@@ -26,7 +26,7 @@ class TestDiary(unittest.TestCase):
         diary.delete_diary(base.get_dbo(), "test", self.nid)
  
     def test_get_between_two_dates(self):
-        diary.get_between_two_dates(base.get_dbo(), "user", "2014-01-01", "2014-01-31")
+        diary.get_between_two_dates(base.get_dbo(), "user", base.today(), base.today())
 
     def test_get_uncompleted_upto_today(self):
         diary.get_uncompleted_upto_today(base.get_dbo(), "user")

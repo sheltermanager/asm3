@@ -40,8 +40,9 @@ def get_person_query(dbo):
         "web.MediaName AS WebsiteMediaName, " \
         "web.Date AS WebsiteMediaDate, " \
         "web.MediaNotes AS WebsiteMediaNotes, " \
-        "(SELECT COUNT(oi.ID) FROM ownerinvestigation oi WHERE oi.OwnerID = o.ID) AS Investigation, " \
-        "(SELECT COUNT(ac.ID) FROM animalcontrol ac WHERE ac.OwnerID = o.ID OR ac.Owner2ID = o.ID or ac.Owner3ID = o.ID) AS Incident " \
+        "CASE WHEN EXISTS(SELECT oi.ID FROM ownerinvestigation oi WHERE oi.OwnerID = o.ID) THEN 1 ELSE 0 END AS Investigation, " \
+        "CASE WHEN EXISTS(SELECT ac.ID FROM animalcontrol ac WHERE ac.OwnerID = o.ID OR ac.Owner2ID = o.ID OR ac.Owner3ID = o.ID) THEN 1 ELSE 0 END AS Incident, " \
+        "CASE WHEN EXISTS(SELECT bib.ID FROM animal bib WHERE bib.BroughtInByOwnerID = o.ID OR bib.OriginalOwnerID = o.ID) THEN 1 ELSE 0 END AS Surrender " \
         "FROM owner o " \
         "LEFT OUTER JOIN owner ho ON ho.ID = o.HomeCheckedBy " \
         "LEFT OUTER JOIN media web ON web.LinkID = o.ID AND web.LinkTypeID = 3 AND web.WebsitePhoto = 1 "
@@ -92,7 +93,7 @@ def get_person_name(dbo, personid):
     """
     Returns the full person name for an id
     """
-    return db.query_string(dbo, "SELECT OwnerName FROM owner WHERE ID = %d" % int(personid))
+    return dbo.query_string("SELECT OwnerName FROM owner WHERE ID = ?", [ utils.cint(personid) ])
 
 def get_person_name_code(dbo, personid):
     """
@@ -178,7 +179,8 @@ def get_satellite_counts(dbo, personid):
         "(SELECT COUNT(*) FROM ownerrota r WHERE r.OwnerID = o.ID) AS rota, " \
         "(SELECT COUNT(*) FROM ownertraploan ot WHERE ot.OwnerID = o.ID) AS traploan, " \
         "(SELECT COUNT(*) FROM ownervoucher ov WHERE ov.OwnerID = o.ID) AS vouchers, " \
-        "((SELECT COUNT(*) FROM animal WHERE AdoptionCoordinatorID = o.ID OR BroughtInByOwnerID = o.ID OR OriginalOwnerID = o.ID OR CurrentVETID = o.ID OR OwnersVetID = o.ID) + " \
+        "((SELECT COUNT(*) FROM animal WHERE AdoptionCoordinatorID = o.ID OR BroughtInByOwnerID = o.ID OR OriginalOwnerID = o.ID OR CurrentVetID = o.ID OR OwnersVetID = o.ID OR NeuteredByVetID = o.ID) + " \
+        "(SELECT COUNT(*) FROM adoption WHERE ReturnedByOwnerID = o.ID) + " \
         "(SELECT COUNT(*) FROM animalwaitinglist WHERE OwnerID = o.ID) + " \
         "(SELECT COUNT(*) FROM animalfound WHERE OwnerID = o.ID) + " \
         "(SELECT COUNT(*) FROM animallost WHERE OwnerID = o.ID) + " \
@@ -244,6 +246,18 @@ def get_links(dbo, pid):
         "LEFT OUTER JOIN internallocation il ON il.ID = a.ShelterLocation " \
         "LEFT OUTER JOIN deathreason dr ON dr.ID = a.PTSReasonID " \
         "WHERE BroughtInByOwnerID = %d " \
+        "UNION SELECT 'RO' AS TYPE, " \
+        "%s AS TYPEDISPLAY, m.ReturnDate AS DDATE, a.ID AS LINKID, " \
+        "%s AS LINKDISPLAY, " \
+        "%s AS FIELD2, " \
+        "CASE WHEN a.DeceasedDate Is Not Null THEN 'D' ELSE '' END AS DMOD " \
+        "FROM adoption m " \
+        "INNER JOIN animal a ON m.AnimalID = a.ID " \
+        "LEFT OUTER JOIN lksmovementtype mt ON mt.ID = m.MovementType " \
+        "INNER JOIN species s ON s.ID = a.SpeciesID " \
+        "LEFT OUTER JOIN internallocation il ON il.ID = a.ShelterLocation " \
+        "LEFT OUTER JOIN deathreason dr ON dr.ID = a.PTSReasonID " \
+        "WHERE m.ReturnedByOwnerID = %d " \
         "UNION SELECT 'AO' AS TYPE, " \
         "%s AS TYPEDISPLAY, a.DateBroughtIn AS DDATE, a.ID AS LINKID, " \
         "%s AS LINKDISPLAY, " \
@@ -258,11 +272,36 @@ def get_links(dbo, pid):
         "UNION SELECT 'OV' AS TYPE, " \
         "%s AS TYPEDISPLAY, a.DateBroughtIn AS DDATE, a.ID AS LINKID, " \
         "%s AS LINKDISPLAY, " \
-        "'' AS FIELD2, '' AS DMOD FROM animal a WHERE OwnersVetID = %d " \
+        "%s AS FIELD2, " \
+        "CASE WHEN a.DeceasedDate Is Not Null THEN 'D' ELSE '' END AS DMOD " \
+        "FROM animal a " \
+        "LEFT OUTER JOIN lksmovementtype mt ON mt.ID = a.ActiveMovementType " \
+        "INNER JOIN species s ON s.ID = a.SpeciesID " \
+        "LEFT OUTER JOIN internallocation il ON il.ID = a.ShelterLocation " \
+        "LEFT OUTER JOIN deathreason dr ON dr.ID = a.PTSReasonID " \
+        "WHERE OwnersVetID = %d " \
         "UNION SELECT 'CV' AS TYPE, " \
         "%s AS TYPEDISPLAY, a.DateBroughtIn AS DDATE, a.ID AS LINKID, " \
         "%s AS LINKDISPLAY, " \
-        "'' AS FIELD2, '' AS DMOD FROM animal a WHERE CurrentVetID = %d " \
+        "%s AS FIELD2, " \
+        "CASE WHEN a.DeceasedDate Is Not Null THEN 'D' ELSE '' END AS DMOD " \
+        "FROM animal a " \
+        "LEFT OUTER JOIN lksmovementtype mt ON mt.ID = a.ActiveMovementType " \
+        "INNER JOIN species s ON s.ID = a.SpeciesID " \
+        "LEFT OUTER JOIN internallocation il ON il.ID = a.ShelterLocation " \
+        "LEFT OUTER JOIN deathreason dr ON dr.ID = a.PTSReasonID " \
+        "WHERE CurrentVetID = %d " \
+        "UNION SELECT 'AV' AS TYPE, " \
+        "%s AS TYPEDISPLAY, a.DateBroughtIn AS DDATE, a.ID AS LINKID, " \
+        "%s AS LINKDISPLAY, " \
+        "%s AS FIELD2, " \
+        "CASE WHEN a.DeceasedDate Is Not Null THEN 'D' ELSE '' END AS DMOD " \
+        "FROM animal a " \
+        "LEFT OUTER JOIN lksmovementtype mt ON mt.ID = a.ActiveMovementType " \
+        "INNER JOIN species s ON s.ID = a.SpeciesID " \
+        "LEFT OUTER JOIN internallocation il ON il.ID = a.ShelterLocation " \
+        "LEFT OUTER JOIN deathreason dr ON dr.ID = a.PTSReasonID " \
+        "WHERE NeuteredByVetID = %d " \
         "UNION SELECT 'WL' AS TYPE, " \
         "%s AS TYPEDISPLAY, a.DatePutOnList AS DDATE, a.ID AS LINKID, " \
         "s.SpeciesName AS LINKDISPLAY, " \
@@ -315,9 +354,11 @@ def get_links(dbo, pid):
         "ORDER BY DDATE DESC, LINKDISPLAY" \
         % ( db.ds(_("Original Owner", l)), linkdisplay, animalextra, int(pid), 
         db.ds(_("Brought In By", l)), linkdisplay, animalextra, int(pid),
+        db.ds(_("Returned By", l)), linkdisplay, animalextra, int(pid),
         db.ds(_("Adoption Coordinator", l)), linkdisplay, animalextra, int(pid),
-        db.ds(_("Owner Vet", l)), linkdisplay, int(pid), 
-        db.ds(_("Current Vet", l)), linkdisplay, int(pid),
+        db.ds(_("Owner Vet", l)), linkdisplay, animalextra, int(pid), 
+        db.ds(_("Current Vet", l)), linkdisplay, animalextra, int(pid),
+        db.ds(_("Altering Vet", l)), linkdisplay, animalextra, int(pid),
         db.ds(_("Waiting List Contact", l)), int(pid), 
         db.ds(_("Lost Animal Contact", l)), int(pid),
         db.ds(_("Found Animal Contact", l)), int(pid),
@@ -590,17 +631,24 @@ def calculate_owner_name(dbo, personclass= 0, title = "", initials = "", first =
 
 def update_owner_names(dbo):
     """
-    Regenerates all owner name fields based on the current format.
+    Regenerates all owner code and name fields based on the current values.
     """
-    al.debug("regenerating owner names...", "person.update_owner_names", dbo)
-    own = db.query(dbo, "SELECT ID, OwnerType, OwnerTitle, OwnerInitials, OwnerForeNames, OwnerSurname FROM owner")
+    al.debug("regenerating owner names and codes...", "person.update_owner_names", dbo)
+    own = dbo.query("SELECT ID, OwnerCode, OwnerType, OwnerTitle, OwnerInitials, OwnerForeNames, OwnerSurname FROM owner")
     nameformat = configuration.owner_name_format(dbo)
     async.set_progress_max(dbo, len(own))
     for o in own:
-        db.execute(dbo, "UPDATE owner SET OwnerName = %s WHERE ID = %d" % \
-            (db.ds(calculate_owner_name(dbo, o["OWNERTYPE"], o["OWNERTITLE"], o["OWNERINITIALS"], o["OWNERFORENAMES"], o["OWNERSURNAME"], nameformat)), o["ID"]))
+        if o.ownercode is None or o.ownercode == "":
+            dbo.update("owner", o.id, { 
+                "OwnerCode": calculate_owner_code(o.id, o.ownersurname),
+                "OwnerName": calculate_owner_name(dbo, o.ownertype, o.ownertitle, o.ownerinitials, o.ownerforenames, o.ownersurname, nameformat)
+            }, setRecordVersion=False, setLastChanged=False, writeAudit=False)
+        else:
+            dbo.update("owner", o.id, { 
+                "OwnerName": calculate_owner_name(dbo, o.ownertype, o.ownertitle, o.ownerinitials, o.ownerforenames, o.ownersurname, nameformat)
+            }, setRecordVersion=False, setLastChanged=False, writeAudit=False)
         async.increment_progress_value(dbo)
-    al.debug("regenerated %d owner names" % len(own), "person.update_owner_names", dbo)
+    al.debug("regenerated %d owner names and codes" % len(own), "person.update_owner_names", dbo)
     return "OK %d" % len(own)
 
 def update_person_from_form(dbo, post, username):
@@ -654,6 +702,7 @@ def update_person_from_form(dbo, post, username):
         ( "MobileTelephone", post.db_string("mobiletelephone")),
         ( "EmailAddress", post.db_string("email")),
         ( "ExcludeFromBulkEmail", post.db_boolean("excludefrombulkemail")),
+        ( "JurisdictionID", post.db_integer("jurisdiction")),
         ( "IDCheck", db.di(homechecked) ),
         ( "Comments", post.db_string("comments")),
         ( "SiteID", post.db_integer("site")),
@@ -803,6 +852,7 @@ def insert_person_from_form(dbo, post, username):
         ( "MobileTelephone", db.ds(d("mobiletelephone", "") )),
         ( "EmailAddress", db.ds(d("emailaddress", "") )),
         ( "ExcludeFromBulkEmail", post.db_boolean("excludefrombulkemail")),
+        ( "JurisdictionID", post.db_integer("jurisdiction")),
         ( "IDCheck", db.di(homechecked) ),
         ( "Comments", db.ds(d("comments") )),
         ( "SiteID", post.db_integer("site")),
@@ -886,9 +936,12 @@ def merge_flags(dbo, username, personid, flags):
     as a pipe delimited string.
     """
     fgs = []
-    if flags is None or flags == "": return
-    if flags.find("|"): fgs = flags.split("|")
-    if flags.find(","): fgs = flags.split(",")
+    if flags is None or flags == "": 
+        return ""
+    elif flags.find("|") != -1: 
+        fgs = flags.split("|")
+    elif flags.find(",") != -1: 
+        fgs = flags.split(",")
     epf = db.query_string(dbo, "SELECT AdditionalFlags FROM owner WHERE ID = %d" % personid)
     epfb = epf.split("|")
     for x in fgs:
@@ -929,11 +982,13 @@ def merge_person(dbo, username, personid, mergepersonid):
     # Reparent all satellite records
     reparent("adoption", "OwnerID")
     reparent("adoption", "RetailerID")
+    reparent("adoption", "ReturnedByOwnerID")
     reparent("animal", "OriginalOwnerID")
     reparent("animal", "BroughtInByOwnerID")
     reparent("animal", "AdoptionCoordinatorID")
     reparent("animal", "OwnersVetID")
     reparent("animal", "CurrentVetID")
+    reparent("animal", "NeuteredByVetID")
     reparent("animalcontrol", "CallerID")
     reparent("animalcontrol", "OwnerID")
     reparent("animalcontrol", "Owner2ID")
@@ -1008,9 +1063,9 @@ def delete_person(dbo, username, personid):
     Deletes a person and all its satellite records.
     """
     l = dbo.locale
-    if db.query_int(dbo, "SELECT COUNT(ID) FROM adoption WHERE OwnerID=%d OR RetailerID=%d" % (personid, personid)):
+    if db.query_int(dbo, "SELECT COUNT(ID) FROM adoption WHERE OwnerID=%d OR RetailerID=%d OR ReturnedByOwnerID=%d" % (personid, personid, personid)):
         raise utils.ASMValidationError(_("This person has movements and cannot be removed.", l))
-    if db.query_int(dbo, "SELECT COUNT(ID) FROM animal WHERE AdoptionCoordinatorID=%d OR BroughtInByOwnerID=%d OR OriginalOwnerID=%d OR CurrentVetID=%d OR OwnersVetID=%d" % (personid, personid, personid, personid, personid)):
+    if db.query_int(dbo, "SELECT COUNT(ID) FROM animal WHERE AdoptionCoordinatorID=%d OR BroughtInByOwnerID=%d OR OriginalOwnerID=%d OR CurrentVetID=%d OR OwnersVetID=%d OR NeuteredByVetID = %d" % (personid, personid, personid, personid, personid, personid)):
         raise utils.ASMValidationError(_("This person is linked to an animal and cannot be removed.", l))
     if db.query_int(dbo, "SELECT COUNT(ID) FROM ownerdonation WHERE OwnerID=%d" % personid):
         raise utils.ASMValidationError(_("This person has payments and cannot be removed.", l))
@@ -1337,4 +1392,40 @@ def update_lookingfor_report(dbo):
     configuration.lookingfor_last_match_count(dbo, lookingfor_last_match_count(dbo))
     return "OK %d" % lookingfor_last_match_count(dbo)
 
+def update_anonymise_personal_data(dbo, overrideretainyears = None):
+    """
+    Anonymises personal data once the retention period in years is up.
+    A cutoff date is calculated from today - retentionyears. If the person was
+    created before this date and has no movements, payments or logs more recent than that date, 
+    they are considered expired.
+    The name, address, email and phone fields are blanked, the surname is set to a fixed string
+    and the town/county/postcode fields are left alone for statistics and reporting purposes.
+    Setting overrideretainyears allows the caller to set the retention period (None uses the config values)
+    People with the following flags are NOT anonymised due to a presumed ongoing relationship -  
+        aco, adoptioncoordinator, retailer, homechecker, member, shelter, foster, staff, vet, volunteer
+    """
+    l = dbo.locale
+    anonymised = _("No longer retained", l)
+    enabled = configuration.anonymise_personal_data(dbo)
+    retainyears = configuration.anonymise_after_years(dbo)
+    if overrideretainyears:
+        enabled = True
+        retainyears = overrideretainyears
+    if not enabled or retainyears == 0:
+        al.debug("set to retain personal data indefinitely, abandoning.", "person.update_anonymise_personal_data", dbo)
+        return
+    cutoff = dbo.today(offset = -365 * retainyears)
+    affected = dbo.execute("UPDATE owner SET OwnerTitle = '', OwnerInitials = '', OwnerForeNames = '', " \
+        "OwnerSurname = ?, OwnerName = ?, OwnerAddress = '', EmailAddress = '', " \
+        "HomeTelephone = '', WorkTelephone = '', MobileTelephone = '', " \
+        "LastChangedDate = ?, LastChangedBy = ? " \
+        "WHERE CreatedDate <= ? AND OwnerSurname <> ? " \
+        "AND IsACO=0 AND IsAdoptionCoordinator=0 AND IsRetailer=0 AND IsHomeChecker=0 AND IsMember=0 " \
+        "AND IsShelter=0 AND IsFosterer=0 AND IsStaff=0 AND IsVet=0 AND IsVolunteer=0 " \
+        "AND NOT EXISTS(SELECT ID FROM ownerdonation WHERE OwnerID = owner.ID AND Date > ?) " \
+        "AND NOT EXISTS(SELECT ID FROM adoption WHERE OwnerID = owner.ID AND MovementDate > ?) " \
+        "AND NOT EXISTS(SELECT ID FROM log WHERE Date > ? AND LinkID = owner.ID AND LogTypeID = 1) ", 
+        ( anonymised, anonymised, dbo.now(), "system", cutoff, anonymised, cutoff, cutoff, cutoff ))
+    al.debug("anonymised %s expired person records outside of retention period (%s years)." % (affected, retainyears), "person.update_anonymise_personal_data", dbo)
+    return "OK %d" % affected
 

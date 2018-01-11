@@ -2,7 +2,7 @@ Non-Neutered/Spayed Adopted Animals
 ###
 Auditing
 ###
-any
+Any
 ###
 Adopted animals who have not been neutered/spayed.
 ###
@@ -10,9 +10,10 @@ en
 ###
 SELECT a.AnimalName, a.ShelterCode, t.AnimalType, s.Sex, ad.MovementDate,
 o.OwnerName, o.OwnerAddress, O.OwnerTown, o.OwnerCounty, o.OwnerPostcode,
-o.HomeTelephone, o.WorkTelephone, o.MobileTelephone, o.EmailAddress, a.AnimalAge
+o.HomeTelephone, o.WorkTelephone, o.MobileTelephone, o.EmailAddress, a.AnimalAge, p.SpeciesName
 FROM animal a
 INNER JOIN animaltype t ON t.ID = a.AnimalTypeID
+INNER JOIN species p ON p.ID = a.SpeciesID
 INNER JOIN internallocation i ON i.ID = a.ShelterLocation
 INNER JOIN lksex s ON s.ID = a.Sex
 INNER JOIN adoption ad ON a.ActiveMovementID = ad.ID
@@ -26,6 +27,7 @@ $$HEADER
 <tr>
 <th>Name</th>
 <th>Code</th>
+<th>Species</th>
 <th>Type</th>
 <th>Sex</th>
 <th>Age</th>
@@ -38,6 +40,7 @@ $$BODY
 <tr>
 <td>$ANIMALNAME</td>
 <td>$SHELTERCODE</td>
+<td>$SPECIESNAME</td>
 <td>$ANIMALTYPE</td>
 <td>$SEX</td>
 <td>$ANIMALAGE</td>

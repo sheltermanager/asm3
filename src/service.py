@@ -36,7 +36,8 @@ AUTH_METHODS = [
     "xml_adoptable_animal", "json_adoptable_animal",
     "xml_adoptable_animals", "json_adoptable_animals", "jsonp_adoptable_animals",
     "xml_recent_adoptions", "json_recent_adoptions", "jsonp_recent_adoptions", 
-    "xml_shelter_animals", "json_shelter_animals", "jsonp_shelter_animals"
+    "xml_shelter_animals", "json_shelter_animals", "jsonp_shelter_animals",
+    "xml_recent_changes", "json_recent_changes", "jsonp_recent_changes"
 ]
 
 def flood_protect(method, remoteip, ttl, message = ""):
@@ -369,19 +370,34 @@ def handler(post, path, remoteip, referer, querystring):
         mcsv = utils.csv(l, rows, cols, True)
         return set_cached_response(cache_key, "text/csv", 600, 600, mcsv)
 
+    elif method == "jsonp_recent_changes":
+        users.check_permission_map(l, user["SUPERUSER"], securitymap, users.VIEW_ANIMAL)
+        sa = animal.get_recent_changes(dbo)
+        return ("application/javascript", 0, "%s(%s);" % (post["callback"], utils.json(sa)))
+
+    elif method == "json_recent_changes":
+        users.check_permission_map(l, user["SUPERUSER"], securitymap, users.VIEW_ANIMAL)
+        sa = animal.get_recent_changes(dbo)
+        return set_cached_response(cache_key, "application/json", 3600, 3600, utils.json(sa))
+
+    elif method == "xml_recent_changes":
+        users.check_permission_map(l, user["SUPERUSER"], securitymap, users.VIEW_ANIMAL)
+        sa = animal.get_recent_changes(dbo)
+        return set_cached_response(cache_key, "application/xml", 3600, 3600, html.xml(sa))
+
     elif method == "jsonp_shelter_animals":
         users.check_permission_map(l, user["SUPERUSER"], securitymap, users.VIEW_ANIMAL)
-        sa = animal.get_animal_find_simple(dbo, "", "shelter")
+        sa = animal.get_shelter_animals(dbo)
         return ("application/javascript", 0, "%s(%s);" % (post["callback"], utils.json(sa)))
 
     elif method == "json_shelter_animals":
         users.check_permission_map(l, user["SUPERUSER"], securitymap, users.VIEW_ANIMAL)
-        sa = animal.get_animal_find_simple(dbo, "", "shelter")
+        sa = animal.get_shelter_animals(dbo)
         return set_cached_response(cache_key, "application/json", 3600, 3600, utils.json(sa))
 
     elif method == "xml_shelter_animals":
         users.check_permission_map(l, user["SUPERUSER"], securitymap, users.VIEW_ANIMAL)
-        sa = animal.get_animal_find_simple(dbo, "", "shelter")
+        sa = animal.get_shelter_animals(dbo)
         return set_cached_response(cache_key, "application/xml", 3600, 3600, html.xml(sa))
 
     elif method == "rss_timeline":

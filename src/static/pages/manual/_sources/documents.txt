@@ -62,6 +62,12 @@ width x height, which is the size used by the Dymo 450 label printer)::
 To set the orientation to landscape. Portrait is the default but can be
 explicitly set too.
 
+Use the margins directive to set the PDF margins::
+
+    <!-- pdf margins 2cm 2cm 1cm 1cm end -->
+
+Margins are in the order top, bottom, left then right.
+
 Electronic Signatures
 ---------------------
 

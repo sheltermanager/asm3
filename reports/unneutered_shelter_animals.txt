@@ -1,0 +1,53 @@
+Non-Neutered/Spayed Shelter Animals 
+###
+Auditing
+###
+any
+###
+Shelter animals who have not been neutered/spayed.
+###
+en
+###
+SELECT a.AnimalName, a.ShelterCode, t.AnimalType, s.Sex, ad.MovementDate,
+o.OwnerName, o.OwnerAddress, O.OwnerTown, o.OwnerCounty, o.OwnerPostcode,
+o.HomeTelephone, o.WorkTelephone, o.MobileTelephone, o.EmailAddress, a.AnimalAge,
+i.LocationName, p.SpeciesName
+FROM animal a
+INNER JOIN animaltype t ON t.ID = a.AnimalTypeID
+INNER JOIN species p ON p.ID = a.SpeciesID
+INNER JOIN internallocation i ON i.ID = a.ShelterLocation
+INNER JOIN lksex s ON s.ID = a.Sex
+INNER JOIN adoption ad ON a.ActiveMovementID = ad.ID
+INNER JOIN owner o ON o.ID = ad.OwnerID
+WHERE a.Neutered = 0 AND a.Archived = 0 
+ORDER BY t.AnimalType, a.AnimalName
+###
+$$HEADER
+<table border="1">
+<tr>
+<th>Name</th>
+<th>Code</th>
+<th>Type</th>
+<th>Species</th>
+<th>Sex</th>
+<th>Age</th>
+<th>Location</th>
+</tr>
+HEADER$$
+
+$$BODY
+<tr>
+<td>$ANIMALNAME</td>
+<td>$SHELTERCODE</td>
+<td>$ANIMALTYPE</td>
+<td>$SPECIESNAME</td>
+<td>$SEX</td>
+<td>$ANIMALAGE</td>
+<td>$LOCATIONNAME</td>
+</tr>
+BODY$$
+
+$$FOOTER
+</table>
+FOOTER$$
+

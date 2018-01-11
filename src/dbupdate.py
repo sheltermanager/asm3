@@ -3,7 +3,7 @@
 import al
 import animal, animalcontrol, financial, lostfound, medical, movement, onlineform, person, waitinglist
 import configuration, db, dbfs, utils
-import os, sys
+import os, sys, base64
 from i18n import _
 
 VERSIONS = ( 
@@ -22,7 +22,7 @@ VERSIONS = (
     33800, 33801, 33802, 33803, 33900, 33901, 33902, 33903, 33904, 33905, 33906, 
     33907, 33908, 33909, 33911, 33912, 33913, 33914, 33915, 33916, 34000, 34001, 
     34002, 34003, 34004, 34005, 34006, 34007, 34008, 34009, 34010, 34011, 34012,
-    34013, 34014, 34015
+    34013, 34014, 34015, 34016, 34017, 34018, 34019, 34020
 )
 
 LATEST_VERSION = VERSIONS[-1]
@@ -36,7 +36,7 @@ TABLES = ( "accounts", "accountsrole", "accountstrx", "additional", "additionalf
     "animaltype", "animaltest", "animaltransport", "animalvaccination", "animalwaitinglist", "audittrail", 
     "basecolour", "breed", "citationtype", "configuration", "costtype", "customreport", "customreportrole", "dbfs", 
     "deathreason", "diary", "diarytaskdetail", "diarytaskhead", "diet", "donationpayment", "donationtype", 
-    "entryreason", "incidentcompleted", "incidenttype", "internallocation", "licencetype", "lkanimalflags", "lkcoattype", 
+    "entryreason", "incidentcompleted", "incidenttype", "internallocation", "jurisdiction", "licencetype", "lkanimalflags", "lkcoattype", 
     "lkownerflags", "lksaccounttype", "lksdiarylink", "lksdonationfreq", "lksex", "lksfieldlink", "lksfieldtype", 
     "lksize", "lksloglink", "lksmedialink", "lksmediatype", "lksmovementtype", "lksposneg", "lksrotatype", 
     "lksyesno", "lksynun", "lkurgency", "lkworktype", "log", "logtype", "media", "medicalprofile", "messages", "onlineform", 
@@ -174,6 +174,7 @@ def sql_structure(dbo):
         fint("ReturnedReasonID"),
         fstr("InsuranceNumber", True),
         flongstr("ReasonForReturn"),
+        fint("ReturnedByOwnerID", True),
         fdate("ReservationDate", True),
         fdate("ReservationCancelledDate", True),
         fint("ReservationStatusID", True),
@@ -196,6 +197,7 @@ def sql_structure(dbo):
     sql += index("adoption_ReservationStatusID", "adoption", "ReservationStatusID")
     sql += index("adoption_ReturnDate", "adoption", "ReturnDate")
     sql += index("adoption_ReturnedReasonID", "adoption", "ReturnedReasonID")
+    sql += index("adoption_ReturnedByOwnerID", "adoption", "ReturnedByOwnerID")
     sql += index("adoption_TrialEndDate", "adoption", "TrialEndDate")
 
     sql += table("animal", (
@@ -228,6 +230,8 @@ def sql_structure(dbo):
         fint("Identichipped"),
         fstr("IdentichipNumber"),
         fdate("IdentichipDate", True),
+        fstr("Identichip2Number", True),
+        fdate("Identichip2Date", True),
         fint("Tattoo"),
         fstr("TattooNumber"),
         fdate("TattooDate", True),
@@ -239,6 +243,7 @@ def sql_structure(dbo):
         fint("SmartTagType"),
         fint("Neutered"),
         fdate("NeuteredDate", True),
+        fint("NeuteredByVetID", True), 
         fint("CombiTested"),
         fdate("CombiTestDate", True),
         fint("CombiTestResult"),
@@ -276,6 +281,7 @@ def sql_structure(dbo):
         fint("IsGoodWithChildren"),
         fint("IsHouseTrained"),
         fint("IsNotAvailableForAdoption"),
+        fint("IsNotForRegistration", True),
         fint("IsHold", True),
         fdate("HoldUntilDate", True),
         fint("IsQuarantine", True),
@@ -331,9 +337,11 @@ def sql_structure(dbo):
     sql += index("animal_DiedOffShelter", "animal", "DiedOffShelter")
     sql += index("animal_EntryReasonID", "animal", "EntryReasonID")
     sql += index("animal_IdentichipNumber", "animal", "IdentichipNumber")
+    sql += index("animal_Identichip2Number", "animal", "Identichip2Number")
     sql += index("animal_LastChangedDate", "animal", "LastChangedDate")
     sql += index("animal_MostRecentEntryDate", "animal", "MostRecentEntryDate")
     sql += index("animal_Neutered", "animal", "Neutered")
+    sql += index("animal_NeuteredByVetID", "animal", "NeuteredByVetID")
     sql += index("animal_NonShelterAnimal", "animal", "NonShelterAnimal")
     sql += index("animal_OriginalOwnerID", "animal", "OriginalOwnerID")
     sql += index("animal_OwnersVetID", "animal", "OwnersVetID")
@@ -368,6 +376,7 @@ def sql_structure(dbo):
         fstr("DispatchLatLong", True),
         fstr("DispatchedACO", True),
         fint("PickupLocationID", True),
+        fint("JurisdictionID", True),
         fdate("DispatchDateTime", True),
         fdate("RespondedDateTime", True),
         fdate("FollowupDateTime", True),
@@ -403,6 +412,7 @@ def sql_structure(dbo):
     sql += index("animalcontrol_FollowupComplete3", "animalcontrol", "FollowupComplete3")
     sql += index("animalcontrol_CompletedDate", "animalcontrol", "CompletedDate")
     sql += index("animalcontrol_IncidentCompletedID", "animalcontrol", "IncidentCompletedID")
+    sql += index("animalcontrol_JurisdictionID", "animalcontrol", "JurisdictionID")
     sql += index("animalcontrol_PickupLocationID", "animalcontrol", "PickupLocationID")
     sql += index("animalcontrol_AnimalID", "animalcontrol", "AnimalID")
     sql += index("animalcontrol_OwnerID", "animalcontrol", "OwnerID")
@@ -876,6 +886,12 @@ def sql_structure(dbo):
         fint("SiteID", True), 
         fint("IsRetired", True) ), False)
 
+    sql += table("jurisdiction", (
+        fid(),
+        fstr("JurisdictionName"),
+        fstr("JurisdictionDescription", True),
+        fint("IsRetired", True) ), False)
+
     sql += table("licencetype", (
         fid(),
         fstr("LicenceTypeName"),
@@ -1074,6 +1090,7 @@ def sql_structure(dbo):
         fstr("MobileTelephone", True),
         fstr("EmailAddress", True),
         fint("ExcludeFromBulkEmail", True),
+        fint("JurisdictionID", True),
         fint("IDCheck", True),
         flongstr("Comments", True),
         fint("SiteID", True),
@@ -1127,6 +1144,7 @@ def sql_structure(dbo):
     sql += index("owner_HomeTelephone", "owner", "HomeTelephone")
     sql += index("owner_MobileTelephone", "owner", "MobileTelephone")
     sql += index("owner_WorkTelephone", "owner", "WorkTelephone")
+    sql += index("owner_JurisdictionID", "owner", "JurisdictionID")
     sql += index("owner_OwnerInitials", "owner", "OwnerInitials")
     sql += index("owner_OwnerPostcode", "owner", "OwnerPostcode")
     sql += index("owner_OwnerSurname", "owner", "OwnerSurname")
@@ -1973,6 +1991,7 @@ def sql_default_data(dbo, skip_config = False):
     sql += lookup2("donationpayment", "PaymentName", 2, _("Cheque", l))
     sql += lookup2("donationpayment", "PaymentName", 3, _("Credit Card", l))
     sql += lookup2("donationpayment", "PaymentName", 4, _("Debit Card", l))
+    sql += lookup2("donationpayment", "PaymentName", 5, _("PayPal", l))
     sql += lookup2money("donationtype", "DonationName", 1, _("Donation", l))
     sql += lookup2money("donationtype", "DonationName", 2, _("Adoption Fee", l))
     sql += lookup2money("donationtype", "DonationName", 3, _("Waiting List Donation", l))
@@ -2011,6 +2030,7 @@ def sql_default_data(dbo, skip_config = False):
     sql += lookup2("incidenttype", "IncidentName", 9, _("Number of pets", l))
     sql += lookup2("incidenttype", "IncidentName", 10, _("Sick/injured animal", l))
     sql += internallocation(1, _("Shelter", l))
+    sql += lookup2("jurisdiction", "JurisdictionName", 1, _("Local", l))
     sql += lookup2money("licencetype", "LicenceTypeName", 1, _("Altered Dog - 1 year", l))
     sql += lookup2money("licencetype", "LicenceTypeName", 2, _("Unaltered Dog - 1 year", l))
     sql += lookup2money("licencetype", "LicenceTypeName", 3, _("Altered Dog - 3 year", l))
@@ -2449,18 +2469,29 @@ def dump(dbo, includeConfig = True, includeDBFS = True, includeCustomReport = Tr
     if deleteDBV: yield "DELETE FROM configuration WHERE ItemName LIKE 'DBV';\n"
     if wrapTransaction: yield "COMMIT;\n"
 
-def dump_dbfs_stdout(dbo):
+def dump_dbfs_base64(dbo):
     """
-    Dumps the DBFS table to stdout. For use with very large dbfs tables.
+    Generator function that dumps the DBFS table, reading every single
+    file and including it as old style base64 in the Content column.
+    This can be used to get an old style dbfs from newer storage mechanisms for export.
     """
-    print("BEGIN;")
-    print("DELETE FROM dbfs;")
-    rows = dbo.query("SELECT ID, Name, Path FROM dbfs")
+    yield "DELETE FROM dbfs;\n"
+    rows = dbo.query("SELECT ID, Name, Path FROM dbfs ORDER BY ID")
     for r in rows:
-        content = dbo.query_string("SELECT Content FROM dbfs WHERE ID=%d" % r["ID"])
-        print("INSERT INTO dbfs (ID, Name, Path, Content) VALUES (%d, '%s', '%s', '%s');" % (r["ID"], r["NAME"], r["PATH"], content))
+        content = ""
+        url = ""
+        # Only try and read the dbfs file if it has an extension and is actually a file
+        if r["NAME"].find(".") != -1:
+            try:
+                content = dbfs.get_string_id(dbo, r["ID"])
+            except:
+                # Ignore if we couldn't read, leaving content blank
+                pass
+        if content != "":
+            url = "base64:"
+            content = base64.b64encode(content)
+        yield "INSERT INTO dbfs (ID, Name, Path, URL, Content) VALUES (%d, '%s', '%s', '%s', '%s');\n" % (r["ID"], r["NAME"], r["PATH"], url, content)
         del content
-    print("COMMIT;")
 
 def dump_hsqldb(dbo, includeDBFS = True):
     """
@@ -2614,7 +2645,7 @@ def reset_db(dbo):
         "stockusage" ]
     for t in deltables:
         dbo.execute_dbupdate("DELETE FROM %s" % t)
-    dbo.execute_dbupdate("DELETE FROM dbfs WHERE Path LIKE '/animal%' OR Path LIKE '/owner%'")
+    dbfs.delete_orphaned_media(dbo) # this deletes dbfs items referenced by the media we just deleted
     install_db_sequences(dbo)
 
 def perform_updates(dbo):
@@ -2861,6 +2892,26 @@ def update_3010(dbo):
     dbo.execute_dbupdate(sql)
     # Add additionalflags field to person
     add_column(dbo, "owner", "AdditionalFlags", dbo.type_longtext)
+    # Populate it with existing flags
+    dbo.execute_dbupdate("UPDATE owner SET AdditionalFlags = ''")
+    flags = ( 
+        ("IDCheck", "homechecked"), 
+        ("IsBanned", "banned"),
+        ("IsVolunteer", "volunteer"),
+        ("IsMember", "member"),
+        ("IsHomeChecker", "homechecker"),
+        ("IsDonor", "donor"),
+        ("IsShelter", "shelter"),
+        ("IsACO", "aco"), 
+        ("IsStaff", "staff"), 
+        ("IsFosterer", "fosterer"), 
+        ("IsRetailer", "retailer"), 
+        ("IsVet", "vet"), 
+        ("IsGiftAid", "giftaid")
+    )
+    for field, flag in flags:
+        concat = dbo.sql_concat(["AdditionalFlags", "'%s|'" % flag])
+        dbo.execute_dbupdate("UPDATE owner SET AdditionalFlags=%s WHERE %s=1" % (concat, field) )
 
 def update_3050(dbo):
     # Add default cost for vaccinations
@@ -4436,12 +4487,7 @@ def update_33913(dbo):
     # Add owner.OwnerCode
     add_column(dbo, "owner", "OwnerCode", dbo.type_shorttext)
     add_index(dbo, "owner_OwnerCode", "owner", "OwnerCode")
-    codefunc = "SUBSTR(UPPER(o.OwnerSurname), 1, 2) || o.ID"
-    if dbo.dbtype == "MYSQL": 
-        codefunc = "CONCAT(SUBSTR(UPPER(o.OwnerSurname), 1, 2), LPAD(o.ID, 6, '0'))"
-    if dbo.dbtype == "POSTGRESQL": 
-        codefunc = "SUBSTRING(UPPER((XPATH('/z/text()', ('<z>' || replace(replace(replace(o.OwnerSurname, '&', ''), '<', ''), '>', '') || '</z>')::xml))[1]::text) FROM 0 FOR 3) || TO_CHAR(o.ID, 'FM000000')"
-    dbo.execute_dbupdate("UPDATE owner o SET OwnerCode = %s" % codefunc)
+    dbo.execute_dbupdate("UPDATE owner o SET OwnerCode = %s" % dbo.sql_concat([ dbo.sql_substring("UPPER(o.OwnerSurname)", 1, 2), dbo.sql_zero_pad_left("o.ID", 6) ]))
 
 def update_33914(dbo):
     # Add owner.IsAdoptionCoordinator
@@ -4597,6 +4643,45 @@ def update_34015(dbo):
     dbo.execute_dbupdate("UPDATE media SET DBFSID = (SELECT MAX(ID) FROM dbfs WHERE Name LIKE media.MediaName)")
     dbo.execute_dbupdate("UPDATE media SET DBFSID = 0 WHERE DBFSID Is Null")
     # Remove any _scaled component of names from both media and dbfs
-    dbo.execute_dbupdate("UPDATE media SET MediaName = %s WHERE MediaName LIKE '%_scaled%'" % dbo.sql_replace("MediaName", "_scaled", ""))
-    dbo.execute_dbupdate("UPDATE dbfs SET Name = %s WHERE Name LIKE '%_scaled%'" % dbo.sql_replace("Name", "_scaled", ""))
+    dbo.execute_dbupdate("UPDATE media SET MediaName = %s WHERE MediaName LIKE '%%_scaled%%'" % dbo.sql_replace("MediaName", "_scaled", ""))
+    dbo.execute_dbupdate("UPDATE dbfs SET Name = %s WHERE Name LIKE '%%_scaled%%'" % dbo.sql_replace("Name", "_scaled", ""))
+
+def update_34016(dbo):
+    l = dbo.locale
+    # Add JurisdictionID
+    add_column(dbo, "owner", "JurisdictionID", dbo.type_integer)
+    add_column(dbo, "animalcontrol", "JurisdictionID", dbo.type_integer)
+    add_index(dbo, "owner_JurisdictionID", "owner", "JurisdictionID")
+    add_index(dbo, "animalcontrol_JurisdictionID", "animalcontrol", "JurisdictionID")
+    sql = "CREATE TABLE jurisdiction ( ID INTEGER NOT NULL, " \
+        "JurisdictionName %(short)s NOT NULL, " \
+        "JurisdictionDescription %(long)s, " \
+        "IsRetired INTEGER)" % { "short": dbo.type_shorttext, "long": dbo.type_longtext }
+    dbo.execute_dbupdate(sql)
+    dbo.execute_dbupdate("UPDATE owner SET JurisdictionID = 0")
+    dbo.execute_dbupdate("UPDATE animalcontrol SET JurisdictionID = 0")
+    dbo.execute_dbupdate("INSERT INTO jurisdiction VALUES (1, '%s', '', 0)" % _("Local", l))
+
+def update_34017(dbo):
+    # Add extra microchip fields
+    add_column(dbo, "animal", "Identichip2Number", dbo.type_shorttext)
+    add_column(dbo, "animal", "Identichip2Date", dbo.type_datetime)
+    add_index(dbo, "animal_Identichip2Number", "animal", "Identichip2Number")
+
+def update_34018(dbo):
+    # Add ReturnedByOwnerID
+    add_column(dbo, "adoption", "ReturnedByOwnerID", dbo.type_integer)
+    add_index(dbo, "adoption_ReturnedByOwnerID", "adoption", "ReturnedByOwnerID")
+    dbo.execute_dbupdate("UPDATE adoption SET ReturnedByOwnerID = 0")
+
+def update_34019(dbo):
+    # Add NeuteredByVetID
+    add_column(dbo, "animal", "NeuteredByVetID", dbo.type_integer)
+    add_index(dbo, "animal_NeuteredByVetID", "animal", "NeuteredByVetID")
+    dbo.execute_dbupdate("UPDATE animal SET NeuteredByVetID = 0")
+
+def update_34020(dbo):
+    # Add IsNotForRegistration
+    add_column(dbo, "animal", "IsNotForRegistration", dbo.type_integer)
+    dbo.execute_dbupdate("UPDATE animal SET IsNotForRegistration = 0")
 

@@ -13,7 +13,7 @@ import utils
 
 from i18n import BUILD, _, translate, format_currency, format_date, now, python2display, python2unix
 from sitedefs import BASE_URL, LOCALE, MINIFY_JS, ROLLUP_JS
-from sitedefs import ASMSELECT_CSS, ASMSELECT_JS, BASE64_JS, CODEMIRROR_CSS, CODEMIRROR_JS, CODEMIRROR_BASE, FLOT_JS, FLOT_PIE_JS, FULLCALENDAR_JS, FULLCALENDAR_CSS, JQUERY_JS, JQUERY_UI_JS, JQUERY_UI_CSS, MOMENT_JS, MOUSETRAP_JS, PATH_JS, SIGNATURE_JS, TABLESORTER_CSS, TABLESORTER_JS, TABLESORTER_WIDGETS_JS, TIMEPICKER_CSS, TIMEPICKER_JS, TINYMCE_4_JS, TOUCHPUNCH_JS
+from sitedefs import ASMSELECT_CSS, ASMSELECT_JS, BASE64_JS, CODEMIRROR_CSS, CODEMIRROR_JS, CODEMIRROR_BASE, EXIFRESTORER_JS, FLOT_JS, FLOT_PIE_JS, FULLCALENDAR_JS, FULLCALENDAR_CSS, JQUERY_JS, JQUERY_UI_JS, JQUERY_UI_CSS, MOMENT_JS, MOUSETRAP_JS, PATH_JS, SIGNATURE_JS, TABLESORTER_CSS, TABLESORTER_JS, TABLESORTER_WIDGETS_JS, TIMEPICKER_CSS, TIMEPICKER_JS, TINYMCE_4_JS, TOUCHPUNCH_JS
 
 BACKGROUND_COLOURS = {
     "asm":              "#ffffff",
@@ -239,6 +239,7 @@ def bare_header(title, theme = "asm", locale = LOCALE, config_db = "asm", config
                 script_tag(CODEMIRROR_BASE + "mode/xml/xml.js") + 
                 script_tag(CODEMIRROR_BASE + "mode/htmlmixed/htmlmixed.js") + 
                 script_tag(CODEMIRROR_BASE + "mode/sql/sql.js") + 
+                script_tag(EXIFRESTORER_JS) +
                 script_tag(FULLCALENDAR_JS) + 
                 script_tag(SIGNATURE_JS) +
                 script_tag(TABLESORTER_JS) + 
@@ -669,8 +670,8 @@ def menu_structure(l, reports, mailmerges):
             ("", "", "", "publish?mode=pcuk", "asm-icon-blank", "Publish to PetsLocated.com" ),
             ("", "", "", "publish?mode=rg", "asm-icon-blank", "Publish to RescueGroups.org" ),
             ("", "", "", "publish?mode=vear", "asm-icon-blank", "Register animals with AKC Reunite Microchips (via VetEnvoy)"),
-            ("", "", "", "publish?mode=abuk", "asm-icon-blank", "Register animals with idENTICHIP/Anibase UK Microchips"),
-            ("", "", "", "publish?mode=ptuk", "asm-icon-blank", "Register animals with AVID/PETtrac UK Microchips"),
+            ("", "", "", "publish?mode=abuk", "asm-icon-blank", "Register animals with Identibase UK Microchips"),
+            ("", "", "", "publish?mode=ptuk", "asm-icon-blank", "Register animals with AVID UK Microchips"),
             ("", "", "", "publish?mode=fa", "asm-icon-blank", "Register animal microchips with FoundAnimals.org"),
             ("", "", "", "publish?mode=veha", "asm-icon-blank", "Register animals with HomeAgain Microchips (via VetEnvoy)"),
             ("", "", "", "publish?mode=pl", "asm-icon-blank", "Register animals with PetLink Microchips"),
@@ -697,6 +698,7 @@ def menu_structure(l, reports, mailmerges):
             (users.EXPORT_REPORT, "", "", "report_export", "asm-icon-report", _("Export Reports as CSV", l) ),
             (users.USE_SQL_INTERFACE, "", "", "csvexport", "asm-icon-animal", _("Export Animals as CSV", l) ),
             (users.USE_SQL_INTERFACE, "", "", "csvimport", "asm-icon-database", _("Import a CSV file", l) ),
+            (users.USE_SQL_INTERFACE, "", "", "csvimport_paypal", "asm-icon-paypal", _("Import a PayPal CSV file", l) ),
             (users.TRIGGER_BATCH, "", "", "batch", "asm-icon-batch", _("Trigger Batch Processes", l) )
         ))
     )

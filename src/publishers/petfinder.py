@@ -92,11 +92,6 @@ class PetFinderPublisher(FTPPublisher):
                     self.cleanup()
                     return
 
-                # If a limit was set, stop now
-                if self.pc.limit > 0 and anCount > self.pc.limit:
-                    self.log("Hit publishing limit of %d animals. Stopping." % self.pc.limit)
-                    break
-
                 # Upload images for this animal
                 self.uploadImages(an, False, 3)
                 # Mapped species

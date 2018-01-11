@@ -2,7 +2,7 @@ Print Animal Record
 ###
 Auditing
 ###
-33907/Any
+34018/Any
 ###
 A complete printout of an animal record.
 ###
@@ -12,6 +12,7 @@ SELECT a.ID AS AnimalID, a.*,
 oo.OwnerName AS ooname, oo.OwnerAddress AS ooaddress, oo.OwnerPostcode AS oopostcode, oo.HomeTelephone AS ootel, oo.EmailAddress AS ooemail,
 bi.OwnerName AS biname, bi.OwnerAddress AS biaddress, bi.OwnerPostcode AS bipostcode, bi.HomeTelephone AS bitel, bi.EmailAddress AS biemail,
 cv.OwnerName AS cvname, cv.OwnerAddress AS cvaddress, cv.OwnerPostcode AS cvpostcode, cv.HomeTelephone AS cvtel, cv.EmailAddress AS cvemail,
+av.OwnerName AS avname,
 lksize.size,
 entryreason.reasonname AS entryreasonname,
 deathreason.reasonname AS ptsreasonname,
@@ -57,6 +58,7 @@ LEFT OUTER JOIN deathreason ON deathreason.ID = a.ptsreasonid
 LEFT OUTER JOIN owner oo ON a.OriginalOwnerID = oo.ID
 LEFT OUTER JOIN owner bi ON a.BroughtInByOwnerID = bi.ID
 LEFT OUTER JOIN owner cv ON a.CurrentVetID = cv.ID
+LEFT OUTER JOIN owner av ON a.NeuteredByVetID = av.ID
 LEFT OUTER JOIN animal ba1 ON a.BondedAnimalID = ba1.ID
 LEFT OUTER JOIN animal ba2 ON a.BondedAnimal2ID = ba2.ID
 WHERE a.ID = $ASK ANIMAL$
@@ -94,9 +96,9 @@ $$BODY
 </tr><tr>
 <td>Good With Kids</td><td>$WITHCHILDREN</td><td>Housetrained</td><td>$HOUSETRAINED</td>
 </tr><tr>
-<td>Microchipped</td><td>$YIDENTICHIPPED $IDENTICHIPDATE $IDENTICHIPNUMBER</td><td>Tattoo</td><td>$YTATTOO $TATTOODATE $TATTOONUMBER</td>
+<td>Microchipped</td><td>$YIDENTICHIPPED $IDENTICHIPDATE $IDENTICHIPNUMBER $IDENTICHIP2DATE $IDENTICHIP2NUMBER</td><td>Tattoo</td><td>$YTATTOO $TATTOODATE $TATTOONUMBER</td>
 </tr><tr>
-<td>Altered</td><td>$ALTERED $NEUTEREDDATE</td><td>Declawed</td><td>$YDECLAWED</td>
+<td>Altered</td><td>$ALTERED $NEUTEREDDATE $AVNAME</td><td>Declawed</td><td>$YDECLAWED</td>
 </tr><tr>
 <td>Heartworm Tested</td><td>$YHEARTWORMTESTED $HEARTWORMTESTDATE $PHEARTWORMTESTRESULT</td>
 </tr><tr>
@@ -207,17 +209,47 @@ FOOTER$$
 +++
 SUBREPORT_AnimalPrintMedical
 +++
-SELECT * FROM animalmedical
-WHERE animalmedical.AnimalID = $PARENTKEY$
-ORDER BY StartDate
+SELECT
+a.ShelterCode, a.AnimalName,
+t.AnimalType, s.SpeciesName,
+il.LocationName, am.TreatmentName,
+am.Dosage, amt.TreatmentNumber, amt.TotalTreatments,
+am.Cost, amt.DateRequired, amt.DateGiven, am.Comments AS RegimeComments, amt.Comments
+FROM animal a
+INNER JOIN animaltype t ON t.ID = a.AnimalTypeID
+INNER JOIN species s ON s.ID = a.SpeciesID
+INNER JOIN internallocation il ON il.ID = a.ShelterLocation
+INNER JOIN animalmedical am ON a.ID = am.AnimalID
+INNER JOIN animalmedicaltreatment amt ON amt.AnimalMedicalID = am.ID
+WHERE a.ID = $PARENTKEY$
+ORDER BY amt.DateRequired
 +++
 $$HEADER
 <table cellpadding="5">
-<tr><th>Started</th><th>Treatment</th><th>Dosage</th><th>Status</th><th>Comments</th></tr>
+<tr>
+<td><b>Therapy</b></td>
+<td><b>Dosage</b></td>
+<td><b>Regimen Cost</b></td>
+<td><b>Number</b></td>
+<td><b>Required</b></td>
+<td><b>Given</b></td>
+<td><b>Regimen Comments</b></td>
+<td><b>Comments</b></td>
+</tr>
 HEADER$$
-$$BODY
-<tr><td>$STARTDATE</td><td>$TREATMENTNAME</td><td>$DOSAGE</td><td>$TREATMENTSGIVEN / $TOTALNUMBEROFTREATMENTS</td><td>$COMMENTS</td></tr>
+
+$$BODY<tr>
+<td>$TREATMENTNAME</td>
+<td>$DOSAGE</td>
+<td>$COST</td>
+<td>$TREATMENTNUMBER / $TOTALTREATMENTS</td>
+<td>$DATEREQUIRED</td>
+<td>$DATEGIVEN</td>
+<td>$REGIMECOMMENTS</td>
+<td>$COMMENTS</td>
+</tr>
 BODY$$
+
 $$FOOTER
 </table>
 FOOTER$$
@@ -382,10 +414,12 @@ FOOTER$$
 SUBREPORT_AnimalPrintMovement
 +++
 SELECT ad.*, mt.MovementType,
-o.OwnerName, o.OwnerAddress, o.OwnerTown, o.OwnerCounty, o.OwnerPostcode, o.HomeTelephone, o.MobileTelephone, o.EmailAddress 
+o.OwnerName, o.OwnerAddress, o.OwnerTown, o.OwnerCounty, o.OwnerPostcode, o.HomeTelephone, o.MobileTelephone, o.EmailAddress,
+rb.OwnerName AS ReturnedBy
 FROM adoption ad
 INNER JOIN lksmovementtype mt ON mt.ID = ad.MovementType
 LEFT OUTER JOIN owner o ON o.ID = ad.OwnerID
+LEFT OUTER JOIN owner rb ON rb.ID = ad.ReturnedByOwnerID 
 WHERE ad.AnimalID = $PARENTKEY$
 ORDER BY ad.ReservationDate, ad.MovementDate
 +++
@@ -395,7 +429,7 @@ $$HEADER
 HEADER$$
 $$BODY
 <tr><td>$ADOPTIONNUMBER</td><td><b>$OWNERNAME</b><br />$OWNERADDRESS</br />$OWNERTOWN $OWNERCOUNTY $OWNERPOSTCODE<br />H: $HOMETELEPHONE<br />M: $MOBILETELEPHONE<br />$EMAILADDRESS</td>
-<td>$RESERVATIONDATE</td><td>$RESERVATIONCANCELLEDDATE</td><td>$MOVEMENTDATE</td><td>$MOVEMENTTYPE</td><td>$RETURNDATE</td><td>$REASONFORRETURN</td><td>$COMMENTS</td></tr>
+<td>$RESERVATIONDATE</td><td>$RESERVATIONCANCELLEDDATE</td><td>$MOVEMENTDATE</td><td>$MOVEMENTTYPE</td><td>$RETURNDATE $RETURNEDBY</td><td>$REASONFORRETURN</td><td>$COMMENTS</td></tr>
 BODY$$
 $$FOOTER
 </table>

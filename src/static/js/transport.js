@@ -45,7 +45,7 @@ $(function() {
                     { json_field: "DRIVEROWNERID", post_field: "driver", label: _("Driver"), type: "person", personfilter: "driver" },
                     { json_field: "TRANSPORTTYPEID", post_field: "type", label: _("Type"), type: "select", options: { rows: controller.transporttypes, displayfield: "TRANSPORTTYPENAME", valuefield: "ID" }},
                     { json_field: "STATUS", post_field: "status", label: _("Status"), type: "select", options: { rows: statuses, displayfield: "NAME", valuefield: "ID" }},
-                    { json_field: "MILES", post_field: "miles", label: _("Miles"), type: "number", defaultval: 0 },
+                    { json_field: "MILES", post_field: "miles", label: transport.miles_label(), type: "number", defaultval: 0 },
                     { json_field: "COST", post_field: "cost", label: _("Cost"), type: "currency", hideif: function() { return !config.bool("ShowCostAmount"); } },
                     { json_field: "COSTPAIDDATE", post_field: "costpaid", label: _("Paid"), type: "date", hideif: function() { return !config.bool("ShowCostPaid"); } },
                     { json_field: "COMMENTS", post_field: "comments", label: _("Comments"), type: "textarea" },
@@ -153,7 +153,7 @@ $(function() {
                             return format.date(row.DROPOFFDATETIME) + " " + format.time(row.DROPOFFDATETIME);
                         }
                     },
-                    { field: "MILES", display: _("Miles") },
+                    { field: "MILES", display: transport.miles_label() },
                     { field: "COST", display: _("Cost"), formatter: tableform.format_currency,
                         hideif: function() { return !config.bool("ShowCostAmount"); }
                     },
@@ -315,6 +315,16 @@ $(function() {
                 row.DROPOFFOWNERPOSTCODE = $("#dropoff").personchooser("get_selected").OWNERPOSTCODE; 
             }
         }, 
+
+        /**
+         * Returns the label as miles or km based on locale
+         */
+        miles_label: function() {
+            if (asm.locale == "en" || asm.locale == "en_GB") {
+                return _("Miles");
+            }
+            return _("Km");
+        },
 
         render: function() {
             var s = "";

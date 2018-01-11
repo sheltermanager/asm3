@@ -8,10 +8,10 @@ import collections
 import configuration
 import csv
 import datetime
-import db
 import dbupdate
 import financial
 import i18n
+import medical
 import movement
 import person
 import re
@@ -28,18 +28,25 @@ VALID_FIELDS = [
     "ANIMALREASONFORENTRY", "ANIMALHIDDENDETAILS", "ANIMALNOTFORADOPTION",
     "ANIMALGOODWITHCATS", "ANIMALGOODWITHDOGS", "ANIMALGOODWITHKIDS", 
     "ANIMALHOUSETRAINED", "ANIMALHEALTHPROBLEMS",
+    "VACCINATIONTYPE", "VACCINATIONDUEDATE", "VACCINATIONGIVENDATE", "VACCINATIONEXPIRESDATE", 
+    "VACCINATIONMANUFACTURER", "VACCINATIONBATCHNUMBER", "VACCINATIONCOMMENTS", 
+    "MEDICALNAME", "MEDICALDOSAGE", "MEDICALGIVENDATE", "MEDICALCOMMENTS",
     "ORIGINALOWNERTITLE", "ORIGINALOWNERINITIALS", "ORIGINALOWNERFIRSTNAME",
     "ORIGINALOWNERLASTNAME", "ORIGINALOWNERADDRESS", "ORIGINALOWNERCITY",
-    "ORIGINALOWNERSTATE", "ORIGINALOWNERZIPCODE", "ORIGINALOWNERHOMEPHONE",
+    "ORIGINALOWNERSTATE", "ORIGINALOWNERZIPCODE", "ORIGINALOWNERJURISDICTION", "ORIGINALOWNERHOMEPHONE",
     "ORIGINALOWNERWORKPHONE", "ORIGINALOWNERCELLPHONE", "ORIGINALOWNEREMAIL",
-    "DONATIONDATE", "DONATIONAMOUNT", "DONATIONCOMMENTS", "DONATIONTYPE", "DONATIONPAYMENT", 
-    "MOVEMENTTYPE", "MOVEMENTDATE", "MOVEMENTCOMMENTS", "MOVEMENTRETURNDATE", 
+    "DONATIONDATE", "DONATIONAMOUNT", "DONATIONCHECKNUMBER", "DONATIONCOMMENTS", "DONATIONTYPE", "DONATIONPAYMENT", 
+    "LICENSETYPE", "LICENSENUMBER", "LICENSEFEE", "LICENSEISSUEDATE", "LICENSEEXPIRESDATE", "LICENSECOMMENTS",
     "PERSONTITLE", "PERSONINITIALS", "PERSONFIRSTNAME", "PERSONLASTNAME", "PERSONNAME",
     "PERSONADDRESS", "PERSONCITY", "PERSONSTATE",
-    "PERSONZIPCODE", "PERSONFOSTERER", "PERSONDONOR",
+    "PERSONZIPCODE", "PERSONJURISDICTION", "PERSONFOSTERER", "PERSONDONOR",
     "PERSONFLAGS", "PERSONCOMMENTS", "PERSONHOMEPHONE", "PERSONWORKPHONE",
     "PERSONCELLPHONE", "PERSONEMAIL", "PERSONCLASS",
-    "PERSONMEMBER", "PERSONMEMBERSHIPEXPIRY"
+    "PERSONMEMBER", "PERSONMEMBERSHIPEXPIRY",
+    "PERSONMATCHACTIVE", "PERSONMATCHSEX", "PERSONMATCHSIZE", "PERSONMATCHCOLOR", "PERSONMATCHAGEFROM", "PERSONMATCHAGETO",
+    "PERSONMATCHTYPE", "PERSONMATCHSPECIES", "PERSONMATCHBREED1", "PERSONMATCHBREED2",
+    "PERSONMATCHGOODWITHCATS", "PERSONMATCHGOODWITHDOGS", "PERSONMATCHGOODWITHCHILDREN", "PERSONMATCHHOUSETRAINED",
+    "PERSONMATCHCOMMENTSCONTAIN"
 ]
 
 def gkc(m, f):
@@ -131,9 +138,9 @@ def gkynu(m, f):
         switch. Returns 2 (unknown) for a blank field
         Input should start with Y/N/U or 0/1/2 """
     if f not in m: return 2
-    if m[f].upper().startswith("Y") or m[f] == "0": return 0
-    if m[f].upper().startswith("N") or m[f] == "1": return 1
-    return 2
+    if m[f].upper().startswith("Y") or m[f] == "0": return "0"
+    if m[f].upper().startswith("N") or m[f] == "1": return "1"
+    return "2"
 
 def gkbr(dbo, m, f, speciesid, create):
     """ reads lookup field f from map m, returning a str(int) that
@@ -162,7 +169,7 @@ def gkl(dbo, m, f, table, namefield, create):
     lv = m[f]
     matchid = dbo.query_int("SELECT ID FROM %s WHERE LOWER(%s) = ?" % (table, namefield), [ lv.strip().lower().replace("'", "`") ])
     if matchid == 0 and create:
-        nextid = db.get_id(dbo, table)
+        nextid = dbo.get_id(table)
         sql = "INSERT INTO %s (ID, %s) VALUES (?, ?)" % (table, namefield)
         dbo.execute(sql, (nextid, lv.replace("'", "`")))
         return str(nextid)
@@ -172,19 +179,34 @@ def create_additional_fields(dbo, row, errors, rowno, csvkey = "ANIMALADDITIONAL
     # Identify any additional fields that may have been specified with
     # ANIMALADDITIONAL<fieldname>
     for a in additional.get_field_definitions(dbo, linktype):
-        v = gks(row, csvkey + str(a["FIELDNAME"]).upper())
+        v = gks(row, csvkey + str(a.fieldname).upper())
         if v != "":
-            sql = db.make_insert_sql("additional", (
-                ( "LinkType", db.di(a["LINKTYPE"]) ),
-                ( "LinkID", db.di(int(linkid)) ),
-                ( "AdditionalFieldID", db.di(a["ID"]) ),
-                ( "Value", db.ds(v) ) ))
             try:
-                db.execute(dbo, sql)
+                dbo.insert("additional", {
+                    "LinkType":             a.linktype,
+                    "LinkID":               linkid,
+                    "AdditionalFieldID":    a.id,
+                    "Value":                v
+                }, generateID=False)
             except Exception as e:
                 errors.append( (rowno, str(row), str(e)) )
 
-def csvimport(dbo, csvdata, createmissinglookups = False, cleartables = False, checkduplicates = False):
+def row_error(errors, rowtype, rowno, row, e, dbo, exinfo):
+    """ 
+    Handles error messages during import 
+    errors: List of errors to append to
+    rowtype: The area of processing for the row (eg: animal)
+    rowno: The row number
+    row: The row data itself
+    e: The exception thrown
+    exinfo: execution info for logging
+    """
+    errmsg = str(e)
+    if type(e) == utils.ASMValidationError: errmsg = e.getMsg()
+    al.error("row %d %s: (%s): %s" % (rowno, rowtype, str(row), errmsg), "csvimport.row_error", dbo, exinfo)
+    errors.append( (rowno, str(row), errmsg) )
+
+def csvimport(dbo, csvdata, encoding = "utf8", createmissinglookups = False, cleartables = False, checkduplicates = False):
     """
     Imports the csvdata.
     createmissinglookups: If a lookup value is given that's not in our data, add it
@@ -196,7 +218,11 @@ def csvimport(dbo, csvdata, createmissinglookups = False, cleartables = False, c
     csvdata = csvdata.replace("\r\n", "\n")
     csvdata = csvdata.replace("\r", "\n")
 
-    reader = csv.reader(StringIO(csvdata), dialect="excel")
+    reader = None
+    if encoding == "utf8":
+        reader = utils.UnicodeCSVReader(StringIO(csvdata))
+    else:
+        reader = utils.UnicodeCSVReader(StringIO(csvdata), encoding=encoding)
 
     # Make sure we have a valid header
     cols = None
@@ -210,9 +236,13 @@ def csvimport(dbo, csvdata, createmissinglookups = False, cleartables = False, c
     onevalid = False
     hasanimal = False
     hasanimalname = False
+    hasmed = False
+    hasvacc = False
     hasperson = False
     haspersonlastname = False
     haspersonname = False
+    haslicence = False
+    haslicencenumber = False
     hasmovement = False
     hasmovementdate = False
     hasdonation = False
@@ -224,6 +254,10 @@ def csvimport(dbo, csvdata, createmissinglookups = False, cleartables = False, c
         if col.startswith("ANIMAL"): hasanimal = True
         if col == "ANIMALNAME": hasanimalname = True
         if col.startswith("ORIGINALOWNER"): hasoriginalowner = True
+        if col.startswith("VACCINATION"): hasvacc = True
+        if col.startswith("MEDICAL"): hasmed = True
+        if col.startswith("LICENSE"): haslicence = True
+        if col == "LICENSENUMBER": haslicencenumber = True
         if col == "ORIGINALOWNERLASTNAME": hasoriginalownerlastname = True
         if col.startswith("PERSON"): hasperson = True
         if col == "PERSONLASTNAME": haspersonlastname = True
@@ -267,6 +301,25 @@ def csvimport(dbo, csvdata, createmissinglookups = False, cleartables = False, c
     if hasdonation and not (haspersonlastname or haspersonname):
         async.set_last_error(dbo, "Your CSV file has donation fields, but no person to apply the donation to")
         return
+
+    # If we have any med fields, we need an animal
+    if hasmed and not hasanimal:
+        async.set_last_error(dbo, "Your CSV file has medical fields, but no animal to apply them to")
+        return
+
+    # If we have any vacc fields, we need an animal
+    if hasvacc and not hasanimal:
+        async.set_last_error(dbo, "Your CSV file has vaccination fields, but no animal to apply them to")
+        return
+
+    # If we have licence fields, we need a number
+    if haslicence and not haslicencenumber:
+        async.set_last_error(dbo, "Your CSV file has license fields, but no LICENSENUMBER column")
+        return
+
+    # We also need a valid person
+    if haslicence and not (haspersonlastname or haspersonname):
+        async.set_last_error(dbo, "Your CSV file has license fields, but no person to apply the license to")
 
     # Read the whole CSV file into a list of maps. Note, the
     # reader has a cursor at the second row already because
@@ -322,7 +375,9 @@ def csvimport(dbo, csvdata, createmissinglookups = False, cleartables = False, c
             a["breed2"] = gkbr(dbo, row, "ANIMALBREED2", a["species"], createmissinglookups)
             if a["breed2"] != "0" and a["breed2"] != a["breed1"]:
                 a["crossbreed"] = "on"
-            a["size"] = str(configuration.default_size(dbo))
+            a["size"] = gkl(dbo, row, "ANIMALSIZE", "lksize", "Size", False)
+            if gks(row, "ANIMALSIZE") == "": 
+                a["size"] = str(configuration.default_size(dbo))
             a["internallocation"] = gkl(dbo, row, "ANIMALLOCATION", "internallocation", "LocationName", createmissinglookups)
             if a["internallocation"] == "0":
                 a["internallocation"] = str(configuration.default_location(dbo))
@@ -361,6 +416,7 @@ def csvimport(dbo, csvdata, createmissinglookups = False, cleartables = False, c
                 p["town"] = gks(row, "ORIGINALOWNERCITY")
                 p["county"] = gks(row, "ORIGINALOWNERSTATE")
                 p["postcode"] = gks(row, "ORIGINALOWNERZIPCODE")
+                p["jurisdiction"] = gkl(dbo, row, "ORIGINALOWNERJURISDICTION", "jurisdiction", "JurisdictionName", createmissinglookups)
                 p["hometelephone"] = gks(row, "ORIGINALOWNERHOMEPHONE")
                 p["worktelephone"] = gks(row, "ORIGINALOWNERWORKPHONE")
                 p["mobiletelephone"] = gks(row, "ORIGINALOWNERCELLPHONE")
@@ -376,8 +432,7 @@ def csvimport(dbo, csvdata, createmissinglookups = False, cleartables = False, c
                         # Identify an ORIGINALOWNERADDITIONAL additional fields and create them
                         create_additional_fields(dbo, row, errors, rowno, "ORIGINALOWNERADDITIONAL", "person", ooid)
                 except Exception as e:
-                    al.error("row %d (%s), originalowner: %s" % (rowno, str(row), str(e)), "csvimport.csvimport", dbo, sys.exc_info())
-                    errors.append( (rowno, str(row), "originalowner: " + str(e)) )
+                    row_error(errors, "originalowner", rowno, row, e, dbo, sys.exc_info())
             try:
                 if checkduplicates:
                     dup = animal.get_animal_sheltercode(dbo, a["sheltercode"])
@@ -388,10 +443,7 @@ def csvimport(dbo, csvdata, createmissinglookups = False, cleartables = False, c
                     # Identify an ANIMALADDITIONAL additional fields and create them
                     create_additional_fields(dbo, row, errors, rowno, "ANIMALADDITIONAL", "animal", animalid)
             except Exception as e:
-                al.error("row %d (%s): %s" % (rowno, str(row), str(e)), "csvimport.csvimport", dbo, sys.exc_info())
-                errmsg = str(e)
-                if type(e) == utils.ASMValidationError: errmsg = e.getMsg()
-                errors.append( (rowno, str(row), errmsg) )
+                row_error(errors, "animal", rowno, row, e, dbo, sys.exc_info())
 
         # Person data?
         personid = 0
@@ -417,6 +469,7 @@ def csvimport(dbo, csvdata, createmissinglookups = False, cleartables = False, c
             p["town"] = gks(row, "PERSONCITY")
             p["county"] = gks(row, "PERSONSTATE")
             p["postcode"] = gks(row, "PERSONZIPCODE")
+            p["jurisdiction"] = gkl(dbo, row, "PERSONJURISDICTION", "jurisdiction", "JurisdictionName", createmissinglookups)
             p["hometelephone"] = gks(row, "PERSONHOMEPHONE")
             p["worktelephone"] = gks(row, "PERSONWORKPHONE")
             p["mobiletelephone"] = gks(row, "PERSONCELLPHONE")
@@ -428,6 +481,22 @@ def csvimport(dbo, csvdata, createmissinglookups = False, cleartables = False, c
             p["flags"] = flags
             p["comments"] = gks(row, "PERSONCOMMENTS")
             p["membershipexpires"] = gkd(dbo, row, "PERSONMEMBERSHIPEXPIRY")
+            p["matchactive"] = gkbi(row, "PERSONMATCHACTIVE")
+            if p["matchactive"] == "1":
+                if "PERSONMATCHSEX" in cols: p["matchsex"] = gks(row, "PERSONMATCHSEX").lower().startswith("m") and "1" or "0"
+                if "PERSONMATCHSIZE" in cols: p["matchsize"] = gkl(dbo, row, "PERSONMATCHSIZE", "lksize", "Size", False)
+                if "PERSONMATCHCOLOR" in cols: p["matchcolour"] = gkl(dbo, row, "PERSONMATCHCOLOR", "basecolour", "BaseColour", createmissinglookups)
+                if "PERSONMATCHAGEFROM" in cols: p["matchagefrom"] = gks(row, "PERSONMATCHAGEFROM")
+                if "PERSONMATCHAGETO" in cols: p["matchageto"] = gks(row, "PERSONMATCHAGETO")
+                if "PERSONMATCHTYPE" in cols: p["matchanimaltype"] = gkl(dbo, row, "PERSONMATCHTYPE", "animaltype", "AnimalType", createmissinglookups)
+                if "PERSONMATCHSPECIES" in cols: p["matchspecies"] = gkl(dbo, row, "PERSONMATCHSPECIES", "species", "SpeciesName", createmissinglookups)
+                if "PERSONMATCHBREED1" in cols: p["matchbreed"] = gkbr(dbo, row, "PERSONMATCHBREED1", p["matchspecies"], createmissinglookups)
+                if "PERSONMATCHBREED2" in cols: p["matchbreed2"] = gkbr(dbo, row, "PERSONMATCHBREED2", p["matchspecies"], createmissinglookups)
+                if "PERSONMATCHGOODWITHCATS" in cols: p["matchgoodwithcats"] = gkynu(row, "PERSONMATCHGOODWITHCATS")
+                if "PERSONMATCHGOODWITHDOGS" in cols: p["matchgoodwithdogs"] = gkynu(row, "PERSONMATCHGOODWITHDOGS")
+                if "PERSONMATCHGOODWITHCHILDREN" in cols: p["matchgoodwithchildren"] = gkynu(row, "PERSONMATCHGOODWITHCHILDREN")
+                if "PERSONMATCHHOUSETRAINED" in cols: p["matchhousetrained"] = gkynu(row, "PERSONMATCHHOUSETRAINED")
+                if "PERSONMATCHCOMMENTSCONTAIN" in cols: p["matchcommentscontain"] = gks(row, "PERSONMATCHCOMMENTSCONTAIN")
             try:
                 if checkduplicates:
                     dups = person.get_person_similar(dbo, p["emailaddress"], p["surname"], p["forenames"], p["address"])
@@ -441,10 +510,7 @@ def csvimport(dbo, csvdata, createmissinglookups = False, cleartables = False, c
                     # Identify any PERSONADDITIONAL additional fields and create them
                     create_additional_fields(dbo, row, errors, rowno, "PERSONADDITIONAL", "person", personid)
             except Exception as e:
-                al.error("row %d (%s), person: %s" % (rowno, str(row), str(e)), "csvimport.csvimport", dbo, sys.exc_info())
-                errmsg = str(e)
-                if type(e) == utils.ASMValidationError: errmsg = e.getMsg()
-                errors.append( (rowno, str(row), "person: " + errmsg) )
+                row_error(errors, "person", rowno, row, e, dbo, sys.exc_info())
 
         # Movement to tie animal/person together?
         movementid = 0
@@ -462,10 +528,7 @@ def csvimport(dbo, csvdata, createmissinglookups = False, cleartables = False, c
             try:
                 movementid = movement.insert_movement_from_form(dbo, "import", utils.PostedData(m, dbo.locale))
             except Exception as e:
-                al.error("row %d (%s), movement: %s" % (rowno, str(row), str(e)), "csvimport.csvimport", dbo, sys.exc_info())
-                errmsg = str(e)
-                if type(e) == utils.ASMValidationError: errmsg = e.getMsg()
-                errors.append( (rowno, str(row), "movement: " + errmsg) )
+                row_error(errors, "movement", rowno, row, e, dbo, sys.exc_info())
 
         # Donation?
         if hasdonation and personid != 0 and gkc(row, "DONATIONAMOUNT") != 0:
@@ -476,6 +539,7 @@ def csvimport(dbo, csvdata, createmissinglookups = False, cleartables = False, c
             d["amount"] = str(gkc(row, "DONATIONAMOUNT"))
             d["comments"] = gks(row, "DONATIONCOMMENTS")
             d["received"] = gkd(dbo, row, "DONATIONDATE", True)
+            d["chequenumber"] = gks(row, "DONATIONCHECKNUMBER")
             d["type"] = gkl(dbo, row, "DONATIONTYPE", "donationtype", "DonationName", createmissinglookups)
             if d["type"] == "0":
                 d["type"] = str(configuration.default_donation_type(dbo))
@@ -485,11 +549,160 @@ def csvimport(dbo, csvdata, createmissinglookups = False, cleartables = False, c
             try:
                 financial.insert_donation_from_form(dbo, "import", utils.PostedData(d, dbo.locale))
             except Exception as e:
-                al.error("row %d (%s), donation: %s" % (rowno, str(row), str(e)), "csvimport.csvimport", dbo, sys.exc_info())
-                errmsg = str(e)
-                if type(e) == utils.ASMValidationError: errmsg = e.getMsg()
-                errors.append( (rowno, str(row), "donation: " + errmsg) )
+                row_error(errors, "payment", rowno, row, e, dbo, sys.exc_info())
             if movementid != 0: movement.update_movement_donation(dbo, movementid)
+
+        # Vaccination?
+        if hasvacc and animalid != 0 and gks(row, "VACCINATIONDUEDATE") != "":
+            v = {}
+            v["animal"] = str(animalid)
+            v["type"] = gkl(dbo, row, "VACCINATIONTYPE", "vaccinationtype", "VaccinationType", createmissinglookups)
+            if v["type"] == "0":
+                v["type"] = str(configuration.default_vaccination_type(dbo))
+            v["required"] = gkd(dbo, row, "VACCINATIONDUEDATE", True)
+            v["given"] = gkd(dbo, row, "VACCINATIONGIVENDATE")
+            v["expires"] = gkd(dbo, row, "VACCINATIONEXPIRESDATE")
+            v["batchnumber"] = gks(row, "VACCINATIONBATCHNUMBER")
+            v["manufacturer"] = gks(row, "VACCINATIONMANUFACTURER")
+            v["comments"] = gks(row, "VACCINATIONCOMMENTS")
+            try:
+                medical.insert_vaccination_from_form(dbo, "import", utils.PostedData(v, dbo.locale))
+            except Exception as e:
+                row_error(errors, "vaccination", rowno, row, e, dbo, sys.exc_info())
+
+        # Medical?
+        if hasmed and animalid != 0 and gks(row, "MEDICALGIVENDATE") != "" and gks(row, "MEDICALNAME") != "":
+            m = {}
+            m["animal"] = str(animalid)
+            m["treatmentname"] = gks(row, "MEDICALNAME")
+            m["dosage"] = gks(row, "MEDICALDOSAGE")
+            m["startdate"] = gkd(dbo, row, "MEDICALGIVENDATE")
+            m["comments"] = gks(row, "MEDICALCOMMENTS")
+            m["singlemulti"] = "0" # single treatment
+            m["status"] = "2" # completed
+            try:
+                medical.insert_regimen_from_form(dbo, "import", utils.PostedData(m, dbo.locale))
+            except Exception as e:
+                row_error(errors, "medical", rowno, row, e, dbo, sys.exc_info())
+
+        # License?
+        if haslicence and personid != 0 and gks(row, "LICENSENUMBER") != "":
+            l = {}
+            l["person"] = str(personid)
+            l["animal"] = str(animalid)
+            l["type"] = gkl(dbo, row, "LICENSETYPE", "licencetype", "LicenceTypeName", createmissinglookups)
+            if l["type"] == "0": l["type"] = 1
+            l["number"] = gks(row, "LICENSENUMBER")
+            l["fee"] = str(gkc(row, "LICENSEFEE"))
+            l["issuedate"] = gkd(dbo, row, "LICENSEISSUEDATE")
+            l["expirydate"] = gkd(dbo, row, "LICENSEEXPIRESDATE")
+            l["comments"] = gks(row, "LICENSECOMMENTS")
+            try:
+                financial.insert_licence_from_form(dbo, "import", utils.PostedData(l, dbo.locale))
+            except Exception as e:
+                row_error(errors, "license", rowno, row, e, dbo, sys.exc_info())
+
+        rowno += 1
+
+    h = [ "<p>%d success, %d errors</p><table>" % (len(data) - len(errors), len(errors)) ]
+    for rowno, row, err in errors:
+        h.append("<tr><td>%s</td><td>%s</td><td>%s</td></tr>" % (rowno, row, err))
+    h.append("</table>")
+    return "".join(h)
+
+def csvimport_paypal(dbo, csvdata, donationtypeid, donationpaymentid, flags):
+    """
+    Imports a PayPal CSV file of transactions.
+    """
+    def v(r, n, n2 = "", n3 = "", n4 = "", n5 = ""):
+        """ Read values n(x) from a dictionary r depending on which is present, 
+            if none are present empty string is returned """
+        if n in r: return r[n]
+        if n2 != "" and n2 in r: return r[n2]
+        if n3 != "" and n3 in r: return r[n3]
+        if n4 != "" and n4 in r: return r[n4]
+        if n5 != "" and n5 in r: return r[n5]
+        return ""
+
+    reader = utils.UnicodeCSVDictReader(StringIO(csvdata))
+    data = list(reader)
+    errors = []
+    rowno = 1
+    async.set_progress_max(dbo, len(data))
+
+    for r in data:
+
+        # Skip blank rows
+        if len(r) == 0: continue
+
+        REQUIRED_FIELDS = [ "Date", "Currency", "Gross", "Fee", "Net", "From Email Address", "Status", "Type" ]
+        for rf in REQUIRED_FIELDS:
+            if rf not in r:
+                async.set_last_error(dbo, "This CSV file does not look like a PayPal CSV (missing %s)" % rf)
+                return
+
+        al.debug("import paypal csv: row %d of %d" % (rowno, len(data)), "csvimport.csvimport_paypal", dbo)
+        async.increment_progress_value(dbo)
+
+        if r["Status"] != "Completed" and r["Type"] not in ( "Website Payment", "Subscription Payment", "Donation Payment" ):
+            al.debug("skipping: Status='%s', Type='%s'" % (r["Status"], r["Type"]), "csvimport.csvimport_paypal", dbo)
+            continue
+
+        # Parse name (use all up to last space for first names if only Name exists)
+        name = v(r, "Name")
+        firstname = v(r, "First Name")
+        lastname = v(r, "Last Name")
+        if name != "" and firstname == "" and lastname == "":
+            if name.find(" ") != -1:
+                firstname =name[0:name.rfind(" ")]
+                lastname =name[name.rfind(" ")+1:]
+            else:
+                lastname = name
+
+        # Person data
+        personid = 0
+        p = {}
+        p["ownertype"] = "1"
+        p["forenames"] = firstname
+        p["surname"] = lastname
+        p["address"] = v(r, "Address Line 1", "Street Address 1")
+        p["town"] = v(r, "Town/City", "Town", "City")
+        p["county"] = v(r, "County", "State", "Province", "Region", "State/Province/Region/County/Territory/Prefecture/Republic")
+        p["postcode"] = v(r, "Postcode", "Zip Code", "Zip/Postal Code")
+        p["hometelephone"] = v(r, "Contact Phone Number", "Phone Number")
+        p["emailaddress"] = v(r, "From Email Address")
+        p["flags"] = flags
+        try:
+            dups = person.get_person_similar(dbo, p["emailaddress"], p["surname"], p["forenames"], p["address"])
+            if len(dups) > 0:
+                personid = dups[0]["ID"]
+                # Merge flags and any extra details
+                person.merge_flags(dbo, "import", personid, flags)
+                person.merge_person_details(dbo, "import", personid, p)
+            if personid == 0:
+                personid = person.insert_person_from_form(dbo, utils.PostedData(p, dbo.locale), "import")
+        except Exception as e:
+            row_error(errors, "person", rowno, r, e, dbo, sys.exc_info())
+
+        # Donation info
+        net = utils.cint(utils.cfloat(v(r, "Net")) * 100)
+        if personid != 0 and net > 0:
+            d = {}
+            d["person"] = str(personid)
+            d["animal"] = "0"
+            d["movement"] = "0"
+            d["amount"] = str(net)
+            comments = "PayPal ID: %s \nItem: %s %s \nCurrency: %s \nGross: %s \nFee: %s \nSubject: %s \nNote: %s" % \
+                ( v(r, "Transaction ID"), v(r, "Item ID", "Item Number"), v(r, "Item Title"), v(r, "Currency"), 
+                v(r, "Gross"), v(r, "Fee"), v(r, "Subject"), v(r, "Note") )
+            d["comments"] = comments
+            d["received"] = v(r, "Date")
+            d["type"] = str(donationtypeid)
+            d["payment"] = str(donationpaymentid)
+            try:
+                financial.insert_donation_from_form(dbo, "import", utils.PostedData(d, dbo.locale))
+            except Exception as e:
+                row_error(errors, "payment", rowno, r, e, dbo, sys.exc_info())
 
         rowno += 1
 
@@ -563,7 +776,39 @@ def csvexport_animals(dbo, animalids):
         row["PERSONWORKPHONE"] = a["CURRENTOWNERWORKTELEPHONE"]
         row["PERSONCELLPHONE"] = a["CURRENTOWNERMOBILETELEPHONE"]
         row["PERSONEMAIL"] = a["CURRENTOWNEREMAILADDRESS"]
+        row["VACCINATIONTYPE"] = ""
+        row["VACCINATIONDUEDATE"] = ""
+        row["VACCINATIONGIVENDATE"] = ""
+        row["VACCINATIONEXPIRESDATE"] = ""
+        row["VACCINATIONMANUFACTURER"] = ""
+        row["VACCINATIONBATCHNUMBER"] = ""
+        row["VACCINATIONCOMMENTS"] = ""
+        row["MEDICALNAME"] = ""
+        row["MEDICALDOSAGE"] = ""
+        row["MEDICALGIVENDATE"] = ""
+        row["MEDICALCOMMENTS"] = ""
         rows.append(row)
+        for v in medical.get_vaccinations(dbo, a["ID"]):
+            row = collections.OrderedDict()
+            row["VACCINATIONTYPE"] = v["VACCINATIONTYPE"]
+            row["VACCINATIONDUEDATE"] = i18n.python2display(l, v["DATEREQUIRED"])
+            row["VACCINATIONGIVENDATE"] = i18n.python2display(l, v["DATEOFVACCINATION"])
+            row["VACCINATIONEXPIRESDATE"] = i18n.python2display(l, v["DATEEXPIRES"])
+            row["VACCINATIONMANUFACTURER"] = v["MANUFACTURER"]
+            row["VACCINATIONBATCHNUMBER"] = v["BATCHNUMBER"]
+            row["VACCINATIONCOMMENTS"] = v["COMMENTS"]
+            row["ANIMALCODE"] = a["SHELTERCODE"]
+            row["ANIMALNAME"] = a["ANIMALNAME"]
+            rows.append(row)
+        for m in medical.get_regimens(dbo, a["ID"]):
+            row = collections.OrderedDict()
+            row["MEDICALNAME"] = m["TREATMENTNAME"]
+            row["MEDICALDOSAGE"] = m["DOSAGE"]
+            row["MEDICALGIVENDATE"] = i18n.python2display(l, m["STARTDATE"])
+            row["MEDICALCOMMENTS"] = m["COMMENTS"]
+            row["ANIMALCODE"] = a["SHELTERCODE"]
+            row["ANIMALNAME"] = a["ANIMALNAME"]
+            rows.append(row)
     if len(rows) == 0: return ""
     keys = rows[0].keys()
     out = StringIO()

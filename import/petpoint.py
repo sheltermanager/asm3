@@ -9,17 +9,21 @@ Import script for PetPoint databases exported as CSV
 Can optionally import vacc and tests too, the PP reports
 are MedicalVaccineExpress and MedicalTestsExpress
 
-3rd March - 12th January, 2017
+Can optionally import color info from location history:
+AnimalLocationHistory
+
+3rd March - 8th September, 2017
 """
 
 # The shelter's petfinder ID for grabbing animal images for adoptable animals
 PETFINDER_ID = ""
 
-INTAKE_FILENAME = "data/petpoint_tg1436/animals.csv"
-MEMO_FILENAME = "data/petpoint_tg1436/memo.csv"
-PERSON_FILENAME = "data/petpoint_tg1436/person.csv"
-VACC_FILENAME = "data/petpoint_tg1436/vacc.csv"
-TEST_FILENAME = "data/petpoint_tg1436/test.csv"
+INTAKE_FILENAME = "data/petpoint_nv1573/animals.csv"
+MEMO_FILENAME = ""
+LOCATION_FILENAME = ""
+PERSON_FILENAME = "data/petpoint_nv1573/person.csv"
+VACC_FILENAME = ""
+TEST_FILENAME = ""
 
 # Whether or not the vaccine and test files are in two row stacked format
 MEDICAL_TWO_ROW_FORMAT = False
@@ -33,7 +37,7 @@ def findowner(ownername = ""):
     return None
 
 def getdate(d):
-    return asm.getdate_mmddyyyy(d)
+    return asm.getdate_guess(d)
 
 # --- START OF CONVERSION ---
 
@@ -58,6 +62,7 @@ print "DELETE FROM internallocation;"
 print "DELETE FROM animal WHERE ID >= 100 AND CreatedBy = 'conversion';"
 print "DELETE FROM animaltest WHERE ID >= 100 AND CreatedBy = 'conversion';"
 print "DELETE FROM animalvaccination WHERE ID >= 100 AND CreatedBy = 'conversion';"
+print "DELETE FROM log WHERE ID >= 100 AND CreatedBy = 'conversion';"
 print "DELETE FROM owner WHERE ID >= 100 AND CreatedBy = 'conversion';"
 print "DELETE FROM adoption WHERE ID >= 100 AND CreatedBy = 'conversion';"
 
@@ -100,7 +105,8 @@ if PERSON_FILENAME != "":
         o.IsVolunteer = asm.iif(d["Association"] == "Volunteer", 1, 0)
         o.ExcludeFromBulkEmail = asm.iif(d["Contact By Email"] == "Yes", 1, 0)
 
-for d in asm.csv_to_list(INTAKE_FILENAME):
+# Sort the data on intake date ascending
+for d in sorted(asm.csv_to_list(INTAKE_FILENAME), key=lambda k: getdate(k["Intake Date"])):
     # Each row contains an animal, intake and outcome
     if ppa.has_key(d["Animal ID"]):
         a = ppa[d["Animal ID"]]
@@ -134,7 +140,8 @@ for d in asm.csv_to_list(INTAKE_FILENAME):
         if d["Intake Type"] == "Transfer In":
             a.IsTransfer = 1
         a.generateCode()
-        a.ShortCode = d["Animal ID"]
+        a.ShortCode = d["ARN"]
+        if a.ShortCode.strip() == "": a.ShortCode = d["Animal ID"]
         if "Distinguishing Markings" in d: a.Markings = d["Distinguishing Markings"]
         a.IsNotAvailableForAdoption = 0
         a.ShelterLocation = asm.location_id_for_name(d["Location"])
@@ -159,21 +166,11 @@ for d in asm.csv_to_list(INTAKE_FILENAME):
         if "Secondary Breed" in d: comments += d["Secondary Breed"]
         comments += ", age: " + d["Age Group"]
         if "Intake Condition" in d: comments += ", intake condition: " + d["Intake Condition"]
-        a.BreedID = asm.breed_id_for_name(d["Primary Breed"])
-        a.Breed2ID = a.BreedID
-        a.BreedName = asm.breed_name_for_id(a.BreedID)
-        a.CrossBreed = 0
-        if "Secondary Breed" in d and d["Secondary Breed"].strip() != "":
-            a.CrossBreed = 1
-            if d["Secondary Breed"] == "Mix":
-                a.Breed2ID = 442
-            else:
-                a.Breed2ID = asm.breed_id_for_name(d["Secondary Breed"])
-            if a.Breed2ID == 1: a.Breed2ID = 442
-            a.BreedName = "%s / %s" % ( asm.breed_name_for_id(a.BreedID), asm.breed_name_for_id(a.Breed2ID) )
+        comments += ", ID: " + d["Animal ID"] + ", ARN: " + d["ARN"]
+        asm.breed_ids(a, d["Primary Breed"], d["Secondary Breed"])
         a.HiddenAnimalDetails = comments
 
-        if d["Admitter"] != "" and d["Intake Type"] == "Owner/Guardian Surrender":
+        if d["Admitter"] != "" and d["Intake Type"] in ("Owner/Guardian Surrender", "Transfer In"):
             o = findowner(d["Admitter"])
             if o == None:
                 o = asm.Owner()
@@ -186,6 +183,7 @@ for d in asm.csv_to_list(INTAKE_FILENAME):
                 else:
                     o.OwnerSurname = o.OwnerName
                 o.OwnerAddress = d["Street Number"] + " " + d["Street Name"] + " " + d["Street Type"] + " " + d["Street Direction"]
+                if o.OwnerAddress == "": o.OwnerAddress = d["Agency Address"]
                 o.OwnerTown = d["City"]
                 o.OwnerCounty = d["Province"]
                 o.OwnerPostcode = d["Postal Code"]
@@ -195,10 +193,19 @@ for d in asm.csv_to_list(INTAKE_FILENAME):
             a.OriginalOwnerID = o.ID
             a.BroughtInByOwnerID = o.ID
 
+    if d["Intake Type"] == "Return":
+        # Return the most recent adoption for this animal
+        for m in movements:
+            if m.AnimalID == a.ID and m.ReturnDate is None and m.MovementType == 1:
+                m.ReturnDate = getdate(d["Intake Date"])
+                m.ReturnedReasonID = 17 # Surrender
+                a.Archived = 0 # Return to shelter so another movement takes it away again
+                break
+
     o = None
     if d["Outcome Person Name"].strip() != "":
         o = findowner(d["Outcome Person Name"])
-        if o == None:
+        if o is None:
             o = asm.Owner()
             owners.append(o)
             o.OwnerName = d["Outcome Person Name"]
@@ -215,11 +222,31 @@ for d in asm.csv_to_list(INTAKE_FILENAME):
             o.EmailAddress = d["Out Email"]
             o.HomeTelephone = d["Out Home Phone"]
             o.MobileTelephone = d["Out Cell Phone"]
+    elif d["Outcome Agency Name"].strip() != "":
+        o = findowner(d["Outcome Agency Name"])
+        if o is None:
+            o = asm.Owner()
+            owners.append(o)
+            o.OwnerName = d["Outcome Agency Name"]
+            bits = o.OwnerName.split(" ")
+            if len(bits) > 1:
+                o.OwnerForeNames = bits[0]
+                o.OwnerSurname = bits[len(bits)-1]
+            else:
+                o.OwnerSurname = o.OwnerName
+            o.OwnerAddress = d["Agency Street Number"] + " " + d["Agency Street Name"] + " " + d["Agency Street Type"] + " " + d["Agency Street Direction"]
+            o.OwnerTown = d["Agency City"]
+            o.OwnerCounty = d["Agency Province"]
+            o.OwnerPostcode = d["Agency Postal Code"]
+            o.EmailAddress = d["Agency Email"]
+            o.HomeTelephone = d["Agency Home Phone"]
+            o.MobileTelephone = d["Agency Cell Number"]
+            o.IsShelter = 1
 
     ot = d["Outcome Type"]
     ost = d["Outcome Subtype"]
     od = getdate(d["Outcome Date"])
-    if (ot == "Transfer Out" and ost == "Potential Adopter") or ot == "Adoption":
+    if (ot == "Transfer Out" and ost == "Potential Adopter" and d["Outcome Person Name"] != "") or ot == "Adoption":
         if a is None or o is None: continue
         m = asm.Movement()
         m.AnimalID = a.ID
@@ -293,8 +320,8 @@ for d in asm.csv_to_list(INTAKE_FILENAME):
 # Turn memos into history logs
 if MEMO_FILENAME != "":
     for d in asm.csv_to_list(MEMO_FILENAME):
-        if ppa.has_key(d["Animal ID"]):
-            a = ppa[d["Animal ID"]]
+        if ppa.has_key(d["AnimalID"]):
+            a = ppa[d["AnimalID"]]
             l = asm.Log()
             logs.append(l)
             l.LogTypeID = 3 # History
@@ -305,7 +332,15 @@ if MEMO_FILENAME != "":
                 l.Date = asm.now()
             l.Comments = d["Textbox131"]
 
-vacc = asm.csv_to_list(VACC_FILENAME)
+# Extract color info from location history
+if LOCATION_FILENAME != "":
+    for d in asm.csv_to_list(LOCATION_FILENAME):
+        if ppa.has_key(d["textbox15"]):
+            name1, name2 = d["textbox59"].split("/", 1)
+            a = ppa[d["textbox15"]]
+            a.BaseColourID = asm.colour_id_for_names(name1, name2)
+            if a.HiddenAnimalDetails.find("color:") == -1:
+                a.HiddenAnimalDetails += ", color: " + d["textbox59"]
 
 def process_vacc(animalno, vaccdate = None, vaccexpires = None, vaccname = ""):
     """ Processes a vaccination record. PP have multiple formats of this data file """
@@ -339,7 +374,8 @@ def process_vacc(animalno, vaccdate = None, vaccexpires = None, vaccname = ""):
     av.DateExpires = vaccexpires
     av.Comments = "Type: %s" % vaccname
 
-if vacc is not None:
+if VACC_FILENAME != "":
+    vacc = asm.csv_to_list(VACC_FILENAME)
     if MEDICAL_TWO_ROW_FORMAT:
         odd = True
         vaccname = ""
@@ -359,8 +395,6 @@ if vacc is not None:
         for v in vacc:
             process_vacc(v["AnimalID"], getdate(v["Date"]), None, v["RecordType3"])
             #process_vacc(v["StatusDateTime3"], getdate(v["BodyWeight"]), None, v["RecordType3"]) # Once saw a broken version of this file like this
-
-test = asm.csv_to_list(TEST_FILENAME)
 
 def process_test(animalno, testdate = None, testname = "", result = ""):
     """ Process a test record """
@@ -399,7 +433,8 @@ def process_test(animalno, testdate = None, testname = "", result = ""):
         at.TestTypeID = 1
         at.Comments = "Test for %s" % testname
 
-if test is not None:
+if TEST_FILENAME != "":
+    test = asm.csv_to_list(TEST_FILENAME)
     if MEDICAL_TWO_ROW_FORMAT:
         odd = True
         testname = ""
@@ -421,18 +456,7 @@ if test is not None:
 
 # Run back through the animals, if we have any that are still
 # on shelter after 1 year, add an adoption to an unknown owner
-for a in animals:
-    if a.Archived == 0 and a.DateBroughtIn < asm.subtract_days(asm.now(), 365):
-        m = asm.Movement()
-        m.AnimalID = a.ID
-        m.OwnerID = uo.ID
-        m.MovementType = 1
-        m.MovementDate = a.DateBroughtIn
-        a.Archived = 1
-        a.ActiveMovementID = m.ID
-        a.ActiveMovementDate = a.DateBroughtIn
-        a.ActiveMovementType = 1
-        movements.append(m)
+asm.adopt_older_than(animals, movements, uo.ID, 365)
 
 # Now that everything else is done, output stored records
 for k,v in asm.locations.iteritems():

@@ -96,4 +96,11 @@ class DatabasePostgreSQL(Database):
         """ Writes a char length """
         return "char_length(%s)" % item
 
+    def sql_substring(self, fieldexpr, pos, chars):
+        """ SQL substring function from pos for chars """
+        return "SUBSTRING(%s FROM %s TO %s)" % (fieldexpr, pos, chars)
+
+    def sql_zero_pad_left(self, fieldexpr, digits):
+        """ Writes a function that zero pads an expression with zeroes to digits """
+        return "TO_CHAR(%s, 'FM%s')" % (fieldexpr, "0"*digits)
 

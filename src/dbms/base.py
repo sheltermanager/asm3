@@ -63,6 +63,30 @@ class QueryBuilder(object):
     def params(self):
         return self.values
 
+class ResultRow(dict):
+    """
+    A ResultRow object is like a dictionary except `obj.foo` can be used
+    in addition to `obj['foo']`. 
+    It's also case insensitive as dbms tend to be on column names.
+    """
+    def __getattr__(self, key):
+        try:
+            return self[key.upper()]
+        except KeyError as k:
+            raise AttributeError(k)
+
+    def __setattr__(self, key, value):
+        self[key.upper()] = value
+
+    def __delattr__(self, key):
+        try:
+            del self[key.upper()]
+        except KeyError as k:
+            raise AttributeError(k)
+
+    def __repr__(self):
+        return '<ResultRow ' + dict.__repr__(self) + '>'
+
 class Database(object):
     """
     Object that handles all interactions with the database.
@@ -182,7 +206,8 @@ class Database(object):
                     k = k.replace("*", "")
                 else:
                     # Otherwise, do XSS escaping
-                    v = v.replace(">", "&gt;").replace("<", "&lt;")
+                    v = self.escape_xss(v)
+                v = self.escape_apos(v)
                 values[k] = u"%s" % v
         return values
 
@@ -218,12 +243,22 @@ class Database(object):
         s = s.replace("'", "`")
         return s
 
+    def escape_apos(self, s):
+        """ Turn apostrophes into backticks before storing """
+        if s is None: return ""
+        return s.replace("'", "`")
+
+    def escape_xss(self, s):
+        """ XSS escapes a string """
+        return s.replace("<", "&lt;").replace(">", "&gt;")
+
     def execute(self, sql, params=None, override_lock=False):
         """
             Runs the action query given and returns rows affected
             override_lock: if this is set to False and dbo.locked = True,
-            we don't do anything. This makes it easy to lock the database
-            for writes, but keep databases upto date.
+                           we don't do anything. This makes it easy to 
+                           lock the database for writes, but keep databases 
+                           upto date.
         """
         if not override_lock and self.locked: return 0
         if sql is None or sql.strip() == "": return 0
@@ -237,9 +272,7 @@ class Database(object):
             rv = s.rowcount
             c.commit()
             self.cursor_close(c, s)
-            if DB_EXEC_LOG != "":
-                with open(DB_EXEC_LOG.replace("{database}", self.database), "a") as f:
-                    f.write("-- %s\n%s;\n" % (self.now(), sql))
+            self._log_sql(sql, params)
             return rv
         except Exception as err:
             al.error(str(err), "Database.execute", self, sys.exc_info())
@@ -271,8 +304,8 @@ class Database(object):
             "INSERT INTO table (field1, field2) VALUES (%s, %s)", [ ( "val1", "val2" ), ( "val3", "val4" ) ]
             Returns rows affected
             override_lock: if this is set to False and dbo.locked = True,
-            we don't do anything. This makes it easy to lock the database
-            for writes, but keep databases upto date.
+                           we don't do anything. This makes it easy to lock the database
+                           for writes, but keep databases upto date.
         """
         if not override_lock and self.locked: return
         if sql is None or sql.strip() == "": return 0
@@ -333,7 +366,7 @@ class Database(object):
         except:
             return False
 
-    def insert(self, table, values, user="", generateID=True, setRecordVersion=True, writeAudit=True):
+    def insert(self, table, values, user="", generateID=True, setRecordVersion=True, setCreated=True, writeAudit=True):
         """ Inserts a row into a table.
             table: The table to insert into
             values: A dict of column names with values
@@ -343,7 +376,7 @@ class Database(object):
             writeAudit: If True, writes an audit record for the insert
             Returns the ID of the inserted record
         """
-        if user != "":
+        if user != "" and setCreated:
             values["CreatedBy"] = user
             values["LastChangedBy"] = user
             values["CreatedDate"] = self.now()
@@ -356,31 +389,35 @@ class Database(object):
         values = self.encode_str_before_write(values)
         sql = "INSERT INTO %s (%s) VALUES (%s)" % ( table, ",".join(values.iterkeys()), self.sql_placeholders(values) )
         self.execute(sql, values.values())
-        if writeAudit and iid != 0:
+        if writeAudit and iid != 0 and user != "":
             audit.create(self, user, table, iid, audit.dump_row(self, table, iid))
         return iid
 
-    def update(self, table, iid, values, user="", setRecordVersion=True, writeAudit=True):
+    def update(self, table, where, values, user="", setRecordVersion=True, setLastChanged=True, writeAudit=True):
         """ Updates a row in a table.
             table: The table to update
-            iid: The value of the ID column in the row to update
+            where: Either a where clause or an int ID value for ID=where
             values: A dict of column names with values
             user: The user account performing the update. If set, adds CreatedBy/Date/LastChangedBy/Date fields
             setRecordVersion: If user is non-blank and this is True, sets RecordVersion
             writeAudit: If True, writes an audit record for the update
         """
-        if user != "":
-            values["CreatedBy"] = user
+        if user != "" and setLastChanged:
             values["LastChangedBy"] = user
-            values["CreatedDate"] = self.now()
             values["LastChangedDate"] = self.now()
             if setRecordVersion: values["RecordVersion"] = self.get_recordversion()
         values = self.encode_str_before_write(values)
-        sql = "UPDATE %s SET %s WHERE ID = %s" % ( table, ",".join( ["%s=?" % x for x in values.iterkeys()] ), iid )
-        preaudit = self.query_row(table, iid)
+        iid = 0
+        if type(where) == int: 
+            iid = where
+            where = "ID=%s" % where
+        sql = "UPDATE %s SET %s WHERE %s" % ( table, ",".join( ["%s=?" % x for x in values.iterkeys()] ), where )
+        if iid > 0: 
+            preaudit = self.query_row(table, iid)
         self.execute(sql, values.values())
-        postaudit = self.query_row(table, iid)
-        if user != "" and writeAudit: 
+        if iid > 0:
+            postaudit = self.query_row(table, iid)
+        if user != "" and iid > 0 and writeAudit: 
             audit.edit(self, user, table, iid, audit.map_diff(preaudit, postaudit))
 
     def delete(self, table, iid, user="", writeAudit=True):
@@ -398,8 +435,41 @@ class Database(object):
         """ Install any supporting stored procedures (typically for reports) needed for this backend """
         pass
 
-    def now(self):
-        return i18n.now(self.timezone)
+    def _log_sql(self, sql, params):
+        """ If outputting statements to a log is enabled, write the statement
+            substitutes any parameters """
+        if DB_EXEC_LOG == "":
+            return
+        if params:
+            for p in params:
+                sql = sql.replace("%s", self.sql_value(p), 1)
+        with open(DB_EXEC_LOG.replace("{database}", self.database), "a") as f:
+            f.write("-- %s\n%s;\n" % (self.now(), sql))
+
+    def now(self, timenow=True, offset=0, settime=""):
+        """ Returns now as a Python date, adjusted for the database timezone.
+            timenow: if True, includes the current time
+            offset:  Add this many days to now (negative values supported)
+            settime: A time in HH:MM:SS format to set
+        """
+        d = i18n.now(self.timezone)
+        if not timenow:
+            d = d.replace(hour = 0, minute = 0, second = 0, microsecond = 0)
+        if offset > 0:
+            d = i18n.add_days(d, offset)
+        if offset < 0:
+            d = i18n.subtract_days(d, abs(offset))
+        if settime != "":
+            timebits = settime.split(":")
+            d = d.replace(hour = utils.cint(timebits[0]), minute = utils.cint(timebits[1]), second = utils.cint(timebits[2]), microsecond = 0)
+        return d
+
+    def today(self, offset=0, settime=""):
+        """ Returns today at midnight
+            offset:  Add this many days to now (negative values supported) 
+            settime: A time in HH:MM:SS format to set
+        """
+        return self.now(timenow=False, offset=offset, settime=settime)
 
     def optimistic_check(self, table, tid, version):
         """ Verifies that the record with ID tid in table still has
@@ -412,7 +482,7 @@ class Database(object):
         return version == self.query_int("SELECT RecordVersion FROM %s WHERE ID = %d" % (table, tid))
 
     def query(self, sql, params=None, limit=0, distincton=""):
-        """ Runs the query given and returns the resultset as a list of dictionaries. 
+        """ Runs the query given and returns the resultset as a list of ResultRow objects. 
             All fieldnames are uppercased when returned.
             params: tuple of parameters for the query
             limit: limit results to X rows
@@ -447,8 +517,7 @@ class Database(object):
                 cols.append(i[0].upper())
             seendistinct = set()
             for row in d:
-                # Intialise a map for each row
-                rowmap = {}
+                rowmap = ResultRow()
                 for i in range(0, len(row)):
                     v = self.encode_str_after_read(row[i])
                     rowmap[cols[i]] = v
@@ -717,16 +786,7 @@ class Database(object):
         for k in sorted(r.iterkeys()):
             if not donefields:
                 fields.append(k)
-            v = r[k]
-            if v is None:
-                values.append("null")
-            elif utils.is_unicode(v) or utils.is_str(v):
-                if escapeCR != "": v = v.replace("\n", escapeCR).replace("\r", "")
-                values.append("'%s'" % v.replace("'", "`"))
-            elif type(v) == datetime.datetime:
-                values.append("'%04d-%02d-%02d %02d:%02d:%02d'" % ( v.year, v.month, v.day, v.hour, v.minute, v.second ))
-            else:
-                values.append(str(v))
+            values.append(self.sql_value(r[k]))
         donefields = True
         return "INSERT INTO %s (%s) VALUES (%s);\n" % (table, ",".join(fields), ",".join(values))
 
@@ -756,6 +816,10 @@ class Database(object):
     def sql_cast(self, expr, newtype):
         """ Writes a database independent cast for expr to newtype """
         return "CAST(%s AS %s)" % (expr, newtype)
+
+    def sql_cast_char(self, expr):
+        """ Writes a database independent cast for expr to a char """
+        return self.sql_cast(expr, "TEXT")
 
     def sql_char_length(self, item):
         """ Writes a database independent char length """
@@ -789,6 +853,29 @@ class Database(object):
     def sql_replace(self, fieldexpr, findstr, replacestr):
         """ Writes a replace expression that finds findstr in fieldexpr, replacing with replacestr """
         return "REPLACE(%s, '%s', '%s')" % (fieldexpr, findstr, replacestr)
+
+    def sql_substring(self, fieldexpr, pos, chars):
+        """ SQL substring function from pos for chars """
+        return "SUBSTR(%s, %s, %s)" % (fieldexpr, pos, chars)
+
+    def sql_today(self, wrapParens=True, includeTime=True):
+        """ Writes today as an SQL date """
+        return self.sql_date(self.today(), wrapParens=wrapParens, includeTime=includeTime)
+
+    def sql_value(self, v):
+        """ Given a value v, writes it as an SQL parameter value """
+        if v is None:
+            return "null"
+        elif utils.is_unicode(v) or utils.is_str(v):
+            return "'%s'" % v.replace("'", "`")
+        elif type(v) == datetime.datetime:
+            return self.sql_date(v)
+        else:
+            return str(v)
+
+    def sql_zero_pad_left(self, fieldexpr, digits):
+        """ Writes a function that zero pads an expression with zeroes to digits """
+        return fieldexpr
 
     def switch_param_placeholder(self, sql):
         """ Swaps the ? token in the sql for the usual Python DBAPI placeholder of %s 

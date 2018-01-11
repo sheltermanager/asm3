@@ -98,6 +98,9 @@ def daily(dbo):
         # auto remove online forms
         ttask(onlineform.auto_remove_old_incoming_forms, dbo)
 
+        # auto anonymise expired personal data
+        ttask(person.update_anonymise_personal_data, dbo)
+
         # Update the generated looking for report
         ttask(person.update_lookingfor_report, dbo)
 
@@ -201,12 +204,13 @@ def maint_db_dump(dbo):
         em = str(sys.exc_info()[0])
         al.error("FAIL: uncaught error running maint_db_dump: %s" % em, "cron.maint_db_dump", dbo, sys.exc_info())
 
-def maint_db_dump_dbfs(dbo):
+def maint_db_dump_dbfs_base64(dbo):
     try:
-        dbupdate.dump_dbfs_stdout(dbo)
+        for x in dbupdate.dump_dbfs_base64(dbo):
+            print(utils.cunicode(x).encode("utf-8"))
     except:
         em = str(sys.exc_info()[0])
-        al.error("FAIL: uncaught error running maint_db_dump: %s" % em, "cron.maint_db_dump", dbo, sys.exc_info())
+        al.error("FAIL: uncaught error running maint_db_dump_dbfs_base64: %s" % em, "cron.maint_db_dump_dbfs_base64", dbo, sys.exc_info())
 
 def maint_db_dump_merge(dbo):
     try:
@@ -257,6 +261,13 @@ def maint_db_reset(dbo):
     except:
         em = str(sys.exc_info()[0])
         al.error("FAIL: uncaught error running maint_db_reset: %s" % em, "cron.maint_db_reset", dbo, sys.exc_info())
+
+def maint_db_delete_orphaned_media(dbo):
+    try:
+        dbfs.delete_orphaned_media(dbo)
+    except:
+        em = str(sys.exc_info()[0])
+        al.error("FAIL: uncaught error running maint_db_delete_orphaned_media: %s" % em, "cron.maint_db_delete_orphaned_media", dbo, sys.exc_info())
 
 def maint_deduplicate_people(dbo):
     try:
@@ -342,8 +353,8 @@ def run(dbo, mode):
         maint_db_diagnostic(dbo)
     elif mode == "maint_db_dump":
         maint_db_dump(dbo)
-    elif mode == "maint_db_dump_dbfs":
-        maint_db_dump_dbfs(dbo)
+    elif mode == "maint_db_dump_dbfs_base64":
+        maint_db_dump_dbfs_base64(dbo)
     elif mode == "maint_db_dump_merge":
         maint_db_dump_merge(dbo)
     elif mode == "maint_db_dump_smcom":
@@ -360,6 +371,8 @@ def run(dbo, mode):
         maint_db_reinstall(dbo)
     elif mode == "maint_db_reset":
         maint_db_reset(dbo)
+    elif mode == "maint_db_delete_orphaned_media":
+        maint_db_delete_orphaned_media(dbo)
     elif mode == "maint_deduplicate_people":
         maint_deduplicate_people(dbo)
     elapsed = time.time() - x
@@ -423,13 +436,15 @@ def print_usage():
     print("       maint_animal_figures_annual - calculate all annual figures for all time")
     print("       maint_db_diagnostic - run database diagnostics")
     print("       maint_db_dump - produce a dump of INSERT statements to recreate the db")
-    print("       maint_db_dump_dbfs - produce a dump of INSERT statements to recreate the dbfs")
+    print("       maint_db_dump_dbfs_base64 - dump the dbfs table and include all content as base64")
     print("       maint_db_dump_merge - produce a dump of INSERT statements, renumbering IDs to +100000")
     print("       maint_db_dump_animalcsv - produce a CSV of animal/adoption/owner data")
     print("       maint_db_dump_personcsv - produce a CSV of person data")
     print("       maint_db_dump_smcom - produce an SQL dump for import into sheltermanager.com")
     print("       maint_db_install - install structure/data into a new empty database")
     print("       maint_db_reinstall - wipe the db and reinstall default data")
+    print("       maint_db_reset - wipe the db of all but lookup data")
+    print("       maint_db_delete_orphaned_media - delete all entries from the dbfs not in media")
     print("       maint_deduplicate_people - automatically merge duplicate people records")
     print("       maint_recode_all - regenerate all animal codes")
     print("       maint_recode_shelter - regenerate animals codes for all shelter animals")

@@ -200,6 +200,7 @@ def check_permission(session, flag, message = ""):
     """
     Throws an ASMPermissionError if the flag is not in the map
     """
+    if "superuser" not in session or "securitymap" not in session: raise utils.ASMPermissionError("Invalid session")
     l = session.locale
     if session.superuser == 1: return
     if not has_security_flag(session.securitymap, flag):
@@ -211,6 +212,7 @@ def check_permission_bool(session, flag):
     """
     Returns True if a user has permission to do something
     """
+    if "superuser" not in session or "securitymap" not in session: return False
     if session.superuser == 1: return True
     if has_security_flag(session.securitymap, flag): return True
     return False

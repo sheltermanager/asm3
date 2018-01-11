@@ -178,6 +178,7 @@ class AdoptAPetPublisher(FTPPublisher):
             "Domestic Short Hair -black and white=Domestic Shorthair\n" \
             "Exotic Shorthair=Exotic\n" \
             "Extra-Toes Cat (Hemingway Polydactyl)=Hemingway/Polydactyl\n" \
+            "Havana=Havana Brown\n" \
             "Oriental Long Hair=Oriental\n" \
             "Oriental Short Hair=Oriental\n" \
             "Oriental Tabby=Oriental\n" \
@@ -281,6 +282,7 @@ class AdoptAPetPublisher(FTPPublisher):
             "Domestic Short Hair-black and white=Domestic Shorthair\n" \
             "Exotic Shorthair=Exotic\n" \
             "Extra-Toes Cat (Hemingway Polydactyl)=Hemingway/Polydactyl\n" \
+            "Havana=Havana Brown\n" \
             "Oriental Long Hair=Oriental\n" \
             "Oriental Short Hair=Oriental\n" \
             "Oriental Tabby=Oriental\n" \
@@ -418,11 +420,6 @@ class AdoptAPetPublisher(FTPPublisher):
                     self.resetPublisherProgress()
                     self.cleanup()
                     return
-
-                # If a limit was set, stop now
-                if self.pc.limit > 0 and anCount > self.pc.limit:
-                    self.log("Hit publishing limit of %d animals. Stopping." % self.pc.limit)
-                    break
 
                 # Upload images for this animal
                 self.uploadImages(an)

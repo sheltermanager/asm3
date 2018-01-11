@@ -53,10 +53,19 @@ class DatabaseMySQL(Database):
             s = s.encode("utf-8")
             s = MySQLdb.escape_string(s)
             s = s.decode("utf-8")
+        # This is historic - ASM2 switched backticks for apostrophes so we do for compatibility
+        s = s.replace("'", "`")
         return s
 
     def sql_concat(self, items):
         """ Writes concat for a list of items """
         return "CONCAT(" + ",".join(items) + ")"
 
+    def sql_cast_char(self, expr):
+        """ Writes a database independent cast for expr to a char """
+        return self.sql_cast(expr, "CHAR")
+
+    def sql_zero_pad_left(self, fieldexpr, digits):
+        """ Writes a function that zero pads an expression with zeroes to digits """
+        return "LPAD(%s, %s, '0')" % (fieldexpr, digits)
 

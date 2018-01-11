@@ -1,11 +1,14 @@
 /*jslint browser: true, forin: true, eqeq: true, plusplus: true, white: true, sloppy: true, vars: true, nomen: true */
-/*global $, console, jQuery, Modernizr, Mousetrap, Path */
+/*global $, console, jQuery, ExifRestorer, Modernizr, Mousetrap, Path */
 /*global alert, asm, atob, btoa, header, _, escape, unescape */
 /*global consts: true, common: true, config: true, controller: true, dlgfx: true, format: true, html: true, log: true, validate: true */
 
 (function($) {
 
     common = {
+
+        /** Speed of all JQuery animations (is there a JQuery default? */
+        fx_speed: 100, 
 
         replace_all: function(str, find, replace) {
           return str.replace(new RegExp(find, 'g'), replace);
@@ -856,6 +859,7 @@
             $(".asm-textbox, .asm-halftextbox, .asm-doubletextbox").textbox();
             $(".asm-textarea, .asm-textareafixed, .asm-textareafixeddouble").textarea();
             $(".asm-richtextarea").richtextarea();
+            $(".asm-table").table();
             if (_) {
                 $(".asm-bsmselect").attr("title", _("Select"));
             }
@@ -1124,9 +1128,10 @@
             if (isNaN(nv)) { nv = 0; }
             nv = nv.toFixed(asm.currencydp);
             rv = nv.toString();
-            // add commas every 3 digits
+            // add a group digit separator every 3 digits of the whole numbers
+            // (note that radix is swapped below here when fractional portion appended)
             var parts = nv.toString().split(".");
-            rv = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") + (parts[1] ? "." + parts[1] : "");
+            rv = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, asm.currencydigitgrouping) + (parts[1] ? asm.currencyradix + parts[1] : "");
             // tack the currency symbol onto the beginning or end according to locale
             if (asm.currencyprefix && asm.currencyprefix == "s") {
                 rv = rv + cs;
@@ -1138,14 +1143,18 @@
         },
 
         currency_to_float: function(c) {
-            /*jslint regexp: true */
-            c = c.replace(/[^0-9\.\-]/g, '');
+            // Remove everything that isn't a digit, sign or our decimal mark
+            c = c.replace(new RegExp("[^0-9\\" + asm.currencyradix + "\\-]", "g"), '');
+            c = $.trim(c);
             // Some currency formats (eg: Russian py6. and Indian Rs. have a 
             // dot to finish. If we have a leading dot, it must be one of
             // those formats so remove it.
             if (c.substring(0, 1) == ".") {
                 c = c.substring(1);
             }
+            // Replace our decimal mark with a ".", as that's all parseFloat understands
+            // There should only ever be one of them so standard js replace is ok
+            c = c.replace(asm.currencyradix, ".");
             return parseFloat(c);
         },
 
@@ -1621,6 +1630,7 @@
                 { onshelter: true, label: _("Cruelty Case"), html: field_option("CRUELTYCASE", "crueltycase", _("Cruelty Case")) },
                 { onshelter: false, label: _("Non-Shelter"), html: field_option("NONSHELTERANIMAL", "nonshelter", _("Non-Shelter")) },
                 { onshelter: true, label: _("Not For Adoption"), html: field_option("ISNOTAVAILABLEFORADOPTION", "notforadoption", _("Not For Adoption")) },
+                { onshelter: false, label: _("Do Not Register Microchip"), html: field_option("ISNOTFORREGISTRATION", "notforregistration", _("Do Not Register Microchip")) },
                 { onshelter: true, label: _("Quarantine"), html: field_option("ISQUARANTINE", "quarantine", _("Quarantine")) }
             ];
 
@@ -1658,13 +1668,16 @@
             var h = [
                 '<h3><a href="#">' + _("Audit Trail") + '</a></h3>',
                 '<div>',
-                '<table>',
+                '<table class="asm-table">',
+                '<thead>',
                 '<tr>',
                 '<th>Date</th>',
                 '<th>User</th>',
                 '<th>Action</th>',
                 '<th>Details</th>',
-                '</tr>'
+                '</tr>',
+                '</thead>',
+                '<tbody>'
             ], readableaction = {
                 0: _("Add"),
                 1: _("Edit"),
@@ -1679,7 +1692,9 @@
                 h.push('<td>' + v.USERNAME + '</td>');
                 h.push('<td>' + readableaction[v.ACTION] + '</td>');
                 h.push('<td>' + v.DESCRIPTION + '</td>');
+                h.push('</tr>');
             });
+            h.push('</tbody>');
             h.push('</table>');
             h.push('</div>');
             return h.join("\n");
@@ -1968,8 +1983,16 @@
          * of steps to avoid aliasing.
          */
         scale_image: function(img, w, h) {
-            if (img.height > h * 2 || img.width > w * 2) { return html.scale_image_2_step(img, w, h); }
-            return html.scale_image_1_step(img, w, h);
+            var scaled;
+            if (img.height > h * 2 || img.width > w * 2) { 
+                scaled = html.scale_image_2_step(img, w, h); 
+            }
+            else {
+                scaled = html.scale_image_1_step(img, w, h);
+            }
+            // Restore any exif info that was on the original image
+            // so we don't lose orientation
+            return ExifRestorer.restore(img.src, scaled);
         },
 
         /**

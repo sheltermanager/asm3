@@ -26,19 +26,18 @@ $(function() {
                         type: "buttonmenu", 
                     options: [ 
                         "dumpsql|" + _("SQL dump"), 
-                        "dumpsqlnomedia|" + _("SQL dump (without media)"),
-                        "dumpddlmysql|" + _("DDL dump (MySQL)"),
-                        "dumpddlpostgres|" + _("DDL dump (PostgreSQL)"),
-                        "dumpddldb2|" + _("DDL dump (DB2)"), 
                         // ASM2_COMPATIBILITY
                         "dumpsqlasm2|" + _("SQL dump (ASM2 HSQLDB Format)"),
-                        "dumpsqlasm2nomedia|" + _("SQL dump (ASM2 HSQLDB Format, without media)"),
                         // ASM2_COMPATIBILITY
+                        "dumpsqlmedia|" + _("SQL dump (media)"), 
                         "animalcsv|" + _("CSV of animal/adopter data"), 
                         "personcsv|" + _("CSV of person data"),
                         "incidentcsv|" + _("CSV of incident data"),
                         "licencecsv|" + _("CSV of license data"),
-                        "paymentcsv|" + _("CSV of payment data")
+                        "paymentcsv|" + _("CSV of payment data"),
+                        "dumpddlmysql|" + _("DDL dump (MySQL)"),
+                        "dumpddlpostgres|" + _("DDL dump (PostgreSQL)"),
+                        "dumpddldb2|" + _("DDL dump (DB2)")
                     ]}
                 ], true),
                 '</div>',

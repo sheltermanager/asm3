@@ -94,18 +94,19 @@ def fw(s):
     if s.find(" ") == -1: return s
     return s.split(" ")[0]
 
-def animal_tags(dbo, a):
+def animal_tags(dbo, a, includeDonations=True):
     """
     Generates a list of tags from an animal result (the deep type from
     calling animal.get_animal)
+    includeDonations: Whether or not to create tags for donations
     """
     l = dbo.locale
     qr = QR_IMG_SRC % { "url": BASE_URL + "/animal?id=%d" % a["ID"], "size": "150x150" }
     animalage = a["ANIMALAGE"]
-    if animalage is not None and animalage.endswith("."): 
+    if animalage and animalage.endswith("."): 
         animalage = animalage[0:len(animalage)-1]
     timeonshelter = a["TIMEONSHELTER"]
-    if timeonshelter.endswith("."): 
+    if timeonshelter and timeonshelter.endswith("."): 
         timeonshelter = timeonshelter[0:len(timeonshelter)-1]
     displaydob = python2display(l, a["DATEOFBIRTH"])
     displayage = animalage
@@ -381,6 +382,10 @@ def animal_tags(dbo, a):
             val = additional_yesno(l, af)
         if af["FIELDTYPE"] == additional.MONEY:
             val = format_currency_no_symbol(l, af["VALUE"])
+        if af["FIELDTYPE"] == additional.ANIMAL_LOOKUP:
+            val = af["ANIMALNAME"]
+        if af["FIELDTYPE"] == additional.PERSON_LOOKUP:
+            val = af["OWNERNAME"]
         tags[af["FIELDNAME"].upper()] = val
 
     include_incomplete_vacc = configuration.include_incomplete_vacc_doc(dbo)
@@ -462,7 +467,7 @@ def animal_tags(dbo, a):
     }
     tags.update(table_tags(dbo, d, animal.get_diets(dbo, a["ID"]), "DIETNAME", "DATESTARTED"))
 
-    # Donations (only add if this animal doesn't have an active movement)
+    # Donations
     d = {
         "RECEIPTNUM":               "RECEIPTNUMBER",
         "DONATIONTYPE":             "DONATIONNAME",
@@ -486,7 +491,7 @@ def animal_tags(dbo, a):
         "PAYMENTVATAMOUNT":         "c:VATAMOUNT",
         "PAYMENTTAXAMOUNT":         "c:VATAMOUNT"
     }
-    if a["ACTIVEMOVEMENTID"] is None or a["ACTIVEMOVEMENTID"] == 0:
+    if includeDonations:
         tags.update(table_tags(dbo, d, financial.get_animal_donations(dbo, a["ID"]), "DONATIONNAME", "DATE"))
 
     # Costs
@@ -561,6 +566,10 @@ def animalcontrol_tags(dbo, ac):
         "RESPONDEDTIME":        format_time(ac["RESPONDEDDATETIME"]),
         "FOLLOWUPDATE":         python2display(l, ac["FOLLOWUPDATETIME"]),
         "FOLLOWUPTIME":         format_time(ac["FOLLOWUPDATETIME"]),
+        "FOLLOWUPDATE2":         python2display(l, ac["FOLLOWUPDATETIME2"]),
+        "FOLLOWUPTIME2":         format_time(ac["FOLLOWUPDATETIME2"]),
+        "FOLLOWUPDATE3":         python2display(l, ac["FOLLOWUPDATETIME3"]),
+        "FOLLOWUPTIME3":         format_time(ac["FOLLOWUPDATETIME3"]),
         "COMPLETEDDATE":        python2display(l, ac["COMPLETEDDATE"]),
         "COMPLETEDTYPENAME":    utils.nulltostr(ac["COMPLETEDNAME"]),
         "ANIMALDESCRIPTION":    ac["ANIMALDESCRIPTION"],
@@ -628,6 +637,10 @@ def animalcontrol_tags(dbo, ac):
             val = additional_yesno(l, af)
         if af["FIELDTYPE"] == additional.MONEY:
             val = format_currency_no_symbol(l, af["VALUE"])
+        if af["FIELDTYPE"] == additional.ANIMAL_LOOKUP:
+            val = af["ANIMALNAME"]
+        if af["FIELDTYPE"] == additional.PERSON_LOOKUP:
+            val = af["OWNERNAME"]
         tags[af["FIELDNAME"].upper()] = val
 
     # Citations
@@ -864,6 +877,10 @@ def person_tags(dbo, p):
             val = additional_yesno(l, af)
         if af["FIELDTYPE"] == additional.MONEY:
             val = format_currency_no_symbol(l, af["VALUE"])
+        if af["FIELDTYPE"] == additional.ANIMAL_LOOKUP:
+            val = af["ANIMALNAME"]
+        if af["FIELDTYPE"] == additional.PERSON_LOOKUP:
+            val = af["OWNERNAME"]
         tags[af["FIELDNAME"].upper()] = val
 
     # Citations
@@ -1094,7 +1111,9 @@ def generate_animal_doc(dbo, template, animalid, username):
     a = animal.get_animal(dbo, animalid)
     im = media.get_image_file_data(dbo, "animal", animalid)[1]
     if a is None: raise utils.ASMValidationError("%d is not a valid animal ID" % animalid)
-    tags = animal_tags(dbo, a)
+    # Only include donations if there isn't an active movement as we'll take care
+    # of them below if there is
+    tags = animal_tags(dbo, a, includeDonations=(not a["ACTIVEMOVEMENTID"] or a["ACTIVEMOVEMENTID"] == 0))
     # Use the person info from the latest open movement for the animal
     # This will pick up future dated adoptions instead of fosterers (which are still currentowner)
     # as get_animal_movements returns them in descending order of movement date
@@ -1155,7 +1174,7 @@ def generate_donation_doc(dbo, template, donationids, username):
     d = dons[0]
     tags = person_tags(dbo, person.get_person(dbo, d["OWNERID"]))
     if d["ANIMALID"] is not None and d["ANIMALID"] != 0:
-        tags = append_tags(tags, animal_tags(dbo, animal.get_animal(dbo, d["ANIMALID"])))
+        tags = append_tags(tags, animal_tags(dbo, animal.get_animal(dbo, d["ANIMALID"]), includeDonations=False))
     if d["MOVEMENTID"] is not None and d["MOVEMENTID"] != 0:
         tags = append_tags(tags, movement_tags(dbo, movement.get_movement(dbo, d["MOVEMENTID"])))
     tags = append_tags(tags, donation_tags(dbo, dons))
@@ -1187,7 +1206,7 @@ def generate_movement_doc(dbo, template, movementid, username):
     m = movement.get_movement(dbo, movementid)
     if m is None:
         raise utils.ASMValidationError("%d is not a valid movement ID" % movementid)
-    tags = animal_tags(dbo, animal.get_animal(dbo, m["ANIMALID"]))
+    tags = animal_tags(dbo, animal.get_animal(dbo, m["ANIMALID"]), includeDonations=False)
     if m["OWNERID"] is not None and m["OWNERID"] != 0:
         tags = append_tags(tags, person_tags(dbo, person.get_person(dbo, m["OWNERID"])))
     tags = append_tags(tags, movement_tags(dbo, m))

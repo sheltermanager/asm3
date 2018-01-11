@@ -219,6 +219,17 @@ def get_vaccinated(dbo, animalid):
         "WHERE AnimalID = %d AND DateOfVaccination Is Null AND DateRequired < %s" % (animalid, db.dd(now(dbo.timezone))))
     return outstanding == 0 and given > 0
 
+def get_batch_for_vaccination_types(dbo):
+    """
+    Returns vaccination types and 
+    last non-empty batch number and manufacturer we saw for that type
+    """
+    return dbo.query("SELECT ID, " \
+        "(SELECT BatchNumber FROM animalvaccination v1 WHERE v1.ID = (SELECT MAX(v2.ID) FROM animalvaccination v2 WHERE v2.BatchNumber <> '' AND vt.ID = v2.VaccinationID AND DateOfVaccination Is Not Null)) AS BatchNumber, " \
+        "(SELECT Manufacturer FROM animalvaccination v1 WHERE v1.ID = (SELECT MAX(v2.ID) FROM animalvaccination v2 WHERE v2.BatchNumber <> '' AND vt.ID = v2.VaccinationID AND DateOfVaccination Is Not Null)) AS Manufacturer " \
+        "FROM vaccinationtype vt " \
+        "ORDER BY vt.ID")
+
 def get_regimens(dbo, animalid, onlycomplete = False, sort = ASCENDING_REQUIRED):
     """
     Returns a recordset of medical regimens for an animal:
@@ -401,44 +412,44 @@ def get_vaccinations_outstanding(dbo, offset = "m31", locationfilter = "", sitei
         "AND a.DeceasedDate Is Null %s %s %s " \
         "ORDER BY av.DateRequired, a.AnimalName" % (shelterfilter, ec, locationfilter))
 
-def get_vaccinations_two_dates(dbo, dbstart, dbend, locationfilter = "", siteid = 0):
+def get_vaccinations_two_dates(dbo, start, end, locationfilter = "", siteid = 0):
     """
     Returns vaccinations due between two dates:
-    dbstart, dbend: ISO dates
+    start, end: dates
     locationfilter, siteid: restrictions on visible locations/site
     ID, ANIMALID, SHELTERCODE, ANIMALNAME, LOCATIONNAME, WEBSITEMEDIANAME, DATEREQUIRED, DATEOFVACCINATION, COMMENTS, VACCINATIONTYPE, VACCINATIONID
     """
-    ec = " AND av.DateRequired >= '%s' AND av.DateRequired <= '%s'" % (dbstart, dbend)
     locationfilter = animal.get_location_filter_clause(locationfilter=locationfilter, siteid=siteid, andprefix=True)
     shelterfilter = ""
     if not configuration.include_off_shelter_medical(dbo):
         shelterfilter = " AND (a.Archived = 0 OR a.ActiveMovementType = 2)"
-    return db.query(dbo, get_vaccination_query(dbo) + \
+    return dbo.query(get_vaccination_query(dbo) + \
         "WHERE av.DateRequired Is Not Null AND av.DateOfVaccination Is Null " \
-        "AND a.DeceasedDate Is Null %s %s %s " \
-        "ORDER BY av.DateRequired, a.AnimalName" % (shelterfilter, ec, locationfilter))
+        "AND av.DateRequired >= ? AND av.DateRequired <= ? " \
+        "AND a.DeceasedDate Is Null %s %s " \
+        "ORDER BY av.DateRequired, a.AnimalName" % (shelterfilter, locationfilter), (start, end))
 
-def get_vaccinations_expiring_two_dates(dbo, dbstart, dbend, locationfilter = "", siteid = 0):
+def get_vaccinations_expiring_two_dates(dbo, start, end, locationfilter = "", siteid = 0):
     """
     Returns vaccinations expiring between two dates. 
     A vacc is only considered truly expired if there isn't another vacc of the 
     same type for the same animal with a newer required date.
-    dbstart, dbend: ISO dates
+    start, end: dates
     locationfilter, siteid: restrictions on visible locations/site
     ID, ANIMALID, SHELTERCODE, ANIMALNAME, LOCATIONNAME, WEBSITEMEDIANAME, DATEREQUIRED, DATEOFVACCINATION, COMMENTS, VACCINATIONTYPE, VACCINATIONID
     """
-    ec = " AND av.DateExpires >= '%s' AND av.DateExpires <= '%s'" % (dbstart, dbend)
     locationfilter = animal.get_location_filter_clause(locationfilter=locationfilter, siteid=siteid, andprefix=True)
     shelterfilter = ""
     if not configuration.include_off_shelter_medical(dbo):
         shelterfilter = " AND (a.Archived = 0 OR a.ActiveMovementType = 2)"
-    return db.query(dbo, get_vaccination_query(dbo) + \
+    return dbo.query(get_vaccination_query(dbo) + \
         "WHERE av.DateExpires Is Not Null AND av.DateOfVaccination Is Not Null " \
         "AND NOT EXISTS(SELECT av2.ID FROM animalvaccination av2 WHERE av2.ID <> av.ID " \
             "AND av2.AnimalID = av.AnimalID AND av2.VaccinationID = av.VaccinationID " \
             "AND av2.ID <> av.ID AND av2.DateRequired >= av.DateOfVaccination) " \
-        "AND a.DeceasedDate Is Null %s %s %s " \
-        "ORDER BY av.DateExpires, a.AnimalName" % (shelterfilter, ec, locationfilter))
+        "AND av.DateExpires >= ? AND av.DateExpires <= ? " \
+        "AND a.DeceasedDate Is Null %s %s " \
+        "ORDER BY av.DateExpires, a.AnimalName" % (shelterfilter, locationfilter), (start, end))
 
 def get_vacc_manufacturers(dbo):
     rows = db.query(dbo, "SELECT DISTINCT Manufacturer FROM animalvaccination WHERE Manufacturer Is Not Null AND Manufacturer <> '' ORDER BY Manufacturer")
@@ -468,21 +479,21 @@ def get_tests_outstanding(dbo, offset = "m31", locationfilter = "", siteid = 0):
         "AND a.DeceasedDate Is Null %s %s %s " \
         "ORDER BY at.DateRequired, a.AnimalName" % (shelterfilter, ec, locationfilter))
 
-def get_tests_two_dates(dbo, dbstart, dbend, locationfilter = "", siteid = 0):
+def get_tests_two_dates(dbo, start, end, locationfilter = "", siteid = 0):
     """
     Returns a recordset of animals awaiting tests between two dates
-    dbstart, dbend: ISO dates
+    start, end: dates
     ID, ANIMALID, SHELTERCODE, ANIMALNAME, LOCATIONNAME, WEBSITEMEDIANAME, DATEREQUIRED, DATEOFTEST, COMMENTS, TESTNAME, RESULTNAME, TESTTYPEID
     """
-    ec = " AND at.DateRequired >= '%s' AND at.DateRequired <= '%s'" % (dbstart, dbend)
     locationfilter = animal.get_location_filter_clause(locationfilter=locationfilter, siteid=siteid, andprefix=True)
     shelterfilter = ""
     if not configuration.include_off_shelter_medical(dbo):
         shelterfilter = " AND (a.Archived = 0 OR a.ActiveMovementType = 2)"
-    return db.query(dbo, get_test_query(dbo) + \
+    return dbo.query(get_test_query(dbo) + \
         "WHERE at.DateRequired Is Not Null AND at.DateOfTest Is Null " \
-        "AND a.DeceasedDate Is Null %s %s %s " \
-        "ORDER BY at.DateRequired, a.AnimalName" % (shelterfilter, ec, locationfilter))
+        "AND at.DateRequired >= ? AND at.DateRequired <= ? " \
+        "AND a.DeceasedDate Is Null %s %s " \
+        "ORDER BY at.DateRequired, a.AnimalName" % (shelterfilter, locationfilter), (start, end))
 
 def get_treatments_outstanding(dbo, offset = "m31", locationfilter = "", siteid = 0):
     """
@@ -511,9 +522,9 @@ def get_treatments_outstanding(dbo, offset = "m31", locationfilter = "", siteid 
         "AND a.DeceasedDate Is Null %s %s %s " \
         "ORDER BY amt.DateRequired, a.AnimalName" % (shelterfilter, ec, locationfilter)))
 
-def get_treatments_two_dates(dbo, dbstart, dbend, locationfilter = "", siteid = 0):
+def get_treatments_two_dates(dbo, start, end, locationfilter = "", siteid = 0):
     """
-    Returns a recordset of shelter animals awaiting medical treatments between two ISO dates.
+    Returns a recordset of shelter animals awaiting medical treatments between two dates.
     ANIMALID, SHELTERCODE, ANIMALNAME, LOCATIONNAME, WEBSITEMEDIANAME,
     TREATMENTNAME, COST, COMMENTS, NAMEDFREQUENCY, NAMEDNUMBEROFTREATMENTS,
     NAMEDSTATUS, DOSAGE, STARTDATE, TREATMENTSGIVEN, TREATMENTSREMAINING,
@@ -521,16 +532,16 @@ def get_treatments_two_dates(dbo, dbstart, dbend, locationfilter = "", siteid = 
     TOTALNUMBEROFTREATMENTS, DATEREQUIRED, DATEGIVEN, TREATMENTCOMMENTS,
     TREATMENTNUMBER, TOTALTREATMENTS, GIVENBY, REGIMENID, TREATMENTID
     """
-    ec = " AND amt.DateRequired >= '%s' AND amt.DateRequired <= '%s'" % (dbstart, dbend)
     locationfilter = animal.get_location_filter_clause(locationfilter=locationfilter, siteid=siteid, andprefix=True)
     shelterfilter = ""
     if not configuration.include_off_shelter_medical(dbo):
         shelterfilter = " AND (a.Archived = 0 OR a.ActiveMovementType = 2)"
-    return embellish_regimen(dbo.locale, db.query(dbo, get_medicaltreatment_query(dbo) + \
+    return embellish_regimen(dbo.locale, dbo.query(get_medicaltreatment_query(dbo) + \
         "WHERE amt.DateRequired Is Not Null AND amt.DateGiven Is Null " \
         "AND am.Status = 0 " \
-        "AND a.DeceasedDate Is Null %s %s %s " \
-        "ORDER BY amt.DateRequired, a.AnimalName" % (shelterfilter, ec, locationfilter)))
+        "AND amt.DateRequired >= ? AND amt.DateRequired <= ? " \
+        "AND a.DeceasedDate Is Null %s %s " \
+        "ORDER BY amt.DateRequired, a.AnimalName" % (shelterfilter, locationfilter), (start, end)))
 
 def update_test_today(dbo, username, testid, resultid):
     """
@@ -975,7 +986,7 @@ def update_asm2_tests(dbo, testid, action = "insert"):
     # tests and if the test result was the same, reset it back to unknown
     elif action == "delete":
         if t["TESTNAME"].find("FIV") != -1:
-            db.execute(dbo, "UPDATE animal SET CombiTested = 0, CombiTestDate = Null, CombiTestResult = 0 WHERE ID = %d" \
+            db.execute(dbo, "UPDATE animal SET CombiTestResult = 0 WHERE ID = %d" \
                 " AND CombiTestResult = %d" % (t["ANIMALID"], result))
         if t["TESTNAME"].find("FLV") != -1 or t["TESTNAME"].find("FeLV") != -1:
             db.execute(dbo, "UPDATE animal SET FLVResult = 0 WHERE ID = %d" \

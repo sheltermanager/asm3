@@ -276,7 +276,8 @@ Defaults
 --------
 
 This screen allows configuration of the system defaults. These defaults are
-used to select starting values when finding and creating animals. 
+used to select starting values when finding and creating animals and other
+records.
 
 * Mark new animals as not for adoption: Setting this option will cause ASM to
   automatically tick the “not for adoption” box when creating new animals. This
@@ -304,6 +305,23 @@ used to select starting values when finding and creating animals.
   this option is on, a log record is created every time you change an animal's
   weight so you can track the history of an animal's wieght with reports and
   graphs.
+
+* Anonymize personal data after this many years: If this option is on, the 
+  system will automatically anonymize person records this many years after
+  their creation. Anonymizing will blank the name, email, address and telephone 
+  fields. The city, state and zipcode (town, county and postcode for other locales)
+  will be retained along with the rest of the person data for statistics
+  and reporting. This option helps organisations in the EU to comply with 
+  data retention policies and the GDPR by removing identifiable personal data.
+
+  To be anonymized, a record needs to be older than the retention period, and
+  all payments, movements or log entries attached to the person must be older
+  than the retention period.  The person record cannot have any flag that
+  indicates an ongoing relationship with the shelter. These flags are: 
+
+   aco, adoptioncoordinator, retailer, homechecker, member, shelter, foster, staff, vet, volunteer
+
+.. warning:: Once anonymized, personal data is gone forever and cannot be recovered.
 
 Diary 
 -----

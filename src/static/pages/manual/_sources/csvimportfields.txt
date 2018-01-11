@@ -3,7 +3,7 @@
 Appendix: CSV file import fields
 ================================
 
-ASM will recognise columns with the following names when importing CSV files:
+ASM will recognise columns with the following names when importing CSV files. Where you wish to supply multiple rows for the same animal (such as for vaccinations or regimens), make sure you have a populated ANIMALCODE column, similarly for multiple rows to people (such as movements, licenses, etc) make sure you have populated person data.
 
 ANIMALCODE
     A code for the animal. If supplied, it will set the sheltercode and short sheltercode fields. If not supplied, the system will generate a code for the animal to the appropriate scheme. If you have manual codes turned on and no animal code is supplied, an error message will be displayed and the import abandoned.
@@ -67,12 +67,34 @@ DONATIONDATE
     The date the donation amount on this line was received. If movement columns are present, it will be attached to the movement as well as the person. If no person columns are present, having this column in the CSV file will cause an error.
 DONATIONAMOUNT
     The amount of the donation on this line (as a floating point number)
+DONATIONCHECKNUMBER
+    The cheque/check number for the donation
 DONATIONCOMMENTS
     Any comments to go with the donation
 DONATIONPAYMENT
     The payment method to use (should correspond to a payment method in your database, eg: Cash)
 DONATIONTYPE
     The payment type to use (should correspond to a payment type in your database).
+LICENSETYPE
+    The license type to use (licenses need at least person info)
+LICENSENUMBER
+    The license number (mandatory)
+LICENSEFEE
+    The fee paid for the license
+LICENSEISSUEDATE
+    The date the license was issued
+LICENSEEXPIRESDATE
+    The date the license expires
+LICENSECOMMENTS
+    Any comments on the license
+MEDICALNAME
+    The name of the medical regimen for this line
+MEDICALDOSAGE
+    The dosage of the medical regimen
+MEDICALGIVENDATE
+    The date the medical regimen started (only one-off treatment regimens can be created via import)
+MEDICALCOMMENTS
+    Any comments on the medical regimen
 MOVEMENTTYPE
     The type of movement for this line (1 = Adoption, 2 = Foster, 3 = Transfer, 4 = Escaped, 5 = Reclaimed, 6 = Stolen, 7 = Released to Wild, 8 = Moved to Retailer. If MOVEMENTTYPE is not specified, but a MOVEMENTDATE has been given, ASM will default the type to adoption.
 MOVEMENTDATE
@@ -97,6 +119,8 @@ ORIGINALOWNERSTATE
     The original owner's state/county.
 ORIGINALOWNERZIPCODE
     The original owner's zip or postcode.
+ORIGINALOWNERJURISDICTION
+    The original owner's jurisdiction
 ORIGINALOWNERHOMEPHONE
     The original owner's home phone.
 ORIGINALOWNERWORKPHONE
@@ -127,6 +151,8 @@ PERSONSTATE
     The person's state/county
 PERSONZIPCODE
     The person's zip or postcode
+PERSONJURISDICTION
+    The person's jurisdiction
 PERSONHOMEPHONE
     The person's home phone number
 PERSONWORKPHONE
@@ -148,6 +174,40 @@ PERSONFLAGS
     Additional flags that you have added to the system should exactly match their flag names as they appear on the person screens, eg: banned,Fundraising Flag 1,Custom Flag
 PERSONCOMMENTS
     Any comments to go with the person record.
+PERSONMATCHACTIVE
+    Y or 1 in this column indicates the person is looking for an animal. If this field is not set to Y or 1, the other PERSONMATCH columns are ignored for this row.
+PERSONMATCHSEX
+    The gender of the animal the person is looking for
+PERSONMATCHSIZE
+    The size of the animal the person is looking for
+PERSONMATCHCOLOR
+    The color of the animal the person is looking for
+PERSONMATCHAGEFROM, PERSONMATCHAGETO
+    The age range of the animal the person is looking for in years
+PERSONMATCHTYPE
+    The animal type of the animal the person is looking for
+PERSONMATCHSPECIES
+    The species of animal the person is looking for
+PERSONMATCHBREED1, PERSONMATCHBREED2
+    The breed of the animal the person is looking for
+PERSONMATCHGOODWITHCATS, PERSONMATCHGOODWITHDOGS, PERSONMATCHGOODWITHCHILDREN, PERSONMATCHHOUSETRAINED
+    The good with/housetrained flags of the animal the person is looking for
+PERSONMATCHCOMMENTSCONTAIN
+    The animal this person is looking for will have this value in its comments
 PERSONADDITIONAL<fieldname>
     If you have person additional fields defined, you can put the uppercased version of their name as a suffix to this. Eg, for an additional field called DateOfBirth PERSONADDITIONALDATEOFBIRTH
+VACCINATIONTYPE
+    The type of vaccination on this line 
+VACCINATIONDUEDATE
+    The due date for the vaccination
+VACCINATIONGIVENDATE
+    The date the vaccination was given
+VACCINATIONEXPIRESDATE
+    The date the vaccine wears off and needs to be re-administered
+VACCINATIONMANUFACTURER
+    The manufacturer of the vaccine
+VACCINATIONBATCHNUMBER
+    The serial/batch number of the vaccine
+VACCINATIONCOMMENTS
+    Comments on the vaccine
 

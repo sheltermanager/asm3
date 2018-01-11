@@ -12,7 +12,9 @@ SELECT
 BreedName,
 CAST(AVG(DaysOnShelter) AS INTEGER) AS avtimeonshelter
 FROM animal
-WHERE DaysOnShelter > 0 AND DateBroughtIn > '$ASK DATE Enter the from date$' AND DateBroughtIn < '$ASK DATE Enter the to date$'
+WHERE DaysOnShelter > 0 
+AND DateBroughtIn > '$ASK DATE Enter the from date$' AND DateBroughtIn < '$ASK DATE Enter the to date$'
+AND NonShelterAnimal = 0
 GROUP BY BreedName
 ORDER BY CAST(AVG(DaysOnShelter) AS INTEGER) DESC
 ###
@@ -49,7 +51,9 @@ SELECT
 BreedName,
 AVG(DaysOnShelter) AS avtimeonshelter
 FROM animal
-WHERE DaysOnShelter > 0 AND DateBroughtIn > '$ASK DATE Enter the from date$' AND DateBroughtIn < '$ASK DATE Enter the to date$'
+WHERE DaysOnShelter > 0 
+AND NonShelterAnimal = 0
+AND DateBroughtIn > '$ASK DATE Enter the from date$' AND DateBroughtIn < '$ASK DATE Enter the to date$'
 GROUP BY BreedName
 ORDER BY AVG(DaysOnShelter) DESC
 ###

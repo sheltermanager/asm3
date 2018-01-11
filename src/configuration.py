@@ -3,7 +3,6 @@
 import al
 import audit
 import cachemem
-import db
 import i18n
 import sys
 import utils
@@ -105,6 +104,8 @@ DEFAULTS = {
     "AnnualFiguresShowBabiesType": "Yes",
     "AnnualFiguresBabyMonths" : "6",
     "AnnualFiguresSplitAdoptions": "Yes",
+    "AnonymisePersonalData": "No",
+    "AnonymiseAfterYears": "0",
     "AutoCancelReservesDays": "14",
     "AutoDefaultShelterCode": "Yes",
     "AutoInsuranceStart": "0",
@@ -118,6 +119,7 @@ DEFAULTS = {
     "AFDefaultDeathReason": "1",
     "AFDefaultDiaryPerson": "",
     "AFDefaultDonationType": "1",
+    "AFDefaultPaymentMethod": "1",
     "AFDefaultEntryReason": "4",
     "AFDefaultLocation": "1",
     "AFDefaultLogFilter": "-1",
@@ -135,6 +137,7 @@ DEFAULTS = {
     "AvidOverseasOriginCountry": "",
     "BoardingCostType": "1",
     "CancelReservesOnAdoption": "Yes",
+    "CloneAnimalIncludeLogs": "Yes",
     "CostSourceAccount": "9",
     "CreateBoardingCostOnAdoption": "Yes",
     "CreateCostTrx": "No",
@@ -247,6 +250,7 @@ DEFAULTS = {
     "RecordSearchLimit": "1000",
     "RetailerOnShelter": "Yes",
     "ReturnFostersOnAdoption": "Yes",
+    "ReturnFostersOnTransfer": "Yes",
     "ScalePDFs": "Yes", 
     "SearchColumns": "AnimalName,Image,ShelterCode,ShelterLocation,SpeciesID,BreedName," \
         "Sex, AnimalAge, Size, BaseColourID, Markings, IdentichipNumber, DateBroughtIn",
@@ -331,8 +335,9 @@ def cset(dbo, key, value = "", ignoreDBLock = False, sanitiseXSS = True, invalid
     """
     Update a configuration item in the table.
     """
-    db.execute(dbo, "DELETE FROM configuration WHERE ItemName LIKE %s" % db.ds(key), ignoreDBLock)
-    db.execute(dbo, "INSERT INTO configuration (ItemName, ItemValue) VALUES (%s, %s)" % (db.ds(key), db.ds(value, sanitiseXSS)), ignoreDBLock)
+    dbo.execute("DELETE FROM configuration WHERE ItemName LIKE ?", [key], override_lock=ignoreDBLock)
+    if sanitiseXSS: value = dbo.escape_xss(value)
+    dbo.execute("INSERT INTO configuration (ItemName, ItemValue) VALUES (?, ?)", (key, value), override_lock=ignoreDBLock)
     if invalidateConfigCache: invalidate_config_cache(dbo)
 
 def cset_db(dbo, key, value = ""):
@@ -406,10 +411,10 @@ def get_map(dbo):
     CACHE_KEY = "%s_config" % dbo.database
     cmap = cachemem.get(CACHE_KEY)
     if cmap is None:
-        rows = db.query(dbo, "SELECT ITEMNAME, ITEMVALUE FROM configuration ORDER BY ITEMNAME")
+        rows = dbo.query("SELECT ItemName, ItemValue FROM configuration ORDER BY ItemName")
         cmap = DEFAULTS.copy()
         for r in rows:
-            cmap[r["ITEMNAME"]] = r["ITEMVALUE"]
+            cmap[r.itemname] = r.itemvalue
         cachemem.put(CACHE_KEY, cmap, 3600) # one hour cache means direct database updates show up eventually
     return cmap
 
@@ -437,23 +442,30 @@ def advanced_find_animal(dbo):
 def advanced_find_animal_on_shelter(dbo):
     return cboolean(dbo, "AdvancedFindAnimalOnShelter", DEFAULTS["AdvancedFindAnimalOnShelter"] == "Yes")
 
-def age_group(dbo, band):
-    return cfloat(dbo, "AgeGroup%d" % band)
-
-def age_group_for_name(dbo, name):
+def age_group_bands(dbo):
+    bands = []
     for i in range(1, 9):
         groupname = cstring(dbo, "AgeGroup%dName" % i)
-        if groupname == name:
-            return cfloat(dbo, "AgeGroup%d" % i)
+        if groupname.strip() != "":
+            bands.append( ( groupname, cfloat(dbo, "AgeGroup%d" % i) ) )
+    return bands
+
+def age_group_for_name(dbo, name):
+    for group, years in age_group_bands(dbo):
+        if group == name:
+            return years
     return 0
 
 def age_groups(dbo):
     groups = []
     for i in range(1, 9):
         groupname = cstring(dbo, "AgeGroup%dName" % i)
-        if groupname != "":
+        if groupname.strip() != "":
             groups.append(groupname)
     return groups
+
+def age_group(dbo, band):
+    return cfloat(dbo, "AgeGroup%d" % band)
 
 def age_group_name(dbo, band):
     return cstring(dbo, "AgeGroup%dName" % band)
@@ -490,6 +502,12 @@ def annual_figures_baby_months(dbo):
 
 def annual_figures_split_adoptions(dbo):
     return cboolean(dbo, "AnnualFiguresSplitAdoptions", DEFAULTS["AnnualFiguresSplitAdoptions"] == "Yes")
+
+def anonymise_personal_data(dbo):
+    return cboolean(dbo, "AnonymisePersonalData", DEFAULTS["AnonymisePersonalData"])
+
+def anonymise_after_years(dbo):
+    return cint(dbo, "AnonymiseAfterYears", DEFAULTS["AnonymiseAfterYears"])
 
 def asm_news(dbo, update=False):
     s = cstring(dbo, "ASMNews")
@@ -551,6 +569,9 @@ def avid_reregistration(dbo):
 def cancel_reserves_on_adoption(dbo):
     return cboolean(dbo, "CancelReservesOnAdoption", DEFAULTS["CancelReservesOnAdoption"] == "Yes")
 
+def clone_animal_include_logs(dbo):
+    return cboolean(dbo, "CloneAnimalIncludeLogs", DEFAULTS["CloneAnimalIncludeLogs"] == "Yes")
+
 def coding_format(dbo):
     return cstring(dbo, "CodingFormat", DEFAULTS["CodingFormat"])
 
@@ -577,15 +598,17 @@ def db_lock(dbo):
     Locks the database for updates, returns True if the lock was
     successful.
     """
-    if cboolean(dbo, "DBLock"): return False
-    cset_db(dbo, "DBLock", "Yes")
+    cache_key = "%s_db_update_lock" % dbo.database
+    if cachemem.get(cache_key): return False
+    cachemem.put(cache_key, "YES", 60 * 5)
     return True
 
 def db_unlock(dbo):
     """
     Marks the database as unlocked for updates
     """
-    cset_db(dbo, "DBLock", "No")
+    cache_key = "%s_db_update_lock" % dbo.database
+    cachemem.delete(cache_key)
 
 def db_view_seq_version(dbo, newval = None):
     if newval is None:
@@ -908,9 +931,6 @@ def petlink_email(dbo):
 def petlink_password(dbo):
     return cstring(dbo, "PetLinkPassword")
 
-def petlink_chippassword(dbo):
-    return cstring(dbo, "PetLinkChipPassword")
-
 def petrescue_user(dbo):
     return cstring(dbo, "PetRescueFTPUser")
 
@@ -947,6 +967,9 @@ def record_search_limit(dbo):
 def return_fosters_on_adoption(dbo):
     return cboolean(dbo, "ReturnFostersOnAdoption", DEFAULTS["ReturnFostersOnAdoption"] == "Yes")
 
+def return_fosters_on_transfer(dbo):
+    return cboolean(dbo, "ReturnFostersOnTransfer", DEFAULTS["ReturnFostersOnTransfer"] == "Yes")
+
 def smarttag_accountid(dbo):
     return cstring(dbo, "SmartTagFTPUser")
 
@@ -975,7 +998,7 @@ def receipt_number_next(dbo):
     """ Returns the ReceiptNumberNext value and increments it """
     nrn = cint(dbo, "ReceiptNumberNext", 0)
     if nrn == 0:
-        nrn = 1 + db.query_int(dbo, "SELECT MAX(ID) FROM ownerdonation")
+        nrn = 1 + dbo.query_int("SELECT MAX(ID) FROM ownerdonation")
     cset(dbo, "ReceiptNumberNext", str(nrn + 1))
     return nrn
 

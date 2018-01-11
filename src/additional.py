@@ -80,7 +80,7 @@ def get_additional_fields(dbo, linkid, linktype = "animal"):
         "FROM additionalfield af LEFT OUTER JOIN additional a ON af.ID = a.AdditionalFieldID " \
         "AND a.LinkID = %d " \
         "WHERE af.LinkType IN (%s) " \
-        "ORDER BY af.DisplayIndex" % ( dbo.sql_cast("animal.ID", "VARCHAR"), dbo.sql_cast("owner.ID", "VARCHAR"), linkid, inclause ))
+        "ORDER BY af.DisplayIndex" % ( dbo.sql_cast_char("animal.ID"), dbo.sql_cast_char("owner.ID"), linkid, inclause ))
 
 def get_additional_fields_ids(dbo, rows, linktype = "animal"):
     """
@@ -91,7 +91,7 @@ def get_additional_fields_ids(dbo, rows, linktype = "animal"):
     inclause = clause_for_linktype(linktype)
     links = []
     for r in rows:
-        links.append(str(r["ID"]))
+        links.append(str(r.id))
     if len(links) == 0:
         links.append("0")
     return dbo.query("SELECT a.LinkID, af.ID, af.FieldName, af.FieldLabel, af.ToolTip, " \
@@ -100,7 +100,7 @@ def get_additional_fields_ids(dbo, rows, linktype = "animal"):
         "CASE WHEN af.FieldType = 9 AND a.Value <> '' AND a.Value <> '0' THEN (SELECT OwnerName FROM owner WHERE %s = a.Value) ELSE '' END AS OwnerName " \
         "FROM additional a INNER JOIN additionalfield af ON af.ID = a.AdditionalFieldID " \
         "WHERE a.LinkType IN (%s) AND a.LinkID IN (%s) " \
-        "ORDER BY af.DisplayIndex" % ( dbo.sql_cast("animal.ID", "VARCHAR"), dbo.sql_cast("owner.ID", "VARCHAR"), inclause, ",".join(links)))
+        "ORDER BY af.DisplayIndex" % ( dbo.sql_cast_char("animal.ID"), dbo.sql_cast_char("owner.ID"), inclause, ",".join(links)))
 
 def get_field_definitions(dbo, linktype = "animal"):
     """
@@ -121,6 +121,21 @@ def get_fields(dbo):
         "INNER JOIN lksfieldlink lt ON lt.ID = a.LinkType " \
         "INNER JOIN lksyesno m ON m.ID = a.Mandatory " \
         "ORDER BY a.LinkType, a.DisplayIndex")
+
+def append_to_results(dbo, rows, linktype = "animal"):
+    """
+    Goes through each row in rows and adds any additional fields to the resultset.
+    Requires an ID column in the rows.
+    """
+    for r in rows:
+        add = get_additional_fields(dbo, r.id, linktype)
+        for af in add:
+            if af.fieldname.find("&") != -1:
+                # We've got unicode chars for the tag name - not allowed
+                r["ADD" + str(af.id)] = af.value
+            else:
+                r[af.fieldname] = af.value
+    return rows
 
 def insert_field_from_form(dbo, username, post):
     """
@@ -181,22 +196,22 @@ def save_values_for_link(dbo, post, linkid, linktype = "animal"):
     af = get_field_definitions(dbo, linktype)
     l = dbo.locale
     for f in af:
-        key = "a.%s.%s" % (f["MANDATORY"], f["ID"])
+        key = "a.%s.%s" % (f.mandatory, f.id)
         if key in post:
             val = post[key]
-            if f["FIELDTYPE"] == YESNO:
+            if f.fieldtype == YESNO:
                 val = str(post.boolean(key))
-            elif f["FIELDTYPE"] == MONEY:
+            elif f.fieldtype == MONEY:
                 val = str(post.integer(key))
-            elif f["FIELDTYPE"] == DATE:
+            elif f.fieldtype == DATE:
                 if len(val.strip()) > 0 and post.date(key) is None:
-                    raise utils.ASMValidationError(_("Additional date field '{0}' contains an invalid date.", l).format(f["FIELDNAME"]))
+                    raise utils.ASMValidationError(_("Additional date field '{0}' contains an invalid date.", l).format(f.fieldname))
                 val = python2display(dbo.locale, post.date(key))
             try:
                 dbo.insert("additional", {
-                    "LinkType":             f["LINKTYPE"],
+                    "LinkType":             f.linktype,
                     "LinkID":               linkid,
-                    "AdditionalFieldID":    f["ID"],
+                    "AdditionalFieldID":    f.id,
                     "Value":                val
                 }, generateID=False, writeAudit=False)
             except Exception as err:

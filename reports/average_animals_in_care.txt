@@ -1,6 +1,6 @@
 Average Monthly Animals In Care by Species
 ###
-Stats
+Statistics
 ###
 3000/Any
 ###

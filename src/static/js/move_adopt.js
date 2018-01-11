@@ -303,28 +303,35 @@ $(function() {
            
                 // Owner banned?
                 if (rec.ISBANNED == 1 && config.bool("WarnBannedOwner")) {
-                    $("#warntext").html(_("This person has been banned from adopting animals"));
+                    $("#warntext").html(_("This person has been banned from adopting animals."));
                     $("#ownerwarn").fadeIn();
                     return;
                 }
 
                 // Owner previously under investigation
                 if (rec.INVESTIGATION > 0) {
-                    $("#warntext").html(_("This person has been under investigation"));
+                    $("#warntext").html(_("This person has been under investigation."));
                     $("#ownerwarn").fadeIn();
                     return;
                 }
 
                 // Owner part of animal control incident
                 if (rec.INCIDENT > 0) {
-                    $("#warntext").html(_("This person has an animal control incident against them"));
+                    $("#warntext").html(_("This person has an animal control incident against them."));
+                    $("#ownerwarn").fadeIn();
+                    return;
+                }
+
+                // Owner previously surrendered?
+                if (rec.SURRENDER > 0 && config.bool("WarnBroughtIn")) {
+                    $("#warntext").html(_("This person has previously surrendered an animal."));
                     $("#ownerwarn").fadeIn();
                     return;
                 }
 
                 // Owner not homechecked?
                 if (rec.IDCHECK == 0 && config.bool("WarnNoHomeCheck")) {
-                    $("#warntext").html(_("This person has not passed a homecheck"));
+                    $("#warntext").html(_("This person has not passed a homecheck."));
                     $("#ownerwarn").fadeIn();
                     return;
                 }

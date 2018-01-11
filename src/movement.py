@@ -27,7 +27,7 @@ def get_movement_query(dbo):
     return "SELECT m.*, o.OwnerTitle, o.OwnerInitials, o.OwnerSurname, o.OwnerForenames, o.OwnerName, " \
         "o.OwnerAddress, o.OwnerTown, o.OwnerCounty, o.OwnerPostcode, o.HomeTelephone, o.WorkTelephone, o.MobileTelephone, " \
         "rs.StatusName AS ReservationStatusName, " \
-        "a.ShelterCode, a.ShortCode, a.AnimalAge, a.AgeGroup, a.AnimalName, a.Neutered, a.DeceasedDate, a.HasActiveReserve, " \
+        "a.ShelterCode, a.ShortCode, a.AnimalAge, a.AgeGroup, a.AnimalName, a.BreedName, a.Neutered, a.DeceasedDate, a.HasActiveReserve, " \
         "a.HasTrialAdoption, a.IsHold, a.IsQuarantine, a.HoldUntilDate, a.CrueltyCase, a.NonShelterAnimal, " \
         "a.ActiveMovementType, a.Archived, a.IsNotAvailableForAdoption, " \
         "a.CombiTestResult, a.FLVResult, a.HeartwormTestResult, " \
@@ -124,9 +124,9 @@ def get_animal_transports(dbo, animalid):
     return db.query(dbo, get_transport_query(dbo) + \
         "WHERE t.AnimalID = %d ORDER BY DropoffDateTime" % animalid)
 
-def get_transport_two_dates(dbo, dbstart, dbend): 
-    return db.query(dbo, get_transport_query(dbo) + \
-        "WHERE t.PickupDateTime >= '%s' AND t.PickupDateTime <= '%s' ORDER BY t.PickupDateTime" % (dbstart, dbend))
+def get_transport_two_dates(dbo, start, end): 
+    return dbo.query(get_transport_query(dbo) + \
+        "WHERE t.PickupDateTime >= ? AND t.PickupDateTime <= ? ORDER BY t.PickupDateTime", (start, end))
 
 def get_recent_adoptions(dbo, months = 1):
     """
@@ -285,6 +285,13 @@ def validate_movement_form_data(dbo, post):
             "AND AnimalID = %d AND ID <> %d" % ( db.dd(movementdate), animalid, int(movementid) )
         changed = db.execute(dbo, sql)
         al.debug("movement is an adoption, returning outstanding fosters (%d)." % changed, "movement.validate_movement_form_data", dbo)
+    # If the option to return fosters on transfer is set, return any outstanding fosters for the animal
+    if movementtype == TRANSFER and configuration.return_fosters_on_transfer(dbo):
+        sql = "UPDATE adoption SET ReturnDate = %s " \
+            "WHERE ReturnDate Is Null AND MovementType = 2 " \
+            "AND AnimalID = %d AND ID <> %d" % ( db.dd(movementdate), animalid, int(movementid) )
+        changed = db.execute(dbo, sql)
+        al.debug("movement is a transfer, returning outstanding fosters (%d)." % changed, "movement.validate_movement_form_data", dbo)
     # Can't have multiple open movements
     if movementdate is not None and returndate is None:
         existingopen = db.query_int(dbo, "SELECT COUNT(*) FROM adoption WHERE MovementDate Is Not Null AND " \
@@ -375,6 +382,7 @@ def insert_movement_from_form(dbo, username, post):
         ( "Donation", post.db_integer("donation")),
         ( "InsuranceNumber", post.db_string("insurance")),
         ( "ReasonForReturn", post.db_string("reason")),
+        ( "ReturnedByOwnerID", post.db_integer("returnedby")), 
         ( "ReservationDate", post.db_date("reservationdate")),
         ( "ReservationCancelledDate", post.db_date("reservationcancelled")),
         ( "ReservationStatusID", post.db_integer("reservationstatus")),
@@ -409,6 +417,7 @@ def update_movement_from_form(dbo, username, post):
         ( "Donation", post.db_integer("donation")),
         ( "InsuranceNumber", post.db_string("insurance")),
         ( "ReasonForReturn", post.db_string("reason")),
+        ( "ReturnedByOwnerID", post.db_integer("returnedby")), 
         ( "ReservationDate", post.db_date("reservationdate")),
         ( "ReservationCancelledDate", post.db_date("reservationcancelled")),
         ( "ReservationStatusID", post.db_integer("reservationstatus")),
@@ -429,12 +438,11 @@ def delete_movement(dbo, username, mid):
     """
     Deletes a movement record
     """
-    animalid = db.query_int(dbo, "SELECT AnimalID FROM adoption WHERE ID = %d" % int(mid))
+    animalid = dbo.query_int("SELECT AnimalID FROM adoption WHERE ID = ?", [mid])
     if animalid == 0:
         raise utils.ASMError("Trying to delete a movement that does not exist")
-    db.execute(dbo, "UPDATE ownerdonation SET MovementID = 0 WHERE MovementID = %d" % int(mid))
-    audit.delete(dbo, username, "adoption", mid, audit.dump_row(dbo, "adoption", mid))
-    db.execute(dbo, "DELETE FROM adoption WHERE ID = %d" % int(mid))
+    dbo.execute("UPDATE ownerdonation SET MovementID = 0 WHERE MovementID = ?", [mid])
+    dbo.delete("adoption", mid, username)
     animal.update_animal_status(dbo, animalid)
     animal.update_variable_animal_data(dbo, animalid)
 
@@ -785,6 +793,8 @@ def insert_transport_from_form(dbo, username, post):
     l = dbo.locale
     if post.integer("animal") == 0:
         raise utils.ASMValidationError(i18n._("Transport requires an animal", l))
+    if None is post.date("pickupdate") or None is post.date("dropoffdate"):
+        raise utils.ASMValidationError(i18n._("Transports must have valid pickup and dropoff dates and times.", l))
 
     transportid = db.get_id(dbo, "animaltransport")
     sql = db.make_insert_user_sql(dbo, "animaltransport", username, ( 
@@ -818,6 +828,11 @@ def update_transport_from_form(dbo, username, post):
     """
     Updates a movement record from posted form data
     """
+    l = dbo.locale
+    if post.integer("animal") == 0:
+        raise utils.ASMValidationError(i18n._("Transport requires an animal", l))
+    if None is post.date("pickupdate") or None is post.date("dropoffdate"):
+        raise utils.ASMValidationError(i18n._("Transports must have valid pickup and dropoff dates and times.", l))
     transportid = post.integer("transportid")
     sql = db.make_update_user_sql(dbo, "animaltransport", username, "ID=%d" % transportid, ( 
         ( "AnimalID", post.db_integer("animal")),

@@ -270,9 +270,7 @@ def attach_file_from_form(dbo, username, linktype, linkid, post):
     filedata = post["filedata"]
     filename = post["filename"]
     comments = post["comments"]
-    checkpref = True
     if filedata != "":
-        checkpref = False
         filetype = post["filetype"]
         if filetype.startswith("image") or filename.lower().endswith(".jpg"): ext = ".jpg"
         elif filetype.find("pdf") != -1 or filename.lower().endswith(".pdf"): ext = ".pdf"
@@ -291,7 +289,6 @@ def attach_file_from_form(dbo, username, linktype, linkid, post):
     else:
         # It's a traditional form post with a filechooser, we should make
         # it the default web/doc picture after posting if none is available.
-        checkpref = True
         ext = post.filename()
         ext = ext[ext.rfind("."):].lower()
         filedata = post.filedata()
@@ -356,7 +353,7 @@ def attach_file_from_form(dbo, username, linktype, linkid, post):
     db.execute(dbo, sql)
     audit.create(dbo, username, "media", mediaid, str(mediaid) + ": for " + str(linkid) + "/" + str(linktype))
 
-    if ispicture and checkpref:
+    if ispicture:
         check_default_web_doc_pic(dbo, mediaid, linkid, linktype)
 
 def attach_link_from_form(dbo, username, linktype, linkid, post):
@@ -791,15 +788,19 @@ def scale_all_animal_images(dbo):
     for i, m in enumerate(mp):
         filepath = db.query_string(dbo, "SELECT Path FROM dbfs WHERE Name='%s'" % m["MEDIANAME"])
         name = str(m["MEDIANAME"])
-        inputfile = tempfile.NamedTemporaryFile(suffix=".pdf", delete=False)
-        outputfile = tempfile.NamedTemporaryFile(suffix=".pdf", delete=False)
+        inputfile = tempfile.NamedTemporaryFile(suffix=".jpg", delete=False)
+        outputfile = tempfile.NamedTemporaryFile(suffix=".jpg", delete=False)
         odata = dbfs.get_string(dbo, name)
         inputfile.write(odata)
         inputfile.flush()
         inputfile.close()
         outputfile.close()
         al.debug("scaling %s (%d of %d)" % (name, i, len(mp)), "media.scale_all_animal_images", dbo)
-        scale_image_file(inputfile.name, outputfile.name, configuration.incoming_media_scaling(dbo))
+        try:
+            scale_image_file(inputfile.name, outputfile.name, configuration.incoming_media_scaling(dbo))
+        except Exception as err:
+            al.error("failed scaling image, doing nothing: %s" % err, "media.scale_all_animal_images", dbo)
+            continue
         f = open(outputfile.name, "r")
         data = f.read()
         f.close()

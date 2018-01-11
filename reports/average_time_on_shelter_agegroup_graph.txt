@@ -13,7 +13,7 @@ AgeGroup,
 YEAR(DateBroughtIn) AS biyear,
 AVG(DaysOnShelter) AS TimeOnShelter
 FROM animal
-WHERE DaysOnShelter > 0
+WHERE DaysOnShelter > 0 AND NonShelterAnimal = 0
 GROUP BY AgeGroup, YEAR(DateBroughtIn)
 ###
 GRAPH LINES
@@ -33,7 +33,7 @@ AgeGroup,
 CAST(EXTRACT(YEAR FROM DateBroughtIn) AS INTEGER) AS biyear,
 CAST(AVG(DaysOnShelter) AS INTEGER) AS avtimeonshelter
 FROM animal
-WHERE DaysOnShelter > 0
+WHERE DaysOnShelter > 0 AND NonShelterAnimal = 0
 GROUP BY AgeGroup, EXTRACT(YEAR FROM DateBroughtIn)
 ORDER BY AgeGroup, EXTRACT(YEAR FROM DateBroughtIn)
 ###

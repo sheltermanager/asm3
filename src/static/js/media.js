@@ -178,7 +178,7 @@ $(function() {
                     h.push('<br />');
                     h.push('<a class="viewlink" title="' + _('View media') + '" href="' + m.MEDIANAME + '">' + shortnotes + '</a>');
                 }
-                else if (media.is_extension(m.MEDIANAME, "jpg") || media.is_extension(m.MEDIANAME, "jpeg")) {
+                else if (media.is_jpeg(m.MEDIANAME)) {
                     h.push('<a href="image?mode=media&id=' + m.ID + '&date=' + encodeURIComponent(m.DATE) + '">');
                     h.push('<img class="asm-thumbnail thumbnailshadow" src="image?mode=media&id=' + m.ID + '&date=' + encodeURIComponent(m.DATE) + '" title="' + html.title(fullnotes) + '" /></a>');
                 }
@@ -225,10 +225,10 @@ $(function() {
                 if (m.DOCPHOTO == 1 && controller.showpreferred) {
                     h.push(html.icon("document", _("Default image for documents")));
                 }
-                if (media.is_extension(m.MEDIANAME, "jpg") && m.WEBSITEPHOTO == 0 && !m.EXCLUDEFROMPUBLISH && controller.name == "animal_media") {
+                if (media.is_jpeg(m.MEDIANAME) && m.WEBSITEPHOTO == 0 && !m.EXCLUDEFROMPUBLISH && controller.name == "animal_media") {
                     h.push('<img class="incexc" data="' + m.ID + '" src="static/images/ui/tick.gif" title="' + _('Include this image when publishing') + '" />');
                 }
-                if (media.is_extension(m.MEDIANAME, "jpg") && m.WEBSITEPHOTO == 0 && m.EXCLUDEFROMPUBLISH && controller.name == "animal_media") {
+                if (media.is_jpeg(m.MEDIANAME) && m.WEBSITEPHOTO == 0 && m.EXCLUDEFROMPUBLISH && controller.name == "animal_media") {
                     h.push('<img class="incexc" data="' + m.ID + '" src="static/images/ui/cross.gif" title="' + _('Exclude this image when publishing') + '" />');
                 }
                 h.push('</span>');
@@ -268,7 +268,7 @@ $(function() {
             if (!comments) { comments = ""; }
 
             // We're only allowed to upload files of a certain type
-            if ( !media.is_extension(file.name, "jpg") && !media.is_extension(file.name, "jpeg") && 
+            if ( !media.is_jpeg(file.name) && 
                  !media.is_extension(file.name, "pdf") && !media.is_extension(file.name, "html") ) {
                 header.show_error(_("Only PDF, HTML and JPG image files can be attached."));
                 deferred.resolve();
@@ -359,19 +359,21 @@ $(function() {
         /** 
          * Goes through our list of media elements and if we have pictures
          * but none preferred for the web or doc, select the first.
+         * Will also select the first if there's an issue and more than
+         * one preferred is selected.
          * Multi-file drag and drop doesn't auto select these values due
          * to it being a race condition.
          * Reloads if a change is made or forcereload is true.
          */
         check_preferred_images: function(forcereload) {
-            var newweb, newdoc, hasweb, hasdoc;
+            var newweb, newdoc, hasweb, hasdoc, webcount = 0, doccount = 0;
             if (!controller.showpreferred) { return false; }
             $.each(controller.media, function(i, v) {
-                if (v.MEDIANAME.indexOf(".jpg") != -1 || v.MEDIANAME.indexOf(".jpeg") != -1) { 
+                if (media.is_jpeg(v.MEDIANAME)) {
                     if (!newweb) { newweb = v.ID; }
                     if (!newdoc) { newdoc = v.ID; }
-                    if (v.WEBSITEPHOTO) { hasweb = true; }
-                    if (v.DOCPHOTO) { hasdoc = true; }
+                    if (v.WEBSITEPHOTO) { hasweb = true; webcount += 1; }
+                    if (v.DOCPHOTO) { hasdoc = true; doccount += 1; }
                 }
             });
             if (!hasweb && !hasdoc && newweb) {
@@ -388,6 +390,12 @@ $(function() {
             else if (!hasdoc && newdoc) {
                 media.ajax("mode=doc&ids=" + newdoc);
             }
+            else if (webcount > 1 && newweb) {
+                media.ajax("mode=web&ids=" + newweb);
+            }
+            else if (doccount > 1 && newdoc) {
+                media.ajax("mode=doc&ids=" + newdoc);
+            }
             else if (forcereload) {
                 common.route_reload();
             }
@@ -402,7 +410,7 @@ $(function() {
 
             // If the file isn't a jpeg or a PDF, fail validation
             var fname = $("#filechooser").val();
-            if ( !media.is_extension(fname, "jpg") && !media.is_extension(fname, "jpeg") && 
+            if ( !media.is_jpeg(fname) &&
                  !media.is_extension(fname, "pdf") && !media.is_extension(fname, "html") ) {
                 header.show_error(_("Only PDF, HTML and JPG image files can be attached."));
                 return;
@@ -444,6 +452,10 @@ $(function() {
 
         is_extension: function(s, ext) {
             return s.toLowerCase().indexOf("." + ext) != -1;
+        },
+
+        is_jpeg: function(s) {
+            return media.is_extension(s, "jpg") || media.is_extension(s, "jpeg");
         },
 
         /**
@@ -518,7 +530,7 @@ $(function() {
                 if ($(".asm-mediaicons input:checked").size() == 1) {
                     $(".asm-mediaicons input:checked").each(function() {
                         var mname = $(this).parent().parent().find(".media-name").val();
-                        if (media.is_extension(mname, "jpg") || media.is_extension(mname, "jpeg")) {
+                        if (media.is_jpeg(mname)) { 
                             $("#button-web").button("option", "disabled", false); 
                             $("#button-doc").button("option", "disabled", false); 
                         }
@@ -540,7 +552,7 @@ $(function() {
                 // selection only contains images
                 $(".asm-mediaicons input:checked").each(function() {
                     var mname = $(this).parent().parent().find(".media-name").val();
-                    if (media.is_extension(mname, "jpg") || media.is_extension(mname, "jpeg")) {
+                    if (media.is_jpeg(mname)) {
                         $("#button-rotateanti").button("option", "disabled", false); 
                         $("#button-rotateclock").button("option", "disabled", false); 
                     }

@@ -94,7 +94,7 @@ class PETtracUKPublisher(AbstractPublisher):
         if registeroverseas: 
             chipprefix = "a.IdentichipNumber LIKE '%'" # If overseas registration is on, send all chips to AVID
 
-        animals = get_microchip_data(self.dbo, [chipprefix,], "pettracuk", allowintake = False)
+        animals = get_microchip_data(self.dbo, [chipprefix,], "pettracuk", allowintake = False or registeroverseas)
         if len(animals) == 0:
             self.setLastError("No animals found to publish.")
             return

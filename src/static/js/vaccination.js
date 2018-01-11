@@ -23,10 +23,13 @@ $(function() {
                     { json_field: "ANIMALS", post_field: "animals", label: _("Animals"), type: "animalmulti" },
                     { json_field: "VACCINATIONID", post_field: "type", label: _("Type"), type: "select", 
                         options: { displayfield: "VACCINATIONTYPE", valuefield: "ID", rows: controller.vaccinationtypes }},
-                    { json_field: "DATEREQUIRED", post_field: "required", label: _("Required"), type: "date", validation: "notblank" },
-                    { json_field: "DATEOFVACCINATION", post_field: "given", label: _("Given"), type: "date" },
+                    { json_field: "DATEREQUIRED", post_field: "required", label: _("Required"), type: "date", validation: "notblank", 
+                        callout: _("The date the vaccination is required/due to be administered")},
+                    { json_field: "DATEOFVACCINATION", post_field: "given", label: _("Given"), type: "date", 
+                        callout: _("The date the vaccination was administered") },
                     { json_field: "ADMINISTERINGVETID", post_field: "administeringvet", label: _("Administering Vet"), type: "person", personfilter: "vet" },
-                    { json_field: "DATEEXPIRES", post_field: "expires", label: _("Expires"), type: "date" },
+                    { json_field: "DATEEXPIRES", post_field: "expires", label: _("Expires"), type: "date",
+                        callout: _('Optional, the date the vaccination "wears off" and needs to be administered again') },
                     { json_field: "BATCHNUMBER", post_field: "batchnumber", label: _("Batch Number"), type: "text" },
                     { json_field: "MANUFACTURER", post_field: "manufacturer", label: _("Manufacturer"), type: "text" },
                     { json_field: "COST", post_field: "cost", label: _("Cost"), type: "currency", hideif: function() { return !config.bool("ShowCostAmount"); } },
@@ -437,8 +440,16 @@ $(function() {
             this.bind_givendialog();
             this.bind_requireddialog();
 
-            // When the vacc type is changed, use the default cost from the vaccination type
-            $("#type").change(vaccination.set_default_cost);
+            // When the vacc type is changed, update the default cost and batch/manufacturer
+            $("#type").change(function() {
+                vaccination.set_default_cost();
+                vaccination.set_last_batch();
+            });
+
+            // When focus leaves the given date, update the batch/manufacturer
+            $("#given").blur(function() {
+                vaccination.set_last_batch();
+            });
 
             // Remember the currently selected animal when it changes so we can add
             // its name and code to the local set
@@ -488,6 +499,23 @@ $(function() {
                     }
                     return true;
                 }
+            });
+        },
+
+        /** Sets the batch number and manufacturer fields based on the last 
+         *  vacc of this type we saw
+         */
+        set_last_batch: function() {
+            // If the vacc hasn't been given, don't do anything
+            if (!$("#given").val()) { return; }
+            var seltype = $("#type").val();
+            $.each(controller.batches, function(i, v) {
+                if (seltype == v.ID) {
+                    $("#batchnumber, #manufacturer").val("");
+                    if (v.BATCHNUMBER) { $("#batchnumber").val(v.BATCHNUMBER); }
+                    if (v.MANUFACTURER) { $("#manufacturer").val(v.MANUFACTURER); }
+                }
+                return true;
             });
         },
 

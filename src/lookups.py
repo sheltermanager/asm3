@@ -26,6 +26,7 @@ LOOKUP_TABLES = {
     "incidentcompleted":(_("Incident Completed Types"), "CompletedName", _("Completed Type"), "CompletedDescription", 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, ("animalcontrol.IncidentCompletedID",)),
     "incidenttype":     (_("Incident Types"), "IncidentName", _("Type"), "IncidentDescription", 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, ("animalcontrol.IncidentTypeID",)),
     "internallocation": (_("Internal Locations"), "LocationName", _("Location"), "LocationDescription", 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, ("animal.ShelterLocation",)),
+    "jurisdiction":     (_("Jurisdictions"), "JurisdictionName", _("Jurisdiction"), "JurisdictionDescription", 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, ("animalcontrol.JurisdictionID","owner.JurisdictionID")),
     "licencetype":      (_("License Types"), "LicenceTypeName", _("Type"), "LicenceTypeDescription", 0, 0, 0, 0, 1, 0, 0, 1, 1, 1, ("ownerlicence.LicenceTypeID",)),
     "logtype":          (_("Log Types"), "LogTypeName", _("Type"), "LogTypeDescription", 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, ("log.LogTypeID",)),
     "lksmovementtype":  (_("Movement Types"), "MovementType", _("Type"), "", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, ("adoption.MovementType", "animal.ActiveMovementType",)),
@@ -92,6 +93,7 @@ LOCALES = [
     ( "en_PH", "English (Philippines)"),
     ( "en_QA", "English (Qatar)"),
     ( "en_ZA", "English (South Africa)"),
+    ( "en_ES", "English (Spain)"), 
     ( "en_CH", "English (Switzerland)"),
     ( "en_TH", "English (Thailand)"),
     ( "en_TW", "English (Taiwan)"),
@@ -149,6 +151,7 @@ LOCALE_COUNTRY_NAME_MAP = {
     "en_KY":    "Caymen Islands",
     "en_CN":    "China",
     "en_CY":    "Cyprus",
+    "en_ES":    "Spain",
     "en_IN":    "India",
     "en_IL":    "Israel",
     "en_KW":    "Kuwait",
@@ -217,6 +220,7 @@ MICROCHIP_MANUFACTURERS = [
     { "length": 15, "regex": r"^360981", "name": "Novartis", "locales": "" },
     { "length": 15, "regex": r"^578098", "name": "Kruuse Norge", "locales": "" },
     { "length": 15, "regex": r"^578077", "name": "AVID Friendchip Norway", "locales": "" },
+    { "length": 15, "regex": r"^578094", "name": "AVID Friendchip Norway", "locales": "" },
     { "length": 15, "regex": r"^688", "name": "Serbia", "locales": "" },
     { "length": 15, "regex": r"^90007400", "name": "SmartTag", "locales": "" },
     { "length": 15, "regex": r"^90007900", "name": "PetLog", "locales": "en_GB" },
@@ -233,6 +237,7 @@ MICROCHIP_MANUFACTURERS = [
     { "length": 15, "regex": r"^900", "name": "BCDS", "locales": "" },
     { "length": 15, "regex": r"^911002", "name": "911PetChip", "locales": "" },
     { "length": 15, "regex": r"^939", "name": "M4S ID", "locales": "" },
+    { "length": 15, "regex": r"^9410000", "name": "PetKey", "locales": "" },
     { "length": 15, "regex": r"^941", "name": "Felixcan", "locales": "" },
     { "length": 15, "regex": r"^943", "name": "BCDS", "locales": "" },
     { "length": 15, "regex": r"^945", "name": "BCDS", "locales": "" },
@@ -1039,6 +1044,9 @@ def get_internal_locations(dbo, locationfilter = "", siteid = 0):
 def get_internallocation_name(dbo, lid):
     if lid is None: return ""
     return db.query_string(dbo, "SELECT LocationName FROM internallocation WHERE ID = %d" % lid)
+
+def get_jurisdictions(dbo):
+    return dbo.query("SELECT * FROM jurisdiction ORDER BY JurisdictionName")
 
 def get_licence_types(dbo):
     return db.query(dbo, "SELECT * FROM licencetype ORDER BY LicenceTypeName")

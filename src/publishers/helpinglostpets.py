@@ -75,11 +75,6 @@ class HelpingLostPetsPublisher(FTPPublisher):
                     self.resetPublisherProgress()
                     return
 
-                # If a limit was set, stop now
-                if self.pc.limit > 0 and anCount > self.pc.limit:
-                    self.log("Hit publishing limit of %d animals. Stopping." % self.pc.limit)
-                    break
-
                 # OrgID
                 line.append("\"%s\"" % shelterid)
                 # PetID
@@ -143,11 +138,6 @@ class HelpingLostPetsPublisher(FTPPublisher):
                     self.log("User cancelled publish. Stopping.")
                     self.resetPublisherProgress()
                     return
-
-                # If a limit was set, stop now
-                if self.pc.limit > 0 and anCount > self.pc.limit:
-                    self.log("Hit publishing limit of %d animals. Stopping." % self.pc.limit)
-                    break
 
                 # Upload one image for this animal
                 self.uploadImage(an, an["WEBSITEMEDIANAME"], an["SHELTERCODE"] + ".jpg")

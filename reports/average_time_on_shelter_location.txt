@@ -13,7 +13,9 @@ LocationName,
 CAST(AVG(DaysOnShelter) AS INTEGER) AS avtimeonshelter
 FROM animal
 INNER JOIN internallocation ON internallocation.ID = animal.ShelterLocation
-WHERE DaysOnShelter > 0 AND DateBroughtIn > '$ASK DATE Enter the from date$' AND DateBroughtIn < '$ASK DATE Enter the to date$'
+WHERE DaysOnShelter > 0 
+AND NonShelterAnimal = 0
+AND DateBroughtIn > '$ASK DATE Enter the from date$' AND DateBroughtIn < '$ASK DATE Enter the to date$'
 GROUP BY LocationName
 ORDER BY CAST(AVG(DaysOnShelter) AS INTEGER) DESC
 ###
@@ -51,7 +53,9 @@ LocationName,
 AVG(DaysOnShelter) AS avtimeonshelter
 FROM animal
 INNER JOIN internallocation ON internallocation.ID = animal.ShelterLocation
-WHERE DaysOnShelter > 0 AND DateBroughtIn > '$ASK DATE Enter the from date$' AND DateBroughtIn < '$ASK DATE Enter the to date$'
+WHERE DaysOnShelter > 0 
+AND NonShelterAnimal = 0
+AND DateBroughtIn > '$ASK DATE Enter the from date$' AND DateBroughtIn < '$ASK DATE Enter the to date$'
 GROUP BY LocationName
 ORDER BY AVG(DaysOnShelter) DESC
 ###

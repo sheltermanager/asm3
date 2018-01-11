@@ -120,7 +120,7 @@ class FoundAnimalsPublisher(FTPPublisher):
                 # Sex
                 line.append("\"%s\"" % an["SEXNAME"])
                 # Spayed/Neutered
-                line.append("\"%s\"" % an["NEUTERED"] == 1 and "Yes" or "No")
+                line.append("\"%s\"" % utils.iif(an["NEUTERED"] == 1, "Yes", "No"))
                 # Primary Breed
                 line.append("\"%s\"" % an["PETFINDERBREED"])
                 # Secondary Breed
@@ -138,6 +138,12 @@ class FoundAnimalsPublisher(FTPPublisher):
                 success.append(an)
             except Exception as err:
                 self.logError("Failed processing animal: %s, %s" % (str(an["SHELTERCODE"]), err), sys.exc_info())
+
+        # Bail if we didn't have anything to do
+        if len(csv) == 0:
+            self.log("No data left to send to foundanimals")
+            self.cleanup()
+            return
 
         # Mark published
         self.markAnimalsPublished(success)

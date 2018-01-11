@@ -50,6 +50,7 @@ $(function() {
                     { json_field: "COMMENTS", post_field: "comments", label: _("Comments"), type: "textarea" },
                     { json_field: "RETURNDATE", post_field: "returndate", label: _("Return Date"), type: "date" },
                     { json_field: "RETURNEDREASONID", post_field: "returncategory", label: _("Return Category"), type: "select", options: { displayfield: "REASONNAME", valuefield: "ID", rows: controller.returncategories}},
+                    { json_field: "RETURNEDBYOWNERID", post_field: "returnedby", label: _("Returned By"), type: "person" },
                     { json_field: "REASONFORRETURN", post_field: "reason", label: _("Reason"), type: "textarea" }
                 ]
             };
@@ -119,8 +120,13 @@ $(function() {
                     },
                     { field: "RESERVATIONSTATUSNAME", display: _("Status"),
                         hideif: function(row) {
-                            // Don't show this column if we aren't in the reservation book
-                            return controller.name != "move_book_reservation";
+                            // Don't show this column if we aren't in the reservation book or animal/person
+                            return controller.name != "move_book_reservation" && !controller.animal && !controller.person;
+                        },
+                        formatter: function(row, v) {
+                            // Only show anything for reservation
+                            if (row.MOVEMENTTYPE == 0) { return row.RESERVATIONSTATUSNAME; }
+                            return "";
                         }
                     },
                     { field: "RETURNDATE", display: _("Returned"), 
@@ -152,6 +158,12 @@ $(function() {
                             return controller.name == "animal_movements";
                         }
                     },
+                    { field: "BREEDNAME", display: _("Breed"), 
+                        hideif: function(row) {
+                            // Only show this column for foster and reservation books
+                            return controller.name != "move_book_foster" && controller.name != "move_book_reservation";
+                        }
+                    },
                     { field: "IMAGE", display: "", 
                         formatter: function(row) {
                             return '<a href="animal?id=' + row.ANIMALID + '"><img src=' + html.thumbnail_src(row, "animalthumb") + ' style="margin-right: 8px" class="asm-thumbnail thumbnailshadow" /></a>';
@@ -165,7 +177,11 @@ $(function() {
                     },
                     { field: "ANIMAL", display: _("Animal"), 
                         formatter: function(row) {
-                            return html.animal_link(row, { noemblems: controller.name == "animal_movements" });
+                            return html.animal_link(row);
+                        },
+                        hideif: function(row) {
+                            // Don't show this column for animal_movement
+                            return controller.name == "animal_movements";
                         }
                     },
                     { field: "PERSON", display: _("Person"),
@@ -178,7 +194,7 @@ $(function() {
                             return "";
                         },
                         hideif: function(row) {
-                            return controller.name == "move_book_retailer";
+                            return controller.name == "move_book_retailer" || controller.name == "person_movements";
                         }
                     },
                     { field: "RETAILER", display: _("Retailer"),
@@ -242,6 +258,7 @@ $(function() {
                                 $("#animal").animalchooser("clear");
                                 $("#person").personchooser("clear");
                                 $("#retailer").personchooser("clear");
+                                $("#returnedby").personchooser("clear");
                                 if (controller.animal) {
                                     $("#animal").animalchooser("loadbyid", controller.animal.ID);
                                 }
@@ -334,7 +351,7 @@ $(function() {
                  { id: "return", text: _("Return"), icon: "complete", enabled: "one", perm: "camv",
                      tooltip: _("Return this movement and bring the animal back to the shelter"),
                      hideif: function() {
-                         return controller.name.indexOf("move_book_recent") == -1;
+                         return controller.name.indexOf("move_book_recent") == -1 && controller.name.indexOf("move_book_foster") == -1;
                      },
                      click: function() {
                         var row = tableform.table_selected_row(table);
@@ -455,20 +472,27 @@ $(function() {
 
             // Person warnings
             if (p) {
+
                 // Is this owner banned?
-                if (p.ISBANNED == 1) {
-                     if (config.bool("WarnBannedOwner")) { 
-                         warn.push(_("This person has been banned from adopting animals.")); 
-                     }
+                if (p.ISBANNED == 1 && config.bool("WarnBannedOwner")) {
+                    warn.push(_("This person has been banned from adopting animals.")); 
                 }
+
                 // Owner previously under investigation
                 if (p.INVESTIGATION > 0) {
-                    warn.push(_("This person has been under investigation"));
+                    warn.push(_("This person has been under investigation."));
                 }
+
                 // Owner part of animal control incident
                 if (p.INCIDENT > 0) {
-                    warn.push(_("This person has an animal control incident against them"));
+                    warn.push(_("This person has an animal control incident against them."));
                 }
+
+                // Owner previously surrendered?
+                if (p.SURRENDER > 0 && config.bool("WarnBroughtIn")) {
+                    warn.push(_("This person has previously surrendered an animal."));
+                }
+
                 // Does this owner live in the same postcode area as the animal's
                 // original owner?
                 if ( format.postcode_prefix($(".animalchooser-oopostcode").val()) == format.postcode_prefix(p.OWNERPOSTCODE) ||
@@ -644,11 +668,15 @@ $(function() {
                 $("#reservationdate").closest("tr").fadeIn();
                 $("#reservationstatus").closest("tr").fadeIn();
                 $("#reservationcancelled").closest("tr").fadeIn();
+                $("#movementdate").closest("tr").fadeOut();
+                $("#returndate").closest("tr").fadeOut();
             }
             else {
                 $("#reservationdate").closest("tr").fadeOut();
                 $("#reservationstatus").closest("tr").fadeOut();
                 $("#reservationcancelled").closest("tr").fadeOut();
+                $("#movementdate").closest("tr").fadeIn();
+                $("#returndate").closest("tr").fadeIn();
             }
             // If the movement is one that doesn't require a person, hide the person row
             if (mt == 4 || mt == 6 || mt == 7) {
@@ -667,10 +695,12 @@ $(function() {
             if ($("#returndate").val() && ( $("#type").val() == 1 || $("#type").val() == 5 )) {
                 $("#returncategory").closest("tr").fadeIn();
                 $("#reason").closest("tr").fadeIn();
+                $("#returnedby").closest("tr").fadeIn();
             }
             else {
                 $("#returncategory").closest("tr").fadeOut();
                 $("#reason").closest("tr").fadeOut();
+                $("#returnedby").closest("tr").fadeOut();
             }
         },
 

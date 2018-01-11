@@ -241,6 +241,11 @@ select:disabled, input:disabled, textarea:disabled {
     min-width: 330px;
 }
 
+.asm-main-table { border-collapse: separate; }
+.asm-main-table td { font-weight: normal !important; padding: .4em; border-top-width: 0px !important; }
+.asm-main-table a { font-weight: bold; }
+.asm-main-table a:hover { text-decoration: underline !important; }
+
 /** FOOTER ========================= */
 .asm-footer-version {
     margin-top: 16px;
@@ -407,7 +412,7 @@ select:disabled, input:disabled, textarea:disabled {
 .asm-table td.first, .asm-table th.first { border-left-width: 0px !important; }
 .asm-table a { font-weight: bold; }
 .asm-table a:hover { text-decoration: underline !important; }
-.asm-completerow { opacity: 0.3; zoom: 1;}
+.asm-completerow { opacity: 0.5; zoom: 1;}
 .asm-overduerow { font-style: italic !important; color: #ff0000 !important; }
 .asm-warningrow { color: #ff0000; }
 #header-fixed { left: 16px; border-collapse: collapse; }

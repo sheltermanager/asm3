@@ -462,19 +462,23 @@ $(function() {
             }
 
             // Set select box default values
-            $("#animaltype").val(config.str("AFDefaultType"));
+            $("#animaltype").select("value", config.str("AFDefaultType"));
             animal_new.set_nonsheltertype_once = false;
-            $("#species").val(config.str("AFDefaultSpecies"));
+            $("#species").select("value", config.str("AFDefaultSpecies"));
             animal_new.update_breed_select();
-            $("#breed1, #breed2").val(config.str("AFDefaultBreed"));
-            $("#basecolour").val(config.str("AFDefaultColour"));
-            $("#entryreason").val(config.str("AFDefaultEntryReason"));
-            $("#internallocation").val(config.str("AFDefaultLocation"));
-            $("#size").val(config.str("AFDefaultSize"));
-            $("#sex").val("2"); // Unknown
+            $("#breed1, #breed2").select("value", config.str("AFDefaultBreed"));
+            $("#basecolour").select("value", config.str("AFDefaultColour"));
+            $("#entryreason").select("value", config.str("AFDefaultEntryReason"));
+            $("#internallocation").select("value", config.str("AFDefaultLocation"));
+            $("#size").select("value", config.str("AFDefaultSize"));
+            $("#sex").select("value", "2"); // Unknown
 
             // Remove any retired lookups from the lists
             $(".asm-selectbox").select("removeRetiredOptions");
+
+            // Any lookups that don't have a value after setting the defaults
+            // should inherit the first in their list instead.
+            $(".asm-selectbox").select("firstIfBlank");
 
             // Set date/time defaults
             $("#datebroughtin").val(format.date(new Date()));

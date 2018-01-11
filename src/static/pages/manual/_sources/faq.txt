@@ -46,6 +46,24 @@ record, you will see the words "Not for adoption" in the banner at the top of
 the record and directly underneath that in brackets the rule that has excluded
 the animal from being adoptable.
 
+Why are my non-shelter and adopted animals appearing on the vaccination book?
+-----------------------------------------------------------------------------
+
+The option :menuselection:`Settings --> Options --> Defaults --> Include
+off-shelter animals in medical books and calendars` controls whether or not
+off-shelter animals appear in the vaccination book, medical book, test book and
+are highlighted in alerts on the home page. By default, this option is off. 
+
+Why can't I edit the date brought in field?
+-------------------------------------------
+
+The option :menuselection:`Settings --> Options --> Animal Codes --> Once
+assigned, codes cannot be changed` will cause the edit animal screen to lock
+any fields that make up part of the shelter code. For example, if your coding
+format contains T for the type, the type field will be locked for editing when
+this option is on. If your coding format has any of YYYY, MM or DD for a
+portion of the date brought in, that field will be locked too.
+
 How do I integrate my adoptable animals with my website?
 --------------------------------------------------------
 
@@ -59,7 +77,7 @@ wrong picture, then delete it and upload the correct picture your browser will
 continue to show the old picture. 
 
 To fix this, invalidate your browser's cache when looking at the animal's
-record by pressing :kbd:`CTRL+R` or :kdb:`F5` to reload all images from the
+record by pressing :kbd:`CTRL+R` or :kbd:`F5` to reload all images from the
 server. This does not work as well in some versions of Internet Explorer and if
 you are using that, you can try :menuselection:`Tools --> Internet Options` and
 delete temporary internet files.
@@ -80,6 +98,29 @@ web browser:
 
 * Chrome: Untick the "Print headers and footers" box in the print preview
   screen.
+
+My scanned confidential documents are being published on my website / PetFinder!
+--------------------------------------------------------------------------------
+
+You've attached scanned documents as JPEG images to animal records. You should
+NEVER do this!
+
+* They can be published outside the shelter, which you do not want. 
+
+* They aren't relevant to someone browsing an animal bio online.
+  
+* ASM scales down incoming pictures for the web, assuming any pictures you
+  upload are always going to be photos of animals. This means smaller text on
+  documents you scan as JPEG will become unreadable.
+
+Instead, you should always attach your scanned documents as PDF files. ASM
+scales PDFs in a different way so that they don't lose clarity and legibility,
+it will never publish a PDF to any website.
+
+If you're using phones rather than flatbed scanners to scan your documents,
+apps exist for all mobile platforms that allow you to take a photo of a
+document, clean it up and output it as a PDF. Apps such as "CamScanner" for
+Android, or "Scanner App" for iPhone.
 
 Why are ASM emails being sent from bounce+account@sheltermanager.com?
 ---------------------------------------------------------------------

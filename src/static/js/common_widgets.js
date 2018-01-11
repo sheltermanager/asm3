@@ -413,6 +413,13 @@
                 $(this).val( $(this).find("option:first").val() );
             });
         }
+        else if (method == "firstIfBlank") {
+            $(this).each(function() {
+                if ($(this).val() == null) {
+                    $(this).val( $(this).find("option:first").val() );
+                }
+            });
+        }
         else if (method == "value") {
             $(this).each(function() {
                 if (newval !== undefined) {
@@ -592,7 +599,7 @@
             }
             $("#emailfrom").autocomplete({source: mailaddresses});
             $("#emailfrom").autocomplete("widget").css("z-index", 1000);
-            $("#emailto").val(html.decode(o.name) + " <" + o.email + ">");
+            $("#emailto").val(common.replace_all(html.decode(o.name), ",", "") + " <" + o.email + ">");
             var msg = config.str("EmailSignature");
             if (o.message) { msg = "<p>" + o.message + "</p>" + msg; }
             else { msg = "<p>&nbsp;</p>" + msg; }
@@ -779,6 +786,8 @@
             // Set the default for our new payment type
             $("#donationtype" + i).val(config.str("AFDefaultDonationType")).change();
             $("#donationtype" + i).change();
+            // Payment method
+            $("#payment" + i).val(config.str("AFDefaultPaymentMethod"));
             // If we're creating accounting transactions and the override
             // option is set, allow override of the destination account
             if (config.bool("CreateDonationTrx") && config.bool("DonationTrxOverride")) {
@@ -1017,7 +1026,7 @@
             if (!wasactive) {
                 $(button).removeClass("ui-state-default").addClass("ui-state-active");
                 $(button + " span.ui-button-text").removeClass("ui-icon-triangle-1-e").addClass("ui-icon-triangle-1-s");
-                $(body).css("z-index", "2 !important").slideDown();
+                $(body).css("z-index", "2 !important").slideDown(common.fx_speed);
             }
         }
     });
@@ -1199,6 +1208,9 @@
                         "F11": function(cm) {
                             cm.setOption("fullScreen", !cm.getOption("fullScreen"));
                         },
+                        "Shift-Ctrl-F": function(cm) {
+                            cm.setOption("fullScreen", !cm.getOption("fullScreen"));
+                        },
                         "Esc": function(cm) {
                             if (cm.getOption("fullScreen")) { cm.setOption("fullScreen", false); }
                         }
@@ -1265,6 +1277,9 @@
                         "F11": function(cm) {
                             cm.setOption("fullScreen", !cm.getOption("fullScreen"));
                         },
+                        "Shift-Ctrl-F": function(cm) {
+                            cm.setOption("fullScreen", !cm.getOption("fullScreen"));
+                        },
                         "Esc": function(cm) {
                             if (cm.getOption("fullScreen")) { cm.setOption("fullScreen", false); }
                         },
@@ -1325,7 +1340,7 @@
             }
         };
         if (cmd === undefined) {
-            var allowed = [ '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '.', '-' ];
+            var allowed = [ '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', asm.currencyradix, '-' ];
             this.each(function() {
                 $(this).keypress(function(e) {
                     var k = e.charCode || e.keyCode;
@@ -1354,11 +1369,8 @@
                     return 0;
                 }
                 // Extract only the numbers, sign and decimal point
-                v = v.replace(/[^0123456789\-\.]/g, '');
-                v = $.trim(v);
-                f = parseFloat(v);
-                f *= 100;
-                // Adding 0.5 corrects IEEE rounding errors 
+                f = format.currency_to_float(v) * 100;
+                // Adding 0.5 corrects IEEE rounding errors in multiplication
                 if (f > 0) { f += 0.5; }
                 return parseInt(f, 10);
             }
@@ -1391,23 +1403,23 @@
             // newdata
             // report
             if (type == "main") {
-                $(this).delay(1).show("slide", {direction: 'up'});
+                $(this).show("slide", {direction: 'up'}, common.fx_speed);
                 return;
             }
             if (type == "formtab") {
-                $(this).delay(1).show("slide", {direction: 'right'});
+                $(this).show("slide", {direction: 'right'}, common.fx_speed);
                 return;
             }
             if (type == "book") {
-                $(this).delay(1).show("slide", {direction: 'down'});
+                $(this).show("slide", {direction: 'down'}, common.fx_speed);
                 return;
             }
             if (type == "options") {
-                $(this).delay(1).show("slide", {direction: 'up'});
+                $(this).show("slide", {direction: 'up'}, common.fx_speed);
                 return;
             }
             // default
-            $(this).delay(1).show("slide", {direction: 'left'});
+            $(this).show("slide", {direction: 'left'}, common.fx_speed);
         });
     };
 

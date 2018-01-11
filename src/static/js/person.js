@@ -125,6 +125,15 @@ $(function() {
                 '<input type="text" id="worktelephone" data-json="WORKTELEPHONE" data-post="worktelephone" class="asm-textbox" />',
                 '</td>',
                 '</tr>',
+                '<tr id="jurisdictionrow">',
+                '<td><label for="jurisdiction">' + _("Jurisdiction") + '</label></td>',
+                '<td>',
+                '<select id="jurisdiction" data-json="JURISDICTIONID" data-post="jurisdiction" class="asm-selectbox">',
+                html.list_to_options(controller.jurisdictions, "ID", "JURISDICTIONNAME"),
+                '</select>',
+                '</td>',
+                '</tr>',
+
                 '</table>',
                 '<!-- right table -->',
                 '<td width="30%">',
@@ -405,6 +414,7 @@ $(function() {
             return tableform.buttons_render([
                 { id: "save", text: _("Save"), icon: "save", tooltip: _("Save this person") },
                 { id: "delete", text: _("Delete"), icon: "delete", tooltip: _("Delete this person") },
+                { id: "anonymise", text: _("Anonymize"), icon: "delete", tooltip: _("Remove personally identifiable data") },
                 { id: "merge", text: _("Merge"), icon: "copy", tooltip: _("Merge another person into this one") },
                 { id: "document", text: _("Document"), type: "buttonmenu", icon: "document", tooltip: _("Generate a document from this person") },
                 { id: "diarytask", text: _("Diary Task"), type: "buttonmenu", icon: "diary-task", tooltip: _("Create diary notes from a task") },
@@ -490,11 +500,14 @@ $(function() {
             $(".towncounty").toggle( !config.bool("HideTownCounty") );
             $("#latlongrow").toggle( config.bool("ShowLatLong") );
             $("#siterow").toggle( config.bool("MultiSiteEnabled") );
+            $("#jurisdictionrow").toggle( !config.bool("DisableAnimalControl") );
+            $("#button-anonymise").toggle( config.bool("AnonymisePersonalData") );
+
 
             // SECURITY =============================================================
 
-            if (!common.has_permission("co")) { $("#button-save").hide(); }
-            if (!common.has_permission("do")) { $("#button-delete").hide(); }
+            if (!common.has_permission("co")) { $("#button-save, #button-anonymise").hide(); }
+            if (!common.has_permission("do")) { $("#button-delete, #button-anonymise").hide(); }
             if (!common.has_permission("gaf")) { $("#button-document").hide(); }
             if (!common.has_permission("adn")) { $("#button-diarytask").hide(); }
             if (!common.has_permission("mo")) { $("#button-merge").hide(); }
@@ -734,6 +747,12 @@ $(function() {
                 validate.save(function() {
                     common.route_reload();
                 });
+            });
+
+            $("#button-anonymise").button().click(function() {
+                $("#title, #initials, #forenames, #address, #email, #hometelephone, #worktelephone, #mobiletelephone").val("");
+                $("#surname").val(_("No longer retained"));
+                validate.dirty(true);
             });
 
             $("#button-delete").button().click(function() {

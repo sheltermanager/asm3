@@ -316,6 +316,10 @@ def check_sql(dbo, username, sql):
     COMMON_DATE_TOKENS = ( "$CURRENT_DATE", "$@from", "$@to", "$@thedate" )
     # Clean up and substitute some tags
     sql = sql.replace("$USER$", username)
+    # Subtitute CONST tokens
+    for name, value in utils.regex_multi(r"\$CONST (.+?)\=(.+?)\$", sql):
+        sql = sql.replace("$%s$" % name, value) # replace all tokens with the constant value
+        sql = sql.replace("$CONST %s=%s$" % (name, value), "") # remove the constant declaration
     i = sql.find("$")
     while (i != -1):
         end = sql.find("$", i+1)
@@ -793,11 +797,11 @@ class Report:
                     except Exception as e:
                         # Ignore anything that wasn't a number
                         pass
-                fstr = "%0." + str(roundto) + "f"
-                value = ""
                 if utils.is_currency(fields[1]):
-                    value = i18n.get_currency_symbol(self.dbo.locale)
-                value += fstr % total
+                    value = i18n.format_currency(self.dbo.locale, total * 100)
+                else:
+                    fmt = "%%0.%sf" % roundto
+                    value = fmt % total
 
             # {COUNT.field[.distinct]}
             if key.lower().startswith("count"):
@@ -1039,6 +1043,15 @@ class Report:
         s = s.replace("$$VERSION$$", i18n.get_version())
         s = s.replace("$$USER$$", self.user)
         s = s.replace("$$REGISTEREDTO$$", configuration.organisation(self.dbo))
+        s = s.replace("$$ORGANISATION$$", configuration.organisation(self.dbo))
+        s = s.replace("$$ORGANISATIONADDRESS$$", configuration.organisation_address(self.dbo))
+        s = s.replace("$$ORGANISATIONTOWN$$", configuration.organisation_town(self.dbo))
+        s = s.replace("$$ORGANISATIONCITY$$", configuration.organisation_town(self.dbo))
+        s = s.replace("$$ORGANISATIONCOUNTY$$", configuration.organisation_county(self.dbo))
+        s = s.replace("$$ORGANISATIONSTATE$$", configuration.organisation_county(self.dbo))
+        s = s.replace("$$ORGANISATIONPOSTCODE$$", configuration.organisation_postcode(self.dbo))
+        s = s.replace("$$ORGANISATIONZIPCODE$$", configuration.organisation_postcode(self.dbo))
+        s = s.replace("$$ORGANISATIONTELEPHONE$$", configuration.organisation_telephone(self.dbo))
         return s
 
     def _SubstituteHeaderFooter(self, headfoot, text, rs):
@@ -1072,6 +1085,7 @@ class Report:
         s = strip_sql_comments(s)
         s = s.replace("$CURRENT_DATE$", self.dbo.sql_date(self.dbo.now(), includeTime=False, wrapParens=False))
         s = s.replace("$USER$", self.user)
+        s = s.replace("$DATABASENAME$", self.dbo.database)
         # Substitute the location filter, but only if the report actually
         # references it to save unnecessary database lookups
         if s.find("$LOCATIONFILTER$") != -1:
@@ -1087,6 +1101,10 @@ class Report:
         if s.find("$SITE$") != -1:
             sf = db.query_int(self.dbo, "SELECT SiteID FROM users WHERE UserName = %s" % db.ds(self.user))
             s = s.replace("$SITE$", str(sf))
+        # Subtitute CONST tokens
+        for name, value in utils.regex_multi(r"\$CONST (.+?)\=(.+?)\$", s):
+            s = s.replace("$%s$" % name, value) # replace all tokens with the constant value
+            s = s.replace("$CONST %s=%s$" % (name, value), "") # remove the constant declaration
         self.sql = s
         # If we don't have any parameters, no point trying to deal with these
         if params is None: return
@@ -1455,13 +1473,14 @@ class Report:
             "var points = \n")
 
         p = []
-        lastlatlong = ""
+        firstvalidlatlong = ""
         for g in rs:
             p.append({ "latlong": g[0], "popuptext": g[1] })
-            lastlatlong = g[0]
+            if firstvalidlatlong == "" and g[0] is not None and not g[0].startswith("0,0"):
+                firstvalidlatlong = g[0]
 
         self._Append( utils.json(p) + ";\n" )
-        self._Append( "mapping.draw_map(\"embeddedmap\", 10, \"%s\", points);\n" % lastlatlong )
+        self._Append( "mapping.draw_map(\"embeddedmap\", 10, \"%s\", points);\n" % firstvalidlatlong )
         self._Append( "}, 50);\n" )
         self._Append("""
             </script>

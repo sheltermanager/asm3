@@ -140,7 +140,7 @@ $(function() {
                 '<td id="hleftshel">' + _("Left shelter") + ':</td><td><b>' + (a.ARCHIVED == 1 ? format.date(a.ACTIVEMOVEMENTDATE) : "") + '</b></td>',
                 '</tr>',
                 '<tr>',
-                '<td id="htimeonshel">' + _("Time on shelter") + ':</td><td><b>' + a.TIMEONSHELTER + '</b></td>',
+                '<td id="htimeonshel">' + _("Time on shelter") + ':</td><td><b>' + a.TIMEONSHELTER + ' (' + a.DAYSONSHELTER + ' ' + _("days") + ')</b></td>',
                 '</tr>',
                 '</table>',
                 '</div>'
@@ -508,7 +508,7 @@ $(function() {
                 flags.push(_("Quarantine"));
             }
             if (a.ADDITIONALFLAGS != null) {
-                var stock = [ "courtesy", "crueltycase", "nonshelter", "notforadoption", "quarantine" ];
+                var stock = [ "courtesy", "crueltycase", "nonshelter", "notforadoption", "notforregistration", "quarantine" ];
                 $.each(a.ADDITIONALFLAGS.split("|"), function(i, v) {
                     if (v != "" && $.inArray(v, stock) == -1) {
                         flags.push(v);

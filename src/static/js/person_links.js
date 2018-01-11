@@ -30,10 +30,12 @@ $(function() {
                 s.push('<td ' + tdclass + '>');
                 if (li.TYPE == "OO") { s.push('<a href="animal?id=' + li.LINKID + '">' + li.LINKDISPLAY + '</a>'); }
                 if (li.TYPE == "BI") { s.push('<a href="animal?id=' + li.LINKID + '">' + li.LINKDISPLAY + '</a>'); }
+                if (li.TYPE == "RO") { s.push('<a href="animal?id=' + li.LINKID + '">' + li.LINKDISPLAY + '</a>'); }
                 if (li.TYPE == "AO") { s.push('<a href="animal?id=' + li.LINKID + '">' + li.LINKDISPLAY + '</a>'); }
                 if (li.TYPE == "PB") { s.push('<a href="animal?id=' + li.LINKID + '">' + li.LINKDISPLAY + '</a>'); }
                 if (li.TYPE == "OV") { s.push('<a href="animal?id=' + li.LINKID + '">' + li.LINKDISPLAY + '</a>'); }
                 if (li.TYPE == "CV") { s.push('<a href="animal?id=' + li.LINKID + '">' + li.LINKDISPLAY + '</a>'); }
+                if (li.TYPE == "AV") { s.push('<a href="animal?id=' + li.LINKID + '">' + li.LINKDISPLAY + '</a>'); }
                 if (li.TYPE == "WL") { s.push('<a href="waitinglist?id=' + li.LINKID + '">' + li.LINKDISPLAY + '</a>'); }
                 if (li.TYPE == "LA") { s.push('<a href="lostanimal?id=' + li.LINKID + '">' + li.LINKDISPLAY + '</a>'); }
                 if (li.TYPE == "FA") { s.push('<a href="foundanimal?id=' + li.LINKID + '">' + li.LINKDISPLAY + '</a>'); }

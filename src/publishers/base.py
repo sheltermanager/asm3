@@ -26,21 +26,24 @@ def quietcallback(x):
     """ ftplib callback that does nothing instead of dumping to stdout """
     pass
 
-def get_animal_data(dbo, pc = None, animalid = 0, include_additional_fields = False, strip_personal_data = False):
+def get_animal_data(dbo, pc = None, animalid = 0, include_additional_fields = False, strip_personal_data = False, limit = 0):
     """
     Returns a resultset containing the animal info for the criteria given.
     pc: The publish criteria (if None, default is used)
     animalid: If non-zero only returns the animal given (if it is adoptable)
     include_additional_fields: Load additional fields for each result
     strip_personal_data: Remove any personal data such as surrenderer, brought in by, etc.
+    limit: Only return limit rows.
     """
     if pc is None:
         pc = PublishCriteria(configuration.publisher_presets(dbo))
     sql = get_animal_data_query(dbo, pc, animalid)
-    rows = dbo.query(sql, limit=pc.limit, distincton="ID")
+    rows = dbo.query(sql, distincton="ID")
+    al.debug("get_animal_data_query returned %d rows" % len(rows), "publishers.base.get_animal_data", dbo)
     # If the sheltercode format has a slash in it, convert it to prevent
     # creating images with broken paths.
     if len(rows) > 0 and rows[0]["SHELTERCODE"].find("/") != -1:
+        al.debug("discovered forward slashes in code, repairing", "publishers.base.get_animal_data", dbo)
         for r in rows:
             r["SHORTCODE"] = r["SHORTCODE"].replace("/", "-").replace(" ", "")
             r["SHELTERCODE"] = r["SHELTERCODE"].replace("/", "-").replace(" ", "")
@@ -52,17 +55,12 @@ def get_animal_data(dbo, pc = None, animalid = 0, include_additional_fields = Fa
             r["WEBSITEMEDIANOTES"] = r["ANIMALCOMMENTS"]
     # If we aren't including animals with blank descriptions, remove them now
     if not pc.includeWithoutDescription:
+        oldcount = len(rows)
         rows = [r for r in rows if utils.nulltostr(r["WEBSITEMEDIANOTES"]).strip() != ""]
+        al.debug("removed %d rows without descriptions" % (oldcount - len(rows)), "publishers.base.get_animal_data", dbo)
     # Embellish additional fields if requested
     if include_additional_fields:
-        for r in rows:
-            add = additional.get_additional_fields(dbo, int(r["ID"]), "animal")
-            for af in add:
-                if af["FIELDNAME"].find("&") != -1:
-                    # We've got unicode chars for the tag name - not allowed
-                    r["ADD" + str(af["ID"])] = af["VALUE"]
-                else:
-                    r[af["FIELDNAME"]] = af["VALUE"]
+        additional.append_to_results(dbo, rows, "animal")
     # Strip any personal data if requested
     if strip_personal_data:
         for r in rows:
@@ -80,6 +78,7 @@ def get_animal_data(dbo, pc = None, animalid = 0, include_additional_fields = Fa
             if r["ID"] == aid:
                 a["ANIMALNAME"] = "%s, %s" % (a["ANIMALNAME"], r["ANIMALNAME"])
                 rows.remove(r)
+                al.debug("merged animal %d into %d" % (aid, a["ID"]), "publishers.base.get_animal_data", dbo)
                 break
     if pc.bondedAsSingle:
         for r in rows:
@@ -87,6 +86,11 @@ def get_animal_data(dbo, pc = None, animalid = 0, include_additional_fields = Fa
                 merge_animal(r, r["BONDEDANIMALID"])
             if r["BONDEDANIMAL2ID"] is not None and r["BONDEDANIMAL2ID"] != 0:
                 merge_animal(r, r["BONDEDANIMAL2ID"])
+    # If a limit was set, throw away extra rows
+    # (we do it here instead of a LIMIT clause as there's extra logic that throws
+    #  away rows above).
+    if limit > 0 and len(rows) > limit:
+        rows = rows[0:limit]
     return rows
 
 def get_animal_data_query(dbo, pc, animalid = 0):
@@ -169,6 +173,7 @@ def get_microchip_data(dbo, patterns, publishername, allowintake = True):
     orgpostcode = configuration.organisation_postcode(dbo)
     orgtelephone = configuration.organisation_telephone(dbo)
     email = configuration.email(dbo)
+    extras = []
     for r in rows:
         use_original_owner_info = False
         use_shelter_info = False
@@ -197,8 +202,8 @@ def get_microchip_data(dbo, patterns, publishername, allowintake = True):
             r["CURRENTOWNERZIPCODE"] = r["ORIGINALOWNERPOSTCODE"]
             r["CURRENTOWNERHOMETELEPHONE"] = r["ORIGINALOWNERHOMETELEPHONE"]
             r["CURRENTOWNERPHONE"] = r["ORIGINALOWNERHOMETELEPHONE"]
-            r["CURRENTOWNERWORKPHONE"] = r["ORIGINALOWNERWORKTELEPHONE"]
-            r["CURRENTOWNERMOBILEPHONE"] = r["ORIGINALOWNERMOBILETELEPHONE"]
+            r["CURRENTOWNERWORKTELEPHONE"] = r["ORIGINALOWNERWORKTELEPHONE"]
+            r["CURRENTOWNERMOBILETELEPHONE"] = r["ORIGINALOWNERMOBILETELEPHONE"]
             r["CURRENTOWNERCELLPHONE"] = r["ORIGINALOWNERMOBILETELEPHONE"]
             r["CURRENTOWNEREMAILADDRESS"] = r["ORIGINALOWNEREMAILADDRESS"]
         if use_shelter_info:
@@ -216,11 +221,18 @@ def get_microchip_data(dbo, patterns, publishername, allowintake = True):
             r["CURRENTOWNERZIPCODE"] = orgpostcode
             r["CURRENTOWNERHOMETELEPHONE"] = orgtelephone
             r["CURRENTOWNERPHONE"] = orgtelephone
-            r["CURRENTOWNERWORKPHONE"] = orgtelephone
-            r["CURRENTOWNERMOBILEPHONE"] = orgtelephone
+            r["CURRENTOWNERWORKTELEPHONE"] = orgtelephone
+            r["CURRENTOWNERMOBILETELEPHONE"] = orgtelephone
             r["CURRENTOWNERCELLPHONE"] = orgtelephone
             r["CURRENTOWNEREMAILADDRESS"] = email
-    return rows
+        # If this row has IDENTICHIP2NUMBER and IDENTICHIP2DATE populated, clone the 
+        # row and move the values to IDENTICHIPNUMBER and IDENTICHIPDATE for publishing
+        if r["IDENTICHIP2NUMBER"] and r["IDENTICHIP2NUMBER"] != "":
+            x = r.copy()
+            x["IDENTICHIPNUMBER"] = x["IDENTICHIP2NUMBER"]
+            x["IDENTICHIPDATE"] = x["IDENTICHIP2DATE"]
+            extras.append(x)
+    return rows + extras
 
 def get_microchip_data_query(dbo, patterns, publishername, movementtypes = "1", allowintake = True):
     """
@@ -238,7 +250,8 @@ def get_microchip_data_query(dbo, patterns, publishername, movementtypes = "1", 
     pclauses = []
     for p in patterns:
         if p.startswith("9") or p.startswith("0"):
-            pclauses.append("a.IdentichipNumber LIKE '%s%%'" % p)
+            pclauses.append("(a.IdentichipNumber IS NOT NULL AND a.IdentichipNumber LIKE '%s%%')" % p)
+            pclauses.append("(a.Identichip2Number IS NOT NULL AND a.Identichip2Number LIKE '%s%%')" % p)
         else:
             pclauses.append("(%s)" % p)
     trialclause = ""
@@ -253,8 +266,10 @@ def get_microchip_data_query(dbo, patterns, publishername, movementtypes = "1", 
     nonshelterclause = "OR (a.NonShelterAnimal = 1 AND a.OriginalOwnerID Is Not Null AND a.OriginalOwnerID > 0 AND a.IdentichipDate Is Not Null " \
         "AND NOT EXISTS(SELECT SentDate FROM animalpublished WHERE PublishedTo = '%(publishername)s' " \
         "AND AnimalID = a.ID AND SentDate >= a.IdentichipDate))" % { "publishername": publishername }
-    where = " WHERE (%(patterns)s) AND a.DeceasedDate Is Null AND (" \
-        "(a.ActiveMovementID > 0 AND a.ActiveMovementType > 0 AND (a.ActiveMovementType IN (%(movementtypes)s)) %(trialclause)s " \
+    where = " WHERE (%(patterns)s) AND a.DeceasedDate Is Null " \
+        "AND (a.IsNotForRegistration Is Null OR a.IsNotForRegistration=0) " \
+        "AND (" \
+        "(a.ActiveMovementID > 0 AND a.ActiveMovementType > 0 AND a.ActiveMovementType IN (%(movementtypes)s) %(trialclause)s " \
         "AND NOT EXISTS(SELECT SentDate FROM animalpublished WHERE PublishedTo = '%(publishername)s' " \
         "AND AnimalID = a.ID AND SentDate >= a.ActiveMovementDate)) " \
         "%(nonshelterclause)s " \
@@ -307,7 +322,6 @@ class PublishCriteria(object):
     outputDeceased = False # True if html publisher should output a deceased.html page
     outputForms = False # True if html publisher should output a forms.html page
     outputRSS = False # True if html publisher should output an rss.xml page
-    limit = 0
     style = "."
     extension = "html"
     scaleImages = "" # A resize spec or old values of: 1 = None, 2 = 320x200, 3=640x480, 4=800x600, 5=1024x768, 6=300x300, 7=95x95
@@ -364,7 +378,6 @@ class PublishCriteria(object):
             if s.startswith("order"): self.order = self.get_int(s)
             if s.startswith("excludeunder"): self.excludeUnderWeeks = self.get_int(s)
             if s.startswith("animalsperpage"): self.animalsPerPage = self.get_int(s)
-            if s.startswith("limit"): self.limit = self.get_int(s)
             if s.startswith("style"): self.style = self.get_str(s)
             if s.startswith("extension"): self.extension = self.get_str(s)
             if s.startswith("scaleimages"): self.scaleImages = self.get_str(s)
@@ -410,7 +423,6 @@ class PublishCriteria(object):
         s += " order=" + str(self.order)
         s += " excludeunder=" + str(self.excludeUnderWeeks)
         s += " animalsperpage=" + str(self.animalsPerPage)
-        s += " limit=" + str(self.limit)
         s += " style=" + str(self.style)
         s += " extension=" + str(self.extension)
         s += " scaleimages=" + str(self.scaleImages)
@@ -496,6 +508,9 @@ class AbstractPublisher(threading.Thread):
         # same, return a blank. By the time we get here, crossbreed must == 1
         b = utils.nulltostr(breedname).lower()
         if b == "mix" or b == "cross" or b == "unknown" or b == "crossbreed" or breed1id == breed2id:
+            return ""
+        # Don't return null
+        if publisherbreed is None:
             return ""
         return publisherbreed
 

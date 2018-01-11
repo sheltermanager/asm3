@@ -255,6 +255,7 @@ $(function() {
                 }
             }
             else if ( name == "ShelterCode") { rv = row.CODE; }
+            else if ( name == "IdentichipNumber") { rv = common.nulltostr(row.IDENTICHIPNUMBER) + " " + common.nulltostr(row.IDENTICHIP2NUMBER); }
             else if ($.inArray(name, DATE_FIELDS) > -1) {
                 rv = format.date(value);
                 if (format.time(value) != "00:00:00") {

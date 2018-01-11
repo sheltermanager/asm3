@@ -14,13 +14,13 @@ v.VaccinationType, av.DateExpires, av.Comments,
 o.OwnerName, o.OwnerAddress, o.OwnerTown, o.OwnerCounty,
 o.OwnerPostcode, o.HomeTelephone, o.WorkTelephone, o.MobileTelephone
 FROM animal a
-INNER JOIN animaltype t ON t.ID = a.AnimalTypeID
+LEFT OUTER JOIN animaltype t ON t.ID = a.AnimalTypeID
 INNER JOIN animalvaccination av ON a.ID = av.AnimalID
 INNER JOIN vaccinationtype v ON av.VaccinationID = v.ID
-INNER JOIN internallocation il ON il.ID = a.ShelterLocation
-INNER JOIN adoption ad ON ad.ID = a.ActiveMovementID
-INNER JOIN owner o ON ad.OwnerID = o.ID
-WHERE av.DateOfVaccination Is Null
+LEFT OUTER JOIN internallocation il ON il.ID = a.ShelterLocation
+LEFT OUTER JOIN adoption ad ON ad.ID = a.ActiveMovementID
+LEFT OUTER JOIN owner o ON ad.OwnerID = o.ID
+WHERE av.DateOfVaccination Is Not Null
 AND av.DateExpires >= '$ASK DATE Expiring between$' AND av.DateExpires <= '$ASK DATE and$'
 ORDER BY av.DateExpires
 ###

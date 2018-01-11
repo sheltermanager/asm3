@@ -17,9 +17,9 @@ Will also look in PATH/images/ANIMALKEY.[jpg|JPG] for animal photos if available
 29th December, 2016
 """
 
-PATH = "data/shelterpro_ac0916"
+PATH = "data/shelterpro_vk1496"
 
-START_ID = 2500
+START_ID = 100
 
 INCIDENT_IMPORT = False
 LICENCE_IMPORT = True
@@ -123,15 +123,15 @@ uo.OwnerSurname = "Unknown Owner"
 uo.OwnerName = uo.OwnerSurname
 
 # Load up data files
-caddress = dbfread.DBF("%s/address.dbf" % PATH)
+caddress = dbfread.DBF("%s/address.dbf" % PATH, encoding="latin1")
 caddrlink = dbfread.DBF("%s/addrlink.dbf" % PATH)
 canimal = dbfread.DBF("%s/animal.dbf" % PATH)
 clicense = dbfread.DBF("%s/license.dbf" % PATH)
-cperson = dbfread.DBF("%s/person.dbf" % PATH)
+cperson = dbfread.DBF("%s/person.dbf" % PATH, encoding="latin1")
 cshelter = dbfread.DBF("%s/shelter.dbf" % PATH)
 cvacc = dbfread.DBF("%s/vacc.dbf" % PATH)
 cincident = dbfread.DBF("%s/incident.dbf" % PATH)
-cnote = dbfread.DBF("%s/note.dbf" % PATH)
+cnote = dbfread.DBF("%s/note.dbf" % PATH, encoding="latin1")
 
 # Start with animals
 for row in canimal:
@@ -155,6 +155,7 @@ for row in canimal:
     a.CreatedDate = a.DateBroughtIn
     a.EntryReasonID = 4
     a.generateCode(gettypeletter(a.AnimalTypeID))
+    a.ShortCode = row["ANIMALKEY"]
     a.Neutered = asm.cint(row["FIX"])
     a.Declawed = asm.cint(row["DECLAWED"])
     a.IsNotAvailableForAdoption = 0
@@ -269,7 +270,7 @@ for row in cshelter:
     if ppa.has_key(row["ANIMALKEY"]):
         a = ppa[row["ANIMALKEY"]]
         arivdate = row["ARIVDATE"]
-        a.ShortCode = asm.strip(row["FIELDCARD"])
+        a.ShortCode = asm.strip(row["ANIMALKEY"])
         a.ShelterLocationUnit = asm.strip(row["KENNEL"])
         a.NonShelterAnimal = 0
         if arivdate is not None:
@@ -277,7 +278,7 @@ for row in cshelter:
             a.LastChangedDate = a.DateBroughtIn
             a.CreatedDate = a.DateBroughtIn
             a.generateCode(gettypeletter(a.AnimalTypeID))
-            a.ShortCode = asm.strip(row["FIELDCARD"])
+            a.ShortCode = asm.strip(row["ANIMALKEY"])
     else:
         # Couldn't find an animal record, bail
         continue
@@ -420,7 +421,8 @@ if INCIDENT_IMPORT:
         elif row["FINALOUTCO"] == "OTHER":
             ac.IncidentCompletedID = 6 # Does not exist in default data
         ac.IncidentTypeID = 1
-        comments = "outcome: %s\n" % row["FINALOUTCO"]
+        comments = "case: %s\n" % row["INCIDENTKEY"]
+        comments += "outcome: %s\n" % row["FINALOUTCO"]
         comments += "precinct: %s\n" % row["PRECINCT"]
         ac.CallNotes = comments
         ac.Sex = 2

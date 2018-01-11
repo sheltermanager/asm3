@@ -188,6 +188,7 @@ def getdate_guess(s):
         If the year is under 2000, makes it 4 digit.
     """
     if s is None or s == "" or s.find("N/A") != -1 or s.find("NA") != -1 or s.find("TBA") != -1 or s.find("TBD") != -1: return None
+    if s.find(" ") > -1: s = s[0:s.find(" ")]
     b = s.split("/")
     if s.find("-") != -1:
         b = s.split("-")
@@ -207,7 +208,11 @@ def getdate_guess(s):
         y = cint(b[2])
     if y < 2000: y += 2000
     if y == 0 or m == 0: return None
-    return datetime.datetime(y, m, d)
+    try:
+        return datetime.datetime(y, m, d)
+    except Exception as err:
+        stderr("bad data: %s" % s)
+        raise err
 
 def getdate_yyyymmdd(s):
     s = remove_time(s)
@@ -351,32 +356,32 @@ colours = (
 ("59","Sorrel Tortoiseshell")
 )
 
-def colour_id_for_name(name, firstWordOnly = False):
+def colour_id_for_name(name, firstWordOnly = False, default = 1):
     if firstWordOnly:
         if name.find(" ") != -1: name = name[0:name.find(" ")]
         if name.find("/") != -1: name = name[0:name.find("/")]
     for cid, cname in colours:
         if cname.upper().find(name.upper()) != -1:
             return int(cid)
-    return 1
+    return default
 
-def colour_id_for_names(name1, name2):
-    if name1 == name2:
+def colour_id_for_names(name1, name2, default = 1):
+    if name1 == name2 or name2.strip() == "":
         return colour_id_for_name(name1, True)
     for cid, cname in colours:
         if cname.upper().find(name1.upper()) != -1 and cname.upper().find(name2.upper()) != -1:
             return int(cid)
-    return 1
+    return default
 
 def colour_from_db(name, default = 2):
     """ Looks up the colour in the db when the conversion is run, assign to BaseColourID """
     return "COALESCE((SELECT ID FROM basecolour WHERE lower(BaseColour) LIKE lower('%s') LIMIT 1), %d)" % (name.strip(), default)
 
-def colour_name_for_id(id):
+def colour_name_for_id(id, default = "Black"):
     for cid, cname in colours:
         if int(cid) == id:
             return cname
-    return "Black"
+    return default
 
 # List of default species
 species = (
@@ -890,6 +895,21 @@ def breed_name(id1, id2 = None):
         return breed_name_for_id(id1)
     return breed_name_for_id(id1) + " / " + breed_name_for_id(id2)
 
+def breed_ids(a, breed1, breed2 = "", default = 1):
+	a.BreedID = breed_id_for_name(breed1, default)
+	a.Breed2ID = a.BreedID
+	a.BreedName = breed_name_for_id(a.BreedID)
+	a.CrossBreed = 0
+	if breed2 is not None and breed2.strip() != "":
+		a.CrossBreed = 1
+		if breed2 == "Mix" or breed2 == "Unknown":
+			a.Breed2ID = 442
+		else:
+			a.Breed2ID = breed_id_for_name(breed2, default)
+		if a.Breed2ID == 1: a.Breed2ID = 442
+        if a.Breed2ID != a.BreedID: 
+        	a.BreedName = "%s / %s" % ( breed_name_for_id(a.BreedID), breed_name_for_id(a.Breed2ID) )
+
 def breed_from_db(name, default = 2):
     """ Looks up the breed in the db when the conversion is run, assign to BreedID """
     return "COALESCE((SELECT ID FROM breed WHERE lower(BreedName) LIKE lower('%s') LIMIT 1), %d)" % (name.strip(), default)
@@ -1251,6 +1271,24 @@ def adopt_to(a, ownerid, movementtype = 1, movementdate = None):
     print m
     return m
 
+def adopt_older_than(animals, movements, ownerid=100, days=365):
+	""" Runs through animals and if any are still on shelter after 'days',
+        creates an adoption to ownerid. Returns movements
+	"""
+	for a in animals:
+		if a.Archived == 0 and a.DateBroughtIn < subtract_days(now(), days):
+			m = Movement()
+			m.AnimalID = a.ID
+			m.OwnerID = ownerid
+			m.MovementType = 1
+			m.MovementDate = a.DateBroughtIn
+			a.Archived = 1
+			a.ActiveMovementID = m.ID
+			a.ActiveMovementDate = a.DateBroughtIn
+			a.ActiveMovementType = 1
+			movements.append(m)
+	return movements
+
 def animal_image(animalid, imagedata):
     """ Writes the media and dbfs entries to add an image to an animal """
     if imagedata is None: return
@@ -1258,11 +1296,13 @@ def animal_image(animalid, imagedata):
     medianame = str(mediaid) + '.jpg'
     encoded = base64.b64encode(imagedata)
     print "UPDATE media SET websitephoto = 0, docphoto = 0 WHERE linkid = %d AND linktypeid = 0;" % animalid
-    print "INSERT INTO media (id, medianame, medianotes, websitephoto, docphoto, newsincelastpublish, updatedsincelastpublish, " \
-        "excludefrompublish, linkid, linktypeid, recordversion, date) VALUES (%d, '%s', %s, 1, 1, 0, 0, 0, %d, 0, 0, %s);" % \
-        ( mediaid, medianame, ds(""), animalid, dd(datetime.datetime.today()) )
+    print "INSERT INTO media (id, medianame, medianotes, mediasize, mediamimetype, websitephoto, docphoto, newsincelastpublish, updatedsincelastpublish, " \
+        "excludefrompublish, linkid, linktypeid, recordversion, date) VALUES (%d, '%s', %s, %s, 'image/jpeg', 1, 1, 0, 0, 0, %d, 0, 0, %s);" % \
+        ( mediaid, medianame, ds(""), len(imagedata), animalid, dd(datetime.datetime.today()) )
     print "INSERT INTO dbfs (id, name, path, content) VALUES (%d, '%s', '%s', '');" % ( getid("dbfs"), str(animalid), '/animal' )
-    print "INSERT INTO dbfs (id, name, path, url, content) VALUES (%d, '%s', '%s', 'base64:', '%s');" % (getid("dbfs"), medianame, "/animal/" + str(animalid), encoded)
+    dbfsid = getid("dbfs")
+    print "INSERT INTO dbfs (id, name, path, url, content) VALUES (%d, '%s', '%s', 'base64:', '%s');" % (dbfsid, medianame, "/animal/" + str(animalid), encoded)
+    print "UPDATE media SET DBFSID = %d WHERE ID = %d;" % (dbfsid, mediaid)
 
 def animal_regimen_single(animalid, dategiven, treatmentname, dosage = "", comments = ""):
     """ Writes a regimen and treatment record for a single given treatment """
@@ -1733,6 +1773,8 @@ class Animal:
     Identichipped = 0
     IdentichipNumber = ""
     IdentichipDate = None
+    Identichip2Number = ""
+    Identichip2Date = None
     Tattoo = 0
     TattooNumber = ""
     TattooDate = None
@@ -1743,6 +1785,7 @@ class Animal:
     SmartTagType = 0
     Neutered = 0
     NeuteredDate = None
+    NeuteredByVetID = 0
     CombiTested = 0
     CombiTestDate = None
     CombiTestResult = 0
@@ -1776,6 +1819,7 @@ class Animal:
     IsGoodWithChildren = 2
     IsHouseTrained = 2
     IsNotAvailableForAdoption = 0
+    IsNotForRegistration = 1
     IsHold = 0
     HoldUntilDate = None
     IsQuarantine = 0
@@ -1864,6 +1908,8 @@ class Animal:
             ( "Identichipped", di(self.Identichipped) ),
             ( "IdentichipNumber", ds(self.IdentichipNumber) ),
             ( "IdentichipDate", dd(self.IdentichipDate) ),
+            ( "Identichip2Number", ds(self.Identichip2Number) ),
+            ( "Identichip2Date", dd(self.Identichip2Date) ),
             ( "Tattoo", di(self.Tattoo) ),
             ( "TattooNumber", ds(self.TattooNumber) ),
             ( "TattooDate", dd(self.TattooDate) ),
@@ -1874,6 +1920,7 @@ class Animal:
             ( "SmartTagType", di(self.SmartTagType) ),
             ( "Neutered", di(self.Neutered) ),
             ( "NeuteredDate", dd(self.NeuteredDate) ),
+            ( "NeuteredByVetID", di(self.NeuteredByVetID) ),
             ( "CombiTested", di(self.CombiTested) ),
             ( "CombiTestDate", dd(self.CombiTestDate) ),
             ( "CombiTestResult", di(self.CombiTestResult) ),
@@ -1910,6 +1957,7 @@ class Animal:
             ( "IsGoodWithChildren", di(self.IsGoodWithChildren) ),
             ( "IsHouseTrained", di(self.IsHouseTrained) ),
             ( "IsNotAvailableForAdoption", di(self.IsNotAvailableForAdoption) ),
+            ( "IsNotForRegistration", di(self.IsNotForRegistration) ),
             ( "IsHold", di(self.IsHold) ),
             ( "HoldUntilDate", dd(self.HoldUntilDate) ),
             ( "IsQuarantine", di(self.IsQuarantine) ),
@@ -1985,7 +2033,8 @@ class Movement:
     MovementDate = None
     MovementType = 0
     ReturnDate = None
-    ReturnedReasonID = 1
+    ReturnedReasonID = 4 # Unable to cope
+    ReturnedByOwnerID = 0
     InsuranceNumber = ""
     ReasonForReturn = ""
     ReservationDate = None
@@ -2016,6 +2065,7 @@ class Movement:
             ( "MovementType", di(self.MovementType) ),
             ( "ReturnDate", dd(self.ReturnDate) ),
             ( "ReturnedReasonID", di(self.ReturnedReasonID) ),
+            ( "ReturnedByOwnerID", di(self.ReturnedByOwnerID) ),
             ( "InsuranceNumber", ds(self.InsuranceNumber) ),
             ( "ReasonForReturn", ds(self.ReasonForReturn) ),
             ( "ReservationDate", dd(self.ReservationDate) ),

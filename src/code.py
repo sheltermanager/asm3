@@ -22,7 +22,7 @@ import db, dbfs, dbupdate
 import diary as extdiary
 import financial
 import html
-from i18n import _, BUILD, translate, get_version, get_display_date_format, get_currency_prefix, get_currency_symbol, get_currency_dp, python2display, add_days, subtract_days, subtract_months, first_of_month, last_of_month, monday_of_week, sunday_of_week, first_of_year, last_of_year, now, format_currency, i18nstringsjs
+from i18n import _, BUILD, translate, get_version, get_display_date_format, get_currency_prefix, get_currency_symbol, get_currency_dp, get_currency_radix, get_currency_digit_grouping, parse_date, python2display, add_days, subtract_days, subtract_months, first_of_month, last_of_month, monday_of_week, sunday_of_week, first_of_year, last_of_year, now, format_currency, i18nstringsjs
 import log as extlog
 import lookups as extlookups
 import lostfound as extlostfound
@@ -460,6 +460,8 @@ class configjs(ASMEndpoint):
             "currencysymbol": get_currency_symbol(o.locale),
             "currencydp": get_currency_dp(o.locale),
             "currencyprefix": get_currency_prefix(o.locale),
+            "currencyradix": get_currency_radix(o.locale),
+            "currencydigitgrouping": get_currency_digit_grouping(o.locale),
             "securitymap": o.session.securitymap,
             "superuser": o.session.superuser,
             "locationfilter": o.locationfilter,
@@ -665,7 +667,7 @@ class media(ASMEndpoint):
             body.append("")
             if post.boolean("addtolog"):
                 extlog.add_log(dbo, o.user, self.log_from_media_type(m["LINKTYPEID"]), m["LINKID"], post.integer("logtype"), "%s :: %s" % (_("Document signing request", l), utils.html_email_to_plain("\n".join(body))))
-        utils.send_email(dbo, post["from"], emailadd, "", _("Document signing request", l), "\n".join(body), "plain")
+        utils.send_email(dbo, post["from"], emailadd, post["cc"], _("Document signing request", l), "\n".join(body), "plain")
         return emailadd
 
     def post_sign(self, o):
@@ -854,9 +856,7 @@ class main(JSONEndpoint):
             animallinks = extanimal.get_links_longest_on_shelter(dbo, linkmax, o.locationfilter, o.siteid)
         elif linkmode == "adoptable":
             linkname = _("Up for adoption", l)
-            pc = extpublish.PublishCriteria(configuration.publisher_presets(dbo))
-            pc.limit = linkmax
-            animallinks = extpublish.get_animal_data(dbo, pc)
+            animallinks = extpublish.get_animal_data(dbo, limit=linkmax)
         # Users and roles, active users
         usersandroles = users.get_users_and_roles(dbo)
         activeusers = users.get_active_users(dbo)
@@ -1162,6 +1162,7 @@ class animal(JSONEndpoint):
             "diarytasks": extdiary.get_animal_tasks(dbo),
             "entryreasons": extlookups.get_entryreasons(dbo),
             "flags": extlookups.get_animal_flags(dbo),
+            "incidents": extanimalcontrol.get_animalcontrol_for_animal(dbo, o.post.integer("id")),
             "internallocations": extlookups.get_internal_locations(dbo, o.locationfilter, o.siteid),
             "microchipmanufacturers": extlookups.MICROCHIP_MANUFACTURERS,
             "pickuplocations": extlookups.get_pickup_locations(dbo),
@@ -1627,6 +1628,7 @@ class animal_vaccination(JSONEndpoint):
             "animal": a,
             "tabcounts": extanimal.get_satellite_counts(dbo, a["ID"])[0],
             "rows": vacc,
+            "batches": extmedical.get_batch_for_vaccination_types(dbo),
             "manufacturers": "|".join(extmedical.get_vacc_manufacturers(dbo)),
             "stockitems": extstock.get_stock_items(dbo),
             "stockusagetypes": extlookups.get_stock_usage_types(dbo),
@@ -1680,9 +1682,9 @@ class calendar_events(ASMEndpoint):
     url = "calendar_events"
 
     def content(self, o):
-        start = o.post["start"]
-        end = o.post["end"]
-        if start == "" or end == "":
+        start = parse_date("%Y-%m-%d", o.post["start"])
+        end = parse_date("%Y-%m-%d", o.post["end"])
+        if not start or not end:
             return "[]"
         events = []
         ev = o.post["ev"]
@@ -1888,8 +1890,26 @@ class csvimport(JSONEndpoint):
 
     def post_all(self, o):
         l = o.locale
-        async.function_task(o.dbo, _("Import a CSV file", l), extcsvimport.csvimport, o.dbo, o.post.filedata(), 
+        async.function_task(o.dbo, _("Import a CSV file", l), extcsvimport.csvimport, o.dbo, o.post.filedata(), o.post["encoding"], 
             o.post.boolean("createmissinglookups") == 1, o.post.boolean("cleartables") == 1, o.post.boolean("checkduplicates") == 1)
+        self.redirect("task")
+
+class csvimport_paypal(JSONEndpoint):
+    url = "csvimport_paypal"
+    get_permissions = users.USE_SQL_INTERFACE
+    post_permissions = users.USE_SQL_INTERFACE
+
+    def controller(self, o):
+        return { 
+            "donationtypes": extlookups.get_donation_types(o.dbo),
+            "paymenttypes": extlookups.get_payment_types(o.dbo),
+            "flags": extlookups.get_person_flags(o.dbo)
+        }
+
+    def post_all(self, o):
+        l = o.locale
+        async.function_task(o.dbo, _("Import a PayPal CSV file", l), extcsvimport.csvimport_paypal, o.dbo, \
+            o.post.filedata(), o.post.integer("type"), o.post.integer("payment"), o.post["flags"])
         self.redirect("task")
 
 class diary(ASMEndpoint):
@@ -2105,7 +2125,7 @@ class document_gen(ASMEndpoint):
                 raise utils.ASMValidationError("%d is not a valid licence id" % recid)
             ownerid = l["OWNERID"]
             tempname += " - " + extperson.get_person_name(dbo, ownerid)
-            extmedia.create_document_media(dbo, session.user, extmedia.PERSON, recid, tempname, post["document"])
+            extmedia.create_document_media(dbo, session.user, extmedia.PERSON, ownerid, tempname, post["document"])
             self.redirect("person_media?id=%d" % ownerid)
         elif linktype == "MOVEMENT":
             m = extmovement.get_movement(dbo, recid)
@@ -2255,8 +2275,11 @@ class document_repository_file(ASMEndpoint):
         if o.post.integer("dbfsid") != 0:
             name = dbfs.get_name_for_id(o.dbo, o.post.integer("dbfsid"))
             mimetype, encoding = mimetypes.guess_type("file://" + name, strict=False)
+            disp = "attachment"
+            if mimetype == "application/pdf": 
+                disp = "inline" # Try to show PDFs in place
             self.header("Content-Type", mimetype)
-            self.header("Content-Disposition", "attachment; filename=\"%s\"" % name)
+            self.header("Content-Disposition", "%s; filename=\"%s\"" % (disp, name))
             return dbfs.get_string_id(o.dbo, o.post.integer("dbfsid"))
 
 class document_templates(JSONEndpoint):
@@ -2575,6 +2598,7 @@ class incident(JSONEndpoint):
             "additional": extadditional.get_additional_fields(dbo, a["ACID"], "incident"),
             "audit": self.checkb(users.VIEW_AUDIT_TRAIL) and audit.get_audit_for_link(dbo, "animalcontrol", a["ACID"]) or [],
             "incident": a,
+            "jurisdictions": extlookups.get_jurisdictions(dbo),
             "animallinks": extanimalcontrol.get_animalcontrol_animals(dbo, o.post.integer("id")),
             "incidenttypes": extlookups.get_incident_types(dbo),
             "completedtypes": extlookups.get_incident_completed_types(dbo),
@@ -2751,6 +2775,7 @@ class incident_new(JSONEndpoint):
         al.debug("add incident", "code.incident_new", dbo)
         return {
             "incidenttypes": extlookups.get_incident_types(dbo),
+            "jurisdictions": extlookups.get_jurisdictions(dbo),
             "additional": extadditional.get_additional_fields(dbo, 0, "incident"),
             "pickuplocations": extlookups.get_pickup_locations(dbo),
             "roles": users.get_roles(dbo),
@@ -3809,6 +3834,14 @@ class onlineforms(JSONEndpoint):
             extonlineform.import_onlineform_html(o.dbo, o.post.filedata())
         self.redirect("onlineforms")
 
+class onlineform_json(ASMEndpoint):
+    url = "onlineform_json"
+    get_permissions = users.EDIT_ONLINE_FORMS
+
+    def content(self, o):
+        self.header("Content-Type", "application/json")
+        return extonlineform.get_onlineform_json(o.dbo, o.post.integer("formid"))
+
 class options(JSONEndpoint):
     url = "options"
     get_permissions = users.SYSTEM_OPTIONS
@@ -3830,6 +3863,7 @@ class options(JSONEndpoint):
             "locales": extlookups.LOCALES,
             "locations": extlookups.get_internal_locations(dbo),
             "logtypes": extlookups.get_log_types(dbo),
+            "paymenttypes": extlookups.get_payment_types(dbo),
             "personfindcolumns": html.json_personfindcolumns(dbo),
             "quicklinks": html.json_quicklinks(dbo),
             "reservationstatuses": extlookups.get_reservation_statuses(dbo),
@@ -3857,25 +3891,30 @@ class person(JSONEndpoint):
     def controller(self, o):
         dbo = o.dbo
         p = extperson.get_person(dbo, o.post.integer("id"))
-        if p is None: self.notfound()
+        if p is None: 
+            self.notfound()
         if p["ISSTAFF"] == 1:
             self.check(users.VIEW_STAFF)
         if p["ISVOLUNTEER"] == 1:
             self.check(users.VIEW_VOLUNTEER)
         if o.siteid != 0 and p["SITEID"] != 0 and o.siteid != p["SITEID"]:
             raise utils.ASMPermissionError("person not in user site")
+        upid = users.get_personid(dbo, o.user)
+        if upid != 0 and upid == p.id:
+            raise utils.ASMPermissionError("cannot view user staff record")
         al.debug("opened person '%s'" % p["OWNERNAME"], "code.person", dbo)
         return {
-            "additional": extadditional.get_additional_fields(dbo, p["ID"], "person"),
+            "additional": extadditional.get_additional_fields(dbo, p.id, "person"),
             "animaltypes": extlookups.get_animal_types(dbo),
-            "audit": self.checkb(users.VIEW_AUDIT_TRAIL) and audit.get_audit_for_link(dbo, "owner", p["ID"]) or [],
+            "audit": self.checkb(users.VIEW_AUDIT_TRAIL) and audit.get_audit_for_link(dbo, "owner", p.id) or [],
             "species": extlookups.get_species(dbo),
             "breeds": extlookups.get_breeds_by_species(dbo),
             "colours": extlookups.get_basecolours(dbo),
             "diarytasks": extdiary.get_person_tasks(dbo),
             "flags": extlookups.get_person_flags(dbo),
             "ynun": extlookups.get_ynun(dbo),
-            "homecheckhistory": extperson.get_homechecked(dbo, o.post.integer("id")),
+            "homecheckhistory": extperson.get_homechecked(dbo, p.id),
+            "jurisdictions": extlookups.get_jurisdictions(dbo),
             "logtypes": extlookups.get_log_types(dbo),
             "sexes": extlookups.get_sexes(dbo),
             "sites": extlookups.get_sites(dbo),
@@ -3883,7 +3922,7 @@ class person(JSONEndpoint):
             "towns": "|".join(extperson.get_towns(dbo)),
             "counties": "|".join(extperson.get_counties(dbo)),
             "towncounties": "|".join(extperson.get_town_to_county(dbo)),
-            "tabcounts": extperson.get_satellite_counts(dbo, p["ID"])[0],
+            "tabcounts": extperson.get_satellite_counts(dbo, p.id)[0],
             "templates": dbfs.get_document_templates(dbo),
             "person": p
         }
@@ -3977,11 +4016,13 @@ class person_embed(ASMEndpoint):
     check_logged_in = False
 
     def content(self, o):
+        if not session.dbo: raise utils.ASMPermissionError("No session")
         dbo = session.dbo
         self.header("Content-Type", "application/json")
         self.header("Cache-Control", "max-age=180") # This data can be cached for a few minutes - good for multi-widgets on one page
         return utils.json({
             "additional": extadditional.get_additional_fields(dbo, 0, "person"),
+            "jurisdictions": extlookups.get_jurisdictions(dbo),
             "towns": "|".join(extperson.get_towns(dbo)),
             "counties": "|".join(extperson.get_counties(dbo)),
             "towncounties": "|".join(extperson.get_town_to_county(dbo)),
@@ -4231,6 +4272,7 @@ class person_new(JSONEndpoint):
             "counties": "|".join(extperson.get_counties(dbo)),
             "towncounties": "|".join(extperson.get_town_to_county(dbo)),
             "additional": extadditional.get_additional_fields(dbo, 0, "person"),
+            "jurisdictions": extlookups.get_jurisdictions(dbo),
             "flags": extlookups.get_person_flags(dbo),
             "sites": extlookups.get_sites(dbo)
         }
@@ -4240,6 +4282,7 @@ class person_new(JSONEndpoint):
 
 class person_rota(JSONEndpoint):
     url = "person_rota"
+    js_module = "rota"
     get_permissions = users.VIEW_ROTA
 
     def controller(self, o):
@@ -4628,6 +4671,7 @@ class service(ASMEndpoint):
         else:
             self.header("Content-Type", contenttype)
             self.header("Cache-Control", "max-age=%d" % maxage)
+            self.header("Access-Control-Allow-Origin", "*") # CORS
             return response
 
     def content(self, o):
@@ -4753,6 +4797,10 @@ class sql_dump(GeneratorEndpoint):
             al.info("%s executed SQL database dump" % str(session.user), "code.sql", dbo)
             self.header("Content-Disposition", "attachment; filename=\"dump.sql\"")
             for x in dbupdate.dump(dbo): yield x
+        if mode == "dumpsqlmedia":
+            al.info("%s executed SQL database dump (base64/media)" % str(session.user), "code.sql", dbo)
+            self.header("Content-Disposition", "attachment; filename=\"media.sql\"")
+            for x in dbupdate.dump_dbfs_base64(dbo): yield x
         elif mode == "dumpsqlnomedia":
             al.info("%s executed SQL database dump (without media)" % str(session.user), "code.sql", dbo)
             self.header("Content-Disposition", "attachment; filename=\"dump.sql\"")
@@ -5081,6 +5129,7 @@ class vaccination(JSONEndpoint):
             "name": "vaccination",
             "newvacc": o.post.integer("newvacc") == 1,
             "rows": vacc,
+            "batches": extmedical.get_batch_for_vaccination_types(dbo),
             "manufacturers": "|".join(extmedical.get_vacc_manufacturers(dbo)),
             "stockitems": extstock.get_stock_items(dbo),
             "stockusagetypes": extlookups.get_stock_usage_types(dbo),

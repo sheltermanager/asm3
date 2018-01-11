@@ -13,6 +13,7 @@ YEAR(DateBroughtIn) AS biyear,
 AVG(DaysOnShelter) AS TimeOnShelter
 FROM animal
 WHERE DaysOnShelter > 0
+AND NonShelterAnimal = 0
 GROUP BY YEAR(DateBroughtIn)
 ###
 GRAPH PIE
@@ -32,6 +33,7 @@ YEAR(DateBroughtIn) AS biyear,
 AVG(DaysOnShelter) AS TimeOnShelter
 FROM animal
 WHERE DaysOnShelter > 0
+AND NonShelterAnimal = 0
 GROUP BY YEAR(DateBroughtIn)
 ###
 GRAPH PIE
@@ -51,6 +53,7 @@ CAST(EXTRACT(YEAR FROM DateBroughtIn) AS INTEGER) AS biyear,
 CAST(AVG(DaysOnShelter) AS INTEGER) AS avtimeonshelter
 FROM animal
 WHERE DaysOnShelter > 0
+AND NonShelterAnimal = 0
 GROUP BY EXTRACT(YEAR FROM DateBroughtIn)
 ORDER BY EXTRACT(YEAR FROM DateBroughtIn)
 ###

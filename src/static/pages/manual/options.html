@@ -396,29 +396,54 @@ box.</li>
 <h2>Defaults<a class="headerlink" href="#defaults" title="Permalink to this headline">¶</a></h2>
 <p>This screen allows configuration of the system defaults. These defaults are
 used to select starting values when finding and creating animals.</p>
-<ul class="simple">
-<li>Mark new animals as not for adoption: Setting this option will cause ASM to
+<ul>
+<li><p class="first">Mark new animals as not for adoption: Setting this option will cause ASM to
 automatically tick the “not for adoption” box when creating new animals. This
 is an extra precaution - by forcing users to untick the box when necessary,
-no animal can be accidentally published.</li>
-<li>Prefill new media notes for animal images with animal comments if left blank:
+no animal can be accidentally published.</p>
+</li>
+<li><p class="first">Prefill new media notes for animal images with animal comments if left blank:
 If no notes are given when adding images as media, ASM will default the
-animal&#8217;s comments field.</li>
-<li>Prefill new media notes with the filename if left blank: If the media being
+animal&#8217;s comments field.</p>
+</li>
+<li><p class="first">Prefill new media notes with the filename if left blank: If the media being
 added is not an image and the notes are blank, use the original filename as
-the notes.</li>
-<li>Include off-shelter animals in medical calendar and books: If ticked, animals
+the notes.</p>
+</li>
+<li><p class="first">Include off-shelter animals in medical calendar and books: If ticked, animals
 with outstanding medical/vacc/tests that have left the shelter will be shown
-in medical books and the medical calendar.</li>
-<li>When I change the location of an animal, make a note of it in the log: If
+in medical books and the medical calendar.</p>
+</li>
+<li><p class="first">When I change the location of an animal, make a note of it in the log: If
 this option is on, a log record is created every time you change an animal&#8217;s
 internal location with the new location so you can track the history of where
-the animal has moved within your shelter.</li>
-<li>When I change the weight of an animal, make a note of it in the log: If
+the animal has moved within your shelter.</p>
+</li>
+<li><p class="first">When I change the weight of an animal, make a note of it in the log: If
 this option is on, a log record is created every time you change an animal&#8217;s
 weight so you can track the history of an animal&#8217;s wieght with reports and
-graphs.</li>
+graphs.</p>
+</li>
+<li><p class="first">Anonymize personal data after this many years: If this option is on, the
+system will automatically anonymize person records this many years after
+their creation. Anonymizing will blank the name, email, address and telephone
+fields. The city, state and zipcode (town, county and postcode for other locales)
+will be retained along with the rest of the person data for statistics
+and reporting. This option helps organisations in the EU to comply with
+data retention policies and the GDPR by removing identifiable personal data.</p>
+<p>To be anonymized, a record needs to be older than the retention period, and
+all payments, movements or log entries attached to the person must be older
+than the retention period.  The person record cannot have any flag that
+indicates an ongoing relationship with the shelter. These flags are:</p>
+<blockquote>
+<div><p>aco, adoptioncoordinator, retailer, homechecker, member, shelter, foster, staff, vet, volunteer</p>
+</div></blockquote>
+</li>
 </ul>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">Once anonymized, personal data is gone forever and cannot be recovered.</p>
+</div>
 </div>
 <div class="section" id="diary">
 <h2>Diary<a class="headerlink" href="#diary" title="Permalink to this headline">¶</a></h2>

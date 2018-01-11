@@ -28,7 +28,7 @@ a.AnimalComments,
 s.SpeciesName
 FROM animal a
 LEFT OUTER JOIN species s ON s.ID = a.SpeciesID
-WHERE Archived = 0 AND (ShelterLocation = $@loc$ OR $@loc$ = 0)
+WHERE Archived = 0 AND ActiveMovementType Is Null AND (ShelterLocation = $@loc$ OR $@loc$ = 0)
 ORDER BY s.SpeciesName, a.AnimalName
 ###
 $$HEADER

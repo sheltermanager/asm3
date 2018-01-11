@@ -14,9 +14,9 @@ Will also look in PATH/images/ANIMALKEY.[jpg|JPG] for animal photos if available
 6th Oct, 2014 - 19th April, 2017
 """
 
-PATH = "data/shelterpro_dd1372"
+PATH = "data/shelterpro_zf1009"
 
-START_ID = 2500
+START_ID = 100
 
 INCIDENT_IMPORT = True
 LICENCE_IMPORT = True
@@ -155,6 +155,7 @@ for row in canimal:
     a.CreatedDate = a.DateBroughtIn
     a.EntryReasonID = 4
     a.generateCode(gettypeletter(a.AnimalTypeID))
+    a.ShortCode = row["ANIMALKEY"]
     a.Neutered = asm.cint(row["FIX"])
     a.Declawed = asm.cint(row["DECLAWED"])
     a.IsNotAvailableForAdoption = 0
@@ -269,7 +270,7 @@ for row in cshelter:
     if ppa.has_key(row["ANIMALKEY"]):
         a = ppa[row["ANIMALKEY"]]
         arivdate = getdate(row["ARIVDATE"])
-        a.ShortCode = asm.strip(row["FIELDCARD"])
+        a.ShortCode = asm.strip(row["ANIMALKEY"])
         a.ShelterLocationUnit = asm.strip(row["KENNEL"])
         a.NonShelterAnimal = 0
         if arivdate is not None:
@@ -277,7 +278,7 @@ for row in cshelter:
             a.LastChangedDate = a.DateBroughtIn
             a.CreatedDate = a.DateBroughtIn
             a.generateCode(gettypeletter(a.AnimalTypeID))
-            a.ShortCode = asm.strip(row["FIELDCARD"])
+            a.ShortCode = asm.strip(row["ANIMALKEY"])
     else:
         # Couldn't find an animal record, bail
         continue
@@ -421,7 +422,8 @@ if INCIDENT_IMPORT:
         elif row["FINALOUTCOME"] == "OTHER":
             ac.IncidentCompletedID = 6 # Does not exist in default data
         ac.IncidentTypeID = 1
-        comments = "outcome: %s\n" % row["FINALOUTCOME"]
+        comments = "case: %s\n" % row["INCIDENTKEY"]
+        comments += "outcome: %s\n" % row["FINALOUTCOME"]
         comments += "precinct: %s\n" % row["PRECINCT"]
         ac.CallNotes = comments
         ac.Sex = 2

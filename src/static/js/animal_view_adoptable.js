@@ -1,7 +1,7 @@
 /*jslint browser: true, forin: true, eqeq: true, white: true, plusplus: true, sloppy: true, vars: true, nomen: true */
 /*global alert */
 /*global asm3_adoptable_filters, asm3_adoptable_iframe, asm3_adoptable_iframe_height, asm3_adoptable_iframe_bgcolor */
-/*global asm3_adoptable_translations, asm3_adoptable_extra, asm3_adoptable_filter */
+/*global asm3_adoptable_translations, asm3_adoptable_extra, asm3_adoptable_filter, asm3_adoptable_limit, asm3_adoptable_sort */
 
 (function() {
 
@@ -32,6 +32,16 @@
     var iframe_bgcolor = "#fff";
     if (typeof asm3_adoptable_iframe_bgcolor !== 'undefined') {
         iframe_bgcolor = asm3_adoptable_iframe_bgcolor;
+    }
+
+    var sort_order = "ANIMALNAME";
+    if (typeof asm3_adoptable_sort !== 'undefined') {
+        sort_order = asm3_adoptable_sort;
+    }
+
+    var limit = 0;
+    if (typeof asm3_adoptable_limit !== 'undefined') {
+        limit = asm3_adoptable_limit;
     }
 
     var translate = function(s) {
@@ -152,6 +162,8 @@
                 extra = asm3_adoptable_extra(item);
             }
             
+            if (limit > 0 && index >= limit) { return; }
+
             h.push(substitute(thumbnail_template, {
                 account: account,
                 baseurl: baseurl,
@@ -199,7 +211,7 @@
             sexoptions: construct_options("(any gender)", "SEX", "SEXNAME")
         });
 
-        adoptables.sort(sort_single("ANIMALNAME"));
+        adoptables.sort(sort_single(sort_order));
         render_adoptables();
 
         document.getElementById("asm3-select-species").addEventListener("change", render_adoptables);

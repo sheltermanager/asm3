@@ -446,6 +446,7 @@ class ASMValidationError(web.HTTPError):
         status = '500 Internal Server Error'
         headers = { 'Content-Type': "text/html" }
         data = "<h1>Validation Error</h1><p>%s</p>" % msg
+        if "headers" not in web.ctx: web.ctx.headers = []
         web.HTTPError.__init__(self, status, headers, data)
 
     def getMsg(self):
@@ -459,6 +460,7 @@ class ASMPermissionError(web.HTTPError):
         status = '500 Internal Server Error'
         headers = { 'Content-Type': "text/html" }
         data = "<h1>Permission Error</h1><p>%s</p>" % msg
+        if "headers" not in web.ctx: web.ctx.headers = []
         web.HTTPError.__init__(self, status, headers, data)
 
 class ASMError(web.HTTPError):
@@ -469,6 +471,7 @@ class ASMError(web.HTTPError):
         status = '500 Internal Server Error'
         headers = { 'Content-Type': "text/html" }
         data = "<h1>Error</h1><p>%s</p>" % msg
+        if "headers" not in web.ctx: web.ctx.headers = []
         web.HTTPError.__init__(self, status, headers, data)
 
 def df_c(data, field):
@@ -605,6 +608,54 @@ def escape_tinymce(content):
     c = c.replace("&lt;style\n", "&lt;style&gt;\n")
     return c
 
+class UnicodeCSVReader(object):
+    """
+    A CSV reader that reads UTF-8 and converts any unicode values to
+    XML entities.
+    """
+    encoding = "utf-8-sig"
+    def __init__(self, f, dialect=extcsv.excel, encoding="utf-8-sig", **kwds):
+        self.encoding = encoding
+        self.reader = extcsv.reader(f, dialect=dialect, **kwds)
+
+    def next(self):
+        """ 
+        next() -> unicode
+        This function reads and returns the next line as a Unicode string.
+        """
+        row = self.reader.next()
+        return [ self.process(s) for s in row ]
+
+    def process(self, s):
+        """ Process an element """
+        x = cunicode(s, self.encoding) # decode to unicode with selected encoding
+        x = x.encode("ascii", "xmlcharrefreplace") # encode back to ascii, using XML entities
+        if x.startswith("\""): x = x[1:] # strip any unwanted quotes from the beginning
+        if x.endswith("\""): x = x[0:len(x)-1] # ... and end
+        return x
+
+    def __iter__(self):
+        return self
+
+class UnicodeCSVDictReader(object):
+    """
+    A CSV reader that uses UnicodeCSVReader to handle UTF-8 and returns
+    each row as a dictionary instead.
+    """
+    def __init__(self, f):
+        self.reader = UnicodeCSVReader(f)
+        self.cols = self.reader.next()
+
+    def next(self):
+        row = self.reader.next()
+        d = {}
+        for (c, r) in zip(self.cols, row):
+            d[c] = r
+        return d
+
+    def __iter__(self):
+        return self
+
 class UnicodeCSVWriter(object):
     """
     A CSV writer which will write rows to CSV file "f",
@@ -673,16 +724,28 @@ def fix_relative_document_uris(s, baseurl, account = "" ):
     ones to the service so that documents will work outside of 
     the ASM UI.
     """
-    dbp = ""
-    accountp = ""
-    if account != "":
-        dbp = "db=%s&amp;" % account
-        accountp = "&account=" + account
-    s = s.replace("image?mode=animal&amp;id=", baseurl + "/service?method=animal_image" + accountp + "&animalid=")
-    s = s.replace("image?mode=dbfs&amp;id=/reports/", baseurl + "/service?method=extra_image" + accountp + "&title=")
-    s = s.replace("image?" + dbp + "mode=dbfs&amp;id=/reports/", baseurl + "/service?method=extra_image" + accountp + "&title=")
-    s = s.replace("image?mode=dbfs&amp;id=", baseurl + "/service?method=dbfs_image" + accountp + "&title=")
-    s = s.replace("image?" + dbp + "mode=dbfs&amp;id=", baseurl + "/service?method=dbfs_image" + accountp + "&title=")
+    patterns = (
+        # animal images
+        ( "image?mode=animal&amp;id=", "animal_image", "animalid" ),
+        ( "image?db={account}&ampmode=animal&amp;id=", "animal_image", "animalid" ),
+        ( "image?db={account}&mode=animal&id=", "animal_image", "animalid" ),
+
+        # animal thumbnail images
+        ( "image?mode=animalthumb&amp;id=", "animal_thumbnail", "animalid" ),
+        ( "image?db={account}&amp;mode=animalthumb&amp;id=", "animal_thumbnail", "animalid" ),
+        ( "image?db={account}&mode=animalthumb&id=", "animal_thumbnail", "animalid" ),
+
+        # report/extra images
+        ( "image?mode=dbfs&amp;id=/reports/", "extra_image", "title" ),
+        ( "image?db={account}&amp;mode=dbfs&amp;id=/reports/", "extra_image", "title" ),
+
+        # any image in the dbfs by path
+        ( "image?mode=dbfs&amp;id=", "dbfs_image", "title" ),
+        ( "image?db={account}&amp;mode=dbfs&amp;id=", "dbfs_image", "title" )
+    )
+    for f, m, p in patterns:
+        f = f.replace("{account}", account)
+        s = s.replace(f, baseurl + "/service?method=" + m + "&account=" + account + "&" + p + "=")
     return s
 
 def substitute_tags(searchin, tags, use_xml_escaping = True, opener = "&lt;&lt;", closer = "&gt;&gt;"):
@@ -784,6 +847,19 @@ def get_url(url, headers = {}, cookies = {}, timeout = None):
     r = requests.get(url, headers = headers, cookies=cookies, timeout=timeout)
     return { "cookies": r.cookies, "headers": r.headers, "response": r.text, "status": r.status_code, "requestheaders": r.request.headers, "requestbody": r.request.body }
 
+def post_data(url, data, contenttype = "", headers = {}):
+    """
+    Posts data to a URL as the body
+    """
+    try:
+        if contenttype != "":
+            headers["Content-Type"] = "text/csv"
+        req = urllib2.Request(url, data, headers)
+        resp = urllib2.urlopen(req)
+        return { "requestheaders": headers, "requestbody": data, "headers": resp.info().headers, "response": resp.read(), "status": resp.getcode() }
+    except urllib2.HTTPError as e:
+        return { "requestheaders": headers, "requestbody": data, "headers": e.info().headers, "response": e.read(), "status": e.getcode() }
+
 def post_form(url, fields, headers = {}, cookies = {}):
     """
     Does a form post
@@ -819,25 +895,13 @@ def post_json(url, json, headers = {}):
     """
     Posts a JSON document to a URL
     """
-    try:
-        headers["Content-Type"] = "text/json"
-        req = urllib2.Request(url, json, headers)
-        resp = urllib2.urlopen(req)
-        return { "headers": resp.info().headers, "response": resp.read(), "status": resp.getcode() }
-    except urllib2.HTTPError as e:
-        return { "headers": e.info().headers, "response": e.read(), "status": e.getcode() }
+    return post_data(url, json, "text/json", headers)
 
 def post_xml(url, xml, headers = {}):
     """
     Posts an XML document to a URL
     """
-    try:
-        headers["Content-Type"] = "text/xml"
-        req = urllib2.Request(url, xml, headers)
-        resp = urllib2.urlopen(req)
-        return { "headers": resp.info().headers, "response": resp.read(), "status": resp.getcode() }
-    except urllib2.HTTPError as e:
-        return { "headers": e.info().headers, "response": e.read(), "status": e.getcode() }
+    return post_data(url, xml, "text/xml", headers)
 
 def read_text_file(name):
     """
@@ -1091,6 +1155,12 @@ def html_to_pdf(htmldata, baseurl = "", account = ""):
     if ps != "":
         w, h = ps.split("x")
         papersize = "--page-width %s --page-height %s" % (w, h)
+    # Margins, top/bottom/left/right eg: <!-- pdf margins 2cm 2cm 2cm 2cm end -->
+    margins = "--margin-top 1cm"
+    mg = regex_one("pdf margins (.+?) end", htmldata)
+    if mg != "":
+        tm, bm, lm, rm = mg.split(" ")
+        margins = "--margin-top %s --margin-bottom %s --margin-left %s --margin-right %s" % (tm, bm, lm, rm)
     header = "<!DOCTYPE HTML>\n<html>\n<head>"
     header += '<meta http-equiv="content-type" content="text/html; charset=utf-8">\n'
     header += "</head><body>"
@@ -1114,7 +1184,7 @@ def html_to_pdf(htmldata, baseurl = "", account = ""):
     inputfile.flush()
     inputfile.close()
     outputfile.close()
-    cmdline = HTML_TO_PDF % { "output": outputfile.name, "input": inputfile.name, "orientation": orientation, "papersize": papersize }
+    cmdline = HTML_TO_PDF % { "output": outputfile.name, "input": inputfile.name, "orientation": orientation, "papersize": papersize, "margins": margins }
     code, output = cmd(cmdline)
     if code > 0:
         al.error("code %s returned from '%s': %s" % (code, cmdline, output), "utils.html_to_pdf")

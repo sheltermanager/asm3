@@ -46,3 +46,44 @@ BODY$$
 $$FOOTER
 </table>
 FOOTER$$
+&&&
+Income Breakdown Chart
+###
+Accounts
+###
+2870/PostgreSQL
+###
+A graph of income received between two dates
+###
+en
+###
+SELECT a.Code,
+SUM(ABS(ROUND(x.Amount / 100.0, 2))) 
+FROM accountstrx x
+INNER JOIN accounts a ON a.ID = x.SourceAccountID
+WHERE a.AccountType = 5 AND x.TrxDate >= '$ASK DATE Transactions between$' AND x.TrxDate <= '$ASK DATE and$' 
+GROUP BY a.Code
+ORDER BY a.Code
+###
+GRAPH PIE
+&&&
+Expense Breakdown Chart
+###
+Accounts
+###
+2870/PostgreSQL
+###
+A graph of expenses paid between two dates
+###
+en
+###
+SELECT a.Code,
+SUM(ABS(ROUND(x.Amount / 100.0, 2))) 
+FROM accountstrx x
+INNER JOIN accounts a ON a.ID = x.DestinationAccountID
+WHERE a.AccountType = 4 AND x.TrxDate >= '$ASK DATE Transactions between$' AND x.TrxDate <= '$ASK DATE and$' 
+GROUP BY a.Code
+ORDER BY a.Code
+###
+GRAPH PIE
+

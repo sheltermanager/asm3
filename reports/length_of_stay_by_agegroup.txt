@@ -18,7 +18,7 @@ INNER JOIN species s ON s.ID = a.SpeciesID
 INNER JOIN entryreason e ON e.ID = a.EntryReasonID
 WHERE a.DateBroughtIn >= '$ASK DATE Animals entering the shelter between$' AND a.DateBroughtIn <= '$ASK DATE and$'
 AND NonShelterAnimal = 0 
-ORDER BY a.BreedName, a.DateBroughtIn
+ORDER BY a.AgeGroup, a.DateBroughtIn
 ###
 $$HEADER
 HEADER$$

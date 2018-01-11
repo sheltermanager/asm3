@@ -1,6 +1,6 @@
 Monthly Adoptions By Location
 ###
-Financial Charts
+Movement Charts
 ###
 3000/MySQL
 ###
@@ -23,7 +23,7 @@ GRAPH BARS
 &&&
 Monthly Adoptions By Location
 ###
-Financial Charts
+Movement Charts
 ###
 3000/PostgreSQL
 ###

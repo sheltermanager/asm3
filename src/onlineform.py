@@ -472,51 +472,40 @@ def insert_onlineform_from_form(dbo, username, post):
     """
     Create an onlineform record from posted data
     """
-    formid = db.get_id(dbo, "onlineform")
-    sql = db.make_insert_sql("onlineform", ( 
-        ( "ID", db.di(formid)),
-        ( "Name", post.db_string("name")),
-        ( "RedirectUrlAfterPOST", post.db_string("redirect")),
-        ( "SetOwnerFlags", post.db_string("flags")),
-        ( "EmailAddress", post.db_string("email")),
-        ( "EmailSubmitter", post.db_boolean("emailsubmitter")),
-        ( "EmailMessage", db.ds(post["emailmessage"], False)),
-        ( "Header", db.ds(post["header"], False) ),
-        ( "Footer", db.ds(post["footer"], False) ),
-        ( "Description", db.ds(post["description"], False) )
-        ))
-    db.execute(dbo, sql)
-    audit.create(dbo, username, "onlineform", formid, audit.dump_row(dbo, "onlineform", formid))
-    return formid
+    return dbo.insert("onlineform", {
+        "Name":                 post["name"],
+        "RedirectUrlAfterPOST": post["redirect"],
+        "SetOwnerFlags":        post["flags"],
+        "EmailAddress":         post["email"],
+        "EmailSubmitter":       post.boolean("emailsubmitter"),
+        "*EmailMessage":        post["emailmessage"],
+        "*Header":              post["header"],
+        "*Footer":              post["footer"],
+        "*Description":         post["description"]
+    }, username, setCreated=False)
 
 def update_onlineform_from_form(dbo, username, post):
     """
     Update an onlineform record from posted data
     """
-    formid = post.integer("formid")
-    sql = db.make_update_sql("onlineform", "ID=%d" % formid, ( 
-        ( "Name", post.db_string("name")),
-        ( "RedirectUrlAfterPOST", post.db_string("redirect")),
-        ( "SetOwnerFlags", post.db_string("flags")),
-        ( "EmailAddress", post.db_string("email")),
-        ( "EmailSubmitter", post.db_boolean("emailsubmitter")),
-        ( "EmailMessage", db.ds(post["emailmessage"], False)),
-        ( "Header", db.ds(post["header"], False) ),
-        ( "Footer", db.ds(post["footer"], False) ),
-        ( "Description", db.ds(post["description"], False) )
-        ))
-    preaudit = db.query(dbo, "SELECT * FROM onlineform WHERE ID = %d" % formid)
-    db.execute(dbo, sql)
-    postaudit = db.query(dbo, "SELECT * FROM onlineform WHERE ID = %d" % formid)
-    audit.edit(dbo, username, "onlineform", formid, audit.map_diff(preaudit, postaudit))
+    return dbo.update("onlineform", post.integer("formid"), {
+        "Name":                 post["name"],
+        "RedirectUrlAfterPOST": post["redirect"],
+        "SetOwnerFlags":        post["flags"],
+        "EmailAddress":         post["email"],
+        "EmailSubmitter":       post.boolean("emailsubmitter"),
+        "*EmailMessage":        post["emailmessage"],
+        "*Header":              post["header"],
+        "*Footer":              post["footer"],
+        "*Description":         post["description"]
+    }, username, setLastChanged=False)
 
 def delete_onlineform(dbo, username, formid):
     """
     Deletes the specified onlineform and fields
     """
-    audit.delete(dbo, username, "onlineform", formid, audit.dump_row(dbo, "onlineform", formid))
-    db.execute(dbo, "DELETE FROM onlineformfield WHERE OnlineFormID = %d" % int(formid))
-    db.execute(dbo, "DELETE FROM onlineform WHERE ID = %d" % int(formid))
+    dbo.execute("DELETE FROM onlineformfield WHERE OnlineFormID = ?", [formid])
+    dbo.delete("onlineform", formid, username)
 
 def clone_onlineform(dbo, username, formid):
     l = dbo.locale
@@ -611,11 +600,18 @@ def insert_onlineformincoming_from_form(dbo, post, remoteip):
             raise utils.ASMValidationError("Invalid verification key")
     IGNORE_FIELDS = [ JSKEY_NAME, "formname", "flags", "redirect", "account", "filechooser", "method" ]
     l = dbo.locale
-    collationid = db.query_int(dbo, "SELECT MAX(CollationID) FROM onlineformincoming") + 1
+    collationid = dbo.query_int("SELECT MAX(CollationID) FROM onlineformincoming") + 1
     formname = post["formname"]
     posteddate = i18n.now(dbo.timezone)
     flags = post["flags"]
     submitteremail = ""
+    firstnamelabel = ""
+    firstname = ""
+    lastnamelabel = ""
+    lastname = ""
+    animalnamelabel = ""
+    animalname = ""
+    post.data["formreceived"] = "%s %s" % (i18n.python2display(dbo.locale, posteddate), i18n.format_time(posteddate))
     for k, v in post.data.iteritems():
         if k not in IGNORE_FIELDS and not k.startswith("asmSelect"):
             label = ""
@@ -628,14 +624,25 @@ def insert_onlineformincoming_from_form(dbo, post, remoteip):
             if k.find("_") != -1:
                 fid = utils.cint(k[k.rfind("_")+1:])
                 fieldname = k[0:k.rfind("_")]
-                if fieldname == "emailaddress": submitteremail = v.strip()
                 if fid != 0:
-                    fld = db.query(dbo, "SELECT FieldType, Label, Tooltip, DisplayIndex FROM onlineformfield WHERE ID = %d" % fid)
+                    fld = dbo.query("SELECT FieldType, Label, Tooltip, DisplayIndex FROM onlineformfield WHERE ID = ?", [fid])
                     if len(fld) > 0:
                         label = fld[0]["LABEL"]
                         displayindex = fld[0]["DISPLAYINDEX"]
                         fieldtype = fld[0]["FIELDTYPE"]
                         tooltip = fld[0]["TOOLTIP"]
+                        # Store a few known fields for access later
+                        if fieldname == "emailaddress": 
+                            submitteremail = v.strip()
+                        if fieldname == "firstname": 
+                            firstname = v.strip()
+                            firstnamelabel = label
+                        if fieldname == "lastname": 
+                            lastname = v.strip()
+                            lastnamelabel = label
+                        if fieldname == "animalname" or fieldname == "reserveanimalname":
+                            animalname = v.strip()
+                            animalnamelabel = label
                         # If it's a raw markup field, store the markup as the value
                         if fieldtype == FIELDTYPE_RAWMARKUP:
                             v = "RAW::%s" % tooltip
@@ -645,48 +652,60 @@ def insert_onlineformincoming_from_form(dbo, post, remoteip):
                             if utils.nulltostr(tooltip) != "":
                                 if flags != "": flags += ","
                                 flags += tooltip
-                                db.execute(dbo, "UPDATE onlineformincoming SET Flags = %s WHERE CollationID = %d" % (db.ds(flags), collationid))
+                                dbo.update("onlineformincoming", "CollationID=%s" % collationid, {
+                                    "Flags":    flags
+                                })
             # Do the insert
-            sql = db.make_insert_sql("onlineformincoming", ( 
-                ( "CollationID", db.di(collationid)),
-                ( "FormName", db.ds(formname)),
-                ( "PostedDate", db.ddt(posteddate)),
-                ( "Flags", db.ds(flags)),
-                ( "FieldName", db.ds(fieldname)),
-                ( "Label", db.ds(label)),
-                ( "DisplayIndex", db.di(displayindex)),
-                ( "Host", db.ds(remoteip)),
-                ( "Value", utils.iif(fieldtype == FIELDTYPE_RAWMARKUP, db.ds(v, False), db.ds(v)) )
-                ))
-            db.execute(dbo, sql)
+            dbo.insert("onlineformincoming", {
+                "CollationID":      collationid,
+                "FormName":         formname,
+                "PostedDate":       posteddate,
+                "Flags":            flags,
+                "FieldName":        fieldname,
+                "Label":            label,
+                "DisplayIndex":     displayindex,
+                "Host":             remoteip,
+                utils.iif(fieldtype == FIELDTYPE_RAWMARKUP, "*Value", "Value"): v # don't XSS escape raw markup by prefixing fieldname with *
+            }, generateID=False)
     # Sort out the preview of the first few fields
     fieldssofar = 0
     preview = []
+    # If we have first and last name, include them in the preview
+    if firstname != "" and lastname != "":
+        preview.append("%s: %s" % (firstnamelabel, firstname))
+        preview.append("%s: %s" % (lastnamelabel, lastname))
+        fieldssofar += 2
+    # If we have an animal name, include that too
+    if animalname != "":
+        preview.append("%s: %s" % (animalnamelabel, animalname))
+        fieldssofar += 1
     for fld in get_onlineformincoming_detail(dbo, collationid):
         if fieldssofar < 3:
             # Don't include raw markup or signature fields in the preview
             if fld["VALUE"].startswith("RAW::") or fld["VALUE"].startswith("data:"): continue
             fieldssofar += 1
-            preview.append( fld["LABEL"] + ": " + fld["VALUE"] )
-    db.execute(dbo, "UPDATE onlineformincoming SET Preview = %s WHERE CollationID = %s" % ( db.ds(", ".join(preview)), db.di(collationid) ))
+            preview.append( "%s: %s" % (fld["LABEL"], fld["VALUE"] ))
+    dbo.update("onlineformincoming", "CollationID=%s" % collationid, { 
+        "Preview": ", ".join(preview) 
+    })
     # Do we have a valid emailaddress for the submitter and EmailSubmitter is set? 
     # If so, send them a copy of their submission
-    emailsubmitter = db.query_int(dbo, "SELECT o.EmailSubmitter FROM onlineform o " \
+    emailsubmitter = dbo.query_int("SELECT o.EmailSubmitter FROM onlineform o " \
         "INNER JOIN onlineformincoming oi ON oi.FormName = o.Name " \
-        "WHERE oi.CollationID = %d" % int(collationid))
+        "WHERE oi.CollationID = ?", [collationid])
     if submitteremail != "" and submitteremail.find("@") != -1 and emailsubmitter == 1:
         # Get the confirmation message. If one hasn't been set, send a copy of the submission.
-        body = db.query_string(dbo, "SELECT o.EmailMessage FROM onlineform o " \
+        body = dbo.query_string("SELECT o.EmailMessage FROM onlineform o " \
             "INNER JOIN onlineformincoming oi ON oi.FormName = o.Name " \
-            "WHERE oi.CollationID = %d" % int(collationid))
+            "WHERE oi.CollationID = ?", [collationid])
         if body is None or body.strip() == "": 
             body = get_onlineformincoming_html_print(dbo, [collationid,])
         utils.send_email(dbo, configuration.email(dbo), submitteremail, "", i18n._("Submission received: {0}", l).format(formname), body, "html")
     # Did the original form specify some email addresses to send 
     # incoming submissions to?
-    email = db.query_string(dbo, "SELECT o.EmailAddress FROM onlineform o " \
+    email = dbo.query_string("SELECT o.EmailAddress FROM onlineform o " \
         "INNER JOIN onlineformincoming oi ON oi.FormName = o.Name " \
-        "WHERE oi.CollationID = %d" % int(collationid))
+        "WHERE oi.CollationID = ?", [collationid])
     if email is not None and email.strip() != "":
         # If a submitter email is set, use that to reply to instead
         replyto = submitteremail 
@@ -703,11 +722,12 @@ def delete_onlineformincoming(dbo, username, collationid):
     db.execute(dbo, "DELETE FROM onlineformincoming WHERE CollationID = %d" % int(collationid))
 
 def guess_agegroup(dbo, s):
-    """ Guesses an agegroup, returns the default if no match is found """
+    """ Guesses an agegroup, returns the third band (adult by default) if no match is found """
     s = str(s).lower()
-    guess = dbo.query_string("SELECT ItemValue FROM configuration WHERE ItemName LIKE ? AND LOWER(ItemValue) LIKE ?", ["AgeGroup%Name", "%%%s%%" % s])
-    if guess != "": return guess
-    return dbo.query_string("SELECT ItemValue FROM configuration WHERE ItemName LIKE ?", ["AgeGroup2Name"])
+    for g in configuration.age_groups(dbo):
+        if g.lower() == s:
+            return g
+    return configuration.age_group_name(dbo, 3)
 
 def guess_breed(dbo, s):
     """ Guesses a breed, returns the default if no match is found """

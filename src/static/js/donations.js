@@ -167,6 +167,7 @@ $(function() {
                                 }
                                 $("#quantity").val("1");
                                 $("#type").select("value", config.integer("AFDefaultDonationType"));
+                                $("#payment").select("value", config.integer("AFDefaultPaymentMethod"));
                                 $("#giftaid").prop("checked", false);
                                 $("#receiptnumber").val("");
                                 $("#receiptnumber").closest("tr").hide();

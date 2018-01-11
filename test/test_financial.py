@@ -44,7 +44,7 @@ class TestFinancial(unittest.TestCase):
         financial.get_donations(base.get_dbo())
 
     def test_get_donations_due_two_dates(self):
-        financial.get_donations_due_two_dates(base.get_dbo(), '2014-01-01', '2014-01-31')
+        financial.get_donations_due_two_dates(base.get_dbo(), base.today(), base.today())
 
     def test_get_animal_donations(self):
         financial.get_animal_donations(base.get_dbo(), 0)

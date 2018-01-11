@@ -407,6 +407,15 @@ $(function() {
                 '<input type="text" id="microchipnumber" data-json="IDENTICHIPNUMBER" data-post="microchipnumber" class="asm-textbox" title="' + html.title(_("The microchip number")) + '" /> <span id="microchipbrand"></span>',
                 '</td>',
                 '</tr>',
+                '<tr id="microchiprow2">',
+                '<td nowrap="nowrap"></td>',
+                '<td>',
+                '<input id="microchipdate2" data-json="IDENTICHIP2DATE" data-post="microchipdate2" class="asm-halftextbox asm-datebox" title="' + html.title(_("The date the animal was microchipped")) + '" />',
+                '</td>',
+                '<td>',
+                '<input type="text" id="microchipnumber2" data-json="IDENTICHIP2NUMBER" data-post="microchipnumber2" class="asm-textbox" title="' + html.title(_("The microchip number")) + '" /> <span id="microchipbrand2"></span>',
+                '</td>',
+                '</tr>',
                 '<tr id="tattoorow">',
                 '<td>',
                 '<input class="asm-checkbox" type="checkbox" id="tattoo" data-json="TATTOO" data-post="tattoo" title="' + html.title(_("This animal has a tattoo")) + '" />',
@@ -442,6 +451,9 @@ $(function() {
                 '</td>',
                 '<td>',
                 '<input id="neutereddate" data-json="NEUTEREDDATE" data-post="neutereddate" class="asm-halftextbox asm-datebox" title="' + html.title(_("The date the animal was altered")) + '" />',
+                '</td>',
+                '<td valign="top">',
+                '<input id="neuteringvet" data-json="NEUTEREDBYVETID" data-post="neuteringvet" data-mode="brief" data-filter="vet" type="hidden" class="asm-personchooser" />',
                 '</td>',
                 '</tr>',
                 '<tr id="declawedrow">',
@@ -529,6 +541,46 @@ $(function() {
                 '</table>',
                 '</div>'
             ].join("\n");
+        },
+
+        render_incidents: function() {
+            
+            if (controller.incidents.length == 0 || !common.has_permission("vaci")) {
+                return;
+            }
+
+            var h = [
+                '<h3><a href="#">' + _("Incidents") + '</a></h3>',
+                '<div>',
+                '<table class="asm-table">',
+                '<thead>',
+                '<tr>',
+                '<th>' + _("Type") + '</th>',
+                '<th>' + _("Number") + '</th>',
+                '<th>' + _("Incident Date/Time") + '</th>',
+                '<th>' + _("Address") + '</th>',
+                '<th>' + _("Suspect") + '</th>',
+                '<th>' + _("Completed") + '</th>',
+                '<th>' + _("Notes") + '</th>',
+                '</tr>',
+                '</thead>',
+                '<tbody>'
+            ];
+
+            $.each(controller.incidents, function(i, v) {
+                h.push('<tr>');
+                h.push('<td><b><a href="incident?id=' + v.ACID + '">' + v.INCIDENTNAME + '</a></b></td>');
+                h.push('<td>' + format.padleft(v.ACID, 6) + '</td>');
+                h.push('<td>' + format.date(v.INCIDENTDATETIME) + ' ' + format.time(v.INCIDENTDATETIME) + '</td>');
+                h.push('<td>' + v.DISPATCHADDRESS + ', ' + v.DISPATCHTOWN + ' ' + v.DISPATCHCOUNTY + ' ' + v.DISPATCHPOSTCODE + '</td>');
+                h.push('<td><b>' + html.person_link(v.OWNERID, v.OWNERNAME) + '</b></td>');
+                h.push('<td>' + format.date(v.COMPLETEDDATE) + ' ' + common.nulltostr(v.COMPLETEDNAME) + '</td>');
+                h.push('<td>' + v.CALLNOTES + '</td>');
+                h.push('</tr>');
+            });
+
+            h.push('</table></div>');
+            return h.join("\n");
         },
 
         render_notes: function() {
@@ -742,6 +794,7 @@ $(function() {
                 this.render_entry(),
                 this.render_health_and_identification(),
                 this.render_death(),
+                this.render_incidents(),
                 this.render_publish_history(),
                 html.audit_trail_accordion(controller),
                 '</div>', // accordion
@@ -789,9 +842,15 @@ $(function() {
                         if (!desc) { desc = _("(available)"); }
                         src.push({ label: unit + ' : ' + desc, value: unit });
                     });
-                    // Load the unit source and trigger display of the
-                    // dropdown on focus
-                    $("#unit").autocomplete({ source: src }).bind('focus', function() { 
+                    // Reload the source of available units
+                    $("#unit").autocomplete({ 
+                        source: src,
+                        // Dirty the form when an item is chosen from the dropdown
+                        select: function(event, ui) {
+                            validate.dirty(true);
+                        }
+                    // Display the autocomplete on focus
+                    }).bind('focus', function() { 
                         $(this).autocomplete("search", ":"); 
                     });
                 });
@@ -843,10 +902,11 @@ $(function() {
             $("#rabiestagrow").toggle( $("#species").select("value") == 1 || $("#species").select("value") == 2 );
 
             // Enable/disable health and identification fields based on checkboxes
-            $("#microchipdate, #microchipnumber").toggle($("#microchipped").is(":checked"));
+            $("#microchipdate, #microchipnumber, #microchiprow2").toggle($("#microchipped").is(":checked"));
             $("#tattoodate, #tattoonumber").toggle($("#tattoo").is(":checked"));
             $("#smarttagnumber, #smarttagtype").toggle($("#smarttag").is(":checked"));
             $("#neutereddate").toggle($("#neutered").is(":checked"));
+            $("#neuteringvet").closest("td").toggle($("#neutered").is(":checked"));
             $("#heartwormtestdate, #heartwormtestresult").toggle($("#heartwormtested").is(":checked"));
             $("#fivltestdate, #fivresult, #flvresult").toggle($("#fivltested").is(":checked"));
 
@@ -914,7 +974,11 @@ $(function() {
                 $("#lastlocation").hide();
                 $("#locationrow").hide();
                 $("#locationunitrow").hide();
-                if ($("#animalname").val().indexOf("Template") != 0) { $("#feerow").hide(); } // Only hide the fee for non-shelter non-template animals
+                if ($("#animalname").val().indexOf("Template") != 0) { 
+                    // Only hide the fee and intake date for non-shelter non-template animals
+                    $("#feerow").hide(); 
+                    $("#datebroughtinrow").hide();
+                } 
                 $("#transferinrow").hide();
                 $("#pickeduprow").hide();
                 $("#holdrow").hide();
@@ -1002,7 +1066,7 @@ $(function() {
             if (config.bool("DontShowCoatType")) { $("#coattyperow").hide(); }
             if (config.bool("DontShowSize")) { $("#sizerow").hide(); }
             if (config.bool("DontShowWeight")) { $("#kilosrow, #poundsrow").hide(); }
-            if (config.bool("DontShowMicrochip")) { $("#microchiprow").hide(); }
+            if (config.bool("DontShowMicrochip")) { $("#microchiprow, #microchiprow2").hide(); }
             if (config.bool("DontShowTattoo")) { $("#tattoorow").hide(); }
             if (config.str("SmartTagFTPUser") == "") { $("#smarttagrow").hide(); }
             if (config.bool("DontShowBonded")) { $("#bondedwith1row, #bondedwith2row").hide(); }
@@ -1049,28 +1113,32 @@ $(function() {
         },
 
         show_microchip_supplier: function() {
-            var m, 
-                n = $("#microchipnumber").val();
-            if (!n) { 
-                $("#microchipbrand").fadeOut();
-                return;
-            }
-            $.each(controller.microchipmanufacturers, function(i, v) {
-                if (n.length == v.length && new RegExp(v.regex).test(n)) {
-                    if (v.locales == "" || $.inArray(asm.locale, v.locales.split(" ")) != -1) {
-                        m = "<span style='font-weight: bold'>" + v.name + "</span>";
-                        return false;
-                    }
+            var pair = function(microchipnumber, microchipbrand) {
+                var m, 
+                    n = $(microchipnumber).val();
+                if (!n) { 
+                    $(microchipbrand).fadeOut();
+                    return;
                 }
-            });
-            if (!m && (n.length != 9 && n.length != 10 && n.length != 15)) {
-                m = "<span style='font-weight: bold; color: red'>" + _("Invalid microchip number length") + "</span>";
-            }
-            if (!m) {
-                m = "<span style='font-weight: bold; color: red'>" + _("Unknown microchip brand") + "</span>";
-            }
-            $("#microchipbrand").html(m);
-            $("#microchipbrand").fadeIn();
+                $.each(controller.microchipmanufacturers, function(i, v) {
+                    if (n.length == v.length && new RegExp(v.regex).test(n)) {
+                        if (v.locales == "" || $.inArray(asm.locale, v.locales.split(" ")) != -1) {
+                            m = "<span style='font-weight: bold'>" + v.name + "</span>";
+                            return false;
+                        }
+                    }
+                });
+                if (!m && (n.length != 9 && n.length != 10 && n.length != 15)) {
+                    m = "<span style='font-weight: bold; color: red'>" + _("Invalid microchip number length") + "</span>";
+                }
+                if (!m) {
+                    m = "<span style='font-weight: bold; color: red'>" + _("Unknown microchip brand") + "</span>";
+                }
+                $(microchipbrand).html(m);
+                $(microchipbrand).fadeIn();
+            };
+            pair("#microchipnumber", "#microchipbrand");
+            pair("#microchipnumber2", "#microchipbrand2");
         },
 
         /** Validates the form fields prior to saving */
@@ -1222,6 +1290,7 @@ $(function() {
             // the alphanumberbox widget.
             if (!config.bool("AllowNonANMicrochip")) {
                 $("#microchipnumber").alphanumber();
+                $("#microchipnumber2").alphanumber();
                 $("#tattoonumber").alphanumber();
             }
 
@@ -1254,6 +1323,7 @@ $(function() {
             // If the microchip number changes, lookup the manufacturer and
             // display it
             $("#microchipnumber").change(animal.show_microchip_supplier);
+            $("#microchipnumber2").change(animal.show_microchip_supplier);
 
             additional.relocate_fields();
 
@@ -1341,7 +1411,9 @@ $(function() {
             $("#specialneeds").change(animal.enable_widgets);
             $("#litterid").keyup(animal.enable_widgets);
             $("#microchipnumber").keyup(animal.enable_widgets);
+            $("#microchipnumber2").keyup(animal.enable_widgets);
             $("#microchipdate").change(animal.enable_widgets);
+            $("#microchipdate2").change(animal.enable_widgets);
             $("#pickedup").click(animal.enable_widgets).keyup(animal.enable_widgets);
             $("#transferin").click(animal.enable_widgets).keyup(animal.enable_widgets);
             $("#crossbreed").click(animal.enable_widgets).keyup(animal.enable_widgets);
@@ -1372,8 +1444,10 @@ $(function() {
             $("#button-clone").button().click(function() {
                 $("#button-clone").button("disable");
                 var formdata = "mode=clone&animalid=" + $("#animalid").val();
+                header.show_loading(_("Cloning..."));
                 common.ajax_post("animal", formdata)
                     .then(function(result) { 
+                        header.hide_loading();
                         common.route("animal?id=" + result + "&cloned=true"); 
                     });
             });
@@ -1477,6 +1551,7 @@ $(function() {
             common.widget_destroy("#bonded2", "animalchooser");
             common.widget_destroy("#originalowner", "personchooser");
             common.widget_destroy("#broughtinby", "personchooser");
+            common.widget_destroy("#neuteringvet", "personchooser");
             common.widget_destroy("#coordinator", "personchooser");
             common.widget_destroy("#pickedupby", "personchooser");
             common.widget_destroy("#currentvet", "personchooser");

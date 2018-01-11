@@ -199,6 +199,20 @@ information below the animal's name in the list::
     <div id="asm3-adoptables" />
     <script src="http://localhost:5000/service?method=animal_view_adoptable_js"></script>
 
+Sort
+^^^^
+
+You can choose the sort order by setting an asm3_adoptable_sort variable. The default is
+ANIMALNAME, but another useful value is -DAYSONSHELTER to output animals based on how
+long they've been on shelter with the longest first. Preceding the sort field with a 
+minus symbol will sort in descending order::
+
+    <script>
+    asm3_adoptable_sort = "-DAYSONSHELTER";
+    </script>
+    <div id="asm3-adoptables" />
+    <script src="http://localhost:5000/service?method=animal_view_adoptable_js"></script>
+
 Extra Content
 ^^^^^^^^^^^^^
 
@@ -218,6 +232,25 @@ thumbnail and basic info::
 You could set .asm3-adoptable-tagline to display: none and then use an extra
 content callback to output and format any data from the animal's record in the
 way you want and override the default behaviour.
+
+Limit
+^^^^^
+
+You can limit the number of animals rendered by the adoptable_js output. This
+is useful if you want to only show a limited number of animals - eg: If this
+call is on the home page of your website and you'd like to show some featured
+animals.
+
+For example, this will limit output to the first 3 animals in the set. Combined
+with the -DAYSONSHELTER sort, it will show the 3 animals who have been on
+shelter the longest::
+
+    <script>
+    asm3_adoptable_sort = "-DAYSONSHELTER";
+    asm3_adoptable_limit = 3;
+    </script>
+    <div id="asm3-adoptables" />
+    <script src="http://localhost:5000/service?method=animal_view_adoptable_js"></script>
 
 Popup iFrame
 ^^^^^^^^^^^^
@@ -317,6 +350,17 @@ information. The method name determines whether the format returned is JSON or
 XML::
     
     http://localhost:5000/service?method=xml_recent_adoptions&username=user&password=letmein
+
+json_recent_changes and xml_recent_changes
+--------------------------------------------
+
+.. rubric:: Cache time: 1 hour 
+
+Returns a dataset containing all animals who have been modified in the last
+month. The method determines whether the format returned is JSON or XML::
+
+    http://localhost:5000/service?method=xml_recent_changes&username=user&password=letmein
+
 
 json_shelter_animals and xml_shelter_animals
 --------------------------------------------

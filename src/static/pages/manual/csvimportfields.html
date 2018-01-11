@@ -161,7 +161,7 @@
             
   <div class="section" id="appendix-csv-file-import-fields">
 <span id="csvimportfields"></span><h1>Appendix: CSV file import fields<a class="headerlink" href="#appendix-csv-file-import-fields" title="Permalink to this headline">¶</a></h1>
-<p>ASM will recognise columns with the following names when importing CSV files:</p>
+<p>ASM will recognise columns with the following names when importing CSV files. Where you wish to supply multiple rows for the same animal (such as for vaccinations or regimens), make sure you have a populated ANIMALCODE column, similarly for multiple rows to people (such as movements, licenses, etc) make sure you have populated person data.</p>
 <dl class="docutils">
 <dt>ANIMALCODE</dt>
 <dd>A code for the animal. If supplied, it will set the sheltercode and short sheltercode fields. If not supplied, the system will generate a code for the animal to the appropriate scheme. If you have manual codes turned on and no animal code is supplied, an error message will be displayed and the import abandoned.</dd>
@@ -225,12 +225,34 @@
 <dd>The date the donation amount on this line was received. If movement columns are present, it will be attached to the movement as well as the person. If no person columns are present, having this column in the CSV file will cause an error.</dd>
 <dt>DONATIONAMOUNT</dt>
 <dd>The amount of the donation on this line (as a floating point number)</dd>
+<dt>DONATIONCHECKNUMBER</dt>
+<dd>The cheque/check number for the donation</dd>
 <dt>DONATIONCOMMENTS</dt>
 <dd>Any comments to go with the donation</dd>
 <dt>DONATIONPAYMENT</dt>
 <dd>The payment method to use (should correspond to a payment method in your database, eg: Cash)</dd>
 <dt>DONATIONTYPE</dt>
 <dd>The payment type to use (should correspond to a payment type in your database).</dd>
+<dt>LICENSETYPE</dt>
+<dd>The license type to use (licenses need at least person info)</dd>
+<dt>LICENSENUMBER</dt>
+<dd>The license number (mandatory)</dd>
+<dt>LICENSEFEE</dt>
+<dd>The fee paid for the license</dd>
+<dt>LICENSEISSUEDATE</dt>
+<dd>The date the license was issued</dd>
+<dt>LICENSEEXPIRESDATE</dt>
+<dd>The date the license expires</dd>
+<dt>LICENSECOMMENTS</dt>
+<dd>Any comments on the license</dd>
+<dt>MEDICALNAME</dt>
+<dd>The name of the medical regimen for this line</dd>
+<dt>MEDICALDOSAGE</dt>
+<dd>The dosage of the medical regimen</dd>
+<dt>MEDICALGIVENDATE</dt>
+<dd>The date the medical regimen started (only one-off treatment regimens can be created via import)</dd>
+<dt>MEDICALCOMMENTS</dt>
+<dd>Any comments on the medical regimen</dd>
 <dt>MOVEMENTTYPE</dt>
 <dd>The type of movement for this line (1 = Adoption, 2 = Foster, 3 = Transfer, 4 = Escaped, 5 = Reclaimed, 6 = Stolen, 7 = Released to Wild, 8 = Moved to Retailer. If MOVEMENTTYPE is not specified, but a MOVEMENTDATE has been given, ASM will default the type to adoption.</dd>
 <dt>MOVEMENTDATE</dt>
@@ -255,6 +277,8 @@
 <dd>The original owner&#8217;s state/county.</dd>
 <dt>ORIGINALOWNERZIPCODE</dt>
 <dd>The original owner&#8217;s zip or postcode.</dd>
+<dt>ORIGINALOWNERJURISDICTION</dt>
+<dd>The original owner&#8217;s jurisdiction</dd>
 <dt>ORIGINALOWNERHOMEPHONE</dt>
 <dd>The original owner&#8217;s home phone.</dd>
 <dt>ORIGINALOWNERWORKPHONE</dt>
@@ -285,6 +309,8 @@
 <dd>The person&#8217;s state/county</dd>
 <dt>PERSONZIPCODE</dt>
 <dd>The person&#8217;s zip or postcode</dd>
+<dt>PERSONJURISDICTION</dt>
+<dd>The person&#8217;s jurisdiction</dd>
 <dt>PERSONHOMEPHONE</dt>
 <dd>The person&#8217;s home phone number</dd>
 <dt>PERSONWORKPHONE</dt>
@@ -306,8 +332,42 @@
 Additional flags that you have added to the system should exactly match their flag names as they appear on the person screens, eg: banned,Fundraising Flag 1,Custom Flag</dd>
 <dt>PERSONCOMMENTS</dt>
 <dd>Any comments to go with the person record.</dd>
+<dt>PERSONMATCHACTIVE</dt>
+<dd>Y or 1 in this column indicates the person is looking for an animal. If this field is not set to Y or 1, the other PERSONMATCH columns are ignored for this row.</dd>
+<dt>PERSONMATCHSEX</dt>
+<dd>The gender of the animal the person is looking for</dd>
+<dt>PERSONMATCHSIZE</dt>
+<dd>The size of the animal the person is looking for</dd>
+<dt>PERSONMATCHCOLOR</dt>
+<dd>The color of the animal the person is looking for</dd>
+<dt>PERSONMATCHAGEFROM, PERSONMATCHAGETO</dt>
+<dd>The age range of the animal the person is looking for in years</dd>
+<dt>PERSONMATCHTYPE</dt>
+<dd>The animal type of the animal the person is looking for</dd>
+<dt>PERSONMATCHSPECIES</dt>
+<dd>The species of animal the person is looking for</dd>
+<dt>PERSONMATCHBREED1, PERSONMATCHBREED2</dt>
+<dd>The breed of the animal the person is looking for</dd>
+<dt>PERSONMATCHGOODWITHCATS, PERSONMATCHGOODWITHDOGS, PERSONMATCHGOODWITHCHILDREN, PERSONMATCHHOUSETRAINED</dt>
+<dd>The good with/housetrained flags of the animal the person is looking for</dd>
+<dt>PERSONMATCHCOMMENTSCONTAIN</dt>
+<dd>The animal this person is looking for will have this value in its comments</dd>
 <dt>PERSONADDITIONAL&lt;fieldname&gt;</dt>
 <dd>If you have person additional fields defined, you can put the uppercased version of their name as a suffix to this. Eg, for an additional field called DateOfBirth PERSONADDITIONALDATEOFBIRTH</dd>
+<dt>VACCINATIONTYPE</dt>
+<dd>The type of vaccination on this line</dd>
+<dt>VACCINATIONDUEDATE</dt>
+<dd>The due date for the vaccination</dd>
+<dt>VACCINATIONGIVENDATE</dt>
+<dd>The date the vaccination was given</dd>
+<dt>VACCINATIONEXPIRESDATE</dt>
+<dd>The date the vaccine wears off and needs to be re-administered</dd>
+<dt>VACCINATIONMANUFACTURER</dt>
+<dd>The manufacturer of the vaccine</dd>
+<dt>VACCINATIONBATCHNUMBER</dt>
+<dd>The serial/batch number of the vaccine</dd>
+<dt>VACCINATIONCOMMENTS</dt>
+<dd>Comments on the vaccine</dd>
 </dl>
 </div>
 
