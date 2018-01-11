@@ -47,11 +47,15 @@ minify:
 	mkdir -p src/static/js/min
 	for i in src/static/js/*.js; do echo $$i; cat $$i | scripts/jsmin/jsmin > src/static/js/min/`basename $$i .js`.min.js; done
 
-compile: compilejs compilepy
+compile: compilejs compilepy compilejsmin
 
 compilejs:
 	@echo "[compile javascript] ================="
 	cd scripts/jslint && ./run.py
+
+compilejsmin:
+	@echo "[compile jsmin] ======================"
+	gcc -o scripts/jsmin/jsmin scripts/jsmin/jsmin.c
 
 compilepy:
 	@echo "[compile python] ====================="
