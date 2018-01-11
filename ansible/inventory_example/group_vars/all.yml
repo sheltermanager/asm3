@@ -1,0 +1,7 @@
+---
+# It is convenient to have the same user account created across all
+# hosts that Ansible will be connecting to.
+ansible_user: "someone"
+ansible_ssh_pass:    "{{ vault_ansible_sudo_pass }}"
+ansible_become_pass: "{{ vault_ansible_sudo_pass }}"
+...

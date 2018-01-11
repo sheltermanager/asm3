@@ -1,0 +1,6 @@
+---
+mysql_conf:
+  - { option: "default_storage_engine", value: "InnoDB" }
+  - { option: "character_set_server",   value: "utf8"   }
+  - { option: "innodb_file_per_table",  value: "1"      }
+...

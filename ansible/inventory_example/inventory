@@ -1,14 +1,16 @@
 [linux]
-sheltermanager
+[linux:children]
+apache
+mysql
+asm
 
 [apache]
-sheltermanager
+[apache:children]
+asm
 
 [mysql]
-sheltermanager
-
-[wsgi]
-sheltermanager
+[mysql:children]
+asm
 
 [asm]
-sheltermanager
+shelter-prod

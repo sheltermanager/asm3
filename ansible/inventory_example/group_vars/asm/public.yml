@@ -17,7 +17,7 @@ asm_db:
   host: "localhost"
   name: "asm"
   user: "asm"
-  pass: "{{ vault_asm_db.password }}"
+  pass: "{{ vault_asm_db.pass }}"
 
 # Some of these values require double quotes around them.
 # It is probably best to single quote all the YML strings, in order to
