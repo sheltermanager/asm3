@@ -854,6 +854,10 @@ class Database(object):
         """ Writes a replace expression that finds findstr in fieldexpr, replacing with replacestr """
         return "REPLACE(%s, '%s', '%s')" % (fieldexpr, findstr, replacestr)
 
+    def sql_substring(self, fieldexpr, pos, chars):
+        """ SQL substring function from pos for chars """
+        return "SUBSTR(%s, %s, %s)" % (fieldexpr, pos, chars)
+
     def sql_today(self, wrapParens=True, includeTime=True):
         """ Writes today as an SQL date """
         return self.sql_date(self.today(), wrapParens=wrapParens, includeTime=includeTime)
@@ -868,6 +872,10 @@ class Database(object):
             return self.sql_date(v)
         else:
             return str(v)
+
+    def sql_zero_pad_left(self, fieldexpr, digits):
+        """ Writes a function that zero pads an expression with zeroes to digits """
+        return fieldexpr
 
     def switch_param_placeholder(self, sql):
         """ Swaps the ? token in the sql for the usual Python DBAPI placeholder of %s 

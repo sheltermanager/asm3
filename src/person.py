@@ -631,17 +631,24 @@ def calculate_owner_name(dbo, personclass= 0, title = "", initials = "", first =
 
 def update_owner_names(dbo):
     """
-    Regenerates all owner name fields based on the current format.
+    Regenerates all owner code and name fields based on the current values.
     """
-    al.debug("regenerating owner names...", "person.update_owner_names", dbo)
-    own = db.query(dbo, "SELECT ID, OwnerType, OwnerTitle, OwnerInitials, OwnerForeNames, OwnerSurname FROM owner")
+    al.debug("regenerating owner names and codes...", "person.update_owner_names", dbo)
+    own = dbo.query("SELECT ID, OwnerCode, OwnerType, OwnerTitle, OwnerInitials, OwnerForeNames, OwnerSurname FROM owner")
     nameformat = configuration.owner_name_format(dbo)
     async.set_progress_max(dbo, len(own))
     for o in own:
-        db.execute(dbo, "UPDATE owner SET OwnerName = %s WHERE ID = %d" % \
-            (db.ds(calculate_owner_name(dbo, o["OWNERTYPE"], o["OWNERTITLE"], o["OWNERINITIALS"], o["OWNERFORENAMES"], o["OWNERSURNAME"], nameformat)), o["ID"]))
+        if o.ownercode is None or o.ownercode == "":
+            dbo.update("owner", o.id, { 
+                "OwnerCode": calculate_owner_code(o.id, o.ownersurname),
+                "OwnerName": calculate_owner_name(dbo, o.ownertype, o.ownertitle, o.ownerinitials, o.ownerforenames, o.ownersurname, nameformat)
+            }, setRecordVersion=False, setLastChanged=False, writeAudit=False)
+        else:
+            dbo.update("owner", o.id, { 
+                "OwnerName": calculate_owner_name(dbo, o.ownertype, o.ownertitle, o.ownerinitials, o.ownerforenames, o.ownersurname, nameformat)
+            }, setRecordVersion=False, setLastChanged=False, writeAudit=False)
         async.increment_progress_value(dbo)
-    al.debug("regenerated %d owner names" % len(own), "person.update_owner_names", dbo)
+    al.debug("regenerated %d owner names and codes" % len(own), "person.update_owner_names", dbo)
     return "OK %d" % len(own)
 
 def update_person_from_form(dbo, post, username):

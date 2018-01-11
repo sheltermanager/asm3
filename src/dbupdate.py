@@ -4487,12 +4487,7 @@ def update_33913(dbo):
     # Add owner.OwnerCode
     add_column(dbo, "owner", "OwnerCode", dbo.type_shorttext)
     add_index(dbo, "owner_OwnerCode", "owner", "OwnerCode")
-    codefunc = "SUBSTR(UPPER(o.OwnerSurname), 1, 2) || o.ID"
-    if dbo.dbtype == "MYSQL": 
-        codefunc = "CONCAT(SUBSTR(UPPER(o.OwnerSurname), 1, 2), LPAD(o.ID, 6, '0'))"
-    if dbo.dbtype == "POSTGRESQL": 
-        codefunc = "SUBSTRING(UPPER((XPATH('/z/text()', ('<z>' || replace(replace(replace(o.OwnerSurname, '&', ''), '<', ''), '>', '') || '</z>')::xml))[1]::text) FROM 0 FOR 3) || TO_CHAR(o.ID, 'FM000000')"
-    dbo.execute_dbupdate("UPDATE owner o SET OwnerCode = %s" % codefunc)
+    dbo.execute_dbupdate("UPDATE owner o SET OwnerCode = %s" % dbo.sql_concat([ dbo.sql_substring("UPPER(o.OwnerSurname)", 1, 2), dbo.sql_zero_pad_left("o.ID", 6) ]))
 
 def update_33914(dbo):
     # Add owner.IsAdoptionCoordinator

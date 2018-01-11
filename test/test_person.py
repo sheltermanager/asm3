@@ -71,6 +71,9 @@ class TestPerson(unittest.TestCase):
 
     def test_get_person_rota(self):
         person.get_person_rota(base.get_dbo(), self.nid)
+
+    def test_update_owner_names(self):
+        person.update_owner_names(base.get_dbo())
  
     def test_get_person_find_simple(self):
         assert len(person.get_person_find_simple(base.get_dbo(), "Test", "user")) > 0

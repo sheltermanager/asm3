@@ -1,6 +1,8 @@
 40
 ================
 
+11/01/18 DB specific leftpad/substring methods in database classes
+11/01/18 Batch update person names fixes missing codes too
 10/01/18 Only default batch/manufacturer if the vacc is given #104
 05/01/18 Default batch number and manufacturer from last vacc of type #104
 05/01/18 Add support for default payment method #274
