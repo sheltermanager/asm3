@@ -1,0 +1,8 @@
+---
+apache_serveradmin: somebody@domain.org
+
+apache_modules:
+  - alias
+  - rewrite
+  - ssl
+...

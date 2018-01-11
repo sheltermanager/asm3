@@ -1,0 +1,3 @@
+---
+ansible_host: "sheltertest.somedomain.org"
+...

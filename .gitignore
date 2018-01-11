@@ -13,3 +13,6 @@ cordova/asm/platforms
 .DS_Store
 /.project
 /.pydevproject
+/ansible/archives/*.*
+/ansible/roles
+/ansible/*.retry

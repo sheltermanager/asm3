@@ -1,0 +1,7 @@
+---
+# You probably want to vault this file
+# ansible-vault encrypt private.yml
+#
+# It is shown here, unencrypted for example purposes.
+vault_ansible_sudo_pass: "something secret"
+...

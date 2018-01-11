@@ -1,0 +1,85 @@
+---
+- hosts: asm
+  become: yes
+  roles:
+    - City-of-Bloomington.mysql
+    - City-of-Bloomington.apache
+  tasks:
+    - name: Install Animal Shelter Manger dependencies
+      apt:
+        name: "{{ item }}"
+        state: present
+      tags: asm
+      with_items:
+        - libapache2-mod-wsgi
+        - make
+        - python
+        - python-imaging
+        - python-webpy
+        - python-mysqldb
+        - python-psycopg2
+        - imagemagick
+        - wkhtmltopdf
+        - python-requests
+        - python-ndg-httpsclient
+        - python-pyasn1
+
+    - name: "Activate Apache WSGI Module"
+      apache2_module:
+        name: "wsgi"
+
+    - name: Create mysql database
+      mysql_db:
+        config_file: "{{ mysql_defaults_extra_file }}"
+        name: "{{ asm_db.name }}"
+        state: present
+      no_log: True
+
+    - name: Create mysql user for site
+      mysql_user:
+        name:     "{{ asm_db.user }}"
+        password: "{{ asm_db.pass }}"
+        priv:     "{{ asm_db.name }}.*:ALL"
+        state: present
+        config_file: "{{ mysql_defaults_extra_file }}"
+      no_log: True
+
+    - name: Create web application directory
+      file:
+        path: "{{ asm_path }}"
+        state: "directory"
+        owner: "www-data"
+        group: "staff"
+        mode: u=rwx,g=rwxs,o=rx
+
+    - name: Create data directory
+      file:
+        path: "{{ asm_data }}"
+        state: "directory"
+        owner: "www-data"
+        group: "staff"
+        mode: u=rwx,g=rwxs,o=rx
+
+    - name: Extract release
+      unarchive:
+        src: "{{ asm_archive.path }}"
+        dest: /usr/local/src
+      register: release
+
+    - name: "Install release"
+      command: "rsync -rlv /usr/local/src/{{ asm_archive.name }}/ {{ asm_path }}/"
+      when: release.changed
+
+    - name: "Update apache configuration"
+      template:
+        src: "asm.conf"
+        dest: "/etc/apache2/sites-enabled/conf.d/asm.conf"
+      notify: "apache_restart"
+
+    - name: "Update sitedefs"
+      lineinfile:
+        dest: "{{ asm_path }}/src/sitedefs.py"
+        regexp: "^{{ item.key }}"
+        line: "{{ item.key }} = {{ item.value }}"
+      with_dict: "{{ asm_sitedefs }}"
+...
