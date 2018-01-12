@@ -14,8 +14,8 @@ FROM adoption ad
 INNER JOIN animal a ON a.ID = ad.AnimalID
 INNER JOIN owner o ON o.ID = ad.OwnerID
 INNER JOIN owner r ON r.ID = ad.RetailerID
-WHERE ad.OriginalRetailerMovementID > 0 
-AND ad.MovementDate >= '$ASK DATE From date$' 
+WHERE 
+ad.MovementDate >= '$ASK DATE From date$' 
 AND ad.MovementDate <= '$ASK DATE To date$'
 AND ad.ReturnDate Is Null
 AND ad.MovementType = 1
