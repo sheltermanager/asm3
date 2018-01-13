@@ -19,7 +19,7 @@ LEFT OUTER JOIN owner rvet ON rvet.ID = rv.AdministeringVetID
 LEFT OUTER JOIN species s ON s.ID = a.SpeciesID
 LEFT OUTER JOIN lksex sx ON sx.ID = a.Sex
 WHERE ol.ExpiryDate >= '$ASK DATE Enter the from date$'
-AND ol.ExpiryDate <= '$ASK DATE Enter the to date$'
+AND ol.ExpiryDate <= '$ASK DATE Enter the to date$' AND a.DeceasedDate Is Null 
 ORDER BY ol.ExpiryDate
 ###
 MAIL

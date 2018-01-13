@@ -18,7 +18,7 @@ INNER JOIN licencetype lt ON lt.ID = ol.LicenceTypeID
 INNER JOIN owner o ON o.ID = ol.OwnerID
 LEFT OUTER JOIN animal a ON a.ID = ol.AnimalID 
 WHERE ol.ExpiryDate >= '$ASK DATE Enter the from date$'
-AND ol.ExpiryDate <= '$ASK DATE Enter the to date$'
+AND ol.ExpiryDate <= '$ASK DATE Enter the to date$' AND a.DeceasedDate Is Null
 ORDER BY ol.ExpiryDate
 ###
 $$HEADER

@@ -20,7 +20,7 @@ INNER JOIN owner o ON o.ID = ol.OwnerID
 LEFT OUTER JOIN animal a ON a.ID = ol.AnimalID 
 LEFT OUTER JOIN jurisdiction j ON j.ID = o.JurisdictionID
 WHERE ol.ExpiryDate >= '$ASK DATE Expiring between $'
-AND ol.ExpiryDate <= '$ASK DATE and $'
+AND ol.ExpiryDate <= '$ASK DATE and $' AND a.DeceasedDate Is Null 
 ORDER BY j.JurisdictionName, ol.ExpiryDate
 ###
 $$HEADER
