@@ -55,7 +55,7 @@ def gkc(m, f):
     if f not in m: return 0
     try:
         # Remove non-numeric characters
-        v = re.sub(r'[^\d.]+', '', str(m[f]))
+        v = re.sub(r'[^\d\-\.]+', '', str(m[f]))
         fl = float(v)
         fl *= 100
         return int(fl)
