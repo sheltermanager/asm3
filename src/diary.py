@@ -337,7 +337,7 @@ def execute_diary_task(dbo, username, tasktype, taskid, linkid, selecteddate):
     """
     def fix(s):
         return s.replace("<", "&lt;").replace(">", "&gt;")
-    rollingdate = i18n.now(dbo.timezone) 
+    rollingdate = dbo.today()
     dtd = dbo.query("SELECT * FROM diarytaskdetail WHERE DiaryTaskHeadID = ? ORDER BY OrderIndex", [taskid])
     tags = {}
     linktype = ANIMAL
