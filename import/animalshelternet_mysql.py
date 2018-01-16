@@ -13,7 +13,7 @@ we did with a MySQL ASN database did not have data in any of those tables.
 13th September 2017
 """
 
-db = web.database( dbn = "mysql", db = "arl", user = "robin", pw = "robin" )
+db = web.database( dbn = "mysql", db = "zc1502", user = "robin", pw = "robin" )
 
 START_ID = 100
 
@@ -43,11 +43,9 @@ asm.setid("adoption", START_ID)
 asm.setid("animal", START_ID)
 asm.setid("owner", START_ID)
 asm.setid("animalvaccination", START_ID)
-asm.setid("internallocation", 2)
 
 # Remove existing
 print "\\set ON_ERROR_STOP\nBEGIN;"
-print "DELETE FROM internallocation WHERE ID >= 2;"
 print "DELETE FROM adoption WHERE ID >= %d AND CreatedBy = 'conversion';" % START_ID
 print "DELETE FROM animal WHERE ID >= %d AND CreatedBy = 'conversion';" % START_ID
 print "DELETE FROM owner WHERE ID >= %d AND CreatedBy = 'conversion';" % START_ID
@@ -152,6 +150,8 @@ for row in db.query("select animals.*, intake.Comments as IntakeComments, intake
         a.DateBroughtIn = row.tsAdded
         a.NonShelterAnimal = 1
         a.Archived = 1
+    if a.DateOfBirth is None:
+        a.DateOfBirth = a.DateBroughtIn or row.tsAdded
     a.LastChangedDate = a.DateBroughtIn
     a.CreatedDate = a.DateBroughtIn
 
