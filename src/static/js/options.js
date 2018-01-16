@@ -631,6 +631,8 @@ $(function() {
                 '<br />',
                 '<input data="IncludeOffShelterMedical" id="includeoffsheltermedical" type="checkbox" class="asm-checkbox" /> <label for="includeoffsheltermedical">' + _("Include off-shelter animals in medical calendar and books") + '</label>',
                 '<br />',
+                '<input data="AutoDefaultVaccBatch" id="autodefaultvaccbatch" type="checkbox" class="asm-checkbox" /> <label for="autodefaultvaccbatch">' + _("When entering vaccinations, default the last batch number and manufacturer for that type") + '</label>',
+                '</br />',
                 '<input data="LocationChangeLog" id="locationchangelog" type="checkbox" class="asm-checkbox" /> <label for="locationchangelog">' + _("When I change the location of an animal, make a note of it in the log with this type") + '</label>',
                 '<select data="LocationChangeLogType" id="locationchangelogtype" class="asm-selectbox">',
                 html.list_to_options(controller.logtypes, "ID", "LOGTYPENAME"),

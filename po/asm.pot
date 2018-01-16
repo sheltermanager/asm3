@@ -12423,6 +12423,12 @@ msgid ""
 msgstr ""
 
 #: options.js
+msgid ""
+"When entering vaccinations, default the last batch number and manufacturer "
+"for that type"
+msgstr ""
+
+#: options.js
 msgid "When matching lost animals, include shelter animals"
 msgstr ""
 

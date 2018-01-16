@@ -108,6 +108,7 @@ DEFAULTS = {
     "AnonymiseAfterYears": "0",
     "AutoCancelReservesDays": "14",
     "AutoDefaultShelterCode": "Yes",
+    "AutoDefaultVaccBatch": "Yes",
     "AutoInsuranceStart": "0",
     "AutoInsuranceEnd": "0",
     "AutoInsuranceNext": "0",

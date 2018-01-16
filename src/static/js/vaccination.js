@@ -506,6 +506,8 @@ $(function() {
          *  vacc of this type we saw
          */
         set_last_batch: function() {
+            // If the option is disabled, don't do it
+            if (!config.bool("AutoDefaultVaccBatch")) { return; }
             // If the vacc hasn't been given, don't do anything
             if (!$("#given").val()) { return; }
             var seltype = $("#type").val();

@@ -1,6 +1,7 @@
 40
 ================
 
+16/01/18 Option to disable defaulting of manufacturer/batch #104
 15/01/18 Don't strip the sign when importing currency amounts from CSV
 11/01/18 DB specific leftpad/substring methods in database classes
 11/01/18 Batch update person names fixes missing codes too
