@@ -1,0 +1,54 @@
+Fosterers Active between two Dates
+###
+Movements
+###
+3000/Any
+###
+Fosterers who fostered between two dates with contact info and notes
+###
+en
+###
+$VAR from DATE Enter from date$
+$VAR to DATE Enter to date$
+
+SELECT
+OwnerName,
+OwnerAddress, OwnerTown, OwnerCounty, OwnerPostcode, HomeTelephone, MobileTelephone,
+Comments,
+AdditionalFlags,
+(SELECT COUNT(*) FROM adoption WHERE OwnerID = owner.ID AND (ReturnDate Is Null OR ReturnDate > '$CURRENT_DATE$')) AS ActiveFosters,
+FosterCapacity
+FROM owner
+WHERE IsFosterer = 1
+AND EXISTS(SELECT ID FROM adoption WHERE MovementType = 2 AND OwnerID = owner.ID AND (MovementDate <= '$@from$' OR MovementDate <= '$@to$') AND (ReturnDate Is Null OR ReturnDate >= '$@from$' OR ReturnDate >= '$@to$'))
+ORDER BY OwnerName
+###
+$$HEADER
+<table border="1">
+<tr>
+<th>Fosterer</th>
+<th>Contact</th>
+<th>Flags</th>
+<th>Comments</th>
+<th>Fosters</th>
+</tr>
+HEADER$$
+
+$$BODY
+<tr>
+<td>$OWNERNAME</td>
+<td>$OWNERADDRESS<br/>
+$OWNERTOWN $OWNERCOUNTY $OWNERPOSTCODE<br/>
+H: $HOMETELEPHONE<br/>
+M: $MOBILETELEPHONE</td>
+<td>$ADDITIONALFLAGS</td>
+<td>$COMMENTS</td>
+<td>$ACTIVEFOSTERS / $FOSTERCAPACITY</td>
+</tr>
+BODY$$
+
+$$FOOTER
+</table>
+<h2>Total Active Fosterers: {COUNT.OWNERNAME}</h2>
+FOOTER$$
+
