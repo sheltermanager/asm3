@@ -78,7 +78,7 @@ def _get_mc():
     Returns a memcache client
     """
     import memcache
-    mc = memcache.Client([MEMCACHED_SERVER], debug=0)
+    mc = memcache.Client([MEMCACHED_SERVER], debug=1) # causes any errors to be pumped out to stderr and picked up my mod_wsgi
     return mc
 
 def _memcache_available():
