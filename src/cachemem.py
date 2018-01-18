@@ -2,6 +2,7 @@
 
 from sitedefs import MEMCACHED_SERVER
 
+import al
 import time
 
 def get(key):
@@ -91,7 +92,9 @@ def _memcache_get(key):
 def _memcache_put(key, value, ttl):
     global memcache_client
     if memcache_client is None: memcache_client = _get_mc()
-    return memcache_client.set(key, value, time = ttl )
+    rv = memcache_client.set(key, value, time = ttl )
+    if not rv: al.error("failed writing value to memcache (ttl=%s,key=%s,val=%s)" % (ttl, key, value), "cachemem.memcache_put")
+    return rv
 
 def _memcache_increment(key):
     global memcache_client

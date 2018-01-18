@@ -7,8 +7,8 @@ import time
 # flake8: noqa - we have a lot of locales and this is convenient
 from locales import *
 
-VERSION = "40u [Thu 18 Jan 13:19:17 GMT 2018]"
-BUILD = "01181319"
+VERSION = "40u [Thu 18 Jan 13:37:29 GMT 2018]"
+BUILD = "01181337"
 
 DMY = ( "%d/%m/%Y", "%d/%m/%y" )
 MDY = ( "%m/%d/%Y", "%m/%d/%y" )
