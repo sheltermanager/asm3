@@ -60,19 +60,19 @@ def session_manager():
         """
         def __contains__(self, key):
             rv = cachemem.get(key) is not None
-            if SESSION_DEBUG: al.debug("MemCacheStore.__contains__", "contains(%s)=%s" % (key, rv))
+            if SESSION_DEBUG: al.debug("contains(%s)=%s" % (key, rv), "MemCacheStore.__contains__")
             return rv
         def __getitem__(self, key):
             rv = cachemem.get(key)
-            if SESSION_DEBUG: al.debug("MemCacheStore.__getitem__", "getitem(%s)=%s" % (key, rv))
+            if SESSION_DEBUG: al.debug("getitem(%s)=%s" % (key, rv), "MemCacheStore.__getitem__")
             return rv
         def __setitem__(self, key, value):
             rv = cachemem.put(key, value, web.config.session_parameters["timeout"])
-            if SESSION_DEBUG: al.debug("MemCacheStore.__setitem__", "setitem(%s, %s)=%s" % (key, value, rv))
+            if SESSION_DEBUG: al.debug("setitem(%s, %s)=%s" % (key, value, rv), "MemCacheStore.__setitem__")
             return rv
         def __delitem__(self, key):
             rv = cachemem.delete(key)
-            if SESSION_DEBUG: al.debug("MemCacheStore.__delitem__", "delitem(%s)=%s" % (key, rv))
+            if SESSION_DEBUG: al.debug("delitem(%s)=%s" % (key, rv), "MemCacheStore.__delitem__")
             return rv
         def cleanup(self, timeout):
             pass # Not needed, we assign values to memcache with timeout
