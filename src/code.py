@@ -60,11 +60,11 @@ def session_manager():
         """
         def __contains__(self, key):
             rv = cachemem.get(key) is not None
-            if SESSION_DEBUG: al.debug("MemCacheStore.__contains__", "contains(%s)=" % (key, rv))
+            if SESSION_DEBUG: al.debug("MemCacheStore.__contains__", "contains(%s)=%s" % (key, rv))
             return rv
         def __getitem__(self, key):
             rv = cachemem.get(key)
-            if SESSION_DEBUG: al.debug("MemCacheStore.__getitem__", "getitem(%s)=" % (key, rv))
+            if SESSION_DEBUG: al.debug("MemCacheStore.__getitem__", "getitem(%s)=%s" % (key, rv))
             return rv
         def __setitem__(self, key, value):
             rv = cachemem.put(key, value, web.config.session_parameters["timeout"])
@@ -84,10 +84,7 @@ def session_manager():
     web.config.session_parameters["secure"] = SESSION_SECURE_COOKIE
     sess = None
     if utils.websession is None:
-        # Disable noisy logging from session db
-        web.config.debug_sql = False
-        store = MemCacheStore()
-        sess = web.session.Session(app, store, initializer={"user" : None, "dbo" : None, "locale" : None, 
+        sess = web.session.Session(app, MemCacheStore(), initializer={"user" : None, "dbo" : None, "locale" : None, 
             "searches" : [], "siteid": None, "locationfilter": None })
         utils.websession = sess
     else:
