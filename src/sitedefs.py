@@ -72,6 +72,9 @@ DEPLOYMENT_TYPE = "wsgi"
 # Whether the session cookie should be secure (only valid for https)
 SESSION_SECURE_COOKIE = False
 
+# Output debug info on sessions
+SESSION_DEBUG = False
+
 # The host/port that memcached is running on if it is to be used.
 # If memcache is not available, an in memory dictionary will be
 # used instead.

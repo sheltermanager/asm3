@@ -45,7 +45,7 @@ import utils
 import waitinglist as extwaitinglist
 import web
 import wordprocessor
-from sitedefs import BASE_URL, DEPLOYMENT_TYPE, ELECTRONIC_SIGNATURES, EMERGENCY_NOTICE, FORGOTTEN_PASSWORD, FORGOTTEN_PASSWORD_LABEL, LARGE_FILES_CHUNKED, LOCALE, GEO_PROVIDER, GEO_PROVIDER_KEY, JQUERY_UI_CSS, LEAFLET_CSS, LEAFLET_JS, MULTIPLE_DATABASES, MULTIPLE_DATABASES_TYPE, MULTIPLE_DATABASES_PUBLISH_URL, MULTIPLE_DATABASES_PUBLISH_FTP, ADMIN_EMAIL, EMAIL_ERRORS, MADDIES_FUND_TOKEN_URL, MANUAL_HTML_URL, MANUAL_PDF_URL, MANUAL_FAQ_URL, MANUAL_VIDEO_URL, MAP_LINK, MAP_PROVIDER, OSM_MAP_TILES, FOUNDANIMALS_FTP_USER, PETRESCUE_FTP_HOST, PETSLOCATED_FTP_USER, QR_IMG_SRC, SERVICE_URL, SESSION_SECURE_COOKIE, SHARE_BUTTON, SMARTTAG_FTP_USER, SMCOM_PAYMENT_LINK, VETENVOY_US_VENDOR_PASSWORD, VETENVOY_US_VENDOR_USERID
+from sitedefs import BASE_URL, DEPLOYMENT_TYPE, ELECTRONIC_SIGNATURES, EMERGENCY_NOTICE, FORGOTTEN_PASSWORD, FORGOTTEN_PASSWORD_LABEL, LARGE_FILES_CHUNKED, LOCALE, GEO_PROVIDER, GEO_PROVIDER_KEY, JQUERY_UI_CSS, LEAFLET_CSS, LEAFLET_JS, MULTIPLE_DATABASES, MULTIPLE_DATABASES_TYPE, MULTIPLE_DATABASES_PUBLISH_URL, MULTIPLE_DATABASES_PUBLISH_FTP, ADMIN_EMAIL, EMAIL_ERRORS, MADDIES_FUND_TOKEN_URL, MANUAL_HTML_URL, MANUAL_PDF_URL, MANUAL_FAQ_URL, MANUAL_VIDEO_URL, MAP_LINK, MAP_PROVIDER, OSM_MAP_TILES, FOUNDANIMALS_FTP_USER, PETRESCUE_FTP_HOST, PETSLOCATED_FTP_USER, QR_IMG_SRC, SERVICE_URL, SESSION_SECURE_COOKIE, SESSION_DEBUG, SHARE_BUTTON, SMARTTAG_FTP_USER, SMCOM_PAYMENT_LINK, VETENVOY_US_VENDOR_PASSWORD, VETENVOY_US_VENDOR_USERID
 
 def session_manager():
     """
@@ -59,13 +59,21 @@ def session_manager():
         (if available).
         """
         def __contains__(self, key):
-            return cachemem.get(key) is not None
+            rv = cachemem.get(key) is not None
+            if SESSION_DEBUG: al.debug("MemCacheStore.__contains__", "contains(%s)=" % (key, rv))
+            return rv
         def __getitem__(self, key):
-            return cachemem.get(key)
+            rv = cachemem.get(key)
+            if SESSION_DEBUG: al.debug("MemCacheStore.__getitem__", "getitem(%s)=" % (key, rv))
+            return rv
         def __setitem__(self, key, value):
-            return cachemem.put(key, value, web.config.session_parameters["timeout"])
+            rv = cachemem.put(key, value, web.config.session_parameters["timeout"])
+            if SESSION_DEBUG: al.debug("MemCacheStore.__setitem__", "setitem(%s, %s)=%s" % (key, value, rv))
+            return rv
         def __delitem__(self, key):
-            cachemem.delete(key)
+            rv = cachemem.delete(key)
+            if SESSION_DEBUG: al.debug("MemCacheStore.__delitem__", "delitem(%s)=%s" % (key, rv))
+            return rv
         def cleanup(self, timeout):
             pass # Not needed, we assign values to memcache with timeout
     # Set session parameters, 24 hour timeout
