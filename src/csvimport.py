@@ -164,14 +164,18 @@ def gkl(dbo, m, f, table, namefield, create):
         corresponds to a lookup match for namefield in table.
         if create is True, adds a row to the table if it doesn't
         find a match and then returns str(newid)
+        if the value is an empty string, (blank) is used instead.
         returns "0" if key not present, or if no match was found and create is off """
     if f not in m: return "0"
     lv = m[f]
     matchid = dbo.query_int("SELECT ID FROM %s WHERE LOWER(%s) = ?" % (table, namefield), [ lv.strip().lower().replace("'", "`") ])
     if matchid == 0 and create:
-        nextid = dbo.get_id(table)
-        sql = "INSERT INTO %s (ID, %s) VALUES (?, ?)" % (table, namefield)
-        dbo.execute(sql, (nextid, lv.replace("'", "`")))
+        if lv.strip() == "":
+            l = dbo.locale
+            lv = i18n._("(blank)", l)
+        nextid = dbo.insert(table, {
+            namefield:  lv
+        }, setRecordVersion=False, setCreated=False, writeAudit=False)
         return str(nextid)
     return str(matchid)
 

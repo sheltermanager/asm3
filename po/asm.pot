@@ -39,7 +39,7 @@ msgstr ""
 msgid "(available)"
 msgstr ""
 
-#: person_find_results.js
+#: person_find_results.js csvimport.py
 msgid "(blank)"
 msgstr ""
 
