@@ -293,7 +293,7 @@ def get_transactions(dbo, accountid, datefrom, dateto, reconciled):
         "LEFT OUTER JOIN animal aca ON aca.ID = ac.AnimalID " \
         "WHERE t.TrxDate >= %s AND t.TrxDate <= %s%s " \
         "AND (t.SourceAccountID = %d OR t.DestinationAccountID = %d) " \
-        "ORDER BY t.TrxDate" % ( db.dd(datefrom), db.dd(dateto), recfilter, int(accountid), int(accountid)))
+        "ORDER BY t.TrxDate, t.ID" % ( db.dd(datefrom), db.dd(dateto), recfilter, int(accountid), int(accountid)))
     balance = 0
     if period != "":
         balance = get_balance_fromto_date(dbo, accountid, i18n.display2python(l, period), datefrom)
