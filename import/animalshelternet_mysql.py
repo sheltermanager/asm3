@@ -140,8 +140,11 @@ for row in db.query("select animals.*, intake.Comments as IntakeComments, intake
     if row.Size == "L": a.Size = 1
     if row.Size == "M": a.Size = 2
     if row.Size == "S": a.Size = 3
-    if row.AlteredAtIntake == "Y": a.Neutered = 1
+    if row.AlteredAtIntake == "Y": 
+        a.Neutered = 1
     a.NeuteredDate = row.AlteredDate
+    if a.NeuteredDate is not None:
+        a.Neutered = 1
     if row.Declawed == "Y": a.Declawed = 1
     if row.IntakeCustUid in ppo:
         a.OriginalOwnerID = ppo[row.IntakeCustUid]
@@ -170,6 +173,7 @@ for row in db.query("select disposit.*, (select descr from lookup where value = 
         a.PutToSleep = 1
         a.PTSReason = row.Comments
         a.Archived = 1
+        a.NonShelterAnimal = 0
 
     if row.disptype == "DOA":
         a.DeceasedDate = row.DispositDTL1
@@ -177,6 +181,7 @@ for row in db.query("select disposit.*, (select descr from lookup where value = 
         a.IsDOA = 1
         a.PTSReason = row.Comments
         a.Archived = 1
+        a.NonShelterAnimal = 0
 
     if row.disptype == "Adoption" and row.CustUid in ppo:
         o = ppo[row.CustUid]
@@ -189,6 +194,7 @@ for row in db.query("select disposit.*, (select descr from lookup where value = 
         a.ActiveMovementID = m.ID
         a.ActiveMovementDate = m.MovementDate
         a.ActiveMovementType = 1
+        a.NonShelterAnimal = 0
         movements.append(m)
 
 """
