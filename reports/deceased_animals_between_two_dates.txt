@@ -29,7 +29,7 @@ LEFT OUTER JOIN animaltype t ON t.ID = a.AnimalTypeID
 LEFT OUTER JOIN species s ON s.ID = a.SpeciesID
 LEFT OUTER JOIN lksex sx ON sx.ID = a.Sex
 LEFT OUTER JOIN deathreason r ON r.ID = a.PTSReasonID
-WHERE a.DeceasedDate >= '$ASK DATE Died between $' AND a.DeceasedDate <= '$ASK DATE and $'
+WHERE a.DiedOffShelter = 0 AND a.DeceasedDate >= '$ASK DATE Died between $' AND a.DeceasedDate <= '$ASK DATE and $'
 ORDER BY a.DeceasedDate
 ###
 $$HEADER
