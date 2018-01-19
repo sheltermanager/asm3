@@ -11,6 +11,7 @@ en
 SELECT a.ShelterCode, 
 a.AnimalName, 
 a.MostRecentEntryDate,
+a.DeceasedDate,
 a.IdentichipNumber,
 a.AnimalAge,
 a.BreedName,
@@ -32,7 +33,8 @@ WHERE a.DeceasedDate >= '$ASK DATE Died between $' AND a.DeceasedDate <= '$ASK D
 ORDER BY a.DeceasedDate
 ###
 $$HEADER
-<table border=1><tr>
+<table border=1>
+<tr>
 <td><b>Date of Death</b></td>
 <td><b>Code</b></td>
 <td><b>Name</b></td>
@@ -45,12 +47,6 @@ $$HEADER
 <td><b>Cause of Death</b></td>
 </tr>
 HEADER$$
-
-$$GROUP_SpeciesName
-$$HEAD
-$$FOOT
-</table>
-GROUP$$
 
 $$BODY
 <tr>
