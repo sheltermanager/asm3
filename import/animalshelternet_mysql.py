@@ -91,7 +91,8 @@ for row in db.select("people"):
 # Animals/intake
 for row in db.query("select animals.*, intake.Comments as IntakeComments, intake.CustUid as IntakeCustUid, " \
     "IntakeDTL1, IntakeDTL2, " \
-    "coalesce((select descr from lookup where value = intake.ReasonCode), '') AS IntakeReason " \
+    "coalesce((select descr from lookup where value = intake.ReasonCode), '') AS IntakeReason, " \
+    "coalesce((select descr from lookup where value = animals.Color limit 1), '') AS ColorName " \
     "from animals " \
     "left outer join intake on intake.RefUID = animals.IntakeRefUID " \
     "order by IntakeDTL1").list():
@@ -115,6 +116,7 @@ for row in db.query("select animals.*, intake.Comments as IntakeComments, intake
     a.EntryReasonID = 7 # Stray
     if row.IntakeReason.startswith("Owner"): a.EntryReasonID = 17 # Owner
     asm.breed_ids(a, row.Breed1, row.Breed2)
+    a.BaseColourID = asm.colour_id_for_name(row.ColorName, firstWordOnly=True)
     a.Sex = asm.getsex_mf(row.Sex)
     a.generateCode(gettypeletter(a.AnimalTypeID))
     a.ShortCode = row.AnimalUid
@@ -129,6 +131,7 @@ for row in db.query("select animals.*, intake.Comments as IntakeComments, intake
     a.GoodWithChildren = ynu(row.GoodWithChildren)
     a.HouseTrained = ynu(row.HouseBroken)
     a.AnimalComments = row.Comments
+    a.HiddenAnimalDetails = "Original breed: %s / %s, color: %s" % (row.Breed1, row.Breed2, row.ColorName)
     a.IdentichipNumber = asm.nulltostr(row.MicrochipID)
     if a.IdentichipNumber != "": a.Identichipped = 1
     a.TattooNumber = asm.nulltostr(row.tattoo)
