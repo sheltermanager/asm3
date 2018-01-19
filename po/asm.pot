@@ -4282,6 +4282,10 @@ msgstr ""
 msgid "Exclude from bulk email"
 msgstr ""
 
+#: options.js
+msgid "Exclude new animal photos from publishing"
+msgstr ""
+
 #: media.js
 msgid "Exclude this image when publishing"
 msgstr ""

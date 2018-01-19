@@ -625,6 +625,8 @@ $(function() {
                 '<p>',
                 '<input data="AutoNotForAdoption" id="autonotadopt" type="checkbox" class="asm-checkbox" /> <label for="autonotadopt">' + _("Mark new animals as not for adoption") + '</label>',
                 '<br />',
+                '<input data="AutoNewImagesNotForPublish" id="autoimagesnotforpublish" type="checkbox" class="asm-checkbox" /> <label for="autoimagesnotforpublish">' + _("Exclude new animal photos from publishing") + '</label>',
+                '<br />',
                 '<input data="AutoMediaNotes" id="automedianotes" type="checkbox" class="asm-checkbox" /> <label for="automedianotes">' + _("Prefill new media notes for animal images with animal comments if left blank") + '</label>',
                 '<br />',
                 '<input data="DefaultMediaNotesFromFile" id="medianotesfile" type="checkbox" class="asm-checkbox" /> <label for="medianotesfile">' + _("Prefill new media notes with the filename if left blank") + '</label>',

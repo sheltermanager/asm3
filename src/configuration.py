@@ -112,6 +112,8 @@ DEFAULTS = {
     "AutoInsuranceStart": "0",
     "AutoInsuranceEnd": "0",
     "AutoInsuranceNext": "0",
+    "AutoNewImagesNotForPublish": "No",
+    "AutoNotForAdoption": "No",
     "AutoRemoveHoldDays": "0",
     "AutoRemoveIncomingFormsDays": "14",
     "AFDefaultBreed": "221",
@@ -537,8 +539,11 @@ def auto_insurance_next(dbo, newins = 0):
 def auto_media_notes(dbo):
     return cboolean(dbo, "AutoMediaNotes")
 
+def auto_new_images_not_for_publish(dbo):
+    return cboolean(dbo, "AutoNewImagesNotForPublish", DEFAULTS["AutoNewImagesNotForPublish"] == "Yes")
+
 def auto_not_for_adoption(dbo):
-    return cboolean(dbo, "AutoNotForAdoption")
+    return cboolean(dbo, "AutoNotForAdoption", DEFAULTS["AutoNotForAdoption"] == "Yes")
 
 def auto_remove_incoming_forms_days(dbo):
     return cint(dbo, "AutoRemoveIncomingFormsDays", int(DEFAULTS["AutoRemoveIncomingFormsDays"]))

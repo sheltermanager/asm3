@@ -1,6 +1,7 @@
 40
 ================
 
+19/01/18 Option to mark new images not for publishing #336
 19/01/18 Keep account/trx in entry order with second sort of ID
 19/01/18 Convert new empty lookup items to (blank) during CSV import
 16/01/18 Option to disable defaulting of manufacturer/batch #104

@@ -284,6 +284,14 @@ records.
   is an extra precaution - by forcing users to untick the box when necessary,
   no animal can be accidentally published. 
 
+* Exclude new animal photos from publishing: Setting this option will make
+  any photos uploaded to the media tab not sent by the publishers or included
+  in any websites. If an animal does not have any other photos, they will
+  continue to have the "No photo available" picture until the picture is
+  made available for publishing (by ticking the red cross to the lower right
+  of it on the media tab). This allows new photos to be vetted before
+  being sent to adoption sites or used anywhere.
+
 * Prefill new media notes for animal images with animal comments if left blank:
   If no notes are given when adding images as media, ASM will default the
   animal's comments field.

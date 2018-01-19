@@ -299,6 +299,9 @@ def attach_file_from_form(dbo, username, linktype, linkid, post):
     medianame = "%d%s" % ( mediaid, ext )
     ispicture = ext == ".jpg" or ext == ".jpeg"
     ispdf = ext == ".pdf"
+    excludefrompublish = 0
+    if configuration.auto_new_images_not_for_publish(dbo) and ispicture:
+        excludefrompublish = 1
 
     # Is it a picture?
     if ispicture:
@@ -341,7 +344,7 @@ def attach_file_from_form(dbo, username, linktype, linkid, post):
         ( "WebsitePhoto", db.di(0) ),
         ( "WebsiteVideo", db.di(0) ),
         ( "DocPhoto", db.di(0) ),
-        ( "ExcludeFromPublish", db.di(0) ),
+        ( "ExcludeFromPublish", db.di(excludefrompublish) ),
         # ASM2_COMPATIBILITY
         ( "NewSinceLastPublish", db.di(1) ),
         ( "UpdatedSinceLastPublish", db.di(0) ),
@@ -353,7 +356,8 @@ def attach_file_from_form(dbo, username, linktype, linkid, post):
     db.execute(dbo, sql)
     audit.create(dbo, username, "media", mediaid, str(mediaid) + ": for " + str(linkid) + "/" + str(linktype))
 
-    if ispicture:
+    # Verify this record has a web/doc default if we aren't excluding it from publishing
+    if ispicture and excludefrompublish == 0:
         check_default_web_doc_pic(dbo, mediaid, linkid, linktype)
 
 def attach_link_from_form(dbo, username, linktype, linkid, post):

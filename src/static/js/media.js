@@ -358,7 +358,8 @@ $(function() {
 
         /** 
          * Goes through our list of media elements and if we have pictures
-         * but none preferred for the web or doc, select the first.
+         * but none preferred for the web or doc, select the first
+         * image that is not excluded from publishing.
          * Will also select the first if there's an issue and more than
          * one preferred is selected.
          * Multi-file drag and drop doesn't auto select these values due
@@ -369,7 +370,7 @@ $(function() {
             var newweb, newdoc, hasweb, hasdoc, webcount = 0, doccount = 0;
             if (!controller.showpreferred) { return false; }
             $.each(controller.media, function(i, v) {
-                if (media.is_jpeg(v.MEDIANAME)) {
+                if (media.is_jpeg(v.MEDIANAME) && !v.EXCLUDEFROMPUBLISH) {
                     if (!newweb) { newweb = v.ID; }
                     if (!newdoc) { newdoc = v.ID; }
                     if (v.WEBSITEPHOTO) { hasweb = true; webcount += 1; }
