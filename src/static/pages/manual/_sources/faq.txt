@@ -133,7 +133,7 @@ apps exist for all mobile platforms that allow you to take a photo of a
 document, clean it up and output it as a PDF. Apps such as "CamScanner" for
 Android, or "Scanner App" for iPhone.
 
-Why are ASM emails being sent from bounce+account@sheltermanager.com?
+Why are ASM emails being sent from account@bounce.sheltermanager.com?
 ---------------------------------------------------------------------
 
 In the early days of email, address spoofing was used by everyone. It was
@@ -164,15 +164,15 @@ recipient.
 
 Instead, ASM sends emails from the fixed address you configured in sitedefs and
 trusts you know what you're doing.  sheltermanager.com sends emails from a
-bounce+account@sheltermanager.com address. Your real email address is set in
+account@bounce.sheltermanager.com address. Your real email address is set in
 the Reply-To email header, which email clients will honour when someone replies
 to your message. So while they'll see the message as appearing to come from
-bounce+account@sheltermanager.com, when they hit the reply button in their
+account@bounce.sheltermanager.com, when they hit the reply button in their
 email client, the email they create will have a to address of you@youremail.com
 instead.
 
 In the case of sheltermanager.com, if someone does accidentally reply to a
-bounce+account@sheltermanager.com address, the sheltermanager email server will
+account@bounce.sheltermanager.com address, the sheltermanager email server will
 find your account and send the email through to you, or find a Reply-To header
 in the quoted message if one exists and send it to that.
 
