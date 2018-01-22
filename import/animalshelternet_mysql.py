@@ -91,7 +91,7 @@ for row in db.select("people"):
 # Animals/intake
 for row in db.query("select animals.*, intake.Comments as IntakeComments, intake.CustUid as IntakeCustUid, " \
     "IntakeDTL1, IntakeDTL2, " \
-    "coalesce((select descr from lookup where value = intake.ReasonCode), '') AS IntakeReason, " \
+    "coalesce((select descr from lookup where value = intake.ReasonCode limit 1), '') AS IntakeReason, " \
     "coalesce((select descr from lookup where value = animals.Color limit 1), '') AS ColorName " \
     "from animals " \
     "left outer join intake on intake.RefUID = animals.IntakeRefUID " \
@@ -162,7 +162,7 @@ for row in db.query("select animals.*, intake.Comments as IntakeComments, intake
     a.CreatedDate = a.DateBroughtIn
 
 # Dispositions/animals
-for row in db.query("select disposit.*, (select descr from lookup where value = disposit.transtype) as disptype from disposit").list():
+for row in db.query("select disposit.*, (select descr from lookup where value = disposit.transtype limit 1) as disptype from disposit").list():
     a = None
     if row.AnimalUid in ppa:
         a = ppa[row.AnimalUid]
