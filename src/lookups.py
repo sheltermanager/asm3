@@ -232,6 +232,7 @@ MICROCHIP_MANUFACTURERS = [
     { "length": 15, "regex": r"^900118", "name": "SmartChip", "locales": "" },
     { "length": 15, "regex": r"^900128", "name": "Gepe-Geimuplast", "locales": "" },
     { "length": 15, "regex": r"^900138", "name": "ID-Ology", "locales": "" },
+    { "length": 15, "regex": r"^900139", "name": "SmartTag", "locales": "" },
     { "length": 15, "regex": r"^900164", "name": "Save This Life", "locales": "" },
     { "length": 15, "regex": r"^900182", "name": "Petlog", "locales": "" },
     { "length": 15, "regex": r"^900141", "name": "SmartTag", "locales": "" },

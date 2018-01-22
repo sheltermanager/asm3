@@ -42,7 +42,7 @@ class SmartTagPublisher(FTPPublisher):
             self.cleanup()
             return
 
-        animals = get_microchip_data(self.dbo, ["a.SmartTag = 1 AND a.SmartTagNumber <> ''", '90007400', '900141'], "smarttag")
+        animals = get_microchip_data(self.dbo, ["a.SmartTag = 1 AND a.SmartTagNumber <> ''", '90007400', '900139', '900141'], "smarttag")
         if len(animals) == 0:
             self.setLastError("No animals found to publish.")
             self.cleanup(save_log=False)
