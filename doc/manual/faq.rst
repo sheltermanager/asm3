@@ -54,6 +54,17 @@ off-shelter animals in medical books and calendars` controls whether or not
 off-shelter animals appear in the vaccination book, medical book, test book and
 are highlighted in alerts on the home page. By default, this option is off. 
 
+Why are my non-shelter and adopted animals being shown on my website?
+---------------------------------------------------------------------
+
+You've likely set the "Courtesy Listing" flag for that animal.
+
+The purpose of that flag is to force animals that wouldn't normally be
+adoptable to appear on websites and be sent to third parties for publicity.
+Common scenarios for this are non-shelter owned animals or previously adopted
+animals where the owner is handling the adoption, but the shelter is helping to
+publicise the animal.
+
 Why can't I edit the date brought in field?
 -------------------------------------------
 
