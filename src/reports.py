@@ -156,7 +156,7 @@ def is_mailmerge(dbo, crid):
     """
     Returns true if the report with crid is a mailmerge
     """
-    return db.query_string(dbo, "SELECT HTMLBody FROM customreport WHERE ID = %d" % int(crid)).startswith("MAIL")
+    return db.query_string(dbo, "SELECT HTMLBody FROM customreport WHERE ID = %d" % crid).startswith("MAIL")
 
 def get_criteria_params(dbo, customreportid, post):
     """
@@ -391,7 +391,7 @@ def get_smcom_reports(dbo):
     loaded = get_all_report_titles(dbo)
     def version_ok(rdb):
         if rdb.find("/") == -1: return True
-        ver = int(rdb[0:rdb.find("/")])
+        ver = utils.cint(rdb[0:rdb.find("/")])
         return dbupdate.LATEST_VERSION >= ver
     def database_ok(rdb):
         if rdb.find("ASM2") != -1: return False
@@ -785,20 +785,14 @@ class Report:
                 # rounding
                 roundto = 2
                 if len(fields) > 2:
-                    roundto = int(fields[2])
+                    roundto = utils.cint(fields[2])
 
                 total = 0.0
                 for i in range(gd.lastGroupStartPosition, gd.lastGroupEndPosition + 1):
-                    try:
-                        fv = float(rs[i][calcfield])
-                        if utils.is_currency(fields[1]):
-                            fv /= 100
-                        total += fv
-                    except Exception as e:
-                        # Ignore anything that wasn't a number
-                        pass
+                    total += utils.cfloat(rs[i][calcfield])
+
                 if utils.is_currency(fields[1]):
-                    value = i18n.format_currency(self.dbo.locale, total * 100)
+                    value = i18n.format_currency(self.dbo.locale, utils.cint(total))
                 else:
                     fmt = "%%0.%sf" % roundto
                     value = fmt % total
@@ -827,20 +821,16 @@ class Report:
                 # rounding
                 roundto = 2
                 if len(fields) > 2:
-                    roundto = int(fields[2])
+                    roundto = utils.cint(fields[2])
 
                 total = 0.0
                 num = 0
                 for i in range(gd.lastGroupStartPosition, gd.lastGroupEndPosition + 1):
-                    try:
-                        fv = float(rs[i][calcfield])
-                        if utils.is_currency(fields[1]):
-                            fv /= 100
-                        total += fv
-                        num += 1
-                    except Exception as e:
-                        # Ignore anything that wasn't a number
-                        pass
+                    fv = utils.cfloat(rs[i][calcfield])
+                    if utils.is_currency(fields[1]):
+                        fv /= 100
+                    total += fv
+                    num += 1
                 fstr = "%0." + str(roundto) + "f"
                 value = fstr % (0)
                 if num > 0:
@@ -856,7 +846,7 @@ class Report:
                 # rounding
                 roundto = 2
                 if len(fields) > 3:
-                    roundto = int(fields[3])
+                    roundto = utils.cint(fields[3])
 
                 matched = 0
                 for i in range(gd.lastGroupStartPosition, gd.lastGroupEndPosition + 1):
@@ -916,7 +906,7 @@ class Report:
                 calcfield = fields[1].upper()
                 value = str(rs[gd.lastGroupStartPosition][calcfield])
                 if utils.is_currency(calcfield):
-                    value = str(float(value) / 100)
+                    value = str(utils.cfloat(value) / 100)
 
             # {LAST.field}
             if key.lower().startswith("last"):
@@ -925,7 +915,7 @@ class Report:
                 calcfield = fields[1].upper()
                 value = str(rs[gd.lastGroupStartPosition][calcfield])
                 if utils.is_currency(calcfield):
-                    value = str(float(value) / 100)
+                    value = str(utils.cfloat(value) / 100)
 
             # {SQL.sql} - arbitrary sql command, output first
             # column of first row
