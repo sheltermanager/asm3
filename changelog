@@ -1,6 +1,8 @@
 40
 ================
 
+23/01/18 Email document signing request is plain instead of html #210
+23/01/18 Email document as pdf is plain instead of html message #311
 23/01/18 Fix currency rounding error on report.SUM
 22/01/18 Add new SmartTag prefix 900141
 19/01/18 Option to mark new images not for publishing #336
