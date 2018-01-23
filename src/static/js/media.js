@@ -123,18 +123,18 @@ $(function() {
             }
 
             h.push(tableform.buttons_render([
-                { id: "new", text: _("Attach File"), icon: "media-add", tooltip: _("Attach a file") },
-                { id: "newlink", text: _("Attach Link"), icon: "link", tooltip: _("Attach a link to a web resource") },
-                { id: "newdoc", text: _("New Document"), icon: "document", tooltip: _("Create a new document") },
-                { id: "delete", text: _("Delete"), icon: "media-delete" },
-                { id: "email", text: _("Email"), icon: "email", tooltip: _("Email a copy of the selected media files") },
-                { id: "emailpdf", text: _("Email PDF"), icon: "pdf", tooltip: _("Email a copy of the selected HTML documents as PDFs") },
+                { id: "new", text: _("Attach File"), icon: "media-add", perm: "aam", tooltip: _("Attach a file") },
+                { id: "newlink", text: _("Attach Link"), icon: "link", perm: "aam", tooltip: _("Attach a link to a web resource") },
+                { id: "newdoc", text: _("New Document"), icon: "document", perm: "aam", tooltip: _("Create a new document") },
+                { id: "delete", text: _("Delete"), icon: "media-delete", perm: "dam" },
+                { id: "email", text: _("Email"), icon: "email", perm: "emo", tooltip: _("Email a copy of the selected media files") },
+                { id: "emailpdf", text: _("Email PDF"), icon: "pdf", perm: "emo", tooltip: _("Email a copy of the selected HTML documents as PDFs") },
                 { id: "sign", text: _("Sign"), type: "buttonmenu", icon: "signature" },
-                { id: "rotateanti", icon: "rotate-anti", tooltip: _("Rotate image 90 degrees anticlockwise") },
-                { id: "rotateclock", icon: "rotate-clock", tooltip: _("Rotate image 90 degrees clockwise") },
-                { id: "web", icon: "web", tooltip: _("Make this the default image when viewing this record and publishing to the web") },
-                { id: "doc", icon: "document", tooltip: _("Make this the default image when creating documents") },
-                { id: "video", icon: "video", tooltip: _("Make this the default video link when publishing to the web") }
+                { id: "rotateanti", icon: "rotate-anti", perm: "cam", tooltip: _("Rotate image 90 degrees anticlockwis") },
+                { id: "rotateclock", icon: "rotate-clock", perm:" cam", tooltip: _("Rotate image 90 degrees clockwise") },
+                { id: "web", icon: "web", perm: "cam", tooltip: _("Make this the default image when viewing this record and publishing to the web") },
+                { id: "doc", icon: "document", perm: "cam", tooltip: _("Make this the default image when creating documents") },
+                { id: "video", icon: "video", perm: "cam", tooltip: _("Make this the default video link when publishing to the web") }
             ]));
 
             h.push(media.render_items());
