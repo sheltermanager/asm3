@@ -122,6 +122,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#html-report">html_report</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#json-adoptable-animal-and-xml-adoptable-animal">json_adoptable_animal and xml_adoptable_animal</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#json-adoptable-animals-and-xml-adoptable-animals">json_adoptable_animals and xml_adoptable_animals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#json-lost-animals-xml-lost-animals-json-found-animals-xml-found-animals">json_lost_animals, xml_lost_animals, json_found_animals, xml_found_animals</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#json-recent-adoptions-and-xml-recent-adoptions">json_recent_adoptions and xml_recent_adoptions</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#json-recent-changes-and-xml-recent-changes">json_recent_changes and xml_recent_changes</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#json-shelter-animals-and-xml-shelter-animals">json_shelter_animals and xml_shelter_animals</a></li>
@@ -492,6 +493,16 @@ JSON or XML:</p>
 <p>Returns a dataset containing all animals available for adoption. The method
 determines whether the format returned is JSON or XML:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span>http://localhost:5000/service?method=xml_adoptable_animals&amp;username=user&amp;password=letmein
+</pre></div>
+</div>
+</div>
+<div class="section" id="json-lost-animals-xml-lost-animals-json-found-animals-xml-found-animals">
+<h2>json_lost_animals, xml_lost_animals, json_found_animals, xml_found_animals<a class="headerlink" href="#json-lost-animals-xml-lost-animals-json-found-animals-xml-found-animals" title="Permalink to this headline">¶</a></h2>
+<p class="rubric">Cache time: 1 hour</p>
+<p>Returns a dataset containing all lost or found animals reported in the last 90
+days that are still active.  The method determines whether the format returned
+is JSON or XML:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>http://localhost:5000/service?method=xml_found_animals&amp;username=user&amp;password=letmein
 </pre></div>
 </div>
 </div>

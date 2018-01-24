@@ -138,12 +138,6 @@ def get_lostanimal_find_simple(dbo, query = "", limit = 0):
     sql = get_lostanimal_query(dbo) + " WHERE " + " OR ".join(ors)
     return db.query(dbo, sql, limit=limit)
 
-def get_foundanimal_last_days(dbo, days = 90):
-    """
-    Returns found animals active for the last X days
-    """
-    return db.query(dbo, get_foundanimal_query(dbo) + " WHERE a.DateFound > %s AND a.ReturnToOwnerDate Is Null" % db.dd(subtract_days(now(dbo.timezone), days)))
-
 def get_foundanimal_find_simple(dbo, query = "", limit = 0):
     """
     Returns rows for simple found animal searches.
@@ -304,6 +298,18 @@ def get_foundanimal_find_advanced(dbo, criteria, limit = 0):
     where = " WHERE " + " AND ".join(c)
     sql = get_foundanimal_query(dbo) + where + " ORDER BY a.ID"
     return db.query(dbo, sql, limit=limit)
+
+def get_lostanimal_last_days(dbo, days = 90):
+    """
+    Returns lost animals active for the last X days
+    """
+    return db.query(dbo, get_lostanimal_query(dbo) + " WHERE a.DateLost > %s AND a.DateFound Is Null" % db.dd(subtract_days(now(dbo.timezone), days)))
+
+def get_foundanimal_last_days(dbo, days = 90):
+    """
+    Returns found animals active for the last X days
+    """
+    return db.query(dbo, get_foundanimal_query(dbo) + " WHERE a.DateFound > %s AND a.ReturnToOwnerDate Is Null" % db.dd(subtract_days(now(dbo.timezone), days)))
 
 def get_lostanimal_satellite_counts(dbo, lfid):
     """

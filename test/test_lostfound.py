@@ -63,6 +63,12 @@ class TestLostFound(unittest.TestCase):
     def test_get_foundanimal_find_advanced(self):
         assert len(lostfound.get_foundanimal_find_advanced(base.get_dbo(), { "area": "Test" })) > 0
 
+    def test_get_lostanimal_last_days(self):
+        assert len(lostfound.get_lostanimal_last_days(base.get_dbo())) > 0
+
+    def test_get_foundanimal_last_days(self):
+        assert len(lostfound.get_foundanimal_last_days(base.get_dbo())) > 0
+
     def test_get_lostanimal_satellite_counts(self):
         assert len(lostfound.get_lostanimal_satellite_counts(base.get_dbo(), self.laid)) > 0
 

@@ -18,6 +18,7 @@ import dbfs
 import dbupdate
 import html
 import media
+import lostfound
 import movement
 import onlineform
 import publish
@@ -35,6 +36,8 @@ AUTH_METHODS = [
     "csv_mail", "csv_report", "html_report", "rss_timeline", "upload_animal_image",
     "xml_adoptable_animal", "json_adoptable_animal",
     "xml_adoptable_animals", "json_adoptable_animals", "jsonp_adoptable_animals",
+    "xml_found_animals", "json_found_animals", "jsonp_found_animals",
+    "xml_lost_animals", "json_lost_animals", "jsonp_lost_animals",
     "xml_recent_adoptions", "json_recent_adoptions", "jsonp_recent_adoptions",
     "xml_shelter_animals", "json_shelter_animals", "jsonp_shelter_animals",
     "xml_recent_changes", "json_recent_changes", "jsonp_recent_changes"
@@ -341,8 +344,34 @@ def handler(post, path, remoteip, referer, querystring):
         return set_cached_response(cache_key, "application/xml", 3600, 3600, html.xml(rs))
 
     elif method == "json_found_animals":
+        users.check_permission_map(l, user["SUPERUSER"], securitymap, users.VIEW_FOUND_ANIMAL)
         rs = lostfound.get_foundanimal_last_days(dbo)
         return set_cached_response(cache_key, "application/json", 3600, 3600, html.json(rs))
+
+    elif method == "jsonp_found_animals":
+        users.check_permission_map(l, user["SUPERUSER"], securitymap, users.VIEW_FOUND_ANIMAL)
+        rs = lostfound.get_foundanimal_last_days(dbo)
+        return ("application/javascript", 0, "%s(%s);" % (post["callback"], utils.json(rs)))
+
+    elif method == "xml_found_animals":
+        users.check_permission_map(l, user["SUPERUSER"], securitymap, users.VIEW_FOUND_ANIMAL)
+        rs = lostfound.get_foundanimal_last_days(dbo)
+        return set_cached_response(cache_key, "application/json", 3600, 3600, html.xml(rs))
+
+    elif method == "json_lost_animals":
+        users.check_permission_map(l, user["SUPERUSER"], securitymap, users.VIEW_LOST_ANIMAL)
+        rs = lostfound.get_lostanimal_last_days(dbo)
+        return set_cached_response(cache_key, "application/json", 3600, 3600, html.json(rs))
+
+    elif method == "jsonp_lost_animals":
+        users.check_permission_map(l, user["SUPERUSER"], securitymap, users.VIEW_LOST_ANIMAL)
+        rs = lostfound.get_lostanimal_last_days(dbo)
+        return ("application/javascript", 0, "%s(%s);" % (post["callback"], utils.json(rs)))
+
+    elif method == "xml_lost_animals":
+        users.check_permission_map(l, user["SUPERUSER"], securitymap, users.VIEW_LOST_ANIMAL)
+        rs = lostfound.get_lostanimal_last_days(dbo)
+        return set_cached_response(cache_key, "application/json", 3600, 3600, html.xml(rs))
 
     elif method == "json_recent_adoptions":
         users.check_permission_map(l, user["SUPERUSER"], securitymap, users.VIEW_ANIMAL)
