@@ -161,14 +161,17 @@ $(function() {
                  },
                  { id: "given", text: _("Give"), icon: "complete", enabled: "multi", perm: "cav",
                      click: function() {
-                        var comments = "";
+                        var comments = "", vacctype = 0;
                         $.each(controller.rows, function(i, v) {
                             if (tableform.table_id_selected(v.ID)) {
                                 comments += "[" + v.SHELTERCODE + " - " + v.ANIMALNAME + "] ";
+                                vacctype = v.VACCINATIONID;
                             }
                         });
                         $("#usagecomments").val(comments);
-                        $("#newdateg").datepicker("setDate", new Date());
+                        $("#givennewdate").datepicker("setDate", new Date());
+                        $("#givenexpires, #givenbatch, #givenmanufacturer").val("");
+                        vaccination.set_given_batch(vacctype);
                         $("#usagetype").select("firstvalue");
                         $("#usagedate").datepicker("setDate", new Date());
                         $("#usagedate").closest("tr").hide();
@@ -341,16 +344,39 @@ $(function() {
                 '<div id="dialog-given" style="display: none" title="' + html.title(_("Give Vaccination")) + '">',
                 '<table width="100%">',
                 '<tr>',
-                '<td><label for="newdateg">' + _("Given") + '</label></td>',
-                '<td><input id="newdateg" data="newdate" type="text" class="asm-textbox asm-datebox asm-field" /></td>',
+                '<td><label for="givennewdate">' + _("Given") + '</label></td>',
+                '<td><input id="givennewdate" data="newdate" type="text" class="asm-textbox asm-datebox asm-field" /></td>',
                 '</tr>',
+                '<tr>',
+                '<td><label for="givenexpires">' + _("Expires") + '</label>',
+                '<span id="callout-givenexpires" class="asm-callout">' + _('Optional, the date the vaccination "wears off" and needs to be administered again') + '</span>',
+                '</td>',
+                '<td><input id="givenexpires" data="givenexpires" type="text" class="asm-textbox asm-datebox asm-field" /></td>',
+                '</tr>',
+                '<tr>',
+                '<td><label for="givenbatch">' + _("Batch Number") + '</label></td>',
+                '<td><input id="givenbatch" data="givenbatch" type="text" class="asm-textbox asm-field" /></td>',
+                '</tr>',
+                '<tr>',
+                '<tr>',
+                '<td><label for="givenmanufacturer">' + _("Manufacturer") + '</label></td>',
+                '<td><input id="givenmanufacturer" data="givenmanufacturer" type="text" class="asm-textbox asm-field" /></td>',
+                '</tr>',
+                '<tr>',
                 '<tr>',
                 '<td><label for="givenvet">' + _("Administering Vet") + '</label></td>',
                 '<td><input id="givenvet" data="givenvet" type="hidden" class="asm-personchooser asm-field" data-filter="vet" /></td>',
                 '</tr>',
-                '<tr><td></td><td>' + html.info(_("Specifying a reschedule date will make copies of the selected vaccinations and mark them to be given on the reschedule date. Example: If this vaccination needs to be given every year, set the reschedule date to be 1 year from today.")) + '</td></tr>',
                 '<tr>',
-                '<td><label for="rescheduledate">' + _("Reschedule") + '</label></td>',
+                '<td></td>',
+                '<td>',
+                html.info(_("Specifying a reschedule date will make copies of the selected vaccinations and mark them to be given on the reschedule date. Example: If this vaccination needs to be given every year, set the reschedule date to be 1 year from today.")),
+                '</td>',
+                '</tr>',
+                '<tr>',
+                '<td><label for="rescheduledate">' + _("Reschedule") + '</label>',
+                '<span id="callout-rescheduledate" class="asm-callout">' + _("Specifying a reschedule date will make copies of the selected vaccinations and mark them to be given on the reschedule date. Example: If this vaccination needs to be given every year, set the reschedule date to be 1 year from today.") + '</span>',
+                '</td>',
                 '<td><input id="rescheduledate" data="rescheduledate" type="text" class="asm-textbox asm-datebox asm-field" /></td>',
                 '</tr>',
                 '<tr>',
@@ -395,15 +421,15 @@ $(function() {
             var givenbuttons = { }, table = vaccination.table;
             givenbuttons[_("Save")] = function() {
                 validate.reset("dialog-given");
-                if (!validate.notblank([ "newdateg" ])) { return; }
-                $("#usagedate").val($("#newdateg").val()); // copy given to usage
+                if (!validate.notblank([ "givennewdate" ])) { return; }
+                $("#usagedate").val($("#givennewdate").val()); // copy given to usage
                 $("#dialog-given").disable_dialog_buttons();
                 var ids = tableform.table_ids(table);
                 common.ajax_post("vaccination", $("#dialog-given .asm-field").toPOST() + "&mode=given&ids=" + ids)
                     .then(function() {
                         $.each(controller.rows, function(i, v) {
                             if (tableform.table_id_selected(v.ID)) {
-                                v.DATEOFVACCINATION = format.date_iso($("#newdateg").val());
+                                v.DATEOFVACCINATION = format.date_iso($("#givennewdate").val());
                             }
                         });
                         tableform.table_update(table);
@@ -516,6 +542,22 @@ $(function() {
                     $("#batchnumber, #manufacturer").val("");
                     if (v.BATCHNUMBER) { $("#batchnumber").val(v.BATCHNUMBER); }
                     if (v.MANUFACTURER) { $("#manufacturer").val(v.MANUFACTURER); }
+                }
+                return true;
+            });
+        },
+
+        /** Sets the batch number and manufacturer fields on the given dialog
+         *  based on the last vacc of this type we saw
+         */
+        set_given_batch: function(vacctype) {
+            // If the option is disabled, don't do it
+            if (!config.bool("AutoDefaultVaccBatch")) { return; }
+            $.each(controller.batches, function(i, v) {
+                if (vacctype == v.ID) {
+                    $("#givenbatch, #givenmanufacturer").val("");
+                    if (v.BATCHNUMBER) { $("#givenbatch").val(v.BATCHNUMBER); }
+                    if (v.MANUFACTURER) { $("#givenmanufacturer").val(v.MANUFACTURER); }
                 }
                 return true;
             });

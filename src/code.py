@@ -5164,9 +5164,12 @@ class vaccination(JSONEndpoint):
         newdate = post.date("newdate")
         rescheduledate = post.date("rescheduledate")
         reschedulecomments = post["reschedulecomments"]
+        givenexpires = post.date("givenexpires")
+        givenbatch = post["givenbatch"]
+        givenmanufacturer = post["givenmanufacturer"]
         vet = post.integer("givenvet")
         for vid in post.integer_list("ids"):
-            extmedical.complete_vaccination(o.dbo, o.user, vid, newdate, vet)
+            extmedical.complete_vaccination(o.dbo, o.user, vid, newdate, vet, givenexpires, givenbatch, givenmanufacturer)
             if rescheduledate is not None:
                 extmedical.reschedule_vaccination(o.dbo, o.user, vid, rescheduledate, reschedulecomments)
             if post.integer("item") != -1:

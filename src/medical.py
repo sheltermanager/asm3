@@ -574,23 +574,27 @@ def calculate_given_remaining(dbo, amid):
         "TreatmentsGiven = %d, TreatmentsRemaining = " \
         "((TotalNumberOfTreatments * TimingRule) - %d) WHERE ID = %d" % (given, given, amid))
 
-def complete_vaccination(dbo, username, vaccinationid, newdate, vetid = 0):
+def complete_vaccination(dbo, username, vaccinationid, newdate, vetid = 0, dateexpires = None, batchnumber = "", manufacturer = ""):
     """
-    Marks a vaccination completed on newdate
+    Marks a vaccination given/completed on newdate
     """
-    db.execute(dbo, "UPDATE animalvaccination SET DateOfVaccination = %s, AdministeringVetID = %s, " \
-        "LastChangedBy = %s, LastChangedDate = %s WHERE ID = %d" % \
-        ( db.dd(newdate), db.di(vetid), db.ds(username), db.ddt(now(dbo.timezone)), vaccinationid))
-    audit.edit(dbo, username, "animalvaccination", vaccinationid, str(vaccinationid) + " => given " + str(newdate))
+    dbo.update("animalvaccination", vaccinationid, {
+        "DateOfVaccination":    newdate,
+        "DateExpires":          dateexpires,
+        "AdministeringVetID":   vetid,
+        "BatchNumber":          batchnumber,
+        "Manufacturer":         manufacturer
+    }, username)
 
 def complete_test(dbo, username, testid, newdate, testresult, vetid = 0):
     """
     Marks a test performed on newdate with testresult
     """
-    db.execute(dbo, "UPDATE animaltest SET DateOfTest = %s, AdministeringVetID = %s, " \
-        "LastChangedBy = %s, LastChangedDate = %s, TestResultID = %d WHERE ID = %d" % \
-        ( db.dd(newdate), db.di(vetid), db.ds(username), db.ddt(now(dbo.timezone)), testresult, testid))
-    audit.edit(dbo, username, "animaltest", testid, "%d => performed on %s (result: %d)" % (testid, str(newdate), testresult))
+    dbo.update("animaltest", testid, {
+        "DateOfTest":           newdate,
+        "TestResultID":         testresult,
+        "AdministeringVetID":   vetid
+    }, username)
     # ASM2_COMPATIBILITY
     update_asm2_tests(dbo, testid)
 

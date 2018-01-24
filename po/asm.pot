@@ -9165,7 +9165,7 @@ msgid "Rota cloned successfully."
 msgstr ""
 
 #: media.js
-msgid "Rotate image 90 degrees anticlockwise"
+msgid "Rotate image 90 degrees anticlockwis"
 msgstr ""
 
 #: media.js
