@@ -65,24 +65,34 @@ def get_foundanimal_query(dbo):
     return "SELECT a.*, a.ID AS LFID, s.SpeciesName, b.BreedName, " \
         "c.BaseColour AS BaseColourName, c.AdoptAPetColour, x.Sex AS SexName, " \
         "o.OwnerSurname, o.OwnerForeNames, o.OwnerTitle, o.OwnerInitials, " \
-        "o.OwnerName, o.OwnerPostcode, o.HomeTelephone, o.WorkTelephone, o.MobileTelephone " \
+        "o.OwnerName, o.OwnerPostcode, o.HomeTelephone, o.WorkTelephone, o.MobileTelephone, " \
+        "web.ID AS WebsiteMediaID, " \
+        "web.MediaName AS WebsiteMediaName, " \
+        "web.Date AS WebsiteMediaDate, " \
+        "web.MediaNotes AS WebsiteMediaNotes " \
         "FROM animalfound a " \
         "LEFT OUTER JOIN breed b ON a.BreedID = b.ID " \
         "LEFT OUTER JOIN species s ON a.AnimalTypeID = s.ID " \
         "LEFT OUTER JOIN basecolour c ON a.BaseColourID = c.ID " \
         "LEFT OUTER JOIN lksex x ON a.Sex = x.ID " \
+        "LEFT OUTER JOIN media web ON web.LinkID = a.ID AND web.LinkTypeID = 2 AND web.WebsitePhoto = 1 " \
         "LEFT OUTER JOIN owner o ON a.OwnerID = o.ID"
 
 def get_lostanimal_query(dbo):
     return "SELECT a.*, a.ID AS LFID, s.SpeciesName, b.BreedName, " \
         "c.BaseColour AS BaseColourName, c.AdoptAPetColour, x.Sex AS SexName, " \
         "o.OwnerSurname, o.OwnerForeNames, o.OwnerTitle, o.OwnerInitials, " \
-        "o.OwnerName, o.OwnerPostcode, o.HomeTelephone, o.WorkTelephone, o.MobileTelephone " \
+        "o.OwnerName, o.OwnerPostcode, o.HomeTelephone, o.WorkTelephone, o.MobileTelephone, " \
+        "web.ID AS WebsiteMediaID, " \
+        "web.MediaName AS WebsiteMediaName, " \
+        "web.Date AS WebsiteMediaDate, " \
+        "web.MediaNotes AS WebsiteMediaNotes " \
         "FROM animallost a " \
         "LEFT OUTER JOIN breed b ON a.BreedID = b.ID " \
         "LEFT OUTER JOIN species s ON a.AnimalTypeID = s.ID " \
         "LEFT OUTER JOIN basecolour c ON a.BaseColourID = c.ID " \
         "LEFT OUTER JOIN lksex x ON a.Sex = x.ID " \
+        "LEFT OUTER JOIN media web ON web.LinkID = a.ID AND web.LinkTypeID = 2 AND web.WebsitePhoto = 1 " \
         "LEFT OUTER JOIN owner o ON a.OwnerID = o.ID"
 
 def get_lostanimal(dbo, aid):

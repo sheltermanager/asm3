@@ -805,6 +805,7 @@ def json_personfindcolumns(dbo):
         ( "MobileTelephone", _("Cell", l) ),
         ( "EmailAddress", _("Email", l) ),
         ( "IDCheck", _("Homechecked", l) ),
+        ( "Jurisdiction", _("Jurisdiction", l) ),
         ( "Comments", _("Comments", l) ),
         ( "IsBanned", _("Banned", l) ),
         ( "IsVolunteer", _("Volunteer", l) ),

@@ -23,9 +23,14 @@ def get_waitinglist_query(dbo):
         "o.OwnerName, o.OwnerSurname, o.OwnerForeNames, o.OwnerTitle, o.OwnerInitials, " \
         "o.OwnerAddress, o.OwnerTown, o.OwnerCounty, o.OwnerPostcode, " \
         "o.HomeTelephone, o.WorkTelephone, o.MobileTelephone, o.EmailAddress, " \
-        "u.Urgency AS UrgencyName " \
+        "u.Urgency AS UrgencyName, " \
+        "web.ID AS WebsiteMediaID, " \
+        "web.MediaName AS WebsiteMediaName, " \
+        "web.Date AS WebsiteMediaDate, " \
+        "web.MediaNotes AS WebsiteMediaNotes " \
         "FROM animalwaitinglist a " \
         "LEFT OUTER JOIN lksize sz ON sz.ID = a.Size " \
+        "LEFT OUTER JOIN media web ON web.LinkID = a.ID AND web.LinkTypeID = 5 AND web.WebsitePhoto = 1 " \
         "INNER JOIN species s ON s.ID = a.SpeciesID " \
         "INNER JOIN owner o ON o.ID = a.OwnerID " \
         "INNER JOIN lkurgency u ON u.ID = a.Urgency"

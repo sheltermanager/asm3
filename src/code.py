@@ -2518,7 +2518,7 @@ class foundanimal_media(JSONEndpoint):
             "media": m,
             "animal": a,
             "tabcounts": extlostfound.get_foundanimal_satellite_counts(dbo, a["LFID"])[0],
-            "showpreferred": False,
+            "showpreferred": True,
             "linkid": o.post.integer("id"),
             "linktypeid": extmedia.FOUNDANIMAL,
             "logtypes": extlookups.get_log_types(dbo),
@@ -2671,6 +2671,7 @@ class incident_find(JSONEndpoint):
             "incidenttypes": extlookups.get_incident_types(dbo),
             "completedtypes": extlookups.get_incident_completed_types(dbo),
             "citationtypes": extlookups.get_citation_types(dbo),
+            "jurisdictions": extlookups.get_jurisdictions(dbo),
             "pickuplocations": extlookups.get_pickup_locations(dbo),
             "species": extlookups.get_species(dbo),
             "sexes": extlookups.get_sexes(dbo),
@@ -2760,7 +2761,7 @@ class incident_media(JSONEndpoint):
             "media": m,
             "incident": a,
             "tabcounts": extanimalcontrol.get_animalcontrol_satellite_counts(dbo, a["ACID"])[0],
-            "showpreferred": False,
+            "showpreferred": True,
             "linkid": o.post.integer("id"),
             "linktypeid": extmedia.ANIMALCONTROL,
             "logtypes": extlookups.get_log_types(dbo),
@@ -3106,7 +3107,7 @@ class lostanimal_media(JSONEndpoint):
             "media": m,
             "animal": a,
             "tabcounts": extlostfound.get_lostanimal_satellite_counts(dbo, a["LFID"])[0],
-            "showpreferred": False,
+            "showpreferred": True,
             "linkid": o.post.integer("id"),
             "linktypeid": extmedia.LOSTANIMAL,
             "logtypes": extlookups.get_log_types(dbo),
@@ -4091,6 +4092,7 @@ class person_find(JSONEndpoint):
         al.debug("lookups loaded", "code.person_find", dbo)
         return {
             "flags": flags,
+            "jurisdictions": extlookups.get_jurisdictions(dbo),
             "users": users.get_users(dbo)
         }
 
@@ -5281,7 +5283,7 @@ class waitinglist_media(JSONEndpoint):
             "media": m,
             "animal": a,
             "tabcounts": extwaitinglist.get_satellite_counts(dbo, a["WLID"])[0],
-            "showpreferred": False,
+            "showpreferred": True,
             "linkid": o.post.integer("id"),
             "linktypeid": extmedia.WAITINGLIST,
             "logtypes": extlookups.get_log_types(dbo),

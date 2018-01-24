@@ -1,6 +1,8 @@
 40
 ================
 
+24/01/18 Searchable jurisdictions for people/incidents #267
+24/01/18 Add WebsiteMedia* fields for waiting list/lost/found/incident #330
 24/01/18 Allow editing/setting of batch, expires and manufacturer in give #330
 24/01/18 Add lost/found service calls #329 #334
 23/01/18 Email document signing request is plain instead of html #210

@@ -134,6 +134,7 @@ $(function() {
                 "MobileTelephone":  _("Cell Phone"),
                 "EmailAddress":  _("Email"),
                 "IDCheck":  _("Homechecked"),
+                "Jurisdiction": _("Jurisdiction"),
                 "Comments":  _("Comments"),
                 "IsBanned":  _("Banned"),
                 "IsVolunteer":  _("Volunteer"),
@@ -188,7 +189,10 @@ $(function() {
                 "IsMember", "IsDonor", "IsShelter", "IsACO", "IsStaff", "IsFosterer",
                 "IsRetailer", "IsVet", "IsGiftAid" ],
             rv = "";
-            if ($.inArray(name, DATE_FIELDS) > -1) {
+            if (name == "Jurisdiction") {
+                rv = row.JURISDICTIONNAME;
+            }
+            else if ($.inArray(name, DATE_FIELDS) > -1) {
                 rv = format.date(value);
             }
             else if ($.inArray(name, STRING_FIELDS) > -1) {

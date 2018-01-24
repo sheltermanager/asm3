@@ -23,6 +23,7 @@ $(function() {
                 '<th>' + _("Address") + '</th>',
                 '<th>' + _("City") + '</th>',
                 '<th>' + _("Zipcode") + '</th>',
+                '<th>' + _("Jurisdiction") + '</th>',
                 '<th>' + _("Location") + '</th>',
                 '<th>' + _("Suspect") + '</th>',
                 '<th>' + _("Dispatch Date/Time") + '</th>',
@@ -52,6 +53,7 @@ $(function() {
                 h.push('<td>' + common.nulltostr(r.DISPATCHADDRESS) + '</td>');
                 h.push('<td>' + common.nulltostr(r.DISPATCHTOWN) + '</td>');
                 h.push('<td>' + common.nulltostr(r.DISPATCHPOSTCODE) + '</td>');
+                h.push('<td>' + common.nulltostr(r.JURISDICTIONNAME) + '</td>');
                 h.push('<td>' + common.nulltostr(r.LOCATIONNAME) + '</td>');
                 h.push('<td>');
                 if (r.OWNERNAME1) { h.push(html.person_link(r.OWNERID, r.OWNERNAME1)); }

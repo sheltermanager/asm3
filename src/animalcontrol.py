@@ -23,15 +23,21 @@ def get_animalcontrol_query(dbo):
         "o1.HomeTelephone AS SuspectHomeTelephone, o1.WorkTelephone AS SuspectWorkTelephone, o1.MobileTelephone AS SuspectMobileTelephone, " \
         "vo.OwnerName AS VictimName, vo.OwnerAddress AS VictimAddress, vo.OwnerTown AS VictimTown, vo.OwnerCounty AS VictimCounty, vo.OwnerPostcode AS VictimPostcode," \
         "vo.HomeTelephone AS VictimHomeTelephone, vo.WorkTelephone AS VictimWorkTelephone, vo.MobileTelephone AS VictimMobileTelephone, " \
-        "ti.IncidentName, ci.CompletedName, pl.LocationName " \
+        "ti.IncidentName, ci.CompletedName, pl.LocationName, j.JurisdictionName, " \
+        "web.ID AS WebsiteMediaID, " \
+        "web.MediaName AS WebsiteMediaName, " \
+        "web.Date AS WebsiteMediaDate, " \
+        "web.MediaNotes AS WebsiteMediaNotes " \
         "FROM animalcontrol ac " \
         "LEFT OUTER JOIN species s ON s.ID = ac.SpeciesID " \
         "LEFT OUTER JOIN lksex x ON x.ID = ac.Sex " \
+        "LEFT OUTER JOIN jurisdiction j ON j.ID = ac.JurisdictionID " \
         "LEFT OUTER JOIN owner co ON co.ID = ac.CallerID " \
         "LEFT OUTER JOIN owner o1 ON o1.ID = ac.OwnerID " \
         "LEFT OUTER JOIN owner o2 ON o2.ID = ac.Owner2ID " \
         "LEFT OUTER JOIN owner o3 ON o3.ID = ac.Owner3ID " \
         "LEFT OUTER JOIN owner vo ON vo.ID = ac.VictimID " \
+        "LEFT OUTER JOIN media web ON web.LinkID = ac.ID AND web.LinkTypeID = 6 AND web.WebsitePhoto = 1 " \
         "LEFT OUTER JOIN pickuplocation pl ON pl.ID = ac.PickupLocationID " \
         "LEFT OUTER JOIN incidenttype ti ON ti.ID = ac.IncidentTypeID " \
         "LEFT OUTER JOIN incidentcompleted ci ON ci.ID = ac.IncidentCompletedID"
@@ -159,6 +165,7 @@ def get_animalcontrol_find_advanced(dbo, criteria, username, limit = 0):
        address - string partial pattern
        city - string partial pattern
        postcode - string partial pattern
+       jurisdiction - -1 for all or ID
        pickuplocation - -1 for all or ID
        description - string partial pattern
        agegroup - agegroup text to match
@@ -231,6 +238,7 @@ def get_animalcontrol_find_advanced(dbo, criteria, username, limit = 0):
     addstr("callerphone", "co.HomeTelephone")
     addid("incidenttype", "ac.IncidentTypeID")
     addid("pickuplocation", "ac.PickupLocationID")
+    addid("jurisdiction", "ac.JurisdictionID")
     if post["dispatchedaco"] != "-1": addstr("dispatchedaco", "ac.DispatchedACO")
     adddate("incidentfrom", "incidentto", "ac.IncidentDateTime")
     adddate("dispatchfrom", "dispatchto", "ac.DispatchDateTime")

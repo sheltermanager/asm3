@@ -37,6 +37,8 @@ def get_person_query(dbo):
     return "SELECT o.*, o.ID AS PersonID, " \
         "ho.OwnerName AS HomeCheckedByName, ho.HomeTelephone AS HomeCheckedByHomeTelephone, " \
         "ho.MobileTelephone AS HomeCheckedByMobileTelephone, ho.EmailAddress AS HomeCheckedByEmail, " \
+        "j.JurisdictionName, " \
+        "web.ID AS WebsiteMediaID, " \
         "web.MediaName AS WebsiteMediaName, " \
         "web.Date AS WebsiteMediaDate, " \
         "web.MediaNotes AS WebsiteMediaNotes, " \
@@ -45,7 +47,8 @@ def get_person_query(dbo):
         "CASE WHEN EXISTS(SELECT bib.ID FROM animal bib WHERE bib.BroughtInByOwnerID = o.ID OR bib.OriginalOwnerID = o.ID) THEN 1 ELSE 0 END AS Surrender " \
         "FROM owner o " \
         "LEFT OUTER JOIN owner ho ON ho.ID = o.HomeCheckedBy " \
-        "LEFT OUTER JOIN media web ON web.LinkID = o.ID AND web.LinkTypeID = 3 AND web.WebsitePhoto = 1 "
+        "LEFT OUTER JOIN media web ON web.LinkID = o.ID AND web.LinkTypeID = 3 AND web.WebsitePhoto = 1 " \
+        "LEFT OUTER JOIN jurisdiction j ON j.ID = o.JurisdictionID "
 
 def get_rota_query(dbo):
     """
@@ -461,6 +464,7 @@ def get_person_find_advanced(dbo, criteria, username, includeStaff = False, limi
        town - string partial pattern
        county - string partial pattern
        postcode - string partial pattern
+       jurisdiction - -1 for all or jurisdiction
        homecheck - string partial pattern
        comments - string partial pattern
        email - string partial pattern
@@ -478,6 +482,10 @@ def get_person_find_advanced(dbo, criteria, username, includeStaff = False, limi
 
     def crit(cfield):
         return post[cfield]
+
+    def addid(cfield, field): 
+        if post[cfield] != "" and post.integer(cfield) > -1:
+            c.append("%s = %d" % (field, post.integer(cfield)))
 
     def addstr(cfield, field): 
         if hk(cfield) and criteria[cfield] != "": 
@@ -504,6 +512,7 @@ def get_person_find_advanced(dbo, criteria, username, includeStaff = False, limi
     addstr("town", "o.OwnerTown")
     addstr("county", "o.OwnerCounty")
     addstr("postcode", "o.OwnerPostcode")
+    addid("jurisdiction", "o.JurisdictionID")
     addstr("email", "o.EmailAddress")
     addwords("homecheck", "o.HomeCheckAreas")
     addwords("comments", "o.Comments")

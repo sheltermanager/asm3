@@ -155,6 +155,7 @@ def get_animal_query(dbo):
         "ELSE " \
         "(SELECT LocationName FROM internallocation WHERE ID=a.ShelterLocation) " \
         "END AS DisplayLocationName, " \
+        "web.ID AS WebsiteMediaID, " \
         "web.MediaName AS WebsiteMediaName, " \
         "web.Date AS WebsiteMediaDate, " \
         "web.MediaNotes AS WebsiteMediaNotes, " \
