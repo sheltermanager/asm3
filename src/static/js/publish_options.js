@@ -16,7 +16,7 @@ $(function() {
                 '<li class="localeus hasmaddiesfund"><a href="#tab-maddiesfund">Maddie\'s Fund Publisher</a></li>',
                 '<li class="localeus localeca localemx"><a href="#tab-petfinder">PetFinder Publisher</a></li>',
                 '<li class="localegb haspetslocated"><a href="#tab-petslocated">PetsLocated Publisher</a></li>',
-                '<li class="localeau"><a href="#tab-petrescue">PetRescue Publisher</a></li>',
+                // '<li class="localeau"><a href="#tab-petrescue">PetRescue Publisher</a></li>', // disabled due to lack of support
                 '<li class="localeus"><a href="#tab-rescuegroups">RescueGroups Publisher</a></li>',
                 '<li class="localegb"><a href="#tab-pettrac">AVID UK Microchips</a></li>',
                 '<li class="localegb"><a href="#tab-anibase">Identibase UK Microchips</a></li>',
@@ -815,7 +815,7 @@ $(function() {
                 this.render_petlink(),
                 this.render_htmlftp(),
                 this.render_petfinder(),
-                this.render_petrescue(),
+                // this.render_petrescue(), // disabled due to lack of support
                 this.render_petslocated(),
                 this.render_rescuegroups(),
                 this.render_adoptapet(),

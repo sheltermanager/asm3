@@ -1,6 +1,7 @@
 40
 ================
 
+24/01/18 Disable PetRescue due to removal of support by PR
 24/01/18 Searchable jurisdictions for people/incidents #267
 24/01/18 Add WebsiteMedia* fields for waiting list/lost/found/incident #330
 24/01/18 Allow editing/setting of batch, expires and manufacturer in give #330
