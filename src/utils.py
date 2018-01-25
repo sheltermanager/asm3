@@ -840,12 +840,23 @@ def where_text_filter(dbo, field, term):
 def get_url(url, headers = {}, cookies = {}, timeout = None):
     """
     Retrieves a URL
-    return value is headers and response as a string
     """
     # requests timeout is seconds/float, but some may call this with integer ms instead so convert
     if timeout is not None and timeout > 1000: timeout = timeout / 1000.0
     r = requests.get(url, headers = headers, cookies=cookies, timeout=timeout)
     return { "cookies": r.cookies, "headers": r.headers, "response": r.text, "status": r.status_code, "requestheaders": r.request.headers, "requestbody": r.request.body }
+
+def get_image_url(url, headers = {}, cookies = {}, timeout = None):
+    """
+    Retrives an image from a URL
+    """
+    # requests timeout is seconds/float, but some may call this with integer ms instead so convert
+    if timeout is not None and timeout > 1000: timeout = timeout / 1000.0
+    r = requests.get(url, headers = headers, cookies=cookies, timeout=timeout, stream=True)
+    s = StringIO()
+    for chunk in r:
+        s.write(chunk) # default from requests is 128 byte chunks
+    return { "cookies": r.cookies, "headers": r.headers, "response": s.getvalue(), "status": r.status_code, "requestheaders": r.request.headers, "requestbody": r.request.body }
 
 def post_data(url, data, contenttype = "", headers = {}):
     """

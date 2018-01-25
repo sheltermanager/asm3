@@ -9,6 +9,8 @@ ANIMALCODE
     A code for the animal. If supplied, it will set the sheltercode and short sheltercode fields. If not supplied, the system will generate a code for the animal to the appropriate scheme. If you have manual codes turned on and no animal code is supplied, an error message will be displayed and the import abandoned.
 ANIMALNAME
     The animal's name
+ANIMALIMAGE
+    A photo for the animal, it can either be a fully qualified HTTP URL to a JPG image OR a base64 encoded JPG expressed as a data URI
 ANIMALNOTFORADOPTION
     Y/N to indicate whether this animal is not available for adoption (Y is not available).
 ANIMALSEX
@@ -176,6 +178,10 @@ PERSONCOMMENTS
     Any comments to go with the person record.
 PERSONMATCHACTIVE
     Y or 1 in this column indicates the person is looking for an animal. If this field is not set to Y or 1, the other PERSONMATCH columns are ignored for this row.
+PERSONMATCHADDED
+    The date the system should start looking for matches
+PERSONMATCHEXPIRES
+    The date the system should stop looking for matches
 PERSONMATCHSEX
     The gender of the animal the person is looking for
 PERSONMATCHSIZE

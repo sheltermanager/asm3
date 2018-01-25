@@ -281,7 +281,7 @@ def attach_file_from_form(dbo, username, linktype, linkid, post):
             # Browser escaping turns base64 pluses back into spaces, so switch back
             filedata = filedata.replace(" ", "+")
         filedata = base64.b64decode(filedata)
-        al.debug("received HTML5 file data '%s' (%d bytes)" % (filename, len(filedata)), "media.attach_file_from_form", dbo)
+        al.debug("received data URI '%s' (%d bytes)" % (filename, len(filedata)), "media.attach_file_from_form", dbo)
         if ext == "":
             msg = "could not determine extension from file.type '%s', abandoning" % filetype
             al.error(msg, "media.attach_file_from_form", dbo)

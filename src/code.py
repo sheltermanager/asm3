@@ -1881,7 +1881,7 @@ class csvexport(JSONEndpoint):
     def post_all(self, o):
         self.header("Content-Type", "text/csv")
         self.header("Content-Disposition", u"attachment; filename=export.csv")
-        return extcsvimport.csvexport_animals(o.dbo, o.post["animals"])
+        return extcsvimport.csvexport_animals(o.dbo, o.post["animals"], o.post.boolean("includeimage") == 1)
 
 class csvimport(JSONEndpoint):
     url = "csvimport"

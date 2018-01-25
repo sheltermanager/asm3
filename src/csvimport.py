@@ -4,6 +4,7 @@ import additional
 import al
 import animal
 import async
+import base64
 import collections
 import configuration
 import csv
@@ -11,6 +12,7 @@ import datetime
 import dbupdate
 import financial
 import i18n
+import media
 import medical
 import movement
 import person
@@ -27,7 +29,7 @@ VALID_FIELDS = [
     "ANIMALENTRYDATE", "ANIMALDECEASEDDATE", "ANIMALCODE",
     "ANIMALREASONFORENTRY", "ANIMALHIDDENDETAILS", "ANIMALNOTFORADOPTION",
     "ANIMALGOODWITHCATS", "ANIMALGOODWITHDOGS", "ANIMALGOODWITHKIDS", 
-    "ANIMALHOUSETRAINED", "ANIMALHEALTHPROBLEMS",
+    "ANIMALHOUSETRAINED", "ANIMALHEALTHPROBLEMS", "ANIMALIMAGE",
     "VACCINATIONTYPE", "VACCINATIONDUEDATE", "VACCINATIONGIVENDATE", "VACCINATIONEXPIRESDATE", 
     "VACCINATIONMANUFACTURER", "VACCINATIONBATCHNUMBER", "VACCINATIONCOMMENTS", 
     "MEDICALNAME", "MEDICALDOSAGE", "MEDICALGIVENDATE", "MEDICALCOMMENTS",
@@ -43,7 +45,8 @@ VALID_FIELDS = [
     "PERSONFLAGS", "PERSONCOMMENTS", "PERSONHOMEPHONE", "PERSONWORKPHONE",
     "PERSONCELLPHONE", "PERSONEMAIL", "PERSONCLASS",
     "PERSONMEMBER", "PERSONMEMBERSHIPEXPIRY",
-    "PERSONMATCHACTIVE", "PERSONMATCHSEX", "PERSONMATCHSIZE", "PERSONMATCHCOLOR", "PERSONMATCHAGEFROM", "PERSONMATCHAGETO",
+    "PERSONMATCHACTIVE", "PERSONMATCHADDED", "PERSONMATCHEXPIRES",
+    "PERSONMATCHSEX", "PERSONMATCHSIZE", "PERSONMATCHCOLOR", "PERSONMATCHAGEFROM", "PERSONMATCHAGETO",
     "PERSONMATCHTYPE", "PERSONMATCHSPECIES", "PERSONMATCHBREED1", "PERSONMATCHBREED2",
     "PERSONMATCHGOODWITHCATS", "PERSONMATCHGOODWITHDOGS", "PERSONMATCHGOODWITHCHILDREN", "PERSONMATCHHOUSETRAINED",
     "PERSONMATCHCOMMENTSCONTAIN"
@@ -207,6 +210,9 @@ def row_error(errors, rowtype, rowno, row, e, dbo, exinfo):
     """
     errmsg = str(e)
     if type(e) == utils.ASMValidationError: errmsg = e.getMsg()
+    # If ANIMALIMAGE contains a data-uri, squash it for legibility
+    if "ANIMALIMAGE" in row and row["ANIMALIMAGE"].startswith("data"):
+        row["ANIMALIMAGE"] = "data:,"
     al.error("row %d %s: (%s): %s" % (rowno, rowtype, str(row), errmsg), "csvimport.row_error", dbo, exinfo)
     errors.append( (rowno, str(row), errmsg) )
 
@@ -408,6 +414,23 @@ def csvimport(dbo, csvdata, encoding = "utf8", createmissinglookups = False, cle
             a["microchipnumber"] = gks(row, "ANIMALMICROCHIP")
             if a["microchipnumber"] != "": a["microchipped"] = "on"
             a["microchipdate"] = gkd(dbo, row, "ANIMALMICROCHIPDATE")
+            # image data if any was supplied
+            imagedata = gks(row, "ANIMALIMAGE")
+            if imagedata.startswith("http"):
+                # It's a URL, get the image from the remote server
+                r = utils.get_image_url(imagedata, timeout=5000)
+                if r["status"] == 200:
+                    al.debug("retrieved image from %s (%s bytes)" % (imagedata, len(r["response"])), "csvimport.csvimport", dbo)
+                    imagedata = "data:image/jpeg;base64,%s" % base64.b64encode(r["response"])
+                else:
+                    row_error(errors, "animal", rowno, row, "error reading image from '%s': %s" % (imagedata, r), dbo, sys.exc_info())
+                    continue
+            elif imagedata.startswith("data:image"):
+                # It's a base64 encoded data URI - do nothing as attach_file requires it
+                pass
+            else:
+                # We don't know what it is, don't try and do anything with it
+                imagedata = ""
             # If an original owner is specified, create a person record
             # for them and attach it to the animal as original owner
             if gks(row, "ORIGINALOWNERLASTNAME") != "":
@@ -446,6 +469,10 @@ def csvimport(dbo, csvdata, encoding = "utf8", createmissinglookups = False, cle
                     animalid, newcode = animal.insert_animal_from_form(dbo, utils.PostedData(a, dbo.locale), "import")
                     # Identify an ANIMALADDITIONAL additional fields and create them
                     create_additional_fields(dbo, row, errors, rowno, "ANIMALADDITIONAL", "animal", animalid)
+                    # If we have some image data, add it to the animal
+                    if len(imagedata) > 0:
+                        imagepost = utils.PostedData({ "filename": "image.jpg", "filetype": "image/jpeg", "filedata": imagedata }, dbo.locale)
+                        media.attach_file_from_form(dbo, "import", media.ANIMAL, animalid, imagepost)
             except Exception as e:
                 row_error(errors, "animal", rowno, row, e, dbo, sys.exc_info())
 
@@ -487,6 +514,8 @@ def csvimport(dbo, csvdata, encoding = "utf8", createmissinglookups = False, cle
             p["membershipexpires"] = gkd(dbo, row, "PERSONMEMBERSHIPEXPIRY")
             p["matchactive"] = gkbi(row, "PERSONMATCHACTIVE")
             if p["matchactive"] == "1":
+                if "PERSONMATCHADDED" in cols: p["matchadded"] = gkd(row, "PERSONMATCHADDED")
+                if "PERSONMATCHEXPIRES" in cols: p["matchexpires"] = gkd(row, "PERSONMATCHEXPIRES")
                 if "PERSONMATCHSEX" in cols: p["matchsex"] = gks(row, "PERSONMATCHSEX").lower().startswith("m") and "1" or "0"
                 if "PERSONMATCHSIZE" in cols: p["matchsize"] = gkl(dbo, row, "PERSONMATCHSIZE", "lksize", "Size", False)
                 if "PERSONMATCHCOLOR" in cols: p["matchcolour"] = gkl(dbo, row, "PERSONMATCHCOLOR", "basecolour", "BaseColour", createmissinglookups)
@@ -716,7 +745,7 @@ def csvimport_paypal(dbo, csvdata, donationtypeid, donationpaymentid, flags):
     h.append("</table>")
     return "".join(h)
 
-def csvexport_animals(dbo, animalids):
+def csvexport_animals(dbo, animalids, includephoto = False):
     """
     Export CSV data for the supplied comma separated list of animalids
     """
@@ -728,6 +757,11 @@ def csvexport_animals(dbo, animalids):
         if a is None: continue
         row["ANIMALCODE"] = a["SHELTERCODE"]
         row["ANIMALNAME"] = a["ANIMALNAME"]
+        if includephoto: 
+            row["ANIMALIMAGE"] = ""
+        if a["WEBSITEIMAGECOUNT"] > 0 and includephoto:
+            mdate, mdata = media.get_image_file_data(dbo, "animal", a["ID"])
+            row["ANIMALIMAGE"] = "data:image/jpg;base64,%s" % base64.b64encode(mdata)
         row["ANIMALSEX"] = a["SEXNAME"]
         row["ANIMALTYPE"] = a["ANIMALTYPENAME"]
         row["ANIMALCOLOR"] = a["BASECOLOURNAME"]
