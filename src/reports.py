@@ -789,7 +789,8 @@ class Report:
 
                 total = 0.0
                 for i in range(gd.lastGroupStartPosition, gd.lastGroupEndPosition + 1):
-                    total += utils.cfloat(rs[i][calcfield])
+                    if calcfield in rs[i]:
+                        total += utils.cfloat(rs[i][calcfield])
 
                 if utils.is_currency(fields[1]):
                     value = i18n.format_currency(self.dbo.locale, utils.cint(total))
@@ -826,11 +827,13 @@ class Report:
                 total = 0.0
                 num = 0
                 for i in range(gd.lastGroupStartPosition, gd.lastGroupEndPosition + 1):
-                    fv = utils.cfloat(rs[i][calcfield])
-                    if utils.is_currency(fields[1]):
-                        fv /= 100
-                    total += fv
-                    num += 1
+                    fv = 0
+                    if calcfield in rs[i]:
+                        fv = utils.cfloat(rs[i][calcfield])
+                        if utils.is_currency(fields[1]):
+                            fv /= 100
+                        total += fv
+                        num += 1
                 fstr = "%0." + str(roundto) + "f"
                 value = fstr % (0)
                 if num > 0:
