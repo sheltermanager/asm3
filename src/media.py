@@ -682,13 +682,23 @@ def rotate_image(imagedata, clockwise = True):
 
 def remove_expired_media(dbo, username = "system"):
     """
-    Removes all media where today > media.date + media.retaindays
+    Removes all media where retainuntil < today
+    and document media older than today - remove document media years
     """
     rows = dbo.query("SELECT ID, DBFSID FROM media WHERE RetainUntil Is Not Null AND RetainUntil < ?", [ dbo.today() ])
     for r in rows:
-       dbfs.delete_id(r.dbfsid) 
+        dbfs.delete_id(r.dbfsid) 
     dbo.execute("DELETE FROM media WHERE RetainUntil Is Not Null AND RetainUntil < ?", [ dbo.today() ])
-    al.debug("removed %d expired media items" % len(rows), "media.remove_expired_media", dbo)
+    al.debug("removed %d expired media items (retain until)" % len(rows), "media.remove_expired_media", dbo)
+    if configuration.auto_remove_document_media(dbo):
+        years = configuration.auto_remove_document_media_years(dbo)
+        if years > 0:
+            cutoff = dbo.today(years * -365)
+            rows = dbo.query("SELECT ID, DBFSID FROM media WHERE MediaType = ? AND MediaMimeType <> 'image/jpeg' AND Date < ?", ( MEDIATYPE_FILE, cutoff ))
+            for r in rows:
+                dbfs.delete_id(r.dbfsid) 
+            dbo.execute("DELETE FROM media WHERE MediaType = ? AND MediaMimeType <> 'image/jpeg' AND Date < ?", ( MEDIATYPE_FILE, cutoff ))
+            al.debug("removed %d expired document media items (remove after years)" % len(rows), "media.remove_expired_media", dbo)
 
 def scale_thumbnail(imagedata):
     """

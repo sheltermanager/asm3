@@ -56,6 +56,7 @@ $(function() {
                 '<li><a href="#tab-animalcodes">' + _("Animal Codes") + '</a></li>',
                 '<li><a href="#tab-animalemblems">' + _("Animal Emblems") + '</a></li>',
                 '<li><a href="#tab-costs">' + _("Costs") + '</a></li>',
+                '<li><a href="#tab-data-retention">' + _("Data Retention") + '</a></li>',
                 '<li><a href="#tab-defaults">' + _("Defaults") + '</a></li>',
                 '<li><a href="#tab-diaryandmessages">' + _("Diary and Messages") + '</a></li>',
                 '<li><a href="#tab-display">' + _("Display") + '</a></li>',
@@ -493,6 +494,22 @@ $(function() {
             ].join("\n");
         },
 
+        render_data_retention: function() {
+            return [
+                '<div id="tab-data-retention">',
+                '<p>',
+                '<input data="AnonymisePersonalData" id="anonymisepersonaldata" type="checkbox" class="asm-checkbox" /> <label for="anonymisepersonaldata">' + _("Anonymize personal data after this many years") + '</label>',
+                '<span id="callout-anonymise" class="asm-callout">' + _("This many years after creation of a person record, the name, address and telephone data will be anonymized.") + '</span>',
+                '<input data="AnonymiseAfterYears" type="text" class="asm-textbox asm-intbox" />', 
+                '<br />',
+                '<input data="AutoRemoveDocumentMedia" id="autoremovedocumentmedia" type="checkbox" class="asm-checkbox" /> <label for="autoremovedocumentmedia">' + _("Remove HTML and PDF document media after this many years") + '</label>',
+                '<input data="AutoRemoveDMYears" type="text" class="asm-textbox asm-intbox" />', 
+                '</p>',
+                '</div>'
+            ].join("\n");
+        },
+
+
         render_defaults: function() {
             return [
                 '<div id="tab-defaults">',
@@ -644,10 +661,6 @@ $(function() {
                 '<select data="WeightChangeLogType" id="weightchangelogtype" class="asm-selectbox">',
                 html.list_to_options(controller.logtypes, "ID", "LOGTYPENAME"),
                 '</select>',
-                '<br />',
-                '<input data="AnonymisePersonalData" id="anonymisepersonaldata" type="checkbox" class="asm-checkbox" /> <label for="anonymisepersonaldata">' + _("Anonymize personal data after this many years") + '</label>',
-                '<span id="callout-anonymise" class="asm-callout">' + _("This many years after creation of a person record, the name, address and telephone data will be anonymized.") + '</span>',
-                '<input data="AnonymiseAfterYears" type="text" class="asm-textbox asm-intbox" />', 
                 '</p>',
                 '</div>'
             ].join("\n");
@@ -1097,6 +1110,7 @@ $(function() {
                 this.render_animalcodes(),
                 this.render_animalemblems(),
                 this.render_costs(),
+                this.render_data_retention(),
                 this.render_defaults(),
                 this.render_diaryandmessages(),
                 this.render_display(),

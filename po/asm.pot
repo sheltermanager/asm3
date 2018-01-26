@@ -21,7 +21,7 @@ msgstr ""
 msgid " days."
 msgstr ""
 
-#: options.js incident_new.js person.js lostfound_find.js log.js
+#: options.js incident_new.js person.js person_find.js lostfound_find.js log.js
 #: waitinglist_results.js person_new.js users.js incident.js animal_find.js
 #: incident_find.js common_personchooser.js stocklevel.js common.js html.py
 msgid "(all)"
@@ -2892,6 +2892,10 @@ msgstr ""
 msgid "Data"
 msgstr ""
 
+#: options.js
+msgid "Data Retention"
+msgstr ""
+
 #: login.js mobile.py
 msgid "Database"
 msgstr ""
@@ -5735,6 +5739,10 @@ msgstr ""
 msgid "Include off-shelter animals in medical calendar and books"
 msgstr ""
 
+#: csvexport.js
+msgid "Include preferred photo"
+msgstr ""
+
 #: publish_options.js
 msgid "Include quarantined animals"
 msgstr ""
@@ -6034,8 +6042,9 @@ msgstr ""
 msgid "June"
 msgstr ""
 
-#: incident_new.js person.js person_new.js incident.js common_personchooser.js
-#: lookups.py
+#: person_find_results.js incident_new.js person.js person_find.js
+#: person_new.js incident.js incident_find.js common_personchooser.js
+#: incident_find_results.js html.py lookups.py
 msgid "Jurisdiction"
 msgstr ""
 
@@ -8725,6 +8734,10 @@ msgstr ""
 
 #: options.js waitinglist_results.js incident.js
 msgid "Remove"
+msgstr ""
+
+#: options.js
+msgid "Remove HTML and PDF document media after this many years"
 msgstr ""
 
 #: options.js

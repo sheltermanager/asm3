@@ -114,6 +114,8 @@ DEFAULTS = {
     "AutoInsuranceNext": "0",
     "AutoNewImagesNotForPublish": "No",
     "AutoNotForAdoption": "No",
+    "AutoRemoveDocumentMedia": "No",
+    "AutoRemoveDMYears": "0",
     "AutoRemoveHoldDays": "0",
     "AutoRemoveIncomingFormsDays": "14",
     "AFDefaultBreed": "221",
@@ -544,6 +546,12 @@ def auto_new_images_not_for_publish(dbo):
 
 def auto_not_for_adoption(dbo):
     return cboolean(dbo, "AutoNotForAdoption", DEFAULTS["AutoNotForAdoption"] == "Yes")
+
+def auto_remove_document_media(dbo):
+    return cboolean(dbo, "AutoRemoveDocumentMedia", DEFAULTS["AutoRemoveDocumentMedia"] == "Yes")
+
+def auto_remove_document_media_years(dbo):
+    return cint(dbo, "AutoRemoveDMYears", int(DEFAULTS["AutoRemoveDMYears"]))
 
 def auto_remove_incoming_forms_days(dbo):
     return cint(dbo, "AutoRemoveIncomingFormsDays", int(DEFAULTS["AutoRemoveIncomingFormsDays"]))

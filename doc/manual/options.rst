@@ -272,6 +272,36 @@ animals (this value can be modified on the animal's cost tab).
   date a cost was paid separately from the date a cost was incurred, tick this
   box.
 
+Data Retention
+--------------
+
+This tab allows configuration of how long ASM should keep certain types of data
+before removing them. These settings can be used to enforce data retention
+policies instigated as part of data protection compliance.
+
+* Anonymize personal data after this many years: If this option is on, the 
+  system will automatically anonymize person records this many years after
+  their creation. Anonymizing will blank the name, email, address and telephone 
+  fields. The city, state and zipcode (town, county and postcode for other locales)
+  will be retained along with the rest of the person data for statistics
+  and reporting. This option helps organisations in the EU to comply with 
+  data retention policies and the GDPR by removing identifiable personal data.
+
+  To be anonymized, a record needs to be older than the retention period, and
+  all payments, movements or log entries attached to the person must be older
+  than the retention period.  The person record cannot have any flag that
+  indicates an ongoing relationship with the shelter. These flags are: 
+
+   aco, adoptioncoordinator, retailer, homechecker, member, shelter, foster, staff, vet, volunteer
+
+.. warning:: Once anonymized, personal data is gone forever and cannot be recovered.
+
+* Remove HTML and PDF document media after this many years: If this option is
+  on, the system will automatically delete HTML and PDF document media this
+  many years after its creation.
+
+.. warning:: Once deleted, documents are gone forever and cannot be recovered.
+
 Defaults
 --------
 
@@ -318,23 +348,6 @@ records.
   this option is on, a log record is created every time you change an animal's
   weight so you can track the history of an animal's wieght with reports and
   graphs.
-
-* Anonymize personal data after this many years: If this option is on, the 
-  system will automatically anonymize person records this many years after
-  their creation. Anonymizing will blank the name, email, address and telephone 
-  fields. The city, state and zipcode (town, county and postcode for other locales)
-  will be retained along with the rest of the person data for statistics
-  and reporting. This option helps organisations in the EU to comply with 
-  data retention policies and the GDPR by removing identifiable personal data.
-
-  To be anonymized, a record needs to be older than the retention period, and
-  all payments, movements or log entries attached to the person must be older
-  than the retention period.  The person record cannot have any flag that
-  indicates an ongoing relationship with the shelter. These flags are: 
-
-   aco, adoptioncoordinator, retailer, homechecker, member, shelter, foster, staff, vet, volunteer
-
-.. warning:: Once anonymized, personal data is gone forever and cannot be recovered.
 
 Diary 
 -----
