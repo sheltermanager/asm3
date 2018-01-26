@@ -101,6 +101,9 @@ def daily(dbo):
         # auto anonymise expired personal data
         ttask(person.update_anonymise_personal_data, dbo)
 
+        # auto remove expired media items
+        ttask(media.remove_expired_media, dbo)
+
         # Update the generated looking for report
         ttask(person.update_lookingfor_report, dbo)
 

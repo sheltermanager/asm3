@@ -351,7 +351,8 @@ def attach_file_from_form(dbo, username, linktype, linkid, post):
         # ASM2_COMPATIBILITY
         ( "LinkID", db.di(linkid) ),
         ( "LinkTypeID", db.di(linktype) ),
-        ( "Date", db.ddt(i18n.now(dbo.timezone)))
+        ( "Date", db.ddt(i18n.now(dbo.timezone))),
+        ( "RetainUntil", db.dd(None) )
         ))
     db.execute(dbo, sql)
     audit.create(dbo, username, "media", mediaid, str(mediaid) + ": for " + str(linkid) + "/" + str(linktype))
@@ -392,7 +393,8 @@ def attach_link_from_form(dbo, username, linktype, linkid, post):
         # ASM2_COMPATIBILITY
         ( "LinkID", db.di(linkid) ),
         ( "LinkTypeID", db.di(linktype) ),
-        ( "Date", db.ddt(i18n.now(dbo.timezone)) )
+        ( "Date", db.ddt(i18n.now(dbo.timezone)) ),
+        ( "RetainUntil", db.dd(None) )
         ))
     db.execute(dbo, sql)
     audit.create(dbo, username, "media", mediaid, str(mediaid) + ": for " + str(linkid) + "/" + str(linktype) + ": link to " + post["linktarget"])
@@ -449,7 +451,8 @@ def create_blank_document_media(dbo, username, linktype, linkid):
         # ASM2_COMPATIBILITY
         ( "LinkID", db.di(linkid) ),
         ( "LinkTypeID", db.di(linktype) ),
-        ( "Date", db.ddt(i18n.now(dbo.timezone)) )
+        ( "Date", db.ddt(i18n.now(dbo.timezone)) ),
+        ( "RetainUntil", db.dd(None) )
         ))
     db.execute(dbo, sql)
     audit.create(dbo, username, "media", mediaid, str(mediaid) + ": for " + str(linkid) + "/" + str(linktype))
@@ -494,7 +497,8 @@ def create_document_media(dbo, username, linktype, linkid, template, content):
         # ASM2_COMPATIBILITY
         ( "LinkID", db.di(linkid) ),
         ( "LinkTypeID", db.di(linktype) ),
-        ( "Date", db.ddt(i18n.now(dbo.timezone)) )
+        ( "Date", db.ddt(i18n.now(dbo.timezone)) ),
+        ( "RetainUntil", db.dd(None) )
         ))
     db.execute(dbo, sql)
     audit.create(dbo, username, "media", mediaid, str(mediaid) + ": for " + str(linkid) + "/" + str(linktype))
@@ -675,6 +679,16 @@ def rotate_image(imagedata, clockwise = True):
     except Exception as err:
         al.error("failed rotating image: %s" % str(err), "media.rotate_image")
         return imagedata
+
+def remove_expired_media(dbo, username = "system"):
+    """
+    Removes all media where today > media.date + media.retaindays
+    """
+    rows = dbo.query("SELECT ID, DBFSID FROM media WHERE RetainUntil Is Not Null AND RetainUntil < ?", [ dbo.today() ])
+    for r in rows:
+       dbfs.delete_id(r.dbfsid) 
+    dbo.execute("DELETE FROM media WHERE RetainUntil Is Not Null AND RetainUntil < ?", [ dbo.today() ])
+    al.debug("removed %d expired media items" % len(rows), "media.remove_expired_media", dbo)
 
 def scale_thumbnail(imagedata):
     """

@@ -2573,7 +2573,8 @@ def clone_animal(dbo, username, animalid):
             # ASM2_COMPATIBILITY
             "LinkID":               nid,
             "LinkTypeID":           media.ANIMAL,
-            "Date":                 me.date
+            "Date":                 me.date,
+            "RetainUntil":          me.retainuntil
         }, generateID=False)
         # Now clone the dbfs item pointed to by this media item if it's a file
         if me.mediatype == media.MEDIATYPE_FILE:

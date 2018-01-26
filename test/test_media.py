@@ -21,8 +21,10 @@ class TestMedia(unittest.TestCase):
         f = open(base.PATH + "../src/media/reports/nopic.jpg", "rb")
         data = f.read()
         f.close()
-        post = utils.PostedData({ "base64image": "data:" + base64.b64encode(data) }, "en")
+        post = utils.PostedData({ "filename": "image.jpg", "filetype": "image/jpeg", "filedata": "data:image/jpeg;base64," + base64.b64encode(data) }, "en")
         media.attach_file_from_form(base.get_dbo(), "test", media.ANIMAL, nid, post)
         animal.delete_animal(base.get_dbo(), "test", nid)
  
+    def test_remove_expired_media(self):
+        media.remove_expired_media(base.get_dbo())
 

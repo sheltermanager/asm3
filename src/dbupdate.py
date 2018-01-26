@@ -22,7 +22,7 @@ VERSIONS = (
     33800, 33801, 33802, 33803, 33900, 33901, 33902, 33903, 33904, 33905, 33906, 
     33907, 33908, 33909, 33911, 33912, 33913, 33914, 33915, 33916, 34000, 34001, 
     34002, 34003, 34004, 34005, 34006, 34007, 34008, 34009, 34010, 34011, 34012,
-    34013, 34014, 34015, 34016, 34017, 34018, 34019, 34020
+    34013, 34014, 34015, 34016, 34017, 34018, 34019, 34020, 34021
 )
 
 LATEST_VERSION = VERSIONS[-1]
@@ -1000,7 +1000,8 @@ def sql_structure(dbo):
         fint("LinkID"),
         fint("LinkTypeID"),
         fint("RecordVersion", True),
-        fdate("Date") ), False)
+        fdate("Date"),
+        fdate("RetainUntil", True) ), False)
     sql += index("media_DBFSID", "media", "DBFSID")
     sql += index("media_MediaMimeType", "media", "MediaMimeType")
     sql += index("media_LinkID", "media", "LinkID")
@@ -1008,6 +1009,8 @@ def sql_structure(dbo):
     sql += index("media_WebsitePhoto", "media", "WebsitePhoto")
     sql += index("media_WebsiteVideo", "media", "WebsiteVideo")
     sql += index("media_DocPhoto", "media", "DocPhoto")
+    sql += index("media_Date", "media", "Date")
+    sql += index("media_RetainUntil", "media", "RetainUntil")
 
     sql += table("medicalprofile", (
         fid(),
@@ -4684,4 +4687,11 @@ def update_34020(dbo):
     # Add IsNotForRegistration
     add_column(dbo, "animal", "IsNotForRegistration", dbo.type_integer)
     dbo.execute_dbupdate("UPDATE animal SET IsNotForRegistration = 0")
+
+def update_34021(dbo):
+    # Add RetainUntil to expire media on a set date
+    add_column(dbo, "media", "RetainUntil", dbo.type_datetime)
+    add_index(dbo, "media_RetainUntil", "media", "RetainUntil")
+    add_index(dbo, "media_Date", "media", "Date") # seemed to be missing previously
+
 
