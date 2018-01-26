@@ -222,7 +222,7 @@ def get_animal_query(dbo):
         "LEFT OUTER JOIN lksmovementtype mt ON mt.ID = a.ActiveMovementType " \
         "LEFT OUTER JOIN owner ov ON ov.ID = a.OwnersVetID " \
         "LEFT OUTER JOIN owner cv ON cv.ID = a.CurrentVetID " \
-        "LEFT OUTER JOIN owner nv ON cv.ID = a.NeuteredByVetID " \
+        "LEFT OUTER JOIN owner nv ON nv.ID = a.NeuteredByVetID " \
         "LEFT OUTER JOIN owner oo ON oo.ID = a.OriginalOwnerID " \
         "LEFT OUTER JOIN owner bo ON bo.ID = a.BroughtInByOwnerID " \
         "LEFT OUTER JOIN owner ao ON ao.ID = a.AdoptionCoordinatorID " \
