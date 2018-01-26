@@ -61,6 +61,14 @@ def get_animal_query(dbo):
         "cv.WorkTelephone AS CurrentVetWorkTelephone, " \
         "cv.EmailAddress AS CurrentVetEmailAddress, " \
         "cv.MembershipNumber AS CurrentVetLicenceNumber, " \
+        "nv.OwnerName AS NeuteringVetName, " \
+        "nv.OwnerAddress AS NeuteringVetAddress, " \
+        "nv.OwnerTown AS NeuteringVetTown, " \
+        "nv.OwnerCounty AS NeuteringVetCounty, " \
+        "nv.OwnerPostcode AS NeuteringVetPostcode, " \
+        "nv.WorkTelephone AS NeuteringVetWorkTelephone, " \
+        "nv.EmailAddress AS NeuteringVetEmailAddress, " \
+        "nv.MembershipNumber AS NeuteringVetLicenceNumber, " \
         "oo.OwnerName AS OriginalOwnerName, " \
         "oo.OwnerTitle AS OriginalOwnerTitle, " \
         "oo.OwnerInitials AS OriginalOwnerInitials, " \
@@ -214,6 +222,7 @@ def get_animal_query(dbo):
         "LEFT OUTER JOIN lksmovementtype mt ON mt.ID = a.ActiveMovementType " \
         "LEFT OUTER JOIN owner ov ON ov.ID = a.OwnersVetID " \
         "LEFT OUTER JOIN owner cv ON cv.ID = a.CurrentVetID " \
+        "LEFT OUTER JOIN owner nv ON cv.ID = a.NeuteredByVetID " \
         "LEFT OUTER JOIN owner oo ON oo.ID = a.OriginalOwnerID " \
         "LEFT OUTER JOIN owner bo ON bo.ID = a.BroughtInByOwnerID " \
         "LEFT OUTER JOIN owner ao ON ao.ID = a.AdoptionCoordinatorID " \

@@ -276,6 +276,22 @@ CurrentVetEmail
     The email address of the animal's current vet
 CurrentVetLicence / CurrentVetLicense
     The veterinary licence number
+NeuteringVetName
+    The name of the vet that neutered/spayed the animal
+NeuteringVetAddress
+    The address of the vet that neutered/spayed the animal
+NeuteringVetTown 
+    (NeuteringVetCity for US users)
+NeuteringVetCounty 
+    (NeuteringVetState for US users)
+NeuteringVetPostcode
+    The postal code of the the vet that neutered/spayed the animal
+NeuteringVetPhone
+    A phone number for the vet that neutered/spayed the animal
+NeuteringVetEmail
+    The email address of the vet that neutered/spayed the animal
+NeuteringVetLicence / NeuteringVetLicense
+    The veterinary licence number
 OwnersVetName
     The owner's vet
 OwnersVetAddress
