@@ -146,7 +146,10 @@ DateOfBirth
     The animal's date of birth 
 AgeGroup 
     VARCHAR 
-    The animal's age group based on date of birth 
+    The animal's age group based on date of birth at the most recent time it entered the shelter
+AgeGroupActiveMovement
+    VARCHAR
+    The animal's age group based on date of birth at the last time it left the shelter
 DeceasedDate 
     TIMESTAMP 
     Date the animal died, if null the animal is still alive 

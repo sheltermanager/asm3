@@ -2,7 +2,7 @@ Length of Stay by Age Group (Left Shelter Only)
 ###
 Statistics
 ###
-2721/PostgreSQL
+34022/PostgreSQL
 ###
 Shows time on shelter by age group for animals entering the shelter between two dates and have left with ages at entry and exit.
 ###
@@ -10,7 +10,7 @@ en
 ###
 SELECT
 a.AnimalName, a.ShelterCode,
-s.SpeciesName, e.ReasonName, a.AgeGroup,
+s.SpeciesName, e.ReasonName, a.AgeGroupActiveMovement,
 a.DateBroughtIn, a.TimeOnShelter, a.DaysOnShelter, a.AnimalAge, 
 CASE WHEN a.ActiveMovementType = 2 THEN Null ELSE a.ActiveMovementDate END AS DateExit,
 age(a.DateBroughtIn, a.DateOfBirth)::varchar AS AgeEntry,
@@ -20,14 +20,14 @@ INNER JOIN species s ON s.ID = a.SpeciesID
 INNER JOIN entryreason e ON e.ID = a.EntryReasonID
 WHERE a.DateBroughtIn >= '$ASK DATE Animals entering the shelter between$' AND a.DateBroughtIn <= '$ASK DATE and$'
 AND NonShelterAnimal = 0 AND Archived = 1
-ORDER BY a.AgeGroup, a.DateBroughtIn
+ORDER BY a.AgeGroupActiveMovement, a.DateBroughtIn
 ###
 $$HEADER
 HEADER$$
 
-$$GROUP_AgeGroup
+$$GROUP_AgeGroupActiveMovement
 $$HEAD
-<h2>$AgeGroup</h2>
+<h2>$AgeGroupActiveMovement</h2>
 <table border="1">
 <tr>
 <th>Code</th>
@@ -41,7 +41,7 @@ $$HEAD
 </tr>
 $$FOOT
 </table>
-<p>Total $AgeGroup: {COUNT.AgeGroup}, Average: {AVG.DaysOnShelter.2} days</p>
+<p>Total $AgeGroupActiveMovement: {COUNT.AgeGroupActiveMovement}, Average: {AVG.DaysOnShelter.2} days</p>
 GROUP$$
 
 $$BODY

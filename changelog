@@ -1,6 +1,8 @@
 40
 ================
 
+27/01/18 AgeGroup contains age group at most recent intake now
+27/01/18 Add AgeGroupActiveMovement and update exit reports to use it
 27/01/18 Tidy up batch trigger interface
 27/01/18 Add batch trigger for all ages/times (variable data)
 26/01/18 Add NeuteringVet* wordkeys 

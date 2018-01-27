@@ -22,7 +22,7 @@ VERSIONS = (
     33800, 33801, 33802, 33803, 33900, 33901, 33902, 33903, 33904, 33905, 33906, 
     33907, 33908, 33909, 33911, 33912, 33913, 33914, 33915, 33916, 34000, 34001, 
     34002, 34003, 34004, 34005, 34006, 34007, 34008, 34009, 34010, 34011, 34012,
-    34013, 34014, 34015, 34016, 34017, 34018, 34019, 34020, 34021
+    34013, 34014, 34015, 34016, 34017, 34018, 34019, 34020, 34021, 34022
 )
 
 LATEST_VERSION = VERSIONS[-1]
@@ -307,6 +307,7 @@ def sql_structure(dbo):
         fstr("TotalTimeOnShelter", True),
         fint("DaysOnShelter", True),
         fint("TotalDaysOnShelter", True),
+        fstr("AgeGroupActiveMovement", True),
         fint("DailyBoardingCost", True),
         fstr("AnimalAge", True) ))
     sql += index("animal_AnimalShelterCode", "animal", "ShelterCode", True)
@@ -4694,4 +4695,7 @@ def update_34021(dbo):
     add_index(dbo, "media_RetainUntil", "media", "RetainUntil")
     add_index(dbo, "media_Date", "media", "Date") # seemed to be missing previously
 
+def update_34022(dbo):
+    # Add AgeGroupActiveMovement
+    add_column(dbo, "animal", "AgeGroupActiveMovement", dbo.type_shorttext)
 

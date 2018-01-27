@@ -2,7 +2,7 @@ Adoptions by Age Group
 ###
 Movements
 ###
-2621/Any
+34022/Any
 ###
 Number of adoptions between two dates of animals of a certain age group.
 ###
@@ -10,15 +10,15 @@ en
 ###
 SELECT
 species.SpeciesName,
-animal.AgeGroup,
+animal.AgeGroupActiveMovement,
 COUNT(animal.id) AS TotalAdoptions
 FROM animal
 INNER JOIN species ON species.ID = animal.SpeciesID
 INNER JOIN adoption ON adoption.AnimalID = animal.ID
 WHERE adoption.MovementDate >= '$ASK DATE Adopted between$' AND adoption.MovementDate <= '$ASK DATE and$'
 AND adoption.MovementType = 1
-GROUP BY SpeciesName, AgeGroup
-ORDER BY SpeciesName, AgeGroup
+GROUP BY SpeciesName, AgeGroupActiveMovement
+ORDER BY SpeciesName, AgeGroupActiveMovement
 ###
 $$HEADER
 <table border=1><tr>
@@ -30,7 +30,7 @@ HEADER$$
 
 $$BODY<tr>
 <td>$SPECIESNAME</td>
-<td>$AGEGROUP</td>
+<td>$AGEGROUPACTIVEMOVEMENT</td>
 <td>$TOTALADOPTIONS</td>
 </tr>
 BODY$$
