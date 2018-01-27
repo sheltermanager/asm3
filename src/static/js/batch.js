@@ -13,15 +13,20 @@ $(function() {
                     _("Some batch processes may take a few minutes to run and could prevent other users being able to use the system for a short time.")
                     + '</b>'),
                 '<div id="tasks">',
-                '<p id="p-genshelterpos">' + _("Recalculate on-shelter animal locations") + ' <button id="button-genshelterpos">' + _("Go") + '</button></p>',
-                '<p id="p-genallpos">' + _("Recalculate ALL animal locations") + ' <button id="button-genallpos">' + _("Go") + '</button></p>',
-                '<p id="p-genlookingfor">' + _("Regenerate 'Person looking for' report") + ' <button id="button-genlookingfor">' + _("Go") + '</button></p>',
-                '<p id="p-genownername">' + _("Regenerate person names in selected format") + ' <button id="button-genownername">' + _("Go") + '</button></p>',
-                '<p id="p-genlostfound">' + _("Regenerate 'Match lost and found animals' report") + ' <button id="button-genlostfound">' + _("Go") + '</button></p>',
-                '<p id="p-genfigyear">' + _("Regenerate annual animal figures for") + ' <input id="figyear" class="asm-textbox asm-datebox" />',
-                '<button id="button-genfigyear">' + _("Go") + '</button></p>',
-                '<p id="p-genfigmonth">' + _("Regenerate monthly animal figures for") + ' <input id="figmonth" class="asm-textbox asm-datebox" />',
-                '<button id="button-genfigmonth">' + _("Go") + '</button></p>',
+                '<p>',
+                '<select id="task">',
+                '<option value="genshelterpos">' + _("Recalculate on-shelter animal locations") + '</option>',
+                '<option value="genallpos">' + _("Recalculate ALL animal locations") + '</option>',
+                '<option value="genallvariable">' + _("Recalculate ALL animal ages/times") + '</option>',
+                '<option value="genlookingfor">' + _("Regenerate 'Person looking for' report") + '</option>',
+                '<option value="genownername">' + _("Regenerate person names in selected format") + '</option>',
+                '<option value="genlostfound">' + _("Regenerate 'Match lost and found animals' report") + '</option>',
+                '<option value="genfigyear">' + _("Regenerate annual animal figures for") + '</option>',
+                '<option value="genfigmonth">' + _("Regenerate monthly animal figures for") + '</option>',
+                '</select>',
+                '<input id="taskdate" class="asm-textbox asm-datebox" style="display: none" />',
+                '<button id="button-go">' + _("Go") + '</button>',
+                '</p>',
                 '</div>',
                 '</div>',
                 html.content_footer()
@@ -36,13 +41,14 @@ $(function() {
         },
 
         bind: function() {
-            $("#button-genfigyear").button().click(function() { batch.runmode("genfigyear", "mode=genfigyear&figyear=" + $("#figyear").val()); });
-            $("#button-genfigmonth").button().click(function() { batch.runmode("genfigmonth", "mode=genfigmonth&figmonth=" + $("#figmonth").val()); });
-            $("#button-genshelterpos").button().click(function() { batch.runmode("genshelterpos", "mode=genshelterpos"); });
-            $("#button-genallpos").button().click(function() { batch.runmode("genallpos", "mode=genallpos"); });
-            $("#button-genlookingfor").button().click(function() { batch.runmode("genlookingfor", "mode=genlookingfor"); });
-            $("#button-genownername").button().click(function() { batch.runmode("genownername", "mode=genownername"); });
-            $("#button-genlostfound").button().click(function() { batch.runmode("genlostfound", "mode=genlostfound"); });
+            $("#button-go").button().click(function() {
+                var task = $("#task").val(), taskdate = $("#taskdate").val();
+                batch.runmode( task, "mode=" + task + "&taskdate=" + taskdate );
+            });
+            $("#task").change(function() {
+                var task = $("#task").val();
+                $("#taskdate").toggle(task == "genfigyear" || task == "genfigmonth");
+            });
         },
 
         name: "batch",

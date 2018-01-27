@@ -1,6 +1,8 @@
 40
 ================
 
+27/01/18 Tidy up batch trigger interface
+27/01/18 Add batch trigger for all ages/times (variable data)
 26/01/18 Add NeuteringVet* wordkeys 
 26/01/18 Data retention options tab, removed document media years #344
 26/01/18 Add infrastructure for RetainUntil to expire media

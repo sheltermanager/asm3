@@ -1648,11 +1648,11 @@ class batch(JSONEndpoint):
 
     def post_genfigyear(self, o):
         l = o.locale
-        async.function_task(o.dbo, _("Regenerate annual animal figures for", l), extanimal.update_animal_figures_annual, o.dbo, o.post.date("figyear").year)
+        async.function_task(o.dbo, _("Regenerate annual animal figures for", l), extanimal.update_animal_figures_annual, o.dbo, o.post.date("taskdate").year)
 
     def post_genfigmonth(self, o):
         l = o.locale
-        async.function_task(o.dbo, _("Regenerate monthly animal figures for", l), extanimal.update_animal_figures, o.dbo, o.post.date("figmonth").month, o.post.date("figmonth").year)
+        async.function_task(o.dbo, _("Regenerate monthly animal figures for", l), extanimal.update_animal_figures, o.dbo, o.post.date("taskdate").month, o.post.date("taskdate").year)
 
     def post_genshelterpos(self, o):
         l = o.locale
@@ -1661,6 +1661,10 @@ class batch(JSONEndpoint):
     def post_genallpos(self, o):
         l = o.locale
         async.function_task(o.dbo, _("Recalculate ALL animal locations", l), extanimal.update_all_animal_statuses, o.dbo)
+
+    def post_genallvariable(self, o):
+        l = o.locale
+        async.function_task(o.dbo, _("Recalculate ALL animal ages/times", l), extanimal.update_all_variable_animal_data, o.dbo)
 
     def post_genlookingfor(self, o):
         l = o.locale

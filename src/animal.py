@@ -2983,7 +2983,7 @@ def update_variable_animal_data(dbo, animalid, a = None, animalupdatebatch = Non
 
 def update_all_variable_animal_data(dbo):
     """
-    Updates variable animal data for all animals. This is a big memory heavy routine is you've
+    Updates variable animal data for all animals. This is a big memory heavy routine if you've
     got a lot of animal and movement records as loads sections of both complete tables into RAM.
     """
     l = dbo.locale
@@ -3003,8 +3003,10 @@ def update_all_variable_animal_data(dbo):
         "WHERE ad.MovementType NOT IN (2,8) AND ad.MovementDate Is Not Null AND ad.ReturnDate Is Not Null " \
         "ORDER BY AnimalID")
 
+    async.set_progress_max(dbo, len(animals))
     for a in animals:
         update_variable_animal_data(dbo, a.id, a, animalupdatebatch, bands, movements)
+        async.increment_progress_value(dbo)
 
     dbo.execute_many("UPDATE animal SET " \
         "TimeOnShelter = ?, " \
