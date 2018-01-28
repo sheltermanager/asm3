@@ -1,6 +1,7 @@
 40
 ================
 
+28/01/18 Include times in report dates exported to CSV
 27/01/18 AgeGroup contains age group at most recent intake now
 27/01/18 Add AgeGroupActiveMovement and update exit reports to use it
 27/01/18 Tidy up batch trigger interface
