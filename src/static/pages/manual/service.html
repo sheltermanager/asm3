@@ -420,6 +420,7 @@ asm3_adoptable_iframe = true in your script. Eg:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">script</span><span class="o">&gt;</span>
 <span class="n">asm3_adoptable_filters</span> <span class="o">=</span> <span class="s2">&quot;sex breed agegroup size species&quot;</span><span class="p">;</span>
 <span class="n">asm3_adoptable_iframe</span> <span class="o">=</span> <span class="n">true</span><span class="p">;</span>
+<span class="n">asm3_adoptable_iframe_fixed</span> <span class="o">=</span> <span class="n">true</span><span class="p">;</span>
 <span class="o">&lt;/</span><span class="n">script</span><span class="o">&gt;</span>
 <span class="o">&lt;</span><span class="n">div</span> <span class="nb">id</span><span class="o">=</span><span class="s2">&quot;asm3-adoptables&quot;</span> <span class="o">/&gt;</span>
 <span class="o">&lt;</span><span class="n">script</span> <span class="n">src</span><span class="o">=</span><span class="s2">&quot;http://localhost:5000/service?method=animal_view_adoptable_js&quot;</span><span class="o">&gt;&lt;/</span><span class="n">script</span><span class="o">&gt;</span>
@@ -440,6 +441,12 @@ of the default of white:</p>
 <span class="o">&lt;</span><span class="n">script</span> <span class="n">src</span><span class="o">=</span><span class="s2">&quot;http://localhost:5000/service?method=animal_view_adoptable_js&quot;</span><span class="o">&gt;&lt;/</span><span class="n">script</span><span class="o">&gt;</span>
 </pre></div>
 </div>
+<p>By default, the iframe will use absolute positioning. If your page has multiple
+screens of vertical height, this will cause it to scroll back to the top when
+viewing an animal. Setting asm3_adoptable_iframe_fixed will use fixed
+positioning instead, which keeps the position of the parent page when viewing
+animals, but this has been found to be less compatible with some browsers and
+iframes.</p>
 </div>
 </div>
 <div class="section" id="csv-mail-and-csv-report">

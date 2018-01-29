@@ -1,6 +1,6 @@
 /*jslint browser: true, forin: true, eqeq: true, white: true, plusplus: true, sloppy: true, vars: true, nomen: true */
 /*global alert */
-/*global asm3_adoptable_filters, asm3_adoptable_iframe, asm3_adoptable_iframe_height, asm3_adoptable_iframe_bgcolor */
+/*global asm3_adoptable_filters, asm3_adoptable_iframe, asm3_adoptable_iframe_height, asm3_adoptable_iframe_bgcolor, asm3_adoptable_iframe_fixed */
 /*global asm3_adoptable_translations, asm3_adoptable_extra, asm3_adoptable_filter, asm3_adoptable_limit, asm3_adoptable_sort */
 
 (function() {
@@ -23,6 +23,12 @@
     if (typeof asm3_adoptable_iframe !== 'undefined') {
         use_iframe = asm3_adoptable_iframe;
     }
+
+    var iframe_fixed = false;
+    if (typeof asm3_adoptable_iframe_fixed !== 'undefined') {
+        iframe_fixed = asm3_adoptable_iframe_fixed;
+    }
+    var iframe_position = iframe_fixed ? "fixed" : "absolute";
 
     var iframe_height = "6000px";
     if (typeof asm3_adoptable_iframe_height !== 'undefined') {
@@ -111,7 +117,7 @@
     ].join("");
 
     var overlay_template = [
-        '<div id="asm3-adoptable-iframe-overlay" style="z-index: 9999; display: none; overflow: hidden; position: absolute; left: 0; top: 0; width: 100%; height: {iframe_height}; background-color: {iframe_bgcolor}">',
+        '<div id="asm3-adoptable-iframe-overlay" style="z-index: 9999; display: none; overflow: hidden; position: {iframe_position}; left: 0; top: 0; width: 100%; height: {iframe_height}; background-color: {iframe_bgcolor}">',
             '<p style="text-align: right;">',
                 '<a id="asm3-adoptable-iframe-close" href="#">&times; ' + translate("CLOSE") + '</a>&nbsp;&nbsp;',
             '</p>',
@@ -188,7 +194,7 @@
                 handler = function(e) {
                     document.getElementById("asm3-adoptable-iframe").src = this.href;
                     document.getElementById("asm3-adoptable-iframe-overlay").style.display = "block";
-                    window.scrollTo(0, 0);
+                    if (!iframe_fixed) { window.scrollTo(0, 0); }
                     e.preventDefault();
                 };
             for (i = 0; i < links.length; i++) {
@@ -228,7 +234,7 @@
 
         if (use_iframe) {
             var overlay = document.createElement('div');
-            overlay.innerHTML = substitute(overlay_template, { "iframe_height": iframe_height, "iframe_bgcolor": iframe_bgcolor });
+            overlay.innerHTML = substitute(overlay_template, { "iframe_position": iframe_position, "iframe_height": iframe_height, "iframe_bgcolor": iframe_bgcolor });
             document.body.appendChild(overlay);
             document.getElementById("asm3-adoptable-iframe-close").addEventListener("click", function(e) {
                 document.getElementById("asm3-adoptable-iframe").src = "about:blank";

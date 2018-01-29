@@ -263,6 +263,7 @@ asm3_adoptable_iframe = true in your script. Eg::
     <script>
     asm3_adoptable_filters = "sex breed agegroup size species";
     asm3_adoptable_iframe = true;
+    asm3_adoptable_iframe_fixed = true;
     </script>
     <div id="asm3-adoptables" />
     <script src="http://localhost:5000/service?method=animal_view_adoptable_js"></script>
@@ -282,6 +283,13 @@ of the default of white::
     </script>
     <div id="asm3-adoptables" />
     <script src="http://localhost:5000/service?method=animal_view_adoptable_js"></script>
+
+By default, the iframe will use absolute positioning. If your page has multiple
+screens of vertical height, this will cause it to scroll back to the top when
+viewing an animal. Setting asm3_adoptable_iframe_fixed will use fixed
+positioning instead, which keeps the position of the parent page when viewing
+animals, but this has been found to be less compatible with some browsers and
+iframes.
 
 csv_mail and csv_report
 -----------------------
