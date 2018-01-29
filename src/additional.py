@@ -134,7 +134,7 @@ def append_to_results(dbo, rows, linktype = "animal"):
                 # We've got unicode chars for the tag name - not allowed
                 r["ADD" + str(af.id)] = af.value
             else:
-                r[af.fieldname] = af.value
+                r[af.fieldname.upper()] = af.value
     return rows
 
 def insert_field_from_form(dbo, username, post):
