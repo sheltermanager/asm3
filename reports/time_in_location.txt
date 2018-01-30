@@ -8,8 +8,8 @@ Shows the time spent in a given internal location by animals who entered the she
 ###
 en
 ###
-$VAR from DATE Enter from date$
-$VAR to DATE Enter to date$
+$VAR from DATE Animals entering between$
+$VAR to DATE and$
 $VAR loc STRING Enter partial location name$
 
 SELECT
