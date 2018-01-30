@@ -16,6 +16,7 @@ we did with a MySQL ASN database did not have data in any of those tables.
 db = web.database( dbn = "mysql", db = "zc1502", user = "robin", pw = "robin" )
 
 START_ID = 100
+HOLDS_AS_ADOPTIONS = True
 
 def gettypeletter(aid):
     tmap = {
@@ -67,7 +68,7 @@ uo.OwnerName = uo.OwnerSurname
 for row in db.select("people"):
     o = asm.Owner()
     owners.append(o)
-    ppo[row.CustUid] = o
+    ppo[str(row.CustUid)] = o
     o.OwnerTitle = row.Title
     o.OwnerSurname = row.LastName
     if o.OwnerSurname == "": 
@@ -97,12 +98,12 @@ for row in db.query("select animals.*, intake.Comments as IntakeComments, intake
     "left outer join intake on intake.RefUID = animals.IntakeRefUID " \
     "order by IntakeDTL1").list():
 
-    if row.AnimalUid in ppa:
-        a = ppa[row.AnimalUid]
+    if str(row.AnimalUid) in ppa:
+        a = ppa[str(row.AnimalUid)]
     else:
         a = asm.Animal()
         animals.append(a)
-        ppa[row.AnimalUid] = a
+        ppa[str(row.AnimalUid)] = a
     a.SpeciesID = asm.species_id_for_name(row.Species)
     if a.SpeciesID == 1 and row.IntakeReason.startswith("Stray"):
         a.AnimalTypeID = 10
@@ -146,8 +147,8 @@ for row in db.query("select animals.*, intake.Comments as IntakeComments, intake
     if a.NeuteredDate is not None:
         a.Neutered = 1
     if row.Declawed == "Y": a.Declawed = 1
-    if row.IntakeCustUid in ppo:
-        a.OriginalOwnerID = ppo[row.IntakeCustUid]
+    if str(row.IntakeCustUid) in ppo:
+        a.OriginalOwnerID = ppo[str(row.IntakeCustUid)]
         a.BroughtInByOwnerID = a.OriginalOwnerID
     a.DateOfBirth = row.Birthdate
     a.DateBroughtIn = row.IntakeDTL1
@@ -164,8 +165,8 @@ for row in db.query("select animals.*, intake.Comments as IntakeComments, intake
 # Dispositions/animals
 for row in db.query("select disposit.*, (select descr from lookup where value = disposit.transtype limit 1) as disptype from disposit").list():
     a = None
-    if row.AnimalUid in ppa:
-        a = ppa[row.AnimalUid]
+    if str(row.AnimalUid) in ppa:
+        a = ppa[str(row.AnimalUid)]
     if a is None: continue
 
     if row.disptype == "Euthanize":
@@ -183,13 +184,37 @@ for row in db.query("select disposit.*, (select descr from lookup where value = 
         a.Archived = 1
         a.NonShelterAnimal = 0
 
-    if row.disptype == "Adoption" and row.CustUid in ppo:
+    if row.disptype == "Adoption" and str(row.CustUid) in ppo:
         o = ppo[row.CustUid]
         m = asm.Movement()
         m.AnimalID = a.ID
         m.OwnerID = o.ID
         m.MovementType = 1
         m.MovementDate = row.DispositDTL1
+        a.Archived = 1
+        a.ActiveMovementID = m.ID
+        a.ActiveMovementDate = m.MovementDate
+        a.ActiveMovementType = 1
+        a.NonShelterAnimal = 0
+        movements.append(m)
+
+# At least one customer has used holds to store adoptions instead of dispositions
+if HOLDS_AS_ADOPTIONS:
+    for row in db.query("select * from hold").list():
+        a = None
+        if str(row.AnimalUid) in ppa:
+            a = ppa[str(row.AnimalUid)]
+        o = None
+        if str(row.CustUid) in ppo:
+            o = ppo[str(row.CustUid)]
+        if a is None or o is None:
+            asm.stderr("No animal/person combo: %s, %s" % (row.AnimalUid, row.CustUid))
+            continue
+        m = asm.Movement()
+        m.AnimalID = a.ID
+        m.OwnerID = o.ID
+        m.MovementType = 1
+        m.MovementDate = row.Startts
         a.Archived = 1
         a.ActiveMovementID = m.ID
         a.ActiveMovementDate = m.MovementDate
