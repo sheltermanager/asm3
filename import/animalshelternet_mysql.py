@@ -148,7 +148,7 @@ for row in db.query("select animals.*, intake.Comments as IntakeComments, intake
         a.Neutered = 1
     if row.Declawed == "Y": a.Declawed = 1
     if str(row.IntakeCustUid) in ppo:
-        a.OriginalOwnerID = ppo[str(row.IntakeCustUid)]
+        a.OriginalOwnerID = ppo[str(row.IntakeCustUid)].ID
         a.BroughtInByOwnerID = a.OriginalOwnerID
     a.DateOfBirth = row.Birthdate
     a.DateBroughtIn = row.IntakeDTL1
