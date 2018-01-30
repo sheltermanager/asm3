@@ -1179,33 +1179,71 @@ def calc_shelter_code(dbo, animaltypeid, entryreasonid, speciesid, datebroughtin
         return s
 
     def substitute_tokens(fmt, year, tyear, ever, datebroughtin, animaltype, species, entryreason):
-        code = fmt
-        code = code.replace("YYYY", "%04d" % datebroughtin.year)
-        code = code.replace("YY", "%02d" % (int(datebroughtin.year) - 2000))
-        code = code.replace("MM", "%02d" % datebroughtin.month)
-        code = code.replace("DD", "%02d" % datebroughtin.day)
-        code = code.replace("UUUUUUUUUU", "%010d" % ever)
-        code = code.replace("UUUU", "%04d" % ever)
-        code = code.replace("NNN", "%03d" % tyear)
-        code = code.replace("NN", str(tyear))
-        code = code.replace("XXX", "%03d" % year)
-        code = code.replace("XX", str(year))
-        # The following tokens all substitute to letters that could
-        # then be substituted themselves - wrap delimiters around
-        # those tokens before substituting them so that doesn't happen
-        code = code.replace("TT", "{YY}")
-        code = code.replace("T", "{T}")
-        code = code.replace("SS", "{PP}")
-        code = code.replace("S", "{S}")
-        code = code.replace("EE", "{NN}")
-        code = code.replace("E", "{E}")
-        code = code.replace("{YY}", utils.substring(animaltype, 0, 2))
-        code = code.replace("{T}", utils.substring(animaltype, 0, 1))
-        code = code.replace("{PP}", utils.substring(species, 0, 2))
-        code = code.replace("{S}", utils.substring(species, 0, 1))
-        code = code.replace("{NN}", utils.substring(entryreason, 0, 2))
-        code = code.replace("{E}", utils.substring(entryreason, 0, 1))
-        return code
+        """
+        Produces a code by switching tokens in the code format fmt.
+        The format is parsed to left to right, testing for tokens. Anything
+        not recognised as a token is added. Anything preceded by a backslash is added.
+        """
+        code = []
+        x = 0
+        while x < len(fmt):
+            # Add the next character if we encounter a backslash to effectively escape it
+            if fmt[x:x+1] == "\\":
+                x += 1
+                code.append(fmt[x:x+1])
+                x += 1
+            elif fmt[x:x+4] == "YYYY": 
+                code.append("%04d" % datebroughtin.year)
+                x += 4
+            elif fmt[x:x+2] == "YY":   
+                code.append("%02d" % (int(datebroughtin.year) - 2000))
+                x += 2
+            elif fmt[x:x+2] == "MM":   
+                code.append("%02d" % datebroughtin.month)
+                x += 2
+            elif fmt[x:x+2] == "DD":   
+                code.append("%02d" % datebroughtin.day)
+                x += 2
+            elif fmt[x:x+10] == "UUUUUUUUUU": 
+                code.append("%010d" % ever)
+                x += 10
+            elif fmt[x:x+4] == "UUUU": 
+                code.append("%04d" % ever)
+                x += 4
+            elif fmt[x:x+3] == "NNN":  
+                code.append("%03d" % tyear)
+                x += 3
+            elif fmt[x:x+2] == "NN":   
+                code.append(str(tyear))
+                x += 2
+            elif fmt[x:x+3] == "XXX":  
+                code.append("%03d" % year)
+                x += 3
+            elif fmt[x:x+2] == "XX":   
+                code.append(str(year))
+                x += 2
+            elif fmt[x:x+2] == "TT":   
+                code.append(utils.substring(animaltype, 0, 2))
+                x += 2
+            elif fmt[x:x+1] == "T":    
+                code.append(utils.substring(animaltype, 0, 1))
+                x += 1
+            elif fmt[x:x+2] == "SS":   
+                code.append(utils.substring(species, 0, 2))
+                x += 2
+            elif fmt[x:x+1] == "S":    
+                code.append(utils.substring(species, 0, 1))
+                x += 1
+            elif fmt[x:x+2] == "EE":   
+                code.append(utils.substring(entryreason, 0, 2))
+                x += 2
+            elif fmt[x:x+1] == "E":    
+                code.append(utils.substring(entryreason, 0, 1))
+                x += 1
+            else:
+                code.append(fmt[x:x+1])
+                x += 1
+        return "".join(code)
 
     if datebroughtin is None:
         datebroughtin = dbo.today()
