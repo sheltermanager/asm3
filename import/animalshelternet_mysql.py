@@ -17,6 +17,11 @@ db = web.database( dbn = "mysql", db = "zc1502", user = "robin", pw = "robin" )
 
 START_ID = 100
 HOLDS_AS_ADOPTIONS = True
+FIX_FIELD_LENGTHS = True
+
+if FIX_FIELD_LENGTHS:
+    db.query("ALTER TABLE animals MODIFY Name VARCHAR(255)")
+    db.query("ALTER TABLE animals MODIFY MicrochipID VARCHAR(255)")
 
 def gettypeletter(aid):
     tmap = {
