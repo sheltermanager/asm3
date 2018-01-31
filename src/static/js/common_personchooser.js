@@ -631,8 +631,13 @@
 
         clear: function(fireclearedevent) {
             this.element.val("0");
+            this.options.id = 0;
             this.options.display.html("");
             if (fireclearedevent) { this._trigger("cleared", null); }
+        },
+
+        is_empty: function() {
+            return this.options.id == 0;
         },
 
         /**

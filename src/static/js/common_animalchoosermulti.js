@@ -135,6 +135,10 @@
             this.options.results.find(":checked").prop("checked", false);
         },
 
+        is_empty: function() {
+            return this.options.ids == "";
+        },
+
         destroy: function() {
             try {
                 this.options.dialog.dialog("destroy"); 

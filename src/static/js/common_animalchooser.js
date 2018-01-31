@@ -15,6 +15,7 @@
      *            cleared (after user clicks the clear button)
      */
     $.widget("asm.animalchooser", {
+        
         options: {
             id: 0,
             rec: {},
@@ -23,6 +24,7 @@
             display: null,
             filter: "all"
         },
+
         _create: function() {
             var h = [
                 '<div class="animalchooser">',
@@ -105,6 +107,7 @@
                 self.loadbyid(self.element.val());
             }
         },
+
         /**
          * Empties the widget
          */
@@ -115,11 +118,17 @@
             this.options.display.html("");
             if (fireclearedevent) { this._trigger("cleared", null); }
         },
+
+        is_empty: function() {
+            return this.options.id == 0;
+        },
+
         destroy: function() {
             try {
                 this.options.dialog.dialog("destroy");
             } catch (ex) {}
         },
+
         /**
          * Loads an animal into the widget by ID
          */
@@ -151,6 +160,7 @@
                 }
             });
         },
+
         find: function() {
             var self = this;
             var dialog = this.options.dialog, node = this.options.node;
@@ -211,9 +221,11 @@
                 }
             });
         },
+
         get_selected: function() {
             return this.selected;
         }
+
     });
 
 } (jQuery));
