@@ -136,8 +136,10 @@ $(function() {
                 { id: "new", text: _("New Payment"), icon: "new", enabled: "always", perm: "oaod",
                      click: function() { 
                         tableform.dialog_show_add(dialog, {
+                            onvalidate: function() {
+                                return donations.validation();
+                            },
                             onadd: function() {
-                                if (!donations.validation()) { tableform.dialog_enable_buttons(); return; }
                                 tableform.fields_post(dialog.fields, "mode=create", "donation")
                                     .then(function(response) {
                                         var row = {};

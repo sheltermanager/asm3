@@ -280,8 +280,10 @@ $(function() {
         new_vacc: function() { 
             var table = vaccination.table, dialog = vaccination.dialog;
             tableform.dialog_show_add(dialog, {
+                onvalidate: function() {
+                    return validate.notzero([ "animal" ]);
+                },
                 onadd: function() {
-                    if (!validation.notzero([ "animal" ])) { return; }
                     tableform.fields_post(dialog.fields, "mode=create", "vaccination")
                         .then(function(response) {
                             var row = {};
@@ -318,8 +320,10 @@ $(function() {
         new_bulk_vacc: function() {
             var dialog = vaccination.dialog;
             tableform.dialog_show_add(dialog, {
+                onvalidate: function() {
+                    return validate.notblank([ "animals" ]);
+                },
                 onadd: function() {
-                    if (!validation.notblank([ "animals" ])) { return; }
                     tableform.fields_post(dialog.fields, "mode=createbulk", "vaccination")
                         .then(function(response) {
                             tableform.dialog_close();

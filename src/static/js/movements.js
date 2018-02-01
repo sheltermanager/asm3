@@ -236,8 +236,10 @@ $(function() {
                 { id: "new", text: _("New Movement"), icon: "new", enabled: "always", perm: "aamv", 
                      click: function() { 
                         tableform.dialog_show_add(dialog, {
+                            onvalidate: function() {
+                                return movements.validation();
+                            },
                             onadd: function() {
-                                if (!movements.validation()) { tableform.dialog_enable_buttons(); return; }
                                 tableform.fields_post(dialog.fields, "mode=create", "movement")
                                     .then(function(response) {
                                         var row = {};

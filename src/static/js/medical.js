@@ -360,56 +360,65 @@ $(function() {
 
         new_medical: function() { 
             var dialog = medical.dialog;
-            if (controller.animal) {
-                $("#animal").animalchooser("loadbyid", controller.animal.ID);
-                $("#animal").closest("tr").hide();
-            }
-            else {
-                $("#animal").closest("tr").show();
-                $("#animal").animalchooser("clear");
-            }
-            $("#animals").closest("tr").hide();
-            $("#dialog-tableform .asm-textbox, #dialog-tableform .asm-textarea").val("");
-            $("#profileid").closest("tr").show();
-            $("#profileid").select("value", "");
-            $("#treatmentrulecalc").show();
-            $("#status").select("value", "0");
-            tableform.dialog_show_add(dialog)
-                .then(function() {
-                    tableform.dialog_disable_buttons();   
-                    return tableform.fields_post(dialog.fields, "mode=create", "medical");
-                })
-                .then(function(response) {
-                    tableform.dialog_close();
-                    common.route_reload();
-                })
-                .fail(function() {
-                    tableform.dialog_enable_buttons();
-                });
+            tableform.dialog_show_add(dialog, {
+                onvalidate: function() {
+                    return validate.notzero([ "animal" ]);
+                },
+                onadd: function() {
+                    tableform.fields_post(dialog.fields, "mode=create", "medical")
+                        .then(function(response) {
+                            tableform.dialog_close();
+                            common.route_reload();
+                        })
+                        .fail(function() {
+                            tableform.dialog_enable_buttons();   
+                        });
+                },
+                onload: function() {
+                    if (controller.animal) {
+                        $("#animal").animalchooser("loadbyid", controller.animal.ID);
+                        $("#animal").closest("tr").hide();
+                    }
+                    else {
+                        $("#animal").closest("tr").show();
+                        $("#animal").animalchooser("clear");
+                    }
+                    $("#animals").closest("tr").hide();
+                    $("#dialog-tableform .asm-textbox, #dialog-tableform .asm-textarea").val("");
+                    $("#profileid").closest("tr").show();
+                    $("#profileid").select("value", "");
+                    $("#treatmentrulecalc").show();
+                    $("#status").select("value", "0");
+                }
+            });
         },
 
         new_bulk_medical: function() { 
-            $("#animal").closest("tr").hide();
-            $("#animals").closest("tr").show();
-            $("#animals").animalchoosermulti("clear");
-            $("#dialog-tableform .asm-textbox, #dialog-tableform .asm-textarea").val("");
-            $("#profileid").closest("tr").show();
-            $("#treatmentrulecalc").show();
-            $("#status").select("value", "0");
-            tableform.dialog_show_add(medical.dialog)
-                .then(function() {
-                    tableform.dialog_disable_buttons();   
-                    return tableform.fields_post(medical.dialog.fields, "mode=createbulk", "medical");
-                })
-                .then(function(response) {
-                    tableform.dialog_close();
-                    common.route_reload();
-                })
-                .fail(function() {
-                    tableform.dialog_enable_buttons();   
-                });
+            tableform.dialog_show_add(medical.dialog, {
+                onvalidate: function() {
+                    return validate.notblank([ "animals" ]);
+                },
+                onadd: function() {
+                    tableform.fields_post(medical.dialog.fields, "mode=createbulk", "medical")
+                        .then(function(response) {
+                            tableform.dialog_close();
+                            common.route_reload();
+                        })
+                        .fail(function() {
+                            tableform.dialog_enable_buttons();   
+                        });
+                },
+                onload: function() {
+                    $("#animal").closest("tr").hide();
+                    $("#animals").closest("tr").show();
+                    $("#animals").animalchoosermulti("clear");
+                    $("#dialog-tableform .asm-textbox, #dialog-tableform .asm-textarea").val("");
+                    $("#profileid").closest("tr").show();
+                    $("#treatmentrulecalc").show();
+                    $("#status").select("value", "0");
+                }
+            });
         },
-
 
         render_givendialog: function() {
             return [

@@ -590,6 +590,7 @@
          * o: options/events - 
          *  onadd: function to run when the user clicks the add button (after validation)
          *  onload: function to run when the form has loaded and been displayed
+         *  onvalidate: function to run to validate the form
          */
         dialog_show_add: function(dialog, o) {
 
@@ -634,6 +635,11 @@
                 text: _("Add"),
                 "class": 'asm-dialog-actionbutton',
                 click: function() {
+                    if (o && o.onvalidate) { 
+                        if (!o.onvalidate()) { 
+                            return;
+                        }
+                    }
                     if (tableform.fields_validate(dialog.fields)) {
                         if (dialog.close_on_ok) {
                             $(this).dialog("close");
@@ -707,6 +713,7 @@
          *  onchange: function to run when the user clicks the change button (after validation)
          *  onload: function to run after the form has been loaded and displayed
          *  ondelete: function to run after the delete button is clicked
+         *  onvalidate: function to run to validate the form
          */
         dialog_show_edit: function(dialog, row, o) {
 
@@ -762,6 +769,11 @@
                     text: _("Change"),
                     "class": 'asm-dialog-actionbutton',
                     click: function() {
+                        if (o && o.onvalidate) { 
+                            if (!o.onvalidate()) { 
+                                return;
+                            }
+                        }
                         if (tableform.fields_validate(dialog.fields)) {
                             if (dialog.close_on_ok) {
                                 $(this).dialog("close");

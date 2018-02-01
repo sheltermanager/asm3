@@ -217,6 +217,9 @@ $(function() {
         new_test: function() { 
             var dialog = test.dialog, table = test.table;
             tableform.dialog_show_add(dialog, {
+                onvalidate: function() {
+                    return validate.notzero([ "animal" ]);
+                },
                 onadd: function() {
                     tableform.fields_post(dialog.fields, "mode=create", "test")
                         .then(function(response) {
@@ -254,6 +257,9 @@ $(function() {
         new_bulk_test: function() { 
             var dialog = test.dialog, table = test.table;
             tableform.dialog_show_add(dialog, {
+                onvalidate: function() {
+                    return validate.notblank([ "animals" ]);
+                },
                 onadd: function() {
                     tableform.fields_post(dialog.fields, "mode=createbulk", "test")
                         .then(function(response) {
