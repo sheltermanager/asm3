@@ -281,6 +281,7 @@ $(function() {
             var table = vaccination.table, dialog = vaccination.dialog;
             tableform.dialog_show_add(dialog, {
                 onadd: function() {
+                    if (!validation.notzero([ "animal" ])) { return; }
                     tableform.fields_post(dialog.fields, "mode=create", "vaccination")
                         .then(function(response) {
                             var row = {};
@@ -318,6 +319,7 @@ $(function() {
             var dialog = vaccination.dialog;
             tableform.dialog_show_add(dialog, {
                 onadd: function() {
+                    if (!validation.notblank([ "animals" ])) { return; }
                     tableform.fields_post(dialog.fields, "mode=createbulk", "vaccination")
                         .then(function(response) {
                             tableform.dialog_close();
