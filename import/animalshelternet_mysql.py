@@ -22,7 +22,8 @@ FIX_FIELD_LENGTHS = True
 if FIX_FIELD_LENGTHS:
     db.query("ALTER TABLE animals " \
         "MODIFY Name VARCHAR(255), " \
-        "MODIFY MicrochipID VARCHAR(255)")
+        "MODIFY MicrochipID VARCHAR(255), " \
+        "MODIFY RabiesNum VARCHAR(255)")
 
 def gettypeletter(aid):
     tmap = {
