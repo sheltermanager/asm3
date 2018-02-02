@@ -951,6 +951,8 @@ def merge_flags(dbo, username, personid, flags):
         fgs = flags.split("|")
     elif flags.find(",") != -1: 
         fgs = flags.split(",")
+    else:
+        fgs.append(flags)
     epf = db.query_string(dbo, "SELECT AdditionalFlags FROM owner WHERE ID = %d" % personid)
     epfb = epf.split("|")
     for x in fgs:
