@@ -136,7 +136,7 @@ $(function() {
                                     .replace("{1}", $("#issuedate").val())
                                     .replace("{2}", $("#expirydate").val());
                             var u = "move_gendoc?" +
-                                "mode=LICENCE&id=" + result +
+                                "linktype=LICENCE&id=" + result +
                                 "&message=" + encodeURIComponent(common.base64_encode(msg));
                             common.route(u);
                         }

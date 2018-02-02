@@ -1,6 +1,7 @@
 40
 ================
 
+02/02/18 Fix bad mode passing from license renewal to generate doc
 01/02/18 medical, test and vacc weren't testing for valid animals #349
 30/01/18 Allow backslash in coding formats to escape chars
 28/01/18 Include times in report dates exported to CSV
