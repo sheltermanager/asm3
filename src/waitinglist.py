@@ -141,11 +141,11 @@ def get_waitinglist_find_simple(dbo, query = "", limit = 0):
     if utils.is_numeric(query):
         ors.append("a.ID = " + str(utils.cint(query)))
     ors.append(add("o.OwnerName"))
-    ors.append(add("a.AnimalDescription"))
     ors.append(u"EXISTS(SELECT ad.Value FROM additional ad " \
         "INNER JOIN additionalfield af ON af.ID = ad.AdditionalFieldID AND af.Searchable = 1 " \
         "WHERE ad.LinkID=a.ID AND ad.LinkType IN (%s) AND LOWER(ad.Value) LIKE '%%%s%%')" % (additional.WAITINGLIST_IN, query.lower()))
     if not dbo.is_large_db:
+        ors.append(add("a.AnimalDescription"))
         ors.append(add("a.ReasonForWantingToPart"))
         ors.append(add("a.ReasonForRemoval"))
     sql = get_waitinglist_query(dbo) + " WHERE " + " OR ".join(ors)

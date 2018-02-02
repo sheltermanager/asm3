@@ -138,11 +138,7 @@ def get_lostanimal_find_simple(dbo, query = "", limit = 0):
             "INNER JOIN additionalfield af ON af.ID = ad.AdditionalFieldID AND af.Searchable = 1 " \
             "WHERE ad.LinkID=a.ID AND ad.LinkType IN (%s) AND LOWER(ad.Value) LIKE '%%%s%%')" % (additional.LOSTANIMAL_IN, query.lower()))
         if not dbo.is_large_db:
-            ors.append(add("x.Sex"))
             ors.append(add("b.BreedName"))
-            ors.append(add("c.BaseColour"))
-            ors.append(add("s.SpeciesName"))
-            ors.append(add("a.AgeGroup"))
             ors.append(add("a.DistFeat"))
             ors.append(add("a.Comments"))
     sql = get_lostanimal_query(dbo) + " WHERE " + " OR ".join(ors)
@@ -171,11 +167,7 @@ def get_foundanimal_find_simple(dbo, query = "", limit = 0):
             "INNER JOIN additionalfield af ON af.ID = ad.AdditionalFieldID AND af.Searchable = 1 " \
             "WHERE ad.LinkID=a.ID AND ad.LinkType IN (%s) AND LOWER(ad.Value) LIKE '%%%s%%')" % (additional.FOUNDANIMAL_IN, query.lower()))
         if not dbo.is_large_db:
-            ors.append(add("x.Sex"))
             ors.append(add("b.BreedName"))
-            ors.append(add("c.BaseColour"))
-            ors.append(add("s.SpeciesName"))
-            ors.append(add("a.AgeGroup"))
             ors.append(add("a.DistFeat"))
             ors.append(add("a.Comments"))
     sql = get_foundanimal_query(dbo) + " WHERE " + " OR ".join(ors)
