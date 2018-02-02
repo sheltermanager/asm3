@@ -3,14 +3,17 @@
 *. Generate manual - html and pdf for the program with make manual
 
 *. Update the translations - (download from zanata, make translations)
+   (Where to do mass download?)
 
-*. Run make to compile/check, then make dist to build
+*. Add the new version to zanata and make it default
+   (Use: "Copy to new version" from ... menu at the top right of current version)
+
+*. Run make compile tests, then make dist to build
 
 *. Verify installation works with an empty MySQL database
 
-*. Commit any changes made so far
-
-*. Copy all sheltermanager* files to public.sheltermanager.com:/var/www/deb
+*. Copy build/sheltermanager* to public.sheltermanager.com:/var/www/public/deb
+   run /var/www/public/deb/makerepo.sh to rebuild Debian repository.
 
 *. Update site/en_news.html site/rss.xml site/en_header.t (new version number)
 
@@ -23,6 +26,8 @@
 *. Update twitter and facebook
 
 *. Update manual with lulu
+
+*. Commit any changes made so far
 
 *. run "git tag -f -a 41" to create a tag for the release number, followed by "git push && git push -f --tags" 
    (-f is only necessary for replacing a tag)
