@@ -13,13 +13,14 @@
 *. Verify installation works with an empty MySQL database
 
 *. Copy build/sheltermanager* to public.sheltermanager.com:/var/www/public/deb
-   run /var/www/public/deb/makerepo.sh to rebuild Debian repository.
+   run /var/www/public/deb/makerepo.sh on public to rebuild Debian repository.
 
-*. Update site/en_news.html site/rss.xml site/en_header.t (new version number)
-
-*. Update repo/asm_smcom_news.html repo/asm_news.html
-
-*. Update changelog3.txt on site
+*. Write release note and update smcom_www and "make site":
+        site/en_news.html 
+        site/rss.xml 
+        site/en_header.t (new version number)
+        repo/asm_news.html 
+        copy changelog to repo/changelog3.txt
 
 *. Mark milestone complete in github
 
