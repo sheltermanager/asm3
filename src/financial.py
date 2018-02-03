@@ -114,7 +114,7 @@ def get_account_code(dbo, accountid):
     """
     Returns the code for an accountid
     """
-    return db.query_string(dbo, "SELECT Code FROM accounts WHERE ID = %d" % int(accountid))
+    return dbo.query_string("SELECT Code FROM accounts WHERE ID = ?", [accountid])
 
 def get_account_codes(dbo, exclude = "", onlyactive = True):
     """
@@ -133,7 +133,7 @@ def get_account_edit_roles(dbo, accountid):
     Returns a list of edit roles for this account
     """
     roles = []
-    rows = db.query(dbo, "SELECT r.RoleName FROM accountsrole ar INNER JOIN role r ON r.ID = ar.RoleID WHERE ar.AccountID = %d AND ar.CanEdit = 1" % int(accountid))
+    rows = dbo.query("SELECT r.RoleName FROM accountsrole ar INNER JOIN role r ON r.ID = ar.RoleID WHERE ar.AccountID = ? AND ar.CanEdit = 1", [accountid])
     for r in rows:
         roles.append(r["ROLENAME"])
     return roles
@@ -142,7 +142,7 @@ def get_account_id(dbo, code):
     """
     Returns the id for an account code
     """
-    return db.query_int(dbo, "SELECT ID FROM accounts WHERE Code = %s" % db.ds(code))
+    return dbo.query_int("SELECT ID FROM accounts WHERE Code = ?", [code])
     
 def get_accounts(dbo, onlyactive = False):
     """
@@ -155,12 +155,12 @@ def get_accounts(dbo, onlyactive = False):
     pfilter = ""
     aperiod = configuration.accounting_period(dbo)
     if aperiod != "":
-        pfilter = " AND TrxDate >= " + db.dd(i18n.display2python(l, aperiod))
+        pfilter = " AND TrxDate >= %s" % dbo.sql_date(i18n.display2python(l, aperiod), wrapParens=True, includeTime=False)
     afilter = ""
     if onlyactive:
         afilter = "WHERE Archived = 0 "
-    roles = db.query(dbo, "SELECT ar.*, r.RoleName FROM accountsrole ar INNER JOIN role r ON ar.RoleID = r.ID")
-    accounts = db.query(dbo, "SELECT a.*, at.AccountType AS AccountTypeName, " \
+    roles = dbo.query("SELECT ar.*, r.RoleName FROM accountsrole ar INNER JOIN role r ON ar.RoleID = r.ID")
+    accounts = dbo.query("SELECT a.*, at.AccountType AS AccountTypeName, " \
         "dt.DonationName, " \
         "(SELECT SUM(Amount) FROM accountstrx WHERE DestinationAccountID = a.ID%s) AS dest," \
         "(SELECT SUM(Amount) FROM accountstrx WHERE SourceAccountID = a.ID%s) AS src," \
@@ -171,35 +171,34 @@ def get_accounts(dbo, onlyactive = False):
         "LEFT OUTER JOIN donationtype dt ON dt.ID = a.DonationTypeID %s " \
         "ORDER BY a.AccountType, a.Code" % (pfilter, pfilter, pfilter, pfilter, afilter))
     for a in accounts:
-        dest = a["DEST"]
-        src = a["SRC"]
-        recdest = a["RECDEST"]
-        recsrc = a["RECSRC"]
+        dest = a.dest
+        src = a.src
+        recdest = a.recdest
+        recsrc = a.recsrc
         if dest is None: dest = 0
         if src is None: src = 0
         if recdest is None: recdest = 0
         if recsrc is None: recsrc = 0
-        
-        a["BALANCE"] = dest - src
-        a["RECONCILED"] = recdest - recsrc
-        if a["ACCOUNTTYPE"] == INCOME or a["ACCOUNTTYPE"] == EXPENSE:
-            a["BALANCE"] = abs(a["BALANCE"])
-            a["RECONCILED"] = abs(a["RECONCILED"])
+        a.balance = dest - src
+        a.reconciled = recdest - recsrc
+        if a.accounttype == INCOME or a.accounttype == EXPENSE:
+            a.balance = abs(a.balance)
+            a.reconciled = abs(a.reconciled)
         viewroleids = []
         viewrolenames = []
         editroleids = []
         editrolenames = []
         for r in roles:
-            if r["ACCOUNTID"] == a["ID"] and r["CANVIEW"] == 1:
-                viewroleids.append(str(r["ROLEID"]))
-                viewrolenames.append(str(r["ROLENAME"]))
-            if r["ACCOUNTID"] == a["ID"] and r["CANEDIT"] == 1:
-                editroleids.append(str(r["ROLEID"]))
-                editrolenames.append(str(r["ROLENAME"]))
-        a["VIEWROLEIDS"] = "|".join(viewroleids)
-        a["VIEWROLES"] = "|".join(viewrolenames)
-        a["EDITROLEIDS"] = "|".join(editroleids)
-        a["EDITROLES"] = "|".join(editrolenames)
+            if r.accountid == a.id and r.canview == 1:
+                viewroleids.append(str(r.roleid))
+                viewrolenames.append(str(r.rolename))
+            if r.accountid == a.id and r.canedit == 1:
+                editroleids.append(str(r.roleid))
+                editrolenames.append(str(r.rolename))
+        a.viewroleids = "|".join(viewroleids)
+        a.viewroles = "|".join(viewrolenames)
+        a.editroleids = "|".join(editroleids)
+        a.editroles = "|".join(editrolenames)
     return accounts
 
 def get_balance_to_date(dbo, accountid, todate):
@@ -207,18 +206,18 @@ def get_balance_to_date(dbo, accountid, todate):
     Returns the balance of accountid to todate.
     """
     aid = int(accountid)
-    rows = db.query(dbo, "SELECT a.AccountType, " \
-        "(SELECT SUM(Amount) FROM accountstrx WHERE SourceAccountID = a.ID AND TrxDate < %s) AS withdrawal," \
-        "(SELECT SUM(Amount) FROM accountstrx WHERE DestinationAccountID = a.ID AND TrxDate < %s) AS deposit " \
+    rows = dbo.query("SELECT a.AccountType, " \
+        "(SELECT SUM(Amount) FROM accountstrx WHERE SourceAccountID = a.ID AND TrxDate < ?) AS withdrawal," \
+        "(SELECT SUM(Amount) FROM accountstrx WHERE DestinationAccountID = a.ID AND TrxDate < ?) AS deposit " \
         "FROM accounts a " \
-        "WHERE a.ID = %d" % ( db.dd(todate), db.dd(todate), aid ))
+        "WHERE a.ID = ?", (todate, todate, aid))
     r = rows[0]
-    deposit = r["DEPOSIT"]
-    withdrawal = r["WITHDRAWAL"]
+    deposit = r.deposit
+    withdrawal = r.withdrawal
     if deposit is None: deposit = 0
     if withdrawal is None: withdrawal = 0
     balance = deposit - withdrawal
-    #if r["ACCOUNTTYPE"] == INCOME or r["ACCOUNTTYPE"] == EXPENSE: balance = abs(balance)
+    #if r.accounttype == INCOME or r.accounttype == EXPENSE: balance = abs(balance)
     return balance
 
 def get_balance_fromto_date(dbo, accountid, fromdate, todate):
@@ -226,25 +225,27 @@ def get_balance_fromto_date(dbo, accountid, fromdate, todate):
     Returns the balance of accountid from fromdate to todate.
     """
     aid = int(accountid)
-    rows = db.query(dbo, "SELECT a.AccountType, " \
-        "(SELECT SUM(Amount) FROM accountstrx WHERE SourceAccountID = a.ID AND TrxDate >= %s AND TrxDate < %s) AS withdrawal," \
-        "(SELECT SUM(Amount) FROM accountstrx WHERE DestinationAccountID = a.ID AND TrxDate >= %s AND TrxDate < %s) AS deposit " \
+    rows = dbo.query("SELECT a.AccountType, " \
+        "(SELECT SUM(Amount) FROM accountstrx WHERE SourceAccountID = a.ID AND TrxDate >= ? AND TrxDate < ?) AS withdrawal," \
+        "(SELECT SUM(Amount) FROM accountstrx WHERE DestinationAccountID = a.ID AND TrxDate >= ? AND TrxDate < ?) AS deposit " \
         "FROM accounts a " \
-        "WHERE a.ID = %d" % ( db.dd(fromdate), db.dd(todate), db.dd(fromdate), db.dd(todate), aid ))
+        "WHERE a.ID = ?", (fromdate, todate, fromdate, todate, aid))
     r = rows[0]
-    deposit = r["DEPOSIT"]
-    withdrawal = r["WITHDRAWAL"]
+    deposit = r.deposit
+    withdrawal = r.withdrawal
     if deposit is None: deposit = 0
     if withdrawal is None: withdrawal = 0
     balance = deposit - withdrawal
-    #if r["ACCOUNTTYPE"] == INCOME or r["ACCOUNTTYPE"] == EXPENSE: balance = abs(balance)
+    #if r.accounttype == INCOME or r.accounttype == EXPENSE: balance = abs(balance)
     return balance
 
 def mark_reconciled(dbo, trxid):
     """
     Marks a transaction reconciled.
     """
-    db.execute(dbo, "UPDATE accountstrx SET Reconciled = 1 WHERE ID = %d" % int(trxid))
+    dbo.update("accountstrx", trxid, {
+        "Reconciled": 1
+    })
 
 def get_transactions(dbo, accountid, datefrom, dateto, reconciled):
     """
@@ -273,7 +274,7 @@ def get_transactions(dbo, accountid, datefrom, dateto, reconciled):
         recfilter = " AND Reconciled = 1"
     elif reconciled == NONRECONCILED:
         recfilter = " AND Reconciled = 0"
-    rows = db.query(dbo, "SELECT t.*, srcac.Code AS SrcCode, destac.Code AS DestCode, " \
+    rows = dbo.query("SELECT t.*, srcac.Code AS SrcCode, destac.Code AS DestCode, " \
         "o.OwnerName AS PersonName, o.ID AS PersonID, a.ID AS DonationAnimalID, " \
         "a.AnimalName AS DonationAnimalName, " \
         "CASE " \
@@ -293,7 +294,7 @@ def get_transactions(dbo, accountid, datefrom, dateto, reconciled):
         "LEFT OUTER JOIN animal aca ON aca.ID = ac.AnimalID " \
         "WHERE t.TrxDate >= %s AND t.TrxDate <= %s%s " \
         "AND (t.SourceAccountID = %d OR t.DestinationAccountID = %d) " \
-        "ORDER BY t.TrxDate, t.ID" % ( db.dd(datefrom), db.dd(dateto), recfilter, int(accountid), int(accountid)))
+        "ORDER BY t.TrxDate, t.ID" % ( dbo.sql_date(datefrom, includeTime=False), dbo.sql_date(dateto, includeTime=False), recfilter, accountid, accountid))
     balance = 0
     if period != "":
         balance = get_balance_fromto_date(dbo, accountid, i18n.display2python(l, period), datefrom)
@@ -301,53 +302,53 @@ def get_transactions(dbo, accountid, datefrom, dateto, reconciled):
         balance = get_balance_to_date(dbo, accountid, datefrom)
     for r in rows:
         # Error scenario - this account is both source and destination
-        if r["SOURCEACCOUNTID"] == accountid and r["DESTINATIONACCOUNTID"] == accountid:
-            r["WITHDRAWAL"] = 0
-            r["DEPOSIT"] = 0
-            r["THISACCOUNT"] = accountid
-            r["THISACCOUNTCODE"] = r["SRCCODE"]
-            r["OTHERACCOUNT"] = accountid
-            r["OTHERACCOUNTCODE"] = "<-->"
-            r["BALANCE"] = balance
+        if r.sourceaccountid == accountid and r.destinationaccountid == accountid:
+            r.withdrawal = 0
+            r.deposit = 0
+            r.thisaccount = accountid
+            r.thisaccountcode = r.SRCCODE
+            r.otheraccount = accountid
+            r.otheraccountcode = "<-->"
+            r.balance = balance
         # This account is the source - it's a withdrawal
-        elif r["SOURCEACCOUNTID"] == accountid:
-            r["WITHDRAWAL"] = r["AMOUNT"]
-            r["DEPOSIT"] = 0
-            r["OTHERACCOUNT"] = r["DESTINATIONACCOUNTID"]
-            r["OTHERACCOUNTCODE"] = r["DESTCODE"]
-            r["THISACCOUNT"] = accountid
-            r["THISACCOUNTCODE"] = r["SRCCODE"]
-            balance -= r["AMOUNT"]
-            r["BALANCE"] = balance
+        elif r.sourceaccountid == accountid:
+            r.withdrawal = r.amount
+            r.deposit = 0
+            r.otheraccount = r.destinationaccountid
+            r.otheraccountcode = r.destcode
+            r.thisaccount = accountid
+            r.thisaccountcode = r.srccodE
+            balance -= r.amount
+            r.balance = balance
         # This account is the destination - it's a deposit
         else:
-            r["WITHDRAWAL"] = 0
-            r["DEPOSIT"] = r["AMOUNT"]
-            r["OTHERACCOUNT"] = r["SOURCEACCOUNTID"]
-            r["OTHERACCOUNTCODE"] = r["SRCCODE"]
-            r["THISACCOUNT"] = accountid
-            r["THISACCOUNTCODE"] = r["DESTCODE"]
-            balance += r["AMOUNT"]
-            r["BALANCE"] = balance
+            r.withdrawal = 0
+            r.deposit = r.amount
+            r.otheraccount = r.sourceaccountid
+            r.otheraccountcode = r.srccode
+            r.thisaccount = accountid
+            r.thisaccountcode = r.destcode
+            balance += r.amount
+            r.balance = balance
     return rows
        
 def get_donation(dbo, did):
     """
     Returns a single donation by id
     """
-    return db.query(dbo, get_donation_query(dbo) + "WHERE od.ID = %d" % int(did))[0]
+    return dbo.query(get_donation_query(dbo) + "WHERE od.ID = ?", [did])[0]
 
 def get_donations_by_ids(dbo, dids):
     """
     Returns multiple donations with a list of ids
     """
-    return db.query(dbo, get_donation_query(dbo) + "WHERE od.ID IN (%s) ORDER BY od.Date" % ",".join(str(x) for x in dids))
+    return dbo.query(get_donation_query(dbo) + "WHERE od.ID IN (%s) ORDER BY od.Date" % ",".join(str(x) for x in dids))
 
 def get_movement_donation(dbo, mid):
     """
     Returns the most recent donation with movement id mid
     """
-    r = db.query(dbo, get_donation_query(dbo) + "WHERE od.MovementID = %d ORDER BY Date DESC, od.ID DESC" % int(mid))
+    r = dbo.query(get_donation_query(dbo) + "WHERE od.MovementID = ? ORDER BY Date DESC, od.ID DESC", [mid])
     if len(r) == 0: return None
     return r[0]
 
@@ -355,7 +356,7 @@ def get_movement_donations(dbo, mid):
     """
     Returns all donations for a movement
     """
-    return db.query(dbo, get_donation_query(dbo) + "WHERE od.MovementID = %d ORDER BY Date DESC, od.ID DESC" % int(mid))
+    return dbo.query(get_donation_query(dbo) + "WHERE od.MovementID = ? ORDER BY Date DESC, od.ID DESC", [mid])
 
 def get_next_receipt_number(dbo):
     """ Returns the next receipt number for the frontend """
@@ -369,21 +370,13 @@ def get_donations(dbo, offset = "m31"):
     ISGIFTAID, FREQUENCY, FREQUENCYNAME, NEXTCREATED, COMMENTS, OWNERNAME, 
     ANIMALNAME, SHELTERCODE, OWNERID, ANIMALID
     """
-    ec = ""
-    order = ""
     offsetdays = utils.cint(offset[1:])
     if offset.startswith("m"):
-        ec = "od.Date >= %s AND od.Date <= %s" % (db.dd( i18n.subtract_days(i18n.now(dbo.timezone), offsetdays)), db.dd(i18n.now(dbo.timezone)))
-        order = "od.Date DESC"
+        return dbo.query(get_donation_query(dbo) + " WHERE od.Date >= ? AND od.Date <= ? ORDER BY od.Date DESC", (dbo.today(offsetdays*-1), dbo.today()))
     elif offset.startswith("p"):
-        ec = "od.Date Is Null AND od.DateDue >= %s AND od.DateDue <= %s" % (db.dd(i18n.now(dbo.timezone)), db.dd(i18n.add_days(i18n.now(dbo.timezone), offsetdays)))
-        order = "od.DateDue DESC"
+        return dbo.query(get_donation_query(dbo) + " WHERE od.DateDue >= ? AND od.DateDue <= ? ORDER BY od.DateDue DESC", (dbo.today(), dbo.today(offsetdays)))
     elif offset.startswith("d"):
-        ec = "od.Date Is Null AND od.DateDue <= %s" % (db.dd(i18n.now(dbo.timezone)))
-        order = "od.DateDue"
-    return db.query(dbo, get_donation_query(dbo) + \
-        "WHERE %s "
-        "ORDER BY %s" % (ec, order))
+        return dbo.query(get_donation_query(dbo) + " WHERE od.Date Is Null AND od.DateDue <= ? ORDER BY od.DateDue", (dbo.today(),))
 
 def get_donations_due_two_dates(dbo, start, end):
     """
@@ -407,9 +400,9 @@ def get_animal_donations(dbo, aid, sort = ASCENDING):
     order = "Date DESC, od.ID DESC"
     if sort == ASCENDING:
         order = "Date, od.ID"
-    return db.query(dbo, get_donation_query(dbo) + \
-        "WHERE od.AnimalID = %d " \
-        "ORDER BY %s" % (int(aid), order))
+    return dbo.query(get_donation_query(dbo) + \
+        "WHERE od.AnimalID = ? " \
+        "ORDER BY %s" % order, [aid])
 
 def get_person_donations(dbo, oid, sort = ASCENDING):
     """
@@ -421,9 +414,9 @@ def get_person_donations(dbo, oid, sort = ASCENDING):
     order = "Date DESC, od.ID DESC"
     if sort == ASCENDING:
         order = "Date, od.ID"
-    return db.query(dbo, get_donation_query(dbo) + \
-        "WHERE od.OwnerID = %d " \
-        "ORDER BY %s" % (int(oid), order))
+    return dbo.query(get_donation_query(dbo) + \
+        "WHERE od.OwnerID = ? " \
+        "ORDER BY %s" % order, [oid])
 
 def get_incident_citations(dbo, iid, sort = ASCENDING):
     """
@@ -435,9 +428,9 @@ def get_incident_citations(dbo, iid, sort = ASCENDING):
     order = "oc.CitationDate DESC"
     if sort == ASCENDING:
         order = "oc.CitationDate"
-    return db.query(dbo, get_citation_query(dbo) + \
-        "WHERE oc.AnimalControlID = %d " \
-        "ORDER BY %s" % (int(iid), order))
+    return dbo.query(get_citation_query(dbo) + \
+        "WHERE oc.AnimalControlID = ? " \
+        "ORDER BY %s" % order, [iid])
 
 def get_person_citations(dbo, oid, sort = ASCENDING):
     """
@@ -449,9 +442,9 @@ def get_person_citations(dbo, oid, sort = ASCENDING):
     order = "oc.CitationDate DESC"
     if sort == ASCENDING:
         order = "oc.CitationDate"
-    return db.query(dbo, get_citation_query(dbo) + \
-        "WHERE oc.OwnerID = %d " \
-        "ORDER BY %s" % (int(oid), order))
+    return dbo.query(get_citation_query(dbo) + \
+        "WHERE oc.OwnerID = ? " \
+        "ORDER BY %s" % order, [oid])
 
 def get_unpaid_fines(dbo):
     """
@@ -459,9 +452,9 @@ def get_unpaid_fines(dbo):
     ID, CITATIONTYPEID, CITATIONNAME, CITATIONDATE, FINEDUEDATE, FINEPAIDDATE,
     FINEAMOUNT, OWNERNAME, INCIDENTNAME
     """
-    return db.query(dbo, get_citation_query(dbo) + \
-        "WHERE oc.FineDueDate Is Not Null AND oc.FineDueDate <= %s AND oc.FinePaidDate Is Null " \
-        "ORDER BY oc.CitationDate DESC" % db.dd(i18n.now(dbo.timezone)))
+    return dbo.query(get_citation_query(dbo) + \
+        "WHERE oc.FineDueDate Is Not Null AND oc.FineDueDate <= ? AND oc.FinePaidDate Is Null " \
+        "ORDER BY oc.CitationDate DESC", [dbo.today()])
 
 def get_animal_licences(dbo, aid, sort = ASCENDING):
     """
@@ -473,9 +466,9 @@ def get_animal_licences(dbo, aid, sort = ASCENDING):
     order = "ol.IssueDate DESC"
     if sort == ASCENDING:
         order = "ol.IssueDate"
-    return db.query(dbo, get_licence_query(dbo) + \
-        "WHERE ol.AnimalID = %d " \
-        "ORDER BY %s" % (int(aid), order))
+    return dbo.query(get_licence_query(dbo) + \
+        "WHERE ol.AnimalID = ? " \
+        "ORDER BY %s" % order, [aid])
 
 def get_person_licences(dbo, oid, sort = ASCENDING):
     """
@@ -487,9 +480,9 @@ def get_person_licences(dbo, oid, sort = ASCENDING):
     order = "ol.IssueDate DESC"
     if sort == ASCENDING:
         order = "ol.IssueDate"
-    return db.query(dbo, get_licence_query(dbo) + \
-        "WHERE ol.OwnerID = %d " \
-        "ORDER BY %s" % (int(oid), order))
+    return dbo.query(get_licence_query(dbo) + \
+        "WHERE ol.OwnerID = ? " \
+        "ORDER BY %s" % order, [oid])
 
 def get_recent_licences(dbo):
     """
@@ -497,19 +490,19 @@ def get_recent_licences(dbo):
     ID, LICENCETYPEID, LICENCETYPENAME, LICENCENUMBER, ISSUEDATE, EXPIRYDATE,
     COMMENTS, OWNERNAME, ANIMALNAME, SHELTERCODE, OWNERID, ANIMALID
     """
-    return db.query(dbo, get_licence_query(dbo) + \
-        "WHERE ol.IssueDate >= %s " \
-        "ORDER BY ol.IssueDate DESC" % db.dd(i18n.subtract_days(i18n.now(dbo.timezone), 30)))
+    return dbo.query(get_licence_query(dbo) + \
+        "WHERE ol.IssueDate >= ? " \
+        "ORDER BY ol.IssueDate DESC", [dbo.today(-30)])
 
 def get_licence_find_simple(dbo, licnum, dummy = 0):
-    return db.query(dbo, get_licence_query(dbo) + \
-        "WHERE UPPER(ol.LicenceNumber) LIKE UPPER('%%%s%%')" % licnum.replace("'", "`"))
+    return dbo.query(get_licence_query(dbo) + \
+        "WHERE UPPER(ol.LicenceNumber) LIKE UPPER(?)", [licnum])
 
 def get_licence(dbo, licenceid):
     """
     Returns a single licence by id
     """
-    rows = db.query(dbo, get_licence_query(dbo) + "WHERE ol.ID=%d" % licenceid)
+    rows = dbo.query(get_licence_query(dbo) + "WHERE ol.ID = ?", [licenceid])
     if len(rows) > 0:
         return rows[0]
     else:
@@ -521,15 +514,13 @@ def get_licences(dbo, offset = "i31"):
     offset is i to go backwards on issue date
     or e to go backwards on expiry date 
     """
-    ec = ""
     offsetdays = utils.cint(offset[1:])
-    today = i18n.now(dbo.timezone)
-    offsetdate = i18n.subtract_days(today, offsetdays)
     if offset.startswith("i"):
-        ec = " ol.IssueDate >= %s AND ol.IssueDate <= %s" % (db.dd(offsetdate), db.dd(today))
+        return dbo.query(get_licence_query(dbo) + " WHERE ol.IssueDate >= ? AND ol.IssueDate <= ? ORDER BY ol.IssueDate DESC", 
+            (dbo.today(offsetdays*-1), dbo.today()))
     if offset.startswith("e"):
-        ec = " ol.ExpiryDate >= %s AND ol.ExpiryDate <= %s" % (db.dd(offsetdate), db.dd(today))
-    return db.query(dbo, get_licence_query(dbo) + "WHERE %s ORDER BY ol.IssueDate DESC" % ec) 
+        return dbo.query(get_licence_query(dbo) + " WHERE ol.ExpiryDate >= ? AND ol.ExpiryDate <= ? ORDER BY ol.ExpiryDate DESC", 
+            (dbo.today(offsetdays*-1), dbo.today()))
 
 def get_vouchers(dbo, personid):
     """
@@ -537,8 +528,8 @@ def get_vouchers(dbo, personid):
     ID, VOUCHERNAME, VOUCHERID, DATEISSUED, DATEEXPIRED,
     VALUE, COMMENTS
     """
-    return db.query(dbo, get_voucher_query(dbo) + \
-        "WHERE ov.OwnerID = %d ORDER BY ov.DateIssued" % int(personid))
+    return dbo.query(get_voucher_query(dbo) + \
+        "WHERE ov.OwnerID = ? ORDER BY ov.DateIssued", [personid])
 
 def insert_donations_from_form(dbo, username, post, donationdate, force_receive = False, personid = 0, animalid = 0, movementid = 0, ignorezero = True):
     """
