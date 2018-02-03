@@ -206,7 +206,9 @@ for row in db.query("select disposit.*, (select descr from lookup where value = 
         movements.append(m)
 
 # At least one customer has used holds to store adoptions instead of dispositions
+# They also entered them multiple times.
 if HOLDS_AS_ADOPTIONS:
+    holdadopt = {}
     for row in db.query("select * from hold").list():
         a = None
         if str(row.AnimalUid) in ppa:
@@ -217,17 +219,21 @@ if HOLDS_AS_ADOPTIONS:
         if a is None or o is None:
             asm.stderr("No animal/person combo: %s, %s" % (row.AnimalUid, row.CustUid))
             continue
-        m = asm.Movement()
-        m.AnimalID = a.ID
-        m.OwnerID = o.ID
-        m.MovementType = 1
-        m.MovementDate = row.Startts
-        a.Archived = 1
-        a.ActiveMovementID = m.ID
-        a.ActiveMovementDate = m.MovementDate
-        a.ActiveMovementType = 1
-        a.NonShelterAnimal = 0
-        movements.append(m)
+        # Do we already have this animal/person combo?
+        k = "a=%so=%s" % (a.ID, o.ID)
+        if not k in holdadopt:
+            holdadopt[k] = "x"
+            m = asm.Movement()
+            m.AnimalID = a.ID
+            m.OwnerID = o.ID
+            m.MovementType = 1
+            m.MovementDate = row.Startts
+            a.Archived = 1
+            a.ActiveMovementID = m.ID
+            a.ActiveMovementDate = m.MovementDate
+            a.ActiveMovementType = 1
+            a.NonShelterAnimal = 0
+            movements.append(m)
 
 """
 # Medical - this info MAY be supplied by the medetail table, but it was blank
