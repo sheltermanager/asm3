@@ -1,6 +1,6 @@
 Active Donors
 ###
-Membership
+Donors
 ###
 33310/Any
 ###
@@ -19,7 +19,7 @@ MAIL
 &&&
 Donors who donated over an amount between two dates
 ###
-Membership
+Donors
 ###
 33310/Any
 ###
@@ -45,7 +45,7 @@ MAIL
 &&&
 Donors of type who donated over an amount between two dates
 ###
-Membership
+Donors
 ###
 33310/Any
 ###
