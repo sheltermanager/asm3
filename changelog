@@ -1,6 +1,7 @@
 41
 ================
 
+05/02/18 Do not include currency symbols when exporting report to CSV
 02/02/18 Merge flags failed when given only one flag
 
 40

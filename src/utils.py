@@ -26,7 +26,7 @@ from email.mime.multipart import MIMEMultipart
 from email.header import Header
 from email.utils import make_msgid, formatdate
 from email import Charset, Encoders
-from i18n import _, display2python, format_currency, format_time, python2display, VERSION
+from i18n import _, display2python, format_currency_no_symbol, format_time, python2display, VERSION
 from cStringIO import StringIO
 from sitedefs import SMTP_SERVER, FROM_ADDRESS, HTML_TO_PDF
 
@@ -710,7 +710,7 @@ def csv(l, rows, cols = None, includeheader = True):
         rd = []
         for c in cols:
             if is_currency(c):
-                rd.append(decode_html(format_currency(l, r[c])))
+                rd.append(decode_html(format_currency_no_symbol(l, r[c])))
             elif is_date(r[c]):
                 dateportion = python2display(l, r[c])
                 timeportion = format_time(r[c])
