@@ -42,7 +42,7 @@ $OWNERCOUNTY<br/>
 $OWNERPOSTCODE<br/>
 </td>
 <td>$HOMETELEPHONE</td>
-<td>&pound;$AMOUNT</td>
+<td>$AMOUNT</td>
 </tr>
 BODY$$
 
