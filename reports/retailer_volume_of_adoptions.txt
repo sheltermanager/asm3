@@ -19,7 +19,7 @@ ad.MovementDate >= '$ASK DATE From date$'
 AND ad.MovementDate <= '$ASK DATE To date$'
 AND ad.ReturnDate Is Null
 AND ad.MovementType = 1
-ORDER BY r.OwnerName, a.AnimalName
+ORDER BY r.OwnerName, ad.MovementDate
 ###
 $$HEADER
 HEADER$$
