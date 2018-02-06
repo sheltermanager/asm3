@@ -1,6 +1,6 @@
 Adoptions by Retailer
 ###
-Movements
+Retailers
 ###
 Any
 ###
@@ -39,7 +39,7 @@ HEADER$$
 $$GROUP_RName
 $$HEAD
 <h2>$RName</h2>
-<p>$RAddress, $RTown $RCounty $Postcode <i>$REmailAddress</i></p>
+<p>$RAddress, $RTown $RCounty $RPostcode <i>$REmailAddress</i></p>
 <table border=1><tr>
 <td><b>Code</b></td>
 <td><b>Name</b></td>
