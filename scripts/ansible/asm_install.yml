@@ -23,6 +23,8 @@
         - python-requests
         - python-ndg-httpsclient
         - python-pyasn1
+        - memcached
+        - python-memcache
 
     - name: "Activate Apache WSGI Module"
       apache2_module:
@@ -35,7 +37,7 @@
         state: present
       no_log: True
 
-    - name: Create mysql user for site
+    - name: "Create mysql user"
       mysql_user:
         name:     "{{ asm_db.user }}"
         password: "{{ asm_db.pass }}"
@@ -44,27 +46,30 @@
         config_file: "{{ mysql_defaults_extra_file }}"
       no_log: True
 
-    - name: Create web application directory
-      file:
-        path: "{{ asm_path }}"
-        state: "directory"
-        owner: "www-data"
-        group: "staff"
-        mode: u=rwx,g=rwxs,o=rx
-
-    - name: Create data directory
-      file:
-        path: "{{ asm_data }}"
-        state: "directory"
-        owner: "www-data"
-        group: "staff"
-        mode: u=rwx,g=rwxs,o=rx
-
-    - name: Extract release
+    - name: "Extract release"
       unarchive:
         src: "{{ asm_archive.path }}"
-        dest: /usr/local/src
+        dest: "/usr/local/src"
       register: release
+
+    - name: "Remove old release"
+      file:
+        path: "{{ asm_path }}"
+        state: "absent"
+      when: release.changed
+
+    - name: "Create ASM directories"
+      file:
+        path: "{{ item }}"
+        state: "directory"
+        owner: "www-data"
+        group: "staff"
+        mode: u=rwx,g=rwxs,o=rx
+      with_items:
+        - "{{ asm_path }}"
+        - "{{ asm_data }}"
+        - "{{ asm_data }}/cache"
+        - "{{ asm_data }}/media"
 
     - name: "Install release"
       command: "rsync -rlv /usr/local/src/{{ asm_archive.name }}/ {{ asm_path }}/"
@@ -77,9 +82,13 @@
       notify: "apache_restart"
 
     - name: "Update sitedefs"
-      lineinfile:
+      template:
+        src: "sitedefs.py"
         dest: "{{ asm_path }}/src/sitedefs.py"
-        regexp: "^{{ item.key }}"
-        line: "{{ item.key }} = {{ item.value }}"
-      with_dict: "{{ asm_sitedefs }}"
+
+    - name: "Install CRON"
+      template:
+        src: "cron.sh"
+        dest: "/etc/cron.daily/asm"
+        mode: "0755"
 ...
