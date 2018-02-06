@@ -4629,22 +4629,37 @@ class schemajs(ASMEndpoint):
             dbo = o.dbo
             self.header("Content-Type", "text/javascript")
             self.header("Cache-Control", "max-age=86400")
-            tobj = {}
-            for t in dbupdate.TABLES:
-                try:
-                    rows = db.query(dbo, "SELECT * FROM %s" % t, limit=1)
-                    if len(rows) != 0:
-                        tobj[t] = rows[0]
-                except Exception as err:
-                    al.error("%s" % str(err), "code.schemajs", dbo)
-            for t in dbupdate.VIEWS:
-                realtable = t.replace("v_", "")
-                try:
-                    rows = db.query(dbo, "SELECT * FROM %s WHERE ID = (SELECT MIN(ID) FROM %s)" % (t, realtable), limit=1)
-                    if len(rows) != 0:
-                        tobj[t] = rows[0]
-                except Exception as err:
-                    al.error("%s" % str(err), "code.schemajs", dbo)
+            CACHE_KEY = "schema"
+            tobj = cachemem.get(CACHE_KEY)
+            if tobj is None:
+                tobj = {}
+                for t in dbupdate.TABLES:
+                    try:
+                        rows = db.query(dbo, "SELECT * FROM %s" % t, limit=1)
+                        if len(rows) != 0:
+                            row = rows[0]
+                            for k in row.copy():
+                                row[k] = ""
+                            tobj[t] = row
+                    except Exception as err:
+                        al.error("%s" % str(err), "code.schemajs", dbo)
+                # Derive the extra *NAME fields from *ID in view tables.
+                # We do this instead of reading a row from the view. 
+                # This is because MySQL view performance can be absolutely 
+                # horrible on large tables as it implements views
+                # by creating a temporary table (which has none of the indexes).
+                for t in dbupdate.VIEWS:
+                    realtable = t.replace("v_", "")
+                    try:
+                        if realtable in tobj:
+                            row = tobj[realtable]
+                            for k in row.copy().iterkeys():
+                                if k.endswith("ID") and k != "ID":
+                                    row[k.replace("ID", "NAME")] = ""
+                            tobj[t] = row
+                    except Exception as err:
+                        al.error("%s" % str(err), "code.schemajs", dbo)
+                cachemem.put(CACHE_KEY, tobj, 86400)
             return "schema = %s;" % utils.json(tobj)
         else:
             # Not logged in
