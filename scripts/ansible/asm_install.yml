@@ -2,9 +2,16 @@
 - hosts: asm
   become: yes
   roles:
-    - City-of-Bloomington.mysql
     - City-of-Bloomington.apache
   tasks:
+    - name: "Mysql setup"
+      include_tasks: tasks/mysql.yml
+      when: asm_db.type == 'MYSQL'
+
+    - name: "Postgres setup"
+      include_tasks: tasks/postgresql.yml
+      when: asm_db.type == 'POSTGRESQL'
+
     - name: Install Animal Shelter Manger dependencies
       apt:
         name: "{{ item }}"
@@ -16,8 +23,6 @@
         - python
         - python-imaging
         - python-webpy
-        - python-mysqldb
-        - python-psycopg2
         - imagemagick
         - wkhtmltopdf
         - python-requests
@@ -29,22 +34,6 @@
     - name: "Activate Apache WSGI Module"
       apache2_module:
         name: "wsgi"
-
-    - name: Create mysql database
-      mysql_db:
-        config_file: "{{ mysql_defaults_extra_file }}"
-        name: "{{ asm_db.name }}"
-        state: present
-      no_log: True
-
-    - name: "Create mysql user"
-      mysql_user:
-        name:     "{{ asm_db.user }}"
-        password: "{{ asm_db.pass }}"
-        priv:     "{{ asm_db.name }}.*:ALL"
-        state: present
-        config_file: "{{ mysql_defaults_extra_file }}"
-      no_log: True
 
     - name: "Extract release"
       unarchive:
