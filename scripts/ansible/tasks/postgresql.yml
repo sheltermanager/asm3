@@ -1,0 +1,26 @@
+---
+- include_role:
+    name: City-of-Bloomington.postgresql
+
+- name: "Install Postgres Dependencies"
+  apt:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - python-psycopg2
+
+- name: "Create postgres user"
+  become: yes
+  become_user: postgres
+  postgresql_user:
+    name:     "{{ asm_db.user }}"
+    password: "{{ asm_db.pass }}"
+    role_attr_flags: LOGIN
+
+- name: "Create postgres database"
+  become: yes
+  become_user: postgres
+  postgresql_db:
+    name:  "{{ asm_db.name }}"
+    owner: "{{ asm_db.user }}"
+...

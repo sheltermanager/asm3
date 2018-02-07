@@ -1,5 +1,5 @@
 ---
-asm_version: 39
+asm_version: "41u"
 asm_archive:
   name: "asm3-{{ asm_version }}"
   ext: ".tar.gz"
@@ -8,7 +8,7 @@ asm_archive:
 asm_path: "/srv/sites/asm"
 asm_data: "/srv/data/asm"
 
-asm_base_uri: /asm
+asm_base_uri: /
 asm_base_url: https://{{ ansible_host }}{{ asm_base_uri }}
 
 asm_db:
@@ -17,18 +17,5 @@ asm_db:
   host: "localhost"
   name: "asm"
   user: "asm"
-  pass: "{{ vault_asm_db.pass }}"
-
-# Some of these values require double quotes around them.
-# It is probably best to single quote all the YML strings, in order to
-# distinguish between values that need to be quoted and values
-# that are bare numbers.
-asm_sitedefs:
-  BASE_URL:    '"{{ asm_base_url }}"'
-  DB_TYPE:     '"{{ asm_db.type  }}"'
-  DB_HOST:     '"{{ asm_db.host  }}"'
-  DB_PORT:      '{{ asm_db.port  }}'
-  DB_USERNAME: '"{{ asm_db.user  }}"'
-  DB_PASSWORD: '"{{ asm_db.pass  }}"'
-  DB_NAME:     '"{{ asm_db.name  }}"'
+  pass: "{{ vault_asm_db.password }}"
 ...

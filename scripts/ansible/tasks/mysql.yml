@@ -1,0 +1,27 @@
+---
+- include_role:
+    name: City-of-Bloomington.mysql
+
+- name: "Install MySQL Dependencies"
+  apt:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - python-mysqldb
+
+- name: Create mysql database
+  mysql_db:
+    config_file: "{{ mysql_defaults_extra_file }}"
+    name: "{{ asm_db.name }}"
+    state: present
+  no_log: True
+
+- name: "Create mysql user"
+  mysql_user:
+    name:     "{{ asm_db.user }}"
+    password: "{{ asm_db.pass }}"
+    priv:     "{{ asm_db.name }}.*:ALL"
+    state: present
+    config_file: "{{ mysql_defaults_extra_file }}"
+  no_log: True
+...
