@@ -1,6 +1,7 @@
 41
 ================
 
+07/02/18 Add en_KH (Cambodia)
 06/02/18 Cache schema for code complete for 24 hours server side #355
 06/02/18 Fix MySQL view performance on schemajs and get_person_query #354
 05/02/18 Do not include currency symbols when exporting report to CSV
