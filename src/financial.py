@@ -306,7 +306,7 @@ def get_transactions(dbo, accountid, datefrom, dateto, reconciled):
             r.withdrawal = 0
             r.deposit = 0
             r.thisaccount = accountid
-            r.thisaccountcode = r.SRCCODE
+            r.thisaccountcode = r.srccode
             r.otheraccount = accountid
             r.otheraccountcode = "<-->"
             r.balance = balance
@@ -317,7 +317,7 @@ def get_transactions(dbo, accountid, datefrom, dateto, reconciled):
             r.otheraccount = r.destinationaccountid
             r.otheraccountcode = r.destcode
             r.thisaccount = accountid
-            r.thisaccountcode = r.srccodE
+            r.thisaccountcode = r.srccode
             balance -= r.amount
             r.balance = balance
         # This account is the destination - it's a deposit
