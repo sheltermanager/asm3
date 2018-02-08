@@ -5,10 +5,10 @@ import asm
 """
 Import script for Multiple Options SQL Server databases exported to MDB and then CSV
 
-7th September, 2015
+7th September, 2015 - 8th Feb, 2018
 """
 
-PATH = "data/multiops_zg0861"
+PATH = "data/multiops_zz1094"
 
 owners = []
 ownerlicences = []
@@ -223,6 +223,9 @@ for row in canimals:
     comments += ", Status: " + status
     comments += ", Area: " + location + ", Pen: " + pen
     a.HiddenAnimalDetails = comments
+    # All animals are non-shelter until we find them in the intake list
+    a.NonShelterAnimal = 1
+    a.Archived = 1
 
 # Read and store images
 for row in canimalimages:
@@ -234,7 +237,7 @@ for row in canimalimages:
 for row in canimalids:
     if not ppa.has_key(row["tblAnimalsID"]): continue
     a = ppa[row["tblAnimalsID"]]
-    # TODO: These are customer specific. 2 == microchip
+    # TODO: These can be customer specific, but appear to be default/fixed 2 == microchip
     if row["sysAnimalIDTypesID"] == "2":
         a.IdentichipNumber = row["Code"]
         a.Identichipped = 1
@@ -242,9 +245,9 @@ for row in canimalids:
     # 10 = police document id
     if row["sysAnimalIDTypesID"] == "10":
         asm.additional_field("DocumentID", 0, a.ID, row["Code"])
-    # 21 = jcas animal code
+    # 21 = shelter's animal code
     if row["sysAnimalIDTypesID"] == "21" and row["Code"].strip() != "":
-        a.ShelterCode = "JCAS%s (%s)" % (row["Code"], a.ID)
+        a.ShelterCode = "%s (%s)" % (row["Code"], a.ID)
         a.ShortCode = row["Code"]
 
 # animal intake/disposition list
@@ -254,6 +257,9 @@ for row in canimalintakes:
     if not ppa.has_key(row["tblAnimalsID"]):
         continue
     a = ppa[row["tblAnimalsID"]]
+    # If it's been an intake, it's not non-shelter
+    a.NonShelterAnimal = 0
+    a.Archived = 0
     a.AnimalTypeID = asm.type_from_db(asm.find_value(canimalrectypes, "sysAnimalReceivedTypesID", row["sysAnimalReceivedTypesID"], "ReceivedType"))
     a.EntryReason = row["SurrenderReasons"] + ". " + row["Location"] + ": " + row["StreetNumber"] + " " + row["Street"] + " " + row["City"] + " " + row["State"] + " " + row["ZipCode"]
     if row["BroughtInByID"] != "":
@@ -529,8 +535,6 @@ for ac in animalcontrolanimals:
 
 asm.stderr_summary(animals=animals, animalmedicals=animalmedicals, animalvaccinations=animalvaccinations, logs=logs, owners=owners, movements=movements, ownerlicences=ownerlicences, animalcontrol=animalcontrol)
 
-# Move all animals without a matching location off shelter
-print "UPDATE animal SET Archived = 1 WHERE Archived = 0 AND ActiveMovementID = 0 AND ShelterLocation = 1;"
 print "DELETE FROM configuration WHERE ItemName LIKE 'DBView%';"
 print "COMMIT;"
 
