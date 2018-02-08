@@ -303,6 +303,16 @@ def attach_file_from_form(dbo, username, linktype, linkid, post):
     if configuration.auto_new_images_not_for_publish(dbo) and ispicture:
         excludefrompublish = 1
 
+    # Are we allowed to upload this type of media?
+    if ispicture and not configuration.media_allow_jpg(dbo):
+        msg = "upload of media type jpg is disabled"
+        al.error(msg, "media.attach_file_from_form", dbo)
+        raise utils.ASMValidationError(msg)
+    if ispdf and not configuration.media_allow_pdf(dbo):
+        msg = "upload of media type pdf is disabled"
+        al.error(msg, "media.attach_file_from_form", dbo)
+        raise utils.ASMValidationError(msg)
+
     # Is it a picture?
     if ispicture:
         # Autorotate it to match the EXIF orientation

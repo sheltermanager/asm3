@@ -223,7 +223,8 @@ DEFAULTS = {
     "MatchWithin2Weeks": "5",
     "MatchPointFloor": "20",
     "MaxMediaFileSize": "1000",
-    "MeetAPetKey": "haRQPthLgW",
+    "MediaAllowJPG": "Yes",
+    "MediaAllowPDF": "Yes",
     "MicrochipRegisterMovements": "1,5",
     "MovementDonationsDefaultDue": "No",
     "MovementNumberOverride": "No",
@@ -870,14 +871,11 @@ def match_within2weeks(dbo):
 def match_point_floor(dbo):
     return cint(dbo, "MatchPointFloor", 20)
 
-def meetapet_key(dbo):
-    return cstring(dbo, "MeetAPetKey", DEFAULTS["MeetAPetKey"])
+def media_allow_jpg(dbo):
+    return cboolean(dbo, "MediaAllowJPG", DEFAULTS["MediaAllowJPG"] == "Yes")
 
-def meetapet_secret(dbo):
-    return cstring(dbo, "MeetAPetSecret")
-
-def meetapet_userkey(dbo):
-    return cstring(dbo, "MeetAPetUserKey")
+def media_allow_pdf(dbo):
+    return cboolean(dbo, "MediaAllowPDF", DEFAULTS["MediaAllowPDF"] == "Yes")
 
 def microchip_register_movements(dbo):
     return cstring(dbo, "MicrochipRegisterMovements", DEFAULTS["MicrochipRegisterMovements"])
