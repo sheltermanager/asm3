@@ -346,7 +346,7 @@ def handler(post, path, remoteip, referer, querystring):
     elif method == "json_found_animals":
         users.check_permission_map(l, user["SUPERUSER"], securitymap, users.VIEW_FOUND_ANIMAL)
         rs = lostfound.get_foundanimal_last_days(dbo)
-        return set_cached_response(cache_key, "application/json", 3600, 3600, html.json(rs))
+        return set_cached_response(cache_key, "application/json", 3600, 3600, utils.json(rs))
 
     elif method == "jsonp_found_animals":
         users.check_permission_map(l, user["SUPERUSER"], securitymap, users.VIEW_FOUND_ANIMAL)
