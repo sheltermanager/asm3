@@ -328,7 +328,6 @@ def attach_file_from_form(dbo, username, linktype, linkid, post):
         orig_len = len(filedata)
         filedata = scale_pdf(filedata)
         if len(filedata) < orig_len:
-            medianame = "%d_scaled.pdf" % mediaid
             al.debug("compressed PDF (%d bytes)" % (len(filedata)), "media.attach_file_from_form", dbo)
 
     # Attach the file in the dbfs
