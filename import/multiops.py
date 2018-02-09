@@ -9,6 +9,9 @@ Import script for Multiple Options SQL Server databases exported to MDB and then
 """
 
 PATH = "data/multiops_zz1094"
+START_ID = 50000
+ADOPT_LONGER_THAN_DAYS = 0 # All animals on shelter longer than this, auto adopt to unknown owner (default 365)
+DEFAULT_INTAKE_DATE = asm.getdate_yyyymmdd("2017/10/23")
 
 owners = []
 ownerlicences = []
@@ -26,38 +29,44 @@ ppac = {}
 addresses = {}
 addrlink = {}
 
-asm.setid("animal", 50000)
-asm.setid("animalcontrol", 50000)
-asm.setid("animalmedical", 50000)
-asm.setid("animalmedicaltreatment", 50000)
-asm.setid("animalvaccination", 50000)
-asm.setid("log", 50000)
-asm.setid("owner", 50000)
-asm.setid("ownerlicence", 50000)
-asm.setid("adoption", 50000)
-asm.setid("media", 50000)
-asm.setid("dbfs", 50000)
+asm.setid("animal", START_ID)
+asm.setid("animalcontrol", START_ID)
+asm.setid("animalmedical", START_ID)
+asm.setid("animalmedicaltreatment", START_ID)
+asm.setid("animalvaccination", START_ID)
+asm.setid("log", START_ID)
+asm.setid("owner", START_ID)
+asm.setid("ownerlicence", START_ID)
+asm.setid("adoption", START_ID)
+asm.setid("media", START_ID)
+asm.setid("dbfs", START_ID)
 
 # Remove existing
 print "\\set ON_ERROR_STOP\nBEGIN;"
-print "DELETE FROM additional WHERE LinkID >= 50000;"
-print "DELETE FROM animal WHERE ID >= 50000;"
-print "DELETE FROM animalcontrol WHERE ID >= 50000;"
-print "DELETE FROM animalmedical WHERE ID >= 50000;"
-print "DELETE FROM animalmedicaltreatment WHERE ID >= 50000;"
-print "DELETE FROM animalvaccination WHERE ID >= 50000;"
-print "DELETE FROM log WHERE ID >= 50000;"
-print "DELETE FROM owner WHERE ID >= 50000;"
-print "DELETE FROM ownerlicence WHERE ID >= 50000;"
-print "DELETE FROM adoption WHERE ID >= 50000;"
-print "DELETE FROM media WHERE ID >= 50000;"
-print "DELETE FROM dbfs WHERE ID >= 50000;"
+print "DELETE FROM additional WHERE LinkID >= %d;" % START_ID
+print "DELETE FROM animal WHERE ID >= %d;" % START_ID
+print "DELETE FROM animalcontrol WHERE ID >= %d;" % START_ID
+print "DELETE FROM animalmedical WHERE ID >= %d;" % START_ID
+print "DELETE FROM animalmedicaltreatment WHERE ID >= %d;" % START_ID
+print "DELETE FROM animalvaccination WHERE ID >= %d;" % START_ID
+print "DELETE FROM log WHERE ID >= %d;" % START_ID
+print "DELETE FROM owner WHERE ID >= %d;" % START_ID
+print "DELETE FROM ownerlicence WHERE ID >= %d;" % START_ID
+print "DELETE FROM adoption WHERE ID >= %d;" % START_ID
+print "DELETE FROM media WHERE ID >= %d;" % START_ID
+print "DELETE FROM dbfs WHERE ID >= %d;" % START_ID
 
 # Create a transfer owner
 to = asm.Owner()
 owners.append(to)
 to.OwnerSurname = "Other Shelter"
 to.OwnerName = to.OwnerSurname
+
+# And an unknown owner
+uo = asm.Owner()
+owners.append(uo)
+uo.OwnerSurname = "Unknown Owner"
+uo.OwnerName = uo.OwnerSurname
 
 # Load up data files
 canimaldispo = asm.csv_to_list("%s/sysAnimalDispositionChoices.csv" % PATH)
@@ -147,14 +156,15 @@ for row in canimals:
     a.AnimalName = row["Name"]
     if a.AnimalName.strip() == "":
         a.AnimalName = "(unknown)"
-    a.DateOfBirth = asm.getdate_mmddyy(row["DateOfBirth"])
-    if a.DateOfBirth is None: a.DateOfBirth = asm.now()
-    a.DateBroughtIn = asm.now()
+    a.DateBroughtIn = DEFAULT_INTAKE_DATE
     irow = asm.find_row(canimalintakes, "tblAnimalsID", row["tblAnimalsID"])
-    if irow is not None:
+    if irow is not None and asm.getdate_mmddyy(irow["DateReceived"]) is not None:
         a.DateBroughtIn = asm.getdate_mmddyy(irow["DateReceived"])
-    if a.DateBroughtIn is None:
-        a.DateBroughtIn = asm.now()
+    a.DateOfBirth = asm.getdate_mmddyy(row["DateOfBirth"])
+    if a.DateOfBirth is None: 
+        a.DateOfBirth = a.DateBroughtIn
+    a.CreatedDate = a.DateBroughtIn
+    a.LastChangedDate = a.DateBroughtIn
     a.EntryReasonID = 1
     #a.generateCode(gettypeletter(a.AnimalTypeID))
     code = "MO" + asm.padleft(row["tblAnimalsID"], 6)
@@ -186,7 +196,8 @@ for row in canimals:
     a.BreedID = asm.breed_id_for_name(breed1)
     a.Breed2ID = asm.breed_id_for_name(breed2)
     # Not sure if this was customer specific with the (Mix) (Purebred) -
-    # needs checking on future conversions
+    # needs checking on future conversions.
+    # It wasn't customer specific - present in last multiops we saw.
     if breed2 == "(Mix)": 
         a.Breed2ID = 442
         a.CrossBreed = 1
@@ -512,6 +523,9 @@ for row in ccomplaintsnotes:
     l.Date = asm.getdate_mmddyy(row["LastUpdate"])
     if l.Date is None: l.Date = asm.now()
     l.Comments = row["Note"]
+
+# Take remaining animals off shelter if they've been on longer than ADOPT_LONGER_THAN_DAYS
+asm.adopt_older_than(animals, movements, ownerid=uo.ID, days=ADOPT_LONGER_THAN_DAYS)
 
 # Now that everything else is done, output stored records
 for a in animals:
