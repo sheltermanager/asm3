@@ -755,9 +755,8 @@ def scale_pdf(filedata):
     # If something went wrong during the scaling, use the original data
     if not scale_pdf_file(inputfile.name, outputfile.name):
         return filedata
-    f = open(outputfile.name, "rb")
-    compressed = f.read()
-    f.close()
+    with open(outputfile.name, "rb") as f:
+        compressed = f.read()
     os.unlink(inputfile.name)
     os.unlink(outputfile.name)
     # If something has gone wrong and the scaled one has no size, return the original
@@ -838,9 +837,8 @@ def scale_all_animal_images(dbo):
         except Exception as err:
             al.error("failed scaling image, doing nothing: %s" % err, "media.scale_all_animal_images", dbo)
             continue
-        f = open(outputfile.name, "r")
-        data = f.read()
-        f.close()
+        with open(outputfile.name, "r") as f:
+            data = f.read()
         os.unlink(inputfile.name)
         os.unlink(outputfile.name)
         # Update the image file data

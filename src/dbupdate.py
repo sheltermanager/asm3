@@ -2,7 +2,7 @@
 
 import al
 import animal, animalcontrol, financial, lostfound, medical, movement, onlineform, person, waitinglist
-import configuration, db, dbfs, utils
+import configuration, db, dbfs, smcom, utils
 import os, sys, base64
 from i18n import _
 
@@ -4698,4 +4698,12 @@ def update_34021(dbo):
 def update_34022(dbo):
     # Add AgeGroupActiveMovement
     add_column(dbo, "animal", "AgeGroupActiveMovement", dbo.type_shorttext)
+
+def update_34100(dbo):
+    # smcom only: Switch from file to s3 storage
+    # TODO: This is not in the active update lists yet
+    # TODO: Needs to be scheduled to deploy ready for a monday daytime so final s3 sync can run
+    if smcom.active():
+        # TODO: go through existing media where mediasize = 0 and calculate it
+        dbo.execute_dbupdate("UPDATE dbfs SET url = replace(url, 'file:', 's3:') where url like 'file:%'")
 

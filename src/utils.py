@@ -1204,9 +1204,8 @@ def html_to_pdf(htmldata, baseurl = "", account = ""):
     if code > 0:
         al.error("code %s returned from '%s': %s" % (code, cmdline, output), "utils.html_to_pdf")
         return "ERROR"
-    f = open(outputfile.name, "r")
-    pdfdata = f.read()
-    f.close()
+    with open(outputfile.name, "r") as f:
+        pdfdata = f.read()
     os.unlink(inputfile.name)
     os.unlink(outputfile.name)
     return pdfdata
