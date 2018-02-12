@@ -1,6 +1,7 @@
 41
 ================
 
+12/02/18 Fix output of HomeCheckedBy on person find results
 11/02/18 Complete and test AWS S3 storage module
 11/02/18 Use with blocks around file access
 07/02/18 Add en_KH (Cambodia)

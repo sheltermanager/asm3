@@ -184,13 +184,16 @@ $(function() {
             STRING_FIELDS = [ "CreatedBy", "OwnerTitle", "OwnerInitials", "OwnerForenames", "OwnerSurname",
                 "OwnerName", "OwnerAddress", "OwnerTown", "OwnerCounty", "OwnerPostcode",
                 "HomeTelephone", "WorkTelephone", "MobileTelephone", "EmailAddress",
-                "Comments", "MembershipNumber", "HomeCheckAreas", "HomeCheckedBy" ],
+                "Comments", "MembershipNumber", "HomeCheckAreas" ],
             YES_NO_FIELDS = [ "IDCheck", "IsBanned", "IsVolunteer", "IsHomeChecker", 
                 "IsMember", "IsDonor", "IsShelter", "IsACO", "IsStaff", "IsFosterer",
                 "IsRetailer", "IsVet", "IsGiftAid" ],
             rv = "";
             if (name == "Jurisdiction") {
                 rv = row.JURISDICTIONNAME;
+            }
+            else if (name == "HomeCheckedBy") {
+                rv = row.HOMECHECKEDBYNAME;
             }
             else if ($.inArray(name, DATE_FIELDS) > -1) {
                 rv = format.date(value);
