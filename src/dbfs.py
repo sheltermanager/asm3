@@ -104,8 +104,7 @@ class FileStorage(DBFSStorage):
     def get(self, dbfsid, url):
         """ Returns the file data for url """
         filepath = "%s/%s/%s" % (DBFS_FILESTORAGE_FOLDER, self.dbo.database, url.replace("file:", ""))
-        with open(filepath, "rb") as f:
-            return f.read()
+        return utils.read_binary_file(filepath)
 
     def put(self, dbfsid, filename, filedata):
         """ Stores the file data (clearing the Content column) and returns the URL """
@@ -117,8 +116,7 @@ class FileStorage(DBFSStorage):
         extension = self._extension_from_filename(filename)
         filepath = "%s/%s/%s%s" % (DBFS_FILESTORAGE_FOLDER, self.dbo.database, dbfsid, extension)
         url = "file:%s%s" % (dbfsid, extension)
-        with open(filepath, "wb") as f:
-            f.write(filedata)
+        utils.write_binary_file(filepath, filedata)
         os.chmod(filepath, 0o666) # Make the file world read/write
         self.dbo.execute("UPDATE dbfs SET URL = ?, Content = '' WHERE ID = ?", (url, dbfsid))
         return url
@@ -169,8 +167,7 @@ class S3Storage(DBFSStorage):
         localpath = "/tmp/%s%s" % (self.dbo.database, name)
         returncode, output = self._s3cmd("cp", [remotepath, localpath])
         if returncode == 0:
-            with open(localpath, "rb") as f:
-                s = f.read()
+            s = utils.read_binary_file(localpath)
             os.unlink(localpath)
             cachedisk.put(cachekey, s, self.CACHE_TTL)
             return s
@@ -183,8 +180,7 @@ class S3Storage(DBFSStorage):
         remotepath = "s3://%s/%s/%s%s" % (DBFS_S3_BUCKET, self.dbo.database, dbfsid, extension)
         localpath = "/tmp/%s%s%s" % (self.dbo.database, dbfsid, extension)
         url = "s3:%s%s" % (dbfsid, extension)
-        with open(localpath, "wb") as f:
-            f.write(filedata)
+        utils.write_binary_file(localpath, filedata)
         returncode, output = self._s3cmd("cp", [localpath, remotepath])
         os.unlink(localpath)
         if returncode == 0:
@@ -289,9 +285,7 @@ def put_file(dbo, name, path, filepath):
     Reads the the file from filepath and stores it with name/path
     """
     check_create_path(dbo, path)
-    f = open(filepath, "rb")
-    s = f.read()
-    f.close()
+    s = utils.read_binary_file(filepath)
     dbfsid = dbo.insert("dbfs", {
         "Name": name,
         "Path": path
@@ -355,10 +349,7 @@ def get_file(dbo, name, path, saveto):
     Gets DBFS file contents and saves them to the
     filename given. Returns True for success
     """
-    s = get_string(dbo, name, path)
-    f = open(saveto, "wb")
-    f.write(s)
-    f.close()
+    utils.write_binary_file(saveto, get_string(dbo, name, path))
     return True
 
 def file_exists(dbo, name):
@@ -380,9 +371,7 @@ def get_files(dbo, name, path, saveto):
     if len(rows) > 0:
         for r in rows:
             o = DBFSStorage(dbo, r.url)
-            f = open(saveto, "wb")
-            f.write(o.get(r.id, r.url))
-            f.close()
+            utils.write_binary_file(saveto, o.get(r.id, r.url))
         return True
     return False
 
@@ -445,61 +434,6 @@ def get_nopic(dbo):
     Returns the nopic jpeg file
     """
     return get_string(dbo, "nopic.jpg", "/reports")
-
-def get_html_publisher_templates(dbo):
-    """
-    Returns a list of available template/styles for the html publisher
-    """
-    l = []
-    rows = dbo.query("SELECT Name, Path FROM dbfs WHERE Path Like '/internet' ORDER BY Name")
-    hasRootStyle = False
-    for r in rows:
-        if r.name.find(".dat") != -1:
-            hasRootStyle = True
-        elif r.name.find(".") == -1:
-            l.append(r.name)
-    if hasRootStyle:
-        l.append(".")
-    return sorted(l)
-
-def get_html_publisher_templates_files(dbo):
-    """
-    Returns a list of all templates/styles with their header, footer and bodies.
-    This call can only be used for grabbing them for the UI. It turns < and > into
-    &lt; and &gt; so that json encoding the result doesn't blow up the browser.
-    """
-    templates = []
-    available = get_html_publisher_templates(dbo)
-    for name in available:
-        if name != ".":
-            head = get_string(dbo, "head.html", "/internet/%s" % name)
-            if head == "": head = get_string(dbo, "pih.dat", "/internet/%s" % name)
-            body = get_string(dbo, "body.html", "/internet/%s" % name)
-            if body == "": body = get_string(dbo, "pib.dat", "/internet/%s" % name)
-            foot = get_string(dbo, "foot.html", "/internet/%s" % name)
-            if foot == "": foot = get_string(dbo, "pif.dat", "/internet/%s" % name)
-            templates.append({ "NAME": name, "HEADER": head, "BODY": body, "FOOTER": foot})
-    return templates
-
-def update_html_publisher_template(dbo, username, name, header, body, footer):
-    """
-    Creates a new html publisher template with the name given. If the
-    template already exists, it recreates it.
-    """
-    delete_path(dbo, "/internet/" + name)
-    delete(dbo, name, "/internet")
-    create_path(dbo, "/internet", name)
-    put_string(dbo, "head.html", "/internet/%s" % name, header)
-    put_string(dbo, "body.html", "/internet/%s" % name, body)
-    put_string(dbo, "foot.html", "/internet/%s" % name, footer)
-    al.debug("%s updated html template %s" % (username, name), "dbfs.update_html_publisher_template", dbo)
-    audit.edit(dbo, username, "htmltemplate", 0, "altered html template '%s'" % name)
-
-def delete_html_publisher_template(dbo, username, name):
-    delete_path(dbo, "/internet/" + name)
-    delete(dbo, name, "/internet")
-    al.debug("%s deleted html template %s" % (username, name), "dbfs.update_html_publisher_template", dbo)
-    audit.delete(dbo, username, "htmltemplate", 0, "remove html template '%s'" % name)
 
 def sanitise_path(path):
     """ Strips disallowed chars from new paths """
@@ -639,12 +573,6 @@ def has_nopic(dbo):
     Returns True if the database has a nopic.jpg file
     """
     return get_nopic(dbo) != ""
-
-def has_html_document_templates(dbo):
-    """
-    Returns True if there are some html document templates in the database
-    """
-    return len(get_html_document_templates(dbo)) > 0
 
 def delete_orphaned_media(dbo):
     """

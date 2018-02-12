@@ -4,12 +4,12 @@ import animal
 import audit
 import configuration
 import db
-import dbfs
 import dbupdate
 import i18n
 import lookups
 import html
 import person
+import template
 import users
 import utils
 from sitedefs import BASE_URL, QR_IMG_SRC, URL_REPORTS
@@ -114,6 +114,19 @@ def get_reports(dbo):
         r["VIEWROLEIDS"] = "|".join(viewroleids)
         r["VIEWROLES"] = "|".join(viewrolenames)
     return reps
+
+def get_raw_report_header(dbo):
+    header, body, footer = template.get_html_template(dbo, "report")
+    if header.strip() == "": header = DEFAULT_REPORT_HEADER
+    return header
+
+def get_raw_report_footer(dbo):
+    header, body, footer = template.get_html_template(dbo, "report")
+    if footer.strip() == "": footer = DEFAULT_REPORT_FOOTER
+    return footer
+
+def set_raw_report_headerfooter(dbo, head, foot):
+    template.update_html_template(dbo, "", "report", head, "", foot, True)
 
 def get_report_header(dbo, title, username):
     """
@@ -654,7 +667,7 @@ class Report:
 
     def _ReadHeader(self):
         """
-        Reads the report header from the DBFS. If the omitHeaderFooter
+        Reads the report header from the DB. If the omitHeaderFooter
         flag is set, returns a basic header, if it's a subreport,
         returns nothing.
         """
@@ -664,15 +677,13 @@ class Report:
             return ""
         else:
             # Look it up from the DB
-            s = dbfs.get_string(self.dbo, "head.html", "/reports")
-            if s.strip() == "": s = dbfs.get_string(self.dbo, "head.dat", "/reports")
-            if s.strip() == "": s = DEFAULT_REPORT_HEADER
+            s = get_raw_report_header(self.dbo)
             s = self._SubstituteTemplateHeaderFooter(s)
             return s
 
     def _ReadFooter(self):
         """
-        Reads the report footer from the DBFS. If the omitHeaderFooter
+        Reads the report footer from the DB. If the omitHeaderFooter
         flag is set, returns a basic footer, if it's a subreport,
         returns nothing.
         """
@@ -682,9 +693,7 @@ class Report:
             return ""
         else:
             # Look it up from the DB
-            s = dbfs.get_string(self.dbo, "foot.html", "/reports")
-            if s == "": s = dbfs.get_string(self.dbo, "foot.dat", "/reports")
-            if s.strip() == "": s = DEFAULT_REPORT_FOOTER
+            s = get_raw_report_footer(self.dbo)
             s = self._SubstituteTemplateHeaderFooter(s)
             return s
 

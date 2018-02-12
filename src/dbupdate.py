@@ -22,7 +22,7 @@ VERSIONS = (
     33800, 33801, 33802, 33803, 33900, 33901, 33902, 33903, 33904, 33905, 33906, 
     33907, 33908, 33909, 33911, 33912, 33913, 33914, 33915, 33916, 34000, 34001, 
     34002, 34003, 34004, 34005, 34006, 34007, 34008, 34009, 34010, 34011, 34012,
-    34013, 34014, 34015, 34016, 34017, 34018, 34019, 34020, 34021, 34022
+    34013, 34014, 34015, 34016, 34017, 34018, 34019, 34020, 34021, 34022, 34100
 )
 
 LATEST_VERSION = VERSIONS[-1]
@@ -43,7 +43,7 @@ TABLES = ( "accounts", "accountsrole", "accountstrx", "additional", "additionalf
     "onlineformfield", "onlineformincoming", "owner", "ownercitation", "ownerdonation", "ownerinvestigation", 
     "ownerlicence", "ownerlookingfor", "ownerrota", "ownertraploan", "ownervoucher", "pickuplocation", "publishlog", 
     "reservationstatus", "role", "site", "species", "stocklevel", "stocklocation", "stockusage", "stockusagetype", 
-    "testtype", "testresult", "transporttype", "traptype", "userrole", "users", "vaccinationtype", "voucher" )
+    "templatehtml", "testtype", "testresult", "transporttype", "traptype", "userrole", "users", "vaccinationtype", "voucher" )
 
 # ASM2_COMPATIBILITY This is used for dumping tables in ASM2/HSQLDB format. 
 # These are the tables present in ASM2. users is not included due to the
@@ -1371,6 +1371,15 @@ def sql_structure(dbo):
         fint("IsRetired", True) ), False)
     sql += index("stockusagetype_UsageTypeName", "stockusagetype", "UsageTypeName")
 
+    sql += table("templatehtml", (
+        fid(),
+        fstr("Name"),
+        flongstr("Header"),
+        flongstr("Body", True),
+        flongstr("Footer", True),
+        fint("IsBuiltIn") ), False)
+    sql += index("templatehtml_Name", "templatehtml", "Name", True)
+
     sql += table("testtype", (
         fid(),
         fstr("TestName"),
@@ -2339,54 +2348,32 @@ def install_default_media(dbo, removeFirst = False):
     """
     Installs the default media files into the dbfs
     """
+    def add_html_template(name, head, body, foot, builtin):
+        dbo.execute_dbupdate("DELETE FROM templatehtml WHERE Name = ?", [name])
+        dbo.insert("templatehtml", {
+            "Name":     name,
+            "*Header":  head,
+            "*Body":    body,
+            "*Footer":  foot,
+            "IsBuiltIn": builtin
+        })
+    def add_html_template_from_files(name):
+        head = utils.read_binary_file(dbo.installpath + "media/internet/%s/head.html" % name)
+        foot = utils.read_binary_file(dbo.installpath + "media/internet/%s/foot.html" % name)
+        body = utils.read_binary_file(dbo.installpath + "media/internet/%s/body.html" % name)
+        add_html_template(name, head, body, foot, 0)
     path = dbo.installpath
     if removeFirst:
         al.info("removing /internet, /templates and /report", "dbupdate.install_default_media", dbo)
         dbo.execute_dbupdate("DELETE FROM dbfs WHERE Path Like '/internet%' OR Path Like '/report%' OR Path Like '/template%'")
     al.info("creating default media", "dbupdate.install_default_media", dbo)
-    dbfs.create_path(dbo, "/", "internet")
-    dbfs.create_path(dbo, "/internet", "animalview")
-    dbfs.put_file(dbo, "body.html", "/internet/animalview", path + "media/internet/animalview/body.html")
-    dbfs.put_file(dbo, "foot.html", "/internet/animalview", path + "media/internet/animalview/foot.html")
-    dbfs.put_file(dbo, "head.html", "/internet/animalview", path + "media/internet/animalview/head.html")
-    dbfs.create_path(dbo, "/internet", "littlebox")
-    dbfs.put_file(dbo, "body.html", "/internet/littlebox", path + "media/internet/littlebox/body.html")
-    dbfs.put_file(dbo, "foot.html", "/internet/littlebox", path + "media/internet/littlebox/foot.html")
-    dbfs.put_file(dbo, "head.html", "/internet/littlebox", path + "media/internet/littlebox/head.html")
-    dbfs.create_path(dbo, "/internet", "responsive")
-    dbfs.put_file(dbo, "body.html", "/internet/responsive", path + "media/internet/responsive/body.html")
-    dbfs.put_file(dbo, "foot.html", "/internet/responsive", path + "media/internet/responsive/foot.html")
-    dbfs.put_file(dbo, "head.html", "/internet/responsive", path + "media/internet/responsive/head.html")
-    dbfs.create_path(dbo, "/internet", "plain")
-    dbfs.put_file(dbo, "body.html", "/internet/plain", path + "media/internet/plain/body.html")
-    dbfs.put_file(dbo, "foot.html", "/internet/plain", path + "media/internet/plain/foot.html")
-    dbfs.put_file(dbo, "head.html", "/internet/plain", path + "media/internet/plain/head.html")
-    dbfs.put_file(dbo, "redirector.html", "/internet/plain", path + "media/internet/plain/redirector.html")
-    dbfs.put_file(dbo, "search.html", "/internet/plain", path + "media/internet/plain/search.html")
-    dbfs.create_path(dbo, "/internet", "rss")
-    dbfs.put_file(dbo, "body.html", "/internet/rss", path + "media/internet/rss/body.html")
-    dbfs.put_file(dbo, "foot.html", "/internet/rss", path + "media/internet/rss/foot.html")
-    dbfs.put_file(dbo, "head.html", "/internet/rss", path + "media/internet/rss/head.html")
-    dbfs.create_path(dbo, "/internet", "sm.com")
-    dbfs.put_file(dbo, "body.html", "/internet/sm.com", path + "media/internet/sm.com/body.html")
-    dbfs.put_file(dbo, "foot.html", "/internet/sm.com", path + "media/internet/sm.com/foot.html")
-    dbfs.put_file(dbo, "head.html", "/internet/sm.com", path + "media/internet/sm.com/head.html")
-    dbfs.put_file(dbo, "back1.png", "/internet/sm.com", path + "media/internet/sm.com/back1.png")
-    dbfs.put_file(dbo, "cat_no.png", "/internet/sm.com", path + "media/internet/sm.com/cat_no.png")
-    dbfs.put_file(dbo, "cat.png", "/internet/sm.com", path + "media/internet/sm.com/cat.png")
-    dbfs.put_file(dbo, "dog_no.png", "/internet/sm.com", path + "media/internet/sm.com/dog_no.png")
-    dbfs.put_file(dbo, "dog.png", "/internet/sm.com", path + "media/internet/sm.com/dog.png")
-    dbfs.put_file(dbo, "housetrained.png", "/internet/sm.com", path + "media/internet/sm.com/housetrained.png")
-    dbfs.put_file(dbo, "kids_no.png", "/internet/sm.com", path + "media/internet/sm.com/kids_no.png")
-    dbfs.put_file(dbo, "kids.png", "/internet/sm.com", path + "media/internet/sm.com/kids.png")
-    dbfs.put_file(dbo, "neutered.png", "/internet/sm.com", path + "media/internet/sm.com/neutered.png")
-    dbfs.put_file(dbo, "new.png", "/internet/sm.com", path + "media/internet/sm.com/new.png")
-    dbfs.put_file(dbo, "updated.png", "/internet/sm.com", path + "media/internet/sm.com/updated.png")
-    dbfs.put_file(dbo, "vaccinated.png", "/internet/sm.com", path + "media/internet/sm.com/vaccinated.png")
     dbfs.create_path(dbo, "/", "reports")
-    dbfs.put_file(dbo, "foot.html", "/reports", path + "media/reports/foot.html")
-    dbfs.put_file(dbo, "head.html", "/reports", path + "media/reports/head.html")
     dbfs.put_file(dbo, "nopic.jpg", "/reports", path + "media/reports/nopic.jpg")
+    add_html_template_from_files("animalview")
+    add_html_template_from_files("littlebox")
+    add_html_template_from_files("responsive")
+    add_html_template_from_files("plain")
+    add_html_template_from_files("rss")
     dbfs.create_path(dbo, "/", "templates")
     dbfs.put_file(dbo, "adoption_form.html", "/templates", path + "media/templates/adoption_form.html")
     dbfs.put_file(dbo, "cat_assessment_form.html", "/templates", path + "media/templates/cat_assessment_form.html")
@@ -4699,17 +4686,75 @@ def update_34022(dbo):
     # Add AgeGroupActiveMovement
     add_column(dbo, "animal", "AgeGroupActiveMovement", dbo.type_shorttext)
 
-"""
 def update_34100(dbo):
-    # smcom only: Switch from file to s3 storage
-    # TODO: This is not in the active update lists yet
-    # TODO: Needs to be scheduled to deploy ready for a monday daytime so final s3 sync can run
+    # Add templatehtml table
+    fields = ",".join([
+        dbo.ddl_add_table_column("ID", dbo.type_integer, False, pk=True),
+        dbo.ddl_add_table_column("Name", dbo.type_shorttext, False),
+        dbo.ddl_add_table_column("Header", dbo.type_longtext, False),
+        dbo.ddl_add_table_column("Body", dbo.type_longtext, True),
+        dbo.ddl_add_table_column("Footer", dbo.type_longtext, True),
+        dbo.ddl_add_table_column("IsBuiltIn", dbo.type_integer, False) ])
+    dbo.execute_dbupdate( dbo.ddl_add_table("templatehtml", fields) )
+    dbo.execute_dbupdate( dbo.ddl_add_index("templatehtml_Name", "templatehtml", "Name", True) )
+    # Copy HTML templates from DBFS
+    for row in dbo.query("SELECT Name, Path FROM dbfs WHERE Path Like '/internet' AND Name NOT LIKE '%.%' ORDER BY Name"):
+        head = dbfs.get_string(dbo, "head.html", "/internet/%s" % row.name)
+        foot = dbfs.get_string(dbo, "foot.html", "/internet/%s" % row.name)
+        body = dbfs.get_string(dbo, "body.html", "/internet/%s" % row.name)
+        dbo.insert("templatehtml", {
+            "Name":     row.name,
+            "*Header":  head,
+            "*Body":    body,
+            "*Footer":  foot,
+            "IsBuiltIn":  0
+        })
+    # Copy fixed templates for report header/footer and online form header/footer
+    reporthead = dbfs.get_string(dbo, "head.html", "/reports")
+    reportfoot = dbfs.get_string(dbo, "foot.html", "/reports")
+    if reporthead != "":
+        dbo.insert("templatehtml", {
+            "Name":     "report",
+            "*Header":  reporthead,
+            "*Body":    "",
+            "*Footer":  reportfoot,
+            "IsBuiltIn":  1
+        })
+    ofhead = dbfs.get_string(dbo, "head.html", "/onlineform")
+    offoot = dbfs.get_string(dbo, "foot.html", "/onlineform")
+    if ofhead != "":
+        dbo.insert("templatehtml", {
+            "Name":     "onlineform",
+            "*Header":  ofhead,
+            "*Body":    "",
+            "*Footer":  offoot,
+            "IsBuiltIn":  1
+        })
+
+def update_34101(dbo):
+    # TODO: Add templatedocument table and copy from DBFS
+    pass
+
+def update_34102(dbo):
+    # smcom only update: Switch from file to s3 storage
     if smcom.active():
-        # TODO: go through existing media where mediasize = 0 and dbfsid > 0 
-        # TODO: calculate it before switching to s3 (while it's fast to access files)
-        # TODO: join to dbfs table on dbfsid (should be safe)
-        # TODO: then, with the DBFS ID you can construct the file name and use os to read
-        # TODO: file size without having to go through the DBFS module and read the data
-        # TODO: verify in a database (eg: rp0282) that dbfsid was set correctly by previous update 34015
+        # Reapply 34015 as it was botched on some databases
+        dbo.execute_dbupdate("UPDATE media SET DBFSID = (SELECT MAX(ID) FROM dbfs WHERE Name LIKE media.MediaName) WHERE DBFSID Is Null OR DBFSID = 0")
+        dbo.execute_dbupdate("UPDATE media SET DBFSID = 0 WHERE DBFSID Is Null")
+        # Remove any _scaled component of names from both media and dbfs
+        dbo.execute_dbupdate("UPDATE media SET MediaName = %s WHERE MediaName LIKE '%%_scaled%%'" % dbo.sql_replace("MediaName", "_scaled", ""))
+        dbo.execute_dbupdate("UPDATE dbfs SET Name = %s WHERE Name LIKE '%%_scaled%%'" % dbo.sql_replace("Name", "_scaled", ""))
+        # Read the file size of all media files that are not set and update the media table
+        batch = []
+        for r in dbo.query("SELECT ID, DBFSID, MediaName FROM media WHERE (MediaSize Is Null OR MediaSize = 0) AND (DBFSID Is Not Null AND DBFSID > 0)"):
+            ext = r.medianame[r.medianame.rfind("."):]
+            fname = "/root/media/%s/%s%s" % (dbo.database, r.dbfsid, ext)
+            try:
+                fsize = os.path.getsize(fname)
+                batch.append( (fsize, r.id) )
+            except:
+                pass # Ignore attempts to read non-existent files
+        dbo.execute_many("UPDATE media SET MediaSize = ? WHERE ID = ?", batch) 
+        # Switch the existing dbfs records to look at s3 instead of the file system
         dbo.execute_dbupdate("UPDATE dbfs SET url = replace(url, 'file:', 's3:') where url like 'file:%'")
-"""
+

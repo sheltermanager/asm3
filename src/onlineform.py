@@ -6,7 +6,6 @@ import animalcontrol
 import audit
 import configuration
 import db
-import dbfs
 import geo
 import i18n
 import html
@@ -16,6 +15,7 @@ import media
 import movement
 import person
 import publish
+import template
 import utils
 import waitinglist
 import web
@@ -331,7 +331,7 @@ def import_onlineform_html(dbo, h):
         insert_onlineformfield_from_form(dbo, "import", utils.PostedData(data, dbo.locale))
 
 def get_onlineform_header(dbo):
-    header = dbfs.get_string_filepath(dbo, "/onlineform/head.html")
+    header, body, footer = template.get_html_template(dbo, "onlineform")
     if header == "": header = "<!DOCTYPE html>\n" \
         "<html>\n" \
        "<head>\n" \
@@ -353,9 +353,12 @@ def get_onlineform_header(dbo):
     return header
 
 def get_onlineform_footer(dbo):
-    footer = dbfs.get_string_filepath(dbo, "/onlineform/foot.html")
+    header, body, footer = template.get_html_template(dbo, "onlineform")
     if footer == "": footer = "</body>\n</html>"
     return footer
+
+def set_onlineform_headerfooter(dbo, head, foot):
+    template.update_html_template(dbo, "", "onlineform", head, "", foot, True)
 
 def get_onlineform_name(dbo, formid):
     """ Returns the name of a form """

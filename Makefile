@@ -71,6 +71,8 @@ smcom-dev: version clean minify
 
 smcom-stable: version clean minify
 	@echo "[smcom stable] ========================="
+	@# Having a BREAKING_CHANGES file prevents accidental deploy to stable without dumping sessions or doing it the next day
+	@if [ -f BREAKING_CHANGES ]; then echo "Cannot deploy due to breaking DB changes" && exit 1; fi;
 	rsync --progress --exclude '*.pyc' --delete -r src/* root@$(DEPLOY_HOST):/usr/local/lib/asm_stable.new
 	ssh root@$(DEPLOY_HOST) "/root/sheltermanager_update_asm_stable.sh"
 

@@ -1251,7 +1251,7 @@ def giftaid_spreadsheet(dbo, path, fromdate, todate):
     # Get the zip file containing our tax year template and load
     # it into an in-memory file
     try:
-        ods = open(path + "static/docs/giftaid.ods", "r")
+        ods = open(path + "static/docs/giftaid.ods", "rb")
         zf = zipfile.ZipFile(ods, "r")
         # Load the content.xml file
         content = zf.open("content.xml").read()

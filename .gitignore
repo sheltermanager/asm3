@@ -16,3 +16,4 @@ cordova/asm/platforms
 scripts/ansible/archives/*.*
 scripts/ansible/roles
 scripts/ansible/*.retry
+BREAKING_CHANGES

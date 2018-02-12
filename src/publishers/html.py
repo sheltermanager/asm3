@@ -3,7 +3,6 @@
 import animal
 import configuration
 import db
-import dbfs
 import i18n
 import lookups
 import math
@@ -11,6 +10,7 @@ import onlineform
 import os
 import smcom
 import sys
+import template
 import users
 import utils
 import wordprocessor
@@ -56,19 +56,8 @@ class HTMLPublisher(FTPPublisher):
             s = s.replace(x, "_")
         return s
 
-    def getPathFromStyle(self):
-        """
-        Looks at the publishing criteria and returns a DBFS path to get
-        the template files from
-        """
-        if self.pc.style == ".": return "/internet"
-        return "/internet/" + self.pc.style
-
     def getHeader(self):
-        path = self.getPathFromStyle()
-        self.log("Getting header style from: %s" % path)
-        header = dbfs.get_string(self.dbo, "head.html", path)
-        if header == "": header = dbfs.get_string(self.dbo, "pih.dat", path)
+        header, body, footer = template.get_html_template(self.dbo, self.pc.style)
         if header == "":
             header = """<html>
             <head>
@@ -81,33 +70,19 @@ class HTMLPublisher(FTPPublisher):
         return header
 
     def getFooter(self):
-        path = self.getPathFromStyle()
-        self.log("Getting footer style from: %s" % path)
-        footer = dbfs.get_string(self.dbo, "foot.html", path)
-        if footer == "": footer = dbfs.get_string(self.dbo, "pif.dat", path)
+        header, body, footer = template.get_html_template(self.dbo, self.pc.style)
         if footer == "":
             footer = "</table></body></html>"
         return footer
 
     def getBody(self):
-        path = self.getPathFromStyle()
-        body = dbfs.get_string(self.dbo, "body.html", path)
-        if body == "": body = dbfs.get_string(self.dbo, "pib.dat", path)
+        header, body, footer = template.get_html_template(self.dbo, self.pc.style)
         if body == "":
             body = "<tr><td><img height=200 width=320 src=$$IMAGE$$></td>" \
                 "<td><b>$$ShelterCode$$ - $$AnimalName$$</b><br>" \
                 "$$BreedName$$ $$SpeciesName$$ aged $$Age$$<br><br>" \
                 "<b>Details</b><br><br>$$WebMediaNotes$$<hr></td></tr>"
         return body
-
-    def saveTemplateImages(self):
-        """
-        Saves all image files in the template folder to the publish directory
-        """
-        dbfs.get_files(self.dbo, "%.jp%g", self.getPathFromStyle(), self.publishDir)
-        dbfs.get_files(self.dbo, "%.png", self.getPathFromStyle(), self.publishDir)
-        dbfs.get_files(self.dbo, "%.gif", self.getPathFromStyle(), self.publishDir)
-        # TODO: Upload these via FTP
 
     def substituteHFTag(self, searchin, page, user, title = ""):
         """
@@ -600,9 +575,6 @@ class HTMLPublisher(FTPPublisher):
         if self.pc.generateJavascriptDB:
             self.writeJavaScript(animals)
 
-        # Save any additional images required by the template
-        self.saveTemplateImages()
-
     def executeRSS(self):
         """
         Generates and uploads the rss.xml page
@@ -640,9 +612,8 @@ class HTMLPublisher(FTPPublisher):
         try:
             animals = self.getMatchingAnimals()
             totalAnimals = len(animals)
-            header = dbfs.get_string(self.dbo, "head.html", "/internet/rss")
-            footer = dbfs.get_string(self.dbo, "foot.html", "/internet/rss")
-            body = dbfs.get_string(self.dbo, "body.html", "/internet/rss")
+           
+            header, body, footer = template.get_html_template(self.dbo, "rss")
             if header == "": header = rss_header()
             if footer == "": footer = rss_footer()
             if body == "": body = rss_body()

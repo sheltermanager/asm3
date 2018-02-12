@@ -926,6 +926,20 @@ def read_text_file(name):
         text = f.read()
     return text.encode("ascii", "xmlcharrefreplace")
 
+def read_binary_file(name):
+    """
+    Reads a binary file and returns the result
+    """
+    with open(name, "rb") as f:
+        return f.read()
+
+def write_binary_file(name, data):
+    """
+    Writes a binary file
+    """
+    with open(name, "wb") as f:
+        f.write(data)
+
 def html_email_to_plain(s):
     """
     Turns an HTML email into plain text by converting

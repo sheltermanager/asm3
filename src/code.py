@@ -40,6 +40,7 @@ import search as extsearch
 import service as extservice
 import smcom
 import stock as extstock
+import template
 import users
 import utils
 import waitinglist as extwaitinglist
@@ -154,9 +155,7 @@ def emergency_notice():
     """
     if EMERGENCY_NOTICE != "":
         if os.path.exists(EMERGENCY_NOTICE):
-            f = open(EMERGENCY_NOTICE, "r")
-            s = f.read()
-            f.close()
+            s = utils.read_text_file(EMERGENCY_NOTICE)
             return s
     return ""
 
@@ -508,9 +507,7 @@ class css(ASMEndpoint):
         if v.find("..") != -1: self.notfound() # prevent escaping our PATH
         if not os.path.exists(csspath): self.notfound()
         if v == "": self.notfound()
-        f = open(csspath, "r")
-        content = f.read()
-        f.close()
+        content = utils.read_binary_file(csspath)
         self.header("Content-Type", "text/css")
         self.header("Cache-Control", "max-age=8640000") # Don't refresh this version for 100 days
         return content
@@ -536,9 +533,7 @@ class js(ASMEndpoint):
         if v.find("..") != -1: self.notfound() # prevent escaping our PATH
         if not os.path.exists(jspath): self.notfound()
         if v == "": self.notfound()
-        f = open(jspath, "r")
-        content = f.read()
-        f.close()
+        content = utils.read_binary_file(jspath)
         self.header("Content-Type", "text/javascript")
         self.header("Cache-Control", "max-age=8640000") # Don't refresh this version for 100 days
         return content
@@ -2574,21 +2569,25 @@ class htmltemplates(JSONEndpoint):
     post_permissions = users.PUBLISH_OPTIONS
 
     def controller(self, o):
-        templates = dbfs.get_html_publisher_templates_files(o.dbo)
+        templates = template.get_html_templates(o.dbo)
         al.debug("editing %d html templates" % len(templates), "code.htmltemplates", o.dbo)
         return {
             "rows": templates
         }
 
     def post_create(self, o):
-        dbfs.update_html_publisher_template(o.dbo, o.user, o.post["templatename"], o.post["header"], o.post["body"], o.post["footer"])
+        if o.post["templatename"] in ( "onlineform", "report" ):
+            raise utils.ASMValidationError("Illegal name '%s'" % o.post["templatename"])
+        template.update_html_template(o.dbo, o.user, o.post["templatename"], o.post["header"], o.post["body"], o.post["footer"])
 
     def post_update(self, o):
-        dbfs.update_html_publisher_template(o.dbo, o.user, o.post["templatename"], o.post["header"], o.post["body"], o.post["footer"])
+        if o.post["templatename"] in ( "onlineform", "report" ):
+            raise utils.ASMValidationError("Illegal name '%s'" % o.post["templatename"])
+        template.update_html_template(o.dbo, o.user, o.post["templatename"], o.post["header"], o.post["body"], o.post["footer"])
 
     def post_delete(self, o):
         for name in o.post["names"].split(","):
-            if name != "": dbfs.delete_html_publisher_template(o.dbo, o.user, name)
+            if name != "": template.delete_html_template(o.dbo, o.user, name)
 
 class incident(JSONEndpoint):
     url = "incident"
@@ -3832,8 +3831,7 @@ class onlineforms(JSONEndpoint):
             extonlineform.clone_onlineform(o.dbo, o.user, did)
 
     def post_headfoot(self, o):
-        dbfs.put_string_filepath(o.dbo, "/onlineform/head.html", o.post["header"])
-        dbfs.put_string_filepath(o.dbo, "/onlineform/foot.html", o.post["footer"])
+        extonlineform.set_onlineform_headerfooter(o.dbo, o.post["header"], o.post["footer"])
 
     def post_import(self, o):
         fd = o.post.filedata()
@@ -4439,7 +4437,7 @@ class publish_options(JSONEndpoint):
             "hasvesys": VETENVOY_US_VENDOR_USERID != "",
             "haspetrescue": PETRESCUE_FTP_HOST != "",
             "logtypes": extlookups.get_log_types(dbo),
-            "styles": dbfs.get_html_publisher_templates(dbo),
+            "styles": template.get_html_template_names(dbo),
             "users": users.get_users(dbo)
         }
         al.debug("loaded lookups", "code.publish_options", dbo)
@@ -4549,10 +4547,8 @@ class reports(JSONEndpoint):
     def controller(self, o):
         dbo = o.dbo
         reports = extreports.get_reports(dbo)
-        header = dbfs.get_string(dbo, "head.html", "/reports")
-        if header == "": header = dbfs.get_string(dbo, "head.dat", "/reports")
-        footer = dbfs.get_string(dbo, "foot.html", "/reports")
-        if footer == "": footer = dbfs.get_string(dbo, "foot.dat", "/reports")
+        header = extreports.get_raw_report_header(dbo)
+        footer = extreports.get_raw_report_footer(dbo)
         al.debug("editing %d reports" % len(reports), "code.reports", dbo)
         return {
             "categories": "|".join(extreports.get_categories(dbo)),
@@ -4589,8 +4585,7 @@ class reports(JSONEndpoint):
 
     def post_headfoot(self, o):
         self.check(users.CHANGE_REPORT)
-        dbfs.put_string_filepath(o.dbo, "/reports/head.html", o.post["header"])
-        dbfs.put_string_filepath(o.dbo, "/reports/foot.html", o.post["footer"])
+        extreports.set_raw_report_headerfooter(o.dbo, o.post["header"], o.post["footer"])
 
     def post_smcomlist(self, o):
         return utils.json(extreports.get_smcom_reports(o.dbo))

@@ -8,9 +8,9 @@ import al
 import animal
 import configuration
 import db
-import dbfs
 import i18n
 import smcom
+import template
 import utils
 import wordprocessor
 
@@ -28,19 +28,15 @@ def get_animal_view(dbo, animalid):
     a = animal.get_animal(dbo, animalid)
     if configuration.publisher_use_comments(dbo):
         a["WEBSITEMEDIANOTES"] = a["ANIMALCOMMENTS"]
-    head = dbfs.get_string(dbo, "head.html", "/internet/animalview")
-    body = dbfs.get_string(dbo, "body.html", "/internet/animalview")
-    foot = dbfs.get_string(dbo, "foot.html", "/internet/animalview")
+    head, body, foot = template.get_html_template(dbo, "animalview")
+    if head == "":
+        head = "<!DOCTYPE html>\n<html>\n<head>\n<title>$$SHELTERCODE$$ - $$ANIMALNAME$$</title></head>\n<body>"
+        body = "<h2>$$SHELTERCODE$$ - $$ANIMALNAME$$</h2><p><img src='$$WEBMEDIAFILENAME$$'/></p><p>$$WEBMEDIANOTES$$</p>"
+        foot = "</body>\n</html>"
     if smcom.active():
         a["WEBSITEMEDIANAME"] = "%s?account=%s&method=animal_image&animalid=%d" % (SERVICE_URL, dbo.database, animalid)
     else:
         a["WEBSITEMEDIANAME"] = "%s?method=animal_image&animalid=%d" % (SERVICE_URL, animalid)
-    if head == "":
-        head = "<!DOCTYPE html>\n<html>\n<head>\n<title>$$SHELTERCODE$$ - $$ANIMALNAME$$</title></head>\n<body>"
-    if body == "":
-        body = "<h2>$$SHELTERCODE$$ - $$ANIMALNAME$$</h2><p><img src='$$WEBMEDIAFILENAME$$'/></p><p>$$WEBMEDIANOTES$$</p>"
-    if foot == "":
-        foot = "</body>\n</html>"
     s = head + body + foot
     tags = wordprocessor.animal_tags(dbo, a)
     tags = wordprocessor.append_tags(tags, wordprocessor.org_tags(dbo, "system"))

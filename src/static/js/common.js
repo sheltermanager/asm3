@@ -2319,6 +2319,7 @@
          * Shows a global error and returns false if one or more of the addresses is invalid.
          */
         email: function(v) {
+            /*jslint regexp: true */
             var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
             var rv = true;
             if (v.indexOf(";") != -1) { v = v.replace(";", ","); }
