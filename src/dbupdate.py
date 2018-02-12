@@ -2344,9 +2344,9 @@ def install_default_onlineforms(dbo):
             except Exception as err:
                 al.error("error importing form: %s" % str(err), "dbupdate.install_default_onlineformms", dbo)
 
-def install_default_media(dbo, removeFirst = False):
+def install_default_templates(dbo, removeFirst = False):
     """
-    Installs the default media files into the dbfs
+    Installs the default templates files into the db
     """
     def add_html_template(name, head, body, foot, builtin):
         dbo.execute_dbupdate("DELETE FROM templatehtml WHERE Name = ?", [name])
@@ -2364,9 +2364,9 @@ def install_default_media(dbo, removeFirst = False):
         add_html_template(name, head, body, foot, 0)
     path = dbo.installpath
     if removeFirst:
-        al.info("removing /internet, /templates and /report", "dbupdate.install_default_media", dbo)
+        al.info("removing /internet, /templates and /report", "dbupdate.install_default_templates", dbo)
         dbo.execute_dbupdate("DELETE FROM dbfs WHERE Path Like '/internet%' OR Path Like '/report%' OR Path Like '/template%'")
-    al.info("creating default media", "dbupdate.install_default_media", dbo)
+    al.info("creating default media", "dbupdate.install_default_templates", dbo)
     dbfs.create_path(dbo, "/", "reports")
     dbfs.put_file(dbo, "nopic.jpg", "/reports", path + "media/reports/nopic.jpg")
     add_html_template_from_files("animalview")
@@ -2414,7 +2414,7 @@ def install(dbo):
     install_default_data(dbo)
     install_db_sequences(dbo)
     install_db_stored_procedures(dbo)
-    install_default_media(dbo)
+    install_default_templates(dbo)
     install_default_onlineforms(dbo)
 
 def dump(dbo, includeConfig = True, includeDBFS = True, includeCustomReport = True, \
@@ -4697,39 +4697,45 @@ def update_34100(dbo):
         dbo.ddl_add_table_column("IsBuiltIn", dbo.type_integer, False) ])
     dbo.execute_dbupdate( dbo.ddl_add_table("templatehtml", fields) )
     dbo.execute_dbupdate( dbo.ddl_add_index("templatehtml_Name", "templatehtml", "Name", True) )
-    # Copy HTML templates from DBFS
+    # Copy HTML templates from DBFS - we track ID manually as the sequence won't be created yet
+    nextid = 1
     for row in dbo.query("SELECT Name, Path FROM dbfs WHERE Path Like '/internet' AND Name NOT LIKE '%.%' ORDER BY Name"):
         head = dbfs.get_string(dbo, "head.html", "/internet/%s" % row.name)
         foot = dbfs.get_string(dbo, "foot.html", "/internet/%s" % row.name)
         body = dbfs.get_string(dbo, "body.html", "/internet/%s" % row.name)
         dbo.insert("templatehtml", {
+            "ID":       nextid,
             "Name":     row.name,
             "*Header":  head,
             "*Body":    body,
             "*Footer":  foot,
             "IsBuiltIn":  0
-        })
+        }, generateID=False)
+        nextid += 1
     # Copy fixed templates for report header/footer and online form header/footer
     reporthead = dbfs.get_string(dbo, "head.html", "/reports")
     reportfoot = dbfs.get_string(dbo, "foot.html", "/reports")
     if reporthead != "":
         dbo.insert("templatehtml", {
+            "ID":       nextid,
             "Name":     "report",
             "*Header":  reporthead,
             "*Body":    "",
             "*Footer":  reportfoot,
             "IsBuiltIn":  1
-        })
+        }, generateID=False)
+        nextid += 1
     ofhead = dbfs.get_string(dbo, "head.html", "/onlineform")
     offoot = dbfs.get_string(dbo, "foot.html", "/onlineform")
     if ofhead != "":
         dbo.insert("templatehtml", {
+            "ID":       nextid,
             "Name":     "onlineform",
             "*Header":  ofhead,
             "*Body":    "",
             "*Footer":  offoot,
             "IsBuiltIn":  1
-        })
+        }, generateID=False)
 
 def update_34101(dbo):
     # TODO: Add templatedocument table and copy from DBFS

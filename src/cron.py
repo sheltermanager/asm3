@@ -146,12 +146,12 @@ def publish_html(dbo):
         em = str(sys.exc_info()[0])
         al.error("FAIL: uncaught error running html publisher: %s" % em, "cron.publish_html", dbo, sys.exc_info())
 
-def maint_reinstall_default_media(dbo):
+def maint_reinstall_default_templates(dbo):
     try:
-        dbupdate.install_default_media(dbo, True)
+        dbupdate.install_default_templates(dbo, True)
     except:
         em = str(sys.exc_info()[0])
-        al.error("FAIL: uncaught error running maint_reinstall_default_media: %s" % em, "cron.maint_reinstall_default_media", dbo, sys.exc_info())
+        al.error("FAIL: uncaught error running maint_reinstall_default_templates: %s" % em, "cron.maint_reinstall_default_templates", dbo, sys.exc_info())
 
 def maint_recode_all(dbo):
     try:
@@ -368,8 +368,8 @@ def run(dbo, mode):
         maint_db_dump_personcsv(dbo)
     elif mode == "maint_db_install":
         maint_db_install(dbo)
-    elif mode == "maint_reinstall_default_media":
-        maint_reinstall_default_media(dbo)
+    elif mode == "maint_reinstall_default_templates":
+        maint_reinstall_default_templates(dbo)
     elif mode == "maint_db_reinstall":
         maint_db_reinstall(dbo)
     elif mode == "maint_db_reset":
@@ -451,7 +451,7 @@ def print_usage():
     print("       maint_deduplicate_people - automatically merge duplicate people records")
     print("       maint_recode_all - regenerate all animal codes")
     print("       maint_recode_shelter - regenerate animals codes for all shelter animals")
-    print("       maint_reinstall_default_media - re-adds default document/publishing templates")
+    print("       maint_reinstall_default_templates - re-adds default document/publishing templates")
     print("       maint_scale_animal_images - re-scales all the animal images in the database")
     print("       maint_scale_odts - re-scales all odt files attached to records (remove images)")
     print("       maint_scale_pdfs - re-scales all the PDFs in the database")
