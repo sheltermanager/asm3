@@ -2346,7 +2346,7 @@ class donation(JSONEndpoint):
 
     def post_create(self, o):
         self.check(users.ADD_DONATION)
-        return financial.insert_donation_from_form(o.dbo, o.user, o.post)
+        return "%s|%s" % (financial.insert_donation_from_form(o.dbo, o.user, o.post), o.post["receiptnumber"])
 
     def post_update(self, o):
         self.check(users.CHANGE_DONATION)

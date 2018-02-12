@@ -1,6 +1,7 @@
 41
 ================
 
+12/02/18 Show "real" receipt number after adding payment instead of ID
 12/02/18 Add email address validation and sending feedback #352
 12/02/18 Fix bad opening balance code caused by time portion in default #361
 12/02/18 Fix output of HomeCheckedBy on person find results

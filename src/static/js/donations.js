@@ -143,10 +143,10 @@ $(function() {
                                 tableform.fields_post(dialog.fields, "mode=create", "donation")
                                     .then(function(response) {
                                         var row = {};
-                                        row.ID = response;
+                                        row.ID = response.split("|")[0];
                                         tableform.fields_update_row(dialog.fields, row);
                                         donations.set_extra_fields(row);
-                                        row.RECEIPTNUMBER = format.padleft(row.ID, 8);
+                                        row.RECEIPTNUMBER = response.split("|")[1];
                                         controller.rows.push(row);
                                         tableform.table_update(table);
                                         donations.calculate_total();
