@@ -574,7 +574,10 @@ def delete_media(dbo, username, mid):
     mr = mr[0]
     mn = mr["MEDIANAME"]
     audit.delete(dbo, username, "media", mid, str(mr))
-    dbfs.delete(dbo, mn)
+    try:
+        dbfs.delete(dbo, mn)
+    except Exception as err:
+        al.error(err, "media.delete_media", dbo)
     db.execute(dbo, "DELETE FROM media WHERE ID = %d" % int(mid))
     # Was it the web or doc preferred? If so, make the first image for the link
     # the web or doc preferred instead
