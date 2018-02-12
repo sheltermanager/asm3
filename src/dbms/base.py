@@ -366,7 +366,7 @@ class Database(object):
         except:
             return False
 
-    def insert(self, table, values, user="", generateID=True, setRecordVersion=True, setCreated=True, writeAudit=True):
+    def insert(self, table, values, user="", generateID=True, setOverrideDBLock=False, setRecordVersion=True, setCreated=True, writeAudit=True):
         """ Inserts a row into a table.
             table: The table to insert into
             values: A dict of column names with values
@@ -388,12 +388,12 @@ class Database(object):
             values["ID"] = iid
         values = self.encode_str_before_write(values)
         sql = "INSERT INTO %s (%s) VALUES (%s)" % ( table, ",".join(values.iterkeys()), self.sql_placeholders(values) )
-        self.execute(sql, values.values())
+        self.execute(sql, values.values(), override_lock=setOverrideDBLock)
         if writeAudit and iid != 0 and user != "":
             audit.create(self, user, table, iid, audit.dump_row(self, table, iid))
         return iid
 
-    def update(self, table, where, values, user="", setRecordVersion=True, setLastChanged=True, writeAudit=True):
+    def update(self, table, where, values, user="", setOverrideDBLock=False, setRecordVersion=True, setLastChanged=True, writeAudit=True):
         """ Updates a row in a table.
             table: The table to update
             where: Either a where clause or an int ID value for ID=where
@@ -414,7 +414,7 @@ class Database(object):
         sql = "UPDATE %s SET %s WHERE %s" % ( table, ",".join( ["%s=?" % x for x in values.iterkeys()] ), where )
         if iid > 0: 
             preaudit = self.query_row(table, iid)
-        self.execute(sql, values.values())
+        self.execute(sql, values.values(), override_lock=setOverrideDBLock)
         if iid > 0:
             postaudit = self.query_row(table, iid)
         if user != "" and iid > 0 and writeAudit: 

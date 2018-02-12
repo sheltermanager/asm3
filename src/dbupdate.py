@@ -4710,7 +4710,7 @@ def update_34100(dbo):
             "*Body":    body,
             "*Footer":  foot,
             "IsBuiltIn":  0
-        }, generateID=False)
+        }, generateID=False, setOverrideDBLock=True)
         nextid += 1
     # Copy fixed templates for report header/footer and online form header/footer
     reporthead = dbfs.get_string(dbo, "head.html", "/reports")
@@ -4723,7 +4723,7 @@ def update_34100(dbo):
             "*Body":    "",
             "*Footer":  reportfoot,
             "IsBuiltIn":  1
-        }, generateID=False)
+        }, generateID=False, setOverrideDBLock=True)
         nextid += 1
     ofhead = dbfs.get_string(dbo, "head.html", "/onlineform")
     offoot = dbfs.get_string(dbo, "foot.html", "/onlineform")
@@ -4735,7 +4735,7 @@ def update_34100(dbo):
             "*Body":    "",
             "*Footer":  offoot,
             "IsBuiltIn":  1
-        }, generateID=False)
+        }, generateID=False, setOverrideDBLock=True)
 
 def update_34101(dbo):
     # TODO: Add templatedocument table and copy from DBFS
@@ -4760,7 +4760,7 @@ def update_34102(dbo):
                 batch.append( (fsize, r.id) )
             except:
                 pass # Ignore attempts to read non-existent files
-        dbo.execute_many("UPDATE media SET MediaSize = ? WHERE ID = ?", batch) 
+        dbo.execute_many("UPDATE media SET MediaSize = ? WHERE ID = ?", batch, override_lock=True) 
         # Switch the existing dbfs records to look at s3 instead of the file system
         dbo.execute_dbupdate("UPDATE dbfs SET url = replace(url, 'file:', 's3:') where url like 'file:%'")
 
