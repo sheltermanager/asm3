@@ -2312,6 +2312,26 @@
             return rv;
         },
 
+        /**
+         * Validates one or more email addresses
+         * If a comma or semi-colon is separate, splits the value on
+         * them and validates each address.
+         * Shows a global error and returns false if one or more of the addresses is invalid.
+         */
+        email: function(v) {
+            var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+            var rv = true;
+            if (v.indexOf(";") != -1) { v = v.replace(";", ","); }
+            $.each(v.split(","), function(i, e) {
+                if (e.indexOf("<") != -1 && e.indexOf(">") != -1) { e = e.substring(e.indexOf("<")+1, e.indexOf(">")); }
+                if (!re.test(String(e).toLowerCase())) { 
+                    rv = false; 
+                    header.show_error(_("Invalid email address '{0}'").replace("{0}", e));
+                }
+            });
+            return rv;
+        },
+
         /* Accepts an array of ids to test whether they're zero or not
            if they are, their label is highlighted and false is returned */
         notzero: function(fields) {

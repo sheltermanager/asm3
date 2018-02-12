@@ -562,10 +562,16 @@
         show: function(o) {
             var b = {}; 
             b[_("Send")] = function() { 
+                if (!validate.email($("#emailfrom").val())) { return; }
+                if (!validate.email($("#emailto").val())) { return; }
+                if ($("#emailcc").val() != "" && !validate.email($("#emailcc").val())) { return; }
                 if (o.formdata) { o.formdata += "&"; }
                 o.formdata += $("#dialog-email input, #dialog-email select, #dialog-email .asm-richtextarea").toPOST();
-                common.ajax_post(o.post, o.formdata, function() { 
-                    header.show_info(_("Message successfully sent"));
+                header.show_loading(_("Sending..."));
+                common.ajax_post(o.post, o.formdata, function() {
+                    var recipients = $("#emailto").val();
+                    if ($("#emailcc").val() != "") { recipients += ", " + $("#emailcc").val(); }
+                    header.show_info(_("Message successfully sent to {0}").replace("{0}", recipients));
                     $("#dialog-email").dialog("close");
                 });
             };

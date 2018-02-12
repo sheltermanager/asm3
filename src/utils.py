@@ -1014,6 +1014,10 @@ def send_email(dbo, replyadd, toadd, ccadd = "", subject = "", body = "", conten
     fromadd = fromadd.replace("{alias}", dbo.alias)
     fromadd = fromadd.replace("{database}", dbo.database)
 
+    # Sanitise semi-colons in the distribution list
+    toadd = toadd.replace(";", ",")
+    ccadd = ccadd.replace(";", ",")
+
     # Check for any problems in the reply address, such as unclosed address
     if replyadd.find("<") != -1 and replyadd.find(">") == -1:
         replyadd += ">"
@@ -1054,12 +1058,11 @@ def send_email(dbo, replyadd, toadd, ccadd = "", subject = "", body = "", conten
         msg.attach(part)
  
     # Construct the list of to addresses. We strip email addresses so
-    # only the you@domain.com portion remains. We also split the list
-    # by semi-colons as well as commas because Outlook users seem to make
-    # that mistake a lot and use it as a separator
-    tolist = [strip_email(x) for x in toadd.replace(";", ",").split(",")]
+    # only the you@domain.com portion remains for us to pass to the
+    # SMTP server. 
+    tolist = [strip_email(x) for x in toadd.split(",")]
     if ccadd != "":
-        tolist += [strip_email(x) for x in ccadd.replace(";", ",").split(",")]
+        tolist += [strip_email(x) for x in ccadd.split(",")]
     replyadd = strip_email(replyadd)
 
     al.debug("from: %s, reply-to: %s, to: %s, subject: %s, body: %s" % \
