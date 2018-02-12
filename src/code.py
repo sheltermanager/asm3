@@ -1057,24 +1057,25 @@ class accounts_trx(JSONEndpoint):
         defview = configuration.default_account_view_period(dbo)
         fromdate = post["fromdate"]
         todate = post["todate"]
+        today = dbo.today()
         if fromdate != "" and todate != "":
             fromdate = post.date("fromdate")
             todate = post.date("todate")
         elif defview == financial.THIS_MONTH:
-            fromdate = first_of_month(now())
-            todate = last_of_month(now())
+            fromdate = first_of_month(today)
+            todate = last_of_month(today)
         elif defview == financial.THIS_WEEK:
-            fromdate = monday_of_week(now())
-            todate = sunday_of_week(now())
+            fromdate = monday_of_week(today)
+            todate = sunday_of_week(today)
         elif defview == financial.THIS_YEAR:
-            fromdate = first_of_year(now())
-            todate = last_of_year(now())
+            fromdate = first_of_year(today)
+            todate = last_of_year(today)
         elif defview == financial.LAST_MONTH:
-            fromdate = first_of_month(subtract_months(now(), 1))
-            todate = last_of_month(subtract_months(now(), 1))
+            fromdate = first_of_month(subtract_months(today, 1))
+            todate = last_of_month(subtract_months(today, 1))
         elif defview == financial.LAST_WEEK:
-            fromdate = monday_of_week(subtract_days(now(), 7))
-            todate = sunday_of_week(subtract_days(now(), 7))
+            fromdate = monday_of_week(subtract_days(today, 7))
+            todate = sunday_of_week(subtract_days(today, 7))
         transactions = financial.get_transactions(dbo, post.integer("accountid"), fromdate, todate, post.integer("recfilter"))
         accountcode = financial.get_account_code(dbo, post.integer("accountid"))
         accounteditroles = financial.get_account_edit_roles(dbo, post.integer("accountid"))

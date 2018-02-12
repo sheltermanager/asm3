@@ -4699,11 +4699,17 @@ def update_34022(dbo):
     # Add AgeGroupActiveMovement
     add_column(dbo, "animal", "AgeGroupActiveMovement", dbo.type_shorttext)
 
+"""
 def update_34100(dbo):
     # smcom only: Switch from file to s3 storage
     # TODO: This is not in the active update lists yet
     # TODO: Needs to be scheduled to deploy ready for a monday daytime so final s3 sync can run
     if smcom.active():
-        # TODO: go through existing media where mediasize = 0 and calculate it
+        # TODO: go through existing media where mediasize = 0 and dbfsid > 0 
+        # TODO: calculate it before switching to s3 (while it's fast to access files)
+        # TODO: join to dbfs table on dbfsid (should be safe)
+        # TODO: then, with the DBFS ID you can construct the file name and use os to read
+        # TODO: file size without having to go through the DBFS module and read the data
+        # TODO: verify in a database (eg: rp0282) that dbfsid was set correctly by previous update 34015
         dbo.execute_dbupdate("UPDATE dbfs SET url = replace(url, 'file:', 's3:') where url like 'file:%'")
-
+"""
