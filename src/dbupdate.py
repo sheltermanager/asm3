@@ -22,7 +22,8 @@ VERSIONS = (
     33800, 33801, 33802, 33803, 33900, 33901, 33902, 33903, 33904, 33905, 33906, 
     33907, 33908, 33909, 33911, 33912, 33913, 33914, 33915, 33916, 34000, 34001, 
     34002, 34003, 34004, 34005, 34006, 34007, 34008, 34009, 34010, 34011, 34012,
-    34013, 34014, 34015, 34016, 34017, 34018, 34019, 34020, 34021, 34022, 34100
+    34013, 34014, 34015, 34016, 34017, 34018, 34019, 34020, 34021, 34022, 34100,
+    34101, 34102
 )
 
 LATEST_VERSION = VERSIONS[-1]
@@ -43,7 +44,7 @@ TABLES = ( "accounts", "accountsrole", "accountstrx", "additional", "additionalf
     "onlineformfield", "onlineformincoming", "owner", "ownercitation", "ownerdonation", "ownerinvestigation", 
     "ownerlicence", "ownerlookingfor", "ownerrota", "ownertraploan", "ownervoucher", "pickuplocation", "publishlog", 
     "reservationstatus", "role", "site", "species", "stocklevel", "stocklocation", "stockusage", "stockusagetype", 
-    "templatehtml", "testtype", "testresult", "transporttype", "traptype", "userrole", "users", 
+    "templatedocument", "templatehtml", "testtype", "testresult", "transporttype", "traptype", "userrole", "users", 
     "vaccinationtype", "voucher" )
 
 # ASM2_COMPATIBILITY This is used for dumping tables in ASM2/HSQLDB format. 
@@ -1372,6 +1373,13 @@ def sql_structure(dbo):
         fint("IsRetired", True) ), False)
     sql += index("stockusagetype_UsageTypeName", "stockusagetype", "UsageTypeName")
 
+    sql += table("templatedocument", (
+        fid(),
+        fstr("Name"),
+        fstr("Path"),
+        flongstr("Content") ), False)
+    sql += index("templatedocument_NamePath", "templatedocument", "Name,Path", True)
+
     sql += table("templatehtml", (
         fid(),
         fstr("Name"),
@@ -2349,6 +2357,12 @@ def install_default_templates(dbo, removeFirst = False):
     """
     Installs the default templates files into the db
     """
+    def add_document_template_from_file(name, path, filename):
+        dbo.insert("templatedocument", {
+            "Name":     name,
+            "Path":     path,
+            "Content":  base64.b64encode( utils.read_binary_file(filename) )
+        })
     def add_html_template(name, head, body, foot, builtin):
         dbo.execute_dbupdate("DELETE FROM templatehtml WHERE Name = ?", [name])
         dbo.insert("templatehtml", {
@@ -2365,9 +2379,11 @@ def install_default_templates(dbo, removeFirst = False):
         add_html_template(name, head, body, foot, 0)
     path = dbo.installpath
     if removeFirst:
-        al.info("removing /internet, /templates and /report", "dbupdate.install_default_templates", dbo)
+        al.info("removing default templates from dbfs, templatehtml and templatedocument", "dbupdate.install_default_templates", dbo)
         dbo.execute_dbupdate("DELETE FROM dbfs WHERE Path Like '/internet%' OR Path Like '/report%' OR Path Like '/template%'")
-    al.info("creating default media", "dbupdate.install_default_templates", dbo)
+        dbo.execute_dbupdate("DELETE FROM templatedocument")
+        dbo.execute_dbupdate("DELETE FROM templatehtml")
+    al.info("creating default templates", "dbupdate.install_default_templates", dbo)
     dbfs.create_path(dbo, "/", "reports")
     dbfs.put_file(dbo, "nopic.jpg", "/reports", path + "media/reports/nopic.jpg")
     add_html_template_from_files("animalview")
@@ -2375,35 +2391,34 @@ def install_default_templates(dbo, removeFirst = False):
     add_html_template_from_files("responsive")
     add_html_template_from_files("plain")
     add_html_template_from_files("rss")
-    dbfs.create_path(dbo, "/", "templates")
-    dbfs.put_file(dbo, "adoption_form.html", "/templates", path + "media/templates/adoption_form.html")
-    dbfs.put_file(dbo, "cat_assessment_form.html", "/templates", path + "media/templates/cat_assessment_form.html")
-    dbfs.put_file(dbo, "cat_cage_card.html", "/templates", path + "media/templates/cat_cage_card.html")
-    dbfs.put_file(dbo, "cat_information.html", "/templates", path + "media/templates/cat_information.html")
-    dbfs.put_file(dbo, "dog_assessment_form.html", "/templates", path + "media/templates/dog_assessment_form.html")
-    dbfs.put_file(dbo, "dog_cage_card.html", "/templates", path + "media/templates/dog_cage_card.html")
-    dbfs.put_file(dbo, "dog_information.html", "/templates", path + "media/templates/dog_information.html")
-    dbfs.put_file(dbo, "dog_license.html", "/templates", path + "media/templates/dog_license.html")
-    dbfs.put_file(dbo, "fancy_cage_card.html", "/templates", path + "media/templates/fancy_cage_card.html")
-    dbfs.put_file(dbo, "half_a4_cage_card.html", "/templates", path + "media/templates/half_a4_cage_card.html")
-    dbfs.put_file(dbo, "homecheck_form.html", "/templates", path + "media/templates/homecheck_form.html")
-    dbfs.put_file(dbo, "incident_information.html", "/templates", path + "media/templates/incident_information.html")
-    dbfs.put_file(dbo, "invoice.html", "/templates", path + "media/templates/invoice.html")
-    dbfs.put_file(dbo, "microchip_form.html", "/templates", path + "media/templates/microchip_form.html")
-    dbfs.put_file(dbo, "petplan.html", "/templates", path + "media/templates/petplan.html")
-    dbfs.put_file(dbo, "rabies_certificate.html", "/templates", path + "media/templates/rabies_certificate.html")
-    dbfs.put_file(dbo, "receipt.html", "/templates", path + "media/templates/receipt.html")
-    dbfs.put_file(dbo, "receipt_tax.html", "/templates", path + "media/templates/receipt_tax.html")
-    dbfs.put_file(dbo, "reserved.html", "/templates", path + "media/templates/reserved.html")
-    dbfs.create_path(dbo, "/templates", "rspca")
-    dbfs.put_file(dbo, "rspca_adoption.html", "/templates/rspca", path + "media/templates/rspca/rspca_adoption.html")
-    dbfs.put_file(dbo, "rspca_behaviour_observations_cat.html", "/templates/rspca", path + "media/templates/rspca/rspca_behaviour_observations_cat.html")
-    dbfs.put_file(dbo, "rspca_behaviour_observations_dog.html", "/templates/rspca", path + "media/templates/rspca/rspca_behaviour_observations_dog.html")
-    dbfs.put_file(dbo, "rspca_behaviour_observations_rabbit.html", "/templates/rspca", path + "media/templates/rspca/rspca_behaviour_observations_rabbit.html")
-    dbfs.put_file(dbo, "rspca_dog_advice_leaflet.html", "/templates/rspca", path + "media/templates/rspca/rspca_dog_advice_leaflet.html")
-    dbfs.put_file(dbo, "rspca_post_home_visit.html", "/templates/rspca", path + "media/templates/rspca/rspca_post_home_visit.html")
-    dbfs.put_file(dbo, "rspca_transfer_of_ownership.html", "/templates/rspca", path + "media/templates/rspca/rspca_transfer_of_ownership.html")
-    dbfs.put_file(dbo, "rspca_transfer_of_title.html", "/templates/rspca", path + "media/templates/rspca/rspca_transfer_of_title.html")
+    add_document_template_from_file(path + "media/templates/adoption_form.html")
+    add_document_template_from_file(dbo, "adoption_form.html", "/templates", path + "media/templates/adoption_form.html")
+    add_document_template_from_file(dbo, "cat_assessment_form.html", "/templates", path + "media/templates/cat_assessment_form.html")
+    add_document_template_from_file(dbo, "cat_cage_card.html", "/templates", path + "media/templates/cat_cage_card.html")
+    add_document_template_from_file(dbo, "cat_information.html", "/templates", path + "media/templates/cat_information.html")
+    add_document_template_from_file(dbo, "dog_assessment_form.html", "/templates", path + "media/templates/dog_assessment_form.html")
+    add_document_template_from_file(dbo, "dog_cage_card.html", "/templates", path + "media/templates/dog_cage_card.html")
+    add_document_template_from_file(dbo, "dog_information.html", "/templates", path + "media/templates/dog_information.html")
+    add_document_template_from_file(dbo, "dog_license.html", "/templates", path + "media/templates/dog_license.html")
+    add_document_template_from_file(dbo, "fancy_cage_card.html", "/templates", path + "media/templates/fancy_cage_card.html")
+    add_document_template_from_file(dbo, "half_a4_cage_card.html", "/templates", path + "media/templates/half_a4_cage_card.html")
+    add_document_template_from_file(dbo, "homecheck_form.html", "/templates", path + "media/templates/homecheck_form.html")
+    add_document_template_from_file(dbo, "incident_information.html", "/templates", path + "media/templates/incident_information.html")
+    add_document_template_from_file(dbo, "invoice.html", "/templates", path + "media/templates/invoice.html")
+    add_document_template_from_file(dbo, "microchip_form.html", "/templates", path + "media/templates/microchip_form.html")
+    add_document_template_from_file(dbo, "petplan.html", "/templates", path + "media/templates/petplan.html")
+    add_document_template_from_file(dbo, "rabies_certificate.html", "/templates", path + "media/templates/rabies_certificate.html")
+    add_document_template_from_file(dbo, "receipt.html", "/templates", path + "media/templates/receipt.html")
+    add_document_template_from_file(dbo, "receipt_tax.html", "/templates", path + "media/templates/receipt_tax.html")
+    add_document_template_from_file(dbo, "reserved.html", "/templates", path + "media/templates/reserved.html")
+    add_document_template_from_file(dbo, "rspca_adoption.html", "/templates/rspca", path + "media/templates/rspca/rspca_adoption.html")
+    add_document_template_from_file(dbo, "rspca_behaviour_observations_cat.html", "/templates/rspca", path + "media/templates/rspca/rspca_behaviour_observations_cat.html")
+    add_document_template_from_file(dbo, "rspca_behaviour_observations_dog.html", "/templates/rspca", path + "media/templates/rspca/rspca_behaviour_observations_dog.html")
+    add_document_template_from_file(dbo, "rspca_behaviour_observations_rabbit.html", "/templates/rspca", path + "media/templates/rspca/rspca_behaviour_observations_rabbit.html")
+    add_document_template_from_file(dbo, "rspca_dog_advice_leaflet.html", "/templates/rspca", path + "media/templates/rspca/rspca_dog_advice_leaflet.html")
+    add_document_template_from_file(dbo, "rspca_post_home_visit.html", "/templates/rspca", path + "media/templates/rspca/rspca_post_home_visit.html")
+    add_document_template_from_file(dbo, "rspca_transfer_of_ownership.html", "/templates/rspca", path + "media/templates/rspca/rspca_transfer_of_ownership.html")
+    add_document_template_from_file(dbo, "rspca_transfer_of_title.html", "/templates/rspca", path + "media/templates/rspca/rspca_transfer_of_title.html")
 
 def install(dbo):
     """
@@ -4739,11 +4754,27 @@ def update_34100(dbo):
         }, generateID=False, setOverrideDBLock=True)
 
 def update_34101(dbo):
-    # TODO: Add templatedocument table and copy from DBFS
-    pass
+    # Add templatedocument table and copy templates from DBFS
+    fields = ",".join([
+        dbo.ddl_add_table_column("ID", dbo.type_integer, False, pk=True),
+        dbo.ddl_add_table_column("Name", dbo.type_shorttext, False),
+        dbo.ddl_add_table_column("Path", dbo.type_shorttext, False),
+        dbo.ddl_add_table_column("Content", dbo.type_longtext, False) ])
+    dbo.execute_dbupdate( dbo.ddl_add_table("templatedocument", fields) )
+    dbo.execute_dbupdate( dbo.ddl_add_index("templatedocument_NamePath", "templatedocument", "Name,Path", True) )
+    # Copy document templates from DBFS - we track ID manually as the sequence won't be created yet
+    nextid = 1
+    for row in dbo.query("SELECT ID, Name, Path FROM dbfs WHERE Path Like '/templates%' AND (Name LIKE '%.html' OR Name LIKE '%.odt') ORDER BY Name"):
+        content = dbfs.get_string_id(dbo, row.id)
+        dbo.insert("templatedocument", {
+            "ID":       nextid,
+            "Name":     row.name,
+            "Path":     row.path,
+            "Content":  base64.b64encode(content)
+        }, generateID=False, setOverrideDBLock=True)
+        nextid += 1
 
 def update_34102(dbo):
-    # TODO: Inactive
     if smcom.active():
         # sheltermanager.com only: calculate media file sizes for existing databases
         # ===

@@ -1171,7 +1171,7 @@ class animal(JSONEndpoint):
             "sizes": extlookups.get_sizes(dbo),
             "sharebutton": SHARE_BUTTON,
             "tabcounts": extanimal.get_satellite_counts(dbo, a["ID"])[0],
-            "templates": dbfs.get_document_templates(dbo),
+            "templates": template.get_document_templates(dbo),
             "ynun": extlookups.get_ynun(dbo)
         }
 
@@ -1341,7 +1341,7 @@ class animal_donations(JSONEndpoint):
             "accounts": financial.get_accounts(dbo),
             "paymenttypes": extlookups.get_payment_types(dbo),
             "frequencies": extlookups.get_donation_frequencies(dbo),
-            "templates": dbfs.get_document_templates(dbo)
+            "templates": template.get_document_templates(dbo)
         }
 
 class animal_embed(ASMEndpoint):
@@ -1436,7 +1436,7 @@ class animal_licence(JSONEndpoint):
             "name": "animal_licence",
             "rows": licences,
             "animal": a,
-            "templates": dbfs.get_document_templates(dbo),
+            "templates": template.get_document_templates(dbo),
             "tabcounts": extanimal.get_satellite_counts(dbo, a["ID"])[0],
             "licencetypes": extlookups.get_licence_types(dbo)
         }
@@ -1530,7 +1530,7 @@ class animal_movements(JSONEndpoint):
             "movementtypes": extlookups.get_movement_types(dbo),
             "reservationstatuses": extlookups.get_reservation_statuses(dbo),
             "returncategories": extlookups.get_entryreasons(dbo),
-            "templates": dbfs.get_document_templates(dbo),
+            "templates": template.get_document_templates(dbo),
             "name": self.url
         }
 
@@ -2054,33 +2054,33 @@ class document_gen(ASMEndpoint):
         post = o.post
         linktype = post["linktype"]
         if post["id"] == "" or post["id"] == "0": raise utils.ASMValidationError("no id parameter")
-        template = post.integer("template")
-        templatename = dbfs.get_name_for_id(dbo, template)
+        dtid = post.integer("dtid")
+        templatename = template.get_document_template_name(dbo, dtid)
         title = templatename
         loglinktype = extlog.ANIMAL
         al.debug("generating %s document for %d, template '%s'" % (linktype, post.integer("id"), templatename), "code.document_gen", dbo)
         logid = post.integer("id")
         if linktype == "ANIMAL" or linktype == "":
             loglinktype = extlog.ANIMAL
-            content = wordprocessor.generate_animal_doc(dbo, template, post.integer("id"), o.user)
+            content = wordprocessor.generate_animal_doc(dbo, dtid, post.integer("id"), o.user)
         elif linktype == "ANIMALCONTROL":
             loglinktype = extlog.ANIMALCONTROL
-            content = wordprocessor.generate_animalcontrol_doc(dbo, template, post.integer("id"), o.user)
+            content = wordprocessor.generate_animalcontrol_doc(dbo, dtid, post.integer("id"), o.user)
         elif linktype == "PERSON":
             loglinktype = extlog.PERSON
-            content = wordprocessor.generate_person_doc(dbo, template, post.integer("id"), o.user)
+            content = wordprocessor.generate_person_doc(dbo, dtid, post.integer("id"), o.user)
         elif linktype == "DONATION":
             loglinktype = extlog.PERSON
             logid = financial.get_donation(dbo, post.integer_list("id")[0])["OWNERID"]
-            content = wordprocessor.generate_donation_doc(dbo, template, post.integer_list("id"), o.user)
+            content = wordprocessor.generate_donation_doc(dbo, dtid, post.integer_list("id"), o.user)
         elif linktype == "LICENCE":
             loglinktype = extlog.PERSON
             logid = financial.get_licence(dbo, post.integer("id"))["OWNERID"]
-            content = wordprocessor.generate_licence_doc(dbo, template, post.integer("id"), o.user)
+            content = wordprocessor.generate_licence_doc(dbo, dtid, post.integer("id"), o.user)
         elif linktype == "MOVEMENT":
             loglinktype = extlog.PERSON
             logid = extmovement.get_movement(dbo, post.integer("id"))["OWNERID"]
-            content = wordprocessor.generate_movement_doc(dbo, template, post.integer("id"), o.user)
+            content = wordprocessor.generate_movement_doc(dbo, dtid, post.integer("id"), o.user)
         if configuration.generate_document_log(dbo) and configuration.generate_document_log_type(dbo) > 0:
             extlog.add_log(dbo, o.user, loglinktype, logid, configuration.generate_document_log_type(dbo), _("Generated document '{0}'").format(templatename))
         if templatename.endswith(".html"):
@@ -2088,7 +2088,7 @@ class document_gen(ASMEndpoint):
             web.header("Cache-Control", "no-cache")
             return html.tinymce_header(title, "document_edit.js", jswindowprint=configuration.js_window_print(dbo)) + \
                 html.tinymce_main(dbo.locale, "document_gen", recid=post["id"], linktype=post["linktype"], \
-                    template=post["template"], content=utils.escape_tinymce(content))
+                    dtid=dtid, content=utils.escape_tinymce(content))
         elif templatename.endswith(".odt"):
             web.header("Content-Type", "application/vnd.oasis.opendocument.text")
             web.header("Content-Disposition", "attach; filename=\"%s\"" % templatename)
@@ -2099,8 +2099,8 @@ class document_gen(ASMEndpoint):
         dbo = o.dbo
         post = o.post
         linktype = post["linktype"]
-        template = post.integer("template")
-        tempname = dbfs.get_name_for_id(dbo, template)
+        dtid = post.integer("dtid")
+        tempname = template.get_document_template_name(dbo, dtid)
         recid = post.integer("recid")
         if linktype == "ANIMAL":
             tempname += " - " + extanimal.get_animal_namecode(dbo, recid)
@@ -2165,19 +2165,19 @@ class document_edit(ASMEndpoint):
     def content(self, o):
         dbo = o.dbo
         post = o.post
-        template = post.integer("template")
-        templatename = dbfs.get_name_for_id(dbo, template)
+        dtid = post.integer("dtid")
+        templatename = template.get_document_template_name(dbo, dtid)
         if templatename == "": self.notfound()
         title = templatename
         al.debug("editing %s" % templatename, "code.document_edit", dbo)
         if templatename.endswith(".html"):
-            content = utils.escape_tinymce(dbfs.get_string_id(dbo, template))
+            content = utils.escape_tinymce(template.get_document_template_content(dbo, dtid))
             self.header("Content-Type", "text/html")
             self.header("Cache-Control", "no-cache")
             return html.tinymce_header(title, "document_edit.js", jswindowprint=configuration.js_window_print(dbo)) + \
-                html.tinymce_main(dbo.locale, "document_edit", template=template, content=content)
+                html.tinymce_main(dbo.locale, "document_edit", dtid=dtid, content=content)
         elif templatename.endswith(".odt"):
-            content = dbfs.get_string_id(dbo, template)
+            content = template.get_document_template_content(dbo, dtid)
             self.header("Content-Type", "application/vnd.oasis.opendocument.text")
             self.header("Cache-Control", "no-cache")
             return content
@@ -2185,9 +2185,8 @@ class document_edit(ASMEndpoint):
     def post_save(self, o):
         dbo = o.dbo
         post = o.post
-        template = post.integer("template")
-        templatename = dbfs.get_name_for_id(dbo, template)
-        dbfs.put_string_id(dbo, template, templatename, post["document"])
+        dtid = post.integer("dtid")
+        template.update_document_template_content(dbo, dtid, post["document"])
         self.redirect("document_templates")
 
     def post_pdf(self, o):
@@ -2291,32 +2290,32 @@ class document_templates(JSONEndpoint):
     post_permissions = users.MODIFY_DOCUMENT_TEMPLATES
 
     def controller(self, o):
-        templates = dbfs.get_document_templates(o.dbo)
+        templates = template.get_document_templates(o.dbo)
         al.debug("got %d document templates" % len(templates), "code.document_templates", o.dbo)
         return {
             "rows": templates
         }
 
     def post_create(self, o):
-        return dbfs.create_document_template(o.dbo, o.user, o.post["template"])
+        return template.create_document_template(o.dbo, o.user, o.post["template"])
 
     def post_createodt(self, o):
         post = o.post
         fn = post.filename()
         if post["path"] != "": fn = post["path"] + "/" + fn
-        dbfs.create_document_template(o.dbo, o.user, fn, ".odt", post.filedata())
+        template.create_document_template(o.dbo, o.user, fn, ".odt", post.filedata())
         self.redirect("document_templates")
 
     def post_clone(self, o):
         for t in o.post.integer_list("ids"):
-            return dbfs.clone_document_template(o.dbo, o.user, t, o.post["template"])
+            return template.clone_document_template(o.dbo, o.user, t, o.post["template"])
 
     def post_delete(self, o):
         for t in o.post.integer_list("ids"):
-            dbfs.delete_document_template(o.dbo, o.user, t)
+            template.delete_document_template(o.dbo, o.user, t)
 
     def post_rename(self, o):
-        dbfs.rename_document_template(o.dbo, o.user, o.post.integer("dbfsid"), o.post["newname"])
+        template.rename_document_template(o.dbo, o.user, o.post.integer("dtid"), o.post["newname"])
 
 class donation(JSONEndpoint):
     url = "donation"
@@ -2335,7 +2334,7 @@ class donation(JSONEndpoint):
             "accounts": financial.get_accounts(dbo),
             "paymenttypes": extlookups.get_payment_types(dbo),
             "frequencies": extlookups.get_donation_frequencies(dbo),
-            "templates": dbfs.get_document_templates(dbo),
+            "templates": template.get_document_templates(dbo),
             "rows": donations
         }
 
@@ -2615,7 +2614,7 @@ class incident(JSONEndpoint):
             "sexes": extlookups.get_sexes(dbo),
             "sites": extlookups.get_sites(dbo),
             "tabcounts": extanimalcontrol.get_animalcontrol_satellite_counts(dbo, a["ACID"])[0],
-            "templates": dbfs.get_document_templates(dbo),
+            "templates": template.get_document_templates(dbo),
             "users": users.get_users(dbo)
         }
 
@@ -2819,7 +2818,7 @@ class licence(JSONEndpoint):
         return {
             "name": "licence",
             "rows": licences,
-            "templates": dbfs.get_document_templates(dbo),
+            "templates": template.get_document_templates(dbo),
             "licencetypes": extlookups.get_licence_types(dbo)
         }
 
@@ -3210,7 +3209,7 @@ class mailmerge(JSONEndpoint):
             "fields": fields,
             "numrows": len(rows),
             "hasperson": "OWNERNAME" in fields and "OWNERADDRESS" in fields and "OWNERTOWN" in fields and "OWNERPOSTCODE" in fields,
-            "templates": dbfs.get_document_templates(dbo)
+            "templates": template.get_document_templates(dbo)
         }
    
     def post_email(self, o):
@@ -3227,21 +3226,21 @@ class mailmerge(JSONEndpoint):
         post = o.post
         rows, cols = extreports.execute_query(dbo, o.session.mergereport, o.user, o.session.mergeparams)
         templateid = post.integer("templateid")
-        template = dbfs.get_string_id(dbo, templateid)
-        templatename = dbfs.get_name_for_id(dbo, templateid)
+        templatecontent = template.get_document_template_content(dbo, templateid)
+        templatename = template.get_document_template_name(dbo, templateid)
         if not templatename.endswith(".html"):
             raise utils.ASMValidationError("Only html templates are allowed")
         # Generate a document from the template for each row
         org_tags = wordprocessor.org_tags(dbo, session.user)
         c = []
         for d in rows:
-            c.append( wordprocessor.substitute_tags(template, wordprocessor.append_tags(d, org_tags)) )
+            c.append( wordprocessor.substitute_tags(templatecontent, wordprocessor.append_tags(d, org_tags)) )
         content = '<div class="mce-pagebreak" style="page-break-before: always; clear: both; border: 0">&nbsp;</div>'.join(c)
         self.header("Content-Type", "text/html")
         self.header("Cache-Control", "no-cache")
         return html.tinymce_header(templatename, "document_edit.js", jswindowprint=True, pdfenabled=False, readonly=True) + \
             html.tinymce_main(o.locale, "", recid=0, linktype="", \
-                template="", content=utils.escape_tinymce(content))
+                dtid="", content=utils.escape_tinymce(content))
 
     def post_labels(self, o):
         dbo = o.dbo
@@ -3410,7 +3409,7 @@ class move_book_foster(JSONEndpoint):
             "movementtypes": extlookups.get_movement_types(dbo),
             "reservationstatuses": extlookups.get_reservation_statuses(dbo),
             "returncategories": extlookups.get_entryreasons(dbo),
-            "templates": dbfs.get_document_templates(dbo)
+            "templates": template.get_document_templates(dbo)
         }
 
 class move_book_recent_adoption(JSONEndpoint):
@@ -3428,7 +3427,7 @@ class move_book_recent_adoption(JSONEndpoint):
             "movementtypes": extlookups.get_movement_types(dbo),
             "reservationstatuses": extlookups.get_reservation_statuses(dbo),
             "returncategories": extlookups.get_entryreasons(dbo),
-            "templates": dbfs.get_document_templates(dbo)
+            "templates": template.get_document_templates(dbo)
         }
 
 class move_book_recent_other(JSONEndpoint):
@@ -3446,7 +3445,7 @@ class move_book_recent_other(JSONEndpoint):
             "movementtypes": extlookups.get_movement_types(dbo),
             "reservationstatuses": extlookups.get_reservation_statuses(dbo),
             "returncategories": extlookups.get_entryreasons(dbo),
-            "templates": dbfs.get_document_templates(dbo)
+            "templates": template.get_document_templates(dbo)
         }
 
 class move_book_recent_transfer(JSONEndpoint):
@@ -3464,7 +3463,7 @@ class move_book_recent_transfer(JSONEndpoint):
             "movementtypes": extlookups.get_movement_types(dbo),
             "reservationstatuses": extlookups.get_reservation_statuses(dbo),
             "returncategories": extlookups.get_entryreasons(dbo),
-            "templates": dbfs.get_document_templates(dbo)
+            "templates": template.get_document_templates(dbo)
         }
 
 class move_book_reservation(JSONEndpoint):
@@ -3482,7 +3481,7 @@ class move_book_reservation(JSONEndpoint):
             "movementtypes": extlookups.get_movement_types(dbo),
             "reservationstatuses": extlookups.get_reservation_statuses(dbo),
             "returncategories": extlookups.get_entryreasons(dbo),
-            "templates": dbfs.get_document_templates(dbo)
+            "templates": template.get_document_templates(dbo)
         }
 
 class move_book_retailer(JSONEndpoint):
@@ -3500,7 +3499,7 @@ class move_book_retailer(JSONEndpoint):
             "movementtypes": extlookups.get_movement_types(dbo),
             "reservationstatuses": extlookups.get_reservation_statuses(dbo),
             "returncategories": extlookups.get_entryreasons(dbo),
-            "templates": dbfs.get_document_templates(dbo)
+            "templates": template.get_document_templates(dbo)
         }
 
 class move_book_trial_adoption(JSONEndpoint):
@@ -3518,7 +3517,7 @@ class move_book_trial_adoption(JSONEndpoint):
             "movementtypes": extlookups.get_movement_types(dbo),
             "reservationstatuses": extlookups.get_reservation_statuses(dbo),
             "returncategories": extlookups.get_entryreasons(dbo),
-            "templates": dbfs.get_document_templates(dbo)
+            "templates": template.get_document_templates(dbo)
         }
 
 class move_book_unneutered(JSONEndpoint):
@@ -3536,7 +3535,7 @@ class move_book_unneutered(JSONEndpoint):
             "movementtypes": extlookups.get_movement_types(dbo),
             "reservationstatuses": extlookups.get_reservation_statuses(dbo),
             "returncategories": extlookups.get_entryreasons(dbo),
-            "templates": dbfs.get_document_templates(dbo)
+            "templates": template.get_document_templates(dbo)
         }
 
 class move_deceased(JSONEndpoint):
@@ -3570,7 +3569,7 @@ class move_gendoc(JSONEndpoint):
     def controller(self, o):
         return {
             "message": o.post["message"],
-            "templates": html.template_selection(dbfs.get_document_templates(o.dbo), "document_gen?linktype=%s&id=%s" % (o.post["linktype"], o.post["id"]))
+            "templates": html.template_selection(template.get_document_templates(o.dbo), "document_gen?linktype=%s&id=%s" % (o.post["linktype"], o.post["id"]))
         }
 
 class move_reclaim(JSONEndpoint):
@@ -3930,7 +3929,7 @@ class person(JSONEndpoint):
             "counties": "|".join(extperson.get_counties(dbo)),
             "towncounties": "|".join(extperson.get_town_to_county(dbo)),
             "tabcounts": extperson.get_satellite_counts(dbo, p.id)[0],
-            "templates": dbfs.get_document_templates(dbo),
+            "templates": template.get_document_templates(dbo),
             "person": p
         }
 
@@ -4014,7 +4013,7 @@ class person_donations(JSONEndpoint):
             "accounts": financial.get_accounts(dbo),
             "paymenttypes": extlookups.get_payment_types(dbo),
             "frequencies": extlookups.get_donation_frequencies(dbo),
-            "templates": dbfs.get_document_templates(dbo),
+            "templates": template.get_document_templates(dbo),
             "rows": donations
         }
 
@@ -4167,7 +4166,7 @@ class person_licence(JSONEndpoint):
             "name": "person_licence",
             "rows": licences,
             "person": p,
-            "templates": dbfs.get_document_templates(dbo),
+            "templates": template.get_document_templates(dbo),
             "tabcounts": extperson.get_satellite_counts(dbo, p["ID"])[0],
             "licencetypes": extlookups.get_licence_types(dbo)
         }
@@ -4264,7 +4263,7 @@ class person_movements(JSONEndpoint):
             "movementtypes": extlookups.get_movement_types(dbo),
             "reservationstatuses": extlookups.get_reservation_statuses(dbo),
             "returncategories": extlookups.get_entryreasons(dbo),
-            "templates": dbfs.get_document_templates(dbo)
+            "templates": template.get_document_templates(dbo)
         }
 
 class person_new(JSONEndpoint):

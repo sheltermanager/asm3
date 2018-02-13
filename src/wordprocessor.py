@@ -5,7 +5,6 @@ import animal
 import animalcontrol
 import configuration
 import db
-import dbfs
 import financial
 import html
 import log
@@ -15,6 +14,7 @@ import medical
 import movement
 import person
 import publish
+import template
 import users
 import utils
 import zipfile
@@ -1075,15 +1075,15 @@ def substitute_tags(searchin, tags, use_xml_escaping = True, opener = "&lt;&lt;"
             break
     return s
 
-def substitute_template(dbo, template, tags, imdata = None):
+def substitute_template(dbo, templateid, tags, imdata = None):
     """
-    Reads the template specified by dbfs id "template" and substitutes
+    Reads the template specified by id "template" and substitutes
     according to the tags in "tags". Returns the built file.
     imdata is the preferred image for the record and since html uses
     URLs, only applies to ODT templates.
     """
-    templatedata = dbfs.get_string_id(dbo, template)
-    templatename = dbfs.get_name_for_id(dbo, template)
+    templatedata = template.get_document_template_content(dbo, templateid)
+    templatename = template.get_document_template_name(dbo, templateid)
     if templatename.endswith(".html"):
         # Translate any user signature placeholder
         templatedata = templatedata.replace("signature:user", "&lt;&lt;UserSignatureSrc&gt;&gt;")
@@ -1113,11 +1113,11 @@ def substitute_template(dbo, template, tags, imdata = None):
         except Exception as zderr:
             raise utils.ASMError("Failed generating odt document: %s" % str(zderr))
 
-def generate_animal_doc(dbo, template, animalid, username):
+def generate_animal_doc(dbo, templateid, animalid, username):
     """
     Generates an animal document from a template using animal keys and
     (if a currentowner is available) person keys
-    template: The path/name of the template to use
+    templateid: The ID of the template
     animalid: The animal to generate for
     """
     a = animal.get_animal(dbo, animalid)
@@ -1143,24 +1143,24 @@ def generate_animal_doc(dbo, template, animalid, username):
     if not has_person_tags and a["RESERVEDOWNERID"] is not None and a["RESERVEDOWNERID"] != 0:
         tags = append_tags(tags, person_tags(dbo, person.get_person(dbo, a["RESERVEDOWNERID"])))
     tags = append_tags(tags, org_tags(dbo, username))
-    return substitute_template(dbo, template, tags, im)
+    return substitute_template(dbo, templateid, tags, im)
 
-def generate_animalcontrol_doc(dbo, template, acid, username):
+def generate_animalcontrol_doc(dbo, templateid, acid, username):
     """
     Generates an animal control incident document from a template
-    template: The path/name of the template to use
+    templateid: The ID of the template
     acid:     The incident id to generate for
     """
     ac = animalcontrol.get_animalcontrol(dbo, acid)
     if ac is None: raise utils.ASMValidationError("%d is not a valid incident ID" % acid)
     tags = animalcontrol_tags(dbo, ac)
     tags = append_tags(tags, org_tags(dbo, username))
-    return substitute_template(dbo, template, tags)
+    return substitute_template(dbo, templateid, tags)
 
-def generate_person_doc(dbo, template, personid, username):
+def generate_person_doc(dbo, templateid, personid, username):
     """
     Generates a person document from a template
-    template: The path/name of the template to use
+    templateid: The ID of the template
     personid: The person to generate for
     """
     p = person.get_person(dbo, personid)
@@ -1172,12 +1172,12 @@ def generate_person_doc(dbo, template, personid, username):
     if len(m) > 0: 
         tags = append_tags(tags, movement_tags(dbo, m[0]))
         tags = append_tags(tags, animal_tags(dbo, animal.get_animal(dbo, m[0]["ANIMALID"])))
-    return substitute_template(dbo, template, tags, im)
+    return substitute_template(dbo, templateid, tags, im)
 
-def generate_donation_doc(dbo, template, donationids, username):
+def generate_donation_doc(dbo, templateid, donationids, username):
     """
     Generates a donation document from a template
-    template: The path/name of the template to use
+    templateid: The ID of the template
     donationids: A list of ids to generate for
     """
     dons = financial.get_donations_by_ids(dbo, donationids)
@@ -1191,12 +1191,12 @@ def generate_donation_doc(dbo, template, donationids, username):
         tags = append_tags(tags, movement_tags(dbo, movement.get_movement(dbo, d["MOVEMENTID"])))
     tags = append_tags(tags, donation_tags(dbo, dons))
     tags = append_tags(tags, org_tags(dbo, username))
-    return substitute_template(dbo, template, tags)
+    return substitute_template(dbo, templateid, tags)
 
-def generate_licence_doc(dbo, template, licenceid, username):
+def generate_licence_doc(dbo, templateid, licenceid, username):
     """
     Generates a licence document from a template
-    template: The path/name of the template to use
+    templateid: The ID of the template
     licenceid: The licence to generate for
     """
     l = financial.get_licence(dbo, licenceid)
@@ -1207,12 +1207,12 @@ def generate_licence_doc(dbo, template, licenceid, username):
         tags = append_tags(tags, animal_tags(dbo, animal.get_animal(dbo, l["ANIMALID"])))
     tags = append_tags(tags, licence_tags(dbo, l))
     tags = append_tags(tags, org_tags(dbo, username))
-    return substitute_template(dbo, template, tags)
+    return substitute_template(dbo, templateid, tags)
 
-def generate_movement_doc(dbo, template, movementid, username):
+def generate_movement_doc(dbo, templateid, movementid, username):
     """
     Generates a movement document from a template
-    template: The path/name of the template to use
+    templateid: The ID of the template
     movementid: The movement to generate for
     """
     m = movement.get_movement(dbo, movementid)
@@ -1224,5 +1224,5 @@ def generate_movement_doc(dbo, template, movementid, username):
     tags = append_tags(tags, movement_tags(dbo, m))
     tags = append_tags(tags, donation_tags(dbo, financial.get_movement_donations(dbo, movementid)))
     tags = append_tags(tags, org_tags(dbo, username))
-    return substitute_template(dbo, template, tags)
+    return substitute_template(dbo, templateid, tags)
 

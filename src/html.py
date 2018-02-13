@@ -307,17 +307,17 @@ def tinymce_print_header(title):
     """ % { "title": title,
            "css": asm_css_tag("asm-tinymce.css") }
 
-def tinymce_main(locale, action, recid="", mediaid = "", linktype = "", redirecturl = "", template = "", content = ""):
+def tinymce_main(locale, action, recid="", mediaid = "", linktype = "", redirecturl = "", dtid = "", content = ""):
     """ 
     Outputs the main body of a tinymce page.
     action: The post target for the controller
-    template: Name of the template to post back
+    template: The ID of the template to post back
     content: The content for the box
     """
     return """
         <form method="post" action="%(action)s">
         <input type="hidden" id="locale" value="%(locale)s" />
-        <input type="hidden" name="template" value="%(template)s" />
+        <input type="hidden" name="dtid" value="%(dtid)s" />
         <input type="hidden" name="recid" value="%(recid)s" />
         <input type="hidden" name="mediaid" value="%(mediaid)s" />
         <input type="hidden" name="linktype" value="%(linktype)s" />
@@ -333,7 +333,7 @@ def tinymce_main(locale, action, recid="", mediaid = "", linktype = "", redirect
         </html>
     """ % { "action": action, 
             "locale": locale, 
-            "template": template, 
+            "dtid": dtid, 
             "recid": recid, 
             "mediaid": mediaid, 
             "linktype": linktype, 

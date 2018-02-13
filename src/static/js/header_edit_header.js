@@ -603,7 +603,7 @@ $(function() {
                     s.push('<li class="asm-menu-category">' + t.PATH + '</li>');
                     lastpath = t.PATH;
                 }
-                s.push('<li class="asm-menu-item"><a target="_blank" class="templatelink" data="' + t.ID + '" href="document_gen?linktype=' + linktype + '&id=' + id + '&template=' + t.ID + '">' + t.NAME + '</a></li>');
+                s.push('<li class="asm-menu-item"><a target="_blank" class="templatelink" data="' + t.ID + '" href="document_gen?linktype=' + linktype + '&id=' + id + '&dtid=' + t.ID + '">' + t.NAME + '</a></li>');
             });
             return s.join("\n");
         },
