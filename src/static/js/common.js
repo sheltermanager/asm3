@@ -2324,6 +2324,7 @@
             var rv = true;
             if (v.indexOf(";") != -1) { v = v.replace(";", ","); }
             $.each(v.split(","), function(i, e) {
+                e = common.trim(e);
                 if (e.indexOf("<") != -1 && e.indexOf(">") != -1) { e = e.substring(e.indexOf("<")+1, e.indexOf(">")); }
                 if (!re.test(String(e).toLowerCase())) { 
                     rv = false; 
