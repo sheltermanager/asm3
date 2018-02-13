@@ -1,6 +1,7 @@
 41
 ================
 
+13/02/18 Export animals as CSV should only need EXPORT_REPORT permission
 13/02/18 Document Template table refactoring and fixes #295
 13/02/18 Add maint_db_update cron task
 12/02/18 HTML Template table refactoring and fixes #363

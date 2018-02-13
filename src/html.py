@@ -694,7 +694,7 @@ def menu_structure(l, reports, mailmerges):
             (users.SYSTEM_OPTIONS, "", "", "options", "asm-icon-settings", _("Options", l) ),
             ("", "", "", "--cat", "asm-icon-database", _("Data", l)),
             (users.EXPORT_REPORT, "", "", "report_export", "asm-icon-report", _("Export Reports as CSV", l) ),
-            (users.USE_SQL_INTERFACE, "", "", "csvexport", "asm-icon-animal", _("Export Animals as CSV", l) ),
+            (users.EXPORT_REPORT, "", "", "csvexport", "asm-icon-animal", _("Export Animals as CSV", l) ),
             (users.USE_SQL_INTERFACE, "", "", "csvimport", "asm-icon-database", _("Import a CSV file", l) ),
             (users.USE_SQL_INTERFACE, "", "", "csvimport_paypal", "asm-icon-paypal", _("Import a PayPal CSV file", l) ),
             (users.TRIGGER_BATCH, "", "", "batch", "asm-icon-batch", _("Trigger Batch Processes", l) )
