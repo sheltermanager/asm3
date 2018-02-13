@@ -43,7 +43,8 @@ TABLES = ( "accounts", "accountsrole", "accountstrx", "additional", "additionalf
     "onlineformfield", "onlineformincoming", "owner", "ownercitation", "ownerdonation", "ownerinvestigation", 
     "ownerlicence", "ownerlookingfor", "ownerrota", "ownertraploan", "ownervoucher", "pickuplocation", "publishlog", 
     "reservationstatus", "role", "site", "species", "stocklevel", "stocklocation", "stockusage", "stockusagetype", 
-    "templatehtml", "testtype", "testresult", "transporttype", "traptype", "userrole", "users", "vaccinationtype", "voucher" )
+    "templatehtml", "testtype", "testresult", "transporttype", "traptype", "userrole", "users", 
+    "vaccinationtype", "voucher" )
 
 # ASM2_COMPATIBILITY This is used for dumping tables in ASM2/HSQLDB format. 
 # These are the tables present in ASM2. users is not included due to the
@@ -4742,9 +4743,11 @@ def update_34101(dbo):
     pass
 
 def update_34102(dbo):
-    # smcom only update: Switch from file to s3 storage
+    # TODO: Inactive
     if smcom.active():
-        # Reapply 34015 as it was botched on some databases
+        # sheltermanager.com only: calculate media file sizes for existing databases
+        # ===
+        # Reapply update 34015 where necessary as it was botched on some smcom databases
         dbo.execute_dbupdate("UPDATE media SET DBFSID = (SELECT MAX(ID) FROM dbfs WHERE Name LIKE media.MediaName) WHERE DBFSID Is Null OR DBFSID = 0")
         dbo.execute_dbupdate("UPDATE media SET DBFSID = 0 WHERE DBFSID Is Null")
         # Remove any _scaled component of names from both media and dbfs
@@ -4761,6 +4764,10 @@ def update_34102(dbo):
             except:
                 pass # Ignore attempts to read non-existent files
         dbo.execute_many("UPDATE media SET MediaSize = ? WHERE ID = ?", batch, override_lock=True) 
-        # Switch the existing dbfs records to look at s3 instead of the file system
+
+def update_34103(dbo):
+    # TODO: Inactive
+    if smcom.active():
+        # sheltermanager.com only: Final switch over to access old media from S3 instead of filesystem
         dbo.execute_dbupdate("UPDATE dbfs SET url = replace(url, 'file:', 's3:') where url like 'file:%'")
 

@@ -1,6 +1,7 @@
 41
 ================
 
+13/02/18 Add maint_db_update cron task
 12/02/18 HTML Template table refactoring and fixes #363
 12/02/18 Show "real" receipt number after adding payment instead of ID
 12/02/18 Add email address validation and sending feedback #352

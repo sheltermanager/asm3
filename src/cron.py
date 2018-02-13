@@ -272,6 +272,29 @@ def maint_db_delete_orphaned_media(dbo):
         em = str(sys.exc_info()[0])
         al.error("FAIL: uncaught error running maint_db_delete_orphaned_media: %s" % em, "cron.maint_db_delete_orphaned_media", dbo, sys.exc_info())
 
+def maint_db_update(dbo):
+    """
+    Check and run any outstanding database updates
+    """
+    try:
+        # This should never be run at a time when users may be
+        # using the system, remove any database update locks as any
+        # lock at this time should be erroneous
+        configuration.db_unlock(dbo)
+
+        # Check to see if any updates need performing on this database
+        if dbupdate.check_for_updates(dbo):
+            ttask(dbupdate.perform_updates, dbo)
+
+        if dbupdate.check_for_view_seq_changes(dbo):
+            ttask(dbupdate.install_db_views, dbo)
+            ttask(dbupdate.install_db_sequences, dbo)
+            ttask(dbupdate.install_db_stored_procedures, dbo)
+
+    except:
+        em = str(sys.exc_info()[0])
+        al.error("FAIL: running db updates: %s" % em, "cron.maint_db_update", dbo, sys.exc_info())
+
 def maint_deduplicate_people(dbo):
     try:
         person.merge_duplicate_people(dbo, "cron")
@@ -374,6 +397,8 @@ def run(dbo, mode):
         maint_db_reinstall(dbo)
     elif mode == "maint_db_reset":
         maint_db_reset(dbo)
+    elif mode == "maint_db_update":
+        maint_db_update(dbo)
     elif mode == "maint_db_delete_orphaned_media":
         maint_db_delete_orphaned_media(dbo)
     elif mode == "maint_deduplicate_people":
@@ -448,6 +473,7 @@ def print_usage():
     print("       maint_db_reinstall - wipe the db and reinstall default data")
     print("       maint_db_reset - wipe the db of all but lookup data")
     print("       maint_db_delete_orphaned_media - delete all entries from the dbfs not in media")
+    print("       maint_db_update - run any outstanding database updates")
     print("       maint_deduplicate_people - automatically merge duplicate people records")
     print("       maint_recode_all - regenerate all animal codes")
     print("       maint_recode_shelter - regenerate animals codes for all shelter animals")
