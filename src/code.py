@@ -4821,10 +4821,6 @@ class sql_dump(GeneratorEndpoint):
             al.info("%s executed SQL database dump (base64/media)" % str(session.user), "code.sql", dbo)
             self.header("Content-Disposition", "attachment; filename=\"media.sql\"")
             for x in dbupdate.dump_dbfs_base64(dbo): yield x
-        elif mode == "dumpsqlnomedia":
-            al.info("%s executed SQL database dump (without media)" % str(session.user), "code.sql", dbo)
-            self.header("Content-Disposition", "attachment; filename=\"dump.sql\"")
-            for x in dbupdate.dump(dbo, includeDBFS = False): yield x
         if mode == "dumpddlmysql":
             al.info("%s executed DDL dump MySQL" % str(session.user), "code.sql", dbo)
             self.header("Content-Disposition", "attachment; filename=\"ddl_mysql.sql\"")

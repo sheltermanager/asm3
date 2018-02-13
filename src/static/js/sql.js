@@ -29,7 +29,6 @@ $(function() {
                         // ASM2_COMPATIBILITY
                         "dumpsqlasm2|" + _("SQL dump (ASM2 HSQLDB Format)"),
                         // ASM2_COMPATIBILITY
-                        "dumpsqlmedia|" + _("SQL dump (media)"), 
                         "animalcsv|" + _("CSV of animal/adopter data"), 
                         "personcsv|" + _("CSV of person data"),
                         "incidentcsv|" + _("CSV of incident data"),
