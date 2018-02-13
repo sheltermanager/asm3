@@ -1437,7 +1437,7 @@ def template_selection(templates, url):
         if t["PATH"] != lastpath:
             s += "<li class=\"asm-menu-category\">%s</li>" % ( t["PATH"] )
             lastpath = t["PATH"]
-        s += "<li class=\"asm-menu-item\"><a target=\"_blank\" class=\"templatelink\" data=\"%d\" href=\"%s&template=%s\">%s</a></li>" % (t["ID"], url, t["ID"], t["NAME"])
+        s += "<li class=\"asm-menu-item\"><a target=\"_blank\" class=\"templatelink\" data=\"%d\" href=\"%s&dtid=%s\">%s</a></li>" % (t["ID"], url, t["ID"], t["NAME"])
     return s
 
 def timeline_rss(dbo, limit = 500):
