@@ -90,7 +90,7 @@ AND (DeceasedDate Is Null OR DeceasedDate > '$@to$')) AS JuniorCatEnding,
 
 (SELECT COUNT(*) FROM animal
 INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
-WHERE ReasonName LIKE '%Stray%'
+WHERE ReasonName LIKE '%Stray%' AND IsTransfer = 0
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID = 1
 AND DateOfBirth < DateBroughtIn - INTERVAL '5 months' 
