@@ -477,7 +477,7 @@ def create_document_media(dbo, username, linktype, linkid, template, content):
     sql = db.make_insert_sql("media", (
         ( "ID", db.di(mediaid) ),
         ( "DBFSID", db.di(dbfsid) ),
-        ( "MediaSize", db.di(0) ),
+        ( "MediaSize", db.di(len(content)) ),
         ( "MediaName", db.ds("%d.html" % mediaid) ),
         ( "MediaMimeType", db.ds("text/html")),
         ( "MediaType", db.di(0)),
@@ -539,7 +539,7 @@ def update_file_content(dbo, username, mid, content):
     Updates the dbfs content for the file pointed to by id
     """
     dbfs.replace_string(dbo, content, get_name_for_id(dbo, mid))
-    db.execute(dbo, "UPDATE media SET Date = %s WHERE ID = %d" % ( db.ddt(i18n.now(dbo.timezone)), int(mid) ))
+    db.execute(dbo, "UPDATE media SET Date = %s, MediaSize = %s WHERE ID = %d" % ( db.ddt(i18n.now(dbo.timezone)), len(content), int(mid) ))
     audit.edit(dbo, username, "media", mid, str(mid) + " changed file contents")
 
 def update_media_notes(dbo, username, mid, notes):
@@ -599,7 +599,7 @@ def rotate_media(dbo, username, mid, clockwise = True):
     # Store it back in the dbfs and add an entry to the audit trail
     dbfs.put_string(dbo, mn, path, imagedata)
     # Update the date stamp on the media record
-    db.execute(dbo, "UPDATE media SET Date = %s WHERE ID = %d" % (db.ddt(i18n.now(dbo.timezone)), mid))
+    db.execute(dbo, "UPDATE media SET Date = %s, MediaSize = %s WHERE ID = %d" % (db.ddt(i18n.now(dbo.timezone)), len(imagedata), mid))
     audit.edit(dbo, username, "media", mid, "media id %d rotated, clockwise=%s" % (mid, str(clockwise)))
 
 def scale_image(imagedata, resizespec):
