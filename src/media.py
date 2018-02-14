@@ -162,11 +162,15 @@ def get_image_file_data(dbo, mode, iid, seq = 0, justdate = False):
         else:
             return (NOPIC_DATE, "NOPIC")
     def mrec(mm):
+        if len(mm) == 0:
+            return nopic()
         if justdate:
             return mm[0]["DATE"]
         else:
             return (mm[0]["DATE"], dbfs.get_string(dbo, mm[0]["MEDIANAME"]))
     def thumb_mrec(mm):
+        if len(mm) == 0:
+            return thumb_nopic()
         if justdate:
             return mm[0]["DATE"]
         else:
@@ -174,60 +178,42 @@ def get_image_file_data(dbo, mode, iid, seq = 0, justdate = False):
 
     if mode == "animal":
         if seq == 0:
-            mm = get_web_preferred(dbo, ANIMAL, int(iid))
-            if len(mm) == 0:
-                return nopic()
-            else:
-                return mrec(mm)
+            return mrec( get_web_preferred(dbo, ANIMAL, int(iid)) )
         else:
-            tseq = get_total_seq(dbo, ANIMAL, int(iid))
-            if seq > tseq:
-                return nopic()
-            else:
-                mm = get_media_by_seq(dbo, ANIMAL, int(iid), seq)
-                return mrec(mm)
+            return mrec( get_media_by_seq(dbo, ANIMAL, int(iid), seq) )
+
     elif mode == "person":
         if seq == 0:
-            mm = get_web_preferred(dbo, PERSON, int(iid))
-            if len(mm) == 0:
-                return nopic()
-            else:
-                return mrec(mm)
+            return mrec( get_web_preferred(dbo, PERSON, int(iid)) )
         else:
-            tseq = get_total_seq(dbo, PERSON, int(iid))
-            if seq > tseq:
-                return nopic()
-            else:
-                mm = get_media_by_seq(dbo, PERSON, int(iid), seq)
-                return mrec(mm)
+            return mrec( get_media_by_seq(dbo, PERSON, int(iid), seq) )
+
     elif mode == "animalthumb":
-        mm = get_web_preferred(dbo, ANIMAL, int(iid))
-        if len(mm) == 0:
-            return thumb_nopic()
-        else:
-            return thumb_mrec(mm)
+        return thumb_mrec( get_web_preferred(dbo, ANIMAL, int(iid)) )
+
     elif mode == "personthumb":
-        mm = get_web_preferred(dbo, PERSON, int(iid))
-        if len(mm) == 0:
-            return thumb_nopic()
-        else:
-            return thumb_mrec(mm)
+        return thumb_mrec( get_web_preferred(dbo, PERSON, int(iid)) )
+
     elif mode == "media":
-        mm = get_media_by_id(dbo, int(iid))
-        if len(mm) == 0:
-            return nopic()
-        else:
-            return mrec(mm)
+        return mrec( get_media_by_id(dbo, int(iid)) )
+
     elif mode == "dbfs":
         if justdate:
-            return datetime.datetime.today()
+            return dbo.now()
         else:
             if str(iid).startswith("/"):
                 # Complete path was given
-                return (datetime.datetime.today(), dbfs.get_string_filepath(dbo, str(iid)))
+                return (dbo.now(), dbfs.get_string_filepath(dbo, str(iid)))
             else:
                 # Only name was given
-                return (datetime.datetime.today(), dbfs.get_string(dbo, str(iid)))
+                return (dbo.now(), dbfs.get_string(dbo, str(iid)))
+
+    elif mode == "nopic":
+        if dbfs.file_exists(dbo, "nopic.jpg"):
+            return (dbo.now(), dbfs.get_string_filepath(dbo, "/reports/nopic.jpg"))
+        else:
+            return (dbo.now(), utils.read_binary_file(dbo.installpath + "media/reports/nopic.jpg"))
+
     else:
         return nopic()
 

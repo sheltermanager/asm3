@@ -2379,13 +2379,10 @@ def install_default_templates(dbo, removeFirst = False):
         add_html_template(name, head, body, foot, 0)
     path = dbo.installpath
     if removeFirst:
-        al.info("removing default templates from dbfs, templatehtml and templatedocument", "dbupdate.install_default_templates", dbo)
-        dbo.execute_dbupdate("DELETE FROM dbfs WHERE Path Like '/internet%' OR Path Like '/report%' OR Path Like '/template%'")
+        al.info("removing default templates from templatehtml and templatedocument", "dbupdate.install_default_templates", dbo)
         dbo.execute_dbupdate("DELETE FROM templatedocument")
         dbo.execute_dbupdate("DELETE FROM templatehtml")
     al.info("creating default templates", "dbupdate.install_default_templates", dbo)
-    dbfs.create_path(dbo, "/", "reports")
-    dbfs.put_file(dbo, "nopic.jpg", "/reports", path + "media/reports/nopic.jpg")
     add_html_template_from_files("animalview")
     add_html_template_from_files("littlebox")
     add_html_template_from_files("responsive")

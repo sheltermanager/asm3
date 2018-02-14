@@ -391,7 +391,7 @@ class image(ASMEndpoint):
         else:
             self.header("Content-Type", "image/jpeg")
             self.header("Cache-Control", "no-cache")
-            self.redirect("image?db=%s&mode=dbfs&id=/reports/nopic.jpg" % o.dbo.database)
+            self.redirect("image?db=%s&mode=nopic" % o.dbo.database)
 
 class rollupjs(ASMEndpoint):
     url = "rollup.js"
@@ -4533,7 +4533,7 @@ class report_images(JSONEndpoint):
 
     def post_delete(self, o):
         for i in o.post["ids"].split(","):
-            if i != "" and not i.endswith("nopic.jpg"): dbfs.delete_filepath(o.dbo, "/reports/" + i)
+            if i != "": dbfs.delete_filepath(o.dbo, "/reports/" + i)
         self.reload_config()
 
     def post_rename(self, o):

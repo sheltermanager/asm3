@@ -2075,7 +2075,7 @@
          */
         img_src: function(row, mode) {
             if (!row.WEBSITEMEDIANAME) {
-                return "image?db=" + asm.useraccount + "&mode=dbfs&id=/reports/nopic.jpg";
+                return "image?db=" + asm.useraccount + "&mode=nopic";
             }
             var idval = 0, uri = "";
             if (mode == "animal") {
@@ -2115,7 +2115,7 @@
          */
         thumbnail_src: function(row, mode) {
             if (!row.WEBSITEMEDIANAME) {
-                return "image?db=" + asm.useraccount + "&mode=dbfs&id=/reports/nopic.jpg";
+                return "image?db=" + asm.useraccount + "&mode=nopic";
             }
             var idval = 0, uri = "";
             if (mode == "animalthumb") {
