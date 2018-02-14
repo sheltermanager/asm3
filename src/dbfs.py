@@ -133,7 +133,6 @@ class FileStorage(DBFSStorage):
 class S3Storage(DBFSStorage):
     """ Storage class for putting media in Amazon S3 """
     dbo = None
-    CACHE_TTL = 172800 # Read/write through cache, keep everything for 48 hours
     s3mutex = Lock() # Objects assigned to class member vars in Python copy the same reference to all instance objects, making this effectively a global.
     
     def __init__(self, dbo):
@@ -142,6 +141,11 @@ class S3Storage(DBFSStorage):
     def _cache_key(self, url):
         """ Calculates a cache key for url """
         return "%s:%s" % (self.dbo.database, url)
+
+    def _cache_ttl(self, name):
+        """ Gets the cache ttl for a file based on its name/extension """
+        if name.endswith("jpg"): return 86400 * 7 # Cache images for one week
+        return 86400 * 2 # Cache everything else for two days
 
     def _s3cmd(self, cmd, params):
         """ Executes an S3 command with awscli. Uses the global mutex above to limit active calls to one per application instance """
@@ -167,7 +171,7 @@ class S3Storage(DBFSStorage):
         if returncode == 0:
             s = utils.read_binary_file(localpath)
             os.unlink(localpath)
-            cachedisk.put(cachekey, s, self.CACHE_TTL)
+            cachedisk.put(cachekey, s, self._cache_ttl(name))
             return s
         raise DBFSError("Failed retrieving from S3: %s %s" % (returncode, output))
 
@@ -182,7 +186,7 @@ class S3Storage(DBFSStorage):
         returncode, output = self._s3cmd("cp", [localpath, remotepath])
         os.unlink(localpath)
         if returncode == 0:
-            cachedisk.put(self._cache_key(url), filedata, self.CACHE_TTL)
+            cachedisk.put(self._cache_key(url), filedata, self._cache_ttl(filename))
             self.dbo.execute("UPDATE dbfs SET URL = ?, Content = '' WHERE ID = ?", (url, dbfsid))
             return url
         raise DBFSError("Failed storing in S3: %s %s" % (returncode, output))
