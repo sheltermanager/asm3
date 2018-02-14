@@ -98,7 +98,7 @@ AND NonShelterAnimal = 0) AS AdultDogStray,
 
 (SELECT COUNT(*) FROM animal 
 INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
-WHERE ReasonName LIKE '%Stray%'
+WHERE ReasonName LIKE '%Stray%' AND IsTransfer = 0
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID = 1
 AND DateOfBirth >= DateBroughtIn - INTERVAL '5 months' 
@@ -106,7 +106,7 @@ AND NonShelterAnimal = 0) AS JuniorDogStray,
 
 (SELECT COUNT(*) FROM animal
 INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
-WHERE ReasonName LIKE '%Stray%'
+WHERE ReasonName LIKE '%Stray%' AND IsTransfer = 0
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID = 2
 AND DateOfBirth < DateBroughtIn - INTERVAL '5 months' 
@@ -114,7 +114,7 @@ AND NonShelterAnimal = 0) AS AdultCatStray,
 
 (SELECT COUNT(*) FROM animal 
 INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
-WHERE ReasonName LIKE '%Stray%'
+WHERE ReasonName LIKE '%Stray%' AND IsTransfer = 0
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID = 2
 AND DateOfBirth >= DateBroughtIn - INTERVAL '5 months' 
@@ -157,7 +157,7 @@ AND NonShelterAnimal = 0) AS JuniorCatTransferIn,
 
 (SELECT COUNT(*) FROM animal
 INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
-WHERE OriginalOwnerID > 0
+WHERE OriginalOwnerID > 0 AND IsTransfer = 0
 AND AsilomarOwnerRequestedEuthanasia = 1
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID = 1
@@ -166,7 +166,7 @@ AND NonShelterAnimal = 0) AS AdultDogRequestedEuth,
 
 (SELECT COUNT(*) FROM animal 
 INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
-WHERE OriginalOwnerID > 0
+WHERE OriginalOwnerID > 0 AND IsTransfer = 0
 AND AsilomarOwnerRequestedEuthanasia = 1
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID = 1
@@ -175,7 +175,7 @@ AND NonShelterAnimal = 0) AS JuniorDogRequestedEuth,
 
 (SELECT COUNT(*) FROM animal
 INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
-WHERE OriginalOwnerID > 0
+WHERE OriginalOwnerID > 0 AND IsTransfer = 0
 AND AsilomarOwnerRequestedEuthanasia = 1
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID = 2
@@ -184,7 +184,7 @@ AND NonShelterAnimal = 0) AS AdultCatRequestedEuth,
 
 (SELECT COUNT(*) FROM animal 
 INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
-WHERE OriginalOwnerID > 0
+WHERE OriginalOwnerID > 0 AND IsTransfer = 0
 AND AsilomarOwnerRequestedEuthanasia = 1
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID = 2
