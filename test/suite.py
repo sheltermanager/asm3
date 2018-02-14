@@ -94,6 +94,10 @@ import test_stock
 suitestock = unittest.makeSuite(test_stock.TestStock, 'test')
 fullsuite.append(suitestock)
 
+import test_template
+suitetemplate = unittest.makeSuite(test_template.TestTemplate, 'test')
+fullsuite.append(suitetemplate)
+
 import test_users
 suiteusers = unittest.makeSuite(test_users.TestUsers, 'test')
 fullsuite.append(suiteusers)

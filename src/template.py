@@ -25,17 +25,19 @@ def get_html_template_names(dbo):
 def update_html_template(dbo, username, name, head, body, foot, builtin = False):
     """ Creates/updates an HTML publishing template """
     dbo.execute("DELETE FROM templatehtml WHERE Name = ?", [name])
-    dbo.insert("templatehtml", {
+    htid = dbo.insert("templatehtml", {
         "Name":     name,
         "*Header":  head,
         "*Body":    body,
         "*Footer":  foot,
         "IsBuiltIn": builtin and 1 or 0
     })
+    audit.create(dbo, username, "templatehtml", htid, "id: %d, name: %s" % (htid, name))
 
 def delete_html_template(dbo, username, name):
     """ Get an html template by name """
     dbo.execute("DELETE FROM templatehtml WHERE Name = ?", [name])
+    audit.delete(dbo, username, "templatehtml", 0, "delete template %s" % name)
 
 def get_document_templates(dbo):
     """ Returns all document template info """

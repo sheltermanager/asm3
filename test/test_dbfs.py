@@ -8,6 +8,12 @@ import dbfs
 
 class TestDBFS(unittest.TestCase):
 
+    def setUp(self):
+        dbfs.put_string_filepath(base.get_dbo(), "/reports/nopic.jpg", "fake_jpg_image_data")
+
+    def tearDown(self):
+        dbfs.delete_filepath(base.get_dbo(), "/reports/nopic.jpg")
+
     def test_create_path(self):
         dbfs.create_path(base.get_dbo(), "/", "test")
         dbfs.delete_path(base.get_dbo(), "test")
@@ -27,42 +33,27 @@ class TestDBFS(unittest.TestCase):
         dbfs.delete_filepath(base.get_dbo(), "/reports/test.txt")
 
     def test_file_exists(self):
-        assert dbfs.file_exists(base.get_dbo(), "nopic.jpg")
+        content = "123test"
+        dbfs.put_string_filepath(base.get_dbo(), "/reports/test.txt", content)
+        assert dbfs.file_exists(base.get_dbo(), "test.txt")
 
     def test_list_contents(self):
         assert len(dbfs.list_contents(base.get_dbo(), "/reports")) > 0
 
-    def test_get_nopic(self):
-        assert len(dbfs.get_nopic(base.get_dbo())) > 0
-
-    def test_get_document_templates(self):
-        assert len(dbfs.get_document_templates(base.get_dbo())) > 0
-
-    def test_get_html_document_templates(self):
-        assert len(dbfs.get_html_document_templates(base.get_dbo())) > 0
-
-    def test_get_odt_document_templates(self):
-        dbfs.get_html_publisher_templates(base.get_dbo())
-
-    def test_get_html_publisher_templates_files(self):
-        assert len(dbfs.get_html_publisher_templates_files(base.get_dbo())) > 0
-
-    def test_update_html_publisher_template(self):
-        dbfs.update_html_publisher_template(base.get_dbo(), "test", "test", "HEADER", "BODY", "FOOTER")
-        assert "test" in dbfs.get_html_publisher_templates(base.get_dbo())
-        dbfs.delete_html_publisher_template(base.get_dbo(), "test", "test")
-
-    def test_create_html_template(self):
-        dbfsid = dbfs.create_document_template(base.get_dbo(), "test", "test", ".html", "<p>TEST</p>")
-        assert "test.html" == dbfs.get_name_for_id(base.get_dbo(), dbfsid)
-        dbfsid2 = dbfs.clone_document_template(base.get_dbo(), "test", dbfsid, "test2")
-        assert "test2.html" == dbfs.get_name_for_id(base.get_dbo(), dbfsid2)
-        dbfs.delete_id(base.get_dbo(), dbfsid)
-        dbfs.delete_id(base.get_dbo(), dbfsid2)
-
     def test_get_document_repository(self):
         dbfs.get_document_repository(base.get_dbo())
 
+    def test_upload_document_repository(self):
+        dbfs.upload_document_repository(base.get_dbo(), "", "testdr.txt", "content")
+        assert dbfs.get_string_filepath(base.get_dbo(), "/document_repository/testdr.txt") == "content"
+
     def test_get_report_images(self):
         assert len(dbfs.get_report_images(base.get_dbo())) > 0
+
+    def test_delete_orphaned_media(self):
+        dbfs.delete_orphaned_media(base.get_dbo())
+
+    def test_switch_storage(self):
+        dbfs.switch_storage(base.get_dbo())
+
 

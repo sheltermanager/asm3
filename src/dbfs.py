@@ -431,12 +431,6 @@ def list_contents(dbo, path):
 
 # End of storage primitives -- everything past here calls functions above
 
-def get_nopic(dbo):
-    """
-    Returns the nopic jpeg file
-    """
-    return get_string(dbo, "nopic.jpg", "/reports")
-
 def sanitise_path(path):
     """ Strips disallowed chars from new paths """
     disallowed = (" ", "|", ",", "!", "\"", "'", "$", "%", "^", "*",
@@ -503,12 +497,6 @@ def upload_document_repository(dbo, path, filename, filedata):
         path = sanitise_path(path)
         filepath = "/document_repository/%s/%s" % (path, filename)
     put_string_filepath(dbo, filepath, filedata)
-
-def has_nopic(dbo):
-    """
-    Returns True if the database has a nopic.jpg file
-    """
-    return get_nopic(dbo) != ""
 
 def delete_orphaned_media(dbo):
     """
