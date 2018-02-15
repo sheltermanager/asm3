@@ -418,7 +418,7 @@ $(function() {
                 // continues on to open the link in a new window
                 var template_name = $(this).attr("data");
                 var ids = tableform.table_ids(donations.table);
-                $(this).prop("href", "document_gen?linktype=DONATION&id=" + ids + "&template=" + template_name);
+                $(this).prop("href", "document_gen?linktype=DONATION&id=" + ids + "&dtid=" + template_name);
             });
         },
 
