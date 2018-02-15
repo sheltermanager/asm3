@@ -1,6 +1,7 @@
 41
 ================
 
+15/02/18 Fix permissions around generating/saving document templates
 14/02/18 Do not require nopic.jpg in DBFS, fall back to static file #365
 13/02/18 Export animals as CSV should only need EXPORT_REPORT permission
 13/02/18 Document Template table refactoring and fixes #295

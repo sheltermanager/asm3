@@ -21,7 +21,7 @@ $(function() {
                 rows: controller.rows,
                 idcolumn: "ID",
                 edit: function(row) {
-                    common.route("document_edit?dtid=" + row.ID);
+                    common.route("document_template_edit?dtid=" + row.ID);
                 },
                 columns: [
                     { field: "NAME", display: _("Template") },
@@ -37,7 +37,7 @@ $(function() {
                                  return tableform.fields_post(dialog.fields, "mode=create", "document_templates");
                              })
                              .then(function(response) {
-                                 common.route("document_edit?dtid=" + response);
+                                 common.route("document_template_edit?dtid=" + response);
                              });
                      } 
                  },
@@ -57,7 +57,7 @@ $(function() {
                                  return tableform.fields_post(dialog.fields, "mode=clone&ids=" + ids , "document_templates");
                              })
                              .then(function(response) {
-                                 common.route("document_edit?dtid=" + response);
+                                 common.route("document_template_edit?dtid=" + response);
                              });
                      } 
                  },

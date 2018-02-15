@@ -2047,7 +2047,6 @@ class diarytasks(JSONEndpoint):
 class document_gen(ASMEndpoint):
     url = "document_gen"
     get_permissions = users.GENERATE_DOCUMENTS
-    post_permissions = users.GENERATE_DOCUMENTS
 
     def content(self, o):
         dbo = o.dbo
@@ -2096,6 +2095,7 @@ class document_gen(ASMEndpoint):
             return content
 
     def post_save(self, o):
+        self.check(users.ADD_MEDIA)
         dbo = o.dbo
         post = o.post
         linktype = post["linktype"]
@@ -2144,6 +2144,7 @@ class document_gen(ASMEndpoint):
             raise utils.ASMValidationError("Linktype '%s' is invalid, cannot save" % linktype)
 
     def post_pdf(self, o):
+        self.check(users.VIEW_MEDIA)
         dbo = o.dbo
         post = o.post
         disposition = configuration.pdf_inline(dbo) and "inline; filename=\"doc.pdf\"" or "attachment; filename=\"doc.pdf\""
@@ -2152,15 +2153,16 @@ class document_gen(ASMEndpoint):
         return utils.html_to_pdf(post["document"], BASE_URL, MULTIPLE_DATABASES and dbo.database or "")
 
     def post_print(self, o):
+        self.check(users.VIEW_MEDIA)
         l = o.locale
         post = o.post
         self.header("Content-Type", "text/html")
         return "%s%s%s" % (html.tinymce_print_header(_("Print Preview", l)), post["document"], "</body></html>")
 
-class document_edit(ASMEndpoint):
-    url = "document_edit"
-    get_permissions = users.GENERATE_DOCUMENTS
-    post_permissions = users.GENERATE_DOCUMENTS
+class document_template_edit(ASMEndpoint):
+    url = "document_template_edit"
+    get_permissions = users.MODIFY_DOCUMENT_TEMPLATES
+    post_permissions = users.MODIFY_DOCUMENT_TEMPLATES
 
     def content(self, o):
         dbo = o.dbo
@@ -2169,13 +2171,13 @@ class document_edit(ASMEndpoint):
         templatename = template.get_document_template_name(dbo, dtid)
         if templatename == "": self.notfound()
         title = templatename
-        al.debug("editing %s" % templatename, "code.document_edit", dbo)
+        al.debug("editing %s" % templatename, "code.document_template_edit", dbo)
         if templatename.endswith(".html"):
             content = utils.escape_tinymce(template.get_document_template_content(dbo, dtid))
             self.header("Content-Type", "text/html")
             self.header("Cache-Control", "no-cache")
             return html.tinymce_header(title, "document_edit.js", jswindowprint=configuration.js_window_print(dbo)) + \
-                html.tinymce_main(dbo.locale, "document_edit", dtid=dtid, content=content)
+                html.tinymce_main(dbo.locale, "document_template_edit", dtid=dtid, content=content)
         elif templatename.endswith(".odt"):
             content = template.get_document_template_content(dbo, dtid)
             self.header("Content-Type", "application/vnd.oasis.opendocument.text")
@@ -2206,7 +2208,6 @@ class document_edit(ASMEndpoint):
 class document_media_edit(ASMEndpoint):
     url = "document_media_edit"
     get_permissions = users.VIEW_MEDIA
-    post_permissions = users.CHANGE_MEDIA
 
     def content(self, o):
         dbo = o.dbo
@@ -2221,11 +2222,13 @@ class document_media_edit(ASMEndpoint):
                 content=utils.escape_tinymce(filedata))
 
     def post_save(self, o):
+        self.check(users.CHANGE_MEDIA)
         post = o.post
         extmedia.update_file_content(o.dbo, o.user, post.integer("mediaid"), post["document"])
         raise self.redirect(post["redirecturl"])
 
     def post_pdf(self, o):
+        self.check(users.VIEW_MEDIA)
         dbo = o.dbo
         disposition = configuration.pdf_inline(dbo) and "inline; filename=\"doc.pdf\"" or "attachment; filename=\"doc.pdf\""
         self.header("Content-Type", "application/pdf")
@@ -2233,6 +2236,7 @@ class document_media_edit(ASMEndpoint):
         return utils.html_to_pdf(o.post["document"], BASE_URL, MULTIPLE_DATABASES and dbo.database or "")
 
     def post_print(self, o):
+        self.check(users.VIEW_MEDIA)
         l = o.locale
         self.header("Content-Type", "text/html")
         return "%s%s%s" % (html.tinymce_print_header(_("Print Preview", l)), o.post["document"], "</body></html>")
