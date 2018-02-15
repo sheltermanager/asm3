@@ -6,6 +6,7 @@ import cachedisk
 import mimetypes
 import os, sys
 import smcom
+import time
 import utils
 import web
 from threading import Lock
@@ -150,11 +151,13 @@ class S3Storage(DBFSStorage):
     def _s3cmd(self, cmd, params):
         """ Executes an S3 command with awscli. Uses the global mutex above to limit active calls to one per application instance """
         cmd = "aws s3 %s %s" % (cmd, " ".join(params))
+        t = time.time()
         with self.s3mutex:
             returncode, output = utils.cmd(cmd)
-            rv = "%s, %s" % (returncode, output)
+            t = time.time() - t
+            rv = "%s %0.2f sec, %s" % (returncode, t, output)
             if returncode == 0: 
-                rv = "0 OK"
+                rv = "0 %0.2f sec OK" % t
             al.debug("s3cmd: %s (%s)" % (cmd, rv), "S3Storage._s3cmd", self.dbo)
             return (returncode, output)
 
