@@ -91,7 +91,6 @@ def put(key, value, ttl):
         except:
             pass
 
-
 def remove_expired():
     """
     Runs through the cache and deletes any files that have expired.
@@ -99,6 +98,7 @@ def remove_expired():
     extract the expires value.
     If the Python pickle format ever changes, this might mess us up.
     """
+    if DISK_CACHE == "": return
     for fname in os.listdir(DISK_CACHE):
         if fname.startswith("."): continue
         fpath = "%s/%s" % (DISK_CACHE, fname)
@@ -110,8 +110,9 @@ def remove_expired():
         if sp == -1: 
             # If we didn't find it, remove the file anyway - we don't know what this is
             os.unlink(fpath)
-        ep = chunk.find("\n", sp)
-        expires = float(chunk[sp+1:ep])
-        if time.time() > expires:
-            os.unlink(fpath)
+        else:
+            ep = chunk.find("\n", sp)
+            expires = float(chunk[sp+1:ep])
+            if time.time() > expires:
+                os.unlink(fpath)
 

@@ -8,6 +8,7 @@ sys.path.append(os.getcwd())
 import al
 import audit
 import animal
+import cachedisk
 import configuration
 import db
 import dbfs
@@ -302,6 +303,13 @@ def maint_deduplicate_people(dbo):
         em = str(sys.exc_info()[0])
         al.error("FAIL: uncaught error running maint_deduplicate_people: %s" % em, "cron.maint_deduplicate_people", dbo, sys.exc_info())
 
+def maint_disk_cache(dbo):
+    try:
+        cachedisk.remove_expired()
+    except:
+        em = str(sys.exc_info()[0])
+        al.error("FAIL: uncaught error running remove_expired: %s" % em, "cron.maint_disk_cache", dbo, sys.exc_info())
+
 def maint_scale_animal_images(dbo):
     try:
         media.scale_all_animal_images(dbo)
@@ -403,6 +411,9 @@ def run(dbo, mode):
         maint_db_delete_orphaned_media(dbo)
     elif mode == "maint_deduplicate_people":
         maint_deduplicate_people(dbo)
+    elif mode == "maint_disk_cache":
+        maint_disk_cache(dbo)
+
     elapsed = time.time() - x
     al.info("end %s: elapsed %0.2f secs" % (mode, elapsed), "cron.run", dbo)
 
@@ -475,6 +486,7 @@ def print_usage():
     print("       maint_db_delete_orphaned_media - delete all entries from the dbfs not in media")
     print("       maint_db_update - run any outstanding database updates")
     print("       maint_deduplicate_people - automatically merge duplicate people records")
+    print("       maint_disk_cache - remove expired entries from the disk cache")
     print("       maint_recode_all - regenerate all animal codes")
     print("       maint_recode_shelter - regenerate animals codes for all shelter animals")
     print("       maint_reinstall_default_templates - re-adds default document/publishing templates")
