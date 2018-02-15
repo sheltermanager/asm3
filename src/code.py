@@ -386,7 +386,7 @@ class image(ASMEndpoint):
             return ""
         if imagedata != "NOPIC":
             self.header("Content-Type", "image/jpeg")
-            self.header("Cache-Control", "max-age=86400")
+            self.header("Cache-Control", "max-age=604800") # Cache images on the client for 1 week, media.date can invalidate it
             return imagedata
         else:
             self.header("Content-Type", "image/jpeg")
