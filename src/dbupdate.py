@@ -2339,6 +2339,8 @@ def reinstall_default_data(dbo):
             print("DELETE FROM %s" % table)
             dbo.execute_dbupdate("DELETE FROM %s" % table)
     install_default_data(dbo, True)
+    install_default_templates(dbo)
+    install_default_onlineforms(dbo)
 
 def install_default_onlineforms(dbo, removeFirst = False):
     """
