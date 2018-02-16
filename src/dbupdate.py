@@ -2340,12 +2340,16 @@ def reinstall_default_data(dbo):
             dbo.execute_dbupdate("DELETE FROM %s" % table)
     install_default_data(dbo, True)
 
-def install_default_onlineforms(dbo):
+def install_default_onlineforms(dbo, removeFirst = False):
     """
     Installs the default online forms into the database
     """
     path = dbo.installpath + "media/onlineform/"
     al.info("creating default online forms", "dbupdate.install_default_onlineforms", dbo)
+    if removeFirst:
+        al.info("removing existing forms from onlineform, onlineformfield", "dbupdate.install_default_onlineforms", dbo)
+        dbo.execute_dbupdate("DELETE FROM onlineform")
+        dbo.execute_dbupdate("DELETE FROM onlineformfield")
     for o in os.listdir(path):
         if o.endswith(".json"):
             try:
@@ -2379,7 +2383,7 @@ def install_default_templates(dbo, removeFirst = False):
         add_html_template(name, head, body, foot, 0)
     path = dbo.installpath
     if removeFirst:
-        al.info("removing default templates from templatehtml and templatedocument", "dbupdate.install_default_templates", dbo)
+        al.info("removing templates from templatehtml and templatedocument", "dbupdate.install_default_templates", dbo)
         dbo.execute_dbupdate("DELETE FROM templatedocument")
         dbo.execute_dbupdate("DELETE FROM templatehtml")
     al.info("creating default templates", "dbupdate.install_default_templates", dbo)
