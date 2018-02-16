@@ -147,13 +147,6 @@ def publish_html(dbo):
         em = str(sys.exc_info()[0])
         al.error("FAIL: uncaught error running html publisher: %s" % em, "cron.publish_html", dbo, sys.exc_info())
 
-def maint_reinstall_default_templates(dbo):
-    try:
-        dbupdate.install_default_templates(dbo, True)
-    except:
-        em = str(sys.exc_info()[0])
-        al.error("FAIL: uncaught error running maint_reinstall_default_templates: %s" % em, "cron.maint_reinstall_default_templates", dbo, sys.exc_info())
-
 def maint_recode_all(dbo):
     try:
         animal.maintenance_reassign_all_codes(dbo)
@@ -258,6 +251,20 @@ def maint_db_reinstall(dbo):
     except:
         em = str(sys.exc_info()[0])
         al.error("FAIL: uncaught error running maint_db_reinstall: %s" % em, "cron.maint_db_reinstall", dbo, sys.exc_info())
+
+def maint_db_reinstall_default_templates(dbo):
+    try:
+        dbupdate.install_default_templates(dbo, True)
+    except:
+        em = str(sys.exc_info()[0])
+        al.error("FAIL: uncaught error running maint_db_reinstall_default_templates: %s" % em, "cron.maint_db_reinstall_default_templates", dbo, sys.exc_info())
+
+def maint_db_reinstall_default_onlineforms(dbo):
+    try:
+        dbupdate.install_default_onlineforms(dbo, True)
+    except:
+        em = str(sys.exc_info()[0])
+        al.error("FAIL: uncaught error running maint_db_reinstall_default_onlineforms: %s" % em, "cron.maint_db_reinstall_default_onlineforms", dbo, sys.exc_info())
 
 def maint_db_reset(dbo):
     try:
@@ -399,10 +406,12 @@ def run(dbo, mode):
         maint_db_dump_personcsv(dbo)
     elif mode == "maint_db_install":
         maint_db_install(dbo)
-    elif mode == "maint_reinstall_default_templates":
-        maint_reinstall_default_templates(dbo)
     elif mode == "maint_db_reinstall":
         maint_db_reinstall(dbo)
+    elif mode == "maint_db_reinstall_default_onlineforms":
+        maint_db_reinstall_default_onlineforms(dbo)
+    elif mode == "maint_db_reinstall_default_templates":
+        maint_db_reinstall_default_templates(dbo)
     elif mode == "maint_db_reset":
         maint_db_reset(dbo)
     elif mode == "maint_db_update":
@@ -481,7 +490,9 @@ def print_usage():
     print("       maint_db_dump_personcsv - produce a CSV of person data")
     print("       maint_db_dump_smcom - produce an SQL dump for import into sheltermanager.com")
     print("       maint_db_install - install structure/data into a new empty database")
-    print("       maint_db_reinstall - wipe the db and reinstall default data")
+    print("       maint_db_reinstall - wipe the db and reinstall all default data and templates")
+    print("       maint_db_reinstall_default_onlineforms - reloads default online forms")
+    print("       maint_db_reinstall_default_templates - reloads default document/publishing templates")
     print("       maint_db_reset - wipe the db of all but lookup data")
     print("       maint_db_delete_orphaned_media - delete all entries from the dbfs not in media")
     print("       maint_db_update - run any outstanding database updates")
@@ -489,7 +500,6 @@ def print_usage():
     print("       maint_disk_cache - remove expired entries from the disk cache")
     print("       maint_recode_all - regenerate all animal codes")
     print("       maint_recode_shelter - regenerate animals codes for all shelter animals")
-    print("       maint_reinstall_default_templates - re-adds default document/publishing templates")
     print("       maint_scale_animal_images - re-scales all the animal images in the database")
     print("       maint_scale_odts - re-scales all odt files attached to records (remove images)")
     print("       maint_scale_pdfs - re-scales all the PDFs in the database")
