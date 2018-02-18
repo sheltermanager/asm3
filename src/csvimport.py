@@ -514,8 +514,8 @@ def csvimport(dbo, csvdata, encoding = "utf8", createmissinglookups = False, cle
             p["membershipexpires"] = gkd(dbo, row, "PERSONMEMBERSHIPEXPIRY")
             p["matchactive"] = gkbi(row, "PERSONMATCHACTIVE")
             if p["matchactive"] == "1":
-                if "PERSONMATCHADDED" in cols: p["matchadded"] = gkd(row, "PERSONMATCHADDED")
-                if "PERSONMATCHEXPIRES" in cols: p["matchexpires"] = gkd(row, "PERSONMATCHEXPIRES")
+                if "PERSONMATCHADDED" in cols: p["matchadded"] = gkd(dbo, row, "PERSONMATCHADDED")
+                if "PERSONMATCHEXPIRES" in cols: p["matchexpires"] = gkd(dbo, row, "PERSONMATCHEXPIRES")
                 if "PERSONMATCHSEX" in cols: p["matchsex"] = gks(row, "PERSONMATCHSEX").lower().startswith("m") and "1" or "0"
                 if "PERSONMATCHSIZE" in cols: p["matchsize"] = gkl(dbo, row, "PERSONMATCHSIZE", "lksize", "Size", False)
                 if "PERSONMATCHCOLOR" in cols: p["matchcolour"] = gkl(dbo, row, "PERSONMATCHCOLOR", "basecolour", "BaseColour", createmissinglookups)
