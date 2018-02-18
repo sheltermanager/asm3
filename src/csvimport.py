@@ -141,6 +141,7 @@ def gkynu(m, f):
         switch. Returns 2 (unknown) for a blank field
         Input should start with Y/N/U or 0/1/2 """
     if f not in m: return 2
+    if m[f].upper().startswith("A") or m[f] == "-1": return "-1" # (any) for match good with
     if m[f].upper().startswith("Y") or m[f] == "0": return "0"
     if m[f].upper().startswith("N") or m[f] == "1": return "1"
     return "2"
