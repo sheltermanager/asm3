@@ -148,6 +148,13 @@ class S3Storage(DBFSStorage):
         if name.endswith("jpg"): return 86400 * 7 # Cache images for one week
         return 86400 * 2 # Cache everything else for two days
 
+    def _del_file(self, filename):
+        """ Deletes a file, ignoring any exceptions """
+        try:
+            os.unlink(filename)
+        except OSError as err:
+            al.error("Failed deleting '%s': %s" % (filename, err), "S3Storage._del_file", self.dbo)
+
     def _s3cmd(self, cmd, params):
         """ Executes an S3 command with awscli. Uses the global mutex above to limit active calls to one per application instance """
         cmd = "aws s3 %s %s" % (cmd, " ".join(params))
@@ -173,7 +180,7 @@ class S3Storage(DBFSStorage):
         returncode, output = self._s3cmd("cp", [remotepath, localpath])
         if returncode == 0:
             s = utils.read_binary_file(localpath)
-            os.unlink(localpath)
+            self._del_file(localpath)
             cachedisk.put(cachekey, s, self._cache_ttl(name))
             return s
         raise DBFSError("Failed retrieving from S3: %s %s" % (returncode, output))
@@ -187,7 +194,7 @@ class S3Storage(DBFSStorage):
         url = "s3:%s%s" % (dbfsid, extension)
         utils.write_binary_file(localpath, filedata)
         returncode, output = self._s3cmd("cp", [localpath, remotepath])
-        os.unlink(localpath)
+        self._del_file(localpath)
         if returncode == 0:
             cachedisk.put(self._cache_key(url), filedata, self._cache_ttl(filename))
             self.dbo.execute("UPDATE dbfs SET URL = ?, Content = '' WHERE ID = ?", (url, dbfsid))
