@@ -6,7 +6,6 @@ import cachedisk
 import mimetypes
 import os, sys
 import smcom
-import time
 import utils
 import web
 from threading import Lock
@@ -135,8 +134,11 @@ class S3Storage(DBFSStorage):
     """ Storage class for putting media in Amazon S3 """
     dbo = None
     s3mutex = Lock() # Objects assigned to class member vars in Python copy the same reference to all instance objects, making this effectively a global.
+    s3client = None
     
     def __init__(self, dbo):
+        import boto3
+        self.s3client = boto3.client("s3")
         self.dbo = dbo
 
     def _cache_key(self, url):
@@ -148,66 +150,45 @@ class S3Storage(DBFSStorage):
         if name.endswith("jpg"): return 86400 * 7 # Cache images for one week
         return 86400 * 2 # Cache everything else for two days
 
-    def _del_file(self, filename):
-        """ Deletes a file, ignoring any exceptions """
-        try:
-            os.unlink(filename)
-        except OSError as err:
-            al.error("Failed deleting '%s': %s" % (filename, err), "S3Storage._del_file", self.dbo)
-
-    def _s3cmd(self, cmd, params):
-        """ Executes an S3 command with awscli. Uses the global mutex above to limit active calls to one per application instance """
-        cmd = "aws s3 %s %s" % (cmd, " ".join(params))
-        t = time.time()
-        with self.s3mutex:
-            returncode, output = utils.cmd(cmd)
-            t = time.time() - t
-            rv = "%s %0.2f sec, %s" % (returncode, t, output)
-            if returncode == 0: 
-                rv = "0 %0.2f sec OK" % t
-            al.debug("s3cmd: %s (%s)" % (cmd, rv), "S3Storage._s3cmd", self.dbo)
-            return (returncode, output)
-
     def get(self, dbfsid, url):
         """ Returns the file data for url, reads through the disk cache """
         cachekey = self._cache_key(url)
         cachedata = cachedisk.get(cachekey)
         if cachedata is not None:
             return cachedata
-        name = url.replace("s3:", "")
-        remotepath = "s3://%s/%s/%s" % (DBFS_S3_BUCKET, self.dbo.database, name)
-        localpath = "/tmp/%s%s" % (self.dbo.database, name)
-        returncode, output = self._s3cmd("cp", [remotepath, localpath])
-        if returncode == 0:
-            s = utils.read_binary_file(localpath)
-            self._del_file(localpath)
-            cachedisk.put(cachekey, s, self._cache_ttl(name))
-            return s
-        raise DBFSError("Failed retrieving from S3: %s %s" % (returncode, output))
+        object_key = "%s/%s" % (self.dbo.database, url.replace("s3:", ""))
+        try:
+            response = self.s3client.get_object(Bucket=DBFS_S3_BUCKET, Key=object_key)
+            al.debug("GET: %s" % object_key, "S3Storage.get", self.dbo)
+            body = response["Body"].read()
+            cachedisk.put(cachekey, body, self._cache_ttl(object_key))
+            return body
+        except Exception as err:
+            raise DBFSError("Failed retrieving from S3: %s" % err)
 
     def put(self, dbfsid, filename, filedata):
         """ Stores the file data (clearing the Content column) and returns the URL """
-        # S3 does not require folders to be created before upload as they are part of the filename
         extension = self._extension_from_filename(filename)
-        remotepath = "s3://%s/%s/%s%s" % (DBFS_S3_BUCKET, self.dbo.database, dbfsid, extension)
-        localpath = "/tmp/%s%s%s" % (self.dbo.database, dbfsid, extension)
+        object_key = "%s/%s%s" % (self.dbo.database, dbfsid, extension)
         url = "s3:%s%s" % (dbfsid, extension)
-        utils.write_binary_file(localpath, filedata)
-        returncode, output = self._s3cmd("cp", [localpath, remotepath])
-        self._del_file(localpath)
-        if returncode == 0:
+        try:
+            self.s3client.put_object(Bucket=DBFS_S3_BUCKET, Key=object_key, Body=filedata)
+            al.debug("PUT: %s" % object_key, "S3Storage.put", self.dbo)
             cachedisk.put(self._cache_key(url), filedata, self._cache_ttl(filename))
             self.dbo.execute("UPDATE dbfs SET URL = ?, Content = '' WHERE ID = ?", (url, dbfsid))
             return url
-        raise DBFSError("Failed storing in S3: %s %s" % (returncode, output))
+        except Exception as err:
+            raise DBFSError("Failed storing in S3: %s" % err)
 
     def delete(self, url):
         """ Deletes the file data """
-        remotepath = "s3://%s/%s/%s" % (DBFS_S3_BUCKET, self.dbo.database, url.replace("s3:", ""))
-        returncode, output = self._s3cmd("rm", [remotepath])
-        cachedisk.delete(self._cache_key(url))
-        if returncode != 0:
-            raise DBFSError("Failed deleting from S3: %s %s" % (returncode, output))
+        object_key = "%s/%s" % (self.dbo.database, url.replace("s3:", ""))
+        try:
+            self.s3client.delete_object(Bucket=DBFS_S3_BUCKET, Key=object_key)
+            al.debug("DELETE: %s" % object_key, "S3Storage.delete", self.dbo)
+            cachedisk.delete(self._cache_key(url))
+        except Exception as err:
+            raise DBFSError("Failed deleting from S3: %s" % err)
 
     def url_prefix(self):
         return "s3:"
