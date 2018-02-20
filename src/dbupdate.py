@@ -23,7 +23,7 @@ VERSIONS = (
     33907, 33908, 33909, 33911, 33912, 33913, 33914, 33915, 33916, 34000, 34001, 
     34002, 34003, 34004, 34005, 34006, 34007, 34008, 34009, 34010, 34011, 34012,
     34013, 34014, 34015, 34016, 34017, 34018, 34019, 34020, 34021, 34022, 34100,
-    34101, 34102
+    34101, 34102, 34103
 )
 
 LATEST_VERSION = VERSIONS[-1]
@@ -4800,7 +4800,6 @@ def update_34102(dbo):
         dbo.execute_many("UPDATE media SET MediaSize = ? WHERE ID = ?", batch, override_lock=True) 
 
 def update_34103(dbo):
-    # TODO: Inactive
     if smcom.active():
         # sheltermanager.com only: Final switch over to access old media from S3 instead of filesystem
         dbo.execute_dbupdate("UPDATE dbfs SET url = replace(url, 'file:', 's3:') where url like 'file:%'")
