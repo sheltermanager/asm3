@@ -18,7 +18,8 @@ Extra, non-mandatory packages:
 
 * apt-get install imagemagick (for scaling/compressing PDFs to save on storage)
 * apt-get install wkhtmltopdf (for creating PDFs from HTML document templates)
-* apt-get install python-requests python-ndg-httpsclient python-pyasn1 (needed for all HTTPS publishers - PetLink, MeetAPet, VetEnvoy)
+* apt-get install python-requests (needed for all HTTPS publishers - PetLink, MeetAPet, VetEnvoy)
+* apt-get install python-boto3 (needed for Amazon S3 media storage)
 
 Packages necessary for building static checkers, installers and manuals:
 
