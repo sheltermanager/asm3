@@ -78,10 +78,10 @@ def sql_structure(dbo):
     def table(name, fields, includechange = True):
         if includechange:
             cf = (fint("RecordVersion", True),
-                fstr("CreatedBy", True),
-                fdate("CreatedDate", True),
-                fstr("LastChangedBy", True),
-                fdate("LastChangedDate", True))
+                fstr("CreatedBy"),
+                fdate("CreatedDate"),
+                fstr("LastChangedBy"),
+                fdate("LastChangedDate"))
             return "%s;\n" % dbo.ddl_add_table(name, ",".join(fields + cf))
         return "%s;\n" % dbo.ddl_add_table(name, ",".join(fields))
     def index(name, table, fieldlist, unique = False, partial = False):
@@ -527,7 +527,13 @@ def sql_structure(dbo):
         fint("CachedAnimalsLeft"),
         fdate("InvalidDate", True),
         fint("NumberInLitter"),
-        flongstr("Comments") ))
+        flongstr("Comments"),
+        fint("RecordVersion", True),
+        # Created/LastChanged did not exist in ASM2 animallitter so we make them nullable here
+        fstr("CreatedBy", True),
+        fdate("CreatedDate", True),
+        fstr("LastChangedBy", True),
+        fdate("LastChangedDate", True)), False)
 
     sql += table("animallost", (
         fid(),
@@ -575,7 +581,7 @@ def sql_structure(dbo):
         flongstr("FoundFeatures", True),
         fint("FoundBaseColourID", True),
         fdate("FoundDate", True),
-        fint("MatchPoints") ))
+        fint("MatchPoints") ), False)
 
     sql += index("animallostfoundmatch_AnimalLostID", "animallostfoundmatch", "AnimalLostID")
     sql += index("animallostfoundmatch_AnimalFoundID", "animallostfoundmatch", "AnimalFoundID")

@@ -16,6 +16,12 @@ Organisation / Organization
     The shelter's name
 OrganisationAddress / OrganizationAddress
     The shelter's address
+OrganisationTown / OrganizationCity
+    The shelter's town / city
+OrganisationCounty / OrganizationState
+    The shelter's county / province / state
+OrganisationPostcode / OrganizationZipcode
+    The shelter's zip or postal code
 OrganisationTelephone / OrganizationTelephone
     The shelter's telephone number
 Date
