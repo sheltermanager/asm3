@@ -37,13 +37,22 @@ def org_tags(dbo, username):
         sig = utils.nulltostr(u["SIGNATURE"])
     orgname = configuration.organisation(dbo)
     orgaddress = configuration.organisation_address(dbo)
+    orgtown = configuration.organisation_town(dbo)
+    orgcounty = configuration.organisation_county(dbo)
+    orgpostcode = configuration.organisation_postcode(dbo)
     orgtel = configuration.organisation_telephone(dbo)
     tags = {
         "ORGANISATION"          : orgname,
         "ORGANISATIONADDRESS"   : orgaddress,
+        "ORGANISATIONTOWN"      : orgtown,
+        "ORGANISATIONCOUNTY"    : orgcounty,
+        "ORGANISATIONPOSTCODE"  : orgpostcode,
         "ORGANISATIONTELEPHONE" : orgtel,
         "ORGANIZATION"          : orgname,
         "ORGANIZATIONADDRESS"   : orgaddress,
+        "ORGANIZATIONCITY"      : orgtown,
+        "ORGANIZATIONSTATE"     : orgcounty,
+        "ORGANIZATIONZIPCODE"   : orgpostcode,
         "ORGANIZATIONTELEPHONE" : orgtel,
         "DATE"                  : python2display(dbo.locale, now(dbo.timezone)),
         "USERNAME"              : username,
