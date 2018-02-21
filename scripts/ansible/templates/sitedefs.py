@@ -85,7 +85,7 @@ MEMCACHED_SERVER = "127.0.0.1:11211"
 # database - media files are base64 encoded in the dbfs.content db column
 # file - media files are stored in a folder
 # s3 - media files are stored in amazon s3
-DBFS_STORE = "database"
+DBFS_STORE = "{{ asm_sitedefs.dbfs_store }}"
 
 # DBFS_STORE = file: The folder where media files are stored.
 # It must exist and ASM must have write permissions. It should never end with a /
