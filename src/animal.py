@@ -1864,7 +1864,7 @@ def insert_animal_from_form(dbo, post, username):
             raise utils.ASMValidationError(_("Microchip number {0} has already been allocated to another animal.", l).format(post["microchipnumber"]))
     if dob > dbo.today():
         raise utils.ASMValidationError(_("Date of birth cannot be in the future.", l))
-    if datebroughtin > dbo.today(offset=6):
+    if datebroughtin > dbo.today(offset=20):
         raise utils.ASMValidationError(_("Date brought in cannot be in the future.", l))
 
     # Set default brought in by if we have one and none was set
@@ -2907,7 +2907,7 @@ def insert_litter_from_form(dbo, username, post):
         "NumberInLitter":   post.integer("numberinlitter"),
         "Comments":         post["comments"],
         "RecordVersion":    dbo.get_recordversion()
-    }, username)
+    }, username, setCreated = False)
     update_active_litters(dbo)
     # if a list of littermates were given, set the litterid on those animal records
     for i in post.integer_list("animals"):
@@ -2928,7 +2928,7 @@ def update_litter_from_form(dbo, username, post):
         "NumberInLitter":   post.integer("numberinlitter"),
         "Comments":         post["comments"],
         "RecordVersion":    dbo.get_recordversion()
-    }, username)
+    }, username, setLastChanged = False)
     update_active_litters(dbo)
 
 def delete_litter(dbo, username, lid):

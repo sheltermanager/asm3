@@ -528,12 +528,7 @@ def sql_structure(dbo):
         fdate("InvalidDate", True),
         fint("NumberInLitter"),
         flongstr("Comments"),
-        fint("RecordVersion", True),
-        # Created/LastChanged did not exist in ASM2 animallitter so we make them nullable here
-        fstr("CreatedBy", True),
-        fdate("CreatedDate", True),
-        fstr("LastChangedBy", True),
-        fdate("LastChangedDate", True)), False)
+        fint("RecordVersion", True)), False)
 
     sql += table("animallost", (
         fid(),
