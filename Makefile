@@ -125,6 +125,6 @@ testsdb:
 deps:
 	@echo "[deps] ========================="
 	apt-get install python python-imaging python-webpy python-mysqldb python-psycopg2 python-requests python-memcache
-	apt-get install nodejs flake8 imagemagick wkhtmltopdf
+	apt-get install exuberant-ctags nodejs flake8 imagemagick wkhtmltopdf
 	apt-get install python-sphinx python-sphinx-rtd-theme texlive-latex-base texlive-latex-extra
 
