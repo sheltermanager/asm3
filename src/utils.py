@@ -49,6 +49,9 @@ websession = None
 # Global reference to the current code path
 PATH = os.path.dirname(os.path.abspath(__file__)) + os.sep
 
+# Regex for counting pages in PDF file data
+pdfcountpages = re.compile(r"/Type\s*/Page([^s]|$)", re.MULTILINE | re.DOTALL)
+
 class PostedData(object):
     """
     Helper class for reading fields from the web.py web.input object
@@ -1166,6 +1169,12 @@ def send_user_email(dbo, sendinguser, user, subject, body):
             send_email(dbo, fromadd, u["EMAILADDRESS"], "", subject, body)
         elif nulltostr(u["ROLES"]).find(user) != -1:
             send_email(dbo, fromadd, u["EMAILADDRESS"], "", subject, body)
+
+def pdf_count_pages(filedata):
+    """
+    Given a PDF in filedata, returns the number of pages.
+    """
+    return len(pdfcountpages.findall(filedata))
 
 def html_to_pdf(htmldata, baseurl = "", account = ""):
     """

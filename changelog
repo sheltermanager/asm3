@@ -1,6 +1,7 @@
 41
 ================
 
+27/02/18 Do not attempt to scale PDFs with more than 50 pages
 20/02/18 Rewrite S3Storage to use boto3 #375
 15/02/18 Fix permissions around generating/saving document templates
 14/02/18 Do not require nopic.jpg in DBFS, fall back to static file #365

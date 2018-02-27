@@ -735,6 +735,12 @@ def scale_pdf(filedata):
     """
     Scales the given PDF filedata down and returns the compressed PDF data.
     """
+    # If there are more than 50 pages, it's going to take forever to scale -
+    # don't even bother trying. 
+    pagecount = utils.pdf_count_pages(filedata)
+    if pagecount > 50:
+        al.error("Abandon PDF scaling - has > 50 pages (%s found)" % pagecount, "media.scale_pdf")
+        return filedata
     inputfile = tempfile.NamedTemporaryFile(suffix=".pdf", delete=False)
     outputfile = tempfile.NamedTemporaryFile(suffix=".pdf", delete=False)
     inputfile.write(filedata)
