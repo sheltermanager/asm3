@@ -14,7 +14,8 @@ CASE WHEN (a.Archived = 1 AND a.NeuteredDate >= a.DateBroughtIn AND a.NeuteredDa
 FROM animal a 
 INNER JOIN animaltype ay ON ay.ID = a.AnimalTypeID 
 INNER JOIN species s ON s.ID = a.SpeciesID 
-WHERE a.DateBroughtIn >= '$ASK DATE Enter the earliest date brought in$' AND a.DateBroughtIn <= '$ASK DATE Enter the latest date brought in$' AND NonShelterAnimal = 0
+WHERE a.Neutered = 1 AND a.NeuteredDate Is Not Null
+AND a.DateBroughtIn >= '$ASK DATE Enter the earliest date brought in$' AND a.DateBroughtIn <= '$ASK DATE Enter the latest date brought in$' AND NonShelterAnimal = 0
 ORDER BY a.DateBroughtIn
 ###
 $$HEADER
