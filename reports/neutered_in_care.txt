@@ -8,15 +8,15 @@ Animals entering the shelter between two dates identifying whether they were neu
 ###
 en
 ###
-SELECT a.DateBroughtIn, a.ShelterCode, a.AnimalName, ay.AnimalType, s.SpeciesName, 
+SELECT a.MostRecentEntryDate, a.ShelterCode, a.AnimalName, ay.AnimalType, s.SpeciesName, 
 CASE WHEN a.Neutered = 1 THEN 'Yes' ELSE 'No' END AS Neutered, a.NeuteredDate, a.ActiveMovementDate,
 CASE WHEN (a.Archived = 1 AND a.NeuteredDate >= a.DateBroughtIn AND a.NeuteredDate  <= a.ActiveMovementDate) OR (a.Archived = 0 AND a.NeuteredDate >= a.DateBroughtIn) THEN 'Yes' ELSE 'No' END AS NeuteredInCare
 FROM animal a 
 INNER JOIN animaltype ay ON ay.ID = a.AnimalTypeID 
 INNER JOIN species s ON s.ID = a.SpeciesID 
-WHERE a.Neutered = 1 AND a.NeuteredDate Is Not Null
-AND a.DateBroughtIn >= '$ASK DATE Enter the earliest date brought in$' AND a.DateBroughtIn <= '$ASK DATE Enter the latest date brought in$' AND NonShelterAnimal = 0
-ORDER BY a.DateBroughtIn
+WHERE a.Neutered = 1 AND a.NeuteredDate Is Not Null 
+AND a.MostRecentEntryDate >= '$ASK DATE Enter the earliest date brought in$' AND a.MostRecentEntryDate <= '$ASK DATE Enter the latest date brought in$' AND NonShelterAnimal = 0
+ORDER BY a.MostRecentEntryDate
 ###
 $$HEADER
 <table border="1">
@@ -34,7 +34,7 @@ HEADER$$
 
 $$BODY
 <tr>
-<td>$DATEBROUGHTIN</td>
+<td>$MOSTRECENTENTRYDATE</td>
 <td>$SHELTERCODE</td>
 <td>$ANIMALNAME</td>
 <td>$ANIMALTYPE</td>
@@ -48,4 +48,3 @@ BODY$$
 $$FOOTER
 </table>
 FOOTER$$
-
