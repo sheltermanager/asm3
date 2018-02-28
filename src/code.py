@@ -550,7 +550,7 @@ class jserror(ASMEndpoint):
         dbo = o.dbo
         post = o.post
         emailsubject = "%s @ %s" % (post["user"], post["account"])
-        emailbody = "%s:\n\n%s" % (post["msg"], post["stack"])
+        emailbody = "%s:\n\n%s\n\nUA: %s\nIP: %s" % (post["msg"], post["stack"], self.user_agent(), self.remote_ip())
         logmess = "%s@%s: %s %s" % (post["user"], post["account"], post["msg"], post["stack"])
         al.error(logmess, "code.jserror", dbo)
         if EMAIL_ERRORS:
