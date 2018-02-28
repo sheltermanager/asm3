@@ -103,11 +103,21 @@ def fw(s):
     if s.find(" ") == -1: return s
     return s.split(" ")[0]
 
-def animal_tags(dbo, a, includeDonations=True):
+def animal_tags_publisher(dbo, a, includeAdditional=True):
+    """
+    Convenience method for getting animal tags when used by a publisher - 
+    very little apart from additional fields are required and we can save
+    database calls for each animal.
+    """
+    return animal_tags(dbo, a, includeAdditional=includeAdditional, includeAdoptionStatus=False, \
+        includeCosts=False, includeDiet=False, includeDonations=False, includeFutureOwner=False, includeLogs=False, includeMedical=False)
+
+def animal_tags(dbo, a, includeAdditional=True, includeAdoptionStatus=True, includeCosts=True, \
+    includeDiet=True, includeDonations=True, includeFutureOwner=True, includeLogs=True, includeMedical=True):
     """
     Generates a list of tags from an animal result (the deep type from
     calling animal.get_animal)
-    includeDonations: Whether or not to create tags for donations
+    includeAdoptionStatus in particular is expensive. If you don't need some of the tags, you can not include them.
     """
     l = dbo.locale
     qr = QR_IMG_SRC % { "url": BASE_URL + "/animal?id=%d" % a["ID"], "size": "150x150" }
@@ -344,9 +354,7 @@ def animal_tags(dbo, a, includeDonations=True):
         "ANIMALONFOSTER"        : yes_no(l, a["ACTIVEMOVEMENTTYPE"] == movement.FOSTER),
         "ANIMALPERMANENTFOSTER" : yes_no(l, a["HASPERMANENTFOSTER"] == 1),
         "ANIMALATRETAILER"      : yes_no(l, a["ACTIVEMOVEMENTTYPE"] == movement.RETAILER),
-        "ANIMALISADOPTABLE"     : utils.iif(publish.is_adoptable(dbo, a["ID"]), _("Yes", l), _("No", l)),
         "ANIMALISRESERVED"      : yes_no(l, a["HASACTIVERESERVE"] == 1),
-        "ADOPTIONSTATUS"        : publish.get_adoption_status(dbo, a),
         "ADOPTIONID"            : a["ACTIVEMOVEMENTADOPTIONNUMBER"],
         "OUTCOMEDATE"           : utils.iif(a["DECEASEDDATE"] is None, python2display(l, a["ACTIVEMOVEMENTDATE"]), python2display(l, a["DECEASEDDATE"])),
         "OUTCOMETYPE"           : utils.iif(a["ARCHIVED"] == 1, a["DISPLAYLOCATIONNAME"], "")
@@ -369,10 +377,16 @@ def animal_tags(dbo, a, includeDonations=True):
         tags["CURRENTOWNERCELLPHONE"] = a["ORIGINALOWNERMOBILETELEPHONE"]
         tags["CURRENTOWNEREMAIL"] = a["ORIGINALOWNEREMAILADDRESS"]
 
+    if includeAdoptionStatus:
+        # Requires calls to publish.get_animal_data which is expensive
+        # and unnecessary if it's a publisher doing the calling
+        tags["ADOPTIONSTATUS"] = publish.get_adoption_status(dbo, a)
+        tags["ANIMALISADOPTABLE"] = utils.iif(publish.is_adoptable(dbo, a["ID"]), _("Yes", l), _("No", l)),
+
     # If the animal doesn't have a current owner, but does have an open
     # movement with a future date on it, look up the owner and use that 
     # instead so that we can still generate paperwork for future adoptions.
-    if a["CURRENTOWNERID"] is None or a["CURRENTOWNERID"] == 0:
+    if includeFutureOwner and a["CURRENTOWNERID"] is None or a["CURRENTOWNERID"] == 0:
         latest = movement.get_animal_movements(dbo, a["ID"])
         if len(latest) > 0:
             latest = latest[0]
@@ -395,165 +409,170 @@ def animal_tags(dbo, a, includeDonations=True):
                     tags["CURRENTOWNEREMAIL"] = p["EMAILADDRESS"]
 
     # Additional fields
-    add = additional.get_additional_fields(dbo, a["ID"], "animal")
-    for af in add:
-        val = af["VALUE"]
-        if val is None: val = ""
-        if af["FIELDTYPE"] == additional.YESNO:
-            val = additional_yesno(l, af)
-        if af["FIELDTYPE"] == additional.MONEY:
-            val = format_currency_no_symbol(l, af["VALUE"])
-        if af["FIELDTYPE"] == additional.ANIMAL_LOOKUP:
-            val = af["ANIMALNAME"]
-        if af["FIELDTYPE"] == additional.PERSON_LOOKUP:
-            val = af["OWNERNAME"]
-        tags[af["FIELDNAME"].upper()] = val
+    if includeAdditional:
+        add = additional.get_additional_fields(dbo, a["ID"], "animal")
+        for af in add:
+            val = af["VALUE"]
+            if val is None: val = ""
+            if af["FIELDTYPE"] == additional.YESNO:
+                val = additional_yesno(l, af)
+            if af["FIELDTYPE"] == additional.MONEY:
+                val = format_currency_no_symbol(l, af["VALUE"])
+            if af["FIELDTYPE"] == additional.ANIMAL_LOOKUP:
+                val = af["ANIMALNAME"]
+            if af["FIELDTYPE"] == additional.PERSON_LOOKUP:
+                val = af["OWNERNAME"]
+            tags[af["FIELDNAME"].upper()] = val
 
     include_incomplete_vacc = configuration.include_incomplete_vacc_doc(dbo)
     include_incomplete_medical = configuration.include_incomplete_medical_doc(dbo)
-    
-    # Vaccinations
-    d = {
-        "VACCINATIONNAME":          "VACCINATIONTYPE",
-        "VACCINATIONREQUIRED":      "d:DATEREQUIRED",
-        "VACCINATIONGIVEN":         "d:DATEOFVACCINATION",
-        "VACCINATIONEXPIRES":       "d:DATEEXPIRES",
-        "VACCINATIONBATCH":         "BATCHNUMBER",
-        "VACCINATIONMANUFACTURER":  "MANUFACTURER",
-        "VACCINATIONCOST":          "c:COST",
-        "VACCINATIONCOMMENTS":      "COMMENTS",
-        "VACCINATIONDESCRIPTION":   "VACCINATIONDESCRIPTION",
-        "VACCINATIONADMINISTERINGVETNAME":      "ADMINISTERINGVETNAME",
-        "VACCINATIONADMINISTERINGVETLICENCE":   "ADMINISTERINGVETLICENCE",
-        "VACCINATIONADMINISTERINGVETLICENSE":   "ADMINISTERINGVETLICENCE",
-        "VACCINATIONADMINISTERINGVETADDRESS":   "ADMINISTERINGVETADDRESS",
-        "VACCINATIONADMINISTERINGVETTOWN":      "ADMINISTERINGVETTOWN",
-        "VACCINATIONADMINISTERINGVETCITY":      "ADMINISTERINGVETTOWN",
-        "VACCINATIONADMINISTERINGVETCOUNTY":    "ADMINISTERINGVETCOUNTY",
-        "VACCINATIONADMINISTERINGVETSTATE":     "ADMINISTERINGVETCOUNTY",
-        "VACCINATIONADMINISTERINGVETPOSTCODE":  "ADMINISTERINGVETPOSTCODE",
-        "VACCINATIONADMINISTERINGVETZIPCODE":   "ADMINISTERINGVETPOSTCODE",
-        "VACCINATIONADMINISTERINGVETEMAIL":     "ADMINISTERINGVETEMAIL"
-    }
-    tags.update(table_tags(dbo, d, medical.get_vaccinations(dbo, a["ID"], not include_incomplete_vacc), "VACCINATIONTYPE", "DATEOFVACCINATION"))
-    tags["ANIMALISVACCINATED"] = utils.iif(medical.get_vaccinated(dbo, a["ID"]), _("Yes", l), _("No", l))
+   
+    if includeMedical:
+        # Vaccinations
+        d = {
+            "VACCINATIONNAME":          "VACCINATIONTYPE",
+            "VACCINATIONREQUIRED":      "d:DATEREQUIRED",
+            "VACCINATIONGIVEN":         "d:DATEOFVACCINATION",
+            "VACCINATIONEXPIRES":       "d:DATEEXPIRES",
+            "VACCINATIONBATCH":         "BATCHNUMBER",
+            "VACCINATIONMANUFACTURER":  "MANUFACTURER",
+            "VACCINATIONCOST":          "c:COST",
+            "VACCINATIONCOMMENTS":      "COMMENTS",
+            "VACCINATIONDESCRIPTION":   "VACCINATIONDESCRIPTION",
+            "VACCINATIONADMINISTERINGVETNAME":      "ADMINISTERINGVETNAME",
+            "VACCINATIONADMINISTERINGVETLICENCE":   "ADMINISTERINGVETLICENCE",
+            "VACCINATIONADMINISTERINGVETLICENSE":   "ADMINISTERINGVETLICENCE",
+            "VACCINATIONADMINISTERINGVETADDRESS":   "ADMINISTERINGVETADDRESS",
+            "VACCINATIONADMINISTERINGVETTOWN":      "ADMINISTERINGVETTOWN",
+            "VACCINATIONADMINISTERINGVETCITY":      "ADMINISTERINGVETTOWN",
+            "VACCINATIONADMINISTERINGVETCOUNTY":    "ADMINISTERINGVETCOUNTY",
+            "VACCINATIONADMINISTERINGVETSTATE":     "ADMINISTERINGVETCOUNTY",
+            "VACCINATIONADMINISTERINGVETPOSTCODE":  "ADMINISTERINGVETPOSTCODE",
+            "VACCINATIONADMINISTERINGVETZIPCODE":   "ADMINISTERINGVETPOSTCODE",
+            "VACCINATIONADMINISTERINGVETEMAIL":     "ADMINISTERINGVETEMAIL"
+        }
+        tags.update(table_tags(dbo, d, medical.get_vaccinations(dbo, a["ID"], not include_incomplete_vacc), "VACCINATIONTYPE", "DATEOFVACCINATION"))
+        tags["ANIMALISVACCINATED"] = utils.iif(medical.get_vaccinated(dbo, a["ID"]), _("Yes", l), _("No", l))
 
-    # Tests
-    d = {
-        "TESTNAME":                 "TESTNAME",
-        "TESTRESULT":               "RESULTNAME",
-        "TESTREQUIRED":             "d:DATEREQUIRED",
-        "TESTGIVEN":                "d:DATEOFTEST",
-        "TESTCOST":                 "c:COST",
-        "TESTCOMMENTS":             "COMMENTS",
-        "TESTDESCRIPTION":          "TESTDESCRIPTION",
-        "TESTADMINISTERINGVETNAME":      "ADMINISTERINGVETNAME",
-        "TESTADMINISTERINGVETLICENCE":   "ADMINISTERINGVETLICENCE",
-        "TESTADMINISTERINGVETLICENSE":   "ADMINISTERINGVETLICENCE",
-        "TESTADMINISTERINGVETADDRESS":   "ADMINISTERINGVETADDRESS",
-        "TESTADMINISTERINGVETTOWN":      "ADMINISTERINGVETTOWN",
-        "TESTADMINISTERINGVETCITY":      "ADMINISTERINGVETTOWN",
-        "TESTADMINISTERINGVETCOUNTY":    "ADMINISTERINGVETCOUNTY",
-        "TESTADMINISTERINGVETSTATE":     "ADMINISTERINGVETCOUNTY",
-        "TESTADMINISTERINGVETPOSTCODE":  "ADMINISTERINGVETPOSTCODE",
-        "TESTADMINISTERINGVETZIPCODE":   "ADMINISTERINGVETPOSTCODE",
-        "TESTADMINISTERINGVETEMAIL":     "ADMINISTERINGVETEMAIL"
+        # Tests
+        d = {
+            "TESTNAME":                 "TESTNAME",
+            "TESTRESULT":               "RESULTNAME",
+            "TESTREQUIRED":             "d:DATEREQUIRED",
+            "TESTGIVEN":                "d:DATEOFTEST",
+            "TESTCOST":                 "c:COST",
+            "TESTCOMMENTS":             "COMMENTS",
+            "TESTDESCRIPTION":          "TESTDESCRIPTION",
+            "TESTADMINISTERINGVETNAME":      "ADMINISTERINGVETNAME",
+            "TESTADMINISTERINGVETLICENCE":   "ADMINISTERINGVETLICENCE",
+            "TESTADMINISTERINGVETLICENSE":   "ADMINISTERINGVETLICENCE",
+            "TESTADMINISTERINGVETADDRESS":   "ADMINISTERINGVETADDRESS",
+            "TESTADMINISTERINGVETTOWN":      "ADMINISTERINGVETTOWN",
+            "TESTADMINISTERINGVETCITY":      "ADMINISTERINGVETTOWN",
+            "TESTADMINISTERINGVETCOUNTY":    "ADMINISTERINGVETCOUNTY",
+            "TESTADMINISTERINGVETSTATE":     "ADMINISTERINGVETCOUNTY",
+            "TESTADMINISTERINGVETPOSTCODE":  "ADMINISTERINGVETPOSTCODE",
+            "TESTADMINISTERINGVETZIPCODE":   "ADMINISTERINGVETPOSTCODE",
+            "TESTADMINISTERINGVETEMAIL":     "ADMINISTERINGVETEMAIL"
 
-    }
-    tags.update(table_tags(dbo, d, medical.get_tests(dbo, a["ID"], not include_incomplete_vacc), "TESTNAME", "DATEOFTEST"))
+        }
+        tags.update(table_tags(dbo, d, medical.get_tests(dbo, a["ID"], not include_incomplete_vacc), "TESTNAME", "DATEOFTEST"))
 
-    # Medical
-    d = {
-        "MEDICALNAME":              "TREATMENTNAME",
-        "MEDICALCOMMENTS":          "COMMENTS",
-        "MEDICALFREQUENCY":         "NAMEDFREQUENCY",
-        "MEDICALNUMBEROFTREATMENTS": "NAMEDNUMBEROFTREATMENTS",
-        "MEDICALSTATUS":            "NAMEDSTATUS",
-        "MEDICALDOSAGE":            "DOSAGE",
-        "MEDICALSTARTDATE":         "d:STARTDATE",
-        "MEDICALTREATMENTSGIVEN":   "TREATMENTSGIVEN",
-        "MEDICALTREATMENTSREMAINING": "TREATMENTSREMAINING",
-        "MEDICALNEXTTREATMENTDUE":  "d:NEXTTREATMENTDUE",
-        "MEDICALLASTTREATMENTGIVEN": "d:LASTTREATMENTGIVEN",
-        "MEDICALCOST":              "c:COST"
-    }
-    tags.update(table_tags(dbo, d, medical.get_regimens(dbo, a["ID"], not include_incomplete_medical), "TREATMENTNAME", "STATUS"))
+        # Medical
+        d = {
+            "MEDICALNAME":              "TREATMENTNAME",
+            "MEDICALCOMMENTS":          "COMMENTS",
+            "MEDICALFREQUENCY":         "NAMEDFREQUENCY",
+            "MEDICALNUMBEROFTREATMENTS": "NAMEDNUMBEROFTREATMENTS",
+            "MEDICALSTATUS":            "NAMEDSTATUS",
+            "MEDICALDOSAGE":            "DOSAGE",
+            "MEDICALSTARTDATE":         "d:STARTDATE",
+            "MEDICALTREATMENTSGIVEN":   "TREATMENTSGIVEN",
+            "MEDICALTREATMENTSREMAINING": "TREATMENTSREMAINING",
+            "MEDICALNEXTTREATMENTDUE":  "d:NEXTTREATMENTDUE",
+            "MEDICALLASTTREATMENTGIVEN": "d:LASTTREATMENTGIVEN",
+            "MEDICALCOST":              "c:COST"
+        }
+        tags.update(table_tags(dbo, d, medical.get_regimens(dbo, a["ID"], not include_incomplete_medical), "TREATMENTNAME", "STATUS"))
 
     # Diet
-    d = {
-        "DIETNAME":                 "DIETNAME",
-        "DIETDESCRIPTION":          "DIETDESCRIPTION",
-        "DIETDATESTARTED":          "d:DATESTARTED",
-        "DIETCOMMENTS":             "COMMENTS"
-    }
-    tags.update(table_tags(dbo, d, animal.get_diets(dbo, a["ID"]), "DIETNAME", "DATESTARTED"))
+    if includeDiet:
+        d = {
+            "DIETNAME":                 "DIETNAME",
+            "DIETDESCRIPTION":          "DIETDESCRIPTION",
+            "DIETDATESTARTED":          "d:DATESTARTED",
+            "DIETCOMMENTS":             "COMMENTS"
+        }
+        tags.update(table_tags(dbo, d, animal.get_diets(dbo, a["ID"]), "DIETNAME", "DATESTARTED"))
 
     # Donations
-    d = {
-        "RECEIPTNUM":               "RECEIPTNUMBER",
-        "DONATIONTYPE":             "DONATIONNAME",
-        "DONATIONPAYMENTTYPE":      "PAYMENTNAME",
-        "DONATIONDATE":             "d:DATE",
-        "DONATIONDATEDUE":          "d:DATEDUE",
-        "DONATIONAMOUNT":           "c:DONATION",
-        "DONATIONCOMMENTS":         "COMMENTS",
-        "DONATIONGIFTAID":          "y:ISGIFTAID",
-        "PAYMENTTYPE":              "DONATIONNAME",
-        "PAYMENTMETHOD":            "PAYMENTNAME",
-        "PAYMENTDATE":              "d:DATE",
-        "PAYMENTDATEDUE":           "d:DATEDUE",
-        "PAYMENTAMOUNT":            "c:DONATION",
-        "PAYMENTCOMMENTS":          "COMMENTS",
-        "PAYMENTGIFTAID":           "y:ISGIFTAID",
-        "PAYMENTVAT":               "y:ISVAT",
-        "PAYMENTTAX":               "y:ISVAT",
-        "PAYMENTVATRATE":           "f:VATRATE",
-        "PAYMENTTAXRATE":           "f:VATRATE",
-        "PAYMENTVATAMOUNT":         "c:VATAMOUNT",
-        "PAYMENTTAXAMOUNT":         "c:VATAMOUNT"
-    }
     if includeDonations:
+        d = {
+            "RECEIPTNUM":               "RECEIPTNUMBER",
+            "DONATIONTYPE":             "DONATIONNAME",
+            "DONATIONPAYMENTTYPE":      "PAYMENTNAME",
+            "DONATIONDATE":             "d:DATE",
+            "DONATIONDATEDUE":          "d:DATEDUE",
+            "DONATIONAMOUNT":           "c:DONATION",
+            "DONATIONCOMMENTS":         "COMMENTS",
+            "DONATIONGIFTAID":          "y:ISGIFTAID",
+            "PAYMENTTYPE":              "DONATIONNAME",
+            "PAYMENTMETHOD":            "PAYMENTNAME",
+            "PAYMENTDATE":              "d:DATE",
+            "PAYMENTDATEDUE":           "d:DATEDUE",
+            "PAYMENTAMOUNT":            "c:DONATION",
+            "PAYMENTCOMMENTS":          "COMMENTS",
+            "PAYMENTGIFTAID":           "y:ISGIFTAID",
+            "PAYMENTVAT":               "y:ISVAT",
+            "PAYMENTTAX":               "y:ISVAT",
+            "PAYMENTVATRATE":           "f:VATRATE",
+            "PAYMENTTAXRATE":           "f:VATRATE",
+            "PAYMENTVATAMOUNT":         "c:VATAMOUNT",
+            "PAYMENTTAXAMOUNT":         "c:VATAMOUNT"
+        }
         tags.update(table_tags(dbo, d, financial.get_animal_donations(dbo, a["ID"]), "DONATIONNAME", "DATE"))
 
     # Costs
-    d = {
-        "COSTTYPE":                 "COSTTYPENAME",
-        "COSTDATE":                 "d:COSTDATE",
-        "COSTDATEPAID":             "d:COSTPAIDDATE",
-        "COSTAMOUNT":               "c:COSTAMOUNT",
-        "COSTDESCRIPTION":          "DESCRIPTION"
-    }
-    tags.update(table_tags(dbo, d, animal.get_costs(dbo, a["ID"]), "COSTTYPENAME", "COSTPAIDDATE"))
+    if includeCosts:
+        d = {
+            "COSTTYPE":                 "COSTTYPENAME",
+            "COSTDATE":                 "d:COSTDATE",
+            "COSTDATEPAID":             "d:COSTPAIDDATE",
+            "COSTAMOUNT":               "c:COSTAMOUNT",
+            "COSTDESCRIPTION":          "DESCRIPTION"
+        }
+        tags.update(table_tags(dbo, d, animal.get_costs(dbo, a["ID"]), "COSTTYPENAME", "COSTPAIDDATE"))
 
-    # Cost totals
-    totalvaccinations = db.query_int(dbo, "SELECT SUM(Cost) FROM animalvaccination WHERE AnimalID = %d" % a["ID"])
-    totaltransports = db.query_int(dbo, "SELECT SUM(Cost) FROM animaltransport WHERE AnimalID = %d" % a["ID"])
-    totaltests = db.query_int(dbo, "SELECT SUM(Cost) FROM animaltest WHERE AnimalID = %d" % a["ID"])
-    totalmedicals = db.query_int(dbo, "SELECT SUM(Cost) FROM animalmedical WHERE AnimalID = %d" % a["ID"])
-    totallines = db.query_int(dbo, "SELECT SUM(CostAmount) FROM animalcost WHERE AnimalID = %d" % a["ID"])
-    totalcosts = totalvaccinations + totaltransports + totaltests + totalmedicals + totallines
-    dailyboardingcost = a["DAILYBOARDINGCOST"] or 0
-    daysonshelter = a["DAYSONSHELTER"] or 0
-    costtags = {
-        "TOTALVACCINATIONCOSTS": format_currency_no_symbol(l, totalvaccinations),
-        "TOTALTRANSPORTCOSTS": format_currency_no_symbol(l, totaltransports),
-        "TOTALTESTCOSTS": format_currency_no_symbol(l, totaltests),
-        "TOTALMEDICALCOSTS": format_currency_no_symbol(l, totalmedicals),
-        "TOTALLINECOSTS": format_currency_no_symbol(l, totallines),
-        "DAILYBOARDINGCOST": format_currency_no_symbol(l, dailyboardingcost),
-        "CURRENTBOARDINGCOST": format_currency_no_symbol(l, dailyboardingcost * daysonshelter),
-        "TOTALCOSTS": format_currency_no_symbol(l, dailyboardingcost * daysonshelter + totalcosts)
-    }
-    tags = append_tags(tags, costtags)
+        # Cost totals
+        totalvaccinations = db.query_int(dbo, "SELECT SUM(Cost) FROM animalvaccination WHERE AnimalID = %d" % a["ID"])
+        totaltransports = db.query_int(dbo, "SELECT SUM(Cost) FROM animaltransport WHERE AnimalID = %d" % a["ID"])
+        totaltests = db.query_int(dbo, "SELECT SUM(Cost) FROM animaltest WHERE AnimalID = %d" % a["ID"])
+        totalmedicals = db.query_int(dbo, "SELECT SUM(Cost) FROM animalmedical WHERE AnimalID = %d" % a["ID"])
+        totallines = db.query_int(dbo, "SELECT SUM(CostAmount) FROM animalcost WHERE AnimalID = %d" % a["ID"])
+        totalcosts = totalvaccinations + totaltransports + totaltests + totalmedicals + totallines
+        dailyboardingcost = a["DAILYBOARDINGCOST"] or 0
+        daysonshelter = a["DAYSONSHELTER"] or 0
+        costtags = {
+            "TOTALVACCINATIONCOSTS": format_currency_no_symbol(l, totalvaccinations),
+            "TOTALTRANSPORTCOSTS": format_currency_no_symbol(l, totaltransports),
+            "TOTALTESTCOSTS": format_currency_no_symbol(l, totaltests),
+            "TOTALMEDICALCOSTS": format_currency_no_symbol(l, totalmedicals),
+            "TOTALLINECOSTS": format_currency_no_symbol(l, totallines),
+            "DAILYBOARDINGCOST": format_currency_no_symbol(l, dailyboardingcost),
+            "CURRENTBOARDINGCOST": format_currency_no_symbol(l, dailyboardingcost * daysonshelter),
+            "TOTALCOSTS": format_currency_no_symbol(l, dailyboardingcost * daysonshelter + totalcosts)
+        }
+        tags = append_tags(tags, costtags)
 
-    # Logs
-    d = {
-        "LOGNAME":                  "LOGTYPENAME",
-        "LOGDATE":                  "d:DATE",
-        "LOGCOMMENTS":              "COMMENTS",
-        "LOGCREATEDBY":             "CREATEDBY"
-    }
-    tags.update(table_tags(dbo, d, log.get_logs(dbo, log.ANIMAL, a["ID"], 0, log.ASCENDING), "LOGTYPENAME", "DATE"))
+    if includeLogs:
+        # Logs
+        d = {
+            "LOGNAME":                  "LOGTYPENAME",
+            "LOGDATE":                  "d:DATE",
+            "LOGCOMMENTS":              "COMMENTS",
+            "LOGCREATEDBY":             "CREATEDBY"
+        }
+        tags.update(table_tags(dbo, d, log.get_logs(dbo, log.ANIMAL, a["ID"], 0, log.ASCENDING), "LOGTYPENAME", "DATE"))
 
     return tags
 

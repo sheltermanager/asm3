@@ -115,7 +115,7 @@ class HTMLPublisher(FTPPublisher):
         """
         Substitutes any tags in the body for animal data
         """
-        tags = wordprocessor.animal_tags(self.dbo, a)
+        tags = wordprocessor.animal_tags_publisher(self.dbo, a)
         tags["TotalAnimals"] = str(self.totalAnimals)
         tags["IMAGE"] = str(a["WEBSITEMEDIANAME"])
         # Note: WEBSITEMEDIANOTES becomes ANIMALCOMMENTS in get_animal_data when publisher_use_comments is on

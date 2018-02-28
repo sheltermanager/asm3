@@ -38,7 +38,7 @@ def get_animal_view(dbo, animalid):
     else:
         a["WEBSITEMEDIANAME"] = "%s?method=animal_image&animalid=%d" % (SERVICE_URL, animalid)
     s = head + body + foot
-    tags = wordprocessor.animal_tags(dbo, a)
+    tags = wordprocessor.animal_tags_publisher(dbo, a)
     tags = wordprocessor.append_tags(tags, wordprocessor.org_tags(dbo, "system"))
     # Add extra tags for websitemedianame2-4 if they exist
     if a["WEBSITEIMAGECOUNT"] > 1: 

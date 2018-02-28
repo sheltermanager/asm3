@@ -544,7 +544,7 @@ class AbstractPublisher(threading.Thread):
         """
         Replace any $$Tag$$ tags in s, using animal a
         """
-        tags = wordprocessor.animal_tags(self.dbo, a)
+        tags = wordprocessor.animal_tags_publisher(self.dbo, a)
         return wordprocessor.substitute_tags(s, tags, True, "$$", "$$")
 
     def resetPublisherProgress(self):
@@ -668,9 +668,11 @@ class AbstractPublisher(threading.Thread):
         # Note: WEBSITEMEDIANOTES becomes ANIMALCOMMENTS in get_animal_data when publisher_use_comments is on
         notes = utils.nulltostr(an["WEBSITEMEDIANOTES"])
         # Add any extra text as long as this isn't a courtesy listing
-        if an["ISCOURTESY"] != 1: notes += configuration.third_party_publisher_sig(self.dbo)
-        # Replace any wp tags used in the notes
-        notes = self.replaceAnimalTags(an, notes)
+        if an["ISCOURTESY"] != 1: 
+            sig = configuration.third_party_publisher_sig(self.dbo)
+            # If publisher tokens are present, replace them
+            if sig.find("$$") != -1: self.replaceAnimalTags(an, sig)
+            notes += sig
         # Escape carriage returns
         cr = ""
         if crToBr: 
