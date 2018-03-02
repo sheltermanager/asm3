@@ -1,6 +1,7 @@
 41
 ================
 
+02/03/18 PetLink: abandon registration on account locked error
 28/02/18 Refactor publishers for substitution performance #386
 27/02/18 Do not attempt to scale PDFs with more than 50 pages
 20/02/18 Rewrite S3Storage to use boto3 #375

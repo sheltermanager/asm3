@@ -225,6 +225,11 @@ class PetLinkPublisher(AbstractPublisher):
                             an["FAILMESSAGE"] = message
                             failed_animals.append(an)
 
+                        # If the message is that this microchip cannot be transferred, mark it processed with the fail message
+                        elif message.find("cannot be transferred - the account is locked.") != -1:
+                            an["FAILMESSAGE"] = message
+                            failed_animals.append(an)
+
                         # If the message was that the chip is already registered,
                         # mark the animal as published but at the intake date -
                         # this will force this publisher to put it through as a transfer
