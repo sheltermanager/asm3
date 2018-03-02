@@ -18,4 +18,11 @@ asm_db:
   name: "asm"
   user: "asm"
   pass: "{{ vault_asm_db.password }}"
+
+asm_sitedefs:
+    # Where to store media files.
+    # database - media files are base64 encoded in the dbfs.content db column
+    # file - media files are stored in a folder
+    # s3 - media files are stored in amazon s3
+    dbfs_store: "file"
 ...
