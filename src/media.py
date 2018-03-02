@@ -416,16 +416,7 @@ def create_blank_document_media(dbo, username, linktype, linkid):
     returns the new media id
     """
     mediaid = db.get_id(dbo, "media")
-    path = ""
-    if linktype == ANIMAL:
-        path = "/animal"
-    elif linktype == PERSON:
-        path = "/owner"
-    elif linktype == LOSTANIMAL:
-        path = "/lostanimal"
-    elif linktype == FOUNDANIMAL:
-        path = "/foundanimal"
-    path += "/" + str(linkid)
+    path = get_dbfs_path(linkid, linktype)
     name = str(mediaid) + ".html"
     dbfsid = dbfs.put_string(dbo, name, path, "")
     sql = db.make_insert_sql("media", (
@@ -462,16 +453,7 @@ def create_document_media(dbo, username, linktype, linkid, template, content):
     content: The document contents
     """
     mediaid = db.get_id(dbo, "media")
-    path = ""
-    if linktype == ANIMAL:
-        path = "/animal"
-    elif linktype == PERSON:
-        path = "/owner"
-    elif linktype == LOSTANIMAL:
-        path = "/lostanimal"
-    elif linktype == FOUNDANIMAL:
-        path = "/foundanimal"
-    path += "/" + str(linkid)
+    path = get_dbfs_path(linkid, linktype)
     name = str(mediaid) + ".html"
     dbfsid = dbfs.put_string(dbo, name, path, content)
     sql = db.make_insert_sql("media", (
