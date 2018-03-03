@@ -1,6 +1,7 @@
 41
 ================
 
+03/03/18 add animal_view_adoptable_html service call #390
 03/03/18 html_adoptable_animals service call #193
 03/03/18 Reinstate adoptionstatus/isanimaladoptable without db calls
 02/03/18 PetLink: abandon registration on account locked error

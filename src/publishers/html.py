@@ -100,6 +100,23 @@ def get_animal_view(dbo, animalid):
     s = s.replace("**le**", "<br />")
     return s
 
+def get_animal_view_adoptable_html(dbo):
+    """ Returns an HTML wrapper around get_animal_view_adoptable_js - uses
+        a template called animalviewadoptable if it exists. 
+    """
+    head, body, foot = template.get_html_template(dbo, "animalviewadoptable")
+    if head == "":
+        head = "<!DOCTYPE html>\n<html>\n<head>\n<title>Adoptable Animals</title></head>\n<body>"
+        body = "<div id=\"asm3-adoptables\" />\n" \
+            "<script>\n" \
+            "asm3_adoptable_filters = \"sex breed agegroup size species\";\n" \
+            "asm3_adoptable_iframe = true;\n" \
+            "asm3_adoptable_iframe_fixed = true;\n" \
+            "</script>\n" \
+            "<script src=\"%s?method=animal_view_adoptable_js&account=%s\"></script>" % (SERVICE_URL, dbo.database)
+        foot = "</body>\n</html>"
+    return "%s\n%s\n%s" % (head, body, foot)
+
 def get_animal_view_adoptable_js(dbo):
     """ Returns js that outputs adoptable animals into a host div """
     js = utils.read_text_file("%s/static/js/animal_view_adoptable.js" % dbo.installpath)
