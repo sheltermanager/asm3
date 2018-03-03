@@ -14,7 +14,7 @@ import lostfound
 import media
 import movement
 import person
-import publish
+import publishers.base
 import template
 import utils
 import waitinglist
@@ -202,8 +202,8 @@ def get_onlineform_html(dbo, formid, completedocument = True):
         elif f["FIELDTYPE"] == FIELDTYPE_ADOPTABLEANIMAL:
             h.append('<select class="asm-onlineform-adoptableanimal" name="%s" title="%s" %s>' % ( html.escape(fname), utils.nulltostr(f["TOOLTIP"]), required))
             h.append('<option></option>')
-            pc = publish.PublishCriteria(configuration.publisher_presets(dbo))
-            rs = publish.get_animal_data(dbo, pc, include_additional_fields = True)
+            pc = publishers.base.PublishCriteria(configuration.publisher_presets(dbo))
+            rs = publishers.base.get_animal_data(dbo, pc, include_additional_fields = True)
             for a in rs:
                 h.append('<option value="%(name)s::%(code)s">%(name)s (%(species)s - %(code)s)</option>' % \
                     { "name": a["ANIMALNAME"], "code": a["SHELTERCODE"], "species": a["SPECIESNAME"]})
