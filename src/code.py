@@ -34,6 +34,7 @@ import movement as extmovement
 import onlineform as extonlineform
 import person as extperson
 import publish as extpublish
+import publishers.base
 import publishers.vetenvoy
 import reports as extreports
 import search as extsearch
@@ -854,7 +855,7 @@ class main(JSONEndpoint):
             animallinks = extanimal.get_links_longest_on_shelter(dbo, linkmax, o.locationfilter, o.siteid)
         elif linkmode == "adoptable":
             linkname = _("Up for adoption", l)
-            animallinks = extpublish.get_animal_data(dbo, limit=linkmax)
+            animallinks = publishers.base.get_animal_data(dbo, limit=linkmax)
         # Users and roles, active users
         usersandroles = users.get_users_and_roles(dbo)
         activeusers = users.get_active_users(dbo)
