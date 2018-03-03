@@ -318,9 +318,9 @@ def is_animal_adoptable(dbo, a):
     if a.ACTIVEMOVEMENTTYPE == 1 and a.HASTRIALADOPTION == 1 and not p.includeTrial: return False
     if a.ACTIVEMOVEMENTTYPE == 1 and a.HASTRIALADOPTION == 0: return False
     if a.ACTIVEMOVEMENTTYPE >= 3 and a.ACTIVEMOVEMENTTYPE <= 7: return False
-    if a.WEBSITEMEDIANAME == "" and not p.includeWithoutImage: return False
-    if p.includeWithoutDescription and configuration.publisher_use_comments(dbo) and a.ANIMALCOMMENTS == "": return False
-    if p.includeWithoutDescription and not configuration.publisher_use_comments(dbo) and a.WEBSITEMEDIANOTES == "": return False
+    if not p.includeWithoutImage and a.WEBSITEMEDIANAME == "": return False
+    if not p.includeWithoutDescription and configuration.publisher_use_comments(dbo) and a.ANIMALCOMMENTS == "": return False
+    if not p.includeWithoutDescription and not configuration.publisher_use_comments(dbo) and a.WEBSITEMEDIANOTES == "": return False
     if p.excludeUnderWeeks > 0 and i18n.add_days(a.DATEOFBIRTH, 7 * p.excludeUnderWeeks) > dbo.today(): return False
     if len(p.internalLocations) > 0 and a.ACTIVEMOVEMENTTYPE == 0 and str(a.SHELTERLOCATION) not in p.internalLocations: return False
     return True
