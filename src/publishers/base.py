@@ -284,6 +284,48 @@ def get_microchip_data_query(dbo, patterns, publishername, movementtypes = "1", 
     sql = animal.get_animal_query(dbo) + where
     return sql
 
+def get_adoption_status(dbo, a):
+    """
+    Returns a string representing the animal's current adoption 
+    status.
+    """
+    l = dbo.locale
+    if a["ARCHIVED"] == 0 and a["CRUELTYCASE"] == 1: return i18n._("Cruelty Case", l)
+    if a["ARCHIVED"] == 0 and a["ISQUARANTINE"] == 1: return i18n._("Quarantine", l)
+    if a["ARCHIVED"] == 0 and a["ISHOLD"] == 1: return i18n._("Hold", l)
+    if a["ARCHIVED"] == 0 and a["HASACTIVERESERVE"] == 1: return i18n._("Reserved", l)
+    if a["ARCHIVED"] == 0 and a["HASPERMANENTFOSTER"] == 1: return i18n._("Permanent Foster", l)
+    if is_animal_adoptable(dbo, a): return i18n._("Adoptable", l)
+    return i18n._("Not For Adoption", l)
+
+def is_animal_adoptable(dbo, a):
+    """
+    Returns true if the animal a is adoptable. This should match exactly the code in common.js / html.is_animal_adoptable
+    """
+    p = PublishCriteria(configuration.publisher_presets(dbo))
+    if a.ISNOTAVAILABLEFORADOPTION == 1: return False
+    if a.NONSHELTERANIMAL == 1: return False
+    if a.DECEASEDDATE is not None: return False
+    if a.HASFUTUREADOPTION == 1: return False
+    if a.HASPERMANENTFOSTER == 1: return False
+    if a.CRUELTYCASE == 1 and not p.includeCaseAnimals: return False
+    if a.NEUTERED == 0 and not p.includeNonNeutered: return False
+    if a.HASACTIVERESERVE == 1 and not p.includeReservedAnimals: return False
+    if a.ISHOLD == 1 and not p.includeHold: return False
+    if a.ISQUARANTINE == 1 and not p.includeQuarantine: return False
+    if a.ACTIVEMOVEMENTTYPE == 2 and not p.includeFosterAnimals: return False
+    if a.ACTIVEMOVEMENTTYPE == 8 and not p.includeRetailerAnimals: return False
+    if a.ACTIVEMOVEMENTTYPE == 1 and a.HASTRIALADOPTION == 1 and not p.includeTrial: return False
+    if a.ACTIVEMOVEMENTTYPE == 1 and a.HASTRIALADOPTION == 0: return False
+    if a.ACTIVEMOVEMENTTYPE >= 3 and a.ACTIVEMOVEMENTTYPE <= 7: return False
+    if a.WEBSITEMEDIANAME == "" and not p.includeWithoutImage: return False
+    if p.includeWithoutDescription and configuration.publisher_use_comments(dbo) and a.ANIMALCOMMENTS == "": return False
+    if p.includeWithoutDescription and not configuration.publisher_use_comments(dbo) and a.WEBSITEMEDIANOTES == "": return False
+    if p.excludeUnderWeeks > 0 and i18n.add_days(a.DATEOFBIRTH, 7 * p.excludeUnderWeeks) > dbo.today(): return False
+    if len(p.internalLocations) > 0 and a.ACTIVEMOVEMENTTYPE == 0 and str(a.SHELTERLOCATION) not in p.internalLocations: return False
+    return True
+
+
 class PublishCriteria(object):
     """
     Class containing publishing criteria. Has functions to 

@@ -21,8 +21,8 @@ import media
 import lostfound
 import movement
 import onlineform
-import publish
 import publishers.base
+import publishers.html
 import reports
 import smcom
 import users
@@ -296,10 +296,10 @@ def handler(post, path, remoteip, referer, querystring):
             al.error("animal_view failed, %s is not an animalid" % str(animalid), "service.handler", dbo)
             return ("text/plain", 0, "ERROR: Invalid animalid")
         else:
-            return set_cached_response(cache_key, "text/html", 120, 120, publish.get_animal_view(dbo, utils.cint(animalid)))
+            return set_cached_response(cache_key, "text/html", 120, 120, publishers.html.get_animal_view(dbo, utils.cint(animalid)))
 
     elif method == "animal_view_adoptable_js":
-        return set_cached_response(cache_key, "application/javascript", 600, 600, publish.get_animal_view_adoptable_js(dbo))
+        return set_cached_response(cache_key, "application/javascript", 600, 600, publishers.html.get_animal_view_adoptable_js(dbo))
 
     elif method =="dbfs_image":
         hotlink_protect("dbfs_image", referer)

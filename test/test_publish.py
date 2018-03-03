@@ -29,16 +29,16 @@ class TestPublish(unittest.TestCase):
 
     def test_get_adoption_status(self):
         a = animal.get_animal(base.get_dbo(), self.nid)
-        assert "Adoptable" == publish.get_adoption_status(base.get_dbo(), a)
+        assert "Adoptable" == publishers.base.get_adoption_status(base.get_dbo(), a)
 
     def test_get_animal_data(self):
         assert len(publishers.base.get_animal_data(base.get_dbo())) > 0
 
     def test_get_animal_view(self):
-        assert len(publish.get_animal_view(base.get_dbo(), self.nid)) > 0
+        assert len(publishers.html.get_animal_view(base.get_dbo(), self.nid)) > 0
 
     def test_get_animal_view_adoptable_js(self):
-        assert len(publish.get_animal_view_adoptable_js(base.get_dbo())) > 0
+        assert len(publishers.html.get_animal_view_adoptable_js(base.get_dbo())) > 0
 
     def test_gen_avid_pdf(self):
         p = publishers.pettracuk.PETtracUKPublisher(base.get_dbo(), publishers.base.PublishCriteria())

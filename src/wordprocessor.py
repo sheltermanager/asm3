@@ -13,7 +13,7 @@ import media
 import medical
 import movement
 import person
-import publish
+import publishers.base
 import template
 import users
 import utils
@@ -109,11 +109,11 @@ def animal_tags_publisher(dbo, a, includeAdditional=True):
     very little apart from additional fields are required and we can save
     database calls for each animal.
     """
-    return animal_tags(dbo, a, includeAdditional=includeAdditional, includeAdoptionStatus=False, \
-        includeCosts=False, includeDiet=False, includeDonations=False, includeFutureOwner=False, includeLogs=False, includeMedical=False)
+    return animal_tags(dbo, a, includeAdditional=includeAdditional, includeCosts=False, includeDiet=False, \
+        includeDonations=False, includeFutureOwner=False, includeLogs=False, includeMedical=False)
 
-def animal_tags(dbo, a, includeAdditional=True, includeAdoptionStatus=True, includeCosts=True, \
-    includeDiet=True, includeDonations=True, includeFutureOwner=True, includeLogs=True, includeMedical=True):
+def animal_tags(dbo, a, includeAdditional=True, includeCosts=True, includeDiet=True, includeDonations=True, \
+        includeFutureOwner=True, includeLogs=True, includeMedical=True):
     """
     Generates a list of tags from an animal result (the deep type from
     calling animal.get_animal)
@@ -350,6 +350,8 @@ def animal_tags(dbo, a, includeAdditional=True, includeAdoptionStatus=True, incl
         "DOCUMENTIMGTHUMBSRC"   : html.thumbnail_img_src(dbo, a, "animalthumb"),
         "DOCUMENTIMGTHUMBLINK"  : "<img src=\"" + html.thumbnail_img_src(dbo, a, "animalthumb") + "\" />",
         "DOCUMENTQRLINK"        : "<img src=\"%s\" />" % qr,
+        "ADOPTIONSTATUS"        : publishers.base.get_adoption_status(dbo, a),
+        "ANIMALISADOPTABLE"     : utils.iif(publishers.base.is_animal_adoptable(dbo, a), _("Yes", l), _("No", l)),
         "ANIMALONSHELTER"       : yes_no(l, a["ARCHIVED"] == 0),
         "ANIMALONFOSTER"        : yes_no(l, a["ACTIVEMOVEMENTTYPE"] == movement.FOSTER),
         "ANIMALPERMANENTFOSTER" : yes_no(l, a["HASPERMANENTFOSTER"] == 1),
@@ -376,12 +378,6 @@ def animal_tags(dbo, a, includeAdditional=True, includeAdoptionStatus=True, incl
         tags["CURRENTOWNERMOBILEPHONE"] = a["ORIGINALOWNERMOBILETELEPHONE"]
         tags["CURRENTOWNERCELLPHONE"] = a["ORIGINALOWNERMOBILETELEPHONE"]
         tags["CURRENTOWNEREMAIL"] = a["ORIGINALOWNEREMAILADDRESS"]
-
-    if includeAdoptionStatus:
-        # Requires calls to publish.get_animal_data which is expensive
-        # and unnecessary if it's a publisher doing the calling
-        tags["ADOPTIONSTATUS"] = publish.get_adoption_status(dbo, a)
-        tags["ANIMALISADOPTABLE"] = utils.iif(publish.is_adoptable(dbo, a["ID"]), _("Yes", l), _("No", l)),
 
     # If the animal doesn't have a current owner, but does have an open
     # movement with a future date on it, look up the owner and use that 
