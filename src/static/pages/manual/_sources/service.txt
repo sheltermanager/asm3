@@ -307,10 +307,30 @@ extra_image
 
 .. rubric:: Cache time: 1 day
 
-Returns an extra image (see :menuselection:`Settings->Reports->Extra Images`).
-Pass the name of the image in the title parameter::
+Returns an extra image (see :menuselection:`Settings --> Reports --> Extra
+Images`).  Pass the name of the image in the title parameter::
 
     http://localhost:5000/service?method=extra_image&title=splash.jpg
+
+html_adoptable_animals
+----------------------
+
+.. rubric:: Cache time: 30 minutes
+
+Returns a complete HTML document containing an HTML page of adoptable animals.
+
+You can pass an HTML template name in an optional "template" parameter (leaving
+it off will cause animalview to be used). It is also possible to pass
+speciesid=X or animaltypeid=X parameters to only output animals of that species
+and type. In the default dataset, speciesid=1 is Dogs and speciesid=2 is cats.
+
+The rules governing which animals are adoptable are those set under
+:menuselection:`Publishing --> Set Publishing Options --> Animal Selection`.
+You can view the set at :menuselection:`Publishing --> View Animals Matching
+Publishing Options`
+ 
+    http://localhost:5000/service?method=html_adoptable_animals&template=littlebox&speciesid=1
+    http://localhost:5000/service?method=html_adoptable_animals
 
 html_report
 -----------
@@ -324,7 +344,7 @@ order within the SQL. If you run the report within the ASM frontend you will
 see the parameters it requires in the address bar::
 
     http://localhost:5000/service?method=html_report&username=user&password=letmein&title=Detailed+Shelter+Inventory
-
+   
 json_adoptable_animal and xml_adoptable_animal
 ----------------------------------------------
 

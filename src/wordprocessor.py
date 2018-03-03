@@ -110,10 +110,10 @@ def animal_tags_publisher(dbo, a, includeAdditional=True):
     database calls for each animal.
     """
     return animal_tags(dbo, a, includeAdditional=includeAdditional, includeCosts=False, includeDiet=False, \
-        includeDonations=False, includeFutureOwner=False, includeLogs=False, includeMedical=False)
+        includeDonations=False, includeFutureOwner=False, includeIsVaccinated=True, includeLogs=False, includeMedical=False)
 
 def animal_tags(dbo, a, includeAdditional=True, includeCosts=True, includeDiet=True, includeDonations=True, \
-        includeFutureOwner=True, includeLogs=True, includeMedical=True):
+        includeFutureOwner=True, includeIsVaccinated=True, includeLogs=True, includeMedical=True):
     """
     Generates a list of tags from an animal result (the deep type from
     calling animal.get_animal)
@@ -420,6 +420,10 @@ def animal_tags(dbo, a, includeAdditional=True, includeCosts=True, includeDiet=T
                 val = af["OWNERNAME"]
             tags[af["FIELDNAME"].upper()] = val
 
+    # Is vaccinated indicator
+    if includeIsVaccinated:    
+        tags["ANIMALISVACCINATED"] = utils.iif(medical.get_vaccinated(dbo, a["ID"]), _("Yes", l), _("No", l))
+
     include_incomplete_vacc = configuration.include_incomplete_vacc_doc(dbo)
     include_incomplete_medical = configuration.include_incomplete_medical_doc(dbo)
    
@@ -448,7 +452,6 @@ def animal_tags(dbo, a, includeAdditional=True, includeCosts=True, includeDiet=T
             "VACCINATIONADMINISTERINGVETEMAIL":     "ADMINISTERINGVETEMAIL"
         }
         tags.update(table_tags(dbo, d, medical.get_vaccinations(dbo, a["ID"], not include_incomplete_vacc), "VACCINATIONTYPE", "DATEOFVACCINATION"))
-        tags["ANIMALISVACCINATED"] = utils.iif(medical.get_vaccinated(dbo, a["ID"]), _("Yes", l), _("No", l))
 
         # Tests
         d = {

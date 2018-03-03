@@ -119,6 +119,7 @@
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#csv-mail-and-csv-report">csv_mail and csv_report</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#extra-image">extra_image</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#html-adoptable-animals">html_adoptable_animals</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#html-report">html_report</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#json-adoptable-animal-and-xml-adoptable-animal">json_adoptable_animal and xml_adoptable_animal</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#json-adoptable-animals-and-xml-adoptable-animals">json_adoptable_animals and xml_adoptable_animals</a></li>
@@ -462,11 +463,27 @@ you can pass those too just like with html_report:</p>
 <div class="section" id="extra-image">
 <h2>extra_image<a class="headerlink" href="#extra-image" title="Permalink to this headline">¶</a></h2>
 <p class="rubric">Cache time: 1 day</p>
-<p>Returns an extra image (see <span class="menuselection">Settings-&gt;Reports-&gt;Extra Images</span>).
-Pass the name of the image in the title parameter:</p>
+<p>Returns an extra image (see <span class="menuselection">Settings ‣ Reports ‣ Extra
+Images</span>).  Pass the name of the image in the title parameter:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span>http://localhost:5000/service?method=extra_image&amp;title=splash.jpg
 </pre></div>
 </div>
+</div>
+<div class="section" id="html-adoptable-animals">
+<h2>html_adoptable_animals<a class="headerlink" href="#html-adoptable-animals" title="Permalink to this headline">¶</a></h2>
+<p class="rubric">Cache time: 30 minutes</p>
+<p>Returns a complete HTML document containing an HTML page of adoptable animals.</p>
+<p>You can pass an HTML template name in an optional &#8220;template&#8221; parameter (leaving
+it off will cause animalview to be used). It is also possible to pass
+speciesid=X or animaltypeid=X parameters to only output animals of that species
+and type. In the default dataset, speciesid=1 is Dogs and speciesid=2 is cats.</p>
+<p>The rules governing which animals are adoptable are those set under
+<span class="menuselection">Publishing ‣ Set Publishing Options ‣ Animal Selection</span>.
+You can view the set at <span class="menuselection">Publishing ‣ View Animals Matching
+Publishing Options</span></p>
+<blockquote>
+<div><a class="reference external" href="http://localhost:5000/service?method=html_adoptable_animals&amp;template=littlebox&amp;speciesid=1">http://localhost:5000/service?method=html_adoptable_animals&amp;template=littlebox&amp;speciesid=1</a>
+<a class="reference external" href="http://localhost:5000/service?method=html_adoptable_animals">http://localhost:5000/service?method=html_adoptable_animals</a></div></blockquote>
 </div>
 <div class="section" id="html-report">
 <h2>html_report<a class="headerlink" href="#html-report" title="Permalink to this headline">¶</a></h2>

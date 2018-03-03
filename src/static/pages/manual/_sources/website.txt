@@ -39,8 +39,19 @@ to appear on the page:
 
 .. image:: images/wordpress_2.png
 
-Static HTML Website
--------------------
+Dynamic HTML Page 
+-----------------
+
+ASM can generate dynamic pages of your adoptable animals on demand with the
+service API. The HTML templates are those used by the regular HTML publisher.
+
+For example, to embed a dynamic page of adoptable animals in an iframe on your
+website for a sheltermanager.com account::
+
+    <iframe src="https://sheltermanager.com/service/asmservice?account=ACCOUNT&method=html_adoptable_animals" width="100%" height="600px" />
+
+Static HTML Pages (Publisher)
+-----------------------------
 
 ASM can generate a set of static pages from your data with its 
 :ref:`htmlftppublisher`. You can configure it under
@@ -48,7 +59,8 @@ ASM can generate a set of static pages from your data with its
 
 The HTML/FTP publisher constructs the static pages using HTML templates, which
 you can create under :menuselection:`Publishing --> Edit HTML publishing
-templates`
+templates` and outputs the pages to a folder of your choice, sending them on to
+an FTP server of your choice.
 
 Once the site has been created, you can either link directly to it, or embed it
 on your website with an iframe tag.

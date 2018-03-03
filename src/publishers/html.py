@@ -18,6 +18,51 @@ import wordprocessor
 from base import FTPPublisher, PublishCriteria, get_animal_data, is_animal_adoptable
 from sitedefs import BASE_URL, MULTIPLE_DATABASES_PUBLISH_FTP, MULTIPLE_DATABASES_PUBLISH_URL, SERVICE_URL
 
+def get_adoptable_animals(dbo, style="", speciesid=0, animaltypeid=0):
+    """ Returns a page of adoptable animals.
+    style: The HTML publishing template to use
+    speciesid: 0 for all species, or a specific one
+    animaltypeid: 0 for all animal types or a specific one
+    """
+    animals = get_animal_data(dbo, PublishCriteria(configuration.publisher_presets(dbo)), include_additional_fields = True)
+    # Get the specified template
+    head, body, foot = template.get_html_template(dbo, style)
+    if head == "":
+        head, body, foot = get_animal_view_template(dbo)
+    # Substitute the header and footer tags
+    org_tags = wordprocessor.org_tags(dbo, "system")
+    head = wordprocessor.substitute_tags(head, org_tags, True, "$$", "$$")
+    foot = wordprocessor.substitute_tags(foot, org_tags, True, "$$", "$$")
+    # Run through each animal and generate body sections
+    bodies = []
+    for a in animals:
+        if speciesid > 0 and a.SPECIESID != speciesid: continue
+        if animaltypeid > 0 and a.ANIMALTYPEID != animaltypeid: continue
+        # Translate website media name to the service call for images
+        if smcom.active():
+            a.WEBSITEMEDIANAME = "%s?account=%s&method=animal_image&animalid=%d" % (SERVICE_URL, dbo.database, a.ID)
+        else:
+            a.WEBSITEMEDIANAME = "%s?method=animal_image&animalid=%d" % (SERVICE_URL, a.ID)
+        # Generate tags for this row
+        tags = wordprocessor.animal_tags_publisher(dbo, a)
+        tags = wordprocessor.append_tags(tags, org_tags)
+        # Add extra tags for websitemedianame2-4 if they exist
+        if a.WEBSITEIMAGECOUNT > 1: 
+            tags["WEBMEDIAFILENAME2"] = "%s&seq=2" % a.WEBSITEMEDIANAME
+        if a.WEBSITEIMAGECOUNT > 2: 
+            tags["WEBMEDIAFILENAME3"] = "%s&seq=3" % a.WEBSITEMEDIANAME
+        if a.WEBSITEIMAGECOUNT > 3: 
+            tags["WEBMEDIAFILENAME4"] = "%s&seq=4" % a.WEBSITEMEDIANAME
+        # Set the description
+        if configuration.publisher_use_comments(dbo):
+            a.WEBSITEMEDIANOTES = a.ANIMALCOMMENTS
+        # Add extra publishing text, preserving the line endings
+        notes = utils.nulltostr(a.WEBSITEMEDIANOTES)
+        notes += configuration.third_party_publisher_sig(dbo).replace("\n", "<br/>")
+        tags["WEBMEDIANOTES"] = notes 
+        bodies.append(wordprocessor.substitute_tags(body, tags, True, "$$", "$$"))
+    return "%s\n%s\n%s" % (head,"\n".join(bodies), foot)
+    
 def get_animal_view(dbo, animalid):
     """ Constructs the animal view page to the template. """
     a = animal.get_animal(dbo, animalid)
@@ -26,28 +71,28 @@ def get_animal_view(dbo, animalid):
         raise utils.ASMPermissionError("animal is not adoptable")
     # If the option is on, use animal comments as the notes
     if configuration.publisher_use_comments(dbo):
-        a["WEBSITEMEDIANOTES"] = a["ANIMALCOMMENTS"]
-    head, body, foot = template.get_html_template(dbo, "animalview")
+        a.WEBSITEMEDIANOTES = a.ANIMALCOMMENTS
+    head, body, foot = get_animal_view_template(dbo)
     if head == "":
         head = "<!DOCTYPE html>\n<html>\n<head>\n<title>$$SHELTERCODE$$ - $$ANIMALNAME$$</title></head>\n<body>"
         body = "<h2>$$SHELTERCODE$$ - $$ANIMALNAME$$</h2><p><img src='$$WEBMEDIAFILENAME$$'/></p><p>$$WEBMEDIANOTES$$</p>"
         foot = "</body>\n</html>"
     if smcom.active():
-        a["WEBSITEMEDIANAME"] = "%s?account=%s&method=animal_image&animalid=%d" % (SERVICE_URL, dbo.database, animalid)
+        a.WEBSITEMEDIANAME = "%s?account=%s&method=animal_image&animalid=%d" % (SERVICE_URL, dbo.database, animalid)
     else:
-        a["WEBSITEMEDIANAME"] = "%s?method=animal_image&animalid=%d" % (SERVICE_URL, animalid)
+        a.WEBSITEMEDIANAME = "%s?method=animal_image&animalid=%d" % (SERVICE_URL, animalid)
     s = head + body + foot
     tags = wordprocessor.animal_tags_publisher(dbo, a)
     tags = wordprocessor.append_tags(tags, wordprocessor.org_tags(dbo, "system"))
     # Add extra tags for websitemedianame2-4 if they exist
-    if a["WEBSITEIMAGECOUNT"] > 1: 
-        tags["WEBMEDIAFILENAME2"] = "%s&seq=2" % a["WEBSITEMEDIANAME"]
-    if a["WEBSITEIMAGECOUNT"] > 2: 
-        tags["WEBMEDIAFILENAME3"] = "%s&seq=3" % a["WEBSITEMEDIANAME"]
-    if a["WEBSITEIMAGECOUNT"] > 3: 
-        tags["WEBMEDIAFILENAME4"] = "%s&seq=4" % a["WEBSITEMEDIANAME"]
+    if a.WEBSITEIMAGECOUNT > 1: 
+        tags["WEBMEDIAFILENAME2"] = "%s&seq=2" % a.WEBSITEMEDIANAME
+    if a.WEBSITEIMAGECOUNT > 2: 
+        tags["WEBMEDIAFILENAME3"] = "%s&seq=3" % a.WEBSITEMEDIANAME
+    if a.WEBSITEIMAGECOUNT > 3: 
+        tags["WEBMEDIAFILENAME4"] = "%s&seq=4" % a.WEBSITEMEDIANAME
     # Add extra publishing text, preserving the line endings
-    notes = utils.nulltostr(a["WEBSITEMEDIANOTES"])
+    notes = utils.nulltostr(a.WEBSITEMEDIANOTES)
     notes += configuration.third_party_publisher_sig(dbo)
     notes = notes.replace("\n", "**le**")
     tags["WEBMEDIANOTES"] = notes 
@@ -64,6 +109,15 @@ def get_animal_view_adoptable_js(dbo):
     js = js.replace("{TOKEN_BASE_URL}", BASE_URL)
     js = js.replace("\"{TOKEN_ADOPTABLES}\"", utils.json(get_animal_data(dbo, pc, include_additional_fields = True, strip_personal_data = True)))
     return js
+
+def get_animal_view_template(dbo):
+    """ Returns a tuple of the header, body and footer for the animalview template """
+    head, body, foot = template.get_html_template(dbo, "animalview")
+    if head == "":
+        head = "<!DOCTYPE html>\n<html>\n<head>\n<title>$$SHELTERCODE$$ - $$ANIMALNAME$$</title></head>\n<body>"
+        body = "<h2>$$SHELTERCODE$$ - $$ANIMALNAME$$</h2><p><img src='$$WEBMEDIAFILENAME$$'/></p><p>$$WEBMEDIANOTES$$</p>"
+        foot = "</body>\n</html>"
+    return ( head, body, foot )
 
 class HTMLPublisher(FTPPublisher):
     """

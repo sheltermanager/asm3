@@ -319,6 +319,11 @@ def handler(post, path, remoteip, referer, querystring):
             rs = publishers.base.get_animal_data(dbo, None, utils.cint(animalid), include_additional_fields = True)
             return set_cached_response(cache_key, "application/json", 3600, 3600, utils.json(rs))
 
+    elif method == "html_adoptable_animals":
+        return set_cached_response(cache_key, "text/html", 1800, 1800, \
+            publishers.html.get_adoptable_animals(dbo, style=post["template"], \
+                speciesid=post.integer("speciesid"), animaltypeid=post.integer("animaltypeid")))
+
     elif method == "json_adoptable_animals":
         users.check_permission_map(l, user["SUPERUSER"], securitymap, users.VIEW_ANIMAL)
         rs = publishers.base.get_animal_data(dbo, None, include_additional_fields = True)
