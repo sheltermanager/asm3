@@ -117,6 +117,7 @@
 <li class="toctree-l3"><a class="reference internal" href="#popup-iframe">Popup iFrame</a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="#animal-view-adoptable-html">animal_view_adoptable_html</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#csv-mail-and-csv-report">csv_mail and csv_report</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#extra-image">extra_image</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#html-adoptable-animals">html_adoptable_animals</a></li>
@@ -449,6 +450,16 @@ positioning instead, which keeps the position of the parent page when viewing
 animals, but this has been found to be less compatible with some browsers and
 iframes.</p>
 </div>
+</div>
+<div class="section" id="animal-view-adoptable-html">
+<h2>animal_view_adoptable_html<a class="headerlink" href="#animal-view-adoptable-html" title="Permalink to this headline">¶</a></h2>
+<p class="rubric">Cache time: 2 minutes</p>
+<p>Returns a complete HTML document that references animal_view_adoptable_js to
+show a list of adoptable animals. It looks for an HTML template called
+&#8220;animalviewadoptable&#8221; and falls back to a basic internal template if it does
+not exist.</p>
+<blockquote>
+<div><a class="reference external" href="http://localhost:5000/service?method=&amp;animal_view_adoptable_html">http://localhost:5000/service?method=&amp;animal_view_adoptable_html</a></div></blockquote>
 </div>
 <div class="section" id="csv-mail-and-csv-report">
 <h2>csv_mail and csv_report<a class="headerlink" href="#csv-mail-and-csv-report" title="Permalink to this headline">¶</a></h2>

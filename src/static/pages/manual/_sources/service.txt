@@ -291,6 +291,18 @@ positioning instead, which keeps the position of the parent page when viewing
 animals, but this has been found to be less compatible with some browsers and
 iframes.
 
+animal_view_adoptable_html
+--------------------------
+
+.. rubric:: Cache time: 2 minutes
+
+Returns a complete HTML document that references animal_view_adoptable_js to
+show a list of adoptable animals. It looks for an HTML template called
+"animalviewadoptable" and falls back to a basic internal template if it does
+not exist.
+
+    http://localhost:5000/service?method=&animal_view_adoptable_html
+
 csv_mail and csv_report
 -----------------------
 
