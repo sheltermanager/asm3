@@ -9,7 +9,6 @@ import configuration
 import datetime
 import diary
 import dbfs
-import extension
 import financial
 import log
 import lookups
@@ -1810,8 +1809,6 @@ def insert_animal_from_form(dbo, post, username):
     data: The webpy data object containing form parameters
     Returns a tuple containing the newly created animal id and code
     """
-    if not extension.route(dbo, "before", "insert_animal_from_form", post):
-        return
     l = dbo.locale
     nextid = dbo.get_id("animal")
     post.data["id"] = nextid
@@ -2018,7 +2015,6 @@ def insert_animal_from_form(dbo, post, username):
     # Do we have a matching template animal we can copy some satellite info from?
     clone_from_template(dbo, username, nextid, dob, post.integer("animaltype"), post.integer("species"))
 
-    extension.route(dbo, "after", "insert_animal_from_form", post)
     return (nextid, get_code(dbo, nextid))
 
 def update_animal_from_form(dbo, post, username):
@@ -2026,8 +2022,6 @@ def update_animal_from_form(dbo, post, username):
     Updates an animal record from the edit animal screen
     data: The webpy data object containing form parameters
     """
-    if not extension.route(dbo, "before", "update_animal_from_form", post):
-        return
     l = dbo.locale
     aid = post.integer("id")
 
@@ -2211,7 +2205,6 @@ def update_animal_from_form(dbo, post, username):
 
     # Update any diary notes linked to this animal
     update_diary_linkinfo(dbo, aid)
-    extension.route(dbo, "after", "update_animal_from_form", post)
 
 def update_animals_from_form(dbo, post, username):
     """
