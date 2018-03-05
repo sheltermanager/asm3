@@ -131,9 +131,7 @@ class FileStorage(DBFSStorage):
         return "file:"
 
 class S3Storage(DBFSStorage):
-    """ Storage class for putting media in Amazon S3 
-        A mutex is used around S3 operations as the boto3 client sessions are not thread safe.
-    """
+    """ Storage class for putting media in Amazon S3 """
     dbo = None
     s3client = None
     
