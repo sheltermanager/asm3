@@ -8,7 +8,6 @@ import os, sys
 import smcom
 import utils
 import web
-from threading import Lock
 from sitedefs import DBFS_STORE, DBFS_FILESTORAGE_FOLDER, DBFS_S3_BUCKET
 
 class DBFSStorage(object):
@@ -137,7 +136,8 @@ class S3Storage(DBFSStorage):
     
     def __init__(self, dbo):
         import boto3
-        self.s3client = boto3.client("s3")
+        session = boto3.Session() # Create a new session each time as the default one is not thread safe
+        self.s3client = session.client("s3")
         self.dbo = dbo
 
     def _cache_key(self, url):
