@@ -1,6 +1,7 @@
 41
 ================
 
+05/03/18 Fix permission bug that prevented non-super users editing accounts
 04/03/18 Reinstate mutex to avoid lack of boto3 thread safety
 04/03/18 Remove unused extension code #388
 03/03/18 add animal_view_adoptable_html service call #390

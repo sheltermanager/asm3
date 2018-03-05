@@ -83,9 +83,9 @@ $(function() {
                     { field: "CODE", display: _("Code"), formatter: function(row) {
                             var editlink = "<a href=\"#\" class=\"link-edit\" data-id=\"" + row.ID + "\">" + 
                                 html.icon("accounts", _("Edit account")) + '</a>';
-                            // If the user is not a superuser or in a role that has permission to
-                            // edit the account, remove the edit link
-                            if (!asm.superuser && !common.array_overlap(row.EDITROLEIDS.split("|"), asm.roleids.split("|"))) {
+                            // If this account has a set of roles that can edit it, remove the edit link
+                            // if this user is not a super user or in a role on the list
+                            if (row.EDITROLEIDS && !asm.superuser && !common.array_overlap(row.EDITROLEIDS.split("|"), asm.roleids.split("|"))) {
                                 editlink = "";
                             }
                             return '<span style="white-space: nowrap">' +
