@@ -36,9 +36,13 @@ $(function() {
                 h.push('<p class="asm-menu-category">' + f.FLAG + '</p>');
                 // Output every animal who has this flag
                 $.each(controller.animals, function(ia, a) {
-                    if (a.ADDITIONALFLAGS && a.ADDITIONALFLAGS.indexOf(f.FLAG + "|") != -1) {
-                        h.push(shelterview.render_animal(a, false, !a.ACTIVEMOVEMENTTYPE && a.ARCHIVED == 0));
-                    }
+                    if (!a.ADDITIONALFLAGS) { return; }
+                    var aflags = a.ADDITIONALFLAGS.split("|");
+                    $.each(aflags, function(x, af) {
+                        if (af == f.FLAG) {
+                            h.push(shelterview.render_animal(a, false, !a.ACTIVEMOVEMENTTYPE && a.ARCHIVED == 0));
+                        }
+                    });
                 });
             });
             // Output all animals who don't have any flags
