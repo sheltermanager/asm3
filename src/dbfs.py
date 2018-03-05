@@ -135,7 +135,6 @@ class S3Storage(DBFSStorage):
         A mutex is used around S3 operations as the boto3 client sessions are not thread safe.
     """
     dbo = None
-    s3mutex = Lock() # Objects assigned to class member vars in Python copy the same reference to all instance objects, making this effectively a global.
     s3client = None
     
     def __init__(self, dbo):
@@ -160,10 +159,8 @@ class S3Storage(DBFSStorage):
             return cachedata
         object_key = "%s/%s" % (self.dbo.database, url.replace("s3:", ""))
         try:
-            body = ""
-            with self.s3mutex:
-                response = self.s3client.get_object(Bucket=DBFS_S3_BUCKET, Key=object_key)
-                body = response["Body"].read()
+            response = self.s3client.get_object(Bucket=DBFS_S3_BUCKET, Key=object_key)
+            body = response["Body"].read()
             al.debug("GET: %s" % object_key, "S3Storage.get", self.dbo)
             cachedisk.put(cachekey, body, self._cache_ttl(object_key))
             return body
@@ -176,8 +173,7 @@ class S3Storage(DBFSStorage):
         object_key = "%s/%s%s" % (self.dbo.database, dbfsid, extension)
         url = "s3:%s%s" % (dbfsid, extension)
         try:
-            with self.s3mutex:
-                self.s3client.put_object(Bucket=DBFS_S3_BUCKET, Key=object_key, Body=filedata)
+            self.s3client.put_object(Bucket=DBFS_S3_BUCKET, Key=object_key, Body=filedata)
             al.debug("PUT: %s" % object_key, "S3Storage.put", self.dbo)
             cachedisk.put(self._cache_key(url), filedata, self._cache_ttl(filename))
             self.dbo.execute("UPDATE dbfs SET URL = ?, Content = '' WHERE ID = ?", (url, dbfsid))
@@ -189,8 +185,7 @@ class S3Storage(DBFSStorage):
         """ Deletes the file data """
         object_key = "%s/%s" % (self.dbo.database, url.replace("s3:", ""))
         try:
-            with self.s3mutex:
-                self.s3client.delete_object(Bucket=DBFS_S3_BUCKET, Key=object_key)
+            self.s3client.delete_object(Bucket=DBFS_S3_BUCKET, Key=object_key)
             al.debug("DELETE: %s" % object_key, "S3Storage.delete", self.dbo)
             cachedisk.delete(self._cache_key(url))
         except Exception as err:
