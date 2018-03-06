@@ -22,7 +22,7 @@ The code snippet required to embed the adoptable animal list in a page on your
 website looks like this::
     
     <div id="asm3-adoptables" />
-    <script src="https://sheltermanager.com/service/asmservice?method=animal_view_adoptable_js&account=ACCOUNT"></script>
+    <script src="https://service.sheltermanager.com/asmservice?method=animal_view_adoptable_js&account=ACCOUNT"></script>
 
 This example is for sheltermanager.com, substitute your own URL in the script
 src if you are hosting ASM yourself. Also, if you are using sheltermanager.com,
@@ -48,7 +48,7 @@ service API. The HTML templates are those used by the regular HTML publisher.
 For example, to embed a dynamic page of adoptable animals in an iframe on your
 website for a sheltermanager.com account::
 
-    <iframe src="https://sheltermanager.com/service/asmservice?account=ACCOUNT&method=html_adoptable_animals" width="100%" height="600px" />
+    <iframe src="https://service.sheltermanager.com/asmservice?account=ACCOUNT&method=html_adoptable_animals" width="100%" height="600px" />
 
 Static HTML Pages (Publisher)
 -----------------------------
