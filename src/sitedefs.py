@@ -303,4 +303,4 @@ TINYMCE_4_JS = 'static/lib/tinymce/4.1.7/tinymce/js/tinymce/tinymce.min.js'
 TOUCHPUNCH_JS = 'static/lib/touchpunch/0.2.3/jquery.ui.touch-punch.min.js'
 
 SMCOM_PAYMENT_LINK = ""
-SMCOM_LOGIN_LINK = ""
+SMCOM_LOGIN_URL = ""

@@ -1,4 +1,4 @@
-DEPLOY_HOST=wwwdx.sheltermanager.com
+DEPLOY_HOST=servicedx.sheltermanager.com
 
 all:	compile clean tags minify
 
@@ -67,24 +67,24 @@ compilepy:
 smcom-dev: version clean minify
 	@echo "[smcom dev] ========================="
 	rsync --progress --exclude '*.pyc' --delete -r src/* root@$(DEPLOY_HOST):/usr/local/lib/asm_dev.new
-	ssh root@$(DEPLOY_HOST) "/root/sheltermanager_sync_asm.py syncdev"
+	ssh root@$(DEPLOY_HOST) "/root/scripts/sheltermanager_sync_asm.py syncdev"
 
 smcom-stable: version clean minify
 	@echo "[smcom stable] ========================="
 	@# Having a BREAKING_CHANGES file prevents accidental deploy to stable without dumping sessions or doing it on a schedule
 	@if [ -f BREAKING_CHANGES ]; then echo "Cannot deploy due to breaking DB changes" && exit 1; fi;
 	rsync --progress --exclude '*.pyc' --delete -r src/* root@$(DEPLOY_HOST):/usr/local/lib/asm_stable.new
-	ssh root@$(DEPLOY_HOST) "/root/sheltermanager_sync_asm.py syncstable"
+	ssh root@$(DEPLOY_HOST) "/root/scripts/sheltermanager_sync_asm.py syncstable"
 
 smcom-stable-dumpsessions: version clean minify
 	@echo "[smcom stable dumpsessions] ==================="
 	rsync --exclude '*.pyc' --delete -r src/* root@$(DEPLOY_HOST):/usr/local/lib/asm_stable.new
-	ssh root@$(DEPLOY_HOST) "/root/sheltermanager_sync_asm.py syncstable dumpsessions"
+	ssh root@$(DEPLOY_HOST) "/root/scripts/sheltermanager_sync_asm.py syncstable dumpsessions"
 
 smcom-stable-tgz:
 	@echo "[smcom stable tgz] ======================"
 	rsync --exclude '*.pyc' --delete -r src/* root@$(DEPLOY_HOST):/usr/local/lib/asm_stable.new
-	ssh root@$(DEPLOY_HOST) "/root/sheltermanager_sync_asm.py syncstabletgz"
+	ssh root@$(DEPLOY_HOST) "/root/scripts/sheltermanager_sync_asm.py syncstabletgz"
 
 pot:
 	@echo "[template] ========================="
