@@ -132,7 +132,7 @@ $(function() {
                     else if (String(data).indexOf("WRONGSERVER") != -1) {
                         // This is smcom specific - if the database is not on this
                         // server, go back to the main login screen to prompt for an account
-                        window.location = "https://sheltermanager.com/service/asmlogin";
+                        window.location = controller.smcomloginlink;
                     }
                     else {
                         // We have a successful login!
