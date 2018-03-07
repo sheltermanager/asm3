@@ -576,9 +576,13 @@ $(function() {
             if (p.ISVOLUNTEER == 1) {
                 flags.push(_("Volunteer"));
             }
+            if (p.EXCLUDEFROMBULKEMAIL == 1) {
+                flags.push(_("Exclude from bulk email"));
+            }
             if (p.ADDITIONALFLAGS != null) {
-                var stock = [ "aco", "banned", "coordinator", "deceased", "donor", "driver", "fosterer", "homechecked", "homechecker", 
-                    "member", "shelter", "retailer", "staff", "giftaid", "vet", "volunteer"];
+                var stock = [ "aco", "banned", "coordinator", "deceased", "donor", "driver", "excludefrombulkemail",
+                    "fosterer", "homechecked", "homechecker", "member", "shelter", "retailer", "staff", "giftaid", 
+                    "vet", "volunteer"];
                 $.each(p.ADDITIONALFLAGS.split("|"), function(i, v) {
                     if (v != "" && $.inArray(v, stock) == -1) {
                         flags.push(v);

@@ -1740,6 +1740,7 @@
                 { label: _("Deceased"), html: field_option("ISDECEASED", "deceased", _("Deceased")) },
                 { label: _("Donor"), html: field_option("ISDONOR", "donor", _("Donor")) },
                 { label: _("Driver"), html: field_option("ISDRIVER", "driver", _("Driver")) },
+                { label: _("Exclude from bulk email"), html: field_option("EXCLUDEFROMBULKEMAIL", "excludefrombulkemail", _("Exclude from bulk email")) },
                 { label: _("Fosterer"), html: field_option("ISFOSTERER", "fosterer", _("Fosterer")) },
                 { label: _("Homechecked"), html: field_option("IDCHECK", "homechecked", _("Homechecked")) },
                 { label: _("Homechecker"), html: field_option("ISHOMECHECKER", "homechecker", _("Homechecker")) },

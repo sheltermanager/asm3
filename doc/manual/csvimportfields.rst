@@ -172,7 +172,7 @@ PERSONFOSTERER
 PERSONDONOR
     Y or 1 in this column to indicate the person is a regular donor.
 PERSONFLAGS
-    This column can be used to set any other person flags on the imported person. Flags should be comma separated with no extra spaces. Built in flags are their lower case English names, eg: banned,aco,homechecked,homechecker
+    This column can be used to set any other person flags on the imported person. Flags should be comma separated with no extra spaces. Built in flags are their lower case English names, eg: banned,aco,homechecked,homechecker,excludefrombulkemail
     Additional flags that you have added to the system should exactly match their flag names as they appear on the person screens, eg: banned,Fundraising Flag 1,Custom Flag
 PERSONCOMMENTS
     Any comments to go with the person record.

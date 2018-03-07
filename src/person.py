@@ -691,6 +691,7 @@ def update_person_from_form(dbo, post, username):
     retailer = bi("retailer" in flags)
     vet = bi("vet" in flags)
     giftaid = bi("giftaid" in flags)
+    excludefrombulkemail = bi("excludefrombulkemail" in flags)
     flagstr = "|".join(flags) + "|"
 
     sql = db.make_update_user_sql(dbo, "owner", username, "ID=%d" % pid, (
@@ -710,7 +711,7 @@ def update_person_from_form(dbo, post, username):
         ( "WorkTelephone", post.db_string("worktelephone")),
         ( "MobileTelephone", post.db_string("mobiletelephone")),
         ( "EmailAddress", post.db_string("email")),
-        ( "ExcludeFromBulkEmail", post.db_boolean("excludefrombulkemail")),
+        ( "ExcludeFromBulkEmail", db.di(excludefrombulkemail)),
         ( "JurisdictionID", post.db_integer("jurisdiction")),
         ( "IDCheck", db.di(homechecked) ),
         ( "Comments", post.db_string("comments")),
@@ -786,9 +787,11 @@ def update_flags(dbo, username, personid, flags):
     retailer = bi("retailer" in flags)
     vet = bi("vet" in flags)
     giftaid = bi("giftaid" in flags)
+    excludefrombulkemail = bi("excludefrombulkemail" in flags)
     flagstr = "|".join(flags) + "|"
     sql = db.make_update_user_sql(dbo, "owner", username, "ID=%d" % personid, (
         ( "IDCheck", db.di(homechecked) ),
+        ( "ExcludeFromBulkEmail", db.di(excludefrombulkemail)), 
         ( "IsAdoptionCoordinator", db.di(coordinator)), 
         ( "IsBanned", db.di(banned)),
         ( "IsVolunteer", db.di(volunteer)),
@@ -839,6 +842,7 @@ def insert_person_from_form(dbo, post, username):
     retailer = bi("retailer" in flags)
     vet = bi("vet" in flags)
     giftaid = bi("giftaid" in flags)
+    excludefrombulkemail = bi("excludefrombulkemail" in flags)
     flagstr = "|".join(flags) + "|"
 
     pid = db.get_id(dbo, "owner")
@@ -860,7 +864,7 @@ def insert_person_from_form(dbo, post, username):
         ( "WorkTelephone", db.ds(d("worktelephone", "") )),
         ( "MobileTelephone", db.ds(d("mobiletelephone", "") )),
         ( "EmailAddress", db.ds(d("emailaddress", "") )),
-        ( "ExcludeFromBulkEmail", post.db_boolean("excludefrombulkemail")),
+        ( "ExcludeFromBulkEmail", db.di(excludefrombulkemail)),
         ( "JurisdictionID", post.db_integer("jurisdiction")),
         ( "IDCheck", db.di(homechecked) ),
         ( "Comments", db.ds(d("comments") )),
