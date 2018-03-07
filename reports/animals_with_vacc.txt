@@ -8,7 +8,10 @@ Shelter animals who have a recent vaccination of a particular type
 ###
 en
 ###
-SELECT a.ShelterCode, a.AnimalName, s.SpeciesName, a.BreedName, a.AnimalAge, a.DisplayLocation, a.MostRecentEntryDate
+$VAR vt STRING Vaccination type$
+SELECT a.ShelterCode, a.AnimalName, s.SpeciesName, a.BreedName, a.AnimalAge, a.DisplayLocation, a.MostRecentEntryDate,
+(SELECT DateOfVaccination FROM animalvaccination INNER JOIN vaccinationtype ON vaccinationtype.ID = animalvaccination.VaccinationID AND 
+UPPER(vaccinationtype.VaccinationType) LIKE UPPER('%$@vt$%') ORDER BY DateOfVaccination DESC LIMIT 1) AS LastGiven
 FROM animal a
 INNER JOIN species s ON s.ID = a.SpeciesID
 LEFT OUTER JOIN adoption ad ON ad.ID = a.ActiveMovementID
@@ -17,7 +20,7 @@ WHERE a.Archived = 0
 AND EXISTS(SELECT av.ID FROM animalvaccination av
 INNER JOIN vaccinationtype vt ON av.VaccinationID = vt.ID
 WHERE av.AnimalID = a.ID AND av.DateOfVaccination >= a.MostRecentEntryDate 
-AND UPPER(vt.VaccinationType) LIKE UPPER('%$ASK STRING Vaccination type$%'))
+AND UPPER(vt.VaccinationType) LIKE UPPER('%$@vt$%'))
 ORDER BY a.AnimalName
 ###
 $$HEADER
@@ -30,6 +33,7 @@ $$HEADER
 <th>Age</th>
 <th>Location</th>
 <th>Entered Shelter</th>
+<th>Last Given</th>
 </tr>
 HEADER$$
 
@@ -42,6 +46,7 @@ $$BODY
 <td>$ANIMALAGE</td>
 <td>$DISPLAYLOCATION</td>
 <td>$MOSTRECENTENTRYDATE</td>
+<td>$LASTGIVEN</td>
 </tr>
 BODY$$
 
