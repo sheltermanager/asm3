@@ -76,7 +76,8 @@ class PetLinkPublisher(AbstractPublisher):
             try:
                 line = []
                 anCount += 1
-                self.log("Processing: %s: %s (%d of %d) - %s" % ( an["SHELTERCODE"], an["ANIMALNAME"], anCount, len(animals), an["IDENTICHIPNUMBER"]))
+                self.log("Processing: %s: %s (%d of %d) - %s %s" % \
+                    ( an["SHELTERCODE"], an["ANIMALNAME"], anCount, len(animals), an["IDENTICHIPNUMBER"], an["CURRENTOWNERNAME"] ))
                 self.updatePublisherProgress(self.getProgress(anCount, len(animals)))
 
                 # If the user cancelled, stop now
@@ -90,13 +91,18 @@ class PetLinkPublisher(AbstractPublisher):
                     self.logError("Chip number failed validation (%s not 15 digits), skipping." % an["IDENTICHIPNUMBER"])
                     continue
 
-                # Validate certain items aren't blank so we aren't registering bogus data
-                if utils.nulltostr(an["CURRENTOWNERADDRESS"]).strip() == "":
-                    self.logError("Address for the new owner is blank, cannot process")
+                # Validate certain items aren't blank so we aren't trying to register
+                # things that PetLink will bounce back anyway
+                if utils.nulltostr(an["CURRENTOWNERTOWN"]).strip() == "":
+                    self.logError("City for the new owner is blank, cannot process")
+                    continue 
+
+                if utils.nulltostr(an["CURRENTOWNERCOUNTY"]).strip() == "":
+                    self.logError("State for the new owner is blank, cannot process")
                     continue 
 
                 if utils.nulltostr(an["CURRENTOWNERPOSTCODE"]).strip() == "":
-                    self.logError("Postal code for the new owner is blank, cannot process")
+                    self.logError("Zipcode for the new owner is blank, cannot process")
                     continue
 
                 # If there's no email or phone, PetLink won't accept it
