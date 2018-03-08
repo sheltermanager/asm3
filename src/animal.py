@@ -2581,7 +2581,7 @@ def clone_animal(dbo, username, animalid):
             "WebsitePhoto":         me.websitephoto,
             "WebsiteVideo":         me.websitevideo,
             "DocPhoto":             me.docphoto,
-            "ExcludeFromPublish":   0,
+            "ExcludeFromPublish":   me.excludefrompublish,
             # ASM2_COMPATIBILITY
             "NewSinceLastPublish":  1,
             "UpdatedSinceLastPublish": 0,
