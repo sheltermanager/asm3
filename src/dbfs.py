@@ -136,7 +136,9 @@ class S3Storage(DBFSStorage):
     
     def __init__(self, dbo):
         import boto3
-        session = boto3.Session() # Create a new session each time as the default one is not thread safe
+        # Create a new session each time as the default one is not thread safe
+        # This does has a significant performance impact. There's a boto issue to make sessions thread safe.
+        session = boto3.Session() 
         self.s3client = session.client("s3")
         self.dbo = dbo
 
@@ -146,8 +148,8 @@ class S3Storage(DBFSStorage):
 
     def _cache_ttl(self, name):
         """ Gets the cache ttl for a file based on its name/extension """
-        if name.endswith("jpg"): return 86400 * 7 # Cache images for one week
-        return 86400 * 2 # Cache everything else for two days
+        if name.endswith(".jpg") or name.endswith(".jpeg"): return (86400 * 14) # Cache images for two weeks
+        return (86400 * 2) # Cache everything else for two days
 
     def get(self, dbfsid, url):
         """ Returns the file data for url, reads through the disk cache """
