@@ -77,6 +77,7 @@ class MaddiesFundPublisher(AbstractPublisher):
         self.log("Maddies Fund Publisher starting...")
 
         BATCH_SIZE = 250 # How many animals to send in one POST
+        PERIOD = 214 # How many days to go back when checking for fosters and adoptions (7 months * 30.5 = 214 days)
 
         if self.isPublisherExecuting(): return
         self.updatePublisherProgress(0)
@@ -92,8 +93,8 @@ class MaddiesFundPublisher(AbstractPublisher):
             self.cleanup()
             return
 
-        # Send all fosters and adoptions for the last month that haven't been sent already
-        cutoff = i18n.subtract_days(i18n.now(self.dbo.timezone), 31)
+        # Send all fosters and adoptions for the period that haven't been sent already
+        cutoff = i18n.subtract_days(i18n.now(self.dbo.timezone), PERIOD)
         sql = "%s WHERE a.ActiveMovementType IN (1,2) " \
             "AND a.ActiveMovementDate >= ? AND a.DeceasedDate Is Null AND a.NonShelterAnimal = 0 " \
             "AND NOT EXISTS(SELECT AnimalID FROM animalpublished WHERE AnimalID = a.ID AND PublishedTo = 'maddiesfund' AND SentDate >= a.ActiveMovementDate) " \

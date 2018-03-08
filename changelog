@@ -1,6 +1,7 @@
 41
 ================
 
+08/03/18 MPA: Go back 7 months rather than 1 when considering foster/adoption
 08/03/18 Open in new browser tab causing constant reloads for related tabs
 07/03/18 PetLink do not require street address
 07/03/18 Make exclude from bulk email a flag instead of separate #284
