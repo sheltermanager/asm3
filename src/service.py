@@ -280,7 +280,7 @@ def handler(post, path, remoteip, referer, querystring):
         else:
             mediadate, data = media.get_image_file_data(dbo, "animal", utils.cint(animalid), seq)
             if data == "NOPIC": mediadate, data = media.get_image_file_data(dbo, "nopic", 0)
-            return set_cached_response(cache_key, "image/jpeg", 86400, 120, data)
+            return set_cached_response(cache_key, "image/jpeg", 86400, 3600, data)
 
     elif method =="animal_thumbnail":
         if utils.cint(animalid) == 0:
@@ -289,7 +289,7 @@ def handler(post, path, remoteip, referer, querystring):
         else:
             mediadate, data = media.get_image_file_data(dbo, "animalthumb", utils.cint(animalid), seq)
             if data == "NOPIC": mediadate, data = media.get_image_file_data(dbo, "nopic", 0)
-            return set_cached_response(cache_key, "image/jpeg", 86400, 120, data)
+            return set_cached_response(cache_key, "image/jpeg", 86400, 86400, data)
 
     elif method == "animal_view":
         if utils.cint(animalid) == 0:
@@ -306,12 +306,12 @@ def handler(post, path, remoteip, referer, querystring):
 
     elif method =="dbfs_image":
         hotlink_protect("dbfs_image", referer)
-        return set_cached_response(cache_key, "image/jpeg", 86400, 120, utils.iif(title.startswith("/"),
+        return set_cached_response(cache_key, "image/jpeg", 86400, 86400, utils.iif(title.startswith("/"),
             dbfs.get_string_filepath(dbo, title), dbfs.get_string(dbo, title)))
 
     elif method =="extra_image":
         hotlink_protect("extra_image", referer)
-        return set_cached_response(cache_key, "image/jpeg", 86400, 120, dbfs.get_string(dbo, title, "/reports"))
+        return set_cached_response(cache_key, "image/jpeg", 86400, 86400, dbfs.get_string(dbo, title, "/reports"))
 
     elif method == "json_adoptable_animal":
         if utils.cint(animalid) == 0:

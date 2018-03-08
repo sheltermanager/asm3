@@ -39,7 +39,7 @@ The following method values are supported:
 animal_image
 ------------
 
-.. rubric:: Cache time: 1 day
+.. rubric:: Cache time: 1 hour
 
 Returns an animal's preferred image. Send the id of the animal::
 
