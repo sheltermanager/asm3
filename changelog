@@ -1,6 +1,7 @@
 41
 ================
 
+08/03/18 Open in new browser tab causing constant reloads for related tabs
 07/03/18 PetLink do not require street address
 07/03/18 Make exclude from bulk email a flag instead of separate #284
 05/03/18 Fix bug with shelter view flags where text overlaps

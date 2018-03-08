@@ -898,7 +898,14 @@
                         href = String($(this).attr("href"));
                         anchor = $(this);
                         $.each(recpages, function(i, v) {
+                            // If the URL target begins with one of our recpages, it's a candidate
+                            // for adding a target attribute for a new tab.
                             if (href.indexOf(v) == 0 && href.indexOf("?") != -1) {
+                                // If the current url we're looking at begins with this base page, 
+                                // don't do anything - we don't want it to open in a new tab
+                                if (common.current_url().indexOf("/" + v) != -1) {
+                                    return;
+                                }
                                 // Create targetname from URL, throwing away any
                                 // portion after an underscore to get animal52, etc.
                                 targetname = href.substring(href.lastIndexOf("/")+1);
