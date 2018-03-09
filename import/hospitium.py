@@ -115,9 +115,24 @@ for d in asm.csv_to_list("%s/adoption_contacts.csv" % PATH):
             a.LastChangedDate = m.MovementDate
             movements.append(m)
 
-# Run back through the animals, if we have any that are still
-# on shelter after 1 year, add an adoption to an unknown owner
-asm.adopt_older_than(animals, movements, uo.ID, 365)
+# Run back through the animals, if we have any with an adopted date
+# but they weren't in the adopted_contacts, adopt them to the unknown owner
+for a in animals:
+    if a.SourceAdoptedDate is not None and a.ActiveMovementDate is None:
+        m = asm.Movement()
+        m.AnimalID = a.ID
+        m.OwnerID = uo.ID
+        m.MovementType = 1
+        m.MovementDate = a.SourceAdoptedDate
+        a.Archived = 1
+        a.ActiveMovementDate = m.MovementDate
+        a.ActiveMovementID = m.ID
+        a.ActiveMovementType = 1
+        a.LastChangedDate = m.MovementDate
+        movements.append(m)
+
+# Catch all for remaining animals, adopt everyone on shelter longer than a year
+# asm.adopt_older_than(animals, movements, uo.ID, 365)
 
 # Now that everything else is done, output stored records
 for a in animals:
