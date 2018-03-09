@@ -67,6 +67,10 @@ def get_animal_data(dbo, pc = None, animalid = 0, include_additional_fields = Fa
             for k in r.iterkeys():
                 if k.startswith("ORIGINALOWNER") or k.startswith("BROUGHTINBY") or k.startswith("CURRENTOWNER") or k.startswith("RESERVEDOWNER"):
                     r[k] = ""
+    # Calculate age groups for now (age group field contains age group at intake otherwise)
+    bands = configuration.age_group_bands(dbo)
+    for r in rows:
+        r["AGEGROUP"] = animal.calc_age_group(dbo, r["ID"], r, bands)
     # If bondedAsSingle is on, go through the the set of animals and merge
     # the bonded animals into a single record
     def merge_animal(a, aid):
