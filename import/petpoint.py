@@ -17,6 +17,7 @@ AnimalLocationHistory
 
 # The shelter's petfinder ID for grabbing animal images for adoptable animals
 PETFINDER_ID = ""
+START_ID = 200
 
 INTAKE_FILENAME = "data/petpoint_nv1573/animals.csv"
 MEMO_FILENAME = ""
@@ -50,21 +51,21 @@ logs = []
 ppa = {}
 ppo = {}
 
-asm.setid("animal", 100)
-asm.setid("animaltest", 100)
-asm.setid("animalvaccination", 100)
-asm.setid("log", 100)
-asm.setid("owner", 100)
-asm.setid("adoption", 100)
+asm.setid("animal", START_ID)
+asm.setid("animaltest", START_ID)
+asm.setid("animalvaccination", START_ID)
+asm.setid("log", START_ID)
+asm.setid("owner", START_ID)
+asm.setid("adoption", START_ID)
 
 print "\\set ON_ERROR_STOP\nBEGIN;"
 print "DELETE FROM internallocation;"
-print "DELETE FROM animal WHERE ID >= 100 AND CreatedBy = 'conversion';"
-print "DELETE FROM animaltest WHERE ID >= 100 AND CreatedBy = 'conversion';"
-print "DELETE FROM animalvaccination WHERE ID >= 100 AND CreatedBy = 'conversion';"
-print "DELETE FROM log WHERE ID >= 100 AND CreatedBy = 'conversion';"
-print "DELETE FROM owner WHERE ID >= 100 AND CreatedBy = 'conversion';"
-print "DELETE FROM adoption WHERE ID >= 100 AND CreatedBy = 'conversion';"
+print "DELETE FROM animal WHERE ID >= %s AND CreatedBy = 'conversion';" % START_ID
+print "DELETE FROM animaltest WHERE ID >= %s AND CreatedBy = 'conversion';" % START_ID
+print "DELETE FROM animalvaccination WHERE ID >= %s AND CreatedBy = 'conversion';" % START_ID
+print "DELETE FROM log WHERE ID >= %s AND CreatedBy = 'conversion';" % START_ID
+print "DELETE FROM owner WHERE ID >= %s AND CreatedBy = 'conversion';" % START_ID
+print "DELETE FROM adoption WHERE ID >= %s AND CreatedBy = 'conversion';" % START_ID
 
 # Create an unknown owner
 uo = asm.Owner()
@@ -74,10 +75,10 @@ uo.OwnerName = uo.OwnerSurname
 
 pf = ""
 if PETFINDER_ID != "":
-    asm.setid("media", 100)
-    asm.setid("dbfs", 200)
-    print "DELETE FROM media WHERE ID >= 100;"
-    print "DELETE FROM dbfs WHERE ID >= 200;"
+    asm.setid("media", START_ID)
+    asm.setid("dbfs", START_ID)
+    print "DELETE FROM media WHERE ID >= %s;" % START_ID
+    print "DELETE FROM dbfs WHERE ID >= %s;" % START_ID
     pf = asm.petfinder_get_adoptable(PETFINDER_ID)
 
 # Deal with people first (if set)
@@ -128,9 +129,7 @@ for d in sorted(asm.csv_to_list(INTAKE_FILENAME), key=lambda k: getdate(k["Intak
         a.AnimalName = d["Animal Name"]
         if a.AnimalName.strip() == "":
             a.AnimalName = "(unknown)"
-        a.DateBroughtIn = getdate(d["Intake Date"])
-        if a.DateBroughtIn is None:
-            a.DateBroughtIn = asm.today()
+        a.DateBroughtIn = getdate(d["Intake Date"]) or asm.today()
         if "Date Of Birth" in d and d["Date Of Birth"].strip() != "":
             a.DateOfBirth = getdate(d["Date Of Birth"])
         else:
@@ -256,6 +255,7 @@ for d in sorted(asm.csv_to_list(INTAKE_FILENAME), key=lambda k: getdate(k["Intak
         m.Comments = ot + "/" + ost
         a.Archived = 1
         a.ActiveMovementID = m.ID
+        a.ActiveMovementDate = m.MovementDate
         a.ActiveMovementType = 1
         a.LastChangedDate = od
         movements.append(m)
@@ -269,6 +269,7 @@ for d in sorted(asm.csv_to_list(INTAKE_FILENAME), key=lambda k: getdate(k["Intak
         m.Comments = ot + "/" + ost
         a.Archived = 1
         a.ActiveMovementID = m.ID
+        a.ActiveMovementDate = m.MovementDate
         a.ActiveMovementType = 3
         a.LastChangedDate = od
         movements.append(m)
@@ -282,6 +283,7 @@ for d in sorted(asm.csv_to_list(INTAKE_FILENAME), key=lambda k: getdate(k["Intak
         m.Comments = ot + "/" + ost
         a.Archived = 1
         a.ActiveMovementID = m.ID
+        a.ActiveMovementDate = m.MovementDate
         a.ActiveMovementType = 3
         a.LastChangedDate = od
         movements.append(m)
@@ -309,6 +311,7 @@ for d in sorted(asm.csv_to_list(INTAKE_FILENAME), key=lambda k: getdate(k["Intak
         m.Comments = ot + "/" + ost
         a.Archived = 1
         a.ActiveMovementID = m.ID
+        a.ActiveMovementDate = m.MovementDate
         a.ActiveMovementType = 8
         a.LastChangedDate = od
         movements.append(m)
