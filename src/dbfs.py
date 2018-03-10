@@ -137,7 +137,8 @@ class S3Storage(DBFSStorage):
     def __init__(self, dbo):
         import boto3
         # Create a new session each time as the default one is not thread safe
-        # This does has a significant performance impact. There's a boto issue to make sessions thread safe.
+        # This does has a significant performance impact. There's a boto issue to make sessions thread safe in future.
+        # To use the default session, self.s3client = boto3.client("s3")
         session = boto3.Session() 
         self.s3client = session.client("s3")
         self.dbo = dbo
@@ -148,13 +149,15 @@ class S3Storage(DBFSStorage):
 
     def _cache_ttl(self, name):
         """ Gets the cache ttl for a file based on its name/extension """
-        if name.endswith(".jpg") or name.endswith(".jpeg"): return (86400 * 14) # Cache images for two weeks
+        name = name.lower()
+        if name.endswith(".jpg") or name.endswith(".jpeg"): return (86400 * 7) # Cache images for a week
         return (86400 * 2) # Cache everything else for two days
 
     def get(self, dbfsid, url):
         """ Returns the file data for url, reads through the disk cache """
         cachekey = self._cache_key(url)
-        cachedata = cachedisk.get(cachekey)
+        cachettl = self._cache_ttl(url)
+        cachedata = cachedisk.touch(cachekey, ttlremaining=86400, newttl=cachettl) # Use touch to refresh items expiring in less than 24 hours
         if cachedata is not None:
             return cachedata
         object_key = "%s/%s" % (self.dbo.database, url.replace("s3:", ""))
@@ -162,7 +165,7 @@ class S3Storage(DBFSStorage):
             response = self.s3client.get_object(Bucket=DBFS_S3_BUCKET, Key=object_key)
             body = response["Body"].read()
             al.debug("GET: %s" % object_key, "S3Storage.get", self.dbo)
-            cachedisk.put(cachekey, body, self._cache_ttl(object_key))
+            cachedisk.put(cachekey, body, cachettl)
             return body
         except Exception as err:
             raise DBFSError("Failed retrieving from S3: %s" % err)

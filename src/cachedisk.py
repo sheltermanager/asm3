@@ -47,8 +47,8 @@ def get(key):
         if not os.path.exists(fname): return None
 
         # Pull the entry out
-        f = open(fname, "r")
-        o = pickle.load(f)
+        with open(fname, "r") as f:
+            o = pickle.load(f)
 
         # Has the entry expired?
         if o["expires"] < time.time():
@@ -59,11 +59,6 @@ def get(key):
     except Exception as err:
         al.error(str(err), "cachedisk.get")
         return None
-    finally:
-        try:
-            f.close()
-        except:
-            pass
 
 def put(key, value, ttl):
     """
@@ -80,16 +75,45 @@ def put(key, value, ttl):
         }
 
         # Write the entry
-        f = open(fname, "w")
-        pickle.dump(o, f)
+        with open(fname, "w") as f:
+            pickle.dump(o, f)
 
     except Exception as err:
         al.error(str(err), "cachedisk.put")
-    finally:
-        try:
-            f.close()
-        except:
-            pass
+
+def touch(key, ttlremaining = 0, newttl = 0):
+    """
+    Retrieves a value from our disk cache and updates its ttl if there is less than ttlremaining until expiry.
+    This can be used to make our timed expiry cache into a sort of hybrid with LRU.
+    Returns None if the value is not found or has expired.
+    """
+    f = None
+    try:
+        fname = _getfilename(key)
+
+        # No cache entry found, bail
+        if not os.path.exists(fname): return None
+
+        # Pull the entry out
+        with open(fname, "r") as f:
+            o = pickle.load(f)
+
+        # Has the entry expired?
+        now = time.time()
+        if o["expires"] < now:
+            delete(key)
+            return None
+
+        # Is there less than ttlremaining to expiry? If so update it to newttl
+        if o["expires"] - now < ttlremaining:
+            o["expires"] = now + newttl
+            with open(fname, "w") as f:
+                pickle.dump(o, f)
+
+        return o["value"]
+    except Exception as err:
+        al.error(str(err), "cachedisk.touch")
+        return None
 
 def remove_expired():
     """
