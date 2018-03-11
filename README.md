@@ -18,6 +18,7 @@ Extra, non-mandatory packages:
 
 * apt-get install imagemagick (for scaling/compressing PDFs to save on storage)
 * apt-get install wkhtmltopdf (for creating PDFs from HTML document templates)
+* apt-get install python-reportlab (for creating mailing label PDFs)
 * apt-get install python-requests (needed for all HTTPS publishers - PetLink, MeetAPet, VetEnvoy)
 * apt-get install python-boto3 (needed for Amazon S3 media storage)
 
