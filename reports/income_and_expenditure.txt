@@ -19,7 +19,7 @@ l.AccountType
 FROM accounts a
 INNER JOIN lksaccounttype l ON l.ID = a.AccountType
 WHERE a.AccountType IN (2,3,4,5)
-ORDER BY l.AccountType
+ORDER BY l.AccountType, a.Code
 ###
 $$HEADER
 HEADER$$
