@@ -10,7 +10,7 @@ produces animals.csv, adoption_contacts.csv, relinquishment_contacts.csv
 """
 
 PATH = "data/hospitium_hs1402"
-START_ID = 100
+START_ID = 500
 
 def getdate(d):
     return asm.getdate_guess(d)
@@ -56,12 +56,13 @@ for d in asm.csv_to_list("%s/animals.csv" % PATH):
     a.DateOfBirth = getdate(d["Birthday"]) or a.DateBroughtIn
     a.CreatedDate = a.DateBroughtIn
     a.LastChangedDate = a.DateBroughtIn
-    a.generateCode()
+    a.ShelterCode = d["ID"][d["ID"].rfind("-")+1:]
+    a.ShortCode = a.ShelterCode
     a.BaseColourID = asm.colour_id_for_name(d["Animal Color"])
     a.IsNotAvailableForAdoption = 0
     a.Sex = asm.getsex_mf(d["Sex"])
     a.Size = 2
-    a.Neutered = d["Spay / Neuter"] == "Yes"
+    a.Neutered = asm.iif(d["Spay / Neuter"] == "Yes", 1, 0)
     a.EntryReasonID = 17 # Surrender
     a.Archived = 0
     a.HiddenAnimalDetails = "Color: %s\nPrevious Name: %s\nBiter: %s\nDiet: %s\n%s" % (d["Animal Color"], d["Previous Name"], d["Biter"], d["Diet"], d["Special Needs"])
@@ -131,8 +132,8 @@ for a in animals:
         a.LastChangedDate = m.MovementDate
         movements.append(m)
 
-# Catch all for remaining animals, adopt everyone on shelter longer than a year
-# asm.adopt_older_than(animals, movements, uo.ID, 365)
+# Catch all for remaining animals, adopt everyone still on shelter
+asm.adopt_older_than(animals, movements, uo.ID, 0)
 
 # Now that everything else is done, output stored records
 for a in animals:
