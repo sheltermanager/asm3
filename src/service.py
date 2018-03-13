@@ -296,13 +296,13 @@ def handler(post, path, remoteip, referer, querystring):
             al.error("animal_view failed, %s is not an animalid" % str(animalid), "service.handler", dbo)
             return ("text/plain", 0, 0, "ERROR: Invalid animalid")
         else:
-            return set_cached_response(cache_key, "text/html", 120, 120, publishers.html.get_animal_view(dbo, utils.cint(animalid)))
+            return set_cached_response(cache_key, "text/html", 86400, 120, publishers.html.get_animal_view(dbo, utils.cint(animalid)))
 
     elif method == "animal_view_adoptable_js":
-        return set_cached_response(cache_key, "application/javascript", 600, 600, publishers.html.get_animal_view_adoptable_js(dbo))
+        return set_cached_response(cache_key, "application/javascript", 10800, 600, publishers.html.get_animal_view_adoptable_js(dbo))
 
     elif method == "animal_view_adoptable_html":
-        return set_cached_response(cache_key, "text/html", 120, 120, publishers.html.get_animal_view_adoptable_html(dbo))
+        return set_cached_response(cache_key, "text/html", 86400, 86400, publishers.html.get_animal_view_adoptable_html(dbo))
 
     elif method =="dbfs_image":
         hotlink_protect("dbfs_image", referer)
@@ -323,7 +323,7 @@ def handler(post, path, remoteip, referer, querystring):
             return set_cached_response(cache_key, "application/json", 3600, 3600, utils.json(rs))
 
     elif method == "html_adoptable_animals":
-        return set_cached_response(cache_key, "text/html", 1800, 1800, \
+        return set_cached_response(cache_key, "text/html", 10800, 1800, \
             publishers.html.get_adoptable_animals(dbo, style=post["template"], \
                 speciesid=post.integer("speciesid"), animaltypeid=post.integer("animaltypeid")))
 

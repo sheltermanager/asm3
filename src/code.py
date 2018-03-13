@@ -403,7 +403,7 @@ class image(ASMEndpoint):
             return ""
         if imagedata != "NOPIC":
             self.content_type("image/jpeg")
-            self.cache_control(86400)
+            self.cache_control(86400, 3600)
             return imagedata
         else:
             self.redirect("image?db=%s&mode=nopic" % o.dbo.database)
