@@ -76,7 +76,7 @@ def get_cached_response(cache_key):
     """
     if not CACHE_SERVICE_RESPONSES: return None
     response = cachedisk.get(cache_key)
-    if response is None: return None
+    if response is None or len(response) != 4: return None
     #al.debug("GET: %s (%d bytes)" % (cache_key, len(response[2])), "service.get_cached_response")
     return response
 
@@ -89,7 +89,7 @@ def set_cached_response(cache_key, mime, clientage, serverage, content):
     serverage: The ttl for storing in our server cache (seconds)
     content: The response
     """
-    response = (mime, clientage, content)
+    response = (mime, clientage, serverage, content)
     if not CACHE_SERVICE_RESPONSES: return response
     #al.debug("PUT: %s (%d bytes)" % (cache_key, len(content)), "service.set_cached_response")
     cachedisk.put(cache_key, response, serverage)
@@ -226,7 +226,7 @@ def handler(post, path, remoteip, referer, querystring):
 
     # Are we dealing with multiple databases, but no account was specified?
     if account == "" and MULTIPLE_DATABASES:
-        return ("text/plain", 0, "ERROR: No database/alias specified")
+        return ("text/plain", 0, 0, "ERROR: No database/alias specified")
 
     # Are we dealing with multiple databases and an account was specified?
     if account != "":
@@ -240,12 +240,12 @@ def handler(post, path, remoteip, referer, querystring):
                 dbo  = db.get_multiple_database_info(account)
             if dbo.database in ( "FAIL", "DISABLED", "WRONGSERVER" ):
                 al.error("auth failed - invalid smaccount %s from %s (%s)" % (account, remoteip, dbo.database), "service.handler", dbo)
-                return ("text/plain", 0, "ERROR: Invalid database (%s)" % dbo.database)
+                return ("text/plain", 0, 0, "ERROR: Invalid database (%s)" % dbo.database)
 
     # If the database has disabled the service API, stop now
     if not configuration.service_enabled(dbo):
         al.error("Service API is disabled (%s)" % method, "service.handler", dbo)
-        return ("text/plain", 0, "ERROR: Service API is disabled")
+        return ("text/plain", 0, 0, "ERROR: Service API is disabled")
 
     # Do any database updates need doing in this db?
     dbo.installpath = path
@@ -259,11 +259,11 @@ def handler(post, path, remoteip, referer, querystring):
         # If the database has authenticated service methods disabled, stop now
         if not configuration.service_auth_enabled(dbo):
             al.error("Service API for auth methods is disabled (%s)" % method, "service.handler", dbo)
-            return ("text/plain", 0, "ERROR: Service API for authenticated methods is disabled")
+            return ("text/plain", 0, 0, "ERROR: Service API for authenticated methods is disabled")
         user = users.authenticate(dbo, username, password)
         if user is None:
             al.error("auth failed - %s/%s is not a valid username/password from %s" % (username, password, remoteip), "service.handler", dbo)
-            return ("text/plain", 0, "ERROR: Invalid username and password")
+            return ("text/plain", 0, 0, "ERROR: Invalid username and password")
         securitymap = users.get_security_map(dbo, user["USERNAME"])
 
     # Get the preferred locale and timezone for the site
@@ -276,7 +276,7 @@ def handler(post, path, remoteip, referer, querystring):
         hotlink_protect("animal_image", referer)
         if utils.cint(animalid) == 0:
             al.error("animal_image failed, %s is not an animalid" % str(animalid), "service.handler", dbo)
-            return ("text/plain", 0, "ERROR: Invalid animalid")
+            return ("text/plain", 0, 0, "ERROR: Invalid animalid")
         else:
             mediadate, data = media.get_image_file_data(dbo, "animal", utils.cint(animalid), seq)
             if data == "NOPIC": mediadate, data = media.get_image_file_data(dbo, "nopic", 0)
@@ -285,7 +285,7 @@ def handler(post, path, remoteip, referer, querystring):
     elif method =="animal_thumbnail":
         if utils.cint(animalid) == 0:
             al.error("animal_thumbnail failed, %s is not an animalid" % str(animalid), "service.handler", dbo)
-            return ("text/plain", 0, "ERROR: Invalid animalid")
+            return ("text/plain", 0, 0, "ERROR: Invalid animalid")
         else:
             mediadate, data = media.get_image_file_data(dbo, "animalthumb", utils.cint(animalid), seq)
             if data == "NOPIC": mediadate, data = media.get_image_file_data(dbo, "nopic", 0)
@@ -294,7 +294,7 @@ def handler(post, path, remoteip, referer, querystring):
     elif method == "animal_view":
         if utils.cint(animalid) == 0:
             al.error("animal_view failed, %s is not an animalid" % str(animalid), "service.handler", dbo)
-            return ("text/plain", 0, "ERROR: Invalid animalid")
+            return ("text/plain", 0, 0, "ERROR: Invalid animalid")
         else:
             return set_cached_response(cache_key, "text/html", 120, 120, publishers.html.get_animal_view(dbo, utils.cint(animalid)))
 
@@ -316,7 +316,7 @@ def handler(post, path, remoteip, referer, querystring):
     elif method == "json_adoptable_animal":
         if utils.cint(animalid) == 0:
             al.error("json_adoptable_animal failed, %s is not an animalid" % str(animalid), "service.handler", dbo)
-            return ("text/plain", 0, "ERROR: Invalid animalid")
+            return ("text/plain", 0, 0, "ERROR: Invalid animalid")
         else:
             users.check_permission_map(l, user["SUPERUSER"], securitymap, users.VIEW_ANIMAL)
             rs = publishers.base.get_animal_data(dbo, None, utils.cint(animalid), include_additional_fields = True)
@@ -335,12 +335,12 @@ def handler(post, path, remoteip, referer, querystring):
     elif method == "jsonp_adoptable_animals":
         users.check_permission_map(l, user["SUPERUSER"], securitymap, users.VIEW_ANIMAL)
         rs = publishers.base.get_animal_data(dbo, None, include_additional_fields = True)
-        return ("application/javascript", 0, "%s(%s);" % (post["callback"], utils.json(rs)))
+        return ("application/javascript", 0, 0, "%s(%s);" % (post["callback"], utils.json(rs)))
 
     elif method == "xml_adoptable_animal":
         if utils.cint(animalid) == 0:
             al.error("xml_adoptable_animal failed, %s is not an animalid" % str(animalid), "service.handler", dbo)
-            return ("text/plain", 0, "ERROR: Invalid animalid")
+            return ("text/plain", 0, 0, "ERROR: Invalid animalid")
         else:
             users.check_permission_map(l, user["SUPERUSER"], securitymap, users.VIEW_ANIMAL)
             rs = publishers.base.get_animal_data(dbo, None, utils.cint(animalid), include_additional_fields = True)
@@ -359,7 +359,7 @@ def handler(post, path, remoteip, referer, querystring):
     elif method == "jsonp_found_animals":
         users.check_permission_map(l, user["SUPERUSER"], securitymap, users.VIEW_FOUND_ANIMAL)
         rs = lostfound.get_foundanimal_last_days(dbo)
-        return ("application/javascript", 0, "%s(%s);" % (post["callback"], utils.json(rs)))
+        return ("application/javascript", 0, 0, "%s(%s);" % (post["callback"], utils.json(rs)))
 
     elif method == "xml_found_animals":
         users.check_permission_map(l, user["SUPERUSER"], securitymap, users.VIEW_FOUND_ANIMAL)
@@ -374,7 +374,7 @@ def handler(post, path, remoteip, referer, querystring):
     elif method == "jsonp_lost_animals":
         users.check_permission_map(l, user["SUPERUSER"], securitymap, users.VIEW_LOST_ANIMAL)
         rs = lostfound.get_lostanimal_last_days(dbo)
-        return ("application/javascript", 0, "%s(%s);" % (post["callback"], utils.json(rs)))
+        return ("application/javascript", 0, 0, "%s(%s);" % (post["callback"], utils.json(rs)))
 
     elif method == "xml_lost_animals":
         users.check_permission_map(l, user["SUPERUSER"], securitymap, users.VIEW_LOST_ANIMAL)
@@ -389,7 +389,7 @@ def handler(post, path, remoteip, referer, querystring):
     elif method == "jsonp_recent_adoptions":
         users.check_permission_map(l, user["SUPERUSER"], securitymap, users.VIEW_ANIMAL)
         rs = movement.get_recent_adoptions(dbo)
-        return ("application/javascript", 0, "%s(%s);" % (post["callback"], utils.json(rs)))
+        return ("application/javascript", 0, 0, "%s(%s);" % (post["callback"], utils.json(rs)))
 
     elif method == "xml_recent_adoptions":
         users.check_permission_map(l, user["SUPERUSER"], securitymap, users.VIEW_ANIMAL)
@@ -414,7 +414,7 @@ def handler(post, path, remoteip, referer, querystring):
     elif method == "jsonp_recent_changes":
         users.check_permission_map(l, user["SUPERUSER"], securitymap, users.VIEW_ANIMAL)
         sa = animal.get_recent_changes(dbo)
-        return ("application/javascript", 0, "%s(%s);" % (post["callback"], utils.json(sa)))
+        return ("application/javascript", 0, 0, "%s(%s);" % (post["callback"], utils.json(sa)))
 
     elif method == "json_recent_changes":
         users.check_permission_map(l, user["SUPERUSER"], securitymap, users.VIEW_ANIMAL)
@@ -429,7 +429,7 @@ def handler(post, path, remoteip, referer, querystring):
     elif method == "jsonp_shelter_animals":
         users.check_permission_map(l, user["SUPERUSER"], securitymap, users.VIEW_ANIMAL)
         sa = animal.get_shelter_animals(dbo)
-        return ("application/javascript", 0, "%s(%s);" % (post["callback"], utils.json(sa)))
+        return ("application/javascript", 0, 0, "%s(%s);" % (post["callback"], utils.json(sa)))
 
     elif method == "json_shelter_animals":
         users.check_permission_map(l, user["SUPERUSER"], securitymap, users.VIEW_ANIMAL)
@@ -448,7 +448,7 @@ def handler(post, path, remoteip, referer, querystring):
     elif method == "upload_animal_image":
         users.check_permission_map(l, user["SUPERUSER"], securitymap, users.ADD_MEDIA)
         media.attach_file_from_form(dbo, username, media.ANIMAL, int(animalid), post)
-        return ("text/plain", 0, "OK")
+        return ("text/plain", 0, 0, "OK")
 
     elif method == "online_form_html":
         if formid == 0:
@@ -466,7 +466,7 @@ def handler(post, path, remoteip, referer, querystring):
         redirect = post["redirect"]
         if redirect == "":
             redirect = BASE_URL + "/static/pages/form_submitted.html"
-        return ("redirect", 0, redirect)
+        return ("redirect", 0, 0, redirect)
 
     elif method == "sign_document":
         if formid == 0:
@@ -475,7 +475,7 @@ def handler(post, path, remoteip, referer, querystring):
             return set_cached_response(cache_key, "text/html", 2, 2, sign_document_page(dbo, formid))
         else:
             media.sign_document(dbo, "service", formid, post["sig"], post["signdate"])
-            return ("text/plain", 0, "OK")
+            return ("text/plain", 0, 0, "OK")
 
     else:
         al.error("invalid method '%s'" % method, "service.handler", dbo)

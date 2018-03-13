@@ -403,7 +403,7 @@ class image(ASMEndpoint):
             return ""
         if imagedata != "NOPIC":
             self.content_type("image/jpeg")
-            self.cache_control(604800) # Cache images on the client for 1 week, media.date invalidates it on change anyway
+            self.cache_control(86400)
             return imagedata
         else:
             self.redirect("image?db=%s&mode=nopic" % o.dbo.database)
@@ -524,7 +524,7 @@ class css(ASMEndpoint):
         if v == "": self.notfound()
         content = utils.read_binary_file(csspath)
         self.content_type("text/css")
-        self.cache_control(8640000) # Don't refresh for 100 days (qs invalidates)
+        self.cache_control(86400)
         return content
 
 class i18njs(ASMEndpoint):
@@ -535,7 +535,7 @@ class i18njs(ASMEndpoint):
         l = o.post["l"]
         if l == "": l = LOCALE
         self.content_type("text/javascript")
-        self.cache_control(8640000)
+        self.cache_control(86400)
         return i18nstringsjs(l)
 
 class js(ASMEndpoint):
@@ -550,7 +550,7 @@ class js(ASMEndpoint):
         if v == "": self.notfound()
         content = utils.read_binary_file(jspath)
         self.content_type("text/javascript")
-        self.cache_control(8640000)
+        self.cache_control(86400)
         return content
 
 class jserror(ASMEndpoint):
@@ -4431,7 +4431,7 @@ class publish_log_view(ASMEndpoint):
 
     def content(self, o):
         al.debug("viewing log file %s" % o.post["view"], "code.publish_logs", o.dbo)
-        self.cache_control(8640000)
+        self.cache_control(86400)
         self.content_type("text/plain")
         self.header("Content-Disposition", "inline; filename=\"%s\"" % o.post["view"])
         return extpublish.get_publish_log(o.dbo, o.post.integer("view"))
@@ -4704,12 +4704,12 @@ class service(ASMEndpoint):
     check_logged_in = False
 
     def handle(self, o):
-        contenttype, maxage, response = extservice.handler(o.post, PATH, self.remote_ip(), self.referer(), self.query())
+        contenttype, client_ttl, cache_ttl, response = extservice.handler(o.post, PATH, self.remote_ip(), self.referer(), self.query())
         if contenttype == "redirect":
             self.redirect(response)
         else:
             self.content_type(contenttype)
-            self.cache_control(maxage, maxage) # TODO we have a server age
+            self.cache_control(client_ttl, cache_ttl) 
             self.header("Access-Control-Allow-Origin", "*") # CORS
             return response
 
