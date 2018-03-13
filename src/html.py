@@ -512,37 +512,6 @@ def icon(name, title = ""):
     else:
         return "<span class=\"asm-icon asm-icon-%s\" title=\"%s\"></span>" % (name, escape(title))
 
-def img_src(row, mode):
-    """
-    Gets the img src attribute/link for a picture. If the row
-    doesn't have preferred media, the nopic src is returned instead.
-    We do it this way to make things more easily cacheable.
-    If we're in animal mode, we'll take ANIMALID or ID, if we're
-    in person mode we'll use PERSONID or ID
-    row: An animal_query or person_query row containing ID, ANIMALID or PERSONID and WEBSITEMEDIANAME/DATE
-    mode: The mode - animal or person
-    """
-    if row["WEBSITEMEDIANAME"] is None or row["WEBSITEMEDIANAME"] == "":
-        return "image?mode=dbfs&id=/reports/nopic.jpg"
-    else:
-        idval = 0
-        if mode == "animal":
-            if "ANIMALID" in row:
-                idval = int(row["ANIMALID"])
-            elif "ID" in row:
-                idval = int(row["ID"])
-        elif mode == "person":
-            if "PERSONID" in row:
-                idval = int(row["PERSONID"])
-            elif "ID" in row:
-                idval = int(row["ID"])
-        else:
-            idval = int(row["ID"])
-        uri = "image?mode=" + mode + "&id=" + str(idval)
-        if "WEBSITEMEDIADATE" in row and row["WEBSITEMEDIADATE"] is not None:
-            uri += "&date=" + str(row["WEBSITEMEDIADATE"].isoformat())
-        return uri
-
 def doc_img_src(dbo, row, mode):
     """
     Gets the img src attribute/link for a document picture. If the row
@@ -553,7 +522,7 @@ def doc_img_src(dbo, row, mode):
     if row["DOCMEDIANAME"] is None or row["DOCMEDIANAME"] == "":
         return "image?db=%s&mode=dbfs&id=/reports/nopic.jpg" % dbo.database
     else:
-        return "image?db=%s&mode=dbfs&id=%s" % (dbo.database, row["DOCMEDIANAME"])
+        return "image?db=%s&mode=dbfs&id=%s&date=%s" % (dbo.database, row["DOCMEDIANAME"], row["DOCMEDIADATE"].isoformat())
 
 def menu_structure(l, reports, mailmerges):
     """
@@ -901,7 +870,7 @@ def thumbnail_img_src(dbo, row, mode):
     mode: The mode - animalthumb or personthumb
     """
     if row["WEBSITEMEDIANAME"] is None or row["WEBSITEMEDIANAME"] == "":
-        return "image?mode=dbfs&id=/reports/nopic.jpg"
+        return "image?db=%s&mode=dbfs&id=/reports/nopic.jpg" % dbo.database
     else:
         idval = 0
         if mode == "animalthumb":

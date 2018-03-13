@@ -168,6 +168,7 @@ def get_animal_query(dbo):
         "web.MediaNotes AS WebsiteMediaNotes, " \
         "(SELECT COUNT(*) FROM media mtc WHERE MediaMimeType = 'image/jpeg' AND mtc.LinkTypeID = 0 AND mtc.LinkID = a.ID AND ExcludeFromPublish = 0) AS WebsiteImageCount, " \
         "doc.MediaName AS DocMediaName, " \
+        "doc.Date AS DocMediaDate, " \
         "vid.MediaName AS WebsiteVideoURL, " \
         "vid.MediaNotes AS WebsiteVideoNotes, " \
         "CASE WHEN EXISTS(SELECT ID FROM adoption WHERE AnimalID = a.ID AND MovementType = 1 AND MovementDate > %(today)s) THEN 1 ELSE 0 END AS HasFutureAdoption, " \

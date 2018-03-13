@@ -213,6 +213,22 @@ class ASMEndpoint(object):
         """ Virtual function: override to get the content """
         return ""
 
+    def cache_control(self, client_ttl = 0, cache_ttl = 0):
+        """ Sends a cache control header.
+        client_ttl: The max-age to send for the client
+        cache_ttl:  The s-maxage to send for an edge cache
+        """
+        if client_ttl == 0 and cache_ttl == 0:
+            self.header("Cache-Control", "no-cache, no-store, must-revalidate, max-age=0")
+        elif client_ttl > 0 and cache_ttl == 0:
+            self.header("Cache-Control", "public, max-age=%s" % client_ttl)
+        else:
+            self.header("Cache-Control", "public, max-age=%s, s-maxage=%s" % (client_ttl, cache_ttl))
+
+    def content_type(self, ct):
+        """ Sends a content-type header """
+        self.header("Content-Type", ct)
+
     def header(self, key, value):
         """ Set the response header key to value """
         web.header(key, value)
@@ -293,18 +309,18 @@ class JSONEndpoint(ASMEndpoint):
         o = self._params()
         c = self.controller(o)
         self.header("X-Frame-Options", "SAMEORIGIN")
-        self.header("Cache-Control", "no-cache, no-store, must-revalidate")
+        self.cache_control(0)
         if self.js_module == "":
             self.js_module = self.url
         if not o.post["json"] == "true":
-            self.header("Content-Type", "text/html")
+            self.content_type("text/html")
             footer = "<script>\n$(document).ready(function() { " \
                 "common.route_listen(); " \
                 "common.module_start(\"%(js_module)s\"); " \
                 "});\n</script>\n</body>\n</html>" % { "js_module": self.js_module }
             return "%s\n<script type=\"text/javascript\">\ncontroller = %s;\n</script>\n%s" % (html.header("", session), utils.json(c), footer)
         else:
-            web.header("Content-Type", "application/json")
+            self.content_type("application/json")
             return utils.json(c)
 
 class index(ASMEndpoint):
@@ -336,8 +352,8 @@ class database(ASMEndpoint):
                 s = "-- Creation script for %s\n\n" % dbo.dbtype
                 s += dbupdate.sql_structure(dbo)
                 s += dbupdate.sql_default_data(dbo).replace("|=", ";")
-                web.header("Content-Type", "text/plain")
-                web.header("Content-Disposition", "attachment; filename=\"setup.sql\"")
+                self.content_type("text/plain")
+                self.header("Content-Disposition", "attachment; filename=\"setup.sql\"")
                 return s
         if dbo.has_structure():
             raise utils.ASMPermissionError("Database already created")
@@ -366,7 +382,7 @@ class database(ASMEndpoint):
             </script>
             """ % html.options_locales()
         s += html.footer()
-        web.header("Content-Type", "text/html")
+        self.content_type("text/html")
         return s
 
     def post_all(self, o):
@@ -386,12 +402,10 @@ class image(ASMEndpoint):
             al.error("%s" % str(err), "code.image", o.dbo)
             return ""
         if imagedata != "NOPIC":
-            self.header("Content-Type", "image/jpeg")
-            self.header("Cache-Control", "max-age=604800") # Cache images on the client for 1 week, media.date can invalidate it
+            self.content_type("image/jpeg")
+            self.cache_control(604800) # Cache images on the client for 1 week, media.date invalidates it
             return imagedata
         else:
-            self.header("Content-Type", "image/jpeg")
-            self.header("Cache-Control", "no-cache")
             self.redirect("image?db=%s&mode=nopic" % o.dbo.database)
 
 class rollupjs(ASMEndpoint):
@@ -399,8 +413,8 @@ class rollupjs(ASMEndpoint):
     check_logged_in = False
 
     def content(self, o):
-        self.header("Content-Type", "text/javascript")
-        self.header("Cache-Control", "max-age=86400")
+        self.content_type("text/javascript")
+        self.cache_control(86400)
         rollup = cachemem.get("rollup")
         if rollup is None:
             rollup = html.asm_rollup_scripts(PATH)
@@ -420,12 +434,12 @@ class configjs(ASMEndpoint):
         # post = utils.PostedData(web.input(db = "", ts = ""), session.locale)
         if o.user is None:
             # We aren't logged in and can't do anything, don't cache an empty page
-            self.header("Content-Type", "text/javascript")
-            self.header("Cache-Control", "no-cache")
+            self.content_type("text/javascript")
+            self.cache_control(0)
             return ""
         dbo = o.dbo
-        self.header("Content-Type", "text/javascript")
-        self.header("Cache-Control", "max-age=86400")
+        self.content_type("text/javascript")
+        self.cache_control(86400)
         realname = ""
         emailaddress = ""
         expirydate = ""
@@ -509,8 +523,8 @@ class css(ASMEndpoint):
         if not os.path.exists(csspath): self.notfound()
         if v == "": self.notfound()
         content = utils.read_binary_file(csspath)
-        self.header("Content-Type", "text/css")
-        self.header("Cache-Control", "max-age=8640000") # Don't refresh this version for 100 days
+        self.content_type("text/css")
+        self.cache_control(8640000) # Don't refresh for 100 days (qs invalidates)
         return content
 
 class i18njs(ASMEndpoint):
@@ -520,8 +534,8 @@ class i18njs(ASMEndpoint):
     def content(self, o):
         l = o.post["l"]
         if l == "": l = LOCALE
-        self.header("Content-Type", "text/javascript")
-        self.header("Cache-Control", "max-age=8640000")
+        self.content_type("text/javascript")
+        self.cache_control(8640000)
         return i18nstringsjs(l)
 
 class js(ASMEndpoint):
@@ -535,8 +549,8 @@ class js(ASMEndpoint):
         if not os.path.exists(jspath): self.notfound()
         if v == "": self.notfound()
         content = utils.read_binary_file(jspath)
-        self.header("Content-Type", "text/javascript")
-        self.header("Cache-Control", "max-age=8640000") # Don't refresh this version for 100 days
+        self.content_type("text/javascript")
+        self.cache_control(8640000)
         return content
 
 class jserror(ASMEndpoint):
@@ -562,9 +576,9 @@ class media(ASMEndpoint):
 
     def content(self, o):
         lastmod, medianame, mimetype, filedata = extmedia.get_media_file_data(o.dbo, o.post.integer("id"))
-        web.header("Content-Type", mimetype)
-        web.header("Cache-Control", "max-age=86400")
-        web.header("Content-Disposition", "inline; filename=\"%s\"" % medianame)
+        self.content_type(mimetype)
+        self.header("Content-Disposition", "inline; filename=\"%s\"" % medianame)
+        self.cache_control(86400)
         return filedata
 
     def log_from_media_type(self, x):
@@ -711,7 +725,7 @@ class mobile(ASMEndpoint):
     login_url = "/mobile_login"
 
     def content(self, o):
-        self.header("Content-Type", "text/html")
+        self.content_type("text/html")
         return extmobile.page(o.dbo, o.session, o.user)
 
 class mobile_login(ASMEndpoint):
@@ -722,7 +736,7 @@ class mobile_login(ASMEndpoint):
         if not MULTIPLE_DATABASES:
             dbo = db.get_database()
             o.locale = configuration.locale(dbo)
-        self.header("Content-Type", "text/html")
+        self.content_type("text/html")
         return extmobile.page_login(o.locale, o.post)
 
     def post_all(self, o):
@@ -753,7 +767,7 @@ class mobile_post(ASMEndpoint):
         elif s.startswith("GO "):
             self.redirect(s[3:])
         else:
-            self.header("Content-Type", "text/html")
+            self.content_type("text/html")
             return s
 
     def content(self, o):
@@ -776,8 +790,8 @@ class mobile_report(ASMEndpoint):
         # Make sure this user has a role that can view the report
         extreports.check_view_permission(o.session, crid)
         crit = extreports.get_criteria_controls(dbo, crid, mode = "MOBILE", locationfilter = o.locationfilter, siteid = o.siteid) 
-        self.header("Content-Type", "text/html")
-        self.header("Cache-Control", "no-cache")
+        self.content_type("text/html")
+        self.cache_control(0)
         # If the report doesn't take criteria, just show it
         if crit == "":
             al.debug("report %d has no criteria, displaying" % crid, "code.mobile_report", dbo)
@@ -799,7 +813,7 @@ class mobile_sign(ASMEndpoint):
     login_url = "/mobile_login"
 
     def content(self, o):
-        self.header("Content-Type", "text/html")
+        self.content_type("text/html")
         return extmobile.page_sign(o.dbo, o.session, o.user)
 
 class main(JSONEndpoint):
@@ -962,7 +976,7 @@ class login(ASMEndpoint):
         s += "<script type=\"text/javascript\">\ncontroller = %s;\n</script>\n" % utils.json(c)
         s += '<script>\n$(document).ready(function() { $("body").append(login.render()); login.bind(); });\n</script>'
         s += html.footer()
-        self.header("Content-Type", "text/html")
+        self.content_type("text/html")
         self.header("X-Frame-Options", "SAMEORIGIN")
         return s
 
@@ -974,7 +988,7 @@ class login_jsonp(ASMEndpoint):
     check_logged_in = False
 
     def content(self, o):
-        self.header("Content-Type", "text/javascript")
+        self.content_type("text/javascript")
         return "%s({ response: '%s' })" % (o.post["callback"], users.web_login(o.post, o.session, self.remote_ip(), PATH))
 
 class login_splash(ASMEndpoint):
@@ -991,8 +1005,8 @@ class login_splash(ASMEndpoint):
                         dbo = smcom.get_database_info(smaccount)
                     else:
                         dbo = db.get_multiple_database_info(smaccount)
-            self.header("Content-Type", "image/jpeg")
-            self.header("Cache-Control", "max-age=86400")
+            self.content_type("image/jpeg")
+            self.cache_control(86400, 120)
             return dbfs.get_string_filepath(dbo, "/reports/splash.jpg")
         except Exception as err:
             al.error("%s" % str(err), "code.login_splash", dbo)
@@ -1352,14 +1366,14 @@ class animal_embed(ASMEndpoint):
     post_permissions = users.VIEW_ANIMAL
 
     def post_find(self, o):
-        self.header("Content-Type", "application/json")
+        self.content_type("application/json")
         q = o.post["q"]
         rows = extanimal.get_animal_find_simple(o.dbo, q, o.post["filter"], 100, o.locationfilter, o.siteid)
         al.debug("got %d results for '%s'" % (len(rows), self.query()), "code.animal_embed", o.dbo)
         return utils.json(rows)
 
     def post_multiselect(self, o):
-        self.header("Content-Type", "application/json")
+        self.content_type("application/json")
         dbo = o.dbo
         rows = extanimal.get_animal_find_simple(dbo, "", "all", configuration.record_search_limit(dbo), o.locationfilter, o.siteid)
         locations = extlookups.get_internal_locations(dbo)
@@ -1369,7 +1383,7 @@ class animal_embed(ASMEndpoint):
         return utils.json(rv)
 
     def post_id(self, o):
-        self.header("Content-Type", "application/json")
+        self.content_type("application/json")
         dbo = o.dbo
         animalid = o.post.integer("id")
         a = extanimal.get_animal(dbo, animalid)
@@ -1805,7 +1819,7 @@ class calendar_events(ASMEndpoint):
                     "icon": "traploan",
                     "link": "person_traploan?id=%d" % l["OWNERID"]})
         al.debug("calendarview found %d events (%s->%s)" % (len(events), start, end), "code.calendarview", dbo)
-        self.header("Content-Type", "application/json")
+        self.content_type("application/json")
         return utils.json(events)
 
 class change_password(JSONEndpoint):
@@ -1881,7 +1895,7 @@ class csvexport(JSONEndpoint):
     get_permissions = users.USE_SQL_INTERFACE
 
     def post_all(self, o):
-        self.header("Content-Type", "text/csv")
+        self.content_type("text/csv")
         self.header("Content-Disposition", u"attachment; filename=export.csv")
         return extcsvimport.csvexport_animals(o.dbo, o.post["animals"], o.post.boolean("includeimage") == 1)
 
@@ -2085,15 +2099,15 @@ class document_gen(ASMEndpoint):
         if configuration.generate_document_log(dbo) and configuration.generate_document_log_type(dbo) > 0:
             extlog.add_log(dbo, o.user, loglinktype, logid, configuration.generate_document_log_type(dbo), _("Generated document '{0}'").format(templatename))
         if templatename.endswith(".html"):
-            web.header("Content-Type", "text/html")
-            web.header("Cache-Control", "no-cache")
+            self.content_type("text/html")
+            self.cache_control(0)
             return html.tinymce_header(title, "document_edit.js", jswindowprint=configuration.js_window_print(dbo)) + \
                 html.tinymce_main(dbo.locale, "document_gen", recid=post["id"], linktype=post["linktype"], \
                     dtid=dtid, content=utils.escape_tinymce(content))
         elif templatename.endswith(".odt"):
-            web.header("Content-Type", "application/vnd.oasis.opendocument.text")
-            web.header("Content-Disposition", "attach; filename=\"%s\"" % templatename)
-            web.header("Cache-Control", "no-cache")
+            self.content_type("application/vnd.oasis.opendocument.text")
+            self.header("Content-Disposition", "attach; filename=\"%s\"" % templatename)
+            self.cache_control(0)
             return content
 
     def post_save(self, o):
@@ -2150,7 +2164,7 @@ class document_gen(ASMEndpoint):
         dbo = o.dbo
         post = o.post
         disposition = configuration.pdf_inline(dbo) and "inline; filename=\"doc.pdf\"" or "attachment; filename=\"doc.pdf\""
-        self.header("Content-Type", "application/pdf")
+        self.content_type("application/pdf")
         self.header("Content-Disposition", disposition)
         return utils.html_to_pdf(post["document"], BASE_URL, MULTIPLE_DATABASES and dbo.database or "")
 
@@ -2158,7 +2172,7 @@ class document_gen(ASMEndpoint):
         self.check(users.VIEW_MEDIA)
         l = o.locale
         post = o.post
-        self.header("Content-Type", "text/html")
+        self.content_type("text/html")
         return "%s%s%s" % (html.tinymce_print_header(_("Print Preview", l)), post["document"], "</body></html>")
 
 class document_template_edit(ASMEndpoint):
@@ -2176,14 +2190,14 @@ class document_template_edit(ASMEndpoint):
         al.debug("editing %s" % templatename, "code.document_template_edit", dbo)
         if templatename.endswith(".html"):
             content = utils.escape_tinymce(template.get_document_template_content(dbo, dtid))
-            self.header("Content-Type", "text/html")
-            self.header("Cache-Control", "no-cache")
+            self.content_type("text/html")
+            self.cache_control(0)
             return html.tinymce_header(title, "document_edit.js", jswindowprint=configuration.js_window_print(dbo)) + \
                 html.tinymce_main(dbo.locale, "document_template_edit", dtid=dtid, content=content)
         elif templatename.endswith(".odt"):
             content = template.get_document_template_content(dbo, dtid)
-            self.header("Content-Type", "application/vnd.oasis.opendocument.text")
-            self.header("Cache-Control", "no-cache")
+            self.content_type("application/vnd.oasis.opendocument.text")
+            self.cache_control(0)
             return content
 
     def post_save(self, o):
@@ -2197,14 +2211,14 @@ class document_template_edit(ASMEndpoint):
         dbo = o.dbo
         post = o.post
         disposition = configuration.pdf_inline(dbo) and "inline; filename=\"doc.pdf\"" or "attachment; filename=\"doc.pdf\""
-        self.header("Content-Type", "application/pdf")
+        self.content_type("application/pdf")
         self.header("Content-Disposition", disposition)
         return utils.html_to_pdf(post["document"], BASE_URL, MULTIPLE_DATABASES and dbo.database or "")
 
     def post_print(self, o):
         post = o.post
         l = o.locale
-        self.header("Content-Type", "text/html")
+        self.content_type("text/html")
         return "%s%s%s" % (html.tinymce_print_header(_("Print Preview", l)), post["document"], "</body></html>")
 
 class document_media_edit(ASMEndpoint):
@@ -2217,7 +2231,7 @@ class document_media_edit(ASMEndpoint):
         lastmod, medianame, mimetype, filedata = extmedia.get_media_file_data(dbo, post.integer("id"))
         al.debug("editing media %d" % post.integer("id"), "code.document_media_edit", dbo)
         title = medianame
-        self.header("Content-Type", "text/html")
+        self.content_type("text/html")
         return html.tinymce_header(title, "document_edit.js", jswindowprint=configuration.js_window_print(dbo), \
             onlysavewhendirty=False, readonly=extmedia.has_signature(dbo, post.integer("id"))) + \
             html.tinymce_main(dbo.locale, "document_media_edit", mediaid=post.integer("id"), redirecturl=post["redirecturl"], \
@@ -2233,14 +2247,14 @@ class document_media_edit(ASMEndpoint):
         self.check(users.VIEW_MEDIA)
         dbo = o.dbo
         disposition = configuration.pdf_inline(dbo) and "inline; filename=\"doc.pdf\"" or "attachment; filename=\"doc.pdf\""
-        self.header("Content-Type", "application/pdf")
+        self.content_type("application/pdf")
         self.header("Content-Disposition", disposition)
         return utils.html_to_pdf(o.post["document"], BASE_URL, MULTIPLE_DATABASES and dbo.database or "")
 
     def post_print(self, o):
         self.check(users.VIEW_MEDIA)
         l = o.locale
-        self.header("Content-Type", "text/html")
+        self.content_type("text/html")
         return "%s%s%s" % (html.tinymce_print_header(_("Print Preview", l)), o.post["document"], "</body></html>")
 
 class document_repository(JSONEndpoint):
@@ -2286,7 +2300,7 @@ class document_repository_file(ASMEndpoint):
             disp = "attachment"
             if mimetype == "application/pdf": 
                 disp = "inline" # Try to show PDFs in place
-            self.header("Content-Type", mimetype)
+            self.content_type(mimetype)
             self.header("Content-Disposition", "%s; filename=\"%s\"" % (disp, name))
             return dbfs.get_string_id(o.dbo, o.post.integer("dbfsid"))
 
@@ -2367,7 +2381,7 @@ class donation(JSONEndpoint):
 
     def post_personmovements(self, o):
         self.check(users.VIEW_MOVEMENT)
-        self.header("Content-Type", "application/json")
+        self.content_type("application/json")
         return utils.json(extmovement.get_person_movements(o.dbo, o.post.integer("personid")))
 
 class donation_receive(JSONEndpoint):
@@ -2563,8 +2577,8 @@ class giftaid_hmrc_spreadsheet(JSONEndpoint):
         fromdate = o.post["fromdate"]
         todate = o.post["todate"]
         al.debug("generating HMRC giftaid spreadsheet for %s -> %s" % (fromdate, todate), "code.giftaid_hmrc_spreadsheet", o.dbo)
-        self.header("Content-Type", "application/vnd.oasis.opendocument.spreadsheet")
-        self.header("Cache-Control", "no-cache")
+        self.content_type("application/vnd.oasis.opendocument.spreadsheet")
+        self.cache_control(0)
         self.header("Content-Disposition", "attachment; filename=\"giftaid.ods\"")
         return financial.giftaid_spreadsheet(o.dbo, PATH, o.post.date("fromdate"), o.post.date("todate"))
 
@@ -2807,8 +2821,8 @@ class latency(JSONEndpoint):
         return {}
 
     def post_all(self, o):
-        self.header("Content-Type", "text/plain")
-        self.header("Cache-Control", "no-cache")
+        self.content_type("text/plain")
+        self.cache_control(0)
         return "pong"
 
 class licence(JSONEndpoint):
@@ -3155,8 +3169,8 @@ class lostfound_match(ASMEndpoint):
         lostanimalid = post.integer("lostanimalid")
         foundanimalid = post.integer("foundanimalid")
         animalid = post.integer("animalid")
-        self.header("Content-Type", "text/html")
-        self.header("Cache-Control", "no-cache")
+        self.content_type("text/html")
+        self.cache_control(0)
         # If no parameters have been given, use the cached daily copy of the match report
         if lostanimalid == 0 and foundanimalid == 0 and animalid == 0:
             al.debug("no parameters given, using cached report at /reports/daily/lost_found_match.html", "code.lostfound_match", dbo)
@@ -3242,8 +3256,8 @@ class mailmerge(JSONEndpoint):
         for d in rows:
             c.append( wordprocessor.substitute_tags(templatecontent, wordprocessor.append_tags(d, org_tags)) )
         content = '<div class="mce-pagebreak" style="page-break-before: always; clear: both; border: 0">&nbsp;</div>'.join(c)
-        self.header("Content-Type", "text/html")
-        self.header("Cache-Control", "no-cache")
+        self.content_type("text/html")
+        self.cache_control(0)
         return html.tinymce_header(templatename, "document_edit.js", jswindowprint=True, pdfenabled=False, readonly=True) + \
             html.tinymce_main(o.locale, "", recid=0, linktype="", \
                 dtid="", content=utils.escape_tinymce(content))
@@ -3252,7 +3266,7 @@ class mailmerge(JSONEndpoint):
         dbo = o.dbo
         post = o.post
         rows, cols = extreports.execute_query(dbo, o.session.mergereport, o.user, o.session.mergeparams)
-        self.header("Content-Type", "application/pdf")
+        self.content_type("application/pdf")
         disposition = configuration.pdf_inline(dbo) and "inline; filename=%s" or "attachment; filename=%s"
         self.header("Content-Disposition", disposition % o.session.mergetitle + ".pdf")
         return utils.generate_label_pdf(dbo, o.locale, rows, post["papersize"], post["units"],
@@ -3265,7 +3279,7 @@ class mailmerge(JSONEndpoint):
         dbo = o.dbo
         post = o.post
         rows, cols = extreports.execute_query(dbo, o.session.mergereport, o.user, o.session.mergeparams)
-        self.header("Content-Type", "text/csv")
+        self.content_type("text/csv")
         self.header("Content-Disposition", u"attachment; filename=" + utils.decode_html(o.session.mergetitle) + u".csv")
         includeheader = 1 == post.boolean("includeheader")
         return utils.csv(o.locale, rows, cols, includeheader)
@@ -3765,8 +3779,8 @@ class onlineform_incoming_print(ASMEndpoint):
     get_permissions = users.VIEW_INCOMING_FORMS
 
     def content(self, o):
-        self.header("Content-Type", "text/html")
-        self.header("Cache-Control", "no-cache")
+        self.content_type("text/html")
+        self.cache_control(0)
         return extonlineform.get_onlineformincoming_html_print(o.dbo, o.post.integer_list("ids"))
 
 class onlineform(JSONEndpoint):
@@ -3851,7 +3865,7 @@ class onlineform_json(ASMEndpoint):
     get_permissions = users.EDIT_ONLINE_FORMS
 
     def content(self, o):
-        self.header("Content-Type", "application/json")
+        self.content_type("application/json")
         return extonlineform.get_onlineform_json(o.dbo, o.post.integer("formid"))
 
 class options(JSONEndpoint):
@@ -4030,8 +4044,8 @@ class person_embed(ASMEndpoint):
     def content(self, o):
         if not session.dbo: raise utils.ASMPermissionError("No session")
         dbo = session.dbo
-        self.header("Content-Type", "application/json")
-        self.header("Cache-Control", "max-age=180") # This data can be cached for a few minutes - good for multi-widgets on one page
+        self.content_type("application/json")
+        self.cache_control(180) # Person data can be cached for a few minutes, useful for multiple widgets on one page
         return utils.json({
             "additional": extadditional.get_additional_fields(dbo, 0, "person"),
             "jurisdictions": extlookups.get_jurisdictions(dbo),
@@ -4044,7 +4058,7 @@ class person_embed(ASMEndpoint):
 
     def post_find(self, o):
         self.check(users.VIEW_PERSON)
-        self.header("Content-Type", "application/json")
+        self.content_type("application/json")
         q = o.post["q"]
         rows = extperson.get_person_find_simple(o.dbo, q, o.user, o.post["filter"], \
             self.checkb(users.VIEW_STAFF), \
@@ -4054,7 +4068,7 @@ class person_embed(ASMEndpoint):
 
     def post_id(self, o):
         self.check(users.VIEW_PERSON)
-        self.header("Content-Type", "application/json")
+        self.content_type("application/json")
         dbo = o.dbo
         post = o.post
         p = extperson.get_person(dbo, post.integer("id"))
@@ -4067,7 +4081,7 @@ class person_embed(ASMEndpoint):
 
     def post_similar(self, o):
         self.check(users.VIEW_PERSON)
-        self.header("Content-Type", "application/json")
+        self.content_type("application/json")
         dbo = o.dbo
         post = o.post
         surname = post["surname"]
@@ -4083,7 +4097,7 @@ class person_embed(ASMEndpoint):
 
     def post_add(self, o):
         self.check(users.ADD_PERSON)
-        self.header("Content-Type", "application/json")
+        self.content_type("application/json")
         dbo = o.dbo
         al.debug("add new person", "code.person_embed", dbo)
         pid = extperson.insert_person_from_form(dbo, o.post, session.user)
@@ -4205,7 +4219,7 @@ class person_lookingfor(ASMEndpoint):
     get_permissions = users.VIEW_PERSON
 
     def content(self, o):
-        self.header("Content-Type", "text/html")
+        self.content_type("text/html")
         if o.post.integer("personid") == 0:
             return configuration.lookingfor_report(o.dbo)
         else:
@@ -4417,9 +4431,9 @@ class publish_log_view(ASMEndpoint):
 
     def content(self, o):
         al.debug("viewing log file %s" % o.post["view"], "code.publish_logs", o.dbo)
-        web.header("Content-Type", "text/plain")
-        web.header("Cache-Control", "max-age=10000000")
-        web.header("Content-Disposition", "inline; filename=\"%s\"" % o.post["view"])
+        self.cache_control(8640000)
+        self.content_type("text/plain")
+        self.header("Content-Disposition", "inline; filename=\"%s\"" % o.post["view"])
         return extpublish.get_publish_log(o.dbo, o.post.integer("view"))
 
 class publish_options(JSONEndpoint):
@@ -4467,8 +4481,8 @@ class report(ASMEndpoint):
         # Make sure this user has a role that can view the report
         extreports.check_view_permission(o.session, crid)
         crit = extreports.get_criteria_controls(dbo, crid, locationfilter = o.locationfilter, siteid = o.siteid) 
-        self.header("Content-Type", "text/html")
-        self.header("Cache-Control", "no-cache")
+        self.content_type("text/html")
+        self.cache_control(0)
         # If this report takes criteria and none were supplied, go to the criteria screen instead to get them
         if crit != "" and post["hascriteria"] == "": self.redirect("report_criteria?id=%d&target=report" % post.integer("id"))
         al.debug("got criteria (%s), executing report %d" % (str(post.data), crid), "code.report", dbo)
@@ -4520,7 +4534,7 @@ class report_export_csv(ASMEndpoint):
         filename = title.replace(" ", "_").replace("\"", "").replace("'", "").lower()
         p = extreports.get_criteria_params(dbo, crid, post)
         rows, cols = extreports.execute_query(dbo, crid, session.user, p)
-        self.header("Content-Type", "text/csv")
+        self.content_type("text/csv")
         self.header("Content-Disposition", u"attachment; filename=\"" + utils.decode_html(filename) + u".csv\"")
         return utils.csv(o.locale, rows, cols, True)
 
@@ -4628,8 +4642,8 @@ class schemajs(ASMEndpoint):
         # Return schema of all database tables
         if utils.is_loggedin(o.session) and o.dbo is not None:
             dbo = o.dbo
-            self.header("Content-Type", "text/javascript")
-            self.header("Cache-Control", "max-age=86400")
+            self.content_type("text/javascript")
+            self.cache_control(86400)
             CACHE_KEY = "schema"
             tobj = cachemem.get(CACHE_KEY)
             if tobj is None:
@@ -4664,8 +4678,8 @@ class schemajs(ASMEndpoint):
             return "schema = %s;" % utils.json(tobj)
         else:
             # Not logged in
-            self.header("Content-Type", "text/javascript")
-            self.header("Cache-Control", "no-cache")
+            self.content_type("text/javascript")
+            self.cache_control(0)
             return ""
 
 class search(JSONEndpoint):
@@ -4694,8 +4708,8 @@ class service(ASMEndpoint):
         if contenttype == "redirect":
             self.redirect(response)
         else:
-            self.header("Content-Type", contenttype)
-            self.header("Cache-Control", "public, max-age=%d, s-maxage=%d" % (maxage, maxage))
+            self.content_type(contenttype)
+            self.cache_control(maxage, maxage) # TODO we have a server age
             self.header("Access-Control-Allow-Origin", "*") # CORS
             return response
 
@@ -4770,7 +4784,7 @@ class sql(JSONEndpoint):
 
     def post_execfile(self, o):
         sql = o.post["sqlfile"].strip()
-        self.header("Content-Type", "text/plain")
+        self.content_type("text/plain")
         return self.exec_sql_from_file(o.dbo, sql)
 
     def exec_sql(self, dbo, sql):
@@ -4816,7 +4830,7 @@ class sql_dump(GeneratorEndpoint):
         l = o.locale
         dbo = o.dbo
         mode = o.post["mode"]
-        self.header("Content-Type", "text/plain")
+        self.content_type("text/plain")
         if LARGE_FILES_CHUNKED: self.header("Transfer-Encoding", "chunked")
         if mode == "dumpsql":
             al.info("%s executed SQL database dump" % str(session.user), "code.sql", dbo)
