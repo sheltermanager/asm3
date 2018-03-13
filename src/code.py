@@ -403,7 +403,7 @@ class image(ASMEndpoint):
             return ""
         if imagedata != "NOPIC":
             self.content_type("image/jpeg")
-            self.cache_control(604800) # Cache images on the client for 1 week, media.date invalidates it
+            self.cache_control(604800) # Cache images on the client for 1 week, media.date invalidates it on change anyway
             return imagedata
         else:
             self.redirect("image?db=%s&mode=nopic" % o.dbo.database)
