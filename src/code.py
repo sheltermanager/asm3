@@ -4695,7 +4695,7 @@ class service(ASMEndpoint):
             self.redirect(response)
         else:
             self.header("Content-Type", contenttype)
-            self.header("Cache-Control", "max-age=%d" % maxage)
+            self.header("Cache-Control", "public, max-age=%d, s-maxage=%d" % (maxage, maxage))
             self.header("Access-Control-Allow-Origin", "*") # CORS
             return response
 
