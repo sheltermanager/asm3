@@ -71,7 +71,7 @@ def asm_script_tag(filename):
     """
     Returns a path to our caching script loader for a javascript file
     """
-    return "<script type=\"text/javascript\" src=\"js?v=%s&k=%s\"></script>\n" % (js_minified_name(filename), BUILD)
+    return "<script type=\"text/javascript\" src=\"x.js?v=%s&k=%s\"></script>\n" % (js_minified_name(filename), BUILD)
 
 def asm_script_tags(path):
     """
@@ -117,7 +117,7 @@ def asm_css_tag(filename):
     """
     Returns a path to our caching css loader for a stylesheet
     """
-    return "<link rel=\"stylesheet\" type=\"text/css\" href=\"css?v=%s&k=%s\" />\n" % (filename, BUILD)
+    return "<link rel=\"stylesheet\" type=\"text/css\" href=\"x.css?v=%s&k=%s\" />\n" % (filename, BUILD)
 
 def xml(results):
     """

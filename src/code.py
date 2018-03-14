@@ -513,7 +513,7 @@ class configjs(ASMEndpoint):
         return "asm = %s;" % utils.json(c)
 
 class css(ASMEndpoint):
-    url = "css"
+    url = "x.css"
     check_logged_in = False
 
     def content(self, o):
@@ -539,7 +539,7 @@ class i18njs(ASMEndpoint):
         return i18nstringsjs(l)
 
 class js(ASMEndpoint):
-    url = "js"
+    url = "x.js"
     check_logged_in = False
 
     def content(self, o):
