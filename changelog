@@ -1,6 +1,7 @@
 41
 ================
 
+14/03/18 Allow MPA to be used in Canada/Australia
 13/03/18 Remove unused img_src code, make sure date/db in all calls for edge cache
 10/03/18 Allow S3 DBFS cache entries to be recycled if they have < 24h left
 09/03/18 Recalculate age group of adoptable animals #396

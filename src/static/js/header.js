@@ -255,11 +255,15 @@ $(function() {
             if (asm.locale != "en") {
                 ep.replace("ap", "");
                 ep.replace("fa", "");
-                ep.replace("mf", "");
                 ep.replace("p911", "");
                 ep.replace("rg", "");
                 ep.replace("st", "");
                 ep.replace("ve", "");
+            }
+
+            // Maddie's Fund are US, Canada and Australia
+            if (asm.locale != "en" && asm.locale != "en_CA" && asm.locale != "en_AU") {
+                ep.replace("mf", "");
             }
 
             // PetRescue is AU only
