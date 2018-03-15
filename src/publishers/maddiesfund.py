@@ -110,7 +110,8 @@ class MaddiesFundPublisher(AbstractPublisher):
         # Now find shelter animals who have been sent previously (using sent date against return to prevent re-sends)
         sql = "%s WHERE a.Archived = 0 AND a.ActiveMovementType = 0 AND " \
             "EXISTS(SELECT AnimalID FROM animalpublished WHERE AnimalID = a.ID AND " \
-            "PublishedTo = 'maddiesfund' AND SentDate < a.MostRecentEntryDate)" % animal.get_animal_query(self.dbo)
+            "PublishedTo = 'maddiesfund' AND SentDate < " \
+            "(SELECT MAX(ReturnDate) FROM adoption WHERE AnimalID = a.ID WHERE MovementType IN (1,2) AND ReturnDate Is Not Null))" % animal.get_animal_query(self.dbo)
         animals += self.dbo.query(sql, distincton="ID")
 
         if len(animals) == 0:
