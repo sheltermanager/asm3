@@ -561,7 +561,7 @@ class Database(object):
         without doing any caching and is equivalent to Database.query()
         """
         if not CACHE_COMMON_QUERIES: return self.query(sql, params=params, limit=limit)
-        cache_key = utils.md5_hash("%s:%s:%s" % (self.alias, self.database, sql.replace(" ", "_")))
+        cache_key = utils.md5_hash("%s:%s:%s" % (self.database, sql, params))
         results = cachemem.get(cache_key)
         if results is not None:
             return results
