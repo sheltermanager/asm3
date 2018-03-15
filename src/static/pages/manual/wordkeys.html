@@ -209,7 +209,8 @@ templates, wrapped in double angle-brackets. Eg: &lt;&lt;AnimalName&gt;&gt;</p>
 <dt>UserSignature</dt>
 <dd>An image tag containing the electronic signature of the user generating the document</dd>
 <dt>UserSignatureSrc</dt>
-<dd>Just the src attribute value so the signature can be applied to your own image tag (eg: to override size)</dd>
+<dd>Just the src attribute value so the signature can be applied to your own
+image tag (eg: to override size)</dd>
 </dl>
 </div>
 <div class="section" id="animal-keys">
@@ -218,7 +219,10 @@ templates, wrapped in double angle-brackets. Eg: &lt;&lt;AnimalName&gt;&gt;</p>
 movement screens.</p>
 <dl class="docutils">
 <dt>DocumentImgLink</dt>
-<dd>An &lt;img&gt; tag containing a link to the animal&#8217;s preferred document image.</dd>
+<dd>An &lt;img&gt; tag containing a link to the animal&#8217;s preferred document image.
+The image will be 200px high. You can also suffix a pixel height in
+increments of 100 upto 500px if you would like the image to be larger, eg:
+&lt;&lt;DocumentImgLink300&gt;&gt;, &lt;&lt;DocumentImgLink400&gt;&gt;, &lt;&lt;DocumentImgLink500&gt;&gt;</dd>
 <dt>DocumentImgSrc</dt>
 <dd>Just the src attribute value for an image link to the preferred document image.</dd>
 <dt>DocumentImgThumbLink</dt>
@@ -226,7 +230,8 @@ movement screens.</p>
 <dt>DocumentImgThumbSrc</dt>
 <dd>Just the src attribute value for a thumbnail link to the preferred document image.</dd>
 <dt>DocumentQRLink</dt>
-<dd>An &lt;img&gt; tag containing a link to QR code that references a URL to the animal&#8217;s record within ASM.</dd>
+<dd>An &lt;img&gt; tag containing a link to QR code that references a URL to the
+animal&#8217;s record within ASM.</dd>
 <dt>ShelterCode</dt>
 <dd>The animal&#8217;s shelter code</dd>
 <dt>ShortShelterCode</dt>
@@ -258,7 +263,9 @@ Breed 2&#8221; to indicate that the animal is a cross of two breeds.</dd>
 <dt>LocationUnit</dt>
 <dd>The location unit (eg, pen or cage number)</dd>
 <dt>DisplayLocation</dt>
-<dd>Either the internal location if the animal is on shelter, a movement type/person for animals leaving the shelter or a deceased reason if the animal is no longer alive</dd>
+<dd>Either the internal location if the animal is on shelter, a movement
+type/person for animals leaving the shelter or a deceased reason if the
+animal is no longer alive</dd>
 <dt>CoatType</dt>
 <dd>The animal&#8217;s coat type</dd>
 <dt>AnimalFlags</dt>
@@ -279,13 +286,17 @@ name)</dd>
 <dt>DateOfBirth</dt>
 <dd>The animal&#8217;s date of birth</dd>
 <dt>EstimatedDOB</dt>
-<dd>The word (estimated) if the estimated date of birth flag is ticked on the animal, or a blank string if not.</dd>
+<dd>The word (estimated) if the estimated date of birth flag is ticked on the
+animal, or a blank string if not.</dd>
 <dt>AgeGroup</dt>
-<dd>The animal&#8217;s age group (the defaults are Baby, Adult, Young Adult and Senior). These can be configured under the Settings-&gt;Options screen.</dd>
+<dd>The animal&#8217;s age group (the defaults are Baby, Adult, Young Adult and
+Senior). These can be configured under the Settings-&gt;Options screen.</dd>
 <dt>DisplayAge</dt>
-<dd>If the EstimatedDOB flag is set, outputs the age group, if not, outputs a string representation of the animal&#8217;s age.</dd>
+<dd>If the EstimatedDOB flag is set, outputs the age group, if not, outputs a
+string representation of the animal&#8217;s age.</dd>
 <dt>DisplayDOB</dt>
-<dd>If the EstimatedDOB flag is set, outputs the age group, if not, outputs the animal&#8217;s date of birth.</dd>
+<dd>If the EstimatedDOB flag is set, outputs the age group, if not, outputs the
+animal&#8217;s date of birth.</dd>
 <dt>HoldUntilDate</dt>
 <dd>If the animal is held, the date it will be held until</dd>
 <dt>DeceasedDate</dt>
@@ -517,11 +528,13 @@ name)</dd>
 <dt>ReclaimedDate</dt>
 <dd>The date (if applicable) that the animal was reclaimed by its owner</dd>
 <dt>MostRecentEntry</dt>
-<dd>The date the animal most recently entered the shelter (if it was returned from an adoption or fostering for example)</dd>
+<dd>The date the animal most recently entered the shelter (if it was returned
+from an adoption or fostering for example)</dd>
 <dt>MostRecentMonthEntry</dt>
 <dd>The month the animal most recently entered the shelter</dd>
 <dt>TimeOnShelter</dt>
-<dd>A readable string showing the time the animal has spent on the shelter (from the last time it entered), eg: 4 weeks.</dd>
+<dd>A readable string showing the time the animal has spent on the shelter
+(from the last time it entered), eg: 4 weeks.</dd>
 <dt>NoTimesReturned</dt>
 <dd>The number of times the animal has been returned to the shelter</dd>
 <dt>AdoptionStatus</dt>
@@ -535,7 +548,8 @@ name)</dd>
 <dt>WebMediaNew</dt>
 <dd>&#8220;Yes&#8221; if the animal has not been published via the web publishing tool</dd>
 <dt>WebMediaUpdated</dt>
-<dd>&#8220;Yes&#8221; if the notes on the media for the animal have been edited since the animal was last published via the web publishing tool</dd>
+<dd>&#8220;Yes&#8221; if the notes on the media for the animal have been edited since the
+animal was last published via the web publishing tool</dd>
 <dt>WebsiteVideoURL</dt>
 <dd>The web address of the default video link for this animal</dd>
 <dt>WebsiteVideoNotes</dt>
@@ -553,11 +567,13 @@ name)</dd>
 <dt>AnimalIsReserved</dt>
 <dd>&#8220;Yes&#8221; if the animal has been reserved</dd>
 <dt>AnimalIsVaccinated</dt>
-<dd>&#8220;Yes&#8221; if the animal has at least one vaccination given and no vaccinations due before today that have not been given</dd>
+<dd>&#8220;Yes&#8221; if the animal has at least one vaccination given and no vaccinations
+due before today that have not been given</dd>
 <dt>OutcomeDate</dt>
 <dd>If the animal has left the care of the shelter, the date it left</dd>
 <dt>OutcomeType</dt>
-<dd>How the animal left the shelter (can be a movement type or deceased reason if the animal died)</dd>
+<dd>How the animal left the shelter (can be a movement type or deceased reason
+if the animal died)</dd>
 </dl>
 </div>
 <div class="section" id="vaccination-keys">

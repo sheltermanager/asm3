@@ -35,7 +35,8 @@ UserEmailAddress
 UserSignature
     An image tag containing the electronic signature of the user generating the document
 UserSignatureSrc
-    Just the src attribute value so the signature can be applied to your own image tag (eg: to override size)
+    Just the src attribute value so the signature can be applied to your own
+    image tag (eg: to override size)
 
 Animal Keys
 -----------
@@ -45,6 +46,9 @@ movement screens.
 
 DocumentImgLink
     An <img> tag containing a link to the animal's preferred document image.
+    The image will be 200px high. You can also suffix a pixel height in
+    increments of 100 upto 500px if you would like the image to be larger, eg:
+    <<DocumentImgLink300>>, <<DocumentImgLink400>>, <<DocumentImgLink500>>
 DocumentImgSrc
     Just the src attribute value for an image link to the preferred document image.
 DocumentImgThumbLink
@@ -52,7 +56,8 @@ DocumentImgThumbLink
 DocumentImgThumbSrc
     Just the src attribute value for a thumbnail link to the preferred document image.
 DocumentQRLink
-    An <img> tag containing a link to QR code that references a URL to the animal's record within ASM.
+    An <img> tag containing a link to QR code that references a URL to the
+    animal's record within ASM.
 ShelterCode
     The animal's shelter code 
 ShortShelterCode
@@ -84,7 +89,9 @@ LocationDescription
 LocationUnit
     The location unit (eg, pen or cage number)
 DisplayLocation
-    Either the internal location if the animal is on shelter, a movement type/person for animals leaving the shelter or a deceased reason if the animal is no longer alive
+    Either the internal location if the animal is on shelter, a movement
+    type/person for animals leaving the shelter or a deceased reason if the
+    animal is no longer alive
 CoatType
     The animal's coat type 
 AnimalFlags
@@ -105,13 +112,17 @@ MonthBroughtIn
 DateOfBirth
     The animal's date of birth 
 EstimatedDOB
-    The word (estimated) if the estimated date of birth flag is ticked on the animal, or a blank string if not. 
+    The word (estimated) if the estimated date of birth flag is ticked on the
+    animal, or a blank string if not. 
 AgeGroup
-    The animal's age group (the defaults are Baby, Adult, Young Adult and Senior). These can be configured under the Settings->Options screen. 
+    The animal's age group (the defaults are Baby, Adult, Young Adult and
+    Senior). These can be configured under the Settings->Options screen. 
 DisplayAge
-    If the EstimatedDOB flag is set, outputs the age group, if not, outputs a string representation of the animal's age. 
+    If the EstimatedDOB flag is set, outputs the age group, if not, outputs a
+    string representation of the animal's age. 
 DisplayDOB
-    If the EstimatedDOB flag is set, outputs the age group, if not, outputs the animal's date of birth. 
+    If the EstimatedDOB flag is set, outputs the age group, if not, outputs the
+    animal's date of birth. 
 HoldUntilDate
     If the animal is held, the date it will be held until
 DeceasedDate
@@ -343,11 +354,13 @@ SpeciesName
 ReclaimedDate
     The date (if applicable) that the animal was reclaimed by its owner 
 MostRecentEntry
-    The date the animal most recently entered the shelter (if it was returned from an adoption or fostering for example) 
+    The date the animal most recently entered the shelter (if it was returned
+    from an adoption or fostering for example) 
 MostRecentMonthEntry
     The month the animal most recently entered the shelter 
 TimeOnShelter
-    A readable string showing the time the animal has spent on the shelter (from the last time it entered), eg: 4 weeks. 
+    A readable string showing the time the animal has spent on the shelter
+    (from the last time it entered), eg: 4 weeks. 
 NoTimesReturned
     The number of times the animal has been returned to the shelter 
 AdoptionStatus
@@ -361,7 +374,8 @@ WebMediaNotes
 WebMediaNew
     "Yes" if the animal has not been published via the web publishing tool 
 WebMediaUpdated
-    "Yes" if the notes on the media for the animal have been edited since the animal was last published via the web publishing tool 
+    "Yes" if the notes on the media for the animal have been edited since the
+    animal was last published via the web publishing tool 
 WebsiteVideoURL
     The web address of the default video link for this animal
 WebsiteVideoNotes
@@ -379,11 +393,13 @@ AnimalPermanentFoster
 AnimalIsReserved
     "Yes" if the animal has been reserved
 AnimalIsVaccinated
-    "Yes" if the animal has at least one vaccination given and no vaccinations due before today that have not been given
+    "Yes" if the animal has at least one vaccination given and no vaccinations
+    due before today that have not been given
 OutcomeDate
     If the animal has left the care of the shelter, the date it left
 OutcomeType
-    How the animal left the shelter (can be a movement type or deceased reason if the animal died)
+    How the animal left the shelter (can be a movement type or deceased reason
+    if the animal died)
 
 Vaccination Keys
 ----------------
