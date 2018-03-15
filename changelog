@@ -1,6 +1,7 @@
 41
 ================
 
+15/03/18 Use a short term cache on person_embed/post_id to prevent repeat lookups
 15/03/18 Show debug info on retrieval of images and media
 15/03/18 Open records in new tab not working from find pages #399
 15/03/18 MPA not sending returned foster updates
