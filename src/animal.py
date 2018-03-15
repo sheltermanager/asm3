@@ -266,22 +266,14 @@ def get_animal(dbo, animalid):
     (int) animalid: The animal to get
     """
     if animalid is None or animalid == 0: return None
-    rows = dbo.query(get_animal_query(dbo) + " WHERE a.ID = ?", [animalid])
-    if rows is None or len(rows) == 0:
-        return None
-    else:
-        return rows[0]
+    return dbo.first_row( dbo.query(get_animal_query(dbo) + " WHERE a.ID = ?", [animalid]) )
 
 def get_animal_sheltercode(dbo, code):
     """
     Returns a complete animal row by ShelterCode
     """
     if code is None or code == "": return None
-    rows = dbo.query(get_animal_query(dbo) + " WHERE a.ShelterCode = ?", [code])
-    if rows is None or len(rows) == 0:
-        return None
-    else:
-        return rows[0]
+    return dbo.first_row( dbo.query(get_animal_query(dbo) + " WHERE a.ShelterCode = ?", [code]) )
 
 def get_animals_ids(dbo, sort, q, limit = 5, cachetime = 60):
     """
@@ -1430,7 +1422,7 @@ def get_cost_totals(dbo, animalid):
         "(SELECT SUM(CostAmount) FROM animalcost WHERE AnimalID = animal.ID) AS tc, " \
         "(SELECT SUM(Donation) FROM ownerdonation WHERE AnimalID = animal.ID) AS td " \
         "FROM animal WHERE ID = ?"
-    return dbo.query(q, [animalid])[0]
+    return dbo.first_row( dbo.query(q, [animalid]) )
 
 def get_diets(dbo, animalid, sort = ASCENDING):
     """
@@ -2060,10 +2052,10 @@ def update_animal_from_form(dbo, post, username):
 
     # If the option is on and the internal location or unit has changed, log it
     if configuration.location_change_log(dbo):
-        oldloc = dbo.query("SELECT ShelterLocation, ShelterLocationUnit FROM animal WHERE ID=?", [aid])
-        if len(oldloc) > 0:
-            oldlocid = oldloc[0].shelterlocation
-            oldlocunit = oldloc[0].shelterlocationunit
+        oldloc = dbo.first_row( dbo.query("SELECT ShelterLocation, ShelterLocationUnit FROM animal WHERE ID=?", [aid]) )
+        if oldloc:
+            oldlocid = oldloc.shelterlocation
+            oldlocunit = oldloc.shelterlocationunit
             if post.integer("location") != oldlocid or post["unit"] != oldlocunit:
                 oldlocation = dbo.query_string("SELECT LocationName FROM internallocation WHERE ID = ?", [oldlocid])
                 if oldlocunit is not None and oldlocunit != "":
@@ -2335,12 +2327,12 @@ def update_location_unit(dbo, username, animalid, newlocationid, newunit = ""):
     # If the option is on and the internal location has changed, log it
     l = dbo.locale
     if configuration.location_change_log(dbo):
-        oldloc = dbo.query("SELECT ShelterCode, AnimalName, ShelterLocation, ShelterLocationUnit FROM animal WHERE ID=?", [animalid])
-        if len(oldloc) > 0:
-            animalname = oldloc[0].animalname
-            sheltercode = oldloc[0].sheltercode
-            oldlocid = oldloc[0].shelterlocation
-            oldlocunit = oldloc[0].shelterlocationunit
+        oldloc = dbo.first_row( dbo.query("SELECT ShelterCode, AnimalName, ShelterLocation, ShelterLocationUnit FROM animal WHERE ID=?", [animalid]) )
+        if oldloc:
+            animalname = oldloc.animalname
+            sheltercode = oldloc.sheltercode
+            oldlocid = oldloc.shelterlocation
+            oldlocunit = oldloc.shelterlocationunit
             if newlocationid != oldlocid or newunit != oldlocunit:
                 oldlocation = dbo.query_string("SELECT LocationName FROM internallocation WHERE ID = ?", [oldlocid])
                 if oldlocunit is not None and oldlocunit != "":
@@ -2674,12 +2666,12 @@ def clone_from_template(dbo, username, animalid, dob, animaltypeid, speciesid):
     if cloneanimalid == 0:
         return
     # Any animal fields that should be copied to the new record
-    copyfrom = dbo.query("SELECT DateBroughtIn, Fee, AnimalComments FROM animal WHERE ID = ?", [cloneanimalid])
-    broughtin = copyfrom[0].datebroughtin
+    copyfrom = dbo.first_row( dbo.query("SELECT DateBroughtIn, Fee, AnimalComments FROM animal WHERE ID = ?", [cloneanimalid]) )
+    broughtin = copyfrom.datebroughtin
     newbroughtin = dbo.query_date("SELECT DateBroughtIn FROM animal WHERE ID = ?", [animalid])
     dbo.update("animal", animalid, {
-        "Fee":                      copyfrom[0].fee,
-        "AnimalComments":           copyfrom[0].animalcomments
+        "Fee":                      copyfrom.fee,
+        "AnimalComments":           copyfrom.animalcomments
     }, username, writeAudit=False)
     # Helper function to work out the difference between intake and a date and add that
     # difference to today to get a new date
@@ -2938,22 +2930,22 @@ def update_animal_check_bonds(dbo, animalid):
     """
 
     def addbond(tanimalid, bondid):
-        tbond = dbo.query("SELECT BondedAnimalID, BondedAnimal2ID FROM animal WHERE ID = ?", [tanimalid])
-        if len(tbond) == 0: return
+        tbond = dbo.first_row( dbo.query("SELECT BondedAnimalID, BondedAnimal2ID FROM animal WHERE ID = ?", [tanimalid]) )
+        if not tbond: return
         # If a bond already exists, don't do anything
-        if tbond[0].bondedanimalid == bondid: return
-        if tbond[0].bondedanimal2id == bondid: return
+        if tbond.bondedanimalid == bondid: return
+        if tbond.bondedanimal2id == bondid: return
         # Add a bond if we have a free slot
-        if tbond[0].bondedanimalid == 0:
+        if tbond.bondedanimalid == 0:
             dbo.execute("UPDATE animal SET BondedAnimalID = ? WHERE ID = ?", (bondid, tanimalid))
             return
-        if tbond[0].bondedanimal2id == 0:
+        if tbond.bondedanimal2id == 0:
             dbo.execute("UPDATE animal SET BondedAnimal2ID = ? WHERE ID = ?",  (bondid, tanimalid))
 
-    bonds = dbo.query("SELECT BondedAnimalID, BondedAnimal2ID FROM animal WHERE ID = ?", [animalid])
-    if len(bonds) == 0: return
-    bond1 = bonds[0].bondedanimalid
-    bond2 = bonds[0].bondedanimal2id
+    bonds = dbo.first_row( dbo.query("SELECT BondedAnimalID, BondedAnimal2ID FROM animal WHERE ID = ?", [animalid]) )
+    if not bonds: return
+    bond1 = bonds.bondedanimalid
+    bond2 = bonds.bondedanimal2id
     if bond1 != 0: addbond(bond1, animalid)
     if bond2 != 0: addbond(bond2, animalid)
 

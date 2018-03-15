@@ -206,12 +206,11 @@ def get_balance_to_date(dbo, accountid, todate):
     Returns the balance of accountid to todate.
     """
     aid = int(accountid)
-    rows = dbo.query("SELECT a.AccountType, " \
+    r = dbo.first_row( dbo.query("SELECT a.AccountType, " \
         "(SELECT SUM(Amount) FROM accountstrx WHERE SourceAccountID = a.ID AND TrxDate < ?) AS withdrawal," \
         "(SELECT SUM(Amount) FROM accountstrx WHERE DestinationAccountID = a.ID AND TrxDate < ?) AS deposit " \
         "FROM accounts a " \
-        "WHERE a.ID = ?", (todate, todate, aid))
-    r = rows[0]
+        "WHERE a.ID = ?", (todate, todate, aid)) )
     deposit = r.deposit
     withdrawal = r.withdrawal
     if deposit is None: deposit = 0
@@ -225,12 +224,11 @@ def get_balance_fromto_date(dbo, accountid, fromdate, todate):
     Returns the balance of accountid from fromdate to todate.
     """
     aid = int(accountid)
-    rows = dbo.query("SELECT a.AccountType, " \
+    r = dbo.first_row( dbo.query("SELECT a.AccountType, " \
         "(SELECT SUM(Amount) FROM accountstrx WHERE SourceAccountID = a.ID AND TrxDate >= ? AND TrxDate < ?) AS withdrawal," \
         "(SELECT SUM(Amount) FROM accountstrx WHERE DestinationAccountID = a.ID AND TrxDate >= ? AND TrxDate < ?) AS deposit " \
         "FROM accounts a " \
-        "WHERE a.ID = ?", (fromdate, todate, fromdate, todate, aid))
-    r = rows[0]
+        "WHERE a.ID = ?", (fromdate, todate, fromdate, todate, aid)) )
     deposit = r.deposit
     withdrawal = r.withdrawal
     if deposit is None: deposit = 0
@@ -336,7 +334,7 @@ def get_donation(dbo, did):
     """
     Returns a single donation by id
     """
-    return dbo.query(get_donation_query(dbo) + "WHERE od.ID = ?", [did])[0]
+    return dbo.first_row( dbo.query(get_donation_query(dbo) + "WHERE od.ID = ?", [did]) )
 
 def get_donations_by_ids(dbo, dids):
     """
@@ -348,9 +346,7 @@ def get_movement_donation(dbo, mid):
     """
     Returns the most recent donation with movement id mid
     """
-    r = dbo.query(get_donation_query(dbo) + "WHERE od.MovementID = ? ORDER BY Date DESC, od.ID DESC", [mid])
-    if len(r) == 0: return None
-    return r[0]
+    return dbo.first_row( dbo.query(get_donation_query(dbo) + "WHERE od.MovementID = ? ORDER BY Date DESC, od.ID DESC", [mid]) )
 
 def get_movement_donations(dbo, mid):
     """
@@ -502,11 +498,7 @@ def get_licence(dbo, licenceid):
     """
     Returns a single licence by id
     """
-    rows = dbo.query(get_licence_query(dbo) + "WHERE ol.ID = ?", [licenceid])
-    if len(rows) > 0:
-        return rows[0]
-    else:
-        return None
+    return dbo.first_row( dbo.query(get_licence_query(dbo) + "WHERE ol.ID = ?", [licenceid]) )
 
 def get_licences(dbo, offset = "i31"):
     """

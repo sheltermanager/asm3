@@ -333,6 +333,11 @@ class Database(object):
             except:
                 pass
 
+    def first_row(self, rows, valueIfEmpty=None):
+        """ Returns the first row in rows or valueIfEmpty if rows has no elements """
+        if len(rows) == 0: return valueIfEmpty
+        return rows[0]
+
     def get_id(self, table):
         """ Returns the next ID for a table """
         nextid = self.get_id_max(table)

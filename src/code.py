@@ -4058,20 +4058,6 @@ class person_embed(ASMEndpoint):
             "sites": extlookups.get_sites(dbo)
         })
 
-    def cache_get_person(self, dbo, pid):
-        """ Put person records looked up by post_id in a very short term 
-            cache. The same person tends to be surrenderer/intake owner so
-            having a short term cache here means we can save querying the
-            database again """
-        TTL = 120
-        key = "ep_cache_%s_%s" % (dbo.database, pid)
-        p = cachemem.get(key)
-        if not p:
-            p = extperson.get_person(dbo, pid)
-            cachemem.put(key, p, TTL)
-            al.debug("get person by id %d got '%s'" % (pid, p["OWNERNAME"]), "code.person_embed", dbo)
-        return p
-
     def post_find(self, o):
         self.check(users.VIEW_PERSON)
         self.content_type("application/json")
@@ -4085,11 +4071,12 @@ class person_embed(ASMEndpoint):
     def post_id(self, o):
         self.check(users.VIEW_PERSON)
         self.content_type("application/json")
+        self.cache_control(120)
         dbo = o.dbo
-        post = o.post
-        p = self.cache_get_person(dbo, post.integer("id"))
-        if p is None:
-            al.error("get person by id %d found no records." % (post.integer("id")), "code.person_embed", dbo)
+        pid = o.post.integer("id")
+        p = extperson.get_person_embedded(dbo, pid)
+        if not p:
+            al.error("get person by id %d found no records." % pid, "code.person_embed", dbo)
             raise web.notfound()
         else:
             return utils.json((p,))

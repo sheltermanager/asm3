@@ -41,9 +41,8 @@ def get_waitinglist_by_id(dbo, wid):
     """
     l = dbo.locale
     sql = get_waitinglist_query(dbo) + " WHERE a.ID = %d" % int(wid)
-    rows = db.query(dbo, sql)
-    if len(rows) == 0: return None
-    r = rows[0]
+    r = dbo.first_row( dbo.query(sql) )
+    if not r: return None
     ranks = get_waitinglist_ranks(dbo)
     if r["WLID"] in ranks:
         r["RANK"] = ranks[r["WLID"]]
@@ -356,7 +355,7 @@ def create_animal(dbo, username, wlid):
     """
     Creates an animal record from a waiting list entry with the id given
     """
-    a = db.query(dbo, "SELECT * FROM animalwaitinglist WHERE ID = %d" % wlid)[0]
+    a = dbo.first_row( dbo.query("SELECT * FROM animalwaitinglist WHERE ID = %d" % wlid) )
     l = dbo.locale
     data = {
         "animalname":           _("Waiting List {0}", l).format(wlid),

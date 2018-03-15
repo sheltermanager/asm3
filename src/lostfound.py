@@ -99,21 +99,13 @@ def get_lostanimal(dbo, aid):
     """
     Returns a lost animal record
     """
-    rows = db.query(dbo, get_lostanimal_query(dbo) + " WHERE a.ID = %d" % int(aid))
-    if rows is None or len(rows) == 0:
-        return None
-    else:
-        return rows[0]
+    return dbo.first_row( dbo.query(get_lostanimal_query(dbo) + " WHERE a.ID = %d" % int(aid)) )
 
 def get_foundanimal(dbo, aid):
     """
     Returns a found animal record
     """
-    rows = db.query(dbo, get_foundanimal_query(dbo) + " WHERE a.ID = %d" % int(aid))
-    if rows is None or len(rows) == 0:
-        return None
-    else:
-        return rows[0]
+    return dbo.first_row( dbo.query(get_foundanimal_query(dbo) + " WHERE a.ID = %d" % int(aid)) )
 
 def get_lostanimal_find_simple(dbo, query = "", limit = 0):
     """
@@ -804,7 +796,7 @@ def create_animal_from_found(dbo, username, aid):
     """
     Creates an animal record from a found animal with the id given
     """
-    a = db.query(dbo, "SELECT * FROM animalfound WHERE ID = %d" % int(aid))[0]
+    a = dbo.first_row( dbo.query("SELECT * FROM animalfound WHERE ID = %d" % int(aid)) )
     l = dbo.locale
     data = {
         "animalname":           _("Found Animal {0}", l).format(aid),
@@ -834,7 +826,7 @@ def create_waitinglist_from_found(dbo, username, aid):
     """
     Creates a waiting list entry from a found animal with the id given
     """
-    a = db.query(dbo, "SELECT * FROM animalfound WHERE ID = %d" % int(aid))[0]
+    a = dbo.first_row( dbo.query("SELECT * FROM animalfound WHERE ID = %d" % int(aid)) )
     l = dbo.locale
     data = {
         "dateputon":            python2display(l, now(dbo.timezone)),
