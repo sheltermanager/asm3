@@ -69,7 +69,7 @@ def get_person(dbo, personid):
 
 def get_person_embedded(dbo, personid):
     """ Returns a person record for the person chooser widget, uses a read-through cache for performance """
-    return dbo.first_row( dbo.query_cache(get_person_query(dbo) + " WHERE o.ID = ?", [personid], age=120) )
+    return dbo.first_row( dbo.query_cache(get_person_query(dbo) + " WHERE o.ID = %s" % personid, age=120) )
 
 def get_person_similar(dbo, email = "", surname = "", forenames = "", address = ""):
     """
