@@ -404,6 +404,7 @@ class image(ASMEndpoint):
         if imagedata != "NOPIC":
             self.content_type("image/jpeg")
             self.cache_control(86400, 3600)
+            al.debug("mode=%s id=%s seq=%s (%s bytes)" % (o.post["mode"], o.post["id"], o.post["seq"], len(imagedata)), "image.content", o.dbo)
             return imagedata
         else:
             self.redirect("image?db=%s&mode=nopic" % o.dbo.database)
@@ -579,6 +580,7 @@ class media(ASMEndpoint):
         self.content_type(mimetype)
         self.header("Content-Disposition", "inline; filename=\"%s\"" % medianame)
         self.cache_control(86400)
+        al.debug("%s %s (%s bytes)" % (medianame, mimetype, len(filedata)), "media.content", o.dbo)
         return filedata
 
     def log_from_media_type(self, x):
