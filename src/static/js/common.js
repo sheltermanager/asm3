@@ -891,7 +891,7 @@
          */
         inject_target: function() {
             var recpages = [ "animal", "incident", "person", "waitinglist", "lostanimal", "foundanimal" ];
-            var href, anchor, targetname, r;
+            var href, anchor, targetname, r, url = common.current_url();
             if (config.bool("RecordNewBrowserTab")) {
                 $("a").each(function() {
                     if ($(this).attr("href")) {
@@ -901,9 +901,10 @@
                             // If the URL target begins with one of our recpages, it's a candidate
                             // for adding a target attribute for a new tab.
                             if (href.indexOf(v) == 0 && href.indexOf("?") != -1) {
-                                // If the current url we're looking at begins with this base page, 
-                                // don't do anything - we don't want it to open in a new tab
-                                if (common.current_url().indexOf("/" + v) != -1) {
+                                // If this is not a find page and the current url we're looking at 
+                                // begins with this base page, don't do anything - we don't want 
+                                // it to open in a new tab as it's a satellite tab
+                                if (url.indexOf("/" + v + "_find") == -1 && url.indexOf("/" + v) != -1) {
                                     return;
                                 }
                                 // Create targetname from URL, throwing away any
