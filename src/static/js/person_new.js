@@ -79,6 +79,19 @@ $(function() {
                 '</select>',
                 '</td>',
                 '</tr>',
+                '<tr id="gdprcontactoptinrow">',
+                '<td><label for="gdprcontactoptin">' + _("GDPR Contact Opt-In") + '</label></td>',
+                '<td>',
+                '<select id="gdprcontactoptin" data-json="GDPRCONTACTOPTIN" data-post="gdprcontactoptin" class="asm-bsmselect" multiple="multiple">',
+                '<option value="didnotask">' + _("Did not ask") + '</option>',
+                '<option value="declined">' + _("Declined") + '</option>',
+                '<option value="email">' + _("Email") + '</option>',
+                '<option value="post">' + _("Post") + '</option>',
+                '<option value="sms">' + _("SMS") + '</option>',
+                '<option value="phone">' + _("Phone") + '</option>',
+                '</select>',
+                '</td>',
+                '</tr>',
                 '<tr id="jurisdictionrow">',
                 '<td><label for="jurisdiction">' + _("Jurisdiction") + '</label></td>',
                 '<td>',
@@ -222,6 +235,8 @@ $(function() {
                 $(".towncounty").hide();
             }
 
+            $("#gdprcontactoptinrow").toggle( config.bool("ShowGDPRContactOptIn") );
+
             if (config.bool("DisableAnimalControl")) {
                 $("#jurisdictionrow").hide();
             }
@@ -244,7 +259,6 @@ $(function() {
                     }
                 }
             });
-
 
             $("#add").button().click(function() {
                 person_new.create_and_edit = false;

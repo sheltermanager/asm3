@@ -272,8 +272,8 @@ animals (this value can be modified on the animal's cost tab).
   date a cost was paid separately from the date a cost was incurred, tick this
   box.
 
-Data Retention
---------------
+Data Protection
+---------------
 
 This tab allows configuration of how long ASM should keep certain types of data
 before removing them. These settings can be used to enforce data retention
@@ -301,6 +301,18 @@ policies instigated as part of data protection compliance.
   many years after its creation.
 
 .. warning:: Once deleted, documents are gone forever and cannot be recovered.
+
+*  Show GDPR Contact Opt-In field on person screens: If this option is on, the
+  system will show a contact opt-in field on person records. You can use it to
+  specify which forms of communication a person prefers. When saving the
+  record, if "Email" is not in the list of preferred communication methods, the
+  "Exclude from bulk email" flag will automatically be set on the person's
+  record.
+
+* When I set a new GDPR Opt-In contact option, make a note of it in the log
+  with this type: This option will automatically log any changes to the contact
+  opt-in field so that the person who changed it along with the date and time
+  are recorded in the log.
 
 Defaults
 --------

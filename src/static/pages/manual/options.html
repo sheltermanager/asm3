@@ -114,7 +114,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#age-groups">Age Groups</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#animal-codes">Animal Codes</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#costs">Costs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#data-retention">Data Retention</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#data-protection">Data Protection</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#defaults">Defaults</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#diary">Diary</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#display">Display</a></li>
@@ -393,8 +393,8 @@ date a cost was paid separately from the date a cost was incurred, tick this
 box.</li>
 </ul>
 </div>
-<div class="section" id="data-retention">
-<h2>Data Retention<a class="headerlink" href="#data-retention" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="data-protection">
+<h2>Data Protection<a class="headerlink" href="#data-protection" title="Permalink to this headline">¶</a></h2>
 <p>This tab allows configuration of how long ASM should keep certain types of data
 before removing them. These settings can be used to enforce data retention
 policies instigated as part of data protection compliance.</p>
@@ -428,6 +428,21 @@ many years after its creation.</li>
 <p class="first admonition-title">Warning</p>
 <p class="last">Once deleted, documents are gone forever and cannot be recovered.</p>
 </div>
+<ul class="simple">
+<li>Show GDPR Contact Opt-In field on person screens: If this option is on, the</li>
+</ul>
+<blockquote>
+<div>system will show a contact opt-in field on person records. You can use it to
+specify which forms of communication a person prefers. When saving the
+record, if &#8220;Email&#8221; is not in the list of preferred communication methods, the
+&#8220;Exclude from bulk email&#8221; flag will automatically be set on the person&#8217;s
+record.</div></blockquote>
+<ul class="simple">
+<li>When I set a new GDPR Opt-In contact option, make a note of it in the log
+with this type: This option will automatically log any changes to the contact
+opt-in field so that the person who changed it along with the date and time
+are recorded in the log.</li>
+</ul>
 </div>
 <div class="section" id="defaults">
 <h2>Defaults<a class="headerlink" href="#defaults" title="Permalink to this headline">¶</a></h2>

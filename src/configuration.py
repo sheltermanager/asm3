@@ -192,11 +192,14 @@ DEFAULTS = {
     "FancyTooltips": "No",
     "FirstDayOfWeek": "1",
     "FosterOnShelter": "Yes",
-    "IncidentPermissions": "No",
-    "IncomingMediaScaling": "640x640",
+    "ShowGDPRContactOptIn": "No",
+    "GDPRContactChangeLog": "No",
+    "GDPRContactChangeLogType": "6",
     "GeocodeWithPostcodeOnly": "No",
     "GenerateDocumentLog": "No",
     "GenerateDocumentLogType": "5",
+    "IncidentPermissions": "No",
+    "IncomingMediaScaling": "640x640",
     "InactivityTimer": "No",
     "InactivityTimeout": "20", 
     "IncludeOffShelterMedical": "No",
@@ -757,6 +760,12 @@ def generate_document_log(dbo):
 def generate_document_log_type(dbo):
     return cint(dbo, "GenerateDocumentLogType", 0)
 
+def gdpr_contact_change_log(dbo):
+    return cboolean(dbo, "GDPRContactChangeLog", DEFAULTS["GDPRContactChangeLog"] == "Yes")
+
+def gdpr_contact_change_log_type(dbo):
+    return cint(dbo, "GDPRContactChangeLogType", DEFAULTS["GDPRContactChangeLogType"])
+
 def geo_provider_override(dbo):
     return cstring(dbo, "GeoProviderOverride")
 
@@ -1046,6 +1055,9 @@ def show_alerts_home_page(dbo):
 
 def show_cost_paid(dbo):
     return cboolean(dbo, "ShowCostPaid", DEFAULTS["ShowCostPaid"] == "Yes")
+
+def show_gdpr_contact_optin(dbo):
+    return cboolean(dbo, "ShowGDPRContactOptIn", DEFAULTS["ShowGDPRContactOptIn"] == "Yes")
 
 def show_stats_home_page(dbo):
     return cstring(dbo, "ShowStatsHomePage", DEFAULTS["ShowStatsHomePage"])

@@ -23,7 +23,7 @@ VERSIONS = (
     33907, 33908, 33909, 33911, 33912, 33913, 33914, 33915, 33916, 34000, 34001, 
     34002, 34003, 34004, 34005, 34006, 34007, 34008, 34009, 34010, 34011, 34012,
     34013, 34014, 34015, 34016, 34017, 34018, 34019, 34020, 34021, 34022, 34100,
-    34101, 34102, 34103
+    34101, 34102, 34103, 34104
 )
 
 LATEST_VERSION = VERSIONS[-1]
@@ -1097,6 +1097,7 @@ def sql_structure(dbo):
         fstr("MobileTelephone", True),
         fstr("EmailAddress", True),
         fint("ExcludeFromBulkEmail", True),
+        fstr("GDPRContactOptIn", True),
         fint("JurisdictionID", True),
         fint("IDCheck", True),
         flongstr("Comments", True),
@@ -1141,6 +1142,7 @@ def sql_structure(dbo):
         fstr("MatchCommentsContain", True) ))
     sql += index("owner_CreatedBy", "owner", "CreatedBy")
     sql += index("owner_CreatedDate", "owner", "CreatedDate")
+    sql += index("owner_GDPRContactOptIn", "owner", "GDPRContactOptIn")
     sql += index("owner_MembershipNumber", "owner", "MembershipNumber")
     sql += index("owner_OwnerCode", "owner", "OwnerCode")
     sql += index("owner_OwnerName", "owner", "OwnerName")
@@ -2188,6 +2190,7 @@ def sql_default_data(dbo, skip_config = False):
     sql += lookup2("logtype", "LogTypeName", 3, _("History", l))
     sql += lookup2("logtype", "LogTypeName", 4, _("Weight", l))
     sql += lookup2("logtype", "LogTypeName", 5, _("Document", l))
+    sql += lookup2("logtype", "LogTypeName", 6, _("GDPR Contact Opt-In", l))
     sql += lookup2("pickuplocation", "LocationName", 1, _("Shelter", l))
     sql += lookup2("reservationstatus", "StatusName", 1, _("More Info Needed", l))
     sql += lookup2("reservationstatus", "StatusName", 2, _("Pending Vet Check", l))
@@ -4804,4 +4807,14 @@ def update_34103(dbo):
     if smcom.active():
         # sheltermanager.com only: Final switch over to access old media from S3 instead of filesystem
         dbo.execute_dbupdate("UPDATE dbfs SET url = replace(url, 'file:', 's3:') where url like 'file:%'")
+
+def update_34104(dbo):
+    # Add owner.GDPRContactOptIn
+    add_column(dbo, "owner", "GDPRContactOptIn", dbo.type_shorttext)
+    add_index(dbo, "owner_GDPRContactOptIn", "owner", "GDPRContactOptIn")
+    dbo.execute_dbupdate("UPDATE owner SET GDPRContactOptIn = ''")
+    # Add a new GDPR contact opt-in log type
+    ltid = dbo.get_id_max("logtype")
+    dbo.insert("logtype", { "ID": ltid, "LogTypeName": _("GDPR Contact Opt-In") }, setOverrideDBLock=True)
+    configuration.cset(dbo, "GDPRContactChangeLogType", str(ltid), ignoreDBLock=True)
 

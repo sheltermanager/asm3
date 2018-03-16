@@ -118,6 +118,19 @@ $(function() {
                 '<input type="text" id="worktelephone" data-json="WORKTELEPHONE" data-post="worktelephone" class="asm-textbox" />',
                 '</td>',
                 '</tr>',
+                '<tr id="gdprcontactoptinrow">',
+                '<td><label for="gdprcontactoptin">' + _("GDPR Contact Opt-In") + '</label></td>',
+                '<td>',
+                '<select id="gdprcontactoptin" data-json="GDPRCONTACTOPTIN" data-post="gdprcontactoptin" class="asm-bsmselect" multiple="multiple">',
+                '<option value="didnotask">' + _("Did not ask") + '</option>',
+                '<option value="declined">' + _("Declined") + '</option>',
+                '<option value="email">' + _("Email") + '</option>',
+                '<option value="post">' + _("Post") + '</option>',
+                '<option value="sms">' + _("SMS") + '</option>',
+                '<option value="phone">' + _("Phone") + '</option>',
+                '</select>',
+                '</td>',
+                '</tr>',
                 '<tr id="jurisdictionrow">',
                 '<td><label for="jurisdiction">' + _("Jurisdiction") + '</label></td>',
                 '<td>',
@@ -495,10 +508,9 @@ $(function() {
             $("#siterow").toggle( config.bool("MultiSiteEnabled") );
             $("#jurisdictionrow").toggle( !config.bool("DisableAnimalControl") );
             $("#button-anonymise").toggle( config.bool("AnonymisePersonalData") );
-
+            $("#gdprcontactoptinrow").toggle( config.bool("ShowGDPRContactOptIn") );
 
             // SECURITY =============================================================
-
             if (!common.has_permission("co")) { $("#button-save, #button-anonymise").hide(); }
             if (!common.has_permission("do")) { $("#button-delete, #button-anonymise").hide(); }
             if (!common.has_permission("gaf")) { $("#button-document").hide(); }

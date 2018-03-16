@@ -1,6 +1,7 @@
 41
 ================
 
+16/03/18 GDPR Contact Opt-In field on person records #387
 15/03/18 Allow DocumentImgLink2-500 to set img size
 15/03/18 Use a short term cache on person_embed/post_id to prevent repeat lookups
 15/03/18 Show debug info on retrieval of images and media

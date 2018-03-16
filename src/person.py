@@ -694,6 +694,20 @@ def update_person_from_form(dbo, post, username):
     excludefrombulkemail = bi("excludefrombulkemail" in flags)
     flagstr = "|".join(flags) + "|"
 
+    # If the option is on and the gdpr contact info has changed, log it
+    if configuration.show_gdpr_contact_optin(dbo) and configuration.gdpr_contact_change_log(dbo):
+        oldvalue = dbo.query_string("SELECT GDPRContactOptIn FROM owner WHERE ID=?", [pid])
+        if post["gdprcontactoptin"] != oldvalue:
+            newvalue = post["gdprcontactoptin"]
+            log.add_log(dbo, username, log.PERSON, pid, configuration.gdpr_contact_change_log_type(dbo),
+                "%s" % (newvalue))
+
+    # If we're using GDPR contact options and email is not set, set the exclude from bulk email flag
+    if configuration.show_gdpr_contact_optin(dbo):
+        excludefrombulkemail = 1
+        if post["gdprcontactoptin"].find("email") != -1:
+            excludefrombulkemail = 0
+
     sql = db.make_update_user_sql(dbo, "owner", username, "ID=%d" % pid, (
         ( "OwnerType", post.db_integer("ownertype") ),
         ( "OwnerCode", db.ds(calculate_owner_code(pid, post["surname"]))),
@@ -712,6 +726,7 @@ def update_person_from_form(dbo, post, username):
         ( "MobileTelephone", post.db_string("mobiletelephone")),
         ( "EmailAddress", post.db_string("email")),
         ( "ExcludeFromBulkEmail", db.di(excludefrombulkemail)),
+        ( "GDPRContactOptIn", post.db_string("gdprcontactoptin")),
         ( "JurisdictionID", post.db_integer("jurisdiction")),
         ( "IDCheck", db.di(homechecked) ),
         ( "Comments", post.db_string("comments")),
@@ -845,6 +860,12 @@ def insert_person_from_form(dbo, post, username):
     excludefrombulkemail = bi("excludefrombulkemail" in flags)
     flagstr = "|".join(flags) + "|"
 
+    # If we're using GDPR contact options and email is not set, set the exclude from bulk email flag
+    if configuration.show_gdpr_contact_optin(dbo):
+        excludefrombulkemail = 1
+        if post["gdprcontactoptin"].find("email") != -1:
+            excludefrombulkemail = 0
+
     pid = db.get_id(dbo, "owner")
     sql = db.make_insert_user_sql(dbo, "owner", username, (
         ( "ID", db.di(pid) ),
@@ -865,6 +886,7 @@ def insert_person_from_form(dbo, post, username):
         ( "MobileTelephone", db.ds(d("mobiletelephone", "") )),
         ( "EmailAddress", db.ds(d("emailaddress", "") )),
         ( "ExcludeFromBulkEmail", db.di(excludefrombulkemail)),
+        ( "GDPRContactOptIn", db.ds(d("gdprcontactoptin") )),
         ( "JurisdictionID", post.db_integer("jurisdiction")),
         ( "IDCheck", db.di(homechecked) ),
         ( "Comments", db.ds(d("comments") )),
