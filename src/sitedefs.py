@@ -156,7 +156,7 @@ GEO_PROVIDER_KEY = ""
 
 # Map provider for rendering maps on the client, can be "osm" or "google"
 MAP_PROVIDER = "osm"
-OSM_MAP_TILES = "http://{s}.tile.osm.org/{z}/{x}/{y}.png" # (can be switched for cloudmade.com or other OSM slippy tiles)
+OSM_MAP_TILES = "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" # (can be switched for cloudmade.com or other OSM slippy tiles)
 
 # Bulk geocode provider for server side geocoding of
 # historical data, can be "nominatim" or "google" or "" to disable.
