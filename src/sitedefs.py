@@ -63,8 +63,8 @@ DB_TIME_LOG_OVER = 0
 DB_TIMEOUT = 0
 
 # URLs for ASM services
-URL_NEWS = "http://sheltermanager.com/repo/asm_news.html"
-URL_REPORTS = "http://sheltermanager.com/repo/reports.txt"
+URL_NEWS = "https://sheltermanager.com/repo/asm_news.html"
+URL_REPORTS = "https://sheltermanager.com/repo/reports.txt"
 
 # Deployment type, wsgi or fcgi
 DEPLOYMENT_TYPE = "wsgi"
@@ -147,7 +147,7 @@ HTML_TO_PDF = "wkhtmltopdf --orientation %(orientation)s %(papersize)s %(input)s
 #HTML_TO_PDF = "html2pdf %(input)s %(output)s"
 
 # Target for viewing an address on a map, {0} is the address
-MAP_LINK = "http://www.openstreetmap.org/search?query={0}"
+MAP_LINK = "https://www.openstreetmap.org/search?query={0}"
 
 # Client side geocode provider for mapping address to lat/lng in the browser
 # can be "mapquest", "nominatim" or "google"
@@ -156,7 +156,7 @@ GEO_PROVIDER_KEY = ""
 
 # Map provider for rendering maps on the client, can be "osm" or "google"
 MAP_PROVIDER = "osm"
-OSM_MAP_TILES = "http://{s}.tile.osm.org/{z}/{x}/{y}.png" # (can be switched for cloudmade.com or other OSM slippy tiles)
+OSM_MAP_TILES = "https://{s}.tile.osm.org/{z}/{x}/{y}.png" # (can be switched for cloudmade.com or other OSM slippy tiles)
 
 # Bulk geocode provider for server side geocoding of
 # historical data, can be "nominatim" or "google" or "" to disable.
@@ -170,8 +170,8 @@ BULK_GEO_BATCH = True
 BULK_GEO_LIMIT = 100
 
 # URLs for public geocoding services
-BULK_GEO_NOMINATIM_URL = "http://nominatim.openstreetmap.org/search?format=json&q={q}"
-BULK_GEO_GOOGLE_URL = "http://maps.googleapis.com/maps/api/geocode/json?address={q}&sensor=false"
+BULK_GEO_NOMINATIM_URL = "https://nominatim.openstreetmap.org/search?format=json&q={q}"
+BULK_GEO_GOOGLE_URL = "https://maps.googleapis.com/maps/api/geocode/json?address={q}&sensor=false"
 
 # Timeout when doing server side geocode lookups
 BULK_GEO_LOOKUP_TIMEOUT = 10
@@ -211,7 +211,7 @@ PETSLOCATED_FTP_USER = ""
 PETSLOCATED_FTP_PASSWORD = ""
 VETENVOY_US_VENDOR_USERID = ""
 VETENVOY_US_VENDOR_PASSWORD = ""
-VETENVOY_US_BASE_URL = "http://www.vetenvoy.com/"
+VETENVOY_US_BASE_URL = "https://www.vetenvoy.info/"
 VETENVOY_US_SYSTEM_ID = "20"
 VETENVOY_US_HOMEAGAIN_RECIPIENTID = ""
 VETENVOY_US_AKC_REUNITE_RECIPIENTID = ""
