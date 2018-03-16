@@ -23,7 +23,7 @@ VERSIONS = (
     33907, 33908, 33909, 33911, 33912, 33913, 33914, 33915, 33916, 34000, 34001, 
     34002, 34003, 34004, 34005, 34006, 34007, 34008, 34009, 34010, 34011, 34012,
     34013, 34014, 34015, 34016, 34017, 34018, 34019, 34020, 34021, 34022, 34100,
-    34101, 34102, 34103, 34104
+    34101, 34102, 34103, 34104, 34105
 )
 
 LATEST_VERSION = VERSIONS[-1]
@@ -36,7 +36,7 @@ TABLES = ( "accounts", "accountsrole", "accountstrx", "additional", "additionalf
     "animalmedical", "animalmedicaltreatment", "animalname", "animalpublished", 
     "animaltype", "animaltest", "animaltransport", "animalvaccination", "animalwaitinglist", "audittrail", 
     "basecolour", "breed", "citationtype", "configuration", "costtype", "customreport", "customreportrole", "dbfs", 
-    "deathreason", "diary", "diarytaskdetail", "diarytaskhead", "diet", "donationpayment", "donationtype", 
+    "deathreason", "deletion", "diary", "diarytaskdetail", "diarytaskhead", "diet", "donationpayment", "donationtype", 
     "entryreason", "incidentcompleted", "incidenttype", "internallocation", "jurisdiction", "licencetype", "lkanimalflags", "lkcoattype", 
     "lkownerflags", "lksaccounttype", "lksdiarylink", "lksdonationfreq", "lksex", "lksfieldlink", "lksfieldtype", 
     "lksize", "lksloglink", "lksmedialink", "lksmediatype", "lksmovementtype", "lksposneg", "lksrotatype", 
@@ -64,7 +64,7 @@ TABLES_ASM2 = ( "accounts", "accountstrx", "additional", "additionalfield",
 # Tables that don't have an ID column (we don't create PostgreSQL sequences for them for pseq pk)
 TABLES_NO_ID_COLUMN = ( "accountsrole", "additional", "audittrail", "animalcontrolanimal", 
     "animalcontrolrole", "animallostfoundmatch", "animalpublished", "configuration", "customreportrole", 
-    "onlineformincoming", "ownerlookingfor", "userrole" )
+    "deletion", "onlineformincoming", "ownerlookingfor", "userrole" )
 
 VIEWS = ( "v_adoption", "v_animal", "v_animalcontrol", "v_animalfound", "v_animallost", 
     "v_animalmedicaltreatment", "v_animaltest", "v_animalvaccination", "v_animalwaitinglist", 
@@ -814,6 +814,15 @@ def sql_structure(dbo):
         fstr("ReasonName"),
         fstr("ReasonDescription", True),
         fint("IsRetired", True) ), False)
+
+    sql += table("deletion", (
+        fint("ID"),
+        fstr("TableName"),
+        fstr("DeletedBy"),
+        fdate("Date"),
+        fstr("IDList"),
+        flongstr("RestoreSQL") ), False)
+    sql += index("deletion_IDTablename", "deletion", "ID,Tablename")
 
     sql += table("diary", (
         fid(),
@@ -4818,4 +4827,16 @@ def update_34104(dbo):
     ltid = dbo.get_id_max("logtype")
     dbo.insert("logtype", { "ID": ltid, "LogTypeName": _("GDPR Contact Opt-In", l), "IsRetired": 0 }, setOverrideDBLock=True)
     configuration.cset(dbo, "GDPRContactChangeLogType", str(ltid), ignoreDBLock=True)
+
+def update_34105(dbo):
+    # Add deletion table
+    fields = ",".join([
+        dbo.ddl_add_table_column("ID", dbo.type_integer, False),
+        dbo.ddl_add_table_column("TableName", dbo.type_shorttext, False),
+        dbo.ddl_add_table_column("DeletedBy", dbo.type_shorttext, False),
+        dbo.ddl_add_table_column("Date", dbo.type_datetime, False),
+        dbo.ddl_add_table_column("IDList", dbo.type_shorttext, False),
+        dbo.ddl_add_table_column("RestoreSQL", dbo.type_longtext, False) ])
+    dbo.execute_dbupdate( dbo.ddl_add_table("deletion", fields) )
+    dbo.execute_dbupdate( dbo.ddl_add_index("deletion_IDTablename", "deletion", "ID,Tablename") )
 
