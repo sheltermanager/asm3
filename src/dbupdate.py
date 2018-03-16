@@ -4809,12 +4809,13 @@ def update_34103(dbo):
         dbo.execute_dbupdate("UPDATE dbfs SET url = replace(url, 'file:', 's3:') where url like 'file:%'")
 
 def update_34104(dbo):
+    l = dbo.locale
     # Add owner.GDPRContactOptIn
     add_column(dbo, "owner", "GDPRContactOptIn", dbo.type_shorttext)
     add_index(dbo, "owner_GDPRContactOptIn", "owner", "GDPRContactOptIn")
     dbo.execute_dbupdate("UPDATE owner SET GDPRContactOptIn = ''")
     # Add a new GDPR contact opt-in log type
     ltid = dbo.get_id_max("logtype")
-    dbo.insert("logtype", { "ID": ltid, "LogTypeName": _("GDPR Contact Opt-In") }, setOverrideDBLock=True)
+    dbo.insert("logtype", { "ID": ltid, "LogTypeName": _("GDPR Contact Opt-In", l), "IsRetired": 0 }, setOverrideDBLock=True)
     configuration.cset(dbo, "GDPRContactChangeLogType", str(ltid), ignoreDBLock=True)
 
