@@ -588,6 +588,7 @@
             });
             if (o.logtypes) {
                 $("#emaillogtype").append( html.list_to_options(o.logtypes, "ID", "LOGTYPENAME") );
+                $("#emaillogtype").select("value", config.integer("AFDefaultLogType"));
             }
             else {
                 $("#emaillogtype").closest("tr").hide();
