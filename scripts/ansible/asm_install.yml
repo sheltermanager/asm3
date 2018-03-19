@@ -30,6 +30,7 @@
         - python-pyasn1
         - memcached
         - python-memcache
+        - postfix
 
     - name: "Activate Apache WSGI Module"
       apache2_module:
@@ -80,13 +81,13 @@
         src: "cron.sh"
         dest: "/etc/cron.daily/asm"
         mode: "0755"
-        
+
     - name: "Configure backup credentials"
       template:
         src: "backup.cnf"
         dest: "/etc/cron.daily/backup.d/asm.cnf"
         mode: "0600"
-      
+
     - name: "Install backup script"
       template:
         src: "backup.sh"

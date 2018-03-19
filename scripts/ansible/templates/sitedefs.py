@@ -19,7 +19,7 @@ TIMEZONE = 0
 # syslog  - the UNIX syslogger (to LOCAL3 facility)
 # ntevent - the Windows event logger
 # <file>  - The path to a file to log to
-LOG_LOCATION = "syslog"
+LOG_LOCATION = "{{ asm_sitedefs.log_location }}"
 
 # Include debug messages when logging - set to False
 # to disable debug messages
@@ -111,7 +111,7 @@ CACHE_SERVICE_RESPONSES = False
 # are emailed to ADMIN_EMAIL and the user is given a generic
 # error page. If set to False, debug information is output.
 EMAIL_ERRORS = False
-ADMIN_EMAIL = "you@youraddress.com"
+ADMIN_EMAIL = "{{ asm_sitedefs.admin_email }}"
 
 # If MINIFY_JS is set to True, minified versions of the javascript
 # files will be generated at build/deploy time and the handler
