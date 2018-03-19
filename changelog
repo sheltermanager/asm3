@@ -1,6 +1,8 @@
 41
 ================
 
+19/03/18 Resolve redirects to absolute URLs to assist CDNs
+17/03/18 Apply default log type in emails, style multi-select
 16/03/18 Add deletions table in preparation for #391
 16/03/18 GDPR Contact Opt-In field on person records #387
 15/03/18 Allow DocumentImgLink2-500 to set img size

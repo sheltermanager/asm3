@@ -666,6 +666,14 @@ select:disabled, input:disabled, textarea:disabled {
     border: 1px solid #555;
 }
 
+.asmSelect {
+    width: 197px;
+    background-color: #ddd;
+    color: #000;
+    border: 1px solid #bbb;
+    padding: 2px;
+}
+
 .asm-selectbox {
     width: 197px;
     background-color: #fff;
