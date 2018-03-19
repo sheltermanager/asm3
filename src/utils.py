@@ -793,7 +793,7 @@ def check_locked_db(session):
         l = session.locale
         raise ASMPermissionError(_("This database is locked.", l))
 
-def check_loggedin(session, web, loginpage = "/login"):
+def check_loggedin(session, web, loginpage = "login"):
     """
     Checks if we have a logged in user and if not, redirects to
     the login page

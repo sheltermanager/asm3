@@ -1,6 +1,6 @@
 # ASM3 site definitions
 
-# The base URL to the ASM installation as seen by the client
+# The base URL to the ASM installation as seen by the client (should not end with /)
 BASE_URL = "http://localhost:5000"
 
 # The URL to asm's service endpoint to be shown in online forms screen

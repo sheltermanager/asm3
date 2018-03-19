@@ -246,7 +246,9 @@ class ASMEndpoint(object):
         return web.ctx.query
 
     def redirect(self, route):
-        """ Redirect to another route """
+        """ Redirect to another route 
+            Uses BASE_URL if a relative route is given to help CDNs. """
+        if not route.startswith("http"): route = "%s/%s" % (BASE_URL, route)
         raise web.seeother(route)
 
     def referer(self):
@@ -333,8 +335,8 @@ class index(ASMEndpoint):
         if not MULTIPLE_DATABASES:
             dbo = db.get_database()
             if not dbo.has_structure():
-                self.redirect("/database")
-        self.redirect("/main")
+                self.redirect("database")
+        self.redirect("main")
 
 class database(ASMEndpoint):
     url = "database"
@@ -390,7 +392,7 @@ class database(ASMEndpoint):
         dbo.locale = o.post["locale"]
         dbo.installpath = PATH
         dbupdate.install(dbo)
-        raise web.seeother("/login")
+        self.redirect("login")
 
 class image(ASMEndpoint):
     url = "image"
