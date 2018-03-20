@@ -405,7 +405,8 @@ class image(ASMEndpoint):
             return ""
         if imagedata != "NOPIC":
             self.content_type("image/jpeg")
-            self.cache_control(86400, 3600)
+            # CDN caching, cache for one hour by default, unless a date parameter is set (could cache forever)
+            self.cache_control(86400, utils.iif(o.post["date"] != "", 86400, 3600))
             al.debug("mode=%s id=%s seq=%s (%s bytes)" % (o.post["mode"], o.post["id"], o.post["seq"], len(imagedata)), "image.content", o.dbo)
             return imagedata
         else:
