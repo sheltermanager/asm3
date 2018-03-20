@@ -28,7 +28,7 @@ from email.utils import make_msgid, formatdate
 from email import Charset, Encoders
 from i18n import _, display2python, format_currency_no_symbol, format_time, python2display, VERSION
 from cStringIO import StringIO
-from sitedefs import SMTP_SERVER, FROM_ADDRESS, HTML_TO_PDF
+from sitedefs import BASE_URL, SMTP_SERVER, FROM_ADDRESS, HTML_TO_PDF
 
 # Monkeypatch to allow SNI support in urllib3. This is necessary
 # as many servers (including Facebook and PetLink)
@@ -802,7 +802,7 @@ def check_loggedin(session, web, loginpage = "login"):
         path = web.ctx.path
         if path.startswith("/"): path = path[1:]
         query = str(web.ctx.query)
-        raise web.seeother(loginpage + "?target=" + path + query)
+        raise web.seeother("%s/%s?target=%s%s" % (BASE_URL, loginpage, path, query))
     else:
         # update the last user activity
         users.update_user_activity(session.dbo, session.user)
