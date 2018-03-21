@@ -49,6 +49,12 @@ import web
 import wordprocessor
 from sitedefs import BASE_URL, DEPLOYMENT_TYPE, ELECTRONIC_SIGNATURES, EMERGENCY_NOTICE, FORGOTTEN_PASSWORD, FORGOTTEN_PASSWORD_LABEL, LARGE_FILES_CHUNKED, LOCALE, GEO_PROVIDER, GEO_PROVIDER_KEY, JQUERY_UI_CSS, LEAFLET_CSS, LEAFLET_JS, MULTIPLE_DATABASES, MULTIPLE_DATABASES_TYPE, MULTIPLE_DATABASES_PUBLISH_URL, MULTIPLE_DATABASES_PUBLISH_FTP, ADMIN_EMAIL, EMAIL_ERRORS, MADDIES_FUND_TOKEN_URL, MANUAL_HTML_URL, MANUAL_PDF_URL, MANUAL_FAQ_URL, MANUAL_VIDEO_URL, MAP_LINK, MAP_PROVIDER, OSM_MAP_TILES, FOUNDANIMALS_FTP_USER, PETRESCUE_FTP_HOST, PETSLOCATED_FTP_USER, QR_IMG_SRC, SERVICE_URL, SESSION_SECURE_COOKIE, SESSION_DEBUG, SHARE_BUTTON, SMARTTAG_FTP_USER, SMCOM_LOGIN_URL, SMCOM_PAYMENT_LINK, VETENVOY_US_VENDOR_PASSWORD, VETENVOY_US_VENDOR_USERID
 
+CACHE_ONE_HOUR = 3600
+CACHE_ONE_DAY = 86400
+CACHE_ONE_WEEK = 604800
+CACHE_ONE_MONTH = 2592000
+CACHE_ONE_YEAR = 31536000 
+
 def session_manager():
     """
     Sort out our session manager. We use a global in the utils module
@@ -405,8 +411,12 @@ class image(ASMEndpoint):
             return ""
         if imagedata != "NOPIC":
             self.content_type("image/jpeg")
-            # CDN caching, cache for one hour by default, unless a date parameter is set (could cache forever)
-            self.cache_control(86400, utils.iif(o.post["date"] != "", 86400, 3600))
+            if o.post["date"] != "":
+                # if we have a date parameter, it can be used to invalidate any cache
+                self.cache_control(CACHE_ONE_YEAR)
+            else:
+                # otherwise cache for an hour in CDNs and just for the day locally
+                self.cache_control(CACHE_ONE_DAY, CACHE_ONE_HOUR)
             al.debug("mode=%s id=%s seq=%s (%s bytes)" % (o.post["mode"], o.post["id"], o.post["seq"], len(imagedata)), "image.content", o.dbo)
             return imagedata
         else:
@@ -417,8 +427,9 @@ class rollupjs(ASMEndpoint):
     check_logged_in = False
 
     def content(self, o):
+        # b=build is passed as a parameter and to invalidate caching
         self.content_type("text/javascript")
-        self.cache_control(86400)
+        self.cache_control(CACHE_ONE_YEAR)
         rollup = cachemem.get("rollup")
         if rollup is None:
             rollup = html.asm_rollup_scripts(PATH)
@@ -443,7 +454,7 @@ class configjs(ASMEndpoint):
             return ""
         dbo = o.dbo
         self.content_type("text/javascript")
-        self.cache_control(86400)
+        self.cache_control(CACHE_ONE_YEAR)
         realname = ""
         emailaddress = ""
         expirydate = ""
@@ -521,6 +532,7 @@ class css(ASMEndpoint):
     check_logged_in = False
 
     def content(self, o):
+        # k=build is passed to invalidate cache
         v = o.post["v"]
         csspath = PATH + "static/css/" + v
         if v.find("..") != -1: self.notfound() # prevent escaping our PATH
@@ -528,7 +540,7 @@ class css(ASMEndpoint):
         if v == "": self.notfound()
         content = utils.read_binary_file(csspath)
         self.content_type("text/css")
-        self.cache_control(86400)
+        self.cache_control(CACHE_ONE_YEAR)
         return content
 
 class i18njs(ASMEndpoint):
@@ -536,10 +548,11 @@ class i18njs(ASMEndpoint):
     check_logged_in = False
 
     def content(self, o):
+        # k=build is passed to invalidate cache
         l = o.post["l"]
         if l == "": l = LOCALE
         self.content_type("text/javascript")
-        self.cache_control(86400)
+        self.cache_control(CACHE_ONE_YEAR)
         return i18nstringsjs(l)
 
 class js(ASMEndpoint):
@@ -547,6 +560,7 @@ class js(ASMEndpoint):
     check_logged_in = False
 
     def content(self, o):
+        # k=build is passed to invalidate cache
         v = o.post["v"]
         jspath = PATH + "static/js/" + v
         if v.find("..") != -1: self.notfound() # prevent escaping our PATH
@@ -554,7 +568,7 @@ class js(ASMEndpoint):
         if v == "": self.notfound()
         content = utils.read_binary_file(jspath)
         self.content_type("text/javascript")
-        self.cache_control(86400)
+        self.cache_control(CACHE_ONE_YEAR)
         return content
 
 class jserror(ASMEndpoint):
@@ -582,7 +596,7 @@ class media(ASMEndpoint):
         lastmod, medianame, mimetype, filedata = extmedia.get_media_file_data(o.dbo, o.post.integer("id"))
         self.content_type(mimetype)
         self.header("Content-Disposition", "inline; filename=\"%s\"" % medianame)
-        self.cache_control(86400)
+        self.cache_control(CACHE_ONE_DAY)
         al.debug("%s %s (%s bytes)" % (medianame, mimetype, len(filedata)), "media.content", o.dbo)
         return filedata
 
@@ -1011,7 +1025,7 @@ class login_splash(ASMEndpoint):
                     else:
                         dbo = db.get_multiple_database_info(smaccount)
             self.content_type("image/jpeg")
-            self.cache_control(86400, 120)
+            self.cache_control(CACHE_ONE_DAY, 120)
             return dbfs.get_string_filepath(dbo, "/reports/splash.jpg")
         except Exception as err:
             al.error("%s" % str(err), "code.login_splash", dbo)
@@ -4436,7 +4450,7 @@ class publish_log_view(ASMEndpoint):
 
     def content(self, o):
         al.debug("viewing log file %s" % o.post["view"], "code.publish_logs", o.dbo)
-        self.cache_control(86400)
+        self.cache_control(CACHE_ONE_WEEK) # log files never change
         self.content_type("text/plain")
         self.header("Content-Disposition", "inline; filename=\"%s\"" % o.post["view"])
         return extpublish.get_publish_log(o.dbo, o.post.integer("view"))
@@ -4644,11 +4658,11 @@ class schemajs(ASMEndpoint):
     check_logged_in = False
 
     def content(self, o):
-        # Return schema of all database tables
+        # Return schema of all database tables, includes k=build param to invalidate cache
         if utils.is_loggedin(o.session) and o.dbo is not None:
             dbo = o.dbo
             self.content_type("text/javascript")
-            self.cache_control(86400)
+            self.cache_control(CACHE_ONE_YEAR)
             CACHE_KEY = "schema"
             tobj = cachemem.get(CACHE_KEY)
             if tobj is None:

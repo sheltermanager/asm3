@@ -181,7 +181,7 @@ def bare_header(title, theme = "asm", locale = LOCALE, config_db = "asm", config
     def script_config():
         return "<script type=\"text/javascript\" src=\"config.js?db=%s&ts=%s\"></script>\n" % (config_db, config_ts)
     def script_schema():
-        return "<script type=\"text/javascript\" src=\"schema.js?db=%s&ts=%s\"></script>\n" % (config_db, config_ts)
+        return "<script type=\"text/javascript\" src=\"schema.js?k=%s\"></script>\n" % (BUILD)
     # Use the default if we have no locale
     if locale is None: locale = LOCALE
     # Load the asm scripts
