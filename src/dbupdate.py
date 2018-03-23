@@ -23,7 +23,7 @@ VERSIONS = (
     33907, 33908, 33909, 33911, 33912, 33913, 33914, 33915, 33916, 34000, 34001, 
     34002, 34003, 34004, 34005, 34006, 34007, 34008, 34009, 34010, 34011, 34012,
     34013, 34014, 34015, 34016, 34017, 34018, 34019, 34020, 34021, 34022, 34100,
-    34101, 34102, 34103, 34104, 34105
+    34101, 34102, 34103, 34104, 34105, 34106
 )
 
 LATEST_VERSION = VERSIONS[-1]
@@ -121,7 +121,7 @@ def sql_structure(dbo):
         fint("AccountID"),
         fint("RoleID"),
         fint("CanView"),
-        fint("CanEdit") ))
+        fint("CanEdit") ), False)
     sql += index("accountsrole_AccountIDRoleID", "accountsrole", "AccountID, RoleID")
 
     sql += table("accountstrx", (
@@ -433,7 +433,7 @@ def sql_structure(dbo):
         fint("AnimalControlID"),
         fint("RoleID"),
         fint("CanView"),
-        fint("CanEdit") ))
+        fint("CanEdit") ), False)
     sql += index("animalcontrolrole_AnimalControlIDRoleID", "animalcontrolrole", "AnimalControlID, RoleID")
 
     sql += table("animalcost", (
@@ -796,7 +796,7 @@ def sql_structure(dbo):
     sql += table("customreportrole", (
         fint("ReportID"),
         fint("RoleID"),
-        fint("CanView") ))
+        fint("CanView") ), False)
     sql += index("customreportrole_ReportIDRoleID", "customreportrole", "ReportID, RoleID")
 
     sql += table("dbfs", (
@@ -4839,4 +4839,18 @@ def update_34105(dbo):
         dbo.ddl_add_table_column("RestoreSQL", dbo.type_longtext, False) ])
     dbo.execute_dbupdate( dbo.ddl_add_table("deletion", fields) )
     dbo.execute_dbupdate( dbo.ddl_add_index("deletion_IDTablename", "deletion", "ID,Tablename") )
+
+def update_34106(dbo):
+    # Remove recordversion and created/lastchanged columns from role tables - should never have been there
+    # and has been erroneously added to these tables for new databases (nullable change is the serious cause)
+    for t in ( "accountsrole", "animalcontrolrole", "customreportrole" ):
+        try:
+            dbo.execute_dbupdate( dbo.ddl_drop_column(t, "CreatedBy") )
+            dbo.execute_dbupdate( dbo.ddl_drop_column(t, "CreatedDate") )
+            dbo.execute_dbupdate( dbo.ddl_drop_column(t, "LastChangedDate") )
+            dbo.execute_dbupdate( dbo.ddl_drop_column(t, "LastChangedBy") )
+            dbo.execute_dbupdate( dbo.ddl_drop_column(t, "RecordVersion") )
+        except:
+            pass
+
 

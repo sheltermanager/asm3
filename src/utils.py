@@ -12,6 +12,7 @@ import htmlentitydefs
 import json as extjson
 import os
 import re
+import requests
 import smtplib
 import subprocess
 import sys

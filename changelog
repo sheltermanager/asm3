@@ -1,6 +1,7 @@
 41
 ================
 
+23/03/18 Remove created/lastchanged fields from role subtables
 23/03/18 Hide visual aids when editing generated documents #409
 23/03/18 Add pdf zoom directive
 19/03/18 Resolve redirects to absolute URLs to assist CDNs
