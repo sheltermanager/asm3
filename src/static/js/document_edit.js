@@ -1,5 +1,5 @@
 /*jslint browser: true, forin: true, eqeq: true, white: true, sloppy: true, vars: true */
-/*global $, baseurl, buildno, jswindowprint, onlysavewhendirty, pdfenabled, readonly, tinymce, tinyMCE */
+/*global $, baseurl, buildno, jswindowprint, onlysavewhendirty, pdfenabled, visualaids, readonly, tinymce, tinyMCE */
 
 $(function() {
    
@@ -33,6 +33,9 @@ $(function() {
 
         // Disable some items if we're in read only mode
         menubar: !readonly,
+
+        // Whether to show visual aids (dotted line around tables without borders)
+        visual: visualaids,
 
         // readonly: readonly, // This takes out too much stuff, we remove contenteditable from iframe instead.
 

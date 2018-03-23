@@ -2120,7 +2120,7 @@ class document_gen(ASMEndpoint):
         if templatename.endswith(".html"):
             self.content_type("text/html")
             self.cache_control(0)
-            return html.tinymce_header(title, "document_edit.js", jswindowprint=configuration.js_window_print(dbo)) + \
+            return html.tinymce_header(title, "document_edit.js", visualaids=False, jswindowprint=configuration.js_window_print(dbo)) + \
                 html.tinymce_main(dbo.locale, "document_gen", recid=post["id"], linktype=post["linktype"], \
                     dtid=dtid, content=utils.escape_tinymce(content))
         elif templatename.endswith(".odt"):
