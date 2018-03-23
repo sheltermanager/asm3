@@ -68,6 +68,13 @@ Use the margins directive to set the PDF margins::
 
 Margins are in the order top, bottom, left then right.
 
+The PDF engine will scale the document to fit the page horizontally based on the
+widest element in it. Use the zoom directive to override this behaviour and
+specify a scaling amount::
+
+    <!-- pdf zoom 0.5 end -->
+
+
 Electronic Signatures
 ---------------------
 

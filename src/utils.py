@@ -1196,6 +1196,11 @@ def html_to_pdf(htmldata, baseurl = "", account = ""):
     if ps != "":
         w, h = ps.split("x")
         papersize = "--page-width %s --page-height %s" % (w, h)
+    # Zoom - eg: <!-- pdf zoom 0.5 end -->
+    zoom = "--enable-smart-shrinking"
+    zm = regex_one("pdf zoom (.+?) end", htmldata)
+    if zm != "":
+        zoom = "--disable-smart-shrinking --zoom %s" % zm
     # Margins, top/bottom/left/right eg: <!-- pdf margins 2cm 2cm 2cm 2cm end -->
     margins = "--margin-top 1cm"
     mg = regex_one("pdf margins (.+?) end", htmldata)
@@ -1225,7 +1230,7 @@ def html_to_pdf(htmldata, baseurl = "", account = ""):
     inputfile.flush()
     inputfile.close()
     outputfile.close()
-    cmdline = HTML_TO_PDF % { "output": outputfile.name, "input": inputfile.name, "orientation": orientation, "papersize": papersize, "margins": margins }
+    cmdline = HTML_TO_PDF % { "output": outputfile.name, "input": inputfile.name, "orientation": orientation, "papersize": papersize, "zoom": zoom, "margins": margins }
     code, output = cmd(cmdline)
     if code > 0:
         al.error("code %s returned from '%s': %s" % (code, cmdline, output), "utils.html_to_pdf")

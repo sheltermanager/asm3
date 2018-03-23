@@ -220,6 +220,12 @@ explicitly set too.</p>
 </pre></div>
 </div>
 <p>Margins are in the order top, bottom, left then right.</p>
+<p>The PDF engine will scale the document to fit the page horizontally based on the
+widest element in it. Use the zoom directive to override this behaviour and
+specify a scaling amount:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>&lt;!-- pdf zoom 0.5 end --&gt;
+</pre></div>
+</div>
 <div class="section" id="electronic-signatures">
 <h2>Electronic Signatures<a class="headerlink" href="#electronic-signatures" title="Permalink to this headline">¶</a></h2>
 <div class="admonition warning">
