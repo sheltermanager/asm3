@@ -33,12 +33,13 @@ from sitedefs import BASE_URL, SMTP_SERVER, FROM_ADDRESS, HTML_TO_PDF
 # Monkeypatch to allow SNI support in urllib3. This is necessary
 # as many servers (including Facebook and PetLink)
 # will not allow us to connect and use HTTPS without SNI
-try:
-    import requests
-    from urllib3.contrib import pyopenssl
-    pyopenssl.inject_into_urllib3()
-except:
-    sys.stderr.write("No requests/urllib3 module found.")
+# TODO: Disabled 23/03/18 as should no longer be needed
+#try:
+#    import requests
+#    from urllib3.contrib import pyopenssl
+#    pyopenssl.inject_into_urllib3()
+#except:
+#    sys.stderr.write("No requests/urllib3 module found.")
 
 # Global reference to the Python websession. This is used to allow
 # debug mode with webpy by keeping a global single copy of the
