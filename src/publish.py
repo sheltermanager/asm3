@@ -49,6 +49,9 @@ def start_publisher(dbo, code, user = "", async = True):
     elif code == "ve":   p = publishers.vetenvoy.AllVetEnvoyPublisher(dbo, pc)
     elif code == "veha": p = publishers.vetenvoy.HomeAgainPublisher(dbo, pc)
     elif code == "vear": p = publishers.vetenvoy.AKCReunitePublisher(dbo, pc)
+    else: 
+        al.error("invalid publisher code '%s'" % code, "publish.start_publisher", dbo)
+        return
     if async:
         p.start()
     else:
