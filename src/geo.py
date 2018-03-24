@@ -11,7 +11,7 @@ import threading
 import time
 import utils
 from lookups import LOCALE_COUNTRY_NAME_MAP
-from sitedefs import BULK_GEO_PROVIDER, BULK_GEO_PROVIDER_KEY, BULK_GEO_NOMINATIM_URL, BULK_GEO_GOOGLE_URL, BULK_GEO_LOOKUP_TIMEOUT, BULK_GEO_SLEEP_AFTER
+from sitedefs import BASE_URL, BULK_GEO_PROVIDER, BULK_GEO_PROVIDER_KEY, BULK_GEO_NOMINATIM_URL, BULK_GEO_GOOGLE_URL, BULK_GEO_LOOKUP_TIMEOUT, BULK_GEO_SLEEP_AFTER
 
 lat_long_lock = threading.Lock()
 
@@ -58,7 +58,7 @@ def get_lat_long(dbo, address, town, county, postcode, country = None):
             al.debug("cache hit for address: %s = %s" % (q, v), "geo.get_lat_long", dbo)
             return v
 
-        jr = utils.get_url(url, timeout = BULK_GEO_LOOKUP_TIMEOUT)["response"]
+        jr = utils.get_url(url, headers = { "Referer": BASE_URL }, timeout = BULK_GEO_LOOKUP_TIMEOUT)["response"]
         j = json.loads(jr)
 
         latlon = None
