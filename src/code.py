@@ -1679,10 +1679,12 @@ class batch(JSONEndpoint):
 
     def post_genfigyear(self, o):
         l = o.locale
+        if o.post.date("taskdate") is None: raise utils.ASMValidationError("no date parameter")
         async.function_task(o.dbo, _("Regenerate annual animal figures for", l), extanimal.update_animal_figures_annual, o.dbo, o.post.date("taskdate").year)
 
     def post_genfigmonth(self, o):
         l = o.locale
+        if o.post.date("taskdate") is None: raise utils.ASMValidationError("no date parameter")
         async.function_task(o.dbo, _("Regenerate monthly animal figures for", l), extanimal.update_animal_figures, o.dbo, o.post.date("taskdate").month, o.post.date("taskdate").year)
 
     def post_genshelterpos(self, o):
