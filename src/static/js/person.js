@@ -621,7 +621,14 @@ $(function() {
                 var formdata = "mode=exec&id=" + $("#personid").val() + "&tasktype=PERSON&taskid=" + taskid + "&seldate=" + $("#seldate").val();
                 common.ajax_post("diarytask", formdata)
                     .then(function() { 
-                        common.route("person_diary?id=" + controller.person.ID); 
+                        if (validate.unsaved) {
+                            validate.save(function() {
+                                common.route("person_diary?id=" + controller.person.ID);
+                            });
+                        }
+                        else {
+                            common.route("person_diary?id=" + controller.person.ID);
+                        }
                     });
             };
 

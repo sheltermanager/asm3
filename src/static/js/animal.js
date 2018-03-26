@@ -1357,8 +1357,16 @@ $(function() {
             var create_task = function(taskid) {
                 var formdata = "mode=exec&id=" + controller.animal.ID + "&tasktype=ANIMAL&taskid=" + taskid + "&seldate=" + $("#seldate").val();
                 common.ajax_post("diarytask", formdata)
-                    .then(function(result) { 
-                        common.route("animal_diary?id=" + controller.animal.ID);
+                    .then(function(result) {
+                        // Attempt to save any changes before viewing the diary tab
+                        if (validate.unsaved) {
+                            validate.save(function() {
+                                common.route("animal_diary?id=" + controller.animal.ID);
+                            });
+                        }
+                        else {
+                            common.route("animal_diary?id=" + controller.animal.ID);
+                        }
                     });
             };
 
