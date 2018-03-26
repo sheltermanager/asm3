@@ -8,6 +8,7 @@ $(function() {
         { "ID": 11, "NAME": _("Checkbox") },
         { "ID": 1, "NAME": _("Text") },
         { "ID": 10, "NAME": _("Date") },
+        { "ID": 16, "NAME": _("Time") },
         { "ID": 2, "NAME": _("Notes") },
         { "ID": 3, "NAME": _("Lookup") },
         { "ID": 14, "NAME": _("Lookup (Multiple Select)") },

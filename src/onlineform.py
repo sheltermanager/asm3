@@ -20,7 +20,7 @@ import utils
 import waitinglist
 import web
 from HTMLParser import HTMLParser
-from sitedefs import BASE_URL, ASMSELECT_CSS, ASMSELECT_JS, JQUERY_JS, JQUERY_UI_JS, JQUERY_UI_CSS, SIGNATURE_JS, TOUCHPUNCH_JS
+from sitedefs import BASE_URL, ASMSELECT_CSS, ASMSELECT_JS, JQUERY_JS, JQUERY_UI_JS, JQUERY_UI_CSS, SIGNATURE_JS, TIMEPICKER_CSS, TIMEPICKER_JS, TOUCHPUNCH_JS
 
 FIELDTYPE_YESNO = 0
 FIELDTYPE_TEXT = 1
@@ -38,6 +38,7 @@ FIELDTYPE_RADIOGROUP = 12
 FIELDTYPE_SIGNATURE = 13
 FIELDTYPE_LOOKUP_MULTI = 14
 FIELDTYPE_GDPR_CONTACT_OPTIN = 15
+FIELDTYPE_TIME = 16
 
 # Types as used in JSON representations
 FIELDTYPE_MAP = {
@@ -56,7 +57,8 @@ FIELDTYPE_MAP = {
     "RADIOGROUP": 12,
     "SIGNATURE": 13,
     "LOOKUP_MULTI": 14,
-    "GDPR_CONTACT_OPTIN": 15
+    "GDPR_CONTACT_OPTIN": 15,
+    "TIME": 16
 }
 
 FIELDTYPE_MAP_REVERSE = {v: k for k, v in FIELDTYPE_MAP.items()}
@@ -126,11 +128,13 @@ def get_onlineform_html(dbo, formid, completedocument = True):
         extra = "<script>\nDATE_FORMAT = '%s';\n</script>\n" % df
         extra += html.css_tag(JQUERY_UI_CSS.replace("%(theme)s", "smoothness")) + \
             html.css_tag(ASMSELECT_CSS) + \
+            html.css_tag(TIMEPICKER_CSS) + \
             html.script_tag(JQUERY_JS) + \
             html.script_tag(JQUERY_UI_JS) + \
             html.script_tag(TOUCHPUNCH_JS) + \
             html.script_tag(SIGNATURE_JS) + \
             html.script_tag(ASMSELECT_JS) + \
+            html.script_tag(TIMEPICKER_JS) + \
             html.asm_script_tag("onlineform_extra.js") + \
             "</head>"
         header = header.replace("</head>", extra)
@@ -177,6 +181,8 @@ def get_onlineform_html(dbo, formid, completedocument = True):
             h.append('<input class="asm-onlineform-text" type="text" name="%s" title="%s" %s />' % ( html.escape(fname), utils.nulltostr(f["TOOLTIP"]), requiredtext))
         elif f["FIELDTYPE"] == FIELDTYPE_DATE:
             h.append('<input class="asm-onlineform-date" type="text" name="%s" title="%s" %s />' % ( html.escape(fname), utils.nulltostr(f["TOOLTIP"]), requiredtext))
+        elif f["FIELDTYPE"] == FIELDTYPE_TIME:
+            h.append('<input class="asm-onlineform-time" type="text" name="%s" title="%s" %s />' % ( html.escape(fname), utils.nulltostr(f["TOOLTIP"]), requiredtext))
         elif f["FIELDTYPE"] == FIELDTYPE_NOTES:
             h.append('<textarea class="asm-onlineform-notes" name="%s" title="%s" %s></textarea>' % ( html.escape(fname), utils.nulltostr(f["TOOLTIP"]), requiredtext))
         elif f["FIELDTYPE"] == FIELDTYPE_LOOKUP:
