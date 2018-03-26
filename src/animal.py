@@ -469,6 +469,7 @@ def get_animal_find_advanced(dbo, criteria, limit = 0, locationfilter = "", site
            fivplus
            flvplus
            heartwormplus
+           includedeceased
         flag - one or more of (plus custom):
             courtesy
             crueltycase
@@ -477,6 +478,8 @@ def get_animal_find_advanced(dbo, criteria, limit = 0, locationfilter = "", site
             notforregistration
             quarantine
     locationfilter: IN clause of locations to search
+    By default, deceased animals are not included. They are only included if the "includedeceased" 
+        filter is set or the logicallocation is set to deceased.
     """
     ands = []
     values = []
@@ -583,6 +586,9 @@ def get_animal_find_advanced(dbo, criteria, limit = 0, locationfilter = "", site
         ands.append("EXISTS (SELECT AdoptionNumber FROM adoption WHERE " \
             "LOWER(AdoptionNumber) LIKE ? AND AnimalID = a.ID)")
         values.append( "%%%s%%" % post["adoptionno"] )
+
+    if post["filter"].find("includedeceased") == -1 and post["logicallocation"] != "deceased":
+        ands.append("a.DeceasedDate Is Null")
 
     addcomp("reserved", "reserved", "a.HasActiveReserve = 1")
     addcomp("reserved", "unreserved", "a.HasActiveReserve = 0")

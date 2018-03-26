@@ -5725,6 +5725,10 @@ msgstr ""
 msgid "Include cruelty case animals"
 msgstr ""
 
+#: animal_find.js
+msgid "Include deceased animals"
+msgstr ""
+
 #: publish_options.js
 msgid "Include fostered animals"
 msgstr ""
