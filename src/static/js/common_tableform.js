@@ -483,6 +483,7 @@
          *      edit_perm: 'ca',
          *      width: 500,
          *      height: 200, (omit for auto)
+         *      resizable: false (omit for false),
          *      html_form_action: target (renders form tag around fields if set)
          *      html_form_enctype: enctype
          *      fields: (see fields_render)
@@ -665,7 +666,7 @@
             }
 
             $("#dialog-tableform").dialog({
-                resizable: false,
+                resizable: (dialog.resizable || false),
                 width: dw,
                 height: (dialog.height || "auto"),
                 modal: true,
@@ -802,7 +803,7 @@
             }
 
             $("#dialog-tableform").dialog({
-                resizable: false,
+                resizable: (dialog.resizable || false),
                 width: dw,
                 height: (dialog.height || "auto"),
                 modal: true,
