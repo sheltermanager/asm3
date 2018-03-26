@@ -37,6 +37,7 @@ FIELDTYPE_CHECKBOX = 11
 FIELDTYPE_RADIOGROUP = 12
 FIELDTYPE_SIGNATURE = 13
 FIELDTYPE_LOOKUP_MULTI = 14
+FIELDTYPE_GDPR_CONTACT_OPTIN = 15
 
 # Types as used in JSON representations
 FIELDTYPE_MAP = {
@@ -54,7 +55,8 @@ FIELDTYPE_MAP = {
     "CHECKBOX": 11,
     "RADIOGROUP": 12,
     "SIGNATURE": 13,
-    "LOOKUP_MULTI": 14
+    "LOOKUP_MULTI": 14,
+    "GDPR_CONTACT_OPTIN": 15
 }
 
 FIELDTYPE_MAP_REVERSE = {v: k for k, v in FIELDTYPE_MAP.items()}
@@ -67,7 +69,7 @@ JSKEY_VALUE = '918273645'
 FORM_FIELDS = [
     "title", "initials", "firstname", "forenames", "surname", "lastname", "address",
     "town", "city", "county", "state", "postcode", "zipcode", "hometelephone", 
-    "worktelephone", "mobiletelephone", "celltelephone", "emailaddress", "excludefrombulkemail",
+    "worktelephone", "mobiletelephone", "celltelephone", "emailaddress", "excludefrombulkemail", "gdprcontactoptin",
     "description", "reason", "size", "species", "breed", "agegroup", "color", "colour", 
     "arealost", "areafound", "areapostcode", "areazipcode",
     "animalname", "reserveanimalname",
@@ -207,6 +209,14 @@ def get_onlineform_html(dbo, formid, completedocument = True):
             for a in rs:
                 h.append('<option value="%(name)s::%(code)s">%(name)s (%(species)s - %(code)s)</option>' % \
                     { "name": a["ANIMALNAME"], "code": a["SHELTERCODE"], "species": a["SPECIESNAME"]})
+            h.append('</select>')
+        elif f["FIELDTYPE"] == FIELDTYPE_GDPR_CONTACT_OPTIN:
+            h.append('<input type="hidden" name="%s" value="" />' % html.escape(fname))
+            h.append('<select class="asm-onlineform-gdprcontactoptin asm-onlineform-lookupmulti" multiple="multiple" data-name="%s" data-required="%s" title="%s">' % ( html.escape(fname), utils.iif(required != "", "required", ""), utils.nulltostr(f["TOOLTIP"])))
+            h.append('<option value="email">%s</option>' % i18n._("Email", l))
+            h.append('<option value="post">%s</option>' % i18n._("Post", l))
+            h.append('<option value="sms">%s</option>' % i18n._("SMS", l))
+            h.append('<option value="phone">%s</option>' % i18n._("Phone", l))
             h.append('</select>')
         elif f["FIELDTYPE"] == FIELDTYPE_COLOUR:
             h.append('<select class="asm-onlineform-colour" name="%s" title="%s" %s>' % ( html.escape(fname), utils.nulltostr(f["TOOLTIP"]), required))
@@ -830,6 +840,7 @@ def create_person(dbo, username, collationid):
         if f["FIELDNAME"] == "celltelephone": d["mobiletelephone"] = f["VALUE"]
         if f["FIELDNAME"] == "emailaddress": d["emailaddress"] = f["VALUE"]
         if f["FIELDNAME"] == "excludefrombulkemail" and f["VALUE"] != "" and f["VALUE"] != i18n._("No", l): d["excludefrombulkemail"] = "on"
+        if f["FIELDNAME"] == "gdprcontactoptin": d["gdprcontactoptin"] = f["VALUE"]
         if f["FIELDNAME"].startswith("reserveanimalname"): d[f["FIELDNAME"]] = f["VALUE"]
     d["flags"] = flags
     # Have we got enough info to create the person record? We just need a surname

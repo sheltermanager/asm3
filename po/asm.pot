@@ -679,7 +679,7 @@ msgstr ""
 msgid "Adopt an animal"
 msgstr ""
 
-#: animal_find.js animal_bulk.js shelterview.js publish.py
+#: animal_find.js animal_bulk.js shelterview.js
 msgid "Adoptable"
 msgstr ""
 
@@ -2812,7 +2812,7 @@ msgstr ""
 msgid "Crossbreed"
 msgstr ""
 
-#: options.js header_edit_header.js shelterview.js common.js publish.py html.py
+#: options.js header_edit_header.js shelterview.js common.js html.py
 msgid "Cruelty Case"
 msgstr ""
 
@@ -2893,7 +2893,7 @@ msgid "Data"
 msgstr ""
 
 #: options.js
-msgid "Data Retention"
+msgid "Data Protection"
 msgstr ""
 
 #: login.js mobile.py
@@ -3079,6 +3079,10 @@ msgstr ""
 
 #: animal_find_results.js animal.js mobile.py html.py
 msgid "Declawed"
+msgstr ""
+
+#: person.js person_new.js
+msgid "Declined"
 msgstr ""
 
 #: options.js
@@ -3498,6 +3502,10 @@ msgstr ""
 
 #: diarytasks.js
 msgid "Diary tasks need a name."
+msgstr ""
+
+#: person.js person_new.js
+msgid "Did not ask"
 msgstr ""
 
 #: header.js
@@ -3991,8 +3999,8 @@ msgid "Electricity Bills"
 msgstr ""
 
 #: person_find_results.js options.js person.js waitinglist.js person_find.js
-#: waitinglist_results.js animal.js users.js incident.js lostfound.js media.js
-#: mobile.py html.py
+#: waitinglist_results.js animal.js person_new.js users.js incident.js
+#: lostfound.js media.js mobile.py onlineform.py html.py
 msgid "Email"
 msgstr ""
 
@@ -4282,7 +4290,7 @@ msgstr ""
 msgid "Exclude animals who are aged under"
 msgstr ""
 
-#: person.js mobile.py
+#: header_edit_header.js common.js mobile.py
 msgid "Exclude from bulk email"
 msgstr ""
 
@@ -4955,6 +4963,10 @@ msgstr ""
 msgid "Future notes"
 msgstr ""
 
+#: onlineform.js person.js person_new.js dbupdate.py
+msgid "GDPR Contact Opt-In"
+msgstr ""
+
 #: dbupdate.py
 msgid "Gaited"
 msgstr ""
@@ -5362,7 +5374,7 @@ msgid "History"
 msgstr ""
 
 #: options.js animal_find_results.js animal_find.js transport.js shelterview.js
-#: common.js publish.py html.py
+#: common.js html.py
 msgid "Hold"
 msgstr ""
 
@@ -7443,7 +7455,7 @@ msgid "Not Available for Adoption"
 msgstr ""
 
 #: options.js header_edit_header.js animal_bulk.js shelterview.js common.js
-#: publish.py html.py
+#: html.py
 msgid "Not For Adoption"
 msgstr ""
 
@@ -8020,7 +8032,7 @@ msgid "Performed"
 msgstr ""
 
 #: movements.js animal_find.js move_foster.js shelterview.js common.js
-#: publish.py dbupdate.py
+#: dbupdate.py
 msgid "Permanent Foster"
 msgstr ""
 
@@ -8083,7 +8095,7 @@ msgstr ""
 msgid "Pheasant"
 msgstr ""
 
-#: mobile.py
+#: person.js person_new.js mobile.py onlineform.py
 msgid "Phone"
 msgstr ""
 
@@ -8254,6 +8266,10 @@ msgstr ""
 
 #: lookups.py
 msgid "Positive/Negative"
+msgstr ""
+
+#: person.js person_new.js onlineform.py
+msgid "Post"
 msgstr ""
 
 #: dbupdate.py
@@ -8442,7 +8458,7 @@ msgid "Quantity"
 msgstr ""
 
 #: options.js animal_find_results.js header_edit_header.js shelterview.js
-#: common.js publish.py html.py
+#: common.js html.py
 msgid "Quarantine"
 msgstr ""
 
@@ -8993,7 +9009,7 @@ msgid "Reserve an animal"
 msgstr ""
 
 #: options.js animal_find_results.js animal_find.js shelterview.js common.js
-#: publish.py html.py
+#: html.py
 msgid "Reserved"
 msgstr ""
 
@@ -9225,6 +9241,10 @@ msgstr ""
 msgid "SM Account"
 msgstr ""
 
+#: person.js person_new.js onlineform.py
+msgid "SMS"
+msgstr ""
+
 #: reports.js
 msgid "SQL"
 msgstr ""
@@ -9239,10 +9259,6 @@ msgstr ""
 
 #: sql.js
 msgid "SQL dump (ASM2 HSQLDB Format)"
-msgstr ""
-
-#: sql.js
-msgid "SQL dump (media)"
 msgstr ""
 
 #: reports.js sql.js
@@ -9669,6 +9685,10 @@ msgstr ""
 
 #: dbupdate.py
 msgid "Short"
+msgstr ""
+
+#: options.js
+msgid "Show GDPR Contact Opt-In field on person screens"
 msgstr ""
 
 #: options.js
@@ -12425,6 +12445,12 @@ msgstr ""
 
 #: options.js
 msgid "When I generate a document, make a note of it in the log with this type"
+msgstr ""
+
+#: options.js
+msgid ""
+"When I set a new GDPR Opt-In contact option, make a note of it in the log "
+"with this type"
 msgstr ""
 
 #: options.js
