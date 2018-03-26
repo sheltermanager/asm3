@@ -67,6 +67,7 @@ JSKEY_VALUE = '918273645'
 # Online field names that we recognise and will attempt to map to
 # known fields when importing from submitted forms
 FORM_FIELDS = [
+    "emailsubmissionto",
     "title", "initials", "firstname", "forenames", "surname", "lastname", "address",
     "town", "city", "county", "state", "postcode", "zipcode", "hometelephone", 
     "worktelephone", "mobiletelephone", "celltelephone", "emailaddress", "excludefrombulkemail", "gdprcontactoptin",
@@ -618,6 +619,7 @@ def insert_onlineformincoming_from_form(dbo, post, remoteip):
     posteddate = i18n.now(dbo.timezone)
     flags = post["flags"]
     submitteremail = ""
+    emailsubmissionto = ""
     firstnamelabel = ""
     firstname = ""
     lastnamelabel = ""
@@ -647,6 +649,8 @@ def insert_onlineformincoming_from_form(dbo, post, remoteip):
                         # Store a few known fields for access later
                         if fieldname == "emailaddress": 
                             submitteremail = v.strip()
+                        if fieldname == "emailsubmissionto":
+                            emailsubmissionto = v.strip()
                         if fieldname == "firstname": 
                             firstname = v.strip()
                             firstnamelabel = label
@@ -724,6 +728,13 @@ def insert_onlineformincoming_from_form(dbo, post, remoteip):
         replyto = submitteremail 
         if replyto == "": replyto = configuration.email(dbo)
         utils.send_email(dbo, replyto, email, "", "%s - %s" % (formname, ", ".join(preview)), 
+            get_onlineformincoming_html_print(dbo, [collationid,]), "html")
+    # Did the form submission have a value in an "emailsubmissionto" field?
+    if emailsubmissionto is not None and emailsubmissionto.strip() != "":
+        # If a submitter email is set, use that to reply to instead
+        replyto = submitteremail 
+        if replyto == "": replyto = configuration.email(dbo)
+        utils.send_email(dbo, replyto, emailsubmissionto, "", "%s - %s" % (formname, ", ".join(preview)), 
             get_onlineformincoming_html_print(dbo, [collationid,]), "html")
     return collationid
 

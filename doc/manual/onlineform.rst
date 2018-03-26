@@ -67,6 +67,9 @@ A "raw markup" field type allows you to insert your own HTML sections within
 the form. This is useful for adding contract clauses, headings, or any sort
 of extra formatting. 
 
+The "GDPR contact" field type allows for a multiple lookup of GDPR
+communication choices to be made for resulting person records.
+
 When forms are submitted through the website they come through to the “View
 Incoming Forms” screen, where the values can be inspected by clicking the name
 of the form submission. The screen shows a preview of the incoming data and the
@@ -74,7 +77,12 @@ IP address that submitted it.
 
 If a field called "emailaddress" is supplied as part of the form submission,
 the complete submission will be emailed automatically to the person who
-completed it for their records.
+completed it for their records. 
+
+Similarly, if a field called "emailsubmissionto" is supplied, containing one or
+more comma separated email addresses, the submission will also be emailed to
+these extra addresses. This can be useful to have form values trigger hidden
+values to send submissions to other addresses.
 
 .. image:: images/onlineform_incoming.png
 
