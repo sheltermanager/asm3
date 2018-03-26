@@ -380,7 +380,7 @@ def delete_diarytask(dbo, username, taskid):
     """
     Deletes a diary task
     """
-    dbo.execute("DELETE FROM diarytaskdetail WHERE DiaryTaskHeadID = %d" % int(taskid))
+    dbo.delete("diarytaskdetail", "DiaryTaskHeadID=%d" % taskid, username)
     dbo.delete("diarytaskhead", taskid, username)
 
 def insert_diarytaskdetail_from_form(dbo, username, post):

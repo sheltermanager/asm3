@@ -425,16 +425,18 @@ class Database(object):
         if user != "" and iid > 0 and writeAudit: 
             audit.edit(self, user, table, iid, audit.map_diff(preaudit, postaudit))
 
-    def delete(self, table, iid, user="", writeAudit=True):
+    def delete(self, table, where, user="", writeAudit=True):
         """ Deletes row ID=iid from table 
             table: The table to delete from
-            iid: The value of the ID column in the row to delete
+            where: Either a where clause or an int ID value for ID=where
             user: The user account doing the delete
             writeAudit: If True, writes an audit record for the delete
         """
+        if type(where) == int: 
+            where = "ID=%d" % where
         if writeAudit and user != "":
-            audit.delete(self, user, table, iid, audit.dump_row(self, table, iid))
-        self.execute("DELETE FROM %s WHERE ID=%s" % (table, iid))
+            audit.delete_rows(self, user, table, where)
+        self.execute("DELETE FROM %s WHERE %s" % (table, where))
 
     def install_stored_procedures(self):
         """ Install any supporting stored procedures (typically for reports) needed for this backend """

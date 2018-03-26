@@ -2777,21 +2777,16 @@ def delete_animal(dbo, username, animalid):
     l = dbo.locale
     if dbo.query_int("SELECT COUNT(ID) FROM adoption WHERE AnimalID=?", [animalid]):
         raise utils.ASMValidationError(_("This animal has movements and cannot be removed.", l))
-    audit.delete_rows(dbo, username, "media", "LinkID = %d AND LinkTypeID = %d" % (animalid, media.ANIMAL))
-    dbo.execute("DELETE FROM media WHERE LinkID = ? AND LinkTypeID = ?", (animalid, media.ANIMAL))
-    audit.delete_rows(dbo, username, "diary", "LinkID = %d AND LinkType = %d" % (animalid, diary.ANIMAL))
-    dbo.execute("DELETE FROM diary WHERE LinkID = ? AND LinkType = ?", (animalid, diary.ANIMAL))
-    audit.delete_rows(dbo, username, "log", "LinkID = %d AND LinkType = %d" % (animalid, log.ANIMAL))
-    dbo.execute("DELETE FROM log WHERE LinkID = ? AND LinkType = ?", (animalid, log.ANIMAL))
+    dbo.delete("media", "LinkID=%d AND LinkTypeID=%d" % (animalid, media.ANIMAL), username)
+    dbo.delete("diary", "LinkID=%d AND LinkType=%d" % (animalid, diary.ANIMAL), username)
+    dbo.delete("log", "LinkID=%d AND LinkType=%d" % (animalid, log.ANIMAL), username)
     dbo.execute("DELETE FROM additional WHERE LinkID = %d AND LinkType IN (%s)" % (animalid, additional.ANIMAL_IN))
     dbo.execute("DELETE FROM animalcontrolanimal WHERE AnimalID = ?", [animalid])
     dbo.execute("DELETE FROM animalpublished WHERE AnimalID = ?", [animalid])
     for t in [ "adoption", "animalmedical", "animalmedicaltreatment", "animaltest", "animaltransport", "animalvaccination" ]:
-        audit.delete_rows(dbo, username, t, "AnimalID = %d" % animalid)
-        dbo.execute("DELETE FROM %s WHERE AnimalID = ?" % t, [animalid])
+        dbo.delete(t, "AnimalID=%d" % animalid, username)
+    dbo.delete("animal", animalid, username)
     dbfs.delete_path(dbo, "/animal/%d" % animalid)
-    audit.delete(dbo, username, "animal", animalid, audit.dump_row(dbo, "animal", animalid))
-    dbo.execute("DELETE FROM animal WHERE ID = ?", [animalid])
 
 def update_daily_boarding_cost(dbo, username, animalid, cost):
     """

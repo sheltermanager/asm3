@@ -528,16 +528,12 @@ def delete_animalcontrol(dbo, username, acid):
     """
     Deletes an animal control record
     """
-    audit.delete_rows(dbo, username, "media", "LinkID = %d AND LinkTypeID = %d" % (acid, media.ANIMALCONTROL))
-    dbo.execute("DELETE FROM media WHERE LinkID = ? AND LinkTypeID = ?", (acid, media.ANIMALCONTROL))
-    audit.delete_rows(dbo, username, "diary", "LinkID = %d AND LinkType = %d" % (acid, diary.ANIMALCONTROL))
-    dbo.execute("DELETE FROM diary WHERE LinkID = ? AND LinkType = ?", (acid, diary.ANIMALCONTROL))
-    audit.delete_rows(dbo, username, "log", "LinkID = %d AND LinkType = %d" % (acid, log.ANIMALCONTROL))
-    dbo.execute("DELETE FROM log WHERE LinkID = ? AND LinkType = ?", (acid, log.ANIMALCONTROL))
+    dbo.delete("media", "LinkID=%d AND LinkTypeID=%d" % (acid, media.ANIMALCONTROL), username)
+    dbo.delete("diary", "LinkID=%d AND LinkType=%d" % (acid, diary.ANIMALCONTROL), username)
+    dbo.delete("log", "LinkID=%d AND LinkType=%d" % (acid, log.ANIMALCONTROL), username)
     dbo.execute("DELETE FROM additional WHERE LinkID = %d AND LinkType IN (%s)" % (acid, additional.INCIDENT_IN))
+    dbo.delete("animalcontrol", acid, username)
     dbfs.delete_path(dbo, "/animalcontrol/%d" % acid)
-    audit.delete(dbo, username, "animalcontrol", acid, audit.dump_row(dbo, "animalcontrol", acid))
-    dbo.execute("DELETE FROM animalcontrol WHERE ID = ?", [acid])
 
 def insert_animalcontrol(dbo, username):
     """
