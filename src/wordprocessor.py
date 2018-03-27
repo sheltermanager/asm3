@@ -372,7 +372,7 @@ def animal_tags(dbo, a, includeAdditional=True, includeCosts=True, includeDiet=T
         "DOCUMENTIMGLINK400"    : "<img height=\"400\" src=\"" + html.doc_img_src(dbo, a) + "\" >",
         "DOCUMENTIMGLINK500"    : "<img height=\"500\" src=\"" + html.doc_img_src(dbo, a) + "\" >",
         "DOCUMENTIMGTHUMBSRC"   : html.thumbnail_img_src(dbo, a, "animalthumb"),
-        "DOCUMENTIMGTHUMBLINK"  : "<img src=\"" + html.thumbnail_img_src(dbo, a) + "\" />",
+        "DOCUMENTIMGTHUMBLINK"  : "<img src=\"" + html.thumbnail_img_src(dbo, a, "animalthumb") + "\" />",
         "DOCUMENTQRLINK"        : "<img src=\"%s\" />" % qr,
         "ADOPTIONSTATUS"        : publishers.base.get_adoption_status(dbo, a),
         "ANIMALISADOPTABLE"     : utils.iif(publishers.base.is_animal_adoptable(dbo, a), _("Yes", l), _("No", l)),
