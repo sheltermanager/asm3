@@ -5751,6 +5751,10 @@ msgid ""
 "templates"
 msgstr ""
 
+#: animal_find.js
+msgid "Include non-shelter animals"
+msgstr ""
+
 #: options.js
 msgid "Include off-shelter animals in medical calendar and books"
 msgstr ""

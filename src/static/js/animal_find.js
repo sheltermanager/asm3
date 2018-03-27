@@ -280,6 +280,7 @@ $(function() {
                 '<option value="flvplus">' + _("FLV+") + '</option>',
                 '<option value="heartwormplus">' + _("Heartworm+") + '</option>',
                 '<option value="includedeceased">' + _("Include deceased animals") + '</option>',
+                '<option value="includenonshelter">' + _("Include non-shelter animals") + '</option>',
                 '<option value="showtransfersonly">' + _("Only show transfers") + '</option>',
                 '<option value="showpickupsonly">' + _("Only show pickups") + '</option>',
                 '<option value="showspecialneedsonly">' + _("Only show special needs") + '</option>',

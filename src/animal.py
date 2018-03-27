@@ -470,6 +470,7 @@ def get_animal_find_advanced(dbo, criteria, limit = 0, locationfilter = "", site
            flvplus
            heartwormplus
            includedeceased
+           includenonshelter
         flag - one or more of (plus custom):
             courtesy
             crueltycase
@@ -478,8 +479,6 @@ def get_animal_find_advanced(dbo, criteria, limit = 0, locationfilter = "", site
             notforregistration
             quarantine
     locationfilter: IN clause of locations to search
-    By default, deceased animals are not included. They are only included if the "includedeceased" 
-        filter is set or the logicallocation is set to deceased.
     """
     ands = []
     values = []
@@ -589,6 +588,9 @@ def get_animal_find_advanced(dbo, criteria, limit = 0, locationfilter = "", site
 
     if post["filter"].find("includedeceased") == -1 and post["logicallocation"] != "deceased":
         ands.append("a.DeceasedDate Is Null")
+
+    if post["filter"].find("includenonshelter") == -1 and post["flags"].find("nonshelter") == -1:
+        ands.append("a.NonShelterAnimal = 0")
 
     addcomp("reserved", "reserved", "a.HasActiveReserve = 1")
     addcomp("reserved", "unreserved", "a.HasActiveReserve = 0")
