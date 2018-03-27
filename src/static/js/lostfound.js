@@ -13,10 +13,16 @@ $(function() {
             this.mode = mode;
             return [
                 '<div id="emailform" />',
+                '<div id="button-document-body" class="asm-menu-body">',
+                '<ul class="asm-menu-list">',
+                edit_header.template_list(controller.templates, ( mode == "lost" ? "LOSTANIMAL" : "FOUNDANIMAL" ), controller.animal.ID),
+                '</ul>',
+                '</div>',
                 edit_header.lostfound_edit_header(mode, controller.animal, "details", controller.tabcounts),
                 tableform.buttons_render([
                     { id: "save", text: _("Save"), icon: "save", tooltip: _("Save this record") },
                     { id: "delete", text: _("Delete"), icon: "delete", tooltip: _("Delete this record") },
+                    { id: "document", text: _("Document"), type: "buttonmenu", icon: "document", tooltip: _("Generate a document from this record") },
                     { id: "match", text: _("Match"), icon: "match", tooltip: _("Match against other lost/found animals") },
                     { id: "email", text: _("Email"), icon: "email", tooltip: _("Email this person") },
                     { id: "toanimal", text: _("Create Animal"), icon: "animal-add", hideif: function() { return mode != "found"; },
@@ -167,6 +173,7 @@ $(function() {
             if (!common.has_permission("aa")) { $("#button-toanimal").hide(); }
             if (!common.has_permission("awl")) { $("#button-towaitinglist").hide(); }
             if (!common.has_permission("mlaf")) { $("#button-match").hide(); }
+            if (!common.has_permission("gaf")) { $("#button-document").hide(); }
             if (lostfound.mode == "lost") {
                 if (!common.has_permission("cla")) { $("#button-save").hide(); }
                 if (!common.has_permission("dla")) { $("#button-delete").hide(); }
@@ -223,6 +230,9 @@ $(function() {
 
             // Load the tab strip
             $(".asm-tabbar").asmtabs();
+
+            // Setup the document button
+            $("#button-document").asmmenu();
 
             $("#asm-details-accordion").accordion({
                 heightStyle: "content"

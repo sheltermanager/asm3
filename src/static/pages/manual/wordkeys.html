@@ -131,6 +131,9 @@
 <li class="toctree-l2"><a class="reference internal" href="#licence-keys">Licence Keys</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#incident-keys">Incident Keys</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#incident-animal-keys">Incident Animal Keys</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#lost-animal-keys">Lost Animal Keys</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#found-animal-keys">Found Animal Keys</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#waiting-list-keys">Waiting List Keys</a></li>
 </ul>
 </li>
 </ul>
@@ -882,7 +885,7 @@ movements.</p>
 <h2>Person Keys<a class="headerlink" href="#person-keys" title="Permalink to this headline">¶</a></h2>
 <p>Person keys are available for documents generated from the person and movement
 screens, they are also available for documents generated from the payment
-and licence tabs.</p>
+and licence tabs as well as lost animal, found animal and waiting list.</p>
 <dl class="docutils">
 <dt>OwnerTitle</dt>
 <dd>The person&#8217;s title</dd>
@@ -1187,6 +1190,112 @@ descending (AnimalNameLast1).</p>
 <dd>The date the animal entered the shelter</dd>
 <dt>DeceasedDate</dt>
 <dd>The date the animal died</dd>
+</dl>
+</div>
+<div class="section" id="lost-animal-keys">
+<h2>Lost Animal Keys<a class="headerlink" href="#lost-animal-keys" title="Permalink to this headline">¶</a></h2>
+<p>Lost animal keys are only available for documents generated with the document
+button on a single lost animal record. In addition to the tokens listed below,
+the person keys listed above are also valid for the primary contact along with
+log keys.</p>
+<dl class="docutils">
+<dt>DateReported</dt>
+<dd>The date the report was received</dd>
+<dt>DateLost</dt>
+<dd>The date the animal was first missing</dd>
+<dt>DateFound</dt>
+<dd>The date the animal was found</dd>
+<dt>AgeGroup</dt>
+<dd>An age group for the animal</dd>
+<dt>Features</dt>
+<dd>Any information about the animal&#8217;s appearance</dd>
+<dt>AreaLost</dt>
+<dd>The area in which the animal was lost (street, etc)</dd>
+<dt>AreaPostcode</dt>
+<dd>The postcode in which the animal was lost</dd>
+<dt>Comments</dt>
+<dd>Any comments about the lost record</dd>
+<dt>SpeciesName</dt>
+<dd>The species of animal</dd>
+<dt>BreedName</dt>
+<dd>The breed of animal</dd>
+<dt>BaseColorName / BaseColourName</dt>
+<dd>The color of the animal</dd>
+<dt>Sex</dt>
+<dd>The sex of the animal</dd>
+<dt>DocumentImgLink</dt>
+<dd>A photo of the animal if one exists. 200/300/400/500 can also be suffixed
+as with animal images above to control the size of the output.</dd>
+</dl>
+</div>
+<div class="section" id="found-animal-keys">
+<h2>Found Animal Keys<a class="headerlink" href="#found-animal-keys" title="Permalink to this headline">¶</a></h2>
+<p>Found animal keys are only available for documents generated with the document
+button on a single found animal record. In addition to the tokens listed below,
+the person keys listed above are also valid for the primary contact along with
+log keys.</p>
+<dl class="docutils">
+<dt>DateReported</dt>
+<dd>The date the report was received</dd>
+<dt>DateFound</dt>
+<dd>The date the animal was found</dd>
+<dt>DateReturned</dt>
+<dd>The date the animal was returned to its owner</dd>
+<dt>AgeGroup</dt>
+<dd>An age group for the animal</dd>
+<dt>Features</dt>
+<dd>Any information about the animal&#8217;s appearance</dd>
+<dt>AreaFound</dt>
+<dd>The area in which the animal was found (street, etc)</dd>
+<dt>AreaPostcode</dt>
+<dd>The postcode in which the animal was found</dd>
+<dt>Comments</dt>
+<dd>Any comments about the found record</dd>
+<dt>SpeciesName</dt>
+<dd>The species of animal</dd>
+<dt>BreedName</dt>
+<dd>The breed of animal</dd>
+<dt>BaseColorName / BaseColourName</dt>
+<dd>The color of the animal</dd>
+<dt>Sex</dt>
+<dd>The sex of the animal</dd>
+<dt>DocumentImgLink</dt>
+<dd>A photo of the animal if one exists. 200/300/400/500 can also be suffixed
+as with animal images above to control the size of the output.</dd>
+</dl>
+</div>
+<div class="section" id="waiting-list-keys">
+<h2>Waiting List Keys<a class="headerlink" href="#waiting-list-keys" title="Permalink to this headline">¶</a></h2>
+<p>Waiting list keys are only available for documents generated with the document
+button on a single waiting list record. In addition to the tokens listed below,
+the person keys listed above are also valid for the primary contact along with
+log keys.</p>
+<dl class="docutils">
+<dt>DatePutOnList</dt>
+<dd>The date the animal was put on the waiting list</dd>
+<dt>DateRemovedFromList</dt>
+<dd>The date the animal was removed from the waiting list</dd>
+<dt>DateOfLastOwnerContact</dt>
+<dd>The last time we heard from the owner</dd>
+<dt>Size</dt>
+<dd>The size of the animal</dd>
+<dt>SpeciesName</dt>
+<dd>The species of animal</dd>
+<dt>Description</dt>
+<dd>A description of the animal</dd>
+<dt>ReasonForWantingToPart</dt>
+<dd>The reason the owner is relinquishing the animal</dd>
+<dt>ReasonForRemoval</dt>
+<dd>The reason this waiting list entry was removed</dd>
+<dt>CanAffordDonation</dt>
+<dd>Yes/No - whether the person can afford to make a donation</dd>
+<dt>Urgency</dt>
+<dd>An urgency rating for this waiting list item</dd>
+<dt>Comments</dt>
+<dd>Any comments on this waiting list entry</dd>
+<dt>DocumentImgLink</dt>
+<dd>A photo of the animal if one exists. 200/300/400/500 can also be suffixed
+as with animal images above to control the size of the output.</dd>
 </dl>
 </div>
 </div>

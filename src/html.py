@@ -515,12 +515,11 @@ def icon(name, title = ""):
     else:
         return "<span class=\"asm-icon asm-icon-%s\" title=\"%s\"></span>" % (name, escape(title))
 
-def doc_img_src(dbo, row, mode):
+def doc_img_src(dbo, row):
     """
     Gets the img src attribute/link for a document picture. If the row
     doesn't have doc preferred media, the nopic src is returned instead.
-    row: An animal_query or person_query row containing DOCMEDIANAME
-    mode: The mode - animal or person
+    row: A query containing DOCMEDIANAME
     """
     if row["DOCMEDIANAME"] is None or row["DOCMEDIANAME"] == "":
         return "image?db=%s&mode=dbfs&id=/reports/nopic.jpg" % dbo.database

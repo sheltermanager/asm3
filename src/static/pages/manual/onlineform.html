@@ -216,6 +216,8 @@ electronically with a touchscreen.</p>
 <p>A &#8220;raw markup&#8221; field type allows you to insert your own HTML sections within
 the form. This is useful for adding contract clauses, headings, or any sort
 of extra formatting.</p>
+<p>The &#8220;GDPR contact&#8221; field type allows for a multiple lookup of GDPR
+communication choices to be made for resulting person records.</p>
 <p>When forms are submitted through the website they come through to the “View
 Incoming Forms” screen, where the values can be inspected by clicking the name
 of the form submission. The screen shows a preview of the incoming data and the
@@ -223,6 +225,10 @@ IP address that submitted it.</p>
 <p>If a field called &#8220;emailaddress&#8221; is supplied as part of the form submission,
 the complete submission will be emailed automatically to the person who
 completed it for their records.</p>
+<p>Similarly, if a field called &#8220;emailsubmissionto&#8221; is supplied, containing one or
+more comma separated email addresses, the submission will also be emailed to
+these extra addresses. This can be useful to have form values trigger hidden
+values to send submissions to other addresses.</p>
 <img alt="_images/onlineform_incoming.png" src="_images/onlineform_incoming.png" />
 <p>Selecting a form allows you to intelligently create or attach records from the
 data, or explicitly attach the form to existing records.</p>

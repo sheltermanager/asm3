@@ -9,6 +9,7 @@ import financial
 import html
 import log
 import lookups
+import lostfound
 import media
 import medical
 import movement
@@ -17,6 +18,7 @@ import publishers.base
 import template
 import users
 import utils
+import waitinglist
 import zipfile
 from i18n import _, format_currency_no_symbol, format_time, now, python2display, yes_no
 from sitedefs import BASE_URL, QR_IMG_SRC
@@ -102,6 +104,24 @@ def fw(s):
     if s is None: return ""
     if s.find(" ") == -1: return s
     return s.split(" ")[0]
+
+def additional_field_tags(dbo, fields):
+    """ Process additional fields and returns them as tags """
+    l = dbo.locale
+    tags = {}
+    for af in fields:
+        val = af["VALUE"]
+        if val is None: val = ""
+        if af["FIELDTYPE"] == additional.YESNO:
+            val = additional_yesno(l, af)
+        if af["FIELDTYPE"] == additional.MONEY:
+            val = format_currency_no_symbol(l, af["VALUE"])
+        if af["FIELDTYPE"] == additional.ANIMAL_LOOKUP:
+            val = af["ANIMALNAME"]
+        if af["FIELDTYPE"] == additional.PERSON_LOOKUP:
+            val = af["OWNERNAME"]
+        tags[af["FIELDNAME"].upper()] = val
+    return tags
 
 def animal_tags_publisher(dbo, a, includeAdditional=True):
     """
@@ -345,14 +365,14 @@ def animal_tags(dbo, a, includeAdditional=True, includeCosts=True, includeDiet=T
         "WEBSITEVIDEONOTES"     : a["WEBSITEVIDEONOTES"],
         "WEBMEDIANOTES"         : a["WEBSITEMEDIANOTES"],
         "WEBSITEMEDIANOTES"     : a["WEBSITEMEDIANOTES"],
-        "DOCUMENTIMGSRC"        : html.doc_img_src(dbo, a, "animal"),
-        "DOCUMENTIMGLINK"       : "<img height=\"200\" src=\"" + html.doc_img_src(dbo, a, "animal") + "\" >",
-        "DOCUMENTIMGLINK200"    : "<img height=\"200\" src=\"" + html.doc_img_src(dbo, a, "animal") + "\" >",
-        "DOCUMENTIMGLINK300"    : "<img height=\"300\" src=\"" + html.doc_img_src(dbo, a, "animal") + "\" >",
-        "DOCUMENTIMGLINK400"    : "<img height=\"400\" src=\"" + html.doc_img_src(dbo, a, "animal") + "\" >",
-        "DOCUMENTIMGLINK500"    : "<img height=\"500\" src=\"" + html.doc_img_src(dbo, a, "animal") + "\" >",
+        "DOCUMENTIMGSRC"        : html.doc_img_src(dbo, a),
+        "DOCUMENTIMGLINK"       : "<img height=\"200\" src=\"" + html.doc_img_src(dbo, a) + "\" >",
+        "DOCUMENTIMGLINK200"    : "<img height=\"200\" src=\"" + html.doc_img_src(dbo, a) + "\" >",
+        "DOCUMENTIMGLINK300"    : "<img height=\"300\" src=\"" + html.doc_img_src(dbo, a) + "\" >",
+        "DOCUMENTIMGLINK400"    : "<img height=\"400\" src=\"" + html.doc_img_src(dbo, a) + "\" >",
+        "DOCUMENTIMGLINK500"    : "<img height=\"500\" src=\"" + html.doc_img_src(dbo, a) + "\" >",
         "DOCUMENTIMGTHUMBSRC"   : html.thumbnail_img_src(dbo, a, "animalthumb"),
-        "DOCUMENTIMGTHUMBLINK"  : "<img src=\"" + html.thumbnail_img_src(dbo, a, "animalthumb") + "\" />",
+        "DOCUMENTIMGTHUMBLINK"  : "<img src=\"" + html.thumbnail_img_src(dbo, a) + "\" />",
         "DOCUMENTQRLINK"        : "<img src=\"%s\" />" % qr,
         "ADOPTIONSTATUS"        : publishers.base.get_adoption_status(dbo, a),
         "ANIMALISADOPTABLE"     : utils.iif(publishers.base.is_animal_adoptable(dbo, a), _("Yes", l), _("No", l)),
@@ -410,19 +430,7 @@ def animal_tags(dbo, a, includeAdditional=True, includeCosts=True, includeDiet=T
 
     # Additional fields
     if includeAdditional:
-        add = additional.get_additional_fields(dbo, a["ID"], "animal")
-        for af in add:
-            val = af["VALUE"]
-            if val is None: val = ""
-            if af["FIELDTYPE"] == additional.YESNO:
-                val = additional_yesno(l, af)
-            if af["FIELDTYPE"] == additional.MONEY:
-                val = format_currency_no_symbol(l, af["VALUE"])
-            if af["FIELDTYPE"] == additional.ANIMAL_LOOKUP:
-                val = af["ANIMALNAME"]
-            if af["FIELDTYPE"] == additional.PERSON_LOOKUP:
-                val = af["OWNERNAME"]
-            tags[af["FIELDNAME"].upper()] = val
+        tags.update(additional_field_tags(dbo, additional.get_additional_fields(dbo, a["ID"], "animal")))
 
     # Is vaccinated indicator
     if includeIsVaccinated:    
@@ -672,19 +680,7 @@ def animalcontrol_tags(dbo, ac):
     tags.update(table_tags(dbo, d, animalcontrol.get_animalcontrol_animals(dbo, ac["ID"]), "SPECIESNAME", "DATEBROUGHTIN"))
 
     # Additional fields
-    add = additional.get_additional_fields(dbo, ac["ID"], "incident")
-    for af in add:
-        val = af["VALUE"]
-        if val is None: val = ""
-        if af["FIELDTYPE"] == additional.YESNO:
-            val = additional_yesno(l, af)
-        if af["FIELDTYPE"] == additional.MONEY:
-            val = format_currency_no_symbol(l, af["VALUE"])
-        if af["FIELDTYPE"] == additional.ANIMAL_LOOKUP:
-            val = af["ANIMALNAME"]
-        if af["FIELDTYPE"] == additional.PERSON_LOOKUP:
-            val = af["OWNERNAME"]
-        tags[af["FIELDNAME"].upper()] = val
+    tags.update(additional_field_tags(dbo, additional.get_additional_fields(dbo, ac["ID"], "incident")))
 
     # Citations
     d = {
@@ -788,6 +784,86 @@ def donation_tags(dbo, donations):
     tags["PAYMENTTOTALVAT"] = format_currency_no_symbol(l, totals["vat"])
     tags["PAYMENTTOTALTAX"] = format_currency_no_symbol(l, totals["vat"])
     tags["PAYMENTTOTAL"] = format_currency_no_symbol(l, totals["total"])
+    return tags
+
+def foundanimal_tags(dbo, a):
+    """
+    Generates a list of tags from a foundanimal result (lostfound.get_foundanimal)
+    """
+    l = dbo.locale
+    tags = {
+        "ID":                       utils.padleft(a["ID"], 6),
+        "DATEREPORTED":             python2display(l, a["DATEREPORTED"]),
+        "DATEFOUND":                python2display(l, a["DATEFOUND"]),
+        "DATERETURNED":             python2display(l, a["RETURNTOOWNERDATE"]),
+        "AGEGROUP":                 a["AGEGROUP"],
+        "FEATURES":                 a["DISTFEAT"],
+        "AREAFOUND":                a["AREAFOUND"],
+        "AREAPOSTCODE":             a["AREAPOSTCODE"],
+        "COMMENTS":                 a["COMMENTS"],
+        "SPECIESNAME":              a["SPECIESNAME"],
+        "BREEDNAME":                a["BREEDNAME"],
+        "BASECOLOURNAME":           a["BASECOLOURNAME"],
+        "BASECOLORNAME":            a["BASECOLOURNAME"],
+        "SEX":                      a["SEXNAME"],
+        "DOCUMENTIMGLINK"       : "<img height=\"200\" src=\"" + html.doc_img_src(dbo, a) + "\" >",
+        "DOCUMENTIMGLINK200"    : "<img height=\"200\" src=\"" + html.doc_img_src(dbo, a) + "\" >",
+        "DOCUMENTIMGLINK300"    : "<img height=\"300\" src=\"" + html.doc_img_src(dbo, a) + "\" >",
+        "DOCUMENTIMGLINK400"    : "<img height=\"400\" src=\"" + html.doc_img_src(dbo, a) + "\" >",
+        "DOCUMENTIMGLINK500"    : "<img height=\"500\" src=\"" + html.doc_img_src(dbo, a) + "\" >"
+    }
+
+    # Additional fields
+    tags.update(additional_field_tags(dbo, additional.get_additional_fields(dbo, a["ID"], "foundanimal")))
+
+    # Logs
+    d = {
+        "LOGNAME":            "LOGTYPENAME",
+        "LOGDATE":            "d:DATE",
+        "LOGCOMMENTS":        "COMMENTS",
+        "LOGCREATEDBY":       "CREATEDBY"
+    }
+    tags.update(table_tags(dbo, d, log.get_logs(dbo, log.FOUNDANIMAL, a["ID"], 0, log.ASCENDING), "LOGTYPENAME", "DATE"))
+    return tags
+
+def lostanimal_tags(dbo, a):
+    """
+    Generates a list of tags from a lostanimal result (lostfound.get_lostanimal)
+    """
+    l = dbo.locale
+    tags = {
+        "ID":                       utils.padleft(a["ID"], 6),
+        "DATEREPORTED":             python2display(l, a["DATEREPORTED"]),
+        "DATELOST":                 python2display(l, a["DATELOST"]),
+        "DATEFOUND":                python2display(l, a["DATEFOUND"]),
+        "AGEGROUP":                 a["AGEGROUP"],
+        "FEATURES":                 a["DISTFEAT"],
+        "AREALOST":                 a["AREALOST"],
+        "AREAPOSTCODE":             a["AREAPOSTCODE"],
+        "COMMENTS":                 a["COMMENTS"],
+        "SPECIESNAME":              a["SPECIESNAME"],
+        "BREEDNAME":                a["BREEDNAME"],
+        "BASECOLOURNAME":           a["BASECOLOURNAME"],
+        "BASECOLORNAME":            a["BASECOLOURNAME"],
+        "SEX":                      a["SEXNAME"],
+        "DOCUMENTIMGLINK"       : "<img height=\"200\" src=\"" + html.doc_img_src(dbo, a) + "\" >",
+        "DOCUMENTIMGLINK200"    : "<img height=\"200\" src=\"" + html.doc_img_src(dbo, a) + "\" >",
+        "DOCUMENTIMGLINK300"    : "<img height=\"300\" src=\"" + html.doc_img_src(dbo, a) + "\" >",
+        "DOCUMENTIMGLINK400"    : "<img height=\"400\" src=\"" + html.doc_img_src(dbo, a) + "\" >",
+        "DOCUMENTIMGLINK500"    : "<img height=\"500\" src=\"" + html.doc_img_src(dbo, a) + "\" >"
+    }
+
+    # Additional fields
+    tags.update(additional_field_tags(dbo, additional.get_additional_fields(dbo, a["ID"], "lostanimal")))
+
+    # Logs
+    d = {
+        "LOGNAME":            "LOGTYPENAME",
+        "LOGDATE":            "d:DATE",
+        "LOGCOMMENTS":        "COMMENTS",
+        "LOGCREATEDBY":       "CREATEDBY"
+    }
+    tags.update(table_tags(dbo, d, log.get_logs(dbo, log.LOSTANIMAL, a["ID"], 0, log.ASCENDING), "LOGTYPENAME", "DATE"))
     return tags
 
 def licence_tags(dbo, li):
@@ -912,19 +988,7 @@ def person_tags(dbo, p):
     }
 
     # Additional fields
-    add = additional.get_additional_fields(dbo, p["ID"], "person")
-    for af in add:
-        val = af["VALUE"]
-        if val is None: val = ""
-        if af["FIELDTYPE"] == additional.YESNO:
-            val = additional_yesno(l, af)
-        if af["FIELDTYPE"] == additional.MONEY:
-            val = format_currency_no_symbol(l, af["VALUE"])
-        if af["FIELDTYPE"] == additional.ANIMAL_LOOKUP:
-            val = af["ANIMALNAME"]
-        if af["FIELDTYPE"] == additional.PERSON_LOOKUP:
-            val = af["OWNERNAME"]
-        tags[af["FIELDNAME"].upper()] = val
+    tags.update(additional_field_tags(dbo, additional.get_additional_fields(dbo, p["ID"], "person")))
 
     # Citations
     d = {
@@ -959,6 +1023,44 @@ def person_tags(dbo, p):
     }
     tags.update(table_tags(dbo, d, animalcontrol.get_person_traploans(dbo, p["ID"], animalcontrol.ASCENDING), "TRAPTYPENAME", "RETURNDATE"))
 
+    return tags
+
+def waitinglist_tags(dbo, a):
+    """
+    Generates a list of tags from a waiting list result (waitinglist.get_waitinglist_by_id)
+    """
+    l = dbo.locale
+    tags = {
+        "ID":                       utils.padleft(a["ID"], 6),
+        "DATEPUTONLIST":            python2display(l, a["DATEPUTONLIST"]),
+        "DATEREMOVEDFROMLIST":      python2display(l, a["DATEREMOVEDFROMLIST"]),
+        "DATEOFLASTOWNERCONTACT":   python2display(l, a["DATEOFLASTOWNERCONTACT"]),
+        "SIZE":                     a["SIZENAME"],
+        "SPECIESNAME":              a["SPECIESNAME"],
+        "DESCRIPTION":              a["ANIMALDESCRIPTION"],
+        "REASONFORWANTINGTOPART":   a["REASONFORWANTINGTOPART"],
+        "REASONFORREMOVAL":         a["REASONFORREMOVAL"],
+        "CANAFFORDDONATION":        utils.iif(a["CANAFFORDDONATION"] == 1, _("Yes", l), _("No", l)),
+        "URGENCY":                  a["URGENCYNAME"],
+        "COMMENTS":                 a["COMMENTS"],
+        "DOCUMENTIMGLINK"       : "<img height=\"200\" src=\"" + html.doc_img_src(dbo, a) + "\" >",
+        "DOCUMENTIMGLINK200"    : "<img height=\"200\" src=\"" + html.doc_img_src(dbo, a) + "\" >",
+        "DOCUMENTIMGLINK300"    : "<img height=\"300\" src=\"" + html.doc_img_src(dbo, a) + "\" >",
+        "DOCUMENTIMGLINK400"    : "<img height=\"400\" src=\"" + html.doc_img_src(dbo, a) + "\" >",
+        "DOCUMENTIMGLINK500"    : "<img height=\"500\" src=\"" + html.doc_img_src(dbo, a) + "\" >"
+    }
+
+    # Additional fields
+    tags.update(additional_field_tags(dbo, additional.get_additional_fields(dbo, a["ID"], "waitinglist")))
+
+    # Logs
+    d = {
+        "LOGNAME":            "LOGTYPENAME",
+        "LOGDATE":            "d:DATE",
+        "LOGCOMMENTS":        "COMMENTS",
+        "LOGCREATEDBY":       "CREATEDBY"
+    }
+    tags.update(table_tags(dbo, d, log.get_logs(dbo, log.WAITINGLIST, a["ID"], 0, log.ASCENDING), "LOGTYPENAME", "DATE"))
     return tags
 
 def append_tags(tags1, tags2):
@@ -1224,6 +1326,34 @@ def generate_donation_doc(dbo, templateid, donationids, username):
     tags = append_tags(tags, org_tags(dbo, username))
     return substitute_template(dbo, templateid, tags)
 
+def generate_foundanimal_doc(dbo, templateid, faid, username):
+    """
+    Generates a found animal document from a template
+    templateid: The ID of the template
+    faid: The found animal to generate for
+    """
+    a = lostfound.get_foundanimal(dbo, faid)
+    if a is None:
+        raise utils.ASMValidationError("%d is not a valid found animal ID" % faid)
+    tags = person_tags(dbo, person.get_person(dbo, a["OWNERID"]))
+    tags = append_tags(tags, foundanimal_tags(dbo, a))
+    tags = append_tags(tags, org_tags(dbo, username))
+    return substitute_template(dbo, templateid, tags)
+
+def generate_lostanimal_doc(dbo, templateid, laid, username):
+    """
+    Generates a found animal document from a template
+    templateid: The ID of the template
+    laid: The lost animal to generate for
+    """
+    a = lostfound.get_lostanimal(dbo, laid)
+    if a is None:
+        raise utils.ASMValidationError("%d is not a valid lost animal ID" % laid)
+    tags = person_tags(dbo, person.get_person(dbo, a["OWNERID"]))
+    tags = append_tags(tags, lostanimal_tags(dbo, a))
+    tags = append_tags(tags, org_tags(dbo, username))
+    return substitute_template(dbo, templateid, tags)
+
 def generate_licence_doc(dbo, templateid, licenceid, username):
     """
     Generates a licence document from a template
@@ -1254,6 +1384,20 @@ def generate_movement_doc(dbo, templateid, movementid, username):
         tags = append_tags(tags, person_tags(dbo, person.get_person(dbo, m["OWNERID"])))
     tags = append_tags(tags, movement_tags(dbo, m))
     tags = append_tags(tags, donation_tags(dbo, financial.get_movement_donations(dbo, movementid)))
+    tags = append_tags(tags, org_tags(dbo, username))
+    return substitute_template(dbo, templateid, tags)
+
+def generate_waitinglist_doc(dbo, templateid, wlid, username):
+    """
+    Generates a waiting list document from a template
+    templateid: The ID of the template
+    wlid: The waiting list to generate for
+    """
+    a = waitinglist.get_waitinglist_by_id(dbo, wlid)
+    if a is None:
+        raise utils.ASMValidationError("%d is not a valid waiting list ID" % wlid)
+    tags = person_tags(dbo, person.get_person(dbo, a["OWNERID"]))
+    tags = append_tags(tags, waitinglist_tags(dbo, a))
     tags = append_tags(tags, org_tags(dbo, username))
     return substitute_template(dbo, templateid, tags)
 

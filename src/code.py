@@ -2109,6 +2109,14 @@ class document_gen(ASMEndpoint):
             loglinktype = extlog.PERSON
             logid = financial.get_donation(dbo, post.integer_list("id")[0])["OWNERID"]
             content = wordprocessor.generate_donation_doc(dbo, dtid, post.integer_list("id"), o.user)
+        elif linktype == "FOUNDANIMAL":
+            loglinktype = extlog.FOUNDANIMAL
+            logid = extlostfound.get_foundanimal(dbo, post.integer("id"))["OWNERID"]
+            content = wordprocessor.generate_foundanimal_doc(dbo, dtid, post.integer("id"), o.user)
+        elif linktype == "LOSTANIMAL":
+            loglinktype = extlog.LOSTANIMAL
+            logid = extlostfound.get_lostanimal(dbo, post.integer("id"))["OWNERID"]
+            content = wordprocessor.generate_lostanimal_doc(dbo, dtid, post.integer("id"), o.user)
         elif linktype == "LICENCE":
             loglinktype = extlog.PERSON
             logid = financial.get_licence(dbo, post.integer("id"))["OWNERID"]
@@ -2117,6 +2125,10 @@ class document_gen(ASMEndpoint):
             loglinktype = extlog.PERSON
             logid = extmovement.get_movement(dbo, post.integer("id"))["OWNERID"]
             content = wordprocessor.generate_movement_doc(dbo, dtid, post.integer("id"), o.user)
+        elif linktype == "WAITINGLIST":
+            loglinktype = extlog.WAITINGLIST
+            logid = extwaitinglist.get_waitinglist_by_id(dbo, post.integer("id"))["OWNERID"]
+            content = wordprocessor.generate_waitinglist_doc(dbo, dtid, post.integer("id"), o.user)
         if configuration.generate_document_log(dbo) and configuration.generate_document_log_type(dbo) > 0:
             extlog.add_log(dbo, o.user, loglinktype, logid, configuration.generate_document_log_type(dbo), _("Generated document '{0}'").format(templatename))
         if templatename.endswith(".html"):
@@ -2147,10 +2159,22 @@ class document_gen(ASMEndpoint):
             tempname += " - " + utils.padleft(recid, 6)
             extmedia.create_document_media(dbo, session.user, extmedia.ANIMALCONTROL, recid, tempname, post["document"])
             self.redirect("incident_media?id=%d" % recid)
+        elif linktype == "FOUNDANIMAL":
+            tempname += " - " + utils.padleft(recid, 6)
+            extmedia.create_document_media(dbo, session.user, extmedia.FOUNDANIMAL, recid, tempname, post["document"])
+            self.redirect("foundanimal_media?id=%d" % recid)
+        elif linktype == "LOSTANIMAL":
+            tempname += " - " + utils.padleft(recid, 6)
+            extmedia.create_document_media(dbo, session.user, extmedia.LOSTANIMAL, recid, tempname, post["document"])
+            self.redirect("lostanimal_media?id=%d" % recid)
         elif linktype == "PERSON":
             tempname += " - " + extperson.get_person_name(dbo, recid)
             extmedia.create_document_media(dbo, session.user, extmedia.PERSON, recid, tempname, post["document"])
             self.redirect("person_media?id=%d" % recid)
+        elif linktype == "WAITINGLIST":
+            tempname += " - " + utils.padleft(recid, 6)
+            extmedia.create_document_media(dbo, session.user, extmedia.WAITINGLIST, recid, tempname, post["document"])
+            self.redirect("waitinglist_media?id=%d" % recid)
         elif linktype == "DONATION":
             d = financial.get_donations_by_ids(dbo, post.integer_list("recid"))
             if len(d) == 0:
@@ -2443,6 +2467,7 @@ class foundanimal(JSONEndpoint):
             "logtypes": extlookups.get_log_types(dbo),
             "sexes": extlookups.get_sexes(dbo),
             "species": extlookups.get_species(dbo),
+            "templates": template.get_document_templates(dbo),
             "tabcounts": extlostfound.get_foundanimal_satellite_counts(dbo, a["LFID"])[0]
         }
 
@@ -3044,6 +3069,7 @@ class lostanimal(JSONEndpoint):
             "logtypes": extlookups.get_log_types(dbo),
             "sexes": extlookups.get_sexes(dbo),
             "species": extlookups.get_species(dbo),
+            "templates": template.get_document_templates(dbo),
             "tabcounts": extlostfound.get_lostanimal_satellite_counts(dbo, a["LFID"])[0]
         }
 
@@ -5253,6 +5279,7 @@ class waitinglist(JSONEndpoint):
             "sizes": extlookups.get_sizes(dbo),
             "species": extlookups.get_species(dbo),
             "urgencies": extlookups.get_urgencies(dbo),
+            "templates": template.get_document_templates(dbo),
             "tabcounts": extwaitinglist.get_satellite_counts(dbo, a["ID"])[0]
         }
 

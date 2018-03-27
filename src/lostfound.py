@@ -67,6 +67,8 @@ def get_foundanimal_query(dbo):
         "o.OwnerSurname, o.OwnerForeNames, o.OwnerTitle, o.OwnerInitials, " \
         "o.OwnerName, o.OwnerPostcode, o.HomeTelephone, o.WorkTelephone, o.MobileTelephone, " \
         "web.ID AS WebsiteMediaID, " \
+        "web.MediaName AS DocMediaName, " \
+        "web.Date AS DocMediaDate, " \
         "web.MediaName AS WebsiteMediaName, " \
         "web.Date AS WebsiteMediaDate, " \
         "web.MediaNotes AS WebsiteMediaNotes " \
@@ -84,6 +86,8 @@ def get_lostanimal_query(dbo):
         "o.OwnerSurname, o.OwnerForeNames, o.OwnerTitle, o.OwnerInitials, " \
         "o.OwnerName, o.OwnerPostcode, o.HomeTelephone, o.WorkTelephone, o.MobileTelephone, " \
         "web.ID AS WebsiteMediaID, " \
+        "web.MediaName AS DocMediaName, " \
+        "web.Date AS DocMediaDate, " \
         "web.MediaName AS WebsiteMediaName, " \
         "web.Date AS WebsiteMediaDate, " \
         "web.MediaNotes AS WebsiteMediaNotes " \

@@ -716,7 +716,7 @@ Person Keys
 
 Person keys are available for documents generated from the person and movement
 screens, they are also available for documents generated from the payment 
-and licence tabs. 
+and licence tabs as well as lost animal, found animal and waiting list.
 
 OwnerTitle 
     The person's title
@@ -1019,4 +1019,110 @@ DateBroughtIn
     The date the animal entered the shelter
 DeceasedDate
     The date the animal died
+
+Lost Animal Keys
+----------------
+
+Lost animal keys are only available for documents generated with the document
+button on a single lost animal record. In addition to the tokens listed below,
+the person keys listed above are also valid for the primary contact along with
+log keys.
+
+DateReported
+    The date the report was received
+DateLost
+    The date the animal was first missing
+DateFound
+    The date the animal was found
+AgeGroup
+    An age group for the animal
+Features
+    Any information about the animal's appearance
+AreaLost
+    The area in which the animal was lost (street, etc)
+AreaPostcode
+    The postcode in which the animal was lost
+Comments
+    Any comments about the lost record
+SpeciesName
+    The species of animal
+BreedName
+    The breed of animal
+BaseColorName / BaseColourName
+    The color of the animal
+Sex
+    The sex of the animal
+DocumentImgLink
+    A photo of the animal if one exists. 200/300/400/500 can also be suffixed
+    as with animal images above to control the size of the output.
+
+Found Animal Keys
+-----------------
+
+Found animal keys are only available for documents generated with the document
+button on a single found animal record. In addition to the tokens listed below,
+the person keys listed above are also valid for the primary contact along with
+log keys.
+
+DateReported
+    The date the report was received
+DateFound
+    The date the animal was found
+DateReturned
+    The date the animal was returned to its owner
+AgeGroup
+    An age group for the animal
+Features
+    Any information about the animal's appearance
+AreaFound
+    The area in which the animal was found (street, etc)
+AreaPostcode
+    The postcode in which the animal was found
+Comments
+    Any comments about the found record
+SpeciesName
+    The species of animal
+BreedName
+    The breed of animal
+BaseColorName / BaseColourName
+    The color of the animal
+Sex
+    The sex of the animal
+DocumentImgLink
+    A photo of the animal if one exists. 200/300/400/500 can also be suffixed
+    as with animal images above to control the size of the output.
+
+Waiting List Keys
+-----------------
+
+Waiting list keys are only available for documents generated with the document
+button on a single waiting list record. In addition to the tokens listed below,
+the person keys listed above are also valid for the primary contact along with
+log keys.
+
+DatePutOnList
+    The date the animal was put on the waiting list
+DateRemovedFromList
+    The date the animal was removed from the waiting list
+DateOfLastOwnerContact
+    The last time we heard from the owner
+Size   
+    The size of the animal
+SpeciesName
+    The species of animal
+Description
+    A description of the animal
+ReasonForWantingToPart
+    The reason the owner is relinquishing the animal
+ReasonForRemoval
+    The reason this waiting list entry was removed
+CanAffordDonation
+    Yes/No - whether the person can afford to make a donation
+Urgency
+    An urgency rating for this waiting list item
+Comments
+    Any comments on this waiting list entry
+DocumentImgLink
+    A photo of the animal if one exists. 200/300/400/500 can also be suffixed
+    as with animal images above to control the size of the output.
 

@@ -3588,7 +3588,8 @@ msgstr ""
 msgid "Doberman Pinscher"
 msgstr ""
 
-#: movements.js person.js animal.js incident.js licence.js dbupdate.py
+#: movements.js person.js waitinglist.js animal.js incident.js lostfound.js
+#: licence.js dbupdate.py
 msgid "Document"
 msgstr ""
 
@@ -5013,6 +5014,10 @@ msgstr ""
 
 #: person.js
 msgid "Generate a document from this person"
+msgstr ""
+
+#: waitinglist.js lostfound.js
+msgid "Generate a document from this record"
 msgstr ""
 
 #: publish_options.js

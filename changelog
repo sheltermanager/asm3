@@ -1,6 +1,7 @@
 41
 ================
 
+27/03/18 Add document template support to lost/found and waiting list #414
 26/03/18 Transport book content can be too high (allow resize) #353
 26/03/18 Filter out deceased animals from advanced find (require filter) #394
 26/03/18 Include email address when logging sent emails #351

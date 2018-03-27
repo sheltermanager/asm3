@@ -25,6 +25,8 @@ def get_waitinglist_query(dbo):
         "o.HomeTelephone, o.WorkTelephone, o.MobileTelephone, o.EmailAddress, " \
         "u.Urgency AS UrgencyName, " \
         "web.ID AS WebsiteMediaID, " \
+        "web.MediaName AS DocMediaName, " \
+        "web.Date AS DocMediaDate, " \
         "web.MediaName AS WebsiteMediaName, " \
         "web.Date AS WebsiteMediaDate, " \
         "web.MediaNotes AS WebsiteMediaNotes " \

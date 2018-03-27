@@ -10,10 +10,16 @@ $(function() {
         render: function() {
             return [
                 '<div id="emailform" />',
+                '<div id="button-document-body" class="asm-menu-body">',
+                '<ul class="asm-menu-list">',
+                edit_header.template_list(controller.templates, "WAITINGLIST", controller.animal.ID),
+                '</ul>',
+                '</div>',
                 edit_header.waitinglist_edit_header(controller.animal, "details", controller.tabcounts),
                 tableform.buttons_render([
                     { id: "save", text: _("Save"), icon: "save", tooltip: _("Save this waiting list entry") },
                     { id: "delete", text: _("Delete"), icon: "delete", tooltip: _("Delete this waiting list entry") },
+                    { id: "document", text: _("Document"), type: "buttonmenu", icon: "document", tooltip: _("Generate a document from this record") },
                     { id: "email", text: _("Email"), icon: "email", tooltip: _("Email this person") },
                     { id: "toanimal", text: _("Create Animal"), icon: "animal-add", tooltip: _("Create a new animal from this waiting list entry") }
                 ]),
@@ -157,6 +163,7 @@ $(function() {
 
             if (!common.has_permission("cwl")) { $("#button-save").hide(); }
             if (!common.has_permission("aa")) { $("#button-toanimal").hide(); }
+            if (!common.has_permission("gaf")) { $("#button-document").hide(); }
             if (!common.has_permission("dwl")) { $("#button-delete").hide(); }
         },
 
@@ -204,6 +211,9 @@ $(function() {
             $("#asm-details-accordion").accordion({
                 heightStyle: "content"
             }); 
+
+            // Setup the document button
+            $("#button-document").asmmenu();
 
             validate.save = function(callback) {
                 if (!waitinglist.validation()) { header.hide_loading(); return; }
