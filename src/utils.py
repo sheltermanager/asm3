@@ -717,8 +717,13 @@ def csv(l, rows, cols = None, includeheader = True):
             if is_currency(c):
                 rd.append(decode_html(format_currency_no_symbol(l, r[c])))
             elif is_date(r[c]):
-                dateportion = python2display(l, r[c])
-                timeportion = format_time(r[c])
+                timeportion = "00:00:00"
+                dateportion = ""
+                try:
+                    dateportion = python2display(l, r[c])
+                    timeportion = format_time(r[c])
+                except:
+                    pass # Don't stop the show for bad dates/times
                 if timeportion != "00:00:00": # include time if non-midnight
                     dateportion = "%s %s" % (dateportion, timeportion)
                 rd.append(decode_html(dateportion))
