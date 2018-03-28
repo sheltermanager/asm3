@@ -447,9 +447,9 @@ def get_person_find_simple(dbo, query, username="", classfilter="all", includeSt
     elif classfilter == "driver":
         cf = " AND o.IsDriver = 1"
     if not includeStaff:
-        cf = " AND o.IsStaff = 0"
+        cf += " AND o.IsStaff = 0"
     if not includeVolunteers:
-        cf = " AND o.IsVolunteer = 0"
+        cf += " AND o.IsVolunteer = 0"
     sql = utils.cunicode(get_person_query(dbo)) + " WHERE (" + u" OR ".join(ors) + ")" + cf + " ORDER BY o.OwnerName"
     return reduce_find_results(dbo, username, db.query(dbo, sql, limit=limit))
 
