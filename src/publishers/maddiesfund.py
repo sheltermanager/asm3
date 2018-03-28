@@ -149,9 +149,10 @@ class MaddiesFundPublisher(AbstractPublisher):
                     self.resetPublisherProgress()
                     return
 
-                # If there's no email, MPA won't accept it
+                # If there's no email and there is an active person, MPA won't accept it
+                # (we have the extra active person condition because we want to send returns)
                 email = utils.nulltostr(an["CURRENTOWNEREMAILADDRESS"]).strip()
-                if email == "":
+                if email == "" and an["CURRENTOWNERSURNAME"] is not None and an["CURRENTOWNERSURNAME"] != "":
                     self.logError("No email address for owner, skipping.")
                 else:
                     # Build an adoption JSON object containing the adopter and animal
