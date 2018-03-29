@@ -149,93 +149,87 @@ class MaddiesFundPublisher(AbstractPublisher):
                     self.resetPublisherProgress()
                     return
 
-                # If there's no email and there is an active person, MPA won't accept it
-                # (we have the extra active person condition because we want to send returns)
-                email = utils.nulltostr(an["CURRENTOWNEREMAILADDRESS"]).strip()
-                if email == "" and an["CURRENTOWNERSURNAME"] is not None and an["CURRENTOWNERSURNAME"] != "":
-                    self.logError("No email address for owner, skipping.")
-                else:
-                    # Build an adoption JSON object containing the adopter and animal
-                    a = {
-                        "PetID": an["ID"],
-                        "Site": organisation,
-                        "PetName": an["ANIMALNAME"],
-                        "PetStatus": self.getPetStatus(an),
-                        "PetLitterID": an["ACCEPTANCENUMBER"],
-                        "GroupType": utils.iif(utils.nulltostr(an["ACCEPTANCENUMBER"]) != "", "Litter", ""),
-                        "PetSpecies": an["SPECIESNAME"],
-                        "PetSex": an["SEXNAME"],
-                        "DateofBirth": self.getDate(an["DATEOFBIRTH"]), 
-                        "SpayNeuterStatus": utils.iif(an["NEUTERED"] == 1, "Spayed/Neutered", ""),
-                        "Breed": an["BREEDNAME"],
-                        "Color": an["BASECOLOURNAME"],
-                        "SecondaryColor": "",
-                        "Pattern": "",
-                        "HealthStatus": an["ASILOMARINTAKECATEGORY"] + 1, # We're zero based, they use 1-base
-                        "PetBiography": an["ANIMALCOMMENTS"],
-                        "Photo": "%s?method=animal_image&account=%s&animalid=%s" % (SERVICE_URL, self.dbo.database, an["ID"]),
-                        "Microchip": an["IDENTICHIPNUMBER"],
-                        "MicrochipIssuer": lookups.get_microchip_manufacturer(self.dbo.locale, an["IDENTICHIPNUMBER"]),
-                        "RelationshipType": self.getRelationshipType(an),
-                        "FosterCareDate": self.getDate(an["ACTIVEMOVEMENTDATE"]),
-                        "FosterEndDate": "",
-                        "RabiesTag": an["RABIESTAG"],
+                # Build an adoption JSON object containing the adopter and animal
+                a = {
+                    "PetID": an["ID"],
+                    "Site": organisation,
+                    "PetName": an["ANIMALNAME"],
+                    "PetStatus": self.getPetStatus(an),
+                    "PetLitterID": an["ACCEPTANCENUMBER"],
+                    "GroupType": utils.iif(utils.nulltostr(an["ACCEPTANCENUMBER"]) != "", "Litter", ""),
+                    "PetSpecies": an["SPECIESNAME"],
+                    "PetSex": an["SEXNAME"],
+                    "DateofBirth": self.getDate(an["DATEOFBIRTH"]), 
+                    "SpayNeuterStatus": utils.iif(an["NEUTERED"] == 1, "Spayed/Neutered", ""),
+                    "Breed": an["BREEDNAME"],
+                    "Color": an["BASECOLOURNAME"],
+                    "SecondaryColor": "",
+                    "Pattern": "",
+                    "HealthStatus": an["ASILOMARINTAKECATEGORY"] + 1, # We're zero based, they use 1-base
+                    "PetBiography": an["ANIMALCOMMENTS"],
+                    "Photo": "%s?method=animal_image&account=%s&animalid=%s" % (SERVICE_URL, self.dbo.database, an["ID"]),
+                    "Microchip": an["IDENTICHIPNUMBER"],
+                    "MicrochipIssuer": lookups.get_microchip_manufacturer(self.dbo.locale, an["IDENTICHIPNUMBER"]),
+                    "RelationshipType": self.getRelationshipType(an),
+                    "FosterCareDate": self.getDate(an["ACTIVEMOVEMENTDATE"]),
+                    "FosterEndDate": "",
+                    "RabiesTag": an["RABIESTAG"],
 
-                        "ID": an["CURRENTOWNERID"],
-                        "Firstname": an["CURRENTOWNERFORENAMES"],
-                        "Lastname": an["CURRENTOWNERSURNAME"],
-                        "EmailAddress": self.getEmail(an["CURRENTOWNEREMAILADDRESS"]),
-                        "Street": an["CURRENTOWNERADDRESS"],
-                        "Apartment": "",
-                        "City": an["CURRENTOWNERTOWN"],
-                        "State": an["CURRENTOWNERCOUNTY"],
-                        "Zipcode": an["CURRENTOWNERPOSTCODE"],
-                        "ContactNumber": an["CURRENTOWNERHOMETELEPHONE"],
-                        "Organization": organisation,
+                    "ID": an["CURRENTOWNERID"],
+                    "Firstname": an["CURRENTOWNERFORENAMES"],
+                    "Lastname": an["CURRENTOWNERSURNAME"],
+                    "EmailAddress": self.getEmail(an["CURRENTOWNEREMAILADDRESS"]),
+                    "Street": an["CURRENTOWNERADDRESS"],
+                    "Apartment": "",
+                    "City": an["CURRENTOWNERTOWN"],
+                    "State": an["CURRENTOWNERCOUNTY"],
+                    "Zipcode": an["CURRENTOWNERPOSTCODE"],
+                    "ContactNumber": an["CURRENTOWNERHOMETELEPHONE"],
+                    "Organization": organisation,
+                }
+
+                # Build a list of intake histories - use the initial one first
+                ph = [
+                    {
+                        "IntakeType": an["ENTRYREASONNAME"],
+                        "IntakeDate": self.getDate(an["DATEBROUGHTIN"]),
+                        "City": utils.nulltostr(an["BROUGHTINBYOWNERTOWN"]),
+                        "State": utils.nulltostr(an["BROUGHTINBYOWNERCOUNTY"]),
+                        "LengthOwned": ""
                     }
-
-                    # Build a list of intake histories - use the initial one first
-                    ph = [
-                        {
-                            "IntakeType": an["ENTRYREASONNAME"],
-                            "IntakeDate": self.getDate(an["DATEBROUGHTIN"]),
-                            "City": utils.nulltostr(an["BROUGHTINBYOWNERTOWN"]),
-                            "State": utils.nulltostr(an["BROUGHTINBYOWNERCOUNTY"]),
-                            "LengthOwned": ""
-                        }
-                    ]
-                    # Then any exit movements where the animal was returned
-                    for ra in movement.get_animal_movements(self.dbo, an["ID"]):
-                        if ra["MOVEMENTTYPE"] > 0 and ra["MOVEMENTTYPE"] not in (2, 8) and ra["RETURNDATE"] is not None:
-                            ph.append({
-                                "IntakeType": ra["RETURNEDREASONNAME"],
-                                "IntakeDate": self.getDate(ra["RETURNDATE"]),
-                                "City": utils.nulltostr(ra["OWNERTOWN"]),
-                                "State": utils.nulltostr(ra["OWNERCOUNTY"]),
-                                "LengthOwned": "" # We don't have this info
-                            })
-                    a["PetHistoryDetails"] = ph
-                    
-                    # Next add vaccination histories
-                    vh = []
-                    for v in medical.get_vaccinations(self.dbo, an["ID"]):
-                        vh.append({
-                            "VaccinationRecordNumber": str(v["ID"]),
-                            "VaccinationStatus": utils.iif(v["DATEOFVACCINATION"] is not None, "Completed", "Scheduled"),
-                            "VaccinationStatusDateTime": self.getDate(v["DATEREQUIRED"]),
-                            "Vaccine": v["VACCINATIONTYPE"],
-                            "Type": "", # Live/Killed - we don't keep this info yet, see issue #281
-                            "Manufacturer": utils.nulltostr(v["MANUFACTURER"]),
-                            "VaccineLot": utils.nulltostr(v["BATCHNUMBER"]),
-                            "VaccinationNotes": v["COMMENTS"],
-                            "Length": "", # Not sure what this value is for - advised to ignore by MPA devs
-                            "RevaccinationDate": self.getDate(v["DATEEXPIRES"])
+                ]
+                # Then any exit movements where the animal was returned
+                for ra in movement.get_animal_movements(self.dbo, an["ID"]):
+                    if ra["MOVEMENTTYPE"] > 0 and ra["MOVEMENTTYPE"] not in (2, 8) and ra["RETURNDATE"] is not None:
+                        ph.append({
+                            "IntakeType": ra["RETURNEDREASONNAME"],
+                            "IntakeDate": self.getDate(ra["RETURNDATE"]),
+                            "City": utils.nulltostr(ra["OWNERTOWN"]),
+                            "State": utils.nulltostr(ra["OWNERCOUNTY"]),
+                            "LengthOwned": "" # We don't have this info
                         })
-                    a["PetVaccinationDetails"] = vh
+                a["PetHistoryDetails"] = ph
+                
+                # Next add vaccination histories
+                vh = []
+                for v in medical.get_vaccinations(self.dbo, an["ID"]):
+                    vh.append({
+                        "VaccinationRecordNumber": str(v["ID"]),
+                        "VaccinationStatus": utils.iif(v["DATEOFVACCINATION"] is not None, "Completed", "Scheduled"),
+                        "VaccinationStatusDateTime": self.getDate(v["DATEREQUIRED"]),
+                        "Vaccine": v["VACCINATIONTYPE"],
+                        "Type": "", # Live/Killed - we don't keep this info yet, see issue #281
+                        "Manufacturer": utils.nulltostr(v["MANUFACTURER"]),
+                        "VaccineLot": utils.nulltostr(v["BATCHNUMBER"]),
+                        "VaccinationNotes": v["COMMENTS"],
+                        "Length": "", # Not sure what this value is for - advised to ignore by MPA devs
+                        "RevaccinationDate": self.getDate(v["DATEEXPIRES"])
+                    })
+                a["PetVaccinationDetails"] = vh
 
-                    thisbatch.append(a)
-                    processed.append(an)
-                    self.logSuccess("Processed: %s: %s (%d of %d)" % ( an["SHELTERCODE"], an["ANIMALNAME"], anCount, len(animals)))
+                thisbatch.append(a)
+                processed.append(an)
+                self.logSuccess("Processed: %s: %s (%d of %d)" % ( an["SHELTERCODE"], an["ANIMALNAME"], anCount, len(animals)))
 
                 # If we have hit our batch size, or this is the
                 # last animal then send what we have.
