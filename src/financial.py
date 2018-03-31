@@ -916,37 +916,58 @@ def insert_account_from_donationtype(dbo, dtid, name, desc):
         "Description":      desc
     }, "system")
 
+def insert_account_roles(dbo, username, accountid, post):
+    """
+    accountid:  the account we're setting edit and view roles
+    post:       a post object containing viewroles and editroles members
+    """
+
+    dbo.delete("accountsrole", "AccountID=%d" % accountid)
+
+    for rid in post.integer_list("viewroles"):
+        dbo.insert("accountsrole", {
+            "AccountID":    accountid,
+            "RoleID":       rid,
+            "CanView":      1,
+            "CanEdit":      0
+        }, generateID=False)
+
+    for rid in post.integer_list("editroles"):
+        if rid in post.integer_list("viewroles"):
+            dbo.update("accountsrole", "AccountID=%d AND RoleID=%d" % (accountid, rid), {
+                "CanEdit":  1
+            })
+        else:
+            dbo.insert("accountsrole", {
+                "AccountID":    accountid,
+                "RoleID":       rid,
+                "CanView":      0,
+                "CanEdit":      1
+            }, generateID=False)
+
 def insert_account_from_form(dbo, username, post):
     """
     Creates an account from posted form data 
     """
     l = dbo.locale
+
     if post["code"] == "":
         raise utils.ASMValidationError(i18n._("Account code cannot be blank.", l))
-    if 0 != db.query_int(dbo, "SELECT COUNT(*) FROM accounts WHERE Code Like %s" % db.ds(post["code"])):
+    if 0 != dbo.query_int("SELECT COUNT(*) FROM accounts WHERE Code Like ?", [post["code"]]):
         raise utils.ASMValidationError(i18n._("Account code '{0}' has already been used.", l).format(post["code"]))
 
-    aid = db.get_id(dbo, "accounts")
-    sql = db.make_insert_user_sql(dbo, "accounts", username, ( 
-        ( "ID", db.di(aid)),
-        ( "Code", post.db_string("code")),
-        ( "Archived", post.db_integer("archived")),
-        ( "AccountType", post.db_integer("type")),
-        ( "DonationTypeID", post.db_integer("donationtype")),
-        ( "CostTypeID", post.db_integer("costtype")),
-        ( "Description", post.db_string("description"))
-        ))
-    db.execute(dbo, sql)
-    audit.create(dbo, username, "accounts", aid, audit.dump_row(dbo, "accounts", aid))
-    accountid = post.integer("accountid")
-    for rid in post.integer_list("viewroles"):
-        db.execute(dbo, "INSERT INTO accountsrole (AccountID, RoleID, CanView, CanEdit) VALUES (%d, %d, 1, 0)" % (accountid, rid))
-    for rid in post.integer_list("editroles"):
-        if rid in post.integer_list("viewroles"):
-            db.execute(dbo, "UPDATE accountsrole SET CanEdit = 1 WHERE AccountID = %d AND RoleID = %d" % (accountid, rid))
-        else:
-            db.execute(dbo, "INSERT INTO accountsrole (AccountID, RoleID, CanView, CanEdit) VALUES (%d, %d, 0, 1)" % (accountid, rid))
-    return aid
+    accountid = dbo.insert("accounts", {
+        "Code":             post["code"],
+        "Archived":         post.integer("archived"),
+        "AccountType":      post.integer("type"),
+        "DonationTypeID":   post.integer("donationtype"),
+        "CostTypeID":       post.integer("costtype"),
+        "Description":      post["description"]
+    }, username)
+
+    insert_account_roles(dbo, username, accountid, post)
+
+    return accountid
 
 def update_account_from_form(dbo, username, post):
     """
@@ -956,38 +977,28 @@ def update_account_from_form(dbo, username, post):
     accountid = post.integer("accountid")
     if post["code"] == "":
         raise utils.ASMValidationError(i18n._("Account code cannot be blank.", l))
-    if 0 != db.query_int(dbo, "SELECT COUNT(*) FROM accounts WHERE Code Like %s AND ID <> %d" % (db.ds(post["code"]), accountid)):
+
+    if 0 != dbo.query_int("SELECT COUNT(*) FROM accounts WHERE Code Like ? AND ID <> ?", (post["code"], accountid)):
         raise utils.ASMValidationError(i18n._("Account code '{0}' has already been used.", l).format(post["code"]))
 
-    sql = db.make_update_user_sql(dbo, "accounts", username, "ID=%d" % accountid, ( 
-        ( "Code", post.db_string("code")),
-        ( "AccountType", post.db_integer("type")),
-        ( "Archived", post.db_integer("archived")),
-        ( "DonationTypeID", post.db_integer("donationtype")),
-        ( "CostTypeID", post.db_integer("costtype")),
-        ( "Description", post.db_string("description"))
-        ))
-    preaudit = db.query(dbo, "SELECT * FROM accounts WHERE ID = %d" % accountid)
-    db.execute(dbo, sql)
-    postaudit = db.query(dbo, "SELECT * FROM accounts WHERE ID = %d" % accountid)
-    audit.edit(dbo, username, "accounts", accountid, audit.map_diff(preaudit, postaudit))
-    db.execute(dbo, "DELETE FROM accountsrole WHERE AccountID = %d" % accountid)
-    for rid in post.integer_list("viewroles"):
-        db.execute(dbo, "INSERT INTO accountsrole (AccountID, RoleID, CanView, CanEdit) VALUES (%d, %d, 1, 0)" % (accountid, rid))
-    for rid in post.integer_list("editroles"):
-        if rid in post.integer_list("viewroles"):
-            db.execute(dbo, "UPDATE accountsrole SET CanEdit = 1 WHERE AccountID = %d AND RoleID = %d" % (accountid, rid))
-        else:
-            db.execute(dbo, "INSERT INTO accountsrole (AccountID, RoleID, CanView, CanEdit) VALUES (%d, %d, 0, 1)" % (accountid, rid))
+    dbo.update("accounts", accountid, {
+        "Code":             post["code"],
+        "AccountType":      post.integer("type"),
+        "Archived":         post.integer("archived"),
+        "DonationTypeID":   post.integer("donationtype"),
+        "CostTypeID":       post.integer("costtype"),
+        "Description":      post["description"]
+    }, username)
+
+    insert_account_roles(dbo, username, accountid, post)
 
 def delete_account(dbo, username, aid):
     """
     Deletes an account
     """
-    audit.delete(dbo, username, "accounts", aid, audit.dump_row(dbo, "accounts", aid))
-    db.execute(dbo, "DELETE FROM accountstrx WHERE SourceAccountID = %d OR DestinationAccountID = %d" % ( int(aid), int(aid) ))
-    db.execute(dbo, "DELETE FROM accountsrole WHERE AccountID = %d" % int(aid))
-    db.execute(dbo, "DELETE FROM accounts WHERE ID = %d" % int(aid))
+    dbo.delete("accountstrx", "SourceAccountID=%d OR DestinationAccountID=%d" % (aid, aid), username)
+    dbo.delete("accountsrole", "AccountID=%d" % aid)
+    dbo.delete("accounts", aid, username)
 
 def insert_trx_from_form(dbo, username, post):
     """

@@ -98,6 +98,10 @@ class TestFinancial(unittest.TestCase):
         financial.receive_donation(base.get_dbo(), "test", did)
         financial.delete_donation(base.get_dbo(), "test", did)
 
+    def test_insert_account_from_costtype(self):
+        aid = financial.insert_account_from_costtype(base.get_dbo(), 1, "Test", "Test")
+        financial.delete_account(base.get_dbo(), "test", aid)
+
     def test_insert_account_from_donationtype(self):
         aid = financial.insert_account_from_donationtype(base.get_dbo(), 1, "Test", "Test")
         financial.delete_account(base.get_dbo(), "test", aid)
