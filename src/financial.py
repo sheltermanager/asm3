@@ -1012,6 +1012,7 @@ def insert_trx_from_form(dbo, username, post):
     withdrawal = post.integer("withdrawal")
     account = post.integer("accountid")
     other = get_account_id(dbo, post["otheraccount"])
+
     if other == 0:
         raise utils.ASMValidationError(i18n._("Account code '{0}' is not valid.", l).format(post["otheraccount"]))
     if deposit > 0:
@@ -1022,20 +1023,16 @@ def insert_trx_from_form(dbo, username, post):
         amount = withdrawal
         source = account
         target = other
-    tid = db.get_id(dbo, "accountstrx")
-    sql = db.make_insert_user_sql(dbo, "accountstrx", username, (
-        ( "ID", db.di(tid) ),
-        ( "TrxDate", post.db_date("trxdate")),
-        ( "Description", post.db_string("description")),
-        ( "Reconciled", post.db_boolean("reconciled")),
-        ( "Amount", db.di(amount)),
-        ( "SourceAccountID", db.di(source)),
-        ( "DestinationAccountID", db.di(target)),
-        ( "OwnerDonationID", db.di(0))
-        ))
-    db.execute(dbo, sql)
-    audit.create(dbo, username, "accountstrx", tid, audit.dump_row(dbo, "accountstrx", tid))
-    return tid
+
+    return dbo.insert("accountstrx", {
+        "TrxDate":              post.date("trxdate"),
+        "Description":          post["description"],
+        "Reconciled":           post.boolean("reconciled"),
+        "Amount":               amount,
+        "SourceAccountID":      source,
+        "DestinationAccountID": target,
+        "OwnerDonationID":      0
+    }, username)
 
 def update_trx_from_form(dbo, username, post):
     """
@@ -1050,6 +1047,7 @@ def update_trx_from_form(dbo, username, post):
     account = post.integer("accountid")
     trxid = post.integer("trxid")
     other = get_account_id(dbo, post["otheraccount"])
+
     if other == 0:
         raise utils.ASMValidationError(i18n._("Account code '{0}' is not valid.", l).format(post["otheraccount"]))
     if deposit > 0:
@@ -1060,112 +1058,86 @@ def update_trx_from_form(dbo, username, post):
         amount = withdrawal
         source = account
         target = other
-    sql = db.make_update_user_sql(dbo, "accountstrx", username, "ID=%d" % trxid, (
-        ( "TrxDate", post.db_date("trxdate")),
-        ( "Description", post.db_string("description")),
-        ( "Reconciled", post.db_integer("reconciled")),
-        ( "Amount", db.di(amount)),
-        ( "SourceAccountID", db.di(source)),
-        ( "DestinationAccountID", db.di(target))
-        ))
-    preaudit = db.query(dbo, "SELECT * FROM accountstrx WHERE ID = %d" % trxid)
-    db.execute(dbo, sql)
-    postaudit = db.query(dbo, "SELECT * FROM accountstrx WHERE ID = %d" % trxid)
-    audit.edit(dbo, username, "accountstrx", trxid, audit.map_diff(preaudit, postaudit))
+
+    return dbo.update("accountstrx", trxid, {
+        "TrxDate":              post.date("trxdate"),
+        "Description":          post["description"],
+        "Reconciled":           post.boolean("reconciled"),
+        "Amount":               amount,
+        "SourceAccountID":      source,
+        "DestinationAccountID": target
+    }, username)
 
 def delete_trx(dbo, username, tid):
     """
     Deletes a transaction
     """
-    audit.delete(dbo, username, "accountstrx", tid, audit.dump_row(dbo, "accountstrx", tid))
-    db.execute(dbo, "DELETE FROM accountstrx WHERE ID = %d" % int(tid))
+    dbo.delete("accountstrx", tid, username)
 
 def insert_voucher_from_form(dbo, username, post):
     """
     Creates a voucher record from posted form data 
     """
-    voucherid = db.get_id(dbo, "ownervoucher")
-    sql = db.make_insert_user_sql(dbo, "ownervoucher", username, ( 
-        ( "ID", db.di(voucherid)),
-        ( "OwnerID", post.db_integer("personid")),
-        ( "VoucherID", post.db_integer("type")),
-        ( "DateIssued", post.db_date("issued")),
-        ( "DateExpired", post.db_date("expires")),
-        ( "Value", post.db_integer("amount")),
-        ( "Comments", post.db_string("comments"))
-        ))
-    db.execute(dbo, sql)
-    audit.create(dbo, username, "ownervoucher", voucherid, audit.dump_row(dbo, "ownervoucher", voucherid))
-    return voucherid
+    return dbo.insert("ownervoucher", {
+        "OwnerID":      post.integer("personid"),
+        "VoucherID":    post.integer("type"),
+        "DateIssued":   post.date("issued"),
+        "DateExpired":  post.date("expires"),
+        "Value":        post.integer("amount"),
+        "Comments":     post["comments"]
+    }, username)
 
 def update_voucher_from_form(dbo, username, post):
     """
     Updates a voucher record from posted form data
     """
-    voucherid = post.integer("voucherid")
-    sql = db.make_update_user_sql(dbo, "ownervoucher", username, "ID=%d" % voucherid, ( 
-        ( "VoucherID", post.db_integer("type")),
-        ( "DateIssued", post.db_date("issued")),
-        ( "DateExpired", post.db_date("expires")),
-        ( "Value", post.db_integer("amount")),
-        ( "Comments", post.db_string("comments"))
-    ))
-    preaudit = db.query(dbo, "SELECT * FROM ownervoucher WHERE ID = %d" % voucherid)
-    db.execute(dbo, sql)
-    postaudit = db.query(dbo, "SELECT * FROM ownervoucher WHERE ID = %d" % voucherid)
-    audit.edit(dbo, username, "ownervoucher", voucherid, audit.map_diff(preaudit, postaudit))
+    dbo.update("ownervoucher", post.integer("voucherid"), {
+        "VoucherID":    post.integer("type"),
+        "DateIssued":   post.date("issued"),
+        "DateExpired":  post.date("expires"),
+        "Value":        post.integer("amount"),
+        "Comments":     post["comments"]
+    }, username)
 
 def delete_voucher(dbo, username, vid):
     """
     Deletes a voucher record
     """
-    audit.delete(dbo, username, "ownervoucher", vid, audit.dump_row(dbo, "ownervoucher", vid))
-    db.execute(dbo, "DELETE FROM ownervoucher WHERE ID = %d" % int(vid))
+    dbo.delete("ownervoucher", vid, username)
 
 def insert_citation_from_form(dbo, username, post):
     """
     Creates a citation record from posted form data 
     """
-    citationid = db.get_id(dbo, "ownercitation")
-    sql = db.make_insert_user_sql(dbo, "ownercitation", username, ( 
-        ( "ID", db.di(citationid)),
-        ( "OwnerID", post.db_integer("person")),
-        ( "AnimalControlID", post.db_integer("incident")),
-        ( "CitationTypeID", post.db_integer("type")),
-        ( "CitationDate", post.db_date("citationdate")),
-        ( "FineAmount", post.db_integer("fineamount")),
-        ( "FineDueDate", post.db_date("finedue")),
-        ( "FinePaidDate", post.db_date("finepaid")),
-        ( "Comments", post.db_string("comments"))
-        ))
-    db.execute(dbo, sql)
-    audit.create(dbo, username, "ownercitation", citationid, audit.dump_row(dbo, "ownercitation", citationid))
-    return citationid
+    return dbo.insert("ownercitation", {
+        "OwnerID":              post.integer("person"),
+        "AnimalControlID":      post.integer("incident"),
+        "CitationTypeID":       post.integer("type"),
+        "CitationDate":         post.date("citationdate"),
+        "FineAmount":           post.integer("fineamount"),
+        "FineDueDate":          post.date("finedue"),
+        "FinePaidDate":         post.date("finepaid"),
+        "Comments":             post["comments"]
+    }, username)
 
 def update_citation_from_form(dbo, username, post):
     """
     Updates a citation record from posted form data
     """
-    citationid = post.integer("citationid")
-    sql = db.make_update_user_sql(dbo, "ownercitation", username, "ID=%d" % citationid, ( 
-        ( "CitationTypeID", post.db_integer("type")),
-        ( "CitationDate", post.db_date("citationdate")),
-        ( "FineAmount", post.db_integer("fineamount")),
-        ( "FineDueDate", post.db_date("finedue")),
-        ( "FinePaidDate", post.db_date("finepaid")),
-        ( "Comments", post.db_string("comments"))
-    ))
-    preaudit = db.query(dbo, "SELECT * FROM ownercitation WHERE ID = %d" % citationid)
-    db.execute(dbo, sql)
-    postaudit = db.query(dbo, "SELECT * FROM ownercitation WHERE ID = %d" % citationid)
-    audit.edit(dbo, username, "ownercitation", citationid, audit.map_diff(preaudit, postaudit))
+    dbo.update("ownercitation", post.integer("citationid"), {
+        "CitationTypeID":       post.integer("type"),
+        "CitationDate":         post.date("citationdate"),
+        "FineAmount":           post.integer("fineamount"),
+        "FineDueDate":          post.date("finedue"),
+        "FinePaidDate":         post.date("finepaid"),
+        "Comments":             post["comments"]
+    }, username)
 
 def delete_citation(dbo, username, cid):
     """
     Deletes a citation record
     """
-    audit.delete(dbo, username, "ownercitation", cid, audit.dump_row(dbo, "ownercitation", cid))
-    db.execute(dbo, "DELETE FROM ownercitation WHERE ID = %d" % int(cid))
+    dbo.delete("ownercitation", cid, username)
 
 def insert_licence_from_form(dbo, username, post):
     """
@@ -1176,21 +1148,17 @@ def insert_licence_from_form(dbo, username, post):
         raise utils.ASMValidationError(i18n._("License number '{0}' has already been issued.", l).format(post["number"]))
     if post.date("issuedate") is None or post.date("expirydate") is None:
         raise utils.ASMValidationError(i18n._("Issue date and expiry date must be valid dates.", l))
-    licenceid = db.get_id(dbo, "ownerlicence")
-    sql = db.make_insert_user_sql(dbo, "ownerlicence", username, ( 
-        ( "ID", db.di(licenceid)),
-        ( "OwnerID", post.db_integer("person")),
-        ( "AnimalID", post.db_integer("animal")),
-        ( "LicenceTypeID", post.db_integer("type")),
-        ( "LicenceNumber", post.db_string("number")),
-        ( "LicenceFee", post.db_integer("fee")),
-        ( "IssueDate", post.db_date("issuedate")),
-        ( "ExpiryDate", post.db_date("expirydate")),
-        ( "Comments", post.db_string("comments"))
-        ))
-    db.execute(dbo, sql)
-    audit.create(dbo, username, "ownerlicence", licenceid, audit.dump_row(dbo, "ownerlicence", licenceid))
-    return licenceid
+
+    return dbo.insert("ownerlicence", {
+        "OwnerID":          post.integer("person"),
+        "AnimalID":         post.integer("animal"),
+        "LicenceTypeID":    post.integer("type"),
+        "LicenceNumber":    post["number"],
+        "LicenceFee":       post.integer("fee"),
+        "IssueDate":        post.date("issuedate"),
+        "ExpiryDate":       post.date("expirydate"),
+        "Comments":         post["comments"]
+    }, username)
 
 def update_licence_from_form(dbo, username, post):
     """
@@ -1198,31 +1166,27 @@ def update_licence_from_form(dbo, username, post):
     """
     l = dbo.locale
     licenceid = post.integer("licenceid")
-    if configuration.unique_licence_numbers(dbo) and 0 != db.query_int(dbo, "SELECT COUNT(*) FROM ownerlicence WHERE LicenceNumber = %s AND ID <> %d" % (post.db_string("number"), licenceid)):
+    if configuration.unique_licence_numbers(dbo) and 0 != dbo.query_int("SELECT COUNT(*) FROM ownerlicence WHERE LicenceNumber = ? AND ID <> ?", (post["number"], licenceid)):
         raise utils.ASMValidationError(i18n._("License number '{0}' has already been issued.", l).format(post["number"]))
     if post.date("issuedate") is None or post.date("expirydate") is None:
         raise utils.ASMValidationError(i18n._("Issue date and expiry date must be valid dates.", l))
-    sql = db.make_update_user_sql(dbo, "ownerlicence", username, "ID=%d" % licenceid, ( 
-        ( "OwnerID", post.db_integer("person")),
-        ( "AnimalID", post.db_integer("animal")),
-        ( "LicenceTypeID", post.db_integer("type")),
-        ( "LicenceNumber", post.db_string("number")),
-        ( "LicenceFee", post.db_integer("fee")),
-        ( "IssueDate", post.db_date("issuedate")),
-        ( "ExpiryDate", post.db_date("expirydate")),
-        ( "Comments", post.db_string("comments"))
-    ))
-    preaudit = db.query(dbo, "SELECT * FROM ownerlicence WHERE ID = %d" % licenceid)
-    db.execute(dbo, sql)
-    postaudit = db.query(dbo, "SELECT * FROM ownercitation WHERE ID = %d" % licenceid)
-    audit.edit(dbo, username, "ownerlicence", licenceid, audit.map_diff(preaudit, postaudit))
+
+    dbo.update("ownerlicence", licenceid, {
+        "OwnerID":          post.integer("person"),
+        "AnimalID":         post.integer("animal"),
+        "LicenceTypeID":    post.integer("type"),
+        "LicenceNumber":    post["number"],
+        "LicenceFee":       post.integer("fee"),
+        "IssueDate":        post.date("issuedate"),
+        "ExpiryDate":       post.date("expirydate"),
+        "Comments":         post["comments"]
+    }, username)
 
 def delete_licence(dbo, username, lid):
     """
     Deletes a licence record
     """
-    audit.delete(dbo, username, "ownerlicence", lid, audit.dump_row(dbo, "ownerlicence", lid))
-    db.execute(dbo, "DELETE FROM ownerlicence WHERE ID = %d" % int(lid))
+    dbo.delete("ownerlicence", lid, username)
 
 def giftaid_spreadsheet(dbo, path, fromdate, todate):
     """
@@ -1255,14 +1219,16 @@ def giftaid_spreadsheet(dbo, path, fromdate, todate):
     try:
         ods = open(path + "static/docs/giftaid.ods", "rb")
         zf = zipfile.ZipFile(ods, "r")
+
         # Load the content.xml file
         content = zf.open("content.xml").read()
-        dons = db.query(dbo, "SELECT od.Date AS DonationDate, od.Donation AS DonationAmount, o.* " \
+        dons = dbo.query("SELECT od.Date AS DonationDate, od.Donation AS DonationAmount, o.* " \
             "FROM ownerdonation od " \
             "INNER JOIN owner o ON od.OwnerID = o.ID " \
             "WHERE od.IsGiftAid = 1 AND od.Date Is Not Null AND " \
-            "od.Date >= %s AND od.Date <= %s ORDER BY od.Date" % (db.dd(fromdate), db.dd(todate)))
+            "od.Date >= ? AND od.Date <= ? ORDER BY od.Date", (fromdate, todate))
         al.debug("got %d giftaid donations for %s -> %s" % (len(dons), str(fromdate), str(todate)), "financial.giftaid_spreadsheet", dbo)
+
         # Insert them into the content.xml
         # We just replace the first occurrence each time
         subearly = False
@@ -1273,24 +1239,25 @@ def giftaid_spreadsheet(dbo, path, fromdate, todate):
                 subearly = True
                 content = content.replace("table:style-name=\"ce21\" office:value-type=\"string\">", 
                     "table:style-name=\"ce36\" office:value-type=\"date\" office:date-value=\"%s\">" % \
-                    i18n.format_date("%Y-%m-%d", d["DONATIONDATE"]))
-                content = content.replace("DONEARLIESTDONATION", i18n.format_date("%d/%m/%y", d["DONATIONDATE"]))
-            content = content.replace("DONTITLE", xmlescape(d["OWNERTITLE"]), 1)
-            content = content.replace("DONFIRSTNAME", xmlescape(d["OWNERFORENAMES"]), 1)
-            content = content.replace("DONLASTNAME", xmlescape(d["OWNERSURNAME"]), 1)
-            content = content.replace("DONHOUSENUMBER", xmlescape(housenumber(d["OWNERADDRESS"])), 1)
-            content = content.replace("DONPOSTCODE", xmlescape(d["OWNERPOSTCODE"]), 1)
+                    i18n.format_date("%Y-%m-%d", d.DONATIONDATE))
+                content = content.replace("DONEARLIESTDONATION", i18n.format_date("%d/%m/%y", d.DONATIONDATE))
+            content = content.replace("DONTITLE", xmlescape(d.OWNERTITLE), 1)
+            content = content.replace("DONFIRSTNAME", xmlescape(d.OWNERFORENAMES), 1)
+            content = content.replace("DONLASTNAME", xmlescape(d.OWNERSURNAME), 1)
+            content = content.replace("DONHOUSENUMBER", xmlescape(housenumber(d.OWNERADDRESS)), 1)
+            content = content.replace("DONPOSTCODE", xmlescape(d.OWNERPOSTCODE), 1)
             content = content.replace("DONAGGREGATE", "", 1)
             content = content.replace("DONSPONSOR", "", 1)
             # Switch the string date format to a real date with the correct value
             content = content.replace("table:style-name=\"ce36\" office:value-type=\"string\">", 
                 "table:style-name=\"ce36\" office:value-type=\"date\" office:date-value=\"%s\">" % \
                 i18n.format_date("%Y-%m-%d", d["DONATIONDATE"]), 1)
-            content = content.replace("DONDATE", i18n.format_date("%d/%m/%y", d["DONATIONDATE"]), 1)
-            donamt = str(float(d["DONATIONAMOUNT"]) / 100)
-            dontotal += float(d["DONATIONAMOUNT"]) / 100
+            content = content.replace("DONDATE", i18n.format_date("%d/%m/%y", d.DONATIONDATE), 1)
+            donamt = str(float(d.DONATIONAMOUNT) / 100)
+            dontotal += float(d.DONATIONAMOUNT) / 100
             content = content.replace("<text:p>54,321.00</text:p>", "<text:p>" + donamt + "</text:p>", 1)
             content = content.replace("office:value=\"54321\"", "office:value=\"" + donamt + "\"", 1)
+
         # Clear out anything remaining
         content = content.replace("DONTITLE", "")
         content = content.replace("DONFIRSTNAME", "")
@@ -1302,9 +1269,11 @@ def giftaid_spreadsheet(dbo, path, fromdate, todate):
         content = content.replace("DONDATE", "")
         content = content.replace("<text:p>54,321.00</text:p>", "<text:p></text:p>")
         content = content.replace("office:value=\"54321\"", "office:value=\"\"")
+
         # Update the total at the top
         content = content.replace("54,321,000.00</text:p>", str(dontotal) + "</text:p>", 1)
         content = content.replace("office:value=\"54321000\"", "office:value=\"" + str(dontotal) + "\"", 1)
+
         # Write the replacement file
         zo = StringIO()
         zfo = zipfile.ZipFile(zo, "w")
