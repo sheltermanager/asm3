@@ -571,90 +571,86 @@ def insert_donations_from_form(dbo, username, post, donationdate, force_receive 
 
 def insert_donation_from_form(dbo, username, post):
     """
-    Creates a donation record from posted form data 
+    Creates a payment record from posted form data 
     """
-    donationid = db.get_id(dbo, "ownerdonation")
     if post["receiptnumber"] == "":
         post.data["receiptnumber"] = get_next_receipt_number(dbo)
-    sql = db.make_insert_user_sql(dbo, "ownerdonation", username, ( 
-        ( "ID", db.di(donationid)),
-        ( "OwnerID", post.db_integer("person")),
-        ( "AnimalID", post.db_integer("animal")),
-        ( "MovementID", post.db_integer("movement")),
-        ( "DonationTypeID", post.db_integer("type")),
-        ( "DonationPaymentID", post.db_integer("payment")),
-        ( "Frequency", post.db_integer("frequency")),
-        ( "Quantity", post.db_integer("quantity")), 
-        ( "UnitPrice", post.db_integer("unitprice")),
-        ( "Donation", post.db_integer("amount")),
-        ( "DateDue", post.db_date("due")),
-        ( "Date", post.db_date("received")),
-        ( "NextCreated", db.di(0)),
-        ( "ChequeNumber", post.db_string("chequenumber")), 
-        ( "ReceiptNumber", post.db_string("receiptnumber")),
-        ( "IsGiftAid", post.db_boolean("giftaid")),
-        ( "IsVAT", post.db_boolean("vat")),
-        ( "VATRate", post.db_floating("vatrate")),
-        ( "VATAmount", post.db_integer("vatamount")),
-        ( "Comments", post.db_string("comments"))
-        ))
-    db.execute(dbo, sql)
-    audit.create(dbo, username, "ownerdonation", donationid, audit.dump_row(dbo, "ownerdonation", donationid))
+    
+    donationid = dbo.insert("ownerdonation", {
+        "OwnerID":              post.integer("person"),
+        "AnimalID":             post.integer("animal"),
+        "MovementID":           post.integer("movement"),
+        "DonationTypeID":       post.integer("type"),
+        "DonationPaymentID":    post.integer("payment"),
+        "Frequency":            post.integer("frequency"),
+        "Quantity":             post.integer("quantity"),
+        "UnitPrice":            post.integer("unitprice"),
+        "Donation":             post.integer("amount"),
+        "DateDue":              post.date("due"),
+        "Date":                 post.date("received"),
+        "NextCreated":          0,
+        "ChequeNumber":         post["chequenumber"],
+        "ReceiptNumber":        post["receiptnumber"],
+        "IsGiftAid":            post.boolean("giftaid"),
+        "IsVAT":                post.boolean("vat"),
+        "VATRate":              post.floating("vatrate"),
+        "VATAmount":            post.integer("vatamount"),
+        "Comments":             post["comments"]
+    }, username)
+
     if configuration.donation_trx_override(dbo):
         update_matching_donation_transaction(dbo, username, donationid, post.integer("destaccount"))
     else:
         update_matching_donation_transaction(dbo, username, donationid)
+
     check_create_next_donation(dbo, username, donationid)
     movement.update_movement_donation(dbo, post.integer("movement"))
     return donationid
 
 def update_donation_from_form(dbo, username, post):
     """
-    Updates a donation record from posted form data
+    Updates a payment record from posted form data
     """
     donationid = post.integer("donationid")
     if post["receiptnumber"] == "":
-        post.data["receiptnumber"] = db.query_string(dbo, "SELECT ReceiptNumber FROM ownerdonation WHERE ID = %d" % donationid)
-    sql = db.make_update_user_sql(dbo, "ownerdonation", username, "ID=%d" % donationid, ( 
-        ( "OwnerID", post.db_integer("person")),
-        ( "AnimalID", post.db_integer("animal")),
-        ( "MovementID", post.db_integer("movement")),
-        ( "DonationTypeID", post.db_integer("type")),
-        ( "DonationPaymentID", post.db_integer("payment")),
-        ( "Frequency", post.db_integer("frequency")),
-        ( "Quantity", post.db_integer("quantity")),
-        ( "UnitPrice", post.db_integer("unitprice")),
-        ( "Donation", post.db_integer("amount")),
-        ( "DateDue", post.db_date("due")),
-        ( "Date", post.db_date("received")),
-        ( "ChequeNumber", post.db_string("chequenumber")),
-        ( "ReceiptNumber", post.db_string("receiptnumber")),
-        ( "IsGiftAid", post.db_boolean("giftaid")),
-        ( "IsVAT", post.db_boolean("vat")),
-        ( "VATRate", post.db_floating("vatrate")),
-        ( "VATAmount", post.db_integer("vatamount")),
-        ( "Comments", post.db_string("comments"))
-        ))
-    preaudit = db.query(dbo, "SELECT * FROM ownerdonation WHERE ID = %d" % donationid)
-    db.execute(dbo, sql)
-    postaudit = db.query(dbo, "SELECT * FROM ownerdonation WHERE ID = %d" % donationid)
-    audit.edit(dbo, username, "ownerdonation", donationid, audit.map_diff(preaudit, postaudit))
+        post.data["receiptnumber"] = dbo.query_string("SELECT ReceiptNumber FROM ownerdonation WHERE ID = ?", [donationid])
+
+    dbo.update("ownerdonation", donationid, {
+        "OwnerID":              post.integer("person"),
+        "AnimalID":             post.integer("animal"),
+        "MovementID":           post.integer("movement"),
+        "DonationTypeID":       post.integer("type"),
+        "DonationPaymentID":    post.integer("payment"),
+        "Frequency":            post.integer("frequency"),
+        "Quantity":             post.integer("quantity"),
+        "UnitPrice":            post.integer("unitprice"),
+        "Donation":             post.integer("amount"),
+        "DateDue":              post.date("due"),
+        "Date":                 post.date("received"),
+        "ChequeNumber":         post["chequenumber"],
+        "ReceiptNumber":        post["receiptnumber"],
+        "IsGiftAid":            post.boolean("giftaid"),
+        "IsVAT":                post.boolean("vat"),
+        "VATRate":              post.floating("vatrate"),
+        "VATAmount":            post.integer("vatamount"),
+        "Comments":             post["comments"]
+    }, username)
+
     if configuration.donation_trx_override(dbo):
         update_matching_donation_transaction(dbo, username, donationid, post.integer("destaccount"))
     else:
         update_matching_donation_transaction(dbo, username, donationid)
+
     check_create_next_donation(dbo, username, donationid)
     movement.update_movement_donation(dbo, post.integer("movement"))
 
 def delete_donation(dbo, username, did):
     """
-    Deletes a donation record
+    Deletes a payment record
     """
-    audit.delete(dbo, username, "ownerdonation", did, audit.dump_row(dbo, "ownerdonation", did))
     movementid = db.query_int(dbo, "SELECT MovementID FROM ownerdonation WHERE ID = %d" % int(did))
-    db.execute(dbo, "DELETE FROM ownerdonation WHERE ID = %d" % int(did))
-    # Delete any existing transaction for this donation if there is one
-    db.execute(dbo, "DELETE FROM accountstrx WHERE OwnerDonationID = %d" % int(did))
+    dbo.delete("accountstrx", "OwnerDonationID = %d" % did, username) # remove matching trx if exists
+    dbo.delete("ownerdonation", did, username)
     movement.update_movement_donation(dbo, movementid)
 
 def receive_donation(dbo, username, did):
@@ -662,11 +658,15 @@ def receive_donation(dbo, username, did):
     Marks a donation received
     """
     if id is None or did == "": return
-    receiptno = db.query_string(dbo, "SELECT ReceiptNumber FROM ownerdonation WHERE ID = %d" % did)
-    db.execute(dbo, "UPDATE ownerdonation SET Date = %s, LastChangedBy = %s, LastChangedDate = %s WHERE ID = %d" % ( \
-        db.dd(i18n.now(dbo.timezone)), db.ds(username), db.ddt(i18n.now(dbo.timezone)), int(did) ))
+    receiptno = dbo.query_string("SELECT ReceiptNumber FROM ownerdonation WHERE ID = ?", [did])
+    
+    dbo.update("ownerdonation", did, {
+        "Date":     dbo.today()
+    }, username)
+
+
     audit.edit(dbo, username, "ownerdonation", did, "receipt %s, id %s: received" % (receiptno, did))
-    update_matching_donation_transaction(dbo, username, int(did))
+    update_matching_donation_transaction(dbo, username, did)
     check_create_next_donation(dbo, username, did)
 
 def check_create_next_donation(dbo, username, odid):
@@ -674,55 +674,56 @@ def check_create_next_donation(dbo, username, odid):
     Checks to see if a donation is now received and the next in 
     a sequence needs to be created for donations with a frequency 
     """
-    al.debug("Create next donation %d" % int(odid), "financial.check_create_next_donation", dbo)
-    d = db.query(dbo, "SELECT * FROM ownerdonation WHERE ID = %d" % int(odid))
-    if d is None or len(d) == 0: 
-        al.error("No donation found for %d" % int(odid), "financial.check_create_next_donation", dbo)
+    al.debug("Create next donation %d" % odid, "financial.check_create_next_donation", dbo)
+    d = dbo.query("SELECT * FROM ownerdonation WHERE ID = ?", [odid])
+    if len(d) == 0: 
+        al.error("No donation found for %d" % odid, "financial.check_create_next_donation", dbo)
         return
+
     d = d[0]
     # If we have a frequency > 0, the nextcreated flag isn't set
     # and there's a datereceived and due then we need to create the
     # next donation in the sequence
-    if d["DATEDUE"] is not None and d["DATE"] is not None and d["FREQUENCY"] > 0 and d["NEXTCREATED"] == 0:
-        nextdue = d["DATEDUE"]
-        if d["FREQUENCY"] == 1:
+    if d.DATEDUE is not None and d.DATE is not None and d.FREQUENCY > 0 and d.NEXTCREATED == 0:
+
+        nextdue = d.DATEDUE
+        if d.FREQUENCY == 1:
             nextdue = i18n.add_days(nextdue, 7)
-        if d["FREQUENCY"] == 2:
+        if d.FREQUENCY == 2:
             nextdue = i18n.add_months(nextdue, 1)
-        if d["FREQUENCY"] == 3:
+        if d.FREQUENCY == 3:
             nextdue = i18n.add_months(nextdue, 3)
-        if d["FREQUENCY"] == 4:
+        if d.FREQUENCY == 4:
             nextdue = i18n.add_months(nextdue, 6)
-        if d["FREQUENCY"] == 5:
+        if d.FREQUENCY == 5:
             nextdue = i18n.add_years(nextdue, 1)
         al.debug("Next donation due %s" % str(nextdue), "financial.check_create_next_donation", dbo)
+
         # Update nextcreated flag for this donation
-        db.execute(dbo, "UPDATE ownerdonation SET NextCreated = 1 WHERE ID = %d" % int(odid))
+        dbo.execute("UPDATE ownerdonation SET NextCreated = 1 WHERE ID = ?", [odid])
+
         # Create the new donation due record
-        did = db.get_id(dbo, "ownerdonation")
-        sql = db.make_insert_user_sql(dbo, "ownerdonation", username, (
-            ( "ID", db.di(did)),
-            ( "AnimalID", db.di(d["ANIMALID"])),
-            ( "OwnerID", db.di(d["OWNERID"])),
-            ( "MovementID", db.di(d["MOVEMENTID"])),
-            ( "DonationTypeID", db.di(d["DONATIONTYPEID"])),
-            ( "DateDue", db.dd(nextdue)),
-            ( "Date", db.dd(None)),
-            ( "Quantity", db.di(d["QUANTITY"])),
-            ( "UnitPrice", db.di(d["UNITPRICE"])), 
-            ( "Donation", db.di(d["DONATION"])),
-            ( "IsGiftAid", db.di(d["ISGIFTAID"])),
-            ( "DonationPaymentID", db.di(d["DONATIONPAYMENTID"])),
-            ( "Frequency", db.di(d["FREQUENCY"])),
-            ( "NextCreated", db.di(0)),
-            ( "ChequeNumber", db.ds("")), 
-            ( "ReceiptNumber", db.ds(utils.padleft(did, 8))),
-            ( "IsVAT", db.di(d["ISVAT"])),
-            ( "VATRate", db.df(d["VATRATE"])),
-            ( "VATAmount", db.di(d["VATAMOUNT"])),
-            ( "Comments", db.ds(d["COMMENTS"]))
-        ))
-        db.execute(dbo, sql)
+        dbo.insert("ownerdonation", {
+            "AnimalID":             d.ANIMALID,
+            "OwnerID":              d.OWNERID,
+            "MovementID":           d.MOVEMENTID,
+            "DonationTypeID":       d.DONATIONTYPEID,
+            "DateDue":              nextdue,
+            "Date":                 None,
+            "Quantity":             d.QUANTITY,
+            "UnitPrice":            d.UNITPRICE,
+            "Donation":             d.DONATION,
+            "IsGiftAid":            d.ISGIFTAID,
+            "DonationPaymentID":    d.DONATIONPAYMENTID,
+            "Frequency":            d.FREQUENCY,
+            "NextCreated":          0,
+            "ChequeNumber":         "",
+            "ReceiptNumber":        get_next_receipt_number(dbo),
+            "IsVAT":                d.ISVAT,
+            "VATRate":              d.VATRATE,
+            "VATAmount":            d.VATAMOUNT,
+            "Comments":             d.COMMENTS
+        }, username)
 
 def update_matching_cost_transaction(dbo, username, acid, destinationaccount = 0):
     """
@@ -733,29 +734,34 @@ def update_matching_cost_transaction(dbo, username, acid, destinationaccount = 0
     if not configuration.create_cost_trx(dbo): 
         al.debug("Create cost trx is off, not creating trx.", "financial.update_matching_cost_transaction", dbo)
         return
+
     # Find the cost record
-    ac = db.query(dbo, "SELECT * FROM animalcost WHERE ID = %d" % int(acid))
+    ac = dbo.query("SELECT * FROM animalcost WHERE ID = ?", [acid])
     if ac is None or len(ac) == 0:
         al.error("No matching transaction for %d found in database, bailing" % int(acid), "financial.update_matching_cost_transaction", dbo)
         return
     c = ac[0]
+
     # If cost paid dates are on and the cost hasn't been paid, don't do anything
-    if configuration.show_cost_paid(dbo) and c["COSTPAIDDATE"] is None: 
+    if configuration.show_cost_paid(dbo) and c.COSTPAIDDATE is None: 
         al.debug("Cost not paid, not creating trx.", "financial.update_matching_cost_transaction", dbo)
         return
+
     # Do we already have an existing transaction for this donation?
     # If we do, we only need to check the amounts as it's now the
     # users problem if they picked the wrong donationtype/account
-    trxid = db.query_int(dbo, "SELECT ID FROM accountstrx WHERE AnimalCostID = %d" % int(acid))
+    trxid = dbo.query_int("SELECT ID FROM accountstrx WHERE AnimalCostID = ?", [acid])
     if trxid != 0:
-        al.debug("Already have an existing transaction, updating amount to %d" % c["COSTAMOUNT"], "financial.update_matching_cost_transaction", dbo)
-        db.execute(dbo, "UPDATE accountstrx SET Amount = %d WHERE ID = %d" % (c["COSTAMOUNT"], trxid))
+        al.debug("Already have an existing transaction, updating amount to %d" % c.COSTAMOUNT, "financial.update_matching_cost_transaction", dbo)
+        db.execute(dbo, "UPDATE accountstrx SET Amount = %d WHERE ID = %d" % (c.COSTAMOUNT, trxid))
         return
+
     # Get the target account for this type of cost, use the first expense account on file for that type
-    target = db.query_int(dbo, "SELECT ID FROM accounts WHERE AccountType = %d AND CostTypeID = %d ORDER BY ID" % (EXPENSE, int(c["COSTTYPEID"])))
+    target = dbo.query_int("SELECT ID FROM accounts WHERE AccountType = ? AND CostTypeID = ? ORDER BY ID", (EXPENSE, c.COSTTYPEID))
     if target == 0:
         # This shouldn't happen, but we can't go ahead without an account
         raise utils.ASMValidationError("No target account found for cost type, can't create trx")
+
     # Get the source account if we weren't given one
     source = destinationaccount
     if source == 0:
@@ -763,7 +769,7 @@ def update_matching_cost_transaction(dbo, username, acid, destinationaccount = 0
         al.debug("Source account in config is: %s" % target, "financial.update_matching_cost_transaction", dbo)
         # If no source is configured, use the first bank account on file
         if source == 0:
-            source = db.query_int(dbo, "SELECT ID FROM accounts WHERE AccountType = 1")
+            source = dbo.query_int("SELECT ID FROM accounts WHERE AccountType = 1")
             al.debug("Got blank source, getting first bank account: %s" % source, "financial.update_matching_cost_transaction", dbo)
             if source == 0:
                 # Shouldn't happen, but we have no bank accounts on file
@@ -778,29 +784,28 @@ def update_matching_cost_transaction(dbo, username, acid, destinationaccount = 0
         #    al.debug("Found override for costtype %s, got new target account %s" % (str(c["COSTTYPEID"]), str(target)), "financial.update_matching_cost_transaction", dbo)
     # Is the cost for a negative amount? If so, flip the accounts
     # round as this must be a refund and make the amount positive.
-    amount = c["COSTAMOUNT"]
+    amount = c.COSTAMOUNT
     if amount < 0:
         oldtarget = target
         target = source
         source = oldtarget
         amount = abs(amount)
-    trxdate = c["COSTDATE"]
-    if c["COSTPAIDDATE"] is not None: trxdate = c["COSTPAIDDATE"]
+
+    trxdate = c.COSTDATE
+    if c.COSTPAIDDATE is not None: trxdate = c.COSTPAIDDATE
+
     # Create the transaction
-    tid = db.get_id(dbo, "accountstrx")
-    sql = db.make_insert_user_sql(dbo, "accountstrx", username, (
-        ( "ID", db.di(tid) ),
-        ( "TrxDate", db.dd(trxdate)),
-        ( "Description", db.ds(c["DESCRIPTION"])),
-        ( "Reconciled", db.di(0)),
-        ( "Amount", db.di(amount)),
-        ( "SourceAccountID", db.di(source)),
-        ( "DestinationAccountID", db.di(target)),
-        ( "OwnerDonationID", db.di(0)), 
-        ( "AnimalCostID", db.di(int(acid)))
-        ))
-    db.execute(dbo, sql)
-    al.debug("Trx created with ID %d" % int(tid), "financial.update_matching_cost_transaction", dbo)
+    tid = dbo.insert("accountstrx", {
+        "TrxDate":          trxdate,
+        "Description":      c.DESCRIPTION,
+        "Reconciled":       0,
+        "Amount":           amount,
+        "SourceAccountID":  source,
+        "DestinationAccountID": target,
+        "OwnerDonationID":  0,
+        "AnimalCostID":     acid
+    }, username)
+    al.debug("Trx created with ID %d" % tid, "financial.update_matching_cost_transaction", dbo)
 
 def update_matching_donation_transaction(dbo, username, odid, destinationaccount = 0):
     """
@@ -811,29 +816,34 @@ def update_matching_donation_transaction(dbo, username, odid, destinationaccount
     if not configuration.create_donation_trx(dbo): 
         al.debug("Create donation trx is off, not creating trx.", "financial.update_matching_donation_transaction", dbo)
         return
+
     # Find the donation record
-    dr = db.query(dbo, "SELECT * FROM ownerdonation WHERE ID = %d" % int(odid))
+    dr = dbo.query("SELECT * FROM ownerdonation WHERE ID = ?", [odid])
     if dr is None or len(dr) == 0:
         al.error("No matching transaction for %d found in database, bailing" % int(odid), "financial.update_matching_donation_transaction", dbo)
         return
     d = dr[0]
+
     # If the donation hasn't been received, don't do anything
-    if d["DATE"] is None: 
+    if d.DATE is None: 
         al.debug("Donation not received, not creating trx.", "financial.update_matching_donation_transaction", dbo)
         return
+
     # Do we already have an existing transaction for this donation?
     # If we do, we only need to check the amounts as it's now the
     # users problem if they picked the wrong donationtype/account
-    trxid = db.query_int(dbo, "SELECT ID FROM accountstrx WHERE OwnerDonationID = %d" % int(odid))
+    trxid = dbo.query_int("SELECT ID FROM accountstrx WHERE OwnerDonationID = ?", [odid])
     if trxid != 0:
         al.debug("Already have an existing transaction, updating amount to %d" % d["DONATION"], "financial.update_matching_donation_transaction", dbo)
-        db.execute(dbo, "UPDATE accountstrx SET Amount = %d WHERE ID = %d" % (d["DONATION"], trxid))
+        dbo.execute("UPDATE accountstrx SET Amount = ? WHERE ID = ?", (d.DONATION, trxid))
         return
+
     # Get the source account for this type of donation, use the first income account on file for that type
-    source = db.query_int(dbo, "SELECT ID FROM accounts WHERE AccountType = %d AND DonationTypeID = %d ORDER BY ID" % (INCOME, int(d["DONATIONTYPEID"])))
+    source = dbo.query_int("SELECT ID FROM accounts WHERE AccountType = ? AND DonationTypeID = ? ORDER BY ID", (INCOME, d.DONATIONTYPEID))
     if source == 0:
         # This shouldn't happen, but we can't go ahead without an account
         raise utils.ASMValidationError("No source account found for donation type, can't create trx")
+
     # Get the target account if we weren't given one
     target = destinationaccount
     if target == 0:
@@ -841,7 +851,7 @@ def update_matching_donation_transaction(dbo, username, odid, destinationaccount
         al.debug("Target account in config is: %s" % target, "financial.update_matching_donation_transaction", dbo)
         # If no target is configured, use the first bank account on file
         if target == 0:
-            target = db.query_int(dbo, "SELECT ID FROM accounts WHERE AccountType = 1")
+            target = dbo.query_int("SELECT ID FROM accounts WHERE AccountType = 1")
             al.debug("Got blank target, getting first bank account: %s" % target, "financial.update_matching_donation_transaction", dbo)
             if target == 0:
                 # Shouldn't happen, but we have no bank accounts on file
@@ -850,31 +860,30 @@ def update_matching_donation_transaction(dbo, username, odid, destinationaccount
         # Has a mapping been created by the user for this donation type
         # to a destination other than the default?
         maps = configuration.donation_account_mappings(dbo)
-        if str(d["DONATIONTYPEID"]) in maps:
-            target = maps[str(d["DONATIONTYPEID"])]
+        if str(d.DONATIONTYPEID) in maps:
+            target = maps[str(d.DONATIONTYPEID)]
             al.debug("Found override for donationtype %s, got new target account %s" % (str(d["DONATIONTYPEID"]), str(target)), "financial.update_matching_donation_transaction", dbo)
+
     # Is the donation for a negative amount? If so, flip the accounts
     # round as this is a refund donation and make the amount positive.
-    amount = d["DONATION"]
+    amount = d.DONATION
     if amount < 0:
         oldtarget = target
         target = source
         source = oldtarget
         amount = abs(amount)
+
     # Create the transaction
-    tid = db.get_id(dbo, "accountstrx")
-    sql = db.make_insert_user_sql(dbo, "accountstrx", username, (
-        ( "ID", db.di(tid) ),
-        ( "TrxDate", db.dd(d["DATE"])),
-        ( "Description", db.ds(d["COMMENTS"])),
-        ( "Reconciled", db.di(0)),
-        ( "Amount", db.di(amount)),
-        ( "SourceAccountID", db.di(source)),
-        ( "DestinationAccountID", db.di(target)),
-        ( "AnimalCostID", db.di(0)),
-        ( "OwnerDonationID", db.di(int(odid)))
-        ))
-    db.execute(dbo, sql)
+    tid = dbo.insert("accountstrx", {
+        "TrxDate":              d.DATE,
+        "Description":          d.COMMENTS,
+        "Reconciled":           0,
+        "Amount":               amount,
+        "SourceAccountID":      source,
+        "DestinationAccountID": target,
+        "AnimalCostID":         0,
+        "OwnerDonationID":      odid
+    }, username)
     al.debug("Trx created with ID %d" % int(tid), "financial.update_matching_cost_transaction", dbo)
 
 def insert_account_from_costtype(dbo, ctid, name, desc):
@@ -882,40 +891,30 @@ def insert_account_from_costtype(dbo, ctid, name, desc):
     Creates an account from a donation type record
     """
     l = dbo.locale
-    aid = db.get_id(dbo, "accounts")
     acode = i18n._("Expense::", l) + name.replace(" ", "")
-    sql = db.make_insert_user_sql(dbo, "accounts", "system", ( 
-        ( "ID", db.di(aid)),
-        ( "Code", db.ds(acode)),
-        ( "Archived", db.di(0)),
-        ( "AccountType", db.di(EXPENSE)),
-        ( "DonationTypeID", db.di(0)),
-        ( "CostTypeID", db.di(ctid)),
-        ( "Description", db.ds(desc))
-        ))
-    db.execute(dbo, sql)
-    audit.create(dbo, "system", "accounts", aid, audit.dump_row(dbo, "accounts", aid))
-    return aid
+    return dbo.insert("accounts", {
+        "Code":             acode,
+        "Archived":         0,
+        "AccountType":      EXPENSE,
+        "DonationTypeID":   0,
+        "CostTypeID":       ctid,
+        "Description":      desc
+    }, "system")
 
 def insert_account_from_donationtype(dbo, dtid, name, desc):
     """
     Creates an account from a donation type record
     """
     l = dbo.locale
-    aid = db.get_id(dbo, "accounts")
     acode = i18n._("Income::", l) + name.replace(" ", "")
-    sql = db.make_insert_user_sql(dbo, "accounts", "system", ( 
-        ( "ID", db.di(aid)),
-        ( "Code", db.ds(acode)),
-        ( "Archived", db.di(0)),
-        ( "AccountType", db.di(INCOME)),
-        ( "DonationTypeID", db.di(dtid)),
-        ( "CostTypeID", db.di(0)),
-        ( "Description", db.ds(desc))
-        ))
-    db.execute(dbo, sql)
-    audit.create(dbo, "system", "accounts", aid, audit.dump_row(dbo, "accounts", aid))
-    return aid
+    return dbo.insert("accounts", {
+        "Code":             acode,
+        "Archived":         0,
+        "AccountType":      INCOME,
+        "DonationTypeID":   dtid,
+        "CostTypeID":       0,
+        "Description":      desc
+    }, "system")
 
 def insert_account_from_form(dbo, username, post):
     """
