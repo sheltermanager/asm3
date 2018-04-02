@@ -1,7 +1,5 @@
 #!/usr/bin/python
 
-import audit
-import db
 import i18n
 import utils
 

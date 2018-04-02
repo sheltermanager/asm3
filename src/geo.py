@@ -7,10 +7,10 @@
 import al
 import cachemem
 import json
+import i18n
 import threading
 import time
 import utils
-from lookups import LOCALE_COUNTRY_NAME_MAP
 from sitedefs import BASE_URL, BULK_GEO_PROVIDER, BULK_GEO_PROVIDER_KEY, BULK_GEO_NOMINATIM_URL, BULK_GEO_GOOGLE_URL, BULK_GEO_LOOKUP_TIMEOUT, BULK_GEO_SLEEP_AFTER
 
 lat_long_lock = threading.Lock()
@@ -37,7 +37,7 @@ def get_lat_long(dbo, address, town, county, postcode, country = None):
         h = address_hash(address, town, county, postcode)
 
         if country is None: 
-            country = LOCALE_COUNTRY_NAME_MAP[dbo.locale]
+            country = i18n.get_country(dbo.locale)
 
         if BULK_GEO_PROVIDER == "nominatim":
             q = normalise_nominatim(address, town, county, postcode, country)

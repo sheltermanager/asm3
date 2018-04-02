@@ -22,7 +22,7 @@ import db, dbfs, dbupdate
 import diary as extdiary
 import financial
 import html
-from i18n import _, BUILD, translate, get_version, get_display_date_format, get_currency_prefix, get_currency_symbol, get_currency_dp, get_currency_radix, get_currency_digit_grouping, parse_date, python2display, add_days, subtract_days, subtract_months, first_of_month, last_of_month, monday_of_week, sunday_of_week, first_of_year, last_of_year, now, format_currency, i18nstringsjs
+from i18n import _, BUILD, translate, get_version, get_display_date_format, get_currency_prefix, get_currency_symbol, get_currency_dp, get_currency_radix, get_currency_digit_grouping, get_locales, parse_date, python2display, add_days, subtract_days, subtract_months, first_of_month, last_of_month, monday_of_week, sunday_of_week, first_of_year, last_of_year, now, format_currency, i18nstringsjs
 import log as extlog
 import lookups as extlookups
 import lostfound as extlostfound
@@ -1867,7 +1867,7 @@ class change_user_settings(JSONEndpoint):
         al.debug("%s change user settings screen" % o.user, "code.change_user_settings", o.dbo)
         return {
             "user": users.get_users(o.dbo, o.user),
-            "locales": extlookups.LOCALES,
+            "locales": get_locales(),
             "sigtype": ELECTRONIC_SIGNATURES,
             "themes": extlookups.VISUAL_THEMES
         }
@@ -3933,7 +3933,7 @@ class options(JSONEndpoint):
             "donationtypes": extlookups.get_donation_types(dbo),
             "entryreasons": extlookups.get_entryreasons(dbo),
             "incidenttypes": extlookups.get_incident_types(dbo),
-            "locales": extlookups.LOCALES,
+            "locales": get_locales(),
             "locations": extlookups.get_internal_locations(dbo),
             "logtypes": extlookups.get_log_types(dbo),
             "paymenttypes": extlookups.get_payment_types(dbo),

@@ -11,7 +11,7 @@ import person
 import users
 import utils
 
-from i18n import BUILD, _, translate, format_currency, format_date, now, python2display, python2unix
+from i18n import BUILD, _, translate, format_currency, format_date, get_locales, now, python2display, python2unix
 from sitedefs import BASE_URL, LOCALE, MINIFY_JS, ROLLUP_JS
 from sitedefs import ASMSELECT_CSS, ASMSELECT_JS, BASE64_JS, CODEMIRROR_CSS, CODEMIRROR_JS, CODEMIRROR_BASE, EXIFRESTORER_JS, FLOT_JS, FLOT_PIE_JS, FULLCALENDAR_JS, FULLCALENDAR_CSS, JQUERY_JS, JQUERY_UI_JS, JQUERY_UI_CSS, MOMENT_JS, MOUSETRAP_JS, PATH_JS, SIGNATURE_JS, TABLESORTER_CSS, TABLESORTER_JS, TABLESORTER_WIDGETS_JS, TIMEPICKER_CSS, TIMEPICKER_JS, TINYMCE_4_JS, TOUCHPUNCH_JS
 
@@ -1172,7 +1172,7 @@ def options_litters(dbo, includeAll = False, selected = "-1"):
 
 def options_locales():
     s = ""
-    for code, label in lookups.LOCALES:
+    for code, label in get_locales():
         s += "<option value=\"" + code + "\">" + label + "</option>"
     return s
 
