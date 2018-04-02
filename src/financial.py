@@ -3,7 +3,6 @@
 import al
 import audit
 import configuration
-import db
 import i18n
 import movement
 import utils
@@ -648,7 +647,7 @@ def delete_donation(dbo, username, did):
     """
     Deletes a payment record
     """
-    movementid = db.query_int(dbo, "SELECT MovementID FROM ownerdonation WHERE ID = %d" % int(did))
+    movementid = dbo.query_int("SELECT MovementID FROM ownerdonation WHERE ID = ?", [did])
     dbo.delete("accountstrx", "OwnerDonationID = %d" % did, username) # remove matching trx if exists
     dbo.delete("ownerdonation", did, username)
     movement.update_movement_donation(dbo, movementid)
@@ -753,7 +752,7 @@ def update_matching_cost_transaction(dbo, username, acid, destinationaccount = 0
     trxid = dbo.query_int("SELECT ID FROM accountstrx WHERE AnimalCostID = ?", [acid])
     if trxid != 0:
         al.debug("Already have an existing transaction, updating amount to %d" % c.COSTAMOUNT, "financial.update_matching_cost_transaction", dbo)
-        db.execute(dbo, "UPDATE accountstrx SET Amount = %d WHERE ID = %d" % (c.COSTAMOUNT, trxid))
+        dbo.update("accountstrx", trxid, { "Amount": c.COSTAMOUNT })
         return
 
     # Get the target account for this type of cost, use the first expense account on file for that type
@@ -1147,7 +1146,7 @@ def insert_licence_from_form(dbo, username, post):
     Creates a licence record from posted form data 
     """
     l = dbo.locale
-    if configuration.unique_licence_numbers(dbo) and 0 != db.query_int(dbo, "SELECT COUNT(*) FROM ownerlicence WHERE LicenceNumber = %s" % post.db_string("number")):
+    if configuration.unique_licence_numbers(dbo) and 0 != dbo.query_int("SELECT COUNT(*) FROM ownerlicence WHERE LicenceNumber = ?", [post["number"]]):
         raise utils.ASMValidationError(i18n._("License number '{0}' has already been issued.", l).format(post["number"]))
     if post.date("issuedate") is None or post.date("expirydate") is None:
         raise utils.ASMValidationError(i18n._("Issue date and expiry date must be valid dates.", l))
