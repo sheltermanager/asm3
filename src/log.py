@@ -18,18 +18,13 @@ ASCENDING = 0
 DESCENDING = 1
 
 def add_log(dbo, username, linktype, linkid, logtypeid, logtext):
-    logid = db.get_id(dbo, "log")
-    sql = db.make_insert_user_sql(dbo, "log", username, (
-        ( "ID", db.di(logid) ),
-        ( "LogTypeID", db.di(logtypeid) ),
-        ( "LinkID", db.di(linkid) ),
-        ( "LinkType", db.di(linktype) ),
-        ( "Date", db.ddt(i18n.now(dbo.timezone)) ),
-        ( "Comments", db.ds(logtext) )
-        ))
-    db.execute(dbo, sql)
-    audit.create(dbo, username, "log", logid, audit.dump_row(dbo, "log", logid))
-    return logid
+    return dbo.insert("log", {
+        "LogTypeID":        logtypeid,
+        "LinkID":           linkid,
+        "LinkType":         linktype,
+        "Date":             dbo.now(),
+        "Comments":         logtext
+    }, username)
 
 def get_logs(dbo, linktypeid, linkid, logtype = 0, sort = DESCENDING):
     """
@@ -37,16 +32,16 @@ def get_logs(dbo, linktypeid, linkid, logtype = 0, sort = DESCENDING):
     """
     sql = "SELECT l.*, lt.LogTypeName FROM log l " \
         "INNER JOIN logtype lt ON lt.ID = l.LogTypeID " \
-        "WHERE LinkType = %d AND LinkID = %d " % (int(linktypeid), int(linkid))
+        "WHERE LinkType = %d AND LinkID = %d " % (linktypeid, linkid)
     if logtype > 0:
-        sql += "AND l.LogTypeID = %d " % int(logtype)
+        sql += "AND l.LogTypeID = %d " % logtype
     if sort == ASCENDING:
         sql += "ORDER BY l.Date"
     if sort == DESCENDING:
         sql += "ORDER BY l.Date DESC"
-    return db.query(dbo, sql)
+    return dbo.query(sql)
 
-def insert_log_from_form(dbo, username, linktypeid, linkid, post):
+def insert_log_from_form(dbo, username, linktype, linkid, post):
     """
     Creates a log from the form data
     username: User creating the diary
@@ -56,41 +51,32 @@ def insert_log_from_form(dbo, username, linktypeid, linkid, post):
     l = dbo.locale
     if post.date("logdate") is None:
         raise utils.ASMValidationError(i18n._("Log date must be a valid date", l))
-    logid = db.get_id(dbo, "log")
-    sql = db.make_insert_user_sql(dbo, "log", username, (
-        ( "ID", db.di(logid)),
-        ( "LogTypeID", post.db_integer("type")),
-        ( "LinkID", db.di(linkid) ),
-        ( "LinkType", db.di(linktypeid) ),
-        ( "Date", post.db_datetime("logdate", "logtime")),
-        ( "Comments", post.db_string("entry"))
-        ))
-    db.execute(dbo, sql)
-    audit.create(dbo, username, "log", logid, audit.dump_row(dbo, "log", logid))
-    return logid
+
+    return dbo.insert("log", {
+        "LogTypeID":        post.integer("type"),
+        "LinkID":           linkid,
+        "LinkType":         linktype,
+        "Date":             post.datetime("logdate", "logtime"),
+        "Comments":         post["entry"]
+    }, username)
 
 def update_log_from_form(dbo, username, post):
     """
     Updates a log from form data
     """
     l = dbo.locale
-    logid = post.integer("logid")
     if post.date("logdate") is None:
         raise utils.ASMValidationError(i18n._("Log date must be a valid date", l))
-    sql = db.make_update_user_sql(dbo, "log", username, "ID=%d" % logid, (
-        ( "LogTypeID", post.db_integer("type")),
-        ( "Date", post.db_datetime("logdate", "logtime")),
-        ( "Comments", post.db_string("entry"))
-        ))
-    preaudit = db.query(dbo, "SELECT * FROM log WHERE ID=%d" % logid)
-    db.execute(dbo, sql)
-    postaudit = db.query(dbo, "SELECT * FROM log WHERE ID=%d" % logid)
-    audit.edit(dbo, username, "log", logid, audit.map_diff(preaudit, postaudit))
+
+    dbo.update("log", post.integer("logid"), {
+        "LogTypeID":    post.integer("type"),
+        "Date":         post.datetime("logdate", "logtime"),
+        "Comments":     post["entry"]
+    }, username)
 
 def delete_log(dbo, username, logid):
     """
     Deletes a log
     """
-    audit.delete(dbo, username, "log", logid, audit.dump_row(dbo, "log", logid))
-    db.execute(dbo, "DELETE FROM log WHERE ID = %d" % int(logid))
+    dbo.delete("log", logid, username)
 
