@@ -3,6 +3,7 @@
 import audit
 import base64
 import configuration
+import utils
 
 def get_html_template(dbo, name):
     """ Returns a tuple of the header, body and footer values for template name """
@@ -69,6 +70,10 @@ def create_document_template(dbo, username, name, ext = ".html", content = "<p><
     filepath = sanitise_path(filepath)
     name = filepath[filepath.rfind("/")+1:]
     path = filepath[:filepath.rfind("/")]
+
+    if 0 != dbo.query_int("SELECT COUNT(*) FROM templatedocument WHERE Name = ? AND Path = ?", (name, path)):
+        raise utils.ASMValidationError("%s already exists" % filepath)
+
     dtid = dbo.insert("templatedocument", {
         "Name":     name,
         "Path":     path,

@@ -1015,6 +1015,9 @@ def insert_trx_from_form(dbo, username, post):
 
     if other == 0:
         raise utils.ASMValidationError(i18n._("Account code '{0}' is not valid.", l).format(post["otheraccount"]))
+    if post.date("trxdate") is None:
+        raise utils.ASMValidationError(i18n._("Date '{0}' is not valid.", l).format(post["trxdate"]))
+
     if deposit > 0:
         amount = deposit
         source = other
