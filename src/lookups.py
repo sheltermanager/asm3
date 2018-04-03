@@ -1016,7 +1016,6 @@ def insert_lookup(dbo, lookup, name, desc="", speciesid=0, pfbreed="", pfspecies
             return dbo.insert(lookup, { t[LOOKUP_NAMEFIELD]: name })    
     else:
         # Name/Description
-        nid = db.get_id(dbo, lookup)
         if t[LOOKUP_CANRETIRE] == 1:
             return dbo.insert(lookup, { t[LOOKUP_NAMEFIELD]: name, t[LOOKUP_DESCFIELD]: desc, "IsRetired": retired })    
         else:
@@ -1170,7 +1169,7 @@ def get_stock_locations(dbo):
 
 def get_stock_location_name(dbo, slid):
     if slid is None: return ""
-    return db.query_string(dbo, "SELECT LocationName FROM stocklocation WHERE ID = %d" % slid)
+    return dbo.query_string("SELECT LocationName FROM stocklocation WHERE ID = ?", [slid])
 
 def get_stock_usage_types(dbo):
     return dbo.query("SELECT * FROM stockusagetype ORDER BY UsageTypeName")
