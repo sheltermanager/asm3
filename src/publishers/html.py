@@ -113,7 +113,7 @@ def get_animal_view_adoptable_html(dbo):
             "<script>\n" \
             "asm3_adoptable_filters = \"sex breed agegroup size species\";\n" \
             "asm3_adoptable_iframe = true;\n" \
-            "asm3_adoptable_iframe_fixed = true;\n" \
+            "asm3_adoptable_iframe_fixed = false; // fixed == true does not work with multi-photos/scrolling\n" \
             "</script>\n" \
             "<script src=\"%s?method=animal_view_adoptable_js&account=%s\"></script>" % (SERVICE_URL, dbo.database)
         foot = "</body>\n</html>"
