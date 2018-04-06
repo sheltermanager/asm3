@@ -268,7 +268,7 @@ $(function() {
             if (!comments) { comments = ""; }
 
             // We're only allowed to upload files of a certain type
-            if ( !media.is_jpeg(file.name) && 
+            if ( !media.is_jpeg(file.name) && !media.is_extension(file.name, "png") && 
                  !media.is_extension(file.name, "pdf") && !media.is_extension(file.name, "html") ) {
                 header.show_error(_("Only PDF, HTML and JPG image files can be attached."));
                 deferred.resolve();
@@ -411,7 +411,7 @@ $(function() {
 
             // If the file isn't a jpeg or a PDF, fail validation
             var fname = $("#filechooser").val();
-            if ( !media.is_jpeg(fname) &&
+            if ( !media.is_jpeg(fname) && !media.is_extension(fname, "png") && 
                  !media.is_extension(fname, "pdf") && !media.is_extension(fname, "html") ) {
                 header.show_error(_("Only PDF, HTML and JPG image files can be attached."));
                 return;

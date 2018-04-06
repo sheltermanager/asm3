@@ -259,6 +259,7 @@ def attach_file_from_form(dbo, username, linktype, linkid, post):
     if filedata != "":
         filetype = post["filetype"]
         if filetype.startswith("image") or filename.lower().endswith(".jpg"): ext = ".jpg"
+        elif filetype.startswith("image") or filename.lower().endswith(".png"): ext = ".png"
         elif filetype.find("pdf") != -1 or filename.lower().endswith(".pdf"): ext = ".pdf"
         elif filetype.find("html") != -1 or filename.lower().endswith(".html"): ext = ".html"
         # Strip the data:mime prefix so we just have base64 data
@@ -280,6 +281,12 @@ def attach_file_from_form(dbo, username, linktype, linkid, post):
         filedata = post.filedata()
         filename = post.filename()
         al.debug("received POST file data '%s' (%d bytes)" % (filename, len(filedata)), "media.attach_file_from_form", dbo)
+
+    # If we receive some images in formats other than JPG, we'll
+    # pretend they're jpg as that's what they'll get transformed into
+    # by scale_image
+    if ext == ".png":
+        ext = ".jpg"
 
     mediaid = db.get_id(dbo, "media")
     medianame = "%d%s" % ( mediaid, ext )
