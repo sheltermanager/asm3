@@ -211,23 +211,36 @@ class PetLinkPublisher(AbstractPublisher):
             # Parse any errors in the JSON response
             for e in jresp["errors"]:
                 chip = ""
-                # Prefer microchip= in location column, then fall back to id=/microchip= in column
-                if e["location"].find("microchip=") != -1:
-                    chip = e["location"]
-                    chip = chip[chip.find("microchip=")+10:]
-                elif e["column"].find("id=") != -1:
-                    chip = e["column"].replace("id=", "")
-                elif e["column"].find("microchip=") != -1:
-                    chip = e["column"].replace("microchip=", "")
-                message = e["message"]
+                message = ""
+                try:
+                    # Prefer microchip= in location column, then fall back to id=/microchip= in column
+                    if e["location"].find("microchip=") != -1:
+                        chip = e["location"]
+                        chip = chip[chip.find("microchip=")+10:]
+                    elif e["column"].find("id=") != -1:
+                        chip = e["column"].replace("id=", "")
+                    elif e["column"].find("microchip=") != -1:
+                        chip = e["column"].replace("microchip=", "")
+                    message = e["message"]
+                except Exception as erj:
+                    try:
+                        self.logError("Failed unpacking error message (message=%s) from '%s'" % (erj, e))
+                    except:
+                        self.logError("Failed decoding error message from PetLink")
+                    continue
 
                 # Iterate over a copy of the processed list so we can remove animals from it
                 for an in processed_animals[:]:
 
                     if an["IDENTICHIPNUMBER"] == chip:
                         processed_animals.remove(an)
-                        self.logError("%s: %s (%s) - Received error message from PetLink: %s" % \
-                            (an["SHELTERCODE"], an["ANIMALNAME"], an["IDENTICHIPNUMBER"], message))
+                        try:
+                            self.logError("%s: %s (%s) - Received error message from PetLink: %s" % \
+                                (an["SHELTERCODE"], an["ANIMALNAME"], an["IDENTICHIPNUMBER"], message))
+                        except Exception as erm:
+                            self.logError("%s: %s (%s) - Error decoding message from PetLink" % \
+                                (an["SHELTERCODE"], an["ANIMALNAME"], an["IDENTICHIPNUMBER"]))
+                            continue
 
                         # If the contact info is on file, process the animal with an error message
                         if message.find("has an existing PetLink account and their contact information is already on file") != -1:

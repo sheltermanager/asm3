@@ -1,6 +1,7 @@
 41
 ================
 
+04/04/18 PetLink cope with encoding errors in responses
 02/04/18 Remove unnecessary locale lists #395
 28/03/18 Fix bug where no staff/volunteer permission wiped out person filters
 27/03/18 Add document template support to lost/found and waiting list #414
