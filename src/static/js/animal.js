@@ -1476,7 +1476,7 @@ $(function() {
             });
 
             $("#button-littermates").button().click(function() {
-                common.route("animal_find_results?mode=ADVANCED&q=&litterid=" + encodeURIComponent($("#litterid").val()));
+                common.route("animal_find_results?mode=ADVANCED&q=&filter=includedeceased&litterid=" + encodeURIComponent($("#litterid").val()));
             });
 
             // Inline buttons
