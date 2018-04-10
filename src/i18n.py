@@ -7,8 +7,8 @@ import time
 # flake8: noqa - we have a lot of locales and this is convenient
 from locales import *
 
-VERSION = "41u [Mon  9 Apr 09:54:59 BST 2018]"
-BUILD = "04090954"
+VERSION = "41u [Tue 10 Apr 08:38:53 BST 2018]"
+BUILD = "04100838"
 
 DMY = ( "%d/%m/%Y", "%d/%m/%y" )
 MDY = ( "%m/%d/%Y", "%m/%d/%y" )
@@ -63,6 +63,7 @@ locale_maps = {
     "en_GB":    ( "English", "Great Britain", DMY, POUND, PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ".", "," ),
     "en_AU":    ( "English", "Australia", DMY, DOLLAR, PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ".", "," ),
     "en_AW":    ( "English", "Aruba", DMY, "Awg.", PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ".", "," ),
+    "en_BE":    ( "English", "Belgium", DMY, EURO, PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ",", " " ),
     "en_BG":    ( "English", "Bulgaria", DMY, "&#x043b;&#x0432;", PLURAL_ENGLISH, CURRENCY_SUFFIX, 2, ",", " "),
     "en_BH":    ( "English", "Bahrain", MDY, "BD", PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ".", "," ),
     "en_BQ":    ( "English", "Bonaire", DMY, DOLLAR, PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ".", "," ),
@@ -104,6 +105,7 @@ locale_maps = {
     "et":       ( "Estonian", "Estonia", DMY, "kr", PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ",", " " ),
     "fi":       ( "Finnish", "Finland", DMY, EURO, PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ",", " "),
     "fr":       ( "French", "France", DMY, EURO, PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ",", " " ),
+    "fr_BE":    ( "French", "Belgium", DMY, EURO, PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ",", " " ),
     "fr_LU":    ( "French", "Luxembourg", DMY, EURO, PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ".", "," ),
     "fr_CA":    ( "French", "Canada", DMY, DOLLAR, PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ",", " " ),
     "fr_CH":    ( "French", "Switzerland", DMY, "CHF", PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ".", "," ),
@@ -115,6 +117,7 @@ locale_maps = {
     "nb":       ( "Norwegian Bokmal", "Norway", DMY, "kr", PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ",", " " ),
     "nl":       ( "Dutch", "Holland", DMY, EURO, PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ",", " " ),
     "nl_AW":    ( "Dutch", "Aruba", DMY, "Awg.", PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ".", "," ),
+    "nl_BE":    ( "Dutch", "Belgium", DMY, EURO, PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ",", " " ),
     "nl_BQ":    ( "Dutch", "Bonaire", DMY, DOLLAR, PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ".", "," ),
     "pl":       ( "Polish", "Poland", DMY, "&#x007a;&#x0142;", PLURAL_POLISH, CURRENCY_PREFIX, 2, ",", " " ),
     "pt":       ( "Portugese", "Portugal", DMY, EURO, PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ",", " " ),
@@ -137,17 +140,17 @@ def real_locale(locale = "en"):
     #   en_AU (Australia)
     #   en_CA (Canada)
     #   en_GB (UK)
-    if locale in ("en_BG", "en_BQ", "en_CH", "en_CY", "en_ES", "en_IE", "en_IN", "en_KH", "en_LU", "en_NZ", "en_PH", "en_TH", "en_TW", "en_VN", "en_ZA"):
+    if locale in ("en_BE", "en_BG", "en_BQ", "en_CH", "en_CY", "en_ES", "en_IE", "en_IN", "en_KH", "en_LU", "en_NZ", "en_PH", "en_TH", "en_TW", "en_VN", "en_ZA"):
         locale = "en_GB"
     if locale in ("en_BH", "en_CO", "en_KY", "en_KW", "en_IL", "en_LB", "en_MX"):
         locale = "en"
     if locale in ("en_NZ",):
         locale = "en_AU"
     # Dutch locales
-    if locale in ("nl_AW", "nl_BQ"):
+    if locale in ("nl_AW", "nl_BE", "nl_BQ"):
         locale = "nl"
     # French locales
-    if locale in ("fr_CH", "fr_LU"):
+    if locale in ("fr_BE", "fr_CH", "fr_LU"):
         locale = "fr"
     # German locales
     if locale in ("de_AT", "de_CH", "de_LU"):
