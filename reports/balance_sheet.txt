@@ -8,8 +8,7 @@ Balance sheet of assets/liabilities for a given date period based on reconciled 
 ###
 en
 ###
-$VAR from DATE Enter from date$
-$VAR to DATE Enter to date$
+$VAR to DATE Balance sheet at date$
 
 SELECT * FROM (
 
