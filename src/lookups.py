@@ -4,7 +4,7 @@ import configuration
 import financial
 import re
 import utils
-from i18n import _, add_days, now
+from i18n import _
 
 # Look up tables map
 # tablename : ( tablelabel, namefield, namelabel, descfield, hasspecies, haspfspecies, haspfbreed, hasapcolour, hasdefaultcost, hasunits, hassite, canadd, candelete, canretire,(foreignkeys) )
@@ -957,7 +957,6 @@ def get_lookup(dbo, tablename, namefield):
 
 def insert_lookup(dbo, lookup, name, desc="", speciesid=0, pfbreed="", pfspecies="", apcolour="", units="", site=1, defaultcost=0, retired=0):
     t = LOOKUP_TABLES[lookup]
-    sql = ""
     nid = 0
     if lookup == "basecolour":
         return dbo.insert("basecolour", {
@@ -1023,7 +1022,6 @@ def insert_lookup(dbo, lookup, name, desc="", speciesid=0, pfbreed="", pfspecies
 
 def update_lookup(dbo, iid, lookup, name, desc="", speciesid=0, pfbreed="", pfspecies="", apcolour="", units="", site=1, defaultcost=0, retired=0):
     t = LOOKUP_TABLES[lookup]
-    sql = ""
     if lookup == "basecolour":
         dbo.update("basecolour", iid, { 
             "BaseColour":               name,
