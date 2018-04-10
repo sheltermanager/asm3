@@ -157,13 +157,13 @@ def get_title(dbo, customreportid):
     """
     Returns the title of a custom report from its ID
     """
-    return db.query_string(dbo, "SELECT Title FROM customreport WHERE ID = %s" % str(customreportid))
+    return dbo.query_string("SELECT Title FROM customreport WHERE ID = ?", [customreportid])
 
 def get_id(dbo, title):
     """
     Returns the id of a custom report from its title. 0 if not found.
     """
-    return db.query_int(dbo, "SELECT ID FROM customreport WHERE Title Like '%" + title + "%'")
+    return dbo.query_int("SELECT ID FROM customreport WHERE Title LIKE ?", [title.strip()])
 
 def is_mailmerge(dbo, crid):
     """
