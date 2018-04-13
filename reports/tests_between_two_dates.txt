@@ -55,6 +55,7 @@ $$FOOT
 <td><b> {SUM.Cost}<b/></td>
 </tr>
 </table>
+<p>Total $TestName: {COUNT.TestName}</p>
 GROUP$$
 
 $$BODY
@@ -74,5 +75,5 @@ BODY$$
 
 $$FOOTER
 </table>
-<h3>Total: {SUM.Cost}</h3>
+<h3>Total: {COUNT.TestName} (Cost {SUM.Cost})</h3>
 FOOTER$$
