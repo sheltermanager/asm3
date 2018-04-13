@@ -157,13 +157,14 @@ def get_animal_data_query(dbo, pc, animalid = 0):
         sql += " ORDER BY a.MostRecentEntryDate"
     return sql
 
-def get_microchip_data(dbo, patterns, publishername, allowintake = True):
+def get_microchip_data(dbo, patterns, publishername, allowintake = True, organisation_email = ""):
     """
     Returns a list of animals with unpublished microchips.
     patterns:      A list of either microchip prefixes or SQL clauses to OR together
                    together in the preamble, eg: [ '977', "a.SmartTag = 1 AND a.SmartTagNumber <> ''" ]
     publishername: The name of the microchip registration publisher, eg: pettracuk
     allowintake:   True if the provider is ok with registering to the shelter's details on intake
+    organisation_email: The org email to set for intake animals (if blank, uses configuration.email())
     """
     movementtypes = configuration.microchip_register_movements(dbo)
     try:
@@ -177,6 +178,7 @@ def get_microchip_data(dbo, patterns, publishername, allowintake = True):
     orgpostcode = configuration.organisation_postcode(dbo)
     orgtelephone = configuration.organisation_telephone(dbo)
     email = configuration.email(dbo)
+    if organisation_email != "": email = organisation_email
     extras = []
     for r in rows:
         use_original_owner_info = False

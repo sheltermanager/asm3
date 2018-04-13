@@ -949,6 +949,9 @@ def helpinglostpets_postal(dbo):
 def petlink_email(dbo):
     return cstring(dbo, "PetLinkEmail")
 
+def petlink_owner_email(dbo):
+    return cstring(dbo, "PetLinkOwnerEmail")
+
 def petlink_password(dbo):
     return cstring(dbo, "PetLinkPassword")
 

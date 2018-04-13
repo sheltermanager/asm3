@@ -52,13 +52,14 @@ class PetLinkPublisher(AbstractPublisher):
         self.setStartPublishing()
 
         plemail = configuration.petlink_email(self.dbo)
+        plowneremail = configuration.petlink_owner_email(self.dbo)
         password = configuration.petlink_password(self.dbo)
 
         if plemail == "" or password == "":
             self.setLastError("No PetLink login has been set.")
             return
 
-        animals = get_microchip_data(self.dbo, ['98102',], "petlink")
+        animals = get_microchip_data(self.dbo, ['98102',], "petlink", organisation_email = plowneremail)
         if len(animals) == 0:
             self.setLastError("No animals found to publish.")
             return
