@@ -307,6 +307,32 @@ def reduce_find_results(dbo, username, rows):
             results.append(r)
     return results
 
+def check_view_permission(dbo, username, session, acid):
+    """
+    Checks that the currently logged in user has permission to
+    view the incident with acid.
+    If they can't, an ASMPermissionError is thrown.
+    """
+    # Superusers can do anything
+    if session.superuser == 1: return True
+    viewroles = []
+    for rr in dbo.query("SELECT RoleID FROM animalcontrolrole WHERE AnimalControlID = ? AND CanView = 1", [acid]):
+        viewroles.append(rr.ROLEID)
+    # No view roles means anyone can view
+    if len(viewroles) == 0:
+        return True
+    # Does the user have any of the view roles?
+    userroles = []
+    for ur in dbo.query("SELECT RoleID FROM userrole INNER JOIN users ON userrole.UserID = users.ID WHERE users.UserName LIKE ?", [username]):
+        userroles.append(ur.ROLEID)
+    hasperm = False
+    for ur in userroles:
+        if ur in viewroles:
+            hasperm = True
+    if hasperm:
+        return True
+    raise utils.ASMPermissionError("User does not have required role to view this incident")
+
 def get_animalcontrol_satellite_counts(dbo, acid):
     """
     Returns a resultset containing the number of each type of satellite

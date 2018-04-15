@@ -2661,6 +2661,7 @@ class incident(JSONEndpoint):
     def controller(self, o):
         dbo = o.dbo
         a = extanimalcontrol.get_animalcontrol(dbo, o.post.integer("id"))
+        extanimalcontrol.check_view_permission(dbo, o.user, o.session, o.post.integer("id"))
         if o.siteid != 0 and a["SITEID"] != 0 and o.siteid != a["SITEID"]:
             raise utils.ASMPermissionError("incident not in user site")
         if a is None: self.notfound()
