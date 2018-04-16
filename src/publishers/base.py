@@ -5,7 +5,6 @@ import al
 import animal
 import async
 import configuration
-import db
 import dbfs
 import ftplib
 import glob
@@ -37,7 +36,7 @@ def get_animal_data(dbo, pc = None, animalid = 0, include_additional_fields = Fa
     """
     if pc is None:
         pc = PublishCriteria(configuration.publisher_presets(dbo))
-    sql = get_animal_data_query(dbo, pc, animalid)
+    sql = get_animal_data_query(dbo, pc)
     rows = dbo.query(sql, distincton="ID")
     al.debug("get_animal_data_query returned %d rows" % len(rows), "publishers.base.get_animal_data", dbo)
     # If the sheltercode format has a slash in it, convert it to prevent
@@ -45,18 +44,18 @@ def get_animal_data(dbo, pc = None, animalid = 0, include_additional_fields = Fa
     if len(rows) > 0 and rows[0]["SHELTERCODE"].find("/") != -1:
         al.debug("discovered forward slashes in code, repairing", "publishers.base.get_animal_data", dbo)
         for r in rows:
-            r["SHORTCODE"] = r["SHORTCODE"].replace("/", "-").replace(" ", "")
-            r["SHELTERCODE"] = r["SHELTERCODE"].replace("/", "-").replace(" ", "")
+            r.SHORTCODE = r.SHORTCODE.replace("/", "-").replace(" ", "")
+            r.SHELTERCODE = r.SHELTERCODE.replace("/", "-").replace(" ", "")
     # If we're using animal comments, override the websitemedianotes field
     # with animalcomments for compatibility with service users and other
     # third parties who were used to the old way of doing things
     if configuration.publisher_use_comments(dbo):
         for r in rows:
-            r["WEBSITEMEDIANOTES"] = r["ANIMALCOMMENTS"]
+            r.WEBSITEMEDIANOTES = r.ANIMALCOMMENTS
     # If we aren't including animals with blank descriptions, remove them now
     if not pc.includeWithoutDescription:
         oldcount = len(rows)
-        rows = [r for r in rows if utils.nulltostr(r["WEBSITEMEDIANOTES"]).strip() != ""]
+        rows = [r for r in rows if utils.nulltostr(r.WEBSITEMEDIANOTES).strip() != ""]
         al.debug("removed %d rows without descriptions" % (oldcount - len(rows)), "publishers.base.get_animal_data", dbo)
     # Embellish additional fields if requested
     if include_additional_fields:
@@ -75,17 +74,23 @@ def get_animal_data(dbo, pc = None, animalid = 0, include_additional_fields = Fa
         then remove it from the set.
         """
         for r in rows:
-            if r["ID"] == aid:
-                a["ANIMALNAME"] = "%s, %s" % (a["ANIMALNAME"], r["ANIMALNAME"])
+            if r.ID == aid:
+                a.ANIMALNAME = "%s, %s" % (a.ANIMALNAME, r.ANIMALNAME)
                 rows.remove(r)
                 al.debug("merged animal %d into %d" % (aid, a["ID"]), "publishers.base.get_animal_data", dbo)
                 break
     if pc.bondedAsSingle:
         for r in rows:
-            if r["BONDEDANIMALID"] is not None and r["BONDEDANIMALID"] != 0:
-                merge_animal(r, r["BONDEDANIMALID"])
-            if r["BONDEDANIMAL2ID"] is not None and r["BONDEDANIMAL2ID"] != 0:
-                merge_animal(r, r["BONDEDANIMAL2ID"])
+            if r.BONDEDANIMALID is not None and r.BONDEDANIMALID != 0:
+                merge_animal(r, r.BONDEDANIMALID)
+            if r.BONDEDANIMAL2ID is not None and r.BONDEDANIMAL2ID != 0:
+                merge_animal(r, r.BONDEDANIMAL2ID)
+    # If animalid was set, only return that row or an empty set if it wasn't present
+    if animalid != 0:
+        for r in rows:
+            if r.ID == animalid:
+                return [ r ]
+        return []
     # If a limit was set, throw away extra rows
     # (we do it here instead of a LIMIT clause as there's extra logic that throws
     #  away rows above).
@@ -93,17 +98,12 @@ def get_animal_data(dbo, pc = None, animalid = 0, include_additional_fields = Fa
         rows = rows[0:limit]
     return rows
 
-def get_animal_data_query(dbo, pc, animalid = 0):
+def get_animal_data_query(dbo, pc):
     """
-    Generate the adoptable animal query. If animalid is supplied, only runs the
-    query for a single animal (useful for determining if one animal is on the
-    adoptable list).
+    Generate the adoptable animal query.
     """
     sql = animal.get_animal_query(dbo)
-    if animalid == 0:
-        sql += " WHERE a.ID > 0"
-    else:
-        sql += " WHERE a.ID = %d" % animalid
+    sql += " WHERE a.ID > 0"
     if not pc.includeCaseAnimals: 
         sql += " AND a.CrueltyCase = 0"
     if not pc.includeNonNeutered:
@@ -119,14 +119,13 @@ def get_animal_data_query(dbo, pc, animalid = 0):
     if not pc.includeTrial:
         sql += " AND a.HasTrialAdoption = 0"
     # Make sure animal is old enough
-    exclude = i18n.subtract_days(i18n.now(), pc.excludeUnderWeeks * 7)
-    sql += " AND a.DateOfBirth <= " + db.dd(exclude)
+    sql += " AND a.DateOfBirth <= " + dbo.sql_value(dbo.today(offset = pc.excludeUnderWeeks * -7))
     # Filter out dead and unadoptable animals
     sql += " AND a.DeceasedDate Is Null AND a.IsNotAvailableForAdoption = 0"
     # Filter out permanent fosters
     sql += " AND a.HasPermanentFoster = 0"
     # Filter out animals with a future adoption
-    sql += " AND NOT EXISTS(SELECT ID FROM adoption WHERE MovementType = 1 AND AnimalID = a.ID AND MovementDate > %s)" % db.dd(i18n.now(dbo.timezone))
+    sql += " AND NOT EXISTS(SELECT ID FROM adoption WHERE MovementType = 1 AND AnimalID = a.ID AND MovementDate > %s)" % dbo.sql_value(dbo.today())
     # Build a set of OR clauses based on any movements/locations
     moveor = []
     # Always include courtesy post animals
@@ -180,59 +179,59 @@ def get_microchip_data(dbo, patterns, publishername, allowintake = True, organis
         use_original_owner_info = False
         use_shelter_info = False
         # If this is a non-shelter animal, use the original owner info
-        if r["NONSHELTERANIMAL"] == 1 and r["ORIGINALOWNERNAME"] is not None and r["ORIGINALOWNERNAME"] != "":
+        if r.NONSHELTERANIMAL == 1 and r.ORIGINALOWNERNAME is not None and r.ORIGINALOWNERNAME != "":
             use_original_owner_info = True
         # If this is an on-shelter animal with no active movement, use the shelter info
-        elif r["ARCHIVED"] == 0 and r["ACTIVEMOVEMENTID"] == 0:
+        elif r.ARCHIVED == 0 and r.ACTIVEMOVEMENTID == 0:
             use_shelter_info = True
         # If this is a shelter animal on foster, but register on intake is set and foster is not, use the shelter info
-        elif r["ARCHIVED"] == 0 and r["ACTIVEMOVEMENTTYPE"] == 2 and movementtypes.find("0") != -1 and movementtypes.find("2") == -1:
+        elif r.ARCHIVED == 0 and r.ACTIVEMOVEMENTTYPE == 2 and movementtypes.find("0") != -1 and movementtypes.find("2") == -1:
             use_shelter_info = True
         # Otherwise, leave CURRENTOWNER* fields as they are for active movement
         if use_original_owner_info:
-            r["CURRENTOWNERNAME"] = r["ORIGINALOWNERNAME"]
-            r["CURRENTOWNERTITLE"] = r["ORIGINALOWNERTITLE"]
-            r["CURRENTOWNERINITIALS"] = r["ORIGINALOWNERINITIALS"]
-            r["CURRENTOWNERFORENAMES"] = r["ORIGINALOWNERFORENAMES"]
-            r["CURRENTOWNERSURNAME"] = r["ORIGINALOWNERSURNAME"]
-            r["CURRENTOWNERADDRESS"] = r["ORIGINALOWNERADDRESS"]
-            r["CURRENTOWNERTOWN"] = r["ORIGINALOWNERTOWN"]
-            r["CURRENTOWNERCOUNTY"] = r["ORIGINALOWNERCOUNTY"]
-            r["CURRENTOWNERPOSTCODE"] = r["ORIGINALOWNERPOSTCODE"]
-            r["CURRENTOWNERCITY"] = r["ORIGINALOWNERTOWN"]
-            r["CURRENTOWNERSTATE"] = r["ORIGINALOWNERCOUNTY"]
-            r["CURRENTOWNERZIPCODE"] = r["ORIGINALOWNERPOSTCODE"]
-            r["CURRENTOWNERHOMETELEPHONE"] = r["ORIGINALOWNERHOMETELEPHONE"]
-            r["CURRENTOWNERPHONE"] = r["ORIGINALOWNERHOMETELEPHONE"]
-            r["CURRENTOWNERWORKTELEPHONE"] = r["ORIGINALOWNERWORKTELEPHONE"]
-            r["CURRENTOWNERMOBILETELEPHONE"] = r["ORIGINALOWNERMOBILETELEPHONE"]
-            r["CURRENTOWNERCELLPHONE"] = r["ORIGINALOWNERMOBILETELEPHONE"]
-            r["CURRENTOWNEREMAILADDRESS"] = r["ORIGINALOWNEREMAILADDRESS"]
+            r.CURRENTOWNERNAME = r.ORIGINALOWNERNAME
+            r.CURRENTOWNERTITLE = r.ORIGINALOWNERTITLE
+            r.CURRENTOWNERINITIALS = r.ORIGINALOWNERINITIALS
+            r.CURRENTOWNERFORENAMES = r.ORIGINALOWNERFORENAMES
+            r.CURRENTOWNERSURNAME = r.ORIGINALOWNERSURNAME
+            r.CURRENTOWNERADDRESS = r.ORIGINALOWNERADDRESS
+            r.CURRENTOWNERTOWN = r.ORIGINALOWNERTOWN
+            r.CURRENTOWNERCOUNTY = r.ORIGINALOWNERCOUNTY
+            r.CURRENTOWNERPOSTCODE = r.ORIGINALOWNERPOSTCODE
+            r.CURRENTOWNERCITY = r.ORIGINALOWNERTOWN
+            r.CURRENTOWNERSTATE = r.ORIGINALOWNERCOUNTY
+            r.CURRENTOWNERZIPCODE = r.ORIGINALOWNERPOSTCODE
+            r.CURRENTOWNERHOMETELEPHONE = r.ORIGINALOWNERHOMETELEPHONE
+            r.CURRENTOWNERPHONE = r.ORIGINALOWNERHOMETELEPHONE
+            r.CURRENTOWNERWORKTELEPHONE = r.ORIGINALOWNERWORKTELEPHONE
+            r.CURRENTOWNERMOBILETELEPHONE = r.ORIGINALOWNERMOBILETELEPHONE
+            r.CURRENTOWNERCELLPHONE = r.ORIGINALOWNERMOBILETELEPHONE
+            r.CURRENTOWNEREMAILADDRESS = r.ORIGINALOWNEREMAILADDRESS
         if use_shelter_info:
-            r["CURRENTOWNERNAME"] = organisation
-            r["CURRENTOWNERTITLE"] = ""
-            r["CURRENTOWNERINITIALS"] = ""
-            r["CURRENTOWNERFORENAMES"] = ""
-            r["CURRENTOWNERSURNAME"] = organisation
-            r["CURRENTOWNERADDRESS"] = orgaddress
-            r["CURRENTOWNERTOWN"] = orgtown
-            r["CURRENTOWNERCOUNTY"] = orgcounty
-            r["CURRENTOWNERPOSTCODE"] = orgpostcode
-            r["CURRENTOWNERCITY"] = orgtown
-            r["CURRENTOWNERSTATE"] = orgcounty
-            r["CURRENTOWNERZIPCODE"] = orgpostcode
-            r["CURRENTOWNERHOMETELEPHONE"] = orgtelephone
-            r["CURRENTOWNERPHONE"] = orgtelephone
-            r["CURRENTOWNERWORKTELEPHONE"] = orgtelephone
-            r["CURRENTOWNERMOBILETELEPHONE"] = orgtelephone
-            r["CURRENTOWNERCELLPHONE"] = orgtelephone
-            r["CURRENTOWNEREMAILADDRESS"] = email
+            r.CURRENTOWNERNAME = organisation
+            r.CURRENTOWNERTITLE = ""
+            r.CURRENTOWNERINITIALS = ""
+            r.CURRENTOWNERFORENAMES = ""
+            r.CURRENTOWNERSURNAME = organisation
+            r.CURRENTOWNERADDRESS = orgaddress
+            r.CURRENTOWNERTOWN = orgtown
+            r.CURRENTOWNERCOUNTY = orgcounty
+            r.CURRENTOWNERPOSTCODE = orgpostcode
+            r.CURRENTOWNERCITY = orgtown
+            r.CURRENTOWNERSTATE = orgcounty
+            r.CURRENTOWNERZIPCODE = orgpostcode
+            r.CURRENTOWNERHOMETELEPHONE = orgtelephone
+            r.CURRENTOWNERPHONE = orgtelephone
+            r.CURRENTOWNERWORKTELEPHONE = orgtelephone
+            r.CURRENTOWNERMOBILETELEPHONE = orgtelephone
+            r.CURRENTOWNERCELLPHONE = orgtelephone
+            r.CURRENTOWNEREMAILADDRESS = email
         # If this row has IDENTICHIP2NUMBER and IDENTICHIP2DATE populated, clone the 
         # row and move the values to IDENTICHIPNUMBER and IDENTICHIPDATE for publishing
-        if r["IDENTICHIP2NUMBER"] and r["IDENTICHIP2NUMBER"] != "":
+        if r.IDENTICHIP2NUMBER and r.IDENTICHIP2NUMBER != "":
             x = r.copy()
-            x["IDENTICHIPNUMBER"] = x["IDENTICHIP2NUMBER"]
-            x["IDENTICHIPDATE"] = x["IDENTICHIP2DATE"]
+            x.IDENTICHIPNUMBER = x.IDENTICHIP2NUMBER
+            x.IDENTICHIPDATE = x.IDENTICHIP2DATE
             extras.append(x)
     return rows + extras
 
@@ -292,11 +291,11 @@ def get_adoption_status(dbo, a):
     status.
     """
     l = dbo.locale
-    if a["ARCHIVED"] == 0 and a["CRUELTYCASE"] == 1: return i18n._("Cruelty Case", l)
-    if a["ARCHIVED"] == 0 and a["ISQUARANTINE"] == 1: return i18n._("Quarantine", l)
-    if a["ARCHIVED"] == 0 and a["ISHOLD"] == 1: return i18n._("Hold", l)
-    if a["ARCHIVED"] == 0 and a["HASACTIVERESERVE"] == 1: return i18n._("Reserved", l)
-    if a["ARCHIVED"] == 0 and a["HASPERMANENTFOSTER"] == 1: return i18n._("Permanent Foster", l)
+    if a.ARCHIVED == 0 and a.CRUELTYCASE == 1: return i18n._("Cruelty Case", l)
+    if a.ARCHIVED == 0 and a.ISQUARANTINE == 1: return i18n._("Quarantine", l)
+    if a.ARCHIVED == 0 and a.ISHOLD == 1: return i18n._("Hold", l)
+    if a.ARCHIVED == 0 and a.HASACTIVERESERVE == 1: return i18n._("Reserved", l)
+    if a.ARCHIVED == 0 and a.HASPERMANENTFOSTER == 1: return i18n._("Permanent Foster", l)
     if is_animal_adoptable(dbo, a): return i18n._("Adoptable", l)
     return i18n._("Not For Adoption", l)
 
@@ -326,7 +325,6 @@ def is_animal_adoptable(dbo, a):
     if p.excludeUnderWeeks > 0 and i18n.add_days(a.DATEOFBIRTH, 7 * p.excludeUnderWeeks) > dbo.today(): return False
     if len(p.internalLocations) > 0 and a.ACTIVEMOVEMENTTYPE == 0 and str(a.SHELTERLOCATION) not in p.internalLocations: return False
     return True
-
 
 class PublishCriteria(object):
     """
@@ -506,21 +504,21 @@ class AbstractPublisher(threading.Thread):
         """
         Returns True if all species have been mapped for publishers
         """
-        return 0 == db.query_int(self.dbo, "SELECT COUNT(*) FROM species " + \
+        return 0 == self.dbo.query_int("SELECT COUNT(*) FROM species " \
             "WHERE PetFinderSpecies Is Null OR PetFinderSpecies = ''")
 
     def checkMappedBreeds(self):
         """
         Returns True if all breeds have been mapped for publishers
         """
-        return 0 == db.query_int(self.dbo, "SELECT COUNT(*) FROM breed " + \
+        return 0 == self.dbo.query_int("SELECT COUNT(*) FROM breed " + \
             "WHERE PetFinderBreed Is Null OR PetFinderBreed = ''")
 
     def checkMappedColours(self):
         """
         Returns True if all colours have been mapped for publishers
         """
-        return 0 == db.query_int(self.dbo, "SELECT COUNT(*) FROM basecolour " + \
+        return 0 == self.dbo.query_int("SELECT COUNT(*) FROM basecolour " \
             "WHERE AdoptAPetColour Is Null OR AdoptAPetColour = ''")
 
     def getPublisherBreed(self, an, b1or2 = 1):
@@ -734,7 +732,7 @@ class AbstractPublisher(threading.Thread):
         """
         Returns the last date animalid was sent to the current publisher
         """
-        return db.query_date(self.dbo, "SELECT SentDate FROM animalpublished WHERE AnimalID = %d AND PublishedTo = '%s'" % (animalid, self.publisherKey))
+        return self.dbo.query_date("SELECT SentDate FROM animalpublished WHERE AnimalID = ? AND PublishedTo = ?", (animalid, self.publisherKey))
 
     def markAnimalPublished(self, animalid, datevalue = None):
         """
@@ -743,8 +741,11 @@ class AbstractPublisher(threading.Thread):
         """
         if datevalue is None: datevalue = i18n.now(self.dbo.timezone)
         self.markAnimalUnpublished(animalid)
-        db.execute(self.dbo, "INSERT INTO animalpublished (AnimalID, PublishedTo, SentDate) VALUES (%d, '%s', %s)" %
-            (animalid, self.publisherKey, db.dd(datevalue)))
+        self.dbo.insert("animalpublished", {
+            "AnimalID":     animalid,
+            "PublishedTo":  self.publisherKey,
+            "SentDate":     datevalue
+        }, generateID=False)
 
     def markAnimalFirstPublished(self, animalid):
         """
@@ -754,14 +755,18 @@ class AbstractPublisher(threading.Thread):
         the date the animal was first made adoptable.
         """
         FIRST_PUBLISHER = "first"
-        if 0 == db.query_int(self.dbo, "SELECT COUNT(SentDate) FROM animalpublished WHERE AnimalID = %d AND PUblishedTo = '%s'" % (animalid, FIRST_PUBLISHER)):
-            db.execute(self.dbo, "INSERT INTO animalpublished (AnimalID, PublishedTo, SentDate) VALUES (%s, %s, %s)" % (animalid, db.ds(FIRST_PUBLISHER), db.dd(i18n.now(self.dbo.timezone))))
+        if 0 == self.dbo.query_int("SELECT COUNT(SentDate) FROM animalpublished WHERE AnimalID = ? AND PUblishedTo = ?",(animalid, FIRST_PUBLISHER)):
+            self.dbo.insert("animalpublished", {
+                "AnimalID":     animalid,
+                "PublishedTo":  FIRST_PUBLISHER,
+                "SentDate":     self.dbo.today()
+            }, generateID=False)
 
     def markAnimalUnpublished(self, animalid):
         """
         Marks an animal as not published for the current publisher
         """
-        db.execute(self.dbo, "DELETE FROM animalpublished WHERE AnimalID = %d AND PublishedTo = '%s'" % (animalid, self.publisherKey))
+        self.dbo.delete("animalpublished", "AnimalID=%d AND PublishedTo='%s'" % (animalid, self.publisherKey))
 
     def markAnimalsPublished(self, animals, first=False):
         """
@@ -858,16 +863,13 @@ class AbstractPublisher(threading.Thread):
         """
         Saves the log to the publishlog table
         """
-        plid = db.get_id(self.dbo, "publishlog")
-        sql = db.make_insert_sql("publishlog", ( 
-            ( "ID", db.di(plid) ), 
-            ( "PublishDateTime", db.ddt(self.publishDateTime) ),
-            ( "Name", db.ds(self.publisherKey) ),
-            ( "Success", db.di(self.successes) ),
-            ( "Alerts", db.di(self.alerts) ),
-            ( "LogData", db.ds("\n".join(self.logBuffer), False) )
-            ))
-        db.execute(self.dbo, sql)
+        self.dbo.insert("publishlog", {
+            "PublishDateTime":      self.publishDateTime,
+            "Name":                 self.publisherKey,
+            "Success":              self.successes,
+            "Alerts":               self.alerts,
+            "LogData":              "\n".join(self.logBuffer)
+        })
 
     def isImage(self, path):
         """

@@ -65,11 +65,9 @@ def get_adoptable_animals(dbo, style="", speciesid=0, animaltypeid=0):
     
 def get_animal_view(dbo, animalid):
     """ Constructs the animal view page to the template. """
-    a = animal.get_animal(dbo, animalid)
-    if a is None:
-        raise utils.ASMPermissionError("animal does not exist")
+    a = dbo.first_row(get_animal_data(dbo, animalid=animalid, include_additional_fields=True, strip_personal_data=True))
     # If the animal is not adoptable, bail out
-    if not is_animal_adoptable(dbo, a):
+    if a is None or not is_animal_adoptable(dbo, a):
         raise utils.ASMPermissionError("animal is not adoptable")
     # If the option is on, use animal comments as the notes
     if configuration.publisher_use_comments(dbo):
