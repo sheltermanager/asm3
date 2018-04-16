@@ -1,6 +1,7 @@
 41
 ================
 
+16/04/18 AgeGroup should be now until the animal leaves the shelter #422
 15/04/18 Check incident permissions at server side during open
 13/04/18 PetLink: Allow an owner account to be set for intake animals #423
 10/04/18 Show ungiven tests with a blank result in mobile interface #420

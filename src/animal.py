@@ -2957,6 +2957,7 @@ def update_variable_animal_data(dbo, animalid, a = None, animalupdatebatch = Non
     Updates the variable data animal fields,
     MostRecentEntryDate, TimeOnShelter, DaysOnShelter, AgeGroup, AnimalAge,
     TotalTimeOnShelter, TotalDaysOnShelter
+    AgeGroup holds the animal's current age group, but resets to last entry when they leave the shelter.
     (int) animalid: The animal to update
     a: An animal result to use instead of looking it up from the id
     animalupdatebatch: A batch of update parameters
@@ -2966,7 +2967,7 @@ def update_variable_animal_data(dbo, animalid, a = None, animalupdatebatch = Non
     if animalupdatebatch is not None:
         animalupdatebatch.append((
             calc_time_on_shelter(dbo, animalid, a),
-            calc_age_group(dbo, animalid, a, bands, a.mostrecententrydate),
+            calc_age_group(dbo, animalid, a, bands, utils.iif(a.activemovementdate is not None, a.mostrecententrydate, None)),
             calc_age_group(dbo, animalid, a, bands, a.activemovementdate),
             calc_age(dbo, animalid, a),
             calc_days_on_shelter(dbo, animalid, a),
@@ -2975,10 +2976,13 @@ def update_variable_animal_data(dbo, animalid, a = None, animalupdatebatch = Non
             animalid
         ))
     else:
+        activemovement = dbo.query_date("SELECT ActiveMovementDate FROM animal WHERE ID = ?", [animalid])
+        recententry = dbo.query_date("SELECT MostRecentEntryDate FROM animal WHERE ID = ?", [animalid])
+        agegroupto = utils.iif(activemovement is not None, recententry, None)
         dbo.update("animal", animalid, {
             "TimeOnShelter":        calc_time_on_shelter(dbo, animalid, a),
-            "AgeGroup":             calc_age_group(dbo, animalid, a, todate = dbo.query_date("SELECT MostRecentEntryDate FROM animal WHERE ID = ?", [animalid])),
-            "AgeGroupActiveMovement": calc_age_group(dbo, animalid, a, todate = dbo.query_date("SELECT ActiveMovementDate FROM animal WHERE ID = ?", [animalid])),
+            "AgeGroup":             calc_age_group(dbo, animalid, a, todate = agegroupto),
+            "AgeGroupActiveMovement": calc_age_group(dbo, animalid, a, todate = activemovement),
             "AnimalAge":            calc_age(dbo, animalid, a),
             "DaysOnShelter":        calc_days_on_shelter(dbo, animalid, a),
             "TotalTimeOnShelter":   calc_total_time_on_shelter(dbo, animalid, a),
