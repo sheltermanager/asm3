@@ -24,7 +24,44 @@ def get_adoptable_animals(dbo, style="", speciesid=0, animaltypeid=0):
     speciesid: 0 for all species, or a specific one
     animaltypeid: 0 for all animal types or a specific one
     """
-    animals = get_animal_data(dbo, PublishCriteria(configuration.publisher_presets(dbo)), include_additional_fields = True)
+    animals = get_animal_data(dbo, include_additional_fields=True)
+    return animals_to_page(animals)
+
+def get_adopted_animals(dbo, daysadopted=0, style="", speciesid=0, animaltypeid=0):
+    """ Returns a page of adopted animals.
+    daysadopted: The number of days the animals have been adopted
+    style: The HTML publishing template to use
+    speciesid: 0 for all species, or a specific one
+    animaltypeid: 0 for all animal types or a specific one
+    """
+    if daysadopted == 0: daysadopted = 30
+    orderby = "a.ActiveMovementDate DESC"
+    animals = dbo.query(animal.get_animal_query(dbo) + " WHERE a.ActiveMovementType = 1 AND " \
+        "a.ActiveMovementDate >= ? AND a.DeceasedDate Is Null AND a.NonShelterAnimal = 0 "
+        "ORDER BY %s" % orderby, [ dbo.today(daysadopted * -1)] )
+    return animals_to_page(animals)
+
+def get_deceased_animals(dbo, daysdeceased=0, style="", speciesid=0, animaltypeid=0):
+    """ Returns a page of deceased animals.
+    daysdeceased: The number of days the animals have been deceased
+    style: The HTML publishing template to use
+    speciesid: 0 for all species, or a specific one
+    animaltypeid: 0 for all animal types or a specific one
+    """
+    if daysdeceased == 0: daysdeceased = 30
+    orderby = "a.DeceasedDate DESC"
+    animals = dbo.query(animal.get_animal_query(dbo) + \
+        " WHERE a.DeceasedDate Is Not Null AND a.DeceasedDate >= ? AND a.NonShelterAnimal = 0 AND a.DiedOffShelter = 0 "
+        "ORDER BY %s" % orderby, [ dbo.today(daysdeceased * -1)] )
+    return animals_to_page(animals)
+
+def animals_to_page(dbo, animals, style="", speciesid=0, animaltypeid=0):
+    """ Returns a page of animals.
+    animals: A resultset containing animal records
+    style: The HTML publishing template to use
+    speciesid: 0 for all species, or a specific one
+    animaltypeid: 0 for all animal types or a specific one
+    """
     # Get the specified template
     head, body, foot = template.get_html_template(dbo, style)
     if head == "":

@@ -344,6 +344,46 @@ Publishing Options`
     http://localhost:5000/service?method=html_adoptable_animals&template=littlebox&speciesid=1
     http://localhost:5000/service?method=html_adoptable_animals
 
+html_adopted_animals
+----------------------
+
+.. rubric:: Cache time: 30 minutes
+
+Returns a complete HTML document containing an HTML page of recently adopted
+animals.
+
+You can pass an HTML template name in an optional "template" parameter (leaving
+it off will cause animalview to be used). It is also possible to pass
+speciesid=X or animaltypeid=X parameters to only output animals of that species
+and type. In the default dataset, speciesid=1 is Dogs and speciesid=2 is cats.
+
+You can also pass a "days" parameter to indicate how far you would like to
+go back. If you do not set it, the default is animals adopted in the last 30
+days.
+ 
+    http://localhost:5000/service?method=html_adopted_animals&template=littlebox&speciesid=1&days=60
+    http://localhost:5000/service?method=html_adopted_animals
+
+html_deceased_animals
+----------------------
+
+.. rubric:: Cache time: 30 minutes
+
+Returns a complete HTML document containing an HTML page of recently deceased 
+animals.
+
+You can pass an HTML template name in an optional "template" parameter (leaving
+it off will cause animalview to be used). It is also possible to pass
+speciesid=X or animaltypeid=X parameters to only output animals of that species
+and type. In the default dataset, speciesid=1 is Dogs and speciesid=2 is cats.
+
+You can also pass a "days" parameter to indicate how far you would like to
+go back. If you do not set it, the default is animals deceased in the last 30
+days.
+ 
+    http://localhost:5000/service?method=html_deceased_animals&template=littlebox&speciesid=1&days=60
+    http://localhost:5000/service?method=html_deceased_animals
+
 html_report
 -----------
 
