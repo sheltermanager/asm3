@@ -218,6 +218,7 @@ def page(dbo, session, username):
     testresults = lookups.get_test_results(dbo)
     stl = stock.get_stock_locations_totals(dbo)
     inmy = animalcontrol.get_animalcontrol_find_advanced(dbo, { "dispatchedaco": session.user, "filter": "incomplete" }, username)
+    inun = animalcontrol.get_animalcontrol_find_advanced(dbo, { "dispatchedaco": session.user, "filter": "undispatched" }, username)
     inop = animalcontrol.get_animalcontrol_find_advanced(dbo, { "filter": "incomplete" }, username)
     infp = animalcontrol.get_animalcontrol_find_advanced(dbo, { "filter": "requirefollowup" }, username)
     homelink = jqm_link("mobile", _("Home", l), "home", "ui-btn-right", "b")
@@ -262,6 +263,8 @@ def page(dbo, session, username):
         items.append(jqm_listitem_link("mobile_post?posttype=aincs", _("Add Call", l), "call"))
     if len(inmy) > 0 and pb(users.CHANGE_INCIDENT):
         items.append(jqm_listitem_link("#inmy", _("My Incidents", l), "call", len(inmy)))
+    if len(inun) > 0 and pb(users.CHANGE_INCIDENT):
+        items.append(jqm_listitem_link("#inun", _("My Undispatched Incidents", l), "call", len(inun)))
     if len(inop) > 0 and pb(users.CHANGE_INCIDENT):
         items.append(jqm_listitem_link("#inop", _("Open Incidents", l), "call", len(inop)))
     if len(infp) > 0 and pb(users.CHANGE_INCIDENT):
@@ -301,6 +304,7 @@ def page(dbo, session, username):
     h += page_homecheck(l, homelink, dbo)
     h += page_stocklevels(l, homelink, stl)
     h += page_incidents(l, homelink, inmy, "inmy", _("My Incidents", l))
+    h += page_incidents(l, homelink, inun, "inun", _("My Undispatched Incidents", l))
     h += page_incidents(l, homelink, inop, "inop", _("Open Incidents", l))
     h += page_incidents(l, homelink, infp, "infp", _("Incidents Requiring Followup", l))
     h += page_find_person(l, homelink)

@@ -7120,6 +7120,10 @@ msgstr ""
 msgid "My Incidents"
 msgstr ""
 
+#: mobile.py
+msgid "My Undispatched Incidents"
+msgstr ""
+
 #: header.js html.py configuration.py
 msgid "My diary notes"
 msgstr ""
