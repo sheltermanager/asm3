@@ -1108,28 +1108,23 @@ def table_tags(dbo, d, rows, typefield = "", recentdatefield = ""):
     """
     l = dbo.locale
     tags = {}
-
-    # Create the indexed rows
-    for i, r in enumerate(rows, 1):
-        for k, v in d.iteritems():
-            tags[k + str(i)] = table_get_value(l, r, v)
-
     uniquetypes = {}
     recentgiven = {}
 
-    # Go backwards through rows
-    for i, r in enumerate(reversed(rows), 1):
-
-        # Create reversed index tags
+    # Go forwards through the rows
+    for i, r in enumerate(rows, 1):
+        
+        # Create the indexed tags
         for k, v in d.iteritems():
-            tags[k + "LAST" + str(i)] = table_get_value(l, r, v)
+            tags[k + str(i)] = table_get_value(l, r, v)
 
         # Type suffixed tags
         if typefield != "":
             t = r[typefield]
+
             # If the type is somehow null, we can't do anything
-            if t is None:
-                continue
+            if t is None: continue
+
             # Is this the first of this type we've seen?
             # If so, create the tags with type as a suffix
             if t not in uniquetypes:
@@ -1137,6 +1132,13 @@ def table_tags(dbo, d, rows, typefield = "", recentdatefield = ""):
                 t = t.upper().replace(" ", "").replace("/", "")
                 for k, v in d.iteritems():
                     tags[k + t] = table_get_value(l, r, v)
+
+    # Go backwards through rows
+    for i, r in enumerate(reversed(rows), 1):
+
+        # Create reversed index tags
+        for k, v in d.iteritems():
+            tags[k + "LAST" + str(i)] = table_get_value(l, r, v)
 
         # Recent suffixed tags
         if recentdatefield != "":
