@@ -1389,6 +1389,7 @@
             var p = config.str("PublisherPresets"),
                 exwks = format.to_int(common.url_param(p.replace(/ /g, "&"), "excludeunder")),
                 locs = common.url_param(p.replace(/ /g, "&"), "includelocations");
+            if (a.ISCOURTESY == 1) { return [ true, _("Courtesy Listing") ]; }
             if (a.ISNOTAVAILABLEFORADOPTION == 1) { return [ false, _("Not for adoption flag set") ]; }
             if (a.NONSHELTERANIMAL == 1) { return [ false, _("Non-Shelter") ]; }
             if (a.DECEASEDDATE) { return [ false, _("Deceased") ]; }

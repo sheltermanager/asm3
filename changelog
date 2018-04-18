@@ -1,6 +1,7 @@
 41
 ================
 
+18/04/18 is_animal_adoptable logic should consider courtesy listings
 17/04/18 html_adopted_animals, html_deceased_animals service calls #384 #385
 16/04/18 animalview should be using get_animal_data to honour bonded animals #421
 16/04/18 AgeGroup should be now until the animal leaves the shelter #422

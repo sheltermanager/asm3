@@ -304,6 +304,7 @@ def is_animal_adoptable(dbo, a):
     Returns true if the animal a is adoptable. This should match exactly the code in common.js / html.is_animal_adoptable
     """
     p = PublishCriteria(configuration.publisher_presets(dbo))
+    if a.ISCOURTESY == 1: return True
     if a.ISNOTAVAILABLEFORADOPTION == 1: return False
     if a.NONSHELTERANIMAL == 1: return False
     if a.DECEASEDDATE is not None: return False

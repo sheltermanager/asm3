@@ -25,7 +25,7 @@ def get_adoptable_animals(dbo, style="", speciesid=0, animaltypeid=0):
     animaltypeid: 0 for all animal types or a specific one
     """
     animals = get_animal_data(dbo, include_additional_fields=True)
-    return animals_to_page(animals)
+    return animals_to_page(dbo, animals, style=style, speciesid=speciesid, animaltypeid=animaltypeid)
 
 def get_adopted_animals(dbo, daysadopted=0, style="", speciesid=0, animaltypeid=0):
     """ Returns a page of adopted animals.
@@ -39,7 +39,7 @@ def get_adopted_animals(dbo, daysadopted=0, style="", speciesid=0, animaltypeid=
     animals = dbo.query(animal.get_animal_query(dbo) + " WHERE a.ActiveMovementType = 1 AND " \
         "a.ActiveMovementDate >= ? AND a.DeceasedDate Is Null AND a.NonShelterAnimal = 0 "
         "ORDER BY %s" % orderby, [ dbo.today(daysadopted * -1)] )
-    return animals_to_page(animals)
+    return animals_to_page(dbo, animals, style=style, speciesid=speciesid, animaltypeid=animaltypeid)
 
 def get_deceased_animals(dbo, daysdeceased=0, style="", speciesid=0, animaltypeid=0):
     """ Returns a page of deceased animals.
@@ -53,7 +53,7 @@ def get_deceased_animals(dbo, daysdeceased=0, style="", speciesid=0, animaltypei
     animals = dbo.query(animal.get_animal_query(dbo) + \
         " WHERE a.DeceasedDate Is Not Null AND a.DeceasedDate >= ? AND a.NonShelterAnimal = 0 AND a.DiedOffShelter = 0 "
         "ORDER BY %s" % orderby, [ dbo.today(daysdeceased * -1)] )
-    return animals_to_page(animals)
+    return animals_to_page(dbo, animals, style=style, speciesid=speciesid, animaltypeid=animaltypeid)
 
 def animals_to_page(dbo, animals, style="", speciesid=0, animaltypeid=0):
     """ Returns a page of animals.
