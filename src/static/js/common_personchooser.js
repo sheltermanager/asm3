@@ -298,6 +298,11 @@
                     if (config.bool("MultiSiteEnabled")) {
                         dialogadd.find(".personchooser-site").select("value", asm.siteid);
                     }
+                    // If we have a filter, set the appropriate person flags to match
+                    if (self.options.filter) {
+                        dialogadd.find(".personchooser-flags option[value='" + self.options.filter + "']").prop("selected", true);
+                        dialogadd.find(".personchooser-flags").change();
+                    }
                 },
                 close: function() {
                     dialogadd.find("input, textarea").val("");
