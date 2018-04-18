@@ -1,6 +1,7 @@
 41
 ================
 
+18/04/18 Record GDPR options in the log for new people
 18/04/18 Fix access to first of type in wordkey tokens #383
 18/04/18 Set flags when creating people from a filtered embed person #44
 18/04/18 Add GDPR Contact Opt-In to advanced person find #416

@@ -937,6 +937,12 @@ def insert_person_from_form(dbo, post, username):
     db.execute(dbo, sql)
     audit.create(dbo, username, "owner", pid, audit.dump_row(dbo, "owner", pid))
 
+    # If the option is on, record any GDPR contact options in the log
+    if configuration.show_gdpr_contact_optin(dbo) and configuration.gdpr_contact_change_log(dbo) and post["gdprcontactoptin"] != "":
+        newvalue = post["gdprcontactoptin"]
+        log.add_log(dbo, username, log.PERSON, pid, configuration.gdpr_contact_change_log_type(dbo),
+            "%s" % (newvalue))
+
     # Save any additional field values given
     additional.save_values_for_link(dbo, post, pid, "person")
 
