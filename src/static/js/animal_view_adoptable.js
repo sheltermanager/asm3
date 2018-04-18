@@ -76,9 +76,18 @@
 
     var sort_single = function(fieldname) {
         var sortOrder = 1;
-        if (fieldname[0] === "-") {
+        if (fieldname.indexOf("-") != -1) {
             sortOrder = -1;
-            fieldname = fieldname.substr(1);
+            fieldname = fieldname.replace("-", "");
+        }
+        if (fieldname.indexOf("@") != -1) {
+            fieldname = fieldname.replace("@", "");
+            return function (a,b) {
+                var ca = a[fieldname];
+                var cb = b[fieldname];
+                var result = (ca < cb) ? -1 : (ca > cb) ? 1 : 0;
+                return result * sortOrder;
+            };
         }
         return function (a,b) {
             var ca = String(a[fieldname]).toUpperCase();

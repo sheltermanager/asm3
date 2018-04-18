@@ -205,10 +205,11 @@ Sort
 You can choose the sort order by setting an asm3_adoptable_sort variable. The default is
 ANIMALNAME, but another useful value is -DAYSONSHELTER to output animals based on how
 long they've been on shelter with the longest first. Preceding the sort field with a 
-minus symbol will sort in descending order::
+minus symbol - will sort in descending order. You can also use precede the sort field with
+an at symbol @ to do a numeric sort rather than a string/alphanumeric sort::
 
     <script>
-    asm3_adoptable_sort = "-DAYSONSHELTER";
+    asm3_adoptable_sort = "-@DAYSONSHELTER";
     </script>
     <div id="asm3-adoptables" />
     <script src="http://localhost:5000/service?method=animal_view_adoptable_js"></script>
