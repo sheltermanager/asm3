@@ -1,5 +1,5 @@
 /*jslint browser: true, forin: true, eqeq: true, white: true, sloppy: true, vars: true, nomen: true */
-/*global $, jQuery, _, additional, asm, common, config, controller, dlgfx, format, geo, header, html, validate */
+/*global $, jQuery, _, additional, asm, common, config, controller, dlgfx, edit_header, format, geo, header, html, validate */
 
 $(function() {
 
@@ -83,12 +83,7 @@ $(function() {
                 '<td><label for="gdprcontactoptin">' + _("GDPR Contact Opt-In") + '</label></td>',
                 '<td>',
                 '<select id="gdprcontactoptin" data-json="GDPRCONTACTOPTIN" data-post="gdprcontactoptin" class="asm-bsmselect" multiple="multiple">',
-                '<option value="didnotask">' + _("Did not ask") + '</option>',
-                '<option value="declined">' + _("Declined") + '</option>',
-                '<option value="email">' + _("Email") + '</option>',
-                '<option value="post">' + _("Post") + '</option>',
-                '<option value="sms">' + _("SMS") + '</option>',
-                '<option value="phone">' + _("Phone") + '</option>',
+                edit_header.gdpr_contact_options(),
                 '</select>',
                 '</td>',
                 '</tr>',

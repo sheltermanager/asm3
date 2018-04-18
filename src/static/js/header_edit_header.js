@@ -226,6 +226,17 @@ $(function() {
             return s.join("\n");
         },
 
+        gdpr_contact_options: function() {
+            return [
+                '<option value="didnotask">' + _("Did not ask") + '</option>',
+                '<option value="declined">' + _("Declined") + '</option>',
+                '<option value="email">' + _("Email") + '</option>',
+                '<option value="post">' + _("Post") + '</option>',
+                '<option value="sms">' + _("SMS") + '</option>',
+                '<option value="phone">' + _("Phone") + '</option>'
+            ];
+        },
+
         /** 
          * Returns the header for the incident pages, with the banner info and
          * tabs.

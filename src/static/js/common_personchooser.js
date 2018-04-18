@@ -1,6 +1,6 @@
 /*jslint browser: true, forin: true, eqeq: true, plusplus: true, white: true, sloppy: true, vars: true, nomen: true */
 /*global $, console, jQuery */
-/*global _, asm, additional, common, config, dlgfx, format, geo, html, header, log, validate, escape, unescape */
+/*global _, asm, additional, common, config, dlgfx, edit_header, format, geo, html, header, log, validate, escape, unescape */
 
 (function($) {
 
@@ -166,9 +166,18 @@
                 '</select>',
                 '</td>',
                 '</tr>',
+                '<tr>',
                 '<td><label>' + _("Flags") + '</label></td>',
                 '<td>',
                 '<select class="personchooser-flags chooser" data="flags" multiple="multiple">',
+                '</select>',
+                '</td>',
+                '</tr>',
+                '<tr class="personchooser-gdprrow">',
+                '<td><label>' + _("GDPR Contact Opt-In") + '</label></td>',
+                '<td>',
+                '<select class="personchooser-gdpr chooser" data="gdprcontactoptin" multiple="multiple">',
+                edit_header.gdpr_contact_options(),
                 '</select>',
                 '</td>',
                 '</tr>',
@@ -210,6 +219,11 @@
             // Hide jurisdictions for no animal control
             if (config.bool("DisableAnimalControl")) {
                 dialogadd.find(".personchooser-jurisdictionrow").hide();
+            }
+
+            // Hide GDPR if option not on
+            if (!config.bool("ShowGDPRContactOptIn")) {
+                dialogadd.find(".personchooser-gdprrow").hide();
             }
             
             // Create the find dialog
@@ -289,6 +303,8 @@
                     dialogadd.find("input, textarea").val("");
                     dialogadd.find(".personchooser-flags option:selected").removeAttr("selected");
                     dialogadd.find(".personchooser-flags").change();
+                    dialogadd.find(".personchooser-gdpr option:selected").removeAttr("selected");
+                    dialogadd.find(".personchooser-gdpr").change();
                     dialogadd.find("label").removeClass(validate.ERROR_LABEL_CLASS);
                     dialogadd.enable_dialog_buttons();
                 }
@@ -347,6 +363,17 @@
                     // Setup person flag select widget
                     dialogadd.find(".personchooser-flags").attr("title", _("Select"));
                     dialogadd.find(".personchooser-flags").asmSelect({
+                        animate: true,
+                        sortable: true,
+                        removeLabel: '<strong>X</strong>',
+                        listClass: 'bsmList-custom',  
+                        listItemClass: 'bsmListItem-custom',
+                        listItemLabelClass: 'bsmListItemLabel-custom',
+                        removeClass: 'bsmListItemRemove-custom'
+                    });
+                    // Setup GDPR select widget
+                    dialogadd.find(".personchooser-gdpr").attr("title", _("Select"));
+                    dialogadd.find(".personchooser-gdpr").asmSelect({
                         animate: true,
                         sortable: true,
                         removeLabel: '<strong>X</strong>',
