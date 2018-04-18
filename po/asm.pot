@@ -2908,6 +2908,10 @@ msgstr ""
 msgid "Date"
 msgstr ""
 
+#: financial.py
+msgid "Date '{0}' is not valid."
+msgstr ""
+
 #: animal.js animal_new.js mobile.py html.py
 msgid "Date Brought In"
 msgstr ""
@@ -3081,7 +3085,7 @@ msgstr ""
 msgid "Declawed"
 msgstr ""
 
-#: person.js person_new.js
+#: header_edit_header.js
 msgid "Declined"
 msgstr ""
 
@@ -3504,7 +3508,7 @@ msgstr ""
 msgid "Diary tasks need a name."
 msgstr ""
 
-#: person.js person_new.js
+#: header_edit_header.js
 msgid "Did not ask"
 msgstr ""
 
@@ -4000,7 +4004,7 @@ msgid "Electricity Bills"
 msgstr ""
 
 #: person_find_results.js options.js person.js waitinglist.js person_find.js
-#: waitinglist_results.js animal.js person_new.js users.js incident.js
+#: header_edit_header.js waitinglist_results.js animal.js users.js incident.js
 #: lostfound.js media.js mobile.py onlineform.py html.py
 msgid "Email"
 msgstr ""
@@ -4964,7 +4968,8 @@ msgstr ""
 msgid "Future notes"
 msgstr ""
 
-#: onlineform.js person.js person_new.js dbupdate.py
+#: onlineform.js person.js person_find.js person_new.js common_personchooser.js
+#: dbupdate.py
 msgid "GDPR Contact Opt-In"
 msgstr ""
 
@@ -8108,7 +8113,7 @@ msgstr ""
 msgid "Pheasant"
 msgstr ""
 
-#: person.js person_new.js mobile.py onlineform.py
+#: header_edit_header.js mobile.py onlineform.py
 msgid "Phone"
 msgstr ""
 
@@ -8281,7 +8286,7 @@ msgstr ""
 msgid "Positive/Negative"
 msgstr ""
 
-#: person.js person_new.js onlineform.py
+#: header_edit_header.js onlineform.py
 msgid "Post"
 msgstr ""
 
@@ -9254,7 +9259,7 @@ msgstr ""
 msgid "SM Account"
 msgstr ""
 
-#: person.js person_new.js onlineform.py
+#: header_edit_header.js onlineform.py
 msgid "SMS"
 msgstr ""
 

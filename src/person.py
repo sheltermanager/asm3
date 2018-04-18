@@ -469,9 +469,8 @@ def get_person_find_advanced(dbo, criteria, username, includeStaff = False, limi
        comments - string partial pattern
        email - string partial pattern
        medianotes - string partial pattern
-       filter - "all" "aco" "banned" "donor" "driver", "fosterer" "homechecked"
-            "homechecker" "member" "retailer" "shelter" "staff" "giftaid"
-            "vet" "volunteer"
+       filter - built in or additional flags, ANDed
+       gdpr - one or more gdpr contact values ANDed
     """
     c = []
     l = dbo.locale
@@ -525,6 +524,7 @@ def get_person_find_advanced(dbo, criteria, username, includeStaff = False, limi
             elif flag == "deceased": c.append("o.IsDeceased=1")
             elif flag == "donor": c.append("o.IsDonor=1")
             elif flag == "driver": c.append("o.IsDriver=1")
+            elif flag == "excludefrombulkemail": c.append("o.ExcludeFromBulkEmail=1")
             elif flag == "fosterer": c.append("o.IsFosterer=1")
             elif flag == "homechecked": c.append("o.IDCheck=1")
             elif flag == "homechecker": c.append("o.IsHomeChecker=1")
@@ -536,6 +536,9 @@ def get_person_find_advanced(dbo, criteria, username, includeStaff = False, limi
             elif flag == "vet": c.append("o.IsVet=1")
             elif flag == "volunteer": c.append("o.IsVolunteer=1")
             else: c.append("LOWER(o.AdditionalFlags) LIKE %s" % db.ds("%%%s%%" % flag.lower()))
+    if crit("gdpr") != "":
+        for g in crit("gdpr").split(","):
+            c.append("o.GDPRContactOptIn LIKE %s" % db.ds("%%%s%%" % g))
     if not includeStaff:
         c.append("o.IsStaff = 0")
     if len(c) == 0:
