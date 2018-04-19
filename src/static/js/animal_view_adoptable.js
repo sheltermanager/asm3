@@ -75,23 +75,19 @@
     };
 
     var sort_single = function(fieldname) {
-        var sortOrder = 1;
+        var sortOrder = 1, comp = 0;
         if (fieldname.indexOf("-") != -1) {
             sortOrder = -1;
             fieldname = fieldname.replace("-", "");
         }
         if (fieldname.indexOf("@") != -1) {
             fieldname = fieldname.replace("@", "");
-            return function (a,b) {
-                var ca = a[fieldname];
-                var cb = b[fieldname];
-                var result = (ca < cb) ? -1 : (ca > cb) ? 1 : 0;
-                return result * sortOrder;
-            };
+            comp = 1; 
         }
         return function (a,b) {
-            var ca = String(a[fieldname]).toUpperCase();
-            var cb = String(b[fieldname]).toUpperCase();
+            var ca, cb;
+            if (comp == 0) { ca = String(a[fieldname]).toUpperCase(); cb = String(b[fieldname]).toUpperCase(); }
+            if (comp == 1) { ca = a[fieldname]; cb = b[fieldname]; }
             var result = (ca < cb) ? -1 : (ca > cb) ? 1 : 0;
             return result * sortOrder;
         };
