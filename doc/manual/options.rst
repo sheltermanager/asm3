@@ -416,6 +416,15 @@ Display
   screen allowing you to set the locations a user account is restricted to
   viewing.
 
+* Enable multiple sites: Once enabled, sites can be created in the lookup data
+  section. Sites can be assigned to locations, user accounts, incidents  and
+  people records. User accounts with a particular site assigned can only see
+  animals in locations belonging to their site, along with people and incidents
+  at their site. Leaving a person, location or incident with no site allows
+  anyone to see it. Leaving a user account without a site allows it to see all
+  sites.  This allows you to handle multiple sites with one ASM database. A
+  number of site-specific reports are available in the repository.
+
 * When displaying person names in lists, use the format: In movement books,
   donation books, the waiting list, etc. when showing person names, ASM can use
   different formats if you want surname first for sorting, etc.
