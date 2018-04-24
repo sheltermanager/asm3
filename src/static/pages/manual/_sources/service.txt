@@ -7,7 +7,7 @@ ASM includes a service API that you can call from other software via HTTP. To
 call the API you construct a URL to the service controller. The service
 controller is /service, so if you are accessing a local ASM from your local
 machine, the URL will start http://localhost:5000/service. If you are using
-sheltermanager.com, the URL will start https://sheltermanager.com/asm/service.
+sheltermanager.com, the URL will start https://service.sheltermanager.com/asmservice.
 
 If you are using sheltermanager.com, or have enabled the option
 CACHE_SERVICE_RESPONSES in your sitedefs.py, please be aware that some service
