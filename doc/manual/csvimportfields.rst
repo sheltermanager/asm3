@@ -163,6 +163,8 @@ PERSONCELLPHONE
     The person's cell/mobile number
 PERSONEMAIL
     The person's email address
+PERSONGDPRCONTACTOPTIN
+    The GDPR contact optin values, separated by a comma. These values are: didnotask, declined, email, post, sms, phone
 PERSONMEMBER
     Y or 1 in this column to indicate the person should have the membership flag set.
 PERSONMEMBERSHIPEXPIRY
