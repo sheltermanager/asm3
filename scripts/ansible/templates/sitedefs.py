@@ -263,7 +263,7 @@ SMTP_SERVER = { "sendmail": True }
 # {organisation} organisation name
 # {database} database name
 # {alias} database alias
-FROM_ADDRESS = "you@yourdomain.com"
+FROM_ADDRESS = "{{ asm_sitedefs.admin_email }}"
 
 # URLs to access manuals and help documentation
 MANUAL_HTML_URL = "static/pages/manual/index.html"
