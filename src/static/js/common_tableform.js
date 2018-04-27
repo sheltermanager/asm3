@@ -1031,6 +1031,25 @@
                     d += "/>";
                     if (!v.justwidget) { d += "</td></tr>"; }
                 }
+                else if (v.type == "datetime") {
+                    if (!v.justwidget) { d += "<tr><td><label for=\"" + v.post_field + "\">" + v.label + "</label>" + callout + "</td><td>"; }
+                    d += "<span style=\"white-space: nowrap\">";
+                    d += "<input id=\"" + v.post_field + "date\" type=\"text\" class=\"asm-textbox asm-datebox asm-halftextbox\" ";
+                    d += "data-json=\"" + v.json_field + "\" data-post=\"" + v.post_field + "date\" ";
+                    if (v.readonly) { d += " data-noedit=\"true\" "; }
+                    if (v.validation) { d += "data-validation=\"" + v.validation + "\" "; }
+                    if (v.tooltip) { d += "title=\"" + html.title(v.tooltip) + "\""; }
+                    d += "/>";
+                    d += "<input id=\"" + v.post_field + "time\" type=\"text\" class=\"asm-textbox asm-timebox asm-halftextbox";
+                    d += "\" ";
+                    d += "data-json=\"" + v.json_field + "\" data-post=\"" + v.post_field + "time\" ";
+                    if (v.readonly) { d += " data-noedit=\"true\" "; }
+                    if (v.validation) { d += "data-validation=\"" + v.validation + "\" "; }
+                    if (v.tooltip) { d += "title=\"" + html.title(v.tooltip) + "\""; }
+                    d += "/>";
+                    d += "</span>";
+                    if (!v.justwidget) { d += "</td></tr>"; }
+                }
                 else if (v.type == "currency") {
                     if (!v.justwidget) { d += "<tr><td><label for=\"" + v.post_field + "\">" + v.label + "</label>" + callout + "</td><td>"; }
                     d += "<input id=\"" + v.post_field + "\" type=\"text\" class=\"asm-textbox asm-currencybox";
@@ -1247,7 +1266,6 @@
         fields_populate_from_json: function(fields, row) {
             $.each(fields, function(i, v) {
                 var n = $("#" + v.post_field);
-                if (n.length == 0) { return; }
                 if (v.type == "animal") {
                     n.animalchooser("clear", false);
                     n.animalchooser("loadbyid", row[v.json_field]);
@@ -1268,6 +1286,10 @@
                 }
                 else if (v.type == "time") {
                     n.val(format.time(row[v.json_field]));
+                }
+                else if (v.type == "datetime") {
+                    $("#" + v.post_field + "date").val(format.date(row[v.json_field]));
+                    $("#" + v.post_field + "time").val(format.time(row[v.json_field]));
                 }
                 else if (v.type == "check") {
                     n.prop("checked", row[v.json_field] == 1);
@@ -1299,6 +1321,7 @@
                     n.sqleditor("value", row[v.json_field]);
                 }
                 else {
+                    if (n.length == 0) { return; }
                     n.val(html.decode(row[v.json_field]));
                 }
             });
@@ -1324,6 +1347,12 @@
                     var ts = n.val();
                     if (!ts) { ts = "00:00:00"; }
                     row[v.json_field] = format.date_iso_settime(row[v.json_field], ts);
+                }
+                else if (v.type == "datetime") {
+                    var dv = $("#" + v.post_field + "date").val();
+                    var tv = $("#" + v.post_field + "time").val();
+                    row[v.json_field] = format.date_iso(dv);
+                    row[v.json_field] = format.date_iso_settime(row[v.json_field], tv);
                 }
                 else if (v.type == "check") {
                     row[v.json_field] = n.is(":checked") ? 1 : 0;
@@ -1417,6 +1446,11 @@
                     else {
                         post += v.post_field + "=off";
                     }
+                }
+                else if (v.type == "datetime") {
+                    if (post != "") { post += "&"; }
+                    post += v.post_field + "date=" + encodeURIComponent($("#" + v.post_field + "date").val());
+                    post += "&" + v.post_field + "time=" + encodeURIComponent($("#" + v.post_field + "time").val());
                 }
                 else if (v.type == "richtextarea") {
                     if (post != "") { post += "&"; }

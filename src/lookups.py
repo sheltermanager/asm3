@@ -858,7 +858,7 @@ def get_citation_types(dbo):
     return dbo.query("SELECT * FROM citationtype ORDER BY CitationName")
 
 def get_clinic_statuses(dbo):
-    return dbo.query("SELECT * FROM lksclinicstatuses ORDER BY ID")
+    return dbo.query("SELECT * FROM lksclinicstatus ORDER BY ID")
 
 def get_coattypes(dbo):
     return dbo.query("SELECT * FROM lkcoattype ORDER BY CoatType")

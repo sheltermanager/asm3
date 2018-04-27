@@ -15,8 +15,8 @@ class TestClinic(unittest.TestCase):
         data = {
             "animal": "1",
             "person": "1",
-            "date": base.today_display(),
-            "time": "12:00:00",
+            "apptdate": base.today_display(),
+            "appttime": "12:00:00",
             "status": "1",
         }
         post = utils.PostedData(data, "en")
@@ -43,8 +43,8 @@ class TestClinic(unittest.TestCase):
         data = {
             "animal": "2",
             "person": "2",
-            "date": base.today_display(),
-            "time": "08:00:00",
+            "apptdate": base.today_display(),
+            "appttime": "08:00:00",
             "status": "2",
         }
         post = utils.PostedData(data, "en")

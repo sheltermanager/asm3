@@ -16,6 +16,7 @@ import async
 import audit
 import base64
 import cachemem
+import clinic
 import configuration
 import csvimport as extcsvimport
 import db, dbfs, dbupdate
@@ -1910,6 +1911,40 @@ class citations(JSONEndpoint):
         self.check(users.DELETE_CITATION)
         for lid in o.post.integer_list("ids"):
             financial.delete_citation(o.dbo, o.user, lid)
+
+class clinic_appointment(JSONEndpoint):
+    url = "clinic_appointment"
+    js_module = "clinic_appointment"
+    get_permissions = users.VIEW_CLINIC
+
+    def controller(self, o):
+        dbo = o.dbo
+        #f = o.post["filter"]
+        vm = o.post["view"]
+        if vm == "": vm = "waitingroom"
+        if vm == "waitingroom":
+            rows = clinic.get_appointments_today(dbo)
+        al.debug("got %d appointments" % (len(rows)), "code.clinic_appointment", dbo)
+        return {
+            "name": "clinic_appointment",
+            "view": vm,
+            "clinicstatuses": extlookups.get_clinic_statuses(dbo),
+            "forlist": users.get_users(dbo),
+            "rows": rows
+        }
+
+    def post_create(self, o):
+        self.check(users.ADD_CLINIC)
+        return clinic.insert_appointment_from_form(o.dbo, o.user, o.post)
+
+    def post_update(self, o):
+        self.check(users.CHANGE_CLINIC)
+        clinic.update_appointment_from_form(o.dbo, o.user, o.post)
+
+    def post_delete(self, o):
+        self.check(users.DELETE_CLINIC)
+        for cid in o.post.integer_list("ids"):
+            clinic.delete_appointment(o.dbo, o.user, cid)
 
 class csvexport(JSONEndpoint):
     url = "csvexport"

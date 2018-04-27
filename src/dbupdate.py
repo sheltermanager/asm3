@@ -772,6 +772,7 @@ def sql_structure(dbo):
         fid(),
         fint("AnimalID"),
         fint("OwnerID"),
+        fstr("ApptFor"),
         fdate("DateTime"),
         fint("Status"),
         fdate("ArrivedDateTime", True),
@@ -786,6 +787,7 @@ def sql_structure(dbo):
     sql += index("clinicappointment_AnimalID", "clinicappointment", "AnimalID")
     sql += index("clinicappointment_OwnerID", "clinicappointment", "OwnerID")
     sql += index("clinicappointment_Status", "clinicappointment", "Status")
+    sql += index("clinicappointment_ApptFor", "clinicappointment", "ApptFor")
 
     sql += table("clinicinvoiceitem", (
         fid(),
@@ -4897,6 +4899,7 @@ def update_34107(dbo):
         dbo.ddl_add_table_column("ID", dbo.type_integer, False, pk=True),
         dbo.ddl_add_table_column("AnimalID", dbo.type_integer, False),
         dbo.ddl_add_table_column("OwnerID", dbo.type_integer, False),
+        dbo.ddl_add_table_column("ApptFor", dbo.type_shorttext, False),
         dbo.ddl_add_table_column("DateTime", dbo.type_datetime, False),
         dbo.ddl_add_table_column("Status", dbo.type_integer, False),
         dbo.ddl_add_table_column("ArrivedDateTime", dbo.type_datetime, True),
@@ -4917,6 +4920,7 @@ def update_34107(dbo):
     dbo.execute_dbupdate( dbo.ddl_add_table("clinicappointment", fields) )
     dbo.execute_dbupdate( dbo.ddl_add_index("clinicappointment_AnimalID", "clinicappointment", "AnimalID") )
     dbo.execute_dbupdate( dbo.ddl_add_index("clinicappointment_OwnerID", "clinicappointment", "OwnerID") )
+    dbo.execute_dbupdate( dbo.ddl_add_index("clinicappointment_ApptFor", "clinicappointment", "ApptFor") )
     dbo.execute_dbupdate( dbo.ddl_add_index("clinicappointment_Status", "clinicappointment", "Status") )
     fields = ",".join([
         dbo.ddl_add_table_column("ID", dbo.type_integer, False, pk=True),

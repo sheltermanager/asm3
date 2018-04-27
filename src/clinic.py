@@ -56,13 +56,14 @@ def insert_appointment_from_form(dbo, username, post):
     Creates a clinic appointment from posted form data
     """
     l = dbo.locale
-    if post.datetime("date", "time") is None:
+    if post.datetime("apptdate", "appttime") is None:
         raise utils.ASMValidationError(i18n._("Appointment date must be a valid date", l))
 
     return dbo.insert("clinicappointment", {
         "AnimalID":             post.integer("animal"),
         "OwnerID":              post.integer("person"),
-        "DateTime":             post.datetime("date", "time"),
+        "ApptFor":              post["for"],
+        "DateTime":             post.datetime("apptdate", "appttime"),
         "Status":               post.integer("status"),
         "ArrivedDateTime":      post.datetime("arriveddate", "arrivedtime"),
         "WithVetDateTime":      post.datetime("withvetdate", "withvettime"),
@@ -80,13 +81,14 @@ def update_appointment_from_form(dbo, username, post):
     Updates an appointment from form data
     """
     l = dbo.locale
-    if post.datetime("date", "time") is None:
+    if post.datetime("apptdate", "appttime") is None:
         raise utils.ASMValidationError(i18n._("Appointment date must be a valid date", l))
 
     dbo.update("clinicappointment", post.integer("appointmentid"), {
         "AnimalID":             post.integer("animal"),
         "OwnerID":              post.integer("person"),
-        "DateTime":             post.datetime("date", "time"),
+        "ApptFor":              post["for"],
+        "DateTime":             post.datetime("apptdate", "appttime"),
         "Status":               post.integer("status"),
         "ArrivedDateTime":      post.datetime("arriveddate", "arrivedtime"),
         "WithVetDateTime":      post.datetime("withvetdate", "withvettime"),
