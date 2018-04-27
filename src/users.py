@@ -31,6 +31,11 @@ ADD_REPO_DOCUMENT               = "ard"
 DELETE_REPO_DOCUMENT            = "drd"
 VIEW_REPO_DOCUMENT              = "vrd"
 
+ADD_CLINIC                      = "acl"
+VIEW_CLINIC                     = "vcl"
+CHANGE_CLINIC                   = "ccl"
+DELETE_CLINIC                   = "dcl"
+
 ADD_VACCINATION                 = "aav"
 VIEW_VACCINATION                = "vav"
 CHANGE_VACCINATION              = "cav"

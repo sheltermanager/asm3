@@ -16,6 +16,7 @@ LOOKUP_TABLES = {
     "breed":            (_("Breeds"), "BreedName", _("Breed"), "BreedDescription", 1, 0, 1, 0, 0, 0, 0, 1, 1, 1, ("animal.BreedID", "animal.Breed2ID", "animallost.BreedID", "animalfound.BreedID")),
     "lkcoattype":       (_("Coat Types"), "CoatType", _("Coat Type"), "", 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, ("animal.CoatType",)),
     "citationtype":     (_("Citation Types"), "CitationName", _("Citation Type"), "CitationDescription", 0, 0, 0, 0, 1, 0, 0, 1, 1, 1, ("ownercitation.CitationTypeID",)),
+    "lksclinicstatus":  (_("Clinic Statuses"), "Status", _("Status"), "", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, ("clinicappointment.Status",)),
     "costtype":         (_("Cost Types"), "CostTypeName", _("Cost Type"), "CostTypeDescription", 0, 0, 0, 0, 1, 0, 0, 1, 1, 1, ("animalcost.CostTypeID",)),
     "deathreason":      (_("Death Reasons"), "ReasonName", _("Reason"), "ReasonDescription", 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, ("animal.PTSReasonID",)),
     "diet":             (_("Diets"), "DietName", _("Diet"), "DietDescription", 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, ("animaldiet.DietID",)),
@@ -855,6 +856,9 @@ def get_breed_name(dbo, bid):
 
 def get_citation_types(dbo):
     return dbo.query("SELECT * FROM citationtype ORDER BY CitationName")
+
+def get_clinic_statuses(dbo):
+    return dbo.query("SELECT * FROM lksclinicstatuses ORDER BY ID")
 
 def get_coattypes(dbo):
     return dbo.query("SELECT * FROM lkcoattype ORDER BY CoatType")
