@@ -3,6 +3,14 @@
 
 $(function() {
 
+    var SCHEDULED = 0,
+        INVOICE_ONLY = 1,
+        NOT_ARRIVED = 2,
+        WAITING = 3,
+        WITH_VET = 4,
+        COMPLETE = 5,
+        CANCELLED = 6;
+
     var clinic_appointment = {
 
         lastanimal: null,
@@ -86,7 +94,7 @@ $(function() {
                     { field: "DATETIME", display: _("Appointment"), formatter: tableform.format_datetime, initialsort: true, initialsortdirection: "asc" },
                     { field: "ARRIVEDDATETIME", display: _("Arrived"), formatter: tableform.format_datetime },
                     { field: "WITHVETDATETIME", display: _("With Vet"), formatter: tableform.format_datetime },
-                    { field: "COMPLETEDATETIME", display: _("Complete"), formatter: tableform.format_datetime },
+                    { field: "COMPLETEDDATETIME", display: _("Complete"), formatter: tableform.format_datetime },
                     { field: "AMOUNT", display: _("Amount"), formatter: tableform.format_currency },
                     { field: "VATAMOUNT", display: _("Tax"), formatter: tableform.format_currency, 
                         hideif: function() { return !config.bool("VATEnabled"); } },
@@ -120,8 +128,8 @@ $(function() {
                         .always(function() {
                             tableform.dialog_enable_buttons();   
                         });
-                 }},
-                 { id: "delete", text: _("Delete"), icon: "delete", enabled: "multi", perm: "dcl",
+                }},
+                { id: "delete", text: _("Delete"), icon: "delete", enabled: "multi", perm: "dcl",
                      click: function() { 
                          tableform.delete_dialog()
                              .then(function() {
@@ -134,13 +142,64 @@ $(function() {
                                  tableform.table_update(table);
                              });
                      } 
-                 },
-                 { id: "filter", type: "dropdownfilter", 
+                },
+                { id: "refresh", text: _("Refresh"), icon: "refresh", enabled: "always", 
+                     click: function() { 
+                         common.route_reload();
+                     } 
+                },
+
+                { id: "towaiting", text: _("Waiting"), icon: "diary", enabled: "multi", perm: "ccl",
+                    click: function() {
+                        tableform.buttons_default_state(buttons);
+                        var ids = tableform.table_ids(table),
+                            pdata = "mode=towaiting&ids=" + ids + "&date=" + format.date(new Date()) + "&time=" + format.time(new Date());
+                        common.ajax_post("clinic_appointment", pdata).then(function() {
+                            $.each(tableform.table_selected_rows(table), function(i, v) {
+                                v.ARRIVEDDATETIME = format.date_now_iso();
+                                v.STATUS = WAITING;
+                                v.CLINICSTATUSNAME = common.get_field(controller.clinicstatuses, v.STATUS, "STATUS");
+                            });
+                            tableform.table_update(table);
+                        });
+                    }
+                },
+                { id: "towithvet", text: _("With Vet"), icon: "health", enabled: "multi", perm: "ccl",
+                    click: function() {
+                        tableform.buttons_default_state(buttons);
+                        var ids = tableform.table_ids(table),
+                            pdata = "mode=towithvet&ids=" + ids + "&date=" + format.date(new Date()) + "&time=" + format.time(new Date());
+                        common.ajax_post("clinic_appointment", pdata).then(function() {
+                            $.each(tableform.table_selected_rows(table), function(i, v) {
+                                v.WITHVETDATETIME = format.date_now_iso();
+                                v.STATUS = WITH_VET;
+                                v.CLINICSTATUSNAME = common.get_field(controller.clinicstatuses, v.STATUS, "STATUS");
+                            });
+                            tableform.table_update(table);
+                        });
+                    }
+                },
+                { id: "tocomplete", text: _("Complete"), icon: "complete", enabled: "multi", perm: "ccl",
+                    click: function() {
+                        tableform.buttons_default_state(buttons);
+                        var ids = tableform.table_ids(table),
+                            pdata = "mode=tocomplete&ids=" + ids + "&date=" + format.date(new Date()) + "&time=" + format.time(new Date());
+                        common.ajax_post("clinic_appointment", pdata).then(function() {
+                            $.each(tableform.table_selected_rows(table), function(i, v) {
+                                v.COMPLETEDDATETIME = format.date_now_iso();
+                                v.STATUS = COMPLETE;
+                                v.CLINICSTATUSNAME = common.get_field(controller.clinicstatuses, v.STATUS, "STATUS");
+                            });
+                            tableform.table_update(table);
+                        });
+                    }
+                },
+                { id: "filter", type: "dropdownfilter", 
                      options: '<option value="-1">' + _("(all)") + '</option>' + html.list_to_options(controller.clinicstatuses, "ID", "STATUS"),
                      click: function(selval) {
                         common.route(controller.name + "?filter=" + selval);
                      }
-                 }
+                }
             ];
             this.dialog = dialog;
             this.buttons = buttons;
@@ -222,10 +281,7 @@ $(function() {
         },
 
         sync: function() {
-            // If we have a filter, update the select
-            if (controller.filter) {
-                $("#filter").select("value", controller.filter);
-            }
+            $("#filter").select("value", controller.filter);
         },
 
         validation: function() {
@@ -248,15 +304,16 @@ $(function() {
                     3: controller.animal.SPECIESNAME, 4: controller.animal.ANIMALAGE }); 
             }
             else if (controller.name == "person_clinic") { t = controller.person.OWNERNAME; }
-            else if (controller.name == "clinic_appointment" && controller.view == "waitingroom") { t = _("Waiting Room"); }
-            else if (controller.name == "clinic_appointment" && controller.view == "vet") { t = _("Consulting Room"); }
+            else if (controller.name == "clinic_waitingroom") { t = _("Waiting Room"); }
+            else if (controller.name == "clinic_consultingroom") { t = _("Consulting Room - {0}").replace("{0}", asm.user); }
             return t;
         },
 
         routes: {
             "animal_clinic": function() { common.module_loadandstart("clinic_appointment", "animal_clinic?" + this.rawqs); },
             "person_clinic": function() { common.module_loadandstart("clinic_appointment", "person_clinic?" + this.rawqs); },
-            "clinic_appointment": function() { common.module_loadandstart("clinic_appointment", "clinic_appointment?" + this.rawqs); }
+            "clinic_waitingroom": function() { common.module_loadandstart("clinic_appointment", "clinic_waitingroom?" + this.rawqs); },
+            "clinic_consultingroom": function() { common.module_loadandstart("clinic_appointment", "clinic_consultingroom?" + this.rawqs); }
         }
 
     };

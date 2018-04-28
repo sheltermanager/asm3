@@ -1917,22 +1917,6 @@ class clinic_appointment(JSONEndpoint):
     js_module = "clinic_appointment"
     get_permissions = users.VIEW_CLINIC
 
-    def controller(self, o):
-        dbo = o.dbo
-        #f = o.post["filter"]
-        vm = o.post["view"]
-        if vm == "": vm = "waitingroom"
-        if vm == "waitingroom":
-            rows = clinic.get_appointments_today(dbo)
-        al.debug("got %d appointments" % (len(rows)), "code.clinic_appointment", dbo)
-        return {
-            "name": "clinic_appointment",
-            "view": vm,
-            "clinicstatuses": extlookups.get_clinic_statuses(dbo),
-            "forlist": users.get_users(dbo),
-            "rows": rows
-        }
-
     def post_create(self, o):
         self.check(users.ADD_CLINIC)
         return clinic.insert_appointment_from_form(o.dbo, o.user, o.post)
@@ -1945,6 +1929,59 @@ class clinic_appointment(JSONEndpoint):
         self.check(users.DELETE_CLINIC)
         for cid in o.post.integer_list("ids"):
             clinic.delete_appointment(o.dbo, o.user, cid)
+
+    def post_towaiting(self, o):
+        self.check(users.CHANGE_CLINIC)
+        for cid in o.post.integer_list("ids"):
+            clinic.update_appointment_to_waiting(o.dbo, o.user, cid, o.post.datetime("date", "time"))
+
+    def post_towithvet(self, o):
+        self.check(users.CHANGE_CLINIC)
+        for cid in o.post.integer_list("ids"):
+            clinic.update_appointment_to_with_vet(o.dbo, o.user, cid, o.post.datetime("date", "time"))
+
+    def post_tocomplete(self, o):
+        self.check(users.CHANGE_CLINIC)
+        for cid in o.post.integer_list("ids"):
+            clinic.update_appointment_to_complete(o.dbo, o.user, cid, o.post.datetime("date", "time"))
+
+class clinic_consultingroom(JSONEndpoint):
+    url = "clinic_consultingroom"
+    js_module = "clinic_appointment"
+    get_permissions = users.VIEW_CLINIC
+
+    def controller(self, o):
+        dbo = o.dbo
+        sf = o.post.integer("filter")
+        if o.post["filter"] == "": sf = -1
+        rows = clinic.get_appointments_today(dbo, statusfilter = sf, userfilter = o.user)
+        al.debug("got %d appointments" % (len(rows)), "code.clinic_consultingroom", dbo)
+        return {
+            "name": self.url,
+            "filter": sf,
+            "clinicstatuses": extlookups.get_clinic_statuses(dbo),
+            "forlist": users.get_users(dbo),
+            "rows": rows
+        }
+
+class clinic_waitingroom(JSONEndpoint):
+    url = "clinic_waitingroom"
+    js_module = "clinic_appointment"
+    get_permissions = users.VIEW_CLINIC
+
+    def controller(self, o):
+        dbo = o.dbo
+        sf = o.post.integer("filter")
+        if o.post["filter"] == "": sf = -1
+        rows = clinic.get_appointments_today(dbo, statusfilter = sf)
+        al.debug("got %d appointments" % (len(rows)), "code.clinic_waitingroom", dbo)
+        return {
+            "name": self.url,
+            "filter": sf,
+            "clinicstatuses": extlookups.get_clinic_statuses(dbo),
+            "forlist": users.get_users(dbo),
+            "rows": rows
+        }
 
 class csvexport(JSONEndpoint):
     url = "csvexport"

@@ -1208,6 +1208,19 @@
         },
 
         /**
+         * Returns now as an ISO date
+         */
+        date_now_iso: function() {
+            var d = new Date(); 
+            return format.padleft(d.getFullYear(), 4) + "-" + 
+                format.padleft((d.getMonth() + 1), 2) + "-" + 
+                format.padleft(d.getDate(), 2) + "T" +
+                format.padleft(d.getHours(), 2) + ":" +
+                format.padleft(d.getMinutes(), 2) + ":" +
+                format.padleft(d.getSeconds(), 2);
+        },
+
+        /**
          * Turns a display date or js date into iso format.
          * null is returned if d is undefined/null
          */

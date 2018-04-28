@@ -1,5 +1,6 @@
 #!/usr/bin/python
 
+import al
 import i18n
 import utils
 
@@ -36,13 +37,17 @@ def get_clinic_invoice_query(dbo):
     return "SELECT ci.* " \
         "FROM clinicinvoiceitem ci "
 
-def get_appointments_today(dbo, sort = DESCENDING):
+def get_appointments_today(dbo, sort=DESCENDING, statusfilter=-1, userfilter=""):
     """
     Gets all appointments that are due today
     """
     order = "ca.DateTime"
     if sort == DESCENDING: order += " DESC"
-    sql = "%s WHERE ca.DateTime >= ? AND ca.DateTime <= ? ORDER BY %s" % (get_clinic_appointment_query(dbo), order)
+    sf = ""
+    if statusfilter != -1: sf = "AND ca.Status = %d" % statusfilter
+    uf = ""
+    if userfilter != "": uf = "AND ca.ApptFor = %s" % dbo.sql_value(userfilter)
+    sql = "%s WHERE ca.DateTime >= ? AND ca.DateTime <= ? %s %s ORDER BY %s" % (get_clinic_appointment_query(dbo), sf, uf, order)
     return dbo.query(sql, [ dbo.today(), dbo.today(settime="23:59:59") ])
 
 def get_invoice_items(dbo, appointmentid):
@@ -101,13 +106,42 @@ def update_appointment_from_form(dbo, username, post):
         "VATAmount":            post.integer("vatamount")
     }, username)
 
-
 def delete_appointment(dbo, username, appointmentid):
     """
     Deletes an appointment
     """
     dbo.delete("clinicinvoiceitem", "ClinicAppointmentID=%d" % appointmentid, username)
     dbo.delete("clinicappointment", appointmentid, username)
+
+def update_appointment_to_waiting(dbo, username, appointmentid, datetime=None):
+    """
+    Moves an appointment to the waiting status
+    """
+    if datetime is None: datetime = dbo.now()
+    dbo.update("clinicappointment", appointmentid, {
+        "Status":           WAITING,
+        "ArrivedDateTime":  datetime
+    }, username)
+
+def update_appointment_to_with_vet(dbo, username, appointmentid, datetime=None):
+    """
+    Moves an appointment to the with vet status
+    """
+    if datetime is None: datetime = dbo.now()
+    dbo.update("clinicappointment", appointmentid, {
+        "Status":           WITH_VET,
+        "WithVetDateTime":  datetime
+    }, username)
+
+def update_appointment_to_complete(dbo, username, appointmentid, datetime=None):
+    """
+    Moves an appointment to the complete status
+    """
+    if datetime is None: datetime = dbo.now()
+    dbo.update("clinicappointment", appointmentid, {
+        "Status":             COMPLETE,
+        "CompletedDateTime":  datetime
+    }, username)
 
 def insert_invoice_from_form(dbo, username, post):
     """
@@ -134,4 +168,15 @@ def delete_invoice(dbo, username, itemid):
     Deletes an invoice item
     """
     dbo.delete("clinicinvoiceitem", itemid, username)
+
+def auto_update_statuses(dbo):
+    """
+    Moves on waiting list statuses where appropriate.
+    1. For appointments due in the next 20 hours with a status of scheduled, moves them on to "Not Arrived"
+    2. TODO: Auto cancel? Better to leave as not arrived so the difference can be seen between didn't show up and cancelled?
+    """
+    cutoff = i18n.add_hours(dbo.now(), 20)
+    affected = dbo.execute("UPDATE clinicappointment SET Status = ? WHERE Status = ? AND DateTime >= ? AND DateTime <= ?", (NOT_ARRIVED, SCHEDULED, dbo.now(), cutoff))
+    al.debug("advanced %d appointments from SCHEDULED to NOT_ARRIVED" % affected, "clinic.auto_update_statuses", dbo)
+    return "OK %d" % affected
 

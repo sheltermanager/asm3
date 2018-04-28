@@ -65,3 +65,11 @@ class TestClinic(unittest.TestCase):
         clinic.update_invoice_from_form(base.get_dbo(), "test", post)
         clinic.delete_invoice(base.get_dbo(), "test", nid)
 
+    def test_updates(self):
+        clinic.update_appointment_to_waiting(base.get_dbo(), "test", self.anid, base.today())
+        clinic.update_appointment_to_with_vet(base.get_dbo(), "test", self.anid, base.today())
+        clinic.update_appointment_to_complete(base.get_dbo(), "test", self.anid, base.today())
+
+    def test_auto_update_statuses(self):
+        clinic.auto_update_statuses(base.get_dbo())
+
