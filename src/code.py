@@ -1912,10 +1912,8 @@ class citations(JSONEndpoint):
         for lid in o.post.integer_list("ids"):
             financial.delete_citation(o.dbo, o.user, lid)
 
-class clinic_appointment(JSONEndpoint):
+class clinic_appointment(ASMEndpoint):
     url = "clinic_appointment"
-    js_module = "clinic_appointment"
-    get_permissions = users.VIEW_CLINIC
 
     def post_create(self, o):
         self.check(users.ADD_CLINIC)
