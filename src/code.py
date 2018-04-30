@@ -1947,6 +1947,36 @@ class clinic_appointment(ASMEndpoint):
         for cid in o.post.integer_list("ids"):
             clinic.update_appointment_to_complete(o.dbo, o.user, cid, o.post.datetime("date", "time"))
 
+class clinic_invoice(JSONEndpoint):
+    url = "clinic_invoice"
+    js_module = "clinic_invoice"
+    get_permissions = users.VIEW_CLINIC
+
+    def controller(self, o):
+        dbo = o.dbo
+        appointmentid = o.post.integer("appointmentid")
+        appointment = clinic.get_appointment(appointmentid)
+        if appointment is None: self.notfound()
+        rows = clinic.get_invoice_items(dbo, appointmentid)
+        al.debug("got %d invoice items for appointment %d" % (len(rows), appointmentid), "code.clinic_invoice", dbo)
+        return {
+            "appointment": appointment,
+            "rows": rows
+        }
+
+    def post_create(self, o):
+        self.check(users.ADD_CLINIC)
+        return clinic.insert_invoice_from_form(o.dbo, o.user, o.post)
+
+    def post_update(self, o):
+        self.check(users.CHANGE_CLINIC)
+        clinic.update_invoice_from_form(o.dbo, o.user, o.post)
+
+    def post_delete(self, o):
+        self.check(users.DELETE_CLINIC)
+        for iid in o.post.integer_list("ids"):
+            clinic.delete_invoice(o.dbo, o.user, iid)
+
 class clinic_consultingroom(JSONEndpoint):
     url = "clinic_consultingroom"
     js_module = "clinic_appointment"

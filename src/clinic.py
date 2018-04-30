@@ -37,6 +37,12 @@ def get_clinic_invoice_query(dbo):
     return "SELECT ci.* " \
         "FROM clinicinvoiceitem ci "
 
+def get_appointment(dbo, appointmentid):
+    """
+    Returns an appointment by ID
+    """
+    return dbo.first_row(dbo.query("%s WHERE ca.ID = ?" % get_clinic_appointment_query(dbo), [appointmentid]))
+
 def get_appointments_today(dbo, sort=DESCENDING, statusfilter=-1, userfilter=""):
     """
     Gets all appointments that are due today

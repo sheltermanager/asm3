@@ -33,6 +33,9 @@ class TestClinic(unittest.TestCase):
         clinic.delete_appointment(base.get_dbo(), "test", self.anid)
         clinic.delete_invoice(base.get_dbo(), "test", self.inid)
 
+    def test_get_appointment(self):
+        assert clinic.get_appointment(base.get_dbo(), self.anid) is not None
+
     def test_get_appointments_today(self):
         assert len(clinic.get_appointments_today(base.get_dbo())) > 0
 
