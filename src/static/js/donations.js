@@ -258,7 +258,6 @@ $(function() {
         },
 
         update_movements: function(personid) {
-            var formdata = "mode=personmovements&personid=" + personid;
             common.ajax_post("donation", "mode=personmovements&personid=" + personid)
                 .then(function(result) {
                     var h = "<option value=\"0\"></option>";

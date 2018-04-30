@@ -13,8 +13,9 @@ $(function() {
 
     var clinic_appointment = {
 
-        lastanimal: null,
         lastperson: null,
+        animals: null,
+        dialog_row: null,
 
         model: function() {
             var dialog = {
@@ -28,8 +29,8 @@ $(function() {
                 fields: [
                     { json_field: "APPTFOR", post_field: "for", label: _("For"), type: "select", 
                         options: { rows: controller.forlist, displayfield: "USERNAME", valuefield: "USERNAME" }},
-                    { json_field: "ANIMALID", post_field: "animal", label: _("Animal"), type: "animal" },
                     { json_field: "OWNERID", post_field: "person", label: _("Person"), type: "person" },
+                    { json_field: "ANIMALID", post_field: "animal", label: _("Animal"), type: "select" },
                     { json_field: "STATUS", post_field: "status", label: _("Status"), type: "select", 
                         options: { displayfield: "STATUS", valuefield: "ID", rows: controller.clinicstatuses }},
                     { json_field: "DATETIME", post_field: "appt", label: _("Appointment"), type: "datetime" },
@@ -51,6 +52,8 @@ $(function() {
                 idcolumn: "ID",
                 edit: function(row) {
                     tableform.fields_populate_from_json(dialog.fields, row);
+                    clinic_appointment.dialog_row = row;
+                    clinic_appointment.update_animals(row.OWNERID);
                     tableform.dialog_show_edit(dialog, row)
                             .then(function() {
                                 if (!clinic_appointment.validation()) { tableform.dialog_enable_buttons(); return; }
@@ -207,18 +210,8 @@ $(function() {
         },
 
         set_extra_fields: function(row) {
-            if (controller.animal) {
-                row.ANIMALNAME = controller.animal.ANIMALNAME;
-                row.SHELTERCODE = controller.animal.SHELTERCODE;
-            }
-            else if (clinic_appointment.lastanimal) {
-                row.ANIMALNAME = clinic_appointment.lastanimal.ANIMALNAME;
-                row.SHELTERCODE = clinic_appointment.lastanimal.SHELTERCODE;
-            }
-            else {
-                row.ANIMALNAME = "";
-                row.SHELTERCODE = "";
-            }
+            row.ANIMALNAME = common.get_field(clinic_appointment.animals, row.ANIMALID, "ANIMALNAME");
+            row.SHELTERCODE = common.get_field(clinic_appointment.animals, row.ANIMALID, "SHELTERCODE");
             if (controller.person) {
                 row.OWNERNAME = controller.person.OWNERNAME;
                 row.OWNERADDRESS = controller.person.OWNERADDRESS;
@@ -235,6 +228,25 @@ $(function() {
             }
             row.CLINICSTATUSNAME = common.get_field(controller.clinicstatuses, row.STATUS, "STATUS");
             row.LASTCHANGEDBY = asm.user;
+        },
+
+        update_animals: function(personid) {
+            common.ajax_post("clinic_appointment", "mode=personanimals&personid=" + personid)
+                .then(function(result) {
+                    var h = "<option value=\"0\"></option>";
+                    clinic_appointment.animals = jQuery.parseJSON(result);
+                    $.each(clinic_appointment.animals, function(i,v) {
+                        h += "<option value=\"" + v.ID + "\">";
+                        h += v.ANIMALNAME + " - " + v.SHELTERCODE + " (" + v.SEXNAME + " " + v.BREEDNAME + " " + v.SPECIESNAME + ")";
+                        h += "</option>";
+                    });
+                    $("#animal").html(h);
+                    if (clinic_appointment.dialog_row && clinic_appointment.dialog_row.ANIMALID) {
+                        $("#animal").select("value", clinic_appointment.dialog_row.ANIMALID);
+                    }
+                    $("#movement").closest("tr").fadeIn();
+                });
+
         },
 
         render: function() {
@@ -262,16 +274,9 @@ $(function() {
             tableform.buttons_bind(this.buttons);
             tableform.table_bind(this.table, this.buttons);
 
-            $("#animal").animalchooser().bind("animalchooserchange", function(event, rec) {
-                clinic_appointment.lastanimal = rec;
-            });
-
-            $("#animal").animalchooser().bind("animalchooserloaded", function(event, rec) {
-                clinic_appointment.lastanimal = rec;
-            });
-
             $("#person").personchooser().bind("personchooserchange", function(event, rec) {
                 clinic_appointment.lastperson = rec;
+                clinic_appointment.update_animals(rec.ID);
             });
 
             $("#person").personchooser().bind("personchooserloaded", function(event, rec) {
@@ -292,6 +297,7 @@ $(function() {
 
         destroy: function() {
             tableform.dialog_destroy();
+            clinic_appointment.dialog_row = null;
         },
 
         name: "clinic_appointment",

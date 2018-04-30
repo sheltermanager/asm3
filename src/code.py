@@ -1928,6 +1928,10 @@ class clinic_appointment(ASMEndpoint):
         for cid in o.post.integer_list("ids"):
             clinic.delete_appointment(o.dbo, o.user, cid)
 
+    def post_personanimals(self, o):
+        self.check(users.VIEW_ANIMAL)
+        return utils.json(extanimal.get_animals_owned_by(o.dbo, o.post.integer("personid")))
+
     def post_towaiting(self, o):
         self.check(users.CHANGE_CLINIC)
         for cid in o.post.integer_list("ids"):
