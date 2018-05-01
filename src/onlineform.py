@@ -926,7 +926,7 @@ def create_animalcontrol(dbo, username, collationid):
     incidentid = animalcontrol.insert_animalcontrol_from_form(dbo, utils.PostedData(d, dbo.locale), username)
     # Attach the form to the incident
     formname = get_onlineformincoming_name(dbo, collationid)
-    formhtml = get_onlineformincoming_html(dbo, collationid)
+    formhtml = get_onlineformincoming_html_print(dbo, [collationid,])
     media.create_document_media(dbo, username, media.ANIMALCONTROL, incidentid, formname, formhtml )
     return (collationid, incidentid, utils.padleft(incidentid, 6) + " - " + personname)
 
@@ -966,7 +966,7 @@ def create_lostanimal(dbo, username, collationid):
     lostanimalid = lostfound.insert_lostanimal_from_form(dbo, utils.PostedData(d, dbo.locale), username)
     # Attach the form to the lost animal
     formname = get_onlineformincoming_name(dbo, collationid)
-    formhtml = get_onlineformincoming_html(dbo, collationid)
+    formhtml = get_onlineformincoming_html_print(dbo, [collationid,])
     media.create_document_media(dbo, username, media.LOSTANIMAL, lostanimalid, formname, formhtml )
     return (collationid, lostanimalid, utils.padleft(lostanimalid, 6) + " - " + personname)
   
@@ -1006,7 +1006,7 @@ def create_foundanimal(dbo, username, collationid):
     foundanimalid = lostfound.insert_foundanimal_from_form(dbo, utils.PostedData(d, dbo.locale), username)
     # Attach the form to the found animal
     formname = get_onlineformincoming_name(dbo, collationid)
-    formhtml = get_onlineformincoming_html(dbo, collationid)
+    formhtml = get_onlineformincoming_html_print(dbo, [collationid,])
     media.create_document_media(dbo, username, media.FOUNDANIMAL, foundanimalid, formname, formhtml )
     return (collationid, foundanimalid, utils.padleft(foundanimalid, 6) + " - " + personname)
 
@@ -1058,7 +1058,7 @@ def create_transport(dbo, username, collationid):
     movement.insert_transport_from_form(dbo, username, utils.PostedData(d, dbo.locale))
     # Attach the form to the animal
     formname = get_onlineformincoming_name(dbo, collationid)
-    formhtml = get_onlineformincoming_html(dbo, collationid)
+    formhtml = get_onlineformincoming_html_print(dbo, [collationid,])
     media.create_document_media(dbo, username, media.ANIMAL, animalid, formname, formhtml )
     return (collationid, animalid, animal.get_animal_namecode(dbo, animalid))
 
@@ -1089,7 +1089,7 @@ def create_waitinglist(dbo, username, collationid):
     wlid = waitinglist.insert_waitinglist_from_form(dbo, utils.PostedData(d, dbo.locale), username)
     # Attach the form to the waiting list
     formname = get_onlineformincoming_name(dbo, collationid)
-    formhtml = get_onlineformincoming_html(dbo, collationid)
+    formhtml = get_onlineformincoming_html_print(dbo, [collationid,])
     media.create_document_media(dbo, username, media.WAITINGLIST, wlid, formname, formhtml )
     return (collationid, wlid, utils.padleft(wlid, 6) + " - " + personname)
 
