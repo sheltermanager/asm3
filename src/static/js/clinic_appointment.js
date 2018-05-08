@@ -69,6 +69,15 @@ $(function() {
                                 tableform.dialog_enable_buttons();
                             });
                 },
+                complete: function(row) {
+                    if (row.STATUS == COMPLETE || row.STATUS == CANCELLED) { return true; }
+                    return false;
+                },
+                overdue: function(row) {
+                    if (!row.ARRIVEDDATETIME && format.date_js(row.DATETIME) < new Date() && 
+                        controller.name.indexOf("clinic") == 0 && (row.STATUS == SCHEDULED || row.STATUS == NOT_ARRIVED)) { return true; }
+                    return false;
+                },
                 columns: [
                     { field: "CLINICSTATUSNAME", display: _("Status") },
                     { field: "APPTFOR", display: _("For") },
