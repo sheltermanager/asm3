@@ -30,8 +30,8 @@ class TestClinic(unittest.TestCase):
         self.inid = clinic.insert_invoice_from_form(base.get_dbo(), "test", post)
 
     def tearDown(self):
-        clinic.delete_appointment(base.get_dbo(), "test", self.anid)
         clinic.delete_invoice(base.get_dbo(), "test", self.inid)
+        clinic.delete_appointment(base.get_dbo(), "test", self.anid)
 
     def test_get_appointment(self):
         assert clinic.get_appointment(base.get_dbo(), self.anid) is not None
@@ -58,7 +58,7 @@ class TestClinic(unittest.TestCase):
 
     def test_invoice_crud(self):
         data = {
-            "appointmentid": "2",
+            "appointmentid": self.anid,
             "description": "bar",
             "amount": "1500"
         }

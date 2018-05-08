@@ -82,7 +82,7 @@ def insert_appointment_from_form(dbo, username, post):
         "ReasonForAppointment": post["reason"],
         "Comments":             post["comments"],
         "Amount":               post.integer("amount"),
-        "IsVAT":                post.integer("isvat"),
+        "IsVAT":                post.boolean("vat"),
         "VATRate":              post.floating("vatrate"),
         "VATAmount":            post.integer("vatamount")
     }, username)
@@ -107,7 +107,7 @@ def update_appointment_from_form(dbo, username, post):
         "ReasonForAppointment": post["reason"],
         "Comments":             post["comments"],
         "Amount":               post.integer("amount"),
-        "IsVAT":                post.integer("isvat"),
+        "IsVAT":                post.boolean("vat"),
         "VATRate":              post.floating("vatrate"),
         "VATAmount":            post.integer("vatamount")
     }, username)
@@ -149,31 +149,50 @@ def update_appointment_to_complete(dbo, username, appointmentid, datetime=None):
         "CompletedDateTime":  datetime
     }, username)
 
+def update_appointment_total(dbo, appointmentid):
+    """
+    Calculates the amount and VAT on an appointment/invoice
+    """
+    a = get_appointment(dbo, appointmentid)
+    total = dbo.query_int("SELECT SUM(Amount) FROM clinicinvoiceitem WHERE ClinicAppointmentID = ? AND Amount Is Not Null AND Amount > 0", [appointmentid])
+    vatamount = 0
+    if a.ISVAT == 1 and a.VATRATE > 0:
+        vatamount = utils.cint(total * (a.VATRATE / 100.0))
+    dbo.update("clinicappointment", appointmentid, {
+        "Amount":       total,
+        "VATAmount":    vatamount
+    })
+
 def insert_invoice_from_form(dbo, username, post):
     """
     Creates an invoice item from posted form data
     """
-    return dbo.insert("clinicinvoiceitem", {
+    nid = dbo.insert("clinicinvoiceitem", {
         "ClinicAppointmentID":      post.integer("appointmentid"),
         "Description":              post["description"],
-        "Amount":                   post["amount"]
+        "Amount":                   post.integer("amount")
     }, username)
+    update_appointment_total(dbo, post.integer("appointmentid"))
+    return nid
 
 def update_invoice_from_form(dbo, username, post):
     """
     Creates an invoice item from posted form data
     """
-    return dbo.update("clinicinvoiceitem", post.integer("itemid"), {
+    dbo.update("clinicinvoiceitem", post.integer("itemid"), {
         "ClinicAppointmentID":      post.integer("appointmentid"),
         "Description":              post["description"],
-        "Amount":                   post["amount"]
+        "Amount":                   post.integer("amount")
     }, username)
+    update_appointment_total(dbo, post.integer("appointmentid"))
 
 def delete_invoice(dbo, username, itemid):
     """
     Deletes an invoice item
     """
+    appointmentid = dbo.query_int("SELECT ClinicAppointmentID FROM clinicinvoiceitem WHERE ID = ?", [itemid])
     dbo.delete("clinicinvoiceitem", itemid, username)
+    update_appointment_total(dbo, appointmentid)
 
 def auto_update_statuses(dbo):
     """

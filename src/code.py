@@ -1955,12 +1955,13 @@ class clinic_invoice(JSONEndpoint):
     def controller(self, o):
         dbo = o.dbo
         appointmentid = o.post.integer("appointmentid")
-        appointment = clinic.get_appointment(appointmentid)
+        appointment = clinic.get_appointment(dbo, appointmentid)
         if appointment is None: self.notfound()
         rows = clinic.get_invoice_items(dbo, appointmentid)
         al.debug("got %d invoice items for appointment %d" % (len(rows), appointmentid), "code.clinic_invoice", dbo)
         return {
             "appointment": appointment,
+            "appointmentid": appointmentid,
             "rows": rows
         }
 

@@ -79,7 +79,14 @@ $(function() {
                     return false;
                 },
                 columns: [
-                    { field: "CLINICSTATUSNAME", display: _("Status") },
+                    { field: "CLINICSTATUSNAME", display: _("Status"), formatter: function(row) {
+                        var invlink = "<a href=\"clinic_invoice?appointmentid=" + row.ID + "\">" + 
+                            html.icon("accounts", _("Edit invoice")) + '</a>';
+                        return '<span style="white-space: nowrap">' +
+                            '<input type="checkbox" data-id="' + row.ID + '" title="' + html.title(_("Select")) + '" />' +
+                            '<a href="#" data-id="' + row.ID + '" class="link-edit">' + row.CLINICSTATUSNAME + '</a> ' + 
+                            invlink + '</span>';
+                    }},
                     { field: "APPTFOR", display: _("For") },
                     { field: "PERSON", display: _("Person"),
                         formatter: function(row) {
@@ -124,6 +131,10 @@ $(function() {
                         },
                         onload: function() {
                             $("#status").select("value", "0");
+                            if (config.bool("VATEnabled")) {
+                                $("#vat").prop("checked", true);
+                                $("#vatrate").val(config.number("VATRate"));
+                            }
                         }})
                         .then(function() {
                             return tableform.fields_post(dialog.fields, "mode=create", "clinic_appointment");
@@ -310,7 +321,7 @@ $(function() {
         },
 
         name: "clinic_appointment",
-        animation: "formtab",
+        animation: "book",
         title:  function() { 
             var t = "";
             if (controller.name == "animal_clinic") {
