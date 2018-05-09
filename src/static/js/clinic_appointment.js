@@ -111,7 +111,11 @@ $(function() {
                         }
                     },
                     { field: "DATETIME", display: _("Appointment"), formatter: tableform.format_datetime, initialsort: true, initialsortdirection: "asc" },
-                    { field: "ARRIVEDDATETIME", display: _("Arrived"), formatter: tableform.format_datetime },
+                    { field: "ARRIVEDDATETIME", display: _("Arrived"), formatter: function(row) {
+                        if (!row.ARRIVEDDATETIME) { return ""; }
+                        var diffmins = Math.round((new Date() - format.date_js(row.ARRIVEDDATETIME)) / 60000);
+                        return tableform.format_datetime(row, row.ARRIVEDDATETIME) + " (" + diffmins + " " + _("mins") + ")";
+                    }},
                     { field: "WITHVETDATETIME", display: _("With Vet"), formatter: tableform.format_datetime },
                     { field: "COMPLETEDDATETIME", display: _("Complete"), formatter: tableform.format_datetime },
                     { field: "AMOUNT", display: _("Amount"), formatter: tableform.format_currency },
