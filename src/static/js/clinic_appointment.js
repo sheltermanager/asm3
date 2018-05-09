@@ -121,7 +121,8 @@ $(function() {
                         }},
                     { field: "ARRIVEDDATETIME", display: _("Arrived"), formatter: function(row) {
                         if (!row.ARRIVEDDATETIME) { return ""; }
-                        var diffmins = Math.round((new Date() - format.date_js(row.ARRIVEDDATETIME)) / 60000),
+                        var cutoff = format.date_js(row.WITHVETDATETIME) || new Date(),
+                            diffmins = Math.round((cutoff - format.date_js(row.ARRIVEDDATETIME)) / 60000),
                             d = format.date(row.ARRIVEDDATETIME), t = format.time(row.ARRIVEDDATETIME, TIMEFORMAT),
                             dv = clinic_appointment.is_book ? t : d + " " + t;
                         return dv + " (" + diffmins + " " + _("mins") + ")";

@@ -174,6 +174,7 @@ def get_satellite_counts(dbo, personid):
         "(SELECT COUNT(*) FROM media me WHERE me.LinkID = o.ID AND me.LinkTypeID = %d) AS media, " \
         "(SELECT COUNT(*) FROM diary di WHERE di.LinkID = o.ID AND di.LinkType = %d) AS diary, " \
         "(SELECT COUNT(*) FROM adoption ad WHERE ad.OwnerID = o.ID) AS movements, " \
+        "(SELECT COUNT(*) FROM clinicappointment ca WHERE ca.OwnerID = o.ID) AS clinic, " \
         "(SELECT COUNT(*) FROM log WHERE log.LinkID = o.ID AND log.LinkType = %d) AS logs, " \
         "(SELECT COUNT(*) FROM ownerdonation od WHERE od.OwnerID = o.ID) AS donations, " \
         "(SELECT COUNT(*) FROM ownercitation oc WHERE oc.OwnerID = o.ID) AS citation, " \
@@ -1141,7 +1142,7 @@ def delete_person(dbo, username, personid):
     audit.delete_rows(dbo, username, "log", "LinkID = %d AND LinkType = %d" % (personid, log.PERSON))
     db.execute(dbo, "DELETE FROM log WHERE LinkID = %d AND LinkType = %d" % (personid, log.PERSON))
     db.execute(dbo, "DELETE FROM additional WHERE LinkID = %d AND LinkType IN (%s)" % (personid, additional.PERSON_IN))
-    for t in [ "adoption", "ownercitation", "ownerdonation", "ownerlicence", "ownertraploan", "ownervoucher" ]:
+    for t in [ "adoption", "clinicappointment", "ownercitation", "ownerdonation", "ownerlicence", "ownertraploan", "ownervoucher" ]:
         audit.delete_rows(dbo, username, t, "OwnerID = %d" % personid)
         db.execute(dbo, "DELETE FROM %s WHERE OwnerID = %d" % (t, personid))
     dbfs.delete_path(dbo, "/owner/%d" % personid)
