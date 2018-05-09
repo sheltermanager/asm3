@@ -9,13 +9,16 @@ $(function() {
         WAITING = 3,
         WITH_VET = 4,
         COMPLETE = 5,
-        CANCELLED = 6;
+        CANCELLED = 6,
+
+        TIMEFORMAT = "%H:%M";
 
     var clinic_appointment = {
 
         lastperson: null,
         animals: null,
         dialog_row: null,
+        is_book: false,
 
         model: function() {
             var dialog = {
@@ -75,7 +78,7 @@ $(function() {
                 },
                 overdue: function(row) {
                     if (!row.ARRIVEDDATETIME && format.date_js(row.DATETIME) < new Date() && 
-                        controller.name.indexOf("clinic") == 0 && (row.STATUS == SCHEDULED || row.STATUS == NOT_ARRIVED)) { return true; }
+                        clinic_appointment.is_book && (row.STATUS == SCHEDULED || row.STATUS == NOT_ARRIVED)) { return true; }
                     return false;
                 },
                 columns: [
@@ -110,14 +113,31 @@ $(function() {
                             return controller.name.indexOf("animal_") != -1;
                         }
                     },
-                    { field: "DATETIME", display: _("Appointment"), formatter: tableform.format_datetime, initialsort: true, initialsortdirection: "asc" },
+                    { field: "DATETIME", display: _("Appointment"), initialsort: true, initialsortdirection: "asc", 
+                        formatter: function(row) {
+                            var d = format.date(row.DATETIME), t = format.time(row.DATETIME, TIMEFORMAT);
+                            if (clinic_appointment.is_book) { return t; }
+                            return d + " " + t;
+                        }},
                     { field: "ARRIVEDDATETIME", display: _("Arrived"), formatter: function(row) {
                         if (!row.ARRIVEDDATETIME) { return ""; }
-                        var diffmins = Math.round((new Date() - format.date_js(row.ARRIVEDDATETIME)) / 60000);
-                        return tableform.format_datetime(row, row.ARRIVEDDATETIME) + " (" + diffmins + " " + _("mins") + ")";
+                        var diffmins = Math.round((new Date() - format.date_js(row.ARRIVEDDATETIME)) / 60000),
+                            d = format.date(row.ARRIVEDDATETIME), t = format.time(row.ARRIVEDDATETIME, TIMEFORMAT),
+                            dv = clinic_appointment.is_book ? t : d + " " + t;
+                        return dv + " (" + diffmins + " " + _("mins") + ")";
                     }},
-                    { field: "WITHVETDATETIME", display: _("With Vet"), formatter: tableform.format_datetime },
-                    { field: "COMPLETEDDATETIME", display: _("Complete"), formatter: tableform.format_datetime },
+                    { field: "WITHVETDATETIME", display: _("With Vet"), 
+                        formatter: function(row) {
+                            var d = format.date(row.WITHVETDATETIME), t = format.time(row.WITHVETDATETIME, TIMEFORMAT);
+                            if (clinic_appointment.is_book) { return t; }
+                            return d + " " + t;
+                        }},
+                    { field: "COMPLETEDDATETIME", display: _("Complete"), 
+                        formatter: function(row) {
+                            var d = format.date(row.COMPLETEDDATETIME), t = format.time(row.COMPLETEDDATETIME, TIMEFORMAT);
+                            if (clinic_appointment.is_book) { return t; }
+                            return d + " " + t;
+                        }},
                     { field: "AMOUNT", display: _("Amount"), formatter: tableform.format_currency },
                     { field: "VATAMOUNT", display: _("Tax"), formatter: tableform.format_currency, 
                         hideif: function() { return !config.bool("VATEnabled"); } },
@@ -275,6 +295,7 @@ $(function() {
 
         render: function() {
             var h = [];
+            this.is_book = controller.name.indexOf("clinic") == 0;
             this.model();
             h.push(tableform.dialog_render(this.dialog));
             if (controller.name == "animal_clinic") {
