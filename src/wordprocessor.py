@@ -1277,6 +1277,11 @@ def generate_animal_doc(dbo, templateid, animalid, username):
     # If we didn't have an open movement and there's a reserve, use that as the person
     if not has_person_tags and a["RESERVEDOWNERID"] is not None and a["RESERVEDOWNERID"] != 0:
         tags = append_tags(tags, person_tags(dbo, person.get_person(dbo, a["RESERVEDOWNERID"])))
+        has_person_tags = True
+    # If this is a non-shelter animal, use the owner
+    if not has_person_tags and a["NONSHELTERANIMAL"] == 1 and a["ORIGINALOWNERID"] is not None and a["ORIGINALOWNERID"] != 0:
+        tags = append_tags(tags, person_tags(dbo, person.get_person(dbo, a["ORIGINALOWNERID"])))
+        has_person_tags = True
     tags = append_tags(tags, org_tags(dbo, username))
     return substitute_template(dbo, templateid, tags, im)
 
