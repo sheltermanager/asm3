@@ -81,15 +81,14 @@ def get_appointments_today(dbo, sort=DESCENDING, statusfilter=-1, userfilter="",
 
 def get_appointments_two_dates(dbo, start, end, siteid = 0):
     """
-    Returns vaccinations due between two dates:
+    Returns appointments due between two dates:
     start, end: dates 
-    locationfilter, siteid: restrictions on visible locations/site
-    ID, ANIMALID, SHELTERCODE, ANIMALNAME, LOCATIONNAME, WEBSITEMEDIANAME, DATEREQUIRED, DATEOFVACCINATION, COMMENTS, VACCINATIONTYPE, VACCINATIONID
+    siteid: only show people with the matching siteid if non-zero
     """
     return dbo.query(get_clinic_appointment_query(dbo) + \
-        "WHERE ca.CompletedDateTime Is Null " \
+        "WHERE ca.Status NOT IN (?, ?) " \
         "AND ca.DateTime >= ? AND ca.DateTime <= ? %s " \
-        "ORDER BY ca.DateTime" % (get_site_filter(siteid)), (start, end))
+        "ORDER BY ca.DateTime" % (get_site_filter(siteid)), (COMPLETE, CANCELLED, start, end))
 
 def get_invoice_items(dbo, appointmentid):
     """
