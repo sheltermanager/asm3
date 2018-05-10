@@ -23,7 +23,7 @@ import db, dbfs, dbupdate
 import diary as extdiary
 import financial
 import html
-from i18n import _, BUILD, translate, get_version, get_display_date_format, get_currency_prefix, get_currency_symbol, get_currency_dp, get_currency_radix, get_currency_digit_grouping, get_locales, parse_date, python2display, add_days, subtract_days, subtract_months, first_of_month, last_of_month, monday_of_week, sunday_of_week, first_of_year, last_of_year, now, format_currency, i18nstringsjs
+from i18n import _, BUILD, translate, get_version, get_display_date_format, get_currency_prefix, get_currency_symbol, get_currency_dp, get_currency_radix, get_currency_digit_grouping, get_locales, parse_date, python2display, add_minutes, add_days, subtract_days, subtract_months, first_of_month, last_of_month, monday_of_week, sunday_of_week, first_of_year, last_of_year, now, format_currency, i18nstringsjs
 import log as extlog
 import lookups as extlookups
 import lostfound as extlostfound
@@ -1265,6 +1265,27 @@ class animal_bulk(JSONEndpoint):
     def post_all(self, o):
         return extanimal.update_animals_from_form(o.dbo, o.post, o.user)
 
+class animal_clinic(JSONEndpoint):
+    url = "animal_clinic"
+    js_module = "clinic_appointment"
+    get_permissions = users.VIEW_CLINIC
+
+    def controller(self, o):
+        dbo = o.dbo
+        animalid = o.post.integer("id")
+        a = extanimal.get_animal(dbo, animalid)
+        if a is None: self.notfound()
+        rows = clinic.get_animal_appointments(dbo, animalid)
+        al.debug("got %d appointments for animal %s %s" % (len(rows), a.CODE, a.ANIMALNAME), "code.animal_clinic", dbo)
+        return {
+            "name": self.url,
+            "animal": a,
+            "clinicstatuses": extlookups.get_clinic_statuses(dbo),
+            "forlist": users.get_users(dbo),
+            "rows": rows,
+            "tabcounts": extanimal.get_satellite_counts(dbo, animalid)[0]
+        }
+
 class animal_costs(JSONEndpoint):
     url = "animal_costs"
     get_permissions = users.VIEW_COST
@@ -1792,6 +1813,18 @@ class calendar_events(ASMEndpoint):
                     "tooltip": tit, 
                     "icon": "test",
                     "link": "animal_test?id=%d" % t["ANIMALID"] })
+        if "c" in ev and self.checkb(users.VIEW_CLINIC):
+            for c in clinic.get_appointments_two_dates(dbo, start, end, o.siteid):
+                sub = "%s - %s" % (c.OWNERNAME, c.ANIMALNAME)
+                tit = "%s - %s (%s) %s" % (c.OWNERNAME, c.ANIMALNAME, c.APPTFOR, c.REASONFORAPPOINTMENT)
+                events.append({ 
+                    "title": sub, 
+                    "allDay": False, 
+                    "start": c.DATETIME,
+                    "end": add_minutes(c.DATETIME, 20),
+                    "tooltip": tit, 
+                    "icon": "health",
+                    "link": "person_clinic?id=%d" % c.OWNERID })
         if "p" in ev and self.checkb(users.VIEW_DONATION):
             for p in financial.get_donations_due_two_dates(dbo, start, end):
                 sub = "%s - %s" % (p["DONATIONNAME"], p["OWNERNAME"])
@@ -1987,7 +2020,7 @@ class clinic_consultingroom(JSONEndpoint):
         dbo = o.dbo
         sf = o.post.integer("filter")
         if o.post["filter"] == "": sf = -1
-        rows = clinic.get_appointments_today(dbo, statusfilter = sf, userfilter = o.user)
+        rows = clinic.get_appointments_today(dbo, statusfilter = sf, userfilter = o.user, siteid = o.siteid)
         al.debug("got %d appointments" % (len(rows)), "code.clinic_consultingroom", dbo)
         return {
             "name": self.url,
@@ -2006,7 +2039,7 @@ class clinic_waitingroom(JSONEndpoint):
         dbo = o.dbo
         sf = o.post.integer("filter")
         if o.post["filter"] == "": sf = -1
-        rows = clinic.get_appointments_today(dbo, statusfilter = sf)
+        rows = clinic.get_appointments_today(dbo, statusfilter = sf, siteid = o.siteid)
         al.debug("got %d appointments" % (len(rows)), "code.clinic_waitingroom", dbo)
         return {
             "name": self.url,
@@ -4145,6 +4178,27 @@ class person_citations(JSONEndpoint):
             "person": p,
             "tabcounts": extperson.get_satellite_counts(dbo, p["ID"])[0],
             "citationtypes": extlookups.get_citation_types(dbo)
+        }
+
+class person_clinic(JSONEndpoint):
+    url = "person_clinic"
+    js_module = "clinic_appointment"
+    get_permissions = users.VIEW_CLINIC
+
+    def controller(self, o):
+        dbo = o.dbo
+        personid = o.post.integer("id")
+        p = extperson.get_person(dbo, personid)
+        if p is None: self.notfound()
+        rows = clinic.get_person_appointments(dbo, personid)
+        al.debug("got %d appointments for person %s" % (len(rows), p.OWNERNAME), "code.person_clinic", dbo)
+        return {
+            "name": self.url,
+            "person": p,
+            "tabcounts": extperson.get_satellite_counts(dbo, personid)[0],
+            "clinicstatuses": extlookups.get_clinic_statuses(dbo),
+            "forlist": users.get_users(dbo),
+            "rows": rows
         }
 
 class person_diary(JSONEndpoint):

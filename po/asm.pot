@@ -341,6 +341,10 @@ msgstr ""
 msgid "Add Investigation"
 msgstr ""
 
+#: clinic_invoice.js
+msgid "Add Invoice Item"
+msgstr ""
+
 #: roles.js
 msgid "Add Licenses"
 msgstr ""
@@ -1110,7 +1114,8 @@ msgstr ""
 msgid "American Wirehair"
 msgstr ""
 
-#: clinic_appointment.js donations.js person_vouchers.js common_widgets.js
+#: clinic_invoice.js clinic_appointment.js donations.js person_vouchers.js
+#: common_widgets.js
 msgid "Amount"
 msgstr ""
 
@@ -2434,8 +2439,16 @@ msgstr ""
 msgid "Clear tables before importing"
 msgstr ""
 
-#: roles.js
+#: header_edit_header.js roles.js calendarview.js html.py
 msgid "Clinic"
+msgstr ""
+
+#: html.py
+msgid "Clinic Calendar"
+msgstr ""
+
+#: clinic_invoice.js
+msgid "Clinic Invoice - {0}"
 msgstr ""
 
 #: lookups.py
@@ -2624,6 +2637,10 @@ msgstr ""
 
 #: transport.js
 msgid "Confirmed"
+msgstr ""
+
+#: html.py
+msgid "Consulting Room"
 msgstr ""
 
 #: clinic_appointment.js
@@ -3276,14 +3293,15 @@ msgid "Defaults formats for code and shortcode are TYYYYNNN and NNT"
 msgstr ""
 
 #: animal_diet.js report_images.js onlineform.js document_repository.js
-#: movements.js person.js waitinglist.js staff_rota.js additional.js
-#: clinic_appointment.js donations.js diary.js diarytask.js traploan.js main.js
-#: log.js waitinglist_results.js animal_costs.js person_investigation.js
-#: animal.js roles.js htmltemplates.js reports.js litters.js accounts_trx.js
-#: users.js incident.js lostfound.js media.js diarytasks.js person_vouchers.js
-#: document_templates.js accounts.js onlineforms.js test.js stocklevel.js
-#: lookups.js citations.js licence.js transport.js onlineform_incoming.js
-#: common_tableform.js vaccination.js medicalprofile.js common.js
+#: movements.js person.js waitinglist.js clinic_invoice.js staff_rota.js
+#: additional.js clinic_appointment.js donations.js diary.js diarytask.js
+#: traploan.js main.js log.js waitinglist_results.js animal_costs.js
+#: person_investigation.js animal.js roles.js htmltemplates.js reports.js
+#: litters.js accounts_trx.js users.js incident.js lostfound.js media.js
+#: diarytasks.js person_vouchers.js document_templates.js accounts.js
+#: onlineforms.js test.js stocklevel.js lookups.js citations.js licence.js
+#: transport.js onlineform_incoming.js common_tableform.js vaccination.js
+#: medicalprofile.js common.js
 msgid "Delete"
 msgstr ""
 
@@ -3455,10 +3473,10 @@ msgstr ""
 msgid "Deposit Returned"
 msgstr ""
 
-#: animal_diet.js waitinglist.js waitinglist_results.js animal_costs.js
-#: report_export.js reports.js waitinglist_new.js accounts_trx.js incident.js
-#: incident_find.js accounts.js onlineforms.js stocklevel.js lookups.js
-#: mobile.py lostfound.py html.py
+#: animal_diet.js waitinglist.js clinic_invoice.js waitinglist_results.js
+#: animal_costs.js report_export.js reports.js waitinglist_new.js
+#: accounts_trx.js incident.js incident_find.js accounts.js onlineforms.js
+#: stocklevel.js lookups.js mobile.py lostfound.py html.py
 msgid "Description"
 msgstr ""
 
@@ -3849,6 +3867,10 @@ msgstr ""
 msgid "Edit Header/Footer"
 msgstr ""
 
+#: clinic_invoice.js
+msgid "Edit Invoice Item"
+msgstr ""
+
 #: lookups.js
 msgid "Edit Lookups"
 msgstr ""
@@ -3919,6 +3941,10 @@ msgstr ""
 
 #: person_investigation.js
 msgid "Edit investigation"
+msgstr ""
+
+#: clinic_appointment.js
+msgid "Edit invoice"
 msgstr ""
 
 #: licence.js
@@ -6014,6 +6040,10 @@ msgstr ""
 msgid "Invoice Only"
 msgstr ""
 
+#: clinic_invoice.js
+msgid "Invoice items need a description and amount."
+msgstr ""
+
 #: dbupdate.py
 msgid "Irish Setter"
 msgstr ""
@@ -7301,6 +7331,10 @@ msgstr ""
 
 #: dbupdate.py
 msgid "New Guinea Singing Dog"
+msgstr ""
+
+#: clinic_invoice.js
+msgid "New Item"
 msgstr ""
 
 #: licence.js
@@ -8858,6 +8892,10 @@ msgid "Remove HTML and PDF document media after this many years"
 msgstr ""
 
 #: options.js
+msgid "Remove clinic functionality from screens and menus"
+msgstr ""
+
+#: options.js
 msgid "Remove fine-grained animal control incident permissions"
 msgstr ""
 
@@ -9504,9 +9542,9 @@ msgstr ""
 msgid "Second offence"
 msgstr ""
 
-#: person.js common_animalchoosermulti.js animal.js roles.js reports.js
-#: accounts_trx.js users.js diarytasks.js accounts.js common_personchooser.js
-#: onlineforms.js common_tableform.js common.js
+#: person.js common_animalchoosermulti.js clinic_appointment.js animal.js
+#: roles.js reports.js accounts_trx.js users.js diarytasks.js accounts.js
+#: common_personchooser.js onlineforms.js common_tableform.js common.js
 msgid "Select"
 msgstr ""
 
@@ -12397,7 +12435,7 @@ msgstr ""
 msgid "Waiting List: {0}"
 msgstr ""
 
-#: clinic_appointment.js
+#: clinic_appointment.js html.py
 msgid "Waiting Room"
 msgstr ""
 
@@ -12911,6 +12949,10 @@ msgstr ""
 
 #: main.js
 msgid "less"
+msgstr ""
+
+#: clinic_appointment.js
+msgid "mins"
 msgstr ""
 
 #: medical.js medicalprofile.js medical.py

@@ -39,6 +39,13 @@ class TestClinic(unittest.TestCase):
     def test_get_appointments_today(self):
         assert len(clinic.get_appointments_today(base.get_dbo())) > 0
 
+    def test_get_appointments_two_dates(self):
+        clinic.get_appointments_two_dates(base.get_dbo(), "2001-01-01", "2020-01-01")
+
+    def test_get_appointments_tabs(self):
+        clinic.get_animal_appointments(base.get_dbo(), 1)
+        clinic.get_person_appointments(base.get_dbo(), 1)
+
     def test_get_invoice_items(self):
         assert len(clinic.get_invoice_items(base.get_dbo(), self.anid)) > 0
 

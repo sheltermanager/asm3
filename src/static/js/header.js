@@ -307,6 +307,10 @@ $(function() {
                 if (config.bool("DisableLostAndFound")) {
                     $(".taglostfound").hide();  
                 }
+                // If clinic is disabled, hide menu entries for it
+                if (config.bool("DisableClinic")) {
+                    $(".tagclinic").hide();
+                }
                 // If retailer is disabled, hide menu entries for it
                 if (config.bool("DisableRetailer")) {
                     $(".tagretailer").hide();

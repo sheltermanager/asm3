@@ -7,8 +7,8 @@ import time
 # flake8: noqa - we have a lot of locales and this is convenient
 from locales import *
 
-VERSION = "41u [Wed  9 May 17:00:36 BST 2018]"
-BUILD = "05091700"
+VERSION = "41u [Thu 10 May 11:23:56 BST 2018]"
+BUILD = "05101123"
 
 DMY = ( "%d/%m/%Y", "%d/%m/%y" )
 MDY = ( "%m/%d/%Y", "%m/%d/%y" )
@@ -463,6 +463,13 @@ def add_hours(date, nohours = 1):
     """
     if date is None: return None
     return date + datetime.timedelta(hours = nohours)
+
+def add_minutes(date, nomins = 1):
+    """
+    Add mins to date, returning a new datetime
+    """
+    if date is None: return None
+    return date + datetime.timedelta(minutes = nomins)
 
 def subtract_hours(date, nohours = 1):
     """

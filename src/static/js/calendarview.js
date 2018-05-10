@@ -45,6 +45,10 @@ $(function() {
                 '<label for="toggle-test">' + _("Test") + '</label>',
                 '</span> ',
                 '<span class="asm-calendar-legend">',
+                html.icon("health") + '<input id="toggle-test" data="c" type="checkbox" class="asm-checkbox" />' + 
+                '<label for="toggle-test">' + _("Clinic") + '</label>',
+                '</span> ',
+                '<span class="asm-calendar-legend">',
                 html.icon("donation") + '<input id="toggle-donation" data="p" type="checkbox" class="asm-checkbox" />' + 
                 '<label for="toggle-donation">' + _("Payment") + '</label>',
                 '</span> ',

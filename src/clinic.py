@@ -28,6 +28,7 @@ def get_clinic_appointment_query(dbo):
         "FROM clinicappointment ca " \
         "LEFT OUTER JOIN lksclinicstatus cs ON cs.ID = ca.Status " \
         "LEFT OUTER JOIN animal a ON ca.AnimalID = a.ID " \
+        "LEFT OUTER JOIN internallocation il ON a.ShelterLocation = il.ID " \
         "LEFT OUTER JOIN media ma ON ma.LinkID = a.ID AND ma.LinkTypeID = 0 AND ma.WebsitePhoto = 1 " \
         "LEFT OUTER JOIN species s ON a.SpeciesID = s.ID " \
         "LEFT OUTER JOIN lksex sx ON sx.ID = a.Sex " \
@@ -37,13 +38,33 @@ def get_clinic_invoice_query(dbo):
     return "SELECT ci.* " \
         "FROM clinicinvoiceitem ci "
 
+def get_site_filter(siteid = 0):
+    """ 
+    Returns a site filter for use with appointment queries.
+    Filters on people, so if the user has a non-zero siteid, only people with the matching site id are shown
+    """
+    if siteid == 0: return ""
+    return " AND o.SiteID = %d" % siteid
+
 def get_appointment(dbo, appointmentid):
     """
     Returns an appointment by ID
     """
     return dbo.first_row(dbo.query("%s WHERE ca.ID = ?" % get_clinic_appointment_query(dbo), [appointmentid]))
 
-def get_appointments_today(dbo, sort=DESCENDING, statusfilter=-1, userfilter=""):
+def get_animal_appointments(dbo, animalid):
+    """
+    Returns all appointments for an animal
+    """
+    return dbo.query("%s WHERE ca.AnimalID = ?" % get_clinic_appointment_query(dbo), [animalid])
+
+def get_person_appointments(dbo, personid):
+    """
+    Returns all appointments for a person
+    """
+    return dbo.query("%s WHERE ca.OwnerID = ?" % get_clinic_appointment_query(dbo), [personid])
+
+def get_appointments_today(dbo, sort=DESCENDING, statusfilter=-1, userfilter="", siteid=0):
     """
     Gets all appointments that are due today
     """
@@ -53,8 +74,22 @@ def get_appointments_today(dbo, sort=DESCENDING, statusfilter=-1, userfilter="")
     if statusfilter != -1: sf = "AND ca.Status = %d" % statusfilter
     uf = ""
     if userfilter != "": uf = "AND ca.ApptFor = %s" % dbo.sql_value(userfilter)
-    sql = "%s WHERE ca.DateTime >= ? AND ca.DateTime <= ? %s %s ORDER BY %s" % (get_clinic_appointment_query(dbo), sf, uf, order)
+    tf = ""
+    if siteid != 0: tf = get_site_filter(siteid)
+    sql = "%s WHERE ca.DateTime >= ? AND ca.DateTime <= ? %s %s %s ORDER BY %s" % (get_clinic_appointment_query(dbo), sf, uf, tf, order)
     return dbo.query(sql, [ dbo.today(), dbo.today(settime="23:59:59") ])
+
+def get_appointments_two_dates(dbo, start, end, siteid = 0):
+    """
+    Returns vaccinations due between two dates:
+    start, end: dates 
+    locationfilter, siteid: restrictions on visible locations/site
+    ID, ANIMALID, SHELTERCODE, ANIMALNAME, LOCATIONNAME, WEBSITEMEDIANAME, DATEREQUIRED, DATEOFVACCINATION, COMMENTS, VACCINATIONTYPE, VACCINATIONID
+    """
+    return dbo.query(get_clinic_appointment_query(dbo) + \
+        "WHERE ca.CompletedDateTime Is Null " \
+        "AND ca.DateTime >= ? AND ca.DateTime <= ? %s " \
+        "ORDER BY ca.DateTime" % (get_site_filter(siteid)), (start, end))
 
 def get_invoice_items(dbo, appointmentid):
     """

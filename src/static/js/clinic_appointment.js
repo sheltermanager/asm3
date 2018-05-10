@@ -125,7 +125,8 @@ $(function() {
                             diffmins = Math.round((cutoff - format.date_js(row.ARRIVEDDATETIME)) / 60000),
                             d = format.date(row.ARRIVEDDATETIME), t = format.time(row.ARRIVEDDATETIME, TIMEFORMAT),
                             dv = clinic_appointment.is_book ? t : d + " " + t;
-                        return dv + " (" + diffmins + " " + _("mins") + ")";
+                        if (clinic_appointment.is_book) { dv += " (" + diffmins + " " + _("mins") + ")"; }
+                        return dv;
                     }},
                     { field: "WITHVETDATETIME", display: _("With Vet"), 
                         formatter: function(row) {
@@ -243,10 +244,13 @@ $(function() {
                     }
                 },
                 { id: "filter", type: "dropdownfilter", 
-                     options: '<option value="-1">' + _("(all)") + '</option>' + html.list_to_options(controller.clinicstatuses, "ID", "STATUS"),
-                     click: function(selval) {
-                        common.route(controller.name + "?filter=" + selval);
-                     }
+                    options: '<option value="-1">' + _("(all)") + '</option>' + html.list_to_options(controller.clinicstatuses, "ID", "STATUS"),
+                    hideif: function() {
+                        return !clinic_appointment.is_book;
+                    },
+                    click: function(selval) {
+                       common.route(controller.name + "?filter=" + selval);
+                    }
                 }
             ];
             this.dialog = dialog;
@@ -300,10 +304,10 @@ $(function() {
             this.model();
             h.push(tableform.dialog_render(this.dialog));
             if (controller.name == "animal_clinic") {
-                h.push(edit_header.animal_edit_header(controller.animal, "clinics", controller.tabcounts));
+                h.push(edit_header.animal_edit_header(controller.animal, "clinic", controller.tabcounts));
             }
             else if (controller.name == "person_clinic") {
-                h.push(edit_header.person_edit_header(controller.person, "clinics", controller.tabcounts));
+                h.push(edit_header.person_edit_header(controller.person, "clinic", controller.tabcounts));
             }
             else {
                 h.push(html.content_header(this.title()));
