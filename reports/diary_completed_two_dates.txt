@@ -1,0 +1,39 @@
+Diary (completed between two dates)
+###
+Diary
+###
+Any
+###
+Shows all completed diary notes between two dates.
+###
+en
+###
+SELECT *
+FROM diary
+WHERE DateCompleted Is Not Null
+AND DateCompleted >= '$ASK DATE Notes completed between$' AND DateCompleted <= '$ASK DATE and$'
+ORDER BY DiaryForName, DateCompleted
+###
+$$HEADER
+HEADER$$
+
+$$GROUP_DiaryForName
+$$HEAD
+<h2>$DiaryForName</h2>
+<hr />
+$$FOOT
+GROUP$$
+
+$$BODY
+<p>
+<i>$DIARYDATETIME</i> (completed on $DATECOMPLETED)<br />
+<b>$LINKINFO $SUBJECT</b>
+</p>
+<p>
+$NOTE
+</p>
+<hr />
+BODY$$
+
+$$FOOTER
+FOOTER$$

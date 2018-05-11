@@ -1,4 +1,4 @@
-Diary (between two dates)
+Diary (outstanding between two dates)
 ###
 Diary
 ###
