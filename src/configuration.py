@@ -263,7 +263,7 @@ DEFAULTS = {
     "ScalePDFs": "Yes", 
     "SearchColumns": "AnimalName,Image,ShelterCode,ShelterLocation,SpeciesID,BreedName," \
         "Sex, AnimalAge, Size, BaseColourID, Markings, IdentichipNumber, DateBroughtIn",
-    "SearchSort": "3",
+    "SearchSort": "6",
     "ServiceEnabled": "Yes",
     "ServiceAuthEnabled": "Yes", 
     "ShelterViewDefault": "location",
