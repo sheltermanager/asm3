@@ -19,10 +19,10 @@ AnimalLocationHistory
 PETFINDER_ID = ""
 START_ID = 200
 
-INTAKE_FILENAME = "data/petpoint_nv1573/animals.csv"
+INTAKE_FILENAME = "data/petpoint_zd1690/animals.csv"
 MEMO_FILENAME = ""
 LOCATION_FILENAME = ""
-PERSON_FILENAME = "data/petpoint_nv1573/person.csv"
+PERSON_FILENAME = "data/petpoint_zd1690/people.csv"
 VACC_FILENAME = ""
 TEST_FILENAME = ""
 
