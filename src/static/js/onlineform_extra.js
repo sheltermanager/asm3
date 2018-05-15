@@ -111,7 +111,8 @@ $(document).ready(function() {
     // some of our fields to values passed 
     $.each(parse_params(), function(k, v) {
         $(".asm-onlineform-date, .asm-onlineform-time, .asm-onlineform-text, .asm-onlineform-lookup, .asm-onlineform-notes, " +
-            ".asm-onlineform-check, .asm-onlineform-radio, .asm-onlineform-adoptableanimal, .asm-onlineform-shelteranimal").each(function() {
+            ".asm-onlineform-check, .asm-onlineform-radio, .asm-onlineform-adoptableanimal, .asm-onlineform-shelteranimal, " +
+            ".asm-onlineform-breed, .asm-onlineform-colour, .asm-onlineform-species").each(function() {
             if ($(this).attr("name").indexOf(k) == 0) {
                 $(this).val(v);
             }
