@@ -21,13 +21,13 @@ START_ID = 200
 
 INTAKE_FILENAME = "data/petpoint_zd1690/animals.csv"
 MEMO_FILENAME = ""
-LOCATION_FILENAME = ""
+LOCATION_FILENAME = "data/petpoint_zd1690/locations.csv"
 PERSON_FILENAME = "data/petpoint_zd1690/people.csv"
-VACC_FILENAME = ""
-TEST_FILENAME = ""
+VACC_FILENAME = "data/petpoint_zd1690/vacc.csv"
+TEST_FILENAME = "data/petpoint_zd1690/tests.csv"
 
 # Whether or not the vaccine and test files are in two row stacked format
-MEDICAL_TWO_ROW_FORMAT = False
+MEDICAL_TWO_ROW_FORMAT = True
 
 def findowner(ownername = ""):
     """ Looks for an owner with the given name in the collection
@@ -322,9 +322,11 @@ for d in sorted(asm.csv_to_list(INTAKE_FILENAME), key=lambda k: getdate(k["Intak
 
 # Turn memos into history logs
 if MEMO_FILENAME != "":
+    idfield = "AnimalID"
     for d in asm.csv_to_list(MEMO_FILENAME):
-        if ppa.has_key(d["AnimalID"]):
-            a = ppa[d["AnimalID"]]
+        if not d.has_key(idfield): idfield = "Name"
+        if ppa.has_key(d[idfield]):
+            a = ppa[d[idfield]]
             l = asm.Log()
             logs.append(l)
             l.LogTypeID = 3 # History
@@ -338,12 +340,12 @@ if MEMO_FILENAME != "":
 # Extract color info from location history
 if LOCATION_FILENAME != "":
     for d in asm.csv_to_list(LOCATION_FILENAME):
-        if ppa.has_key(d["textbox15"]):
-            name1, name2 = d["textbox59"].split("/", 1)
-            a = ppa[d["textbox15"]]
+        if ppa.has_key(d["Animal#"]):
+            name1, name2 = d["Color"].split("/", 1)
+            a = ppa[d["Animal#"]]
             a.BaseColourID = asm.colour_id_for_names(name1, name2)
             if a.HiddenAnimalDetails.find("color:") == -1:
-                a.HiddenAnimalDetails += ", color: " + d["textbox59"]
+                a.HiddenAnimalDetails += ", color: " + d["Color"]
 
 def process_vacc(animalno, vaccdate = None, vaccexpires = None, vaccname = ""):
     """ Processes a vaccination record. PP have multiple formats of this data file """
