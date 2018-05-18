@@ -1283,6 +1283,7 @@ class animal_clinic(JSONEndpoint):
             "clinicstatuses": extlookups.get_clinic_statuses(dbo),
             "forlist": users.get_users(dbo),
             "rows": rows,
+            "templates": template.get_document_templates(dbo),
             "tabcounts": extanimal.get_satellite_counts(dbo, animalid)[0]
         }
 
@@ -2027,6 +2028,7 @@ class clinic_consultingroom(JSONEndpoint):
             "filter": sf,
             "clinicstatuses": extlookups.get_clinic_statuses(dbo),
             "forlist": users.get_users(dbo),
+            "templates": template.get_document_templates(dbo),
             "rows": rows
         }
 
@@ -2046,6 +2048,7 @@ class clinic_waitingroom(JSONEndpoint):
             "filter": sf,
             "clinicstatuses": extlookups.get_clinic_statuses(dbo),
             "forlist": users.get_users(dbo),
+            "templates": template.get_document_templates(dbo),
             "rows": rows
         }
 
@@ -2240,6 +2243,9 @@ class document_gen(ASMEndpoint):
         elif linktype == "ANIMALCONTROL":
             loglinktype = extlog.ANIMALCONTROL
             content = wordprocessor.generate_animalcontrol_doc(dbo, dtid, post.integer("id"), o.user)
+        elif linktype == "CLINIC":
+            loglinktype = extlog.PERSON
+            content = wordprocessor.generate_clinic_doc(dbo, dtid, post.integer("id"), o.user)
         elif linktype == "PERSON":
             loglinktype = extlog.PERSON
             content = wordprocessor.generate_person_doc(dbo, dtid, post.integer("id"), o.user)
@@ -2297,6 +2303,14 @@ class document_gen(ASMEndpoint):
             tempname += " - " + utils.padleft(recid, 6)
             extmedia.create_document_media(dbo, session.user, extmedia.ANIMALCONTROL, recid, tempname, post["document"])
             self.redirect("incident_media?id=%d" % recid)
+        elif linktype == "CLINIC":
+            c = clinic.get_appointment(dbo, recid)
+            if c is None:
+                raise utils.ASMValidationError("%d is not a valid clinic id" % recid)
+            ownerid = c.OWNERID
+            tempname += " - " + c.OWNERNAME
+            extmedia.create_document_media(dbo, session.user, extmedia.PERSON, ownerid, tempname, post["document"])
+            self.redirect("person_media?id=%d" % ownerid)
         elif linktype == "FOUNDANIMAL":
             tempname += " - " + utils.padleft(recid, 6)
             extmedia.create_document_media(dbo, session.user, extmedia.FOUNDANIMAL, recid, tempname, post["document"])
@@ -4198,6 +4212,7 @@ class person_clinic(JSONEndpoint):
             "tabcounts": extperson.get_satellite_counts(dbo, personid)[0],
             "clinicstatuses": extlookups.get_clinic_statuses(dbo),
             "forlist": users.get_users(dbo),
+            "templates": template.get_document_templates(dbo),
             "rows": rows
         }
 

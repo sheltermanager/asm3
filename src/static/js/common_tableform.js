@@ -405,6 +405,16 @@
         },
 
         /**
+         * Returns the selected ID in the table.
+         * Returns undefined if nothing is selected.
+         */
+        table_selected_id: function(table) {
+            var selid = $("#tableform input:checked").attr("data-id");
+            if (!selid) { return undefined; }
+            return selid;
+        },
+
+        /**
          * Returns the selected row in the table.
          * Returns undefined if nothing is selected.
          */

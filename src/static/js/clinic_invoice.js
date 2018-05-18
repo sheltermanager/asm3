@@ -85,6 +85,12 @@ $(function() {
             this.model();
             h.push(tableform.dialog_render(this.dialog));
             h.push(html.content_header(this.title()));
+            h.push(html.info(_("Appointment {0}. {1} on {2} for {3}")
+                .replace("{0}", format.padleft(controller.appointment.ID, 6))
+                .replace("{1}", controller.appointment.OWNERNAME)
+                .replace("{2}", format.date(controller.appointment.DATETIME) + " " + format.time(controller.appointment.DATETIME))
+                .replace("{3}", controller.appointment.ANIMALNAME)
+                ));
             h.push(tableform.buttons_render(this.buttons));
             h.push(tableform.table_render(this.table));
             h.push(html.content_footer());

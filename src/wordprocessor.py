@@ -3,6 +3,7 @@
 import additional
 import animal
 import animalcontrol
+import clinic
 import configuration
 import db
 import financial
@@ -926,6 +927,41 @@ def movement_tags(dbo, m):
     }
     return tags    
 
+def clinic_tags(dbo, c):
+    """
+    Generates a list of tags from a clinic result (clinic.get_appointment)
+    """
+    l = dbo.locale
+    tags = {
+        "ID":                   utils.padleft(c.ID, 6),
+        "APPOINTMENTFOR"        : c.APPTFOR,
+        "APPOINTMENTDATE"       : python2display(l, c.DATETIME),
+        "APPOINTMENTTIME"       : format_time(c.DATETIME),
+        "STATUS"                : c.CLINICSTATUSNAME,
+        "ARRIVEDDATE"           : python2display(l, c.ARRIVEDDATETIME),
+        "ARRIVEDTIME"           : format_time(c.ARRIVEDDATETIME),
+        "WITHVETDATE"           : python2display(l, c.WITHVETDATETIME),
+        "WITHVETTIME"           : format_time(c.WITHVETDATETIME),
+        "COMPLETEDDATE"         : python2display(l, c.COMPLETEDDATETIME),
+        "COMPLETEDTIME"         : format_time(c.COMPLETEDDATETIME),
+        "REASONFORAPPOINTMENT"  : c.REASONFORAPPOINTMENT,
+        "COMMENTS"              : c.COMMENTS,
+        "INVOICEAMOUNT"         : format_currency_no_symbol(l, c.AMOUNT),
+        "INVOICEVATAMOUNT"      : format_currency_no_symbol(l, c.VATAMOUNT),
+        "INVOICETAXAMOUNT"      : format_currency_no_symbol(l, c.VATAMOUNT),
+        "INVOICEVATRATE"        : c.VATRATE,
+        "INVOICETAXRATE"        : c.VATRATE,
+        "INVOICETOTAL"          : format_currency_no_symbol(l, c.AMOUNT + c.VATAMOUNT),
+    }
+
+    # Invoice items
+    d = {
+        "CLINICINVOICEAMOUNT"       : "c:AMOUNT",
+        "CLINICINVOICEDESCRIPTION"  : "DESCRIPTION"
+    }
+    tags.update(table_tags(dbo, d, clinic.get_invoice_items(dbo, c.ID)))
+    return tags
+
 def person_tags(dbo, p):
     """
     Generates a list of tags from a person result (the deep type from
@@ -1295,6 +1331,22 @@ def generate_animalcontrol_doc(dbo, templateid, acid, username):
     if ac is None: raise utils.ASMValidationError("%d is not a valid incident ID" % acid)
     tags = animalcontrol_tags(dbo, ac)
     tags = append_tags(tags, org_tags(dbo, username))
+    return substitute_template(dbo, templateid, tags)
+
+def generate_clinic_doc(dbo, templateid, appointmentid, username):
+    """
+    Generates a clinic document from a template
+    templateid: The ID of the template
+    appointmentid: The clinicappointment id to generate for
+    """
+    c = clinic.get_appointment(dbo, appointmentid)
+    if c is None: raise utils.ASMValidationError("%d is not a valid clinic appointment ID" % appointmentid)
+    tags = clinic_tags(dbo, c)
+    a = animal.get_animal(dbo, c.ANIMALID)
+    if a is not None:
+        tags = append_tags(tags, animal_tags(dbo, a, includeAdditional=True, includeCosts=False, includeDiet=False, includeDonations=False, \
+            includeFutureOwner=False, includeIsVaccinated=False, includeLogs=False, includeMedical=False))
+    tags = append_tags(tags, person_tags(dbo, person.get_person(dbo, c.OWNERID)))
     return substitute_template(dbo, templateid, tags)
 
 def generate_person_doc(dbo, templateid, personid, username):

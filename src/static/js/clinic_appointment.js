@@ -243,6 +243,8 @@ $(function() {
                         });
                     }
                 },
+                { id: "document", text: _("Receipt/Invoice"), icon: "document", enabled: "one", perm: "gaf", 
+                    tooltip: _("Generate document from this appointment"), type: "buttonmenu" },
                 { id: "filter", type: "dropdownfilter", 
                     options: '<option value="-1">' + _("(all)") + '</option>' + html.list_to_options(controller.clinicstatuses, "ID", "STATUS"),
                     hideif: function() {
@@ -299,10 +301,15 @@ $(function() {
         },
 
         render: function() {
-            var h = [];
             this.is_book = controller.name.indexOf("clinic") == 0;
             this.model();
-            h.push(tableform.dialog_render(this.dialog));
+            var h = [
+                tableform.dialog_render(this.dialog),
+                '<div id="button-document-body" class="asm-menu-body">',
+                '<ul class="asm-menu-list">',
+                edit_header.template_list(controller.templates, "CLINIC", 0),
+                '</ul></div>'
+            ];
             if (controller.name == "animal_clinic") {
                 h.push(edit_header.animal_edit_header(controller.animal, "clinic", controller.tabcounts));
             }
@@ -331,6 +338,15 @@ $(function() {
 
             $("#person").personchooser().bind("personchooserloaded", function(event, rec) {
                 clinic_appointment.lastperson = rec;
+            });
+
+            // Add click handlers to templates
+            $(".templatelink").click(function() {
+                // Update the href as it is clicked so default browser behaviour
+                // continues on to open the link in a new window
+                var template_name = $(this).attr("data");
+                var id = tableform.table_selected_id(clinic_appointment.table);
+                $(this).prop("href", "document_gen?linktype=CLINIC&id=" + id + "&dtid=" + template_name);
             });
 
         },
