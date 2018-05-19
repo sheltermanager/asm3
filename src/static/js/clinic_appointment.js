@@ -161,6 +161,11 @@ $(function() {
                                 $("#vat").prop("checked", true);
                                 $("#vatrate").val(config.number("VATRate"));
                             }
+                            $("#person").personchooser("clear");
+                            if (controller.person) {
+                                $("#person").personchooser("loadbyid", controller.person.ID);
+                                clinic_appointment.update_animals(controller.person.ID);
+                            }
                         }})
                         .then(function() {
                             return tableform.fields_post(dialog.fields, "mode=create", "clinic_appointment");
