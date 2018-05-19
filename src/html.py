@@ -617,7 +617,7 @@ def menu_structure(l, reports, mailmerges):
             (users.VIEW_CLINIC, "", "tagclinic", "--cat", "asm-icon-health", _("Clinic", l) ),
             (users.VIEW_CLINIC, "", "tagclinic", "clinic_waitingroom", "asm-icon-person", _("Waiting Room", l) ),
             (users.VIEW_CLINIC, "", "tagclinic", "clinic_consultingroom", "asm-icon-users", _("Consulting Room", l) ),
-            (users.VIEW_CLINIC, "", "tagclinic", "calendarview?ev=c", "asm-icon-diary", _("Clinic Calendar", l) ),
+            (users.VIEW_CLINIC, "", "tagclinic", "clinic_calendar", "asm-icon-diary", _("Clinic Calendar", l) ),
         )),
         ("", "financial", _("Financial", l), (
             ( users.VIEW_ACCOUNT, "alt+shift+x", "tagaccounts", "accounts", "asm-icon-accounts", _("Accounts", l) ),

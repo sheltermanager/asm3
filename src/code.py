@@ -1815,7 +1815,7 @@ class calendar_events(ASMEndpoint):
                     "icon": "test",
                     "link": "animal_test?id=%d" % t["ANIMALID"] })
         if "c" in ev and self.checkb(users.VIEW_CLINIC):
-            for c in clinic.get_appointments_two_dates(dbo, start, end, o.siteid):
+            for c in clinic.get_appointments_two_dates(dbo, start, end, o.post["apptfor"], o.siteid):
                 sub = "%s - %s" % (c.OWNERNAME, c.ANIMALNAME)
                 tit = "%s - %s (%s) %s" % (c.OWNERNAME, c.ANIMALNAME, c.APPTFOR, c.REASONFORAPPOINTMENT)
                 events.append({ 
@@ -1981,9 +1981,17 @@ class clinic_appointment(ASMEndpoint):
         for cid in o.post.integer_list("ids"):
             clinic.update_appointment_to_complete(o.dbo, o.user, cid, o.post.datetime("date", "time"))
 
+class clinic_calendar(JSONEndpoint):
+    url = "clinic_calendar"
+    get_permissions = users.VIEW_CLINIC
+
+    def controller(self, o):
+        return {
+            "forlist": users.get_users(o.dbo)
+        }
+
 class clinic_invoice(JSONEndpoint):
     url = "clinic_invoice"
-    js_module = "clinic_invoice"
     get_permissions = users.VIEW_CLINIC
 
     def controller(self, o):

@@ -79,16 +79,23 @@ def get_appointments_today(dbo, sort=DESCENDING, statusfilter=-1, userfilter="",
     sql = "%s WHERE ca.DateTime >= ? AND ca.DateTime <= ? %s %s %s ORDER BY %s" % (get_clinic_appointment_query(dbo), sf, uf, tf, order)
     return dbo.query(sql, [ dbo.today(), dbo.today(settime="23:59:59") ])
 
-def get_appointments_two_dates(dbo, start, end, siteid = 0):
+def get_appointments_two_dates(dbo, start, end, apptfor = "", siteid = 0):
     """
     Returns appointments due between two dates:
     start, end: dates 
     siteid: only show people with the matching siteid if non-zero
     """
-    return dbo.query(get_clinic_appointment_query(dbo) + \
-        "WHERE ca.Status NOT IN (?, ?) " \
-        "AND ca.DateTime >= ? AND ca.DateTime <= ? %s " \
-        "ORDER BY ca.DateTime" % (get_site_filter(siteid)), (COMPLETE, CANCELLED, start, end))
+    if apptfor != "":
+        return dbo.query(get_clinic_appointment_query(dbo) + \
+            "WHERE ca.Status NOT IN (?, ?) " \
+            "AND ca.ApptFor = ? " \
+            "AND ca.DateTime >= ? AND ca.DateTime <= ? %s " \
+            "ORDER BY ca.DateTime" % (get_site_filter(siteid)), (COMPLETE, CANCELLED, apptfor, start, end))
+    else:
+        return dbo.query(get_clinic_appointment_query(dbo) + \
+            "WHERE ca.Status NOT IN (?, ?) " \
+            "AND ca.DateTime >= ? AND ca.DateTime <= ? %s " \
+            "ORDER BY ca.DateTime" % (get_site_filter(siteid)), (COMPLETE, CANCELLED, start, end))
 
 def get_invoice_items(dbo, appointmentid):
     """
