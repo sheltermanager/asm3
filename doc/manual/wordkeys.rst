@@ -145,14 +145,20 @@ BondedAnimal2Code
     The code of the second animal this animal is bonded to
 Fee
     The animal's adoption fee if you are using per-animal adoption fees
-MicrochipNumber
-    The animal's microchip number 
 Microchipped
     "Yes" if the animal has been microchipped 
+MicrochipNumber
+    The animal's microchip number 
+MicrochipNumber2
+    The animal's second microchip number if it has one
 MicrochipDate
     The date the animal was microchipped 
+MicrochipDate2
+    The date the animal received a second microchip
 MicrochipManufacturer
     The manufacturer of the microchip
+MicrochipManufacturer2
+    The manufacturer of the second microchip
 Tattoo
     "Yes" if the animal has an identifying tattoo 
 TattooNumber
