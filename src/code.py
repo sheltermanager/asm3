@@ -1281,6 +1281,8 @@ class animal_clinic(JSONEndpoint):
             "name": self.url,
             "animal": a,
             "clinicstatuses": extlookups.get_clinic_statuses(dbo),
+            "donationtypes": extlookups.get_donation_types(dbo),
+            "paymenttypes": extlookups.get_payment_types(dbo),
             "forlist": users.get_users(dbo),
             "rows": rows,
             "templates": template.get_document_templates(dbo),
@@ -1962,6 +1964,11 @@ class clinic_appointment(ASMEndpoint):
         for cid in o.post.integer_list("ids"):
             clinic.delete_appointment(o.dbo, o.user, cid)
 
+    def post_payment(self, o):
+        self.check(users.ADD_DONATION)
+        for cid in o.post.integer_list("ids"):
+            clinic.insert_payment_from_appointment(o.dbo, o.user, cid, o.post)
+
     def post_personanimals(self, o):
         self.check(users.VIEW_ANIMAL)
         return utils.json(extanimal.get_animals_owned_by(o.dbo, o.post.integer("personid")))
@@ -2035,6 +2042,8 @@ class clinic_consultingroom(JSONEndpoint):
             "name": self.url,
             "filter": sf,
             "clinicstatuses": extlookups.get_clinic_statuses(dbo),
+            "donationtypes": extlookups.get_donation_types(dbo),
+            "paymenttypes": extlookups.get_payment_types(dbo),
             "forlist": users.get_users(dbo),
             "templates": template.get_document_templates(dbo),
             "rows": rows
@@ -2055,6 +2064,8 @@ class clinic_waitingroom(JSONEndpoint):
             "name": self.url,
             "filter": sf,
             "clinicstatuses": extlookups.get_clinic_statuses(dbo),
+            "donationtypes": extlookups.get_donation_types(dbo),
+            "paymenttypes": extlookups.get_payment_types(dbo),
             "forlist": users.get_users(dbo),
             "templates": template.get_document_templates(dbo),
             "rows": rows
@@ -4219,6 +4230,8 @@ class person_clinic(JSONEndpoint):
             "person": p,
             "tabcounts": extperson.get_satellite_counts(dbo, personid)[0],
             "clinicstatuses": extlookups.get_clinic_statuses(dbo),
+            "donationtypes": extlookups.get_donation_types(dbo),
+            "paymenttypes": extlookups.get_payment_types(dbo),
             "forlist": users.get_users(dbo),
             "templates": template.get_document_templates(dbo),
             "rows": rows

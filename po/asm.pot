@@ -48,7 +48,7 @@ msgstr ""
 msgid "(both)"
 msgstr ""
 
-#: main.js html.py
+#: main.js clinic_calendar.js html.py
 msgid "(everyone)"
 msgstr ""
 
@@ -1379,7 +1379,7 @@ msgstr ""
 msgid "Appointment date must be a valid date"
 msgstr ""
 
-#: clinic_invoice.js
+#: clinic_invoice.js clinic.py
 msgid "Appointment {0}. {1} on {2} for {3}"
 msgstr ""
 
@@ -1391,11 +1391,11 @@ msgstr ""
 msgid "Approved"
 msgstr ""
 
-#: calendarview.js common.js
+#: calendarview.js clinic_calendar.js common.js
 msgid "Apr"
 msgstr ""
 
-#: calendarview.js common.js
+#: calendarview.js clinic_calendar.js common.js
 msgid "April"
 msgstr ""
 
@@ -1475,11 +1475,11 @@ msgstr ""
 msgid "Audit Trail"
 msgstr ""
 
-#: calendarview.js common.js
+#: calendarview.js clinic_calendar.js common.js
 msgid "Aug"
 msgstr ""
 
-#: calendarview.js common.js
+#: calendarview.js clinic_calendar.js common.js
 msgid "August"
 msgstr ""
 
@@ -2064,11 +2064,11 @@ msgid "Canary"
 msgstr ""
 
 #: report_images.js common_animalchooser.js person.js
-#: common_animalchoosermulti.js main.js roles.js reports.js medical.js
-#: accounts_trx.js person_new.js users.js media.js document_templates.js
-#: common_personchooser.js onlineforms.js test.js common_widgets.js
-#: onlineform_incoming.js common_tableform.js sql.js vaccination.js common.js
-#: publish_options.js
+#: common_animalchoosermulti.js clinic_appointment.js main.js roles.js
+#: reports.js medical.js accounts_trx.js person_new.js users.js media.js
+#: document_templates.js common_personchooser.js onlineforms.js test.js
+#: common_widgets.js onlineform_incoming.js common_tableform.js sql.js
+#: vaccination.js common.js publish_options.js
 msgid "Cancel"
 msgstr ""
 
@@ -2447,7 +2447,7 @@ msgstr ""
 msgid "Clinic"
 msgstr ""
 
-#: html.py
+#: clinic_calendar.js html.py
 msgid "Clinic Calendar"
 msgstr ""
 
@@ -2755,8 +2755,9 @@ msgstr ""
 msgid "Cream"
 msgstr ""
 
-#: lostfound_new.js incident_new.js roles.js waitinglist_new.js person_new.js
-#: common_personchooser.js onlineform_incoming.js animal_new.js
+#: lostfound_new.js incident_new.js clinic_appointment.js roles.js
+#: waitinglist_new.js person_new.js common_personchooser.js
+#: onlineform_incoming.js animal_new.js
 msgid "Create"
 msgstr ""
 
@@ -2768,12 +2769,20 @@ msgstr ""
 msgid "Create Log"
 msgstr ""
 
+#: clinic_appointment.js
+msgid "Create Payment"
+msgstr ""
+
 #: lostfound.js
 msgid "Create Waiting List"
 msgstr ""
 
 #: move_reclaim.js move_adopt.js
 msgid "Create a cost record"
+msgstr ""
+
+#: clinic_appointment.js
+msgid "Create a due or received payment record from this appointment"
 msgstr ""
 
 #: animal.js
@@ -3083,7 +3092,7 @@ msgstr ""
 msgid "Date/Time"
 msgstr ""
 
-#: calendarview.js
+#: calendarview.js clinic_calendar.js
 msgid "Day"
 msgstr ""
 
@@ -3127,7 +3136,7 @@ msgstr ""
 msgid "Debit Card"
 msgstr ""
 
-#: calendarview.js common.js
+#: calendarview.js clinic_calendar.js common.js
 msgid "Dec"
 msgstr ""
 
@@ -3140,7 +3149,7 @@ msgstr ""
 msgid "Deceased Date"
 msgstr ""
 
-#: calendarview.js common.js
+#: calendarview.js clinic_calendar.js common.js
 msgid "December"
 msgstr ""
 
@@ -3660,8 +3669,8 @@ msgstr ""
 msgid "Doberman Pinscher"
 msgstr ""
 
-#: movements.js person.js waitinglist.js animal.js incident.js lostfound.js
-#: licence.js dbupdate.py
+#: movements.js person.js waitinglist.js clinic_appointment.js animal.js
+#: incident.js lostfound.js licence.js dbupdate.py
 msgid "Document"
 msgstr ""
 
@@ -3795,7 +3804,8 @@ msgstr ""
 msgid "Duck"
 msgstr ""
 
-#: donations.js traploan.js common_widgets.js citations.js
+#: clinic_appointment.js donations.js traploan.js common_widgets.js
+#: citations.js
 msgid "Due"
 msgstr ""
 
@@ -4621,11 +4631,11 @@ msgstr ""
 msgid "Features"
 msgstr ""
 
-#: calendarview.js common.js
+#: calendarview.js clinic_calendar.js common.js
 msgid "Feb"
 msgstr ""
 
-#: calendarview.js common.js
+#: calendarview.js clinic_calendar.js common.js
 msgid "February"
 msgstr ""
 
@@ -5024,11 +5034,11 @@ msgstr ""
 msgid "Frequently Asked Questions"
 msgstr ""
 
-#: calendarview.js common.js
+#: calendarview.js clinic_calendar.js common.js
 msgid "Fri"
 msgstr ""
 
-#: reports.js calendarview.js common.js
+#: reports.js calendarview.js clinic_calendar.js common.js
 msgid "Friday"
 msgstr ""
 
@@ -6112,11 +6122,11 @@ msgstr ""
 msgid "Jack Russell Terrier"
 msgstr ""
 
-#: calendarview.js common.js
+#: calendarview.js clinic_calendar.js common.js
 msgid "Jan"
 msgstr ""
 
-#: calendarview.js common.js
+#: calendarview.js clinic_calendar.js common.js
 msgid "January"
 msgstr ""
 
@@ -6140,11 +6150,11 @@ msgstr ""
 msgid "Jindo"
 msgstr ""
 
-#: calendarview.js common.js
+#: calendarview.js clinic_calendar.js common.js
 msgid "Jul"
 msgstr ""
 
-#: calendarview.js common.js
+#: calendarview.js clinic_calendar.js common.js
 msgid "July"
 msgstr ""
 
@@ -6164,11 +6174,11 @@ msgstr ""
 msgid "Jump to movements"
 msgstr ""
 
-#: calendarview.js common.js
+#: calendarview.js clinic_calendar.js common.js
 msgid "Jun"
 msgstr ""
 
-#: calendarview.js common.js
+#: calendarview.js clinic_calendar.js common.js
 msgid "June"
 msgstr ""
 
@@ -6422,7 +6432,7 @@ msgstr ""
 msgid "Links"
 msgstr ""
 
-#: calendarview.js
+#: calendarview.js clinic_calendar.js
 msgid "List"
 msgstr ""
 
@@ -6773,11 +6783,11 @@ msgstr ""
 msgid "Map of active incidents"
 msgstr ""
 
-#: calendarview.js common.js
+#: calendarview.js clinic_calendar.js common.js
 msgid "Mar"
 msgstr ""
 
-#: calendarview.js common.js
+#: calendarview.js clinic_calendar.js common.js
 msgid "March"
 msgstr ""
 
@@ -6861,7 +6871,7 @@ msgstr ""
 msgid "Maternity"
 msgstr ""
 
-#: calendarview.js common.js
+#: calendarview.js clinic_calendar.js common.js
 msgid "May"
 msgstr ""
 
@@ -6982,7 +6992,7 @@ msgstr ""
 msgid "Messages successfully sent"
 msgstr ""
 
-#: donations.js csvimport_paypal.js common_widgets.js
+#: clinic_appointment.js donations.js csvimport_paypal.js common_widgets.js
 msgid "Method"
 msgstr ""
 
@@ -7054,11 +7064,11 @@ msgstr ""
 msgid "Modify Lookups"
 msgstr ""
 
-#: calendarview.js common.js
+#: calendarview.js clinic_calendar.js common.js
 msgid "Mon"
 msgstr ""
 
-#: options.js reports.js calendarview.js common.js
+#: options.js reports.js calendarview.js clinic_calendar.js common.js
 msgid "Monday"
 msgstr ""
 
@@ -7066,7 +7076,7 @@ msgstr ""
 msgid "Money"
 msgstr ""
 
-#: calendarview.js
+#: calendarview.js clinic_calendar.js
 msgid "Month"
 msgstr ""
 
@@ -7635,7 +7645,7 @@ msgstr ""
 msgid "Notes about the death of the animal"
 msgstr ""
 
-#: calendarview.js common.js
+#: calendarview.js clinic_calendar.js common.js
 msgid "Nov"
 msgstr ""
 
@@ -7643,7 +7653,7 @@ msgstr ""
 msgid "Nova Scotia Duck-Tolling Retriever"
 msgstr ""
 
-#: calendarview.js common.js
+#: calendarview.js clinic_calendar.js common.js
 msgid "November"
 msgstr ""
 
@@ -7682,11 +7692,11 @@ msgstr ""
 msgid "Ocicat"
 msgstr ""
 
-#: calendarview.js common.js
+#: calendarview.js clinic_calendar.js common.js
 msgid "Oct"
 msgstr ""
 
-#: calendarview.js common.js
+#: calendarview.js clinic_calendar.js common.js
 msgid "October"
 msgstr ""
 
@@ -8715,7 +8725,7 @@ msgstr ""
 msgid "Receipt No"
 msgstr ""
 
-#: clinic_appointment.js donations.js
+#: donations.js
 msgid "Receipt/Invoice"
 msgstr ""
 
@@ -8731,7 +8741,8 @@ msgstr ""
 msgid "Receive a payment"
 msgstr ""
 
-#: donation_receive.js donations.js common_widgets.js onlineform_incoming.js
+#: donation_receive.js clinic_appointment.js donations.js common_widgets.js
+#: onlineform_incoming.js
 msgid "Received"
 msgstr ""
 
@@ -9442,7 +9453,7 @@ msgstr ""
 msgid "Samoyed"
 msgstr ""
 
-#: calendarview.js common.js
+#: calendarview.js clinic_calendar.js common.js
 msgid "Sat"
 msgstr ""
 
@@ -9450,7 +9461,7 @@ msgstr ""
 msgid "Satin"
 msgstr ""
 
-#: reports.js calendarview.js common.js
+#: reports.js calendarview.js clinic_calendar.js common.js
 msgid "Saturday"
 msgstr ""
 
@@ -9645,7 +9656,7 @@ msgstr ""
 msgid "Sent to mobile signing pad."
 msgstr ""
 
-#: calendarview.js common.js
+#: calendarview.js clinic_calendar.js common.js
 msgid "Sep"
 msgstr ""
 
@@ -9653,7 +9664,7 @@ msgstr ""
 msgid "Separate waiting list rank by species"
 msgstr ""
 
-#: calendarview.js common.js
+#: calendarview.js clinic_calendar.js common.js
 msgid "September"
 msgstr ""
 
@@ -10421,11 +10432,11 @@ msgstr ""
 msgid "Sugar Glider"
 msgstr ""
 
-#: calendarview.js common.js
+#: calendarview.js clinic_calendar.js common.js
 msgid "Sun"
 msgstr ""
 
-#: options.js reports.js calendarview.js common.js
+#: options.js reports.js calendarview.js clinic_calendar.js common.js
 msgid "Sunday"
 msgstr ""
 
@@ -11441,7 +11452,7 @@ msgstr ""
 msgid "Thoroughbred"
 msgstr ""
 
-#: calendarview.js common.js
+#: calendarview.js clinic_calendar.js common.js
 msgid "Thu"
 msgstr ""
 
@@ -11449,7 +11460,7 @@ msgstr ""
 msgid "Thumbnail size"
 msgstr ""
 
-#: reports.js calendarview.js common.js
+#: reports.js calendarview.js clinic_calendar.js common.js
 msgid "Thursday"
 msgstr ""
 
@@ -11552,7 +11563,7 @@ msgstr ""
 msgid "To week beginning"
 msgstr ""
 
-#: options.js calendarview.js common.js
+#: options.js calendarview.js clinic_calendar.js common.js
 msgid "Today"
 msgstr ""
 
@@ -11789,11 +11800,11 @@ msgstr ""
 msgid "Tu"
 msgstr ""
 
-#: calendarview.js common.js
+#: calendarview.js clinic_calendar.js common.js
 msgid "Tue"
 msgstr ""
 
-#: reports.js calendarview.js common.js
+#: reports.js calendarview.js clinic_calendar.js common.js
 msgid "Tuesday"
 msgstr ""
 
@@ -11823,13 +11834,14 @@ msgstr ""
 
 #: animal_diet.js options.js onlineform.js common_animalchooser.js
 #: document_repository.js movements.js incident_new.js person.js staff_rota.js
-#: additional.js donations.js traploan.js animal_find_results.js log.js
-#: animal_costs.js animal.js mailmerge.js reports.js person_links.js log_new.js
-#: csvimport_paypal.js users.js incident.js media.js diarytasks.js
-#: person_vouchers.js animal_find.js accounts.js licence_renewal.js test.js
-#: common_widgets.js citations.js licence.js transport.js animal_new.js
-#: incident_find_results.js animal_bulk.js vaccination.js shelterview.js
-#: mobile.py reports.py html.py lookups.py
+#: additional.js clinic_appointment.js donations.js traploan.js
+#: animal_find_results.js log.js animal_costs.js animal.js mailmerge.js
+#: reports.js person_links.js log_new.js csvimport_paypal.js users.js
+#: incident.js media.js diarytasks.js person_vouchers.js animal_find.js
+#: accounts.js licence_renewal.js test.js common_widgets.js citations.js
+#: licence.js transport.js animal_new.js incident_find_results.js
+#: animal_bulk.js vaccination.js shelterview.js mobile.py reports.py html.py
+#: lookups.py
 msgid "Type"
 msgstr ""
 
@@ -12523,15 +12535,15 @@ msgstr ""
 msgid "We"
 msgstr ""
 
-#: calendarview.js common.js
+#: calendarview.js clinic_calendar.js common.js
 msgid "Wed"
 msgstr ""
 
-#: reports.js calendarview.js common.js
+#: reports.js calendarview.js clinic_calendar.js common.js
 msgid "Wednesday"
 msgstr ""
 
-#: calendarview.js
+#: calendarview.js clinic_calendar.js
 msgid "Week"
 msgstr ""
 
@@ -13063,6 +13075,10 @@ msgstr ""
 
 #: task.js publish.js
 msgid "{0} is running ({1}&#37; complete)."
+msgstr ""
+
+#: clinic_appointment.js
+msgid "{0} payment records created."
 msgstr ""
 
 #: main.js

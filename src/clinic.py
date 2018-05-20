@@ -1,6 +1,7 @@
 #!/usr/bin/python
 
 import al
+import financial
 import i18n
 import utils
 
@@ -234,6 +235,27 @@ def delete_invoice(dbo, username, itemid):
     appointmentid = dbo.query_int("SELECT ClinicAppointmentID FROM clinicinvoiceitem WHERE ID = ?", [itemid])
     dbo.delete("clinicinvoiceitem", itemid, username)
     update_appointment_total(dbo, appointmentid)
+
+def insert_payment_from_appointment(dbo, username, appointmentid, post):
+    """
+    Creates a payment record from an appointment via the create payment dialog.
+    """
+    l = dbo.locale
+    c = get_appointment(dbo, appointmentid)
+    d = {
+        "person":   str(c.OwnerID),
+        "animal":   str(c.AnimalID),
+        "type":     post["paymenttype"],
+        "payment":  post["paymentmethod"],
+        "amount":   str(c.Amount),
+        "due":      post["due"],
+        "received": post["received"],
+        "vat":      utils.iif(c.IsVAT == 1, "on", ""),
+        "vatrate":  str(c.VATRate),
+        "vatamount": str(c.VATAmount),
+        "comments": i18n._("Appointment {0}. {1} on {2} for {3}").format( utils.padleft(c.ID, 6), c.OWNERNAME, i18n.python2display(l, c.DATETIME), c.ANIMALNAME )
+    }
+    return financial.insert_donation_from_form(dbo, username, utils.PostedData(d, l))
 
 def auto_update_statuses(dbo):
     """

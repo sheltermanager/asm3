@@ -4,6 +4,8 @@ import unittest
 import base
 
 import clinic
+
+import financial
 import utils
 
 class TestClinic(unittest.TestCase):
@@ -48,6 +50,17 @@ class TestClinic(unittest.TestCase):
 
     def test_get_invoice_items(self):
         assert len(clinic.get_invoice_items(base.get_dbo(), self.anid)) > 0
+
+    def test_insert_payment_from_appointment(self):
+        data = {
+            "due":      "01/01/2018",
+            "received": "",
+            "paymenttype": "1",
+            "paymentmethod": "1"
+        }
+        post = utils.PostedData(data, "en")
+        pid = clinic.insert_payment_from_appointment(base.get_dbo(), "test", self.anid, post)
+        financial.delete_donation(base.get_dbo(), "test", pid)
 
     def test_appointment_crud(self):
         data = {

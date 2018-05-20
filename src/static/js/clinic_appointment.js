@@ -248,8 +248,16 @@ $(function() {
                         });
                     }
                 },
-                { id: "document", text: _("Receipt/Invoice"), icon: "document", enabled: "one", perm: "gaf", 
+                { id: "document", text: _("Document"), icon: "document", enabled: "one", perm: "gaf", 
                     tooltip: _("Generate document from this appointment"), type: "buttonmenu" },
+                 { id: "payment", text: _("Create Payment"), icon: "donation", enabled: "multi", perm: "oaod", 
+                     tooltip: _("Create a due or received payment record from this appointment"),
+                     click: function() {
+                        $("#paymenttype").select("value", config.integer("AFDefaultDonationType"));
+                        $("#paymentmethod").select("value", config.integer("AFDefaultPaymentMethod"));
+                        $("#dialog-payment").dialog("open");
+                     }
+                 },
                 { id: "filter", type: "dropdownfilter", 
                     options: '<option value="-1">' + _("(all)") + '</option>' + html.list_to_options(controller.clinicstatuses, "ID", "STATUS"),
                     hideif: function() {
@@ -305,11 +313,74 @@ $(function() {
 
         },
 
+        render_paymentdialog: function() {
+            return [
+                '<div id="dialog-payment" style="display: none" title="' + html.title(_("Create Payment")) + '">',
+                '<table width="100%">',
+                '<tr>',
+                '<td><label for="paymenttype">' + _("Type") + '</label></td>',
+                '<td><select id="paymenttype" data="paymenttype" class="asm-selectbox asm-field">',
+                html.list_to_options(controller.donationtypes, "ID", "DONATIONNAME"),
+                '</select></td>',
+                '</tr>',
+                '<tr>',
+                '<td><label for="paymentmethod">' + _("Method") + '</label></td>',
+                '<td><select id="paymentmethod" data="paymentmethod" class="asm-selectbox asm-field">',
+                html.list_to_options(controller.paymenttypes, "ID", "PAYMENTNAME"),
+                '</select></td>',
+                '</tr>',
+                '<tr>',
+                '<td><label for="due">' + _("Due") + '</label></td>',
+                '<td><input id="due" data="due" type="textbox" class="asm-textbox asm-datebox asm-field" /></td>',
+                '</tr>',
+                '<tr>',
+                '<td><label for="received">' + _("Received") + '</label></td>',
+                '<td><input id="received" data="received" type="textbox" class="asm-textbox asm-datebox asm-field" /></td>',
+                '</tr>',
+                '</table>',
+                '</div>'
+            ].join("\n");
+        },
+
+        bind_paymentdialog: function() {
+
+            var paymentbuttons = { };
+            paymentbuttons[_("Create")] = function() {
+                validate.reset();
+                if (!$("#due").val() && !$("#received").val()) { validate.notblank([ "received" ]); return; }
+                $("#dialog-payment").disable_dialog_buttons();
+                var ids = tableform.table_ids(clinic_appointment.table);
+                common.ajax_post("clinic_appointment", $("#dialog-payment .asm-field").toPOST() + "&mode=payment&ids=" + ids)
+                    .then(function() {
+                        header.show_info(_("{0} payment records created.").replace("{0}", ids.split(",").length-1));
+                    })
+                    .always(function() {
+                        $("#dialog-payment").dialog("close");
+                        $("#dialog-payment").enable_dialog_buttons();
+                    });
+            };
+            paymentbuttons[_("Cancel")] = function() {
+                $("#dialog-payment").dialog("close");
+            };
+
+            $("#dialog-payment").dialog({
+                autoOpen: false,
+                width: 550,
+                modal: true,
+                dialogClass: "dialogshadow",
+                show: dlgfx.edit_show,
+                hide: dlgfx.edit_hide,
+                buttons: paymentbuttons
+            });
+
+        },
+
         render: function() {
             this.is_book = controller.name.indexOf("clinic") == 0;
             this.model();
             var h = [
                 tableform.dialog_render(this.dialog),
+                clinic_appointment.render_paymentdialog(),
                 '<div id="button-document-body" class="asm-menu-body">',
                 '<ul class="asm-menu-list">',
                 edit_header.template_list(controller.templates, "CLINIC", 0),
@@ -335,6 +406,7 @@ $(function() {
             tableform.dialog_bind(this.dialog);
             tableform.buttons_bind(this.buttons);
             tableform.table_bind(this.table, this.buttons);
+            clinic_appointment.bind_paymentdialog();
 
             $("#person").personchooser().bind("personchooserchange", function(event, rec) {
                 clinic_appointment.lastperson = rec;
@@ -368,6 +440,7 @@ $(function() {
 
         destroy: function() {
             tableform.dialog_destroy();
+            common.widget_destroy("#dialog-payment");
             clinic_appointment.dialog_row = null;
         },
 
