@@ -157,7 +157,7 @@ DEFAULTS = {
     "DefaultShiftStart": "09:00",
     "DefaultShiftEnd": "17:00",
     "DisableAnimalControl": "No",
-    "DisableClinic": "Yes",
+    "DisableClinic": "No",
     "DisableStockControl": "No",
     "DisableTransport": "No",
     "DisableTrapLoan": "No",

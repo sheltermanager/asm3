@@ -1132,3 +1132,47 @@ DocumentImgLink
     A photo of the animal if one exists. 200/300/400/500 can also be suffixed
     as with animal images above to control the size of the output.
 
+Clinic Keys
+-----------
+
+Clinic keys are only available for documents generated with the document button
+on a single clinic appointment record (either via the Clinic tab of an animal
+or person, or the "Consulting Room" or "Waiting Room" screens). In addition to
+these keys, the person and animal keys listed above are valid for clinic
+appointments.
+
+AppointmentFor
+    The name of the vet the appointment is with
+AppointmentDate
+    The date of the appointment
+AppointmentTime
+    The time of the appointment
+Status
+    The appointment's current status
+ArrivedDate
+    The date the person arrived for the appointment
+ArrivedTime
+    The time the person arrived for the appointment
+WithVetDate
+    The date the person was with the vet for the appointment
+WithVetTime
+    The time the person was with the vet for the appointment
+CompletedDate
+    The date the appointment was complete
+CompletedTime
+    The time the appointment was complete
+ReasonForAppointment
+    The reason the appointment was made
+Comments
+    Any comments on the appointment
+InvoiceAmount
+    The total of all invoice items for the appointment
+InvoiceVatAmount / InvoiceTaxAmount
+    The total VAT/Tax on the invoice
+InvoiceVatRate / InvoiceTaxRate
+    The tax rate applied to the invoice
+InvoiceTotal
+    The total of invoice amount and VAT/Tax
+
+
+

@@ -612,6 +612,10 @@ quickly get to some of ASM's screens without having to open the menus.
 Remove
 ------
 
+* Remove clinic functionality from screens and menus: If your shelter does
+  not run a clinic, this option will disable the system's clinic appointment
+  and invoicing functionality from the medical menu and animal/person screens.
+
 * Remove move menu and the movements tab from animal and person screens: If
   your shelter does not do adoptions and animals never leave, this option will
   disable the system's movement functionality.

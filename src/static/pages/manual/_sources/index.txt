@@ -14,6 +14,7 @@ Contents:
    movements
    documents
    animalcontrol
+   clinic
    lostandfound
    waitinglist
    generaldiary
