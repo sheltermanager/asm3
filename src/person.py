@@ -1466,13 +1466,15 @@ def update_anonymise_personal_data(dbo, overrideretainyears = None):
         "OwnerSurname = ?, OwnerName = ?, OwnerAddress = '', EmailAddress = '', " \
         "HomeTelephone = '', WorkTelephone = '', MobileTelephone = '', " \
         "LastChangedDate = ?, LastChangedBy = ? " \
-        "WHERE CreatedDate <= ? AND OwnerSurname <> ? " \
+        "WHERE OwnerSurname <> ? AND CreatedDate <= ? " \
         "AND IsACO=0 AND IsAdoptionCoordinator=0 AND IsRetailer=0 AND IsHomeChecker=0 AND IsMember=0 " \
         "AND IsShelter=0 AND IsFosterer=0 AND IsStaff=0 AND IsVet=0 AND IsVolunteer=0 " \
+        "AND NOT EXISTS(SELECT ID FROM animal WHERE (OriginalOwnerID = owner.ID OR BroughtInByOwnerID = owner.ID) AND DateBroughtIn > ?) " \
+        "AND NOT EXISTS(SELECT ID FROM clinicappointment WHERE OwnerID = owner.ID AND DateTime > ?) " \
         "AND NOT EXISTS(SELECT ID FROM ownerdonation WHERE OwnerID = owner.ID AND Date > ?) " \
         "AND NOT EXISTS(SELECT ID FROM adoption WHERE OwnerID = owner.ID AND MovementDate > ?) " \
-        "AND NOT EXISTS(SELECT ID FROM log WHERE Date > ? AND LinkID = owner.ID AND LogTypeID = 1) ", 
-        ( anonymised, anonymised, dbo.now(), "system", cutoff, anonymised, cutoff, cutoff, cutoff ))
+        "AND NOT EXISTS(SELECT ID FROM log WHERE LinkID = owner.ID AND LogTypeID = 1 AND Date > ?) ", 
+        ( anonymised, anonymised, dbo.now(), "system", anonymised, cutoff, cutoff, cutoff, cutoff, cutoff, cutoff ))
     al.debug("anonymised %s expired person records outside of retention period (%s years)." % (affected, retainyears), "person.update_anonymise_personal_data", dbo)
     return "OK %d" % affected
 
