@@ -1116,7 +1116,7 @@ def handler_viewanimal(session, l, dbo, a, af, diet, vacc, test, med, logs, home
         h.append(table())
         h.append(hd(_("Test", l)))
         for t in test:
-            h.append(tr(python2display(l, t["DATEREQUIRED"]), python2display(l, t["DATEOFTEST"]), t["TESTNAME"], utils.iif(t["DATEOFTEST"] is None, "", t["RESULTNAME"])))
+            h.append(tr(python2display(l, t["DATEREQUIRED"]), python2display(l, t["DATEOFTEST"]), t["TESTNAME"], utils.iif(t["DATEOFTEST"] is not None, t["RESULTNAME"], "")))
         h.append(table_end())
 
     if users.check_permission_bool(session, users.VIEW_MEDICAL):
