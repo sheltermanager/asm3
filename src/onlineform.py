@@ -646,12 +646,12 @@ def insert_onlineformincoming_from_form(dbo, post, remoteip):
                 fid = utils.cint(k[k.rfind("_")+1:])
                 fieldname = k[0:k.rfind("_")]
                 if fid != 0:
-                    fld = dbo.query("SELECT FieldType, Label, Tooltip, DisplayIndex FROM onlineformfield WHERE ID = ?", [fid])
-                    if len(fld) > 0:
-                        label = fld[0]["LABEL"]
-                        displayindex = fld[0]["DISPLAYINDEX"]
-                        fieldtype = fld[0]["FIELDTYPE"]
-                        tooltip = fld[0]["TOOLTIP"]
+                    fld = dbo.first_row(dbo.query("SELECT FieldType, Label, Tooltip, DisplayIndex FROM onlineformfield WHERE ID = ?", [fid]))
+                    if fld is not None:
+                        label = fld.LABEL
+                        displayindex = fld.DISPLAYINDEX
+                        fieldtype = fld.FIELDTYPE
+                        tooltip = fld.TOOLTIP
                         # Store a few known fields for access later
                         if fieldname == "emailaddress": 
                             submitteremail = v.strip()
@@ -671,13 +671,12 @@ def insert_onlineformincoming_from_form(dbo, post, remoteip):
                             v = "RAW::%s" % tooltip
                         # If we have a checkbox field with a tooltip, it contains additional
                         # person flags, add them to our set
-                        if fieldtype == FIELDTYPE_CHECKBOX:
-                            if utils.nulltostr(tooltip) != "":
-                                if flags != "": flags += ","
-                                flags += tooltip
-                                dbo.update("onlineformincoming", "CollationID=%s" % collationid, {
-                                    "Flags":    flags
-                                })
+                        if fieldtype == FIELDTYPE_CHECKBOX and utils.nulltostr(tooltip) != "" and (v == "checked" or v == "on"):
+                            if flags != "": flags += ","
+                            flags += tooltip
+                            dbo.update("onlineformincoming", "CollationID=%s" % collationid, {
+                                "Flags":    flags
+                            })
             # Do the insert
             dbo.insert("onlineformincoming", {
                 "CollationID":      collationid,
