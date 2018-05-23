@@ -6,7 +6,6 @@ import audit
 import base64
 import configuration
 import datetime
-import db
 import dbfs
 import i18n
 from PIL import ExifTags, Image
@@ -59,72 +58,68 @@ def mime_type(filename):
     return "application/octet-stream"
 
 def get_web_preferred_name(dbo, linktype, linkid):
-    return db.query_string(dbo, "SELECT MediaName FROM media " \
-        "WHERE LinkTypeID = %d AND WebsitePhoto = 1 AND LinkID = %d" % (linktype, linkid))
+    return dbo.query_string("SELECT MediaName FROM media " \
+        "WHERE LinkTypeID = ? AND WebsitePhoto = 1 AND LinkID = ?", (linktype, linkid))
 
 def get_web_preferred(dbo, linktype, linkid):
-    return db.query(dbo, "SELECT * FROM media WHERE LinkTypeID = %d AND " \
-        "WebsitePhoto = 1 AND LinkID = %d" % (linktype, linkid))
+    return dbo.query("SELECT * FROM media WHERE LinkTypeID = ? AND " \
+        "WebsitePhoto = 1 AND LinkID = ?", (linktype, linkid))
 
 def get_media_by_seq(dbo, linktype, linkid, seq):
     """ Returns image media by a one-based sequence number. 
         Element 1 is always the preferred.
         Empty list is returned if the item doesn't exist
     """
-    rows = db.query(dbo, "SELECT * FROM media " \
-        "WHERE LinkTypeID = %d AND LinkID = %d " \
+    rows = dbo.query(dbo, "SELECT * FROM media " \
+        "WHERE LinkTypeID = ? AND LinkID = ? " \
         "AND MediaMimeType = 'image/jpeg' " \
         "AND (ExcludeFromPublish = 0 OR ExcludeFromPublish Is Null) " \
-        "ORDER BY WebsitePhoto DESC, ID" % (linktype, linkid))
+        "ORDER BY WebsitePhoto DESC, ID", (linktype, linkid))
     if len(rows) >= seq:
         return [rows[seq-1],]
     else:
         return []
 
 def get_total_seq(dbo, linktype, linkid):
-    return db.query_int(dbo, "SELECT COUNT(ID) FROM media WHERE LinkTypeID = %d AND LinkID = %d " \
+    return dbo.query_int(dbo, "SELECT COUNT(ID) FROM media WHERE LinkTypeID = ? AND LinkID = ? " \
         "AND MediaMimeType = 'image/jpeg' " \
-        "AND (ExcludeFromPublish = 0 OR ExcludeFromPublish Is Null)" % (linktype, linkid))
+        "AND (ExcludeFromPublish = 0 OR ExcludeFromPublish Is Null)", (linktype, linkid))
 
 def set_video_preferred(dbo, username, mid):
     """
     Makes the media with id the preferred for video in the link
     """
-    link = db.query(dbo, "SELECT LinkID, LinkTypeID FROM media WHERE ID = %d" % int(mid))[0]
-    db.execute(dbo, "UPDATE media SET WebsiteVideo = 0 WHERE LinkID = %d AND LinkTypeID = %d" % ( int(link["LINKID"]), int(link["LINKTYPEID"])))
-    db.execute(dbo, "UPDATE media SET WebsiteVideo = 1 WHERE ID = %d" % int(mid))
-    audit.edit(dbo, username, "media", mid, str(mid) + ": video preferred for " + str(link["LINKID"]) + "/" + str(link["LINKTYPEID"]))
+    link = dbo.first_row(dbo.query("SELECT LinkID, LinkTypeID FROM media WHERE ID = ?", [mid]))
+    dbo.update("media", "LinkID=%d AND LinkTypeID=%d" % (link.LINKID, link.LINKTYPEID), { "WebsiteVideo": 0 })
+    dbo.update("media", mid, { "WebsiteVideo": 1 }, username, setLastChanged=False) 
 
 def set_web_preferred(dbo, username, mid):
     """
     Makes the media with id the preferred for the web in the link
     """
-    link = db.query(dbo, "SELECT LinkID, LinkTypeID FROM media WHERE ID = %d" % int(mid))[0]
-    db.execute(dbo, "UPDATE media SET WebsitePhoto = 0 WHERE LinkID = %d AND LinkTypeID = %d" % ( int(link["LINKID"]), int(link["LINKTYPEID"])))
-    db.execute(dbo, "UPDATE media SET WebsitePhoto = 1, ExcludeFromPublish = 0, Date = %s WHERE ID = %d" % (db.ddt(i18n.now(dbo.timezone)), int(mid) ))
-    audit.edit(dbo, username, "media", mid, str(mid) + ": web preferred for " + str(link["LINKID"]) + "/" + str(link["LINKTYPEID"]))
+    link = dbo.first_row(dbo.query("SELECT LinkID, LinkTypeID FROM media WHERE ID = ?", [mid]))
+    dbo.update("media", "LinkID=%d AND LinkTypeID=%d" % (link.LINKID, link.LINKTYPEID), { "WebsitePhoto": 0 })
+    dbo.update("media", mid, { "WebsitePhoto": 1 }, username, setLastChanged=False) 
 
 def set_doc_preferred(dbo, username, mid):
     """
     Makes the media with id the preferred for docs in the link
     """
-    link = db.query(dbo, "SELECT LinkID, LinkTypeID FROM media WHERE ID = %d" % int(mid))[0]
-    db.execute(dbo, "UPDATE media SET DocPhoto = 0 WHERE LinkID = %d AND LinkTypeID = %d" % ( int(link["LINKID"]), int(link["LINKTYPEID"])))
-    db.execute(dbo, "UPDATE media SET DocPhoto = 1 WHERE ID = %d" % int(mid))
-    audit.edit(dbo, username, "media", mid, str(mid) + ": document preferred for " + str(link["LINKID"]) + "/" + str(link["LINKTYPEID"]))
+    link = dbo.first_row(dbo.query("SELECT LinkID, LinkTypeID FROM media WHERE ID = ?", [mid]))
+    dbo.update("media", "LinkID=%d AND LinkTypeID=%d" % (link.LINKID, link.LINKTYPEID), { "DocPhoto": 0 })
+    dbo.update("media", mid, { "DocPhoto": 1 }, username, setLastChanged=False) 
 
 def set_excluded(dbo, username, mid, exclude = 1):
     """
     Marks the media with id excluded from publishing.
     """
-    db.execute(dbo, "UPDATE media SET ExcludeFromPublish = %d WHERE ID = %d" % (exclude, mid))
-    audit.edit(dbo, username, "media", mid, str(mid) + ": excluded from publishing")
+    dbo.update("media", mid, { "ExcludeFromPublish": exclude }, username, setLastChanged=False)
 
 def get_name_for_id(dbo, mid):
-    return db.query_string(dbo, "SELECT MediaName FROM media WHERE ID = %d" % mid)
+    return dbo.query_string("SELECT MediaName FROM media WHERE ID = ?", [mid])
 
 def get_notes_for_id(dbo, mid):
-    return db.query_string(dbo, "SELECT MediaNotes FROM media WHERE ID = %d" % mid)
+    return dbo.query_string("SELECT MediaNotes FROM media WHERE ID = ?", [mid])
 
 def get_media_file_data(dbo, mid):
     """
@@ -136,7 +131,7 @@ def get_media_file_data(dbo, mid):
     mm = get_media_by_id(dbo, mid)
     if len(mm) == 0: return (None, "", "", "")
     mm = mm[0]
-    return mm["DATE"], mm["MEDIANAME"], mm["MEDIAMIMETYPE"], dbfs.get_string(dbo, mm["MEDIANAME"])
+    return mm.DATE, mm.MEDIANAME, mm.MEDIAMIMETYPE, dbfs.get_string(dbo, mm.MEDIANAME)
 
 def get_image_file_data(dbo, mode, iid, seq = 0, justdate = False):
     """
@@ -151,30 +146,20 @@ def get_image_file_data(dbo, mode, iid, seq = 0, justdate = False):
     """
     def nopic():
         NOPIC_DATE = datetime.datetime(2011, 1, 1)
-        if justdate: 
-            return NOPIC_DATE
-        else:
-            return (NOPIC_DATE, "NOPIC")
+        if justdate: return NOPIC_DATE
+        return (NOPIC_DATE, "NOPIC")
     def thumb_nopic():
         NOPIC_DATE = datetime.datetime(2011, 1, 1)
-        if justdate:
-            return NOPIC_DATE
-        else:
-            return (NOPIC_DATE, "NOPIC")
+        if justdate: return NOPIC_DATE
+        return (NOPIC_DATE, "NOPIC")
     def mrec(mm):
-        if len(mm) == 0:
-            return nopic()
-        if justdate:
-            return mm[0]["DATE"]
-        else:
-            return (mm[0]["DATE"], dbfs.get_string(dbo, mm[0]["MEDIANAME"]))
+        if len(mm) == 0: return nopic()
+        if justdate: return mm[0].DATE
+        return (mm[0].DATE, dbfs.get_string(dbo, mm[0].MEDIANAME))
     def thumb_mrec(mm):
-        if len(mm) == 0:
-            return thumb_nopic()
-        if justdate:
-            return mm[0]["DATE"]
-        else:
-            return (mm[0]["DATE"], scale_thumbnail(dbfs.get_string(dbo, mm[0]["MEDIANAME"])))
+        if len(mm) == 0: return thumb_nopic()
+        if justdate: return mm[0].DATE
+        return (mm[0].DATE, scale_thumbnail(dbfs.get_string(dbo, mm[0].MEDIANAME)))
 
     if mode == "animal":
         if seq == 0:
@@ -232,18 +217,18 @@ def get_dbfs_path(linkid, linktype):
     return path
 
 def get_media(dbo, linktype, linkid):
-    return db.query(dbo, "SELECT * FROM media WHERE LinkTypeID = %d AND LinkID = %d ORDER BY Date DESC" % ( linktype, linkid ))
+    return dbo.query("SELECT * FROM media WHERE LinkTypeID = ? AND LinkID = ? ORDER BY Date DESC", ( linktype, linkid ))
 
 def get_media_by_id(dbo, mid):
-    return db.query(dbo, "SELECT * FROM media WHERE ID = %d" % mid )
+    return dbo.query("SELECT * FROM media WHERE ID = ?", [mid] )
 
 def get_image_media(dbo, linktype, linkid, ignoreexcluded = False):
     if not ignoreexcluded:
-        return db.query(dbo, "SELECT * FROM media WHERE LinkTypeID = %d AND LinkID = %d " \
-            "AND (LOWER(MediaName) Like '%%.jpg' OR LOWER(MediaName) Like '%%.jpeg')" % ( linktype, linkid ))
+        return dbo.query("SELECT * FROM media WHERE LinkTypeID = ? AND LinkID = ? " \
+            "AND (LOWER(MediaName) Like '%%.jpg' OR LOWER(MediaName) Like '%%.jpeg')", ( linktype, linkid ))
     else:
-        return db.query(dbo, "SELECT * FROM media WHERE (ExcludeFromPublish = 0 OR ExcludeFromPublish Is Null) " \
-            "AND LinkTypeID = %d AND LinkID = %d AND (LOWER(MediaName) Like '%%.jpg' OR LOWER(MediaName) Like '%%.jpeg')" % ( linktype, linkid ))
+        return dbo.query("SELECT * FROM media WHERE (ExcludeFromPublish = 0 OR ExcludeFromPublish Is Null) " \
+            "AND LinkTypeID = ? AND LinkID = ? AND (LOWER(MediaName) Like '%%.jpg' OR LOWER(MediaName) Like '%%.jpeg')", ( linktype, linkid ))
 
 def attach_file_from_form(dbo, username, linktype, linkid, post):
     """
@@ -288,7 +273,7 @@ def attach_file_from_form(dbo, username, linktype, linkid, post):
     if ext == ".png":
         ext = ".jpg"
 
-    mediaid = db.get_id(dbo, "media")
+    mediaid = dbo.get_id("media")
     medianame = "%d%s" % ( mediaid, ext )
     ispicture = ext == ".jpg" or ext == ".jpeg"
     ispdf = ext == ".pdf"
@@ -335,85 +320,81 @@ def attach_file_from_form(dbo, username, linktype, linkid, post):
         comments = utils.filename_only(filename)
     
     # Create the media record
-    sql = db.make_insert_sql("media", (
-        ( "ID", db.di(mediaid) ),
-        ( "DBFSID", db.di(dbfsid) ),
-        ( "MediaSize", db.di(len(filedata))),
-        ( "MediaName", db.ds(medianame) ),
-        ( "MediaMimeType", db.ds(mime_type(medianame))),
-        ( "MediaType", db.di(0) ),
-        ( "MediaNotes", db.ds(comments) ),
-        ( "WebsitePhoto", db.di(0) ),
-        ( "WebsiteVideo", db.di(0) ),
-        ( "DocPhoto", db.di(0) ),
-        ( "ExcludeFromPublish", db.di(excludefrompublish) ),
+    dbo.insert("media", {
+        "ID":                   mediaid,
+        "DBFSID":               dbfsid,
+        "MediaSize":            len(filedata),
+        "MediaName":            medianame,
+        "MediaMimeType":        mime_type(medianame),
+        "MediaType":            0,
+        "MediaNotes":           comments,
+        "WebsitePhoto":         0,
+        "WebsiteVideo":         0,
+        "DocPhoto":             0,
+        "ExcludeFromPublish":   excludefrompublish,
         # ASM2_COMPATIBILITY
-        ( "NewSinceLastPublish", db.di(1) ),
-        ( "UpdatedSinceLastPublish", db.di(0) ),
+        "NewSinceLastPublish":  1,
+        "UpdatedSinceLastPublish": 0,
         # ASM2_COMPATIBILITY
-        ( "LinkID", db.di(linkid) ),
-        ( "LinkTypeID", db.di(linktype) ),
-        ( "Date", db.ddt(i18n.now(dbo.timezone))),
-        ( "RetainUntil", db.dd(None) )
-        ))
-    db.execute(dbo, sql)
-    audit.create(dbo, username, "media", mediaid, str(mediaid) + ": for " + str(linkid) + "/" + str(linktype))
+        "LinkID":               linkid,
+        "LinkTypeID":           linktype,
+        "Date":                 dbo.now(),
+        "RetainUntil":          None
+    }, username, setCreated=False, generateID=False)
 
     # Verify this record has a web/doc default if we aren't excluding it from publishing
     if ispicture and excludefrompublish == 0:
         check_default_web_doc_pic(dbo, mediaid, linkid, linktype)
 
+    return mediaid
+
 def attach_link_from_form(dbo, username, linktype, linkid, post):
     """
     Attaches a link to a web resource from a form
     """
-    existingvid = db.query_int(dbo, "SELECT COUNT(*) FROM media WHERE WebsiteVideo = 1 " \
-        "AND LinkID = %d AND LinkTypeID = %d" % ( int(linkid), int(linktype) ))
+    existingvid = dbo.query_int("SELECT COUNT(*) FROM media WHERE WebsiteVideo = 1 " \
+        "AND LinkID = ? AND LinkTypeID = ?", (linkid, linktype))
     defvid = 0
     if existingvid == 0 and post.integer("linktype") == MEDIATYPE_VIDEO_LINK:
         defvid = 1
-    mediaid = db.get_id(dbo, "media")
     url = post["linktarget"]
     if url.find("://") == -1:
         url = "http://" + url
     al.debug("attached link %s" % url, "media.attach_file_from_form")
-    sql = db.make_insert_sql("media", (
-        ( "ID", db.di(mediaid) ),
-        ( "DBFSID", db.di(0) ),
-        ( "MediaSize", db.di(0) ),
-        ( "MediaName", db.ds(url) ),
-        ( "MediaMimeType", db.ds("text/url")),
-        ( "MediaType", post.db_integer("linktype") ),
-        ( "MediaNotes", post.db_string("comments") ),
-        ( "WebsitePhoto", db.di(0) ),
-        ( "WebsiteVideo", db.di(defvid) ),
-        ( "DocPhoto", db.di(0) ),
-        ( "ExcludeFromPublish", db.di(0) ),
+    return dbo.insert("media", {
+        "DBFSID":               0,
+        "MediaSize":            0,
+        "MediaName":            url,
+        "MediaMimeType":        "text/url",
+        "MediaType":            post.integer("linktype"),
+        "MediaNotes":           post["comments"],
+        "WebsitePhoto":         0,
+        "WebsiteVideo":         defvid,
+        "DocPhoto":             0,
+        "ExcludeFromPublish":   0,
         # ASM2_COMPATIBILITY
-        ( "NewSinceLastPublish", db.di(1) ),
-        ( "UpdatedSinceLastPublish", db.di(0) ),
+        "NewSinceLastPublish":  1,
+        "UpdatedSinceLastPublish": 0,
         # ASM2_COMPATIBILITY
-        ( "LinkID", db.di(linkid) ),
-        ( "LinkTypeID", db.di(linktype) ),
-        ( "Date", db.ddt(i18n.now(dbo.timezone)) ),
-        ( "RetainUntil", db.dd(None) )
-        ))
-    db.execute(dbo, sql)
-    audit.create(dbo, username, "media", mediaid, str(mediaid) + ": for " + str(linkid) + "/" + str(linktype) + ": link to " + post["linktarget"])
+        "LinkID":               linkid,
+        "LinkTypeID":           linktype,
+        "Date":                 dbo.now(),
+        "RetainUntil":          None
+    }, username, setCreated=False)
 
 def check_default_web_doc_pic(dbo, mediaid, linkid, linktype):
     """
     Checks if linkid/type has a default pic for the web or documents. If not,
     sets mediaid to be the default.
     """
-    existing_web = db.query_int(dbo, "SELECT COUNT(*) FROM media WHERE WebsitePhoto = 1 " \
-        "AND LinkID = %d AND LinkTypeID = %d" % ( int(linkid), int(linktype) ))
-    existing_doc = db.query_int(dbo, "SELECT COUNT(*) FROM media WHERE DocPhoto = 1 " \
-        "AND LinkID = %d AND LinkTypeID = %d" % ( int(linkid), int(linktype) ))
+    existing_web = dbo.query_int("SELECT COUNT(*) FROM media WHERE WebsitePhoto = 1 " \
+        "AND LinkID = ? AND LinkTypeID = ?", (linkid, linktype))
+    existing_doc = dbo.query_int("SELECT COUNT(*) FROM media WHERE DocPhoto = 1 " \
+        "AND LinkID = ? AND LinkTypeID = ?", (linkid, linktype))
     if existing_web == 0:
-        db.execute(dbo, "UPDATE media SET WebsitePhoto = 1 WHERE ID = %d" % mediaid)
+        dbo.update("media", mediaid, { "WebsitePhoto": 1 })
     if existing_doc == 0:
-        db.execute(dbo, "UPDATE media SET DocPhoto = 1 WHERE ID = %d" % mediaid)
+        dbo.update("media", mediaid, { "DocPhoto": 1 })
 
 def create_blank_document_media(dbo, username, linktype, linkid):
     """
@@ -422,33 +403,31 @@ def create_blank_document_media(dbo, username, linktype, linkid):
     linkid: ID for the link
     returns the new media id
     """
-    mediaid = db.get_id(dbo, "media")
+    mediaid = dbo.get_id("media")
     path = get_dbfs_path(linkid, linktype)
     name = str(mediaid) + ".html"
     dbfsid = dbfs.put_string(dbo, name, path, "")
-    sql = db.make_insert_sql("media", (
-        ( "ID", db.di(mediaid) ),
-        ( "DBFSID", db.di(dbfsid) ),
-        ( "MediaSize", db.di(0) ),
-        ( "MediaName", db.ds("%d.html" % mediaid) ),
-        ( "MediaMimeType", db.ds("text/html")),
-        ( "MediaType", db.di(0)),
-        ( "MediaNotes", db.ds("New document") ),
-        ( "WebsitePhoto", db.di(0) ),
-        ( "WebsiteVideo", db.di(0) ),
-        ( "DocPhoto", db.di(0) ),
-        ( "ExcludeFromPublish", db.di(0) ),
+    dbo.insert("media", {
+        "ID":                   mediaid,
+        "DBFSID":               dbfsid,
+        "MediaSize":            0,
+        "MediaName":            "%d.html" % mediaid,
+        "MediaMimeType":        "text/html",
+        "MediaType":            0,
+        "MediaNotes":           "New document",
+        "WebsitePhoto":         0,
+        "WebsiteVideo":         0,
+        "DocPhoto":             0,
+        "ExcludeFromPublish":   0,
         # ASM2_COMPATIBILITY
-        ( "NewSinceLastPublish", db.di(1) ),
-        ( "UpdatedSinceLastPublish", db.di(0) ),
+        "NewSinceLastPublish":  1,
+        "UpdatedSinceLastPublish": 0,
         # ASM2_COMPATIBILITY
-        ( "LinkID", db.di(linkid) ),
-        ( "LinkTypeID", db.di(linktype) ),
-        ( "Date", db.ddt(i18n.now(dbo.timezone)) ),
-        ( "RetainUntil", db.dd(None) )
-        ))
-    db.execute(dbo, sql)
-    audit.create(dbo, username, "media", mediaid, str(mediaid) + ": for " + str(linkid) + "/" + str(linktype))
+        "LinkID":               linkid,
+        "LinkTypeID":           linktype,
+        "Date":                 dbo.now(),
+        "RetainUntil":          None
+    }, username, setCreated=False, generateID=False)
     return mediaid
 
 def create_document_media(dbo, username, linktype, linkid, template, content):
@@ -459,33 +438,32 @@ def create_document_media(dbo, username, linktype, linkid, template, content):
     template: The name of the template used to create the document
     content: The document contents
     """
-    mediaid = db.get_id(dbo, "media")
+    mediaid = dbo.get_id("media")
     path = get_dbfs_path(linkid, linktype)
     name = str(mediaid) + ".html"
     dbfsid = dbfs.put_string(dbo, name, path, content)
-    sql = db.make_insert_sql("media", (
-        ( "ID", db.di(mediaid) ),
-        ( "DBFSID", db.di(dbfsid) ),
-        ( "MediaSize", db.di(len(content)) ),
-        ( "MediaName", db.ds("%d.html" % mediaid) ),
-        ( "MediaMimeType", db.ds("text/html")),
-        ( "MediaType", db.di(0)),
-        ( "MediaNotes", db.ds(template) ),
-        ( "WebsitePhoto", db.di(0) ),
-        ( "WebsiteVideo", db.di(0) ),
-        ( "DocPhoto", db.di(0) ),
-        ( "ExcludeFromPublish", db.di(0) ),
+    dbo.insert("media", {
+        "ID":                   mediaid,
+        "DBFSID":               dbfsid,
+        "MediaSize":            len(content),
+        "MediaName":            "%d.html" % mediaid,
+        "MediaMimeType":        "text/html",
+        "MediaType":            0,
+        "MediaNotes":           template,
+        "WebsitePhoto":         0,
+        "WebsiteVideo":         0,
+        "DocPhoto":             0,
+        "ExcludeFromPublish":   0,
         # ASM2_COMPATIBILITY
-        ( "NewSinceLastPublish", db.di(1) ),
-        ( "UpdatedSinceLastPublish", db.di(0) ),
+        "NewSinceLastPublish":  1,
+        "UpdatedSinceLastPublish": 0,
         # ASM2_COMPATIBILITY
-        ( "LinkID", db.di(linkid) ),
-        ( "LinkTypeID", db.di(linktype) ),
-        ( "Date", db.ddt(i18n.now(dbo.timezone)) ),
-        ( "RetainUntil", db.dd(None) )
-        ))
-    db.execute(dbo, sql)
-    audit.create(dbo, username, "media", mediaid, str(mediaid) + ": for " + str(linkid) + "/" + str(linktype))
+        "LinkID":               linkid,
+        "LinkTypeID":           linktype,
+        "Date":                 dbo.now(),
+        "RetainUntil":          None
+    }, username, setCreated=False, generateID=False)
+    return mediaid
 
 def sign_document(dbo, username, mid, sigurl, signdate):
     """
@@ -500,7 +478,7 @@ def sign_document(dbo, username, mid, sigurl, signdate):
         al.error("document %s is not HTML" % mid, "media.sign_document", dbo)
         raise utils.ASMValidationError("Cannot sign a non-HTML document")
     # Has this document already been signed? 
-    if 0 != db.query_int(dbo, "SELECT COUNT(*) FROM media WHERE ID = %d AND SignatureHash Is Not Null AND SignatureHash <> ''" % mid):
+    if 0 != dbo.query_int("SELECT COUNT(*) FROM media WHERE ID = ? AND SignatureHash Is Not Null AND SignatureHash <> ''", [mid]):
         al.error("document %s has already been signed" % mid, "media.sign_document", dbo)
         raise utils.ASMValidationError("Document is already signed")
     # Does the document have a signing placeholder image? If so, replace it
@@ -515,80 +493,71 @@ def sign_document(dbo, username, mid, sigurl, signdate):
         sig += "<p>%s</p>\n" % signdate
         content += sig
     # Create a hash of the contents and store it with the media record
-    db.execute(dbo, "UPDATE media SET SignatureHash = '%s' WHERE ID = %d" % (utils.md5_hash(content), mid))
+    dbo.update("media", mid, { "SignatureHash": utils.md5_hash(content) })
     # Update the dbfs contents
     update_file_content(dbo, username, mid, content)
 
 def has_signature(dbo, mid):
     """ Returns true if a piece of media has a signature """
-    return 0 != db.query_int(dbo, "SELECT COUNT(*) FROM media WHERE SignatureHash Is Not Null AND SignatureHash <> '' AND ID = %d" % mid)
+    return 0 != dbo.query_int("SELECT COUNT(*) FROM media WHERE SignatureHash Is Not Null AND SignatureHash <> '' AND ID = ?", [mid])
 
 def update_file_content(dbo, username, mid, content):
     """
     Updates the dbfs content for the file pointed to by id
     """
     dbfs.replace_string(dbo, content, get_name_for_id(dbo, mid))
-    db.execute(dbo, "UPDATE media SET Date = %s, MediaSize = %s WHERE ID = %d" % ( db.ddt(i18n.now(dbo.timezone)), len(content), int(mid) ))
-    audit.edit(dbo, username, "media", mid, str(mid) + " changed file contents")
+    dbo.update("media", mid, { "Date": dbo.now(), "MediaSize": len(content) }, username, setLastChanged=False)
 
 def update_media_notes(dbo, username, mid, notes):
-    sql = db.make_update_sql("media", "ID=%d" % int(mid), (
-        ( "MediaNotes", db.ds(notes)),
+    dbo.update("media", mid, { 
+        "MediaNotes": notes,
         # ASM2_COMPATIBILITY
-        ( "UpdatedSinceLastPublish", db.di(1))
-        ))
-    db.execute(dbo, sql)
-    audit.edit(dbo, username, "media", mid, str(mid) + "notes => " + notes)
+        "UpdatedSinceLastPublish": 1
+    }, username, setLastChanged=False)
 
 def delete_media(dbo, username, mid):
     """
     Deletes a media record from the system
     """
-    mr = db.query(dbo, "SELECT * FROM media WHERE ID=%d" % int(mid))
-    if len(mr) == 0: return
-    mr = mr[0]
-    mn = mr["MEDIANAME"]
-    audit.delete(dbo, username, "media", mid, str(mr))
+    mr = dbo.first_row(dbo.query("SELECT * FROM media WHERE ID=?", [mid]))
+    if not mr: return
     try:
-        dbfs.delete(dbo, mn)
+        dbfs.delete(dbo, mr.MEDIANAME)
     except Exception as err:
         al.error(str(err), "media.delete_media", dbo)
-    db.execute(dbo, "DELETE FROM media WHERE ID = %d" % int(mid))
+    dbo.delete("media", mid, username)
     # Was it the web or doc preferred? If so, make the first image for the link
     # the web or doc preferred instead
-    if mr["WEBSITEPHOTO"] == 1:
-        ml = db.query(dbo, "SELECT * FROM media WHERE LinkID=%d AND LinkTypeID=%d " \
+    if mr.WEBSITEPHOTO == 1:
+        ml = dbo.first_row(dbo.query("SELECT * FROM media WHERE LinkID = ? AND LinkTypeID = ? " \
             "AND MediaMimeType = 'image/jpeg' " \
-            "ORDER BY ID" % ( mr["LINKID"], mr["LINKTYPEID"] ))
-        if len(ml) > 0:
-            db.execute(dbo, "UPDATE media SET WebsitePhoto = 1 WHERE ID = %d" % ml[0]["ID"])
-    if mr["DOCPHOTO"] == 1:
-        ml = db.query(dbo, "SELECT * FROM media WHERE LinkID=%d AND LinkTypeID=%d " \
+            "ORDER BY ID", (mr.LINKID, mr.LINKTYPEID)))
+        if ml: dbo.update("media", ml.ID, { "WebsitePhoto": 1 })
+    if mr.DOCPHOTO == 1:
+        ml = dbo.first_row(dbo.query("SELECT * FROM media WHERE LinkID = ? AND LinkTypeID = ? " \
             "AND MediaMimeType = 'image/jpeg' " \
-            "ORDER BY ID" % ( mr["LINKID"], mr["LINKTYPEID"] ))
-        if len(ml) > 0:
-            db.execute(dbo, "UPDATE media SET DocPhoto = 1 WHERE ID = %d" % ml[0]["ID"])
+            "ORDER BY ID", (mr.LINKID, mr.LINKTYPEID)))
+        if ml: dbo.update("media", ml.ID, { "DocPhoto": 1 })
 
 def rotate_media(dbo, username, mid, clockwise = True):
     """
     Rotates an image media record 90 degrees if clockwise is true, or 270 degrees if false
     """
-    mr = db.query(dbo, "SELECT * FROM media WHERE ID=%d" % int(mid))
-    if len(mr) == 0: raise utils.ASMError("Record does not exist")
-    mr = mr[0]
-    mn = mr["MEDIANAME"]
+    mr = dbo.first_row(dbo.query("SELECT * FROM media WHERE ID=?", [mid]))
+    if not mr: raise utils.ASMError("Record does not exist")
     # If it's not a jpg image, we can stop right now
+    mn = mr.MEDIANAME
     ext = mn[mn.rfind("."):].lower()
     if ext != ".jpg" and ext != ".jpeg":
         raise utils.ASMError("Image is not a JPEG file, cannot rotate")
     # Load the image data
-    path = get_dbfs_path(mr["LINKID"], mr["LINKTYPEID"])
+    path = get_dbfs_path(mr.LINKID, mr.LINKTYPEID)
     imagedata = dbfs.get_string(dbo, mn, path)
     imagedata = rotate_image(imagedata, clockwise)
     # Store it back in the dbfs and add an entry to the audit trail
     dbfs.put_string(dbo, mn, path, imagedata)
     # Update the date stamp on the media record
-    db.execute(dbo, "UPDATE media SET Date = %s, MediaSize = %s WHERE ID = %d" % (db.ddt(i18n.now(dbo.timezone)), len(imagedata), mid))
+    dbo.update("media", mid, { "Date": dbo.now(), "MediaSize": len(imagedata) })
     audit.edit(dbo, username, "media", mid, "media id %d rotated, clockwise=%s" % (mid, str(clockwise)))
 
 def scale_image(imagedata, resizespec):
@@ -803,10 +772,10 @@ def scale_all_animal_images(dbo):
     Goes through all animal images in the database and scales
     them to the current incoming media scaling factor.
     """
-    mp = db.query(dbo, "SELECT ID, MediaName FROM media WHERE MediaMimeType = 'image/jpeg' AND LinkTypeID = 0")
+    mp = dbo.query("SELECT ID, MediaName FROM media WHERE MediaMimeType = 'image/jpeg' AND LinkTypeID = 0")
     for i, m in enumerate(mp):
-        filepath = db.query_string(dbo, "SELECT Path FROM dbfs WHERE Name='%s'" % m["MEDIANAME"])
-        name = str(m["MEDIANAME"])
+        filepath = dbo.query_string("SELECT Path FROM dbfs WHERE Name = ?", [m.MEDIANAME])
+        name = str(m.MEDIANAME)
         inputfile = tempfile.NamedTemporaryFile(suffix=".jpg", delete=False)
         outputfile = tempfile.NamedTemporaryFile(suffix=".jpg", delete=False)
         odata = dbfs.get_string(dbo, name)
@@ -825,7 +794,7 @@ def scale_all_animal_images(dbo):
         os.unlink(outputfile.name)
         # Update the image file data
         dbfs.put_string(dbo, name, filepath, data)
-        dbo.execute("UPDATE media SET MediaSize = ? WHERE ID = ?", (len(data), m["ID"]))
+        dbo.update("media", m.ID, { "MediaSize": len(data) })
     al.debug("scaled %d images" % len(mp), "media.scale_all_animal_images", dbo)
 
 def scale_all_odt(dbo):
@@ -833,22 +802,22 @@ def scale_all_odt(dbo):
     Goes through all odt files attached to records in the database and 
     scales them down (throws away images and objects so only the text remains to save space)
     """
-    mo = db.query(dbo, "SELECT ID, MediaName FROM media WHERE MediaMimeType = 'application/vnd.oasis.opendocument.text'")
+    mo = dbo.query("SELECT ID, MediaName FROM media WHERE MediaMimeType = 'application/vnd.oasis.opendocument.text'")
     total = 0
     for i, m in enumerate(mo):
-        name = str(m["MEDIANAME"])
+        name = str(m.MEDIANAME)
         al.debug("scaling %s (%d of %d)" % (name, i, len(mo)), "media.scale_all_odt", dbo)
         odata = dbfs.get_string(dbo, name)
         if odata == "":
             al.error("file %s does not exist" % name, "media.scale_all_odt", dbo)
             continue
-        path = db.query_string(dbo, "SELECT Path FROM dbfs WHERE Name='%s'" % name)
+        path = dbo.query_string("SELECT Path FROM dbfs WHERE Name = ?", [name])
         ndata = scale_odt(odata)
         if len(ndata) < 512:
             al.error("scaled odt %s came back at %d bytes, abandoning" % (name, len(ndata)), "scale_all_odt", dbo)
         else:
             dbfs.put_string(dbo, name, path, ndata)
-            dbo.execute("UPDATE media SET MediaSize = ? WHERE ID = ?", (len(ndata), m["ID"]))
+            dbo.update("media", m.ID, { "MediaSize": len(ndata) }) 
             total += 1
     al.debug("scaled %d of %d odts" % (total, len(mo)), "media.scale_all_odt", dbo)
 
@@ -856,18 +825,17 @@ def scale_all_pdf(dbo):
     """
     Goes through all PDFs in the database and attempts to scale them down.
     """
-    mp = db.query(dbo, \
-        "SELECT ID, MediaName FROM media WHERE MediaMimeType = 'application/pdf' ORDER BY ID DESC")
+    mp = dbo.query("SELECT ID, MediaName FROM media WHERE MediaMimeType = 'application/pdf' ORDER BY ID DESC")
     total = 0
     for i, m in enumerate(mp):
-        dbfsid = db.query_string(dbo, "SELECT ID FROM dbfs WHERE Name='%s'" % m["MEDIANAME"])
+        dbfsid = dbo.query_string("SELECT ID FROM dbfs WHERE Name = ?", [m.MEDIANAME])
         odata = dbfs.get_string_id(dbo, dbfsid)
         data = scale_pdf(odata)
-        al.debug("scaling %s (%d of %d): old size %d, new size %d" % (m["MEDIANAME"], i, len(mp), len(odata), len(data)), "check_and_scale_pdfs", dbo)
+        al.debug("scaling %s (%d of %d): old size %d, new size %d" % (m.MEDIANAME, i, len(mp), len(odata), len(data)), "check_and_scale_pdfs", dbo)
         # Store the new compressed PDF file data - if it's smaller
         if len(data) < len(odata):
-            dbfs.put_string_id(dbo, dbfsid, m["MEDIANAME"], data)
-            dbo.execute("UPDATE media SET MediaSize = ? WHERE ID = ?", (len(data), m["ID"]))
+            dbfs.put_string_id(dbo, dbfsid, m.MEDIANAME, data)
+            dbo.update("media", m.ID, { "MediaSize": len(data) })
             total += 1
     al.debug("scaled %d of %d pdfs" % (total, len(mp)), "media.scale_all_pdf", dbo)
 
