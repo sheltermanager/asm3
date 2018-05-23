@@ -7,7 +7,6 @@ import base64
 import configuration
 import datetime
 import dbfs
-import i18n
 from PIL import ExifTags, Image
 import os
 import tempfile
@@ -70,7 +69,7 @@ def get_media_by_seq(dbo, linktype, linkid, seq):
         Element 1 is always the preferred.
         Empty list is returned if the item doesn't exist
     """
-    rows = dbo.query(dbo, "SELECT * FROM media " \
+    rows = dbo.query("SELECT * FROM media " \
         "WHERE LinkTypeID = ? AND LinkID = ? " \
         "AND MediaMimeType = 'image/jpeg' " \
         "AND (ExcludeFromPublish = 0 OR ExcludeFromPublish Is Null) " \

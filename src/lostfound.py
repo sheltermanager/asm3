@@ -4,7 +4,6 @@ import additional
 import al
 import animal
 import async
-import audit
 import configuration
 import dbfs
 import diary
@@ -13,7 +12,7 @@ import media
 import reports
 import utils
 import waitinglist
-from i18n import _, date_diff_days, now, subtract_days, subtract_years, python2display
+from i18n import _, date_diff_days, now, subtract_years, python2display
 
 class LostFoundMatch:
     dbo = None
