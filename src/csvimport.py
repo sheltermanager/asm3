@@ -43,7 +43,7 @@ VALID_FIELDS = [
     "PERSONADDRESS", "PERSONCITY", "PERSONSTATE",
     "PERSONZIPCODE", "PERSONJURISDICTION", "PERSONFOSTERER", "PERSONDONOR",
     "PERSONFLAGS", "PERSONCOMMENTS", "PERSONHOMEPHONE", "PERSONWORKPHONE",
-    "PERSONCELLPHONE", "PERSONEMAIL", "PERSONCLASS",
+    "PERSONCELLPHONE", "PERSONEMAIL", "PERSONGDPRCONTACT", "PERSONCLASS",
     "PERSONMEMBER", "PERSONMEMBERSHIPEXPIRY",
     "PERSONMATCHACTIVE", "PERSONMATCHADDED", "PERSONMATCHEXPIRES",
     "PERSONMATCHSEX", "PERSONMATCHSIZE", "PERSONMATCHCOLOR", "PERSONMATCHAGEFROM", "PERSONMATCHAGETO",
@@ -506,6 +506,7 @@ def csvimport(dbo, csvdata, encoding = "utf8", createmissinglookups = False, cle
             p["worktelephone"] = gks(row, "PERSONWORKPHONE")
             p["mobiletelephone"] = gks(row, "PERSONCELLPHONE")
             p["emailaddress"] = gks(row, "PERSONEMAIL")
+            p["gdprcontactoptin"] = gks(row, "PERSONGDPRCONTACTOPTIN")
             flags = gks(row, "PERSONFLAGS")
             if gkb(row, "PERSONFOSTERER"): flags += ",fosterer"
             if gkb(row, "PERSONMEMBER"): flags += ",member"

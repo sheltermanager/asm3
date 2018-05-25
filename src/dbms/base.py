@@ -69,6 +69,9 @@ class ResultRow(dict):
     in addition to `obj['foo']`. 
     It's also case insensitive as dbms tend to be on column names.
     """
+    def copy(self):
+        return ResultRow(dict.copy(self))
+
     def __getattr__(self, key):
         try:
             return self[key.upper()]

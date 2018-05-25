@@ -16,13 +16,14 @@ import async
 import audit
 import base64
 import cachemem
+import clinic
 import configuration
 import csvimport as extcsvimport
 import db, dbfs, dbupdate
 import diary as extdiary
 import financial
 import html
-from i18n import _, BUILD, translate, get_version, get_display_date_format, get_currency_prefix, get_currency_symbol, get_currency_dp, get_currency_radix, get_currency_digit_grouping, get_locales, parse_date, python2display, add_days, subtract_days, subtract_months, first_of_month, last_of_month, monday_of_week, sunday_of_week, first_of_year, last_of_year, now, format_currency, i18nstringsjs
+from i18n import _, BUILD, translate, get_version, get_display_date_format, get_currency_prefix, get_currency_symbol, get_currency_dp, get_currency_radix, get_currency_digit_grouping, get_locales, parse_date, python2display, add_minutes, add_days, subtract_days, subtract_months, first_of_month, last_of_month, monday_of_week, sunday_of_week, first_of_year, last_of_year, now, format_currency, i18nstringsjs
 import log as extlog
 import lookups as extlookups
 import lostfound as extlostfound
@@ -47,7 +48,7 @@ import utils
 import waitinglist as extwaitinglist
 import web
 import wordprocessor
-from sitedefs import BASE_URL, DEPLOYMENT_TYPE, ELECTRONIC_SIGNATURES, EMERGENCY_NOTICE, FORGOTTEN_PASSWORD, FORGOTTEN_PASSWORD_LABEL, LARGE_FILES_CHUNKED, LOCALE, GEO_PROVIDER, GEO_PROVIDER_KEY, JQUERY_UI_CSS, LEAFLET_CSS, LEAFLET_JS, MULTIPLE_DATABASES, MULTIPLE_DATABASES_TYPE, MULTIPLE_DATABASES_PUBLISH_URL, MULTIPLE_DATABASES_PUBLISH_FTP, ADMIN_EMAIL, EMAIL_ERRORS, MADDIES_FUND_TOKEN_URL, MANUAL_HTML_URL, MANUAL_PDF_URL, MANUAL_FAQ_URL, MANUAL_VIDEO_URL, MAP_LINK, MAP_PROVIDER, OSM_MAP_TILES, FOUNDANIMALS_FTP_USER, PETRESCUE_FTP_HOST, PETSLOCATED_FTP_USER, QR_IMG_SRC, SERVICE_URL, SESSION_SECURE_COOKIE, SESSION_DEBUG, SHARE_BUTTON, SMARTTAG_FTP_USER, SMCOM_LOGIN_URL, SMCOM_PAYMENT_LINK, VETENVOY_US_VENDOR_PASSWORD, VETENVOY_US_VENDOR_USERID
+from sitedefs import BASE_URL, DEPLOYMENT_TYPE, ELECTRONIC_SIGNATURES, EMERGENCY_NOTICE, FORGOTTEN_PASSWORD, FORGOTTEN_PASSWORD_LABEL, LARGE_FILES_CHUNKED, LOCALE, GEO_PROVIDER, GEO_PROVIDER_KEY, JQUERY_UI_CSS, LEAFLET_CSS, LEAFLET_JS, MULTIPLE_DATABASES, MULTIPLE_DATABASES_TYPE, MULTIPLE_DATABASES_PUBLISH_URL, MULTIPLE_DATABASES_PUBLISH_FTP, ADMIN_EMAIL, EMAIL_ERRORS, MADDIES_FUND_TOKEN_URL, MANUAL_HTML_URL, MANUAL_PDF_URL, MANUAL_FAQ_URL, MANUAL_VIDEO_URL, MAP_LINK, MAP_PROVIDER, OSM_MAP_TILES, FOUNDANIMALS_FTP_USER, PETLINK_BASE_URL, PETRESCUE_FTP_HOST, PETSLOCATED_FTP_USER, QR_IMG_SRC, SERVICE_URL, SESSION_SECURE_COOKIE, SESSION_DEBUG, SHARE_BUTTON, SMARTTAG_FTP_USER, SMCOM_LOGIN_URL, SMCOM_PAYMENT_LINK, VETENVOY_US_VENDOR_PASSWORD, VETENVOY_US_VENDOR_USERID
 
 CACHE_ONE_HOUR = 3600
 CACHE_ONE_DAY = 86400
@@ -1264,6 +1265,30 @@ class animal_bulk(JSONEndpoint):
     def post_all(self, o):
         return extanimal.update_animals_from_form(o.dbo, o.post, o.user)
 
+class animal_clinic(JSONEndpoint):
+    url = "animal_clinic"
+    js_module = "clinic_appointment"
+    get_permissions = users.VIEW_CLINIC
+
+    def controller(self, o):
+        dbo = o.dbo
+        animalid = o.post.integer("id")
+        a = extanimal.get_animal(dbo, animalid)
+        if a is None: self.notfound()
+        rows = clinic.get_animal_appointments(dbo, animalid)
+        al.debug("got %d appointments for animal %s %s" % (len(rows), a.CODE, a.ANIMALNAME), "code.animal_clinic", dbo)
+        return {
+            "name": self.url,
+            "animal": a,
+            "clinicstatuses": extlookups.get_clinic_statuses(dbo),
+            "donationtypes": extlookups.get_donation_types(dbo),
+            "paymenttypes": extlookups.get_payment_types(dbo),
+            "forlist": users.get_users(dbo),
+            "rows": rows,
+            "templates": template.get_document_templates(dbo),
+            "tabcounts": extanimal.get_satellite_counts(dbo, animalid)[0]
+        }
+
 class animal_costs(JSONEndpoint):
     url = "animal_costs"
     get_permissions = users.VIEW_COST
@@ -1791,6 +1816,18 @@ class calendar_events(ASMEndpoint):
                     "tooltip": tit, 
                     "icon": "test",
                     "link": "animal_test?id=%d" % t["ANIMALID"] })
+        if "c" in ev and self.checkb(users.VIEW_CLINIC):
+            for c in clinic.get_appointments_two_dates(dbo, start, end, o.post["apptfor"], o.siteid):
+                sub = "%s - %s" % (c.OWNERNAME, c.ANIMALNAME)
+                tit = "%s - %s (%s) %s" % (c.OWNERNAME, c.ANIMALNAME, c.APPTFOR, c.REASONFORAPPOINTMENT)
+                events.append({ 
+                    "title": sub, 
+                    "allDay": False, 
+                    "start": c.DATETIME,
+                    "end": add_minutes(c.DATETIME, 20),
+                    "tooltip": tit, 
+                    "icon": "health",
+                    "link": "person_clinic?id=%d" % c.OWNERID })
         if "p" in ev and self.checkb(users.VIEW_DONATION):
             for p in financial.get_donations_due_two_dates(dbo, start, end):
                 sub = "%s - %s" % (p["DONATIONNAME"], p["OWNERNAME"])
@@ -1910,6 +1947,129 @@ class citations(JSONEndpoint):
         self.check(users.DELETE_CITATION)
         for lid in o.post.integer_list("ids"):
             financial.delete_citation(o.dbo, o.user, lid)
+
+class clinic_appointment(ASMEndpoint):
+    url = "clinic_appointment"
+
+    def post_create(self, o):
+        self.check(users.ADD_CLINIC)
+        return clinic.insert_appointment_from_form(o.dbo, o.user, o.post)
+
+    def post_update(self, o):
+        self.check(users.CHANGE_CLINIC)
+        clinic.update_appointment_from_form(o.dbo, o.user, o.post)
+
+    def post_delete(self, o):
+        self.check(users.DELETE_CLINIC)
+        for cid in o.post.integer_list("ids"):
+            clinic.delete_appointment(o.dbo, o.user, cid)
+
+    def post_payment(self, o):
+        self.check(users.ADD_DONATION)
+        for cid in o.post.integer_list("ids"):
+            clinic.insert_payment_from_appointment(o.dbo, o.user, cid, o.post)
+
+    def post_personanimals(self, o):
+        self.check(users.VIEW_ANIMAL)
+        return utils.json(extanimal.get_animals_owned_by(o.dbo, o.post.integer("personid")))
+
+    def post_towaiting(self, o):
+        self.check(users.CHANGE_CLINIC)
+        for cid in o.post.integer_list("ids"):
+            clinic.update_appointment_to_waiting(o.dbo, o.user, cid, o.post.datetime("date", "time"))
+
+    def post_towithvet(self, o):
+        self.check(users.CHANGE_CLINIC)
+        for cid in o.post.integer_list("ids"):
+            clinic.update_appointment_to_with_vet(o.dbo, o.user, cid, o.post.datetime("date", "time"))
+
+    def post_tocomplete(self, o):
+        self.check(users.CHANGE_CLINIC)
+        for cid in o.post.integer_list("ids"):
+            clinic.update_appointment_to_complete(o.dbo, o.user, cid, o.post.datetime("date", "time"))
+
+class clinic_calendar(JSONEndpoint):
+    url = "clinic_calendar"
+    get_permissions = users.VIEW_CLINIC
+
+    def controller(self, o):
+        return {
+            "forlist": users.get_users(o.dbo)
+        }
+
+class clinic_invoice(JSONEndpoint):
+    url = "clinic_invoice"
+    get_permissions = users.VIEW_CLINIC
+
+    def controller(self, o):
+        dbo = o.dbo
+        appointmentid = o.post.integer("appointmentid")
+        appointment = clinic.get_appointment(dbo, appointmentid)
+        if appointment is None: self.notfound()
+        rows = clinic.get_invoice_items(dbo, appointmentid)
+        al.debug("got %d invoice items for appointment %d" % (len(rows), appointmentid), "code.clinic_invoice", dbo)
+        return {
+            "appointment": appointment,
+            "appointmentid": appointmentid,
+            "rows": rows
+        }
+
+    def post_create(self, o):
+        self.check(users.ADD_CLINIC)
+        return clinic.insert_invoice_from_form(o.dbo, o.user, o.post)
+
+    def post_update(self, o):
+        self.check(users.CHANGE_CLINIC)
+        clinic.update_invoice_from_form(o.dbo, o.user, o.post)
+
+    def post_delete(self, o):
+        self.check(users.DELETE_CLINIC)
+        for iid in o.post.integer_list("ids"):
+            clinic.delete_invoice(o.dbo, o.user, iid)
+
+class clinic_consultingroom(JSONEndpoint):
+    url = "clinic_consultingroom"
+    js_module = "clinic_appointment"
+    get_permissions = users.VIEW_CLINIC
+
+    def controller(self, o):
+        dbo = o.dbo
+        sf = o.post.integer("filter")
+        if o.post["filter"] == "": sf = -1
+        rows = clinic.get_appointments_today(dbo, statusfilter = sf, userfilter = o.user, siteid = o.siteid)
+        al.debug("got %d appointments" % (len(rows)), "code.clinic_consultingroom", dbo)
+        return {
+            "name": self.url,
+            "filter": sf,
+            "clinicstatuses": extlookups.get_clinic_statuses(dbo),
+            "donationtypes": extlookups.get_donation_types(dbo),
+            "paymenttypes": extlookups.get_payment_types(dbo),
+            "forlist": users.get_users(dbo),
+            "templates": template.get_document_templates(dbo),
+            "rows": rows
+        }
+
+class clinic_waitingroom(JSONEndpoint):
+    url = "clinic_waitingroom"
+    js_module = "clinic_appointment"
+    get_permissions = users.VIEW_CLINIC
+
+    def controller(self, o):
+        dbo = o.dbo
+        sf = o.post.integer("filter")
+        if o.post["filter"] == "": sf = -1
+        rows = clinic.get_appointments_today(dbo, statusfilter = sf, siteid = o.siteid)
+        al.debug("got %d appointments" % (len(rows)), "code.clinic_waitingroom", dbo)
+        return {
+            "name": self.url,
+            "filter": sf,
+            "clinicstatuses": extlookups.get_clinic_statuses(dbo),
+            "donationtypes": extlookups.get_donation_types(dbo),
+            "paymenttypes": extlookups.get_payment_types(dbo),
+            "forlist": users.get_users(dbo),
+            "templates": template.get_document_templates(dbo),
+            "rows": rows
+        }
 
 class csvexport(JSONEndpoint):
     url = "csvexport"
@@ -2102,6 +2262,9 @@ class document_gen(ASMEndpoint):
         elif linktype == "ANIMALCONTROL":
             loglinktype = extlog.ANIMALCONTROL
             content = wordprocessor.generate_animalcontrol_doc(dbo, dtid, post.integer("id"), o.user)
+        elif linktype == "CLINIC":
+            loglinktype = extlog.PERSON
+            content = wordprocessor.generate_clinic_doc(dbo, dtid, post.integer("id"), o.user)
         elif linktype == "PERSON":
             loglinktype = extlog.PERSON
             content = wordprocessor.generate_person_doc(dbo, dtid, post.integer("id"), o.user)
@@ -2159,6 +2322,14 @@ class document_gen(ASMEndpoint):
             tempname += " - " + utils.padleft(recid, 6)
             extmedia.create_document_media(dbo, session.user, extmedia.ANIMALCONTROL, recid, tempname, post["document"])
             self.redirect("incident_media?id=%d" % recid)
+        elif linktype == "CLINIC":
+            c = clinic.get_appointment(dbo, recid)
+            if c is None:
+                raise utils.ASMValidationError("%d is not a valid clinic id" % recid)
+            ownerid = c.OWNERID
+            tempname += " - " + c.OWNERNAME
+            extmedia.create_document_media(dbo, session.user, extmedia.PERSON, ownerid, tempname, post["document"])
+            self.redirect("person_media?id=%d" % ownerid)
         elif linktype == "FOUNDANIMAL":
             tempname += " - " + utils.padleft(recid, 6)
             extmedia.create_document_media(dbo, session.user, extmedia.FOUNDANIMAL, recid, tempname, post["document"])
@@ -4042,6 +4213,30 @@ class person_citations(JSONEndpoint):
             "citationtypes": extlookups.get_citation_types(dbo)
         }
 
+class person_clinic(JSONEndpoint):
+    url = "person_clinic"
+    js_module = "clinic_appointment"
+    get_permissions = users.VIEW_CLINIC
+
+    def controller(self, o):
+        dbo = o.dbo
+        personid = o.post.integer("id")
+        p = extperson.get_person(dbo, personid)
+        if p is None: self.notfound()
+        rows = clinic.get_person_appointments(dbo, personid)
+        al.debug("got %d appointments for person %s" % (len(rows), p.OWNERNAME), "code.person_clinic", dbo)
+        return {
+            "name": self.url,
+            "person": p,
+            "tabcounts": extperson.get_satellite_counts(dbo, personid)[0],
+            "clinicstatuses": extlookups.get_clinic_statuses(dbo),
+            "donationtypes": extlookups.get_donation_types(dbo),
+            "paymenttypes": extlookups.get_payment_types(dbo),
+            "forlist": users.get_users(dbo),
+            "templates": template.get_document_templates(dbo),
+            "rows": rows
+        }
+
 class person_diary(JSONEndpoint):
     url = "person_diary"
     js_module = "diary"
@@ -4498,6 +4693,7 @@ class publish_options(JSONEndpoint):
             "hasftpoverride": MULTIPLE_DATABASES_PUBLISH_FTP is not None and not configuration.publisher_ignore_ftp_override(dbo),
             "hasfoundanimals": FOUNDANIMALS_FTP_USER != "",
             "hasmaddiesfund": MADDIES_FUND_TOKEN_URL != "",
+            "haspetlink": PETLINK_BASE_URL != "",
             "haspetslocated": PETSLOCATED_FTP_USER != "",
             "hassmarttag": SMARTTAG_FTP_USER != "",
             "hasvevendor": VETENVOY_US_VENDOR_PASSWORD != "",

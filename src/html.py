@@ -612,7 +612,12 @@ def menu_structure(l, reports, mailmerges):
             ("", "", "", "--cat", "asm-icon-medical", _("Treatments", l) ),
             (users.ADD_MEDICAL, "", "", "medical?newmed=1", "asm-icon-blank", _("Add a medical regimen", l) ),
             (users.VIEW_MEDICAL, "", "", "medical", "asm-icon-book", _("Medical book", l) ),
-            (users.VIEW_MEDICAL, "", "", "medicalprofile", "asm-icon-blank", _("Medical profiles", l) )
+            (users.VIEW_MEDICAL, "", "", "medicalprofile", "asm-icon-blank", _("Medical profiles", l) ),
+            ( "", "", "tagclinic", "--break", "", "" ),
+            (users.VIEW_CLINIC, "", "tagclinic", "--cat", "asm-icon-health", _("Clinic", l) ),
+            (users.VIEW_CLINIC, "", "tagclinic", "clinic_waitingroom", "asm-icon-person", _("Waiting Room", l) ),
+            (users.VIEW_CLINIC, "", "tagclinic", "clinic_consultingroom", "asm-icon-users", _("Consulting Room", l) ),
+            (users.VIEW_CLINIC, "", "tagclinic", "clinic_calendar", "asm-icon-diary", _("Clinic Calendar", l) ),
         )),
         ("", "financial", _("Financial", l), (
             ( users.VIEW_ACCOUNT, "alt+shift+x", "tagaccounts", "accounts", "asm-icon-accounts", _("Accounts", l) ),

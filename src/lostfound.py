@@ -4,9 +4,7 @@ import additional
 import al
 import animal
 import async
-import audit
 import configuration
-import db
 import dbfs
 import diary
 import log
@@ -14,7 +12,7 @@ import media
 import reports
 import utils
 import waitinglist
-from i18n import _, date_diff_days, now, subtract_days, subtract_years, python2display, display2python
+from i18n import _, date_diff_days, now, subtract_years, python2display
 
 class LostFoundMatch:
     dbo = None
@@ -117,28 +115,37 @@ def get_lostanimal_find_simple(dbo, query = "", limit = 0):
     query: The search criteria
     """
     ors = []
+    values = []
     query = query.replace("'", "`")
+    querylike = "%%%s%%" % query.lower()
     def add(field):
-        return utils.where_text_filter(dbo, field, query)
+        ors.append("(LOWER(%s) LIKE ? OR LOWER(%s) LIKE ?)" % (field, field))
+        values.append(querylike)
+        values.append(utils.decode_html(querylike))
+    def addclause(clause):
+        ors.append(clause)
+        values.append(querylike)
     # If no query has been given, show unfound lost animal records
     # for the last 30 days
     if query == "":
-        ors.append("a.DateLost > %s AND a.DateFound Is Null" % db.dd(subtract_days(now(dbo.timezone), 30)))
+        ors.append("a.DateLost > ? AND a.DateFound Is Null")
+        values.append(dbo.today(offset=-30))
     else:
         if utils.is_numeric(query):
-            ors.append("a.ID = " + str(utils.cint(query)))
-        ors.append(add("o.OwnerName"))
-        ors.append(add("a.AreaLost"))
-        ors.append(add("a.AreaPostcode"))
-        ors.append(u"EXISTS(SELECT ad.Value FROM additional ad " \
+            ors.append("a.ID = ?")
+            values.append(utils.cint(query))
+        add("o.OwnerName")
+        add("a.AreaLost")
+        add("a.AreaPostcode")
+        addclause("EXISTS(SELECT ad.Value FROM additional ad " \
             "INNER JOIN additionalfield af ON af.ID = ad.AdditionalFieldID AND af.Searchable = 1 " \
-            "WHERE ad.LinkID=a.ID AND ad.LinkType IN (%s) AND LOWER(ad.Value) LIKE '%%%s%%')" % (additional.LOSTANIMAL_IN, query.lower()))
+            "WHERE ad.LinkID=a.ID AND ad.LinkType IN (%s) AND LOWER(ad.Value) LIKE ?)" % additional.LOSTANIMAL_IN)
         if not dbo.is_large_db:
-            ors.append(add("b.BreedName"))
-            ors.append(add("a.DistFeat"))
-            ors.append(add("a.Comments"))
-    sql = get_lostanimal_query(dbo) + " WHERE " + " OR ".join(ors)
-    return db.query(dbo, sql, limit=limit)
+            add("b.BreedName")
+            add("a.DistFeat")
+            add("a.Comments")
+    sql = "%s WHERE %s" % (get_lostanimal_query(dbo), " OR ".join(ors))
+    return dbo.query(sql, values, limit=limit, distincton="ID")
 
 def get_foundanimal_find_simple(dbo, query = "", limit = 0):
     """
@@ -146,31 +153,40 @@ def get_foundanimal_find_simple(dbo, query = "", limit = 0):
     query: The search criteria
     """
     ors = []
+    values = []
     query = query.replace("'", "`")
+    querylike = "%%%s%%" % query.lower()
     def add(field):
-        return utils.where_text_filter(dbo, field, query)
-    # If no query has been given, show unreturned found animal records
+        ors.append("(LOWER(%s) LIKE ? OR LOWER(%s) LIKE ?)" % (field, field))
+        values.append(querylike)
+        values.append(utils.decode_html(querylike))
+    def addclause(clause):
+        ors.append(clause)
+        values.append(querylike)
+    # If no query has been given, show unfound lost animal records
     # for the last 30 days
     if query == "":
-        ors.append("a.DateFound > %s AND a.ReturnToOwnerDate Is Null" % db.dd(subtract_days(now(dbo.timezone), 30)))
+        ors.append("a.DateFound > ? AND a.ReturnToOwnerDate Is Null")
+        values.append(dbo.today(offset=-30))
     else:
         if utils.is_numeric(query):
-            ors.append("a.ID = " + str(utils.cint(query)))
-        ors.append(add("o.OwnerName"))
-        ors.append(add("a.AreaFound"))
-        ors.append(add("a.AreaPostcode"))
-        ors.append(u"EXISTS(SELECT ad.Value FROM additional ad " \
+            ors.append("a.ID = ?")
+            values.append(utils.cint(query))
+        add("o.OwnerName")
+        add("a.AreaFound")
+        add("a.AreaPostcode")
+        addclause("EXISTS(SELECT ad.Value FROM additional ad " \
             "INNER JOIN additionalfield af ON af.ID = ad.AdditionalFieldID AND af.Searchable = 1 " \
-            "WHERE ad.LinkID=a.ID AND ad.LinkType IN (%s) AND LOWER(ad.Value) LIKE '%%%s%%')" % (additional.FOUNDANIMAL_IN, query.lower()))
+            "WHERE ad.LinkID=a.ID AND ad.LinkType IN (%s) AND LOWER(ad.Value) LIKE ?)" % additional.FOUNDANIMAL_IN)
         if not dbo.is_large_db:
-            ors.append(add("b.BreedName"))
-            ors.append(add("a.DistFeat"))
-            ors.append(add("a.Comments"))
-    sql = get_foundanimal_query(dbo) + " WHERE " + " OR ".join(ors)
-    return db.query(dbo, sql, limit=limit)
+            add("b.BreedName")
+            add("a.DistFeat")
+            add("a.Comments")
+    sql = "%s WHERE %s" % (get_foundanimal_query(dbo), " OR ".join(ors))
+    return dbo.query(sql, values, limit=limit, distincton="ID")
 
 def get_lostanimal_find_advanced(dbo, criteria, limit = 0):
-    """f
+    """
     Returns rows for advanced lost animal searches.
     criteria: A dictionary of criteria
        number - string partial pattern
@@ -189,49 +205,65 @@ def get_lostanimal_find_advanced(dbo, criteria, limit = 0):
        completefrom - found date from in current display locale format
        completeto - found date to in current display locale format
     """
-    c = []
+    ands = []
+    values = []
     l = dbo.locale
     post = utils.PostedData(criteria, l)
 
-    def hk(cfield):
-        return post[cfield] != ""
-
-    def crit(cfield):
-        return post[cfield]
-
     def addid(cfield, field): 
-        if hk(cfield) and int(crit(cfield)) != -1: 
-            c.append("%s = %s" % (field, crit(cfield)))
+        if post[cfield] != "" and post.integer(cfield) > -1:
+            ands.append("%s = ?" % field)
+            values.append(post.integer(cfield))
 
     def addstr(cfield, field): 
-        if hk(cfield) and crit(cfield) != "": 
-            c.append("LOWER(%s) LIKE '%%%s%%'" % ( field, crit(cfield).lower().replace("'", "`")))
+        if post[cfield] != "":
+            x = post[cfield].lower().replace("'", "`")
+            x = "%%%s%%" % x
+            ands.append("(LOWER(%s) LIKE ? OR LOWER(%s) LIKE ?)" % (field, field))
+            values.append(x)
+            values.append(utils.decode_html(x))
 
     def adddate(cfieldfrom, cfieldto, field): 
-        if hk(cfieldfrom) and hk(cfieldto): 
-            c.append("%s >= %s AND %s <= %s" % ( 
-                field, db.dd(display2python(l, crit(cfieldfrom))), 
-                field, db.dd(display2python(l, crit(cfieldto)))))
+        if post[cfieldfrom] != "" and post[cfieldto] != "":
+            post.data["dayend"] = "23:59:59"
+            ands.append("%s >= ? AND %s <= ?" % (field, field))
+            values.append(post.date(cfieldfrom))
+            values.append(post.datetime(cfieldto, "dayend"))
 
-    c.append("a.ID > 0")
-    if crit("number") != "": c.append("a.ID = %s" % utils.cint(crit("number")))
+    def addfilter(f, condition):
+        if post["filter"].find(f) != -1: ands.append(condition)
+
+    def addcomp(cfield, value, condition):
+        if post[cfield] == value: ands.append(condition)
+
+    def addwords(cfield, field):
+        if post[cfield] != "":
+            words = post[cfield].split(" ")
+            for w in words:
+                x = w.lower().replace("'", "`")
+                x = "%%%s%%" % x
+                ands.append("(LOWER(%s) LIKE ? OR LOWER(%s) LIKE ?)" % (field, field))
+                values.append(x)
+                values.append(utils.decode_html(x))
+
+    ands.append("a.ID > 0")
+    addid("number", "a.ID")
     addstr("contact", "o.OwnerName")
     addstr("area", "a.AreaLost")
     addstr("postcode", "a.AreaPostcode")
     addstr("features", "a.DistFeat")
-    if (crit("agegroup") != "-1"): addstr("agegroup", "a.AgeGroup")
+    if post["agegroup"] != "-1": addstr("agegroup", "a.AgeGroup")
     addid("sex", "a.Sex")
     addid("species", "a.AnimalTypeID")
     addid("breed", "a.BreedID")
     addid("colour", "a.BaseColourID")
     adddate("datefrom", "dateto", "a.DateLost")
-    if crit("excludecomplete") == "1":
-        c.append("a.DateFound Is Null")
-    elif crit("completefrom") != "" and crit("completeto") != "":
-        adddate("completefrom", "completeto", "a.DateFound")
-    where = " WHERE " + " AND ".join(c)
-    sql = get_lostanimal_query(dbo) + where + " ORDER BY a.ID"
-    return db.query(dbo, sql, limit=limit)
+    adddate("completefrom", "completeto", "a.DateFound")
+    if post["excludecomplete"] == "1":
+        ands.append("a.DateFound Is Null")
+    where = " WHERE " + " AND ".join(ands)
+    sql = "%s %s ORDER BY a.ID" % (get_lostanimal_query(dbo), where)
+    return dbo.query(sql, values, limit=limit, distincton="ID")
 
 def get_foundanimal_find_advanced(dbo, criteria, limit = 0):
     """
@@ -253,61 +285,77 @@ def get_foundanimal_find_advanced(dbo, criteria, limit = 0):
        completefrom - returned date from in current display locale format
        completeto - returned date to in current display locale format
     """
-    c = []
+    ands = []
+    values = []
     l = dbo.locale
     post = utils.PostedData(criteria, l)
 
-    def hk(cfield):
-        return post[cfield] != ""
-
-    def crit(cfield):
-        return post[cfield]
-
     def addid(cfield, field): 
-        if hk(cfield) and int(crit(cfield)) != -1: 
-            c.append("%s = %s" % (field, crit(cfield)))
+        if post[cfield] != "" and post.integer(cfield) > -1:
+            ands.append("%s = ?" % field)
+            values.append(post.integer(cfield))
 
     def addstr(cfield, field): 
-        if hk(cfield) and crit(cfield) != "": 
-            c.append("LOWER(%s) LIKE '%%%s%%'" % ( field, crit(cfield).lower().replace("'", "`")))
+        if post[cfield] != "":
+            x = post[cfield].lower().replace("'", "`")
+            x = "%%%s%%" % x
+            ands.append("(LOWER(%s) LIKE ? OR LOWER(%s) LIKE ?)" % (field, field))
+            values.append(x)
+            values.append(utils.decode_html(x))
 
     def adddate(cfieldfrom, cfieldto, field): 
-        if hk(cfieldfrom) and hk(cfieldto): 
-            c.append("%s >= %s AND %s <= %s" % ( 
-                field, db.dd(display2python(l, crit(cfieldfrom))), 
-                field, db.dd(display2python(l, crit(cfieldto)))))
+        if post[cfieldfrom] != "" and post[cfieldto] != "":
+            post.data["dayend"] = "23:59:59"
+            ands.append("%s >= ? AND %s <= ?" % (field, field))
+            values.append(post.date(cfieldfrom))
+            values.append(post.datetime(cfieldto, "dayend"))
 
-    c.append("a.ID > 0")
-    if crit("number") != "": c.append("a.ID = %s" % utils.cint(crit("number")))
+    def addfilter(f, condition):
+        if post["filter"].find(f) != -1: ands.append(condition)
+
+    def addcomp(cfield, value, condition):
+        if post[cfield] == value: ands.append(condition)
+
+    def addwords(cfield, field):
+        if post[cfield] != "":
+            words = post[cfield].split(" ")
+            for w in words:
+                x = w.lower().replace("'", "`")
+                x = "%%%s%%" % x
+                ands.append("(LOWER(%s) LIKE ? OR LOWER(%s) LIKE ?)" % (field, field))
+                values.append(x)
+                values.append(utils.decode_html(x))
+
+    ands.append("a.ID > 0")
+    addid("number", "a.ID")
     addstr("contact", "o.OwnerName")
     addstr("area", "a.AreaFound")
     addstr("postcode", "a.AreaPostcode")
     addstr("features", "a.DistFeat")
-    if (crit("agegroup") != "-1"): addstr("agegroup", "a.AgeGroup")
+    if post["agegroup"] != "-1": addstr("agegroup", "a.AgeGroup")
     addid("sex", "a.Sex")
     addid("species", "a.AnimalTypeID")
     addid("breed", "a.BreedID")
     addid("colour", "a.BaseColourID")
     adddate("datefrom", "dateto", "a.DateFound")
-    if crit("excludecomplete") == "1":
-        c.append("a.ReturnToOwnerDate Is Null")
-    elif crit("completefrom") != "" and crit("completeto") != "":
-        adddate("completefrom", "completeto", "a.ReturnToOwnerDate")
-    where = " WHERE " + " AND ".join(c)
-    sql = get_foundanimal_query(dbo) + where + " ORDER BY a.ID"
-    return db.query(dbo, sql, limit=limit)
+    adddate("completefrom", "completeto", "a.ReturnToOwnerDate")
+    if post["excludecomplete"] == "1":
+        ands.append("a.ReturnToOwnerDate Is Null")
+    where = " WHERE " + " AND ".join(ands)
+    sql = "%s %s ORDER BY a.ID" % (get_foundanimal_query(dbo), where)
+    return dbo.query(sql, values, limit=limit, distincton="ID")
 
 def get_lostanimal_last_days(dbo, days = 90):
     """
     Returns lost animals active for the last X days
     """
-    return db.query(dbo, get_lostanimal_query(dbo) + " WHERE a.DateLost > %s AND a.DateFound Is Null" % db.dd(subtract_days(now(dbo.timezone), days)))
+    return dbo.query(get_lostanimal_query(dbo) + " WHERE a.DateLost > ? AND a.DateFound Is Null", [dbo.today(offset=days*-1)])
 
 def get_foundanimal_last_days(dbo, days = 90):
     """
     Returns found animals active for the last X days
     """
-    return db.query(dbo, get_foundanimal_query(dbo) + " WHERE a.DateFound > %s AND a.ReturnToOwnerDate Is Null" % db.dd(subtract_days(now(dbo.timezone), days)))
+    return dbo.query(get_foundanimal_query(dbo) + " WHERE a.DateFound > ? AND a.ReturnToOwnerDate Is Null", [dbo.today(offset=days*-1)])
 
 def get_lostanimal_satellite_counts(dbo, lfid):
     """
@@ -318,9 +366,9 @@ def get_lostanimal_satellite_counts(dbo, lfid):
         "(SELECT COUNT(*) FROM media me WHERE me.LinkID = a.ID AND me.LinkTypeID = %d) AS media, " \
         "(SELECT COUNT(*) FROM diary di WHERE di.LinkID = a.ID AND di.LinkType = %d) AS diary, " \
         "(SELECT COUNT(*) FROM log WHERE log.LinkID = a.ID AND log.LinkType = %d) AS logs " \
-        "FROM animallost a WHERE a.ID = %d" \
-        % (media.LOSTANIMAL, diary.LOSTANIMAL, log.LOSTANIMAL, int(lfid))
-    return db.query(dbo, sql)
+        "FROM animallost a WHERE a.ID = ?" \
+        % (media.LOSTANIMAL, diary.LOSTANIMAL, log.LOSTANIMAL)
+    return dbo.query(sql, [lfid])
 
 def get_foundanimal_satellite_counts(dbo, lfid):
     """
@@ -331,9 +379,9 @@ def get_foundanimal_satellite_counts(dbo, lfid):
         "(SELECT COUNT(*) FROM media me WHERE me.LinkID = a.ID AND me.LinkTypeID = %d) AS media, " \
         "(SELECT COUNT(*) FROM diary di WHERE di.LinkID = a.ID AND di.LinkType = %d) AS diary, " \
         "(SELECT COUNT(*) FROM log WHERE log.LinkID = a.ID AND log.LinkType = %d) AS logs " \
-        "FROM animalfound a WHERE a.ID = %d" \
-        % (media.FOUNDANIMAL, diary.FOUNDANIMAL, log.FOUNDANIMAL, int(lfid))
-    return db.query(dbo, sql)
+        "FROM animalfound a WHERE a.ID = ?" \
+        % (media.FOUNDANIMAL, diary.FOUNDANIMAL, log.FOUNDANIMAL)
+    return dbo.query(sql, [lfid])
 
 def send_email_from_form(dbo, username, post):
     """
@@ -398,40 +446,40 @@ def match(dbo, lostanimalid = 0, foundanimalid = 0, animalid = 0, limit = 0):
     includeshelter = configuration.match_include_shelter(dbo)
     fullmatch = animalid == 0 and lostanimalid == 0 and foundanimalid == 0
     # Ignore records older than 6 months to keep things useful
-    giveup = subtract_days(now(dbo.timezone), 180)
+    giveup = dbo.today(offset=-182)
 
     # Get our set of lost animals
     lostanimals = None
     if lostanimalid == 0:
-        lostanimals = db.query(dbo, get_lostanimal_query(dbo) + \
-            " WHERE a.DateFound Is Null AND a.DateLost > %s ORDER BY a.DateLost" % db.dd(giveup))
+        lostanimals = dbo.query(get_lostanimal_query(dbo) + \
+            " WHERE a.DateFound Is Null AND a.DateLost > ? ORDER BY a.DateLost", [giveup])
     else:
-        lostanimals = db.query(dbo, get_lostanimal_query(dbo) + \
-            " WHERE a.ID = %d" % lostanimalid)
+        lostanimals = dbo.query(get_lostanimal_query(dbo) + \
+            " WHERE a.ID = ?", [lostanimalid])
 
     oldestdate = giveup
     if len(lostanimals) > 0:
-        oldestdate = lostanimals[0]["DATELOST"]
+        oldestdate = lostanimals[0].DATELOST
 
     # Get the set of found animals for comparison
     foundanimals = None
     if foundanimalid == 0:
-        foundanimals = db.query(dbo, get_foundanimal_query(dbo) + \
+        foundanimals = dbo.query(get_foundanimal_query(dbo) + \
             " WHERE a.ReturnToOwnerDate Is Null" \
-            " AND a.DateFound >= %s " % db.dd(oldestdate))
+            " AND a.DateFound >= ? ", [oldestdate])
     else:
-        foundanimals = db.query(dbo, get_foundanimal_query(dbo) + " WHERE a.ID = %d" % foundanimalid)
+        foundanimals = dbo.query(get_foundanimal_query(dbo) + " WHERE a.ID = ?", [foundanimalid])
 
     # Get the set of shelter animals for comparison - anything brought in recently
     # that's 1. still on shelter or 2. was released to wild, transferred or escaped
     shelteranimals = None
     if includeshelter:
         if animalid == 0:
-            shelteranimals = db.query(dbo, animal.get_animal_query(dbo) + " WHERE " + \
+            shelteranimals = dbo.query(animal.get_animal_query(dbo) + " WHERE " + \
                 "(a.Archived = 0 OR a.ActiveMovementType IN (3,4,7)) " \
-                "AND a.DateBroughtIn > %s" % db.dd(oldestdate))
+                "AND a.DateBroughtIn > ?", [oldestdate])
         else:
-            shelteranimals = db.query(dbo, animal.get_animal_query(dbo) + " WHERE a.ID = %d" % animalid)
+            shelteranimals = dbo.query(animal.get_animal_query(dbo) + " WHERE a.ID = ?", [animalid])
 
     async.set_progress_max(dbo, len(lostanimals))
     for la in lostanimals:
@@ -553,7 +601,7 @@ def match(dbo, lostanimalid = 0, foundanimalid = 0, animalid = 0, limit = 0):
                         break
 
     if fullmatch:
-        db.execute(dbo, "DELETE FROM animallostfoundmatch")
+        dbo.execute("DELETE FROM animallostfoundmatch")
         sql = "INSERT INTO animallostfoundmatch (AnimalLostID, AnimalFoundID, AnimalID, LostContactName, LostContactNumber, " \
             "LostArea, LostPostcode, LostAgeGroup, LostSex, LostSpeciesID, LostBreedID, LostFeatures, LostBaseColourID, LostDate, " \
             "FoundContactName, FoundContactNumber, FoundArea, FoundPostcode, FoundAgeGroup, FoundSex, FoundSpeciesID, FoundBreedID, " \
@@ -623,7 +671,7 @@ def lostfound_last_match_count(dbo):
     """
     Returns the number of lost/found matches from the last run
     """
-    return db.query_int(dbo, "SELECT COUNT(*) FROM animallostfoundmatch")
+    return dbo.query_int("SELECT COUNT(*) FROM animallostfoundmatch")
 
 def update_match_report(dbo):
     """
@@ -638,13 +686,13 @@ def get_lost_person_name(dbo, aid):
     """
     Returns the contact name for a lost animal
     """
-    return db.query_string(dbo, "SELECT o.OwnerName FROM animallost a INNER JOIN owner o ON a.OwnerID = o.ID WHERE a.ID = %d" % int(aid))
+    return dbo.query_string("SELECT o.OwnerName FROM animallost a INNER JOIN owner o ON a.OwnerID = o.ID WHERE a.ID = ?", [aid])
 
 def get_found_person_name(dbo, aid):
     """
     Returns the contact name for a found animal
     """
-    return db.query_string(dbo, "SELECT o.OwnerName FROM animalfound a INNER JOIN owner o ON a.OwnerID = o.ID WHERE a.ID = %d" % int(aid))
+    return dbo.query_string("SELECT o.OwnerName FROM animalfound a INNER JOIN owner o ON a.OwnerID = o.ID WHERE a.ID = ?", [aid])
 
 def update_lostanimal_from_form(dbo, post, username):
     """
@@ -664,25 +712,22 @@ def update_lostanimal_from_form(dbo, post, username):
     if post.integer("owner") == "0":
         raise utils.ASMValidationError(_("Lost animals must have a contact", l))
 
-    preaudit = db.query(dbo, "SELECT * FROM animallost WHERE ID = %d" % lfid)
-    db.execute(dbo, db.make_update_user_sql(dbo, "animallost", username, "ID=%d" % lfid, (
-        ( "AnimalTypeID", post.db_integer("species")),
-        ( "DateReported", post.db_date("datereported")),
-        ( "DateLost", post.db_date("datelost")),
-        ( "DateFound", post.db_date("datefound")),
-        ( "Sex", post.db_integer("sex")),
-        ( "BreedID", post.db_integer("breed")),
-        ( "AgeGroup", post.db_string("agegroup")),
-        ( "BaseColourID", post.db_integer("colour")),
-        ( "DistFeat", post.db_string("markings")),
-        ( "AreaLost", post.db_string("arealost")),
-        ( "AreaPostcode", post.db_string("areapostcode")),
-        ( "OwnerID", post.db_integer("owner")),
-        ( "Comments", post.db_string("comments"))
-        )))
+    dbo.update("animallost", lfid, {
+        "AnimalTypeID":     post.integer("species"),
+        "DateReported":     post.date("datereported"),
+        "DateLost":         post.date("datelost"),
+        "DateFound":        post.date("datefound"),
+        "Sex":              post.integer("sex"),
+        "BreedID":          post.integer("breed"),
+        "AgeGroup":         post["agegroup"],
+        "BaseColourID":     post.integer("colour"),
+        "DistFeat":         post["markings"],
+        "AreaLost":         post["arealost"],
+        "AreaPostcode":     post["areapostcode"],
+        "OwnerID":          post.integer("owner"),
+        "Comments":         post["comments"]
+    }, username)
     additional.save_values_for_link(dbo, post, lfid, "lostanimal")
-    postaudit = db.query(dbo, "SELECT * FROM animallost WHERE ID = %d" % lfid)
-    audit.edit(dbo, username, "animallost", lfid, audit.map_diff(preaudit, postaudit))
 
 def insert_lostanimal_from_form(dbo, post, username):
     """
@@ -697,24 +742,21 @@ def insert_lostanimal_from_form(dbo, post, username):
     if post.integer("owner") == "0":
         raise utils.ASMValidationError(_("Lost animals must have a contact", l))
 
-    nid = db.get_id(dbo, "animallost")
-    db.execute(dbo, db.make_insert_user_sql(dbo, "animallost", username, (
-        ( "ID", db.di(nid)),
-        ( "AnimalTypeID", post.db_integer("species")),
-        ( "DateReported", post.db_date("datereported")),
-        ( "DateLost", post.db_date("datelost")),
-        ( "DateFound", post.db_date("datefound")),
-        ( "Sex", post.db_integer("sex")),
-        ( "BreedID", post.db_integer("breed")),
-        ( "AgeGroup", post.db_string("agegroup")),
-        ( "BaseColourID", post.db_integer("colour")),
-        ( "DistFeat", post.db_string("markings")),
-        ( "AreaLost", post.db_string("arealost")),
-        ( "AreaPostcode", post.db_string("areapostcode")),
-        ( "OwnerID", post.db_integer("owner")),
-        ( "Comments", post.db_string("comments"))
-        )))
-    audit.create(dbo, username, "animallost", nid, audit.dump_row(dbo, "animallost", nid))
+    nid = dbo.insert("animallost", {
+        "AnimalTypeID":     post.integer("species"),
+        "DateReported":     post.date("datereported"),
+        "DateLost":         post.date("datelost"),
+        "DateFound":        post.date("datefound"),
+        "Sex":              post.integer("sex"),
+        "BreedID":          post.integer("breed"),
+        "AgeGroup":         post["agegroup"],
+        "BaseColourID":     post.integer("colour"),
+        "DistFeat":         post["markings"],
+        "AreaLost":         post["arealost"],
+        "AreaPostcode":     post["areapostcode"],
+        "OwnerID":          post.integer("owner"),
+        "Comments":         post["comments"]
+    }, username)
 
     # Save any additional field values given
     additional.save_values_for_link(dbo, post, nid, "lostanimal")
@@ -739,25 +781,22 @@ def update_foundanimal_from_form(dbo, post, username):
     if post.integer("owner") == 0:
         raise utils.ASMValidationError(_("Found animals must have a contact", l))
 
-    preaudit = db.query(dbo, "SELECT * FROM animalfound WHERE ID = %d" % lfid)
-    db.execute(dbo, db.make_update_user_sql(dbo, "animalfound", username, "ID=%d" % lfid, (
-        ( "AnimalTypeID", post.db_integer("species")),
-        ( "DateReported", post.db_date("datereported")),
-        ( "ReturnToOwnerDate", post.db_date("returntoownerdate")),
-        ( "DateFound", post.db_date("datefound")),
-        ( "Sex", post.db_integer("sex")),
-        ( "BreedID", post.db_integer("breed")),
-        ( "AgeGroup", post.db_string("agegroup")),
-        ( "BaseColourID", post.db_integer("colour")),
-        ( "DistFeat", post.db_string("markings")),
-        ( "AreaFound", post.db_string("areafound")),
-        ( "AreaPostcode", post.db_string("areapostcode")),
-        ( "OwnerID", post.db_integer("owner")),
-        ( "Comments", post.db_string("comments"))
-        )))
+    dbo.update("animalfound", lfid, {
+        "AnimalTypeID":     post.integer("species"),
+        "DateReported":     post.date("datereported"),
+        "ReturnToOwnerDate": post.date("returntoownerdate"),
+        "DateFound":        post.date("datefound"),
+        "Sex":              post.integer("sex"),
+        "BreedID":          post.integer("breed"),
+        "AgeGroup":         post["agegroup"],
+        "BaseColourID":     post.integer("colour"),
+        "DistFeat":         post["markings"],
+        "AreaFound":        post["areafound"],
+        "AreaPostcode":     post["areapostcode"],
+        "OwnerID":          post.integer("owner"),
+        "Comments":         post["comments"]
+    }, username)
     additional.save_values_for_link(dbo, post, lfid, "foundanimal")
-    postaudit = db.query(dbo, "SELECT * FROM animalfound WHERE ID = %d" % lfid)
-    audit.edit(dbo, username, "animalfound", lfid, audit.map_diff(preaudit, postaudit))
 
 def insert_foundanimal_from_form(dbo, post, username):
     """
@@ -772,24 +811,21 @@ def insert_foundanimal_from_form(dbo, post, username):
     if post.integer("owner") == 0:
         raise utils.ASMValidationError(_("Found animals must have a contact", l))
 
-    nid = db.get_id(dbo, "animalfound")
-    db.execute(dbo, db.make_insert_user_sql(dbo, "animalfound", username, (
-        ( "ID", db.di(nid)),
-        ( "AnimalTypeID", post.db_integer("species")),
-        ( "DateReported", post.db_date("datereported")),
-        ( "ReturnToOwnerDate", post.db_date("returntoownerdate")),
-        ( "DateFound", post.db_date("datefound")),
-        ( "Sex", post.db_integer("sex")),
-        ( "BreedID", post.db_integer("breed")),
-        ( "AgeGroup", post.db_string("agegroup")),
-        ( "BaseColourID", post.db_integer("colour")),
-        ( "DistFeat", post.db_string("markings")),
-        ( "AreaFound", post.db_string("areafound")),
-        ( "AreaPostcode", post.db_string("areapostcode")),
-        ( "OwnerID", post.db_integer("owner")),
-        ( "Comments", post.db_string("comments"))
-        )))
-    audit.create(dbo, username, "animalfound", nid, audit.dump_row(dbo, "animalfound", nid))
+    nid = dbo.insert("animalfound", {
+        "AnimalTypeID":     post.integer("species"),
+        "DateReported":     post.date("datereported"),
+        "ReturnToOwnerDate": post.date("returntoownerdate"),
+        "DateFound":        post.date("datefound"),
+        "Sex":              post.integer("sex"),
+        "BreedID":          post.integer("breed"),
+        "AgeGroup":         post["agegroup"],
+        "BaseColourID":     post.integer("colour"),
+        "DistFeat":         post["markings"],
+        "AreaFound":        post["areafound"],
+        "AreaPostcode":     post["areapostcode"],
+        "OwnerID":          post.integer("owner"),
+        "Comments":         post["comments"]
+    }, username)
 
     # Save any additional field values given
     additional.save_values_for_link(dbo, post, nid, "foundanimal")
@@ -850,29 +886,21 @@ def delete_lostanimal(dbo, username, aid):
     """
     Deletes a lost animal
     """
-    audit.delete_rows(dbo, username, "media", "LinkID = %d AND LinkTypeID = %d" % (aid, media.LOSTANIMAL))
-    db.execute(dbo, "DELETE FROM media WHERE LinkID = %d AND LinkTypeID = %d" % (aid, media.LOSTANIMAL))
-    audit.delete_rows(dbo, username, "diary", "LinkID = %d AND LinkType = %d" % (aid, diary.LOSTANIMAL))
-    db.execute(dbo, "DELETE FROM diary WHERE LinkID = %d AND LinkType = %d" % (aid, diary.LOSTANIMAL))
-    audit.delete_rows(dbo, username, "log", "LinkID = %d AND LinkType = %d" % (aid, log.LOSTANIMAL))
-    db.execute(dbo, "DELETE FROM log WHERE LinkID = %d AND LinkType = %d" % (aid, log.LOSTANIMAL))
-    db.execute(dbo, "DELETE FROM additional WHERE LinkID = %d AND LinkType IN (%s)" % (aid, additional.LOSTANIMAL_IN))
+    dbo.delete("media", "LinkID=%d AND LinkTypeID=%d" % (aid, media.LOSTANIMAL), username)
+    dbo.delete("diary", "LinkID=%d AND LinkType=%d" % (aid, diary.LOSTANIMAL), username)
+    dbo.delete("log", "LinkID=%d AND LinkType=%d" % (aid, log.LOSTANIMAL), username)
+    dbo.execute("DELETE FROM additional WHERE LinkID = %d AND LinkType IN (%s)" % (aid, additional.LOSTANIMAL_IN))
+    dbo.delete("animallost", aid, username)
     dbfs.delete_path(dbo, "/lostanimal/%d" % aid)
-    audit.delete(dbo, username, "animallost", aid, audit.dump_row(dbo, "animallost", aid))
-    db.execute(dbo, "DELETE FROM animallost WHERE ID = %d" % aid)
 
 def delete_foundanimal(dbo, username, aid):
     """
     Deletes a found animal
     """
-    audit.delete_rows(dbo, username, "media", "LinkID = %d AND LinkTypeID = %d" % (aid, media.FOUNDANIMAL))
-    db.execute(dbo, "DELETE FROM media WHERE LinkID = %d AND LinkTypeID = %d" % (aid, media.FOUNDANIMAL))
-    audit.delete_rows(dbo, username, "diary", "LinkID = %d AND LinkType = %d" % (aid, diary.FOUNDANIMAL))
-    db.execute(dbo, "DELETE FROM diary WHERE LinkID = %d AND LinkType = %d" % (aid, diary.FOUNDANIMAL))
-    audit.delete_rows(dbo, username, "log", "LinkID = %d AND LinkType = %d" % (aid, log.FOUNDANIMAL))
-    db.execute(dbo, "DELETE FROM log WHERE LinkID = %d AND LinkType = %d" % (aid, log.FOUNDANIMAL))
-    db.execute(dbo, "DELETE FROM additional WHERE LinkID = %d AND LinkType IN (%s)" % (aid, additional.FOUNDANIMAL_IN))
+    dbo.delete("media", "LinkID=%d AND LinkTypeID=%d" % (aid, media.FOUNDANIMAL), username)
+    dbo.delete("diary", "LinkID=%d AND LinkType=%d" % (aid, diary.FOUNDANIMAL), username)
+    dbo.delete("log", "LinkID=%d AND LinkType=%d" % (aid, log.FOUNDANIMAL), username)
+    dbo.execute("DELETE FROM additional WHERE LinkID = %d AND LinkType IN (%s)" % (aid, additional.FOUNDANIMAL_IN))
+    dbo.delete("animalfound", aid, username)
     dbfs.delete_path(dbo, "/foundanimal/%d" % aid)
-    audit.delete(dbo, username, "animalfound", aid, audit.dump_row(dbo, "animalfound", aid))
-    db.execute(dbo, "DELETE FROM animalfound WHERE ID = %d" % aid)
 

@@ -23,7 +23,7 @@ VERSIONS = (
     33907, 33908, 33909, 33911, 33912, 33913, 33914, 33915, 33916, 34000, 34001, 
     34002, 34003, 34004, 34005, 34006, 34007, 34008, 34009, 34010, 34011, 34012,
     34013, 34014, 34015, 34016, 34017, 34018, 34019, 34020, 34021, 34022, 34100,
-    34101, 34102, 34103, 34104, 34105, 34106
+    34101, 34102, 34103, 34104, 34105, 34106, 34107, 34108
 )
 
 LATEST_VERSION = VERSIONS[-1]
@@ -35,11 +35,12 @@ TABLES = ( "accounts", "accountsrole", "accountstrx", "additional", "additionalf
     "animalfound", "animalcontrolanimal", "animallitter", "animallost", "animallostfoundmatch", 
     "animalmedical", "animalmedicaltreatment", "animalname", "animalpublished", 
     "animaltype", "animaltest", "animaltransport", "animalvaccination", "animalwaitinglist", "audittrail", 
-    "basecolour", "breed", "citationtype", "configuration", "costtype", "customreport", "customreportrole", "dbfs", 
-    "deathreason", "deletion", "diary", "diarytaskdetail", "diarytaskhead", "diet", "donationpayment", "donationtype", 
+    "basecolour", "breed", "citationtype", "clinicappointment", "clinicinvoiceitem", "configuration", 
+    "costtype", "customreport", "customreportrole", "dbfs", "deathreason", "deletion", "diary", 
+    "diarytaskdetail", "diarytaskhead", "diet", "donationpayment", "donationtype", 
     "entryreason", "incidentcompleted", "incidenttype", "internallocation", "jurisdiction", "licencetype", "lkanimalflags", "lkcoattype", 
-    "lkownerflags", "lksaccounttype", "lksdiarylink", "lksdonationfreq", "lksex", "lksfieldlink", "lksfieldtype", 
-    "lksize", "lksloglink", "lksmedialink", "lksmediatype", "lksmovementtype", "lksposneg", "lksrotatype", 
+    "lkownerflags", "lksaccounttype", "lksclinicstatus", "lksdiarylink", "lksdonationfreq", "lksex", 
+    "lksfieldlink", "lksfieldtype", "lksize", "lksloglink", "lksmedialink", "lksmediatype", "lksmovementtype", "lksposneg", "lksrotatype", 
     "lksyesno", "lksynun", "lkurgency", "lkworktype", "log", "logtype", "media", "medicalprofile", "messages", "onlineform", 
     "onlineformfield", "onlineformincoming", "owner", "ownercitation", "ownerdonation", "ownerinvestigation", 
     "ownerlicence", "ownerlookingfor", "ownerrota", "ownertraploan", "ownervoucher", "pickuplocation", "publishlog", 
@@ -61,7 +62,7 @@ TABLES_ASM2 = ( "accounts", "accountstrx", "additional", "additionalfield",
     "logtype", "media", "medicalprofile", "owner", "ownerdonation", "ownervoucher", "primarykey", 
     "species", "vaccinationtype", "voucher" )
 
-# Tables that don't have an ID column (we don't create PostgreSQL sequences for them for pseq pk)
+# Tables that don't have an ID column (we don't create sequences for these tables for supporting dbs like postgres)
 TABLES_NO_ID_COLUMN = ( "accountsrole", "additional", "audittrail", "animalcontrolanimal", 
     "animalcontrolrole", "animallostfoundmatch", "animalpublished", "configuration", "customreportrole", 
     "deletion", "onlineformincoming", "ownerlookingfor", "userrole" )
@@ -767,6 +768,34 @@ def sql_structure(dbo):
         fint("DefaultCost", True),
         fint("IsRetired", True) ), False)
 
+    sql += table("clinicappointment", (
+        fid(),
+        fint("AnimalID"),
+        fint("OwnerID"),
+        fstr("ApptFor"),
+        fdate("DateTime"),
+        fint("Status"),
+        fdate("ArrivedDateTime", True),
+        fdate("WithVetDateTime", True),
+        fdate("CompletedDateTime", True),
+        flongstr("ReasonForAppointment", True),
+        flongstr("Comments", True),
+        fint("Amount"),
+        fint("IsVAT"),
+        ffloat("VATRate"),
+        fint("VATAmount") ))
+    sql += index("clinicappointment_AnimalID", "clinicappointment", "AnimalID")
+    sql += index("clinicappointment_OwnerID", "clinicappointment", "OwnerID")
+    sql += index("clinicappointment_Status", "clinicappointment", "Status")
+    sql += index("clinicappointment_ApptFor", "clinicappointment", "ApptFor")
+
+    sql += table("clinicinvoiceitem", (
+        fid(),
+        fint("ClinicAppointmentID"),
+        flongstr("Description"),
+        fint("Amount") ))
+    sql += index("clinicinvoiceitem_ClinicAppointmentID", "clinicinvoiceitem", "ClinicAppointmentID")
+
     sql += table("configuration", (
         fstr("ItemName"),
         flongstr("ItemValue", False) ), False)
@@ -920,6 +949,9 @@ def sql_structure(dbo):
 
     sql += table("lkownerflags", (
         fid(), fstr("Flag") ), False)
+
+    sql += table("lksclinicstatus", (
+        fid(), fstr("Status") ), False)
 
     sql += table("lkcoattype", (
         fid(), fstr("CoatType") ), False)
@@ -1492,7 +1524,7 @@ def sql_default_data(dbo, skip_config = False):
     def species(tid, name, petfinder):
         return "INSERT INTO species (ID, SpeciesName, SpeciesDescription, PetFinderSpecies, IsRetired) VALUES (%s, '%s', '', '%s', 0)|=\n" % ( tid, dbo.escape(name), petfinder )
     def user(tid, username, realname, password, superuser):
-        return "INSERT INTO users (ID, UserName, RealName, EmailAddress, Password, SuperUser, OwnerID, SecurityMap, IPRestriction, Signature, LocaleOverride, ThemeOverride, SiteID, DisableLogin, LocationFilter, RecordVersion) VALUES (%s,'%s','%s', '', 'plain:%s', %s, 0,'', '', '', '', '', 1, 0, '', 0)|=\n" % (tid, username, realname, password, superuser and 1 or 0)
+        return "INSERT INTO users (ID, UserName, RealName, EmailAddress, Password, SuperUser, OwnerID, SecurityMap, IPRestriction, Signature, LocaleOverride, ThemeOverride, SiteID, DisableLogin, LocationFilter, RecordVersion) VALUES (%s,'%s','%s', '', 'plain:%s', %s, 0,'', '', '', '', '', 0, 0, '', 0)|=\n" % (tid, username, realname, password, superuser and 1 or 0)
 
     l = dbo.locale
     sql = ""
@@ -2091,6 +2123,13 @@ def sql_default_data(dbo, skip_config = False):
     sql += lookup1("lksaccounttype", "AccountType", 7, _("Shares", l))
     sql += lookup1("lksaccounttype", "AccountType", 8, _("Asset", l))
     sql += lookup1("lksaccounttype", "AccountType", 9, _("Liability", l))
+    sql += lookup1("lksclinicstatus", "Status", 0, _("Scheduled", l))
+    sql += lookup1("lksclinicstatus", "Status", 1, _("Invoice Only", l))
+    sql += lookup1("lksclinicstatus", "Status", 2, _("Not Arrived", l))
+    sql += lookup1("lksclinicstatus", "Status", 3, _("Waiting", l))
+    sql += lookup1("lksclinicstatus", "Status", 4, _("With Vet", l))
+    sql += lookup1("lksclinicstatus", "Status", 5, _("Complete", l))
+    sql += lookup1("lksclinicstatus", "Status", 6, _("Cancelled", l))
     sql += lookup1("lksmovementtype", "MovementType", 0, _("None", l))
     sql += lookup1("lksmovementtype", "MovementType", 1, _("Adoption", l))
     sql += lookup1("lksmovementtype", "MovementType", 2, _("Foster", l))
@@ -4853,4 +4892,67 @@ def update_34106(dbo):
         except:
             pass
 
+def update_34107(dbo):
+    # Add clinic tables
+    l = dbo.locale
+    fields = ",".join([
+        dbo.ddl_add_table_column("ID", dbo.type_integer, False, pk=True),
+        dbo.ddl_add_table_column("AnimalID", dbo.type_integer, False),
+        dbo.ddl_add_table_column("OwnerID", dbo.type_integer, False),
+        dbo.ddl_add_table_column("ApptFor", dbo.type_shorttext, False),
+        dbo.ddl_add_table_column("DateTime", dbo.type_datetime, False),
+        dbo.ddl_add_table_column("Status", dbo.type_integer, False),
+        dbo.ddl_add_table_column("ArrivedDateTime", dbo.type_datetime, True),
+        dbo.ddl_add_table_column("WithVetDateTime", dbo.type_datetime, True),
+        dbo.ddl_add_table_column("CompletedDateTime", dbo.type_datetime, True),
+        dbo.ddl_add_table_column("ReasonForAppointment", dbo.type_longtext, True),
+        dbo.ddl_add_table_column("Comments", dbo.type_longtext, True),
+        dbo.ddl_add_table_column("Amount", dbo.type_integer, False),
+        dbo.ddl_add_table_column("IsVAT", dbo.type_integer, False),
+        dbo.ddl_add_table_column("VATRate", dbo.type_float, False),
+        dbo.ddl_add_table_column("VATAmount", dbo.type_integer, False),
+        dbo.ddl_add_table_column("RecordVersion", dbo.type_integer, True),
+        dbo.ddl_add_table_column("CreatedBy", dbo.type_shorttext, False),
+        dbo.ddl_add_table_column("CreatedDate", dbo.type_datetime, False),
+        dbo.ddl_add_table_column("LastChangedBy", dbo.type_shorttext, False),
+        dbo.ddl_add_table_column("LastChangedDate", dbo.type_datetime, False)
+    ])
+    dbo.execute_dbupdate( dbo.ddl_add_table("clinicappointment", fields) )
+    dbo.execute_dbupdate( dbo.ddl_add_index("clinicappointment_AnimalID", "clinicappointment", "AnimalID") )
+    dbo.execute_dbupdate( dbo.ddl_add_index("clinicappointment_OwnerID", "clinicappointment", "OwnerID") )
+    dbo.execute_dbupdate( dbo.ddl_add_index("clinicappointment_ApptFor", "clinicappointment", "ApptFor") )
+    dbo.execute_dbupdate( dbo.ddl_add_index("clinicappointment_Status", "clinicappointment", "Status") )
+    fields = ",".join([
+        dbo.ddl_add_table_column("ID", dbo.type_integer, False, pk=True),
+        dbo.ddl_add_table_column("ClinicAppointmentID", dbo.type_integer, False),
+        dbo.ddl_add_table_column("Description", dbo.type_longtext, False),
+        dbo.ddl_add_table_column("Amount", dbo.type_integer, False),
+        dbo.ddl_add_table_column("RecordVersion", dbo.type_integer, True),
+        dbo.ddl_add_table_column("CreatedBy", dbo.type_shorttext, False),
+        dbo.ddl_add_table_column("CreatedDate", dbo.type_datetime, False),
+        dbo.ddl_add_table_column("LastChangedBy", dbo.type_shorttext, False),
+        dbo.ddl_add_table_column("LastChangedDate", dbo.type_datetime, False)
+    ])
+    dbo.execute_dbupdate( dbo.ddl_add_table("clinicinvoiceitem", fields) )
+    dbo.execute_dbupdate( dbo.ddl_add_index("clinicinvoiceitem_ClinicAppointmentID", "clinicinvoiceitem", "ClinicAppointmentID") )
+    fields = ",".join([
+        dbo.ddl_add_table_column("ID", dbo.type_integer, False, pk=True),
+        dbo.ddl_add_table_column("Status", dbo.type_shorttext, False)
+    ])
+    dbo.execute_dbupdate( dbo.ddl_add_table("lksclinicstatus", fields) )
+    dbo.insert("lksclinicstatus", { "ID": 0, "Status": _("Scheduled", l) }, setOverrideDBLock=True, generateID=False)
+    dbo.insert("lksclinicstatus", { "ID": 1, "Status": _("Invoice Only", l) }, setOverrideDBLock=True, generateID=False)
+    dbo.insert("lksclinicstatus", { "ID": 2, "Status": _("Not Arrived", l) }, setOverrideDBLock=True, generateID=False)
+    dbo.insert("lksclinicstatus", { "ID": 3, "Status": _("Waiting", l) }, setOverrideDBLock=True, generateID=False)
+    dbo.insert("lksclinicstatus", { "ID": 4, "Status": _("With Vet", l) }, setOverrideDBLock=True, generateID=False)
+    dbo.insert("lksclinicstatus", { "ID": 5, "Status": _("Complete", l) }, setOverrideDBLock=True, generateID=False)
+    dbo.insert("lksclinicstatus", { "ID": 6, "Status": _("Cancelled", l) }, setOverrideDBLock=True, generateID=False)
+
+def update_34108(dbo):
+    # Install new clinic_invoice template
+    dbo.insert("templatedocument", {
+        "Name":     "clinic_invoice.html",
+        "Path":     "/templates",
+        "Content":  base64.b64encode( utils.read_binary_file( dbo.installpath + "media/templates/clinic_invoice.html" ) )
+    })
 

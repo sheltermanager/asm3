@@ -3,6 +3,7 @@
 import additional
 import animal
 import animalcontrol
+import clinic
 import configuration
 import db
 import financial
@@ -185,9 +186,12 @@ def animal_tags(dbo, a, includeAdditional=True, includeCosts=True, includeDiet=T
         "IDENTICHIPPED"         : a["IDENTICHIPPEDNAME"],
         "IDENTICHIPPEDDATE"     : python2display(l, a["IDENTICHIPDATE"]),
         "MICROCHIPNUMBER"       : a["IDENTICHIPNUMBER"],
+        "MICROCHIPNUMBER2"      : a["IDENTICHIP2NUMBER"],
         "MICROCHIPPED"          : a["IDENTICHIPPEDNAME"],
         "MICROCHIPDATE"         : python2display(l, a["IDENTICHIPDATE"]),
+        "MICROCHIPDATE2"        : python2display(l, a["IDENTICHIP2DATE"]),
         "MICROCHIPMANUFACTURER" : lookups.get_microchip_manufacturer(l, a["IDENTICHIPNUMBER"]),
+        "MICROCHIPMANUFACTURER2": lookups.get_microchip_manufacturer(l, a["IDENTICHIP2NUMBER"]),
         "TATTOO"                : a["TATTOONAME"],
         "TATTOODATE"            : python2display(l, a["TATTOODATE"]),
         "TATTOONUMBER"          : a["TATTOONUMBER"],
@@ -926,6 +930,41 @@ def movement_tags(dbo, m):
     }
     return tags    
 
+def clinic_tags(dbo, c):
+    """
+    Generates a list of tags from a clinic result (clinic.get_appointment)
+    """
+    l = dbo.locale
+    tags = {
+        "ID":                   utils.padleft(c.ID, 6),
+        "APPOINTMENTFOR"        : c.APPTFOR,
+        "APPOINTMENTDATE"       : python2display(l, c.DATETIME),
+        "APPOINTMENTTIME"       : format_time(c.DATETIME),
+        "STATUS"                : c.CLINICSTATUSNAME,
+        "ARRIVEDDATE"           : python2display(l, c.ARRIVEDDATETIME),
+        "ARRIVEDTIME"           : format_time(c.ARRIVEDDATETIME),
+        "WITHVETDATE"           : python2display(l, c.WITHVETDATETIME),
+        "WITHVETTIME"           : format_time(c.WITHVETDATETIME),
+        "COMPLETEDDATE"         : python2display(l, c.COMPLETEDDATETIME),
+        "COMPLETEDTIME"         : format_time(c.COMPLETEDDATETIME),
+        "REASONFORAPPOINTMENT"  : c.REASONFORAPPOINTMENT,
+        "COMMENTS"              : c.COMMENTS,
+        "INVOICEAMOUNT"         : format_currency_no_symbol(l, c.AMOUNT),
+        "INVOICEVATAMOUNT"      : format_currency_no_symbol(l, c.VATAMOUNT),
+        "INVOICETAXAMOUNT"      : format_currency_no_symbol(l, c.VATAMOUNT),
+        "INVOICEVATRATE"        : c.VATRATE,
+        "INVOICETAXRATE"        : c.VATRATE,
+        "INVOICETOTAL"          : format_currency_no_symbol(l, c.AMOUNT + c.VATAMOUNT),
+    }
+
+    # Invoice items
+    d = {
+        "CLINICINVOICEAMOUNT"       : "c:AMOUNT",
+        "CLINICINVOICEDESCRIPTION"  : "DESCRIPTION"
+    }
+    tags.update(table_tags(dbo, d, clinic.get_invoice_items(dbo, c.ID)))
+    return tags
+
 def person_tags(dbo, p):
     """
     Generates a list of tags from a person result (the deep type from
@@ -1108,28 +1147,23 @@ def table_tags(dbo, d, rows, typefield = "", recentdatefield = ""):
     """
     l = dbo.locale
     tags = {}
-
-    # Create the indexed rows
-    for i, r in enumerate(rows, 1):
-        for k, v in d.iteritems():
-            tags[k + str(i)] = table_get_value(l, r, v)
-
     uniquetypes = {}
     recentgiven = {}
 
-    # Go backwards through rows
-    for i, r in enumerate(reversed(rows), 1):
-
-        # Create reversed index tags
+    # Go forwards through the rows
+    for i, r in enumerate(rows, 1):
+        
+        # Create the indexed tags
         for k, v in d.iteritems():
-            tags[k + "LAST" + str(i)] = table_get_value(l, r, v)
+            tags[k + str(i)] = table_get_value(l, r, v)
 
         # Type suffixed tags
         if typefield != "":
             t = r[typefield]
+
             # If the type is somehow null, we can't do anything
-            if t is None:
-                continue
+            if t is None: continue
+
             # Is this the first of this type we've seen?
             # If so, create the tags with type as a suffix
             if t not in uniquetypes:
@@ -1137,6 +1171,13 @@ def table_tags(dbo, d, rows, typefield = "", recentdatefield = ""):
                 t = t.upper().replace(" ", "").replace("/", "")
                 for k, v in d.iteritems():
                     tags[k + t] = table_get_value(l, r, v)
+
+    # Go backwards through rows
+    for i, r in enumerate(reversed(rows), 1):
+
+        # Create reversed index tags
+        for k, v in d.iteritems():
+            tags[k + "LAST" + str(i)] = table_get_value(l, r, v)
 
         # Recent suffixed tags
         if recentdatefield != "":
@@ -1275,6 +1316,11 @@ def generate_animal_doc(dbo, templateid, animalid, username):
     # If we didn't have an open movement and there's a reserve, use that as the person
     if not has_person_tags and a["RESERVEDOWNERID"] is not None and a["RESERVEDOWNERID"] != 0:
         tags = append_tags(tags, person_tags(dbo, person.get_person(dbo, a["RESERVEDOWNERID"])))
+        has_person_tags = True
+    # If this is a non-shelter animal, use the owner
+    if not has_person_tags and a["NONSHELTERANIMAL"] == 1 and a["ORIGINALOWNERID"] is not None and a["ORIGINALOWNERID"] != 0:
+        tags = append_tags(tags, person_tags(dbo, person.get_person(dbo, a["ORIGINALOWNERID"])))
+        has_person_tags = True
     tags = append_tags(tags, org_tags(dbo, username))
     return substitute_template(dbo, templateid, tags, im)
 
@@ -1288,6 +1334,22 @@ def generate_animalcontrol_doc(dbo, templateid, acid, username):
     if ac is None: raise utils.ASMValidationError("%d is not a valid incident ID" % acid)
     tags = animalcontrol_tags(dbo, ac)
     tags = append_tags(tags, org_tags(dbo, username))
+    return substitute_template(dbo, templateid, tags)
+
+def generate_clinic_doc(dbo, templateid, appointmentid, username):
+    """
+    Generates a clinic document from a template
+    templateid: The ID of the template
+    appointmentid: The clinicappointment id to generate for
+    """
+    c = clinic.get_appointment(dbo, appointmentid)
+    if c is None: raise utils.ASMValidationError("%d is not a valid clinic appointment ID" % appointmentid)
+    tags = clinic_tags(dbo, c)
+    a = animal.get_animal(dbo, c.ANIMALID)
+    if a is not None:
+        tags = append_tags(tags, animal_tags(dbo, a, includeAdditional=True, includeCosts=False, includeDiet=False, includeDonations=False, \
+            includeFutureOwner=False, includeIsVaccinated=False, includeLogs=False, includeMedical=False))
+    tags = append_tags(tags, person_tags(dbo, person.get_person(dbo, c.OWNERID)))
     return substitute_template(dbo, templateid, tags)
 
 def generate_person_doc(dbo, templateid, personid, username):

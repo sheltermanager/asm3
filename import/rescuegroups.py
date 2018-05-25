@@ -8,6 +8,14 @@ This is done with Reports, then Animals (All Fields) for adoptable and adopted, 
 It produces an Animals.csv file.
 If you use Animals->Exports, you can do a manual export for PetFinder that puts all
 your images on their FTP server to pick up.
+
+If RG are running slow, a custom report can be made with the following fields:
+
+Animal ID, Internal ID, Status, Species, Name, Created, Last Updated, 
+General Age, Mixed, Sex, Primary Breed, Secondary Breed, Color (General), 
+Declawed, Special Needs, Altered, Housetrained, OK with Cats, OK with Kids, OK with Cats, 
+Microchip Number, Description, Location, Summary, Picture 1
+
 """
 
 PATH = "data/zb1564_rescuegroups"
@@ -50,7 +58,6 @@ print "DELETE FROM animal WHERE ID >= 100;"
 print "DELETE FROM owner WHERE ID >= 100;"
 print "DELETE FROM media WHERE ID >= 100;"
 print "DELETE FROM dbfs WHERE ID >= 300;"
-
 pfpage = ""
 if PETFINDER_ID != "":
     pfpage = asm.petfinder_get_adoptable(PETFINDER_ID)

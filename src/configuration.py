@@ -157,6 +157,7 @@ DEFAULTS = {
     "DefaultShiftStart": "09:00",
     "DefaultShiftEnd": "17:00",
     "DisableAnimalControl": "No",
+    "DisableClinic": "No",
     "DisableStockControl": "No",
     "DisableTransport": "No",
     "DisableTrapLoan": "No",
@@ -263,7 +264,7 @@ DEFAULTS = {
     "ScalePDFs": "Yes", 
     "SearchColumns": "AnimalName,Image,ShelterCode,ShelterLocation,SpeciesID,BreedName," \
         "Sex, AnimalAge, Size, BaseColourID, Markings, IdentichipNumber, DateBroughtIn",
-    "SearchSort": "3",
+    "SearchSort": "6",
     "ServiceEnabled": "Yes",
     "ServiceAuthEnabled": "Yes", 
     "ShelterViewDefault": "location",

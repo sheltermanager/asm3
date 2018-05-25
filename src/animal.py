@@ -655,6 +655,17 @@ def get_animals_long_term(dbo):
     """
     return dbo.query("%s WHERE a.DaysOnShelter > ? AND a.Archived = 0" % get_animal_query(dbo), [configuration.long_term_months(dbo) * 30])
 
+def get_animals_owned_by(dbo, personid):
+    """
+    Returns all animals who are owned by personid
+    1. Animals that have an open adoption to this person (nonshelter=0)
+    2. Animals where originalownerid = personid (nonshelter=1)
+    """
+    sa = dbo.query("%s WHERE a.NonShelterAnimal = 0 AND a.ActiveMovementType = 1 AND a.DeceasedDate Is Null " \
+        "AND EXISTS(SELECT ID FROM adoption WHERE AnimalID = a.ID AND OwnerID = ? AND MovementType = 1 AND ReturnDate Is Null)" % get_animal_query(dbo), [personid])
+    nsa = dbo.query("%s WHERE a.NonShelterAnimal = 1 AND a.DeceasedDate Is Null AND a.OriginalOwnerID = ?" % get_animal_query(dbo), [personid])
+    return get_animals_brief(sa + nsa)
+
 def get_animals_quarantine(dbo):
     """
     Returns all shelter animals who have the quarantine flag set
@@ -1661,6 +1672,7 @@ def get_satellite_counts(dbo, animalid):
         "(SELECT COUNT(*) FROM animalvaccination av WHERE av.AnimalID = a.ID) AS vaccination, " \
         "(SELECT COUNT(*) FROM animaltest at WHERE at.AnimalID = a.ID) AS test, " \
         "(SELECT COUNT(*) FROM animalmedical am WHERE am.AnimalID = a.ID) AS medical, " \
+        "(SELECT COUNT(*) FROM clinicappointment ca WHERE ca.AnimalID = a.ID) AS clinic, " \
         "(SELECT COUNT(*) FROM animaldiet ad WHERE ad.AnimalID = a.ID) AS diet, " \
         "(SELECT COUNT(*) FROM animaltransport tr WHERE tr.AnimalID = a.ID) AS transport, " \
         "(SELECT COUNT(*) FROM media me WHERE me.LinkID = a.ID AND me.LinkTypeID = ?) AS media, " \
@@ -2791,7 +2803,7 @@ def delete_animal(dbo, username, animalid):
     dbo.execute("DELETE FROM additional WHERE LinkID = %d AND LinkType IN (%s)" % (animalid, additional.ANIMAL_IN))
     dbo.execute("DELETE FROM animalcontrolanimal WHERE AnimalID = ?", [animalid])
     dbo.execute("DELETE FROM animalpublished WHERE AnimalID = ?", [animalid])
-    for t in [ "adoption", "animalmedical", "animalmedicaltreatment", "animaltest", "animaltransport", "animalvaccination" ]:
+    for t in [ "adoption", "animalmedical", "animalmedicaltreatment", "animaltest", "animaltransport", "animalvaccination", "clinicappointment" ]:
         dbo.delete(t, "AnimalID=%d" % animalid, username)
     dbo.delete("animal", animalid, username)
     dbfs.delete_path(dbo, "/animal/%d" % animalid)

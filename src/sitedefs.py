@@ -205,7 +205,7 @@ SMARTTAG_FTP_HOST = "ftp.idtag.com"
 SMARTTAG_FTP_USER = ""
 SMARTTAG_FTP_PASSWORD = ""
 PETTRAC_UK_POST_URL = "https://online.pettrac.com/registration/onlineregistration.aspx"
-PETLINK_BASE_URL = "https://www.petlink.net/us/"
+PETLINK_BASE_URL = ""
 PETSLOCATED_FTP_HOST = "ftp.petslocated.com"
 PETSLOCATED_FTP_USER = ""
 PETSLOCATED_FTP_PASSWORD = ""
@@ -237,7 +237,7 @@ MULTIPLE_DATABASES_PUBLISH_FTP = None
 SHARE_BUTTON = "shareweb,shareemail"
 
 # Type of electronic signing device available
-ELECTRONIC_SIGNATURES = "touch"
+ELECTRONIC_SIGNATURES = ""
 
 # If you want a forgotten password link on the login page,
 # the URL it should link to

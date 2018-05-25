@@ -9,6 +9,7 @@ import al
 import audit
 import animal
 import cachedisk
+import clinic
 import configuration
 import db
 import dbfs
@@ -104,6 +105,9 @@ def daily(dbo):
 
         # auto remove expired media items
         ttask(media.remove_expired_media, dbo)
+
+        # auto update clinic statuses
+        ttask(clinic.auto_update_statuses, dbo)
 
         # Update the generated looking for report
         ttask(person.update_lookingfor_report, dbo)

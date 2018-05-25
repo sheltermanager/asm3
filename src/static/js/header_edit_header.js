@@ -177,6 +177,7 @@ $(function() {
                 [ "vaccination", "animal_vaccination", _("Vaccination"), "vaccination", "vav" ],
                 [ "test", "animal_test", _("Test"), "test", "vat" ],
                 [ "medical", "animal_medical", _("Medical"), "medical", "mvam" ],
+                [ "clinic", "animal_clinic", _("Clinic"), "health", "vcl" ],
                 [ "licence", "animal_licence", _("License"), "licence", "vapl" ],
                 [ "diet", "animal_diet", _("Diet"), "diet", "dvad" ],
                 [ "costs", "animal_costs", _("Costs"), "cost", "cvad" ],
@@ -189,18 +190,11 @@ $(function() {
             $.each(tabs, function(it, vt) {
                 var key = vt[0], url = vt[1], display = vt[2], iconname = vt[3], perms = vt[4];
                 if (perms && !common.has_permission(perms)) { return; } // don't show if no permission
-                if ((key == "licence") && config.bool("DisableAnimalControl")) {
-                    return;
-                }
-                if ((key == "movements") && config.bool("DisableMovements")) {
-                    return;
-                }
-                if ((key == "movements") && a.NONSHELTERANIMAL == 1) {
-                    return;
-                }
-                if ((key == "transport") && config.bool("DisableTransport")) {
-                    return;
-                }
+                if ((key == "clinic") && config.bool("DisableClinic")) { return; }
+                if ((key == "licence") && config.bool("DisableAnimalControl")) { return; }
+                if ((key == "movements") && config.bool("DisableMovements")) { return; }
+                if ((key == "movements") && a.NONSHELTERANIMAL == 1) { return; }
+                if ((key == "transport") && config.bool("DisableTransport")) { return; }
                 if (key == selected) {
                     s += "<li class=\"ui-tabs-selected ui-state-active\"><a href=\"#\">" + display + " " + check_display_icon(key, iconname) + "</a></li>";
                 }
@@ -224,6 +218,17 @@ $(function() {
                 s.push('<li class="asm-menu-item"><a href="#" class="diarytask" data="' + mode + ' ' + t.ID + ' ' + t.NEEDSDATE + '">' + t.NAME + '</a></li>');
             });
             return s.join("\n");
+        },
+
+        gdpr_contact_options: function() {
+            return [
+                '<option value="didnotask">' + _("Did not ask") + '</option>',
+                '<option value="declined">' + _("Declined") + '</option>',
+                '<option value="email">' + _("Email") + '</option>',
+                '<option value="post">' + _("Post") + '</option>',
+                '<option value="sms">' + _("SMS") + '</option>',
+                '<option value="phone">' + _("Phone") + '</option>'
+            ];
         },
 
         /** 
@@ -452,6 +457,7 @@ $(function() {
                 [ "citation", "person_citations", _("Citations"), "citation", "vacc" ],
                 [ "rota", "person_rota", _("Rota"), "rota", "voro" ],
                 [ "traploan", "person_traploan", _("Trap Loans"), "traploan", "vatl" ],
+                [ "clinic", "person_clinic", _("Clinic"), "health", "vcl" ],
                 [ "donations", "person_donations", _("Payments"), "donation", "ovod" ],
                 [ "vouchers", "person_vouchers", _("Vouchers"), "donation", "vvov" ],
                 [ "media", "person_media", _("Media"), "media", "vam" ],
@@ -462,18 +468,11 @@ $(function() {
             $.each(tabs, function(it, vt) {
                 var key = vt[0], url = vt[1], display = vt[2], iconname = vt[3], perms = vt[4];
                 if (perms && !common.has_permission(perms)) { return; } // don't show if no permission
-                if ((key == "citation" || key == "licence" || key == "investigation") && config.bool("DisableAnimalControl")) {
-                    return;
-                }
-                if ((key == "traploan") && config.bool("DisableTrapLoan")) {
-                    return;
-                }
-                if ((key == "movements") && config.bool("DisableMovements")) {
-                    return;
-                }
-                if ((key == "rota") && ((!p.ISVOLUNTEER && !p.ISSTAFF) || config.bool("DisableRota"))) {
-                    return;
-                }
+                if ((key == "citation" || key == "licence" || key == "investigation") && config.bool("DisableAnimalControl")) { return; }
+                if ((key == "clinic") && config.bool("DisableClinic")) { return; }
+                if ((key == "traploan") && config.bool("DisableTrapLoan")) { return; }
+                if ((key == "movements") && config.bool("DisableMovements")) { return; }
+                if ((key == "rota") && ((!p.ISVOLUNTEER && !p.ISSTAFF) || config.bool("DisableRota"))) { return; }
                 if (key == selected) {
                     s.push("<li class=\"ui-tabs-selected ui-state-active\"><a href=\"#\">" + display + " " + check_display_icon(key, iconname) + "</a></li>");
                 }

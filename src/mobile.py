@@ -218,6 +218,7 @@ def page(dbo, session, username):
     testresults = lookups.get_test_results(dbo)
     stl = stock.get_stock_locations_totals(dbo)
     inmy = animalcontrol.get_animalcontrol_find_advanced(dbo, { "dispatchedaco": session.user, "filter": "incomplete" }, username)
+    inun = animalcontrol.get_animalcontrol_find_advanced(dbo, { "dispatchedaco": session.user, "filter": "undispatched" }, username)
     inop = animalcontrol.get_animalcontrol_find_advanced(dbo, { "filter": "incomplete" }, username)
     infp = animalcontrol.get_animalcontrol_find_advanced(dbo, { "filter": "requirefollowup" }, username)
     homelink = jqm_link("mobile", _("Home", l), "home", "ui-btn-right", "b")
@@ -262,6 +263,8 @@ def page(dbo, session, username):
         items.append(jqm_listitem_link("mobile_post?posttype=aincs", _("Add Call", l), "call"))
     if len(inmy) > 0 and pb(users.CHANGE_INCIDENT):
         items.append(jqm_listitem_link("#inmy", _("My Incidents", l), "call", len(inmy)))
+    if len(inun) > 0 and pb(users.CHANGE_INCIDENT):
+        items.append(jqm_listitem_link("#inun", _("My Undispatched Incidents", l), "call", len(inun)))
     if len(inop) > 0 and pb(users.CHANGE_INCIDENT):
         items.append(jqm_listitem_link("#inop", _("Open Incidents", l), "call", len(inop)))
     if len(infp) > 0 and pb(users.CHANGE_INCIDENT):
@@ -301,6 +304,7 @@ def page(dbo, session, username):
     h += page_homecheck(l, homelink, dbo)
     h += page_stocklevels(l, homelink, stl)
     h += page_incidents(l, homelink, inmy, "inmy", _("My Incidents", l))
+    h += page_incidents(l, homelink, inun, "inun", _("My Undispatched Incidents", l))
     h += page_incidents(l, homelink, inop, "inop", _("Open Incidents", l))
     h += page_incidents(l, homelink, infp, "infp", _("Incidents Requiring Followup", l))
     h += page_find_person(l, homelink)
@@ -1067,12 +1071,12 @@ def handler_viewanimal(session, l, dbo, a, af, diet, vacc, test, med, logs, home
     h.append(tr( _("Entry Reason", l), a["REASONFORENTRY"]))
     h.append(table_end())
     h.append(table())
-    h.append(tr( _("Microchipped", l), python2display(l, a["IDENTICHIPDATE"]), a["IDENTICHIPNUMBER"]))
-    h.append(tr( _("Tattoo", l), python2display(l, a["TATTOODATE"]), a["TATTOONUMBER"]))
-    h.append(tr( _("Neutered", l), python2display(l, a["NEUTEREDDATE"])))
-    h.append(tr( _("Declawed", l), a["DECLAWEDNAME"]))
-    h.append(tr( _("Heartworm Tested", l), python2display(l, a["HEARTWORMTESTDATE"]), a["HEARTWORMTESTRESULTNAME"]))
-    h.append(tr( _("FIV/L Tested", l), python2display(l, a["COMBITESTDATE"]), "%s %s" % (a["COMBITESTRESULTNAME"], a["FLVRESULTNAME"])))
+    h.append(tr( _("Microchipped", l), python2display(l, a["IDENTICHIPDATE"]), utils.iif(a["IDENTICHIPPED"] == 1, a["IDENTICHIPNUMBER"], "")))
+    h.append(tr( _("Tattoo", l), python2display(l, a["TATTOODATE"]), utils.iif(a["TATTOO"] == 1, a["TATTOONUMBER"], "")))
+    h.append(tr( _("Neutered", l), utils.iif(a["NEUTERED"] == 1, python2display(l, a["NEUTEREDDATE"]), "")))
+    h.append(tr( _("Declawed", l), utils.iif(a["DECLAWED"] == 1, a["DECLAWEDNAME"], "")))
+    h.append(tr( _("Heartworm Tested", l), python2display(l, a["HEARTWORMTESTDATE"]), utils.iif(a["HEARTWORMTESTED"] == 1, a["HEARTWORMTESTRESULTNAME"], "")))
+    h.append(tr( _("FIV/L Tested", l), python2display(l, a["COMBITESTDATE"]), utils.iif(a["COMBITESTED"] == 1, "%s %s" % (a["COMBITESTRESULTNAME"], a["FLVRESULTNAME"]), "")))
     h.append(tr( _("Health Problems", l), a["HEALTHPROBLEMS"]))
     h.append(tr( _("Rabies Tag", l), a["RABIESTAG"]))
     h.append(tr( _("Special Needs", l), a["HASSPECIALNEEDSNAME"]))
@@ -1112,7 +1116,7 @@ def handler_viewanimal(session, l, dbo, a, af, diet, vacc, test, med, logs, home
         h.append(table())
         h.append(hd(_("Test", l)))
         for t in test:
-            h.append(tr(python2display(l, t["DATEREQUIRED"]), python2display(l, t["DATEOFTEST"]), t["TESTNAME"], utils.iif(t["DATEOFTEST"] is None, "", t["RESULTNAME"])))
+            h.append(tr(python2display(l, t["DATEREQUIRED"]), python2display(l, t["DATEOFTEST"]), t["TESTNAME"], utils.iif(t["DATEOFTEST"] is not None, t["RESULTNAME"], "")))
         h.append(table_end())
 
     if users.check_permission_bool(session, users.VIEW_MEDICAL):

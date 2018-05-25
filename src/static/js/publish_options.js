@@ -21,7 +21,7 @@ $(function() {
                 '<li class="localegb"><a href="#tab-pettrac">AVID UK Microchips</a></li>',
                 '<li class="localegb"><a href="#tab-anibase">Identibase UK Microchips</a></li>',
                 '<li class="localeus hasfoundanimals"><a href="#tab-foundanimals">FoundAnimals Microchips</a></li>',
-                '<li class="localeus localeca localemx"><a href="#tab-petlink">PetLink Microchips</a></li>',
+                '<li class="localeus localeca localemx haspetlink"><a href="#tab-petlink">PetLink Microchips</a></li>',
                 '<li class="localeus hassmarttag"><a href="#tab-smarttag">SmartTag Tags/Microchips</a></li>',
                 '<li class="localeus hasvevendor"><a href="#tab-vetenvoy">VetEnvoy Microchips</a></li>',
                 '</ul>'
@@ -966,61 +966,25 @@ $(function() {
 
             $("#button-save").button("disable");
 
+            // Enable services that are only present in certain locales
             $(".localeau").hide();
             $(".localeus").hide();
             $(".localeca").hide();
             $(".localegb").hide();
             $(".localemx").hide();
+            if (asm.locale == "en") { $(".localeus").show(); }
+            if (asm.locale == "en_AU" && controller.haspetrescue) { $(".localeau").show(); }
+            if (asm.locale == "en_GB") { $(".localegb").show(); }
+            if (asm.locale == "en_CA" || asm.locale == "fr_CA") { $(".localeca").show(); }
+            if (asm.locale == "en_MX" || asm.locale == "es_MX") { $(".localemx").show(); }
 
-            // Enable tabs for US only publishers
-            if (asm.locale == "en") {
-                $(".localeus").show();
-            }
-
-            // Enable tab sections for Australian publishers
-            if (asm.locale == "en_AU" && controller.haspetrescue) {
-                $(".localeau").show();
-            }
-
-            // Enable tab sections for British publishers
-            if (asm.locale == "en_GB") {
-                $(".localegb").show();
-            }
-
-            // Enable tab sections for Canadian publishers
-            if (asm.locale == "en_CA" || asm.locale == "fr_CA") {
-                $(".localeca").show();
-            }
-
-            // Enable tab sections for Mexican publishers
-            if (asm.locale == "en_MX" || asm.locale == "es_MX") {
-                $(".localemx").show();
-            }
-
-            // Disable FoundAnimals if it's not setup in sitedefs
-            if (!controller.hasfoundanimals) {
-                $(".hasfoundanimals").hide();
-            }
-
-            // Disable Maddie's Fund if it's not setup in sitedefs
-            if (!controller.hasmaddiesfund) {
-                $(".hasmaddiesfund").hide();
-            }
-
-            // Disable PetsLocated if it's not setup in sitedefs
-            if (!controller.haspetslocated) {
-                $(".haspetslocated").hide();
-            }
-
-            // Disable VetEnvoy if there's no vendor password
-            if (!controller.hasvevendor) {
-                $(".hasvevendor").hide();
-            }
-
-            // Disable SmartTag if it's not setup in sitedefs
-            if (!controller.hassmarttag) {
-                $(".hassmarttag").hide();
-            }
+            // Disable services that require sitedef setup
+            if (!controller.hasfoundanimals) { $(".hasfoundanimals").hide(); }
+            if (!controller.hasmaddiesfund) { $(".hasmaddiesfund").hide(); }
+            if (!controller.haspetlink) { $(".haspetlink").hide(); }
+            if (!controller.haspetslocated) { $(".haspetslocated").hide(); }
+            if (!controller.hasvevendor) { $(".hasvevendor").hide(); }
+            if (!controller.hassmarttag) { $(".hassmarttag").hide(); }
 
             // Components
             $("#tabs").tabs({ show: "slideDown", hide: "slideUp" });

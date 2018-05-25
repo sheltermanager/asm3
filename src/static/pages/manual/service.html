@@ -93,6 +93,7 @@
 <li class="toctree-l1"><a class="reference internal" href="movements.html">Movements</a></li>
 <li class="toctree-l1"><a class="reference internal" href="documents.html">Documents</a></li>
 <li class="toctree-l1"><a class="reference internal" href="animalcontrol.html">Animal Control</a></li>
+<li class="toctree-l1"><a class="reference internal" href="clinic.html">Clinic</a></li>
 <li class="toctree-l1"><a class="reference internal" href="lostandfound.html">Lost and Found</a></li>
 <li class="toctree-l1"><a class="reference internal" href="waitinglist.html">Waiting List</a></li>
 <li class="toctree-l1"><a class="reference internal" href="generaldiary.html">General Diary</a></li>
@@ -194,7 +195,7 @@
 call the API you construct a URL to the service controller. The service
 controller is /service, so if you are accessing a local ASM from your local
 machine, the URL will start <a class="reference external" href="http://localhost:5000/service">http://localhost:5000/service</a>. If you are using
-sheltermanager.com, the URL will start <a class="reference external" href="https://sheltermanager.com/asm/service">https://sheltermanager.com/asm/service</a>.</p>
+sheltermanager.com, the URL will start <a class="reference external" href="https://service.sheltermanager.com/asmservice">https://service.sheltermanager.com/asmservice</a>.</p>
 <p>If you are using sheltermanager.com, or have enabled the option
 CACHE_SERVICE_RESPONSES in your sitedefs.py, please be aware that some service
 call responses are cached for performance. The cache time is indicated with the
@@ -369,9 +370,10 @@ information below the animal&#8217;s name in the list:</p>
 <p>You can choose the sort order by setting an asm3_adoptable_sort variable. The default is
 ANIMALNAME, but another useful value is -DAYSONSHELTER to output animals based on how
 long they&#8217;ve been on shelter with the longest first. Preceding the sort field with a
-minus symbol will sort in descending order:</p>
+minus symbol - will sort in descending order. You can also use precede the sort field with
+an at symbol &#64; to do a numeric sort rather than a string/alphanumeric sort:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">script</span><span class="o">&gt;</span>
-<span class="n">asm3_adoptable_sort</span> <span class="o">=</span> <span class="s2">&quot;-DAYSONSHELTER&quot;</span><span class="p">;</span>
+<span class="n">asm3_adoptable_sort</span> <span class="o">=</span> <span class="s2">&quot;-@DAYSONSHELTER&quot;</span><span class="p">;</span>
 <span class="o">&lt;/</span><span class="n">script</span><span class="o">&gt;</span>
 <span class="o">&lt;</span><span class="n">div</span> <span class="nb">id</span><span class="o">=</span><span class="s2">&quot;asm3-adoptables&quot;</span> <span class="o">/&gt;</span>
 <span class="o">&lt;</span><span class="n">script</span> <span class="n">src</span><span class="o">=</span><span class="s2">&quot;http://localhost:5000/service?method=animal_view_adoptable_js&quot;</span><span class="o">&gt;&lt;/</span><span class="n">script</span><span class="o">&gt;</span>

@@ -92,6 +92,7 @@
 <li class="toctree-l1"><a class="reference internal" href="movements.html">Movements</a></li>
 <li class="toctree-l1"><a class="reference internal" href="documents.html">Documents</a></li>
 <li class="toctree-l1"><a class="reference internal" href="animalcontrol.html">Animal Control</a></li>
+<li class="toctree-l1"><a class="reference internal" href="clinic.html">Clinic</a></li>
 <li class="toctree-l1"><a class="reference internal" href="lostandfound.html">Lost and Found</a></li>
 <li class="toctree-l1"><a class="reference internal" href="waitinglist.html">Waiting List</a></li>
 <li class="toctree-l1"><a class="reference internal" href="generaldiary.html">General Diary</a></li>
@@ -134,6 +135,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#lost-animal-keys">Lost Animal Keys</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#found-animal-keys">Found Animal Keys</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#waiting-list-keys">Waiting List Keys</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#clinic-keys">Clinic Keys</a></li>
 </ul>
 </li>
 </ul>
@@ -322,14 +324,20 @@ animal&#8217;s date of birth.</dd>
 <dd>The code of the second animal this animal is bonded to</dd>
 <dt>Fee</dt>
 <dd>The animal&#8217;s adoption fee if you are using per-animal adoption fees</dd>
-<dt>MicrochipNumber</dt>
-<dd>The animal&#8217;s microchip number</dd>
 <dt>Microchipped</dt>
 <dd>&#8220;Yes&#8221; if the animal has been microchipped</dd>
+<dt>MicrochipNumber</dt>
+<dd>The animal&#8217;s microchip number</dd>
+<dt>MicrochipNumber2</dt>
+<dd>The animal&#8217;s second microchip number if it has one</dd>
 <dt>MicrochipDate</dt>
 <dd>The date the animal was microchipped</dd>
+<dt>MicrochipDate2</dt>
+<dd>The date the animal received a second microchip</dd>
 <dt>MicrochipManufacturer</dt>
 <dd>The manufacturer of the microchip</dd>
+<dt>MicrochipManufacturer2</dt>
+<dd>The manufacturer of the second microchip</dd>
 <dt>Tattoo</dt>
 <dd>&#8220;Yes&#8221; if the animal has an identifying tattoo</dd>
 <dt>TattooNumber</dt>
@@ -1296,6 +1304,48 @@ log keys.</p>
 <dt>DocumentImgLink</dt>
 <dd>A photo of the animal if one exists. 200/300/400/500 can also be suffixed
 as with animal images above to control the size of the output.</dd>
+</dl>
+</div>
+<div class="section" id="clinic-keys">
+<h2>Clinic Keys<a class="headerlink" href="#clinic-keys" title="Permalink to this headline">¶</a></h2>
+<p>Clinic keys are only available for documents generated with the document button
+on a single clinic appointment record (either via the Clinic tab of an animal
+or person, or the &#8220;Consulting Room&#8221; or &#8220;Waiting Room&#8221; screens). In addition to
+these keys, the person and animal keys listed above are valid for clinic
+appointments.</p>
+<dl class="docutils">
+<dt>AppointmentFor</dt>
+<dd>The name of the vet the appointment is with</dd>
+<dt>AppointmentDate</dt>
+<dd>The date of the appointment</dd>
+<dt>AppointmentTime</dt>
+<dd>The time of the appointment</dd>
+<dt>Status</dt>
+<dd>The appointment&#8217;s current status</dd>
+<dt>ArrivedDate</dt>
+<dd>The date the person arrived for the appointment</dd>
+<dt>ArrivedTime</dt>
+<dd>The time the person arrived for the appointment</dd>
+<dt>WithVetDate</dt>
+<dd>The date the person was with the vet for the appointment</dd>
+<dt>WithVetTime</dt>
+<dd>The time the person was with the vet for the appointment</dd>
+<dt>CompletedDate</dt>
+<dd>The date the appointment was complete</dd>
+<dt>CompletedTime</dt>
+<dd>The time the appointment was complete</dd>
+<dt>ReasonForAppointment</dt>
+<dd>The reason the appointment was made</dd>
+<dt>Comments</dt>
+<dd>Any comments on the appointment</dd>
+<dt>InvoiceAmount</dt>
+<dd>The total of all invoice items for the appointment</dd>
+<dt>InvoiceVatAmount / InvoiceTaxAmount</dt>
+<dd>The total VAT/Tax on the invoice</dd>
+<dt>InvoiceVatRate / InvoiceTaxRate</dt>
+<dd>The tax rate applied to the invoice</dd>
+<dt>InvoiceTotal</dt>
+<dd>The total of invoice amount and VAT/Tax</dd>
 </dl>
 </div>
 </div>

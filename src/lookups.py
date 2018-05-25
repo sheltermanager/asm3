@@ -16,6 +16,7 @@ LOOKUP_TABLES = {
     "breed":            (_("Breeds"), "BreedName", _("Breed"), "BreedDescription", 1, 0, 1, 0, 0, 0, 0, 1, 1, 1, ("animal.BreedID", "animal.Breed2ID", "animallost.BreedID", "animalfound.BreedID")),
     "lkcoattype":       (_("Coat Types"), "CoatType", _("Coat Type"), "", 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, ("animal.CoatType",)),
     "citationtype":     (_("Citation Types"), "CitationName", _("Citation Type"), "CitationDescription", 0, 0, 0, 0, 1, 0, 0, 1, 1, 1, ("ownercitation.CitationTypeID",)),
+    "lksclinicstatus":  (_("Clinic Statuses"), "Status", _("Status"), "", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, ("clinicappointment.Status",)),
     "costtype":         (_("Cost Types"), "CostTypeName", _("Cost Type"), "CostTypeDescription", 0, 0, 0, 0, 1, 0, 0, 1, 1, 1, ("animalcost.CostTypeID",)),
     "deathreason":      (_("Death Reasons"), "ReasonName", _("Reason"), "ReasonDescription", 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, ("animal.PTSReasonID",)),
     "diet":             (_("Diets"), "DietName", _("Diet"), "DietDescription", 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, ("animaldiet.DietID",)),
@@ -110,8 +111,9 @@ MICROCHIP_MANUFACTURERS = [
     { "length": 15, "regex": r"^943", "name": "BCDS", "locales": "" },
     { "length": 15, "regex": r"^945", "name": "BCDS", "locales": "" },
     { "length": 15, "regex": r"^952", "name": "M4S ID", "locales": "" },
-    { "length": 15, "regex": r"^953", "name": "Virbac/PetLog", "locales": "en_GB" },
+    { "length": 15, "regex": r"^953010002", "name": "Back Home", "locales": "en_AU" },
     { "length": 15, "regex": r"^95301", "name": "Australasian Animal Registry", "locales": "en_AU" },
+    { "length": 15, "regex": r"^953", "name": "Virbac/PetLog", "locales": "en_GB" },
     { "length": 15, "regex": r"^955", "name": "Biolog-ID", "locales": "" },
     { "length": 15, "regex": r"^956", "name": "AKC Reunite", "locales": "" },
     { "length": 15, "regex": r"^965", "name": "4D Technology/Petsafe", "locales": "" },
@@ -855,6 +857,9 @@ def get_breed_name(dbo, bid):
 
 def get_citation_types(dbo):
     return dbo.query("SELECT * FROM citationtype ORDER BY CitationName")
+
+def get_clinic_statuses(dbo):
+    return dbo.query("SELECT * FROM lksclinicstatus ORDER BY ID")
 
 def get_coattypes(dbo):
     return dbo.query("SELECT * FROM lkcoattype ORDER BY CoatType")

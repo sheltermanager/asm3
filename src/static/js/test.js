@@ -97,6 +97,7 @@ $(function() {
                             return config.bool("DontShowLitterID");
                         }
                     },
+                    { field: "SPECIESNAME", display: _("Species") },
                     { field: "LOCATIONNAME", display: _("Location"),
                         formatter: function(row) {
                             var s = row.LOCATIONNAME;

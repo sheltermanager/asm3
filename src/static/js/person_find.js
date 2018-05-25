@@ -1,5 +1,5 @@
 /*jslint browser: true, forin: true, eqeq: true, white: true, sloppy: true, vars: true, nomen: true */
-/*global $, jQuery, _, asm, common, config, controller, dlgfx, format, header, html, validate */
+/*global $, jQuery, _, asm, common, config, controller, dlgfx, edit_header, format, header, html, validate */
 
 $(function() {
 
@@ -97,6 +97,12 @@ $(function() {
                 html.list_to_options(controller.jurisdictions, "ID", "JURISDICTIONNAME"),
                 '</select>',
                 '</td>',
+                '<td>',
+                '<label for="email">' + _("Email") + '</label>',
+                '</td>',
+                '<td>',
+                '<input id="email" data="email" class="asm-textbox" />',
+                '</td>',
                 '</tr>',
                 '<tr>',
                 '<td>',
@@ -106,10 +112,11 @@ $(function() {
                 '<input id="comments" data="comments" class="asm-textbox" />',
                 '</td>',
                 '<td>',
-                '<label for="email">' + _("Email") + '</label>',
+                '<label for="filter">' + _("Flags") + '</label>',
                 '</td>',
                 '<td>',
-                '<input id="email" data="email" class="asm-textbox" />',
+                '<select id="filter" data="filter" multiple="multiple" class="asm-bsmselect">',
+                '</select>',
                 '</td>',
                 '</tr>',
                 '<tr>',
@@ -120,10 +127,11 @@ $(function() {
                 '<input id="medianotes" data="medianotes" class="asm-textbox" />',
                 '</td>',
                 '<td>',
-                '<label for="filter">' + _("Flags") + '</label>',
+                '<label for="gdpr">' + _("GDPR Contact Opt-In") + '</label>',
                 '</td>',
                 '<td>',
-                '<select id="filter" data="filter" multiple="multiple" class="asm-bsmselect">',
+                '<select id="gdpr" data="gdpr" multiple="multiple" class="asm-bsmselect">',
+                edit_header.gdpr_contact_options(),
                 '</select>',
                 '</td>',
                 '</tr>',
@@ -174,6 +182,9 @@ $(function() {
 
             // Load the person flag options
             html.person_flag_options(null, controller.flags, $("#filter"), true);
+
+            $("label[for='gdpr']").toggle( config.bool("ShowGDPRContactOptIn") );
+            $("#gdpr").closest("td").toggle( config.bool("ShowGDPRContactOptIn") );
 
             // Search button - we don't use the traditional submit because
             // the bsmselect widget craps extra values into the form and 

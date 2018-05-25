@@ -38,6 +38,7 @@ def get_medicaltreatment_query(dbo):
         "a.HasActiveReserve, a.HasTrialAdoption, a.CrueltyCase, a.NonShelterAnimal, a.ShelterLocation, " \
         "a.Neutered, a.IsNotAvailableForAdoption, a.IsHold, a.IsQuarantine, " \
         "a.CombiTestResult, a.FLVResult, a.HeartwormTestResult, " \
+        "(SELECT SpeciesName FROM species WHERE ID = a.SpeciesID) AS SpeciesName, " \
         "CASE " \
         "WHEN a.Archived = 0 AND a.ActiveMovementType = 8 THEN " \
         "(SELECT MovementType FROM lksmovementtype WHERE ID=8) " \
@@ -108,6 +109,7 @@ def get_test_query(dbo):
         "a.HasActiveReserve, a.HasTrialAdoption, a.CrueltyCase, a.NonShelterAnimal, a.ShelterLocation, " \
         "a.Neutered, a.IsNotAvailableForAdoption, a.IsHold, a.IsQuarantine, " \
         "a.CombiTestResult, a.FLVResult, a.HeartwormTestResult, " \
+        "(SELECT SpeciesName FROM species WHERE ID = a.SpeciesID) AS SpeciesName, " \
         "CASE " \
         "WHEN a.Archived = 0 AND a.ActiveMovementType = 8 THEN " \
         "(SELECT MovementType FROM lksmovementtype WHERE ID=8) " \
@@ -153,6 +155,7 @@ def get_vaccination_query(dbo):
         "a.HasActiveReserve, a.HasTrialAdoption, a.CrueltyCase, a.NonShelterAnimal, a.ShelterLocation, " \
         "a.Neutered, a.IsNotAvailableForAdoption, a.IsHold, a.IsQuarantine, " \
         "a.CombiTestResult, a.FLVResult, a.HeartwormTestResult, " \
+        "(SELECT SpeciesName FROM species WHERE ID = a.SpeciesID) AS SpeciesName, " \
         "CASE " \
         "WHEN a.Archived = 0 AND a.ActiveMovementType = 8 THEN " \
         "(SELECT MovementType FROM lksmovementtype WHERE ID=8) " \

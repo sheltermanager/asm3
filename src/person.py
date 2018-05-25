@@ -174,6 +174,7 @@ def get_satellite_counts(dbo, personid):
         "(SELECT COUNT(*) FROM media me WHERE me.LinkID = o.ID AND me.LinkTypeID = %d) AS media, " \
         "(SELECT COUNT(*) FROM diary di WHERE di.LinkID = o.ID AND di.LinkType = %d) AS diary, " \
         "(SELECT COUNT(*) FROM adoption ad WHERE ad.OwnerID = o.ID) AS movements, " \
+        "(SELECT COUNT(*) FROM clinicappointment ca WHERE ca.OwnerID = o.ID) AS clinic, " \
         "(SELECT COUNT(*) FROM log WHERE log.LinkID = o.ID AND log.LinkType = %d) AS logs, " \
         "(SELECT COUNT(*) FROM ownerdonation od WHERE od.OwnerID = o.ID) AS donations, " \
         "(SELECT COUNT(*) FROM ownercitation oc WHERE oc.OwnerID = o.ID) AS citation, " \
@@ -469,9 +470,8 @@ def get_person_find_advanced(dbo, criteria, username, includeStaff = False, limi
        comments - string partial pattern
        email - string partial pattern
        medianotes - string partial pattern
-       filter - "all" "aco" "banned" "donor" "driver", "fosterer" "homechecked"
-            "homechecker" "member" "retailer" "shelter" "staff" "giftaid"
-            "vet" "volunteer"
+       filter - built in or additional flags, ANDed
+       gdpr - one or more gdpr contact values ANDed
     """
     c = []
     l = dbo.locale
@@ -525,6 +525,7 @@ def get_person_find_advanced(dbo, criteria, username, includeStaff = False, limi
             elif flag == "deceased": c.append("o.IsDeceased=1")
             elif flag == "donor": c.append("o.IsDonor=1")
             elif flag == "driver": c.append("o.IsDriver=1")
+            elif flag == "excludefrombulkemail": c.append("o.ExcludeFromBulkEmail=1")
             elif flag == "fosterer": c.append("o.IsFosterer=1")
             elif flag == "homechecked": c.append("o.IDCheck=1")
             elif flag == "homechecker": c.append("o.IsHomeChecker=1")
@@ -536,6 +537,9 @@ def get_person_find_advanced(dbo, criteria, username, includeStaff = False, limi
             elif flag == "vet": c.append("o.IsVet=1")
             elif flag == "volunteer": c.append("o.IsVolunteer=1")
             else: c.append("LOWER(o.AdditionalFlags) LIKE %s" % db.ds("%%%s%%" % flag.lower()))
+    if crit("gdpr") != "":
+        for g in crit("gdpr").split(","):
+            c.append("o.GDPRContactOptIn LIKE %s" % db.ds("%%%s%%" % g))
     if not includeStaff:
         c.append("o.IsStaff = 0")
     if len(c) == 0:
@@ -934,6 +938,12 @@ def insert_person_from_form(dbo, post, username):
     db.execute(dbo, sql)
     audit.create(dbo, username, "owner", pid, audit.dump_row(dbo, "owner", pid))
 
+    # If the option is on, record any GDPR contact options in the log
+    if configuration.show_gdpr_contact_optin(dbo) and configuration.gdpr_contact_change_log(dbo) and post["gdprcontactoptin"] != "":
+        newvalue = post["gdprcontactoptin"]
+        log.add_log(dbo, username, log.PERSON, pid, configuration.gdpr_contact_change_log_type(dbo),
+            "%s" % (newvalue))
+
     # Save any additional field values given
     additional.save_values_for_link(dbo, post, pid, "person")
 
@@ -1132,7 +1142,7 @@ def delete_person(dbo, username, personid):
     audit.delete_rows(dbo, username, "log", "LinkID = %d AND LinkType = %d" % (personid, log.PERSON))
     db.execute(dbo, "DELETE FROM log WHERE LinkID = %d AND LinkType = %d" % (personid, log.PERSON))
     db.execute(dbo, "DELETE FROM additional WHERE LinkID = %d AND LinkType IN (%s)" % (personid, additional.PERSON_IN))
-    for t in [ "adoption", "ownercitation", "ownerdonation", "ownerlicence", "ownertraploan", "ownervoucher" ]:
+    for t in [ "adoption", "clinicappointment", "ownercitation", "ownerdonation", "ownerlicence", "ownertraploan", "ownervoucher" ]:
         audit.delete_rows(dbo, username, t, "OwnerID = %d" % personid)
         db.execute(dbo, "DELETE FROM %s WHERE OwnerID = %d" % (t, personid))
     dbfs.delete_path(dbo, "/owner/%d" % personid)
@@ -1456,13 +1466,15 @@ def update_anonymise_personal_data(dbo, overrideretainyears = None):
         "OwnerSurname = ?, OwnerName = ?, OwnerAddress = '', EmailAddress = '', " \
         "HomeTelephone = '', WorkTelephone = '', MobileTelephone = '', " \
         "LastChangedDate = ?, LastChangedBy = ? " \
-        "WHERE CreatedDate <= ? AND OwnerSurname <> ? " \
+        "WHERE OwnerSurname <> ? AND CreatedDate <= ? " \
         "AND IsACO=0 AND IsAdoptionCoordinator=0 AND IsRetailer=0 AND IsHomeChecker=0 AND IsMember=0 " \
         "AND IsShelter=0 AND IsFosterer=0 AND IsStaff=0 AND IsVet=0 AND IsVolunteer=0 " \
+        "AND NOT EXISTS(SELECT ID FROM animal WHERE (OriginalOwnerID = owner.ID OR BroughtInByOwnerID = owner.ID) AND DateBroughtIn > ?) " \
+        "AND NOT EXISTS(SELECT ID FROM clinicappointment WHERE OwnerID = owner.ID AND DateTime > ?) " \
         "AND NOT EXISTS(SELECT ID FROM ownerdonation WHERE OwnerID = owner.ID AND Date > ?) " \
         "AND NOT EXISTS(SELECT ID FROM adoption WHERE OwnerID = owner.ID AND MovementDate > ?) " \
-        "AND NOT EXISTS(SELECT ID FROM log WHERE Date > ? AND LinkID = owner.ID AND LogTypeID = 1) ", 
-        ( anonymised, anonymised, dbo.now(), "system", cutoff, anonymised, cutoff, cutoff, cutoff ))
+        "AND NOT EXISTS(SELECT ID FROM log WHERE LinkID = owner.ID AND LogTypeID = 1 AND Date > ?) ", 
+        ( anonymised, anonymised, dbo.now(), "system", anonymised, cutoff, cutoff, cutoff, cutoff, cutoff, cutoff ))
     al.debug("anonymised %s expired person records outside of retention period (%s years)." % (affected, retainyears), "person.update_anonymise_personal_data", dbo)
     return "OK %d" % affected
 

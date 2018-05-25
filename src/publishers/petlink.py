@@ -231,6 +231,7 @@ class PetLinkPublisher(AbstractPublisher):
                     continue
 
                 # Iterate over a copy of the processed list so we can remove animals from it
+                # that have error emssages.
                 for an in processed_animals[:]:
 
                     if an["IDENTICHIPNUMBER"] == chip:
@@ -243,29 +244,29 @@ class PetLinkPublisher(AbstractPublisher):
                                 (an["SHELTERCODE"], an["ANIMALNAME"], an["IDENTICHIPNUMBER"]))
                             continue
 
-                        # If the contact info is on file, process the animal with an error message
-                        if message.find("has an existing PetLink account and their contact information is already on file") != -1:
-                            an["FAILMESSAGE"] = message
-                            failed_animals.append(an)
-
-                        # If the message is that this microchip is not pre-paid, mark it processed with the fail message
-                        elif message.find("Not a prepaid microchip.") != -1:
-                            an["FAILMESSAGE"] = message
-                            failed_animals.append(an)
-
-                        # If the message is that this microchip cannot be transferred, mark it processed with the fail message
-                        elif message.find("cannot be transferred - the account is locked.") != -1:
-                            an["FAILMESSAGE"] = message
-                            failed_animals.append(an)
-
                         # If the message was that the chip is already registered,
-                        # mark the animal as published but at the intake date -
+                        # mark this animal as published but on the intake date -
                         # this will force this publisher to put it through as a transfer
-                        # next time (we remove it from the process list above)
-                        elif message.find("This microchip code has already been registered") != -1:
+                        # next time since we'll find a previous published record.
+                        if message.find("has already been registered") != -1:
                             self.markAnimalPublished(an["ID"], an["DATEBROUGHTIN"])
                             self.log("%s: %s (%s) - Already registered, marking as PetLink TRANSFER for next publish" % \
                                 (an["SHELTERCODE"], an["ANIMALNAME"], an["IDENTICHIPNUMBER"]))
+                            continue
+
+                        # If the message is one of PetLink's permanent failure conditons, 
+                        # mark the chip failed so that we stop trying.
+                        # Any other error message we treat as transient and do nothing 
+                        # (which means we'll attempt to register the chip the next time this publisher is run).
+                        PERMANENT_FAILURES = [ 
+                            "has an existing PetLink account and their contact information is already on file",
+                            "Not a prepaid microchip.",
+                            "cannot be transferred - the account is locked."
+                        ]
+                        for m in PERMANENT_FAILURES:
+                            if message.find(m) != -1:
+                                an["FAILMESSAGE"] = message
+                                failed_animals.append(an)
 
             if len(processed_animals) > 0:
                 self.markAnimalsPublished(processed_animals)

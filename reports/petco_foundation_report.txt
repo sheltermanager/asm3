@@ -71,6 +71,11 @@ $$BODY
 BODY$$
 
 $$FOOTER
+<tr>
+<td><i>Total</i></td>
+<td><i>{SUM.NumberInShelter.0}</i></td>
+</tr>
+
 FOOTER$$
 +++
 
@@ -112,6 +117,11 @@ $$BODY
 BODY$$
 
 $$FOOTER
+<tr>
+<td><i>$AGEGROUP</i></td>
+<td><i>{SUM.NumberInShelter.0}</i></td>
+</tr>
+
 FOOTER$$
 +++
 SUBREPORT_PetcoIntakeNumbers
@@ -179,6 +189,14 @@ $$BODY
 BODY$$
 
 $$FOOTER
+<tr>
+<td><i>Total</i></td>
+<td><i>{SUM.Stray.0}</i></td>
+<td><i>{SUM.OwnerSurrender.0}</i></td>
+<td><i>{SUM.Transfers.0}</i></td>
+<td><i>{SUM.OtherSources.0}</i></td>
+</tr>
+
 FOOTER$$
 +++
 SUBREPORT_PetcoOutcomes
@@ -235,6 +253,16 @@ $$BODY
 BODY$$
 
 $$FOOTER
+<tr>
+<td><i>Total</i></td>
+<td><i>{SUM.Adopted.0}</i></td>
+<td><i>{SUM.ReturnedToOwner.0}</i></td>
+<td><i>{SUM.Transferred.0}</i></td>
+<td><i>{SUM.DiedInCare.0}</i></td>
+<td><i>{SUM.Euthanized.0}</i></td>
+<td><i>{SUM.Other.0}</i></td>
+</tr>
+
 FOOTER$$
 +++
 SUBREPORT_PetcoSpayNeuter
@@ -278,5 +306,11 @@ $$BODY
 BODY$$
 
 $$FOOTER
+<tr>
+<td><i>Total</i></td>
+<td><i>{SUM.ShelterAnimal.0}</i></td>
+<td><i>{SUM.PublicAnimal.0}</i></td>
+<td><i>{SUM.TNR.0}</i></td>
+</tr>
 FOOTER$$
 

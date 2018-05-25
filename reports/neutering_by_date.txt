@@ -16,14 +16,21 @@ INNER JOIN animaltype ay ON ay.ID = animal.AnimalTypeID
 INNER JOIN species s ON s.ID = animal.SpeciesID
 WHERE Neutered = 1 AND 
 NeuteredDate BETWEEN '$ASK DATE Enter from date$' AND '$ASK DATE Enter to date$'
-ORDER BY NeuteredDate
+ORDER BY s.SpeciesName, x.Sex, NeuteredDate
 ###
 $$HEADER
 HEADER$$
 
+$$GROUP_SpeciesName
+$$HEAD
+<h2>$Species</h2>
+$$FOOT
+<h2>Total $Species: {COUNT.ShelterCode}</h2>
+GROUP$$
+
 $$GROUP_Sex
 $$HEAD
-<h2>$Sex</h2>
+<h3>$Sex</h3>
 <table border=1><tr>
 <td><b>Code</b></td>
 <td><b>Name</b></td>
@@ -34,7 +41,7 @@ $$HEAD
 </tr>
 $$FOOT
 </table>
-<h2>Total $Sex: {COUNT.ShelterCode}</h2>
+<h3>Total $Sex $Species: {COUNT.ShelterCode}</h3>
 GROUP$$
 
 $$BODY
@@ -49,6 +56,6 @@ $$BODY
 BODY$$
 
 $$FOOTER
-<h2>Total: {COUNT.ShelterCode}</h2>
+<h1>Total: {COUNT.ShelterCode}</h1>
 FOOTER$$
 

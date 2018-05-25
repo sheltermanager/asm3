@@ -700,6 +700,7 @@ $(function() {
                 '<input data="ReportNewBrowserTab" id="reportnewbrowsertab" class="asm-checkbox" type="checkbox" /> <label for="reportnewbrowsertab">' + _("Open reports in a new browser tab") + '</label><br />',
                 '<input data="ReportMenuAccordion" id="reportmenuaccordion" class="asm-checkbox" type="checkbox" /> <label for="reportmenuaccordion">' + _("Show report menu items in collapsed categories") + '</label><br />',
                 '<input data="LocationFiltersEnabled" id="locationfilters" class="asm-checkbox" type="checkbox" /> <label for="locationfilters">' + _("Enable location filters") + '</label><br />',
+                '<input data="MultiSiteEnabled" id="multisite" class="asm-checkbox" type="checkbox" /> <label for="multisite">' + _("Enable multiple sites") + '</label><br />',
                 '<input data="InactivityTimer" id="inactivitytimer" class="asm-checkbox" type="checkbox" /> <label for="inactivitytimer">' + _("Auto log users out after this many minutes of inactivity") + '</label>',
                 '<input data="InactivityTimeout" id="inactivitytimeout" class="asm-textbox asm-numberbox" /><br />',
                 '<label for="ownernameformat" style="margin-left: 24px">' + _("When displaying person names, use the format") + '</label> ',
@@ -1032,6 +1033,7 @@ $(function() {
             return [
                 '<div id="tab-unwanted">',
                 '<p>',
+                '<input data="DisableClinic" id="disableclinic" class="asm-checkbox" type="checkbox" /> <label for="disableclinic">' + _("Remove clinic functionality from screens and menus") + '</label><br />',
                 '<input data="DisableMovements" id="disablemovements" class="asm-checkbox" type="checkbox" /> <label for="disablemovements">' + _("Remove move menu and the movements tab from animal and person screens") + '</label><br />',
                 '<input data="DisableRetailer" id="disableretailer" class="asm-checkbox" type="checkbox" /> <label for="disableretailer">' + _("Remove retailer functionality from the movement screens and menus") + '</label><br />',
                 '<input data="DisableDocumentRepo" id="disabledocumentrepo" class="asm-checkbox" type="checkbox" /> <label for="disabledocumentrepo">' + _("Remove the document repository functionality from menus") + '</label><br />',

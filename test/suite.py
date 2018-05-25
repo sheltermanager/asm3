@@ -22,6 +22,10 @@ import test_animal
 suitea = unittest.makeSuite(test_animal.TestAnimal, 'test')
 fullsuite.append(suitea)
 
+import test_clinic
+suiteclinic = unittest.makeSuite(test_clinic.TestClinic, 'test')
+fullsuite.append(suiteclinic)
+
 import test_csvimport
 suitecsv = unittest.makeSuite(test_csvimport.TestCSVImport, 'test')
 fullsuite.append(suitecsv)
