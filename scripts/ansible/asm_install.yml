@@ -62,7 +62,7 @@
         - "{{ asm_data }}/cache"
         - "{{ asm_data }}/media"
         - "/srv/backups/asm"
-        - "/var/log/cron/asm"
+        - "/var/log/cron"
 
     - name: "Install release"
       command: "rsync -rlv /usr/local/src/{{ asm_archive.name }}/ {{ asm_path }}/"
