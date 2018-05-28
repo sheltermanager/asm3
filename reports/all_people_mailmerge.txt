@@ -35,4 +35,23 @@ WHERE o.ExcludeFromBulkEmail = 0 AND o.IsDeceased = 0 AND o.OwnerType = 2
 ORDER BY o.OwnerSurname
 ###
 MAIL
+&&&
+All People (GDPR email only)
+###
+Membership
+###
+34104/Any
+###
+Person info for all people with the GDPR email contact set.
+###
+en
+###
+SELECT DISTINCT o.OwnerName,o.OwnerAddress, o.OwnerTown, o.OwnerCounty, o.OwnerPostcode, 
+o.HomeTelephone, o.WorkTelephone, o.MobileTelephone, o.EmailAddress, o.OwnerTitle, o.OwnerForenames,
+o.OwnerSurname, o.MembershipExpiryDate
+FROM owner o
+WHERE o.GDPRContactOptIn LIKE '%email%' AND o.IsDeceased = 0 AND o.OwnerType = 1
+ORDER BY o.OwnerSurname
+###
+MAIL
 
