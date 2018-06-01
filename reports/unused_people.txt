@@ -40,11 +40,9 @@ $$HEADER
 <tr>
 <th>Name</th>
 <th>Address</th>
-<th>City</th>
-<th>State</th>
-<th>Zip</th>
-<th>Home Phone</th>
-<th>Work Phone</th>
+<th>Home</th>
+<th>Work</th>
+<th>Mobile</th>
 <th>Email</th>
 <th>Flags</th>
 </tr>
@@ -53,12 +51,11 @@ HEADER$$
 $$BODY
 <tr>
 <td><a target="_blank" href="person?id=$ID">$OWNERNAME</a></td>
-<td>$OWNERADDRESS</td>
-<td>$OWNERTOWN</td>
-<td>$OWNERCOUNTY</td>
-<td>$OWNERPOSTCODE</td>
+<td>$OWNERADDRESS<br/>
+$OWNERTOWN, $OWNERCOUNTY $OWNERPOSTCODE</td>
 <td>$HOMETELEPHONE</td>
 <td>$WORKTELEPHONE</td>
+<td>$MOBILETELEPHONE</td>
 <td>$EMAILADDRESS</td>
 <td>$ADDITIONALFLAGS</td>
 </tr>
