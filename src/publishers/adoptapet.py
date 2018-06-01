@@ -238,7 +238,7 @@ class AdoptAPetPublisher(FTPPublisher):
             "#6:Age=Age\n" \
             "#7:Name=Name\n" \
             "#8:Size=Size\n" \
-            "#9:Sex=Sex\n" % (breedmap, breedmap)
+            "#9:Sex=Sex\n"
         if not includecolours:
             defmap += "#10:Description=Description\n" \
             "#11:Status=Status\n" \
