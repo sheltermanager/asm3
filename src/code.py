@@ -5119,6 +5119,10 @@ class sql_dump(GeneratorEndpoint):
             al.debug("%s executed CSV animal dump" % str(session.user), "code.sql", dbo)
             self.header("Content-Disposition", "attachment; filename=\"animal.csv\"")
             yield utils.csv(l, extanimal.get_animal_find_advanced(dbo, { "logicallocation" : "all", "filter" : "includedeceased,includenonshelter" }))
+        elif mode == "medicalcsv":
+            al.debug("%s executed CSV medical dump" % str(session.user), "code.sql", dbo)
+            self.header("Content-Disposition", "attachment; filename=\"medical.csv\"")
+            yield utils.csv(l, extmedical.get_medical_export(dbo))
         elif mode == "personcsv":
             al.debug("%s executed CSV person dump" % str(session.user), "code.sql", dbo)
             self.header("Content-Disposition", "attachment; filename=\"person.csv\"")

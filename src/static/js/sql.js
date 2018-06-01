@@ -30,6 +30,7 @@ $(function() {
                         "dumpsqlasm2|" + _("SQL dump (ASM2 HSQLDB Format)"),
                         // ASM2_COMPATIBILITY
                         "animalcsv|" + _("CSV of animal/adopter data"), 
+                        "medicalcsv|" + _("CSV of animal/medical data"), 
                         "personcsv|" + _("CSV of person data"),
                         "incidentcsv|" + _("CSV of incident data"),
                         "licencecsv|" + _("CSV of license data"),

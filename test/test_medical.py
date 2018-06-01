@@ -29,6 +29,9 @@ class TestMedical(unittest.TestCase):
     def test_get_regimens_treatments(self):
         medical.get_regimens_treatments(base.get_dbo(), 1)
 
+    def test_get_medical_export(self):
+        medical.get_medical_export(base.get_dbo())
+
     def test_get_profiles(self):
         medical.get_profiles(base.get_dbo())
 

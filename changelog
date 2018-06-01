@@ -1,6 +1,7 @@
 41
 ================
 
+01/06/18 Export medical.csv file with animal/medical data
 30/05/18 PetFinder: updated DSH/DMH/DLH/Tabby cat breeds and adoptapet mappings
 22/05/18 Do not anonymise people surrendering animals in the cutoff period
 20/05/18 Clinic UI documentation, active by default #9
