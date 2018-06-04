@@ -134,7 +134,7 @@ class AdoptAPetPublisher(FTPPublisher):
             "Domestic Long Hair (Buff)=Domestic Longhair\n" \
             "Domestic Long Hair (Gray)=Domestic Longhair\n" \
             "Domestic Long Hair (Orange)=Domestic Longhair\n" \
-            "Domestic Long Hair (Orange & White)Domestic Longhair\n" \
+            "Domestic Long Hair (Orange & White)=Domestic Longhair\n" \
             "Domestic Long Hair (Gray & White)=Domestic Longhair\n" \
             "Domestic Long Hair (White)=Domestic Longhair\n" \
             "Domestic Long Hair (Black & White)=Domestic Longhair\n" \
