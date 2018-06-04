@@ -24,6 +24,7 @@ num_days_to_keep=5
 # ASM configured cron activies
 #----------------------------------------------------------
 /usr/bin/python $ASM_PATH/src/cron.py daily &> /var/log/cron/asm
+/usr/bin/python $ASM_PATH/src/cron.py publish_3pty &>> /var/log/cron/asm
 
 #----------------------------------------------------------
 # Backups
