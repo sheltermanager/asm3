@@ -468,12 +468,12 @@ def csvimport(dbo, csvdata, encoding = "utf8", createmissinglookups = False, cle
                         animalid = dup["ID"]
                 if animalid == 0:
                     animalid, newcode = animal.insert_animal_from_form(dbo, utils.PostedData(a, dbo.locale), "import")
-                    # Identify an ANIMALADDITIONAL additional fields and create them
+                    # Identify any ANIMALADDITIONAL additional fields and create them
                     create_additional_fields(dbo, row, errors, rowno, "ANIMALADDITIONAL", "animal", animalid)
-                    # If we have some image data, add it to the animal
-                    if len(imagedata) > 0:
-                        imagepost = utils.PostedData({ "filename": "image.jpg", "filetype": "image/jpeg", "filedata": imagedata }, dbo.locale)
-                        media.attach_file_from_form(dbo, "import", media.ANIMAL, animalid, imagepost)
+                # If we have some image data, add it to the animal
+                if len(imagedata) > 0:
+                    imagepost = utils.PostedData({ "filename": "image.jpg", "filetype": "image/jpeg", "filedata": imagedata }, dbo.locale)
+                    media.attach_file_from_form(dbo, "import", media.ANIMAL, animalid, imagepost)
             except Exception as e:
                 row_error(errors, "animal", rowno, row, e, dbo, sys.exc_info())
 
