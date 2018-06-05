@@ -194,6 +194,14 @@ def sign_document_page(dbo, mid):
     h.append("</body></html>")
     return "\n".join(h)
 
+def strip_personal_data(rows):
+    """ Removes any personal data from animal rows """
+    for r in rows:
+        for k in r.iterkeys():
+            if k.startswith("ORIGINALOWNER") or k.startswith("BROUGHTINBY") or k.startswith("CURRENTOWNER") or k.startswith("RESERVEDOWNER"):
+                r[k] = ""
+    return rows
+
 def handler(post, path, remoteip, referer, querystring):
     """ Handles the various service method types.
     post:        The GET/POST parameters
@@ -339,12 +347,12 @@ def handler(post, path, remoteip, referer, querystring):
 
     elif method == "json_adoptable_animals":
         users.check_permission_map(l, user["SUPERUSER"], securitymap, users.VIEW_ANIMAL)
-        rs = publishers.base.get_animal_data(dbo, None, include_additional_fields = True)
+        rs = strip_personal_data(publishers.base.get_animal_data(dbo, None, include_additional_fields = True))
         return set_cached_response(cache_key, "application/json", 3600, 3600, utils.json(rs))
 
     elif method == "jsonp_adoptable_animals":
         users.check_permission_map(l, user["SUPERUSER"], securitymap, users.VIEW_ANIMAL)
-        rs = publishers.base.get_animal_data(dbo, None, include_additional_fields = True)
+        rs = strip_personal_data(publishers.base.get_animal_data(dbo, None, include_additional_fields = True))
         return ("application/javascript", 0, 0, "%s(%s);" % (post["callback"], utils.json(rs)))
 
     elif method == "xml_adoptable_animal":
@@ -358,7 +366,7 @@ def handler(post, path, remoteip, referer, querystring):
 
     elif method == "xml_adoptable_animals":
         users.check_permission_map(l, user["SUPERUSER"], securitymap, users.VIEW_ANIMAL)
-        rs = publishers.base.get_animal_data(dbo, None, include_additional_fields = True)
+        rs = strip_personal_data(publishers.base.get_animal_data(dbo, None, include_additional_fields = True))
         return set_cached_response(cache_key, "application/xml", 3600, 3600, html.xml(rs))
 
     elif method == "json_found_animals":
@@ -438,17 +446,17 @@ def handler(post, path, remoteip, referer, querystring):
 
     elif method == "jsonp_shelter_animals":
         users.check_permission_map(l, user["SUPERUSER"], securitymap, users.VIEW_ANIMAL)
-        sa = animal.get_shelter_animals(dbo)
+        sa = strip_personal_data(animal.get_shelter_animals(dbo))
         return ("application/javascript", 0, 0, "%s(%s);" % (post["callback"], utils.json(sa)))
 
     elif method == "json_shelter_animals":
         users.check_permission_map(l, user["SUPERUSER"], securitymap, users.VIEW_ANIMAL)
-        sa = animal.get_shelter_animals(dbo)
+        sa = strip_personal_data(animal.get_shelter_animals(dbo))
         return set_cached_response(cache_key, "application/json", 3600, 3600, utils.json(sa))
 
     elif method == "xml_shelter_animals":
         users.check_permission_map(l, user["SUPERUSER"], securitymap, users.VIEW_ANIMAL)
-        sa = animal.get_shelter_animals(dbo)
+        sa = strip_personal_data(animal.get_shelter_animals(dbo))
         return set_cached_response(cache_key, "application/xml", 3600, 3600, html.xml(sa))
 
     elif method == "rss_timeline":
