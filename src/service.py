@@ -195,10 +195,12 @@ def sign_document_page(dbo, mid):
     return "\n".join(h)
 
 def strip_personal_data(rows):
-    """ Removes any personal data from animal rows """
+    """ Removes any personal data from animal rows 
+        include_current: If False, strips CURRENTOWNER tokens (typically foster for shelter animals)
+    """
     for r in rows:
         for k in r.iterkeys():
-            if k.startswith("ORIGINALOWNER") or k.startswith("BROUGHTINBY") or k.startswith("CURRENTOWNER") or k.startswith("RESERVEDOWNER"):
+            if k.startswith("CURRENTOWNER") or k.startswith("ORIGINALOWNER") or k.startswith("BROUGHTINBY") or k.startswith("RESERVEDOWNER"):
                 r[k] = ""
     return rows
 
