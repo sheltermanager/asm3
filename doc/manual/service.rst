@@ -464,6 +464,12 @@ the format returned is JSON or XML::
 
     http://localhost:5000/service?method=xml_shelter_animals&username=user&password=letmein
 
+By default, any personal or sensitive data (such as names and contact
+information of fosterers and surrenders) will be stripped from the results. If
+you wish them to be included, pass an extra sensitive=1 parameter::
+
+    http://localhost:5000/service?method=xml_shelter_animals&username=user&password=letmein&sensitive=1
+
 rss_timeline
 ------------
 

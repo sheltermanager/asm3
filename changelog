@@ -1,6 +1,7 @@
 41
 ================
 
+06/06/18 sensitive=1 param to enable personal data in service calls
 05/06/18 Strip personal data from *_shelter_animals service calls
 04/06/18 Attach images even when merging csv imported animals
 01/06/18 Export medical.csv file with animal/medical data

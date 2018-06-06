@@ -604,6 +604,12 @@ the format returned is JSON or XML:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span>http://localhost:5000/service?method=xml_shelter_animals&amp;username=user&amp;password=letmein
 </pre></div>
 </div>
+<p>By default, any personal or sensitive data (such as names and contact
+information of fosterers and surrenders) will be stripped from the results. If
+you wish them to be included, pass an extra sensitive=1 parameter:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>http://localhost:5000/service?method=xml_shelter_animals&amp;username=user&amp;password=letmein&amp;sensitive=1
+</pre></div>
+</div>
 </div>
 <div class="section" id="rss-timeline">
 <h2>rss_timeline<a class="headerlink" href="#rss-timeline" title="Permalink to this headline">¶</a></h2>
