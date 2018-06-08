@@ -694,12 +694,15 @@ class Database(object):
         for r in self.query_generator(sql):
             yield self.row_to_insert_sql(table, r, escapeCR)
 
-    def query_tuple(self, sql, params=None):
+    def query_tuple(self, sql, params=None, limit=0):
         """ Runs the query given and returns the resultset
             as a tuple of tuples.
         """
         try:
             c, s = self.cursor_open()
+            # Add limit clause if set
+            if limit > 0:
+                sql = "%s %s" % (sql, self.sql_limit(limit))
             # Run the query and retrieve all rows
             if params:
                 sql = self.switch_param_placeholder(sql)
@@ -720,12 +723,15 @@ class Database(object):
             except:
                 pass
 
-    def query_tuple_columns(self, sql, params=None):
+    def query_tuple_columns(self, sql, params=None, limit=0):
         """ Runs the query given and returns the resultset
             as a grid of tuples and a list of columnames
         """
         try:
             c, s = self.cursor_open()
+            # Add limit clause if set
+            if limit > 0:
+                sql = "%s %s" % (sql, self.sql_limit(limit))
             # Run the query and retrieve all rows
             if params: 
                 sql = self.switch_param_placeholder(sql)

@@ -17,6 +17,7 @@ import audit
 import base64
 import cachemem
 import clinic
+import collections
 import configuration
 import csvimport as extcsvimport
 import db, dbfs, dbupdate
@@ -3110,7 +3111,7 @@ class litters(JSONEndpoint):
         return extanimal.insert_litter_from_form(o.dbo, o.user, o.post)
 
     def post_nextlitterid(self, o):
-        nextid = db.query_int(o.dbo, "SELECT MAX(ID) FROM animallitter") + 1
+        nextid = o.dbo.query_int("SELECT MAX(ID) FROM animallitter") + 1
         return utils.padleft(nextid, 6)
 
     def post_update(self, o):
@@ -4894,12 +4895,11 @@ class schemajs(ASMEndpoint):
                 tobj = {}
                 for t in dbupdate.TABLES:
                     try:
-                        rows = db.query(dbo, "SELECT * FROM %s" % t, limit=1)
-                        if len(rows) != 0:
-                            row = rows[0]
-                            for k in row.copy():
-                                row[k] = ""
-                            tobj[t] = row
+                        rows, cols = dbo.query_tuple_columns("SELECT * FROM %s" % t, limit=1)
+                        trow = collections.OrderedDict()
+                        for c in sorted(cols):
+                            trow[c] = ""
+                        tobj[t] = trow
                     except Exception as err:
                         al.error("%s" % str(err), "code.schemajs", dbo)
                 # Derive the extra *NAME fields from *ID in view tables.
@@ -5015,7 +5015,7 @@ class sql(JSONEndpoint):
     def post_cols(self, o):
         try:
             if o.post["table"].strip() == "": return ""
-            rows = db.query(o.dbo, "SELECT * FROM %s" % o.post["table"], limit=1)
+            rows = o.dbo.query("SELECT * FROM %s" % o.post["table"], limit=1)
             if len(rows) == 0: return ""
             return "|".join(sorted(rows[0].iterkeys()))
         except Exception as err:
@@ -5039,9 +5039,9 @@ class sql(JSONEndpoint):
                 if q == "": continue
                 al.info("%s query: %s" % (session.user, q), "code.sql", dbo)
                 if q.lower().startswith("select") or q.lower().startswith("show"):
-                    return html.table(db.query(dbo, q))
+                    return html.table(dbo.query(q))
                 else:
-                    rowsaffected += db.execute(dbo, q)
+                    rowsaffected += dbo.execute(q)
                     configuration.db_view_seq_version(dbo, "0")
             return _("{0} rows affected.", l).format(rowsaffected)
         except Exception as err:
@@ -5056,9 +5056,9 @@ class sql(JSONEndpoint):
                 if q == "": continue
                 al.info("%s query: %s" % (session.user, q), "code.sql", dbo)
                 if q.lower().startswith("select") or q.lower().startswith("show"):
-                    output.append(str(db.query(dbo, q)))
+                    output.append(str(dbo.query(q)))
                 else:
-                    rowsaffected = db.execute(dbo, q)
+                    rowsaffected = dbo.execute(q)
                     configuration.db_view_seq_version(dbo, "0")
                     output.append(_("{0} rows affected.", l).format(rowsaffected))
             except Exception as err:
@@ -5594,7 +5594,7 @@ class waitinglist_results(JSONEndpoint):
     def controller(self, o):
         dbo = o.dbo
         post = o.post
-        priorityfloor = utils.iif(post["priorityfloor"] == "", db.query_int(dbo, "SELECT MAX(ID) FROM lkurgency"), post.integer("priorityfloor"))
+        priorityfloor = utils.iif(post["priorityfloor"] == "", dbo.query_int("SELECT MAX(ID) FROM lkurgency"), post.integer("priorityfloor"))
         speciesfilter = utils.iif(post["species"] == "", -1, post.integer("species"))
         sizefilter = utils.iif(post["size"] == "", -1, post.integer("size"))
         rows = extwaitinglist.get_waitinglist(dbo, priorityfloor, speciesfilter, sizefilter,
