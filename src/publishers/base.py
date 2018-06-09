@@ -714,7 +714,7 @@ class AbstractPublisher(threading.Thread):
         if an["ISCOURTESY"] != 1: 
             sig = configuration.third_party_publisher_sig(self.dbo)
             # If publisher tokens are present, replace them
-            if sig.find("$$") != -1: self.replaceAnimalTags(an, sig)
+            if sig.find("$$") != -1: sig = self.replaceAnimalTags(an, sig)
             notes += sig
         # Escape carriage returns
         cr = ""
