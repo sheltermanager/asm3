@@ -93,7 +93,7 @@ $(function() {
             // put it in a timer so that our command is added last to override everything else.
             setTimeout(function() {
                 ed.addCommand("mcePageBreak", function() {
-                    tinyMCE.execCommand("mceInsertContent", false, "<div class='mce-pagebreak' style='page-break-before: always; clear: both; border: 0'>&nbsp;</div>");
+                    tinyMCE.execCommand("mceInsertContent", false, "<div class='mce-pagebreak' style='page-break-before: always; clear: both;'>&nbsp;</div>");
                 });
             }, 1000);
 

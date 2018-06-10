@@ -299,7 +299,7 @@ TABLESORTER_JS = 'static/lib/tablesorter/2.7.12/jquery.tablesorter.min.js'
 TABLESORTER_WIDGETS_JS = 'static/lib/tablesorter/2.7.12/jquery.tablesorter.widgets.min.js'
 TIMEPICKER_CSS = 'static/lib/timepicker/0.3.3/jquery.ui.timepicker.css'
 TIMEPICKER_JS = 'static/lib/timepicker/0.3.3/jquery.ui.timepicker.js'
-TINYMCE_4_JS = 'static/lib/tinymce/4.1.7/tinymce/js/tinymce/tinymce.min.js'
+TINYMCE_4_JS = 'static/lib/tinymce/4.7.13/tinymce/js/tinymce/tinymce.min.js'
 TOUCHPUNCH_JS = 'static/lib/touchpunch/0.2.3/jquery.ui.touch-punch.min.js'
 
 SMCOM_PAYMENT_LINK = ""

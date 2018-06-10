@@ -1,6 +1,7 @@
 41
 ================
 
+10/06/18 Upgrade TinyMCE to 4.7.13 (hope to fix infinite loop and iPad bug) #440
 09/06/18 getDescription was not substituting $$ tokens publishing to PF/AP/etc
 08/06/18 Read cols for autocomplete from cursor instead of results
 06/06/18 sensitive=1 param to enable personal data in service calls
