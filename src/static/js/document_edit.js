@@ -10,8 +10,8 @@ $(function() {
     // height of the viewport and 80% width
     var h = $(window).height(),
         w = Math.floor(($(window).width() / 100.0) * 80.0);
-    // max-width is 900px
-    if (w > 900) { w = 900; }
+    // max-width is 775px
+    if (w > 775) { w = 775; }
     $("div").css({
         height: h - 160,
         width: w
