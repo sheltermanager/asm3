@@ -7,11 +7,13 @@ $(function() {
     var ro_toolbar = "pdf print";
 
     // Set the containing div and textarea to the vertical 
-    // height of the viewport and a suitable printable width
+    // height of the viewport and 80% width
     var h = $(window).height(),
-        w = "775";
+        w = Math.floor(($(window).width() / 100.0) * 80.0);
+    // max-width is 900px
+    if (w > 900) { w = 900; }
     $("div").css({
-        height: h,
+        height: h - 160,
         width: w
     });
     $("#wp").css({
