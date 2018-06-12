@@ -7,8 +7,8 @@ import time
 # flake8: noqa - we have a lot of locales and this is convenient
 from locales import *
 
-VERSION = "41u [Tue 12 Jun 11:39:02 BST 2018]"
-BUILD = "06121139"
+VERSION = "41u [Tue 12 Jun 12:08:42 BST 2018]"
+BUILD = "06121208"
 
 DMY = ( "%d/%m/%Y", "%d/%m/%y" )
 MDY = ( "%m/%d/%Y", "%m/%d/%y" )
@@ -77,10 +77,11 @@ locale_maps = {
     "en_KW":    ( "English", "Kuwait", DMY, "KD", PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ".", "," ),
     "en_KY":    ( "English", "Caymen Islands", DMY, DOLLAR, PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ".", "," ),
     "en_IE":    ( "English", "Ireland", DMY, EURO, PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ".", "," ),
-    "en_IN":    ( "English", "India", DMY, "Rs.", PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ".", ","),
+    "en_IN":    ( "English", "India", DMY, "&#8360;", PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ".", ","),
     "en_IL":    ( "English", "Israel", DMY, "&#x20aa;", PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ".", "," ),
     "en_LB":    ( "English", "Lebanon", MDY, "L&pound;", PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ".", "," ),
     "en_LU":    ( "English", "Luxembourg", DMY, EURO, PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ".", "," ),
+    "en_MY":    ( "English", "Malaysia", DMY, "RM", PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ".", "," ),
     "en_MX":    ( "English", "Mexico", DMY, DOLLAR, PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ".", "," ),
     "en_PH":    ( "English", "Philippines", DMY, "&#x20b1;", PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ".", ","),
     "en_QA":    ( "English", "Qatar", DMY, "QR", PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ".", ","),

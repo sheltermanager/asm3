@@ -1,6 +1,7 @@
 41
 ================
 
+12/06/18 Add Malaysian locale, fix Indian rupee symbol to use Unicode
 12/06/18 Fix new TinyMCE content.min.css to match old line-height and font-size
 10/06/18 Upgrade TinyMCE to 4.7.13 (hope to fix infinite loop and iPad bug) #440
 09/06/18 getDescription was not substituting $$ tokens publishing to PF/AP/etc
