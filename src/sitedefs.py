@@ -164,7 +164,7 @@ BULK_GEO_PROVIDER = "nominatim"
 BULK_GEO_PROVIDER_KEY = ""
 
 # Whether or not to try and complete blank geocodes as part of the batch
-BULK_GEO_BATCH = True
+BULK_GEO_BATCH = False
 
 # How many to do in the overnight batch each time
 BULK_GEO_LIMIT = 100
