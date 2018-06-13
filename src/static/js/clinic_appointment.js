@@ -144,7 +144,11 @@ $(function() {
                     { field: "VATAMOUNT", display: _("Tax"), formatter: tableform.format_currency, 
                         hideif: function() { return !config.bool("VATEnabled"); } },
                     { field: "REASONFORAPPOINTMENT", display: _("Reason") },
-                    { field: "COMMENTS", display: _("Comments") }
+                    { field: "COMMENTS", display: _("Comments"), 
+                        formatter: function(row) {
+                            return html.truncate(row.COMMENTS, 80);
+                        }
+                    }
                 ]
 
             };

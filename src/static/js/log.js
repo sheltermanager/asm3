@@ -47,7 +47,7 @@ $(function() {
                     { field: "LASTCHANGEDBY", display: _("By") },
                     { field: "DATE", display: _("Date"), formatter: tableform.format_date, initialsort: true, initialsortdirection: "desc" },
                     { field: "DATE", display: _("Time"), formatter: tableform.format_time_blank },
-                    { field: "COMMENTS", display: _("Note"), formatter: function(row, v) { return v.replace(/\n/g, "<br />");  }}
+                    { field: "COMMENTS", display: _("Note"), formatter: function(row, v) { return html.truncate(v.replace(/\n/g, " "), 80);  }}
                 ]
             };
 
