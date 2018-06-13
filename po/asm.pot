@@ -9878,6 +9878,10 @@ msgid "Show codes on the shelter view screen"
 msgstr ""
 
 #: options.js
+msgid "Show complete comments in table views"
+msgstr ""
+
+#: options.js
 msgid "Show empty locations"
 msgstr ""
 
