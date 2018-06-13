@@ -51,7 +51,7 @@ $(function() {
                     { field: "DIETNAME", display: _("Type") },
                     { field: "DIETDESCRIPTION", display: _("Description") },
                     { field: "DATESTARTED", display: _("Start Date"), initialsort: true, initialsortdirection: "desc", formatter: tableform.format_date },
-                    { field: "COMMENTS", display: _("Comments") }
+                    { field: "COMMENTS", display: _("Comments"), formatter: tableform.format_comments }
                 ]
             };
 

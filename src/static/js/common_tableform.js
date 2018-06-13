@@ -1,6 +1,6 @@
 /*jslint browser: true, forin: true, eqeq: true, plusplus: true, white: true, sloppy: true, vars: true, nomen: true */
 /*global $, console, jQuery, Mousetrap */
-/*global asm, common, dlgfx, format, html, validate, header, _, escape, unescape */
+/*global asm, common, config, dlgfx, format, html, validate, header, _, escape, unescape */
 /*global tableform: true */
 
 (function($) {
@@ -152,6 +152,12 @@
                     }
                 }
             });
+        },
+
+        /** Formats a value as comments (truncates to one line or shows full with \n -> <br/> based on config) */
+        format_comments: function(row, v) {
+            if (config.bool("ShowFullCommentsInTables")) { return v.replace(/\n/g, "<br />"); }
+            return html.truncate(v, 80);
         },
 
         /** Formats a value as a currency */

@@ -137,7 +137,7 @@ $(function() {
                     { field: "COSTPAIDDATE", display: _("Paid"), formatter: tableform.format_date,
                         hideif: function() { return !config.bool("ShowCostPaid"); }
                     },
-                    { field: "COMMENTS", display: _("Comments") }
+                    { field: "COMMENTS", display: _("Comments"), formatter: tableform.format_comments }
                 ]
             };
 

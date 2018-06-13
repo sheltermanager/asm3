@@ -382,15 +382,19 @@ Display
 * Use HTML5 client side image scaling: If your browser supports it, media will
   be scaled on your PC before being uploaded to the server to save time.
 
+* Show animal thumbnails in movement and medical books: Show animal pictures in
+  the rows of the movement and medical books (foster book, reservation book,
+  vaccination book, etc.)
+
 * Show a minimap of the address on person screens: Show an embedded map to the
   person's address on the details screen.
 
 * Show weight as lb rather than kg: Change the field label on the animal weight
   field to lb instead of the usual kg.
 
-* Show animal thumbnails in movement and medical books: Show animal pictures in
-  the rows of the movement and medical books (foster book, reservation book,
-  vaccination book, etc.)
+* Show complete comments in table views: When viewing comments or log notes in
+  tables, show the complete text instead of truncating it to 80 characters and
+  fitting the text onto one line.
 
 * Keep table headers visible when scrolling: If selected, when scrolling down
   long tables their headers will float at the top of the screen to remind you

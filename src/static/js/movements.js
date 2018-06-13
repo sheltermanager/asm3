@@ -225,9 +225,7 @@ $(function() {
                         }
                     },
                     { field: "COMMENTS", display: _("Comments"), 
-                        formatter: function(row) {
-                            return html.truncate(row.COMMENTS + " " + row.REASONFORRETURN, 80); 
-                        }
+                        formatter: function(row, v) { return tableform.format_comments(row, row.COMMENTS + " " + row.REASONFORRETURN); }
                     }
                 ]
             };

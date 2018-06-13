@@ -273,6 +273,7 @@ DEFAULTS = {
     "ShowCostAmount": "Yes",
     "ShowCostPaid": "No",
     "ShowDeceasedHomePage": "Yes",
+    "ShowFullCommentsInTables": "No",
     "ShowAlertsHomePage": "Yes", 
     "ShowTimelineHomePage": "Yes", 
     "ShowStatsHomePage": "thismonth", 

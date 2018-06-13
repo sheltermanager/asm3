@@ -167,9 +167,7 @@ $(function() {
                         }
                     },
                     { field: "COMMENTS", display: _("Comments"), 
-                        formatter: function(row) {
-                            return row.COMMENTS + " " + row.TREATMENTCOMMENTS;
-                        }
+                        formatter: function(row, v) { return tableform.format_comments(row, row.COMMENTS + " " + row.TREATMENTCOMMENTS); }
                     }
                 ]
             };

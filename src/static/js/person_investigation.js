@@ -41,7 +41,7 @@ $(function() {
                 columns: [
                     { field: "CREATEDBY", display: _("By") },
                     { field: "DATE", display: _("Date"), initialsort: true, initialsortdirection: "desc", formatter: tableform.format_date }, 
-                    { field: "NOTES", display: _("Notes") }
+                    { field: "NOTES", display: _("Notes"), formatter: tableform.format_comments }
                 ]
             };
 

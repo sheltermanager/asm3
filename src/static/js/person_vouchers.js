@@ -52,7 +52,7 @@ $(function() {
                     { field: "DATEISSUED", display: _("Issued"), initialsort: true, initialsortdirection: "desc", formatter: tableform.format_date },
                     { field: "DATEEXPIRED", display: _("Expires"), formatter: tableform.format_date },
                     { field: "VALUE", display: _("Amount"), formatter: tableform.format_currency },
-                    { field: "COMMENTS", display: _("Comments") }
+                    { field: "COMMENTS", display: _("Comments"), formatter: tableform.format_comments }
                 ]
             };
 

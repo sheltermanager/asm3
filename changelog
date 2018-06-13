@@ -1,6 +1,7 @@
 41
 ================
 
+13/06/18 Option to show/hide full comments on all table views
 13/06/18 Show log entries on a single line instead of the complete note
 12/06/18 Add Malaysian locale, fix Indian rupee symbol to use Unicode
 12/06/18 Fix new TinyMCE content.min.css to match old line-height and font-size

@@ -66,7 +66,7 @@ $(function() {
                     { field: "DEPOSITAMOUNT", display: _("Deposit"), formatter: tableform.format_currency },
                     { field: "RETURNDUEDATE", display: _("Due"), formatter: tableform.format_date },
                     { field: "RETURNDATE", display: _("Returned"), formatter: tableform.format_date },
-                    { field: "COMMENTS", display: _("Comments") }
+                    { field: "COMMENTS", display: _("Comments"), formatter: tableform.format_comments }
                 ]
             };
 

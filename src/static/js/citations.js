@@ -74,7 +74,7 @@ $(function() {
                     { field: "FINEAMOUNT", display: _("Fine Amount"), formatter: tableform.format_currency },
                     { field: "FINEDUEDATE", display: _("Due"), formatter: tableform.format_date },
                     { field: "FINEPAIDDATE", display: _("Paid"), formatter: tableform.format_date },
-                    { field: "COMMENTS", display: _("Comments") }
+                    { field: "COMMENTS", display: _("Comments"), formatter: tableform.format_comments }
                 ]
             };
 

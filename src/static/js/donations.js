@@ -128,11 +128,7 @@ $(function() {
                             return controller.name.indexOf("animal_") != -1;
                         }
                     },
-                    { field: "COMMENTS", display: _("Comments"), 
-                        formatter: function(row) {
-                            return html.truncate(row.COMMENTS, 80);
-                        }
-                    }
+                    { field: "COMMENTS", display: _("Comments"), formatter: tableform.format_comments }
                 ]
             };
 

@@ -64,7 +64,7 @@ $(function() {
                     { field: "INVALIDDATE", display: _("Expires"), formatter: tableform.format_date },
                     { field: "NUMBERINLITTER", display: _("Number in litter") },
                     { field: "CACHEDANIMALSLEFT", display: _("Remaining") },
-                    { field: "COMMENTS", display: _("Comments") }
+                    { field: "COMMENTS", display: _("Comments"), formatter: tableform.format_comments }
                 ]
             };
 
