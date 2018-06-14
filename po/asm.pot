@@ -7791,6 +7791,10 @@ msgid "Only show account totals for the current period, which starts on "
 msgstr ""
 
 #: animal_find.js
+msgid "Only show declawed"
+msgstr ""
+
+#: animal_find.js
 msgid "Only show pickups"
 msgstr ""
 

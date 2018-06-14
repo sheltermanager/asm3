@@ -284,6 +284,7 @@ $(function() {
                 '<option value="showtransfersonly">' + _("Only show transfers") + '</option>',
                 '<option value="showpickupsonly">' + _("Only show pickups") + '</option>',
                 '<option value="showspecialneedsonly">' + _("Only show special needs") + '</option>',
+                '<option value="showdeclawedonly">' + _("Only show declawed") + '</option>',
                 '</select>',
                 '</tr>',
                 '<tr>',

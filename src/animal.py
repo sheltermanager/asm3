@@ -462,6 +462,7 @@ def get_animal_find_advanced(dbo, criteria, limit = 0, locationfilter = "", site
            showtransfersonly
            showpickupsonly
            showspecialneedsonly
+           showdeclawedonly
            goodwithchildren
            goodwithcats
            goodwithdogs
@@ -558,6 +559,7 @@ def get_animal_find_advanced(dbo, criteria, limit = 0, locationfilter = "", site
     addfilter("showtransfersonly", "a.IsTransfer = 1")
     addfilter("showpickupsonly", "a.IsPickup = 1")
     addfilter("showspecialneedsonly", "a.HasSpecialNeeds = 1")
+    addfilter("showdeclawedonly", "a.Declawed = 1")
     addfilter("fivplus", "a.CombiTested = 1 AND a.CombiTestResult = 2")
     addfilter("flvplus", "a.CombiTested = 1 AND a.FLVResult = 2")
     addfilter("heartwormplus", "a.HeartwormTested = 1 AND a.HeartwormTestResult = 2")
