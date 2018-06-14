@@ -1606,12 +1606,12 @@ def update_active_litters(dbo):
     for a in active:
         remaining = a.cachedanimalsleft
         newremaining = a.dbcount
-        if newremaining == 0 and remaining > 0:
+        if newremaining == 0:
             al.debug("litter '%s' has no animals left, expiring." % a.acceptancenumber, "animal.update_active_litters", dbo)
             dbo.execute("UPDATE animallitter SET InvalidDate=? WHERE ID=?", (dbo.today(), a.id))
         if newremaining != remaining:
             dbo.execute("UPDATE animallitter SET CachedAnimalsLeft=? WHERE ID=?", (newremaining, a.id))
-            al.debug("litter '%s' has fewer animals, setting remaining to %d." % (a.acceptancenumber, int(newremaining)), "animal.update_active_litters", dbo)
+            al.debug("litter '%s' change, setting remaining to %d." % (a.acceptancenumber, int(newremaining)), "animal.update_active_litters", dbo)
 
 def get_active_litters(dbo, speciesid = -1):
     """
