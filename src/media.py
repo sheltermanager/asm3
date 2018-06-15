@@ -90,7 +90,7 @@ def set_video_preferred(dbo, username, mid):
     """
     link = dbo.first_row(dbo.query("SELECT LinkID, LinkTypeID FROM media WHERE ID = ?", [mid]))
     dbo.update("media", "LinkID=%d AND LinkTypeID=%d" % (link.LINKID, link.LINKTYPEID), { "WebsiteVideo": 0 })
-    dbo.update("media", mid, { "WebsiteVideo": 1 }, username, setLastChanged=False) 
+    dbo.update("media", mid, { "WebsiteVideo": 1, "Date": dbo.now() }, username, setLastChanged=False) 
 
 def set_web_preferred(dbo, username, mid):
     """
@@ -98,7 +98,7 @@ def set_web_preferred(dbo, username, mid):
     """
     link = dbo.first_row(dbo.query("SELECT LinkID, LinkTypeID FROM media WHERE ID = ?", [mid]))
     dbo.update("media", "LinkID=%d AND LinkTypeID=%d" % (link.LINKID, link.LINKTYPEID), { "WebsitePhoto": 0 })
-    dbo.update("media", mid, { "WebsitePhoto": 1 }, username, setLastChanged=False) 
+    dbo.update("media", mid, { "WebsitePhoto": 1, "Date": dbo.now() }, username, setLastChanged=False) 
 
 def set_doc_preferred(dbo, username, mid):
     """
@@ -106,7 +106,7 @@ def set_doc_preferred(dbo, username, mid):
     """
     link = dbo.first_row(dbo.query("SELECT LinkID, LinkTypeID FROM media WHERE ID = ?", [mid]))
     dbo.update("media", "LinkID=%d AND LinkTypeID=%d" % (link.LINKID, link.LINKTYPEID), { "DocPhoto": 0 })
-    dbo.update("media", mid, { "DocPhoto": 1 }, username, setLastChanged=False) 
+    dbo.update("media", mid, { "DocPhoto": 1, "Date": dbo.now() }, username, setLastChanged=False) 
 
 def set_excluded(dbo, username, mid, exclude = 1):
     """
@@ -510,6 +510,7 @@ def update_file_content(dbo, username, mid, content):
 def update_media_notes(dbo, username, mid, notes):
     dbo.update("media", mid, { 
         "MediaNotes": notes,
+        "Date":       dbo.now(),
         # ASM2_COMPATIBILITY
         "UpdatedSinceLastPublish": 1
     }, username, setLastChanged=False)
