@@ -2564,6 +2564,8 @@ def dump_hsqldb(dbo, includeDBFS = True):
     yield sql_structure(hdbo)
     for x in dump(dbo, includeNonASM2 = False, includeDBFS = includeDBFS, escapeCR = " ", wrapTransaction = False):
         yield x
+    yield "DELETE FROM configuration WHERE ItemName LIKE 'DatabaseVersion';\n"
+    yield "INSERT INTO configuration (ItemName, ItemValue) VALUES ('DatabaseVersion', '2870');\n"
 
 def dump_smcom(dbo):
     """
