@@ -2562,7 +2562,7 @@ def dump_hsqldb(dbo, includeDBFS = True):
     # ASM2_COMPATIBILITY
     hdbo = db.get_database("HSQLDB")
     yield sql_structure(hdbo)
-    for x in dump(dbo, includeNonASM2 = False, includeDBFS = includeDBFS, escapeCR = " ", wrapTransaction = False):
+    for x in dump(dbo, includeNonASM2 = False, includeDBFS = includeDBFS, escapeCR = " ", includeUsers = False, wrapTransaction = False):
         yield x
     yield "DELETE FROM configuration WHERE ItemName LIKE 'DatabaseVersion';\n"
     yield "INSERT INTO configuration (ItemName, ItemValue) VALUES ('DatabaseVersion', '2870');\n"
