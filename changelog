@@ -1,6 +1,7 @@
 41
 ================
 
+25/06/18 Bug that meant $$HTMLHEADER overrode $$HEADER
 14/06/18 Allow litters to fluctuate upwards (returns/etc)
 14/06/18 Advanced animal find filter: show declawed only
 13/06/18 Option to show/hide full comments on all table views

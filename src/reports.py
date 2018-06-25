@@ -1529,7 +1529,7 @@ class Report:
         self._Append(htmlheader)
 
         headerstart = self.html.find("$$HEADER")
-        headerend = self.html.find("HEADER$$")
+        headerend = self.html.find("HEADER$$", headerstart)
         if headerstart == -1 or headerend == -1:
             self._p("The header block of your report is invalid.")
             return
@@ -1544,7 +1544,7 @@ class Report:
         cbody = self.html[bodystart+6:bodyend]
 
         footerstart = self.html.find("$$FOOTER")
-        footerend = self.html.find("FOOTER$$")
+        footerend = self.html.find("FOOTER$$", footerstart)
 
         if footerstart == -1 or footerend == -1:
             self._p("The footer block of your report is invalid.")
