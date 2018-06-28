@@ -826,40 +826,6 @@ TrapReturnDate
 TrapComments
     Any comments on the traploana
 
-Payment/Receipt/Invoice Keys
-----------------------------
-
-Payment keys are available for documents generated for a one or more payments
-from the payment tab. Keys for the person making the payment are also present
-and if the payment is linked to an animal, animal keys are also present. 
-
-PaymentID 
-    The payment record ID (used to generate receipt number)
-PaymentType
-    The payment type
-PaymentMethod
-    The payment method
-PaymentDate
-    The date the payment was received 
-PaymentDateDue
-    If this is a recurring payment, the date it is due 
-PaymentAmount 
-    The payment amount
-ReceiptNum
-    If you issue receipts for donations, the receipt number 
-PaymentGiftAid
-    Yes or No if this donation is eligible for UK giftaid
-PaymentComments 
-    Any comments for the payment
-PaymentCreatedBy 
-    (PaymentCreatedByName) 
-PaymentCreatedDate 
-    The date this payment record was created
-PaymentLastChangedBy 
-    (PaymentLastChangedByName) 
-PaymentLastChangedDate  
-    The date this payment record was last changed
-
 Licence Keys
 ------------
 
