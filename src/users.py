@@ -234,7 +234,8 @@ def has_security_flag(securitymap, flag):
     """
     Returns true if the given flag is in the given map
     """
-    return securitymap.find(flag + " ") != -1
+    perms = securitymap.split("*")
+    return flag + " " in perms
 
 def add_security_flag(securitymap, flag):
     """
