@@ -199,7 +199,7 @@ class PetLinkPublisher(AbstractPublisher):
             self.log("req hdr: %s, \nreq data: %s" % (r["requestheaders"], r["requestbody"]))
             self.log("resp hdr: %s, \nresp body: %s" % (r["headers"], r["response"]))
 
-            jresp = utils.json_parse(r["response"])
+            jresp = utils.json_parse(r["response"].decode("utf-8").encode("ascii", "xmlcharrefreplace"))
             
             # Look for remote exceptions
             if "exception" in jresp and jresp["exception"] != "":
