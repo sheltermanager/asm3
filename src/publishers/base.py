@@ -869,7 +869,7 @@ class AbstractPublisher(threading.Thread):
             "Name":                 self.publisherKey,
             "Success":              self.successes,
             "Alerts":               self.alerts,
-            "LogData":              "\n".join(self.logBuffer)
+            "LogData":              utils.cunicode("\n").join(self.logBuffer)
         })
 
     def isImage(self, path):
