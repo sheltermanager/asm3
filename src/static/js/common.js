@@ -244,7 +244,7 @@
 
         has_permission: function(flag) {
             if (asm.superuser) { return true; }
-            if (asm.securitymap.indexOf("*" + flag + " ") != -1) { return true; }
+            if (asm.securitymap.indexOf(flag + " ") != -1) { return true; }
             return false;
         },
 

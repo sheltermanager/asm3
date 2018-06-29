@@ -234,7 +234,7 @@ def has_security_flag(securitymap, flag):
     """
     Returns true if the given flag is in the given map
     """
-    return securitymap.find("*" + flag + " ") != -1
+    return securitymap.find(flag + " ") != -1
 
 def add_security_flag(securitymap, flag):
     """
