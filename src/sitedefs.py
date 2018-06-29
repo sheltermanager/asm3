@@ -138,7 +138,7 @@ QR_IMG_SRC = "//chart.googleapis.com/chart?cht=qr&chl=%(url)s&chs=%(size)s"
 
 # Shell command to use to compress PDFs
 SCALE_PDF_DURING_ATTACH = False
-SCALE_PDF_CMD = "convert %(input)s -compress Zip %(output)s"
+SCALE_PDF_CMD = "convert -density 120 -quality 60 %(input)s -compress Jpeg %(output)s"
 #SCALE_PDF_CMD = "pdftk %(input)s output %(output)s compress"
 #SCALE_PDF_CMD = "gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dPDFSETTINGS=/screen -dNOPAUSE -dQUIET -dBATCH -sOutputFile=%(output)s %(input)s"
 
