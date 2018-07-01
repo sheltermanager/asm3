@@ -714,7 +714,6 @@ def web_login(post, session, remoteip, path):
             session.dbo = dbo
             session.user = user["USERNAME"]
             session.superuser = user["SUPERUSER"]
-            session.passchange = (password == "password")
             session.mobileapp = mobileapp
             update_session(session)
         except:

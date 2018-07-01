@@ -843,9 +843,6 @@ class main(JSONEndpoint):
     def controller(self, o):
         l = o.locale
         dbo = o.dbo
-        # Do we need to request a password change?
-        if session.passchange:
-            self.redirect("change_password?suggest=1")
         # If there's something wrong with the database, logout
         if not dbo.has_structure():
             self.redirect("logout")
@@ -1888,7 +1885,6 @@ class change_password(JSONEndpoint):
         al.debug("%s change password screen" % o.user, "code.change_password", o.dbo)
         return {
             "ismaster": smcom.active() and o.dbo.database == o.user,
-            "issuggest": o.post.integer("suggest") == 1,
             "username": o.user
         }
 

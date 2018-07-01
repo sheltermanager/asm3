@@ -1,6 +1,7 @@
 41
 ================
 
+01/07/18 Remove old "password" password check #458
 29/06/18 Bug in testing permissions for dam/mdam
 29/06/18 Disable autocomplete on date/time fields in dialogs
 29/06/18 Anibase publisher should respond to chipRegisterable=false
