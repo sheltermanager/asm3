@@ -10348,6 +10348,10 @@ msgstr ""
 msgid "Status"
 msgstr ""
 
+#: options.js shelterview.js
+msgid "Status and Species"
+msgstr ""
+
 #: common.js
 msgid "Stay"
 msgstr ""
@@ -12899,12 +12903,6 @@ msgstr ""
 
 #: csvimport.js
 msgid "Your CSV file should have a header row with field names ASM recognises."
-msgstr ""
-
-#: change_password.js
-msgid ""
-"Your password is currently set to 'password'. This is highly insecure and we "
-"strongly suggest you choose a new password."
 msgstr ""
 
 #: main.js
