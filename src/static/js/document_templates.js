@@ -80,6 +80,11 @@ $(function() {
                          $("#newname").val(tableform.table_selected_row(table).NAME);
                          $("#dialog-rename").dialog("open");
                      } 
+                 },
+                 { id: "images", text: _("Extra Images"), icon: "image", enabled: "always", tooltip: _("Add extra images for use in reports and documents"),
+                     click: function() {
+                        common.route("report_images");
+                     }
                  }
 
             ];
