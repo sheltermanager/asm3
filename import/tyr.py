@@ -37,13 +37,12 @@ asm.setid("owner", START_ID)
 asm.setid("adoption", START_ID)
 
 print "\\set ON_ERROR_STOP\nBEGIN;"
-print "DELETE FROM internallocation;"
-print "DELETE FROM animal WHERE ID >= %s AND CreatedBy = 'conversion';" % START_ID
-print "DELETE FROM animaltest WHERE ID >= %s AND CreatedBy = 'conversion';" % START_ID
-print "DELETE FROM animalvaccination WHERE ID >= %s AND CreatedBy = 'conversion';" % START_ID
-print "DELETE FROM log WHERE ID >= %s AND CreatedBy = 'conversion';" % START_ID
-print "DELETE FROM owner WHERE ID >= %s AND CreatedBy = 'conversion';" % START_ID
-print "DELETE FROM adoption WHERE ID >= %s AND CreatedBy = 'conversion';" % START_ID
+print "DELETE FROM animal WHERE ID >= %s;" % START_ID
+print "DELETE FROM animalmedical WHERE ID >= %s;" % START_ID
+print "DELETE FROM animalmedicaltreatment WHERE ID >= %s;" % START_ID
+print "DELETE FROM animalvaccination WHERE ID >= %s;" % START_ID
+print "DELETE FROM owner WHERE ID >= %s;" % START_ID
+print "DELETE FROM adoption WHERE ID >= %s;" % START_ID
 
 # Deal with people first (if set)
 if PERSON_FILENAME != "":
@@ -111,7 +110,7 @@ for d in asm.csv_to_list_cols(ANIMAL_FILENAME, ANIMAL_COLS):
 
 # Then milestones (intakes and movements)
 MILESTONE_COLS = [ "ID", "OrgID", "OrgName", "AddedDate", "AddedBy", "Date", "Type", "PersonID", 
-    "AnimalID", "Name", "EntryType", "Ustr1", "Ustr2", "Uint1", "Uint2", "Comments" ]
+    "AnimalID", "Species", "Name", "EntryType", "Ustr1", "Ustr2", "Uint1", "Uint2", "Comments" ]
 for d in asm.csv_to_list_cols(MILESTONE_FILENAME, MILESTONE_COLS):
     a = None
     o = None
@@ -154,19 +153,21 @@ for d in asm.csv_to_list_cols(MILESTONE_FILENAME, MILESTONE_COLS):
         for m in movements:
             if m.AnimalID == a.ID and m.OwnerID == o.ID and m.MovementType == 1 and m.ReturnDate is None:
                 m.ReturnDate = getdate(d["Date"])
+    elif d["Type"] == "Death":
+        a.DeceasedDate = getdate(d["Date"])
+        if d["Comments"].find("uthan") != -1:
+            a.PutToSleep = 1
+        a.PTSReasonID = 2
+        a.PTSReason = d["Comments"]
+        a.Archived = 1
 
-def process_vacc(animalno, vaccdate = None, vaccexpires = None, vaccname = ""):
+def process_vacc(animalid, vaccdate = None, vaccexpires = None, vaccname = "", batchnumber = "", manufacturer = "", comments = ""):
     """ Processes a vaccination record. PP have multiple formats of this data file """
-    if ppa.has_key(animalno):
-        a = ppa[animalno]
-    else:
-        asm.stderr("cannot process vacc %s, %s, %s, - no matching animal" % (animalno, vaccdate, vaccname))
-        return
     av = asm.AnimalVaccination()
     animalvaccinations.append(av)
     if vaccdate is None:
         vaccdate = a.DateBroughtIn
-    av.AnimalID = a.ID
+    av.AnimalID = animalid
     av.VaccinationID = 8
     vaccmap = {
         "Bordatella": 6,
@@ -185,18 +186,21 @@ def process_vacc(animalno, vaccdate = None, vaccexpires = None, vaccname = ""):
     av.DateRequired = vaccdate
     av.DateOfVaccination = vaccdate
     av.DateExpires = vaccexpires
-    av.Comments = "Type: %s" % vaccname
+    av.Manufacturer = manufacturer
+    av.BatchNumber = batchnumber
+    av.Comments = "Type: %s, %s" % (vaccname, comments)
 
 # Finally health
 HEALTH_COLS = [ "ID", "OrgID", "OrgName", "AddedDate", "AddedBy", "Uint1", "Ustr1", "AnimalID", "Name", "Type", "Ustr2", "Ustr3", 
-    "Type2", "Thing", "Ubool1", "Ustr4", "Status", "Given", "Due", "U1", "U2", "U3", "U4", "U5", "U6", "U7", "U8", "U9", "U10", "User", "Vet", "Ustr5", "Ustr6", "Microchip", "Comments" ]
+    "Type2", "Thing", "Ubool1", "Ustr4", "Status", "Given", "Due", "U1", "U2", "U3", "U4", "Manufacturer", "BatchNumber", "U7", "U8", "U9", "U10", "User", "Vet", "Ustr5", "TestResult", "Microchip", "Comments" ]
 for d in asm.csv_to_list_cols(HEALTH_FILENAME, HEALTH_COLS):
     a = None
+    healthdate = getdate(d["Given"]) or getdate(d["Due"])
     if d["AnimalID"] in ppa: a = ppa[d["AnimalID"]]
     if d["Type"] == "Vaccination":
-        process_vacc( d["AnimalID"], getdate(d["Given"]), None, d["Thing"] )
+        process_vacc( a.ID, healthdate, None, d["Thing"], d["BatchNumber"], d["Manufacturer"], d["Comments"] )
     elif d["Type"] == "Procedure":
-        animalmedicals.append( asm.animal_regimen_single(d["AnimalID"], getdate(d["Given"]), d["Thing"], "One", d["Comments"]) )
+        animalmedicals.append( asm.animal_regimen_single(d["AnimalID"], healthdate, d["Thing"], "Procedure", d["Comments"] + " " + d["TestResult"]) )
         if d["Thing"] == "Microchip Implant":
             a.Identichipped = 1
             a.IdentichipNumber = d["Microchip"]
@@ -205,6 +209,7 @@ for d in asm.csv_to_list_cols(HEALTH_FILENAME, HEALTH_COLS):
 for k,v in asm.locations.iteritems():
     print v
 for a in animals:
+    #if a.Archived == 1: print a
     print a
 for am in animalmedicals:
     print am
