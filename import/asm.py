@@ -127,6 +127,42 @@ def csv_to_list(fname, strip = False, remove_control = False, uppercasekeys = Fa
         o.append(row)
     return o
 
+def csv_to_list_cols(fname, cols, strip = False, remove_control = False, uppercasekeys = False, unicodehtml = False):
+    """
+    Reads the csv file fname and returns it as a list of maps 
+    with cols used as the keys.
+    strip: If True, removes whitespace from all fields
+    remove_control: If True, removes all ascii chars < 32
+    uppercasekeys: If True, runs upper() on headings/map keys
+    unicodehtml: If True, interprets the file as utf8 and replaces unicode chars with HTML entities
+    returns a list of maps
+    returns None if the file does not exist
+    """
+    if not os.path.exists(fname): return None
+    o = []
+    # Read the file into memory buffer b first
+    # any raw transformations can be done on it there
+    b = StringIO()
+    with open(fname, "rb") as f:
+        for s in f.readlines():
+            if remove_control:
+                b.write(''.join(c for c in s if ord(c) >= 32))
+                b.write("\n")
+            elif unicodehtml:
+                b.write(s.decode("utf8").encode("ascii", "xmlcharrefreplace"))
+            else:
+                b.write(s)
+        f.close()
+    reader = csv.DictReader(StringIO(b.getvalue()), cols)
+    for row in reader:
+        if strip:
+            for k, v in row.iteritems():
+                row[k] = v.strip()
+        if uppercasekeys:
+            row = {k.upper(): v for k, v in row.iteritems()}
+        o.append(row)
+    return o
+
 def cint(s):
     try:
         return int(s)
