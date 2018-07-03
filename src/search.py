@@ -17,6 +17,8 @@ import users
 import waitinglist
 from i18n import _, now
 
+THE_PAST = datetime.datetime(1900,1,1,0,0,0)
+
 def search(dbo, session, q):
 
     """
@@ -65,6 +67,7 @@ def search(dbo, session, q):
                 qlow = q.lower()
                 if rtype == "ANIMAL":
                     r["SORTON"] = r["LASTCHANGEDDATE"]
+                    if r["SORTON"] is None: r["SORTON"] = THE_PAST 
                     if r["ANIMALNAME"].lower() == qlow or r["SHELTERCODE"].lower() == qlow or r["SHORTCODE"].lower() == qlow:
                         r["SORTON"] = now()
                     # Put matches where term present just behind direct matches
@@ -72,6 +75,7 @@ def search(dbo, session, q):
                         r["SORTON"] = now() - datetime.timedelta(seconds=1)
                 elif rtype == "PERSON":
                     r["SORTON"] = r["LASTCHANGEDDATE"]
+                    if r["SORTON"] is None: r["SORTON"] = THE_PAST
                     # Count how many of the keywords in the search were present
                     # in the owner name field - if it's all of them then raise
                     # the relevance.
@@ -87,14 +91,13 @@ def search(dbo, session, q):
                         r["SORTON"] = now() - datetime.timedelta(seconds=1)
                 elif rtype == "LICENCE":
                     r["SORTON"] = r["ISSUEDATE"]
-                    if r["SORTON"] is None: 
-                        r["SORTON"] = now()
-                    if r["LICENCENUMBER"].lower() == qlow:
-                        r["SORTON"] = now()
+                    if r["SORTON"] is None: r["SORTON"] = THE_PAST
+                    if r["LICENCENUMBER"].lower() == qlow: r["SORTON"] = now()
                 else:
                     r["SORTON"] = r["LASTCHANGEDDATE"]
             else:
                 r["SORTON"] = r[sortfield]
+                if r["SORTON"] is None and sortfield.endswith("DATE"): r["SORTON"] = THE_PAST
             results.append(r)
 
     l = dbo.locale
