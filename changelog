@@ -1,6 +1,7 @@
 41
 ================
 
+03/07/18 Changing text of flags should update them in animal/person #460
 03/07/18 Fix search bug caused by blank last changed dates
 02/07/18 Show extra images button on document templates #453
 02/07/18 Status and species shelterview filter #457
