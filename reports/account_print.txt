@@ -15,7 +15,7 @@ $VAR to DATE and$
 SELECT *, 
 SUM(BalanceModifier) OVER (ORDER BY TrxDate, ID) AS MoneyBalance FROM 
 (
-SELECT TrxDate, accountstrx.ID, accountstrx.Description, 
+SELECT TrxDate, accountstrx.ID, accountstrx.Description, owner.OwnerName, 
 CASE WHEN Reconciled = 1 THEN 'R' ELSE '' END AS Reconciled,
 CASE WHEN source.Code LIKE '%$@account$%' THEN Amount ELSE 0 END AS MoneyDebit,
 CASE WHEN dest.Code LIKE '%$@account$%' THEN Amount ELSE 0 END AS MoneyCredit,
@@ -24,6 +24,8 @@ CASE WHEN source.Code LIKE '%$@account$%' THEN Amount * -1 WHEN dest.Code LIKE '
 FROM accountstrx
 INNER JOIN accounts source ON accountstrx.SourceAccountID = source.ID
 INNER JOIN accounts dest ON accountstrx.DestinationAccountID = dest.ID
+LEFT OUTER JOIN ownerdonation ON ownerdonation.ID = accountstrx.OwnerDonationID
+LEFT OUTER JOIN owner ON owner.ID = ownerdonation.OwnerID
 WHERE TrxDate >= '$@from$' AND TrxDate <= '$@to$' 
 AND (source.Code LIKE '%$@account$%' OR dest.Code LIKE '%$@account$%')
 ) dummy 
@@ -47,7 +49,7 @@ $$BODY
 <tr>
 <td>$TRXDATE</td>
 <td>$RECONCILED</td>
-<td>$DESCRIPTION</td>
+<td>$DESCRIPTION $OWNERNAME</td>
 <td>$OTHERACCOUNT</td>
 <td align="right">$MONEYDEBIT</td>
 <td align="right">$MONEYCREDIT</td>
