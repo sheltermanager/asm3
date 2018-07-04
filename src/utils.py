@@ -61,49 +61,138 @@ class PostedData(object):
     """
     data = None
     locale = None
+
     def __init__(self, data, locale):
         self.data = data
         self.locale = locale
+
     def boolean(self, field):
-        return df_kc(self.data, field)
-    def db_boolean(self, field):
-        return df_c(self.data, field)
+        if field not in self.data:
+            return 0
+        if self.data[field] == "checked" or self.data[field] == "on":
+            return 1
+        else:
+            return 0
+
     def date(self, field):
-        return df_kd(self.data, field, self.locale)
+        """ Returns a date key from a datafield """
+        if field in self.data:
+            return display2python(self.locale, self.data[field])
+        else:
+            return None
+
     def datetime(self, datefield, timefield):
-        return df_kdt(self.data, datefield, timefield, self.locale)
-    def db_date(self, field):
-        return df_d(self.data, field, self.locale)
-    def db_datetime(self, datefield, timefield):
-        return df_dt(self.data, datefield, timefield, self.locale)
+        """ Returns a datetime field """
+        if datefield in self.data:
+            d = display2python(self.locale, self.data[datefield])
+            if d is None: return None
+            if timefield in self.data:
+                tbits = self.data[timefield].split(":")
+                hour = 0
+                minute = 0
+                second = 0
+                if len(tbits) > 0:
+                    hour = cint(tbits[0])
+                if len(tbits) > 1:
+                    minute = cint(tbits[1])
+                if len(tbits) > 2:
+                    second = cint(tbits[2])
+                t = datetime.time(hour, minute, second)
+                d = d.combine(d, t)
+            return d
+        else:
+            return None
+
     def integer(self, field):
-        return df_ki(self.data, field)
-    def db_integer(self, field):
-        return df_s(self.data, field)
+        """ Returns an integer key from a datafield """
+        if field in self.data:
+            return cint(self.data[field])
+        else:
+            return 0
+
     def integer_list(self, field):
-        return df_kl(self.data, field)
+        """
+        Returns a list of integers from a datafield that contains
+        comma separated numbers.
+        """
+        if field in self.data:
+            s = self.string(field)
+            items = s.split(",")
+            ids = []
+            for i in items:
+                if is_numeric(i):
+                    ids.append(cint(i))
+            return ids
+        else:
+            return []
+
     def floating(self, field):
-        return df_kf(self.data, field)
-    def db_floating(self, field):
-        return str(df_kf(self.data, field))
+        """ Returns a float key from a datafield """
+        if field in self.data:
+            return cfloat(self.data[field])
+        else:
+            return float(0)
+
     def string(self, field, strip = True):
-        return df_ks(self.data, field, strip)
+        """ Returns a string key from a datafield """
+        if field in self.data:
+            s = encode_html(self.data[field])
+            if strip: s = s.strip()
+            return s
+        else:
+            return ""
+
+    def db_boolean(self, field):
+        return str(self.boolean(field))
+
+    def db_date(self, field):
+        """ Returns a date field for the database """
+        if field in self.data:
+            return db.dd(display2python(self.locale, self.data[field]))
+        else:
+            return "Null"
+
+    def db_datetime(self, datefield, timefield):
+        """ Returns a datetime field for the database """
+        return db.ddt(self.datetime(datefield, timefield))
+
+    def db_integer(self, field):
+        return str(self.integer(field))
+
+    def db_floating(self, field):
+        return str(self.floating(field))
+
     def db_string(self, field):
-        return df_t(self.data, field)
+        """ Returns a posted text field for the database, turns it from unicode into
+            ascii with XML entities to represent codepoints > 128 """
+        if field in self.data:
+            if is_str(self.data[field]):
+                s = cunicode(self.data[field]).encode("ascii", "xmlcharrefreplace")
+            else:
+                s = self.data[field].encode("ascii", "xmlcharrefreplace")
+            return db.ds(s.strip())
+        else:
+            return "''"
+
     def filename(self):
         if "filechooser" in self.data:
             return encode_html(self.data.filechooser.filename)
         return ""
+
     def filedata(self):
         if "filechooser" in self.data:
             return self.data.filechooser.value
         return ""
+
     def __contains__(self, key):
         return key in self.data
+
     def has_key(self, key):
         return key in self.data
+
     def __getitem__(self, key):
         return self.string(key)
+
     def __repr__(self):
         return json(self.data)
 
@@ -478,122 +567,6 @@ class ASMError(web.HTTPError):
         data = "<h1>Error</h1><p>%s</p>" % msg
         if "headers" not in web.ctx: web.ctx.headers = []
         web.HTTPError.__init__(self, status, headers, data)
-
-def df_c(data, field):
-    """ Returns a checkbox field for the database """
-    if field not in data:
-        return db.di(0)
-    if data[field] == "checked" or data[field] == "on":
-        return db.di(1)
-    else:
-        return db.di(0)
-
-def df_t(data, field):
-    """ Returns a posted text field for the database, turns it from unicode into
-        ascii with XML entities to represent codepoints > 128 """
-    if field in data:
-        if is_str(data[field]):
-            s = cunicode(data[field]).encode("ascii", "xmlcharrefreplace")
-        else:
-            s = data[field].encode("ascii", "xmlcharrefreplace")
-        return db.ds(s.strip())
-    else:
-        return "''"
-
-def df_s(data, field):
-    """ Returns a select field for the database """
-    if field in data:
-        return db.di(data[field])
-    else:
-        return "0"
-
-def df_d(data, field, l):
-    """ Returns a date field for the database """
-    if field in data:
-        return db.dd(display2python(l, data[field]))
-    else:
-        return "Null"
-
-def df_dt(data, datefield, timefield, l):
-    """ Returns a datetime field for the database """
-    return db.ddt(df_kdt(data, datefield, timefield, l))
-
-def df_kc(data, field):
-    """ Returns a checkbox field """
-    if field not in data:
-        return 0
-    if data[field] == "checked" or data[field] == "on":
-        return 1
-    else:
-        return 0
-
-def df_ki(data, field):
-    """ Returns an integer key from a datafield """
-    if field in data:
-        return cint(data[field])
-    else:
-        return 0
-
-def df_kf(data, field):
-    """ Returns a float key from a datafield """
-    if field in data:
-        return cfloat(data[field])
-    else:
-        return float(0)
-
-def df_ks(data, field, strip = True):
-    """ Returns a string key from a datafield """
-    if field in data:
-        s = encode_html(data[field])
-        if strip: s = s.strip()
-        return s
-    else:
-        return ""
-
-def df_kd(data, field, l):
-    """ Returns a date key from a datafield """
-    if field in data:
-        return display2python(l, data[field])
-    else:
-        return None
-
-def df_kdt(data, datefield, timefield, l):
-    """ Returns a datetime field """
-    if datefield in data:
-        d = display2python(l, data[datefield])
-        if d is None: return None
-        if timefield in data:
-            tbits = data[timefield].split(":")
-            hour = 0
-            minute = 0
-            second = 0
-            if len(tbits) > 0:
-                hour = cint(tbits[0])
-            if len(tbits) > 1:
-                minute = cint(tbits[1])
-            if len(tbits) > 2:
-                second = cint(tbits[2])
-            t = datetime.time(hour, minute, second)
-            d = d.combine(d, t)
-        return d
-    else:
-        return None
-
-def df_kl(data, field):
-    """
-    Returns a list of integers from a datafield that contains
-    comma separated numbers.
-    """
-    if field in data:
-        s = df_ks(data, field)
-        items = s.split(",")
-        ids = []
-        for i in items:
-            if is_numeric(i):
-                ids.append(cint(i))
-        return ids
-    else:
-        return []
 
 def escape_tinymce(content):
     """
