@@ -208,7 +208,7 @@ def get_vaccinations(dbo, animalid, onlygiven = False, sort = ASCENDING_REQUIRED
         sql += " ORDER BY av.DateRequired"
     elif sort == DESCENDING_REQUIRED:
         sql += " ORDER BY av.DateRequired DESC"
-    return db.query(dbo, sql)
+    return dbo.query(sql)
 
 def get_vaccinated(dbo, animalid):
     """
@@ -216,10 +216,10 @@ def get_vaccinated(dbo, animalid):
         1. The animal has had at least one vaccination given
         2. There are no outstanding vaccinations due before today
     """
-    given = db.query_int(dbo, "SELECT COUNT(ID) FROM animalvaccination " \
-        "WHERE AnimalID = %d AND DateOfVaccination Is Not Null " % animalid)
-    outstanding = db.query_int(dbo, "SELECT COUNT(ID) FROM animalvaccination " \
-        "WHERE AnimalID = %d AND DateOfVaccination Is Null AND DateRequired < %s" % (animalid, db.dd(now(dbo.timezone))))
+    given = dbo.query_int("SELECT COUNT(ID) FROM animalvaccination " \
+        "WHERE AnimalID = ? AND DateOfVaccination Is Not Null ", [animalid])
+    outstanding = dbo.query_int("SELECT COUNT(ID) FROM animalvaccination " \
+        "WHERE AnimalID = ? AND DateOfVaccination Is Null AND DateRequired < ?", (animalid, dbo.today()))
     return outstanding == 0 and given > 0
 
 def get_batch_for_vaccination_types(dbo):
@@ -255,7 +255,7 @@ def get_regimens(dbo, animalid, onlycomplete = False, sort = ASCENDING_REQUIRED)
         sql += " ORDER BY ID"
     elif sort == DESCENDING_REQUIRED:
         sql += " ORDER BY ID DESC"
-    rows = db.query(dbo, sql)
+    rows = dbo.query(sql)
     # Now add our extra named fields
     return embellish_regimen(l, rows)
 
@@ -277,8 +277,7 @@ def get_regimens_treatments(dbo, animalid, sort = DESCENDING_REQUIRED):
         sql += "ORDER BY amt.DateRequired DESC"
     elif sort == DESCENDING_GIVEN:
         sql += "ORDER BY amt.DateGiven DESC"
-
-    rows = db.query(dbo, sql)
+    rows = dbo.query(sql)
     # Now add our extra named fields
     return embellish_regimen(l, rows)
 
@@ -328,8 +327,7 @@ def get_profile(dbo, pfid):
     TIMINGRULE, TIMINGRULEFREQUENCY, TIMINGRULENOFREQUENCIES, TREATMENTRULE, TOTALNUMBEROFTREATMENTS
     """
     l = dbo.locale
-    sql = "SELECT m.* FROM medicalprofile m WHERE m.ID = %d" % int(pfid)
-    rows = db.query(dbo, sql)
+    rows = dbo.query("SELECT m.* FROM medicalprofile m WHERE m.ID = ?", [pfid])
     rows = embellish_regimen(l, rows)
     return rows[0]
 
@@ -345,7 +343,7 @@ def get_profiles(dbo, sort = ASCENDING_NAME):
         sql += "ORDER BY ProfileName"
     elif sort == DESCENDING_NAME:
         sql += "ORDER BY ProfileName DESC"
-    rows = db.query(dbo, sql)
+    rows = dbo.query(sql)
     # Now add our extra named fields
     return embellish_regimen(l, rows)
 
@@ -357,51 +355,51 @@ def embellish_regimen(l, rows):
     """
     for r in rows:
         st = 0
-        if "REGIMENID" in r: r["COMPOSITEID"] = "%d_%d" % (r["REGIMENID"], r["TREATMENTID"])
-        if "STATUS" in r: st = int(r["STATUS"])
-        tr = int(r["TIMINGRULE"])
-        trr = int(r["TREATMENTRULE"])
-        trf = int(r["TIMINGRULEFREQUENCY"])
-        trnf = int(r["TIMINGRULENOFREQUENCIES"])
-        tnt = int(r["TOTALNUMBEROFTREATMENTS"])
+        if "REGIMENID" in r: r.COMPOSITEID = "%d_%d" % (r.REGIMENID, r.TREATMENTID)
+        if "STATUS" in r: st = r.STATUS
+        tr = int(r.TIMINGRULE)
+        trr = int(r.TREATMENTRULE)
+        trf = int(r.TIMINGRULEFREQUENCY)
+        trnf = int(r.TIMINGRULENOFREQUENCIES)
+        tnt = int(r.TOTALNUMBEROFTREATMENTS)
         # NAMEDFREQUENCY - pulls together timing rule
         # information to produce a string, like "One Off"
         # or "1 treatment every 5 weeks"
         tp = _("days", l)
         if tr == ONEOFF:
-            r["NAMEDFREQUENCY"] = _("One Off", l)
+            r.NAMEDFREQUENCY = _("One Off", l)
         else:
             if trf == DAILY:
-                r["NAMEDFREQUENCY"] = _("{0} treatments every {1} days", l).format(tr, trnf)
+                r.NAMEDFREQUENCY = _("{0} treatments every {1} days", l).format(tr, trnf)
                 tp = _("days", l)
             elif trf == WEEKDAILY:
-                r["NAMEDFREQUENCY"] = _("{0} treatments every {1} weekdays", l).format(tr, trnf)
+                r.NAMEDFREQUENCY = _("{0} treatments every {1} weekdays", l).format(tr, trnf)
                 tp = _("weekdays", l)
             elif trf == WEEKLY:
-                r["NAMEDFREQUENCY"] = _("{0} treatments every {1} weeks", l).format(tr, trnf)
+                r.NAMEDFREQUENCY = _("{0} treatments every {1} weeks", l).format(tr, trnf)
                 tp = _("weeks", l)
             elif trf == MONTHLY:
-                r["NAMEDFREQUENCY"] = _("{0} treatments every {1} months", l).format(tr, trnf)
+                r.NAMEDFREQUENCY = _("{0} treatments every {1} months", l).format(tr, trnf)
                 tp = _("months", l)
             elif trf == YEARLY:
-                r["NAMEDFREQUENCY"] = _("{0} treatments every {1} years", l).format(tr, trnf)
+                r.NAMEDFREQUENCY = _("{0} treatments every {1} years", l).format(tr, trnf)
                 tp = _("years", l)
         # NAMEDNUMBEROFTREATMENTS - pulls together the treatment
         # rule information to return a string like "Unspecified" or
         # "21 treatment periods (52 treatments)" or "1 treatment" for one-offs
         if tr == ONEOFF:
-            r["NAMEDNUMBEROFTREATMENTS"] = _("1 treatment", l)
+            r.NAMEDNUMBEROFTREATMENTS = _("1 treatment", l)
         elif trr == UNSPECIFIED_LENGTH:
-            r["NAMEDNUMBEROFTREATMENTS"] = _("Unspecified", l)
+            r.NAMEDNUMBEROFTREATMENTS = _("Unspecified", l)
         else:
-            r["NAMEDNUMBEROFTREATMENTS"] = str(_("{0} {1} ({2} treatments)", l)).format(tnt, tp, tr * tnt)
+            r.NAMEDNUMBEROFTREATMENTS = str(_("{0} {1} ({2} treatments)", l)).format(tnt, tp, tr * tnt)
         # NAMEDSTATUS
         if st == ACTIVE:
-            r["NAMEDSTATUS"] = _("Active", l)
+            r.NAMEDSTATUS = _("Active", l)
         elif st == COMPLETED:
-            r["NAMEDSTATUS"] = _("Completed", l)
+            r.NAMEDSTATUS = _("Completed", l)
         elif st == HELD:
-            r["NAMEDSTATUS"] = _("Held", l)
+            r.NAMEDSTATUS = _("Held", l)
     return rows
 
 def get_tests(dbo, animalid, onlygiven = False, sort = ASCENDING_REQUIRED):
@@ -418,7 +416,7 @@ def get_tests(dbo, animalid, onlygiven = False, sort = ASCENDING_REQUIRED):
         sql += "ORDER BY at.DateRequired"
     elif sort == DESCENDING_REQUIRED:
         sql += "ORDER BY at.DateRequired DESC"
-    return db.query(dbo, sql)
+    return dbo.query(sql)
 
 def get_vaccinations_outstanding(dbo, offset = "m31", locationfilter = "", siteid = 0):
     """
@@ -449,7 +447,7 @@ def get_vaccinations_outstanding(dbo, offset = "m31", locationfilter = "", sitei
     shelterfilter = ""
     if not configuration.include_off_shelter_medical(dbo):
         shelterfilter = " AND (a.Archived = 0 OR a.ActiveMovementType = 2)"
-    return db.query(dbo, get_vaccination_query(dbo) + \
+    return dbo.query(get_vaccination_query(dbo) + \
         "WHERE av.DateRequired Is Not Null " \
         "AND a.DeceasedDate Is Null %s %s %s " \
         "ORDER BY av.DateRequired, a.AnimalName" % (shelterfilter, ec, locationfilter))
