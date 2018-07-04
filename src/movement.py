@@ -90,113 +90,97 @@ def get_movements(dbo, movementtype):
     Gets the list of movements of a particular type 
     (unreturned or returned after today and for animals who aren't deceased)
     """
-    return db.query(dbo, get_movement_query(dbo) + \
-        "WHERE m.MovementType = %d AND " \
-        "(m.ReturnDate Is Null OR m.ReturnDate > %s) " \
+    return dbo.query(get_movement_query(dbo) + \
+        "WHERE m.MovementType = ? AND " \
+        "(m.ReturnDate Is Null OR m.ReturnDate > ?) " \
         "AND a.DeceasedDate Is Null " \
-        "ORDER BY m.MovementDate DESC" % (int(movementtype), db.dd(i18n.now(dbo.timezone))))
+        "ORDER BY m.MovementDate DESC", (movementtype, dbo.today()))
 
 def get_movement(dbo, movementid):
     """
     Returns a single movement by id. Returns None if it does not exist.
     """
-    m = db.query(dbo, get_movement_query(dbo) + " WHERE m.ID = %d" % movementid)
-    if len(m) == 0: return None
-    return m[0]
+    return dbo.first_row(dbo.query(get_movement_query(dbo) + " WHERE m.ID = ?", [movementid]))
 
 def get_active_reservations(dbo, age = 0):
     """
     Gets the list of uncancelled reservation movements.
     age: The age of the reservation in days, or 0 for all
     """
-    where = ""
     if age > 0:
-        where = "AND m.ReservationDate <= %s" % db.dd(i18n.subtract_days(i18n.now(dbo.timezone), age))
-    return db.query(dbo, get_movement_query(dbo) + \
-        "WHERE m.ReservationDate Is Not Null AND m.MovementDate Is Null AND m.MovementType = 0 AND m.ReturnDate Is Null " \
-        "AND m.ReservationCancelledDate Is Null %s ORDER BY m.ReservationDate" % where)
+        return dbo.query(get_movement_query(dbo) + \
+            " WHERE m.ReservationDate Is Not Null AND m.MovementDate Is Null AND m.MovementType = 0 AND m.ReturnDate Is Null " \
+            "AND m.ReservationCancelledDate Is Null AND m.ReservationDate <= ? ORDER BY m.ReservationDate", [dbo.today(offset=age*-1)])
+    return dbo.query(get_movement_query(dbo) + \
+        " WHERE m.ReservationDate Is Not Null AND m.MovementDate Is Null AND m.MovementType = 0 AND m.ReturnDate Is Null " \
+        "AND m.ReservationCancelledDate Is Null ORDER BY m.ReservationDate")
 
 def get_active_transports(dbo):
-    return db.query(dbo, get_transport_query(dbo) + \
-        "WHERE t.Status < 10 OR DropoffDateTime > %s ORDER BY DropoffDateTime" % db.dd(i18n.now(dbo.timezone)))
+    return dbo.query(get_transport_query(dbo) + " WHERE t.Status < 10 OR DropoffDateTime > ? ORDER BY DropoffDateTime", [dbo.today()])
 
 def get_animal_transports(dbo, animalid):
-    return db.query(dbo, get_transport_query(dbo) + \
-        "WHERE t.AnimalID = %d ORDER BY DropoffDateTime" % animalid)
+    return dbo.query(get_transport_query(dbo) + " WHERE t.AnimalID = ? ORDER BY DropoffDateTime", [animalid])
 
 def get_transport_two_dates(dbo, start, end): 
-    return dbo.query(get_transport_query(dbo) + \
-        "WHERE t.PickupDateTime >= ? AND t.PickupDateTime <= ? ORDER BY t.PickupDateTime", (start, end))
+    return dbo.query(get_transport_query(dbo) + " WHERE t.PickupDateTime >= ? AND t.PickupDateTime <= ? ORDER BY t.PickupDateTime", (start, end))
 
 def get_recent_adoptions(dbo, months = 1):
     """
     Returns a list of adoptions in the last "months" months.
     """
-    return db.query(dbo, get_movement_query(dbo) + \
+    return dbo.query(get_movement_query(dbo) + \
         "WHERE m.MovementType = 1 AND m.MovementDate Is Not Null AND m.ReturnDate Is Null " \
-        "AND m.MovementDate > %s " \
-        "ORDER BY m.MovementDate DESC" % db.dd(i18n.subtract_days(i18n.now(dbo.timezone), months * 31)))
+        "AND m.MovementDate > ? " \
+        "ORDER BY m.MovementDate DESC", [dbo.today(offset=months*-31)])
 
 def get_recent_nonfosteradoption(dbo, months = 1):
     """
     Returns a list of active movements that aren't reserves,
     fosters, adoptions or transfers in the last "months" months.
     """
-    return db.query(dbo, get_movement_query(dbo) + \
+    return dbo.query(get_movement_query(dbo) + \
         "WHERE m.MovementType > 3 AND m.MovementDate Is Not Null AND m.ReturnDate Is Null " \
-        "AND m.MovementDate > %s " \
-        "ORDER BY m.MovementDate DESC" % db.dd(i18n.subtract_days(i18n.now(dbo.timezone), months * 31)))
+        "AND m.MovementDate > ? " \
+        "ORDER BY m.MovementDate DESC", [dbo.today(offset=months*-31)])
 
 def get_recent_transfers(dbo, months = 1):
     """
     Returns a list of transfers in the last "months" months.
     """
-    return db.query(dbo, get_movement_query(dbo) + \
+    return dbo.query(get_movement_query(dbo) + \
         "WHERE m.MovementType = 3 AND m.MovementDate Is Not Null AND m.ReturnDate Is Null " \
-        "AND m.MovementDate > %s " \
-        "ORDER BY m.MovementDate DESC" % db.dd(i18n.subtract_days(i18n.now(dbo.timezone), months * 31)))
+        "AND m.MovementDate > ? " \
+        "ORDER BY m.MovementDate DESC", [dbo.today(offset=months*-31)])
 
 def get_recent_unneutered_adoptions(dbo, months = 1):
     """
     Returns a list of adoptions in the last "months" months where the
     animal remains unneutered.
     """
-    return db.query(dbo, get_movement_query(dbo) + \
+    return dbo.query(get_movement_query(dbo) + \
         "WHERE m.MovementType = 1 AND m.MovementDate Is Not Null AND m.ReturnDate Is Null " \
-        "AND m.MovementDate > %s AND a.Neutered = 0 " \
-        "ORDER BY m.MovementDate DESC" % db.dd(i18n.subtract_days(i18n.now(dbo.timezone), months * 31)))
+        "AND m.MovementDate > ? AND a.Neutered = 0 " \
+        "ORDER BY m.MovementDate DESC", [dbo.today(offset=months*-31)])
 
-def get_trial_adoptions(dbo, mode = "ALL"):
+def get_trial_adoptions(dbo):
     """
     Returns a list of trial adoption movements. 
-    If mode is EXPIRING, shows trials that end today or before.
-    If mode is ACTIVE, shows trials that end after today.
-    If mode is ALL, returns all trials.
     """
-    where = ""
-    if mode == "ALL":
-        where = ""
-    elif mode == "EXPIRING":
-        where = "AND m.TrialEndDate <= %s " % db.dd(i18n.now(dbo.timezone))
-    elif mode == "ACTIVE":
-        where = "AND m.TrialEndDate > %s " % db.dd(i18n.now(dbo.timezone))
-    return db.query(dbo, get_movement_query(dbo) + \
-        "WHERE m.IsTrial = 1 AND m.MovementType = 1 AND (m.ReturnDate Is Null OR m.ReturnDate > %s) %s " \
-        "ORDER BY m.TrialEndDate" % (db.dd(i18n.now(dbo.timezone)), where))
+    return dbo.query(get_movement_query(dbo) + \
+        "WHERE m.IsTrial = 1 AND m.MovementType = 1 AND (m.ReturnDate Is Null OR m.ReturnDate > ?) " \
+        "ORDER BY m.TrialEndDate", [dbo.today()])
 
 def get_animal_movements(dbo, aid):
     """
     Gets the list of movements for a particular animal
     """
-    return db.query(dbo, get_movement_query(dbo) + \
-        "WHERE m.AnimalID = %d ORDER BY m.MovementDate DESC" % int(aid))
+    return dbo.query(get_movement_query(dbo) + " WHERE m.AnimalID = ? ORDER BY m.MovementDate DESC", [aid])
 
 def get_person_movements(dbo, pid):
     """
     Gets the list of movements for a particular person
     """
-    return db.query(dbo, get_movement_query(dbo) + \
-        "WHERE m.OwnerID = %d ORDER BY m.MovementDate DESC" % int(pid))
+    return dbo.query(get_movement_query(dbo) + " WHERE m.OwnerID = ? ORDER BY m.MovementDate DESC", [pid])
 
 def validate_movement_form_data(dbo, post):
     """

@@ -426,21 +426,21 @@ def get_vaccinations_outstanding(dbo, offset = "m31", locationfilter = "", sitei
     ec = ""
     offsetdays = utils.atoi(offset)
     if offset.startswith("m"):
-        ec = " AND av.DateRequired >= %s AND av.DateRequired <= %s AND av.DateOfVaccination Is Null" % (dbo.sql_date(dbo.today(offsetdays*-1)), dbo.sql_date(dbo.today()))
+        ec = " AND av.DateRequired >= %s AND av.DateRequired <= %s AND av.DateOfVaccination Is Null" % (dbo.sql_date(dbo.today(offset=offsetdays*-1)), dbo.sql_date(dbo.today()))
     if offset.startswith("p"):
-        ec = " AND av.DateRequired >= %s AND av.DateRequired <= %s AND av.DateOfVaccination Is Null" % (dbo.sql_date(dbo.today()), dbo.sql_date(dbo.today(offsetdays)))
+        ec = " AND av.DateRequired >= %s AND av.DateRequired <= %s AND av.DateOfVaccination Is Null" % (dbo.sql_date(dbo.today()), dbo.sql_date(dbo.today(offset=offsetdays)))
     if offset.startswith("xm"):
         ec = " AND av.DateExpires >= %s AND av.DateExpires <= %s AND av.DateOfVaccination Is Not Null " \
             "AND NOT EXISTS(SELECT av2.ID FROM animalvaccination av2 WHERE av2.ID <> av.ID " \
             "AND av2.AnimalID = av.AnimalID AND av2.VaccinationID = av.VaccinationID " \
             "AND av2.ID <> av.ID AND av2.DateRequired >= av.DateOfVaccination)" \
-                % (dbo.sql_date(dbo.today(offsetdays*-1)), dbo.sql_date(dbo.today()))
+                % (dbo.sql_date(dbo.today(offset=offsetdays*-1)), dbo.sql_date(dbo.today()))
     if offset.startswith("xp"):
         ec = " AND av.DateExpires >= %s AND av.DateExpires <= %s AND av.DateOfVaccination Is Not Null " \
             "AND NOT EXISTS(SELECT av2.ID FROM animalvaccination av2 WHERE av2.ID <> av.ID " \
             "AND av2.AnimalID = av.AnimalID AND av2.VaccinationID = av.VaccinationID " \
             "AND av2.ID <> av.ID AND av2.DateRequired >= av.DateOfVaccination)" \
-                % (dbo.sql_date(dbo.today()), dbo.sql_date(dbo.today(offsetdays)))
+                % (dbo.sql_date(dbo.today()), dbo.sql_date(dbo.today(offset=offsetdays)))
     locationfilter = animal.get_location_filter_clause(locationfilter=locationfilter, siteid=siteid, andprefix=True)
     shelterfilter = ""
     if not configuration.include_off_shelter_medical(dbo):
@@ -505,9 +505,9 @@ def get_tests_outstanding(dbo, offset = "m31", locationfilter = "", siteid = 0):
     ec = ""
     offsetdays = utils.atoi(offset)
     if offset.startswith("m"):
-        ec = " AND at.DateRequired >= %s AND at.DateRequired <= %s" % (dbo.sql_date(dbo.today(offsetdays*-1)), dbo.sql_date(dbo.today()))
+        ec = " AND at.DateRequired >= %s AND at.DateRequired <= %s" % (dbo.sql_date(dbo.today(offset=offsetdays*-1)), dbo.sql_date(dbo.today()))
     if offset.startswith("p"):
-        ec = " AND at.DateRequired >= %s AND at.DateRequired <= %s" % (dbo.sql_date(dbo.today()), dbo.sql_date(dbo.today(offsetdays)))
+        ec = " AND at.DateRequired >= %s AND at.DateRequired <= %s" % (dbo.sql_date(dbo.today()), dbo.sql_date(dbo.today(offset=offsetdays)))
     locationfilter = animal.get_location_filter_clause(locationfilter=locationfilter, siteid=siteid, andprefix=True)
     shelterfilter = ""
     if not configuration.include_off_shelter_medical(dbo):
@@ -547,9 +547,9 @@ def get_treatments_outstanding(dbo, offset = "m31", locationfilter = "", siteid 
     ec = ""
     offsetdays = utils.atoi(offset)
     if offset.startswith("m"):
-        ec = " AND amt.DateRequired >= %s AND amt.DateRequired <= %s" % (dbo.sql_date(dbo.today(offsetdays*-1)), dbo.sql_date(dbo.today()))
+        ec = " AND amt.DateRequired >= %s AND amt.DateRequired <= %s" % (dbo.sql_date(dbo.today(offset=offsetdays*-1)), dbo.sql_date(dbo.today()))
     if offset.startswith("p"):
-        ec = " AND amt.DateRequired >= %s AND amt.DateRequired <= %s" % (dbo.sql_date(dbo.today()), dbo.sql_date(dbo.today(offsetdays)))
+        ec = " AND amt.DateRequired >= %s AND amt.DateRequired <= %s" % (dbo.sql_date(dbo.today()), dbo.sql_date(dbo.today(offset=offsetdays)))
     locationfilter = animal.get_location_filter_clause(locationfilter=locationfilter, siteid=siteid, andprefix=True)
     shelterfilter = ""
     if not configuration.include_off_shelter_medical(dbo):
