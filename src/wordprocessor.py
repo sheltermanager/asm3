@@ -5,7 +5,6 @@ import animal
 import animalcontrol
 import clinic
 import configuration
-import db
 import financial
 import html
 import log
@@ -559,11 +558,11 @@ def animal_tags(dbo, a, includeAdditional=True, includeCosts=True, includeDiet=T
         tags.update(table_tags(dbo, d, animal.get_costs(dbo, a["ID"]), "COSTTYPENAME", "COSTPAIDDATE"))
 
         # Cost totals
-        totalvaccinations = db.query_int(dbo, "SELECT SUM(Cost) FROM animalvaccination WHERE AnimalID = %d" % a["ID"])
-        totaltransports = db.query_int(dbo, "SELECT SUM(Cost) FROM animaltransport WHERE AnimalID = %d" % a["ID"])
-        totaltests = db.query_int(dbo, "SELECT SUM(Cost) FROM animaltest WHERE AnimalID = %d" % a["ID"])
-        totalmedicals = db.query_int(dbo, "SELECT SUM(Cost) FROM animalmedical WHERE AnimalID = %d" % a["ID"])
-        totallines = db.query_int(dbo, "SELECT SUM(CostAmount) FROM animalcost WHERE AnimalID = %d" % a["ID"])
+        totalvaccinations = dbo.query_int("SELECT SUM(Cost) FROM animalvaccination WHERE AnimalID = ?", [a["ID"]])
+        totaltransports = dbo.query_int("SELECT SUM(Cost) FROM animaltransport WHERE AnimalID = ?", [a["ID"]])
+        totaltests = dbo.query_int("SELECT SUM(Cost) FROM animaltest WHERE AnimalID = ?", [a["ID"]])
+        totalmedicals = dbo.query_int("SELECT SUM(Cost) FROM animalmedical WHERE AnimalID = ?", [a["ID"]])
+        totallines = dbo.query_int("SELECT SUM(CostAmount) FROM animalcost WHERE AnimalID = ?", [a["ID"]])
         totalcosts = totalvaccinations + totaltransports + totaltests + totalmedicals + totallines
         dailyboardingcost = a["DAILYBOARDINGCOST"] or 0
         daysonshelter = a["DAYSONSHELTER"] or 0
