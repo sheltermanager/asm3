@@ -53,6 +53,7 @@ $$FOOT
 <td></td>
 <td><b> {SUM.Cost}<b/></td>
 </tr>
+<p><b>Total $VaccinationType: {COUNT.VaccinationType}</b></p>
 
 </table>
 
