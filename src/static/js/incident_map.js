@@ -8,7 +8,7 @@ $(function() {
         render: function() {
             return [
                 html.content_header(_("Active Incidents")),
-                '<div id="embeddedmap" style="width: 100%; height: 600px; color: #000" />',
+                '<div id="embeddedmap" style="z-index: 1; width: 100%; height: 600px; color: #000" />',
                 html.content_footer()
             ].join("\n");
         },

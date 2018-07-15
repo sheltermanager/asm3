@@ -1469,7 +1469,7 @@ class Report:
             self._Append("</body></html>")
             return self.output
 
-        self._Append('<div id="embeddedmap" style="width: 100%%; height: 600px; color: #000" />\n')
+        self._Append('<div id="embeddedmap" style="z-index: 1; width: 100%%; height: 600px; color: #000" />\n')
         self._Append("<script type='text/javascript'>\n" \
             "setTimeout(function() {\n" \
             "var points = \n")

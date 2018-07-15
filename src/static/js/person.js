@@ -172,7 +172,7 @@ $(function() {
                 '<!-- Third column, embedded map placeholder -->',
                 '</td>',
                 '<td width="35%">',
-                '<div id="embeddedmap" style="width: 100%; height: 300px; color: #000" />',
+                '<div id="embeddedmap" style="z-index: 1; width: 100%; height: 300px; color: #000" />',
                 '<!-- end outer table -->',
                 '</td>',
                 '</tr>',
