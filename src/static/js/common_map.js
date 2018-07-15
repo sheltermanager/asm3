@@ -87,25 +87,6 @@
             });
         },
 
-        /** Gets the lat/long position for an address from sheltermanager.com */
-        _smcom_get_lat_long: function(address, town, city, postcode, callback) {
-            var add = encodeURIComponent(address.replace("\n", ",") + "," + town).replace(/ /g, "+");
-            if (this._only_use_postcode()) { add = postcode.replace(/ /g, "+"); }
-            var url = "/geocode?format=json&q=" + add;
-            $.ajax({
-                type: "GET",
-                dataType: "json",
-                mimeType: "text/json",
-                url: url,
-                success: function(data) {
-                    callback(data[0].lat, data[0].lon);
-                },
-                error: function(jqXHR, textStatus, errorThrown) {
-                    callback(0, 0);
-                }
-            });
-        },
-
         /** Gets the lat/long position for an address from mapquest */
         _mapquest_get_lat_long: function(address, town, city, postcode, callback) {
             var add = (address.replace("\n", ",") + "," + town + "," + city + "," + postcode).replace(/'/g, '');
