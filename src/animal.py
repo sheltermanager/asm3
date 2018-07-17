@@ -660,11 +660,11 @@ def get_animals_long_term(dbo):
 def get_animals_owned_by(dbo, personid):
     """
     Returns all animals who are owned by personid
-    1. Animals that have an open adoption to this person (nonshelter=0)
+    1. Animals that have an open adoption, foster, transter, reclaim or retailer movement to this person (nonshelter=0)
     2. Animals where originalownerid = personid (nonshelter=1)
     """
-    sa = dbo.query("%s WHERE a.NonShelterAnimal = 0 AND a.ActiveMovementType = 1 AND a.DeceasedDate Is Null " \
-        "AND EXISTS(SELECT ID FROM adoption WHERE AnimalID = a.ID AND OwnerID = ? AND MovementType = 1 AND ReturnDate Is Null)" % get_animal_query(dbo), [personid])
+    sa = dbo.query("%s WHERE a.NonShelterAnimal = 0 AND a.ActiveMovementType IN (1,2,3,5,8) AND a.DeceasedDate Is Null " \
+        "AND EXISTS(SELECT ID FROM adoption WHERE AnimalID = a.ID AND OwnerID = ? AND MovementType IN (1,2,3,5,8) AND ReturnDate Is Null)" % get_animal_query(dbo), [personid])
     nsa = dbo.query("%s WHERE a.NonShelterAnimal = 1 AND a.DeceasedDate Is Null AND a.OriginalOwnerID = ?" % get_animal_query(dbo), [personid])
     return get_animals_brief(sa + nsa)
 
