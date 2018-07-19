@@ -9,6 +9,8 @@ import utils
 from base import FTPPublisher, get_microchip_data
 from sitedefs import SMARTTAG_FTP_HOST, SMARTTAG_FTP_USER, SMARTTAG_FTP_PASSWORD
 
+SMARTTAG_PREFIXES = [ '90007400', '900139', '900141' ]
+
 class SmartTagPublisher(FTPPublisher):
     """
     Handles publishing to SmartTag PETID
@@ -29,6 +31,15 @@ class SmartTagPublisher(FTPPublisher):
         else:
             return "\"N\""
 
+    def stIsSmartTagPrefix(self, chipno):
+        """
+        Returns true if this is a smart tag chip prefix
+        """
+        for p in SMARTTAG_PREFIXES:
+            if chipno.startswith(p):
+                return True
+        return False
+
     def run(self):
         
         if self.isPublisherExecuting(): return
@@ -42,7 +53,7 @@ class SmartTagPublisher(FTPPublisher):
             self.cleanup()
             return
 
-        animals = get_microchip_data(self.dbo, ["a.SmartTag = 1 AND a.SmartTagNumber <> ''", '90007400', '900139', '900141'], "smarttag")
+        animals = get_microchip_data(self.dbo, ["a.SmartTag = 1 AND a.SmartTagNumber <> ''"] + SMARTTAG_PREFIXES], "smarttag")
         if len(animals) == 0:
             self.setLastError("No animals found to publish.")
             self.cleanup(save_log=False)
@@ -92,7 +103,7 @@ class SmartTagPublisher(FTPPublisher):
                 # sourcesystemownerkey
                 line.append("\"%s\"" % str(an["CURRENTOWNERID"]))
                 # signupidassigned, signuptype
-                if an["IDENTICHIPNUMBER"].startswith("90007400"):
+                if self.stIsSmartTagPrefix(an["IDENTICHIPNUMBER"]):
                     # if we have a smarttag microchip number, use that instead of the tag
                     # since it's unlikely someone will want both
                     line.append("\"%s\"" % an["IDENTICHIPNUMBER"])
