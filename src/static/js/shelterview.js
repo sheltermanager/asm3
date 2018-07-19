@@ -526,7 +526,7 @@ $(function() {
             h.push('<option value="statusspecies">' + _("Status and Species") + '</option>');
             h.push('<option value="type">' + _("Type") + '</option>');
             h.push('</select>');
-            h.push('<p class="asm-menu-category">' + config.str("Organisation") + '</p>');
+            h.push('<p class="asm-menu-category">' + config.str("Organisation") + ' (' + controller.animals.length + ')</p>');
             h.push('<div id="viewcontainer"></div>');
             h.push('</div>');
             return h.join("\n");
