@@ -262,7 +262,8 @@ class PetLinkPublisher(AbstractPublisher):
                         # (which means we'll attempt to register the chip the next time this publisher is run).
                         PERMANENT_FAILURES = [ 
                             "has an existing PetLink account and their contact information is already on file",
-                            "Not a prepaid microchip.",
+                            "Not a prepaid microchip",
+                            "This is a Found Animals Registry chip",
                             "cannot be transferred - the account is locked."
                         ]
                         for m in PERMANENT_FAILURES:
