@@ -42,12 +42,15 @@ def get_person_query(dbo):
         "web.MediaName AS WebsiteMediaName, " \
         "web.Date AS WebsiteMediaDate, " \
         "web.MediaNotes AS WebsiteMediaNotes, " \
+        "doc.MediaName AS DocMediaName, " \
+        "doc.Date AS DocMediaDate, " \
         "(SELECT COUNT(*) FROM ownerinvestigation oi WHERE oi.OwnerID = o.ID) AS Investigation, " \
         "(SELECT COUNT(*) FROM animalcontrol ac WHERE ac.OwnerID = o.ID OR ac.Owner2ID = o.ID OR ac.Owner3ID = o.ID) AS Incident, " \
         "(SELECT COUNT(*) FROM animal bib WHERE bib.BroughtInByOwnerID = o.ID OR bib.OriginalOwnerID = o.ID) AS Surrender " \
         "FROM owner o " \
         "LEFT OUTER JOIN owner ho ON ho.ID = o.HomeCheckedBy " \
         "LEFT OUTER JOIN media web ON web.LinkID = o.ID AND web.LinkTypeID = 3 AND web.WebsitePhoto = 1 " \
+        "LEFT OUTER JOIN media doc ON doc.LinkID = o.ID AND doc.LinkTypeID = 3 AND doc.DocPhoto = 1 " \
         "LEFT OUTER JOIN jurisdiction j ON j.ID = o.JurisdictionID "
 
 def get_rota_query(dbo):

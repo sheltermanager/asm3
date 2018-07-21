@@ -964,7 +964,7 @@ def clinic_tags(dbo, c):
     tags.update(table_tags(dbo, d, clinic.get_invoice_items(dbo, c.ID)))
     return tags
 
-def person_tags(dbo, p):
+def person_tags(dbo, p, includeImg=False):
     """
     Generates a list of tags from a person result (the deep type from
     calling person.get_person)
@@ -1022,8 +1022,16 @@ def person_tags(dbo, p):
         "HOMECHECKEDBYMOBILETELEPHONE": p["HOMECHECKEDBYMOBILETELEPHONE"],
         "HOMECHECKEDBYCELLTELEPHONE": p["HOMECHECKEDBYMOBILETELEPHONE"],
         "MEMBERSHIPNUMBER"      : p["MEMBERSHIPNUMBER"],
-        "MEMBERSHIPEXPIRYDATE"  : python2display(l, p["MEMBERSHIPEXPIRYDATE"])
+        "MEMBERSHIPEXPIRYDATE"  : python2display(l, p["MEMBERSHIPEXPIRYDATE"]),
     }
+
+    if includeImg:
+        tags["DOCUMENTIMGSRC"] = html.doc_img_src(dbo, p)
+        tags["DOCUMENTIMGLINK"] = "<img height=\"200\" src=\"" + html.doc_img_src(dbo, p) + "\" >"
+        tags["DOCUMENTIMGLINK200"] = "<img height=\"200\" src=\"" + html.doc_img_src(dbo, p) + "\" >"
+        tags["DOCUMENTIMGLINK300"] = "<img height=\"300\" src=\"" + html.doc_img_src(dbo, p) + "\" >"
+        tags["DOCUMENTIMGLINK400"] = "<img height=\"400\" src=\"" + html.doc_img_src(dbo, p) + "\" >"
+        tags["DOCUMENTIMGLINK500"] = "<img height=\"500\" src=\"" + html.doc_img_src(dbo, p) + "\" >"
 
     # Additional fields
     tags.update(additional_field_tags(dbo, additional.get_additional_fields(dbo, p["ID"], "person")))
@@ -1360,7 +1368,7 @@ def generate_person_doc(dbo, templateid, personid, username):
     p = person.get_person(dbo, personid)
     im = media.get_image_file_data(dbo, "person", personid)[1]
     if p is None: raise utils.ASMValidationError("%d is not a valid person ID" % personid)
-    tags = person_tags(dbo, p)
+    tags = person_tags(dbo, p, includeImg=True)
     tags = append_tags(tags, org_tags(dbo, username))
     m = movement.get_person_movements(dbo, personid)
     if len(m) > 0: 
