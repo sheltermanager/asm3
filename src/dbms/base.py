@@ -394,6 +394,8 @@ class Database(object):
         if generateID:
             iid = self.get_id(table)
             values["ID"] = iid
+        elif "ID" in values:
+            iid = values["ID"]
         values = self.encode_str_before_write(values)
         sql = "INSERT INTO %s (%s) VALUES (%s)" % ( table, ",".join(values.iterkeys()), self.sql_placeholders(values) )
         self.execute(sql, values.values(), override_lock=setOverrideDBLock)
@@ -409,6 +411,7 @@ class Database(object):
             user: The user account performing the update. If set, adds CreatedBy/Date/LastChangedBy/Date fields
             setRecordVersion: If user is non-blank and this is True, sets RecordVersion
             writeAudit: If True, writes an audit record for the update
+            returns the number of rows updated
         """
         if user != "" and setLastChanged:
             values["LastChangedBy"] = user
@@ -422,11 +425,12 @@ class Database(object):
         sql = "UPDATE %s SET %s WHERE %s" % ( table, ",".join( ["%s=?" % x for x in values.iterkeys()] ), where )
         if iid > 0: 
             preaudit = self.query_row(table, iid)
-        self.execute(sql, values.values(), override_lock=setOverrideDBLock)
+        rows_affected = self.execute(sql, values.values(), override_lock=setOverrideDBLock)
         if iid > 0:
             postaudit = self.query_row(table, iid)
         if user != "" and iid > 0 and writeAudit: 
             audit.edit(self, user, table, iid, audit.map_diff(preaudit, postaudit))
+        return rows_affected
 
     def delete(self, table, where, user="", writeAudit=True):
         """ Deletes row ID=iid from table 
@@ -434,12 +438,13 @@ class Database(object):
             where: Either a where clause or an int ID value for ID=where
             user: The user account doing the delete
             writeAudit: If True, writes an audit record for the delete
+            returns the number of rows deleted
         """
         if type(where) == int: 
             where = "ID=%d" % where
         if writeAudit and user != "":
             audit.delete_rows(self, user, table, where)
-        self.execute("DELETE FROM %s WHERE %s" % (table, where))
+        return self.execute("DELETE FROM %s WHERE %s" % (table, where))
 
     def install_stored_procedures(self):
         """ Install any supporting stored procedures (typically for reports) needed for this backend """
