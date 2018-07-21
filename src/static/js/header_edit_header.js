@@ -104,6 +104,10 @@ $(function() {
             if (a.ADOPTIONCOORDINATORID) {
                 coordinator = '<tr><td>' + _("Adoption Coordinator") + ':</td><td><b>' + html.person_link(a.ADOPTIONCOORDINATORID, a.ADOPTIONCOORDINATORNAME) + '</b></td></tr>';
             }
+            var chipinfo = "";
+            if (a.IDENTICHIPPED == 1) {
+                chipinfo = '<tr><td>' + _("Microchip") + ':</td><td><b>' + a.IDENTICHIPNUMBER + " " + a.IDENTICHIP2NUMBER + '</b></td></tr>';
+            }
             var first_column = [
                 '<input type="hidden" id="animalid" value="' + a.ID + '" />',
                 '<div class="asm-grid">',
@@ -130,6 +134,7 @@ $(function() {
                 '</tr>',
                 coordinator,
                 animalcontrol,
+                chipinfo,
                 '<tr>',
                 '<td id="hentshel">' + _("Entered shelter") + ':</td><td><b>' + format.date(a.MOSTRECENTENTRYDATE),
                 format.time(a.MOSTRECENTENTRYDATE) != "00:00:00" ? ' ' + format.time(a.MOSTRECENTENTRYDATE) : '',
