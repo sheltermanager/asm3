@@ -49,9 +49,9 @@ def get_person_query(dbo):
         "(SELECT COUNT(*) FROM animal bib WHERE bib.BroughtInByOwnerID = o.ID OR bib.OriginalOwnerID = o.ID) AS Surrender " \
         "FROM owner o " \
         "LEFT OUTER JOIN owner ho ON ho.ID = o.HomeCheckedBy " \
-        "LEFT OUTER JOIN media web ON web.LinkID = o.ID AND web.LinkTypeID = 3 AND web.WebsitePhoto = 1 " \
-        "LEFT OUTER JOIN media doc ON doc.LinkID = o.ID AND doc.LinkTypeID = 3 AND doc.DocPhoto = 1 " \
-        "LEFT OUTER JOIN jurisdiction j ON j.ID = o.JurisdictionID "
+        "LEFT OUTER JOIN media web ON web.LinkID = o.ID AND web.LinkTypeID = %d AND web.WebsitePhoto = 1 " \
+        "LEFT OUTER JOIN media doc ON doc.LinkID = o.ID AND doc.LinkTypeID = %d AND doc.DocPhoto = 1 " \
+        "LEFT OUTER JOIN jurisdiction j ON j.ID = o.JurisdictionID " % (media.PERSON, media.PERSON)
 
 def get_rota_query(dbo):
     """

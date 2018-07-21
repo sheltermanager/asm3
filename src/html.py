@@ -522,7 +522,7 @@ def doc_img_src(dbo, row):
     row: A query containing DOCMEDIANAME
     """
     if row["DOCMEDIANAME"] is None or row["DOCMEDIANAME"] == "":
-        return "image?db=%s&mode=dbfs&id=/reports/nopic.jpg" % dbo.database
+        return "image?db=%s&mode=nopic" % dbo.database
     else:
         return "image?db=%s&mode=dbfs&id=%s&date=%s" % (dbo.database, row["DOCMEDIANAME"], row["DOCMEDIADATE"].isoformat())
 

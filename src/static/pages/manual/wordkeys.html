@@ -128,7 +128,6 @@
 <li class="toctree-l2"><a class="reference internal" href="#person-keys">Person Keys</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#citation-keys">Citation Keys</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#traploan-keys">Traploan Keys</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#payment-receipt-invoice-keys">Payment/Receipt/Invoice Keys</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#licence-keys">Licence Keys</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#incident-keys">Incident Keys</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#incident-animal-keys">Incident Animal Keys</a></li>
@@ -949,6 +948,13 @@ and licence tabs as well as lost animal, found animal and waiting list.</p>
 <dd>The person&#8217;s membership number</dd>
 <dt>MembershipExpiryDate</dt>
 <dd>The date this person&#8217;s membership with the shelter expires</dd>
+<dt>DocumentImgLink</dt>
+<dd>An &lt;img&gt; tag containing a link to the person&#8217;s preferred document image.
+The image will be 200px high. You can also suffix a pixel height in
+increments of 100 upto 500px if you would like the image to be larger, eg:
+&lt;&lt;DocumentImgLink300&gt;&gt;, &lt;&lt;DocumentImgLink400&gt;&gt;, &lt;&lt;DocumentImgLink500&gt;&gt;</dd>
+<dt>DocumentImgSrc</dt>
+<dd>Just the src attribute value for an image link to the preferred document image.</dd>
 </dl>
 </div>
 <div class="section" id="citation-keys">
@@ -996,40 +1002,6 @@ loan of that type for the person (eg: TrapLoanDateCat). The fields are:</p>
 <dd>The date the trap was returned</dd>
 <dt>TrapComments</dt>
 <dd>Any comments on the traploana</dd>
-</dl>
-</div>
-<div class="section" id="payment-receipt-invoice-keys">
-<h2>Payment/Receipt/Invoice Keys<a class="headerlink" href="#payment-receipt-invoice-keys" title="Permalink to this headline">¶</a></h2>
-<p>Payment keys are available for documents generated for a one or more payments
-from the payment tab. Keys for the person making the payment are also present
-and if the payment is linked to an animal, animal keys are also present.</p>
-<dl class="docutils">
-<dt>PaymentID</dt>
-<dd>The payment record ID (used to generate receipt number)</dd>
-<dt>PaymentType</dt>
-<dd>The payment type</dd>
-<dt>PaymentMethod</dt>
-<dd>The payment method</dd>
-<dt>PaymentDate</dt>
-<dd>The date the payment was received</dd>
-<dt>PaymentDateDue</dt>
-<dd>If this is a recurring payment, the date it is due</dd>
-<dt>PaymentAmount</dt>
-<dd>The payment amount</dd>
-<dt>ReceiptNum</dt>
-<dd>If you issue receipts for donations, the receipt number</dd>
-<dt>PaymentGiftAid</dt>
-<dd>Yes or No if this donation is eligible for UK giftaid</dd>
-<dt>PaymentComments</dt>
-<dd>Any comments for the payment</dd>
-<dt>PaymentCreatedBy</dt>
-<dd>(PaymentCreatedByName)</dd>
-<dt>PaymentCreatedDate</dt>
-<dd>The date this payment record was created</dd>
-<dt>PaymentLastChangedBy</dt>
-<dd>(PaymentLastChangedByName)</dd>
-<dt>PaymentLastChangedDate</dt>
-<dd>The date this payment record was last changed</dd>
 </dl>
 </div>
 <div class="section" id="licence-keys">

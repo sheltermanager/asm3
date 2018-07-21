@@ -75,8 +75,8 @@ def get_foundanimal_query(dbo):
         "LEFT OUTER JOIN species s ON a.AnimalTypeID = s.ID " \
         "LEFT OUTER JOIN basecolour c ON a.BaseColourID = c.ID " \
         "LEFT OUTER JOIN lksex x ON a.Sex = x.ID " \
-        "LEFT OUTER JOIN media web ON web.LinkID = a.ID AND web.LinkTypeID = 2 AND web.WebsitePhoto = 1 " \
-        "LEFT OUTER JOIN owner o ON a.OwnerID = o.ID"
+        "LEFT OUTER JOIN media web ON web.LinkID = a.ID AND web.LinkTypeID = %d AND web.WebsitePhoto = 1 " \
+        "LEFT OUTER JOIN owner o ON a.OwnerID = o.ID" % media.FOUNDANIMAL
 
 def get_lostanimal_query(dbo):
     return "SELECT a.*, a.ID AS LFID, s.SpeciesName, b.BreedName, " \
@@ -94,8 +94,8 @@ def get_lostanimal_query(dbo):
         "LEFT OUTER JOIN species s ON a.AnimalTypeID = s.ID " \
         "LEFT OUTER JOIN basecolour c ON a.BaseColourID = c.ID " \
         "LEFT OUTER JOIN lksex x ON a.Sex = x.ID " \
-        "LEFT OUTER JOIN media web ON web.LinkID = a.ID AND web.LinkTypeID = 2 AND web.WebsitePhoto = 1 " \
-        "LEFT OUTER JOIN owner o ON a.OwnerID = o.ID"
+        "LEFT OUTER JOIN media web ON web.LinkID = a.ID AND web.LinkTypeID = %d AND web.WebsitePhoto = 1 " \
+        "LEFT OUTER JOIN owner o ON a.OwnerID = o.ID" % media.LOSTANIMAL
 
 def get_lostanimal(dbo, aid):
     """

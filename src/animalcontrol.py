@@ -27,7 +27,9 @@ def get_animalcontrol_query(dbo):
         "web.ID AS WebsiteMediaID, " \
         "web.MediaName AS WebsiteMediaName, " \
         "web.Date AS WebsiteMediaDate, " \
-        "web.MediaNotes AS WebsiteMediaNotes " \
+        "web.MediaNotes AS WebsiteMediaNotes, " \
+        "doc.MediaName AS DocMediaName, " \
+        "doc.Date AS DocMediaDate " \
         "FROM animalcontrol ac " \
         "LEFT OUTER JOIN species s ON s.ID = ac.SpeciesID " \
         "LEFT OUTER JOIN lksex x ON x.ID = ac.Sex " \
@@ -37,10 +39,11 @@ def get_animalcontrol_query(dbo):
         "LEFT OUTER JOIN owner o2 ON o2.ID = ac.Owner2ID " \
         "LEFT OUTER JOIN owner o3 ON o3.ID = ac.Owner3ID " \
         "LEFT OUTER JOIN owner vo ON vo.ID = ac.VictimID " \
-        "LEFT OUTER JOIN media web ON web.LinkID = ac.ID AND web.LinkTypeID = 6 AND web.WebsitePhoto = 1 " \
+        "LEFT OUTER JOIN media web ON web.LinkID = ac.ID AND web.LinkTypeID = %d AND web.WebsitePhoto = 1 " \
+        "LEFT OUTER JOIN media doc ON doc.LinkID = ac.ID AND doc.LinkTypeID = %d AND doc.DocPhoto = 1 " \
         "LEFT OUTER JOIN pickuplocation pl ON pl.ID = ac.PickupLocationID " \
         "LEFT OUTER JOIN incidenttype ti ON ti.ID = ac.IncidentTypeID " \
-        "LEFT OUTER JOIN incidentcompleted ci ON ci.ID = ac.IncidentCompletedID"
+        "LEFT OUTER JOIN incidentcompleted ci ON ci.ID = ac.IncidentCompletedID" % (media.ANIMALCONTROL, media.ANIMALCONTROL)
 
 def get_animalcontrol_animals_query(dbo):
     return "SELECT a.ID, aca.AnimalID, a.ShelterCode, a.ShortCode, a.AgeGroup, a.AnimalName, " \
