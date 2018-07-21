@@ -4291,6 +4291,15 @@ def update_animal_figures_annual(dbo, year = 0):
                 "GROUP BY ad.MovementDate, a.DateOfBirth" % (int(sp["ID"]), firstofyear, lastofyear, movement.ADOPTION),
                 sp["ID"], sp["SPECIESNAME"], "SP_TRANSFERINADOPTED", group, 150, showbabies, babymonths)
 
+    group = _("Live Releases {0}", l).format(year)
+    for sp in allspecies:
+        species_line("SELECT ad.MovementDate AS TheDate, a.DateOfBirth AS DOB, " \
+            "COUNT(ad.ID) AS Total FROM animal a INNER JOIN adoption ad ON ad.AnimalID = a.ID WHERE " \
+            "a.SpeciesID = %d AND ad.MovementDate >= %s AND ad.MovementDate <= %s " \
+            "AND a.NonShelterAnimal = 0 AND ad.MovementType IN (%d, %d,  %d) " \
+            "GROUP BY ad.MovementDate, a.DateOfBirth" % (int(sp["ID"]), firstofyear, lastofyear, movement.ADOPTION, movement.TRANSFER, movement.RECLAIMED),
+            sp["ID"], sp["SPECIESNAME"], "SP_LIVERELEASE", group, 160, showbabies, babymonths)
+
     group = _("Neutered/Spayed Shelter Animals In {0}", l).format(year)
     for sp in allspecies:
         species_line("SELECT a.NeuteredDate AS TheDate, a.DateOfBirth AS DOB, " \
@@ -4298,7 +4307,7 @@ def update_animal_figures_annual(dbo, year = 0):
             "a.SpeciesID = %d AND a.NeuteredDate >= %s AND a.NeuteredDate <= %s " \
             "AND a.NonShelterAnimal = 0 " \
             "GROUP BY a.NeuteredDate, a.DateOfBirth" % (int(sp["ID"]), firstofyear, lastofyear),
-            sp["ID"], sp["SPECIESNAME"], "SP_NEUTERSPAYSA", group, 160, showbabies, babymonths)
+            sp["ID"], sp["SPECIESNAME"], "SP_NEUTERSPAYSA", group, 170, showbabies, babymonths)
 
     group = _("Neutered/Spayed Non-Shelter Animals In {0}", l).format(year)
     for sp in allspecies:
@@ -4307,7 +4316,7 @@ def update_animal_figures_annual(dbo, year = 0):
             "a.SpeciesID = %d AND a.NeuteredDate >= %s AND a.NeuteredDate <= %s " \
             "AND a.NonShelterAnimal = 1 " \
             "GROUP BY a.NeuteredDate, a.DateOfBirth" % (int(sp["ID"]), firstofyear, lastofyear),
-            sp["ID"], sp["SPECIESNAME"], "SP_NEUTERSPAYNS", group, 170, showbabies, babymonths)
+            sp["ID"], sp["SPECIESNAME"], "SP_NEUTERSPAYNS", group, 180, showbabies, babymonths)
 
     async.set_progress_value(dbo, 1)
 
@@ -4460,6 +4469,15 @@ def update_animal_figures_annual(dbo, year = 0):
                 "GROUP BY ad.MovementDate, a.DateOfBirth" % (int(at["ID"]), firstofyear, lastofyear, movement.ADOPTION),
                 at["ID"], at["ANIMALTYPE"], "AT_TRANSFERINADOPTED", group, 150, at["SHOWSPLIT"], babymonths)
 
+    group = _("Live Releases {0}", l).format(year)
+    for at in alltypes:
+        type_line("SELECT ad.MovementDate AS TheDate, a.DateOfBirth AS DOB, " \
+            "COUNT(ad.ID) AS Total FROM animal a INNER JOIN adoption ad ON ad.AnimalID = a.ID WHERE " \
+            "a.AnimalTypeID = %d AND ad.MovementDate >= %s AND ad.MovementDate <= %s " \
+            "AND a.NonShelterAnimal = 0 AND ad.MovementType in (%d, %d, %d) " \
+            "GROUP BY ad.MovementDate, a.DateOfBirth" % (int(at["ID"]), firstofyear, lastofyear, movement.ADOPTION, movement.TRANSFER, movement.RECLAIMED),
+            at["ID"], at["ANIMALTYPE"], "AT_LIVERELEASE", group, 160, at["SHOWSPLIT"], babymonths)
+
     async.set_progress_value(dbo, 2)
 
     # Entry Reasons =====================================
@@ -4610,6 +4628,15 @@ def update_animal_figures_annual(dbo, year = 0):
                 "AND a.IsTransfer = 1 AND a.NonShelterAnimal = 0 AND ad.MovementType = %d " \
                 "GROUP BY ad.MovementDate, a.DateOfBirth" % (int(er["ID"]), firstofyear, lastofyear, movement.ADOPTION),
                 er["ID"], er["REASONNAME"], "ER_TRANSFERINADOPTED", group, 150, er["SHOWSPLIT"], babymonths)
+
+    group = _("Live Releases {0}", l).format(year)
+    for er in allreasons:
+        entryreason_line("SELECT ad.MovementDate AS TheDate, a.DateOfBirth AS DOB, " \
+            "COUNT(ad.ID) AS Total FROM animal a INNER JOIN adoption ad ON ad.AnimalID = a.ID WHERE " \
+            "a.EntryReasonID = %d AND ad.MovementDate >= %s AND ad.MovementDate <= %s " \
+            "AND a.NonShelterAnimal = 0 AND ad.MovementType IN (%d, %d, %d) " \
+            "GROUP BY ad.MovementDate, a.DateOfBirth" % (int(er["ID"]), firstofyear, lastofyear, movement.ADOPTION, movement.TRANSFER, movement.RECLAIMED),
+            er["ID"], er["REASONNAME"], "ER_LIVERELEASE", group, 160, er["SHOWSPLIT"], babymonths)
     
     async.set_progress_value(dbo, 3)
 
