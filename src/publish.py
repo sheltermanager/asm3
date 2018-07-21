@@ -6,7 +6,6 @@
 
 import al
 import configuration
-import db
 import i18n
 
 import publishers.adoptapet, publishers.anibaseuk, publishers.foundanimals, publishers.helpinglostpets, publishers.html, publishers.maddiesfund, publishers.petfinder, publishers.petlink, publishers.petrescue, publishers.petslocateduk, publishers.pettracuk, publishers.rescuegroups, publishers.smarttag, publishers.vetenvoy
@@ -16,18 +15,18 @@ from publishers.base import PublishCriteria
 def delete_old_publish_logs(dbo):
     """ Deletes all publishing logs older than 14 days """
     KEEP_DAYS = 14
-    where = "WHERE PublishDateTime < %s" % db.dd(i18n.subtract_days(i18n.now(dbo.timezone), KEEP_DAYS))
-    count = db.query_int(dbo, "SELECT COUNT(*) FROM publishlog %s" % where)
+    cutoff = dbo.today(offset=KEEP_DAYS*-1)
+    count = dbo.query_int(dbo, "SELECT COUNT(*) FROM publishlog WHERE PublishDateTime < ?", [cutoff])
     al.debug("removing %d publishing logs (keep for %d days)." % (count, KEEP_DAYS), "publish.delete_old_publish_logs", dbo)
-    db.execute(dbo, "DELETE FROM publishlog %s" % where)
+    dbo.execute("DELETE FROM publishlog WHERE PublishDateTime < ?", [cutoff])
 
 def get_publish_logs(dbo):
     """ Returns all publishing logs """
-    return db.query(dbo, "SELECT ID, PublishDateTime, Name, Success, Alerts FROM publishlog ORDER BY PublishDateTime DESC")
+    return dbo.query("SELECT ID, PublishDateTime, Name, Success, Alerts FROM publishlog ORDER BY PublishDateTime DESC")
 
 def get_publish_log(dbo, plid):
     """ Returns the log for a publish log ID """
-    return db.query_string(dbo, "SELECT LogData FROM publishlog WHERE ID = %d" % plid)
+    return dbo.query_string("SELECT LogData FROM publishlog WHERE ID = ?", [plid])
 
 def start_publisher(dbo, code, user = "", async = True):
     """ Starts the publisher with code on a background thread """
