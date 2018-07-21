@@ -3444,7 +3444,7 @@ class mailmerge(JSONEndpoint):
             "title": title,
             "fields": fields,
             "numrows": len(rows),
-            "hasperson": "OWNERNAME" in fields and "OWNERADDRESS" in fields and "OWNERTOWN" in fields and "OWNERPOSTCODE" in fields,
+            "hasperson": "OWNERNAME" in fields and "OWNERADDRESS" in fields and "OWNERTOWN" in fields and "OWNERCOUNTY" in fields and "OWNERPOSTCODE" in fields,
             "templates": template.get_document_templates(dbo)
         }
    

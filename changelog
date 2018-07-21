@@ -1,6 +1,7 @@
 41
 ================
 
+21/07/18 Fix bug where missing state/county field breaks labels #462
 21/07/18 DocumentImgLink support for person documents #437
 21/07/18 Record holds in the log #342
 21/07/18 Show microchip number in banner #337
