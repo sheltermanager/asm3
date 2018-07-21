@@ -351,6 +351,10 @@ records.
   and manufacturer will be copied from the last vaccination on record of the
   vaccination type.
 
+* When I mark an animal held, make a note of it in the log: If this option is on,
+  a log record is created when you mark an animal held along with the hold
+  until date.
+
 * When I change the location of an animal, make a note of it in the log: If
   this option is on, a log record is created every time you change an animal's
   internal location with the new location so you can track the history of where

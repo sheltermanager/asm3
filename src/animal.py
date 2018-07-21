@@ -2027,6 +2027,11 @@ def insert_animal_from_form(dbo, post, username):
         log.add_log(dbo, username, log.ANIMAL, nextid, configuration.weight_change_log_type(dbo),
             "%s%s" % (weight, units))
 
+    # If the animal is held and we're logging it, mark it in the log
+    if configuration.hold_change_log(dbo) and post.boolean("hold"):
+        log.add_log(dbo, username, log.ANIMAL, nextid, configuration.hold_change_log_type(dbo),
+            _("Hold until {0}", l).format(post["holduntil"]))
+
     # Do we have a matching template animal we can copy some satellite info from?
     clone_from_template(dbo, username, nextid, dob, post.integer("animaltype"), post.integer("species"))
 
@@ -2087,6 +2092,13 @@ def update_animal_from_form(dbo, post, username):
                     newlocation += "-" + post["unit"]
                 log.add_log(dbo, username, log.ANIMAL, aid, configuration.location_change_log_type(dbo), 
                     _("{0} {1}: Moved from {2} to {3}", l).format(post["sheltercode"], post["animalname"], oldlocation, newlocation))
+
+    # If the option is on and the hold status has changed, log it
+    if configuration.hold_change_log(dbo):
+        oldhold = dbo.query_int("SELECT IsHold FROM animal WHERE ID=?", [aid])
+        if oldhold == 0 and post.boolean("hold"):
+            log.add_log(dbo, username, log.ANIMAL, aid, configuration.hold_change_log_type(dbo),
+                _("Hold until {0}", l).format(post["holduntil"]))
 
     # If the option is on and the weight has changed, log it
     if configuration.weight_change_log(dbo):

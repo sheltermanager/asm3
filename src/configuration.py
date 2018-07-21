@@ -199,6 +199,8 @@ DEFAULTS = {
     "GeocodeWithPostcodeOnly": "No",
     "GenerateDocumentLog": "No",
     "GenerateDocumentLogType": "5",
+    "HoldChangeLog": "Yes",
+    "HoldChangeLogType": "3",
     "IncidentPermissions": "No",
     "IncomingMediaScaling": "640x640",
     "InactivityTimer": "No",
@@ -773,6 +775,12 @@ def geo_provider_override(dbo):
 
 def geo_provider_key_override(dbo):
     return cstring(dbo, "GeoProviderKeyOverride")
+
+def hold_change_log(dbo):
+    return cboolean(dbo, "HoldChangeLog", DEFAULTS["HoldChangeLog"] == "Yes")
+
+def hold_change_log_type(dbo):
+    return cint(dbo, "HoldChangeLogType", DEFAULTS["HoldChangeLogType"])
 
 def include_incomplete_medical_doc(dbo):
     return cboolean(dbo, "IncludeIncompleteMedicalDoc", DEFAULTS["IncludeIncompleteMedicalDoc"] == "Yes")
