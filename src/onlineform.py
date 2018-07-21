@@ -536,7 +536,7 @@ def clone_onlineform(dbo, username, formid):
         "*Header":              f.HEADER,
         "*Footer":              f.FOOTER,
         "*Description":         f.DESCRIPTION
-    }, username)
+    }, username, setCreated=False)
 
     for ff in get_onlineformfields(dbo, formid):
         dbo.insert("onlineformfield", {
@@ -563,7 +563,7 @@ def insert_onlineformfield_from_form(dbo, username, post):
         "Mandatory":        post.boolean("mandatory"),
         "Lookups":          post["lookups"],
         "*Tooltip":         post["tooltip"]
-    }, username)
+    }, username, setCreated=False)
 
 def update_onlineformfield_from_form(dbo, username, post):
     """
@@ -577,7 +577,7 @@ def update_onlineformfield_from_form(dbo, username, post):
         "Mandatory":        post.boolean("mandatory"),
         "Lookups":          post["lookups"],
         "*Tooltip":         post["tooltip"]
-    }, username)
+    }, username, setLastChanged=False)
 
 def delete_onlineformfield(dbo, username, fieldid):
     """
@@ -671,7 +671,7 @@ def insert_onlineformincoming_from_form(dbo, post, remoteip):
                 "DisplayIndex":     displayindex,
                 "Host":             remoteip,
                 utils.iif(fieldtype == FIELDTYPE_RAWMARKUP, "*Value", "Value"): v # don't XSS escape raw markup by prefixing fieldname with *
-            }, generateID=False)
+            }, generateID=False, setCreated=False)
 
     # Sort out the preview of the first few fields
     fieldssofar = 0
