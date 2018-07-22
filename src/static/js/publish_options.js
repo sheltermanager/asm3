@@ -11,7 +11,7 @@ $(function() {
                 '<li><a href="#tab-animalselection">' + _("Animal Selection") + '</a></li>',
                 '<li><a href="#tab-allpublishers">' + _("All Publishers") + '</a></li>',
                 '<li><a href="#tab-htmlftp">' + _("HTML/FTP Publisher") + '</a></li>',
-                '<li class="localeus"><a href="#tab-adoptapet">AdoptAPet Publisher</a></li>',
+                '<li class="localeus localemx"><a href="#tab-adoptapet">AdoptAPet Publisher</a></li>',
                 '<li><a href="#tab-helpinglostpets">HelpingLostPets Publisher</a></li>',
                 '<li class="localeus localeca localeau hasmaddiesfund"><a href="#tab-maddiesfund">Maddie\'s Fund Publisher</a></li>',
                 '<li class="localeus localeca localemx"><a href="#tab-petfinder">PetFinder Publisher</a></li>',
