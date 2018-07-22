@@ -498,7 +498,7 @@ def insert_adoption_from_form(dbo, username, post, creating = [], create_payment
         dbo.update("owner", post.integer("person"), { "IDCheck": 1, "DateLastHomeChecked": dbo.today() }, username)
     # If the animal was flagged as not available for adoption, then it
     # shouldn't be since we've just adopted it.
-    dbo.execute("animal", a.ID, { "IsNotAvailableForAdoption": 0 })
+    dbo.update("animal", a.ID, { "IsNotAvailableForAdoption": 0 })
     # Is the animal reserved to the person adopting? 
     movementid = 0
     for m in fm:
