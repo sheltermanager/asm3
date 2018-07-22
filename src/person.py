@@ -197,7 +197,7 @@ def get_satellite_counts(dbo, personid):
         "(SELECT COUNT(*) FROM additional af INNER JOIN additionalfield aff ON aff.ID = af.AdditionalFieldID " \
         "WHERE aff.FieldType = ? AND af.Value = ?) " \
         ") AS links " \
-        "FROM owner o WHERE o.ID = ?", (media.PERSON, diary.PERSON, log.PERSON, additional.PERSON_LOOKUP, personid, personid))
+        "FROM owner o WHERE o.ID = ?", (media.PERSON, diary.PERSON, log.PERSON, additional.PERSON_LOOKUP, str(personid), personid))
 
 def get_reserves_without_homechecks(dbo):
     """
