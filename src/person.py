@@ -26,8 +26,8 @@ def get_homechecked(dbo, personid):
     """
     Returns a list of people homechecked by personid
     """
-    return db.query(dbo, "SELECT ID, OwnerName, DateLastHomeChecked, Comments FROM owner " \
-        "WHERE HomeCheckedBy = %d" % int(personid))
+    return dbo.query("SELECT ID, OwnerName, DateLastHomeChecked, Comments FROM owner " \
+        "WHERE HomeCheckedBy = ?", [personid])
 
 def get_person_query(dbo):
     """
@@ -90,9 +90,9 @@ def get_person_similar(dbo, email = "", surname = "", forenames = "", address = 
     email = email.replace("'", "`").lower().strip()
     eq = []
     if email != "" and email.find("@") != -1 and email.find(".") != -1:
-        eq = db.query(dbo, get_person_query(dbo) + "WHERE LOWER(o.EmailAddress) LIKE '%s'" % email)
-    per = db.query(dbo, get_person_query(dbo) + "WHERE LOWER(o.OwnerSurname) LIKE '%s' AND " \
-        "LOWER(o.OwnerForeNames) LIKE '%s%%' AND LOWER(o.OwnerAddress) Like '%s%%'" % (surname, forenames, address))
+        eq = dbo.query(get_person_query(dbo) + " WHERE LOWER(o.EmailAddress) LIKE ?", [email])
+    per = dbo.query(get_person_query(dbo) + " WHERE LOWER(o.OwnerSurname) LIKE ? AND " \
+        "LOWER(o.OwnerForeNames) LIKE ? AND LOWER(o.OwnerAddress) LIKE ?", (surname, forenames + "%", address + "%"))
     return eq + per
 
 def get_person_name(dbo, personid):
@@ -105,21 +105,21 @@ def get_person_name_code(dbo, personid):
     """
     Returns the person name and code for an id
     """
-    r = db.query(dbo, "SELECT o.OwnerName, o.OwnerCode FROM owner o WHERE o.ID = %d" % int(personid))
-    if len(r) == 0: return ""
-    return "%s - %s" % (r[0]["OWNERNAME"], r[0]["OWNERCODE"])
+    r = dbo.first_row(dbo.query("SELECT o.OwnerName, o.OwnerCode FROM owner o WHERE o.ID = ?", [personid]))
+    if r is None: return ""
+    return "%s - %s" % (r.OWNERNAME, r.OWNERCODE)
 
 def get_person_name_addresses(dbo):
     """
     Returns the person name and address for everyone on file
     """
-    return db.query(dbo, "SELECT o.ID, o.OwnerName, o.OwnerAddress FROM owner o ORDER BY o.OwnerName")
+    return dbo.query("SELECT o.ID, o.OwnerName, o.OwnerAddress FROM owner o ORDER BY o.OwnerName")
 
 def get_fosterers(dbo):
     """
     Returns all fosterers
     """
-    return db.query(dbo, get_person_query(dbo) + " WHERE o.IsFosterer = 1 ORDER BY o.OwnerName")
+    return dbo.query(get_person_query(dbo) + " WHERE o.IsFosterer = 1 ORDER BY o.OwnerName")
 
 def get_shelterview_fosterers(dbo, siteid = 0):
     """
@@ -127,45 +127,45 @@ def get_shelterview_fosterers(dbo, siteid = 0):
     """
     sitefilter = ""
     if siteid is not None and siteid != 0: sitefilter = "AND o.SiteID = %s" % siteid
-    return db.query(dbo, "SELECT o.ID, o.OwnerName, o.FosterCapacity FROM owner o WHERE o.IsFosterer = 1 %s ORDER BY o.OwnerName" % sitefilter)
+    return dbo.query("SELECT o.ID, o.OwnerName, o.FosterCapacity FROM owner o WHERE o.IsFosterer = 1 %s ORDER BY o.OwnerName" % sitefilter)
 
 def get_staff_volunteers(dbo):
     """
     Returns all staff and volunteers
     """
-    return db.query(dbo, get_person_query(dbo) + " WHERE o.IsStaff = 1 OR o.IsVolunteer = 1 ORDER BY o.IsStaff DESC, o.OwnerName")
+    return dbo.query(get_person_query(dbo) + " WHERE o.IsStaff = 1 OR o.IsVolunteer = 1 ORDER BY o.IsStaff DESC, o.OwnerName")
 
 def get_towns(dbo):
     """
     Returns a list of all towns
     """
-    rows = db.query(dbo, "SELECT DISTINCT OwnerTown FROM owner")
+    rows = dbo.query("SELECT DISTINCT OwnerTown FROM owner ORDER BY OwnerTown")
     if rows is None: return []
     towns = []
     for r in rows:
-        towns.append(str(r["OWNERTOWN"]))
+        towns.append(str(r.OWNERTOWN))
     return towns
 
 def get_town_to_county(dbo):
     """
     Returns a lookup of which county towns belong in
     """
-    rows = db.query(dbo, "SELECT DISTINCT OwnerTown, OwnerCounty FROM owner")
+    rows = dbo.query("SELECT DISTINCT OwnerTown, OwnerCounty FROM owner ORDER BY OwnerCounty")
     if rows is None: return []
     tc = []
     for r in rows:
-        tc.append("%s^^%s" % (r["OWNERTOWN"], r["OWNERCOUNTY"]))
+        tc.append("%s^^%s" % (r.OWNERTOWN, r.OWNERCOUNTY))
     return tc
 
 def get_counties(dbo):
     """
     Returns a list of counties
     """
-    rows = db.query(dbo, "SELECT DISTINCT OwnerCounty FROM owner")
+    rows = dbo.query("SELECT DISTINCT OwnerCounty FROM owner")
     if rows is None: return []
     counties = []
     for r in rows:
-        counties.append("%s" % r["OWNERCOUNTY"])
+        counties.append("%s" % r.OWNERCOUNTY)
     return counties
 
 def get_satellite_counts(dbo, personid):
@@ -173,12 +173,12 @@ def get_satellite_counts(dbo, personid):
     Returns a resultset containing the number of each type of satellite
     record that a person has.
     """
-    sql = "SELECT o.ID, " \
-        "(SELECT COUNT(*) FROM media me WHERE me.LinkID = o.ID AND me.LinkTypeID = %d) AS media, " \
-        "(SELECT COUNT(*) FROM diary di WHERE di.LinkID = o.ID AND di.LinkType = %d) AS diary, " \
+    return dbo.query("SELECT o.ID, " \
+        "(SELECT COUNT(*) FROM media me WHERE me.LinkID = o.ID AND me.LinkTypeID = ?) AS media, " \
+        "(SELECT COUNT(*) FROM diary di WHERE di.LinkID = o.ID AND di.LinkType = ?) AS diary, " \
         "(SELECT COUNT(*) FROM adoption ad WHERE ad.OwnerID = o.ID) AS movements, " \
         "(SELECT COUNT(*) FROM clinicappointment ca WHERE ca.OwnerID = o.ID) AS clinic, " \
-        "(SELECT COUNT(*) FROM log WHERE log.LinkID = o.ID AND log.LinkType = %d) AS logs, " \
+        "(SELECT COUNT(*) FROM log WHERE log.LinkID = o.ID AND log.LinkType = ?) AS logs, " \
         "(SELECT COUNT(*) FROM ownerdonation od WHERE od.OwnerID = o.ID) AS donations, " \
         "(SELECT COUNT(*) FROM ownercitation oc WHERE oc.OwnerID = o.ID) AS citation, " \
         "(SELECT COUNT(*) FROM ownerinvestigation oi WHERE oi.OwnerID = o.ID) AS investigation, " \
@@ -195,29 +195,23 @@ def get_satellite_counts(dbo, personid):
         "(SELECT COUNT(*) FROM animalcontrol WHERE CallerID = o.ID OR VictimID = o.ID " \
         "OR OwnerID = o.ID OR Owner2ID = o.ID or Owner3ID = o.ID) + " \
         "(SELECT COUNT(*) FROM additional af INNER JOIN additionalfield aff ON aff.ID = af.AdditionalFieldID " \
-        "WHERE aff.FieldType = %d AND af.Value = '%d') " \
+        "WHERE aff.FieldType = ? AND af.Value = ?) " \
         ") AS links " \
-        "FROM owner o WHERE o.ID = %d" \
-        % (media.PERSON, diary.PERSON, log.PERSON, additional.PERSON_LOOKUP, int(personid), int(personid))
-    return db.query(dbo, sql)
+        "FROM owner o WHERE o.ID = ?", (media.PERSON, diary.PERSON, log.PERSON, additional.PERSON_LOOKUP, personid, personid))
 
 def get_reserves_without_homechecks(dbo):
     """
     Returns owners that have a reservation but aren't homechecked
     """
-    sql = get_person_query(dbo)
-    sql += "INNER JOIN adoption a ON a.OwnerID = o.ID " \
-        "WHERE a.MovementType = 0 AND a.ReservationDate Is Not Null AND a.ReservationCancelledDate Is Null AND o.IDCheck = 0"
-    return db.query(dbo, sql)
+    return dbo.query(get_person_query(dbo) + " INNER JOIN adoption a ON a.OwnerID = o.ID " \
+        "WHERE a.MovementType = 0 AND a.ReservationDate Is Not Null AND a.ReservationCancelledDate Is Null AND o.IDCheck = 0")
 
 def get_overdue_donations(dbo):
     """
     Returns owners that have an overdue regular donation
     """
-    sql = get_person_query(dbo)
-    sql += " INNER JOIN ownerdonation od ON od.OwnerID = o.ID " \
-        "WHERE od.Date Is Null AND od.DateDue Is Not Null AND od.DateDue <= %s" % (db.dd(now(dbo.timezone)))
-    return db.query(dbo, sql)
+    return dbo.query(get_person_query(dbo) + " INNER JOIN ownerdonation od ON od.OwnerID = o.ID " \
+        "WHERE od.Date Is Null AND od.DateDue Is Not Null AND od.DateDue <= ?", [dbo.today()])
 
 def get_links(dbo, pid):
     """
@@ -359,34 +353,34 @@ def get_links(dbo, pid):
         "LEFT OUTER JOIN deathreason dr ON dr.ID = a.PTSReasonID " \
         "WHERE af.Value = '%d' AND aff.FieldType = %s AND aff.LinkType IN (%s) " \
         "ORDER BY DDATE DESC, LINKDISPLAY" \
-        % ( db.ds(_("Original Owner", l)), linkdisplay, animalextra, int(pid), 
-        db.ds(_("Brought In By", l)), linkdisplay, animalextra, int(pid),
-        db.ds(_("Returned By", l)), linkdisplay, animalextra, int(pid),
-        db.ds(_("Adoption Coordinator", l)), linkdisplay, animalextra, int(pid),
-        db.ds(_("Owner Vet", l)), linkdisplay, animalextra, int(pid), 
-        db.ds(_("Current Vet", l)), linkdisplay, animalextra, int(pid),
-        db.ds(_("Altering Vet", l)), linkdisplay, animalextra, int(pid),
-        db.ds(_("Waiting List Contact", l)), int(pid), 
-        db.ds(_("Lost Animal Contact", l)), int(pid),
-        db.ds(_("Found Animal Contact", l)), int(pid),
-        db.ds(_("Animal Control Incident", l)), int(pid), int(pid), int(pid), 
-        db.ds(_("Animal Control Caller", l)), int(pid), 
-        db.ds(_("Animal Control Victim", l)), int(pid),
-        db.ds(_("Driver", l)), linkdisplay, int(pid),
+        % ( dbo.sql_value(_("Original Owner", l)), linkdisplay, animalextra, int(pid), 
+        dbo.sql_value(_("Brought In By", l)), linkdisplay, animalextra, int(pid),
+        dbo.sql_value(_("Returned By", l)), linkdisplay, animalextra, int(pid),
+        dbo.sql_value(_("Adoption Coordinator", l)), linkdisplay, animalextra, int(pid),
+        dbo.sql_value(_("Owner Vet", l)), linkdisplay, animalextra, int(pid), 
+        dbo.sql_value(_("Current Vet", l)), linkdisplay, animalextra, int(pid),
+        dbo.sql_value(_("Altering Vet", l)), linkdisplay, animalextra, int(pid),
+        dbo.sql_value(_("Waiting List Contact", l)), int(pid), 
+        dbo.sql_value(_("Lost Animal Contact", l)), int(pid),
+        dbo.sql_value(_("Found Animal Contact", l)), int(pid),
+        dbo.sql_value(_("Animal Control Incident", l)), int(pid), int(pid), int(pid), 
+        dbo.sql_value(_("Animal Control Caller", l)), int(pid), 
+        dbo.sql_value(_("Animal Control Victim", l)), int(pid),
+        dbo.sql_value(_("Driver", l)), linkdisplay, int(pid),
         linkdisplay, animalextra, int(pid), additional.PERSON_LOOKUP, additional.clause_for_linktype("animal") ) 
-    return db.query(dbo, sql)
+    return dbo.query(sql)
 
 def get_investigation(dbo, personid, sort = ASCENDING):
     """
     Returns investigation records for the given person:
     OWNERID, DATE, NOTES
     """
-    sql = "SELECT o.* FROM ownerinvestigation o WHERE o.OwnerID = %d " % personid
+    sql = "SELECT o.* FROM ownerinvestigation o WHERE o.OwnerID = ? "
     if sort == ASCENDING:
         sql += "ORDER BY o.Date"
     else:
         sql += "ORDER BY o.Date DESC"
-    return db.query(dbo, sql)
+    return dbo.query(sql, [personid])
 
 def get_person_find_simple(dbo, query, username="", classfilter="all", includeStaff = False, includeVolunteers = False, limit = 0):
     """
