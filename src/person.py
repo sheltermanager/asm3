@@ -389,67 +389,36 @@ def get_person_find_simple(dbo, query, username="", classfilter="all", includeSt
     classfilter: One of all, vet, retailer, staff, fosterer, volunteer, shelter, 
                  aco, banned, homechecked, homechecker, member, donor, driver, volunteerandstaff
     """
-    ors = []
-    query = query.replace("'", "`")
-    words = query.split(" ")
-    def add(field):
-        return utils.where_text_filter(dbo, field, query)
-    onac = []
-    for w in words:
-        onac.append("(%s)" % utils.where_text_filter(dbo, "o.OwnerName", w))
-    ors.append("(%s)" % " AND ".join(onac))
-    ors.append(add("o.OwnerCode"))
-    ors.append(add("o.OwnerAddress"))
-    ors.append(add("o.OwnerTown"))
-    ors.append(add("o.OwnerCounty"))
-    ors.append(add("o.OwnerPostcode"))
-    ors.append(add("o.EmailAddress"))
-    ors.append(add("o.HomeTelephone"))
-    ors.append(add("o.WorkTelephone"))
-    ors.append(add("o.MobileTelephone"))
-    ors.append(add("o.MembershipNumber"))
-    ors.append(u"EXISTS(SELECT ad.Value FROM additional ad " \
+    ss = utils.SimpleSearchBuilder(dbo, query)
+    ss.add_words("o.OwnerName")
+    ss.add_fields([ "o.OwnerCode", "o.OwnerAddress", "o.OwnerTown", "o.OwnerCounty", "o.OwnerPostcode",
+        "o.EmailAddress", "o.HomeTelephone", "o.WorkTelephone", "o.MobileTelephone", "o.MembershipNumber" ])
+    ss.add_clause("EXISTS(SELECT ad.Value FROM additional ad " \
         "INNER JOIN additionalfield af ON af.ID = ad.AdditionalFieldID AND af.Searchable = 1 " \
-        "WHERE ad.LinkID=o.ID AND ad.LinkType IN (%s) AND LOWER(ad.Value) LIKE '%%%s%%')" % (additional.PERSON_IN, query.lower()))
-    cf = ""
-    if classfilter == "all":
-        pass
-    elif classfilter == "coordinator":
-        cf = " AND o.IsAdoptionCoordinator = 1"
-    elif classfilter == "vet":
-        cf = " AND o.IsVet = 1"
-    elif classfilter == "retailer":
-        cf = " AND o.IsRetailer = 1"
-    elif classfilter == "staff":
-        cf = " AND o.IsStaff = 1"
-    elif classfilter == "fosterer":
-        cf = " AND o.IsFosterer = 1"
-    elif classfilter == "volunteer":
-        cf = " AND o.IsVolunteer = 1"
-    elif classfilter == "volunteerandstaff":
-        cf = " AND (o.IsVolunteer = 1 OR o.IsStaff = 1)"
-    elif classfilter == "shelter":
-        cf = " AND o.IsShelter = 1"
-    elif classfilter == "aco":
-        cf = " AND o.IsACO = 1"
-    elif classfilter == "banned":
-        cf = " AND o.IsBanned = 1"
-    elif classfilter == "homechecked":
-        cf = " AND o.IDCheck = 1"
-    elif classfilter == "homechecker":
-        cf = " AND o.IsHomeChecker = 1"
-    elif classfilter == "member":
-        cf = " AND o.IsMember = 1"
-    elif classfilter == "donor":
-        cf = " AND o.IsDonor = 1"
-    elif classfilter == "driver":
-        cf = " AND o.IsDriver = 1"
-    if not includeStaff:
-        cf += " AND o.IsStaff = 0"
-    if not includeVolunteers:
-        cf += " AND o.IsVolunteer = 0"
-    sql = utils.cunicode(get_person_query(dbo)) + " WHERE (" + u" OR ".join(ors) + ")" + cf + " ORDER BY o.OwnerName"
-    return reduce_find_results(dbo, username, db.query(dbo, sql, limit=limit))
+        "WHERE ad.LinkID=o.ID AND ad.LinkType IN (%s) AND LOWER(ad.Value) LIKE ?)" % additional.PERSON_IN)
+    classfilters = {
+        "all":              "",
+        "coordinator":      " AND o.IsAdoptionCoordinator = 1",
+        "vet":              " AND o.IsVet = 1",
+        "retailer":         " AND o.IsRetailer = 1",
+        "staff":            " AND o.IsStaff = 1",
+        "fosterer":         " AND o.IsFosterer = 1",
+        "volunteer":        " AND o.IsVolunteer = 1",
+        "volunteerandstaff": " AND (o.IsVolunteer = 1 OR o.IsStaff = 1)",
+        "shelter":          " AND o.IsShelter = 1",
+        "aco":              " AND o.IsACO = 1",
+        "banned":           " AND o.IsBanned = 1",
+        "homechecked":      " AND o.IDCheck = 1",
+        "homechecker":      " AND o.IsHomeChecker = 1",
+        "member":           " AND o.IsMember = 1",
+        "donor":            " AND o.IsDonor = 1",
+        "driver":           " AND o.IsDriver = 1"
+    }
+    cf = classfilters[classfilter]
+    if not includeStaff: cf += " AND o.IsStaff = 0"
+    if not includeVolunteers: cf += " AND o.IsVolunteer = 0"
+    sql = utils.cunicode(get_person_query(dbo)) + " WHERE (" + u" OR ".join(ss.ors) + ")" + cf + " ORDER BY o.OwnerName"
+    return reduce_find_results(dbo, username, dbo.query(sql, ss.values, limit=limit))
 
 def get_person_find_advanced(dbo, criteria, username, includeStaff = False, limit = 0):
     """
@@ -470,80 +439,57 @@ def get_person_find_advanced(dbo, criteria, username, includeStaff = False, limi
        filter - built in or additional flags, ANDed
        gdpr - one or more gdpr contact values ANDed
     """
-    c = []
-    l = dbo.locale
-    post = utils.PostedData(criteria, l)
 
-    def hk(cfield):
-        return post[cfield] != ""
+    ss = utils.AdvancedSearchBuilder(dbo, utils.PostedData(criteria, dbo.locale))
+    ss.add_words("name", "o.OwnerName")
+    ss.add_str("code", "o.OwnerCode")
+    ss.add_str("createdby", "o.CreatedBy")
+    ss.add_str("address", "o.OwnerAddress")
+    ss.add_str("town", "o.OwnerTown")
+    ss.add_str("county", "o.OwnerCounty")
+    ss.add_str("postcode", "o.OwnerPostcode")
+    ss.add_id("jurisdiction", "o.JurisdictionID")
+    ss.add_str("email", "o.EmailAddress")
+    ss.add_words("homecheck", "o.HomeCheckAreas")
+    ss.add_words("comments", "o.Comments")
+    ss.add_words("medianotes", "web.MediaNotes")
 
-    def crit(cfield):
-        return post[cfield]
+    if "filter" in criteria:
+        for flag in criteria["filter"].split(","):
+            if flag == "aco": ss.ands.append("o.IsACO=1")
+            elif flag == "banned": ss.ands.append("o.IsBanned=1")
+            elif flag == "coordinator": ss.ands.append("o.IsAdoptionCoordinator=1")
+            elif flag == "deceased": ss.ands.append("o.IsDeceased=1")
+            elif flag == "donor": ss.ands.append("o.IsDonor=1")
+            elif flag == "driver": ss.ands.append("o.IsDriver=1")
+            elif flag == "excludefrombulkemail": ss.ands.append("o.ExcludeFromBulkEmail=1")
+            elif flag == "fosterer": ss.ands.append("o.IsFosterer=1")
+            elif flag == "homechecked": ss.ands.append("o.IDCheck=1")
+            elif flag == "homechecker": ss.ands.append("o.IsHomeChecker=1")
+            elif flag == "member": ss.ands.append("o.IsMember=1")
+            elif flag == "retailer": ss.ands.append("o.IsRetailer=1")
+            elif flag == "shelter": ss.ands.append("o.IsShelter=1")
+            elif flag == "staff": ss.ands.append("o.IsStaff=1")
+            elif flag == "giftaid": ss.ands.append("o.IsGiftAid=1")
+            elif flag == "vet": ss.ands.append("o.IsVet=1")
+            elif flag == "volunteer": ss.ands.append("o.IsVolunteer=1")
+            else: 
+                ss.ands.append("LOWER(o.AdditionalFlags) LIKE ?")
+                ss.values.append("%%%s%%" % flag.lower())
 
-    def addid(cfield, field): 
-        if post[cfield] != "" and post.integer(cfield) > -1:
-            c.append("%s = %d" % (field, post.integer(cfield)))
+    if "gdpr" in criteria:
+        for g in criteria["gdpr"].split(","):
+            ss.ands.append("o.GDPRContactOptIn LIKE ?")
+            ss.values.append("%%%s%%" % g)
 
-    def addstr(cfield, field): 
-        if hk(cfield) and criteria[cfield] != "": 
-            x = crit(cfield).lower().replace("'", "`")
-            c.append("(LOWER(%s) LIKE '%%%s%%' OR LOWER(%s) LIKE '%%%s%%')" % ( 
-                field, x,
-                field, utils.decode_html(x) 
-            ))
-
-    def addwords(cfield, field):
-        if hk(cfield) and crit(cfield) != "":
-            words = crit(cfield).split(" ")
-            for w in words:
-                x = w.lower().replace("'", "`")
-                c.append("(LOWER(%s) LIKE '%%%s%%' OR LOWER(%s) LIKE '%%%s%%')" % (
-                    field, x,
-                    field, utils.decode_html(x)
-                ))
-
-    addstr("code", "o.OwnerCode")
-    addstr("createdby", "o.CreatedBy")
-    addwords("name", "o.OwnerName")
-    addstr("address", "o.OwnerAddress")
-    addstr("town", "o.OwnerTown")
-    addstr("county", "o.OwnerCounty")
-    addstr("postcode", "o.OwnerPostcode")
-    addid("jurisdiction", "o.JurisdictionID")
-    addstr("email", "o.EmailAddress")
-    addwords("homecheck", "o.HomeCheckAreas")
-    addwords("comments", "o.Comments")
-    addwords("medianotes", "web.MediaNotes")
-    if crit("filter") != "":
-        for flag in crit("filter").split(","):
-            if flag == "aco": c.append("o.IsACO=1")
-            elif flag == "banned": c.append("o.IsBanned=1")
-            elif flag == "coordinator": c.append("o.IsAdoptionCoordinator=1")
-            elif flag == "deceased": c.append("o.IsDeceased=1")
-            elif flag == "donor": c.append("o.IsDonor=1")
-            elif flag == "driver": c.append("o.IsDriver=1")
-            elif flag == "excludefrombulkemail": c.append("o.ExcludeFromBulkEmail=1")
-            elif flag == "fosterer": c.append("o.IsFosterer=1")
-            elif flag == "homechecked": c.append("o.IDCheck=1")
-            elif flag == "homechecker": c.append("o.IsHomeChecker=1")
-            elif flag == "member": c.append("o.IsMember=1")
-            elif flag == "retailer": c.append("o.IsRetailer=1")
-            elif flag == "shelter": c.append("o.IsShelter=1")
-            elif flag == "staff": c.append("o.IsStaff=1")
-            elif flag == "giftaid": c.append("o.IsGiftAid=1")
-            elif flag == "vet": c.append("o.IsVet=1")
-            elif flag == "volunteer": c.append("o.IsVolunteer=1")
-            else: c.append("LOWER(o.AdditionalFlags) LIKE %s" % db.ds("%%%s%%" % flag.lower()))
-    if crit("gdpr") != "":
-        for g in crit("gdpr").split(","):
-            c.append("o.GDPRContactOptIn LIKE %s" % db.ds("%%%s%%" % g))
     if not includeStaff:
         c.append("o.IsStaff = 0")
-    if len(c) == 0:
+
+    if len(ss.ands) == 0:
         sql = get_person_query(dbo) + " ORDER BY o.OwnerName"
     else:
-        sql = get_person_query(dbo) + " WHERE " + " AND ".join(c) + " ORDER BY o.OwnerName"
-    return reduce_find_results(dbo, username, db.query(dbo, sql, limit=limit))
+        sql = get_person_query(dbo) + " WHERE " + " AND ".join(ss.ands) + " ORDER BY o.OwnerName"
+    return reduce_find_results(dbo, username, dbo.query(sql, ss.values, limit=limit))
 
 def reduce_find_results(dbo, username, rows):
     """

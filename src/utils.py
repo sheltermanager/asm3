@@ -196,6 +196,124 @@ class PostedData(object):
     def __repr__(self):
         return json(self.data)
 
+class SimpleSearchBuilder(object):
+    """
+    Builds a simple search (based on a single search term)
+    ss = SimpleSearchBuilder(dbo, "test")
+    ss.add_field("a.AnimalName")
+    ss.add_field("a.ShelterCode")
+    ss.add_fields([ "a.BreedName", "a.AnimalComments" ])
+    ss.ors, ss.values
+    """
+    
+    q = ""
+    qlike = ""
+    ors = []
+    values = []
+    dbo = None
+
+    def __init__(self, dbo, q):
+        self.dbo = dbo
+        self.q = q.replace("'", "`")
+        self.qlike = "%%%s%%" % self.q.lower()
+
+    def add_field(self, field):
+        """ Add a field to search """
+        self.ors.append("(LOWER(%s) LIKE ? OR LOWER(%s) LIKE ?)" % (field, field))
+        self.values.append(self.qlike)
+        self.values.append(decode_html(self.qlike))
+
+    def add_fields(self, fieldlist):
+        """ Add clauses for many fields in one list """
+        for f in fieldlist:
+            self.add_field(f)
+
+    def add_words(self, field):
+        """ Adds all the words in the term as separate clauses """
+        for w in self.q.split(" "):
+            self.ors.append("(LOWER(%s) LIKE ? OR LOWER(%s) LIKE ?)" % (field, field))
+            self.values.append(w)
+            self.values.append(decode_html(w))
+
+    def add_clause(self, clause):
+        self.ors.append(clause)
+        self.values.append(self.qlike)
+
+class AdvancedSearchBuilder(object):
+    """
+    Builds an advanced search (requires a post with multiple supplied parameters)
+    as = AdvancedSearchBuilder(dbo, post)
+    as.add_id("litterid", "a.AcceptanceNumber")
+    as.add_str("rabiestag", "a.RabiesTag")
+    as.ands, as.values
+    """
+
+    ands = []
+    values = []
+    dbo = None
+    post = None
+
+    def __init__(self, dbo, post):
+        self.dbo = dbo
+        self.post = post
+
+    def add_id(self, cfield, field): 
+        """ Adds a clause for comparing an ID field """
+        if self.post[cfield] != "" and self.post.integer(cfield) > -1:
+            self.ands.append("%s = ?" % field)
+            self.values.append(post.integer(cfield))
+
+    def add_id_pair(self, cfield, field, field2): 
+        """ Adds a clause for a posted value to one of two ID fields (eg: breeds) """
+        if self.post[cfield] != "" and self.post.integer(cfield) > 0: 
+            self.ands.append("(%s = ? OR %s = ?)" % (field, field2))
+            self.values.append(post.integer(cfield))
+            self.values.append(post.integer(cfield))
+
+    def add_str(self, cfield, field): 
+        """ Adds a clause for a posted value to a string field """
+        if self.post[cfield] != "":
+            x = self.post[cfield].lower().replace("'", "`")
+            x = "%%%s%%" % x
+            ands.append("(LOWER(%s) LIKE ? OR LOWER(%s) LIKE ?)" % (field, field))
+            self.values.append(x)
+            self.values.append(decode_html(x))
+
+    def add_str_pair(self, cfield, field, field2): 
+        """ Adds a clause for a posted value to one of two string fields """
+        if self.post[cfield] != "":
+            x = "%%%s%%" % self.post[cfield].lower()
+            self.ands.append("(LOWER(%s) LIKE ? OR LOWER(%s) LIKE ?)" % (field, field2))
+            self.values.append(x)
+            self.values.append(x)
+
+    def add_date(self, cfieldfrom, cfieldto, field): 
+        """ Adds a clause for a posted date range to a date field """
+        if self.post[cfieldfrom] != "" and self.post[cfieldto] != "":
+            self.post.data["dayend"] = "23:59:59"
+            self.ands.append("%s >= ? AND %s <= ?" % (field, field))
+            self.values.append(post.date(cfieldfrom))
+            self.values.append(post.datetime(cfieldto, "dayend"))
+
+    def add_filter(self, f, condition):
+        """ Adds a complete clause if posted filter value is present """
+        if post["filter"].find(f) != -1: self.ands.append(condition)
+
+    def add_comp(self, cfield, value, condition):
+        """ Adds a clause if a field holds a value """
+        if self.post[cfield] == value: self.ands.append(condition)
+
+    def add_words(self, cfield, field):
+        """ Adds a separate clause for each word in cfield """
+        if self.post[cfield] != "":
+            words = self.post[cfield].split(" ")
+            for w in words:
+                x = w.lower().replace("'", "`")
+                x = "%%%s%%" % x
+                self.ands.append("(LOWER(%s) LIKE ? OR LOWER(%s) LIKE ?)" % (field, field))
+                self.values.append(x)
+                self.values.append(decode_html(x))
+
 def is_currency(f):
     """ Returns true if the field with name f is a currency field """
     CURRENCY_FIELDS = "AMT AMOUNT DONATION DAILYBOARDINGCOST COSTAMOUNT COST FEE LICENCEFEE DEPOSITAMOUNT FINEAMOUNT UNITPRICE VATAMOUNT"
@@ -801,28 +919,6 @@ def md5_hash(s):
     m.update(s)
     s = m.hexdigest()
     return s
-
-def where_text_filter(dbo, field, term):
-    """
-    Used when adding a text search term filter to a where clause. It matches
-    the lowered string literally, decodes the search term to unicode and matches for
-    that.
-    dbo: The database info
-    field: The field we're filtering on
-    term:  The item we're filtering for
-    """
-    term = term.lower().replace("'", "`")
-    normal = u"LOWER(%s) LIKE '%%%s%%'" % (field, term)
-    decoded = u"LOWER(%s) LIKE  '%%%s%%'" % (field, decode_html(term))
-    wc = normal + u" OR " + decoded
-    # If DB_DECODE_HTML_ENTITIES is true and you have a UTF collation
-    # on your database, case insensitive searching will work here
-    # for all languages.
-    # If DB_DECODE_HTML_ENTITIES is false (the default and for sm.com)
-    # case insensitive searching for non-English languages will 
-    # not work as unicode code points are stored in the database 
-    # HTML entities and LOWER() has no effect.
-    return wc
 
 def get_url(url, headers = {}, cookies = {}, timeout = None):
     """
