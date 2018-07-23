@@ -376,39 +376,15 @@ def get_animal_find_simple(dbo, query, classfilter = "all", limit = 0, locationf
         locationfilter = get_location_filter_clause(locationfilter=locationfilter, tablequalifier="a", siteid=siteid, andprefix=True)
         sql = "%s WHERE a.Archived=0 %s ORDER BY a.AnimalName" % (get_animal_query(dbo), locationfilter)
         return dbo.query(sql, limit=limit, distincton="ID")
-    ors = []
-    values = []
-    query = query.replace("'", "`")
-    querylike = "%%%s%%" % query.lower()
-    def add(field):
-        ors.append("(LOWER(%s) LIKE ? OR LOWER(%s) LIKE ?)" % (field, field))
-        values.append(querylike)
-        values.append(utils.decode_html(querylike))
-    def addclause(clause):
-        ors.append(clause)
-        values.append(querylike)
-    add("a.AnimalName")
-    add("a.ShelterCode")
-    add("a.ShortCode")
-    add("a.AcceptanceNumber")
-    add("a.BreedName")
-    add("a.IdentichipNumber")
-    add("a.Identichip2Number")
-    add("a.TattooNumber")
-    add("a.RabiesTag")
-    add("il.LocationName")
-    add("a.ShelterLocationUnit")
-    add("a.PickupAddress")
-    addclause("EXISTS(SELECT ad.Value FROM additional ad " \
+    ss = utils.SimpleSearchBuilder(dbo, query)
+    ss.add_fields([ "a.AnimalName", "a.ShelterCode", "a.ShortCode", "a.AcceptanceNumber", "a.BreedName",
+        "a.IdentichipNumber", "a.Identichip2Number", "a.TattooNumber", "a.RabiesTag", "il.LocationName", 
+        "a.ShelterLocationUnit", "a.PickupAddress" ])
+    ss.add_clause("EXISTS(SELECT ad.Value FROM additional ad " \
         "INNER JOIN additionalfield af ON af.ID = ad.AdditionalFieldID AND af.Searchable = 1 " \
         "WHERE ad.LinkID=a.ID AND ad.LinkType IN (%s) AND LOWER(ad.Value) LIKE ?)" % additional.ANIMAL_IN)
-    if not dbo.is_large_db: 
-        add("a.Markings")
-        add("a.HiddenAnimalDetails")
-        add("a.AnimalComments")
-        add("a.ReasonNO")
-        add("a.HealthProblems")
-        add("a.PTSReason")
+    ss.add_large_text_fields([ "a.Markings", "a.HiddenAnimalDetails", "a.AnimalComments", "a.ReasonNO", 
+        "a.HealthProblems", "a.PTSReason" ])
     if classfilter == "shelter":
         classfilter = "a.Archived = 0 AND "
     elif classfilter == "female":
@@ -419,8 +395,8 @@ def get_animal_find_simple(dbo, query, classfilter = "all", limit = 0, locationf
         get_animal_query(dbo),
         classfilter,
         get_location_filter_clause(locationfilter=locationfilter, tablequalifier="a", siteid=siteid, andsuffix=True),
-        " OR ".join(ors))
-    return dbo.query(sql, values, limit=limit, distincton="ID")
+        " OR ".join(ss.ors))
+    return dbo.query(sql, ss.values, limit=limit, distincton="ID")
 
 def get_animal_find_advanced(dbo, criteria, limit = 0, locationfilter = "", siteid = 0):
     """
@@ -481,151 +457,99 @@ def get_animal_find_advanced(dbo, criteria, limit = 0, locationfilter = "", site
             quarantine
     locationfilter: IN clause of locations to search
     """
-    ands = []
-    values = []
-    l = dbo.locale
-    post = utils.PostedData(criteria, l)
-
-    def addid(cfield, field): 
-        if post[cfield] != "" and post.integer(cfield) > -1:
-            ands.append("%s = ?" % field)
-            values.append(post.integer(cfield))
-
-    def addidpair(cfield, field, field2): 
-        if post[cfield] != "" and post.integer(cfield) > 0: 
-            ands.append("(%s = ? OR %s = ?)" % (field, field2))
-            values.append(post.integer(cfield))
-            values.append(post.integer(cfield))
-
-    def addstr(cfield, field): 
-        if post[cfield] != "":
-            x = post[cfield].lower().replace("'", "`")
-            x = "%%%s%%" % x
-            ands.append("(LOWER(%s) LIKE ? OR LOWER(%s) LIKE ?)" % (field, field))
-            values.append(x)
-            values.append(utils.decode_html(x))
-
-    def addstrpair(cfield, field, field2): 
-        if post[cfield] != "":
-            x = "%%%s%%" % post[cfield].lower()
-            ands.append("(LOWER(%s) LIKE ? OR LOWER(%s) LIKE ?)" % (field, field2))
-            values.append(x)
-            values.append(x)
-
-    def adddate(cfieldfrom, cfieldto, field): 
-        if post[cfieldfrom] != "" and post[cfieldto] != "":
-            post.data["dayend"] = "23:59:59"
-            ands.append("%s >= ? AND %s <= ?" % (field, field))
-            values.append(post.date(cfieldfrom))
-            values.append(post.datetime(cfieldto, "dayend"))
-
-    def addfilter(f, condition):
-        if post["filter"].find(f) != -1: ands.append(condition)
-
-    def addcomp(cfield, value, condition):
-        if post[cfield] == value: ands.append(condition)
-
-    def addwords(cfield, field):
-        if post[cfield] != "":
-            words = post[cfield].split(" ")
-            for w in words:
-                x = w.lower().replace("'", "`")
-                x = "%%%s%%" % x
-                ands.append("(LOWER(%s) LIKE ? OR LOWER(%s) LIKE ?)" % (field, field))
-                values.append(x)
-                values.append(utils.decode_html(x))
-
-    addstr("animalname", "a.AnimalName")
-    addid("animaltypeid", "a.AnimalTypeID")
-    addid("speciesid", "a.SpeciesID")
-    addidpair("breedid", "a.BreedID", "a.Breed2ID")
-    addid("shelterlocation", "a.ShelterLocation")
+    post = utils.PostedData(criteria, dbo.locale)
+    ss = utils.AdvancedSearchBuilder(dbo, post)
+    ss.add_str("animalname", "a.AnimalName")
+    ss.add_id("animaltypeid", "a.AnimalTypeID")
+    ss.add_id("speciesid", "a.SpeciesID")
+    ss.add_id_pair("breedid", "a.BreedID", "a.Breed2ID")
+    ss.add_id("shelterlocation", "a.ShelterLocation")
     # If we have a location filter and no location has been given, use the filter
     if locationfilter != "" and post.integer("shelterlocation") == -1:
-        ands.append(get_location_filter_clause(locationfilter=locationfilter, tablequalifier="a", siteid=siteid))
-    addstrpair("microchip", "a.IdentichipNumber", "a.Identichip2Number")
-    addstr("rabiestag", "a.RabiesTag")
-    addstr("pickupaddress", "a.PickupAddress")
-    addid("sex", "a.Sex")
-    addid("size", "a.Size")
-    addid("colour", "a.BaseColourID")
-    addstr("sheltercode", "a.ShelterCode")
-    addstr("litterid", "a.AcceptanceNumber")
-    adddate("inbetweenfrom", "inbetweento", "a.MostRecentEntryDate")
-    addfilter("goodwithchildren", "a.IsGoodWithChildren = 0")
-    addfilter("goodwithdogs", "a.IsGoodWithDogs = 0")
-    addfilter("goodwithcats", "a.IsGoodWithCats = 0")
-    addfilter("housetrained", "a.IsHouseTrained = 0")
-    addfilter("showtransfersonly", "a.IsTransfer = 1")
-    addfilter("showpickupsonly", "a.IsPickup = 1")
-    addfilter("showspecialneedsonly", "a.HasSpecialNeeds = 1")
-    addfilter("showdeclawedonly", "a.Declawed = 1")
-    addfilter("fivplus", "a.CombiTested = 1 AND a.CombiTestResult = 2")
-    addfilter("flvplus", "a.CombiTested = 1 AND a.FLVResult = 2")
-    addfilter("heartwormplus", "a.HeartwormTested = 1 AND a.HeartwormTestResult = 2")
-    addwords("comments", "a.AnimalComments")
-    addwords("hiddencomments", "a.HiddenAnimalDetails")
-    addwords("features", "a.Markings")
-    addstr("originalowner", "oo.OwnerName")
+        ss.ands.append(get_location_filter_clause(locationfilter=locationfilter, tablequalifier="a", siteid=siteid))
+    ss.add_str_pair("microchip", "a.IdentichipNumber", "a.Identichip2Number")
+    ss.add_str("rabiestag", "a.RabiesTag")
+    ss.add_str("pickupaddress", "a.PickupAddress")
+    ss.add_id("sex", "a.Sex")
+    ss.add_id("size", "a.Size")
+    ss.add_id("colour", "a.BaseColourID")
+    ss.add_str("sheltercode", "a.ShelterCode")
+    ss.add_str("litterid", "a.AcceptanceNumber")
+    ss.add_date("inbetweenfrom", "inbetweento", "a.MostRecentEntryDate")
+    ss.add_filter("goodwithchildren", "a.IsGoodWithChildren = 0")
+    ss.add_filter("goodwithdogs", "a.IsGoodWithDogs = 0")
+    ss.add_filter("goodwithcats", "a.IsGoodWithCats = 0")
+    ss.add_filter("housetrained", "a.IsHouseTrained = 0")
+    ss.add_filter("showtransfersonly", "a.IsTransfer = 1")
+    ss.add_filter("showpickupsonly", "a.IsPickup = 1")
+    ss.add_filter("showspecialneedsonly", "a.HasSpecialNeeds = 1")
+    ss.add_filter("showdeclawedonly", "a.Declawed = 1")
+    ss.add_filter("fivplus", "a.CombiTested = 1 AND a.CombiTestResult = 2")
+    ss.add_filter("flvplus", "a.CombiTested = 1 AND a.FLVResult = 2")
+    ss.add_filter("heartwormplus", "a.HeartwormTested = 1 AND a.HeartwormTestResult = 2")
+    ss.add_words("comments", "a.AnimalComments")
+    ss.add_words("hiddencomments", "a.HiddenAnimalDetails")
+    ss.add_words("features", "a.Markings")
+    ss.add_str("originalowner", "oo.OwnerName")
     if post.integer("agegroup") != -1:
-        addstr("agegroup", "a.AgeGroup")
-    adddate("outbetweenfrom", "outbetweento", "a.ActiveMovementDate")
-    addwords("medianotes", "web.MediaNotes")
-    addstr("createdby", "a.CreatedBy")
+        ss.add_str("agegroup", "a.AgeGroup")
+    ss.add_date("outbetweenfrom", "outbetweento", "a.ActiveMovementDate")
+    ss.add_words("medianotes", "web.MediaNotes")
+    ss.add_str("createdby", "a.CreatedBy")
 
     if post["agedbetweenfrom"] != "" and post["agedbetweento"] != "":
-        ands.append("a.DateOfBirth >= ? AND a.DateOfBirth <= ?")
-        values.append(subtract_years(dbo.now(), post.floating("agedbetweento")))
-        values.append(subtract_years(dbo.now(), post.floating("agedbetweenfrom")))
+        ss.ands.append("a.DateOfBirth >= ? AND a.DateOfBirth <= ?")
+        ss.values.append(subtract_years(dbo.now(), post.floating("agedbetweento")))
+        ss.values.append(subtract_years(dbo.now(), post.floating("agedbetweenfrom")))
 
     if post["insuranceno"] != "":
-        ands.append("EXISTS (SELECT InsuranceNumber FROM adoption WHERE " \
+        ss.ands.append("EXISTS (SELECT InsuranceNumber FROM adoption WHERE " \
             "LOWER(InsuranceNumber) LIKE ? AND AnimalID = a.ID)")
-        values.append( "%%%s%%" % post["insuranceno"] )
+        ss.values.append( "%%%s%%" % post["insuranceno"] )
 
     if post["adoptionno"] != "":
-        ands.append("EXISTS (SELECT AdoptionNumber FROM adoption WHERE " \
+        ss.ands.append("EXISTS (SELECT AdoptionNumber FROM adoption WHERE " \
             "LOWER(AdoptionNumber) LIKE ? AND AnimalID = a.ID)")
-        values.append( "%%%s%%" % post["adoptionno"] )
+        ss.values.append( "%%%s%%" % post["adoptionno"] )
 
     if post["filter"].find("includedeceased") == -1 and post["logicallocation"] != "deceased":
-        ands.append("a.DeceasedDate Is Null")
+        ss.ands.append("a.DeceasedDate Is Null")
 
     if post["filter"].find("includenonshelter") == -1 and post["flags"].find("nonshelter") == -1:
-        ands.append("a.NonShelterAnimal = 0")
+        ss.ands.append("a.NonShelterAnimal = 0")
 
-    addcomp("reserved", "reserved", "a.HasActiveReserve = 1")
-    addcomp("reserved", "unreserved", "a.HasActiveReserve = 0")
-    addcomp("logicallocation", "onshelter", "a.Archived = 0")
-    addcomp("logicallocation", "adoptable", "a.Archived = 0 AND a.IsNotAvailableForAdoption = 0 AND a.HasTrialAdoption = 0")
-    addcomp("logicallocation", "reserved", "a.Archived = 0 AND a.HasActiveReserve = 1 AND a.HasTrialAdoption = 0")
-    addcomp("logicallocation", "hold", "a.IsHold = 1 AND a.Archived = 0")
-    addcomp("logicallocation", "fostered", "a.ActiveMovementType = %d" % movement.FOSTER)
-    addcomp("logicallocation", "permanentfoster", "a.ActiveMovementType = %d AND a.HasPermanentFoster = 1" % movement.FOSTER)
-    addcomp("logicallocation", "adopted", "a.ActiveMovementType = %d" % movement.ADOPTION)
-    addcomp("logicallocation", "transferred", "a.ActiveMovementType = %d" % movement.TRANSFER)
-    addcomp("logicallocation", "escaped", "a.ActiveMovementType = %d" % movement.ESCAPED)
-    addcomp("logicallocation", "stolen", "a.ActiveMovementType = %d" % movement.STOLEN)
-    addcomp("logicallocation", "releasedtowild", "a.ActiveMovementType = %d" % movement.RELEASED)
-    addcomp("logicallocation", "reclaimed", "a.ActiveMovementType = %d" % movement.RECLAIMED)
-    addcomp("logicallocation", "retailer", "a.ActiveMovementType = %d" % movement.RETAILER)
-    addcomp("logicallocation", "deceased", "a.DeceasedDate Is Not Null")
+    ss.add_comp("reserved", "reserved", "a.HasActiveReserve = 1")
+    ss.add_comp("reserved", "unreserved", "a.HasActiveReserve = 0")
+    ss.add_comp("logicallocation", "onshelter", "a.Archived = 0")
+    ss.add_comp("logicallocation", "adoptable", "a.Archived = 0 AND a.IsNotAvailableForAdoption = 0 AND a.HasTrialAdoption = 0")
+    ss.add_comp("logicallocation", "reserved", "a.Archived = 0 AND a.HasActiveReserve = 1 AND a.HasTrialAdoption = 0")
+    ss.add_comp("logicallocation", "hold", "a.IsHold = 1 AND a.Archived = 0")
+    ss.add_comp("logicallocation", "fostered", "a.ActiveMovementType = %d" % movement.FOSTER)
+    ss.add_comp("logicallocation", "permanentfoster", "a.ActiveMovementType = %d AND a.HasPermanentFoster = 1" % movement.FOSTER)
+    ss.add_comp("logicallocation", "adopted", "a.ActiveMovementType = %d" % movement.ADOPTION)
+    ss.add_comp("logicallocation", "transferred", "a.ActiveMovementType = %d" % movement.TRANSFER)
+    ss.add_comp("logicallocation", "escaped", "a.ActiveMovementType = %d" % movement.ESCAPED)
+    ss.add_comp("logicallocation", "stolen", "a.ActiveMovementType = %d" % movement.STOLEN)
+    ss.add_comp("logicallocation", "releasedtowild", "a.ActiveMovementType = %d" % movement.RELEASED)
+    ss.add_comp("logicallocation", "reclaimed", "a.ActiveMovementType = %d" % movement.RECLAIMED)
+    ss.add_comp("logicallocation", "retailer", "a.ActiveMovementType = %d" % movement.RETAILER)
+    ss.add_comp("logicallocation", "deceased", "a.DeceasedDate Is Not Null")
     if post["flags"] != "":
         for flag in post["flags"].split(","):
-            if flag == "courtesy": ands.append("a.IsCourtesy=1")
-            elif flag == "crueltycase": ands.append("a.CrueltyCase=1")
-            elif flag == "nonshelter": ands.append("a.NonShelterAnimal=1")
-            elif flag == "notforadoption": ands.append("a.IsNotAvailableForAdoption=1")
-            elif flag == "notforregistration": ands.append("a.IsNotForRegistration=1")
-            elif flag == "quarantine": ands.append("a.IsQuarantine=1")
+            if flag == "courtesy": ss.ands.append("a.IsCourtesy=1")
+            elif flag == "crueltycase": ss.ands.append("a.CrueltyCase=1")
+            elif flag == "nonshelter": ss.ands.append("a.NonShelterAnimal=1")
+            elif flag == "notforadoption": ss.ands.append("a.IsNotAvailableForAdoption=1")
+            elif flag == "notforregistration": ss.ands.append("a.IsNotForRegistration=1")
+            elif flag == "quarantine": ss.ands.append("a.IsQuarantine=1")
             else: 
-                ands.append("LOWER(a.AdditionalFlags) LIKE ?")
-                values.append("%%%s%%" % flag.lower())
+                ss.ands.append("LOWER(a.AdditionalFlags) LIKE ?")
+                ss.values.append("%%%s%%" % flag.lower())
+
     where = ""
-    if len(ands) > 0:
-        where = "WHERE " + " AND ".join(ands)
+    if len(ss.ands) > 0: where = "WHERE " + " AND ".join(ss.ands)
     sql = "%s %s ORDER BY a.AnimalName" % (get_animal_query(dbo), where)
-    return dbo.query(sql, values, limit=limit, distincton="ID")
+    return dbo.query(sql, ss.values, limit=limit, distincton="ID")
 
 def get_animals_not_for_adoption(dbo):
     """

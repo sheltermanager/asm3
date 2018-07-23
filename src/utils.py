@@ -302,10 +302,21 @@ class SimpleSearchBuilder(object):
         self.values.append(self.qlike)
         self.values.append(decode_html(self.qlike))
 
+    def add_field_value(self, field, value):
+        """ Add a field with a specific value """
+        self.ors.append("%s = ?" % field)
+        self.values.append(value)
+
     def add_fields(self, fieldlist):
         """ Add clauses for many fields in one list """
         for f in fieldlist:
             self.add_field(f)
+
+    def add_large_text_fields(self, fieldlist):
+        """ Add clauses for many large text fields (only search in smaller databases) in one list """
+        if not self.dbo.is_large_db:
+            for f in fieldlist:
+                self.add_field(f)
 
     def add_words(self, field):
         """ Adds all the words in the term as separate clauses """

@@ -133,24 +133,19 @@ def get_waitinglist_find_simple(dbo, query = "", limit = 0):
     Returns rows for simple waiting list searches.
     query: The search criteria
     """
+    ss = utils.SimpleSearchBuilder(dbo, query)
     # If no query has been given, do a current waitinglist search
     if query == "":
         return get_waitinglist(dbo)
-    ors = []
-    def add(f):
-        return "LOWER(%s) LIKE '%%%s%%'" % (f, query.lower())
-    if utils.is_numeric(query):
-        ors.append("a.ID = " + str(utils.cint(query)))
-    ors.append(add("o.OwnerName"))
-    ors.append(u"EXISTS(SELECT ad.Value FROM additional ad " \
+    if utils.is_numeric(query): ss.add_field_value("a.ID", utils.cint(query))
+    ss.add_field("o.OwnerName")
+    ss.add_clause("EXISTS(SELECT ad.Value FROM additional ad " \
         "INNER JOIN additionalfield af ON af.ID = ad.AdditionalFieldID AND af.Searchable = 1 " \
-        "WHERE ad.LinkID=a.ID AND ad.LinkType IN (%s) AND LOWER(ad.Value) LIKE '%%%s%%')" % (additional.WAITINGLIST_IN, query.lower()))
-    if not dbo.is_large_db:
-        ors.append(add("a.AnimalDescription"))
-        ors.append(add("a.ReasonForWantingToPart"))
-        ors.append(add("a.ReasonForRemoval"))
-    sql = get_waitinglist_query(dbo) + " WHERE " + " OR ".join(ors)
-    return db.query(dbo, sql, limit=limit)
+        "WHERE ad.LinkID=a.ID AND ad.LinkType IN (%s) AND LOWER(ad.Value) LIKE ?)" % additional.WAITINGLIST_IN)
+    ss.add_large_text_fields([ "a.AnimalDescription", "a.ReasonForWantingToPart", "a.ReasonForRemoval" ])
+
+    sql = "%s WHERE %s ORDER BY a.ID" % (get_waitinglist_query(dbo), " OR ".join(ss.ors))
+    return dbo.query(sql, ss.values, limit=limit, distincton="ID")
 
 def get_satellite_counts(dbo, wlid):
     """

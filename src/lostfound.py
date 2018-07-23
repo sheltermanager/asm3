@@ -114,76 +114,46 @@ def get_lostanimal_find_simple(dbo, query = "", limit = 0):
     Returns rows for simple lost animal searches.
     query: The search criteria
     """
-    ors = []
-    values = []
-    query = query.replace("'", "`")
-    querylike = "%%%s%%" % query.lower()
-    def add(field):
-        ors.append("(LOWER(%s) LIKE ? OR LOWER(%s) LIKE ?)" % (field, field))
-        values.append(querylike)
-        values.append(utils.decode_html(querylike))
-    def addclause(clause):
-        ors.append(clause)
-        values.append(querylike)
+    ss = utils.SimpleSearchBuilder(dbo, query)
+
     # If no query has been given, show unfound lost animal records
     # for the last 30 days
     if query == "":
-        ors.append("a.DateLost > ? AND a.DateFound Is Null")
-        values.append(dbo.today(offset=-30))
+        ss.ors.append("a.DateLost > ? AND a.DateFound Is Null")
+        ss.values.append(dbo.today(offset=-30))
     else:
-        if utils.is_numeric(query):
-            ors.append("a.ID = ?")
-            values.append(utils.cint(query))
-        add("o.OwnerName")
-        add("a.AreaLost")
-        add("a.AreaPostcode")
-        addclause("EXISTS(SELECT ad.Value FROM additional ad " \
+        if utils.is_numeric(query): ss.add_field_value("a.ID", utils.cint(query))
+        ss.add_fields([ "o.OwnerName", "a.AreaLost", "a.AreaPostcode" ])
+        ss.add_clause("EXISTS(SELECT ad.Value FROM additional ad " \
             "INNER JOIN additionalfield af ON af.ID = ad.AdditionalFieldID AND af.Searchable = 1 " \
             "WHERE ad.LinkID=a.ID AND ad.LinkType IN (%s) AND LOWER(ad.Value) LIKE ?)" % additional.LOSTANIMAL_IN)
-        if not dbo.is_large_db:
-            add("b.BreedName")
-            add("a.DistFeat")
-            add("a.Comments")
-    sql = "%s WHERE %s" % (get_lostanimal_query(dbo), " OR ".join(ors))
-    return dbo.query(sql, values, limit=limit, distincton="ID")
+        ss.add_large_text_fields([ "b.BreedName", "a.DistFeat", "a.Comments" ])
+
+    sql = "%s WHERE %s" % (get_lostanimal_query(dbo), " OR ".join(ss.ors))
+    return dbo.query(sql, ss.values, limit=limit, distincton="ID")
 
 def get_foundanimal_find_simple(dbo, query = "", limit = 0):
     """
     Returns rows for simple found animal searches.
     query: The search criteria
     """
-    ors = []
-    values = []
-    query = query.replace("'", "`")
-    querylike = "%%%s%%" % query.lower()
-    def add(field):
-        ors.append("(LOWER(%s) LIKE ? OR LOWER(%s) LIKE ?)" % (field, field))
-        values.append(querylike)
-        values.append(utils.decode_html(querylike))
-    def addclause(clause):
-        ors.append(clause)
-        values.append(querylike)
+    ss = utils.SimpleSearchBuilder(dbo, query)
+
     # If no query has been given, show unfound lost animal records
     # for the last 30 days
     if query == "":
-        ors.append("a.DateFound > ? AND a.ReturnToOwnerDate Is Null")
-        values.append(dbo.today(offset=-30))
+        ss.ors.append("a.DateFound > ? AND a.ReturnToOwnerDate Is Null")
+        ss.values.append(dbo.today(offset=-30))
     else:
-        if utils.is_numeric(query):
-            ors.append("a.ID = ?")
-            values.append(utils.cint(query))
-        add("o.OwnerName")
-        add("a.AreaFound")
-        add("a.AreaPostcode")
-        addclause("EXISTS(SELECT ad.Value FROM additional ad " \
+        if utils.is_numeric(query): ss.add_field_value("a.ID", utils.cint(query))
+        ss.add_fields([ "o.OwnerName", "a.AreaFound", "a.AreaPostcode" ])
+        ss.add_clause("EXISTS(SELECT ad.Value FROM additional ad " \
             "INNER JOIN additionalfield af ON af.ID = ad.AdditionalFieldID AND af.Searchable = 1 " \
             "WHERE ad.LinkID=a.ID AND ad.LinkType IN (%s) AND LOWER(ad.Value) LIKE ?)" % additional.FOUNDANIMAL_IN)
-        if not dbo.is_large_db:
-            add("b.BreedName")
-            add("a.DistFeat")
-            add("a.Comments")
-    sql = "%s WHERE %s" % (get_foundanimal_query(dbo), " OR ".join(ors))
-    return dbo.query(sql, values, limit=limit, distincton="ID")
+        ss.add_large_text_fields([ "b.BreedName", "a.DistFeat", "a.Comments" ])
+
+    sql = "%s WHERE %s" % (get_foundanimal_query(dbo), " OR ".join(ss.ors))
+    return dbo.query(sql, ss.values, limit=limit, distincton="ID")
 
 def get_lostanimal_find_advanced(dbo, criteria, limit = 0):
     """
@@ -205,65 +175,27 @@ def get_lostanimal_find_advanced(dbo, criteria, limit = 0):
        completefrom - found date from in current display locale format
        completeto - found date to in current display locale format
     """
-    ands = []
-    values = []
-    l = dbo.locale
-    post = utils.PostedData(criteria, l)
+    post = utils.PostedData(criteria, dbo.locale)
+    ss = utils.AdvancedSearchBuilder(dbo, post)
 
-    def addid(cfield, field): 
-        if post[cfield] != "" and post.integer(cfield) > -1:
-            ands.append("%s = ?" % field)
-            values.append(post.integer(cfield))
-
-    def addstr(cfield, field): 
-        if post[cfield] != "":
-            x = post[cfield].lower().replace("'", "`")
-            x = "%%%s%%" % x
-            ands.append("(LOWER(%s) LIKE ? OR LOWER(%s) LIKE ?)" % (field, field))
-            values.append(x)
-            values.append(utils.decode_html(x))
-
-    def adddate(cfieldfrom, cfieldto, field): 
-        if post[cfieldfrom] != "" and post[cfieldto] != "":
-            post.data["dayend"] = "23:59:59"
-            ands.append("%s >= ? AND %s <= ?" % (field, field))
-            values.append(post.date(cfieldfrom))
-            values.append(post.datetime(cfieldto, "dayend"))
-
-    def addfilter(f, condition):
-        if post["filter"].find(f) != -1: ands.append(condition)
-
-    def addcomp(cfield, value, condition):
-        if post[cfield] == value: ands.append(condition)
-
-    def addwords(cfield, field):
-        if post[cfield] != "":
-            words = post[cfield].split(" ")
-            for w in words:
-                x = w.lower().replace("'", "`")
-                x = "%%%s%%" % x
-                ands.append("(LOWER(%s) LIKE ? OR LOWER(%s) LIKE ?)" % (field, field))
-                values.append(x)
-                values.append(utils.decode_html(x))
-
-    ands.append("a.ID > 0")
-    addid("number", "a.ID")
-    addstr("contact", "o.OwnerName")
-    addstr("area", "a.AreaLost")
-    addstr("postcode", "a.AreaPostcode")
-    addstr("features", "a.DistFeat")
-    if post["agegroup"] != "-1": addstr("agegroup", "a.AgeGroup")
-    addid("sex", "a.Sex")
-    addid("species", "a.AnimalTypeID")
-    addid("breed", "a.BreedID")
-    addid("colour", "a.BaseColourID")
-    adddate("datefrom", "dateto", "a.DateLost")
-    adddate("completefrom", "completeto", "a.DateFound")
+    ss.ands.append("a.ID > 0")
+    ss.add_id("number", "a.ID")
+    ss.add_str("contact", "o.OwnerName")
+    ss.add_str("area", "a.AreaLost")
+    ss.add_str("postcode", "a.AreaPostcode")
+    ss.add_str("features", "a.DistFeat")
+    if post["agegroup"] != "-1": ss.add_str("agegroup", "a.AgeGroup")
+    ss.add_id("sex", "a.Sex")
+    ss.add_id("species", "a.AnimalTypeID")
+    ss.add_id("breed", "a.BreedID")
+    ss.add_id("colour", "a.BaseColourID")
+    ss.add_date("datefrom", "dateto", "a.DateLost")
+    ss.add_date("completefrom", "completeto", "a.DateFound")
     if post["excludecomplete"] == "1":
-        ands.append("a.DateFound Is Null")
-    where = " WHERE " + " AND ".join(ands)
-    sql = "%s %s ORDER BY a.ID" % (get_lostanimal_query(dbo), where)
-    return dbo.query(sql, values, limit=limit, distincton="ID")
+        ss.ands.append("a.DateFound Is Null")
+
+    sql = "%s WHERE %s ORDER BY a.ID" % (get_lostanimal_query(dbo), " AND ".join(ss.ands))
+    return dbo.query(sql, ss.values, limit=limit, distincton="ID")
 
 def get_foundanimal_find_advanced(dbo, criteria, limit = 0):
     """
@@ -285,65 +217,27 @@ def get_foundanimal_find_advanced(dbo, criteria, limit = 0):
        completefrom - returned date from in current display locale format
        completeto - returned date to in current display locale format
     """
-    ands = []
-    values = []
-    l = dbo.locale
-    post = utils.PostedData(criteria, l)
+    post = utils.PostedData(criteria, dbo.locale)
+    ss = utils.AdvancedSearchBuilder(dbo, post)
 
-    def addid(cfield, field): 
-        if post[cfield] != "" and post.integer(cfield) > -1:
-            ands.append("%s = ?" % field)
-            values.append(post.integer(cfield))
-
-    def addstr(cfield, field): 
-        if post[cfield] != "":
-            x = post[cfield].lower().replace("'", "`")
-            x = "%%%s%%" % x
-            ands.append("(LOWER(%s) LIKE ? OR LOWER(%s) LIKE ?)" % (field, field))
-            values.append(x)
-            values.append(utils.decode_html(x))
-
-    def adddate(cfieldfrom, cfieldto, field): 
-        if post[cfieldfrom] != "" and post[cfieldto] != "":
-            post.data["dayend"] = "23:59:59"
-            ands.append("%s >= ? AND %s <= ?" % (field, field))
-            values.append(post.date(cfieldfrom))
-            values.append(post.datetime(cfieldto, "dayend"))
-
-    def addfilter(f, condition):
-        if post["filter"].find(f) != -1: ands.append(condition)
-
-    def addcomp(cfield, value, condition):
-        if post[cfield] == value: ands.append(condition)
-
-    def addwords(cfield, field):
-        if post[cfield] != "":
-            words = post[cfield].split(" ")
-            for w in words:
-                x = w.lower().replace("'", "`")
-                x = "%%%s%%" % x
-                ands.append("(LOWER(%s) LIKE ? OR LOWER(%s) LIKE ?)" % (field, field))
-                values.append(x)
-                values.append(utils.decode_html(x))
-
-    ands.append("a.ID > 0")
-    addid("number", "a.ID")
-    addstr("contact", "o.OwnerName")
-    addstr("area", "a.AreaFound")
-    addstr("postcode", "a.AreaPostcode")
-    addstr("features", "a.DistFeat")
-    if post["agegroup"] != "-1": addstr("agegroup", "a.AgeGroup")
-    addid("sex", "a.Sex")
-    addid("species", "a.AnimalTypeID")
-    addid("breed", "a.BreedID")
-    addid("colour", "a.BaseColourID")
-    adddate("datefrom", "dateto", "a.DateFound")
-    adddate("completefrom", "completeto", "a.ReturnToOwnerDate")
+    ss.ands.append("a.ID > 0")
+    ss.add_id("number", "a.ID")
+    ss.add_str("contact", "o.OwnerName")
+    ss.add_str("area", "a.AreaLost")
+    ss.add_str("postcode", "a.AreaPostcode")
+    ss.add_str("features", "a.DistFeat")
+    if post["agegroup"] != "-1": ss.add_str("agegroup", "a.AgeGroup")
+    ss.add_id("sex", "a.Sex")
+    ss.add_id("species", "a.AnimalTypeID")
+    ss.add_id("breed", "a.BreedID")
+    ss.add_id("colour", "a.BaseColourID")
+    ss.add_date("datefrom", "dateto", "a.DateFound")
+    ss.add_date("completefrom", "completeto", "a.ReturnToOwnerDate")
     if post["excludecomplete"] == "1":
-        ands.append("a.ReturnToOwnerDate Is Null")
-    where = " WHERE " + " AND ".join(ands)
-    sql = "%s %s ORDER BY a.ID" % (get_foundanimal_query(dbo), where)
-    return dbo.query(sql, values, limit=limit, distincton="ID")
+        ss.ands.append("a.ReturnToOwnerDate Is Null")
+
+    sql = "%s WHERE %s ORDER BY a.ID" % (get_foundanimal_query(dbo), " AND ".join(ss.ands))
+    return dbo.query(sql, ss.values, limit=limit, distincton="ID")
 
 def get_lostanimal_last_days(dbo, days = 90):
     """
