@@ -4,12 +4,10 @@ import additional
 import al
 import animal
 import async
-import audit
 import configuration
 import datetime
 import dbfs
 import diary
-import db
 import geo
 import log
 import media
@@ -1015,44 +1013,33 @@ def insert_rota_from_form(dbo, username, post):
     """
     Creates a rota record from posted form data
     """
-    nrota = db.get_id(dbo, "ownerrota")
-    sql = db.make_insert_user_sql(dbo, "ownerrota", username, ( 
-        ( "ID", db.di(nrota)),
-        ( "OwnerID", post.db_integer("person")),
-        ( "StartDateTime", post.db_datetime("startdate", "starttime")),
-        ( "EndDateTime", post.db_datetime("enddate", "endtime")),
-        ( "RotaTypeID", post.db_integer("type")),
-        ( "WorkTypeID", post.db_integer("worktype")),
-        ( "Comments", post.db_string("comments"))
-        ))
-    db.execute(dbo, sql)
-    audit.create(dbo, username, "ownerrota", nrota, audit.dump_row(dbo, "ownerrota", nrota))
-    return nrota
+    return dbo.insert("ownerrota", {
+        "OwnerID":          post.integer("person"),
+        "StartDateTime":    post.datetime("startdate", "starttime"),
+        "EndDateTime":      post.datetime("enddate", "endtime"),
+        "RotaTypeID":       post.integer("type"),
+        "WorkTypeID":       post.integer("worktype"),
+        "Comments":         post["comments"]
+    }, username)
 
 def update_rota_from_form(dbo, username, post):
     """
     Updates a rota record from posted form data
     """
-    rotaid = post.integer("rotaid")
-    sql = db.make_update_user_sql(dbo, "ownerrota", username, "ID=%d" % rotaid, ( 
-        ( "OwnerID", post.db_integer("person")),
-        ( "StartDateTime", post.db_datetime("startdate", "starttime")),
-        ( "EndDateTime", post.db_datetime("enddate", "endtime")),
-        ( "RotaTypeID", post.db_integer("type")),
-        ( "WorkTypeID", post.db_integer("worktype")),
-        ( "Comments", post.db_string("comments"))
-        ))
-    preaudit = db.query(dbo, "SELECT * FROM ownerrota WHERE ID = %d" % rotaid)
-    db.execute(dbo, sql)
-    postaudit = db.query(dbo, "SELECT * FROM ownerrota WHERE ID = %d" % rotaid)
-    audit.edit(dbo, username, "ownerrota", rotaid, audit.map_diff(preaudit, postaudit))
+    return dbo.update("ownerrota", post.integer("rotaid"), {
+        "OwnerID":          post.integer("person"),
+        "StartDateTime":    post.datetime("startdate", "starttime"),
+        "EndDateTime":      post.datetime("enddate", "endtime"),
+        "RotaTypeID":       post.integer("type"),
+        "WorkTypeID":       post.integer("worktype"),
+        "Comments":         post["comments"]
+    }, username)
 
 def delete_rota(dbo, username, rid):
     """
     Deletes the selected rota record
     """
-    audit.delete(dbo, username, "ownerrota", rid, audit.dump_row(dbo, "ownerrota", rid))
-    db.execute(dbo, "DELETE FROM ownerrota WHERE ID = %d" % int(rid))
+    dbo.delete("ownerrota", rid, username)
 
 def delete_rota_week(dbo, username, startdate):
     """
@@ -1061,47 +1048,33 @@ def delete_rota_week(dbo, username, startdate):
     startdate: A python date representing the start of the week
     """
     enddate = add_days(startdate, 7)
-    audit.delete(dbo, username, "ownerrota", 0,  \
-        str(db.query(dbo, "SELECT * FROM ownerrota " \
-        "WHERE StartDateTime >= %s AND StartDateTime <= %s" % (db.dd(startdate), db.dd(enddate)))))
-    db.execute(dbo, "DELETE FROM ownerrota WHERE " \
-        "StartDateTime >= %s AND StartDateTime <= %s" % (db.dd(startdate), db.dd(enddate)))
+    dbo.delete("ownerrota", "StartDateTime>=%s AND StartDateTime<=%s" % (dbo.sql_date(startdate), dbo.sql_date(enddate)), username)
 
 def insert_investigation_from_form(dbo, username, post):
     """
     Creates an investigation record from posted form data
     """
-    ninv = db.get_id(dbo, "ownerinvestigation")
-    sql = db.make_insert_user_sql(dbo, "ownerinvestigation", username, ( 
-        ( "ID", db.di(ninv)),
-        ( "OwnerID", post.db_integer("personid")),
-        ( "Date", post.db_date("date")),
-        ( "Notes", post.db_string("notes"))
-        ))
-    db.execute(dbo, sql)
-    audit.create(dbo, username, "ownerinvestigation", ninv, audit.dump_row(dbo, "ownerinvestigation", ninv))
-    return ninv
+    return dbo.insert("ownerinvestigation", {
+        "OwnerID":      post.integer("personid"),
+        "Date":         post.date("date"),
+        "Notes":        post["notes"]
+    }, username)
 
 def update_investigation_from_form(dbo, username, post):
     """
     Updates an investigation record from posted form data
     """
-    investigationid = post.integer("investigationid")
-    sql = db.make_update_user_sql(dbo, "ownerinvestigation", username, "ID=%d" % investigationid, ( 
-        ( "Date", post.db_date("date")),
-        ( "Notes", post.db_string("notes"))
-        ))
-    preaudit = db.query(dbo, "SELECT * FROM ownerinvestigation WHERE ID = %d" % investigationid)
-    db.execute(dbo, sql)
-    postaudit = db.query(dbo, "SELECT * FROM ownerinvestigation WHERE ID = %d" % investigationid)
-    audit.edit(dbo, username, "ownerinvestigation", investigationid, audit.map_diff(preaudit, postaudit))
+    dbo.update("ownerinvestigation", post.integer("investigationid"), {
+        "OwnerID":      post.integer("personid"),
+        "Date":         post.date("date"),
+        "Notes":        post["notes"]
+    }, username)
 
 def delete_investigation(dbo, username, iid):
     """
     Deletes the selected investigation record
     """
-    audit.delete(dbo, username, "ownerinvestigation", iid, audit.dump_row(dbo, "ownerinvestigation", iid))
-    db.execute(dbo, "DELETE FROM ownerinvestigation WHERE ID = %d" % int(iid))
+    dbo.delete("ownerinvestigation", iid, username)
 
 def send_email_from_form(dbo, username, post):
     """
@@ -1140,7 +1113,7 @@ def lookingfor_report(dbo, username = "system", personid = 0, limit = 0):
     if personid != 0:
         idclause = " AND owner.ID=%d" % personid
   
-    people = db.query(dbo, "SELECT owner.*, " \
+    people = dbo.query("SELECT owner.*, " \
         "(SELECT Size FROM lksize WHERE ID = owner.MatchSize) AS MatchSizeName, " \
         "(SELECT BaseColour FROM basecolour WHERE ID = owner.MatchColour) AS MatchColourName, " \
         "(SELECT Sex FROM lksex WHERE ID = owner.MatchSex) AS MatchSexName, " \
@@ -1149,7 +1122,7 @@ def lookingfor_report(dbo, username = "system", personid = 0, limit = 0):
         "(SELECT SpeciesName FROM species WHERE ID = owner.MatchSpecies) AS MatchSpeciesName " \
         "FROM owner WHERE MatchActive = 1 AND " \
         "(MatchExpires Is Null OR MatchExpires > %s)%s " \
-        "ORDER BY OwnerName" % (db.dd(now(dbo.timezone)), idclause))
+        "ORDER BY OwnerName" % (dbo.sql_today(), idclause))
 
     ah = []
     ah.append(hr())
@@ -1185,12 +1158,12 @@ def lookingfor_report(dbo, username = "system", personid = 0, limit = 0):
         if p["MATCHGOODWITHDOGS"] == 0: sql.append(" AND a.IsGoodWithDogs = 0")
         if p["MATCHHOUSETRAINED"] == 0: sql.append(" AND a.IsHouseTrained = 0")
         if p["MATCHAGEFROM"] >= 0 and p["MATCHAGETO"] > 0: 
-            sql.append(" AND a.DateOfBirth BETWEEN %s AND %s" % (db.dd(subtract_years(now(dbo.timezone), p["MATCHAGETO"])), \
-                db.dd(subtract_years(now(dbo.timezone), p["MATCHAGEFROM"]))))
+            sql.append(" AND a.DateOfBirth BETWEEN %s AND %s" % (dbo.sql_date(subtract_years(now(dbo.timezone), p["MATCHAGETO"])), \
+                dbo.sql_date(subtract_years(now(dbo.timezone), p["MATCHAGEFROM"]))))
         if p["MATCHCOMMENTSCONTAIN"] is not None and p["MATCHCOMMENTSCONTAIN"] != "":
             for w in str(p["MATCHCOMMENTSCONTAIN"]).split(" "):
                 sql.append(" AND a.AnimalComments Like '%%%s%%'" % w.replace("'", "`"))
-        animals = db.query(dbo, animal.get_animal_query(dbo) + " WHERE a.Archived=0 AND a.IsNotAvailableForAdoption=0 AND a.HasActiveReserve=0 AND a.CrueltyCase=0 AND a.DeceasedDate Is Null" + "".join(sql))
+        animals = dbo.query(animal.get_animal_query(dbo) + " WHERE a.Archived=0 AND a.IsNotAvailableForAdoption=0 AND a.HasActiveReserve=0 AND a.CrueltyCase=0 AND a.DeceasedDate Is Null" + "".join(sql))
 
         h.append("<h2>%s (%s) %s %s</h2>" % (p["OWNERNAME"], p["OWNERADDRESS"], p["HOMETELEPHONE"], p["MOBILETELEPHONE"]))
         c = []
@@ -1255,7 +1228,7 @@ def lookingfor_report(dbo, username = "system", personid = 0, limit = 0):
 
     # Update ownerlookingfor table
     if personid == 0:
-        db.execute(dbo, "DELETE FROM ownerlookingfor")
+        dbo.execute("DELETE FROM ownerlookingfor")
         if len(batch) > 0:
             dbo.execute_many("INSERT INTO ownerlookingfor (AnimalID, OwnerID, MatchSummary) VALUES (?,?,?)", batch)
 
@@ -1265,7 +1238,7 @@ def lookingfor_last_match_count(dbo):
     """
     Returns the number of matches the last time lookingfor was run
     """
-    return db.query_int(dbo, "SELECT COUNT(*) FROM ownerlookingfor")
+    return dbo.query_int("SELECT COUNT(*) FROM ownerlookingfor")
 
 def update_missing_geocodes(dbo):
     """
@@ -1278,12 +1251,12 @@ def update_missing_geocodes(dbo):
     if not BULK_GEO_BATCH:
         al.warn("BULK_GEO_BATCH is False, skipping", "update_missing_geocodes", dbo)
         return
-    people = db.query(dbo, "SELECT ID, OwnerAddress, OwnerTown, OwnerCounty, OwnerPostcode " \
+    people = dbo.query("SELECT ID, OwnerAddress, OwnerTown, OwnerCounty, OwnerPostcode " \
         "FROM owner WHERE LatLong Is Null OR LatLong = '' ORDER BY CreatedDate DESC", limit=BULK_GEO_LIMIT)
     batch = []
     for p in people:
-        latlong = geo.get_lat_long(dbo, p["OWNERADDRESS"], p["OWNERTOWN"], p["OWNERCOUNTY"], p["OWNERPOSTCODE"])
-        batch.append((latlong, p["ID"]))
+        latlong = geo.get_lat_long(dbo, p.OWNERADDRESS, p.OWNERTOWN, p.OWNERCOUNTY, p.OWNERPOSTCODE)
+        batch.append((latlong, p.ID))
     dbo.execute_many("UPDATE owner SET LatLong = ? WHERE ID = ?", batch)
     al.debug("updated %d person geocodes" % len(batch), "person.update_missing_geocodes", dbo)
 
