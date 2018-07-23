@@ -188,7 +188,7 @@ class ASMEndpoint(object):
     get_permissions = ( )  # List of permissions needed to GET
     post_permissions = ( ) # List of permissions needed to POST
     check_logged_in = True # Check whether we have a valid login
-    login_url = "/login"   # The url to go to if not logged in
+    login_url = "login"    # The url to go to if not logged in
 
     def _params(self):
         l = session.locale
