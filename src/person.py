@@ -483,7 +483,7 @@ def get_person_find_advanced(dbo, criteria, username, includeStaff = False, limi
             ss.values.append("%%%s%%" % g)
 
     if not includeStaff:
-        c.append("o.IsStaff = 0")
+        ss.ands.append("o.IsStaff = 0")
 
     if len(ss.ands) == 0:
         sql = get_person_query(dbo) + " ORDER BY o.OwnerName"

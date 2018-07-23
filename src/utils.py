@@ -213,26 +213,28 @@ class AdvancedSearchBuilder(object):
     def __init__(self, dbo, post):
         self.dbo = dbo
         self.post = post
+        self.ands = []
+        self.values = []
 
     def add_id(self, cfield, field): 
         """ Adds a clause for comparing an ID field """
         if self.post[cfield] != "" and self.post.integer(cfield) > -1:
             self.ands.append("%s = ?" % field)
-            self.values.append(post.integer(cfield))
+            self.values.append(self.post.integer(cfield))
 
     def add_id_pair(self, cfield, field, field2): 
         """ Adds a clause for a posted value to one of two ID fields (eg: breeds) """
         if self.post[cfield] != "" and self.post.integer(cfield) > 0: 
             self.ands.append("(%s = ? OR %s = ?)" % (field, field2))
-            self.values.append(post.integer(cfield))
-            self.values.append(post.integer(cfield))
+            self.values.append(self.post.integer(cfield))
+            self.values.append(self.post.integer(cfield))
 
     def add_str(self, cfield, field): 
         """ Adds a clause for a posted value to a string field """
         if self.post[cfield] != "":
             x = self.post[cfield].lower().replace("'", "`")
             x = "%%%s%%" % x
-            ands.append("(LOWER(%s) LIKE ? OR LOWER(%s) LIKE ?)" % (field, field))
+            self.ands.append("(LOWER(%s) LIKE ? OR LOWER(%s) LIKE ?)" % (field, field))
             self.values.append(x)
             self.values.append(decode_html(x))
 
@@ -249,12 +251,12 @@ class AdvancedSearchBuilder(object):
         if self.post[cfieldfrom] != "" and self.post[cfieldto] != "":
             self.post.data["dayend"] = "23:59:59"
             self.ands.append("%s >= ? AND %s <= ?" % (field, field))
-            self.values.append(post.date(cfieldfrom))
-            self.values.append(post.datetime(cfieldto, "dayend"))
+            self.values.append(self.post.date(cfieldfrom))
+            self.values.append(self.post.datetime(cfieldto, "dayend"))
 
     def add_filter(self, f, condition):
         """ Adds a complete clause if posted filter value is present """
-        if post["filter"].find(f) != -1: self.ands.append(condition)
+        if self.post["filter"].find(f) != -1: self.ands.append(condition)
 
     def add_comp(self, cfield, value, condition):
         """ Adds a clause if a field holds a value """
@@ -291,6 +293,8 @@ class SimpleSearchBuilder(object):
         self.dbo = dbo
         self.q = q.replace("'", "`")
         self.qlike = "%%%s%%" % self.q.lower()
+        self.ors = []
+        self.values = []
 
     def add_field(self, field):
         """ Add a field to search """
@@ -307,8 +311,8 @@ class SimpleSearchBuilder(object):
         """ Adds all the words in the term as separate clauses """
         for w in self.q.split(" "):
             self.ors.append("(LOWER(%s) LIKE ? OR LOWER(%s) LIKE ?)" % (field, field))
-            self.values.append(w)
-            self.values.append(decode_html(w))
+            self.values.append("%%%s%%" % w)
+            self.values.append(decode_html("%%%s%%" % w))
 
     def add_clause(self, clause):
         self.ors.append(clause)
