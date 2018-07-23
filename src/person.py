@@ -499,31 +499,30 @@ def reduce_find_results(dbo, username, rows):
     """
     # Do nothing if there are no results
     if len(rows) == 0: return rows
-    u = db.query(dbo, "SELECT * FROM users WHERE UserName = %s" % db.ds(username))
+    u = dbo.first_row(dbo.query("SELECT * FROM users WHERE UserName = ?", [username]))
     # Do nothing if we can't find the user
-    if len(u) == 0: return rows
+    if u is None: return rows
     # Do nothing if the user has no site
-    u = u[0]
-    if u["SITEID"] == 0: return rows
+    if u.SITEID == 0: return rows
     # Remove rows where the user doesn't have that site
     results = []
     for r in rows:
         # Compare the site ID on the  person to our user - to exclude the record,
         # both user and person must have a site ID and they must be different
-        if r["SITEID"] != 0 and r["SITEID"] != u["SITEID"]: continue
+        if r.SITEID != 0 and r.SITEID != u.SITEID: continue
         results.append(r)
     return results
 
 def get_person_rota(dbo, personid):
-    return db.query(dbo, get_rota_query(dbo) + " WHERE r.OwnerID = %d ORDER BY r.StartDateTime DESC" % personid, limit=100)
+    return dbo.query(get_rota_query(dbo) + " WHERE r.OwnerID = ? ORDER BY r.StartDateTime DESC", [personid])
 
 def get_rota(dbo, startdate, enddate):
     """ Returns rota records that apply between the two dates given """
-    return db.query(dbo, get_rota_query(dbo) + \
-        " WHERE (r.StartDateTime >= %(start)s AND r.StartDateTime < %(end)s)" \
-        " OR (r.EndDateTime >= %(start)s AND r.EndDateTime < %(end)s)" \
-        " OR (r.StartDateTime < %(start)s AND r.EndDateTime >= %(start)s) " \
-        " ORDER BY r.StartDateTime" % { "start": db.dd(startdate), "end": db.dd(enddate) })
+    return dbo.query(dbo, get_rota_query(dbo) + \
+        " WHERE (r.StartDateTime >= ? AND r.StartDateTime < ?)" \
+        " OR (r.EndDateTime >= ? AND r.EndDateTime < ?)" \
+        " OR (r.StartDateTime < ? AND r.EndDateTime >= ?) " \
+        " ORDER BY r.StartDateTime", (startdate, enddate, startdate, enddate, startdate, startdate))
 
 def clone_rota_week(dbo, username, startdate, newdate, flags):
     """ Copies a weeks worth of rota records from startdate to newdate """
@@ -533,30 +532,30 @@ def clone_rota_week(dbo, username, startdate, newdate, flags):
     if newdate.weekday() != 0 or startdate.weekday() != 0:
         raise utils.ASMValidationError("startdate and newdate should both be a Monday")
     enddate = add_days(startdate, 7)
-    rows = db.query(dbo, get_rota_query(dbo) + " WHERE StartDateTime >= %s AND StartDateTime <= %s" % (db.dd(startdate), db.dd(enddate)))
+    rows = dbo.query(get_rota_query(dbo) + " WHERE StartDateTime >= ? AND StartDateTime <= ?", (startdate, enddate))
     for r in rows:
         # Were some flags set? If so, does the current person for this rota element have those flags?
         if flags is not None and flags != "":
-            if not utils.list_overlap(flags.split("|"), utils.nulltostr(r["ADDITIONALFLAGS"]).split("|")):
+            if not utils.list_overlap(flags.split("|"), utils.nulltostr(r.ADDITIONALFLAGS).split("|")):
                 # The element doesn't have the right flags, skip to the next
                 continue
         # Calculate how far from the start date this rec is so we can apply that
         # diff to the newdate
-        sdiff = date_diff_days(startdate, r["STARTDATETIME"])
-        ediff = date_diff_days(startdate, r["ENDDATETIME"])
+        sdiff = date_diff_days(startdate, r.STARTDATETIME)
+        ediff = date_diff_days(startdate, r.ENDDATETIME)
         sd = add_days(newdate, sdiff)
         ed = add_days(newdate, ediff)
-        sd = datetime.datetime(sd.year, sd.month, sd.day, r["STARTDATETIME"].hour, r["STARTDATETIME"].minute, 0)
-        ed = datetime.datetime(ed.year, ed.month, ed.day, r["ENDDATETIME"].hour, r["ENDDATETIME"].minute, 0)
+        sd = datetime.datetime(sd.year, sd.month, sd.day, r.STARTDATETIME.hour, r.STARTDATETIME.minute, 0)
+        ed = datetime.datetime(ed.year, ed.month, ed.day, r.ENDDATETIME.hour, r.ENDDATETIME.minute, 0)
         insert_rota_from_form(dbo, username, utils.PostedData({
-            "person":    str(r["OWNERID"]),
+            "person":    str(r.OWNERID),
             "startdate": python2display(l, sd),
             "starttime": format_time(sd),
             "enddate":   python2display(l, ed),
             "endtime":   format_time(ed),
-            "type":      str(r["ROTATYPEID"]),
-            "worktype":  str(r["WORKTYPEID"]),
-            "comments":  r["COMMENTS"]
+            "type":      str(r.ROTATYPEID),
+            "worktype":  str(r.WORKTYPEID),
+            "comments":  r.COMMENTS
         }, l))
 
 def calculate_owner_code(pid, surname):
