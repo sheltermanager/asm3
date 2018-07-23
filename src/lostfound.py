@@ -223,7 +223,7 @@ def get_foundanimal_find_advanced(dbo, criteria, limit = 0):
     ss.ands.append("a.ID > 0")
     ss.add_id("number", "a.ID")
     ss.add_str("contact", "o.OwnerName")
-    ss.add_str("area", "a.AreaLost")
+    ss.add_str("area", "a.AreaFound")
     ss.add_str("postcode", "a.AreaPostcode")
     ss.add_str("features", "a.DistFeat")
     if post["agegroup"] != "-1": ss.add_str("agegroup", "a.AgeGroup")

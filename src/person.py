@@ -518,7 +518,7 @@ def get_person_rota(dbo, personid):
 
 def get_rota(dbo, startdate, enddate):
     """ Returns rota records that apply between the two dates given """
-    return dbo.query(dbo, get_rota_query(dbo) + \
+    return dbo.query(get_rota_query(dbo) + \
         " WHERE (r.StartDateTime >= ? AND r.StartDateTime < ?)" \
         " OR (r.EndDateTime >= ? AND r.EndDateTime < ?)" \
         " OR (r.StartDateTime < ? AND r.EndDateTime >= ?) " \
