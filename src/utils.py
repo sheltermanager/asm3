@@ -193,6 +193,9 @@ class PostedData(object):
     def __getitem__(self, key):
         return self.string(key)
 
+    def __setitem__(self, key, value):
+        self.data[key] = value
+
     def __repr__(self):
         return json(self.data)
 
