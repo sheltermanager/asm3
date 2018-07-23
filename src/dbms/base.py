@@ -11,6 +11,33 @@ import utils
 
 from sitedefs import DB_TYPE, DB_HOST, DB_PORT, DB_USERNAME, DB_PASSWORD, DB_NAME, DB_HAS_ASM2_PK_TABLE, DB_DECODE_HTML_ENTITIES, DB_EXEC_LOG, DB_EXPLAIN_QUERIES, DB_TIME_QUERIES, DB_TIME_LOG_OVER, DB_TIMEOUT, CACHE_COMMON_QUERIES
 
+class ResultRow(dict):
+    """
+    A ResultRow object is like a dictionary except `obj.foo` can be used
+    in addition to `obj['foo']`. 
+    It's also case insensitive as dbms tend to be on column names.
+    """
+    def copy(self):
+        return ResultRow(dict.copy(self))
+
+    def __getattr__(self, key):
+        try:
+            return self[key.upper()]
+        except KeyError as k:
+            raise AttributeError(k)
+
+    def __setattr__(self, key, value):
+        self[key.upper()] = value
+
+    def __delattr__(self, key):
+        try:
+            del self[key.upper()]
+        except KeyError as k:
+            raise AttributeError(k)
+
+    def __repr__(self):
+        return '<ResultRow ' + dict.__repr__(self) + '>'
+
 class QueryBuilder(object):
     """
     Build a query from component parts, keeping track of params eg:
@@ -71,146 +98,6 @@ class QueryBuilder(object):
     
     def params(self):
         return self.values
-
-class SimpleSearchBuilder(object):
-    """
-    Builds a simple search (based on a single search term)
-    ss = SimpleSearchBuilder(dbo, "test")
-    ss.add_field("a.AnimalName")
-    ss.add_field("a.ShelterCode")
-    ss.add_fields([ "a.BreedName", "a.AnimalComments" ])
-    ss.ors, ss.values
-    """
-    
-    q = ""
-    qlike = ""
-    ors = []
-    values = []
-    dbo = None
-
-    def __init__(self, dbo, q):
-        self.dbo = dbo
-        self.sql = ""
-        self.q = q.replace("'", "`")
-        self.qlike = "%%%s%%" % self.q.lower()
-
-    def add_field(self, field):
-        """ Add a field to search """
-        self.ors.append("(LOWER(%s) LIKE ? OR LOWER(%s) LIKE ?)" % (field, field))
-        self.values.append(self.qlike)
-        self.values.append(utils.decode_html(self.qlike))
-
-    def add_fields(self, fieldlist):
-        """ Add clauses for many fields in one list """
-        for f in fieldlist:
-            self.add(f)
-
-    def add_clause(self, clause):
-        self.ors.append(clause)
-        self.values.append(self.querylike)
-
-class AdvancedSearchBuilder(object):
-    """
-    Builds an advanced search (requires a post with multiple supplied parameters)
-    as = AdvancedSearchBuilder(dbo, post)
-    as.add_id("litterid", "a.AcceptanceNumber")
-    as.add_str("rabiestag", "a.RabiesTag")
-    as.ands, as.values
-    """
-
-    ands = []
-    values = []
-    dbo = None
-    post = None
-
-    def __init__(self, dbo, post):
-        self.dbo = dbo
-        self.post = post
-
-    def add_id(self, cfield, field): 
-        """ Adds a clause for comparing an ID field """
-        if self.post[cfield] != "" and self.post.integer(cfield) > -1:
-            self.ands.append("%s = ?" % field)
-            self.values.append(post.integer(cfield))
-
-    def add_id_pair(self, cfield, field, field2): 
-        """ Adds a clause for a posted value to one of two ID fields (eg: breeds) """
-        if self.post[cfield] != "" and self.post.integer(cfield) > 0: 
-            self.ands.append("(%s = ? OR %s = ?)" % (field, field2))
-            self.values.append(post.integer(cfield))
-            self.values.append(post.integer(cfield))
-
-    def add_str(self, cfield, field): 
-        """ Adds a clause for a posted value to a string field """
-        if self.post[cfield] != "":
-            x = self.post[cfield].lower().replace("'", "`")
-            x = "%%%s%%" % x
-            ands.append("(LOWER(%s) LIKE ? OR LOWER(%s) LIKE ?)" % (field, field))
-            self.values.append(x)
-            self.values.append(utils.decode_html(x))
-
-    def add_str_pair(self, cfield, field, field2): 
-        """ Adds a clause for a posted value to one of two string fields """
-        if self.post[cfield] != "":
-            x = "%%%s%%" % self.post[cfield].lower()
-            self.ands.append("(LOWER(%s) LIKE ? OR LOWER(%s) LIKE ?)" % (field, field2))
-            self.values.append(x)
-            self.values.append(x)
-
-    def add_date(self, cfieldfrom, cfieldto, field): 
-        """ Adds a clause for a posted date range to a date field """
-        if self.post[cfieldfrom] != "" and self.post[cfieldto] != "":
-            self.post.data["dayend"] = "23:59:59"
-            self.ands.append("%s >= ? AND %s <= ?" % (field, field))
-            self.values.append(post.date(cfieldfrom))
-            self.values.append(post.datetime(cfieldto, "dayend"))
-
-    def add_filter(self, f, condition):
-        """ Adds a complete clause if posted filter value is present """
-        if post["filter"].find(f) != -1: self.ands.append(condition)
-
-    def add_comp(self, cfield, value, condition):
-        """ Adds a clause if a field holds a value """
-        if self.post[cfield] == value: self.ands.append(condition)
-
-    def add_words(self, cfield, field):
-        """ Adds a separate clause for each word in cfield """
-        if self.post[cfield] != "":
-            words = self.post[cfield].split(" ")
-            for w in words:
-                x = w.lower().replace("'", "`")
-                x = "%%%s%%" % x
-                self.ands.append("(LOWER(%s) LIKE ? OR LOWER(%s) LIKE ?)" % (field, field))
-                self.values.append(x)
-                self.values.append(utils.decode_html(x))
-
-
-class ResultRow(dict):
-    """
-    A ResultRow object is like a dictionary except `obj.foo` can be used
-    in addition to `obj['foo']`. 
-    It's also case insensitive as dbms tend to be on column names.
-    """
-    def copy(self):
-        return ResultRow(dict.copy(self))
-
-    def __getattr__(self, key):
-        try:
-            return self[key.upper()]
-        except KeyError as k:
-            raise AttributeError(k)
-
-    def __setattr__(self, key, value):
-        self[key.upper()] = value
-
-    def __delattr__(self, key):
-        try:
-            del self[key.upper()]
-        except KeyError as k:
-            raise AttributeError(k)
-
-    def __repr__(self):
-        return '<ResultRow ' + dict.__repr__(self) + '>'
 
 class Database(object):
     """

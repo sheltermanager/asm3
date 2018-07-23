@@ -196,49 +196,6 @@ class PostedData(object):
     def __repr__(self):
         return json(self.data)
 
-class SimpleSearchBuilder(object):
-    """
-    Builds a simple search (based on a single search term)
-    ss = SimpleSearchBuilder(dbo, "test")
-    ss.add_field("a.AnimalName")
-    ss.add_field("a.ShelterCode")
-    ss.add_fields([ "a.BreedName", "a.AnimalComments" ])
-    ss.ors, ss.values
-    """
-    
-    q = ""
-    qlike = ""
-    ors = []
-    values = []
-    dbo = None
-
-    def __init__(self, dbo, q):
-        self.dbo = dbo
-        self.q = q.replace("'", "`")
-        self.qlike = "%%%s%%" % self.q.lower()
-
-    def add_field(self, field):
-        """ Add a field to search """
-        self.ors.append("(LOWER(%s) LIKE ? OR LOWER(%s) LIKE ?)" % (field, field))
-        self.values.append(self.qlike)
-        self.values.append(decode_html(self.qlike))
-
-    def add_fields(self, fieldlist):
-        """ Add clauses for many fields in one list """
-        for f in fieldlist:
-            self.add_field(f)
-
-    def add_words(self, field):
-        """ Adds all the words in the term as separate clauses """
-        for w in self.q.split(" "):
-            self.ors.append("(LOWER(%s) LIKE ? OR LOWER(%s) LIKE ?)" % (field, field))
-            self.values.append(w)
-            self.values.append(decode_html(w))
-
-    def add_clause(self, clause):
-        self.ors.append(clause)
-        self.values.append(self.qlike)
-
 class AdvancedSearchBuilder(object):
     """
     Builds an advanced search (requires a post with multiple supplied parameters)
@@ -313,6 +270,49 @@ class AdvancedSearchBuilder(object):
                 self.ands.append("(LOWER(%s) LIKE ? OR LOWER(%s) LIKE ?)" % (field, field))
                 self.values.append(x)
                 self.values.append(decode_html(x))
+
+class SimpleSearchBuilder(object):
+    """
+    Builds a simple search (based on a single search term)
+    ss = SimpleSearchBuilder(dbo, "test")
+    ss.add_field("a.AnimalName")
+    ss.add_field("a.ShelterCode")
+    ss.add_fields([ "a.BreedName", "a.AnimalComments" ])
+    ss.ors, ss.values
+    """
+    
+    q = ""
+    qlike = ""
+    ors = []
+    values = []
+    dbo = None
+
+    def __init__(self, dbo, q):
+        self.dbo = dbo
+        self.q = q.replace("'", "`")
+        self.qlike = "%%%s%%" % self.q.lower()
+
+    def add_field(self, field):
+        """ Add a field to search """
+        self.ors.append("(LOWER(%s) LIKE ? OR LOWER(%s) LIKE ?)" % (field, field))
+        self.values.append(self.qlike)
+        self.values.append(decode_html(self.qlike))
+
+    def add_fields(self, fieldlist):
+        """ Add clauses for many fields in one list """
+        for f in fieldlist:
+            self.add_field(f)
+
+    def add_words(self, field):
+        """ Adds all the words in the term as separate clauses """
+        for w in self.q.split(" "):
+            self.ors.append("(LOWER(%s) LIKE ? OR LOWER(%s) LIKE ?)" % (field, field))
+            self.values.append(w)
+            self.values.append(decode_html(w))
+
+    def add_clause(self, clause):
+        self.ors.append(clause)
+        self.values.append(self.qlike)
 
 def is_currency(f):
     """ Returns true if the field with name f is a currency field """
