@@ -6,7 +6,6 @@ import configuration
 import csv as extcsv
 import datetime
 import decimal
-import db
 import hashlib
 import htmlentitydefs
 import json as extjson
@@ -30,17 +29,6 @@ from email import Charset, Encoders
 from i18n import _, display2python, format_currency_no_symbol, format_time, python2display, VERSION
 from cStringIO import StringIO
 from sitedefs import BASE_URL, SMTP_SERVER, FROM_ADDRESS, HTML_TO_PDF
-
-# Monkeypatch to allow SNI support in urllib3. This is necessary
-# as many servers (including Facebook and PetLink)
-# will not allow us to connect and use HTTPS without SNI
-# TODO: Disabled 23/03/18 as should no longer be needed
-#try:
-#    import requests
-#    from urllib3.contrib import pyopenssl
-#    pyopenssl.inject_into_urllib3()
-#except:
-#    sys.stderr.write("No requests/urllib3 module found.")
 
 # Global reference to the Python websession. This is used to allow
 # debug mode with webpy by keeping a global single copy of the
@@ -141,38 +129,6 @@ class PostedData(object):
             return s
         else:
             return ""
-
-    def db_boolean(self, field):
-        return str(self.boolean(field))
-
-    def db_date(self, field):
-        """ Returns a date field for the database """
-        if field in self.data:
-            return db.dd(display2python(self.locale, self.data[field]))
-        else:
-            return "Null"
-
-    def db_datetime(self, datefield, timefield):
-        """ Returns a datetime field for the database """
-        return db.ddt(self.datetime(datefield, timefield))
-
-    def db_integer(self, field):
-        return str(self.integer(field))
-
-    def db_floating(self, field):
-        return str(self.floating(field))
-
-    def db_string(self, field):
-        """ Returns a posted text field for the database, turns it from unicode into
-            ascii with XML entities to represent codepoints > 128 """
-        if field in self.data:
-            if is_str(self.data[field]):
-                s = cunicode(self.data[field]).encode("ascii", "xmlcharrefreplace")
-            else:
-                s = self.data[field].encode("ascii", "xmlcharrefreplace")
-            return db.ds(s.strip())
-        else:
-            return "''"
 
     def filename(self):
         if "filechooser" in self.data:

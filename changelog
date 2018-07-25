@@ -1,6 +1,7 @@
 41
 ================
 
+25/07/18 Parameterised query refactoring complete #252
 22/07/18 AdoptAPet now support Mexican locales
 21/07/18 DocumentImgLink broken on lost animal docs #432
 21/07/18 Fix bug where missing state/county field breaks labels #462

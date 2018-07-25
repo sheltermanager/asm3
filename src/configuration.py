@@ -402,7 +402,7 @@ def csave(dbo, username, post):
                 put(k, v)
         elif k == "DefaultDailyBoardingCost":
             # Need to handle currency fields differently
-            put(k, post.db_integer(k))
+            put(k, str(post.integer(k)))
         elif k.startswith("rc:"):
             # It's a NOT check
             if v == "checked": v = "No"

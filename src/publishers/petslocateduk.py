@@ -2,7 +2,6 @@
 
 import animal
 import configuration
-import db
 import i18n
 import lostfound
 import os
@@ -276,8 +275,8 @@ class PetsLocatedUKPublisher(FTPPublisher):
         animals = []
 
         if includeshelter:
-            animals = db.query(self.dbo, animal.get_animal_query(self.dbo) + " WHERE a.Archived = 0 AND " \
-                "a.AdditionalFlags LIKE '%%%s|%%'" % (shelterwithflag))
+            animals = self.dbo.query(animal.get_animal_query(self.dbo) + " WHERE a.Archived = 0 AND " \
+                "a.AdditionalFlags LIKE ?", ["%%%s|%%" % shelterwithflag])
 
         if len(animals) == 0 and len(foundanimals) == 0 and len(lostanimals) == 0:
             self.setLastError("No animals found to publish.")

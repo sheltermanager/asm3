@@ -2164,7 +2164,7 @@ def update_animals_from_form(dbo, post, username):
     if len(post.integer_list("animals")) == 0: return 0
     aud = []
     if post["litterid"] != "":
-        dbo.execute("UPDATE animal SET AcceptanceNumber = %s WHERE ID IN (%s)" % (post.db_string("litterid"), post["animals"]))
+        dbo.execute("UPDATE animal SET AcceptanceNumber = %s WHERE ID IN (%s)" % (dbo.sql_value(post["litterid"]), post["animals"]))
         aud.append("LitterID = %s" % post["litterid"])
     if post.integer("animaltype") != -1:
         dbo.execute("UPDATE animal SET AnimalTypeID = %d WHERE ID IN (%s)" % (post.integer("animaltype"), post["animals"]))
@@ -2185,7 +2185,7 @@ def update_animals_from_form(dbo, post, username):
         dbo.execute("UPDATE animal SET IsNotForRegistration = %d WHERE ID IN (%s)" % (post.integer("notforregistration"), post["animals"]))
         aud.append("IsNotForRegistration = %s" % post["notforregistration"])
     if post["holduntil"] != "":
-        dbo.execute("UPDATE animal SET IsHold = 1, HoldUntilDate = %s WHERE ID IN (%s)" % (post.db_date("holduntil"), post["animals"]))
+        dbo.execute("UPDATE animal SET IsHold = 1, HoldUntilDate = %s WHERE ID IN (%s)" % (dbo.sql_date(post.date("holduntil")), post["animals"]))
         aud.append("HoldUntilDate = %s" % post["holduntil"])
     if post.integer("goodwithcats") != -1:
         dbo.execute("UPDATE animal SET IsGoodWithCats = %d WHERE ID IN (%s)" % (post.integer("goodwithcats"), post["animals"]))
@@ -2200,7 +2200,7 @@ def update_animals_from_form(dbo, post, username):
         dbo.execute("UPDATE animal SET IsHouseTrained = %d WHERE ID IN (%s)" % (post.integer("housetrained"), post["animals"]))
         aud.append("IsHouseTrained = %s" % post["housetrained"])
     if post["neutereddate"] != "":
-        dbo.execute("UPDATE animal SET Neutered = 1, NeuteredDate = %s WHERE ID IN (%s)" % (post.db_date("neutereddate"), post["animals"]))
+        dbo.execute("UPDATE animal SET Neutered = 1, NeuteredDate = %s WHERE ID IN (%s)" % (dbo.sql_date(post.date("neutereddate")), post["animals"]))
         aud.append("NeuteredDate = %s" % post["neutereddate"])
     if post["currentvet"] != "" and post["currentvet"] != "0":
         dbo.execute("UPDATE animal SET CurrentVetID = %d WHERE ID IN (%s)" % (post.integer("currentvet"), post["animals"]))

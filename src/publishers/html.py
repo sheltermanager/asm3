@@ -2,7 +2,6 @@
 
 import animal
 import configuration
-import db
 import i18n
 import lookups
 import math
@@ -339,9 +338,9 @@ class HTMLPublisher(FTPPublisher):
             if self.pc.order == 0: orderby = "a.ActiveMovementDate"
             elif self.pc.order == 1: orderby = "a.ActiveMovementDate DESC"
             elif self.pc.order == 2: orderby = "a.AnimalName"
-            animals = db.query(self.dbo, animal.get_animal_query(self.dbo) + " WHERE a.ActiveMovementType = 1 AND " \
+            animals = self.dbo.query(animal.get_animal_query(self.dbo) + " WHERE a.ActiveMovementType = 1 AND " \
                 "a.ActiveMovementDate >= %s AND a.DeceasedDate Is Null AND a.NonShelterAnimal = 0 "
-                "ORDER BY %s" % (db.dd(cutoff), orderby))
+                "ORDER BY %s" % (self.dbo.sql_date(cutoff), orderby))
             totalAnimals = len(animals)
             header = self.substituteHFTag(self.getHeader(), -1, user, i18n._("Recently adopted", l))
             footer = self.substituteHFTag(self.getFooter(), -1, user, i18n._("Recently adopted", l))
@@ -404,9 +403,9 @@ class HTMLPublisher(FTPPublisher):
             if self.pc.order == 0: orderby = "a.DeceasedDate"
             elif self.pc.order == 1: orderby = "a.DeceasedDate DESC"
             elif self.pc.order == 2: orderby = "a.AnimalName"
-            animals = db.query(self.dbo, animal.get_animal_query(self.dbo) + " WHERE a.DeceasedDate Is Not Null AND " \
+            animals = self.dbo.query(animal.get_animal_query(self.dbo) + " WHERE a.DeceasedDate Is Not Null AND " \
                 "a.DeceasedDate >= %s AND a.NonShelterAnimal = 0 AND a.DiedOffShelter = 0 " \
-                "ORDER BY %s" % (db.dd(cutoff), orderby))
+                "ORDER BY %s" % (self.dbo.sql_date(cutoff), orderby))
             totalAnimals = len(animals)
             header = self.substituteHFTag(self.getHeader(), -1, user, i18n._("Recently deceased", l))
             footer = self.substituteHFTag(self.getFooter(), -1, user, i18n._("Recently deceased", l))
