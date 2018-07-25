@@ -78,6 +78,10 @@ import test_movement
 suitemove = unittest.makeSuite(test_movement.TestMovement, 'test')
 fullsuite.append(suitemove)
 
+import test_onlineform
+suiteonlineform = unittest.makeSuite(test_onlineform.TestOnlineForm, 'test')
+fullsuite.append(suiteonlineform)
+
 import test_person
 suiteperson = unittest.makeSuite(test_person.TestPerson, 'test')
 fullsuite.append(suiteperson)
@@ -85,6 +89,10 @@ fullsuite.append(suiteperson)
 import test_publish
 suitepublish = unittest.makeSuite(test_publish.TestPublish, 'test')
 fullsuite.append(suitepublish)
+
+import test_reports
+suitereports = unittest.makeSuite(test_reports.TestReports, 'test')
+fullsuite.append(suitereports)
 
 import test_search
 suitesearch = unittest.makeSuite(test_search.TestSearch, 'test')
@@ -118,6 +126,7 @@ if __name__ == "__main__":
     base.reset_db()
     dbupdate.install(base.get_dbo())
     s = unittest.TestSuite(fullsuite)
+    #s = unittest.TestSuite([suitereports]) # How to run a single suite of tests
     runner = unittest.TextTestRunner()
     runner.run(s)
 
