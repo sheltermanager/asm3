@@ -1,9 +1,7 @@
 #!/usr/bin/python
 
 import animal
-import audit
 import configuration
-import db
 import dbupdate
 import i18n
 import lookups
@@ -55,7 +53,7 @@ def get_all_report_titles(dbo):
     include builtin reports since they don't count for ASM3 (and should be
     replaced when viewing available reports)
     """
-    return db.query(dbo, "SELECT Title FROM customreport WHERE %s > 3 ORDER BY Title" % dbo.sql_char_length("HTMLBody"))
+    return dbo.query("SELECT Title FROM customreport WHERE %s > 3 ORDER BY Title" % dbo.sql_char_length("HTMLBody"))
 
 def get_available_reports(dbo, include_with_criteria = True):
     """
@@ -67,8 +65,8 @@ def get_available_reports(dbo, include_with_criteria = True):
     reps = []
     rs = get_reports(dbo)
     for r in rs:
-        htmlbody = r["HTMLBODY"]
-        sql = r["SQLCOMMAND"]
+        htmlbody = r.HTMLBODY
+        sql = r.SQLCOMMAND
         # Ignore ASM 2.x builtin reports
         if sql.startswith("0"):
             continue
@@ -93,7 +91,7 @@ def get_available_mailmerges(dbo):
     reps = []
     rs = get_reports(dbo)
     for r in rs:
-        if not r["HTMLBODY"].startswith("MAIL"): continue
+        if not r.HTMLBODY.startswith("MAIL"): continue
         reps.append(r)
     return reps
 
@@ -102,17 +100,17 @@ def get_reports(dbo):
     Returns a list of all reports on the system, filtering out any of
     the old ASM2 built in reports
     """
-    reps = db.query(dbo, "SELECT * FROM customreport WHERE SQLCommand NOT LIKE '0%' ORDER BY Category, Title")
-    roles = db.query(dbo, "SELECT cr.*, r.RoleName FROM customreportrole cr INNER JOIN role r ON cr.RoleID = r.ID")
+    reps = dbo.query("SELECT * FROM customreport WHERE SQLCommand NOT LIKE '0%' ORDER BY Category, Title")
+    roles = dbo.query("SELECT cr.*, r.RoleName FROM customreportrole cr INNER JOIN role r ON cr.RoleID = r.ID")
     for r in reps:
         viewroleids = []
         viewrolenames = []
         for o in roles:
-            if o["REPORTID"] == r["ID"] and o["CANVIEW"] == 1:
-                viewroleids.append(str(o["ROLEID"]))
-                viewrolenames.append(str(o["ROLENAME"]))
-        r["VIEWROLEIDS"] = "|".join(viewroleids)
-        r["VIEWROLES"] = "|".join(viewrolenames)
+            if o.REPORTID == r.ID and o.CANVIEW == 1:
+                viewroleids.append(str(o.ROLEID))
+                viewrolenames.append(str(o.ROLENAME))
+        r.VIEWROLEIDS = "|".join(viewroleids)
+        r.VIEWROLES = "|".join(viewrolenames)
     return reps
 
 def get_raw_report_header(dbo):
@@ -147,10 +145,10 @@ def get_report_footer(dbo, title, username):
     return r._ReadFooter()
 
 def get_categories(dbo):
-    cat = db.query(dbo, "SELECT DISTINCT Category FROM customreport ORDER BY Category")
+    cat = dbo.query("SELECT DISTINCT Category FROM customreport ORDER BY Category")
     rv = []
     for c in cat:
-        rv.append(c["CATEGORY"])
+        rv.append(c.CATEGORY)
     return rv
 
 def get_title(dbo, customreportid):
@@ -169,7 +167,7 @@ def is_mailmerge(dbo, crid):
     """
     Returns true if the report with crid is a mailmerge
     """
-    return db.query_string(dbo, "SELECT HTMLBody FROM customreport WHERE ID = %d" % crid).startswith("MAIL")
+    return dbo.query_string("SELECT HTMLBody FROM customreport WHERE ID = ?", [crid]).startswith("MAIL")
 
 def get_criteria_params(dbo, customreportid, post):
     """
@@ -236,15 +234,15 @@ def check_view_permission(session, customreportid):
     # Superusers can do anything
     if session.superuser == 1: return True
     reportroles = []
-    for rr in db.query(dbo, "SELECT RoleID FROM customreportrole WHERE ReportID = %d AND CanView = 1" % customreportid):
-        reportroles.append(rr["ROLEID"])
+    for rr in dbo.query("SELECT RoleID FROM customreportrole WHERE ReportID = ? AND CanView = 1", [customreportid]):
+        reportroles.append(rr.ROLEID)
     # No view roles means anyone can view
     if len(reportroles) == 0:
         return True
     # Does the user have any of the view roles?
     userroles = []
-    for ur in db.query(dbo, "SELECT RoleID FROM userrole INNER JOIN users ON userrole.UserID = users.ID WHERE users.UserName LIKE %s" % db.ds(session.user)):
-        userroles.append(ur["ROLEID"])
+    for ur in dbo.query("SELECT RoleID FROM userrole INNER JOIN users ON userrole.UserID = users.ID WHERE users.UserName LIKE ?", [session.user]):
+        userroles.append(ur.ROLEID)
     hasperm = False
     for ur in userroles:
         if ur in reportroles:
@@ -262,25 +260,23 @@ def insert_report_from_form(dbo, username, post):
         htmlbody = rtype
     else:
         htmlbody = post["html"]
-    reportid = db.get_id(dbo, "customreport")
-    sql = db.make_insert_user_sql(dbo, "customreport", username, ( 
-        ( "ID", db.di(reportid)),
-        ( "Title", post.db_string("title")),
-        ( "Category", post.db_string("category")),
-        ( "SQLCommand", db.ds(post["sql"], False) ),
-        ( "HTMLBody", db.ds(htmlbody, False) ),
-        ( "DailyEmail", post.db_string("dailyemail")),
-        ( "DailyEmailHour", post.db_integer("dailyemailhour")),
-        ( "DailyEmailFrequency", post.db_integer("dailyemailfrequency")),
-        ( "Description", post.db_string("description")),
-        ( "OmitHeaderFooter", post.db_boolean("omitheaderfooter")),
-        ( "OmitCriteria", post.db_boolean("omitcriteria"))
-        ), False)
-    db.execute(dbo, sql)
-    audit.create(dbo, username, "customreport", reportid, audit.dump_row(dbo, "customreport", reportid))
-    db.execute(dbo, "DELETE FROM customreportrole WHERE ReportID = %d" % reportid)
+
+    reportid = dbo.insert("customreport", {
+        "Title":                post["title"],
+        "Category":             post["category"],
+        "*SQLCommand":          post["sql"],
+        "*HTMLBody":            htmlbody,
+        "DailyEmail":           post["dailyemail"],
+        "DailyEmailHour":       post.integer("dailyemailhour"),
+        "DailyEmailFrequency":  post.integer("dailyemailfrequency"),
+        "Description":          post["description"],
+        "OmitHeaderFooter":     post.boolean("omitheaderfooter"),
+        "OmitCriteria":         post.boolean("omitcriteria")
+    }, username, setRecordVersion=False)
+
+    dbo.delete("customreportrole", "ReportID=%d" % reportid)
     for rid in post.integer_list("viewroles"):
-        db.execute(dbo, "INSERT INTO customreportrole (ReportID, RoleID, CanView) VALUES (%d, %d, 1)" % (reportid, rid))
+        dbo.insert("customreportrole", { "ReportID": reportid, "RoleID": rid, "CanView": 1 }, generateID=False, setCreated=False)
     return reportid
 
 def update_report_from_form(dbo, username, post):
@@ -288,37 +284,29 @@ def update_report_from_form(dbo, username, post):
     Updates a report record from posted form data
     """
     reportid = post.integer("reportid")
-    sql = db.make_update_user_sql(dbo, "customreport", username, "ID=%d" % reportid, ( 
-        ( "Title", post.db_string("title")),
-        ( "Category", post.db_string("category")),
-        ( "SQLCommand", db.ds(post["sql"], False) ),
-        ( "HTMLBody", db.ds(post["html"], False) ),
-        ( "DailyEmail", post.db_string("dailyemail")),
-        ( "DailyEmailHour", post.db_integer("dailyemailhour")),
-        ( "DailyEmailFrequency", post.db_integer("dailyemailfrequency")),
-        ( "Description", post.db_string("description")),
-        ( "OmitHeaderFooter", post.db_boolean("omitheaderfooter")),
-        ( "OmitCriteria", post.db_boolean("omitcriteria"))
-        ), False)
-    preaudit = db.query(dbo, "SELECT * FROM customreport WHERE ID = %d" % reportid)
-    db.execute(dbo, sql)
-    postaudit = db.query(dbo, "SELECT * FROM customreport WHERE ID = %d" % reportid)
-    diff = audit.map_diff(preaudit, postaudit, [ "TITLE", ])
-    diff = html.escape(diff)
-    audit.edit(dbo, username, "customreport", reportid, diff)
-    db.execute(dbo, "DELETE FROM customreportrole WHERE ReportID = %d" % reportid)
+    dbo.update("customreport", reportid, {
+        "Title":                post["title"],
+        "Category":             post["category"],
+        "*SQLCommand":          post["sql"],
+        "*HTMLBody":            post["html"],
+        "DailyEmail":           post["dailyemail"],
+        "DailyEmailHour":       post.integer("dailyemailhour"),
+        "DailyEmailFrequency":  post.integer("dailyemailfrequency"),
+        "Description":          post["description"],
+        "OmitHeaderFooter":     post.boolean("omitheaderfooter"),
+        "OmitCriteria":         post.boolean("omitcriteria")
+    }, username, setRecordVersion=False)
+
+    dbo.delete("customreportrole", "ReportID=%d" % reportid)
     for rid in post.integer_list("viewroles"):
-        db.execute(dbo, "INSERT INTO customreportrole (ReportID, RoleID, CanView) VALUES (%d, %d, 1)" % (reportid, rid))
+        dbo.insert("customreportrole", { "ReportID": reportid, "RoleID": rid, "CanView": 1 }, generateID=False, setCreated=False)
 
 def delete_report(dbo, username, rid):
     """
     Deletes a report record
     """
-    data = str(db.query(dbo, "SELECT * FROM customreport WHERE ID = %d" % rid))
-    data = html.escape(data)
-    audit.delete(dbo, username, "customreport", rid, data)
-    db.execute(dbo, "DELETE FROM customreportrole WHERE ReportID = %d" % rid)
-    db.execute(dbo, "DELETE FROM customreport WHERE ID = %d" % rid)
+    dbo.delete("customreportrole", "ReportID=%d" % rid)
+    dbo.delete("customreport", rid, username)
 
 def check_sql(dbo, username, sql):
     """
@@ -354,7 +342,7 @@ def check_sql(dbo, username, sql):
         raise utils.ASMValidationError("Reports must be based on a SELECT query.")
     # Test the query
     try:
-        db.query_tuple(dbo, sql)
+        dbo.query_tuple(sql)
     except Exception as e:
         raise utils.ASMValidationError(str(e))
     return sql
@@ -382,7 +370,7 @@ def generate_html(dbo, username, sql):
     output the data in a table.
     """
     sql = check_sql(dbo, username, sql)
-    rs, cols = db.query_tuple_columns(dbo, sql)
+    rs, cols = dbo.query_tuple_columns(sql)
     h = "$$HEADER\n<table border=\"1\">\n<tr>\n"
     b = "$$BODY\n<tr>\n"
     f = "$$FOOTER\n</table>\nFOOTER$$\n"
@@ -460,7 +448,7 @@ def install_smcom_reports(dbo, user, ids):
             if r["SUBREPORTS"] != "":
                 b = r["SUBREPORTS"].split("+++")
                 while len(b) >= 3:
-                    db.execute(dbo, "DELETE FROM customreport WHERE Title Like '%s'" % b[0].strip().replace("'", "`"))
+                    dbo.delete("customreport", "Title LIKE '%s'" % b[0].strip().replace("'", "`"))
                     data["title"] = b[0]
                     data["sql"] = b[1]
                     data["html"] = b[2]
@@ -484,11 +472,11 @@ def get_reports_menu(dbo, roleids = "", superuser = False):
     rep = get_available_reports(dbo)
     lastcat = ""
     for r in rep:
-        if r["CATEGORY"] != lastcat:
-            lastcat = r["CATEGORY"]
+        if r.CATEGORY != lastcat:
+            lastcat = r.CATEGORY
             rv.append( ["", "", "", "--cat", "", lastcat] )
-        if superuser or r["VIEWROLEIDS"] == "" or utils.list_overlap(r["VIEWROLEIDS"].split("|"), roleids.split("|")):
-            rv.append( [ users.VIEW_REPORT, "", "", "report?id=%d" % r["ID"], "", r["TITLE"] ] )
+        if superuser or r.VIEWROLEIDS == "" or utils.list_overlap(r.VIEWROLEIDS.split("|"), roleids.split("|")):
+            rv.append( [ users.VIEW_REPORT, "", "", "report?id=%d" % r.ID, "", r.TITLE ] )
     return rv
 
 def get_mailmerges_menu(dbo, roleids = "", superuser = False):
@@ -504,11 +492,11 @@ def get_mailmerges_menu(dbo, roleids = "", superuser = False):
     mm = get_available_mailmerges(dbo)
     lastcat = ""
     for m in mm:
-        if m["CATEGORY"] != lastcat:
-            lastcat = m["CATEGORY"]
+        if m.CATEGORY != lastcat:
+            lastcat = m.CATEGORY
             mv.append( ["", "", "", "--cat", "", lastcat] )
-        if superuser or m["VIEWROLEIDS"] == "" or utils.list_overlap(m["VIEWROLEIDS"].split("|"), roleids.split("|")):
-            mv.append( [ users.MAIL_MERGE, "", "", "mailmerge?id=%d" % m["ID"], "", m["TITLE"] ] )
+        if superuser or m.VIEWROLEIDS == "" or utils.list_overlap(m.VIEWROLEIDS.split("|"), roleids.split("|")):
+            mv.append( [ users.MAIL_MERGE, "", "", "mailmerge?id=%d" % m.ID, "", m.TITLE ] )
     return mv
 
 def email_daily_reports(dbo, now = None):
@@ -536,9 +524,9 @@ def email_daily_reports(dbo, now = None):
         month = now.month
         lastdayofmonth = i18n.last_of_month(now).day
     for r in rs:
-        emails = utils.nulltostr(r["DAILYEMAIL"])
-        runhour = r["DAILYEMAILHOUR"]
-        freq = r["DAILYEMAILFREQUENCY"]
+        emails = utils.nulltostr(r.DAILYEMAIL)
+        runhour = r.DAILYEMAILHOUR
+        freq = r.DAILYEMAILFREQUENCY
         if emails == "": continue # No emails to send to, don't do anything
         if now is None and runhour != -1: continue # We're running for the batch, but an hour is set on the report
         if now is not None and hour != runhour: continue # It's not the right hour to send
@@ -554,10 +542,10 @@ def email_daily_reports(dbo, now = None):
         if freq == 10 and day != 1 and month != 1: continue # Freq is beginning of year and its not 1st Jan
         if freq == 11 and day != 31 and month != 12: continue # Freq is end of year and its not 31st Dec
         # If we get here, we're good to send
-        body = execute(dbo, r["ID"], "dailyemail")
+        body = execute(dbo, r.ID, "dailyemail")
         # Only send if there's data on the report
         if body.find(i18n._("No data to show on the report.", l)) == -1:
-            utils.send_email(dbo, configuration.email(dbo), emails, "", r["TITLE"], body, "html")
+            utils.send_email(dbo, configuration.email(dbo), emails, "", r.TITLE, body, "html")
 
 def execute_title(dbo, title, username = "system", params = None):
     """
@@ -649,19 +637,19 @@ class Report:
         our local class variables.
         Returns True on success.
         """
-        rs = db.query(self.dbo, "SELECT Title, Category, HTMLBody, SQLCommand, OmitCriteria, " \
-            "OmitHeaderFooter FROM customreport WHERE ID = %s" % str(reportId))
+        rs = self.dbo.query("SELECT Title, Category, HTMLBody, SQLCommand, OmitCriteria, " \
+            "OmitHeaderFooter FROM customreport WHERE ID = ?", [reportId])
         
         # Can't do anything if the ID was invalid
         if len(rs) == 0: return False
 
         r = rs[0]
-        self.title = r["TITLE"]
-        self.category = r["CATEGORY"]
-        self.html = r["HTMLBODY"]
-        self.sql = r["SQLCOMMAND"]
-        self.omitCriteria = r["OMITCRITERIA"] > 0
-        self.omitHeaderFooter = r["OMITHEADERFOOTER"] > 0
+        self.title = r.TITLE
+        self.category = r.CATEGORY
+        self.html = r.HTMLBODY
+        self.sql = r.SQLCOMMAND
+        self.omitCriteria = r.OMITCRITERIA > 0
+        self.omitHeaderFooter = r.OMITHEADERFOOTER > 0
         self.isSubReport = self.sql.find("PARENTKEY") != -1 or self.sql.find("PARENTARG") != -1
         return True
 
@@ -937,15 +925,14 @@ class Report:
                 if asql.lower().startswith("select"):
                     # Select - return first row/column
                     try:
-                        x = db.query_tuple(self.dbo, asql)
-                        value = str(x[0][0])
+                        value = self.dbo.query_string(asql)
                     except Exception as e:
                         value = str(e)
                 else:
                     # Action query, run it
                     try:
                         value = ""
-                        db.execute(self.dbo, asql)
+                        self.dbo.execute(asql)
                     except Exception as e:
                         value = str(e)
 
@@ -993,7 +980,7 @@ class Report:
                     continue
 
                 # Get custom report ID from title
-                crid = db.query_int(self.dbo, "SELECT ID FROM customreport WHERE LOWER(Title) LIKE '" + fields[1] + "'")
+                crid = self.dbo.query_int("SELECT ID FROM customreport WHERE LOWER(Title) LIKE ?", [fields[1]])
                 if crid == 0:
                     self._p("Custom report '" + fields[1] + "' doesn't exist.")
                     valid = False
@@ -1091,7 +1078,7 @@ class Report:
         # Substitute the location filter, but only if the report actually
         # references it to save unnecessary database lookups
         if s.find("$LOCATIONFILTER$") != -1:
-            lf = db.query_string(self.dbo, "SELECT LocationFilter FROM users WHERE UserName = %s" % db.ds(self.user))
+            lf = self.dbo.query_string("SELECT LocationFilter FROM users WHERE UserName = ?", [self.user])
             # If the locationfilter is blank, make it a list of all possible internal location IDs
             if lf == "":
                 ils = [ ]
@@ -1101,7 +1088,7 @@ class Report:
             s = s.replace("$LOCATIONFILTER$", lf)
         # Same goes for site
         if s.find("$SITE$") != -1:
-            sf = db.query_int(self.dbo, "SELECT SiteID FROM users WHERE UserName = %s" % db.ds(self.user))
+            sf = self.dbo.query_int("SELECT SiteID FROM users WHERE UserName = ?", [self.user])
             s = s.replace("$SITE$", str(sf))
         # Subtitute CONST tokens
         for name, value in utils.regex_multi(r"\$CONST (.+?)\=(.+?)\$", s):
@@ -1304,8 +1291,8 @@ class Report:
         rs = None
         cols = None
         try:
-            rs = db.query(self.dbo, self.sql)
-            cols = db.query_columns(self.dbo, self.sql)
+            rs = self.dbo.query(self.sql)
+            cols = self.dbo.query_columns(self.sql)
         except Exception as e:
             self._p(e)
         return (rs, cols)
@@ -1328,7 +1315,7 @@ class Report:
 
         # Run the graph query, bail out if we have an error
         try:
-            rs, cols = db.query_tuple_columns(self.dbo, self.sql)
+            rs, cols = self.dbo.query_tuple_columns(self.sql)
         except Exception as e:
             self._p(e)
             self._Append("</body></html>")
@@ -1448,7 +1435,7 @@ class Report:
 
         # Run the map query, bail out if we have an error
         try:
-            rs, cols = db.query_tuple_columns(self.dbo, self.sql)
+            rs, cols = self.dbo.query_tuple_columns(self.sql)
         except Exception as e:
             self._p(e)
             self._Append("</body></html>")
@@ -1619,7 +1606,7 @@ class Report:
         # Run the query
         rs = None
         try:
-            rs = db.query(self.dbo, self.sql)
+            rs = self.dbo.query(self.sql)
         except Exception as e:
             self._p(e)
 
@@ -1779,7 +1766,7 @@ class Report:
                         continue
                     
                     # Get custom report ID from title
-                    crid = db.query_int(self.dbo, "SELECT ID FROM customreport WHERE LOWER(Title) LIKE '" + fields[1] + "'")
+                    crid = self.dbo.query_int("SELECT ID FROM customreport WHERE LOWER(Title) LIKE ?", [fields[1]])
                     if crid == 0:
                         self._p("Custom report '" + fields[1] + "' doesn't exist.")
                         valid = False
