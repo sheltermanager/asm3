@@ -85,6 +85,11 @@ class FoundAnimalsPublisher(FTPPublisher):
                     self.logError("Microchip length is not 9, 10 or 15, cannot process")
                     continue
 
+                servicedate = an["ACTIVEMOVEMENTDATE"] or an["MOSTRECENTENTRYDATE"]
+                if servicedate < self.dbo.today(offset=-365*3):
+                    self.logError("Service date is older than 3 years, ignoring")
+                    continue
+
                 # First Name
                 line.append("\"%s\"" % an["CURRENTOWNERFORENAMES"])
                 # Last Name
@@ -112,7 +117,7 @@ class FoundAnimalsPublisher(FTPPublisher):
                 # Microchip Number
                 line.append("\"%s\"" % an["IDENTICHIPNUMBER"])
                 # Service Date
-                line.append("\"%s\"" % i18n.format_date("%m/%d/%Y", an["ACTIVEMOVEMENTDATE"] or an["MOSTRECENTENTRYDATE"]))
+                line.append("\"%s\"" % i18n.format_date("%m/%d/%Y", servicedate))
                 # Date of Birth
                 line.append("\"%s\"" % i18n.format_date("%m/%d/%Y", an["DATEOFBIRTH"]))
                 # Species
