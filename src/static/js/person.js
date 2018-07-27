@@ -97,7 +97,7 @@ $(function() {
                 '<tr>',
                 '<td><label for="email">' + _("Email") + '</label></td>',
                 '<td>',
-                '<input type="text" id="email" data-json="EMAILADDRESS" data-post="email" maxlength="200" class="asm-textbox" />',
+                '<input type="text" id="email" data-json="EMAILADDRESS" data-post="emailaddress" maxlength="200" class="asm-textbox" />',
                 '</td>',
                 '</tr>',
                 '<tr>',
