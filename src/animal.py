@@ -1027,6 +1027,15 @@ def calc_age_group(dbo, animalid, a = None, bands = None, todate = None):
     # Out of bands and none matched
     return ""
 
+def calc_age_group_rows(dbo, rows, todate = None):
+    """
+    Given a set of animal results, recalculates all the age groups on those rows at todate
+    """
+    bands = configuration.age_group_bands(dbo)
+    for r in rows:
+        r.AGEGROUP = calc_age_group(dbo, r.ID, r, bands, todate) 
+    return rows
+
 def calc_age(dbo, animalid, a = None):
     """
     Returns an animal's age as a readable string
@@ -1736,11 +1745,13 @@ def delete_publish_history(dbo, animalid, service):
 
 def get_shelterview_animals(dbo, locationfilter = "", siteid = 0):
     """
-    Returns all available animals for shelterview
+    Returns all available animals for shelterview.
+    Age groups are recalculated to today for display.
     """
     limit = configuration.record_search_limit(dbo)
     locationfilter = get_location_filter_clause(locationfilter=locationfilter, siteid=siteid, andprefix=True)
-    return get_animals_ids(dbo, "a.AnimalName", "SELECT animal.ID FROM animal LEFT OUTER JOIN internallocation il ON il.ID = animal.ShelterLocation WHERE Archived = 0 %s ORDER BY HasPermanentFoster, animal.ID DESC" % locationfilter, limit=limit)
+    animals = get_animals_ids(dbo, "a.AnimalName", "SELECT animal.ID FROM animal LEFT OUTER JOIN internallocation il ON il.ID = animal.ShelterLocation WHERE Archived = 0 %s ORDER BY HasPermanentFoster, animal.ID DESC" % locationfilter, limit=limit)
+    return calc_age_group_rows(dbo, animals)
 
 def insert_animal_from_form(dbo, post, username):
     """

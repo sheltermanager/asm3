@@ -4966,6 +4966,7 @@ class shelterview(JSONEndpoint):
     def controller(self, o):
         dbo = o.dbo
         animals = extanimal.get_shelterview_animals(dbo, o.locationfilter, o.siteid)
+        animals = extanimal.calc_age_group_rows(dbo, animals)
         al.debug("got %d animals for shelterview" % (len(animals)), "code.shelterview", dbo)
         return {
             "animals": extanimal.get_animals_brief(animals),
