@@ -812,6 +812,7 @@ def fix_relative_document_uris(s, baseurl, account = "" ):
         ( "image?mode=animal&amp;id=", "animal_image", "animalid" ),
         ( "image?db={account}&ampmode=animal&amp;id=", "animal_image", "animalid" ),
         ( "image?db={account}&mode=animal&id=", "animal_image", "animalid" ),
+        ( "image?db={account}&amp;mode=nopic", "extra_image", "title=nopic.jpg&xx" ),
 
         # animal thumbnail images
         ( "image?mode=animalthumb&amp;id=", "animal_thumbnail", "animalid" ),

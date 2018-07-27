@@ -1,6 +1,7 @@
 41
 ================
 
+27/07/18 nopic.jpg broken the PDF engine
 27/07/18 Do not XSS escape publisher logs
 27/07/18 Simplify adding publishers with publish.PUBLISHER_LIST #227
 27/07/18 recalculate age groups for shelter view #422
