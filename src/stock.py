@@ -46,7 +46,7 @@ def get_stock_items(dbo):
     """
     Returns a set of stock items.
     """
-    rows = dbo.query(dbo, "SELECT sv.*, sl.LocationName " \
+    rows = dbo.query("SELECT sv.*, sl.LocationName " \
         "FROM stocklevel sv " \
         "INNER JOIN stocklocation sl ON sl.ID = sv.StockLocationID " \
         "WHERE sv.Balance > 0 " \

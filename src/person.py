@@ -654,7 +654,26 @@ def insert_person_from_form(dbo, post, username):
         "MatchGoodWithDogs": -1,
         "MatchGoodWithChildren": -1,
         "MatchHouseTrained": -1,
-        "MatchCommentsContain": ""
+        "MatchCommentsContain": "",
+        # Flags are updated afterwards, but cannot be null
+        "IDCheck":                  0,
+        "ExcludeFromBulkEmail":     0,
+        "IsAdoptionCoordinator":    0,
+        "IsBanned":                 0,
+        "IsVolunteer":              0,
+        "IsMember":                 0,
+        "IsHomeChecker":            0,
+        "IsDeceased":               0,
+        "IsDonor":                  0,
+        "IsDriver":                 0,
+        "IsShelter":                0,
+        "IsACO":                    0,
+        "IsStaff":                  0,
+        "IsFosterer":               0,
+        "IsRetailer":               0,
+        "IsVet":                    0,
+        "IsGiftAid":                0,
+        "AdditionalFlags":          ""
     }, username, generateID=False)
 
     # If we're using GDPR contact options and email is not set, set the exclude from bulk email flag
