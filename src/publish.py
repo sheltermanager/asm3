@@ -15,7 +15,7 @@ def delete_old_publish_logs(dbo):
     """ Deletes all publishing logs older than 14 days """
     KEEP_DAYS = 14
     cutoff = dbo.today(offset=KEEP_DAYS*-1)
-    count = dbo.query_int(dbo, "SELECT COUNT(*) FROM publishlog WHERE PublishDateTime < ?", [cutoff])
+    count = dbo.query_int("SELECT COUNT(*) FROM publishlog WHERE PublishDateTime < ?", [cutoff])
     al.debug("removing %d publishing logs (keep for %d days)." % (count, KEEP_DAYS), "publish.delete_old_publish_logs", dbo)
     dbo.execute("DELETE FROM publishlog WHERE PublishDateTime < ?", [cutoff])
 
