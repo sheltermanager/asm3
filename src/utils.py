@@ -280,9 +280,11 @@ class SimpleSearchBuilder(object):
     def add_words(self, field):
         """ Adds all the words in the term as separate clauses """
         for w in self.q.split(" "):
+            x = w.lower().replace("'", "`")
+            x = "%%%s%%" % x
             self.ors.append("(LOWER(%s) LIKE ? OR LOWER(%s) LIKE ?)" % (field, field))
-            self.values.append("%%%s%%" % w)
-            self.values.append(decode_html("%%%s%%" % w))
+            self.values.append(x)
+            self.values.append(decode_html(x))
 
     def add_clause(self, clause):
         self.ors.append(clause)
