@@ -1,6 +1,7 @@
 41
 ================
 
+27/07/18 Simplify adding publishers with publish.PUBLISHER_LIST #227
 27/07/18 recalculate age groups for shelter view #422
 27/07/18 recalc age group on publish commit was reverted, reapplied #396
 26/07/18 Found animals want a 3 year limit on chip registrations

@@ -526,13 +526,20 @@ def doc_img_src(dbo, row):
     else:
         return "image?db=%s&mode=dbfs&id=%s&date=%s" % (dbo.database, row["DOCMEDIANAME"], row["DOCMEDIADATE"].isoformat())
 
-def menu_structure(l, reports, mailmerges):
+def menu_structure(l, publisherlist, reports, mailmerges):
     """
     Returns a list of lists representing the main menu structure
     l: The locale
+    publisherlist: A reference to publish.PUBLISHER_LIST
     reports: A list of tuples containing the report url and name
     mailmerges: A list of tuples containing the report/mailmerge url and name
     """
+    publishers = []
+    for k, v in publisherlist.iteritems():
+        if k == "html": # HTML requires translated text, where other publishers are localised/English
+            publishers.append(("", "", "", "publish?mode=html", "asm-icon-blank", _("Publish HTML via FTP", l) ))
+        else:
+            publishers.append(("", "", "", "publish?mode=%s" % k, "asm-icon-blank", v["label"]))
     return (
         ("", "asm", _("ASM", l), (
             ( "", "", "", "--cat", "asm-icon-animal", _("Animals", l) ),
@@ -629,29 +636,15 @@ def menu_structure(l, reports, mailmerges):
             ( users.VIEW_DONATION, "", "taggb", "--cat", "", "HMRC" ),
             ( users.VIEW_DONATION, "", "taggb", "giftaid_hmrc_spreadsheet", "asm-icon-report", "Generate HMRC Gift Aid spreadsheet" )
         )),
-        (users.USE_INTERNET_PUBLISHER, "publishing", _("Publishing", l), (
+        (users.USE_INTERNET_PUBLISHER, "publishing", _("Publishing", l), [
             ("", "", "", "--cat", "asm-icon-settings", _("Configuration", l) ),
             (users.VIEW_ANIMAL, "", "", "search?q=forpublish", "asm-icon-animal", _("View animals matching publishing options", l) ),
             (users.PUBLISH_OPTIONS, "", "", "publish_options", "asm-icon-settings", _("Set publishing options", l) ),
             (users.PUBLISH_OPTIONS, "", "", "htmltemplates", "asm-icon-document", _("Edit HTML publishing templates", l)),
-            ("", "", "", "--cat", "web", _("Publish now", l) ),
-            ("", "", "", "publish?mode=html", "asm-icon-blank", _("Publish HTML via FTP", l) ),
-            ("", "", "", "publish?mode=ap", "asm-icon-blank", "Publish to AdoptAPet.com" ),
-            ("", "", "", "publish?mode=hlp", "asm-icon-blank", "Publish to HelpingLostPets.com" ),
-            ("", "", "", "publish?mode=mf", "asm-icon-blank", "Publish to Maddie's Pet Assistant" ),
-            ("", "", "", "publish?mode=pf", "asm-icon-blank", "Publish to PetFinder.com" ),
-            ("", "", "", "publish?mode=pr", "asm-icon-blank", "Publish to PetRescue.com.au" ),
-            ("", "", "", "publish?mode=pcuk", "asm-icon-blank", "Publish to PetsLocated.com" ),
-            ("", "", "", "publish?mode=rg", "asm-icon-blank", "Publish to RescueGroups.org" ),
-            ("", "", "", "publish?mode=vear", "asm-icon-blank", "Register animals with AKC Reunite Microchips (via VetEnvoy)"),
-            ("", "", "", "publish?mode=abuk", "asm-icon-blank", "Register animals with Identibase UK Microchips"),
-            ("", "", "", "publish?mode=ptuk", "asm-icon-blank", "Register animals with AVID UK Microchips"),
-            ("", "", "", "publish?mode=fa", "asm-icon-blank", "Register animal microchips with FoundAnimals.org"),
-            ("", "", "", "publish?mode=veha", "asm-icon-blank", "Register animals with HomeAgain Microchips (via VetEnvoy)"),
-            ("", "", "", "publish?mode=pl", "asm-icon-blank", "Register animals with PetLink Microchips"),
-            ("", "", "", "publish?mode=st", "asm-icon-blank", "Register animals with SmartTag Pet ID"),
+            ("", "", "", "--cat", "web", _("Publish now", l) ) 
+        ] + publishers + [
             (users.USE_INTERNET_PUBLISHER, "", "", "publish_logs", "asm-icon-log", _("View publishing logs", l) )
-        )),
+        ]),
         (users.MAIL_MERGE, "mailmerge", _("Mail", l),
             mailmerges
         ),

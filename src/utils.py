@@ -411,6 +411,8 @@ def json_handler(obj):
         return "%02d:%02d:%02d" % (hours, minutes, seconds)
     elif isinstance(obj, decimal.Decimal):
         return str(obj)
+    elif isinstance(obj, type):
+        return str(obj)
     else:
         raise TypeError('Object of type %s with value of %s is not JSON serializable' % (type(obj), repr(obj)))
 

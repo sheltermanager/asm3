@@ -237,66 +237,13 @@ $(function() {
             $(".asm-menu-icon").asmmenu();
             $(".asm-menu-accordion").accordion({ active: false, collapsible: true, heightStyle: "content" });
 
-            // Hide inactive publishers
-            var ep = "";
-            try {
-                ep = config.str("PublishersEnabled");
-            }
-            catch(ip) {}
-
-            // AdoptAPet, Meetapet, PetFinder and PetLink are US/Canada/Mexico
-            if (asm.locale != "en" && asm.locale != "en_CA" && asm.locale != "fr_CA" && asm.locale != "es_MX" && asm.locale != "en_MX") {
-                ep.replace("ap", "");
-                ep.replace("mp", "");
-                ep.replace("pf", "");
-                ep.replace("pl", "");
-            }
-
-            // FoundAnimals, Maddie's Fund, Pets911, RescueGroups, SmartTag and VetEnvoy/US are US only
-            if (asm.locale != "en") {
-                ep.replace("fa", "");
-                ep.replace("p911", "");
-                ep.replace("rg", "");
-                ep.replace("st", "");
-                ep.replace("ve", "");
-            }
-
-            // Maddie's Fund are US, Canada and Australia
-            if (asm.locale != "en" && asm.locale != "en_CA" && asm.locale != "en_AU") {
-                ep.replace("mf", "");
-            }
-
-            // PetRescue is AU only
-            if (asm.locale != "en_AU") {
-                ep.replace("pr", "");
-            }
-
-            // PETtrac, Anibase and PetsLocated are UK only
-            if (asm.locale != "en_GB") {
-                ep.replace("abuk", "");
-                ep.replace("ptuk", "");
-                ep.replace("pcuk", "");
-            }
-
-            if (ep.indexOf("html") == -1) { $("#asm-menu-publishing-body [href='publish?mode=html']").closest("li").hide(); }
-            if (ep.indexOf("pf") == -1) { $("#asm-menu-publishing-body [href='publish?mode=pf']").closest("li").hide(); }
-            if (ep.indexOf("abuk") == -1) { $("#asm-menu-publishing-body [href='publish?mode=abuk']").closest("li").hide(); }
-            if (ep.indexOf("ap") == -1) { $("#asm-menu-publishing-body [href='publish?mode=ap']").closest("li").hide(); }
-            if (ep.indexOf("fa") == -1) { $("#asm-menu-publishing-body [href='publish?mode=fa']").closest("li").hide(); }
-            if (ep.indexOf("p911") == -1) { $("#asm-menu-publishing-body [href='publish?mode=p9']").closest("li").hide(); }
-            if (ep.indexOf("rg") == -1) { $("#asm-menu-publishing-body [href='publish?mode=rg']").closest("li").hide(); }
-            if (ep.indexOf("mf") == -1) { $("#asm-menu-publishing-body [href='publish?mode=mf']").closest("li").hide(); }
-            if (ep.indexOf("mp") == -1) { $("#asm-menu-publishing-body [href='publish?mode=mp']").closest("li").hide(); }
-            if (ep.indexOf("hlp") == -1) { $("#asm-menu-publishing-body [href='publish?mode=hlp']").closest("li").hide(); }
-            if (ep.indexOf("pl") == -1) { $("#asm-menu-publishing-body [href='publish?mode=pl']").closest("li").hide(); }
-            if (ep.indexOf("pcuk") == -1) { $("#asm-menu-publishing-body [href='publish?mode=pcuk']").closest("li").hide(); }
-            if (ep.indexOf("pr") == -1) { $("#asm-menu-publishing-body [href='publish?mode=pr']").closest("li").hide(); }
-            if (ep.indexOf("ptuk") == -1) { $("#asm-menu-publishing-body [href='publish?mode=ptuk']").closest("li").hide(); }
-            if (ep.indexOf("st") == -1) { $("#asm-menu-publishing-body [href='publish?mode=st']").closest("li").hide(); }
-            if (ep.indexOf("ve") == -1) { 
-                $("#asm-menu-publishing-body [href='publish?mode=vear']").closest("li").hide(); 
-                $("#asm-menu-publishing-body [href='publish?mode=veha']").closest("li").hide(); 
-            }
+            // Hide any publishers that are not enabled
+            var ep = config.str("PublishersEnabled");
+            $.each(asm.publishers, function(k, v) {
+                if (ep.indexOf(k) == -1) {
+                    $("#asm-menu-publishing-body [href='publish?mode=" + k + "']").closest("li").hide(); 
+                }
+            });
 
             try {
                 // If movements are disabled, remove the move menu

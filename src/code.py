@@ -524,8 +524,10 @@ class configjs(ASMEndpoint):
             "mobileapp": o.session.mobileapp,
             "config": configuration.get_map(dbo),
             "menustructure": html.menu_structure(o.locale, 
-            extreports.get_reports_menu(dbo, o.session.roleids, o.session.superuser), 
-            extreports.get_mailmerges_menu(dbo, o.session.roleids, o.session.superuser))
+                extpublish.PUBLISHER_LIST,
+                extreports.get_reports_menu(dbo, o.session.roleids, o.session.superuser), 
+                extreports.get_mailmerges_menu(dbo, o.session.roleids, o.session.superuser)),
+            "publishers": extpublish.PUBLISHER_LIST
         }
         return "asm = %s;" % utils.json(c)
 
