@@ -425,7 +425,7 @@ def create_animal(dbo, username, wlid):
             "LogTypeID":    lo.LOGTYPEID,
             "Date":         lo.DATE,
             "Comments":     lo.COMMENTS
-        })
+        }, username)
 
     return nextid
    
