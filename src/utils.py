@@ -278,13 +278,15 @@ class SimpleSearchBuilder(object):
                 self.add_field(f)
 
     def add_words(self, field):
-        """ Adds all the words in the term as separate clauses """
+        """ Adds each word in the term as and clauses so that each word is separately matched and has to be present """
+        ands = []
         for w in self.q.split(" "):
             x = w.lower().replace("'", "`")
             x = "%%%s%%" % x
-            self.ors.append("(LOWER(%s) LIKE ? OR LOWER(%s) LIKE ?)" % (field, field))
+            ands.append("(LOWER(%s) LIKE ? OR LOWER(%s) LIKE ?)" % (field, field))
             self.values.append(x)
             self.values.append(decode_html(x))
+        self.ors.append("(" + " AND ".join(ands) + ")")
 
     def add_clause(self, clause):
         self.ors.append(clause)
