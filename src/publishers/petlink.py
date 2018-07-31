@@ -264,7 +264,8 @@ class PetLinkPublisher(AbstractPublisher):
                             "has an existing PetLink account and their contact information is already on file",
                             "Not a prepaid microchip",
                             "This is a Found Animals Registry chip",
-                            "cannot be transferred - the account is locked."
+                            "cannot be transferred - the account is locked.",
+                            "Microchip number has already been registered in the database"
                         ]
                         for m in PERMANENT_FAILURES:
                             if message.find(m) != -1:
