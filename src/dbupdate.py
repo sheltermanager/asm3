@@ -23,7 +23,7 @@ VERSIONS = (
     33907, 33908, 33909, 33911, 33912, 33913, 33914, 33915, 33916, 34000, 34001, 
     34002, 34003, 34004, 34005, 34006, 34007, 34008, 34009, 34010, 34011, 34012,
     34013, 34014, 34015, 34016, 34017, 34018, 34019, 34020, 34021, 34022, 34100,
-    34101, 34102, 34103, 34104, 34105, 34106, 34107, 34108
+    34101, 34102, 34103, 34104, 34105, 34106, 34107, 34108, 34109
 )
 
 LATEST_VERSION = VERSIONS[-1]
@@ -1257,7 +1257,7 @@ def sql_structure(dbo):
     sql += table("ownerlookingfor", (
         fint("OwnerID"),
         fint("AnimalID"),
-        flongstr("MatchSummary") ))
+        flongstr("MatchSummary") ), False)
 
     sql += index("ownerlookingfor_OwnerID", "ownerlookingfor", "OwnerID")
     sql += index("ownerlookingfor_AnimalID", "ownerlookingfor", "AnimalID")
@@ -4957,4 +4957,13 @@ def update_34108(dbo):
         "Path":     "/templates",
         "Content":  base64.b64encode( utils.read_binary_file( dbo.installpath + "media/templates/clinic_invoice.html" ) )
     })
+
+def update_34109(dbo):
+    # Remove recordversion and created/lastchanged columns from ownerlookingfor - should never have been there
+    # and has been erroneously added to these tables for new databases (nullable change is the serious cause)
+    tables = [ "ownerlookingfor" ]
+    cols = [ "CreatedBy", "CreatedDate", "LastChangedBy", "LastChangedDate", "RecordVersion" ]
+    for t in tables:
+        for c in cols:
+            drop_column(dbo, t, c)
 
