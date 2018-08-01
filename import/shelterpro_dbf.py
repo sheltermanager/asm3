@@ -14,17 +14,18 @@ Requires address.dbf, addrlink.dbf, animal.dbf, incident.dbf, license.dbf, note.
 
 Will also look in PATH/images/ANIMALKEY.[jpg|JPG] for animal photos if available.
 
-29th December, 2016
+29th December, 2016 - 1st August 2018
 """
 
-PATH = "data/shelterpro_vk1496"
+PATH = "data/shelterpro_db1769"
 
 START_ID = 100
 
-INCIDENT_IMPORT = False
+INCIDENT_IMPORT = True
 LICENCE_IMPORT = True
 PICTURE_IMPORT = False
 VACCINATION_IMPORT = True
+NOTE_IMPORT = False
 
 IMPORT_ANIMALS_WITH_NO_NAME = True
 
@@ -131,7 +132,7 @@ cperson = dbfread.DBF("%s/person.dbf" % PATH, encoding="latin1")
 cshelter = dbfread.DBF("%s/shelter.dbf" % PATH)
 cvacc = dbfread.DBF("%s/vacc.dbf" % PATH)
 cincident = dbfread.DBF("%s/incident.dbf" % PATH)
-cnote = dbfread.DBF("%s/note.dbf" % PATH, encoding="latin1")
+if NOTE_IMPORT: cnote = dbfread.DBF("%s/note.dbf" % PATH, encoding="latin1")
 
 # Start with animals
 for row in canimal:
@@ -421,44 +422,45 @@ if INCIDENT_IMPORT:
         elif row["FINALOUTCO"] == "OTHER":
             ac.IncidentCompletedID = 6 # Does not exist in default data
         ac.IncidentTypeID = 1
-        comments = "case: %s\n" % row["INCIDENTKEY"]
-        comments += "outcome: %s\n" % row["FINALOUTCO"]
-        comments += "precinct: %s\n" % row["PRECINCT"]
+        comments = "case: %s\n" % row["INCIDENTKE"]
+        comments += "outcome: %s\n" % asm.strip(row["FINALOUTCO"])
+        comments += "precinct: %s\n" % asm.strip(row["PRECINCT"])
         ac.CallNotes = comments
         ac.Sex = 2
 
 # Notes as log entries
-for row in cnote:
-    eventtype = row["EVENTTYPE"]
-    eventkey = row["EVENTKEY"]
-    notedate = asm.getdate_mmddyy(row["NOTEDATE"])
-    memo = row["NOTEMEMO"]
-    if eventtype in [ 1, 3 ]: # animal/intake or case notes
-        if not eventkey in ppa: continue
-        linkid = ppa[eventkey].ID
-        ppa[eventkey].HiddenAnimalDetails += "\n" + memo
-        l = asm.Log()
-        logs.append(l)
-        l.LogTypeID = 3
-        l.LinkID = linkid
-        l.LinkType = 0
-        l.Date = notedate
-        if l.Date is None:
-            l.Date = asm.now()
-        l.Comments = memo
-    elif eventtype in [ 2, 5, 10 ]: # person, case and incident notes
-        if not eventkey in ppi: continue
-        linkid = ppi[eventkey].ID
-        ppi[eventkey].CallNotes += "\n" + memo
-        l = asm.Log()
-        logs.append(l)
-        l.LogTypeID = 3
-        l.LinkID = linkid
-        l.LinkType = 6
-        l.Date = notedate
-        if l.Date is None:
-            l.Date = asm.now()
-        l.Comments = memo
+if NOTE_IMPORT:
+    for row in cnote:
+        eventtype = row["EVENTTYPE"]
+        eventkey = row["EVENTKEY"]
+        notedate = asm.getdate_mmddyy(row["NOTEDATE"])
+        memo = row["NOTEMEMO"]
+        if eventtype in [ 1, 3 ]: # animal/intake or case notes
+            if not eventkey in ppa: continue
+            linkid = ppa[eventkey].ID
+            ppa[eventkey].HiddenAnimalDetails += "\n" + memo
+            l = asm.Log()
+            logs.append(l)
+            l.LogTypeID = 3
+            l.LinkID = linkid
+            l.LinkType = 0
+            l.Date = notedate
+            if l.Date is None:
+                l.Date = asm.now()
+            l.Comments = memo
+        elif eventtype in [ 2, 5, 10 ]: # person, case and incident notes
+            if not eventkey in ppi: continue
+            linkid = ppi[eventkey].ID
+            ppi[eventkey].CallNotes += "\n" + memo
+            l = asm.Log()
+            logs.append(l)
+            l.LogTypeID = 3
+            l.LinkID = linkid
+            l.LinkType = 6
+            l.Date = notedate
+            if l.Date is None:
+                l.Date = asm.now()
+            l.Comments = memo
 
 # Run back through the animals, if we have any that are still
 # on shelter after 2 years, add an adoption to an unknown owner
