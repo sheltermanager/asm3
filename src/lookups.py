@@ -135,8 +135,10 @@ MICROCHIP_MANUFACTURERS = [
     { "length": 15, "regex": r"^9851", "name": "Anibase/Identichip", "locales": "en_GB" },
     { "length": 15, "regex": r"^985", "name": "HomeAgain", "locales": "" },
     { "length": 15, "regex": r"^9861", "name": "Anibase/Identichip", "locales": "en_GB" },
-    { "length": 15, "regex": r"^99000000", "name": "nanoChip", "locales": "" },
-    { "length": 15, "regex": r"^99100100", "name": "HomeSafe", "locales": "en_AU" },
+    { "length": 15, "regex": r"^9900000", "name": "nanoChip", "locales": "" },
+    { "length": 15, "regex": r"^9910010", "name": "HomeSafe", "locales": "en_AU" },
+    { "length": 15, "regex": r"^9910010", "name": "AKC Reunite", "locales": "en" },
+    { "length": 15, "regex": r"^9910039", "name": "911PetChip", "locales": "en" },
     { "length": 15, "regex": r"^999", "name": "Transponder Test", "locales": ""}
 ]
 
