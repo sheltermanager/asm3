@@ -5158,7 +5158,7 @@ class staff_rota(JSONEndpoint):
             "nextdate": add_days(startdate, 7),
             "rotatypes": extlookups.get_rota_types(dbo),
             "worktypes": extlookups.get_work_types(dbo),
-            "staff": extperson.get_staff_volunteers(dbo)
+            "staff": extperson.get_staff_volunteers(dbo, o.siteid)
         }
 
     def post_create(self, o):
