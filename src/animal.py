@@ -428,6 +428,7 @@ def get_animal_find_advanced(dbo, criteria, limit = 0, locationfilter = "", site
        agedbetweento - string containing floating point number
        agegroup - contains an agegroup name
        microchip - string partial pattern
+       tattoo - string partial pattern
        insuranceno - string partial pattern
        rabiestag - string partial pattern
        pickupaddress - string partial pattern
@@ -468,6 +469,7 @@ def get_animal_find_advanced(dbo, criteria, limit = 0, locationfilter = "", site
     if locationfilter != "" and post.integer("shelterlocation") == -1:
         ss.ands.append(get_location_filter_clause(locationfilter=locationfilter, tablequalifier="a", siteid=siteid))
     ss.add_str_pair("microchip", "a.IdentichipNumber", "a.Identichip2Number")
+    ss.add_str("tattoo", "a.TattooNumber")
     ss.add_str("rabiestag", "a.RabiesTag")
     ss.add_str("pickupaddress", "a.PickupAddress")
     ss.add_id("sex", "a.Sex")

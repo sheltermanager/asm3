@@ -3,7 +3,7 @@
 import datetime, unittest
 #import base
 
-import html
+import html, publish
 
 class TestHtml(unittest.TestCase):
  
@@ -14,5 +14,5 @@ class TestHtml(unittest.TestCase):
         assert html.escape("><") == "&gt;&lt;"
 
     def test_menu_structure(self):
-        assert html.menu_structure("en", [], []) is not None
+        assert html.menu_structure("en", publish.PUBLISHER_LIST, [], []) is not None
 
