@@ -10,7 +10,7 @@ import web
 from sitedefs import MULTIPLE_DATABASES, MULTIPLE_DATABASES_TYPE
 
 # Regex to remove invalid chars from an entered database
-INVALID_REMOVE = re.compile('[\/\.\*\?]')
+INVALID_REMOVE = re.compile('[\/\.\*\?\ ]')
 
 try:
     sys.path.append("/root/asmdb")
