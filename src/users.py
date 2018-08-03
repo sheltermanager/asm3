@@ -659,7 +659,6 @@ def web_login(post, session, remoteip, path):
     username = post["username"]
     password = post["password"]
     mobileapp = post["mobile"] == "true"
-    nologconnection = post["nologconnection"]
     if len(username) > 100:
         username = username[0:100]
     # Do we have multiple databases?
@@ -727,13 +726,6 @@ def web_login(post, session, remoteip, path):
             session.roleids = ""
             session.locationfilter = ""
             session.siteid = 0
-        try:
-            # If it's a sheltermanager.com database, try and update the
-            # last time the user connected to today
-            if smcom.active() and database != "" and nologconnection == "":
-                smcom.set_last_connected(dbo)
-        except:
-            pass
         try:
             # Mark the user logged in
             audit.login(dbo, username, remoteip)

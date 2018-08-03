@@ -25,6 +25,20 @@ def active():
     """
     return MULTIPLE_DATABASES and MULTIPLE_DATABASES_TYPE == "smcom"
 
+def get_account(alias):
+    """
+    Returns the smcom account object for alias/db
+    Uses a read through 48 hour cache to save unnecessary calls
+    """
+    TTL = 86400 * 2
+    cachekey = "smcom_dbinfo_%s" % alias
+    a = cachemem.get(cachekey)
+    if a is None:
+        a = smcom_client.get_account(alias)
+        if a is not None and "user" in a:
+            cachemem.put(cachekey, a, TTL)
+    return a
+
 def get_database_info(alias):
     """
     Returns the dbo object for a sheltermanager.com account or alias.  
@@ -39,16 +53,10 @@ def get_database_info(alias):
     dbo.dbtype = "POSTGRESQL"
     dbo.alias = alias
 
-    # Use a read-through cache to save hammering our service
-    cachekey = "smcom_dbinfo_%s" % alias
-    a = cachemem.get(cachekey)
+    a = get_account(alias)
     if a is None:
-        a = smcom_client.get_account(alias)
-        if a is None or "user" not in a:
-            dbo.database = "FAIL"
-            return dbo
-        # Cache successful responses for a day
-        cachemem.put(cachekey, a, 86400)
+        dbo.database = "FAIL"
+        return dbo
 
     dbo.database = str(a["user"])
     dbo.username = dbo.database
@@ -69,7 +77,7 @@ def get_expiry_date(dbo):
     """
     Returns the account expiry date or None for a problem.
     """
-    a = smcom_client.get_account(dbo.database)
+    a = get_account(dbo.database)
     try:
         expiry = datetime.datetime.strptime(a["expiry"], "%Y-%m-%d")
         al.debug("retrieved account expiry date: %s" % expiry, "smcom.get_expiry_date", dbo)
@@ -82,15 +90,6 @@ def go_smcom_my(dbo):
     Goes to the my account page for this database
     """
     raise web.seeother(smcom_client.get_my_url(dbo.database))
-
-def set_last_connected(dbo):
-    """
-    Sets the last connected date on a database to today
-    """
-    al.debug("Setting last connected to now for %s" % dbo.database, "smcom.set_last_connected", dbo)
-    response = smcom_client.update_last_connected(dbo.database)
-    if response != "OK":
-        al.error("Failed setting last connection: %s" % response, "smcom.set_last_connected", dbo)
 
 def vacuum_full(dbo):
     """ Performs a full vacuum on the database via command line (transaction problems via db.py) """
