@@ -1451,6 +1451,7 @@ class animal_find(JSONEndpoint):
             "breeds": extlookups.get_breeds_by_species(dbo),
             "flags": extlookups.get_animal_flags(dbo),
             "sexes": extlookups.get_sexes(dbo),
+            "entryreasons": extlookups.get_entryreasons(dbo),
             "internallocations": extlookups.get_internal_locations(dbo, o.locationfilter, o.siteid),
             "sizes": extlookups.get_sizes(dbo),
             "colours": extlookups.get_basecolours(dbo),

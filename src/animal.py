@@ -475,6 +475,7 @@ def get_animal_find_advanced(dbo, criteria, limit = 0, locationfilter = "", site
     ss.add_id("sex", "a.Sex")
     ss.add_id("size", "a.Size")
     ss.add_id("colour", "a.BaseColourID")
+    ss.add_id("entryreason", "a.EntryReasonID")
     ss.add_str("sheltercode", "a.ShelterCode")
     ss.add_str("litterid", "a.AcceptanceNumber")
     ss.add_date("inbetweenfrom", "inbetweento", "a.MostRecentEntryDate")
