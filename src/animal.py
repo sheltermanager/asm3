@@ -2860,10 +2860,13 @@ def insert_litter_from_form(dbo, username, post):
         "Comments":         post["comments"],
         "RecordVersion":    dbo.get_recordversion()
     }, username, setCreated = False)
-    update_active_litters(dbo)
+    
     # if a list of littermates were given, set the litterid on those animal records
     for i in post.integer_list("animals"):
         dbo.update("animal", i, { "AcceptanceNumber": post["litterref"] })
+
+    update_active_litters(dbo)
+
     return nid
 
 def update_litter_from_form(dbo, username, post):
@@ -2881,6 +2884,7 @@ def update_litter_from_form(dbo, username, post):
         "Comments":         post["comments"],
         "RecordVersion":    dbo.get_recordversion()
     }, username, setLastChanged = False)
+
     update_active_litters(dbo)
 
 def delete_litter(dbo, username, lid):

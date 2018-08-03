@@ -1,6 +1,7 @@
 41
 ================
 
+03/08/18 New litters getting expiry date due to late Litter ID update #465
 02/08/18 Allow advanced search by tattoo number #452
 02/08/18 Apply site filter to staff rota #455
 01/08/18 Remove non-null created/lastchanged columns from ownerlookingfor
