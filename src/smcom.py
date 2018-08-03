@@ -1,6 +1,7 @@
 #!/usr/bin/python
 
 import al
+import cachemem
 import datetime
 import db
 import re
@@ -37,20 +38,31 @@ def get_database_info(alias):
     dbo.port = 6432
     dbo.dbtype = "POSTGRESQL"
     dbo.alias = alias
-    a = smcom_client.get_account(alias)
-    if a is None or "user" not in a:
-        dbo.database = "FAIL"
-        return dbo
+
+    # Use a read-through cache to save hammering our service
+    cachekey = "smcom_dbinfo_%s" % alias
+    a = cachemem.get(cachekey)
+    if a is None:
+        a = smcom_client.get_account(alias)
+        if a is None or "user" not in a:
+            dbo.database = "FAIL"
+            return dbo
+        # Cache successful responses for a day
+        cachemem.put(cachekey, a, 86400)
+
     dbo.database = str(a["user"])
     dbo.username = dbo.database
     dbo.password = dbo.database
+
     # Is this sm.com account disabled or removed from the server?
     if a["expired"] or a["archived"]:
         dbo.database = "DISABLED"
+
     # Is this the wrong server?
     if smcom_client.get_this_server() != a["server"]: 
         dbo.database = "WRONGSERVER"
         al.error("failed login, wrong server: %s not present in %s" % (a["server"], smcom_client.get_this_server()))
+
     return dbo
 
 def get_expiry_date(dbo):
