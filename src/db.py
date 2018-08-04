@@ -1,11 +1,12 @@
 #!/usr/bin/python
 
 import dbms.hsqldb, dbms.mysql, dbms.postgresql, dbms.sqlite, dbms.db2
+import smcom
 
-from sitedefs import DB_TYPE, MULTIPLE_DATABASES_MAP
+from sitedefs import DB_TYPE, MULTIPLE_DATABASES, MULTIPLE_DATABASES_MAP, MULTIPLE_DATABASES_TYPE
 
-def get_database(t = None):
-    """ Returns a database object for the current database backend, or type t if supplied """
+def get_dbo(t = None):
+    """ Returns a dbo object for the current database backend, or type t if supplied """
     m = {
         "HSQLDB":       dbms.hsqldb.DatabaseHSQLDB,
         "MYSQL":        dbms.mysql.DatabaseMySQL,
@@ -18,7 +19,21 @@ def get_database(t = None):
     x.dbtype = t
     return x
 
-def get_multiple_database_info(alias):
+def get_database(alias = ""):
+    """ Gets the current database connection. Requires an alias/db for multiple/smcom """
+    if MULTIPLE_DATABASES:
+        if MULTIPLE_DATABASES_TYPE == "smcom":
+            # Is this sheltermanager.com? If so, we need to get the
+            # database connection info (dbo) before we can login.
+            dbo = smcom.get_database_info(alias)
+        else:
+            # Look up the database info from our map
+            dbo  = _get_multiple_database_info(alias)
+    else:
+        dbo = get_dbo()
+    return dbo
+
+def _get_multiple_database_info(alias):
     """ Gets the Database object for the alias in our map MULTIPLE_DATABASES_MAP. """
     if alias not in MULTIPLE_DATABASES_MAP:
         dbo = get_database()

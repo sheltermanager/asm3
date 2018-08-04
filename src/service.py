@@ -24,12 +24,11 @@ import onlineform
 import publishers.base
 import publishers.html
 import reports
-import smcom
 import users
 import utils
 from i18n import _
 from sitedefs import JQUERY_JS, JQUERY_UI_JS, MOMENT_JS, SIGNATURE_JS, TOUCHPUNCH_JS
-from sitedefs import BASE_URL, MULTIPLE_DATABASES, MULTIPLE_DATABASES_TYPE, CACHE_SERVICE_RESPONSES, IMAGE_HOTLINKING_ONLY_FROM_DOMAIN
+from sitedefs import BASE_URL, MULTIPLE_DATABASES, CACHE_SERVICE_RESPONSES, IMAGE_HOTLINKING_ONLY_FROM_DOMAIN
 
 # Service methods that require authentication
 AUTH_METHODS = [
@@ -213,9 +212,6 @@ def handler(post, path, remoteip, referer, querystring):
     querystring: The complete querystring
     return value is a tuple containing MIME type, max-age, content
     """
-    # Database info
-    dbo = db.get_database()
-
     # Get service parameters
     account = post["account"]
     username = post["username"]
@@ -239,19 +235,11 @@ def handler(post, path, remoteip, referer, querystring):
     if account == "" and MULTIPLE_DATABASES:
         return ("text/plain", 0, 0, "ERROR: No database/alias specified")
 
-    # Are we dealing with multiple databases and an account was specified?
-    if account != "":
-        if MULTIPLE_DATABASES:
-            if MULTIPLE_DATABASES_TYPE == "smcom":
-                # Is this sheltermanager.com? If so, we need to get the
-                # database connection info (dbo) before we can login.
-                dbo = smcom.get_database_info(account)
-            else:
-                # Look up the database info from our map
-                dbo  = db.get_multiple_database_info(account)
-            if dbo.database in ( "FAIL", "DISABLED", "WRONGSERVER" ):
-                al.error("auth failed - invalid smaccount %s from %s (%s)" % (account, remoteip, dbo.database), "service.handler", dbo)
-                return ("text/plain", 0, 0, "ERROR: Invalid database (%s)" % dbo.database)
+    dbo = db.get_database(account)
+
+    if dbo.database in ( "FAIL", "DISABLED", "WRONGSERVER" ):
+        al.error("auth failed - invalid smaccount %s from %s (%s)" % (account, remoteip, dbo.database), "service.handler", dbo)
+        return ("text/plain", 0, 0, "ERROR: Invalid database (%s)" % dbo.database)
 
     # If the database has disabled the service API, stop now
     if not configuration.service_enabled(dbo):

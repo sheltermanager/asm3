@@ -2560,7 +2560,7 @@ def dump_hsqldb(dbo, includeDBFS = True):
     generator function.
     """
     # ASM2_COMPATIBILITY
-    hdbo = db.get_database("HSQLDB")
+    hdbo = db.get_dbo("HSQLDB")
     yield sql_structure(hdbo)
     for x in dump(dbo, includeNonASM2 = False, includeDBFS = includeDBFS, escapeCR = " ", includeUsers = False, wrapTransaction = False):
         yield x

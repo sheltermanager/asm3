@@ -49,7 +49,7 @@ import utils
 import waitinglist as extwaitinglist
 import web
 import wordprocessor
-from sitedefs import BASE_URL, DEPLOYMENT_TYPE, ELECTRONIC_SIGNATURES, EMERGENCY_NOTICE, FORGOTTEN_PASSWORD, FORGOTTEN_PASSWORD_LABEL, LARGE_FILES_CHUNKED, LOCALE, GEO_PROVIDER, GEO_PROVIDER_KEY, JQUERY_UI_CSS, LEAFLET_CSS, LEAFLET_JS, MULTIPLE_DATABASES, MULTIPLE_DATABASES_TYPE, MULTIPLE_DATABASES_PUBLISH_URL, MULTIPLE_DATABASES_PUBLISH_FTP, ADMIN_EMAIL, EMAIL_ERRORS, MADDIES_FUND_TOKEN_URL, MANUAL_HTML_URL, MANUAL_PDF_URL, MANUAL_FAQ_URL, MANUAL_VIDEO_URL, MAP_LINK, MAP_PROVIDER, OSM_MAP_TILES, FOUNDANIMALS_FTP_USER, PETLINK_BASE_URL, PETRESCUE_FTP_HOST, PETSLOCATED_FTP_USER, QR_IMG_SRC, SERVICE_URL, SESSION_SECURE_COOKIE, SESSION_DEBUG, SHARE_BUTTON, SMARTTAG_FTP_USER, SMCOM_LOGIN_URL, SMCOM_PAYMENT_LINK, VETENVOY_US_VENDOR_PASSWORD, VETENVOY_US_VENDOR_USERID
+from sitedefs import BASE_URL, DEPLOYMENT_TYPE, ELECTRONIC_SIGNATURES, EMERGENCY_NOTICE, FORGOTTEN_PASSWORD, FORGOTTEN_PASSWORD_LABEL, LARGE_FILES_CHUNKED, LOCALE, GEO_PROVIDER, GEO_PROVIDER_KEY, JQUERY_UI_CSS, LEAFLET_CSS, LEAFLET_JS, MULTIPLE_DATABASES, MULTIPLE_DATABASES_PUBLISH_URL, MULTIPLE_DATABASES_PUBLISH_FTP, ADMIN_EMAIL, EMAIL_ERRORS, MADDIES_FUND_TOKEN_URL, MANUAL_HTML_URL, MANUAL_PDF_URL, MANUAL_FAQ_URL, MANUAL_VIDEO_URL, MAP_LINK, MAP_PROVIDER, OSM_MAP_TILES, FOUNDANIMALS_FTP_USER, PETLINK_BASE_URL, PETRESCUE_FTP_HOST, PETSLOCATED_FTP_USER, QR_IMG_SRC, SERVICE_URL, SESSION_SECURE_COOKIE, SESSION_DEBUG, SHARE_BUTTON, SMARTTAG_FTP_USER, SMCOM_LOGIN_URL, SMCOM_PAYMENT_LINK, VETENVOY_US_VENDOR_PASSWORD, VETENVOY_US_VENDOR_USERID
 
 CACHE_ONE_HOUR = 3600
 CACHE_ONE_DAY = 86400
@@ -351,7 +351,6 @@ class database(ASMEndpoint):
     check_logged_in = False
 
     def content(self, o):
-        dbo = db.get_database()
         if MULTIPLE_DATABASES:
             if smcom.active():
                 raise utils.ASMPermissionError("N/A for sm.com")
@@ -359,14 +358,18 @@ class database(ASMEndpoint):
                 # We can't create the database as we have multiple, so
                 # output the SQL creation script with default data
                 # for whatever our dbtype is instead
+                dbo = db.get_dbo()
                 s = "-- Creation script for %s\n\n" % dbo.dbtype
                 s += dbupdate.sql_structure(dbo)
                 s += dbupdate.sql_default_data(dbo).replace("|=", ";")
                 self.content_type("text/plain")
                 self.header("Content-Disposition", "attachment; filename=\"setup.sql\"")
                 return s
+
+        dbo = db.get_database()
         if dbo.has_structure():
             raise utils.ASMPermissionError("Database already created")
+
         s = html.bare_header("Create your database")
         s += """
             <h2>Create your new ASM database</h2>
@@ -942,10 +945,12 @@ class login(ASMEndpoint):
         post = o.post
         has_animals = True
         custom_splash = False
+
         # Filter out IE8 and below right now - they just aren't good enough
         ua = self.user_agent()
         if ua.find("MSIE 6") != -1 or ua.find("MSIE 7") != -1 or ua.find("MSIE 8") != -1:
             self.redirect("static/pages/unsupported_ie.html")
+
         # Figure out how to get the default locale and any overridden splash screen
         # Single database
         if not MULTIPLE_DATABASES:
@@ -953,28 +958,20 @@ class login(ASMEndpoint):
             l = configuration.locale(dbo)
             has_animals = extanimal.get_has_animals(dbo)
             custom_splash = dbfs.file_exists(dbo, "splash.jpg")
-        # Multiple databases, no account given
-        elif MULTIPLE_DATABASES and MULTIPLE_DATABASES_TYPE == "map" and post["smaccount"] == "":
-            try:
-                dbo = db.get_database()
-                l = configuration.locale(dbo)
-            except:
-                l = LOCALE
-                pass
+
         # Multiple databases, account given
-        elif MULTIPLE_DATABASES and MULTIPLE_DATABASES_TYPE == "map" and post["smaccount"] != "":
-            dbo = db.get_multiple_database_info(post["smaccount"])
-            if dbo.database != "FAIL" and dbo.database != "DISABLED":
-                custom_splash = dbfs.file_exists(dbo, "splash.jpg")
-                l = configuration.locale(dbo)
-        # Sheltermanager.com
-        elif MULTIPLE_DATABASES and MULTIPLE_DATABASES_TYPE == "smcom" and post["smaccount"] != "":
-            dbo = smcom.get_database_info(post["smaccount"])
+        elif MULTIPLE_DATABASES and post["smaccount"] != "":
+            dbo = db.get_database(post["smaccount"])
             if dbo.database == "WRONGSERVER":
                 self.redirect(SMCOM_LOGIN_URL)
             elif dbo.database != "FAIL" and dbo.database != "DISABLED":
                 custom_splash = dbfs.file_exists(dbo, "splash.jpg")
                 l = configuration.locale(dbo)
+
+        # Fall back to system locale
+        else:
+            l = LOCALE
+
         title = _("Animal Shelter Manager Login", l)
         s = html.bare_header(title, locale = l)
         c = { "smcom": smcom.active(),
@@ -1017,14 +1014,7 @@ class login_splash(ASMEndpoint):
 
     def content(self, o):
         try:
-            dbo = db.get_database()
-            smaccount = o.post["smaccount"]
-            if MULTIPLE_DATABASES:
-                if smaccount != "":
-                    if MULTIPLE_DATABASES_TYPE == "smcom":
-                        dbo = smcom.get_database_info(smaccount)
-                    else:
-                        dbo = db.get_multiple_database_info(smaccount)
+            dbo = db.get_database(o.post["smaccount"])
             self.content_type("image/jpeg")
             self.cache_control(CACHE_ONE_DAY, 120)
             return dbfs.get_string_filepath(dbo, "/reports/splash.jpg")
@@ -5086,21 +5076,21 @@ class sql_dump(GeneratorEndpoint):
         if mode == "dumpddlmysql":
             al.info("%s executed DDL dump MySQL" % str(session.user), "code.sql", dbo)
             self.header("Content-Disposition", "attachment; filename=\"ddl_mysql.sql\"")
-            dbo2 = db.get_database("MYSQL")
+            dbo2 = db.get_dbo("MYSQL")
             dbo2.locale = dbo.locale
             yield dbupdate.sql_structure(dbo2)
             yield dbupdate.sql_default_data(dbo2).replace("|=", ";")
         if mode == "dumpddlpostgres":
             al.info("%s executed DDL dump PostgreSQL" % str(session.user), "code.sql", dbo)
             self.header("Content-Disposition", "attachment; filename=\"ddl_postgresql.sql\"")
-            dbo2 = db.get_database("POSTGRESQL")
+            dbo2 = db.get_dbo("POSTGRESQL")
             dbo2.locale = dbo.locale
             yield dbupdate.sql_structure(dbo2)
             yield dbupdate.sql_default_data(dbo2).replace("|=", ";")
         if mode == "dumpddldb2":
             al.info("%s executed DDL dump DB2" % str(session.user), "code.sql", dbo)
             self.header("Content-Disposition", "attachment; filename=\"ddl_db2.sql\"")
-            dbo2 = db.get_database("DB2")
+            dbo2 = db.get_dbo("DB2")
             dbo2.locale = dbo.locale
             yield dbupdate.sql_structure(dbo2)
             yield dbupdate.sql_default_data(dbo2).replace("|=", ";")

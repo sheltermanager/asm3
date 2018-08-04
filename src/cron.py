@@ -23,7 +23,6 @@ import onlineform
 import person
 import publish
 import reports as extreports
-import smcom
 import time
 import utils
 import waitinglist
@@ -444,10 +443,7 @@ def run_default_database(mode):
     run(dbo, mode)
 
 def run_alias(mode, alias):
-    if MULTIPLE_DATABASES_TYPE == "smcom":
-        dbo = smcom.get_database_info(alias)
-    elif MULTIPLE_DATABASES_TYPE == "map" and alias != "%":
-        dbo  = db.get_multiple_database_info(alias)
+    dbo = db.get_database(alias)
     dbo.alias = alias
     if dbo.database == "FAIL":
         print("Invalid database alias '%s'" % (alias))
@@ -458,7 +454,7 @@ def run_alias(mode, alias):
         run(dbo, mode)
 
 def run_override_database(mode, dbtype, host, port, username, password, database, alias):
-    dbo = db.get_database(dbtype)
+    dbo = db.get_dbo(dbtype)
     dbo.dbtype = dbtype
     dbo.host = host
     dbo.port = port

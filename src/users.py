@@ -11,10 +11,8 @@ import hashlib
 import i18n
 import os
 import pbkdf2
-import smcom
 import sys
 import utils
-from sitedefs import MULTIPLE_DATABASES, MULTIPLE_DATABASES_TYPE
 
 # Security flags
 ADD_ANIMAL                      = "aa"
@@ -654,7 +652,6 @@ def web_login(post, session, remoteip, path):
         DISABLED    - The database is disabled
         WRONGSERVER - The database is not on this server
     """
-    dbo = db.get_database()
     database = post["database"]
     username = post["username"]
     password = post["password"]
@@ -663,25 +660,10 @@ def web_login(post, session, remoteip, path):
     if len(username) > 100:
         username = username[0:100]
 
-    # Do we have multiple databases?
-    if MULTIPLE_DATABASES:
-        if MULTIPLE_DATABASES_TYPE == "smcom":
-            # Is this sheltermanager.com? If so, we need to get the 
-            # database connection info (dbo) before we can login.
-            # If a database hasn't been supplied, let's bail out now
-            # since we can't do anything
-            if str(database).strip() == "":
-                return "FAIL"
-            else:
-                dbo = smcom.get_database_info(database)
-                # Bail out if there was a problem with the database
-                if dbo.database in ("FAIL", "DISABLED", "WRONGSERVER"):
-                    return dbo.database
-        else:
-            # Look up the database info from our map
-            dbo  = db.get_multiple_database_info(database)
-            if dbo.database == "FAIL":
-                return dbo.database
+    dbo = db.get_database(database)
+
+    if dbo.database in ("FAIL", "DISABLED", "WRONGSERVER"):
+        return dbo.database
 
     # Connect to the database and authenticate the username and password
     user = authenticate(dbo, username, password)

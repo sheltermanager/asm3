@@ -17,7 +17,7 @@ def reset_db():
         pass
 
 def get_dbo():
-    dbo = db.get_database("SQLITE")
+    dbo = db.get_dbo("SQLITE")
     dbo.database = DB_PATH
     dbo.installpath = "%s/../src/" % PATH
     return dbo
