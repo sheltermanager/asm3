@@ -659,8 +659,10 @@ def web_login(post, session, remoteip, path):
     username = post["username"]
     password = post["password"]
     mobileapp = post["mobile"] == "true"
+    nologconnection = post["nologconnection"] == "true"
     if len(username) > 100:
         username = username[0:100]
+
     # Do we have multiple databases?
     if MULTIPLE_DATABASES:
         if MULTIPLE_DATABASES_TYPE == "smcom":
@@ -680,16 +682,20 @@ def web_login(post, session, remoteip, path):
             dbo  = db.get_multiple_database_info(database)
             if dbo.database == "FAIL":
                 return dbo.database
+
     # Connect to the database and authenticate the username and password
     user = authenticate(dbo, username, password)
     if user is not None and not authenticate_ip(user, remoteip):
         al.error("user %s with ip %s failed ip restriction check '%s'" % (username, remoteip, user.IPRESTRICTION), "users.web_login", dbo)
         return "FAIL"
+    
     if user is not None and "DISABLELOGIN" in user and user.DISABLELOGIN == 1:
         al.error("user %s with ip %s failed as account has logins disabled" % (username, remoteip), "users.web_login", dbo)
         return "FAIL"
+
     if user is not None:
         al.info("%s successfully authenticated from %s" % (username, remoteip), "users.web_login", dbo)
+
         try:
             dbo.locked = configuration.smdb_locked(dbo)
             dbo.timezone = configuration.timezone(dbo)
@@ -704,6 +710,7 @@ def web_login(post, session, remoteip, path):
         except:
             al.error("failed setting up session: %s" % str(sys.exc_info()[0]), "users.web_login", dbo, sys.exc_info())
             return "FAIL"
+
         try:
             session.securitymap = get_security_map(dbo, user.USERNAME)
         except:
@@ -711,6 +718,7 @@ def web_login(post, session, remoteip, path):
             # the user (the error occurs because there's no role table)
             al.debug("role table does not exist, using securitymap from user", "users.web_login", dbo)
             session.securitymap = user.SECURITYMAP
+
         try:
             ur = get_users(dbo, user.USERNAME)[0]
             session.roles = ur.ROLES
@@ -726,20 +734,26 @@ def web_login(post, session, remoteip, path):
             session.roleids = ""
             session.locationfilter = ""
             session.siteid = 0
+
         try:
             # Mark the user logged in
-            audit.login(dbo, username, remoteip)
+            if not nologconnection: 
+                audit.login(dbo, username, remoteip)
+
             # Check to see if any updates need performing on this database
             if dbupdate.check_for_updates(dbo):
                 dbupdate.perform_updates(dbo)
                 # We did some updates, better reload just in case config/reports/etc changed
                 update_session(session)
+
             # Check to see if our views and sequences are out of date and need reloading
             if dbupdate.check_for_view_seq_changes(dbo):
                 dbupdate.install_db_views(dbo)
                 dbupdate.install_db_sequences(dbo)
+
         except:
             al.error("failed updating database: %s" % str(sys.exc_info()[0]), "users.web_login", dbo, sys.exc_info())
+
         try:
             al.info("%s logged in" % user.USERNAME, "users.login", dbo)
             update_user_activity(dbo, user.USERNAME)
