@@ -307,6 +307,8 @@ DEFAULTS = {
     "WarnACTypeChange": "Yes",
     "WarnBroughtIn": "Yes",
     "WarnMultipleReserves": "Yes", 
+    "WarnUnaltered": "Yes",
+    "WarnNoMicrochip": "Yes",
     "WarnNoPendingVacc": "Yes",
     "WarnNoHomeCheck": "Yes",
     "WarnBannedOwner": "Yes",

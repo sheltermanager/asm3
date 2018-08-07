@@ -533,6 +533,16 @@ $(function() {
                     warn.push(_("This animal is currently quarantined and should not leave the shelter."));
                 }
 
+                // Unaltered
+                if (config.bool("WarnUnaltered") && a.NEUTERED == 0) {
+                    warn.push(_("This animal has not been altered."));
+                }
+
+                // Not microchipped
+                if (config.bool("WarnNoMicrochip") && a.IDENTICHIPPED == 0) {
+                    warn.push(_("This animal has not been microchipped."));
+                }
+
                 // Check for bonded animals and warn
                 if (a.BONDEDANIMALID != "0" || a.BONDEDANIMAL2ID != "0") {
                     var bw = "";

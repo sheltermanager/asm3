@@ -4333,7 +4333,7 @@ msgstr ""
 msgid "Entry"
 msgstr ""
 
-#: options.js animal.js animal_new.js shelterview.js mobile.py
+#: options.js animal.js animal_find.js animal_new.js shelterview.js mobile.py
 msgid "Entry Category"
 msgstr ""
 
@@ -10584,7 +10584,7 @@ msgstr ""
 msgid "Tattoo Date"
 msgstr ""
 
-#: html.py
+#: animal_find.js html.py
 msgid "Tattoo Number"
 msgstr ""
 
@@ -11142,6 +11142,14 @@ msgstr ""
 
 #: animal.py
 msgid "This animal has movements and cannot be removed."
+msgstr ""
+
+#: movements.js move_adopt.js
+msgid "This animal has not been altered."
+msgstr ""
+
+#: movements.js move_adopt.js
+msgid "This animal has not been microchipped."
 msgstr ""
 
 #: animal.js
@@ -12513,6 +12521,14 @@ msgstr ""
 
 #: options.js
 msgid "Warn if the name of the new animal is similar to one entered recently"
+msgstr ""
+
+#: options.js
+msgid "Warn when adopting an animal who has not been microchipped"
+msgstr ""
+
+#: options.js
+msgid "Warn when adopting an unaltered animal"
 msgstr ""
 
 #: options.js
