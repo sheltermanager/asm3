@@ -590,6 +590,12 @@ the reservation for you after this time.
   option, trial adoptions are still shown in the Shelter View and on shelter
   searches/reports.
 
+* Warn when adopting an unaltered animal: If the animal has not been 
+  neutered/spayed, show a warning when trying to adopt it. 
+
+* Warn when adopting an animal who has not been microchipped: If the animal
+  has not been microchipped, show a warning when trying to adopt it.
+
 * Warn when adopting to a person who has not been homechecked: If the person
   record does not have them down as homechecked, the system can warn you if you
   try to adopt an animal to them. 
