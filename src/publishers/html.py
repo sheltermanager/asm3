@@ -17,14 +17,15 @@ import wordprocessor
 from base import FTPPublisher, PublishCriteria, get_animal_data, is_animal_adoptable
 from sitedefs import BASE_URL, MULTIPLE_DATABASES_PUBLISH_FTP, MULTIPLE_DATABASES_PUBLISH_URL, SERVICE_URL
 
-def get_adoptable_animals(dbo, style="", speciesid=0, animaltypeid=0):
+def get_adoptable_animals(dbo, style="", speciesid=0, animaltypeid=0, locationid=0):
     """ Returns a page of adoptable animals.
     style: The HTML publishing template to use
     speciesid: 0 for all species, or a specific one
     animaltypeid: 0 for all animal types or a specific one
+    locationid: 0 for all internal locations or a specific one
     """
     animals = get_animal_data(dbo, include_additional_fields=True)
-    return animals_to_page(dbo, animals, style=style, speciesid=speciesid, animaltypeid=animaltypeid)
+    return animals_to_page(dbo, animals, style=style, speciesid=speciesid, animaltypeid=animaltypeid, locationid=locationid)
 
 def get_adopted_animals(dbo, daysadopted=0, style="", speciesid=0, animaltypeid=0):
     """ Returns a page of adopted animals.
@@ -54,12 +55,13 @@ def get_deceased_animals(dbo, daysdeceased=0, style="", speciesid=0, animaltypei
         "ORDER BY %s" % orderby, [ dbo.today(daysdeceased * -1)] )
     return animals_to_page(dbo, animals, style=style, speciesid=speciesid, animaltypeid=animaltypeid)
 
-def animals_to_page(dbo, animals, style="", speciesid=0, animaltypeid=0):
+def animals_to_page(dbo, animals, style="", speciesid=0, animaltypeid=0, locationid=0):
     """ Returns a page of animals.
     animals: A resultset containing animal records
     style: The HTML publishing template to use
     speciesid: 0 for all species, or a specific one
     animaltypeid: 0 for all animal types or a specific one
+    locationid: 0 for all internal locations or a specific one
     """
     # Get the specified template
     head, body, foot = template.get_html_template(dbo, style)
@@ -74,6 +76,7 @@ def animals_to_page(dbo, animals, style="", speciesid=0, animaltypeid=0):
     for a in animals:
         if speciesid > 0 and a.SPECIESID != speciesid: continue
         if animaltypeid > 0 and a.ANIMALTYPEID != animaltypeid: continue
+        if locationid > 0 and a.SHELTERLOCATION != locationid: continue
         # Translate website media name to the service call for images
         if smcom.active():
             a.WEBSITEMEDIANAME = "%s?account=%s&method=animal_image&animalid=%d" % (SERVICE_URL, dbo.database, a.ID)

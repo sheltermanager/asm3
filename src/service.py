@@ -324,7 +324,7 @@ def handler(post, path, remoteip, referer, querystring):
     elif method == "html_adoptable_animals":
         return set_cached_response(cache_key, "text/html", 10800, 1800, \
             publishers.html.get_adoptable_animals(dbo, style=post["template"], \
-                speciesid=post.integer("speciesid"), animaltypeid=post.integer("animaltypeid")))
+                speciesid=post.integer("speciesid"), animaltypeid=post.integer("animaltypeid"), locationid=post.integer("locationid")))
 
     elif method == "html_adopted_animals":
         return set_cached_response(cache_key, "text/html", 10800, 1800, \
