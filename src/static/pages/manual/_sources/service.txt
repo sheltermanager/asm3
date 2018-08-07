@@ -333,9 +333,16 @@ html_adoptable_animals
 Returns a complete HTML document containing an HTML page of adoptable animals.
 
 You can pass an HTML template name in an optional "template" parameter (leaving
-it off will cause animalview to be used). It is also possible to pass
-speciesid=X or animaltypeid=X parameters to only output animals of that species
-and type. In the default dataset, speciesid=1 is Dogs and speciesid=2 is cats.
+it off will cause animalview to be used). It is also possible extra parameters:
+
+* speciesid=X - only output animals of that species. In the default dataset, 
+  speciesid=1 is Dogs and speciesid=2 is cats.
+
+* animaltypeid=X - only output animals of that type. Run this query at
+  the SQL interface to find out the ID numbers: SELECT * FROM animaltype
+
+* locationid=X - only output animals in this location. Run this query at
+  the SQL interface to find out the ID numbers: SELECT * FROM internallocation
 
 The rules governing which animals are adoptable are those set under
 :menuselection:`Publishing --> Set Publishing Options --> Animal Selection`.

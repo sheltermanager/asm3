@@ -489,9 +489,15 @@ Images</span>).  Pass the name of the image in the title parameter:</p>
 <p class="rubric">Cache time: 30 minutes</p>
 <p>Returns a complete HTML document containing an HTML page of adoptable animals.</p>
 <p>You can pass an HTML template name in an optional &#8220;template&#8221; parameter (leaving
-it off will cause animalview to be used). It is also possible to pass
-speciesid=X or animaltypeid=X parameters to only output animals of that species
-and type. In the default dataset, speciesid=1 is Dogs and speciesid=2 is cats.</p>
+it off will cause animalview to be used). It is also possible extra parameters:</p>
+<ul class="simple">
+<li>speciesid=X - only output animals of that species. In the default dataset,
+speciesid=1 is Dogs and speciesid=2 is cats.</li>
+<li>animaltypeid=X - only output animals of that type. Run this query at
+the SQL interface to find out the ID numbers: SELECT * FROM animaltype</li>
+<li>locationid=X - only output animals in this location. Run this query at
+the SQL interface to find out the ID numbers: SELECT * FROM internallocation</li>
+</ul>
 <p>The rules governing which animals are adoptable are those set under
 <span class="menuselection">Publishing ‣ Set Publishing Options ‣ Animal Selection</span>.
 You can view the set at <span class="menuselection">Publishing ‣ View Animals Matching
