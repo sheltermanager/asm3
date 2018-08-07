@@ -83,7 +83,7 @@ def get_waitinglist_ranks(dbo):
         rank += 1
     return ranks
 
-def get_waitinglist(dbo, priorityfloor = 5, species = -1, size = -1, addresscontains = "", includeremoved = 0, namecontains = "", descriptioncontains = ""):
+def get_waitinglist(dbo, priorityfloor = 5, species = -1, size = -1, addresscontains = "", includeremoved = 0, namecontains = "", descriptioncontains = "", siteid = 0):
     """
     Retrieves the waiting list
     priorityfloor: The lowest urgency to show (1 = urgent, 5 = lowest)
@@ -109,6 +109,7 @@ def get_waitinglist(dbo, priorityfloor = 5, species = -1, size = -1, addresscont
     if addresscontains != "": add("UPPER(OwnerAddress) LIKE ?", "%%%s%%" % addresscontains.upper())
     if namecontains != "": add("UPPER(OwnerName) LIKE ?", "%%%s%%" % namecontains.upper())
     if descriptioncontains != "": add("UPPER(AnimalDescription) LIKE ?", "%%%s%%" % descriptioncontains.upper())
+    if siteid != 0: add("(o.SiteID = 0 OR o.SiteID = ?)", siteid)
 
     sql = "%s WHERE %s ORDER BY a.Urgency, a.DatePutOnList" % (get_waitinglist_query(dbo), " AND ".join(ands))
     rows = dbo.query(sql, values)
@@ -134,12 +135,16 @@ def get_waitinglist(dbo, priorityfloor = 5, species = -1, size = -1, addresscont
         r.TIMEONLIST = date_diff(l, r.DATEPUTONLIST, now(dbo.timezone))
     return rows
 
-def get_waitinglist_find_simple(dbo, query = "", limit = 0):
+def get_waitinglist_find_simple(dbo, query = "", limit = 0, siteid = 0):
     """
     Returns rows for simple waiting list searches.
     query: The search criteria
     """
     ss = utils.SimpleSearchBuilder(dbo, query)
+
+    sitefilter = ""
+    if siteid != 0: sitefilter = " AND (o.SiteID = 0 OR o.SiteID = %d)" % siteid
+
     # If no query has been given, do a current waitinglist search
     if query == "":
         return get_waitinglist(dbo)
@@ -150,7 +155,7 @@ def get_waitinglist_find_simple(dbo, query = "", limit = 0):
         "WHERE ad.LinkID=a.ID AND ad.LinkType IN (%s) AND LOWER(ad.Value) LIKE ?)" % additional.WAITINGLIST_IN)
     ss.add_large_text_fields([ "a.AnimalDescription", "a.ReasonForWantingToPart", "a.ReasonForRemoval" ])
 
-    sql = "%s WHERE %s ORDER BY a.ID" % (get_waitinglist_query(dbo), " OR ".join(ss.ors))
+    sql = "%s WHERE a.ID > 0 %s AND (%s) ORDER BY a.ID" % (get_waitinglist_query(dbo), sitefilter, " OR ".join(ss.ors))
     return dbo.query(sql, ss.values, limit=limit, distincton="ID")
 
 def get_satellite_counts(dbo, wlid):

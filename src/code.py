@@ -4293,9 +4293,9 @@ class person_embed(ASMEndpoint):
         self.check(users.VIEW_PERSON)
         self.content_type("application/json")
         q = o.post["q"]
-        rows = extperson.get_person_find_simple(o.dbo, q, o.user, o.post["filter"], \
-            self.checkb(users.VIEW_STAFF), \
-            self.checkb(users.VIEW_VOLUNTEER), 100)
+        rows = extperson.get_person_find_simple(o.dbo, q, o.user, classfilter=o.post["filter"], \
+            includeStaff=self.checkb(users.VIEW_STAFF), \
+            includeVolunteers=self.checkb(users.VIEW_VOLUNTEER), limit=100, siteid=o.siteid)
         al.debug("find '%s' got %d rows" % (self.query(), len(rows)), "code.person_embed", o.dbo)
         return utils.json(rows)
 
@@ -4360,12 +4360,14 @@ class person_find_results(JSONEndpoint):
         mode = o.post["mode"]
         q = o.post["q"]
         if mode == "SIMPLE":
-            results = extperson.get_person_find_simple(dbo, q, o.user, "all", \
-                self.checkb(users.VIEW_STAFF), \
-                self.checkb(users.VIEW_VOLUNTEER), \
-                configuration.record_search_limit(dbo))
+            results = extperson.get_person_find_simple(dbo, q, o.user, classfilter="all", \
+                includeStaff=self.checkb(users.VIEW_STAFF), \
+                includeVolunteers=self.checkb(users.VIEW_VOLUNTEER), \
+                limit=configuration.record_search_limit(dbo), siteid=o.siteid)
         else:
-            results = extperson.get_person_find_advanced(dbo, o.post.data, o.user, self.checkb(users.VIEW_STAFF), configuration.record_search_limit(dbo))
+            results = extperson.get_person_find_advanced(dbo, o.post.data, o.user, \
+                includeStaff=self.checkb(users.VIEW_STAFF), includeVolunteers=self.checkb(users.VIEW_VOLUNTEER), \
+                limit=configuration.record_search_limit(dbo), siteid=o.siteid)
         add = None
         if len(results) > 0: 
             add = extadditional.get_additional_fields_ids(dbo, results, "person")
@@ -5115,7 +5117,7 @@ class sql_dump(GeneratorEndpoint):
         elif mode == "personcsv":
             al.debug("%s executed CSV person dump" % str(session.user), "code.sql", dbo)
             self.header("Content-Disposition", "attachment; filename=\"person.csv\"")
-            yield utils.csv(l, extperson.get_person_find_simple(dbo, "", session.user, "all", True, True, 0))
+            yield utils.csv(l, extperson.get_person_find_simple(dbo, "", session.user, includeStaff=True, includeVolunteers=True))
         elif mode == "incidentcsv":
             al.debug("%s executed CSV incident dump" % str(session.user), "code.sql", dbo)
             self.header("Content-Disposition", "attachment; filename=\"incident.csv\"")

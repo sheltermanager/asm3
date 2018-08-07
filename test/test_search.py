@@ -10,7 +10,7 @@ import utils
 class TestSearch(unittest.TestCase):
 
     def test_search(self):
-        fakesession = web.utils.storage(user="test", roles="", superuser=1)
+        fakesession = web.utils.storage(user="test", roles="", superuser=1, locationfilter="", siteid=0)
         search.search(base.get_dbo(), fakesession, "test")
         keywords = [ "os", "notforadoption", "notmicrochipped", "hold", "quarantine", "deceased", 
             "forpublish", "people", "vets", "retailers", "staff", "fosterers", "volunteers", "shelters",

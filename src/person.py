@@ -382,7 +382,7 @@ def get_investigation(dbo, personid, sort = ASCENDING):
         sql += "ORDER BY o.Date DESC"
     return dbo.query(sql, [personid])
 
-def get_person_find_simple(dbo, query, username="", classfilter="all", includeStaff = False, includeVolunteers = False, limit = 0):
+def get_person_find_simple(dbo, query, username="", classfilter="all", includeStaff = False, includeVolunteers = False, limit = 0, siteid = 0):
     """
     Returns rows for simple person searches.
     query: The search criteria
@@ -417,10 +417,11 @@ def get_person_find_simple(dbo, query, username="", classfilter="all", includeSt
     cf = classfilters[classfilter]
     if not includeStaff: cf += " AND o.IsStaff = 0"
     if not includeVolunteers: cf += " AND o.IsVolunteer = 0"
+    if siteid != 0: cf += " AND (o.SiteID = 0 OR o.SiteID = %d)" % siteid
     sql = utils.cunicode(get_person_query(dbo)) + " WHERE (" + u" OR ".join(ss.ors) + ")" + cf + " ORDER BY o.OwnerName"
-    return reduce_find_results(dbo, username, dbo.query(sql, ss.values, limit=limit, distincton="ID"))
+    return dbo.query(sql, ss.values, limit=limit, distincton="ID")
 
-def get_person_find_advanced(dbo, criteria, username, includeStaff = False, limit = 0):
+def get_person_find_advanced(dbo, criteria, username, includeStaff = False, includeVolunteers = False, limit = 0, siteid = 0):
     """
     Returns rows for advanced person searches.
     criteria: A dictionary of criteria
@@ -485,33 +486,18 @@ def get_person_find_advanced(dbo, criteria, username, includeStaff = False, limi
     if not includeStaff:
         ss.ands.append("o.IsStaff = 0")
 
+    if not includeVolunteers:
+        ss.ands.append("o.IsVolunteer = 0")
+
+    if siteid != 0:
+        ss.ands.append("(o.SiteID = 0 OR o.SiteID = ?)")
+        ss.values.append(siteid)
+
     if len(ss.ands) == 0:
         sql = get_person_query(dbo) + " ORDER BY o.OwnerName"
     else:
         sql = get_person_query(dbo) + " WHERE " + " AND ".join(ss.ands) + " ORDER BY o.OwnerName"
-    return reduce_find_results(dbo, username, dbo.query(sql, ss.values, limit=limit))
-
-def reduce_find_results(dbo, username, rows):
-    """
-    Given the results of a find operation, goes through the results and removes 
-    any results which the user does not have permission to view. So far, this is because:
-    1. Multi-site is on, there's a site on the person that is not the current users
-    """
-    # Do nothing if there are no results
-    if len(rows) == 0: return rows
-    u = dbo.first_row(dbo.query("SELECT * FROM users WHERE UserName = ?", [username]))
-    # Do nothing if we can't find the user
-    if u is None: return rows
-    # Do nothing if the user has no site
-    if u.SITEID == 0: return rows
-    # Remove rows where the user doesn't have that site
-    results = []
-    for r in rows:
-        # Compare the site ID on the  person to our user - to exclude the record,
-        # both user and person must have a site ID and they must be different
-        if r.SITEID != 0 and r.SITEID != u.SITEID: continue
-        results.append(r)
-    return results
+    return dbo.query(sql, ss.values, limit=limit, distincton="ID")
 
 def get_person_rota(dbo, personid):
     return dbo.query(get_rota_query(dbo) + " WHERE r.OwnerID = ? ORDER BY r.StartDateTime DESC", [personid])

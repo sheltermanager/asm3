@@ -109,17 +109,20 @@ def get_foundanimal(dbo, aid):
     """
     return dbo.first_row( dbo.query(get_foundanimal_query(dbo) + " WHERE a.ID = %d" % int(aid)) )
 
-def get_lostanimal_find_simple(dbo, query = "", limit = 0):
+def get_lostanimal_find_simple(dbo, query = "", limit = 0, siteid = 0):
     """
     Returns rows for simple lost animal searches.
     query: The search criteria
     """
     ss = utils.SimpleSearchBuilder(dbo, query)
 
+    sitefilter = ""
+    if siteid != 0: sitefilter = " AND (o.SiteID = 0 OR o.SiteID = %d)" % siteid
+
     # If no query has been given, show unfound lost animal records
     # for the last 30 days
     if query == "":
-        ss.ors.append("a.DateLost > ? AND a.DateFound Is Null")
+        ss.ors.append("a.DateLost > ? AND a.DateFound Is Null %s" % sitefilter)
         ss.values.append(dbo.today(offset=-30))
     else:
         if utils.is_numeric(query): ss.add_field_value("a.ID", utils.cint(query))
@@ -129,20 +132,23 @@ def get_lostanimal_find_simple(dbo, query = "", limit = 0):
             "WHERE ad.LinkID=a.ID AND ad.LinkType IN (%s) AND LOWER(ad.Value) LIKE ?)" % additional.LOSTANIMAL_IN)
         ss.add_large_text_fields([ "b.BreedName", "a.DistFeat", "a.Comments" ])
 
-    sql = "%s WHERE %s" % (get_lostanimal_query(dbo), " OR ".join(ss.ors))
+    sql = "%s WHERE a.ID > 0 %s AND (%s)" % (get_lostanimal_query(dbo), sitefilter, " OR ".join(ss.ors))
     return dbo.query(sql, ss.values, limit=limit, distincton="ID")
 
-def get_foundanimal_find_simple(dbo, query = "", limit = 0):
+def get_foundanimal_find_simple(dbo, query = "", limit = 0, siteid = 0):
     """
     Returns rows for simple found animal searches.
     query: The search criteria
     """
     ss = utils.SimpleSearchBuilder(dbo, query)
 
+    sitefilter = ""
+    if siteid != 0: sitefilter = " AND (o.SiteID = 0 OR o.SiteID = %d)" % siteid
+
     # If no query has been given, show unfound lost animal records
     # for the last 30 days
     if query == "":
-        ss.ors.append("a.DateFound > ? AND a.ReturnToOwnerDate Is Null")
+        ss.ors.append("a.DateFound > ? AND a.ReturnToOwnerDate Is Null %s" % sitefilter)
         ss.values.append(dbo.today(offset=-30))
     else:
         if utils.is_numeric(query): ss.add_field_value("a.ID", utils.cint(query))
@@ -152,10 +158,10 @@ def get_foundanimal_find_simple(dbo, query = "", limit = 0):
             "WHERE ad.LinkID=a.ID AND ad.LinkType IN (%s) AND LOWER(ad.Value) LIKE ?)" % additional.FOUNDANIMAL_IN)
         ss.add_large_text_fields([ "b.BreedName", "a.DistFeat", "a.Comments" ])
 
-    sql = "%s WHERE %s" % (get_foundanimal_query(dbo), " OR ".join(ss.ors))
+    sql = "%s WHERE a.ID > 0 %s AND (%s)" % (get_foundanimal_query(dbo), sitefilter, " OR ".join(ss.ors))
     return dbo.query(sql, ss.values, limit=limit, distincton="ID")
 
-def get_lostanimal_find_advanced(dbo, criteria, limit = 0):
+def get_lostanimal_find_advanced(dbo, criteria, limit = 0, siteid = 0):
     """
     Returns rows for advanced lost animal searches.
     criteria: A dictionary of criteria
@@ -179,6 +185,7 @@ def get_lostanimal_find_advanced(dbo, criteria, limit = 0):
     ss = utils.AdvancedSearchBuilder(dbo, post)
 
     ss.ands.append("a.ID > 0")
+    if siteid != 0: ss.ands.append("(o.SiteID = 0 OR o.SiteID = %d)" % siteid)
     ss.add_id("number", "a.ID")
     ss.add_str("contact", "o.OwnerName")
     ss.add_str("area", "a.AreaLost")
@@ -197,7 +204,7 @@ def get_lostanimal_find_advanced(dbo, criteria, limit = 0):
     sql = "%s WHERE %s ORDER BY a.ID" % (get_lostanimal_query(dbo), " AND ".join(ss.ands))
     return dbo.query(sql, ss.values, limit=limit, distincton="ID")
 
-def get_foundanimal_find_advanced(dbo, criteria, limit = 0):
+def get_foundanimal_find_advanced(dbo, criteria, limit = 0, siteid = 0):
     """
     Returns rows for advanced lost animal searches.
     criteria: A dictionary of criteria
@@ -221,6 +228,7 @@ def get_foundanimal_find_advanced(dbo, criteria, limit = 0):
     ss = utils.AdvancedSearchBuilder(dbo, post)
 
     ss.ands.append("a.ID > 0")
+    if siteid != 0: ss.ands.append("(o.SiteID = 0 OR o.SiteID = %d)" % siteid)
     ss.add_id("number", "a.ID")
     ss.add_str("contact", "o.OwnerName")
     ss.add_str("area", "a.AreaFound")

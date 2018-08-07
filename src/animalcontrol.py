@@ -9,7 +9,7 @@ import log
 import media
 import users
 import utils
-from i18n import _, now, subtract_days, python2display, format_time_now
+from i18n import _, python2display, format_time_now
 
 ASCENDING = 0
 DESCENDING = 1
@@ -111,16 +111,20 @@ def get_followup_two_dates(dbo, start, end):
         "(ac.FollowupDateTime2 >= ? AND ac.FollowupDateTime2 <= ? AND NOT ac.FollowupComplete2 = 1) OR " \
         "(ac.FollowupDateTime3 >= ? AND ac.FollowupDateTime3 <= ? AND NOT ac.FollowupComplete3 = 1)", (start, end, start, end, start, end))
 
-def get_animalcontrol_find_simple(dbo, query = "", username = "", limit = 0):
+def get_animalcontrol_find_simple(dbo, query = "", username = "", limit = 0, siteid = 0):
     """
     Returns rows for simple animal control searches.
     query: The search criteria
     """
     ss = utils.SimpleSearchBuilder(dbo, query)
+
+    sitefilter = ""
+    if siteid != 0: sitefilter = " AND (ac.SiteID = 0 OR ac.SiteID = %d)" % siteid
+
     # If no query has been given, show open animal control records
     # from the last 30 days
     if query == "":
-        ss.ors.append("ac.IncidentDateTime > %s AND ac.CompletedDate Is Null" % dbo.sql_date(subtract_days(dbo.today(), 30)))
+        ss.ors.append("ac.IncidentDateTime > %s AND ac.CompletedDate Is Null %s" % (dbo.sql_date(dbo.today(offset=-30)), sitefilter))
     else:
         if utils.is_numeric(query): ss.add_field_value("ac.ID", utils.cint(query))
         ss.add_fields([ "co.OwnerName", "ti.IncidentName", "ac.DispatchAddress", "ac.DispatchPostcode", "o1.OwnerName", 
@@ -130,10 +134,10 @@ def get_animalcontrol_find_simple(dbo, query = "", username = "", limit = 0):
             "WHERE ad.LinkID=ac.ID AND ad.LinkType IN (%s) AND LOWER(ad.Value) LIKE ?)" % (additional.INCIDENT_IN))
         ss.add_large_text_fields([ "ac.CallNotes", "ac.AnimalDescription" ])
 
-    sql = "%s WHERE %s ORDER BY ac.ID" % ( get_animalcontrol_query(dbo), " OR ".join(ss.ors))
+    sql = "%s WHERE ac.ID > 0 %s AND (%s) ORDER BY ac.ID" % ( get_animalcontrol_query(dbo), sitefilter, " OR ".join(ss.ors))
     return reduce_find_results(dbo, username, dbo.query(sql, ss.values, limit=limit, distincton="ID"))
 
-def get_animalcontrol_find_advanced(dbo, criteria, username, limit = 0):
+def get_animalcontrol_find_advanced(dbo, criteria, username, limit = 0, siteid = 0):
     """
     Returns rows for advanced animal control searches.
     criteria: A dictionary of criteria
@@ -171,6 +175,7 @@ def get_animalcontrol_find_advanced(dbo, criteria, username, limit = 0):
     ss = utils.AdvancedSearchBuilder(dbo, post)
 
     ss.ands.append("ac.ID > 0")
+    if siteid != 0: ss.ands.append("(ac.SiteID = 0 OR ac.SiteID = %d)" % siteid)
     ss.add_id("number", "ac.ID")
     ss.add_str("callername", "co.OwnerName")
     ss.add_str("victimname", "vo.OwnerName")
@@ -507,10 +512,10 @@ def insert_animalcontrol(dbo, username):
     """
     l = dbo.locale
     d = {
-        "incidentdate":     python2display(l, now(dbo.timezone)),
+        "incidentdate":     python2display(l, dbo.now()),
         "incidenttime":     format_time_now(dbo.timezone),
         "incidenttype":     configuration.default_incident(dbo),
-        "calldate":         python2display(l, now(dbo.timezone)),
+        "calldate":         python2display(l, dbo.now()),
         "calltime":         format_time_now(dbo.timezone),
         "calltaker":        username
     }
