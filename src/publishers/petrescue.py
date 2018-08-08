@@ -2,11 +2,11 @@
 
 import configuration
 import i18n
-import os
+import medical
 import sys
 import utils
 
-from base import FTPPublisher
+from base import AbstractPublisher
 from sitedefs import SERVICE_URL, PETRESCUE_URL, PETRESCUE_AUTH_TOKEN
 
 class PetRescuePublisher(AbstractPublisher):
@@ -63,7 +63,7 @@ class PetRescuePublisher(AbstractPublisher):
                 isdog = an.SPECIESID == 1
                 iscat = an.SPECIESID == 2
 
-                ageinyears = i18n.date_diff_days(dob, i18n.now())
+                ageinyears = i18n.date_diff_days(an.DATEOFBIRTH, i18n.now())
 
                 vaccinated = medical.get_vaccinated(self.dbo, an.ID)
                 
@@ -99,7 +99,7 @@ class PetRescuePublisher(AbstractPublisher):
                     "microchip_number":         an.IDENTICHIPNUMBER, 
                     "desexed":                  utils.iif(an.NEUTERED == 1, "true", "false"), # true | false, validates to always true according to docs
                     "contact_method":           "email", # email | phone
-                    "size":                     utils.iif(isdog, size, "")# dogs only - small | medium | high
+                    "size":                     utils.iif(isdog, size, ""), # dogs only - small | medium | high
                     "senior":                   utils.iif(isdog and ageinyears > 7, "true", "false"), # dogs only, true | false
                     "vaccinated":               utils.iif(vaccinated, "true", "false"), # cats, dogs, rabbits, true | false
                     "wormed":                   utils.iif(vaccinated, "true", "false"), # cats & dogs, true | false
@@ -151,7 +151,7 @@ class PetRescuePublisher(AbstractPublisher):
         animals = self.dbo.query("SELECT a.ID, a.ShelterCode, a.AnimalName, p.SentDate, a.ActiveMovementDate, a.DeceasedDate FROM animal a " \
             "INNER JOIN animalpublished p ON p.ID = a.AnimalID AND p.PublishedTo='petrescue' " \
             "WHERE Archived = 1 AND ((DeceasedDate Is Not Null AND DeceasedDate >= ?) OR (ActiveMovementDate Is Not Null AND ActiveMovementType NOT IN (2,8))) " \
-            "ORDER BY a.ID", [dbo.today(offset=-30)])
+            "ORDER BY a.ID", [self.dbo.today(offset=-30)])
 
         for an in animals:
             if an.SENTDATE < an.ACTIVEMOVEMENT or an.SENTDATE < an.DECEASEDDATE:
