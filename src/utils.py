@@ -922,14 +922,15 @@ def get_image_url(url, headers = {}, cookies = {}, timeout = None):
         s.write(chunk) # default from requests is 128 byte chunks
     return { "cookies": r.cookies, "headers": r.headers, "response": s.getvalue(), "status": r.status_code, "requestheaders": r.request.headers, "requestbody": r.request.body }
 
-def post_data(url, data, contenttype = "", headers = {}):
+def post_data(url, data, contenttype = "", httpmethod = "", headers = {}):
     """
     Posts data to a URL as the body
+    httpmethod: POST by default
     """
     try:
-        if contenttype != "":
-            headers["Content-Type"] = "text/csv"
+        if contenttype != "": headers["Content-Type"] = contenttype
         req = urllib2.Request(url, data, headers)
+        if httpmethod != "": req.get_method = lambda: httpmethod
         resp = urllib2.urlopen(req)
         return { "requestheaders": headers, "requestbody": data, "headers": resp.info().headers, "response": resp.read(), "status": resp.getcode() }
     except urllib2.HTTPError as e:
@@ -966,17 +967,23 @@ def post_multipart(url, fields = None, files = None, headers = {}, cookies = {})
         "requestbody": r.request.body 
     }
 
+def patch_json(url, json, headers = {}, cookies = {}):
+    """
+    posts json with a PATCH http method
+    """
+    return post_data(url, json, contenttype="text/json", httpmethod="PATCH", headers=headers)
+
 def post_json(url, json, headers = {}):
     """
     Posts a JSON document to a URL
     """
-    return post_data(url, json, "text/json", headers)
+    return post_data(url, json, contenttype="text/json", headers=headers)
 
 def post_xml(url, xml, headers = {}):
     """
     Posts an XML document to a URL
     """
-    return post_data(url, xml, "text/xml", headers)
+    return post_data(url, xml, contenttype="text/xml", headers=headers)
 
 def read_text_file(name):
     """

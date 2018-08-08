@@ -487,7 +487,7 @@ def get_recent_licences(dbo):
     """
     return dbo.query(get_licence_query(dbo) + \
         "WHERE ol.IssueDate >= ? " \
-        "ORDER BY ol.IssueDate DESC", [dbo.today(-30)])
+        "ORDER BY ol.IssueDate DESC", [dbo.today(offset=-30)])
 
 def get_licence_find_simple(dbo, licnum, dummy = 0):
     return dbo.query(get_licence_query(dbo) + \

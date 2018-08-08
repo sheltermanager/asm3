@@ -250,7 +250,6 @@ class MaddiesFundPublisher(AbstractPublisher):
             except Exception as err:
                 self.logError("Failed processing animal: %s, %s" % (an["SHELTERCODE"], err), sys.exc_info())
 
-        self.saveLog()
-        self.setPublisherComplete()
+        self.cleanup()
 
 

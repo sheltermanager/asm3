@@ -16,7 +16,7 @@ $(function() {
                 '<li class="localeus localeca localeau hasmaddiesfund"><a href="#tab-maddiesfund">Maddie\'s Fund Publisher</a></li>',
                 '<li class="localeus localeca localemx"><a href="#tab-petfinder">PetFinder Publisher</a></li>',
                 '<li class="localegb haspetslocated"><a href="#tab-petslocated">PetsLocated Publisher</a></li>',
-                // '<li class="localeau"><a href="#tab-petrescue">PetRescue Publisher</a></li>', // disabled due to lack of support
+                '<li class="localeau"><a href="#tab-petrescue">PetRescue Publisher</a></li>', 
                 '<li class="localeus"><a href="#tab-rescuegroups">RescueGroups Publisher</a></li>',
                 '<li class="localegb"><a href="#tab-pettrac">AVID UK Microchips</a></li>',
                 '<li class="localegb"><a href="#tab-anibase">Identibase UK Microchips</a></li>',
@@ -534,6 +534,7 @@ $(function() {
                 '<div id="tab-petrescue">',
                 html.info('Signup at <a href="http://petrescue.com.au">petrescue.com.au</a>'),
                 '<p><input id="enabledpr" type="checkbox" class="asm-checkbox enablecheck" /><label for="enabledpr">' + _("Enabled") + '</label></p>',
+                /*
                 '<table>',
                 '<tr>',
                 '<td><label for="prftpuser">PetRescue account ID</label></td>',
@@ -551,6 +552,7 @@ $(function() {
                 '</select></td>',
                 '</tr>',
                 '</table>',
+                */
                 '</div>'
             ].join("\n");
         },
