@@ -171,15 +171,17 @@ class PetRescuePublisher(AbstractPublisher):
 
         animals = self.dbo.query("SELECT a.ID, a.ShelterCode, a.AnimalName, p.SentDate, a.ActiveMovementDate, a.DeceasedDate FROM animal a " \
             "INNER JOIN animalpublished p ON p.ID = a.AnimalID AND p.PublishedTo='petrescue' " \
-            "WHERE Archived = 1 AND ((DeceasedDate Is Not Null AND DeceasedDate >= ?) OR (ActiveMovementDate Is Not Null AND ActiveMovementType NOT IN (2,8))) " \
-            "ORDER BY a.ID", [self.dbo.today(offset=-30)])
+            "WHERE Archived = 1 AND ((DeceasedDate Is Not Null AND DeceasedDate >= ?) OR " \
+            "(ActiveMovementDate Is Not Null AND ActiveMovementDate >= ? AND ActiveMovementType NOT IN (2,8))) " \
+            "ORDER BY a.ID", [self.dbo.today(offset=-30), self.dbo.today(offset=-30)])
 
         for an in animals:
-            if an.SENTDATE < an.ACTIVEMOVEMENT or an.SENTDATE < an.DECEASEDDATE:
+            if (an.ACTIVEMOVEMENTDATE and an.SENTDATE < an.ACTIVEMOVEMENTDATE) or (an.DECEASEDDATE and an.SENTDATE < an.DECEASEDDATE):
                 
                 status = utils.iif(an.DECEASEDDATE is not None, "removed", "rehomed")
-                url = PETRESCUE_URL + "listings/%s/SM%s" % (an.ID, self.dbo.database)
                 data = { "status": status }
+                url = PETRESCUE_URL + "listings/%s/SM%s" % (an.ID, self.dbo.database)
+
                 self.log("Sending PATCH to %s to update existing listing: %s" % (url, data))
                 r = utils.patch_json(url, utils.json(data), headers=headers)
 
