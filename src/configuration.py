@@ -247,7 +247,6 @@ DEFAULTS = {
         "MembershipNumber,IsBanned,IDCheck,OwnerAddress," \
         "OwnerTown,OwnerCounty,OwnerPostcode,HomeTelephone,WorkTelephone," \
         "MobileTelephone,EmailAddress",
-    "PetRescueLocationRegionID": "No",
     "PetsLocatedIncludeShelter": "No",
     "PetsLocatedAnimalFlag": "",
     "PicturesInBooks": "Yes",
@@ -933,6 +932,9 @@ def organisation_telephone(dbo):
 
 def owner_name_format(dbo):
     return cstring(dbo, "OwnerNameFormat", DEFAULTS["OwnerNameFormat"])
+
+def petrescue_token(dbo):
+    return cstring(dbo, "PetRescueToken")
 
 def pdf_inline(dbo):
     return cboolean(dbo, "PDFInline", DEFAULTS["PDFInline"] == "Yes")

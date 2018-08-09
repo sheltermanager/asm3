@@ -7,7 +7,7 @@ import sys
 import utils
 
 from base import AbstractPublisher
-from sitedefs import SERVICE_URL, PETRESCUE_URL, PETRESCUE_AUTH_TOKEN
+from sitedefs import SERVICE_URL, PETRESCUE_URL
 
 class PetRescuePublisher(AbstractPublisher):
     """
@@ -28,7 +28,19 @@ class PetRescuePublisher(AbstractPublisher):
         self.setLastError("")
         self.setStartPublishing()
 
-        # TODO: Is the Auth Token for all of ASM or per organisation? Assuming ASM.
+        token = configuration.petrescue_token(self.dbo)
+        postcode = configuration.organisation_postcode(self.dbo)
+        contact_name = configuration.organisation(self.dbo)
+        contact_email = configuration.email(self.dbo)
+        contact_number = configuration.organisation_telephone(self.dbo)
+
+        if token == "":
+            self.setLastError("No PetRescue auth token has been set.")
+            return
+
+        if postcode == "" or contact_email == "":
+            self.setLastError("You need to set your organisation postcode and contact email under Settings->Options->Shelter Details->Email")
+            return
 
         animals = self.getMatchingAnimals()
         processed = []
@@ -38,13 +50,7 @@ class PetRescuePublisher(AbstractPublisher):
             self.cleanup()
             return
 
-        postcode = configuration.organisation_postcode(self.dbo)
-        contact_name = configuration.organisation(self.dbo)
-        contact_email = configuration.email(self.dbo)
-        contact_number = configuration.organisation_telephone(self.dbo)
-
-
-        headers = { "Authorization": "Token token=%s" % PETRESCUE_AUTH_TOKEN }
+        headers = { "Authorization": "Token token=%s" % token }
 
         anCount = 0
         for an in animals:

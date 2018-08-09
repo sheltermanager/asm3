@@ -534,25 +534,12 @@ $(function() {
                 '<div id="tab-petrescue">',
                 html.info('Signup at <a href="http://petrescue.com.au">petrescue.com.au</a>'),
                 '<p><input id="enabledpr" type="checkbox" class="asm-checkbox enablecheck" /><label for="enabledpr">' + _("Enabled") + '</label></p>',
-                /*
                 '<table>',
                 '<tr>',
-                '<td><label for="prftpuser">PetRescue account ID</label></td>',
-                '<td><input id="prftpuser" type="text" class="asm-textbox cfg" data="PetRescueFTPUser" /></td>',
-                '</tr>',
-                '<tr>',
-                '<td><label for="prftppass">PetRescue password</label></td>',
-                '<td><input id="prftppass" type="text" class="asm-textbox cfg" data="PetRescueFTPPassword" /></td>',
-                '</tr>',
-                '<tr>',
-                '<td><label for="prregion">Send internal locations as region IDs</label></td>',
-                '<td><select id="prregion" class="asm-selectbox cfg" data="PetRescueLocationRegionID">',
-                '<option value="No">' + _("No") + '</option>',
-                '<option value="Yes">' + _("Yes") + '</option>',
-                '</select></td>',
+                '<td><label for="prtoken">PetRescue Token</label></td>',
+                '<td><input id="prtoken" type="text" class="asm-textbox cfg" data="PetRescueToken" /></td>',
                 '</tr>',
                 '</table>',
-                */
                 '</div>'
             ].join("\n");
         },
