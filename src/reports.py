@@ -1462,14 +1462,11 @@ class Report:
             "var points = \n")
 
         p = []
-        firstvalidlatlong = ""
         for g in rs:
             p.append({ "latlong": g[0], "popuptext": g[1] })
-            if firstvalidlatlong == "" and g[0] is not None and not g[0].startswith("0,0"):
-                firstvalidlatlong = g[0]
 
         self._Append( utils.json(p) + ";\n" )
-        self._Append( "mapping.draw_map(\"embeddedmap\", 10, \"%s\", points);\n" % firstvalidlatlong )
+        self._Append( "mapping.draw_map(\"embeddedmap\", 10, \"\", points);\n" )
         self._Append( "}, 50);\n" )
         self._Append("""
             </script>

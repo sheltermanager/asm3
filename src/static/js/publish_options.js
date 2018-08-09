@@ -813,7 +813,7 @@ $(function() {
                 this.render_petlink(),
                 this.render_htmlftp(),
                 this.render_petfinder(),
-                // this.render_petrescue(), // disabled due to lack of support
+                this.render_petrescue(), 
                 this.render_petslocated(),
                 this.render_rescuegroups(),
                 this.render_adoptapet(),

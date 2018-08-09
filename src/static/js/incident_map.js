@@ -15,14 +15,12 @@ $(function() {
 
         show_mini_map: function() {
             setTimeout(function() {
-                var lastlatlong = "";
                 $.each(controller.rows, function(i, v) {
                     v.latlong = v.DISPATCHLATLONG;
                     v.popuptext = "<b>" + v.DISPATCHADDRESS + "</b><br /><a target='_blank' href='incident?id=" + v.ACID + "'>" + 
                         v.INCIDENTNAME + " " + common.nulltostr(v.OWNERNAME) + "</a>";
-                    if (v.latlong) { lastlatlong = v.latlong; }
                 });
-                mapping.draw_map("embeddedmap", 10, lastlatlong, controller.rows); 
+                mapping.draw_map("embeddedmap", 10, "", controller.rows); 
             }, 50);
         },
 

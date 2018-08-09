@@ -1,5 +1,5 @@
 /*jslint browser: true, forin: true, eqeq: true, plusplus: true, white: true, sloppy: true, vars: true, nomen: true */
-/*global $, jQuery, google, asm, config, L */
+/*global alert, $, jQuery, google, asm, config, L */
 /*global google_loaded: true, geo: true, mapping: true */
 
 (function($) {
@@ -28,9 +28,6 @@
             };
             if (asm.geoprovider == "nominatim") {
                 this._nominatim_get_lat_long(address, town, city, postcode, callback);
-            }
-            else if (asm.geoprovider == "smcom") {
-                this._smcom_get_lat_long(address, town, city, postcode, callback);
             }
             else if (asm.geoprovider == "google") {
                 this._google_get_lat_long(address, town, city, postcode, callback);
@@ -135,15 +132,28 @@
          * Draws a map using our selected provider.
          * divid: The element to draw the map in
          * zoom: The zoom level for the map 1-18
-         * latlong: A lat,long string to mark the center of the map
+         * latlong: A lat,long string to mark the center of the map (or empty string for current location)
          * markers: A list of marker objects to draw { latlong: "", popuptext: "", popupactive: false }
          */
         draw_map: function(divid, zoom, latlong, markers) {
-            if (asm.mapprovider == "osm") {
-                this._leaflet_draw_map(divid, zoom, latlong, markers);
+            var _draw_map = function(latlong) {
+                if (asm.mapprovider == "osm") {
+                    mapping._leaflet_draw_map(divid, zoom, latlong, markers);
+                }
+                else if (asm.mapprovider == "google") {
+                    mapping._google_draw_map(divid, zoom, latlong, markers);
+                }
+            };
+            if (latlong != "") {
+                _draw_map(latlong);
             }
-            else if (asm.mapprovider == "google") {
-                this._google_draw_map(divid, zoom, latlong, markers);
+            else if (navigator.geolocation) {
+                    navigator.geolocation.getCurrentPosition(function(position) {
+                        _draw_map(position.coords.latitude + "," + position.coords.longitude);
+                    });
+            }
+            else {
+                alert("Geolocation is not supported by your browser.");
             }
         },
 
