@@ -18,6 +18,6 @@ FROM ownerdonation d
 INNER JOIN owner o ON d.OwnerID = o.ID
 WHERE d.Date >= '$@from$' AND d.Date <= '$@to$'
 AND o.LatLong <> '' 
-ORDER BY d.Date
+ORDER BY o.LatLong
 ###
 MAP
