@@ -96,13 +96,13 @@ class PetRescuePublisher(AbstractPublisher):
                     "name":                     an.ANIMALNAME, # animal name
                     "adoption_fee":             str(an.FEE * 100),
                     "species_name":             an.SPECIESNAME,
-                    "breed_names":              "%s,%s" % (an.BREEDNAME1, an.BREEDNAME2), # breed1,breed2
+                    "breed_names":              utils.iif(an.CROSSBREED == 1, "%s,%s" % (an.BREEDNAME1, an.BREEDNAME2), an.BREEDNAME1), # breed1,breed2 or breed1
                     "mix":                      utils.iif(an.CROSSBREED == 1, "true", "false"), # true | false
                     "date_of_birth":            i18n.format_date("%Y-%m-%d", an.DATEOFBIRTH), # iso
                     "gender":                   an.SEXNAME.lower(), # male | female
                     "personality":              "", # 20-4000 chars of free type
                     "postcode":                 postcode, # shelter postcode
-                    "microchip_number":         an.IDENTICHIPNUMBER, 
+                    "microchip_number":         utils.iif(an.IDENTICHIPPED == 1, an.IDENTICHIPNUMBER, ""), 
                     "desexed":                  utils.iif(an.NEUTERED == 1, "true", "false"), # true | false, validates to always true according to docs
                     "contact_method":           "email", # email | phone
                     "size":                     utils.iif(isdog, size, ""), # dogs only - small | medium | high
@@ -132,7 +132,9 @@ class PetRescuePublisher(AbstractPublisher):
                 # No - send a new listing
                 if lastsent is None:
 
-                    r = utils.post_json(PETRESCUE_URL + "listings", utils.json(data), headers=headers)
+                    url = PETRESCUE_URL + "listings"
+                    self.log("Sending POST to %s to create new listing: %s" % (url, data))
+                    r = utils.post_json(url, utils.json(data), headers=headers)
 
                     if r["status"] != 200:
                         self.logError("HTTP %d, headers: %s, response: %s" % (r["status"], r["headers"], r["response"]))
@@ -141,7 +143,20 @@ class PetRescuePublisher(AbstractPublisher):
                         self.logSuccess("Processed: %s: %s (%d of %d)" % ( an["SHELTERCODE"], an["ANIMALNAME"], anCount, len(animals)))
                         processed.append(an)
 
-                # Yes - send a PATCH to the existing listing TODO: disabled for now
+                # Yes and the animal record has had a change since last sent - send a PATCH to the existing listing 
+                elif lastsent < an.LASTCHANGEDDATE:
+
+                    url = PETRESCUE_URL + "listings/%s/SM%s" % (an.ID, self.dbo.database)
+                    self.log("Sending PATCH to %s to update existing listing: %s" % (url, data))
+                    r = utils.patch_json(url, utils.json(data), headers=headers)
+
+                    if r["status"] != 200:
+                        self.logError("HTTP %d, headers: %s, response: %s" % (r["status"], r["headers"], r["response"]))
+                    else:
+                        self.log("HTTP %d, headers: %s, response: %s" % (r["status"], r["headers"], r["response"]))
+                        self.logSuccess("Processed: %s: %s (%d of %d)" % ( an["SHELTERCODE"], an["ANIMALNAME"], anCount, len(animals)))
+                        processed.append(an)
+
                 else:
                     self.log("Nothing to do, listing already sent.")
                     self.logSuccess("Processed: %s: %s (%d of %d)" % ( an["SHELTERCODE"], an["ANIMALNAME"], anCount, len(animals)))
@@ -163,17 +178,19 @@ class PetRescuePublisher(AbstractPublisher):
             if an.SENTDATE < an.ACTIVEMOVEMENT or an.SENTDATE < an.DECEASEDDATE:
                 
                 status = utils.iif(an.DECEASEDDATE is not None, "removed", "rehomed")
-                self.logSuccess("%s - %s: Marking with new status %s" % (an.SHELTERCODE, an.ANIMALNAME, status))
-
-                r = utils.patch_json(PETRESCUE_URL + "listings/%s/SM%s" % (an.ID, self.dbo.database), utils.json({ "status": status }), headers=headers)
+                url = PETRESCUE_URL + "listings/%s/SM%s" % (an.ID, self.dbo.database)
+                data = { "status": status }
+                self.log("Sending PATCH to %s to update existing listing: %s" % (url, data))
+                r = utils.patch_json(url, utils.json(data), headers=headers)
 
                 if r["status"] != 200:
                     self.logError("HTTP %d, headers: %s, response: %s" % (r["status"], r["headers"], r["response"]))
                 else:
                     self.log("HTTP %d, headers: %s, response: %s" % (r["status"], r["headers"], r["response"]))
+                    self.logSuccess("%s - %s: Marked with new status %s" % (an.SHELTERCODE, an.ANIMALNAME, status))
                     # By marking these animals in the processed list again, their SentDate
                     # will become today, which should exclude them from sending these status
-                    # updates in future
+                    # updates to close the listing again in future
                     processed.append(an)
 
         # Mark sent animals published

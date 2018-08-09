@@ -1,6 +1,7 @@
 41
 ================
 
+09/08/18 new RESTful petrescue.com.au publisher 
 09/08/18 Advanced find/adoptable - ignore cruelty/hold and quarantine
 09/08/18 Use picture date to invalidate 24h thumbnail cache on adoptable js
 07/08/18 Allow locationid=X to be passed to html_adoptable_animals
