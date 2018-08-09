@@ -360,6 +360,9 @@ def csvimport(dbo, csvdata, encoding = "utf8", createmissinglookups = False, cle
         al.debug("import csv: row %d of %d" % (rowno, len(data)), "csvimport.csvimport", dbo)
         async.increment_progress_value(dbo)
 
+        # Should we stop?
+        if async.get_cancel(dbo): break
+
         # Do we have animal data to read?
         animalid = 0
         if hasanimal and gks(row, "ANIMALNAME") != "":
@@ -669,6 +672,9 @@ def csvimport_paypal(dbo, csvdata, donationtypeid, donationpaymentid, flags):
 
         # Skip blank rows
         if len(r) == 0: continue
+
+        # Should we stop?
+        if async.get_cancel(dbo): break
 
         REQUIRED_FIELDS = [ "Date", "Currency", "Gross", "Fee", "Net", "From Email Address", "Status", "Type" ]
         for rf in REQUIRED_FIELDS:

@@ -1,6 +1,7 @@
 41
 ================
 
+09/08/18 Allow task cancel button to work for CSV/PayPal imports
 09/08/18 Use browser location to center incident/report maps #189
 09/08/18 new RESTful petrescue.com.au publisher 
 09/08/18 Advanced find/adoptable - ignore cruelty/hold and quarantine

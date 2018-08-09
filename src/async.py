@@ -144,6 +144,7 @@ def function_task(dbo, taskname, fn, *args):
     set_last_error(dbo, "")
     set_return_value(dbo, "")
     set_task_name(dbo, taskname)
+    set_cancel(dbo, False)
     set_progress_max(dbo, 100) # override in called function
     set_progress_value(dbo, 0)
     FuncThread(dbo, fn, *args).start()
