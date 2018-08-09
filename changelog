@@ -1,6 +1,7 @@
 41
 ================
 
+09/08/18 Use picture date to invalidate 24h thumbnail cache on adoptable js
 07/08/18 Allow locationid=X to be passed to html_adoptable_animals
 07/08/18 Warn when animal being adopted is unaltered/has no microchip #317
 07/08/18 better/added siteid filtering for person/lostfound/waitinglist #469
