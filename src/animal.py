@@ -524,7 +524,8 @@ def get_animal_find_advanced(dbo, criteria, limit = 0, locationfilter = "", site
     ss.add_comp("reserved", "reserved", "a.HasActiveReserve = 1")
     ss.add_comp("reserved", "unreserved", "a.HasActiveReserve = 0")
     ss.add_comp("logicallocation", "onshelter", "a.Archived = 0")
-    ss.add_comp("logicallocation", "adoptable", "a.Archived = 0 AND a.IsNotAvailableForAdoption = 0 AND a.HasTrialAdoption = 0")
+    ss.add_comp("logicallocation", "adoptable", "a.Archived = 0 AND a.IsNotAvailableForAdoption = 0 AND " \
+        "a.HasTrialAdoption = 0 AND a.IsHold = 0 AND a.IsQuarantine = 0 AND a.CrueltyCase = 0")
     ss.add_comp("logicallocation", "reserved", "a.Archived = 0 AND a.HasActiveReserve = 1 AND a.HasTrialAdoption = 0")
     ss.add_comp("logicallocation", "hold", "a.IsHold = 1 AND a.Archived = 0")
     ss.add_comp("logicallocation", "fostered", "a.ActiveMovementType = %d" % movement.FOSTER)
