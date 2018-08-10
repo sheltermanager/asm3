@@ -847,7 +847,9 @@ def main_screen_animal_link_mode(dbo):
     return cstring(dbo, "MainScreenAnimalLinkMode", DEFAULTS["MainScreenAnimalLinkMode"])
 
 def main_screen_animal_link_max(dbo):
-    return cint(dbo, "MainScreenAnimalLinkMax", int(DEFAULTS["MainScreenAnimalLinkMax"]))
+    maxlinks = cint(dbo, "MainScreenAnimalLinkMax", int(DEFAULTS["MainScreenAnimalLinkMax"]))
+    maxlinks = min(maxlinks, 100)
+    return maxlinks
 
 def manual_codes(dbo):
     return cboolean(dbo, "ManualCodes", DEFAULTS["ManualCodes"] == "Yes")
