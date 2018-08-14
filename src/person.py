@@ -133,7 +133,7 @@ def get_staff_volunteers(dbo, siteid = 0):
     """
     sitefilter = ""
     if siteid is not None and siteid != 0: sitefilter = "AND o.SiteID = %s" % siteid
-    return dbo.query(get_person_query(dbo) + " WHERE o.IsStaff = 1 OR o.IsVolunteer = 1 %s ORDER BY o.IsStaff DESC, o.OwnerName" % sitefilter)
+    return dbo.query(get_person_query(dbo) + " WHERE o.IsStaff = 1 OR o.IsVolunteer = 1 %s ORDER BY o.IsStaff DESC, o.OwnerSurname, o.OwnerForeNames" % sitefilter)
 
 def get_towns(dbo):
     """
