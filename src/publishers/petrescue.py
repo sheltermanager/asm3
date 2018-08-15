@@ -126,40 +126,17 @@ class PetRescuePublisher(AbstractPublisher):
                     "status":                   "active" # active | removed | on_hold | rehomed | suspended | group_suspended
                 }
 
-                # Has this animal been sent previously? 
-                lastsent = self.dbo.query_date("SELECT SentDate FROM animalpublished WHERE AnimalID=? AND PublishedTo='petrescue'", [an.ID])
+                # PetRescue will insert/update accordingly based on whether remote_id/remote_source exists
+                url = PETRESCUE_URL + "listings"
+                self.log("Sending POST to %s to create/update listing: %s" % (url, data))
+                r = utils.post_json(url, utils.json(data), headers=headers)
 
-                # No - send a new listing
-                if lastsent is None:
-
-                    url = PETRESCUE_URL + "listings"
-                    self.log("Sending POST to %s to create new listing: %s" % (url, data))
-                    r = utils.post_json(url, utils.json(data), headers=headers)
-
-                    if r["status"] != 200:
-                        self.logError("HTTP %d, headers: %s, response: %s" % (r["status"], r["headers"], r["response"]))
-                    else:
-                        self.log("HTTP %d, headers: %s, response: %s" % (r["status"], r["headers"], r["response"]))
-                        self.logSuccess("Processed: %s: %s (%d of %d)" % ( an["SHELTERCODE"], an["ANIMALNAME"], anCount, len(animals)))
-                        processed.append(an)
-
-                # Yes and the animal record has had a change since last sent - send a PATCH to the existing listing 
-                elif lastsent < an.LASTCHANGEDDATE:
-
-                    url = PETRESCUE_URL + "listings/%s/SM%s" % (an.ID, self.dbo.database)
-                    self.log("Sending PATCH to %s to update existing listing: %s" % (url, data))
-                    r = utils.patch_json(url, utils.json(data), headers=headers)
-
-                    if r["status"] != 200:
-                        self.logError("HTTP %d, headers: %s, response: %s" % (r["status"], r["headers"], r["response"]))
-                    else:
-                        self.log("HTTP %d, headers: %s, response: %s" % (r["status"], r["headers"], r["response"]))
-                        self.logSuccess("Processed: %s: %s (%d of %d)" % ( an["SHELTERCODE"], an["ANIMALNAME"], anCount, len(animals)))
-                        processed.append(an)
-
+                if r["status"] != 200:
+                    self.logError("HTTP %d, headers: %s, response: %s" % (r["status"], r["headers"], r["response"]))
                 else:
-                    self.log("Nothing to do, listing already sent.")
+                    self.log("HTTP %d, headers: %s, response: %s" % (r["status"], r["headers"], r["response"]))
                     self.logSuccess("Processed: %s: %s (%d of %d)" % ( an["SHELTERCODE"], an["ANIMALNAME"], anCount, len(animals)))
+                    processed.append(an)
 
             except Exception as err:
                 self.logError("Failed processing animal: %s, %s" % (str(an["SHELTERCODE"]), err), sys.exc_info())

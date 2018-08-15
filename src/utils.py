@@ -967,12 +967,6 @@ def post_multipart(url, fields = None, files = None, headers = {}, cookies = {})
         "requestbody": r.request.body 
     }
 
-def patch_json(url, json, headers = {}, cookies = {}):
-    """
-    posts json with a PATCH http method
-    """
-    return post_data(url, json, contenttype="text/json", httpmethod="PATCH", headers=headers)
-
 def post_json(url, json, headers = {}):
     """
     Posts a JSON document to a URL
