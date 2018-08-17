@@ -124,7 +124,7 @@ class PetRescuePublisher(AbstractPublisher):
                     "remote_id":                str(an.ID), # animal identifier in ASM
                     "remote_source":            "SM%s" % self.dbo.database, # system/database identifier
                     "name":                     an.ANIMALNAME, # animal name
-                    "adoption_fee":             str(utils.cint(an.FEE) * 100),
+                    "adoption_fee":             i18n.format_currency_no_symbol(self.locale, an.FEE),
                     "species_name":             an.SPECIESNAME,
                     "breed_names":              self.get_breed_names(an), # breed1,breed2 or breed1
                     "mix":                      an.CROSSBREED == 1, # true | false
