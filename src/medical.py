@@ -250,9 +250,9 @@ def get_regimens(dbo, animalid, onlycomplete = False, sort = ASCENDING_REQUIRED)
         "ORDER BY amt.DateGiven DESC %s) AS LastTreatmentGiven " \
         "FROM animalmedical am WHERE %sam.AnimalID = %d " % (dbo.sql_limit(1), dbo.sql_limit(1), sc, animalid)
     if sort == ASCENDING_REQUIRED:
-        sql += " ORDER BY ID"
+        sql += " ORDER BY am.StartDate"
     elif sort == DESCENDING_REQUIRED:
-        sql += " ORDER BY ID DESC"
+        sql += " ORDER BY am.StartDate DESC"
     rows = dbo.query(sql)
     # Now add our extra named fields
     return embellish_regimen(l, rows)

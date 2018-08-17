@@ -1,6 +1,8 @@
 41
 ================
 
+17/08/18 Order regimens in document templates by regimen start date
+17/08/18 PetRescue publishing via new API
 10/08/18 Cap max links on home page at 100 to prevent overflows
 09/08/18 Allow task cancel button to work for CSV/PayPal imports
 09/08/18 Use browser location to center incident/report maps #189
