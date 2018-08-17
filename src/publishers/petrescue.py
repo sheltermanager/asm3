@@ -127,19 +127,19 @@ class PetRescuePublisher(AbstractPublisher):
                     "adoption_fee":             str(utils.cint(an.FEE) * 100),
                     "species_name":             an.SPECIESNAME,
                     "breed_names":              self.get_breed_names(an), # breed1,breed2 or breed1
-                    "mix":                      utils.iif(an.CROSSBREED == 1, "true", "false"), # true | false
+                    "mix":                      an.CROSSBREED == 1, # true | false
                     "date_of_birth":            i18n.format_date("%Y-%m-%d", an.DATEOFBIRTH), # iso
                     "gender":                   an.SEXNAME.lower(), # male | female
                     "personality":              "", # 20-4000 chars of free type
                     "postcode":                 postcode, # shelter postcode
                     "microchip_number":         utils.iif(an.IDENTICHIPPED == 1, an.IDENTICHIPNUMBER, ""), 
-                    "desexed":                  utils.iif(an.NEUTERED == 1, "true", "false"), # true | false, validates to always true according to docs
+                    "desexed":                  an.NEUTERED == 1,# true | false, validates to always true according to docs
                     "contact_method":           "email", # email | phone
                     "size":                     utils.iif(isdog, size, ""), # dogs only - small | medium | high
-                    "senior":                   utils.iif(isdog and ageinyears > 7, "true", "false"), # dogs only, true | false
-                    "vaccinated":               utils.iif(vaccinated, "true", "false"), # cats, dogs, rabbits, true | false
-                    "wormed":                   utils.iif(vaccinated, "true", "false"), # cats & dogs, true | false
-                    "heart_worm_treated":       utils.iif(vaccinated, "true", "false"), # dogs only, true | false
+                    "senior":                   isdog and ageinyears > 7, # dogs only, true | false
+                    "vaccinated":               vaccinated, # cats, dogs, rabbits, true | false
+                    "wormed":                   vaccinated, # cats & dogs, true | false
+                    "heart_worm_treated":       vaccinated, # dogs only, true | false
                     "coat":                     utils.iif(iscat, coat, ""), # cats only, short | medium_coat | long
                     "intake_origin":            utils.iif(iscat, origin, ""), # cats only, community_cat | owner_surrender | pound_transfer | shelter_transfer
                     "adoption_process":         "", # 4,000 chars how to adopt
@@ -148,18 +148,19 @@ class PetRescuePublisher(AbstractPublisher):
                     "contact_name":             contact_name, # name of contact details owner
                     "contact_number":           contact_number, # number to enquire about adoption
                     "contact_email":            contact_email, # email to enquire about adoption
-                    "foster_needed":            "false", # true | false
-                    "interstate":               "true", # true | false - can the animal be adopted to another state
+                    "foster_needed":            False, # true | false
+                    "interstate":               True, # true | false - can the animal be adopted to another state
                     "medical_notes":            an.HEALTHPROBLEMS, # 4,000 characters medical notes
-                    "multiple_animals":         "false", # More than one animal included in listing true | false
+                    "multiple_animals":         False, # More than one animal included in listing true | false
                     "photo_urls":               photo_url, # Comma separated photo URL strings
                     "status":                   "active" # active | removed | on_hold | rehomed | suspended | group_suspended
                 }
 
                 # PetRescue will insert/update accordingly based on whether remote_id/remote_source exists
                 url = PETRESCUE_URL + "listings"
-                self.log("Sending POST to %s to create/update listing: %s" % (url, data))
-                r = utils.post_json(url, utils.json(data), headers=headers)
+                jsondata = utils.json(data)
+                self.log("Sending POST to %s to create/update listing: %s" % (url, jsondata))
+                r = utils.post_json(url, jsondata, headers=headers)
 
                 if r["status"] != 200:
                     self.logError("HTTP %d, headers: %s, response: %s" % (r["status"], r["headers"], r["response"]))
@@ -177,7 +178,7 @@ class PetRescuePublisher(AbstractPublisher):
         # 3. Have an entry in animalpublished/petrescue where the sent date is older than the deceased date
 
         animals = self.dbo.query("SELECT a.ID, a.ShelterCode, a.AnimalName, p.SentDate, a.ActiveMovementDate, a.DeceasedDate FROM animal a " \
-            "INNER JOIN animalpublished p ON p.AnimalID = a.AnimalID AND p.PublishedTo='petrescue' " \
+            "INNER JOIN animalpublished p ON p.AnimalID = a.ID AND p.PublishedTo='petrescue' " \
             "WHERE Archived = 1 AND ((DeceasedDate Is Not Null AND DeceasedDate >= ?) OR " \
             "(ActiveMovementDate Is Not Null AND ActiveMovementDate >= ? AND ActiveMovementType NOT IN (2,8))) " \
             "ORDER BY a.ID", [self.dbo.today(offset=-30), self.dbo.today(offset=-30)])
@@ -187,10 +188,11 @@ class PetRescuePublisher(AbstractPublisher):
                 
                 status = utils.iif(an.DECEASEDDATE is not None, "removed", "rehomed")
                 data = { "status": status }
+                jsondata = utils.json(data)
                 url = PETRESCUE_URL + "listings/%s/SM%s" % (an.ID, self.dbo.database)
 
-                self.log("Sending PATCH to %s to update existing listing: %s" % (url, data))
-                r = utils.patch_json(url, utils.json(data), headers=headers)
+                self.log("Sending PATCH to %s to update existing listing: %s" % (url, jsondata))
+                r = utils.patch_json(url, jsondata, headers=headers)
 
                 if r["status"] != 200:
                     self.logError("HTTP %d, headers: %s, response: %s" % (r["status"], r["headers"], r["response"]))
