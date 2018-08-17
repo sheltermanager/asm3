@@ -114,8 +114,8 @@ class PetRescuePublisher(AbstractPublisher):
                 else: coat = "medium_coat"
 
                 origin = ""
-                if an.ORIGINALOWNERID > 0: origin = "owner_surrender"
-                elif an.ISTRANSFER == 1: origin = "shelter_transfer"
+                if an.ISTRANSFER == 1: origin = "shelter_transfer"
+                else: origin = "owner_surrender"
 
                 photo_url = "%s?account=%s&method=animal_image&animalid=%d" % (SERVICE_URL, self.dbo.database, an.ID)
 
