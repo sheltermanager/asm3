@@ -124,7 +124,7 @@ class PetRescuePublisher(AbstractPublisher):
                     "remote_id":                str(an.ID), # animal identifier in ASM
                     "remote_source":            "SM%s" % self.dbo.database, # system/database identifier
                     "name":                     an.ANIMALNAME, # animal name
-                    "adoption_fee":             str(an.FEE * 100),
+                    "adoption_fee":             str(utils.cint(an.FEE) * 100),
                     "species_name":             an.SPECIESNAME,
                     "breed_names":              self.get_breed_names(an), # breed1,breed2 or breed1
                     "mix":                      utils.iif(an.CROSSBREED == 1, "true", "false"), # true | false
@@ -177,7 +177,7 @@ class PetRescuePublisher(AbstractPublisher):
         # 3. Have an entry in animalpublished/petrescue where the sent date is older than the deceased date
 
         animals = self.dbo.query("SELECT a.ID, a.ShelterCode, a.AnimalName, p.SentDate, a.ActiveMovementDate, a.DeceasedDate FROM animal a " \
-            "INNER JOIN animalpublished p ON p.ID = a.AnimalID AND p.PublishedTo='petrescue' " \
+            "INNER JOIN animalpublished p ON p.AnimalID = a.AnimalID AND p.PublishedTo='petrescue' " \
             "WHERE Archived = 1 AND ((DeceasedDate Is Not Null AND DeceasedDate >= ?) OR " \
             "(ActiveMovementDate Is Not Null AND ActiveMovementDate >= ? AND ActiveMovementType NOT IN (2,8))) " \
             "ORDER BY a.ID", [self.dbo.today(offset=-30), self.dbo.today(offset=-30)])
