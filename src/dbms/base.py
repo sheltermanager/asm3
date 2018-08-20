@@ -880,9 +880,11 @@ class Database(object):
         """ Writes a limit clause to X items """
         return "LIMIT %s" % x
 
-    def sql_replace(self, fieldexpr, findstr, replacestr):
+    def sql_replace(self, fieldexpr, findstr="?", replacestr="?"):
         """ Writes a replace expression that finds findstr in fieldexpr, replacing with replacestr """
-        return "REPLACE(%s, '%s', '%s')" % (fieldexpr, findstr, replacestr)
+        if findstr != "?": findstr = "'%s'" % self.escape(findstr)
+        if replacestr != "?": findstr = "'%s'" % self.escape(replacestr)
+        return "REPLACE(%s, %s, %s)" % (fieldexpr, findstr, replacestr)
 
     def sql_substring(self, fieldexpr, pos, chars):
         """ SQL substring function from pos for chars """

@@ -1074,9 +1074,9 @@ def update_lookup(dbo, iid, lookup, name, desc="", speciesid=0, pfbreed="", pfsp
         dbo.update(lookup, iid, { t[LOOKUP_NAMEFIELD]: newflag })
         # Update the text in flags fields where appropriate
         if lookup == "lkownerflags":
-            dbo.execute("UPDATE owner SET AdditionalFlags = %s WHERE AdditionalFlags LIKE '%%%s%%'" % (dbo.sql_replace("AdditionalFlags", oldflag, newflag), oldflag))
+            dbo.execute("UPDATE owner SET AdditionalFlags = %s WHERE AdditionalFlags LIKE ?" % dbo.sql_replace("AdditionalFlags"), (oldflag, newflag, "%%%s%%" % oldflag))
         elif lookup == "lkanimalflags":
-            dbo.execute("UPDATE animal SET AdditionalFlags = %s WHERE AdditionalFlags LIKE '%%%s%%'" % (dbo.sql_replace("AdditionalFlags", oldflag, newflag), oldflag))
+            dbo.execute("UPDATE animal SET AdditionalFlags = %s WHERE AdditionalFlags LIKE ?" % dbo.sql_replace("AdditionalFlags"), (oldflag, newflag, "%%%s%%" % oldflag))
     elif t[LOOKUP_DESCFIELD] == "":
         # No description
         if t[LOOKUP_CANRETIRE] == 1:
