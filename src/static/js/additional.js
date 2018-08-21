@@ -120,8 +120,8 @@ $(function() {
                 $("#lookupvalues").closest("tr").fadeOut();
             }
             // Show searchable for correct field types
-            // of text, notes, lookup or multi-lookup
-            if (ft == 1 || ft == 2 || ft == 6 || ft == 7) {
+            // of text, notes, number, lookup or multi-lookup
+            if (ft == 1 || ft == 2 || ft == 3 || ft == 6 || ft == 7) {
                 $("#searchable").closest("tr").fadeIn();
             }
             else {
