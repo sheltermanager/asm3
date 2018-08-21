@@ -144,17 +144,42 @@
                     mapping._google_draw_map(divid, zoom, latlong, markers);
                 }
             };
+            var first_valid = this._first_valid_latlong(markers);
+            // A center point has been specified, use that
             if (latlong != "") {
                 _draw_map(latlong);
             }
+            // No center point specified, use the device location
             else if (navigator.geolocation) {
-                    navigator.geolocation.getCurrentPosition(function(position) {
-                        _draw_map(position.coords.latitude + "," + position.coords.longitude);
-                    });
+                    navigator.geolocation.getCurrentPosition(
+                        function(position) {
+                            // We got a position from the browser
+                            _draw_map(position.coords.latitude + "," + position.coords.longitude);
+                        },
+                        function() {
+                            // The user refused or an error occurred - use the first marker pin
+                            if (first_valid) { _draw_map(first_valid); }
+                        }
+                    );
             }
-            else {
-                alert("Geolocation is not supported by your browser.");
+            else if (first_valid) {
+                // Geolocation is not supported - use the first marker pin
+                _draw_map(first_valid);
             }
+        },
+
+        /**
+         * Returns the first valid latlong value from the list of markers
+         */
+        _first_valid_latlong: function(markers) {
+            var fv;
+            $.each(markers, function(i, v) {
+                if (v.latlong) {
+                    fv = v.latlong;
+                    return false;
+                }
+            });
+            return fv;
         },
 
         _leaflet_draw_map: function(divid, zoom, latlong, markers) {

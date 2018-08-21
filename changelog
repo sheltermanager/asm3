@@ -1,6 +1,7 @@
 41
 ================
 
+21/08/18 Refusing to share location breaks map reports #475
 20/08/18 Fixed issue renaming flags containing apostrophes
 17/08/18 Order regimens in document templates by regimen start date
 17/08/18 PetRescue publishing via new API
