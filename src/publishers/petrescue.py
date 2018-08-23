@@ -80,7 +80,7 @@ class PetRescuePublisher(AbstractPublisher):
             self.cleanup()
             return
 
-        headers = { "Authorization": "Token token=%s" % token }
+        headers = { "Authorization": "Token token=%s" % token, "Accept": "*/*" }
 
         anCount = 0
         for an in animals:
