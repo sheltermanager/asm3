@@ -473,7 +473,7 @@ def handler(post, path, remoteip, referer, querystring):
     elif method == "online_form_json":
         if formid == 0:
             raise utils.ASMError("method online_form_json requires a valid formid")
-        return set_cached_response(cache_key, "text/json; charset=utf-8", 30, 30, onlineform.get_onlineform_json(dbo, formid))
+        return set_cached_response(cache_key, "application/json; charset=utf-8", 30, 30, onlineform.get_onlineform_json(dbo, formid))
 
     elif method == "online_form_post":
         flood_protect("online_form_post", remoteip, 15)

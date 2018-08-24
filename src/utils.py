@@ -971,7 +971,7 @@ def post_json(url, json, headers = {}):
     """
     Posts a JSON document to a URL
     """
-    return post_data(url, json, contenttype="text/json", headers=headers)
+    return post_data(url, json, contenttype="application/json", headers=headers)
 
 def post_xml(url, xml, headers = {}):
     """

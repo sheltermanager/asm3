@@ -97,7 +97,7 @@
             $.ajax({
                 type: "POST",
                 dataType: "json",
-                mimeType: "text/json",
+                mimeType: "application/json",
                 url: url,
                 success: function(response) {
                     if (response.results[0]) {
