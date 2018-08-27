@@ -206,6 +206,7 @@ for d in db.select("Adoptions"):
 # Donations
 for d in db.select("Donations"):
     if not ppo.has_key(d.contactID): continue
+    o = ppo[d.contactID]
     od = asm.OwnerDonation()
     ownerdonations.append(od)
     od.OwnerID = o.ID
