@@ -114,8 +114,10 @@ class PetRescuePublisher(AbstractPublisher):
                 else: coat = "medium_coat"
 
                 origin = ""
-                if an.ISTRANSFER == 1: origin = "shelter_transfer"
-                else: origin = "owner_surrender"
+                if an.ISTRANSFER == 1 and an.BROUGHTINBYOWNERNAME.lower().find("pound") == -1: origin = "shelter_transfer"
+                elif an.ISTRANSFER == 1 and an.BROUGHTINBYOWNERNAME.lower().find("pound") != -1: origin = "pound_transfer"
+                elif an.ORIGINALOWNERID > 0: origin = "owner_surrender"
+                else: origin = "community_cat"
 
                 photo_url = "%s?account=%s&method=animal_image&animalid=%d" % (SERVICE_URL, self.dbo.database, an.ID)
 
@@ -130,7 +132,8 @@ class PetRescuePublisher(AbstractPublisher):
                     "mix":                      an.CROSSBREED == 1, # true | false
                     "date_of_birth":            i18n.format_date("%Y-%m-%d", an.DATEOFBIRTH), # iso
                     "gender":                   an.SEXNAME.lower(), # male | female
-                    "personality":              "", # 20-4000 chars of free type
+                    "personality":              an.WEBSITEMEDIANOTES, # 20-4000 chars of free type
+                    "location_postcode":        postcode, # shelter postcode
                     "postcode":                 postcode, # shelter postcode
                     "microchip_number":         utils.iif(an.IDENTICHIPPED == 1, an.IDENTICHIPNUMBER, ""), 
                     "desexed":                  an.NEUTERED == 1,# true | false, validates to always true according to docs
