@@ -105,7 +105,7 @@ class PetRescuePublisher(AbstractPublisher):
                 
                 size = ""
                 if an.SIZE == 2: size = "medium"
-                elif an.SIZE < 2: size = "high"
+                elif an.SIZE < 2: size = "large"
                 else: size = "small"
 
                 coat = ""
