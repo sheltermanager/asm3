@@ -129,7 +129,7 @@ def animal_tags_publisher(dbo, a, includeAdditional=True):
     very little apart from additional fields are required and we can save
     database calls for each animal.
     """
-    return animal_tags(dbo, a, includeAdditional=includeAdditional, includeCosts=False, includeDiet=False, \
+    return animal_tags(dbo, a, includeAdditional=includeAdditional, includeCosts=False, includeDiet=True, \
         includeDonations=False, includeFutureOwner=False, includeIsVaccinated=True, includeLogs=False, includeMedical=False)
 
 def animal_tags(dbo, a, includeAdditional=True, includeCosts=True, includeDiet=True, includeDonations=True, \
