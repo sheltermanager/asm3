@@ -2,7 +2,7 @@ Neutered In Care
 ###
 Auditing
 ###
-Any
+34019/Any
 ###
 Animals entering the shelter between two dates identifying whether they were neutered in the care of the shelter
 ###
@@ -10,10 +10,11 @@ en
 ###
 SELECT a.MostRecentEntryDate, a.ShelterCode, a.AnimalName, ay.AnimalType, s.SpeciesName, 
 CASE WHEN a.Neutered = 1 THEN 'Yes' ELSE 'No' END AS Neutered, a.NeuteredDate, a.ActiveMovementDate,
-CASE WHEN (a.Archived = 1 AND a.NeuteredDate >= a.DateBroughtIn AND a.NeuteredDate  <= a.ActiveMovementDate) OR (a.Archived = 0 AND a.NeuteredDate >= a.DateBroughtIn) THEN 'Yes' ELSE 'No' END AS NeuteredInCare
+CASE WHEN (a.Archived = 1 AND a.NeuteredDate >= a.DateBroughtIn AND a.NeuteredDate  <= a.ActiveMovementDate) OR (a.Archived = 0 AND a.NeuteredDate >= a.DateBroughtIn) THEN 'Yes' ELSE 'No' END AS NeuteredInCare, nv.OwnerName
 FROM animal a 
 INNER JOIN animaltype ay ON ay.ID = a.AnimalTypeID 
 INNER JOIN species s ON s.ID = a.SpeciesID 
+LEFT OUTER JOIN owner nv ON nv.ID = a.NeuteredByVetID 
 WHERE a.Neutered = 1 AND a.NeuteredDate Is Not Null 
 AND a.MostRecentEntryDate >= '$ASK DATE Enter the earliest date brought in$' AND a.MostRecentEntryDate <= '$ASK DATE Enter the latest date brought in$' AND NonShelterAnimal = 0
 ORDER BY a.MostRecentEntryDate
@@ -39,7 +40,7 @@ $$BODY
 <td>$ANIMALNAME</td>
 <td>$ANIMALTYPE</td>
 <td>$SPECIESNAME</td>
-<td>$NEUTERED $NEUTEREDDATE</td>
+<td>$NEUTERED $NEUTEREDDATE $OWNERNAME</td>
 <td>$ACTIVEMOVEMENTDATE</td>
 <td>$NEUTEREDINCARE</td>
 </tr>

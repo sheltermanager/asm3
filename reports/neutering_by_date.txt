@@ -2,18 +2,19 @@ Neutering by Date
 ###
 Auditing
 ###
-Any
+34019/Any
 ###
 All animals neutered/spayed between two dates.
 ###
 en
 ###
 SELECT ShelterCode, AnimalName, ay.AnimalType, s.SpeciesName, 
-NeuteredDate, AnimalComments, x.Sex
+NeuteredDate, AnimalComments, x.Sex, nv.OwnerName
 FROM animal
 INNER JOIN lksex x ON x.ID = animal.Sex 
 INNER JOIN animaltype ay ON ay.ID = animal.AnimalTypeID
 INNER JOIN species s ON s.ID = animal.SpeciesID
+LEFT OUTER JOIN owner nv ON nv.ID = animal.NeuteredByVetID
 WHERE Neutered = 1 AND 
 NeuteredDate BETWEEN '$ASK DATE Enter from date$' AND '$ASK DATE Enter to date$'
 ORDER BY s.SpeciesName, x.Sex, NeuteredDate
@@ -37,6 +38,7 @@ $$HEAD
 <td><b>Type</b></td>
 <td><b>Species</b></td>
 <td><b>Date</b></td>
+<td><b>By</b></td>
 <td><b>Comments</b></td>
 </tr>
 $$FOOT
@@ -51,6 +53,7 @@ $$BODY
 <td>$ANIMALTYPE</td>
 <td>$SPECIESNAME</td>
 <td>$NEUTEREDDATE</td>
+<td>$OWNERNAME</td>
 <td>$ANIMALCOMMENTS</td>
 </tr>
 BODY$$
