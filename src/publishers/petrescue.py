@@ -155,7 +155,7 @@ class PetRescuePublisher(AbstractPublisher):
                     "interstate":               True, # true | false - can the animal be adopted to another state
                     "medical_notes":            an.HEALTHPROBLEMS, # 4,000 characters medical notes
                     "multiple_animals":         False, # More than one animal included in listing true | false
-                    "photo_urls":               photo_url, # Comma separated photo URL strings
+                    "photo_urls":               [ photo_url ], # List of photo URL strings
                     "status":                   "active" # active | removed | on_hold | rehomed | suspended | group_suspended
                 }
 
