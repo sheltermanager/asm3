@@ -1194,6 +1194,8 @@ def table_tags(dbo, d, rows, typefield = "", recentdatefield = ""):
             # others have some kind of date
             if recentdatefield == "STATUS":
                 t = r[typefield]
+                # If the type is somehow null, we can't do anything
+                if t is None: continue
                 # Is this the first type with STATUS==2 we've seen?
                 # If so, create the tags with recent as a suffix.
                 if t not in recentgiven and r[recentdatefield] == 2:
@@ -1203,6 +1205,8 @@ def table_tags(dbo, d, rows, typefield = "", recentdatefield = ""):
                         tags[k + "RECENT" + t] = table_get_value(l, r, v)
             else:
                 t = r[typefield]
+                # If the type is somehow null, we can't do anything
+                if t is None: continue
                 # Is this the first type with a date we've seen?
                 # If so, create the tags with recent as a suffix
                 if t not in recentgiven and r[recentdatefield] is not None:
