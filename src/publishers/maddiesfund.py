@@ -116,8 +116,8 @@ class MaddiesFundPublisher(AbstractPublisher):
 
         # Now find animals who have been sent previously and have a new/changed vaccination since then
         sql = "%s WHERE a.Archived = 0 AND " \
-            "EXISTS(SELECT AnimalID FROM animalpublished p INNER JOIN animalvaccination av ON av.AnimalID = a.ID WHERE p.AnimalID = a.ID AND " \
-            "PublishedTo = 'maddiesfund' AND (SentDate < av.CreatedDate OR SentDate < av.LastChangedDate))" % animal.get_animal_query(self.dbo)
+            "EXISTS(SELECT p.AnimalID FROM animalpublished p INNER JOIN animalvaccination av ON av.AnimalID = a.ID WHERE p.AnimalID = a.ID AND " \
+            "p.PublishedTo = 'maddiesfund' AND (p.SentDate < av.CreatedDate OR p.SentDate < av.LastChangedDate))" % animal.get_animal_query(self.dbo)
         animals += self.dbo.query(sql, [cutoff], distincton="ID")
 
         if len(animals) == 0:
