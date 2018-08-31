@@ -23,7 +23,7 @@ VERSIONS = (
     33907, 33908, 33909, 33911, 33912, 33913, 33914, 33915, 33916, 34000, 34001, 
     34002, 34003, 34004, 34005, 34006, 34007, 34008, 34009, 34010, 34011, 34012,
     34013, 34014, 34015, 34016, 34017, 34018, 34019, 34020, 34021, 34022, 34100,
-    34101, 34102, 34103, 34104, 34105, 34106, 34107, 34108, 34109
+    34101, 34102, 34103, 34104, 34105, 34106, 34107, 34108, 34109, 34110
 )
 
 LATEST_VERSION = VERSIONS[-1]
@@ -152,6 +152,7 @@ def sql_structure(dbo):
         fint("FieldType"),
         fint("DisplayIndex"),
         fint("Mandatory"),
+        fint("NewRecord"),
         fint("Searchable", True) ), False)
     sql += index("additionalfield_LinkType", "additionalfield", "LinkType")
 
@@ -4966,4 +4967,9 @@ def update_34109(dbo):
     for t in tables:
         for c in cols:
             drop_column(dbo, t, c)
+
+def update_34110(dbo):
+    # Add additionalfield.NewRecord
+    add_column(dbo, "additionalfield", "NewRecord", dbo.type_integer)
+    dbo.execute_dbupdate("UPDATE additionalfield SET NewRecord = Mandatory")
 

@@ -392,8 +392,8 @@
                         html.list_to_options(self.options.sites, "ID", "SITENAME"));
                     // Add jurisdictions
                     dialogadd.find(".personchooser-jurisdiction").html(html.list_to_options(self.options.jurisdictions, "ID", "JURISDICTIONNAME"));
-                    // Add mandatory additional fields
-                    dialogadd.find("table").append(additional.additional_mandatory_fields(d.additional, false, "additional chooser"));
+                    // Add new additional fields
+                    dialogadd.find("table").append(additional.additional_new_fields(d.additional, false, "additional chooser"));
 
                     // Was there a value already set by the markup? If so, use it
                     if (self.element.val() != "" && self.element.val() != "0") {

@@ -1,6 +1,8 @@
 41
 ================
 
+31/08/18 Fix long-standing bug in additional field default values #474
+31/08/18 Separate additional fields on records from mandatory flag #474
 27/08/18 RECENT wordkeys should use DateRequired if incomplete vacc set #477
 27/08/18 Long term animal alert should obey sites
 23/08/18 Update MPA when a new vacc is added or existing one changed

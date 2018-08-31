@@ -21,6 +21,7 @@ $(function() {
                         options: { displayfield: "FIELDTYPE", valuefield: "ID", rows: controller.fieldtypes }},
                     { json_field: "LINKTYPE", post_field: "link", label: _("Link"), type: "select", 
                         options: { displayfield: "LINKTYPE", valuefield: "ID", rows: controller.linktypes }},
+                    { json_field: "NEWRECORD", post_field: "newrecord", label: _("Show on new record screens"), type: "check" },
                     { json_field: "MANDATORY", post_field: "mandatory", label: _("Mandatory"), type: "check" },
                     { json_field: "SEARCHABLE", post_field: "searchable", label: _("Searchable"), type: "check" },
                     { json_field: "DISPLAYINDEX", post_field: "displayindex", label: _("Display Index"), type: "number", defaultval: "0" },
@@ -50,6 +51,7 @@ $(function() {
                     { field: "FIELDLABEL", display: _("Label") },
                     { field: "FIELDTYPENAME", display: _("Type") },
                     { field: "LINKTYPENAME", display: _("Link") },
+                    { field: "NEWRECORD", display: _("New Record"), formatter: function(row) { if (row.NEWRECORD == 1) { return _("Yes"); } return _("No"); }},
                     { field: "MANDATORY", display: _("Mandatory"), formatter: function(row) { if (row.MANDATORY == 1) { return _("Yes"); } return _("No"); }},
                     { field: "SEARCHABLE", display: _("Searchable"), formatter: function(row) { if (row.SEARCHABLE == 1) { return _("Yes"); } return _("No"); }},
                     { field: "DISPLAYINDEX", display: _("Index") }

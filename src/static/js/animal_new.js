@@ -288,7 +288,7 @@ $(function() {
                 '<input id="timebroughtin" data="timebroughtin" class="asm-textbox asm-timebox" />',
                 '</td>',
                 '</tr>',
-                additional.additional_mandatory_fields(controller.additional),
+                additional.additional_new_fields(controller.additional),
                 '</table>',
                 '<div class="centered">',
                 '<button id="addedit">' + html.icon("animal-add") + ' ' + _("Create and edit") + '</button>',
@@ -447,7 +447,7 @@ $(function() {
 
         reset: function() {
 
-            $(".asm-textbox").val("").change();
+            $("#animalname, #dateofbirth, #weight, #weightlb").val("").change();
             $(".asm-checkbox").prop("checked", false).change();
             $(".asm-personchooser").personchooser("clear");
 
