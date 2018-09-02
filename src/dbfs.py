@@ -523,6 +523,8 @@ def switch_storage(dbo):
         try:
             filedata = source.get(r.id, r.url)
             target.put(r.id, r.name, filedata)
+            # Update the media size while we're switching in case it wasn't set previously
+            dbo.execute("UPDATE media SET MediaSize=? WHERE DBFSID=?", ( len(filedata), r.id ))
         except Exception as err:
             al.error("Error reading, skipping: %s" % str(err), "dbfs.switch_storage", dbo)
     # smcom only - perform postgresql full vacuum after switching
