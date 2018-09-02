@@ -431,7 +431,7 @@ def run(dbo, mode):
 
 def run_all_map_databases(mode):
     for alias in MULTIPLE_DATABASES_MAP.iterkeys():
-        dbo = db.get_multiple_database_info(alias)
+        dbo = db.get_database(alias)
         dbo.timeout = 0
         dbo.connection = dbo.connect()
         run(dbo, mode)
