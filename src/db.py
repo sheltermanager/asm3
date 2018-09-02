@@ -40,7 +40,7 @@ def _get_multiple_database_info(alias):
         dbo.database = "FAIL"
         return dbo
     mapinfo = MULTIPLE_DATABASES_MAP[alias]
-    dbo = get_database(mapinfo["dbtype"])
+    dbo = get_dbo(mapinfo["dbtype"])
     dbo.alias = alias
     dbo.dbtype = mapinfo["dbtype"]
     dbo.host = mapinfo["host"]
