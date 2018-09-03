@@ -841,9 +841,9 @@ $(function() {
             person.enable_widgets();
 
             // Map button
-            var map = person.get_map_url();
-            var maplinkref = String(asm.maplink).replace("{0}", map);
             $("#button-map").button().click(function() {
+                var mapq = person.get_map_url();
+                var maplinkref = String(asm.maplink).replace("{0}", mapq);
                 window.open(maplinkref, "_blank");
             });
 

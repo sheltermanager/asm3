@@ -325,7 +325,8 @@ $(function() {
                     { id: "document", text: _("Document"), type: "buttonmenu", icon: "document", tooltip: _("Generate a document from this incident") },
                     { id: "email", text: _("Email"), icon: "email", tooltip: _("Email incident notes to ACO") },
                     { id: "dispatch", text: _("Dispatch"), icon: "calendar", tooltip: _("Mark dispatched now") },
-                    { id: "respond", text: _("Respond"), icon: "calendar", tooltip: _("Mark responded now") }
+                    { id: "respond", text: _("Respond"), icon: "calendar", tooltip: _("Mark responded now") },
+                    { id: "map", text: _("Map"), icon: "map", tooltip: _("Find this address on a map") }
                 ]),
                 '<div id="asm-details-accordion">',
                 this.render_details(),
@@ -381,10 +382,10 @@ $(function() {
         },
 
         get_map_url: function() {
-            var add = $("#address").val().replace("\n", ",");
-            var town = $("#town").val();
-            var county = $("#county").val();
-            var postcode = $("#postcode").val();
+            var add = $("#dispatchaddress").val().replace("\n", ",");
+            var town = $("#dispatchtown").val();
+            var county = $("#dispatchcounty").val();
+            var postcode = $("#dispatchpostcode").val();
             var map = add;
             if (town != "") { map += "," + town; }
             if (county != "") { map += "," + county; }
@@ -568,6 +569,12 @@ $(function() {
                     $("#button-respond").button("disable");
                     validate.dirty(true);
                 }
+            });
+
+            $("#button-map").button().click(function() {
+                var mapq = incident.get_map_url();
+                var maplinkref = String(asm.maplink).replace("{0}", mapq);
+                window.open(maplinkref, "_blank");
             });
 
             $("#button-linkanimal")

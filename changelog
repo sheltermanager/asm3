@@ -1,6 +1,7 @@
 41
 ================
 
+03/09/18 Add "Open in map" to incident, calculate on click for incident/person
 03/09/18 Maddies Fund: Set new PetCode field
 31/08/18 Fix long-standing bug in additional field default values #474
 31/08/18 Separate additional fields on records from mandatory flag #474
