@@ -158,6 +158,7 @@ class MaddiesFundPublisher(AbstractPublisher):
                 # Build an adoption JSON object containing the adopter and animal
                 a = {
                     "PetID": an["ID"],
+                    "PetCode": an["SHELTERCODE"],
                     "Site": organisation,
                     "PetName": an["ANIMALNAME"],
                     "PetStatus": self.getPetStatus(an),
