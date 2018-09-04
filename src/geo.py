@@ -11,7 +11,7 @@ import i18n
 import threading
 import time
 import utils
-from sitedefs import BASE_URL, GEO_PROVIDER, GEO_PROVIDER_KEY, GEO_LOOKUP_TIMEOUT, GEO_SLEEP_AFTER
+from sitedefs import BASE_URL, GEO_PROVIDER, GEO_PROVIDER_KEY, GEO_LOOKUP_TIMEOUT, GEO_SLEEP_AFTER, GEO_SMCOM_URL
 
 GEO_NOMINATIM_URL = "https://nominatim.openstreetmap.org/search?format=json&street={street}&city={city}&state={state}&postalcode={zipcode}&country={country}"
 GEO_GOOGLE_URL = "https://maps.googleapis.com/maps/api/geocode/json?address={q}&sensor=false&key={key}"
@@ -71,6 +71,7 @@ class GeoProvider(object):
         self.url = self.url.replace("{county}", county).replace("{state}", county)
         self.url = self.url.replace("{postcode}", postcode).replace("{zipcode}", postcode)
         self.url = self.url.replace("{country}", country)
+        self.url = self.url.replace("{locale}", self.dbo.locale)
         self.url = self.url.replace("{key}", GEO_PROVIDER_KEY)
 
     def search(self):
@@ -124,6 +125,27 @@ class Google(GeoProvider):
             al.error("couldn't find geocode in google response. Status was %s: %s, %s" % (j["status"], str(err), self.response), "geo.parse_google", self.dbo)
             return "0,0,%s" % h
 
+class Smcom(GeoProvider):
+    """ Geocoding support from sheltermanager.com """
+    def __init__(self, dbo, address, town, county, postcode, country):
+        self.url = GEO_SMCOM_URL
+        GeoProvider.__init__(self, dbo, address, town, county, postcode, country)
+
+    def parse(self):
+        h = self.address_hash()
+        j = self.json_response
+        if len(j) == 0:
+            al.debug("no response from smcom for %s (response %s)" % (self.url, str(self.response)), "geo.parse_smcom", self.dbo)
+            return "0,0,%s" % h
+        try:
+            latlon = "%s,%s,%s" % (str(j["lat"]), str(j["lng"]), h)
+            al.debug("contacted smcom to get geocode for %s = %s" % (self.url, latlon), "geo.parse_smcom", self.dbo)
+            return latlon
+        except Exception as err:
+            al.error("couldn't find geocode in smcom response. Response was %s" % self.response, "geo.parse_google", self.dbo)
+            return "0,0,%s" % h
+
+
 def address_hash(address, town, county, postcode):
     """ Produces a hash of the address to include with latlon values """
     addrhash = "%s%s%s%s" % (address, town, county, postcode)
@@ -157,6 +179,8 @@ def get_lat_long(dbo, address, town, county, postcode, country = None):
             g = Nominatim(dbo, address, town, county, postcode, country)
         elif GEO_PROVIDER == "google":
             g = Google(dbo, address, town, county, postcode, country)
+        elif GEO_PROVIDER == "smcom":
+            g = Smcom(dbo, address, town, county, postcode, country)
         else:
             al.error("unrecognised geo provider: %s" % GEO_PROVIDER, "geo.get_lat_long", dbo)
             return None

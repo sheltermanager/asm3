@@ -156,6 +156,7 @@ OSM_MAP_TILES = "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" # (can be s
 
 GEO_PROVIDER = "nominatim"  # Geocode provider to use - nominatim or google
 GEO_PROVIDER_KEY = ""       # For google, the API key to use when making geocoding requests
+GEO_SMCOM_URL = ""
 GEO_BATCH = False           # Whether or not to try and lookup geocodes as part of the batch
 GEO_LIMIT = 100             # How many geocodes to lookup as part of the batch
 GEO_LOOKUP_TIMEOUT = 5      # Timeout when doing geocode lookups
