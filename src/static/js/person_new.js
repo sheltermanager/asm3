@@ -1,5 +1,5 @@
 /*jslint browser: true, forin: true, eqeq: true, white: true, sloppy: true, vars: true, nomen: true */
-/*global $, jQuery, _, additional, asm, common, config, controller, dlgfx, edit_header, format, geo, header, html, validate */
+/*global $, jQuery, _, additional, asm, common, config, controller, dlgfx, edit_header, format, header, html, validate */
 
 $(function() {
 
@@ -133,11 +133,6 @@ $(function() {
                     return; 
                 }
                 header.show_loading(_("Creating..."));
-                var address = $("#address").val(),
-                    town = $("#town").val(),
-                    county = $("#county").val(),
-                    postcode = $("#postcode").val();
-                var addrhash = geo.address_hash(address, town, county, postcode);
                 var formdata = $("input, textarea, select").not(".chooser").toPOST();
                 common.ajax_post("person_new", formdata)
                     .then(function(personid) {
@@ -148,14 +143,6 @@ $(function() {
                             header.show_info(_("Person successfully created"));
                         }
                         $("#asm-content button").button("enable");
-                        geo.get_lat_long(address, town, county, postcode)
-                            .then(function(lat, lon) {
-                                if (lat) {
-                                    var latlong = lat + "," + lon + "," + addrhash;
-                                    var formdata = "mode=latlong&personid=" + personid + "&latlong=" + latlong;
-                                    common.ajax_post("person", formdata);
-                                }
-                            });
                     })
                     .always(function() {
                         $("#asm-content button").button("enable");

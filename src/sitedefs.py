@@ -149,36 +149,17 @@ HTML_TO_PDF = "wkhtmltopdf --orientation %(orientation)s %(papersize)s %(input)s
 # Target for viewing an address on a map, {0} is the address
 MAP_LINK = "https://www.openstreetmap.org/search?query={0}"
 
-# Client side geocode provider for mapping address to lat/lng in the browser
-# can be "mapquest", "nominatim" or "google"
-GEO_PROVIDER = "nominatim"
-GEO_PROVIDER_KEY = ""
-
 # Map provider for rendering maps on the client, can be "osm" or "google"
 MAP_PROVIDER = "osm"
+MAP_PROVIDER_KEY = ""       # For google, the API key to use when making map requests
 OSM_MAP_TILES = "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" # (can be switched for cloudmade.com or other OSM slippy tiles)
 
-# Bulk geocode provider for server side geocoding of
-# historical data, can be "nominatim" or "google" or "" to disable.
-BULK_GEO_PROVIDER = "nominatim"
-BULK_GEO_PROVIDER_KEY = ""
-
-# Whether or not to try and complete blank geocodes as part of the batch
-BULK_GEO_BATCH = False
-
-# How many to do in the overnight batch each time
-BULK_GEO_LIMIT = 100
-
-# URLs for public geocoding services
-BULK_GEO_NOMINATIM_URL = "https://nominatim.openstreetmap.org/search?format=json&q={q}"
-BULK_GEO_GOOGLE_URL = "https://maps.googleapis.com/maps/api/geocode/json?address={q}&sensor=false"
-
-# Timeout when doing server side geocode lookups
-BULK_GEO_LOOKUP_TIMEOUT = 10
-
-# Sleep for this many seconds after a server side geocode request
-# (nominatim has a no more than 1 request/s limit)
-BULK_GEO_SLEEP_AFTER = 1
+GEO_PROVIDER = "nominatim"  # Geocode provider to use - nominatim or google
+GEO_PROVIDER_KEY = ""       # For google, the API key to use when making geocoding requests
+GEO_BATCH = False           # Whether or not to try and lookup geocodes as part of the batch
+GEO_LIMIT = 100             # How many geocodes to lookup as part of the batch
+GEO_LOOKUP_TIMEOUT = 5      # Timeout when doing geocode lookups
+GEO_SLEEP_AFTER = 1         # Sleep for seconds after a request to throttle (nominatim has a 1/s limit)
 
 # Enable the database field on login and allow login to multiple databases
 MULTIPLE_DATABASES = False

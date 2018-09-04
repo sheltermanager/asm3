@@ -1,5 +1,5 @@
 /*jslint browser: true, forin: true, eqeq: true, white: true, sloppy: true, vars: true, nomen: true */
-/*global $, jQuery, _, asm, additional, common, config, controller, dlgfx, edit_header, format, geo, header, html, mapping, tableform, validate */
+/*global $, jQuery, _, asm, additional, common, config, controller, dlgfx, edit_header, format, header, html, mapping, tableform, validate */
 
 $(function() {
 
@@ -401,32 +401,6 @@ $(function() {
             }, 50);
         },
 
-        get_geocode: function(showminimap) {
-            // Gets the geocode for the dispatch address. If showminimap is true,
-            // displays the minimap as well.
-            var i = controller.incident;
-            var addrhash = geo.address_hash(i.DISPATCHADDRESS, i.DISPATCHTOWN, i.DISPATCHCOUNTY, i.DISPATCHPOSTCODE);
-            // Do we already have a LATLONG? If it's upto date,
-            // just show the map position
-            if (i.DISPATCHLATLONG) {
-                var b = i.DISPATCHLATLONG.split(",");
-                if (b[2] == addrhash) {
-                    incident.show_mini_map();
-                    return;
-                }
-            }
-            // Lookup the LATLONG and then show the map
-            geo.get_lat_long(i.DISPATCHADDRESS, i.DISPATCHTOWN, i.DISPATCHCOUNTY, i.DISPATCHPOSTCODE)
-                .then(function(lat, lon) {
-                    var latlon = lat + "," + lon + "," + addrhash;
-                    i.DISPATCHLATLONG = latlon;
-                    $("#latlong").val(latlon);
-                    // We updated the latlong, rather than dirtying the form, send it to the DB
-                    common.ajax_post("incident", "mode=latlong&incidentid=" + i.ACID + "&latlong=" + encodeURIComponent(latlon));
-                    if (showminimap) { incident.show_mini_map(); }
-                });
-        },
-
         validation: function() {
 
             // Remove any previous errors
@@ -467,7 +441,7 @@ $(function() {
                     // No map api likes being loaded in a hidden div and this avoids that
                     if (config.bool("ShowPersonMiniMap") && $("#dispatchaddress").val()) {
                         if ($("#asm-details-accordion").accordion("option", "active") == 2) {
-                            incident.get_geocode(true);
+                            incident.show_mini_map();
                         }
                     }
                 }

@@ -860,6 +860,9 @@ def map_link_override(dbo):
 def map_provider_override(dbo):
     return cstring(dbo, "MapProviderOverride")
 
+def map_provider_key_override(dbo):
+    return cstring(dbo, "MapProviderKeyOverride")
+
 def match_species(dbo):
     return cint(dbo, "MatchSpecies", 5)
 

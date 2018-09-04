@@ -1,6 +1,7 @@
 41
 ================
 
+04/09/18 Remove all client side geocoding in favour of simpler server side code
 03/09/18 Add "Open in map" to incident, calculate on click for incident/person
 03/09/18 Maddies Fund: Set new PetCode field
 31/08/18 Fix long-standing bug in additional field default values #474

@@ -49,7 +49,7 @@ import utils
 import waitinglist as extwaitinglist
 import web
 import wordprocessor
-from sitedefs import BASE_URL, DEPLOYMENT_TYPE, ELECTRONIC_SIGNATURES, EMERGENCY_NOTICE, FORGOTTEN_PASSWORD, FORGOTTEN_PASSWORD_LABEL, LARGE_FILES_CHUNKED, LOCALE, GEO_PROVIDER, GEO_PROVIDER_KEY, JQUERY_UI_CSS, LEAFLET_CSS, LEAFLET_JS, MULTIPLE_DATABASES, MULTIPLE_DATABASES_PUBLISH_URL, MULTIPLE_DATABASES_PUBLISH_FTP, ADMIN_EMAIL, EMAIL_ERRORS, MADDIES_FUND_TOKEN_URL, MANUAL_HTML_URL, MANUAL_PDF_URL, MANUAL_FAQ_URL, MANUAL_VIDEO_URL, MAP_LINK, MAP_PROVIDER, OSM_MAP_TILES, FOUNDANIMALS_FTP_USER, PETLINK_BASE_URL, PETRESCUE_URL, PETSLOCATED_FTP_USER, QR_IMG_SRC, SERVICE_URL, SESSION_SECURE_COOKIE, SESSION_DEBUG, SHARE_BUTTON, SMARTTAG_FTP_USER, SMCOM_LOGIN_URL, SMCOM_PAYMENT_LINK, VETENVOY_US_VENDOR_PASSWORD, VETENVOY_US_VENDOR_USERID
+from sitedefs import BASE_URL, DEPLOYMENT_TYPE, ELECTRONIC_SIGNATURES, EMERGENCY_NOTICE, FORGOTTEN_PASSWORD, FORGOTTEN_PASSWORD_LABEL, LARGE_FILES_CHUNKED, LOCALE, JQUERY_UI_CSS, LEAFLET_CSS, LEAFLET_JS, MULTIPLE_DATABASES, MULTIPLE_DATABASES_PUBLISH_URL, MULTIPLE_DATABASES_PUBLISH_FTP, ADMIN_EMAIL, EMAIL_ERRORS, MADDIES_FUND_TOKEN_URL, MANUAL_HTML_URL, MANUAL_PDF_URL, MANUAL_FAQ_URL, MANUAL_VIDEO_URL, MAP_LINK, MAP_PROVIDER, MAP_PROVIDER_KEY, OSM_MAP_TILES, FOUNDANIMALS_FTP_USER, PETLINK_BASE_URL, PETRESCUE_URL, PETSLOCATED_FTP_USER, QR_IMG_SRC, SERVICE_URL, SESSION_SECURE_COOKIE, SESSION_DEBUG, SHARE_BUTTON, SMARTTAG_FTP_USER, SMCOM_LOGIN_URL, SMCOM_PAYMENT_LINK, VETENVOY_US_VENDOR_PASSWORD, VETENVOY_US_VENDOR_USERID
 
 CACHE_ONE_HOUR = 3600
 CACHE_ONE_DAY = 86400
@@ -473,15 +473,12 @@ class configjs(ASMEndpoint):
         if len(us) > 0:
             emailaddress = utils.nulltostr(us[0]["EMAILADDRESS"])
             realname = utils.nulltostr(us[0]["REALNAME"])
-        geoprovider = GEO_PROVIDER
-        geoprovidero = configuration.geo_provider_override(dbo)
-        if geoprovidero != "": geoprovider = geoprovidero
-        geoproviderkey = GEO_PROVIDER_KEY
-        geoproviderkeyo = configuration.geo_provider_key_override(dbo)
-        if geoproviderkeyo != "": geoproviderkey = geoproviderkeyo
         mapprovider = MAP_PROVIDER
         mapprovidero = configuration.map_provider_override(dbo)
+        mapproviderkey = MAP_PROVIDER_KEY
+        mapproviderkeyo = configuration.map_provider_key_override(dbo)
         if mapprovidero != "": mapprovider = mapprovidero
+        if mapproviderkeyo != "": mapproviderkey = mapproviderkeyo
         maplink = MAP_LINK
         maplinko = configuration.map_link_override(dbo)
         if maplinko != "": maplinko = maplink
@@ -515,13 +512,12 @@ class configjs(ASMEndpoint):
             "smcomexpiry": expirydate,
             "smcomexpirydisplay": expirydatedisplay,
             "smcompaymentlink": SMCOM_PAYMENT_LINK.replace("{alias}", dbo.alias).replace("{database}", dbo.database),
-            "geoprovider": geoprovider,
-            "geoproviderkey": geoproviderkey,
             "jqueryuicss": JQUERY_UI_CSS,
             "leafletcss": LEAFLET_CSS,
             "leafletjs": LEAFLET_JS,
             "maplink": maplink,
             "mapprovider": mapprovider,
+            "mapproviderkey": mapproviderkey,
             "osmmaptiles": OSM_MAP_TILES,
             "hascustomlogo": dbfs.file_exists(dbo, "logo.jpg"),
             "mobileapp": o.session.mobileapp,

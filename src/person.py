@@ -15,7 +15,7 @@ import reports
 import users
 import utils
 from i18n import _, add_days, date_diff_days, format_time, python2display, subtract_years, now
-from sitedefs import BULK_GEO_BATCH, BULK_GEO_LIMIT
+from sitedefs import GEO_BATCH, GEO_LIMIT
 
 ASCENDING = 0
 DESCENDING = 1
@@ -681,6 +681,9 @@ def insert_person_from_form(dbo, post, username):
         log.add_log(dbo, username, log.PERSON, pid, configuration.gdpr_contact_change_log_type(dbo),
             "%s" % (newvalue))
 
+    # Look up a geocode for the person's address
+    update_geocode(dbo, pid, "", post["address"], post["town"], post["county"], post["postcode"])
+
     return pid
 
 def update_person_from_form(dbo, post, username):
@@ -758,6 +761,9 @@ def update_person_from_form(dbo, post, username):
 
     # Save any additional field values given
     additional.save_values_for_link(dbo, post, pid, "person")
+
+    # Check/update the geocode for the person's address
+    update_geocode(dbo, pid, post["latlong"], post["address"], post["town"], post["county"], post["postcode"])
 
 def update_flags(dbo, username, personid, flags):
     """
@@ -971,7 +977,28 @@ def update_pass_homecheck(dbo, user, personid, comments):
         com = dbo.query_string("SELECT Comments FROM owner WHERE ID = ?", [personid])
         com += "\n" + comments
         dbo.update("owner", personid, { "Comments": "%s\n%s" % (com, comments) }, user)
-  
+
+def update_geocode(dbo, personid, latlon="", address="", town="", county="", postcode=""):
+    """
+    Looks up the geocode for this person with the address info given.
+    If latlon is already set to a value, checks the address hash to see if it
+    matches and does not do the geocode if it does.
+    """
+    # If an address hasn't been specified, look it up from the personid given
+    if address == "":
+        row = dbo.first_row(dbo.query("SELECT OwnerAddress, OwnerTown, OwnerCounty, OwnerPostcode FROM owner WHERE ID=?", [personid]))
+        address = row.OWNERADDRESS
+        town = row.OWNERTOWN
+        county = row.OWNERCOUNTY
+        postcode = row.OWNERPOSTCODE
+    # If a latlon has been passed and it contains a hash of the address elements,
+    # then the address hasn't changed since the last geocode was done - do nothing
+    if latlon != "":
+        if latlon.find(geo.address_hash(address, town, county, postcode)) != -1:
+            return
+    # Do the geocode
+    update_latlong(dbo, personid, geo.get_lat_long(dbo, address, town, county, postcode))
+
 def update_latlong(dbo, personid, latlong):
     """
     Updates the latlong field.
@@ -1255,11 +1282,11 @@ def update_missing_geocodes(dbo):
     a lot of historical data don't end up tying up the daily
     batch for a long time, they'll just slowly complete over time.
     """
-    if not BULK_GEO_BATCH:
-        al.warn("BULK_GEO_BATCH is False, skipping", "update_missing_geocodes", dbo)
+    if not GEO_BATCH:
+        al.warn("GEO_BATCH is False, skipping", "update_missing_geocodes", dbo)
         return
     people = dbo.query("SELECT ID, OwnerAddress, OwnerTown, OwnerCounty, OwnerPostcode " \
-        "FROM owner WHERE LatLong Is Null OR LatLong = '' ORDER BY CreatedDate DESC", limit=BULK_GEO_LIMIT)
+        "FROM owner WHERE LatLong Is Null OR LatLong = '' ORDER BY CreatedDate DESC", limit=GEO_LIMIT)
     batch = []
     for p in people:
         latlong = geo.get_lat_long(dbo, p.OWNERADDRESS, p.OWNERTOWN, p.OWNERCOUNTY, p.OWNERPOSTCODE)

@@ -5,6 +5,7 @@ import audit
 import configuration
 import dbfs
 import diary
+import geo
 import log
 import media
 import users
@@ -323,6 +324,33 @@ def get_traploan_two_dates(dbo, start, end):
     return dbo.query(get_traploan_query(dbo) + \
         "WHERE ReturnDate Is Null AND ReturnDueDate >= ? AND ReturnDueDate <= ?", (start, end))
 
+def update_dispatch_geocode(dbo, incidentid, latlon="", address="", town="", county="", postcode=""):
+    """
+    Looks up the geocode for this incident with the address info given.
+    If latlon is already set to a value, checks the address hash to see if it
+    matches and does not do the geocode if it does.
+    """
+    # If an address hasn't been specified, look it up from the incidentid given
+    if address == "":
+        row = dbo.first_row(dbo.query("SELECT DispatchAddress, DispatchTown, DispatchCounty, DispatchPostcode FROM animalcontrol WHERE ID=?", [incidentid]))
+        address = row.DISPATCHADDRESS
+        town = row.DISPATCHTOWN
+        county = row.DISPATCHCOUNTY
+        postcode = row.DISPATCHPOSTCODE
+    # If a latlon has been passed and it contains a hash of the address elements,
+    # then the address hasn't changed since the last geocode was done - do nothing
+    if latlon != "":
+        if latlon.find(geo.address_hash(address, town, county, postcode)) != -1:
+            return
+    # Do the geocode
+    update_dispatch_latlong(dbo, incidentid, geo.get_lat_long(dbo, address, town, county, postcode))
+
+def update_dispatch_latlong(dbo, incidentid, latlong):
+    """
+    Updates the latlong field on an incident.
+    """
+    dbo.update("animalcontrol", incidentid, { "DispatchLatLong": latlong })
+
 def update_animalcontrol_completenow(dbo, acid, username, completetype):
     """
     Updates an animal control incident record, marking it completed now with the type specified
@@ -402,6 +430,9 @@ def update_animalcontrol_from_form(dbo, post, username):
 
     additional.save_values_for_link(dbo, post, acid, "incident")
     update_animalcontrol_roles(dbo, acid, post.integer_list("viewroles"), post.integer_list("editroles"))
+
+    # Check/update the geocode for the dispatch address
+    update_dispatch_geocode(dbo, acid, post["dispatchlatlong"], post["dispatchaddress"], post["dispatchtown"], post["dispatchcounty"], post["dispatchpostcode"])
 
 def update_animalcontrol_roles(dbo, acid, viewroles, editroles):
     """
@@ -493,6 +524,10 @@ def insert_animalcontrol_from_form(dbo, post, username):
 
     additional.save_values_for_link(dbo, post, nid, "incident")
     update_animalcontrol_roles(dbo, nid, post.integer_list("viewroles"), post.integer_list("editroles"))
+
+    # Look up a geocode for the dispatch address
+    update_dispatch_geocode(dbo, nid, "", post["dispatchaddress"], post["dispatchtown"], post["dispatchcounty"], post["dispatchpostcode"])
+
     return nid
 
 def delete_animalcontrol(dbo, username, acid):
@@ -558,13 +593,5 @@ def delete_traploan(dbo, username, tid):
     Deletes a traploan record
     """
     dbo.delete("ownertraploan", tid, username)
-
-def update_dispatch_latlong(dbo, incidentid, latlong):
-    """
-    Updates the dispatch latlong field.
-    """
-    dbo.update("animalcontrol", incidentid, {
-        "DispatchLatLong":  latlong
-    })
 
 
