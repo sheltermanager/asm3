@@ -592,7 +592,7 @@ def update_owner_names(dbo):
     al.debug("regenerated %d owner names and codes" % len(own), "person.update_owner_names", dbo)
     return "OK %d" % len(own)
 
-def insert_person_from_form(dbo, post, username):
+def insert_person_from_form(dbo, post, username, geocode=True):
     """
     Creates a new person record from incoming form data
     Returns the ID of the new record
@@ -682,7 +682,7 @@ def insert_person_from_form(dbo, post, username):
             "%s" % (newvalue))
 
     # Look up a geocode for the person's address
-    update_geocode(dbo, pid, "", post["address"], post["town"], post["county"], post["postcode"])
+    if geocode: update_geocode(dbo, pid, "", post["address"], post["town"], post["county"], post["postcode"])
 
     return pid
 

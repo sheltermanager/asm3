@@ -458,7 +458,7 @@ def csvimport(dbo, csvdata, encoding = "utf8", createmissinglookups = False, cle
                         if len(dups) > 0:
                             a["originalowner"] = str(dups[0]["ID"])
                     if "originalowner" not in a:
-                        ooid = person.insert_person_from_form(dbo, utils.PostedData(p, dbo.locale), "import")
+                        ooid = person.insert_person_from_form(dbo, utils.PostedData(p, dbo.locale), "import", geocode=False)
                         a["originalowner"] = str(ooid)
                         # Identify an ORIGINALOWNERADDITIONAL additional fields and create them
                         create_additional_fields(dbo, row, errors, rowno, "ORIGINALOWNERADDITIONAL", "person", ooid)
@@ -544,7 +544,7 @@ def csvimport(dbo, csvdata, encoding = "utf8", createmissinglookups = False, cle
                         person.merge_flags(dbo, "import", personid, flags)
                         person.merge_person_details(dbo, "import", personid, p)
                 if personid == 0:
-                    personid = person.insert_person_from_form(dbo, utils.PostedData(p, dbo.locale), "import")
+                    personid = person.insert_person_from_form(dbo, utils.PostedData(p, dbo.locale), "import", geocode=False)
                     # Identify any PERSONADDITIONAL additional fields and create them
                     create_additional_fields(dbo, row, errors, rowno, "PERSONADDITIONAL", "person", personid)
             except Exception as e:
@@ -725,7 +725,7 @@ def csvimport_paypal(dbo, csvdata, donationtypeid, donationpaymentid, flags):
                 person.merge_flags(dbo, "import", personid, flags)
                 person.merge_person_details(dbo, "import", personid, p)
             if personid == 0:
-                personid = person.insert_person_from_form(dbo, utils.PostedData(p, dbo.locale), "import")
+                personid = person.insert_person_from_form(dbo, utils.PostedData(p, dbo.locale), "import", geocode=False)
         except Exception as e:
             row_error(errors, "person", rowno, r, e, dbo, sys.exc_info())
 
