@@ -339,7 +339,7 @@ def update_dispatch_geocode(dbo, incidentid, latlon="", address="", town="", cou
         postcode = row.DISPATCHPOSTCODE
     # If a latlon has been passed and it contains a hash of the address elements,
     # then the address hasn't changed since the last geocode was done - do nothing
-    if latlon != "":
+    if latlon is not None and latlon != "":
         if latlon.find(geo.address_hash(address, town, county, postcode)) != -1:
             return latlon
     # Do the geocode
