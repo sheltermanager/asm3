@@ -993,11 +993,13 @@ def update_geocode(dbo, personid, latlon="", address="", town="", county="", pos
         postcode = row.OWNERPOSTCODE
     # If a latlon has been passed and it contains a hash of the address elements,
     # then the address hasn't changed since the last geocode was done - do nothing
-    if latlon != "":
+    if latlon is not None and latlon != "":
         if latlon.find(geo.address_hash(address, town, county, postcode)) != -1:
-            return
+            return latlon
     # Do the geocode
-    update_latlong(dbo, personid, geo.get_lat_long(dbo, address, town, county, postcode))
+    latlon = geo.get_lat_long(dbo, address, town, county, postcode)
+    update_latlong(dbo, personid, latlon)
+    return latlon
 
 def update_latlong(dbo, personid, latlong):
     """

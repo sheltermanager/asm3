@@ -341,9 +341,11 @@ def update_dispatch_geocode(dbo, incidentid, latlon="", address="", town="", cou
     # then the address hasn't changed since the last geocode was done - do nothing
     if latlon != "":
         if latlon.find(geo.address_hash(address, town, county, postcode)) != -1:
-            return
+            return latlon
     # Do the geocode
-    update_dispatch_latlong(dbo, incidentid, geo.get_lat_long(dbo, address, town, county, postcode))
+    latlon = geo.get_lat_long(dbo, address, town, county, postcode)
+    update_dispatch_latlong(dbo, incidentid, latlon)
+    return latlon
 
 def update_dispatch_latlong(dbo, incidentid, latlong):
     """

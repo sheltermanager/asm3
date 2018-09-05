@@ -2819,8 +2819,11 @@ class incident(JSONEndpoint):
         dbo = o.dbo
         a = extanimalcontrol.get_animalcontrol(dbo, o.post.integer("id"))
         extanimalcontrol.check_view_permission(dbo, o.user, o.session, o.post.integer("id"))
-        if o.siteid != 0 and a["SITEID"] != 0 and o.siteid != a["SITEID"]:
+        if o.siteid != 0 and a.SITEID != 0 and o.siteid != a.SITEID:
             raise utils.ASMPermissionError("incident not in user site")
+        if (a.DISPATCHLATLONG is None or a.DISPATCHLATLONG == "") and a.DISPATCHADDRESS != "":
+            a.DISPATCHLATLONG = extanimalcontrol.update_dispatch_geocode(dbo, a.ID, \
+                a.DISPATCHLATLONG, a.DISPATCHADDRESS, a.DISPATCHTOWN, a.DISPATCHCOUNTY, a.DISPATCHPOSTCODE)
         if a is None: self.notfound()
         al.debug("open incident %s %s %s" % (a["ACID"], a["INCIDENTNAME"], python2display(o.locale, a["INCIDENTDATETIME"])), "code.incident", dbo)
         return {
@@ -4124,16 +4127,18 @@ class person(JSONEndpoint):
         p = extperson.get_person(dbo, o.post.integer("id"))
         if p is None: 
             self.notfound()
-        if p["ISSTAFF"] == 1:
+        if p.ISSTAFF == 1:
             self.check(users.VIEW_STAFF)
-        if p["ISVOLUNTEER"] == 1:
+        if p.ISVOLUNTEER == 1:
             self.check(users.VIEW_VOLUNTEER)
-        if o.siteid != 0 and p["SITEID"] != 0 and o.siteid != p["SITEID"]:
+        if o.siteid != 0 and p.SITEID != 0 and o.siteid != p.SITEID:
             raise utils.ASMPermissionError("person not in user site")
+        if (p.LATLONG is None or p.LATLONG == "") and p.OWNERADDRESS != "":
+            p.LATLONG = extperson.update_geocode(dbo, p.ID, p.LATLONG, p.OWNERADDRESS, p.OWNERTOWN, p.OWNERCOUNTY, p.OWNERPOSTCODE)
         upid = users.get_personid(dbo, o.user)
         if upid != 0 and upid == p.id:
             raise utils.ASMPermissionError("cannot view user staff record")
-        al.debug("opened person '%s'" % p["OWNERNAME"], "code.person", dbo)
+        al.debug("opened person '%s'" % p.OWNERNAME, "code.person", dbo)
         return {
             "additional": extadditional.get_additional_fields(dbo, p.id, "person"),
             "animaltypes": extlookups.get_animal_types(dbo),
