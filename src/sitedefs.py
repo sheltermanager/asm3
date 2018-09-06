@@ -152,7 +152,7 @@ MAP_LINK = "https://www.openstreetmap.org/search?query={0}"
 # Map provider for rendering maps on the client, can be "osm" or "google"
 MAP_PROVIDER = "osm"
 MAP_PROVIDER_KEY = ""       # For google, the API key to use when making map requests
-OSM_MAP_TILES = "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" # (can be switched for cloudmade.com or other OSM slippy tiles)
+OSM_MAP_TILES = "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" 
 
 GEO_PROVIDER = "nominatim"  # Geocode provider to use - nominatim or google
 GEO_PROVIDER_KEY = ""       # For google, the API key to use when making geocoding requests
