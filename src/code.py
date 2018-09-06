@@ -2818,13 +2818,13 @@ class incident(JSONEndpoint):
     def controller(self, o):
         dbo = o.dbo
         a = extanimalcontrol.get_animalcontrol(dbo, o.post.integer("id"))
+        if a is None: self.notfound()
         extanimalcontrol.check_view_permission(dbo, o.user, o.session, o.post.integer("id"))
         if o.siteid != 0 and a.SITEID != 0 and o.siteid != a.SITEID:
             raise utils.ASMPermissionError("incident not in user site")
         if (a.DISPATCHLATLONG is None or a.DISPATCHLATLONG == "") and a.DISPATCHADDRESS != "":
             a.DISPATCHLATLONG = extanimalcontrol.update_dispatch_geocode(dbo, a.ID, \
                 a.DISPATCHLATLONG, a.DISPATCHADDRESS, a.DISPATCHTOWN, a.DISPATCHCOUNTY, a.DISPATCHPOSTCODE)
-        if a is None: self.notfound()
         al.debug("open incident %s %s %s" % (a["ACID"], a["INCIDENTNAME"], python2display(o.locale, a["INCIDENTDATETIME"])), "code.incident", dbo)
         return {
             "agegroups": configuration.age_groups(dbo),
