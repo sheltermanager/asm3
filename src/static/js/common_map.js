@@ -73,7 +73,9 @@
                 var map = L.map(divid).setView([ll[0], ll[1]], 15);
                 L.Icon.Default.imagePath = asm.leafletjs.substring(0, asm.leafletjs.lastIndexOf("/")) + "/images/";
                 L.tileLayer(asm.osmmaptiles, {
-                    attribution: '&copy; <a target="_blank" href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+                    attribution: '<a target="_blank" href="http://osm.org/copyright">&copy; OpenStreetMap contributors</a> | ' + 
+                        '<a target="_blank" href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a> | ' + 
+                        '<a target="_blank" href="https://www.openstreetmap.org/fixthemap">Improve this map</a>'
                 }).addTo(map);
                 L.control.scale().addTo(map);
                 $.each(markers, function(i, v) {
