@@ -1,6 +1,8 @@
 41
 ================
 
+07/09/18 PetRescue: title case animal names to not set off all caps validation
+07/09/18 Fix for bug that always enabled VetEnvoy publishers
 04/09/18 Remove all client side geocoding in favour of simpler server side code
 03/09/18 Add "Open in map" to incident, calculate on click for incident/person
 03/09/18 Maddies Fund: Set new PetCode field

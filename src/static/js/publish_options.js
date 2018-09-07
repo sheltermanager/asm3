@@ -903,9 +903,9 @@ $(function() {
                 var ep = [];
                 $(".enablecheck").each(function() {
                     var c = $(this), k = c.attr("id").replace("enabled", "");
-                    if (c.is(":checked")) { ep.push(k); }
                     // VetEnvoy has two publishers - enable them both if VetEnvoy is on
-                    if (k == "ve") { ep.push("veha"); ep.push("vear"); }
+                    if (c.is(":checked") && k == "ve") { ep.push("veha"); ep.push("vear"); }
+                    else if (c.is(":checked")) { ep.push(k); }
                 });
                 return encodeURIComponent(ep.join(" "));
             };
