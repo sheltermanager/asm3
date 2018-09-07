@@ -114,8 +114,8 @@ class PetRescuePublisher(AbstractPublisher):
                 else: coat = "medium_coat"
 
                 origin = ""
-                if an.ISTRANSFER == 1 and an.BROUGHTINBYOWNERNAME.lower().find("pound") == -1: origin = "shelter_transfer"
-                elif an.ISTRANSFER == 1 and an.BROUGHTINBYOWNERNAME.lower().find("pound") != -1: origin = "pound_transfer"
+                if an.ISTRANSFER == 1 and str(an.BROUGHTINBYOWNERNAME).lower().find("pound") == -1: origin = "shelter_transfer"
+                elif an.ISTRANSFER == 1 and str(an.BROUGHTINBYOWNERNAME).lower().find("pound") != -1: origin = "pound_transfer"
                 elif an.ORIGINALOWNERID > 0: origin = "owner_surrender"
                 else: origin = "community_cat"
 
