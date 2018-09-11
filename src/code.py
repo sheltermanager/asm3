@@ -5139,7 +5139,7 @@ class staff_rota(JSONEndpoint):
     def controller(self, o):
         dbo = o.dbo
         startdate = o.post.date("start")
-        if startdate is None: startdate = monday_of_week(now())
+        if startdate is None: startdate = monday_of_week(dbo.today())
         rota = extperson.get_rota(dbo, startdate, add_days(startdate, 7))
         al.debug("got %d rota items" % len(rota), "code.staff_rota", dbo)
         return {
