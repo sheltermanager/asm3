@@ -1734,7 +1734,7 @@
          * node: A jquery dom node of the select box to populate
          * includeall: Have an all/(all) option at the top of the list
          */
-        person_flag_options: function(p, flags, node, includeall) {
+        person_flag_options: function(p, flags, node, include_all, include_previous_adopter) {
 
             var opt = [];
             var field_option = function(fieldname, post, label) {
@@ -1780,13 +1780,17 @@
                 h.push({ label: _("UK Giftaid"), html: field_option("ISGIFTAID", "giftaid", _("UK Giftaid"))});
             }
 
+            if (include_previous_adopter) {
+                h.push({ label: _("Previous Adopter"), html: field_option("", "padopter", _("Previous Adopter"))});
+            }
+
             $.each(flags, function(i, v) {
                 h.push({ label: v.FLAG, html: flag_option(v.FLAG) });
             });
 
             h.sort(common.sort_single("label"));
 
-            if (includeall) {
+            if (include_all) {
                 opt.push('<option value="all">' + _("(all)") + '</option>');
             }
 

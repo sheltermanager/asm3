@@ -474,6 +474,7 @@ def get_person_find_advanced(dbo, criteria, username, includeStaff = False, incl
             elif flag == "giftaid": ss.ands.append("o.IsGiftAid=1")
             elif flag == "vet": ss.ands.append("o.IsVet=1")
             elif flag == "volunteer": ss.ands.append("o.IsVolunteer=1")
+            elif flag == "padopter": ss.ands.append("EXISTS(SELECT OwnerID FROM adoption WHERE OwnerID = o.ID AND MovementType=1)")
             else: 
                 ss.ands.append("LOWER(o.AdditionalFlags) LIKE ?")
                 ss.values.append("%%%s%%" % flag.lower())

@@ -294,7 +294,7 @@ $(function() {
 
         sync: function() {
             // Load the full set of flags into the select
-            html.person_flag_options(null, controller.flags, $("#flags"), false);
+            html.person_flag_options(null, controller.flags, $("#flags"));
             // Now remove irrelevant built in flags (staff/volunteer are a given,
             // banned, donor, deceased and homechecked don't make sense)
             $.each([ "banned", "deceased", "donor", "homechecked" ], function(i, v) {

@@ -4803,7 +4803,7 @@ msgstr ""
 msgid "Find staff/volunteer"
 msgstr ""
 
-#: person.js
+#: person.js incident.js
 msgid "Find this address on a map"
 msgstr ""
 
@@ -6783,7 +6783,7 @@ msgstr ""
 msgid "Manx"
 msgstr ""
 
-#: person.js reports.js reports.py
+#: person.js reports.js incident.js reports.py
 msgid "Map"
 msgstr ""
 
@@ -8466,6 +8466,10 @@ msgstr ""
 
 #: common.js
 msgid "Previous"
+msgstr ""
+
+#: common.js
+msgid "Previous Adopter"
 msgstr ""
 
 #: onlineform_incoming.js

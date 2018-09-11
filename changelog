@@ -1,6 +1,8 @@
 41
 ================
 
+11/09/18 Include previous adopter virtual flag on advanced find person #476
+11/09/18 Fix time bug in staff rota when generating "today" on mondays
 10/09/18 Subtract 0.5 for currency rounding problems with negative amounts #480
 10/09/18 Add en_NA Namibian locale
 07/09/18 PetRescue: title case animal names to not set off all caps validation
