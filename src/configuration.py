@@ -1154,6 +1154,12 @@ def waiting_list_rank_by_species(dbo):
     return cboolean(dbo, "WaitingListRankBySpecies")
 
 def waiting_list_highlights(dbo, newhighlights = "READ"):
+    if newhighlights == "READ":
+        return cstring(dbo, "WaitingListHighlights")
+    else:
+        cset(dbo, "WaitingListHighlights", newhighlights + " ")
+
+def waiting_list_view_columns(dbo):
     return cstring(dbo, "WaitingListViewColumns", DEFAULTS["WaitingListViewColumns"])
 
 def waiting_list_urgency_update_period(dbo):
