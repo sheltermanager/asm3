@@ -6,6 +6,7 @@
 
 import al
 import cachemem
+import configuration
 import json
 import i18n
 import threading
@@ -159,8 +160,6 @@ def get_lat_long(dbo, address, town, county, postcode, country = None):
     and returns them as lat,long,hash
     If no results were found, a zero lat and long are returned so that
     we know not to try and look this up again until the address hash changes.
-    NB: dbo is only used for contextual reference in logging and obtaining locale, 
-        no database calls are made by any of this code.
     """
 
     if address.strip() == "":
@@ -171,8 +170,12 @@ def get_lat_long(dbo, address, town, county, postcode, country = None):
         # abusing our geo provider
         lat_long_lock.acquire()
 
+        # Use the country passed. If no country was passed, check
+        # if one has been set with the shelter details in settings,
+        # otherwise use the country from the user's locale.
         if country is None: 
-            country = i18n.get_country(dbo.locale)
+            country = configuration.organisation_country(dbo)
+            if country == "": country = i18n.get_country(dbo.locale)
 
         g = None
         if GEO_PROVIDER == "nominatim":

@@ -1,6 +1,7 @@
 41
 ================
 
+11/09/18 Add English/Japan locale, allow country override on options for geocoding
 11/09/18 Include previous adopter virtual flag on advanced find person #476
 11/09/18 Fix time bug in staff rota when generating "today" on mondays
 10/09/18 Subtract 0.5 for currency rounding problems with negative amounts #480
