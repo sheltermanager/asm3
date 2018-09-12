@@ -73,6 +73,7 @@ class GeoProvider(object):
         self.url = self.url.replace("{postcode}", postcode).replace("{zipcode}", postcode)
         self.url = self.url.replace("{country}", country)
         self.url = self.url.replace("{locale}", self.dbo.locale)
+        self.url = self.url.replace("{account}", self.dbo.database)
         self.url = self.url.replace("{key}", GEO_PROVIDER_KEY)
 
     def search(self):
