@@ -984,6 +984,8 @@ class Report:
                 if crid == 0:
                     self._p("Custom report '" + fields[1] + "' doesn't exist.")
                     valid = False
+                    startkey = out.find("{", startkey+1)
+                    continue
 
                 # Create our list of parameters from the fields passed
                 # to the subreport key. They are accessed as PARENTARGX
@@ -1642,7 +1644,7 @@ class Report:
                     if gd.fieldName not in rs[row]:
                         self._p("Cannot construct group, field '%s' does not exist" % gd.fieldName)
                         return
-                    if cascade or not gd.lastFieldValue == rs[row][gd.fieldName]:
+                    if cascade or gd.lastFieldValue != rs[row][gd.fieldName]:
                         # Mark this one for update
                         gd.forceFinish = True
                         gd.lastGroupEndPosition = row - 1
@@ -1660,10 +1662,16 @@ class Report:
             # Do each header in ascending order
             for gd in groups:
                 if gd.forceFinish or first_record:
-                    # Mark the position
+                    # Mark the start position
                     gd.lastGroupStartPosition = row
-                    gd.lastGroupEndPosition = row
-
+                    gd.lastGroupEndPosition = len(rs)-1
+                    # Find the end position of the group so that
+                    # calculations work in headers
+                    groupval = rs[row][gd.fieldName]
+                    for trow in range(row, len(rs)):
+                        if groupval != rs[trow][gd.fieldName]:
+                            gd.lastGroupEndPosition = trow-1
+                            break
                     # Output the header, switching field values
                     # and calculating any totals
                     self._OutputGroupBlock(gd, HEADER, rs)
@@ -1767,6 +1775,8 @@ class Report:
                     if crid == 0:
                         self._p("Custom report '" + fields[1] + "' doesn't exist.")
                         valid = False
+                        startkey = tempbody.find("{", startkey+1)
+                        continue
 
                     # Create our list of parameters from the fields passed
                     # to the subreport key. They are accessed as PARENTARGX
