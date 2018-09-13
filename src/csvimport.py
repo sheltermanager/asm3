@@ -543,6 +543,7 @@ def csvimport(dbo, csvdata, encoding = "utf8", createmissinglookups = False, cle
                         personid = dups[0]["ID"]
                         # Merge flags and any extra details
                         person.merge_flags(dbo, "import", personid, flags)
+                        person.merge_gdpr_flags(dbo, "import", personid, p["gdprcontactoptin"])
                         person.merge_person_details(dbo, "import", personid, p)
                 if personid == 0:
                     personid = person.insert_person_from_form(dbo, utils.PostedData(p, dbo.locale), "import", geocode=False)

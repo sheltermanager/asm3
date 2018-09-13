@@ -864,6 +864,7 @@ def create_person(dbo, username, collationid):
             personid = similar[0].ID
             # Merge flags and any extra details
             person.merge_flags(dbo, username, personid, flags)
+            if "gdprcontactoptin" in d: person.merge_gdpr_flags(dbo, "import", personid, d["gdprcontactoptin"])
             person.merge_person_details(dbo, username, personid, d)
     # Create the person record if we didn't find one
     if personid == 0:

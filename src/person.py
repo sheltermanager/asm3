@@ -836,6 +836,19 @@ def merge_person_details(dbo, username, personid, d):
     merge("mobiletelephone", "MOBILETELEPHONE")
     merge("emailaddress", "EMAILADDRESS")
 
+def merge_gdpr_flags(dbo, username, personid, flags):
+    """
+    Merges the delimited string flags wtih those on personid.gdprcontactoptin
+    The original person record is updated and the new list of GDPR flags is returned 
+    as a pipe delimited string.
+    """
+    if flags is None or flags == "": return ""
+    fgs = flags.split(",")
+    epf = dbo.query_string("SELECT GDPRContactOptIn FROM owner WHERE ID = ?", [personid])
+    fgs += epf.split(",")
+    dbo.update("owner", personid, { "GDPRContactOptIn": ",".join(fgs) })
+    return ",".join(fgs)
+
 def merge_flags(dbo, username, personid, flags):
     """
     Merges the delimited string flags with those on personid
@@ -894,6 +907,9 @@ def merge_person(dbo, username, personid, mergepersonid):
 
     # Merge any flags from the target
     merge_flags(dbo, username, personid, mp.ADDITIONALFLAGS)
+
+    # Mergy any GDPR flags from the target
+    merge_gdpr_flags(dbo, username, personid, mp.GDPRCONTACTOPTIN)
 
     # Reparent all satellite records
     reparent("adoption", "OwnerID")
