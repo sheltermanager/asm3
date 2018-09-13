@@ -13,6 +13,8 @@
 
   
   
+  
+  
 
   
 
@@ -22,28 +24,21 @@
 
   
 
-  
-  
-    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-  
-
-  
-
-  
-        <link rel="index" title="Index"
-              href="genindex.html"/>
-        <link rel="search" title="Search" href="search.html"/>
-    <link rel="top" title="ASM 41u documentation" href="index.html"/>
-        <link rel="next" title="Options" href="options.html"/>
-        <link rel="prev" title="Mail Merge Sources" href="mailmerge.html"/> 
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Options" href="options.html" />
+    <link rel="prev" title="Mail Merge Sources" href="mailmerge.html" /> 
 
   
   <script src="_static/js/modernizr.min.js"></script>
 
 </head>
 
-<body class="wy-body-for-nav" role="document">
+<body class="wy-body-for-nav">
 
+   
   <div class="wy-grid-for-nav">
 
     
@@ -84,7 +79,10 @@
           
             
             
-                <ul class="current">
+              
+            
+            
+              <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="foreword.html">Foreword</a></li>
 <li class="toctree-l1"><a class="reference internal" href="gettingstarted.html">Getting Started</a></li>
 <li class="toctree-l1"><a class="reference internal" href="searching.html">Search</a></li>
@@ -120,6 +118,7 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#user-roles">User roles</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#export-animals-as-csv">Export Animals as CSV</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#import-a-csv-file">Import a CSV file</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#import-a-paypal-csv-file">Import a PayPal CSV file</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#trigger-batch-processes">Trigger Batch Processes</a></li>
@@ -144,34 +143,54 @@
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
 
       
-      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
-        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-        <a href="index.html">ASM</a>
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">ASM</a>
+        
       </nav>
 
 
-      
       <div class="wy-nav-content">
+        
         <div class="rst-content">
+        
           
 
- 
+
+
+
+
+
+
+
+
+
+
+
 
 
 
 <div role="navigation" aria-label="breadcrumbs navigation">
+
   <ul class="wy-breadcrumbs">
-    <li><a href="index.html">Docs</a> &raquo;</li>
-      
-    <li>Configuration</li>
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Configuration</li>
+    
+    
       <li class="wy-breadcrumbs-aside">
         
-          
-            <a href="_sources/configuration.txt" rel="nofollow"> View page source</a>
+            
+            <a href="_sources/configuration.rst.txt" rel="nofollow"> View page source</a>
           
         
       </li>
+    
   </ul>
+
+  
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
@@ -199,20 +218,20 @@ be pipe-separated, eg: Item 1 | Item 2 | Item 3</p>
 <p>If you selected a field type of “Yes/No” then “Lookup Items” can optionally
 hold a pair of values that ASM will use. You can use this to supply your own
 text for Yes/No fields in the web publisher and document templates. The default
-if you don&#8217;t supply a Lookup Items for a Yes/No field is 0=Yes|1=No</p>
+if you don’t supply a Lookup Items for a Yes/No field is 0=Yes|1=No</p>
 <p>The mandatory checkbox allows you to mark a field as mandatory (ie. Will not
 let a user save until they have supplied a value). Mandatory additional fields
 will appear on the new screen for a record where non-mandatory ones do not.</p>
 <p>The searchable checkbox allows you to include the additional field in global
 searches using the search box at the top right of every screen. Pay careful
 attention to your use of this as unnecessarily marking fields searchable can
-slow things down. It&#8217;s best generally to only make an additional field searchable
+slow things down. It’s best generally to only make an additional field searchable
 if that field contains a unique string to identify the record (for example,
 Driving Licence ID).</p>
-<p>Here&#8217;s a worked example: To add a new field to the animal screen to say whether
+<p>Here’s a worked example: To add a new field to the animal screen to say whether
 the animal has been tested for kennel cough, create a new additional field and
 enter the following values:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span>Name: KennelCough
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>Name: KennelCough
 Label: Kennel Cough Tested?
 Tooltip: Tick this box if the animal has been tested for kennel cough
 Mandatory: No
@@ -231,7 +250,7 @@ is animal additional tab, 1 is person additional tab).</p>
 <p>You can access additional fields in reports by using a subquery. For example,
 to output a list of all our animal names with the new KennelCough field we
 defined:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">SELECT</span> <span class="n">a</span><span class="o">.</span><span class="n">AnimalName</span><span class="p">,</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">SELECT</span> <span class="n">a</span><span class="o">.</span><span class="n">AnimalName</span><span class="p">,</span>
     <span class="p">(</span><span class="n">SELECT</span> <span class="n">ad</span><span class="o">.</span><span class="n">VALUE</span> <span class="n">FROM</span> <span class="n">additional</span> <span class="n">ad</span>
      <span class="n">INNER</span> <span class="n">JOIN</span> <span class="n">additionalfield</span> <span class="n">af</span> <span class="n">ON</span> <span class="n">af</span><span class="o">.</span><span class="n">ID</span> <span class="o">=</span> <span class="n">ad</span><span class="o">.</span><span class="n">AdditionalFieldID</span>
      <span class="n">WHERE</span> <span class="n">ad</span><span class="o">.</span><span class="n">LinkID</span> <span class="o">=</span> <span class="n">a</span><span class="o">.</span><span class="n">ID</span> <span class="n">AND</span> <span class="n">af</span><span class="o">.</span><span class="n">FieldName</span> <span class="o">=</span> <span class="s1">&#39;KennelCough&#39;</span><span class="p">)</span> <span class="n">AS</span> <span class="n">KennelCough</span>
@@ -250,7 +269,7 @@ inactive so that they cannot be chosen for new records, but are retained for
 compatibility with existing records.</p>
 <img alt="_images/lookup_data_publisher.png" src="_images/lookup_data_publisher.png" />
 <p>Some lookups, such as breed, species and color allow you to choose a matching
-&#8220;Publisher&#8221; item. These are the items that will be sent to AdoptAPet, PetFinder
+“Publisher” item. These are the items that will be sent to AdoptAPet, PetFinder
 and other third party adoption sites when transmitting adoptable animal data.</p>
 </div>
 <div class="section" id="document-templates">
@@ -267,7 +286,7 @@ wordkeys.</p>
 “Browse sheltermanager.com” button allows you to browse reports from the online
 repository and choose reports, graphs and mail merges to install.</p>
 <p>The “Edit Header/Footer” button allows you to modify the HTML header that is
-prepended and footer that is appended to reports when they&#8217;re run.</p>
+prepended and footer that is appended to reports when they’re run.</p>
 <div class="section" id="extra-images">
 <h3>Extra Images<a class="headerlink" href="#extra-images" title="Permalink to this headline">¶</a></h3>
 <p>The “Extra Images” button allows you to upload additional images for use in
@@ -280,7 +299,7 @@ some of its standard pictures:</p>
 have any image media. You cannot delete this image, however you can upload a
 new image called nopic.jpg to replace it.</li>
 <li>logo.jpg – this is the image the system will use for the home logo at the top
-left corner. By default, it&#8217;s the ASM logo but it can be changed for your
+left corner. By default, it’s the ASM logo but it can be changed for your
 shelter. Ideally, your logo should not be more than 32 pixels high, but the
 system will scale down larger images.</li>
 <li>splash.jpg – this is the image the system will show on the login screen
@@ -295,11 +314,11 @@ instead of the default ASM splash screens. Your splash image should be
 every person who uses Animal Shelter Manager have their own login and user name
 (when a user is finished, they should navigate to <span class="menuselection">User ‣
 Logout</span> to prepare the system for the next user) - simply to make sure that
-people do not get other people&#8217;s work attributed to them on the audit trails.</p>
+people do not get other people’s work attributed to them on the audit trails.</p>
 <p>Whilst editing a user, you can choose absolutely everything that user may do
 within the system by assigning one or more appropriate roles. If you set the
-user type to &#8220;superuser&#8221;, the user has full administrative privileges to the
-system. If you choose &#8220;normal user&#8221;, you will need to set permissions for
+user type to “superuser”, the user has full administrative privileges to the
+system. If you choose “normal user”, you will need to set permissions for
 the user by assigning roles.</p>
 <p>If you set an email address for the user and configure email, you can have the
 system send diary notes and messages via email to users.</p>
@@ -340,6 +359,19 @@ not at that site without having to configure individual location filters.</p>
 When you edit a role, ASM will show you a huge number of tickboxes to determine
 what any user with that role is allowed to do within the system.</p>
 </div>
+<div class="section" id="export-animals-as-csv">
+<h2>Export Animals as CSV<a class="headerlink" href="#export-animals-as-csv" title="Permalink to this headline">¶</a></h2>
+<p>ASM can export your animal data to a CSV file. This format of CSV file is the one
+used by the “Import a CSV file” screen. You can use this function to export data
+to a file that you can give to other ASM users to import into their database.</p>
+<p>When importing CSV files produced by this function, make sure you turn on the
+“Merge duplicates” option. It is necessary because files generated by this export
+use repeated lines of animal data to contain the medical, movement and financial
+history.</p>
+<p>A number of pre-set filters are available. You can choose to export all animals
+in your database, just those who are currently on the shelter or a selection
+of the current on shelter animals.</p>
+</div>
 <div class="section" id="import-a-csv-file">
 <h2>Import a CSV file<a class="headerlink" href="#import-a-csv-file" title="Permalink to this headline">¶</a></h2>
 <p>ASM can import data from a CSV file.</p>
@@ -361,16 +393,16 @@ created and linked to the person (and movement if one was available).</p>
 <p>If a column is not supplied, then ASM will use the default as set under the
 default tab in Settings-Options. For example, not setting ANIMALTYPE will cause
 ASM to use the default animal type.</p>
-<p>ASM prefers the ANIMALDOB field to set the date of birth, but if you don&#8217;t have
+<p>ASM prefers the ANIMALDOB field to set the date of birth, but if you don’t have
 it, it will calculate the date of birth from the ANIMLAGE field (which it
 assumes to be an integer number of years). If neither are set, it will use
-today&#8217;s date as a last resort.</p>
+today’s date as a last resort.</p>
 <p>If ANIMALBREED2 is not set, the animal is assumed to be a purebreed of
 ANIMALBREED1. If ANIMALBREED2 is set and is different from ANIMALBREED1, then
 the crossbreed flag will be set on the resulting animal.</p>
 <p>If the “Create missing lookup values” option is on, and the file contains a
 value that is not present in the database (for example, if you have “Goldfish”
-in the ANIMALSPECIES column, but it isn&#8217;t a species in your database), then it
+in the ANIMALSPECIES column, but it isn’t a species in your database), then it
 will be created during the import and the animal linked to it.</p>
 <p>If the “Clear tables before importing” option is on, ASM will remove all data
 from the animal, person, movement and donation tables before doing the import.
@@ -385,10 +417,10 @@ it will not be created again.</p>
 </div>
 <div class="section" id="import-a-paypal-csv-file">
 <h2>Import a PayPal CSV file<a class="headerlink" href="#import-a-paypal-csv-file" title="Permalink to this headline">¶</a></h2>
-<p>ASM can import data from CSV files produced by PayPal&#8217;s activity reporting.</p>
+<p>ASM can import data from CSV files produced by PayPal’s activity reporting.</p>
 <p>The import process allows you to choose a payment type and method for the
-imported transactions and any flags you&#8217;d like to assign to people records
-created or updated as a result of the import. The import will use the person&#8217;s
+imported transactions and any flags you’d like to assign to people records
+created or updated as a result of the import. The import will use the person’s
 email or name and address to try and automatically attach payments to existing
 person records where possible. If an existing record cannot be found, a new
 person will be created.</p>
@@ -408,15 +440,16 @@ database for other users. They should be used sparingly.</p>
 
 
            </div>
+           
           </div>
           <footer>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="options.html" class="btn btn-neutral float-right" title="Options" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="options.html" class="btn btn-neutral float-right" title="Options" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="mailmerge.html" class="btn btn-neutral" title="Mail Merge Sources" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="mailmerge.html" class="btn btn-neutral" title="Mail Merge Sources" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
@@ -429,7 +462,7 @@ database for other users. They should be used sparingly.</p>
 
     </p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
 
@@ -448,9 +481,11 @@ database for other users. They should be used sparingly.</p>
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
             VERSION:'41u',
+            LANGUAGE:'None',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
-            HAS_SOURCE:  true
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
         };
     </script>
       <script type="text/javascript" src="_static/jquery.js"></script>
@@ -459,19 +494,13 @@ database for other users. They should be used sparingly.</p>
 
   
 
-  
-  
-    <script type="text/javascript" src="_static/js/theme.js"></script>
-  
+  <script type="text/javascript" src="_static/js/theme.js"></script>
 
-  
-  
   <script type="text/javascript">
       jQuery(function () {
-          SphinxRtdTheme.StickyNav.enable();
+          SphinxRtdTheme.Navigation.enable(true);
       });
-  </script>
-   
+  </script> 
 
 </body>
 </html>

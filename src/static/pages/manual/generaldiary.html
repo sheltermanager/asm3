@@ -13,6 +13,8 @@
 
   
   
+  
+  
 
   
 
@@ -22,28 +24,21 @@
 
   
 
-  
-  
-    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-  
-
-  
-
-  
-        <link rel="index" title="Index"
-              href="genindex.html"/>
-        <link rel="search" title="Search" href="search.html"/>
-    <link rel="top" title="ASM 41u documentation" href="index.html"/>
-        <link rel="next" title="Accounts" href="accounts.html"/>
-        <link rel="prev" title="Waiting List" href="waitinglist.html"/> 
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Accounts" href="accounts.html" />
+    <link rel="prev" title="Waiting List" href="waitinglist.html" /> 
 
   
   <script src="_static/js/modernizr.min.js"></script>
 
 </head>
 
-<body class="wy-body-for-nav" role="document">
+<body class="wy-body-for-nav">
 
+   
   <div class="wy-grid-for-nav">
 
     
@@ -84,7 +79,10 @@
           
             
             
-                <ul class="current">
+              
+            
+            
+              <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="foreword.html">Foreword</a></li>
 <li class="toctree-l1"><a class="reference internal" href="gettingstarted.html">Getting Started</a></li>
 <li class="toctree-l1"><a class="reference internal" href="searching.html">Search</a></li>
@@ -137,34 +135,54 @@
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
 
       
-      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
-        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-        <a href="index.html">ASM</a>
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">ASM</a>
+        
       </nav>
 
 
-      
       <div class="wy-nav-content">
+        
         <div class="rst-content">
+        
           
 
- 
+
+
+
+
+
+
+
+
+
+
+
 
 
 
 <div role="navigation" aria-label="breadcrumbs navigation">
+
   <ul class="wy-breadcrumbs">
-    <li><a href="index.html">Docs</a> &raquo;</li>
-      
-    <li>General Diary</li>
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>General Diary</li>
+    
+    
       <li class="wy-breadcrumbs-aside">
         
-          
-            <a href="_sources/generaldiary.txt" rel="nofollow"> View page source</a>
+            
+            <a href="_sources/generaldiary.rst.txt" rel="nofollow"> View page source</a>
           
         
       </li>
+    
   </ul>
+
+  
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
@@ -178,8 +196,8 @@ date and time.</p>
 <p>Each user of the system has their own view into the general diary and they can
 monitor both diary notes that have been issued to them by other staff members
 and diary notes that they have created for other staff members. If you have
-email addresses for your user accounts and you&#8217;ve configured the system email
-account, you can have the system email everyone&#8217;s diary notes to them each day.</p>
+email addresses for your user accounts and you’ve configured the system email
+account, you can have the system email everyone’s diary notes to them each day.</p>
 <div class="section" id="add-a-new-diary-note">
 <h2>Add a new diary note<a class="headerlink" href="#add-a-new-diary-note" title="Permalink to this headline">¶</a></h2>
 <img alt="_images/diary_add.png" src="_images/diary_add.png" />
@@ -259,13 +277,13 @@ before it.</p>
 <p>If we created another task for after the operation, say “Check on the animal in
 a week”, then we would set the day pivot to 7, because the task comes after the
 operation and it should generate a reminder 7 days from the operation.</p>
-<p>The next thing to look at is the content of the data itself - it&#8217;s alright
+<p>The next thing to look at is the content of the data itself - it’s alright
 having a task that says “Starve Animal” and “Neuter Animal”, but how do you
 know which animal? Simple, the wordkeys we use when generating documents can
 also be embedded in the subject and note text of a diary task, to be replaced
 by the real thing when the task is executed.</p>
 <p>This means that the subject of the starve task could be “Starve &lt;&lt;ShelterCode&gt;&gt;
-&lt;&lt;AnimalName&gt;&gt;” for example, which would give the note the animal&#8217;s shelter
+&lt;&lt;AnimalName&gt;&gt;” for example, which would give the note the animal’s shelter
 code and name in the subject line, so you knew which animal the diary note
 referred to.</p>
 <p>Even if your task has only one item, diary tasks are still handy to use because
@@ -289,15 +307,16 @@ to animals or owners.</p>
 
 
            </div>
+           
           </div>
           <footer>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="accounts.html" class="btn btn-neutral float-right" title="Accounts" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="accounts.html" class="btn btn-neutral float-right" title="Accounts" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="waitinglist.html" class="btn btn-neutral" title="Waiting List" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="waitinglist.html" class="btn btn-neutral" title="Waiting List" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
@@ -310,7 +329,7 @@ to animals or owners.</p>
 
     </p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
 
@@ -329,9 +348,11 @@ to animals or owners.</p>
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
             VERSION:'41u',
+            LANGUAGE:'None',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
-            HAS_SOURCE:  true
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
         };
     </script>
       <script type="text/javascript" src="_static/jquery.js"></script>
@@ -340,19 +361,13 @@ to animals or owners.</p>
 
   
 
-  
-  
-    <script type="text/javascript" src="_static/js/theme.js"></script>
-  
+  <script type="text/javascript" src="_static/js/theme.js"></script>
 
-  
-  
   <script type="text/javascript">
       jQuery(function () {
-          SphinxRtdTheme.StickyNav.enable();
+          SphinxRtdTheme.Navigation.enable(true);
       });
-  </script>
-   
+  </script> 
 
 </body>
 </html>

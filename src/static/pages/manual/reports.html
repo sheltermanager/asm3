@@ -13,6 +13,8 @@
 
   
   
+  
+  
 
   
 
@@ -22,28 +24,21 @@
 
   
 
-  
-  
-    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-  
-
-  
-
-  
-        <link rel="index" title="Index"
-              href="genindex.html"/>
-        <link rel="search" title="Search" href="search.html"/>
-    <link rel="top" title="ASM 41u documentation" href="index.html"/>
-        <link rel="next" title="Litters" href="litters.html"/>
-        <link rel="prev" title="Stock Control" href="stockcontrol.html"/> 
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Litters" href="litters.html" />
+    <link rel="prev" title="Stock Control" href="stockcontrol.html" /> 
 
   
   <script src="_static/js/modernizr.min.js"></script>
 
 </head>
 
-<body class="wy-body-for-nav" role="document">
+<body class="wy-body-for-nav">
 
+   
   <div class="wy-grid-for-nav">
 
     
@@ -84,7 +79,10 @@
           
             
             
-                <ul class="current">
+              
+            
+            
+              <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="foreword.html">Foreword</a></li>
 <li class="toctree-l1"><a class="reference internal" href="gettingstarted.html">Getting Started</a></li>
 <li class="toctree-l1"><a class="reference internal" href="searching.html">Search</a></li>
@@ -143,34 +141,54 @@
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
 
       
-      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
-        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-        <a href="index.html">ASM</a>
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">ASM</a>
+        
       </nav>
 
 
-      
       <div class="wy-nav-content">
+        
         <div class="rst-content">
+        
           
 
- 
+
+
+
+
+
+
+
+
+
+
+
 
 
 
 <div role="navigation" aria-label="breadcrumbs navigation">
+
   <ul class="wy-breadcrumbs">
-    <li><a href="index.html">Docs</a> &raquo;</li>
-      
-    <li>Reports</li>
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Reports</li>
+    
+    
       <li class="wy-breadcrumbs-aside">
         
-          
-            <a href="_sources/reports.txt" rel="nofollow"> View page source</a>
+            
+            <a href="_sources/reports.rst.txt" rel="nofollow"> View page source</a>
           
         
       </li>
+    
   </ul>
+
+  
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
@@ -183,7 +201,7 @@ fall broadly into the following categories.</p>
 <p>All reports are accessed from the Reports top level-menu. By default, ASM does
 not install with any reports. You must install them from
 <span class="menuselection">Settings ‣ Reports ‣ Browse sheltermanager.com</span> – this
-requires your ASM server to have access to the internet. There&#8217;s an “Install
+requires your ASM server to have access to the internet. There’s an “Install
 Recommended” button you can use to choose the default set to install.</p>
 <p>Some of the standard, most useful reports you should install are:</p>
 <ul class="simple">
@@ -248,8 +266,8 @@ the same language used for creating web pages on the internet.</p>
 HTML for you in a simple table format. It is worthwhile running this and then
 modifying the HTML afterwards.</p>
 <p>The editor will highlight the syntax of both languages for you, and if you
-press <code class="kbd docutils literal"><span class="pre">F11</span></code>, will allow you to edit in full screen mode. For SQL, you can use
-<code class="kbd docutils literal"><span class="pre">CTRL+SPACE</span></code> to get context-sensitive help with ASM&#8217;s tables and columns.</p>
+press <kbd class="kbd docutils literal notranslate">F11</kbd>, will allow you to edit in full screen mode. For SQL, you can use
+<kbd class="kbd docutils literal notranslate">CTRL+SPACE</kbd> to get context-sensitive help with ASM’s tables and columns.</p>
 <p>For some excellent beginner tutorials on both SQL and HTML, see
 www.w3schools.com</p>
 <div class="section" id="sql-keys">
@@ -260,12 +278,12 @@ only show animals of a particular species, etc?</p>
 <p>ASM offers SQL preprocessor instructions to allow you to substitute system
 information, or information requested from the user at report generation time.</p>
 <ul class="simple">
-<li>$USER$ - Substitutes the current user&#8217;s name.</li>
-<li>$LOCATIONFILTER$ - Substitutes the current user&#8217;s location filter (a comma
+<li>$USER$ - Substitutes the current user’s name.</li>
+<li>$LOCATIONFILTER$ - Substitutes the current user’s location filter (a comma
 separated string of internal location IDs) or a list of all internal location
 IDs if the user does not have a location filter.</li>
-<li>$SITE$ - Substitutes the current user&#8217;s site ID (multi-site only).</li>
-<li>$CURRENT_DATE$ - Substitutes today&#8217;s date in an appropriate string SQL format
+<li>$SITE$ - Substitutes the current user’s site ID (multi-site only).</li>
+<li>$CURRENT_DATE$ - Substitutes today’s date in an appropriate string SQL format
 for the current database. This saves you having to use NOW() or
 CURRENT_DATE() or various other SQL functions specific to one database.</li>
 <li>$PARENTKEY$ - Substitutes the field value named in the report calling this
@@ -279,7 +297,7 @@ access the parent AnimalName field with $PARENTARG3$. When you use this key
 in your report SQL, ASM assumes that this report is a subreport and will not
 display it on the menu.</li>
 <li>AS money[fieldname] – If you alias an output field so that it has the prefix
-“money” as its name, the report engine will make sure it&#8217;s formatted as a
+“money” as its name, the report engine will make sure it’s formatted as a
 currency and assume that its value is a whole integer money amount (where 1
 is 1 cent/pence/etc).</li>
 </ul>
@@ -288,12 +306,12 @@ is 1 cent/pence/etc).</li>
 <h3>ASK<a class="headerlink" href="#ask" title="Permalink to this headline">¶</a></h3>
 <p>Ask is quite a detailed key, which requests information from the user at
 generation time. The basic syntax is this:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span>$ASK [TYPE] [Message]$
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ASK [TYPE] [Message]$
 </pre></div>
 </div>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
-<p class="last">If you are substituting any kind of string value (ASK DATE or ASK STRING), you must wrap the ASK key inside string delimiters (the apostrophe &#8216;) otherwise you will get SQL errors.</p>
+<p class="last">If you are substituting any kind of string value (ASK DATE or ASK STRING), you must wrap the ASK key inside string delimiters (the apostrophe ‘) otherwise you will get SQL errors.</p>
 </div>
 <p>The types are outlined below:</p>
 <ul class="simple">
@@ -336,7 +354,7 @@ given a text box to enter the string in. The value substituted is the string.</l
 <p>VAR works just like ASK, the only difference is that instead of substituting
 the value into the SQL, it stores it to a variable name. You can then
 substitute the variable multiple times in your SQL:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span>$VAR &lt;varname&gt; [TYPE] [Message]$
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$VAR &lt;varname&gt; [TYPE] [Message]$
 </pre></div>
 </div>
 <p>The VAR tag should appear in your SQL before you reference the variable
@@ -344,7 +362,7 @@ created. The variable is substituted with $&#64;varname$</p>
 <p>This example shows a list of animals of a selected species brought in after the
 given date. The species and broughtinafter variables could be reused as many
 times as we like:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span>$VAR species SPECIES$
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$VAR species SPECIES$
 $VAR broughtinafter DATE The date the animals were brought in after$
 SELECT AnimalName, DateBroughtIn FROM animal
 WHERE SpeciesID=$@species$ AND DateBroughtIn &gt;= &#39;$@broughtinafter$&#39;
@@ -354,14 +372,14 @@ WHERE SpeciesID=$@species$ AND DateBroughtIn &gt;= &#39;$@broughtinafter$&#39;
 <div class="section" id="const">
 <h3>CONST<a class="headerlink" href="#const" title="Permalink to this headline">¶</a></h3>
 <p>CONST allows you to declare a constant value for later use in your query:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span>$CONST name=value$
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$CONST name=value$
 </pre></div>
 </div>
 <p>A constant must have a name and it can be accessed with $name$ (it does not
 require the &#64; prefix like variables).</p>
 <p>This example shows a list of all adopted animals and assigns the adoption
 movement type 1 to a constant:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span>$CONST MOVEADOPT=1$
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$CONST MOVEADOPT=1$
 
 SELECT AnimalName FROM animal WHERE ActiveMovementType = $MOVEADOPT$
 </pre></div>
@@ -373,11 +391,11 @@ SELECT AnimalName FROM animal WHERE ActiveMovementType = $MOVEADOPT$
 HTML. You define a number of “blocks” to your reports. Anyone who has used a
 reporting tool (eg: Microsoft Access or Crystal) will recognise these.</p>
 <ul class="simple">
-<li>$$HEADER ... HEADER$$ - The topmost section of the report should be entered
+<li>$$HEADER … HEADER$$ - The topmost section of the report should be entered
 here.</li>
-<li>$$FOOTER ... FOOTER$$ - The bottom most section of the report should be
+<li>$$FOOTER … FOOTER$$ - The bottom most section of the report should be
 entered here.</li>
-<li>$$BODY ... BODY$$ - The main section of your report where the detail goes.</li>
+<li>$$BODY … BODY$$ - The main section of your report where the detail goes.</li>
 <li>$$GROUP_&lt;field&gt; .. GROUP$$ - Optional grouping level. If you want to group by
 a particular field in the formatted output, you should add a group block.
 Within the group block you must also define a $$HEAD and $$FOOT section.</li>
@@ -389,7 +407,7 @@ supply a new one instead.</li>
 supply a new one instead.</li>
 </ul>
 <p>For example, to group on the OwnerName field:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span>$$GROUP_OwnerName
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$$GROUP_OwnerName
 $$HEAD
 &lt;h2&gt;$OwnerName&lt;/h2&gt;
 $$FOOT
@@ -421,14 +439,14 @@ number of decimal places to round to.</p>
 preferred image for the given animal ID. Animal IDs can be a $field from the
 selected data. If the optional sequence number is given, then a link to image
 seq (where seq is a 1-based count) for the animal is output instead. If seq
-is invalid, or the animal doesn&#8217;t have a preferred image the default system
+is invalid, or the animal doesn’t have a preferred image the default system
 nopic.jpg file is used instead.</p>
 </li>
 <li><p class="first">{CHIPMANUFACTURER.&lt;chipno&gt;} - (also valid in $$BODY) Returns the name of
 the microchip manufacturer of the given chip number.</p>
 </li>
 <li><p class="first">{QR.&lt;animalid&gt;[.size]} – (also valid in $$BODY) Returns a URL to the google
-charting api to generate a QR code with a link to this animal&#8217;s record for
+charting api to generate a QR code with a link to this animal’s record for
 mobile devices. If size is not set, then 150x150 is used. Eg:
 {QR.$ID.200x200}</p>
 </li>
@@ -460,7 +478,7 @@ subreport to access this value for filtering your data.</p>
 </ul>
 <p>Here is an example report to show all animals currently on the shelter, with
 their picture, grouped by their internal location and giving totals for each:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span>SELECT animal.ID, animal.AnimalName, animal.ShelterCode, internalLocation.LocationName
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>SELECT animal.ID, animal.AnimalName, animal.ShelterCode, internalLocation.LocationName
 FROM animal
 INNER JOIN internallocation ON
 animal.ShelterLocation = internallocation.ID
@@ -519,7 +537,7 @@ data on the legend.</li>
 from animal movements each year. Following our scheme, the Year column being
 first is the X axis label, TotalAmount is the first datapoint for that item on
 the X axis:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">SELECT</span> <span class="n">YEAR</span><span class="p">(</span><span class="n">DateReceived</span><span class="p">)</span> <span class="n">AS</span> <span class="n">Year</span><span class="p">,</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">SELECT</span> <span class="n">YEAR</span><span class="p">(</span><span class="n">DateReceived</span><span class="p">)</span> <span class="n">AS</span> <span class="n">Year</span><span class="p">,</span>
 <span class="n">SUM</span><span class="p">(</span><span class="n">ownerdonation</span><span class="o">.</span><span class="n">Donation</span><span class="p">)</span> <span class="n">AS</span> <span class="n">TotalAmount</span>
 <span class="n">FROM</span> <span class="n">ownerdonation</span>
 <span class="n">WHERE</span> <span class="n">MovementID</span> <span class="o">&gt;</span> <span class="mi">0</span>
@@ -570,7 +588,7 @@ series.</li>
 <p>For example, this SQL produces a graph that shows the number of donations made
 for over a year by internal location. Each location becomes a series with a set
 of data points for each month of the year:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span>SELECT i.LocationName,
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>SELECT i.LocationName,
 MONTH(ad.MovementDate) AS bimonth,
 COUNT(ad.Donation) AS total
 FROM adoption ad
@@ -592,7 +610,7 @@ is the LatLong marker for the map, and the second is the text to display in the
 popup when the marker is clicked.</p>
 <p>For example, this SQL will produce a map that shows the location of every
 person on file, with their address when the marker is clicked:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">SELECT</span> <span class="n">LatLong</span><span class="p">,</span> <span class="n">OwnerAddress</span> <span class="n">FROM</span> <span class="n">owner</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">SELECT</span> <span class="n">LatLong</span><span class="p">,</span> <span class="n">OwnerAddress</span> <span class="n">FROM</span> <span class="n">owner</span>
 </pre></div>
 </div>
 </div>
@@ -600,15 +618,16 @@ person on file, with their address when the marker is clicked:</p>
 
 
            </div>
+           
           </div>
           <footer>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="litters.html" class="btn btn-neutral float-right" title="Litters" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="litters.html" class="btn btn-neutral float-right" title="Litters" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="stockcontrol.html" class="btn btn-neutral" title="Stock Control" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="stockcontrol.html" class="btn btn-neutral" title="Stock Control" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
@@ -621,7 +640,7 @@ person on file, with their address when the marker is clicked:</p>
 
     </p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
 
@@ -640,9 +659,11 @@ person on file, with their address when the marker is clicked:</p>
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
             VERSION:'41u',
+            LANGUAGE:'None',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
-            HAS_SOURCE:  true
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
         };
     </script>
       <script type="text/javascript" src="_static/jquery.js"></script>
@@ -651,19 +672,13 @@ person on file, with their address when the marker is clicked:</p>
 
   
 
-  
-  
-    <script type="text/javascript" src="_static/js/theme.js"></script>
-  
+  <script type="text/javascript" src="_static/js/theme.js"></script>
 
-  
-  
   <script type="text/javascript">
       jQuery(function () {
-          SphinxRtdTheme.StickyNav.enable();
+          SphinxRtdTheme.Navigation.enable(true);
       });
-  </script>
-   
+  </script> 
 
 </body>
 </html>

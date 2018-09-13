@@ -13,6 +13,8 @@
 
   
   
+  
+  
 
   
 
@@ -22,28 +24,21 @@
 
   
 
-  
-  
-    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-  
-
-  
-
-  
-        <link rel="index" title="Index"
-              href="genindex.html"/>
-        <link rel="search" title="Search" href="search.html"/>
-    <link rel="top" title="ASM 41u documentation" href="index.html"/>
-        <link rel="next" title="Appendix: Entity Relationship Diagrams" href="relationships.html"/>
-        <link rel="prev" title="Appendix: CSV file import fields" href="csvimportfields.html"/> 
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Appendix: Entity Relationship Diagrams" href="relationships.html" />
+    <link rel="prev" title="Appendix: CSV file import fields" href="csvimportfields.html" /> 
 
   
   <script src="_static/js/modernizr.min.js"></script>
 
 </head>
 
-<body class="wy-body-for-nav" role="document">
+<body class="wy-body-for-nav">
 
+   
   <div class="wy-grid-for-nav">
 
     
@@ -84,7 +79,10 @@
           
             
             
-                <ul class="current">
+              
+            
+            
+              <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="foreword.html">Foreword</a></li>
 <li class="toctree-l1"><a class="reference internal" href="gettingstarted.html">Getting Started</a></li>
 <li class="toctree-l1"><a class="reference internal" href="searching.html">Search</a></li>
@@ -135,34 +133,54 @@
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
 
       
-      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
-        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-        <a href="index.html">ASM</a>
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">ASM</a>
+        
       </nav>
 
 
-      
       <div class="wy-nav-content">
+        
         <div class="rst-content">
+        
           
 
- 
+
+
+
+
+
+
+
+
+
+
+
 
 
 
 <div role="navigation" aria-label="breadcrumbs navigation">
+
   <ul class="wy-breadcrumbs">
-    <li><a href="index.html">Docs</a> &raquo;</li>
-      
-    <li>Appendix: Database Tables/Columns</li>
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Appendix: Database Tables/Columns</li>
+    
+    
       <li class="wy-breadcrumbs-aside">
         
-          
-            <a href="_sources/databasetables.txt" rel="nofollow"> View page source</a>
+            
+            <a href="_sources/databasetables.rst.txt" rel="nofollow"> View page source</a>
           
         
       </li>
+    
   </ul>
+
+  
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
@@ -257,7 +275,7 @@ A unique, incrementing number that identifies this record</dd>
 Link to the animaltype table</dd>
 <dt>AnimalName</dt>
 <dd>VARCHAR
-The animal&#8217;s name</dd>
+The animal’s name</dd>
 <dt>NonShelterAnimal</dt>
 <dd>INTEGER
 1 if the animal is a non-shelter animal (kept out of figures)</dd>
@@ -296,7 +314,7 @@ Link to lkcoattype table</dd>
 Distinguishing features field</dd>
 <dt>ShelterCode</dt>
 <dd>VARCHAR
-The animal&#8217;s shelter code</dd>
+The animal’s shelter code</dd>
 <dt>ShortCode</dt>
 <dd>VARCHAR
 The short version of the shelter code</dd>
@@ -311,13 +329,13 @@ The next NNN code is MAX(YearCodeID) for matching brought in year and type</dd>
 The acceptance number/Litter ID</dd>
 <dt>DateOfBirth</dt>
 <dd>TIMESTAMP
-The animal&#8217;s date of birth</dd>
+The animal’s date of birth</dd>
 <dt>AgeGroup</dt>
 <dd>VARCHAR
-The animal&#8217;s age group based on date of birth at the most recent time it entered the shelter</dd>
+The animal’s age group based on date of birth at the most recent time it entered the shelter</dd>
 <dt>AgeGroupActiveMovement</dt>
 <dd>VARCHAR
-The animal&#8217;s age group based on date of birth at the last time it left the shelter</dd>
+The animal’s age group based on date of birth at the last time it left the shelter</dd>
 <dt>DeceasedDate</dt>
 <dd>TIMESTAMP
 Date the animal died, if null the animal is still alive</dd>
@@ -329,7 +347,7 @@ Link to the lksex table</dd>
 1 if the animal is microchipped</dd>
 <dt>IdentichipNumber</dt>
 <dd>VARCHAR
-The animal&#8217;s microchip number</dd>
+The animal’s microchip number</dd>
 <dt>IdentichipDate</dt>
 <dd>TIMESTAMP
 The date the animal was microchipped</dd>
@@ -338,7 +356,7 @@ The date the animal was microchipped</dd>
 1 if the animal has an ear tattoo</dd>
 <dt>TattooNumber</dt>
 <dd>VARCHAR
-The animal&#8217;s tattoo number</dd>
+The animal’s tattoo number</dd>
 <dt>TattooDate</dt>
 <dd>TIMESTAMP
 The date the animal was tattooed</dd>
@@ -356,10 +374,10 @@ The date the animal was neutered/spayed</dd>
 Hidden animal comments</dd>
 <dt>AnimalComments</dt>
 <dd>VARCHAR
-The animal&#8217;s comments</dd>
+The animal’s comments</dd>
 <dt>OwnersVetID</dt>
 <dd>INTEGER
-Link to the owner&#8217;s vet (owner table, 0 for no value)</dd>
+Link to the owner’s vet (owner table, 0 for no value)</dd>
 <dt>CurrentVetID</dt>
 <dd>INTEGER
 Link to the current vet (owner table, 0 for no value)</dd>
@@ -374,7 +392,7 @@ Link to the owner who brought the animal in (owner table)</dd>
 Freeform text, reason animal was brought to shelter</dd>
 <dt>ReasonNO</dt>
 <dd>VARCHAR
-Freeform text, reason original owner didn&#8217;t bring the animal in</dd>
+Freeform text, reason original owner didn’t bring the animal in</dd>
 <dt>DateBroughtIn</dt>
 <dd>TIMESTAMP
 The date the animal was brought into the shelter</dd>
@@ -422,10 +440,10 @@ Link to the lksyesnoun table for yes/no/unknown</dd>
 Location on shelter (link to internallocation table)</dd>
 <dt>DiedOffShelter</dt>
 <dd>INTEGER
-1 if the animal died off shelter (won&#8217;t be included on figures reports)</dd>
+1 if the animal died off shelter (won’t be included on figures reports)</dd>
 <dt>Size</dt>
 <dd>INTEGER
-animal&#8217;s size (link to lksize table)</dd>
+animal’s size (link to lksize table)</dd>
 <dt>RabiesTag</dt>
 <dd>VARCHAR
 The rabies tag field</dd>
@@ -443,7 +461,7 @@ Link to lksmovementtype for the current movement type</dd>
 The current movement date</dd>
 <dt>ActiveMovementReturn</dt>
 <dd>TIMESTAMP
-The current movement&#8217;s return date</dd>
+The current movement’s return date</dd>
 <dt>HasActiveReserve</dt>
 <dd>INTEGER
 1 if the animal has an open reservation</dd>
@@ -452,7 +470,7 @@ The current movement&#8217;s return date</dd>
 1 if the animal is on trial adoption</dd>
 <dt>DisplayLocation</dt>
 <dd>VARCHAR
-Shows a readable version of the animal&#8217;s location. If on shelter, the internal location. If off shelter, the movementtype, accompanied by the person name.</dd>
+Shows a readable version of the animal’s location. If on shelter, the internal location. If off shelter, the movementtype, accompanied by the person name.</dd>
 <dt>MostRecentEntryDate</dt>
 <dd>TIMESTAMP
 The most recent entry date - either DateBroughtIn or ActiveMovementDate</dd>
@@ -574,7 +592,7 @@ The age group of the animal involved in the incident</dd>
 </div>
 <div class="section" id="dbfs">
 <h2>dbfs<a class="headerlink" href="#dbfs" title="Permalink to this headline">¶</a></h2>
-<p>The dbfs table holds a row for each file stored in ASM&#8217;s database. Name and
+<p>The dbfs table holds a row for each file stored in ASM’s database. Name and
 Path can be concatenated to form a full path. Eg: path = /templates name =
 cage_card.html</p>
 <dl class="docutils">
@@ -649,23 +667,23 @@ Optimistic lock flag</dd>
 </div>
 <div class="section" id="owner">
 <h2>owner<a class="headerlink" href="#owner" title="Permalink to this headline">¶</a></h2>
-<p>The owner table holds a row for every person stored in ASM&#8217;s database.</p>
+<p>The owner table holds a row for every person stored in ASM’s database.</p>
 <dl class="docutils">
 <dt>ID</dt>
 <dd>INTEGER
 A unique, incrementing number that identifies this record</dd>
 <dt>OwnerTitle</dt>
 <dd>VARCHAR
-The person&#8217;s title, eg: Mr</dd>
+The person’s title, eg: Mr</dd>
 <dt>OwnerInitials</dt>
 <dd>VARCHAR
-The person&#8217;s initials</dd>
+The person’s initials</dd>
 <dt>OwnerForeNames</dt>
 <dd>VARCHAR
-The person&#8217;s first name(s)</dd>
+The person’s first name(s)</dd>
 <dt>OwnerSurname</dt>
 <dd>VARCHAR
-The person&#8217;s surname</dd>
+The person’s surname</dd>
 <dt>OwnerName</dt>
 <dd>VARCHAR
 Title, Forenames and Surname concatenated together for display</dd>
@@ -707,7 +725,7 @@ The county or state (depending on locale)</dd>
 1 if this person is a shelter member</dd>
 <dt>MembershipExpiryDate</dt>
 <dd>TIMESTAMP
-The date this person&#8217;s membership expires</dd>
+The date this person’s membership expires</dd>
 <dt>MembershipNumber</dt>
 <dd>VARCHAR
 The membership number</dd>
@@ -755,7 +773,7 @@ Date any looking for match was added to this person</dd>
 Date this looking for info expires</dd>
 <dt>MatchActive</dt>
 <dd>INTEGER
-1 If we should consider this person&#8217;s looking for info when building the looking for report</dd>
+1 If we should consider this person’s looking for info when building the looking for report</dd>
 <dt>MatchSex</dt>
 <dd>INTEGER</dd>
 <dt>MatchSize</dt>
@@ -788,15 +806,16 @@ Date this looking for info expires</dd>
 
 
            </div>
+           
           </div>
           <footer>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="relationships.html" class="btn btn-neutral float-right" title="Appendix: Entity Relationship Diagrams" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="relationships.html" class="btn btn-neutral float-right" title="Appendix: Entity Relationship Diagrams" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="csvimportfields.html" class="btn btn-neutral" title="Appendix: CSV file import fields" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="csvimportfields.html" class="btn btn-neutral" title="Appendix: CSV file import fields" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
@@ -809,7 +828,7 @@ Date this looking for info expires</dd>
 
     </p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
 
@@ -828,9 +847,11 @@ Date this looking for info expires</dd>
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
             VERSION:'41u',
+            LANGUAGE:'None',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
-            HAS_SOURCE:  true
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
         };
     </script>
       <script type="text/javascript" src="_static/jquery.js"></script>
@@ -839,19 +860,13 @@ Date this looking for info expires</dd>
 
   
 
-  
-  
-    <script type="text/javascript" src="_static/js/theme.js"></script>
-  
+  <script type="text/javascript" src="_static/js/theme.js"></script>
 
-  
-  
   <script type="text/javascript">
       jQuery(function () {
-          SphinxRtdTheme.StickyNav.enable();
+          SphinxRtdTheme.Navigation.enable(true);
       });
-  </script>
-   
+  </script> 
 
 </body>
 </html>

@@ -13,6 +13,8 @@
 
   
   
+  
+  
 
   
 
@@ -22,28 +24,21 @@
 
   
 
-  
-  
-    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-  
-
-  
-
-  
-        <link rel="index" title="Index"
-              href="genindex.html"/>
-        <link rel="search" title="Search" href="search.html"/>
-    <link rel="top" title="ASM 41u documentation" href="index.html"/>
-        <link rel="next" title="Animal Control" href="animalcontrol.html"/>
-        <link rel="prev" title="Movements" href="movements.html"/> 
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Animal Control" href="animalcontrol.html" />
+    <link rel="prev" title="Movements" href="movements.html" /> 
 
   
   <script src="_static/js/modernizr.min.js"></script>
 
 </head>
 
-<body class="wy-body-for-nav" role="document">
+<body class="wy-body-for-nav">
 
+   
   <div class="wy-grid-for-nav">
 
     
@@ -84,7 +79,10 @@
           
             
             
-                <ul class="current">
+              
+            
+            
+              <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="foreword.html">Foreword</a></li>
 <li class="toctree-l1"><a class="reference internal" href="gettingstarted.html">Getting Started</a></li>
 <li class="toctree-l1"><a class="reference internal" href="searching.html">Search</a></li>
@@ -132,34 +130,54 @@
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
 
       
-      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
-        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-        <a href="index.html">ASM</a>
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">ASM</a>
+        
       </nav>
 
 
-      
       <div class="wy-nav-content">
+        
         <div class="rst-content">
+        
           
 
- 
+
+
+
+
+
+
+
+
+
+
+
 
 
 
 <div role="navigation" aria-label="breadcrumbs navigation">
+
   <ul class="wy-breadcrumbs">
-    <li><a href="index.html">Docs</a> &raquo;</li>
-      
-    <li>Documents</li>
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Documents</li>
+    
+    
       <li class="wy-breadcrumbs-aside">
         
-          
-            <a href="_sources/documents.txt" rel="nofollow"> View page source</a>
+            
+            <a href="_sources/documents.rst.txt" rel="nofollow"> View page source</a>
           
         
       </li>
+    
   </ul>
+
+  
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
@@ -176,7 +194,7 @@ that will be substituted with real data when a document is generated. For a
 complete list of document keys, see <a class="reference internal" href="wordkeys.html#wordkeys"><span class="std std-ref">Appendix: Wordkeys</span></a></p>
 <p>Keys follow the format &lt;&lt;[Keyname]&gt;&gt;. For example, putting the tag
 &lt;&lt;AnimalName&gt;&gt; in your document will cause it to be substituted for the
-animal&#8217;s name.</p>
+animal’s name.</p>
 <img alt="_images/document_menu.png" src="_images/document_menu.png" />
 <p>A number of places in the system have toolbars with generate document buttons,
 you can find these:</p>
@@ -200,38 +218,38 @@ machines running different operating systems and with different fonts
 installed.</p>
 <img alt="_images/html_wp_to_pdf.png" src="_images/html_wp_to_pdf.png" />
 <p>You can embed directives in your document to give some hints to the PDF engine.
-These should take the form of HTML comments, embedded in &lt;!&#8211; and &#8211;&gt;, and can
+These should take the form of HTML comments, embedded in &lt;!– and –&gt;, and can
 be inserted by going to Tools-&gt;Source Code in the document editor:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span>&lt;!-- pdf papersize a4 --&gt;
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>&lt;!-- pdf papersize a4 --&gt;
 </pre></div>
 </div>
 <p>To set the papersize to a4. Other options are a3, a5 and letter:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span>&lt;!-- pdf papersize exact 89mmx36mm end --&gt;
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>&lt;!-- pdf papersize exact 89mmx36mm end --&gt;
 </pre></div>
 </div>
 <p>To set the papersize to an exact measurement (in this case 89mm x 36mm
 width x height, which is the size used by the Dymo 450 label printer):</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span>&lt;!-- pdf orientation landscape --&gt;
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>&lt;!-- pdf orientation landscape --&gt;
 </pre></div>
 </div>
 <p>To set the orientation to landscape. Portrait is the default but can be
 explicitly set too.</p>
 <p>Use the margins directive to set the PDF margins:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span>&lt;!-- pdf margins 2cm 2cm 1cm 1cm end --&gt;
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>&lt;!-- pdf margins 2cm 2cm 1cm 1cm end --&gt;
 </pre></div>
 </div>
 <p>Margins are in the order top, bottom, left then right.</p>
 <p>The PDF engine will scale the document to fit the page horizontally based on the
 widest element in it. Use the zoom directive to override this behaviour and
 specify a scaling amount:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span>&lt;!-- pdf zoom 0.5 end --&gt;
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>&lt;!-- pdf zoom 0.5 end --&gt;
 </pre></div>
 </div>
 <div class="section" id="electronic-signatures">
 <h2>Electronic Signatures<a class="headerlink" href="#electronic-signatures" title="Permalink to this headline">¶</a></h2>
 <div class="admonition warning">
 <p class="first admonition-title">Warning</p>
-<p class="last">Electronic signatures are only supported by ASM&#8217;s built in HTML-based word processor. They cannot be used with OpenOffice templates.</p>
+<p class="last">Electronic signatures are only supported by ASM’s built in HTML-based word processor. They cannot be used with OpenOffice templates.</p>
 </div>
 <img alt="_images/sign_buttons.png" src="_images/sign_buttons.png" />
 <p>ASM allows you to add electronic signatures to documents. Signed documents are
@@ -239,19 +257,19 @@ read only and cannot be edited. A cryptographic hash for the signed document is
 calculated and stored separately so that any future tampering can be detected.</p>
 <p>There are multiple methods of adding signatures to documents:</p>
 <ul class="simple">
-<li>&#8220;Sign on screen&#8221; menu item in the media tab (using a touchscreen monitor,
+<li>“Sign on screen” menu item in the media tab (using a touchscreen monitor,
 wacom tablet, lightpen, other mouse-like device or if you are using a tablet
 computer)</li>
-<li>&#8220;Signing Pad&#8221; mode of the mobile interface for any external
+<li>“Signing Pad” mode of the mobile interface for any external
 touchscreen device (iPad, iPhone, Android phone/tablet, etc).</li>
-<li>&#8220;Request signature by email&#8221; menu item in the media tab, which sends an email
+<li>“Request signature by email” menu item in the media tab, which sends an email
 to the recipient of your choice (defaults to the current person if this is
-a person&#8217;s media tab) with links for them to follow to sign the selected
+a person’s media tab) with links for them to follow to sign the selected
 documents with their own touchscreen device.</li>
 <li>A signature that has been pre-stored for the currently logged in user
 (necessary for a staff signature in addition to the main signatory).</li>
 </ul>
-<p>To use, select the documents you&#8217;d like to sign and click the &#8220;Sign&#8221; dropdown
+<p>To use, select the documents you’d like to sign and click the “Sign” dropdown
 on the toolbar of the media tab. ASM allows you to use any generic mouse
 or touchscreen hardware and mobile touchscreen devices as signing pads - you do
 not need to buy expensive custom hardware.</p>
@@ -262,9 +280,9 @@ not need to buy expensive custom hardware.</p>
 <img alt="_images/sign_dialog.png" src="_images/sign_dialog.png" />
 <p>To control the size and location of the signature:</p>
 <ul class="simple">
-<li>insert an image where you&#8217;d like the signature to appear</li>
+<li>insert an image where you’d like the signature to appear</li>
 <li>When the insert image dialog requests the image source, instead of a URL,
-enter &#8220;signature:placeholder&#8221; without the quotes.</li>
+enter “signature:placeholder” without the quotes.</li>
 <li>Choose a size to constrain the image to - eg: 150 x 75</li>
 <li>The document signing module will insert the signature inside your image
 when the document is signed.</li>
@@ -279,13 +297,13 @@ that the document has now been signed.</p>
 </div>
 <div class="section" id="mobile-signing">
 <h2>Mobile Signing<a class="headerlink" href="#mobile-signing" title="Permalink to this headline">¶</a></h2>
-<p>The &#8220;Mobile signing pad&#8221; menu item allows you to mark the document for signing
+<p>The “Mobile signing pad” menu item allows you to mark the document for signing
 in the mobile interface.</p>
-<p>If you visit ASM&#8217;s mobile interface on any mobile/tablet device, you can use the
-&#8220;Signing Pad&#8221; link in the mobile interface to go into signing pad mode.</p>
+<p>If you visit ASM’s mobile interface on any mobile/tablet device, you can use the
+“Signing Pad” link in the mobile interface to go into signing pad mode.</p>
 <div class="admonition warning">
 <p class="first admonition-title">Warning</p>
-<p class="last">The mobile interface must be logged in with the same user account as the person who clicked the &#8220;Signing Pad&#8221; button on the media tab. This prevents users signing other&#8217;s documents and eliminates confusion in multi-site use.</p>
+<p class="last">The mobile interface must be logged in with the same user account as the person who clicked the “Signing Pad” button on the media tab. This prevents users signing other’s documents and eliminates confusion in multi-site use.</p>
 </div>
 <img alt="_images/sign_mobilepad.png" src="_images/sign_mobilepad.png" />
 <img alt="_images/sign_waiting.png" src="_images/sign_waiting.png" />
@@ -301,35 +319,36 @@ email them in PDF form to adopters directly.</p>
 <h2>User Signatures<a class="headerlink" href="#user-signatures" title="Permalink to this headline">¶</a></h2>
 <p>It is quite common for documents to require a member of staff signature as well
 as the main signatory (eg: new adopter/volunteer/etc. ). In order to add a
-second signature to a document, the user&#8217;s signature must be stored within the
-system. This means the system can insert the user&#8217;s signature into the document
-which can then be signed using the signing pad - it isn&#8217;t currently possible to
+second signature to a document, the user’s signature must be stored within the
+system. This means the system can insert the user’s signature into the document
+which can then be signed using the signing pad - it isn’t currently possible to
 add multiple signatures to a single document using the signing pad.</p>
-<p>Each user can store their own signature in the &#8220;Change User Settings&#8221; page,
-accessed under the user menu (the menu with the logged in user&#8217;s name at
+<p>Each user can store their own signature in the “Change User Settings” page,
+accessed under the user menu (the menu with the logged in user’s name at
 the top right of the screen).</p>
 <img alt="_images/sign_user.png" src="_images/sign_user.png" />
-<p>You can add a placeholder for the current user&#8217;s signature in your document
+<p>You can add a placeholder for the current user’s signature in your document
 templates with the &lt;&lt;UserSignature&gt;&gt; wordkey. This will insert the signature
 at full size into the document as an image.</p>
-<p>If you&#8217;d like to control the size and placement of the user&#8217;s signature in
+<p>If you’d like to control the size and placement of the user’s signature in
 a similar manner to normal signatures, you can insert an image and
-when prompted for the image source use &#8220;signature:user&#8221; without the
+when prompted for the image source use “signature:user” without the
 quotes.</p>
 </div>
 </div>
 
 
            </div>
+           
           </div>
           <footer>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="animalcontrol.html" class="btn btn-neutral float-right" title="Animal Control" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="animalcontrol.html" class="btn btn-neutral float-right" title="Animal Control" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="movements.html" class="btn btn-neutral" title="Movements" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="movements.html" class="btn btn-neutral" title="Movements" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
@@ -342,7 +361,7 @@ quotes.</p>
 
     </p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
 
@@ -361,9 +380,11 @@ quotes.</p>
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
             VERSION:'41u',
+            LANGUAGE:'None',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
-            HAS_SOURCE:  true
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
         };
     </script>
       <script type="text/javascript" src="_static/jquery.js"></script>
@@ -372,19 +393,13 @@ quotes.</p>
 
   
 
-  
-  
-    <script type="text/javascript" src="_static/js/theme.js"></script>
-  
+  <script type="text/javascript" src="_static/js/theme.js"></script>
 
-  
-  
   <script type="text/javascript">
       jQuery(function () {
-          SphinxRtdTheme.StickyNav.enable();
+          SphinxRtdTheme.Navigation.enable(true);
       });
-  </script>
-   
+  </script> 
 
 </body>
 </html>

@@ -13,6 +13,8 @@
 
   
   
+  
+  
 
   
 
@@ -22,28 +24,21 @@
 
   
 
-  
-  
-    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-  
-
-  
-
-  
-        <link rel="index" title="Index"
-              href="genindex.html"/>
-        <link rel="search" title="Search" href="search.html"/>
-    <link rel="top" title="ASM 41u documentation" href="index.html"/>
-        <link rel="next" title="Appendix: Online Form import fields" href="onlineformfields.html"/>
-        <link rel="prev" title="Appendix: Entity Relationship Diagrams" href="relationships.html"/> 
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Appendix: Online Form import fields" href="onlineformfields.html" />
+    <link rel="prev" title="Appendix: Entity Relationship Diagrams" href="relationships.html" /> 
 
   
   <script src="_static/js/modernizr.min.js"></script>
 
 </head>
 
-<body class="wy-body-for-nav" role="document">
+<body class="wy-body-for-nav">
 
+   
   <div class="wy-grid-for-nav">
 
     
@@ -84,7 +79,10 @@
           
             
             
-                <ul class="current">
+              
+            
+            
+              <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="foreword.html">Foreword</a></li>
 <li class="toctree-l1"><a class="reference internal" href="gettingstarted.html">Getting Started</a></li>
 <li class="toctree-l1"><a class="reference internal" href="searching.html">Search</a></li>
@@ -136,34 +134,54 @@
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
 
       
-      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
-        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-        <a href="index.html">ASM</a>
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">ASM</a>
+        
       </nav>
 
 
-      
       <div class="wy-nav-content">
+        
         <div class="rst-content">
+        
           
 
- 
+
+
+
+
+
+
+
+
+
+
+
 
 
 
 <div role="navigation" aria-label="breadcrumbs navigation">
+
   <ul class="wy-breadcrumbs">
-    <li><a href="index.html">Docs</a> &raquo;</li>
-      
-    <li>Appendix: Integrating with Your Website</li>
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Appendix: Integrating with Your Website</li>
+    
+    
       <li class="wy-breadcrumbs-aside">
         
-          
-            <a href="_sources/website.txt" rel="nofollow"> View page source</a>
+            
+            <a href="_sources/website.rst.txt" rel="nofollow"> View page source</a>
           
         
       </li>
+    
   </ul>
+
+  
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
@@ -175,7 +193,7 @@
 your website.</p>
 <div class="section" id="javascript-include">
 <h2>Javascript Include<a class="headerlink" href="#javascript-include" title="Permalink to this headline">¶</a></h2>
-<p>The animal_view_adoptable_js method of ASM&#8217;s <a class="reference internal" href="service.html#serviceapi"><span class="std std-ref">Service API</span></a>
+<p>The animal_view_adoptable_js method of ASM’s <a class="reference internal" href="service.html#serviceapi"><span class="std std-ref">Service API</span></a>
 can generate a list of adoptable animal thumbnails for embedding straight into
 a div container on a page of your website.</p>
 <p>Clicking on the thumbnails will call the animal_view method of the Service API
@@ -184,7 +202,7 @@ information appears on it by editing the animal_view template under
 <span class="menuselection">Publishing ‣ Edit HTML publishing templates</span></p>
 <p>The code snippet required to embed the adoptable animal list in a page on your
 website looks like this:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">div</span> <span class="nb">id</span><span class="o">=</span><span class="s2">&quot;asm3-adoptables&quot;</span> <span class="o">/&gt;</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">div</span> <span class="nb">id</span><span class="o">=</span><span class="s2">&quot;asm3-adoptables&quot;</span> <span class="o">/&gt;</span>
 <span class="o">&lt;</span><span class="n">script</span> <span class="n">src</span><span class="o">=</span><span class="s2">&quot;https://service.sheltermanager.com/asmservice?method=animal_view_adoptable_js&amp;account=ACCOUNT&quot;</span><span class="o">&gt;&lt;/</span><span class="n">script</span><span class="o">&gt;</span>
 </pre></div>
 </div>
@@ -194,7 +212,7 @@ change ACCOUNT in the src for your sheltermanager.com account.</p>
 <div class="section" id="wordpress">
 <h3>Wordpress<a class="headerlink" href="#wordpress" title="Permalink to this headline">¶</a></h3>
 <p>To embed your adoptable animals in a Wordpress page, edit the page and add the
-javascript include snippet shown above where you&#8217;d like your adoptable animals
+javascript include snippet shown above where you’d like your adoptable animals
 to appear on the page:</p>
 <img alt="_images/wordpress_1.png" src="_images/wordpress_1.png" />
 <img alt="_images/wordpress_2.png" src="_images/wordpress_2.png" />
@@ -206,7 +224,7 @@ to appear on the page:</p>
 service API. The HTML templates are those used by the regular HTML publisher.</p>
 <p>For example, to embed a dynamic page of adoptable animals in an iframe on your
 website for a sheltermanager.com account:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">iframe</span> <span class="n">src</span><span class="o">=</span><span class="s2">&quot;https://service.sheltermanager.com/asmservice?account=ACCOUNT&amp;method=html_adoptable_animals&quot;</span> <span class="n">width</span><span class="o">=</span><span class="s2">&quot;100%&quot;</span> <span class="n">height</span><span class="o">=</span><span class="s2">&quot;600px&quot;</span> <span class="o">/&gt;</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">iframe</span> <span class="n">src</span><span class="o">=</span><span class="s2">&quot;https://service.sheltermanager.com/asmservice?account=ACCOUNT&amp;method=html_adoptable_animals&quot;</span> <span class="n">width</span><span class="o">=</span><span class="s2">&quot;100%&quot;</span> <span class="n">height</span><span class="o">=</span><span class="s2">&quot;600px&quot;</span> <span class="o">/&gt;</span>
 </pre></div>
 </div>
 </div>
@@ -222,14 +240,14 @@ an FTP server of your choice.</p>
 <p>Once the site has been created, you can either link directly to it, or embed it
 on your website with an iframe tag.</p>
 <p>For example, to embed a static HTML website generated by sheltermanager.com
-(don&#8217;t forget to swap ACCOUNT for your sheltermanager.com account number):</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">iframe</span> <span class="n">src</span><span class="o">=</span><span class="s2">&quot;https://public.sheltermanager.com/animals/ACCOUNT&quot;</span> <span class="n">width</span><span class="o">=</span><span class="s2">&quot;100%&quot;</span> <span class="n">height</span><span class="o">=</span><span class="s2">&quot;600px&quot;</span> <span class="o">/&gt;</span>
+(don’t forget to swap ACCOUNT for your sheltermanager.com account number):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">iframe</span> <span class="n">src</span><span class="o">=</span><span class="s2">&quot;https://public.sheltermanager.com/animals/ACCOUNT&quot;</span> <span class="n">width</span><span class="o">=</span><span class="s2">&quot;100%&quot;</span> <span class="n">height</span><span class="o">=</span><span class="s2">&quot;600px&quot;</span> <span class="o">/&gt;</span>
 </pre></div>
 </div>
 </div>
 <div class="section" id="service-api-data-calls">
 <h2>Service API Data Calls<a class="headerlink" href="#service-api-data-calls" title="Permalink to this headline">¶</a></h2>
-<p>Finally, you can use ASM&#8217;s Service API to retrieve the adoptable animal
+<p>Finally, you can use ASM’s Service API to retrieve the adoptable animal
 information and images programatically yourself and use that information to
 construct a site in any way you wish.</p>
 <p>More information can be found in the section on the <a class="reference internal" href="service.html#serviceapi"><span class="std std-ref">Service API</span></a></p>
@@ -238,15 +256,16 @@ construct a site in any way you wish.</p>
 
 
            </div>
+           
           </div>
           <footer>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="onlineformfields.html" class="btn btn-neutral float-right" title="Appendix: Online Form import fields" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="onlineformfields.html" class="btn btn-neutral float-right" title="Appendix: Online Form import fields" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="relationships.html" class="btn btn-neutral" title="Appendix: Entity Relationship Diagrams" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="relationships.html" class="btn btn-neutral" title="Appendix: Entity Relationship Diagrams" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
@@ -259,7 +278,7 @@ construct a site in any way you wish.</p>
 
     </p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
 
@@ -278,9 +297,11 @@ construct a site in any way you wish.</p>
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
             VERSION:'41u',
+            LANGUAGE:'None',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
-            HAS_SOURCE:  true
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
         };
     </script>
       <script type="text/javascript" src="_static/jquery.js"></script>
@@ -289,19 +310,13 @@ construct a site in any way you wish.</p>
 
   
 
-  
-  
-    <script type="text/javascript" src="_static/js/theme.js"></script>
-  
+  <script type="text/javascript" src="_static/js/theme.js"></script>
 
-  
-  
   <script type="text/javascript">
       jQuery(function () {
-          SphinxRtdTheme.StickyNav.enable();
+          SphinxRtdTheme.Navigation.enable(true);
       });
-  </script>
-   
+  </script> 
 
 </body>
 </html>

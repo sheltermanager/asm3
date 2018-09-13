@@ -13,6 +13,8 @@
 
   
   
+  
+  
 
   
 
@@ -22,28 +24,21 @@
 
   
 
-  
-  
-    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-  
-
-  
-
-  
-        <link rel="index" title="Index"
-              href="genindex.html"/>
-        <link rel="search" title="Search" href="search.html"/>
-    <link rel="top" title="ASM 41u documentation" href="index.html"/>
-        <link rel="next" title="Publishing" href="publishing.html"/>
-        <link rel="prev" title="Mobile Interface" href="mobile.html"/> 
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Publishing" href="publishing.html" />
+    <link rel="prev" title="Mobile Interface" href="mobile.html" /> 
 
   
   <script src="_static/js/modernizr.min.js"></script>
 
 </head>
 
-<body class="wy-body-for-nav" role="document">
+<body class="wy-body-for-nav">
 
+   
   <div class="wy-grid-for-nav">
 
     
@@ -84,7 +79,10 @@
           
             
             
-                <ul class="current">
+              
+            
+            
+              <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="foreword.html">Foreword</a></li>
 <li class="toctree-l1"><a class="reference internal" href="gettingstarted.html">Getting Started</a></li>
 <li class="toctree-l1"><a class="reference internal" href="searching.html">Search</a></li>
@@ -156,34 +154,54 @@
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
 
       
-      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
-        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-        <a href="index.html">ASM</a>
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">ASM</a>
+        
       </nav>
 
 
-      
       <div class="wy-nav-content">
+        
         <div class="rst-content">
+        
           
 
- 
+
+
+
+
+
+
+
+
+
+
+
 
 
 
 <div role="navigation" aria-label="breadcrumbs navigation">
+
   <ul class="wy-breadcrumbs">
-    <li><a href="index.html">Docs</a> &raquo;</li>
-      
-    <li>Service API</li>
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Service API</li>
+    
+    
       <li class="wy-breadcrumbs-aside">
         
-          
-            <a href="_sources/service.txt" rel="nofollow"> View page source</a>
+            
+            <a href="_sources/service.rst.txt" rel="nofollow"> View page source</a>
           
         
       </li>
+    
   </ul>
+
+  
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
@@ -204,13 +222,13 @@ call below.</p>
 can POST the parameters too if you prefer.</p>
 <p>The service requires the following parameters:</p>
 <ul class="simple">
-<li>account: If this is a sheltermanager.com service call, the user&#8217;s account
+<li>account: If this is a sheltermanager.com service call, the user’s account
 number. Can be omitted for other installations.</li>
 <li>username: A valid ASM user.</li>
-<li>password: A valid ASM password. From a security standpoint, it&#8217;s better to
+<li>password: A valid ASM password. From a security standpoint, it’s better to
 create at least one ASM user dedicated to calling the service to assist with
 audit trails and to lock it down so an attacker with the URL cannot change
-your data or view anything you don&#8217;t want them to.</li>
+your data or view anything you don’t want them to.</li>
 <li>method: A service method to call</li>
 <li>animalid / title: An animal ID or title depending on the service method
 called.</li>
@@ -219,22 +237,22 @@ called.</li>
 <div class="section" id="animal-image">
 <h2>animal_image<a class="headerlink" href="#animal-image" title="Permalink to this headline">¶</a></h2>
 <p class="rubric">Cache time: 1 hour</p>
-<p>Returns an animal&#8217;s preferred image. Send the id of the animal:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span>http://localhost:5000/service?method=animal_image&amp;animalid=520&amp;seq=1
+<p>Returns an animal’s preferred image. Send the id of the animal:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>http://localhost:5000/service?method=animal_image&amp;animalid=520&amp;seq=1
 </pre></div>
 </div>
-<p>An optional &#8220;seq&#8221; parameter can be included to return the animal&#8217;s other
+<p>An optional “seq” parameter can be included to return the animal’s other
 available images. seq=1 returns the preferred image (and will be assumed if
 that parameter is omitted), seq=2 returns the second available image, etc. seq
-is a 1-based count and can be used with the &#8220;WebsiteImageCount&#8221; property
+is a 1-based count and can be used with the “WebsiteImageCount” property
 included in animal records (which contains the number of images an animal has)
 to programatically grab all the images for a particular animal.</p>
 </div>
 <div class="section" id="animal-thumbnail">
 <h2>animal_thumbnail<a class="headerlink" href="#animal-thumbnail" title="Permalink to this headline">¶</a></h2>
 <p class="rubric">Cache time: 1 day</p>
-<p>Returns an animal&#8217;s preferred image as a thumbnail. Send the id of the animal:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span>http://localhost:5000/service?method=animal_thumbnail&amp;animalid=520
+<p>Returns an animal’s preferred image as a thumbnail. Send the id of the animal:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>http://localhost:5000/service?method=animal_thumbnail&amp;animalid=520
 </pre></div>
 </div>
 <p>The thumbnail will be sized to whatever the main application is using
@@ -246,10 +264,10 @@ to programatically grab all the images for a particular animal.</p>
 <p>Returns a webpage with information for one animal, constructed from the
 animal_view HTML publishing template (editable at <span class="menuselection">Publishing -&gt;
 Edit HTML publishing templates</span>). Pass the id of the animal:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span>http://localhost:5000/service?method=animal_view&amp;animalid=520
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>http://localhost:5000/service?method=animal_view&amp;animalid=520
 </pre></div>
 </div>
-<p>When you use <span class="menuselection">Share ‣ Link to this animal</span> on an animal&#8217;s record,
+<p>When you use <span class="menuselection">Share ‣ Link to this animal</span> on an animal’s record,
 it is this service call that the system redirects you to.</p>
 </div>
 <div class="section" id="animal-view-adoptable-js">
@@ -258,11 +276,11 @@ it is this service call that the system redirects you to.</p>
 <p>Returns a javascript file that when executed injects thumbnails of all
 adoptable animals into the page with links to the animal_view service call. It
 is most useful as the src attribute for a &lt;script&gt; tag.</p>
-<p>The page must contain a div with an id attribute of &#8220;asm3-adoptables&#8221;, where
+<p>The page must contain a div with an id attribute of “asm3-adoptables”, where
 the adoptable animal thumbnails are to appear. If div#asm3-adoptables cannot be
 found, a popup error message will appear.</p>
-<p>Here&#8217;s an example page showing how to inject your adoptable animal list:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span>&lt;!DOCTYPE html&gt;
+<p>Here’s an example page showing how to inject your adoptable animal list:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>&lt;!DOCTYPE html&gt;
 &lt;html&gt;
 &lt;head&gt;
 &lt;title&gt;Adoptable Animals&lt;/title&gt;
@@ -290,7 +308,7 @@ following classes:</p>
 <li>asm3-adoptable-item : The div surrounding each animal thumbnail</li>
 <li>asm3-adoptable-link : The a tag enclosing the thumbnail and animal name</li>
 <li>asm3-adoptable-thumbnail : The thumbnail img tag</li>
-<li>asm3-adoptable-name : The animal&#8217;s name</li>
+<li>asm3-adoptable-name : The animal’s name</li>
 <li>asm3-adoptable-tagline : The brief animal information</li>
 </ul>
 <p>and the following elements by their id attribute:</p>
@@ -299,27 +317,27 @@ following classes:</p>
 <li>asm3-adoptable-iframe-close: The close link at the top right of the popup</li>
 <li>asm3-adoptable-iframe: The popup iframe itself</li>
 </ul>
-<p>Eg: To add rounded corners to the thumbnails and show the animal&#8217;s name in
+<p>Eg: To add rounded corners to the thumbnails and show the animal’s name in
 bold, add this to your CSS:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">.</span><span class="n">asm3</span><span class="o">-</span><span class="n">adoptable</span><span class="o">-</span><span class="n">name</span> <span class="p">{</span> <span class="n">font</span><span class="o">-</span><span class="n">weight</span><span class="p">:</span> <span class="n">bold</span><span class="p">;</span> <span class="p">}</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">.</span><span class="n">asm3</span><span class="o">-</span><span class="n">adoptable</span><span class="o">-</span><span class="n">name</span> <span class="p">{</span> <span class="n">font</span><span class="o">-</span><span class="n">weight</span><span class="p">:</span> <span class="n">bold</span><span class="p">;</span> <span class="p">}</span>
 <span class="o">.</span><span class="n">asm3</span><span class="o">-</span><span class="n">adoptable</span><span class="o">-</span><span class="n">thumbnail</span> <span class="p">{</span> <span class="n">border</span><span class="o">-</span><span class="n">radius</span><span class="p">:</span> <span class="mi">8</span><span class="n">px</span><span class="p">;</span> <span class="p">}</span>
 </pre></div>
 </div>
 <p>To increase the size of the close link, add this:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="c1">#asm3-adoptable-iframe-close { font-size: 200%; }</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1">#asm3-adoptable-iframe-close { font-size: 200%; }</span>
 </pre></div>
 </div>
 </div>
 <div class="section" id="translations">
 <h3>Translations<a class="headerlink" href="#translations" title="Permalink to this headline">¶</a></h3>
-<p>It&#8217;s possible to translate any of the text output by the adoptable list on the
+<p>It’s possible to translate any of the text output by the adoptable list on the
 fly. By default, it only uses text from your database values so they will match
 the language of your database.</p>
 <p>You can add on-the-fly translation by adding a script tag with a dictionary
 called asm3_adoptable_translations above the script that makes the service
 call. Eg to translate some English species to French and to change the default (any
 species) to all as well as the CLOSE link text:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">script</span><span class="o">&gt;</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">script</span><span class="o">&gt;</span>
 <span class="n">asm3_adoptable_translations</span> <span class="o">=</span> <span class="p">{</span>
     <span class="s2">&quot;Dog&quot;</span><span class="p">:</span> <span class="s2">&quot;Chien&quot;</span><span class="p">,</span>
     <span class="s2">&quot;Cat&quot;</span><span class="p">:</span> <span class="s2">&quot;Chat&quot;</span><span class="p">,</span>
@@ -341,7 +359,7 @@ animal record and must return true if the record is to be included in the list
 of thumbnails.</p>
 <p>For example, to only output animals with an animal type of dog, you could use
 this callback:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">script</span><span class="o">&gt;</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">script</span><span class="o">&gt;</span>
 <span class="n">function</span> <span class="n">asm3_adoptable_filter</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">arr</span><span class="p">)</span> <span class="p">{</span>
     <span class="k">return</span> <span class="n">a</span><span class="o">.</span><span class="n">ANIMALTYPENAME</span> <span class="o">==</span> <span class="s2">&quot;D (Dog)&quot;</span><span class="p">;</span>
 <span class="p">}</span>
@@ -356,8 +374,8 @@ Definition: asm3_adoptable_filter(item, index, arr)</p>
 <p>Which dropdowns appear depends on the asm3_adoptable_filters string. To use
 them all, include the following asm3_adoptable_filters line. The order in which
 they appear in the filters line is also used to output that piece of
-information below the animal&#8217;s name in the list:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">script</span><span class="o">&gt;</span>
+information below the animal’s name in the list:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">script</span><span class="o">&gt;</span>
 <span class="n">asm3_adoptable_filters</span> <span class="o">=</span> <span class="s2">&quot;sex breed agegroup size species&quot;</span><span class="p">;</span>
 <span class="o">&lt;/</span><span class="n">script</span><span class="o">&gt;</span>
 <span class="o">&lt;</span><span class="n">div</span> <span class="nb">id</span><span class="o">=</span><span class="s2">&quot;asm3-adoptables&quot;</span> <span class="o">/&gt;</span>
@@ -369,10 +387,10 @@ information below the animal&#8217;s name in the list:</p>
 <h3>Sort<a class="headerlink" href="#sort" title="Permalink to this headline">¶</a></h3>
 <p>You can choose the sort order by setting an asm3_adoptable_sort variable. The default is
 ANIMALNAME, but another useful value is -DAYSONSHELTER to output animals based on how
-long they&#8217;ve been on shelter with the longest first. Preceding the sort field with a
+long they’ve been on shelter with the longest first. Preceding the sort field with a
 minus symbol - will sort in descending order. You can also use precede the sort field with
 an at symbol &#64; to do a numeric sort rather than a string/alphanumeric sort:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">script</span><span class="o">&gt;</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">script</span><span class="o">&gt;</span>
 <span class="n">asm3_adoptable_sort</span> <span class="o">=</span> <span class="s2">&quot;-@DAYSONSHELTER&quot;</span><span class="p">;</span>
 <span class="o">&lt;/</span><span class="n">script</span><span class="o">&gt;</span>
 <span class="o">&lt;</span><span class="n">div</span> <span class="nb">id</span><span class="o">=</span><span class="s2">&quot;asm3-adoptables&quot;</span> <span class="o">/&gt;</span>
@@ -382,10 +400,10 @@ an at symbol &#64; to do a numeric sort rather than a string/alphanumeric sort:<
 </div>
 <div class="section" id="extra-content">
 <h3>Extra Content<a class="headerlink" href="#extra-content" title="Permalink to this headline">¶</a></h3>
-<p>It&#8217;s also possible to add an extra content callback, which adoptable_js calls
-for every animal it outputs. For example, to add the animal&#8217;s bio below the
+<p>It’s also possible to add an extra content callback, which adoptable_js calls
+for every animal it outputs. For example, to add the animal’s bio below the
 thumbnail and basic info:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">script</span><span class="o">&gt;</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">script</span><span class="o">&gt;</span>
 <span class="n">asm3_adoptable_filters</span> <span class="o">=</span> <span class="s2">&quot;sex breed agegroup size species&quot;</span><span class="p">;</span>
 <span class="n">asm3_adoptable_extra</span> <span class="o">=</span> <span class="n">function</span><span class="p">(</span><span class="n">a</span><span class="p">)</span> <span class="p">{</span>
     <span class="k">return</span> <span class="n">a</span><span class="o">.</span><span class="n">WEBSITEMEDIANOTES</span><span class="p">;</span>
@@ -396,19 +414,19 @@ thumbnail and basic info:</p>
 </pre></div>
 </div>
 <p>You could set .asm3-adoptable-tagline to display: none and then use an extra
-content callback to output and format any data from the animal&#8217;s record in the
+content callback to output and format any data from the animal’s record in the
 way you want and override the default behaviour.</p>
 </div>
 <div class="section" id="limit">
 <h3>Limit<a class="headerlink" href="#limit" title="Permalink to this headline">¶</a></h3>
 <p>You can limit the number of animals rendered by the adoptable_js output. This
 is useful if you want to only show a limited number of animals - eg: If this
-call is on the home page of your website and you&#8217;d like to show some featured
+call is on the home page of your website and you’d like to show some featured
 animals.</p>
 <p>For example, this will limit output to the first 3 animals in the set. Combined
 with the -DAYSONSHELTER sort, it will show the 3 animals who have been on
 shelter the longest:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">script</span><span class="o">&gt;</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">script</span><span class="o">&gt;</span>
 <span class="n">asm3_adoptable_sort</span> <span class="o">=</span> <span class="s2">&quot;-DAYSONSHELTER&quot;</span><span class="p">;</span>
 <span class="n">asm3_adoptable_limit</span> <span class="o">=</span> <span class="mi">3</span><span class="p">;</span>
 <span class="o">&lt;/</span><span class="n">script</span><span class="o">&gt;</span>
@@ -423,7 +441,7 @@ shelter the longest:</p>
 system can also load the page in a floating iframe so that viewing adoptable
 animals does not leave your site. You can enable this behaviour by setting
 asm3_adoptable_iframe = true in your script. Eg:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">script</span><span class="o">&gt;</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">script</span><span class="o">&gt;</span>
 <span class="n">asm3_adoptable_filters</span> <span class="o">=</span> <span class="s2">&quot;sex breed agegroup size species&quot;</span><span class="p">;</span>
 <span class="n">asm3_adoptable_iframe</span> <span class="o">=</span> <span class="n">true</span><span class="p">;</span>
 <span class="n">asm3_adoptable_iframe_fixed</span> <span class="o">=</span> <span class="n">true</span><span class="p">;</span>
@@ -437,7 +455,7 @@ cannot be set by CSS (everything else can be), but there are a couple of
 javascript variables you can set for them instead.</p>
 <p>Eg: To fix the iframe height at 2000 pixels and use a gray background instead
 of the default of white:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">script</span><span class="o">&gt;</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">script</span><span class="o">&gt;</span>
 <span class="n">asm3_adoptable_filters</span> <span class="o">=</span> <span class="s2">&quot;sex breed agegroup size species&quot;</span><span class="p">;</span>
 <span class="n">asm3_adoptable_iframe</span> <span class="o">=</span> <span class="n">true</span><span class="p">;</span>
 <span class="n">asm3_adoptable_iframe_height</span> <span class="o">=</span> <span class="s2">&quot;2000px&quot;</span><span class="p">;</span>
@@ -460,7 +478,7 @@ iframes.</p>
 <p class="rubric">Cache time: 2 minutes</p>
 <p>Returns a complete HTML document that references animal_view_adoptable_js to
 show a list of adoptable animals. It looks for an HTML template called
-&#8220;animalviewadoptable&#8221; and falls back to a basic internal template if it does
+“animalviewadoptable” and falls back to a basic internal template if it does
 not exist.</p>
 <blockquote>
 <div><a class="reference external" href="http://localhost:5000/service?method=&amp;animal_view_adoptable_html">http://localhost:5000/service?method=&amp;animal_view_adoptable_html</a></div></blockquote>
@@ -471,7 +489,7 @@ not exist.</p>
 <p>Returns a CSV file containing a mail merge or report. Pass the name of the mail
 merge/report in the title attribute and if the merge requires any parameters,
 you can pass those too just like with html_report:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span>http://localhost:5000/service?method=csv_report&amp;username=user&amp;password=letmein&amp;title=Detailed+Shelter+Inventory
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>http://localhost:5000/service?method=csv_report&amp;username=user&amp;password=letmein&amp;title=Detailed+Shelter+Inventory
 </pre></div>
 </div>
 </div>
@@ -480,7 +498,7 @@ you can pass those too just like with html_report:</p>
 <p class="rubric">Cache time: 1 day</p>
 <p>Returns an extra image (see <span class="menuselection">Settings ‣ Reports ‣ Extra
 Images</span>).  Pass the name of the image in the title parameter:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span>http://localhost:5000/service?method=extra_image&amp;title=splash.jpg
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>http://localhost:5000/service?method=extra_image&amp;title=splash.jpg
 </pre></div>
 </div>
 </div>
@@ -488,7 +506,7 @@ Images</span>).  Pass the name of the image in the title parameter:</p>
 <h2>html_adoptable_animals<a class="headerlink" href="#html-adoptable-animals" title="Permalink to this headline">¶</a></h2>
 <p class="rubric">Cache time: 30 minutes</p>
 <p>Returns a complete HTML document containing an HTML page of adoptable animals.</p>
-<p>You can pass an HTML template name in an optional &#8220;template&#8221; parameter (leaving
+<p>You can pass an HTML template name in an optional “template” parameter (leaving
 it off will cause animalview to be used). It is also possible extra parameters:</p>
 <ul class="simple">
 <li>speciesid=X - only output animals of that species. In the default dataset,
@@ -511,11 +529,11 @@ Publishing Options</span></p>
 <p class="rubric">Cache time: 30 minutes</p>
 <p>Returns a complete HTML document containing an HTML page of recently adopted
 animals.</p>
-<p>You can pass an HTML template name in an optional &#8220;template&#8221; parameter (leaving
+<p>You can pass an HTML template name in an optional “template” parameter (leaving
 it off will cause animalview to be used). It is also possible to pass
 speciesid=X or animaltypeid=X parameters to only output animals of that species
 and type. In the default dataset, speciesid=1 is Dogs and speciesid=2 is cats.</p>
-<p>You can also pass a &#8220;days&#8221; parameter to indicate how far you would like to
+<p>You can also pass a “days” parameter to indicate how far you would like to
 go back. If you do not set it, the default is animals adopted in the last 30
 days.</p>
 <blockquote>
@@ -527,11 +545,11 @@ days.</p>
 <p class="rubric">Cache time: 30 minutes</p>
 <p>Returns a complete HTML document containing an HTML page of recently deceased
 animals.</p>
-<p>You can pass an HTML template name in an optional &#8220;template&#8221; parameter (leaving
+<p>You can pass an HTML template name in an optional “template” parameter (leaving
 it off will cause animalview to be used). It is also possible to pass
 speciesid=X or animaltypeid=X parameters to only output animals of that species
 and type. In the default dataset, speciesid=1 is Dogs and speciesid=2 is cats.</p>
-<p>You can also pass a &#8220;days&#8221; parameter to indicate how far you would like to
+<p>You can also pass a “days” parameter to indicate how far you would like to
 go back. If you do not set it, the default is animals deceased in the last 30
 days.</p>
 <blockquote>
@@ -546,7 +564,7 @@ the title attribute. If the report requires any parameters, you can pass those
 too. VAR parameters are just their name, ASK parameters are ASKn where n is the
 order within the SQL. If you run the report within the ASM frontend you will
 see the parameters it requires in the address bar:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span>http://localhost:5000/service?method=html_report&amp;username=user&amp;password=letmein&amp;title=Detailed+Shelter+Inventory
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>http://localhost:5000/service?method=html_report&amp;username=user&amp;password=letmein&amp;title=Detailed+Shelter+Inventory
 </pre></div>
 </div>
 </div>
@@ -556,7 +574,7 @@ see the parameters it requires in the address bar:</p>
 <p>Returns a dataset containing a single animal record from the list of animals
 available for adoption. The method determines whether the format returned is
 JSON or XML:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span>http://localhost:5000/service?method=xml_adoptable_animal&amp;animalid=123&amp;username=user&amp;password=letmein
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>http://localhost:5000/service?method=xml_adoptable_animal&amp;animalid=123&amp;username=user&amp;password=letmein
 </pre></div>
 </div>
 <div class="admonition note">
@@ -569,7 +587,7 @@ JSON or XML:</p>
 <p class="rubric">Cache time: 1 hour</p>
 <p>Returns a dataset containing all animals available for adoption. The method
 determines whether the format returned is JSON or XML:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span>http://localhost:5000/service?method=xml_adoptable_animals&amp;username=user&amp;password=letmein
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>http://localhost:5000/service?method=xml_adoptable_animals&amp;username=user&amp;password=letmein
 </pre></div>
 </div>
 </div>
@@ -579,7 +597,7 @@ determines whether the format returned is JSON or XML:</p>
 <p>Returns a dataset containing all lost or found animals reported in the last 90
 days that are still active.  The method determines whether the format returned
 is JSON or XML:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span>http://localhost:5000/service?method=xml_found_animals&amp;username=user&amp;password=letmein
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>http://localhost:5000/service?method=xml_found_animals&amp;username=user&amp;password=letmein
 </pre></div>
 </div>
 </div>
@@ -589,7 +607,7 @@ is JSON or XML:</p>
 <p>Returns a dataset containing all recently adopted animals with their new owner
 information. The method name determines whether the format returned is JSON or
 XML:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span>http://localhost:5000/service?method=xml_recent_adoptions&amp;username=user&amp;password=letmein
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>http://localhost:5000/service?method=xml_recent_adoptions&amp;username=user&amp;password=letmein
 </pre></div>
 </div>
 </div>
@@ -598,7 +616,7 @@ XML:</p>
 <p class="rubric">Cache time: 1 hour</p>
 <p>Returns a dataset containing all animals who have been modified in the last
 month. The method determines whether the format returned is JSON or XML:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span>http://localhost:5000/service?method=xml_recent_changes&amp;username=user&amp;password=letmein
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>http://localhost:5000/service?method=xml_recent_changes&amp;username=user&amp;password=letmein
 </pre></div>
 </div>
 </div>
@@ -607,13 +625,13 @@ month. The method determines whether the format returned is JSON or XML:</p>
 <p class="rubric">Cache time: 1 hour</p>
 <p>Returns a dataset containing all shelter animals. The method determines whether
 the format returned is JSON or XML:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span>http://localhost:5000/service?method=xml_shelter_animals&amp;username=user&amp;password=letmein
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>http://localhost:5000/service?method=xml_shelter_animals&amp;username=user&amp;password=letmein
 </pre></div>
 </div>
 <p>By default, any personal or sensitive data (such as names and contact
 information of fosterers and surrenders) will be stripped from the results. If
 you wish them to be included, pass an extra sensitive=1 parameter:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span>http://localhost:5000/service?method=xml_shelter_animals&amp;username=user&amp;password=letmein&amp;sensitive=1
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>http://localhost:5000/service?method=xml_shelter_animals&amp;username=user&amp;password=letmein&amp;sensitive=1
 </pre></div>
 </div>
 </div>
@@ -621,7 +639,7 @@ you wish them to be included, pass an extra sensitive=1 parameter:</p>
 <h2>rss_timeline<a class="headerlink" href="#rss-timeline" title="Permalink to this headline">¶</a></h2>
 <p class="rubric">Cache time: 1 hour</p>
 <p>Returns an RSS feed of the timeline for use with feed aggregators:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span>http://localhost:5000/service?method=rss_timeline&amp;username=user&amp;password=letmein
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>http://localhost:5000/service?method=rss_timeline&amp;username=user&amp;password=letmein
 </pre></div>
 </div>
 </div>
@@ -629,15 +647,16 @@ you wish them to be included, pass an extra sensitive=1 parameter:</p>
 
 
            </div>
+           
           </div>
           <footer>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="publishing.html" class="btn btn-neutral float-right" title="Publishing" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="publishing.html" class="btn btn-neutral float-right" title="Publishing" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="mobile.html" class="btn btn-neutral" title="Mobile Interface" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="mobile.html" class="btn btn-neutral" title="Mobile Interface" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
@@ -650,7 +669,7 @@ you wish them to be included, pass an extra sensitive=1 parameter:</p>
 
     </p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
 
@@ -669,9 +688,11 @@ you wish them to be included, pass an extra sensitive=1 parameter:</p>
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
             VERSION:'41u',
+            LANGUAGE:'None',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
-            HAS_SOURCE:  true
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
         };
     </script>
       <script type="text/javascript" src="_static/jquery.js"></script>
@@ -680,19 +701,13 @@ you wish them to be included, pass an extra sensitive=1 parameter:</p>
 
   
 
-  
-  
-    <script type="text/javascript" src="_static/js/theme.js"></script>
-  
+  <script type="text/javascript" src="_static/js/theme.js"></script>
 
-  
-  
   <script type="text/javascript">
       jQuery(function () {
-          SphinxRtdTheme.StickyNav.enable();
+          SphinxRtdTheme.Navigation.enable(true);
       });
-  </script>
-   
+  </script> 
 
 </body>
 </html>

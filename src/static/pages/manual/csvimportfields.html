@@ -13,6 +13,8 @@
 
   
   
+  
+  
 
   
 
@@ -22,28 +24,21 @@
 
   
 
-  
-  
-    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-  
-
-  
-
-  
-        <link rel="index" title="Index"
-              href="genindex.html"/>
-        <link rel="search" title="Search" href="search.html"/>
-    <link rel="top" title="ASM 41u documentation" href="index.html"/>
-        <link rel="next" title="Appendix: Database Tables/Columns" href="databasetables.html"/>
-        <link rel="prev" title="Appendix: Frequently Asked Questions" href="faq.html"/> 
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Appendix: Database Tables/Columns" href="databasetables.html" />
+    <link rel="prev" title="Appendix: Frequently Asked Questions" href="faq.html" /> 
 
   
   <script src="_static/js/modernizr.min.js"></script>
 
 </head>
 
-<body class="wy-body-for-nav" role="document">
+<body class="wy-body-for-nav">
 
+   
   <div class="wy-grid-for-nav">
 
     
@@ -84,7 +79,10 @@
           
             
             
-                <ul class="current">
+              
+            
+            
+              <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="foreword.html">Foreword</a></li>
 <li class="toctree-l1"><a class="reference internal" href="gettingstarted.html">Getting Started</a></li>
 <li class="toctree-l1"><a class="reference internal" href="searching.html">Search</a></li>
@@ -127,34 +125,54 @@
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
 
       
-      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
-        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-        <a href="index.html">ASM</a>
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">ASM</a>
+        
       </nav>
 
 
-      
       <div class="wy-nav-content">
+        
         <div class="rst-content">
+        
           
 
- 
+
+
+
+
+
+
+
+
+
+
+
 
 
 
 <div role="navigation" aria-label="breadcrumbs navigation">
+
   <ul class="wy-breadcrumbs">
-    <li><a href="index.html">Docs</a> &raquo;</li>
-      
-    <li>Appendix: CSV file import fields</li>
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Appendix: CSV file import fields</li>
+    
+    
       <li class="wy-breadcrumbs-aside">
         
-          
-            <a href="_sources/csvimportfields.txt" rel="nofollow"> View page source</a>
+            
+            <a href="_sources/csvimportfields.rst.txt" rel="nofollow"> View page source</a>
           
         
       </li>
+    
   </ul>
+
+  
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
@@ -167,31 +185,33 @@
 <dt>ANIMALCODE</dt>
 <dd>A code for the animal. If supplied, it will set the sheltercode and short sheltercode fields. If not supplied, the system will generate a code for the animal to the appropriate scheme. If you have manual codes turned on and no animal code is supplied, an error message will be displayed and the import abandoned.</dd>
 <dt>ANIMALNAME</dt>
-<dd>The animal&#8217;s name</dd>
+<dd>The animal’s name</dd>
 <dt>ANIMALIMAGE</dt>
 <dd>A photo for the animal, it can either be a fully qualified HTTP URL to a JPG image OR a base64 encoded JPG expressed as a data URI</dd>
+<dt>ANIMALNONSHELTER</dt>
+<dd>Y/N to indicate whether this animal is a owned by a member of the public and not a shelter animal</dd>
 <dt>ANIMALNOTFORADOPTION</dt>
 <dd>Y/N to indicate whether this animal is not available for adoption (Y is not available).</dd>
 <dt>ANIMALSEX</dt>
-<dd>The animal&#8217;s gender. ASM looks for the initial letter “M” in the string to indicate male.</dd>
+<dd>The animal’s gender. ASM looks for the initial letter “M” in the string to indicate male.</dd>
 <dt>ANIMALTYPE</dt>
-<dd>The animal&#8217;s type. This should correspond to one of ASM&#8217;s animal types from your database.</dd>
+<dd>The animal’s type. This should correspond to one of ASM’s animal types from your database.</dd>
 <dt>ANIMALCOLOR</dt>
-<dd>The animal&#8217;s color. This should correspond to a color in your database.</dd>
+<dd>The animal’s color. This should correspond to a color in your database.</dd>
 <dt>ANIMALBREED1</dt>
-<dd>The animal&#8217;s primary breed. It should match a breed in your database.</dd>
+<dd>The animal’s primary breed. It should match a breed in your database.</dd>
 <dt>ANIMALBREED2</dt>
-<dd>The animal&#8217;s secondary breed. If different from ANIMALBREED1, ASM will mark the animal as a crossbreed.</dd>
+<dd>The animal’s secondary breed. If different from ANIMALBREED1, ASM will mark the animal as a crossbreed.</dd>
 <dt>ANIMALDOB</dt>
-<dd>The animal&#8217;s date of birth. This field, or ANIMALAGE must be supplied or the record will not be imported.</dd>
+<dd>The animal’s date of birth. This field, or ANIMALAGE must be supplied or the record will not be imported.</dd>
 <dt>ANIMALAGE</dt>
-<dd>The animal&#8217;s current age in years. ASM will calculate a date of birth from this during import if ANIMALDOB is not supplied or blank.</dd>
+<dd>The animal’s current age in years. ASM will calculate a date of birth from this during import if ANIMALDOB is not supplied or blank.</dd>
 <dt>ANIMALLOCATION</dt>
-<dd>The animal&#8217;s location within your shelter. This should correspond to a location in your database.</dd>
+<dd>The animal’s location within your shelter. This should correspond to a location in your database.</dd>
 <dt>ANIMALUNIT</dt>
-<dd>The unit within the animal&#8217;s location within the shelter, eg: pen/cage number.</dd>
+<dd>The unit within the animal’s location within the shelter, eg: pen/cage number.</dd>
 <dt>ANIMALSPECIES</dt>
-<dd>The animal&#8217;s species. This should match a species in your database.</dd>
+<dd>The animal’s species. This should match a species in your database.</dd>
 <dt>ANIMALHOUSETRAINED</dt>
 <dd>Y/N/U to indicate yes/no/unknown</dd>
 <dt>ANIMALGOODWITHCATS</dt>
@@ -201,13 +221,13 @@
 <dt>ANIMALGOODWITHKIDS</dt>
 <dd>Y/N/U to indicate yes/no/unknown</dd>
 <dt>ANIMALCOMMENTS</dt>
-<dd>Some comments to put in the animal&#8217;s comment field.</dd>
+<dd>Some comments to put in the animal’s comment field.</dd>
 <dt>ANIMALHIDDENDETAILS</dt>
-<dd>Some comments for the animal&#8217;s hidden details field.</dd>
+<dd>Some comments for the animal’s hidden details field.</dd>
 <dt>ANIMALMARKINGS</dt>
-<dd>Some comments for the animal&#8217;s markings field.</dd>
+<dd>Some comments for the animal’s markings field.</dd>
 <dt>ANIMALHEALTHPROBLEMS</dt>
-<dd>Some comments for the animal&#8217;s health problems field.</dd>
+<dd>Some comments for the animal’s health problems field.</dd>
 <dt>ANIMALNEUTERED</dt>
 <dd>Y/N to indicate yes/no</dd>
 <dt>ANIMALNEUTEREDDATE</dt>
@@ -217,7 +237,7 @@
 <dt>ANIMALMICROCHIPDATE</dt>
 <dd>The date the microchip was implanted</dd>
 <dt>ANIMALENTRYDATE</dt>
-<dd>The date the animal entered the shelter (date brought in). Today&#8217;s date will be used if this column is not present or the value is blank.</dd>
+<dd>The date the animal entered the shelter (date brought in). Today’s date will be used if this column is not present or the value is blank.</dd>
 <dt>ANIMALREASONFORENTRY</dt>
 <dd>Free text, notes on the reason the animal entered the shelter.</dd>
 <dt>ANIMALDECEASEDDATE</dt>
@@ -265,69 +285,69 @@
 <dt>MOVEMENTCOMMENTS</dt>
 <dd>Any comments for the movement</dd>
 <dt>ORIGINALOWNERTITLE</dt>
-<dd>If we have original owner info for the animal, the person&#8217;s title.</dd>
+<dd>If we have original owner info for the animal, the person’s title.</dd>
 <dt>ORIGINALOWNERINITIALS</dt>
-<dd>Original owner&#8217;s initials.</dd>
+<dd>Original owner’s initials.</dd>
 <dt>ORIGINALOWNERFIRSTNAME</dt>
-<dd>The original owner&#8217;s first name(s).</dd>
+<dd>The original owner’s first name(s).</dd>
 <dt>ORIGINALOWNERLASTNAME</dt>
-<dd>The original owner&#8217;s last name. This column being present and having data in it determines whether or not the importer will consider the animal as having original owner info.</dd>
+<dd>The original owner’s last name. This column being present and having data in it determines whether or not the importer will consider the animal as having original owner info.</dd>
 <dt>ORIGINALOWNERADDRESS</dt>
-<dd>Original owner&#8217;s address.</dd>
+<dd>Original owner’s address.</dd>
 <dt>ORIGINALOWNERCITY</dt>
-<dd>The original owner&#8217;s city/town.</dd>
+<dd>The original owner’s city/town.</dd>
 <dt>ORIGINALOWNERSTATE</dt>
-<dd>The original owner&#8217;s state/county.</dd>
+<dd>The original owner’s state/county.</dd>
 <dt>ORIGINALOWNERZIPCODE</dt>
-<dd>The original owner&#8217;s zip or postcode.</dd>
+<dd>The original owner’s zip or postcode.</dd>
 <dt>ORIGINALOWNERJURISDICTION</dt>
-<dd>The original owner&#8217;s jurisdiction</dd>
+<dd>The original owner’s jurisdiction</dd>
 <dt>ORIGINALOWNERHOMEPHONE</dt>
-<dd>The original owner&#8217;s home phone.</dd>
+<dd>The original owner’s home phone.</dd>
 <dt>ORIGINALOWNERWORKPHONE</dt>
-<dd>The original owner&#8217;s work phone.</dd>
+<dd>The original owner’s work phone.</dd>
 <dt>ORIGINALOWNERCELLPHONE</dt>
-<dd>The original owner&#8217;s mobile phone.</dd>
+<dd>The original owner’s mobile phone.</dd>
 <dt>ORIGINALOWNEREMAIL</dt>
-<dd>The original owner&#8217;s email.</dd>
+<dd>The original owner’s email.</dd>
 <dt>ORIGINALOWNERADDITIONAL&lt;fieldname&gt;</dt>
 <dd>If you have person additional fields defined, you can put the uppercased version of their name as a suffix to this. Eg, for an additional field called DateOfBirth ORIGINALOWNERADDITIONALDATEOFBIRTH</dd>
 <dt>PERSONCLASS</dt>
 <dd>1 = Individual/Couple, 2 = Organisation</dd>
 <dt>PERSONTITLE</dt>
-<dd>The person&#8217;s title</dd>
+<dd>The person’s title</dd>
 <dt>PERSONINITIALS</dt>
-<dd>The person&#8217;s initials</dd>
+<dd>The person’s initials</dd>
 <dt>PERSONFIRSTNAME</dt>
-<dd>The person&#8217;s first name (forenames)</dd>
+<dd>The person’s first name (forenames)</dd>
 <dt>PERSONLASTNAME</dt>
-<dd>The person&#8217;s last name (surname)</dd>
+<dd>The person’s last name (surname)</dd>
 <dt>PERSONNAME</dt>
 <dd>If this field is supplied, ASM will assume it contains first names and a last name, overriding any fields that set those. Everything up to the last space is considered first names and everything up to the last space the last name.</dd>
 <dt>PERSONADDRESS</dt>
-<dd>The person&#8217;s address</dd>
+<dd>The person’s address</dd>
 <dt>PERSONCITY</dt>
-<dd>The person&#8217;s town/city</dd>
+<dd>The person’s town/city</dd>
 <dt>PERSONSTATE</dt>
-<dd>The person&#8217;s state/county</dd>
+<dd>The person’s state/county</dd>
 <dt>PERSONZIPCODE</dt>
-<dd>The person&#8217;s zip or postcode</dd>
+<dd>The person’s zip or postcode</dd>
 <dt>PERSONJURISDICTION</dt>
-<dd>The person&#8217;s jurisdiction</dd>
+<dd>The person’s jurisdiction</dd>
 <dt>PERSONHOMEPHONE</dt>
-<dd>The person&#8217;s home phone number</dd>
+<dd>The person’s home phone number</dd>
 <dt>PERSONWORKPHONE</dt>
-<dd>The person&#8217;s work phone number</dd>
+<dd>The person’s work phone number</dd>
 <dt>PERSONCELLPHONE</dt>
-<dd>The person&#8217;s cell/mobile number</dd>
+<dd>The person’s cell/mobile number</dd>
 <dt>PERSONEMAIL</dt>
-<dd>The person&#8217;s email address</dd>
+<dd>The person’s email address</dd>
 <dt>PERSONGDPRCONTACTOPTIN</dt>
 <dd>The GDPR contact optin values, separated by a comma. These values are: didnotask, declined, email, post, sms, phone</dd>
 <dt>PERSONMEMBER</dt>
 <dd>Y or 1 in this column to indicate the person should have the membership flag set.</dd>
 <dt>PERSONMEMBERSHIPEXPIRY</dt>
-<dd>A date for when this person&#8217;s membership expires</dd>
+<dd>A date for when this person’s membership expires</dd>
 <dt>PERSONFOSTERER</dt>
 <dd>Y or 1 in this column to indicate the person should have the fosterer flag set.</dd>
 <dt>PERSONDONOR</dt>
@@ -382,15 +402,16 @@ Additional flags that you have added to the system should exactly match their fl
 
 
            </div>
+           
           </div>
           <footer>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="databasetables.html" class="btn btn-neutral float-right" title="Appendix: Database Tables/Columns" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="databasetables.html" class="btn btn-neutral float-right" title="Appendix: Database Tables/Columns" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="faq.html" class="btn btn-neutral" title="Appendix: Frequently Asked Questions" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="faq.html" class="btn btn-neutral" title="Appendix: Frequently Asked Questions" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
@@ -403,7 +424,7 @@ Additional flags that you have added to the system should exactly match their fl
 
     </p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
 
@@ -422,9 +443,11 @@ Additional flags that you have added to the system should exactly match their fl
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
             VERSION:'41u',
+            LANGUAGE:'None',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
-            HAS_SOURCE:  true
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
         };
     </script>
       <script type="text/javascript" src="_static/jquery.js"></script>
@@ -433,19 +456,13 @@ Additional flags that you have added to the system should exactly match their fl
 
   
 
-  
-  
-    <script type="text/javascript" src="_static/js/theme.js"></script>
-  
+  <script type="text/javascript" src="_static/js/theme.js"></script>
 
-  
-  
   <script type="text/javascript">
       jQuery(function () {
-          SphinxRtdTheme.StickyNav.enable();
+          SphinxRtdTheme.Navigation.enable(true);
       });
-  </script>
-   
+  </script> 
 
 </body>
 </html>
