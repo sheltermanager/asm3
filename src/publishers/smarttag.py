@@ -9,7 +9,7 @@ import utils
 from base import FTPPublisher, get_microchip_data
 from sitedefs import SMARTTAG_FTP_HOST, SMARTTAG_FTP_USER, SMARTTAG_FTP_PASSWORD
 
-SMARTTAG_PREFIXES = [ '90007400', '900139', '900141' ]
+SMARTTAG_PREFIXES = [ '90007400', '900139', '900141', '987' ]
 
 class SmartTagPublisher(FTPPublisher):
     """

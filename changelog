@@ -1,6 +1,7 @@
 41
 ================
 
+13/09/18 Add new smarttag microchip prefix 987*
 13/09/18 More options for exporting animal data as CSV #484
 13/09/18 ANIMALNONSHELTER CSV import field and support for export
 13/09/18 "Do not publish" flag for html_adopted|deceased_animals, etc #485
