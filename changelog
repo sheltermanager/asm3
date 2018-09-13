@@ -1,6 +1,8 @@
 41
 ================
 
+13/09/18 More options for exporting animal data as CSV #484
+13/09/18 ANIMALNONSHELTER CSV import field and support for export
 13/09/18 "Do not publish" flag for html_adopted|deceased_animals, etc #485
 12/09/18 Show clear error message when accessing subreports that don't exist
 12/09/18 Fix bug that prevented group SUM working in $HEAD blocks

@@ -11,6 +11,8 @@ ANIMALNAME
     The animal's name
 ANIMALIMAGE
     A photo for the animal, it can either be a fully qualified HTTP URL to a JPG image OR a base64 encoded JPG expressed as a data URI
+ANIMALNONSHELTER
+    Y/N to indicate whether this animal is a owned by a member of the public and not a shelter animal
 ANIMALNOTFORADOPTION
     Y/N to indicate whether this animal is not available for adoption (Y is not available).
 ANIMALSEX

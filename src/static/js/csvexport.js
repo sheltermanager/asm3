@@ -15,6 +15,19 @@ $(function() {
                 '<table>',
                 '<tr>',
                 '<td>',
+                '<label for="filter">' + _("Filter") + '</label>',
+                '</td>',
+                '<td>',
+                '<select id="filter" name="filter" class="asm-selectbox">',
+                '<option value="all">' + _("All Animals") + '</option>',
+                '<option value="shelter">' + _("All On-Shelter Animals") + '</option>',
+                '<option value="selshelter">' + _("Selected On-Shelter Animals") + '</option>',
+                '<option value="nonshelter">' + _("Non-Shelter Animals") + '</option>',
+                '</select>',
+                '</td>',
+                '</tr>',
+                '<tr id="animalsrow">',
+                '<td>',
                 '<label for="animals">' + _("Animals") + '</label>',
                 '</td>',
                 '<td>',
@@ -37,8 +50,17 @@ $(function() {
 
         bind: function() {
             $("#submit").button().click(function() {
-                if (!$("#animals").val()) { return; }
                 $("#csvform").submit();
+            });
+
+            $("#animalsrow").hide();
+            $("#filter").change(function() {
+                if ($("#filter").select("value") == "selshelter") { 
+                    $("#animalsrow").fadeIn(); 
+                }
+                else {
+                    $("#animalsrow").fadeOut(); 
+                }
             });
         },
 

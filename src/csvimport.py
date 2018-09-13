@@ -27,7 +27,7 @@ VALID_FIELDS = [
     "ANIMALSPECIES", "ANIMALAGE", 
     "ANIMALCOMMENTS", "ANIMALMARKINGS", "ANIMALNEUTERED", "ANIMALNEUTEREDDATE", "ANIMALMICROCHIP", "ANIMALMICROCHIPDATE", 
     "ANIMALENTRYDATE", "ANIMALDECEASEDDATE", "ANIMALCODE",
-    "ANIMALREASONFORENTRY", "ANIMALHIDDENDETAILS", "ANIMALNOTFORADOPTION",
+    "ANIMALREASONFORENTRY", "ANIMALHIDDENDETAILS", "ANIMALNOTFORADOPTION", "ANIMALNONSHELTER", 
     "ANIMALGOODWITHCATS", "ANIMALGOODWITHDOGS", "ANIMALGOODWITHKIDS", 
     "ANIMALHOUSETRAINED", "ANIMALHEALTHPROBLEMS", "ANIMALIMAGE",
     "VACCINATIONTYPE", "VACCINATIONDUEDATE", "VACCINATIONGIVENDATE", "VACCINATIONEXPIRESDATE", 
@@ -401,6 +401,7 @@ def csvimport(dbo, csvdata, encoding = "utf8", createmissinglookups = False, cle
             a["hiddenanimaldetails"] = gks(row, "ANIMALHIDDENDETAILS")
             a["healthproblems"] = gks(row, "ANIMALHEALTHPROBLEMS")
             a["notforadoption"] = gkbi(row, "ANIMALNOTFORADOPTION")
+            a["nonshelter"] = gkbi(row, "ANIMALNONSHELTER")
             a["housetrained"] = gkynu(row, "ANIMALHOUSETRAINED")
             a["goodwithcats"] = gkynu(row, "ANIMALGOODWITHCATS")
             a["goodwithdogs"] = gkynu(row, "ANIMALGOODWITHDOGS")
@@ -757,15 +758,24 @@ def csvimport_paypal(dbo, csvdata, donationtypeid, donationpaymentid, flags):
     h.append("</table>")
     return "".join(h)
 
-def csvexport_animals(dbo, animalids, includephoto = False):
+def csvexport_animals(dbo, dataset, animalids = "", includephoto = False):
     """
-    Export CSV data for the supplied comma separated list of animalids
+    Export CSV data for a set of animals.
+    dataset: The named set of data to use
+    animalids: If dataset == selshelter, a comma separated list of animals to export
+    includephoto: Output a base64 encoded version of the animal's photo if True
     """
     l = dbo.locale
+    q = ""
+    if dataset == "all": q = "SELECT ID FROM animal ORDER BY ID"
+    elif dataset == "shelter": q = "SELECT ID FROM animal WHERE Archived=0 ORDER BY ID"
+    elif dataset == "nonshelter": q = "SELECT ID FROM animal WHERE NonShelterAnimal=1 ORDER BY ID"
+    elif dataset == "selshelter": q = "SELECT ID FROM animal WHERE ID IN (%s) ORDER BY ID" % animalids
+    ids = dbo.query(q)
     rows = []
-    for aid in animalids.split(","):
+    for aid in ids:
         row = collections.OrderedDict()
-        a = animal.get_animal(dbo, utils.cint(aid))
+        a = animal.get_animal(dbo, aid.ID)
         if a is None: continue
         row["ANIMALCODE"] = a["SHELTERCODE"]
         row["ANIMALNAME"] = a["ANIMALNAME"]
@@ -795,6 +805,7 @@ def csvexport_animals(dbo, animalids, includephoto = False):
         row["ANIMALENTRYDATE"] = i18n.python2display(l, a["DATEBROUGHTIN"])
         row["ANIMALDECEASEDDATE"] = i18n.python2display(l, a["DECEASEDDATE"])
         row["ANIMALNOTFORADOPTION"] = a["ISNOTAVAILABLEFORADOPTION"]
+        row["ANIMALNONSHELTER"] = a["NONSHELTERANIMAL"]
         row["ANIMALGOODWITHCATS"] = a["ISGOODWITHCATSNAME"]
         row["ANIMALGOODWITHDOGS"] = a["ISGOODWITHDOGSNAME"]
         row["ANIMALGOODWITHKIDS"] = a["ISGOODWITHCHILDRENNAME"]
@@ -859,6 +870,7 @@ def csvexport_animals(dbo, animalids, includephoto = False):
             row["ANIMALCODE"] = a["SHELTERCODE"]
             row["ANIMALNAME"] = a["ANIMALNAME"]
             rows.append(row)
+        del a
     if len(rows) == 0: return ""
     keys = rows[0].keys()
     out = StringIO()
