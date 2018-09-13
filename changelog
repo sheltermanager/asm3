@@ -1,6 +1,7 @@
 41
 ================
 
+13/09/18 "Do not publish" flag for html_adopted|deceased_animals, etc #485
 12/09/18 Show clear error message when accessing subreports that don't exist
 12/09/18 Fix bug that prevented group SUM working in $HEAD blocks
 11/09/18 Add English/Japan locale, allow country override on options for geocoding

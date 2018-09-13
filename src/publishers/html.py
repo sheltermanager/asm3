@@ -36,8 +36,9 @@ def get_adopted_animals(dbo, daysadopted=0, style="", speciesid=0, animaltypeid=
     """
     if daysadopted == 0: daysadopted = 30
     orderby = "a.ActiveMovementDate DESC"
-    animals = dbo.query(animal.get_animal_query(dbo) + " WHERE a.ActiveMovementType = 1 AND " \
-        "a.ActiveMovementDate >= ? AND a.DeceasedDate Is Null AND a.NonShelterAnimal = 0 "
+    animals = dbo.query(animal.get_animal_query(dbo) + \
+        " WHERE a.IsNotAvailableForAdoption = 0 AND a.ActiveMovementType = 1 AND " \
+        "a.ActiveMovementDate >= ? AND a.DeceasedDate Is Null AND a.NonShelterAnimal = 0 " \
         "ORDER BY %s" % orderby, [ dbo.today(daysadopted * -1)] )
     return animals_to_page(dbo, animals, style=style, speciesid=speciesid, animaltypeid=animaltypeid)
 
@@ -51,7 +52,7 @@ def get_deceased_animals(dbo, daysdeceased=0, style="", speciesid=0, animaltypei
     if daysdeceased == 0: daysdeceased = 30
     orderby = "a.DeceasedDate DESC"
     animals = dbo.query(animal.get_animal_query(dbo) + \
-        " WHERE a.DeceasedDate Is Not Null AND a.DeceasedDate >= ? AND a.NonShelterAnimal = 0 AND a.DiedOffShelter = 0 "
+        " WHERE a.IsNotAvailableForAdoption = 0 AND a.DeceasedDate Is Not Null AND a.DeceasedDate >= ? AND a.NonShelterAnimal = 0 AND a.DiedOffShelter = 0 "
         "ORDER BY %s" % orderby, [ dbo.today(daysdeceased * -1)] )
     return animals_to_page(dbo, animals, style=style, speciesid=speciesid, animaltypeid=animaltypeid)
 
@@ -341,7 +342,8 @@ class HTMLPublisher(FTPPublisher):
             if self.pc.order == 0: orderby = "a.ActiveMovementDate"
             elif self.pc.order == 1: orderby = "a.ActiveMovementDate DESC"
             elif self.pc.order == 2: orderby = "a.AnimalName"
-            animals = self.dbo.query(animal.get_animal_query(self.dbo) + " WHERE a.ActiveMovementType = 1 AND " \
+            animals = self.dbo.query(animal.get_animal_query(self.dbo) + \
+                " WHERE a.IsNotAvailableForAdoption = 0 AND a.ActiveMovementType = 1 AND " \
                 "a.ActiveMovementDate >= %s AND a.DeceasedDate Is Null AND a.NonShelterAnimal = 0 "
                 "ORDER BY %s" % (self.dbo.sql_date(cutoff), orderby))
             totalAnimals = len(animals)
@@ -406,7 +408,8 @@ class HTMLPublisher(FTPPublisher):
             if self.pc.order == 0: orderby = "a.DeceasedDate"
             elif self.pc.order == 1: orderby = "a.DeceasedDate DESC"
             elif self.pc.order == 2: orderby = "a.AnimalName"
-            animals = self.dbo.query(animal.get_animal_query(self.dbo) + " WHERE a.DeceasedDate Is Not Null AND " \
+            animals = self.dbo.query(animal.get_animal_query(self.dbo) + \
+                " WHERE a.IsNotAvailableForAdoption = 0 AND a.DeceasedDate Is Not Null AND " \
                 "a.DeceasedDate >= %s AND a.NonShelterAnimal = 0 AND a.DiedOffShelter = 0 " \
                 "ORDER BY %s" % (self.dbo.sql_date(cutoff), orderby))
             totalAnimals = len(animals)

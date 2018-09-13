@@ -1648,12 +1648,13 @@
             };
 
             var h = [
-                { onshelter: false, label: _("Courtesy Listing"), html: field_option("ISCOURTESY", "courtesy", _("Courtesy Listing")) },
-                { onshelter: true, label: _("Cruelty Case"), html: field_option("CRUELTYCASE", "crueltycase", _("Cruelty Case")) },
-                { onshelter: false, label: _("Non-Shelter"), html: field_option("NONSHELTERANIMAL", "nonshelter", _("Non-Shelter")) },
-                { onshelter: true, label: _("Not For Adoption"), html: field_option("ISNOTAVAILABLEFORADOPTION", "notforadoption", _("Not For Adoption")) },
-                { onshelter: false, label: _("Do Not Register Microchip"), html: field_option("ISNOTFORREGISTRATION", "notforregistration", _("Do Not Register Microchip")) },
-                { onshelter: true, label: _("Quarantine"), html: field_option("ISQUARANTINE", "quarantine", _("Quarantine")) }
+                { loc: "any", label: _("Courtesy Listing"), html: field_option("ISCOURTESY", "courtesy", _("Courtesy Listing")) },
+                { loc: "on", label: _("Cruelty Case"), html: field_option("CRUELTYCASE", "crueltycase", _("Cruelty Case")) },
+                { loc: "any", label: _("Non-Shelter"), html: field_option("NONSHELTERANIMAL", "nonshelter", _("Non-Shelter")) },
+                { loc: "on", label: _("Not For Adoption"), html: field_option("ISNOTAVAILABLEFORADOPTION", "notforadoption", _("Not For Adoption")) },
+                { loc: "off", label: _("Do Not Publish"), html: field_option("ISNOTAVAILABLEFORADOPTION", "notforadoption", _("Do Not Publish")) },
+                { loc: "any", label: _("Do Not Register Microchip"), html: field_option("ISNOTFORREGISTRATION", "notforregistration", _("Do Not Register Microchip")) },
+                { loc: "on", label: _("Quarantine"), html: field_option("ISQUARANTINE", "quarantine", _("Quarantine")) }
             ];
 
             $.each(flags, function(i, v) {
@@ -1667,10 +1668,10 @@
             }
 
             $.each(h, function(i, v) {
-                // Skip if this flag only applies to on-shelter animals and this animal is off-shelter
-                if (v.onshelter && a && a.ARCHIVED == 1 && a.ACTIVEMOVEMENTTYPE != 2) {
-                    return;
-                }
+                // Skip if the flag is only for on-shelter and the animal is off-shelter
+                if (v.loc == "on" && a && a.ARCHIVED == 1 && a.ACTIVEMOVEMENTTYPE != 2) { return; }
+                // Skip if the flag is for off shelter only and the animal is on shelter
+                if (v.loc == "off" && a && a.ARCHIVED == 0) { return; }
                 opt.push(v.html);    
             });
 
