@@ -43,7 +43,7 @@ class GeoProvider(object):
     def uri_encode(self, s):
         """ Converts a parameter to URI encoding """
         s = utils.html_to_uri(s) # Convert HTML entities to URI encoded entities &#255; becomes %ff
-        return s.replace("&", "").replace("=", "").replace("^", "").replace(".", "").replace("\r", "").replace("\n", ",").replace(", ", ",").replace(" ", "+")
+        return s.replace("#", "").s.replace("&", "").replace("=", "").replace("^", "").replace(".", "").replace("\r", "").replace("\n", ",").replace(", ", ",").replace(" ", "+")
 
     def first_line(self, s):
         """ Returns just the first line of a string """
