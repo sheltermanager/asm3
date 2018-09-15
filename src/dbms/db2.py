@@ -29,8 +29,13 @@ class DatabaseDB2(Database):
     type_integer = "INTEGER"
     type_float = "REAL"
 
+    def check_reorg(self):
+        for row in self.query("SELECT TABNAME from SYSIBMADM.ADMINTABINFO where REORG_PENDING='Y'"):
+            self.execute("CALL SYSPROC.ADMIN_CMD('REORG TABLE %s')" % (row.tabname), params=None, override_lock=True)
+        return
+
     def connect(self):
-        return ibm_db_dbi.connect("DSN=%s; HOSTNAME=%s; PORT=%s" %(self.database, self.host, self.port), user=self.username, password=self.password)
+        return ibm_db_dbi.connect("DSN=%s; HOSTNAME=%s; PORT=%s" % (self.database, self.host, self.port), user=self.username, password=self.password)
 
     def ddl_add_index(self, name, table, column, unique = False, partial = False):
         u = ""
@@ -57,6 +62,12 @@ class DatabaseDB2(Database):
                 answer.append("'")
             answer.append(char)
         return ''.join(answer)
+
+    def execute_dbupdate(self, sql, params=None):
+        rv = self.execute(sql, params=params, override_lock=True)
+        if rv > 0:
+            self.check_reorg()
+        return rv
 
     def sql_limit(self, x):
         """ Writes a limit clause to X items """
