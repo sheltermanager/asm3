@@ -1665,6 +1665,10 @@ class Report:
                     # Mark the start position
                     gd.lastGroupStartPosition = row
                     gd.lastGroupEndPosition = len(rs)-1
+                    # Check the group field exists
+                    if gd.fieldName not in rs[row]:
+                        self._p("Cannot construct group, field '%s' does not exist" % gd.fieldName)
+                        return
                     # Find the end position of the group so that
                     # calculations work in headers
                     groupval = rs[row][gd.fieldName]
