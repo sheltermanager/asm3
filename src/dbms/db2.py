@@ -29,8 +29,13 @@ class DatabaseDB2(Database):
     type_integer = "INTEGER"
     type_float = "REAL"
 
+    def check_reorg(self):
+        for row in self.query("SELECT TABNAME from SYSIBMADM.ADMINTABINFO where REORG_PENDING='Y'"):
+            self.execute("CALL SYSPROC.ADMIN_CMD('REORG TABLE %s')" % (row.tabname), params=None, override_lock=True)
+        return
+
     def connect(self):
-        return ibm_db_dbi.connect("DSN=%s; HOSTNAME=%s; PORT=%s" %(self.database, self.host, self.port), user=self.username, password=self.password)
+        return ibm_db_dbi.connect("DSN=%s; HOSTNAME=%s; PORT=%s" % (self.database, self.host, self.port), user=self.username, password=self.password)
 
     def ddl_add_index(self, name, table, column, unique = False, partial = False):
         u = ""
@@ -38,14 +43,20 @@ class DatabaseDB2(Database):
         if partial: column = "CHAR(SUBSTR(%s, 1, 255))" % column
         return "CREATE %sINDEX %s ON %s (%s)" % (u, name, table, column)
 
+    def ddl_add_sequence(self, table, startat):
+        return "CREATE SEQUENCE seq_%s START WITH %s INCREMENT BY 1 NO CYCLE NO CACHE" % (table, startat)
+
     def ddl_drop_view(self, name):
         return "BEGIN DECLARE CONTINUE HANDLER FOR SQLSTATE '42704' BEGIN END; EXECUTE IMMEDIATE 'DROP VIEW %s'; END" % name
 
-    def ddl_modify_column(self, table, column, newtype, using = ""):
-        return "ALTER TABLE %s ALTER COLUMN %s SET DATA TYPE %s" % (table, column, newtype)
-
     def ddl_drop_column(self, table, column):
         return "ALTER TABLE %s DROP COLUMN %s CASCADE" % (table, column)
+
+    def ddl_drop_sequence(self, table):
+        return "BEGIN DECLARE CONTINUE HANDLER FOR SQLSTATE '42704' BEGIN END; EXECUTE IMMEDIATE 'DROP SEQUENCE seq_%s'; END" % table
+
+    def ddl_modify_column(self, table, column, newtype, using = ""):
+        return "ALTER TABLE %s ALTER COLUMN %s SET DATA TYPE %s" % (table, column, newtype)
 
     def escape(self, s):
         esc_chars = "\x00\x1a\\\";"
@@ -58,10 +69,20 @@ class DatabaseDB2(Database):
             answer.append(char)
         return ''.join(answer)
 
-    def sql_limit(self, x):
-        """ Writes a limit clause to X items """
-        return "FETCH FIRST %s ROWS ONLY" % x
-    
+    def execute_dbupdate(self, sql, params=None):
+        rv = self.execute(sql, params=params, override_lock=True)
+        if rv > 0:
+            self.check_reorg()
+        return rv
+
+    def get_id(self, table):
+        """ Returns the next ID for a table using sequences
+        """
+        nextid = self.query_int("VALUES NEXT VALUE FOR seq_%s" % table)
+        al.debug("get_id: %s -> %d (sequence)" % (table, nextid), "DatabaseDB2.get_id", self)
+        self.update_asm2_primarykey(table, nextid)
+        return nextid
+
     def query_explain(self, sql, params=None):
         """
         Runs an EXPLAIN query
@@ -74,22 +95,15 @@ class DatabaseDB2(Database):
             o.append(r[0])
         return "\n".join(o)
 
-    def ddl_add_sequence(self, table, startat):
-        return "CREATE SEQUENCE seq_%s START WITH %s INCREMENT BY 1 NO CYCLE NO CACHE" % (table, startat)
-
-    def ddl_drop_sequence(self, table):
-        return "BEGIN DECLARE CONTINUE HANDLER FOR SQLSTATE '42704' BEGIN END; EXECUTE IMMEDIATE 'DROP SEQUENCE seq_%s'; END" % table
-
-    def get_id(self, table):
-        """ Returns the next ID for a table using sequences
-        """
-        nextid = self.query_int("VALUES NEXT VALUE FOR seq_%s" % table)
-        al.debug("get_id: %s -> %d (sequence)" % (table, nextid), "DatabaseDB2.get_id", self)
-        self.update_asm2_primarykey(table, nextid)
-        return nextid
+    def sql_cast_char(self, expr):
+        """ Writes a database independent cast for expr to a char """
+        return "CHAR(%s)" % (expr)
     
+    def sql_limit(self, x):
+        """ Writes a limit clause to X items """
+        return "FETCH FIRST %s ROWS ONLY" % x
+
     def switch_param_placeholder(self, sql):
         """ DB2 likes ? so do nothing 
         """
         return sql
-
