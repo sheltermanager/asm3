@@ -270,7 +270,7 @@ class Database(object):
             override_lock: if this is set to False and dbo.locked = True,
                            we don't do anything. This makes it easy to 
                            lock the database for writes, but keep databases 
-                           upto date.
+                           up to date.
         """
         if not override_lock and self.locked: return 0
         if sql is None or sql.strip() == "": return 0
