@@ -380,7 +380,7 @@ def update_animalcontrol_respondnow(dbo, acid, username):
         "RespondedDateTime":    dbo.now()
     }, username)
 
-def update_animalcontrol_from_form(dbo, post, username):
+def update_animalcontrol_from_form(dbo, post, username, geocode=True):
     """
     Updates an animal control incident record from the screen
     data: The webpy data object containing form parameters
@@ -434,7 +434,7 @@ def update_animalcontrol_from_form(dbo, post, username):
     update_animalcontrol_roles(dbo, acid, post.integer_list("viewroles"), post.integer_list("editroles"))
 
     # Check/update the geocode for the dispatch address
-    update_dispatch_geocode(dbo, acid, post["dispatchlatlong"], post["dispatchaddress"], post["dispatchtown"], post["dispatchcounty"], post["dispatchpostcode"])
+    if geocode: update_dispatch_geocode(dbo, acid, post["dispatchlatlong"], post["dispatchaddress"], post["dispatchtown"], post["dispatchcounty"], post["dispatchpostcode"])
 
 def update_animalcontrol_roles(dbo, acid, viewroles, editroles):
     """
@@ -479,7 +479,7 @@ def update_animalcontrol_removelink(dbo, username, acid, animalid):
     dbo.execute("DELETE FROM animalcontrolanimal WHERE AnimalControlID = ? AND AnimalID = ?", (acid, animalid))
     audit.delete(dbo, username, "animalcontrolanimal", acid, "incident %d no longer linked to animal %d" % (acid, animalid))
 
-def insert_animalcontrol_from_form(dbo, post, username):
+def insert_animalcontrol_from_form(dbo, post, username, geocode=True):
     """
     Inserts a new animal control incident record from the screen
     data: The webpy data object containing form parameters
@@ -528,7 +528,7 @@ def insert_animalcontrol_from_form(dbo, post, username):
     update_animalcontrol_roles(dbo, nid, post.integer_list("viewroles"), post.integer_list("editroles"))
 
     # Look up a geocode for the dispatch address
-    update_dispatch_geocode(dbo, nid, "", post["dispatchaddress"], post["dispatchtown"], post["dispatchcounty"], post["dispatchpostcode"])
+    if geocode: update_dispatch_geocode(dbo, nid, "", post["dispatchaddress"], post["dispatchtown"], post["dispatchcounty"], post["dispatchpostcode"])
 
     return nid
 

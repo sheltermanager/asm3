@@ -44,7 +44,7 @@ def get_person_query(dbo):
         "doc.Date AS DocMediaDate, " \
         "(SELECT COUNT(*) FROM ownerinvestigation oi WHERE oi.OwnerID = o.ID) AS Investigation, " \
         "(SELECT COUNT(*) FROM animalcontrol ac WHERE ac.OwnerID = o.ID OR ac.Owner2ID = o.ID OR ac.Owner3ID = o.ID) AS Incident, " \
-        "(SELECT COUNT(*) FROM animal bib WHERE bib.BroughtInByOwnerID = o.ID OR bib.OriginalOwnerID = o.ID) AS Surrender " \
+        "(SELECT COUNT(*) FROM animal bib WHERE NonShelterAnimal = 0 AND IsTransfer = 0 AND IsPickup = 0 AND bib.OriginalOwnerID = o.ID) AS Surrender " \
         "FROM owner o " \
         "LEFT OUTER JOIN owner ho ON ho.ID = o.HomeCheckedBy " \
         "LEFT OUTER JOIN media web ON web.LinkID = o.ID AND web.LinkTypeID = %d AND web.WebsitePhoto = 1 " \
@@ -687,7 +687,7 @@ def insert_person_from_form(dbo, post, username, geocode=True):
 
     return pid
 
-def update_person_from_form(dbo, post, username):
+def update_person_from_form(dbo, post, username, geocode=True):
     """
     Updates an existing person record from incoming form data
     """
@@ -764,7 +764,7 @@ def update_person_from_form(dbo, post, username):
     additional.save_values_for_link(dbo, post, pid, "person")
 
     # Check/update the geocode for the person's address
-    update_geocode(dbo, pid, post["latlong"], post["address"], post["town"], post["county"], post["postcode"])
+    if geocode: update_geocode(dbo, pid, post["latlong"], post["address"], post["town"], post["county"], post["postcode"])
 
 def update_flags(dbo, username, personid, flags):
     """

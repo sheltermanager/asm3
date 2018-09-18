@@ -61,7 +61,7 @@ class TestAnimalControl(unittest.TestCase):
             "incidenttime":   "00:00:00"
         }
         post = utils.PostedData(data, "en")
-        nid = animalcontrol.insert_animalcontrol_from_form(base.get_dbo(), post, "test")
+        nid = animalcontrol.insert_animalcontrol_from_form(base.get_dbo(), post, "test", geocode=False)
         animalcontrol.delete_animalcontrol(base.get_dbo(), "test", nid)
 
     def test_update_animalcontrol_from_form(self):
@@ -70,7 +70,7 @@ class TestAnimalControl(unittest.TestCase):
             "incidenttime":   "00:00:00"
         }
         post = utils.PostedData(data, "en")
-        animalcontrol.update_animalcontrol_from_form(base.get_dbo(), post, "test")
+        animalcontrol.update_animalcontrol_from_form(base.get_dbo(), post, "test", geocode=False)
 
     def test_insert_traploan_from_form(self):
         data = {

@@ -19,7 +19,7 @@ class TestPerson(unittest.TestCase):
             "address": "123 test street"
         }
         post = utils.PostedData(data, "en")
-        self.nid = person.insert_person_from_form(base.get_dbo(), post, "test")
+        self.nid = person.insert_person_from_form(base.get_dbo(), post, "test", geocode=False)
 
     def tearDown(self):
         person.delete_person(base.get_dbo(), "test", self.nid)
