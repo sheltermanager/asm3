@@ -1,6 +1,7 @@
 41
 ================
 
+20/09/18 Bug allowed "Include without description" to override courtesy listing
 18/09/18 Brought in warning should only apply to shelter/non-pickup/non-transfer
 13/09/18 Merge GDPR contact flags during merge, CSV import, onlineform create #446
 13/09/18 Add new smarttag microchip prefix 987*

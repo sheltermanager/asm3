@@ -57,9 +57,10 @@ def get_animal_data(dbo, pc=None, animalid=0, include_additional_fields=False, r
             r.WEBSITEMEDIANOTES = r.ANIMALCOMMENTS
 
     # If we aren't including animals with blank descriptions, remove them now
+    # (but don't let it override the courtesy flag, which should always make animals appear)
     if not pc.includeWithoutDescription:
         oldcount = len(rows)
-        rows = [r for r in rows if utils.nulltostr(r.WEBSITEMEDIANOTES).strip() != ""]
+        rows = [r for r in rows if r.ISCOURTESY == 0 and utils.nulltostr(r.WEBSITEMEDIANOTES).strip() != ""]
         al.debug("removed %d rows without descriptions" % (oldcount - len(rows)), "publishers.base.get_animal_data", dbo)
 
     # Embellish additional fields if requested
