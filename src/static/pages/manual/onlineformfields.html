@@ -182,7 +182,8 @@
 <span id="onlineformfields"></span><h1>Appendix: Online Form import fields<a class="headerlink" href="#appendix-online-form-import-fields" title="Permalink to this headline">¶</a></h1>
 <p>ASM will recognise fields with the following names when receiving incoming
 online form submissions. These can be used to create person, lost animal, found
-animal and waiting list records as well as attach to existing animal records.</p>
+animal, incident and waiting list records as well as attach to existing
+animal records.</p>
 <dl class="docutils">
 <dt>title</dt>
 <dd>The person’s title, eg: Mr</dd>
@@ -232,6 +233,10 @@ animal and waiting list records as well as attach to existing animal records.</p
 <dd>The name of an existing shelter animal to attach this form to if specified (use the adoptable/shelter animal field types to get a valid animal name from your form)</dd>
 <dt>reserveanimalname[x]</dt>
 <dd>The name of a shelter/adoptable animal to reserve to the imported person record. This is useful when creating adoption application forms to automatically tie the person to the animal they are interested in adopting. Unlike the other keys, you can add a numeric suffix to have multiple animals reserved by the imported person (eg: reserveanimalname1, reserveanimalname2…)</dd>
+<dt>callnotes</dt>
+<dd>When creating an incident, the incident notes</dd>
+<dt>dispatchaddress / dispatchcity / dispatchstate / dispatchzipcode</dt>
+<dd>The dispatch address for an incident</dd>
 </dl>
 </div>
 
