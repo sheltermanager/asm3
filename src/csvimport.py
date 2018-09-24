@@ -688,11 +688,11 @@ def csvimport_paypal(dbo, csvdata, donationtypeid, donationpaymentid, flags):
         async.increment_progress_value(dbo)
 
         if r["Status"] != "Completed":
-            al.debug("skipping: Status='%s', Type='%s'" % (r["Status"], r["Type"]), "csvimport.csvimport_paypal", dbo)
+            al.debug("skipping: Status='%s' (!= Completed), Type='%s'" % (r["Status"], r["Type"]), "csvimport.csvimport_paypal", dbo)
             continue
 
-        if r["Type"] not in ( "Website Payment", "Subscription Payment", "Donation Payment" ):
-            al.debug("skipping: Status='%s', Type='%s'" % (r["Status"], r["Type"]), "csvimport.csvimport_paypal", dbo)
+        if r["Type"].find("Payment") == -1:
+            al.debug("skipping: Status='%s', Type='%s' (!Payment)" % (r["Status"], r["Type"]), "csvimport.csvimport_paypal", dbo)
             continue
 
         # Parse name (use all up to last space for first names if only Name exists)
