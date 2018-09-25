@@ -20,9 +20,21 @@ asm_db:
   pass: "{{ vault_asm_db.password }}"
 
 asm_sitedefs:
+    log_location: "stderr"
     # Where to store media files.
     # database - media files are base64 encoded in the dbfs.content db column
     # file - media files are stored in a folder
     # s3 - media files are stored in amazon s3
     dbfs_store: "file"
+    admin_email: "asm@shelter.somewhere"
+    # Map provider for rendering maps on the client, can be "osm" or "google"
+    map_provider: "google"
+    # Client side geocode provider for mapping address to lat/lng in the browser
+    # can be "mapquest", "nominatim" or "google"
+    geo_provider: "google"
+    geo_provider_key: ""
+    # Bulk geocode provider for server side geocoding of
+    # historical data, can be "nominatim" or "google" or "" to disable.
+    bulk_geo_provider: "google"
+    bulk_geo_provider_key: ""
 ...

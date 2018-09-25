@@ -152,7 +152,7 @@ MAP_LINK = "https://www.openstreetmap.org/search?query={0}"
 # Client side geocode provider for mapping address to lat/lng in the browser
 # can be "mapquest", "nominatim" or "google"
 GEO_PROVIDER = "{{ asm_sitedefs.geo_provider }}"
-GEO_PROVIDER_KEY = ""
+GEO_PROVIDER_KEY = "{{ asm_sitedefs.geo_provider_key }}"
 
 # Map provider for rendering maps on the client, can be "osm" or "google"
 MAP_PROVIDER = "{{ asm_sitedefs.map_provider }}"
@@ -161,7 +161,7 @@ OSM_MAP_TILES = "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" # (can be s
 # Bulk geocode provider for server side geocoding of
 # historical data, can be "nominatim" or "google" or "" to disable.
 BULK_GEO_PROVIDER = "{{ asm_sitedefs.bulk_geo_provider }}"
-BULK_GEO_PROVIDER_KEY = ""
+BULK_GEO_PROVIDER_KEY = "{{ asm_sitedefs.bulk_geo_provider_key }}"
 
 # Whether or not to try and complete blank geocodes as part of the batch
 BULK_GEO_BATCH = True
