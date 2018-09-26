@@ -1,6 +1,7 @@
 41
 ================
 
+26/09/18 Similar name check considers animals still on shelter as well
 24/09/18 PayPal import, recognise any type containing "Payment"
 20/09/18 Bug allowed "Include without description" to override courtesy listing
 18/09/18 Brought in warning should only apply to shelter/non-pickup/non-transfer

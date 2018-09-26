@@ -1681,11 +1681,11 @@ def get_random_name(dbo, sex = 0):
 
 def get_recent_with_name(dbo, name):
     """
-    Returns a list of animals who have a brought in date in the last 3 weeks
-    with the name given.
+    Returns a list of animals who have a brought in date in the last 3 weeks OR are on shelter
+    and have the name given.
     """
     return dbo.query("SELECT ID, ID AS ANIMALID, SHELTERCODE, ANIMALNAME FROM animal " \
-        "WHERE DateBroughtIn >= ? AND LOWER(AnimalName) LIKE ?", (dbo.today(offset=-21), name.lower()))
+        "WHERE (DateBroughtIn >= ? OR Archived=0) AND LOWER(AnimalName) LIKE ?", (dbo.today(offset=-21), name.lower()))
 
 def get_recent_changes(dbo, months=1, include_additional_fields=True):
     """ Returns all animal records that were changed in the last months """
