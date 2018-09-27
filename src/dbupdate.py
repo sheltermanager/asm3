@@ -2704,9 +2704,8 @@ def reset_db(dbo):
         "animaldiet", "animalfigures", "animalfiguresannual", 
         "animalfound", "animallitter", "animallost", "animalmedical", "animalmedicaltreatment", "animalname",
         "animaltest", "animaltransport", "animalvaccination", "animalwaitinglist", "diary", "log",
-        "media", "messages", "onlineform", "onlineformfield", "onlineformincoming", "owner", "ownercitation",
-        "ownerdonation", "ownerinvestigation", "ownerlicence", "ownertraploan", "ownervoucher", "stocklevel",
-        "stockusage" ]
+        "media", "messages", "owner", "ownercitation", "ownerdonation", "ownerinvestigation", "ownerlicence", 
+        "ownertraploan", "ownervoucher", "stocklevel", "stockusage" ]
     for t in deltables:
         dbo.execute_dbupdate("DELETE FROM %s" % t)
     dbfs.delete_orphaned_media(dbo) # this deletes dbfs items referenced by the media we just deleted
