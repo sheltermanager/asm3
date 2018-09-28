@@ -973,6 +973,12 @@ def post_json(url, json, headers = {}):
     """
     return post_data(url, json, contenttype="application/json", headers=headers)
 
+def patch_json(url, json, headers = {}):
+    """
+    Posts a JSON document to a URL with the PATCH HTTP method
+    """
+    return post_data(url, json, contenttype="application/json", httpmethod="PATCH", headers=headers)
+
 def post_xml(url, xml, headers = {}):
     """
     Posts an XML document to a URL

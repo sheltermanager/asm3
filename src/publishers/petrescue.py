@@ -180,32 +180,45 @@ class PetRescuePublisher(AbstractPublisher):
         # 2. Have an entry in animalpublished/petrescue where the sent date is older than the active movement
         # 3. Have an entry in animalpublished/petrescue where the sent date is older than the deceased date
 
-        animals = self.dbo.query("SELECT a.ID, a.ShelterCode, a.AnimalName, p.SentDate, a.ActiveMovementDate, a.DeceasedDate FROM animal a " \
-            "INNER JOIN animalpublished p ON p.AnimalID = a.ID AND p.PublishedTo='petrescue' " \
-            "WHERE Archived = 1 AND ((DeceasedDate Is Not Null AND DeceasedDate >= ?) OR " \
-            "(ActiveMovementDate Is Not Null AND ActiveMovementDate >= ? AND ActiveMovementType NOT IN (2,8))) " \
-            "ORDER BY a.ID", [self.dbo.today(offset=-30), self.dbo.today(offset=-30)])
+        try:
+            animals = self.dbo.query("SELECT a.ID, a.ShelterCode, a.AnimalName, p.SentDate, a.ActiveMovementDate, a.DeceasedDate FROM animal a " \
+                "INNER JOIN animalpublished p ON p.AnimalID = a.ID AND p.PublishedTo='petrescue' " \
+                "WHERE Archived = 1 AND ((DeceasedDate Is Not Null AND DeceasedDate >= ?) OR " \
+                "(ActiveMovementDate Is Not Null AND ActiveMovementDate >= ? AND ActiveMovementType NOT IN (2,8))) " \
+                "ORDER BY a.ID", [self.dbo.today(offset=-30), self.dbo.today(offset=-30)])
+        except Exception as err:
+            self.logError("Failed running query to retrieve listings to close: %s" % err, sys.exc_info())
 
         for an in animals:
-            if (an.ACTIVEMOVEMENTDATE and an.SENTDATE < an.ACTIVEMOVEMENTDATE) or (an.DECEASEDDATE and an.SENTDATE < an.DECEASEDDATE):
-                
-                status = utils.iif(an.DECEASEDDATE is not None, "removed", "rehomed")
-                data = { "status": status }
-                jsondata = utils.json(data)
-                url = PETRESCUE_URL + "listings/%s/SM%s" % (an.ID, self.dbo.database)
+            try:
+                if (an.ACTIVEMOVEMENTDATE and an.SENTDATE < an.ACTIVEMOVEMENTDATE) or (an.DECEASEDDATE and an.SENTDATE < an.DECEASEDDATE):
+                    
+                    status = utils.iif(an.DECEASEDDATE is not None, "removed", "rehomed")
+                    data = { "status": status }
+                    jsondata = utils.json(data)
+                    url = PETRESCUE_URL + "listings/%s/SM%s" % (an.ID, self.dbo.database)
 
-                self.log("Sending PATCH to %s to update existing listing: %s" % (url, jsondata))
-                r = utils.patch_json(url, jsondata, headers=headers)
+                    self.log("Sending PATCH to %s to update existing listing: %s" % (url, jsondata))
+                    r = utils.patch_json(url, jsondata, headers=headers)
 
-                if r["status"] != 200:
-                    self.logError("HTTP %d, headers: %s, response: %s" % (r["status"], r["headers"], r["response"]))
-                else:
-                    self.log("HTTP %d, headers: %s, response: %s" % (r["status"], r["headers"], r["response"]))
-                    self.logSuccess("%s - %s: Marked with new status %s" % (an.SHELTERCODE, an.ANIMALNAME, status))
-                    # By marking these animals in the processed list again, their SentDate
-                    # will become today, which should exclude them from sending these status
-                    # updates to close the listing again in future
-                    processed.append(an)
+                    if r["status"] == 200:
+                        self.log("HTTP %d, headers: %s, response: %s" % (r["status"], r["headers"], r["response"]))
+                        self.logSuccess("%s - %s: Marked with new status %s" % (an.SHELTERCODE, an.ANIMALNAME, status))
+                        # By marking these animals in the processed list again, their SentDate
+                        # will become today, which should exclude them from sending these status
+                        # updates to close the listing again in future
+                        processed.append(an)
+                    elif r["status"] == 500:
+                        # This can happen if PR no longer have the listing - we'll keep trying to update it forever
+                        # so treat 500 as a permanent failure
+                        self.logError("HTTP %d, headers: %s, response: %s" % (r["status"], r["headers"], r["response"]))
+                        self.logSuccess("%s - %s: Permanent failure encountered, marking sent to prevent future requests" % (an.SHELTERCODE, an.ANIMALNAME))
+                        processed.append(an)
+                    else:
+                        self.logError("HTTP %d, headers: %s, response: %s" % (r["status"], r["headers"], r["response"]))
+
+            except Exception as err:
+                self.logError("Failed closing listing for %s - %s: %s" % (an.SHELTERCODE, an.ANIMALNAME, err), sys.exc_info())
 
         # Mark sent animals published
         self.markAnimalsPublished(processed, first=True)
