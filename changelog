@@ -1,6 +1,7 @@
 41
 ================
 
+02/10/18 Merge animal functionality #73
 26/09/18 Similar name check considers animals still on shelter as well
 24/09/18 PayPal import, recognise any type containing "Payment"
 20/09/18 Bug allowed "Include without description" to override courtesy listing

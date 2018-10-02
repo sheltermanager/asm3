@@ -1214,6 +1214,10 @@ class animal(JSONEndpoint):
         sheltercode, shortcode, unique, year = extanimal.calc_shelter_code(o.dbo, animaltypeid, entryreasonid, speciesid, datebroughtin)
         return sheltercode + "||" + shortcode + "||" + str(unique) + "||" + str(year)
 
+    def post_merge(self, o):
+        self.check(users.DELETE_ANIMAL)
+        extanimal.merge_animal(o.dbo, o.user, o.post.integer("animalid"), o.post.integer("mergeanimalid"))
+
     def post_randomname(self, o):
         return extanimal.get_random_name(o.dbo, o.post.integer("sex"))
 

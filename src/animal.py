@@ -2762,6 +2762,49 @@ def delete_animal(dbo, username, animalid):
     dbo.delete("animal", animalid, username)
     dbfs.delete_path(dbo, "/animal/%d" % animalid)
 
+def merge_animal(dbo, username, animalid, mergeanimalid):
+    """
+    Reparents all satellite records of mergeanimalid onto
+    animalid.
+    """
+    l = dbo.locale
+
+    if animalid == mergeanimalid:
+        raise utils.ASMValidationError(_("The animal record to merge must be different from the original.", l))
+
+    if animalid == 0 or mergeanimalid == 0:
+        raise utils.ASMValidationError("Internal error: Cannot merge ID 0")
+
+    def reparent(table, field, linktypefield = "", linktype = -1):
+        if linktype >= 0:
+            dbo.execute("UPDATE %s SET %s = %d WHERE %s = %d AND %s = %d" % (table, field, animalid, field, mergeanimalid, linktypefield, linktype))
+        else:
+            dbo.execute("UPDATE %s SET %s = %d WHERE %s = %d" % (table, field, animalid, field, mergeanimalid))
+
+    # Reparent all satellite records
+    reparent("adoption", "AnimalID")
+    reparent("animal", "BondedAnimalID")
+    reparent("animal", "BondedAnimal2ID")
+    reparent("animalcontrolanimal", "AnimalID")
+    reparent("animalcost", "AnimalID")
+    reparent("animaldiet", "AnimalID")
+    reparent("animallitter", "ParentAnimalID")
+    reparent("animallostfoundmatch", "AnimalID")
+    reparent("animalmedical", "AnimalID")
+    reparent("animalmedicaltreatment", "AnimalID")
+    reparent("animalpublished", "AnimalID")
+    reparent("animaltest", "AnimalID")
+    reparent("animaltransport", "AnimalID")
+    reparent("animalvaccination", "AnimalID")
+    reparent("clinicappointment", "AnimalID")
+    reparent("ownerdonation", "AnimalID")
+    reparent("ownerlookingfor", "AnimalID")
+    reparent("ownerlicence", "AnimalID")
+    reparent("media", "LinkID", "LinkTypeID", media.ANIMAL)
+    reparent("diary", "LinkID", "LinkType", diary.ANIMAL)
+    reparent("log", "LinkID", "LinkType", log.ANIMAL)
+    dbo.delete("animal", mergeanimalid, username)
+
 def update_daily_boarding_cost(dbo, username, animalid, cost):
     """
     Updates the daily boarding cost amount for an animal. The

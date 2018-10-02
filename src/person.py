@@ -935,6 +935,7 @@ def merge_person(dbo, username, personid, mergepersonid):
     reparent("animaltest", "AdministeringVetID")
     reparent("animalvaccination", "AdministeringVetID")
     reparent("animalwaitinglist", "OwnerID")
+    reparent("clinicappointment", "OwnerID")
     reparent("ownercitation", "OwnerID")
     reparent("ownerdonation", "OwnerID")
     reparent("ownerinvestigation", "OwnerID")

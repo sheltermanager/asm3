@@ -753,6 +753,22 @@ $(function() {
                 '</tr>',
                 '</table>',
                 '</div>',
+                '<div id="dialog-merge" style="display: none" title="' + html.title(_("Select animal to merge")) + '">',
+                '<div class="ui-state-highlight ui-corner-all" style="margin-top: 20px; padding: 0 .7em">',
+                '<p><span class="ui-icon ui-icon-info" style="float: left; margin-right: .3em;"></span>',
+                _("Select an animal to merge into this record. The selected animal will be removed, and their movements, diary notes, log entries, etc. will be reattached to this record."),
+                '</p>',
+                '</div>',
+                html.capture_autofocus(),
+                '<table width="100%">',
+                '<tr>',
+                '<td><label for="mergeanimal">' + _("Animal") + '</label></td>',
+                '<td>',
+                '<input id="mergeanimal" data="mergeanimal" type="hidden" class="asm-animalchooser" value="" />',
+                '</td>',
+                '</tr>',
+                '</table>',
+                '</div>',
                 '<div id="button-share-body" class="asm-menu-body">',
                 '<ul class="asm-menu-list">',
                     '<li id="button-shareweb" class="sharebutton asm-menu-item"><a '
@@ -777,6 +793,7 @@ $(function() {
                 tableform.buttons_render([
                     { id: "save", text: _("Save"), icon: "save", tooltip: _("Save this person") },
                     { id: "clone", text: _("Clone"), icon: "copy", tooltip: _("Create a new animal by copying this one") },
+                    { id: "merge", text: _("Merge"), icon: "copy", tooltip: _("Merge another animal into this one") },
                     { id: "delete", text: _("Delete"), icon: "delete", tooltip: _("Delete this animal") },
                     { id: "document", text: _("Document"), type: "buttonmenu", icon: "document", tooltip: _("Generate a document from this animal") },
                     { id: "diarytask", text: _("Diary Task"), type: "buttonmenu", icon: "diary-task", tooltip: _("Create diary notes from a task") },
@@ -1084,6 +1101,7 @@ $(function() {
 
             if (!common.has_permission("ca")) { $("#button-save").hide(); }
             if (!common.has_permission("aa")) { $("#button-clone").hide(); }
+            if (!common.has_permission("da")) { $("#button-merge").hide(); }
             if (!common.has_permission("da")) { $("#button-delete").hide(); }
             if (!common.has_permission("gaf")) { $("#button-document").hide(); }
             if (!common.has_permission("adn")) { $("#button-diarytask").hide(); }
@@ -1460,6 +1478,29 @@ $(function() {
                     });
             });
 
+            $("#button-merge").button().click(function() {
+                var mb = {}; 
+                mb[_("Merge")] = function() { 
+                    $("#dialog-merge").dialog("close");
+                    var formdata = "mode=merge&animalid=" + $("#animalid").val() + "&mergeanimalid=" + $("#mergeanimal").val();
+                    common.ajax_post("animal", formdata)
+                        .then(function() { 
+                            validate.dirty(false);
+                            common.route_reload(); 
+                        });
+                };
+                mb[_("Cancel")] = function() { $(this).dialog("close"); };
+                $("#dialog-merge").dialog({
+                     width: 600,
+                     resizable: false,
+                     modal: true,
+                     dialogClass: "dialogshadow",
+                     show: dlgfx.delete_show,
+                     hide: dlgfx.delete_hide,
+                     buttons: mb
+                });
+            });
+
             $("#button-delete").button().click(function() {
                 tableform.delete_dialog(null, _("This will permanently remove this animal, are you sure?"))
                     .then(function() {
@@ -1555,6 +1596,8 @@ $(function() {
         destroy: function() {
             validate.unbind_dirty();
             common.widget_destroy("#dialog-dt-date");
+            common.widget_destroy("#dialog-merge");
+            common.widget_destroy("#mergeanimal", "animalchooser");
             common.widget_destroy("#bonded1", "animalchooser");
             common.widget_destroy("#bonded2", "animalchooser");
             common.widget_destroy("#originalowner", "personchooser");
