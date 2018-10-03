@@ -17,19 +17,31 @@ Will also look in PATH/images/ANIMALKEY.[jpg|JPG] for animal photos if available
 29th December, 2016 - 1st August 2018
 """
 
-PATH = "data/shelterpro_tz1790"
+PATH = "data/shelterpro_sk1797"
 
 START_ID = 100
 
 INCIDENT_IMPORT = True
-LICENCE_IMPORT = False
+LICENCE_IMPORT = True
 PICTURE_IMPORT = False
-VACCINATION_IMPORT = False
+VACCINATION_IMPORT = True
 NOTE_IMPORT = False
-SHELTER_IMPORT = False # Normally would be True but this last one was a weird shelterpro that was all incidents
+SHELTER_IMPORT = True # Normally would be True but one was a weird shelterpro that was all incidents
 
 SEPARATE_ADDRESS_TABLE = False
 IMPORT_ANIMALS_WITH_NO_NAME = True
+
+""" when faced with a field type it doesn't understand, dbfread can produce an error
+    'Unknown field type xx'. This parser returns anything unrecognised as binary data """
+class ExtraFieldParser(dbfread.FieldParser):
+    def parse(self, field, data):
+        try:
+            return dbfread.FieldParser.parse(self, field, data)
+        except ValueError:
+            return data
+
+def open_dbf(name):
+    return dbfread.DBF("%s/%s.DBF" % (PATH, name.upper()), encoding="latin1", parserclass=ExtraFieldParser)
 
 def gettype(animaldes):
     spmap = {
@@ -128,15 +140,15 @@ uo.OwnerName = uo.OwnerSurname
 
 # Load up data files
 if SEPARATE_ADDRESS_TABLE:
-    caddress = dbfread.DBF("%s/ADDRESS.DBF" % PATH, encoding="latin1")
-    caddrlink = dbfread.DBF("%s/ADDRLINK.DBF" % PATH)
-canimal = dbfread.DBF("%s/ANIMAL.DBF" % PATH)
-if LICENCE_IMPORT: clicense = dbfread.DBF("%s/LICENSE.DBF" % PATH)
-cperson = dbfread.DBF("%s/PERSON.DBF" % PATH, encoding="latin1")
-if SHELTER_IMPORT: cshelter = dbfread.DBF("%s/SHELTER.DBF" % PATH)
-if VACCINATION_IMPORT: cvacc = dbfread.DBF("%s/VACC.DBF" % PATH)
-if INCIDENT_IMPORT: cincident = dbfread.DBF("%s/INCIDENT.DBF" % PATH)
-if NOTE_IMPORT: cnote = dbfread.DBF("%s/NOTE.DBF" % PATH, encoding="latin1")
+    caddress = open_dbf("address")
+    caddrlink = open_dbf("addrlink")
+canimal = open_dbf("animal")
+if LICENCE_IMPORT: clicense = open_dbf("license")
+cperson = open_dbf("person")
+if SHELTER_IMPORT: cshelter = open_dbf("shelter")
+if VACCINATION_IMPORT: cvacc = open_dbf("vacc")
+if INCIDENT_IMPORT: cincident = open_dbf("incident")
+if NOTE_IMPORT: cnote = open_dbf("note")
 
 # Addresses if we have a separate file
 if SEPARATE_ADDRESS_TABLE:
