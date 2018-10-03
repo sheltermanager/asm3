@@ -537,7 +537,7 @@ $(function() {
                 '<table>',
                 '<tr>',
                 '<td><label for="prtoken">PetRescue Token</label></td>',
-                '<td><input id="prtoken" type="text" class="asm-textbox cfg" data="PetRescueToken" /></td>',
+                '<td><input id="prtoken" type="text" class="asm-doubletextbox cfg" data="PetRescueToken" /></td>',
                 '</tr>',
                 '</table>',
                 '</div>'
