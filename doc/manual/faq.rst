@@ -75,6 +75,17 @@ format contains T for the type, the type field will be locked for editing when
 this option is on. If your coding format has any of YYYY, MM or DD for a
 portion of the date brought in, that field will be locked too.
 
+Why can't I view my person record?
+----------------------------------
+
+You've linked a person record to your user account. This should only be done when
+you want to forbid a user account from viewing a person record and is there to 
+prevent staff members from editing their own person records.
+
+You can unlink the person record by going to :menuselection:`Settings -->Edit System Users`,
+editing your user account and using the trash can icon to the right of "Staff Record"
+to break the link. Breaking the link will not delete the person record or user account.
+
 How do I integrate my adoptable animals with my website?
 --------------------------------------------------------
 
