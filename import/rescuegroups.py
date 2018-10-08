@@ -22,7 +22,7 @@ Address, Comment, Email, First Name, Last Name, Phone (Cell), Phone (Home)
 
 """
 
-PATH = "data/rg_db1644"
+PATH = "data/rg_ck1833"
 
 DEFAULT_BREED = 261 # default to dsh
 PETFINDER_ID = ""
@@ -159,21 +159,22 @@ for d in asm.csv_to_list("%s/Animals.csv" % PATH):
     if a.Archived == 0 and imdata is None and pfpage != "":
         asm.petfinder_image(pfpage, a.ID, a.AnimalName)
 
-for d in asm.csv_to_list("%s/Contacts.csv" % PATH):
-    # Each row contains a person
-    o = asm.Owner()
-    owners.append(o)
-    o.OwnerForeNames = d["First Name"]
-    o.OwnerSurname = d["Last Name"]
-    o.OwnerName = o.OwnerForeNames + " " + o.OwnerSurname
-    o.OwnerAddress = d["Address"]
-    #o.OwnerTown = d["City"]
-    #o.OwnerCounty = d["State"]
-    #o.OwnerPostcode = d["Zipcode"]
-    o.EmailAddress = d["Email"]
-    o.HomeTelephone = d["Phone (Home)"]
-    o.MobileTelephone = d["Phone (Cell)"]
-    o.Comments = d["Comment"]
+if os.path.exists("%s/Contacts.csv" % PATH):
+    for d in asm.csv_to_list("%s/Contacts.csv" % PATH):
+        # Each row contains a person
+        o = asm.Owner()
+        owners.append(o)
+        o.OwnerForeNames = d["First Name"]
+        o.OwnerSurname = d["Last Name"]
+        o.OwnerName = o.OwnerForeNames + " " + o.OwnerSurname
+        o.OwnerAddress = d["Address"]
+        #o.OwnerTown = d["City"]
+        #o.OwnerCounty = d["State"]
+        #o.OwnerPostcode = d["Zipcode"]
+        o.EmailAddress = d["Email"]
+        o.HomeTelephone = d["Phone (Home)"]
+        o.MobileTelephone = d["Phone (Cell)"]
+        o.Comments = d["Comment"]
 
 # Now that everything else is done, output stored records
 for a in animals:
