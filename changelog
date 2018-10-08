@@ -1,6 +1,7 @@
 41
 ================
 
+08/10/18 Refactor looking for, match comments on hidden comments too
 02/10/18 Merge animal functionality #73
 26/09/18 Similar name check considers animals still on shelter as well
 24/09/18 PayPal import, recognise any type containing "Payment"

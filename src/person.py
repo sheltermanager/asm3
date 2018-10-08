@@ -1200,69 +1200,96 @@ def lookingfor_report(dbo, username = "system", personid = 0, limit = 0):
     async.set_progress_max(dbo, len(people))
     for p in people:
         async.increment_progress_value(dbo)
-        sql = []
-        if p["MATCHANIMALTYPE"] > 0: sql.append(" AND a.AnimalTypeID = %d" % int(p["MATCHANIMALTYPE"]))
-        if p["MATCHSPECIES"] > 0: sql.append(" AND a.SpeciesID = %d" % int(p["MATCHSPECIES"]))
-        if p["MATCHBREED"] > 0: sql.append(" AND (a.BreedID = %d OR a.Breed2ID = %d)" % (int(p["MATCHBREED"]), int(p["MATCHBREED"])))
-        if p["MATCHSEX"] > -1: sql.append(" AND a.Sex = %d" % int(p["MATCHSEX"]))
-        if p["MATCHSIZE"] > -1: sql.append(" AND a.Size = %d" % int(p["MATCHSIZE"]))
-        if p["MATCHCOLOUR"] > -1: sql.append(" AND a.BaseColourID = %d" % int(p["MATCHCOLOUR"]))
-        if p["MATCHGOODWITHCHILDREN"] == 0: sql.append(" AND a.IsGoodWithChildren = 0")
-        if p["MATCHGOODWITHCATS"] == 0: sql.append(" AND a.IsGoodWithCats = 0")
-        if p["MATCHGOODWITHDOGS"] == 0: sql.append(" AND a.IsGoodWithDogs = 0")
-        if p["MATCHHOUSETRAINED"] == 0: sql.append(" AND a.IsHouseTrained = 0")
-        if p["MATCHAGEFROM"] >= 0 and p["MATCHAGETO"] > 0: 
-            sql.append(" AND a.DateOfBirth BETWEEN %s AND %s" % (dbo.sql_date(subtract_years(now(dbo.timezone), p["MATCHAGETO"])), \
-                dbo.sql_date(subtract_years(now(dbo.timezone), p["MATCHAGEFROM"]))))
-        if p["MATCHCOMMENTSCONTAIN"] is not None and p["MATCHCOMMENTSCONTAIN"] != "":
-            for w in str(p["MATCHCOMMENTSCONTAIN"]).split(" "):
-                sql.append(" AND a.AnimalComments Like '%%%s%%'" % w.replace("'", "`"))
-        animals = dbo.query(animal.get_animal_query(dbo) + " WHERE a.Archived=0 AND a.IsNotAvailableForAdoption=0 AND a.HasActiveReserve=0 AND a.CrueltyCase=0 AND a.DeceasedDate Is Null" + "".join(sql))
+        ands = [ "a.Archived=0", "a.IsNotAvailableForAdoption=0", "a.HasActiveReserve=0", "a.CrueltyCase=0", "a.DeceasedDate Is Null" ]
+        v = [] # query values
+        c = [] # readable criteria
+        if p.MATCHANIMALTYPE != -1: 
+            ands.append("a.AnimalTypeID=?")
+            v.append(p.MATCHANIMALTYPE)
+            c.append(p.MATCHANIMALTYPENAME)
+        if p.MATCHSPECIES != -1: 
+            ands.append("a.SpeciesID=?")
+            v.append(p.MATCHSPECIES)
+            c.append(p.MATCHSPECIESNAME)
+        if p.MATCHBREED != -1: 
+            ands.append("(a.BreedID=? OR a.Breed2ID=?)")
+            v.append(p.MATCHBREED)
+            v.append(p.MATCHBREED)
+            c.append(p.MATCHBREEDNAME)
+        if p.MATCHSEX != -1: 
+            ands.append("a.Sex=?")
+            v.append(p.MATCHSEX)
+            c.append(p.MATCHSEXNAME)
+        if p.MATCHSIZE != -1: 
+            ands.append("a.Size=?")
+            v.append(p.MATCHSIZE)
+            c.append(p.MATCHSIZENAME)
+        if p.MATCHCOLOUR != -1: 
+            ands.append("a.BaseColourID=?")
+            v.append(p.MATCHCOLOUR)
+            c.append(p.MATCHCOLOURNAME)
+        if p.MATCHGOODWITHCHILDREN == 0: 
+            ands.append("a.IsGoodWithChildren=0")
+            c.append(_("Good with kids", l))
+        if p.MATCHGOODWITHCATS == 0: 
+            ands.append("a.IsGoodWithCats=0")
+            c.append(_("Good with cats", l))
+        if p.MATCHGOODWITHDOGS == 0: 
+            ands.append("a.IsGoodWithDogs=0")
+            c.append(_("Good with dogs", l))
+        if p.MATCHHOUSETRAINED == 0: 
+            ands.append("a.IsHouseTrained=0")
+            c.append(_("Housetrained", l))
+        if p.MATCHAGEFROM >= 0 and p.MATCHAGETO > 0: 
+            ands.append("a.DateOfBirth BETWEEN ? AND ?")
+            v.append(subtract_years(now(dbo.timezone), p.MATCHAGETO))
+            v.append(subtract_years(now(dbo.timezone), p.MATCHAGEFROM))
+            c.append(_("Age", l) + (" %0.2f - %0.2f" % (p.MATCHAGEFROM, p.MATCHAGETO)))
+        if p.MATCHCOMMENTSCONTAIN is not None and p.MATCHCOMMENTSCONTAIN != "":
+            for w in str(p.MATCHCOMMENTSCONTAIN).split(" "):
+                ands.append("(a.AnimalComments LIKE ? OR a.HiddenAnimalDetails LIKE ?)")
+                v.append("%%%s%%" % w)
+                v.append("%%%s%%" % w)
+            c.append(_("Comments Contain", l) + ": " + p.MATCHCOMMENTSCONTAIN)
 
-        h.append("<h2>%s (%s) %s %s</h2>" % (p["OWNERNAME"], p["OWNERADDRESS"], p["HOMETELEPHONE"], p["MOBILETELEPHONE"]))
-        c = []
-        if p["MATCHSIZE"] != -1: c.append(p["MATCHSIZENAME"])
-        if p["MATCHCOLOUR"] != -1: c.append(p["MATCHCOLOURNAME"])
-        if p["MATCHSEX"] != -1: c.append(p["MATCHSEXNAME"])
-        if p["MATCHBREED"] != -1: c.append(p["MATCHBREEDNAME"])
-        if p["MATCHSPECIES"] != -1: c.append(p["MATCHSPECIESNAME"])
-        if p["MATCHANIMALTYPE"] != -1: c.append(p["MATCHANIMALTYPENAME"])
-        if p["MATCHGOODWITHCHILDREN"] == 0: c.append(_("Good with kids", l))
-        if p["MATCHGOODWITHCATS"] == 0: c.append(_("Good with cats", l))
-        if p["MATCHGOODWITHDOGS"] == 0: c.append(_("Good with dogs", l))
-        if p["MATCHHOUSETRAINED"] == 0: c.append(_("Housetrained", l))
-        if p["MATCHAGEFROM"] >= 0 and p["MATCHAGETO"] > 0: c.append(_("Age", l) + (" %0.2f - %0.2f" % (p["MATCHAGEFROM"], p["MATCHAGETO"])))
-        if p["MATCHCOMMENTSCONTAIN"] is not None and p["MATCHCOMMENTSCONTAIN"] != "": c.append(_("Comments Contain", l) + ": " + p["MATCHCOMMENTSCONTAIN"])
-        if p["COMMENTS"] != "" and p["COMMENTS"] is not None: 
-            h.append( "<p style='font-size: 8pt'>%s</p>" % p["COMMENTS"])
+        animals = dbo.query(animal.get_animal_query(dbo) + " WHERE " + " AND ".join(ands) + " ORDER BY a.LastChangedDate DESC", v)
+
+        # Output owner info
+        h.append("<h2>%s (%s) %s %s</h2>" % (p.OWNERNAME, p.OWNERADDRESS, p.HOMETELEPHONE, p.MOBILETELEPHONE))
+        if p.COMMENTS != "" and p.COMMENTS is not None: 
+            h.append( "<p style='font-size: 8pt'>%s</p>" % p.COMMENTS)
+
+        # Summary of owner criteria
         summary = ""
         if len(c) > 0:
             summary = ", ".join(x for x in c if x is not None)
             h.append( "<p style='font-size: 8pt'>(%s: %s)</p>" % (_("Looking for", l), summary) )
 
+        # Match info
         outputheader = False
         for a in animals:
             if not outputheader:
                 outputheader = True
                 h.append("".join(ah))
             h.append( "<tr>")
-            h.append( td(a["CODE"]))
-            h.append( td(a["ANIMALNAME"]))
-            h.append( td(a["ANIMALAGE"]))
-            h.append( td(a["SEXNAME"]))
-            h.append( td(a["SIZENAME"]))
-            h.append( td(a["BASECOLOURNAME"]))
-            h.append( td(a["SPECIESNAME"]))
-            h.append( td(a["BREEDNAME"]))
-            h.append( td(a["ISGOODWITHCATSNAME"]))
-            h.append( td(a["ISGOODWITHDOGSNAME"]))
-            h.append( td(a["ISGOODWITHCHILDRENNAME"]))
-            h.append( td(a["ISHOUSETRAINEDNAME"]))
-            h.append( td(a["ANIMALCOMMENTS"]))
+            h.append( td(a.CODE))
+            h.append( td(a.ANIMALNAME))
+            h.append( td(a.ANIMALAGE))
+            h.append( td(a.SEXNAME))
+            h.append( td(a.SIZENAME))
+            h.append( td(a.BASECOLOURNAME))
+            h.append( td(a.SPECIESNAME))
+            h.append( td(a.BREEDNAME))
+            h.append( td(a.ISGOODWITHCATSNAME))
+            h.append( td(a.ISGOODWITHDOGSNAME))
+            h.append( td(a.ISGOODWITHCHILDRENNAME))
+            h.append( td(a.ISHOUSETRAINEDNAME))
+            h.append( td(a.ANIMALCOMMENTS + " " + a.HIDDENANIMALDETAILS))
+            h.append( "</tr>")
 
             # Add an entry to ownerlookingfor for other reports
             if personid == 0:
-                batch.append( ( a["ID"], p["ID"], summary ) )
+                batch.append( ( a.ID, p.ID, summary ) )
 
             totalmatches += 1
             if limit > 0 and totalmatches >= limit:
