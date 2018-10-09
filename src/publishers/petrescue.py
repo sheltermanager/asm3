@@ -21,12 +21,12 @@ class PetRescuePublisher(AbstractPublisher):
 
     def get_breed_names(self, an):
         """
-        Returns the comma separated list of breeds for the animal.
+        Returns a list of breeds for the animal.
         """
         if an.CROSSBREED == 1:
-            return "%s,%s" % (self.get_breed_name(an.SPECIESNAME, an.BREEDNAME1), self.get_breed_name(an.SPECIESNAME, an.BREEDNAME2))
+            return [self.get_breed_name(an.SPECIESNAME, an.BREEDNAME1), self.get_breed_name(an.SPECIESNAME, an.BREEDNAME2)]
         else:
-            return self.get_breed_name(an.SPECIESNAME, an.BREEDNAME1)
+            return [self.get_breed_name(an.SPECIESNAME, an.BREEDNAME1)]
 
     def get_breed_name(self, sname, bname):
         """
@@ -128,7 +128,7 @@ class PetRescuePublisher(AbstractPublisher):
                     "name":                     an.ANIMALNAME.title(), # animal name (title case, they validate against caps)
                     "adoption_fee":             i18n.format_currency_no_symbol(self.locale, an.FEE),
                     "species_name":             an.SPECIESNAME,
-                    "breed_names":              self.get_breed_names(an), # breed1,breed2 or breed1
+                    "breed_names":              self.get_breed_names(an), # [breed1,breed2] or [breed1]
                     "mix":                      an.CROSSBREED == 1, # true | false
                     "date_of_birth":            i18n.format_date("%Y-%m-%d", an.DATEOFBIRTH), # iso
                     "gender":                   an.SEXNAME.lower(), # male | female
