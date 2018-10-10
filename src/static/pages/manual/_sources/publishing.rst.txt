@@ -315,22 +315,13 @@ can also integrate with Petrescue.com.au and upload your animals for adoption
 directly to your account with them. 
 
 You will need to go to :menuselection:`Publishing --> Set Publishing Options`
-first and view the PetRescue panel. Here, you should enter the shelter Id given
-to you by PetRescue.com.au and your password. All you need to do then is choose
+first and view the PetRescue panel. Here, you should enter the access token given
+to you by PetRescue.com.au. All you need to do then is choose
 Publish to PetRescue.com.au in place of the normal internet publisher. The
 options for filtering animals are the same (see previous section for
 reference).
 
-PetRescue has an additional option you can set for "Send internal locations as
-region IDs". By default the PetRescue publisher sends regionID as 1 (the
-default if you do not have separate regions registered with PetRescue). If you
-turn this option on, ASM will look at the internal location of each animal and
-if there's a numeric prefix on the location name, that number will be sent as
-the regionID. The number itself is evaluated so you can pad the numbers with
-leading zeroes for readability if you prefer. This feature is aimed at small
-foster-based rescue groups who operate in multiple areas.
-
-.. note:: If you have created new Species or Breeds within ASM, you will need to map them to the available publisher options under the Breed and Species sections of :menuselection:`Settings->Lookup Data`. If you have some that are not mapped, the publisher will fail with an error message.
+.. note:: PetRescue integration relies on you naming your breeds and species with the same values that they do. If a breed does not match one of the PetRescue breeds, ASM will send it as "Mixed Breed" instead. 
 
 rescuegroups.org
 ----------------
