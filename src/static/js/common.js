@@ -1805,6 +1805,19 @@
         },
 
         /**
+         * Returns a link to a person with the address below - 
+         * but only if the view person permission is set
+         */
+        person_link_address: function(row) {
+            if (!common.has_permission("vo")) { return _("Forbidden"); }
+            return html.person_link(row.OWNERID, row.OWNERNAME) +
+                '<br/>' + common.nulltostr(row.OWNERADDRESS) + 
+                '<br/>' + common.nulltostr(row.OWNERTOWN) + 
+                '<br/>' + common.nulltostr(row.OWNERCOUNTY) + ' ' + common.nulltostr(row.OWNERPOSTCODE) + 
+                '<br/>' + common.nulltostr(row.HOMETELEPHONE) + " " + common.nulltostr(row.WORKTELEPHONE) + " " + common.nulltostr(row.MOBILETELEPHONE);
+        },
+
+        /**
          * Returns a link to a person - but only if the view person permission is set
          * to hide their name.
          * personid: The person ID

@@ -186,11 +186,7 @@ $(function() {
                     },
                     { field: "PERSON", display: _("Person"),
                         formatter: function(row) {
-                            if (row.OWNERID) {
-                                return html.person_link(row.OWNERID, row.OWNERNAME) +
-                                    '<br/>' + common.nulltostr(row.OWNERADDRESS) + '<br/>' + common.nulltostr(row.OWNERTOWN) + '<br/>' + common.nulltostr(row.OWNERCOUNTY) + ' ' + common.nulltostr(row.OWNERPOSTCODE) + 
-                                    '<br/>' + common.nulltostr(row.HOMETELEPHONE) + " " + common.nulltostr(row.WORKTELEPHONE) + " " + common.nulltostr(row.MOBILETELEPHONE);
-                            }
+                            if (row.OWNERID) { return html.person_link_address(row); }
                             return "";
                         },
                         hideif: function(row) {
