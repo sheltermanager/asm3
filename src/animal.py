@@ -2776,10 +2776,14 @@ def merge_animal(dbo, username, animalid, mergeanimalid):
         raise utils.ASMValidationError("Internal error: Cannot merge ID 0")
 
     def reparent(table, field, linktypefield = "", linktype = -1):
-        if linktype >= 0:
-            dbo.execute("UPDATE %s SET %s = %d WHERE %s = %d AND %s = %d" % (table, field, animalid, field, mergeanimalid, linktypefield, linktype))
-        else:
-            dbo.execute("UPDATE %s SET %s = %d WHERE %s = %d" % (table, field, animalid, field, mergeanimalid))
+        try:
+            if linktype >= 0:
+                dbo.execute("UPDATE %s SET %s = %d WHERE %s = %d AND %s = %d" % (table, field, animalid, field, mergeanimalid, linktypefield, linktype))
+            else:
+                dbo.execute("UPDATE %s SET %s = %d WHERE %s = %d" % (table, field, animalid, field, mergeanimalid))
+        except Exception as err:
+            al.error("error reparenting: %s -> %s, table=%s, field=%s, linktypefield=%s, linktype=%s, error=%s" % \
+                (mergeanimalid, animalid, table, field, linktypefield, linktype, err), "animal.merge_animal", dbo)
 
     # Reparent all satellite records
     reparent("adoption", "AnimalID")
