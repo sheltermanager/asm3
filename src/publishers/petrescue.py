@@ -134,7 +134,6 @@ class PetRescuePublisher(AbstractPublisher):
                     "gender":                   an.SEXNAME.lower(), # male | female
                     "personality":              an.WEBSITEMEDIANOTES, # 20-4000 chars of free type
                     "location_postcode":        postcode, # shelter postcode
-                    "postcode":                 postcode, # shelter postcode
                     "microchip_number":         utils.iif(an.IDENTICHIPPED == 1, an.IDENTICHIPNUMBER, ""), 
                     "desexed":                  an.NEUTERED == 1,# true | false, validates to always true according to docs
                     "contact_method":           "email", # email | phone
