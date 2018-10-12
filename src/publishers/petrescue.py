@@ -60,6 +60,7 @@ class PetRescuePublisher(AbstractPublisher):
 
         token = configuration.petrescue_token(self.dbo)
         postcode = configuration.organisation_postcode(self.dbo)
+        state = configuration.organisation_county(self.dbo)
         contact_name = configuration.organisation(self.dbo)
         contact_email = configuration.email(self.dbo)
         contact_number = configuration.organisation_telephone(self.dbo)
@@ -119,6 +120,15 @@ class PetRescuePublisher(AbstractPublisher):
                 elif an.ORIGINALOWNERID > 0: origin = "owner_surrender"
                 else: origin = "community_cat"
 
+                # Use the fosterer's postcode and state if available
+                location_postcode = postcode
+                location_state_abbr = state
+                if an.ACTIVEMOVEMENTID and an.ACTIVEMOVEMENTTYPE == 2:
+                    fr = self.dbo.first_row(self.dbo.query("SELECT OwnerCounty, OwnerPostcode FROM adoption m " \
+                        "INNER JOIN owner o ON m.OwnerID = o.ID WHERE m.ID=?", [ an.ACTIVEMOVEMENTID ]))
+                    if fr is not None and fr.OWNERPOSTCODE: location_postcode = fr.OWNERPOSTCODE
+                    if fr is not None and fr.OWNERCOUNTY: location_state_abbr = fr.OWNERCOUNTY
+
                 photo_url = "%s?account=%s&method=animal_image&animalid=%d" % (SERVICE_URL, self.dbo.database, an.ID)
 
                 # Construct a dictionary of info for this animal
@@ -133,7 +143,8 @@ class PetRescuePublisher(AbstractPublisher):
                     "date_of_birth":            i18n.format_date("%Y-%m-%d", an.DATEOFBIRTH), # iso
                     "gender":                   an.SEXNAME.lower(), # male | female
                     "personality":              an.WEBSITEMEDIANOTES, # 20-4000 chars of free type
-                    "location_postcode":        postcode, # shelter postcode
+                    "location_postcode":        location_postcode, # shelter/fosterer postcode
+                    "location_state_abbr":      location_state_abbr, # shelter/fosterer state
                     "microchip_number":         utils.iif(an.IDENTICHIPPED == 1, an.IDENTICHIPNUMBER, ""), 
                     "desexed":                  an.NEUTERED == 1,# true | false, validates to always true according to docs
                     "contact_method":           "email", # email | phone
