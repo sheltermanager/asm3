@@ -3,12 +3,13 @@
 import datetime
 import json
 import time
+import utils
 
 # flake8: noqa - we have a lot of locales and this is convenient
 from locales import *
 
-VERSION = "41u [Fri 12 Oct 09:29:55 BST 2018]"
-BUILD = "10120929"
+VERSION = "41u [Sat 13 Oct 14:59:05 BST 2018]"
+BUILD = "10131459"
 
 DMY = ( "%d/%m/%Y", "%d/%m/%y" )
 MDY = ( "%m/%d/%Y", "%m/%d/%y" )
@@ -418,6 +419,22 @@ def parse_date(dateformat, d):
         return datetime.datetime.strptime(d, dateformat)
     except:
         return None
+
+def parse_time(d, t):
+    """
+    Parses the time t and combines it with python date d
+    """
+    if d is None: return None
+    tbits = t.split(":")
+    hour = 0
+    minute = 0
+    second = 0
+    if len(tbits) > 0: hour = utils.cint(tbits[0])
+    if len(tbits) > 1: minute = utils.cint(tbits[1])
+    if len(tbits) > 2: second = utils.cint(tbits[2])
+    t = datetime.time(hour, minute, second)
+    d = d.combine(d, t)
+    return d
 
 def yes_no(l, condition):
     if condition:

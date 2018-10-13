@@ -360,7 +360,7 @@ def insert_movement_from_form(dbo, username, post):
         "InsuranceNumber":              post["insurance"],
         "ReasonForReturn":              post["reason"],
         "ReturnedByOwnerID":            post.integer("returnedby"),
-        "ReservationDate":              post.date("reservationdate"),
+        "ReservationDate":              post.datetime("reservationdate", "reservationtime"),
         "ReservationCancelledDate":     post.date("reservationcancelled"),
         "ReservationStatusID":          post.integer("reservationstatus"),
         "IsTrial":                      post.boolean("trial"),
@@ -396,7 +396,7 @@ def update_movement_from_form(dbo, username, post):
         "InsuranceNumber":              post["insurance"],
         "ReasonForReturn":              post["reason"],
         "ReturnedByOwnerID":            post.integer("returnedby"),
-        "ReservationDate":              post.date("reservationdate"),
+        "ReservationDate":              post.datetime("reservationdate", "reservationtime"),
         "ReservationCancelledDate":     post.date("reservationcancelled"),
         "ReservationStatusID":          post.integer("reservationstatus"),
         "IsTrial":                      post.boolean("trial"),
@@ -664,7 +664,7 @@ def insert_transfer_from_form(dbo, username, post):
     movementid = insert_movement_from_form(dbo, username, utils.PostedData(move_dict, l))
     return movementid
 
-def insert_reserve_for_animal_name(dbo, username, personid, animalname):
+def insert_reserve_for_animal_name(dbo, username, personid, reservationdate, animalname):
     """
     Creates a reservation for the animal with animalname to personid.
     animalname can either be just the name of a shelter animal, or it
@@ -685,7 +685,8 @@ def insert_reserve_for_animal_name(dbo, username, personid, animalname):
     move_dict = {
         "person"                : str(personid),
         "animal"                : str(aid),
-        "reservationdate"       : i18n.python2display(l, dbo.today()),
+        "reservationdate"       : i18n.python2display(l, reservationdate),
+        "reservationtime"       : i18n.format_time(reservationdate),
         "reservationstatus"     : configuration.default_reservation_status(dbo),
         "movementdate"          : "",
         "type"                  : str(NO_MOVEMENT),

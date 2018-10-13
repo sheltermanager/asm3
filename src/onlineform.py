@@ -827,6 +827,7 @@ def create_person(dbo, username, collationid):
     fields = get_onlineformincoming_detail(dbo, collationid)
     d = {}
     flags = None
+    formreceived = i18n.python2display(l, dbo.now())
     for f in fields:
         if flags is None: flags = f.FLAGS
         if f.FIELDNAME == "title": d["title"] = f.VALUE
@@ -850,6 +851,9 @@ def create_person(dbo, username, collationid):
         if f.FIELDNAME == "excludefrombulkemail" and f.VALUE != "" and f.VALUE != i18n._("No", l): d["excludefrombulkemail"] = "on"
         if f.FIELDNAME == "gdprcontactoptin": d["gdprcontactoptin"] = f.VALUE
         if f.FIELDNAME.startswith("reserveanimalname"): d[f.FIELDNAME] = f.VALUE
+        if f.FIELDNAME == "formreceived" and f.VALUE.find(" ") != -1: 
+            recdate, rectime = f.VALUE.split(" ")
+            formreceived = i18n.parse_time( i18n.display2python(l, recdate), rectime )
     d["flags"] = flags
     # Have we got enough info to create the person record? We just need a surname
     if "surname" not in d:
@@ -882,7 +886,7 @@ def create_person(dbo, username, collationid):
     for k, v in d.iteritems():
         if k.startswith("reserveanimalname"):
             try:
-                movement.insert_reserve_for_animal_name(dbo, username, personid, v)
+                movement.insert_reserve_for_animal_name(dbo, username, personid, formreceived, v)
             except Exception as err:
                 al.warn("could not create reservation for %d on %s (%s)" % (personid, v, err), "create_person", dbo)
                 web.ctx.status = "200 OK" # ASMValidationError sets status to 500

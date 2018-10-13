@@ -38,7 +38,7 @@ $(function() {
                     { json_field: "RETAILERID", post_field: "retailer", label: _("Retailer"), type: "person", personfilter: "retailer", hideif: function() { return config.bool("DisableRetailer"); } },
                     { json_field: "ADOPTIONNUMBER", post_field: "adoptionno", label: _("Movement Number"), tooltip: _("A unique number to identify this movement"), type: "text" },
                     { json_field: "INSURANCENUMBER", post_field: "insurance", label: _("Insurance"), tooltip: _("If the shelter provides initial insurance cover to new adopters, the policy number"), type: "text" },
-                    { json_field: "RESERVATIONDATE", post_field: "reservationdate", label: _("Reservation Date"), tooltip: _("The date this animal was reserved"), type: "date" },
+                    { json_field: "RESERVATIONDATE", post_field: "reservation", label: _("Reservation Date"), tooltip: _("The date this animal was reserved"), type: "datetime" },
                     { json_field: "RESERVATIONSTATUSID", post_field: "reservationstatus", label: _("Reservation Status"), type: "select", options: { displayfield: "STATUSNAME", valuefield: "ID", rows: controller.reservationstatuses }},
                     { json_field: "RESERVATIONCANCELLEDDATE", post_field: "reservationcancelled", label: _("Reservation Cancelled"), type: "date" },
                     { type: "nextcol" },
@@ -106,13 +106,13 @@ $(function() {
                         initialsort: controller.name != "move_book_trial_adoption", 
                         initialsortdirection: controller.name == "move_book_reservation" ? "asc" : "desc", 
                         formatter: function(row, v) { 
-                            // If we're only a reservation, use the reserve date
-                            if (row.MOVEMENTTYPE == 0) { 
-                                // If the reserve date is the same as the created date, use created
-                                // date with the time component
-                                if (format.date(row.CREATEDDATE) == format.date(row.RESERVATIONDATE)) { 
-                                    return format.date(row.CREATEDDATE) + " " + format.time(row.CREATEDDATE);
+                            // If we're only a reservation, use the reserve date instead
+                            if (row.MOVEMENTTYPE == 0) {
+                                // If the reserve date has its own time, use that
+                                if (format.time(row.RESERVATIONDATE) != "") {
+                                    return format.date(row.RESERVATIONDATE) + " " + format.time(row.RESERVATIONDATE);
                                 }
+                                // Otherwise, include no time
                                 return format.date(row.RESERVATIONDATE);
                             }
                             return format.date(row.MOVEMENTDATE);

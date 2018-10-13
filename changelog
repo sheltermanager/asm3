@@ -1,6 +1,7 @@
 41
 ================
 
+13/10/18 Allow reserve times to be stored, use form submission date/time
 12/10/18 PetRescue: send state abbrv and use fosterer postcode if available
 10/10/18 html.person_link_address that honours permissions on movement screens
 09/10/18 PetRescue require breed_names as a list rather than csv
