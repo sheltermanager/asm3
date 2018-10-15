@@ -264,6 +264,7 @@ $(function() {
                                 $("#type").select("value", "0");
                                 $("#returncategory").select("value", config.str("AFDefaultReturnReason"));
                                 $("#reservationstatus").select("value", config.str("AFDefaultReservationStatus"));
+                                $("#reservationtime").val("00:00:00");
                                 $("#adoptionno").closest("tr").hide();
 
                                 // Choose an appropriate default type based on our controller
