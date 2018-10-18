@@ -670,16 +670,21 @@ $(function() {
             else {
                 $("#insurance").closest("tr").fadeOut();
             }
-            // Show the reservation fields for reserves
-            if (mt == 0) {
+            // Show the reservation date field for both reserves and adoptions
+            if (mt == 1 || mt == 0) {
                 $("#reservationdate").closest("tr").fadeIn();
+            }
+            else {
+                $("#reservationdate").closest("tr").fadeOut();
+            }
+            // Show the other reservation fields for reserves
+            if (mt == 0) {
                 $("#reservationstatus").closest("tr").fadeIn();
                 $("#reservationcancelled").closest("tr").fadeIn();
                 $("#movementdate").closest("tr").fadeOut();
                 $("#returndate").closest("tr").fadeOut();
             }
             else {
-                $("#reservationdate").closest("tr").fadeOut();
                 $("#reservationstatus").closest("tr").fadeOut();
                 $("#reservationcancelled").closest("tr").fadeOut();
                 $("#movementdate").closest("tr").fadeIn();
