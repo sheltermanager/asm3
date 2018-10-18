@@ -106,7 +106,7 @@ $(function() {
             }
             var chipinfo = "";
             if (a.IDENTICHIPPED == 1) {
-                chipinfo = '<tr><td>' + _("Microchip") + ':</td><td><b>' + a.IDENTICHIPNUMBER + " " + a.IDENTICHIP2NUMBER + '</b></td></tr>';
+                chipinfo = '<tr><td>' + _("Microchip") + ':</td><td><b>' + a.IDENTICHIPNUMBER + " " + common.nulltostr(a.IDENTICHIP2NUMBER) + '</b></td></tr>';
             }
             var first_column = [
                 '<input type="hidden" id="animalid" value="' + a.ID + '" />',
