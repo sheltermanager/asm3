@@ -425,6 +425,8 @@ class image(ASMEndpoint):
             al.debug("mode=%s id=%s seq=%s (%s bytes)" % (o.post["mode"], o.post["id"], o.post["seq"], len(imagedata)), "image.content", o.dbo)
             return imagedata
         else:
+            # If a parameter of nopic=404 is passed, we return a 404 instead of redirecting to nopic
+            if o.post["nopic"] == "404": self.notfound()
             self.redirect("image?db=%s&mode=nopic" % o.dbo.database)
 
 class rollupjs(ASMEndpoint):
