@@ -60,6 +60,7 @@ class PetRescuePublisher(AbstractPublisher):
 
         token = configuration.petrescue_token(self.dbo)
         postcode = configuration.organisation_postcode(self.dbo)
+        suburb = configuration.organisation_town(self.dbo)
         state = configuration.organisation_county(self.dbo)
         contact_name = configuration.organisation(self.dbo)
         contact_email = configuration.email(self.dbo)
@@ -101,9 +102,7 @@ class PetRescuePublisher(AbstractPublisher):
                 iscat = an.SPECIESID == 2
 
                 ageinyears = i18n.date_diff_days(an.DATEOFBIRTH, i18n.now())
-
-                vaccinated = medical.get_vaccinated(self.dbo, an.ID)
-                
+               
                 size = ""
                 if an.SIZE == 2: size = "medium"
                 elif an.SIZE < 2: size = "large"
@@ -120,14 +119,22 @@ class PetRescuePublisher(AbstractPublisher):
                 elif an.ORIGINALOWNERID > 0: origin = "owner_surrender"
                 else: origin = "community_cat"
 
-                # Use the fosterer's postcode and state if available
+                # Check whether we've been vaccinated, wormed and hw treated
+                vaccinated = medical.get_vaccinated(self.dbo, an.ID)
+                hwtreated = isdog and self.dbo.query_int("SELECT COUNT(*) FROM animalmedical WHERE LOWER(TreatmentName) LIKE 'heart' AND AnimalID=?", [an.ID]) > 0
+                wormed = (isdog or iscat) and self.dbo.query_int("SELECT COUNT(*) FROM animalmedical WHERE LOWER(TreatmentName) LIKE 'worm' " \
+                    "AND LOWER(TreatmentName) NOT LIKE 'heart' AND AnimalID=?", [an.ID]) > 0
+
+                # Use the fosterer's postcode, state and suburb if available
                 location_postcode = postcode
                 location_state_abbr = state
+                location_suburb = suburb
                 if an.ACTIVEMOVEMENTID and an.ACTIVEMOVEMENTTYPE == 2:
                     fr = self.dbo.first_row(self.dbo.query("SELECT OwnerCounty, OwnerPostcode FROM adoption m " \
                         "INNER JOIN owner o ON m.OwnerID = o.ID WHERE m.ID=?", [ an.ACTIVEMOVEMENTID ]))
                     if fr is not None and fr.OWNERPOSTCODE: location_postcode = fr.OWNERPOSTCODE
                     if fr is not None and fr.OWNERCOUNTY: location_state_abbr = fr.OWNERCOUNTY
+                    if fr is not None and fr.OWNERTOWN: location_suburb = fr.OWNERTOWN
 
                 photo_url = "%s?account=%s&method=animal_image&animalid=%d" % (SERVICE_URL, self.dbo.database, an.ID)
 
@@ -145,14 +152,15 @@ class PetRescuePublisher(AbstractPublisher):
                     "personality":              an.WEBSITEMEDIANOTES, # 20-4000 chars of free type
                     "location_postcode":        location_postcode, # shelter/fosterer postcode
                     "location_state_abbr":      location_state_abbr, # shelter/fosterer state
+                    "location_suburb":          location_suburb, # shelter/fosterer suburb
                     "microchip_number":         utils.iif(an.IDENTICHIPPED == 1, an.IDENTICHIPNUMBER, ""), 
                     "desexed":                  an.NEUTERED == 1,# true | false, validates to always true according to docs
                     "contact_method":           "email", # email | phone
                     "size":                     utils.iif(isdog, size, ""), # dogs only - small | medium | high
                     "senior":                   isdog and ageinyears > 7, # dogs only, true | false
                     "vaccinated":               vaccinated, # cats, dogs, rabbits, true | false
-                    "wormed":                   vaccinated, # cats & dogs, true | false
-                    "heart_worm_treated":       vaccinated, # dogs only, true | false
+                    "wormed":                   wormed, # cats & dogs, true | false
+                    "heart_worm_treated":       hwtreated, # dogs only, true | false
                     "coat":                     utils.iif(iscat, coat, ""), # cats only, short | medium_coat | long
                     "intake_origin":            utils.iif(iscat, origin, ""), # cats only, community_cat | owner_surrender | pound_transfer | shelter_transfer
                     "adoption_process":         "", # 4,000 chars how to adopt
