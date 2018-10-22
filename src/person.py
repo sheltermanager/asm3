@@ -41,10 +41,7 @@ def get_person_query(dbo):
         "web.Date AS WebsiteMediaDate, " \
         "web.MediaNotes AS WebsiteMediaNotes, " \
         "doc.MediaName AS DocMediaName, " \
-        "doc.Date AS DocMediaDate, " \
-        "CASE WHEN EXISTS(SELECT oi.ID FROM ownerinvestigation oi WHERE oi.OwnerID = o.ID) THEN 1 ELSE 0 END AS Investigation, " \
-        "CASE WHEN EXISTS(SELECT ac.ID FROM animalcontrol ac WHERE ac.OwnerID = o.ID OR ac.Owner2ID = o.ID OR ac.Owner3ID = o.ID) THEN 1 ELSE 0 END AS Incident, " \
-        "CASE WHEN EXISTS(SELECT bib.ID FROM animal bib WHERE NonShelterAnimal = 0 AND IsTransfer = 0 AND IsPickup = 0 AND bib.OriginalOwnerID = o.ID) THEN 1 ELSE 0 END AS Surrender " \
+        "doc.Date AS DocMediaDate " \
         "FROM owner o " \
         "LEFT OUTER JOIN owner ho ON ho.ID = o.HomeCheckedBy " \
         "LEFT OUTER JOIN media web ON web.LinkID = o.ID AND web.LinkTypeID = %d AND web.WebsitePhoto = 1 " \
@@ -71,6 +68,18 @@ def get_person(dbo, personid):
 def get_person_embedded(dbo, personid):
     """ Returns a person record for the person chooser widget, uses a read-through cache for performance """
     return dbo.first_row( dbo.query_cache(get_person_query(dbo) + " WHERE o.ID = ?", [personid], age=120) )
+
+def embellish_adoption_warnings(dbo, p):
+    """ Adds the adoption warning columns to a person record p and returns it """
+    warn = dbo.first_row(dbo.query("SELECT (SELECT COUNT(*) FROM ownerinvestigation oi WHERE oi.OwnerID = o.ID) AS Investigation, " \
+        "(SELECT COUNT(*) FROM animalcontrol ac WHERE ac.OwnerID = o.ID OR ac.Owner2ID = o.ID OR ac.Owner3ID = o.ID) AS Incident, " \
+        "(SELECT COUNT(*) FROM animal bib WHERE NonShelterAnimal = 0 AND IsTransfer = 0 AND IsPickup = 0 AND bib.OriginalOwnerID = o.ID) AS Surrender " \
+        "FROM owner o " \
+        "WHERE o.ID = ?", [p.ID]))
+    p.INVESTIGATION = warn.INVESTIGATION
+    p.SURRENDER = warn.SURRENDER
+    p.INCIDENT = warn.INCIDENT
+    return p
 
 def get_person_similar(dbo, email = "", surname = "", forenames = "", address = ""):
     """

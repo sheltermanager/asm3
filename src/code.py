@@ -4319,6 +4319,20 @@ class person_embed(ASMEndpoint):
         else:
             return utils.json((p,))
 
+    def post_personwarn(self, o):
+        self.check(users.VIEW_PERSON)
+        self.content_type("application/json")
+        self.cache_control(120)
+        dbo = o.dbo
+        pid = o.post.integer("id")
+        p = extperson.get_person_embedded(dbo, pid)
+        if not p:
+            al.error("get person by id %d found no records." % pid, "code.person_embed", dbo)
+            raise web.notfound()
+        else:
+            extperson.embellish_adoption_warnings(dbo, p)
+            return utils.json((p,))
+
     def post_similar(self, o):
         self.check(users.VIEW_PERSON)
         self.content_type("application/json")

@@ -467,46 +467,6 @@ $(function() {
             // None of these warnings are valid if this isn't a reservation, adoption or a reclaim
             if ($("#type").val() != 0 && $("#type").val() != 1 && $("#type").val() != 5) { return; }
 
-            // Person warnings
-            if (p) {
-
-                // Is this owner banned?
-                if (p.ISBANNED == 1 && config.bool("WarnBannedOwner")) {
-                    warn.push(_("This person has been banned from adopting animals.")); 
-                }
-
-                // Owner previously under investigation
-                if (p.INVESTIGATION > 0) {
-                    warn.push(_("This person has been under investigation."));
-                }
-
-                // Owner part of animal control incident
-                if (p.INCIDENT > 0) {
-                    warn.push(_("This person has an animal control incident against them."));
-                }
-
-                // Owner previously surrendered?
-                if (p.SURRENDER > 0 && config.bool("WarnBroughtIn")) {
-                    warn.push(_("This person has previously surrendered an animal."));
-                }
-
-                // Does this owner live in the same postcode area as the animal's
-                // original owner?
-                if ( format.postcode_prefix($(".animalchooser-oopostcode").val()) == format.postcode_prefix(p.OWNERPOSTCODE) ||
-                     format.postcode_prefix($(".animalchooser-bipostcode").val()) == format.postcode_prefix(p.OWNERPOSTCODE) ) {
-                    if (config.bool("WarnOOPostcode")) { 
-                        warn.push(_("This person lives in the same area as the person who brought the animal to the shelter.")); 
-                    }
-                }
-
-                // Is this owner not homechecked?
-                if (p.IDCHECK == 0) {
-                    if (config.bool("WarnNoHomeCheck")) { 
-                        warn.push(_("This person has not passed a homecheck."));
-                    }
-                }
-            }
-
             // Animal warnings
             if (a) {
 
@@ -556,9 +516,59 @@ $(function() {
                 }
 
             }
-            if (warn.length > 0) {
+
+            // If we don't have a person yet, just show the animal warnings and finish
+            if (!p && warn.length > 0) {
                 tableform.dialog_error(warn.join("<br/>"));
+                return;
             }
+
+            // To handle person warnings, we need to go back to the server to get
+            // extra info on that person (incidents, surrenders, etc)
+            edit_header.person_with_adoption_warnings(p.ID).then(function(data) {
+                p = jQuery.parseJSON(data)[0];
+
+                // Is this owner banned?
+                if (p.ISBANNED == 1 && config.bool("WarnBannedOwner")) {
+                    warn.push(_("This person has been banned from adopting animals.")); 
+                }
+
+                // Owner previously under investigation
+                if (p.INVESTIGATION > 0) {
+                    warn.push(_("This person has been under investigation."));
+                }
+
+                // Owner part of animal control incident
+                if (p.INCIDENT > 0) {
+                    warn.push(_("This person has an animal control incident against them."));
+                }
+
+                // Owner previously surrendered?
+                if (p.SURRENDER > 0 && config.bool("WarnBroughtIn")) {
+                    warn.push(_("This person has previously surrendered an animal."));
+                }
+
+                // Does this owner live in the same postcode area as the animal's
+                // original owner?
+                if ( format.postcode_prefix($(".animalchooser-oopostcode").val()) == format.postcode_prefix(p.OWNERPOSTCODE) ||
+                     format.postcode_prefix($(".animalchooser-bipostcode").val()) == format.postcode_prefix(p.OWNERPOSTCODE) ) {
+                    if (config.bool("WarnOOPostcode")) { 
+                        warn.push(_("This person lives in the same area as the person who brought the animal to the shelter.")); 
+                    }
+                }
+
+                // Is this owner not homechecked?
+                if (p.IDCHECK == 0) {
+                    if (config.bool("WarnNoHomeCheck")) { 
+                        warn.push(_("This person has not passed a homecheck."));
+                    }
+                }
+
+                if (warn.length > 0) {
+                    tableform.dialog_error(warn.join("<br/>"));
+                }
+
+            });
         },
 
         validation: function() {

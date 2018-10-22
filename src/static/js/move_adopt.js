@@ -1,5 +1,5 @@
 /*jslint browser: true, forin: true, eqeq: true, white: true, sloppy: true, vars: true, nomen: true */
-/*global $, jQuery, _, asm, common, config, controller, dlgfx, format, header, html, validate */
+/*global $, jQuery, _, asm, common, config, controller, dlgfx, format, header, edit_header, html, validate */
 
 $(function() {
 
@@ -269,53 +269,57 @@ $(function() {
             $("#person").personchooser().bind("personchooserchange", function(event, rec) {
                 current_person = rec;
 
-                // Show tickbox if owner not homechecked
-                if (rec.IDCHECK == 0) {
-                    $("#markhomechecked").attr("checked", false);
-                    $("#homecheckrow").fadeIn();
-                }
+                edit_header.person_with_adoption_warnings(rec.ID).then(function(data) {
+                    rec = jQuery.parseJSON(data)[0];
 
-                // Default giftaid if the person is registered
-                $("#payment").payments("option", "giftaid", rec.ISGIFTAID == 1);
-                $("#giftaid1").prop("checked", rec.ISGIFTAID == 1);
-           
-                // Owner banned?
-                if (rec.ISBANNED == 1 && config.bool("WarnBannedOwner")) {
-                    $("#warntext").html(_("This person has been banned from adopting animals."));
-                    $("#ownerwarn").fadeIn();
-                    return;
-                }
+                    // Show tickbox if owner not homechecked
+                    if (rec.IDCHECK == 0) {
+                        $("#markhomechecked").attr("checked", false);
+                        $("#homecheckrow").fadeIn();
+                    }
 
-                // Owner previously under investigation
-                if (rec.INVESTIGATION > 0) {
-                    $("#warntext").html(_("This person has been under investigation."));
-                    $("#ownerwarn").fadeIn();
-                    return;
-                }
+                    // Default giftaid if the person is registered
+                    $("#payment").payments("option", "giftaid", rec.ISGIFTAID == 1);
+                    $("#giftaid1").prop("checked", rec.ISGIFTAID == 1);
+               
+                    // Owner banned?
+                    if (rec.ISBANNED == 1 && config.bool("WarnBannedOwner")) {
+                        $("#warntext").html(_("This person has been banned from adopting animals."));
+                        $("#ownerwarn").fadeIn();
+                        return;
+                    }
 
-                // Owner part of animal control incident
-                if (rec.INCIDENT > 0) {
-                    $("#warntext").html(_("This person has an animal control incident against them."));
-                    $("#ownerwarn").fadeIn();
-                    return;
-                }
+                    // Owner previously under investigation
+                    if (rec.INVESTIGATION > 0) {
+                        $("#warntext").html(_("This person has been under investigation."));
+                        $("#ownerwarn").fadeIn();
+                        return;
+                    }
 
-                // Owner previously surrendered?
-                if (rec.SURRENDER > 0 && config.bool("WarnBroughtIn")) {
-                    $("#warntext").html(_("This person has previously surrendered an animal."));
-                    $("#ownerwarn").fadeIn();
-                    return;
-                }
+                    // Owner part of animal control incident
+                    if (rec.INCIDENT > 0) {
+                        $("#warntext").html(_("This person has an animal control incident against them."));
+                        $("#ownerwarn").fadeIn();
+                        return;
+                    }
 
-                // Owner not homechecked?
-                if (rec.IDCHECK == 0 && config.bool("WarnNoHomeCheck")) {
-                    $("#warntext").html(_("This person has not passed a homecheck."));
-                    $("#ownerwarn").fadeIn();
-                    return;
-                }
+                    // Owner previously surrendered?
+                    if (rec.SURRENDER > 0 && config.bool("WarnBroughtIn")) {
+                        $("#warntext").html(_("This person has previously surrendered an animal."));
+                        $("#ownerwarn").fadeIn();
+                        return;
+                    }
 
-                $("#ownerwarn").fadeOut();
+                    // Owner not homechecked?
+                    if (rec.IDCHECK == 0 && config.bool("WarnNoHomeCheck")) {
+                        $("#warntext").html(_("This person has not passed a homecheck."));
+                        $("#ownerwarn").fadeIn();
+                        return;
+                    }
 
+                    $("#ownerwarn").fadeOut();
+
+                });
             });
 
             $("#costdisplay").closest(".ui-widget").hide();
