@@ -517,9 +517,9 @@ $(function() {
 
             }
 
-            // If we don't have a person yet, just show the animal warnings and finish
-            if (!p && warn.length > 0) {
-                tableform.dialog_error(warn.join("<br/>"));
+            // If we don't have a person yet, just show any animal warnings and finish
+            if (!p) { 
+                if (warn.length > 0) { tableform.dialog_error(warn.join("<br/>")); }
                 return;
             }
 
