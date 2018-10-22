@@ -1,6 +1,7 @@
 41
 ================
 
+22/10/18 Consistent field order for add/edit person screens #495
 22/10/18 Separate adoption warnings from get_person for performance #500
 18/10/18 Show reservation date on adoption movements for info
 13/10/18 Allow reserve times to be stored, use form submission date/time

@@ -139,7 +139,6 @@ $(function() {
             $("#person").personchooser().bind("personchooserchange", function(event, rec) {
 
                 edit_header.person_with_adoption_warnings(rec.ID).then(function(data) {
-
                     rec = jQuery.parseJSON(data)[0];
          
                     // Default giftaid if the person is registered
