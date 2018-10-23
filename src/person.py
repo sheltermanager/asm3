@@ -76,9 +76,10 @@ def embellish_adoption_warnings(dbo, p):
         "(SELECT COUNT(*) FROM animal bib WHERE NonShelterAnimal = 0 AND IsTransfer = 0 AND IsPickup = 0 AND bib.OriginalOwnerID = o.ID) AS Surrender " \
         "FROM owner o " \
         "WHERE o.ID = ?", [p.ID]))
-    p.INVESTIGATION = warn.INVESTIGATION
-    p.SURRENDER = warn.SURRENDER
-    p.INCIDENT = warn.INCIDENT
+    if warn is not None:
+        p.INVESTIGATION = warn.INVESTIGATION
+        p.SURRENDER = warn.SURRENDER
+        p.INCIDENT = warn.INCIDENT
     return p
 
 def get_person_similar(dbo, email = "", surname = "", forenames = "", address = ""):

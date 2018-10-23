@@ -130,13 +130,15 @@ class PetRescuePublisher(AbstractPublisher):
                 location_state_abbr = state
                 location_suburb = suburb
                 if an.ACTIVEMOVEMENTID and an.ACTIVEMOVEMENTTYPE == 2:
-                    fr = self.dbo.first_row(self.dbo.query("SELECT OwnerCounty, OwnerPostcode FROM adoption m " \
+                    fr = self.dbo.first_row(self.dbo.query("SELECT OwnerTown, OwnerCounty, OwnerPostcode FROM adoption m " \
                         "INNER JOIN owner o ON m.OwnerID = o.ID WHERE m.ID=?", [ an.ACTIVEMOVEMENTID ]))
                     if fr is not None and fr.OWNERPOSTCODE: location_postcode = fr.OWNERPOSTCODE
                     if fr is not None and fr.OWNERCOUNTY: location_state_abbr = fr.OWNERCOUNTY
                     if fr is not None and fr.OWNERTOWN: location_suburb = fr.OWNERTOWN
 
-                photo_url = "%s?account=%s&method=animal_image&animalid=%d" % (SERVICE_URL, self.dbo.database, an.ID)
+                photo_urls = []
+                for i in range(1, an.WEBSITEIMAGECOUNT):
+                    photo_urls.append("%s?account=%s&method=animal_image&animalid=%d&seq=%d" % (SERVICE_URL, self.dbo.database, an.ID, i))
 
                 # Construct a dictionary of info for this animal
                 data = {
@@ -173,7 +175,7 @@ class PetRescuePublisher(AbstractPublisher):
                     "interstate":               True, # true | false - can the animal be adopted to another state
                     "medical_notes":            an.HEALTHPROBLEMS, # 4,000 characters medical notes
                     "multiple_animals":         False, # More than one animal included in listing true | false
-                    "photo_urls":               [ photo_url ], # List of photo URL strings
+                    "photo_urls":               photo_urls, # List of photo URL strings
                     "status":                   "active" # active | removed | on_hold | rehomed | suspended | group_suspended
                 }
 
