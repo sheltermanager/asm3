@@ -1,6 +1,7 @@
 41
 ================
 
+24/10/18 Allow "My Fosters" location filter #72
 22/10/18 Consistent field order for add/edit person screens #495
 22/10/18 Separate adoption warnings from get_person for performance #500
 18/10/18 Show reservation date on adoption movements for info

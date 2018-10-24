@@ -238,12 +238,13 @@ def search(dbo, session, q):
     user = session.user
     locationfilter = session.locationfilter
     siteid = session.siteid
+    visibleanimalids = session.visibleanimalids
 
     # Special token searches
     if q == "onshelter" or q == "os":
         explain = _("All animals on the shelter.", l)
         if viewanimal:
-            ar(animal.get_animal_find_simple(dbo, "", limit=limit, locationfilter=locationfilter, siteid=siteid), "ANIMAL", animalsort)
+            ar(animal.get_animal_find_simple(dbo, "", limit=limit, locationfilter=locationfilter, siteid=siteid, visibleanimalids=visibleanimalids), "ANIMAL", animalsort)
 
     elif q == "notforadoption":
         explain = _("All animals who are flagged as not for adoption.", l)
@@ -378,7 +379,7 @@ def search(dbo, session, q):
         q = q[q.find(":")+1:].strip()
         explain = _("Animals matching '{0}'.", l).format(q)
         if viewanimal:
-            ar( animal.get_animal_find_simple(dbo, q, limit=limit, locationfilter=locationfilter, siteid=siteid), "ANIMAL", animalsort )
+            ar( animal.get_animal_find_simple(dbo, q, limit=limit, locationfilter=locationfilter, siteid=siteid, visibleanimalids=visibleanimalids), "ANIMAL", animalsort )
 
     elif q.startswith("ac:") or q.startswith("animalcontrol:"):
         q = q[q.find(":")+1:].strip()
@@ -419,7 +420,7 @@ def search(dbo, session, q):
     # No special tokens, search everything and collate
     else:
         if viewanimal:
-            ar( animal.get_animal_find_simple(dbo, q, limit=limit, locationfilter=locationfilter, siteid=siteid), "ANIMAL", animalsort )
+            ar( animal.get_animal_find_simple(dbo, q, limit=limit, locationfilter=locationfilter, siteid=siteid, visibleanimalids=visibleanimalids), "ANIMAL", animalsort )
         if users.check_permission_bool(session, users.VIEW_INCIDENT):
             ar( animalcontrol.get_animalcontrol_find_simple(dbo, q, user, limit=limit, siteid=siteid), "ANIMALCONTROL", acsort )
         if viewperson:

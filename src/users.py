@@ -707,6 +707,17 @@ def web_login(post, session, remoteip, path):
             session.roleids = ur.ROLEIDS
             session.siteid = utils.cint(user.SITEID)
             session.locationfilter = utils.nulltostr(user.LOCATIONFILTER)
+            session.staffid = user.OWNERID
+            session.visibleanimalids = ""
+            # If there's a -12 in location filter, the user can only see their current fosters
+            # Set visibleanimalids to those on foster
+            if utils.nulltostr(user.LOCATIONFILTER).find("-12") != -1:
+                va = []
+                af = dbo.query("SELECT AnimalID FROM adoption WHERE MovementType=2 AND OwnerID=? AND MovementDate<=? AND (ReturnDate Is Null OR ReturnDate>?)", \
+                    ( user.OWNERID, dbo.today(), dbo.today() ))
+                for r in af:
+                    va.append(str(r.ANIMALID))
+                session.visibleanimalids = ",".join(va)
         except:
             # Users coming from v2 won't have the
             # IPRestriction or EmailAddress fields necessary for get_users - we can't
@@ -716,6 +727,8 @@ def web_login(post, session, remoteip, path):
             session.roleids = ""
             session.locationfilter = ""
             session.siteid = 0
+            session.staffid = 0
+            session.visibleanimalids = ""
 
         try:
             # Mark the user logged in
