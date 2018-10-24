@@ -2465,6 +2465,7 @@ def install_default_templates(dbo, removeFirst = False):
     add_document_template_from_file("rabies_certificate.html", "/templates", path + "media/templates/rabies_certificate.html")
     add_document_template_from_file("receipt.html", "/templates", path + "media/templates/receipt.html")
     add_document_template_from_file("receipt_tax.html", "/templates", path + "media/templates/receipt_tax.html")
+    add_document_template_from_file("reclaim_release.html", "/templates", path + "media/templates/reclaim_release.html")
     add_document_template_from_file("reserved.html", "/templates", path + "media/templates/reserved.html")
     add_document_template_from_file("rspca_adoption.html", "/templates/rspca", path + "media/templates/rspca/rspca_adoption.html")
     add_document_template_from_file("rspca_behaviour_observations_cat.html", "/templates/rspca", path + "media/templates/rspca/rspca_behaviour_observations_cat.html")
