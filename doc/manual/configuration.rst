@@ -190,6 +190,18 @@ shorthand for setting a location filter for all the locations that belong to
 that site. It is an easy way of preventing a user from seeing animals who are
 not at that site without having to configure individual location filters.
 
+There are a number of "special" location filters, which correspond to
+animals outside the shelter with particular movements that you may wish to let your
+users see:
+
+* Adopted Animals: Allows the user to see previously adopted animals
+
+* Fostered Animals: Allows the user to see animals currently on foster
+
+* Retailer Animals: Allows the user to see animals currently with retailers
+
+* My Fosters: Restricts the user to ONLY see animals they are currently fostering
+
 User roles
 ----------
 

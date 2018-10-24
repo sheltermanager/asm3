@@ -20,4 +20,19 @@ animals, dispatch and respond to animal control incidents, complete diary tasks
 and mark homechecks as performed. This last item is very useful for volunteers
 going out to homecheck owners prior to adoption.
 
+Mobile App
+----------
+
+An app is available in the Google Play, iTunes and Amazon app stores for mobile
+devices (search for "sheltermanager").
+
+The app encapsulates a number of interfaces, which you can choose from a dropdown
+when logging in. 
+
+* Smartphone Interface: The Mobile interface described above (default)
+
+* Desktop/Tablet Interface: The "full" interface, on your mobile device
+
+* Animal Photo Uploader: An area that links to the gallery or camera of your phone
+  and allows you to take or upload existing photos to animal records.
 
