@@ -1514,7 +1514,7 @@ def sql_default_data(dbo, skip_config = False):
     def account(tid, code, desc, atype, dtype, ctype):
         return "INSERT INTO accounts (ID, Code, Description, Archived, AccountType, CostTypeID, DonationTypeID, RecordVersion, CreatedBy, CreatedDate, LastChangedBy, LastChangedDate) VALUES (%s, '%s', '%s', 0, %s, %s, %s, 0, '%s', %s, '%s', %s)|=\n" % ( tid, dbo.escape(code), dbo.escape(desc), atype, ctype, dtype, 'default', dbo.sql_now(), 'default', dbo.sql_now() ) 
     def breed(tid, name, petfinder, speciesid):
-        return "INSERT INTO breed (ID, BreedName, BreedDescription, PetFinderBreed, SpeciesID, IsRetired) VALUES (%s, '%s', '', '%s', %s, 0)|=\n" % ( tid, dbo.escape(name), petfinder, str(speciesid) )
+        return "INSERT INTO breed (ID, BreedName, BreedDescription, PetFinderBreed, SpeciesID, IsRetired) VALUES (%s, '%s', '', '%s', %s, 0)|=\n" % ( tid, dbo.escape(name), dbo.escape(petfinder), str(speciesid) )
     def basecolour(tid, name, adoptapet):
         return "INSERT INTO basecolour (ID, BaseColour, BaseColourDescription, AdoptAPetColour, IsRetired) VALUES (%s, '%s', '', '%s', 0)|=\n" % (tid, dbo.escape(name), adoptapet)
     def internallocation(lid, name):
@@ -1921,11 +1921,11 @@ def sql_default_data(dbo, skip_config = False):
     sql += breed(320, _("Britannia Petite", l), "Britannia Petite", 7)
     sql += breed(321, _("Bunny Rabbit", l), "Bunny Rabbit", 7)
     sql += breed(322, _("Californian", l), "Californian", 7)
-    sql += breed(323, _("Champagne DArgent", l), "Champagne DArgent", 7)
+    sql += breed(323, _("Champagne D'Argent", l), "Champagne D'Argent", 7)
     sql += breed(324, _("Checkered Giant", l), "Checkered Giant", 7)
     sql += breed(325, _("Chinchilla", l), "Chinchilla", 7)
     sql += breed(326, _("Cinnamon", l), "Cinnamon", 7)
-    sql += breed(327, _("Creme DArgent", l), "Creme DArgent", 7)
+    sql += breed(327, _("Creme D'Argent", l), "Creme D'Argent", 7)
     sql += breed(328, _("Dutch", l), "Dutch", 7)
     sql += breed(329, _("Dwarf", l), "Dwarf", 7)
     sql += breed(330, _("Dwarf Eared", l), "Dwarf Eared", 7)
