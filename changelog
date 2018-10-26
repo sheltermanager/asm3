@@ -1,6 +1,7 @@
 41
 ================
 
+26/10/18 Use a 15 min cache time on alerts/stats/timeline hp for large dbs
 26/10/18 Do not do processing for disabled items on home page
 24/10/18 Allow "My Fosters" location filter #72
 22/10/18 Consistent field order for add/edit person screens #495

@@ -612,7 +612,7 @@ def get_animals_recently_deceased(dbo):
         "OR a.ActiveMovementType = 2) " \
         "AND a.DeceasedDate > ?", [dbo.today(offset=-30)])
 
-def get_alerts(dbo, locationfilter = "", siteid = 0, visibleanimalids = ""):
+def get_alerts(dbo, locationfilter = "", siteid = 0, visibleanimalids = "", age = 120):
     """
     Returns the alert totals for the main screen.
     """
@@ -682,9 +682,9 @@ def get_alerts(dbo, locationfilter = "", siteid = 0, visibleanimalids = ""):
         "FROM lksmovementtype WHERE ID=1" \
             % { "today": today, "endoftoday": endoftoday, "tomorrow": tomorrow, "oneweek": oneweek, "oneyear": oneyear, "onemonth": onemonth, 
                 "futuremonth": futuremonth, "locfilter": locationfilter, "shelterfilter": shelterfilter }
-    return dbo.query_cache(sql, age=120)
+    return dbo.query_cache(sql, age=age)
 
-def get_stats(dbo):
+def get_stats(dbo, age=120):
     """
     Returns the stats figures for the main screen.
     """
@@ -711,7 +711,7 @@ def get_stats(dbo):
             "(SELECT SUM(Cost) FROM animaltransport WHERE PickupDateTime >= :from) AS Costs " \
         "FROM lksmovementtype WHERE ID=1", 
         { "from": countfrom, "adoption": movement.ADOPTION, "reclaimed": movement.RECLAIMED, "transfer": movement.TRANSFER },
-        age=120)
+        age=age)
 
 def embellish_timeline(l, rows):
     """
@@ -755,7 +755,7 @@ def embellish_timeline(l, rows):
         r["DESCRIPTION"] = desc
     return rows
 
-def get_timeline(dbo, limit = 500):
+def get_timeline(dbo, limit = 500, age = 120):
     """
     Returns a list of recent events at the shelter.
     """
@@ -918,7 +918,7 @@ def get_timeline(dbo, limit = 500):
             "WHERE NonShelterAnimal = 0 AND DateBroughtIn <= ? " \
             "ORDER BY DateBroughtIn DESC, ID %(limit)s" % \
             { "limit": dbo.sql_limit(limit) }
-    return embellish_timeline(dbo.locale, dbo.query_cache(sql, [dbo.now()], age=120))
+    return embellish_timeline(dbo.locale, dbo.query_cache(sql, [dbo.now()], age=age))
 
 def calc_time_on_shelter(dbo, animalid, a = None):
     """

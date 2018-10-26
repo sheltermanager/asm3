@@ -898,21 +898,6 @@ class main(JSONEndpoint):
         # Users and roles, active users
         usersandroles = users.get_users_and_roles(dbo)
         activeusers = users.get_active_users(dbo)
-        # Alerts
-        alerts = []
-        if configuration.show_alerts_home_page(dbo):
-            alerts = extanimal.get_alerts(dbo, o.locationfilter, o.siteid, o.visibleanimalids)
-            if len(alerts) > 0: 
-                alerts[0]["LOOKFOR"] = configuration.lookingfor_last_match_count(dbo)
-                alerts[0]["LOSTFOUND"] = configuration.lostfound_last_match_count(dbo)
-        # Stats
-        stats = []
-        if configuration.show_stats_home_page(dbo) != "none":
-            stats = extanimal.get_stats(dbo)
-        # Timeline
-        timeline = []
-        if configuration.show_timeline_home_page(dbo):
-            timeline = extanimal.get_timeline(dbo, 10)
         # Messages
         mess = extlookups.get_messages(dbo, session.user, session.roles, session.superuser)
         # Diary Notes
@@ -921,6 +906,25 @@ class main(JSONEndpoint):
             dm = extdiary.get_uncompleted_upto_today(dbo, "", False)
         else:
             dm = extdiary.get_uncompleted_upto_today(dbo, session.user, False)
+        # Use a 2 minute cache, with a longer cache time of 15 minutes for big databases
+        # on the following complex calls for stats, alerts and the timeline
+        age = 120
+        if dbo.is_large_db: age = 900
+        # Alerts
+        alerts = []
+        if configuration.show_alerts_home_page(dbo):
+            alerts = extanimal.get_alerts(dbo, o.locationfilter, o.siteid, o.visibleanimalids, age=age)
+            if len(alerts) > 0: 
+                alerts[0]["LOOKFOR"] = configuration.lookingfor_last_match_count(dbo)
+                alerts[0]["LOSTFOUND"] = configuration.lostfound_last_match_count(dbo)
+        # Stats
+        stats = []
+        if configuration.show_stats_home_page(dbo) != "none":
+            stats = extanimal.get_stats(dbo, age=age)
+        # Timeline
+        timeline = []
+        if configuration.show_timeline_home_page(dbo):
+            timeline = extanimal.get_timeline(dbo, 10, age=age)
         al.debug("main for '%s', %d diary notes, %d messages" % (session.user, len(dm), len(mess)), "code.main", dbo)
         return {
             "showwelcome": showwelcome,
