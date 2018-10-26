@@ -1499,6 +1499,8 @@ def get_location_filter_clause(locationfilter = "", tablequalifier = "", siteid 
     if visibleanimalids != "":
         clauses.append("%(tq)sID IN (%(va)s)" % { "tq": tablequalifier, "va": visibleanimalids })
     c = " AND ".join(clauses)
+    # If we've got nothing left by this point, don't add a prefix/suffix/where
+    if c == "": return ""
     if andprefix:
         c = " AND %s" % c
     if andsuffix:
