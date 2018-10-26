@@ -872,8 +872,6 @@ class main(JSONEndpoint):
         showwelcome = False
         if configuration.show_first_time_screen(dbo) and session.superuser == 1:
             showwelcome = True
-        # Messages
-        mess = extlookups.get_messages(dbo, session.user, session.roles, session.superuser)
         # Animal links
         linkmode = configuration.main_screen_animal_link_mode(dbo)
         linkmax = configuration.main_screen_animal_link_max(dbo)
@@ -901,10 +899,22 @@ class main(JSONEndpoint):
         usersandroles = users.get_users_and_roles(dbo)
         activeusers = users.get_active_users(dbo)
         # Alerts
-        alerts = extanimal.get_alerts(dbo, o.locationfilter, o.siteid, o.visibleanimalids)
-        if len(alerts) > 0: 
-            alerts[0]["LOOKFOR"] = configuration.lookingfor_last_match_count(dbo)
-            alerts[0]["LOSTFOUND"] = configuration.lostfound_last_match_count(dbo)
+        alerts = []
+        if configuration.show_alerts_home_page(dbo):
+            alerts = extanimal.get_alerts(dbo, o.locationfilter, o.siteid, o.visibleanimalids)
+            if len(alerts) > 0: 
+                alerts[0]["LOOKFOR"] = configuration.lookingfor_last_match_count(dbo)
+                alerts[0]["LOSTFOUND"] = configuration.lostfound_last_match_count(dbo)
+        # Stats
+        stats = []
+        if configuration.show_stats_home_page(dbo) != "none":
+            stats = extanimal.get_stats(dbo)
+        # Timeline
+        timeline = []
+        if configuration.show_timeline_home_page(dbo):
+            timeline = extanimal.get_timeline(dbo, 10)
+        # Messages
+        mess = extlookups.get_messages(dbo, session.user, session.roles, session.superuser)
         # Diary Notes
         dm = None
         if configuration.all_diary_home_page(dbo): 
@@ -923,8 +933,8 @@ class main(JSONEndpoint):
             "activeusers": activeusers,
             "usersandroles": usersandroles,
             "alerts": alerts,
-            "recent": extanimal.get_timeline(dbo, 10),
-            "stats": extanimal.get_stats(dbo),
+            "recent": timeline,
+            "stats": stats,
             "animallinks": extanimal.get_animals_brief(animallinks),
             "noreload": o.post.integer("noreload"),
             "diary": dm,

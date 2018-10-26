@@ -1087,6 +1087,9 @@ def show_gdpr_contact_optin(dbo):
 def show_stats_home_page(dbo):
     return cstring(dbo, "ShowStatsHomePage", DEFAULTS["ShowStatsHomePage"])
 
+def show_timeline_home_page(dbo):
+    return cboolean(dbo, "ShowTimelineHomePage", DEFAULTS["ShowTimelineHomePage"] == "Yes")
+
 def show_weight_in_lbs(dbo):
     return cboolean(dbo, "ShowWeightInLbs", DEFAULTS["ShowWeightInLbs"] == "Yes")
 
