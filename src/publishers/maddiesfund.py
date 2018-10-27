@@ -93,11 +93,13 @@ class MaddiesFundPublisher(AbstractPublisher):
             self.cleanup()
             return
 
-        # Send all fosters and adoptions for the period that haven't been sent already
+        # Send all fosters and adoptions for the period that haven't been sent since they last had a change.
+        # (we use lastchangeddate instead of sent date because MPA want an update when a number of key
+        #  animal fields change, such as neuter status, microchip info, rabies tag, etc)
         cutoff = i18n.subtract_days(i18n.now(self.dbo.timezone), PERIOD)
         sql = "%s WHERE a.ActiveMovementType IN (1,2) " \
             "AND a.ActiveMovementDate >= ? AND a.DeceasedDate Is Null AND a.NonShelterAnimal = 0 " \
-            "AND NOT EXISTS(SELECT AnimalID FROM animalpublished WHERE AnimalID = a.ID AND PublishedTo = 'maddiesfund' AND SentDate >= a.ActiveMovementDate) " \
+            "AND NOT EXISTS(SELECT AnimalID FROM animalpublished WHERE AnimalID = a.ID AND PublishedTo = 'maddiesfund' AND SentDate >= a.LastChangedDate) " \
             "ORDER BY a.ID" % animal.get_animal_query(self.dbo)
         animals = self.dbo.query(sql, [cutoff], distincton="ID")
 
