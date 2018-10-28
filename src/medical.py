@@ -3,9 +3,8 @@
 import al
 import animal
 import configuration
-import datetime
 import utils
-from i18n import _
+from i18n import _, add_days
 
 # Medical treatment rules
 FIXED_LENGTH = 0
@@ -733,19 +732,14 @@ def insert_treatments(dbo, username, amid, requireddate, isstart = True):
     am = dbo.first_row(dbo.query("SELECT * FROM animalmedical WHERE ID = ?", [amid]))
     nofreq = am.TIMINGRULENOFREQUENCIES
     if not isstart:
-        if am.TIMINGRULEFREQUENCY == DAILY:
-            requireddate += datetime.timedelta(days=nofreq)
-        if am.TIMINGRULEFREQUENCY == WEEKDAILY:
-            requireddate += datetime.timedelta(days=nofreq)
+        if am.TIMINGRULEFREQUENCY == DAILY:   requireddate = add_days(requireddate, nofreq)
+        if am.TIMINGRULEFREQUENCY == WEEKLY:  requireddate = add_days(requireddate, nofreq*7)
+        if am.TIMINGRULEFREQUENCY == MONTHLY: requireddate = add_days(requireddate, nofreq*31)
+        if am.TIMINGRULEFREQUENCY == YEARLY:  requireddate = add_days(requireddate, nofreq*365)
+        if am.TIMINGRULEFREQUENCY == WEEKDAILY: 
+            requireddate = add_days(requireddate, nofreq)
             # For python weekday, 0 == Monday, 6 == Sunday
-            while requireddate.weekday() == 5 or requireddate.weekday() == 6:
-                requireddate += datetime.timedelta(days=1)
-        if am.TIMINGRULEFREQUENCY == WEEKLY:
-            requireddate += datetime.timedelta(days=nofreq*7)
-        if am.TIMINGRULEFREQUENCY == MONTHLY:
-            requireddate += datetime.timedelta(days=nofreq*31)
-        if am.TIMINGRULEFREQUENCY == YEARLY:
-            requireddate += datetime.timedelta(days=nofreq*365)
+            while requireddate.weekday() == 5 or requireddate.weekday() == 6: requireddate = add_days(requireddate, 1)
 
     # Create correct number of records
     norecs = am.TIMINGRULE

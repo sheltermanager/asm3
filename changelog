@@ -1,6 +1,7 @@
 41
 ================
 
+28/10/18 Fix bug where unspecified not adding dates properly #470
 27/10/18 Maddies Pet Assistant: Send updates on record change
 26/10/18 get_timeline was never cached due to now() invalidating it
 26/10/18 Use a 15 min cache time on alerts/stats/timeline hp for large dbs
