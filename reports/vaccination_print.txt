@@ -2,7 +2,7 @@ Vaccination Print
 ###
 Auditing
 ###
-33801/Any
+34111/Any
 ###
 Vaccinations for a selected shelter animal.
 ###
@@ -11,7 +11,7 @@ en
 SELECT
 a.ShelterCode, a.AnimalName, t.AnimalType, il.LocationName,
 v.VaccinationType, av.DateRequired,
-CASE WHEN vo.OwnerName Is Not Null THEN vo.OwnerName ELSE av.LastChangedBy END AS GivenBy,
+CASE WHEN vo.OwnerName Is Not Null THEN vo.OwnerName ELSE av.GivenBy END AS GivenBy,
 av.DateOfVaccination, av.DateExpires, av.Comments
 FROM animal a
 INNER JOIN animaltype t ON t.ID = a.AnimalTypeID
