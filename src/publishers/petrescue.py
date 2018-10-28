@@ -155,7 +155,7 @@ class PetRescuePublisher(AbstractPublisher):
                     "location_postcode":        location_postcode, # shelter/fosterer postcode
                     "location_state_abbr":      location_state_abbr, # shelter/fosterer state
                     "location_suburb":          location_suburb, # shelter/fosterer suburb
-                    "microchip_number":         utils.iif(an.IDENTICHIPPED == 1, an.IDENTICHIPNUMBER, ""), 
+                    "microchip_number":         "", # DISABLED utils.iif(an.IDENTICHIPPED == 1, an.IDENTICHIPNUMBER, ""), 
                     "desexed":                  an.NEUTERED == 1,# true | false, validates to always true according to docs
                     "contact_method":           "email", # email | phone
                     "size":                     utils.iif(isdog, size, ""), # dogs only - small | medium | high
@@ -173,7 +173,7 @@ class PetRescuePublisher(AbstractPublisher):
                     "contact_email":            contact_email, # email to enquire about adoption
                     "foster_needed":            False, # true | false
                     "interstate":               True, # true | false - can the animal be adopted to another state
-                    "medical_notes":            an.HEALTHPROBLEMS, # 4,000 characters medical notes
+                    "medical_notes":            "", # DISABLED an.HEALTHPROBLEMS, # 4,000 characters medical notes
                     "multiple_animals":         False, # More than one animal included in listing true | false
                     "photo_urls":               photo_urls, # List of photo URL strings
                     "status":                   "active" # active | removed | on_hold | rehomed | suspended | group_suspended
