@@ -596,7 +596,8 @@ def update_vaccination_today(dbo, username, vaccid):
     Marks a vaccination record as given today. 
     """
     dbo.update("animalvaccination", vaccid, {
-        "DateOfVaccination": dbo.today()
+        "DateOfVaccination": dbo.today(),
+        "GivenBy": username
     }, username)
 
 def calculate_given_remaining(dbo, amid):
@@ -610,13 +611,14 @@ def calculate_given_remaining(dbo, amid):
         "TreatmentsRemaining = ((TotalNumberOfTreatments * TimingRule) - ?) " \
         "WHERE ID = ?", (given, given, amid))
 
-def complete_vaccination(dbo, username, vaccinationid, newdate, vetid = 0, dateexpires = None, batchnumber = "", manufacturer = ""):
+def complete_vaccination(dbo, username, vaccinationid, newdate, givenby = "", vetid = 0, dateexpires = None, batchnumber = "", manufacturer = ""):
     """
     Marks a vaccination given/completed on newdate
     """
     dbo.update("animalvaccination", vaccinationid, {
         "DateOfVaccination":    newdate,
         "DateExpires":          dateexpires,
+        "GivenBy":              utils.iif(givenby == "", username, givenby),
         "AdministeringVetID":   vetid,
         "BatchNumber":          batchnumber,
         "Manufacturer":         manufacturer
@@ -636,14 +638,9 @@ def complete_test(dbo, username, testid, newdate, testresult, vetid = 0):
 
 def reschedule_vaccination(dbo, username, vaccinationid, newdate, comments):
     """
-    Marks a vaccination completed today (if it's not already completed) 
-    and reschedules it for newdate
+    Reschedules a vaccination for a new date by copying it.
     """
     av = dbo.first_row(dbo.query("SELECT * FROM animalvaccination WHERE ID = ?", [vaccinationid]))
-    given = av.DATEOFVACCINATION
-    if given is None:
-        complete_vaccination(dbo, username, vaccinationid, newdate)
-
     dbo.insert("animalvaccination", {
         "AnimalID":             av.ANIMALID,
         "VaccinationID":        av.VACCINATIONID,
@@ -863,6 +860,7 @@ def insert_vaccination_from_form(dbo, username, post):
         "AnimalID":             post.integer("animal"),
         "VaccinationID":        post.integer("type"),
         "AdministeringVetID":   post.integer("administeringvet"),
+        "GivenBy":              post["by"],
         "DateOfVaccination":    post.date("given"),
         "DateRequired":         post.date("required"),
         "DateExpires":          post.date("expires"),
@@ -886,6 +884,7 @@ def update_vaccination_from_form(dbo, username, post):
         "AnimalID":             post.integer("animal"),
         "VaccinationID":        post.integer("type"),
         "AdministeringVetID":   post.integer("administeringvet"),
+        "GivenBy":              post["by"],
         "DateOfVaccination":    post.date("given"),
         "DateRequired":         post.date("required"),
         "DateExpires":          post.date("expires"),

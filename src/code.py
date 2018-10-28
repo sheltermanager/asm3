@@ -1716,6 +1716,7 @@ class animal_vaccination(JSONEndpoint):
             "manufacturers": "|".join(extmedical.get_vacc_manufacturers(dbo)),
             "stockitems": extstock.get_stock_items(dbo),
             "stockusagetypes": extlookups.get_stock_usage_types(dbo),
+            "users": users.get_users(dbo),
             "vaccinationtypes": extlookups.get_vaccination_types(dbo)
         }
 
@@ -5461,6 +5462,7 @@ class vaccination(JSONEndpoint):
             "manufacturers": "|".join(extmedical.get_vacc_manufacturers(dbo)),
             "stockitems": extstock.get_stock_items(dbo),
             "stockusagetypes": extlookups.get_stock_usage_types(dbo),
+            "users": users.get_users(dbo),
             "vaccinationtypes": extlookups.get_vaccination_types(dbo)
         }
 
@@ -5492,9 +5494,10 @@ class vaccination(JSONEndpoint):
         givenexpires = post.date("givenexpires")
         givenbatch = post["givenbatch"]
         givenmanufacturer = post["givenmanufacturer"]
+        givenby = post["givenby"]
         vet = post.integer("givenvet")
         for vid in post.integer_list("ids"):
-            extmedical.complete_vaccination(o.dbo, o.user, vid, newdate, vet, givenexpires, givenbatch, givenmanufacturer)
+            extmedical.complete_vaccination(o.dbo, o.user, vid, newdate, givenby, vet, givenexpires, givenbatch, givenmanufacturer)
             if rescheduledate is not None:
                 extmedical.reschedule_vaccination(o.dbo, o.user, vid, rescheduledate, reschedulecomments)
             if post.integer("item") != -1:
