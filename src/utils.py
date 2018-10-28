@@ -205,6 +205,15 @@ class AdvancedSearchBuilder(object):
             self.values.append(x)
             self.values.append(x)
 
+    def add_str_triplet(self, cfield, field, field2, field3): 
+        """ Adds a clause for a posted value to one of three string fields """
+        if self.post[cfield] != "":
+            x = "%%%s%%" % self.post[cfield].lower()
+            self.ands.append("(LOWER(%s) LIKE ? OR LOWER(%s) LIKE ? OR LOWER(%s) LIKE ?)" % (field, field2, field3))
+            self.values.append(x)
+            self.values.append(x)
+            self.values.append(x)
+
     def add_date(self, cfieldfrom, cfieldto, field): 
         """ Adds a clause for a posted date range to a date field """
         if self.post[cfieldfrom] != "" and self.post[cfieldto] != "":

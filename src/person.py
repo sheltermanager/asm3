@@ -442,6 +442,7 @@ def get_person_find_advanced(dbo, criteria, username, includeStaff = False, incl
        town - string partial pattern
        county - string partial pattern
        postcode - string partial pattern
+       phone - string partial pattern
        jurisdiction - -1 for all or jurisdiction
        homecheck - string partial pattern
        comments - string partial pattern
@@ -459,6 +460,7 @@ def get_person_find_advanced(dbo, criteria, username, includeStaff = False, incl
     ss.add_str("town", "o.OwnerTown")
     ss.add_str("county", "o.OwnerCounty")
     ss.add_str("postcode", "o.OwnerPostcode")
+    ss.add_str_triplet("phone", "o.HomeTelephone", "o.WorkTelephone", "o.MobileTelephone")
     ss.add_id("jurisdiction", "o.JurisdictionID")
     ss.add_str("email", "o.EmailAddress")
     ss.add_words("homecheck", "o.HomeCheckAreas")
