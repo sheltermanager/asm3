@@ -708,11 +708,15 @@ msgstr ""
 msgid "Adopted"
 msgstr ""
 
+#: users.js
+msgid "Adopted Animals"
+msgstr ""
+
 #: animal.py
 msgid "Adopted Transferred In {0}"
 msgstr ""
 
-#: users.js publish_options.js dbupdate.py
+#: publish_options.js dbupdate.py
 msgid "Adoption"
 msgstr ""
 
@@ -1971,7 +1975,7 @@ msgstr ""
 msgid "Burmilla"
 msgstr ""
 
-#: diary.js log.js person_investigation.js medical.js
+#: diary.js log.js person_investigation.js medical.js vaccination.js
 msgid "By"
 msgstr ""
 
@@ -2156,7 +2160,7 @@ msgid "Cell Phone"
 msgstr ""
 
 #: dbupdate.py
-msgid "Champagne DArgent"
+msgid "Champagne D'Argent"
 msgstr ""
 
 #: common_tableform.js common.js
@@ -2889,7 +2893,7 @@ msgid "Credit Card"
 msgstr ""
 
 #: dbupdate.py
-msgid "Creme DArgent"
+msgid "Creme D'Argent"
 msgstr ""
 
 #: reports.py
@@ -4904,7 +4908,7 @@ msgstr ""
 msgid "For"
 msgstr ""
 
-#: common_personchooser.js users.py
+#: common_personchooser.js common.js users.py
 msgid "Forbidden"
 msgstr ""
 
@@ -4924,7 +4928,7 @@ msgstr ""
 msgid "Forms need a name."
 msgstr ""
 
-#: users.js move_foster.js common.js publish_options.js dbupdate.py
+#: move_foster.js common.js publish_options.js dbupdate.py
 msgid "Foster"
 msgstr ""
 
@@ -4958,6 +4962,10 @@ msgstr ""
 
 #: animal_find.js
 msgid "Fostered"
+msgstr ""
+
+#: users.js
+msgid "Fostered Animals"
 msgstr ""
 
 #: person_find_results.js options.js animal_find_results.js
@@ -7250,6 +7258,10 @@ msgstr ""
 msgid "Mustang"
 msgstr ""
 
+#: users.js
+msgid "My Fosters"
+msgstr ""
+
 #: mobile.py
 msgid "My Incidents"
 msgstr ""
@@ -7583,7 +7595,7 @@ msgid "Non-Shelter Animals"
 msgstr ""
 
 #: users.js
-msgid "Non-shelter"
+msgid "Non-shelter Animals"
 msgstr ""
 
 #: dbupdate.py
@@ -9246,9 +9258,13 @@ msgid "Results for '{0}'."
 msgstr ""
 
 #: person_find_results.js options.js movements.js header_edit_header.js
-#: users.js animal_find.js onlineforms.js move_retailer.js shelterview.js
-#: common.js html.py dbupdate.py
+#: animal_find.js onlineforms.js move_retailer.js shelterview.js common.js
+#: html.py dbupdate.py
 msgid "Retailer"
+msgstr ""
+
+#: users.js
+msgid "Retailer Animals"
 msgstr ""
 
 #: movements.js
@@ -12268,7 +12284,7 @@ msgid "Very Large"
 msgstr ""
 
 #: person_find_results.js header_edit_header.js onlineforms.js test.js
-#: vaccination.js common.js html.py dbupdate.py
+#: common.js html.py dbupdate.py
 msgid "Vet"
 msgstr ""
 
