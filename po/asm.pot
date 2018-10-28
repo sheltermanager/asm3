@@ -8291,6 +8291,10 @@ msgstr ""
 msgid "Phone"
 msgstr ""
 
+#: person_find.js
+msgid "Phone contains"
+msgstr ""
+
 #: mobile.py
 msgid "Photo successfully uploaded."
 msgstr ""
