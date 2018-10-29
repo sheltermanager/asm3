@@ -600,6 +600,71 @@ PaymentTotalTax / PaymentTotalVAT
 PaymentTotal
     PaymentTotalReceived + PaymentTotalTax
 
+Transport Keys
+--------------
+
+If you are creating a document from the animal or person records, then the same
+rules apply as for vaccinations and medical records when accessing transports.
+The Recent keyword looks for transports with the most recent drop off date/time.
+
+However, if you create a document from the transport tab of an
+animal record (or the transport book), you can select multiple transports
+before creating the document and access the information by suffixing a number
+to the end of the keys listed below (eg: TransportType1, TransportComments2)
+
+The fields are:
+
+TransportID
+   A unique ID number representing the transport
+TransportType
+   The type of transport
+TransportDriveName
+   The transport driver if known
+TransportPickupDateTime
+   The date and time of the pickup
+TransportPickupName
+   The person the transport is picking up from if known
+TransportPickupAddress
+   The pickup address
+TransportPickupCity / TransportPickupTown
+   The pickup city / town
+TransportState / TransportCounty
+   The pickup state / county
+TransportPickupZipcode / TransportPickupPostcode
+   The pickup zipcode/postcode
+TransportDropoffName
+   The person the transport is taking the animal to if known
+TransportDropoffDateTime
+   The date and time of the dropoff
+TransportDropoffAddress
+   The dropoff address
+TransportDropoffCity / TransportDropoffTown
+   The dropoff city / town
+TransportDropoffState / TransportDropoffCounty
+   The dropoff state / county
+TransportDropoffZipcode / TransportDropoffPostcode
+   The dropoff zipcode / postcode
+TransportMiles
+   The distance of the transport in miles (if known)
+TransportCost
+   The cost of the transport
+TransportComments
+   Any comments present for the transport
+
+The following fields are only available to transports generated via
+the transport tab or book: 
+
+TransportAnimalName
+   The name of the animal being transported
+TransportShelterCode / TransportShortCode
+   The code of the animal being transported
+TransportSpecies
+   The species of animal being transported
+TransportBreed
+   The breed of animal being transported
+TransportSex
+   The sex of the animal being transported
+
 Cost Keys
 ---------
 

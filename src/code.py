@@ -1691,6 +1691,7 @@ class animal_transport(JSONEndpoint):
             "name": "animal_transport",
             "animal": a,
             "tabcounts": extanimal.get_satellite_counts(dbo, a["ID"])[0],
+            "templates": template.get_document_templates(dbo),
             "transporttypes": extlookups.get_transport_types(dbo),
             "rows": transports
         }
@@ -2313,6 +2314,10 @@ class document_gen(ASMEndpoint):
             loglinktype = extlog.PERSON
             logid = extmovement.get_movement(dbo, post.integer("id"))["OWNERID"]
             content = wordprocessor.generate_movement_doc(dbo, dtid, post.integer("id"), o.user)
+        elif linktype == "TRANSPORT":
+            loglinktype = extlog.ANIMAL
+            logid = extmovement.get_transport(dbo, post.integer_list("id")[0])["ANIMALID"]
+            content = wordprocessor.generate_transport_doc(dbo, dtid, post.integer_list("id"), o.user)
         elif linktype == "WAITINGLIST":
             loglinktype = extlog.WAITINGLIST
             logid = extwaitinglist.get_waitinglist_by_id(dbo, post.integer("id"))["OWNERID"]
@@ -2379,6 +2384,14 @@ class document_gen(ASMEndpoint):
             tempname += " - " + extperson.get_person_name(dbo, ownerid)
             extmedia.create_document_media(dbo, session.user, extmedia.PERSON, ownerid, tempname, post["document"])
             self.redirect("person_media?id=%d" % ownerid)
+        elif linktype == "TRANSPORT":
+            t = extmovement.get_transports_by_ids(dbo, post.integer_list("recid"))
+            if len(t) == 0:
+                raise utils.ASMValidationError("list '%s' does not contain valid ids" % recid)
+            animalid = t[0]["ANIMALID"]
+            tempname += " - " + extanimal.get_animal_namecode(dbo, animalid)
+            extmedia.create_document_media(dbo, session.user, extmedia.ANIMAL, animalid, tempname, post["document"])
+            self.redirect("animal_media?id=%d" % animalid)
         elif linktype == "LICENCE":
             l = financial.get_licence(dbo, recid)
             if l is None:
@@ -5388,6 +5401,7 @@ class transport(JSONEndpoint):
         al.debug("got %d transports" % len(transports), "code.transport", dbo)
         return {
             "name": "transport",
+            "templates": template.get_document_templates(dbo),
             "transporttypes": extlookups.get_transport_types(dbo),
             "rows": transports
         }

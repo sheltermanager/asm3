@@ -119,6 +119,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#test-keys">Test Keys</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#medical-keys">Medical Keys</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#payment-keys">Payment Keys</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#transport-keys">Transport Keys</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#cost-keys">Cost Keys</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#diet-keys">Diet Keys</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#log-keys">Log Keys</a></li>
@@ -787,6 +788,69 @@ invoice/receipt document:</p>
 <dd>The total of all sales tax/VAT/GST on the selected payments</dd>
 <dt>PaymentTotal</dt>
 <dd>PaymentTotalReceived + PaymentTotalTax</dd>
+</dl>
+</div>
+<div class="section" id="transport-keys">
+<h2>Transport Keys<a class="headerlink" href="#transport-keys" title="Permalink to this headline">¶</a></h2>
+<p>If you are creating a document from the animal or person records, then the same
+rules apply as for vaccinations and medical records when accessing transports.
+The Recent keyword looks for transports with the most recent drop off date/time.</p>
+<p>However, if you create a document from the transport tab of an
+animal record (or the transport book), you can select multiple transports
+before creating the document and access the information by suffixing a number
+to the end of the keys listed below (eg: TransportType1, TransportComments2)</p>
+<p>The fields are:</p>
+<dl class="docutils">
+<dt>TransportID</dt>
+<dd>A unique ID number representing the transport</dd>
+<dt>TransportType</dt>
+<dd>The type of transport</dd>
+<dt>TransportDriveName</dt>
+<dd>The transport driver if known</dd>
+<dt>TransportPickupDateTime</dt>
+<dd>The date and time of the pickup</dd>
+<dt>TransportPickupName</dt>
+<dd>The person the transport is picking up from if known</dd>
+<dt>TransportPickupAddress</dt>
+<dd>The pickup address</dd>
+<dt>TransportPickupCity / TransportPickupTown</dt>
+<dd>The pickup city / town</dd>
+<dt>TransportState / TransportCounty</dt>
+<dd>The pickup state / county</dd>
+<dt>TransportPickupZipcode / TransportPickupPostcode</dt>
+<dd>The pickup zipcode/postcode</dd>
+<dt>TransportDropoffName</dt>
+<dd>The person the transport is taking the animal to if known</dd>
+<dt>TransportDropoffDateTime</dt>
+<dd>The date and time of the dropoff</dd>
+<dt>TransportDropoffAddress</dt>
+<dd>The dropoff address</dd>
+<dt>TransportDropoffCity / TransportDropoffTown</dt>
+<dd>The dropoff city / town</dd>
+<dt>TransportDropoffState / TransportDropoffCounty</dt>
+<dd>The dropoff state / county</dd>
+<dt>TransportDropoffZipcode / TransportDropoffPostcode</dt>
+<dd>The dropoff zipcode / postcode</dd>
+<dt>TransportMiles</dt>
+<dd>The distance of the transport in miles (if known)</dd>
+<dt>TransportCost</dt>
+<dd>The cost of the transport</dd>
+<dt>TransportComments</dt>
+<dd>Any comments present for the transport</dd>
+</dl>
+<p>The following fields are only available to transports generated via
+the transport tab or book:</p>
+<dl class="docutils">
+<dt>TransportAnimalName</dt>
+<dd>The name of the animal being transported</dd>
+<dt>TransportShelterCode / TransportShortCode</dt>
+<dd>The code of the animal being transported</dd>
+<dt>TransportSpecies</dt>
+<dd>The species of animal being transported</dd>
+<dt>TransportBreed</dt>
+<dd>The breed of animal being transported</dd>
+<dt>TransportSex</dt>
+<dd>The sex of the animal being transported</dd>
 </dl>
 </div>
 <div class="section" id="cost-keys">

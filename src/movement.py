@@ -74,10 +74,12 @@ def get_transport_query(dbo):
         "d.OwnerPostcode AS DriverOwnerPostcode, p.OwnerPostcode AS PickupOwnerPostcode, dr.OwnerPostcode AS DropoffOwnerPostcode, " \
         "t.PickupAddress, t.PickupTown, t.PickupCounty, t.PickupPostcode, t.DropoffAddress, t.DropoffTown, t.DropoffCounty, t.DropoffPostcode, " \
         "ma.MediaName AS WebsiteMediaName, ma.Date AS WebsiteMediaDate, " \
-        "a.AnimalName, a.ShelterCode, a.ShortCode " \
+        "a.AnimalName, a.ShelterCode, a.ShortCode, s.SpeciesName, a.BreedName, x.Sex " \
         "FROM animaltransport t " \
         "INNER JOIN transporttype tt ON tt.ID = t.TransportTypeID " \
         "LEFT OUTER JOIN animal a ON t.AnimalID = a.ID " \
+        "LEFT OUTER JOIN species s ON s.ID = a.SpeciesID " \
+        "LEFT OUTER JOIN lksex x ON x.Sex = a.Sex " \
         "LEFT OUTER JOIN media ma ON ma.LinkID = a.ID AND ma.LinkTypeID = 0 AND ma.WebsitePhoto = 1 " \
         "LEFT OUTER JOIN owner d ON t.DriverOwnerID = d.ID " \
         "LEFT OUTER JOIN owner p ON t.PickupOwnerID = p.ID " \
@@ -118,6 +120,12 @@ def get_active_transports(dbo):
 
 def get_animal_transports(dbo, animalid):
     return dbo.query(get_transport_query(dbo) + " WHERE t.AnimalID = ? ORDER BY DropoffDateTime", [animalid])
+
+def get_transport(dbo, transportid):
+    return dbo.first_row(dbo.query(get_transport_query(dbo) + " WHERE t.ID = ?", [transportid]))
+
+def get_transports_by_ids(dbo, transportids):
+    return dbo.query(get_transport_query(dbo) + "WHERE t.ID IN (%s) ORDER BY DropoffDateTime" % ",".join(str(x) for x in transportids))
 
 def get_transport_two_dates(dbo, start, end): 
     return dbo.query(get_transport_query(dbo) + " WHERE t.PickupDateTime >= ? AND t.PickupDateTime <= ? ORDER BY t.PickupDateTime", (start, end))

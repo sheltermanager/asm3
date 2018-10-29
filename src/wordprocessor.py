@@ -130,10 +130,10 @@ def animal_tags_publisher(dbo, a, includeAdditional=True):
     database calls for each animal.
     """
     return animal_tags(dbo, a, includeAdditional=includeAdditional, includeCosts=False, includeDiet=True, \
-        includeDonations=False, includeFutureOwner=False, includeIsVaccinated=True, includeLogs=False, includeMedical=False)
+        includeDonations=False, includeFutureOwner=False, includeIsVaccinated=True, includeLogs=False, includeMedical=False, includeTransport=False)
 
 def animal_tags(dbo, a, includeAdditional=True, includeCosts=True, includeDiet=True, includeDonations=True, \
-        includeFutureOwner=True, includeIsVaccinated=True, includeLogs=True, includeMedical=True):
+        includeFutureOwner=True, includeIsVaccinated=True, includeLogs=True, includeMedical=True, includeTransport=True):
     """
     Generates a list of tags from an animal result (the deep type from
     calling animal.get_animal)
@@ -547,6 +547,36 @@ def animal_tags(dbo, a, includeAdditional=True, includeCosts=True, includeDiet=T
             "PAYMENTTAXAMOUNT":         "c:VATAMOUNT"
         }
         tags.update(table_tags(dbo, d, financial.get_animal_donations(dbo, a["ID"]), "DONATIONNAME", "DATE"))
+
+    # Transport
+    if includeTransport:
+        d = {
+            "TRANSPORTTYPE":            "TRANSPORTTYPENAME",
+            "TRANSPORTDRIVERNAME":      "DRIVEROWNERNAME", 
+            "TRANSPORTPICKUPDATETIME":  "d:PICKUPDATETIME",
+            "TRANSPORTPICKUPNAME":      "PICKUPOWNERNAME", 
+            "TRANSPORTPICKUPADDRESS":   "PICKUPADDRESS",
+            "TRANSPORTPICKUPTOWN":      "PICKUPTOWN",
+            "TRANSPORTPICKUPCITY":      "PICKUPTOWN",
+            "TRANSPORTPICKUPCOUNTY":    "PICKUPCOUNTY",
+            "TRANSPORTPICKUPSTATE":     "PICKUPCOUNTY",
+            "TRANSPORTPICKUPZIPCODE":   "PICKUPPOSTCODE",
+            "TRANSPORTPICKUPPOSTCODE":  "PICKUPPOSTCODE",
+            "TRANSPORTDROPOFFNAME":     "DROPOFFOWNERNAME", 
+            "TRANSPORTDROPOFFDATETIME": "d:DROPOFFDATETIME",
+            "TRANSPORTDROPOFFADDRESS":  "DROPOFFADDRESS",
+            "TRANSPORTDROPOFFTOWN":     "DROPOFFTOWN",
+            "TRANSPORTDROPOFFCITY":     "DROPOFFTOWN",
+            "TRANSPORTDROPOFFCOUNTY":   "DROPOFFCOUNTY",
+            "TRANSPORTDROPOFFSTATE":    "DROPOFFCOUNTY",
+            "TRANSPORTDROPOFFZIPCODE":  "DROPOFFPOSTCODE",
+            "TRANSPORTDROPOFFPOSTCODE": "DROPOFFPOSTCODE",
+            "TRANSPORTMILES":           "MILES",
+            "TRANSPORTCOST":            "c:COST",
+            "TRANSPORTCOSTPAIDDATE":    "d:COSTPAIDDATE",
+            "TRANSPORTCOMMENTS":        "COMMENTS"
+        }
+        tags.update(table_tags(dbo, d, movement.get_animal_transports(dbo, a["ID"]), "TRANSPORTTYPENAME", "DROPOFFDATETIME"))
 
     # Costs
     if includeCosts:
@@ -1073,6 +1103,56 @@ def person_tags(dbo, p, includeImg=False):
 
     return tags
 
+def transport_tags(dbo, transports):
+    """
+    Generates a list of tags from a list of transports.
+    transports: a list of transport records
+    """
+    l = dbo.locale
+    tags = {}
+    def add_to_tags(i, t): 
+        x = { 
+            "TRANSPORTID"+i:              str(t["ID"]),
+            "TRANSPORTTYPE"+i:            t["TRANSPORTTYPENAME"],
+            "TRANSPORTDRIVERNAME"+i:      t["DRIVEROWNERNAME"], 
+            "TRANSPORTPICKUPDATETIME"+i:  python2display(l, t["PICKUPDATETIME"]),
+            "TRANSPORTPICKUPNAME"+i:      t["PICKUPOWNERNAME"], 
+            "TRANSPORTPICKUPADDRESS"+i:   t["PICKUPADDRESS"],
+            "TRANSPORTPICKUPTOWN"+i:      t["PICKUPTOWN"],
+            "TRANSPORTPICKUPCITY"+i:      t["PICKUPTOWN"],
+            "TRANSPORTPICKUPCOUNTY"+i:    t["PICKUPCOUNTY"],
+            "TRANSPORTPICKUPSTATE"+i:     t["PICKUPCOUNTY"],
+            "TRANSPORTPICKUPZIPCODE"+i:   t["PICKUPPOSTCODE"],
+            "TRANSPORTPICKUPPOSTCODE"+i:  t["PICKUPPOSTCODE"],
+            "TRANSPORTDROPOFFNAME"+i:     t["DROPOFFOWNERNAME"], 
+            "TRANSPORTDROPOFFDATETIME"+i: python2display(l, t["DROPOFFDATETIME"]),
+            "TRANSPORTDROPOFFADDRESS"+i:  t["DROPOFFADDRESS"],
+            "TRANSPORTDROPOFFTOWN"+i:     t["DROPOFFTOWN"],
+            "TRANSPORTDROPOFFCITY"+i:     t["DROPOFFTOWN"],
+            "TRANSPORTDROPOFFCOUNTY"+i:   t["DROPOFFCOUNTY"],
+            "TRANSPORTDROPOFFSTATE"+i:    t["DROPOFFCOUNTY"],
+            "TRANSPORTDROPOFFZIPCODE"+i:  t["DROPOFFPOSTCODE"],
+            "TRANSPORTDROPOFFPOSTCODE"+i: t["DROPOFFPOSTCODE"],
+            "TRANSPORTMILES"+i:           str(t["MILES"]),
+            "TRANSPORTCOST"+i:            format_currency_no_symbol(l, t["COST"]),
+            "TRANSPORTCOSTPAIDDATE"+i:    python2display(l, t["COSTPAIDDATE"]),
+            "TRANSPORTCOMMENTS"+i:        t["COMMENTS"],
+
+            "TRANSPORTANIMALNAME"+i:      t["ANIMALNAME"],
+            "TRANSPORTSHELTERCODE"+i:     t["SHELTERCODE"],
+            "TRANSPORTSHORTCODE"+i:       t["SHORTCODE"],
+            "TRANSPORTSPECIES"+i:         t["SPECIESNAME"],
+            "TRANSPORTBREED"+i:           t["BREEDNAME"],
+            "TRANSPORTSEX"+i:             t["SEX"],
+        }
+        tags.update(x)
+    # Add a copy of the transport tags without an index
+    if len(transports) > 0:
+        add_to_tags("", transports[0]) 
+    for i, t in enumerate(transports):
+        add_to_tags(str(i+1), t)
+    return tags
+
 def waitinglist_tags(dbo, a):
     """
     Generates a list of tags from a waiting list result (waitinglist.get_waitinglist_by_id)
@@ -1459,6 +1539,19 @@ def generate_movement_doc(dbo, templateid, movementid, username):
         tags = append_tags(tags, person_tags(dbo, person.get_person(dbo, m["OWNERID"])))
     tags = append_tags(tags, movement_tags(dbo, m))
     tags = append_tags(tags, donation_tags(dbo, financial.get_movement_donations(dbo, movementid)))
+    tags = append_tags(tags, org_tags(dbo, username))
+    return substitute_template(dbo, templateid, tags)
+
+def generate_transport_doc(dbo, templateid, transportids, username):
+    """
+    Generates a transport document from a template
+    templateid: The ID of the template
+    transportids: A list of ids to generate for
+    """
+    tt = movement.get_transports_by_ids(dbo, transportids)
+    if len(tt) == 0: 
+        raise utils.ASMValidationError("%s does not contain any valid transport IDs" % transportids)
+    tags = transport_tags(dbo, tt)
     tags = append_tags(tags, org_tags(dbo, username))
     return substitute_template(dbo, templateid, tags)
 

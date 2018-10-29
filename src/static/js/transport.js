@@ -264,6 +264,8 @@ $(function() {
                             });
                     }
                  },
+                 { id: "document", text: _("Document"), icon: "document", enabled: "multi", perm: "gaf", 
+                     tooltip: _("Generate document from this transport"), type: "buttonmenu" },
                  { id: "offset", type: "dropdownfilter", 
                      options: [ "item|" + _("Due today"), "item2|" + _("Due in next week") ],
                      click: function(selval) {
@@ -331,6 +333,10 @@ $(function() {
             var s = "";
             this.model();
             s += tableform.dialog_render(this.dialog);
+            s += '<div id="button-document-body" class="asm-menu-body">' +
+                '<ul class="asm-menu-list">' +
+                edit_header.template_list(controller.templates, "TRANSPORT", 0) +
+                '</ul></div>';
             if (controller.name.indexOf("animal_") == 0) {
                 s += edit_header.animal_edit_header(controller.animal, "transport", controller.tabcounts);
             }
@@ -361,6 +367,15 @@ $(function() {
                 $("#dropofftown").val(rec.OWNERTOWN);
                 $("#dropoffcounty").val(rec.OWNERCOUNTY);
                 $("#dropoffpostcode").val(rec.OWNERPOSTCODE);
+            });
+
+            // Add click handlers to templates
+            $(".templatelink").click(function() {
+                // Update the href as it is clicked so default browser behaviour
+                // continues on to open the link in a new window
+                var template_name = $(this).attr("data");
+                var ids = tableform.table_ids(transport.table);
+                $(this).prop("href", "document_gen?linktype=TRANSPORT&id=" + ids + "&dtid=" + template_name);
             });
 
         },
