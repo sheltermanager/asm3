@@ -580,6 +580,52 @@ def get_treatments_two_dates(dbo, start, end, locationfilter = "", siteid = 0, v
         "AND a.DeceasedDate Is Null %s %s " \
         "ORDER BY amt.DateRequired, a.AnimalName" % (shelterfilter, locationfilter), (start, end)))
 
+def get_combined_due(dbo, animalid, start, end):
+    """
+    Returns a combined recordset of medical, vacc and test items for animalid
+    that are due between start and end.
+    animalid: int The animal ID to consider
+    start: python date, due from
+    end: pythond ate, due to
+    """
+    rows = dbo.query("SELECT * FROM (" \
+        "SELECT " \
+        "am.TreatmentName, am.Dosage, amt.TreatmentNumber, " \
+        "amt.TotalTreatments, amt.DateRequired, am.Comments " \
+        "FROM animal a " \
+        "INNER JOIN animaltype t ON t.ID = a.AnimalTypeID " \
+        "INNER JOIN species s ON s.ID = a.SpeciesID " \
+        "INNER JOIN internallocation il ON il.ID = a.ShelterLocation " \
+        "INNER JOIN animalmedical am ON a.ID = am.AnimalID " \
+        "INNER JOIN animalmedicaltreatment amt ON amt.AnimalMedicalID = am.ID " \
+        "WHERE amt.DateGiven Is Null " \
+        "AND (amt.DateRequired >= ? AND amt.DateRequired <= ?) AND a.ID = ? " \
+        "UNION SELECT " \
+        "v.VaccinationType AS TreatmentName, '1' AS Dosage, '1' AS TreatmentNumber, " \
+        "'1' AS TotalTreatments, av.DateRequired, av.Comments " \
+        "FROM animal a " \
+        "INNER JOIN animaltype t ON t.ID = a.AnimalTypeID " \
+        "INNER JOIN animalvaccination av ON a.ID = av.AnimalID " \
+        "INNER JOIN species sp ON sp.ID = a.SpeciesID " \
+        "INNER JOIN vaccinationtype v ON av.VaccinationID = v.ID " \
+        "INNER JOIN internallocation il ON il.ID = a.ShelterLocation " \
+        "WHERE av.DateOfVaccination Is Null " \
+        "AND (av.DateRequired >= ? AND av.DateRequired <= ?) AND a.ID = ? " \
+        "UNION SELECT " \
+        "tt.TestName AS TreatmentName, '1' AS Dosage, '1' AS TreatmentNumber, " \
+        "'1' AS TotalTreatments, at.DateRequired, at.Comments " \
+        "FROM animal a " \
+        "INNER JOIN animaltype t ON t.ID = a.AnimalTypeID " \
+        "INNER JOIN animaltest at ON a.ID = at.AnimalID " \
+        "INNER JOIN species sp ON sp.ID = a.SpeciesID " \
+        "INNER JOIN testtype tt ON at.TestTypeID = tt.ID " \
+        "INNER JOIN internallocation il ON il.ID = a.ShelterLocation " \
+        "WHERE at.DateOfTest Is Null " \
+        "AND (at.DateRequired >= ? AND at.DateRequired <= ?) AND a.ID = ? " \
+        ") dummy " \
+        "ORDER BY DateRequired", ( start, end, animalid, start, end, animalid, start, end, animalid ))
+    return rows
+
 def update_test_today(dbo, username, testid, resultid):
     """
     Marks a test record as performed today. 

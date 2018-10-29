@@ -50,6 +50,9 @@ class TestMedical(unittest.TestCase):
     def test_get_treatments_outstanding(self):
         medical.get_treatments_outstanding(base.get_dbo())
 
+    def test_get_combined_due(self):
+        medical.get_combined_due(base.get_dbo(), 0, None, None)
+
     def test_update_test_today(self):
         medical.update_test_today(base.get_dbo(), "test", 0, 0)
 

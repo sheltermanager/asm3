@@ -4,6 +4,7 @@ import al
 import animal
 import configuration
 import financial
+import medical
 import i18n
 import utils
 
@@ -79,7 +80,7 @@ def get_transport_query(dbo):
         "INNER JOIN transporttype tt ON tt.ID = t.TransportTypeID " \
         "LEFT OUTER JOIN animal a ON t.AnimalID = a.ID " \
         "LEFT OUTER JOIN species s ON s.ID = a.SpeciesID " \
-        "LEFT OUTER JOIN lksex x ON x.Sex = a.Sex " \
+        "LEFT OUTER JOIN lksex x ON x.ID = a.Sex " \
         "LEFT OUTER JOIN media ma ON ma.LinkID = a.ID AND ma.LinkTypeID = 0 AND ma.WebsitePhoto = 1 " \
         "LEFT OUTER JOIN owner d ON t.DriverOwnerID = d.ID " \
         "LEFT OUTER JOIN owner p ON t.PickupOwnerID = p.ID " \
@@ -859,13 +860,87 @@ def auto_cancel_reservations(dbo):
     """
     cancelafter = configuration.auto_cancel_reserves_days(dbo)
     if cancelafter <= 0:
-        al.debug("auto reserve cancel is off.", "movement.auto_cancel_reservations")
+        al.debug("auto reserve cancel is off.", "movement.auto_cancel_reservations", dbo)
         return
     cancelcutoff = dbo.today(offset=cancelafter*-1)
-    al.debug("cutoff date: reservations < %s" % cancelcutoff, "movement.auto_cancel_reservations")
+    al.debug("cutoff date: reservations < %s" % cancelcutoff, "movement.auto_cancel_reservations", dbo)
     count = dbo.execute("UPDATE adoption SET ReservationCancelledDate = ?, LastChangedDate = ?, LastChangedBy = 'system' " \
         "WHERE MovementDate Is Null AND ReservationCancelledDate Is Null AND " \
         "MovementType = 0 AND ReservationDate < ?", (dbo.today(), dbo.now(), cancelcutoff))
     al.debug("cancelled %d reservations older than %s days" % (count, cancelafter), "movement.auto_cancel_reservations", dbo)
 
-    
+def send_fosterer_emails(dbo):
+    """
+    Finds all people on file with at least 1 active foster, then constructs an email 
+    containing any info on overdue medical items and items due in the current week. 
+    Intended to be sent as part of the overnight batch on the first day of the week.
+    """
+    l = dbo.locale
+    lines = []
+    UNDERLINE = "--------------------------------------"
+
+    # If this option is not turned on, bail out
+    if not configuration.fosterer_emails(dbo): 
+        al.debug("FostererEmails configuration option is set to No", "movement.send_fosterer_emails", dbo)
+        return
+
+    # Check the day of the week, if it isn't the first day of the week, drop out
+    if dbo.now().weekday() != 0: 
+        al.debug("now.weekday != 0: no need to send fosterer emails", "movement.send_fosterer_emails", dbo)
+        return
+
+    activefosterers = dbo.query("SELECT ID, OwnerName, EmailAddress FROM owner " \
+        "WHERE EmailAddress <> '' AND EXISTS(SELECT OwnerID FROM adoption WHERE OwnerID = owner.ID AND MovementType = 2 AND MovementDate <= ? " \
+        "AND (ReturnDate Is Null OR ReturnDate > ?)) ORDER BY OwnerName", ( dbo.today(), dbo.today() ))
+    al.debug("%d active fosterers found" % len(activefosterers), "movement.send_fosterer_emails", dbo)
+
+    for f in activefosterers:
+        animals = dbo.query("SELECT a.AnimalName, a.ShelterCode, x.Sex, a.SpeciesID, s.SpeciesName, a.BreedName, " \
+            "a.AnimalAge, a.DateOfBirth, a.Neutered, a.Identichipped, a.IdentichipNumber, " \
+            "m.AnimalID, m.MovementDate " \
+            "FROM adoption m " \
+            "INNER JOIN animal a ON a.ID = m.AnimalID " \
+            "LEFT OUTER JOIN species s ON s.ID = a.SpeciesID " \
+            "LEFT OUTER JOIN lksex x ON x.ID = a.Sex " \
+            "WHERE m.OwnerID = ? AND MovementType = 2 AND MovementDate <= ? " \
+            "AND (ReturnDate Is Null OR ReturnDate > ?) ORDER BY MovementDate", ( f.ID, dbo.today(), dbo.today() ))
+        al.debug("%d animals found for fosterer '%s'" % (len(animals), f.OWNERNAME), "movement.send_fosterer_emails", dbo)
+
+        for a in animals:
+            lines.append( "%s - %s" % (a.ANIMALNAME, a.SHELTERCODE) )
+            lines.append( i18n._("{0} {1} {2} aged {3}", l).format(a.SEX, a.BREEDNAME, a.SPECIESNAME, a.ANIMALAGE) )
+            lines.append( i18n._("Fostered to {0} since {1}", l).format( f.OWNERNAME, i18n.python2display(l, a.MOVEMENTDATE) ))
+            lines.append("")
+            
+            if a.DATEOFBIRTH < dbo.today(offset=-182) and a.NEUTERED == 0 and a.SPECIESID in (1, 2):
+                lines.append(i18n._("WARNING: This animal is over 6 months old and has not been neutered/spayed", l))
+
+            if a.IDENTICHIPPED == 0 or (a.IDENTICHIPPED == 1 and a.IDENTICHIPNUMBER == "") and a.SPECIESID in (1, 2):
+                lines.append(i18n._("WARNING: This animal has not been microchipped", l))
+
+            lines.append("")
+
+            overdue = medical.get_combined_due(dbo, a.ANIMALID, dbo.today(offset=-30), dbo.today(offset=-1))
+            if len(overdue) > 0:
+                lines.append(i18n._("Overdue medical items", l))
+                lines.append(UNDERLINE)
+                for m in overdue:
+                    lines.append( "{0}: {1} {2} {3}/{4} {5}".format( i18n.python2display(l, m.DATEREQUIRED), \
+                        m.TREATMENTNAME, m.DOSAGE, m.TREATMENTNUMBER, m.TOTALTREATMENTS, m.COMMENTS ))
+                lines.append("")
+
+            nextdue = medical.get_combined_due(dbo, a.ANIMALID, dbo.today(), dbo.today(offset=7))
+            if len(nextdue) > 0:
+                lines.append(i18n._("Upcoming medical items", l))
+                lines.append(UNDERLINE)
+                for m in nextdue:
+                    lines.append( "{0}: {1} {2} {3}/{4} {5}".format( i18n.python2display(l, m.DATEREQUIRED), \
+                        m.TREATMENTNAME, m.DOSAGE, m.TREATMENTNUMBER, m.TOTALTREATMENTS, m.COMMENTS ))
+                lines.append("")
+
+            lines.append(UNDERLINE)
+
+        # Email is complete, send to the fosterer
+        utils.send_email(dbo, configuration.email(dbo), f.EMAILADDRESS, subject = i18n._("Fosterer Medical Report", l), body = "\n".join(lines))
+
+

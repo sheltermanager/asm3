@@ -342,15 +342,6 @@ records.
   added is not an image and the notes are blank, use the original filename as
   the notes.
 
-* Include off-shelter animals in medical calendar and books: If ticked, animals
-  with outstanding medical/vacc/tests that have left the shelter will be shown
-  in medical books and the medical calendar.
-
-* When entering vaccinations, default the last batch number and manufacturer
-  for that type: If ticked, when entering a given vaccination, the batch number
-  and manufacturer will be copied from the last vaccination on record of the
-  vaccination type.
-
 * When I mark an animal held, make a note of it in the log: If this option is on,
   a log record is created when you mark an animal held along with the hold
   until date.
@@ -543,6 +534,24 @@ The lost and found tab allows you to assign your own point weightings to the
 different kinds of matches used when generating the lost and found match
 report, as well as determine how many points are need for a match to be
 included.
+
+Medical
+-------
+
+* Include off-shelter animals in medical calendar and books: If ticked, animals
+  with outstanding medical/vacc/tests that have left the shelter will be shown
+  in medical books and the medical calendar.
+
+* When entering vaccinations, default the last batch number and manufacturer
+  for that type: If ticked, when entering a given vaccination, the batch number
+  and manufacturer will be copied from the last vaccination on record of the
+  vaccination type.
+
+* Send a weekly email to fosterers with medical information about their
+  animals: If set, an email will be sent to all active fosterers containing
+  info of overdue medications and medications that fall due in the coming week.
+  The email is sent as part of the overnight batch if the day is the first of
+  the week (Monday).
 
 Movements
 ---------

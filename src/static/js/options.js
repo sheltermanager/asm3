@@ -66,6 +66,7 @@ $(function() {
                 '<li><a href="#tab-homepage">' + _("Home page") + '</a></li>',
                 '<li><a href="#tab-insurance">' + _("Insurance") + '</a></li>',
                 '<li><a href="#tab-lostandfound">' + _("Lost and Found") + '</a></li>',
+                '<li><a href="#tab-medical">' + _("Medical") + '</a></li>',
                 '<li><a href="#tab-movements">' + _("Movements") + '</a></li>',
                 '<li><a href="#tab-quicklinks">' + _("Quicklinks") + '</a></li>',
                 '<li><a href="#tab-unwanted">' + _("Remove") + '</a></li>',
@@ -659,10 +660,6 @@ $(function() {
                 '<br />',
                 '<input data="DefaultMediaNotesFromFile" id="medianotesfile" type="checkbox" class="asm-checkbox" /> <label for="medianotesfile">' + _("Prefill new media notes with the filename if left blank") + '</label>',
                 '<br />',
-                '<input data="IncludeOffShelterMedical" id="includeoffsheltermedical" type="checkbox" class="asm-checkbox" /> <label for="includeoffsheltermedical">' + _("Include off-shelter animals in medical calendar and books") + '</label>',
-                '<br />',
-                '<input data="AutoDefaultVaccBatch" id="autodefaultvaccbatch" type="checkbox" class="asm-checkbox" /> <label for="autodefaultvaccbatch">' + _("When entering vaccinations, default the last batch number and manufacturer for that type") + '</label>',
-                '</br />',
                 '<input data="HoldChangeLog" id="holdchangelog" type="checkbox" class="asm-checkbox" /> <label for="holdchangelog">' + _("When I mark an animal held, make a note of it in the log with this type") + '</label>',
                 '<select data="HoldChangeLogType" id="holdchangelogtype" class="asm-selectbox">',
                 html.list_to_options(controller.logtypes, "ID", "LOGTYPENAME"),
@@ -932,6 +929,20 @@ $(function() {
             ].join("\n");
         },
 
+        render_medical: function() {
+            return [
+                '<div id="tab-medical">',
+                '<p>',
+                '<input data="IncludeOffShelterMedical" id="includeoffsheltermedical" type="checkbox" class="asm-checkbox" /> <label for="includeoffsheltermedical">' + _("Include off-shelter animals in medical calendar and books") + '</label>',
+                '<br />',
+                '<input data="AutoDefaultVaccBatch" id="autodefaultvaccbatch" type="checkbox" class="asm-checkbox" /> <label for="autodefaultvaccbatch">' + _("When entering vaccinations, default the last batch number and manufacturer for that type") + '</label>',
+                '</br />',
+                '<input data="FostererEmails" id="fostereremails" type="checkbox" class="asm-checkbox" /> <label for="fostereremails">' + _("Send a weekly email to fosterers with medical information about their animals") + '</label>',
+                '</p>',
+                '</div>'
+            ].join("\n");
+        },
+
         render_movements: function() {
             return [
                 '<div id="tab-movements">',
@@ -1142,6 +1153,7 @@ $(function() {
                 this.render_homepage(),
                 this.render_insurance(),
                 this.render_lostandfound(),
+                this.render_medical(),
                 this.render_movements(),
                 this.render_quicklinks(),
                 this.render_search(),

@@ -117,6 +117,9 @@ def daily(dbo):
         # Email any reports set to run with batch
         ttask(extreports.email_daily_reports, dbo)
 
+        # Send fosterer medical reports
+        ttask(movement.send_fosterer_emails, dbo)
+
     except:
         em = str(sys.exc_info()[0])
         al.error("FAIL: running batch tasks: %s" % em, "cron.daily", dbo, sys.exc_info())

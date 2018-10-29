@@ -193,6 +193,7 @@ DEFAULTS = {
     "FancyTooltips": "No",
     "FirstDayOfWeek": "1",
     "FosterOnShelter": "Yes",
+    "FostererEmails": "Yes", 
     "ShowGDPRContactOptIn": "No",
     "GDPRContactChangeLog": "No",
     "GDPRContactChangeLogType": "6",
@@ -734,6 +735,9 @@ def email_messages(dbo):
 
 def foster_on_shelter(dbo):
     return cboolean(dbo, "FosterOnShelter", DEFAULTS["FosterOnShelter"] == "Yes")
+
+def fosterer_emails(dbo):
+    return cboolean(dbo, "FostererEmails", DEFAULTS["FostererEmails"] == "Yes")
 
 def foundanimals_email(dbo):
     return cstring(dbo, "FoundAnimalsEmail")
