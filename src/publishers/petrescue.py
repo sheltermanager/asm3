@@ -145,6 +145,11 @@ class PetRescuePublisher(AbstractPublisher):
                 for m in photos:
                     photo_urls.append("%s?account=%s&method=dbfs_image&title=%s" % (SERVICE_URL, self.dbo.database, m.MEDIANAME))
 
+                # Only send microchip_number for locations with a Victoria postcode 3xxx
+                microchip_number = ""
+                if location_postcode.startswith("3"):
+                    microchip_number = utils.iif(an.IDENTICHIPPED == 1, an.IDENTICHIPNUMBER, "")
+
                 # Construct a dictionary of info for this animal
                 data = {
                     "remote_id":                str(an.ID), # animal identifier in ASM
@@ -160,7 +165,7 @@ class PetRescuePublisher(AbstractPublisher):
                     "location_postcode":        location_postcode, # shelter/fosterer postcode
                     "location_state_abbr":      location_state_abbr, # shelter/fosterer state
                     "location_suburb":          location_suburb, # shelter/fosterer suburb
-                    "microchip_number":         utils.iif(an.IDENTICHIPPED == 1, an.IDENTICHIPNUMBER, ""), 
+                    "microchip_number":         microchip_number, 
                     "desexed":                  an.NEUTERED == 1,# true | false, validates to always true according to docs
                     "contact_method":           "email", # email | phone
                     "size":                     utils.iif(isdog, size, ""), # dogs only - small | medium | high
