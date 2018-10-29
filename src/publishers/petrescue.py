@@ -160,7 +160,7 @@ class PetRescuePublisher(AbstractPublisher):
                     "location_postcode":        location_postcode, # shelter/fosterer postcode
                     "location_state_abbr":      location_state_abbr, # shelter/fosterer state
                     "location_suburb":          location_suburb, # shelter/fosterer suburb
-                    "microchip_number":         "", # DISABLED utils.iif(an.IDENTICHIPPED == 1, an.IDENTICHIPNUMBER, ""), 
+                    "microchip_number":         utils.iif(an.IDENTICHIPPED == 1, an.IDENTICHIPNUMBER, ""), 
                     "desexed":                  an.NEUTERED == 1,# true | false, validates to always true according to docs
                     "contact_method":           "email", # email | phone
                     "size":                     utils.iif(isdog, size, ""), # dogs only - small | medium | high
