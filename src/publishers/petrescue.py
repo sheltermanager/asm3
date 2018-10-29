@@ -136,9 +136,14 @@ class PetRescuePublisher(AbstractPublisher):
                     if fr is not None and fr.OWNERCOUNTY: location_state_abbr = fr.OWNERCOUNTY
                     if fr is not None and fr.OWNERTOWN: location_suburb = fr.OWNERTOWN
 
+                # Build a list of immutable photo URLs
                 photo_urls = []
-                for i in range(1, an.WEBSITEIMAGECOUNT):
-                    photo_urls.append("%s?account=%s&method=animal_image&animalid=%d&seq=%d" % (SERVICE_URL, self.dbo.database, an.ID, i))
+                photos = self.dbo.query("SELECT MediaName FROM media " \
+                    "WHERE LinkTypeID = 0 AND LinkID = ? AND MediaMimeType = 'image/jpeg' " \
+                    "AND (ExcludeFromPublish = 0 OR ExcludeFromPublish Is Null) " \
+                    "ORDER BY WebsitePhoto DESC, ID", [an.ID])
+                for m in photos:
+                    photo_urls.append("%s?account=%s&method=dbfs_image&title=%s" % (SERVICE_URL, self.dbo.database, m.MEDIANAME))
 
                 # Construct a dictionary of info for this animal
                 data = {
