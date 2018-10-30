@@ -193,7 +193,7 @@ DEFAULTS = {
     "FancyTooltips": "No",
     "FirstDayOfWeek": "1",
     "FosterOnShelter": "Yes",
-    "FostererEmails": "Yes", 
+    "FostererEmails": "No", 
     "ShowGDPRContactOptIn": "No",
     "GDPRContactChangeLog": "No",
     "GDPRContactChangeLogType": "6",
