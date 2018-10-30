@@ -2568,7 +2568,10 @@ def dump_hsqldb(dbo, includeDBFS = True):
     yield sql_structure(hdbo)
     for x in dump(dbo, includeNonASM2 = False, includeDBFS = includeDBFS, escapeCR = " ", includeUsers = False, wrapTransaction = False):
         yield x
-    yield "DELETE FROM configuration WHERE ItemName LIKE 'DatabaseVersion';\n"
+    yield "DELETE FROM users;\n"
+    yield "INSERT INTO users (ID, UserName, RealName, Password, SuperUser, OwnerID, SecurityMap, RecordVersion) VALUES " \
+        "(1, 'user', 'Default', 'd107d09f5bbe40cade3de5c71e9e9b7', 1, 0, '', 0);\n"
+    yield "DELETE FROM configuration WHERE ItemName LIKE 'DatabaseVersion' OR ItemName LIKE 'SMDBLocked';\n"
     yield "INSERT INTO configuration (ItemName, ItemValue) VALUES ('DatabaseVersion', '2870');\n"
 
 def dump_smcom(dbo):
