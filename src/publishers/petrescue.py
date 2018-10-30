@@ -121,9 +121,9 @@ class PetRescuePublisher(AbstractPublisher):
 
                 # Check whether we've been vaccinated, wormed and hw treated
                 vaccinated = medical.get_vaccinated(self.dbo, an.ID)
-                hwtreated = isdog and self.dbo.query_int("SELECT COUNT(*) FROM animalmedical WHERE LOWER(TreatmentName) LIKE 'heart' AND AnimalID=?", [an.ID]) > 0
-                wormed = (isdog or iscat) and self.dbo.query_int("SELECT COUNT(*) FROM animalmedical WHERE LOWER(TreatmentName) LIKE 'worm' " \
-                    "AND LOWER(TreatmentName) NOT LIKE 'heart' AND AnimalID=?", [an.ID]) > 0
+                hwtreated = isdog and self.dbo.query_int("SELECT COUNT(*) FROM animalmedical WHERE LOWER(TreatmentName) LIKE '%heart%' AND AnimalID=?", [an.ID]) > 0
+                wormed = (isdog or iscat) and self.dbo.query_int("SELECT COUNT(*) FROM animalmedical WHERE LOWER(TreatmentName) LIKE '%worm%' " \
+                    "AND LOWER(TreatmentName) NOT LIKE '%heart%' AND AnimalID=?", [an.ID]) > 0
 
                 # Use the fosterer's postcode, state and suburb if available
                 location_postcode = postcode
