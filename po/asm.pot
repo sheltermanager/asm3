@@ -3694,7 +3694,7 @@ msgid "Doberman Pinscher"
 msgstr ""
 
 #: movements.js person.js waitinglist.js clinic_appointment.js animal.js
-#: incident.js lostfound.js licence.js dbupdate.py
+#: incident.js lostfound.js licence.js transport.js dbupdate.py
 msgid "Document"
 msgstr ""
 
@@ -4968,6 +4968,10 @@ msgstr ""
 msgid "Fostered Animals"
 msgstr ""
 
+#: movement.py
+msgid "Fostered to {0} since {1}"
+msgstr ""
+
 #: person_find_results.js options.js animal_find_results.js
 #: header_edit_header.js onlineforms.js animal_new.js shelterview.js common.js
 #: html.py
@@ -4976,6 +4980,10 @@ msgstr ""
 
 #: options.js shelterview.js
 msgid "Fosterer (Active Only)"
+msgstr ""
+
+#: movement.py
+msgid "Fosterer Medical Report"
 msgstr ""
 
 #: search.js header_edit_header.js
@@ -5169,6 +5177,10 @@ msgstr ""
 
 #: donations.js
 msgid "Generate document from this payment"
+msgstr ""
+
+#: transport.js
+msgid "Generate document from this transport"
 msgstr ""
 
 #: move_gendoc.js
@@ -6923,7 +6935,7 @@ msgstr ""
 msgid "Media notes contain"
 msgstr ""
 
-#: header_edit_header.js roles.js calendarview.js mobile.py html.py
+#: options.js header_edit_header.js roles.js calendarview.js mobile.py html.py
 msgid "Medical"
 msgstr ""
 
@@ -7974,6 +7986,10 @@ msgstr ""
 
 #: donations.js
 msgid "Overdue"
+msgstr ""
+
+#: movement.py
+msgid "Overdue medical items"
 msgstr ""
 
 #: dbupdate.py
@@ -9699,6 +9715,12 @@ msgstr ""
 
 #: mailmerge.js
 msgid "Send Emails"
+msgstr ""
+
+#: options.js
+msgid ""
+"Send a weekly email to fosterers with medical information about their "
+"animals"
 msgstr ""
 
 #: onlineforms.js
@@ -11583,7 +11605,7 @@ msgstr ""
 msgid "Tiger"
 msgstr ""
 
-#: onlineform.js diary.js log.js log_new.js
+#: onlineform.js diary.js log.js log_new.js dbupdate.py
 msgid "Time"
 msgstr ""
 
@@ -12047,6 +12069,10 @@ msgstr ""
 
 #: options.js header.js code.py configuration.py
 msgid "Up for adoption"
+msgstr ""
+
+#: movement.py
+msgid "Upcoming medical items"
 msgstr ""
 
 #: animal_bulk.js
@@ -12519,6 +12545,14 @@ msgstr ""
 
 #: person_vouchers.js
 msgid "Vouchers need an issue and expiry date."
+msgstr ""
+
+#: movement.py
+msgid "WARNING: This animal has not been microchipped"
+msgstr ""
+
+#: movement.py
+msgid "WARNING: This animal is over 6 months old and has not been neutered/spayed"
 msgstr ""
 
 #: clinic_appointment.js dbupdate.py
@@ -13238,7 +13272,7 @@ msgstr ""
 msgid "{0} {1} aged {2}"
 msgstr ""
 
-#: search.js
+#: search.js movement.py
 msgid "{0} {1} {2} aged {3}"
 msgstr ""
 

@@ -23,7 +23,8 @@ VERSIONS = (
     33907, 33908, 33909, 33911, 33912, 33913, 33914, 33915, 33916, 34000, 34001, 
     34002, 34003, 34004, 34005, 34006, 34007, 34008, 34009, 34010, 34011, 34012,
     34013, 34014, 34015, 34016, 34017, 34018, 34019, 34020, 34021, 34022, 34100,
-    34101, 34102, 34103, 34104, 34105, 34106, 34107, 34108, 34109, 34110, 34111
+    34101, 34102, 34103, 34104, 34105, 34106, 34107, 34108, 34109, 34110, 34111,
+    34112
 )
 
 LATEST_VERSION = VERSIONS[-1]
@@ -4984,5 +4985,8 @@ def update_34111(dbo):
     add_index(dbo, "animalvaccination_GivenBy", "animalvaccination", "GivenBy")
     dbo.execute_dbupdate("UPDATE animalvaccination SET GivenBy = LastChangedBy WHERE DateOfVaccination Is Not Null")
 
-
+def update_34112(dbo):
+    # Add a new time additional field type
+    l = dbo.locale
+    dbo.execute_dbupdate("INSERT INTO lksfieldtype (ID, FieldType) VALUES (10, ?)", [ _("Time", l) ])
 

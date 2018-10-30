@@ -26,6 +26,7 @@ $(function() {
         MULTI_LOOKUP: 7,
         ANIMAL_LOOKUP: 8,
         PERSON_LOOKUP: 9,
+        TIME: 10,
 
         /**
          * Renders and lays out additional fields from data from the backend 
@@ -150,6 +151,11 @@ $(function() {
             else if (f.FIELDTYPE == additional.DATE) {
                 fh.push('<td class="to' + f.LINKTYPE + '"><label for="' + fieldid + '">' + f.FIELDLABEL + '</label></td><td>');
                 fh.push('<input ' + fieldattr + ' type="textbox" class="asm-textbox asm-datebox ' + classes + '" data-post="' + postattr + '" ');
+                fh.push('title="' + html.title(f.TOOLTIP) + '" value="' + html.title(fieldval) + '" /></td>');
+            }
+            else if (f.FIELDTYPE == additional.TIME) {
+                fh.push('<td class="to' + f.LINKTYPE + '"><label for="' + fieldid + '">' + f.FIELDLABEL + '</label></td><td>');
+                fh.push('<input ' + fieldattr + ' type="textbox" class="asm-textbox asm-timebox ' + classes + '" data-post="' + postattr + '" ');
                 fh.push('title="' + html.title(f.TOOLTIP) + '" value="' + html.title(fieldval) + '" /></td>');
             }
             else if (f.FIELDTYPE == additional.NOTES) {
