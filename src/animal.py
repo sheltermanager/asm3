@@ -2321,6 +2321,9 @@ def update_diary_linkinfo(dbo, animalid, a = None, diaryupdatebatch = None):
 def update_location_unit(dbo, username, animalid, newlocationid, newunit = ""):
     """
     Updates the shelterlocation and shelterlocationunit fields of the animal given.
+    This is typically called in response to drag and drop events on shelterview and
+    means that the animal should be on shelter rather than with a fosterer, etc.
+    If the animal has an activemovement, it will be returned before the location is changed.
     """
     # If the option is on and the internal location has changed, log it
     l = dbo.locale
@@ -2340,6 +2343,10 @@ def update_location_unit(dbo, username, animalid, newlocationid, newunit = ""):
                     newlocation += "-" + newunit
                 log.add_log(dbo, username, log.ANIMAL, animalid, configuration.location_change_log_type(dbo), 
                     _("{0} {1}: Moved from {2} to {3}", l).format(sheltercode, animalname, oldlocation, newlocation))
+    # If this animal has an active movement, return it first
+    activemovementid = dbo.query_int("SELECT ActiveMovementID FROM animal WHERE ID = ?", [animalid])
+    if activemovementid > 0:
+        movement.return_movement(dbo, activemovementid, animalid)
     # Change the location
     dbo.execute("UPDATE animal SET ShelterLocation = ?, ShelterLocationUnit = ? WHERE ID = ?", (newlocationid, newunit, animalid))
     audit.edit(dbo, username, "animal", animalid, "%s: moved to location: %s, unit: %s" % ( animalid, newlocationid, newunit ))

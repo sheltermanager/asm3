@@ -319,7 +319,7 @@ $(function() {
                     h.push('<div class="asm-shelterview-unit">');
                     h.push('<div><span class="asm-shelterview-secondgroup">' + lastgrp2 + '</span></div>');
                 }
-                h.push(shelterview.render_animal(a, true, !a.ACTIVEMOVEMENTTYPE && a.ARCHIVED == 0));
+                h.push(shelterview.render_animal(a, true, dragdrop));
                 runningtotal += 1;
             });
             if (lastgrp != "") { 
