@@ -466,8 +466,8 @@ json_shelter_animals and xml_shelter_animals
 
 .. rubric:: Cache time: 1 hour 
 
-Returns a dataset containing all shelter animals. The method determines whether
-the format returned is JSON or XML::
+Returns a dataset containing all animals currently in the care of the shelter.
+The method determines whether the format returned is JSON or XML::
 
     http://localhost:5000/service?method=xml_shelter_animals&username=user&password=letmein
 
