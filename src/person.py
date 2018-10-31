@@ -825,19 +825,22 @@ def update_flags(dbo, username, personid, flags):
         "AdditionalFlags":          flagstr
     }, username)
 
-def merge_person_details(dbo, username, personid, d):
+def merge_person_details(dbo, username, personid, d, force=False):
     """
     Merges person details in data dictionary d (the same dictionary that
     would be fed to insert_person_from_form and update_person_from_form)
     to person with personid.
-    If any of the contact fields on the person record are blank, the ones
-    from the dictionary are used instead and updated on the record.
+    If any of the contact fields on the person record are blank and available
+    in the dictionary, the ones from the dictionary are used instead and updated on the record.
+    personid: The person we're merging details into
+    d: The dictionary of values to merge
+    force: If True, forces overwrite of the details with values from d if they are present
     """
     p = get_person(dbo, personid)
     if p is None: return
     def merge(dictfield, fieldname):
-        if dictfield not in d: return
-        if p[fieldname] is None or p[fieldname] == "":
+        if dictfield not in d or d[dictfield] == "": return
+        if p[fieldname] is None or p[fieldname] == "" or force:
             dbo.update("owner", personid, { fieldname: d[dictfield] }, username)
     merge("address", "OWNERADDRESS")
     merge("town", "OWNERTOWN")

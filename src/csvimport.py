@@ -540,11 +540,15 @@ def csvimport(dbo, csvdata, encoding = "utf8", createmissinglookups = False, cle
                 if checkduplicates:
                     dups = person.get_person_similar(dbo, p["emailaddress"], p["surname"], p["forenames"], p["address"])
                     if len(dups) > 0:
-                        personid = dups[0]["ID"]
+                        personid = dups[0].ID
                         # Merge flags and any extra details
                         person.merge_flags(dbo, "import", personid, flags)
                         person.merge_gdpr_flags(dbo, "import", personid, p["gdprcontactoptin"])
-                        person.merge_person_details(dbo, "import", personid, p)
+                        # If we deduplicated on the email address, and address details are
+                        # present, assume that they are newer than the ones we had and update them
+                        # (we do this by setting force=True parameter to merge_person_details,
+                        # otherwise we do a regular merge which only fills in any blanks)
+                        person.merge_person_details(dbo, "import", personid, p, force=dups[0].EMAILADDRESS == p["emailaddress"])
                 if personid == 0:
                     personid = person.insert_person_from_form(dbo, utils.PostedData(p, dbo.locale), "import", geocode=False)
                     # Identify any PERSONADDITIONAL additional fields and create them
