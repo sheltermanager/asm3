@@ -876,7 +876,6 @@ def send_fosterer_emails(dbo):
     Intended to be sent as part of the overnight batch on the first day of the week.
     """
     l = dbo.locale
-    lines = []
     UNDERLINE = "--------------------------------------"
 
     # If this option is not turned on, bail out
@@ -895,6 +894,7 @@ def send_fosterer_emails(dbo):
     al.debug("%d active fosterers found" % len(activefosterers), "movement.send_fosterer_emails", dbo)
 
     for f in activefosterers:
+        lines = []
         animals = dbo.query("SELECT a.AnimalName, a.ShelterCode, x.Sex, a.SpeciesID, s.SpeciesName, a.BreedName, " \
             "a.AnimalAge, a.DateOfBirth, a.Neutered, a.Identichipped, a.IdentichipNumber, " \
             "m.AnimalID, m.MovementDate " \
