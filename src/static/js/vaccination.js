@@ -179,6 +179,7 @@ $(function() {
                         $("#usagedate").datepicker("setDate", new Date());
                         $("#usagedate").closest("tr").hide();
                         $("#quantity").val("0");
+                        $("#givenby").select("value", asm.user);
                         // Default animal's current vet if set and this is an animal vacc tab
                         if (controller.animal && controller.animal.CURRENTVETID) { 
                             $("#givenvet").personchooser("loadbyid", controller.animal.CURRENTVETID); 
@@ -314,7 +315,9 @@ $(function() {
                     $("#administeringvet").personchooser("clear");
                     $("#dialog-tableform .asm-textbox, #dialog-tableform .asm-textarea").val("");
                     $("#type").select("value", config.str("AFDefaultVaccinationType"));
+                    $("#by").select("value", asm.user);
                     vaccination.enable_default_cost = true;
+                    vaccination.lastvet = null;
                     vaccination.set_default_cost();
                 }
             });
