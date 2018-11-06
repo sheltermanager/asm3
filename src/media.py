@@ -489,7 +489,7 @@ def create_log(dbo, user, mid, logcode = "UK00", message = ""):
     m = dbo.first_row(get_media_by_id(dbo, mid))
     if m is None: return
     logtypeid = configuration.generate_document_log_type(dbo)
-    log.add_log(dbo, user, get_log_from_media_type(m.LINKTYPEID), m.LINKID, logtypeid, "%s:%s - %s" % (logcode, message, m.MEDIANOTES))
+    log.add_log(dbo, user, get_log_from_media_type(m.LINKTYPEID), m.LINKID, logtypeid, "%s:%s:%s - %s" % (logcode, m.ID, message, m.MEDIANOTES))
 
 def sign_document(dbo, username, mid, sigurl, signdate):
     """
