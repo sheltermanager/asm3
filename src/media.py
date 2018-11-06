@@ -8,6 +8,7 @@ import configuration
 import datetime
 import dbfs
 from PIL import ExifTags, Image
+import log
 import os
 import tempfile
 import utils
@@ -214,6 +215,18 @@ def get_dbfs_path(linkid, linktype):
     elif linktype == ANIMALCONTROL:
         path = "/animalcontrol/%d" % int(linkid)
     return path
+
+def get_log_from_media_type(x):
+    """ Returns the corresponding log type for a media type """
+    m = {
+        ANIMAL: log.ANIMAL,
+        PERSON: log.PERSON,
+        LOSTANIMAL: log.LOSTANIMAL,
+        FOUNDANIMAL: log.FOUNDANIMAL,
+        WAITINGLIST: log.WAITINGLIST,
+        ANIMALCONTROL: log.ANIMALCONTROL
+    }
+    return m[x]
 
 def get_media(dbo, linktype, linkid):
     return dbo.query("SELECT * FROM media WHERE LinkTypeID = ? AND LinkID = ? ORDER BY Date DESC", ( linktype, linkid ))
@@ -463,6 +476,20 @@ def create_document_media(dbo, username, linktype, linkid, template, content):
         "RetainUntil":          None
     }, username, setCreated=False, generateID=False)
     return mediaid
+
+def create_log(dbo, user, mid, logcode = "UK00", message = ""):
+    """
+    Creates a log message related to media
+    mid: The media ID
+    logcode: The fixed code for reports to use - 
+        ES01 = Document signing request
+        ES02 = Document signed
+    message: Some human readable text to accompany the code
+    """
+    m = dbo.first_row(get_media_by_id(dbo, mid))
+    if m is None: return
+    logtypeid = configuration.generate_document_log_type(dbo)
+    log.add_log(dbo, user, get_log_from_media_type(m.LINKTYPEID), m.LINKID, logtypeid, "%s:%s - %s" % (logcode, message, m.MEDIANOTES))
 
 def sign_document(dbo, username, mid, sigurl, signdate):
     """

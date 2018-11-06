@@ -1,6 +1,8 @@
 41
 ================
 
+06/11/18 Add signed/unsigned request reports to identify missing signatures #10
+06/11/18 Record in the log when email signatures have been received #10
 02/11/18 Bug in vacc where last vet hangs around, default by to current user
 31/10/18 Update existing address info when importing CSV of people data #318
 30/10/18 Allow drag and drop from foster to a shelter location #335

@@ -490,6 +490,7 @@ def handler(post, path, remoteip, referer, querystring):
             return set_cached_response(cache_key, "text/html", 2, 2, sign_document_page(dbo, formid))
         else:
             media.sign_document(dbo, "service", formid, post["sig"], post["signdate"])
+            media.create_log(dbo, "service", formid, "ES02", _("Document signed", l))
             return ("text/plain", 0, 0, "OK")
 
     else:

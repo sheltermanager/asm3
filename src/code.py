@@ -611,17 +611,6 @@ class media(ASMEndpoint):
         al.debug("%s %s (%s bytes)" % (medianame, mimetype, len(filedata)), "media.content", o.dbo)
         return filedata
 
-    def log_from_media_type(self, x):
-        m = {
-            extmedia.ANIMAL: extlog.ANIMAL,
-            extmedia.PERSON: extlog.PERSON,
-            extmedia.LOSTANIMAL: extlog.LOSTANIMAL,
-            extmedia.FOUNDANIMAL: extlog.FOUNDANIMAL,
-            extmedia.WAITINGLIST: extlog.WAITINGLIST,
-            extmedia.ANIMALCONTROL: extlog.ANIMALCONTROL
-        }
-        return m[x]
-
     def post_create(self, o):
         self.check(users.ADD_MEDIA)
         linkid = o.post.integer("linkid")
@@ -669,7 +658,7 @@ class media(ASMEndpoint):
                 content = utils.fix_relative_document_uris(content, BASE_URL, MULTIPLE_DATABASES and dbo.database or "")
             utils.send_email(dbo, post["from"], emailadd, post["cc"], m["MEDIANOTES"], post["body"], "html", content, m["MEDIANAME"])
             if post.boolean("addtolog"):
-                extlog.add_log(dbo, o.user, self.log_from_media_type(m["LINKTYPEID"]), m["LINKID"], post.integer("logtype"), "[%s] %s :: %s" % (emailadd, m["MEDIANOTES"], utils.html_email_to_plain(post["body"])))
+                extlog.add_log(dbo, o.user, extmedia.get_log_from_media_type(m["LINKTYPEID"]), m["LINKID"], post.integer("logtype"), "[%s] %s :: %s" % (emailadd, m["MEDIANOTES"], utils.html_email_to_plain(post["body"])))
         return emailadd
 
     def post_emailpdf(self, o):
@@ -689,7 +678,7 @@ class media(ASMEndpoint):
             contentpdf = utils.html_to_pdf(content, BASE_URL, MULTIPLE_DATABASES and dbo.database or "")
             utils.send_email(dbo, post["from"], emailadd, post["cc"], m["MEDIANOTES"], post["body"], "html", contentpdf, "document.pdf")
             if post.boolean("addtolog"):
-                extlog.add_log(dbo, o.user, self.log_from_media_type(m["LINKTYPEID"]), m["LINKID"], post.integer("logtype"), "[%s] %s :: %s" % (emailadd, m["MEDIANOTES"], utils.html_email_to_plain(post["body"])))
+                extlog.add_log(dbo, o.user, extmedia.get_log_from_media_type(m["LINKTYPEID"]), m["LINKID"], post.integer("logtype"), "[%s] %s :: %s" % (emailadd, m["MEDIANOTES"], utils.html_email_to_plain(post["body"])))
         return emailadd
 
     def post_emailsign(self, o):
@@ -709,7 +698,8 @@ class media(ASMEndpoint):
             if not m["MEDIANAME"].endswith("html"): continue
             body.append("<p><a href=\"%s?account=%s&method=sign_document&formid=%d\">%s</a></p>" % (SERVICE_URL, dbo.database, mid, m["MEDIANOTES"]))
             if post.boolean("addtolog"):
-                extlog.add_log(dbo, o.user, self.log_from_media_type(m["LINKTYPEID"]), m["LINKID"], post.integer("logtype"), "[%s] %s :: %s" % (emailadd, _("Document signing request", l), utils.html_email_to_plain("\n".join(body))))
+                extlog.add_log(dbo, o.user, extmedia.get_log_from_media_type(m["LINKTYPEID"]), m["LINKID"], post.integer("logtype"), "[%s] %s :: %s" % (emailadd, _("Document signing request", l), utils.html_email_to_plain("\n".join(body))))
+            extmedia.create_log(dbo, o.user, mid, "ES01", _("Document signing request", l))
         utils.send_email(dbo, post["from"], emailadd, post["cc"], _("Document signing request", l), "\n".join(body), "html")
         return emailadd
 

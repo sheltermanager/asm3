@@ -3714,6 +3714,10 @@ msgstr ""
 msgid "Document file"
 msgstr ""
 
+#: service.py
+msgid "Document signed"
+msgstr ""
+
 #: code.py
 msgid "Document signing request"
 msgstr ""
