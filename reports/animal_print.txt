@@ -2,7 +2,7 @@ Print Animal Record
 ###
 Auditing
 ###
-34018/Any
+34111/Any
 ###
 A complete printout of an animal record.
 ###
@@ -189,7 +189,7 @@ animalvaccination.DateRequired,
 animalvaccination.DateOfVaccination,
 animalvaccination.DateExpires,
 animalvaccination.Comments AS VaccComments,
-CASE WHEN vo.OwnerName Is Not Null THEN vo.OwnerName ELSE animalvaccination.LastChangedBy END AS GivenBy
+CASE WHEN vo.OwnerName Is Not Null THEN vo.OwnerName ELSE animalvaccination.GivenBy END AS GivenBy
 FROM animalvaccination
 INNER JOIN vaccinationtype ON vaccinationtype.ID = animalvaccination.VaccinationID
 LEFT OUTER JOIN owner vo ON vo.ID = animalvaccination.AdministeringVetID
