@@ -685,11 +685,11 @@ def complete_test(dbo, username, testid, newdate, testresult, vetid = 0):
 def reschedule_vaccination(dbo, username, vaccinationid, newdate, comments):
     """
     Reschedules a vaccination for a new date by copying it.
-    If reschedule comments have been given and the original vacc does not have
-        any comments, they are placed on the original vacc too.
+    Comments are appended to any existing comments on the existing vacc.
     """
     av = dbo.first_row(dbo.query("SELECT * FROM animalvaccination WHERE ID = ?", [vaccinationid]))
-    if comments != "" and av.COMMENTS == "": dbo.update("animalvaccination", vaccinationid, { "Comments": comments }, username)
+    if av.COMMENTS != "": comments = "%s\n%s" % (av.COMMENTS, comments)
+    dbo.update("animalvaccination", vaccinationid, { "Comments": comments }, username)
     dbo.insert("animalvaccination", {
         "AnimalID":             av.ANIMALID,
         "VaccinationID":        av.VACCINATIONID,
@@ -697,7 +697,7 @@ def reschedule_vaccination(dbo, username, vaccinationid, newdate, comments):
         "DateRequired":         newdate,
         "Cost":                 av.COST,
         "CostPaidDate":         None,
-        "Comments":             comments
+        "Comments":             "" 
     }, username)
 
 def update_medical_treatments(dbo, username, amid):
