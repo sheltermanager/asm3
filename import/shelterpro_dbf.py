@@ -17,18 +17,18 @@ Will also look in PATH/images/ANIMALKEY.[jpg|JPG] for animal photos if available
 29th December, 2016 - 1st August 2018
 """
 
-PATH = "data/shelterpro_sk1797"
+PATH = "data/shelterpro_za1799"
 
 START_ID = 100
 
-INCIDENT_IMPORT = True
-LICENCE_IMPORT = True
+INCIDENT_IMPORT = False
+LICENCE_IMPORT = False
 PICTURE_IMPORT = False
 VACCINATION_IMPORT = True
-NOTE_IMPORT = False
-SHELTER_IMPORT = True # Normally would be True but one was a weird shelterpro that was all incidents
+NOTE_IMPORT = True
+SHELTER_IMPORT = True 
 
-SEPARATE_ADDRESS_TABLE = False
+SEPARATE_ADDRESS_TABLE = True
 IMPORT_ANIMALS_WITH_NO_NAME = True
 
 """ when faced with a field type it doesn't understand, dbfread can produce an error
@@ -176,14 +176,15 @@ for row in cperson:
     o.OwnerSurname = asm.strip(row["LNAME"])
     o.OwnerName = o.OwnerTitle + " " + o.OwnerForeNames + " " + o.OwnerSurname
     # Find the address if it's in a separate table
-    if SEPARATE_ADDRESS_TABLE and addrlink.has_key(personkey):
-        addrkey = addrlink[personkey]
-        if addresses.has_key(addrkey):
-            add = addresses[addrkey]
-            o.OwnerAddress = add["address"]
-            o.OwnerTown = add["city"]
-            o.OwnerCounty = add["state"]
-            o.OwnerPostcode = add["zip"]
+    if SEPARATE_ADDRESS_TABLE:
+        if addrlink.has_key(personkey):
+            addrkey = addrlink[personkey]
+            if addresses.has_key(addrkey):
+                add = addresses[addrkey]
+                o.OwnerAddress = add["address"]
+                o.OwnerTown = add["city"]
+                o.OwnerCounty = add["state"]
+                o.OwnerPostcode = add["zip"]
     else:
         # Otherwise, address fields are in the person table
         o.OwnerAddress = row["ADDR1"].encode("ascii", "xmlcharrefreplace") + "\n" + row["ADDR2"].encode("ascii", "xmlcharrefreplace")
@@ -216,7 +217,7 @@ for row in canimal:
         a.AnimalName = "(unknown)"
     age = row["AGE"].split(" ")[0]
     added = asm.now()
-    if "ADDEDDATET" in row: added = row["ADDEDDATET"]
+    if "ADDEDDATET" in row and row["ADDEDDATET"] is not None: added = row["ADDEDDATET"]
     if "DOB" in row: a.DateOfBirth = row["DOB"]
     if a.DateOfBirth is None: a.DateOfBirth = getdateage(age, added)
     a.DateBroughtIn = added
@@ -471,7 +472,7 @@ if NOTE_IMPORT:
     for row in cnote:
         eventtype = row["EVENTTYPE"]
         eventkey = row["EVENTKEY"]
-        notedate = asm.getdate_mmddyy(row["NOTEDATE"])
+        notedate = row["NOTEDATE"]
         memo = row["NOTEMEMO"]
         if eventtype in [ 1, 3 ]: # animal/intake or case notes
             if not eventkey in ppa: continue
