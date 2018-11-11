@@ -122,7 +122,7 @@ class AnibaseUKPublisher(AbstractPublisher):
                     '  <LineOther>'+ xe(an["CURRENTOWNERTOWN"]) + '</LineOther>' \
                     '  <PostalCode>' + xe(an["CURRENTOWNERPOSTCODE"]) + '</PostalCode>' \
                     '  <County_State>'+ xe(an["CURRENTOWNERCOUNTY"]) + '</County_State>' \
-                    '  <Country>USA</Country>' \
+                    '  <Country>United Kingdom</Country>' \
                     ' </Address>' \
                     ' <DaytimePhone><Number>' + xe(an["CURRENTOWNERWORKTELEPHONE"]) + '</Number><Note/></DaytimePhone>' \
                     ' <EveningPhone><Number>' + xe(an["CURRENTOWNERHOMETELEPHONE"]) + '</Number><Note/></EveningPhone>' \
