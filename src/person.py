@@ -564,6 +564,8 @@ def calculate_owner_code(pid, surname):
     surname: The person's surname
     """
     prefix = "XX"
+    REMOVE = set(" !\"'.,$()")
+    surname = "".join(x for x in surname if x not in REMOVE)
     if len(surname) >= 2 and not surname.startswith("&"):
         prefix = surname[0:2].upper()
     return "%s%s" % (prefix, utils.padleft(pid, 6))
