@@ -137,6 +137,7 @@ def get_animal_view(dbo, animalid):
     notes += configuration.third_party_publisher_sig(dbo)
     notes = notes.replace("\n", "**le**")
     tags["WEBMEDIANOTES"] = notes 
+    tags["WEBSITEMEDIANOTES"] = notes 
     s = wordprocessor.substitute_tags(s, tags, True, "$$", "$$")
     s = s.replace("**le**", "<br />")
     return s
