@@ -1,6 +1,7 @@
 41
 ================
 
+16/11/18 Templates should not be applied to new non-shelter animals
 06/11/18 Add signed/unsigned request reports to identify missing signatures #10
 06/11/18 Record in the log when email signatures have been received #10
 02/11/18 Bug in vacc where last vet hangs around, default by to current user
