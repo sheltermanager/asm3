@@ -706,12 +706,11 @@ def insert_onlineformincoming_from_form(dbo, post, remoteip):
         "WHERE oi.CollationID = ?", [collationid])
 
     if submitteremail != "" and submitteremail.find("@") != -1 and emailsubmitter == 1:
-        # Get the confirmation message. If one hasn't been set, send a copy of the submission.
+        # Get the confirmation message. Prepend it to a copy of the submission
         body = dbo.query_string("SELECT o.EmailMessage FROM onlineform o " \
             "INNER JOIN onlineformincoming oi ON oi.FormName = o.Name " \
             "WHERE oi.CollationID = ?", [collationid])
-        if body is None or body.strip() == "": 
-            body = get_onlineformincoming_html_print(dbo, [collationid,])
+        body += "\n" + get_onlineformincoming_html_print(dbo, [collationid,])
         utils.send_email(dbo, configuration.email(dbo), submitteremail, "", i18n._("Submission received: {0}", l).format(formname), body, "html")
 
     # Did the original form specify some email addresses to send 
