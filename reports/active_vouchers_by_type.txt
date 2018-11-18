@@ -8,7 +8,7 @@ Active vouchers issued on the system.
 ###
 en
 ###
-SELECT OwnerName, OwnerAddress, OwnerTown, OwnerCounty, OwnerPostcode, HomeTelephone, WorkTelephone, VoucherName, ownervoucher.ID AS Number, DateIssued, DateExpired, Value, ownervoucher.Comments
+SELECT OwnerName, OwnerAddress, OwnerTown, OwnerCounty, OwnerPostcode, HomeTelephone, WorkTelephone, VoucherName, ownervoucher.ID AS Number, DateIssued, DateExpired, Value AS Amount, ownervoucher.Comments
 FROM owner
 INNER JOIN ownervoucher ON ownervoucher.OwnerID = owner.ID
 INNER JOIN voucher ON ownervoucher.VoucherID = voucher.ID
@@ -32,7 +32,7 @@ $$HEAD
 </tr>
 $$FOOT
 </table>
-<p>{COUNT.VOUCHERNAME} vouchers (value: {SUM.VALUE.2})</p>
+<p>{COUNT.VOUCHERNAME} vouchers (value: {SUM.AMOUNT.2})</p>
 GROUP$$
 
 $$BODY<tr>
@@ -46,7 +46,7 @@ $WORKTELEPHONE</i></td>
 <td>$NUMBER</td>
 <td>$DATEISSUED</td>
 <td>$DATEEXPIRED</td>
-<td>$VALUE</td>
+<td>$AMOUNT</td>
 <td>$COMMENTS</td>
 </tr>
 BODY$$
