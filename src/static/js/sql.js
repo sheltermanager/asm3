@@ -128,7 +128,7 @@ $(function() {
                             $("#sql-results").html(result);
                             $("#sql-results").table();
                             $("#sql-results").fadeIn();
-                            var norecs = String($("#sql-results tr").length - 1);
+                            var norecs = String($("#sql-results tr").length - 2);
                             header.show_info(_("{0} results.").replace("{0}", norecs));
                         }
                         else {
