@@ -698,7 +698,7 @@ def scale_image_file(inimage, outimage, resizespec):
     # If we haven't been given a valid resizespec,
     # use a default value.
     if resizespec.count("x") != 1:
-        resizespec = "400x400"
+        resizespec = "640x640"
     # Turn the scalespec into a tuple of the largest side
     ws, hs = resizespec.split("x")
     w = int(ws)
@@ -714,7 +714,7 @@ def scale_thumbnail_file(inimage, outimage):
     """
     Scales the given image to a thumbnail
     """
-    scale_image_file(inimage, outimage, "70x70")
+    scale_image_file(inimage, outimage, "150x150")
 
 def scale_pdf(filedata):
     """
