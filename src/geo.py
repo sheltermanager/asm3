@@ -143,7 +143,7 @@ class Smcom(GeoProvider):
             latlon = "%s,%s,%s" % (str(j["lat"]), str(j["lng"]), h)
             al.debug("contacted smcom to get geocode for %s = %s" % (self.url, latlon), "geo.parse_smcom", self.dbo)
             return latlon
-        except Exception as err:
+        except:
             al.error("couldn't find geocode in smcom response. Response was %s" % self.response, "geo.parse_google", self.dbo)
             return "0,0,%s" % h
 

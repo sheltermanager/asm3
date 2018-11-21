@@ -853,7 +853,7 @@ class Report:
                     try:
                         if str(rs[i][calcfield]).strip().lower() == str(calcfield2).strip().lower():
                             matched += 1
-                    except Exception as e:
+                    except:
                         # Ignore errors
                         pass
 
@@ -872,7 +872,7 @@ class Report:
                 for i in range(gd.lastGroupStartPosition, gd.lastGroupEndPosition + 1):
                     try:
                         minval = min(minval, rs[i][calcfield])
-                    except Exception as e:
+                    except:
                         # Ignore errors
                         pass
                 if minval == HIGH_MINVAL: minval = 0
@@ -891,7 +891,7 @@ class Report:
                 for i in range(gd.lastGroupStartPosition, gd.lastGroupEndPosition + 1):
                     try:
                         maxval = max(maxval, rs[i][calcfield])
-                    except Exception as e:
+                    except:
                         # Ignore errors
                         pass
                 if utils.is_currency(fields[1]):

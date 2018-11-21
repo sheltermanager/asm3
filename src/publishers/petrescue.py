@@ -59,11 +59,13 @@ class PetRescuePublisher(AbstractPublisher):
         self.setStartPublishing()
 
         token = configuration.petrescue_token(self.dbo)
+        all_desexed = configuration.petrescue_all_desexed(self.dbo)
         postcode = configuration.organisation_postcode(self.dbo)
         suburb = configuration.organisation_town(self.dbo)
         state = configuration.organisation_county(self.dbo)
         contact_name = configuration.organisation(self.dbo)
-        contact_email = configuration.email(self.dbo)
+        contact_email = configuration.petrescue_email(self.dbo)
+        if contact_email == "": contact_email = configuration.email(self.dbo)
         contact_number = configuration.organisation_telephone(self.dbo)
 
         if token == "":
@@ -121,10 +123,15 @@ class PetRescuePublisher(AbstractPublisher):
 
                 # Check whether we've been vaccinated, wormed and hw treated
                 vaccinated = medical.get_vaccinated(self.dbo, an.ID)
+                sixmonths = self.dbo.today(offset=-182)
                 hwtreated = isdog and self.dbo.query_int("SELECT COUNT(*) FROM animalmedical WHERE LOWER(TreatmentName) LIKE ? " \
-                    "AND LOWER(TreatmentName) LIKE ? AND AnimalID=?", ("%heart%", "%worm%", an.ID)) > 0
+                    "AND LOWER(TreatmentName) LIKE ? AND StartDate>? AND AnimalID=?", ("%heart%", "%worm%", sixmonths, an.ID)) > 0
                 wormed = (isdog or iscat) and self.dbo.query_int("SELECT COUNT(*) FROM animalmedical WHERE LOWER(TreatmentName) LIKE ? " \
-                    "AND LOWER(TreatmentName) NOT LIKE ? AND AnimalID=?", ("%worm%", "%heart%", an.ID)) > 0
+                    "AND LOWER(TreatmentName) NOT LIKE ? AND StartDate>? AND AnimalID=?", ("%worm%", "%heart%", sixmonths, an.ID)) > 0
+                # PR want a null value to hide never-treated animals, so we
+                # turn False into a null.
+                if not hwtreated: hwtreated = None
+                if not wormed: wormed = None
 
                 # Use the fosterer's postcode, state and suburb if available
                 location_postcode = postcode
@@ -168,7 +175,7 @@ class PetRescuePublisher(AbstractPublisher):
                     "location_state_abbr":      location_state_abbr, # shelter/fosterer state
                     "location_suburb":          location_suburb, # shelter/fosterer suburb
                     "microchip_number":         microchip_number, 
-                    "desexed":                  an.NEUTERED == 1,# true | false, validates to always true according to docs
+                    "desexed":                  an.NEUTERED == 1 or all_desexed,# true | false, validates to always true according to docs
                     "contact_method":           "email", # email | phone
                     "size":                     utils.iif(isdog, size, ""), # dogs only - small | medium | high
                     "senior":                   isdog and ageinyears > 7, # dogs only, true | false

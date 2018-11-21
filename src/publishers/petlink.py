@@ -241,7 +241,7 @@ class PetLinkPublisher(AbstractPublisher):
                         try:
                             self.logError("%s: %s (%s) - Received error message from PetLink: %s" % \
                                 (an["SHELTERCODE"], an["ANIMALNAME"], an["IDENTICHIPNUMBER"], message))
-                        except Exception as erm:
+                        except:
                             self.logError("%s: %s (%s) - Error decoding message from PetLink" % \
                                 (an["SHELTERCODE"], an["ANIMALNAME"], an["IDENTICHIPNUMBER"]))
                             continue

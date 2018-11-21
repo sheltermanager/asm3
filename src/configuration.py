@@ -945,6 +945,12 @@ def organisation_telephone(dbo):
 def owner_name_format(dbo):
     return cstring(dbo, "OwnerNameFormat", DEFAULTS["OwnerNameFormat"])
 
+def petrescue_all_desexed(dbo):
+    return cboolean(dbo, "PetRescueAllDesexed")
+
+def petrescue_email(dbo):
+    return cstring(dbo, "PetRescueEmail")
+
 def petrescue_token(dbo):
     return cstring(dbo, "PetRescueToken")
 
