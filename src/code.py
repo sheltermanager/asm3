@@ -1793,7 +1793,7 @@ class calendar_events(ASMEndpoint):
         if "v" in ev and self.checkb(users.VIEW_VACCINATION):
             for v in extmedical.get_vaccinations_two_dates(dbo, start, end, o.locationfilter, o.siteid, o.visibleanimalids):
                 sub = "%s - %s" % (v["VACCINATIONTYPE"], v["ANIMALNAME"])
-                tit = "%s - %s %s %s" % (v["VACCINATIONTYPE"], v["SHELTERCODE"], v["ANIMALNAME"], v["COMMENTS"])
+                tit = "%s - %s %s (%s) %s" % (v["VACCINATIONTYPE"], v["SHELTERCODE"], v["ANIMALNAME"], v["DISPLAYLOCATIONNAME"], v["COMMENTS"])
                 events.append({ 
                     "title": sub, 
                     "allDay": True, 
@@ -1803,7 +1803,7 @@ class calendar_events(ASMEndpoint):
                     "link": "animal_vaccination?id=%d" % v["ANIMALID"] })
             for v in extmedical.get_vaccinations_expiring_two_dates(dbo, start, end, o.locationfilter, o.siteid, o.visibleanimalids):
                 sub = "%s - %s" % (v["VACCINATIONTYPE"], v["ANIMALNAME"])
-                tit = "%s - %s %s %s" % (v["VACCINATIONTYPE"], v["SHELTERCODE"], v["ANIMALNAME"], v["COMMENTS"])
+                tit = "%s - %s %s (%s) %s" % (v["VACCINATIONTYPE"], v["SHELTERCODE"], v["ANIMALNAME"], v["DISPLAYLOCATIONNAME"], v["COMMENTS"])
                 events.append({ 
                     "title": sub, 
                     "allDay": True, 
@@ -1814,7 +1814,7 @@ class calendar_events(ASMEndpoint):
         if "m" in ev and self.checkb(users.VIEW_MEDICAL):
             for m in extmedical.get_treatments_two_dates(dbo, start, end, o.locationfilter, o.siteid, o.visibleanimalids):
                 sub = "%s - %s" % (m["TREATMENTNAME"], m["ANIMALNAME"])
-                tit = "%s - %s %s %s %s" % (m["TREATMENTNAME"], m["SHELTERCODE"], m["ANIMALNAME"], m["DOSAGE"], m["COMMENTS"])
+                tit = "%s - %s %s (%s) %s %s" % (m["TREATMENTNAME"], m["SHELTERCODE"], m["ANIMALNAME"], m["DISPLAYLOCATIONNAME"], m["DOSAGE"], m["COMMENTS"])
                 events.append({ 
                     "title": sub, 
                     "allDay": True, 
@@ -1825,7 +1825,7 @@ class calendar_events(ASMEndpoint):
         if "t" in ev and self.checkb(users.VIEW_TEST):
             for t in extmedical.get_tests_two_dates(dbo, start, end, o.locationfilter, o.siteid, o.visibleanimalids):
                 sub = "%s - %s" % (t["TESTNAME"], t["ANIMALNAME"])
-                tit = "%s - %s %s %s" % (t["TESTNAME"], t["SHELTERCODE"], t["ANIMALNAME"], t["COMMENTS"])
+                tit = "%s - %s %s (%s) %s" % (t["TESTNAME"], t["SHELTERCODE"], t["ANIMALNAME"], t["DISPLAYLLOCATIONNAME"], t["COMMENTS"])
                 events.append({ 
                     "title": sub, 
                     "allDay": True, 

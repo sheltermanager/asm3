@@ -1,6 +1,7 @@
 41
 ================
 
+21/11/18 Add location to tooltips on medical calendar #519
 19/11/18 Result count off by 1 for SELECT in sql interface
 17/11/18 Include submission with confirmation message #516
 16/11/18 Templates should not be applied to new non-shelter animals
