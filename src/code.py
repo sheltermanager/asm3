@@ -1825,7 +1825,7 @@ class calendar_events(ASMEndpoint):
         if "t" in ev and self.checkb(users.VIEW_TEST):
             for t in extmedical.get_tests_two_dates(dbo, start, end, o.locationfilter, o.siteid, o.visibleanimalids):
                 sub = "%s - %s" % (t["TESTNAME"], t["ANIMALNAME"])
-                tit = "%s - %s %s (%s) %s" % (t["TESTNAME"], t["SHELTERCODE"], t["ANIMALNAME"], t["DISPLAYLLOCATIONNAME"], t["COMMENTS"])
+                tit = "%s - %s %s (%s) %s" % (t["TESTNAME"], t["SHELTERCODE"], t["ANIMALNAME"], t["DISPLAYLOCATIONNAME"], t["COMMENTS"])
                 events.append({ 
                     "title": sub, 
                     "allDay": True, 
