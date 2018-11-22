@@ -214,47 +214,47 @@ class PetRescuePublisher(AbstractPublisher):
             except Exception as err:
                 self.logError("Failed processing animal: %s, %s" % (str(an["SHELTERCODE"]), err), sys.exc_info())
 
-        # Next, identify animals we've previously sent who:
-        # 1. Have an active exit movement in the last month or died in the last month
-        # 2. Have an entry in animalpublished/petrescue where the sent date is older than the active movement
-        # 3. Have an entry in animalpublished/petrescue where the sent date is older than the deceased date
-
         try:
-            animals = self.dbo.query("SELECT a.ID, a.ShelterCode, a.AnimalName, p.SentDate, a.ActiveMovementDate, a.DeceasedDate FROM animal a " \
-                "INNER JOIN animalpublished p ON p.AnimalID = a.ID AND p.PublishedTo='petrescue' " \
-                "WHERE Archived = 1 AND ((DeceasedDate Is Not Null AND DeceasedDate >= ?) OR " \
-                "(ActiveMovementDate Is Not Null AND ActiveMovementDate >= ? AND ActiveMovementType NOT IN (2,8))) " \
-                "ORDER BY a.ID", [self.dbo.today(offset=-30), self.dbo.today(offset=-30)])
-        except Exception as err:
-            self.logError("Failed running query to retrieve listings to close: %s" % err, sys.exc_info())
+            # Get a list of all animals that we sent to PR recently (14 days)
+            prevsent = self.dbo.query("SELECT AnimalID FROM animalpublished WHERE SentDate>=? AND PublishedTo='petrescue'", [self.dbo.today(offset=-14)])
+            
+            # Build a list of IDs we just sent, along with a list of ids for animals
+            # that we previously sent and are not in the current sent list.
+            # This identifies the listings we need to cancel
+            animalids_just_sent = set([ x.ID for x in animals ])
+            animalids_to_cancel = set([ str(x.ANIMALID) for x in prevsent if x.ANIMALID not in animalids_just_sent])
 
+            # Get the animal records for the ones we need to cancel
+            if len(animalids_to_cancel) == 0:
+                animals = []
+            else:
+                animals = self.dbo.query("SELECT ID, ShelterCode, AnimalName, ActiveMovementDate, ActiveMovementType, DeceasedDate " \
+                    "FROM animal a WHERE ID IN (%s)" % ",".join(animalids_to_cancel))
+
+        except Exception as err:
+            self.logError("Failed finding listings to cancel: %s" % err, sys.exc_info())
+
+        # Cancel the inactive listings
         for an in animals:
             try:
-                if (an.ACTIVEMOVEMENTDATE and an.SENTDATE < an.ACTIVEMOVEMENTDATE) or (an.DECEASEDDATE and an.SENTDATE < an.DECEASEDDATE):
-                    
-                    status = utils.iif(an.DECEASEDDATE is not None, "removed", "rehomed")
-                    data = { "status": status }
-                    jsondata = utils.json(data)
-                    url = PETRESCUE_URL + "listings/%s/SM%s" % (an.ID, self.dbo.database)
+                status = "on_hold"
+                if an.ACTIVEMOVEMENTDATE is not None and an.ACTIVEMOVEMENTTYPE == 1: status = "rehomed"
+                if an.DECEASEDDATE is not None: status = "removed"
+                data = { "status": status }
+                jsondata = utils.json(data)
+                url = PETRESCUE_URL + "listings/%s/SM%s" % (an.ID, self.dbo.database)
 
-                    self.log("Sending PATCH to %s to update existing listing: %s" % (url, jsondata))
-                    r = utils.patch_json(url, jsondata, headers=headers)
+                self.log("Sending PATCH to %s to update existing listing: %s" % (url, jsondata))
+                r = utils.patch_json(url, jsondata, headers=headers)
 
-                    if r["status"] == 200:
-                        self.log("HTTP %d, headers: %s, response: %s" % (r["status"], r["headers"], r["response"]))
-                        self.logSuccess("%s - %s: Marked with new status %s" % (an.SHELTERCODE, an.ANIMALNAME, status))
-                        # By marking these animals in the processed list again, their SentDate
-                        # will become today, which should exclude them from sending these status
-                        # updates to close the listing again in future
-                        processed.append(an)
-                    elif r["status"] == 500:
-                        # This can happen if PR no longer have the listing - we'll keep trying to update it forever
-                        # so treat 500 as a permanent failure
-                        self.logError("HTTP %d, headers: %s, response: %s" % (r["status"], r["headers"], r["response"]))
-                        self.logSuccess("%s - %s: Permanent failure encountered, marking sent to prevent future requests" % (an.SHELTERCODE, an.ANIMALNAME))
-                        processed.append(an)
-                    else:
-                        self.logError("HTTP %d, headers: %s, response: %s" % (r["status"], r["headers"], r["response"]))
+                if r["status"] == 200:
+                    self.log("HTTP %d, headers: %s, response: %s" % (r["status"], r["headers"], r["response"]))
+                    self.logSuccess("%s - %s: Marked with new status %s" % (an.SHELTERCODE, an.ANIMALNAME, status))
+                    # It used to be that we updated animalpublished for this animal to get sentdate to today
+                    # we don't do this now so that we'll update dead listings every day for however many days we
+                    # look back, but that's it
+                else:
+                    self.logError("HTTP %d, headers: %s, response: %s" % (r["status"], r["headers"], r["response"]))
 
             except Exception as err:
                 self.logError("Failed closing listing for %s - %s: %s" % (an.SHELTERCODE, an.ANIMALNAME, err), sys.exc_info())
