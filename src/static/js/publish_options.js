@@ -546,7 +546,7 @@ $(function() {
                 '</span>',
                 '</td>',
                 '<td><select id="prdesex" class="asm-selectbox cfg" data="PetRescueAllDesexed">',
-                '<option value="0">No</option><option value="1">Yes</option></select></td>',
+                '<option>No</option><option>Yes</option></select></td>',
                 '</tr>',
                 '<tr>',
                 '<td><label for="premail">Contact email</label>',

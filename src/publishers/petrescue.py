@@ -175,7 +175,7 @@ class PetRescuePublisher(AbstractPublisher):
                     "location_state_abbr":      location_state_abbr, # shelter/fosterer state
                     "location_suburb":          location_suburb, # shelter/fosterer suburb
                     "microchip_number":         microchip_number, 
-                    "desexed":                  an.NEUTERED == 1 or all_desexed,# true | false, validates to always true according to docs
+                    "desexed":                  an.NEUTERED == 1 or all_desexed, # true | false, validates to always true according to docs
                     "contact_method":           "email", # email | phone
                     "size":                     utils.iif(isdog, size, ""), # dogs only - small | medium | high
                     "senior":                   isdog and ageinyears > 7, # dogs only, true | false
