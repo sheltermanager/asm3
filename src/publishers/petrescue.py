@@ -178,7 +178,7 @@ class PetRescuePublisher(AbstractPublisher):
                     "desexed":                  an.NEUTERED == 1 or all_desexed, # true | false, validates to always true according to docs
                     "contact_method":           "email", # email | phone
                     "size":                     utils.iif(isdog, size, ""), # dogs only - small | medium | high
-                    "senior":                   isdog and ageinyears > 7, # dogs only, true | false
+                    "senior":                   isdog and ageinyears > (7 * 365), # dogs only, true | false
                     "vaccinated":               vaccinated, # cats, dogs, rabbits, true | false
                     "wormed":                   wormed, # cats & dogs, true | false
                     "heart_worm_treated":       hwtreated, # dogs only, true | false
