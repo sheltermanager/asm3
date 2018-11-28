@@ -10,7 +10,11 @@ en
 ###
 SELECT a.MostRecentEntryDate, a.ShelterCode, a.AnimalName, ay.AnimalType, s.SpeciesName, 
 CASE WHEN a.Neutered = 1 THEN 'Yes' ELSE 'No' END AS Neutered, a.NeuteredDate, a.ActiveMovementDate,
-CASE WHEN (a.Archived = 1 AND a.NeuteredDate >= a.DateBroughtIn AND a.NeuteredDate  <= a.ActiveMovementDate) OR (a.Archived = 0 AND a.NeuteredDate >= a.DateBroughtIn) THEN 'Yes' ELSE 'No' END AS NeuteredInCare, nv.OwnerName
+CASE 
+WHEN a.Archived = 1 AND a.NeuteredDate >= a.DateBroughtIn AND a.NeuteredDate  <= a.ActiveMovementDate THEN 'Yes' 
+WHEN a.Archived = 1 AND a.NeuteredDate >= a.DateBroughtIn AND a.DeceasedDate Is Not Null AND a.NeuteredDate  <= a.DeceasedDate THEN 'Yes' 
+WHEN a.Archived = 0 AND a.NeuteredDate >= a.DateBroughtIn THEN 'Yes' 
+ELSE 'No' END AS NeuteredInCare, nv.OwnerName
 FROM animal a 
 INNER JOIN animaltype ay ON ay.ID = a.AnimalTypeID 
 INNER JOIN species s ON s.ID = a.SpeciesID 
