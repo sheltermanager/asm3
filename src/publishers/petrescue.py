@@ -182,7 +182,7 @@ class PetRescuePublisher(AbstractPublisher):
                     "vaccinated":               vaccinated, # cats, dogs, rabbits, true | false
                     "wormed":                   wormed, # cats & dogs, true | false
                     "heart_worm_treated":       hwtreated, # dogs only, true | false
-                    "coat":                     utils.iif(iscat, coat, ""), # cats only, short | medium_coat | long
+                    "coat":                     coat, # Only applies to cats and guinea pigs, but we send for everything: short | medium_coat | long
                     "intake_origin":            utils.iif(iscat, origin, ""), # cats only, community_cat | owner_surrender | pound_transfer | shelter_transfer
                     "adoption_process":         "", # 4,000 chars how to adopt
                     "contact_details_source":   "self", # self | user | group
