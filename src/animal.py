@@ -3529,7 +3529,8 @@ def update_animal_figures(dbo, month = 0, year = 0):
         rows = dbo.query(sql)
         for r in rows:
             dk = "D%d" % r["THEDATE"].day
-            d[dk] = int(r["TOTAL"])
+            if dk not in d: d[dk] = 0
+            d[dk] += int(r["TOTAL"])
         return d
 
     def add_days(listdays):

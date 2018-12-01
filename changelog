@@ -1,6 +1,7 @@
 41
 ================
 
+01/12/18 Fix error in intake counts on monthly figures when times enabled
 01/12/18 Apply default death category when a deceased date is set #510
 01/12/18 Add pickup/dropoff contact wordkeys for transport records #508
 01/12/18 Hidden PetFinder config option PetFinderAgeBands #509
