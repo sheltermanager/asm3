@@ -73,6 +73,10 @@ def get_transport_query(dbo):
         "d.OwnerTown AS DriverOwnerTown, p.OwnerTown AS PickupOwnerTown, dr.OwnerTown AS DropoffOwnerTown, " \
         "d.OwnerCounty AS DriverOwnerCounty, p.OwnerCounty AS PickupOwnerCounty, dr.OwnerCounty AS DropoffOwnerCounty, " \
         "d.OwnerPostcode AS DriverOwnerPostcode, p.OwnerPostcode AS PickupOwnerPostcode, dr.OwnerPostcode AS DropoffOwnerPostcode, " \
+        "d.EmailAddress AS DriverEmailAddress, p.EmailAddress AS PickupEmailAddress, dr.EmailAddress AS DropoffEmailAddress, " \
+        "d.HomeTelephone AS DriverHomeTelephone, p.HomeTelephone AS PickupHomeTelephone, dr.HomeTelephone AS DropoffHomeTelephone, " \
+        "d.WorkTelephone AS DriverWorkTelephone, p.WorkTelephone AS PickupWorkTelephone, dr.WorkTelephone AS DropoffWorkTelephone, " \
+        "d.MobileTelephone AS DriverMobileTelephone, p.MobileTelephone AS PickupMobileTelephone, dr.MobileTelephone AS DropoffMobileTelephone, " \
         "t.PickupAddress, t.PickupTown, t.PickupCounty, t.PickupPostcode, t.DropoffAddress, t.DropoffTown, t.DropoffCounty, t.DropoffPostcode, " \
         "ma.MediaName AS WebsiteMediaName, ma.Date AS WebsiteMediaDate, " \
         "a.AnimalName, a.ShelterCode, a.ShortCode, s.SpeciesName, a.BreedName, x.Sex " \

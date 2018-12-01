@@ -632,6 +632,14 @@ TransportState / TransportCounty
    The pickup state / county
 TransportPickupZipcode / TransportPickupPostcode
    The pickup zipcode/postcode
+TransportPickupEmail
+   The email address of the pickup contact
+TransportPickupHomePhone
+   The home phone number of the pickup contact
+TransportPickupWorkPhone
+   The work phone number of the pickup contact
+TransportPickupCellPhone / TransportPickupMobilePhone
+   The mobile phone number of the pickup contact
 TransportDropoffName
    The person the transport is taking the animal to if known
 TransportDropoffDateTime
@@ -644,6 +652,14 @@ TransportDropoffState / TransportDropoffCounty
    The dropoff state / county
 TransportDropoffZipcode / TransportDropoffPostcode
    The dropoff zipcode / postcode
+TransportDropoffEmail
+   The email address of the dropoff contact
+TransportDropoffHomePhone
+   The home phone number of the dropoff contact
+TransportDropoffWorkPhone
+   The work phone number of the dropoff contact
+TransportDropoffCellPhone / TransportDropoffMobilePhone
+   The mobile phone number of the dropoff contact
 TransportMiles
    The distance of the transport in miles (if known)
 TransportCost
