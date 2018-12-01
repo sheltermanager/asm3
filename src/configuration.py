@@ -960,6 +960,9 @@ def pdf_inline(dbo):
 def person_search_columns(dbo):
     return cstring(dbo, "OwnerSearchColumns", DEFAULTS["OwnerSearchColumns"])
 
+def petfinder_age_bands(dbo):
+    return cstring(dbo, "PetFinderAgeBands")
+
 def petfinder_user(dbo):
     return cstring(dbo, "PetFinderFTPUser")
 
