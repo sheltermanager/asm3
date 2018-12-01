@@ -1424,6 +1424,14 @@ $(function() {
                 validate.dirty(true);
             });
 
+            // If a value is set in the deceased date, set the default death reason
+            // Another change event for this field handles visibility below
+            $("#deceaseddate").change(function() {
+                if ($("#deceaseddate").val() != "") {
+                    $("#deathcategory").select("value", config.str("AFDefaultDeathReason"));
+                }
+            });
+
             // Controls that update the screen when changed
             $("#microchipped").click(animal.enable_widgets).keyup(animal.enable_widgets);
             $("#tattoo").click(animal.enable_widgets).keyup(animal.enable_widgets);
