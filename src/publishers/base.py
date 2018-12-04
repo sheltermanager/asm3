@@ -119,7 +119,8 @@ def get_animal_data_query(dbo, pc):
     Generate the adoptable animal query.
     """
     sql = animal.get_animal_query(dbo)
-    sql += " WHERE a.ID > 0"
+    # Always include non-dead courtesy listings
+    sql += " WHERE (a.DeceasedDate Is Null AND a.IsCourtesy = 1) OR a.ID > 0"
     if not pc.includeCaseAnimals: 
         sql += " AND a.CrueltyCase = 0"
     if not pc.includeNonNeutered:
@@ -144,8 +145,6 @@ def get_animal_data_query(dbo, pc):
     sql += " AND NOT EXISTS(SELECT ID FROM adoption WHERE MovementType = 1 AND AnimalID = a.ID AND MovementDate > %s)" % dbo.sql_value(dbo.today())
     # Build a set of OR clauses based on any movements/locations
     moveor = []
-    # Always include courtesy post animals
-    moveor.append("(a.IsCourtesy = 1)")
     if len(pc.internalLocations) > 0 and pc.internalLocations[0].strip() != "null":
         moveor.append("(a.Archived = 0 AND a.ActiveMovementID = 0 AND a.ShelterLocation IN (%s))" % ",".join(pc.internalLocations))
     else:
