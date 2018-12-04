@@ -60,7 +60,7 @@ def get_animal_data(dbo, pc=None, animalid=0, include_additional_fields=False, r
     # (but don't let it override the courtesy flag, which should always make animals appear)
     if not pc.includeWithoutDescription:
         oldcount = len(rows)
-        rows = [r for r in rows if r.ISCOURTESY == 0 and utils.nulltostr(r.WEBSITEMEDIANOTES).strip() != ""]
+        rows = [r for r in rows if r.ISCOURTESY == 1 or utils.nulltostr(r.WEBSITEMEDIANOTES).strip() != "" ]
         al.debug("removed %d rows without descriptions" % (oldcount - len(rows)), "publishers.base.get_animal_data", dbo)
 
     # Embellish additional fields if requested
@@ -120,7 +120,7 @@ def get_animal_data_query(dbo, pc):
     """
     sql = animal.get_animal_query(dbo)
     # Always include non-dead courtesy listings
-    sql += " WHERE (a.DeceasedDate Is Null AND a.IsCourtesy = 1) OR a.ID > 0"
+    sql += " WHERE (a.DeceasedDate Is Null AND a.IsCourtesy = 1) OR (a.ID > 0"
     if not pc.includeCaseAnimals: 
         sql += " AND a.CrueltyCase = 0"
     if not pc.includeNonNeutered:
@@ -155,7 +155,7 @@ def get_animal_data_query(dbo, pc):
         moveor.append("(a.ActiveMovementType = %d)" % movement.FOSTER)
     if pc.includeTrial:
         moveor.append("(a.ActiveMovementType = %d AND a.HasTrialAdoption = 1)" % movement.ADOPTION)
-    sql += " AND (" + " OR ".join(moveor) + ")"
+    sql += " AND (" + " OR ".join(moveor) + "))"
     # Ordering
     if pc.order == 0:
         sql += " ORDER BY a.MostRecentEntryDate"
