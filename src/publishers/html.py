@@ -108,8 +108,8 @@ def get_animal_view(dbo, animalid):
     """ Constructs the animal view page to the template. """
     a = dbo.first_row(get_animal_data(dbo, animalid=animalid, include_additional_fields=True, strip_personal_data=True))
     # If the animal is not adoptable, bail out
-    if a is None or not is_animal_adoptable(dbo, a):
-        raise utils.ASMPermissionError("animal is not adoptable")
+    if a is None: raise utils.ASMPermissionError("animal is not adoptable (None)")
+    if not is_animal_adoptable(dbo, a): raise utils.ASMPermissionError("animal is not adoptable (False)")
     # If the option is on, use animal comments as the notes
     if configuration.publisher_use_comments(dbo):
         a.WEBSITEMEDIANOTES = a.ANIMALCOMMENTS
