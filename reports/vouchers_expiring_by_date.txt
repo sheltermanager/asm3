@@ -20,16 +20,23 @@ WHERE ov.DateExpired BETWEEN '$ASK DATE Enter the from date$' AND '$ASK DATE Ent
 ORDER BY ov.DateExpired
 ###
 $$HEADER
+HEADER$$
+
+$$GROUP_VoucherName
+$$HEAD
+<h2>$VoucherName</h2>
 <table border=1><tr>
 <td><b>Number</b></td>
 <td><b>Owner</b></td>
-<td><b>Type</b></td>
 <td><b>Issued</b></td>
 <td><b>Expires</b></td>
 <td><b>Value</b></td>
 <td><b>Comments</b></td>
 </tr>
-HEADER$$
+$$FOOT
+</table>
+<p><b>{COUNT.VoucherName}</b> vouchers, value <b>{SUM.Amount.2}</b></p>
+GROUP$$
 
 $$BODY<tr>
 <td>$VOUCHERNUMBER</td>
@@ -39,7 +46,6 @@ $OWNERTOWN<br/>
 $OWNERCOUNTY<br/>
 $OWNERPOSTCODE<br/>
 $HOMETELEPHONE $MOBILETELEPHONE</td>
-<td>$VOUCHERNAME</td>
 <td>$DATEISSUED</td>
 <td>$DATEEXPIRED</td>
 <td>$AMOUNT</td>
@@ -48,5 +54,5 @@ $HOMETELEPHONE $MOBILETELEPHONE</td>
 BODY$$
 
 $$FOOTER
-</table>
 FOOTER$$
+
