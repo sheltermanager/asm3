@@ -2577,7 +2577,7 @@ msgid "Columns displayed"
 msgstr ""
 
 #: lookups.js
-msgid "Comma separated list of units for this location"
+msgid "Comma separated list of units for this location, eg: 1,2,3,4,Isolation,Pen 5"
 msgstr ""
 
 #: animal_diet.js person_find_results.js lostfound_new.js movements.js
