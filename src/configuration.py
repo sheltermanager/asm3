@@ -288,6 +288,7 @@ DEFAULTS = {
     "SMTPPort": "25",
     "StickyTableHeaders": "Yes",
     "TableHeadersVisible": "Yes",
+    "TemplatesForNonShelter": "No",
     "Timezone": "-5",
     "TrialAdoptions": "No",
     "TrialOnShelter": "No",
@@ -1138,6 +1139,9 @@ def use_short_shelter_codes(dbo):
 
 def third_party_publisher_sig(dbo):
     return cstring(dbo, "TPPublisherSig")
+
+def templates_for_nonshelter(dbo):
+    return cboolean(dbo, "TemplatesForNonShelter", DEFAULTS["TemplatesForNonShelter"] == "Yes")
 
 def timezone(dbo):
     return cfloat(dbo, "Timezone", TIMEZONE)

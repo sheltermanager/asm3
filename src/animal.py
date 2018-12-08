@@ -1997,8 +1997,9 @@ def insert_animal_from_form(dbo, post, username):
             _("Hold until {0}", l).format(post["holduntil"]))
 
     # Do we have a matching template animal we can copy some satellite info from?
-    # Only do it if this animal is a shelter animal.
-    if not post.boolean("nonshelter"):
+    # Only do it if this animal is a shelter animal or if the override is on to force
+    # templates for non-shelter animals.
+    if not post.boolean("nonshelter") or configuration.templates_for_nonshelter(dbo):
         clone_from_template(dbo, username, nextid, dob, post.integer("animaltype"), post.integer("species"))
 
     return (nextid, get_code(dbo, nextid))
