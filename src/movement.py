@@ -944,7 +944,8 @@ def send_fosterer_emails(dbo):
 
             lines.append(UNDERLINE)
 
-        # Email is complete, send to the fosterer
-        utils.send_email(dbo, configuration.email(dbo), f.EMAILADDRESS, subject = i18n._("Fosterer Medical Report", l), body = "\n".join(lines))
+        # Email is complete, send to the fosterer (assuming there were some animals to send)
+        if len(animals) > 0:
+            utils.send_email(dbo, configuration.email(dbo), f.EMAILADDRESS, subject = i18n._("Fosterer Medical Report", l), body = "\n".join(lines))
 
 
