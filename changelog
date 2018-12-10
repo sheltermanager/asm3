@@ -1,6 +1,7 @@
 41
 ================
 
+10/12/18 PetRescue: Set multiple_animals where an animal is bonded
 10/12/18 Do not include animals with no publishable images and include without == NO
 08/12/18 Allow templates for non-shelter animals as hidden option #522
 07/12/18 Use callouts on lookup data as tooltips get missed

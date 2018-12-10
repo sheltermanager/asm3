@@ -193,7 +193,7 @@ class PetRescuePublisher(AbstractPublisher):
                     "foster_needed":            False, # true | false
                     "interstate":               True, # true | false - can the animal be adopted to another state
                     "medical_notes":            "", # DISABLED an.HEALTHPROBLEMS, # 4,000 characters medical notes
-                    "multiple_animals":         False, # More than one animal included in listing true | false
+                    "multiple_animals":         an.BONDEDANIMALID > 0 or an.BONDEDANIMAL2ID > 0, # More than one animal included in listing true | false
                     "photo_urls":               photo_urls, # List of photo URL strings
                     "status":                   "active" # active | removed | on_hold | rehomed | suspended | group_suspended
                 }
