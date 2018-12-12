@@ -421,13 +421,16 @@ $(function() {
             // Watch for return date changing
             $("#returndate").change(movements.returndate_change);
 
-            // When we choose a person
+            // When we choose a person or animal
             $("#person").personchooser().bind("personchooserchange", function(event, rec) { movements.lastperson = rec; movements.warnings(); });
-
             $("#person").personchooser().bind("personchooserloaded", function(event, rec) { movements.lastperson = rec; movements.warnings(); });
             $("#person").personchooser().bind("personchooserclear", function(event, rec) { movements.warnings(); });
-            $("#animal").animalchooser().bind("animalchooserchange", function(event, rec) { movements.lastanimal = rec; movements.warnings(); });
-            $("#animal").animalchooser().bind("animalchooserloaded", function(event, rec) { movements.lastanimal = rec; movements.warnings(); });
+            $("#animal").animalchooser().bind("animalchooserchange", function(event, rec) { 
+                movements.lastanimal = rec; movements.warnings(); movements.set_release_name(rec.SPECIESID); 
+            });
+            $("#animal").animalchooser().bind("animalchooserloaded", function(event, rec) { 
+                movements.lastanimal = rec; movements.warnings(); movements.set_release_name(rec.SPECIESID); 
+            });
             $("#retailer").personchooser().bind("personchooserchange", function(event, rec) { movements.lastretailer = rec; movements.warnings(); });
             $("#retailer").personchooser().bind("personchooserloaded", function(event, rec) { movements.lastretailer = rec; movements.warnings(); });
 
@@ -643,6 +646,18 @@ $(function() {
             row.RESERVATIONSTATUSNAME = common.get_field(controller.reservationstatuses, row.RESERVATIONSTATUSID, "STATUSNAME");
             if (row.RESERVATIONDATE != null && row.RESERVATIONCANCELLEDDATE == null && !row.MOVEMENTDATE) { row.MOVEMENTNAME = common.get_field(controller.movementtypes, 9, "MOVEMENTTYPE"); }
             if (row.RESERVATIONDATE != null && row.RESERVATIONCANCELLEDDATE != null && !row.MOVEMENTDATE) { row.MOVEMENTNAME = common.get_field(controller.movementtypes, 10, "MOVEMENTTYPE"); }
+        },
+
+        /** When the animal changes, set the name of the "Release to Wild" movement 
+         *  to "TNR" instead if the species we've been given is a cat.
+         */
+        set_release_name: function(speciesid) {
+            if (speciesid == 2) {
+                $("#type option[value='7']").html(_("TNR"));
+            }
+            else {
+                $("#type option[value='7']").html(_("Released To Wild"));
+            }
         },
 
         /** Fires whenever the movement type box is changed */
