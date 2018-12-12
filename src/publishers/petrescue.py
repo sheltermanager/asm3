@@ -60,6 +60,7 @@ class PetRescuePublisher(AbstractPublisher):
 
         token = configuration.petrescue_token(self.dbo)
         all_desexed = configuration.petrescue_all_desexed(self.dbo)
+        interstate = configuration.petrescue_interstate(self.dbo)
         postcode = configuration.organisation_postcode(self.dbo)
         suburb = configuration.organisation_town(self.dbo)
         state = configuration.organisation_county(self.dbo)
@@ -76,7 +77,7 @@ class PetRescuePublisher(AbstractPublisher):
             self.setLastError("You need to set your organisation postcode and contact email under Settings->Options->Shelter Details->Email")
             return
 
-        animals = self.getMatchingAnimals()
+        animals = self.getMatchingAnimals(includeAdditionalFields=True)
         processed = []
 
         if len(animals) == 0:
@@ -120,6 +121,10 @@ class PetRescuePublisher(AbstractPublisher):
                 elif an.ISTRANSFER == 1 and str(an.BROUGHTINBYOWNERNAME).lower().find("pound") != -1: origin = "pound_transfer"
                 elif an.ORIGINALOWNERID > 0: origin = "owner_surrender"
                 else: origin = "community_cat"
+
+                best_feature = "Looking for love"
+                if "BESTFEATURE" in an and an.BESTFEATURE != "":
+                    best_feature = an.BESTFEATURE
 
                 # Check whether we've been vaccinated, wormed and hw treated
                 vaccinated = medical.get_vaccinated(self.dbo, an.ID)
@@ -171,6 +176,7 @@ class PetRescuePublisher(AbstractPublisher):
                     "date_of_birth":            i18n.format_date("%Y-%m-%d", an.DATEOFBIRTH), # iso
                     "gender":                   an.SEXNAME.lower(), # male | female
                     "personality":              an.WEBSITEMEDIANOTES, # 20-4000 chars of free type
+                    "best_feature":             best_feature, # 25 chars free type, defaults to "Looking for love" requires BESTFEATURE additional field
                     "location_postcode":        location_postcode, # shelter/fosterer postcode
                     "location_state_abbr":      location_state_abbr, # shelter/fosterer state
                     "location_suburb":          location_suburb, # shelter/fosterer suburb
@@ -191,7 +197,7 @@ class PetRescuePublisher(AbstractPublisher):
                     "contact_number":           contact_number, # number to enquire about adoption
                     "contact_email":            contact_email, # email to enquire about adoption
                     "foster_needed":            False, # true | false
-                    "interstate":               True, # true | false - can the animal be adopted to another state
+                    "interstate":               interstate, # true | false - can the animal be flown to another state for adoption
                     "medical_notes":            "", # DISABLED an.HEALTHPROBLEMS, # 4,000 characters medical notes
                     "multiple_animals":         an.BONDEDANIMALID > 0 or an.BONDEDANIMAL2ID > 0, # More than one animal included in listing true | false
                     "photo_urls":               photo_urls, # List of photo URL strings

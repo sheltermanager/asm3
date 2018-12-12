@@ -835,8 +835,8 @@ class AbstractPublisher(threading.Thread):
         self.dbo.execute("DELETE FROM animalpublished WHERE PublishedTo = '%s' AND AnimalID IN (%s)" % (self.publisherKey, ",".join(inclause)))
         self.dbo.execute_many("INSERT INTO animalpublished (AnimalID, PublishedTo, SentDate, Extra) VALUES (?,?,?,?)", batch)
 
-    def getMatchingAnimals(self):
-        a = get_animal_data(self.dbo, self.pc)
+    def getMatchingAnimals(self, includeAdditionalFields=False):
+        a = get_animal_data(self.dbo, self.pc, include_additional_fields=includeAdditionalFields)
         self.log("Got %d matching animals for publishing." % len(a))
         return a
 

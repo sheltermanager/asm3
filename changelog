@@ -1,6 +1,8 @@
 41
 ================
 
+12/12/18 PetRescue: allow "bestfeature" additional field to set tagline
+12/12/18 PetRescue: allow configuration of interstate flag
 10/12/18 Validate that reports with criteria cannot be sent by email #526
 10/12/18 PetRescue: Set multiple_animals where an animal is bonded
 10/12/18 Do not include animals with no publishable images and include without == NO
