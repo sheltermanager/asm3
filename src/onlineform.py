@@ -825,7 +825,7 @@ def create_person(dbo, username, collationid):
     l = dbo.locale
     fields = get_onlineformincoming_detail(dbo, collationid)
     d = {}
-    d["ownertype"] == "1" # Person class of individual/couple
+    d["ownertype"] = "1" # Person class of individual/couple
     flags = None
     formreceived = i18n.python2display(l, dbo.now())
     for f in fields:
