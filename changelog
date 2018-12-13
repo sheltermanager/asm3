@@ -1,6 +1,7 @@
 41
 ================
 
+13/12/18 PetRescue: support "good with" and "needs constant care"
 12/12/18 Change "Released To Wild" to "TNR" when movement is for a cat #531
 12/12/18 PetRescue: allow "bestfeature" additional field to set tagline
 12/12/18 PetRescue: allow configuration of interstate flag

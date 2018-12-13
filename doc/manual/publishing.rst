@@ -330,6 +330,11 @@ allowed 25 letters and can override the tagline on a per-animal basis. To do
 this, you need to create an additional field with the name "bestfeature" for
 your animal records and set the tagline value.
 
+Similarly PetRescue have a "needs constant care" attribute that can be used to
+indicate that an adoptable cannot be left by itself. This can be set with an
+additional field called "needsconstantcare" of type "Yes/No" to allow you to
+set it for your animals.
+
 .. note:: PetRescue integration relies on you naming your breeds and species with the same values that they do. If a breed does not match one of the PetRescue breeds, ASM will send it as "Mixed Breed" instead. 
 
 rescuegroups.org

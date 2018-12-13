@@ -126,6 +126,10 @@ class PetRescuePublisher(AbstractPublisher):
                 if "BESTFEATURE" in an and an.BESTFEATURE != "":
                     best_feature = an.BESTFEATURE
 
+                needs_constant_care = False
+                if "NEEDSCONSTANTCARE" in an and an.NEEDSCONSTANTCARE != "" and an.NEEDSCONSTANTCARE != "0":
+                    needs_constant_care = True
+
                 # Check whether we've been vaccinated, wormed and hw treated
                 vaccinated = medical.get_vaccinated(self.dbo, an.ID)
                 sixmonths = self.dbo.today(offset=-182)
@@ -190,6 +194,11 @@ class PetRescuePublisher(AbstractPublisher):
                     "heart_worm_treated":       hwtreated, # dogs only, true | false
                     "coat":                     coat, # Only applies to cats and guinea pigs, but we send for everything: short | medium_coat | long
                     "intake_origin":            utils.iif(iscat, origin, ""), # cats only, community_cat | owner_surrender | pound_transfer | shelter_transfer
+                    "incompatible_with_cats":   an.GOODWITHCATS == 1,
+                    "incompatible_with_dogs":   an.GOODWITHDOGS == 1,
+                    "incompatible_with_kids_under_5": an.GOODWITHCHILDREN == 1,
+                    "incompatible_with_kids_6_to_12": an.GOODWITHCHILDREN == 1,
+                    "needs_constant_care":      needs_constant_care,
                     "adoption_process":         "", # 4,000 chars how to adopt
                     "contact_details_source":   "self", # self | user | group
                     "contact_preferred_method": "email", # email | phone
