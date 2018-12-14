@@ -1736,7 +1736,7 @@ def get_units_with_availability(dbo, locationid):
     Blank occupant means a free unit
     """
     a = []
-    units = dbo.query_string("SELECT Units FROM internallocation WHERE ID = ?", [locationid]).split(",")
+    units = dbo.query_string("SELECT Units FROM internallocation WHERE ID = ?", [locationid]).replace("|", ",").split(",")
     animals = dbo.query("SELECT a.AnimalName, a.ShortCode, a.ShelterCode, a.ShelterLocationUnit " \
         "FROM animal a WHERE a.Archived = 0 AND ActiveMovementID = 0 AND ShelterLocation = ?", [locationid])
     useshortcodes = configuration.use_short_shelter_codes(dbo)
