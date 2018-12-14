@@ -95,8 +95,8 @@ data, or explicitly attach the form to existing records.
 * Attach Animal: Prompts for a single animal record and attaches a copy of the
   form to them as media.
 
-* Create Animal: Requires an “animalname” field in the form. Intelligently
-  attaches selected forms to their matching shelter animal.
+* Attach Animal (via animalname): Attaches the form to a single animal
+  record based on the animalname field in the form itself.
 
 * Create Person: Searches for a person record matching either the email address
   if present, or the firstname, lastname and address fields on the form. If a

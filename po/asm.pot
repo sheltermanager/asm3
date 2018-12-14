@@ -1174,6 +1174,10 @@ msgstr ""
 msgid "Animal (optional)"
 msgstr ""
 
+#: onlineform_incoming.js
+msgid "Animal (via animalname field)"
+msgstr ""
+
 #: dbupdate.py
 msgid "Animal - Additional"
 msgstr ""
@@ -8950,7 +8954,7 @@ msgstr ""
 msgid "Register microchips after"
 msgstr ""
 
-#: animal_find.js dbupdate.py animal.py
+#: movements.js animal_find.js dbupdate.py animal.py
 msgid "Released To Wild"
 msgstr ""
 
@@ -10629,6 +10633,10 @@ msgstr ""
 msgid "T = first letter of animal type"
 msgstr ""
 
+#: movements.js
+msgid "TNR"
+msgstr ""
+
 #: dbupdate.py
 msgid "TNR - Trap/Neuter/Release"
 msgstr ""
@@ -11494,6 +11502,10 @@ msgstr ""
 
 #: waitinglist.py lostfound.py animalcontrol.py animal.py person.py
 msgid "This record has been changed by another user, please reload."
+msgstr ""
+
+#: reports.js
+msgid "This report cannot be sent by email as it requires criteria to run."
 msgstr ""
 
 #: document_repository.js
