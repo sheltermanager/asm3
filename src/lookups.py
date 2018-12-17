@@ -1213,7 +1213,7 @@ def get_voucher_types(dbo):
     return dbo.query("SELECT * FROM voucher ORDER BY VoucherName")
 
 def get_work_types(dbo):
-    return dbo.query("SELECT * FROM lkworktype ORDER BY ID")
+    return dbo.query("SELECT * FROM lkworktype ORDER BY WorkType")
 
 def get_yesno(dbo):
     return dbo.query("SELECT * FROM lksyesno ORDER BY Name")
