@@ -513,6 +513,10 @@ $(function() {
             if ($("#type").val() != "REPORT") { 
                 $("#html").val($("#type").val()); 
             }
+            if ($("#dailyemail").val() && ($("#sql").sqleditor("value").indexOf("$VAR") != -1 || $("#sql").sqleditor("value").indexOf("$ASK") != -1)) {
+                tableform.dialog_error(_("This report cannot be sent by email as it requires criteria to run."));
+                return false;
+            }
             return true;
         },
 

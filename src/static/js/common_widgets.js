@@ -1379,6 +1379,7 @@
                 f = format.currency_to_float(v) * 100;
                 // Adding 0.5 corrects IEEE rounding errors in multiplication
                 if (f > 0) { f += 0.5; }
+                if (f < 0) { f -= 0.5; }
                 return parseInt(f, 10);
             }
             // We're setting the value

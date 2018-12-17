@@ -23,7 +23,8 @@ VERSIONS = (
     33907, 33908, 33909, 33911, 33912, 33913, 33914, 33915, 33916, 34000, 34001, 
     34002, 34003, 34004, 34005, 34006, 34007, 34008, 34009, 34010, 34011, 34012,
     34013, 34014, 34015, 34016, 34017, 34018, 34019, 34020, 34021, 34022, 34100,
-    34101, 34102, 34103, 34104, 34105, 34106, 34107, 34108
+    34101, 34102, 34103, 34104, 34105, 34106, 34107, 34108, 34109, 34110, 34111,
+    34112
 )
 
 LATEST_VERSION = VERSIONS[-1]
@@ -152,6 +153,7 @@ def sql_structure(dbo):
         fint("FieldType"),
         fint("DisplayIndex"),
         fint("Mandatory"),
+        fint("NewRecord"),
         fint("Searchable", True) ), False)
     sql += index("additionalfield_LinkType", "additionalfield", "LinkType")
 
@@ -695,6 +697,7 @@ def sql_structure(dbo):
         fint("VaccinationID"),
         fint("AdministeringVetID", True),
         fdate("DateOfVaccination", True),
+        fstr("GivenBy", True),
         fdate("DateRequired"),
         fdate("DateExpires", True),
         fstr("BatchNumber", True),
@@ -706,6 +709,7 @@ def sql_structure(dbo):
     sql += index("animalvaccination_AdministeringVetID", "animalvaccination", "AdministeringVetID")
     sql += index("animalvaccination_DateExpires", "animalvaccination", "DateExpires")
     sql += index("animalvaccination_DateRequired", "animalvaccination", "DateRequired")
+    sql += index("animalvaccination_GivenBy", "animalvaccination", "GivenBy")
     sql += index("animalvaccination_CostPaidDate", "animalvaccination", "CostPaidDate")
     sql += index("animalvaccination_Manufacturer", "animalvaccination", "Manufacturer")
 
@@ -1257,7 +1261,7 @@ def sql_structure(dbo):
     sql += table("ownerlookingfor", (
         fint("OwnerID"),
         fint("AnimalID"),
-        flongstr("MatchSummary") ))
+        flongstr("MatchSummary") ), False)
 
     sql += index("ownerlookingfor_OwnerID", "ownerlookingfor", "OwnerID")
     sql += index("ownerlookingfor_AnimalID", "ownerlookingfor", "AnimalID")
@@ -1513,7 +1517,7 @@ def sql_default_data(dbo, skip_config = False):
     def account(tid, code, desc, atype, dtype, ctype):
         return "INSERT INTO accounts (ID, Code, Description, Archived, AccountType, CostTypeID, DonationTypeID, RecordVersion, CreatedBy, CreatedDate, LastChangedBy, LastChangedDate) VALUES (%s, '%s', '%s', 0, %s, %s, %s, 0, '%s', %s, '%s', %s)|=\n" % ( tid, dbo.escape(code), dbo.escape(desc), atype, ctype, dtype, 'default', dbo.sql_now(), 'default', dbo.sql_now() ) 
     def breed(tid, name, petfinder, speciesid):
-        return "INSERT INTO breed (ID, BreedName, BreedDescription, PetFinderBreed, SpeciesID, IsRetired) VALUES (%s, '%s', '', '%s', %s, 0)|=\n" % ( tid, dbo.escape(name), petfinder, str(speciesid) )
+        return "INSERT INTO breed (ID, BreedName, BreedDescription, PetFinderBreed, SpeciesID, IsRetired) VALUES (%s, '%s', '', '%s', %s, 0)|=\n" % ( tid, dbo.escape(name), dbo.escape(petfinder), str(speciesid) )
     def basecolour(tid, name, adoptapet):
         return "INSERT INTO basecolour (ID, BaseColour, BaseColourDescription, AdoptAPetColour, IsRetired) VALUES (%s, '%s', '', '%s', 0)|=\n" % (tid, dbo.escape(name), adoptapet)
     def internallocation(lid, name):
@@ -1920,11 +1924,11 @@ def sql_default_data(dbo, skip_config = False):
     sql += breed(320, _("Britannia Petite", l), "Britannia Petite", 7)
     sql += breed(321, _("Bunny Rabbit", l), "Bunny Rabbit", 7)
     sql += breed(322, _("Californian", l), "Californian", 7)
-    sql += breed(323, _("Champagne DArgent", l), "Champagne DArgent", 7)
+    sql += breed(323, _("Champagne D'Argent", l), "Champagne D'Argent", 7)
     sql += breed(324, _("Checkered Giant", l), "Checkered Giant", 7)
     sql += breed(325, _("Chinchilla", l), "Chinchilla", 7)
     sql += breed(326, _("Cinnamon", l), "Cinnamon", 7)
-    sql += breed(327, _("Creme DArgent", l), "Creme DArgent", 7)
+    sql += breed(327, _("Creme D'Argent", l), "Creme D'Argent", 7)
     sql += breed(328, _("Dutch", l), "Dutch", 7)
     sql += breed(329, _("Dwarf", l), "Dwarf", 7)
     sql += breed(330, _("Dwarf Eared", l), "Dwarf Eared", 7)
@@ -2464,6 +2468,7 @@ def install_default_templates(dbo, removeFirst = False):
     add_document_template_from_file("rabies_certificate.html", "/templates", path + "media/templates/rabies_certificate.html")
     add_document_template_from_file("receipt.html", "/templates", path + "media/templates/receipt.html")
     add_document_template_from_file("receipt_tax.html", "/templates", path + "media/templates/receipt_tax.html")
+    add_document_template_from_file("reclaim_release.html", "/templates", path + "media/templates/reclaim_release.html")
     add_document_template_from_file("reserved.html", "/templates", path + "media/templates/reserved.html")
     add_document_template_from_file("rspca_adoption.html", "/templates/rspca", path + "media/templates/rspca/rspca_adoption.html")
     add_document_template_from_file("rspca_behaviour_observations_cat.html", "/templates/rspca", path + "media/templates/rspca/rspca_behaviour_observations_cat.html")
@@ -2560,10 +2565,15 @@ def dump_hsqldb(dbo, includeDBFS = True):
     generator function.
     """
     # ASM2_COMPATIBILITY
-    hdbo = db.get_database("HSQLDB")
+    hdbo = db.get_dbo("HSQLDB")
     yield sql_structure(hdbo)
-    for x in dump(dbo, includeNonASM2 = False, includeDBFS = includeDBFS, escapeCR = " ", wrapTransaction = False):
+    for x in dump(dbo, includeNonASM2 = False, includeDBFS = includeDBFS, escapeCR = " ", includeUsers = False, wrapTransaction = False):
         yield x
+    yield "DELETE FROM users;\n"
+    yield "INSERT INTO users (ID, UserName, RealName, Password, SuperUser, OwnerID, SecurityMap, RecordVersion) VALUES " \
+        "(1, 'user', 'Default', 'd107d09f5bbe40cade3de5c71e9e9b7', 1, 0, '', 0);\n"
+    yield "DELETE FROM configuration WHERE ItemName LIKE 'DatabaseVersion' OR ItemName LIKE 'SMDBLocked';\n"
+    yield "INSERT INTO configuration (ItemName, ItemValue) VALUES ('DatabaseVersion', '2870');\n"
 
 def dump_smcom(dbo):
     """
@@ -2701,9 +2711,8 @@ def reset_db(dbo):
         "animaldiet", "animalfigures", "animalfiguresannual", 
         "animalfound", "animallitter", "animallost", "animalmedical", "animalmedicaltreatment", "animalname",
         "animaltest", "animaltransport", "animalvaccination", "animalwaitinglist", "diary", "log",
-        "media", "messages", "onlineform", "onlineformfield", "onlineformincoming", "owner", "ownercitation",
-        "ownerdonation", "ownerinvestigation", "ownerlicence", "ownertraploan", "ownervoucher", "stocklevel",
-        "stockusage" ]
+        "media", "messages", "owner", "ownercitation", "ownerdonation", "ownerinvestigation", "ownerlicence", 
+        "ownertraploan", "ownervoucher", "stocklevel", "stockusage" ]
     for t in deltables:
         dbo.execute_dbupdate("DELETE FROM %s" % t)
     dbfs.delete_orphaned_media(dbo) # this deletes dbfs items referenced by the media we just deleted
@@ -4955,4 +4964,29 @@ def update_34108(dbo):
         "Path":     "/templates",
         "Content":  base64.b64encode( utils.read_binary_file( dbo.installpath + "media/templates/clinic_invoice.html" ) )
     })
+
+def update_34109(dbo):
+    # Remove recordversion and created/lastchanged columns from ownerlookingfor - should never have been there
+    # and has been erroneously added to these tables for new databases (nullable change is the serious cause)
+    tables = [ "ownerlookingfor" ]
+    cols = [ "CreatedBy", "CreatedDate", "LastChangedBy", "LastChangedDate", "RecordVersion" ]
+    for t in tables:
+        for c in cols:
+            drop_column(dbo, t, c)
+
+def update_34110(dbo):
+    # Add additionalfield.NewRecord
+    add_column(dbo, "additionalfield", "NewRecord", dbo.type_integer)
+    dbo.execute_dbupdate("UPDATE additionalfield SET NewRecord = Mandatory")
+
+def update_34111(dbo):
+    # Add animalvaccination.GivenBy
+    add_column(dbo, "animalvaccination", "GivenBy", dbo.type_shorttext)
+    add_index(dbo, "animalvaccination_GivenBy", "animalvaccination", "GivenBy")
+    dbo.execute_dbupdate("UPDATE animalvaccination SET GivenBy = LastChangedBy WHERE DateOfVaccination Is Not Null")
+
+def update_34112(dbo):
+    # Add a new time additional field type
+    l = dbo.locale
+    dbo.execute_dbupdate("INSERT INTO lksfieldtype (ID, FieldType) VALUES (10, ?)", [ _("Time", l) ])
 

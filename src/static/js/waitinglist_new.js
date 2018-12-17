@@ -43,7 +43,7 @@ $(function() {
                 '<tr>',
                 '<td>',
                 '<label for="reasonforwantingtopart">' + _("Entry reason") + '</label></td>',
-                '<td><textarea id="reasonforwaitingtopart" data="reasonforwantingtopart" rows="5" class="asm-textareafixed" title="' + html.title(_("The reason the owner wants to part with the animal")) + '"></textarea></td>',
+                '<td><textarea id="reasonforwantingtopart" data="reasonforwantingtopart" rows="5" class="asm-textareafixed" title="' + html.title(_("The reason the owner wants to part with the animal")) + '"></textarea></td>',
                 '</td>',
                 '</tr>',
                 '</table>',
@@ -73,7 +73,7 @@ $(function() {
                 '<input id="owner" data="owner" type="hidden" class="asm-personchooser" value="" />',
                 '</td>',
                 '</tr>',
-                additional.additional_mandatory_fields(controller.additional),
+                additional.additional_new_fields(controller.additional),
                 '</table>',
                 '</td>',
                 '</tr>',
@@ -161,13 +161,15 @@ $(function() {
         },
 
         reset: function() {
+
+            $("#description, #reasonforwantingtopart, #comments").val("").change();
+
             // Set select box default values
             $("#species").val(config.str("AFDefaultSpecies"));
             $("#size").val(config.str("AFDefaultSize"));
             $("#urgency").val(config.str("WaitingListDefaultUrgency"));
 
             // Default dates
-            $(".asm-textbox, .asm-textarea, .asm-textareafixed").val("").change();
             $(".asm-checkbox").prop("checked", false).change();
             $(".asm-personchooser").personchooser("clear");
             $("#dateputon").val(format.date(new Date()));

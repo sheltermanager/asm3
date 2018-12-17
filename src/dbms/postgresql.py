@@ -87,6 +87,16 @@ class DatabasePostgreSQL(Database):
             "WHEN OTHERS THEN r_int = 0;\n" \
             "END;\n" \
             "$$")
+        self.execute_dbupdate(\
+            "CREATE OR REPLACE FUNCTION asm_to_float(p_float TEXT, OUT r_float REAL)\n" \
+            "LANGUAGE plpgsql\n" \
+            "AS $$\n" \
+            "BEGIN\n" \
+            "r_float = p_float::real;\n" \
+            "EXCEPTION\n" \
+            "WHEN OTHERS THEN r_float = 0.0;\n" \
+            "END;\n" \
+            "$$")
 
     def sql_cast(self, expr, newtype):
         """ Writes a database independent cast for expr to newtype """

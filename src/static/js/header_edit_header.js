@@ -13,7 +13,7 @@ $(function() {
 
     // The edit header object deals with the banners at the top of the animal,
     // person, waiting list and lost/found edit pages..
-    // it also has functions for person flags
+    // it also has functions for person and animal flags
     edit_header = {
 
         /**
@@ -104,6 +104,10 @@ $(function() {
             if (a.ADOPTIONCOORDINATORID) {
                 coordinator = '<tr><td>' + _("Adoption Coordinator") + ':</td><td><b>' + html.person_link(a.ADOPTIONCOORDINATORID, a.ADOPTIONCOORDINATORNAME) + '</b></td></tr>';
             }
+            var chipinfo = "";
+            if (a.IDENTICHIPPED == 1) {
+                chipinfo = '<tr><td>' + _("Microchip") + ':</td><td><b>' + a.IDENTICHIPNUMBER + " " + common.nulltostr(a.IDENTICHIP2NUMBER) + '</b></td></tr>';
+            }
             var first_column = [
                 '<input type="hidden" id="animalid" value="' + a.ID + '" />',
                 '<div class="asm-grid">',
@@ -130,6 +134,7 @@ $(function() {
                 '</tr>',
                 coordinator,
                 animalcontrol,
+                chipinfo,
                 '<tr>',
                 '<td id="hentshel">' + _("Entered shelter") + ':</td><td><b>' + format.date(a.MOSTRECENTENTRYDATE),
                 format.time(a.MOSTRECENTENTRYDATE) != "00:00:00" ? ' ' + format.time(a.MOSTRECENTENTRYDATE) : '',
@@ -483,6 +488,19 @@ $(function() {
             s.push("</ul>");
             s.push('<div id="asm-content">');
             return s.join("\n");
+        },
+
+        /**
+         * Looks up how many investigations, incidents and brought in by instances a person has. 
+         * This used to be part of get_person_query and in the record, but it slows things right down on
+         * larger datasets and was only needed during adoption/reserve.
+         * Accepts a person id and returns a promise for the data, which will be a person record
+         * with extra warning values for SURRENDER, INCIDENT and INVESTIGATION
+         * Eg: header_edit_header.person_with_adoption_warnings(20).then(function(rec) { alert("Person has " + rec.SURRENDER); })
+         */
+        person_with_adoption_warnings: function(personid) {
+            var formdata = "mode=personwarn&id=" + personid;
+            return common.ajax_post("person_embed", formdata); 
         },
 
         /**

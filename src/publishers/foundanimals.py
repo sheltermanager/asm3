@@ -32,8 +32,14 @@ class FoundAnimalsPublisher(FTPPublisher):
             self.setLastError("No FoundAnimals folder has been set.")
             self.cleanup()
             return
+        
+        email = configuration.foundanimals_email(self.dbo)
+        if email == "":
+            self.setLastError("No FoundAnimals group email has been set.")
+            self.cleanup()
+            return
 
-        animals = get_microchip_data(self.dbo, ["9", "0"], "foundanimals")
+        animals = get_microchip_data(self.dbo, ["9", "0"], "foundanimals", allowintake=True, organisation_email=email)
         if len(animals) == 0:
             self.setLastError("No animals found to publish.")
             self.cleanup(save_log=False)
@@ -85,6 +91,11 @@ class FoundAnimalsPublisher(FTPPublisher):
                     self.logError("Microchip length is not 9, 10 or 15, cannot process")
                     continue
 
+                servicedate = an["ACTIVEMOVEMENTDATE"] or an["MOSTRECENTENTRYDATE"]
+                if servicedate < self.dbo.today(offset=-365*3):
+                    self.logError("Service date is older than 3 years, ignoring")
+                    continue
+
                 # First Name
                 line.append("\"%s\"" % an["CURRENTOWNERFORENAMES"])
                 # Last Name
@@ -112,7 +123,7 @@ class FoundAnimalsPublisher(FTPPublisher):
                 # Microchip Number
                 line.append("\"%s\"" % an["IDENTICHIPNUMBER"])
                 # Service Date
-                line.append("\"%s\"" % i18n.format_date("%m/%d/%Y", an["ACTIVEMOVEMENTDATE"] or an["MOSTRECENTENTRYDATE"]))
+                line.append("\"%s\"" % i18n.format_date("%m/%d/%Y", servicedate))
                 # Date of Birth
                 line.append("\"%s\"" % i18n.format_date("%m/%d/%Y", an["DATEOFBIRTH"]))
                 # Species
@@ -130,7 +141,7 @@ class FoundAnimalsPublisher(FTPPublisher):
                 # Implanting Organization
                 line.append("\"%s\"" % org)
                 # Rescue Group Email
-                line.append("\"%s\"" % configuration.foundanimals_email(self.dbo))
+                line.append("\"%s\"" % email)
                 # Add to our CSV file
                 csv.append(",".join(line))
                 # Mark success in the log

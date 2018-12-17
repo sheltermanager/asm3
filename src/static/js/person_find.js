@@ -89,6 +89,14 @@ $(function() {
                 '</tr>',
                 '<tr>',
                 '<td>',
+                '<label for="phone">' + _("Phone contains") + '</label>',
+                '</td>',
+                '<td>',
+                '<input id="phone" data="phone" class="asm-textbox" />',
+                '</td>',
+                '</tr>',
+                '<tr>',
+                '<td>',
                 '<label for="jurisdiction">' + _("Jurisdiction") + '</label>',
                 '</td>',
                 '<td>',
@@ -181,7 +189,7 @@ $(function() {
             });
 
             // Load the person flag options
-            html.person_flag_options(null, controller.flags, $("#filter"), true);
+            html.person_flag_options(null, controller.flags, $("#filter"), true, true);
 
             $("label[for='gdpr']").toggle( config.bool("ShowGDPRContactOptIn") );
             $("#gdpr").closest("td").toggle( config.bool("ShowGDPRContactOptIn") );

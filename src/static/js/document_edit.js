@@ -7,11 +7,13 @@ $(function() {
     var ro_toolbar = "pdf print";
 
     // Set the containing div and textarea to the vertical 
-    // height of the viewport and a suitable printable width
+    // height of the viewport and 80% width
     var h = $(window).height(),
-        w = "775";
+        w = Math.floor(($(window).width() / 100.0) * 80.0);
+    // max-width is 775px
+    if (w > 775) { w = 775; }
     $("div").css({
-        height: h,
+        height: h - 160,
         width: w
     });
     $("#wp").css({
@@ -93,7 +95,7 @@ $(function() {
             // put it in a timer so that our command is added last to override everything else.
             setTimeout(function() {
                 ed.addCommand("mcePageBreak", function() {
-                    tinyMCE.execCommand("mceInsertContent", false, "<div class='mce-pagebreak' style='page-break-before: always; clear: both; border: 0'>&nbsp;</div>");
+                    tinyMCE.execCommand("mceInsertContent", false, "<div class='mce-pagebreak' style='page-break-before: always; clear: both;'>&nbsp;</div>");
                 });
             }, 1000);
 

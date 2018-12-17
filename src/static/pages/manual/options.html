@@ -13,6 +13,8 @@
 
   
   
+  
+  
 
   
 
@@ -22,28 +24,21 @@
 
   
 
-  
-  
-    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-  
-
-  
-
-  
-        <link rel="index" title="Index"
-              href="genindex.html"/>
-        <link rel="search" title="Search" href="search.html"/>
-    <link rel="top" title="ASM 41u documentation" href="index.html"/>
-        <link rel="next" title="Appendix: Frequently Asked Questions" href="faq.html"/>
-        <link rel="prev" title="Configuration" href="configuration.html"/> 
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Appendix: Frequently Asked Questions" href="faq.html" />
+    <link rel="prev" title="Configuration" href="configuration.html" /> 
 
   
   <script src="_static/js/modernizr.min.js"></script>
 
 </head>
 
-<body class="wy-body-for-nav" role="document">
+<body class="wy-body-for-nav">
 
+   
   <div class="wy-grid-for-nav">
 
     
@@ -84,7 +79,10 @@
           
             
             
-                <ul class="current">
+              
+            
+            
+              <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="foreword.html">Foreword</a></li>
 <li class="toctree-l1"><a class="reference internal" href="gettingstarted.html">Getting Started</a></li>
 <li class="toctree-l1"><a class="reference internal" href="searching.html">Search</a></li>
@@ -124,6 +122,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#find-animal-person">Find Animal/Person</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#home-page">Home page</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#lost-and-found">Lost and Found</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#medical">Medical</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#movements">Movements</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#quicklinks">Quicklinks</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#remove">Remove</a></li>
@@ -149,34 +148,54 @@
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
 
       
-      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
-        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-        <a href="index.html">ASM</a>
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">ASM</a>
+        
       </nav>
 
 
-      
       <div class="wy-nav-content">
+        
         <div class="rst-content">
+        
           
 
- 
+
+
+
+
+
+
+
+
+
+
+
 
 
 
 <div role="navigation" aria-label="breadcrumbs navigation">
+
   <ul class="wy-breadcrumbs">
-    <li><a href="index.html">Docs</a> &raquo;</li>
-      
-    <li>Options</li>
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Options</li>
+    
+    
       <li class="wy-breadcrumbs-aside">
         
-          
-            <a href="_sources/options.txt" rel="nofollow"> View page source</a>
+            
+            <a href="_sources/options.rst.txt" rel="nofollow"> View page source</a>
           
         
       </li>
+    
   </ul>
+
+  
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
@@ -216,7 +235,7 @@ adding payments to the system, if you have the create matching transactions
 option on as well as this one, a destination account dropdown will be shown
 on payment screens allowing you to override the deposit account that the
 donation will be applied to (the withdrawal account is always the donation
-type&#8217;s matching income account).</li>
+type’s matching income account).</li>
 <li>When receiving payments, allow a quantity and unit price to be set: When
 adding payments to the system, allow a quantity and unit price to be included
 for multiple item purchases/payments.</li>
@@ -242,7 +261,7 @@ not set one, ASM will use the first bank account on file.</li>
 payment transaction, it will use the payment type to find the income
 account to use. The destination account here denotes where the money will be
 moved to. If you do not set one, ASM will use the first bank account on file.</li>
-<li>Donations of type … are sent to ...: In addition to the default payment
+<li>Donations of type … are sent to …: In addition to the default payment
 destination account, you can specify optional mappings, so that when ASM
 receives a payment of a particular type, it uses the specified destination
 account for it when creating the matching accounting transaction.</li>
@@ -281,14 +300,14 @@ coordinator</li>
 <li>Show the transfer in field: Allow incoming transfers to be set</li>
 <li>Show the hold fields: Allow hold and hold until date to be set</li>
 <li>Warn if the animal is similar to one entered recently: Pop up a warning
-dialog if the animal&#8217;s name is the same as one entered recently to help
+dialog if the animal’s name is the same as one entered recently to help
 prevent possible duplicates.</li>
 </ul>
 </div>
 <div class="section" id="age-groups">
 <h2>Age Groups<a class="headerlink" href="#age-groups" title="Permalink to this headline">¶</a></h2>
 <p>It is possible to categorise your animals by their age in ASM. This is useful
-when generating adoption paperwork and you don&#8217;t have an exact date of birth
+when generating adoption paperwork and you don’t have an exact date of birth
 for the animal. Instead, ASM can specify one if its groups, using the AgeGroup
 wordkey (or animal.AgeGroup field in custom reports).</p>
 <p>This tab allows you to choose the threshold for each grouping, as well as the
@@ -306,19 +325,19 @@ conversation.</p>
 <p>The defaults are TYYYYNNN (the first letter of the animal type, followed by the
 year it was brought to the shelter, followed by a number unique within that
 year for that type of animal) for the normal code and NNT for the shortcode (a
-unique number within the year for the animal&#8217;s type, followed by the type).</p>
+unique number within the year for the animal’s type, followed by the type).</p>
 <p>You can build and use any format string you like, using the following tokens:</p>
 <ul class="simple">
 <li>YYYY - The year the animal was brought into the shelter (4 digits)</li>
 <li>YY - The year the animal was brought into the shelter (2 digits)</li>
 <li>MM - The month the animal was brought into the shelter</li>
 <li>DD - The day the animal was brought into the shelter</li>
-<li>E - The first letter of the animal&#8217;s entry category</li>
-<li>EE - The first and second letters of the animal&#8217;s entry category</li>
-<li>S - The first letter of the animal&#8217;s species</li>
-<li>SS - The first and second letters of the animal&#8217;s species</li>
-<li>T - The first letter of the animal&#8217;s type</li>
-<li>TT – The first and second letters of the animal&#8217;s type</li>
+<li>E - The first letter of the animal’s entry category</li>
+<li>EE - The first and second letters of the animal’s entry category</li>
+<li>S - The first letter of the animal’s species</li>
+<li>SS - The first and second letters of the animal’s species</li>
+<li>T - The first letter of the animal’s type</li>
+<li>TT – The first and second letters of the animal’s type</li>
 <li>UUUUUUUUUU - (10 digits) a unique number representing the animal (this number
 will never be used for another animal), padded to 10 digits. If the number
 overflows, more digits will be used.</li>
@@ -329,16 +348,16 @@ overflows, more digits will be used.</li>
 <li>XX - A number which is unique for all animals within the year, no padding is
 done.</li>
 <li>NNN - (3 digits) a number representing the animal, which is unique within the
-year brought in for the animal&#8217;s type and padded to 3 digits. If the number
+year brought in for the animal’s type and padded to 3 digits. If the number
 overflows, more digits will be used.</li>
 <li>NN - A number representing the animal, which is unique within the year
-brought in for the animal&#8217;s type. No padding is done.</li>
+brought in for the animal’s type. No padding is done.</li>
 </ul>
 <p>Here are some examples:</p>
 <ul class="simple">
 <li>YYYYMMDD-NNN-T (an ISO date, followed by a unique number/type within the
 year). Eg: 20080520-001-D</li>
-<li>TUUUUUUUUUU (the animal&#8217;s type, followed by a unique number for the animal) -
+<li>TUUUUUUUUUU (the animal’s type, followed by a unique number for the animal) -
 Eg: U0000003412</li>
 </ul>
 <p>If you change the coding formats when you already have animals on file using a
@@ -349,7 +368,7 @@ or other letters) will not be substituted and will be retained in generated
 codes. For example, the format NNN:21:T will produce 001:21:D for the first dog
 of the year.</p>
 <ul class="simple">
-<li>Manually enter codes (do not generate): This option tells ASM that you don&#8217;t
+<li>Manually enter codes (do not generate): This option tells ASM that you don’t
 want it to generate any codes. A code field will appear on the add animal
 screen and apart from enforcing that codes are unique, ASM will do nothing
 with the values entered by the user. Shortcodes can also be manually entered
@@ -361,7 +380,7 @@ option will make ASM hide the short shelter code field at the top left of the
 animal details screen. It does not stop ASM generating short codes behind the
 scenes, it just stops them being visible on the screen.</li>
 <li>Show codes on the shelter view screen: This option tells ASM to display the
-code with the animal&#8217;s name on the shelter view screen and animal links on
+code with the animal’s name on the shelter view screen and animal links on
 the home page.</li>
 <li>Once assigned, codes cannot be changed: Setting this option will make ASM
 lock the shelter code fields, as well as the type and brought in date once an
@@ -381,7 +400,7 @@ life and need to allow duplicate licenses as a result.</li>
 <div class="section" id="costs">
 <h2>Costs<a class="headerlink" href="#costs" title="Permalink to this headline">¶</a></h2>
 <p>The costs tab allows you to specify a default daily boarding cost for new
-animals (this value can be modified on the animal&#8217;s cost tab).</p>
+animals (this value can be modified on the animal’s cost tab).</p>
 <ul class="simple">
 <li>Create boarding cost record when animal is adopted: If set, then during
 adoption the total daily boarding cost for the animal will be converted to a
@@ -435,8 +454,8 @@ many years after its creation.</li>
 <blockquote>
 <div>system will show a contact opt-in field on person records. You can use it to
 specify which forms of communication a person prefers. When saving the
-record, if &#8220;Email&#8221; is not in the list of preferred communication methods, the
-&#8220;Exclude from bulk email&#8221; flag will automatically be set on the person&#8217;s
+record, if “Email” is not in the list of preferred communication methods, the
+“Exclude from bulk email” flag will automatically be set on the person’s
 record.</div></blockquote>
 <ul class="simple">
 <li>When I set a new GDPR Opt-In contact option, make a note of it in the log
@@ -458,30 +477,26 @@ no animal can be accidentally published.</li>
 <li>Exclude new animal photos from publishing: Setting this option will make
 any photos uploaded to the media tab not sent by the publishers or included
 in any websites. If an animal does not have any other photos, they will
-continue to have the &#8220;No photo available&#8221; picture until the picture is
+continue to have the “No photo available” picture until the picture is
 made available for publishing (by ticking the red cross to the lower right
 of it on the media tab). This allows new photos to be vetted before
 being sent to adoption sites or used anywhere.</li>
 <li>Prefill new media notes for animal images with animal comments if left blank:
 If no notes are given when adding images as media, ASM will default the
-animal&#8217;s comments field.</li>
+animal’s comments field.</li>
 <li>Prefill new media notes with the filename if left blank: If the media being
 added is not an image and the notes are blank, use the original filename as
 the notes.</li>
-<li>Include off-shelter animals in medical calendar and books: If ticked, animals
-with outstanding medical/vacc/tests that have left the shelter will be shown
-in medical books and the medical calendar.</li>
-<li>When entering vaccinations, default the last batch number and manufacturer
-for that type: If ticked, when entering a given vaccination, the batch number
-and manufacturer will be copied from the last vaccination on record of the
-vaccination type.</li>
+<li>When I mark an animal held, make a note of it in the log: If this option is on,
+a log record is created when you mark an animal held along with the hold
+until date.</li>
 <li>When I change the location of an animal, make a note of it in the log: If
-this option is on, a log record is created every time you change an animal&#8217;s
+this option is on, a log record is created every time you change an animal’s
 internal location with the new location so you can track the history of where
 the animal has moved within your shelter.</li>
 <li>When I change the weight of an animal, make a note of it in the log: If
-this option is on, a log record is created every time you change an animal&#8217;s
-weight so you can track the history of an animal&#8217;s wieght with reports and
+this option is on, a log record is created every time you change an animal’s
+weight so you can track the history of an animal’s wieght with reports and
 graphs.</li>
 </ul>
 </div>
@@ -490,7 +505,7 @@ graphs.</li>
 <p>The diary tab allows you to set whether you would like to see the complete
 diary on the home page, or just the diary notes for the current user. You can
 also set whether you would like diary notes emailed to each user every day –
-for this to work, you must have configured the system&#8217;s email in the email
+for this to work, you must have configured the system’s email in the email
 section of the screen and your users must have an email address set.</p>
 </div>
 <div class="section" id="display">
@@ -502,13 +517,16 @@ up the UI.</li>
 modern callout style tooltips in the interface.</li>
 <li>Use HTML5 client side image scaling: If your browser supports it, media will
 be scaled on your PC before being uploaded to the server to save time.</li>
-<li>Show a minimap of the address on person screens: Show an embedded map to the
-person&#8217;s address on the details screen.</li>
-<li>Show weight as lb rather than kg: Change the field label on the animal weight
-field to lb instead of the usual kg.</li>
 <li>Show animal thumbnails in movement and medical books: Show animal pictures in
 the rows of the movement and medical books (foster book, reservation book,
 vaccination book, etc.)</li>
+<li>Show a minimap of the address on person screens: Show an embedded map to the
+person’s address on the details screen.</li>
+<li>Show weight as lb rather than kg: Change the field label on the animal weight
+field to lb instead of the usual kg.</li>
+<li>Show complete comments in table views: When viewing comments or log notes in
+tables, show the complete text instead of truncating it to 80 characters and
+fitting the text onto one line.</li>
 <li>Keep table headers visible when scrolling: If selected, when scrolling down
 long tables their headers will float at the top of the screen to remind you
 of the column headings.</li>
@@ -540,7 +558,7 @@ donation books, the waiting list, etc. when showing person names, ASM can use
 different formats if you want surname first for sorting, etc.</li>
 <li>When displaying calendars, the first day of the week is: For date choosers
 and calendar view, select which day the week should start on. For the US
-and some Jewish cultures, it&#8217;s generally Sunday, for the rest of the world,
+and some Jewish cultures, it’s generally Sunday, for the rest of the world,
 Monday.</li>
 </ul>
 </div>
@@ -631,6 +649,23 @@ different kinds of matches used when generating the lost and found match
 report, as well as determine how many points are need for a match to be
 included.</p>
 </div>
+<div class="section" id="medical">
+<h2>Medical<a class="headerlink" href="#medical" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>Include off-shelter animals in medical calendar and books: If ticked, animals
+with outstanding medical/vacc/tests that have left the shelter will be shown
+in medical books and the medical calendar.</li>
+<li>When entering vaccinations, default the last batch number and manufacturer
+for that type: If ticked, when entering a given vaccination, the batch number
+and manufacturer will be copied from the last vaccination on record of the
+vaccination type.</li>
+<li>Send a weekly email to fosterers with medical information about their
+animals: If set, an email will be sent to all active fosterers containing
+info of overdue medications and medications that fall due in the coming week.
+The email is sent as part of the overnight batch if the day is the first of
+the week (Monday).</li>
+</ul>
+</div>
 <div class="section" id="movements">
 <h2>Movements<a class="headerlink" href="#movements" title="Permalink to this headline">¶</a></h2>
 <p>The movement tab allows a number of days to be set to automatically cancel
@@ -672,6 +707,10 @@ Adoptions” and “Expired Trial Adoptions” reports.</li>
 <li>Treat Trial Adoptions as shelter inventory: As with the Foster as inventory
 option, trial adoptions are still shown in the Shelter View and on shelter
 searches/reports.</li>
+<li>Warn when adopting an unaltered animal: If the animal has not been
+neutered/spayed, show a warning when trying to adopt it.</li>
+<li>Warn when adopting an animal who has not been microchipped: If the animal
+has not been microchipped, show a warning when trying to adopt it.</li>
 <li>Warn when adopting to a person who has not been homechecked: If the person
 record does not have them down as homechecked, the system can warn you if you
 try to adopt an animal to them.</li>
@@ -693,17 +732,17 @@ check based on name and address.</li>
 <h2>Quicklinks<a class="headerlink" href="#quicklinks" title="Permalink to this headline">¶</a></h2>
 <p>Quicklinks can be configured here and shown on the home page and optionally
 all screens (at the cost of some vertical space). Quicklinks allow you to
-quickly get to some of ASM&#8217;s screens without having to open the menus.</p>
+quickly get to some of ASM’s screens without having to open the menus.</p>
 </div>
 <div class="section" id="remove">
 <h2>Remove<a class="headerlink" href="#remove" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
 <li>Remove clinic functionality from screens and menus: If your shelter does
-not run a clinic, this option will disable the system&#8217;s clinic appointment
+not run a clinic, this option will disable the system’s clinic appointment
 and invoicing functionality from the medical menu and animal/person screens.</li>
 <li>Remove move menu and the movements tab from animal and person screens: If
 your shelter does not do adoptions and animals never leave, this option will
-disable the system&#8217;s movement functionality.</li>
+disable the system’s movement functionality.</li>
 <li>Remove retailer functionality from the movement screens and menus: Setting
 this option removes the retailer fields from the movement screens and
 retailer specific options from the menu.</li>
@@ -714,8 +753,8 @@ the online form screens from the menu.</li>
 <li>Remove the animal control functionality from menus: Setting this option
 removes the animal control screens from the menu.</li>
 <li>Remove fine-grained animal control incident permissions: Setting this option
-removes the &#8220;View Roles&#8221; control from the new incident and edit incident
-screens. The &#8220;View Roles&#8221; control allows a user to specify exactly which
+removes the “View Roles” control from the new incident and edit incident
+screens. The “View Roles” control allows a user to specify exactly which
 users can see the incident.</li>
 <li>Remove the rota functionality from menus: Setting this option removes
 the staff rota from the menu and person screens.</li>
@@ -734,53 +773,53 @@ complete address in the address box.</li>
 <li>Remove the insurance number field from the movement screens: Setting this
 option hides the insurance number field and button from <span class="menuselection">Move
 ‣ Adopt an animal</span> and all movement tabs/books.</li>
-<li>Remove the coat type field from the animal screen: If ticked, ASM won&#8217;t
+<li>Remove the coat type field from the animal screen: If ticked, ASM won’t
 display the coat type dropdown on the animal editing screen. For some
 shelters, keeping coat types is unnecessary (particularly for those that keep
 reptiles and birds!), so you can disable it here.</li>
-<li>Remove the microchip fields from the animal screen: If ticked, ASM won&#8217;t
+<li>Remove the microchip fields from the animal screen: If ticked, ASM won’t
 display the microchip indicator, number and date fields. For shelters that
-don&#8217;t keep microchipped animals (eg: Reptiles and birds).</li>
-<li>Remove the tattoo fields from the animal screen: If ticked, ASM won&#8217;t display
-the tattoo indicator, number and date fields. Useful for shelters that don&#8217;t
+don’t keep microchipped animals (eg: Reptiles and birds).</li>
+<li>Remove the tattoo fields from the animal screen: If ticked, ASM won’t display
+the tattoo indicator, number and date fields. Useful for shelters that don’t
 keep animals with ear tattoos.</li>
-<li>Remove the spay/neutered fields from the animal screen: If ticked, ASM won&#8217;t
+<li>Remove the spay/neutered fields from the animal screen: If ticked, ASM won’t
 display the neutered/spayed flag and date. Useful for shelters that keep
 animals that do not require neutering (small mammals, birds, reptiles,
 horses, etc).</li>
-<li>Remove the declawed field from the animal screen: If ticked, ASM won&#8217;t
-display the declawed flag. Useful for shelters that don&#8217;t keep cats, or for
+<li>Remove the declawed field from the animal screen: If ticked, ASM won’t
+display the declawed flag. Useful for shelters that don’t keep cats, or for
 countries where declawing is illegal (such as the UK).</li>
-<li>Remove the heartworm test fields from the animal screen: If ticked, ASM won&#8217;t
+<li>Remove the heartworm test fields from the animal screen: If ticked, ASM won’t
 display the heartworm test fields. Useful for shelters with animals that do
 not require heartworm tests.</li>
-<li>Remove the FIV/L test fields from the animal screen: If ticked, ASM won&#8217;t
+<li>Remove the FIV/L test fields from the animal screen: If ticked, ASM won’t
 display the Combi test or FIV/FLV test fields (depending on your locale).</li>
-<li>Remove the “Good With...” and Housetrained fields from the animal screen: If
-ticked, ASM won&#8217;t display the good with cats/dogs/children and housetrained
-fields. Useful for shelters that don&#8217;t keep cats and dogs.</li>
-<li>Remove the adoption fee field from the animal screen: If ticked, ASM won&#8217;t
+<li>Remove the “Good With…” and Housetrained fields from the animal screen: If
+ticked, ASM won’t display the good with cats/dogs/children and housetrained
+fields. Useful for shelters that don’t keep cats and dogs.</li>
+<li>Remove the adoption fee field from the animal screen: If ticked, ASM won’t
 show the adoption fee field on the animal details. If this option is not on
 and an animal has a fee set, it will override the donation amount in the
 <span class="menuselection">Move ‣ Adopt an animal</span> and <span class="menuselection">Move ‣
 Reserve an animal</span> screens.</li>
 <li>Remove the adoption coordinator field from the animal entry screeen: If ticked,
-ASM won&#8217;t show the adoption coordinator field on the entry slider. Adoption
+ASM won’t show the adoption coordinator field on the entry slider. Adoption
 coordinators are generally used by smaller, distributed rescues.</li>
 <li>Remove the Litter ID/Acceptance Number field from the animal screen: If
-ticked, ASM won&#8217;t display the Litter ID or Acceptance Number field at the top
+ticked, ASM won’t display the Litter ID or Acceptance Number field at the top
 of the details screen. If your shelter does not track litters, or is not a UK
 RSPCA shelter, you can turn this off and save some space on the screen.</li>
-<li>Remove the location unit field from animal details: If ticked, ASM won&#8217;t
+<li>Remove the location unit field from animal details: If ticked, ASM won’t
 display the location unit field (this is the cage or pen number if your
 shelter uses those).</li>
 <li>Remove the Bonded With fields from the entry details screen: If ticked, ASM
-won&#8217;t display the fields that allow an animal to be marked as bonded with
+won’t display the fields that allow an animal to be marked as bonded with
 other animals (bonding is particularly common with rescues that deal with
 rabbits and is the recommendation that pairs of animals are adopted
 together).</li>
 <li>Remove the picked up fields from the entry details screen: If ticked, ASM
-won&#8217;t display the fields that allow an animal to be marked as picked up in a
+won’t display the fields that allow an animal to be marked as picked up in a
 particular location or by an ACO (useful for shelters who do not have staff
 picking up animals).</li>
 </ul>
@@ -810,15 +849,16 @@ independent of how many dogs are on the shelter.</p>
 
 
            </div>
+           
           </div>
           <footer>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="faq.html" class="btn btn-neutral float-right" title="Appendix: Frequently Asked Questions" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="faq.html" class="btn btn-neutral float-right" title="Appendix: Frequently Asked Questions" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="configuration.html" class="btn btn-neutral" title="Configuration" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="configuration.html" class="btn btn-neutral" title="Configuration" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
@@ -827,11 +867,11 @@ independent of how many dogs are on the shelter.</p>
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2018, Sheltermanager, Ltd.
+        &copy; Copyright 2018, Sheltermanager, Ltd
 
     </p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
 
@@ -846,34 +886,33 @@ independent of how many dogs are on the shelter.</p>
 
   
 
-    <script type="text/javascript">
-        var DOCUMENTATION_OPTIONS = {
-            URL_ROOT:'./',
-            VERSION:'41u',
-            COLLAPSE_INDEX:false,
-            FILE_SUFFIX:'.html',
-            HAS_SOURCE:  true
-        };
-    </script>
-      <script type="text/javascript" src="_static/jquery.js"></script>
-      <script type="text/javascript" src="_static/underscore.js"></script>
-      <script type="text/javascript" src="_static/doctools.js"></script>
+    
+    
+      <script type="text/javascript">
+          var DOCUMENTATION_OPTIONS = {
+              URL_ROOT:'./',
+              VERSION:'41u',
+              LANGUAGE:'None',
+              COLLAPSE_INDEX:false,
+              FILE_SUFFIX:'.html',
+              HAS_SOURCE:  true,
+              SOURCELINK_SUFFIX: '.txt'
+          };
+      </script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+    
 
   
 
-  
-  
-    <script type="text/javascript" src="_static/js/theme.js"></script>
-  
+  <script type="text/javascript" src="_static/js/theme.js"></script>
 
-  
-  
   <script type="text/javascript">
       jQuery(function () {
-          SphinxRtdTheme.StickyNav.enable();
+          SphinxRtdTheme.Navigation.enable(true);
       });
-  </script>
-   
+  </script> 
 
 </body>
 </html>

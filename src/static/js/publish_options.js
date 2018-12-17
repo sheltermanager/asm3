@@ -11,12 +11,12 @@ $(function() {
                 '<li><a href="#tab-animalselection">' + _("Animal Selection") + '</a></li>',
                 '<li><a href="#tab-allpublishers">' + _("All Publishers") + '</a></li>',
                 '<li><a href="#tab-htmlftp">' + _("HTML/FTP Publisher") + '</a></li>',
-                '<li class="localeus"><a href="#tab-adoptapet">AdoptAPet Publisher</a></li>',
+                '<li class="localeus localemx"><a href="#tab-adoptapet">AdoptAPet Publisher</a></li>',
                 '<li><a href="#tab-helpinglostpets">HelpingLostPets Publisher</a></li>',
                 '<li class="localeus localeca localeau hasmaddiesfund"><a href="#tab-maddiesfund">Maddie\'s Fund Publisher</a></li>',
                 '<li class="localeus localeca localemx"><a href="#tab-petfinder">PetFinder Publisher</a></li>',
                 '<li class="localegb haspetslocated"><a href="#tab-petslocated">PetsLocated Publisher</a></li>',
-                // '<li class="localeau"><a href="#tab-petrescue">PetRescue Publisher</a></li>', // disabled due to lack of support
+                '<li class="localeau"><a href="#tab-petrescue">PetRescue Publisher</a></li>', 
                 '<li class="localeus"><a href="#tab-rescuegroups">RescueGroups Publisher</a></li>',
                 '<li class="localegb"><a href="#tab-pettrac">AVID UK Microchips</a></li>',
                 '<li class="localegb"><a href="#tab-anibase">Identibase UK Microchips</a></li>',
@@ -536,19 +536,34 @@ $(function() {
                 '<p><input id="enabledpr" type="checkbox" class="asm-checkbox enablecheck" /><label for="enabledpr">' + _("Enabled") + '</label></p>',
                 '<table>',
                 '<tr>',
-                '<td><label for="prftpuser">PetRescue account ID</label></td>',
-                '<td><input id="prftpuser" type="text" class="asm-textbox cfg" data="PetRescueFTPUser" /></td>',
+                '<td><label for="prtoken">PetRescue Token</label></td>',
+                '<td><input id="prtoken" type="text" class="asm-doubletextbox cfg" data="PetRescueToken" /></td>',
                 '</tr>',
                 '<tr>',
-                '<td><label for="prftppass">PetRescue password</label></td>',
-                '<td><input id="prftppass" type="text" class="asm-textbox cfg" data="PetRescueFTPPassword" /></td>',
+                '<td><label for="prdesex">Send all animals as desexed</label>',
+                '<span id="callout-prdesex" class="asm-callout">',
+                'PetRescue will not accept listings for non-desexed animals. Setting this to "Yes" will send all animals as if they are desexed.',
+                '</span>',
+                '</td>',
+                '<td><select id="prdesex" class="asm-selectbox cfg" data="PetRescueAllDesexed">',
+                '<option>No</option><option>Yes</option></select></td>',
                 '</tr>',
                 '<tr>',
-                '<td><label for="prregion">Send internal locations as region IDs</label></td>',
-                '<td><select id="prregion" class="asm-selectbox cfg" data="PetRescueLocationRegionID">',
-                '<option value="No">' + _("No") + '</option>',
-                '<option value="Yes">' + _("Yes") + '</option>',
-                '</select></td>',
+                '<td><label for="printerstate">Mark as interstate</label>',
+                '<span id="callout-printerstate" class="asm-callout">',
+                'Set to yes if you will fly adoptable animals to other states',
+                '</span>',
+                '</td>',
+                '<td><select id="printerstate" class="asm-selectbox cfg" data="PetRescueInterstate">',
+                '<option>No</option><option>Yes</option></select></td>',
+                '</tr>',
+                '<tr>',
+                '<td><label for="premail">Contact email</label>',
+                '<span id="callout-premail" class="asm-callout">',
+                'This is the contact email for PetRescue listings. If you do not set it, the option from Settings -&gt; Options -&gt; Email is used.',
+                '</span>',
+                '</td>',
+                '<td><input id="premail" type="text" class="asm-textbox cfg" data="PetRescueEmail" /></td>',
                 '</tr>',
                 '</table>',
                 '</div>'
@@ -824,7 +839,7 @@ $(function() {
                 this.render_petlink(),
                 this.render_htmlftp(),
                 this.render_petfinder(),
-                // this.render_petrescue(), // disabled due to lack of support
+                this.render_petrescue(), 
                 this.render_petslocated(),
                 this.render_rescuegroups(),
                 this.render_adoptapet(),
@@ -911,23 +926,14 @@ $(function() {
             var cfg_enabled = function() {
                 // Read the enable checkboxes and build a list of enabled publishers 
                 // for storing as a configuration option.
-                var ep = "";
-                if ($("#enabledhtml").is(":checked")) { ep += " html"; }
-                if ($("#enabledpf").is(":checked")) { ep += " pf"; }
-                if ($("#enabledabuk").is(":checked")) { ep += " abuk"; }
-                if ($("#enabledap").is(":checked")) { ep += " ap"; }
-                if ($("#enabledfa").is(":checked")) { ep += " fa"; }
-                if ($("#enabledrg").is(":checked")) { ep += " rg"; }
-                if ($("#enabledmf").is(":checked")) { ep += " mf"; }
-                if ($("#enabledmp").is(":checked")) { ep += " mp"; }
-                if ($("#enabledhlp").is(":checked")) { ep += " hlp"; }
-                if ($("#enabledpl").is(":checked")) { ep += " pl"; }
-                if ($("#enabledpcuk").is(":checked")) { ep += " pcuk"; }
-                if ($("#enabledpr").is(":checked")) { ep += " pr"; }
-                if ($("#enabledptuk").is(":checked")) { ep += " ptuk"; }
-                if ($("#enabledst").is(":checked")) { ep += " st"; }
-                if ($("#enabledve").is(":checked")) { ep += " ve"; }
-                return encodeURIComponent($.trim(ep));
+                var ep = [];
+                $(".enablecheck").each(function() {
+                    var c = $(this), k = c.attr("id").replace("enabled", "");
+                    // VetEnvoy has two publishers - enable them both if VetEnvoy is on
+                    if (c.is(":checked") && k == "ve") { ep.push("veha"); ep.push("vear"); }
+                    else if (c.is(":checked")) { ep.push(k); }
+                });
+                return encodeURIComponent(ep.join(" "));
             };
 
             // Disable publisher panels when the checkbox says they're disabled
@@ -1055,22 +1061,11 @@ $(function() {
                 });
             });
 
-            // Set enabled from enabled list
+            // Set enabled checkboxes from enabled publisher list
             var pe = config.str("PublishersEnabled");
-            if (pe.indexOf("html") != -1) { $("#enabledhtml").attr("checked", true); }
-            if (pe.indexOf("pf") != -1) { $("#enabledpf").attr("checked", true); }
-            if (pe.indexOf("ap") != -1) { $("#enabledap").attr("checked", true); }
-            if (pe.indexOf("fa") != -1) { $("#enabledfa").attr("checked", true); }
-            if (pe.indexOf("rg") != -1) { $("#enabledrg").attr("checked", true); }
-            if (pe.indexOf("mf") != -1) { $("#enabledmf").attr("checked", true); }
-            if (pe.indexOf("hlp") != -1) { $("#enabledhlp").attr("checked", true); }
-            if (pe.indexOf("pl") != -1) { $("#enabledpl").attr("checked", true); }
-            if (pe.indexOf("pcuk") != -1) { $("#enabledpcuk").attr("checked", true); }
-            if (pe.indexOf("pr") != -1) { $("#enabledpr").attr("checked", true); }
-            if (pe.indexOf("ptuk") != -1) { $("#enabledptuk").attr("checked", true); }
-            if (pe.indexOf("abuk") != -1) { $("#enabledabuk").attr("checked", true); }
-            if (pe.indexOf("st") != -1) { $("#enabledst").attr("checked", true); }
-            if (pe.indexOf("ve") != -1) { $("#enabledve").attr("checked", true); }
+            $.each(pe.split(" "), function(i, v) {
+                $("#enabled" + v).attr("checked", true);
+            });
 
             // Disable publisher fields for those not active
             change_checkbox();

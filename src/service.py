@@ -24,12 +24,11 @@ import onlineform
 import publishers.base
 import publishers.html
 import reports
-import smcom
 import users
 import utils
 from i18n import _
 from sitedefs import JQUERY_JS, JQUERY_UI_JS, MOMENT_JS, SIGNATURE_JS, TOUCHPUNCH_JS
-from sitedefs import BASE_URL, MULTIPLE_DATABASES, MULTIPLE_DATABASES_TYPE, CACHE_SERVICE_RESPONSES, IMAGE_HOTLINKING_ONLY_FROM_DOMAIN
+from sitedefs import BASE_URL, MULTIPLE_DATABASES, CACHE_SERVICE_RESPONSES, IMAGE_HOTLINKING_ONLY_FROM_DOMAIN
 
 # Service methods that require authentication
 AUTH_METHODS = [
@@ -194,6 +193,16 @@ def sign_document_page(dbo, mid):
     h.append("</body></html>")
     return "\n".join(h)
 
+def strip_personal_data(rows):
+    """ Removes any personal data from animal rows 
+        include_current: If False, strips CURRENTOWNER tokens (typically foster for shelter animals)
+    """
+    for r in rows:
+        for k in r.iterkeys():
+            if k.startswith("CURRENTOWNER") or k.startswith("ORIGINALOWNER") or k.startswith("BROUGHTINBY") or k.startswith("RESERVEDOWNER"):
+                r[k] = ""
+    return rows
+
 def handler(post, path, remoteip, referer, querystring):
     """ Handles the various service method types.
     post:        The GET/POST parameters
@@ -203,9 +212,6 @@ def handler(post, path, remoteip, referer, querystring):
     querystring: The complete querystring
     return value is a tuple containing MIME type, max-age, content
     """
-    # Database info
-    dbo = db.get_database()
-
     # Get service parameters
     account = post["account"]
     username = post["username"]
@@ -215,6 +221,7 @@ def handler(post, path, remoteip, referer, querystring):
     formid = post.integer("formid")
     seq = post.integer("seq")
     title = post["title"]
+    strip_personal = post.integer("sensitive") == 0
 
     cache_key = querystring.replace(" ", "")
 
@@ -228,19 +235,11 @@ def handler(post, path, remoteip, referer, querystring):
     if account == "" and MULTIPLE_DATABASES:
         return ("text/plain", 0, 0, "ERROR: No database/alias specified")
 
-    # Are we dealing with multiple databases and an account was specified?
-    if account != "":
-        if MULTIPLE_DATABASES:
-            if MULTIPLE_DATABASES_TYPE == "smcom":
-                # Is this sheltermanager.com? If so, we need to get the
-                # database connection info (dbo) before we can login.
-                dbo = smcom.get_database_info(account)
-            else:
-                # Look up the database info from our map
-                dbo  = db.get_multiple_database_info(account)
-            if dbo.database in ( "FAIL", "DISABLED", "WRONGSERVER" ):
-                al.error("auth failed - invalid smaccount %s from %s (%s)" % (account, remoteip, dbo.database), "service.handler", dbo)
-                return ("text/plain", 0, 0, "ERROR: Invalid database (%s)" % dbo.database)
+    dbo = db.get_database(account)
+
+    if dbo.database in ( "FAIL", "DISABLED", "WRONGSERVER" ):
+        al.error("auth failed - invalid smaccount %s from %s (%s)" % (account, remoteip, dbo.database), "service.handler", dbo)
+        return ("text/plain", 0, 0, "ERROR: Invalid database (%s)" % dbo.database)
 
     # If the database has disabled the service API, stop now
     if not configuration.service_enabled(dbo):
@@ -325,7 +324,7 @@ def handler(post, path, remoteip, referer, querystring):
     elif method == "html_adoptable_animals":
         return set_cached_response(cache_key, "text/html", 10800, 1800, \
             publishers.html.get_adoptable_animals(dbo, style=post["template"], \
-                speciesid=post.integer("speciesid"), animaltypeid=post.integer("animaltypeid")))
+                speciesid=post.integer("speciesid"), animaltypeid=post.integer("animaltypeid"), locationid=post.integer("locationid")))
 
     elif method == "html_adopted_animals":
         return set_cached_response(cache_key, "text/html", 10800, 1800, \
@@ -340,11 +339,13 @@ def handler(post, path, remoteip, referer, querystring):
     elif method == "json_adoptable_animals":
         users.check_permission_map(l, user["SUPERUSER"], securitymap, users.VIEW_ANIMAL)
         rs = publishers.base.get_animal_data(dbo, None, include_additional_fields = True)
+        if strip_personal: rs = strip_personal_data(rs)
         return set_cached_response(cache_key, "application/json", 3600, 3600, utils.json(rs))
 
     elif method == "jsonp_adoptable_animals":
         users.check_permission_map(l, user["SUPERUSER"], securitymap, users.VIEW_ANIMAL)
         rs = publishers.base.get_animal_data(dbo, None, include_additional_fields = True)
+        if strip_personal: rs = strip_personal_data(rs)
         return ("application/javascript", 0, 0, "%s(%s);" % (post["callback"], utils.json(rs)))
 
     elif method == "xml_adoptable_animal":
@@ -359,6 +360,7 @@ def handler(post, path, remoteip, referer, querystring):
     elif method == "xml_adoptable_animals":
         users.check_permission_map(l, user["SUPERUSER"], securitymap, users.VIEW_ANIMAL)
         rs = publishers.base.get_animal_data(dbo, None, include_additional_fields = True)
+        if strip_personal: rs = strip_personal_data(rs)
         return set_cached_response(cache_key, "application/xml", 3600, 3600, html.xml(rs))
 
     elif method == "json_found_animals":
@@ -439,16 +441,19 @@ def handler(post, path, remoteip, referer, querystring):
     elif method == "jsonp_shelter_animals":
         users.check_permission_map(l, user["SUPERUSER"], securitymap, users.VIEW_ANIMAL)
         sa = animal.get_shelter_animals(dbo)
+        if strip_personal: sa = strip_personal_data(sa)
         return ("application/javascript", 0, 0, "%s(%s);" % (post["callback"], utils.json(sa)))
 
     elif method == "json_shelter_animals":
         users.check_permission_map(l, user["SUPERUSER"], securitymap, users.VIEW_ANIMAL)
         sa = animal.get_shelter_animals(dbo)
+        if strip_personal: sa = strip_personal_data(sa)
         return set_cached_response(cache_key, "application/json", 3600, 3600, utils.json(sa))
 
     elif method == "xml_shelter_animals":
         users.check_permission_map(l, user["SUPERUSER"], securitymap, users.VIEW_ANIMAL)
         sa = animal.get_shelter_animals(dbo)
+        if strip_personal: sa = strip_personal_data(sa)
         return set_cached_response(cache_key, "application/xml", 3600, 3600, html.xml(sa))
 
     elif method == "rss_timeline":
@@ -468,7 +473,7 @@ def handler(post, path, remoteip, referer, querystring):
     elif method == "online_form_json":
         if formid == 0:
             raise utils.ASMError("method online_form_json requires a valid formid")
-        return set_cached_response(cache_key, "text/json; charset=utf-8", 30, 30, onlineform.get_onlineform_json(dbo, formid))
+        return set_cached_response(cache_key, "application/json; charset=utf-8", 30, 30, onlineform.get_onlineform_json(dbo, formid))
 
     elif method == "online_form_post":
         flood_protect("online_form_post", remoteip, 15)
@@ -485,6 +490,7 @@ def handler(post, path, remoteip, referer, querystring):
             return set_cached_response(cache_key, "text/html", 2, 2, sign_document_page(dbo, formid))
         else:
             media.sign_document(dbo, "service", formid, post["sig"], post["signdate"])
+            media.create_log(dbo, "service", formid, "ES02", _("Document signed", l))
             return ("text/plain", 0, 0, "OK")
 
     else:

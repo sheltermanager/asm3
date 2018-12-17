@@ -30,6 +30,7 @@ $(function() {
                         "dumpsqlasm2|" + _("SQL dump (ASM2 HSQLDB Format)"),
                         // ASM2_COMPATIBILITY
                         "animalcsv|" + _("CSV of animal/adopter data"), 
+                        "medicalcsv|" + _("CSV of animal/medical data"), 
                         "personcsv|" + _("CSV of person data"),
                         "incidentcsv|" + _("CSV of incident data"),
                         "licencecsv|" + _("CSV of license data"),
@@ -127,7 +128,7 @@ $(function() {
                             $("#sql-results").html(result);
                             $("#sql-results").table();
                             $("#sql-results").fadeIn();
-                            var norecs = String($("#sql-results tr").length - 1);
+                            var norecs = String($("#sql-results tr").length - 2);
                             header.show_info(_("{0} results.").replace("{0}", norecs));
                         }
                         else {

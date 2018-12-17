@@ -6,12 +6,13 @@ $(function() {
     var users = {
 
         model: function() {
-            // Add extra location filter options for fosters and trial adoptions
+            // Add extra location filter options
             controller.internallocations.push(
-                { ID: -2, LOCATIONNAME: _("Foster")},
-                { ID: -9, LOCATIONNAME: _("Non-shelter")},
-                { ID: -8, LOCATIONNAME: _("Retailer")},
-                { ID: -1, LOCATIONNAME: _("Adoption")}
+                { ID: -1, LOCATIONNAME: _("Adopted Animals")},
+                { ID: -2, LOCATIONNAME: _("Fostered Animals")},
+                { ID: -12, LOCATIONNAME: _("My Fosters")},
+                { ID: -9, LOCATIONNAME: _("Non-shelter Animals")},
+                { ID: -8, LOCATIONNAME: _("Retailer Animals")}
             );
 
             var dialog = {

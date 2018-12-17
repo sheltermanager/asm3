@@ -13,6 +13,8 @@
 
   
   
+  
+  
 
   
 
@@ -22,28 +24,21 @@
 
   
 
-  
-  
-    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-  
-
-  
-
-  
-        <link rel="index" title="Index"
-              href="genindex.html"/>
-        <link rel="search" title="Search" href="search.html"/>
-    <link rel="top" title="ASM 41u documentation" href="index.html"/>
-        <link rel="next" title="Appendix: Wordkeys" href="wordkeys.html"/>
-        <link rel="prev" title="Appendix: Integrating with Your Website" href="website.html"/> 
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Appendix: Wordkeys" href="wordkeys.html" />
+    <link rel="prev" title="Appendix: Integrating with Your Website" href="website.html" /> 
 
   
   <script src="_static/js/modernizr.min.js"></script>
 
 </head>
 
-<body class="wy-body-for-nav" role="document">
+<body class="wy-body-for-nav">
 
+   
   <div class="wy-grid-for-nav">
 
     
@@ -84,7 +79,10 @@
           
             
             
-                <ul class="current">
+              
+            
+            
+              <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="foreword.html">Foreword</a></li>
 <li class="toctree-l1"><a class="reference internal" href="gettingstarted.html">Getting Started</a></li>
 <li class="toctree-l1"><a class="reference internal" href="searching.html">Search</a></li>
@@ -127,34 +125,54 @@
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
 
       
-      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
-        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-        <a href="index.html">ASM</a>
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">ASM</a>
+        
       </nav>
 
 
-      
       <div class="wy-nav-content">
+        
         <div class="rst-content">
+        
           
 
- 
+
+
+
+
+
+
+
+
+
+
+
 
 
 
 <div role="navigation" aria-label="breadcrumbs navigation">
+
   <ul class="wy-breadcrumbs">
-    <li><a href="index.html">Docs</a> &raquo;</li>
-      
-    <li>Appendix: Online Form import fields</li>
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Appendix: Online Form import fields</li>
+    
+    
       <li class="wy-breadcrumbs-aside">
         
-          
-            <a href="_sources/onlineformfields.txt" rel="nofollow"> View page source</a>
+            
+            <a href="_sources/onlineformfields.rst.txt" rel="nofollow"> View page source</a>
           
         
       </li>
+    
   </ul>
+
+  
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
@@ -164,34 +182,35 @@
 <span id="onlineformfields"></span><h1>Appendix: Online Form import fields<a class="headerlink" href="#appendix-online-form-import-fields" title="Permalink to this headline">¶</a></h1>
 <p>ASM will recognise fields with the following names when receiving incoming
 online form submissions. These can be used to create person, lost animal, found
-animal and waiting list records as well as attach to existing animal records.</p>
+animal, incident and waiting list records as well as attach to existing
+animal records.</p>
 <dl class="docutils">
 <dt>title</dt>
-<dd>The person&#8217;s title, eg: Mr</dd>
+<dd>The person’s title, eg: Mr</dd>
 <dt>initials</dt>
-<dd>The person&#8217;s initials</dd>
+<dd>The person’s initials</dd>
 <dt>forenames / firstname</dt>
-<dd>The person&#8217;s first name</dd>
+<dd>The person’s first name</dd>
 <dt>surname / lastname</dt>
-<dd>The person&#8217;s last name</dd>
+<dd>The person’s last name</dd>
 <dt>address</dt>
-<dd>The person&#8217;s address</dd>
+<dd>The person’s address</dd>
 <dt>town / city</dt>
-<dd>The person&#8217;s town or city</dd>
+<dd>The person’s town or city</dd>
 <dt>county / state</dt>
-<dd>The person&#8217;s county or state</dd>
+<dd>The person’s county or state</dd>
 <dt>postcode / zipcode</dt>
-<dd>The person&#8217;s postcode or zipcode</dd>
+<dd>The person’s postcode or zipcode</dd>
 <dt>hometelephone</dt>
-<dd>The person&#8217;s home phone number</dd>
+<dd>The person’s home phone number</dd>
 <dt>worktelephone</dt>
-<dd>The person&#8217;s work phone number</dd>
+<dd>The person’s work phone number</dd>
 <dt>mobiletelephone / celltelephone</dt>
-<dd>The person&#8217;s mobile number</dd>
+<dd>The person’s mobile number</dd>
 <dt>emailaddress</dt>
-<dd>The person&#8217;s email address</dd>
+<dd>The person’s email address</dd>
 <dt>excludefrombulkemail</dt>
-<dd>If this field is supplied and not a blank or &#8220;No&#8221; in your language, the exclude from bulk email flag will be set for the created person</dd>
+<dd>If this field is supplied and not a blank or “No” in your language, the exclude from bulk email flag will be set for the created person</dd>
 <dt>description</dt>
 <dd>The description for the lost, found or waiting list animal</dd>
 <dt>reason</dt>
@@ -199,9 +218,9 @@ animal and waiting list records as well as attach to existing animal records.</p
 <dt>species</dt>
 <dd>The species of the animal. ASM will try and guess based on the text which one is meant. Use a lookup field to limit the choices to known items (or use the Species field type)</dd>
 <dt>breed</dt>
-<dd>The breed of the animal. ASM will try and guess one of it&#8217;s lookup values (or use the Breed field type to limit to them)</dd>
+<dd>The breed of the animal. ASM will try and guess one of it’s lookup values (or use the Breed field type to limit to them)</dd>
 <dt>agegroup</dt>
-<dd>The age group of the animal. Again, ASM will try and guess one if it&#8217;s internal values.</dd>
+<dd>The age group of the animal. Again, ASM will try and guess one if it’s internal values.</dd>
 <dt>color / colour</dt>
 <dd>The colour of the animal. ASM will try and guess a match (or use the Color field type to limit to them)</dd>
 <dt>arealost</dt>
@@ -213,21 +232,26 @@ animal and waiting list records as well as attach to existing animal records.</p
 <dt>animalname</dt>
 <dd>The name of an existing shelter animal to attach this form to if specified (use the adoptable/shelter animal field types to get a valid animal name from your form)</dd>
 <dt>reserveanimalname[x]</dt>
-<dd>The name of a shelter/adoptable animal to reserve to the imported person record. This is useful when creating adoption application forms to automatically tie the person to the animal they are interested in adopting. Unlike the other keys, you can add a numeric suffix to have multiple animals reserved by the imported person (eg: reserveanimalname1, reserveanimalname2...)</dd>
+<dd>The name of a shelter/adoptable animal to reserve to the imported person record. This is useful when creating adoption application forms to automatically tie the person to the animal they are interested in adopting. Unlike the other keys, you can add a numeric suffix to have multiple animals reserved by the imported person (eg: reserveanimalname1, reserveanimalname2…)</dd>
+<dt>callnotes</dt>
+<dd>When creating an incident, the incident notes</dd>
+<dt>dispatchaddress / dispatchcity / dispatchstate / dispatchzipcode</dt>
+<dd>The dispatch address for an incident</dd>
 </dl>
 </div>
 
 
            </div>
+           
           </div>
           <footer>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="wordkeys.html" class="btn btn-neutral float-right" title="Appendix: Wordkeys" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="wordkeys.html" class="btn btn-neutral float-right" title="Appendix: Wordkeys" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="website.html" class="btn btn-neutral" title="Appendix: Integrating with Your Website" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="website.html" class="btn btn-neutral" title="Appendix: Integrating with Your Website" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
@@ -236,11 +260,11 @@ animal and waiting list records as well as attach to existing animal records.</p
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2018, Sheltermanager, Ltd.
+        &copy; Copyright 2018, Sheltermanager, Ltd
 
     </p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
 
@@ -255,34 +279,33 @@ animal and waiting list records as well as attach to existing animal records.</p
 
   
 
-    <script type="text/javascript">
-        var DOCUMENTATION_OPTIONS = {
-            URL_ROOT:'./',
-            VERSION:'41u',
-            COLLAPSE_INDEX:false,
-            FILE_SUFFIX:'.html',
-            HAS_SOURCE:  true
-        };
-    </script>
-      <script type="text/javascript" src="_static/jquery.js"></script>
-      <script type="text/javascript" src="_static/underscore.js"></script>
-      <script type="text/javascript" src="_static/doctools.js"></script>
+    
+    
+      <script type="text/javascript">
+          var DOCUMENTATION_OPTIONS = {
+              URL_ROOT:'./',
+              VERSION:'41u',
+              LANGUAGE:'None',
+              COLLAPSE_INDEX:false,
+              FILE_SUFFIX:'.html',
+              HAS_SOURCE:  true,
+              SOURCELINK_SUFFIX: '.txt'
+          };
+      </script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+    
 
   
 
-  
-  
-    <script type="text/javascript" src="_static/js/theme.js"></script>
-  
+  <script type="text/javascript" src="_static/js/theme.js"></script>
 
-  
-  
   <script type="text/javascript">
       jQuery(function () {
-          SphinxRtdTheme.StickyNav.enable();
+          SphinxRtdTheme.Navigation.enable(true);
       });
-  </script>
-   
+  </script> 
 
 </body>
 </html>

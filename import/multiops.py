@@ -8,10 +8,11 @@ Import script for Multiple Options SQL Server databases exported to MDB and then
 7th September, 2015 - 8th Feb, 2018
 """
 
-PATH = "data/multiops_zz1094"
-START_ID = 50000
+PATH = "data/multiops_dm1807"
+START_ID = 500
+IMPORT_IMAGES = False
 ADOPT_LONGER_THAN_DAYS = 0 # All animals on shelter longer than this, auto adopt to unknown owner (default 365)
-DEFAULT_INTAKE_DATE = asm.getdate_yyyymmdd("2017/10/23")
+DEFAULT_INTAKE_DATE = asm.getdate_yyyymmdd("2017/12/31")
 
 owners = []
 ownerlicences = []
@@ -26,8 +27,8 @@ animalvaccinations = []
 ppa = {}
 ppo = {}
 ppac = {}
-addresses = {}
-addrlink = {}
+
+intakes = {} # map of tblAnimalsID -> tblAnimalIntakesDisposition row for speed processing large tblAnimals
 
 asm.setid("animal", START_ID)
 asm.setid("animalcontrol", START_ID)
@@ -69,6 +70,7 @@ uo.OwnerSurname = "Unknown Owner"
 uo.OwnerName = uo.OwnerSurname
 
 # Load up data files
+asm.stderr("Load data files")
 canimaldispo = asm.csv_to_list("%s/sysAnimalDispositionChoices.csv" % PATH)
 canimalrectypes = asm.csv_to_list("%s/sysAnimalReceivedTypes.csv" % PATH)
 canimalstatuses = asm.csv_to_list("%s/sysAnimalStatusChoices.csv" % PATH)
@@ -83,7 +85,8 @@ cadoptions = asm.csv_to_list("%s/tblAdoptions.csv" % PATH)
 canimalguardians = asm.csv_to_list("%s/tblAnimalGuardians.csv" % PATH)
 canimals = asm.csv_to_list("%s/tblAnimals.csv" % PATH)
 canimalids = asm.csv_to_list("%s/tblAnimalIDs.csv" % PATH)
-canimalimages = asm.csv_to_list("%s/tblAnimalImages.csv" % PATH)
+canimalimages = []
+if IMPORT_IMAGES: canimalimages = asm.csv_to_list("%s/tblAnimalImages.csv" % PATH)
 canimalintakes = asm.csv_to_list("%s/tblAnimalIntakesDispositions.csv" % PATH)
 canimalsnotes = asm.csv_to_list("%s/tblAnimalsNotes.csv" % PATH)
 ccomplaints = asm.csv_to_list("%s/tblComplaints.csv" % PATH)
@@ -101,6 +104,7 @@ crabies = asm.csv_to_list("%s/tblRabiesCertificates.csv" % PATH)
 cvaccinations = asm.csv_to_list("%s/tblVaccinations.csv" % PATH)
 
 # people
+asm.stderr("Process people")
 for row in cpersons:
     o = asm.Owner()
     owners.append(o)
@@ -115,6 +119,7 @@ for row in cpersons:
     o.ExcludeFromBulkEmail = row["DoNotSolicitContact"] == "-1" and 1 or 0
 
 # addresses
+asm.stderr("Process addresses")
 for row in cpersonsaddresses:
     if ppo.has_key(row["tblKnownPersonsID"]):
         o = ppo[row["tblKnownPersonsID"]]
@@ -126,6 +131,7 @@ for row in cpersonsaddresses:
             o.LatLong = row["Latitude"] + "," + row["Longitude"], ","
 
 # phone numbers
+asm.stderr("Process phone numbers")
 for row in cpersonsphone:
     if ppo.has_key(row["tblKnownPersonsID"]):
         o = ppo[row["tblKnownPersonsID"]]
@@ -137,6 +143,7 @@ for row in cpersonsphone:
             o.MobileTelephone = row["Telephone"]
 
 # ids
+asm.stderr("Process person ID numbers")
 for row in cpersonsids:
     # TODO: 1 == Driver's licence - user specific
     if row["sysKnownPersonsIDTypesID"] == "1":
@@ -144,7 +151,12 @@ for row in cpersonsids:
             o = ppo[row["tblKnownPersonsID"]]
             asm.additional_field("DriversLicense", 1, o.ID, row["Code"])
 
+# build intakes map
+for row in canimalintakes:
+    if row["tblAnimalsID"] not in intakes: intakes[row["tblAnimalsID"]] = row
+
 # animals
+asm.stderr("Process animals")
 for row in canimals:
     if row["PrimaryIDString"] == "": continue
     a = asm.Animal()
@@ -157,7 +169,8 @@ for row in canimals:
     if a.AnimalName.strip() == "":
         a.AnimalName = "(unknown)"
     a.DateBroughtIn = DEFAULT_INTAKE_DATE
-    irow = asm.find_row(canimalintakes, "tblAnimalsID", row["tblAnimalsID"])
+    irow = None
+    if row["tblAnimalsID"] in intakes: irow = intakes[row["tblAnimalsID"]]
     if irow is not None and asm.getdate_mmddyy(irow["DateReceived"]) is not None:
         a.DateBroughtIn = asm.getdate_mmddyy(irow["DateReceived"])
     a.DateOfBirth = asm.getdate_mmddyy(row["DateOfBirth"])
@@ -239,12 +252,14 @@ for row in canimals:
     a.Archived = 1
 
 # Read and store images
+asm.stderr("Process images")
 for row in canimalimages:
     if not ppa.has_key(row["tblAnimalsID"]): continue
     a = ppa[row["tblAnimalsID"]]
     asm.animal_image(a.ID, asm.load_image_from_file("%s/images/%s" % (PATH, row["ImageFilename"])))
 
 # microchips, animal codes and document ids
+asm.stderr("Process animal ID numbers")
 for row in canimalids:
     if not ppa.has_key(row["tblAnimalsID"]): continue
     a = ppa[row["tblAnimalsID"]]
@@ -262,6 +277,7 @@ for row in canimalids:
         a.ShortCode = row["Code"]
 
 # animal intake/disposition list
+asm.stderr("Process intakes and dispositions")
 for row in canimalintakes:
     disposition = asm.find_value(canimaldispo, "sysAnimalDispositionChoicesID", row["sysAnimalDispositionChoicesID"], "Disposition")
     ddate = asm.getdate_mmddyy(row["DispositionDate"])
@@ -348,6 +364,7 @@ for row in canimalintakes:
         movements.append(m)
 
 # adoption list
+asm.stderr("Process adoptions")
 for row in cadoptions:
     if not ppa.has_key(row["tblAnimalsID"]) or not ppo.has_key(row["tblKnownPersonsID"]): continue
     a = ppa[row["tblAnimalsID"]]
@@ -365,6 +382,7 @@ for row in cadoptions:
     movements.append(m)
 
 # foster list
+asm.stderr("Process fosters")
 for row in canimalguardians:
     if not ppa.has_key(row["tblAnimalsID"]) or not ppo.has_key(row["tblKnownPersonsID"]): continue
     a = ppa[row["tblAnimalsID"]]
@@ -392,6 +410,7 @@ for row in canimalguardians:
     movements.append(m)
 
 # vaccinations
+asm.stderr("Process vaccinations")
 for row in cvaccinations:
     if not ppa.has_key(row["tblAnimalsID"]): continue
     a = ppa[row["tblAnimalsID"]]
@@ -413,6 +432,7 @@ for row in cvaccinations:
             av.DateRequired = a.DateBroughtIn
 
 # rabies certs
+asm.stderr("Process rabies certs")
 for row in crabies:
     if not ppa.has_key(row["tblAnimalsID"]): continue
     if asm.getdate_mmddyy(row["RabiesVaccinationDate"]) is None: continue
@@ -430,6 +450,7 @@ for row in crabies:
     av.BatchNumber = "%s %s" % (row["RabiesVaccinationLotNumber"], asm.fw(row["RabiesVaccinationLotExpiration"]))
 
 # medical history
+asm.stderr("Process medical history")
 for row in cmedicalhistory:
     if not ppa.has_key(row["tblAnimalsID"]): continue
     a = ppa[row["tblAnimalsID"]]
@@ -444,6 +465,7 @@ for row in cmedicalhistory:
         animalmedicals.append(asm.animal_regimen_single(a.ID, sdate, tname, "", row["Note"]))
 
 # animal notes
+asm.stderr("Process animal notes")
 for row in canimalsnotes:
     if not ppa.has_key(row["tblAnimalsID"]): continue
     a = ppa[row["tblAnimalsID"]]
@@ -458,6 +480,7 @@ for row in canimalsnotes:
     l.Comments = row["Note"]
 
 # person notes
+asm.stderr("Process person notes")
 for row in cpersonsnotes:
     if not ppo.has_key(row["tblKnownPersonsID"]): continue
     a = ppo[row["tblKnownPersonsID"]]
@@ -469,6 +492,7 @@ for row in cpersonsnotes:
     l.Date = asm.now()
     l.Comments = row["Note"]
 
+asm.stderr("Process complaints")
 for row in ccomplaints:
     ac = asm.AnimalControl()
     ppac[row["tblComplaintsID"]] = ac 
@@ -492,6 +516,7 @@ for row in ccomplaints:
     comments += "\nMO ID: %s" % row["tblComplaintsID"]
     ac.CallNotes = comments
 
+asm.stderr("Process animals linked to complaints")
 for row in ccomplaintsanimals:
     if not ppac.has_key(row["tblComplaintsID"]): continue
     ac = ppac[row["tblComplaintsID"]]
@@ -500,6 +525,7 @@ for row in ccomplaintsanimals:
     animalcontrolanimals.append("DELETE FROM animalcontrolanimal WHERE AnimalControlID = %s AND AnimalID = %s;" % (ac.ID, a.ID))
     animalcontrolanimals.append("INSERT INTO animalcontrolanimal (AnimalControlID, AnimalID) VALUES (%s, %s);" % (ac.ID, a.ID))
 
+asm.stderr("Process people linked to complaints")
 for row in ccomplaintspeople:
     if not ppo.has_key(row["tblKnownPersonsID"]): continue
     o = ppo[row["tblKnownPersonsID"]]
@@ -512,6 +538,7 @@ for row in ccomplaintspeople:
     elif itype == "2" or itype == "5": ac.OwnerID = o.ID # Animal Owner or Suspect
     elif itype == "4": ac.VictimID = o.ID # Victim
 
+asm.stderr("Process complaint notes")
 for row in ccomplaintsnotes:
     if not ppac.has_key(row["tblComplaintsID"]): continue
     a = ppac[row["tblComplaintsID"]]

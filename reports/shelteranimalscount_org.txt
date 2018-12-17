@@ -452,7 +452,7 @@ AND NonShelterAnimal = 0) AS JuniorCatReturnToField,
 
 (SELECT COUNT(*) FROM animal
 INNER JOIN adoption ON animal.ID = adoption.AnimalID 
-WHERE MovementType IN (4, 6, 7)
+WHERE MovementType IN (4, 6)
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID = 1
 AND DateOfBirth < MovementDate - INTERVAL '5 months' 
@@ -460,7 +460,7 @@ AND NonShelterAnimal = 0) AS AdultDogOtherLive,
 
 (SELECT COUNT(*) FROM animal
 INNER JOIN adoption ON animal.ID = adoption.AnimalID 
-WHERE MovementType IN (4, 6, 7)
+WHERE MovementType IN (4, 6)
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID = 1
 AND DateOfBirth >= MovementDate - INTERVAL '5 months' 
@@ -468,7 +468,7 @@ AND NonShelterAnimal = 0) AS JuniorDogOtherLive,
 
 (SELECT COUNT(*) FROM animal
 INNER JOIN adoption ON animal.ID = adoption.AnimalID 
-WHERE MovementType IN (4, 6, 7)
+WHERE MovementType IN (4, 6)
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID = 2
 AND DateOfBirth < MovementDate - INTERVAL '5 months' 
@@ -476,7 +476,7 @@ AND NonShelterAnimal = 0) AS AdultCatOtherLive,
 
 (SELECT COUNT(*) FROM animal
 INNER JOIN adoption ON animal.ID = adoption.AnimalID 
-WHERE MovementType IN (4, 6, 7)
+WHERE MovementType IN (4, 6)
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID = 2
 AND DateOfBirth >= MovementDate - INTERVAL '5 months' 
@@ -949,4 +949,643 @@ BODY$$
 $$FOOTER
 </table>
 FOOTER$$
+&&&
+shelteranimalscount.org monthly CSV export
+###
+Figures
+###
+33600/PostgreSQL
+###
+When run from Export Reports as CSV, produces a file containing one month of data for importing into shelteranimalscount.org
+###
+en
+###
+$VAR from DATE Month starting on$
+$VAR to DATE ending on$
 
+-- requires that you have a Stray entry category for strays
+
+SELECT 
+
+(SELECT ItemValue FROM configuration WHERE ItemName = 'Organisation') AS "Organization / Location Info",
+replace('$@from$', '-', '/') || ' to ' || replace('$@to$', '-', '/') AS "Report Date Range",
+to_char(current_date, 'MM/DD/YYYY') AS "Report Run Date",
+extract(YEAR FROM DATE '$@from$') AS "Record Year",
+extract(MONTH FROM DATE '$@from$') AS "Record Month",
+
+(SELECT COUNT(*) FROM animal
+INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
+WHERE ReasonName LIKE '%Stray%' AND IsTransfer = 0
+AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
+AND SpeciesID = 1
+AND DateOfBirth < DateBroughtIn - INTERVAL '5 months' 
+AND NonShelterAnimal = 0) AS "Stray At Large Canine Adult",
+
+(SELECT COUNT(*) FROM animal 
+INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
+WHERE ReasonName LIKE '%Stray%' AND IsTransfer = 0
+AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
+AND SpeciesID = 1
+AND DateOfBirth >= DateBroughtIn - INTERVAL '5 months' 
+AND NonShelterAnimal = 0) AS "Stray At Large Canine Up To 5 Months",
+
+0 AS "Stray At Large Canine Age Unknown",
+
+(SELECT COUNT(*) FROM animal
+INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
+WHERE ReasonName LIKE '%Stray%' AND IsTransfer = 0
+AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
+AND SpeciesID = 2
+AND DateOfBirth < DateBroughtIn - INTERVAL '5 months' 
+AND NonShelterAnimal = 0) AS "Stray At Large Feline Adult",
+
+(SELECT COUNT(*) FROM animal 
+INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
+WHERE ReasonName LIKE '%Stray%' AND IsTransfer = 0
+AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
+AND SpeciesID = 2
+AND DateOfBirth >= DateBroughtIn - INTERVAL '5 months' 
+AND NonShelterAnimal = 0) AS "Stray At Large Feline Up To 5 Months",
+
+0 AS "Stray At Large Feline Age Unknown", 
+
+
+
+
+(SELECT COUNT(*) FROM animal
+INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
+WHERE OriginalOwnerID > 0 AND ReasonName NOT LIKE '%Stray%' AND IsTransfer = 0
+AND AsilomarOwnerRequestedEuthanasia = 0
+AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
+AND SpeciesID = 1
+AND DateOfBirth < DateBroughtIn - INTERVAL '5 months' 
+AND NonShelterAnimal = 0) + 
+(SELECT COUNT(*) FROM animal
+INNER JOIN adoption ON animal.ID = adoption.AnimalID 
+WHERE MovementType NOT IN (2,8)
+AND ReturnDate >= '$@from$' AND ReturnDate <= '$@to$' 
+AND SpeciesID = 1
+AND DateOfBirth < ReturnDate - INTERVAL '5 months' 
+AND NonShelterAnimal = 0)
+AS "Relinquished By Owner Canine Adult",
+
+(SELECT COUNT(*) FROM animal 
+INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
+WHERE OriginalOwnerID > 0 AND ReasonName NOT LIKE '%Stray%' AND IsTransfer = 0
+AND AsilomarOwnerRequestedEuthanasia = 0
+AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
+AND SpeciesID = 1
+AND DateOfBirth >= DateBroughtIn - INTERVAL '5 months' 
+AND NonShelterAnimal = 0) +
+(SELECT COUNT(*) FROM animal
+INNER JOIN adoption ON animal.ID = adoption.AnimalID 
+WHERE MovementType NOT IN (2,8)
+AND ReturnDate >= '$@from$' AND ReturnDate <= '$@to$' 
+AND SpeciesID = 1
+AND DateOfBirth >= ReturnDate - INTERVAL '5 months' 
+AND NonShelterAnimal = 0)
+AS "Relinquished By Owner Canine Up To 5 Months",
+
+0 AS "Relinquished By Owner Canine Age Unknown", 
+
+(SELECT COUNT(*) FROM animal
+INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
+WHERE OriginalOwnerID > 0 AND ReasonName NOT LIKE '%Stray%' AND IsTransfer = 0
+AND AsilomarOwnerRequestedEuthanasia = 0
+AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
+AND SpeciesID = 2
+AND DateOfBirth < DateBroughtIn - INTERVAL '5 months' 
+AND NonShelterAnimal = 0) + 
+(SELECT COUNT(*) FROM animal
+INNER JOIN adoption ON animal.ID = adoption.AnimalID 
+WHERE MovementType NOT IN (2,8)
+AND ReturnDate >= '$@from$' AND ReturnDate <= '$@to$' 
+AND SpeciesID = 2
+AND DateOfBirth < ReturnDate - INTERVAL '5 months' 
+AND NonShelterAnimal = 0)
+AS "Relinquished By Owner Feline Adult",
+
+(SELECT COUNT(*) FROM animal 
+INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
+WHERE OriginalOwnerID > 0 AND ReasonName NOT LIKE '%Stray%' AND IsTransfer = 0
+AND AsilomarOwnerRequestedEuthanasia = 0
+AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
+AND SpeciesID = 2
+AND DateOfBirth >= DateBroughtIn - INTERVAL '5 months' 
+AND NonShelterAnimal = 0) +
+(SELECT COUNT(*) FROM animal
+INNER JOIN adoption ON animal.ID = adoption.AnimalID 
+WHERE MovementType NOT IN (2,8)
+AND ReturnDate >= '$@from$' AND ReturnDate <= '$@to$' 
+AND SpeciesID = 2
+AND DateOfBirth >= ReturnDate - INTERVAL '5 months' 
+AND NonShelterAnimal = 0) 
+AS "Relinquished By Owner Feline Up To 5 Months",
+
+0 AS "Relinquished By Owner Feline Age Unknown",
+
+
+
+
+(SELECT COUNT(*) FROM animal
+INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
+WHERE OriginalOwnerID > 0 AND IsTransfer = 0
+AND AsilomarOwnerRequestedEuthanasia = 1
+AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
+AND SpeciesID = 1
+AND DateOfBirth < DateBroughtIn - INTERVAL '5 months' 
+AND NonShelterAnimal = 0) AS "Intake Owner-Intended Euthanasia Canine Adult",
+
+(SELECT COUNT(*) FROM animal 
+INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
+WHERE OriginalOwnerID > 0 AND IsTransfer = 0
+AND AsilomarOwnerRequestedEuthanasia = 1
+AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
+AND SpeciesID = 1
+AND DateOfBirth >= DateBroughtIn - INTERVAL '5 months' 
+AND NonShelterAnimal = 0) AS "Intake Owner-Intended Euthanasia Canine Up To 5 Months",
+
+0 AS "Intake Owner-Intended Euthanasia Canine Age Unknown",
+
+(SELECT COUNT(*) FROM animal
+INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
+WHERE OriginalOwnerID > 0 AND IsTransfer = 0
+AND AsilomarOwnerRequestedEuthanasia = 1
+AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
+AND SpeciesID = 2
+AND DateOfBirth < DateBroughtIn - INTERVAL '5 months' 
+AND NonShelterAnimal = 0) AS "Intake Owner-Intended Euthanasia Feline Adult",
+
+(SELECT COUNT(*) FROM animal 
+INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
+WHERE OriginalOwnerID > 0 AND IsTransfer = 0
+AND AsilomarOwnerRequestedEuthanasia = 1
+AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
+AND SpeciesID = 2
+AND DateOfBirth >= DateBroughtIn - INTERVAL '5 months' 
+AND NonShelterAnimal = 0) AS "Intake Owner-Intended Euthanasia Feline Up To 5 Months",
+
+0 AS "Intake Owner-Intended Euthanasia Feline Age Unknown", 
+
+
+
+
+
+(SELECT COUNT(*) FROM animal
+INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
+WHERE IsTransfer = 1
+AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
+AND SpeciesID = 1
+AND DateOfBirth < DateBroughtIn - INTERVAL '5 months'
+AND NonShelterAnimal = 0) AS "Transferred In From Agency Canine Adult",
+
+(SELECT COUNT(*) FROM animal 
+INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
+WHERE IsTransfer = 1
+AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
+AND SpeciesID = 1
+AND DateOfBirth >= DateBroughtIn - INTERVAL '5 months' 
+AND NonShelterAnimal = 0) AS "Transferred In From Agency Canine Up To 5 Months",
+
+0 AS "Transferred In From Agency Canine Age Unknown", 
+
+(SELECT COUNT(*) FROM animal
+INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
+WHERE IsTransfer = 1
+AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
+AND SpeciesID = 2
+AND DateOfBirth < DateBroughtIn - INTERVAL '5 months' 
+AND NonShelterAnimal = 0) AS "Transferred In From Agency Feline Adult",
+
+(SELECT COUNT(*) FROM animal 
+INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
+WHERE IsTransfer = 1
+AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
+AND SpeciesID = 2
+AND DateOfBirth >= DateBroughtIn - INTERVAL '5 months' 
+AND NonShelterAnimal = 0) AS "Transferred In From Agency Feline Up To 5 Months",
+
+0 AS "Transferred In From Agency Feline Age Unknown", 
+
+
+
+
+(SELECT COUNT(*) FROM animal
+INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
+WHERE OriginalOwnerID = 0 AND IsTransfer = 0 AND ReasonName NOT LIKE '%Stray%'
+AND AsilomarOwnerRequestedEuthanasia = 0
+AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
+AND SpeciesID = 1
+AND DateOfBirth < DateBroughtIn - INTERVAL '5 months' 
+AND NonShelterAnimal = 0) AS "Other Intakes Canine Adult",
+
+(SELECT COUNT(*) FROM animal 
+INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
+WHERE OriginalOwnerID = 0 AND IsTransfer = 0 AND ReasonName NOT LIKE '%Stray%'
+AND AsilomarOwnerRequestedEuthanasia = 0
+AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
+AND SpeciesID = 1
+AND DateOfBirth >= DateBroughtIn - INTERVAL '5 months' 
+AND NonShelterAnimal = 0) AS "Other Intakes Canine Up To 5 Months",
+
+0 AS "Other Intakes Canine Age Unknown", 
+
+(SELECT COUNT(*) FROM animal
+INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
+WHERE OriginalOwnerID = 0 AND IsTransfer = 0 AND ReasonName NOT LIKE '%Stray%'
+AND AsilomarOwnerRequestedEuthanasia = 0
+AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
+AND SpeciesID = 2
+AND DateOfBirth < DateBroughtIn - INTERVAL '5 months' 
+AND NonShelterAnimal = 0) AS "Other Intakes Feline Adult",
+
+(SELECT COUNT(*) FROM animal 
+INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
+WHERE OriginalOwnerID = 0 AND IsTransfer = 0 AND ReasonName NOT LIKE '%Stray%'
+AND AsilomarOwnerRequestedEuthanasia = 0
+AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
+AND SpeciesID = 2
+AND DateOfBirth >= DateBroughtIn - INTERVAL '5 months' 
+AND NonShelterAnimal = 0) AS "Other Intakes Feline Up To 5 Months",
+
+0 AS "Other Intakes Feline Age Unknown", 
+
+
+
+
+(SELECT COUNT(*) FROM animal
+INNER JOIN adoption ON animal.ID = adoption.AnimalID 
+WHERE MovementType = 1
+AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
+AND SpeciesID = 1
+AND DateOfBirth < MovementDate - INTERVAL '5 months' 
+AND NonShelterAnimal = 0) AS "Adoption Canine Adult",
+
+(SELECT COUNT(*) FROM animal
+INNER JOIN adoption ON animal.ID = adoption.AnimalID 
+WHERE MovementType = 1
+AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
+AND SpeciesID = 1
+AND DateOfBirth >= MovementDate - INTERVAL '5 months' 
+AND NonShelterAnimal = 0) AS "Adoption Canine Up To 5 Months",
+
+0 AS "Adoption Canine Age Unknown", 
+
+(SELECT COUNT(*) FROM animal
+INNER JOIN adoption ON animal.ID = adoption.AnimalID 
+WHERE MovementType = 1
+AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
+AND SpeciesID = 2
+AND DateOfBirth < MovementDate - INTERVAL '5 months' 
+AND NonShelterAnimal = 0) AS "Adoption Feline Adult",
+
+(SELECT COUNT(*) FROM animal
+INNER JOIN adoption ON animal.ID = adoption.AnimalID 
+WHERE MovementType = 1
+AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
+AND SpeciesID = 2
+AND DateOfBirth >= MovementDate - INTERVAL '5 months' 
+AND NonShelterAnimal = 0) AS "Adoption Feline Up To 5 Months",
+
+0 AS "Adoption Feline Age Unknown", 
+
+
+
+
+
+(SELECT COUNT(*) FROM animal
+INNER JOIN adoption ON animal.ID = adoption.AnimalID 
+WHERE MovementType = 5
+AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
+AND SpeciesID = 1
+AND DateOfBirth < MovementDate - INTERVAL '5 months' 
+AND NonShelterAnimal = 0) AS "Returned To Owner Canine Adult",
+
+(SELECT COUNT(*) FROM animal
+INNER JOIN adoption ON animal.ID = adoption.AnimalID 
+WHERE MovementType = 5
+AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
+AND SpeciesID = 1
+AND DateOfBirth >= MovementDate - INTERVAL '5 months' 
+AND NonShelterAnimal = 0) AS "Returned To Owner Canine Up To 5 Months",
+
+0 AS "Returned To Owner Canine Age Unknown",
+
+(SELECT COUNT(*) FROM animal
+INNER JOIN adoption ON animal.ID = adoption.AnimalID 
+WHERE MovementType = 5
+AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
+AND SpeciesID = 2
+AND DateOfBirth < MovementDate - INTERVAL '5 months' 
+AND NonShelterAnimal = 0) AS "Returned To Owner Feline Adult",
+
+(SELECT COUNT(*) FROM animal
+INNER JOIN adoption ON animal.ID = adoption.AnimalID 
+WHERE MovementType = 5
+AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
+AND SpeciesID = 2
+AND DateOfBirth >= MovementDate - INTERVAL '5 months' 
+AND NonShelterAnimal = 0) AS "Returned To Owner Feline Up To 5 Months",
+
+0 AS "Returned To Owner Feline Age Unknown", 
+
+
+
+
+(SELECT COUNT(*) FROM animal
+INNER JOIN adoption ON animal.ID = adoption.AnimalID 
+INNER JOIN owner ON owner.ID = adoption.OwnerID
+WHERE MovementType = 3
+AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
+AND SpeciesID = 1
+AND DateOfBirth < MovementDate - INTERVAL '5 months' 
+AND NonShelterAnimal = 0) AS "Transfer To Another Agency Canine Adult",
+
+(SELECT COUNT(*) FROM animal
+INNER JOIN adoption ON animal.ID = adoption.AnimalID 
+INNER JOIN owner ON owner.ID = adoption.OwnerID
+WHERE MovementType = 3
+AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
+AND SpeciesID = 1
+AND DateOfBirth >= MovementDate - INTERVAL '5 months' 
+AND NonShelterAnimal = 0) AS "Transfer To Another Agency Canine Up To 5 Months",
+
+0 AS "Transfer To Another Agency Canine Age Unknown", 
+
+(SELECT COUNT(*) FROM animal
+INNER JOIN adoption ON animal.ID = adoption.AnimalID 
+INNER JOIN owner ON owner.ID = adoption.OwnerID
+WHERE MovementType = 3
+AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
+AND SpeciesID = 2
+AND DateOfBirth < MovementDate - INTERVAL '5 months' 
+AND NonShelterAnimal = 0) AS "Transfer To Another Agency Feline Adult",
+
+(SELECT COUNT(*) FROM animal
+INNER JOIN adoption ON animal.ID = adoption.AnimalID 
+INNER JOIN owner ON owner.ID = adoption.OwnerID
+WHERE MovementType = 3
+AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
+AND SpeciesID = 2
+AND DateOfBirth >= MovementDate - INTERVAL '5 months' 
+AND NonShelterAnimal = 0) AS "Transfer To Another Agency Feline Up To 5 Months",
+
+0 AS "Transfer To Another Agency Feline Age Unknown", 
+
+
+
+
+
+(SELECT COUNT(*) FROM animal
+INNER JOIN adoption ON animal.ID = adoption.AnimalID 
+WHERE MovementType = 7
+AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
+AND SpeciesID = 1
+AND DateOfBirth < MovementDate - INTERVAL '5 months' 
+AND NonShelterAnimal = 0) AS "Returned To Field Canine Adult",
+
+(SELECT COUNT(*) FROM animal
+INNER JOIN adoption ON animal.ID = adoption.AnimalID 
+WHERE MovementType = 7
+AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
+AND SpeciesID = 1
+AND DateOfBirth >= MovementDate - INTERVAL '5 months' 
+AND NonShelterAnimal = 0) AS "Returned To Field Canine Up To 5 Months",
+
+0 AS "Returned To Field Canine Age Unknown", 
+
+(SELECT COUNT(*) FROM animal
+INNER JOIN adoption ON animal.ID = adoption.AnimalID 
+WHERE MovementType = 7
+AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
+AND SpeciesID = 2
+AND DateOfBirth < MovementDate - INTERVAL '5 months' 
+AND NonShelterAnimal = 0) AS "Returned To Field Feline Adult",
+
+(SELECT COUNT(*) FROM animal
+INNER JOIN adoption ON animal.ID = adoption.AnimalID 
+WHERE MovementType = 7
+AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
+AND SpeciesID = 2
+AND DateOfBirth >= MovementDate - INTERVAL '5 months' 
+AND NonShelterAnimal = 0) AS "Returned To Field Feline Up To 5 Months",
+
+0 AS "Returned To Field Feline Age Unknown", 
+
+
+
+
+(SELECT COUNT(*) FROM animal
+INNER JOIN adoption ON animal.ID = adoption.AnimalID 
+WHERE MovementType IN (4, 6)
+AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
+AND SpeciesID = 1
+AND DateOfBirth < MovementDate - INTERVAL '5 months' 
+AND NonShelterAnimal = 0) AS "Other Live Outcome Canine Adult",
+
+(SELECT COUNT(*) FROM animal
+INNER JOIN adoption ON animal.ID = adoption.AnimalID 
+WHERE MovementType IN (4, 6)
+AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
+AND SpeciesID = 1
+AND DateOfBirth >= MovementDate - INTERVAL '5 months' 
+AND NonShelterAnimal = 0) AS "Other Live Outcome Canine Up To 5 Months",
+
+0 AS "Other Live Outcome Canine Age Unknown", 
+
+(SELECT COUNT(*) FROM animal
+INNER JOIN adoption ON animal.ID = adoption.AnimalID 
+WHERE MovementType IN (4, 6)
+AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
+AND SpeciesID = 2
+AND DateOfBirth < MovementDate - INTERVAL '5 months' 
+AND NonShelterAnimal = 0) AS "Other Live Outcome Feline Adult",
+
+(SELECT COUNT(*) FROM animal
+INNER JOIN adoption ON animal.ID = adoption.AnimalID 
+WHERE MovementType IN (4, 6)
+AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
+AND SpeciesID = 2
+AND DateOfBirth >= MovementDate - INTERVAL '5 months' 
+AND NonShelterAnimal = 0) AS "Other Live Outcome Feline Up To 5 Months",
+
+0 AS "Other Live Outcome Feline Age Unknown", 
+
+
+
+(SELECT COUNT(*) FROM animal 
+WHERE DeceasedDate >= '$@from$' AND DeceasedDate <= '$@to$'
+AND NonShelterAnimal = 0 AND DiedOffShelter = 0
+AND PutToSleep = 0 AND AsilomarOwnerRequestedEuthanasia = 0
+AND SpeciesID = 1
+AND DateOfBirth < DeceasedDate - INTERVAL '5 months') AS "Died In Care Canine Adult",
+
+(SELECT COUNT(*) FROM animal 
+WHERE DeceasedDate >= '$@from$' AND DeceasedDate <= '$@to$'
+AND NonShelterAnimal = 0 AND DiedOffShelter = 0
+AND PutToSleep = 0 AND AsilomarOwnerRequestedEuthanasia = 0
+AND SpeciesID = 1
+AND DateOfBirth >= DeceasedDate - INTERVAL '5 months') AS "Died In Care Canine Up To 5 Months",
+
+0 AS "Died In Care Canine Age Unknown", 
+
+(SELECT COUNT(*) FROM animal 
+WHERE DeceasedDate >= '$@from$' AND DeceasedDate <= '$@to$'
+AND NonShelterAnimal = 0 AND DiedOffShelter = 0
+AND PutToSleep = 0 AND AsilomarOwnerRequestedEuthanasia = 0
+AND SpeciesID = 2
+AND DateOfBirth < DeceasedDate - INTERVAL '5 months') AS "Died In Care Feline Adult",
+
+(SELECT COUNT(*) FROM animal 
+WHERE DeceasedDate >= '$@from$' AND DeceasedDate <= '$@to$'
+AND NonShelterAnimal = 0 AND DiedOffShelter = 0
+AND PutToSleep = 0 AND AsilomarOwnerRequestedEuthanasia = 0
+AND SpeciesID = 2
+AND DateOfBirth >= DeceasedDate - INTERVAL '5 months') AS "Died In Care Feline Up To 5 Months",
+
+0 AS "Died In Care Feline Age Unknown", 
+
+
+
+
+0 AS "Lost In Care Canine Adult",
+0 AS "Lost In Care Canine Up To 5 Months",
+0 AS "Lost In Care Canine Age Unknown",
+0 AS "Lost In Care Feline Adult",
+0 AS "Lost In Care Feline Up To 5 Months",
+0 AS "Lost In Care Feline Age Unknown", 
+
+
+
+
+(SELECT COUNT(*) FROM animal 
+WHERE DeceasedDate >= '$@from$' AND DeceasedDate <= '$@to$'
+AND NonShelterAnimal = 0 AND DiedOffShelter = 0
+AND PutToSleep = 1 AND AsilomarOwnerRequestedEuthanasia = 0
+AND SpeciesID = 1
+AND DateOfBirth < DeceasedDate - INTERVAL '5 months') AS "Shelter Euthanasia Canine Adult",
+
+(SELECT COUNT(*) FROM animal 
+WHERE DeceasedDate >= '$@from$' AND DeceasedDate <= '$@to$'
+AND NonShelterAnimal = 0 AND DiedOffShelter = 0
+AND PutToSleep = 1 AND AsilomarOwnerRequestedEuthanasia = 0
+AND SpeciesID = 1
+AND DateOfBirth >= DeceasedDate - INTERVAL '5 months') AS "Shelter Euthanasia Canine Up To 5 Months",
+
+0 AS "Shelter Euthanasia Canine Age Unknown", 
+
+(SELECT COUNT(*) FROM animal 
+WHERE DeceasedDate >= '$@from$' AND DeceasedDate <= '$@to$'
+AND NonShelterAnimal = 0 AND DiedOffShelter = 0
+AND PutToSleep = 1 AND AsilomarOwnerRequestedEuthanasia = 0
+AND SpeciesID = 2
+AND DateOfBirth < DeceasedDate - INTERVAL '5 months') AS "Shelter Euthanasia Feline Adult",
+
+(SELECT COUNT(*) FROM animal 
+WHERE DeceasedDate >= '$@from$' AND DeceasedDate <= '$@to$'
+AND NonShelterAnimal = 0 AND DiedOffShelter = 0
+AND PutToSleep = 1 AND AsilomarOwnerRequestedEuthanasia = 0
+AND SpeciesID = 2
+AND DateOfBirth >= DeceasedDate - INTERVAL '5 months') AS "Shelter Euthanasia Feline Up To 5 Months",
+
+0 AS "Shelter Euthanasia Feline Age Unknown", 
+
+
+
+
+(SELECT COUNT(*) FROM animal 
+WHERE DeceasedDate >= '$@from$' AND DeceasedDate <= '$@to$'
+AND NonShelterAnimal = 0 AND DiedOffShelter = 0
+AND PutToSleep = 1 AND AsilomarOwnerRequestedEuthanasia = 1
+AND SpeciesID = 1
+AND DateOfBirth < DeceasedDate - INTERVAL '5 months') AS "Outcome Owner-Intended Euthanasia Canine Adult",
+
+(SELECT COUNT(*) FROM animal 
+WHERE DeceasedDate >= '$@from$' AND DeceasedDate <= '$@to$'
+AND NonShelterAnimal = 0 AND DiedOffShelter = 0
+AND PutToSleep = 1 AND AsilomarOwnerRequestedEuthanasia = 1
+AND SpeciesID = 1
+AND DateOfBirth >= DeceasedDate - INTERVAL '5 months') AS "Outcome Owner-Intended Euthanasia Canine Up To 5 Months",
+
+0 AS "Outcome Owner-Intended Euthanasia Canine Age Unknown", 
+
+(SELECT COUNT(*) FROM animal 
+WHERE DeceasedDate >= '$@from$' AND DeceasedDate <= '$@to$'
+AND NonShelterAnimal = 0 AND DiedOffShelter = 0
+AND PutToSleep = 1 AND AsilomarOwnerRequestedEuthanasia = 1
+AND SpeciesID = 2
+AND DateOfBirth < DeceasedDate - INTERVAL '5 months') AS "Outcome Owner-Intended Euthanasia Feline Adult",
+
+(SELECT COUNT(*) FROM animal 
+WHERE DeceasedDate >= '$@from$' AND DeceasedDate <= '$@to$'
+AND NonShelterAnimal = 0 AND DiedOffShelter = 0
+AND PutToSleep = 1 AND AsilomarOwnerRequestedEuthanasia = 1
+AND SpeciesID = 2
+AND DateOfBirth >= DeceasedDate - INTERVAL '5 months') AS "Outcome Owner-Intended Euthanasia Feline Up To 5 Months",
+
+0 AS "Outcome Owner-Intended Euthanasia Feline Age Unknown", 
+
+
+
+
+
+
+'Beginning' AS Beginning,
+
+(SELECT COUNT(*) FROM animal WHERE 
+NOT EXISTS (SELECT MovementDate FROM adoption WHERE MovementDate < '$@from$' AND (ReturnDate Is Null OR ReturnDate >= '$@from$') AND MovementType NOT IN (2,8) AND AnimalID = animal.ID)
+AND DateBroughtIn < '$@from$'
+AND NonShelterAnimal = 0
+AND SpeciesID = 1
+AND (DeceasedDate Is Null OR DeceasedDate >= '$@from$')) AS "Beginning Canine Count",
+
+(SELECT COUNT(*) FROM animal WHERE 
+NOT EXISTS (SELECT MovementDate FROM adoption WHERE MovementDate < '$@from$' AND (ReturnDate Is Null OR ReturnDate >= '$@from$') AND MovementType NOT IN (2,8) AND AnimalID = animal.ID)
+AND DateBroughtIn < '$@from$'
+AND NonShelterAnimal = 0
+AND SpeciesID = 2
+AND (DeceasedDate Is Null OR DeceasedDate >= '$@from$')) AS "Beginning Feline Count",
+
+'Ending Manual' as "Ending Manual",
+
+(SELECT COUNT(*) FROM animal WHERE 
+NOT EXISTS (SELECT MovementDate FROM adoption WHERE MovementDate <= '$@to$' AND (ReturnDate Is Null OR ReturnDate > '$@to$') AND MovementType NOT IN (2,8) AND AnimalID = animal.ID)
+AND DateBroughtIn <= '$@to$ 23:59:59'
+AND NonShelterAnimal = 0
+AND SpeciesID = 1
+AND (DeceasedDate Is Null OR DeceasedDate > '$@to$')) AS "Ending Manual Canine Count",
+
+(SELECT COUNT(*) FROM animal WHERE 
+NOT EXISTS (SELECT MovementDate FROM adoption WHERE MovementDate <= '$@to$' AND (ReturnDate Is Null OR ReturnDate > '$@to$') AND MovementType NOT IN (2,8) AND AnimalID = animal.ID)
+AND DateBroughtIn <= '$@to$ 23:59:59'
+AND NonShelterAnimal = 0
+AND SpeciesID = 2
+AND (DeceasedDate Is Null OR DeceasedDate > '$@to$')) AS "Ending Manual Feline Count",
+
+'Ending' AS "Ending",
+
+(SELECT COUNT(*) FROM animal WHERE 
+NOT EXISTS (SELECT MovementDate FROM adoption WHERE MovementDate <= '$@to$' AND (ReturnDate Is Null OR ReturnDate > '$@to$') AND MovementType NOT IN (2,8) AND AnimalID = animal.ID)
+AND DateBroughtIn <= '$@to$ 23:59:59'
+AND NonShelterAnimal = 0
+AND SpeciesID = 1
+AND (DeceasedDate Is Null OR DeceasedDate > '$@to$')) AS "Ending Canine Count",
+
+(SELECT COUNT(*) FROM animal WHERE 
+NOT EXISTS (SELECT MovementDate FROM adoption WHERE MovementDate <= '$@to$' AND (ReturnDate Is Null OR ReturnDate > '$@to$') AND MovementType NOT IN (2,8) AND AnimalID = animal.ID)
+AND DateBroughtIn <= '$@to$ 23:59:59'
+AND NonShelterAnimal = 0
+AND SpeciesID = 2
+AND (DeceasedDate Is Null OR DeceasedDate > '$@to$')) AS "Ending Feline Count"
+
+
+###
+$$HEADER
+HEADER$$
+
+$$BODY
+<p>This report should be run from <a href="report_export">Settings-&gt;Export Reports as CSV</a> with one calendar month selected to produce a file for uploading to shelteranimalscount.org</p>
+BODY$$
+
+$$FOOTER
+FOOTER$$

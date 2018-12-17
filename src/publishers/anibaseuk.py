@@ -122,7 +122,7 @@ class AnibaseUKPublisher(AbstractPublisher):
                     '  <LineOther>'+ xe(an["CURRENTOWNERTOWN"]) + '</LineOther>' \
                     '  <PostalCode>' + xe(an["CURRENTOWNERPOSTCODE"]) + '</PostalCode>' \
                     '  <County_State>'+ xe(an["CURRENTOWNERCOUNTY"]) + '</County_State>' \
-                    '  <Country>USA</Country>' \
+                    '  <Country>United Kingdom</Country>' \
                     ' </Address>' \
                     ' <DaytimePhone><Number>' + xe(an["CURRENTOWNERWORKTELEPHONE"]) + '</Number><Note/></DaytimePhone>' \
                     ' <EveningPhone><Number>' + xe(an["CURRENTOWNERHOMETELEPHONE"]) + '</Number><Note/></EveningPhone>' \
@@ -179,10 +179,10 @@ class AnibaseUKPublisher(AbstractPublisher):
                             wassuccess = True
                             break
 
-                    # If we got a chipfound=false message, mark the chip as processed and a success
-                    # so we don't try and register it in future
-                    if str(r["response"]).find("<chipFound>false</chipFound>") != -1:
-                        self.log("chipFound=false response found, marking chip processed to prevent future sending")
+                    # If we got a chipfound=false or chipRegisterable=false message, mark the chip as processed 
+                    # and a success so we don't try and register it in future
+                    if str(r["response"]).find("<chipFound>false</chipFound>") != -1 or str(r["response"]).find("<chipRegisterable>false</chipRegisterable>") != -1:
+                        self.log("chipFound=false/chipRegisterable=false response found, marking chip processed to prevent future sending")
                         processed_animals.append(an)
                         wassuccess = True
 

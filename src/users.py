@@ -11,10 +11,8 @@ import hashlib
 import i18n
 import os
 import pbkdf2
-import smcom
 import sys
 import utils
-from sitedefs import MULTIPLE_DATABASES, MULTIPLE_DATABASES_TYPE
 
 # Security flags
 ADD_ANIMAL                      = "aa"
@@ -234,7 +232,8 @@ def has_security_flag(securitymap, flag):
     """
     Returns true if the given flag is in the given map
     """
-    return securitymap.find(flag + " ") != -1
+    perms = securitymap.split("*")
+    return flag + " " in perms
 
 def add_security_flag(securitymap, flag):
     """
@@ -251,11 +250,11 @@ def authenticate(dbo, username, password):
     """
     username = username.upper()
     # Do not use any login inputs directly in database queries
-    for u in db.query(dbo, "SELECT ID, UserName, Password FROM users"):
-        if username == u["USERNAME"].upper():
-            dbpassword = u["PASSWORD"].strip()
+    for u in dbo.query("SELECT ID, UserName, Password FROM users"):
+        if username == u.USERNAME.upper():
+            dbpassword = u.PASSWORD.strip()
             if verify_password(password, dbpassword):
-                u = db.query(dbo, "SELECT * FROM users WHERE ID=%d" % u["ID"])
+                u = dbo.query("SELECT * FROM users WHERE ID=?", [u.ID])
                 if len(u) == 1: return u[0]
     return None
 
@@ -270,11 +269,11 @@ def authenticate_ip(user, remoteip):
     """
     if "IPRESTRICTION" not in user:
         return True
-    if user["IPRESTRICTION"] is None or user["IPRESTRICTION"] == "":
+    if user.IPRESTRICTION is None or user.IPRESTRICTION == "":
         return True
     # Restriction is a space separated list of addresses in CIDR
     # notation.
-    restrictions = user["IPRESTRICTION"].split(" ")
+    restrictions = user.IPRESTRICTION.split(" ")
     for r in restrictions:
         address = r
         size = "32"
@@ -345,14 +344,14 @@ def change_password(dbo, username, oldpassword, newpassword):
     l = dbo.locale
     if None is authenticate(dbo, username, oldpassword):
         raise utils.ASMValidationError(i18n._("Password is incorrect.", l))
-    db.execute(dbo, "UPDATE users SET Password = '%s' WHERE UserName Like %s" % (hash_password(newpassword), db.ds(username)))
+    dbo.execute("UPDATE users SET Password = ? WHERE UserName LIKE ?", (hash_password(newpassword), username))
 
 def get_locale_override(dbo, username):
     """
     Returns a user's locale override, or empty string if it doesn't have one
     """
     try:
-            return db.query_string(dbo, "SELECT LocaleOverride FROM users WHERE UserName Like %s" % db.ds(username))
+        return dbo.query_string("SELECT LocaleOverride FROM users WHERE UserName LIKE ?", [username])
     except:
         return ""
 
@@ -361,7 +360,7 @@ def get_theme_override(dbo, username):
     Returns a user's theme override, or empty string if it doesn't have one
     """
     try:
-        return db.query_string(dbo, "SELECT ThemeOverride FROM users WHERE UserName Like %s" % db.ds(username))
+        return dbo.query_string("SELECT ThemeOverride FROM users WHERE UserName LIKE ?", [username])
     except:
         return ""
 
@@ -369,36 +368,36 @@ def get_real_name(dbo, username):
     """
     Returns a user's real name
     """
-    return db.query_string(dbo, "SELECT RealName FROM users WHERE UserName Like %s" % db.ds(username))
+    return dbo.query_string("SELECT RealName FROM users WHERE UserName LIKE ?", [username])
 
 def get_roles(dbo):
     """
     Returns a list of all system roles
     """
-    return db.query(dbo, "SELECT * FROM role ORDER BY Rolename")
+    return dbo.query("SELECT * FROM role ORDER BY Rolename")
 
 def get_roles_ids_for_user(dbo, username):
     """
     Returns a list of role ids a user is in
     """
-    rolesd = db.query(dbo, "SELECT RoleID FROM userrole INNER JOIN users ON users.ID = userrole.UserID WHERE users.UserName = %s" % db.ds(username))
+    rolesd = dbo.query("SELECT RoleID FROM userrole INNER JOIN users ON users.ID = userrole.UserID WHERE users.UserName = ?", [username])
     roles = []
     for r in rolesd:
-        roles.append(r["ROLEID"])
+        roles.append(r.ROLEID)
     return roles
 
 def get_roles_for_user(dbo, user):
     """
     Returns a list of roles a user is in
     """
-    rows = db.query(dbo, "SELECT r.Rolename FROM role r " \
+    rows = dbo.query("SELECT r.Rolename FROM role r " \
         "INNER JOIN userrole ur ON ur.RoleID = r.ID " \
         "INNER JOIN users u ON u.ID = ur.UserID " \
-        "WHERE u.UserName Like %s " \
-        "ORDER BY r.Rolename" % db.ds(user))
+        "WHERE u.UserName LIKE ? " \
+        "ORDER BY r.Rolename", [user])
     roles = []
     for r in rows:
-        roles.append(r["ROLENAME"])
+        roles.append(r.ROLENAME)
     return roles
 
 def get_security_map(dbo, username):
@@ -407,12 +406,12 @@ def get_security_map(dbo, username):
     the roles they have.
     """
     rv = ""
-    maps = db.query(dbo, "SELECT role.SecurityMap FROM role " \
+    maps = dbo.query("SELECT role.SecurityMap FROM role " \
         "INNER JOIN userrole ON role.ID = userrole.RoleID " \
         "INNER JOIN users ON users.ID = userrole.UserID " \
-        "WHERE users.UserName Like %s" % db.ds(username))
+        "WHERE users.UserName LIKE ?", [username])
     for m in maps:
-        rv += str(m["SECURITYMAP"])
+        rv += str(m.SECURITYMAP)
     return rv
 
 def get_users_and_roles(dbo):
@@ -420,7 +419,7 @@ def get_users_and_roles(dbo):
     Returns a single list of all users and roles together,
     with one column - USERNAME
     """
-    return db.query(dbo, "SELECT UserName FROM users " \
+    return dbo.query("SELECT UserName FROM users " \
         "UNION SELECT Rolename AS UserName FROM role ORDER BY UserName")
 
 def get_users(dbo, user='%'):
@@ -428,17 +427,17 @@ def get_users(dbo, user='%'):
     Returns a list of all (or selected) system users with a pipe
     separated list of their roles
     """
-    users = db.query(dbo, "SELECT * FROM users WHERE UserName Like %s ORDER BY UserName" % db.ds(user))
-    roles = db.query(dbo, "SELECT ur.*, r.RoleName FROM userrole ur INNER JOIN role r ON ur.RoleID = r.ID")
+    users = dbo.query("SELECT * FROM users WHERE UserName LIKE ? ORDER BY UserName", [user])
+    roles = dbo.query("SELECT ur.*, r.RoleName FROM userrole ur INNER JOIN role r ON ur.RoleID = r.ID")
     for u in users:
         roleids = []
         rolenames = []
         for r in roles:
-            if r["USERID"] == u["ID"]:
-                roleids.append(str(r["ROLEID"]))
-                rolenames.append(str(r["ROLENAME"]))
-        u["ROLEIDS"] = "|".join(roleids)
-        u["ROLES"] = "|".join(rolenames)
+            if r.USERID == u.ID:
+                roleids.append(str(r.ROLEID))
+                rolenames.append(str(r.ROLENAME))
+        u.ROLEIDS = "|".join(roleids)
+        u.ROLES = "|".join(rolenames)
     return users
 
 def get_active_users(dbo):
@@ -497,14 +496,14 @@ def get_personid(dbo, user):
     """
     Returns the personid for a user or 0 if it doesn't have one
     """
-    return db.query_int(dbo, "SELECT OwnerID FROM users WHERE UserName Like %s" % db.ds(user))
+    return dbo.query_int("SELECT OwnerID FROM users WHERE UserName LIKE ?", [user])
 
 def get_location_filter(dbo, user):
     """
     Returns the location filter (comma separated list of IDs) 
     for a user, or "" if it doesn't have one.
     """
-    return db.query_string(dbo, "SELECT LocationFilter FROM users WHERE UserName LIKE %s" % db.ds(user))
+    return dbo.query_string("SELECT LocationFilter FROM users WHERE UserName LIKE ?", [user])
 
 def insert_user_from_form(dbo, username, post):
     """
@@ -514,46 +513,44 @@ def insert_user_from_form(dbo, username, post):
     """
     # Verify the username is unique
     l = dbo.locale
-    if 0 != db.query_int(dbo, "SELECT COUNT(*) FROM users WHERE LOWER(UserName) LIKE LOWER(%s)" % post.db_string("username")):
+    if 0 != dbo.query_int("SELECT COUNT(*) FROM users WHERE LOWER(UserName) LIKE LOWER(?)", [post["username"]]):
         raise utils.ASMValidationError(i18n._("Username '{0}' already exists", l).format(post["username"]))
-    nuserid = db.get_id(dbo, "users")
-    sql = db.make_insert_sql("users", ( 
-        ( "ID", db.di(nuserid)),
-        ( "UserName", post.db_string("username")),
-        ( "RealName", post.db_string("realname")),
-        ( "EmailAddress", post.db_string("email")),
-        ( "Password", db.ds(hash_password(post["password"]))),
-        ( "SuperUser", post.db_integer("superuser")),
-        ( "DisableLogin", post.db_integer("disablelogin")),
-        ( "RecordVersion", db.di(0)),
-        ( "SecurityMap", db.ds("dummy")),
-        ( "OwnerID", post.db_integer("person")),
-        ( "SiteID", post.db_integer("site")),
-        ( "LocationFilter", post.db_string("locationfilter")),
-        ( "IPRestriction", post.db_string("iprestriction"))
-        ))
-    db.execute(dbo, sql)
-    audit.create(dbo, username, "users", nuserid, audit.dump_row(dbo, "users", nuserid))
+
+    nuserid = dbo.insert("users", {
+        "UserName":             post["username"],
+        "RealName":             post["realname"],
+        "EmailAddress":         post["email"],
+        "Password":             hash_password(post["password"]),
+        "SuperUser":            post.integer("superuser"),
+        "DisableLogin":         post.integer("disablelogin"),
+        "RecordVersion":        0,
+        "SecurityMap":          "dummy",
+        "OwnerID":              post.integer("person"),
+        "SiteID":               post.integer("site"),
+        "LocationFilter":       post["locationfilter"],
+        "IPRestriction":        post["iprestriction"]
+    }, username, setCreated=False)
+
+    dbo.delete("userrole", "UserID=%d" % nuserid)
     roles = post["roles"].strip()
     if roles != "":
         for rid in roles.split(","):
             if rid.strip() != "":
-                db.execute(dbo, "INSERT INTO userrole VALUES (%d, %d)" % (nuserid, int(rid)))
+                dbo.insert("userrole", { "UserID": nuserid, "RoleID": rid }, generateID=False)
     return nuserid
 
 def update_user_settings(dbo, username, email = "", realname = "", locale = "", theme = "", signature = ""):
-    userid = db.query_int(dbo, "SELECT ID FROM users WHERE Username = %s" % db.ds(username))
-    sql = db.make_update_sql("users", "ID=%d" % userid, (
-        ( "RealName", db.ds(realname) ),
-        ( "EmailAddress", db.ds(email) ),
-        ( "ThemeOverride", db.ds(theme) ),
-        ( "LocaleOverride", db.ds(locale) ),
-        ( "Signature", db.ds(signature) )
-    ))
-    preaudit = db.query(dbo, "SELECT * FROM users WHERE ID = %d" % int(userid))
-    db.execute(dbo, sql)
-    postaudit = db.query(dbo, "SELECT * FROM users WHERE ID = %d" % int(userid))
-    audit.edit(dbo, username, "users", userid, audit.map_diff(preaudit, postaudit, [ "USERNAME", ]))
+    """
+    Updates the user account settings for email, name, locale, theme and signature
+    """
+    userid = dbo.query_int("SELECT ID FROM users WHERE Username = ?", [username])
+    dbo.update("users", userid, {
+        "RealName":         realname,
+        "EmailAddress":     email,
+        "ThemeOverride":    theme,
+        "LocaleOverride":   locale,
+        "Signature":        signature
+    }, username, setLastChanged=False)
 
 def update_user_from_form(dbo, username, post):
     """
@@ -562,79 +559,67 @@ def update_user_from_form(dbo, username, post):
     role ids) to create userrole records.
     """
     userid = post.integer("userid")
-    sql = db.make_update_sql("users", "ID=%d" % userid, ( 
-        ( "RealName", post.db_string("realname")),
-        ( "EmailAddress", post.db_string("email")),
-        ( "SuperUser", post.db_integer("superuser")),
-        ( "DisableLogin", post.db_integer("disablelogin")),
-        ( "OwnerID", post.db_integer("person")),
-        ( "SiteID", post.db_integer("site")),
-        ( "LocationFilter", post.db_string("locationfilter")),
-        ( "IPRestriction", post.db_string("iprestriction"))
-        ))
-    preaudit = db.query(dbo, "SELECT * FROM users WHERE ID = %d" % userid)
-    db.execute(dbo, sql)
-    postaudit = db.query(dbo, "SELECT * FROM users WHERE ID = %d" % userid)
-    audit.edit(dbo, username, "users", userid, audit.map_diff(preaudit, postaudit, [ "USERNAME", ]))
-    db.execute(dbo, "DELETE FROM userrole WHERE UserID = %d" % userid)
+    dbo.update("users", userid, {
+        "RealName":         post["realname"],
+        "EmailAddress":     post["email"],
+        "SuperUser":        post.integer("superuser"),
+        "DisableLogin":     post.integer("disablelogin"),
+        "OwnerID":          post.integer("person"),
+        "SiteID":           post.integer("site"),
+        "LocationFilter":   post["locationfilter"],
+        "IPRestriction":    post["iprestriction"]
+    }, username, setLastChanged=False)
+
+    dbo.delete("userrole", "UserID=%d" % userid)
     roles = post["roles"].strip()
     if roles != "":
         for rid in roles.split(","):
             if rid.strip() != "":
-                db.execute(dbo, "INSERT INTO userrole VALUES (%d, %d)" % (userid, int(rid)))
+                dbo.insert("userrole", { "UserID": userid, "RoleID": rid }, generateID=False)
 
 def delete_user(dbo, username, uid):
     """
     Deletes the selected user
     """
-    audit.delete(dbo, username, "users", uid, audit.dump_row(dbo, "users", uid))
-    db.execute(dbo, "DELETE FROM users WHERE ID = %d" % int(uid))
-    db.execute(dbo, "DELETE FROM userrole WHERE UserID = %d" % int(uid))
+    dbo.delete("userrole", "UserID=%d" % uid)
+    dbo.delete("users", uid, username)
 
 def insert_role_from_form(dbo, username, post):
     """
     Creates a role record from posted form data. 
     """
-    nroleid = db.get_id(dbo, "role")
-    sql = db.make_insert_sql("role", ( 
-        ( "ID", db.di(nroleid)),
-        ( "Rolename", post.db_string("rolename")),
-        ( "SecurityMap", post.db_string("securitymap"))
-        ))
-    db.execute(dbo, sql)
-    audit.create(dbo, username, "role", nroleid, audit.dump_row(dbo, "role", nroleid))
+    return dbo.insert("role", {
+        "Rolename":     post["rolename"],
+        "SecurityMap":  post["securitymap"]
+    }, username, setCreated=False)
 
 def update_role_from_form(dbo, username, post):
     """
     Updates a role record from posted form data
     """
-    roleid = post.integer("roleid")
-    sql = db.make_update_sql("role", "ID=%d" % roleid, ( 
-        ( "Rolename", post.db_string("rolename")),
-        ( "SecurityMap", post.db_string("securitymap"))
-        ))
-    preaudit = db.query(dbo, "SELECT * FROM role WHERE ID = %d" % roleid)
-    db.execute(dbo, sql)
-    postaudit = db.query(dbo, "SELECT * FROM role WHERE ID = %d" % roleid)
-    audit.edit(dbo, username, "role", roleid, audit.map_diff(preaudit, postaudit, [ "ROLENAME", ]))
+    dbo.update("role", post.integer("roleid"), {
+        "Rolename":     post["rolename"],
+        "SecurityMap":  post["securitymap"]
+    }, username, setLastChanged=False)
 
 def delete_role(dbo, username, rid):
     """
     Deletes the selected role. If it's in use, throws an ASMValidationError
     """
     l = dbo.locale
-    if db.query_int(dbo, "SELECT COUNT(*) FROM userrole WHERE RoleID = %d" % int(rid)) > 0:
+    if dbo.query_int("SELECT COUNT(*) FROM userrole WHERE RoleID = ?", [rid]) > 0:
         raise utils.ASMValidationError(i18n._("Role is in use and cannot be deleted.", l))
-    audit.delete(dbo, username, "role", rid, audit.dump_row(dbo, "role", rid))
-    db.execute(dbo, "DELETE FROM accountsrole WHERE RoleID = %d" % int(rid))
-    db.execute(dbo, "DELETE FROM customreportrole WHERE RoleID = %d" % int(rid))
-    db.execute(dbo, "DELETE FROM role WHERE ID = %d" % int(rid))
+
+    dbo.delete("accountsrole", "RoleID=%d" % rid)
+    dbo.delete("animalcontrolrole", "RoleID=%d" % rid)
+    dbo.delete("customreportrole", "RoleID=%d" % rid)
+    dbo.delete("role", rid, username)
 
 def reset_password(dbo, userid, password):
     """
     Resets the password for the given user to "password"
     """
-    db.execute(dbo, "UPDATE users SET Password = '%s' WHERE ID = %d" % ( hash_password(password), int(userid)))
+    dbo.update("users", userid, { "Password": hash_password(password) })
 
 def update_session(session):
     """
@@ -653,8 +638,8 @@ def update_session(session):
         theme = toverride
     dbo.locale = locale
     if not dbo.is_large_db:
-        dbo.is_large_db = db.query_int(dbo, "SELECT COUNT(*) FROM owner") > 4000 or \
-            db.query_int(dbo, "SELECT COUNT(*) FROM animal") > 2000
+        dbo.is_large_db = dbo.query_int("SELECT COUNT(*) FROM owner") > 4000 or \
+            dbo.query_int("SELECT COUNT(*) FROM animal") > 2000
     session.locale = locale
     session.theme = theme
     session.config_ts = i18n.format_date("%Y%m%d%H%M%S", i18n.now())
@@ -667,43 +652,32 @@ def web_login(post, session, remoteip, path):
         DISABLED    - The database is disabled
         WRONGSERVER - The database is not on this server
     """
-    dbo = db.get_database()
     database = post["database"]
     username = post["username"]
     password = post["password"]
     mobileapp = post["mobile"] == "true"
-    nologconnection = post["nologconnection"]
+    nologconnection = post["nologconnection"] == "true"
     if len(username) > 100:
         username = username[0:100]
-    # Do we have multiple databases?
-    if MULTIPLE_DATABASES:
-        if MULTIPLE_DATABASES_TYPE == "smcom":
-            # Is this sheltermanager.com? If so, we need to get the 
-            # database connection info (dbo) before we can login.
-            # If a database hasn't been supplied, let's bail out now
-            # since we can't do anything
-            if str(database).strip() == "":
-                return "FAIL"
-            else:
-                dbo = smcom.get_database_info(database)
-                # Bail out if there was a problem with the database
-                if dbo.database in ("FAIL", "DISABLED", "WRONGSERVER"):
-                    return dbo.database
-        else:
-            # Look up the database info from our map
-            dbo  = db.get_multiple_database_info(database)
-            if dbo.database == "FAIL":
-                return dbo.database
+
+    dbo = db.get_database(database)
+
+    if dbo.database in ("FAIL", "DISABLED", "WRONGSERVER"):
+        return dbo.database
+
     # Connect to the database and authenticate the username and password
     user = authenticate(dbo, username, password)
     if user is not None and not authenticate_ip(user, remoteip):
-        al.error("user %s with ip %s failed ip restriction check '%s'" % (username, remoteip, user["IPRESTRICTION"]), "users.web_login", dbo)
+        al.error("user %s with ip %s failed ip restriction check '%s'" % (username, remoteip, user.IPRESTRICTION), "users.web_login", dbo)
         return "FAIL"
-    if user is not None and "DISABLELOGIN" in user and user["DISABLELOGIN"] == 1:
+    
+    if user is not None and "DISABLELOGIN" in user and user.DISABLELOGIN == 1:
         al.error("user %s with ip %s failed as account has logins disabled" % (username, remoteip), "users.web_login", dbo)
         return "FAIL"
+
     if user is not None:
         al.info("%s successfully authenticated from %s" % (username, remoteip), "users.web_login", dbo)
+
         try:
             dbo.locked = configuration.smdb_locked(dbo)
             dbo.timezone = configuration.timezone(dbo)
@@ -711,27 +685,39 @@ def web_login(post, session, remoteip, path):
             session.locale = configuration.locale(dbo)
             dbo.locale = session.locale
             session.dbo = dbo
-            session.user = user["USERNAME"]
-            session.superuser = user["SUPERUSER"]
-            session.passchange = (password == "password")
+            session.user = user.USERNAME
+            session.superuser = user.SUPERUSER
             session.mobileapp = mobileapp
             update_session(session)
         except:
             al.error("failed setting up session: %s" % str(sys.exc_info()[0]), "users.web_login", dbo, sys.exc_info())
             return "FAIL"
+
         try:
-            session.securitymap = get_security_map(dbo, user["USERNAME"])
+            session.securitymap = get_security_map(dbo, user.USERNAME)
         except:
             # This is a pre-3002 login where the securitymap is with 
             # the user (the error occurs because there's no role table)
             al.debug("role table does not exist, using securitymap from user", "users.web_login", dbo)
-            session.securitymap = user["SECURITYMAP"]
+            session.securitymap = user.SECURITYMAP
+
         try:
-            ur = get_users(dbo, user["USERNAME"])[0]
-            session.roles = ur["ROLES"]
-            session.roleids = ur["ROLEIDS"]
-            session.siteid = utils.cint(user["SITEID"])
-            session.locationfilter = utils.nulltostr(user["LOCATIONFILTER"])
+            ur = get_users(dbo, user.USERNAME)[0]
+            session.roles = ur.ROLES
+            session.roleids = ur.ROLEIDS
+            session.siteid = utils.cint(user.SITEID)
+            session.locationfilter = utils.nulltostr(user.LOCATIONFILTER)
+            session.staffid = user.OWNERID
+            session.visibleanimalids = ""
+            # If there's a -12 in location filter, the user can only see their current fosters
+            # Set visibleanimalids to those on foster
+            if utils.nulltostr(user.LOCATIONFILTER).find("-12") != -1:
+                va = []
+                af = dbo.query("SELECT AnimalID FROM adoption WHERE MovementType=2 AND OwnerID=? AND MovementDate<=? AND (ReturnDate Is Null OR ReturnDate>?)", \
+                    ( user.OWNERID, dbo.today(), dbo.today() ))
+                for r in af:
+                    va.append(str(r.ANIMALID))
+                session.visibleanimalids = ",".join(va)
         except:
             # Users coming from v2 won't have the
             # IPRestriction or EmailAddress fields necessary for get_users - we can't
@@ -741,30 +727,31 @@ def web_login(post, session, remoteip, path):
             session.roleids = ""
             session.locationfilter = ""
             session.siteid = 0
-        try:
-            # If it's a sheltermanager.com database, try and update the
-            # last time the user connected to today
-            if smcom.active() and database != "" and nologconnection == "":
-                smcom.set_last_connected(dbo)
-        except:
-            pass
+            session.staffid = 0
+            session.visibleanimalids = ""
+
         try:
             # Mark the user logged in
-            audit.login(dbo, username, remoteip)
+            if not nologconnection: 
+                audit.login(dbo, username, remoteip)
+
             # Check to see if any updates need performing on this database
             if dbupdate.check_for_updates(dbo):
                 dbupdate.perform_updates(dbo)
                 # We did some updates, better reload just in case config/reports/etc changed
                 update_session(session)
+
             # Check to see if our views and sequences are out of date and need reloading
             if dbupdate.check_for_view_seq_changes(dbo):
                 dbupdate.install_db_views(dbo)
                 dbupdate.install_db_sequences(dbo)
+
         except:
             al.error("failed updating database: %s" % str(sys.exc_info()[0]), "users.web_login", dbo, sys.exc_info())
+
         try:
-            al.info("%s logged in" % user["USERNAME"], "users.login", dbo)
-            update_user_activity(dbo, user["USERNAME"])
+            al.info("%s logged in" % user.USERNAME, "users.login", dbo)
+            update_user_activity(dbo, user.USERNAME)
         except:
             al.error("failed updating user activity: %s" % str(sys.exc_info()[0]), "users.web_login", dbo, sys.exc_info())
             return "FAIL"
@@ -772,5 +759,5 @@ def web_login(post, session, remoteip, path):
         al.error("database:%s username:%s password:%s failed authentication from %s" % (database, username, password, remoteip), "users.web_login", dbo)
         return "FAIL"
 
-    return user["USERNAME"]
+    return user.USERNAME
 

@@ -1,0 +1,21 @@
+Adoptions By Year
+###
+Movement Charts
+###
+3000/PostgreSQL
+###
+The number of adoptions in a period, grouped by year
+###
+en
+###
+SELECT
+TO_CHAR(ad.MovementDate, 'YYYY') AS Year,
+COUNT(ad.ID) AS total
+FROM adoption ad
+WHERE ad.MovementDate >= '$ASK DATE Adopted between$' AND ad.MovementDate <= '$ASK DATE and $'
+AND ad.MovementType = 1
+GROUP BY TO_CHAR(ad.MovementDate, 'YYYY')
+ORDER BY Year 
+###
+GRAPH BARS
+

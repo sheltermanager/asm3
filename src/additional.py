@@ -73,8 +73,7 @@ def get_additional_fields(dbo, linkid, linktype = "animal"):
     values will be returned for all fields.
     """
     inclause = clause_for_linktype(linktype)
-    return dbo.query("SELECT af.ID, af.FieldName, af.FieldLabel, af.ToolTip, " \
-        "af.LookupValues, af.DefaultValue, af.LinkType, af.FieldType, af.DisplayIndex, af.Mandatory, a.Value, " \
+    return dbo.query("SELECT af.*, a.Value, " \
         "CASE WHEN af.FieldType = 8 AND a.Value <> '' AND a.Value <> '0' THEN (SELECT AnimalName FROM animal WHERE %s = a.Value) ELSE '' END AS AnimalName, " \
         "CASE WHEN af.FieldType = 9 AND a.Value <> '' AND a.Value <> '0' THEN (SELECT OwnerName FROM owner WHERE %s = a.Value) ELSE '' END AS OwnerName " \
         "FROM additionalfield af LEFT OUTER JOIN additional a ON af.ID = a.AdditionalFieldID " \
@@ -94,8 +93,7 @@ def get_additional_fields_ids(dbo, rows, linktype = "animal"):
         links.append(str(r.id))
     if len(links) == 0:
         links.append("0")
-    return dbo.query("SELECT a.LinkID, af.ID, af.FieldName, af.FieldLabel, af.ToolTip, " \
-        "af.LookupValues, af.DefaultValue, af.FieldType, af.DisplayIndex, af.Mandatory, a.Value, " \
+    return dbo.query("SELECT af.*, a.LinkID, a.Value, " \
         "CASE WHEN af.FieldType = 8 AND a.Value <> '' AND a.Value <> '0' THEN (SELECT AnimalName FROM animal WHERE %s = a.Value) ELSE '' END AS AnimalName, " \
         "CASE WHEN af.FieldType = 9 AND a.Value <> '' AND a.Value <> '0' THEN (SELECT OwnerName FROM owner WHERE %s = a.Value) ELSE '' END AS OwnerName " \
         "FROM additional a INNER JOIN additionalfield af ON af.ID = a.AdditionalFieldID " \
@@ -115,11 +113,13 @@ def get_fields(dbo):
     Returns all additional fields 
     """
     return dbo.query("SELECT a.*, ft.FieldType AS FieldTypeName, " \
-        "lt.LinkType AS LinkTypeName, m.Name AS MandatoryName " \
+        "lt.LinkType AS LinkTypeName, m.Name AS MandatoryName, " \
+        "n.Name AS NewRecordName " \
         "FROM additionalfield a " \
         "INNER JOIN lksfieldtype ft ON ft.ID = a.FieldType " \
         "INNER JOIN lksfieldlink lt ON lt.ID = a.LinkType " \
         "INNER JOIN lksyesno m ON m.ID = a.Mandatory " \
+        "INNER JOIN lksyesno n ON n.ID = a.NewRecord " \
         "ORDER BY a.LinkType, a.DisplayIndex")
 
 def append_to_results(dbo, rows, linktype = "animal"):
@@ -148,6 +148,7 @@ def insert_field_from_form(dbo, username, post):
         "LookupValues":     post["lookupvalues"],
         "DefaultValue":     post["defaultvalue"],
         "Mandatory":        post.boolean("mandatory"),
+        "NewRecord":        post.boolean("newrecord"),
         "Searchable":       post.boolean("searchable"),
         "FieldType":        post.integer("type"),
         "LinkType":         post.integer("link"),
@@ -167,6 +168,7 @@ def update_field_from_form(dbo, username, post):
         "LookupValues":     post["lookupvalues"],
         "DefaultValue":     post["defaultvalue"],
         "Mandatory":        post.boolean("mandatory"),
+        "NewRecord":        post.boolean("newrecord"),
         "Searchable":       post.boolean("searchable"),
         "FieldType":        post.integer("type"),
         "LinkType":         post.integer("link"),

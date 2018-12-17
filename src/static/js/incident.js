@@ -1,5 +1,5 @@
 /*jslint browser: true, forin: true, eqeq: true, white: true, sloppy: true, vars: true, nomen: true */
-/*global $, jQuery, _, asm, additional, common, config, controller, dlgfx, edit_header, format, geo, header, html, mapping, tableform, validate */
+/*global $, jQuery, _, asm, additional, common, config, controller, dlgfx, edit_header, format, header, html, mapping, tableform, validate */
 
 $(function() {
 
@@ -201,7 +201,7 @@ $(function() {
                 '</td>',
                 '<td width="35%">',
                 '<input type="hidden" id="latlong" data-json="DISPATCHLATLONG" data-post="dispatchlatlong" />',
-                '<div id="embeddedmap" style="width: 100%; height: 300px; color: #000" />',
+                '<div id="embeddedmap" style="z-index: 1; width: 100%; height: 300px; color: #000" />',
                 '<!-- end outer table -->',
                 '</td>',
                 '</tr>',
@@ -325,7 +325,8 @@ $(function() {
                     { id: "document", text: _("Document"), type: "buttonmenu", icon: "document", tooltip: _("Generate a document from this incident") },
                     { id: "email", text: _("Email"), icon: "email", tooltip: _("Email incident notes to ACO") },
                     { id: "dispatch", text: _("Dispatch"), icon: "calendar", tooltip: _("Mark dispatched now") },
-                    { id: "respond", text: _("Respond"), icon: "calendar", tooltip: _("Mark responded now") }
+                    { id: "respond", text: _("Respond"), icon: "calendar", tooltip: _("Mark responded now") },
+                    { id: "map", text: _("Map"), icon: "map", tooltip: _("Find this address on a map") }
                 ]),
                 '<div id="asm-details-accordion">',
                 this.render_details(),
@@ -381,10 +382,10 @@ $(function() {
         },
 
         get_map_url: function() {
-            var add = $("#address").val().replace("\n", ",");
-            var town = $("#town").val();
-            var county = $("#county").val();
-            var postcode = $("#postcode").val();
+            var add = $("#dispatchaddress").val().replace("\n", ",");
+            var town = $("#dispatchtown").val();
+            var county = $("#dispatchcounty").val();
+            var postcode = $("#dispatchpostcode").val();
             var map = add;
             if (town != "") { map += "," + town; }
             if (county != "") { map += "," + county; }
@@ -398,32 +399,6 @@ $(function() {
                 mapping.draw_map("embeddedmap", 15, controller.incident.DISPATCHLATLONG, [{ 
                     latlong: controller.incident.DISPATCHLATLONG, popuptext: controller.incident.DISPATCHADDRESS, popupactive: true }]);
             }, 50);
-        },
-
-        get_geocode: function(showminimap) {
-            // Gets the geocode for the dispatch address. If showminimap is true,
-            // displays the minimap as well.
-            var i = controller.incident;
-            var addrhash = geo.address_hash(i.DISPATCHADDRESS, i.DISPATCHTOWN, i.DISPATCHCOUNTY, i.DISPATCHPOSTCODE);
-            // Do we already have a LATLONG? If it's upto date,
-            // just show the map position
-            if (i.DISPATCHLATLONG) {
-                var b = i.DISPATCHLATLONG.split(",");
-                if (b[2] == addrhash) {
-                    incident.show_mini_map();
-                    return;
-                }
-            }
-            // Lookup the LATLONG and then show the map
-            geo.get_lat_long(i.DISPATCHADDRESS, i.DISPATCHTOWN, i.DISPATCHCOUNTY, i.DISPATCHPOSTCODE)
-                .then(function(lat, lon) {
-                    var latlon = lat + "," + lon + "," + addrhash;
-                    i.DISPATCHLATLONG = latlon;
-                    $("#latlong").val(latlon);
-                    // We updated the latlong, rather than dirtying the form, send it to the DB
-                    common.ajax_post("incident", "mode=latlong&incidentid=" + i.ACID + "&latlong=" + encodeURIComponent(latlon));
-                    if (showminimap) { incident.show_mini_map(); }
-                });
         },
 
         validation: function() {
@@ -466,7 +441,7 @@ $(function() {
                     // No map api likes being loaded in a hidden div and this avoids that
                     if (config.bool("ShowPersonMiniMap") && $("#dispatchaddress").val()) {
                         if ($("#asm-details-accordion").accordion("option", "active") == 2) {
-                            incident.get_geocode(true);
+                            incident.show_mini_map();
                         }
                     }
                 }
@@ -568,6 +543,12 @@ $(function() {
                     $("#button-respond").button("disable");
                     validate.dirty(true);
                 }
+            });
+
+            $("#button-map").button().click(function() {
+                var mapq = incident.get_map_url();
+                var maplinkref = String(asm.maplink).replace("{0}", mapq);
+                window.open(maplinkref, "_blank");
             });
 
             $("#button-linkanimal")

@@ -47,7 +47,7 @@ $(function() {
                     { field: "COSTPAIDDATE", display: _("Paid"), formatter: tableform.format_date,
                         hideif: function() { return !config.bool("ShowCostPaid"); }
                     },
-                    { field: "DESCRIPTION", display: _("Description") }
+                    { field: "DESCRIPTION", display: _("Description"), formatter: tableform.format_comments }
                 ]
             };
 

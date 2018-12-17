@@ -167,9 +167,7 @@ $(function() {
                         }
                     },
                     { field: "COMMENTS", display: _("Comments"), 
-                        formatter: function(row) {
-                            return row.COMMENTS + " " + row.TREATMENTCOMMENTS;
-                        }
+                        formatter: function(row, v) { return tableform.format_comments(row, row.COMMENTS + " " + row.TREATMENTCOMMENTS); }
                     }
                 ]
             };
@@ -433,6 +431,7 @@ $(function() {
                 '<td><label for="givenby">' + _("By") + '</label></td>',
                 '<td>',
                 '<select id="givenby" data="givenby" class="asm-selectbox asm-field">',
+                '<option value=""></option>',
                 html.list_to_options(controller.users, "USERNAME", "USERNAME"),
                 '</select>',
                 '</td>',

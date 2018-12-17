@@ -6,7 +6,6 @@ import configuration
 import csv as extcsv
 import datetime
 import decimal
-import db
 import hashlib
 import htmlentitydefs
 import json as extjson
@@ -31,17 +30,6 @@ from i18n import _, display2python, format_currency_no_symbol, format_time, pyth
 from cStringIO import StringIO
 from sitedefs import BASE_URL, SMTP_SERVER, FROM_ADDRESS, HTML_TO_PDF
 
-# Monkeypatch to allow SNI support in urllib3. This is necessary
-# as many servers (including Facebook and PetLink)
-# will not allow us to connect and use HTTPS without SNI
-# TODO: Disabled 23/03/18 as should no longer be needed
-#try:
-#    import requests
-#    from urllib3.contrib import pyopenssl
-#    pyopenssl.inject_into_urllib3()
-#except:
-#    sys.stderr.write("No requests/urllib3 module found.")
-
 # Global reference to the Python websession. This is used to allow
 # debug mode with webpy by keeping a global single copy of the
 # session (in debug mode, module reloading means you'd create two
@@ -61,51 +49,257 @@ class PostedData(object):
     """
     data = None
     locale = None
+
     def __init__(self, data, locale):
         self.data = data
         self.locale = locale
+
     def boolean(self, field):
-        return df_kc(self.data, field)
-    def db_boolean(self, field):
-        return df_c(self.data, field)
+        if field not in self.data:
+            return 0
+        if self.data[field] == "checked" or self.data[field] == "on":
+            return 1
+        else:
+            return 0
+
     def date(self, field):
-        return df_kd(self.data, field, self.locale)
+        """ Returns a date key from a datafield """
+        if field in self.data:
+            return display2python(self.locale, self.data[field])
+        else:
+            return None
+
     def datetime(self, datefield, timefield):
-        return df_kdt(self.data, datefield, timefield, self.locale)
-    def db_date(self, field):
-        return df_d(self.data, field, self.locale)
-    def db_datetime(self, datefield, timefield):
-        return df_dt(self.data, datefield, timefield, self.locale)
+        """ Returns a datetime field """
+        if datefield in self.data:
+            d = display2python(self.locale, self.data[datefield])
+            if d is None: return None
+            if timefield in self.data:
+                tbits = self.data[timefield].split(":")
+                hour = 0
+                minute = 0
+                second = 0
+                if len(tbits) > 0:
+                    hour = cint(tbits[0])
+                if len(tbits) > 1:
+                    minute = cint(tbits[1])
+                if len(tbits) > 2:
+                    second = cint(tbits[2])
+                t = datetime.time(hour, minute, second)
+                d = d.combine(d, t)
+            return d
+        else:
+            return None
+
     def integer(self, field):
-        return df_ki(self.data, field)
-    def db_integer(self, field):
-        return df_s(self.data, field)
+        """ Returns an integer key from a datafield """
+        if field in self.data:
+            return cint(self.data[field])
+        else:
+            return 0
+
     def integer_list(self, field):
-        return df_kl(self.data, field)
+        """
+        Returns a list of integers from a datafield that contains
+        comma separated numbers.
+        """
+        if field in self.data:
+            s = self.string(field)
+            items = s.split(",")
+            ids = []
+            for i in items:
+                if is_numeric(i):
+                    ids.append(cint(i))
+            return ids
+        else:
+            return []
+
     def floating(self, field):
-        return df_kf(self.data, field)
-    def db_floating(self, field):
-        return str(df_kf(self.data, field))
+        """ Returns a float key from a datafield """
+        if field in self.data:
+            return cfloat(self.data[field])
+        else:
+            return float(0)
+
     def string(self, field, strip = True):
-        return df_ks(self.data, field, strip)
-    def db_string(self, field):
-        return df_t(self.data, field)
+        """ Returns a string key from a datafield """
+        if field in self.data:
+            s = encode_html(self.data[field])
+            if strip: s = s.strip()
+            return s
+        else:
+            return ""
+
     def filename(self):
         if "filechooser" in self.data:
             return encode_html(self.data.filechooser.filename)
         return ""
+
     def filedata(self):
         if "filechooser" in self.data:
             return self.data.filechooser.value
         return ""
+
     def __contains__(self, key):
         return key in self.data
+
     def has_key(self, key):
         return key in self.data
+
     def __getitem__(self, key):
         return self.string(key)
+
+    def __setitem__(self, key, value):
+        self.data[key] = value
+
     def __repr__(self):
         return json(self.data)
+
+class AdvancedSearchBuilder(object):
+    """
+    Builds an advanced search (requires a post with multiple supplied parameters)
+    as = AdvancedSearchBuilder(dbo, post)
+    as.add_id("litterid", "a.AcceptanceNumber")
+    as.add_str("rabiestag", "a.RabiesTag")
+    as.ands, as.values
+    """
+
+    ands = []
+    values = []
+    dbo = None
+    post = None
+
+    def __init__(self, dbo, post):
+        self.dbo = dbo
+        self.post = post
+        self.ands = []
+        self.values = []
+
+    def add_id(self, cfield, field): 
+        """ Adds a clause for comparing an ID field """
+        if self.post[cfield] != "" and self.post.integer(cfield) > -1:
+            self.ands.append("%s = ?" % field)
+            self.values.append(self.post.integer(cfield))
+
+    def add_id_pair(self, cfield, field, field2): 
+        """ Adds a clause for a posted value to one of two ID fields (eg: breeds) """
+        if self.post[cfield] != "" and self.post.integer(cfield) > 0: 
+            self.ands.append("(%s = ? OR %s = ?)" % (field, field2))
+            self.values.append(self.post.integer(cfield))
+            self.values.append(self.post.integer(cfield))
+
+    def add_str(self, cfield, field): 
+        """ Adds a clause for a posted value to a string field """
+        if self.post[cfield] != "":
+            x = self.post[cfield].lower().replace("'", "`")
+            x = "%%%s%%" % x
+            self.ands.append("(LOWER(%s) LIKE ? OR LOWER(%s) LIKE ?)" % (field, field))
+            self.values.append(x)
+            self.values.append(decode_html(x))
+
+    def add_str_pair(self, cfield, field, field2): 
+        """ Adds a clause for a posted value to one of two string fields """
+        if self.post[cfield] != "":
+            x = "%%%s%%" % self.post[cfield].lower()
+            self.ands.append("(LOWER(%s) LIKE ? OR LOWER(%s) LIKE ?)" % (field, field2))
+            self.values.append(x)
+            self.values.append(x)
+
+    def add_str_triplet(self, cfield, field, field2, field3): 
+        """ Adds a clause for a posted value to one of three string fields """
+        if self.post[cfield] != "":
+            x = "%%%s%%" % self.post[cfield].lower()
+            self.ands.append("(LOWER(%s) LIKE ? OR LOWER(%s) LIKE ? OR LOWER(%s) LIKE ?)" % (field, field2, field3))
+            self.values.append(x)
+            self.values.append(x)
+            self.values.append(x)
+
+    def add_date(self, cfieldfrom, cfieldto, field): 
+        """ Adds a clause for a posted date range to a date field """
+        if self.post[cfieldfrom] != "" and self.post[cfieldto] != "":
+            self.post.data["dayend"] = "23:59:59"
+            self.ands.append("%s >= ? AND %s <= ?" % (field, field))
+            self.values.append(self.post.date(cfieldfrom))
+            self.values.append(self.post.datetime(cfieldto, "dayend"))
+
+    def add_filter(self, f, condition):
+        """ Adds a complete clause if posted filter value is present """
+        if self.post["filter"].find(f) != -1: self.ands.append(condition)
+
+    def add_comp(self, cfield, value, condition):
+        """ Adds a clause if a field holds a value """
+        if self.post[cfield] == value: self.ands.append(condition)
+
+    def add_words(self, cfield, field):
+        """ Adds a separate clause for each word in cfield """
+        if self.post[cfield] != "":
+            words = self.post[cfield].split(" ")
+            for w in words:
+                x = w.lower().replace("'", "`")
+                x = "%%%s%%" % x
+                self.ands.append("(LOWER(%s) LIKE ? OR LOWER(%s) LIKE ?)" % (field, field))
+                self.values.append(x)
+                self.values.append(decode_html(x))
+
+class SimpleSearchBuilder(object):
+    """
+    Builds a simple search (based on a single search term)
+    ss = SimpleSearchBuilder(dbo, "test")
+    ss.add_field("a.AnimalName")
+    ss.add_field("a.ShelterCode")
+    ss.add_fields([ "a.BreedName", "a.AnimalComments" ])
+    ss.ors, ss.values
+    """
+    
+    q = ""
+    qlike = ""
+    ors = []
+    values = []
+    dbo = None
+
+    def __init__(self, dbo, q):
+        self.dbo = dbo
+        self.q = q.replace("'", "`")
+        self.qlike = "%%%s%%" % self.q.lower()
+        self.ors = []
+        self.values = []
+
+    def add_field(self, field):
+        """ Add a field to search """
+        self.ors.append("(LOWER(%s) LIKE ? OR LOWER(%s) LIKE ?)" % (field, field))
+        self.values.append(self.qlike)
+        self.values.append(decode_html(self.qlike))
+
+    def add_field_value(self, field, value):
+        """ Add a field with a specific value """
+        self.ors.append("%s = ?" % field)
+        self.values.append(value)
+
+    def add_fields(self, fieldlist):
+        """ Add clauses for many fields in one list """
+        for f in fieldlist:
+            self.add_field(f)
+
+    def add_large_text_fields(self, fieldlist):
+        """ Add clauses for many large text fields (only search in smaller databases) in one list """
+        if not self.dbo.is_large_db:
+            for f in fieldlist:
+                self.add_field(f)
+
+    def add_words(self, field):
+        """ Adds each word in the term as and clauses so that each word is separately matched and has to be present """
+        ands = []
+        for w in self.q.split(" "):
+            x = w.lower().replace("'", "`")
+            x = "%%%s%%" % x
+            ands.append("(LOWER(%s) LIKE ? OR LOWER(%s) LIKE ?)" % (field, field))
+            self.values.append(x)
+            self.values.append(decode_html(x))
+        self.ors.append("(" + " AND ".join(ands) + ")")
+
+    def add_clause(self, clause):
+        self.ors.append(clause)
+        self.values.append(self.qlike)
 
 def is_currency(f):
     """ Returns true if the field with name f is a currency field """
@@ -229,6 +423,8 @@ def json_handler(obj):
         minutes, seconds = divmod(remain, 60)
         return "%02d:%02d:%02d" % (hours, minutes, seconds)
     elif isinstance(obj, decimal.Decimal):
+        return str(obj)
+    elif isinstance(obj, type):
         return str(obj)
     else:
         raise TypeError('Object of type %s with value of %s is not JSON serializable' % (type(obj), repr(obj)))
@@ -479,122 +675,6 @@ class ASMError(web.HTTPError):
         if "headers" not in web.ctx: web.ctx.headers = []
         web.HTTPError.__init__(self, status, headers, data)
 
-def df_c(data, field):
-    """ Returns a checkbox field for the database """
-    if field not in data:
-        return db.di(0)
-    if data[field] == "checked" or data[field] == "on":
-        return db.di(1)
-    else:
-        return db.di(0)
-
-def df_t(data, field):
-    """ Returns a posted text field for the database, turns it from unicode into
-        ascii with XML entities to represent codepoints > 128 """
-    if field in data:
-        if is_str(data[field]):
-            s = cunicode(data[field]).encode("ascii", "xmlcharrefreplace")
-        else:
-            s = data[field].encode("ascii", "xmlcharrefreplace")
-        return db.ds(s.strip())
-    else:
-        return "''"
-
-def df_s(data, field):
-    """ Returns a select field for the database """
-    if field in data:
-        return db.di(data[field])
-    else:
-        return "0"
-
-def df_d(data, field, l):
-    """ Returns a date field for the database """
-    if field in data:
-        return db.dd(display2python(l, data[field]))
-    else:
-        return "Null"
-
-def df_dt(data, datefield, timefield, l):
-    """ Returns a datetime field for the database """
-    return db.ddt(df_kdt(data, datefield, timefield, l))
-
-def df_kc(data, field):
-    """ Returns a checkbox field """
-    if field not in data:
-        return 0
-    if data[field] == "checked" or data[field] == "on":
-        return 1
-    else:
-        return 0
-
-def df_ki(data, field):
-    """ Returns an integer key from a datafield """
-    if field in data:
-        return cint(data[field])
-    else:
-        return 0
-
-def df_kf(data, field):
-    """ Returns a float key from a datafield """
-    if field in data:
-        return cfloat(data[field])
-    else:
-        return float(0)
-
-def df_ks(data, field, strip = True):
-    """ Returns a string key from a datafield """
-    if field in data:
-        s = encode_html(data[field])
-        if strip: s = s.strip()
-        return s
-    else:
-        return ""
-
-def df_kd(data, field, l):
-    """ Returns a date key from a datafield """
-    if field in data:
-        return display2python(l, data[field])
-    else:
-        return None
-
-def df_kdt(data, datefield, timefield, l):
-    """ Returns a datetime field """
-    if datefield in data:
-        d = display2python(l, data[datefield])
-        if d is None: return None
-        if timefield in data:
-            tbits = data[timefield].split(":")
-            hour = 0
-            minute = 0
-            second = 0
-            if len(tbits) > 0:
-                hour = cint(tbits[0])
-            if len(tbits) > 1:
-                minute = cint(tbits[1])
-            if len(tbits) > 2:
-                second = cint(tbits[2])
-            t = datetime.time(hour, minute, second)
-            d = d.combine(d, t)
-        return d
-    else:
-        return None
-
-def df_kl(data, field):
-    """
-    Returns a list of integers from a datafield that contains
-    comma separated numbers.
-    """
-    if field in data:
-        s = df_ks(data, field)
-        items = s.split(",")
-        ids = []
-        for i in items:
-            if is_numeric(i):
-                ids.append(cint(i))
-        return ids
-    else:
-        return []
-
 def escape_tinymce(content):
     """
     Escapes HTML content for placing inside a tinymce
@@ -743,6 +823,7 @@ def fix_relative_document_uris(s, baseurl, account = "" ):
         ( "image?mode=animal&amp;id=", "animal_image", "animalid" ),
         ( "image?db={account}&ampmode=animal&amp;id=", "animal_image", "animalid" ),
         ( "image?db={account}&mode=animal&id=", "animal_image", "animalid" ),
+        ( "image?db={account}&amp;mode=nopic", "extra_image", "title=nopic.jpg&xx" ),
 
         # animal thumbnail images
         ( "image?mode=animalthumb&amp;id=", "animal_thumbnail", "animalid" ),
@@ -829,28 +910,6 @@ def md5_hash(s):
     s = m.hexdigest()
     return s
 
-def where_text_filter(dbo, field, term):
-    """
-    Used when adding a text search term filter to a where clause. It matches
-    the lowered string literally, decodes the search term to unicode and matches for
-    that.
-    dbo: The database info
-    field: The field we're filtering on
-    term:  The item we're filtering for
-    """
-    term = term.lower().replace("'", "`")
-    normal = u"LOWER(%s) LIKE '%%%s%%'" % (field, term)
-    decoded = u"LOWER(%s) LIKE  '%%%s%%'" % (field, decode_html(term))
-    wc = normal + u" OR " + decoded
-    # If DB_DECODE_HTML_ENTITIES is true and you have a UTF collation
-    # on your database, case insensitive searching will work here
-    # for all languages.
-    # If DB_DECODE_HTML_ENTITIES is false (the default and for sm.com)
-    # case insensitive searching for non-English languages will 
-    # not work as unicode code points are stored in the database 
-    # HTML entities and LOWER() has no effect.
-    return wc
-
 def get_url(url, headers = {}, cookies = {}, timeout = None):
     """
     Retrieves a URL
@@ -872,14 +931,15 @@ def get_image_url(url, headers = {}, cookies = {}, timeout = None):
         s.write(chunk) # default from requests is 128 byte chunks
     return { "cookies": r.cookies, "headers": r.headers, "response": s.getvalue(), "status": r.status_code, "requestheaders": r.request.headers, "requestbody": r.request.body }
 
-def post_data(url, data, contenttype = "", headers = {}):
+def post_data(url, data, contenttype = "", httpmethod = "", headers = {}):
     """
     Posts data to a URL as the body
+    httpmethod: POST by default
     """
     try:
-        if contenttype != "":
-            headers["Content-Type"] = "text/csv"
+        if contenttype != "": headers["Content-Type"] = contenttype
         req = urllib2.Request(url, data, headers)
+        if httpmethod != "": req.get_method = lambda: httpmethod
         resp = urllib2.urlopen(req)
         return { "requestheaders": headers, "requestbody": data, "headers": resp.info().headers, "response": resp.read(), "status": resp.getcode() }
     except urllib2.HTTPError as e:
@@ -920,13 +980,19 @@ def post_json(url, json, headers = {}):
     """
     Posts a JSON document to a URL
     """
-    return post_data(url, json, "text/json", headers)
+    return post_data(url, json, contenttype="application/json", headers=headers)
+
+def patch_json(url, json, headers = {}):
+    """
+    Posts a JSON document to a URL with the PATCH HTTP method
+    """
+    return post_data(url, json, contenttype="application/json", httpmethod="PATCH", headers=headers)
 
 def post_xml(url, xml, headers = {}):
     """
     Posts an XML document to a URL
     """
-    return post_data(url, xml, "text/xml", headers)
+    return post_data(url, xml, contenttype="text/xml", headers=headers)
 
 def read_text_file(name):
     """

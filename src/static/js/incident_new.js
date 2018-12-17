@@ -1,5 +1,5 @@
 /*jslint browser: true, forin: true, eqeq: true, white: true, sloppy: true, vars: true, nomen: true */
-/*global $, jQuery, _, additional, asm, common, config, controller, dlgfx, format, geo, header, html, validate */
+/*global $, jQuery, _, additional, asm, common, config, controller, dlgfx, format, header, html, validate */
 
 $(function() {
 
@@ -110,7 +110,7 @@ $(function() {
                 '</select>',
                 '</td>',
                 '</tr>',
-                additional.additional_mandatory_fields(controller.additional),
+                additional.additional_new_fields(controller.additional),
                 '</table>',
                 '<div class="centered">',
                 '<input type="hidden" data-post="species" value="' + config.integer("AFDefaultSpecies") + '" />',
@@ -192,7 +192,7 @@ $(function() {
         },
 
         reset: function() {
-            $(".asm-textbox, .asm-textarea").val("").change();
+            $("#dispatchaddress, #dispatchtown, #dispatchcounty, #dispatchpostcode").val("").change();
             $(".asm-checkbox").prop("checked", false).change();
             $(".asm-personchooser").personchooser("clear");
             $("#incidentdate").val(format.date(new Date()));

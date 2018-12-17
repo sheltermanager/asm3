@@ -138,7 +138,7 @@ QR_IMG_SRC = "//chart.googleapis.com/chart?cht=qr&chl=%(url)s&chs=%(size)s"
 
 # Shell command to use to compress PDFs
 SCALE_PDF_DURING_ATTACH = False
-SCALE_PDF_CMD = "convert %(input)s -compress Zip %(output)s"
+SCALE_PDF_CMD = "convert -density 120 -quality 60 %(input)s -compress Jpeg %(output)s"
 #SCALE_PDF_CMD = "pdftk %(input)s output %(output)s compress"
 #SCALE_PDF_CMD = "gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dPDFSETTINGS=/screen -dNOPAUSE -dQUIET -dBATCH -sOutputFile=%(output)s %(input)s"
 
@@ -149,36 +149,18 @@ HTML_TO_PDF = "wkhtmltopdf --orientation %(orientation)s %(papersize)s %(input)s
 # Target for viewing an address on a map, {0} is the address
 MAP_LINK = "https://www.openstreetmap.org/search?query={0}"
 
-# Client side geocode provider for mapping address to lat/lng in the browser
-# can be "mapquest", "nominatim" or "google"
-GEO_PROVIDER = "nominatim"
-GEO_PROVIDER_KEY = ""
-
 # Map provider for rendering maps on the client, can be "osm" or "google"
 MAP_PROVIDER = "osm"
-OSM_MAP_TILES = "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" # (can be switched for cloudmade.com or other OSM slippy tiles)
+MAP_PROVIDER_KEY = ""       # For google, the API key to use when making map requests
+OSM_MAP_TILES = "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" 
 
-# Bulk geocode provider for server side geocoding of
-# historical data, can be "nominatim" or "google" or "" to disable.
-BULK_GEO_PROVIDER = "nominatim"
-BULK_GEO_PROVIDER_KEY = ""
-
-# Whether or not to try and complete blank geocodes as part of the batch
-BULK_GEO_BATCH = True
-
-# How many to do in the overnight batch each time
-BULK_GEO_LIMIT = 100
-
-# URLs for public geocoding services
-BULK_GEO_NOMINATIM_URL = "https://nominatim.openstreetmap.org/search?format=json&q={q}"
-BULK_GEO_GOOGLE_URL = "https://maps.googleapis.com/maps/api/geocode/json?address={q}&sensor=false"
-
-# Timeout when doing server side geocode lookups
-BULK_GEO_LOOKUP_TIMEOUT = 10
-
-# Sleep for this many seconds after a server side geocode request
-# (nominatim has a no more than 1 request/s limit)
-BULK_GEO_SLEEP_AFTER = 1
+GEO_PROVIDER = "nominatim"  # Geocode provider to use - nominatim or google
+GEO_PROVIDER_KEY = ""       # For google, the API key to use when making geocoding requests
+GEO_SMCOM_URL = ""
+GEO_BATCH = False           # Whether or not to try and lookup geocodes as part of the batch
+GEO_LIMIT = 100             # How many geocodes to lookup as part of the batch
+GEO_LOOKUP_TIMEOUT = 5      # Timeout when doing geocode lookups
+GEO_SLEEP_AFTER = 1         # Sleep for seconds after a request to throttle (nominatim has a 1/s limit)
 
 # Enable the database field on login and allow login to multiple databases
 MULTIPLE_DATABASES = False
@@ -199,7 +181,7 @@ HELPINGLOSTPETS_FTP_HOST = "www.helpinglostpets.com"
 MADDIES_FUND_TOKEN_URL = ""
 MADDIES_FUND_UPLOAD_URL = ""
 PETFINDER_FTP_HOST = "members.petfinder.com"
-PETRESCUE_FTP_HOST = "ftp.petrescue.com.au"
+PETRESCUE_URL = ""
 RESCUEGROUPS_FTP_HOST = "ftp.rescuegroups.org"
 SMARTTAG_FTP_HOST = "ftp.idtag.com"
 SMARTTAG_FTP_USER = ""
@@ -288,8 +270,8 @@ JQUERY_UI_JS = 'static/lib/jqueryui/jquery-ui-1.11.2/jquery-ui.min.js'
 JQUERY_JS = 'static/lib/jquery/2.1.4/jquery.min.js'
 JQUERY_MOBILE_CSS = 'static/lib/jquerymobile/1.4.5/jquery.mobile.min.css'
 JQUERY_MOBILE_JS = 'static/lib/jquerymobile/1.4.5/jquery.mobile.min.js'
-LEAFLET_CSS = 'static/lib/leaflet/0.7.3/leaflet.css'
-LEAFLET_JS = 'static/lib/leaflet/0.7.3/leaflet.js'
+LEAFLET_CSS = 'static/lib/leaflet/1.3.1/leaflet.css'
+LEAFLET_JS = 'static/lib/leaflet/1.3.1/leaflet.js'
 MOMENT_JS = 'static/lib/moment/2.17.1/moment.min.js'
 MOUSETRAP_JS = 'static/lib/mousetrap/1.4.6/mousetrap.min.js'
 PATH_JS = 'static/lib/pathjs/0.8.4.smcom/path.min.js'
@@ -299,7 +281,7 @@ TABLESORTER_JS = 'static/lib/tablesorter/2.7.12/jquery.tablesorter.min.js'
 TABLESORTER_WIDGETS_JS = 'static/lib/tablesorter/2.7.12/jquery.tablesorter.widgets.min.js'
 TIMEPICKER_CSS = 'static/lib/timepicker/0.3.3/jquery.ui.timepicker.css'
 TIMEPICKER_JS = 'static/lib/timepicker/0.3.3/jquery.ui.timepicker.js'
-TINYMCE_4_JS = 'static/lib/tinymce/4.1.7/tinymce/js/tinymce/tinymce.min.js'
+TINYMCE_4_JS = 'static/lib/tinymce/4.7.13-asm1/tinymce/js/tinymce/tinymce.min.js'
 TOUCHPUNCH_JS = 'static/lib/touchpunch/0.2.3/jquery.ui.touch-punch.min.js'
 
 SMCOM_PAYMENT_LINK = ""

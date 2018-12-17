@@ -19,7 +19,7 @@ class TestPerson(unittest.TestCase):
             "address": "123 test street"
         }
         post = utils.PostedData(data, "en")
-        self.nid = person.insert_person_from_form(base.get_dbo(), post, "test")
+        self.nid = person.insert_person_from_form(base.get_dbo(), post, "test", geocode=False)
 
     def tearDown(self):
         person.delete_person(base.get_dbo(), "test", self.nid)
@@ -74,6 +74,12 @@ class TestPerson(unittest.TestCase):
 
     def test_update_owner_names(self):
         person.update_owner_names(base.get_dbo())
+
+    def test_get_person_embedded(self):
+        assert person.get_person_embedded(base.get_dbo(), self.nid) is not None
+
+    def test_embellish_adoption_warnings(self):
+        assert person.embellish_adoption_warnings(base.get_dbo(), person.get_person_embedded(base.get_dbo(), self.nid)) is not None
  
     def test_get_person_find_simple(self):
         assert len(person.get_person_find_simple(base.get_dbo(), "Test", "user")) > 0

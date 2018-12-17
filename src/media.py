@@ -8,6 +8,7 @@ import configuration
 import datetime
 import dbfs
 from PIL import ExifTags, Image
+import log
 import os
 import tempfile
 import utils
@@ -90,7 +91,7 @@ def set_video_preferred(dbo, username, mid):
     """
     link = dbo.first_row(dbo.query("SELECT LinkID, LinkTypeID FROM media WHERE ID = ?", [mid]))
     dbo.update("media", "LinkID=%d AND LinkTypeID=%d" % (link.LINKID, link.LINKTYPEID), { "WebsiteVideo": 0 })
-    dbo.update("media", mid, { "WebsiteVideo": 1 }, username, setLastChanged=False) 
+    dbo.update("media", mid, { "WebsiteVideo": 1, "Date": dbo.now() }, username, setLastChanged=False) 
 
 def set_web_preferred(dbo, username, mid):
     """
@@ -98,7 +99,7 @@ def set_web_preferred(dbo, username, mid):
     """
     link = dbo.first_row(dbo.query("SELECT LinkID, LinkTypeID FROM media WHERE ID = ?", [mid]))
     dbo.update("media", "LinkID=%d AND LinkTypeID=%d" % (link.LINKID, link.LINKTYPEID), { "WebsitePhoto": 0 })
-    dbo.update("media", mid, { "WebsitePhoto": 1 }, username, setLastChanged=False) 
+    dbo.update("media", mid, { "WebsitePhoto": 1, "Date": dbo.now() }, username, setLastChanged=False) 
 
 def set_doc_preferred(dbo, username, mid):
     """
@@ -106,7 +107,7 @@ def set_doc_preferred(dbo, username, mid):
     """
     link = dbo.first_row(dbo.query("SELECT LinkID, LinkTypeID FROM media WHERE ID = ?", [mid]))
     dbo.update("media", "LinkID=%d AND LinkTypeID=%d" % (link.LINKID, link.LINKTYPEID), { "DocPhoto": 0 })
-    dbo.update("media", mid, { "DocPhoto": 1 }, username, setLastChanged=False) 
+    dbo.update("media", mid, { "DocPhoto": 1, "Date": dbo.now() }, username, setLastChanged=False) 
 
 def set_excluded(dbo, username, mid, exclude = 1):
     """
@@ -215,6 +216,18 @@ def get_dbfs_path(linkid, linktype):
         path = "/animalcontrol/%d" % int(linkid)
     return path
 
+def get_log_from_media_type(x):
+    """ Returns the corresponding log type for a media type """
+    m = {
+        ANIMAL: log.ANIMAL,
+        PERSON: log.PERSON,
+        LOSTANIMAL: log.LOSTANIMAL,
+        FOUNDANIMAL: log.FOUNDANIMAL,
+        WAITINGLIST: log.WAITINGLIST,
+        ANIMALCONTROL: log.ANIMALCONTROL
+    }
+    return m[x]
+
 def get_media(dbo, linktype, linkid):
     return dbo.query("SELECT * FROM media WHERE LinkTypeID = ? AND LinkID = ? ORDER BY Date DESC", ( linktype, linkid ))
 
@@ -224,10 +237,10 @@ def get_media_by_id(dbo, mid):
 def get_image_media(dbo, linktype, linkid, ignoreexcluded = False):
     if not ignoreexcluded:
         return dbo.query("SELECT * FROM media WHERE LinkTypeID = ? AND LinkID = ? " \
-            "AND (LOWER(MediaName) Like '%%.jpg' OR LOWER(MediaName) Like '%%.jpeg')", ( linktype, linkid ))
+            "AND (LOWER(MediaName) Like '%%.jpg' OR LOWER(MediaName) Like '%%.jpeg') ORDER BY media.Date DESC", ( linktype, linkid ))
     else:
         return dbo.query("SELECT * FROM media WHERE (ExcludeFromPublish = 0 OR ExcludeFromPublish Is Null) " \
-            "AND LinkTypeID = ? AND LinkID = ? AND (LOWER(MediaName) Like '%%.jpg' OR LOWER(MediaName) Like '%%.jpeg')", ( linktype, linkid ))
+            "AND LinkTypeID = ? AND LinkID = ? AND (LOWER(MediaName) Like '%%.jpg' OR LOWER(MediaName) Like '%%.jpeg') ORDER BY media.Date DESC", ( linktype, linkid ))
 
 def attach_file_from_form(dbo, username, linktype, linkid, post):
     """
@@ -464,6 +477,20 @@ def create_document_media(dbo, username, linktype, linkid, template, content):
     }, username, setCreated=False, generateID=False)
     return mediaid
 
+def create_log(dbo, user, mid, logcode = "UK00", message = ""):
+    """
+    Creates a log message related to media
+    mid: The media ID
+    logcode: The fixed code for reports to use - 
+        ES01 = Document signing request
+        ES02 = Document signed
+    message: Some human readable text to accompany the code
+    """
+    m = dbo.first_row(get_media_by_id(dbo, mid))
+    if m is None: return
+    logtypeid = configuration.generate_document_log_type(dbo)
+    log.add_log(dbo, user, get_log_from_media_type(m.LINKTYPEID), m.LINKID, logtypeid, "%s:%s:%s - %s" % (logcode, m.ID, message, m.MEDIANOTES))
+
 def sign_document(dbo, username, mid, sigurl, signdate):
     """
     Signs an HTML document.
@@ -510,6 +537,7 @@ def update_file_content(dbo, username, mid, content):
 def update_media_notes(dbo, username, mid, notes):
     dbo.update("media", mid, { 
         "MediaNotes": notes,
+        "Date":       dbo.now(),
         # ASM2_COMPATIBILITY
         "UpdatedSinceLastPublish": 1
     }, username, setLastChanged=False)
@@ -670,7 +698,7 @@ def scale_image_file(inimage, outimage, resizespec):
     # If we haven't been given a valid resizespec,
     # use a default value.
     if resizespec.count("x") != 1:
-        resizespec = "400x400"
+        resizespec = "640x640"
     # Turn the scalespec into a tuple of the largest side
     ws, hs = resizespec.split("x")
     w = int(ws)
@@ -686,7 +714,7 @@ def scale_thumbnail_file(inimage, outimage):
     """
     Scales the given image to a thumbnail
     """
-    scale_image_file(inimage, outimage, "70x70")
+    scale_image_file(inimage, outimage, "150x150")
 
 def scale_pdf(filedata):
     """

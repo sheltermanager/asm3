@@ -1,76 +1,42 @@
 /*jslint browser: true, forin: true, eqeq: true, white: true, sloppy: true, vars: true, nomen: true */
-/*global $, jQuery, _, asm, common, config, controller, dlgfx, format, header, html, validate */
+/*global $, jQuery, _, asm, common, config, controller, dlgfx, format, header, edit_header, html, validate */
 
 $(function() {
 
     var move_adopt = {
+
+        infobox: function(id, s) {
+            return '<div id="' + id + '" class="ui-state-highlight ui-corner-all" ' +
+                'style="margin-top: 5px; padding: 0 .7em; width: 60%; margin-left: auto; margin-right: auto">' +
+                '<p class="centered"><span class="ui-icon ui-icon-info" style="float: left; margin-right: .3em;"></span>' + s + '</p>' + 
+                '</div>';
+        },
+
+        warnbox: function(id, s) {
+            return '<div id="' + id + '" class="ui-state-error ui-corner-all" ' +
+                'style="margin-top: 5px; padding: 0 .7em; width: 60%; margin-left: auto; margin-right: auto">' +
+                '<p class="centered"><span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em;"></span>' + s + '</p>' + 
+                '</div>';
+        },
 
         render: function() {
             return [
                 '<div id="asm-content">',
                 '<input id="movementid" type="hidden" />',
                 html.content_header(_("Adopt an animal"), true),
-                '<div id="bonddisplay" class="ui-state-highlight ui-corner-all" style="margin-top: 5px; padding: 0 .7em; width: 60%; margin-left: auto; margin-right: auto">',
-                '<p class="centered"><span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em;"></span>',
-                '<span id="bonddata" class="centered"></span>',
-                '</p>',
-                '</div>',
-                '<div id="fosterinfo" class="ui-state-highlight ui-corner-all" style="margin-top: 5px; padding: 0 .7em; width: 60%; margin-left: auto; margin-right: auto">',
-                '<p class="centered">',
-                '<span class="ui-icon ui-icon-info" style="float: left; margin-right: .3em;"></span>',
-                _("This animal is currently fostered, it will be automatically returned first."),
-                '</p>',
-                '</div>',
-                '<div id="retailerinfo" class="ui-state-highlight ui-corner-all" style="margin-top: 5px; padding: 0 .7em; width: 60%; margin-left: auto; margin-right: auto">',
-                '<p class="centered">',
-                '<span class="ui-icon ui-icon-info" style="float: left; margin-right: .3em;"></span>',
-                _("This animal is currently at a retailer, it will be automatically returned first."),
-                '</p>',
-                '</div>',
-                '<div id="reserveinfo" class="ui-state-highlight ui-corner-all" style="margin-top: 5px; padding: 0 .7em; width: 60%; margin-left: auto; margin-right: auto">',
-                '<p class="centered">',
-                '<span class="ui-icon ui-icon-info" style="float: left; margin-right: .3em;"></span>',
-                _("This animal has active reservations, they will be cancelled."),
-                '</p>',
-                '</div>',
-                '<div id="feeinfo" class="ui-state-highlight ui-corner-all" style="margin-top: 5px; padding: 0 .7em; width: 60%; margin-left: auto; margin-right: auto">',
-                '<p class="centered">',
-                '<span class="ui-icon ui-icon-info" style="float: left; margin-right: .3em;"></span>',
-                '<span class="subtext"></span>',
-                '</p>',
-                '</div>',
-
-                '<div id="ownerwarn" class="ui-state-error ui-corner-all" style="margin-top: 5px; padding: 0 .7em; width: 60%; margin-left: auto; margin-right: auto">',
-                '<p class="centered"><span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em;"></span>',
-                '<span id="warntext" class="centered"></span>',
-                '</p>',
-                '</div>',
-
-                '<div id="notonshelter" class="ui-state-error ui-corner-all" style="margin-top: 5px; padding: 0 .7em; width: 60%; margin-left: auto; margin-right: auto">',
-                '<p class="centered"><span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em;"></span>',
-                '<span class="centered">' + _("This animal is not on the shelter.") + '</span>',
-                '</p>',
-                '</div>',
-                '<div id="onhold" class="ui-state-error ui-corner-all" style="margin-top: 5px; padding: 0 .7em; width: 60%; margin-left: auto; margin-right: auto">',
-                '<p class="centered"><span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em;"></span>',
-                '<span class="centered">' + _("This animal is currently held and cannot be adopted.") + '</span>',
-                '</p>',
-                '</div>',
-                '<div id="notavailable" class="ui-state-error ui-corner-all" style="margin-top: 5px; padding: 0 .7em; width: 60%; margin-left: auto; margin-right: auto">',
-                '<p class="centered"><span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em;"></span>',
-                '<span class="centered">' + _("This animal is marked not for adoption.") + '</span>',
-                '</p>',
-                '</div>',
-                '<div id="crueltycase" class="ui-state-error ui-corner-all" style="margin-top: 5px; padding: 0 .7em; width: 60%; margin-left: auto; margin-right: auto">',
-                '<p class="centered"><span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em;"></span>',
-                '<span class="centered">' + _("This animal is part of a cruelty case and should not leave the shelter.") + '</span>',
-                '</p>',
-                '</div>',
-                '<div id="quarantine" class="ui-state-error ui-corner-all" style="margin-top: 5px; padding: 0 .7em; width: 60%; margin-left: auto; margin-right: auto">',
-                '<p class="centered"><span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em;"></span>',
-                '<span class="centered">' + _("This animal is currently quarantined and should not leave the shelter.") + '</span>',
-                '</p>',
-                '</div>',
+                this.warnbox("bonddisplay", '<span id="bonddata"></span>'),
+                this.infobox("fosterinfo", _("This animal is currently fostered, it will be automatically returned first.")),
+                this.infobox("retailerinfo", _("This animal is currently at a retailer, it will be automatically returned first.")),
+                this.infobox("reserveinfo", _("This animal has active reservations, they will be cancelled.")),
+                this.infobox("feeinfo", '<span class="subtext"></span>'),
+                this.warnbox("ownerwarn", '<span id="warntext"></span>'),
+                this.warnbox("notonshelter", _("This animal is not on the shelter.")),
+                this.warnbox("onhold", _("This animal is currently held and cannot be adopted.")),
+                this.warnbox("notavailable", _("This animal is marked not for adoption.")),
+                this.warnbox("crueltycase", _("This animal is part of a cruelty case and should not leave the shelter.")),
+                this.warnbox("quarantine", _("This animal is currently quarantined and should not leave the shelter.")),
+                this.warnbox("unaltered", _("This animal has not been altered.")),
+                this.warnbox("notmicrochipped", _("This animal has not been microchipped.")),
                 '<table class="asm-table-layout">',
                 '<tr>',
                 '<td>',
@@ -199,6 +165,8 @@ $(function() {
                 $("#notavailable").fadeOut();
                 $("#crueltycase").fadeOut();
                 $("#quarantine").fadeOut();
+                $("#unaltered").fadeOut();
+                $("#notmicrochipped").fadeOut();
                 $("#adopt").button("enable");
 
                 // If the animal is not on the shelter and not fostered or at a retailer, 
@@ -233,6 +201,16 @@ $(function() {
                 if (rec.ISQUARANTINE == 1) {
                     $("#quarantine").fadeIn();
                     $("#adopt").button("disable");
+                }
+
+                // Unaltered
+                if (config.bool("WarnUnaltered") && rec.NEUTERED == 0) {
+                    $("#unaltered").fadeIn();
+                }
+
+                // Not microchipped
+                if (config.bool("WarnNoMicrochip") && rec.IDENTICHIPPED == 0) {
+                    $("#notmicrochipped").fadeIn();
                 }
 
                 if (rec.ACTIVEMOVEMENTTYPE == 2) {
@@ -291,53 +269,57 @@ $(function() {
             $("#person").personchooser().bind("personchooserchange", function(event, rec) {
                 current_person = rec;
 
-                // Show tickbox if owner not homechecked
-                if (rec.IDCHECK == 0) {
-                    $("#markhomechecked").attr("checked", false);
-                    $("#homecheckrow").fadeIn();
-                }
+                edit_header.person_with_adoption_warnings(rec.ID).then(function(data) {
+                    rec = jQuery.parseJSON(data)[0];
 
-                // Default giftaid if the person is registered
-                $("#payment").payments("option", "giftaid", rec.ISGIFTAID == 1);
-                $("#giftaid1").prop("checked", rec.ISGIFTAID == 1);
-           
-                // Owner banned?
-                if (rec.ISBANNED == 1 && config.bool("WarnBannedOwner")) {
-                    $("#warntext").html(_("This person has been banned from adopting animals."));
-                    $("#ownerwarn").fadeIn();
-                    return;
-                }
+                    // Show tickbox if owner not homechecked
+                    if (rec.IDCHECK == 0) {
+                        $("#markhomechecked").attr("checked", false);
+                        $("#homecheckrow").fadeIn();
+                    }
 
-                // Owner previously under investigation
-                if (rec.INVESTIGATION > 0) {
-                    $("#warntext").html(_("This person has been under investigation."));
-                    $("#ownerwarn").fadeIn();
-                    return;
-                }
+                    // Default giftaid if the person is registered
+                    $("#payment").payments("option", "giftaid", rec.ISGIFTAID == 1);
+                    $("#giftaid1").prop("checked", rec.ISGIFTAID == 1);
+               
+                    // Owner banned?
+                    if (rec.ISBANNED == 1 && config.bool("WarnBannedOwner")) {
+                        $("#warntext").html(_("This person has been banned from adopting animals."));
+                        $("#ownerwarn").fadeIn();
+                        return;
+                    }
 
-                // Owner part of animal control incident
-                if (rec.INCIDENT > 0) {
-                    $("#warntext").html(_("This person has an animal control incident against them."));
-                    $("#ownerwarn").fadeIn();
-                    return;
-                }
+                    // Owner previously under investigation
+                    if (rec.INVESTIGATION > 0) {
+                        $("#warntext").html(_("This person has been under investigation."));
+                        $("#ownerwarn").fadeIn();
+                        return;
+                    }
 
-                // Owner previously surrendered?
-                if (rec.SURRENDER > 0 && config.bool("WarnBroughtIn")) {
-                    $("#warntext").html(_("This person has previously surrendered an animal."));
-                    $("#ownerwarn").fadeIn();
-                    return;
-                }
+                    // Owner part of animal control incident
+                    if (rec.INCIDENT > 0) {
+                        $("#warntext").html(_("This person has an animal control incident against them."));
+                        $("#ownerwarn").fadeIn();
+                        return;
+                    }
 
-                // Owner not homechecked?
-                if (rec.IDCHECK == 0 && config.bool("WarnNoHomeCheck")) {
-                    $("#warntext").html(_("This person has not passed a homecheck."));
-                    $("#ownerwarn").fadeIn();
-                    return;
-                }
+                    // Owner previously surrendered?
+                    if (rec.SURRENDER > 0 && config.bool("WarnBroughtIn")) {
+                        $("#warntext").html(_("This person has previously surrendered an animal."));
+                        $("#ownerwarn").fadeIn();
+                        return;
+                    }
 
-                $("#ownerwarn").fadeOut();
+                    // Owner not homechecked?
+                    if (rec.IDCHECK == 0 && config.bool("WarnNoHomeCheck")) {
+                        $("#warntext").html(_("This person has not passed a homecheck."));
+                        $("#ownerwarn").fadeIn();
+                        return;
+                    }
 
+                    $("#ownerwarn").fadeOut();
+
+                });
             });
 
             $("#costdisplay").closest(".ui-widget").hide();
@@ -348,6 +330,8 @@ $(function() {
             $("#notavailable").hide();
             $("#crueltycase").hide();
             $("#quarantine").hide();
+            $("#unaltered").hide();
+            $("#notmicrochipped").hide();
             $("#fosterinfo").hide();
             $("#reserveinfo").hide();
             $("#feeinfo").hide();

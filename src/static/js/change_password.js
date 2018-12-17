@@ -10,7 +10,6 @@ $(function() {
                 html.content_header(_("Change Password")),
                 html.error(_("The sheltermanager.com admin account password cannot be changed here, please visit {0}").replace("{0}", 
                     "<a href=\"https://sheltermanager.com/my/\">https://sheltermanager.com/my/</a>"), "mastererror"),
-                html.info(_("Your password is currently set to 'password'. This is highly insecure and we strongly suggest you choose a new password."), "suggestinfo"),
                 '<div id="changepassword">',
                 '<table class="asm-table-layout">',
                 '<tr>',
@@ -96,17 +95,11 @@ $(function() {
             });
 
             $("#mastererror").hide();
-            $("#suggestinfo").hide();
 
             // If it's the master sheltermanager.com user, don't allow changing
             if (controller.ismaster) {
                 $("#changepassword").hide();
                 $("#mastererror").fadeIn();
-            }
-
-            // If we were suggesting they change their password, say so
-            if (controller.issuggest) {
-                $("#suggestinfo").fadeIn();
             }
         },
 

@@ -8,21 +8,19 @@ $(function() {
         render: function() {
             return [
                 html.content_header(_("Active Incidents")),
-                '<div id="embeddedmap" style="width: 100%; height: 600px; color: #000" />',
+                '<div id="embeddedmap" style="z-index: 1; width: 100%; height: 600px; color: #000" />',
                 html.content_footer()
             ].join("\n");
         },
 
         show_mini_map: function() {
             setTimeout(function() {
-                var lastlatlong = "";
                 $.each(controller.rows, function(i, v) {
                     v.latlong = v.DISPATCHLATLONG;
                     v.popuptext = "<b>" + v.DISPATCHADDRESS + "</b><br /><a target='_blank' href='incident?id=" + v.ACID + "'>" + 
                         v.INCIDENTNAME + " " + common.nulltostr(v.OWNERNAME) + "</a>";
-                    if (v.latlong) { lastlatlong = v.latlong; }
                 });
-                mapping.draw_map("embeddedmap", 10, lastlatlong, controller.rows); 
+                mapping.draw_map("embeddedmap", 10, "", controller.rows); 
             }, 50);
         },
 

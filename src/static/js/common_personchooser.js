@@ -1,6 +1,6 @@
 /*jslint browser: true, forin: true, eqeq: true, plusplus: true, white: true, sloppy: true, vars: true, nomen: true */
 /*global $, console, jQuery */
-/*global _, asm, additional, common, config, dlgfx, edit_header, format, geo, html, header, log, validate, escape, unescape */
+/*global _, asm, additional, common, config, dlgfx, edit_header, format, html, header, log, validate, escape, unescape */
 
 (function($) {
 
@@ -392,8 +392,8 @@
                         html.list_to_options(self.options.sites, "ID", "SITENAME"));
                     // Add jurisdictions
                     dialogadd.find(".personchooser-jurisdiction").html(html.list_to_options(self.options.jurisdictions, "ID", "JURISDICTIONNAME"));
-                    // Add mandatory additional fields
-                    dialogadd.find("table").append(additional.additional_mandatory_fields(d.additional, false, "additional chooser"));
+                    // Add new additional fields
+                    dialogadd.find("table").append(additional.additional_new_fields(d.additional, false, "additional chooser"));
 
                     // Was there a value already set by the markup? If so, use it
                     if (self.element.val() != "" && self.element.val() != "0") {
@@ -523,26 +523,6 @@
         },
 
         /**
-         * Updates the geocode for a new person
-         */
-        update_geo: function(personid) {
-            var dialogadd = this.options.dialogadd,
-                address = dialogadd.find("[data='address']").val(), 
-                town = dialogadd.find("[data='town']").val(), 
-                county = dialogadd.find("[data='county']").val(), 
-                postcode = dialogadd.find("[data='postcode']").val();
-            var addrhash = geo.address_hash(address, town, county, postcode);
-            geo.get_lat_long(address, town, county, postcode)
-                .then(function(lat, lon) {
-                    if (lat) {
-                        var latlong = lat + "," + lon + "," + addrhash;
-                        var formdata = "mode=latlong&personid=" + personid + "&latlong=" + latlong;
-                        common.ajax_post("person", formdata);
-                    }
-                });
-        },
-
-        /**
          * Posts the add dialog to the backend to create the owner
          */
         add_person: function() {
@@ -577,8 +557,6 @@
                         dialogsimilar.dialog("close"); 
                     } 
                     catch(es) { }
-                    // Update the geocode for the newly created record
-                    self.update_geo(rec.ID);
                     self._trigger("change", null, rec);
                 },
                 error: function(jqxhr, textstatus, response) {

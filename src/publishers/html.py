@@ -2,7 +2,6 @@
 
 import animal
 import configuration
-import db
 import i18n
 import lookups
 import math
@@ -18,14 +17,15 @@ import wordprocessor
 from base import FTPPublisher, PublishCriteria, get_animal_data, is_animal_adoptable
 from sitedefs import BASE_URL, MULTIPLE_DATABASES_PUBLISH_FTP, MULTIPLE_DATABASES_PUBLISH_URL, SERVICE_URL
 
-def get_adoptable_animals(dbo, style="", speciesid=0, animaltypeid=0):
+def get_adoptable_animals(dbo, style="", speciesid=0, animaltypeid=0, locationid=0):
     """ Returns a page of adoptable animals.
     style: The HTML publishing template to use
     speciesid: 0 for all species, or a specific one
     animaltypeid: 0 for all animal types or a specific one
+    locationid: 0 for all internal locations or a specific one
     """
     animals = get_animal_data(dbo, include_additional_fields=True)
-    return animals_to_page(dbo, animals, style=style, speciesid=speciesid, animaltypeid=animaltypeid)
+    return animals_to_page(dbo, animals, style=style, speciesid=speciesid, animaltypeid=animaltypeid, locationid=locationid)
 
 def get_adopted_animals(dbo, daysadopted=0, style="", speciesid=0, animaltypeid=0):
     """ Returns a page of adopted animals.
@@ -36,8 +36,9 @@ def get_adopted_animals(dbo, daysadopted=0, style="", speciesid=0, animaltypeid=
     """
     if daysadopted == 0: daysadopted = 30
     orderby = "a.ActiveMovementDate DESC"
-    animals = dbo.query(animal.get_animal_query(dbo) + " WHERE a.ActiveMovementType = 1 AND " \
-        "a.ActiveMovementDate >= ? AND a.DeceasedDate Is Null AND a.NonShelterAnimal = 0 "
+    animals = dbo.query(animal.get_animal_query(dbo) + \
+        " WHERE a.IsNotAvailableForAdoption = 0 AND a.ActiveMovementType = 1 AND " \
+        "a.ActiveMovementDate >= ? AND a.DeceasedDate Is Null AND a.NonShelterAnimal = 0 " \
         "ORDER BY %s" % orderby, [ dbo.today(daysadopted * -1)] )
     return animals_to_page(dbo, animals, style=style, speciesid=speciesid, animaltypeid=animaltypeid)
 
@@ -51,16 +52,17 @@ def get_deceased_animals(dbo, daysdeceased=0, style="", speciesid=0, animaltypei
     if daysdeceased == 0: daysdeceased = 30
     orderby = "a.DeceasedDate DESC"
     animals = dbo.query(animal.get_animal_query(dbo) + \
-        " WHERE a.DeceasedDate Is Not Null AND a.DeceasedDate >= ? AND a.NonShelterAnimal = 0 AND a.DiedOffShelter = 0 "
+        " WHERE a.IsNotAvailableForAdoption = 0 AND a.DeceasedDate Is Not Null AND a.DeceasedDate >= ? AND a.NonShelterAnimal = 0 AND a.DiedOffShelter = 0 "
         "ORDER BY %s" % orderby, [ dbo.today(daysdeceased * -1)] )
     return animals_to_page(dbo, animals, style=style, speciesid=speciesid, animaltypeid=animaltypeid)
 
-def animals_to_page(dbo, animals, style="", speciesid=0, animaltypeid=0):
+def animals_to_page(dbo, animals, style="", speciesid=0, animaltypeid=0, locationid=0):
     """ Returns a page of animals.
     animals: A resultset containing animal records
     style: The HTML publishing template to use
     speciesid: 0 for all species, or a specific one
     animaltypeid: 0 for all animal types or a specific one
+    locationid: 0 for all internal locations or a specific one
     """
     # Get the specified template
     head, body, foot = template.get_html_template(dbo, style)
@@ -75,6 +77,7 @@ def animals_to_page(dbo, animals, style="", speciesid=0, animaltypeid=0):
     for a in animals:
         if speciesid > 0 and a.SPECIESID != speciesid: continue
         if animaltypeid > 0 and a.ANIMALTYPEID != animaltypeid: continue
+        if locationid > 0 and a.SHELTERLOCATION != locationid: continue
         # Translate website media name to the service call for images
         if smcom.active():
             a.WEBSITEMEDIANAME = "%s?account=%s&method=animal_image&animalid=%d" % (SERVICE_URL, dbo.database, a.ID)
@@ -97,6 +100,7 @@ def animals_to_page(dbo, animals, style="", speciesid=0, animaltypeid=0):
         notes = utils.nulltostr(a.WEBSITEMEDIANOTES)
         notes += configuration.third_party_publisher_sig(dbo).replace("\n", "<br/>")
         tags["WEBMEDIANOTES"] = notes 
+        tags["WEBSITEMEDIANOTES"] = notes # Compatibility, both are valid in wordprocessor.py
         bodies.append(wordprocessor.substitute_tags(body, tags, True, "$$", "$$"))
     return "%s\n%s\n%s" % (head,"\n".join(bodies), foot)
     
@@ -104,8 +108,8 @@ def get_animal_view(dbo, animalid):
     """ Constructs the animal view page to the template. """
     a = dbo.first_row(get_animal_data(dbo, animalid=animalid, include_additional_fields=True, strip_personal_data=True))
     # If the animal is not adoptable, bail out
-    if a is None or not is_animal_adoptable(dbo, a):
-        raise utils.ASMPermissionError("animal is not adoptable")
+    if a is None: raise utils.ASMPermissionError("animal is not adoptable (None)")
+    if not is_animal_adoptable(dbo, a): raise utils.ASMPermissionError("animal is not adoptable (False)")
     # If the option is on, use animal comments as the notes
     if configuration.publisher_use_comments(dbo):
         a.WEBSITEMEDIANOTES = a.ANIMALCOMMENTS
@@ -133,6 +137,7 @@ def get_animal_view(dbo, animalid):
     notes += configuration.third_party_publisher_sig(dbo)
     notes = notes.replace("\n", "**le**")
     tags["WEBMEDIANOTES"] = notes 
+    tags["WEBSITEMEDIANOTES"] = notes 
     s = wordprocessor.substitute_tags(s, tags, True, "$$", "$$")
     s = s.replace("**le**", "<br />")
     return s
@@ -280,6 +285,7 @@ class HTMLPublisher(FTPPublisher):
         # Preserve line endings in the bio
         notes = notes.replace("\n", "**le**")
         tags["WEBMEDIANOTES"] = notes 
+        tags["WEBSITEMEDIANOTES"] = notes 
         output = wordprocessor.substitute_tags(searchin, tags, True, "$$", "$$")
         output = output.replace("**le**", "<br />")
         return output
@@ -339,9 +345,10 @@ class HTMLPublisher(FTPPublisher):
             if self.pc.order == 0: orderby = "a.ActiveMovementDate"
             elif self.pc.order == 1: orderby = "a.ActiveMovementDate DESC"
             elif self.pc.order == 2: orderby = "a.AnimalName"
-            animals = db.query(self.dbo, animal.get_animal_query(self.dbo) + " WHERE a.ActiveMovementType = 1 AND " \
+            animals = self.dbo.query(animal.get_animal_query(self.dbo) + \
+                " WHERE a.IsNotAvailableForAdoption = 0 AND a.ActiveMovementType = 1 AND " \
                 "a.ActiveMovementDate >= %s AND a.DeceasedDate Is Null AND a.NonShelterAnimal = 0 "
-                "ORDER BY %s" % (db.dd(cutoff), orderby))
+                "ORDER BY %s" % (self.dbo.sql_date(cutoff), orderby))
             totalAnimals = len(animals)
             header = self.substituteHFTag(self.getHeader(), -1, user, i18n._("Recently adopted", l))
             footer = self.substituteHFTag(self.getFooter(), -1, user, i18n._("Recently adopted", l))
@@ -404,9 +411,10 @@ class HTMLPublisher(FTPPublisher):
             if self.pc.order == 0: orderby = "a.DeceasedDate"
             elif self.pc.order == 1: orderby = "a.DeceasedDate DESC"
             elif self.pc.order == 2: orderby = "a.AnimalName"
-            animals = db.query(self.dbo, animal.get_animal_query(self.dbo) + " WHERE a.DeceasedDate Is Not Null AND " \
+            animals = self.dbo.query(animal.get_animal_query(self.dbo) + \
+                " WHERE a.IsNotAvailableForAdoption = 0 AND a.DeceasedDate Is Not Null AND " \
                 "a.DeceasedDate >= %s AND a.NonShelterAnimal = 0 AND a.DiedOffShelter = 0 " \
-                "ORDER BY %s" % (db.dd(cutoff), orderby))
+                "ORDER BY %s" % (self.dbo.sql_date(cutoff), orderby))
             totalAnimals = len(animals)
             header = self.substituteHFTag(self.getHeader(), -1, user, i18n._("Recently deceased", l))
             footer = self.substituteHFTag(self.getFooter(), -1, user, i18n._("Recently deceased", l))

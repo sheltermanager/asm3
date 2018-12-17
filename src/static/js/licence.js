@@ -98,7 +98,7 @@ $(function() {
                     { field: "LICENCEFEE", display: _("Fee"), formatter: tableform.format_currency },
                     { field: "ISSUEDATE", display: _("Issued"), formatter: tableform.format_date, initialsort: true, intialsortdirection: "desc" },
                     { field: "EXPIRYDATE", display: _("Expires"), formatter: tableform.format_date },
-                    { field: "COMMENTS", display: _("Comments") }
+                    { field: "COMMENTS", display: _("Comments"), formatter: tableform.format_comments }
                 ]
             };
 

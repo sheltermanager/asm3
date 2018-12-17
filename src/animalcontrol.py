@@ -5,11 +5,12 @@ import audit
 import configuration
 import dbfs
 import diary
+import geo
 import log
 import media
 import users
 import utils
-from i18n import _, now, subtract_days, python2display, format_time_now
+from i18n import _, python2display, format_time_now
 
 ASCENDING = 0
 DESCENDING = 1
@@ -27,7 +28,9 @@ def get_animalcontrol_query(dbo):
         "web.ID AS WebsiteMediaID, " \
         "web.MediaName AS WebsiteMediaName, " \
         "web.Date AS WebsiteMediaDate, " \
-        "web.MediaNotes AS WebsiteMediaNotes " \
+        "web.MediaNotes AS WebsiteMediaNotes, " \
+        "doc.MediaName AS DocMediaName, " \
+        "doc.Date AS DocMediaDate " \
         "FROM animalcontrol ac " \
         "LEFT OUTER JOIN species s ON s.ID = ac.SpeciesID " \
         "LEFT OUTER JOIN lksex x ON x.ID = ac.Sex " \
@@ -37,10 +40,11 @@ def get_animalcontrol_query(dbo):
         "LEFT OUTER JOIN owner o2 ON o2.ID = ac.Owner2ID " \
         "LEFT OUTER JOIN owner o3 ON o3.ID = ac.Owner3ID " \
         "LEFT OUTER JOIN owner vo ON vo.ID = ac.VictimID " \
-        "LEFT OUTER JOIN media web ON web.LinkID = ac.ID AND web.LinkTypeID = 6 AND web.WebsitePhoto = 1 " \
+        "LEFT OUTER JOIN media web ON web.LinkID = ac.ID AND web.LinkTypeID = %d AND web.WebsitePhoto = 1 " \
+        "LEFT OUTER JOIN media doc ON doc.LinkID = ac.ID AND doc.LinkTypeID = %d AND doc.DocPhoto = 1 " \
         "LEFT OUTER JOIN pickuplocation pl ON pl.ID = ac.PickupLocationID " \
         "LEFT OUTER JOIN incidenttype ti ON ti.ID = ac.IncidentTypeID " \
-        "LEFT OUTER JOIN incidentcompleted ci ON ci.ID = ac.IncidentCompletedID"
+        "LEFT OUTER JOIN incidentcompleted ci ON ci.ID = ac.IncidentCompletedID" % (media.ANIMALCONTROL, media.ANIMALCONTROL)
 
 def get_animalcontrol_animals_query(dbo):
     return "SELECT a.ID, aca.AnimalID, a.ShelterCode, a.ShortCode, a.AgeGroup, a.AnimalName, " \
@@ -108,49 +112,33 @@ def get_followup_two_dates(dbo, start, end):
         "(ac.FollowupDateTime2 >= ? AND ac.FollowupDateTime2 <= ? AND NOT ac.FollowupComplete2 = 1) OR " \
         "(ac.FollowupDateTime3 >= ? AND ac.FollowupDateTime3 <= ? AND NOT ac.FollowupComplete3 = 1)", (start, end, start, end, start, end))
 
-def get_animalcontrol_find_simple(dbo, query = "", username = "", limit = 0):
+def get_animalcontrol_find_simple(dbo, query = "", username = "", limit = 0, siteid = 0):
     """
     Returns rows for simple animal control searches.
     query: The search criteria
     """
-    ors = []
-    values = []
-    query = query.replace("'", "`")
-    querylike = "%%%s%%" % query.lower()
-    def add(field):
-        ors.append("(LOWER(%s) LIKE ? OR LOWER(%s) LIKE ?)" % (field, field))
-        values.append(querylike)
-        values.append(utils.decode_html(querylike))
-    def addclause(clause):
-        ors.append(clause)
-        values.append(querylike)
+    ss = utils.SimpleSearchBuilder(dbo, query)
+
+    sitefilter = ""
+    if siteid != 0: sitefilter = " AND (ac.SiteID = 0 OR ac.SiteID = %d)" % siteid
+
     # If no query has been given, show open animal control records
     # from the last 30 days
     if query == "":
-        ors.append("ac.IncidentDateTime > %s AND ac.CompletedDate Is Null" % dbo.sql_date(subtract_days(dbo.today(), 30)))
+        ss.ors.append("ac.IncidentDateTime > %s AND ac.CompletedDate Is Null %s" % (dbo.sql_date(dbo.today(offset=-30)), sitefilter))
     else:
-        if utils.is_numeric(query):
-            ors.append("ac.ID = %s" % utils.cint(query))
-        add("co.OwnerName")
-        add("ti.IncidentName")
-        add("ac.DispatchAddress")
-        add("ac.DispatchPostcode")
-        add("o1.OwnerName")
-        add("o2.OwnerName")
-        add("o3.OwnerName")
-        add("vo.OwnerName")
-        addclause(u"EXISTS(SELECT ad.Value FROM additional ad " \
+        if utils.is_numeric(query): ss.add_field_value("ac.ID", utils.cint(query))
+        ss.add_fields([ "co.OwnerName", "ti.IncidentName", "ac.DispatchAddress", "ac.DispatchPostcode", "o1.OwnerName", 
+            "o2.OwnerName", "o3.OwnerName", "vo.OwnerName" ])
+        ss.add_clause(u"EXISTS(SELECT ad.Value FROM additional ad " \
             "INNER JOIN additionalfield af ON af.ID = ad.AdditionalFieldID AND af.Searchable = 1 " \
             "WHERE ad.LinkID=ac.ID AND ad.LinkType IN (%s) AND LOWER(ad.Value) LIKE ?)" % (additional.INCIDENT_IN))
-        if not dbo.is_large_db:
-            add("ac.CallNotes")
-            add("ac.AnimalDescription")
-    sql = "%s WHERE %s ORDER BY ac.ID" % ( \
-        get_animalcontrol_query(dbo),
-        " OR ".join(ors))
-    return reduce_find_results(dbo, username, dbo.query(sql, values, limit=limit))
+        ss.add_large_text_fields([ "ac.CallNotes", "ac.AnimalDescription" ])
 
-def get_animalcontrol_find_advanced(dbo, criteria, username, limit = 0):
+    sql = "%s WHERE ac.ID > 0 %s AND (%s) ORDER BY ac.ID" % ( get_animalcontrol_query(dbo), sitefilter, " OR ".join(ss.ors))
+    return reduce_find_results(dbo, username, dbo.query(sql, ss.values, limit=limit, distincton="ID"))
+
+def get_animalcontrol_find_advanced(dbo, criteria, username, limit = 0, siteid = 0):
     """
     Returns rows for advanced animal control searches.
     criteria: A dictionary of criteria
@@ -184,86 +172,44 @@ def get_animalcontrol_find_advanced(dbo, criteria, username, limit = 0):
        completedto - completed date to in current display locale format
 
     """
-    ands = []
-    values = []
-    l = dbo.locale
-    post = utils.PostedData(criteria, l)
+    post = utils.PostedData(criteria, dbo.locale)
+    ss = utils.AdvancedSearchBuilder(dbo, post)
 
-    def addid(cfield, field): 
-        if post[cfield] != "" and post.integer(cfield) > -1:
-            ands.append("%s = ?" % field)
-            values.append(post.integer(cfield))
-
-    def addidpair(cfield, field, field2): 
-        if post[cfield] != "" and post.integer(cfield) > 0: 
-            ands.append("(%s = ? OR %s = ?)" % (field, field2))
-            values.append(post.integer(cfield))
-            values.append(post.integer(cfield))
-
-    def addstr(cfield, field): 
-        if post[cfield] != "":
-            x = post[cfield].lower().replace("'", "`")
-            x = "%%%s%%" % x
-            ands.append("(LOWER(%s) LIKE ? OR LOWER(%s) LIKE ?)" % (field, field))
-            values.append(x)
-            values.append(utils.decode_html(x))
-
-    def adddate(cfieldfrom, cfieldto, field): 
-        if post[cfieldfrom] != "" and post[cfieldto] != "":
-            post.data["dayend"] = "23:59:59"
-            ands.append("%s >= ? AND %s <= ?" % (field, field))
-            values.append(post.date(cfieldfrom))
-            values.append(post.datetime(cfieldto, "dayend"))
-
-    def addfilter(f, condition):
-        if post["filter"].find(f) != -1: ands.append(condition)
-
-    def addcomp(cfield, value, condition):
-        if post[cfield] == value: ands.append(condition)
-
-    def addwords(cfield, field):
-        if post[cfield] != "":
-            words = post[cfield].split(" ")
-            for w in words:
-                x = w.lower().replace("'", "`")
-                x = "%%%s%%" % x
-                ands.append("(LOWER(%s) LIKE ? OR LOWER(%s) LIKE ?)" % (field, field))
-                values.append(x)
-                values.append(utils.decode_html(x))
-
-    ands.append("ac.ID > 0")
-    addid("number", "ac.ID")
-    addstr("callername", "co.OwnerName")
-    addstr("victimname", "vo.OwnerName")
-    addstr("callerphone", "co.HomeTelephone")
-    addid("incidenttype", "ac.IncidentTypeID")
-    addid("pickuplocation", "ac.PickupLocationID")
-    addid("jurisdiction", "ac.JurisdictionID")
-    if post["dispatchedaco"] != "-1": addstr("dispatchedaco", "ac.DispatchedACO")
-    adddate("incidentfrom", "incidentto", "ac.IncidentDateTime")
-    adddate("dispatchfrom", "dispatchto", "ac.DispatchDateTime")
-    adddate("respondedfrom", "respondedto", "ac.RespondedDateTime")
-    adddate("followupfrom", "followupto", "ac.FollowupDateTime")
-    adddate("completedfrom", "completedto", "ac.CompletedDate")
-    addid("completedtype", "ac.IncidentCompletedID")
-    addid("citationtype", "ac.CitationTypeID")
-    addstr("address", "ac.DispatchAddress")
-    addstr("city", "ac.DispatchTown")
-    addstr("postcode", "ac.DispatchPostcode")
-    addstr("callnotes", "ac.CallNotes")
-    addstr("description", "ac.AnimalDescription")
-    if post["agegroup"] != "-1": addstr("agegroup", "ac.AgeGroup")
-    addid("sex", "ac.Sex")
-    addid("species", "ac.SpeciesID")
-    addfilter("incomplete", "ac.CompletedDate Is Null")
-    addfilter("undispatched", "ac.CompletedDate Is Null AND ac.CallDateTime Is Not Null AND ac.DispatchDateTime Is Null")
-    addfilter("requirefollowup", "(" \
+    ss.ands.append("ac.ID > 0")
+    if siteid != 0: ss.ands.append("(ac.SiteID = 0 OR ac.SiteID = %d)" % siteid)
+    ss.add_id("number", "ac.ID")
+    ss.add_str("callername", "co.OwnerName")
+    ss.add_str("victimname", "vo.OwnerName")
+    ss.add_str("callerphone", "co.HomeTelephone")
+    ss.add_id("incidenttype", "ac.IncidentTypeID")
+    ss.add_id("pickuplocation", "ac.PickupLocationID")
+    ss.add_id("jurisdiction", "ac.JurisdictionID")
+    if post["dispatchedaco"] != "-1": ss.add_str("dispatchedaco", "ac.DispatchedACO")
+    ss.add_date("incidentfrom", "incidentto", "ac.IncidentDateTime")
+    ss.add_date("dispatchfrom", "dispatchto", "ac.DispatchDateTime")
+    ss.add_date("respondedfrom", "respondedto", "ac.RespondedDateTime")
+    ss.add_date("followupfrom", "followupto", "ac.FollowupDateTime")
+    ss.add_date("completedfrom", "completedto", "ac.CompletedDate")
+    ss.add_id("completedtype", "ac.IncidentCompletedID")
+    ss.add_id("citationtype", "ac.CitationTypeID")
+    ss.add_str("address", "ac.DispatchAddress")
+    ss.add_str("city", "ac.DispatchTown")
+    ss.add_str("postcode", "ac.DispatchPostcode")
+    ss.add_str("callnotes", "ac.CallNotes")
+    ss.add_str("description", "ac.AnimalDescription")
+    if post["agegroup"] != "-1": ss.add_str("agegroup", "ac.AgeGroup")
+    ss.add_id("sex", "ac.Sex")
+    ss.add_id("species", "ac.SpeciesID")
+    ss.add_filter("incomplete", "ac.CompletedDate Is Null")
+    ss.add_filter("undispatched", "ac.CompletedDate Is Null AND ac.CallDateTime Is Not Null AND ac.DispatchDateTime Is Null")
+    ss.add_filter("requirefollowup", "(" \
         "(ac.FollowupDateTime Is Not Null AND ac.FollowupDateTime <= %(now)s AND NOT ac.FollowupComplete = 1) OR " \
         "(ac.FollowupDateTime2 Is Not Null AND ac.FollowupDateTime2 <= %(now)s AND NOT ac.FollowupComplete2 = 1) OR " \
         "(ac.FollowupDateTime3 Is Not Null AND ac.FollowupDateTime3 <= %(now)s AND NOT ac.FollowupComplete3 = 1) " \
         ")" % { "now": dbo.sql_date(dbo.now(settime="23:59:59")) } )
-    sql = "%s WHERE %s ORDER BY ac.ID" % (get_animalcontrol_query(dbo), " AND ".join(ands))
-    return reduce_find_results(dbo, username, dbo.query(sql, values, limit=limit))
+
+    sql = "%s WHERE %s ORDER BY ac.ID" % (get_animalcontrol_query(dbo), " AND ".join(ss.ands))
+    return reduce_find_results(dbo, username, dbo.query(sql, ss.values, limit=limit, distincton="ID"))
 
 def reduce_find_results(dbo, username, rows):
     """
@@ -378,6 +324,35 @@ def get_traploan_two_dates(dbo, start, end):
     return dbo.query(get_traploan_query(dbo) + \
         "WHERE ReturnDate Is Null AND ReturnDueDate >= ? AND ReturnDueDate <= ?", (start, end))
 
+def update_dispatch_geocode(dbo, incidentid, latlon="", address="", town="", county="", postcode=""):
+    """
+    Looks up the geocode for this incident with the address info given.
+    If latlon is already set to a value, checks the address hash to see if it
+    matches and does not do the geocode if it does.
+    """
+    # If an address hasn't been specified, look it up from the incidentid given
+    if address == "":
+        row = dbo.first_row(dbo.query("SELECT DispatchAddress, DispatchTown, DispatchCounty, DispatchPostcode FROM animalcontrol WHERE ID=?", [incidentid]))
+        address = row.DISPATCHADDRESS
+        town = row.DISPATCHTOWN
+        county = row.DISPATCHCOUNTY
+        postcode = row.DISPATCHPOSTCODE
+    # If a latlon has been passed and it contains a hash of the address elements,
+    # then the address hasn't changed since the last geocode was done - do nothing
+    if latlon is not None and latlon != "":
+        if latlon.find(geo.address_hash(address, town, county, postcode)) != -1:
+            return latlon
+    # Do the geocode
+    latlon = geo.get_lat_long(dbo, address, town, county, postcode)
+    update_dispatch_latlong(dbo, incidentid, latlon)
+    return latlon
+
+def update_dispatch_latlong(dbo, incidentid, latlong):
+    """
+    Updates the latlong field on an incident.
+    """
+    dbo.update("animalcontrol", incidentid, { "DispatchLatLong": latlong })
+
 def update_animalcontrol_completenow(dbo, acid, username, completetype):
     """
     Updates an animal control incident record, marking it completed now with the type specified
@@ -405,7 +380,7 @@ def update_animalcontrol_respondnow(dbo, acid, username):
         "RespondedDateTime":    dbo.now()
     }, username)
 
-def update_animalcontrol_from_form(dbo, post, username):
+def update_animalcontrol_from_form(dbo, post, username, geocode=True):
     """
     Updates an animal control incident record from the screen
     data: The webpy data object containing form parameters
@@ -458,6 +433,9 @@ def update_animalcontrol_from_form(dbo, post, username):
     additional.save_values_for_link(dbo, post, acid, "incident")
     update_animalcontrol_roles(dbo, acid, post.integer_list("viewroles"), post.integer_list("editroles"))
 
+    # Check/update the geocode for the dispatch address
+    if geocode: update_dispatch_geocode(dbo, acid, post["dispatchlatlong"], post["dispatchaddress"], post["dispatchtown"], post["dispatchcounty"], post["dispatchpostcode"])
+
 def update_animalcontrol_roles(dbo, acid, viewroles, editroles):
     """
     Updates the view and edit roles for an incident
@@ -501,7 +479,7 @@ def update_animalcontrol_removelink(dbo, username, acid, animalid):
     dbo.execute("DELETE FROM animalcontrolanimal WHERE AnimalControlID = ? AND AnimalID = ?", (acid, animalid))
     audit.delete(dbo, username, "animalcontrolanimal", acid, "incident %d no longer linked to animal %d" % (acid, animalid))
 
-def insert_animalcontrol_from_form(dbo, post, username):
+def insert_animalcontrol_from_form(dbo, post, username, geocode=True):
     """
     Inserts a new animal control incident record from the screen
     data: The webpy data object containing form parameters
@@ -548,6 +526,10 @@ def insert_animalcontrol_from_form(dbo, post, username):
 
     additional.save_values_for_link(dbo, post, nid, "incident")
     update_animalcontrol_roles(dbo, nid, post.integer_list("viewroles"), post.integer_list("editroles"))
+
+    # Look up a geocode for the dispatch address
+    if geocode: update_dispatch_geocode(dbo, nid, "", post["dispatchaddress"], post["dispatchtown"], post["dispatchcounty"], post["dispatchpostcode"])
+
     return nid
 
 def delete_animalcontrol(dbo, username, acid):
@@ -567,10 +549,10 @@ def insert_animalcontrol(dbo, username):
     """
     l = dbo.locale
     d = {
-        "incidentdate":     python2display(l, now(dbo.timezone)),
+        "incidentdate":     python2display(l, dbo.now()),
         "incidenttime":     format_time_now(dbo.timezone),
         "incidenttype":     configuration.default_incident(dbo),
-        "calldate":         python2display(l, now(dbo.timezone)),
+        "calldate":         python2display(l, dbo.now()),
         "calltime":         format_time_now(dbo.timezone),
         "calltaker":        username
     }
@@ -613,13 +595,5 @@ def delete_traploan(dbo, username, tid):
     Deletes a traploan record
     """
     dbo.delete("ownertraploan", tid, username)
-
-def update_dispatch_latlong(dbo, incidentid, latlong):
-    """
-    Updates the dispatch latlong field.
-    """
-    dbo.update("animalcontrol", incidentid, {
-        "DispatchLatLong":  latlong
-    })
 
 

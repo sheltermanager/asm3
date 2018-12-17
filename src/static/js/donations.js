@@ -128,7 +128,7 @@ $(function() {
                             return controller.name.indexOf("animal_") != -1;
                         }
                     },
-                    { field: "COMMENTS", display: _("Comments") }
+                    { field: "COMMENTS", display: _("Comments"), formatter: tableform.format_comments }
                 ]
             };
 

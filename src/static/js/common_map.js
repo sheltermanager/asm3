@@ -1,148 +1,10 @@
 /*jslint browser: true, forin: true, eqeq: true, plusplus: true, white: true, sloppy: true, vars: true, nomen: true */
-/*global $, jQuery, google, asm, config, L */
+/*global alert, $, jQuery, google, asm, config, L */
 /*global google_loaded: true, geo: true, mapping: true */
 
 (function($) {
 
     google_loaded = false;
-
-    /**
-     * Module to perform geocoding.
-     * Supports mapquest, nominatim and google so far.
-     */
-    geo = {
-
-        /**
-         * Get a geocode lat/long for an address.
-         * Returns a promise that will resolve with the lat/long value.
-         */
-        get_lat_long: function(address, town, city, postcode) {
-            var deferred = $.Deferred();
-            var callback = function(lat, lng) {
-                if ($.isNumeric(lat) && $.isNumeric(lng)) { 
-                    deferred.resolve(lat, lng); 
-                }
-                else { 
-                    deferred.reject(); 
-                }
-            };
-            if (asm.geoprovider == "nominatim") {
-                this._nominatim_get_lat_long(address, town, city, postcode, callback);
-            }
-            else if (asm.geoprovider == "smcom") {
-                this._smcom_get_lat_long(address, town, city, postcode, callback);
-            }
-            else if (asm.geoprovider == "google") {
-                this._google_get_lat_long(address, town, city, postcode, callback);
-            }
-            else if (asm.geoprovider == "mapquest") {
-                this._mapquest_get_lat_long(address, town, city, postcode, callback);
-            }
-            return deferred.promise();
-        },
-
-        /** Returns true if we should only be calculating geocodes from the postcode */
-        _only_use_postcode: function() {
-            return config.bool("GeocodeWithPostcodeOnly") || asm.locale == "en_GB";
-        },
-
-        /** Gets the lat/long position for an address from google */
-        _google_get_lat_long: function(address, town, city, postcode, callback) {
-            var add = address.replace("\n", ",") + ", " + town  + ", " + city + ", " + postcode;
-            if (this._only_use_postcode()) { add = postcode; }
-            window._googeocallback = function() {
-                var geocoder = new google.maps.Geocoder();
-                geocoder.geocode( { 'address': add }, function(results, status) {
-                    if (status == google.maps.GeocoderStatus.OK) {
-                        callback(results[0].geometry.location.lat(), results[0].geometry.location.lng());
-                    }
-                    else {
-                        callback(0, 0);
-                    }
-                });
-            };
-            var key = "";
-            if (asm.geoproviderkey) {
-                key = "&key=" + asm.geoproviderkey;
-            }
-            if (google_loaded) {
-                window._googeocallback();
-            }
-            else {
-                $.getScript("//maps.google.com/maps/api/js?v=3.x&sensor=false&async=2{key}&callback=_googeocallback".replace("{key}", key), function() { google_loaded = true; });
-            }
-        },
-
-        /** Gets the lat/long position for an address from nominatim */
-        _nominatim_get_lat_long: function(address, town, city, postcode, callback) {
-            var add = encodeURIComponent(address.replace("\n", ",") + "," + town).replace(/ /g, "+");
-            if (this._only_use_postcode()) { add = postcode.replace(/ /g, "+"); }
-            $.getJSON("http://nominatim.openstreetmap.org/search?format=json&q=" + add + "&json_callback=?", function(data) {
-                if (!data || !data[0] || !data[0].lat) {
-                    callback(0, 0);
-                }
-                else {
-                    callback(data[0].lat, data[0].lon);
-                }
-            });
-        },
-
-        /** Gets the lat/long position for an address from sheltermanager.com */
-        _smcom_get_lat_long: function(address, town, city, postcode, callback) {
-            var add = encodeURIComponent(address.replace("\n", ",") + "," + town).replace(/ /g, "+");
-            if (this._only_use_postcode()) { add = postcode.replace(/ /g, "+"); }
-            var url = "/geocode?format=json&q=" + add;
-            $.ajax({
-                type: "GET",
-                dataType: "json",
-                mimeType: "text/json",
-                url: url,
-                success: function(data) {
-                    callback(data[0].lat, data[0].lon);
-                },
-                error: function(jqXHR, textStatus, errorThrown) {
-                    callback(0, 0);
-                }
-            });
-        },
-
-        /** Gets the lat/long position for an address from mapquest */
-        _mapquest_get_lat_long: function(address, town, city, postcode, callback) {
-            var add = (address.replace("\n", ",") + "," + town + "," + city + "," + postcode).replace(/'/g, '');
-            if (this._only_use_postcode()) { add = postcode; }
-            var url = "http://www.mapquestapi.com/geocoding/v1/address?";
-            if (asm.geoproviderkey) {
-                url += "key=" + asm.geoproviderkey + "&";
-            }
-            url += "outFormat=json&inFormat=json&json=";
-            url += encodeURIComponent("{location: '" + add + "',options:{maxResults:1}}");
-            $.ajax({
-                type: "POST",
-                dataType: "json",
-                mimeType: "text/json",
-                url: url,
-                success: function(response) {
-                    if (response.results[0]) {
-                        var ll = response.results[0].locations[0].latLng;
-                        if (ll && ll.lat) {
-                            callback(ll.lat, ll.lng);
-                            return;
-                        }
-                    }
-                    return callback(0, 0);
-                }
-            });
-        },
-
-        /** Returns a hash of an address */
-        address_hash: function(address, town, city, postcode) {
-            var addrhash = String(address + town + city + postcode);
-            addrhash = addrhash.replace(/ /g, '').replace(/,/g, '').replace(/\n/g, '');
-            if (addrhash.length > 220) { addrhash = addrhash.substring(0, 220); }
-            return addrhash;
-        }
-
-    };
 
     /**
      * Module to provide map drawing/plotting.
@@ -154,16 +16,54 @@
          * Draws a map using our selected provider.
          * divid: The element to draw the map in
          * zoom: The zoom level for the map 1-18
-         * latlong: A lat,long string to mark the center of the map
+         * latlong: A lat,long string to mark the center of the map (or empty string for current location)
          * markers: A list of marker objects to draw { latlong: "", popuptext: "", popupactive: false }
          */
         draw_map: function(divid, zoom, latlong, markers) {
-            if (asm.mapprovider == "osm") {
-                this._leaflet_draw_map(divid, zoom, latlong, markers);
+            var _draw_map = function(latlong) {
+                if (asm.mapprovider == "osm") {
+                    mapping._leaflet_draw_map(divid, zoom, latlong, markers);
+                }
+                else if (asm.mapprovider == "google") {
+                    mapping._google_draw_map(divid, zoom, latlong, markers);
+                }
+            };
+            var first_valid = this._first_valid_latlong(markers);
+            // A center point has been specified, use that
+            if (latlong != "") {
+                _draw_map(latlong);
             }
-            else if (asm.mapprovider == "google") {
-                this._google_draw_map(divid, zoom, latlong, markers);
+            // No center point specified, use the device location
+            else if (navigator.geolocation) {
+                    navigator.geolocation.getCurrentPosition(
+                        function(position) {
+                            // We got a position from the browser
+                            _draw_map(position.coords.latitude + "," + position.coords.longitude);
+                        },
+                        function() {
+                            // The user refused or an error occurred - use the first marker pin
+                            if (first_valid) { _draw_map(first_valid); }
+                        }
+                    );
             }
+            else if (first_valid) {
+                // Geolocation is not supported - use the first marker pin
+                _draw_map(first_valid);
+            }
+        },
+
+        /**
+         * Returns the first valid latlong value from the list of markers
+         */
+        _first_valid_latlong: function(markers) {
+            var fv;
+            $.each(markers, function(i, v) {
+                if (v.latlong) {
+                    fv = v.latlong;
+                    return false;
+                }
+            });
+            return fv;
         },
 
         _leaflet_draw_map: function(divid, zoom, latlong, markers) {
@@ -171,9 +71,11 @@
             $.getScript(asm.leafletjs, function() {
                 var ll = latlong.split(",");
                 var map = L.map(divid).setView([ll[0], ll[1]], 15);
-                L.Icon.Default.imagePath = asm.leafletjs.substring(0, asm.leafletjs.lastIndexOf("/")) + "/images";
+                L.Icon.Default.imagePath = asm.leafletjs.substring(0, asm.leafletjs.lastIndexOf("/")) + "/images/";
                 L.tileLayer(asm.osmmaptiles, {
-                    attribution: '&copy; <a target="_blank" href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+                    attribution: '<a target="_blank" href="http://osm.org/copyright">&copy; OpenStreetMap contributors</a> | ' + 
+                        '<a target="_blank" href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a> | ' + 
+                        '<a target="_blank" href="https://www.openstreetmap.org/fixthemap">Improve this map</a>'
                 }).addTo(map);
                 L.control.scale().addTo(map);
                 $.each(markers, function(i, v) {
@@ -214,8 +116,8 @@
                 });
             };
             var key = "";
-            if (asm.geoproviderkey) {
-                key = "&key=" + asm.geoproviderkey;
+            if (asm.mapproviderkey) {
+                key = "&key=" + asm.mapproviderkey;
             }
             if (google_loaded) {
                 window._goomapcallback();

@@ -38,7 +38,7 @@ $(function() {
                     { json_field: "RETAILERID", post_field: "retailer", label: _("Retailer"), type: "person", personfilter: "retailer", hideif: function() { return config.bool("DisableRetailer"); } },
                     { json_field: "ADOPTIONNUMBER", post_field: "adoptionno", label: _("Movement Number"), tooltip: _("A unique number to identify this movement"), type: "text" },
                     { json_field: "INSURANCENUMBER", post_field: "insurance", label: _("Insurance"), tooltip: _("If the shelter provides initial insurance cover to new adopters, the policy number"), type: "text" },
-                    { json_field: "RESERVATIONDATE", post_field: "reservationdate", label: _("Reservation Date"), tooltip: _("The date this animal was reserved"), type: "date" },
+                    { json_field: "RESERVATIONDATE", post_field: "reservation", label: _("Reservation Date"), tooltip: _("The date this animal was reserved"), type: "datetime" },
                     { json_field: "RESERVATIONSTATUSID", post_field: "reservationstatus", label: _("Reservation Status"), type: "select", options: { displayfield: "STATUSNAME", valuefield: "ID", rows: controller.reservationstatuses }},
                     { json_field: "RESERVATIONCANCELLEDDATE", post_field: "reservationcancelled", label: _("Reservation Cancelled"), type: "date" },
                     { type: "nextcol" },
@@ -106,13 +106,13 @@ $(function() {
                         initialsort: controller.name != "move_book_trial_adoption", 
                         initialsortdirection: controller.name == "move_book_reservation" ? "asc" : "desc", 
                         formatter: function(row, v) { 
-                            // If we're only a reservation, use the reserve date
-                            if (row.MOVEMENTTYPE == 0) { 
-                                // If the reserve date is the same as the created date, use created
-                                // date with the time component
-                                if (format.date(row.CREATEDDATE) == format.date(row.RESERVATIONDATE)) { 
-                                    return format.date(row.CREATEDDATE) + " " + format.time(row.CREATEDDATE);
+                            // If we're only a reservation, use the reserve date instead
+                            if (row.MOVEMENTTYPE == 0) {
+                                // If the reserve date has its own time, use that
+                                if (format.time(row.RESERVATIONDATE) != "") {
+                                    return format.date(row.RESERVATIONDATE) + " " + format.time(row.RESERVATIONDATE);
                                 }
+                                // Otherwise, include no time
                                 return format.date(row.RESERVATIONDATE);
                             }
                             return format.date(row.MOVEMENTDATE);
@@ -186,11 +186,7 @@ $(function() {
                     },
                     { field: "PERSON", display: _("Person"),
                         formatter: function(row) {
-                            if (row.OWNERID) {
-                                return html.person_link(row.OWNERID, row.OWNERNAME) +
-                                    '<br/>' + common.nulltostr(row.OWNERADDRESS) + '<br/>' + common.nulltostr(row.OWNERTOWN) + '<br/>' + common.nulltostr(row.OWNERCOUNTY) + ' ' + common.nulltostr(row.OWNERPOSTCODE) + 
-                                    '<br/>' + common.nulltostr(row.HOMETELEPHONE) + " " + common.nulltostr(row.WORKTELEPHONE) + " " + common.nulltostr(row.MOBILETELEPHONE);
-                            }
+                            if (row.OWNERID) { return html.person_link_address(row); }
                             return "";
                         },
                         hideif: function(row) {
@@ -225,9 +221,7 @@ $(function() {
                         }
                     },
                     { field: "COMMENTS", display: _("Comments"), 
-                        formatter: function(row) {
-                            return html.truncate(row.COMMENTS + " " + row.REASONFORRETURN, 80); 
-                        }
+                        formatter: function(row, v) { return tableform.format_comments(row, row.COMMENTS + " " + row.REASONFORRETURN); }
                     }
                 ]
             };
@@ -270,6 +264,7 @@ $(function() {
                                 $("#type").select("value", "0");
                                 $("#returncategory").select("value", config.str("AFDefaultReturnReason"));
                                 $("#reservationstatus").select("value", config.str("AFDefaultReservationStatus"));
+                                $("#reservationtime").val("00:00:00");
                                 $("#adoptionno").closest("tr").hide();
 
                                 // Choose an appropriate default type based on our controller
@@ -426,13 +421,16 @@ $(function() {
             // Watch for return date changing
             $("#returndate").change(movements.returndate_change);
 
-            // When we choose a person
+            // When we choose a person or animal
             $("#person").personchooser().bind("personchooserchange", function(event, rec) { movements.lastperson = rec; movements.warnings(); });
-
             $("#person").personchooser().bind("personchooserloaded", function(event, rec) { movements.lastperson = rec; movements.warnings(); });
             $("#person").personchooser().bind("personchooserclear", function(event, rec) { movements.warnings(); });
-            $("#animal").animalchooser().bind("animalchooserchange", function(event, rec) { movements.lastanimal = rec; movements.warnings(); });
-            $("#animal").animalchooser().bind("animalchooserloaded", function(event, rec) { movements.lastanimal = rec; movements.warnings(); });
+            $("#animal").animalchooser().bind("animalchooserchange", function(event, rec) { 
+                movements.lastanimal = rec; movements.warnings(); movements.set_release_name(rec.SPECIESID); 
+            });
+            $("#animal").animalchooser().bind("animalchooserloaded", function(event, rec) { 
+                movements.lastanimal = rec; movements.warnings(); movements.set_release_name(rec.SPECIESID); 
+            });
             $("#retailer").personchooser().bind("personchooserchange", function(event, rec) { movements.lastretailer = rec; movements.warnings(); });
             $("#retailer").personchooser().bind("personchooserloaded", function(event, rec) { movements.lastretailer = rec; movements.warnings(); });
 
@@ -472,8 +470,66 @@ $(function() {
             // None of these warnings are valid if this isn't a reservation, adoption or a reclaim
             if ($("#type").val() != 0 && $("#type").val() != 1 && $("#type").val() != 5) { return; }
 
-            // Person warnings
-            if (p) {
+            // Animal warnings
+            if (a) {
+
+                // If the animal is marked not for adoption
+                if (a.ISNOTAVAILABLEFORADOPTION == 1) {
+                    warn.push(_("This animal is marked not for adoption."));
+                }
+
+                // If the animal is held, we shouldn't be allowed to adopt it
+                if (a.ISHOLD == 1) {
+                    warn.push(_("This animal is currently held and cannot be adopted."));
+                }
+
+                // Cruelty case
+                if (a.CRUELTYCASE == 1) {
+                    warn.push(_("This animal is part of a cruelty case and should not leave the shelter."));
+                }
+
+                // Quarantined
+                if (a.ISQUARANTINE == 1) {
+                    warn.push(_("This animal is currently quarantined and should not leave the shelter."));
+                }
+
+                // Unaltered
+                if (config.bool("WarnUnaltered") && a.NEUTERED == 0) {
+                    warn.push(_("This animal has not been altered."));
+                }
+
+                // Not microchipped
+                if (config.bool("WarnNoMicrochip") && a.IDENTICHIPPED == 0) {
+                    warn.push(_("This animal has not been microchipped."));
+                }
+
+                // Check for bonded animals and warn
+                if (a.BONDEDANIMALID != "0" || a.BONDEDANIMAL2ID != "0") {
+                    var bw = "";
+                    if (a.BONDEDANIMAL1NAME != "" && a.BONDEDANIMAL1NAME != null) {
+                        bw += a.BONDEDANIMAL1CODE + " - " + a.BONDEDANIMAL1NAME;
+                    }
+                    if (a.BONDEDANIMAL2NAME != "" && a.BONDEDANIMAL2NAME != null) {
+                        if (bw != "") { bw += ", "; }
+                        bw += a.BONDEDANIMAL2CODE + " - " + a.BONDEDANIMAL2NAME;
+                    }
+                    if (bw != "") {
+                        warn.push(_("This animal is bonded with {0}").replace("{0}", bw));
+                    }
+                }
+
+            }
+
+            // If we don't have a person yet, just show any animal warnings and finish
+            if (!p) { 
+                if (warn.length > 0) { tableform.dialog_error(warn.join("<br/>")); }
+                return;
+            }
+
+            // To handle person warnings, we need to go back to the server to get
+            // extra info on that person (incidents, surrenders, etc)
+            edit_header.person_with_adoption_warnings(p.ID).then(function(data) {
+                p = jQuery.parseJSON(data)[0];
 
                 // Is this owner banned?
                 if (p.ISBANNED == 1 && config.bool("WarnBannedOwner")) {
@@ -510,50 +566,12 @@ $(function() {
                         warn.push(_("This person has not passed a homecheck."));
                     }
                 }
-            }
 
-            // Animal warnings
-            if (a) {
-
-                // If the animal is marked not for adoption
-                if (a.ISNOTAVAILABLEFORADOPTION == 1) {
-                    warn.push(_("This animal is marked not for adoption."));
+                if (warn.length > 0) {
+                    tableform.dialog_error(warn.join("<br/>"));
                 }
 
-                // If the animal is held, we shouldn't be allowed to adopt it
-                if (a.ISHOLD == 1) {
-                    warn.push(_("This animal is currently held and cannot be adopted."));
-                }
-
-                // Cruelty case
-                if (a.CRUELTYCASE == 1) {
-                    warn.push(_("This animal is part of a cruelty case and should not leave the shelter."));
-                }
-
-                // Quarantined
-                if (a.ISQUARANTINE == 1) {
-                    warn.push(_("This animal is currently quarantined and should not leave the shelter."));
-                }
-
-                // Check for bonded animals and warn
-                if (a.BONDEDANIMALID != "0" || a.BONDEDANIMAL2ID != "0") {
-                    var bw = "";
-                    if (a.BONDEDANIMAL1NAME != "" && a.BONDEDANIMAL1NAME != null) {
-                        bw += a.BONDEDANIMAL1CODE + " - " + a.BONDEDANIMAL1NAME;
-                    }
-                    if (a.BONDEDANIMAL2NAME != "" && a.BONDEDANIMAL2NAME != null) {
-                        if (bw != "") { bw += ", "; }
-                        bw += a.BONDEDANIMAL2CODE + " - " + a.BONDEDANIMAL2NAME;
-                    }
-                    if (bw != "") {
-                        warn.push(_("This animal is bonded with {0}").replace("{0}", bw));
-                    }
-                }
-
-            }
-            if (warn.length > 0) {
-                tableform.dialog_error(warn.join("<br/>"));
-            }
+            });
         },
 
         validation: function() {
@@ -630,6 +648,18 @@ $(function() {
             if (row.RESERVATIONDATE != null && row.RESERVATIONCANCELLEDDATE != null && !row.MOVEMENTDATE) { row.MOVEMENTNAME = common.get_field(controller.movementtypes, 10, "MOVEMENTTYPE"); }
         },
 
+        /** When the animal changes, set the name of the "Release to Wild" movement 
+         *  to "TNR" instead if the species we've been given is a cat.
+         */
+        set_release_name: function(speciesid) {
+            if (speciesid == 2) {
+                $("#type option[value='7']").html(_("TNR"));
+            }
+            else {
+                $("#type option[value='7']").html(_("Released To Wild"));
+            }
+        },
+
         /** Fires whenever the movement type box is changed */
         type_change: function() {
             var mt = $("#type").val();
@@ -665,16 +695,21 @@ $(function() {
             else {
                 $("#insurance").closest("tr").fadeOut();
             }
-            // Show the reservation fields for reserves
-            if (mt == 0) {
+            // Show the reservation date field for both reserves and adoptions
+            if (mt == 1 || mt == 0) {
                 $("#reservationdate").closest("tr").fadeIn();
+            }
+            else {
+                $("#reservationdate").closest("tr").fadeOut();
+            }
+            // Show the other reservation fields for reserves
+            if (mt == 0) {
                 $("#reservationstatus").closest("tr").fadeIn();
                 $("#reservationcancelled").closest("tr").fadeIn();
                 $("#movementdate").closest("tr").fadeOut();
                 $("#returndate").closest("tr").fadeOut();
             }
             else {
-                $("#reservationdate").closest("tr").fadeOut();
                 $("#reservationstatus").closest("tr").fadeOut();
                 $("#reservationcancelled").closest("tr").fadeOut();
                 $("#movementdate").closest("tr").fadeIn();

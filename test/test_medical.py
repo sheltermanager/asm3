@@ -29,6 +29,9 @@ class TestMedical(unittest.TestCase):
     def test_get_regimens_treatments(self):
         medical.get_regimens_treatments(base.get_dbo(), 1)
 
+    def test_get_medical_export(self):
+        medical.get_medical_export(base.get_dbo())
+
     def test_get_profiles(self):
         medical.get_profiles(base.get_dbo())
 
@@ -46,6 +49,9 @@ class TestMedical(unittest.TestCase):
 
     def test_get_treatments_outstanding(self):
         medical.get_treatments_outstanding(base.get_dbo())
+
+    def test_get_combined_due(self):
+        medical.get_combined_due(base.get_dbo(), 0, None, None)
 
     def test_update_test_today(self):
         medical.update_test_today(base.get_dbo(), "test", 0, 0)

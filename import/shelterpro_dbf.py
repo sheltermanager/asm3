@@ -14,19 +14,34 @@ Requires address.dbf, addrlink.dbf, animal.dbf, incident.dbf, license.dbf, note.
 
 Will also look in PATH/images/ANIMALKEY.[jpg|JPG] for animal photos if available.
 
-29th December, 2016
+29th December, 2016 - 1st August 2018
 """
 
-PATH = "data/shelterpro_vk1496"
+PATH = "data/shelterpro_za1799"
 
 START_ID = 100
 
 INCIDENT_IMPORT = False
-LICENCE_IMPORT = True
+LICENCE_IMPORT = False
 PICTURE_IMPORT = False
 VACCINATION_IMPORT = True
+NOTE_IMPORT = True
+SHELTER_IMPORT = True 
 
+SEPARATE_ADDRESS_TABLE = True
 IMPORT_ANIMALS_WITH_NO_NAME = True
+
+""" when faced with a field type it doesn't understand, dbfread can produce an error
+    'Unknown field type xx'. This parser returns anything unrecognised as binary data """
+class ExtraFieldParser(dbfread.FieldParser):
+    def parse(self, field, data):
+        try:
+            return dbfread.FieldParser.parse(self, field, data)
+        except ValueError:
+            return data
+
+def open_dbf(name):
+    return dbfread.DBF("%s/%s.DBF" % (PATH, name.upper()), encoding="latin1", parserclass=ExtraFieldParser)
 
 def gettype(animaldes):
     spmap = {
@@ -80,6 +95,7 @@ movements = []
 animals = []
 animalvaccinations = []
 animalcontrol = []
+animalcontrolanimals = []
 
 ppa = {}
 ppo = {}
@@ -123,17 +139,72 @@ uo.OwnerSurname = "Unknown Owner"
 uo.OwnerName = uo.OwnerSurname
 
 # Load up data files
-caddress = dbfread.DBF("%s/address.dbf" % PATH, encoding="latin1")
-caddrlink = dbfread.DBF("%s/addrlink.dbf" % PATH)
-canimal = dbfread.DBF("%s/animal.dbf" % PATH)
-clicense = dbfread.DBF("%s/license.dbf" % PATH)
-cperson = dbfread.DBF("%s/person.dbf" % PATH, encoding="latin1")
-cshelter = dbfread.DBF("%s/shelter.dbf" % PATH)
-cvacc = dbfread.DBF("%s/vacc.dbf" % PATH)
-cincident = dbfread.DBF("%s/incident.dbf" % PATH)
-cnote = dbfread.DBF("%s/note.dbf" % PATH, encoding="latin1")
+if SEPARATE_ADDRESS_TABLE:
+    caddress = open_dbf("address")
+    caddrlink = open_dbf("addrlink")
+canimal = open_dbf("animal")
+if LICENCE_IMPORT: clicense = open_dbf("license")
+cperson = open_dbf("person")
+if SHELTER_IMPORT: cshelter = open_dbf("shelter")
+if VACCINATION_IMPORT: cvacc = open_dbf("vacc")
+if INCIDENT_IMPORT: cincident = open_dbf("incident")
+if NOTE_IMPORT: cnote = open_dbf("note")
 
-# Start with animals
+# Addresses if we have a separate file
+if SEPARATE_ADDRESS_TABLE:
+    for row in caddress:
+        addresses[row["ADDRESSKEY"]] = {
+            "address": asm.strip(row["ADDRESSSTR"]) + " " + asm.strip(row["ADDRESSST2"]) + " " + asm.strip(row["ADDRESSST3"]),
+            "city": asm.strip(row["ADDRESSCIT"]),
+            "state": asm.strip(row["ADDRESSSTA"]),
+            "zip": asm.strip(row["ADDRESSPOS"])
+        }
+    # The link between addresses and people
+    for row in caddrlink:
+        addrlink[row["EVENTKEY"]] = row["ADDRLINKAD"]
+
+# People
+for row in cperson:
+    o = asm.Owner()
+    owners.append(o)
+    personkey = 0
+    # Sometimes called UNIQUE 
+    if "PERSONKEY" in row: personkey = row["PERSONKEY"]
+    elif "UNIQUE" in row: personkey = row["UNIQUE"]
+    ppo[personkey] = o
+    o.OwnerForeNames = asm.strip(row["FNAME"])
+    o.OwnerSurname = asm.strip(row["LNAME"])
+    o.OwnerName = o.OwnerTitle + " " + o.OwnerForeNames + " " + o.OwnerSurname
+    # Find the address if it's in a separate table
+    if SEPARATE_ADDRESS_TABLE:
+        if addrlink.has_key(personkey):
+            addrkey = addrlink[personkey]
+            if addresses.has_key(addrkey):
+                add = addresses[addrkey]
+                o.OwnerAddress = add["address"]
+                o.OwnerTown = add["city"]
+                o.OwnerCounty = add["state"]
+                o.OwnerPostcode = add["zip"]
+    else:
+        # Otherwise, address fields are in the person table
+        o.OwnerAddress = row["ADDR1"].encode("ascii", "xmlcharrefreplace") + "\n" + row["ADDR2"].encode("ascii", "xmlcharrefreplace")
+        o.OwnerTown = row["CITY"]
+        o.OwnerCounty = row["STATE"]
+        o.OwnerPostcode = row["POSTAL_ID"]
+    if asm.strip(row["EMAIL"]) != "(": o.EmailAddress = asm.strip(row["EMAIL"])
+    if row["HOME_PH"] != 0: o.HomeTelephone = asm.strip(row["HOME_PH"])
+    if row["WORK_PH"] != 0: o.WorkTelephone = asm.strip(row["WORK_PH"])
+    if row["THIRD_PH"] != 0: o.MobileTelephone = asm.strip(row["THIRD_PH"])
+    o.IsACO = asm.cint(row["ACO_IND"])
+    o.IsStaff = asm.cint(row["STAFF_IND"])
+    o.IsVolunteer = asm.cint(row["VOL_IND"])
+    o.IsDonor = asm.cint(row["DONOR_IND"])
+    o.IsMember = asm.cint(row["MEMBER_IND"])
+    o.IsBanned = asm.cint(row["NOADOPT"] == "T" and "1" or "0")
+    if "FOSTERS" in row: o.IsFosterer = asm.cint(row["FOSTERS"])
+    # o.ExcludeFromBulkEmail = asm.cint(row["MAILINGSAM"]) # Not sure this is correct
+
+# Animals
 for row in canimal:
     if not IMPORT_ANIMALS_WITH_NO_NAME and row["PETNAME"].strip() == "": continue
     a = asm.Animal()
@@ -145,12 +216,11 @@ for row in canimal:
     if a.AnimalName.strip() == "":
         a.AnimalName = "(unknown)"
     age = row["AGE"].split(" ")[0]
-    # TODO: DOB is not always present in these things
-    a.DateOfBirth = row["DOB"]
-    if a.DateOfBirth is None: a.DateOfBirth = getdateage(age, row["ADDEDDATET"])
-    a.DateBroughtIn = row["ADDEDDATET"]
-    if a.DateBroughtIn is None:
-        a.DateBroughtIn = datetime.datetime.today()    
+    added = asm.now()
+    if "ADDEDDATET" in row and row["ADDEDDATET"] is not None: added = row["ADDEDDATET"]
+    if "DOB" in row: a.DateOfBirth = row["DOB"]
+    if a.DateOfBirth is None: a.DateOfBirth = getdateage(age, added)
+    a.DateBroughtIn = added
     a.LastChangedDate = a.DateBroughtIn
     a.CreatedDate = a.DateBroughtIn
     a.EntryReasonID = 4
@@ -179,6 +249,10 @@ for row in canimal:
     # Make everything non-shelter until it's in the shelter file
     a.NonShelterAnimal = 1
     a.Archived = 1
+    # If the row has an original owner
+    if ppo.has_key(row["PERSOWNR"]):
+        o = ppo[row["PERSOWNR"]]
+        a.OriginalOwnerID = o.ID
     # Shelterpro records Deceased as Status == 2 as far as we can tell
     if row["STATUS"] == 2:
         a.DeceasedDate = a.DateBroughtIn
@@ -220,160 +294,119 @@ if VACCINATION_IMPORT:
         av.BatchNumber = row["VACCSERIAL"]
         av.Comments = "Name: %s, Issue: %s" % (row["VACCDRUGNA"], row["VACCISSUED"])
 
-# Next, addresses
-for row in caddress:
-    addresses[row["ADDRESSKEY"]] = {
-        "address": asm.strip(row["ADDRESSSTR"]) + " " + asm.strip(row["ADDRESSST2"]) + " " + asm.strip(row["ADDRESSST3"]),
-        "city": asm.strip(row["ADDRESSCIT"]),
-        "state": asm.strip(row["ADDRESSSTA"]),
-        "zip": asm.strip(row["ADDRESSPOS"])
-    }
-
-# The link between addresses and people
-for row in caddrlink:
-    addrlink[row["EVENTKEY"]] = row["ADDRLINKAD"]
-
-# Now do people
-for row in cperson:
-    o = asm.Owner()
-    owners.append(o)
-    ppo[row["PERSONKEY"]] = o
-    o.OwnerForeNames = asm.strip(row["FNAME"])
-    o.OwnerSurname = asm.strip(row["LNAME"])
-    o.OwnerName = o.OwnerTitle + " " + o.OwnerForeNames + " " + o.OwnerSurname
-    # Find the address
-    if addrlink.has_key(row["PERSONKEY"]):
-        addrkey = addrlink[row["PERSONKEY"]]
-        if addresses.has_key(addrkey):
-            add = addresses[addrkey]
-            o.OwnerAddress = add["address"]
-            o.OwnerTown = add["city"]
-            o.OwnerCounty = add["state"]
-            o.OwnerPostcode = add["zip"]
-    if asm.strip(row["EMAIL"]) != "(": o.EmailAddress = asm.strip(row["EMAIL"])
-    if row["HOME_PH"] != 0: o.HomeTelephone = asm.strip(row["HOME_PH"])
-    if row["WORK_PH"] != 0: o.WorkTelephone = asm.strip(row["WORK_PH"])
-    if row["THIRD_PH"] != 0: o.MobileTelephone = asm.strip(row["THIRD_PH"])
-    o.IsACO = asm.cint(row["ACO_IND"])
-    o.IsStaff = asm.cint(row["STAFF_IND"])
-    o.IsVolunteer = asm.cint(row["VOL_IND"])
-    o.IsDonor = asm.cint(row["DONOR_IND"])
-    o.IsMember = asm.cint(row["MEMBER_IND"])
-    o.IsBanned = asm.cint(row["NOADOPT"] == "T" and "1" or "0")
-    o.IsFosterer = asm.cint(row["FOSTERS"])
-    # o.ExcludeFromBulkEmail = asm.cint(row["MAILINGSAM"]) # Not sure this is correct
 
 
 # Run through the shelter file and create any movements/euthanisation info
-for row in cshelter:
-    a = None
-    if ppa.has_key(row["ANIMALKEY"]):
-        a = ppa[row["ANIMALKEY"]]
-        arivdate = row["ARIVDATE"]
-        a.ShortCode = asm.strip(row["ANIMALKEY"])
-        a.ShelterLocationUnit = asm.strip(row["KENNEL"])
-        a.NonShelterAnimal = 0
-        if arivdate is not None:
-            a.DateBroughtIn = arivdate
-            a.LastChangedDate = a.DateBroughtIn
-            a.CreatedDate = a.DateBroughtIn
-            a.generateCode(gettypeletter(a.AnimalTypeID))
+if SHELTER_IMPORT:
+    for row in cshelter:
+        a = None
+        if ppa.has_key(row["ANIMALKEY"]):
+            a = ppa[row["ANIMALKEY"]]
+            arivdate = row["ARIVDATE"]
             a.ShortCode = asm.strip(row["ANIMALKEY"])
-    else:
-        # Couldn't find an animal record, bail
-        continue
+            a.ShelterLocationUnit = asm.strip(row["KENNEL"])
+            a.NonShelterAnimal = 0
+            if arivdate is not None:
+                a.DateBroughtIn = arivdate
+                a.LastChangedDate = a.DateBroughtIn
+                a.CreatedDate = a.DateBroughtIn
+                a.generateCode(gettypeletter(a.AnimalTypeID))
+                a.ShortCode = asm.strip(row["ANIMALKEY"])
+        else:
+            # Couldn't find an animal record, bail
+            continue
 
-    o = None
-    if ppo.has_key(row["OWNERATDIS"]):
-        o = ppo[row["OWNERATDIS"]]
+        o = None
+        if ppo.has_key(row["OWNERATDIS"]):
+            o = ppo[row["OWNERATDIS"]]
 
-    # Apply other fields
-    if row["ARIVREAS"] == "QUARANTINE":
-        a.IsQuarantine = 1
+        # Apply other fields
+        if row["ARIVREAS"] == "QUARANTINE":
+            a.IsQuarantine = 1
 
-    elif row["ARIVREAS"] == "STRAY":
-        if a.AnimalTypeID == 2: a.AnimalTypeID = 10
-        if a.AnimalTypeID == 11: a.AnimalTypeID = 12
-        a.EntryReasonID = 7
+        elif row["ARIVREAS"] == "STRAY":
+            if a.AnimalTypeID == 2: a.AnimalTypeID = 10
+            if a.AnimalTypeID == 11: a.AnimalTypeID = 12
+            a.EntryReasonID = 7
 
-    # Adoptions
-    if row["DISPMETH"] == "ADOPTED":
-        if a is None or o is None: continue
-        m = asm.Movement()
-        m.AnimalID = a.ID
-        m.OwnerID = o.ID
-        m.MovementType = 1
-        m.MovementDate = row["DISPDATE"]
-        a.Archived = 1
-        a.ActiveMovementID = m.ID
-        a.ActiveMovementDate = m.MovementDate
-        a.ActiveMovementType = 1
-        movements.append(m)
+        # Adoptions
+        if row["DISPMETH"] == "ADOPTED":
+            if a is None or o is None: continue
+            m = asm.Movement()
+            m.AnimalID = a.ID
+            m.OwnerID = o.ID
+            m.MovementType = 1
+            m.MovementDate = row["DISPDATE"]
+            a.Archived = 1
+            a.ActiveMovementID = m.ID
+            a.ActiveMovementDate = m.MovementDate
+            a.ActiveMovementType = 1
+            movements.append(m)
 
-    # Reclaims
-    elif row["DISPMETH"] == "RETURN TO OWNER":
-        if a is None or o is None: continue
-        m = asm.Movement()
-        m.AnimalID = a.ID
-        m.OwnerID = o.ID
-        m.MovementType = 5
-        m.MovementDate = row["DISPDATE"]
-        a.Archived = 1
-        a.ActiveMovementID = m.ID
-        a.ActiveMovementDate = m.MovementDate
-        a.ActiveMovementType = 5
-        movements.append(m)
+        # Reclaims
+        elif row["DISPMETH"] == "RETURN TO OWNER":
+            if a is None or o is None: continue
+            m = asm.Movement()
+            m.AnimalID = a.ID
+            m.OwnerID = o.ID
+            m.MovementType = 5
+            m.MovementDate = row["DISPDATE"]
+            a.Archived = 1
+            a.ActiveMovementID = m.ID
+            a.ActiveMovementDate = m.MovementDate
+            a.ActiveMovementType = 5
+            movements.append(m)
 
-    # Released or Other
-    elif row["DISPMETH"].startswith("RELEASED") or row["DISPMETH"] == "OTHER":
-        if a is None or o is None: continue
-        m = asm.Movement()
-        m.AnimalID = a.ID
-        m.OwnerID = 0
-        m.MovementType = 7
-        m.MovementDate = row["DISPDATE"]
-        m.Comments = row["DISPMETH"]
-        a.Archived = 1
-        a.ActiveMovementDate = m.MovementDate
-        a.ActiveMovementID = m.ID
-        a.ActiveMovementType = 7
-        movements.append(m)
+        # Released or Other
+        elif row["DISPMETH"].startswith("RELEASED") or row["DISPMETH"] == "OTHER":
+            if a is None or o is None: continue
+            m = asm.Movement()
+            m.AnimalID = a.ID
+            m.OwnerID = 0
+            m.MovementType = 7
+            m.MovementDate = row["DISPDATE"]
+            m.Comments = row["DISPMETH"]
+            a.Archived = 1
+            a.ActiveMovementDate = m.MovementDate
+            a.ActiveMovementID = m.ID
+            a.ActiveMovementType = 7
+            movements.append(m)
 
-    # Holding
-    elif row["DISPMETH"] == "" and row["ANIMSTAT"] == "HOLDING":
-        a.IsHold = 1
-        a.Archived = 0
+        # Holding
+        elif row["DISPMETH"] == "" and row["ANIMSTAT"] == "HOLDING":
+            a.IsHold = 1
+            a.Archived = 0
 
-    # Deceased
-    elif row["DISPMETH"] == "DECEASED":
-        a.DeceasedDate = row["DISPDATE"]
-        a.PTSReasonID = 2 # Died
-        a.Archived = 1
+        # Deceased
+        elif row["DISPMETH"] == "DECEASED":
+            a.DeceasedDate = row["DISPDATE"]
+            a.PTSReasonID = 2 # Died
+            a.Archived = 1
 
-    # Euthanized
-    elif row["DISPMETH"] == "EUTHANIZED":
-        a.DeceasedDate = row["DISPDATE"]
-        a.PutToSleep = 1
-        a.PTSReasonID = 4 # Sick/Injured
-        a.Archived = 1
+        # Euthanized
+        elif row["DISPMETH"] == "EUTHANIZED":
+            a.DeceasedDate = row["DISPDATE"]
+            a.PutToSleep = 1
+            a.PTSReasonID = 4 # Sick/Injured
+            a.Archived = 1
 
-    # If the outcome is blank, it's on the shelter
-    elif row["DISPMETH"].strip() == "":
-        a.Archived = 0
+        # If the outcome is blank, it's on the shelter
+        elif row["DISPMETH"].strip() == "":
+            a.Archived = 0
 
-    # It's the name of an organisation that received the animal
-    else:
-        if a is None: continue
-        m = asm.Movement()
-        m.AnimalID = a.ID
-        m.OwnerID = to.ID
-        m.MovementType = 3
-        m.MovementDate = row["DISPDATE"]
-        m.Comments = row["DISPMETH"]
-        a.Archived = 1
-        a.ActiveMovementID = m.ID
-        a.ActiveMovementType = 3
-        movements.append(m)
+        # It's the name of an organisation that received the animal
+        else:
+            if a is None: continue
+            m = asm.Movement()
+            m.AnimalID = a.ID
+            m.OwnerID = to.ID
+            m.MovementType = 3
+            m.MovementDate = row["DISPDATE"]
+            m.Comments = row["DISPMETH"]
+            a.Archived = 1
+            a.ActiveMovementID = m.ID
+            a.ActiveMovementType = 3
+            movements.append(m)
 
 if LICENCE_IMPORT:
     for row in clicense:
@@ -421,44 +454,52 @@ if INCIDENT_IMPORT:
         elif row["FINALOUTCO"] == "OTHER":
             ac.IncidentCompletedID = 6 # Does not exist in default data
         ac.IncidentTypeID = 1
-        comments = "case: %s\n" % row["INCIDENTKEY"]
-        comments += "outcome: %s\n" % row["FINALOUTCO"]
-        comments += "precinct: %s\n" % row["PRECINCT"]
+        incidentkey = 0
+        if "INCIDENTKE" in row: incidentkey = row["INCIDENTKE"]
+        elif "KEY" in row: incidentkey = row["KEY"]
+        comments = "case: %s\n" % incidentkey
+        comments += "outcome: %s\n" % asm.strip(row["FINALOUTCO"])
+        comments += "precinct: %s\n" % asm.strip(row["PRECINCT"])
         ac.CallNotes = comments
         ac.Sex = 2
+        if "ANIMALKEY" in row:
+            if row["ANIMALKEY"] in ppa:
+                a = ppa[row["ANIMALKEY"]]
+                animalcontrolanimals.append("INSERT INTO animalcontrolanimal (AnimalControlID, AnimalID) VALUES (%s, %s);" % (ac.ID, a.ID))
 
 # Notes as log entries
-for row in cnote:
-    eventtype = row["EVENTTYPE"]
-    eventkey = row["EVENTKEY"]
-    notedate = asm.getdate_mmddyy(row["NOTEDATE"])
-    memo = row["NOTEMEMO"]
-    if eventtype in [ 1, 3 ]: # animal/intake or case notes
-        if not eventkey in ppa: continue
-        linkid = ppa[eventkey].ID
-        ppa[eventkey].HiddenAnimalDetails += "\n" + memo
-        l = asm.Log()
-        logs.append(l)
-        l.LogTypeID = 3
-        l.LinkID = linkid
-        l.LinkType = 0
-        l.Date = notedate
-        if l.Date is None:
-            l.Date = asm.now()
-        l.Comments = memo
-    elif eventtype in [ 2, 5, 10 ]: # person, case and incident notes
-        if not eventkey in ppi: continue
-        linkid = ppi[eventkey].ID
-        ppi[eventkey].CallNotes += "\n" + memo
-        l = asm.Log()
-        logs.append(l)
-        l.LogTypeID = 3
-        l.LinkID = linkid
-        l.LinkType = 6
-        l.Date = notedate
-        if l.Date is None:
-            l.Date = asm.now()
-        l.Comments = memo
+if NOTE_IMPORT:
+    for row in cnote:
+        eventtype = row["EVENTTYPE"]
+        eventkey = row["EVENTKEY"]
+        notedate = row["NOTEDATE"]
+        memo = row["NOTEMEMO"]
+        if eventtype in [ 1, 3 ]: # animal/intake or case notes
+            if not eventkey in ppa: continue
+            linkid = ppa[eventkey].ID
+            ppa[eventkey].HiddenAnimalDetails += "\n" + memo
+            l = asm.Log()
+            logs.append(l)
+            l.LogTypeID = 3
+            l.LinkID = linkid
+            l.LinkType = 0
+            l.Date = notedate
+            if l.Date is None:
+                l.Date = asm.now()
+            l.Comments = memo
+        elif eventtype in [ 2, 5, 10 ]: # person, case and incident notes
+            if not eventkey in ppi: continue
+            linkid = ppi[eventkey].ID
+            ppi[eventkey].CallNotes += "\n" + memo
+            l = asm.Log()
+            logs.append(l)
+            l.LogTypeID = 3
+            l.LinkID = linkid
+            l.LinkType = 6
+            l.Date = notedate
+            if l.Date is None:
+                l.Date = asm.now()
+            l.Comments = memo
 
 # Run back through the animals, if we have any that are still
 # on shelter after 2 years, add an adoption to an unknown owner
@@ -490,6 +531,8 @@ for ol in ownerlicences:
     print ol
 for ac in animalcontrol:
     print ac
+for aca in animalcontrolanimals:
+    print aca
 
 asm.stderr_summary(animals=animals, animalvaccinations=animalvaccinations, logs=logs, owners=owners, movements=movements, ownerlicences=ownerlicences, animalcontrol=animalcontrol)
 

@@ -85,9 +85,10 @@ MICROCHIP_MANUFACTURERS = [
     { "length": 10, "regex": r"^1\d+A", "name": "AVID Europe", "locales": "" }, 
     { "length": 10, "regex": r"^4", "name": "HomeAgain", "locales": "" }, 
     { "length": 15, "regex": r"^360981", "name": "Novartis", "locales": "" },
-    { "length": 15, "regex": r"^578098", "name": "Kruuse Norge", "locales": "" },
-    { "length": 15, "regex": r"^578077", "name": "AVID Friendchip Norway", "locales": "" },
-    { "length": 15, "regex": r"^578094", "name": "AVID Friendchip Norway", "locales": "" },
+    { "length": 15, "regex": r"^578098", "name": "Kruuse Norge", "locales": "nb" },
+    { "length": 15, "regex": r"^578077", "name": "AVID Friendchip Norway", "locales": "nb" },
+    { "length": 15, "regex": r"^578094", "name": "AVID Friendchip Norway", "locales": "nb" },
+    { "length": 15, "regex": r"^578097", "name": "AVID Friendchip Norway", "locales": "nb" },
     { "length": 15, "regex": r"^688", "name": "Serbia", "locales": "" },
     { "length": 15, "regex": r"^90007400", "name": "SmartTag", "locales": "" },
     { "length": 15, "regex": r"^90007900", "name": "PetLog", "locales": "en_GB" },
@@ -96,6 +97,7 @@ MICROCHIP_MANUFACTURERS = [
     { "length": 15, "regex": r"^900026", "name": "Petsafe", "locales": "" },
     { "length": 15, "regex": r"^900042", "name": "Royal Tag", "locales": "" },
     { "length": 15, "regex": r"^900088", "name": "Insprovet", "locales": "" },
+    { "length": 15, "regex": r"^900113000", "name": "International Pet Registry", "locales": "" },
     { "length": 15, "regex": r"^900118", "name": "SmartChip", "locales": "" },
     { "length": 15, "regex": r"^900128", "name": "Gepe-Geimuplast", "locales": "" },
     { "length": 15, "regex": r"^900138", "name": "ID-Ology", "locales": "" },
@@ -134,8 +136,11 @@ MICROCHIP_MANUFACTURERS = [
     { "length": 15, "regex": r"^9851", "name": "Anibase/Identichip", "locales": "en_GB" },
     { "length": 15, "regex": r"^985", "name": "HomeAgain", "locales": "" },
     { "length": 15, "regex": r"^9861", "name": "Anibase/Identichip", "locales": "en_GB" },
-    { "length": 15, "regex": r"^99000000", "name": "nanoChip", "locales": "" },
-    { "length": 15, "regex": r"^99100100", "name": "HomeSafe", "locales": "en_AU" },
+    { "length": 15, "regex": r"^987", "name": "SmartTag", "locales": "" },
+    { "length": 15, "regex": r"^9900000", "name": "nanoChip", "locales": "" },
+    { "length": 15, "regex": r"^9910010", "name": "HomeSafe", "locales": "en_AU" },
+    { "length": 15, "regex": r"^9910010", "name": "AKC Reunite", "locales": "en" },
+    { "length": 15, "regex": r"^9910039", "name": "911PetChip", "locales": "en" },
     { "length": 15, "regex": r"^999", "name": "Transponder Test", "locales": ""}
 ]
 
@@ -414,33 +419,33 @@ PETFINDER_BREEDS = (
     "Dilute Calico",
     "Dilute Tortoiseshell",
     "Domestic Long Hair",
-    "Domestic Long Hair-black",
-    "Domestic Long Hair - buff",
-    "Domestic Long Hair-gray",
-    "Domestic Long Hair - orange",
-    "Domestic Long Hair - orange and white",
-    "Domestic Long Hair - gray and white",
-    "Domestic Long Hair-white",
-    "Domestic Long Hair-black and white",
+    "Domestic Long Hair (Black)",
+    "Domestic Long Hair (Black & White)",
+    "Domestic Long Hair (Buff)",
+    "Domestic Long Hair (Gray)",
+    "Domestic Long Hair (Orange)",
+    "Domestic Long Hair (Orange & White)",
+    "Domestic Long Hair (Gray & White)",
+    "Domestic Long Hair (White)",
     "Domestic Medium Hair",
-    "Domestic Medium Hair-black",
-    "Domestic Medium Hair - buff",
-    "Domestic Medium Hair-gray",
-    "Domestic Medium Hair - gray and white",
-    "Domestic Medium Hair-white",
-    "Domestic Medium Hair-orange",
-    "Domestic Medium Hair - orange and white",
-    "Domestic Medium Hair-black and white",
+    "Domestic Medium Hair (Black)",
+    "Domestic Medium Hair (Black & White)",
+    "Domestic Medium Hair (Buff)",
+    "Domestic Medium Hair (Gray)",
+    "Domestic Medium Hair (Gray & White)",
+    "Domestic Medium Hair (Orange)",
+    "Domestic Medium Hair (Orange & White)",
+    "Domestic Medium Hair (White)",
     "Domestic Short Hair",
-    "Domestic Short Hair-black",
-    "Domestic Short Hair - buff",
-    "Domestic Short Hair-black and white",
-    "Domestic Short Hair-gray",
-    "Domestic Short Hair - gray and white",
-    "Domestic Short Hair-mitted",
-    "Domestic Short Hair-orange",
-    "Domestic Short Hair - orange and white",
-    "Domestic Short Hair-white",
+    "Domestic Short Hair (Black)",
+    "Domestic Short Hair (Black & White)",
+    "Domestic Short Hair (Buff)",
+    "Domestic Short Hair (Gray)",
+    "Domestic Short Hair (Gray & White)",
+    "Domestic Short Hair (Mitted)",
+    "Domestic Short Hair (Orange)",
+    "Domestic Short Hair (Orange & White)",
+    "Domestic Short Hair (White)",
     "Egyptian Mau",
     "Exotic Shorthair",
     "Extra-Toes Cat (Hemingway Polydactyl)",
@@ -472,12 +477,12 @@ PETFINDER_BREEDS = (
     "Somali",
     "Sphynx (hairless cat)",
     "Tabby",
-    "Tabby - Orange",
-    "Tabby - Grey",
-    "Tabby - Brown",
-    "Tabby - white",
-    "Tabby - buff",
-    "Tabby - black",
+    "Tabby (Black)",
+    "Tabby (Brown)",
+    "Tabby (Buff)",
+    "Tabby (Grey)",
+    "Tabby (Orange)",
+    "Tabby (White)",
     "Tiger",
     "Tonkinese",
     "Torbie",
@@ -1066,9 +1071,14 @@ def update_lookup(dbo, iid, lookup, name, desc="", speciesid=0, pfbreed="", pfsp
             "IsRetired":            retired
         })
     elif lookup == "lkownerflags" or lookup == "lkanimalflags":
-        dbo.update(lookup, iid, {
-            t[LOOKUP_NAMEFIELD]:    name.replace(",", " ").replace("|", " ") # sanitise bad values for flags
-        })
+        oldflag = dbo.query_string("SELECT Flag FROM %s WHERE ID = ?" % lookup, [iid])
+        newflag = name.replace(",", " ").replace("|", " ")
+        dbo.update(lookup, iid, { t[LOOKUP_NAMEFIELD]: newflag })
+        # Update the text in flags fields where appropriate
+        if lookup == "lkownerflags":
+            dbo.execute("UPDATE owner SET AdditionalFlags = %s WHERE AdditionalFlags LIKE ?" % dbo.sql_replace("AdditionalFlags"), (oldflag, newflag, "%%%s%%" % oldflag))
+        elif lookup == "lkanimalflags":
+            dbo.execute("UPDATE animal SET AdditionalFlags = %s WHERE AdditionalFlags LIKE ?" % dbo.sql_replace("AdditionalFlags"), (oldflag, newflag, "%%%s%%" % oldflag))
     elif t[LOOKUP_DESCFIELD] == "":
         # No description
         if t[LOOKUP_CANRETIRE] == 1:
@@ -1203,7 +1213,7 @@ def get_voucher_types(dbo):
     return dbo.query("SELECT * FROM voucher ORDER BY VoucherName")
 
 def get_work_types(dbo):
-    return dbo.query("SELECT * FROM lkworktype ORDER BY ID")
+    return dbo.query("SELECT * FROM lkworktype ORDER BY WorkType")
 
 def get_yesno(dbo):
     return dbo.query("SELECT * FROM lksyesno ORDER BY Name")

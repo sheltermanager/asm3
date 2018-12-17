@@ -64,8 +64,14 @@ def delete(dbo, username, tablename, linkid, description):
     action(dbo, DELETE, username, tablename, linkid, description)
 
 def delete_rows(dbo, username, tablename, condition):
-    for r in dbo.query("SELECT * FROM %s WHERE %s" % (tablename, condition)):
-        action(dbo, DELETE, username, tablename, r["ID"], dump_row(dbo, tablename, r["ID"]))
+    rows = dbo.query("SELECT * FROM %s WHERE %s" % (tablename, condition))
+    # If there's an ID column, log an audited delete for each row
+    if len(rows) > 0 and "ID" in rows[0]:
+        for r in dbo.query("SELECT * FROM %s WHERE %s" % (tablename, condition)):
+            action(dbo, DELETE, username, tablename, r["ID"], dump_row(dbo, tablename, r["ID"]))
+    else:
+        # otherwise, stuff all the deleted rows into one delete action
+        action(dbo, DELETE, username, tablename, 0, str(rows))
 
 def move(dbo, username, tablename, linkid, description):
     action(dbo, MOVE, username, tablename, linkid, description)

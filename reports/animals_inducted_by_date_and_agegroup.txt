@@ -25,7 +25,7 @@ INNER JOIN internallocation ON internallocation.ID = animal.ShelterLocation
 LEFT OUTER JOIN owner oo ON animal.OriginalOwnerID = oo.ID
 LEFT OUTER JOIN owner bb ON animal.BroughtInByOwnerID = bb.ID
 WHERE DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' AND NonShelterAnimal = 0
-ORDER BY SpeciesName, DateBroughtIn
+ORDER BY SpeciesName, AgeGroup, DateBroughtIn
 ###
 $$HEADER
 HEADER$$

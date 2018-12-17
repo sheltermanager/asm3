@@ -196,10 +196,12 @@ class PetLinkPublisher(AbstractPublisher):
         self.log("Uploading data file (%d csv lines) to %s..." % (len(csv), UPLOAD_URL))
         try:
             r = utils.post_data(UPLOAD_URL, "\n".join(csv), headers=headers)
-            self.log("req hdr: %s, \nreq data: %s" % (r["requestheaders"], r["requestbody"]))
-            self.log("resp hdr: %s, \nresp body: %s" % (r["headers"], r["response"]))
+            response = r["response"].decode("utf-8").encode("ascii", "xmlcharrefreplace")
 
-            jresp = utils.json_parse(r["response"])
+            self.log("req hdr: %s, \nreq data: %s" % (r["requestheaders"], r["requestbody"]))
+            self.log("resp hdr: %s, \nresp body: %s" % (r["headers"], response))
+
+            jresp = utils.json_parse(response)
             
             # Look for remote exceptions
             if "exception" in jresp and jresp["exception"] != "":
@@ -239,7 +241,7 @@ class PetLinkPublisher(AbstractPublisher):
                         try:
                             self.logError("%s: %s (%s) - Received error message from PetLink: %s" % \
                                 (an["SHELTERCODE"], an["ANIMALNAME"], an["IDENTICHIPNUMBER"], message))
-                        except Exception as erm:
+                        except:
                             self.logError("%s: %s (%s) - Error decoding message from PetLink" % \
                                 (an["SHELTERCODE"], an["ANIMALNAME"], an["IDENTICHIPNUMBER"]))
                             continue
@@ -260,8 +262,10 @@ class PetLinkPublisher(AbstractPublisher):
                         # (which means we'll attempt to register the chip the next time this publisher is run).
                         PERMANENT_FAILURES = [ 
                             "has an existing PetLink account and their contact information is already on file",
-                            "Not a prepaid microchip.",
-                            "cannot be transferred - the account is locked."
+                            "Not a prepaid microchip",
+                            "This is a Found Animals Registry chip",
+                            "cannot be transferred - the account is locked.",
+                            "Microchip number has already been registered in the database"
                         ]
                         for m in PERMANENT_FAILURES:
                             if message.find(m) != -1:

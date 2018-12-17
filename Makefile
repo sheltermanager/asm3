@@ -66,12 +66,17 @@ compilepy:
 	flake8 --config=scripts/flake8 src/*.py src/dbms/*.py src/publishers/*.py
 
 smcom-dev: version clean minify
-	@echo "[smcom dev] ========================="
+	@echo "[smcom dev eur01] ===================="
+	rsync --progress --exclude '*.pyc' --delete -r src/* root@$(DEPLOY_HOST):/usr/local/lib/asm_dev.new
+	ssh root@$(DEPLOY_HOST) "/root/scripts/sheltermanager_sync_asm.py syncdev only_eur01"
+
+smcom-dev-all: version clean minify
+	@echo "[smcom dev all] ======================"
 	rsync --progress --exclude '*.pyc' --delete -r src/* root@$(DEPLOY_HOST):/usr/local/lib/asm_dev.new
 	ssh root@$(DEPLOY_HOST) "/root/scripts/sheltermanager_sync_asm.py syncdev"
 
 smcom-stable: version clean minify
-	@echo "[smcom stable] ========================="
+	@echo "[smcom stable] ======================="
 	@# Having a BREAKING_CHANGES file prevents accidental deploy to stable without dumping sessions or doing it on a schedule
 	@if [ -f BREAKING_CHANGES ]; then echo "Cannot deploy due to breaking DB changes" && exit 1; fi;
 	rsync --progress --exclude '*.pyc' --delete -r src/* root@$(DEPLOY_HOST):/usr/local/lib/asm_stable.new
@@ -105,7 +110,7 @@ manual:
 	@echo "[manual] =========================="
 	cd doc/manual && $(MAKE) clean html latexpdf
 	cp -rf doc/manual/_build/html/* src/static/pages/manual/
-	scp doc/manual/_build/latex/asm3.pdf root@$(WWW_HOST):/var/www/sheltermanager.com/repo/asm3_help.pdf
+	scp -C doc/manual/_build/latex/asm3.pdf root@$(WWW_HOST):/var/www/sheltermanager.com/repo/asm3_help.pdf
 	rsync -a doc/manual/_build/html/ root@$(WWW_HOST):/var/www/sheltermanager.com/repo/asm3_help/
 
 test: version

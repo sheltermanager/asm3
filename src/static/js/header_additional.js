@@ -26,6 +26,7 @@ $(function() {
         MULTI_LOOKUP: 7,
         ANIMAL_LOOKUP: 8,
         PERSON_LOOKUP: 9,
+        TIME: 10,
 
         /**
          * Renders and lays out additional fields from data from the backend 
@@ -65,18 +66,19 @@ $(function() {
         },
 
         /**
-         * Renders and lays out mandatory additional fields from data from the backend 
-         * additional.get_additional_fields call as HTML controls. 
+         * Renders and lays out additional fields from the
+         * additional.get_additional_fields call as HTML controls for 
+         * new record screens. 
          * If there are no fields, an empty string is returned.
-         * The output is a serious of 2 column table rows with label/field
+         * The output is a series of 2 column table rows with label/field
          */
-        additional_mandatory_fields: function(fields, includeids, classes) {
+        additional_new_fields: function(fields, includeids, classes) {
             if (fields.length == 0) { return; }
             var add = [], addidx = 0;
             $.each(fields, function(i, f) {
-                if (f.MANDATORY == 1) {
+                if (f.NEWRECORD == 1) {
                     add.push("<tr>");
-                    add.push(additional.render_field(f, includeids, classes));
+                    add.push(additional.render_field(f, includeids, classes, true));
                     add.push("</tr>");
                 }
             });
@@ -120,8 +122,9 @@ $(function() {
          * f: A combined row from the additionalfield and additional tables
          * includeids: undefined or true - output an id attribute with the field
          * classes: one or more classes to give fields - undefined="additional" 
+         * usedefault: if true, outputs the default value instead of the actual value
          */
-        render_field: function(f, includeids, classes) {
+        render_field: function(f, includeids, classes, usedefault) {
             var fieldname = f.ID,
                 fieldid = "add_" + fieldname,
                 fieldattr = 'id="' + fieldid + '" ',
@@ -129,6 +132,8 @@ $(function() {
                 postattr = "a." + f.MANDATORY + "." + fieldname,
                 fh = [];
             if (classes === undefined) { classes = "additional"; }
+            if (usedefault === undefined) { usedefault = false; }
+            if (usedefault) { fieldval = f.DEFAULTVALUE; }
             if (includeids === false) { fieldattr = ""; } // includeids has to be explicitly false to disable id attrs
             if (f.FIELDTYPE == additional.YESNO) {
                 var checked = "";
@@ -146,6 +151,11 @@ $(function() {
             else if (f.FIELDTYPE == additional.DATE) {
                 fh.push('<td class="to' + f.LINKTYPE + '"><label for="' + fieldid + '">' + f.FIELDLABEL + '</label></td><td>');
                 fh.push('<input ' + fieldattr + ' type="textbox" class="asm-textbox asm-datebox ' + classes + '" data-post="' + postattr + '" ');
+                fh.push('title="' + html.title(f.TOOLTIP) + '" value="' + html.title(fieldval) + '" /></td>');
+            }
+            else if (f.FIELDTYPE == additional.TIME) {
+                fh.push('<td class="to' + f.LINKTYPE + '"><label for="' + fieldid + '">' + f.FIELDLABEL + '</label></td><td>');
+                fh.push('<input ' + fieldattr + ' type="textbox" class="asm-textbox asm-timebox ' + classes + '" data-post="' + postattr + '" ');
                 fh.push('title="' + html.title(f.TOOLTIP) + '" value="' + html.title(fieldval) + '" /></td>');
             }
             else if (f.FIELDTYPE == additional.NOTES) {

@@ -207,9 +207,14 @@ following script at :menuselection:`Settings --> SQL Interface` to remove
 everything imported after the 1st January, 2017::
 
     DELETE FROM animal WHERE CreatedBy = 'import' AND CreatedDate > '2017-01-01';
+    DELETE FROM animalvaccination WHERE CreatedBy = 'import' AND CreatedDate > '2017-01-01';
+    DELETE FROM animalmedical WHERE CreatedBy = 'import' AND CreatedDate > '2017-01-01';
+    DELETE FROM animalmedicaltreatment WHERE CreatedBy = 'import' AND CreatedDate > '2017-01-01';
+    DELETE FROM animaltest WHERE CreatedBy = 'import' AND CreatedDate > '2017-01-01';
     DELETE FROM owner WHERE CreatedBy = 'import' AND CreatedDate > '2017-01-01';
     DELETE FROM animalcontrol WHERE CreatedBy = 'import' AND CreatedDate > '2017-01-01';
     DELETE FROM adoption WHERE CreatedBy = 'import' AND CreatedDate > '2017-01-01';
     DELETE FROM ownerdonation WHERE CreatedBy = 'import' AND CreatedDate > '2017-01-01';
+    DELETE FROM ownerlicence WHERE CreatedBy = 'import' AND CreatedDate > '2017-01-01';
 
 

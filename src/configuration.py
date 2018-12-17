@@ -193,12 +193,15 @@ DEFAULTS = {
     "FancyTooltips": "No",
     "FirstDayOfWeek": "1",
     "FosterOnShelter": "Yes",
+    "FostererEmails": "No", 
     "ShowGDPRContactOptIn": "No",
     "GDPRContactChangeLog": "No",
     "GDPRContactChangeLogType": "6",
     "GeocodeWithPostcodeOnly": "No",
     "GenerateDocumentLog": "No",
     "GenerateDocumentLogType": "5",
+    "HoldChangeLog": "Yes",
+    "HoldChangeLogType": "3",
     "IncidentPermissions": "No",
     "IncomingMediaScaling": "640x640",
     "InactivityTimer": "No",
@@ -245,7 +248,6 @@ DEFAULTS = {
         "MembershipNumber,IsBanned,IDCheck,OwnerAddress," \
         "OwnerTown,OwnerCounty,OwnerPostcode,HomeTelephone,WorkTelephone," \
         "MobileTelephone,EmailAddress",
-    "PetRescueLocationRegionID": "No",
     "PetsLocatedIncludeShelter": "No",
     "PetsLocatedAnimalFlag": "",
     "PicturesInBooks": "Yes",
@@ -273,6 +275,7 @@ DEFAULTS = {
     "ShowCostAmount": "Yes",
     "ShowCostPaid": "No",
     "ShowDeceasedHomePage": "Yes",
+    "ShowFullCommentsInTables": "No",
     "ShowAlertsHomePage": "Yes", 
     "ShowTimelineHomePage": "Yes", 
     "ShowStatsHomePage": "thismonth", 
@@ -285,6 +288,7 @@ DEFAULTS = {
     "SMTPPort": "25",
     "StickyTableHeaders": "Yes",
     "TableHeadersVisible": "Yes",
+    "TemplatesForNonShelter": "No",
     "Timezone": "-5",
     "TrialAdoptions": "No",
     "TrialOnShelter": "No",
@@ -304,6 +308,8 @@ DEFAULTS = {
     "WarnACTypeChange": "Yes",
     "WarnBroughtIn": "Yes",
     "WarnMultipleReserves": "Yes", 
+    "WarnUnaltered": "Yes",
+    "WarnNoMicrochip": "Yes",
     "WarnNoPendingVacc": "Yes",
     "WarnNoHomeCheck": "Yes",
     "WarnBannedOwner": "Yes",
@@ -399,7 +405,7 @@ def csave(dbo, username, post):
                 put(k, v)
         elif k == "DefaultDailyBoardingCost":
             # Need to handle currency fields differently
-            put(k, post.db_integer(k))
+            put(k, str(post.integer(k)))
         elif k.startswith("rc:"):
             # It's a NOT check
             if v == "checked": v = "No"
@@ -731,6 +737,9 @@ def email_messages(dbo):
 def foster_on_shelter(dbo):
     return cboolean(dbo, "FosterOnShelter", DEFAULTS["FosterOnShelter"] == "Yes")
 
+def fosterer_emails(dbo):
+    return cboolean(dbo, "FostererEmails", DEFAULTS["FostererEmails"] == "Yes")
+
 def foundanimals_email(dbo):
     return cstring(dbo, "FoundAnimalsEmail")
 
@@ -772,6 +781,12 @@ def geo_provider_override(dbo):
 
 def geo_provider_key_override(dbo):
     return cstring(dbo, "GeoProviderKeyOverride")
+
+def hold_change_log(dbo):
+    return cboolean(dbo, "HoldChangeLog", DEFAULTS["HoldChangeLog"] == "Yes")
+
+def hold_change_log_type(dbo):
+    return cint(dbo, "HoldChangeLogType", DEFAULTS["HoldChangeLogType"])
 
 def include_incomplete_medical_doc(dbo):
     return cboolean(dbo, "IncludeIncompleteMedicalDoc", DEFAULTS["IncludeIncompleteMedicalDoc"] == "Yes")
@@ -837,7 +852,9 @@ def main_screen_animal_link_mode(dbo):
     return cstring(dbo, "MainScreenAnimalLinkMode", DEFAULTS["MainScreenAnimalLinkMode"])
 
 def main_screen_animal_link_max(dbo):
-    return cint(dbo, "MainScreenAnimalLinkMax", int(DEFAULTS["MainScreenAnimalLinkMax"]))
+    maxlinks = cint(dbo, "MainScreenAnimalLinkMax", int(DEFAULTS["MainScreenAnimalLinkMax"]))
+    maxlinks = min(maxlinks, 100)
+    return maxlinks
 
 def manual_codes(dbo):
     return cboolean(dbo, "ManualCodes", DEFAULTS["ManualCodes"] == "Yes")
@@ -847,6 +864,9 @@ def map_link_override(dbo):
 
 def map_provider_override(dbo):
     return cstring(dbo, "MapProviderOverride")
+
+def map_provider_key_override(dbo):
+    return cstring(dbo, "MapProviderKeyOverride")
 
 def match_species(dbo):
     return cint(dbo, "MatchSpecies", 5)
@@ -917,17 +937,35 @@ def organisation_county(dbo):
 def organisation_postcode(dbo):
     return cstring(dbo, "OrganisationPostcode")
 
+def organisation_country(dbo):
+    return cstring(dbo, "OrganisationCountry")
+
 def organisation_telephone(dbo):
     return cstring(dbo, "OrganisationTelephone", DEFAULTS["OrganisationTelephone"])
 
 def owner_name_format(dbo):
     return cstring(dbo, "OwnerNameFormat", DEFAULTS["OwnerNameFormat"])
 
+def petrescue_all_desexed(dbo):
+    return cboolean(dbo, "PetRescueAllDesexed")
+
+def petrescue_email(dbo):
+    return cstring(dbo, "PetRescueEmail")
+
+def petrescue_interstate(dbo):
+    return cboolean(dbo, "PetRescueInterstate")
+
+def petrescue_token(dbo):
+    return cstring(dbo, "PetRescueToken")
+
 def pdf_inline(dbo):
     return cboolean(dbo, "PDFInline", DEFAULTS["PDFInline"] == "Yes")
 
 def person_search_columns(dbo):
     return cstring(dbo, "OwnerSearchColumns", DEFAULTS["OwnerSearchColumns"])
+
+def petfinder_age_bands(dbo):
+    return cstring(dbo, "PetFinderAgeBands")
 
 def petfinder_user(dbo):
     return cstring(dbo, "PetFinderFTPUser")
@@ -1066,6 +1104,9 @@ def show_gdpr_contact_optin(dbo):
 def show_stats_home_page(dbo):
     return cstring(dbo, "ShowStatsHomePage", DEFAULTS["ShowStatsHomePage"])
 
+def show_timeline_home_page(dbo):
+    return cboolean(dbo, "ShowTimelineHomePage", DEFAULTS["ShowTimelineHomePage"] == "Yes")
+
 def show_weight_in_lbs(dbo):
     return cboolean(dbo, "ShowWeightInLbs", DEFAULTS["ShowWeightInLbs"] == "Yes")
 
@@ -1101,6 +1142,9 @@ def use_short_shelter_codes(dbo):
 
 def third_party_publisher_sig(dbo):
     return cstring(dbo, "TPPublisherSig")
+
+def templates_for_nonshelter(dbo):
+    return cboolean(dbo, "TemplatesForNonShelter", DEFAULTS["TemplatesForNonShelter"] == "Yes")
 
 def timezone(dbo):
     return cfloat(dbo, "Timezone", TIMEZONE)

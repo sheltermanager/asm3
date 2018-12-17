@@ -136,7 +136,7 @@
                 'class="asm3-adoptable-link" ',
                 'href="{baseurl}/service?account={account}&method=animal_view&animalid={animalid}">',
             '<img class="asm3-adoptable-thumbnail" ',
-                'src="{baseurl}/service?account={account}&method=animal_thumbnail&animalid={animalid}" />',
+                'src="{baseurl}/service?account={account}&method=animal_thumbnail&animalid={animalid}&d={mediadate}" />',
             '<br />',
             '<span class="asm3-adoptable-name">{animalname}</span>',
             '</a>',
@@ -184,6 +184,7 @@
                 agegroup: spanwrap("agegroup", translate(item.AGEGROUP)),
                 breed: spanwrap("breed", translate(item.BREEDNAME)),
                 extra: extra,
+                mediadate: item.WEBSITEMEDIADATE,
                 sex: spanwrap("sex", translate(item.SEXNAME)),
                 size: spanwrap("size", translate(item.SIZENAME)),
                 species: spanwrap("species", translate(item.SPECIESNAME))

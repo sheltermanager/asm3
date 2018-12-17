@@ -5,7 +5,6 @@ import animal
 import animalcontrol
 import clinic
 import configuration
-import db
 import financial
 import html
 import log
@@ -130,11 +129,11 @@ def animal_tags_publisher(dbo, a, includeAdditional=True):
     very little apart from additional fields are required and we can save
     database calls for each animal.
     """
-    return animal_tags(dbo, a, includeAdditional=includeAdditional, includeCosts=False, includeDiet=False, \
-        includeDonations=False, includeFutureOwner=False, includeIsVaccinated=True, includeLogs=False, includeMedical=False)
+    return animal_tags(dbo, a, includeAdditional=includeAdditional, includeCosts=False, includeDiet=True, \
+        includeDonations=False, includeFutureOwner=False, includeIsVaccinated=True, includeLogs=False, includeMedical=False, includeTransport=False)
 
 def animal_tags(dbo, a, includeAdditional=True, includeCosts=True, includeDiet=True, includeDonations=True, \
-        includeFutureOwner=True, includeIsVaccinated=True, includeLogs=True, includeMedical=True):
+        includeFutureOwner=True, includeIsVaccinated=True, includeLogs=True, includeMedical=True, includeTransport=True):
     """
     Generates a list of tags from an animal result (the deep type from
     calling animal.get_animal)
@@ -467,7 +466,8 @@ def animal_tags(dbo, a, includeAdditional=True, includeCosts=True, includeDiet=T
             "VACCINATIONADMINISTERINGVETZIPCODE":   "ADMINISTERINGVETPOSTCODE",
             "VACCINATIONADMINISTERINGVETEMAIL":     "ADMINISTERINGVETEMAIL"
         }
-        tags.update(table_tags(dbo, d, medical.get_vaccinations(dbo, a["ID"], not include_incomplete_vacc), "VACCINATIONTYPE", "DATEOFVACCINATION"))
+        tags.update(table_tags(dbo, d, medical.get_vaccinations(dbo, a["ID"], not include_incomplete_vacc), "VACCINATIONTYPE", 
+            utils.iif(include_incomplete_vacc, "DATEREQUIRED", "DATEOFVACCINATION")))
 
         # Tests
         d = {
@@ -491,7 +491,8 @@ def animal_tags(dbo, a, includeAdditional=True, includeCosts=True, includeDiet=T
             "TESTADMINISTERINGVETEMAIL":     "ADMINISTERINGVETEMAIL"
 
         }
-        tags.update(table_tags(dbo, d, medical.get_tests(dbo, a["ID"], not include_incomplete_vacc), "TESTNAME", "DATEOFTEST"))
+        tags.update(table_tags(dbo, d, medical.get_tests(dbo, a["ID"], not include_incomplete_vacc), "TESTNAME", 
+            utils.iif(include_incomplete_vacc, "DATEREQUIRED", "DATEOFTEST")))
 
         # Medical
         d = {
@@ -547,6 +548,46 @@ def animal_tags(dbo, a, includeAdditional=True, includeCosts=True, includeDiet=T
         }
         tags.update(table_tags(dbo, d, financial.get_animal_donations(dbo, a["ID"]), "DONATIONNAME", "DATE"))
 
+    # Transport
+    if includeTransport:
+        d = {
+            "TRANSPORTTYPE":            "TRANSPORTTYPENAME",
+            "TRANSPORTDRIVERNAME":      "DRIVEROWNERNAME", 
+            "TRANSPORTPICKUPDATETIME":  "d:PICKUPDATETIME",
+            "TRANSPORTPICKUPNAME":      "PICKUPOWNERNAME", 
+            "TRANSPORTPICKUPADDRESS":   "PICKUPADDRESS",
+            "TRANSPORTPICKUPTOWN":      "PICKUPTOWN",
+            "TRANSPORTPICKUPCITY":      "PICKUPTOWN",
+            "TRANSPORTPICKUPCOUNTY":    "PICKUPCOUNTY",
+            "TRANSPORTPICKUPSTATE":     "PICKUPCOUNTY",
+            "TRANSPORTPICKUPZIPCODE":   "PICKUPPOSTCODE",
+            "TRANSPORTPICKUPPOSTCODE":  "PICKUPPOSTCODE",
+            "TRANSPORTPICKUPEMAIL":     "PICKUPEMAILADDRESS",
+            "TRANSPORTPICKUPHOMEPHONE": "PICKUPHOMETELEPHONE",
+            "TRANSPORTPICKUPWORKPHONE": "PICKUPWORKTELEPHONE",
+            "TRANSPORTPICKUPMOBILEPHONE": "PICKUPMOBILETELEPHONE",
+            "TRANSPORTPICKUPCELLPHONE": "PICKUPMOBILETELEPHONE",
+            "TRANSPORTDROPOFFNAME":     "DROPOFFOWNERNAME", 
+            "TRANSPORTDROPOFFDATETIME": "d:DROPOFFDATETIME",
+            "TRANSPORTDROPOFFADDRESS":  "DROPOFFADDRESS",
+            "TRANSPORTDROPOFFTOWN":     "DROPOFFTOWN",
+            "TRANSPORTDROPOFFCITY":     "DROPOFFTOWN",
+            "TRANSPORTDROPOFFCOUNTY":   "DROPOFFCOUNTY",
+            "TRANSPORTDROPOFFSTATE":    "DROPOFFCOUNTY",
+            "TRANSPORTDROPOFFZIPCODE":  "DROPOFFPOSTCODE",
+            "TRANSPORTDROPOFFPOSTCODE": "DROPOFFPOSTCODE",
+            "TRANSPORTDROPOFFEMAIL":    "DROPOFFEMAILADDRESS",
+            "TRANSPORTDROPOFFHOMEPHONE": "DROPOFFHOMETELEPHONE",
+            "TRANSPORTDROPOFFWORKPHONE": "DROPOFFWORKTELEPHONE",
+            "TRANSPORTDROPOFFMOBILEPHONE": "DROPOFFMOBILETELEPHONE",
+            "TRANSPORTDROPOFFCELLPHONE": "DROPOFFMOBILETELEPHONE",
+            "TRANSPORTMILES":           "MILES",
+            "TRANSPORTCOST":            "c:COST",
+            "TRANSPORTCOSTPAIDDATE":    "d:COSTPAIDDATE",
+            "TRANSPORTCOMMENTS":        "COMMENTS"
+        }
+        tags.update(table_tags(dbo, d, movement.get_animal_transports(dbo, a["ID"]), "TRANSPORTTYPENAME", "DROPOFFDATETIME"))
+
     # Costs
     if includeCosts:
         d = {
@@ -559,11 +600,11 @@ def animal_tags(dbo, a, includeAdditional=True, includeCosts=True, includeDiet=T
         tags.update(table_tags(dbo, d, animal.get_costs(dbo, a["ID"]), "COSTTYPENAME", "COSTPAIDDATE"))
 
         # Cost totals
-        totalvaccinations = db.query_int(dbo, "SELECT SUM(Cost) FROM animalvaccination WHERE AnimalID = %d" % a["ID"])
-        totaltransports = db.query_int(dbo, "SELECT SUM(Cost) FROM animaltransport WHERE AnimalID = %d" % a["ID"])
-        totaltests = db.query_int(dbo, "SELECT SUM(Cost) FROM animaltest WHERE AnimalID = %d" % a["ID"])
-        totalmedicals = db.query_int(dbo, "SELECT SUM(Cost) FROM animalmedical WHERE AnimalID = %d" % a["ID"])
-        totallines = db.query_int(dbo, "SELECT SUM(CostAmount) FROM animalcost WHERE AnimalID = %d" % a["ID"])
+        totalvaccinations = dbo.query_int("SELECT SUM(Cost) FROM animalvaccination WHERE AnimalID = ?", [a["ID"]])
+        totaltransports = dbo.query_int("SELECT SUM(Cost) FROM animaltransport WHERE AnimalID = ?", [a["ID"]])
+        totaltests = dbo.query_int("SELECT SUM(Cost) FROM animaltest WHERE AnimalID = ?", [a["ID"]])
+        totalmedicals = dbo.query_int("SELECT SUM(Cost) FROM animalmedical WHERE AnimalID = ?", [a["ID"]])
+        totallines = dbo.query_int("SELECT SUM(CostAmount) FROM animalcost WHERE AnimalID = ?", [a["ID"]])
         totalcosts = totalvaccinations + totaltransports + totaltests + totalmedicals + totallines
         dailyboardingcost = a["DAILYBOARDINGCOST"] or 0
         daysonshelter = a["DAYSONSHELTER"] or 0
@@ -965,7 +1006,7 @@ def clinic_tags(dbo, c):
     tags.update(table_tags(dbo, d, clinic.get_invoice_items(dbo, c.ID)))
     return tags
 
-def person_tags(dbo, p):
+def person_tags(dbo, p, includeImg=False):
     """
     Generates a list of tags from a person result (the deep type from
     calling person.get_person)
@@ -1023,8 +1064,16 @@ def person_tags(dbo, p):
         "HOMECHECKEDBYMOBILETELEPHONE": p["HOMECHECKEDBYMOBILETELEPHONE"],
         "HOMECHECKEDBYCELLTELEPHONE": p["HOMECHECKEDBYMOBILETELEPHONE"],
         "MEMBERSHIPNUMBER"      : p["MEMBERSHIPNUMBER"],
-        "MEMBERSHIPEXPIRYDATE"  : python2display(l, p["MEMBERSHIPEXPIRYDATE"])
+        "MEMBERSHIPEXPIRYDATE"  : python2display(l, p["MEMBERSHIPEXPIRYDATE"]),
     }
+
+    if includeImg:
+        tags["DOCUMENTIMGSRC"] = html.doc_img_src(dbo, p)
+        tags["DOCUMENTIMGLINK"] = "<img height=\"200\" src=\"" + html.doc_img_src(dbo, p) + "\" >"
+        tags["DOCUMENTIMGLINK200"] = "<img height=\"200\" src=\"" + html.doc_img_src(dbo, p) + "\" >"
+        tags["DOCUMENTIMGLINK300"] = "<img height=\"300\" src=\"" + html.doc_img_src(dbo, p) + "\" >"
+        tags["DOCUMENTIMGLINK400"] = "<img height=\"400\" src=\"" + html.doc_img_src(dbo, p) + "\" >"
+        tags["DOCUMENTIMGLINK500"] = "<img height=\"500\" src=\"" + html.doc_img_src(dbo, p) + "\" >"
 
     # Additional fields
     tags.update(additional_field_tags(dbo, additional.get_additional_fields(dbo, p["ID"], "person")))
@@ -1062,6 +1111,69 @@ def person_tags(dbo, p):
     }
     tags.update(table_tags(dbo, d, animalcontrol.get_person_traploans(dbo, p["ID"], animalcontrol.ASCENDING), "TRAPTYPENAME", "RETURNDATE"))
 
+    return tags
+
+def transport_tags(dbo, transports):
+    """
+    Generates a list of tags from a list of transports.
+    transports: a list of transport records
+    """
+    l = dbo.locale
+    tags = {}
+    def add_to_tags(i, t): 
+        x = { 
+            "TRANSPORTID"+i:              str(t["ID"]),
+            "TRANSPORTTYPE"+i:            t["TRANSPORTTYPENAME"],
+            "TRANSPORTDRIVERNAME"+i:      t["DRIVEROWNERNAME"], 
+
+            "TRANSPORTPICKUPNAME"+i:      t["PICKUPOWNERNAME"], 
+            "TRANSPORTPICKUPDATETIME"+i:  python2display(l, t["PICKUPDATETIME"]),
+            "TRANSPORTPICKUPADDRESS"+i:   t["PICKUPADDRESS"],
+            "TRANSPORTPICKUPTOWN"+i:      t["PICKUPTOWN"],
+            "TRANSPORTPICKUPCITY"+i:      t["PICKUPTOWN"],
+            "TRANSPORTPICKUPCOUNTY"+i:    t["PICKUPCOUNTY"],
+            "TRANSPORTPICKUPSTATE"+i:     t["PICKUPCOUNTY"],
+            "TRANSPORTPICKUPZIPCODE"+i:   t["PICKUPPOSTCODE"],
+            "TRANSPORTPICKUPPOSTCODE"+i:  t["PICKUPPOSTCODE"],
+            "TRANSPORTPICKUPEMAIL"+i:     t["PICKUPEMAILADDRESS"],
+            "TRANSPORTPICKUPHOMEPHONE"+i: t["PICKUPHOMETELEPHONE"],
+            "TRANSPORTPICKUPWORKPHONE"+i: t["PICKUPWORKTELEPHONE"],
+            "TRANSPORTPICKUPMOBILEPHONE"+i: t["PICKUPMOBILETELEPHONE"],
+            "TRANSPORTPICKUPCELLPHONE"+i: t["PICKUPMOBILETELEPHONE"],
+
+            "TRANSPORTDROPOFFNAME"+i:     t["DROPOFFOWNERNAME"], 
+            "TRANSPORTDROPOFFDATETIME"+i: python2display(l, t["DROPOFFDATETIME"]),
+            "TRANSPORTDROPOFFADDRESS"+i:  t["DROPOFFADDRESS"],
+            "TRANSPORTDROPOFFTOWN"+i:     t["DROPOFFTOWN"],
+            "TRANSPORTDROPOFFCITY"+i:     t["DROPOFFTOWN"],
+            "TRANSPORTDROPOFFCOUNTY"+i:   t["DROPOFFCOUNTY"],
+            "TRANSPORTDROPOFFSTATE"+i:    t["DROPOFFCOUNTY"],
+            "TRANSPORTDROPOFFZIPCODE"+i:  t["DROPOFFPOSTCODE"],
+            "TRANSPORTDROPOFFPOSTCODE"+i: t["DROPOFFPOSTCODE"],
+            "TRANSPORTDROPOFFEMAIL"+i:    t["DROPOFFEMAILADDRESS"],
+            "TRANSPORTDROPOFFHOMEPHONE"+i: t["DROPOFFHOMETELEPHONE"],
+            "TRANSPORTDROPOFFWORKPHONE"+i: t["DROPOFFWORKTELEPHONE"],
+            "TRANSPORTDROPOFFMOBILEPHONE"+i: t["DROPOFFMOBILETELEPHONE"],
+            "TRANSPORTDROPOFFCELLPHONE"+i: t["DROPOFFMOBILETELEPHONE"],
+
+            "TRANSPORTMILES"+i:           str(t["MILES"]),
+            "TRANSPORTCOST"+i:            format_currency_no_symbol(l, t["COST"]),
+            "TRANSPORTCOSTPAIDDATE"+i:    python2display(l, t["COSTPAIDDATE"]),
+            "TRANSPORTCOMMENTS"+i:        t["COMMENTS"],
+
+            "TRANSPORTANIMALNAME"+i:      t["ANIMALNAME"],
+            "TRANSPORTSHELTERCODE"+i:     t["SHELTERCODE"],
+            "TRANSPORTSHORTCODE"+i:       t["SHORTCODE"],
+            "TRANSPORTSPECIES"+i:         t["SPECIESNAME"],
+            "TRANSPORTBREED"+i:           t["BREEDNAME"],
+            "TRANSPORTSEX"+i:             t["SEX"],
+        }
+        tags.update(x)
+    # Add a copy of the transport tags without an index
+    if len(transports) > 0:
+        add_to_tags("", transports[0]) 
+    for i, t in enumerate(transports):
+        add_to_tags(str(i+1), t)
     return tags
 
 def waitinglist_tags(dbo, a):
@@ -1185,6 +1297,8 @@ def table_tags(dbo, d, rows, typefield = "", recentdatefield = ""):
             # others have some kind of date
             if recentdatefield == "STATUS":
                 t = r[typefield]
+                # If the type is somehow null, we can't do anything
+                if t is None: continue
                 # Is this the first type with STATUS==2 we've seen?
                 # If so, create the tags with recent as a suffix.
                 if t not in recentgiven and r[recentdatefield] == 2:
@@ -1194,6 +1308,8 @@ def table_tags(dbo, d, rows, typefield = "", recentdatefield = ""):
                         tags[k + "RECENT" + t] = table_get_value(l, r, v)
             else:
                 t = r[typefield]
+                # If the type is somehow null, we can't do anything
+                if t is None: continue
                 # Is this the first type with a date we've seen?
                 # If so, create the tags with recent as a suffix
                 if t not in recentgiven and r[recentdatefield] is not None:
@@ -1361,7 +1477,7 @@ def generate_person_doc(dbo, templateid, personid, username):
     p = person.get_person(dbo, personid)
     im = media.get_image_file_data(dbo, "person", personid)[1]
     if p is None: raise utils.ASMValidationError("%d is not a valid person ID" % personid)
-    tags = person_tags(dbo, p)
+    tags = person_tags(dbo, p, includeImg=True)
     tags = append_tags(tags, org_tags(dbo, username))
     m = movement.get_person_movements(dbo, personid)
     if len(m) > 0: 
@@ -1446,6 +1562,19 @@ def generate_movement_doc(dbo, templateid, movementid, username):
         tags = append_tags(tags, person_tags(dbo, person.get_person(dbo, m["OWNERID"])))
     tags = append_tags(tags, movement_tags(dbo, m))
     tags = append_tags(tags, donation_tags(dbo, financial.get_movement_donations(dbo, movementid)))
+    tags = append_tags(tags, org_tags(dbo, username))
+    return substitute_template(dbo, templateid, tags)
+
+def generate_transport_doc(dbo, templateid, transportids, username):
+    """
+    Generates a transport document from a template
+    templateid: The ID of the template
+    transportids: A list of ids to generate for
+    """
+    tt = movement.get_transports_by_ids(dbo, transportids)
+    if len(tt) == 0: 
+        raise utils.ASMValidationError("%s does not contain any valid transport IDs" % transportids)
+    tags = transport_tags(dbo, tt)
     tags = append_tags(tags, org_tags(dbo, username))
     return substitute_template(dbo, templateid, tags)
 

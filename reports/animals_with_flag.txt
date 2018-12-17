@@ -1,0 +1,43 @@
+Shelter animals with flag
+###
+Auditing
+###
+33713/Any
+###
+Shelter animals with a particular flag.
+###
+en
+###
+$VAR flag ANIMALFLAG$
+
+SELECT a.AnimalName, a.ShelterCode, t.AnimalType, a.DisplayLocation, a.AdditionalFlags
+FROM animal a
+INNER JOIN animaltype t ON t.ID = a.AnimalTypeID
+WHERE a.Archived = 0 AND (a.AdditionalFlags LIKE '$@flag$|%' OR a.AdditionalFlags LIKE '%$@flag$|') 
+ORDER BY t.AnimalType, a.AnimalName
+###
+$$HEADER
+<table border="1">
+<tr>
+<th>Name</th>
+<th>Code</th>
+<th>Type</th>
+<th>Location</th>
+<th>Flags</th>
+</tr>
+HEADER$$
+
+$$BODY
+<tr>
+<td>$ANIMALNAME</td>
+<td>$SHELTERCODE</td>
+<td>$ANIMALTYPE</td>
+<td>$DISPLAYLOCATION</td>
+<td>$ADDITIONALFLAGS</td>
+</tr>
+BODY$$
+
+$$FOOTER
+</table>
+FOOTER$$
+

@@ -778,6 +778,13 @@ MembershipNumber
     The person's membership number
 MembershipExpiryDate 
     The date this person's membership with the shelter expires
+DocumentImgLink
+    An <img> tag containing a link to the person's preferred document image.
+    The image will be 200px high. You can also suffix a pixel height in
+    increments of 100 upto 500px if you would like the image to be larger, eg:
+    <<DocumentImgLink300>>, <<DocumentImgLink400>>, <<DocumentImgLink500>>
+DocumentImgSrc
+    Just the src attribute value for an image link to the preferred document image.
 
 Citation Keys
 -------------
@@ -825,40 +832,6 @@ TrapReturnDate
     The date the trap was returned
 TrapComments
     Any comments on the traploana
-
-Payment/Receipt/Invoice Keys
-----------------------------
-
-Payment keys are available for documents generated for a one or more payments
-from the payment tab. Keys for the person making the payment are also present
-and if the payment is linked to an animal, animal keys are also present. 
-
-PaymentID 
-    The payment record ID (used to generate receipt number)
-PaymentType
-    The payment type
-PaymentMethod
-    The payment method
-PaymentDate
-    The date the payment was received 
-PaymentDateDue
-    If this is a recurring payment, the date it is due 
-PaymentAmount 
-    The payment amount
-ReceiptNum
-    If you issue receipts for donations, the receipt number 
-PaymentGiftAid
-    Yes or No if this donation is eligible for UK giftaid
-PaymentComments 
-    Any comments for the payment
-PaymentCreatedBy 
-    (PaymentCreatedByName) 
-PaymentCreatedDate 
-    The date this payment record was created
-PaymentLastChangedBy 
-    (PaymentLastChangedByName) 
-PaymentLastChangedDate  
-    The date this payment record was last changed
 
 Licence Keys
 ------------

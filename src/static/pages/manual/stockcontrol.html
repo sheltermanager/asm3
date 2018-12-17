@@ -13,6 +13,8 @@
 
   
   
+  
+  
 
   
 
@@ -22,28 +24,21 @@
 
   
 
-  
-  
-    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-  
-
-  
-
-  
-        <link rel="index" title="Index"
-              href="genindex.html"/>
-        <link rel="search" title="Search" href="search.html"/>
-    <link rel="top" title="ASM 41u documentation" href="index.html"/>
-        <link rel="next" title="Reports" href="reports.html"/>
-        <link rel="prev" title="Accounts" href="accounts.html"/> 
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Reports" href="reports.html" />
+    <link rel="prev" title="Accounts" href="accounts.html" /> 
 
   
   <script src="_static/js/modernizr.min.js"></script>
 
 </head>
 
-<body class="wy-body-for-nav" role="document">
+<body class="wy-body-for-nav">
 
+   
   <div class="wy-grid-for-nav">
 
     
@@ -84,7 +79,10 @@
           
             
             
-                <ul class="current">
+              
+            
+            
+              <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="foreword.html">Foreword</a></li>
 <li class="toctree-l1"><a class="reference internal" href="gettingstarted.html">Getting Started</a></li>
 <li class="toctree-l1"><a class="reference internal" href="searching.html">Search</a></li>
@@ -133,34 +131,54 @@
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
 
       
-      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
-        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-        <a href="index.html">ASM</a>
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">ASM</a>
+        
       </nav>
 
 
-      
       <div class="wy-nav-content">
+        
         <div class="rst-content">
+        
           
 
- 
+
+
+
+
+
+
+
+
+
+
+
 
 
 
 <div role="navigation" aria-label="breadcrumbs navigation">
+
   <ul class="wy-breadcrumbs">
-    <li><a href="index.html">Docs</a> &raquo;</li>
-      
-    <li>Stock Control</li>
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Stock Control</li>
+    
+    
       <li class="wy-breadcrumbs-aside">
         
-          
-            <a href="_sources/stockcontrol.txt" rel="nofollow"> View page source</a>
+            
+            <a href="_sources/stockcontrol.rst.txt" rel="nofollow"> View page source</a>
           
         
       </li>
+    
   </ul>
+
+  
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
@@ -175,7 +193,7 @@ drugs, food and other items.</p>
 subdivide your stock to assist with the stock taking process. A useful
 convention (similar to account codes) is to use a separator for child locations
 so they appear together in lists. For example, you could create locations
-called &#8220;Office&#8221;, &#8220;Office::Shelves&#8221; and &#8220;Office::Desk&#8221;, which would all appear
+called “Office”, “Office::Shelves” and “Office::Desk”, which would all appear
 together in the list of available locations and be able to hold their own list
 of stock.</p>
 <p>To view and add to current stock levels, go to <span class="menuselection">Financial ‣
@@ -193,15 +211,15 @@ container, along with a note each time the stock was used.</p>
 <div class="section" id="adding-new-stock">
 <h2>Adding new stock<a class="headerlink" href="#adding-new-stock" title="Permalink to this headline">¶</a></h2>
 <img alt="_images/stock_add.png" src="_images/stock_add.png" />
-<p>Use the &#8220;New Stock&#8221; button to add a new stocked item. Each stocked item is
-assumed to be a container of  &#8220;total&#8221; items as described by the &#8220;units&#8221; field.
-The &#8220;balance&#8221; field is the amount remaining in the container and will decrement
+<p>Use the “New Stock” button to add a new stocked item. Each stocked item is
+assumed to be a container of  “total” items as described by the “units” field.
+The “balance” field is the amount remaining in the container and will decrement
 as the stock is used. You can also set an expiry date and batch number for
-drugs and perishable goods. In addition, if you set a &#8220;quantity&#8221;, this is the
+drugs and perishable goods. In addition, if you set a “quantity”, this is the
 number of records to create if you have multiples of the same item.</p>
 <p>So, for example, you have 5 boxes of metacam chewable tabs, each box contains
 10 tabs:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">Name</span><span class="p">:</span> <span class="n">Metacam</span> <span class="mi">1</span><span class="n">mg</span> <span class="n">chewable</span> <span class="n">tablet</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Name</span><span class="p">:</span> <span class="n">Metacam</span> <span class="mi">1</span><span class="n">mg</span> <span class="n">chewable</span> <span class="n">tablet</span>
 <span class="n">Description</span><span class="p">:</span> <span class="n">Box</span> <span class="n">of</span> <span class="mi">10</span> <span class="mi">1</span><span class="n">mg</span> <span class="n">chewable</span> <span class="n">meloxicam</span> <span class="n">tablets</span>
 <span class="n">Quantity</span><span class="p">:</span> <span class="mi">5</span>
 <span class="n">Location</span><span class="p">:</span> <span class="n">Stores</span>
@@ -211,7 +229,7 @@ number of records to create if you have multiples of the same item.</p>
 </pre></div>
 </div>
 <p>Every time the level of a stock changes (the balance) or a stock is newly
-created, a &#8220;usage&#8221; record for that item is also created that explains why that
+created, a “usage” record for that item is also created that explains why that
 stock has changed with a stock usage type/category. You can also add some
 comments.</p>
 <p>The system will remember items you have previously entered and the name and
@@ -224,7 +242,7 @@ the list of current stocked items and adjusting the balance. When you change
 the balance of an existing record, the usage fields will appear to prompt you
 to create a usage record to explain why this stock record has changed.</p>
 <p>If the stock has expired and is to be thrown away, set the balance to zero and
-use the &#8220;wastage&#8221; usage type so that reports can calculate how much stock has
+use the “wastage” usage type so that reports can calculate how much stock has
 been wasted. When loading stock screens and items for selection, any stocked
 items with zero balances will be hidden from view.</p>
 </div>
@@ -235,7 +253,7 @@ medical items through the tabs on the animal record or via
 <span class="menuselection">Medical ‣ Test Book</span>, <span class="menuselection">Medical ‣ Vaccination
 Book</span> or <span class="menuselection">Medical ‣ Medical Book</span> the system will prompt you
 to deduct stocks for the test/vaccination/treatment.</p>
-<p>When you hit the &#8220;Give&#8221; or &#8220;Perform&#8221; button on any of those screens, a dialog
+<p>When you hit the “Give” or “Perform” button on any of those screens, a dialog
 will appear to prompt you for the date the test was performed or
 treatment/vaccination administered and usage information to decrement an
 appropriate stocked item.</p>
@@ -254,15 +272,16 @@ that have either expired or are due to expire in the next month.</p>
 
 
            </div>
+           
           </div>
           <footer>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="reports.html" class="btn btn-neutral float-right" title="Reports" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="reports.html" class="btn btn-neutral float-right" title="Reports" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="accounts.html" class="btn btn-neutral" title="Accounts" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="accounts.html" class="btn btn-neutral" title="Accounts" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
@@ -271,11 +290,11 @@ that have either expired or are due to expire in the next month.</p>
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2018, Sheltermanager, Ltd.
+        &copy; Copyright 2018, Sheltermanager, Ltd
 
     </p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
 
@@ -290,34 +309,33 @@ that have either expired or are due to expire in the next month.</p>
 
   
 
-    <script type="text/javascript">
-        var DOCUMENTATION_OPTIONS = {
-            URL_ROOT:'./',
-            VERSION:'41u',
-            COLLAPSE_INDEX:false,
-            FILE_SUFFIX:'.html',
-            HAS_SOURCE:  true
-        };
-    </script>
-      <script type="text/javascript" src="_static/jquery.js"></script>
-      <script type="text/javascript" src="_static/underscore.js"></script>
-      <script type="text/javascript" src="_static/doctools.js"></script>
+    
+    
+      <script type="text/javascript">
+          var DOCUMENTATION_OPTIONS = {
+              URL_ROOT:'./',
+              VERSION:'41u',
+              LANGUAGE:'None',
+              COLLAPSE_INDEX:false,
+              FILE_SUFFIX:'.html',
+              HAS_SOURCE:  true,
+              SOURCELINK_SUFFIX: '.txt'
+          };
+      </script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+    
 
   
 
-  
-  
-    <script type="text/javascript" src="_static/js/theme.js"></script>
-  
+  <script type="text/javascript" src="_static/js/theme.js"></script>
 
-  
-  
   <script type="text/javascript">
       jQuery(function () {
-          SphinxRtdTheme.StickyNav.enable();
+          SphinxRtdTheme.Navigation.enable(true);
       });
-  </script>
-   
+  </script> 
 
 </body>
 </html>

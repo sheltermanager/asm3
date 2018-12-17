@@ -683,6 +683,7 @@ def handler(session, post):
     l = session.locale
     user = session.user
     locationfilter = session.locationfilter
+    siteid = session.siteid
     dbo = session.dbo
     homelink = "<a href='mobile' data-ajax='false' class='ui-btn-right' data-icon='home' data-theme='b'>%s</a>" % _("Home", l)
     mode = post["posttype"]
@@ -771,7 +772,7 @@ def handler(session, post):
         alin = []
         h.append(header(l))
         h.append(jqm_page_header("", _("Shelter Animals", l), homelink))
-        an = animal.get_animal_find_simple(dbo, "", "all", 0, locationfilter)
+        an = animal.get_animal_find_simple(dbo, "", locationfilter=locationfilter, siteid=siteid)
         for a in an:
             alin.append(jqm_listitem_link("mobile_post?posttype=va&id=%d" % a["ID"],
                 "%s - %s (%s %s %s) %s" % (a["CODE"], a["ANIMALNAME"], a["SEXNAME"], a["BREEDNAME"], a["SPECIESNAME"], a["IDENTICHIPNUMBER"]),
@@ -815,9 +816,9 @@ def handler(session, post):
         q = post["q"]
         matches = []
         if q.strip() != "": 
-            matches = person.get_person_find_simple(dbo, q, user, "all", \
-                users.check_permission_bool(session, users.VIEW_STAFF), \
-                users.check_permission_bool(session, users.VIEW_VOLUNTEER), 100)
+            matches = person.get_person_find_simple(dbo, q, user, classfilter="all", \
+                includeStaff=users.check_permission_bool(session, users.VIEW_STAFF), \
+                includeVolunteers=users.check_permission_bool(session, users.VIEW_VOLUNTEER), limit=100, siteid=siteid)
         h = []
         alin = []
         h.append(header(l))

@@ -27,6 +27,8 @@ $(function() {
                         callout: _("The date the vaccination is required/due to be administered")},
                     { json_field: "DATEOFVACCINATION", post_field: "given", label: _("Given"), type: "date", 
                         callout: _("The date the vaccination was administered") },
+                    { json_field: "GIVENBY", post_field: "by", label: _("By"), type: "select",
+                        options: { displayfield: "USERNAME", valuefield: "USERNAME", rows: controller.users }},
                     { json_field: "ADMINISTERINGVETID", post_field: "administeringvet", label: _("Administering Vet"), type: "person", personfilter: "vet" },
                     { json_field: "DATEEXPIRES", post_field: "expires", label: _("Expires"), type: "date",
                         callout: _('Optional, the date the vaccination "wears off" and needs to be administered again') },
@@ -123,9 +125,9 @@ $(function() {
                     { field: "DATEREQUIRED", display: _("Required"), formatter: tableform.format_date, initialsort: true,
                         initialsortdirection: controller.name == "vaccination" ? "asc" : "desc" },
                     { field: "DATEOFVACCINATION", display: _("Given"), formatter: tableform.format_date },
-                    { field: "ADMINISTERINGVET", display: _("Vet"), 
+                    { field: "GIVENBY", display: _("By"), 
                         formatter: function(row) {
-                            if (!row.ADMINISTERINGVETID) { return ""; }
+                            if (!row.ADMINISTERINGVETID) { return row.GIVENBY; }
                             return html.person_link(row.ADMINISTERINGVETID, row.ADMINISTERINGVETNAME);
                         }
                     },
@@ -137,7 +139,7 @@ $(function() {
                     { field: "COSTPAIDDATE", display: _("Paid"), formatter: tableform.format_date,
                         hideif: function() { return !config.bool("ShowCostPaid"); }
                     },
-                    { field: "COMMENTS", display: _("Comments") }
+                    { field: "COMMENTS", display: _("Comments"), formatter: tableform.format_comments }
                 ]
             };
 
@@ -177,6 +179,7 @@ $(function() {
                         $("#usagedate").datepicker("setDate", new Date());
                         $("#usagedate").closest("tr").hide();
                         $("#quantity").val("0");
+                        $("#givenby").select("value", asm.user);
                         // Default animal's current vet if set and this is an animal vacc tab
                         if (controller.animal && controller.animal.CURRENTVETID) { 
                             $("#givenvet").personchooser("loadbyid", controller.animal.CURRENTVETID); 
@@ -312,7 +315,9 @@ $(function() {
                     $("#administeringvet").personchooser("clear");
                     $("#dialog-tableform .asm-textbox, #dialog-tableform .asm-textarea").val("");
                     $("#type").select("value", config.str("AFDefaultVaccinationType"));
+                    $("#by").select("value", asm.user);
                     vaccination.enable_default_cost = true;
+                    vaccination.lastvet = null;
                     vaccination.set_default_cost();
                 }
             });
@@ -370,6 +375,14 @@ $(function() {
                 '<td><input id="givenmanufacturer" data="givenmanufacturer" type="text" class="asm-textbox asm-field" /></td>',
                 '</tr>',
                 '<tr>',
+                '<td><label for="givenby">' + _("By") + '</label></td>',
+                '<td>',
+                '<select id="givenby" data="givenby" class="asm-selectbox asm-field">',
+                '<option value=""></option>',
+                html.list_to_options(controller.users, "USERNAME", "USERNAME"),
+                '</select>',
+                '</td>',
+                '</tr>',
                 '<tr>',
                 '<td><label for="givenvet">' + _("Administering Vet") + '</label></td>',
                 '<td><input id="givenvet" data="givenvet" type="hidden" class="asm-personchooser asm-field" data-filter="vet" /></td>',

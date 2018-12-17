@@ -288,7 +288,7 @@ $(function() {
                 '<input id="timebroughtin" data="timebroughtin" class="asm-textbox asm-timebox" />',
                 '</td>',
                 '</tr>',
-                additional.additional_mandatory_fields(controller.additional),
+                additional.additional_new_fields(controller.additional),
                 '</table>',
                 '<div class="centered">',
                 '<button id="addedit">' + html.icon("animal-add") + ' ' + _("Create and edit") + '</button>',
@@ -352,7 +352,7 @@ $(function() {
             // If the user ticked hold, there's no hold until date and
             // we have an auto remove days period, default the date
             if ($("#hold").is(":checked") && $("#holduntil").val() == "" && config.integer("AutoRemoveHoldDays") > 0) {
-                var holddate = format.date_js(controller.animal.DATEBROUGHTIN).getTime();
+                var holddate = new Date().getTime();
                 holddate += config.integer("AutoRemoveHoldDays") * 86400000;
                 holddate = format.date( new Date(holddate) );
                 $("#holduntil").val(holddate);
@@ -447,7 +447,7 @@ $(function() {
 
         reset: function() {
 
-            $(".asm-textbox").val("").change();
+            $("#animalname, #dateofbirth, #weight, #weightlb").val("").change();
             $(".asm-checkbox").prop("checked", false).change();
             $(".asm-personchooser").personchooser("clear");
 

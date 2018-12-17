@@ -1,5 +1,5 @@
 /*jslint browser: true, forin: true, eqeq: true, white: true, sloppy: true, vars: true, nomen: true */
-/*global $, jQuery, _, asm, common, config, controller, dlgfx, format, header, html, validate */
+/*global $, jQuery, _, asm, common, config, controller, dlgfx, format, header, edit_header, html, validate */
 
 $(function() {
 
@@ -137,40 +137,45 @@ $(function() {
 
             // Callback when person is changed
             $("#person").personchooser().bind("personchooserchange", function(event, rec) {
+
+                edit_header.person_with_adoption_warnings(rec.ID).then(function(data) {
+                    rec = jQuery.parseJSON(data)[0];
          
-                // Default giftaid if the person is registered
-                $("#payment").payments("option", "giftaid", rec.ISGIFTAID == 1);
-                $("#giftaid1").prop("checked", rec.ISGIFTAID == 1);
+                    // Default giftaid if the person is registered
+                    $("#payment").payments("option", "giftaid", rec.ISGIFTAID == 1);
+                    $("#giftaid1").prop("checked", rec.ISGIFTAID == 1);
 
-                // Owner banned?
-                if (rec.ISBANNED == 1 && config.bool("WarnBannedOwner")) {
-                    $("#warntext").text(_("This person has been banned from adopting animals"));
-                    $("#ownerwarn").fadeIn();
-                    return;
-                }
+                    // Owner banned?
+                    if (rec.ISBANNED == 1 && config.bool("WarnBannedOwner")) {
+                        $("#warntext").text(_("This person has been banned from adopting animals"));
+                        $("#ownerwarn").fadeIn();
+                        return;
+                    }
 
-                // Owner previously under investigation
-                if (rec.INVESTIGATION > 0) {
-                    $("#warntext").html(_("This person has been under investigation"));
-                    $("#ownerwarn").fadeIn();
-                    return;
-                }
+                    // Owner previously under investigation
+                    if (rec.INVESTIGATION > 0) {
+                        $("#warntext").html(_("This person has been under investigation"));
+                        $("#ownerwarn").fadeIn();
+                        return;
+                    }
 
-                // Owner part of animal control incident
-                if (rec.INCIDENT > 0) {
-                    $("#warntext").html(_("This person has an animal control incident against them"));
-                    $("#ownerwarn").fadeIn();
-                    return;
-                }
+                    // Owner part of animal control incident
+                    if (rec.INCIDENT > 0) {
+                        $("#warntext").html(_("This person has an animal control incident against them"));
+                        $("#ownerwarn").fadeIn();
+                        return;
+                    }
 
-                // Owner not homechecked?
-                if (rec.IDCHECK == 0 && config.bool("WarnNoHomeCheck")) {
-                    $("#warntext").text(_("This person has not passed a homecheck"));
-                    $("#ownerwarn").fadeIn();
-                    return;
-                }
+                    // Owner not homechecked?
+                    if (rec.IDCHECK == 0 && config.bool("WarnNoHomeCheck")) {
+                        $("#warntext").text(_("This person has not passed a homecheck"));
+                        $("#ownerwarn").fadeIn();
+                        return;
+                    }
 
-                $("#ownerwarn").fadeOut();
+                    $("#ownerwarn").fadeOut();
+
+                });
 
             });
 

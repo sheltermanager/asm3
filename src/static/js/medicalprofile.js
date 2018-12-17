@@ -79,7 +79,7 @@ $(function() {
                     { field: "DOSAGE", display: _("Dosage") },
                     { field: "COST", display: _("Cost"), formatter: tableform.format_currency },
                     { field: "NAMEDFREQUENCY", display: _("Frequency") },
-                    { field: "COMMENTS", display: _("Comments") }
+                    { field: "COMMENTS", display: _("Comments"), formatter: tableform.format_comments }
                 ]
             };
 

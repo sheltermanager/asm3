@@ -107,7 +107,7 @@ $(function() {
                 '<input id="owner" data="owner" type="hidden" class="asm-personchooser" value="" />',
                 '</td>',
                 '</tr>',
-                additional.additional_mandatory_fields(controller.additional),
+                additional.additional_new_fields(controller.additional),
                 '</table>',
                 '</td>',
                 '</tr>',
@@ -233,7 +233,7 @@ $(function() {
         },  
 
         reset: function() {
-            $(".asm-textbox, .asm-textarea").val("").change();
+            $("#dispatchaddress, #dispatchtown, #dispatchcounty, #dispatchpostcode").val("").change();
             $(".asm-checkbox").prop("checked", false).change();
             $(".asm-personchooser").personchooser("clear");
             // Set select box default values

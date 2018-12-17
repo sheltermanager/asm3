@@ -66,6 +66,7 @@ $(function() {
                 '<li><a href="#tab-homepage">' + _("Home page") + '</a></li>',
                 '<li><a href="#tab-insurance">' + _("Insurance") + '</a></li>',
                 '<li><a href="#tab-lostandfound">' + _("Lost and Found") + '</a></li>',
+                '<li><a href="#tab-medical">' + _("Medical") + '</a></li>',
                 '<li><a href="#tab-movements">' + _("Movements") + '</a></li>',
                 '<li><a href="#tab-quicklinks">' + _("Quicklinks") + '</a></li>',
                 '<li><a href="#tab-unwanted">' + _("Remove") + '</a></li>',
@@ -99,6 +100,10 @@ $(function() {
                 '<tr>',
                 '<td><label for="zipcode">' + _("Zipcode") + '</label></td>',
                 '<td><input id="zipcode" type="text" class="asm-textbox" data="OrganisationPostcode" />',
+                '</tr>',
+                '<tr>',
+                '<td><label for="country">' + _("Country") + '</label></td>',
+                '<td><input id="country" type="text" class="asm-textbox" data="OrganisationCountry" />',
                 '</tr>',
                 '<tr>',
                 '<td><label for="telephone">' + _("Telephone") + '</label></td>',
@@ -655,9 +660,10 @@ $(function() {
                 '<br />',
                 '<input data="DefaultMediaNotesFromFile" id="medianotesfile" type="checkbox" class="asm-checkbox" /> <label for="medianotesfile">' + _("Prefill new media notes with the filename if left blank") + '</label>',
                 '<br />',
-                '<input data="IncludeOffShelterMedical" id="includeoffsheltermedical" type="checkbox" class="asm-checkbox" /> <label for="includeoffsheltermedical">' + _("Include off-shelter animals in medical calendar and books") + '</label>',
-                '<br />',
-                '<input data="AutoDefaultVaccBatch" id="autodefaultvaccbatch" type="checkbox" class="asm-checkbox" /> <label for="autodefaultvaccbatch">' + _("When entering vaccinations, default the last batch number and manufacturer for that type") + '</label>',
+                '<input data="HoldChangeLog" id="holdchangelog" type="checkbox" class="asm-checkbox" /> <label for="holdchangelog">' + _("When I mark an animal held, make a note of it in the log with this type") + '</label>',
+                '<select data="HoldChangeLogType" id="holdchangelogtype" class="asm-selectbox">',
+                html.list_to_options(controller.logtypes, "ID", "LOGTYPENAME"),
+                '</select>',
                 '</br />',
                 '<input data="LocationChangeLog" id="locationchangelog" type="checkbox" class="asm-checkbox" /> <label for="locationchangelog">' + _("When I change the location of an animal, make a note of it in the log with this type") + '</label>',
                 '<select data="LocationChangeLogType" id="locationchangelogtype" class="asm-selectbox">',
@@ -695,6 +701,7 @@ $(function() {
                 '<input data="PicturesInBooks" id="picsinbooks" class="asm-checkbox" type="checkbox" /> <label for="picsinbooks">' + _("Show animal thumbnails in movement and medical books") + '</label><br />',
                 '<input data="ShowPersonMiniMap" id="minimap" class="asm-checkbox" type="checkbox" /> <label for="minimap">' + _("Show a minimap of the address on person screens") + '</label><br />',
                 '<input data="ShowWeightInLbs" id="showlbs" class="asm-checkbox" type="checkbox" /> <label for="showlbs">' + _("Show weight as lb rather than kg") + '</label><br />',
+                '<input data="ShowFullCommentsInTables" id="showfullcommentstables" class="asm-checkbox" type="checkbox" /> <label for="showfullcommentstables">' + _("Show complete comments in table views") + '</label><br />',
                 '<input data="StickyTableHeaders" id="floatingheaders" class="asm-checkbox" type="checkbox" /> <label for="floatingheaders">' + _("Keep table headers visible when scrolling") + '</label><br />',
                 '<input data="RecordNewBrowserTab" id="recordnewbrowsertab" class="asm-checkbox" type="checkbox" /> <label for="recordnewbrowsertab">' + _("Open records in a new browser tab") + '</label><br />',
                 '<input data="ReportNewBrowserTab" id="reportnewbrowsertab" class="asm-checkbox" type="checkbox" /> <label for="reportnewbrowsertab">' + _("Open reports in a new browser tab") + '</label><br />',
@@ -922,6 +929,20 @@ $(function() {
             ].join("\n");
         },
 
+        render_medical: function() {
+            return [
+                '<div id="tab-medical">',
+                '<p>',
+                '<input data="IncludeOffShelterMedical" id="includeoffsheltermedical" type="checkbox" class="asm-checkbox" /> <label for="includeoffsheltermedical">' + _("Include off-shelter animals in medical calendar and books") + '</label>',
+                '<br />',
+                '<input data="AutoDefaultVaccBatch" id="autodefaultvaccbatch" type="checkbox" class="asm-checkbox" /> <label for="autodefaultvaccbatch">' + _("When entering vaccinations, default the last batch number and manufacturer for that type") + '</label>',
+                '</br />',
+                '<input data="FostererEmails" id="fostereremails" type="checkbox" class="asm-checkbox" /> <label for="fostereremails">' + _("Send a weekly email to fosterers with medical information about their animals") + '</label>',
+                '</p>',
+                '</div>'
+            ].join("\n");
+        },
+
         render_movements: function() {
             return [
                 '<div id="tab-movements">',
@@ -940,6 +961,8 @@ $(function() {
                 '</p>',
                 '<p class="asm-header">' + _("Warnings") + '</p>',
                 '<p>',
+                '<input data="WarnUnaltered" id="warnunaltered" class="asm-checkbox" type="checkbox" /> <label for="warnunaltered">' + _("Warn when adopting an unaltered animal") + '</label><br />',
+                '<input data="WarnNoMicrochip" id="warnnomicrochip" class="asm-checkbox" type="checkbox" /> <label for="warnnomicrochip">' + _("Warn when adopting an animal who has not been microchipped") + '</label><br />',
                 '<input data="WarnNoHomeCheck" id="warnnohomecheck" class="asm-checkbox" type="checkbox" /> <label for="warnnohomecheck">' + _("Warn when adopting to a person who has not been homechecked") + '</label><br />',
                 '<input data="WarnBannedOwner" id="warnbanned" class="asm-checkbox" type="checkbox" /> <label for="warnbanned">' + _("Warn when adopting to a person who has been banned from adopting animals") + '</label><br />',
                 '<input data="WarnOOPostcode" id="warnoopostcode" class="asm-checkbox" type="checkbox" /> <label for="warnoopostcode">' + _("Warn when adopting to a person who lives in the same area as the original owner") + '</label><br />',
@@ -1016,6 +1039,7 @@ $(function() {
                 '<option value="sexspecies">' + _("Sex and Species") + '</option>',
                 '<option value="species">' + _("Species") + '</option>',
                 '<option value="status">' + _("Status") + '</option>',
+                '<option value="statusspecies">' + _("Status and Species") + '</option>',
                 '<option value="type">' + _("Type") + '</option>',
                 '</select>',
                 '</td>',
@@ -1129,6 +1153,7 @@ $(function() {
                 this.render_homepage(),
                 this.render_insurance(),
                 this.render_lostandfound(),
+                this.render_medical(),
                 this.render_movements(),
                 this.render_quicklinks(),
                 this.render_search(),

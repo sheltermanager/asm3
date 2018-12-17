@@ -93,11 +93,13 @@ class MaddiesFundPublisher(AbstractPublisher):
             self.cleanup()
             return
 
-        # Send all fosters and adoptions for the period that haven't been sent already
+        # Send all fosters and adoptions for the period that haven't been sent since they last had a change.
+        # (we use lastchangeddate instead of sent date because MPA want an update when a number of key
+        #  animal fields change, such as neuter status, microchip info, rabies tag, etc)
         cutoff = i18n.subtract_days(i18n.now(self.dbo.timezone), PERIOD)
         sql = "%s WHERE a.ActiveMovementType IN (1,2) " \
             "AND a.ActiveMovementDate >= ? AND a.DeceasedDate Is Null AND a.NonShelterAnimal = 0 " \
-            "AND NOT EXISTS(SELECT AnimalID FROM animalpublished WHERE AnimalID = a.ID AND PublishedTo = 'maddiesfund' AND SentDate >= a.ActiveMovementDate) " \
+            "AND NOT EXISTS(SELECT AnimalID FROM animalpublished WHERE AnimalID = a.ID AND PublishedTo = 'maddiesfund' AND SentDate >= a.LastChangedDate) " \
             "ORDER BY a.ID" % animal.get_animal_query(self.dbo)
         animals = self.dbo.query(sql, [cutoff], distincton="ID")
 
@@ -113,6 +115,12 @@ class MaddiesFundPublisher(AbstractPublisher):
             "PublishedTo = 'maddiesfund' AND SentDate < " \
             "(SELECT MAX(ReturnDate) FROM adoption WHERE AnimalID = a.ID AND MovementType IN (1,2) AND ReturnDate Is Not Null))" % animal.get_animal_query(self.dbo)
         animals += self.dbo.query(sql, distincton="ID")
+
+        # Now find animals who have been sent previously and have a new/changed vaccination since then
+        sql = "%s WHERE a.Archived = 0 AND " \
+            "EXISTS(SELECT p.AnimalID FROM animalpublished p INNER JOIN animalvaccination av ON av.AnimalID = a.ID WHERE p.AnimalID = a.ID AND " \
+            "p.PublishedTo = 'maddiesfund' AND (p.SentDate < av.CreatedDate OR p.SentDate < av.LastChangedDate))" % animal.get_animal_query(self.dbo)
+        animals += self.dbo.query(sql, [cutoff], distincton="ID")
 
         if len(animals) == 0:
             self.setLastError("No animals found to publish.")
@@ -152,6 +160,7 @@ class MaddiesFundPublisher(AbstractPublisher):
                 # Build an adoption JSON object containing the adopter and animal
                 a = {
                     "PetID": an["ID"],
+                    "PetCode": an["SHELTERCODE"],
                     "Site": organisation,
                     "PetName": an["ANIMALNAME"],
                     "PetStatus": self.getPetStatus(an),
@@ -250,7 +259,6 @@ class MaddiesFundPublisher(AbstractPublisher):
             except Exception as err:
                 self.logError("Failed processing animal: %s, %s" % (an["SHELTERCODE"], err), sys.exc_info())
 
-        self.saveLog()
-        self.setPublisherComplete()
+        self.cleanup()
 
 

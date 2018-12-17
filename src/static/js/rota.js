@@ -67,7 +67,7 @@ $(function() {
                     },
                     { field: "STARTDATETIME", display: _("Start Time"), formatter: tableform.format_datetime, initialsort: true, initialsortdirection: "desc" },
                     { field: "ENDDATETIME", display: _("End Time"), formatter: tableform.format_datetime },
-                    { field: "COMMENTS", display: _("Comments") }
+                    { field: "COMMENTS", display: _("Comments"), formatter: tableform.format_comments }
                 ]
             };
 

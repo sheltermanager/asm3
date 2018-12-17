@@ -319,7 +319,7 @@ $(function() {
                     h.push('<div class="asm-shelterview-unit">');
                     h.push('<div><span class="asm-shelterview-secondgroup">' + lastgrp2 + '</span></div>');
                 }
-                h.push(shelterview.render_animal(a, true, !a.ACTIVEMOVEMENTTYPE && a.ARCHIVED == 0));
+                h.push(shelterview.render_animal(a, true, dragdrop));
                 runningtotal += 1;
             });
             if (lastgrp != "") { 
@@ -461,6 +461,9 @@ $(function() {
             else if (viewmode == "status") {
                 this.render_view("ADOPTIONSTATUS", "", "ADOPTIONSTATUS,ANIMALNAME", false, true);
             }
+            else if (viewmode == "statusspecies") {
+                this.render_view("ADOPTIONSTATUS", "SPECIESNAME", "ADOPTIONSTATUS,SPECIESNAME,ANIMALNAME", false, true);
+            }
             else if (viewmode == "type") {
                 this.render_view("ANIMALTYPENAME", "", "ANIMALTYPENAME,ANIMALNAME", false, true);
             }
@@ -520,9 +523,10 @@ $(function() {
             h.push('<option value="sexspecies">' + _("Sex and Species") + '</option>');
             h.push('<option value="species">' + _("Species") + '</option>');
             h.push('<option value="status">' + _("Status") + '</option>');
+            h.push('<option value="statusspecies">' + _("Status and Species") + '</option>');
             h.push('<option value="type">' + _("Type") + '</option>');
             h.push('</select>');
-            h.push('<p class="asm-menu-category">' + config.str("Organisation") + '</p>');
+            h.push('<p class="asm-menu-category">' + config.str("Organisation") + ' (' + controller.animals.length + ')</p>');
             h.push('<div id="viewcontainer"></div>');
             h.push('</div>');
             return h.join("\n");

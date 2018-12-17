@@ -1,5 +1,5 @@
 /*jslint browser: true, forin: true, eqeq: true, white: true, sloppy: true, vars: true, nomen: true */
-/*global $, jQuery, _, additional, asm, common, config, controller, dlgfx, edit_header, format, geo, header, html, mapping, tableform, validate */
+/*global $, jQuery, _, additional, asm, common, config, controller, dlgfx, edit_header, format, header, html, mapping, tableform, validate */
 
 $(function() {
 
@@ -95,12 +95,6 @@ $(function() {
                 '</td>',
                 '</tr>',
                 '<tr>',
-                '<td><label for="email">' + _("Email") + '</label></td>',
-                '<td>',
-                '<input type="text" id="email" data-json="EMAILADDRESS" data-post="email" maxlength="200" class="asm-textbox" />',
-                '</td>',
-                '</tr>',
-                '<tr>',
                 '<td><label for="hometelephone">' + _("Home Phone") + '</label></td>',
                 '<td>',
                 '<input type="text" id="hometelephone" data-json="HOMETELEPHONE" data-post="hometelephone" class="asm-textbox" />',
@@ -118,12 +112,10 @@ $(function() {
                 '<input type="text" id="worktelephone" data-json="WORKTELEPHONE" data-post="worktelephone" class="asm-textbox" />',
                 '</td>',
                 '</tr>',
-                '<tr id="gdprcontactoptinrow">',
-                '<td><label for="gdprcontactoptin">' + _("GDPR Contact Opt-In") + '</label></td>',
+                '<tr>',
+                '<td><label for="email">' + _("Email") + '</label></td>',
                 '<td>',
-                '<select id="gdprcontactoptin" data-json="GDPRCONTACTOPTIN" data-post="gdprcontactoptin" class="asm-bsmselect" multiple="multiple">',
-                edit_header.gdpr_contact_options(),
-                '</select>',
+                '<input type="text" id="email" data-json="EMAILADDRESS" data-post="emailaddress" maxlength="200" class="asm-textbox" />',
                 '</td>',
                 '</tr>',
                 '<tr id="jurisdictionrow">',
@@ -134,7 +126,14 @@ $(function() {
                 '</select>',
                 '</td>',
                 '</tr>',
-
+                '<tr id="gdprcontactoptinrow">',
+                '<td><label for="gdprcontactoptin">' + _("GDPR Contact Opt-In") + '</label></td>',
+                '<td>',
+                '<select id="gdprcontactoptin" data-json="GDPRCONTACTOPTIN" data-post="gdprcontactoptin" class="asm-bsmselect" multiple="multiple">',
+                edit_header.gdpr_contact_options(),
+                '</select>',
+                '</td>',
+                '</tr>',
                 '</table>',
                 '<!-- right table -->',
                 '<td width="30%">',
@@ -172,7 +171,7 @@ $(function() {
                 '<!-- Third column, embedded map placeholder -->',
                 '</td>',
                 '<td width="35%">',
-                '<div id="embeddedmap" style="width: 100%; height: 300px; color: #000" />',
+                '<div id="embeddedmap" style="z-index: 1; width: 100%; height: 300px; color: #000" />',
                 '<!-- end outer table -->',
                 '</td>',
                 '</tr>',
@@ -558,31 +557,6 @@ $(function() {
             }, 50);
         },
 
-        get_geocode: function(showminimap) {
-            // Gets the geocode for a record. If showminimap is true, shows the minimap afterwards
-            var p = controller.person;
-            var addrhash = geo.address_hash(p.OWNERADDRESS, p.OWNERTOWN, p.OWNERCOUNTY, p.OWNERPOSTCODE);
-            // Do we already have a LATLONG? If it's upto date,
-            // just show the map position
-            if (p.LATLONG) {
-                var b = p.LATLONG.split(",");
-                if (b[2] == addrhash) {
-                    person.show_mini_map();
-                    return;
-                }
-            }
-            // Lookup the LATLONG and then show the map
-            geo.get_lat_long(p.OWNERADDRESS, p.OWNERTOWN, p.OWNERCOUNTY, p.OWNERPOSTCODE)
-                .then(function(lat, lon) {
-                    var latlon = lat + "," + lon + "," + addrhash;
-                    p.LATLONG = latlon;
-                    $("#latlong").val(latlon);
-                    // We updated the latlong, rather than dirtying the form, send it to the DB
-                    common.ajax_post("person", "mode=latlong&personid=" + p.ID + "&latlong=" + encodeURIComponent(latlon));
-                    if (showminimap) { person.show_mini_map(); }
-                });
-        },
-
         bind: function() {
 
             // Load the tab strip and accordion
@@ -841,14 +815,14 @@ $(function() {
             person.enable_widgets();
 
             // Map button
-            var map = person.get_map_url();
-            var maplinkref = String(asm.maplink).replace("{0}", map);
             $("#button-map").button().click(function() {
+                var mapq = person.get_map_url();
+                var maplinkref = String(asm.maplink).replace("{0}", mapq);
                 window.open(maplinkref, "_blank");
             });
 
             if (config.bool("ShowPersonMiniMap")) {
-                person.get_geocode(true);
+                person.show_mini_map();
             }
 
             // Dirty handling

@@ -11,58 +11,6 @@ import utils
 
 from sitedefs import DB_TYPE, DB_HOST, DB_PORT, DB_USERNAME, DB_PASSWORD, DB_NAME, DB_HAS_ASM2_PK_TABLE, DB_DECODE_HTML_ENTITIES, DB_EXEC_LOG, DB_EXPLAIN_QUERIES, DB_TIME_QUERIES, DB_TIME_LOG_OVER, DB_TIMEOUT, CACHE_COMMON_QUERIES
 
-class QueryBuilder(object):
-    """
-    Build a query from component parts, keeping track of params eg:
-
-    qb.select("animalname, sheltercode", "animal a")
-    qb.leftjoin("adoption", "adoption.AnimalID = a.ID")
-    qb.where("id", 5)
-    qb.like("animalname", "bob")
-    qb.orderby("animalname")
-
-    dbo.query(qb.sql(), qb.params())
-    """
-    sselect = ""
-    sfrom = ""
-    sjoins = ""
-    swhere = ""
-    sorderby = ""
-    values = []
-    dbo = None
-    def __init__(self, dbo):
-        self.dbo = dbo
-    def select(self, s, fromclause = ""):
-        if s.lower().startswith("select"):
-            self.sselect = s
-        else:
-            self.sselect = "SELECT %s"
-        if fromclause != "":
-            self.sfrom = " FROM %s " % fromclause
-    def innerjoin(self, table, cond):
-        self.sjoins += "INNER JOIN %s ON %s " % (table, cond)
-    def leftjoin(self, table, cond):
-        self.sjoins += "LEFT OUTER JOIN %s ON %s " % (table, cond)
-    def where(self, k, v = "", cond = "and", operator = "="):
-        """ If only one param is given, it is treated as a clause by itself """
-        if self.swhere != "":
-            self.swhere += " %s " % cond
-        else:
-            self.swhere = " WHERE "
-        if v == "":
-            self.swhere += k + " "
-        else:
-            self.swhere += "%s %s ? " % (k, operator, v)
-            self.values.append(v)
-    def like(self, k, v, cond = "and"):
-        self.where("LOWER(%s)" % k, "%%%s%%" % v.lower(), cond, "LIKE")
-    def orderby(self, s):
-        self.sorderby = " ORDER BY %s" % s
-    def sql(self):
-        return self.sselect + " " + self.sfrom + self.sjoins + self.swhere + self.sorderby
-    def params(self):
-        return self.values
-
 class ResultRow(dict):
     """
     A ResultRow object is like a dictionary except `obj.foo` can be used
@@ -89,6 +37,67 @@ class ResultRow(dict):
 
     def __repr__(self):
         return '<ResultRow ' + dict.__repr__(self) + '>'
+
+class QueryBuilder(object):
+    """
+    Build a query from component parts, keeping track of params eg:
+
+    qb.select("animalname, sheltercode", "animal a")
+    qb.leftjoin("adoption", "adoption.AnimalID = a.ID")
+    qb.where("id", 5)
+    qb.like("animalname", "bob")
+    qb.orderby("animalname")
+
+    dbo.query(qb.sql(), qb.params())
+    """
+    sselect = ""
+    sfrom = ""
+    sjoins = ""
+    swhere = ""
+    sorderby = ""
+    values = []
+    dbo = None
+    
+    def __init__(self, dbo):
+        self.dbo = dbo
+    
+    def select(self, s, fromclause = ""):
+        if s.lower().startswith("select"):
+            self.sselect = s
+        else:
+            self.sselect = "SELECT %s"
+        if fromclause != "":
+            self.sfrom = " FROM %s " % fromclause
+    
+    def innerjoin(self, table, cond):
+        self.sjoins += "INNER JOIN %s ON %s " % (table, cond)
+    
+    def leftjoin(self, table, cond):
+        self.sjoins += "LEFT OUTER JOIN %s ON %s " % (table, cond)
+    
+    def where(self, k, v = "", cond = "and", operator = "="):
+        """ If only one param is given, it is treated as a clause by itself """
+        if self.swhere != "":
+            self.swhere += " %s " % cond
+        else:
+            self.swhere = " WHERE "
+        if v == "":
+            self.swhere += k + " "
+        else:
+            self.swhere += "%s %s ? " % (k, operator, v)
+            self.values.append(v)
+    
+    def like(self, k, v, cond = "and"):
+        self.where("LOWER(%s)" % k, "%%%s%%" % v.lower(), cond, "LIKE")
+    
+    def orderby(self, s):
+        self.sorderby = " ORDER BY %s" % s
+    
+    def sql(self):
+        return self.sselect + " " + self.sfrom + self.sjoins + self.swhere + self.sorderby
+    
+    def params(self):
+        return self.values
 
 class Database(object):
     """
@@ -261,7 +270,7 @@ class Database(object):
             override_lock: if this is set to False and dbo.locked = True,
                            we don't do anything. This makes it easy to 
                            lock the database for writes, but keep databases 
-                           upto date.
+                           up to date.
         """
         if not override_lock and self.locked: return 0
         if sql is None or sql.strip() == "": return 0
@@ -394,6 +403,8 @@ class Database(object):
         if generateID:
             iid = self.get_id(table)
             values["ID"] = iid
+        elif "ID" in values:
+            iid = values["ID"]
         values = self.encode_str_before_write(values)
         sql = "INSERT INTO %s (%s) VALUES (%s)" % ( table, ",".join(values.iterkeys()), self.sql_placeholders(values) )
         self.execute(sql, values.values(), override_lock=setOverrideDBLock)
@@ -409,6 +420,7 @@ class Database(object):
             user: The user account performing the update. If set, adds CreatedBy/Date/LastChangedBy/Date fields
             setRecordVersion: If user is non-blank and this is True, sets RecordVersion
             writeAudit: If True, writes an audit record for the update
+            returns the number of rows updated
         """
         if user != "" and setLastChanged:
             values["LastChangedBy"] = user
@@ -422,11 +434,12 @@ class Database(object):
         sql = "UPDATE %s SET %s WHERE %s" % ( table, ",".join( ["%s=?" % x for x in values.iterkeys()] ), where )
         if iid > 0: 
             preaudit = self.query_row(table, iid)
-        self.execute(sql, values.values(), override_lock=setOverrideDBLock)
+        rows_affected = self.execute(sql, values.values(), override_lock=setOverrideDBLock)
         if iid > 0:
             postaudit = self.query_row(table, iid)
         if user != "" and iid > 0 and writeAudit: 
             audit.edit(self, user, table, iid, audit.map_diff(preaudit, postaudit))
+        return rows_affected
 
     def delete(self, table, where, user="", writeAudit=True):
         """ Deletes row ID=iid from table 
@@ -434,12 +447,13 @@ class Database(object):
             where: Either a where clause or an int ID value for ID=where
             user: The user account doing the delete
             writeAudit: If True, writes an audit record for the delete
+            returns the number of rows deleted
         """
         if type(where) == int: 
             where = "ID=%d" % where
         if writeAudit and user != "":
             audit.delete_rows(self, user, table, where)
-        self.execute("DELETE FROM %s WHERE %s" % (table, where))
+        return self.execute("DELETE FROM %s WHERE %s" % (table, where))
 
     def install_stored_procedures(self):
         """ Install any supporting stored procedures (typically for reports) needed for this backend """
@@ -694,12 +708,15 @@ class Database(object):
         for r in self.query_generator(sql):
             yield self.row_to_insert_sql(table, r, escapeCR)
 
-    def query_tuple(self, sql, params=None):
+    def query_tuple(self, sql, params=None, limit=0):
         """ Runs the query given and returns the resultset
             as a tuple of tuples.
         """
         try:
             c, s = self.cursor_open()
+            # Add limit clause if set
+            if limit > 0:
+                sql = "%s %s" % (sql, self.sql_limit(limit))
             # Run the query and retrieve all rows
             if params:
                 sql = self.switch_param_placeholder(sql)
@@ -720,12 +737,15 @@ class Database(object):
             except:
                 pass
 
-    def query_tuple_columns(self, sql, params=None):
+    def query_tuple_columns(self, sql, params=None, limit=0):
         """ Runs the query given and returns the resultset
             as a grid of tuples and a list of columnames
         """
         try:
             c, s = self.cursor_open()
+            # Add limit clause if set
+            if limit > 0:
+                sql = "%s %s" % (sql, self.sql_limit(limit))
             # Run the query and retrieve all rows
             if params: 
                 sql = self.switch_param_placeholder(sql)
@@ -860,9 +880,11 @@ class Database(object):
         """ Writes a limit clause to X items """
         return "LIMIT %s" % x
 
-    def sql_replace(self, fieldexpr, findstr, replacestr):
+    def sql_replace(self, fieldexpr, findstr="?", replacestr="?"):
         """ Writes a replace expression that finds findstr in fieldexpr, replacing with replacestr """
-        return "REPLACE(%s, '%s', '%s')" % (fieldexpr, findstr, replacestr)
+        if findstr != "?": findstr = "'%s'" % self.escape(findstr)
+        if replacestr != "?": findstr = "'%s'" % self.escape(replacestr)
+        return "REPLACE(%s, %s, %s)" % (fieldexpr, findstr, replacestr)
 
     def sql_substring(self, fieldexpr, pos, chars):
         """ SQL substring function from pos for chars """

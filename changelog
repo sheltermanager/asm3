@@ -1,6 +1,143 @@
 41
 ================
 
+14/12/18 Incoming forms: Rename Create Animal to Attach Animal (via animalname) #532
+13/12/18 PetRescue: support "good with" and "needs constant care"
+12/12/18 Change "Released To Wild" to "TNR" when movement is for a cat #531
+12/12/18 PetRescue: allow "bestfeature" additional field to set tagline
+12/12/18 PetRescue: allow configuration of interstate flag
+10/12/18 Validate that reports with criteria cannot be sent by email #526
+10/12/18 PetRescue: Set multiple_animals where an animal is bonded
+10/12/18 Do not include animals with no publishable images and include without == NO
+08/12/18 Allow templates for non-shelter animals as hidden option #522
+07/12/18 Use callouts on lookup data as tooltips get missed
+07/12/18 Foundanimals, use group email for on intake registrations
+04/12/18 Courtesy post was still obeying many adoptability rules and shouldn't
+01/12/18 Fix error in intake counts on monthly figures when times enabled
+01/12/18 Apply default death category when a deceased date is set #510
+01/12/18 Add pickup/dropoff contact wordkeys for transport records #508
+01/12/18 Hidden PetFinder config option PetFinderAgeBands #509
+21/11/18 Add location to tooltips on medical calendar #519
+19/11/18 Result count off by 1 for SELECT in sql interface
+17/11/18 Include submission with confirmation message #516
+16/11/18 Templates should not be applied to new non-shelter animals
+06/11/18 Add signed/unsigned request reports to identify missing signatures #10
+06/11/18 Record in the log when email signatures have been received #10
+02/11/18 Bug in vacc where last vet hangs around, default by to current user
+31/10/18 Update existing address info when importing CSV of people data #318
+30/10/18 Allow drag and drop from foster to a shelter location #335
+30/10/18 Time additional field type #304
+29/10/18 Weekly fosterer email of medical info #366
+29/10/18 Support for transport documents #479
+29/10/18 PetRescue: Use immutable photo URLs
+28/10/18 Advanced person search, phone number contains #486
+28/10/18 Reschedule comments should go on the original vacc record #483
+28/10/18 Add GivenBy column to animalvaccination #270
+28/10/18 Fix bug where auto remove holds never worked on add animal #316
+28/10/18 Fix bug where unspecified not adding dates properly #470
+27/10/18 Maddies Pet Assistant: Send updates on record change
+26/10/18 get_timeline was never cached due to now() invalidating it
+26/10/18 Use a 15 min cache time on alerts/stats/timeline hp for large dbs
+26/10/18 Do not do processing for disabled items on home page
+24/10/18 Allow "My Fosters" location filter #72
+22/10/18 Consistent field order for add/edit person screens #495
+22/10/18 Separate adoption warnings from get_person for performance #500
+18/10/18 Show reservation date on adoption movements for info
+13/10/18 Allow reserve times to be stored, use form submission date/time
+12/10/18 PetRescue: send state abbrv and use fosterer postcode if available
+10/10/18 html.person_link_address that honours permissions on movement screens
+09/10/18 PetRescue require breed_names as a list rather than csv
+08/10/18 Refactor looking for, match comments on hidden comments too
+02/10/18 Merge animal functionality #73
+26/09/18 Similar name check considers animals still on shelter as well
+24/09/18 PayPal import, recognise any type containing "Payment"
+20/09/18 Bug allowed "Include without description" to override courtesy listing
+18/09/18 Brought in warning should only apply to shelter/non-pickup/non-transfer
+13/09/18 Merge GDPR contact flags during merge, CSV import, onlineform create #446
+13/09/18 Add new smarttag microchip prefix 987*
+13/09/18 More options for exporting animal data as CSV #484
+13/09/18 ANIMALNONSHELTER CSV import field and support for export
+13/09/18 "Do not publish" flag for html_adopted|deceased_animals, etc #485
+12/09/18 Show clear error message when accessing subreports that don't exist
+12/09/18 Fix bug that prevented group SUM working in $HEAD blocks
+11/09/18 Add English/Japan locale, allow country override on options for geocoding
+11/09/18 Include previous adopter virtual flag on advanced find person #476
+11/09/18 Fix time bug in staff rota when generating "today" on mondays
+10/09/18 Subtract 0.5 for currency rounding problems with negative amounts #480
+10/09/18 Add en_NA Namibian locale
+07/09/18 PetRescue: title case animal names to not set off all caps validation
+07/09/18 Fix for bug that always enabled VetEnvoy publishers
+04/09/18 Remove all client side geocoding in favour of simpler server side code
+03/09/18 Add "Open in map" to incident, calculate on click for incident/person
+03/09/18 Maddies Fund: Set new PetCode field
+31/08/18 Fix long-standing bug in additional field default values #474
+31/08/18 Separate additional fields on records from mandatory flag #474
+27/08/18 RECENT wordkeys should use DateRequired if incomplete vacc set #477
+27/08/18 Long term animal alert should obey sites
+23/08/18 Update MPA when a new vacc is added or existing one changed
+21/08/18 Option should be present to make additional number fields searchable
+21/08/18 Refusing to share location breaks map reports #475
+20/08/18 Fixed issue renaming flags containing apostrophes
+17/08/18 Order regimens in document templates by regimen start date
+17/08/18 PetRescue publishing via new API
+10/08/18 Cap max links on home page at 100 to prevent overflows
+09/08/18 Allow task cancel button to work for CSV/PayPal imports
+09/08/18 Use browser location to center incident/report maps #189
+09/08/18 new RESTful petrescue.com.au publisher 
+09/08/18 Advanced find/adoptable - ignore cruelty/hold and quarantine
+09/08/18 Use picture date to invalidate 24h thumbnail cache on adoptable js
+07/08/18 Allow locationid=X to be passed to html_adoptable_animals
+07/08/18 Warn when animal being adopted is unaltered/has no microchip #317
+07/08/18 better/added siteid filtering for person/lostfound/waitinglist #469
+04/08/18 Refactor db.get_database to remove boilerplate and simplify #468
+03/08/18 Allow advanced find by entry category #381
+03/08/18 New litters getting expiry date due to late Litter ID update #465
+02/08/18 Allow advanced search by tattoo number #452
+02/08/18 Apply site filter to staff rota #455
+01/08/18 Remove non-null created/lastchanged columns from ownerlookingfor
+31/07/18 Additional failure condition for PetLink (Microchip already registered)
+29/07/18 When grabbing limited extra publishing images (pf/ap), prefer latest
+27/07/18 nopic.jpg broken the PDF engine
+27/07/18 Do not XSS escape publisher logs
+27/07/18 Simplify adding publishers with publish.PUBLISHER_LIST #227
+27/07/18 recalculate age groups for shelter view #422
+27/07/18 recalc age group on publish commit was reverted, reapplied #396
+26/07/18 Found animals want a 3 year limit on chip registrations
+25/07/18 Parameterised query refactoring complete #252
+22/07/18 AdoptAPet now support Mexican locales
+21/07/18 DocumentImgLink broken on lost animal docs #432
+21/07/18 Fix bug where missing state/county field breaks labels #462
+21/07/18 DocumentImgLink support for person documents #437
+21/07/18 Record holds in the log #342
+21/07/18 Show microchip number in banner #337
+21/07/18 Live release rate on annual figures #303
+20/07/18 Cope with "this is a found.org chip" message from PetLink
+19/07/18 Show grand total by organisation name in shelter view #443
+19/07/18 Smarttag prefixes need checking in a second place to work
+17/07/18 Allow clinic appointments to be booked for fosterers/reclaimants
+03/07/18 Changing text of flags should update them in animal/person #460
+03/07/18 Fix search bug caused by blank last changed dates
+02/07/18 Show extra images button on document templates #453
+02/07/18 Status and species shelterview filter #457
+01/07/18 Remove old "password" password check #458
+29/06/18 Bug in testing permissions for dam/mdam
+29/06/18 Disable autocomplete on date/time fields in dialogs
+29/06/18 Anibase publisher should respond to chipRegisterable=false
+25/06/18 Bug that meant $$HTMLHEADER overrode $$HEADER
+14/06/18 Allow litters to fluctuate upwards (returns/etc)
+14/06/18 Advanced animal find filter: show declawed only
+13/06/18 Option to show/hide full comments on all table views
+13/06/18 Show log entries on a single line instead of the complete note
+12/06/18 Add Malaysian locale, fix Indian rupee symbol to use Unicode
+12/06/18 Fix new TinyMCE content.min.css to match old line-height and font-size
+10/06/18 Upgrade TinyMCE to 4.7.13 (hope to fix infinite loop and iPad bug) #440
+09/06/18 getDescription was not substituting $$ tokens publishing to PF/AP/etc
+08/06/18 Read cols for autocomplete from cursor instead of results
+06/06/18 sensitive=1 param to enable personal data in service calls
+05/06/18 Strip personal data from *_shelter_animals service calls
+04/06/18 Attach images even when merging csv imported animals
+01/06/18 Export medical.csv file with animal/medical data
+30/05/18 PetFinder: updated DSH/DMH/DLH/Tabby cat breeds and adoptapet mappings
 22/05/18 Do not anonymise people surrendering animals in the cutoff period
 20/05/18 Clinic UI documentation, active by default #9
 20/05/18 Add create payment button for appointments #9

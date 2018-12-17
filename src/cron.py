@@ -23,7 +23,6 @@ import onlineform
 import person
 import publish
 import reports as extreports
-import smcom
 import time
 import utils
 import waitinglist
@@ -118,6 +117,9 @@ def daily(dbo):
         # Email any reports set to run with batch
         ttask(extreports.email_daily_reports, dbo)
 
+        # Send fosterer medical reports
+        ttask(movement.send_fosterer_emails, dbo)
+
     except:
         em = str(sys.exc_info()[0])
         al.error("FAIL: running batch tasks: %s" % em, "cron.daily", dbo, sys.exc_info())
@@ -204,6 +206,14 @@ def maint_db_dump(dbo):
     except:
         em = str(sys.exc_info()[0])
         al.error("FAIL: uncaught error running maint_db_dump: %s" % em, "cron.maint_db_dump", dbo, sys.exc_info())
+
+def maint_db_dump_hsqldb(dbo):
+    try:
+        for x in dbupdate.dump_hsqldb(dbo):
+            print(utils.cunicode(x).encode("utf-8"))
+    except:
+        em = str(sys.exc_info()[0])
+        al.error("FAIL: uncaught error running maint_db_dump_hsqldb: %s" % em, "cron.maint_db_dump_hsqldb", dbo, sys.exc_info())
 
 def maint_db_dump_dbfs_base64(dbo):
     try:
@@ -408,6 +418,8 @@ def run(dbo, mode):
         maint_db_dump_animalcsv(dbo)
     elif mode == "maint_db_dump_personcsv":
         maint_db_dump_personcsv(dbo)
+    elif mode == "maint_db_dump_hsqldb":
+        maint_db_dump_hsqldb(dbo)
     elif mode == "maint_db_install":
         maint_db_install(dbo)
     elif mode == "maint_db_reinstall":
@@ -432,7 +444,7 @@ def run(dbo, mode):
 
 def run_all_map_databases(mode):
     for alias in MULTIPLE_DATABASES_MAP.iterkeys():
-        dbo = db.get_multiple_database_info(alias)
+        dbo = db.get_database(alias)
         dbo.timeout = 0
         dbo.connection = dbo.connect()
         run(dbo, mode)
@@ -444,10 +456,7 @@ def run_default_database(mode):
     run(dbo, mode)
 
 def run_alias(mode, alias):
-    if MULTIPLE_DATABASES_TYPE == "smcom":
-        dbo = smcom.get_database_info(alias)
-    elif MULTIPLE_DATABASES_TYPE == "map" and alias != "%":
-        dbo  = db.get_multiple_database_info(alias)
+    dbo = db.get_database(alias)
     dbo.alias = alias
     if dbo.database == "FAIL":
         print("Invalid database alias '%s'" % (alias))
@@ -458,7 +467,7 @@ def run_alias(mode, alias):
         run(dbo, mode)
 
 def run_override_database(mode, dbtype, host, port, username, password, database, alias):
-    dbo = db.get_database(dbtype)
+    dbo = db.get_dbo(dbtype)
     dbo.dbtype = dbtype
     dbo.host = host
     dbo.port = port
@@ -492,6 +501,7 @@ def print_usage():
     print("       maint_db_dump_merge - produce a dump of INSERT statements, renumbering IDs to +100000")
     print("       maint_db_dump_animalcsv - produce a CSV of animal/adoption/owner data")
     print("       maint_db_dump_personcsv - produce a CSV of person data")
+    print("       maint_db_dump_hsqldb - produce a complete HSQLDB file for ASM2")
     print("       maint_db_dump_smcom - produce an SQL dump for import into sheltermanager.com")
     print("       maint_db_install - install structure/data into a new empty database")
     print("       maint_db_reinstall - wipe the db and reinstall all default data and templates")

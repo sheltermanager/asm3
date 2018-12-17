@@ -129,12 +129,12 @@ def get_account_codes(dbo, exclude = "", onlyactive = True):
 
 def get_account_edit_roles(dbo, accountid):
     """
-    Returns a list of edit roles for this account
+    Returns a list of edit role ids for this account
     """
     roles = []
-    rows = dbo.query("SELECT r.RoleName FROM accountsrole ar INNER JOIN role r ON r.ID = ar.RoleID WHERE ar.AccountID = ? AND ar.CanEdit = 1", [accountid])
+    rows = dbo.query("SELECT ar.RoleID FROM accountsrole ar WHERE ar.AccountID = ? AND ar.CanEdit = 1", [accountid])
     for r in rows:
-        roles.append(r["ROLENAME"])
+        roles.append(str(r.ROLEID))
     return roles
 
 def get_account_id(dbo, code):
@@ -487,7 +487,7 @@ def get_recent_licences(dbo):
     """
     return dbo.query(get_licence_query(dbo) + \
         "WHERE ol.IssueDate >= ? " \
-        "ORDER BY ol.IssueDate DESC", [dbo.today(-30)])
+        "ORDER BY ol.IssueDate DESC", [dbo.today(offset=-30)])
 
 def get_licence_find_simple(dbo, licnum, dummy = 0):
     return dbo.query(get_licence_query(dbo) + \

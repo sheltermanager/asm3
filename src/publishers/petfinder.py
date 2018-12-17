@@ -61,6 +61,14 @@ class PetFinderPublisher(FTPPublisher):
             self.cleanup()
             return
 
+        # Build a list of age bands for petfinder ages. It's
+        # a list of integers in days for each band.
+        # The defaults are 6 months, 2 years and 9 years. 
+        agebands = configuration.petfinder_age_bands(self.dbo)
+        if agebands == "" or len(agebands.split(",")) != 3:
+            agebands = "182,730,3285"
+        agebands = [ int(i) for i in agebands.split(",") ]
+
         if not self.openFTPSocket(): 
             self.setLastError("Failed opening FTP socket.")
             if self.logSearch("530 Login") != -1:
@@ -99,12 +107,11 @@ class PetFinderPublisher(FTPPublisher):
                 # Breed 1
                 line.append("\"%s\"" % an["PETFINDERBREED"])
                 # Age, one of Adult, Baby, Senior and Young
-                ageinyears = i18n.date_diff_days(an["DATEOFBIRTH"], i18n.now(self.dbo.timezone))
-                ageinyears /= 365.0
+                ageindays = i18n.date_diff_days(an["DATEOFBIRTH"], i18n.now(self.dbo.timezone))
                 agename = "Adult"
-                if ageinyears < 0.5: agename = "Baby"
-                elif ageinyears < 2: agename = "Young"
-                elif ageinyears < 9: agename = "Adult"
+                if ageindays < agebands[0]: agename = "Baby"
+                elif ageindays < agebands[1]: agename = "Young"
+                elif ageindays < agebands[2]: agename = "Adult"
                 else: agename = "Senior"
                 line.append("\"%s\"" % agename)
                 # Name

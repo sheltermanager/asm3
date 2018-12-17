@@ -27,7 +27,7 @@ VALID_FIELDS = [
     "ANIMALSPECIES", "ANIMALAGE", 
     "ANIMALCOMMENTS", "ANIMALMARKINGS", "ANIMALNEUTERED", "ANIMALNEUTEREDDATE", "ANIMALMICROCHIP", "ANIMALMICROCHIPDATE", 
     "ANIMALENTRYDATE", "ANIMALDECEASEDDATE", "ANIMALCODE",
-    "ANIMALREASONFORENTRY", "ANIMALHIDDENDETAILS", "ANIMALNOTFORADOPTION",
+    "ANIMALREASONFORENTRY", "ANIMALHIDDENDETAILS", "ANIMALNOTFORADOPTION", "ANIMALNONSHELTER", 
     "ANIMALGOODWITHCATS", "ANIMALGOODWITHDOGS", "ANIMALGOODWITHKIDS", 
     "ANIMALHOUSETRAINED", "ANIMALHEALTHPROBLEMS", "ANIMALIMAGE",
     "VACCINATIONTYPE", "VACCINATIONDUEDATE", "VACCINATIONGIVENDATE", "VACCINATIONEXPIRESDATE", 
@@ -360,6 +360,9 @@ def csvimport(dbo, csvdata, encoding = "utf8", createmissinglookups = False, cle
         al.debug("import csv: row %d of %d" % (rowno, len(data)), "csvimport.csvimport", dbo)
         async.increment_progress_value(dbo)
 
+        # Should we stop?
+        if async.get_cancel(dbo): break
+
         # Do we have animal data to read?
         animalid = 0
         if hasanimal and gks(row, "ANIMALNAME") != "":
@@ -398,6 +401,7 @@ def csvimport(dbo, csvdata, encoding = "utf8", createmissinglookups = False, cle
             a["hiddenanimaldetails"] = gks(row, "ANIMALHIDDENDETAILS")
             a["healthproblems"] = gks(row, "ANIMALHEALTHPROBLEMS")
             a["notforadoption"] = gkbi(row, "ANIMALNOTFORADOPTION")
+            a["nonshelter"] = gkbi(row, "ANIMALNONSHELTER")
             a["housetrained"] = gkynu(row, "ANIMALHOUSETRAINED")
             a["goodwithcats"] = gkynu(row, "ANIMALGOODWITHCATS")
             a["goodwithdogs"] = gkynu(row, "ANIMALGOODWITHDOGS")
@@ -455,7 +459,7 @@ def csvimport(dbo, csvdata, encoding = "utf8", createmissinglookups = False, cle
                         if len(dups) > 0:
                             a["originalowner"] = str(dups[0]["ID"])
                     if "originalowner" not in a:
-                        ooid = person.insert_person_from_form(dbo, utils.PostedData(p, dbo.locale), "import")
+                        ooid = person.insert_person_from_form(dbo, utils.PostedData(p, dbo.locale), "import", geocode=False)
                         a["originalowner"] = str(ooid)
                         # Identify an ORIGINALOWNERADDITIONAL additional fields and create them
                         create_additional_fields(dbo, row, errors, rowno, "ORIGINALOWNERADDITIONAL", "person", ooid)
@@ -468,12 +472,12 @@ def csvimport(dbo, csvdata, encoding = "utf8", createmissinglookups = False, cle
                         animalid = dup["ID"]
                 if animalid == 0:
                     animalid, newcode = animal.insert_animal_from_form(dbo, utils.PostedData(a, dbo.locale), "import")
-                    # Identify an ANIMALADDITIONAL additional fields and create them
+                    # Identify any ANIMALADDITIONAL additional fields and create them
                     create_additional_fields(dbo, row, errors, rowno, "ANIMALADDITIONAL", "animal", animalid)
-                    # If we have some image data, add it to the animal
-                    if len(imagedata) > 0:
-                        imagepost = utils.PostedData({ "filename": "image.jpg", "filetype": "image/jpeg", "filedata": imagedata }, dbo.locale)
-                        media.attach_file_from_form(dbo, "import", media.ANIMAL, animalid, imagepost)
+                # If we have some image data, add it to the animal
+                if len(imagedata) > 0:
+                    imagepost = utils.PostedData({ "filename": "image.jpg", "filetype": "image/jpeg", "filedata": imagedata }, dbo.locale)
+                    media.attach_file_from_form(dbo, "import", media.ANIMAL, animalid, imagepost)
             except Exception as e:
                 row_error(errors, "animal", rowno, row, e, dbo, sys.exc_info())
 
@@ -536,12 +540,17 @@ def csvimport(dbo, csvdata, encoding = "utf8", createmissinglookups = False, cle
                 if checkduplicates:
                     dups = person.get_person_similar(dbo, p["emailaddress"], p["surname"], p["forenames"], p["address"])
                     if len(dups) > 0:
-                        personid = dups[0]["ID"]
+                        personid = dups[0].ID
                         # Merge flags and any extra details
                         person.merge_flags(dbo, "import", personid, flags)
-                        person.merge_person_details(dbo, "import", personid, p)
+                        person.merge_gdpr_flags(dbo, "import", personid, p["gdprcontactoptin"])
+                        # If we deduplicated on the email address, and address details are
+                        # present, assume that they are newer than the ones we had and update them
+                        # (we do this by setting force=True parameter to merge_person_details,
+                        # otherwise we do a regular merge which only fills in any blanks)
+                        person.merge_person_details(dbo, "import", personid, p, force=dups[0].EMAILADDRESS == p["emailaddress"])
                 if personid == 0:
-                    personid = person.insert_person_from_form(dbo, utils.PostedData(p, dbo.locale), "import")
+                    personid = person.insert_person_from_form(dbo, utils.PostedData(p, dbo.locale), "import", geocode=False)
                     # Identify any PERSONADDITIONAL additional fields and create them
                     create_additional_fields(dbo, row, errors, rowno, "PERSONADDITIONAL", "person", personid)
             except Exception as e:
@@ -670,6 +679,9 @@ def csvimport_paypal(dbo, csvdata, donationtypeid, donationpaymentid, flags):
         # Skip blank rows
         if len(r) == 0: continue
 
+        # Should we stop?
+        if async.get_cancel(dbo): break
+
         REQUIRED_FIELDS = [ "Date", "Currency", "Gross", "Fee", "Net", "From Email Address", "Status", "Type" ]
         for rf in REQUIRED_FIELDS:
             if rf not in r:
@@ -679,8 +691,12 @@ def csvimport_paypal(dbo, csvdata, donationtypeid, donationpaymentid, flags):
         al.debug("import paypal csv: row %d of %d" % (rowno, len(data)), "csvimport.csvimport_paypal", dbo)
         async.increment_progress_value(dbo)
 
-        if r["Status"] != "Completed" and r["Type"] not in ( "Website Payment", "Subscription Payment", "Donation Payment" ):
-            al.debug("skipping: Status='%s', Type='%s'" % (r["Status"], r["Type"]), "csvimport.csvimport_paypal", dbo)
+        if r["Status"] != "Completed":
+            al.debug("skipping: Status='%s' (!= Completed), Type='%s'" % (r["Status"], r["Type"]), "csvimport.csvimport_paypal", dbo)
+            continue
+
+        if r["Type"].find("Payment") == -1:
+            al.debug("skipping: Status='%s', Type='%s' (!Payment)" % (r["Status"], r["Type"]), "csvimport.csvimport_paypal", dbo)
             continue
 
         # Parse name (use all up to last space for first names if only Name exists)
@@ -715,7 +731,7 @@ def csvimport_paypal(dbo, csvdata, donationtypeid, donationpaymentid, flags):
                 person.merge_flags(dbo, "import", personid, flags)
                 person.merge_person_details(dbo, "import", personid, p)
             if personid == 0:
-                personid = person.insert_person_from_form(dbo, utils.PostedData(p, dbo.locale), "import")
+                personid = person.insert_person_from_form(dbo, utils.PostedData(p, dbo.locale), "import", geocode=False)
         except Exception as e:
             row_error(errors, "person", rowno, r, e, dbo, sys.exc_info())
 
@@ -747,15 +763,24 @@ def csvimport_paypal(dbo, csvdata, donationtypeid, donationpaymentid, flags):
     h.append("</table>")
     return "".join(h)
 
-def csvexport_animals(dbo, animalids, includephoto = False):
+def csvexport_animals(dbo, dataset, animalids = "", includephoto = False):
     """
-    Export CSV data for the supplied comma separated list of animalids
+    Export CSV data for a set of animals.
+    dataset: The named set of data to use
+    animalids: If dataset == selshelter, a comma separated list of animals to export
+    includephoto: Output a base64 encoded version of the animal's photo if True
     """
     l = dbo.locale
+    q = ""
+    if dataset == "all": q = "SELECT ID FROM animal ORDER BY ID"
+    elif dataset == "shelter": q = "SELECT ID FROM animal WHERE Archived=0 ORDER BY ID"
+    elif dataset == "nonshelter": q = "SELECT ID FROM animal WHERE NonShelterAnimal=1 ORDER BY ID"
+    elif dataset == "selshelter": q = "SELECT ID FROM animal WHERE ID IN (%s) ORDER BY ID" % animalids
+    ids = dbo.query(q)
     rows = []
-    for aid in animalids.split(","):
+    for aid in ids:
         row = collections.OrderedDict()
-        a = animal.get_animal(dbo, utils.cint(aid))
+        a = animal.get_animal(dbo, aid.ID)
         if a is None: continue
         row["ANIMALCODE"] = a["SHELTERCODE"]
         row["ANIMALNAME"] = a["ANIMALNAME"]
@@ -785,6 +810,7 @@ def csvexport_animals(dbo, animalids, includephoto = False):
         row["ANIMALENTRYDATE"] = i18n.python2display(l, a["DATEBROUGHTIN"])
         row["ANIMALDECEASEDDATE"] = i18n.python2display(l, a["DECEASEDDATE"])
         row["ANIMALNOTFORADOPTION"] = a["ISNOTAVAILABLEFORADOPTION"]
+        row["ANIMALNONSHELTER"] = a["NONSHELTERANIMAL"]
         row["ANIMALGOODWITHCATS"] = a["ISGOODWITHCATSNAME"]
         row["ANIMALGOODWITHDOGS"] = a["ISGOODWITHDOGSNAME"]
         row["ANIMALGOODWITHKIDS"] = a["ISGOODWITHCHILDRENNAME"]
@@ -849,6 +875,7 @@ def csvexport_animals(dbo, animalids, includephoto = False):
             row["ANIMALCODE"] = a["SHELTERCODE"]
             row["ANIMALNAME"] = a["ANIMALNAME"]
             rows.append(row)
+        del a
     if len(rows) == 0: return ""
     keys = rows[0].keys()
     out = StringIO()

@@ -1,5 +1,5 @@
 /*jslint browser: true, forin: true, eqeq: true, white: true, sloppy: true, vars: true, nomen: true */
-/*global $, jQuery, _, additional, asm, common, config, controller, dlgfx, edit_header, format, geo, header, html, validate */
+/*global $, jQuery, _, additional, asm, common, config, controller, dlgfx, edit_header, format, header, html, validate */
 
 $(function() {
 
@@ -25,52 +25,60 @@ $(function() {
                 '</tr>',
                 '<tr class="tag-individual">',
                 '<td><label for="title">' + _("Title") + '</label></td>',
-                '<td><input class="asm-textbox" maxlength="50" id="title" data="title" type="textbox" /></td>',
+                '<td><input class="asm-textbox newform" maxlength="50" id="title" data="title" type="textbox" /></td>',
                 '</tr>',
                 '<tr class="tag-individual">',
                 '<td><label for="initials">' + _("Initials") + '</label></td>',
-                '<td><input class="asm-textbox" maxlength="50" id="initials" data="initials" type="textbox" /></td>',
+                '<td><input class="asm-textbox newform" maxlength="50" id="initials" data="initials" type="textbox" /></td>',
                 '</tr>',
                 '<tr class="tag-individual">',
                 '<td><label for="forenames">' + _("First name(s)") + '</label></td>',
-                '<td><input class="asm-textbox" maxlength="200" id="forenames" data="forenames" type="textbox" /></td>',
+                '<td><input class="asm-textbox newform" maxlength="200" id="forenames" data="forenames" type="textbox" /></td>',
                 '</tr>',
                 '<tr>',
                 '<td><label for="surname" class="tag-individual">' + _("Last name") + '</label>',
                 '<label for="surname" class="tag-organisation">' + _("Organization name") + '</label></td>',
-                '<td><input class="asm-textbox" maxlength="100" id="surname" data="surname" type="textbox" /></td>',
+                '<td><input class="asm-textbox newform" maxlength="100" id="surname" data="surname" type="textbox" /></td>',
                 '</tr>',
                 '<tr>',
                 '<td><label for="address">' + _("Address") + '</label></td>',
-                '<td><textarea class="asm-textareafixed" id="address" data="address" rows="3"></textarea></td>',
+                '<td><textarea class="asm-textareafixed newform" id="address" data="address" rows="3"></textarea></td>',
                 '</tr>',
                 '<tr class="towncounty">',
                 '<td><label for="town">' + _("City") + '</label></td>',
-                '<td><input class="asm-textbox" maxlength="100" id="town" data="town" type="textbox" /></td>',
+                '<td><input class="asm-textbox newform" maxlength="100" id="town" data="town" type="textbox" /></td>',
                 '</tr>',
                 '<tr class="towncounty">',
                 '<td><label for="county">' + _("State") + '</label></td>',
-                '<td><input class="asm-textbox" maxlength="100" id="county" data="county" type="textbox" /></td>',
+                '<td><input class="asm-textbox newform" maxlength="100" id="county" data="county" type="textbox" /></td>',
                 '</tr>',
                 '<tr>',
                 '<td><label for="postcode">' + _("Zipcode") + '</label></td>',
-                '<td><input class="asm-textbox" id="postcode" data="postcode" type="textbox" /></td>',
+                '<td><input class="asm-textbox newform" id="postcode" data="postcode" type="textbox" /></td>',
                 '</tr>',
                 '<tr>',
                 '<td><label for="hometelephone">' + _("Home Phone") + '</label></td>',
-                '<td><input class="asm-textbox" id="hometelephone" data="hometelephone" type="textbox" /></td>',
+                '<td><input class="asm-textbox newform" id="hometelephone" data="hometelephone" type="textbox" /></td>',
                 '</tr>',
                 '<tr>',
                 '<td><label for="worktelephone">' + _("Work Phone") + '</label></td>',
-                '<td><input class="asm-textbox" id="worktelephone" data="worktelephone" type="textbox" /></td>',
+                '<td><input class="asm-textbox newform" id="worktelephone" data="worktelephone" type="textbox" /></td>',
                 '</tr>',
                 '<tr>',
                 '<td><label for="mobiletelephone">' + _("Cell Phone") + '</label></td>',
-                '<td><input class="asm-textbox" id="mobiletelephone" data="mobiletelephone" type="textbox" /></td>',
+                '<td><input class="asm-textbox newform" id="mobiletelephone" data="mobiletelephone" type="textbox" /></td>',
                 '</tr>',
                 '<tr>',
                 '<td><label for="emailaddress">' + _("Email Address") + '</label></td>',
-                '<td><input class="asm-textbox" maxlength="200" id="emailaddress" data="emailaddress" type="textbox" /></td>',
+                '<td><input class="asm-textbox newform" maxlength="200" id="emailaddress" data="emailaddress" type="textbox" /></td>',
+                '</tr>',
+                '<tr id="jurisdictionrow">',
+                '<td><label for="jurisdiction">' + _("Jurisdiction") + '</label></td>',
+                '<td>',
+                '<select id="jurisdiction" data="jurisdiction" class="asm-selectbox">',
+                html.list_to_options(controller.jurisdictions, "ID", "JURISDICTIONNAME"),
+                '</select>',
+                '</td>',
                 '</tr>',
                 '<tr>',
                 '<td><label for="flags">' + _("Flags") + '</label></td>',
@@ -87,14 +95,6 @@ $(function() {
                 '</select>',
                 '</td>',
                 '</tr>',
-                '<tr id="jurisdictionrow">',
-                '<td><label for="jurisdiction">' + _("Jurisdiction") + '</label></td>',
-                '<td>',
-                '<select id="jurisdiction" data="jurisdiction" class="asm-selectbox">',
-                html.list_to_options(controller.jurisdictions, "ID", "JURISDICTIONNAME"),
-                '</select>',
-                '</td>',
-                '</tr>',
                 '<tr id="siterow">',
                 '<td><label for="site">' + _("Site") + '</label></td>',
                 '<td>',
@@ -104,7 +104,7 @@ $(function() {
                 '</select>',
                 '</td>',
                 '</tr>',
-                additional.additional_mandatory_fields(controller.additional),
+                additional.additional_new_fields(controller.additional),
                 '</table>',
                 '<input id="latlong" data="latlong" type="hidden" value="" />',
                 '<div class="centered">',
@@ -133,11 +133,6 @@ $(function() {
                     return; 
                 }
                 header.show_loading(_("Creating..."));
-                var address = $("#address").val(),
-                    town = $("#town").val(),
-                    county = $("#county").val(),
-                    postcode = $("#postcode").val();
-                var addrhash = geo.address_hash(address, town, county, postcode);
                 var formdata = $("input, textarea, select").not(".chooser").toPOST();
                 common.ajax_post("person_new", formdata)
                     .then(function(personid) {
@@ -148,14 +143,6 @@ $(function() {
                             header.show_info(_("Person successfully created"));
                         }
                         $("#asm-content button").button("enable");
-                        geo.get_lat_long(address, town, county, postcode)
-                            .then(function(lat, lon) {
-                                if (lat) {
-                                    var latlong = lat + "," + lon + "," + addrhash;
-                                    var formdata = "mode=latlong&personid=" + personid + "&latlong=" + latlong;
-                                    common.ajax_post("person", formdata);
-                                }
-                            });
                     })
                     .always(function() {
                         $("#asm-content button").button("enable");
@@ -278,7 +265,7 @@ $(function() {
         },
 
         reset: function() {
-            $(".asm-textbox, .asm-textarea, .asm-textareafixed").val("").change();
+            $(".newform").val("").change();
             $(".asm-checkbox").prop("checked", false).change();
             $(".asm-personchooser").personchooser("clear");
             $("#flags option").prop("selected", false);

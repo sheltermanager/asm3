@@ -13,6 +13,8 @@
 
   
   
+  
+  
 
   
 
@@ -22,28 +24,21 @@
 
   
 
-  
-  
-    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-  
-
-  
-
-  
-        <link rel="index" title="Index"
-              href="genindex.html"/>
-        <link rel="search" title="Search" href="search.html"/>
-    <link rel="top" title="ASM 41u documentation" href="index.html"/>
-        <link rel="next" title="Rota" href="rota.html"/>
-        <link rel="prev" title="Litters" href="litters.html"/> 
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Rota" href="rota.html" />
+    <link rel="prev" title="Litters" href="litters.html" /> 
 
   
   <script src="_static/js/modernizr.min.js"></script>
 
 </head>
 
-<body class="wy-body-for-nav" role="document">
+<body class="wy-body-for-nav">
 
+   
   <div class="wy-grid-for-nav">
 
     
@@ -84,7 +79,10 @@
           
             
             
-                <ul class="current">
+              
+            
+            
+              <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="foreword.html">Foreword</a></li>
 <li class="toctree-l1"><a class="reference internal" href="gettingstarted.html">Getting Started</a></li>
 <li class="toctree-l1"><a class="reference internal" href="searching.html">Search</a></li>
@@ -130,34 +128,54 @@
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
 
       
-      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
-        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-        <a href="index.html">ASM</a>
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">ASM</a>
+        
       </nav>
 
 
-      
       <div class="wy-nav-content">
+        
         <div class="rst-content">
+        
           
 
- 
+
+
+
+
+
+
+
+
+
+
+
 
 
 
 <div role="navigation" aria-label="breadcrumbs navigation">
+
   <ul class="wy-breadcrumbs">
-    <li><a href="index.html">Docs</a> &raquo;</li>
-      
-    <li>Online Forms</li>
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Online Forms</li>
+    
+    
       <li class="wy-breadcrumbs-aside">
         
-          
-            <a href="_sources/onlineform.txt" rel="nofollow"> View page source</a>
+            
+            <a href="_sources/onlineform.rst.txt" rel="nofollow"> View page source</a>
           
         
       </li>
+    
   </ul>
+
+  
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
@@ -171,20 +189,20 @@ accessible, or you are using sheltermanager.com).</p>
 <p>This is very useful for handling adoption and waiting list application forms,
 questionnaires, taking lost or found animal information from people,
 complaints, behavioural assessments, etc. They can be used for any situation
-where you&#8217;d like to take information from web site visitors.</p>
+where you’d like to take information from web site visitors.</p>
 <p>Forms need a name and a description. The description will be shown to the user
-while they are filling out the form. You can also specify a page you&#8217;d like to
-redirect the user to after they&#8217;ve completed the form.</p>
+while they are filling out the form. You can also specify a page you’d like to
+redirect the user to after they’ve completed the form.</p>
 <p>If you use certain key fields (which the system will autocomplete for you), the
 system can create person, lost animal, found animal, animal control incident,
 transport or waiting list records directly from the submitted form data. You
 can also choose to attach form submissions to animal and people records.</p>
 <p>If you set some person flags on your form, any person record created from the
 form data will automatically have those flags. In addition to that, the
-&#8220;checkbox&#8221; field type allows you to enter some additional person flags to set
+“checkbox” field type allows you to enter some additional person flags to set
 if that checkbox is checked during submission.</p>
-<p>If you set the &#8220;Send confirmation email to form submitter&#8221; checkbox for an
-online form, the system will look for a field called &#8220;emailaddress&#8221; during
+<p>If you set the “Send confirmation email to form submitter” checkbox for an
+online form, the system will look for a field called “emailaddress” during
 submission. If that field exists and is populated with an email address, a
 confirmation email will be sent to that address. If the confirmation message
 field is set, that will form the body of the email. HTML can be used, but
@@ -195,13 +213,13 @@ itself will be sent.</p>
 <p>As you can see in the screenshot, each form has a “Form URL”. This is the web
 link you can use on your website to link people to the form. You can also click
 it directly there in the UI to test your form.</p>
-<p>You may add extra parameters to the URL if you&#8217;d like to set default values
+<p>You may add extra parameters to the URL if you’d like to set default values
 for some of your form fields, by using the format fieldname=value.</p>
 <div class="admonition warning">
 <p class="first admonition-title">Warning</p>
-<p class="last">sheltermanager.com uses a short term 2 minute cache on forms, so if you make changes to a form you&#8217;ve recently viewed, you may have to wait 2 minutes for any changes you make to appear.</p>
+<p class="last">sheltermanager.com uses a short term 2 minute cache on forms, so if you make changes to a form you’ve recently viewed, you may have to wait 2 minutes for any changes you make to appear.</p>
 </div>
-<p>Clicking on the form&#8217;s name will allow you to edit the individual fields of
+<p>Clicking on the form’s name will allow you to edit the individual fields of
 information the report will take.</p>
 <img alt="_images/onlineform_fields.png" src="_images/onlineform_fields.png" />
 <p>The dialog will autocomplete the known fields that ASM can look for when
@@ -209,24 +227,24 @@ creating records from form submissions. For details, see <a class="reference int
 <p>To create any record, you will need at least a lastname or surname field. Lost
 animal records need an arealost and description, found animal records need an
 areafound and description, waiting list records need a description.</p>
-<p>The &#8220;lookup&#8221;, &#8220;radio&#8221; or &#8220;multi-lookup&#8221; field types require a list of
+<p>The “lookup”, “radio” or “multi-lookup” field types require a list of
 values. You should separate these with the pipe character. Eg:
 Option 1|Option 2|Option 3</p>
-<p>The &#8220;signature&#8221; field type allows the person completing the form to sign
+<p>The “signature” field type allows the person completing the form to sign
 electronically with a touchscreen.</p>
-<p>A &#8220;raw markup&#8221; field type allows you to insert your own HTML sections within
+<p>A “raw markup” field type allows you to insert your own HTML sections within
 the form. This is useful for adding contract clauses, headings, or any sort
 of extra formatting.</p>
-<p>The &#8220;GDPR contact&#8221; field type allows for a multiple lookup of GDPR
+<p>The “GDPR contact” field type allows for a multiple lookup of GDPR
 communication choices to be made for resulting person records.</p>
 <p>When forms are submitted through the website they come through to the “View
 Incoming Forms” screen, where the values can be inspected by clicking the name
 of the form submission. The screen shows a preview of the incoming data and the
 IP address that submitted it.</p>
-<p>If a field called &#8220;emailaddress&#8221; is supplied as part of the form submission,
+<p>If a field called “emailaddress” is supplied as part of the form submission,
 the complete submission will be emailed automatically to the person who
 completed it for their records.</p>
-<p>Similarly, if a field called &#8220;emailsubmissionto&#8221; is supplied, containing one or
+<p>Similarly, if a field called “emailsubmissionto” is supplied, containing one or
 more comma separated email addresses, the submission will also be emailed to
 these extra addresses. This can be useful to have form values trigger hidden
 values to send submissions to other addresses.</p>
@@ -238,8 +256,8 @@ data, or explicitly attach the form to existing records.</p>
 form to them as media.</li>
 <li>Attach Animal: Prompts for a single animal record and attaches a copy of the
 form to them as media.</li>
-<li>Create Animal: Requires an “animalname” field in the form. Intelligently
-attaches selected forms to their matching shelter animal.</li>
+<li>Attach Animal (via animalname): Attaches the form to a single animal
+record based on the animalname field in the form itself.</li>
 <li>Create Person: Searches for a person record matching either the email address
 if present, or the firstname, lastname and address fields on the form. If a
 match is found, the form is attached to that person. If no match is found, a
@@ -257,7 +275,7 @@ information to create/find a person as well. That person becomes the
 “caller”.  “callnotes” and “dispatchaddress” fields are the minimum required
 to create the incident record.</li>
 <li>Create Transport: Runs through the same steps as Animal, so needs
-an &#8220;animalname&#8221; field to figure out who to attach the transport to.</li>
+an “animalname” field to figure out who to attach the transport to.</li>
 <li>Create Waiting List: Runs through the same steps as Person so needs enough
 information to create/find a person as well. A “description” field is the
 minimum required to create the waiting list record.</li>
@@ -273,7 +291,7 @@ The system will also remove incoming forms older than 2 weeks by default.</p>
 <h2>Importing<a class="headerlink" href="#importing" title="Permalink to this headline">¶</a></h2>
 <p>ASM also allows importing of online forms from files.</p>
 <p>Form files can be in a structured JSON format that ASM recognises, eg:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="p">{</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
     <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Adoption Application&quot;</span><span class="p">,</span>
     <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
     <span class="s2">&quot;header&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
@@ -294,7 +312,7 @@ input, select and textarea elements. It will use the name attribute to set the
 field name and label. The HTML page title will be used as the form title.</p>
 <p>HTML import is only basic, but can be used to grab the existing fields of a
 form you already have ready for editing, eg:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span>&lt;!DOCTYPE html&gt;
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>&lt;!DOCTYPE html&gt;
 &lt;html&gt;
 &lt;head&gt;
 &lt;title&gt;My Adoption Form&lt;/title&gt;
@@ -313,15 +331,16 @@ form you already have ready for editing, eg:</p>
 
 
            </div>
+           
           </div>
           <footer>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="rota.html" class="btn btn-neutral float-right" title="Rota" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="rota.html" class="btn btn-neutral float-right" title="Rota" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="litters.html" class="btn btn-neutral" title="Litters" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="litters.html" class="btn btn-neutral" title="Litters" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
@@ -330,11 +349,11 @@ form you already have ready for editing, eg:</p>
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2018, Sheltermanager, Ltd.
+        &copy; Copyright 2018, Sheltermanager, Ltd
 
     </p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
 
@@ -349,34 +368,33 @@ form you already have ready for editing, eg:</p>
 
   
 
-    <script type="text/javascript">
-        var DOCUMENTATION_OPTIONS = {
-            URL_ROOT:'./',
-            VERSION:'41u',
-            COLLAPSE_INDEX:false,
-            FILE_SUFFIX:'.html',
-            HAS_SOURCE:  true
-        };
-    </script>
-      <script type="text/javascript" src="_static/jquery.js"></script>
-      <script type="text/javascript" src="_static/underscore.js"></script>
-      <script type="text/javascript" src="_static/doctools.js"></script>
+    
+    
+      <script type="text/javascript">
+          var DOCUMENTATION_OPTIONS = {
+              URL_ROOT:'./',
+              VERSION:'41u',
+              LANGUAGE:'None',
+              COLLAPSE_INDEX:false,
+              FILE_SUFFIX:'.html',
+              HAS_SOURCE:  true,
+              SOURCELINK_SUFFIX: '.txt'
+          };
+      </script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+    
 
   
 
-  
-  
-    <script type="text/javascript" src="_static/js/theme.js"></script>
-  
+  <script type="text/javascript" src="_static/js/theme.js"></script>
 
-  
-  
   <script type="text/javascript">
       jQuery(function () {
-          SphinxRtdTheme.StickyNav.enable();
+          SphinxRtdTheme.Navigation.enable(true);
       });
-  </script>
-   
+  </script> 
 
 </body>
 </html>

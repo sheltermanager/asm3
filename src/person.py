@@ -4,12 +4,10 @@ import additional
 import al
 import animal
 import async
-import audit
 import configuration
 import datetime
 import dbfs
 import diary
-import db
 import geo
 import log
 import media
@@ -17,7 +15,7 @@ import reports
 import users
 import utils
 from i18n import _, add_days, date_diff_days, format_time, python2display, subtract_years, now
-from sitedefs import BULK_GEO_BATCH, BULK_GEO_LIMIT
+from sitedefs import GEO_BATCH, GEO_LIMIT
 
 ASCENDING = 0
 DESCENDING = 1
@@ -26,8 +24,8 @@ def get_homechecked(dbo, personid):
     """
     Returns a list of people homechecked by personid
     """
-    return db.query(dbo, "SELECT ID, OwnerName, DateLastHomeChecked, Comments FROM owner " \
-        "WHERE HomeCheckedBy = %d" % int(personid))
+    return dbo.query("SELECT ID, OwnerName, DateLastHomeChecked, Comments FROM owner " \
+        "WHERE HomeCheckedBy = ?", [personid])
 
 def get_person_query(dbo):
     """
@@ -42,13 +40,13 @@ def get_person_query(dbo):
         "web.MediaName AS WebsiteMediaName, " \
         "web.Date AS WebsiteMediaDate, " \
         "web.MediaNotes AS WebsiteMediaNotes, " \
-        "(SELECT COUNT(*) FROM ownerinvestigation oi WHERE oi.OwnerID = o.ID) AS Investigation, " \
-        "(SELECT COUNT(*) FROM animalcontrol ac WHERE ac.OwnerID = o.ID OR ac.Owner2ID = o.ID OR ac.Owner3ID = o.ID) AS Incident, " \
-        "(SELECT COUNT(*) FROM animal bib WHERE bib.BroughtInByOwnerID = o.ID OR bib.OriginalOwnerID = o.ID) AS Surrender " \
+        "doc.MediaName AS DocMediaName, " \
+        "doc.Date AS DocMediaDate " \
         "FROM owner o " \
         "LEFT OUTER JOIN owner ho ON ho.ID = o.HomeCheckedBy " \
-        "LEFT OUTER JOIN media web ON web.LinkID = o.ID AND web.LinkTypeID = 3 AND web.WebsitePhoto = 1 " \
-        "LEFT OUTER JOIN jurisdiction j ON j.ID = o.JurisdictionID "
+        "LEFT OUTER JOIN media web ON web.LinkID = o.ID AND web.LinkTypeID = %d AND web.WebsitePhoto = 1 " \
+        "LEFT OUTER JOIN media doc ON doc.LinkID = o.ID AND doc.LinkTypeID = %d AND doc.DocPhoto = 1 " \
+        "LEFT OUTER JOIN jurisdiction j ON j.ID = o.JurisdictionID " % (media.PERSON, media.PERSON)
 
 def get_rota_query(dbo):
     """
@@ -71,6 +69,19 @@ def get_person_embedded(dbo, personid):
     """ Returns a person record for the person chooser widget, uses a read-through cache for performance """
     return dbo.first_row( dbo.query_cache(get_person_query(dbo) + " WHERE o.ID = ?", [personid], age=120) )
 
+def embellish_adoption_warnings(dbo, p):
+    """ Adds the adoption warning columns to a person record p and returns it """
+    warn = dbo.first_row(dbo.query("SELECT (SELECT COUNT(*) FROM ownerinvestigation oi WHERE oi.OwnerID = o.ID) AS Investigation, " \
+        "(SELECT COUNT(*) FROM animalcontrol ac WHERE ac.OwnerID = o.ID OR ac.Owner2ID = o.ID OR ac.Owner3ID = o.ID) AS Incident, " \
+        "(SELECT COUNT(*) FROM animal bib WHERE NonShelterAnimal = 0 AND IsTransfer = 0 AND IsPickup = 0 AND bib.OriginalOwnerID = o.ID) AS Surrender " \
+        "FROM owner o " \
+        "WHERE o.ID = ?", [p.ID]))
+    if warn is not None:
+        p.INVESTIGATION = warn.INVESTIGATION
+        p.SURRENDER = warn.SURRENDER
+        p.INCIDENT = warn.INCIDENT
+    return p
+
 def get_person_similar(dbo, email = "", surname = "", forenames = "", address = ""):
     """
     Returns people with similar email, names and addresses to those supplied.
@@ -87,9 +98,9 @@ def get_person_similar(dbo, email = "", surname = "", forenames = "", address = 
     email = email.replace("'", "`").lower().strip()
     eq = []
     if email != "" and email.find("@") != -1 and email.find(".") != -1:
-        eq = db.query(dbo, get_person_query(dbo) + "WHERE LOWER(o.EmailAddress) LIKE '%s'" % email)
-    per = db.query(dbo, get_person_query(dbo) + "WHERE LOWER(o.OwnerSurname) LIKE '%s' AND " \
-        "LOWER(o.OwnerForeNames) LIKE '%s%%' AND LOWER(o.OwnerAddress) Like '%s%%'" % (surname, forenames, address))
+        eq = dbo.query(get_person_query(dbo) + " WHERE LOWER(o.EmailAddress) LIKE ?", [email])
+    per = dbo.query(get_person_query(dbo) + " WHERE LOWER(o.OwnerSurname) LIKE ? AND " \
+        "LOWER(o.OwnerForeNames) LIKE ? AND LOWER(o.OwnerAddress) LIKE ?", (surname, forenames + "%", address + "%"))
     return eq + per
 
 def get_person_name(dbo, personid):
@@ -102,21 +113,21 @@ def get_person_name_code(dbo, personid):
     """
     Returns the person name and code for an id
     """
-    r = db.query(dbo, "SELECT o.OwnerName, o.OwnerCode FROM owner o WHERE o.ID = %d" % int(personid))
-    if len(r) == 0: return ""
-    return "%s - %s" % (r[0]["OWNERNAME"], r[0]["OWNERCODE"])
+    r = dbo.first_row(dbo.query("SELECT o.OwnerName, o.OwnerCode FROM owner o WHERE o.ID = ?", [personid]))
+    if r is None: return ""
+    return "%s - %s" % (r.OWNERNAME, r.OWNERCODE)
 
 def get_person_name_addresses(dbo):
     """
     Returns the person name and address for everyone on file
     """
-    return db.query(dbo, "SELECT o.ID, o.OwnerName, o.OwnerAddress FROM owner o ORDER BY o.OwnerName")
+    return dbo.query("SELECT o.ID, o.OwnerName, o.OwnerAddress FROM owner o ORDER BY o.OwnerName")
 
 def get_fosterers(dbo):
     """
     Returns all fosterers
     """
-    return db.query(dbo, get_person_query(dbo) + " WHERE o.IsFosterer = 1 ORDER BY o.OwnerName")
+    return dbo.query(get_person_query(dbo) + " WHERE o.IsFosterer = 1 ORDER BY o.OwnerName")
 
 def get_shelterview_fosterers(dbo, siteid = 0):
     """
@@ -124,45 +135,47 @@ def get_shelterview_fosterers(dbo, siteid = 0):
     """
     sitefilter = ""
     if siteid is not None and siteid != 0: sitefilter = "AND o.SiteID = %s" % siteid
-    return db.query(dbo, "SELECT o.ID, o.OwnerName, o.FosterCapacity FROM owner o WHERE o.IsFosterer = 1 %s ORDER BY o.OwnerName" % sitefilter)
+    return dbo.query("SELECT o.ID, o.OwnerName, o.FosterCapacity FROM owner o WHERE o.IsFosterer = 1 %s ORDER BY o.OwnerName" % sitefilter)
 
-def get_staff_volunteers(dbo):
+def get_staff_volunteers(dbo, siteid = 0):
     """
     Returns all staff and volunteers
     """
-    return db.query(dbo, get_person_query(dbo) + " WHERE o.IsStaff = 1 OR o.IsVolunteer = 1 ORDER BY o.IsStaff DESC, o.OwnerName")
+    sitefilter = ""
+    if siteid is not None and siteid != 0: sitefilter = "AND o.SiteID = %s" % siteid
+    return dbo.query(get_person_query(dbo) + " WHERE o.IsStaff = 1 OR o.IsVolunteer = 1 %s ORDER BY o.IsStaff DESC, o.OwnerSurname, o.OwnerForeNames" % sitefilter)
 
 def get_towns(dbo):
     """
     Returns a list of all towns
     """
-    rows = db.query(dbo, "SELECT DISTINCT OwnerTown FROM owner")
+    rows = dbo.query("SELECT DISTINCT OwnerTown FROM owner ORDER BY OwnerTown")
     if rows is None: return []
     towns = []
     for r in rows:
-        towns.append(str(r["OWNERTOWN"]))
+        towns.append(str(r.OWNERTOWN))
     return towns
 
 def get_town_to_county(dbo):
     """
     Returns a lookup of which county towns belong in
     """
-    rows = db.query(dbo, "SELECT DISTINCT OwnerTown, OwnerCounty FROM owner")
+    rows = dbo.query("SELECT DISTINCT OwnerTown, OwnerCounty FROM owner ORDER BY OwnerCounty")
     if rows is None: return []
     tc = []
     for r in rows:
-        tc.append("%s^^%s" % (r["OWNERTOWN"], r["OWNERCOUNTY"]))
+        tc.append("%s^^%s" % (r.OWNERTOWN, r.OWNERCOUNTY))
     return tc
 
 def get_counties(dbo):
     """
     Returns a list of counties
     """
-    rows = db.query(dbo, "SELECT DISTINCT OwnerCounty FROM owner")
+    rows = dbo.query("SELECT DISTINCT OwnerCounty FROM owner")
     if rows is None: return []
     counties = []
     for r in rows:
-        counties.append("%s" % r["OWNERCOUNTY"])
+        counties.append("%s" % r.OWNERCOUNTY)
     return counties
 
 def get_satellite_counts(dbo, personid):
@@ -170,12 +183,12 @@ def get_satellite_counts(dbo, personid):
     Returns a resultset containing the number of each type of satellite
     record that a person has.
     """
-    sql = "SELECT o.ID, " \
-        "(SELECT COUNT(*) FROM media me WHERE me.LinkID = o.ID AND me.LinkTypeID = %d) AS media, " \
-        "(SELECT COUNT(*) FROM diary di WHERE di.LinkID = o.ID AND di.LinkType = %d) AS diary, " \
+    return dbo.query("SELECT o.ID, " \
+        "(SELECT COUNT(*) FROM media me WHERE me.LinkID = o.ID AND me.LinkTypeID = ?) AS media, " \
+        "(SELECT COUNT(*) FROM diary di WHERE di.LinkID = o.ID AND di.LinkType = ?) AS diary, " \
         "(SELECT COUNT(*) FROM adoption ad WHERE ad.OwnerID = o.ID) AS movements, " \
         "(SELECT COUNT(*) FROM clinicappointment ca WHERE ca.OwnerID = o.ID) AS clinic, " \
-        "(SELECT COUNT(*) FROM log WHERE log.LinkID = o.ID AND log.LinkType = %d) AS logs, " \
+        "(SELECT COUNT(*) FROM log WHERE log.LinkID = o.ID AND log.LinkType = ?) AS logs, " \
         "(SELECT COUNT(*) FROM ownerdonation od WHERE od.OwnerID = o.ID) AS donations, " \
         "(SELECT COUNT(*) FROM ownercitation oc WHERE oc.OwnerID = o.ID) AS citation, " \
         "(SELECT COUNT(*) FROM ownerinvestigation oi WHERE oi.OwnerID = o.ID) AS investigation, " \
@@ -192,29 +205,23 @@ def get_satellite_counts(dbo, personid):
         "(SELECT COUNT(*) FROM animalcontrol WHERE CallerID = o.ID OR VictimID = o.ID " \
         "OR OwnerID = o.ID OR Owner2ID = o.ID or Owner3ID = o.ID) + " \
         "(SELECT COUNT(*) FROM additional af INNER JOIN additionalfield aff ON aff.ID = af.AdditionalFieldID " \
-        "WHERE aff.FieldType = %d AND af.Value = '%d') " \
+        "WHERE aff.FieldType = ? AND af.Value = ?) " \
         ") AS links " \
-        "FROM owner o WHERE o.ID = %d" \
-        % (media.PERSON, diary.PERSON, log.PERSON, additional.PERSON_LOOKUP, int(personid), int(personid))
-    return db.query(dbo, sql)
+        "FROM owner o WHERE o.ID = ?", (media.PERSON, diary.PERSON, log.PERSON, additional.PERSON_LOOKUP, str(personid), personid))
 
 def get_reserves_without_homechecks(dbo):
     """
     Returns owners that have a reservation but aren't homechecked
     """
-    sql = get_person_query(dbo)
-    sql += "INNER JOIN adoption a ON a.OwnerID = o.ID " \
-        "WHERE a.MovementType = 0 AND a.ReservationDate Is Not Null AND a.ReservationCancelledDate Is Null AND o.IDCheck = 0"
-    return db.query(dbo, sql)
+    return dbo.query(get_person_query(dbo) + " INNER JOIN adoption a ON a.OwnerID = o.ID " \
+        "WHERE a.MovementType = 0 AND a.ReservationDate Is Not Null AND a.ReservationCancelledDate Is Null AND o.IDCheck = 0")
 
 def get_overdue_donations(dbo):
     """
     Returns owners that have an overdue regular donation
     """
-    sql = get_person_query(dbo)
-    sql += " INNER JOIN ownerdonation od ON od.OwnerID = o.ID " \
-        "WHERE od.Date Is Null AND od.DateDue Is Not Null AND od.DateDue <= %s" % (db.dd(now(dbo.timezone)))
-    return db.query(dbo, sql)
+    return dbo.query(get_person_query(dbo) + " INNER JOIN ownerdonation od ON od.OwnerID = o.ID " \
+        "WHERE od.Date Is Null AND od.DateDue Is Not Null AND od.DateDue <= ?", [dbo.today()])
 
 def get_links(dbo, pid):
     """
@@ -356,105 +363,75 @@ def get_links(dbo, pid):
         "LEFT OUTER JOIN deathreason dr ON dr.ID = a.PTSReasonID " \
         "WHERE af.Value = '%d' AND aff.FieldType = %s AND aff.LinkType IN (%s) " \
         "ORDER BY DDATE DESC, LINKDISPLAY" \
-        % ( db.ds(_("Original Owner", l)), linkdisplay, animalextra, int(pid), 
-        db.ds(_("Brought In By", l)), linkdisplay, animalextra, int(pid),
-        db.ds(_("Returned By", l)), linkdisplay, animalextra, int(pid),
-        db.ds(_("Adoption Coordinator", l)), linkdisplay, animalextra, int(pid),
-        db.ds(_("Owner Vet", l)), linkdisplay, animalextra, int(pid), 
-        db.ds(_("Current Vet", l)), linkdisplay, animalextra, int(pid),
-        db.ds(_("Altering Vet", l)), linkdisplay, animalextra, int(pid),
-        db.ds(_("Waiting List Contact", l)), int(pid), 
-        db.ds(_("Lost Animal Contact", l)), int(pid),
-        db.ds(_("Found Animal Contact", l)), int(pid),
-        db.ds(_("Animal Control Incident", l)), int(pid), int(pid), int(pid), 
-        db.ds(_("Animal Control Caller", l)), int(pid), 
-        db.ds(_("Animal Control Victim", l)), int(pid),
-        db.ds(_("Driver", l)), linkdisplay, int(pid),
+        % ( dbo.sql_value(_("Original Owner", l)), linkdisplay, animalextra, int(pid), 
+        dbo.sql_value(_("Brought In By", l)), linkdisplay, animalextra, int(pid),
+        dbo.sql_value(_("Returned By", l)), linkdisplay, animalextra, int(pid),
+        dbo.sql_value(_("Adoption Coordinator", l)), linkdisplay, animalextra, int(pid),
+        dbo.sql_value(_("Owner Vet", l)), linkdisplay, animalextra, int(pid), 
+        dbo.sql_value(_("Current Vet", l)), linkdisplay, animalextra, int(pid),
+        dbo.sql_value(_("Altering Vet", l)), linkdisplay, animalextra, int(pid),
+        dbo.sql_value(_("Waiting List Contact", l)), int(pid), 
+        dbo.sql_value(_("Lost Animal Contact", l)), int(pid),
+        dbo.sql_value(_("Found Animal Contact", l)), int(pid),
+        dbo.sql_value(_("Animal Control Incident", l)), int(pid), int(pid), int(pid), 
+        dbo.sql_value(_("Animal Control Caller", l)), int(pid), 
+        dbo.sql_value(_("Animal Control Victim", l)), int(pid),
+        dbo.sql_value(_("Driver", l)), linkdisplay, int(pid),
         linkdisplay, animalextra, int(pid), additional.PERSON_LOOKUP, additional.clause_for_linktype("animal") ) 
-    return db.query(dbo, sql)
+    return dbo.query(sql)
 
 def get_investigation(dbo, personid, sort = ASCENDING):
     """
     Returns investigation records for the given person:
     OWNERID, DATE, NOTES
     """
-    sql = "SELECT o.* FROM ownerinvestigation o WHERE o.OwnerID = %d " % personid
+    sql = "SELECT o.* FROM ownerinvestigation o WHERE o.OwnerID = ? "
     if sort == ASCENDING:
         sql += "ORDER BY o.Date"
     else:
         sql += "ORDER BY o.Date DESC"
-    return db.query(dbo, sql)
+    return dbo.query(sql, [personid])
 
-def get_person_find_simple(dbo, query, username="", classfilter="all", includeStaff = False, includeVolunteers = False, limit = 0):
+def get_person_find_simple(dbo, query, username="", classfilter="all", includeStaff = False, includeVolunteers = False, limit = 0, siteid = 0):
     """
     Returns rows for simple person searches.
     query: The search criteria
     classfilter: One of all, vet, retailer, staff, fosterer, volunteer, shelter, 
                  aco, banned, homechecked, homechecker, member, donor, driver, volunteerandstaff
     """
-    ors = []
-    query = query.replace("'", "`")
-    words = query.split(" ")
-    def add(field):
-        return utils.where_text_filter(dbo, field, query)
-    onac = []
-    for w in words:
-        onac.append("(%s)" % utils.where_text_filter(dbo, "o.OwnerName", w))
-    ors.append("(%s)" % " AND ".join(onac))
-    ors.append(add("o.OwnerCode"))
-    ors.append(add("o.OwnerAddress"))
-    ors.append(add("o.OwnerTown"))
-    ors.append(add("o.OwnerCounty"))
-    ors.append(add("o.OwnerPostcode"))
-    ors.append(add("o.EmailAddress"))
-    ors.append(add("o.HomeTelephone"))
-    ors.append(add("o.WorkTelephone"))
-    ors.append(add("o.MobileTelephone"))
-    ors.append(add("o.MembershipNumber"))
-    ors.append(u"EXISTS(SELECT ad.Value FROM additional ad " \
+    ss = utils.SimpleSearchBuilder(dbo, query)
+    ss.add_words("o.OwnerName")
+    ss.add_fields([ "o.OwnerCode", "o.OwnerAddress", "o.OwnerTown", "o.OwnerCounty", "o.OwnerPostcode",
+        "o.EmailAddress", "o.HomeTelephone", "o.WorkTelephone", "o.MobileTelephone", "o.MembershipNumber" ])
+    ss.add_clause("EXISTS(SELECT ad.Value FROM additional ad " \
         "INNER JOIN additionalfield af ON af.ID = ad.AdditionalFieldID AND af.Searchable = 1 " \
-        "WHERE ad.LinkID=o.ID AND ad.LinkType IN (%s) AND LOWER(ad.Value) LIKE '%%%s%%')" % (additional.PERSON_IN, query.lower()))
-    cf = ""
-    if classfilter == "all":
-        pass
-    elif classfilter == "coordinator":
-        cf = " AND o.IsAdoptionCoordinator = 1"
-    elif classfilter == "vet":
-        cf = " AND o.IsVet = 1"
-    elif classfilter == "retailer":
-        cf = " AND o.IsRetailer = 1"
-    elif classfilter == "staff":
-        cf = " AND o.IsStaff = 1"
-    elif classfilter == "fosterer":
-        cf = " AND o.IsFosterer = 1"
-    elif classfilter == "volunteer":
-        cf = " AND o.IsVolunteer = 1"
-    elif classfilter == "volunteerandstaff":
-        cf = " AND (o.IsVolunteer = 1 OR o.IsStaff = 1)"
-    elif classfilter == "shelter":
-        cf = " AND o.IsShelter = 1"
-    elif classfilter == "aco":
-        cf = " AND o.IsACO = 1"
-    elif classfilter == "banned":
-        cf = " AND o.IsBanned = 1"
-    elif classfilter == "homechecked":
-        cf = " AND o.IDCheck = 1"
-    elif classfilter == "homechecker":
-        cf = " AND o.IsHomeChecker = 1"
-    elif classfilter == "member":
-        cf = " AND o.IsMember = 1"
-    elif classfilter == "donor":
-        cf = " AND o.IsDonor = 1"
-    elif classfilter == "driver":
-        cf = " AND o.IsDriver = 1"
-    if not includeStaff:
-        cf += " AND o.IsStaff = 0"
-    if not includeVolunteers:
-        cf += " AND o.IsVolunteer = 0"
-    sql = utils.cunicode(get_person_query(dbo)) + " WHERE (" + u" OR ".join(ors) + ")" + cf + " ORDER BY o.OwnerName"
-    return reduce_find_results(dbo, username, db.query(dbo, sql, limit=limit))
+        "WHERE ad.LinkID=o.ID AND ad.LinkType IN (%s) AND LOWER(ad.Value) LIKE ?)" % additional.PERSON_IN)
+    classfilters = {
+        "all":              "",
+        "coordinator":      " AND o.IsAdoptionCoordinator = 1",
+        "vet":              " AND o.IsVet = 1",
+        "retailer":         " AND o.IsRetailer = 1",
+        "staff":            " AND o.IsStaff = 1",
+        "fosterer":         " AND o.IsFosterer = 1",
+        "volunteer":        " AND o.IsVolunteer = 1",
+        "volunteerandstaff": " AND (o.IsVolunteer = 1 OR o.IsStaff = 1)",
+        "shelter":          " AND o.IsShelter = 1",
+        "aco":              " AND o.IsACO = 1",
+        "banned":           " AND o.IsBanned = 1",
+        "homechecked":      " AND o.IDCheck = 1",
+        "homechecker":      " AND o.IsHomeChecker = 1",
+        "member":           " AND o.IsMember = 1",
+        "donor":            " AND o.IsDonor = 1",
+        "driver":           " AND o.IsDriver = 1"
+    }
+    cf = classfilters[classfilter]
+    if not includeStaff: cf += " AND o.IsStaff = 0"
+    if not includeVolunteers: cf += " AND o.IsVolunteer = 0"
+    if siteid != 0: cf += " AND (o.SiteID = 0 OR o.SiteID = %d)" % siteid
+    sql = utils.cunicode(get_person_query(dbo)) + " WHERE (" + u" OR ".join(ss.ors) + ")" + cf + " ORDER BY o.OwnerName"
+    return dbo.query(sql, ss.values, limit=limit, distincton="ID")
 
-def get_person_find_advanced(dbo, criteria, username, includeStaff = False, limit = 0):
+def get_person_find_advanced(dbo, criteria, username, includeStaff = False, includeVolunteers = False, limit = 0, siteid = 0):
     """
     Returns rows for advanced person searches.
     criteria: A dictionary of criteria
@@ -465,6 +442,7 @@ def get_person_find_advanced(dbo, criteria, username, includeStaff = False, limi
        town - string partial pattern
        county - string partial pattern
        postcode - string partial pattern
+       phone - string partial pattern
        jurisdiction - -1 for all or jurisdiction
        homecheck - string partial pattern
        comments - string partial pattern
@@ -473,114 +451,77 @@ def get_person_find_advanced(dbo, criteria, username, includeStaff = False, limi
        filter - built in or additional flags, ANDed
        gdpr - one or more gdpr contact values ANDed
     """
-    c = []
-    l = dbo.locale
-    post = utils.PostedData(criteria, l)
 
-    def hk(cfield):
-        return post[cfield] != ""
+    ss = utils.AdvancedSearchBuilder(dbo, utils.PostedData(criteria, dbo.locale))
+    ss.add_words("name", "o.OwnerName")
+    ss.add_str("code", "o.OwnerCode")
+    ss.add_str("createdby", "o.CreatedBy")
+    ss.add_str("address", "o.OwnerAddress")
+    ss.add_str("town", "o.OwnerTown")
+    ss.add_str("county", "o.OwnerCounty")
+    ss.add_str("postcode", "o.OwnerPostcode")
+    ss.add_str_triplet("phone", "o.HomeTelephone", "o.WorkTelephone", "o.MobileTelephone")
+    ss.add_id("jurisdiction", "o.JurisdictionID")
+    ss.add_str("email", "o.EmailAddress")
+    ss.add_words("homecheck", "o.HomeCheckAreas")
+    ss.add_words("comments", "o.Comments")
+    ss.add_words("medianotes", "web.MediaNotes")
 
-    def crit(cfield):
-        return post[cfield]
+    if "filter" in criteria:
+        for flag in criteria["filter"].split(","):
+            if flag == "aco": ss.ands.append("o.IsACO=1")
+            elif flag == "banned": ss.ands.append("o.IsBanned=1")
+            elif flag == "coordinator": ss.ands.append("o.IsAdoptionCoordinator=1")
+            elif flag == "deceased": ss.ands.append("o.IsDeceased=1")
+            elif flag == "donor": ss.ands.append("o.IsDonor=1")
+            elif flag == "driver": ss.ands.append("o.IsDriver=1")
+            elif flag == "excludefrombulkemail": ss.ands.append("o.ExcludeFromBulkEmail=1")
+            elif flag == "fosterer": ss.ands.append("o.IsFosterer=1")
+            elif flag == "homechecked": ss.ands.append("o.IDCheck=1")
+            elif flag == "homechecker": ss.ands.append("o.IsHomeChecker=1")
+            elif flag == "member": ss.ands.append("o.IsMember=1")
+            elif flag == "retailer": ss.ands.append("o.IsRetailer=1")
+            elif flag == "shelter": ss.ands.append("o.IsShelter=1")
+            elif flag == "staff": ss.ands.append("o.IsStaff=1")
+            elif flag == "giftaid": ss.ands.append("o.IsGiftAid=1")
+            elif flag == "vet": ss.ands.append("o.IsVet=1")
+            elif flag == "volunteer": ss.ands.append("o.IsVolunteer=1")
+            elif flag == "padopter": ss.ands.append("EXISTS(SELECT OwnerID FROM adoption WHERE OwnerID = o.ID AND MovementType=1)")
+            else: 
+                ss.ands.append("LOWER(o.AdditionalFlags) LIKE ?")
+                ss.values.append("%%%s%%" % flag.lower())
 
-    def addid(cfield, field): 
-        if post[cfield] != "" and post.integer(cfield) > -1:
-            c.append("%s = %d" % (field, post.integer(cfield)))
+    if "gdpr" in criteria:
+        for g in criteria["gdpr"].split(","):
+            ss.ands.append("o.GDPRContactOptIn LIKE ?")
+            ss.values.append("%%%s%%" % g)
 
-    def addstr(cfield, field): 
-        if hk(cfield) and criteria[cfield] != "": 
-            x = crit(cfield).lower().replace("'", "`")
-            c.append("(LOWER(%s) LIKE '%%%s%%' OR LOWER(%s) LIKE '%%%s%%')" % ( 
-                field, x,
-                field, utils.decode_html(x) 
-            ))
-
-    def addwords(cfield, field):
-        if hk(cfield) and crit(cfield) != "":
-            words = crit(cfield).split(" ")
-            for w in words:
-                x = w.lower().replace("'", "`")
-                c.append("(LOWER(%s) LIKE '%%%s%%' OR LOWER(%s) LIKE '%%%s%%')" % (
-                    field, x,
-                    field, utils.decode_html(x)
-                ))
-
-    addstr("code", "o.OwnerCode")
-    addstr("createdby", "o.CreatedBy")
-    addwords("name", "o.OwnerName")
-    addstr("address", "o.OwnerAddress")
-    addstr("town", "o.OwnerTown")
-    addstr("county", "o.OwnerCounty")
-    addstr("postcode", "o.OwnerPostcode")
-    addid("jurisdiction", "o.JurisdictionID")
-    addstr("email", "o.EmailAddress")
-    addwords("homecheck", "o.HomeCheckAreas")
-    addwords("comments", "o.Comments")
-    addwords("medianotes", "web.MediaNotes")
-    if crit("filter") != "":
-        for flag in crit("filter").split(","):
-            if flag == "aco": c.append("o.IsACO=1")
-            elif flag == "banned": c.append("o.IsBanned=1")
-            elif flag == "coordinator": c.append("o.IsAdoptionCoordinator=1")
-            elif flag == "deceased": c.append("o.IsDeceased=1")
-            elif flag == "donor": c.append("o.IsDonor=1")
-            elif flag == "driver": c.append("o.IsDriver=1")
-            elif flag == "excludefrombulkemail": c.append("o.ExcludeFromBulkEmail=1")
-            elif flag == "fosterer": c.append("o.IsFosterer=1")
-            elif flag == "homechecked": c.append("o.IDCheck=1")
-            elif flag == "homechecker": c.append("o.IsHomeChecker=1")
-            elif flag == "member": c.append("o.IsMember=1")
-            elif flag == "retailer": c.append("o.IsRetailer=1")
-            elif flag == "shelter": c.append("o.IsShelter=1")
-            elif flag == "staff": c.append("o.IsStaff=1")
-            elif flag == "giftaid": c.append("o.IsGiftAid=1")
-            elif flag == "vet": c.append("o.IsVet=1")
-            elif flag == "volunteer": c.append("o.IsVolunteer=1")
-            else: c.append("LOWER(o.AdditionalFlags) LIKE %s" % db.ds("%%%s%%" % flag.lower()))
-    if crit("gdpr") != "":
-        for g in crit("gdpr").split(","):
-            c.append("o.GDPRContactOptIn LIKE %s" % db.ds("%%%s%%" % g))
     if not includeStaff:
-        c.append("o.IsStaff = 0")
-    if len(c) == 0:
+        ss.ands.append("o.IsStaff = 0")
+
+    if not includeVolunteers:
+        ss.ands.append("o.IsVolunteer = 0")
+
+    if siteid != 0:
+        ss.ands.append("(o.SiteID = 0 OR o.SiteID = ?)")
+        ss.values.append(siteid)
+
+    if len(ss.ands) == 0:
         sql = get_person_query(dbo) + " ORDER BY o.OwnerName"
     else:
-        sql = get_person_query(dbo) + " WHERE " + " AND ".join(c) + " ORDER BY o.OwnerName"
-    return reduce_find_results(dbo, username, db.query(dbo, sql, limit=limit))
-
-def reduce_find_results(dbo, username, rows):
-    """
-    Given the results of a find operation, goes through the results and removes 
-    any results which the user does not have permission to view. So far, this is because:
-    1. Multi-site is on, there's a site on the person that is not the current users
-    """
-    # Do nothing if there are no results
-    if len(rows) == 0: return rows
-    u = db.query(dbo, "SELECT * FROM users WHERE UserName = %s" % db.ds(username))
-    # Do nothing if we can't find the user
-    if len(u) == 0: return rows
-    # Do nothing if the user has no site
-    u = u[0]
-    if u["SITEID"] == 0: return rows
-    # Remove rows where the user doesn't have that site
-    results = []
-    for r in rows:
-        # Compare the site ID on the  person to our user - to exclude the record,
-        # both user and person must have a site ID and they must be different
-        if r["SITEID"] != 0 and r["SITEID"] != u["SITEID"]: continue
-        results.append(r)
-    return results
+        sql = get_person_query(dbo) + " WHERE " + " AND ".join(ss.ands) + " ORDER BY o.OwnerName"
+    return dbo.query(sql, ss.values, limit=limit, distincton="ID")
 
 def get_person_rota(dbo, personid):
-    return db.query(dbo, get_rota_query(dbo) + " WHERE r.OwnerID = %d ORDER BY r.StartDateTime DESC" % personid, limit=100)
+    return dbo.query(get_rota_query(dbo) + " WHERE r.OwnerID = ? ORDER BY r.StartDateTime DESC", [personid])
 
 def get_rota(dbo, startdate, enddate):
     """ Returns rota records that apply between the two dates given """
-    return db.query(dbo, get_rota_query(dbo) + \
-        " WHERE (r.StartDateTime >= %(start)s AND r.StartDateTime < %(end)s)" \
-        " OR (r.EndDateTime >= %(start)s AND r.EndDateTime < %(end)s)" \
-        " OR (r.StartDateTime < %(start)s AND r.EndDateTime >= %(start)s) " \
-        " ORDER BY r.StartDateTime" % { "start": db.dd(startdate), "end": db.dd(enddate) })
+    return dbo.query(get_rota_query(dbo) + \
+        " WHERE (r.StartDateTime >= ? AND r.StartDateTime < ?)" \
+        " OR (r.EndDateTime >= ? AND r.EndDateTime < ?)" \
+        " OR (r.StartDateTime < ? AND r.EndDateTime >= ?) " \
+        " ORDER BY r.StartDateTime", (startdate, enddate, startdate, enddate, startdate, startdate))
 
 def clone_rota_week(dbo, username, startdate, newdate, flags):
     """ Copies a weeks worth of rota records from startdate to newdate """
@@ -590,30 +531,30 @@ def clone_rota_week(dbo, username, startdate, newdate, flags):
     if newdate.weekday() != 0 or startdate.weekday() != 0:
         raise utils.ASMValidationError("startdate and newdate should both be a Monday")
     enddate = add_days(startdate, 7)
-    rows = db.query(dbo, get_rota_query(dbo) + " WHERE StartDateTime >= %s AND StartDateTime <= %s" % (db.dd(startdate), db.dd(enddate)))
+    rows = dbo.query(get_rota_query(dbo) + " WHERE StartDateTime >= ? AND StartDateTime <= ?", (startdate, enddate))
     for r in rows:
         # Were some flags set? If so, does the current person for this rota element have those flags?
         if flags is not None and flags != "":
-            if not utils.list_overlap(flags.split("|"), utils.nulltostr(r["ADDITIONALFLAGS"]).split("|")):
+            if not utils.list_overlap(flags.split("|"), utils.nulltostr(r.ADDITIONALFLAGS).split("|")):
                 # The element doesn't have the right flags, skip to the next
                 continue
         # Calculate how far from the start date this rec is so we can apply that
         # diff to the newdate
-        sdiff = date_diff_days(startdate, r["STARTDATETIME"])
-        ediff = date_diff_days(startdate, r["ENDDATETIME"])
+        sdiff = date_diff_days(startdate, r.STARTDATETIME)
+        ediff = date_diff_days(startdate, r.ENDDATETIME)
         sd = add_days(newdate, sdiff)
         ed = add_days(newdate, ediff)
-        sd = datetime.datetime(sd.year, sd.month, sd.day, r["STARTDATETIME"].hour, r["STARTDATETIME"].minute, 0)
-        ed = datetime.datetime(ed.year, ed.month, ed.day, r["ENDDATETIME"].hour, r["ENDDATETIME"].minute, 0)
+        sd = datetime.datetime(sd.year, sd.month, sd.day, r.STARTDATETIME.hour, r.STARTDATETIME.minute, 0)
+        ed = datetime.datetime(ed.year, ed.month, ed.day, r.ENDDATETIME.hour, r.ENDDATETIME.minute, 0)
         insert_rota_from_form(dbo, username, utils.PostedData({
-            "person":    str(r["OWNERID"]),
+            "person":    str(r.OWNERID),
             "startdate": python2display(l, sd),
             "starttime": format_time(sd),
             "enddate":   python2display(l, ed),
             "endtime":   format_time(ed),
-            "type":      str(r["ROTATYPEID"]),
-            "worktype":  str(r["WORKTYPEID"]),
-            "comments":  r["COMMENTS"]
+            "type":      str(r.ROTATYPEID),
+            "worktype":  str(r.WORKTYPEID),
+            "comments":  r.COMMENTS
         }, l))
 
 def calculate_owner_code(pid, surname):
@@ -623,6 +564,8 @@ def calculate_owner_code(pid, surname):
     surname: The person's surname
     """
     prefix = "XX"
+    REMOVE = set(" !\"'.,$()")
+    surname = "".join(x for x in surname if x not in REMOVE)
     if len(surname) >= 2 and not surname.startswith("&"):
         prefix = surname[0:2].upper()
     return "%s%s" % (prefix, utils.padleft(pid, 6))
@@ -664,7 +607,101 @@ def update_owner_names(dbo):
     al.debug("regenerated %d owner names and codes" % len(own), "person.update_owner_names", dbo)
     return "OK %d" % len(own)
 
-def update_person_from_form(dbo, post, username):
+def insert_person_from_form(dbo, post, username, geocode=True):
+    """
+    Creates a new person record from incoming form data
+    Returns the ID of the new record
+    """
+    pid = dbo.get_id("owner")
+    dbo.insert("owner", {
+        "ID":               pid,
+        "OwnerType":        post.integer("ownertype"),
+        "OwnerCode":        calculate_owner_code(pid, post["surname"]),
+        "OwnerName":        calculate_owner_name(dbo, post.integer("ownertype"), post["title"], post["initials"], post["forenames"], post["surname"] ),
+        "OwnerTitle":       post["title"],
+        "OwnerInitials":    post["initials"],
+        "OwnerForenames":   post["forenames"],
+        "OwnerSurname":     post["surname"],
+        "OwnerAddress":     post["address"],
+        "OwnerTown":        post["town"],
+        "OwnerCounty":      post["county"],
+        "OwnerPostcode":    post["postcode"],
+        "LatLong":          post["latlong"],
+        "HomeTelephone":    post["hometelephone"],
+        "WorkTelephone":    post["worktelephone"],
+        "MobileTelephone":  post["mobiletelephone"],
+        "EmailAddress":     post["emailaddress"],
+        "GDPRContactOptIn": post["gdprcontactoptin"],
+        "JurisdictionID":   post.integer("jurisdiction"),
+        "Comments":         post["comments"],
+        "SiteID":           post.integer("site"),
+        "MembershipExpiryDate": post.date("membershipexpires"),
+        "MembershipNumber": post["membershipnumber"],
+        "FosterCapacity":   post.integer("fostercapacity"),
+        "HomeCheckAreas":   post["areas"],
+        "DateLastHomeChecked": post.date("homechecked"),
+        "HomeCheckedBy":    0,
+        "MatchActive":      0,
+        "MatchAdded":       None,
+        "MatchExpires":     None,
+        "MatchSex":         -1,
+        "MatchSize":        -1,
+        "MatchColour":      -1,
+        "MatchAgeFrom":     0,
+        "MatchAgeTo":       0,
+        "MatchAnimalType":  -1,
+        "MatchSpecies":     -1,
+        "MatchBreed":       -1,
+        "MatchBreed2":      -1,
+        "MatchGoodWithCats": -1,
+        "MatchGoodWithDogs": -1,
+        "MatchGoodWithChildren": -1,
+        "MatchHouseTrained": -1,
+        "MatchCommentsContain": "",
+        # Flags are updated afterwards, but cannot be null
+        "IDCheck":                  0,
+        "ExcludeFromBulkEmail":     0,
+        "IsAdoptionCoordinator":    0,
+        "IsBanned":                 0,
+        "IsVolunteer":              0,
+        "IsMember":                 0,
+        "IsHomeChecker":            0,
+        "IsDeceased":               0,
+        "IsDonor":                  0,
+        "IsDriver":                 0,
+        "IsShelter":                0,
+        "IsACO":                    0,
+        "IsStaff":                  0,
+        "IsFosterer":               0,
+        "IsRetailer":               0,
+        "IsVet":                    0,
+        "IsGiftAid":                0,
+        "AdditionalFlags":          ""
+    }, username, generateID=False)
+
+    # If we're using GDPR contact options and email is not set, set the exclude from bulk email flag
+    if configuration.show_gdpr_contact_optin(dbo):
+        if post["gdprcontactoptin"].find("email") == -1:
+            post["flags"] += ",excludefrombulkemail"
+
+    # Update the flags
+    update_flags(dbo, username, pid, post["flags"].split(","))
+
+    # Save any additional field values given
+    additional.save_values_for_link(dbo, post, pid, "person")
+
+    # If the option is on, record any GDPR contact options in the log
+    if configuration.show_gdpr_contact_optin(dbo) and configuration.gdpr_contact_change_log(dbo) and post["gdprcontactoptin"] != "":
+        newvalue = post["gdprcontactoptin"]
+        log.add_log(dbo, username, log.PERSON, pid, configuration.gdpr_contact_change_log_type(dbo),
+            "%s" % (newvalue))
+
+    # Look up a geocode for the person's address
+    if geocode: update_geocode(dbo, pid, "", post["address"], post["town"], post["county"], post["postcode"])
+
+    return pid
+
+def update_person_from_form(dbo, post, username, geocode=True):
     """
     Updates an existing person record from incoming form data
     """
@@ -674,29 +711,6 @@ def update_person_from_form(dbo, post, username):
         raise utils.ASMValidationError(_("This record has been changed by another user, please reload.", l))
 
     pid = post.integer("id")
-
-    def bi(b): 
-        return b and 1 or 0
-
-    flags = post["flags"].split(",")
-    homechecked = bi("homechecked" in flags)
-    banned = bi("banned" in flags)
-    coordinator = bi("coordinator" in flags)
-    volunteer = bi("volunteer" in flags)
-    member = bi("member" in flags)
-    homechecker = bi("homechecker" in flags)
-    deceased = bi("deceased" in flags)
-    donor = bi("donor" in flags)
-    driver = bi("driver" in flags)
-    shelter = bi("shelter" in flags)
-    aco = bi("aco" in flags)
-    staff = bi("staff" in flags)
-    fosterer = bi("fosterer" in flags)
-    retailer = bi("retailer" in flags)
-    vet = bi("vet" in flags)
-    giftaid = bi("giftaid" in flags)
-    excludefrombulkemail = bi("excludefrombulkemail" in flags)
-    flagstr = "|".join(flags) + "|"
 
     # If the option is on and the gdpr contact info has changed, log it
     if configuration.show_gdpr_contact_optin(dbo) and configuration.gdpr_contact_change_log(dbo):
@@ -708,80 +722,63 @@ def update_person_from_form(dbo, post, username):
 
     # If we're using GDPR contact options and email is not set, set the exclude from bulk email flag
     if configuration.show_gdpr_contact_optin(dbo):
-        excludefrombulkemail = 1
-        if post["gdprcontactoptin"].find("email") != -1:
-            excludefrombulkemail = 0
+        if post["gdprcontactoptin"].find("email") == -1:
+            post["flags"] += ",excludefrombulkemail"
 
-    sql = db.make_update_user_sql(dbo, "owner", username, "ID=%d" % pid, (
-        ( "OwnerType", post.db_integer("ownertype") ),
-        ( "OwnerCode", db.ds(calculate_owner_code(pid, post["surname"]))),
-        ( "OwnerName", db.ds(calculate_owner_name(dbo, post.integer("ownertype"), post["title"], post["initials"], post["forenames"], post["surname"] ))),
-        ( "OwnerTitle", post.db_string("title")),
-        ( "OwnerInitials", post.db_string("initials")),
-        ( "OwnerForenames", post.db_string("forenames")),
-        ( "OwnerSurname", post.db_string("surname")),
-        ( "OwnerAddress", post.db_string("address")),
-        ( "OwnerTown", post.db_string("town")),
-        ( "OwnerCounty", post.db_string("county")),
-        ( "OwnerPostcode", post.db_string("postcode")),
-        ( "LatLong", post.db_string("latlong")),
-        ( "HomeTelephone", post.db_string("hometelephone")),
-        ( "WorkTelephone", post.db_string("worktelephone")),
-        ( "MobileTelephone", post.db_string("mobiletelephone")),
-        ( "EmailAddress", post.db_string("email")),
-        ( "ExcludeFromBulkEmail", db.di(excludefrombulkemail)),
-        ( "GDPRContactOptIn", post.db_string("gdprcontactoptin")),
-        ( "JurisdictionID", post.db_integer("jurisdiction")),
-        ( "IDCheck", db.di(homechecked) ),
-        ( "Comments", post.db_string("comments")),
-        ( "SiteID", post.db_integer("site")),
-        ( "IsBanned", db.di(banned)),
-        ( "IsVolunteer", db.di(volunteer)),
-        ( "IsMember", db.di(member)),
-        ( "MembershipExpiryDate", post.db_date("membershipexpires")),
-        ( "MembershipNumber", post.db_string("membershipnumber")),
-        ( "IsAdoptionCoordinator", db.di(coordinator)),
-        ( "IsHomeChecker", db.di(homechecker)),
-        ( "IsDeceased", db.di(deceased)),
-        ( "IsDonor", db.di(donor)),
-        ( "IsDriver", db.di(driver)),
-        ( "IsShelter", db.di(shelter)),
-        ( "IsACO", db.di(aco)),
-        ( "IsStaff", db.di(staff)),
-        ( "IsFosterer", db.di(fosterer)),
-        ( "FosterCapacity", post.db_integer("fostercapacity")),
-        ( "IsRetailer", db.di(retailer)),
-        ( "IsVet", db.di(vet)),
-        ( "IsGiftAid", db.di(giftaid)),
-        ( "AdditionalFlags", db.ds(flagstr)),
-        ( "HomeCheckAreas", post.db_string("areas")),
-        ( "DateLastHomeChecked", post.db_date("homechecked")),
-        ( "HomeCheckedBy", post.db_integer("homecheckedby")),
-        ( "MatchActive", post.db_integer("matchactive")),
-        ( "MatchAdded", post.db_date("matchadded")),
-        ( "MatchExpires", post.db_date("matchexpires")),
-        ( "MatchSex", post.db_integer("matchsex")),
-        ( "MatchSize", post.db_integer("matchsize")),
-        ( "MatchColour", post.db_integer("matchcolour")),
-        ( "MatchAgeFrom", post.db_floating("agedfrom")),
-        ( "MatchAgeTo", post.db_floating("agedto")),
-        ( "MatchAnimalType", post.db_integer("matchtype")),
-        ( "MatchSpecies", post.db_integer("matchspecies")),
-        ( "MatchBreed", post.db_integer("matchbreed1")),
-        ( "MatchBreed2", post.db_integer("matchbreed2")),
-        ( "MatchGoodWithCats", post.db_integer("matchgoodwithcats")),
-        ( "MatchGoodWithDogs", post.db_integer("matchgoodwithdogs")),
-        ( "MatchGoodWithChildren", post.db_integer("matchgoodwithchildren")),
-        ( "MatchHouseTrained", post.db_integer("matchhousetrained")),
-        ( "MatchCommentsContain", post.db_string("commentscontain"))
-    ))
-    preaudit = db.query(dbo, "SELECT * FROM owner WHERE ID=%d" % pid)
-    db.execute(dbo, sql)
-    postaudit = db.query(dbo, "SELECT * FROM owner WHERE ID=%d" % pid)
-    audit.edit(dbo, username, "owner", pid, audit.map_diff(preaudit, postaudit, [ "OWNERNAME", ]))
+    dbo.update("owner", pid, {
+        "OwnerType":        post.integer("ownertype"),
+        "OwnerCode":        calculate_owner_code(pid, post["surname"]),
+        "OwnerName":        calculate_owner_name(dbo, post.integer("ownertype"), post["title"], post["initials"], post["forenames"], post["surname"] ),
+        "OwnerTitle":       post["title"],
+        "OwnerInitials":    post["initials"],
+        "OwnerForenames":   post["forenames"],
+        "OwnerSurname":     post["surname"],
+        "OwnerAddress":     post["address"],
+        "OwnerTown":        post["town"],
+        "OwnerCounty":      post["county"],
+        "OwnerPostcode":    post["postcode"],
+        "LatLong":          post["latlong"],
+        "HomeTelephone":    post["hometelephone"],
+        "WorkTelephone":    post["worktelephone"],
+        "MobileTelephone":  post["mobiletelephone"],
+        "EmailAddress":     post["emailaddress"],
+        "GDPRContactOptIn": post["gdprcontactoptin"],
+        "JurisdictionID":   post.integer("jurisdiction"),
+        "Comments":         post["comments"],
+        "SiteID":           post.integer("site"),
+        "MembershipExpiryDate": post.date("membershipexpires"),
+        "MembershipNumber": post["membershipnumber"],
+        "FosterCapacity":   post.integer("fostercapacity"),
+        "HomeCheckAreas":   post["areas"],
+        "DateLastHomeChecked": post.date("homechecked"),
+        "HomeCheckedBy":    post.integer("homecheckedby"),
+        "MatchActive":      post.integer("matchactive"),
+        "MatchAdded":       post.date("matchadded"),
+        "MatchExpires":     post.date("matchexpires"),
+        "MatchSex":         post.integer("matchsex"),
+        "MatchSize":        post.integer("matchsize"),
+        "MatchColour":      post.integer("matchcolour"),
+        "MatchAgeFrom":     post.floating("agedfrom"),
+        "MatchAgeTo":       post.floating("agedto"),
+        "MatchAnimalType":  post.integer("matchtype"),
+        "MatchSpecies":     post.integer("matchspecies"),
+        "MatchBreed":       post.integer("matchbreed1"),
+        "MatchBreed2":      post.integer("matchbreed2"),
+        "MatchGoodWithCats": post.integer("matchgoodwithcats"),
+        "MatchGoodWithDogs": post.integer("matchgoodwithdogs"),
+        "MatchGoodWithChildren": post.integer("matchgoodwithchildren"),
+        "MatchHouseTrained": post.integer("matchhousetrained"),
+        "MatchCommentsContain": post["commentscontain"]
+    }, username)
+
+    # Update the flags
+    update_flags(dbo, username, pid, post["flags"].split(","))
 
     # Save any additional field values given
     additional.save_values_for_link(dbo, post, pid, "person")
+
+    # Check/update the geocode for the person's address
+    if geocode: update_geocode(dbo, pid, post["latlong"], post["address"], post["town"], post["county"], post["postcode"])
 
 def update_flags(dbo, username, personid, flags):
     """
@@ -808,162 +805,45 @@ def update_flags(dbo, username, personid, flags):
     giftaid = bi("giftaid" in flags)
     excludefrombulkemail = bi("excludefrombulkemail" in flags)
     flagstr = "|".join(flags) + "|"
-    sql = db.make_update_user_sql(dbo, "owner", username, "ID=%d" % personid, (
-        ( "IDCheck", db.di(homechecked) ),
-        ( "ExcludeFromBulkEmail", db.di(excludefrombulkemail)), 
-        ( "IsAdoptionCoordinator", db.di(coordinator)), 
-        ( "IsBanned", db.di(banned)),
-        ( "IsVolunteer", db.di(volunteer)),
-        ( "IsMember", db.di(member)),
-        ( "IsHomeChecker", db.di(homechecker)),
-        ( "IsDeceased", db.di(deceased)),
-        ( "IsDonor", db.di(donor)),
-        ( "IsDriver", db.di(driver)),
-        ( "IsShelter", db.di(shelter)),
-        ( "IsACO", db.di(aco)),
-        ( "IsStaff", db.di(staff)),
-        ( "IsFosterer", db.di(fosterer)),
-        ( "IsRetailer", db.di(retailer)),
-        ( "IsVet", db.di(vet)),
-        ( "IsGiftAid", db.di(giftaid)),
-        ( "AdditionalFlags", db.ds(flagstr))
-    ))
-    db.execute(dbo, sql)
 
-def insert_person_from_form(dbo, post, username):
-    """
-    Creates a new person record from incoming form data
-    Returns the ID of the new record
-    """
-    def d(key, default = None): 
-        if key in post.data:
-            return post[key]
-        else:
-            return default
+    dbo.update("owner", personid, {
+        "IDCheck":                  homechecked,
+        "ExcludeFromBulkEmail":     excludefrombulkemail,
+        "IsAdoptionCoordinator":    coordinator,
+        "IsBanned":                 banned,
+        "IsVolunteer":              volunteer,
+        "IsMember":                 member,
+        "IsHomeChecker":            homechecker,
+        "IsDeceased":               deceased,
+        "IsDonor":                  donor,
+        "IsDriver":                 driver,
+        "IsShelter":                shelter,
+        "IsACO":                    aco,
+        "IsStaff":                  staff,
+        "IsFosterer":               fosterer,
+        "IsRetailer":               retailer,
+        "IsVet":                    vet,
+        "IsGiftAid":                giftaid,
+        "AdditionalFlags":          flagstr
+    }, username)
 
-    def bi(b): 
-        return b and 1 or 0
-
-    flags = post["flags"].split(",")
-    homechecked = bi("homechecked" in flags)
-    banned = bi("banned" in flags)
-    volunteer = bi("volunteer" in flags)
-    member = bi("member" in flags)
-    homechecker = bi("homechecker" in flags)
-    coordinator = bi("coordinator" in flags)
-    donor = bi("donor" in flags)
-    driver = bi("driver" in flags)
-    deceased = bi("deceased" in flags)
-    shelter = bi("shelter" in flags)
-    aco = bi("aco" in flags)
-    staff = bi("staff" in flags)
-    fosterer = bi("fosterer" in flags)
-    retailer = bi("retailer" in flags)
-    vet = bi("vet" in flags)
-    giftaid = bi("giftaid" in flags)
-    excludefrombulkemail = bi("excludefrombulkemail" in flags)
-    flagstr = "|".join(flags) + "|"
-
-    # If we're using GDPR contact options and email is not set, set the exclude from bulk email flag
-    if configuration.show_gdpr_contact_optin(dbo):
-        excludefrombulkemail = 1
-        if post["gdprcontactoptin"].find("email") != -1:
-            excludefrombulkemail = 0
-
-    pid = db.get_id(dbo, "owner")
-    sql = db.make_insert_user_sql(dbo, "owner", username, (
-        ( "ID", db.di(pid) ),
-        ( "OwnerCode", db.ds(calculate_owner_code(pid, post["surname"]))),
-        ( "OwnerName", db.ds(calculate_owner_name(dbo, post.integer("ownertype"), post["title"], post["initials"], post["forenames"], post["surname"] ))),
-        ( "OwnerType", post.db_integer("ownertype") ),
-        ( "OwnerTitle", db.ds(d("title", "") )),
-        ( "OwnerInitials", db.ds(d("initials", "") )),
-        ( "OwnerForenames", db.ds(d("forenames", "") )),
-        ( "OwnerSurname", db.ds(d("surname", "") )),
-        ( "OwnerAddress", db.ds(d("address", "") )),
-        ( "OwnerTown", db.ds(d("town", "") )),
-        ( "OwnerCounty", db.ds(d("county", "") )),
-        ( "OwnerPostcode", db.ds(d("postcode", "") )),
-        ( "LatLong", db.ds(d("latlong", "") )),
-        ( "HomeTelephone", db.ds(d("hometelephone", "") )),
-        ( "WorkTelephone", db.ds(d("worktelephone", "") )),
-        ( "MobileTelephone", db.ds(d("mobiletelephone", "") )),
-        ( "EmailAddress", db.ds(d("emailaddress", "") )),
-        ( "ExcludeFromBulkEmail", db.di(excludefrombulkemail)),
-        ( "GDPRContactOptIn", db.ds(d("gdprcontactoptin") )),
-        ( "JurisdictionID", post.db_integer("jurisdiction")),
-        ( "IDCheck", db.di(homechecked) ),
-        ( "Comments", db.ds(d("comments") )),
-        ( "SiteID", post.db_integer("site")),
-        ( "IsAdoptionCoordinator", db.di(coordinator)),
-        ( "IsBanned", db.di(banned)),
-        ( "IsVolunteer", db.di(volunteer)),
-        ( "IsMember", db.di(member)),
-        ( "MembershipExpiryDate", post.db_date("membershipexpires")),
-        ( "MembershipNumber", db.ds(d("membershipnumber"))),
-        ( "IsHomeChecker", db.di(homechecker)),
-        ( "IsDeceased", db.di(deceased)),
-        ( "IsDonor", db.di(donor)),
-        ( "IsDriver", db.di(driver)),
-        ( "IsShelter", db.di(shelter)),
-        ( "IsACO", db.di(aco)),
-        ( "IsStaff", db.di(staff)),
-        ( "IsFosterer", db.di(fosterer)),
-        ( "FosterCapacity", db.di(d("fostercapacity"))),
-        ( "IsRetailer", db.di(retailer)),
-        ( "IsVet", db.di(vet)),
-        ( "IsGiftAid", db.di(giftaid)),
-        ( "AdditionalFlags", db.ds(flagstr)),
-        ( "HomeCheckAreas", db.ds(d("homecheckareas", "") )),
-        ( "DateLastHomeChecked", post.db_date("datelasthomechecked")),
-        ( "HomeCheckedBy", db.di(d("homecheckedby", 0) )),
-        ( "MatchAdded", post.db_date("matchadded")),
-        ( "MatchExpires", post.db_date("matchexpires")),
-        ( "MatchActive", db.di(d("matchactive", 0) )),
-        ( "MatchSex", db.di(d("matchsex", -1) )),
-        ( "MatchSize", db.di(d("matchsize", -1) )),
-        ( "MatchColour", db.di(d("matchcolour", -1) )),
-        ( "MatchAgeFrom", db.di(d("matchagefrom", 0) )),
-        ( "MatchAgeTo", db.di(d("matchageto", 0) )),
-        ( "MatchAnimalType", db.di(d("matchanimaltype", -1) )),
-        ( "MatchSpecies", db.di(d("matchspecies", -1) )),
-        ( "MatchBreed", db.di(d("matchbreed", -1) )),
-        ( "MatchBreed2", db.di(d("matchbreed2", -1) )),
-        ( "MatchGoodWithCats", db.di(d("matchgoodwithcats", -1) )),
-        ( "MatchGoodWithDogs", db.di(d("matchgoodwithdogs", -1) )),
-        ( "MatchGoodWithChildren", db.di(d("matchgoodwithchildren", -1) )),
-        ( "MatchHouseTrained", db.di(d("matchhousetrained", -1) )),
-        ( "MatchCommentsContain", db.ds(d("matchcommentscontain") )
-    )))
-    db.execute(dbo, sql)
-    audit.create(dbo, username, "owner", pid, audit.dump_row(dbo, "owner", pid))
-
-    # If the option is on, record any GDPR contact options in the log
-    if configuration.show_gdpr_contact_optin(dbo) and configuration.gdpr_contact_change_log(dbo) and post["gdprcontactoptin"] != "":
-        newvalue = post["gdprcontactoptin"]
-        log.add_log(dbo, username, log.PERSON, pid, configuration.gdpr_contact_change_log_type(dbo),
-            "%s" % (newvalue))
-
-    # Save any additional field values given
-    additional.save_values_for_link(dbo, post, pid, "person")
-
-    return pid
-
-def merge_person_details(dbo, username, personid, d):
+def merge_person_details(dbo, username, personid, d, force=False):
     """
     Merges person details in data dictionary d (the same dictionary that
     would be fed to insert_person_from_form and update_person_from_form)
     to person with personid.
-    If any of the contact fields on the person record are blank, the ones
-    from the dictionary are used instead and updated on the record.
+    If any of the contact fields on the person record are blank and available
+    in the dictionary, the ones from the dictionary are used instead and updated on the record.
+    personid: The person we're merging details into
+    d: The dictionary of values to merge
+    force: If True, forces overwrite of the details with values from d if they are present
     """
     p = get_person(dbo, personid)
     if p is None: return
     def merge(dictfield, fieldname):
-        if dictfield not in d: return
-        if p[fieldname] is None or p[fieldname] == "":
-            db.execute(dbo, "UPDATE owner SET %s = %s, LastChangedBy = %s, LastChangedDate = %s WHERE ID = %d" % \
-                (fieldname, db.ds(d[dictfield]), db.ds(username), db.ddt(now(dbo.timezone)), personid))
+        if dictfield not in d or d[dictfield] == "": return
+        if p[fieldname] is None or p[fieldname] == "" or force:
+            dbo.update("owner", personid, { fieldname: d[dictfield] }, username)
     merge("address", "OWNERADDRESS")
     merge("town", "OWNERTOWN")
     merge("county", "OWNERCOUNTY")
@@ -972,6 +852,19 @@ def merge_person_details(dbo, username, personid, d):
     merge("worktelephone", "WORKTELEPHONE")
     merge("mobiletelephone", "MOBILETELEPHONE")
     merge("emailaddress", "EMAILADDRESS")
+
+def merge_gdpr_flags(dbo, username, personid, flags):
+    """
+    Merges the delimited string flags wtih those on personid.gdprcontactoptin
+    The original person record is updated and the new list of GDPR flags is returned 
+    as a pipe delimited string.
+    """
+    if flags is None or flags == "": return ""
+    fgs = flags.split(",")
+    epf = dbo.query_string("SELECT GDPRContactOptIn FROM owner WHERE ID = ?", [personid])
+    fgs += epf.split(",")
+    dbo.update("owner", personid, { "GDPRContactOptIn": ",".join(fgs) })
+    return ",".join(fgs)
 
 def merge_flags(dbo, username, personid, flags):
     """
@@ -989,7 +882,7 @@ def merge_flags(dbo, username, personid, flags):
         fgs = flags.split(",")
     else:
         fgs.append(flags)
-    epf = db.query_string(dbo, "SELECT AdditionalFlags FROM owner WHERE ID = %d" % personid)
+    epf = dbo.query_string("SELECT AdditionalFlags FROM owner WHERE ID = ?", [personid])
     epfb = epf.split("|")
     for x in fgs:
         if x not in epfb and not x == "":
@@ -1004,28 +897,37 @@ def merge_person(dbo, username, personid, mergepersonid):
     deletes it.
     """
     l = dbo.locale
+
     if personid == mergepersonid:
         raise utils.ASMValidationError(_("The person record to merge must be different from the original.", l))
+
     if personid == 0 or mergepersonid == 0:
         raise utils.ASMValidationError("Internal error: Cannot merge ID 0")
+
     def reparent(table, field, linktypefield = "", linktype = -1):
         if linktype >= 0:
-            db.execute(dbo, "UPDATE %s SET %s = %d WHERE %s = %d AND %s = %d" % (table, field, personid, field, mergepersonid, linktypefield, linktype))
+            dbo.execute("UPDATE %s SET %s = %d WHERE %s = %d AND %s = %d" % (table, field, personid, field, mergepersonid, linktypefield, linktype))
         else:
-            db.execute(dbo, "UPDATE %s SET %s = %d WHERE %s = %d" % (table, field, personid, field, mergepersonid))
+            dbo.execute("UPDATE %s SET %s = %d WHERE %s = %d" % (table, field, personid, field, mergepersonid))
+
     # Merge any contact info
     mp = get_person(dbo, mergepersonid)
-    mp["address"] = mp["OWNERADDRESS"]
-    mp["town"] = mp["OWNERTOWN"]
-    mp["county"] = mp["OWNERCOUNTY"]
-    mp["postcode"] = mp["OWNERPOSTCODE"]
-    mp["hometelephone"] = mp["HOMETELEPHONE"]
-    mp["worktelephone"] = mp["WORKTELEPHONE"]
-    mp["mobiletelephone"] = mp["MOBILETELEPHONE"]
-    mp["emailaddress"] = mp["EMAILADDRESS"]
+    mp["address"] = mp.OWNERADDRESS
+    mp["town"] = mp.OWNERTOWN
+    mp["county"] = mp.OWNERCOUNTY
+    mp["postcode"] = mp.OWNERPOSTCODE
+    mp["hometelephone"] = mp.HOMETELEPHONE
+    mp["worktelephone"] = mp.WORKTELEPHONE
+    mp["mobiletelephone"] = mp.MOBILETELEPHONE
+    mp["emailaddress"] = mp.EMAILADDRESS
     merge_person_details(dbo, username, personid, mp)
+
     # Merge any flags from the target
-    merge_flags(dbo, username, personid, mp["ADDITIONALFLAGS"])
+    merge_flags(dbo, username, personid, mp.ADDITIONALFLAGS)
+
+    # Mergy any GDPR flags from the target
+    merge_gdpr_flags(dbo, username, personid, mp.GDPRCONTACTOPTIN)
+
     # Reparent all satellite records
     reparent("adoption", "OwnerID")
     reparent("adoption", "RetailerID")
@@ -1050,6 +952,7 @@ def merge_person(dbo, username, personid, mergepersonid):
     reparent("animaltest", "AdministeringVetID")
     reparent("animalvaccination", "AdministeringVetID")
     reparent("animalwaitinglist", "OwnerID")
+    reparent("clinicappointment", "OwnerID")
     reparent("ownercitation", "OwnerID")
     reparent("ownerdonation", "OwnerID")
     reparent("ownerinvestigation", "OwnerID")
@@ -1060,8 +963,7 @@ def merge_person(dbo, username, personid, mergepersonid):
     reparent("media", "LinkID", "LinkTypeID", media.PERSON)
     reparent("diary", "LinkID", "LinkType", diary.PERSON)
     reparent("log", "LinkID", "LinkType", log.PERSON)
-    audit.delete(dbo, username, "owner", mergepersonid, audit.dump_row(dbo, "owner", mergepersonid))
-    db.execute(dbo, "DELETE FROM owner WHERE ID = %d" % mergepersonid)
+    dbo.delete("owner", mergepersonid, username)
 
 def merge_duplicate_people(dbo, username):
     """
@@ -1071,19 +973,28 @@ def merge_duplicate_people(dbo, username):
     """
     merged = 0
     removed = [] # track people we've already merged and removed so we can skip them
-    people = db.query(dbo, "SELECT ID, OwnerForeNames, OwnerSurname, OwnerAddress FROM owner ORDER BY ID")
+    people = dbo.query("SELECT ID, OwnerForeNames, OwnerSurname, OwnerAddress FROM owner ORDER BY ID")
+
     al.info("Checking for duplicate people (%d records)" % len(people), "person.merge_duplicate_people", dbo)
+
     for i, p in enumerate(people):
-        if p["ID"] in removed: continue
-        dupsql = "SELECT ID FROM owner WHERE ID > %d AND OwnerForeNames = %s AND OwnerSurname = %s AND OwnerAddress = %s" % \
-            (p["ID"], db.ds(p["OWNERFORENAMES"]), db.ds(p["OWNERSURNAME"]), db.ds(p["OWNERADDRESS"]))
-        for mp in db.query(dbo, dupsql):
+
+        if p.ID in removed: continue
+
+        rows = dbo.query("SELECT ID FROM owner WHERE ID > ? AND OwnerForeNames = ? AND OwnerSurname = ? AND OwnerAddress = ?",
+            (p.ID, p.OWNERFORENAMES, p.OWNERSURNAME, p.OWNERADDRESS))
+
+        for mp in rows:
+
             merged += 1
+
             al.debug("found duplicate %s %s (%d of %d) id=%d, dupid=%d, merging" % \
-                (p["OWNERFORENAMES"], p["OWNERSURNAME"], i, len(people), p["ID"], mp["ID"]), \
+                (p.OWNERFORENAMES, p.OWNERSURNAME, i, len(people), p.ID, mp.ID), \
                 "person.merge_duplicate_people", dbo)
-            merge_person(dbo, username, p["ID"], mp["ID"])
-            removed.append(mp["ID"])
+
+            merge_person(dbo, username, p.ID, mp.ID)
+            removed.append(mp.ID)
+
     al.info("Merged %d duplicate people records" % merged, "person.merge_duplicate_people", dbo)
 
 def update_pass_homecheck(dbo, user, personid, comments):
@@ -1091,111 +1002,115 @@ def update_pass_homecheck(dbo, user, personid, comments):
     Marks a person as homechecked and appends any comments supplied to their record.
     """
     by = users.get_personid(dbo, user)
+
     if by != 0: 
-        db.execute(dbo, "UPDATE owner SET HomeCheckedBy = %d WHERE ID = %d" % (by, personid))
-    db.execute(dbo, "UPDATE owner SET IDCheck = 1, DateLastHomeChecked = %s WHERE ID = %d" % ( db.dd(now(dbo.timezone)), personid ))
+        dbo.update("owner", personid, { "HomeCheckedBy": by }, user)
+
+    dbo.update("owner", personid, { "IDCheck": 1, "DateLastHomeChecked": dbo.today() }, user)
+
     if comments != "":
-        com = db.query_string(dbo, "SELECT Comments FROM owner WHERE ID = %d" % personid)
+        com = dbo.query_string("SELECT Comments FROM owner WHERE ID = ?", [personid])
         com += "\n" + comments
-        db.execute(dbo, "UPDATE owner SET Comments = %s WHERE ID = %d" % ( db.ds(com), personid ))
-  
+        dbo.update("owner", personid, { "Comments": "%s\n%s" % (com, comments) }, user)
+
+def update_geocode(dbo, personid, latlon="", address="", town="", county="", postcode=""):
+    """
+    Looks up the geocode for this person with the address info given.
+    If latlon is already set to a value, checks the address hash to see if it
+    matches and does not do the geocode if it does.
+    """
+    # If an address hasn't been specified, look it up from the personid given
+    if address == "":
+        row = dbo.first_row(dbo.query("SELECT OwnerAddress, OwnerTown, OwnerCounty, OwnerPostcode FROM owner WHERE ID=?", [personid]))
+        address = row.OWNERADDRESS
+        town = row.OWNERTOWN
+        county = row.OWNERCOUNTY
+        postcode = row.OWNERPOSTCODE
+    # If a latlon has been passed and it contains a hash of the address elements,
+    # then the address hasn't changed since the last geocode was done - do nothing
+    if latlon is not None and latlon != "":
+        if latlon.find(geo.address_hash(address, town, county, postcode)) != -1:
+            return latlon
+    # Do the geocode
+    latlon = geo.get_lat_long(dbo, address, town, county, postcode)
+    update_latlong(dbo, personid, latlon)
+    return latlon
+
 def update_latlong(dbo, personid, latlong):
     """
     Updates the latlong field.
     """
-    db.execute(dbo, "UPDATE owner SET LatLong = %s WHERE ID = %d" % (db.ds(latlong), int(personid)))
+    dbo.update("owner", personid, { "LatLong": latlong })
 
 def delete_person(dbo, username, personid):
     """
     Deletes a person and all its satellite records.
     """
     l = dbo.locale
-    if db.query_int(dbo, "SELECT COUNT(ID) FROM adoption WHERE OwnerID=%d OR RetailerID=%d OR ReturnedByOwnerID=%d" % (personid, personid, personid)):
+    if dbo.query_int("SELECT COUNT(ID) FROM adoption WHERE OwnerID=? OR RetailerID=? OR ReturnedByOwnerID=?", (personid, personid, personid)):
         raise utils.ASMValidationError(_("This person has movements and cannot be removed.", l))
-    if db.query_int(dbo, "SELECT COUNT(ID) FROM animal WHERE AdoptionCoordinatorID=%d OR BroughtInByOwnerID=%d OR OriginalOwnerID=%d OR CurrentVetID=%d OR OwnersVetID=%d OR NeuteredByVetID = %d" % (personid, personid, personid, personid, personid, personid)):
+    if dbo.query_int("SELECT COUNT(ID) FROM animal WHERE AdoptionCoordinatorID=? OR BroughtInByOwnerID=? OR OriginalOwnerID=? OR CurrentVetID=? OR OwnersVetID=? OR NeuteredByVetID = ?", (personid, personid, personid, personid, personid, personid)):
         raise utils.ASMValidationError(_("This person is linked to an animal and cannot be removed.", l))
-    if db.query_int(dbo, "SELECT COUNT(ID) FROM ownerdonation WHERE OwnerID=%d" % personid):
+    if dbo.query_int("SELECT COUNT(ID) FROM ownerdonation WHERE OwnerID=?", [personid]):
         raise utils.ASMValidationError(_("This person has payments and cannot be removed.", l))
-    if db.query_int(dbo, "SELECT COUNT(ID) FROM animallost WHERE OwnerID=%d" % personid):
+    if dbo.query_int("SELECT COUNT(ID) FROM animallost WHERE OwnerID=?", [personid]):
         raise utils.ASMValidationError(_("This person is linked to lost animals and cannot be removed.", l))
-    if db.query_int(dbo, "SELECT COUNT(ID) FROM animalfound WHERE OwnerID=%d" % personid):
+    if dbo.query_int("SELECT COUNT(ID) FROM animalfound WHERE OwnerID=?", [personid]):
         raise utils.ASMValidationError(_("This person is linked to found animals and cannot be removed.", l))
-    if db.query_int(dbo, "SELECT COUNT(ID) FROM animalwaitinglist WHERE OwnerID=%d" % personid):
+    if dbo.query_int("SELECT COUNT(ID) FROM animalwaitinglist WHERE OwnerID=?", [personid]):
         raise utils.ASMValidationError(_("This person is linked to a waiting list record and cannot be removed.", l))
-    if db.query_int(dbo, "SELECT COUNT(ID) FROM ownercitation WHERE OwnerID=%d" % personid):
+    if dbo.query_int("SELECT COUNT(ID) FROM ownercitation WHERE OwnerID=?", [personid]):
         raise utils.ASMValidationError(_("This person is linked to citations and cannot be removed.", l))
-    if db.query_int(dbo, "SELECT COUNT(ID) FROM ownertraploan WHERE OwnerID=%d" % personid):
+    if dbo.query_int("SELECT COUNT(ID) FROM ownertraploan WHERE OwnerID=?", [personid]):
         raise utils.ASMValidationError(_("This person is linked to trap loans and cannot be removed.", l))
-    if db.query_int(dbo, "SELECT COUNT(ID) FROM ownerinvestigation WHERE OwnerID=%d" % personid):
+    if dbo.query_int("SELECT COUNT(ID) FROM ownerinvestigation WHERE OwnerID=?", [personid]):
         raise utils.ASMValidationError(_("This person is linked to an investigation and cannot be removed.", l))
-    if db.query_int(dbo, "SELECT COUNT(ID) FROM ownerlicence WHERE OwnerID=%d" % personid):
+    if dbo.query_int("SELECT COUNT(ID) FROM ownerlicence WHERE OwnerID=?", [personid]):
         raise utils.ASMValidationError(_("This person is linked to animal licenses and cannot be removed.", l))
-    if db.query_int(dbo, "SELECT COUNT(ID) FROM animalcontrol WHERE OwnerID=%d OR Owner2ID=%d OR Owner3ID = %d OR CallerID=%d OR VictimID=%d" % (personid, personid, personid, personid, personid)):
+    if dbo.query_int("SELECT COUNT(ID) FROM animalcontrol WHERE OwnerID=? OR Owner2ID=? OR Owner3ID = ? OR CallerID=? OR VictimID=?", (personid, personid, personid, personid, personid)):
         raise utils.ASMValidationError(_("This person is linked to animal control and cannot be removed.", l))
-    if db.query_int(dbo, "SELECT COUNT(ID) FROM animaltransport WHERE DriverOwnerID=%d OR PickupOwnerID=%d OR DropoffOwnerID=%d" % (personid, personid, personid)):
+    if dbo.query_int("SELECT COUNT(ID) FROM animaltransport WHERE DriverOwnerID=? OR PickupOwnerID=? OR DropoffOwnerID=?", (personid, personid, personid)):
         raise utils.ASMValidationError(_("This person is linked to animal transportation and cannot be removed.", l))
-    animals = db.query(dbo, "SELECT AnimalID FROM adoption WHERE OwnerID = %d" % personid)
-    audit.delete_rows(dbo, username, "media", "LinkID = %d AND LinkTypeID = %d" % (personid, media.PERSON))
-    db.execute(dbo, "DELETE FROM media WHERE LinkID = %d AND LinkTypeID = %d" % (personid, media.PERSON))
-    audit.delete_rows(dbo, username, "diary", "LinkID = %d AND LinkType = %d" % (personid, diary.PERSON))
-    db.execute(dbo, "DELETE FROM diary WHERE LinkID = %d AND LinkType = %d" % (personid, diary.PERSON))
-    audit.delete_rows(dbo, username, "log", "LinkID = %d AND LinkType = %d" % (personid, log.PERSON))
-    db.execute(dbo, "DELETE FROM log WHERE LinkID = %d AND LinkType = %d" % (personid, log.PERSON))
-    db.execute(dbo, "DELETE FROM additional WHERE LinkID = %d AND LinkType IN (%s)" % (personid, additional.PERSON_IN))
+    dbo.delete("media", "LinkID=%d AND LinkTypeID=%d" % (personid, media.PERSON), username)
+    dbo.delete("diary", "LinkID=%d AND LinkType=%d" % (personid, diary.PERSON), username)
+    dbo.delete("log", "LinkID=%d AND LinkType=%d" % (personid, log.PERSON), username)
+    dbo.execute("DELETE FROM additional WHERE LinkID = %d AND LinkType IN (%s)" % (personid, additional.PERSON_IN))
     for t in [ "adoption", "clinicappointment", "ownercitation", "ownerdonation", "ownerlicence", "ownertraploan", "ownervoucher" ]:
-        audit.delete_rows(dbo, username, t, "OwnerID = %d" % personid)
-        db.execute(dbo, "DELETE FROM %s WHERE OwnerID = %d" % (t, personid))
+        dbo.delete(t, "OwnerID=%d" % personid, username)
+    dbo.delete("owner", personid, username)
     dbfs.delete_path(dbo, "/owner/%d" % personid)
-    audit.delete(dbo, username, "owner", personid, audit.dump_row(dbo, "owner", personid))
-    db.execute(dbo, "DELETE FROM owner WHERE ID = %d" % personid)
-    # Now that we've removed the person, update any animals that were previously
-    # attached to it so that they return to the shelter if necessary.
-    for a in animals:
-        animal.update_animal_status(dbo, int(a["ANIMALID"]))
-        animal.update_variable_animal_data(dbo, int(a["ANIMALID"]))
 
 def insert_rota_from_form(dbo, username, post):
     """
     Creates a rota record from posted form data
     """
-    nrota = db.get_id(dbo, "ownerrota")
-    sql = db.make_insert_user_sql(dbo, "ownerrota", username, ( 
-        ( "ID", db.di(nrota)),
-        ( "OwnerID", post.db_integer("person")),
-        ( "StartDateTime", post.db_datetime("startdate", "starttime")),
-        ( "EndDateTime", post.db_datetime("enddate", "endtime")),
-        ( "RotaTypeID", post.db_integer("type")),
-        ( "WorkTypeID", post.db_integer("worktype")),
-        ( "Comments", post.db_string("comments"))
-        ))
-    db.execute(dbo, sql)
-    audit.create(dbo, username, "ownerrota", nrota, audit.dump_row(dbo, "ownerrota", nrota))
-    return nrota
+    return dbo.insert("ownerrota", {
+        "OwnerID":          post.integer("person"),
+        "StartDateTime":    post.datetime("startdate", "starttime"),
+        "EndDateTime":      post.datetime("enddate", "endtime"),
+        "RotaTypeID":       post.integer("type"),
+        "WorkTypeID":       post.integer("worktype"),
+        "Comments":         post["comments"]
+    }, username)
 
 def update_rota_from_form(dbo, username, post):
     """
     Updates a rota record from posted form data
     """
-    rotaid = post.integer("rotaid")
-    sql = db.make_update_user_sql(dbo, "ownerrota", username, "ID=%d" % rotaid, ( 
-        ( "OwnerID", post.db_integer("person")),
-        ( "StartDateTime", post.db_datetime("startdate", "starttime")),
-        ( "EndDateTime", post.db_datetime("enddate", "endtime")),
-        ( "RotaTypeID", post.db_integer("type")),
-        ( "WorkTypeID", post.db_integer("worktype")),
-        ( "Comments", post.db_string("comments"))
-        ))
-    preaudit = db.query(dbo, "SELECT * FROM ownerrota WHERE ID = %d" % rotaid)
-    db.execute(dbo, sql)
-    postaudit = db.query(dbo, "SELECT * FROM ownerrota WHERE ID = %d" % rotaid)
-    audit.edit(dbo, username, "ownerrota", rotaid, audit.map_diff(preaudit, postaudit))
+    return dbo.update("ownerrota", post.integer("rotaid"), {
+        "OwnerID":          post.integer("person"),
+        "StartDateTime":    post.datetime("startdate", "starttime"),
+        "EndDateTime":      post.datetime("enddate", "endtime"),
+        "RotaTypeID":       post.integer("type"),
+        "WorkTypeID":       post.integer("worktype"),
+        "Comments":         post["comments"]
+    }, username)
 
 def delete_rota(dbo, username, rid):
     """
     Deletes the selected rota record
     """
-    audit.delete(dbo, username, "ownerrota", rid, audit.dump_row(dbo, "ownerrota", rid))
-    db.execute(dbo, "DELETE FROM ownerrota WHERE ID = %d" % int(rid))
+    dbo.delete("ownerrota", rid, username)
 
 def delete_rota_week(dbo, username, startdate):
     """
@@ -1204,47 +1119,33 @@ def delete_rota_week(dbo, username, startdate):
     startdate: A python date representing the start of the week
     """
     enddate = add_days(startdate, 7)
-    audit.delete(dbo, username, "ownerrota", 0,  \
-        str(db.query(dbo, "SELECT * FROM ownerrota " \
-        "WHERE StartDateTime >= %s AND StartDateTime <= %s" % (db.dd(startdate), db.dd(enddate)))))
-    db.execute(dbo, "DELETE FROM ownerrota WHERE " \
-        "StartDateTime >= %s AND StartDateTime <= %s" % (db.dd(startdate), db.dd(enddate)))
+    dbo.delete("ownerrota", "StartDateTime>=%s AND StartDateTime<=%s" % (dbo.sql_date(startdate), dbo.sql_date(enddate)), username)
 
 def insert_investigation_from_form(dbo, username, post):
     """
     Creates an investigation record from posted form data
     """
-    ninv = db.get_id(dbo, "ownerinvestigation")
-    sql = db.make_insert_user_sql(dbo, "ownerinvestigation", username, ( 
-        ( "ID", db.di(ninv)),
-        ( "OwnerID", post.db_integer("personid")),
-        ( "Date", post.db_date("date")),
-        ( "Notes", post.db_string("notes"))
-        ))
-    db.execute(dbo, sql)
-    audit.create(dbo, username, "ownerinvestigation", ninv, audit.dump_row(dbo, "ownerinvestigation", ninv))
-    return ninv
+    return dbo.insert("ownerinvestigation", {
+        "OwnerID":      post.integer("personid"),
+        "Date":         post.date("date"),
+        "Notes":        post["notes"]
+    }, username)
 
 def update_investigation_from_form(dbo, username, post):
     """
     Updates an investigation record from posted form data
     """
-    investigationid = post.integer("investigationid")
-    sql = db.make_update_user_sql(dbo, "ownerinvestigation", username, "ID=%d" % investigationid, ( 
-        ( "Date", post.db_date("date")),
-        ( "Notes", post.db_string("notes"))
-        ))
-    preaudit = db.query(dbo, "SELECT * FROM ownerinvestigation WHERE ID = %d" % investigationid)
-    db.execute(dbo, sql)
-    postaudit = db.query(dbo, "SELECT * FROM ownerinvestigation WHERE ID = %d" % investigationid)
-    audit.edit(dbo, username, "ownerinvestigation", investigationid, audit.map_diff(preaudit, postaudit))
+    dbo.update("ownerinvestigation", post.integer("investigationid"), {
+        "OwnerID":      post.integer("personid"),
+        "Date":         post.date("date"),
+        "Notes":        post["notes"]
+    }, username)
 
 def delete_investigation(dbo, username, iid):
     """
     Deletes the selected investigation record
     """
-    audit.delete(dbo, username, "ownerinvestigation", iid, audit.dump_row(dbo, "ownerinvestigation", iid))
-    db.execute(dbo, "DELETE FROM ownerinvestigation WHERE ID = %d" % int(iid))
+    dbo.delete("ownerinvestigation", iid, username)
 
 def send_email_from_form(dbo, username, post):
     """
@@ -1283,7 +1184,7 @@ def lookingfor_report(dbo, username = "system", personid = 0, limit = 0):
     if personid != 0:
         idclause = " AND owner.ID=%d" % personid
   
-    people = db.query(dbo, "SELECT owner.*, " \
+    people = dbo.query("SELECT owner.*, " \
         "(SELECT Size FROM lksize WHERE ID = owner.MatchSize) AS MatchSizeName, " \
         "(SELECT BaseColour FROM basecolour WHERE ID = owner.MatchColour) AS MatchColourName, " \
         "(SELECT Sex FROM lksex WHERE ID = owner.MatchSex) AS MatchSexName, " \
@@ -1292,7 +1193,7 @@ def lookingfor_report(dbo, username = "system", personid = 0, limit = 0):
         "(SELECT SpeciesName FROM species WHERE ID = owner.MatchSpecies) AS MatchSpeciesName " \
         "FROM owner WHERE MatchActive = 1 AND " \
         "(MatchExpires Is Null OR MatchExpires > %s)%s " \
-        "ORDER BY OwnerName" % (db.dd(now(dbo.timezone)), idclause))
+        "ORDER BY OwnerName" % (dbo.sql_today(), idclause))
 
     ah = []
     ah.append(hr())
@@ -1316,69 +1217,96 @@ def lookingfor_report(dbo, username = "system", personid = 0, limit = 0):
     async.set_progress_max(dbo, len(people))
     for p in people:
         async.increment_progress_value(dbo)
-        sql = []
-        if p["MATCHANIMALTYPE"] > 0: sql.append(" AND a.AnimalTypeID = %d" % int(p["MATCHANIMALTYPE"]))
-        if p["MATCHSPECIES"] > 0: sql.append(" AND a.SpeciesID = %d" % int(p["MATCHSPECIES"]))
-        if p["MATCHBREED"] > 0: sql.append(" AND (a.BreedID = %d OR a.Breed2ID = %d)" % (int(p["MATCHBREED"]), int(p["MATCHBREED"])))
-        if p["MATCHSEX"] > -1: sql.append(" AND a.Sex = %d" % int(p["MATCHSEX"]))
-        if p["MATCHSIZE"] > -1: sql.append(" AND a.Size = %d" % int(p["MATCHSIZE"]))
-        if p["MATCHCOLOUR"] > -1: sql.append(" AND a.BaseColourID = %d" % int(p["MATCHCOLOUR"]))
-        if p["MATCHGOODWITHCHILDREN"] == 0: sql.append(" AND a.IsGoodWithChildren = 0")
-        if p["MATCHGOODWITHCATS"] == 0: sql.append(" AND a.IsGoodWithCats = 0")
-        if p["MATCHGOODWITHDOGS"] == 0: sql.append(" AND a.IsGoodWithDogs = 0")
-        if p["MATCHHOUSETRAINED"] == 0: sql.append(" AND a.IsHouseTrained = 0")
-        if p["MATCHAGEFROM"] >= 0 and p["MATCHAGETO"] > 0: 
-            sql.append(" AND a.DateOfBirth BETWEEN %s AND %s" % (db.dd(subtract_years(now(dbo.timezone), p["MATCHAGETO"])), \
-                db.dd(subtract_years(now(dbo.timezone), p["MATCHAGEFROM"]))))
-        if p["MATCHCOMMENTSCONTAIN"] is not None and p["MATCHCOMMENTSCONTAIN"] != "":
-            for w in str(p["MATCHCOMMENTSCONTAIN"]).split(" "):
-                sql.append(" AND a.AnimalComments Like '%%%s%%'" % w.replace("'", "`"))
-        animals = db.query(dbo, animal.get_animal_query(dbo) + " WHERE a.Archived=0 AND a.IsNotAvailableForAdoption=0 AND a.HasActiveReserve=0 AND a.CrueltyCase=0 AND a.DeceasedDate Is Null" + "".join(sql))
+        ands = [ "a.Archived=0", "a.IsNotAvailableForAdoption=0", "a.HasActiveReserve=0", "a.CrueltyCase=0", "a.DeceasedDate Is Null" ]
+        v = [] # query values
+        c = [] # readable criteria
+        if p.MATCHANIMALTYPE != -1: 
+            ands.append("a.AnimalTypeID=?")
+            v.append(p.MATCHANIMALTYPE)
+            c.append(p.MATCHANIMALTYPENAME)
+        if p.MATCHSPECIES != -1: 
+            ands.append("a.SpeciesID=?")
+            v.append(p.MATCHSPECIES)
+            c.append(p.MATCHSPECIESNAME)
+        if p.MATCHBREED != -1: 
+            ands.append("(a.BreedID=? OR a.Breed2ID=?)")
+            v.append(p.MATCHBREED)
+            v.append(p.MATCHBREED)
+            c.append(p.MATCHBREEDNAME)
+        if p.MATCHSEX != -1: 
+            ands.append("a.Sex=?")
+            v.append(p.MATCHSEX)
+            c.append(p.MATCHSEXNAME)
+        if p.MATCHSIZE != -1: 
+            ands.append("a.Size=?")
+            v.append(p.MATCHSIZE)
+            c.append(p.MATCHSIZENAME)
+        if p.MATCHCOLOUR != -1: 
+            ands.append("a.BaseColourID=?")
+            v.append(p.MATCHCOLOUR)
+            c.append(p.MATCHCOLOURNAME)
+        if p.MATCHGOODWITHCHILDREN == 0: 
+            ands.append("a.IsGoodWithChildren=0")
+            c.append(_("Good with kids", l))
+        if p.MATCHGOODWITHCATS == 0: 
+            ands.append("a.IsGoodWithCats=0")
+            c.append(_("Good with cats", l))
+        if p.MATCHGOODWITHDOGS == 0: 
+            ands.append("a.IsGoodWithDogs=0")
+            c.append(_("Good with dogs", l))
+        if p.MATCHHOUSETRAINED == 0: 
+            ands.append("a.IsHouseTrained=0")
+            c.append(_("Housetrained", l))
+        if p.MATCHAGEFROM >= 0 and p.MATCHAGETO > 0: 
+            ands.append("a.DateOfBirth BETWEEN ? AND ?")
+            v.append(subtract_years(now(dbo.timezone), p.MATCHAGETO))
+            v.append(subtract_years(now(dbo.timezone), p.MATCHAGEFROM))
+            c.append(_("Age", l) + (" %0.2f - %0.2f" % (p.MATCHAGEFROM, p.MATCHAGETO)))
+        if p.MATCHCOMMENTSCONTAIN is not None and p.MATCHCOMMENTSCONTAIN != "":
+            for w in str(p.MATCHCOMMENTSCONTAIN).split(" "):
+                ands.append("(a.AnimalComments LIKE ? OR a.HiddenAnimalDetails LIKE ?)")
+                v.append("%%%s%%" % w)
+                v.append("%%%s%%" % w)
+            c.append(_("Comments Contain", l) + ": " + p.MATCHCOMMENTSCONTAIN)
 
-        h.append("<h2>%s (%s) %s %s</h2>" % (p["OWNERNAME"], p["OWNERADDRESS"], p["HOMETELEPHONE"], p["MOBILETELEPHONE"]))
-        c = []
-        if p["MATCHSIZE"] != -1: c.append(p["MATCHSIZENAME"])
-        if p["MATCHCOLOUR"] != -1: c.append(p["MATCHCOLOURNAME"])
-        if p["MATCHSEX"] != -1: c.append(p["MATCHSEXNAME"])
-        if p["MATCHBREED"] != -1: c.append(p["MATCHBREEDNAME"])
-        if p["MATCHSPECIES"] != -1: c.append(p["MATCHSPECIESNAME"])
-        if p["MATCHANIMALTYPE"] != -1: c.append(p["MATCHANIMALTYPENAME"])
-        if p["MATCHGOODWITHCHILDREN"] == 0: c.append(_("Good with kids", l))
-        if p["MATCHGOODWITHCATS"] == 0: c.append(_("Good with cats", l))
-        if p["MATCHGOODWITHDOGS"] == 0: c.append(_("Good with dogs", l))
-        if p["MATCHHOUSETRAINED"] == 0: c.append(_("Housetrained", l))
-        if p["MATCHAGEFROM"] >= 0 and p["MATCHAGETO"] > 0: c.append(_("Age", l) + (" %0.2f - %0.2f" % (p["MATCHAGEFROM"], p["MATCHAGETO"])))
-        if p["MATCHCOMMENTSCONTAIN"] is not None and p["MATCHCOMMENTSCONTAIN"] != "": c.append(_("Comments Contain", l) + ": " + p["MATCHCOMMENTSCONTAIN"])
-        if p["COMMENTS"] != "" and p["COMMENTS"] is not None: 
-            h.append( "<p style='font-size: 8pt'>%s</p>" % p["COMMENTS"])
+        animals = dbo.query(animal.get_animal_query(dbo) + " WHERE " + " AND ".join(ands) + " ORDER BY a.LastChangedDate DESC", v)
+
+        # Output owner info
+        h.append("<h2>%s (%s) %s %s</h2>" % (p.OWNERNAME, p.OWNERADDRESS, p.HOMETELEPHONE, p.MOBILETELEPHONE))
+        if p.COMMENTS != "" and p.COMMENTS is not None: 
+            h.append( "<p style='font-size: 8pt'>%s</p>" % p.COMMENTS)
+
+        # Summary of owner criteria
         summary = ""
         if len(c) > 0:
             summary = ", ".join(x for x in c if x is not None)
             h.append( "<p style='font-size: 8pt'>(%s: %s)</p>" % (_("Looking for", l), summary) )
 
+        # Match info
         outputheader = False
         for a in animals:
             if not outputheader:
                 outputheader = True
                 h.append("".join(ah))
             h.append( "<tr>")
-            h.append( td(a["CODE"]))
-            h.append( td(a["ANIMALNAME"]))
-            h.append( td(a["ANIMALAGE"]))
-            h.append( td(a["SEXNAME"]))
-            h.append( td(a["SIZENAME"]))
-            h.append( td(a["BASECOLOURNAME"]))
-            h.append( td(a["SPECIESNAME"]))
-            h.append( td(a["BREEDNAME"]))
-            h.append( td(a["ISGOODWITHCATSNAME"]))
-            h.append( td(a["ISGOODWITHDOGSNAME"]))
-            h.append( td(a["ISGOODWITHCHILDRENNAME"]))
-            h.append( td(a["ISHOUSETRAINEDNAME"]))
-            h.append( td(a["ANIMALCOMMENTS"]))
+            h.append( td(a.CODE))
+            h.append( td(a.ANIMALNAME))
+            h.append( td(a.ANIMALAGE))
+            h.append( td(a.SEXNAME))
+            h.append( td(a.SIZENAME))
+            h.append( td(a.BASECOLOURNAME))
+            h.append( td(a.SPECIESNAME))
+            h.append( td(a.BREEDNAME))
+            h.append( td(a.ISGOODWITHCATSNAME))
+            h.append( td(a.ISGOODWITHDOGSNAME))
+            h.append( td(a.ISGOODWITHCHILDRENNAME))
+            h.append( td(a.ISHOUSETRAINEDNAME))
+            h.append( td(a.ANIMALCOMMENTS + " " + a.HIDDENANIMALDETAILS))
+            h.append( "</tr>")
 
             # Add an entry to ownerlookingfor for other reports
             if personid == 0:
-                batch.append( ( a["ID"], p["ID"], summary ) )
+                batch.append( ( a.ID, p.ID, summary ) )
 
             totalmatches += 1
             if limit > 0 and totalmatches >= limit:
@@ -1398,7 +1326,7 @@ def lookingfor_report(dbo, username = "system", personid = 0, limit = 0):
 
     # Update ownerlookingfor table
     if personid == 0:
-        db.execute(dbo, "DELETE FROM ownerlookingfor")
+        dbo.execute("DELETE FROM ownerlookingfor")
         if len(batch) > 0:
             dbo.execute_many("INSERT INTO ownerlookingfor (AnimalID, OwnerID, MatchSummary) VALUES (?,?,?)", batch)
 
@@ -1408,7 +1336,7 @@ def lookingfor_last_match_count(dbo):
     """
     Returns the number of matches the last time lookingfor was run
     """
-    return db.query_int(dbo, "SELECT COUNT(*) FROM ownerlookingfor")
+    return dbo.query_int("SELECT COUNT(*) FROM ownerlookingfor")
 
 def update_missing_geocodes(dbo):
     """
@@ -1418,15 +1346,15 @@ def update_missing_geocodes(dbo):
     a lot of historical data don't end up tying up the daily
     batch for a long time, they'll just slowly complete over time.
     """
-    if not BULK_GEO_BATCH:
-        al.warn("BULK_GEO_BATCH is False, skipping", "update_missing_geocodes", dbo)
+    if not GEO_BATCH:
+        al.warn("GEO_BATCH is False, skipping", "update_missing_geocodes", dbo)
         return
-    people = db.query(dbo, "SELECT ID, OwnerAddress, OwnerTown, OwnerCounty, OwnerPostcode " \
-        "FROM owner WHERE LatLong Is Null OR LatLong = '' ORDER BY CreatedDate DESC", limit=BULK_GEO_LIMIT)
+    people = dbo.query("SELECT ID, OwnerAddress, OwnerTown, OwnerCounty, OwnerPostcode " \
+        "FROM owner WHERE LatLong Is Null OR LatLong = '' ORDER BY CreatedDate DESC", limit=GEO_LIMIT)
     batch = []
     for p in people:
-        latlong = geo.get_lat_long(dbo, p["OWNERADDRESS"], p["OWNERTOWN"], p["OWNERCOUNTY"], p["OWNERPOSTCODE"])
-        batch.append((latlong, p["ID"]))
+        latlong = geo.get_lat_long(dbo, p.OWNERADDRESS, p.OWNERTOWN, p.OWNERCOUNTY, p.OWNERPOSTCODE)
+        batch.append((latlong, p.ID))
     dbo.execute_many("UPDATE owner SET LatLong = ? WHERE ID = ?", batch)
     al.debug("updated %d person geocodes" % len(batch), "person.update_missing_geocodes", dbo)
 

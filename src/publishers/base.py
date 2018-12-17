@@ -25,7 +25,7 @@ def quietcallback(x):
     """ ftplib callback that does nothing instead of dumping to stdout """
     pass
 
-def get_animal_data(dbo, pc = None, animalid = 0, include_additional_fields = False, strip_personal_data = False, limit = 0):
+def get_animal_data(dbo, pc=None, animalid=0, include_additional_fields=False, recalc_age_groups=True, strip_personal_data=False, limit=0):
     """
     Returns a resultset containing the animal info for the criteria given.
     pc: The publish criteria (if None, default is used)
@@ -36,9 +36,11 @@ def get_animal_data(dbo, pc = None, animalid = 0, include_additional_fields = Fa
     """
     if pc is None:
         pc = PublishCriteria(configuration.publisher_presets(dbo))
+    
     sql = get_animal_data_query(dbo, pc)
     rows = dbo.query(sql, distincton="ID")
     al.debug("get_animal_data_query returned %d rows" % len(rows), "publishers.base.get_animal_data", dbo)
+
     # If the sheltercode format has a slash in it, convert it to prevent
     # creating images with broken paths.
     if len(rows) > 0 and rows[0]["SHELTERCODE"].find("/") != -1:
@@ -46,26 +48,36 @@ def get_animal_data(dbo, pc = None, animalid = 0, include_additional_fields = Fa
         for r in rows:
             r.SHORTCODE = r.SHORTCODE.replace("/", "-").replace(" ", "")
             r.SHELTERCODE = r.SHELTERCODE.replace("/", "-").replace(" ", "")
+
     # If we're using animal comments, override the websitemedianotes field
     # with animalcomments for compatibility with service users and other
     # third parties who were used to the old way of doing things
     if configuration.publisher_use_comments(dbo):
         for r in rows:
             r.WEBSITEMEDIANOTES = r.ANIMALCOMMENTS
+
     # If we aren't including animals with blank descriptions, remove them now
+    # (but don't let it override the courtesy flag, which should always make animals appear)
     if not pc.includeWithoutDescription:
         oldcount = len(rows)
-        rows = [r for r in rows if utils.nulltostr(r.WEBSITEMEDIANOTES).strip() != ""]
+        rows = [r for r in rows if r.ISCOURTESY == 1 or utils.nulltostr(r.WEBSITEMEDIANOTES).strip() != "" ]
         al.debug("removed %d rows without descriptions" % (oldcount - len(rows)), "publishers.base.get_animal_data", dbo)
+
     # Embellish additional fields if requested
     if include_additional_fields:
         additional.append_to_results(dbo, rows, "animal")
+
     # Strip any personal data if requested
     if strip_personal_data:
         for r in rows:
             for k in r.iterkeys():
                 if k.startswith("ORIGINALOWNER") or k.startswith("BROUGHTINBY") or k.startswith("CURRENTOWNER") or k.startswith("RESERVEDOWNER"):
                     r[k] = ""
+
+    # Recalculate age groups
+    if recalc_age_groups:
+        animal.calc_age_group_rows(dbo, rows)
+
     # If bondedAsSingle is on, go through the the set of animals and merge
     # the bonded animals into a single record
     def merge_animal(a, aid):
@@ -79,23 +91,27 @@ def get_animal_data(dbo, pc = None, animalid = 0, include_additional_fields = Fa
                 rows.remove(r)
                 al.debug("merged animal %d into %d" % (aid, a["ID"]), "publishers.base.get_animal_data", dbo)
                 break
+
     if pc.bondedAsSingle:
         for r in rows:
             if r.BONDEDANIMALID is not None and r.BONDEDANIMALID != 0:
                 merge_animal(r, r.BONDEDANIMALID)
             if r.BONDEDANIMAL2ID is not None and r.BONDEDANIMAL2ID != 0:
                 merge_animal(r, r.BONDEDANIMAL2ID)
+
     # If animalid was set, only return that row or an empty set if it wasn't present
     if animalid != 0:
         for r in rows:
             if r.ID == animalid:
                 return [ r ]
         return []
+
     # If a limit was set, throw away extra rows
     # (we do it here instead of a LIMIT clause as there's extra logic that throws
     #  away rows above).
     if limit > 0 and len(rows) > limit:
         rows = rows[0:limit]
+
     return rows
 
 def get_animal_data_query(dbo, pc):
@@ -103,13 +119,14 @@ def get_animal_data_query(dbo, pc):
     Generate the adoptable animal query.
     """
     sql = animal.get_animal_query(dbo)
-    sql += " WHERE a.ID > 0"
+    # Always include non-dead courtesy listings
+    sql += " WHERE (a.DeceasedDate Is Null AND a.IsCourtesy = 1) OR (a.ID > 0"
     if not pc.includeCaseAnimals: 
         sql += " AND a.CrueltyCase = 0"
     if not pc.includeNonNeutered:
         sql += " AND a.Neutered = 1"
     if not pc.includeWithoutImage: 
-        sql += " AND EXISTS(SELECT ID FROM media WHERE WebsitePhoto = 1 AND LinkID = a.ID AND LinkTypeID = 0)"
+        sql += " AND EXISTS(SELECT ID FROM media WHERE WebsitePhoto = 1 AND ExcludeFromPublish = 0 AND LinkID = a.ID AND LinkTypeID = 0)"
     if not pc.includeReservedAnimals: 
         sql += " AND a.HasActiveReserve = 0"
     if not pc.includeHold: 
@@ -128,8 +145,6 @@ def get_animal_data_query(dbo, pc):
     sql += " AND NOT EXISTS(SELECT ID FROM adoption WHERE MovementType = 1 AND AnimalID = a.ID AND MovementDate > %s)" % dbo.sql_value(dbo.today())
     # Build a set of OR clauses based on any movements/locations
     moveor = []
-    # Always include courtesy post animals
-    moveor.append("(a.IsCourtesy = 1)")
     if len(pc.internalLocations) > 0 and pc.internalLocations[0].strip() != "null":
         moveor.append("(a.Archived = 0 AND a.ActiveMovementID = 0 AND a.ShelterLocation IN (%s))" % ",".join(pc.internalLocations))
     else:
@@ -140,7 +155,7 @@ def get_animal_data_query(dbo, pc):
         moveor.append("(a.ActiveMovementType = %d)" % movement.FOSTER)
     if pc.includeTrial:
         moveor.append("(a.ActiveMovementType = %d AND a.HasTrialAdoption = 1)" % movement.ADOPTION)
-    sql += " AND (" + " OR ".join(moveor) + ")"
+    sql += " AND (" + " OR ".join(moveor) + "))"
     # Ordering
     if pc.order == 0:
         sql += " ORDER BY a.MostRecentEntryDate"
@@ -162,10 +177,12 @@ def get_microchip_data(dbo, patterns, publishername, allowintake = True, organis
     organisation_email: The org email to set for intake animals (if blank, uses configuration.email())
     """
     movementtypes = configuration.microchip_register_movements(dbo)
+
     try:
         rows = dbo.query(get_microchip_data_query(dbo, patterns, publishername, movementtypes, allowintake), distincton="ID")
     except Exception as err:
         al.error(str(err), "publisher.get_microchip_data", dbo, sys.exc_info())
+
     organisation = configuration.organisation(dbo)
     orgaddress = configuration.organisation_address(dbo)
     orgtown = configuration.organisation_town(dbo)
@@ -175,18 +192,23 @@ def get_microchip_data(dbo, patterns, publishername, allowintake = True, organis
     email = configuration.email(dbo)
     if organisation_email != "": email = organisation_email
     extras = []
+
     for r in rows:
         use_original_owner_info = False
         use_shelter_info = False
+
         # If this is a non-shelter animal, use the original owner info
         if r.NONSHELTERANIMAL == 1 and r.ORIGINALOWNERNAME is not None and r.ORIGINALOWNERNAME != "":
             use_original_owner_info = True
+
         # If this is an on-shelter animal with no active movement, use the shelter info
         elif r.ARCHIVED == 0 and r.ACTIVEMOVEMENTID == 0:
             use_shelter_info = True
+
         # If this is a shelter animal on foster, but register on intake is set and foster is not, use the shelter info
         elif r.ARCHIVED == 0 and r.ACTIVEMOVEMENTTYPE == 2 and movementtypes.find("0") != -1 and movementtypes.find("2") == -1:
             use_shelter_info = True
+
         # Otherwise, leave CURRENTOWNER* fields as they are for active movement
         if use_original_owner_info:
             r.CURRENTOWNERNAME = r.ORIGINALOWNERNAME
@@ -207,6 +229,7 @@ def get_microchip_data(dbo, patterns, publishername, allowintake = True, organis
             r.CURRENTOWNERMOBILETELEPHONE = r.ORIGINALOWNERMOBILETELEPHONE
             r.CURRENTOWNERCELLPHONE = r.ORIGINALOWNERMOBILETELEPHONE
             r.CURRENTOWNEREMAILADDRESS = r.ORIGINALOWNEREMAILADDRESS
+
         if use_shelter_info:
             r.CURRENTOWNERNAME = organisation
             r.CURRENTOWNERTITLE = ""
@@ -226,6 +249,7 @@ def get_microchip_data(dbo, patterns, publishername, allowintake = True, organis
             r.CURRENTOWNERMOBILETELEPHONE = orgtelephone
             r.CURRENTOWNERCELLPHONE = orgtelephone
             r.CURRENTOWNEREMAILADDRESS = email
+
         # If this row has IDENTICHIP2NUMBER and IDENTICHIP2DATE populated, clone the 
         # row and move the values to IDENTICHIPNUMBER and IDENTICHIPDATE for publishing
         if r.IDENTICHIP2NUMBER and r.IDENTICHIP2NUMBER != "":
@@ -233,6 +257,7 @@ def get_microchip_data(dbo, patterns, publishername, allowintake = True, organis
             x.IDENTICHIPNUMBER = x.IDENTICHIP2NUMBER
             x.IDENTICHIPDATE = x.IDENTICHIP2DATE
             extras.append(x)
+
     return rows + extras
 
 def get_microchip_data_query(dbo, patterns, publishername, movementtypes = "1", allowintake = True):
@@ -714,7 +739,7 @@ class AbstractPublisher(threading.Thread):
         if an["ISCOURTESY"] != 1: 
             sig = configuration.third_party_publisher_sig(self.dbo)
             # If publisher tokens are present, replace them
-            if sig.find("$$") != -1: self.replaceAnimalTags(an, sig)
+            if sig.find("$$") != -1: sig = self.replaceAnimalTags(an, sig)
             notes += sig
         # Escape carriage returns
         cr = ""
@@ -810,8 +835,8 @@ class AbstractPublisher(threading.Thread):
         self.dbo.execute("DELETE FROM animalpublished WHERE PublishedTo = '%s' AND AnimalID IN (%s)" % (self.publisherKey, ",".join(inclause)))
         self.dbo.execute_many("INSERT INTO animalpublished (AnimalID, PublishedTo, SentDate, Extra) VALUES (?,?,?,?)", batch)
 
-    def getMatchingAnimals(self):
-        a = get_animal_data(self.dbo, self.pc)
+    def getMatchingAnimals(self, includeAdditionalFields=False):
+        a = get_animal_data(self.dbo, self.pc, include_additional_fields=includeAdditionalFields)
         self.log("Got %d matching animals for publishing." % len(a))
         return a
 
@@ -869,7 +894,7 @@ class AbstractPublisher(threading.Thread):
             "Name":                 self.publisherKey,
             "Success":              self.successes,
             "Alerts":               self.alerts,
-            "LogData":              "\n".join(self.logBuffer)
+            "*LogData":              "\n".join(self.logBuffer)
         })
 
     def isImage(self, path):
