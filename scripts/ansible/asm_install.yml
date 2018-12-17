@@ -1,37 +1,37 @@
 ---
-- hosts: asm
-  become: yes
+- hosts: "asm"
+  become: "yes"
   roles:
-    - City-of-Bloomington.apache
+    - "City-of-Bloomington.apache"
   tasks:
     - name: "Mysql setup"
-      include_tasks: tasks/mysql.yml
-      when: asm_db.type == 'MYSQL'
+      include_tasks: "tasks/mysql.yml"
+      when: "asm_db.type == 'MYSQL'"
 
     - name: "Postgres setup"
-      include_tasks: tasks/postgresql.yml
-      when: asm_db.type == 'POSTGRESQL'
+      include_tasks: "tasks/postgresql.yml"
+      when: "asm_db.type == 'POSTGRESQL'"
 
-    - name: Install Animal Shelter Manger dependencies
+    - name: "Install Animal Shelter Manger dependencies"
       apt:
-        name: "{{ item }}"
-        state: present
-      tags: asm
-      with_items:
-        - libapache2-mod-wsgi
-        - make
-        - python
-        - python-imaging
-        - python-webpy
-        - imagemagick
-        - wkhtmltopdf
-        - python-requests
-        - python-ndg-httpsclient
-        - python-pyasn1
-        - memcached
-        - python-memcache
-        - postfix
-        - curl
+        name: "{{ packages }}"
+        state: "present"
+      vars:
+        packages:
+          - "libapache2-mod-wsgi"
+          - "make"
+          - "python"
+          - "python-pil"
+          - "python-webpy"
+          - "imagemagick"
+          - "wkhtmltopdf"
+          - "python-requests"
+          - "python-ndg-httpsclient"
+          - "python-pyasn1"
+          - "memcached"
+          - "python-memcache"
+          - "postfix"
+          - "curl"
 
     - name: "Activate Apache WSGI Module"
       apache2_module:
@@ -41,13 +41,13 @@
       unarchive:
         src: "{{ asm_archive.path }}"
         dest: "/usr/local/src"
-      register: release
+      register: "release"
 
     - name: "Remove old release"
       file:
         path: "{{ asm_path }}"
         state: "absent"
-      when: release.changed
+      when: "release.changed"
 
     - name: "Create ASM directories"
       file:
@@ -55,7 +55,7 @@
         state: "directory"
         owner: "www-data"
         group: "staff"
-        mode: u=rwx,g=rwxs,o=rx
+        mode: "u=rwx,g=rwxs,o=rx"
       with_items:
         - "{{ asm_path }}"
         - "{{ asm_data }}"
@@ -66,7 +66,7 @@
 
     - name: "Install release"
       command: "rsync -rlv /usr/local/src/{{ asm_archive.name }}/ {{ asm_path }}/"
-      when: release.changed
+      when: "release.changed"
 
     - name: "Update apache configuration"
       template:
