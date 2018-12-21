@@ -37,7 +37,7 @@ def get_animal_data(dbo, pc=None, animalid=0, include_additional_fields=False, r
     if pc is None:
         pc = PublishCriteria(configuration.publisher_presets(dbo))
     
-    sql = get_animal_data_query(dbo, pc)
+    sql = get_animal_data_query(dbo, pc, animalid)
     rows = dbo.query(sql, distincton="ID")
     al.debug("get_animal_data_query returned %d rows" % len(rows), "publishers.base.get_animal_data", dbo)
 
@@ -114,13 +114,15 @@ def get_animal_data(dbo, pc=None, animalid=0, include_additional_fields=False, r
 
     return rows
 
-def get_animal_data_query(dbo, pc):
+def get_animal_data_query(dbo, pc, animalid=0):
     """
     Generate the adoptable animal query.
     """
     sql = animal.get_animal_query(dbo)
     # Always include non-dead courtesy listings
     sql += " WHERE (a.DeceasedDate Is Null AND a.IsCourtesy = 1) OR (a.ID > 0"
+    if animalid != 0:
+        sql += " AND a.ID = " + str(animalid)
     if not pc.includeCaseAnimals: 
         sql += " AND a.CrueltyCase = 0"
     if not pc.includeNonNeutered:
