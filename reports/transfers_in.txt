@@ -18,7 +18,7 @@ INNER JOIN species s ON s.ID = a.SpeciesID
 LEFT OUTER JOIN owner bi ON a.BroughtInByOwnerID = bi.ID
 WHERE a.IsTransfer = 1 
 AND DateBroughtIn >= '$ASK DATE Enter the from date$' AND DateBroughtIn <= '$ASK DATE Enter the to date$'
-ORDER BY a.DateBroughtIn
+ORDER BY bi.OwnerName, a.DateBroughtIn
 ###
 $$HEADER
 HEADER$$
