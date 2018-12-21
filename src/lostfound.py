@@ -3,7 +3,7 @@
 import additional
 import al
 import animal
-import async
+import asynctask
 import configuration
 import dbfs
 import diary
@@ -383,9 +383,9 @@ def match(dbo, lostanimalid = 0, foundanimalid = 0, animalid = 0, limit = 0):
         else:
             shelteranimals = dbo.query(animal.get_animal_query(dbo) + " WHERE a.ID = ?", [animalid])
 
-    async.set_progress_max(dbo, len(lostanimals))
+    asynctask.set_progress_max(dbo, len(lostanimals))
     for la in lostanimals:
-        async.increment_progress_value(dbo)
+        asynctask.increment_progress_value(dbo)
         # Stop if we've hit our limit
         if limit > 0 and len(matches) >= limit:
             break

@@ -3,7 +3,7 @@
 import additional
 import al
 import animalname
-import async
+import asynctask
 import audit
 import configuration
 import datetime
@@ -3062,10 +3062,10 @@ def update_all_variable_animal_data(dbo):
         "WHERE ad.MovementType NOT IN (2,8) AND ad.MovementDate Is Not Null AND ad.ReturnDate Is Not Null " \
         "ORDER BY AnimalID")
 
-    async.set_progress_max(dbo, len(animals))
+    asynctask.set_progress_max(dbo, len(animals))
     for a in animals:
         update_variable_animal_data(dbo, a.id, a, animalupdatebatch, bands, movements)
-        async.increment_progress_value(dbo)
+        asynctask.increment_progress_value(dbo)
 
     dbo.execute_many("UPDATE animal SET " \
         "TimeOnShelter = ?, " \
@@ -3133,10 +3133,10 @@ def update_all_animal_statuses(dbo):
         "trial_on_shelter": configuration.trial_on_shelter(dbo)
     }
 
-    async.set_progress_max(dbo, len(animals))
+    asynctask.set_progress_max(dbo, len(animals))
     for a in animals:
         update_animal_status(dbo, a.id, a, movements, animalupdatebatch, diaryupdatebatch, cfg)
-        async.increment_progress_value(dbo)
+        asynctask.increment_progress_value(dbo)
 
     aff = dbo.execute_many("UPDATE animal SET " \
         "Archived = ?, " \
@@ -3210,10 +3210,10 @@ def update_on_shelter_animal_statuses(dbo):
         "trial_on_shelter": configuration.trial_on_shelter(dbo)
     }
 
-    async.set_progress_max(dbo, len(animals))
+    asynctask.set_progress_max(dbo, len(animals))
     for a in animals:
         update_animal_status(dbo, a.id, a, movements, animalupdatebatch, diaryupdatebatch, cfg)
-        async.increment_progress_value(dbo)
+        asynctask.increment_progress_value(dbo)
 
     aff = dbo.execute_many("UPDATE animal SET " \
         "Archived = ?, " \
@@ -3518,7 +3518,7 @@ def update_animal_figures(dbo, month = 0, year = 0):
     If month and year aren't given, defaults to this month, unless today is
     the first day of the month in which case we do last month.
     """
-    async.set_progress_max(dbo, 3)
+    asynctask.set_progress_max(dbo, 3)
     batch = []
     nid = dbo.get_id_max("animalfigures")
 
@@ -3857,7 +3857,7 @@ def update_animal_figures(dbo, month = 0, year = 0):
         # End of day
         add_row(123, "SP_TOTAL", 0, speciesid, daysinmonth, _("End Of Day", l), 1, False, sheltertotal)
 
-    async.set_progress_value(dbo, 1)
+    asynctask.set_progress_value(dbo, 1)
 
     # Animal Types =====================================
     alltypes = lookups.get_animal_types(dbo)
@@ -4046,7 +4046,7 @@ def update_animal_figures(dbo, month = 0, year = 0):
         # End of day
         add_row(50, "AT_TOTAL", typeid, 0, daysinmonth, _("End Of Day", l), 1, False, sheltertotal)
 
-    async.set_progress_value(dbo, 2)
+    asynctask.set_progress_value(dbo, 2)
 
     # Write out our db changes
     update_db(month, year)
@@ -4058,7 +4058,7 @@ def update_animal_figures_annual(dbo, year = 0):
     If year isn't given, defaults to this year, unless today is the
     first of the year in which case we do last year.
     """
-    async.set_progress_max(dbo, 3)
+    asynctask.set_progress_max(dbo, 3)
     batch = []
     nid = dbo.get_id_max("animalfiguresannual")
 
@@ -4356,7 +4356,7 @@ def update_animal_figures_annual(dbo, year = 0):
             "GROUP BY a.NeuteredDate, a.DateOfBirth" % (int(sp["ID"]), firstofyear, lastofyear),
             sp["ID"], sp["SPECIESNAME"], "SP_NEUTERSPAYNS", group, 180, showbabies, babymonths)
 
-    async.set_progress_value(dbo, 1)
+    asynctask.set_progress_value(dbo, 1)
 
     # Types =====================================
     alltypes = lookups.get_animal_types(dbo)
@@ -4516,7 +4516,7 @@ def update_animal_figures_annual(dbo, year = 0):
             "GROUP BY ad.MovementDate, a.DateOfBirth" % (int(at["ID"]), firstofyear, lastofyear, movement.ADOPTION, movement.TRANSFER, movement.RECLAIMED),
             at["ID"], at["ANIMALTYPE"], "AT_LIVERELEASE", group, 160, at["SHOWSPLIT"], babymonths)
 
-    async.set_progress_value(dbo, 2)
+    asynctask.set_progress_value(dbo, 2)
 
     # Entry Reasons =====================================
     allreasons = lookups.get_entryreasons(dbo)
@@ -4676,7 +4676,7 @@ def update_animal_figures_annual(dbo, year = 0):
             "GROUP BY ad.MovementDate, a.DateOfBirth" % (int(er["ID"]), firstofyear, lastofyear, movement.ADOPTION, movement.TRANSFER, movement.RECLAIMED),
             er["ID"], er["REASONNAME"], "ER_LIVERELEASE", group, 160, er["SHOWSPLIT"], babymonths)
     
-    async.set_progress_value(dbo, 3)
+    asynctask.set_progress_value(dbo, 3)
 
     # Write out all our changes in one go
     update_db(year)

@@ -12,7 +12,7 @@ import al
 import additional as extadditional
 import animal as extanimal
 import animalcontrol as extanimalcontrol
-import async
+import asynctask
 import audit
 import base64
 import cachemem
@@ -1722,36 +1722,36 @@ class batch(JSONEndpoint):
     def post_genfigyear(self, o):
         l = o.locale
         if o.post.date("taskdate") is None: raise utils.ASMValidationError("no date parameter")
-        async.function_task(o.dbo, _("Regenerate annual animal figures for", l), extanimal.update_animal_figures_annual, o.dbo, o.post.date("taskdate").year)
+        asynctask.function_task(o.dbo, _("Regenerate annual animal figures for", l), extanimal.update_animal_figures_annual, o.dbo, o.post.date("taskdate").year)
 
     def post_genfigmonth(self, o):
         l = o.locale
         if o.post.date("taskdate") is None: raise utils.ASMValidationError("no date parameter")
-        async.function_task(o.dbo, _("Regenerate monthly animal figures for", l), extanimal.update_animal_figures, o.dbo, o.post.date("taskdate").month, o.post.date("taskdate").year)
+        asynctask.function_task(o.dbo, _("Regenerate monthly animal figures for", l), extanimal.update_animal_figures, o.dbo, o.post.date("taskdate").month, o.post.date("taskdate").year)
 
     def post_genshelterpos(self, o):
         l = o.locale
-        async.function_task(o.dbo, _("Recalculate on-shelter animal locations", l), extanimal.update_on_shelter_animal_statuses, o.dbo)
+        asynctask.function_task(o.dbo, _("Recalculate on-shelter animal locations", l), extanimal.update_on_shelter_animal_statuses, o.dbo)
 
     def post_genallpos(self, o):
         l = o.locale
-        async.function_task(o.dbo, _("Recalculate ALL animal locations", l), extanimal.update_all_animal_statuses, o.dbo)
+        asynctask.function_task(o.dbo, _("Recalculate ALL animal locations", l), extanimal.update_all_animal_statuses, o.dbo)
 
     def post_genallvariable(self, o):
         l = o.locale
-        async.function_task(o.dbo, _("Recalculate ALL animal ages/times", l), extanimal.update_all_variable_animal_data, o.dbo)
+        asynctask.function_task(o.dbo, _("Recalculate ALL animal ages/times", l), extanimal.update_all_variable_animal_data, o.dbo)
 
     def post_genlookingfor(self, o):
         l = o.locale
-        async.function_task(o.dbo, _("Regenerate 'Person looking for' report", l), extperson.update_lookingfor_report, o.dbo)
+        asynctask.function_task(o.dbo, _("Regenerate 'Person looking for' report", l), extperson.update_lookingfor_report, o.dbo)
 
     def post_genownername(self, o):
         l = o.locale
-        async.function_task(o.dbo, _("Regenerate person names in selected format", l), extperson.update_owner_names, o.dbo)
+        asynctask.function_task(o.dbo, _("Regenerate person names in selected format", l), extperson.update_owner_names, o.dbo)
 
     def post_genlostfound(self, o):
         l = o.locale
-        async.function_task(o.dbo, _("Regenerate 'Match lost and found animals' report", l), extlostfound.update_match_report, o.dbo)
+        asynctask.function_task(o.dbo, _("Regenerate 'Match lost and found animals' report", l), extlostfound.update_match_report, o.dbo)
 
 class calendarview(JSONEndpoint):
     url = "calendarview"
@@ -2106,7 +2106,7 @@ class csvimport(JSONEndpoint):
 
     def post_all(self, o):
         l = o.locale
-        async.function_task(o.dbo, _("Import a CSV file", l), extcsvimport.csvimport, o.dbo, o.post.filedata(), o.post["encoding"], 
+        asynctask.function_task(o.dbo, _("Import a CSV file", l), extcsvimport.csvimport, o.dbo, o.post.filedata(), o.post["encoding"], 
             o.post.boolean("createmissinglookups") == 1, o.post.boolean("cleartables") == 1, o.post.boolean("checkduplicates") == 1)
         self.redirect("task")
 
@@ -2124,7 +2124,7 @@ class csvimport_paypal(JSONEndpoint):
 
     def post_all(self, o):
         l = o.locale
-        async.function_task(o.dbo, _("Import a PayPal CSV file", l), extcsvimport.csvimport_paypal, o.dbo, \
+        asynctask.function_task(o.dbo, _("Import a PayPal CSV file", l), extcsvimport.csvimport_paypal, o.dbo, \
             o.post.filedata(), o.post.integer("type"), o.post.integer("payment"), o.post["flags"])
         self.redirect("task")
 
@@ -4693,19 +4693,19 @@ class publish(JSONEndpoint):
         al.debug("publish started for mode %s" % mode, "code.publish", dbo)
         # If a publisher is already running and we have a mode, mark
         # a failure starting
-        if async.is_task_running(dbo):
+        if asynctask.is_task_running(dbo):
             al.debug("publish already running, not starting new publish", "code.publish", dbo)
         else:
             # If a publishing mode is requested, start that publisher
             # running on a background thread
-            extpublish.start_publisher(dbo, mode, user=o.user, async=True)
+            extpublish.start_publisher(dbo, mode, user=o.user, newthread=True)
         return { "failed": failed }
 
     def post_poll(self, o):
-        return "%s|%d|%s" % (async.get_task_name(o.dbo), async.get_progress_percent(o.dbo), async.get_last_error(o.dbo))
+        return "%s|%d|%s" % (asynctask.get_task_name(o.dbo), asynctask.get_progress_percent(o.dbo), asynctask.get_last_error(o.dbo))
 
     def post_stop(self, o):
-        async.set_cancel(o.dbo, True)
+        asynctask.set_cancel(o.dbo, True)
 
 class publish_logs(JSONEndpoint):
     url = "publish_logs"
@@ -5314,10 +5314,10 @@ class task(JSONEndpoint):
         return { }
    
     def post_poll(self, o):
-        return "%s|%d|%s|%s" % (async.get_task_name(o.dbo), async.get_progress_percent(o.dbo), async.get_last_error(o.dbo), async.get_return_value(o.dbo))
+        return "%s|%d|%s|%s" % (asynctask.get_task_name(o.dbo), asynctask.get_progress_percent(o.dbo), asynctask.get_last_error(o.dbo), asynctask.get_return_value(o.dbo))
 
     def post_stop(self, o):
-        async.set_cancel(o.dbo, True)
+        asynctask.set_cancel(o.dbo, True)
 
 class test(JSONEndpoint):
     url = "test"

@@ -3,7 +3,7 @@
 import additional
 import al
 import animal
-import async
+import asynctask
 import configuration
 import datetime
 import dbfs
@@ -592,7 +592,7 @@ def update_owner_names(dbo):
     al.debug("regenerating owner names and codes...", "person.update_owner_names", dbo)
     own = dbo.query("SELECT ID, OwnerCode, OwnerType, OwnerTitle, OwnerInitials, OwnerForeNames, OwnerSurname FROM owner")
     nameformat = configuration.owner_name_format(dbo)
-    async.set_progress_max(dbo, len(own))
+    asynctask.set_progress_max(dbo, len(own))
     for o in own:
         if o.ownercode is None or o.ownercode == "":
             dbo.update("owner", o.id, { 
@@ -603,7 +603,7 @@ def update_owner_names(dbo):
             dbo.update("owner", o.id, { 
                 "OwnerName": calculate_owner_name(dbo, o.ownertype, o.ownertitle, o.ownerinitials, o.ownerforenames, o.ownersurname, nameformat)
             }, setRecordVersion=False, setLastChanged=False, writeAudit=False)
-        async.increment_progress_value(dbo)
+        asynctask.increment_progress_value(dbo)
     al.debug("regenerated %d owner names and codes" % len(own), "person.update_owner_names", dbo)
     return "OK %d" % len(own)
 
@@ -1214,9 +1214,9 @@ def lookingfor_report(dbo, username = "system", personid = 0, limit = 0):
     ah.append( "</tr>")
 
     totalmatches = 0
-    async.set_progress_max(dbo, len(people))
+    asynctask.set_progress_max(dbo, len(people))
     for p in people:
-        async.increment_progress_value(dbo)
+        asynctask.increment_progress_value(dbo)
         ands = [ "a.Archived=0", "a.IsNotAvailableForAdoption=0", "a.HasActiveReserve=0", "a.CrueltyCase=0", "a.DeceasedDate Is Null" ]
         v = [] # query values
         c = [] # readable criteria

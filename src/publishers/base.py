@@ -3,7 +3,7 @@
 import additional
 import al
 import animal
-import async
+import asynctask
 import configuration
 import dbfs
 import ftplib
@@ -591,15 +591,15 @@ class AbstractPublisher(threading.Thread):
         set, always returns false.
         """
         if self.pc.ignoreLock: return False
-        return async.is_task_running(self.dbo)
+        return asynctask.is_task_running(self.dbo)
 
     def updatePublisherProgress(self, progress):
         """
         Updates the publisher progress in the database
         """
-        async.set_task_name(self.dbo, self.publisherName)
-        async.set_progress_max(self.dbo, 100)
-        async.set_progress_value(self.dbo, progress)
+        asynctask.set_task_name(self.dbo, self.publisherName)
+        asynctask.set_progress_max(self.dbo, 100)
+        asynctask.set_progress_value(self.dbo, progress)
 
     def replaceMDBTokens(self, dbo, s):
         """
@@ -622,13 +622,13 @@ class AbstractPublisher(threading.Thread):
         Resets the publisher progress and stops blocking for other 
         publishers
         """
-        async.reset(self.dbo)
+        asynctask.reset(self.dbo)
 
     def setPublisherComplete(self):
         """
         Mark the current publisher as complete
         """
-        async.set_progress_value(self.dbo, 100)
+        asynctask.set_progress_value(self.dbo, 100)
 
     def getProgress(self, i, n):
         """
@@ -642,19 +642,19 @@ class AbstractPublisher(threading.Thread):
         """
         Returns True if we need to stop publishing
         """
-        return async.get_cancel(self.dbo)
+        return asynctask.get_cancel(self.dbo)
 
     def setStartPublishing(self):
         """
         Clears the stop publishing flag so we can carry on publishing.
         """
-        async.set_cancel(self.dbo, False)
+        asynctask.set_cancel(self.dbo, False)
 
     def setLastError(self, msg):
         """
         Sets the last error message and clears the publisher lock
         """
-        async.set_last_error(self.dbo, msg)
+        asynctask.set_last_error(self.dbo, msg)
         self.lastError = msg
         if msg != "": self.logError(self.lastError)
         self.resetPublisherProgress()

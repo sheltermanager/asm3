@@ -105,7 +105,7 @@ def get_publish_log(dbo, plid):
     """ Returns the log for a publish log ID """
     return dbo.query_string("SELECT LogData FROM publishlog WHERE ID = ?", [plid])
 
-def start_publisher(dbo, code, user = "", async = True):
+def start_publisher(dbo, code, user = "", newthread = True):
     """ Starts the publisher with code """
     pc = PublishCriteria(configuration.publisher_presets(dbo))
     p = None
@@ -121,7 +121,7 @@ def start_publisher(dbo, code, user = "", async = True):
     else:
         p = PUBLISHER_LIST[code]["class"](dbo, pc)
 
-    if async:
+    if newthread:
         p.start()
     else:
         p.run()

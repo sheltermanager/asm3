@@ -140,7 +140,7 @@ def publish_3pty(dbo):
         publishers = configuration.publishers_enabled(dbo)
         for p in publishers.split(" "):
             if p != "html": # We do html/ftp publishing separate from others
-                publish.start_publisher(dbo, p, user="system", async=False)
+                publish.start_publisher(dbo, p, user="system", newthread=False)
     except:
         em = str(sys.exc_info()[0])
         al.error("FAIL: uncaught error running third party publishers: %s" % em, "cron.publish_3pty", dbo, sys.exc_info())
@@ -148,7 +148,7 @@ def publish_3pty(dbo):
 def publish_html(dbo):
     try :
         if configuration.publishers_enabled(dbo).find("html") != -1:
-            publish.start_publisher(dbo, "html", user="system", async=False)
+            publish.start_publisher(dbo, "html", user="system", newthread=False)
     except:
         em = str(sys.exc_info()[0])
         al.error("FAIL: uncaught error running html publisher: %s" % em, "cron.publish_html", dbo, sys.exc_info())

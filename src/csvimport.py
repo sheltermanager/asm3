@@ -3,7 +3,7 @@
 import additional
 import al
 import animal
-import async
+import asynctask
 import base64
 import collections
 import configuration
@@ -241,7 +241,7 @@ def csvimport(dbo, csvdata, encoding = "utf8", createmissinglookups = False, cle
         cols = row
         break
     if cols is None:
-        async.set_last_error(dbo, "Your CSV file is empty")
+        asynctask.set_last_error(dbo, "Your CSV file is empty")
         return
 
     onevalid = False
@@ -280,57 +280,57 @@ def csvimport(dbo, csvdata, encoding = "utf8", createmissinglookups = False, cle
 
     # Any valid fields?
     if not onevalid:
-        async.set_last_error(dbo, "Your CSV file did not contain any fields that ASM recognises")
+        asynctask.set_last_error(dbo, "Your CSV file did not contain any fields that ASM recognises")
         return
 
     # If we have any animal fields, make sure at least ANIMALNAME is supplied
     if hasanimal and not hasanimalname:
-        async.set_last_error(dbo, "Your CSV file has animal fields, but no ANIMALNAME column")
+        asynctask.set_last_error(dbo, "Your CSV file has animal fields, but no ANIMALNAME column")
         return
 
     # If we have any person fields, make sure at least PERSONLASTNAME or PERSONNAME is supplied
     if hasperson and not haspersonlastname and not haspersonname:
-        async.set_last_error(dbo, "Your CSV file has person fields, but no PERSONNAME or PERSONLASTNAME column")
+        asynctask.set_last_error(dbo, "Your CSV file has person fields, but no PERSONNAME or PERSONLASTNAME column")
         return
 
     # If we have any original owner fields, make sure at least ORIGINALOWNERLASTNAME is supplied
     if hasoriginalowner and not hasoriginalownerlastname:
-        async.set_last_error(dbo, "Your CSV file has original owner fields, but no ORIGINALOWNERLASTNAME column")
+        asynctask.set_last_error(dbo, "Your CSV file has original owner fields, but no ORIGINALOWNERLASTNAME column")
         return
 
     # If we have any movement fields, make sure MOVEMENTDATE is supplied
     if hasmovement and not hasmovementdate:
-        async.set_last_error(dbo, "Your CSV file has movement fields, but no MOVEMENTDATE column")
+        asynctask.set_last_error(dbo, "Your CSV file has movement fields, but no MOVEMENTDATE column")
         return
 
     # If we have any donation fields, we need an amount
     if hasdonation and not hasdonationamount:
-        async.set_last_error(dbo, "Your CSV file has donation fields, but no DONATIONAMOUNT column")
+        asynctask.set_last_error(dbo, "Your CSV file has donation fields, but no DONATIONAMOUNT column")
         return
 
     # We also need a valid person
     if hasdonation and not (haspersonlastname or haspersonname):
-        async.set_last_error(dbo, "Your CSV file has donation fields, but no person to apply the donation to")
+        asynctask.set_last_error(dbo, "Your CSV file has donation fields, but no person to apply the donation to")
         return
 
     # If we have any med fields, we need an animal
     if hasmed and not hasanimal:
-        async.set_last_error(dbo, "Your CSV file has medical fields, but no animal to apply them to")
+        asynctask.set_last_error(dbo, "Your CSV file has medical fields, but no animal to apply them to")
         return
 
     # If we have any vacc fields, we need an animal
     if hasvacc and not hasanimal:
-        async.set_last_error(dbo, "Your CSV file has vaccination fields, but no animal to apply them to")
+        asynctask.set_last_error(dbo, "Your CSV file has vaccination fields, but no animal to apply them to")
         return
 
     # If we have licence fields, we need a number
     if haslicence and not haslicencenumber:
-        async.set_last_error(dbo, "Your CSV file has license fields, but no LICENSENUMBER column")
+        asynctask.set_last_error(dbo, "Your CSV file has license fields, but no LICENSENUMBER column")
         return
 
     # We also need a valid person
     if haslicence and not (haspersonlastname or haspersonname):
-        async.set_last_error(dbo, "Your CSV file has license fields, but no person to apply the license to")
+        asynctask.set_last_error(dbo, "Your CSV file has license fields, but no person to apply the license to")
 
     # Read the whole CSV file into a list of maps. Note, the
     # reader has a cursor at the second row already because
@@ -354,14 +354,14 @@ def csvimport(dbo, csvdata, encoding = "utf8", createmissinglookups = False, cle
     # and start importing.
     errors = []
     rowno = 1
-    async.set_progress_max(dbo, len(data))
+    asynctask.set_progress_max(dbo, len(data))
     for row in data:
 
         al.debug("import csv: row %d of %d" % (rowno, len(data)), "csvimport.csvimport", dbo)
-        async.increment_progress_value(dbo)
+        asynctask.increment_progress_value(dbo)
 
         # Should we stop?
-        if async.get_cancel(dbo): break
+        if asynctask.get_cancel(dbo): break
 
         # Do we have animal data to read?
         animalid = 0
@@ -672,7 +672,7 @@ def csvimport_paypal(dbo, csvdata, donationtypeid, donationpaymentid, flags):
     data = list(reader)
     errors = []
     rowno = 1
-    async.set_progress_max(dbo, len(data))
+    asynctask.set_progress_max(dbo, len(data))
 
     for r in data:
 
@@ -680,16 +680,16 @@ def csvimport_paypal(dbo, csvdata, donationtypeid, donationpaymentid, flags):
         if len(r) == 0: continue
 
         # Should we stop?
-        if async.get_cancel(dbo): break
+        if asynctask.get_cancel(dbo): break
 
         REQUIRED_FIELDS = [ "Date", "Currency", "Gross", "Fee", "Net", "From Email Address", "Status", "Type" ]
         for rf in REQUIRED_FIELDS:
             if rf not in r:
-                async.set_last_error(dbo, "This CSV file does not look like a PayPal CSV (missing %s)" % rf)
+                asynctask.set_last_error(dbo, "This CSV file does not look like a PayPal CSV (missing %s)" % rf)
                 return
 
         al.debug("import paypal csv: row %d of %d" % (rowno, len(data)), "csvimport.csvimport_paypal", dbo)
-        async.increment_progress_value(dbo)
+        asynctask.increment_progress_value(dbo)
 
         if r["Status"] != "Completed":
             al.debug("skipping: Status='%s' (!= Completed), Type='%s'" % (r["Status"], r["Type"]), "csvimport.csvimport_paypal", dbo)
