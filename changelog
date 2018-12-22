@@ -1,6 +1,7 @@
 41
 ================
 
+22/12/18 Add WEBSITEMEDIAFILENAME5-8 tokens for animal_view template
 14/12/18 Incoming forms: Rename Create Animal to Attach Animal (via animalname) #532
 13/12/18 PetRescue: support "good with" and "needs constant care"
 12/12/18 Change "Released To Wild" to "TNR" when movement is for a cat #531
