@@ -99,7 +99,7 @@ def set_web_preferred(dbo, username, mid):
     """
     link = dbo.first_row(dbo.query("SELECT LinkID, LinkTypeID FROM media WHERE ID = ?", [mid]))
     dbo.update("media", "LinkID=%d AND LinkTypeID=%d" % (link.LINKID, link.LINKTYPEID), { "WebsitePhoto": 0 })
-    dbo.update("media", mid, { "WebsitePhoto": 1, "Date": dbo.now() }, username, setLastChanged=False) 
+    dbo.update("media", mid, { "WebsitePhoto": 1, "ExcludeFromPublish": 0, "Date": dbo.now() }, username, setLastChanged=False) 
 
 def set_doc_preferred(dbo, username, mid):
     """
