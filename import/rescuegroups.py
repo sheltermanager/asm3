@@ -22,7 +22,7 @@ Address, Comment, Email, First Name, Last Name, Phone (Cell), Phone (Home)
 
 """
 
-PATH = "data/rg_ck1833"
+PATH = "data/rg_zb1870"
 
 DEFAULT_BREED = 261 # default to dsh
 PETFINDER_ID = ""
@@ -122,7 +122,7 @@ for d in asm.csv_to_list("%s/Animals.csv" % PATH):
     if d["OK with Cats"] == "Yes": a.IsGoodWithCats = 0
     a.IdentichipNumber = d["Microchip Number"]
     if a.IdentichipNumber != "": a.Identichipped = 1
-    a.AnimalComments = d["Description"]
+    a.AnimalComments = d["Description (no html)"]
     a.HiddenAnimalDetails = d["Summary"] + ", original breed: " + d["Primary Breed"] + " " + osecondbreed + ", color: " + \
         d["Color (General)"] + ", status: " + d["Status"] + ", internal: " + d["Internal ID"] + ", location: " + d["Location"]
     a.CreatedDate = getdate(d["Created"])
