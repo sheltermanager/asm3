@@ -63,7 +63,7 @@ ASM will look for it's config file in this order until it finds one:
 
 1. In an environment variable called ASM3_CONF
 2. In $INSTALL_DIR/asm3.conf (the folder asm3 python modules are installed in)
-3. In $HOME/.asm3 (the home directory of the user running asm3)
+3. In $HOME/.asm3.conf (the home directory of the user running asm3)
 4. In /etc/asm3.conf
 
 Starting the service

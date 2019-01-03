@@ -12,17 +12,17 @@ def read_config_file():
     the following places in order:
     1. ASM3_CONF environment variable
     2. $INSTALL_DIR/asm3.conf
-    3. $HOME/asm3.conf
+    3. $HOME/.asm3.conf
     4. /etc/asm3.conf
     """
     global cfg
     fname = ""
-    if "ASM3_CONF" in os.environ and os.environ["ASM3_CONF"] != "": fname = os.environ["ASM3_CONF"]
     insconf = os.path.dirname(os.path.abspath(__file__)) + os.sep + "asm3.conf"
-    if os.path.exists(insconf): fname = insconf
-    homeconf = os.path.expanduser("~") + os.sep + "asm3.conf"
-    if os.path.exists(homeconf): fname = homeconf
-    if os.path.exists("/etc/asm3.conf"): fname = "/etc/asm3.conf"
+    homeconf = os.path.expanduser("~") + os.sep + ".asm3.conf"
+    if "ASM3_CONF" in os.environ and os.environ["ASM3_CONF"] != "": fname = os.environ["ASM3_CONF"]
+    elif os.path.exists(insconf): fname = insconf
+    elif os.path.exists(homeconf): fname = homeconf
+    elif os.path.exists("/etc/asm3.conf"): fname = "/etc/asm3.conf"
     if fname == "":
         sys.stderr.write("no config found, using defaults\n")
         cfg = {}
