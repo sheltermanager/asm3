@@ -45,10 +45,15 @@ If you did not, copy scripts/asm3.conf.example to /etc/asm3.conf and edit it.
 Set the following values:
 
 asm3_dbtype = (POSTGRESQL, MYSQL or SQLITE)
+
 asm3_dbhost = (hostname of your server)
+
 asm3_dbport = (port of your server if using tcp)
+
 asm3_dbusername = 
+
 asm3_dbpassword = 
+
 asm3_dbname = (name of the database, can be file path if type is SQLITE)
 
 If you are using MySQL or POSTGRESQL, make sure you have issued a CREATE DATABASE
@@ -64,9 +69,15 @@ ASM will look for it's config file in this order until it finds one:
 Starting the service
 --------------------
 
-The Debian package creates an init.d script called sheltermanager3,
-which is automatically added to the correct runlevels
-after package installation.
+The Debian package creates an init.d script called sheltermanager3 and
+a systemd unit called sheltermanager3. Both are automatically added to the correct 
+runlevels after package installation.
+
+After configuration, run:
+
+    service sheltermanager3 restart
+
+To reload the service with your new configuration.
 
 For manual setups, run "python code.py 5000" to start the service. An
 HTTP server will start running on port 5000, listening on all 
@@ -113,7 +124,7 @@ instructions assume Debian):
 1. Stop the sheltermanager3 service running and remove it from the
    existing system runlevels:
    
-   * /etc/init.d/sheltermanager3 stop
+   * service sheltermanager3 stop
    * update-rc.d sheltermanager3 remove
    
 2. Install apache2 with mod_wsgi. Make sure mod_wsgi is enabled.
@@ -139,9 +150,8 @@ AddType text/html .py
    This assumes that your ASM3 is located at /usr/lib/sheltermanager3
    (the default for our Debian package) and Python2.7
 
-
 4. Restart Apache and navigate to http://localhost/asm
 
-    * /etc/init.d/apache2 restart
+    * service apache2 restart
 
 
