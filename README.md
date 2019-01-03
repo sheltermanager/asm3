@@ -33,25 +33,33 @@ Logging
 -------
 
 ASM logs to the Unix syslog USER facility (/var/log/user.log for most installs)
-by default. This can be changed in the sitedefs.
+by default. This can be changed in the configuration.
 
 Configuring a database
 ----------------------
 
-Find the sitedefs.py file in the source. If you used the Debian package,
-it will be located in /usr/lib/sheltermanager3
+If you used the debian package, edit the file /etc/asm3.conf
+
+If you did not, copy scripts/asm3.conf.example to /etc/asm3.conf and edit it.
 
 Set the following values:
 
-ASM3_DBTYPE (POSTGRESQL, MYSQL or SQLITE)
-ASM3_DBHOST
-ASM3_DBPORT
-ASM3_DBUSERNAME
-ASM3_DBPASSWORD
-ASM3_DBNAME (can be sqlite3 file if type is SQLITE)
+asm3_dbtype = (POSTGRESQL, MYSQL or SQLITE)
+asm3_dbhost = (hostname of your server)
+asm3_dbport = (port of your server if using tcp)
+asm3_dbusername = 
+asm3_dbpassword = 
+asm3_dbname = (name of the database, can be file path if type is SQLITE)
 
-If you are using MySQL, make sure you have issued a CREATE DATABASE
+If you are using MySQL or POSTGRESQL, make sure you have issued a CREATE DATABASE
 and the database already exists (however the schema can be empty).
+
+ASM will look for it's config file in this order until it finds one:
+
+1. In an environment variable called ASM3_CONF
+2. In $INSTALL_DIR/asm3.conf (the folder asm3 python modules are installed in)
+3. In $HOME/.asm3 (the home directory of the user running asm3)
+4. In /etc/asm3.conf
 
 Starting the service
 --------------------
@@ -124,8 +132,7 @@ WSGIPythonPath /usr/lib/python2.7:/usr/lib/python2.7/dist-packages:/usr/lib/shel
 Alias /asm/static /usr/lib/sheltermanager3/static
 AddType text/html .py
 <Directory /usr/lib/sheltermanager3>
-        Order deny,allow
-        Allow from all
+    Require all granted
 </Directory>
 ```
 

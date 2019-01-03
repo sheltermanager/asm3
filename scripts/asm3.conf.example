@@ -1,0 +1,152 @@
+# ASM3 example configuration file
+
+# The base URL to the ASM installation as seen by the client (should not end with /)
+base_url = http://localhost:5000
+
+# The URL to asm's service endpoint to be shown in online forms screen
+service_url = http://localhost:5000/service
+
+# The language to use before a locale has been configured in the database
+locale = en
+
+# The timezone offset to use before one has been configured
+# in the database (+/- server clock offset, NOT UTC)
+timezone = 0
+
+# Where ASM directs log output to, one of:
+# stderr  - the standard error stream
+# syslog  - the UNIX syslogger (to LOCAL3 facility)
+# ntevent - the Windows event logger
+# <file>  - The path to a file to log to
+log_location = syslog
+
+# Include debug messages when logging - set to False
+# to disable debug messages
+log_debug = true
+
+# Database info
+# MYSQL, POSTGRESQL, SQLITE or DB2
+db_type = MYSQL
+db_host = localhost
+db_port = 3306
+db_username = robin
+db_password = robin
+db_name = asm
+
+# If you want to maintain compatibility with an ASM2 client
+# accessing your database, setting this will have ASM3
+# update the primarykey table that ASM2 needs
+db_has_asm2_pk_table = false
+
+# If false, HTML entities (all unicode chars) will be stored as is in the database.
+# (this is better for databases with non Unicode collation/storage and less of
+#  a security risk for Unicode SQL/XSS attacks)
+# If true, HTML entities will be decoded to Unicode before storing in the database
+# (storage is more efficient as UTF8 should be used for 2 bytes/char instead of 5)
+db_decode_html_entities = false
+
+# Time out queries that take longer than this (ms) to run
+db_timeout = 0
+
+# Deployment type, wsgi or fcgi
+deployment_type = wsgi
+
+# Whether the session cookie should be secure (only valid for https)
+session_secure_cookie = false
+
+# Output debug info on sessions
+session_debug = false
+
+# The host/port that memcached is running on if it is to be used.
+# If memcache is not available, an in memory dictionary will be
+# used instead.
+memcached_server = 127.0.0.1:11211
+
+# Where to store media files.
+# database - media files are base64 encoded in the dbfs.content db column
+# file - media files are stored in a folder 
+dbfs_store = database
+
+# dbfs_store = file: The folder where media files are stored.
+# It must exist and ASM must have write permissions. It should never end with a /
+# dbfs_filestorage_folder = 
+
+# The directory to use to cache elements on disk. Must already exist
+# as the application will not attempt to create it.
+disk_cache = /tmp/asm_disk_cache
+
+# Cache results of the most common, less important queries for
+# a short period (60 seconds) in the disk cache to help performance. 
+# These queries include shelterview animals and main screen links) 
+cache_common_queries = false
+
+# Cache service call responses on the server side according
+# to their max-age headers in the disk cache
+cache_service_responses = false
+
+# If email_errors is set to true, all errors from the site
+# are emailed to ADMIN_EMAIL and the user is given a generic
+# error page. If set to False, debug information is output.
+email_errors = false
+admin_email = you@youraddress.com
+
+# If minify_js is set to true, minified versions of the javascript
+# files will be generated at build/deploy time and the handler
+# in html.py will reference them instead
+minify_js = false
+
+# If rollup_js is set to true, all javascript files will be rolled
+# up into a single file before sending to the client (combine
+# with MINIFY_JS for smallest payload in a single request)
+rollup_js = false
+
+# Only allow hotlinks to the animal_image and extra_image
+# service calls from this domain, or comma separated list of domains
+image_hotlinking_only_from_domain = 
+
+# Use Transfer-Encoding: chunked for large files. Note that
+# this does not work with mod_wsgi. Turning it off will cause
+# web.py to buffer the output, which can cause problems with
+# dumps of large databases.
+large_files_chunked = true
+
+# QR code provider. "url" and "size" tokens will be substituted
+qr_img_src = //chart.googleapis.com/chart?cht=qr&chl=%(url)s&chs=%(size)s
+
+# Shell command to use to compress PDFs
+scale_pdf_during_attach = false
+scale_pdf_cmd = convert -density 120 -quality 60 %(input)s -compress Jpeg %(output)s
+
+# Shell command to convert HTML to PDF
+html_to_pdf = wkhtmltopdf --orientation %(orientation)s %(papersize)s %(input)s %(output)s
+
+# Target for viewing an address on a map, {0} is the address
+map_link = https://www.openstreetmap.org/search?query={0}
+
+# Map provider for rendering maps on the client, can be "osm" or "google"
+map_provider = osm
+map_provider_key = 
+osm_map_tiles = https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png
+
+# Geocode provider to use - nominatim or google
+geo_provider = nominatim
+geo_provider_key = 
+geo_batch = false
+geo_limit = 100
+geo_lookup_timeout = 5
+geo_sleep_after = 1
+
+# smtp_server = { "sendmail": false, "host": "mail.yourdomain.com", "port": 25, "username": "userifauth", "password": "passifauth", "usetls": false }
+# smtp_server = { "sendmail": false, "host": "mail.yourdomain.com", "port": 25, "username": "", "password": "", "usetls": false }
+smtp_server = { "sendmail": true }
+
+# The from address for all outgoing emails. The email address configured
+# in the database will be used as the Reply-To header to avoid
+# any issues with DKIM/SPF/DMARC spoofing
+# substitutions: 
+# {organisation} organisation name
+# {database} database name
+# {alias} database alias
+from_address = you@yourdomain.com
+
+

@@ -6,7 +6,7 @@ all:	compile clean tags minify
 dist:	version clean minify
 	rm -rf build
 	mkdir build
-	tar -czvf build/sheltermanager3-`cat VERSION`-src.tar.gz changelog LICENSE src README.md
+	tar -czvf build/sheltermanager3-`cat VERSION`-src.tar.gz changelog LICENSE src README.md scripts/asm3.conf.example
 	cd install/deb && ./makedeb.sh && mv *.deb ../../build
 
 distwin32: dist
