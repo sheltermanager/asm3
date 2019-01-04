@@ -61,6 +61,7 @@
         - "{{ asm_data }}"
         - "{{ asm_data }}/cache"
         - "{{ asm_data }}/media"
+        - "{{ asm_data }}/wsgi"
         - "/srv/backups/asm"
         - "/var/log/cron"
 
@@ -70,14 +71,19 @@
 
     - name: "Update apache configuration"
       template:
-        src: "asm.conf"
+        src: "apache.conf"
         dest: "/etc/apache2/sites-enabled/conf.d/asm.conf"
       notify: "apache_restart"
 
     - name: "Update sitedefs"
       template:
-        src: "sitedefs.py"
-        dest: "{{ asm_path }}/src/sitedefs.py"
+        src: "asm3.conf"
+        dest: "{{ asm_data }}/asm3.conf"
+
+    - name: "Install WSGI script"
+      template:
+        src: "asm3.wsgi"
+        dest: "{{ asm_data }}/wsgi/asm3.wsgi"
 
     - name: "Install CRON"
       template:
