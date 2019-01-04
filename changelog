@@ -1,6 +1,7 @@
 41
 ================
 
+04/01/19 Advanced person/animal search for flags should include terminator
 03/01/19 Use asm3.conf instead of sitedefs #404
 22/12/18 Add WEBSITEMEDIAFILENAME5-8 tokens for animal_view template
 14/12/18 Incoming forms: Rename Create Animal to Attach Animal (via animalname) #532

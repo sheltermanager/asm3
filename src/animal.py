@@ -548,7 +548,7 @@ def get_animal_find_advanced(dbo, criteria, limit = 0, locationfilter = "", site
             elif flag == "quarantine": ss.ands.append("a.IsQuarantine=1")
             else: 
                 ss.ands.append("LOWER(a.AdditionalFlags) LIKE ?")
-                ss.values.append("%%%s%%" % flag.lower())
+                ss.values.append("%%%s|%%" % flag.lower())
 
     where = ""
     if len(ss.ands) > 0: where = "WHERE " + " AND ".join(ss.ands)
