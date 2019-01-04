@@ -1,5 +1,13 @@
 #!/usr/bin/python
 
+"""
+WARNING: YOU SHOULD NO LONGER EDIT THIS FILE BY HAND!
+======================================================
+
+Make changes at /etc/asm3.conf instead. If you do not have that file, 
+copy it from scripts/asm3.conf.example
+"""
+
 # Provides site-wide definitions, reading them from a configuration file
 import codecs, os, sys, json
 
@@ -32,7 +40,8 @@ def read_config_file():
         with codecs.open(fname, 'r', encoding='utf8') as f:
             lines = f.readlines()
         for l in lines:
-            if l.find("=") != -1 and not l.strip().startswith("#"):
+            if l.find("#") != -1: l = l[0:l.find("#")]
+            if l.find("=") != -1:
                 k, v = l.split("=", 1)
                 cfg[k.strip()] = v.strip()
 
@@ -60,7 +69,8 @@ def get_dict(k, dv = {}):
 # The base URL to the ASM installation as seen by the client (should not end with /)
 BASE_URL = get_string("base_url", "http://localhost:5000")
 
-# The URL to asm's service endpoint to be shown in online forms screen
+# The URL to asm's service endpoint to be shown in online forms screens in particular,
+# but also used by animal_view_adoptable_js to link to animal_view etc
 SERVICE_URL = get_string("service_url", "http://localhost:5000/service")
 
 # The language to use before a locale has been configured 
@@ -314,34 +324,34 @@ SMCOM_PAYMENT_LINK = get_string("smcom_payment_link", "")
 SMCOM_LOGIN_URL = get_string("smcom_login_url", "")
 
 # Script and css references for dependencies (can be substituted for separate CDN here)
-ASMSELECT_CSS = 'static/lib/asmselect/1.0.4a/jquery.asmselect.css'
-ASMSELECT_JS = 'static/lib/asmselect/1.0.4a/jquery.asmselect.js'
-BASE64_JS = 'static/lib/base64/0.3.0/base64.min.js'
-CODEMIRROR_JS = 'static/lib/codemirror/5.11/lib/codemirror.js'
-CODEMIRROR_CSS = 'static/lib/codemirror/5.11/lib/codemirror.css'
-CODEMIRROR_BASE = 'static/lib/codemirror/5.11/'
-EXIFRESTORER_JS = 'static/lib/exifrestorer/1.0.0/exifrestorer.js'
-FLOT_JS = 'static/lib/flot/0.8.3/jquery.flot.min.js'
-FLOT_PIE_JS = 'static/lib/flot/0.8.3/jquery.flot.pie.min.js'
-FULLCALENDAR_CSS = 'static/lib/fullcalendar/3.2.0/fullcalendar.min.css'
-FULLCALENDAR_JS = 'static/lib/fullcalendar/3.2.0/fullcalendar.min.js'
-JQUERY_UI_CSS = 'static/lib/jqueryui/jquery-ui-themes-1.11.2/themes/%(theme)s/jquery-ui.css'
-JQUERY_UI_JS = 'static/lib/jqueryui/jquery-ui-1.11.2/jquery-ui.min.js'
-JQUERY_JS = 'static/lib/jquery/2.1.4/jquery.min.js'
-JQUERY_MOBILE_CSS = 'static/lib/jquerymobile/1.4.5/jquery.mobile.min.css'
-JQUERY_MOBILE_JS = 'static/lib/jquerymobile/1.4.5/jquery.mobile.min.js'
-LEAFLET_CSS = 'static/lib/leaflet/1.3.1/leaflet.css'
-LEAFLET_JS = 'static/lib/leaflet/1.3.1/leaflet.js'
-MOMENT_JS = 'static/lib/moment/2.17.1/moment.min.js'
-MOUSETRAP_JS = 'static/lib/mousetrap/1.4.6/mousetrap.min.js'
-PATH_JS = 'static/lib/pathjs/0.8.4.smcom/path.min.js'
-SIGNATURE_JS = 'static/lib/signature/1.1.1/jquery.signature.min.js'
-TABLESORTER_CSS = 'static/lib/tablesorter/2.7.12/themes/theme.asm.css'
-TABLESORTER_JS = 'static/lib/tablesorter/2.7.12/jquery.tablesorter.min.js'
-TABLESORTER_WIDGETS_JS = 'static/lib/tablesorter/2.7.12/jquery.tablesorter.widgets.min.js'
-TIMEPICKER_CSS = 'static/lib/timepicker/0.3.3/jquery.ui.timepicker.css'
-TIMEPICKER_JS = 'static/lib/timepicker/0.3.3/jquery.ui.timepicker.js'
-TINYMCE_4_JS = 'static/lib/tinymce/4.7.13-asm1/tinymce/js/tinymce/tinymce.min.js'
-TOUCHPUNCH_JS = 'static/lib/touchpunch/0.2.3/jquery.ui.touch-punch.min.js'
+ASMSELECT_CSS = get_string("asmselect_css", 'static/lib/asmselect/1.0.4a/jquery.asmselect.css')
+ASMSELECT_JS = get_string("asmselect_js", 'static/lib/asmselect/1.0.4a/jquery.asmselect.js')
+BASE64_JS = get_string("base64_js", 'static/lib/base64/0.3.0/base64.min.js')
+CODEMIRROR_JS = get_string("codemirror_js", 'static/lib/codemirror/5.11/lib/codemirror.js')
+CODEMIRROR_CSS = get_string("codemirror_css", 'static/lib/codemirror/5.11/lib/codemirror.css')
+CODEMIRROR_BASE = get_string("codemirror_base", 'static/lib/codemirror/5.11/')
+EXIFRESTORER_JS = get_string("exifrestorer_js", 'static/lib/exifrestorer/1.0.0/exifrestorer.js')
+FLOT_JS = get_string("flot_js", 'static/lib/flot/0.8.3/jquery.flot.min.js')
+FLOT_PIE_JS = get_string("flot_pie_js", 'static/lib/flot/0.8.3/jquery.flot.pie.min.js')
+FULLCALENDAR_CSS = get_string("fullcalendar_css", 'static/lib/fullcalendar/3.2.0/fullcalendar.min.css')
+FULLCALENDAR_JS = get_string("fullcalendar_js", 'static/lib/fullcalendar/3.2.0/fullcalendar.min.js')
+JQUERY_UI_CSS = get_string("jquery_ui_css", 'static/lib/jqueryui/jquery-ui-themes-1.11.2/themes/%(theme)s/jquery-ui.css')
+JQUERY_UI_JS = get_string("jquery_ui_js", 'static/lib/jqueryui/jquery-ui-1.11.2/jquery-ui.min.js')
+JQUERY_JS = get_string("jquery_js", 'static/lib/jquery/2.1.4/jquery.min.js')
+JQUERY_MOBILE_CSS = get_string("jquery_mobile_css", 'static/lib/jquerymobile/1.4.5/jquery.mobile.min.css')
+JQUERY_MOBILE_JS = get_string("jquery_mobile_js", 'static/lib/jquerymobile/1.4.5/jquery.mobile.min.js')
+LEAFLET_CSS = get_string("leaflet_css", 'static/lib/leaflet/1.3.1/leaflet.css')
+LEAFLET_JS = get_string("leaflet_js", 'static/lib/leaflet/1.3.1/leaflet.js')
+MOMENT_JS = get_string("moment_js", 'static/lib/moment/2.17.1/moment.min.js')
+MOUSETRAP_JS = get_string("mousetrap_js", 'static/lib/mousetrap/1.4.6/mousetrap.min.js')
+PATH_JS = get_string("path_js", 'static/lib/pathjs/0.8.4.smcom/path.min.js')
+SIGNATURE_JS = get_string("signature_js", 'static/lib/signature/1.1.1/jquery.signature.min.js')
+TABLESORTER_CSS = get_string("tablesorter_css", 'static/lib/tablesorter/2.7.12/themes/theme.asm.css')
+TABLESORTER_JS = get_string("tablesorter_js", 'static/lib/tablesorter/2.7.12/jquery.tablesorter.min.js')
+TABLESORTER_WIDGETS_JS = get_string("tablesorter_widgets_js", 'static/lib/tablesorter/2.7.12/jquery.tablesorter.widgets.min.js')
+TIMEPICKER_CSS = get_string("timepicker_css", 'static/lib/timepicker/0.3.3/jquery.ui.timepicker.css')
+TIMEPICKER_JS = get_string("timepicker_js", 'static/lib/timepicker/0.3.3/jquery.ui.timepicker.js')
+TINYMCE_4_JS = get_string("tinymce_4_js", 'static/lib/tinymce/4.7.13-asm1/tinymce/js/tinymce/tinymce.min.js')
+TOUCHPUNCH_JS = get_string("touchpunch_js", 'static/lib/touchpunch/0.2.3/jquery.ui.touch-punch.min.js')
 
 

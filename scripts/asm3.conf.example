@@ -4,6 +4,7 @@
 base_url = http://localhost:5000
 
 # The URL to asm's service endpoint to be shown in online forms screen
+# (typically base_url + /service)
 service_url = http://localhost:5000/service
 
 # The language to use before a locale has been configured in the database
@@ -25,8 +26,7 @@ log_location = syslog
 log_debug = true
 
 # Database info
-# MYSQL, POSTGRESQL, SQLITE or DB2
-db_type = MYSQL
+db_type = MYSQL # MYSQL, POSTGRESQL, SQLITE or DB2
 db_host = localhost
 db_port = 3306
 db_username = robin
