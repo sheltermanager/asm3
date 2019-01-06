@@ -217,7 +217,7 @@ class PetRescuePublisher(AbstractPublisher):
                 url = PETRESCUE_URL + "listings"
                 jsondata = utils.json(data)
                 self.log("Sending POST to %s to create/update listing: %s" % (url, jsondata))
-                r = utils.post_json(url, utils.decode_html(jsondata).encode("utf-8"), headers=headers)
+                r = utils.post_json(url, jsondata, headers=headers)
 
                 if r["status"] != 200:
                     self.logError("HTTP %d, headers: %s, response: %s" % (r["status"], r["headers"], r["response"]))

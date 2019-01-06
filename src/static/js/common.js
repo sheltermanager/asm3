@@ -977,7 +977,9 @@
                 "#person": "personchooser",
                 "#retailer": "personchooser",
                 "#dialog-": "dialog",
-                "#emailform": "emailform"
+                "#emailform": "emailform",
+                "#sql": "sqleditor",
+                "#html": "htmleditor"
             };
             if (!type) {
                 $.each(types, function(k, v) {
