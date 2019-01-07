@@ -21,7 +21,7 @@ PUBLISHER_LIST["html"] = {
 PUBLISHER_LIST["ap"] = {
     "label":    "Publish to AdoptAPet.com",
     "class":    publishers.adoptapet.AdoptAPetPublisher,
-    "locales":  "en en_CA en_MX es_MX"
+    "locales":  "en en_CA fr_CA en_MX es_MX"
 }
 PUBLISHER_LIST["hlp"] = {
     "label":    "Publish to HelpingLostPets.com",
