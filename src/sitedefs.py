@@ -79,7 +79,7 @@ LOCALE = get_string("locale", "en")
 
 # The timezone offset to use before one has been configured
 # in the database (+/- server clock offset, NOT UTC)
-TIMEZONE = get_string("timezone", 0)
+TIMEZONE = get_integer("timezone", 0)
 
 # Where ASM directs log output to, one of:
 # stderr  - the standard error stream
