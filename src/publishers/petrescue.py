@@ -49,6 +49,34 @@ class PetRescuePublisher(AbstractPublisher):
         self.log("'%s' is not a valid PetRescue breed, using default '%s'" % (bname, default_breed))
         return default_breed
 
+    def utf8_to_ascii(self, s):
+        """
+        PR return their responses as UTF8.
+        """
+        return utils.encode_html(s.decode("utf-8"))
+
+    def replace_html_entities(self, s):
+        """
+        Replaces well known HTML entities with ASCII characters (mainly aimed at smartquotes)
+        """
+        ENTITIES = {
+            "8211": "-", # endash
+            "8212": "--", # emdash
+            "8216": "'", # left single quote
+            "8217": "'", # right single quote
+            "8218": ",", # single low quote (comma)
+            "8220": "\"", # left double quotes
+            "8221": "\"", # right double quotes
+            "8222": ",,", # double low quote (comma comma)
+            "8226": "*", # bullet
+            "8230": "...", # ellipsis
+            "8242": "'", # prime (stopwatch)
+            "8243": "\"", # double prime
+        }
+        for k, v in ENTITIES.iteritems():
+            s = s.replace("&#" + k + ";", v)
+        return s
+
     def run(self):
         
         self.log("PetRescuePublisher starting...")
@@ -179,7 +207,7 @@ class PetRescuePublisher(AbstractPublisher):
                     "mix":                      an.CROSSBREED == 1, # true | false
                     "date_of_birth":            i18n.format_date("%Y-%m-%d", an.DATEOFBIRTH), # iso
                     "gender":                   an.SEXNAME.lower(), # male | female
-                    "personality":              an.WEBSITEMEDIANOTES, # 20-4000 chars of free type
+                    "personality":              self.replace_html_entities(an.WEBSITEMEDIANOTES), # 20-4000 chars of free type
                     "best_feature":             best_feature, # 25 chars free type, defaults to "Looking for love" requires BESTFEATURE additional field
                     "location_postcode":        location_postcode, # shelter/fosterer postcode
                     "location_state_abbr":      location_state_abbr, # shelter/fosterer state
@@ -220,9 +248,9 @@ class PetRescuePublisher(AbstractPublisher):
                 r = utils.post_json(url, jsondata, headers=headers)
 
                 if r["status"] != 200:
-                    self.logError("HTTP %d, headers: %s, response: %s" % (r["status"], r["headers"], r["response"]))
+                    self.logError("HTTP %d, headers: %s, response: %s" % (r["status"], r["headers"], self.utf8_to_ascii(r["response"])))
                 else:
-                    self.log("HTTP %d, headers: %s, response: %s" % (r["status"], r["headers"], r["response"]))
+                    self.log("HTTP %d, headers: %s, response: %s" % (r["status"], r["headers"], self.utf8_to_ascii(r["response"])))
                     self.logSuccess("Processed: %s: %s (%d of %d)" % ( an["SHELTERCODE"], an["ANIMALNAME"], anCount, len(animals)))
                     processed.append(an)
 
@@ -263,13 +291,13 @@ class PetRescuePublisher(AbstractPublisher):
                 r = utils.patch_json(url, jsondata, headers=headers)
 
                 if r["status"] == 200:
-                    self.log("HTTP %d, headers: %s, response: %s" % (r["status"], r["headers"], r["response"]))
+                    self.log("HTTP %d, headers: %s, response: %s" % (r["status"], r["headers"], self.utf8_to_ascii(r["response"])))
                     self.logSuccess("%s - %s: Marked with new status %s" % (an.SHELTERCODE, an.ANIMALNAME, status))
                     # It used to be that we updated animalpublished for this animal to get sentdate to today
                     # we don't do this now so that we'll update dead listings every day for however many days we
                     # look back, but that's it
                 else:
-                    self.logError("HTTP %d, headers: %s, response: %s" % (r["status"], r["headers"], r["response"]))
+                    self.logError("HTTP %d, headers: %s, response: %s" % (r["status"], r["headers"], self.utf8_to_ascii(r["response"])))
 
             except Exception as err:
                 self.logError("Failed closing listing for %s - %s: %s" % (an.SHELTERCODE, an.ANIMALNAME, err), sys.exc_info())
