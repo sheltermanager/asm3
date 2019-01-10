@@ -1,10 +1,10 @@
-Non-Neutered/Spayed Adopted Animals 
+Non-Neutered/Spayed Transferred Animals 
 ###
 Auditing
 ###
 Any
 ###
-Adopted animals who have not been neutered/spayed.
+Transferred animals who have not been neutered/spayed.
 ###
 en
 ###
@@ -18,8 +18,8 @@ INNER JOIN internallocation i ON i.ID = a.ShelterLocation
 INNER JOIN lksex s ON s.ID = a.Sex
 INNER JOIN adoption ad ON a.ActiveMovementID = ad.ID
 INNER JOIN owner o ON o.ID = ad.OwnerID
-WHERE a.Neutered = 0 AND DeceasedDate Is Null AND ad.MovementType = 1 
-AND ad.MovementDate >= '$ASK DATE Adopted between$' AND ad.MovementDate <= '$ASK DATE and$'
+WHERE a.Neutered = 0 AND DeceasedDate Is Null AND ad.MovementType = 3 
+AND ad.MovementDate >= '$ASK DATE Transferred between$' AND ad.MovementDate <= '$ASK DATE and$'
 ORDER BY ad.MovementDate, t.AnimalType, a.AnimalName
 ###
 $$HEADER
@@ -31,8 +31,8 @@ $$HEADER
 <th>Type</th>
 <th>Sex</th>
 <th>Age</th>
-<th>Adopted</th>
-<th>By</th>
+<th>Transferred</th>
+<th>To</th>
 </tr>
 HEADER$$
 
