@@ -970,8 +970,8 @@ SELECT
 (SELECT ItemValue FROM configuration WHERE ItemName = 'Organisation') AS "Organization / Location Info",
 replace('$@from$', '-', '/') || ' to ' || replace('$@to$', '-', '/') AS "Report Date Range",
 to_char(current_date, 'MM/DD/YYYY') AS "Report Run Date",
-extract(YEAR FROM DATE '$@from$') AS "Record Year",
-extract(MONTH FROM DATE '$@from$') AS "Record Month",
+extract(YEAR FROM DATE '$@from$')::integer AS "Record Year",
+extract(MONTH FROM DATE '$@from$')::integer AS "Record Month",
 
 (SELECT COUNT(*) FROM animal
 INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
