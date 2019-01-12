@@ -1,6 +1,7 @@
 41
 ================
 
+12/01/19 Grey out deceased animals in movement books/tabs #546
 12/01/19 Use autocomplete="new-password" to work around Chrome autofill on dates
 07/01/19 Enable adoptapet for en_CA fr_CA #543
 04/01/19 Advanced person/animal search for flags should include terminator

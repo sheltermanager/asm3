@@ -99,6 +99,10 @@ $(function() {
                     if (row.MOVEMENTTYPE > 0 && row.RETURNDATE && format.date_js(row.RETURNDATE) <= new Date()) {
                         return true;
                     }
+                    // If the animal is deceased
+                    if (row.DECEASEDDATE) {
+                        return true;
+                    }
                 },
                 columns: [
                     { field: "MOVEMENTNAME", display: _("Type") }, 
