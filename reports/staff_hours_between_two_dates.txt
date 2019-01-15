@@ -21,7 +21,7 @@ INNER JOIN lksrotatype rt ON rt.ID = ort.RotaTypeID
 INNER JOIN lkworktype wt ON wt.ID = ort.WorkTypeID
 WHERE ort.StartDateTime >= '$@from$' AND ort.EndDateTime <= '$@to$ 23:59:59'
 AND ort.RotaTypeID < 10
-ORDER BY o.OwnerName, ort.StartDateTime
+ORDER BY o.OwnerName, rt.RotaType, ort.StartDateTime
 ###
 $$HEADER
 HEADER$$
