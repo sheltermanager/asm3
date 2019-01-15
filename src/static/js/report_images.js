@@ -14,7 +14,7 @@ $(function() {
                 columns: 1,
                 width: 550,
                 fields: [
-                    { post_field: "filechooser", label: _("Image file"), type: "file" }
+                    { post_field: "filechooser", label: _("Image file"), type: "file", validation: "notblank" }
                 ]
             };
 
