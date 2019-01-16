@@ -728,12 +728,13 @@ class AbstractPublisher(threading.Thread):
         if self.tempPublishDir:
             shutil.rmtree(self.publishDir, True)
 
-    def getDescription(self, an, crToBr = False, crToHE = False):
+    def getDescription(self, an, crToBr = False, crToHE = False, crToLF = True):
         """
         Returns the description/bio for an animal.
         an: The animal record
         crToBr: Convert line breaks to <br /> tags
         crToHE: Convert line breaks to html entity &#10;
+        crToLF: Convert line breaks to LF
         """
         # Note: WEBSITEMEDIANOTES becomes ANIMALCOMMENTS in get_animal_data when publisher_use_comments is on
         notes = utils.nulltostr(an["WEBSITEMEDIANOTES"])
@@ -745,10 +746,9 @@ class AbstractPublisher(threading.Thread):
             notes += sig
         # Escape carriage returns
         cr = ""
-        if crToBr: 
-            cr = "<br />"
-        if crToHE:
-            cr = "&#10;"
+        if crToBr: cr = "<br />"
+        elif crToHE: cr = "&#10;"
+        elif crToLF: cr = "\n"
         notes = notes.replace("\r\n", cr)
         notes = notes.replace("\r", cr)
         notes = notes.replace("\n", cr)

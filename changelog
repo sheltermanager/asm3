@@ -1,6 +1,7 @@
 41
 ================
 
+16/01/19 Default escaping of line breaks for publishers is LF
 15/01/19 Do bio processing for PetRescue
 12/01/19 Grey out deceased animals in movement books/tabs #546
 12/01/19 Use autocomplete="new-password" to work around Chrome autofill on dates
