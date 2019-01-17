@@ -228,4 +228,34 @@ everything imported after the 1st January, 2017::
     DELETE FROM ownerdonation WHERE CreatedBy = 'import' AND CreatedDate > '2017-01-01';
     DELETE FROM ownerlicence WHERE CreatedBy = 'import' AND CreatedDate > '2017-01-01';
 
+How do I export my data to shelteranimalscount.org?
+---------------------------------------------------
+
+There's a special report that will export your monthly figures to shelteranimalscount.org
+for upload via their CSV import tool.
+
+To install it, open the reports menu:
+
+.. image:: images/sac_1_reports.png
+
+Use the "Browse sheltermanager.com" button to install new reports. Enter part of the
+name in the search box at the top of the title column, select the report you wish 
+to install by ticking the box to the left of it and clicking the "Install" button.
+
+.. image:: images/sac_2_install.png
+
+Once installed, use the Export Reports as CSV option to run the report:
+
+.. image:: images/sac_3_export.png
+
+Click its name in the list:
+
+.. image:: images/sac_4_run.png
+
+Finally, enter the start and end dates of the calendar month that you'd like to 
+generate the figures for.
+
+.. image:: images/sac_5_calendarmonth.png
+
+.. note:: The report will only work correctly for one calendar month. Run the report multiple times for multiple months.
 

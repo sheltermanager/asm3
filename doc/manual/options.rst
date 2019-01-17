@@ -302,7 +302,7 @@ policies instigated as part of data protection compliance.
 
 .. warning:: Once deleted, documents are gone forever and cannot be recovered.
 
-*  Show GDPR Contact Opt-In field on person screens: If this option is on, the
+* Show GDPR Contact Opt-In field on person screens: If this option is on, the
   system will show a contact opt-in field on person records. You can use it to
   specify which forms of communication a person prefers. When saving the
   record, if "Email" is not in the list of preferred communication methods, the
@@ -550,8 +550,11 @@ Medical
 * Send a weekly email to fosterers with medical information about their
   animals: If set, an email will be sent to all active fosterers containing
   info of overdue medications and medications that fall due in the coming week.
-  The email is sent as part of the overnight batch if the day is the first of
-  the week (Monday).
+  The email is sent as part of the overnight batch, early on Monday mornings.
+
+  An example of the email fosterers will receive looks like this:
+
+.. image:: images/fosterer_email.png
 
 Movements
 ---------
