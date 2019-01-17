@@ -279,19 +279,19 @@ $(function() {
                             grplink = "animal_find_results?logicallocation=adoptable";
                         }
                         if (a.ADOPTIONSTATUS == _("Not For Adoption")) {
-                            grplink = "animal_find_results?logicallocation=notforadoption";
+                            grplink = "animal_find_results?logicallocation=onshelter&flags=notforadoption";
                         }
                         if (a.ADOPTIONSTATUS == _("Reserved")) {
                             grplink = "move_book_reservation";
                         }
                         if (a.ADOPTIONSTATUS == _("Cruelty Case")) {
-                            grplink = "animal_find_results?logicallocation=onshelter&showcrueltycaseonly=on";
+                            grplink = "animal_find_results?logicallocation=onshelter&flags=crueltycase";
                         }
                         if (a.ADOPTIONSTATUS == _("Hold")) {
                             grplink = "animal_find_results?logicallocation=hold";
                         }
                         if (a.ADOPTIONSTATUS == _("Quarantine")) {
-                            grplink = "animal_find_results?logicallocation=quarantine";
+                            grplink = "animal_find_results?logicallocation=onshelter&flags=quarantine";
                         }
                     }
                     if (groupfield == "CURRENTOWNERNAME" && a.CURRENTOWNERID) {
