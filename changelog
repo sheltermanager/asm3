@@ -1,6 +1,7 @@
 41
 ================
 
+18/01/19 Allow identibase to send with blank implant date
 17/01/19 Fix bugs in linking to find results from shelterview status
 16/01/19 Default escaping of line breaks for publishers is LF
 15/01/19 Do bio processing for PetRescue

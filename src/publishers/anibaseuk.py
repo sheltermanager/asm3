@@ -95,14 +95,17 @@ class AnibaseUKPublisher(AbstractPublisher):
                     self.logError("Postal code for the new owner is blank, cannot process")
                     continue
 
-                if an["IDENTICHIPDATE"] is None:
-                    self.logError("Microchip date cannot be blank, cannot process")
-                    continue
+                #if an["IDENTICHIPDATE"] is None:
+                #    self.logError("Microchip date cannot be blank, cannot process")
+                #    continue
 
                 # Make sure the length is actually suitable
                 if not len(an["IDENTICHIPNUMBER"]) in (9, 10, 15):
                     self.logError("Microchip length is not 9, 10 or 15, cannot process")
                     continue
+
+                implantdate = ""
+                if an["IDENTICHIPDATE"] is not None: implantdate = i18n.format_date("%m/%d/%Y", an["IDENTICHIPDATE"])
 
                 # Construct the XML document
                 x = '<?xml version="1.0" encoding="UTF-8"?>\n' \
@@ -145,7 +148,7 @@ class AnibaseUKPublisher(AbstractPublisher):
                     '</PetDetails>' \
                     '<MicrochipDetails>' \
                     '  <MicrochipNumber>' + xe(an["IDENTICHIPNUMBER"]) + '</MicrochipNumber>' \
-                    '  <ImplantDate>' + i18n.format_date("%m/%d/%Y", an["IDENTICHIPDATE"]) + '</ImplantDate>' \
+                    '  <ImplantDate>' + implantdate + '</ImplantDate>' \
                     '  <ImplanterName>' + xe(an["CREATEDBY"]) + '</ImplanterName>' \
                     '</MicrochipDetails>' \
                     '<ThirdPartyDisclosure>true</ThirdPartyDisclosure>' \
