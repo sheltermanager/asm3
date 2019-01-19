@@ -92,6 +92,7 @@ class FoundAnimalsPublisher(FTPPublisher):
                     continue
 
                 servicedate = an["ACTIVEMOVEMENTDATE"] or an["MOSTRECENTENTRYDATE"]
+                if an["NONSHELTERANIMAL"] == 1: servicedate = an["IDENTICHIPDATE"]
                 if servicedate < self.dbo.today(offset=-365*3):
                     self.logError("Service date is older than 3 years, ignoring")
                     continue
