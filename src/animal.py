@@ -2811,7 +2811,9 @@ def merge_animal(dbo, username, animalid, mergeanimalid):
 
     def reparent(table, field, linktypefield = "", linktype = -1):
         try:
-            if linktype >= 0:
+            if table == "media":
+                dbo.execute("UPDATE media SET LinkID=?, WebsitePhoto=0, WebsiteVideo=0, DocPhoto=0 WHERE LinkID=? AND LinkTypeID=?", (animalid, mergeanimalid, linktype))
+            elif linktype >= 0:
                 dbo.execute("UPDATE %s SET %s = %d WHERE %s = %d AND %s = %d" % (table, field, animalid, field, mergeanimalid, linktypefield, linktype))
             else:
                 dbo.execute("UPDATE %s SET %s = %d WHERE %s = %d" % (table, field, animalid, field, mergeanimalid))
