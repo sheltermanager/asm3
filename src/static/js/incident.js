@@ -132,6 +132,10 @@ $(function() {
                 '<input type="text" id="dispatchpostcode" data-json="DISPATCHPOSTCODE" data-post="dispatchpostcode" class="asm-textbox" />',
                 '</td>',
                 '</tr>',
+                '<tr id="dispatchlatlongrow">',
+                '<td></td>',
+                '<td><input type="text" class="asm-textbox" id="dispatchlatlong" data-json="DISPATCHLATLONG" data-post="dispatchlatlong" /></td>',
+                '</tr>',
                 '<tr>',
                 '<td><label for="pickuplocation">' + _("Pickup Location") + '</label></td>',
                 '<td><select id="pickuplocation" data-json="PICKUPLOCATIONID" data-post="pickuplocation" class="asm-selectbox">',
@@ -358,6 +362,8 @@ $(function() {
 
             // Hide the site chooser if multi-site is off
             $("#siterow").toggle( config.bool("MultiSiteEnabled") );
+            
+            $("#dispatchlatlongrow").toggle( config.bool("ShowLatLong") );
 
             // Hide the view roles controls if incident permissions are off
             if (!config.bool("IncidentPermissions")) {
