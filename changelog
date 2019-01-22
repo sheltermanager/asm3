@@ -1,6 +1,7 @@
 41
 ================
 
+22/01/19 Allow upto 10 animal images in animal_view
 19/01/19 Fix bugs caused by multiple preferred images in merge animal
 19/01/19 Use implant date as service date for non-shelter found registrations
 18/01/19 Allow identibase to send with blank implant date
