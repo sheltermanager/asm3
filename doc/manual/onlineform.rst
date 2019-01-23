@@ -84,6 +84,12 @@ more comma separated email addresses, the submission will also be emailed to
 these extra addresses. This can be useful to have form values trigger hidden
 values to send submissions to other addresses.
 
+If you have a field where the name prefix is "additionalX", the system will
+look for an additional field called X and store the submission value in it
+when creating a person record. It will only work for new person records created
+from the form submission and not if the form updates an existing person record
+to prevent overwriting data.
+
 .. image:: images/onlineform_incoming.png
 
 Selecting a form allows you to intelligently create or attach records from the

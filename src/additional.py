@@ -193,12 +193,15 @@ def save_values_for_link(dbo, post, linkid, linktype = "animal"):
     """
     Saves incoming additional field values from a form, clearing any
     existing values first.
+    Keys of either a.MANDATORY.ID can be used (ASM internal forms)
+        or keys of the form additionalFIELDNAME (ASM online forms)
     """
     delete_values_for_link(dbo, linkid, linktype)
     af = get_field_definitions(dbo, linktype)
     l = dbo.locale
     for f in af:
         key = "a.%s.%s" % (f.mandatory, f.id)
+        if key not in post: key = "additional%s" % f.fieldname
         if key in post:
             val = post[key]
             if f.fieldtype == YESNO:

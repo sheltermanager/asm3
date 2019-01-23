@@ -852,6 +852,7 @@ def create_person(dbo, username, collationid):
         if f.FIELDNAME == "excludefrombulkemail" and f.VALUE != "" and f.VALUE != i18n._("No", l): d["excludefrombulkemail"] = "on"
         if f.FIELDNAME == "gdprcontactoptin": d["gdprcontactoptin"] = f.VALUE
         if f.FIELDNAME.startswith("reserveanimalname"): d[f.FIELDNAME] = f.VALUE
+        if f.FIELDNAME.startswith("additional"): d[f.FIELDNAME] = f.VALUE
         if f.FIELDNAME == "formreceived" and f.VALUE.find(" ") != -1: 
             recdate, rectime = f.VALUE.split(" ")
             formreceived = i18n.parse_time( i18n.display2python(l, recdate), rectime )
@@ -869,6 +870,9 @@ def create_person(dbo, username, collationid):
             personid = similar[0].ID
             # Merge flags and any extra details
             person.merge_flags(dbo, username, personid, flags)
+            # NOTE: Do not do this in future - delete_values_for_link is called so even if you only wanted
+            # to update fields present in the form, this call will delete ALL of them.
+            # additional.save_values_for_link(dbo, utils.PostedData(d, dbo.locale), personid, "person")
             if "gdprcontactoptin" in d: person.merge_gdpr_flags(dbo, "import", personid, d["gdprcontactoptin"])
             person.merge_person_details(dbo, username, personid, d)
     # Create the person record if we didn't find one
