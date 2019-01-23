@@ -213,6 +213,7 @@ def get_onlineform_html(dbo, formid, completedocument = True):
         elif f.FIELDTYPE == FIELDTYPE_GDPR_CONTACT_OPTIN:
             h.append('<input type="hidden" name="%s" value="" />' % html.escape(fname))
             h.append('<select class="asm-onlineform-gdprcontactoptin asm-onlineform-lookupmulti" multiple="multiple" data-name="%s" data-required="%s" title="%s">' % ( html.escape(fname), utils.iif(required != "", "required", ""), utils.nulltostr(f.TOOLTIP)))
+            h.append('<option value="declined">%s</option>' % i18n._("Declined", l))
             h.append('<option value="email">%s</option>' % i18n._("Email", l))
             h.append('<option value="post">%s</option>' % i18n._("Post", l))
             h.append('<option value="sms">%s</option>' % i18n._("SMS", l))
