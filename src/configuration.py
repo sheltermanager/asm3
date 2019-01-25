@@ -45,7 +45,7 @@ QUICKLINKS_SET = {
     34: ("search?q=notforadoption", "", i18n._("Not for adoption")),
     35: ("search?q=onshelter", "asm-icon-animal", i18n._("Shelter animals")),
     36: ("accounts", "asm-icon-accounts", i18n._("Accounts")),
-    37: ("donation_receive", "asm-icon-donation", i18n._("Receive a donation")),
+    37: ("donation_receive", "asm-icon-donation", i18n._("Receive a payment")),
     38: ("move_transfer", "", i18n._("Transfer an animal")),
     39: ("medicalprofile", "", i18n._("Medical profiles")),
     40: ("shelterview", "asm-icon-location", i18n._("Shelter view")),
@@ -63,7 +63,8 @@ QUICKLINKS_SET = {
     52: ("transport", "asm-icon-transport", i18n._("Transport Book")),
     53: ("timeline", "asm-icon-calendar", i18n._("Timeline")),
     54: ("staff_rota", "asm-icon-rota", i18n._("Staff Rota")),
-    55: ("move_reclaim", "", i18n._("Reclaim an animal"))
+    55: ("move_reclaim", "", i18n._("Reclaim an animal")),
+    56: ("donation", "asm-icon-donation", i18n._("Payment book"))
 }
 
 # Default configuration values for unset items. This is so they

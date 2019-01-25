@@ -1,6 +1,9 @@
 41
 ================
 
+25/01/19 Add quicklink for payment book
+25/01/19 Calendar view should include clinic by default
+25/01/19 Quicklink should be "receive a payment" not donation
 23/01/19 Allow additional fields to be set for person records in online forms #410
 22/01/19 Allow upto 10 animal images in animal_view
 19/01/19 Fix bugs caused by multiple preferred images in merge animal

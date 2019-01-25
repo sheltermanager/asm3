@@ -66,7 +66,8 @@ $(function() {
         52: ["transport", "asm-icon-transport", _("Transport Book")],
         53: ["timeline", "asm-icon-calendar", _("Timeline")],
         54: ["staff_rota", "asm-icon-rota", _("Staff Rota")],
-        55: ["move_reclaim", "", _("Reclaim an animal")]
+        55: ["move_reclaim", "", _("Reclaim an animal")],
+        56: ["donation", "asm-icon-donation", _("Payment book")]
     };
 
     /** Functions related to rendering and binding to events for the page
