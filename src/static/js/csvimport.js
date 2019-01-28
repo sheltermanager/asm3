@@ -14,10 +14,11 @@ $(function() {
                     _("Please see the manual for more information.")),
                 '<p>',
                 '<input id="cleartables" name="cleartables" type="checkbox" /> ',
-                '<label for="cleartables">' + _("Clear tables before importing") + '</label>',
+                '<label for="cleartables">' + _("Delete database before importing") + '</label>',
                 '</p>',
                 '<div id="cleartablesexplain" style="display: none">',
-                html.error(_("All existing data in your database will be REMOVED before importing the CSV file. This removal cannot be reversed.")),
+                html.error(_("All existing data and media in your database will be REMOVED before importing the CSV file.") + "<br/>" +
+                    _("This removal is permanent and cannot be reversed, are you absolutely sure you wish to do this?")),
                 '</div>',
                 '<p>',
                 '<input id="createmissinglookups" name="createmissinglookups" type="checkbox" /> ',
