@@ -5,6 +5,7 @@
 # Robin Rawson-Tetley <zanata@sheltermanager.com>, 2016. #zanata
 # IvoD <dimov.ivo@gmail.com>, 2017. #zanata
 # IvoD <dimov.ivo@gmail.com>, 2018. #zanata
+# LuckyHunt <info@luckyhunt.org>, 2018. #zanata
 msgid ""
 msgstr ""
 "Project-Id-Version: ASM3\n"
@@ -13,25 +14,25 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"PO-Revision-Date: 2018-07-03 08:32+0000\n"
-"Last-Translator: IvoD <dimov.ivo@gmail.com>\n"
+"PO-Revision-Date: 2018-09-28 12:28+0000\n"
+"Last-Translator: LuckyHunt <info@luckyhunt.org>\n"
 "Language-Team: Bulgarian <bg@li.org>\n"
 "Language: bg\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Zanata 4.4.5\n"
+"X-Generator: Zanata 4.6.2\n"
 "X-Launchpad-Export-Date: 2015-03-02 05:15+0000\n"
 "X-POOTLE-MTIME: 1463072280.000000\n"
 
 #: options.js
 msgid " days."
-msgstr " дни"
+msgstr " дни."
 
 #: options.js incident_new.js person.js person_find.js clinic_appointment.js
 #: lostfound_find.js log.js waitinglist_results.js person_new.js users.js
 #: incident.js animal_find.js incident_find.js common_personchooser.js
 #: stocklevel.js common.js html.py
 msgid "(all)"
-msgstr "(Всички)"
+msgstr "(всички)"
 
 #: person.js
 msgid "(any)"
@@ -39,7 +40,7 @@ msgstr "(всеки)"
 
 #: person_find.js animal_find.js
 msgid "(anyone)"
-msgstr ""
+msgstr "(някой)"
 
 #: animal.js animal_new.js
 msgid "(available)"
@@ -67,7 +68,7 @@ msgstr "(без промяна)"
 
 #: medical.js test.js vaccination.js
 msgid "(no deduction)"
-msgstr ""
+msgstr "не се допуска"
 
 #: shelterview.js html.py
 msgid "(none)"
@@ -159,7 +160,7 @@ msgstr "Кратка версия на референтният номер"
 
 #: task.js
 msgid "A task is already running."
-msgstr ""
+msgstr "Заявката в момента се обработва"
 
 #: movements.js move_transfer.js move_reclaim.js move_adopt.js move_retailer.js
 #: move_reserve.js move_foster.js
@@ -181,7 +182,7 @@ msgstr "ACO"
 
 #: common_widgets.js
 msgid "AM"
-msgstr ""
+msgstr "АМ"
 
 #: main.js mobile.py html.py
 msgid "ASM"
@@ -231,7 +232,7 @@ msgstr "Тормоз"
 
 #: dbupdate.py
 msgid "Abyssinian"
-msgstr "Abyssinian"
+msgstr "Абисинка"
 
 #: roles.js
 msgid "Access System Menu"
@@ -525,7 +526,7 @@ msgstr "Добави задача в дневника"
 msgid "Add diet"
 msgstr "Добави хранителен режим"
 
-#: reports.js
+#: reports.js document_templates.js
 msgid "Add extra images for use in reports and documents"
 msgstr "Добави допълнителни снимки за употреба в справки и документи"
 
@@ -714,17 +715,21 @@ msgstr "Животно за осиновяване"
 
 #: animal.js
 msgid "Adoptable and published for the first time"
-msgstr ""
+msgstr "Готов за осиновяване и публикуван за първи път"
 
 #: animal_find.js common.js animal.py
 msgid "Adopted"
 msgstr "Осиновен/а"
 
+#: users.js
+msgid "Adopted Animals"
+msgstr ""
+
 #: animal.py
 msgid "Adopted Transferred In {0}"
 msgstr "Осиновено прехвърлено към"
 
-#: users.js publish_options.js dbupdate.py
+#: publish_options.js dbupdate.py
 msgid "Adoption"
 msgstr "Осиновяване"
 
@@ -738,8 +743,9 @@ msgid "Adoption Coordinator and Fosterer"
 msgstr "Координатор осиновявания и приемна грижа"
 
 #: dbupdate.py
+#, fuzzy
 msgid "Adoption Event"
-msgstr ""
+msgstr "Случай на осиновяване"
 
 #: animal.js animal_new.js animal_bulk.js dbupdate.py
 msgid "Adoption Fee"
@@ -888,6 +894,14 @@ msgstr "маламут"
 msgid "Alerts"
 msgstr "Известявания"
 
+#: csvexport.js
+msgid "All Animals"
+msgstr ""
+
+#: csvexport.js
+msgid "All On-Shelter Animals"
+msgstr ""
+
 #: publish_options.js
 msgid "All Publishers"
 msgstr "Всички методи за публикуване"
@@ -914,11 +928,11 @@ msgstr "Всички животни в приюта."
 
 #: search.py
 msgid "All animals where the hold ends today."
-msgstr ""
+msgstr "Всички животни, чието задържане приключва днес"
 
 #: search.py
 msgid "All animals who are currently held in case of reclaim."
-msgstr "Животни, задържани в случай, че собственика си промени мнението"
+msgstr "Животни, задържани в случай на поискване"
 
 #: search.py
 msgid "All animals who are currently quarantined."
@@ -938,7 +952,7 @@ msgstr "Всички животни без чип"
 
 #: search.py
 msgid "All banned owners on file."
-msgstr ""
+msgstr "Всички собственици със забрана в системата"
 
 #: header.js html.py configuration.py
 msgid "All diary notes"
@@ -1022,7 +1036,7 @@ msgstr "Разреши избирането на координатор по о�
 
 #: options.js
 msgid "Allow creation of payments on the Move-Reserve screen"
-msgstr ""
+msgstr "Разреши  създаване на плащане на екрана Премести - Запази"
 
 #: options.js
 msgid "Allow drag and drop to move animals between locations"
@@ -1056,11 +1070,11 @@ msgstr "Азбучен ред Я-А"
 
 #: service.py
 msgid "Already Signed"
-msgstr ""
+msgstr "Вече подписано"
 
 #: movement.py
 msgid "Already fostered to this person."
-msgstr ""
+msgstr "Вече осиновено от този човек"
 
 #: options.js animal_find_results.js animal.js animal_new.js animal_bulk.js
 #: shelterview.js html.py
@@ -1153,6 +1167,8 @@ msgid ""
 "An optional comma separated list of email addresses to send the output of "
 "this report to"
 msgstr ""
+"Списък по избор с имейл адреси,разделени със запетая, на които да се изпрати "
+"резултатът от този отчет към"
 
 #: dbupdate.py
 msgid "Anatolian Shepherd"
@@ -1160,11 +1176,11 @@ msgstr "Кангал"
 
 #: dbupdate.py
 msgid "Angora Rabbit"
-msgstr "Angora Rabbit"
+msgstr "Ангорски заек"
 
 #: move_deceased.js movements.js move_transfer.js search.js
 #: clinic_appointment.js donations.js header_edit_header.js move_reclaim.js
-#: medical.js log_new.js incident.js diarytasks.js move_adopt.js
+#: animal.js medical.js log_new.js incident.js diarytasks.js move_adopt.js
 #: move_retailer.js test.js move_reserve.js licence.js transport.js
 #: onlineform_incoming.js vaccination.js move_foster.js mobile.py reports.py
 #: html.py dbupdate.py
@@ -1182,6 +1198,10 @@ msgstr "Животно '{0}' е успешно отбелязано като п�
 #: donation_receive.js licence_renewal.js licence.js
 msgid "Animal (optional)"
 msgstr "Животно (по желание)"
+
+#: onlineform_incoming.js
+msgid "Animal (via animalname field)"
+msgstr ""
 
 #: dbupdate.py
 msgid "Animal - Additional"
@@ -1241,7 +1261,7 @@ msgstr "Животински категории"
 
 #: options.js
 msgid "Animal Links"
-msgstr ""
+msgstr "Връзки към животни"
 
 #: publish_options.js
 msgid "Animal Name"
@@ -1253,11 +1273,11 @@ msgstr "Избор на животни"
 
 #: main.js mobile.py
 msgid "Animal Shelter Manager"
-msgstr "Animal Shelter Manager"
+msgstr "Управител на приюта"
 
 #: code.py
 msgid "Animal Shelter Manager Login"
-msgstr "Animal Shelter Manager Login"
+msgstr "Управител на приюта влизане"
 
 #: dbupdate.py
 msgid "Animal Sponsorship"
@@ -1273,7 +1293,7 @@ msgstr "Типове животни"
 
 #: dbupdate.py
 msgid "Animal board costs"
-msgstr ""
+msgstr "Разходи за животно на пансион"
 
 #: animal.py
 msgid "Animal cannot be deceased before it was brought to the shelter"
@@ -1286,6 +1306,8 @@ msgstr "Формат на кода на животното"
 #: person.js
 msgid "Animal comments MUST contain this phrase in order to match."
 msgstr ""
+"Този израз трябва да съдържа коментари за животни трябва да съдържа, за да "
+"отговарят на условитя"
 
 #: header.js html.py configuration.py
 msgid "Animal control calendar"
@@ -1339,7 +1361,7 @@ msgstr "Животни на групи"
 
 #: dbupdate.py
 msgid "Animals left in vehicle"
-msgstr "Животно зарязано в кола"
+msgstr "Животно,оставено в кола"
 
 #: search.py
 msgid "Animals matching '{0}'."
@@ -1355,7 +1377,7 @@ msgstr "Годишен"
 
 #: dbupdate.py
 msgid "Annually"
-msgstr "Годишен"
+msgstr "Годишно"
 
 #: person.js
 msgid "Anonymize"
@@ -1388,7 +1410,7 @@ msgstr "Всякакви маркировки и отличителни беле
 
 #: dbupdate.py
 msgid "Appaloosa"
-msgstr "Appaloosa"
+msgstr "Апалуза"
 
 #: dbupdate.py
 msgid "Appenzell Mountain Dog"
@@ -1553,12 +1575,16 @@ msgid ""
 "Automatically return any outstanding foster movements on an animal when it "
 "is adopted"
 msgstr ""
+"Автоматично анулирай всякакви отличителни опити за осиновяване, когато "
+"животното е осиновено"
 
 #: options.js
 msgid ""
 "Automatically return any outstanding foster movements on an animal when it "
 "is transferred"
 msgstr ""
+"Автоматично анулирай всякакви отличителни опити за животно, когато е "
+"преместено"
 
 #: header_edit_header.js common.js
 msgid "Available for adoption"
@@ -1623,7 +1649,7 @@ msgstr "Със забрана"
 
 #: animal_new.js
 msgid "Base Color"
-msgstr "Base Color"
+msgstr "Основен цвят"
 
 #: dbupdate.py
 msgid "Basenji"
@@ -1647,11 +1673,11 @@ msgstr "Бигъл"
 
 #: dbupdate.py
 msgid "Bearded Collie"
-msgstr "Bearded Collie"
+msgstr "Брадато коли"
 
 #: dbupdate.py
 msgid "Beauceron"
-msgstr "Beauceron"
+msgstr "Френска овчарка (босерон)"
 
 #: dbupdate.py
 msgid "Bedlington Terrier"
@@ -1663,7 +1689,7 @@ msgstr "Начало на месеца"
 
 #: dbupdate.py
 msgid "Belgian Hare"
-msgstr "Belgian Hare"
+msgstr "Белгийски заек"
 
 #: dbupdate.py
 msgid "Belgian Shepherd Dog Sheepdog"
@@ -1671,7 +1697,7 @@ msgstr "Белгийско овчарско куче"
 
 #: dbupdate.py
 msgid "Belgian Shepherd Laekenois"
-msgstr "Belgian Shepherd Laekenois"
+msgstr "Белгийска овчарка Лакеноа"
 
 #: dbupdate.py
 msgid "Belgian Shepherd Malinois"
@@ -1683,15 +1709,15 @@ msgstr "Гонче"
 
 #: dbupdate.py
 msgid "Bengal"
-msgstr "Bengal"
+msgstr "Бенгалска котка"
 
 #: dbupdate.py
 msgid "Bernese Mountain Dog"
-msgstr "Bernese Mountain Dog"
+msgstr "Бернско планинско куче"
 
 #: dbupdate.py
 msgid "Beveren"
-msgstr "Beveren"
+msgstr "Беверен"
 
 #: dbupdate.py
 msgid "Bichon Frise"
@@ -1703,7 +1729,7 @@ msgstr "Птица"
 
 #: dbupdate.py
 msgid "Birman"
-msgstr "Birman"
+msgstr "Бирманска котка"
 
 #: dbupdate.py
 msgid "Bite"
@@ -1723,11 +1749,11 @@ msgstr "Черен лабрадор ретривър"
 
 #: dbupdate.py
 msgid "Black Mouth Cur"
-msgstr "Black Mouth Cur"
+msgstr "Черномуцунесто куче"
 
 #: dbupdate.py
 msgid "Black Tortie"
-msgstr "Black Tortie"
+msgstr "Костенуркова котка"
 
 #: dbupdate.py
 msgid "Black and Brindle"
@@ -1751,7 +1777,7 @@ msgstr "Черно и бяло"
 
 #: dbupdate.py
 msgid "Bloodhound"
-msgstr "Bloodhound"
+msgstr "Блъдхаунд"
 
 #: dbupdate.py
 msgid "Blue"
@@ -1759,11 +1785,11 @@ msgstr "Синьо"
 
 #: dbupdate.py
 msgid "Blue Tortie"
-msgstr "Blue Tortie"
+msgstr "Синя костенуркова котка"
 
 #: dbupdate.py
 msgid "Bluetick Coonhound"
-msgstr "Bluetick Coonhound"
+msgstr "Блутик Кунхаунд"
 
 #: dbupdate.py
 msgid "Board and Food"
@@ -1791,11 +1817,11 @@ msgstr "Съобщение"
 
 #: dbupdate.py
 msgid "Bombay"
-msgstr "Bombay"
+msgstr "Бомбайска котка"
 
 #: options.js common.js
 msgid "Bonded"
-msgstr ""
+msgstr "Свързан"
 
 #: animal.js mobile.py
 msgid "Bonded With"
@@ -1811,11 +1837,11 @@ msgstr "Коли"
 
 #: dbupdate.py
 msgid "Border Terrier"
-msgstr "Border Terrier"
+msgstr "Бордър териер"
 
 #: dbupdate.py
 msgid "Bordetella"
-msgstr "Bordetella"
+msgstr "Бордетела"
 
 #: dbupdate.py
 msgid "Born in Shelter"
@@ -1823,7 +1849,7 @@ msgstr "Роден в приюта"
 
 #: animal.py
 msgid "Born on Foster {0}"
-msgstr ""
+msgstr "Роден при приемно семейство"
 
 #: animal.py
 msgid "Born on Shelter {0}"
@@ -1843,7 +1869,7 @@ msgstr "И двете"
 
 #: dbupdate.py
 msgid "Bouvier des Flanders"
-msgstr "Bouvier des Flanders"
+msgstr "Флондърско бувие"
 
 #: dbupdate.py
 msgid "Boxer"
@@ -1851,7 +1877,7 @@ msgstr "Боксер"
 
 #: dbupdate.py
 msgid "Boykin Spaniel"
-msgstr "Boykin Spaniel"
+msgstr "Бойкин шпаньол"
 
 #: lostfound_find_results.js lostfound_new.js onlineform.js
 #: common_animalchooser.js movements.js person.js animal_find_results.js
@@ -1871,7 +1897,7 @@ msgstr "Породи"
 
 #: dbupdate.py
 msgid "Briard"
-msgstr "Briard"
+msgstr "Бриар"
 
 #: dbupdate.py
 msgid "Brindle"
@@ -1887,19 +1913,19 @@ msgstr "Тъмно кафеви ивици и бяло"
 
 #: dbupdate.py
 msgid "Britannia Petite"
-msgstr "Britannia Petite"
+msgstr "Британски малък заек"
 
 #: dbupdate.py
 msgid "British Shorthair"
-msgstr "British Shorthair"
+msgstr "Британска късокосместа котка"
 
 #: dbupdate.py
 msgid "Brittany Spaniel"
-msgstr "Brittany Spaniel"
+msgstr "Бретански шпаньол"
 
 #: dbupdate.py
 msgid "Brotogeris"
-msgstr "Brotogeris"
+msgstr "Бротогерис"
 
 #: animal_find_results.js
 msgid "Brought In"
@@ -1935,11 +1961,11 @@ msgstr ""
 
 #: dbupdate.py
 msgid "Brussels Griffon"
-msgstr "Brussels Griffon"
+msgstr "Брюкселски грифон"
 
 #: dbupdate.py
 msgid "Budgie/Budgerigar"
-msgstr "Budgie/Budgerigar"
+msgstr "Вълнист папагал"
 
 #: roles.js
 msgid "Bulk Complete Diary"
@@ -1959,11 +1985,11 @@ msgstr "Масово приключване на списък с чакащи"
 
 #: medical.js
 msgid "Bulk Regimen"
-msgstr ""
+msgstr "Групов режим"
 
 #: test.js
 msgid "Bulk Test"
-msgstr ""
+msgstr "Групово тестване"
 
 #: transport.js
 msgid "Bulk Transport"
@@ -1987,17 +2013,17 @@ msgstr "булмастиф"
 
 #: dbupdate.py
 msgid "Bunny Rabbit"
-msgstr "Bunny Rabbit"
+msgstr "Заек"
 
 #: dbupdate.py
 msgid "Burmese"
-msgstr "Burmese"
+msgstr "Бурманска котка"
 
 #: dbupdate.py
 msgid "Burmilla"
-msgstr "Burmilla"
+msgstr "Бурмила"
 
-#: diary.js log.js person_investigation.js medical.js
+#: diary.js log.js person_investigation.js medical.js vaccination.js
 msgid "By"
 msgstr "От"
 
@@ -2011,7 +2037,7 @@ msgstr "CSV файл с данни за животни/осиновители"
 
 #: sql.js
 msgid "CSV of animal/medical data"
-msgstr ""
+msgstr "CSV файл с данни за животни/ медицинки данни"
 
 #: sql.js
 msgid "CSV of incident data"
@@ -2023,7 +2049,7 @@ msgstr "CSV файл с данни за лицензите"
 
 #: sql.js
 msgid "CSV of payment data"
-msgstr ""
+msgstr "SCV файл с данни за плащане"
 
 #: sql.js
 msgid "CSV of person data"
@@ -2031,11 +2057,11 @@ msgstr "CSV файл с данни за хора"
 
 #: dbupdate.py
 msgid "Caique"
-msgstr "Caique"
+msgstr "Белокоремни папагали"
 
 #: dbupdate.py
 msgid "Cairn Terrier"
-msgstr "Cairn Terrier"
+msgstr "Кеърнтериер"
 
 #: calendarview.js
 msgid "Calendar View"
@@ -2047,11 +2073,11 @@ msgstr "Календар"
 
 #: dbupdate.py
 msgid "Calico"
-msgstr "Calico"
+msgstr "Трицветна котка"
 
 #: dbupdate.py
 msgid "Californian"
-msgstr "Californian"
+msgstr "Калифорниец"
 
 #: header_edit_header.js
 msgid "Call"
@@ -2075,11 +2101,11 @@ msgstr "Телефон на позвънил"
 
 #: dbupdate.py
 msgid "Camel"
-msgstr "Camel"
+msgstr "Камила"
 
 #: users.js
 msgid "Can Login"
-msgstr ""
+msgstr "Мога ли да се логна"
 
 #: waitinglist.js waitinglist_new.js
 msgid "Can afford donation?"
@@ -2091,21 +2117,21 @@ msgstr "Не може да резервирате животно, което е 
 
 #: dbupdate.py
 msgid "Canaan Dog"
-msgstr "Canaan Dog"
+msgstr "Ханаанско куче"
 
 #: dbupdate.py
 msgid "Canadian Hairless"
-msgstr "Canadian Hairless"
+msgstr "Канадски сфинкс"
 
 #: dbupdate.py
 msgid "Canary"
-msgstr "Canary"
+msgstr "Домашно канарче"
 
 #: report_images.js common_animalchooser.js person.js
-#: common_animalchoosermulti.js clinic_appointment.js main.js roles.js
-#: reports.js medical.js accounts_trx.js person_new.js users.js media.js
-#: document_templates.js common_personchooser.js onlineforms.js test.js
-#: common_widgets.js onlineform_incoming.js common_tableform.js sql.js
+#: common_animalchoosermulti.js clinic_appointment.js main.js animal.js
+#: roles.js reports.js medical.js accounts_trx.js person_new.js users.js
+#: media.js document_templates.js common_personchooser.js onlineforms.js
+#: test.js common_widgets.js onlineform_incoming.js common_tableform.js sql.js
 #: vaccination.js common.js publish_options.js
 msgid "Cancel"
 msgstr "Отмяна"
@@ -2131,7 +2157,7 @@ msgstr ""
 
 #: transport.js dbupdate.py
 msgid "Cancelled"
-msgstr ""
+msgstr "Анулирано"
 
 #: dbupdate.py
 msgid "Cancelled Reservation"
@@ -2143,7 +2169,7 @@ msgstr "кане корсо"
 
 #: dbupdate.py
 msgid "Carolina Dog"
-msgstr "Carolina Dog"
+msgstr "Американско динго"
 
 #: dbupdate.py
 msgid "Cash"
@@ -2155,7 +2181,7 @@ msgstr "Котка"
 
 #: dbupdate.py
 msgid "Catahoula Leopard Dog"
-msgstr "Catahoula Leopard Dog"
+msgstr "Леопардова катахула"
 
 #: move_deceased.js report_export.js animal.js reports.js
 msgid "Category"
@@ -2171,11 +2197,11 @@ msgstr "Котешки клетки"
 
 #: dbupdate.py
 msgid "Cattle Dog"
-msgstr "Cattle Dog"
+msgstr "Пастирско куче"
 
 #: dbupdate.py
 msgid "Cavalier King Charles Spaniel"
-msgstr "Cavalier King Charles Spaniel"
+msgstr "Кавалер Кинг Чарлз шпаньол"
 
 #: html.py
 msgid "Cell"
@@ -2187,8 +2213,8 @@ msgid "Cell Phone"
 msgstr "Мобилен"
 
 #: dbupdate.py
-msgid "Champagne DArgent"
-msgstr "Champagne DArgent"
+msgid "Champagne D'Argent"
+msgstr ""
 
 #: common_tableform.js common.js
 msgid "Change"
@@ -2276,7 +2302,7 @@ msgstr "Редакция на хора"
 
 #: roles.js
 msgid "Change Publishing Options"
-msgstr ""
+msgstr "Промяна на опциите за публикуване"
 
 #: roles.js
 msgid "Change Report"
@@ -2328,7 +2354,7 @@ msgstr "Промени списък с чакащи"
 
 #: medical.js
 msgid "Change date required on selected treatments"
-msgstr ""
+msgstr "Промени датата за избраните лечения"
 
 #: dbupdate.py
 msgid "Changed Mind"
@@ -2360,11 +2386,11 @@ msgstr "Графика (стъпаловидна)"
 
 #: dbupdate.py
 msgid "Chartreux"
-msgstr "Chartreux"
+msgstr "Шартрьо"
 
 #: mobile.py
 msgid "Check"
-msgstr ""
+msgstr "Проверка"
 
 #: mobile.py
 msgid "Check License"
@@ -2384,7 +2410,7 @@ msgstr "Проверено от"
 
 #: dbupdate.py
 msgid "Checkered Giant"
-msgstr "Checkered Giant"
+msgstr "Заек Checkered Giant"
 
 #: dbupdate.py
 msgid "Cheque"
@@ -2396,7 +2422,7 @@ msgstr "Ретривър"
 
 #: dbupdate.py
 msgid "Chicken"
-msgstr "Chicken"
+msgstr "Кокошка"
 
 #: dbupdate.py
 msgid "Chihuahua"
@@ -2408,11 +2434,11 @@ msgstr "Деца"
 
 #: dbupdate.py
 msgid "Chinchilla"
-msgstr "Chinchilla"
+msgstr "Чинчила"
 
 #: dbupdate.py
 msgid "Chinese Crested Dog"
-msgstr "Chinese Crested Dog"
+msgstr "Китайско голо качулато куче"
 
 #: dbupdate.py
 msgid "Chinese Foo Dog"
@@ -2529,11 +2555,11 @@ msgstr "Затвори"
 
 #: dbupdate.py
 msgid "Clumber Spaniel"
-msgstr "Clumber Spaniel"
+msgstr "Кламбър шпаньол"
 
 #: dbupdate.py
 msgid "Clydesdale"
-msgstr "Clydesdale"
+msgstr "Клайдсдейл"
 
 #: html.py
 msgid "Coat"
@@ -2549,15 +2575,15 @@ msgstr "Типове окосмения"
 
 #: dbupdate.py
 msgid "Cockapoo"
-msgstr "Cockapoo"
+msgstr "Кокапу"
 
 #: dbupdate.py
 msgid "Cockatiel"
-msgstr "Cockatiel"
+msgstr "Корела"
 
 #: dbupdate.py
 msgid "Cockatoo"
-msgstr "Cockatoo"
+msgstr "Какаду"
 
 #: dbupdate.py
 msgid "Cocker Spaniel"
@@ -2591,6 +2617,8 @@ msgstr "Цвят"
 msgid ""
 "Color to use when publishing to third party services and adoption sites"
 msgstr ""
+"Цвят за използване когато се публикува към трети страни или сайтове за "
+"осиновяване"
 
 #: lookups.py
 msgid "Colors"
@@ -2605,7 +2633,8 @@ msgid "Columns displayed"
 msgstr "Видими колони"
 
 #: lookups.js
-msgid "Comma separated list of units for this location"
+msgid ""
+"Comma separated list of units for this location, eg: 1,2,3,4,Isolation,Pen 5"
 msgstr ""
 
 #: animal_diet.js person_find_results.js lostfound_new.js movements.js
@@ -2628,7 +2657,7 @@ msgstr "Коментарите съдържат"
 
 #: animal.js
 msgid "Comments copied to web preferred media."
-msgstr "Comments copied to web preferred media."
+msgstr "Коментари копирани към уеб предпочитани медии"
 
 #: dbupdate.py
 msgid "Complaint"
@@ -2718,15 +2747,15 @@ msgstr "Трансформирай резервацията в осиновяв�
 
 #: dbupdate.py
 msgid "Coonhound"
-msgstr "Coonhound"
+msgstr "Кунхаунд"
 
 #: animal.js
 msgid ""
 "Copy animal comments to the notes field of the web preferred media for this "
 "animal"
 msgstr ""
-"Copy animal comments to the notes field of the web preferred media for this "
-"animal"
+"Копирай коментарите за животното от полето за бележки от уеб предпочитани "
+"медии за това животно"
 
 #: media.js
 msgid "Copy from animal comments"
@@ -2746,7 +2775,7 @@ msgstr "Корги"
 
 #: dbupdate.py
 msgid "Cornish Rex"
-msgstr "Cornish Rex"
+msgstr "Корниш рекс"
 
 #: animal_costs.js medical.js test.js stocklevel.js transport.js vaccination.js
 #: medicalprofile.js
@@ -2767,7 +2796,7 @@ msgstr "Видове разходи"
 
 #: animal.py
 msgid "Cost date must be a valid date"
-msgstr "Датата на разхода трабда да е валидна дата"
+msgstr "Датата на разхода трябва да е валидна дата"
 
 #: move_reclaim.js move_adopt.js
 msgid "Cost record"
@@ -2783,19 +2812,23 @@ msgstr "За разходите е нужна дата и сума"
 
 #: dbupdate.py
 msgid "Coton de Tulear"
-msgstr "Coton de Tulear"
+msgstr "Котон де Тулеар"
 
 #: onlineform.py
 msgid "Could not find animal with name '{0}'"
 msgstr "Не може да бъде намерено животно с име '{0}'"
 
+#: options.js
+msgid "Country"
+msgstr ""
+
 #: header_edit_header.js common.js html.py
 msgid "Courtesy Listing"
-msgstr ""
+msgstr "Списък с пожелания"
 
 #: dbupdate.py
 msgid "Cow"
-msgstr "Cow"
+msgstr "Крава"
 
 #: dbupdate.py
 msgid "Cream"
@@ -2901,12 +2934,14 @@ msgstr "Създадено от"
 msgid ""
 "Creating cost and cost types creates matching accounts and transactions"
 msgstr ""
+"Създавайки разходи и видове разходи създава еднакви сметки и транзакции"
 
 #: options.js
 msgid ""
 "Creating payments and payments types creates matching accounts and "
 "transactions"
 msgstr ""
+"Създавайки плащане и видове плащания създава еднакви сметки и транзакции"
 
 #: lostfound_new.js donation_receive.js move_transfer.js incident_new.js
 #: move_reclaim.js waitinglist_new.js log_new.js person_new.js move_adopt.js
@@ -2920,8 +2955,8 @@ msgid "Credit Card"
 msgstr "Кредитна карта"
 
 #: dbupdate.py
-msgid "Creme DArgent"
-msgstr "Creme DArgent"
+msgid "Creme D'Argent"
+msgstr ""
 
 #: reports.py
 msgid "Criteria:"
@@ -2933,7 +2968,7 @@ msgstr "Микс"
 
 #: options.js header_edit_header.js shelterview.js common.js html.py
 msgid "Cruelty Case"
-msgstr "Зло животно"
+msgstr "Случай на жестокост"
 
 #: dbupdate.py
 msgid "Culling"
@@ -2953,7 +2988,7 @@ msgstr "Ветеринар в момента"
 
 #: dbupdate.py
 msgid "Cymric"
-msgstr "Cymric"
+msgstr "Кимрик"
 
 #: dbupdate.py
 msgid "D (Dog)"
@@ -2965,15 +3000,15 @@ msgstr "DD = текущ ден"
 
 #: sql.js
 msgid "DDL dump (DB2)"
-msgstr "DDL dump (DB2)"
+msgstr "DDL дъмп (DB2)"
 
 #: sql.js
 msgid "DDL dump (MySQL)"
-msgstr "DDL dump (MySQL)"
+msgstr "DDL дъмп (MySQL)"
 
 #: sql.js
 msgid "DDL dump (PostgreSQL)"
-msgstr "DDL dump (PostgreSQL)"
+msgstr "DDL дъмп (PostgreSQL)"
 
 #: dbupdate.py
 msgid "DHLPP"
@@ -2986,7 +3021,7 @@ msgstr "НЕ ИЗПОЛЗВАЙ това поле за бележки за то�
 
 #: animal.py
 msgid "DOA {0}"
-msgstr ""
+msgstr "Мъртъв при пристигането"
 
 #: mobile.py
 msgid "DOB"
@@ -3006,7 +3041,7 @@ msgstr "Далматинец"
 
 #: dbupdate.py
 msgid "Dandi Dinmont Terrier"
-msgstr "Dandi Dinmont Terrier"
+msgstr "Данди Динмонт Териер"
 
 #: html.py
 msgid "Data"
@@ -3014,7 +3049,7 @@ msgstr "Данни"
 
 #: options.js
 msgid "Data Protection"
-msgstr ""
+msgstr "Защита на данните"
 
 #: login.js mobile.py
 msgid "Database"
@@ -3066,7 +3101,7 @@ msgstr "Датата и бележките са задължителни."
 
 #: animal.js animal.py
 msgid "Date brought in cannot be blank"
-msgstr "Date brought in cannot be blank"
+msgstr "Датата на приемане не може да е празна"
 
 #: animal.py
 msgid "Date brought in cannot be in the future."
@@ -3154,7 +3189,7 @@ msgstr "Дни в приюта"
 
 #: dbupdate.py
 msgid "Dead On Arrival"
-msgstr "Докаран мъртав"
+msgstr "Докаран мъртъв"
 
 #: dbupdate.py
 msgid "Dead animal"
@@ -3162,7 +3197,7 @@ msgstr "Починало животно"
 
 #: move_deceased.js animal.js
 msgid "Dead on arrival"
-msgstr "Dead on arrival"
+msgstr "Мъртъв при пристигането"
 
 #: animal.js
 msgid "Death"
@@ -3235,7 +3270,7 @@ msgstr "Причина за смъртта по подразбиране"
 
 #: options.js
 msgid "Default Diary Person"
-msgstr ""
+msgstr "Служител по подразбиране"
 
 #: options.js
 msgid "Default Entry Reason"
@@ -3255,15 +3290,15 @@ msgstr "Лог филтър по подразбиране"
 
 #: options.js
 msgid "Default Log Type"
-msgstr ""
+msgstr "Тип лог по подразбиране"
 
 #: options.js
 msgid "Default Payment Method"
-msgstr ""
+msgstr "Метод за плащане по подразбиране"
 
 #: options.js
 msgid "Default Payment Type"
-msgstr ""
+msgstr "Тип плащане по подразбиране"
 
 #: options.js
 msgid "Default Reservation Status"
@@ -3299,7 +3334,7 @@ msgstr "Тип ваксинация по подразбиране"
 
 #: additional.js
 msgid "Default Value"
-msgstr ""
+msgstr "Стойност по подразбиране"
 
 #: options.js
 msgid "Default daily boarding cost"
@@ -3307,11 +3342,11 @@ msgstr "Дневен разход за пансион по подразбира�
 
 #: options.js
 msgid "Default destination account for payments"
-msgstr ""
+msgstr "Сметка за плащане по подразбиране"
 
 #: media.js
 msgid "Default image for documents"
-msgstr "Изображение по подразбиране за документи"
+msgstr "Стандартно изображение  на документи"
 
 #: media.js
 msgid "Default image for this record and the web"
@@ -3319,7 +3354,7 @@ msgstr "Изображение по подразбиране за този за�
 
 #: options.js
 msgid "Default source account for costs"
-msgstr ""
+msgstr "Източник на сметка за разходи по подразбиране"
 
 #: options.js
 msgid "Default to advanced find animal screen"
@@ -3528,7 +3563,7 @@ msgstr "Депозит"
 
 #: donations.js common_widgets.js
 msgid "Deposit Account"
-msgstr ""
+msgstr "Депозитна сметка"
 
 #: traploan.js
 msgid "Deposit Returned"
@@ -3551,7 +3586,7 @@ msgstr "Описанието не може да бъде празно"
 
 #: common_widgets.js
 msgid "Deselect"
-msgstr ""
+msgstr "Отстранено"
 
 #: waitinglist.js header_edit_header.js animal.js incident.js lostfound.js
 msgid "Details"
@@ -3559,7 +3594,7 @@ msgstr "Детайли"
 
 #: dbupdate.py
 msgid "Devon Rex"
-msgstr "Devon Rex"
+msgstr "Девън Рекс"
 
 #: common_tableform.js
 msgid "Dialog title"
@@ -3636,7 +3671,7 @@ msgstr "Задачата в дневника се нуждае от име."
 
 #: header_edit_header.js
 msgid "Did not ask"
-msgstr ""
+msgstr "Не попита"
 
 #: header.js
 msgid "Did you know?"
@@ -3704,11 +3739,15 @@ msgstr "Покажи бутон за търсене от дясната стра
 
 #: dbupdate.py
 msgid "Distemper"
-msgstr "Distemper"
+msgstr "Темпера"
+
+#: common.js
+msgid "Do Not Publish"
+msgstr ""
 
 #: animal_bulk.js common.js
 msgid "Do Not Register Microchip"
-msgstr ""
+msgstr "Не регистрирай микрочипът"
 
 #: options.js
 msgid "Do not show"
@@ -3719,7 +3758,7 @@ msgid "Doberman Pinscher"
 msgstr "Доберман"
 
 #: movements.js person.js waitinglist.js clinic_appointment.js animal.js
-#: incident.js lostfound.js licence.js dbupdate.py
+#: incident.js lostfound.js licence.js transport.js dbupdate.py
 msgid "Document"
 msgstr "Документ"
 
@@ -3739,9 +3778,13 @@ msgstr "Шаблони за документи"
 msgid "Document file"
 msgstr "Документ файл"
 
+#: service.py
+msgid "Document signed"
+msgstr ""
+
 #: code.py
 msgid "Document signing request"
-msgstr ""
+msgstr "Заявка за подпис на документ"
 
 #: html.py
 msgid "Document templates"
@@ -3765,19 +3808,19 @@ msgstr "Кучета"
 
 #: dbupdate.py
 msgid "Dogue de Bordeaux"
-msgstr "Dogue de Bordeaux"
+msgstr "Дог от Бордо"
 
 #: dbupdate.py
 msgid "Domestic Long Hair"
-msgstr "Domestic Long Hair"
+msgstr "Домашна дългокосместа котка"
 
 #: dbupdate.py
 msgid "Domestic Medium Hair"
-msgstr "Domestic Medium Hair"
+msgstr "Домашна среднокосместа котка"
 
 #: dbupdate.py
 msgid "Domestic Short Hair"
-msgstr "Domestic Short Hair"
+msgstr "Домашна късокосместа котка"
 
 #: move_reclaim.js move_adopt.js
 msgid "Don't create a cost record"
@@ -3789,7 +3832,7 @@ msgstr "Не намаляй"
 
 #: dbupdate.py
 msgid "Donated"
-msgstr "Дарение"
+msgstr "Дарено"
 
 #: dbupdate.py
 msgid "Donation"
@@ -3809,11 +3852,11 @@ msgstr "Готово"
 
 #: dbupdate.py
 msgid "Donkey"
-msgstr "Donkey"
+msgstr "Магаре"
 
 #: dbupdate.py
 msgid "Donkey/Mule"
-msgstr "Donkey/Mule"
+msgstr "Магаре/ Муле"
 
 #: person_find_results.js header_edit_header.js onlineforms.js common.js
 #: html.py
@@ -3826,7 +3869,7 @@ msgstr "Доза"
 
 #: dbupdate.py
 msgid "Dove"
-msgstr "Dove"
+msgstr "Гълъб"
 
 #: mailmerge.js
 msgid "Download"
@@ -3843,15 +3886,15 @@ msgstr "Шофьор"
 
 #: document_repository.js media.js
 msgid "Drop files here..."
-msgstr "Drop files here..."
+msgstr "Поставете файловете тук..."
 
 #: transport.js
 msgid "Dropoff"
-msgstr ""
+msgstr "Оставяне"
 
 #: dbupdate.py
 msgid "Duck"
-msgstr "Duck"
+msgstr "Патица"
 
 #: clinic_appointment.js donations.js traploan.js common_widgets.js
 #: citations.js
@@ -3880,31 +3923,31 @@ msgstr "Продължителност"
 
 #: dbupdate.py
 msgid "Dutch"
-msgstr "Dutch"
+msgstr "Холандец"
 
 #: dbupdate.py
 msgid "Dutch Shepherd"
-msgstr "Dutch Shepherd"
+msgstr "Холандско овчарско куче"
 
 #: dbupdate.py
 msgid "Dwarf"
-msgstr "Dwarf"
+msgstr "Джудже"
 
 #: dbupdate.py
 msgid "Dwarf Eared"
-msgstr "Dwarf Eared"
+msgstr "С уши на джудже"
 
 #: options.js
 msgid "E = first letter of animal entry category"
-msgstr ""
+msgstr "Е=първата буква от категорията животни при влизане"
 
 #: options.js
 msgid "EE = first and second letter of animal entry category"
-msgstr ""
+msgstr "ЕЕ=първата и втората буква от категорията животни при влизане"
 
 #: dbupdate.py
 msgid "Eclectus"
-msgstr "Eclectus"
+msgstr "Благороден папагал"
 
 #: common.js
 msgid "Edit"
@@ -4036,7 +4079,7 @@ msgstr "Редактирай медицински профил"
 
 #: medical.js
 msgid "Edit medical regimen"
-msgstr "Промени режим на медикаментои"
+msgstr "Промени режим на медикаменти"
 
 #: movements.js
 msgid "Edit movement"
@@ -4064,7 +4107,7 @@ msgstr "Редактирай горния/долния колонтитул на
 
 #: donations.js
 msgid "Edit payment"
-msgstr ""
+msgstr "Редактирай плащане"
 
 #: reports.js
 msgid "Edit report"
@@ -4136,11 +4179,11 @@ msgstr "Редактиране на {0}"
 
 #: dbupdate.py
 msgid "Egyptian Mau"
-msgstr "Egyptian Mau"
+msgstr "Египетска Мау"
 
 #: dbupdate.py
 msgid "Electricity Bills"
-msgstr "Ток"
+msgstr "Сметки за ток"
 
 #: person_find_results.js options.js person.js waitinglist.js person_find.js
 #: header_edit_header.js waitinglist_results.js animal.js users.js incident.js
@@ -4154,15 +4197,15 @@ msgstr "Е-мейл адрес"
 
 #: media.js
 msgid "Email PDF"
-msgstr "Е-мейл PDF"
+msgstr "Имейл PDF"
 
 #: roles.js
 msgid "Email Person"
-msgstr "Изпращане на е-мейли на хора"
+msgstr "Изпращане на имейли на хора"
 
 #: reports.js
 msgid "Email To"
-msgstr "Изпрати като е-мейл на"
+msgstr "Изпрати като имейл на"
 
 #: media.js
 msgid "Email a copy of the selected HTML documents as PDFs"
@@ -4170,11 +4213,11 @@ msgstr "Изпрати копие на избраните HTML документ�
 
 #: media.js
 msgid "Email a copy of the selected media files"
-msgstr ""
+msgstr "Изпрати имейл с копие от избраните медийни файлове"
 
 #: options.js
 msgid "Email address"
-msgstr "Е-мейл адрес"
+msgstr "Имейл адрес"
 
 #: media.js
 msgid "Email document for electronic signature"
@@ -4189,22 +4232,24 @@ msgid ""
 "Email incoming form submissions to this comma separated list of email "
 "addresses"
 msgstr ""
+"Изпрати с имейл входящите формуляри на разделения със запетайка списък с "
+"имейл адреси"
 
 #: media.js
 msgid "Email media"
-msgstr "Е-мейл"
+msgstr "Имейл"
 
 #: common_widgets.js
 msgid "Email person"
-msgstr "Изпращане на е-мейл"
+msgstr "Изпращане на имейл"
 
 #: options.js
 msgid "Email signature"
-msgstr "Е-мейл подпис"
+msgstr "Имейл подпис"
 
 #: onlineforms.js
 msgid "Email submissions to"
-msgstr ""
+msgstr "Изпращане по имейл на"
 
 #: main.js
 msgid "Email this message to all matching users"
@@ -4217,11 +4262,11 @@ msgstr "Изпрати писмо на това лице"
 #: options.js
 msgid "Email users their diary notes each day"
 msgstr ""
-"Изпрати е-мейл с задачите от дневника на съответните потребители всеки ден"
+"Изпрати имейл с задачите от дневника на съответните потребители всеки ден"
 
 #: dbupdate.py
 msgid "Emu"
-msgstr "Emu"
+msgstr "Ему"
 
 #: publish_options.js
 msgid "Enable FTP uploading"
@@ -4233,7 +4278,7 @@ msgstr "Включи функционалността за счетоводни�
 
 #: options.js
 msgid "Enable location filters"
-msgstr ""
+msgstr "Включи филтрите за местоположение"
 
 #: options.js
 msgid "Enable lost and found functionality"
@@ -4241,7 +4286,7 @@ msgstr "Включи функционалността за изгубени и �
 
 #: options.js
 msgid "Enable multiple sites"
-msgstr ""
+msgstr "Включи множество сайтове"
 
 #: options.js
 msgid "Enable the waiting list functionality"
@@ -4261,11 +4306,11 @@ msgstr "Край на деня"
 
 #: rota.js
 msgid "End Time"
-msgstr "Крайно време"
+msgstr "Приключване"
 
 #: options.js
 msgid "End at"
-msgstr "Свършва с"
+msgstr "Свършва на"
 
 #: reports.js
 msgid "End of month"
@@ -4277,7 +4322,7 @@ msgstr "Края на годината"
 
 #: staff_rota.js
 msgid "Ends"
-msgstr ""
+msgstr "Край"
 
 #: medical.js medicalprofile.js
 msgid "Ends after"
@@ -4293,11 +4338,11 @@ msgstr "Английски кокер спаньол"
 
 #: dbupdate.py
 msgid "English Coonhound"
-msgstr "English Coonhound"
+msgstr "Английски кунхаунд"
 
 #: dbupdate.py
 msgid "English Lop"
-msgstr "English Lop"
+msgstr "Заек английски лоп"
 
 #: dbupdate.py
 msgid "English Pointer"
@@ -4309,19 +4354,19 @@ msgstr "Английски сетер"
 
 #: dbupdate.py
 msgid "English Shepherd"
-msgstr "English Shepherd"
+msgstr "Английска овчарка"
 
 #: dbupdate.py
 msgid "English Spot"
-msgstr "English Spot"
+msgstr "Заек английски спот"
 
 #: dbupdate.py
 msgid "English Springer Spaniel"
-msgstr "English Springer Spaniel"
+msgstr "Английски спрингер шпаньол"
 
 #: dbupdate.py
 msgid "English Toy Spaniel"
-msgstr "English Toy Spaniel"
+msgstr "Кинг Чарлз шпаньол"
 
 #: publish_options.js
 msgid "Entered (newest first)"
@@ -4381,13 +4426,13 @@ msgstr "Въвеждането на 'os' ще ви покаже всички ж�
 
 #: dbupdate.py
 msgid "Entlebucher"
-msgstr "Entlebucher"
+msgstr "Ентлебухер"
 
 #: animal.js
 msgid "Entry"
 msgstr "Запис"
 
-#: options.js animal.js animal_new.js shelterview.js mobile.py
+#: options.js animal.js animal_find.js animal_new.js shelterview.js mobile.py
 msgid "Entry Category"
 msgstr "Категория на приемане"
 
@@ -4397,7 +4442,7 @@ msgstr "Дарение за приемане на куче"
 
 #: animal_find_results.js mobile.py html.py
 msgid "Entry Reason"
-msgstr "Copy text 	 Entry Reason"
+msgstr "Причина за приемане"
 
 #: html.py
 msgid "Entry Reason Category"
@@ -4413,7 +4458,7 @@ msgstr "Причина за вписване"
 
 #: login.js
 msgid "Error contacting server."
-msgstr "Error contacting server."
+msgstr "Грешка при контакт със сървъра"
 
 #: animal_find.js dbupdate.py animal.py
 msgid "Escaped"
@@ -4425,7 +4470,7 @@ msgstr "Избягали {0}"
 
 #: dbupdate.py
 msgid "Eskimo Dog"
-msgstr "Eskimo Dog"
+msgstr "Ескимоско куче"
 
 #: animal.js
 msgid "Estimate"
@@ -4453,7 +4498,7 @@ msgstr "Изключи от масови е-мейли"
 
 #: options.js
 msgid "Exclude new animal photos from publishing"
-msgstr ""
+msgstr "Изключи нови снимки на животни от публикуване"
 
 #: media.js
 msgid "Exclude this image when publishing"
@@ -4473,7 +4518,7 @@ msgstr "Изпълни SQL заявката в полето по-долу"
 
 #: task.js
 msgid "Executing Task"
-msgstr ""
+msgstr "Задачи в изпълнение"
 
 #: sql.js
 msgid "Executing..."
@@ -4481,7 +4526,7 @@ msgstr "Изпълнение..."
 
 #: dbupdate.py
 msgid "Exotic Shorthair"
-msgstr "Exotic Shorthair"
+msgstr "Екзотична късокосместа котка"
 
 #: dbupdate.py
 msgid "Expense"
@@ -4493,7 +4538,7 @@ msgstr "Разход::"
 
 #: dbupdate.py
 msgid "Expenses::Board"
-msgstr ""
+msgstr "Разходи:: Пансион"
 
 #: dbupdate.py
 msgid "Expenses::Electricity"
@@ -4533,11 +4578,11 @@ msgstr "Изтекла"
 
 #: licence.js
 msgid "Expired in the last month"
-msgstr ""
+msgstr "Изтекла миналия месец"
 
 #: licence.js
 msgid "Expired in the last week"
-msgstr ""
+msgstr "Изтекла предната седмица"
 
 #: person.js main.js litters.js person_vouchers.js licence.js vaccination.js
 #: mobile.py
@@ -4546,7 +4591,7 @@ msgstr "Изтича на"
 
 #: person_find_results.js licence_renewal.js stocklevel.js
 msgid "Expiry"
-msgstr "Изтича на"
+msgstr "Изтичане"
 
 #: litters.js
 msgid "Expiry date"
@@ -4586,7 +4631,7 @@ msgstr ""
 "Експортирането на цялата база може да отнеме време и да създаде много голям "
 "файл. Сигурни ли сте?"
 
-#: reports.js
+#: reports.js document_templates.js
 msgid "Extra Images"
 msgstr "Допълнителни изображения"
 
@@ -4596,31 +4641,31 @@ msgstr "Допълнителни изображения"
 
 #: dbupdate.py
 msgid "Extra-Toes Cat (Hemingway Polydactyl)"
-msgstr "Extra-Toes Cat (Hemingway Polydactyl)"
+msgstr "Полидактилна котка (котка на Хемингуей)"
 
 #: dbupdate.py
 msgid "F (Feral Cat)"
-msgstr "Кастрирана котка"
+msgstr "Дива котка"
 
 #: dbupdate.py
 msgid "FECV/FeCoV"
-msgstr "FECV/FeCoV"
+msgstr "Коронавирус"
 
 #: dbupdate.py
 msgid "FIPV"
-msgstr "FIPV"
+msgstr "Котешки имунодефицитен вирус"
 
 #: animal_find_results.js dbupdate.py
 msgid "FIV"
-msgstr "FIV тестван"
+msgstr "Котешки имунодефицитен вирус тестван"
 
 #: html.py
 msgid "FIV Result"
-msgstr "FIV резултат"
+msgstr " Резултат за котешки имунодефицитен вирус"
 
 #: animal_find.js common.js
 msgid "FIV+"
-msgstr "FIV+"
+msgstr "Положителен резултат за котешки имунодефицитен вирус"
 
 #: html.py
 msgid "FIV/L Test Date"
@@ -4632,15 +4677,15 @@ msgstr "FIV/L тестван"
 
 #: animal_find_results.js dbupdate.py
 msgid "FLV"
-msgstr "FLV"
+msgstr "Левкоза при котки"
 
 #: html.py
 msgid "FLV Result"
-msgstr "FLV резултат"
+msgstr " Резултат за левкоза"
 
 #: animal_find.js common.js
 msgid "FLV+"
-msgstr "FLV+"
+msgstr "Положителен резултат за левкоза"
 
 #: publish_options.js
 msgid "FTP hostname"
@@ -4656,7 +4701,7 @@ msgstr "FTP потребител"
 
 #: dbupdate.py
 msgid "FVRCP"
-msgstr "FVRCP"
+msgstr "FVRCP ваксина"
 
 #: animal.js
 msgid "Facebook"
@@ -4668,7 +4713,7 @@ msgstr "Неуспешно изпращане на е-мейл"
 
 #: donation_receive.js
 msgid "Failed to create payment."
-msgstr ""
+msgstr "Инициирането на плащането неуспешно"
 
 #: licence_renewal.js
 msgid "Failed to renew license."
@@ -4676,15 +4721,15 @@ msgstr "Неуспешно подновяване на лиценз."
 
 #: dbupdate.py
 msgid "Fawn"
-msgstr "Fawn"
+msgstr "Светлобежов"
 
 #: dbupdate.py
 msgid "Fawn Tortoiseshell"
-msgstr "Fawn Tortoiseshell"
+msgstr "Светлобежов цвят"
 
 #: dbupdate.py
 msgid "FeLV"
-msgstr "FeLV"
+msgstr "Левкоза при котките"
 
 #: lostfound_find_results.js lostfound_new.js animal_find_results.js
 #: lostfound_find.js lostfound.js html.py
@@ -4713,11 +4758,11 @@ msgstr "Несоциализиран"
 
 #: dbupdate.py
 msgid "Ferret"
-msgstr "Ferret"
+msgstr "Фретка"
 
 #: dbupdate.py
 msgid "Field Spaniel"
-msgstr "Field Spaniel"
+msgstr "Фийлд спаньол"
 
 #: additional.js
 msgid "Field names should not contain spaces."
@@ -4725,13 +4770,13 @@ msgstr "Името на полето не трябва да съдържа ин�
 
 #: dbupdate.py
 msgid "Fila Brasileiro"
-msgstr "Fila Brasileiro"
+msgstr "Фила Бразилейро"
 
 #: media.js dbupdate.py
 msgid "File"
 msgstr "Файл"
 
-#: animal_find.js incident_find.js
+#: csvexport.js animal_find.js incident_find.js
 msgid "Filter"
 msgstr "Филтър"
 
@@ -4741,7 +4786,7 @@ msgstr "Финансов"
 
 #: dbupdate.py
 msgid "Finch"
-msgstr "Finch"
+msgstr "Чинка"
 
 #: animal_find.js
 msgid "Find Animal"
@@ -4777,7 +4822,7 @@ msgstr "Намери изгубено животно"
 
 #: common_personchooser.js
 msgid "Find aco"
-msgstr ""
+msgstr "Намери асо"
 
 #: header.js configuration.py
 msgid "Find an incident"
@@ -4859,7 +4904,7 @@ msgstr "Намери персонал"
 msgid "Find staff/volunteer"
 msgstr "Намери служител/доброволец"
 
-#: person.js
+#: person.js incident.js
 msgid "Find this address on a map"
 msgstr "Намери този адрес на картата"
 
@@ -4877,7 +4922,7 @@ msgstr "Размер на глоба"
 
 #: dbupdate.py
 msgid "Finnish Lapphund"
-msgstr "Finnish Lapphund"
+msgstr "Финландски лапхунд"
 
 #: dbupdate.py
 msgid "Finnish Spitz"
@@ -4914,15 +4959,15 @@ msgstr "Категория"
 
 #: dbupdate.py
 msgid "Flat-coated Retriever"
-msgstr "Flat-coated Retriever"
+msgstr "Гладкокосмест ретривър"
 
 #: dbupdate.py
 msgid "Flemish Giant"
-msgstr "Flemish Giant"
+msgstr "Заек белгийски великан"
 
 #: dbupdate.py
 msgid "Florida White"
-msgstr "Florida White"
+msgstr "Заек Florida White"
 
 #: header_edit_header.js incident_find_results.js
 msgid "Followup"
@@ -4944,7 +4989,7 @@ msgstr "Долен колонтитул"
 msgid "For"
 msgstr "За"
 
-#: common_personchooser.js users.py
+#: common_personchooser.js common.js users.py
 msgid "Forbidden"
 msgstr "Забранен"
 
@@ -4964,7 +5009,7 @@ msgstr "URL адрес на формата"
 msgid "Forms need a name."
 msgstr "Формата се нуждае от име."
 
-#: users.js move_foster.js common.js publish_options.js dbupdate.py
+#: move_foster.js common.js publish_options.js dbupdate.py
 msgid "Foster"
 msgstr "Приемен дом"
 
@@ -5001,6 +5046,14 @@ msgstr "Записът за настаняване е успешно създа�
 msgid "Fostered"
 msgstr "В приемен дом"
 
+#: users.js
+msgid "Fostered Animals"
+msgstr ""
+
+#: movement.py
+msgid "Fostered to {0} since {1}"
+msgstr ""
+
 #: person_find_results.js options.js animal_find_results.js
 #: header_edit_header.js onlineforms.js animal_new.js shelterview.js common.js
 #: html.py
@@ -5009,6 +5062,10 @@ msgstr "Приемен стопанин"
 
 #: options.js shelterview.js
 msgid "Fosterer (Active Only)"
+msgstr "Приемен стопанин (само активни)"
+
+#: movement.py
+msgid "Fosterer Medical Report"
 msgstr ""
 
 #: search.js header_edit_header.js
@@ -5073,7 +5130,7 @@ msgstr "Фокстериер"
 
 #: dbupdate.py
 msgid "Foxhound"
-msgstr "Foxhound"
+msgstr "Фоксхаунд"
 
 #: common.js
 msgid "Fr"
@@ -5085,7 +5142,7 @@ msgstr "Френски булдог"
 
 #: dbupdate.py
 msgid "French-Lop"
-msgstr "French-Lop"
+msgstr "Заек френски лоп"
 
 #: donations.js medical.js medicalprofile.js
 msgid "Frequency"
@@ -5126,19 +5183,19 @@ msgstr "Бъдещи бележки"
 #: onlineform.js person.js person_find.js person_new.js common_personchooser.js
 #: dbupdate.py
 msgid "GDPR Contact Opt-In"
-msgstr ""
+msgstr "Опция за контакт с длъжностно лице по защита на личните данни"
 
 #: dbupdate.py
 msgid "Gaited"
-msgstr "Gaited"
+msgstr "Походка на кон"
 
 #: dbupdate.py
 msgid "Gas Bills"
-msgstr "Гас"
+msgstr "Сметки за газ"
 
 #: dbupdate.py
 msgid "Gecko"
-msgstr "Gecko"
+msgstr "Гекон"
 
 #: dbupdate.py
 msgid "General"
@@ -5174,11 +5231,11 @@ msgstr "Добави документ за това движение"
 
 #: person.js
 msgid "Generate a document from this person"
-msgstr "Генерирай документ за това лице"
+msgstr "Генерирай документ от това лице"
 
 #: waitinglist.js lostfound.js
 msgid "Generate a document from this record"
-msgstr ""
+msgstr "Генерирай документ от този запис"
 
 #: publish_options.js
 msgid "Generate a javascript database for the search page"
@@ -5202,6 +5259,10 @@ msgstr "Генерирай документ от този лиценз"
 
 #: donations.js
 msgid "Generate document from this payment"
+msgstr "Генерирай документ от това плащане"
+
+#: transport.js
+msgid "Generate document from this transport"
 msgstr ""
 
 #: move_gendoc.js
@@ -5222,7 +5283,7 @@ msgstr "Генериран документ '{0}"
 
 #: dbupdate.py
 msgid "Gerbil"
-msgstr "Gerbil"
+msgstr "Песчанка"
 
 #: dbupdate.py
 msgid "German Pinscher"
@@ -5282,7 +5343,7 @@ msgstr "Направена ваксина"
 
 #: dbupdate.py
 msgid "Glen of Imaal Terrier"
-msgstr "Glen of Imaal Terrier"
+msgstr "Глен оф Имаал Териер"
 
 #: batch.js
 msgid "Go"
@@ -5310,7 +5371,7 @@ msgstr ""
 
 #: dbupdate.py
 msgid "Goat"
-msgstr "Goat"
+msgstr "Коза\n"
 
 #: dbupdate.py
 msgid "Golden"
@@ -5322,7 +5383,7 @@ msgstr "Голдън ретривър"
 
 #: dbupdate.py
 msgid "Goldfish"
-msgstr "Goldfish"
+msgstr "Златна рибка"
 
 #: html.py
 msgid "Good With Cats"
@@ -5370,11 +5431,11 @@ msgstr "Google+"
 
 #: dbupdate.py
 msgid "Goose"
-msgstr "Goose"
+msgstr "Гъска"
 
 #: dbupdate.py
 msgid "Gordon Setter"
-msgstr "Gordon Setter"
+msgstr "Шотландски сетер"
 
 #: dbupdate.py
 msgid "Grade"
@@ -5382,15 +5443,15 @@ msgstr "Оценка"
 
 #: dbupdate.py
 msgid "Great Dane"
-msgstr "Great Dane"
+msgstr "Немски дог"
 
 #: dbupdate.py
 msgid "Great Pyrenees"
-msgstr "Great Pyrenees"
+msgstr "Пиренейско планинско куче"
 
 #: dbupdate.py
 msgid "Greater Swiss Mountain Dog"
-msgstr "Greater Swiss Mountain Dog"
+msgstr "Голямо швейцарско планинско куче"
 
 #: dbupdate.py
 msgid "Green"
@@ -5410,15 +5471,15 @@ msgstr "Хрътка"
 
 #: dbupdate.py
 msgid "Guinea Pig"
-msgstr "Guinea Pig"
+msgstr "Морско свинче"
 
 #: dbupdate.py
 msgid "Guinea fowl"
-msgstr "Guinea fowl"
+msgstr "Токачка"
 
 #: giftaid_hmrc_spreadsheet.js
 msgid "HMRC Gift Aid Spreadsheet"
-msgstr ""
+msgstr "Електронна таблица за HMRC Gift Aid"
 
 #: reports.js
 msgid "HTML"
@@ -5438,23 +5499,23 @@ msgstr "Безкосместо"
 
 #: dbupdate.py
 msgid "Half-Yearly"
-msgstr "Полугофие"
+msgstr "Полугодие"
 
 #: dbupdate.py
 msgid "Hamster"
-msgstr "Hamster"
+msgstr "Хамстер"
 
 #: dbupdate.py
 msgid "Harlequin"
-msgstr "Harlequin"
+msgstr "Немски дог с черно-бяла окраска тип \"арлекин\""
 
 #: dbupdate.py
 msgid "Havana"
-msgstr "Havana"
+msgstr "Хавана"
 
 #: dbupdate.py
 msgid "Havanese"
-msgstr "Havanese"
+msgstr "Хаванска болонка"
 
 #: htmltemplates.js reports.js onlineforms.js
 msgid "Header"
@@ -5494,7 +5555,7 @@ msgstr "Дирофилария"
 
 #: dbupdate.py
 msgid "Hedgehog"
-msgstr "Hedgehog"
+msgstr "Таралеж"
 
 #: medical.js medical.py
 msgid "Held"
@@ -5506,7 +5567,7 @@ msgstr "Помощ"
 
 #: dbupdate.py
 msgid "Hepatitis"
-msgstr "Hepatitis"
+msgstr "Хепатит"
 
 #: main.js
 msgid ""
@@ -5542,7 +5603,7 @@ msgstr "Открояване"
 
 #: dbupdate.py
 msgid "Himalayan"
-msgstr "Himalayan"
+msgstr "Хималайска котка"
 
 #: dbupdate.py
 msgid "History"
@@ -5562,13 +5623,13 @@ msgstr "Задръж животното до тази дата или остав
 msgid "Hold until"
 msgstr "Задръж до"
 
-#: common.js
+#: common.js animal.py
 msgid "Hold until {0}"
 msgstr "Задръж до {0}"
 
 #: dbupdate.py
 msgid "Holland Lop"
-msgstr "Holland Lop"
+msgstr "Холандски лоп"
 
 #: header.js mobile.py html.py
 msgid "Home"
@@ -5627,11 +5688,11 @@ msgstr "Кон"
 
 #: dbupdate.py
 msgid "Hotot"
-msgstr "Hotot"
+msgstr "Заек Hotot"
 
 #: dbupdate.py
 msgid "Hound"
-msgstr "Hound"
+msgstr "Ловно куче"
 
 #: common_widgets.js
 msgid "Hours"
@@ -5644,7 +5705,7 @@ msgstr "с хигиенни навици"
 
 #: dbupdate.py
 msgid "Hovawart"
-msgstr "Hovawart"
+msgstr "Ховаварт"
 
 #: waitinglist.js waitinglist_new.js
 msgid "How urgent is it that we take this animal?"
@@ -5674,7 +5735,7 @@ msgstr ""
 
 #: dbupdate.py
 msgid "Ibizan Hound"
-msgstr "Ibizan Hound"
+msgstr "Хрътка от Ибиса"
 
 #: movements.js move_adopt.js
 msgid ""
@@ -5689,6 +5750,8 @@ msgid ""
 "If this form has a populated emailaddress field during submission, send a "
 "confirmation email to it"
 msgstr ""
+"Ако тази форма има множество имейл адреси по време на подаването,изпрати "
+"имейл за потвърждение"
 
 #: media.js
 msgid ""
@@ -5703,6 +5766,8 @@ msgid ""
 "If this person is a fosterer, the maximum number of animals they can care "
 "for."
 msgstr ""
+"Ако това е човек за приемна грижа, за какъв максимален брой животни може да "
+"се грижи"
 
 #: person.js
 msgid "If this person is a member, the date that membership expires."
@@ -5732,8 +5797,8 @@ msgid ""
 "If you assign view or edit roles, only users within those roles will be able "
 "to view and edit this account."
 msgstr ""
-"If you assign view or edit roles, only users within those roles will be able "
-"to view and edit this account."
+"Ако зададате роля Гледай или Редактирай, само потребители, които имат тези "
+"роли могат да гледат или редактират този профил"
 
 #: publish_options.js
 msgid ""
@@ -5745,11 +5810,11 @@ msgstr ""
 
 #: dbupdate.py
 msgid "Iguana"
-msgstr "Iguana"
+msgstr "Игуана"
 
 #: dbupdate.py
 msgid "Illyrian Sheepdog"
-msgstr "Illyrian Sheepdog"
+msgstr "Шарпланинец"
 
 #: animal_find_results.js html.py
 msgid "Image"
@@ -5789,23 +5854,23 @@ msgstr "В междинен тотал"
 
 #: publish_options.js
 msgid "In the last month"
-msgstr ""
+msgstr "През последния месец"
 
 #: publish_options.js
 msgid "In the last quarter"
-msgstr ""
+msgstr "През последното тримесечие"
 
 #: publish_options.js
 msgid "In the last week"
-msgstr ""
+msgstr "През последната седмица"
 
 #: publish_options.js
 msgid "In the last year"
-msgstr ""
+msgstr "През последната година"
 
 #: dbupdate.py
 msgid "In-Kind Donation"
-msgstr ""
+msgstr "Дарение в натура"
 
 #: lookups.js
 msgid "Inactive"
@@ -5910,7 +5975,7 @@ msgstr "Включи животните, за които няма снимки"
 
 #: publish_options.js
 msgid "Include cruelty case animals"
-msgstr "Включи злите животни"
+msgstr "Включи животни, подложени на тормоз"
 
 #: animal_find.js
 msgid "Include deceased animals"
@@ -5931,12 +5996,16 @@ msgstr "Включи, животните маркирани като задър�
 #: options.js
 msgid "Include incomplete medical records when generating document templates"
 msgstr ""
+"Включи недовършена медицинскa документация, когато генерираш шаблони за "
+"документи"
 
 #: options.js
 msgid ""
 "Include incomplete vaccination and test records when generating document "
 "templates"
 msgstr ""
+"Включи недовършена документация за ваксинации и тестове когато генерираш "
+"шаблони за документи "
 
 #: animal_find.js
 msgid "Include non-shelter animals"
@@ -5948,7 +6017,7 @@ msgstr "Включи животни извън приюта в медицинс�
 
 #: csvexport.js
 msgid "Include preferred photo"
-msgstr ""
+msgstr "Включи предпочитана снимка"
 
 #: publish_options.js
 msgid "Include quarantined animals"
@@ -5964,7 +6033,7 @@ msgstr "Включи животни на търговци"
 
 #: lostfound_find.js
 msgid "Include returned"
-msgstr ""
+msgstr "Включи върнат"
 
 #: media.js
 msgid "Include this image when publishing"
@@ -6085,7 +6154,7 @@ msgstr "Номер на застраховка"
 
 #: publish_options.js
 msgid "Intake"
-msgstr ""
+msgstr "Приет"
 
 #: animal.py
 msgid "Intakes {0}"
@@ -6101,11 +6170,11 @@ msgstr "Вътрешни местонахождения"
 
 #: code.py
 msgid "Invalid email address"
-msgstr "Невалиден е-мейл адрес"
+msgstr "Невалиден имейл адрес"
 
 #: common.js
 msgid "Invalid email address '{0}'"
-msgstr ""
+msgstr "Невалиден имейл адрес '{0}'"
 
 #: animal.js lookups.py
 msgid "Invalid microchip number length"
@@ -6137,7 +6206,7 @@ msgstr "Инспектор"
 
 #: dbupdate.py
 msgid "Invoice Only"
-msgstr ""
+msgstr "Само фактура"
 
 #: clinic_invoice.js
 msgid "Invoice items need a description and amount."
@@ -6149,11 +6218,11 @@ msgstr "Ирландски сетер"
 
 #: dbupdate.py
 msgid "Irish Terrier"
-msgstr "Ирландски терире"
+msgstr "Ирландски териер"
 
 #: dbupdate.py
 msgid "Irish Water Spaniel"
-msgstr "Irish Water Spaniel"
+msgstr "Ирландски воден шпаньол"
 
 #: dbupdate.py
 msgid "Irish Wolfhound"
@@ -6173,7 +6242,7 @@ msgstr "Издай нова застрахователна полица за т�
 
 #: financial.py
 msgid "Issue date and expiry date must be valid dates."
-msgstr ""
+msgstr "Датата на издаване и крайната дата трябва да са валидни дати"
 
 #: person_vouchers.js licence_renewal.js licence.js
 msgid "Issued"
@@ -6181,27 +6250,27 @@ msgstr "Издаден"
 
 #: licence.js
 msgid "Issued in the last month"
-msgstr ""
+msgstr "Издаден през последния месец"
 
 #: licence.js
 msgid "Issued in the last week"
-msgstr ""
+msgstr "Издаден през последната седмица"
 
 #: dbupdate.py
 msgid "Italian Greyhound"
-msgstr "Italian Greyhound"
+msgstr "Италиански грейхаунд"
 
 #: dbupdate.py
 msgid "Italian Spinone"
-msgstr "Italian Spinone"
+msgstr "Спиноне Италиано"
 
 #: medical.js test.js vaccination.js
 msgid "Item"
-msgstr ""
+msgstr "Вещ"
 
 #: dbupdate.py
 msgid "Jack Russell Terrier"
-msgstr "Джка ръсел териер"
+msgstr "Джак ръсел териер"
 
 #: calendarview.js clinic_calendar.js common.js
 msgid "Jan"
@@ -6213,7 +6282,7 @@ msgstr "Януари"
 
 #: dbupdate.py
 msgid "Japanese Bobtail"
-msgstr "Japanese Bobtail"
+msgstr "Японски бобтейл"
 
 #: dbupdate.py
 msgid "Japanese Chin"
@@ -6221,15 +6290,15 @@ msgstr "японски хин"
 
 #: dbupdate.py
 msgid "Javanese"
-msgstr "Javanese"
+msgstr "Ориенталска дългокосместа котка"
 
 #: dbupdate.py
 msgid "Jersey Wooly"
-msgstr "Jersey Wooly"
+msgstr " Заек Jersey Wooly"
 
 #: dbupdate.py
 msgid "Jindo"
-msgstr "Jindo"
+msgstr "Джиндо"
 
 #: calendarview.js clinic_calendar.js common.js
 msgid "Jul"
@@ -6275,15 +6344,15 @@ msgstr "Юрисдикции"
 
 #: dbupdate.py
 msgid "Kai Dog"
-msgstr "Kai Dog"
+msgstr "Кай Кен"
 
 #: dbupdate.py
 msgid "Kakariki"
-msgstr "Kakariki"
+msgstr "Какарики"
 
 #: dbupdate.py
 msgid "Karelian Bear Dog"
-msgstr "Karelian Bear Dog"
+msgstr "Карелско мечо куче"
 
 #: options.js
 msgid "Keep table headers visible when scrolling"
@@ -6291,7 +6360,7 @@ msgstr "Запази заглавията на колоните при скро�
 
 #: dbupdate.py
 msgid "Keeshond"
-msgstr "Keeshond"
+msgstr "Вълчи шпиц"
 
 #: dbupdate.py
 msgid "Kennel"
@@ -6299,11 +6368,11 @@ msgstr "Външни клетки"
 
 #: dbupdate.py
 msgid "Kerry Blue Terrier"
-msgstr "Kerry Blue Terrier"
+msgstr "Кери син териер"
 
 #: dbupdate.py
 msgid "Kishu"
-msgstr "Kishu"
+msgstr "Кюшу"
 
 #: animal.py
 msgid "Kittens (under {0} months)"
@@ -6311,23 +6380,23 @@ msgstr "Котета (под {0} месеца)"
 
 #: transport.js
 msgid "Km"
-msgstr ""
+msgstr "Км"
 
 #: dbupdate.py
 msgid "Komondor"
-msgstr "Komondor"
+msgstr "Комондор"
 
 #: dbupdate.py
 msgid "Korat"
-msgstr "Korat"
+msgstr "Корат"
 
 #: dbupdate.py
 msgid "Kuvasz"
-msgstr "Kuvasz"
+msgstr "Кувас"
 
 #: dbupdate.py
 msgid "Kyi Leo"
-msgstr "Kyi Leo"
+msgstr "Куй Лео"
 
 #: onlineform.js additional.js
 msgid "Label"
@@ -6339,11 +6408,11 @@ msgstr "Лабрадор ретривър"
 
 #: dbupdate.py
 msgid "Lakeland Terrier"
-msgstr "Lakeland Terrier"
+msgstr "Лейкланд териер"
 
 #: dbupdate.py
 msgid "Lancashire Heeler"
-msgstr "Lancashire Heeler"
+msgstr "Ланкашир Хилер"
 
 #: dbupdate.py
 msgid "Large"
@@ -6383,11 +6452,11 @@ msgstr "Фамилия, Име"
 
 #: latency.js
 msgid "Latency"
-msgstr ""
+msgstr "Латентност"
 
 #: latency.js
 msgid "Latency Tester"
-msgstr ""
+msgstr "Тестер за латентност"
 
 #: options.js search.py
 msgid "Least recently changed"
@@ -6411,11 +6480,11 @@ msgstr "Напуснало приюта"
 
 #: dbupdate.py
 msgid "Leonberger"
-msgstr "Leonberger"
+msgstr "Леонбергер"
 
 #: dbupdate.py
 msgid "Leptospirosis"
-msgstr "Leptospirosis"
+msgstr "Лептоспироза"
 
 #: mailmerge.js
 msgid "Letter"
@@ -6423,7 +6492,7 @@ msgstr "Писмо"
 
 #: dbupdate.py
 msgid "Lhasa Apso"
-msgstr "Lhasa Apso"
+msgstr "Лхаса Апсо"
 
 #: dbupdate.py
 msgid "Liability"
@@ -6471,7 +6540,7 @@ msgstr "Лицензи"
 
 #: licence.js html.py
 msgid "Licensing"
-msgstr ""
+msgstr "Лицензиране"
 
 #: animal.js html.py
 msgid "Lifetime"
@@ -6483,15 +6552,15 @@ msgstr "Светъл кехлибар"
 
 #: dbupdate.py
 msgid "Lilac"
-msgstr "Lilac"
+msgstr "Люляк"
 
 #: dbupdate.py
 msgid "Lilac Tortie"
-msgstr "Lilac Tortie"
+msgstr "Котка с цвят \"лавандула\""
 
 #: lostfound.py person.py
 msgid "Limited to {0} matches"
-msgstr ""
+msgstr "Ограничено до {0} съвпадения"
 
 #: additional.js diary.js incident.js onlineform_incoming.js mobile.py
 msgid "Link"
@@ -6499,7 +6568,7 @@ msgstr "Връзка"
 
 #: incident.js
 msgid "Link an animal"
-msgstr ""
+msgstr "Задай връзка на животно"
 
 #: media.js
 msgid "Link to an external web resource"
@@ -6507,7 +6576,7 @@ msgstr "Линк към външен уеб ресурс"
 
 #: animal.js
 msgid "Link to this animal"
-msgstr ""
+msgstr "Връзка към това животно"
 
 #: header_edit_header.js mobile.py
 msgid "Links"
@@ -6515,7 +6584,7 @@ msgstr "Връзки"
 
 #: calendarview.js clinic_calendar.js
 msgid "List"
-msgstr ""
+msgstr "Списък"
 
 #: animal.js medical.js animal_find.js test.js animal_new.js animal_bulk.js
 #: vaccination.js reports.py html.py
@@ -6542,6 +6611,10 @@ msgstr "Кучила"
 msgid "Litters need at least a required date and number."
 msgstr "Кучилата имат нужда от поне дата и номер"
 
+#: animal.py
+msgid "Live Releases {0}"
+msgstr "Излъчвания на живо {0}"
+
 #: dbupdate.py
 msgid "Liver"
 msgstr "Червеникаво кафяв"
@@ -6556,7 +6629,7 @@ msgstr "Гущер"
 
 #: dbupdate.py
 msgid "Llama"
-msgstr "Llama"
+msgstr "Лама"
 
 #: header.js onlineform_incoming.js common.js
 msgid "Loading..."
@@ -6568,7 +6641,7 @@ msgstr "Заем"
 
 #: dbupdate.py
 msgid "Local"
-msgstr ""
+msgstr "Местен"
 
 #: options.js reports.js change_user_settings.js
 msgid "Locale"
@@ -6582,7 +6655,7 @@ msgstr "Местонахождение"
 
 #: users.js
 msgid "Location Filter"
-msgstr ""
+msgstr "Филтър за местонахождение"
 
 #: options.js shelterview.js
 msgid "Location and Species"
@@ -6590,7 +6663,7 @@ msgstr "Местонахождение и вид животно"
 
 #: options.js shelterview.js
 msgid "Location and Type"
-msgstr ""
+msgstr "Местонахождение и вид"
 
 #: options.js shelterview.js
 msgid "Location and Unit"
@@ -6654,7 +6727,7 @@ msgstr "Дълго"
 
 #: options.js common.js
 msgid "Long term"
-msgstr ""
+msgstr "Дългосрочно"
 
 #: options.js code.py
 msgid "Longest On Shelter"
@@ -6674,7 +6747,7 @@ msgstr "Търсене"
 
 #: onlineform.js
 msgid "Lookup (Multiple Select)"
-msgstr ""
+msgstr "Търсене (множество избори)"
 
 #: additional.js
 msgid "Lookup Values"
@@ -6690,11 +6763,11 @@ msgstr "Номенклатури"
 
 #: dbupdate.py
 msgid "Lop Eared"
-msgstr "Lop Eared"
+msgstr "Заек Lop Eared"
 
 #: dbupdate.py
 msgid "Lory/Lorikeet"
-msgstr "Lory/Lorikeet"
+msgstr "Лори/Лорикети"
 
 #: search.js header_edit_header.js
 msgid "Lost"
@@ -6771,7 +6844,7 @@ msgstr ""
 
 #: dbupdate.py
 msgid "Lovebird"
-msgstr "Lovebird"
+msgstr "Неразделки"
 
 #: dbupdate.py
 msgid "Low"
@@ -6779,7 +6852,7 @@ msgstr "Ниска"
 
 #: dbupdate.py
 msgid "Lowchen"
-msgstr "Lowchen"
+msgstr "Лъвско куче"
 
 #: dbupdate.py
 msgid "Lowest"
@@ -6795,7 +6868,7 @@ msgstr "MM = текущият месец"
 
 #: dbupdate.py
 msgid "Macaw"
-msgstr "Macaw"
+msgstr "Ара"
 
 #: html.py
 msgid "Mail"
@@ -6811,7 +6884,7 @@ msgstr "Шаблон за писмо - {0}"
 
 #: dbupdate.py
 msgid "Maine Coon"
-msgstr "Maine Coon"
+msgstr "Мейн Куун"
 
 #: media.js
 msgid "Make this the default image when creating documents"
@@ -6860,9 +6933,9 @@ msgstr "Производител"
 
 #: dbupdate.py
 msgid "Manx"
-msgstr "Manx"
+msgstr "Манкс"
 
-#: person.js reports.js reports.py
+#: person.js reports.js incident.js reports.py
 msgid "Map"
 msgstr "Карта"
 
@@ -6880,7 +6953,7 @@ msgstr "Март"
 
 #: dbupdate.py
 msgid "Maremma Sheepdog"
-msgstr "Maremma Sheepdog"
+msgstr "Маремска овчарка"
 
 #: move_deceased.js
 msgid "Mark Deceased"
@@ -6892,7 +6965,7 @@ msgstr "Отбележи животно като починало"
 
 #: incident.js
 msgid "Mark dispatched now"
-msgstr "Отележи като отзован"
+msgstr "Отбележи като отзован"
 
 #: options.js
 msgid "Mark new animals as not for adoption"
@@ -6904,7 +6977,7 @@ msgstr "Маркирай като отговорен"
 
 #: donations.js
 msgid "Mark selected payments received"
-msgstr ""
+msgstr "Маркирай избраните плащания като получени"
 
 #: move_adopt.js
 msgid "Mark this owner homechecked"
@@ -6912,7 +6985,7 @@ msgstr "Маркирай този собственик като домашно �
 
 #: medical.js
 msgid "Mark treatments given"
-msgstr ""
+msgstr "Маркирай получило лечение"
 
 #: dbupdate.py
 msgid "Marketer"
@@ -6924,7 +6997,7 @@ msgstr "Отличителни белези"
 
 #: onlineform.js
 msgid "Markup"
-msgstr ""
+msgstr "Маркиране"
 
 #: dbupdate.py
 msgid "Marriage/Relationship split"
@@ -6978,7 +7051,7 @@ msgstr "Бележки за мултимедия"
 msgid "Media notes contain"
 msgstr "Бележките за мултимедия съдържат"
 
-#: header_edit_header.js roles.js calendarview.js mobile.py html.py
+#: options.js header_edit_header.js roles.js calendarview.js mobile.py html.py
 msgid "Medical"
 msgstr "Медицински"
 
@@ -7016,11 +7089,11 @@ msgstr ""
 
 #: mobile.py
 msgid "Medicate"
-msgstr "Medicate"
+msgstr "Лекувам"
 
 #: mobile.py
 msgid "Medicate Animal"
-msgstr "Medicate Animal"
+msgstr "Лекувам животно"
 
 #: dbupdate.py
 msgid "Medium"
@@ -7039,7 +7112,7 @@ msgstr "Членството изтича на"
 msgid "Membership Number"
 msgstr "Членски номер"
 
-#: person.js
+#: person.js animal.js
 msgid "Merge"
 msgstr "Обединение"
 
@@ -7047,13 +7120,17 @@ msgstr "Обединение"
 msgid "Merge Person"
 msgstr "Обединение на хора"
 
+#: animal.js
+msgid "Merge another animal into this one"
+msgstr ""
+
 #: person.js
 msgid "Merge another person into this one"
 msgstr "Обедини този човек с друг човек"
 
 #: publish_options.js
 msgid "Merge bonded animals into a single record"
-msgstr ""
+msgstr "Обедини свързани животни в един запис"
 
 #: csvimport.js
 msgid "Merge duplicate records"
@@ -7073,7 +7150,7 @@ msgstr "Съобщениe от {0}"
 
 #: common_widgets.js
 msgid "Message successfully sent to {0}"
-msgstr ""
+msgstr "Съобщението е изпратено успешно на {0}"
 
 #: mobile.py
 msgid "Messages"
@@ -7087,7 +7164,7 @@ msgstr "Съобщенията са успешно изпратени"
 msgid "Method"
 msgstr "Метод"
 
-#: common_animalchooser.js animal_find_results.js
+#: common_animalchooser.js animal_find_results.js header_edit_header.js
 msgid "Microchip"
 msgstr "Микрочип"
 
@@ -7113,15 +7190,15 @@ msgstr "Мили"
 
 #: dbupdate.py
 msgid "Mini Rex"
-msgstr "Mini Rex"
+msgstr "Мини Рекс"
 
 #: dbupdate.py
 msgid "Mini-Lop"
-msgstr "Mini-Lop"
+msgstr "Мини лоп"
 
 #: dbupdate.py
 msgid "Miniature Pinscher"
-msgstr "Miniature Pinscher"
+msgstr "Мини пинчер"
 
 #: common_widgets.js
 msgid "Minutes"
@@ -7129,11 +7206,11 @@ msgstr "Минути"
 
 #: dbupdate.py
 msgid "Missouri Foxtrotter"
-msgstr "Missouri Foxtrotter"
+msgstr "Мисурийски фокстротър"
 
 #: dbupdate.py
 msgid "Mixed Breed"
-msgstr ""
+msgstr "Смесена порода"
 
 #: common.js
 msgid "Mo"
@@ -7141,15 +7218,15 @@ msgstr "Пн"
 
 #: media.js
 msgid "Mobile signing pad"
-msgstr ""
+msgstr "Подложка за мобилни подписи"
 
 #: roles.js
 msgid "Modify Additional Fields"
-msgstr ""
+msgstr "Промени допълнителни полета"
 
 #: roles.js
 msgid "Modify Document Templates"
-msgstr ""
+msgstr "Промени шаблони за документи"
 
 #: roles.js
 msgid "Modify Lookups"
@@ -7181,7 +7258,7 @@ msgstr "Нужна е повече информация"
 
 #: mobile.py
 msgid "More Medications"
-msgstr "More Medications"
+msgstr "Още лекарства"
 
 #: mobile.py
 msgid "More Tests"
@@ -7197,7 +7274,7 @@ msgstr "Още бележки от дневника"
 
 #: dbupdate.py
 msgid "Morgan"
-msgstr "Morgan"
+msgstr "Морган"
 
 #: main.js
 msgid ""
@@ -7229,11 +7306,11 @@ msgstr "Майка"
 
 #: dbupdate.py
 msgid "Mountain Cur"
-msgstr "Mountain Cur"
+msgstr "Маунтин Кър"
 
 #: dbupdate.py
 msgid "Mountain Dog"
-msgstr "Mountain Dog"
+msgstr "Планинско куче"
 
 #: dbupdate.py
 msgid "Mouse"
@@ -7274,7 +7351,7 @@ msgstr "Тип движение"
 
 #: movement.py
 msgid "Movement dates clash with an existing movement."
-msgstr "Movement dates clash with an existing movement."
+msgstr "Датите на движение съвпадат със съществуващо движение"
 
 #: movement.py
 msgid "Movement numbers must be unique."
@@ -7307,7 +7384,7 @@ msgstr "Многократно лечение"
 
 #: dbupdate.py
 msgid "Munchkin"
-msgstr "Munchkin"
+msgstr "Мънчкин"
 
 #: dbupdate.py
 msgid "Munsterlander"
@@ -7315,7 +7392,11 @@ msgstr "Московска стражевая"
 
 #: dbupdate.py
 msgid "Mustang"
-msgstr "Mustang"
+msgstr "Мустанг"
+
+#: users.js
+msgid "My Fosters"
+msgstr ""
 
 #: mobile.py
 msgid "My Incidents"
@@ -7323,7 +7404,7 @@ msgstr "Моите инциденти"
 
 #: mobile.py
 msgid "My Undispatched Incidents"
-msgstr ""
+msgstr "Неразрешени инциденти"
 
 #: header.js html.py configuration.py
 msgid "My diary notes"
@@ -7331,11 +7412,11 @@ msgstr "Моите бележки в дневника"
 
 #: header.js
 msgid "My sheltermanager.com account"
-msgstr ""
+msgstr "Моят sheltermanager.com акаунт"
 
 #: dbupdate.py
 msgid "Mynah"
-msgstr "Mynah"
+msgstr "Майна"
 
 #: dbupdate.py
 msgid "N (Non-Shelter Animal)"
@@ -7363,7 +7444,7 @@ msgstr "Име и адрес"
 
 #: person.js animal.js animal_new.js animal.py
 msgid "Name cannot be blank"
-msgstr "Name cannot be blank"
+msgstr "Името не може да бъде празно"
 
 #: person_find.js
 msgid "Name contains"
@@ -7383,7 +7464,7 @@ msgstr "Занемарено"
 
 #: dbupdate.py
 msgid "Netherland Dwarf"
-msgstr "Netherland Dwarf"
+msgstr "Заек Холандско джудже"
 
 #: dbupdate.py
 msgid "Neuter/Spay"
@@ -7395,11 +7476,11 @@ msgstr "Кастриран/а"
 
 #: animal.py
 msgid "Neutered/Spayed Non-Shelter Animals In {0}"
-msgstr ""
+msgstr "Некастрирани животни, които не са от приюта {0}"
 
 #: animal.py
 msgid "Neutered/Spayed Shelter Animals In {0}"
-msgstr ""
+msgstr "Кастрирани животни от приюта {0}"
 
 #: report_images.js document_repository.js person_investigation.js
 #: document_templates.js lookups.js rota.js transport.js
@@ -7444,7 +7525,7 @@ msgstr "Нов приемен стопанин"
 
 #: dbupdate.py
 msgid "New Guinea Singing Dog"
-msgstr "New Guinea Singing Dog"
+msgstr "Новогвинейско пеещо куче"
 
 #: clinic_invoice.js
 msgid "New Item"
@@ -7476,11 +7557,15 @@ msgstr "Нова парола"
 
 #: donations.js
 msgid "New Payment"
-msgstr ""
+msgstr "Ново плащане"
 
 #: medicalprofile.js
 msgid "New Profile"
 msgstr "Нов профил"
+
+#: additional.js
+msgid "New Record"
+msgstr "Нов запис"
 
 #: medical.js
 msgid "New Regimen"
@@ -7536,7 +7621,7 @@ msgstr "Нов запис в списъка с чакащи"
 
 #: dbupdate.py
 msgid "New Zealand"
-msgstr "New Zealand"
+msgstr "Нова Зеландия"
 
 #: diarytasks.js
 msgid "New diary task"
@@ -7548,7 +7633,7 @@ msgstr "Ново поле на формата"
 
 #: report_images.js document_templates.js
 msgid "New name"
-msgstr ""
+msgstr "Ново име"
 
 #: onlineforms.js
 msgid "New online form"
@@ -7595,11 +7680,11 @@ msgstr "Няма информация."
 
 #: common.js
 msgid "No description"
-msgstr ""
+msgstr "Няма описание"
 
 #: person.js person.py
 msgid "No longer retained"
-msgstr ""
+msgstr "Не е наличен"
 
 #: lostfound.py person.py
 msgid "No matches found."
@@ -7623,7 +7708,7 @@ msgstr "Няма резултати."
 
 #: task.js
 msgid "No tasks are running."
-msgstr ""
+msgstr "Няма задачи за изпълнение"
 
 #: reports.py
 msgid "No view permission for this report"
@@ -7641,9 +7726,13 @@ msgstr "Не-приютски"
 msgid "Non-Shelter Animal"
 msgstr "Кучето не е на приюта"
 
+#: csvexport.js
+msgid "Non-Shelter Animals"
+msgstr ""
+
 #: users.js
-msgid "Non-shelter"
-msgstr "Не-приютски"
+msgid "Non-shelter Animals"
+msgstr ""
 
 #: dbupdate.py
 msgid "None"
@@ -7651,7 +7740,7 @@ msgstr "Няма"
 
 #: dbupdate.py
 msgid "Norfolk Terrier"
-msgstr "Norfolk Terrier"
+msgstr "Норфолкски териер"
 
 #: users.js
 msgid "Normal user"
@@ -7659,15 +7748,15 @@ msgstr "Нормален потребител"
 
 #: dbupdate.py
 msgid "Norwegian Buhund"
-msgstr "Norwegian Buhund"
+msgstr "Норвежки бухунд"
 
 #: dbupdate.py
 msgid "Norwegian Elkhound"
-msgstr "Norwegian Elkhound"
+msgstr "Норвежки елкхунд"
 
 #: dbupdate.py
 msgid "Norwegian Forest Cat"
-msgstr "Norwegian Forest Cat"
+msgstr "Норвежка горска котка"
 
 #: dbupdate.py
 msgid "Norwegian Lundehund"
@@ -7675,7 +7764,7 @@ msgstr "Дратхар"
 
 #: dbupdate.py
 msgid "Norwich Terrier"
-msgstr "Norwich Terrier"
+msgstr "Норички териер"
 
 #: dbupdate.py
 msgid "Not Arrived"
@@ -7720,7 +7809,7 @@ msgstr "Добавена категория \"Не става за осинов�
 
 #: common.js
 msgid "Not in chosen publisher location"
-msgstr ""
+msgstr "Не е в избраното местоположение на подателя"
 
 #: accounts_trx.js
 msgid "Not reconciled"
@@ -7746,7 +7835,7 @@ msgstr "Ноември"
 
 #: dbupdate.py
 msgid "Nova Scotia Duck-Tolling Retriever"
-msgstr "Nova Scotia Duck-Tolling Retriever"
+msgstr "Новошотландски ретривър"
 
 #: calendarview.js clinic_calendar.js common.js
 msgid "November"
@@ -7754,7 +7843,7 @@ msgstr "Ноември"
 
 #: common_widgets.js
 msgid "Now"
-msgstr ""
+msgstr "Сега"
 
 #: lostfound_find_results.js person_find_results.js waitinglist.js
 #: lostfound_find.js animal.js incident.js lostfound.js person_vouchers.js
@@ -7785,7 +7874,7 @@ msgstr "Брой животни"
 
 #: dbupdate.py
 msgid "Ocicat"
-msgstr "Ocicat"
+msgstr "Оцикет"
 
 #: calendarview.js clinic_calendar.js common.js
 msgid "Oct"
@@ -7801,7 +7890,7 @@ msgstr "Офис"
 
 #: dbupdate.py
 msgid "Old English Sheepdog"
-msgstr "Old English Sheepdog"
+msgstr "Староанглийска овчарка"
 
 #: change_password.js
 msgid "Old Password"
@@ -7839,14 +7928,16 @@ msgstr "Веднъж асоциирани, кодовете не могат да
 #: mobile.py service.py
 msgid "Once signed, this document cannot be edited or tampered with."
 msgstr ""
+"Веднъж подписан този документ не може да бъде повече редактиран или "
+"преправен"
 
 #: medical.py
 msgid "One Off"
-msgstr "One Off"
+msgstr "Еднократно"
 
 #: dbupdate.py
 msgid "One-Off"
-msgstr "Единчна манипулация/доза"
+msgstr "Единична манипулация/доза"
 
 #: onlineform.js code.py
 msgid "Online Form: {0}"
@@ -7872,20 +7963,24 @@ msgstr "Само PDF, HTML и JPG файлове могат да се прика
 
 #: accounts.js
 msgid "Only active accounts"
-msgstr ""
+msgstr "Само активни акаунти"
 
 #: incident_new.js incident.js
 msgid "Only allow users with one of these roles to view this incident"
 msgstr ""
-"Разреши само потрежители с една от тези роли да преглежда този инцидент"
+"Разреши само потребители с една от тези роли да преглежда този инцидент"
 
 #: options.js
 msgid "Only show account totals for the current period, which starts on "
-msgstr "Показвай тоталите на сметките за текущият период, започващи от "
+msgstr "Показвай общите сметки за текущия период, започващи от "
+
+#: animal_find.js
+msgid "Only show declawed"
+msgstr "Покажи само без нокти"
 
 #: animal_find.js
 msgid "Only show pickups"
-msgstr ""
+msgstr "Покажи само взети"
 
 #: animal_find.js
 msgid "Only show special needs"
@@ -7916,6 +8011,7 @@ msgid ""
 "Optional, the date the vaccination \"wears off\" and needs to be "
 "administered again"
 msgstr ""
+"По избор, датата за ваксинация изтича и трябва да бъде приложена отново"
 
 #: options.js html.py
 msgid "Options"
@@ -7943,23 +8039,23 @@ msgstr "Име на организация"
 
 #: dbupdate.py
 msgid "Oriental Long Hair"
-msgstr "Oriental Long Hair"
+msgstr "Ориенталска дългокосместа котка"
 
 #: dbupdate.py
 msgid "Oriental Short Hair"
-msgstr "Oriental Short Hair"
+msgstr "Ориенталска късокосместа"
 
 #: dbupdate.py
 msgid "Oriental Tabby"
-msgstr "Oriental Tabby"
+msgstr "Ориенталска таби"
 
 #: animal.js animal_find.js animal_new.js mobile.py person.py
 msgid "Original Owner"
-msgstr "Оригинален собственик"
+msgstr "Първи собственик"
 
 #: dbupdate.py
 msgid "Ostrich"
-msgstr "Ostrich"
+msgstr "Щраус"
 
 #: accounts_trx.js
 msgid "Other Account"
@@ -7975,7 +8071,7 @@ msgstr "Друг приют"
 
 #: dbupdate.py
 msgid "Otterhound"
-msgstr "Otterhound"
+msgstr "Отерхунд"
 
 #: options.js
 msgid ""
@@ -7998,31 +8094,35 @@ msgstr "Извън междинен тотал"
 
 #: publish_options.js
 msgid "Output a deceased animals page"
-msgstr ""
+msgstr "Възпроизведи страница с починали животни"
 
 #: publish_options.js
 msgid "Output a page with links to available online forms"
-msgstr ""
+msgstr "Възпроизведи страница с линкове към наличните онлайн форми"
 
 #: publish_options.js
 msgid "Output a separate page for each animal type"
-msgstr ""
+msgstr "Възпроизведи отделна страница за всеки животински тип"
 
 #: publish_options.js
 msgid "Output a separate page for each species"
-msgstr ""
+msgstr "Възпроизведи отделна страница за всяка порода"
 
 #: publish_options.js
 msgid "Output an adopted animals page"
-msgstr ""
+msgstr "Възпроизведи страница с осиновени животни"
 
 #: publish_options.js
 msgid "Output an rss.xml page"
-msgstr ""
+msgstr "Възпроизведи rss.xml страница"
 
 #: donations.js
 msgid "Overdue"
 msgstr "Просрочено"
+
+#: movement.py
+msgid "Overdue medical items"
+msgstr ""
 
 #: dbupdate.py
 msgid "Overtime"
@@ -8030,7 +8130,7 @@ msgstr "Извънредно работно време"
 
 #: dbupdate.py
 msgid "Owl"
-msgstr "Owl"
+msgstr "Сова"
 
 #: move_reclaim.js animal_new.js dbupdate.py
 msgid "Owner"
@@ -8062,11 +8162,11 @@ msgstr "Платено"
 
 #: dbupdate.py
 msgid "Paint/Pinto"
-msgstr "Paint/Pinto"
+msgstr "Кон Пейнт/Пинто"
 
 #: dbupdate.py
 msgid "Palomino"
-msgstr "Palomino"
+msgstr "Паломино"
 
 #: mailmerge.js
 msgid "Paper Size"
@@ -8074,15 +8174,15 @@ msgstr "Размер на хартията"
 
 #: dbupdate.py
 msgid "Papillon"
-msgstr "Papillon"
+msgstr "Папийон"
 
 #: dbupdate.py
 msgid "Parainfluenza"
-msgstr "Parainfluenza"
+msgstr "Парагрипен вирус"
 
 #: dbupdate.py
 msgid "Parakeet (Other)"
-msgstr "Parakeet (Other)"
+msgstr "Малък дългоопашат папагал (Друго)"
 
 #: litters.js
 msgid "Parent"
@@ -8090,11 +8190,11 @@ msgstr "Родител"
 
 #: dbupdate.py
 msgid "Parrot (Other)"
-msgstr "Parrot (Other)"
+msgstr "Папагал (Друго)"
 
 #: dbupdate.py
 msgid "Parrotlet"
-msgstr "Parrotlet"
+msgstr "Малки папагали"
 
 #: dbupdate.py
 msgid "Parvovirus"
@@ -8102,11 +8202,11 @@ msgstr "Парвовироза"
 
 #: dbupdate.py
 msgid "Paso Fino"
-msgstr "Paso Fino"
+msgstr "Пасо Фино"
 
 #: mobile.py
 msgid "Pass Homecheck"
-msgstr "Pass Homecheck"
+msgstr "Пропусни домашна проверка"
 
 #: login.js users.js mobile.py
 msgid "Password"
@@ -8134,7 +8234,7 @@ msgstr "Път"
 
 #: dbupdate.py
 msgid "Patterdale Terrier (Fell Terrier)"
-msgstr "Patterdale Terrier (Fell Terrier)"
+msgstr "Патърдейл териер"
 
 #: dbupdate.py
 msgid "PayPal"
@@ -8142,15 +8242,15 @@ msgstr "PayPal"
 
 #: calendarview.js common_widgets.js
 msgid "Payment"
-msgstr ""
+msgstr "Плащане"
 
 #: donations.js
 msgid "Payment Book"
-msgstr ""
+msgstr "Разплащателна книга "
 
 #: accounts_trx.js
 msgid "Payment From"
-msgstr ""
+msgstr "Плащане от"
 
 #: lookups.py
 msgid "Payment Methods"
@@ -8166,7 +8266,7 @@ msgstr "Средства за плащане"
 
 #: html.py
 msgid "Payment book"
-msgstr ""
+msgstr "Разплащателна книга"
 
 #: header.js html.py configuration.py
 msgid "Payment calendar"
@@ -8174,7 +8274,7 @@ msgstr "Календар за плащания"
 
 #: donation_receive.js
 msgid "Payment of {0} successfully received ({1})."
-msgstr ""
+msgstr "Плащане от {0} успешно получено ({1})"
 
 #: header_edit_header.js roles.js
 msgid "Payments"
@@ -8186,19 +8286,19 @@ msgstr "Плащането се нуждае поне от дата, сума и
 
 #: options.js
 msgid "Payments of type"
-msgstr ""
+msgstr "Вид плащания"
 
 #: donation_receive.js
 msgid "Payments require a person"
-msgstr ""
+msgstr "Плащането изисква човек"
 
 #: donation_receive.js
 msgid "Payments require a received date"
-msgstr ""
+msgstr "Плащането изисква дата на получаване"
 
 #: dbupdate.py
 msgid "Peacock/Pea fowl"
-msgstr "Peacock/Pea fowl"
+msgstr "Паун"
 
 #: dbupdate.py
 msgid "Pekingese"
@@ -8242,6 +8342,9 @@ msgid ""
 "imported again and movement/payment data will be attached to the existing "
 "records instead."
 msgstr ""
+"Данни за животни или хора, които вече съществуват в базата данни, няма да "
+"бъдат импортирани отново, а данните по плащането/движението ще бъдат "
+"прикачени към съществуващите записи"
 
 #: search.py
 msgid "People with active reservations, but no homecheck has been done."
@@ -8253,11 +8356,11 @@ msgstr "Хора с просрочени дарения"
 
 #: dbupdate.py
 msgid "Percheron"
-msgstr "Percheron"
+msgstr "Першерон"
 
 #: test.js
 msgid "Perform"
-msgstr ""
+msgstr "Изпълни"
 
 #: mobile.py
 msgid "Perform Homecheck"
@@ -8265,7 +8368,7 @@ msgstr "Проведи домашна инспекция"
 
 #: test.js
 msgid "Perform Test"
-msgstr ""
+msgstr "Направи тест"
 
 #: test.js
 msgid "Performed"
@@ -8278,7 +8381,7 @@ msgstr "Постоянен приемен стопанин"
 
 #: dbupdate.py
 msgid "Persian"
-msgstr "Persian"
+msgstr "Персийска котка"
 
 #: donation_receive.js movements.js person.js staff_rota.js search.js
 #: clinic_appointment.js donations.js traploan.js header_edit_header.js
@@ -8317,27 +8420,31 @@ msgstr "Лична работа"
 
 #: dbupdate.py
 msgid "Peruvian Inca Orchid"
-msgstr "Peruvian Inca Orchid"
+msgstr "Перуанско безкосместо куче"
 
 #: dbupdate.py
 msgid "Peruvian Paso"
-msgstr "Peruvian Paso"
+msgstr "Перуанско Пасо"
 
 #: dbupdate.py
 msgid "Petit Basset Griffon Vendeen"
-msgstr "Petit Basset Griffon Vendeen"
+msgstr "Малък вендейски басетгрифон"
 
 #: dbupdate.py
 msgid "Pharaoh Hound"
-msgstr "Pharaoh Hound"
+msgstr "Фараоново куче"
 
 #: dbupdate.py
 msgid "Pheasant"
-msgstr "Pheasant"
+msgstr "Фазан"
 
 #: header_edit_header.js mobile.py onlineform.py
 msgid "Phone"
 msgstr "Телефон"
+
+#: person_find.js
+msgid "Phone contains"
+msgstr ""
 
 #: mobile.py
 msgid "Photo successfully uploaded."
@@ -8345,15 +8452,15 @@ msgstr "Снимката е успешно качена."
 
 #: animal_find_results.js animal.js html.py
 msgid "Picked Up"
-msgstr "Пробрано след инцидент"
+msgstr "Прибрано след инцидент"
 
 #: animal.js
 msgid "Picked Up By"
-msgstr ""
+msgstr "Взето от"
 
 #: transport.js
 msgid "Pickup"
-msgstr ""
+msgstr "Вземане"
 
 #: animal_find_results.js animal.js animal_find.js html.py
 msgid "Pickup Address"
@@ -8370,15 +8477,15 @@ msgstr "Локации за тръгване"
 
 #: dbupdate.py
 msgid "Pig"
-msgstr "Pig"
+msgstr "Свиня"
 
 #: dbupdate.py
 msgid "Pig (Farm)"
-msgstr "Pig (Farm)"
+msgstr "Домашна свиня"
 
 #: dbupdate.py
 msgid "Pigeon"
-msgstr "Pigeon"
+msgstr "Гълъб"
 
 #: animal.js
 msgid "Pinterest"
@@ -8386,7 +8493,7 @@ msgstr "Pinterest"
 
 #: dbupdate.py
 msgid "Pionus"
-msgstr "Pionus"
+msgstr "Белокоремен папагал"
 
 #: dbupdate.py
 msgid "Pit Bull Terrier"
@@ -8394,15 +8501,15 @@ msgstr "Питбул териер"
 
 #: dbupdate.py
 msgid "Pixie-Bob"
-msgstr "Pixie-Bob"
+msgstr "Пикси Боб"
 
 #: mobile.py service.py
 msgid "Please click the Sign button when you are finished."
-msgstr ""
+msgstr "Моля натиснете бутон Sign (запиши) когато приключите"
 
 #: csvimport.js csvexport.js
 msgid "Please see the manual for more information."
-msgstr ""
+msgstr "Моля вижте ръководството за повече информация"
 
 #: media.js
 msgid "Please select a PDF, HTML or JPG image file to attach"
@@ -8411,18 +8518,21 @@ msgstr "Моля изберете PDF, HTML или JPG файл за прика�
 #: mailmerge.js
 msgid "Please tighten the scope of your email campaign to {0} emails or less."
 msgstr ""
+"Моля сведете обхвата на вашата имейл кампания до {0} имейла или по-малко"
 
 #: media.js
 msgid "Please use the links below to electronically sign these documents."
 msgstr ""
+"Моля използвайте линковете по-долу, за да подпишете тези документи "
+"електронно"
 
 #: dbupdate.py
 msgid "Plott Hound"
-msgstr "Plott Hound"
+msgstr "Плот хаунд"
 
 #: dbupdate.py
 msgid "Poicephalus/Senegal"
-msgstr "Poicephalus/Senegal"
+msgstr "Сенегалски папагал"
 
 #: dbupdate.py
 msgid "Pointer"
@@ -8470,11 +8580,11 @@ msgstr "Необходими точки за да се показва в спр�
 
 #: dbupdate.py
 msgid "Polish"
-msgstr "Polish"
+msgstr "Полски"
 
 #: dbupdate.py
 msgid "Polish Lowland Sheepdog"
-msgstr "Polish Lowland Sheepdog"
+msgstr "Полска низинна овчарка"
 
 #: dbupdate.py
 msgid "Pomeranian"
@@ -8482,7 +8592,7 @@ msgstr "померан"
 
 #: dbupdate.py
 msgid "Pony"
-msgstr "Pony"
+msgstr "Пони"
 
 #: dbupdate.py
 msgid "Poodle"
@@ -8490,11 +8600,11 @@ msgstr "Пудел"
 
 #: dbupdate.py
 msgid "Portugese Podengo"
-msgstr "Portugese Podengo"
+msgstr "Португалско поденго"
 
 #: dbupdate.py
 msgid "Portuguese Water Dog"
-msgstr "Portuguese Water Dog"
+msgstr "Португалско водно куче"
 
 #: animal_find_results.js dbupdate.py
 msgid "Positive"
@@ -8510,7 +8620,7 @@ msgstr "Положителен/Отрицателен"
 
 #: header_edit_header.js onlineform.py
 msgid "Post"
-msgstr ""
+msgstr "Поща"
 
 #: dbupdate.py
 msgid "Postage costs"
@@ -8518,11 +8628,11 @@ msgstr "Куриерски услуги"
 
 #: dbupdate.py
 msgid "Pot Bellied"
-msgstr "Pot Bellied"
+msgstr "Виетнамска свиня"
 
 #: dbupdate.py
 msgid "Prairie Dog"
-msgstr "Prairie Dog"
+msgstr "Прерийно куче"
 
 #: options.js
 msgid ""
@@ -8541,7 +8651,7 @@ msgstr "Материални активи"
 
 #: dbupdate.py
 msgid "Presa Canario"
-msgstr "Presa Canario"
+msgstr "Перо де преса канарио"
 
 #: main.js
 msgid "Press F11 in HTML or SQL code editing boxes to edit in fullscreen mode"
@@ -8553,6 +8663,10 @@ msgstr "Предварителен изглед"
 
 #: common.js
 msgid "Previous"
+msgstr "Преден"
+
+#: common.js
+msgid "Previous Adopter"
 msgstr ""
 
 #: onlineform_incoming.js
@@ -8561,19 +8675,20 @@ msgstr "Печат"
 
 #: code.py
 msgid "Print Preview"
-msgstr ""
+msgstr "Изглед на предпечат"
 
 #: onlineform_incoming.js
 msgid "Print selected forms"
-msgstr ""
+msgstr "Принтирай избраните форми"
 
 #: header.js
 msgid "Printable Manual"
-msgstr ""
+msgstr "Ръководство за принтиране"
 
 #: options.js
 msgid "Printing word processor documents uses hidden iframe and window.print"
 msgstr ""
+"Отпечатването на текстови процесори използва скрити iframe и window принт"
 
 #: main.js mobile.py
 msgid "Priority"
@@ -8621,7 +8736,7 @@ msgstr "Публикувай в папка"
 
 #: animal.js
 msgid "Published to Website"
-msgstr ""
+msgstr "Публикувай в сайта"
 
 #: publish_logs.js lookups.js dbupdate.py
 msgid "Publisher"
@@ -8633,7 +8748,7 @@ msgstr "Порода при публикуване"
 
 #: lookups.js
 msgid "Publisher Color"
-msgstr ""
+msgstr "Цвят при публикуване"
 
 #: publish_logs.js
 msgid "Publisher Logs"
@@ -8649,7 +8764,7 @@ msgstr "Публикуване"
 
 #: animal.js
 msgid "Publishing History"
-msgstr ""
+msgstr "История на публикациите"
 
 #: publish_logs.js
 msgid "Publishing Logs"
@@ -8677,7 +8792,7 @@ msgstr "Пули"
 
 #: dbupdate.py
 msgid "Pumi"
-msgstr "Pumi"
+msgstr "Пуми"
 
 #: animal.py
 msgid "Puppies (under {0} months)"
@@ -8693,7 +8808,7 @@ msgstr "К-во"
 
 #: dbupdate.py
 msgid "Quaker Parakeet"
-msgstr "Quaker Parakeet"
+msgstr "Папагал монах"
 
 #: donations.js medical.js test.js stocklevel.js common_widgets.js
 #: vaccination.js
@@ -8707,7 +8822,7 @@ msgstr "Под карантина"
 
 #: dbupdate.py
 msgid "Quarterhorse"
-msgstr "Quarterhorse"
+msgstr "Кон Куортър"
 
 #: dbupdate.py
 msgid "Quarterly"
@@ -8739,27 +8854,27 @@ msgstr "Заек"
 
 #: dbupdate.py
 msgid "Rabies"
-msgstr "Rabies"
+msgstr "Бяс"
 
 #: animal.js animal_find.js mobile.py
 msgid "Rabies Tag"
-msgstr "Медальон"
+msgstr "Маркиран за бяс"
 
 #: animal_find_results.js html.py
 msgid "RabiesTag"
-msgstr "Медальон"
+msgstr "Маркиран за бяс"
 
 #: onlineform.js
 msgid "Radio Buttons"
-msgstr ""
+msgstr "Радио бутони"
 
 #: dbupdate.py
 msgid "Ragamuffin"
-msgstr "Ragamuffin"
+msgstr "Рагамъфин"
 
 #: dbupdate.py
 msgid "Ragdoll"
-msgstr "Ragdoll"
+msgstr "Рагдол"
 
 #: header_edit_header.js waitinglist_results.js html.py
 msgid "Rank"
@@ -8767,15 +8882,15 @@ msgstr "Класиране"
 
 #: dbupdate.py
 msgid "Rat"
-msgstr "Rat"
+msgstr "Плъх"
 
 #: dbupdate.py
 msgid "Rat Terrier"
-msgstr "Rat Terrier"
+msgstr "Рат териер"
 
 #: onlineform.js
 msgid "Raw Markup"
-msgstr ""
+msgstr "Суров маркер"
 
 #: main.js
 msgid "Read the manual for more information about Animal Shelter Manager."
@@ -8797,7 +8912,7 @@ msgstr "Причина за преглед"
 
 #: animal_find_results.js html.py
 msgid "Reason Not From Owner"
-msgstr "Причина за собственика"
+msgstr "Причина не от собственика"
 
 #: animal.js
 msgid "Reason for Entry"
@@ -8809,7 +8924,7 @@ msgstr "Причина за приемане"
 
 #: animal.js
 msgid "Reason not from Owner"
-msgstr "Причина за собственика"
+msgstr "Причина не от собственика"
 
 #: animal.js
 msgid "Reason the owner did not bring in the animal themselves"
@@ -8817,15 +8932,15 @@ msgstr "Причина, защо собственика не е довел жи�
 
 #: batch.js code.py
 msgid "Recalculate ALL animal ages/times"
-msgstr ""
+msgstr "Преизчисли ВСИЧКИ години на животни/времена"
 
 #: batch.js code.py
 msgid "Recalculate ALL animal locations"
-msgstr ""
+msgstr "Преизчисли ВСИЧКИ местонахождения на животни"
 
 #: batch.js code.py
 msgid "Recalculate on-shelter animal locations"
-msgstr ""
+msgstr "Преизчисли местонахожденията на животните в приюта"
 
 #: donation_receive.js donations.js
 msgid "Receipt No"
@@ -8845,7 +8960,7 @@ msgstr "Получи дарение"
 
 #: donation_receive.js header.js html.py
 msgid "Receive a payment"
-msgstr ""
+msgstr "Получи плащане"
 
 #: donation_receive.js clinic_appointment.js donations.js common_widgets.js
 #: onlineform_incoming.js
@@ -8854,11 +8969,11 @@ msgstr "Получено"
 
 #: donations.js
 msgid "Received in last day"
-msgstr ""
+msgstr "Получено в последния ден"
 
 #: donations.js
 msgid "Received in last month"
-msgstr "Получени предишният месец"
+msgstr "Получени предишния месец"
 
 #: donations.js
 msgid "Received in last week"
@@ -8902,19 +9017,20 @@ msgstr "Рецепция"
 
 #: move_reclaim.js publish_options.js
 msgid "Reclaim"
-msgstr ""
+msgstr "Опитоми"
 
 #: move_reclaim.js header.js html.py configuration.py
 msgid "Reclaim an animal"
-msgstr ""
+msgstr "Опитоми животно"
 
 #: movement.py
 msgid "Reclaim movements must have a valid reclaim date."
 msgstr ""
+"Движенията по опитомяването трябва да имат валидна дата за опитомяване"
 
 #: move_reclaim.js
 msgid "Reclaim successfully created."
-msgstr ""
+msgstr "Опитомяването успешно създадено"
 
 #: animal_find.js dbupdate.py
 msgid "Reclaimed"
@@ -8922,7 +9038,7 @@ msgstr "Върнат"
 
 #: accounts_trx.js
 msgid "Reconcile"
-msgstr "Reconcile"
+msgstr "Съгласуване"
 
 #: accounts_trx.js accounts.js
 msgid "Reconciled"
@@ -8930,7 +9046,7 @@ msgstr "Изравнени"
 
 #: dbupdate.py
 msgid "Redbone Coonhound"
-msgstr "Redbone Coonhound"
+msgstr "Редбон кунхаунд"
 
 #: mobile.py
 msgid "Rediarised"
@@ -8950,7 +9066,7 @@ msgstr "Обновяване"
 
 #: batch.js code.py
 msgid "Regenerate 'Match lost and found animals' report"
-msgstr ""
+msgstr "Зареди отново справка \"Изгубени и намерени животни\""
 
 #: batch.js code.py
 msgid "Regenerate 'Person looking for' report"
@@ -8958,25 +9074,25 @@ msgstr "Регенериране на справка за 'Търсещи жив
 
 #: batch.js code.py
 msgid "Regenerate annual animal figures for"
-msgstr ""
+msgstr "Регенерирай годишни суми за животни"
 
 #: batch.js code.py
 msgid "Regenerate monthly animal figures for"
-msgstr ""
+msgstr "Генерирай отново месечни суми за животни"
 
 #: batch.js code.py
 msgid "Regenerate person names in selected format"
-msgstr ""
+msgstr "Генерирай отново имена на хора в избрания формат"
 
 #: animal_bulk.js
 msgid "Register Microchip"
-msgstr ""
+msgstr "Регистрирай микрочип"
 
 #: publish_options.js
 msgid "Register microchips after"
-msgstr ""
+msgstr "Регистрирай микрочип след"
 
-#: animal_find.js dbupdate.py animal.py
+#: movements.js animal_find.js dbupdate.py animal.py
 msgid "Released To Wild"
 msgstr "Пуснат обратно на свобода"
 
@@ -8986,7 +9102,7 @@ msgstr "Пуснати на свобода {0}"
 
 #: mobile.py
 msgid "Reload"
-msgstr ""
+msgstr "Зареди отново"
 
 #: litters.js
 msgid "Remaining"
@@ -9014,15 +9130,15 @@ msgstr "Премахни"
 
 #: options.js
 msgid "Remove HTML and PDF document media after this many years"
-msgstr ""
+msgstr "Премахни файлове във формат HTML и PDF след толкова години"
 
 #: options.js
 msgid "Remove clinic functionality from screens and menus"
-msgstr ""
+msgstr "Премахни дейността на клиниката от екрани и менюта"
 
 #: options.js
 msgid "Remove fine-grained animal control incident permissions"
-msgstr "Remove fine-grained animal control incident permissions"
+msgstr "Премахни разрешенията за контрол над инцидентите при животните"
 
 #: options.js
 msgid "Remove holds after"
@@ -9031,10 +9147,12 @@ msgstr "Анулирай задържания след"
 #: options.js
 msgid "Remove move menu and the movements tab from animal and person screens"
 msgstr ""
+"Премахни менюто за движение и раздела за движение от екрана за животни и "
+"хора"
 
 #: person.js
 msgid "Remove personally identifiable data"
-msgstr ""
+msgstr "Премахни личните данни"
 
 #: publish_options.js
 msgid "Remove previously published files before uploading"
@@ -9058,7 +9176,7 @@ msgstr "Премахни информацията за кучилото от д�
 
 #: options.js
 msgid "Remove the Rabies Tag field from animal health details"
-msgstr "Премахни полето за медальон от медицинските данни за животното"
+msgstr "Премахни полето за бяс от медицинските данни за животното"
 
 #: options.js
 msgid "Remove the adoption coordinator field from animal entry details"
@@ -9071,6 +9189,7 @@ msgstr "Премахни полето за такса за осиновяван�
 #: options.js
 msgid "Remove the animal control functionality from menus and screens"
 msgstr ""
+"Премахни функционалността за контрол над животните от менютата и прозорците"
 
 #: options.js
 msgid "Remove the bonded with fields from animal entry details"
@@ -9124,6 +9243,7 @@ msgstr "Премахни функционалността за интернет 
 #: options.js
 msgid "Remove the picked up fields from animal entry details"
 msgstr ""
+"Премахни полетата за вземане от детайлите за приемане на животното в приюта"
 
 #: options.js
 msgid "Remove the rota functionality from menus and screens"
@@ -9136,7 +9256,7 @@ msgstr "Премахни полето за размер от детайлите 
 
 #: options.js
 msgid "Remove the stock control functionality from menus and screens"
-msgstr ""
+msgstr "Премахни функционалността за стоков контрол от менюта и екрани"
 
 #: options.js
 msgid "Remove the tattoo fields from animal identification details"
@@ -9192,7 +9312,7 @@ msgstr "Справки"
 
 #: media.js
 msgid "Request signature by email"
-msgstr ""
+msgstr "Изискване на подпис чрез имейл"
 
 #: dbupdate.py
 msgid "Requested"
@@ -9212,7 +9332,7 @@ msgstr "Датата трябва да е валидна"
 
 #: vaccination.js
 msgid "Reschedule"
-msgstr ""
+msgstr "Промени графика"
 
 #: movements.js dbupdate.py
 msgid "Reservation"
@@ -9248,7 +9368,7 @@ msgstr "Регистър на резервации"
 
 #: movement.py
 msgid "Reservation date cannot be after cancellation date."
-msgstr "Reservation date cannot be after cancellation date."
+msgstr "Датата за резервация не може да бъде след датата на отмяна"
 
 #: move_reserve.js
 msgid "Reservation successfully created."
@@ -9274,7 +9394,7 @@ msgstr "Резервирано"
 #: lostfound_new.js incident_new.js waitinglist_new.js person_new.js
 #: animal_new.js
 msgid "Reset"
-msgstr ""
+msgstr "Набери отново"
 
 #: users.js
 msgid "Reset Password"
@@ -9310,10 +9430,14 @@ msgid "Results for '{0}'."
 msgstr "Резултати за '{0}'."
 
 #: person_find_results.js options.js movements.js header_edit_header.js
-#: users.js animal_find.js onlineforms.js move_retailer.js shelterview.js
-#: common.js html.py dbupdate.py
+#: animal_find.js onlineforms.js move_retailer.js shelterview.js common.js
+#: html.py dbupdate.py
 msgid "Retailer"
 msgstr "Търговец"
+
+#: users.js
+msgid "Retailer Animals"
+msgstr ""
 
 #: movements.js
 msgid "Retailer Book"
@@ -9341,7 +9465,7 @@ msgstr "Върни"
 
 #: movements.js
 msgid "Return Category"
-msgstr "Return Category"
+msgstr "Категория Връщане"
 
 #: movements.js
 msgid "Return Date"
@@ -9365,11 +9489,11 @@ msgstr "Върни животно от прехвърляне"
 
 #: movement.py
 msgid "Return date cannot be before the movement date."
-msgstr "Return date cannot be before the movement date."
+msgstr "Датата на връщане не може да бъде преди датата на преместване"
 
 #: movements.js
 msgid "Return this movement and bring the animal back to the shelter"
-msgstr ""
+msgstr "Промени това преместване и върни обратно животното в приюта"
 
 #: movements.js traploan.js lostfound.js animal.py
 msgid "Returned"
@@ -9377,7 +9501,7 @@ msgstr "Върнати"
 
 #: movements.js person.py
 msgid "Returned By"
-msgstr ""
+msgstr "Върнат от"
 
 #: animal.py
 msgid "Returned To Owner"
@@ -9385,11 +9509,11 @@ msgstr "Върнати на собственик"
 
 #: lostfound_find.js
 msgid "Returned from"
-msgstr ""
+msgstr "Върнат от"
 
 #: lostfound_find.js
 msgid "Returned to"
-msgstr ""
+msgstr "Върнат на"
 
 #: animal.py
 msgid "Returned to Owner {0}"
@@ -9409,15 +9533,15 @@ msgstr "Качвай отново снимките на животното вс�
 
 #: dbupdate.py
 msgid "Rex"
-msgstr "Rex"
+msgstr "Рекс"
 
 #: dbupdate.py
 msgid "Rhea"
-msgstr "Rhea"
+msgstr "Нандута"
 
 #: dbupdate.py
 msgid "Rhinelander"
-msgstr "Rhinelander"
+msgstr "заек Ринеландер"
 
 #: dbupdate.py
 msgid "Rhodesian Ridgeback"
@@ -9425,7 +9549,7 @@ msgstr "Роденизийски риджбек"
 
 #: dbupdate.py
 msgid "Ringneck/Psittacula"
-msgstr "Ringneck/Psittacula"
+msgstr "Папагал Рингнек"
 
 #: users.py
 msgid "Role is in use and cannot be deleted."
@@ -9441,7 +9565,7 @@ msgstr "Ролите имат нужда от имена."
 
 #: dbupdate.py
 msgid "Rosella"
-msgstr "Rosella"
+msgstr "Розели"
 
 #: dbupdate.py
 msgid "Rostered day off"
@@ -9462,6 +9586,7 @@ msgstr "Графика е дублиран успешно."
 #: media.js
 msgid "Rotate image 90 degrees anticlockwis"
 msgstr ""
+"Завъртете изображението на 90 градуса обратно на часовниковата стрелка"
 
 #: media.js
 msgid "Rotate image 90 degrees clockwise"
@@ -9481,11 +9606,11 @@ msgstr "Редове"
 
 #: dbupdate.py
 msgid "Ruddy"
-msgstr "Ruddy"
+msgstr "Руди"
 
 #: dbupdate.py
 msgid "Russian Blue"
-msgstr "Russian Blue"
+msgstr "Руска синя котка"
 
 #: dbupdate.py
 msgid "S (Stray Cat)"
@@ -9501,7 +9626,7 @@ msgstr "SM потребител"
 
 #: header_edit_header.js onlineform.py
 msgid "SMS"
-msgstr ""
+msgstr "СМС"
 
 #: reports.js
 msgid "SQL"
@@ -9545,7 +9670,7 @@ msgstr "Сб"
 
 #: dbupdate.py
 msgid "Saddlebred"
-msgstr "Saddlebred"
+msgstr "Кон Садълбред"
 
 #: dbupdate.py
 msgid "Saint Bernard St. Bernard"
@@ -9569,7 +9694,7 @@ msgstr "Съб"
 
 #: dbupdate.py
 msgid "Satin"
-msgstr "Satin"
+msgstr "Сатен"
 
 #: reports.js calendarview.js clinic_calendar.js common.js
 msgid "Saturday"
@@ -9616,7 +9741,7 @@ msgstr "Планира"
 
 #: dbupdate.py
 msgid "Schipperke"
-msgstr "Schipperke"
+msgstr "Шиперке"
 
 #: dbupdate.py
 msgid "Schnauzer"
@@ -9624,11 +9749,11 @@ msgstr "Шнауцер"
 
 #: dbupdate.py
 msgid "Scottish Deerhound"
-msgstr "Scottish Deerhound"
+msgstr "Шотландска еленова хрътка"
 
 #: dbupdate.py
 msgid "Scottish Fold"
-msgstr "Scottish Fold"
+msgstr "Шотландски фолд"
 
 #: dbupdate.py
 msgid "Scottish Terrier Scottie"
@@ -9640,11 +9765,11 @@ msgstr "Скрипт"
 
 #: dbupdate.py
 msgid "Seal"
-msgstr "Seal"
+msgstr "Тюлен"
 
 #: dbupdate.py
 msgid "Sealyham Terrier"
-msgstr "Sealyham Terrier"
+msgstr "Силихам териер"
 
 #: options.js common_animalchooser.js person_find.js lostfound_find.js
 #: animal_find.js incident_find.js header.js common_personchooser.js mobile.py
@@ -9665,7 +9790,7 @@ msgstr "Сортиране на търсенето"
 
 #: additional.js
 msgid "Searchable"
-msgstr ""
+msgstr "За търсене"
 
 #: dbupdate.py
 msgid "Second offence"
@@ -9707,6 +9832,17 @@ msgstr "Избери куче"
 msgid "Select an animal to attach this form to."
 msgstr "Изберете човек, към който да бъде прикачен"
 
+#: animal.js
+msgid ""
+"Select an animal to merge into this record. The selected animal will be "
+"removed, and their movements, diary notes, log entries, etc. will be "
+"reattached to this record."
+msgstr ""
+
+#: animal.js
+msgid "Select animal to merge"
+msgstr ""
+
 #: common_animalchoosermulti.js
 msgid "Select animals"
 msgstr "Избери животни"
@@ -9723,9 +9859,13 @@ msgstr "Обединяване на данни за хора"
 msgid "Select recommended"
 msgstr "Избери препоръчаните"
 
+#: csvexport.js
+msgid "Selected On-Shelter Animals"
+msgstr ""
+
 #: dbupdate.py
 msgid "Selkirk Rex"
-msgstr "Selkirk Rex"
+msgstr "Селкърк рекс"
 
 #: common_widgets.js mobile.py
 msgid "Send"
@@ -9733,33 +9873,41 @@ msgstr "Изпращане"
 
 #: mailmerge.js
 msgid "Send Emails"
-msgstr "Изпращане на е-мейли"
+msgstr "Изпращане на имейли"
+
+#: options.js
+msgid ""
+"Send a weekly email to fosterers with medical information about their "
+"animals"
+msgstr ""
 
 #: onlineforms.js
 msgid "Send confirmation email to form submitter"
-msgstr ""
+msgstr "Изпрати имейл с потвърждение за да се формира възложител"
 
 #: mailmerge.js
 msgid "Send emails"
-msgstr "Изпращане на е-мейли"
+msgstr "Изпращане на имейли"
 
 #: roles.js
 msgid "Send mass emails and perform mail merges"
-msgstr "Изпрати масови е-мейли, чрез шаблони за писма"
+msgstr "Изпрати масови имейли, чрез шаблони за писма"
 
 #: main.js mobile.py
 msgid "Send via email"
-msgstr "Изпрати по е-мейл"
+msgstr "Изпрати по имейл"
 
 #: mailmerge.js
 msgid ""
 "Sending {0} emails is considered abusive and will damage the reputation of "
 "the email server."
 msgstr ""
+"Изпращането на {0} имейли се счита за злоупотреба и ще навреди на "
+"репутацията на сървъра за електронна поща"
 
 #: common_widgets.js
 msgid "Sending..."
-msgstr ""
+msgstr "Изпращане..."
 
 #: dbupdate.py
 msgid "Senior"
@@ -9767,7 +9915,7 @@ msgstr "Старо"
 
 #: media.js
 msgid "Sent to mobile signing pad."
-msgstr ""
+msgstr "Изпрати до мобилното устройство за електронен подпис"
 
 #: calendarview.js clinic_calendar.js common.js
 msgid "Sep"
@@ -9799,7 +9947,7 @@ msgstr "Попълни 0 за да не се обновява спешностт
 
 #: users.js
 msgid "Set wether or not this user account can log in to the user interface."
-msgstr ""
+msgstr "Настройте дали този акаунт да се логва потребителския интерфейс"
 
 #: dbupdate.py
 msgid "Setter"
@@ -9810,6 +9958,9 @@ msgid ""
 "Setting a location filter will prevent this user seeing animals who are not "
 "in these locations on shelterview, find animal and search."
 msgstr ""
+"Прилагането на филтър за местоположение ще предотврати този потребител да "
+"вижда животни, които не са в местоположението на приюта, да намира и да "
+"търси животни"
 
 #: html.py
 msgid "Settings"
@@ -9856,7 +10007,7 @@ msgstr "Сподели"
 
 #: animal.js
 msgid "Shared weblink"
-msgstr ""
+msgstr "Споделена уеб връзка"
 
 #: dbupdate.py
 msgid "Shares"
@@ -9868,7 +10019,7 @@ msgstr "Овца"
 
 #: dbupdate.py
 msgid "Sheep Dog"
-msgstr "Sheep Dog"
+msgstr "Овчарско куче"
 
 #: person_find_results.js header_edit_header.js html.py dbupdate.py
 msgid "Shelter"
@@ -9876,7 +10027,7 @@ msgstr "Приют"
 
 #: onlineform.js
 msgid "Shelter Animal"
-msgstr ""
+msgstr "Приют за животни"
 
 #: mobile.py
 msgid "Shelter Animals"
@@ -9896,7 +10047,7 @@ msgstr "Животни в приюта"
 
 #: animal.js animal_new.js animal.py
 msgid "Shelter code cannot be blank"
-msgstr "Shelter code cannot be blank"
+msgstr "Кодът на приюта не може да бъде празно"
 
 #: animal.py
 msgid "Shelter code {0} has already been allocated to another animal."
@@ -9928,15 +10079,15 @@ msgstr "Преглед на приюта"
 
 #: dbupdate.py
 msgid "Shepherd"
-msgstr "Shepherd"
+msgstr "Овчарско куче"
 
 #: dbupdate.py
 msgid "Shetland Sheepdog Sheltie"
-msgstr "Shetland Sheepdog Sheltie"
+msgstr "Шетландска овчарка"
 
 #: dbupdate.py
 msgid "Shiba Inu"
-msgstr "Shiba Inu"
+msgstr "Шиба Ину"
 
 #: dbupdate.py
 msgid "Shift"
@@ -9944,7 +10095,7 @@ msgstr "Смяна"
 
 #: dbupdate.py
 msgid "Shih Tzu"
-msgstr "Shih Tzu"
+msgstr "Ши Цу"
 
 #: dbupdate.py
 msgid "Short"
@@ -9953,6 +10104,7 @@ msgstr "Късо"
 #: options.js
 msgid "Show GDPR Contact Opt-In field on person screens"
 msgstr ""
+"Покажи контакта за връзка с длъжностното лице по GDPR на екрана на хората"
 
 #: options.js
 msgid "Show PDF files inline instead of sending them as attachments"
@@ -9970,7 +10122,7 @@ msgstr "Покажи карта на адреса на екрана за хор�
 
 #: options.js
 msgid "Show a separate paid date field with costs"
-msgstr ""
+msgstr "Покажи отделно поле за дата за плащане с разходи"
 
 #: options.js
 msgid "Show alerts on the home page"
@@ -9983,7 +10135,7 @@ msgstr ""
 
 #: publish_options.js
 msgid "Show animals adopted"
-msgstr ""
+msgstr "Покажи осиновени животни"
 
 #: options.js
 msgid "Show codes on the shelter view screen"
@@ -9991,11 +10143,15 @@ msgstr "Покажи кодовете на екрана за преглед на
 
 #: options.js
 msgid "Show complete comments in table views"
-msgstr ""
+msgstr "Покажи всички коментари в табличен вид"
 
 #: options.js
 msgid "Show empty locations"
 msgstr "Показвай празните местонахождения"
+
+#: additional.js
+msgid "Show on new record screens"
+msgstr "Покажи екрана на новите записи"
 
 #: options.js
 msgid "Show quick links on all pages"
@@ -10007,7 +10163,7 @@ msgstr "Покажи бързите препратки на началната �
 
 #: options.js
 msgid "Show report menu items in collapsed categories"
-msgstr ""
+msgstr "Покажи елементите на менюто за отчета в обединени категории"
 
 #: options.js
 msgid "Show short shelter codes on screens"
@@ -10027,7 +10183,7 @@ msgstr "Покажи полето за порода"
 
 #: options.js
 msgid "Show the brought in by field"
-msgstr ""
+msgstr "Покажи въведеното в полето"
 
 #: options.js
 msgid "Show the color field"
@@ -10039,7 +10195,7 @@ msgstr "Покажи полето за дата на приемане в при�
 
 #: options.js
 msgid "Show the entry category field"
-msgstr ""
+msgstr "Покажи полето за приемане"
 
 #: options.js
 msgid "Show the full diary (instead of just my notes) on the home page"
@@ -10048,7 +10204,7 @@ msgstr ""
 
 #: options.js
 msgid "Show the hold fields"
-msgstr ""
+msgstr "Покажи полетата за задържане"
 
 #: options.js
 msgid "Show the internal location field"
@@ -10080,11 +10236,11 @@ msgstr "Покажи полето за татус"
 
 #: options.js
 msgid "Show the time brought in field"
-msgstr ""
+msgstr "Покажи времето на въвеждане в полето"
 
 #: options.js
 msgid "Show the transfer in field"
-msgstr ""
+msgstr "Покажи преместването в полето"
 
 #: options.js
 msgid "Show the weight field"
@@ -10112,11 +10268,11 @@ msgstr "Показване на {0} събития от хронология"
 
 #: dbupdate.py
 msgid "Siamese"
-msgstr "Siamese"
+msgstr "Сиамска котка"
 
 #: dbupdate.py
 msgid "Siberian"
-msgstr "Siberian"
+msgstr "Сибирска котка"
 
 #: dbupdate.py
 msgid "Siberian Husky"
@@ -10136,15 +10292,15 @@ msgstr "Болно/наранено животно"
 
 #: media.js mobile.py service.py
 msgid "Sign"
-msgstr ""
+msgstr "Подпиши"
 
 #: media.js
 msgid "Sign document"
-msgstr ""
+msgstr "Документ за подпис"
 
 #: media.js
 msgid "Sign on screen"
-msgstr ""
+msgstr "Прозорец за подпис"
 
 #: onlineform.js change_user_settings.js
 msgid "Signature"
@@ -10152,23 +10308,23 @@ msgstr "Подпис"
 
 #: media.js
 msgid "Signed"
-msgstr ""
+msgstr "Подписан"
 
 #: mobile.py service.py
 msgid "Signing"
-msgstr ""
+msgstr "Подписване"
 
 #: mobile.py service.py
 msgid "Signing Pad"
-msgstr ""
+msgstr "Подложка за подписване"
 
 #: publish_options.js
 msgid "Signup"
-msgstr ""
+msgstr "Запиши се"
 
 #: dbupdate.py
 msgid "Silky Terrier"
-msgstr "Silky Terrier"
+msgstr "Копринен териер"
 
 #: dbupdate.py
 msgid "Silver"
@@ -10176,11 +10332,11 @@ msgstr "Сребърен"
 
 #: dbupdate.py
 msgid "Silver Fox"
-msgstr "Silver Fox"
+msgstr "Сребърна лисица"
 
 #: dbupdate.py
 msgid "Silver Marten"
-msgstr "Silver Marten"
+msgstr "Заек Silver Marten"
 
 #: animal_new.js
 msgid "Similar Animal"
@@ -10196,7 +10352,7 @@ msgstr "Просто"
 
 #: dbupdate.py
 msgid "Singapura"
-msgstr "Singapura"
+msgstr "Сингапура"
 
 #: medical.js medicalprofile.js
 msgid "Single Treatment"
@@ -10205,11 +10361,11 @@ msgstr "Еднократно лечение"
 #: incident_new.js person.js person_new.js users.js incident.js
 #: common_personchooser.js lookups.js html.py lookups.py
 msgid "Site"
-msgstr ""
+msgstr "Място"
 
 #: lookups.py
 msgid "Sites"
-msgstr ""
+msgstr "Места"
 
 #: person.js waitinglist.js animal_find_results.js waitinglist_results.js
 #: animal.js waitinglist_new.js animal_find.js animal_new.js mobile.py html.py
@@ -10223,15 +10379,15 @@ msgstr "Размери"
 
 #: dbupdate.py
 msgid "Skunk"
-msgstr "Skunk"
+msgstr "Скункс"
 
 #: dbupdate.py
 msgid "Skye Terrier"
-msgstr "Skye Terrier"
+msgstr "Скай Териер"
 
 #: dbupdate.py
 msgid "Sloughi"
-msgstr "Sloughi"
+msgstr "Слуги"
 
 #: dbupdate.py
 msgid "Small"
@@ -10251,11 +10407,11 @@ msgstr "Змия"
 
 #: dbupdate.py
 msgid "Snowshoe"
-msgstr "Snowshoe"
+msgstr "Сноушу"
 
 #: animal.js
 msgid "Social"
-msgstr ""
+msgstr "Социален"
 
 #: dbupdate.py
 msgid "Softbill (Other)"
@@ -10267,13 +10423,16 @@ msgstr "Продадена"
 
 #: dbupdate.py
 msgid "Somali"
-msgstr "Somali"
+msgstr "Сомалийска котка"
 
 #: batch.js
 msgid ""
 "Some batch processes may take a few minutes to run and could prevent other "
 "users being able to use the system for a short time."
 msgstr ""
+"Някои групови процеси може да отнемат известно време, за да се изпълнят и "
+"могат да попречат на други потребители да използват системата за кратко "
+"време"
 
 #: main.js
 msgid ""
@@ -10290,15 +10449,15 @@ msgstr "Обяснителен текст"
 
 #: dbupdate.py
 msgid "Sorrel"
-msgstr "Sorrel"
+msgstr "Киселец"
 
 #: dbupdate.py
 msgid "Sorrel Tortoiseshell"
-msgstr "Sorrel Tortoiseshell"
+msgstr "Цвят \"киселец\""
 
 #: service.py
 msgid "Sorry, this document has already been signed"
-msgstr ""
+msgstr "Съжаляваме този документ вече е подписан"
 
 #: dbupdate.py
 msgid "South Russian Ovcharka"
@@ -10306,7 +10465,7 @@ msgstr "Южно руска овчарка"
 
 #: dbupdate.py
 msgid "Spaniel"
-msgstr "Spaniel"
+msgstr "Шпаньол"
 
 #: options.js animal_find_results.js animal.js common.js mobile.py html.py
 msgid "Special Needs"
@@ -10342,10 +10501,14 @@ msgid ""
 "vaccination needs to be given every year, set the reschedule date to be 1 "
 "year from today."
 msgstr ""
+"Отбелязване на дата за промяна на графика ще направи копия на избраните "
+"ваксинации и ще ги маркира за направа на тази дата. Пример: ако дадена "
+"ваксина трябва да се бие всяка година, настройте датата за промяна за една "
+"година от днешната дата"
 
 #: dbupdate.py
 msgid "Sphynx (hairless cat)"
-msgstr "Sphynx (hairless cat)"
+msgstr "Канадски сфинкс"
 
 #: dbupdate.py
 msgid "Spitz"
@@ -10357,7 +10520,7 @@ msgstr "Възрастова граница между бебета и възр�
 
 #: publish_options.js
 msgid "Split species pages with a baby/adult prefix"
-msgstr ""
+msgstr "Разделете страниците между видовете с разлика между бебета/възрастни"
 
 #: dbupdate.py
 msgid "Sponsorship donations"
@@ -10390,7 +10553,7 @@ msgstr "Стандартна"
 
 #: dbupdate.py
 msgid "Standardbred"
-msgstr "Standardbred"
+msgstr "Стандартбред"
 
 #: animal_diet.js medical.js
 msgid "Start Date"
@@ -10463,6 +10626,10 @@ msgstr ""
 msgid "Status"
 msgstr "Статус"
 
+#: options.js shelterview.js
+msgid "Status and Species"
+msgstr "Статус и видове"
+
 #: common.js
 msgid "Stay"
 msgstr "Остани на тази страница"
@@ -10473,7 +10640,7 @@ msgstr "Склад"
 
 #: roles.js
 msgid "Stock Control"
-msgstr ""
+msgstr "Стоков контрол"
 
 #: header.js configuration.py
 msgid "Stock Levels"
@@ -10485,7 +10652,7 @@ msgstr "Локации на наличности"
 
 #: mobile.py
 msgid "Stock Take"
-msgstr ""
+msgstr "Наличност"
 
 #: lookups.py
 msgid "Stock Usage Type"
@@ -10493,11 +10660,11 @@ msgstr "Наличности според употреба"
 
 #: stock.py
 msgid "Stock level must have a name"
-msgstr ""
+msgstr "Нивото на наличност трябва да има име"
 
 #: stock.py
 msgid "Stock level must have a unit"
-msgstr ""
+msgstr "Нивото на наличност трябва да има мерна единица"
 
 #: stocklevel.js
 msgid "Stock needs a name and unit."
@@ -10517,7 +10684,7 @@ msgstr "Откраднато {0}"
 
 #: task.js
 msgid "Stop"
-msgstr ""
+msgstr "Спри"
 
 #: publish.js
 msgid "Stop Publishing"
@@ -10545,11 +10712,11 @@ msgstr "Заглавие"
 
 #: onlineform.py
 msgid "Submission received: {0}"
-msgstr ""
+msgstr "Изпращането получено : {0}"
 
 #: publish_logs.js
 msgid "Success"
-msgstr ""
+msgstr "Успех"
 
 #: onlineform_incoming.js
 msgid "Successfully attached to {0}"
@@ -10557,7 +10724,7 @@ msgstr "Успешно прикачване към {0}"
 
 #: dbupdate.py
 msgid "Sugar Glider"
-msgstr "Sugar Glider"
+msgstr "Захарна летяща катерица"
 
 #: calendarview.js clinic_calendar.js common.js
 msgid "Sun"
@@ -10581,11 +10748,11 @@ msgstr "Фамилия"
 
 #: dbupdate.py
 msgid "Surrender"
-msgstr ""
+msgstr "Отказ"
 
 #: dbupdate.py
 msgid "Surrender Pickup"
-msgstr ""
+msgstr "Място на отказ"
 
 #: incident_new.js animal.js incident.js incident_find_results.js
 msgid "Suspect"
@@ -10609,11 +10776,11 @@ msgstr "Заподозрян / животно"
 
 #: dbupdate.py
 msgid "Swan"
-msgstr "Swan"
+msgstr "Лебед"
 
 #: dbupdate.py
 msgid "Swedish Vallhund"
-msgstr "Swedish Vallhund"
+msgstr "Шведски валхунд"
 
 #: reports.js
 msgid "Syntax check this SQL"
@@ -10639,6 +10806,10 @@ msgstr "Потребители на системата"
 msgid "T = first letter of animal type"
 msgstr "T = първата буква от типа на животното"
 
+#: movements.js
+msgid "TNR"
+msgstr ""
+
 #: dbupdate.py
 msgid "TNR - Trap/Neuter/Release"
 msgstr "Програма \"Кастрирай и върни\""
@@ -10653,11 +10824,11 @@ msgstr "Тъмни райета"
 
 #: dbupdate.py
 msgid "Tabby and White"
-msgstr "Tabby and White"
+msgstr "Таби и бяло"
 
 #: common_widgets.js
 msgid "Take another payment"
-msgstr ""
+msgstr "Приеми друго плащане"
 
 #: incident_new.js incident.js mobile.py
 msgid "Taken By"
@@ -10682,6 +10853,7 @@ msgstr "Задачата е изпълнена."
 #: diarytask.js
 msgid "Task items are executed in order of index, lowest to highest"
 msgstr ""
+"Елементите на задачите са изпълнени по ред от най-ниско към най-високо"
 
 #: animal_find_results.js animal.js animal_new.js mobile.py
 msgid "Tattoo"
@@ -10691,7 +10863,7 @@ msgstr "Татус"
 msgid "Tattoo Date"
 msgstr "Дата на татуиране"
 
-#: html.py
+#: animal_find.js html.py
 msgid "Tattoo Number"
 msgstr "Номер на татус"
 
@@ -10733,11 +10905,11 @@ msgstr ""
 
 #: dbupdate.py
 msgid "Tennessee Walker"
-msgstr "Tennessee Walker"
+msgstr "Тенеси Уокър"
 
 #: dbupdate.py
 msgid "Terrapin"
-msgstr "Terrapin"
+msgstr "Терапин сладководна костенурка"
 
 #: dbupdate.py
 msgid "Terrier"
@@ -10789,7 +10961,7 @@ msgstr "Текст"
 
 #: csvimport.js
 msgid "Text Encoding"
-msgstr ""
+msgstr "Текстово кодиране"
 
 #: common.js
 msgid "Th"
@@ -10797,7 +10969,7 @@ msgstr "Чт"
 
 #: dbupdate.py
 msgid "Thai Ridgeback"
-msgstr "Thai Ridgeback"
+msgstr "Тайландски риджбек"
 
 #: main.js
 msgid "Thank you for choosing Animal Shelter Manager for your shelter!"
@@ -10806,7 +10978,7 @@ msgstr ""
 
 #: service.py
 msgid "Thank you, the document is now signed."
-msgstr ""
+msgstr "Благодарим Ви, документът е подписан"
 
 #: animalcontrol.py
 msgid "That animal is already linked to the incident"
@@ -10833,6 +11005,10 @@ msgstr "URL е адресът на интернет ресурса. Пр: www.yo
 msgid "The animal name"
 msgstr "Името на животното"
 
+#: animal.py
+msgid "The animal record to merge must be different from the original."
+msgstr ""
+
 #: animal.js
 msgid "The animal sex"
 msgstr "Полът на животното"
@@ -10850,8 +11026,8 @@ msgid ""
 "The confirmation email message to send to the form submitter. Leave blank to "
 "send a copy of the completed form."
 msgstr ""
-"The confirmation email message to send to the form submitter. Leave blank to "
-"send a copy of the completed form."
+"Имейлът за потвърждение да се прати на попълващия формуляра. Оставете "
+"празно, за да пратите копие на пълната форма"
 
 #: sql.js
 msgid ""
@@ -10897,7 +11073,7 @@ msgstr "Дата на чипиране"
 
 #: move_reclaim.js
 msgid "The date the animal was reclaimed"
-msgstr ""
+msgstr "Датата, на която животното е върнато обратно"
 
 #: animal.js animal_new.js
 msgid "The date the animal was tattooed"
@@ -10922,7 +11098,7 @@ msgstr "Дата на последен контакт със собствени�
 
 #: donation_receive.js
 msgid "The date the payment was received"
-msgstr ""
+msgstr "Датата, на която е получено плащането"
 
 #: move_reserve.js
 msgid "The date the reservation is effective from"
@@ -10942,11 +11118,11 @@ msgstr "Дата на край на проблното осиновяване"
 
 #: vaccination.js
 msgid "The date the vaccination is required/due to be administered"
-msgstr ""
+msgstr "Датата, на която трябва да се постави ваксина"
 
 #: vaccination.js
 msgid "The date the vaccination was administered"
-msgstr ""
+msgstr "Датата, на която е поставена ваксината"
 
 #: lostfound_new.js lostfound.js
 msgid "The date this animal was found"
@@ -11010,7 +11186,7 @@ msgstr "Номер на движение '{0}' не е уникален."
 
 #: stocklevel.js
 msgid "The number of stock records to create"
-msgstr ""
+msgstr "Брой складови записи, които трябва да се създадат"
 
 #: options.js
 msgid "The period in days before waiting list urgency is increased"
@@ -11036,7 +11212,7 @@ msgstr "Причината, поради която животното е пре
 
 #: stocklevel.js
 msgid "The remaining units in the container"
-msgstr ""
+msgstr "Останалите единици в контейнера"
 
 #: animal.js
 msgid "The result of the FIV test"
@@ -11052,7 +11228,7 @@ msgstr "Резултат от теста за дирофилария"
 
 #: stocklevel.js
 msgid "The retail/resale price per unit"
-msgstr ""
+msgstr "Цена на дребно/при препродажба на единица"
 
 #: animal.js
 msgid "The secondary breed of this animal"
@@ -11092,7 +11268,7 @@ msgstr "Номер на татус"
 
 #: stocklevel.js
 msgid "The type of unit in the container, eg: tablet, vial, etc."
-msgstr ""
+msgstr "Видът на елемента в контейнера: таблетка, шишенце и др."
 
 #: person.js
 msgid "The veterinary license number."
@@ -11100,13 +11276,15 @@ msgstr "Номер на лиценза на ветеринара."
 
 #: stocklevel.js
 msgid "The wholesale/trade price the container was bought for"
-msgstr ""
+msgstr "Цената на едро, за която е закупен контейнерът"
 
 #: onlineform.py
 msgid ""
 "There is not enough information in the form to attach to a shelter animal "
 "record (need an animal name)."
 msgstr ""
+"Няма достатъчно информация във формата, за да се прикачи към записа (трябва "
+"име на животното)"
 
 #: onlineform.py
 msgid ""
@@ -11143,6 +11321,8 @@ msgid ""
 "There is not enough information in the form to create a transport record "
 "(need pickupdate and dropoffdate)."
 msgstr ""
+"Няма достатъчно информация, за да се създаде запис за транспорт (трябва дата "
+"на вземане и на оставяне)"
 
 #: onlineform.py
 msgid ""
@@ -11184,24 +11364,33 @@ msgid ""
 "These batch processes are run each night by the system and should not need "
 "to be run manually."
 msgstr ""
+"Тези процеси се изпълняват всяка вечер от системата и няма нужда от ръчна "
+"настройка"
 
 #: test.js
 msgid ""
 "These fields allow you to deduct stock for the test(s) given. This single "
 "deduction should cover the selected tests being performed."
 msgstr ""
+"Тези полета ви позволяват да приспаднете запас от дадените тестове. Това "
+"единично приспадане трябва да обхваща избраните тестове, които се извършват"
 
 #: medical.js
 msgid ""
 "These fields allow you to deduct stock for the treatment(s) given. This "
 "single deduction should cover the selected treatments being administered."
 msgstr ""
+"Тези полета ви позволяват да приспаднете запас от направените лечения. Това "
+"единично приспадане трябва да обхваща избраните лечения, които се извършват"
 
 #: vaccination.js
 msgid ""
 "These fields allow you to deduct stock for the vaccination(s) given. This "
 "single deduction should cover the selected vaccinations being administered."
 msgstr ""
+"Тези полета ви позволяват да приспаднете запас от направените ваксинации. "
+"Това единично приспадане трябва да обхваща избраните ваксинации, които се "
+"извършват"
 
 #: options.js
 msgid ""
@@ -11289,6 +11478,14 @@ msgstr "Животното е тествано за дирофилария"
 msgid "This animal has movements and cannot be removed."
 msgstr "Това животно има записи за движения. Не може да бъде премахнато."
 
+#: movements.js move_adopt.js
+msgid "This animal has not been altered."
+msgstr "Това животно не е променяно"
+
+#: movements.js move_adopt.js
+msgid "This animal has not been microchipped."
+msgstr "Това животно няма микрочип"
+
 #: animal.js
 msgid "This animal has special needs"
 msgstr "Това животно има специални нужди"
@@ -11305,7 +11502,7 @@ msgstr "Породата на това животно е микс"
 
 #: movements.js
 msgid "This animal is bonded with {0}"
-msgstr ""
+msgstr "Това животно е свързано с {0}"
 
 #: move_adopt.js
 msgid ""
@@ -11330,15 +11527,15 @@ msgstr ""
 
 #: movements.js move_adopt.js movement.py
 msgid "This animal is currently held and cannot be adopted."
-msgstr ""
+msgstr "Това животно е временно задържано и не може да бъде осиновено"
 
 #: movements.js move_reclaim.js move_adopt.js
 msgid "This animal is currently quarantined and should not leave the shelter."
-msgstr ""
+msgstr "Това животно е под карантина и не може да напуска приюта"
 
 #: movements.js move_adopt.js
 msgid "This animal is marked not for adoption."
-msgstr ""
+msgstr "Това животно не е за осиновяване"
 
 #: animal.js
 msgid "This animal is microchipped"
@@ -11353,6 +11550,7 @@ msgstr "Това животно не е в приюта."
 msgid ""
 "This animal is part of a cruelty case and should not leave the shelter."
 msgstr ""
+"Това животно е част от случай на жестокост и не може да напуска приюта"
 
 #: animal.js animal_new.js
 msgid "This animal should be held in case it is reclaimed"
@@ -11378,7 +11576,7 @@ msgstr "Животното е евтаназирано"
 
 #: animal.js
 msgid "This animal was picked up"
-msgstr ""
+msgstr "Това животно е взето"
 
 #: animal.js animal_new.js
 msgid "This animal was transferred from another shelter"
@@ -11406,11 +11604,11 @@ msgstr "Датата на раждане е приблизителна"
 
 #: accounts.js
 msgid "This expense account is the source for costs of this type"
-msgstr ""
+msgstr "Този разход е източникът на такъв тип разходи"
 
 #: accounts.js
 msgid "This income account is the source for payments received of this type"
-msgstr ""
+msgstr "Сметката за приходи е източникът за получени плащания от този вид"
 
 #: lookups.py
 msgid ""
@@ -11425,6 +11623,8 @@ msgid ""
 "This many years after creation of a person record, the name, address and "
 "telephone data will be anonymized."
 msgstr ""
+"След толкова години след създаването на записа за този човек, името, адресът "
+"и номерът на телефона, ще бъдат анонимни"
 
 #: options.js
 msgid "This month"
@@ -11460,7 +11660,7 @@ msgstr "Това лице се разследва в момента"
 
 #: movements.js move_adopt.js
 msgid "This person has been under investigation."
-msgstr ""
+msgstr "Този човек е разследван"
 
 #: person.py
 msgid "This person has movements and cannot be removed."
@@ -11476,15 +11676,15 @@ msgstr "Това лице не е минало успешно домашната
 
 #: person.py
 msgid "This person has payments and cannot be removed."
-msgstr ""
+msgstr "Този човек има задължения и не може да бъде премахнат"
 
 #: movements.js move_adopt.js
 msgid "This person has previously surrendered an animal."
-msgstr ""
+msgstr "Този човек има предишно предаване на животно"
 
 #: person.py
 msgid "This person is linked to a waiting list record and cannot be removed."
-msgstr ""
+msgstr "Този човек е в листа на чакащите и не може да бъде премахнат"
 
 #: person.py
 msgid "This person is linked to an animal and cannot be removed."
@@ -11492,31 +11692,34 @@ msgstr "Този човек е свързан с животно и не може
 
 #: person.py
 msgid "This person is linked to an investigation and cannot be removed."
-msgstr ""
+msgstr "Този човек е свързан с разследване и не може да бъде премахнат."
 
 #: person.py
 msgid "This person is linked to animal control and cannot be removed."
 msgstr ""
+"Този човек е свързан с контрол над животно и не може да бъде премахнат."
 
 #: person.py
 msgid "This person is linked to animal licenses and cannot be removed."
 msgstr ""
+"Този човек е свързан с лицензии за животни и не може да бъде премахнат."
 
 #: person.py
 msgid "This person is linked to animal transportation and cannot be removed."
 msgstr ""
+"Този човек е свързан с транспорт на животно и не може да бъде премахнат."
 
 #: person.py
 msgid "This person is linked to citations and cannot be removed."
-msgstr ""
+msgstr "Този човек е свързан с призовка и не може да бъде премахнат."
 
 #: person.py
 msgid "This person is linked to found animals and cannot be removed."
-msgstr ""
+msgstr "Този човек е свързан с намерено животно и не може да бъде премахнат."
 
 #: person.py
 msgid "This person is linked to lost animals and cannot be removed."
-msgstr ""
+msgstr "Този човек е свързан с изгубено животно и не може да бъде премахнат."
 
 #: person.py
 msgid "This person is linked to trap loans and cannot be removed."
@@ -11551,6 +11754,10 @@ msgstr "Това лице живее в същият район като лиц�
 
 #: waitinglist.py lostfound.py animalcontrol.py animal.py person.py
 msgid "This record has been changed by another user, please reload."
+msgstr "Записът е променен от друг потребител, моля заредете отново"
+
+#: reports.js
+msgid "This report cannot be sent by email as it requires criteria to run."
 msgstr ""
 
 #: document_repository.js
@@ -11577,7 +11784,7 @@ msgstr "Този тип движение изисква попълването �
 #: movements.js move_transfer.js move_reclaim.js move_adopt.js move_retailer.js
 #: move_reserve.js move_foster.js
 msgid "This type of movement requires a person."
-msgstr "This type of movement requires a person."
+msgstr "Този тип движение изисква човек"
 
 #: options.js staff_rota.js
 msgid "This week"
@@ -11585,7 +11792,7 @@ msgstr "Тази седмица"
 
 #: common_tableform.js
 msgid "This will permanently remove the selected records, are you sure?"
-msgstr "This will permanently remove the selected records, are you sure?"
+msgstr "Това ще изтрие завинаги избраните записи,сигурен ли сте?"
 
 #: roles.js
 msgid "This will permanently remove the selected roles, are you sure?"
@@ -11594,6 +11801,7 @@ msgstr "Сигурни ли сте, че искате да изтриете бе
 #: users.js
 msgid "This will permanently remove the selected user accounts. Are you sure?"
 msgstr ""
+"Това ще премахне завинаги избраните акаунти на потребители. Сигурен ли сте?"
 
 #: accounts.js
 msgid ""
@@ -11614,7 +11822,7 @@ msgstr ""
 
 #: animal.js
 msgid "This will permanently remove this animal, are you sure?"
-msgstr "This will permanently remove this animal, are you sure?"
+msgstr "Това ще премахне завинаги това животно, сигурен ли сте?"
 
 #: incident.js
 msgid "This will permanently remove this incident, are you sure?"
@@ -11622,7 +11830,7 @@ msgstr "Сигурни ли сте, че искате да изтриете ин
 
 #: person.js
 msgid "This will permanently remove this person, are you sure?"
-msgstr "This will permanently remove this person, are you sure?"
+msgstr "Това ще премахне завинаги този човек, сигурен ли сте?"
 
 #: lostfound.js
 msgid "This will permanently remove this record, are you sure?"
@@ -11644,7 +11852,7 @@ msgstr "Тази година"
 
 #: dbupdate.py
 msgid "Thoroughbred"
-msgstr "Thoroughbred"
+msgstr "Чистокръвен"
 
 #: calendarview.js clinic_calendar.js common.js
 msgid "Thu"
@@ -11660,27 +11868,27 @@ msgstr "Четвъртък"
 
 #: dbupdate.py
 msgid "Tibetan Mastiff"
-msgstr "Tibetan Mastiff"
+msgstr "Тибетски мастиф"
 
 #: dbupdate.py
 msgid "Tibetan Spaniel"
-msgstr "Tibetan Spaniel"
+msgstr "Тибетски шпаньол"
 
 #: dbupdate.py
 msgid "Tibetan Terrier"
-msgstr "Tibetan Terrier"
+msgstr "Тибетски териер"
 
 #: dbupdate.py
 msgid "Tiger"
-msgstr "Tiger"
+msgstr "Тигър"
 
-#: onlineform.js diary.js log.js log_new.js
+#: onlineform.js diary.js log.js log_new.js dbupdate.py
 msgid "Time"
 msgstr "Време"
 
 #: animal.js animal_new.js
 msgid "Time Brought In"
-msgstr ""
+msgstr "Време доведен"
 
 #: waitinglist_results.js html.py
 msgid "Time On List"
@@ -11729,7 +11937,7 @@ msgstr "До"
 
 #: movements.js
 msgid "To Adoption"
-msgstr ""
+msgstr "За осиновяване"
 
 #: animal.py
 msgid "To Fostering"
@@ -11757,7 +11965,7 @@ msgstr "За да продължите да използвате ASM, моля �
 
 #: staff_rota.js
 msgid "To week beginning"
-msgstr ""
+msgstr "Към началото на седмицата"
 
 #: options.js calendarview.js clinic_calendar.js common.js
 msgid "Today"
@@ -11765,7 +11973,7 @@ msgstr "Днес"
 
 #: dbupdate.py
 msgid "Tonkinese"
-msgstr "Tonkinese"
+msgstr "Тонкинска котка"
 
 #: dbupdate.py
 msgid "Too Many Animals"
@@ -11793,7 +12001,7 @@ msgstr "Костенурка"
 
 #: dbupdate.py
 msgid "Tosa Inu"
-msgstr "Tosa Inu"
+msgstr "Тоса Ину"
 
 #: stocklevel.js common_widgets.js
 msgid "Total"
@@ -11805,15 +12013,15 @@ msgstr "Брой в опаковката"
 
 #: donations.js
 msgid "Total payments"
-msgstr ""
+msgstr "Всичко плащания"
 
 #: dbupdate.py
 msgid "Toucan"
-msgstr "Toucan"
+msgstr "Тукан"
 
 #: dbupdate.py
 msgid "Toy Fox Terrier"
-msgstr "Toy Fox Terrier"
+msgstr "Той Фокс териер"
 
 #: dbupdate.py
 msgid "Training"
@@ -11906,11 +12114,11 @@ msgstr "Транспортен дневник"
 
 #: movement.py
 msgid "Transport requires an animal"
-msgstr ""
+msgstr "Транппортът изисква животно"
 
 #: movement.py
 msgid "Transports must have valid pickup and dropoff dates and times."
-msgstr ""
+msgstr "Транспортът изисква валидна дата и време на вземане и оставяне"
 
 #: header_edit_header.js roles.js
 msgid "Trap Loans"
@@ -11934,7 +12142,7 @@ msgstr "Заем на капани"
 
 #: options.js
 msgid "Treat animals at retailers as part of the shelter inventory"
-msgstr ""
+msgstr "Обработените животни при търговците като част от инвентара на приюта"
 
 #: options.js
 msgid "Treat foster animals as part of the shelter inventory"
@@ -11966,7 +12174,7 @@ msgstr "Лечения"
 
 #: dbupdate.py
 msgid "Treeing Walker Coonhound"
-msgstr "Treeing Walker Coonhound"
+msgstr "Триинг Уокър Кунхаунд"
 
 #: options.js movements.js common.js publish_options.js dbupdate.py
 msgid "Trial Adoption"
@@ -11990,7 +12198,7 @@ msgstr "Трицветно"
 
 #: roles.js batch.js html.py
 msgid "Trigger Batch Processes"
-msgstr ""
+msgstr "Задаване на партидните процеси"
 
 #: common.js
 msgid "Tu"
@@ -12010,15 +12218,15 @@ msgstr "Tumblr"
 
 #: dbupdate.py
 msgid "Turkey"
-msgstr "Turkey"
+msgstr "Турция"
 
 #: dbupdate.py
 msgid "Turkish Angora"
-msgstr "Turkish Angora"
+msgstr "Турска ангорска котка"
 
 #: dbupdate.py
 msgid "Turkish Van"
-msgstr "Turkish Van"
+msgstr "Турска ван"
 
 #: dbupdate.py
 msgid "Turtle"
@@ -12091,7 +12299,7 @@ msgstr "Не  наличен"
 
 #: common.js
 msgid "Under {0} weeks old"
-msgstr ""
+msgstr "Под {0} седмична възраст"
 
 #: search.js animal_find_results.js header_edit_header.js animal.js
 #: stocklevel.js animal_new.js common.js mobile.py html.py
@@ -12142,6 +12350,10 @@ msgstr "Неподходящи условия"
 msgid "Up for adoption"
 msgstr "Животни за осиновяване"
 
+#: movement.py
+msgid "Upcoming medical items"
+msgstr ""
+
 #: animal_bulk.js
 msgid "Update"
 msgstr "Редактирай"
@@ -12160,7 +12372,7 @@ msgstr "Обновете дневните разходи за пансион з�
 
 #: code.py
 msgid "Updated database to version {0}"
-msgstr "Updated database to version {0}"
+msgstr "Направи ъпдейт до версия {0}"
 
 #: reports.js onlineforms.js
 msgid "Updated."
@@ -12172,7 +12384,7 @@ msgstr "Обновяване…"
 
 #: document_templates.js
 msgid "Upload"
-msgstr ""
+msgstr "Качи"
 
 #: document_repository.js
 msgid "Upload Document"
@@ -12180,7 +12392,7 @@ msgstr "Качи документ"
 
 #: document_templates.js
 msgid "Upload ODT"
-msgstr ""
+msgstr "Качи ODT"
 
 #: mobile.py
 msgid "Upload Photo"
@@ -12188,7 +12400,7 @@ msgstr "Качи снимка"
 
 #: document_templates.js
 msgid "Upload a new OpenOffice template"
-msgstr ""
+msgstr "Kaчи нов шаблон от OpenOffice"
 
 #: publish_options.js
 msgid "Upload all available images for animals"
@@ -12224,7 +12436,7 @@ msgstr "Спешност"
 
 #: medical.js test.js stocklevel.js vaccination.js
 msgid "Usage Date"
-msgstr ""
+msgstr "Дата на ползване"
 
 #: medical.js test.js stocklevel.js vaccination.js mobile.py lookups.py
 msgid "Usage Type"
@@ -12260,7 +12472,7 @@ msgstr "Използвай едно поле за порода"
 
 #: publish_options.js
 msgid "Use animal comments"
-msgstr ""
+msgstr "Използвай коментари за животни"
 
 #: options.js
 msgid "Use fancy tooltips"
@@ -12268,7 +12480,7 @@ msgstr "Използвай разчупени подсказки (tooltips)"
 
 #: publish_options.js
 msgid "Use notes from preferred photo"
-msgstr ""
+msgstr "Използвай бележки от предпочитани снимки"
 
 #: main.js
 msgid ""
@@ -12291,6 +12503,8 @@ msgid ""
 "User accounts that will only ever call the Service API should set this to No."
 ""
 msgstr ""
+"Потребителски акаунти, които ще използват номера на  Service API, трябва да "
+"дадат настройки до Номер "
 
 #: html.py
 msgid "User roles"
@@ -12302,7 +12516,7 @@ msgstr "Потребител"
 
 #: users.py
 msgid "Username '{0}' already exists"
-msgstr ""
+msgstr "Потребителското име {0} вече съществува"
 
 #: roles.js
 msgid "Users"
@@ -12362,7 +12576,7 @@ msgstr "Ваксинациите имат нужда от животно и по
 
 #: medical.py
 msgid "Vaccinations require an animal"
-msgstr ""
+msgstr "Ваксинацията изисква животно"
 
 #: animal_costs.js
 msgid ""
@@ -12393,13 +12607,13 @@ msgid "Very Large"
 msgstr "Много едро"
 
 #: person_find_results.js header_edit_header.js onlineforms.js test.js
-#: vaccination.js common.js html.py dbupdate.py
+#: common.js html.py dbupdate.py
 msgid "Vet"
 msgstr "Ветеринар"
 
 #: dbupdate.py
 msgid "Vet Visit"
-msgstr ""
+msgstr "Посещение от ветеринар"
 
 #: incident_new.js incident.js mobile.py
 msgid "Victim"
@@ -12415,7 +12629,7 @@ msgstr "Видео препратка"
 
 #: dbupdate.py
 msgid "Vietnamese Pot Bellied"
-msgstr "Vietnamese Pot Bellied"
+msgstr "Виетнамска свиня"
 
 #: onlineform_incoming.js
 msgid "View"
@@ -12439,7 +12653,7 @@ msgstr "Преглед на глоби/обвинения"
 
 #: roles.js
 msgid "View Clinic Appointment"
-msgstr ""
+msgstr "Виж датата за преглед в клиниката"
 
 #: roles.js
 msgid "View Cost"
@@ -12455,7 +12669,7 @@ msgstr "Преглед на диета"
 
 #: mobile.py service.py
 msgid "View Document"
-msgstr ""
+msgstr "Виж документ"
 
 #: roles.js
 msgid "View Document Repository"
@@ -12515,7 +12729,7 @@ msgstr "Преглед в PDF"
 
 #: roles.js
 msgid "View Payments"
-msgstr ""
+msgstr "Виж плащания"
 
 #: roles.js
 msgid "View Person"
@@ -12547,7 +12761,7 @@ msgstr "Преглед на служители"
 
 #: roles.js
 msgid "View Stock"
-msgstr ""
+msgstr "Виж наличност"
 
 #: roles.js
 msgid "View Tests"
@@ -12591,7 +12805,7 @@ msgstr "Прегледай животните по кучила"
 
 #: mailmerge.js
 msgid "View matching records"
-msgstr ""
+msgstr "Виж съвпадащи записи"
 
 #: media.js
 msgid "View media"
@@ -12607,7 +12821,7 @@ msgstr "Цветово оформление"
 
 #: dbupdate.py
 msgid "Vizsla"
-msgstr "Vizsla"
+msgstr "Визла"
 
 #: person_find_results.js staff_rota.js header_edit_header.js onlineforms.js
 #: common.js html.py
@@ -12626,9 +12840,18 @@ msgstr "Ваучери"
 msgid "Vouchers need an issue and expiry date."
 msgstr "Ваучерите имат нужда от дата на издаване и валидност"
 
+#: movement.py
+msgid "WARNING: This animal has not been microchipped"
+msgstr ""
+
+#: movement.py
+msgid ""
+"WARNING: This animal is over 6 months old and has not been neutered/spayed"
+msgstr ""
+
 #: clinic_appointment.js dbupdate.py
 msgid "Waiting"
-msgstr ""
+msgstr "Чакащ"
 
 #: options.js search.js header_edit_header.js waitinglist_results.js roles.js
 #: onlineform_incoming.js html.py dbupdate.py
@@ -12669,7 +12892,7 @@ msgstr "Чакалня"
 
 #: mobile.py
 msgid "Waiting for documents..."
-msgstr ""
+msgstr "Чакане за документи..."
 
 #: dbupdate.py
 msgid "Waiting list donations"
@@ -12697,12 +12920,20 @@ msgstr "Период на обновяване на спешността в сп
 
 #: dbupdate.py
 msgid "Warmblood"
-msgstr "Warmblood"
+msgstr "Топлокръвен"
 
 #: options.js
 msgid "Warn if the name of the new animal is similar to one entered recently"
 msgstr ""
 "Предупреди ако името на животното  е подобно на вече въведено в системата"
+
+#: options.js
+msgid "Warn when adopting an animal who has not been microchipped"
+msgstr "Предупреди ме,когато се осинови животно, което не е чипирано"
+
+#: options.js
+msgid "Warn when adopting an unaltered animal"
+msgstr "Предупреди ме, когато се осинови непроменено животно"
 
 #: options.js
 msgid ""
@@ -12763,7 +12994,7 @@ msgstr "Седмица"
 
 #: staff_rota.js
 msgid "Week beginning {0}"
-msgstr ""
+msgstr "Началото на семицата {0}"
 
 #: dbupdate.py
 msgid "Weekly"
@@ -12775,7 +13006,7 @@ msgstr "Тегло"
 
 #: dbupdate.py
 msgid "Weimaraner"
-msgstr "Weimaraner"
+msgstr "Ваймаранер"
 
 #: main.js
 msgid "Welcome!"
@@ -12787,7 +13018,7 @@ msgstr "Корги"
 
 #: dbupdate.py
 msgid "Welsh Springer Spaniel"
-msgstr "Welsh Springer Spaniel"
+msgstr "Уелски спрингершпаньол"
 
 #: dbupdate.py
 msgid "Welsh Terrier"
@@ -12795,11 +13026,11 @@ msgstr "Уелски териер"
 
 #: dbupdate.py
 msgid "West Highland White Terrier Westie"
-msgstr "West Highland White Terrier Westie"
+msgstr "Западнохайландски бял териер"
 
 #: dbupdate.py
 msgid "Wheaten Terrier"
-msgstr "Wheaten Terrier"
+msgstr "Пшеничен териер"
 
 #: reports.js
 msgid "When"
@@ -12830,9 +13061,16 @@ msgstr ""
 
 #: options.js
 msgid ""
+"When I mark an animal held, make a note of it in the log with this type"
+msgstr "Когато маркирам задържано животно, запиши бележка в лога от този тип"
+
+#: options.js
+msgid ""
 "When I set a new GDPR Opt-In contact option, make a note of it in the log "
 "with this type"
 msgstr ""
+"Когато настроя нов контакт за лицето по GDPR, запиши бележка в лога от този "
+"тип"
 
 #: options.js
 msgid "When a message is created, email it to each matching user"
@@ -12845,6 +13083,8 @@ msgid ""
 "When creating payments from the Move menu screens, mark them due instead of "
 "received"
 msgstr ""
+"Когато се прави плащане от менюто Move, маркирай крайния срок вместо "
+"получено"
 
 #: options.js
 msgid "When displaying calendars, the first day of the week is"
@@ -12868,6 +13108,8 @@ msgid ""
 "When entering vaccinations, default the last batch number and manufacturer "
 "for that type"
 msgstr ""
+"Когато въвеждате ваксинации дайте по подразбиране партидния номер и "
+"производителя"
 
 #: options.js
 msgid "When matching lost animals, include shelter animals"
@@ -12886,6 +13128,7 @@ msgstr ""
 msgid ""
 "When receiving multiple payments, allow the due and received dates to be set"
 msgstr ""
+"Когато получавате плащане задавайте крайния срок и датите на получаване"
 
 #: options.js
 msgid "When receiving payments, allow a quantity and unit price to be set"
@@ -12899,6 +13142,7 @@ msgstr "При получаване на плащане, записвай по �
 #: options.js
 msgid "When receiving payments, allow the deposit account to be overridden"
 msgstr ""
+"Когато получавате плащания позволете акаунта за депозит да бъде отменен"
 
 #: main.js
 msgid ""
@@ -12923,7 +13167,7 @@ msgstr "Къде се намира това животно в приюта"
 
 #: dbupdate.py
 msgid "Whippet"
-msgstr "Whippet"
+msgstr "Уипет"
 
 #: dbupdate.py
 msgid "White"
@@ -12931,7 +13175,7 @@ msgstr "Бял"
 
 #: dbupdate.py
 msgid "White German Shepherd"
-msgstr "White German Shepherd"
+msgstr "Бяло немско овчарско куче"
 
 #: dbupdate.py
 msgid "White and Black"
@@ -12955,7 +13199,7 @@ msgstr "Бяло с червеникаво кафяво"
 
 #: dbupdate.py
 msgid "White and Tabby"
-msgstr "White and Tabby"
+msgstr "Бяло и таби "
 
 #: dbupdate.py
 msgid "White and Tan"
@@ -12971,7 +13215,7 @@ msgstr "Този собственик ще направи ли дарение?"
 
 #: dbupdate.py
 msgid "Wire-haired Pointing Griffon"
-msgstr "Wire-haired Pointing Griffon"
+msgstr "Грифон на Корталс"
 
 #: dbupdate.py
 msgid "Wirehaired Terrier"
@@ -12983,7 +13227,7 @@ msgstr "При ветеринаря"
 
 #: reports.js
 msgid "With overnight batch"
-msgstr ""
+msgstr "С нощната партида"
 
 #: accounts_trx.js
 msgid "Withdrawal"
@@ -13012,7 +13256,7 @@ msgstr "XXX или XX = уникален номер за тази година"
 
 #: dbupdate.py
 msgid "Xoloitzcuintle/Mexican Hairless"
-msgstr "Xoloitzcuintle/Mexican Hairless"
+msgstr "Мексиканско голо куче"
 
 #: options.js
 msgid "YY or YYYY = current year"
@@ -13020,7 +13264,7 @@ msgstr "YY или YYYY = текуща година"
 
 #: dbupdate.py
 msgid "Yellow Labrador Retriever"
-msgstr "Yellow Labrador Retriever"
+msgstr "Лабрадор ретривър"
 
 #: dbupdate.py
 msgid "Yellow and Grey"
@@ -13089,6 +13333,8 @@ msgid ""
 "You can set a default amount for different payment types in the Settings- "
 "Lookup Data screen. Very handy when creating adoptions."
 msgstr ""
+"Може да зададете количество от различните видове плащания в Настройки - "
+"Lookup Data Screen. МНого удобно когато правите осиновявания"
 
 #: main.js
 msgid "You can sort tables by clicking on the column headings."
@@ -13111,6 +13357,8 @@ msgid ""
 "You can use incoming forms to create new records or attach them to existing "
 "records."
 msgstr ""
+"Може да използвате нови форми, за да създавате нови записи или да ги "
+"прикачвате към съществуващи записи"
 
 #: movement.py
 msgid "You can't have a return without a movement."
@@ -13141,14 +13389,6 @@ msgstr "Тинейджър"
 msgid ""
 "Your CSV file should have a header row with field names ASM recognises."
 msgstr "CSV файлът трябва да има заглавен ред с имена, които ASM разпознава."
-
-#: change_password.js
-msgid ""
-"Your password is currently set to 'password'. This is highly insecure and we "
-"strongly suggest you choose a new password."
-msgstr ""
-"Паролата ви в момента е 'password'. Силно препоръчително е да си смените "
-"паролата."
 
 #: main.js
 msgid ""
@@ -13197,7 +13437,7 @@ msgstr "ден;дена"
 
 #: wordprocessor.py
 msgid "estimate"
-msgstr "estimate"
+msgstr "Оцени"
 
 #: header.js
 msgid ""
@@ -13206,6 +13446,10 @@ msgid ""
 "retailers, staff, fosterers, volunteers, homecheckers, members, activelost, "
 "activefound"
 msgstr ""
+"Филтри: животно,листа с чакащи,изгубено животно,намерено животно, ключови "
+"думи: в приюта, не за осиновяване, забранен, донори, починал, ветеринари, "
+"търговци, персонал, приемни хора, доброволци, проверка на дома, членове, "
+"активно изгубено,активно намерено"
 
 #: mailmerge.js
 msgid "inches"
@@ -13213,7 +13457,7 @@ msgstr "инчове"
 
 #: shelterview.js
 msgid "invalid"
-msgstr ""
+msgstr "невалидно"
 
 #: animal.js animal_new.js wordprocessor.py
 msgid "kg"
@@ -13221,7 +13465,7 @@ msgstr "кг"
 
 #: animal.js animal_new.js wordprocessor.py
 msgid "lb"
-msgstr "lb"
+msgstr "паунд"
 
 #: main.js
 msgid "less"
@@ -13229,7 +13473,7 @@ msgstr "по-малко"
 
 #: clinic_appointment.js
 msgid "mins"
-msgstr ""
+msgstr "минути"
 
 #: medical.js medicalprofile.js medical.py
 msgid "months"
@@ -13253,7 +13497,7 @@ msgstr "или приблизителна възраст в години"
 
 #: animal.js animal_new.js wordprocessor.py
 msgid "oz"
-msgstr "oz"
+msgstr "унция"
 
 #: accounts_trx.js animal_bulk.js
 msgid "to"
@@ -13273,7 +13517,7 @@ msgstr "Третиране, всеки"
 
 #: medical.js medical.py
 msgid "weekdays"
-msgstr ""
+msgstr "работни дни"
 
 #: medical.js medicalprofile.js medical.py
 msgid "weeks"
@@ -13293,7 +13537,7 @@ msgstr "вчера"
 
 #: animal.py
 msgid "{0} (under {1} months)"
-msgstr ""
+msgstr "под {1} месец"
 
 #: animal_diet.js movements.js clinic_appointment.js donations.js diary.js
 #: log.js animal_costs.js animal.js medical.js media.js test.js licence.js
@@ -13317,7 +13561,7 @@ msgstr "{0} животни бяха успешно редактирани."
 
 #: header_additional.js
 msgid "{0} cannot be blank"
-msgstr "{0} cannot be blank"
+msgstr "{0} не може да бъде празно"
 
 #: header_edit_header.js
 msgid "{0} fine, paid"
@@ -13337,11 +13581,11 @@ msgstr "{0} се изпълнява ({1}&#37; приключено)."
 
 #: clinic_appointment.js
 msgid "{0} payment records created."
-msgstr ""
+msgstr "{0} направен запис на плащане"
 
 #: main.js
 msgid "{0} received"
-msgstr ""
+msgstr "{0} получено"
 
 #: mailmerge.js
 msgid "{0} record(s) match the mail merge."
@@ -13357,15 +13601,15 @@ msgstr "{0} редове са засегнати."
 
 #: common_animalchoosermulti.js
 msgid "{0} selected"
-msgstr ""
+msgstr "{0} избрано"
 
 #: medical.py
 msgid "{0} treatments every {1} days"
-msgstr "{0} treatments every {1} days"
+msgstr "{0} процедури на всеки {1} дни"
 
 #: medical.py
 msgid "{0} treatments every {1} months"
-msgstr "{0} treatments every {1} months"
+msgstr "{0} процедури на всеки {1} месеци"
 
 #: medical.py
 msgid "{0} treatments every {1} weekdays"
@@ -13377,39 +13621,39 @@ msgstr "{0} процедури всеки {1} седмици"
 
 #: medical.py
 msgid "{0} treatments every {1} years"
-msgstr "{0} treatments every {1} years"
+msgstr "{0} процедури на всеки {1} години"
 
 #: medical.py
 msgid "{0} {1} ({2} treatments)"
-msgstr "{0} {1} ({2} treatments)"
+msgstr "{0} {1} ({2} процедури"
 
 #: header_edit_header.js
 msgid "{0} {1} aged {2}"
 msgstr "{0} {1} възраст {2}"
 
-#: search.js
+#: search.js movement.py
 msgid "{0} {1} {2} aged {3}"
 msgstr "{0} {1} {2} на възраст {3}"
 
 #: animal.py
 msgid "{0} {1}: Moved from {2} to {3}"
-msgstr ""
+msgstr "{0} {1}: Преместено от {2} на {3}"
 
 #: animal.py
 msgid "{0} {1}: adopted by {2}"
-msgstr ""
+msgstr "{0} {1} осиновено от {2}"
 
 #: animal.py
 msgid "{0} {1}: altered"
-msgstr ""
+msgstr "{0} {1}:променено"
 
 #: animal.py
 msgid "{0} {1}: available for adoption"
-msgstr ""
+msgstr "{0} {1} подходящо за осиновяване"
 
 #: animal.py
 msgid "{0} {1}: died ({2})"
-msgstr ""
+msgstr "{0} {1} починало {2}"
 
 #: animal.py
 msgid "{0} {1}: entered the shelter"
@@ -13417,19 +13661,19 @@ msgstr "{0} {1}: приет в приюта"
 
 #: animal.py
 msgid "{0} {1}: escaped"
-msgstr ""
+msgstr "{0} {1}:избягало"
 
 #: animal.py
 msgid "{0} {1}: euthanised ({2})"
-msgstr ""
+msgstr "{0} {1}: евтанизирано ({2})"
 
 #: animal.py
 msgid "{0} {1}: fostered to {2}"
-msgstr ""
+msgstr "{0} {1}: в приемен дом {2}"
 
 #: animal.py
 msgid "{0} {1}: held"
-msgstr ""
+msgstr "{0} {1}: задържано"
 
 #: animal.py
 msgid "{0} {1}: microchipped"
@@ -13437,43 +13681,43 @@ msgstr "{0} {1}: чипиран"
 
 #: animal.py
 msgid "{0} {1}: not available for adoption"
-msgstr ""
+msgstr "{0} {1}: не е за осиновяване"
 
 #: animal.py
 msgid "{0} {1}: quarantined"
-msgstr ""
+msgstr "{0} {1}: под карантина"
 
 #: animal.py
 msgid "{0} {1}: received {2}"
-msgstr ""
+msgstr "{0} {1}: получено {2} "
 
 #: animal.py
 msgid "{0} {1}: reclaimed by {2}"
-msgstr ""
+msgstr "{0} {1}: върнато от  {2}"
 
 #: animal.py
 msgid "{0} {1}: released"
-msgstr ""
+msgstr "{0} {1}: пуснато"
 
 #: animal.py
 msgid "{0} {1}: reserved by {2}"
-msgstr ""
+msgstr "{0} {1}: резервирано от {2}"
 
 #: animal.py
 msgid "{0} {1}: returned by {2}"
-msgstr ""
+msgstr "{0} {1}:  върнато от  {2}"
 
 #: animal.py
 msgid "{0} {1}: sent to retailer {2}"
-msgstr ""
+msgstr "{0} {1}:  пратено на търговец {2}"
 
 #: animal.py
 msgid "{0} {1}: stolen"
-msgstr ""
+msgstr "{0} {1}: откраднато"
 
 #: animal.py
 msgid "{0} {1}: tested positive for FIV"
-msgstr ""
+msgstr "{0} {1}: позитивен тест за FIV"
 
 #: animal.py
 msgid "{0} {1}: tested positive for FeLV"
@@ -13481,15 +13725,15 @@ msgstr "{0} {1}: позитивни тестове за FeLV"
 
 #: animal.py
 msgid "{0} {1}: tested positive for Heartworm"
-msgstr ""
+msgstr "{0} {1}: позитивен тест за Дирофилариоза"
 
 #: animal.py
 msgid "{0} {1}: transferred to {2}"
-msgstr ""
+msgstr "{0} {1}: превозено до  {2}"
 
 #: staff_rota.js
 msgid "{0}, Week {1}"
-msgstr ""
+msgstr "{0}, седмица {1}"
 
 #: common.js
 msgid ""
@@ -13500,15 +13744,15 @@ msgstr ""
 
 #: animal.py
 msgid "{0}: closed {1} ({2})"
-msgstr ""
+msgstr "{0} затворено {1} ({2})"
 
 #: animal.py
 msgid "{0}: opened {1}"
-msgstr ""
+msgstr "{0} отворено {1} "
 
 #: animal.py
 msgid "{0}: waiting list - {1}"
-msgstr ""
+msgstr "{0}: листа с чакащи {1} "
 
 #: html.py animal.py
 msgid "{0}: {1} {2} - {3} {4}"
@@ -13516,11 +13760,11 @@ msgstr "{0}: {1} {2} - {3} {4}"
 
 #: animal.py
 msgid "{2}: found in {1}: {0}"
-msgstr ""
+msgstr "{2}: намерено в {1}: {0}"
 
 #: animal.py
 msgid "{2}: lost in {1}: {0}"
-msgstr ""
+msgstr "{2} загубено в {1}: {0}"
 
 #: main.js
 msgid "{plural0} animal as dead on arrival"
@@ -13540,7 +13784,7 @@ msgstr "{plural0} животно бе прието в приюта"
 
 #: main.js
 msgid "{plural0} animal has a hold ending today"
-msgstr ""
+msgstr "{plural0} животното има последно задържане днес"
 
 #: main.js
 msgid "{plural0} animal has been on the shelter longer than {0} months"
@@ -13572,15 +13816,15 @@ msgstr "{plural0} ден."
 
 #: main.js
 msgid "{plural0} incomplete animal control call"
-msgstr ""
+msgstr "{plural0} непълен номер за контрол на животното"
 
 #: main.js
 msgid "{plural0} item of stock expires in the next month"
-msgstr ""
+msgstr "{plural0} артикулът няма да е наличен в склада следващия месец"
 
 #: main.js
 msgid "{plural0} item of stock has expired"
-msgstr ""
+msgstr "{plural0} артикулът от склада е изчерпан"
 
 #: main.js
 msgid "{plural0} medical treatment needs to be administered today"
@@ -13592,11 +13836,11 @@ msgstr "{plural0} месец."
 
 #: main.js
 msgid "{plural0} new online form submission"
-msgstr ""
+msgstr "{plural0} нова онлайн форма"
 
 #: main.js
 msgid "{plural0} person has an overdue payment"
-msgstr ""
+msgstr "{plural0} човекът има пресрочено плащане"
 
 #: main.js
 msgid "{plural0} person with an active reservation has not been homechecked"
@@ -13604,11 +13848,11 @@ msgstr "{plural0} човек с активна резервания не е до
 
 #: main.js
 msgid "{plural0} potential match for a lost animal"
-msgstr ""
+msgstr "{plural0} вероятно съвпадение за изгубено животно"
 
 #: main.js
 msgid "{plural0} recent publisher run had errors"
-msgstr ""
+msgstr "{plural0} наскоро публикувано има грешки"
 
 #: main.js
 msgid "{plural0} reservation has been active over a week without adoption"
@@ -13660,7 +13904,7 @@ msgstr "{plural0} спешен запис в списъка с чакащи"
 
 #: main.js
 msgid "{plural0} vaccination has expired"
-msgstr ""
+msgstr "{plural0} ваксинациите са изтекли"
 
 #: main.js
 msgid "{plural0} vaccination needs to be administered today"
@@ -13696,7 +13940,7 @@ msgstr "{plural1}  животни са в приюта повече от {0} м�
 
 #: main.js
 msgid "{plural1} animals have holds ending today"
-msgstr ""
+msgstr "{plural1} животните имат последно задържане днес"
 
 #: main.js
 msgid "{plural1} animals were adopted"
@@ -13724,15 +13968,15 @@ msgstr "{plural1} дни."
 
 #: main.js
 msgid "{plural1} incomplete animal control calls"
-msgstr ""
+msgstr "{plural1} непълен номер на контрол на животните"
 
 #: main.js
 msgid "{plural1} items of stock expire in the next month"
-msgstr ""
+msgstr "{plural1} артикулът от склада изтича следващия месец"
 
 #: main.js
 msgid "{plural1} items of stock have expired"
-msgstr ""
+msgstr "{plural1} артикулът от склада не е наличен"
 
 #: main.js
 msgid "{plural1} medical treatments need to be administered today"
@@ -13744,11 +13988,11 @@ msgstr "{plural1} месеца."
 
 #: main.js
 msgid "{plural1} new online form submissions"
-msgstr ""
+msgstr "{plural1} нови онлай форми"
 
 #: main.js
 msgid "{plural1} people have overdue payments"
-msgstr ""
+msgstr "{plural1} хора с пресрочени плащания"
 
 #: main.js
 msgid "{plural1} people with active reservations have not been homechecked"
@@ -13756,11 +14000,11 @@ msgstr "{plural1} човека с активни резервании не са 
 
 #: main.js
 msgid "{plural1} potential matches for lost animals"
-msgstr ""
+msgstr "{plural1} вероятно съвпадение за изгубени животни"
 
 #: main.js
 msgid "{plural1} recent publisher runs had errors"
-msgstr ""
+msgstr "{plural1} наскоро публикувано има грешки"
 
 #: main.js
 msgid "{plural1} reservations have been active over a week without adoption"
@@ -13812,7 +14056,7 @@ msgstr "{plural1} спешни записи в списъка с чакащи"
 
 #: main.js
 msgid "{plural1} vaccinations have expired"
-msgstr ""
+msgstr "{plural1} изтекли ваксинации"
 
 #: main.js
 msgid "{plural1} vaccinations need to be administered today"
@@ -13848,7 +14092,7 @@ msgstr "{plural2} животни са в приюта повече от {0} ме
 
 #: main.js
 msgid "{plural2} animals have holds ending today"
-msgstr ""
+msgstr "{plural2} животните имат последно задържане днес"
 
 #: main.js
 msgid "{plural2} animals were adopted"
@@ -13876,15 +14120,15 @@ msgstr "{plural2} дни."
 
 #: main.js
 msgid "{plural2} incomplete animal control calls"
-msgstr ""
+msgstr "{plural2} непълен номер на контрол на животните"
 
 #: main.js
 msgid "{plural2} items of stock expire in the next month"
-msgstr ""
+msgstr "{plural2} артикулът от склада изтича следващия месец"
 
 #: main.js
 msgid "{plural2} items of stock have expired"
-msgstr ""
+msgstr "{plural2} артикулът от склада е изчерпан"
 
 #: main.js
 msgid "{plural2} medical treatments need to be administered today"
@@ -13896,11 +14140,11 @@ msgstr "{plural2} месеца."
 
 #: main.js
 msgid "{plural2} new online form submissions"
-msgstr ""
+msgstr "{plural2} нови онлайн форми"
 
 #: main.js
 msgid "{plural2} people have overdue payments"
-msgstr ""
+msgstr "{plural2} хора с пресрочени плащания"
 
 #: main.js
 msgid "{plural2} people with active reservations have not been homechecked"
@@ -13908,11 +14152,11 @@ msgstr "{plural2} човека с активни резервании не са 
 
 #: main.js
 msgid "{plural2} potential matches for lost animals"
-msgstr ""
+msgstr "{plural2} вероятни съвпадения за изгубени животни"
 
 #: main.js
 msgid "{plural2} recent publisher runs had errors"
-msgstr ""
+msgstr "{plural2} наскоро публикувано има грешки"
 
 #: main.js
 msgid "{plural2} reservations have been active over a week without adoption"
@@ -13964,7 +14208,7 @@ msgstr "{plural2} спешни записи в списъка с чакащи"
 
 #: main.js
 msgid "{plural2} vaccinations have expired"
-msgstr ""
+msgstr "{plural2} ваксинациите изтичат"
 
 #: main.js
 msgid "{plural2} vaccinations need to be administered today"
@@ -14000,7 +14244,7 @@ msgstr "{plural3} животни са в приюта повече от {0} ме
 
 #: main.js
 msgid "{plural3} animals have holds ending today"
-msgstr ""
+msgstr "{plural3} последно задържане на животни днес"
 
 #: main.js
 msgid "{plural3} animals were adopted"
@@ -14028,15 +14272,15 @@ msgstr "{plural3} дни."
 
 #: main.js
 msgid "{plural3} incomplete animal control calls"
-msgstr ""
+msgstr "{plural3} непълен номер на контрол на животните"
 
 #: main.js
 msgid "{plural3} items of stock expire in the next month"
-msgstr ""
+msgstr "{plural3} артикулът от склада изтича следващия месец"
 
 #: main.js
 msgid "{plural3} items of stock have expired"
-msgstr ""
+msgstr "{plural3} артикулът от склада не е наличен"
 
 #: main.js
 msgid "{plural3} medical treatments need to be administered today"
@@ -14048,11 +14292,11 @@ msgstr "{plural3} месеца."
 
 #: main.js
 msgid "{plural3} new online form submissions"
-msgstr ""
+msgstr "{plural3} нови онлайн форми"
 
 #: main.js
 msgid "{plural3} people have overdue payments"
-msgstr ""
+msgstr "{plural3} хора с пресрочени плащания"
 
 #: main.js
 msgid "{plural3} people with active reservations have not been homechecked"
@@ -14060,11 +14304,11 @@ msgstr "{plural3} човека с активни резервании не са 
 
 #: main.js
 msgid "{plural3} potential matches for lost animals"
-msgstr ""
+msgstr "{plural3} вероятни съвпадения за изгубени животни"
 
 #: main.js
 msgid "{plural3} recent publisher runs had errors"
-msgstr ""
+msgstr "{plural3} скорошни публикации имат грешки"
 
 #: main.js
 msgid "{plural3} reservations have been active over a week without adoption"
@@ -14116,7 +14360,7 @@ msgstr "{plural3} спешни записи в списъка с чакащи"
 
 #: main.js
 msgid "{plural3} vaccinations have expired"
-msgstr ""
+msgstr "{plural3} ваксинациите изтекоха"
 
 #: main.js
 msgid "{plural3} vaccinations need to be administered today"
