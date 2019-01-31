@@ -10,15 +10,15 @@ msgstr ""
 "Project-Id-Version: ASM3\n"
 "Report-Msgid-Bugs-To: db@sheltermanager.com\n"
 "POT-Creation-Date: 2013-01-24 10:55+0000\n"
-"MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=UTF-8\n"
-"Content-Transfer-Encoding: 8bit\n"
-"PO-Revision-Date: 2018-01-29 04:11+0000\n"
+"PO-Revision-Date: 2019-01-31 10:04+0000\n"
 "Last-Translator: Egil Heine Strand <egil.h.strand@uis.no>\n"
 "Language-Team: Norwegian Bokmal <nb@li.org>\n"
 "Language: nb\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Zanata 4.6.2\n"
+"X-Generator: Poedit 2.2.1\n"
 "X-Launchpad-Export-Date: 2015-03-02 05:17+0000\n"
 "X-POOTLE-MTIME: 1470528460.000000\n"
 
@@ -1874,8 +1874,7 @@ msgid "Breed"
 msgstr "Rase"
 
 #: lookups.js
-msgid ""
-"Breed to use when publishing to third party services and adoption sites"
+msgid "Breed to use when publishing to third party services and adoption sites"
 msgstr ""
 "Rase som skal brukes når det publiseres til tredjeparter og adopsjonssider"
 
@@ -2602,8 +2601,7 @@ msgid "Color"
 msgstr "Farge"
 
 #: lookups.js
-msgid ""
-"Color to use when publishing to third party services and adoption sites"
+msgid "Color to use when publishing to third party services and adoption sites"
 msgstr ""
 
 #: lookups.py
@@ -2917,8 +2915,7 @@ msgid "Created By"
 msgstr "Opprettet av"
 
 #: options.js
-msgid ""
-"Creating cost and cost types creates matching accounts and transactions"
+msgid "Creating cost and cost types creates matching accounts and transactions"
 msgstr ""
 
 #: options.js
@@ -5719,13 +5716,13 @@ msgstr "IP-restriksjoner"
 #: users.js
 msgid ""
 "IP restriction is a space-separated list of IP netblocks in CIDR notation "
-"that this user is *only* permitted to login from (eg: 192.168.0.0/24 127.0.0."
-"0/8). If left blank, the user can login from any address."
+"that this user is *only* permitted to login from (eg: 192.168.0.0/24 "
+"127.0.0.0/8). If left blank, the user can login from any address."
 msgstr ""
 "IP-begrensning er en liste av IP-blokker adskilt av mellomrom på CIDR-form "
-"som denne brukeren kun kan logge seg inn fra (f.eks. 192.168.0.0/24 127.0.0."
-"0/8). Hvis feltet står tomt kan brukeren logge seg inn fra hvilken som helst "
-"adresse."
+"som denne brukeren kun kan logge seg inn fra (f.eks. 192.168.0.0/24 "
+"127.0.0.0/8). Hvis feltet står tomt kan brukeren logge seg inn fra hvilken "
+"som helst adresse."
 
 #: dbupdate.py
 msgid "Ibizan Hound"
@@ -5774,8 +5771,7 @@ msgid "If this person is a member, their membership number."
 msgstr "Hvis denne personen er et medlem, medlemsnummeret."
 
 #: stocklevel.js
-msgid ""
-"If this stock record is for a drug, the batch number from the container"
+msgid "If this stock record is for a drug, the batch number from the container"
 msgstr ""
 
 #: stocklevel.js
@@ -7065,7 +7061,6 @@ msgid ""
 "Medical profiles need a profile name, treatment, dosage and frequencies."
 msgstr ""
 "Medisinske profiler trenger et profilnavn, behandling, dosering og hyppighet."
-""
 
 #: medical.js
 msgid ""
@@ -7903,8 +7898,8 @@ msgstr "På hjelpesenteret"
 #: code.py
 msgid "On shelter for {0} days, daily cost {1}, cost record total <b>{2}</b>"
 msgstr ""
-"Hos fosterhjem i {0} dager, daglige kostnadder {1}, totale kostnadder "
-"<b>{2}</b>"
+"Hos fosterhjem i {0} dager, daglige kostnadder {1}, totale kostnadder <b>{2}"
+"</b>"
 
 #: animal_costs.js
 msgid "On shelter for {0} days. Total cost: {1}"
@@ -9866,8 +9861,7 @@ msgstr "Send E-poster"
 
 #: options.js
 msgid ""
-"Send a weekly email to fosterers with medical information about their "
-"animals"
+"Send a weekly email to fosterers with medical information about their animals"
 msgstr ""
 
 #: onlineforms.js
@@ -10876,8 +10870,7 @@ msgstr "Malnavn"
 
 #: document_templates.js
 msgid ""
-"Template names can include a path portion with /, eg: Vets/Rabies "
-"Certificate"
+"Template names can include a path portion with /, eg: Vets/Rabies Certificate"
 msgstr ""
 "Navn på maler kan inkluder en del med  /, f.eks. Veterinær/rabiessertifikat"
 
@@ -11325,7 +11318,6 @@ msgid ""
 "These are the default values for these fields when creating new records."
 msgstr ""
 "Disse er standardverdier for disse feltene når man oppretter nye oppføringer."
-""
 
 #: batch.js
 msgid ""
@@ -11357,7 +11349,6 @@ msgid ""
 "person screens."
 msgstr ""
 "Disse feltene bestemmer hvilke kolonner som vises på finn dyr og finn person."
-""
 
 #: options.js
 msgid ""
@@ -11370,8 +11361,7 @@ msgstr ""
 #: options.js
 msgid ""
 "These options change the behaviour of the search box at the top of the page."
-msgstr ""
-"Disse alternativene endrer oppførslen på søkeboksen på toppen av siden"
+msgstr "Disse alternativene endrer oppførslen på søkeboksen på toppen av siden"
 
 #: lookups.js
 msgid ""
@@ -11452,7 +11442,6 @@ msgstr "Dette dyret har spesialbehov"
 #: animal_new.js
 msgid ""
 "This animal has the same name as another animal recently added to the system."
-""
 msgstr ""
 "Dette dyret har samme navnet som et annet dyr som er lagt til systemet."
 
@@ -11505,8 +11494,7 @@ msgid "This animal is not on the shelter."
 msgstr "Dette dyret er ikke på hjelpesenteret"
 
 #: movements.js move_reclaim.js move_adopt.js
-msgid ""
-"This animal is part of a cruelty case and should not leave the shelter."
+msgid "This animal is part of a cruelty case and should not leave the shelter."
 msgstr ""
 
 #: animal.js animal_new.js
@@ -11562,8 +11550,7 @@ msgstr ""
 
 #: accounts.js
 msgid "This income account is the source for payments received of this type"
-msgstr ""
-"Denne innskuddskontoen er kilden for betalinger mottatt av denne typen"
+msgstr "Denne innskuddskontoen er kilden for betalinger mottatt av denne typen"
 
 #: lookups.py
 msgid ""
@@ -12411,8 +12398,7 @@ msgstr "Bruk automatiske forsikringsnumre"
 
 #: options.js
 msgid ""
-"Use HTML5 client side image scaling where available to speed up image "
-"uploads"
+"Use HTML5 client side image scaling where available to speed up image uploads"
 msgstr ""
 "Bruk HTML5 bildeskalering der det er tilgjengelig for å fremskynde "
 "bildeopplasting"
@@ -12456,7 +12442,6 @@ msgstr "Brukerroller"
 #: users.js
 msgid ""
 "User accounts that will only ever call the Service API should set this to No."
-""
 msgstr ""
 
 #: html.py
@@ -13006,15 +12991,12 @@ msgid ""
 msgstr "Når jeg endrer vekt på dyret, lag en loggoppføring av denne type"
 
 #: options.js
-msgid ""
-"When I generate a document, make a note of it in the log with this type"
+msgid "When I generate a document, make a note of it in the log with this type"
 msgstr ""
-"Når jeg genererer et dokument, lag en merknad om det i loggen med denne "
-"typen"
+"Når jeg genererer et dokument, lag en merknad om det i loggen med denne typen"
 
 #: options.js
-msgid ""
-"When I mark an animal held, make a note of it in the log with this type"
+msgid "When I mark an animal held, make a note of it in the log with this type"
 msgstr ""
 
 #: options.js
@@ -13232,7 +13214,6 @@ msgstr "Yorkshire Terrier Yorkie"
 #: main.js
 msgid ""
 "You can bookmark search results, animals, people and most data entry screens."
-""
 msgstr "Du kan lage bokmerker for dine søk"
 
 #: main.js
@@ -13257,8 +13238,8 @@ msgstr ""
 
 #: main.js
 msgid ""
-"You can prefix your term in the search box with a: to search only animals, p:"
-" to search only people, wl: to search waiting list entries, la: to search "
+"You can prefix your term in the search box with a: to search only animals, "
+"p: to search only people, wl: to search waiting list entries, la: to search "
 "lost animals and fa: to search found animals."
 msgstr ""
 "Du kan bruke prefiks i søkeboksen: a: for å søke bare på dyr; p: for å søke "
@@ -13321,8 +13302,7 @@ msgid "Young Adult"
 msgstr "Ung voksen"
 
 #: csvimport.js
-msgid ""
-"Your CSV file should have a header row with field names ASM recognises."
+msgid "Your CSV file should have a header row with field names ASM recognises."
 msgstr ""
 
 #: main.js
@@ -13677,8 +13657,7 @@ msgstr "{0}, uke {1}"
 msgid ""
 "{0}: Entered shelter {1}, Last changed on {2} by {3}. {4} {5} {6} aged {7}"
 msgstr ""
-"{0}: Inn på hjelpesenteret {1}, Sist endret {2} av {3}. {4} {5} {6} alder "
-"{7}"
+"{0}: Inn på hjelpesenteret {1}, Sist endret {2} av {3}. {4} {5} {6} alder {7}"
 
 #: animal.py
 msgid "{0}: closed {1} ({2})"
@@ -14313,4 +14292,3 @@ msgstr "{plural3} uker."
 #: i18n.py
 msgid "{plural3} years."
 msgstr "{plural3} år."
-

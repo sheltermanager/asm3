@@ -9,15 +9,15 @@ msgstr ""
 "Project-Id-Version: ASM3\n"
 "Report-Msgid-Bugs-To: db@sheltermanager.com\n"
 "POT-Creation-Date: 2013-01-24 10:55+0000\n"
-"MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=UTF-8\n"
-"Content-Transfer-Encoding: 8bit\n"
-"PO-Revision-Date: 2017-05-31 06:40+0000\n"
+"PO-Revision-Date: 2019-01-31 10:05+0000\n"
 "Last-Translator: Bolevácz Elisabeth <bolevaczbetti@gmail.com>\n"
 "Language-Team: Hungarian <hu@li.org>\n"
 "Language: hu\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Zanata 4.6.2\n"
+"X-Generator: Poedit 2.2.1\n"
 "X-Launchpad-Export-Date: 2015-03-02 05:17+0000\n"
 "X-POOTLE-MTIME: 1466765102.000000\n"
 
@@ -1399,8 +1399,9 @@ msgid ""
 "Any animal types, species, breeds, colors, locations, etc. in the CSV file "
 "that aren't already in the database will be created during the import."
 msgstr ""
-"A CSV fájlban található bármely állat típus, faj, fajta, szín, helyszín, stb."
-", amely még nincs az adatbázisban, létrehozásra kerül az importálás során."
+"A CSV fájlban található bármely állat típus, faj, fajta, szín, helyszín, "
+"stb., amely még nincs az adatbázisban, létrehozásra kerül az importálás "
+"során."
 
 #: animal.js
 msgid "Any health problems the animal has"
@@ -1560,8 +1561,7 @@ msgstr "Felhasználók kiléptetése ennyi percnyi inaktivitás után"
 
 #: waitinglist.py
 msgid "Auto removed due to lack of owner contact."
-msgstr ""
-"A tulajdonos elérhetőségei hiányoznak, ezért a rekord törlésre került."
+msgstr "A tulajdonos elérhetőségei hiányoznak, ezért a rekord törlésre került."
 
 #: options.js
 msgid ""
@@ -1890,8 +1890,7 @@ msgid "Breed"
 msgstr "fajta"
 
 #: lookups.js
-msgid ""
-"Breed to use when publishing to third party services and adoption sites"
+msgid "Breed to use when publishing to third party services and adoption sites"
 msgstr ""
 "Harmadik fél szolgáltatásához és hirdetési oldalakon történő közzétételnél "
 "feltüntetett fajta"
@@ -2623,8 +2622,7 @@ msgid "Color"
 msgstr "Szín"
 
 #: lookups.js
-msgid ""
-"Color to use when publishing to third party services and adoption sites"
+msgid "Color to use when publishing to third party services and adoption sites"
 msgstr ""
 "Harmadik fél szolgáltatója és hirdetőfelületeken való közzétételhez "
 "használatos szín."
@@ -2944,8 +2942,7 @@ msgid "Created By"
 msgstr "Létrehozta"
 
 #: options.js
-msgid ""
-"Creating cost and cost types creates matching accounts and transactions"
+msgid "Creating cost and cost types creates matching accounts and transactions"
 msgstr ""
 "Költségek és költségtípusok létrehozásával megegyező számlák és tranzakciók "
 "jönnek létre"
@@ -3413,8 +3410,7 @@ msgstr "Alapértékek"
 
 #: options.js
 msgid "Defaults formats for code and shortcode are TYYYYNNN and NNT"
-msgstr ""
-"A kódok és rövidített kódok alapértelmezett formátumai TYYYYNNN és NNT"
+msgstr "A kódok és rövidített kódok alapértelmezett formátumai TYYYYNNN és NNT"
 
 #: animal_diet.js report_images.js onlineform.js document_repository.js
 #: movements.js person.js waitinglist.js clinic_invoice.js staff_rota.js
@@ -4275,8 +4271,7 @@ msgstr "Email címzett"
 #: media.js
 msgid "Email a copy of the selected HTML documents as PDFs"
 msgstr ""
-"A kiválasztott HTML dokumentumok másolatának PDF-ként való elküldése E-"
-"mailen"
+"A kiválasztott HTML dokumentumok másolatának PDF-ként való elküldése E-mailen"
 
 #: media.js
 msgid "Email a copy of the selected media files"
@@ -5850,8 +5845,8 @@ msgstr "IP korlátozás"
 #: users.js
 msgid ""
 "IP restriction is a space-separated list of IP netblocks in CIDR notation "
-"that this user is *only* permitted to login from (eg: 192.168.0.0/24 127.0.0."
-"0/8). If left blank, the user can login from any address."
+"that this user is *only* permitted to login from (eg: 192.168.0.0/24 "
+"127.0.0.0/8). If left blank, the user can login from any address."
 msgstr ""
 "Az IP korlátozás, azon CIDR jelölésű IP netblock-ok listája, amelyekről az "
 "adott felhasználó jogosult belépni (pl: 192.168.0.0/24 127.0.0.0/8). Ha ez "
@@ -5906,8 +5901,7 @@ msgid "If this person is a member, their membership number."
 msgstr "Amennyiben ez a személy tag, a tagsági azonosító száma."
 
 #: stocklevel.js
-msgid ""
-"If this stock record is for a drug, the batch number from the container"
+msgid "If this stock record is for a drug, the batch number from the container"
 msgstr ""
 "Amennyiben ez a készlet bejegyzés egy gyógyszerre vonatkozik, a csomagoláson "
 "található azonosító száma"
@@ -8113,8 +8107,7 @@ msgstr "Menhelyen"
 #: code.py
 msgid "On shelter for {0} days, daily cost {1}, cost record total <b>{2}</b>"
 msgstr ""
-"{0} napja a menhelyen, napi költség (1), teljes költség feljegyzés <b>{2}</"
-"b>"
+"{0} napja a menhelyen, napi költség (1), teljes költség feljegyzés <b>{2}</b>"
 
 #: animal_costs.js
 msgid "On shelter for {0} days. Total cost: {1}"
@@ -8174,7 +8167,6 @@ msgstr ""
 msgid "Only show account totals for the current period, which starts on "
 msgstr ""
 "Csak az aktuális időszakra mutassa a fiókok összesítését, időszak kezdete ..."
-""
 
 #: animal_find.js
 msgid "Only show declawed"
@@ -10135,8 +10127,7 @@ msgstr ""
 
 #: options.js
 msgid ""
-"Send a weekly email to fosterers with medical information about their "
-"animals"
+"Send a weekly email to fosterers with medical information about their animals"
 msgstr ""
 
 #: onlineforms.js
@@ -11148,8 +11139,7 @@ msgstr ""
 
 #: document_templates.js
 msgid ""
-"Template names can include a path portion with /, eg: Vets/Rabies "
-"Certificate"
+"Template names can include a path portion with /, eg: Vets/Rabies Certificate"
 msgstr ""
 
 #: dbupdate.py
@@ -11703,7 +11693,6 @@ msgstr ""
 #: animal_new.js
 msgid ""
 "This animal has the same name as another animal recently added to the system."
-""
 msgstr ""
 
 #: animal.js
@@ -11753,8 +11742,7 @@ msgid "This animal is not on the shelter."
 msgstr ""
 
 #: movements.js move_reclaim.js move_adopt.js
-msgid ""
-"This animal is part of a cruelty case and should not leave the shelter."
+msgid "This animal is part of a cruelty case and should not leave the shelter."
 msgstr ""
 
 #: animal.js animal_new.js
@@ -12645,8 +12633,7 @@ msgstr ""
 
 #: options.js
 msgid ""
-"Use HTML5 client side image scaling where available to speed up image "
-"uploads"
+"Use HTML5 client side image scaling where available to speed up image uploads"
 msgstr ""
 
 #: roles.js
@@ -12687,7 +12674,6 @@ msgstr "Felhasználói szerepkörök"
 #: users.js
 msgid ""
 "User accounts that will only ever call the Service API should set this to No."
-""
 msgstr ""
 
 #: html.py
@@ -13236,13 +13222,11 @@ msgid ""
 msgstr ""
 
 #: options.js
-msgid ""
-"When I generate a document, make a note of it in the log with this type"
+msgid "When I generate a document, make a note of it in the log with this type"
 msgstr ""
 
 #: options.js
-msgid ""
-"When I mark an animal held, make a note of it in the log with this type"
+msgid "When I mark an animal held, make a note of it in the log with this type"
 msgstr ""
 
 #: options.js
@@ -13453,7 +13437,6 @@ msgstr "yorkshire terrier"
 #: main.js
 msgid ""
 "You can bookmark search results, animals, people and most data entry screens."
-""
 msgstr ""
 
 #: main.js
@@ -13475,8 +13458,8 @@ msgstr ""
 
 #: main.js
 msgid ""
-"You can prefix your term in the search box with a: to search only animals, p:"
-" to search only people, wl: to search waiting list entries, la: to search "
+"You can prefix your term in the search box with a: to search only animals, "
+"p: to search only people, wl: to search waiting list entries, la: to search "
 "lost animals and fa: to search found animals."
 msgstr ""
 
@@ -13525,8 +13508,7 @@ msgid "Young Adult"
 msgstr ""
 
 #: csvimport.js
-msgid ""
-"Your CSV file should have a header row with field names ASM recognises."
+msgid "Your CSV file should have a header row with field names ASM recognises."
 msgstr ""
 
 #: main.js
@@ -14523,4 +14505,3 @@ msgstr ""
 #: i18n.py
 msgid "{plural3} years."
 msgstr ""
-

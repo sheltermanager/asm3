@@ -1,6 +1,6 @@
 # sv.po
 
-val = {"" : "Project-Id-Version: ASM3\nReport-Msgid-Bugs-To: db@sheltermanager.com\nPOT-Creation-Date: 2013-01-24 10:55+0000\nMIME-Version: 1.0\nContent-Type: text/plain; charset=UTF-8\nContent-Transfer-Encoding: 8bit\nPO-Revision-Date: 2017-11-14 04:56+0000\nLast-Translator: Josephine Holmstr&#246;m <johol77@gmail.com>\nLanguage-Team: Swedish <sv@li.org>\nLanguage: sv\nPlural-Forms: nplurals=2; plural=(n != 1);\nX-Generator: Zanata 4.6.2\nX-Launchpad-Export-Date: 2015-03-02 05:19+0000\nX-POOTLE-MTIME: 1470528518.000000\n",
+val = {"" : "Project-Id-Version: ASM3\nReport-Msgid-Bugs-To: db@sheltermanager.com\nPOT-Creation-Date: 2013-01-24 10:55+0000\nPO-Revision-Date: 2019-01-31 10:03+0000\nLast-Translator: Josephine Holmstr&#246;m <johol77@gmail.com>\nLanguage-Team: Swedish <sv@li.org>\nLanguage: sv\nMIME-Version: 1.0\nContent-Type: text/plain; charset=UTF-8\nContent-Transfer-Encoding: 8bit\nPlural-Forms: nplurals=2; plural=(n != 1);\nX-Generator: Poedit 2.2.1\nX-Launchpad-Export-Date: 2015-03-02 05:19+0000\nX-POOTLE-MTIME: 1470528518.000000\n",
 "{plural3} people with active reservations have not been homechecked" : "{plural3} personer med aktiva tingningar har inte f&#229;tt hembes&#246;k.",
 "Select recommended" : "V&#228;lj rekommenderad",
 "Message successfully sent to {0}" : "",
@@ -1205,7 +1205,6 @@ val = {"" : "Project-Id-Version: ASM3\nReport-Msgid-Bugs-To: db@sheltermanager.c
 "Show codes on the shelter view screen" : "Visa koder p&#229; djurhem &#246;versikts sk&#228;rmen",
 "(both)" : "(b&#229;da)",
 "Publish now" : "Publicera nu",
-"{plural3} years." : "",
 "ASM comes with a dictionary of 4,000 animal names. Just click the generate random name button when adding an animal." : "ASM kommer med ett lexikon inneh&#229;llande 4,000 djurnamn. Klicka p&#229; \"Slumpat namn\" -knappen n&#228;r du l&#228;gger till ett djur.",
 "Bulk Vaccination" : "Ny Vaccination",
 "Due in next year" : "Planerad till n&#228;sta &#229;r",

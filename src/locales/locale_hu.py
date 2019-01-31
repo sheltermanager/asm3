@@ -1,6 +1,6 @@
 # hu.po
 
-val = {"" : "Project-Id-Version: ASM3\nReport-Msgid-Bugs-To: db@sheltermanager.com\nPOT-Creation-Date: 2013-01-24 10:55+0000\nMIME-Version: 1.0\nContent-Type: text/plain; charset=UTF-8\nContent-Transfer-Encoding: 8bit\nPO-Revision-Date: 2017-05-31 06:40+0000\nLast-Translator: Bolev&#225;cz Elisabeth <bolevaczbetti@gmail.com>\nLanguage-Team: Hungarian <hu@li.org>\nLanguage: hu\nPlural-Forms: nplurals=2; plural=(n != 1);\nX-Generator: Zanata 4.6.2\nX-Launchpad-Export-Date: 2015-03-02 05:17+0000\nX-POOTLE-MTIME: 1466765102.000000\n",
+val = {"" : "Project-Id-Version: ASM3\nReport-Msgid-Bugs-To: db@sheltermanager.com\nPOT-Creation-Date: 2013-01-24 10:55+0000\nPO-Revision-Date: 2019-01-31 10:05+0000\nLast-Translator: Bolev&#225;cz Elisabeth <bolevaczbetti@gmail.com>\nLanguage-Team: Hungarian <hu@li.org>\nLanguage: hu\nMIME-Version: 1.0\nContent-Type: text/plain; charset=UTF-8\nContent-Transfer-Encoding: 8bit\nPlural-Forms: nplurals=2; plural=(n != 1);\nX-Generator: Poedit 2.2.1\nX-Launchpad-Export-Date: 2015-03-02 05:17+0000\nX-POOTLE-MTIME: 1466765102.000000\n",
 "{plural3} people with active reservations have not been homechecked" : "{plural3} akt&#237;v foglal&#225;ssal rendelkez&#337; szem&#233;ly nem lett lel&#225;togatva",
 "Select recommended" : "",
 "Message successfully sent to {0}" : "",
@@ -1205,7 +1205,6 @@ val = {"" : "Project-Id-Version: ASM3\nReport-Msgid-Bugs-To: db@sheltermanager.c
 "Show codes on the shelter view screen" : "",
 "(both)" : "mindkett&#337;",
 "Publish now" : "K&#246;zz&#233;t&#233;tel most",
-"{plural3} years." : "",
 "ASM comes with a dictionary of 4,000 animal names. Just click the generate random name button when adding an animal." : "Az ASM sz&#243;t&#225;ra 4.000 db &#225;llatnevet tartalmaz. Egyszer&#369;en kattintson a v&#233;letlenszer&#369; n&#233;vv&#225;laszt&#225;s mez&#337;re, amikor &#250;j &#225;llatot r&#246;gz&#237;t.",
 "Bulk Vaccination" : "Olt&#225;sok hozz&#225;ad&#225;sa",
 "Due in next year" : "J&#246;v&#337;re esed&#233;kes",

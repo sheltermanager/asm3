@@ -1,6 +1,6 @@
 # fr.po
 
-val = {"" : "Project-Id-Version: ASM3\nReport-Msgid-Bugs-To: db@sheltermanager.com\nPOT-Creation-Date: 2013-01-24 10:55+0000\nMIME-Version: 1.0\nContent-Type: text/plain; charset=UTF-8\nContent-Transfer-Encoding: 8bit\nPO-Revision-Date: 2017-02-09 10:12+0000\nLast-Translator: Greg <makgreg@gmail.com>\nLanguage-Team: LANGUAGE <LL@li.org>\nLanguage: fr\nPlural-Forms: nplurals=2; plural=(n > 1);\nX-Generator: Zanata 4.6.2\nX-Launchpad-Export-Date: 2015-03-02 05:16+0000\nX-POOTLE-MTIME: 1445029694.000000\n",
+val = {"" : "Project-Id-Version: ASM3\nReport-Msgid-Bugs-To: db@sheltermanager.com\nPOT-Creation-Date: 2013-01-24 10:55+0000\nPO-Revision-Date: 2019-01-31 10:05+0000\nLast-Translator: Greg <makgreg@gmail.com>\nLanguage-Team: \nLanguage: fr\nMIME-Version: 1.0\nContent-Type: text/plain; charset=UTF-8\nContent-Transfer-Encoding: 8bit\nPlural-Forms: nplurals=2; plural=(n > 1);\nX-Generator: Poedit 2.2.1\nX-Launchpad-Export-Date: 2015-03-02 05:16+0000\nX-POOTLE-MTIME: 1445029694.000000\n",
 "{plural3} people with active reservations have not been homechecked" : "",
 "Select recommended" : "",
 "Message successfully sent to {0}" : "",
@@ -1205,7 +1205,6 @@ val = {"" : "Project-Id-Version: ASM3\nReport-Msgid-Bugs-To: db@sheltermanager.c
 "Show codes on the shelter view screen" : "",
 "(both)" : "(tous)",
 "Publish now" : "Publier maintenant",
-"{plural3} years." : "{plural3} ann&#233;es.",
 "ASM comes with a dictionary of 4,000 animal names. Just click the generate random name button when adding an animal." : "ASM contient un dictionnaire de 4000 noms. Cliquer simplement sur le bouton \"Nom al&#233;atoire\" quand vous ajouter un animal.",
 "Bulk Vaccination" : "Completer Vaccin",
 "Due in next year" : "D&#251; dans l'ann&#233;e prochaine",

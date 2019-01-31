@@ -1,6 +1,6 @@
 # nb.po
 
-val = {"" : "Project-Id-Version: ASM3\nReport-Msgid-Bugs-To: db@sheltermanager.com\nPOT-Creation-Date: 2013-01-24 10:55+0000\nMIME-Version: 1.0\nContent-Type: text/plain; charset=UTF-8\nContent-Transfer-Encoding: 8bit\nPO-Revision-Date: 2018-01-29 04:11+0000\nLast-Translator: Egil Heine Strand <egil.h.strand@uis.no>\nLanguage-Team: Norwegian Bokmal <nb@li.org>\nLanguage: nb\nPlural-Forms: nplurals=2; plural=(n != 1);\nX-Generator: Zanata 4.6.2\nX-Launchpad-Export-Date: 2015-03-02 05:17+0000\nX-POOTLE-MTIME: 1470528460.000000\n",
+val = {"" : "Project-Id-Version: ASM3\nReport-Msgid-Bugs-To: db@sheltermanager.com\nPOT-Creation-Date: 2013-01-24 10:55+0000\nPO-Revision-Date: 2019-01-31 10:04+0000\nLast-Translator: Egil Heine Strand <egil.h.strand@uis.no>\nLanguage-Team: Norwegian Bokmal <nb@li.org>\nLanguage: nb\nMIME-Version: 1.0\nContent-Type: text/plain; charset=UTF-8\nContent-Transfer-Encoding: 8bit\nPlural-Forms: nplurals=2; plural=(n != 1);\nX-Generator: Poedit 2.2.1\nX-Launchpad-Export-Date: 2015-03-02 05:17+0000\nX-POOTLE-MTIME: 1470528460.000000\n",
 "{plural3} people with active reservations have not been homechecked" : "{plural3} personer med aktive reservasjoner er ikke hjemmesjekket",
 "Select recommended" : "Valg anbefalt",
 "Message successfully sent to {0}" : "",
@@ -1205,7 +1205,6 @@ val = {"" : "Project-Id-Version: ASM3\nReport-Msgid-Bugs-To: db@sheltermanager.c
 "Show codes on the shelter view screen" : "Vis koder p&#229; skjermbildet for dyr p&#229; hjelpesenteret",
 "(both)" : "(begge)",
 "Publish now" : "Publiser n&#229;",
-"{plural3} years." : "{plural3} &#229;r.",
 "ASM comes with a dictionary of 4,000 animal names. Just click the generate random name button when adding an animal." : "ASM kommer med en ordbok som inkluderer 4.000 dyrenavn. Bare klikk p&#229; knappen \"Lag tilfeldig navn\" n&#229;r du legger til et dyr.",
 "Bulk Vaccination" : "Flere vaksiner",
 "Due in next year" : "Forfaller neste &#229;r",

@@ -11,15 +11,15 @@ msgstr ""
 "Project-Id-Version: ASM3\n"
 "Report-Msgid-Bugs-To: db@sheltermanager.com\n"
 "POT-Creation-Date: 2013-01-24 10:55+0000\n"
-"MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=UTF-8\n"
-"Content-Transfer-Encoding: 8bit\n"
-"PO-Revision-Date: 2018-09-28 12:28+0000\n"
+"PO-Revision-Date: 2019-01-31 10:07+0000\n"
 "Last-Translator: LuckyHunt <info@luckyhunt.org>\n"
 "Language-Team: Bulgarian <bg@li.org>\n"
 "Language: bg\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Zanata 4.6.2\n"
+"X-Generator: Poedit 2.2.1\n"
 "X-Launchpad-Export-Date: 2015-03-02 05:15+0000\n"
 "X-POOTLE-MTIME: 1463072280.000000\n"
 
@@ -1887,8 +1887,7 @@ msgid "Breed"
 msgstr "Порода"
 
 #: lookups.js
-msgid ""
-"Breed to use when publishing to third party services and adoption sites"
+msgid "Breed to use when publishing to third party services and adoption sites"
 msgstr "Порода, която ще се използва при публикуване в сайтове за осиновяване"
 
 #: lookups.py
@@ -1957,7 +1956,6 @@ msgid ""
 "into your new system."
 msgstr ""
 "Разгледай sheltermanager.com и инсталирай справки, графики и др. в системата."
-""
 
 #: dbupdate.py
 msgid "Brussels Griffon"
@@ -2614,8 +2612,7 @@ msgid "Color"
 msgstr "Цвят"
 
 #: lookups.js
-msgid ""
-"Color to use when publishing to third party services and adoption sites"
+msgid "Color to use when publishing to third party services and adoption sites"
 msgstr ""
 "Цвят за използване когато се публикува към трети страни или сайтове за "
 "осиновяване"
@@ -2931,8 +2928,7 @@ msgid "Created By"
 msgstr "Създадено от"
 
 #: options.js
-msgid ""
-"Creating cost and cost types creates matching accounts and transactions"
+msgid "Creating cost and cost types creates matching accounts and transactions"
 msgstr ""
 "Създавайки разходи и видове разходи създава еднакви сметки и транзакции"
 
@@ -5035,8 +5031,7 @@ msgstr "Регистър на приемните домове"
 
 #: movement.py
 msgid "Foster movements must have a valid foster date."
-msgstr ""
-"Настаняването в приемен дом трябва да има валидна дата на настаняване."
+msgstr "Настаняването в приемен дом трябва да има валидна дата на настаняване."
 
 #: move_foster.js
 msgid "Foster successfully created."
@@ -5726,8 +5721,8 @@ msgstr "Ограничение по IP адрес"
 #: users.js
 msgid ""
 "IP restriction is a space-separated list of IP netblocks in CIDR notation "
-"that this user is *only* permitted to login from (eg: 192.168.0.0/24 127.0.0."
-"0/8). If left blank, the user can login from any address."
+"that this user is *only* permitted to login from (eg: 192.168.0.0/24 "
+"127.0.0.0/8). If left blank, the user can login from any address."
 msgstr ""
 "Полето за IP адреси, е списък с IP адреси в CIDR формат. Потребителят може "
 "да влезе *само* от тези адреси. (Пр: 192.168.0.0/24 127.0.0.0/8). Ако се "
@@ -5782,8 +5777,7 @@ msgid "If this person is a member, their membership number."
 msgstr "Ако този човек е член, датата, на която членството му изтича."
 
 #: stocklevel.js
-msgid ""
-"If this stock record is for a drug, the batch number from the container"
+msgid "If this stock record is for a drug, the batch number from the container"
 msgstr "Ако е лекарство, партидата от опаковката"
 
 #: stocklevel.js
@@ -6105,7 +6099,6 @@ msgid ""
 "people on the web."
 msgstr ""
 "Входящите форми са интернет форми, попълнени и изпратени от хора по интернет."
-""
 
 #: incident_find.js
 msgid "Incomplete incidents"
@@ -6900,8 +6893,7 @@ msgstr ""
 
 #: media.js
 msgid "Make this the default video link when publishing to the web"
-msgstr ""
-"Направи тази връзка към видео,връзката по подразбиране при публикуване"
+msgstr "Направи тази връзка към видео,връзката по подразбиране при публикуване"
 
 #: dbupdate.py
 msgid "Male"
@@ -7085,7 +7077,6 @@ msgid ""
 "Medical regimens need an animal, name, dosage, a start date and frequencies."
 msgstr ""
 "Медицинските режими трябва да имат животно, име, доза начална дата и честота."
-""
 
 #: mobile.py
 msgid "Medicate"
@@ -7928,8 +7919,7 @@ msgstr "Веднъж асоциирани, кодовете не могат да
 #: mobile.py service.py
 msgid "Once signed, this document cannot be edited or tampered with."
 msgstr ""
-"Веднъж подписан този документ не може да бъде повече редактиран или "
-"преправен"
+"Веднъж подписан този документ не може да бъде повече редактиран или преправен"
 
 #: medical.py
 msgid "One Off"
@@ -8523,8 +8513,7 @@ msgstr ""
 #: media.js
 msgid "Please use the links below to electronically sign these documents."
 msgstr ""
-"Моля използвайте линковете по-долу, за да подпишете тези документи "
-"електронно"
+"Моля използвайте линковете по-долу, за да подпишете тези документи електронно"
 
 #: dbupdate.py
 msgid "Plott Hound"
@@ -9025,8 +9014,7 @@ msgstr "Опитоми животно"
 
 #: movement.py
 msgid "Reclaim movements must have a valid reclaim date."
-msgstr ""
-"Движенията по опитомяването трябва да имат валидна дата за опитомяване"
+msgstr "Движенията по опитомяването трябва да имат валидна дата за опитомяване"
 
 #: move_reclaim.js
 msgid "Reclaim successfully created."
@@ -9147,8 +9135,7 @@ msgstr "Анулирай задържания след"
 #: options.js
 msgid "Remove move menu and the movements tab from animal and person screens"
 msgstr ""
-"Премахни менюто за движение и раздела за движение от екрана за животни и "
-"хора"
+"Премахни менюто за движение и раздела за движение от екрана за животни и хора"
 
 #: person.js
 msgid "Remove personally identifiable data"
@@ -9585,8 +9572,7 @@ msgstr "Графика е дублиран успешно."
 
 #: media.js
 msgid "Rotate image 90 degrees anticlockwis"
-msgstr ""
-"Завъртете изображението на 90 градуса обратно на часовниковата стрелка"
+msgstr "Завъртете изображението на 90 градуса обратно на часовниковата стрелка"
 
 #: media.js
 msgid "Rotate image 90 degrees clockwise"
@@ -9877,8 +9863,7 @@ msgstr "Изпращане на имейли"
 
 #: options.js
 msgid ""
-"Send a weekly email to fosterers with medical information about their "
-"animals"
+"Send a weekly email to fosterers with medical information about their animals"
 msgstr ""
 
 #: onlineforms.js
@@ -10431,8 +10416,7 @@ msgid ""
 "users being able to use the system for a short time."
 msgstr ""
 "Някои групови процеси може да отнемат известно време, за да се изпълнят и "
-"могат да попречат на други потребители да използват системата за кратко "
-"време"
+"могат да попречат на други потребители да използват системата за кратко време"
 
 #: main.js
 msgid ""
@@ -10852,8 +10836,7 @@ msgstr "Задачата е изпълнена."
 
 #: diarytask.js
 msgid "Task items are executed in order of index, lowest to highest"
-msgstr ""
-"Елементите на задачите са изпълнени по ред от най-ниско към най-високо"
+msgstr "Елементите на задачите са изпълнени по ред от най-ниско към най-високо"
 
 #: animal_find_results.js animal.js animal_new.js mobile.py
 msgid "Tattoo"
@@ -10897,8 +10880,7 @@ msgstr "Име на шаблон"
 
 #: document_templates.js
 msgid ""
-"Template names can include a path portion with /, eg: Vets/Rabies "
-"Certificate"
+"Template names can include a path portion with /, eg: Vets/Rabies Certificate"
 msgstr ""
 "Имената на шаблоните могат да съдържат разделение в пътя с /, пр. Ветеринари/"
 "Заешки сертификати"
@@ -11493,7 +11475,6 @@ msgstr "Това животно има специални нужди"
 #: animal_new.js
 msgid ""
 "This animal has the same name as another animal recently added to the system."
-""
 msgstr "Това животни има същото име като скоро добавено в системата."
 
 #: animal.js
@@ -11547,10 +11528,8 @@ msgid "This animal is not on the shelter."
 msgstr "Това животно не е в приюта."
 
 #: movements.js move_reclaim.js move_adopt.js
-msgid ""
-"This animal is part of a cruelty case and should not leave the shelter."
-msgstr ""
-"Това животно е част от случай на жестокост и не може да напуска приюта"
+msgid "This animal is part of a cruelty case and should not leave the shelter."
+msgstr "Това животно е част от случай на жестокост и не може да напуска приюта"
 
 #: animal.js animal_new.js
 msgid "This animal should be held in case it is reclaimed"
@@ -12456,8 +12435,7 @@ msgstr "Използвай автоматично номериране на по
 
 #: options.js
 msgid ""
-"Use HTML5 client side image scaling where available to speed up image "
-"uploads"
+"Use HTML5 client side image scaling where available to speed up image uploads"
 msgstr ""
 "Използвай HTML5 намаляване на големината на изображенията за подобряване на "
 "скоростта"
@@ -12501,7 +12479,6 @@ msgstr "Потребителски роли"
 #: users.js
 msgid ""
 "User accounts that will only ever call the Service API should set this to No."
-""
 msgstr ""
 "Потребителски акаунти, които ще използват номера на  Service API, трябва да "
 "дадат настройки до Номер "
@@ -13054,14 +13031,11 @@ msgid ""
 msgstr "При промяна на теглото на животно, създай бележка в дневника с тип"
 
 #: options.js
-msgid ""
-"When I generate a document, make a note of it in the log with this type"
-msgstr ""
-"При генериране на документ, направи бележка в лога с типа на документа"
+msgid "When I generate a document, make a note of it in the log with this type"
+msgstr "При генериране на документ, направи бележка в лога с типа на документа"
 
 #: options.js
-msgid ""
-"When I mark an animal held, make a note of it in the log with this type"
+msgid "When I mark an animal held, make a note of it in the log with this type"
 msgstr "Когато маркирам задържано животно, запиши бележка в лога от този тип"
 
 #: options.js
@@ -13083,8 +13057,7 @@ msgid ""
 "When creating payments from the Move menu screens, mark them due instead of "
 "received"
 msgstr ""
-"Когато се прави плащане от менюто Move, маркирай крайния срок вместо "
-"получено"
+"Когато се прави плащане от менюто Move, маркирай крайния срок вместо получено"
 
 #: options.js
 msgid "When displaying calendars, the first day of the week is"
@@ -13292,7 +13265,6 @@ msgstr "Йоркширски териер"
 #: main.js
 msgid ""
 "You can bookmark search results, animals, people and most data entry screens."
-""
 msgstr "Може да си добавите като букмарк животни, критерии за търсене и т.н."
 
 #: main.js
@@ -13320,8 +13292,8 @@ msgstr ""
 
 #: main.js
 msgid ""
-"You can prefix your term in the search box with a: to search only animals, p:"
-" to search only people, wl: to search waiting list entries, la: to search "
+"You can prefix your term in the search box with a: to search only animals, "
+"p: to search only people, wl: to search waiting list entries, la: to search "
 "lost animals and fa: to search found animals."
 msgstr ""
 "Може да сложите буква за префикс в полето за търсене за търсене на - a: "
@@ -13349,8 +13321,8 @@ msgid ""
 "the upper left corner of the application."
 msgstr ""
 "Може да качите картинки с имена logo.jpg и splash.jpg, за да смените логото "
-"в горният ляв ъгъл и картинката на екрана за вход, през Настройки - Справки -"
-" Допълнителни изображения"
+"в горният ляв ъгъл и картинката на екрана за вход, през Настройки - Справки "
+"- Допълнителни изображения"
 
 #: onlineform_incoming.js
 msgid ""
@@ -13386,8 +13358,7 @@ msgid "Young Adult"
 msgstr "Тинейджър"
 
 #: csvimport.js
-msgid ""
-"Your CSV file should have a header row with field names ASM recognises."
+msgid "Your CSV file should have a header row with field names ASM recognises."
 msgstr "CSV файлът трябва да има заглавен ред с имена, които ASM разпознава."
 
 #: main.js
@@ -13552,8 +13523,7 @@ msgstr "{0} - {1} {2}"
 #: lostfound.py
 msgid ""
 "{0} - {1} {2} ({3}), contact {4} ({5}) - lost in {6}, postcode {7}, on {8}"
-msgstr ""
-"{0} - {1} {2} ({3}),контакт {4} ({5}) - загубено в {6}, ПК {7}, на {8}"
+msgstr "{0} - {1} {2} ({3}),контакт {4} ({5}) - загубено в {6}, ПК {7}, на {8}"
 
 #: animal_bulk.js
 msgid "{0} animals successfully updated."
@@ -14373,4 +14343,3 @@ msgstr "{plural3} седмици."
 #: i18n.py
 msgid "{plural3} years."
 msgstr "{plural3} години."
-

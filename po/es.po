@@ -10,15 +10,15 @@ msgstr ""
 "Project-Id-Version: ASM3\n"
 "Report-Msgid-Bugs-To: db@sheltermanager.com\n"
 "POT-Creation-Date: 2013-01-24 10:55+0000\n"
+"PO-Revision-Date: 2019-01-31 10:05+0000\n"
+"Last-Translator: Marga Gomis <margegomis@gmail.com>\n"
+"Language-Team: \n"
+"Language: es\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"PO-Revision-Date: 2017-11-12 04:18+0000\n"
-"Last-Translator: Marga Gomis <margegomis@gmail.com>\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
-"Language: es\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Zanata 4.6.2\n"
+"X-Generator: Poedit 2.2.1\n"
 "X-Launchpad-Export-Date: 2015-03-02 05:19+0000\n"
 "X-POOTLE-MTIME: 1468534503.000000\n"
 
@@ -1332,7 +1332,6 @@ msgid ""
 msgstr ""
 "Iconos animales son los pequeños iconos que aparecen junto al nombre del "
 "animal en la vista refugio, la página de inicio y los resultados de búsqueda."
-""
 
 #: dbupdate.py
 msgid "Animal food costs"
@@ -1578,8 +1577,7 @@ msgid ""
 "Automatically return any outstanding foster movements on an animal when it "
 "is transferred"
 msgstr ""
-"Devolver automáticamente un animal en acogida al refugio cuando es "
-"trasladado"
+"Devolver automáticamente un animal en acogida al refugio cuando es trasladado"
 
 #: header_edit_header.js common.js
 msgid "Available for adoption"
@@ -1882,8 +1880,7 @@ msgid "Breed"
 msgstr "Raza"
 
 #: lookups.js
-msgid ""
-"Breed to use when publishing to third party services and adoption sites"
+msgid "Breed to use when publishing to third party services and adoption sites"
 msgstr ""
 "Raza que se usará para la publicación en servicios de terceros y páginas de "
 "adopción"
@@ -2613,8 +2610,7 @@ msgid "Color"
 msgstr "Color"
 
 #: lookups.js
-msgid ""
-"Color to use when publishing to third party services and adoption sites"
+msgid "Color to use when publishing to third party services and adoption sites"
 msgstr ""
 "Color a utilizar cuando se publica en servicios de terceros y páginas de "
 "adopción"
@@ -2823,8 +2819,7 @@ msgstr ""
 
 #: header_edit_header.js common.js html.py
 msgid "Courtesy Listing"
-msgstr ""
-"Listado de cortesía (para la difusión de animales externos al refugio)"
+msgstr "Listado de cortesía (para la difusión de animales externos al refugio)"
 
 #: dbupdate.py
 msgid "Cow"
@@ -2933,8 +2928,7 @@ msgid "Created By"
 msgstr "Creado por"
 
 #: options.js
-msgid ""
-"Creating cost and cost types creates matching accounts and transactions"
+msgid "Creating cost and cost types creates matching accounts and transactions"
 msgstr ""
 "Crear costes y tipos de costes crea cuentas y transacciones correspondientes"
 
@@ -4848,8 +4842,7 @@ msgstr "Encuentra las columnas de los animales"
 
 #: incident_find_results.js
 msgid "Find animal control incidents returned {0} results."
-msgstr ""
-"Búsqueda de control de incidentes de animales devolvió {0} resultados."
+msgstr "Búsqueda de control de incidentes de animales devolvió {0} resultados."
 
 #: person.js
 msgid "Find animals matching the looking for criteria of this person"
@@ -5629,8 +5622,7 @@ msgstr "Mantener"
 #: animal.js animal_new.js
 msgid "Hold the animal until this date or blank to hold indefinitely"
 msgstr ""
-"Mantenga al animal hasta esta fecha o en blanco para mantener "
-"indefinidamente"
+"Mantenga al animal hasta esta fecha o en blanco para mantener indefinidamente"
 
 #: animal_find_results.js header_edit_header.js animal.js animal_new.js
 #: animal_bulk.js html.py
@@ -5740,8 +5732,8 @@ msgstr "Restricción IP"
 #: users.js
 msgid ""
 "IP restriction is a space-separated list of IP netblocks in CIDR notation "
-"that this user is *only* permitted to login from (eg: 192.168.0.0/24 127.0.0."
-"0/8). If left blank, the user can login from any address."
+"that this user is *only* permitted to login from (eg: 192.168.0.0/24 "
+"127.0.0.0/8). If left blank, the user can login from any address."
 msgstr ""
 "Restricción de IP es una lista separada por espacios de bloques de red IP en "
 "notación CIDR que este usuario es * sólo * permite iniciar sesión desde (por "
@@ -5797,8 +5789,7 @@ msgid "If this person is a member, their membership number."
 msgstr "Si esta persona es miembro, su número de membresía."
 
 #: stocklevel.js
-msgid ""
-"If this stock record is for a drug, the batch number from the container"
+msgid "If this stock record is for a drug, the batch number from the container"
 msgstr ""
 "Si este registro de stock es de un medicamento, el número de lote del "
 "recipiente"
@@ -6031,8 +6022,7 @@ msgstr ""
 
 #: options.js
 msgid "Include off-shelter animals in medical calendar and books"
-msgstr ""
-"Incluir animales fuera del albergue en el calendario y registro médico"
+msgstr "Incluir animales fuera del albergue en el calendario y registro médico"
 
 #: csvexport.js
 msgid "Include preferred photo"
@@ -7936,8 +7926,8 @@ msgstr "En refugio"
 #: code.py
 msgid "On shelter for {0} days, daily cost {1}, cost record total <b>{2}</b>"
 msgstr ""
-"En refugio durante {0} días, coste diario {1}, coste total de registro "
-"<b>{2}</b>"
+"En refugio durante {0} días, coste diario {1}, coste total de registro <b>{2}"
+"</b>"
 
 #: animal_costs.js
 msgid "On shelter for {0} days. Total cost: {1}"
@@ -7977,8 +7967,7 @@ msgid ""
 "from visitors for applications, etc."
 msgstr ""
 "Formularios en línea que se pueden vincular a partir de su sitio web y se "
-"utilizan para tomar la información de los visitantes de las aplicaciones, "
-"etc"
+"utilizan para tomar la información de los visitantes de las aplicaciones, etc"
 
 #: media.js
 msgid "Only PDF, HTML and JPG image files can be attached."
@@ -9097,8 +9086,8 @@ msgstr "Actualizar"
 #: batch.js code.py
 msgid "Regenerate 'Match lost and found animals' report"
 msgstr ""
-"Regenera el informe \"Correspondencias entre animales perdidos y "
-"encontrados\""
+"Regenera el informe \"Correspondencias entre animales perdidos y encontrados"
+"\""
 
 #: batch.js code.py
 msgid "Regenerate 'Person looking for' report"
@@ -9204,8 +9193,7 @@ msgstr ""
 
 #: options.js
 msgid "Remove the FIV/L test fields from animal health details"
-msgstr ""
-"Retire los campos de prueba de VIF/L de los detalles de sanidad animal"
+msgstr "Retire los campos de prueba de VIF/L de los detalles de sanidad animal"
 
 #: options.js
 msgid "Remove the Litter ID field from animal details"
@@ -9272,8 +9260,7 @@ msgstr ""
 #: options.js
 msgid "Remove the microchip fields from animal identification details"
 msgstr ""
-"Retire los campos de microchips de los detalles de identificación de "
-"animales"
+"Retire los campos de microchips de los detalles de identificación de animales"
 
 #: options.js
 msgid "Remove the neutered fields from animal health details"
@@ -9924,8 +9911,7 @@ msgstr "Enviar emails"
 
 #: options.js
 msgid ""
-"Send a weekly email to fosterers with medical information about their "
-"animals"
+"Send a weekly email to fosterers with medical information about their animals"
 msgstr ""
 
 #: onlineforms.js
@@ -9994,8 +9980,7 @@ msgstr "Se establece en 0 para nunca actualizar urgencias"
 
 #: users.js
 msgid "Set wether or not this user account can log in to the user interface."
-msgstr ""
-"Configura si este usuario puede registrarse en la interfaz de usuarios"
+msgstr "Configura si este usuario puede registrarse en la interfaz de usuarios"
 
 #: dbupdate.py
 msgid "Setter"
@@ -10942,8 +10927,7 @@ msgstr "Nombre de la plantilla"
 
 #: document_templates.js
 msgid ""
-"Template names can include a path portion with /, eg: Vets/Rabies "
-"Certificate"
+"Template names can include a path portion with /, eg: Vets/Rabies Certificate"
 msgstr ""
 "Nombres de plantillas que pueden incluir una parte de la ruta con /, por "
 "ejemplo: Veterinarios / Certificado Rabia"
@@ -11044,8 +11028,8 @@ msgstr "El tipo de SmartTag"
 msgid ""
 "The URL is the address of a web resource, eg: www.youtube.com/watch?v=xxxxxx"
 msgstr ""
-"La URL es la dirección de un recurso web, por ejemplo: www.youtube.com/"
-"watch?v=xxxxxx"
+"La URL es la dirección de un recurso web, por ejemplo: www.youtube.com/watch?"
+"v=xxxxxx"
 
 #: animal.js
 msgid "The animal name"
@@ -11546,7 +11530,6 @@ msgstr "Este animal tiene necesidades especiales"
 #: animal_new.js
 msgid ""
 "This animal has the same name as another animal recently added to the system."
-""
 msgstr ""
 "Este animal tiene el mismo nombre que otro animal recientemente añadido al "
 "sistema."
@@ -11588,8 +11571,7 @@ msgstr "Actualmente este animal está retenido y no se puede adoptar"
 
 #: movements.js move_reclaim.js move_adopt.js
 msgid "This animal is currently quarantined and should not leave the shelter."
-msgstr ""
-"Este animal está actualmente en cuarentena y no debe dejar el refugio."
+msgstr "Este animal está actualmente en cuarentena y no debe dejar el refugio."
 
 #: movements.js move_adopt.js
 msgid "This animal is marked not for adoption."
@@ -11605,8 +11587,7 @@ msgid "This animal is not on the shelter."
 msgstr "Este animal no está en el refugio."
 
 #: movements.js move_reclaim.js move_adopt.js
-msgid ""
-"This animal is part of a cruelty case and should not leave the shelter."
+msgid "This animal is part of a cruelty case and should not leave the shelter."
 msgstr ""
 "Este animal es parte de un caso de crueldad y no debe dejar el refugio."
 
@@ -11759,7 +11740,6 @@ msgstr ""
 msgid "This person is linked to animal licenses and cannot be removed."
 msgstr ""
 "Esta persona está vinculada a una licencia de un animal y no se puede quitar."
-""
 
 #: person.py
 msgid "This person is linked to animal transportation and cannot be removed."
@@ -11790,7 +11770,6 @@ msgstr ""
 msgid "This person is not flagged as a fosterer and cannot foster animals."
 msgstr ""
 "Esta persona no está marcada como casa de aocgida y no puede acoger animales."
-""
 
 #: movement.py
 msgid ""
@@ -11858,8 +11837,7 @@ msgstr "Esta semana"
 #: common_tableform.js
 msgid "This will permanently remove the selected records, are you sure?"
 msgstr ""
-"Esto borrará permanentemente todos los registros seleccionados, ¿está "
-"seguro?"
+"Esto borrará permanentemente todos los registros seleccionados, ¿está seguro?"
 
 #: roles.js
 msgid "This will permanently remove the selected roles, are you sure?"
@@ -11869,8 +11847,7 @@ msgstr ""
 
 #: users.js
 msgid "This will permanently remove the selected user accounts. Are you sure?"
-msgstr ""
-"Esto borrará permanentemente los usuarios seleccionados, ¿está seguro?"
+msgstr "Esto borrará permanentemente los usuarios seleccionados, ¿está seguro?"
 
 #: accounts.js
 msgid ""
@@ -12222,8 +12199,7 @@ msgstr "Tratar adopciones prueba como parte del inventario del refugio"
 
 #: options.js
 msgid "Treat foster animals as part of the shelter inventory"
-msgstr ""
-"Tratar a los animales de acogida como parte del inventario del refugio"
+msgstr "Tratar a los animales de acogida como parte del inventario del refugio"
 
 #: options.js
 msgid "Treat trial adoptions as part of the shelter inventory"
@@ -12389,8 +12365,7 @@ msgstr "Precio de la unidad"
 
 #: animal.js animal_new.js
 msgid "Unit within the location, eg: pen or cage number"
-msgstr ""
-"Unidad dentro de la ubicación, por ejemplo: pluma o número de la jaula"
+msgstr "Unidad dentro de la ubicación, por ejemplo: pluma o número de la jaula"
 
 #: mailmerge.js stocklevel.js lookups.js
 msgid "Units"
@@ -12535,8 +12510,7 @@ msgstr "Emplear números automáticos de seguro"
 
 #: options.js
 msgid ""
-"Use HTML5 client side image scaling where available to speed up image "
-"uploads"
+"Use HTML5 client side image scaling where available to speed up image uploads"
 msgstr ""
 "Utilice HTML5 escalado de imagen del lado del cliente cuando sea posible "
 "para acelerar la subida de imágenes"
@@ -12580,7 +12554,6 @@ msgstr "Roles del usuario"
 #: users.js
 msgid ""
 "User accounts that will only ever call the Service API should set this to No."
-""
 msgstr ""
 "Las cuentas personales que llamarán al servicio API deberán establecer éste "
 "al número"
@@ -12662,8 +12635,8 @@ msgid ""
 "Vaccinations: {0}, Tests: {1}, Medical Treatments: {2}, Transport: {3}, "
 "Costs: {4}, Total Costs: {5} Total Payments: {6}, Balance: {7}"
 msgstr ""
-"Vacunas: {0}, Tests: {1}, Tratamientos médicos: {2}, Transporte: {3}, Costes:"
-" {4}, Costes totales: {5} Pagos totales: {6}, Saldo: {7}\n"
+"Vacunas: {0}, Tests: {1}, Tratamientos médicos: {2}, Transporte: {3}, "
+"Costes: {4}, Costes totales: {5} Pagos totales: {6}, Saldo: {7}\n"
 
 #: mailmerge.js
 msgid "Valid tokens for the subject and text"
@@ -13139,14 +13112,12 @@ msgstr ""
 "registro"
 
 #: options.js
-msgid ""
-"When I generate a document, make a note of it in the log with this type"
+msgid "When I generate a document, make a note of it in the log with this type"
 msgstr ""
 "Al generar un documento, hacer una nota de ello en el registro con este tipo"
 
 #: options.js
-msgid ""
-"When I mark an animal held, make a note of it in the log with this type"
+msgid "When I mark an animal held, make a note of it in the log with this type"
 msgstr ""
 
 #: options.js
@@ -13164,8 +13135,8 @@ msgid ""
 "When creating payments from the Move menu screens, mark them due instead of "
 "received"
 msgstr ""
-"Cuando se creen pagos desde el menú de movimientos, marcarlos como "
-"\"debido\" en lugar de \"recibido\""
+"Cuando se creen pagos desde el menú de movimientos, marcarlos como \"debido"
+"\" en lugar de \"recibido\""
 
 #: options.js
 msgid "When displaying calendars, the first day of the week is"
@@ -13376,7 +13347,6 @@ msgstr "Yorkshire Terrier"
 #: main.js
 msgid ""
 "You can bookmark search results, animals, people and most data entry screens."
-""
 msgstr ""
 "Puede crear marcadores de los resultados de búsquedas, animales, personas y "
 "la mayoría de las pantallas de entrada de datos."
@@ -13407,8 +13377,8 @@ msgstr ""
 
 #: main.js
 msgid ""
-"You can prefix your term in the search box with a: to search only animals, p:"
-" to search only people, wl: to search waiting list entries, la: to search "
+"You can prefix your term in the search box with a: to search only animals, "
+"p: to search only people, wl: to search waiting list entries, la: to search "
 "lost animals and fa: to search found animals."
 msgstr ""
 "Usted puede anteponer su término en la caja de búsqueda con una, a: para "
@@ -13471,8 +13441,7 @@ msgid "Young Adult"
 msgstr "Adulto joven"
 
 #: csvimport.js
-msgid ""
-"Your CSV file should have a header row with field names ASM recognises."
+msgid "Your CSV file should have a header row with field names ASM recognises."
 msgstr ""
 "Su archivo CSV debería tener una cabecera con nombres de campo que ASM pueda "
 "reconocer"
@@ -13679,8 +13648,7 @@ msgstr "{0} recibido"
 
 #: mailmerge.js
 msgid "{0} record(s) match the mail merge."
-msgstr ""
-"Hay {0} registros que coinciden con la combinación de correspondencia."
+msgstr "Hay {0} registros que coinciden con la combinación de correspondencia."
 
 #: sql.js
 msgid "{0} results."
@@ -14475,4 +14443,3 @@ msgstr "{plural3} semana."
 #: i18n.py
 msgid "{plural3} years."
 msgstr "{plural3} años."
-
