@@ -223,8 +223,11 @@ def sql_structure(dbo):
         flongstr("Markings"),
         fstr("ShelterCode"),
         fstr("ShortCode"),
-        fint("UniqueCodeID"),
-        fint("YearCodeID"),
+        # ASM2_COMPATIBILITY
+        fint("UniqueCodeID", True),
+        fdate("SmartTagSentDate", True),
+        fint("YearCodeID", True),
+        # ASM2_COMPATIBILITY
         fstr("AcceptanceNumber"),
         fdate("DateOfBirth"),
         fint("EstimatedDOB"),
@@ -243,8 +246,6 @@ def sql_structure(dbo):
         fint("SmartTag"),
         fstr("SmartTagNumber", True),
         fdate("SmartTagDate", True),
-        # ASM2_COMPATIBILITY
-        fdate("SmartTagSentDate", True),
         fint("SmartTagType"),
         fint("Neutered"),
         fdate("NeuteredDate", True),
@@ -2784,6 +2785,8 @@ def remove_asm2_compatibility(dbo):
     # ASM2_COMPATIBILITY
     dbo.execute_dbupdate("ALTER TABLE users DROP COLUMN SecurityMap")
     dbo.execute_dbupdate("ALTER TABLE animal DROP COLUMN SmartTagSentDate")
+    dbo.execute_dbupdate("ALTER TABLE animal DROP COLUMN YearCodeID")
+    dbo.execute_dbupdate("ALTER TABLE animal DROP COLUMN UniqueCodeID")
     dbo.execute_dbupdate("ALTER TABLE media DROP COLUMN LastPublished")
     dbo.execute_dbupdate("ALTER TABLE media DROP COLUMN LastPublishedPF")
     dbo.execute_dbupdate("ALTER TABLE media DROP COLUMN LastPublishedAP")
