@@ -2,12 +2,6 @@
 
 *. Generate manual - html and pdf for the program with make manual
 
-*. Update the translations - (download from zanata, make translations)
-   (Where to do mass download?)
-
-*. Add the new version to zanata and make it default
-   (Use: "Copy to new version" from ... menu at the top right of current version)
-
 *. Run make compile tests, then make dist to build
 
 *. Verify installation works with an empty MySQL database
