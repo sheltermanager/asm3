@@ -201,25 +201,26 @@ def save_values_for_link(dbo, post, linkid, linktype = "animal"):
     l = dbo.locale
     for f in af:
         key = "a.%s.%s" % (f.mandatory, f.id)
-        if key not in post: key = "additional%s" % f.fieldname
-        if key in post:
-            val = post[key]
-            if f.fieldtype == YESNO:
-                val = str(post.boolean(key))
-            elif f.fieldtype == MONEY:
-                val = str(post.integer(key))
-            elif f.fieldtype == DATE:
-                if len(val.strip()) > 0 and post.date(key) is None:
-                    raise utils.ASMValidationError(_("Additional date field '{0}' contains an invalid date.", l).format(f.fieldname))
-                val = python2display(dbo.locale, post.date(key))
-            try:
-                dbo.insert("additional", {
-                    "LinkType":             f.linktype,
-                    "LinkID":               linkid,
-                    "AdditionalFieldID":    f.id,
-                    "Value":                val
-                }, generateID=False, writeAudit=False)
-            except Exception as err:
-                al.error("Failed saving additional field: %s" % err, "additional.save_values_for_link", dbo, sys.exc_info())
+        key2 = "additional%s" % f.fieldname
+        if key not in post and key2 not in post: continue
+        if key not in post: key = key2
+        val = post[key]
+        if f.fieldtype == YESNO:
+            val = str(post.boolean(key))
+        elif f.fieldtype == MONEY:
+            val = str(post.integer(key))
+        elif f.fieldtype == DATE:
+            if len(val.strip()) > 0 and post.date(key) is None:
+                raise utils.ASMValidationError(_("Additional date field '{0}' contains an invalid date.", l).format(f.fieldname))
+            val = python2display(dbo.locale, post.date(key))
+        try:
+            dbo.insert("additional", {
+                "LinkType":             f.linktype,
+                "LinkID":               linkid,
+                "AdditionalFieldID":    f.id,
+                "Value":                val
+            }, generateID=False, writeAudit=False)
+        except Exception as err:
+            al.error("Failed saving additional field: %s" % err, "additional.save_values_for_link", dbo, sys.exc_info())
 
 
