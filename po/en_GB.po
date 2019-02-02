@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ASM3\n"
 "Report-Msgid-Bugs-To: db@sheltermanager.com\n"
 "POT-Creation-Date: 2013-01-24 10:55+0000\n"
-"PO-Revision-Date: 2019-01-31 10:06+0000\n"
+"PO-Revision-Date: 2019-02-02 12:49+0000\n"
 "Last-Translator: Robin Rawson-Tetley <zanata@sheltermanager.com>\n"
 "Language-Team: LANGUAGE <support@sheltermanager.com>\n"
 "Language: en_GB\n"
@@ -718,10 +718,9 @@ msgid "Adopted"
 msgstr "Adopted"
 
 #: users.js
-#, fuzzy
 #| msgid "Add Animals"
 msgid "Adopted Animals"
-msgstr "Add Animals"
+msgstr "Adopted Animals"
 
 #: animal.py
 msgid "Adopted Transferred In {0}"
@@ -891,16 +890,14 @@ msgid "Alerts"
 msgstr "Alerts"
 
 #: csvexport.js
-#, fuzzy
 #| msgid "Add Animals"
 msgid "All Animals"
-msgstr "Add Animals"
+msgstr "All Animals"
 
 #: csvexport.js
-#, fuzzy
 #| msgid "Shelter Animals"
 msgid "All On-Shelter Animals"
-msgstr "Shelter Animals"
+msgstr "All On-Shelter Animals"
 
 #: publish_options.js
 msgid "All Publishers"
@@ -2204,10 +2201,9 @@ msgid "Cell Phone"
 msgstr "Mobile Phone"
 
 #: dbupdate.py
-#, fuzzy
 #| msgid "Champagne DArgent"
 msgid "Champagne D'Argent"
-msgstr "Champagne DArgent"
+msgstr "Champagne D'Argent"
 
 #: common_tableform.js common.js
 msgid "Change"
@@ -2624,11 +2620,11 @@ msgid "Columns displayed"
 msgstr "Columns displayed"
 
 #: lookups.js
-#, fuzzy
 #| msgid "Comma separated list of units for this location"
 msgid ""
 "Comma separated list of units for this location, eg: 1,2,3,4,Isolation,Pen 5"
-msgstr "Comma separated list of units for this location"
+msgstr ""
+"Comma separated list of units for this location, eg: 1,2,3,4,Isolation,Pen 5"
 
 #: animal_diet.js person_find_results.js lostfound_new.js movements.js
 #: person.js waitinglist.js staff_rota.js clinic_appointment.js donations.js
@@ -2812,10 +2808,9 @@ msgid "Could not find animal with name '{0}'"
 msgstr "Could not find animal with name '{0}'"
 
 #: options.js
-#, fuzzy
 #| msgid "Entry"
 msgid "Country"
-msgstr "Entry"
+msgstr "Country"
 
 #: header_edit_header.js common.js html.py
 msgid "Courtesy Listing"
@@ -2950,10 +2945,9 @@ msgid "Credit Card"
 msgstr "Credit Card"
 
 #: dbupdate.py
-#, fuzzy
 #| msgid "Creme DArgent"
 msgid "Creme D'Argent"
-msgstr "Creme DArgent"
+msgstr "Creme D'Argent"
 
 #: reports.py
 msgid "Criteria:"
@@ -3739,10 +3733,9 @@ msgid "Distemper"
 msgstr "Distemper"
 
 #: common.js
-#, fuzzy
 #| msgid "Stop Publishing"
 msgid "Do Not Publish"
-msgstr "Stop Publishing"
+msgstr "Do Not Publish"
 
 #: animal_bulk.js common.js
 msgid "Do Not Register Microchip"
@@ -3778,10 +3771,9 @@ msgid "Document file"
 msgstr "Document file"
 
 #: service.py
-#, fuzzy
 #| msgid "Document Link"
 msgid "Document signed"
-msgstr "Document Link"
+msgstr "Document signed"
 
 #: code.py
 msgid "Document signing request"
@@ -5048,10 +5040,9 @@ msgid "Fostered"
 msgstr "Fostered"
 
 #: users.js
-#, fuzzy
 #| msgid "Foster an animal"
 msgid "Fostered Animals"
-msgstr "Foster an animal"
+msgstr "Fostered Animals"
 
 #: movement.py
 msgid "Fostered to {0} since {1}"
@@ -5068,10 +5059,9 @@ msgid "Fosterer (Active Only)"
 msgstr "Fosterer (Active Only)"
 
 #: movement.py
-#, fuzzy
 #| msgid "Delete Medical Records"
 msgid "Fosterer Medical Report"
-msgstr "Delete Medical Records"
+msgstr "Fosterer Medical Report"
 
 #: search.js header_edit_header.js
 msgid "Found"
@@ -5267,10 +5257,9 @@ msgid "Generate document from this payment"
 msgstr "Generate document from this payment"
 
 #: transport.js
-#, fuzzy
 #| msgid "Generate document from this payment"
 msgid "Generate document from this transport"
-msgstr "Generate document from this payment"
+msgstr "Generate document from this transport"
 
 #: move_gendoc.js
 msgid "Generate documentation"
@@ -7126,10 +7115,9 @@ msgid "Merge Person"
 msgstr "Merge Person"
 
 #: animal.js
-#, fuzzy
 #| msgid "Merge another person into this one"
 msgid "Merge another animal into this one"
-msgstr "Merge another person into this one"
+msgstr "Merge another animal into this one"
 
 #: person.js
 msgid "Merge another person into this one"
@@ -7402,10 +7390,9 @@ msgid "Mustang"
 msgstr "Mustang"
 
 #: users.js
-#, fuzzy
 #| msgid "Foster"
 msgid "My Fosters"
-msgstr "Foster"
+msgstr "My Fosters"
 
 #: mobile.py
 msgid "My Incidents"
@@ -7573,10 +7560,9 @@ msgid "New Profile"
 msgstr "New Profile"
 
 #: additional.js
-#, fuzzy
 #| msgid "New Report"
 msgid "New Record"
-msgstr "New Report"
+msgstr "New Record"
 
 #: medical.js
 msgid "New Regimen"
@@ -7738,16 +7724,14 @@ msgid "Non-Shelter Animal"
 msgstr "Non-Shelter Animal"
 
 #: csvexport.js
-#, fuzzy
 #| msgid "Non-Shelter Animal"
 msgid "Non-Shelter Animals"
-msgstr "Non-Shelter Animal"
+msgstr "Non-Shelter Animals"
 
 #: users.js
-#, fuzzy
 #| msgid "Non-Shelter Animal"
 msgid "Non-shelter Animals"
-msgstr "Non-Shelter Animal"
+msgstr "Non-shelter Animals"
 
 #: dbupdate.py
 msgid "None"
@@ -8134,10 +8118,9 @@ msgid "Overdue"
 msgstr "Overdue"
 
 #: movement.py
-#, fuzzy
 #| msgid "Add medical profile"
 msgid "Overdue medical items"
-msgstr "Add medical profile"
+msgstr "Overdue medical items"
 
 #: dbupdate.py
 msgid "Overtime"
@@ -8458,10 +8441,9 @@ msgid "Phone"
 msgstr "Phone"
 
 #: person_find.js
-#, fuzzy
 #| msgid "Code contains"
 msgid "Phone contains"
-msgstr "Code contains"
+msgstr "Phone contains"
 
 #: mobile.py
 msgid "Photo successfully uploaded."
@@ -8679,10 +8661,9 @@ msgid "Previous"
 msgstr "Previous"
 
 #: common.js
-#, fuzzy
 #| msgid "Previous"
 msgid "Previous Adopter"
-msgstr "Previous"
+msgstr "Previous Adopter"
 
 #: onlineform_incoming.js
 msgid "Print"
@@ -9442,10 +9423,9 @@ msgid "Retailer"
 msgstr "Retailer"
 
 #: users.js
-#, fuzzy
 #| msgid "Shelter Animals"
 msgid "Retailer Animals"
-msgstr "Shelter Animals"
+msgstr "Retailer Animals"
 
 #: movements.js
 msgid "Retailer Book"
@@ -9840,7 +9820,6 @@ msgid "Select an animal to attach this form to."
 msgstr "Select an animal to attach this form to."
 
 #: animal.js
-#, fuzzy
 #| msgid ""
 #| "Select a person to merge into this record. The selected person will be "
 #| "removed, and their movements, diary notes, log entries, etc. will be "
@@ -9850,15 +9829,14 @@ msgid ""
 "removed, and their movements, diary notes, log entries, etc. will be "
 "reattached to this record."
 msgstr ""
-"Select a person to merge into this record. The selected person will be "
+"Select an animal to merge into this record. The selected animal will be "
 "removed, and their movements, diary notes, log entries, etc. will be "
 "reattached to this record."
 
 #: animal.js
-#, fuzzy
 #| msgid "Select person to merge"
 msgid "Select animal to merge"
-msgstr "Select person to merge"
+msgstr "Select animal to merge"
 
 #: common_animalchoosermulti.js
 msgid "Select animals"
@@ -9877,10 +9855,9 @@ msgid "Select recommended"
 msgstr "Select recommended"
 
 #: csvexport.js
-#, fuzzy
 #| msgid "View Shelter Animals"
 msgid "Selected On-Shelter Animals"
-msgstr "View Shelter Animals"
+msgstr "Selected On-Shelter Animals"
 
 #: dbupdate.py
 msgid "Selkirk Rex"
@@ -9895,11 +9872,11 @@ msgid "Send Emails"
 msgstr "Send Emails"
 
 #: options.js
-#, fuzzy
 #| msgid "A description or other information about the animal"
 msgid ""
 "Send a weekly email to fosterers with medical information about their animals"
-msgstr "A description or other information about the animal"
+msgstr ""
+"Send a weekly email to fosterers with medical information about their animals"
 
 #: onlineforms.js
 msgid "Send confirmation email to form submitter"
@@ -10165,10 +10142,9 @@ msgid "Show empty locations"
 msgstr "Show empty locations"
 
 #: additional.js
-#, fuzzy
 #| msgid "Show short shelter codes on screens"
 msgid "Show on new record screens"
-msgstr "Show short shelter codes on screens"
+msgstr "Show on new record screens"
 
 #: options.js
 msgid "Show quick links on all pages"
@@ -11018,10 +10994,9 @@ msgid "The animal name"
 msgstr "The animal name"
 
 #: animal.py
-#, fuzzy
 #| msgid "The person record to merge must be different from the original."
 msgid "The animal record to merge must be different from the original."
-msgstr "The person record to merge must be different from the original."
+msgstr "The animal record to merge must be different from the original."
 
 #: animal.js
 msgid "The animal sex"
@@ -12846,17 +12821,16 @@ msgid "Vouchers need an issue and expiry date."
 msgstr "Vouchers need an issue and expiry date."
 
 #: movement.py
-#, fuzzy
 #| msgid "This animal has not been microchipped."
 msgid "WARNING: This animal has not been microchipped"
-msgstr "This animal has not been microchipped."
+msgstr "WARNING: This animal has not been microchipped"
 
 #: movement.py
-#, fuzzy
 #| msgid "This animal has movements and cannot be removed."
 msgid ""
 "WARNING: This animal is over 6 months old and has not been neutered/spayed"
-msgstr "This animal has movements and cannot be removed."
+msgstr ""
+"WARNING: This animal is over 6 months old and has not been neutered/spayed"
 
 #: clinic_appointment.js dbupdate.py
 msgid "Waiting"
