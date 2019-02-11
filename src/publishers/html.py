@@ -98,7 +98,7 @@ def animals_to_page(dbo, animals, style="", speciesid=0, animaltypeid=0, locatio
         if configuration.publisher_use_comments(dbo):
             a.WEBSITEMEDIANOTES = a.ANIMALCOMMENTS
         # Add extra publishing text, preserving the line endings
-        notes = utils.nulltostr(a.WEBSITEMEDIANOTES)
+        notes = utils.nulltostr(a.WEBSITEMEDIANOTES).replace("\n", "<br/>")
         notes += configuration.third_party_publisher_sig(dbo).replace("\n", "<br/>")
         tags["WEBMEDIANOTES"] = notes 
         tags["WEBSITEMEDIANOTES"] = notes # Compatibility, both are valid in wordprocessor.py

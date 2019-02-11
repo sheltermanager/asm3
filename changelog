@@ -1,6 +1,8 @@
 42
 ================
 
+11/02/19 Fix bug where line endings weren't translated in html_adoptable_animals
+
 41
 ================
 
