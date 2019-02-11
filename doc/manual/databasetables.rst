@@ -233,16 +233,16 @@ IsTransfer
     1 if the animal was a transfer from another animal shelter 
 IsGoodWithCats 
     INTEGER 
-    Link to the lksyesnoun table for yes/no/unknown 
+    Link to the lksynun table for yes/no/unknown 
 IsGoodWithDogs 
     INTEGER 
-    Link to the lksyesnoun table for yes/no/unknown 
+    Link to the lksynun table for yes/no/unknown 
 IsGoodWithChildren 
     INTEGER 
-    Link to the lksyesnoun table for yes/no/unknown 
+    Link to the lksynun table for yes/no/unknown 
 IsHouseTrained 
     INTEGER 
-    Link to the lksyesnoun table for yes/no/unknown 
+    Link to the lksynun table for yes/no/unknown 
 IsNotAvailableForAdoption 
     INTEGER 
     1 if the animal should not be included for publishing as adoptable 
