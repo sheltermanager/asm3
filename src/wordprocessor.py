@@ -731,7 +731,7 @@ def animalcontrol_tags(dbo, ac):
     d = {
         "CITATIONNAME":         "CITATIONNAME",
         "CITATIONDATE":         "d:CITATIONDATE",
-        "COMMENTS":             "COMMENTS",
+        "CITATIONCOMMENTS":     "COMMENTS",
         "FINEAMOUNT":           "c:FINEAMOUNT",
         "FINEDUEDATE":          "d:FINEDUEDATE",
         "FINEPAIDDATE":         "d:FINEPAIDDATE"
@@ -989,7 +989,7 @@ def clinic_tags(dbo, c):
         "COMPLETEDDATE"         : python2display(l, c.COMPLETEDDATETIME),
         "COMPLETEDTIME"         : format_time(c.COMPLETEDDATETIME),
         "REASONFORAPPOINTMENT"  : c.REASONFORAPPOINTMENT,
-        "COMMENTS"              : c.COMMENTS,
+        "APPOINTMENTCOMMENTS"   : c.COMMENTS,
         "INVOICEAMOUNT"         : format_currency_no_symbol(l, c.AMOUNT),
         "INVOICEVATAMOUNT"      : format_currency_no_symbol(l, c.VATAMOUNT),
         "INVOICETAXAMOUNT"      : format_currency_no_symbol(l, c.VATAMOUNT),
@@ -1049,7 +1049,6 @@ def person_tags(dbo, p, includeImg=False):
         "CELLTELEPHONE"         : p["MOBILETELEPHONE"],
         "EMAILADDRESS"          : p["EMAILADDRESS"],
         "OWNERCOMMENTS"         : p["COMMENTS"],
-        "COMMENTS"              : p["COMMENTS"],
         "OWNERFLAGS"            : utils.nulltostr(p["ADDITIONALFLAGS"]).replace("|", ", "),
         "OWNERCREATEDBY"        : p["CREATEDBY"],
         "OWNERCREATEDBYNAME"    : p["CREATEDBY"],
@@ -1082,7 +1081,7 @@ def person_tags(dbo, p, includeImg=False):
     d = {
         "CITATIONNAME":         "CITATIONNAME",
         "CITATIONDATE":         "d:CITATIONDATE",
-        "COMMENTS":             "COMMENTS",
+        "CITATIONCOMMENTS":     "COMMENTS",
         "FINEAMOUNT":           "c:FINEAMOUNT",
         "FINEDUEDATE":          "d:FINEDUEDATE",
         "FINEPAIDDATE":         "d:FINEPAIDDATE"

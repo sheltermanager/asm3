@@ -880,7 +880,7 @@ CitationName
     The type of citation being issued
 CitationDate
     The date of the citation
-Comments
+CitationComments
     Any comments on the citation
 FineAmount
     The fine amount
@@ -1180,7 +1180,7 @@ CanAffordDonation
     Yes/No - whether the person can afford to make a donation
 Urgency
     An urgency rating for this waiting list item
-Comments
+WaitingListComments
     Any comments on this waiting list entry
 DocumentImgLink
     A photo of the animal if one exists. 200/300/400/500 can also be suffixed
@@ -1217,7 +1217,7 @@ CompletedTime
     The time the appointment was complete
 ReasonForAppointment
     The reason the appointment was made
-Comments
+AppointmentComments
     Any comments on the appointment
 InvoiceAmount
     The total of all invoice items for the appointment

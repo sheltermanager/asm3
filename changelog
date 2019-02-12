@@ -1,6 +1,7 @@
 42
 ================
 
+12/02/19 <<CitationComments>> and <<AppointmentComments>> to disambiguate
 12/02/19 Fix bug that causes non-ASCII chars to break outbound emails #513
 11/02/19 Add 933* microchip range for Buddy ID
 11/02/19 Fix bug where line endings weren't translated in html_adoptable_animals
