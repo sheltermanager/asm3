@@ -1069,9 +1069,9 @@ def send_email(dbo, replyadd, toadd, ccadd = "", subject = "", body = "", conten
         """
         value = value.replace("\n", "") # line breaks are not allowed in headers
         if value.find("&#") != -1:
-            # Is this, To/From/Cc ? If so, parse the addresses and 
+            # Is this an address field? If so, parse the addresses and 
             # encode the descriptions
-            if header == "To" or header == "From" or header == "Cc":
+            if header in ("To", "From", "Cc", "Bounces-To", "Reply-To"):
                 addresses = value.split(",")
                 newval = ""
                 for a in addresses:
@@ -1103,10 +1103,6 @@ def send_email(dbo, replyadd, toadd, ccadd = "", subject = "", body = "", conten
     fromadd = fromadd.replace("{organisation}", configuration.organisation(dbo))
     fromadd = fromadd.replace("{alias}", dbo.alias)
     fromadd = fromadd.replace("{database}", dbo.database)
-
-    # Sanitise semi-colons in the distribution list
-    toadd = toadd.replace(";", ",")
-    ccadd = ccadd.replace(";", ",")
 
     # Check for any problems in the reply address, such as unclosed address
     if replyadd.find("<") != -1 and replyadd.find(">") == -1:
