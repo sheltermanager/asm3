@@ -197,7 +197,9 @@ def get_onlineform_html(dbo, formid, completedocument = True):
         elif f.FIELDTYPE == FIELDTYPE_SHELTERANIMAL:
             h.append('<select class="asm-onlineform-shelteranimal" name="%s" title="%s" %s>' % ( html.escape(fname), utils.nulltostr(f.TOOLTIP), required))
             h.append('<option></option>')
-            for a in animal.get_animals_on_shelter_namecode(dbo):
+            rs = animal.get_animals_on_shelter_namecode(dbo)
+            rs = sorted(rs, key=lambda k: k["ANIMALNAME"])
+            for a in rs:
                 h.append('<option value="%(name)s::%(code)s">%(name)s (%(species)s - %(code)s)</option>' % \
                     { "name": a.ANIMALNAME, "code": a.SHELTERCODE, "species": a.SPECIESNAME})
             h.append('</select>')
@@ -206,6 +208,7 @@ def get_onlineform_html(dbo, formid, completedocument = True):
             h.append('<option></option>')
             pc = publishers.base.PublishCriteria(configuration.publisher_presets(dbo))
             rs = publishers.base.get_animal_data(dbo, pc, include_additional_fields = True)
+            rs = sorted(rs, key=lambda k: k["ANIMALNAME"])
             for a in rs:
                 h.append('<option value="%(name)s::%(code)s">%(name)s (%(species)s - %(code)s)</option>' % \
                     { "name": a.ANIMALNAME, "code": a.SHELTERCODE, "species": a.SPECIESNAME})
