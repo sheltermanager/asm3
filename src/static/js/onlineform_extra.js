@@ -43,6 +43,7 @@ $(document).ready(function() {
             $("input[name='" + fieldname + "']").val(v);
             if (!v && $(this).attr("data-required")) {
                 alert("You must choose at least one option");
+                $(this).parent().find(".asmSelect").focus();
                 rv = false;
                 return false;
             }
