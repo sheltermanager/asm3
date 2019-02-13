@@ -126,3 +126,27 @@ AND owner.ExcludeFromBulkEmail = 0
 ORDER BY owner.OwnerSurname
 ###
 MAIL
+&&&
+Fosterers of Non-Returned Adoptions
+###
+Movements
+###
+33310/Any
+###
+Mailmerge source of fosterer contact info and animal information for non-returned adoptions between two dates
+###
+en
+###
+SELECT DISTINCT owner.ID, owner.OwnerName, owner.OwnerAddress, owner.OwnerPostcode,
+animal.AnimalName, owner.EmailAddress, owner.OwnerTown, owner.OwnerCounty, 
+owner.OwnerTitle, owner.OwnerInitials, owner.OwnerForenames, owner.OwnerSurname
+FROM animal
+INNER JOIN owner ON adoption.OwnerID = owner.ID AND owner.IsFosterer=1
+INNER JOIN adoption ON adoption.AnimalID = animal.ID AND adoption.MovementType=2
+WHERE animal.ActiveMovementType=1 animal.ActiveMovementDate >= '$ASK DATE Enter from date$' AND animal.ActiveMovementDate <= '$ASK DATE Enter to date$' 
+AND animal.DeceasedDate Is Null
+AND owner.ExcludeFromBulkEmail = 0
+ORDER BY owner.OwnerSurname
+###
+MAIL
+
