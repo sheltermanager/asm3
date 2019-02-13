@@ -362,7 +362,6 @@ $(function() {
             paymentbuttons[_("Cancel")] = function() {
                 $("#dialog-payment").dialog("close");
             };
-
             $("#dialog-payment").dialog({
                 autoOpen: false,
                 width: 550,
@@ -372,7 +371,8 @@ $(function() {
                 hide: dlgfx.edit_hide,
                 buttons: paymentbuttons
             });
-
+            // Get rid of any inactive items on the create payment dialog
+            $("#dialog-payment .asm-selectbox").select("removeRetiredOptions", "all");
         },
 
         render: function() {

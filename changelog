@@ -1,6 +1,7 @@
 42
 ================
 
+13/02/19 Remove inactive payment types/methods from clinic create payment #560
 12/02/19 <<CitationComments>> and <<AppointmentComments>> to disambiguate
 12/02/19 Fix bug that causes non-ASCII chars to break outbound emails #513
 11/02/19 Add 933* microchip range for Buddy ID
