@@ -774,7 +774,7 @@ class Report:
             valid = False
 
             # {SUM.field[.round]}
-            if key.lower().startswith("sum"):
+            if key.lower().startswith("sum."):
                 valid = True
                 fields = key.lower().split(".")
                 calcfield = fields[1].upper()
@@ -796,7 +796,7 @@ class Report:
                     value = fmt % total
 
             # {COUNT.field[.distinct]}
-            if key.lower().startswith("count"):
+            if key.lower().startswith("count."):
                 valid = True
                 fields = key.lower().split(".")
                 countfield = fields[1].upper()
@@ -811,7 +811,7 @@ class Report:
                     value = str(gd.lastGroupEndPosition - gd.lastGroupStartPosition + 1)
 
             # {AVG.field[.round]}
-            if key.lower().startswith("avg"):
+            if key.lower().startswith("avg."):
                 valid = True
                 fields = key.lower().split(".")
                 calcfield = fields[1].upper()
@@ -837,7 +837,7 @@ class Report:
                     value = fstr % (total / num)
 
             # {PCT.field.match[.round]}
-            if key.lower().startswith("pct"):
+            if key.lower().startswith("pct."):
                 valid = True
                 fields = key.lower().split(".")
                 calcfield = fields[1].upper()
@@ -862,7 +862,7 @@ class Report:
                 value = fstr % ((matched / outof) * 100)
 
             # {MIN.field}
-            if key.lower().startswith("min"):
+            if key.lower().startswith("min."):
                 valid = True
                 fields = key.lower().split(".")
                 calcfield = fields[1].upper()
@@ -882,7 +882,7 @@ class Report:
                     value = str(minval)
 
             # {MAX.field}
-            if key.lower().startswith("max"):
+            if key.lower().startswith("max."):
                 valid = True
                 fields = key.lower().split(".")
                 calcfield = fields[1].upper()
@@ -900,7 +900,7 @@ class Report:
                     value = str(maxval)
 
             # {FIRST.field}
-            if key.lower().startswith("first"):
+            if key.lower().startswith("first."):
                 valid = True
                 fields = key.lower().split(".")
                 calcfield = fields[1].upper()
@@ -909,7 +909,7 @@ class Report:
                     value = str(utils.cfloat(value) / 100)
 
             # {LAST.field}
-            if key.lower().startswith("last"):
+            if key.lower().startswith("last."):
                 valid = True
                 fields = key.lower().split(".")
                 calcfield = fields[1].upper()
@@ -919,7 +919,7 @@ class Report:
 
             # {SQL.sql} - arbitrary sql command, output first
             # column of first row
-            if key.lower().startswith("sql"):
+            if key.lower().startswith("sql."):
                 valid = True
                 asql = key[4:]
                 if asql.lower().startswith("select"):
@@ -940,7 +940,7 @@ class Report:
             # page to direct the browser to retrieve an image. seq is
             # optional and includes image number X for the animal. If
             # seq is not given, the preferred image is used.
-            if key.lower().startswith("image"):
+            if key.lower().startswith("image."):
                 valid = True
                 fields = key.lower().split(".")
                 animalid = fields[1]
@@ -950,7 +950,7 @@ class Report:
 
             # {CHIPMANUFACTURER.chipno} - substitutes the microchip
             # manufacturer for the chip number specified
-            if key.lower().startswith("chipmanufacturer"):
+            if key.lower().startswith("chipmanufacturer."):
                 valid = True
                 fields = key.lower().split(".")
                 chipno = fields[1]
@@ -959,7 +959,7 @@ class Report:
             # {QR.animalid[.size]} - substitutes a link to the
             # google charting api to generate a QR code that
             # links back to an animal's record.
-            if key.lower().startswith("qr"):
+            if key.lower().startswith("qr."):
                 valid = True
                 fields = key.lower().split(".")
                 animalid = fields[1]
@@ -969,7 +969,7 @@ class Report:
                 value = QR_IMG_SRC % { "url": url, "size": size }
 
             # {SUBREPORT.[title].[parentField]} - embed a subreport
-            if key.lower().startswith("subreport"):
+            if key.lower().startswith("subreport."):
                 valid = True
                 fields = key.lower().split(".")
                 row = gd.lastGroupStartPosition
@@ -1705,7 +1705,7 @@ class Report:
                 valid = False
 
                 # {SQL.sql}
-                if key.lower().startswith("sql"):
+                if key.lower().startswith("sql."):
                     valid = True
                     asql = key[4:]
                     if asql.lower().startswith("select"):
@@ -1726,7 +1726,7 @@ class Report:
                 # page to direct the browser to retrieve an image. seq is
                 # optional and includes image number X for the animal. If
                 # seq is not given, the preferred image is used.
-                if key.lower().startswith("image"):
+                if key.lower().startswith("image."):
                     valid = True
                     fields = key.lower().split(".")
                     if len(fields) < 2:
@@ -1741,7 +1741,7 @@ class Report:
 
                 # {CHIPMANUFACTURER.chipno} - substitutes the microchip
                 # manufacturer for the chip number specified
-                if key.lower().startswith("chipmanufacturer"):
+                if key.lower().startswith("chipmanufacturer."):
                     valid = True
                     fields = key.lower().split(".")
                     chipno = fields[1]
@@ -1750,7 +1750,7 @@ class Report:
                 # {QR.animalid[.size]} - substitutes a link to the
                 # google charting api to generate a QR code that
                 # links back to an animal's record.
-                if key.lower().startswith("qr"):
+                if key.lower().startswith("qr."):
                     valid = True
                     fields = key.lower().split(".")
                     if len(fields) < 2:
@@ -1765,7 +1765,7 @@ class Report:
                     value = QR_IMG_SRC % { "url": url, "size": size }
 
                 # {SUBREPORT.[title].[parentField]} - embed a subreport
-                if key.lower().startswith("subreport"):
+                if key.lower().startswith("subreport."):
                     valid = True
                     fields = key.lower().split(".")
                     if len(fields) < 2:

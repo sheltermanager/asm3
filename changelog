@@ -1,6 +1,7 @@
 42
 ================
 
+14/02/19 Fix bug where report {tokens} can get confused with javascript
 13/02/19 Sort adoptable/shelter animal dropdowns by name on online forms
 13/02/19 Focus the correct multi-select when blank in online forms #558
 13/02/19 Remove inactive payment types/methods from clinic create payment #560
