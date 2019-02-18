@@ -208,8 +208,6 @@ DEFAULTS = {
     "InactivityTimer": "No",
     "InactivityTimeout": "20", 
     "IncludeOffShelterMedical": "No",
-    "IncludeIncompleteMedicalDoc": "Yes",
-    "IncludeIncompleteVaccDoc": "Yes",
     "Locale": "en",
     "LocationChangeLog": "Yes",
     "LocationChangeLogType": "3",

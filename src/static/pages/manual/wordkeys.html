@@ -659,6 +659,10 @@ constructing the key. Eg: A type of “DHCPP Vacc” would bcome
 select the most recent vaccination of that type that has a non-blank given
 date. Eg: VaccinationCommentsRecentDHCPP will return the comments of the last
 given DHCPP vaccination.</p>
+<p>The “Due” keyword operates with the vaccination type and allows you to
+select the most recent vaccination of that type that has a blank given given
+date. Eg: VaccinationRequiredDueDHCPP will return the date the most recent
+due DHCPP vaccination.</p>
 </div>
 <div class="section" id="test-keys">
 <h2>Test Keys<a class="headerlink" href="#test-keys" title="Permalink to this headline">¶</a></h2>
@@ -699,7 +703,7 @@ given DHCPP vaccination.</p>
 <p>The same rules for vaccinations apply to reading medical records, except the
 MedicalName field can be used for looking up the most recent record of that
 treatment. In addition, the Recent keyword looks for medical regimens that have
-a status of complete.</p>
+a status of complete, while the Due keyword looks for active medical regimens.</p>
 <dl class="docutils">
 <dt>MedicalName</dt>
 <dd>The name of the medical treatment</dd>
@@ -731,7 +735,8 @@ a status of complete.</p>
 <h2>Payment Keys<a class="headerlink" href="#payment-keys" title="Permalink to this headline">¶</a></h2>
 <p>If you are creating a document from the animal or person records, then the same
 rules apply as for vaccinations and medical records when accessing payments.
-payments. The Recent keyword looks for payments that have been received.</p>
+payments. The Recent keyword looks for payments that have been received and Due
+for non-received payments.</p>
 <p>However, if you create an invoice/receipt document from the payment tab of a
 person or animal record (or the payment book), you can select multiple payments
 before creating the document and access the information by suffixing a number
@@ -794,7 +799,8 @@ invoice/receipt document:</p>
 <h2>Transport Keys<a class="headerlink" href="#transport-keys" title="Permalink to this headline">¶</a></h2>
 <p>If you are creating a document from the animal or person records, then the same
 rules apply as for vaccinations and medical records when accessing transports.
-The Recent keyword looks for transports with the most recent drop off date/time.</p>
+The Recent keyword looks for transports with the most recent drop off date/time
+and the Due keyword uses the pickup date/time.</p>
 <p>However, if you create a document from the transport tab of an
 animal record (or the transport book), you can select multiple transports
 before creating the document and access the information by suffixing a number
@@ -1062,6 +1068,7 @@ Each citation is indexed with a number for ascending (eg: CitationName1),
 LastX for descending (eg: CitationNameLast1) and with the type name for the
 most recent citation of that type for the person (eg: FineAmountFirstOffence).
 Citation keys can be accessed from a person document or an incident document.</p>
+<p>The Recent keyword returns citations where the fine is paid where Due returns unpaid.</p>
 <dl class="docutils">
 <dt>CitationName</dt>
 <dd>The type of citation being issued</dd>
@@ -1082,7 +1089,9 @@ Citation keys can be accessed from a person document or an incident document.</p
 <p>The same rules apply as for vaccinations, but for accessing trap loans. Each
 loan is indexed with a number for ascending (eg: TrapTypeName1), LastX for
 descending (eg: TrapTypeNameLast1) and with the type name for the most recent
-loan of that type for the person (eg: TrapLoanDateCat). The fields are:</p>
+loan of that type for the person (eg: TrapLoanDateCat).</p>
+<p>The Recent keyword returns returned trap loan records where Due is unreturned.</p>
+<p>The fields are:</p>
 <dl class="docutils">
 <dt>TrapTypeName</dt>
 <dd>The type of trap being loaned</dd>

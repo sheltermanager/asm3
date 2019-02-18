@@ -466,6 +466,11 @@ select the most recent vaccination of that type that has a non-blank given
 date. Eg: VaccinationCommentsRecentDHCPP will return the comments of the last
 given DHCPP vaccination.
 
+The "Due" keyword operates with the vaccination type and allows you to
+select the most recent vaccination of that type that has a blank given given 
+date. Eg: VaccinationRequiredDueDHCPP will return the date the most recent
+due DHCPP vaccination.
+
 Test Keys
 ----------
 
@@ -507,7 +512,7 @@ Medical Keys
 The same rules for vaccinations apply to reading medical records, except the
 MedicalName field can be used for looking up the most recent record of that
 treatment. In addition, the Recent keyword looks for medical regimens that have
-a status of complete.
+a status of complete, while the Due keyword looks for active medical regimens.
 
 MedicalName
     The name of the medical treatment 
@@ -540,7 +545,8 @@ Payment Keys
 
 If you are creating a document from the animal or person records, then the same
 rules apply as for vaccinations and medical records when accessing payments.
-payments. The Recent keyword looks for payments that have been received. 
+payments. The Recent keyword looks for payments that have been received and Due 
+for non-received payments.
 
 However, if you create an invoice/receipt document from the payment tab of a
 person or animal record (or the payment book), you can select multiple payments
@@ -605,7 +611,8 @@ Transport Keys
 
 If you are creating a document from the animal or person records, then the same
 rules apply as for vaccinations and medical records when accessing transports.
-The Recent keyword looks for transports with the most recent drop off date/time.
+The Recent keyword looks for transports with the most recent drop off date/time
+and the Due keyword uses the pickup date/time.
 
 However, if you create a document from the transport tab of an
 animal record (or the transport book), you can select multiple transports
@@ -876,6 +883,8 @@ LastX for descending (eg: CitationNameLast1) and with the type name for the
 most recent citation of that type for the person (eg: FineAmountFirstOffence).
 Citation keys can be accessed from a person document or an incident document.
 
+The Recent keyword returns citations where the fine is paid where Due returns unpaid.
+
 CitationName
     The type of citation being issued
 CitationDate
@@ -895,7 +904,11 @@ Traploan Keys
 The same rules apply as for vaccinations, but for accessing trap loans. Each
 loan is indexed with a number for ascending (eg: TrapTypeName1), LastX for
 descending (eg: TrapTypeNameLast1) and with the type name for the most recent
-loan of that type for the person (eg: TrapLoanDateCat). The fields are:
+loan of that type for the person (eg: TrapLoanDateCat). 
+
+The Recent keyword returns returned trap loan records where Due is unreturned.
+
+The fields are:
 
 TrapTypeName
     The type of trap being loaned

@@ -439,9 +439,6 @@ def animal_tags(dbo, a, includeAdditional=True, includeCosts=True, includeDiet=T
     if includeIsVaccinated:    
         tags["ANIMALISVACCINATED"] = utils.iif(medical.get_vaccinated(dbo, a["ID"]), _("Yes", l), _("No", l))
 
-    include_incomplete_vacc = configuration.include_incomplete_vacc_doc(dbo)
-    include_incomplete_medical = configuration.include_incomplete_medical_doc(dbo)
-   
     if includeMedical:
         # Vaccinations
         d = {
@@ -466,8 +463,7 @@ def animal_tags(dbo, a, includeAdditional=True, includeCosts=True, includeDiet=T
             "VACCINATIONADMINISTERINGVETZIPCODE":   "ADMINISTERINGVETPOSTCODE",
             "VACCINATIONADMINISTERINGVETEMAIL":     "ADMINISTERINGVETEMAIL"
         }
-        tags.update(table_tags(dbo, d, medical.get_vaccinations(dbo, a["ID"], not include_incomplete_vacc), "VACCINATIONTYPE", 
-            utils.iif(include_incomplete_vacc, "DATEREQUIRED", "DATEOFVACCINATION")))
+        tags.update(table_tags(dbo, d, medical.get_vaccinations(dbo, a["ID"]), "VACCINATIONTYPE", "DATEREQUIRED", "DATEOFVACCINATION"))
 
         # Tests
         d = {
@@ -491,8 +487,7 @@ def animal_tags(dbo, a, includeAdditional=True, includeCosts=True, includeDiet=T
             "TESTADMINISTERINGVETEMAIL":     "ADMINISTERINGVETEMAIL"
 
         }
-        tags.update(table_tags(dbo, d, medical.get_tests(dbo, a["ID"], not include_incomplete_vacc), "TESTNAME", 
-            utils.iif(include_incomplete_vacc, "DATEREQUIRED", "DATEOFTEST")))
+        tags.update(table_tags(dbo, d, medical.get_tests(dbo, a["ID"]), "TESTNAME", "DATEREQUIRED", "DATEOFTEST"))
 
         # Medical
         d = {
@@ -509,7 +504,7 @@ def animal_tags(dbo, a, includeAdditional=True, includeCosts=True, includeDiet=T
             "MEDICALLASTTREATMENTGIVEN": "d:LASTTREATMENTGIVEN",
             "MEDICALCOST":              "c:COST"
         }
-        tags.update(table_tags(dbo, d, medical.get_regimens(dbo, a["ID"], not include_incomplete_medical), "TREATMENTNAME", "STATUS"))
+        tags.update(table_tags(dbo, d, medical.get_regimens(dbo, a["ID"]), "TREATMENTNAME", "STATUS", "STATUS"))
 
     # Diet
     if includeDiet:
@@ -519,7 +514,7 @@ def animal_tags(dbo, a, includeAdditional=True, includeCosts=True, includeDiet=T
             "DIETDATESTARTED":          "d:DATESTARTED",
             "DIETCOMMENTS":             "COMMENTS"
         }
-        tags.update(table_tags(dbo, d, animal.get_diets(dbo, a["ID"]), "DIETNAME", "DATESTARTED"))
+        tags.update(table_tags(dbo, d, animal.get_diets(dbo, a["ID"]), "DIETNAME", "DATESTARTED", "DATESTARTED"))
 
     # Donations
     if includeDonations:
@@ -546,7 +541,7 @@ def animal_tags(dbo, a, includeAdditional=True, includeCosts=True, includeDiet=T
             "PAYMENTVATAMOUNT":         "c:VATAMOUNT",
             "PAYMENTTAXAMOUNT":         "c:VATAMOUNT"
         }
-        tags.update(table_tags(dbo, d, financial.get_animal_donations(dbo, a["ID"]), "DONATIONNAME", "DATE"))
+        tags.update(table_tags(dbo, d, financial.get_animal_donations(dbo, a["ID"]), "DONATIONNAME", "DATEDUE", "DATE"))
 
     # Transport
     if includeTransport:
@@ -586,7 +581,7 @@ def animal_tags(dbo, a, includeAdditional=True, includeCosts=True, includeDiet=T
             "TRANSPORTCOSTPAIDDATE":    "d:COSTPAIDDATE",
             "TRANSPORTCOMMENTS":        "COMMENTS"
         }
-        tags.update(table_tags(dbo, d, movement.get_animal_transports(dbo, a["ID"]), "TRANSPORTTYPENAME", "DROPOFFDATETIME"))
+        tags.update(table_tags(dbo, d, movement.get_animal_transports(dbo, a["ID"]), "TRANSPORTTYPENAME", "PICKUPDATETIME", "DROPOFFDATETIME"))
 
     # Costs
     if includeCosts:
@@ -597,7 +592,7 @@ def animal_tags(dbo, a, includeAdditional=True, includeCosts=True, includeDiet=T
             "COSTAMOUNT":               "c:COSTAMOUNT",
             "COSTDESCRIPTION":          "DESCRIPTION"
         }
-        tags.update(table_tags(dbo, d, animal.get_costs(dbo, a["ID"]), "COSTTYPENAME", "COSTPAIDDATE"))
+        tags.update(table_tags(dbo, d, animal.get_costs(dbo, a["ID"]), "COSTTYPENAME", "COSTDATE", "COSTPAIDDATE"))
 
         # Cost totals
         totalvaccinations = dbo.query_int("SELECT SUM(Cost) FROM animalvaccination WHERE AnimalID = ?", [a["ID"]])
@@ -628,7 +623,7 @@ def animal_tags(dbo, a, includeAdditional=True, includeCosts=True, includeDiet=T
             "LOGCOMMENTS":              "COMMENTS",
             "LOGCREATEDBY":             "CREATEDBY"
         }
-        tags.update(table_tags(dbo, d, log.get_logs(dbo, log.ANIMAL, a["ID"], 0, log.ASCENDING), "LOGTYPENAME", "DATE"))
+        tags.update(table_tags(dbo, d, log.get_logs(dbo, log.ANIMAL, a["ID"], 0, log.ASCENDING), "LOGTYPENAME", "DATE", "DATE"))
 
     return tags
 
@@ -722,7 +717,7 @@ def animalcontrol_tags(dbo, ac):
         "DATEBROUGHTIN":        "d:DATEBROUGHTIN",
         "DECEASEDDATE":         "d:DECEASEDDATE"
     }
-    tags.update(table_tags(dbo, d, animalcontrol.get_animalcontrol_animals(dbo, ac["ID"]), "SPECIESNAME", "DATEBROUGHTIN"))
+    tags.update(table_tags(dbo, d, animalcontrol.get_animalcontrol_animals(dbo, ac["ID"]), "SPECIESNAME", "DATEBROUGHTIN", "DATEBROUGHTIN"))
 
     # Additional fields
     tags.update(additional_field_tags(dbo, additional.get_additional_fields(dbo, ac["ID"], "incident")))
@@ -736,7 +731,7 @@ def animalcontrol_tags(dbo, ac):
         "FINEDUEDATE":          "d:FINEDUEDATE",
         "FINEPAIDDATE":         "d:FINEPAIDDATE"
     }
-    tags.update(table_tags(dbo, d, financial.get_incident_citations(dbo, ac["ID"]), "CITATIONNAME", "CITATIONDATE"))
+    tags.update(table_tags(dbo, d, financial.get_incident_citations(dbo, ac["ID"]), "CITATIONNAME", "CITATIONDATE", "FINEPAIDDATE"))
 
     # Logs
     d = {
@@ -745,7 +740,7 @@ def animalcontrol_tags(dbo, ac):
         "INCIDENTLOGCOMMENTS":        "COMMENTS",
         "INCIDENTLOGCREATEDBY":       "CREATEDBY"
     }
-    tags.update(table_tags(dbo, d, log.get_logs(dbo, log.ANIMALCONTROL, ac["ID"], 0, log.ASCENDING), "LOGTYPENAME", "DATE"))
+    tags.update(table_tags(dbo, d, log.get_logs(dbo, log.ANIMALCONTROL, ac["ID"], 0, log.ASCENDING), "LOGTYPENAME", "DATE", "DATE"))
 
     return tags
 
@@ -868,7 +863,7 @@ def foundanimal_tags(dbo, a):
         "LOGCOMMENTS":        "COMMENTS",
         "LOGCREATEDBY":       "CREATEDBY"
     }
-    tags.update(table_tags(dbo, d, log.get_logs(dbo, log.FOUNDANIMAL, a["ID"], 0, log.ASCENDING), "LOGTYPENAME", "DATE"))
+    tags.update(table_tags(dbo, d, log.get_logs(dbo, log.FOUNDANIMAL, a["ID"], 0, log.ASCENDING), "LOGTYPENAME", "DATE", "DATE"))
     return tags
 
 def lostanimal_tags(dbo, a):
@@ -908,7 +903,7 @@ def lostanimal_tags(dbo, a):
         "LOGCOMMENTS":        "COMMENTS",
         "LOGCREATEDBY":       "CREATEDBY"
     }
-    tags.update(table_tags(dbo, d, log.get_logs(dbo, log.LOSTANIMAL, a["ID"], 0, log.ASCENDING), "LOGTYPENAME", "DATE"))
+    tags.update(table_tags(dbo, d, log.get_logs(dbo, log.LOSTANIMAL, a["ID"], 0, log.ASCENDING), "LOGTYPENAME", "DATE", "DATE"))
     return tags
 
 def licence_tags(dbo, li):
@@ -1086,7 +1081,7 @@ def person_tags(dbo, p, includeImg=False):
         "FINEDUEDATE":          "d:FINEDUEDATE",
         "FINEPAIDDATE":         "d:FINEPAIDDATE"
     }
-    tags.update(table_tags(dbo, d, financial.get_person_citations(dbo, p["ID"]), "CITATIONNAME", "CITATIONDATE"))
+    tags.update(table_tags(dbo, d, financial.get_person_citations(dbo, p["ID"]), "CITATIONNAME", "CITATIONDATE", "FINEPAIDDATE"))
 
     # Logs
     d = {
@@ -1095,7 +1090,7 @@ def person_tags(dbo, p, includeImg=False):
         "PERSONLOGCOMMENTS":        "COMMENTS",
         "PERSONLOGCREATEDBY":       "CREATEDBY"
     }
-    tags.update(table_tags(dbo, d, log.get_logs(dbo, log.PERSON, p["ID"], 0, log.ASCENDING), "LOGTYPENAME", "DATE"))
+    tags.update(table_tags(dbo, d, log.get_logs(dbo, log.PERSON, p["ID"], 0, log.ASCENDING), "LOGTYPENAME", "DATE", "DATE"))
 
     # Trap loans
     d = {
@@ -1108,7 +1103,7 @@ def person_tags(dbo, p, includeImg=False):
         "TRAPRETURNDATE":           "d:RETURNDATE",
         "TRAPCOMMENTS":             "COMMENTS"
     }
-    tags.update(table_tags(dbo, d, animalcontrol.get_person_traploans(dbo, p["ID"], animalcontrol.ASCENDING), "TRAPTYPENAME", "RETURNDATE"))
+    tags.update(table_tags(dbo, d, animalcontrol.get_person_traploans(dbo, p["ID"], animalcontrol.ASCENDING), "TRAPTYPENAME", "RETURNDUEDATE", "RETURNDATE"))
 
     return tags
 
@@ -1210,7 +1205,7 @@ def waitinglist_tags(dbo, a):
         "LOGCOMMENTS":        "COMMENTS",
         "LOGCREATEDBY":       "CREATEDBY"
     }
-    tags.update(table_tags(dbo, d, log.get_logs(dbo, log.WAITINGLIST, a["ID"], 0, log.ASCENDING), "LOGTYPENAME", "DATE"))
+    tags.update(table_tags(dbo, d, log.get_logs(dbo, log.WAITINGLIST, a["ID"], 0, log.ASCENDING), "LOGTYPENAME", "DATE", "DATE"))
     return tags
 
 def append_tags(tags1, tags2):
@@ -1240,9 +1235,9 @@ def table_get_value(l, row, k):
         s = str(row[k])
     return s
 
-def table_tags(dbo, d, rows, typefield = "", recentdatefield = ""):
+def table_tags(dbo, d, rows, typefield = "", recentduefield = "", recentgivenfield = ""):
     """
-    For a collection of table rows, generates the LAST/RECENT and indexed tags.
+    For a collection of table rows, generates the LAST/DUE/RECENT and indexed tags.
 
     d: A dictionary of tag names to field expressions. If the field is
        preceded with d:, it is formatted as a date, c: a currency
@@ -1251,7 +1246,10 @@ def table_tags(dbo, d, rows, typefield = "", recentdatefield = ""):
     typefield: The name of the field in rows that contains the type for
        creating tags with the type as a suffix
 
-    recentdatefield: The name of the field in rows that contains the date
+    recentduefield: The name of the field in rows that contains the date
+        the last thing was was due for DUE tags.
+
+    recentgivenfield: The name of the field in rows that contains the date
         the last thing was received/given for RECENT tags.
 
     rows: The table rows
@@ -1259,6 +1257,7 @@ def table_tags(dbo, d, rows, typefield = "", recentdatefield = ""):
     l = dbo.locale
     tags = {}
     uniquetypes = {}
+    recentdue = {}
     recentgiven = {}
 
     # Go forwards through the rows
@@ -1290,17 +1289,44 @@ def table_tags(dbo, d, rows, typefield = "", recentdatefield = ""):
         for k, v in d.iteritems():
             tags[k + "LAST" + str(i)] = table_get_value(l, r, v)
 
-        # Recent suffixed tags
-        if recentdatefield != "":
+        # Due suffixed tags
+        if recentduefield != "":
             # STATUS is an edge case for medical rows only - all the
             # others have some kind of date
-            if recentdatefield == "STATUS":
+            if recentduefield == "STATUS":
                 t = r[typefield]
                 # If the type is somehow null, we can't do anything
                 if t is None: continue
-                # Is this the first type with STATUS==2 we've seen?
+                # Is this the first type with STATUS==0 (active) we've seen?
+                # If so, create the tags with due as a suffix.
+                if t not in recentdue and r[recentduefield] == 0:
+                    recentdue[t] = r
+                    t = t.upper().replace(" ", "").replace("/", "")
+                    for k, v in d.iteritems():
+                        tags[k + "DUE" + t] = table_get_value(l, r, v)
+            else:
+                t = r[typefield]
+                # If the type is somehow null, we can't do anything
+                if t is None: continue
+                # Is this the first type with a due date and blank given date we've seen?
+                # If so, create the tags with due as a suffix
+                if t not in recentdue and r[recentduefield] is not None and r[recentgivenfield] is None:
+                    recentdue[t] = r
+                    t = t.upper().replace(" ", "").replace("/", "")
+                    for k, v in d.iteritems():
+                        tags[k + "DUE" + t] = table_get_value(l, r, v)
+
+        # Recent suffixed tags
+        if recentgivenfield != "":
+            # STATUS is an edge case for medical rows only - all the
+            # others have some kind of date
+            if recentgivenfield == "STATUS":
+                t = r[typefield]
+                # If the type is somehow null, we can't do anything
+                if t is None: continue
+                # Is this the first type with STATUS==2 (complete) we've seen?
                 # If so, create the tags with recent as a suffix.
-                if t not in recentgiven and r[recentdatefield] == 2:
+                if t not in recentgiven and r[recentgivenfield] == 2:
                     recentgiven[t] = r
                     t = t.upper().replace(" ", "").replace("/", "")
                     for k, v in d.iteritems():
@@ -1311,7 +1337,7 @@ def table_tags(dbo, d, rows, typefield = "", recentdatefield = ""):
                 if t is None: continue
                 # Is this the first type with a date we've seen?
                 # If so, create the tags with recent as a suffix
-                if t not in recentgiven and r[recentdatefield] is not None:
+                if t not in recentgiven and r[recentgivenfield] is not None:
                     recentgiven[t] = r
                     t = t.upper().replace(" ", "").replace("/", "")
                     for k, v in d.iteritems():
