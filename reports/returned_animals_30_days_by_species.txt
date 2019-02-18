@@ -21,7 +21,7 @@ WHERE ad.MovementType = 1
 AND ad.ReturnDate >= '$ASK DATE Animals returned between$' 
 AND ad.ReturnDate <= '$ASK DATE and$'
 AND EXTRACT(DAY FROM ad.ReturnDate - ad.MovementDate)::integer < 30
-ORDER BY ad.ReturnDate, a.AnimalName
+ORDER BY s.SpeciesName, ad.ReturnDate, a.AnimalName
 ###
 $$HEADER
 HEADER$$
