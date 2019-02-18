@@ -92,7 +92,7 @@ def get_licence_query(dbo):
     return "SELECT ol.ID, ol.LicenceTypeID, ol.IssueDate, ol.ExpiryDate, lt.LicenceTypeName, " \
         "ol.LicenceNumber, ol.LicenceFee, ol.Comments, ol.OwnerID, ol.AnimalID, " \
         "ol.CreatedBy, ol.CreatedDate, ol.LastChangedBy, ol.LastChangedDate, " \
-        "a.AnimalName, a.ShelterCode, a.ShortCode, " \
+        "a.AnimalName, a.ShelterCode, a.ShortCode, a.Sex, " \
         "o.OwnerTitle, o.OwnerInitials, o.OwnerSurname, o.OwnerForenames, o.OwnerName, " \
         "o.OwnerAddress, o.OwnerTown, o.OwnerCounty, o.OwnerPostcode, " \
         "o.HomeTelephone, o.WorkTelephone, o.MobileTelephone " \

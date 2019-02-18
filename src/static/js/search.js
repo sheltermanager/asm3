@@ -50,7 +50,7 @@ $(function() {
                     }
                     h.push('<p class="asm-search-result">' +
                         '<span class="asm-search-name">' + 
-                        '<img align="right" src="' + html.thumbnail_src(r, "animalthumb") + '" class="asm-thumbnail thumbnailshadow" />' +
+                        html.animal_link_thumb_bare(r) +
                         html.icon("animal", _("Animal")));
                     h.push(html.animal_emblems(r));
                     h.push('<a href="animal?id=' + r.ID + '">' + r.ANIMALNAME + ' - ' + r.CODE + '</a> ');

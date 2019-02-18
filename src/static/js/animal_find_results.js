@@ -280,7 +280,7 @@ $(function() {
                 else { rv = _("Unknown"); }
             }
             else if ( name == "Image" ) {
-                rv = "<img class=\"asm-thumbnail thumbnailshadow\" src=\"" + html.thumbnail_src(row, "animalthumb") + "\" />";
+                rv = html.animal_link_thumb_bare(row);
             }
             else if (add) {
                 $.each(add, function(i, v) {

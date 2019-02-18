@@ -327,6 +327,10 @@ select:disabled, input:disabled, textarea:disabled {
     min-height: 85px;
 }
 
+.asm-search-result .asm-thumbnail {
+    float: right;
+}
+
 .asm-search-personflags {
     font-style: italic;
 }

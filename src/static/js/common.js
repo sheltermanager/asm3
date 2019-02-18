@@ -1489,10 +1489,10 @@
                 "5": a.BREEDNAME,
                 "6": a.SPECIESNAME,
                 "7": a.ANIMALAGE});
-            s.push(common.substitute('<a href="animal?id={id}"><img title="{title}" src="{imgsrc}" class="asm-thumbnail {thumbnailclass} thumbnailshadow" /></a><br />', {
+            s.push(common.substitute('<a href="animal?id={id}"><img title="{title}" src="{imgsrc}" class="{thumbnailclasses}" /></a><br />', {
                 "id" : a.ID,
                 "title" : html.title(title),
-                "thumbnailclass": (a.SEX == 0 ? "asm-thumbnail-male" : (a.SEX == 1 ? "asm-thumbnail-female" : "")),
+                "thumbnailclasses": html.animal_link_thumb_classes(a),
                 "imgsrc" : html.thumbnail_src(a, "animalthumb") }));
             var emblems = html.animal_emblems(a, o);
             s.push(emblems);
@@ -1507,6 +1507,22 @@
                 s.push('<br /><input type="checkbox" class="animalselect" data="{id}" title="{title}" />'.replace("{id}", a.ID).replace("{title}", _("Select")));
             }
             return s.join("\n");
+        },
+
+        /**
+         * Renders a bare animal link thumbnail (just the thumbnail surrounded by a link to the record)
+         */
+        animal_link_thumb_bare: function(a) {
+            var animalid = a.ANIMALID || a.ID,
+                classes = html.animal_link_thumb_classes(a); 
+            return '<a href="animal?id=' + animalid + '"><img onerror=image_error(this) src=' + html.thumbnail_src(a, "animalthumb") + ' class="' + classes + '" /></a>';
+        },
+
+        /**
+         * Returns the classes for animal thumbnails
+         */
+        animal_link_thumb_classes: function(a) {
+            return "asm-thumbnail thumbnail-shadow " + (a.SEX == 0 ? "asm-thumbnail-male" : (a.SEX == 1 ? "asm-thumbnail-female" : ""));
         },
 
         /**

@@ -33,7 +33,7 @@ def get_movement_query(dbo):
         "il.LocationName AS ShelterLocationName, a.ShelterLocationUnit, " \
         "r.OwnerName AS RetailerName, " \
         "ma.MediaName AS WebsiteMediaName, ma.Date AS WebsiteMediaDate, " \
-        "sx.Sex, s.SpeciesName, rr.ReasonName AS ReturnedReasonName, " \
+        "a.Sex, s.SpeciesName, rr.ReasonName AS ReturnedReasonName, " \
         "CASE WHEN m.MovementType = 2 AND m.IsPermanentFoster = 1 THEN " \
         "(SELECT MovementType FROM lksmovementtype WHERE ID=12) " \
         "WHEN m.MovementType = 1 AND m.IsTrial = 1 THEN " \
