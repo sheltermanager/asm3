@@ -891,7 +891,7 @@
          *        justwidget: false, (output tr/td/label)
          *        defaultval: expression or function to evaluate.
          *        height/width/margintop: "css expr",
-         *        validation: "notblank|notzero",
+         *        validation: "notblank|notzero|validemail",
          *        classes: "extraclass anotherone",
          *        tooltip: _("Text"), 
          *        callout: _("Text"), mixed markup allowed
@@ -1411,9 +1411,7 @@
          * row: The json row to use
          */
         fields_validate: function(fields) {
-            var nbids = [];
-            var nzids = [];
-            var ntids = [];
+            var nbids = [], nzids = [], veids = [], vtids = [];
             $.each(fields, function(i, v) {
                 $("label[for='" + v.post_field + "']").removeClass(validate.ERROR_LABEL_CLASS);
                 if (v.validation == "notblank") {
@@ -1422,8 +1420,11 @@
                 if (v.validation == "notzero") {
                     nzids.push(v.post_field);
                 }
+                if (v.validation == "validemail") {
+                    veids.push(v.post_field);
+                }
                 if (v.type == "time") {
-                    ntids.push(v.post_field);
+                    vtids.push(v.post_field);
                 }
             });
             var rv = true;
@@ -1435,8 +1436,12 @@
                 rv = validate.notzero(nzids);
                 if (!rv) { return rv; }
             }
-            if (ntids.length > 0) {
-                rv = validate.validtime(ntids);
+            if (vtids.length > 0) {
+                rv = validate.validtime(vtids);
+                if (!rv) { return rv; }
+            }
+            if (veids.length > 0) {
+                rv = validate.validemail(veids);
                 if (!rv) { return rv; }
             }
             return true;

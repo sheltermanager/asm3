@@ -529,6 +529,13 @@ $(function() {
                 return false;
             }
 
+            // email
+            if ($.trim($("#email").val()) != "") {
+                if (!validate.email($("#email").val())) {
+                    return false;
+                }
+            }
+
             // any additional fields that are marked mandatory
             if (!additional.validate_mandatory()) {
                 return false;

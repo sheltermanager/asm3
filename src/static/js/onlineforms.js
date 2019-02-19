@@ -22,6 +22,7 @@ $(function() {
                         callout: _("After the user presses submit and ASM has accepted the form, redirect the user to this URL") },
                     { json_field: "SETOWNERFLAGS", post_field: "flags", label: _("Person Flags"), type: "selectmulti" },
                     { json_field: "EMAILADDRESS", post_field: "email", label: _("Email submissions to"), type: "textarea", rows: "2", 
+                        validation: "validemail", 
                         tooltip: _("Email incoming form submissions to this comma separated list of email addresses"), 
                         callout: _("Email incoming form submissions to this comma separated list of email addresses") }, 
                     { json_field: "EMAILSUBMITTER", post_field: "emailsubmitter", label: _("Send confirmation email to form submitter"), type: "check",
