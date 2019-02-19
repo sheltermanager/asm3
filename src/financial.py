@@ -657,14 +657,13 @@ def receive_donation(dbo, username, did):
     Marks a donation received
     """
     if id is None or did == "": return
-    receiptno = dbo.query_string("SELECT ReceiptNumber FROM ownerdonation WHERE ID = ?", [did])
+    row = dbo.first_row(dbo.query("SELECT * FROM ownerdonation WHERE ID = ?", [did]))
     
     dbo.update("ownerdonation", did, {
         "Date":     dbo.today()
     }, username)
 
-
-    audit.edit(dbo, username, "ownerdonation", did, "receipt %s, id %s: received" % (receiptno, did))
+    audit.edit(dbo, username, "ownerdonation", did, audit.get_parent_links(row), "receipt %s, id %s: received" % (row.RECEIPTNUMBER, did))
     update_matching_donation_transaction(dbo, username, did)
     check_create_next_donation(dbo, username, did)
 

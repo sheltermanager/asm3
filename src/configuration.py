@@ -418,7 +418,7 @@ def csave(dbo, username, post):
         else:
             # Plain string value
             put(k, v)
-    audit.edit(dbo, username, "configuration", 0, str(post))
+    audit.edit(dbo, username, "configuration", 0, "", str(post))
     invalidate_config_cache(dbo)
 
 def get_map(dbo):

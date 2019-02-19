@@ -1712,10 +1712,11 @@
                 '<table class="asm-table">',
                 '<thead>',
                 '<tr>',
-                '<th>Date</th>',
-                '<th>User</th>',
-                '<th>Action</th>',
-                '<th>Details</th>',
+                '<th>' + _("Date") + '</th>',
+                '<th>' + _("User") + '</th>',
+                '<th>' + _("Action") + '</th>',
+                '<th>' + _("Table") + '</th>',
+                '<th>' + _("Details") + '</th>',
                 '</tr>',
                 '</thead>',
                 '<tbody>'
@@ -1732,6 +1733,7 @@
                 h.push('<td>' + format.date(v.AUDITDATE) + ' ' + format.time(v.AUDITDATE) + '</td>');
                 h.push('<td>' + v.USERNAME + '</td>');
                 h.push('<td>' + readableaction[v.ACTION] + '</td>');
+                h.push('<td>' + v.TABLENAME + '</td>');
                 h.push('<td>' + v.DESCRIPTION + '</td>');
                 h.push('</tr>');
             });

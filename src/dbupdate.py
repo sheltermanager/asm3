@@ -24,7 +24,7 @@ VERSIONS = (
     34002, 34003, 34004, 34005, 34006, 34007, 34008, 34009, 34010, 34011, 34012,
     34013, 34014, 34015, 34016, 34017, 34018, 34019, 34020, 34021, 34022, 34100,
     34101, 34102, 34103, 34104, 34105, 34106, 34107, 34108, 34109, 34110, 34111,
-    34112
+    34112, 34200
 )
 
 LATEST_VERSION = VERSIONS[-1]
@@ -744,12 +744,14 @@ def sql_structure(dbo):
         fstr("UserName"),
         fstr("TableName"),
         fint("LinkID", True),
+        fstr("ParentLinks", True),
         flongstr("Description", False) ), False)
     sql += index("audittrail_Action", "audittrail", "Action")
     sql += index("audittrail_AuditDate", "audittrail", "AuditDate")
     sql += index("audittrail_UserName", "audittrail", "UserName")
     sql += index("audittrail_TableName", "audittrail", "TableName")
     sql += index("audittrail_LinkID", "audittrail", "LinkID")
+    sql += index("audittrail_ParentLinks", "audittrail", "ParentLinks")
 
     sql += table("basecolour", (
         fid(),
@@ -4992,4 +4994,9 @@ def update_34112(dbo):
     # Add a new time additional field type
     l = dbo.locale
     dbo.execute_dbupdate("INSERT INTO lksfieldtype (ID, FieldType) VALUES (10, ?)", [ _("Time", l) ])
+
+def update_34200(dbo):
+    # Add audittrail.ParentLinks
+    add_column(dbo, "audittrail", "ParentLinks", dbo.type_shorttext)
+    add_index(dbo, "audittrail_ParentLinks", "audittrail", "ParentLinks")
 

@@ -33,12 +33,12 @@ def update_html_template(dbo, username, name, head, body, foot, builtin = False)
         "*Footer":  foot,
         "IsBuiltIn": builtin and 1 or 0
     })
-    audit.create(dbo, username, "templatehtml", htid, "id: %d, name: %s" % (htid, name))
+    audit.create(dbo, username, "templatehtml", htid, "", "id: %d, name: %s" % (htid, name))
 
 def delete_html_template(dbo, username, name):
     """ Get an html template by name """
     dbo.execute("DELETE FROM templatehtml WHERE Name = ?", [name])
-    audit.delete(dbo, username, "templatehtml", 0, "delete template %s" % name)
+    audit.delete(dbo, username, "templatehtml", 0, "", "delete template %s" % name)
 
 def get_document_templates(dbo):
     """ Returns all document template info """
@@ -79,7 +79,7 @@ def create_document_template(dbo, username, name, ext = ".html", content = "<p><
         "Path":     path,
         "Content":  base64.b64encode(content)
     })
-    audit.create(dbo, username, "templatedocument", dtid, "id: %d, name: %s" % (dtid, name))
+    audit.create(dbo, username, "templatedocument", dtid, "", "id: %d, name: %s" % (dtid, name))
     return dtid
 
 def clone_document_template(dbo, username, dtid, newname):
@@ -100,7 +100,7 @@ def delete_document_template(dbo, username, dtid):
     """
     name = get_document_template_name(dbo, dtid)
     dbo.delete("templatedocument", dtid, username, writeAudit=False)
-    audit.delete(dbo, username, "templatedocument", dtid, "delete template %d (%s)" % (dtid, name))
+    audit.delete(dbo, username, "templatedocument", dtid, "", "delete template %d (%s)" % (dtid, name))
 
 def rename_document_template(dbo, username, dtid, newname):
     """
@@ -110,7 +110,7 @@ def rename_document_template(dbo, username, dtid, newname):
     dbo.update("templatedocument", dtid, {
         "Name":     newname
     })
-    audit.edit(dbo, username, "templatedocument", dtid, "rename %d to %s" % (dtid, newname))
+    audit.edit(dbo, username, "templatedocument", dtid, "", "rename %d to %s" % (dtid, newname))
 
 def update_document_template_content(dbo, dtid, content):
     """ Changes the content of a template """

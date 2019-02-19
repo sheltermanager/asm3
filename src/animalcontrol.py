@@ -470,14 +470,14 @@ def update_animalcontrol_addlink(dbo, username, acid, animalid):
     if 0 != dbo.query_int("SELECT COUNT(*) FROM animalcontrolanimal WHERE AnimalControlID = ? AND AnimalID = ?", (acid, animalid)):
         raise utils.ASMValidationError(_("That animal is already linked to the incident", l))
     dbo.execute("INSERT INTO animalcontrolanimal (AnimalControlID, AnimalID) VALUES (?, ?)", (acid, animalid))
-    audit.create(dbo, username, "animalcontrolanimal", acid, "incident %d linked to animal %d" % (acid, animalid))
+    audit.create(dbo, username, "animalcontrolanimal", acid, "", "incident %d linked to animal %d" % (acid, animalid))
 
 def update_animalcontrol_removelink(dbo, username, acid, animalid):
     """
     Removes a link between an animal and an incident.
     """
     dbo.execute("DELETE FROM animalcontrolanimal WHERE AnimalControlID = ? AND AnimalID = ?", (acid, animalid))
-    audit.delete(dbo, username, "animalcontrolanimal", acid, "incident %d no longer linked to animal %d" % (acid, animalid))
+    audit.delete(dbo, username, "animalcontrolanimal", acid, "", "incident %d no longer linked to animal %d" % (acid, animalid))
 
 def insert_animalcontrol_from_form(dbo, post, username, geocode=True):
     """

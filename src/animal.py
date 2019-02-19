@@ -2285,7 +2285,7 @@ def update_animals_from_form(dbo, post, username):
     dbo.execute("UPDATE animal SET LastChangedBy = %s, LastChangedDate = %s WHERE ID IN (%s)" % (dbo.sql_value(username), dbo.sql_now(), post["animals"]))
     if len(aud) > 0:
         for animalid in post.integer_list("animals"):
-            audit.edit(dbo, username, "animal", animalid, ", ".join(aud))
+            audit.edit(dbo, username, "animal", animalid, "", ", ".join(aud))
     return len(post.integer_list("animals"))
 
 def update_deceased_from_form(dbo, username, post):
@@ -2352,7 +2352,7 @@ def update_location_unit(dbo, username, animalid, newlocationid, newunit = ""):
         movement.return_movement(dbo, activemovementid, animalid)
     # Change the location
     dbo.execute("UPDATE animal SET ShelterLocation = ?, ShelterLocationUnit = ? WHERE ID = ?", (newlocationid, newunit, animalid))
-    audit.edit(dbo, username, "animal", animalid, "%s: moved to location: %s, unit: %s" % ( animalid, newlocationid, newunit ))
+    audit.edit(dbo, username, "animal", animalid, "", "%s: moved to location: %s, unit: %s" % ( animalid, newlocationid, newunit ))
     update_animal_status(dbo, animalid)
 
 def clone_animal(dbo, username, animalid):
@@ -2634,7 +2634,7 @@ def clone_animal(dbo, username, animalid):
                 "Comments":         lo.comments
             }, username, writeAudit=False)
 
-    audit.create(dbo, username, "animal", nid, audit.dump_row(dbo, "animal", nid))
+    audit.create(dbo, username, "animal", nid, "", audit.dump_row(dbo, "animal", nid))
     update_animal_status(dbo, nid)
     update_variable_animal_data(dbo, nid)
     return nid
@@ -2852,7 +2852,7 @@ def update_daily_boarding_cost(dbo, username, animalid, cost):
     """
     oldcost = dbo.query_string("SELECT DailyBoardingCost FROM animal WHERE ID = ?", [animalid])
     dbo.execute("UPDATE animal SET DailyBoardingCost = ? WHERE ID = ?", (cost, animalid) )
-    audit.edit(dbo, username, "animal", animalid, "%s: DailyBoardingCost %s ==> %s" % ( str(animalid), oldcost, str(cost) ))
+    audit.edit(dbo, username, "animal", animalid, "", "%s: DailyBoardingCost %s ==> %s" % ( str(animalid), oldcost, str(cost) ))
 
 def update_preferred_web_media_notes(dbo, username, animalid, newnotes):
     """
@@ -2864,7 +2864,7 @@ def update_preferred_web_media_notes(dbo, username, animalid, newnotes):
             "MediaNotes": newnotes,
             "UpdatedSinceLastPublish": 1
         })
-        audit.edit(dbo, username, "media", mediaid, str(mediaid) + "notes => " + newnotes)
+        audit.edit(dbo, username, "media", mediaid, "", str(mediaid) + "notes => " + newnotes)
  
 def insert_diet_from_form(dbo, username, post):
     """

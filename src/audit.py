@@ -12,7 +12,18 @@ LOGOUT = 5
 
 def get_audit_for_link(dbo, tablename, linkid):
     """ Returns the audit records for a particular link and table """
-    return dbo.query("SELECT * FROM audittrail WHERE tablename = ? AND linkid = ? ORDER BY AuditDate DESC", (tablename, linkid))
+    parentlinks = "%%%s=%s %%" % (tablename, linkid)
+    return dbo.query("SELECT * FROM audittrail WHERE (tablename = ? AND linkid = ?) OR parentlinks LIKE ? ORDER BY AuditDate DESC", (tablename, linkid, parentlinks))
+
+def get_parent_links(v):
+    """ Reads a dict of values (insert/update values or delete resultrow) and 
+        turns foreign keys from certain tables into values for the audittrail.ParentLinks 
+        field (eg: AnimalID, OwnerID for an output of 'animal=X owner=Y ') """
+    pl = []
+    for k, v in v.iteritems():
+        if k.lower() in ( "animalid", "ownerid", "animalcontrolid" ):
+            pl.append( "%s=%s " % ( k.lower().replace("id", ""), v ))
+    return "".join(pl)
 
 def map_diff(row1, row2, ref = []):
     """
@@ -54,35 +65,35 @@ def dump_row(dbo, tablename, rowid):
 def dump_rows(dbo, tablename, condition):
     return str(dbo.query("SELECT * FROM %s WHERE %s" % (tablename, condition)))
 
-def create(dbo, username, tablename, linkid, description):
-    action(dbo, ADD, username, tablename, linkid, description)
+def create(dbo, username, tablename, linkid, parentlinks, description):
+    action(dbo, ADD, username, tablename, linkid, parentlinks, description)
 
-def edit(dbo, username, tablename, linkid, description):
-    action(dbo, EDIT, username, tablename, linkid, description)
+def edit(dbo, username, tablename, linkid, parentlinks, description):
+    action(dbo, EDIT, username, tablename, linkid, parentlinks, description)
 
-def delete(dbo, username, tablename, linkid, description):
-    action(dbo, DELETE, username, tablename, linkid, description)
+def delete(dbo, username, tablename, linkid, parentlinks, description):
+    action(dbo, DELETE, username, tablename, linkid, parentlinks, description)
 
 def delete_rows(dbo, username, tablename, condition):
     rows = dbo.query("SELECT * FROM %s WHERE %s" % (tablename, condition))
     # If there's an ID column, log an audited delete for each row
     if len(rows) > 0 and "ID" in rows[0]:
         for r in dbo.query("SELECT * FROM %s WHERE %s" % (tablename, condition)):
-            action(dbo, DELETE, username, tablename, r["ID"], dump_row(dbo, tablename, r["ID"]))
+            action(dbo, DELETE, username, tablename, r["ID"], get_parent_links(r), dump_row(dbo, tablename, r["ID"]))
     else:
         # otherwise, stuff all the deleted rows into one delete action
-        action(dbo, DELETE, username, tablename, 0, str(rows))
+        action(dbo, DELETE, username, tablename, 0, "", str(rows))
 
-def move(dbo, username, tablename, linkid, description):
-    action(dbo, MOVE, username, tablename, linkid, description)
+def move(dbo, username, tablename, linkid, parentlinks, description):
+    action(dbo, MOVE, username, tablename, linkid, parentlinks, description)
 
 def login(dbo, username, remoteip = ""):
-    action(dbo, LOGIN, username, "users", 0, "login from %s" % remoteip)
+    action(dbo, LOGIN, username, "users", 0, "", "login from %s" % remoteip)
 
 def logout(dbo, username, remoteip = ""):
-    action(dbo, LOGOUT, username, "users", 0, "logout from %s" % remoteip)
+    action(dbo, LOGOUT, username, "users", 0, "", "logout from %s" % remoteip)
 
-def action(dbo, action, username, tablename, linkid, description):
+def action(dbo, action, username, tablename, linkid, parentlinks, description):
     """
     Adds an audit record
     """
@@ -96,6 +107,7 @@ def action(dbo, action, username, tablename, linkid, description):
         "UserName":     username,
         "TableName":    tablename,
         "LinkID":       linkid,
+        "ParentLinks":  parentlinks,
         "Description":  description
     }, generateID=False, writeAudit=False)
 
