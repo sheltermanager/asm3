@@ -34,6 +34,7 @@ NOT EXISTS (SELECT MovementDate FROM adoption WHERE MovementDate <= '$@thedate$ 
 AND DateBroughtIn <= '$@thedate$ 23:59:59'
 AND NonShelterAnimal = 0 
 AND (DeceasedDate Is Null OR DeceasedDate > '$@thedate$ 23:59:59') 
+AND internallocation.SiteID = $SITE$
 ORDER BY LocationName, SpeciesName
 ###
 $$HEADER
