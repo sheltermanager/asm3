@@ -458,6 +458,9 @@ $(function() {
             else if (viewmode == "species") {
                 this.render_view("SPECIESNAME", "", "SPECIESNAME,ANIMALNAME", false, false);
             }
+            else if (viewmode == "speciescode") {
+                this.render_view("SPECIESNAME", "", "SPECIESNAME,CODE", false, false);
+            }
             else if (viewmode == "status") {
                 this.render_view("ADOPTIONSTATUS", "", "ADOPTIONSTATUS,ANIMALNAME", false, true);
             }
@@ -522,6 +525,7 @@ $(function() {
             h.push('<option value="sex">' + _("Sex") + '</option>');
             h.push('<option value="sexspecies">' + _("Sex and Species") + '</option>');
             h.push('<option value="species">' + _("Species") + '</option>');
+            h.push('<option value="speciescode">' + _("Species and Code") + '</option>');
             h.push('<option value="status">' + _("Status") + '</option>');
             h.push('<option value="statusspecies">' + _("Status and Species") + '</option>');
             h.push('<option value="type">' + _("Type") + '</option>');

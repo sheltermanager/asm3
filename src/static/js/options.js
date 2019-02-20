@@ -1035,6 +1035,7 @@ $(function() {
                 '<option value="sex">' + _("Sex") + '</option>',
                 '<option value="sexspecies">' + _("Sex and Species") + '</option>',
                 '<option value="species">' + _("Species") + '</option>',
+                '<option value="speciescode">' + _("Species and Code") + '</option>',
                 '<option value="status">' + _("Status") + '</option>',
                 '<option value="statusspecies">' + _("Status and Species") + '</option>',
                 '<option value="type">' + _("Type") + '</option>',
