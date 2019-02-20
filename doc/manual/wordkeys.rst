@@ -359,11 +359,13 @@ SpeciesName
     The animal's species 
 ReclaimedDate
     The date (if applicable) that the animal was reclaimed by its owner 
-MostRecentEntry
+MostRecentEntry / MostRecentEntryDate
     The date the animal most recently entered the shelter (if it was returned
     from an adoption or fostering for example) 
 MostRecentMonthEntry
     The month the animal most recently entered the shelter 
+MostRecentEntryCategory
+    The entry category or return category depending on which happened most recently
 TimeOnShelter
     A readable string showing the time the animal has spent on the shelter
     (from the last time it entered), eg: 4 weeks. 

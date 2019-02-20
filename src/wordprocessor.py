@@ -340,6 +340,7 @@ def animal_tags(dbo, a, includeAdditional=True, includeCosts=True, includeDiet=T
         "RESERVEDOWNERCELLPHONE" : a["RESERVEDOWNERMOBILETELEPHONE"],
         "RESERVEDOWNEREMAIL"    : a["RESERVEDOWNEREMAILADDRESS"],
         "ENTRYCATEGORY"         : a["ENTRYREASONNAME"],
+        "MOSTRECENTENTRYCATEGORY" : a["ENTRYREASONNAME"],
         "REASONFORENTRY"        : a["REASONFORENTRY"],
         "REASONFORENTRYBR"      : br(a["REASONFORENTRY"]),
         "REASONNOTBROUGHTBYOWNER" : a["REASONNO"],
@@ -360,6 +361,7 @@ def animal_tags(dbo, a, includeAdditional=True, includeCosts=True, includeDiet=T
         "DECEASEDCATEGORY"      : a["PTSREASONNAME"],
         "SHORTSHELTERCODE"      : a["SHORTCODE"],
         "MOSTRECENTENTRY"       : python2display(l, a["MOSTRECENTENTRYDATE"]),
+        "MOSTRECENTENTRYDATE"   : python2display(l, a["MOSTRECENTENTRYDATE"]),
         "TIMEONSHELTER"         : timeonshelter,
         "WEBMEDIAFILENAME"      : a["WEBSITEMEDIANAME"],
         "WEBSITEIMAGECOUNT"     : a["WEBSITEIMAGECOUNT"],
@@ -430,6 +432,10 @@ def animal_tags(dbo, a, includeAdditional=True, includeCosts=True, includeDiet=T
                     tags["CURRENTOWNERMOBILEPHONE"] = p["MOBILETELEPHONE"]
                     tags["CURRENTOWNERCELLPHONE"] = p["MOBILETELEPHONE"]
                     tags["CURRENTOWNEREMAIL"] = p["EMAILADDRESS"]
+
+            # If the latest movement is an adoption return, update the MOSTRECENTENTRYCATEGORY field
+            if latest["MOVEMENTTYPE"] == 1 and latest["RETURNDATE"] is not None:
+                tags["MOSTRECENTENTRYCATEGORY"] = latest["RETURNEDREASONNAME"]
 
     # Additional fields
     if includeAdditional:
