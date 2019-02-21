@@ -2449,6 +2449,7 @@ def install_default_templates(dbo, removeFirst = False):
         dbo.execute_dbupdate("DELETE FROM templatehtml")
     al.info("creating default templates", "dbupdate.install_default_templates", dbo)
     add_html_template_from_files("animalview")
+    add_html_template_from_files("animalviewadoptable")
     add_html_template_from_files("littlebox")
     add_html_template_from_files("responsive")
     add_html_template_from_files("plain")
