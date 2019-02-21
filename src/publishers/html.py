@@ -146,14 +146,15 @@ def get_animal_view_adoptable_html(dbo):
     head, body, foot = template.get_html_template(dbo, "animalviewadoptable")
     if head == "":
         head = "<!DOCTYPE html>\n<html>\n<head>\n<title>Adoptable Animals</title></head>\n<body>"
-        body = "<div id=\"asm3-adoptables\" />\n" \
+        body = "<div id=\"asm3-adoptables\"></div>\n" \
             "<script>\n" \
             "asm3_adoptable_filters = \"sex breed agegroup size species\";\n" \
             "asm3_adoptable_iframe = true;\n" \
             "asm3_adoptable_iframe_fixed = false; // fixed == true does not work with multi-photos/scrolling\n" \
             "</script>\n" \
-            "<script src=\"%s?method=animal_view_adoptable_js&account=%s\"></script>" % (SERVICE_URL, dbo.database)
+            "<script src=\"$$ADOPTABLEJSURL$$\"></script>"
         foot = "</body>\n</html>"
+    body = body.replace("$$ADOPTABLEJSURL$$", "%s?method=animal_view_adoptable_js&account=%s" % (SERVICE_URL, dbo.database))
     return "%s\n%s\n%s" % (head, body, foot)
 
 def get_animal_view_adoptable_js(dbo):
