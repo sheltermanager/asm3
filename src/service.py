@@ -301,7 +301,7 @@ def handler(post, path, remoteip, referer, querystring):
         return set_cached_response(cache_key, "application/javascript", 10800, 600, publishers.html.get_animal_view_adoptable_js(dbo))
 
     elif method == "animal_view_adoptable_html":
-        return set_cached_response(cache_key, "text/html", 86400, 86400, publishers.html.get_animal_view_adoptable_html(dbo))
+        return set_cached_response(cache_key, "text/html", 86400, 120, publishers.html.get_animal_view_adoptable_html(dbo))
 
     elif method =="dbfs_image":
         hotlink_protect("dbfs_image", referer)
