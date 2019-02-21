@@ -194,7 +194,7 @@ $(function() {
                 cr("vcov", _("Change Vouchers")),
                 cr("vdov", _("Delete Vouchers")),
                 cl(_("System")),
-                cr("asm", _("Access System Menu")),
+                cr("asm", _("Access Settings Menu")),
                 cr("cso", _("Change System Options")),
                 cr("cpo", _("Change Publishing Options")),
                 cr("maf", _("Modify Additional Fields")),

@@ -222,7 +222,7 @@ msgid "Abyssinian"
 msgstr ""
 
 #: roles.js
-msgid "Access System Menu"
+msgid "Access Settings Menu"
 msgstr ""
 
 #: accounts_trx.js
@@ -259,6 +259,10 @@ msgstr ""
 
 #: accounts.js
 msgid "Accounts need a code."
+msgstr ""
+
+#: common.js
+msgid "Action"
 msgstr ""
 
 #: person.js medical.js accounts.js lookups.js medical.py
@@ -949,8 +953,8 @@ msgstr ""
 
 #: csvimport.js
 msgid ""
-"All existing data in your database will be REMOVED before importing the CSV "
-"file. This removal cannot be reversed."
+"All existing data and media in your database will be REMOVED before "
+"importing the CSV file."
 msgstr ""
 
 #: main.js
@@ -2459,10 +2463,6 @@ msgstr ""
 msgid "Clear and sign again"
 msgstr ""
 
-#: csvimport.js
-msgid "Clear tables before importing"
-msgstr ""
-
 #: header_edit_header.js roles.js calendarview.js html.py
 msgid "Clinic"
 msgstr ""
@@ -3000,7 +3000,7 @@ msgstr ""
 #: person.js diary.js traploan.js animal_find_results.js log.js move_reclaim.js
 #: animal_costs.js person_investigation.js animal.js person_links.js log_new.js
 #: accounts_trx.js publish_logs.js move_adopt.js move_retailer.js
-#: move_reserve.js citations.js move_foster.js mobile.py dbupdate.py
+#: move_reserve.js citations.js move_foster.js common.js mobile.py dbupdate.py
 msgid "Date"
 msgstr ""
 
@@ -3181,7 +3181,7 @@ msgstr ""
 msgid "Declawed"
 msgstr ""
 
-#: header_edit_header.js
+#: header_edit_header.js onlineform.py
 msgid "Declined"
 msgstr ""
 
@@ -3474,6 +3474,10 @@ msgstr ""
 msgid "Delete all rota entries for this week"
 msgstr ""
 
+#: csvimport.js
+msgid "Delete database before importing"
+msgstr ""
+
 #: animal.js
 msgid "Delete this animal"
 msgstr ""
@@ -3530,6 +3534,7 @@ msgid "Deselect"
 msgstr ""
 
 #: waitinglist.js header_edit_header.js animal.js incident.js lostfound.js
+#: common.js
 msgid "Details"
 msgstr ""
 
@@ -5897,16 +5902,6 @@ msgstr ""
 msgid "Include held animals"
 msgstr ""
 
-#: options.js
-msgid "Include incomplete medical records when generating document templates"
-msgstr ""
-
-#: options.js
-msgid ""
-"Include incomplete vaccination and test records when generating document "
-"templates"
-msgstr ""
-
 #: animal_find.js
 msgid "Include non-shelter animals"
 msgstr ""
@@ -8140,7 +8135,7 @@ msgstr ""
 msgid "Payment Types"
 msgstr ""
 
-#: html.py
+#: header.js html.py configuration.py
 msgid "Payment book"
 msgstr ""
 
@@ -8817,11 +8812,7 @@ msgstr ""
 msgid "Receive"
 msgstr ""
 
-#: configuration.py
-msgid "Receive a donation"
-msgstr ""
-
-#: donation_receive.js header.js html.py
+#: donation_receive.js header.js html.py configuration.py
 msgid "Receive a payment"
 msgstr ""
 
@@ -10323,6 +10314,10 @@ msgstr ""
 msgid "Species Z-A"
 msgstr ""
 
+#: options.js shelterview.js
+msgid "Species and Code"
+msgstr ""
+
 #: lookups.js
 msgid "Species to use when publishing to third party services and adoption sites"
 msgstr ""
@@ -10651,6 +10646,10 @@ msgstr ""
 
 #: dbupdate.py
 msgid "Tabby and White"
+msgstr ""
+
+#: common.js
+msgid "Table"
 msgstr ""
 
 #: common_widgets.js
@@ -11504,6 +11503,12 @@ msgstr ""
 msgid "This record has been changed by another user, please reload."
 msgstr ""
 
+#: csvimport.js
+msgid ""
+"This removal is permanent and cannot be reversed, are you absolutely sure "
+"you wish to do this?"
+msgstr ""
+
 #: reports.js
 msgid "This report cannot be sent by email as it requires criteria to run."
 msgstr ""
@@ -12217,6 +12222,10 @@ msgstr ""
 msgid ""
 "Use the icon in the lower right of notes fields to view them in a separate "
 "window."
+msgstr ""
+
+#: common.js
+msgid "User"
 msgstr ""
 
 #: users.js
