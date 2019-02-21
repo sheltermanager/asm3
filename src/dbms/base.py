@@ -409,7 +409,7 @@ class Database(object):
         sql = "INSERT INTO %s (%s) VALUES (%s)" % ( table, ",".join(values.iterkeys()), self.sql_placeholders(values) )
         self.execute(sql, values.values(), override_lock=setOverrideDBLock)
         if writeAudit and iid != 0 and user != "":
-            audit.create(self, user, table, iid, audit.get_parent_links(values), audit.dump_row(self, table, iid))
+            audit.create(self, user, table, iid, audit.get_parent_links(values, table), audit.dump_row(self, table, iid))
         return iid
 
     def update(self, table, where, values, user="", setOverrideDBLock=False, setRecordVersion=True, setLastChanged=True, writeAudit=True):
@@ -438,7 +438,7 @@ class Database(object):
         if iid > 0:
             postaudit = self.query_row(table, iid)
         if user != "" and iid > 0 and writeAudit: 
-            audit.edit(self, user, table, iid, audit.get_parent_links(values), audit.map_diff(preaudit, postaudit))
+            audit.edit(self, user, table, iid, audit.get_parent_links(values, table), audit.map_diff(preaudit, postaudit))
         return rows_affected
 
     def delete(self, table, where, user="", writeAudit=True):
