@@ -8,9 +8,6 @@ Current active reservations with the name/address of the potential owner.
 ###
 en
 ###
-$VAR from DATE Enter from date$
-$VAR to DATE Enter to date$
-
 SELECT ShelterCode, AnimalName, DateBroughtIn, ReservationDate, 
 adoption.Comments, 
 species.SpeciesName,
@@ -26,7 +23,7 @@ INNER JOIN owner no ON adoption.OwnerID = no.ID
 INNER JOIN animaltype ON animaltype.ID = animal.AnimalTypeID
 INNER JOIN species ON species.ID = animal.SpeciesID
 INNER JOIN reservationstatus ON reservationstatus.ID = adoption.ReservationStatusID
-WHERE MovementType = 0 AND ReservationCancelledDate Is Null
+WHERE MovementType = 0 AND ReservationCancelledDate Is Null AND DeceasedDate Is Null 
 ORDER BY ReservationDate
 ###
 $$HEADER
