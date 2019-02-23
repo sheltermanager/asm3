@@ -2,7 +2,7 @@ Medical treatments between two dates
 ###
 Medical
 ###
-34004
+34004/Any
 ###
 List of medical treatments given between two dates
 ###
@@ -16,7 +16,7 @@ FROM animalmedicaltreatment v
 INNER JOIN animal a ON a.id=v.animalid
 LEFT JOIN owner o ON o.id=v.administeringvetid
 INNER JOIN species s ON a.speciesid=s. id
-INNER JOIN animalmedical am ON am.id= v.id
+INNER JOIN animalmedical am ON am.id= v.animalmedicalid
 WHERE dategiven >= '$@from$' AND dategiven <= '$@to$'
 ORDER BY treatmentname, dategiven
 ###
@@ -67,6 +67,8 @@ $$BODY
 <td>$SPECIESNAME</td>
 <td>$BREEDNAME</td>
 <td>$DISPLAYLOCATION</td>
+<td>$OWNERNAME</td>
+<td>$MEMBERSHIPNUMBER</td>
 <td>$TREATMENTNAME</td>
 <td>$COMMENTS</td>
 <td>$DATEGIVEN</td>
