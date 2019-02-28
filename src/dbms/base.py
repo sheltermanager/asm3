@@ -868,6 +868,10 @@ class Database(object):
         if wrapParens: return "'%s'" % s
         return s
 
+    def sql_greatest(self, items):
+        """ Writes greatest for a list of items """
+        return "GREATEST(%s)" % ",".join(items)
+
     def sql_placeholders(self, l):
         """ Writes enough ? placeholders for items in l """
         return ",".join('?'*len(l))

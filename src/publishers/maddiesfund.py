@@ -99,9 +99,8 @@ class MaddiesFundPublisher(AbstractPublisher):
         cutoff = i18n.subtract_days(i18n.now(self.dbo.timezone), PERIOD)
         sql = "%s WHERE a.ActiveMovementType IN (1,2) " \
             "AND a.ActiveMovementDate >= ? AND a.DeceasedDate Is Null AND a.NonShelterAnimal = 0 " \
-            "AND NOT EXISTS(SELECT AnimalID FROM animalpublished WHERE AnimalID = a.ID AND PublishedTo = 'maddiesfund' AND " \
-            " (SentDate >= a.ActiveMovementDate OR SentDate >= a.LastChangedDate)) " \
-            "ORDER BY a.ID" % animal.get_animal_query(self.dbo)
+            "AND NOT EXISTS(SELECT AnimalID FROM animalpublished WHERE AnimalID = a.ID AND PublishedTo = 'maddiesfund' AND SentDate >= %s) " \
+            "ORDER BY a.ID" % (animal.get_animal_query(self.dbo), self.dbo.sql_greatest(["a.ActiveMovementDate", "a.LastChangedDate"]))
         animals = self.dbo.query(sql, [cutoff], distincton="ID")
 
         # Now find animals who have been sent previously and are now deceased (using sent date against deceased to prevent re-sends) 

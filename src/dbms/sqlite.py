@@ -18,5 +18,9 @@ class DatabaseSQLite3(Database):
     def connect(self):
         return sqlite3.connect(self.database, detect_types=sqlite3.PARSE_DECLTYPES | sqlite3.PARSE_COLNAMES)
 
+    def sql_greatest(self, items):
+        """ SQLite does not have a GREATEST() function, MAX() should be used instead """
+        return "MAX(%s)" % ",".join(items)
+
     def switch_param_placeholder(self, sql):
         return sql # SQLite3 driver wants ? placeholders rather than usual %s so leave as is
