@@ -99,7 +99,8 @@ class MaddiesFundPublisher(AbstractPublisher):
         cutoff = i18n.subtract_days(i18n.now(self.dbo.timezone), PERIOD)
         sql = "%s WHERE a.ActiveMovementType IN (1,2) " \
             "AND a.ActiveMovementDate >= ? AND a.DeceasedDate Is Null AND a.NonShelterAnimal = 0 " \
-            "AND NOT EXISTS(SELECT AnimalID FROM animalpublished WHERE AnimalID = a.ID AND PublishedTo = 'maddiesfund' AND SentDate >= a.LastChangedDate) " \
+            "AND NOT EXISTS(SELECT AnimalID FROM animalpublished WHERE AnimalID = a.ID AND PublishedTo = 'maddiesfund' AND " \
+            " (SentDate >= a.ActiveMovementDate OR SentDate >= a.LastChangedDate)) " \
             "ORDER BY a.ID" % animal.get_animal_query(self.dbo)
         animals = self.dbo.query(sql, [cutoff], distincton="ID")
 
