@@ -67,7 +67,8 @@ $(function() {
         53: ["timeline", "asm-icon-calendar", _("Timeline")],
         54: ["staff_rota", "asm-icon-rota", _("Staff Rota")],
         55: ["move_reclaim", "", _("Reclaim an animal")],
-        56: ["donation", "asm-icon-donation", _("Payment book")]
+        56: ["donation", "asm-icon-donation", _("Payment book")],
+        57: ["calendarview?ev=c", "asm-icon-calendar", _("Clinic Calendar")]
     };
 
     /** Functions related to rendering and binding to events for the page

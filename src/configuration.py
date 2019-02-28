@@ -64,7 +64,8 @@ QUICKLINKS_SET = {
     53: ("timeline", "asm-icon-calendar", i18n._("Timeline")),
     54: ("staff_rota", "asm-icon-rota", i18n._("Staff Rota")),
     55: ("move_reclaim", "", i18n._("Reclaim an animal")),
-    56: ("donation", "asm-icon-donation", i18n._("Payment book"))
+    56: ("donation", "asm-icon-donation", i18n._("Payment book")),
+    57: ("calendarview?ev=c", "asm-icon-calendar", i18n._("Clinic Calendar"))
 }
 
 # Default configuration values for unset items. This is so they
