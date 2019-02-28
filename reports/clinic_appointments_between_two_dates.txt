@@ -15,7 +15,7 @@ INNER JOIN lksclinicstatus st ON st.ID = c.Status
 LEFT OUTER JOIN animal a ON a.ID = c.AnimalID
 LEFT OUTER JOIN species s ON s.ID = a.SpeciesID
 LEFT OUTER JOIN owner o ON o.ID = c.OwnerID
-WHERE c.DateTime >= '$ASK DATE Appointments between$' AND c.DateTime <= '$ASK DATE and$'
+WHERE c.DateTime >= '$ASK DATE Appointments between$' AND c.DateTime <= '$ASK DATE and$ 23:59:59'
 ORDER BY c.DateTime
 ###
 $$HEADER
