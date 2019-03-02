@@ -8,7 +8,7 @@ Import script for sb1875 csv files
 1st March, 2019
 """
 
-START_ID = 200
+START_ID = 1000
 
 ANIMAL_FILENAME = "data/sb1875_csv/ASM_Animal_Master.csv"
 LOG_FILENAME = "data/sb1875_csv/ASM_Animal_Log.csv"
@@ -33,6 +33,7 @@ ppo = {}
 asm.setid("animal", START_ID)
 asm.setid("animaltest", START_ID)
 asm.setid("animalmedical", START_ID)
+asm.setid("animalmedicaltreatment", START_ID)
 asm.setid("animalvaccination", START_ID)
 asm.setid("log", START_ID)
 asm.setid("owner", START_ID)
@@ -48,7 +49,7 @@ print "DELETE FROM owner WHERE ID >= %s AND CreatedBy = 'conversion';" % START_I
 print "DELETE FROM adoption WHERE ID >= %s AND CreatedBy = 'conversion';" % START_ID
 
 # Deal with people first
-for d in asm.csv_to_list(PERSON_FILENAME):
+for d in asm.csv_to_list(PERSON_FILENAME, remove_non_ascii=True):
     # Each row contains a person
     o = asm.Owner()
     owners.append(o)
@@ -70,7 +71,7 @@ for d in asm.csv_to_list(PERSON_FILENAME):
     o.JurisdictionID = asm.jurisdiction_from_db(d["PERSONADDITIONALCOUNCILNAME"])
 
 # Animal intake records
-for d in asm.csv_to_list(ANIMAL_FILENAME):
+for d in asm.csv_to_list(ANIMAL_FILENAME, remove_non_ascii=True):
     # Each row contains an animal with intake info:
     a = asm.Animal()
     animals.append(a)
@@ -90,16 +91,16 @@ for d in asm.csv_to_list(ANIMAL_FILENAME):
     if a.AnimalName.strip() == "":
         a.AnimalName = "(unknown)"
     a.DateBroughtIn = getdate(d["Date_Admitted"]) or asm.today()
-    if "Date_Of_Birth" in d and d["Date_Of_Birth"].strip() != "":
+    if d["Date_Of_Birth"].strip() != "":
         a.DateOfBirth = getdate(d["Date_Of_Birth"])
-    else:
+    if a.DateOfBirth is None:
         a.DateOfBirth = asm.subtract_days(a.DateBroughtIn, 365)
     a.CreatedDate = a.DateBroughtIn
     a.LastChangedDate = a.DateBroughtIn
-    a.generateCode()
     asm.additional_field("Legacy_Tag_No", 0, a.ID, d["Tag_no"])
     asm.additional_field("Legacy_Tag_No_Q", 0, a.ID, d["Tag_no_qualifier"])
     a.ShortCode = "%s:%s" % (d["Tag_no"], d["Tag_no_qualifier"])
+    a.ShelterCode = a.ShortCode
     asm.breed_ids(a, d["Breed"], d["Cross_Breed"])
     a.BaseColourID = asm.colour_id_for_names(d["Base_Colour"], d["Secondary_Colour"])
     a.AnimalComments = d["Notes"]
@@ -135,12 +136,13 @@ for d in asm.csv_to_list(ANIMAL_FILENAME):
         a.Archived = 1
 
 # Animal log, recording medical history and linking adoptions/surrenderers/etc
-for d in asm.csv_to_list(LOG_FILENAME):
+for d in asm.csv_to_list(LOG_FILENAME, remove_non_ascii=True):
 
     a = ppa[d["Animal_Identifier"]]
     o = None
     ed = getdate(d["Entry_date"])
 
+    if not ed: continue
     if d["People_ctr"] != "": o = ppo[d["People_ctr"]]
 
     if d["Action"] == "Admission" and d["Log_Description"] == "Owner_Surrender":

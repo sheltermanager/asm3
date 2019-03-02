@@ -91,12 +91,13 @@ def atoi(s):
     except:
         return 0
 
-def csv_to_list(fname, strip = False, remove_control = False, uppercasekeys = False, unicodehtml = False):
+def csv_to_list(fname, strip = False, remove_control = False, remove_non_ascii = False, uppercasekeys = False, unicodehtml = False):
     """
     Reads the csv file fname and returns it as a list of maps 
     with the first row used as the keys.
     strip: If True, removes whitespace from all fields
     remove_control: If True, removes all ascii chars < 32
+    remove_non_ascii: If True, removes all ascii chars < 32 or > 127
     uppercasekeys: If True, runs upper() on headings/map keys
     unicodehtml: If True, interprets the file as utf8 and replaces unicode chars with HTML entities
     returns a list of maps
@@ -111,6 +112,9 @@ def csv_to_list(fname, strip = False, remove_control = False, uppercasekeys = Fa
         for s in f.readlines():
             if remove_control:
                 b.write(''.join(c for c in s if ord(c) >= 32))
+                b.write("\n")
+            if remove_non_ascii:
+                b.write(''.join(c for c in s if ord(c) >= 32 and ord(c) <= 127))
                 b.write("\n")
             elif unicodehtml:
                 b.write(s.decode("utf8").encode("ascii", "xmlcharrefreplace"))
