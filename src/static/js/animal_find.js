@@ -401,8 +401,9 @@ $(function() {
             }
             else {
                 $("#logicallocation").select("value", "all");
-                $("#includedeceased").prop("checked", true);
-                $("#includenonshelter").prop("checked", true);
+                $("#filter option[value='includedeceased']").prop("selected", true);
+                $("#filter option[value='includenonshelter']").prop("selected", true);
+                $("#filter").change();
             }
 
             // Only show the breeds for the selected species
