@@ -1407,6 +1407,16 @@ def load_image_from_file(filename):
     except:
         return None
 
+def load_image_from_url(imageurl):
+    try:
+        sys.stderr.write("GET %s\n" % imageurl)
+        jpgdata = urllib2.urlopen(imageurl).read()
+        sys.stderr.write("200 OK %s\n" % imageurl)
+    except Exception,err:
+        sys.stderr.write(str(err) + "\n")
+        return None
+    return jpgdata
+
 def petfinder_get_adoptable(shelterid):
     """
     Returns the page of adoptable animals for the PetFinder shelterid
@@ -1436,13 +1446,7 @@ def petfinder_image(page, animalid, animalname):
     petid = regex(chunk, r"\/petdetail\/(.+?)\"")
     sys.stderr.write("Got PetID: %s\n" % petid)
     imageurl = "http://photos.petfinder.com/photos/pets/%s/1/?bust=1425358987&width=632&no_scale_up=1" % petid
-    try:
-        sys.stderr.write("GET %s\n" % imageurl)
-        jpgdata = urllib2.urlopen(imageurl).read()
-        sys.stderr.write("Got image from %s\n" % imageurl)
-    except Exception,err:
-        sys.stderr.write(str(err) + "\n")
-        return
+    jpgdata = load_image_from_url(imageurl)
     animal_image(animalid, jpgdata)
 
 class AnimalType:

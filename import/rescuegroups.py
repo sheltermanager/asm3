@@ -4,6 +4,7 @@ import asm, os
 
 """
 Import module to read from rescuegroups CSV export.
+
 This is done with Reports, then Animals (All Fields) for adoptable and adopted, etc.
 It produces an Animals.csv file.
 If you use Animals->Exports, you can do a manual export for PetFinder that puts all
@@ -20,12 +21,19 @@ Will also import data from RG All Contacts report, called Contacts.csv:
 
 Address, Comment, Email, First Name, Last Name, Phone (Cell), Phone (Home)
 
+
+I think if people haven't paid for their "Data Management Service" they aren't allowed to
+run any reports. This export will also work with CSVs extracted from Animals->Animal List,
+change the View to Export and then hit Export as CSV.
+
 """
 
-PATH = "data/rg_zb1870"
+PATH = "data/rg_st1945"
 
 DEFAULT_BREED = 261 # default to dsh
-PETFINDER_ID = ""
+PETFINDER_ID = "" # Shouldn't be needed if Picture 1 is present
+
+RG_AWS_PREFIX = "https://s3.amazonaws.com/filestore.rescuegroups.org" # To resolve URLs from the "Picture 1" field of imports
 
 animals = []
 owners = []
@@ -77,56 +85,85 @@ for d in asm.csv_to_list("%s/Animals.csv" % PATH):
         animalletter = "D"
     a.AnimalTypeID = animaltype
     a.SpeciesID = asm.species_id_for_name(d["Species"])
-    a.ShelterCode = "RG%s" % d["Animal ID"]
-    a.ShortCode = a.ShelterCode
+    if "Animal ID" in d:
+        a.ShelterCode = "RG%s" % d["Animal ID"]
+        a.ShortCode = a.ShelterCode
+    else:
+        a.generateCode()
     a.AnimalName = d["Name"]
-    broughtin = getdate(d["Created"])
+
+    broughtin = asm.today()
+    if "Created" in d:
+        broughtin = getdate(d["Created"])
     a.DateBroughtIn = broughtin
+
     dob = broughtin
-    if d["General Age"].find("Baby") != -1:
-        dob = asm.subtract_days(asm.today(), 91)
-    elif d["General Age"].find("Young") != -1:
-        dob = asm.subtract_days(asm.today(), 182)
-    elif d["General Age"].find("Adult") != -1:
-        dob = asm.subtract_days(asm.today(), 730)
-    elif d["General Age"].find("Senior") != -1:
-        dob = asm.subtract_days(asm.today(), 2555)
-    a.DateOfBirth = dob
     a.EstimatedDOB = 1
+    if "General Age" in d:
+        if d["General Age"].find("Baby") != -1:
+            dob = asm.subtract_days(asm.today(), 91)
+        elif d["General Age"].find("Young") != -1:
+            dob = asm.subtract_days(asm.today(), 182)
+        elif d["General Age"].find("Adult") != -1:
+            dob = asm.subtract_days(asm.today(), 730)
+        elif d["General Age"].find("Senior") != -1:
+            dob = asm.subtract_days(asm.today(), 2555)
+    if "Birthdate" in d and d["Birthdate"] != "":
+        dob = asm.getdate_mmddyyyy(d["Birthdate"])
+        a.EstimatedDOB = 0
+    a.DateOfBirth = dob
     a.Sex = 1
     if d["Sex"].startswith("F"):
         a.Sex = 0
-    a.BreedID = asm.breed_id_for_name(d["Primary Breed"], DEFAULT_BREED)
-    osecondbreed = ""
-    if not d["Mixed"] == "Yes":
+    
+    breed1 = ""
+    breed2 = ""
+    mixed = "No"
+    if "Primary Breed" in d:
+        breed1 = d["Primary Breed"]
+        breed2 = d["Secondary Breed"]
+        mixed = d["Mixed"]
+    elif "Breed" in d:
+        # Breed is in form breed1 / breed2 / mixed, sections only present if set
+        breed2 = ""
+        bb = d["Breed"].split("/")
+        breed1 = bb[0]
+        if len(bb) > 1: breed2 = bb[1]
+        if len(bb) > 2: mixed = "Yes"
+        
+    a.BreedID = asm.breed_id_for_name(breed1, DEFAULT_BREED)
+    if not mixed == "Yes":
         a.Breed2ID = a.BreedID
         a.BreedName = asm.breed_name_for_id(a.BreedID)
         a.CrossBreed = 0
     else:
         a.Breed2ID = a.BreedID
-        if "Secondary Breed" in d: 
-            a.Breed2ID = asm.breed_id_for_name(d["Secondary Breed"], DEFAULT_BREED)
-            osecondbreed = d["Secondary Breed"]
+        if breed2 != "":
+            a.Breed2ID = asm.breed_id_for_name(breed2, DEFAULT_BREED)
         a.BreedName = asm.breed_name_for_id(a.BreedID) + " / " + asm.breed_name_for_id(a.Breed2ID)
         a.CrossBreed = 1
     a.BaseColourID = asm.colour_id_for_name(d["Color (General)"])
     a.ShelterLocation = 1
     if "Size Potential (General)" in d: a.Size = size_id_for_name(d["Size Potential (General)"])
-    a.Declawed = d["Declawed"] == "Yes" and 1 or 0
+    if "Declawed" in d: a.Declawed = d["Declawed"] == "Yes" and 1 or 0
     a.HasSpecialNeeds = d["Special Needs"] == "Yes" and 1 or 0
     a.EntryReasonID = 1
     a.Neutered = d["Altered"] == "Yes" and 1 or 0
-    if d["Housetrained"] == "Yes": a.IsHouseTrained = 0
-    if d["OK with Cats"] == "Yes": a.IsGoodWithDogs = 0
-    if d["OK with Kids"] == "Yes": a.IsGoodWithChildren = 0
-    if d["OK with Cats"] == "Yes": a.IsGoodWithCats = 0
-    a.IdentichipNumber = d["Microchip Number"]
+    if "Housetrained" in d and d["Housetrained"] == "Yes": a.IsHouseTrained = 0
+    if "OK with Dogs" in d and d["OK with Dogs"] == "Yes": a.IsGoodWithDogs = 0
+    if "OK with Kids" in d and d["OK with Kids"] == "Yes": a.IsGoodWithChildren = 0
+    if "OK with Cats" in d and d["OK with Cats"] == "Yes": a.IsGoodWithCats = 0
+    if "Microchip Number" in d: a.IdentichipNumber = d["Microchip Number"]
     if a.IdentichipNumber != "": a.Identichipped = 1
-    a.AnimalComments = d["Description (no html)"]
-    a.HiddenAnimalDetails = d["Summary"] + ", original breed: " + d["Primary Breed"] + " " + osecondbreed + ", color: " + \
-        d["Color (General)"] + ", status: " + d["Status"] + ", internal: " + d["Internal ID"] + ", location: " + d["Location"]
-    a.CreatedDate = getdate(d["Created"])
-    a.LastChangedDate = getdate(d["Last Updated"])
+    if "Description" in d: a.AnimalComments = d["Description"]
+    if "Description (no html)" in d: a.AnimalComments = d["Description (no html)"]
+    summary = ""
+    if "Summary" in d: summary = d["Summary"]
+    a.HiddenAnimalDetails = summary + ", original breed: " + breed1 + " " + breed2 + ", color: " + \
+        d["Color (General)"] + ", status: " + d["Status"]
+    if "Internal ID" in d and "Location" in d: a.HiddenAnimalDetails += ", internal: " + d["Internal ID"] + ", location: " + d["Location"]
+    a.CreatedDate = a.DateBroughtIn
+    a.LastChangedDate = a.DateBroughtIn
     # If the animal is adopted, send it to our unknown owner
     if d["Status"] in ("Adopted", "Transferred", "Escaped", "Stolen"):
         mt = { "Adopted": 1, "Transferred": 3, "Escaped": 4, "Stolen": 6 }[d["Status"]]
@@ -152,12 +189,21 @@ for d in asm.csv_to_list("%s/Animals.csv" % PATH):
         a.Archived = 1
 
     # Now do the dbfs and media inserts for a photo if one is available
-    pic1 = d["Picture 1"]
-    if pic1.rfind("/") != -1: pic1 = pic1[pic1.rfind("/")+1:]
-    imdata = asm.load_image_from_file("%s/%s" % (PATH, pic1))
-    asm.animal_image(a.ID, imdata)
-    if a.Archived == 0 and imdata is None and pfpage != "":
-        asm.petfinder_image(pfpage, a.ID, a.AnimalName)
+    if "Picture 1" in d and d["Picture 1"] != "":
+        pic1 = d["Picture 1"]
+        picurl = "%s/%s" % (RG_AWS_PREFIX, pic1)
+        # Check for locally saved photo first
+        if pic1.rfind("/") != -1: pic1 = pic1[pic1.rfind("/")+1:]
+        imdata = asm.load_image_from_file("%s/%s" % (PATH, pic1))
+        if imdata is not None:
+            asm.animal_image(a.ID, imdata)
+        # Try online
+        imdata = asm.load_image_from_url(picurl)
+        if imdata is not None:
+            asm.animal_image(a.ID, imdata)
+        # Try PetFinder
+        if a.Archived == 0 and imdata is None and pfpage != "":
+            asm.petfinder_image(pfpage, a.ID, a.AnimalName)
 
 if os.path.exists("%s/Contacts.csv" % PATH):
     for d in asm.csv_to_list("%s/Contacts.csv" % PATH):
