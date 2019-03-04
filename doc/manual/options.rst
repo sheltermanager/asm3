@@ -463,13 +463,9 @@ documents from templates.
   will send them as attachments for you to download.
   
 * Include incomplete medical records when generating document templates: If
-  set, medical regimens will be included that are incomplete when accessing
-  them via LastX and Recent wordkeys. 
+  set, vaccinations, tests and medical regimens will be included that are incomplete 
+  when accessing them via LastX, Due and Recent wordkeys. 
   
-* Include incomplete vaccination and test records when generating document
-  templates: If set, vaccination and test records will be included that have
-  not been given when accessing them via LastX and Recent wordkeys.
-
 * When I generate a document, make a note of it in the log: If this option is
   on, a log record is created every time you generate a document.
 

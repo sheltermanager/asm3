@@ -477,7 +477,9 @@ given DHCPP vaccination.
 The "Due" keyword operates with the vaccination type and allows you to
 select the most recent vaccination of that type that has a blank given given 
 date. Eg: VaccinationRequiredDueDHCPP will return the date the most recent
-due DHCPP vaccination.
+due DHCPP vaccination. Note that the "Due" keyword will not work if you have 
+turned off the option to include incomplete medical items from documents under
+:menuselection:`Settings --> Options --> Documents --> Include incomplete medical records when generating document templates`
 
 Test Keys
 ----------

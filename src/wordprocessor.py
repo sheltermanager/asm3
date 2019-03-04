@@ -453,6 +453,7 @@ def animal_tags(dbo, a, includeAdditional=True, includeCosts=True, includeDiet=T
         tags["ANIMALISVACCINATED"] = utils.iif(medical.get_vaccinated(dbo, a["ID"]), _("Yes", l), _("No", l))
 
     if includeMedical:
+        iic = configuration.include_incomplete_medical_doc(dbo)
         # Vaccinations
         d = {
             "VACCINATIONNAME":          "VACCINATIONTYPE",
@@ -476,7 +477,7 @@ def animal_tags(dbo, a, includeAdditional=True, includeCosts=True, includeDiet=T
             "VACCINATIONADMINISTERINGVETZIPCODE":   "ADMINISTERINGVETPOSTCODE",
             "VACCINATIONADMINISTERINGVETEMAIL":     "ADMINISTERINGVETEMAIL"
         }
-        tags.update(table_tags(dbo, d, medical.get_vaccinations(dbo, a["ID"]), "VACCINATIONTYPE", "DATEREQUIRED", "DATEOFVACCINATION"))
+        tags.update(table_tags(dbo, d, medical.get_vaccinations(dbo, a["ID"], not iic), "VACCINATIONTYPE", "DATEREQUIRED", "DATEOFVACCINATION"))
 
         # Tests
         d = {
@@ -500,7 +501,7 @@ def animal_tags(dbo, a, includeAdditional=True, includeCosts=True, includeDiet=T
             "TESTADMINISTERINGVETEMAIL":     "ADMINISTERINGVETEMAIL"
 
         }
-        tags.update(table_tags(dbo, d, medical.get_tests(dbo, a["ID"]), "TESTNAME", "DATEREQUIRED", "DATEOFTEST"))
+        tags.update(table_tags(dbo, d, medical.get_tests(dbo, a["ID"], not iic), "TESTNAME", "DATEREQUIRED", "DATEOFTEST"))
 
         # Medical
         d = {
@@ -517,7 +518,7 @@ def animal_tags(dbo, a, includeAdditional=True, includeCosts=True, includeDiet=T
             "MEDICALLASTTREATMENTGIVEN": "d:LASTTREATMENTGIVEN",
             "MEDICALCOST":              "c:COST"
         }
-        tags.update(table_tags(dbo, d, medical.get_regimens(dbo, a["ID"]), "TREATMENTNAME", "STATUS", "STATUS"))
+        tags.update(table_tags(dbo, d, medical.get_regimens(dbo, a["ID"], not iic), "TREATMENTNAME", "STATUS", "STATUS"))
 
     # Diet
     if includeDiet:
