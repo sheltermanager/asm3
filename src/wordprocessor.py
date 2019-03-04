@@ -105,7 +105,7 @@ def fw(s):
     if s.find(" ") == -1: return s
     return s.split(" ")[0]
 
-def additional_field_tags(dbo, fields):
+def additional_field_tags(dbo, fields, prefix = ""):
     """ Process additional fields and returns them as tags """
     l = dbo.locale
     tags = {}
@@ -120,7 +120,7 @@ def additional_field_tags(dbo, fields):
             val = af["ANIMALNAME"]
         if af["FIELDTYPE"] == additional.PERSON_LOOKUP:
             val = af["OWNERNAME"]
-        tags[af["FIELDNAME"].upper()] = val
+        tags[prefix + af["FIELDNAME"].upper()] = val
     return tags
 
 def animal_tags_publisher(dbo, a, includeAdditional=True):
@@ -417,6 +417,7 @@ def animal_tags(dbo, a, includeAdditional=True, includeCosts=True, includeDiet=T
             latest = latest[0]
             if latest["MOVEMENTDATE"] is not None and latest["RETURNDATE"] is None:
                 p = person.get_person(dbo, latest["OWNERID"])
+                a["CURRENTOWNERID"] = latest["OWNERID"]
                 if p is not None:
                     tags["CURRENTOWNERNAME"] = p["OWNERNAME"]
                     tags["CURRENTOWNERADDRESS"] = p["OWNERADDRESS"]
@@ -440,6 +441,12 @@ def animal_tags(dbo, a, includeAdditional=True, includeCosts=True, includeDiet=T
     # Additional fields
     if includeAdditional:
         tags.update(additional_field_tags(dbo, additional.get_additional_fields(dbo, a["ID"], "animal")))
+        if a["ORIGINALOWNERID"] and a["ORIGINALOWNERID"] > 0:
+            tags.update(additional_field_tags(dbo, additional.get_additional_fields(dbo, a["ORIGINALOWNERID"], "person"), "ORIGINALOWNER"))
+        if a["BROUGHTINBYOWNERID"] and a["BROUGHTINBYOWNERID"] > 0:
+            tags.update(additional_field_tags(dbo, additional.get_additional_fields(dbo, a["BROUGHTINBYOWNERID"], "person"), "BROUGHTINBY"))
+        if a["CURRENTOWNERID"] and a["CURRENTOWNERID"] > 0:
+            tags.update(additional_field_tags(dbo, additional.get_additional_fields(dbo, a["CURRENTOWNERID"], "person"), "CURRENTOWNER"))
 
     # Is vaccinated indicator
     if includeIsVaccinated:    

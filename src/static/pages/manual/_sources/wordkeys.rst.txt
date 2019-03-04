@@ -227,6 +227,8 @@ BroughtInByMobilePhone
     (BroughtInByCellPhone for US users)
 BroughtInByEmail
     The email address of the person who brought the animal in
+BroughtInBy Additional Fields
+    Additional fields on the brought in by person can be accessed via BroughtInByFIELDNAME
 OriginalOwnerAddress
     The address of the animal's original owner 
 OriginalOwnerName
@@ -245,6 +247,8 @@ OriginalOwnerMobilePhone
     The original owner's mobile phone number 
 OriginalOwnerEmail
     The original owner's email address 
+OriginalOwner Additional Fields
+    Additional fields on the original owner can be accessed via OriginalOwnerFIELDNAME
 CurrentOwnerName
     The name of the animal's current owner (fosterer or adopter)
 CurrentOwnerAddress 
@@ -263,6 +267,8 @@ CurrentOwnerMobilePhone
     Current owner's cell/mobile phone number
 CurrentOwnerEmail 
     Current owner's email address
+CurrentOwner Additional Fields
+    Additional fields on the current owner can be accessed via CurrentOwnerFIELDNAME
 ReservedOwnerName
     The name of the person with an active reserve on the animal
 ReservedOwnerAddress 
