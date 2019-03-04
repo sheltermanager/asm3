@@ -4960,8 +4960,8 @@ class schemajs(ASMEndpoint):
                     realtable = t.replace("v_", "")
                     try:
                         if realtable in tobj:
-                            row = tobj[realtable]
-                            for k in row.copy().iterkeys():
+                            row = tobj[realtable].copy()
+                            for k in row.iterkeys():
                                 if k.endswith("ID") and k != "ID":
                                     row[k.replace("ID", "NAME")] = ""
                             tobj[t] = row

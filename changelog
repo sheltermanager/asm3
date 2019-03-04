@@ -1,6 +1,7 @@
 42
 ================
 
+04/03/19 Fixed view fields copying into autocomplete of tables #573
 02/03/19 Autoset of include deceased/nonshelter on find animal not working
 28/02/19 Add clinic calendar to available quicklinks
 28/02/19 MPA: Use greatest of last change/active movement to trigger updates
