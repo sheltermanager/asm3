@@ -1,6 +1,7 @@
 42
 ================
 
+05/03/19 Report screen doesn't display roles correctly until refresh #555
 04/03/19 Reinstate include incomplete medical items for documents
 04/03/19 Access additional fields for original, broughtinby, current owner #572
 04/03/19 Fixed view fields copying into autocomplete of tables #573
