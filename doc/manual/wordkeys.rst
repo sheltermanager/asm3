@@ -64,8 +64,8 @@ ShortShelterCode
     The shortened version of the shelter code 
 Age
     The animal's age in readable form (eg: “5 years and 6 months”) 
-AnimalComments
-    The animal comment box 
+Description / AnimalComments
+    The animal description box 
 HealthProblems
     The health problems field 
 LitterID / AcceptanceNumber
@@ -96,8 +96,6 @@ CoatType
     The animal's coat type 
 AnimalFlags
     A list of the flags assigned to an animal, separated by commas.
-AnimalComments
-    The animal comments box 
 AnimalCreatedBy
     The user who created the animal record (AnimalCreatedByName for full user
     name) 
@@ -179,8 +177,8 @@ HeartwormTestDate
     The date of the test 
 HeartwormTestResult
     The result - positive or negative 
-HiddenAnimalDetails
-    The hidden details box 
+HiddenComments / HiddenAnimalDetails
+    The hidden comments box 
 AnimalLastChangedBy
     The user who last changed the animal record (AnimalLastChangedByName for full user name) 
 AnimalLastChangedDate
