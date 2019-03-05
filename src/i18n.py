@@ -8,8 +8,8 @@ import utils
 # flake8: noqa - we have a lot of locales and this is convenient
 from locales import *
 
-VERSION = "42u [Tue  5 Mar 11:17:01 GMT 2019]"
-BUILD = "03051117"
+VERSION = "42u [Tue  5 Mar 13:22:37 GMT 2019]"
+BUILD = "03051322"
 
 DMY = ( "%d/%m/%Y", "%d/%m/%y" )
 MDY = ( "%m/%d/%Y", "%m/%d/%y" )
@@ -468,7 +468,8 @@ def add_years(date, years = 1.0):
     Adds years to a date, returning a new datetime
     """
     if date is None: return None
-    return date + datetime.timedelta(days = int(years * 365))
+    if years == int(years): return date.replace( year = date.year + int(years))
+    return date + datetime.timedelta(days = int(years * 365.0))
 
 def add_days(date, nodays = 1):
     """
@@ -510,7 +511,8 @@ def subtract_years(date, years = 1.0):
     Subtracts years from date, returning a new datetime
     """
     if date is None: return None
-    return date - datetime.timedelta(days = int(years * 365))
+    if years == int(years): return date.replace( year = date.year - int(years))
+    return date - datetime.timedelta(days = int(years * 365.0))
 
 def subtract_months(date, months = 1):
     """

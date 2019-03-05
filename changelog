@@ -1,6 +1,7 @@
 42
 ================
 
+05/03/19 add/subtract_years should do whole calendar years if possible
 05/03/19 Report screen doesn't display roles correctly until refresh #555
 04/03/19 Reinstate include incomplete medical items for documents
 04/03/19 Access additional fields for original, broughtinby, current owner #572
