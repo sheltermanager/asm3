@@ -1061,6 +1061,7 @@ def person_tags(dbo, p, includeImg=False):
         "MOBILETELEPHONE"       : p["MOBILETELEPHONE"],
         "CELLTELEPHONE"         : p["MOBILETELEPHONE"],
         "EMAILADDRESS"          : p["EMAILADDRESS"],
+        "JURISDICTION"          : p["JURISDICTIONNAME"],
         "OWNERCOMMENTS"         : p["COMMENTS"],
         "OWNERFLAGS"            : utils.nulltostr(p["ADDITIONALFLAGS"]).replace("|", ", "),
         "OWNERCREATEDBY"        : p["CREATEDBY"],

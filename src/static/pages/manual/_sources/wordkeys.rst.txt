@@ -864,6 +864,8 @@ OwnerCounty
     (OwnerState for US users) 
 OwnerPostcode 
     (OwnerZipcode for US users) 
+Jurisdiction
+    The person's jurisdiction
 WorkTelephone 
     The person's work telephone number
 MobileTelephone 
