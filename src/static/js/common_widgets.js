@@ -525,6 +525,10 @@
                 '<td><input id="emailcc" data="cc" type="text" class="asm-doubletextbox" /></td>',
                 '</tr>',
                 '<tr>',
+                '<td><label for="emailbcc">' + _("BCC") + '</label></td>',
+                '<td><input id="emailbcc" data="bcc" type="text" class="asm-doubletextbox" /></td>',
+                '</tr>',
+                '<tr>',
                 '<td><label for="emailsubject">' + _("Subject") + '</label></td>',
                 '<td><input id="emailsubject" data="subject" type="text" class="asm-doubletextbox" /></td>',
                 '</tr>',
@@ -567,6 +571,7 @@
                 if (!validate.email($("#emailfrom").val())) { return; }
                 if (!validate.email($("#emailto").val())) { return; }
                 if ($("#emailcc").val() != "" && !validate.email($("#emailcc").val())) { return; }
+                if ($("#emailbcc").val() != "" && !validate.email($("#emailbcc").val())) { return; }
                 if (o.formdata) { o.formdata += "&"; }
                 o.formdata += $("#dialog-email input, #dialog-email select, #dialog-email .asm-richtextarea").toPOST();
                 header.show_loading(_("Sending..."));

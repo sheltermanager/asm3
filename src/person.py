@@ -1155,11 +1155,12 @@ def send_email_from_form(dbo, username, post):
     emailfrom = post["from"]
     emailto = post["to"]
     emailcc = post["cc"]
+    emailbcc = post["bcc"]
     subject = post["subject"]
     addtolog = post.boolean("addtolog")
     logtype = post.integer("logtype")
     body = post["body"]
-    rv = utils.send_email(dbo, emailfrom, emailto, emailcc, subject, body, "html")
+    rv = utils.send_email(dbo, emailfrom, emailto, emailcc, emailbcc, subject, body, "html")
     if addtolog == 1:
         log.add_log(dbo, username, log.PERSON, post.integer("personid"), logtype, utils.html_email_to_plain(body))
     return rv

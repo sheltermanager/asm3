@@ -1026,12 +1026,13 @@ def html_email_to_plain(s):
     s = strip_html_tags(s)
     return s
 
-def send_email(dbo, replyadd, toadd, ccadd = "", subject = "", body = "", contenttype = "plain", attachmentdata = None, attachmentfname = ""):
+def send_email(dbo, replyadd, toadd, ccadd = "", bccadd = "", subject = "", body = "", contenttype = "plain", attachmentdata = None, attachmentfname = ""):
     """
     Sends an email.
     fromadd is a single email address
     toadd is a comma/semi-colon separated list of email addresses 
     ccadd is a comma/semi-colon separated list of email addresses
+    bccadd is a comma/semi-colon separated list of email addresses
     subject, body are strings
     contenttype is either "plain" or "html"
     attachmentdata: If an attachment should be added, the unencoded data
@@ -1069,7 +1070,7 @@ def send_email(dbo, replyadd, toadd, ccadd = "", subject = "", body = "", conten
         if value.find("&#") != -1:
             # Is this an address field? If so, parse the addresses and 
             # encode the descriptions
-            if header in ("To", "From", "Cc", "Bounces-To", "Reply-To"):
+            if header in ("To", "From", "Cc", "Bcc", "Bounces-To", "Reply-To"):
                 addresses = value.split(",")
                 newval = ""
                 for a in addresses:
@@ -1145,8 +1146,9 @@ def send_email(dbo, replyadd, toadd, ccadd = "", subject = "", body = "", conten
     # only the you@domain.com portion remains for us to pass to the
     # SMTP server. 
     tolist = [strip_email(x) for x in toadd.split(",")]
-    if ccadd != "":
-        tolist += [strip_email(x) for x in ccadd.split(",")]
+    if ccadd != "":  tolist += [strip_email(x) for x in ccadd.split(",")]
+    if bccadd != "": tolist += [strip_email(x) for x in bccadd.split(",")]
+
     replyadd = strip_email(replyadd)
 
     al.debug("from: %s, reply-to: %s, to: %s, subject: %s, body: %s" % \
@@ -1173,6 +1175,9 @@ def send_email(dbo, replyadd, toadd, ccadd = "", subject = "", body = "", conten
     # Use sendmail or SMTP for the transport depending on config
     if sendmail:
         try:
+            if bccadd != "": 
+                # sendmail -t processes and removes Bcc header, where SMTP has all recipients (including Bcc) in tolist
+                add_header(msg, "Bcc", bccadd) 
             p = subprocess.Popen(["/usr/sbin/sendmail", "-t", "-oi"], stdin=subprocess.PIPE)
             p.communicate(msg.as_string())
             return True
@@ -1207,7 +1212,7 @@ def send_bulk_email(dbo, fromadd, subject, body, rows, contenttype):
             toadd = r["EMAILADDRESS"]
             if toadd is None or toadd.strip() == "": continue
             al.debug("sending bulk email: to=%s, subject=%s" % (toadd, ssubject), "utils.send_bulk_email", dbo)
-            send_email(dbo, fromadd, toadd, "", ssubject, sbody, contenttype)
+            send_email(dbo, fromadd, toadd, "", "", ssubject, sbody, contenttype)
     thread.start_new_thread(do_send, ())
 
 def send_user_email(dbo, sendinguser, user, subject, body):
@@ -1231,11 +1236,11 @@ def send_user_email(dbo, sendinguser, user, subject, body):
         # skip if we have no email address - we can't send it.
         if u["EMAILADDRESS"] is None or u["EMAILADDRESS"].strip() == "": continue
         if user == "*":
-            send_email(dbo, fromadd, u["EMAILADDRESS"], "", subject, body)
+            send_email(dbo, fromadd, u["EMAILADDRESS"], "", "", subject, body)
         elif u["USERNAME"] == user:
-            send_email(dbo, fromadd, u["EMAILADDRESS"], "", subject, body)
+            send_email(dbo, fromadd, u["EMAILADDRESS"], "", "", subject, body)
         elif nulltostr(u["ROLES"]).find(user) != -1:
-            send_email(dbo, fromadd, u["EMAILADDRESS"], "", subject, body)
+            send_email(dbo, fromadd, u["EMAILADDRESS"], "", "", subject, body)
 
 def pdf_count_pages(filedata):
     """
