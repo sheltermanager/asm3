@@ -684,13 +684,11 @@ def escape_tinymce(content):
     (god this is confusing), which need to be double
     escaped or tinymce breaks. 
     """
-    c = content.replace("&gt;", "&amp;gt;")
+    c = strip_non_ascii(content)
+    c = c.replace("&gt;", "&amp;gt;")
     c = c.replace("&lt;", "&amp;lt;")
     c = c.replace("<", "&lt;")
     c = c.replace(">", "&gt;")
-    # TODO: this is a fix from a period where online form default header was broken
-    # and can be deleted one day.
-    c = c.replace("&lt;style\n", "&lt;style&gt;\n")
     return c
 
 class UnicodeCSVReader(object):

@@ -1,6 +1,7 @@
 42
 ================
 
+05/03/19 Fix infrequent unicode error when reading stored documents from cut/paste html
 05/03/19 Add <<Jurisidiction>> person wordkey #545
 05/03/19 Rename animal comments to description for clarity #569
 05/03/19 add/subtract_years should do whole calendar years if possible
