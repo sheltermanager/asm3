@@ -285,7 +285,7 @@
                     changeMonth: true, 
                     changeYear: true,
                     firstDay: config.integer("FirstDayOfWeek"),
-                    yearRange: "-30:+1",
+                    yearRange: "-30:+3",
                     beforeShowDay: function(a) {
                         var day = a.getDay();
                         var rv = false;

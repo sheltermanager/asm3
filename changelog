@@ -1,6 +1,8 @@
 42
 ================
 
+10/03/19 Datepicker, go to +3 years for some vacc/diary
+10/03/19 Tweak to default animalviewadoptable template (sans-serif, grid layout)
 07/03/19 Online forms should force absolute redirect URLs #574
 06/03/19 Emailing should support BCC #564
 06/03/19 Datepicker, allow quick selection of -30/+1 year
