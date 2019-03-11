@@ -1018,6 +1018,13 @@ def size_from_db(name, default = 1):
     """ Looks up the size in the db when the conversion is run, assign to animal.Size """
     return "COALESCE((SELECT ID FROM lksize WHERE lower(Size) LIKE lower('%s') LIMIT 1), %d)" % (name.strip(), default)
 
+def size_id_for_name(name):
+    name = name.lower()
+    if name.startswith("v") or name.startswith("x"): return 0
+    if name.startswith("l"): return 1
+    if name.startswith("s"): return 2
+    return 3
+
 def donationtype_id_for_name(name, createIfNotExist = True):
     global donationtypes
     if name.strip() == "": return 1
