@@ -304,7 +304,7 @@
                 $(this).datepicker({ 
                     changeMonth: true, 
                     changeYear: true,
-                    yearRange: "-30:+1",
+                    yearRange: "-30:+3",
                     firstDay: config.integer("FirstDayOfWeek")
                 });
             }
