@@ -233,7 +233,8 @@ for d in asm.csv_to_list(LOG_FILENAME, remove_non_ascii=True):
         a.PutToSleep = 1
         a.DeceasedDate = ed
         a.Archived = 1
-        a.PTSReason = d["Log_Notes"]
+        a.PTSReasonID = 2
+        a.PTSReason = d["Log_Description"] + ": " + d["Log_Notes"]
         a.LastChangedDate = ed
 
     elif d["Action"] == "Return" and o:
