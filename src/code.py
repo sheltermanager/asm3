@@ -598,7 +598,7 @@ class jserror(ASMEndpoint):
         logmess = "%s@%s: %s %s" % (post["user"], post["account"], post["msg"], post["stack"])
         al.error(logmess, "code.jserror", dbo)
         if EMAIL_ERRORS:
-            utils.send_email(dbo, ADMIN_EMAIL, ADMIN_EMAIL, "", "", emailsubject, emailbody, "plain")
+            utils.send_email(dbo, ADMIN_EMAIL, ADMIN_EMAIL, "", "", emailsubject, emailbody, "plain", exceptions=False)
 
 class media(ASMEndpoint):
     url = "media"
@@ -2675,10 +2675,8 @@ class foundanimal(JSONEndpoint):
         extlostfound.update_foundanimal_from_form(o.dbo, o.post, o.user)
 
     def post_email(self, o):
-        l = o.locale
         self.check(users.EMAIL_PERSON)
-        if not extlostfound.send_email_from_form(o.dbo, o.user, o.post):
-            raise utils.ASMError(_("Failed sending email", l))
+        extlostfound.send_email_from_form(o.dbo, o.user, o.post)
 
     def post_delete(self, o):
         self.check(users.DELETE_FOUND_ANIMAL)
@@ -2901,9 +2899,7 @@ class incident(JSONEndpoint):
 
     def post_email(self, o):
         self.check(users.EMAIL_PERSON)
-        if not extperson.send_email_from_form(o.dbo, o.user, o.post):
-            l = o.locale
-            raise utils.ASMError(_("Failed sending email", l))
+        extperson.send_email_from_form(o.dbo, o.user, o.post)
 
     def post_linkanimaladd(self, o):
         self.check(users.CHANGE_INCIDENT)
@@ -3282,9 +3278,7 @@ class lostanimal(JSONEndpoint):
 
     def post_email(self, o):
         self.check(users.EMAIL_PERSON)
-        l = o.locale
-        if not extlostfound.send_email_from_form(o.dbo, o.user, o.post):
-            raise utils.ASMError(_("Failed sending email", l))
+        extlostfound.send_email_from_form(o.dbo, o.user, o.post)
 
     def post_delete(self, o):
         self.check(users.DELETE_LOST_ANIMAL)
@@ -4216,9 +4210,7 @@ class person(JSONEndpoint):
 
     def post_email(self, o):
         self.check(users.EMAIL_PERSON)
-        l = o.locale
-        if not extperson.send_email_from_form(o.dbo, o.user, o.post):
-            raise utils.ASMError(_("Failed sending email", l))
+        extperson.send_email_from_form(o.dbo, o.user, o.post)
 
     def post_latlong(self, o):
         self.check(users.CHANGE_PERSON)
@@ -5542,9 +5534,7 @@ class waitinglist(JSONEndpoint):
 
     def post_email(self, o):
         self.check(users.EMAIL_PERSON)
-        l = o.locale
-        if not extwaitinglist.send_email_from_form(o.dbo, o.user, o.post):
-            raise utils.ASMError(_("Failed sending email", l))
+        extwaitinglist.send_email_from_form(o.dbo, o.user, o.post)
 
     def post_delete(self, o):
         self.check(users.DELETE_WAITING_LIST)
