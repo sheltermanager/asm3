@@ -1179,7 +1179,7 @@ def send_email(dbo, replyadd, toadd, ccadd = "", bccadd = "", subject = "", body
             if bccadd != "": 
                 # sendmail -t processes and removes Bcc header, where SMTP has all recipients (including Bcc) in tolist
                 add_header(msg, "Bcc", bccadd) 
-            p = subprocess.Popen(["/usr/sbin/sendmail", "-t", "-oi"], stdin=subprocess.PIPE)
+            p = subprocess.Popen(["/usr/sbin/sendmail", "-t", "-oi"], stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             stdoutdata, stderrdata = p.communicate(msg.as_string())
             if p.returncode != 0: raise Exception("%s %s" % (stdoutdata, stderrdata))
         except Exception as err:
