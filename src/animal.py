@@ -1964,7 +1964,7 @@ def insert_animal_from_form(dbo, post, username):
     }, username, generateID=False)
 
     # Save any additional field values given
-    additional.save_values_for_link(dbo, post, nextid, "animal")
+    additional.save_values_for_link(dbo, post, nextid, "animal", True)
 
     # Update denormalised fields after the insert
     update_animal_check_bonds(dbo, nextid)

@@ -662,7 +662,7 @@ def insert_lostanimal_from_form(dbo, post, username):
     }, username)
 
     # Save any additional field values given
-    additional.save_values_for_link(dbo, post, nid, "lostanimal")
+    additional.save_values_for_link(dbo, post, nid, "lostanimal", True)
 
     return nid
 
@@ -731,7 +731,7 @@ def insert_foundanimal_from_form(dbo, post, username):
     }, username)
 
     # Save any additional field values given
-    additional.save_values_for_link(dbo, post, nid, "foundanimal")
+    additional.save_values_for_link(dbo, post, nid, "foundanimal", True)
 
     return nid
 

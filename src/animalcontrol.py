@@ -524,7 +524,7 @@ def insert_animalcontrol_from_form(dbo, post, username, geocode=True):
         "AgeGroup":             post["agegroup"]
     }, username)
 
-    additional.save_values_for_link(dbo, post, nid, "incident")
+    additional.save_values_for_link(dbo, post, nid, "incident", True)
     update_animalcontrol_roles(dbo, nid, post.integer_list("viewroles"), post.integer_list("editroles"))
 
     # Look up a geocode for the dispatch address

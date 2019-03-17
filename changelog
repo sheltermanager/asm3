@@ -1,6 +1,7 @@
 42
 ================
 
+17/03/19 Additional fields with default values disallow blanks #577
 16/03/19 Show SMTP/sendmail errors in UI
 16/03/19 Set emailerrors from_address param to prevent Google bouncing errors
 10/03/19 Datepicker, go to +3 years for some vacc/diary

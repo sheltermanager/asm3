@@ -688,7 +688,7 @@ def insert_person_from_form(dbo, post, username, geocode=True):
     update_flags(dbo, username, pid, post["flags"].split(","))
 
     # Save any additional field values given
-    additional.save_values_for_link(dbo, post, pid, "person")
+    additional.save_values_for_link(dbo, post, pid, "person", True)
 
     # If the option is on, record any GDPR contact options in the log
     if configuration.show_gdpr_contact_optin(dbo) and configuration.gdpr_contact_change_log(dbo) and post["gdprcontactoptin"] != "":

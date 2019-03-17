@@ -345,7 +345,7 @@ def insert_waitinglist_from_form(dbo, post, username):
     }, username)
 
     # Save any additional field values given
-    additional.save_values_for_link(dbo, post, nwlid, "waitinglist")
+    additional.save_values_for_link(dbo, post, nwlid, "waitinglist", True)
 
     return nwlid
 
