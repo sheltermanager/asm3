@@ -627,6 +627,42 @@
         }
     });
 
+    $.widget("asm.latlong", {
+        options: {
+            lat: null,
+            lng: null,
+            hash: null
+        },
+        _create: function() {
+            var self = this;
+            this.element.hide();
+            this.element.after([
+                '<input type="text" class="latlong-lat asm-halftextbox" />',
+                '<input type="text" class="latlong-long asm-halftextbox" />',
+                '<input type="hidden" class="latlong-hash" />'
+            ]);
+            this.options.lat = this.element.parent().find(".latlong-lat");
+            this.options.lng = this.element.parent().find(".latlong-long");
+            this.options.hash = this.element.parent().find(".latlong-hash");
+            this.options.lat.blur(function() { self.save(self); });
+            this.options.lng.blur(function() { self.save(self); });
+        },
+        load: function() {
+            // Reads the base element value and splits it into the boxes
+            var bits = this.element.val().split(",");
+            if (bits.length > 0) { this.options.lat.val(bits[0]); }
+            if (bits.length > 1) { this.options.lng.val(bits[1]); }
+            if (bits.length > 2) { this.options.hash.val(bits[2]); }
+        },
+        save: function(self) {
+            // Store the entered values back in the base element value
+            var v = self.options.lat.val() + "," +
+                self.options.lng.val() + "," +
+                self.options.hash.val();
+            self.element.val(v);
+        }
+    });
+
     /**
      * Widget to take one or more payments.
      * Relies on controller.accounts, controller.paymenttypes and controller.donationtypes

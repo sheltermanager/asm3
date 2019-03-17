@@ -381,8 +381,12 @@ Display
   the rows of the movement and medical books (foster book, reservation book,
   vaccination book, etc.)
 
-* Show a minimap of the address on person screens: Show an embedded map to the
-  person's address on the details screen.
+* Show a minimap of the address on person screens: Show an embedded map next to the
+  person's address on the details screen. Also shows a minimap on the dispatch
+  slider of incidents.
+
+* Allow editing of latitude/longitude with minimaps: Allow the latitude/longitude
+  geocodes to be hand edited in a field near the minimap and address.
 
 * Show weight as lb rather than kg: Change the field label on the animal weight
   field to lb instead of the usual kg.

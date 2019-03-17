@@ -1034,6 +1034,10 @@ msgid "Allow duplicate microchip numbers"
 msgstr ""
 
 #: options.js
+msgid "Allow editing of latitude/longitude with minimaps"
+msgstr ""
+
+#: options.js
 msgid "Allow overriding of the movement number on the Move menu screens"
 msgstr ""
 
@@ -1559,6 +1563,10 @@ msgstr ""
 
 #: dbupdate.py
 msgid "B (Boarding Animal)"
+msgstr ""
+
+#: common_widgets.js
+msgid "BCC"
 msgstr ""
 
 #: dbupdate.py
@@ -4638,10 +4646,6 @@ msgstr ""
 msgid "Facebook"
 msgstr ""
 
-#: code.py
-msgid "Failed sending email"
-msgstr ""
-
 #: donation_receive.js
 msgid "Failed to create payment."
 msgstr ""
@@ -6358,6 +6362,10 @@ msgstr ""
 
 #: latency.js
 msgid "Latency Tester"
+msgstr ""
+
+#: person.js incident.js
+msgid "Latitude/Longitude"
 msgstr ""
 
 #: options.js search.py

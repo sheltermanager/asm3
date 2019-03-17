@@ -163,8 +163,8 @@ $(function() {
                 '</td>',
                 '</tr>',
                 '<tr id="latlongrow">',
-                '<td></td>',
-                '<td><input type="text" class="asm-textbox" id="latlong" data-json="LATLONG" data-post="latlong" /></td>',
+                '<td><label for="latlong">' + _("Latitude/Longitude") + '</label></td>',
+                '<td><input type="text" class="asm-latlong" id="latlong" data-json="LATLONG" data-post="latlong" /></td>',
                 '</tr>',
                 '<!-- end right table -->',
                 '</table>',
@@ -803,6 +803,9 @@ $(function() {
 
             // Remove any retired lookups from the lists
             $(".asm-selectbox").select("removeRetiredOptions");
+
+            // Update the lat/long
+            $(".asm-latlong").latlong("load");
 
             // Load person flags
             html.person_flag_options(controller.person, controller.flags, $("#flags"));

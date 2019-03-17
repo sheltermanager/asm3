@@ -133,8 +133,8 @@ $(function() {
                 '</td>',
                 '</tr>',
                 '<tr id="dispatchlatlongrow">',
-                '<td></td>',
-                '<td><input type="text" class="asm-textbox" id="dispatchlatlong" data-json="DISPATCHLATLONG" data-post="dispatchlatlong" /></td>',
+                '<td><label for="dispatchlatlong">' + _("Latitude/Longitude") + '</label></td>',
+                '<td><input type="text" class="asm-latlong" id="dispatchlatlong" data-json="DISPATCHLATLONG" data-post="dispatchlatlong" /></td>',
                 '</tr>',
                 '<tr>',
                 '<td><label for="pickuplocation">' + _("Pickup Location") + '</label></td>',
@@ -581,6 +581,9 @@ $(function() {
 
             // Load the data into the controls for the screen
             $("#asm-content input, #asm-content select, #asm-content textarea").fromJSON(controller.incident);
+
+            // Update the lat/long
+            $(".asm-latlong").latlong("load");
 
             // Remove any retired lookups from the lists
             $(".asm-selectbox").select("removeRetiredOptions");
