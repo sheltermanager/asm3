@@ -1,6 +1,7 @@
 42
 ================
 
+18/03/19 Do not show user table filters due to Chrome autofill bug
 18/03/19 Batch should update young offshelter animal ages for desex reports
 18/03/19 Support for PERSONMEMBERSHIPNUMBER CSV import column
 17/03/19 Allow editing of lat/long directly near minimaps #578

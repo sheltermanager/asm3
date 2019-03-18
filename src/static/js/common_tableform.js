@@ -358,7 +358,15 @@
 
             // Apply tablesorter widget
             var options = {};
-            if (table.showfilter || (table.rows && table.rows.length > 9)) { options.filter = true; }
+            // If whether or not to show filters is explicitly set, do that
+            options.filter = false;
+            if (table.hasOwnProperty("showfilter")) { 
+                options.filter = table.showfilter; 
+            }
+            // Otherwise, show the filters if there are 10+ rows in the table
+            else if (table.rows && table.rows.length > 9) { 
+                options.filter = true; 
+            }
             $("#tableform").table(options);
 
             // And the default sort
