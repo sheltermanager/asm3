@@ -145,7 +145,13 @@ def get_animal_view_adoptable_html(dbo):
     """
     head, body, foot = template.get_html_template(dbo, "animalviewadoptable")
     if head == "":
-        head = "<!DOCTYPE html>\n<html>\n<head>\n<title>Adoptable Animals</title></head>\n<body>"
+        head = "<!DOCTYPE html>\n<html>\n<head>\n<title>Adoptable Animals</title>\n" \
+            "<style>\n" \
+            ".asm3-adoptable-item { max-width: 200px; font-family: sans-serif; }\n" \
+            ".asm3-adoptable-link { font-weight: bold; }\n" \
+            ".asm3-adoptable-tag-agegroup, .asm3-adoptable-tag-size { display: none; }\n" \
+            "</style>\n" \
+            "</head>\n<body>\n"
         body = "<div id=\"asm3-adoptables\"></div>\n" \
             "<script>\n" \
             "asm3_adoptable_filters = \"sex breed agegroup size species\";\n" \

@@ -128,7 +128,7 @@ $(function() {
             var fieldname = f.ID,
                 fieldid = "add_" + fieldname,
                 fieldattr = 'id="' + fieldid + '" ',
-                fieldval = f.VALUE || f.DEFAULTVALUE,
+                fieldval = f.VALUE,
                 postattr = "a." + f.MANDATORY + "." + fieldname,
                 fh = [];
             if (classes === undefined) { classes = "additional"; }

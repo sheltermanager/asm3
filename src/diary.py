@@ -56,8 +56,8 @@ def email_uncompleted_upto_today(dbo):
                     totalforuser += 1
             if totalforuser > 0:
                 al.debug("got %d notes for user %s" % (totalforuser, u.username), "diary.email_uncompleted_upto_today", dbo)
-                utils.send_email(dbo, configuration.email(dbo), u.emailaddress, "", 
-                    i18n._("Diary notes for: {0}", l).format(i18n.python2display(l, dbo.now())), s)
+                utils.send_email(dbo, configuration.email(dbo), u.emailaddress, "", "", 
+                    i18n._("Diary notes for: {0}", l).format(i18n.python2display(l, dbo.now())), s, exceptions=False)
 
 def user_role_where_clause(dbo, user = "", includecreatedby = True):
     """

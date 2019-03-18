@@ -17,34 +17,36 @@
   
 
   
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
 
-  
-  
     
 
   
-
   <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Appendix: Frequently Asked Questions" href="faq.html" />
     <link rel="prev" title="Configuration" href="configuration.html" /> 
-
-  
-  <script src="_static/js/modernizr.min.js"></script>
-
 </head>
 
 <body class="wy-body-for-nav">
 
    
   <div class="wy-grid-for-nav">
-
     
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
-        <div class="wy-side-nav-search">
+        <div class="wy-side-nav-search" >
           
 
           
@@ -517,8 +519,11 @@ be scaled on your PC before being uploaded to the server to save time.</li>
 <li>Show animal thumbnails in movement and medical books: Show animal pictures in
 the rows of the movement and medical books (foster book, reservation book,
 vaccination book, etc.)</li>
-<li>Show a minimap of the address on person screens: Show an embedded map to the
-person’s address on the details screen.</li>
+<li>Show a minimap of the address on person screens: Show an embedded map next to the
+person’s address on the details screen. Also shows a minimap on the dispatch
+slider of incidents.</li>
+<li>Allow editing of latitude/longitude with minimaps: Allow the latitude/longitude
+geocodes to be hand edited in a field near the minimap and address.</li>
 <li>Show weight as lb rather than kg: Change the field label on the animal weight
 field to lb instead of the usual kg.</li>
 <li>Show complete comments in table views: When viewing comments or log notes in
@@ -584,11 +589,8 @@ separate copy of the document by itself for use by mobile printing services.</li
 will tell the browser to show PDF documents in the main page. Otherwise, it
 will send them as attachments for you to download.</li>
 <li>Include incomplete medical records when generating document templates: If
-set, medical regimens will be included that are incomplete when accessing
-them via LastX and Recent wordkeys.</li>
-<li>Include incomplete vaccination and test records when generating document
-templates: If set, vaccination and test records will be included that have
-not been given when accessing them via LastX and Recent wordkeys.</li>
+set, vaccinations, tests and medical regimens will be included that are incomplete
+when accessing them via LastX, Due and Recent wordkeys.</li>
 <li>When I generate a document, make a note of it in the log: If this option is
 on, a log record is created every time you generate a document.</li>
 </ul>
@@ -859,7 +861,7 @@ independent of how many dogs are on the shelter.</p>
         <a href="faq.html" class="btn btn-neutral float-right" title="Appendix: Frequently Asked Questions" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="configuration.html" class="btn btn-neutral" title="Configuration" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="configuration.html" class="btn btn-neutral float-left" title="Configuration" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
@@ -885,26 +887,16 @@ independent of how many dogs are on the shelter.</p>
   
 
 
-  
-
-    
-    
-      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-        <script type="text/javascript" src="_static/jquery.js"></script>
-        <script type="text/javascript" src="_static/underscore.js"></script>
-        <script type="text/javascript" src="_static/doctools.js"></script>
-        <script type="text/javascript" src="_static/language_data.js"></script>
-    
-
-  
-
-  <script type="text/javascript" src="_static/js/theme.js"></script>
-
   <script type="text/javascript">
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script> 
+  </script>
+
+  
+  
+    
+   
 
 </body>
 </html>

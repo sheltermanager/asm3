@@ -105,7 +105,7 @@ def fw(s):
     if s.find(" ") == -1: return s
     return s.split(" ")[0]
 
-def additional_field_tags(dbo, fields):
+def additional_field_tags(dbo, fields, prefix = ""):
     """ Process additional fields and returns them as tags """
     l = dbo.locale
     tags = {}
@@ -120,7 +120,7 @@ def additional_field_tags(dbo, fields):
             val = af["ANIMALNAME"]
         if af["FIELDTYPE"] == additional.PERSON_LOOKUP:
             val = af["OWNERNAME"]
-        tags[af["FIELDNAME"].upper()] = val
+        tags[prefix + af["FIELDNAME"].upper()] = val
     return tags
 
 def animal_tags_publisher(dbo, a, includeAdditional=True):
@@ -206,6 +206,8 @@ def animal_tags(dbo, a, includeAdditional=True, includeCosts=True, includeDiet=T
         "HEARTWORMTESTED"       : a["HEARTWORMTESTEDNAME"],
         "HEARTWORMTESTDATE"     : utils.iif(a["HEARTWORMTESTED"] == 1, python2display(l, a["HEARTWORMTESTDATE"]), ""),
         "HEARTWORMTESTRESULT"   : utils.iif(a["HEARTWORMTESTED"] == 1, a["HEARTWORMTESTRESULTNAME"], ""),
+        "HIDDENCOMMENTS"        : a["HIDDENANIMALDETAILS"],
+        "HIDDENCOMMENTSBR"      : br(a["HIDDENANIMALDETAILS"]),
         "HIDDENANIMALDETAILS"   : a["HIDDENANIMALDETAILS"],
         "HIDDENANIMALDETAILSBR" : br(a["HIDDENANIMALDETAILS"]),
         "ANIMALLASTCHANGEDBY"   : a["LASTCHANGEDBY"],
@@ -352,6 +354,8 @@ def animal_tags(dbo, a, includeAdditional=True, includeCosts=True, includeDiet=T
         "ANIMALFLAGS"           : utils.nulltostr(a["ADDITIONALFLAGS"]).replace("|", ", "),
         "ANIMALCOMMENTS"        : a["ANIMALCOMMENTS"],
         "ANIMALCOMMENTSBR"      : br(a["ANIMALCOMMENTS"]),
+        "DESCRIPTION"           : a["ANIMALCOMMENTS"],
+        "DESCRIPTIONBR"         : br(a["ANIMALCOMMENTS"]),
         "SHELTERCODE"           : a["SHELTERCODE"],
         "AGE"                   : animalage,
         "ACCEPTANCENUMBER"      : a["ACCEPTANCENUMBER"],
@@ -417,6 +421,7 @@ def animal_tags(dbo, a, includeAdditional=True, includeCosts=True, includeDiet=T
             latest = latest[0]
             if latest["MOVEMENTDATE"] is not None and latest["RETURNDATE"] is None:
                 p = person.get_person(dbo, latest["OWNERID"])
+                a["CURRENTOWNERID"] = latest["OWNERID"]
                 if p is not None:
                     tags["CURRENTOWNERNAME"] = p["OWNERNAME"]
                     tags["CURRENTOWNERADDRESS"] = p["OWNERADDRESS"]
@@ -440,12 +445,19 @@ def animal_tags(dbo, a, includeAdditional=True, includeCosts=True, includeDiet=T
     # Additional fields
     if includeAdditional:
         tags.update(additional_field_tags(dbo, additional.get_additional_fields(dbo, a["ID"], "animal")))
+        if a["ORIGINALOWNERID"] and a["ORIGINALOWNERID"] > 0:
+            tags.update(additional_field_tags(dbo, additional.get_additional_fields(dbo, a["ORIGINALOWNERID"], "person"), "ORIGINALOWNER"))
+        if a["BROUGHTINBYOWNERID"] and a["BROUGHTINBYOWNERID"] > 0:
+            tags.update(additional_field_tags(dbo, additional.get_additional_fields(dbo, a["BROUGHTINBYOWNERID"], "person"), "BROUGHTINBY"))
+        if a["CURRENTOWNERID"] and a["CURRENTOWNERID"] > 0:
+            tags.update(additional_field_tags(dbo, additional.get_additional_fields(dbo, a["CURRENTOWNERID"], "person"), "CURRENTOWNER"))
 
     # Is vaccinated indicator
     if includeIsVaccinated:    
         tags["ANIMALISVACCINATED"] = utils.iif(medical.get_vaccinated(dbo, a["ID"]), _("Yes", l), _("No", l))
 
     if includeMedical:
+        iic = configuration.include_incomplete_medical_doc(dbo)
         # Vaccinations
         d = {
             "VACCINATIONNAME":          "VACCINATIONTYPE",
@@ -469,7 +481,7 @@ def animal_tags(dbo, a, includeAdditional=True, includeCosts=True, includeDiet=T
             "VACCINATIONADMINISTERINGVETZIPCODE":   "ADMINISTERINGVETPOSTCODE",
             "VACCINATIONADMINISTERINGVETEMAIL":     "ADMINISTERINGVETEMAIL"
         }
-        tags.update(table_tags(dbo, d, medical.get_vaccinations(dbo, a["ID"]), "VACCINATIONTYPE", "DATEREQUIRED", "DATEOFVACCINATION"))
+        tags.update(table_tags(dbo, d, medical.get_vaccinations(dbo, a["ID"], not iic), "VACCINATIONTYPE", "DATEREQUIRED", "DATEOFVACCINATION"))
 
         # Tests
         d = {
@@ -493,7 +505,7 @@ def animal_tags(dbo, a, includeAdditional=True, includeCosts=True, includeDiet=T
             "TESTADMINISTERINGVETEMAIL":     "ADMINISTERINGVETEMAIL"
 
         }
-        tags.update(table_tags(dbo, d, medical.get_tests(dbo, a["ID"]), "TESTNAME", "DATEREQUIRED", "DATEOFTEST"))
+        tags.update(table_tags(dbo, d, medical.get_tests(dbo, a["ID"], not iic), "TESTNAME", "DATEREQUIRED", "DATEOFTEST"))
 
         # Medical
         d = {
@@ -510,7 +522,7 @@ def animal_tags(dbo, a, includeAdditional=True, includeCosts=True, includeDiet=T
             "MEDICALLASTTREATMENTGIVEN": "d:LASTTREATMENTGIVEN",
             "MEDICALCOST":              "c:COST"
         }
-        tags.update(table_tags(dbo, d, medical.get_regimens(dbo, a["ID"]), "TREATMENTNAME", "STATUS", "STATUS"))
+        tags.update(table_tags(dbo, d, medical.get_regimens(dbo, a["ID"], not iic), "TREATMENTNAME", "STATUS", "STATUS"))
 
     # Diet
     if includeDiet:
@@ -1049,6 +1061,7 @@ def person_tags(dbo, p, includeImg=False):
         "MOBILETELEPHONE"       : p["MOBILETELEPHONE"],
         "CELLTELEPHONE"         : p["MOBILETELEPHONE"],
         "EMAILADDRESS"          : p["EMAILADDRESS"],
+        "JURISDICTION"          : p["JURISDICTIONNAME"],
         "OWNERCOMMENTS"         : p["COMMENTS"],
         "OWNERFLAGS"            : utils.nulltostr(p["ADDITIONALFLAGS"]).replace("|", ", "),
         "OWNERCREATEDBY"        : p["CREATEDBY"],

@@ -1964,7 +1964,7 @@ def insert_animal_from_form(dbo, post, username):
     }, username, generateID=False)
 
     # Save any additional field values given
-    additional.save_values_for_link(dbo, post, nextid, "animal")
+    additional.save_values_for_link(dbo, post, nextid, "animal", True)
 
     # Update denormalised fields after the insert
     update_animal_check_bonds(dbo, nextid)
@@ -3120,6 +3120,50 @@ def update_on_shelter_variable_animal_data(dbo):
 
     al.debug("updated variable data for %d animals (locale %s)" % (len(animals), l), "animal.update_on_shelter_variable_animal_data", dbo)
     return "OK %d" % len(animals)
+
+def update_offshelter_young_variable_animal_data(dbo):
+    """
+    Updates variable animal data for all off-shelter animal 
+    records where they are under 9 months old. 
+    This is to prevent situations where adopted animal reports
+    are showing the stored age for puppies/kittens and shelters 
+    are relying on it to decide when to book in a spay/neuter.
+    """
+    l = dbo.locale
+    
+    animalupdatebatch = []
+
+    # Load age group bands now to save repeated looped lookups
+    bands = configuration.age_group_bands(dbo)
+
+    # Relevant on shelter animal fields
+    animals = dbo.query("SELECT ID, DateBroughtIn, DeceasedDate, DiedOffShelter, Archived, ActiveMovementDate, " \
+        "MostRecentEntryDate, DateOfBirth FROM animal WHERE DateOfBirth > ? AND DeceasedDate Is Null AND Archived = 1", [ dbo.today(offset=-274) ])
+
+    # Get a single lookup of movement histories for our on shelter animals
+    movements = dbo.query("SELECT ad.AnimalID, ad.MovementDate, ad.ReturnDate " \
+        "FROM animal a " \
+        "INNER JOIN adoption ad ON a.ID = ad.AnimalID " \
+        "WHERE a.Archived = 0 AND ad.MovementType NOT IN (2,8) " \
+        "AND ad.MovementDate Is Not Null AND ad.ReturnDate Is Not Null " \
+        "ORDER BY a.ID")
+
+    for a in animals:
+        update_variable_animal_data(dbo, a.id, a, animalupdatebatch, bands, movements)
+
+    dbo.execute_many("UPDATE animal SET " \
+        "TimeOnShelter = ?, " \
+        "AgeGroup = ?, " \
+        "AgeGroupActiveMovement = ?, " \
+        "AnimalAge = ?, " \
+        "DaysOnShelter = ?, " \
+        "TotalTimeOnShelter = ?, " \
+        "TotalDaysOnShelter = ? " \
+        "WHERE ID = ?", animalupdatebatch)
+
+    al.debug("updated variable data for %d animals (locale %s)" % (len(animals), l), "animal.update_offshelter_young_variable_animal_data", dbo)
+    return "OK %d" % len(animals)
+
 
 def update_all_animal_statuses(dbo):
     """

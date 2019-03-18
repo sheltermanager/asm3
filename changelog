@@ -1,6 +1,24 @@
 42
 ================
 
+18/03/19 Batch should update young offshelter animal ages for desex reports
+18/03/19 Support for PERSONMEMBERSHIPNUMBER CSV import column
+17/03/19 Allow editing of lat/long directly near minimaps #578
+17/03/19 Additional fields with default values disallow blanks #577
+16/03/19 Show SMTP/sendmail errors in UI
+16/03/19 Set emailerrors from_address param to prevent Google bouncing errors
+10/03/19 Datepicker, go to +3 years for some vacc/diary
+10/03/19 Tweak to default animalviewadoptable template (sans-serif, grid layout)
+07/03/19 Online forms should force absolute redirect URLs #574
+06/03/19 Emailing should support BCC #564
+06/03/19 Datepicker, allow quick selection of -30/+1 year
+05/03/19 Fix infrequent unicode error when reading stored documents from cut/paste html
+05/03/19 Add <<Jurisidiction>> person wordkey #545
+05/03/19 Rename animal comments to description for clarity #569
+05/03/19 add/subtract_years should do whole calendar years if possible
+05/03/19 Report screen doesn't display roles correctly until refresh #555
+04/03/19 Reinstate include incomplete medical items for documents
+04/03/19 Access additional fields for original, broughtinby, current owner #572
 04/03/19 Fixed view fields copying into autocomplete of tables #573
 02/03/19 Autoset of include deceased/nonshelter on find animal not working
 28/02/19 Add clinic calendar to available quicklinks

@@ -703,7 +703,7 @@ def json_animalfindcolumns(dbo):
         ( "HeartwormTestResult", _("Heartworm Test Result", l) ),
         ( "Declawed", _("Declawed", l) ),
         ( "HiddenAnimalDetails", _("Hidden Comments", l) ),
-        ( "AnimalComments", _("Comments", l) ),
+        ( "AnimalComments", _("Description", l) ),
         ( "ReasonForEntry", _("Entry Reason", l) ),
         ( "ReasonNO", _("Reason Not From Owner", l) ),
         ( "DateBroughtIn", _("Date Brought In", l) ),

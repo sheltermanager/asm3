@@ -285,6 +285,7 @@
                     changeMonth: true, 
                     changeYear: true,
                     firstDay: config.integer("FirstDayOfWeek"),
+                    yearRange: "-30:+3",
                     beforeShowDay: function(a) {
                         var day = a.getDay();
                         var rv = false;
@@ -303,6 +304,7 @@
                 $(this).datepicker({ 
                     changeMonth: true, 
                     changeYear: true,
+                    yearRange: "-30:+3",
                     firstDay: config.integer("FirstDayOfWeek")
                 });
             }
@@ -523,6 +525,10 @@
                 '<td><input id="emailcc" data="cc" type="text" class="asm-doubletextbox" /></td>',
                 '</tr>',
                 '<tr>',
+                '<td><label for="emailbcc">' + _("BCC") + '</label></td>',
+                '<td><input id="emailbcc" data="bcc" type="text" class="asm-doubletextbox" /></td>',
+                '</tr>',
+                '<tr>',
                 '<td><label for="emailsubject">' + _("Subject") + '</label></td>',
                 '<td><input id="emailsubject" data="subject" type="text" class="asm-doubletextbox" /></td>',
                 '</tr>',
@@ -565,6 +571,7 @@
                 if (!validate.email($("#emailfrom").val())) { return; }
                 if (!validate.email($("#emailto").val())) { return; }
                 if ($("#emailcc").val() != "" && !validate.email($("#emailcc").val())) { return; }
+                if ($("#emailbcc").val() != "" && !validate.email($("#emailbcc").val())) { return; }
                 if (o.formdata) { o.formdata += "&"; }
                 o.formdata += $("#dialog-email input, #dialog-email select, #dialog-email .asm-richtextarea").toPOST();
                 header.show_loading(_("Sending..."));
@@ -617,6 +624,42 @@
                 $("#emailsubject").val(o.subject); 
             }
             $("#emailsubject").focus();
+        }
+    });
+
+    $.widget("asm.latlong", {
+        options: {
+            lat: null,
+            lng: null,
+            hash: null
+        },
+        _create: function() {
+            var self = this;
+            this.element.hide();
+            this.element.after([
+                '<input type="text" class="latlong-lat asm-halftextbox" />',
+                '<input type="text" class="latlong-long asm-halftextbox" />',
+                '<input type="hidden" class="latlong-hash" />'
+            ]);
+            this.options.lat = this.element.parent().find(".latlong-lat");
+            this.options.lng = this.element.parent().find(".latlong-long");
+            this.options.hash = this.element.parent().find(".latlong-hash");
+            this.options.lat.blur(function() { self.save(self); });
+            this.options.lng.blur(function() { self.save(self); });
+        },
+        load: function() {
+            // Reads the base element value and splits it into the boxes
+            var bits = this.element.val().split(",");
+            if (bits.length > 0) { this.options.lat.val(bits[0]); }
+            if (bits.length > 1) { this.options.lng.val(bits[1]); }
+            if (bits.length > 2) { this.options.hash.val(bits[2]); }
+        },
+        save: function(self) {
+            // Store the entered values back in the base element value
+            var v = self.options.lat.val() + "," +
+                self.options.lng.val() + "," +
+                self.options.hash.val();
+            self.element.val(v);
         }
     });
 

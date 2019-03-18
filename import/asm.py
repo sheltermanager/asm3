@@ -50,7 +50,7 @@ Also has some useful helper functions for reading CSVs and parsing values, eg:
 """
 
 import csv, datetime, re, time
-import os, sys, urllib2, base64
+import os, sys, urllib2, base64, requests
 from cStringIO import StringIO
 
 # Next year code to use for animals when generating shelter codes
@@ -1018,6 +1018,13 @@ def size_from_db(name, default = 1):
     """ Looks up the size in the db when the conversion is run, assign to animal.Size """
     return "COALESCE((SELECT ID FROM lksize WHERE lower(Size) LIKE lower('%s') LIMIT 1), %d)" % (name.strip(), default)
 
+def size_id_for_name(name):
+    name = name.lower()
+    if name.startswith("v") or name.startswith("x"): return 0
+    if name.startswith("l"): return 1
+    if name.startswith("s"): return 2
+    return 3
+
 def donationtype_id_for_name(name, createIfNotExist = True):
     global donationtypes
     if name.strip() == "": return 1
@@ -1312,7 +1319,6 @@ def adopt_to(a, ownerid, movementtype = 1, movementdate = None):
     a.ActiveMovementID = m.ID
     a.ActiveMovementDate = m.MovementDate
     a.ActiveMovementType = m.MovementType
-    print m
     return m
 
 def adopt_older_than(animals, movements, ownerid=100, days=365):
@@ -1448,6 +1454,52 @@ def petfinder_image(page, animalid, animalname):
     imageurl = "http://photos.petfinder.com/photos/pets/%s/1/?bust=1425358987&width=632&no_scale_up=1" % petid
     jpgdata = load_image_from_url(imageurl)
     animal_image(animalid, jpgdata)
+
+def get_url(url, headers = {}, cookies = {}, timeout = None):
+    """
+    Retrieves a URL
+    """
+    # requests timeout is seconds/float, but some may call this with integer ms instead so convert
+    if timeout is not None and timeout > 1000: timeout = timeout / 1000.0
+    r = requests.get(url, headers = headers, cookies=cookies, timeout=timeout)
+    return { "cookies": r.cookies, "headers": r.headers, "response": r.text, "status": r.status_code, "requestheaders": r.request.headers, "requestbody": r.request.body }
+
+def get_image_url(url, headers = {}, cookies = {}, timeout = None):
+    """
+    Retrives an image from a URL
+    """
+    # requests timeout is seconds/float, but some may call this with integer ms instead so convert
+    if timeout is not None and timeout > 1000: timeout = timeout / 1000.0
+    r = requests.get(url, headers = headers, cookies=cookies, timeout=timeout, stream=True)
+    s = StringIO()
+    for chunk in r:
+        s.write(chunk) # default from requests is 128 byte chunks
+    return { "cookies": r.cookies, "headers": r.headers, "response": s.getvalue(), "status": r.status_code, "requestheaders": r.request.headers, "requestbody": r.request.body }
+        
+def post_data(url, data, contenttype = "", httpmethod = "", headers = {}):
+    """ 
+    Posts data to a URL as the body
+    httpmethod: POST by default
+    """
+    try:
+        if contenttype != "": headers["Content-Type"] = contenttype
+        req = urllib2.Request(url, data, headers)
+        if httpmethod != "": req.get_method = lambda: httpmethod
+        resp = urllib2.urlopen(req)
+        return { "requestheaders": headers, "requestbody": data, "headers": resp.info().headers, "response": resp.read(), "status": resp.getcode() }
+    except urllib2.HTTPError as e:
+        return { "requestheaders": headers, "requestbody": data, "headers": e.info().headers, "response": e.read(), "status": e.getcode() }
+    
+def post_form(url, fields, headers = {}, cookies = {}):
+    """
+    Does a form post
+    url: The http url to post to
+    fields: A map of { name: value } elements
+    headers: A map of { name: value } headers
+    return value is the http headers (a map) and server's response as a string
+    """
+    r = requests.post(url, data=fields, headers=headers, cookies=cookies)
+    return { "cookies": r.cookies, "headers": r.headers, "response": r.text, "status": r.status_code, "requestheaders": r.request.headers, "requestbody": r.request.body }
 
 class AnimalType:
     ID = 0

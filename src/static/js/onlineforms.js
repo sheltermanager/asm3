@@ -44,6 +44,7 @@ $(function() {
                 edit: function(row) {
                     tableform.dialog_show_edit(dialog, row)
                         .then(function() {
+                            onlineforms.check_redirect_url();
                             tableform.fields_update_row(dialog.fields, row);
                             return tableform.fields_post(dialog.fields, "mode=update&formid=" + row.ID, "onlineforms");
                         })
@@ -82,7 +83,8 @@ $(function() {
                      click: function() { 
                          tableform.dialog_show_add(dialog)
                              .then(function() {
-                                return tableform.fields_post(dialog.fields, "mode=create", "onlineforms");
+                                 onlineforms.check_redirect_url();
+                                 return tableform.fields_post(dialog.fields, "mode=create", "onlineforms");
                              })
                              .then(function(response) {
                                  var row = {};
@@ -235,6 +237,11 @@ $(function() {
                     $("#rhead, #rfoot").htmleditor("refresh");
                 }
             });
+        },
+
+        check_redirect_url: function() {
+            var u = $("#redirect").val();
+            if (u && u.indexOf("http") != 0) { $("#redirect").val( "https://" + u ); }
         },
 
         render: function() {

@@ -130,7 +130,7 @@ def asm_500_email():
     """
     Custom 500 error page that sends emails to the site admin
     """
-    web.emailerrors(ADMIN_EMAIL, web.webapi._InternalError)()
+    web.emailerrors(to_address=ADMIN_EMAIL, from_address=ADMIN_EMAIL, emailerrors_internal=web.webapi._InternalError)()
     s = """
         <html>
         <head>
@@ -598,7 +598,7 @@ class jserror(ASMEndpoint):
         logmess = "%s@%s: %s %s" % (post["user"], post["account"], post["msg"], post["stack"])
         al.error(logmess, "code.jserror", dbo)
         if EMAIL_ERRORS:
-            utils.send_email(dbo, ADMIN_EMAIL, ADMIN_EMAIL, "", emailsubject, emailbody, "plain")
+            utils.send_email(dbo, ADMIN_EMAIL, ADMIN_EMAIL, "", "", emailsubject, emailbody, "plain", exceptions=False)
 
 class media(ASMEndpoint):
     url = "media"
@@ -656,7 +656,7 @@ class media(ASMEndpoint):
             content = dbfs.get_string(dbo, m["MEDIANAME"])
             if m["MEDIANAME"].endswith("html"):
                 content = utils.fix_relative_document_uris(content, BASE_URL, MULTIPLE_DATABASES and dbo.database or "")
-            utils.send_email(dbo, post["from"], emailadd, post["cc"], m["MEDIANOTES"], post["body"], "html", content, m["MEDIANAME"])
+            utils.send_email(dbo, post["from"], emailadd, post["cc"], post["bcc"], m["MEDIANOTES"], post["body"], "html", content, m["MEDIANAME"])
             if post.boolean("addtolog"):
                 extlog.add_log(dbo, o.user, extmedia.get_log_from_media_type(m["LINKTYPEID"]), m["LINKID"], post.integer("logtype"), "[%s] %s :: %s" % (emailadd, m["MEDIANOTES"], utils.html_email_to_plain(post["body"])))
         return emailadd
@@ -676,7 +676,7 @@ class media(ASMEndpoint):
             if not m["MEDIANAME"].endswith("html"): continue
             content = dbfs.get_string(dbo, m["MEDIANAME"])
             contentpdf = utils.html_to_pdf(content, BASE_URL, MULTIPLE_DATABASES and dbo.database or "")
-            utils.send_email(dbo, post["from"], emailadd, post["cc"], m["MEDIANOTES"], post["body"], "html", contentpdf, "document.pdf")
+            utils.send_email(dbo, post["from"], emailadd, post["cc"], post["bcc"], m["MEDIANOTES"], post["body"], "html", contentpdf, "document.pdf")
             if post.boolean("addtolog"):
                 extlog.add_log(dbo, o.user, extmedia.get_log_from_media_type(m["LINKTYPEID"]), m["LINKID"], post.integer("logtype"), "[%s] %s :: %s" % (emailadd, m["MEDIANOTES"], utils.html_email_to_plain(post["body"])))
         return emailadd
@@ -700,7 +700,7 @@ class media(ASMEndpoint):
             if post.boolean("addtolog"):
                 extlog.add_log(dbo, o.user, extmedia.get_log_from_media_type(m["LINKTYPEID"]), m["LINKID"], post.integer("logtype"), "[%s] %s :: %s" % (emailadd, _("Document signing request", l), utils.html_email_to_plain("\n".join(body))))
             extmedia.create_log(dbo, o.user, mid, "ES01", _("Document signing request", l))
-        utils.send_email(dbo, post["from"], emailadd, post["cc"], _("Document signing request", l), "\n".join(body), "html")
+        utils.send_email(dbo, post["from"], emailadd, post["cc"], post["bcc"], _("Document signing request", l), "\n".join(body), "html")
         return emailadd
 
     def post_sign(self, o):
@@ -2675,10 +2675,8 @@ class foundanimal(JSONEndpoint):
         extlostfound.update_foundanimal_from_form(o.dbo, o.post, o.user)
 
     def post_email(self, o):
-        l = o.locale
         self.check(users.EMAIL_PERSON)
-        if not extlostfound.send_email_from_form(o.dbo, o.user, o.post):
-            raise utils.ASMError(_("Failed sending email", l))
+        extlostfound.send_email_from_form(o.dbo, o.user, o.post)
 
     def post_delete(self, o):
         self.check(users.DELETE_FOUND_ANIMAL)
@@ -2901,9 +2899,7 @@ class incident(JSONEndpoint):
 
     def post_email(self, o):
         self.check(users.EMAIL_PERSON)
-        if not extperson.send_email_from_form(o.dbo, o.user, o.post):
-            l = o.locale
-            raise utils.ASMError(_("Failed sending email", l))
+        extperson.send_email_from_form(o.dbo, o.user, o.post)
 
     def post_linkanimaladd(self, o):
         self.check(users.CHANGE_INCIDENT)
@@ -3282,9 +3278,7 @@ class lostanimal(JSONEndpoint):
 
     def post_email(self, o):
         self.check(users.EMAIL_PERSON)
-        l = o.locale
-        if not extlostfound.send_email_from_form(o.dbo, o.user, o.post):
-            raise utils.ASMError(_("Failed sending email", l))
+        extlostfound.send_email_from_form(o.dbo, o.user, o.post)
 
     def post_delete(self, o):
         self.check(users.DELETE_LOST_ANIMAL)
@@ -4216,9 +4210,7 @@ class person(JSONEndpoint):
 
     def post_email(self, o):
         self.check(users.EMAIL_PERSON)
-        l = o.locale
-        if not extperson.send_email_from_form(o.dbo, o.user, o.post):
-            raise utils.ASMError(_("Failed sending email", l))
+        extperson.send_email_from_form(o.dbo, o.user, o.post)
 
     def post_latlong(self, o):
         self.check(users.CHANGE_PERSON)
@@ -5542,9 +5534,7 @@ class waitinglist(JSONEndpoint):
 
     def post_email(self, o):
         self.check(users.EMAIL_PERSON)
-        l = o.locale
-        if not extwaitinglist.send_email_from_form(o.dbo, o.user, o.post):
-            raise utils.ASMError(_("Failed sending email", l))
+        extwaitinglist.send_email_from_form(o.dbo, o.user, o.post)
 
     def post_delete(self, o):
         self.check(users.DELETE_WAITING_LIST)

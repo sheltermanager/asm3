@@ -188,12 +188,13 @@ def send_email_from_form(dbo, username, post):
     emailfrom = post["from"]
     emailto = post["to"]
     emailcc = post["cc"]
+    emailbcc = post["bcc"]
     subject = post["subject"]
     ishtml = post.boolean("html")
     addtolog = post.boolean("addtolog")
     logtype = post.integer("logtype")
     body = post["body"]
-    rv = utils.send_email(dbo, emailfrom, emailto, emailcc, subject, body, ishtml == 1 and "html" or "plain")
+    rv = utils.send_email(dbo, emailfrom, emailto, emailcc, emailbcc, subject, body, ishtml == 1 and "html" or "plain")
     if addtolog == 1:
         log.add_log(dbo, username, log.WAITINGLIST, post.integer("wlid"), logtype, body)
     return rv
@@ -344,7 +345,7 @@ def insert_waitinglist_from_form(dbo, post, username):
     }, username)
 
     # Save any additional field values given
-    additional.save_values_for_link(dbo, post, nwlid, "waitinglist")
+    additional.save_values_for_link(dbo, post, nwlid, "waitinglist", True)
 
     return nwlid
 

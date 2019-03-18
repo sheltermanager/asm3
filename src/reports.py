@@ -545,7 +545,7 @@ def email_daily_reports(dbo, now = None):
         body = execute(dbo, r.ID, "dailyemail")
         # Only send if there's data on the report
         if body.find(i18n._("No data to show on the report.", l)) == -1:
-            utils.send_email(dbo, configuration.email(dbo), emails, "", r.TITLE, body, "html")
+            utils.send_email(dbo, configuration.email(dbo), emails, "", "", r.TITLE, body, "html", exceptions=False)
 
 def execute_title(dbo, title, username = "system", params = None):
     """

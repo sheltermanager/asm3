@@ -114,6 +114,7 @@ $(function() {
                         onchange: function() {
                             if (!reports.validation()) { tableform.dialog_enable_buttons(); return; }
                             tableform.fields_update_row(dialog.fields, row);
+                            reports.set_extra_fields(row);
                             tableform.fields_post(dialog.fields, "mode=update&reportid=" + row.ID, "reports", function(response) {
                                 tableform.table_update(table);
                                 tableform.dialog_close();
@@ -145,7 +146,7 @@ $(function() {
                     }},
                     { field: "CATEGORY", display: _("Category") },
                     { field: "VIEWROLES", display: _("Roles"), formatter: function(row) {
-                        return row.VIEWROLES ? row.VIEWROLES.replace("|", ", ") : "";
+                        return common.nulltostr(row.VIEWROLES).replace(/[|]+/g, ", ");
                     }},
                     { field: "TITLE", display: _("Report Title"), initialsort: true },
                     { field: "DESCRIPTION", display: _("Description") }
@@ -163,8 +164,8 @@ $(function() {
                                      .then(function(response) {
                                          var row = {};
                                          row.ID = response;
-                                         row.VIEWROLES = "";
                                          tableform.fields_update_row(dialog.fields, row);
+                                         reports.set_extra_fields(row);
                                          controller.rows.push(row);
                                          tableform.table_update(table);
                                          tableform.dialog_close();
@@ -506,6 +507,17 @@ $(function() {
                 .always(function() {
                     header.hide_loading();
                 });
+        },
+
+        set_extra_fields: function(row) {
+            // Build list of VIEWROLES from VIEWROLEIDS
+            var roles = [];
+            var roleids = row.VIEWROLEIDS;
+            if ($.isArray(roleids)) { roleids = roleids.join(","); }
+            $.each(roleids.split(/[|,]+/), function(i, v) {
+                roles.push(common.get_field(controller.roles, v, "ROLENAME"));
+            });
+            row.VIEWROLES = roles.join("|");
         },
 
         validation: function() {

@@ -1034,6 +1034,10 @@ msgid "Allow duplicate microchip numbers"
 msgstr ""
 
 #: options.js
+msgid "Allow editing of latitude/longitude with minimaps"
+msgstr ""
+
+#: options.js
 msgid "Allow overriding of the movement number on the Move menu screens"
 msgstr ""
 
@@ -1559,6 +1563,10 @@ msgstr ""
 
 #: dbupdate.py
 msgid "B (Boarding Animal)"
+msgstr ""
+
+#: common_widgets.js
+msgid "BCC"
 msgstr ""
 
 #: dbupdate.py
@@ -2467,7 +2475,7 @@ msgstr ""
 msgid "Clinic"
 msgstr ""
 
-#: clinic_calendar.js html.py
+#: header.js clinic_calendar.js html.py configuration.py
 msgid "Clinic Calendar"
 msgstr ""
 
@@ -2586,11 +2594,10 @@ msgstr ""
 
 #: animal_diet.js person_find_results.js lostfound_new.js movements.js
 #: person.js waitinglist.js staff_rota.js clinic_appointment.js donations.js
-#: diary.js traploan.js animal_find_results.js log.js header_edit_header.js
-#: waitinglist_results.js animal.js waitinglist_new.js medical.js litters.js
-#: lostfound.js person_vouchers.js accounts.js test.js stocklevel.js
-#: common_widgets.js citations.js licence.js transport.js vaccination.js
-#: medicalprofile.js mobile.py html.py person.py
+#: diary.js traploan.js log.js header_edit_header.js waitinglist_results.js
+#: waitinglist_new.js medical.js litters.js lostfound.js person_vouchers.js
+#: accounts.js test.js stocklevel.js common_widgets.js citations.js licence.js
+#: transport.js vaccination.js medicalprofile.js mobile.py html.py person.py
 msgid "Comments"
 msgstr ""
 
@@ -2698,7 +2705,7 @@ msgstr ""
 
 #: animal.js
 msgid ""
-"Copy animal comments to the notes field of the web preferred media for this "
+"Copy description to the notes field of the web preferred media for this "
 "animal"
 msgstr ""
 
@@ -3514,10 +3521,10 @@ msgstr ""
 msgid "Deposit Returned"
 msgstr ""
 
-#: animal_diet.js waitinglist.js clinic_invoice.js waitinglist_results.js
-#: animal_costs.js report_export.js reports.js waitinglist_new.js
-#: accounts_trx.js incident.js incident_find.js accounts.js onlineforms.js
-#: stocklevel.js lookups.js mobile.py lostfound.py html.py
+#: animal_diet.js waitinglist.js clinic_invoice.js animal_find_results.js
+#: waitinglist_results.js animal_costs.js report_export.js animal.js reports.js
+#: waitinglist_new.js accounts_trx.js incident.js incident_find.js accounts.js
+#: onlineforms.js stocklevel.js lookups.js mobile.py lostfound.py html.py
 msgid "Description"
 msgstr ""
 
@@ -4639,10 +4646,6 @@ msgstr ""
 msgid "Facebook"
 msgstr ""
 
-#: code.py
-msgid "Failed sending email"
-msgstr ""
-
 #: donation_receive.js
 msgid "Failed to create payment."
 msgstr ""
@@ -5514,6 +5517,12 @@ msgstr ""
 msgid "Hidden comments about the animal"
 msgstr ""
 
+#: animal.js
+msgid ""
+"Hidden comments are for staff information only and will never be used on any "
+"adoption websites"
+msgstr ""
+
 #: options.js
 msgid "Hide deceased animals from the home page"
 msgstr ""
@@ -5900,6 +5909,10 @@ msgstr ""
 
 #: publish_options.js
 msgid "Include held animals"
+msgstr ""
+
+#: options.js
+msgid "Include incomplete medical records when generating document templates"
 msgstr ""
 
 #: animal_find.js
@@ -6349,6 +6362,10 @@ msgstr ""
 
 #: latency.js
 msgid "Latency Tester"
+msgstr ""
+
+#: person.js incident.js
+msgid "Latitude/Longitude"
 msgstr ""
 
 #: options.js search.py
@@ -12207,7 +12224,7 @@ msgid "Use a single breed field"
 msgstr ""
 
 #: publish_options.js
-msgid "Use animal comments"
+msgid "Use animal description"
 msgstr ""
 
 #: options.js

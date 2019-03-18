@@ -185,7 +185,7 @@ $(function() {
                 '<tr>',
                 '<td><label for="usecomments">' + _("Animal descriptions") + '</label></td>',
                 '<td><select id="usecomments" class="asm-selectbox cfg" data="PublisherUseComments">',
-                '<option value="Yes">' + _("Use animal comments") + '</option>',
+                '<option value="Yes">' + _("Use animal description") + '</option>',
                 '<option value="No">' + _("Use notes from preferred photo") + '</option>',
                 '</select></td>',
                 '</tr>',

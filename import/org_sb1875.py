@@ -16,7 +16,7 @@ PERSON_FILENAME = "data/sb1875_csv/ASM_People.csv"
 
 def getdate(d):
     if d == "02/01/1900": return None # Weird quirk of their files
-    return asm.getdate_guess(d)
+    return asm.getdate_ddmmyyyy(d)
 
 # --- START OF CONVERSION ---
 
@@ -105,6 +105,7 @@ for d in asm.csv_to_list(ANIMAL_FILENAME, remove_non_ascii=True):
     a.BaseColourID = asm.colour_id_for_names(d["Base_Colour"], d["Secondary_Colour"])
     a.AnimalComments = d["Notes"]
     a.Sex = asm.getsex_mf(d["Sex"])
+    a.Size = asm.size_id_for_name(d["Size"])
     a.NeuteredDate = getdate(d["Date_Desexed"])
     if a.NeuteredDate is not None: a.Neutered = 1
     a.IdentichipNumber = d["Microchip_no"]
@@ -145,7 +146,7 @@ for d in asm.csv_to_list(LOG_FILENAME, remove_non_ascii=True):
     if not ed: continue
     if d["People_ctr"] != "": o = ppo[d["People_ctr"]]
 
-    if d["Action"] == "Admission" and d["Log_Description"] == "Owner_Surrender":
+    if d["Action"] == "Admission" and d["Log_Description"] == "Owner Surrender" and o:
         a.OriginalOwnerID = o.ID
         a.BroughtInByOwnerID = o.ID
         a.DateBroughtIn = ed
@@ -232,7 +233,8 @@ for d in asm.csv_to_list(LOG_FILENAME, remove_non_ascii=True):
         a.PutToSleep = 1
         a.DeceasedDate = ed
         a.Archived = 1
-        a.PTSReason = d["Log_Notes"]
+        a.PTSReasonID = 2
+        a.PTSReason = d["Log_Description"] + ": " + d["Log_Notes"]
         a.LastChangedDate = ed
 
     elif d["Action"] == "Return" and o:
@@ -243,6 +245,11 @@ for d in asm.csv_to_list(LOG_FILENAME, remove_non_ascii=True):
                 m.ReturnedReasonID = 17 # Surrender
                 a.Archived = 0 # Return to shelter so another movement takes it away again
                 break
+
+    elif d["Action"] == "VetCatDischarge":
+        a.NonShelterAnimal = 1
+        a.Archived = 1
+
     else:
         # Create a log entry for action, log_description, log_notes
         l = asm.Log()
@@ -258,10 +265,10 @@ for d in asm.csv_to_list(LOG_FILENAME, remove_non_ascii=True):
 # asm.adopt_older_than(animals, movements, uo.ID, 365)
 
 # Go back through the animals and mark anything on shelter as non-shelter
-for a in animals:
-    if a.Archived == 0:
-        a.NonShelterAnimal = 1
-        a.Archived = 1
+#for a in animals:
+#    if a.Archived == 0:
+#        a.NonShelterAnimal = 1
+#        a.Archived = 1
 
 # Now that everything else is done, output stored records
 for k,v in asm.locations.iteritems():

@@ -208,6 +208,7 @@ DEFAULTS = {
     "IncomingMediaScaling": "640x640",
     "InactivityTimer": "No",
     "InactivityTimeout": "20", 
+    "IncludeIncompleteMedicalDoc": "Yes",
     "IncludeOffShelterMedical": "No",
     "Locale": "en",
     "LocationChangeLog": "Yes",
@@ -790,9 +791,6 @@ def hold_change_log_type(dbo):
 
 def include_incomplete_medical_doc(dbo):
     return cboolean(dbo, "IncludeIncompleteMedicalDoc", DEFAULTS["IncludeIncompleteMedicalDoc"] == "Yes")
-
-def include_incomplete_vacc_doc(dbo):
-    return cboolean(dbo, "IncludeIncompleteVaccDoc", DEFAULTS["IncludeIncompleteVaccDoc"] == "Yes")
 
 def include_off_shelter_medical(dbo):
     return cboolean(dbo, "IncludeOffShelterMedical", DEFAULTS["IncludeOffShelterMedical"] == "Yes")

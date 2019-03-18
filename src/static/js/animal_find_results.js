@@ -155,7 +155,7 @@ $(function() {
                 "HeartwormTestResult":  _("Heartworm"),
                 "Declawed":  _("Declawed"),
                 "HiddenAnimalDetails":  _("Hidden"),
-                "AnimalComments":  _("Comments"),
+                "AnimalComments":  _("Description"),
                 "ReasonForEntry":  _("Entry Reason"),
                 "ReasonNO":  _("Reason Not From Owner"),
                 "DateBroughtIn":  _("Brought In"),

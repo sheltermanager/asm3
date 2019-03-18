@@ -64,8 +64,8 @@ ShortShelterCode
     The shortened version of the shelter code 
 Age
     The animal's age in readable form (eg: “5 years and 6 months”) 
-AnimalComments
-    The animal comment box 
+Description / AnimalComments
+    The animal description box 
 HealthProblems
     The health problems field 
 LitterID / AcceptanceNumber
@@ -96,8 +96,6 @@ CoatType
     The animal's coat type 
 AnimalFlags
     A list of the flags assigned to an animal, separated by commas.
-AnimalComments
-    The animal comments box 
 AnimalCreatedBy
     The user who created the animal record (AnimalCreatedByName for full user
     name) 
@@ -179,8 +177,8 @@ HeartwormTestDate
     The date of the test 
 HeartwormTestResult
     The result - positive or negative 
-HiddenAnimalDetails
-    The hidden details box 
+HiddenComments / HiddenAnimalDetails
+    The hidden comments box 
 AnimalLastChangedBy
     The user who last changed the animal record (AnimalLastChangedByName for full user name) 
 AnimalLastChangedDate
@@ -227,6 +225,8 @@ BroughtInByMobilePhone
     (BroughtInByCellPhone for US users)
 BroughtInByEmail
     The email address of the person who brought the animal in
+BroughtInBy Additional Fields
+    Additional fields on the brought in by person can be accessed via BroughtInByFIELDNAME
 OriginalOwnerAddress
     The address of the animal's original owner 
 OriginalOwnerName
@@ -245,6 +245,8 @@ OriginalOwnerMobilePhone
     The original owner's mobile phone number 
 OriginalOwnerEmail
     The original owner's email address 
+OriginalOwner Additional Fields
+    Additional fields on the original owner can be accessed via OriginalOwnerFIELDNAME
 CurrentOwnerName
     The name of the animal's current owner (fosterer or adopter)
 CurrentOwnerAddress 
@@ -263,6 +265,8 @@ CurrentOwnerMobilePhone
     Current owner's cell/mobile phone number
 CurrentOwnerEmail 
     Current owner's email address
+CurrentOwner Additional Fields
+    Additional fields on the current owner can be accessed via CurrentOwnerFIELDNAME
 ReservedOwnerName
     The name of the person with an active reserve on the animal
 ReservedOwnerAddress 
@@ -471,7 +475,9 @@ given DHCPP vaccination.
 The "Due" keyword operates with the vaccination type and allows you to
 select the most recent vaccination of that type that has a blank given given 
 date. Eg: VaccinationRequiredDueDHCPP will return the date the most recent
-due DHCPP vaccination.
+due DHCPP vaccination. Note that the "Due" keyword will not work if you have 
+turned off the option to include incomplete medical items from documents under
+:menuselection:`Settings --> Options --> Documents --> Include incomplete medical records when generating document templates`
 
 Test Keys
 ----------
@@ -858,6 +864,8 @@ OwnerCounty
     (OwnerState for US users) 
 OwnerPostcode 
     (OwnerZipcode for US users) 
+Jurisdiction
+    The person's jurisdiction
 WorkTelephone 
     The person's work telephone number
 MobileTelephone 

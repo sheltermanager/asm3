@@ -44,7 +44,7 @@ VALID_FIELDS = [
     "PERSONZIPCODE", "PERSONJURISDICTION", "PERSONFOSTERER", "PERSONDONOR",
     "PERSONFLAGS", "PERSONCOMMENTS", "PERSONHOMEPHONE", "PERSONWORKPHONE",
     "PERSONCELLPHONE", "PERSONEMAIL", "PERSONGDPRCONTACT", "PERSONCLASS",
-    "PERSONMEMBER", "PERSONMEMBERSHIPEXPIRY",
+    "PERSONMEMBER", "PERSONMEMBERSHIPNUMBER", "PERSONMEMBERSHIPEXPIRY",
     "PERSONMATCHACTIVE", "PERSONMATCHADDED", "PERSONMATCHEXPIRES",
     "PERSONMATCHSEX", "PERSONMATCHSIZE", "PERSONMATCHCOLOR", "PERSONMATCHAGEFROM", "PERSONMATCHAGETO",
     "PERSONMATCHTYPE", "PERSONMATCHSPECIES", "PERSONMATCHBREED1", "PERSONMATCHBREED2",
@@ -517,6 +517,7 @@ def csvimport(dbo, csvdata, encoding = "utf8", createmissinglookups = False, cle
             if gkb(row, "PERSONDONOR"): flags += ",donor"
             p["flags"] = flags
             p["comments"] = gks(row, "PERSONCOMMENTS")
+            p["membershipnumber"] = gks(row, "PERSONMEMBERSHIPNUMBER")
             p["membershipexpires"] = gkd(dbo, row, "PERSONMEMBERSHIPEXPIRY")
             p["matchactive"] = gkbi(row, "PERSONMATCHACTIVE")
             if p["matchactive"] == "1":

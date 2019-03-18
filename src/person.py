@@ -688,7 +688,7 @@ def insert_person_from_form(dbo, post, username, geocode=True):
     update_flags(dbo, username, pid, post["flags"].split(","))
 
     # Save any additional field values given
-    additional.save_values_for_link(dbo, post, pid, "person")
+    additional.save_values_for_link(dbo, post, pid, "person", True)
 
     # If the option is on, record any GDPR contact options in the log
     if configuration.show_gdpr_contact_optin(dbo) and configuration.gdpr_contact_change_log(dbo) and post["gdprcontactoptin"] != "":
@@ -1155,11 +1155,12 @@ def send_email_from_form(dbo, username, post):
     emailfrom = post["from"]
     emailto = post["to"]
     emailcc = post["cc"]
+    emailbcc = post["bcc"]
     subject = post["subject"]
     addtolog = post.boolean("addtolog")
     logtype = post.integer("logtype")
     body = post["body"]
-    rv = utils.send_email(dbo, emailfrom, emailto, emailcc, subject, body, "html")
+    rv = utils.send_email(dbo, emailfrom, emailto, emailcc, emailbcc, subject, body, "html")
     if addtolog == 1:
         log.add_log(dbo, username, log.PERSON, post.integer("personid"), logtype, utils.html_email_to_plain(body))
     return rv

@@ -848,6 +848,7 @@
             $(".asm-numberbox").number();
             $(".asm-intbox").intnumber();
             $(".asm-ipbox").ipnumber();
+            $(".asm-latlong").latlong();
             $(".asm-timebox").time();
             $(".asm-currencybox").currency();
             $(".asm-selectbox, .asm-doubleselectbox, .asm-halfselectbox, .selectbox").select();

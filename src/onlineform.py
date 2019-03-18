@@ -715,7 +715,7 @@ def insert_onlineformincoming_from_form(dbo, post, remoteip):
             "INNER JOIN onlineformincoming oi ON oi.FormName = o.Name " \
             "WHERE oi.CollationID = ?", [collationid])
         body += "\n" + get_onlineformincoming_html_print(dbo, [collationid,])
-        utils.send_email(dbo, configuration.email(dbo), submitteremail, "", i18n._("Submission received: {0}", l).format(formname), body, "html")
+        utils.send_email(dbo, configuration.email(dbo), submitteremail, "", "", i18n._("Submission received: {0}", l).format(formname), body, "html", exceptions=False)
 
     # Did the original form specify some email addresses to send 
     # incoming submissions to?
@@ -726,16 +726,16 @@ def insert_onlineformincoming_from_form(dbo, post, remoteip):
         # If a submitter email is set, use that to reply to instead
         replyto = submitteremail 
         if replyto == "": replyto = configuration.email(dbo)
-        utils.send_email(dbo, replyto, email, "", "%s - %s" % (formname, ", ".join(preview)), 
-            get_onlineformincoming_html_print(dbo, [collationid,]), "html")
+        utils.send_email(dbo, replyto, email, "", "", "%s - %s" % (formname, ", ".join(preview)), 
+            get_onlineformincoming_html_print(dbo, [collationid,]), "html", exceptions=False)
 
     # Did the form submission have a value in an "emailsubmissionto" field?
     if emailsubmissionto is not None and emailsubmissionto.strip() != "":
         # If a submitter email is set, use that to reply to instead
         replyto = submitteremail 
         if replyto == "": replyto = configuration.email(dbo)
-        utils.send_email(dbo, replyto, emailsubmissionto, "", "%s - %s" % (formname, ", ".join(preview)), 
-            get_onlineformincoming_html_print(dbo, [collationid,]), "html")
+        utils.send_email(dbo, replyto, emailsubmissionto, "", "", "%s - %s" % (formname, ", ".join(preview)), 
+            get_onlineformincoming_html_print(dbo, [collationid,]), "html", exceptions=False)
 
     return collationid
 

@@ -17,33 +17,35 @@
   
 
   
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
 
-  
-  
     
 
   
-
   <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="prev" title="Appendix: Online Form import fields" href="onlineformfields.html" /> 
-
-  
-  <script src="_static/js/modernizr.min.js"></script>
-
 </head>
 
 <body class="wy-body-for-nav">
 
    
   <div class="wy-grid-for-nav">
-
     
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
-        <div class="wy-side-nav-search">
+        <div class="wy-side-nav-search" >
           
 
           
@@ -261,8 +263,8 @@ animal’s record within ASM.</dd>
 <dd>The shortened version of the shelter code</dd>
 <dt>Age</dt>
 <dd>The animal’s age in readable form (eg: “5 years and 6 months”)</dd>
-<dt>AnimalComments</dt>
-<dd>The animal comment box</dd>
+<dt>Description / AnimalComments</dt>
+<dd>The animal description box</dd>
 <dt>HealthProblems</dt>
 <dd>The health problems field</dd>
 <dt>LitterID / AcceptanceNumber</dt>
@@ -293,8 +295,6 @@ animal is no longer alive</dd>
 <dd>The animal’s coat type</dd>
 <dt>AnimalFlags</dt>
 <dd>A list of the flags assigned to an animal, separated by commas.</dd>
-<dt>AnimalComments</dt>
-<dd>The animal comments box</dd>
 <dt>AnimalCreatedBy</dt>
 <dd>The user who created the animal record (AnimalCreatedByName for full user
 name)</dd>
@@ -376,8 +376,8 @@ animal’s date of birth.</dd>
 <dd>The date of the test</dd>
 <dt>HeartwormTestResult</dt>
 <dd>The result - positive or negative</dd>
-<dt>HiddenAnimalDetails</dt>
-<dd>The hidden details box</dd>
+<dt>HiddenComments / HiddenAnimalDetails</dt>
+<dd>The hidden comments box</dd>
 <dt>AnimalLastChangedBy</dt>
 <dd>The user who last changed the animal record (AnimalLastChangedByName for full user name)</dd>
 <dt>AnimalLastChangedDate</dt>
@@ -424,6 +424,8 @@ animal’s date of birth.</dd>
 <dd>(BroughtInByCellPhone for US users)</dd>
 <dt>BroughtInByEmail</dt>
 <dd>The email address of the person who brought the animal in</dd>
+<dt>BroughtInBy Additional Fields</dt>
+<dd>Additional fields on the brought in by person can be accessed via BroughtInByFIELDNAME</dd>
 <dt>OriginalOwnerAddress</dt>
 <dd>The address of the animal’s original owner</dd>
 <dt>OriginalOwnerName</dt>
@@ -442,6 +444,8 @@ animal’s date of birth.</dd>
 <dd>The original owner’s mobile phone number</dd>
 <dt>OriginalOwnerEmail</dt>
 <dd>The original owner’s email address</dd>
+<dt>OriginalOwner Additional Fields</dt>
+<dd>Additional fields on the original owner can be accessed via OriginalOwnerFIELDNAME</dd>
 <dt>CurrentOwnerName</dt>
 <dd>The name of the animal’s current owner (fosterer or adopter)</dd>
 <dt>CurrentOwnerAddress</dt>
@@ -460,6 +464,8 @@ animal’s date of birth.</dd>
 <dd>Current owner’s cell/mobile phone number</dd>
 <dt>CurrentOwnerEmail</dt>
 <dd>Current owner’s email address</dd>
+<dt>CurrentOwner Additional Fields</dt>
+<dd>Additional fields on the current owner can be accessed via CurrentOwnerFIELDNAME</dd>
 <dt>ReservedOwnerName</dt>
 <dd>The name of the person with an active reserve on the animal</dd>
 <dt>ReservedOwnerAddress</dt>
@@ -664,7 +670,9 @@ given DHCPP vaccination.</p>
 <p>The “Due” keyword operates with the vaccination type and allows you to
 select the most recent vaccination of that type that has a blank given given
 date. Eg: VaccinationRequiredDueDHCPP will return the date the most recent
-due DHCPP vaccination.</p>
+due DHCPP vaccination. Note that the “Due” keyword will not work if you have
+turned off the option to include incomplete medical items from documents under
+<span class="menuselection">Settings ‣ Options ‣ Documents ‣ Include incomplete medical records when generating document templates</span></p>
 </div>
 <div class="section" id="test-keys">
 <h2>Test Keys<a class="headerlink" href="#test-keys" title="Permalink to this headline">¶</a></h2>
@@ -1044,6 +1052,8 @@ and licence tabs as well as lost animal, found animal and waiting list.</p>
 <dd>(OwnerState for US users)</dd>
 <dt>OwnerPostcode</dt>
 <dd>(OwnerZipcode for US users)</dd>
+<dt>Jurisdiction</dt>
+<dd>The person’s jurisdiction</dd>
 <dt>WorkTelephone</dt>
 <dd>The person’s work telephone number</dd>
 <dt>MobileTelephone</dt>
@@ -1440,7 +1450,7 @@ appointments.</p>
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
       
-        <a href="onlineformfields.html" class="btn btn-neutral" title="Appendix: Online Form import fields" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="onlineformfields.html" class="btn btn-neutral float-left" title="Appendix: Online Form import fields" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
@@ -1466,26 +1476,16 @@ appointments.</p>
   
 
 
-  
-
-    
-    
-      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-        <script type="text/javascript" src="_static/jquery.js"></script>
-        <script type="text/javascript" src="_static/underscore.js"></script>
-        <script type="text/javascript" src="_static/doctools.js"></script>
-        <script type="text/javascript" src="_static/language_data.js"></script>
-    
-
-  
-
-  <script type="text/javascript" src="_static/js/theme.js"></script>
-
   <script type="text/javascript">
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script> 
+  </script>
+
+  
+  
+    
+   
 
 </body>
 </html>
