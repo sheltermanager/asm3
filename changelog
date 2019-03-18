@@ -1,6 +1,7 @@
 42
 ================
 
+18/03/19 Batch should update young offshelter animal ages for desex reports
 18/03/19 Support for PERSONMEMBERSHIPNUMBER CSV import column
 17/03/19 Allow editing of lat/long directly near minimaps #578
 17/03/19 Additional fields with default values disallow blanks #577
