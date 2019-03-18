@@ -23,8 +23,8 @@ num_days_to_keep=5
 #----------------------------------------------------------
 # ASM configured cron activies
 #----------------------------------------------------------
-/usr/bin/python $ASM_PATH/src/cron.py daily &> /var/log/cron/asm
-/usr/bin/python $ASM_PATH/src/cron.py publish_3pty &>> /var/log/cron/asm
+ASM3_CONF=$ASM_DATA/asm3.conf python $ASM_PATH/src/cron.py daily &> /var/log/cron/asm
+ASM3_CONF=$ASM_DATA/asm3.conf python $ASM_PATH/src/cron.py publish_3pty &>> /var/log/cron/asm
 
 #----------------------------------------------------------
 # Backups
@@ -59,7 +59,7 @@ done
 # CKAN data upload
 #----------------------------------------------------------
 if [ ! -d $ASM_DATA/ckan/csv ]
-	then mkdir $ASM_DATA/ckan/csv
+	then mkdir -p $ASM_DATA/ckan/csv
 fi
 
 for file in `ls $ASM_DATA/ckan/sql`; do
