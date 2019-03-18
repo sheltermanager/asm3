@@ -169,6 +169,8 @@ PERSONGDPRCONTACTOPTIN
     The GDPR contact optin values, separated by a comma. These values are: didnotask, declined, email, post, sms, phone
 PERSONMEMBER
     Y or 1 in this column to indicate the person should have the membership flag set.
+PERSONMEMBERSHIPNUMBER
+    The person's membership number
 PERSONMEMBERSHIPEXPIRY
     A date for when this person's membership expires
 PERSONFOSTERER
