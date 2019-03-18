@@ -219,7 +219,7 @@ def save_values_for_link(dbo, post, linkid, linktype = "animal", setdefaults=Fal
         key = "a.%s.%s" % (f.mandatory, f.id)
         key2 = "additional%s" % f.fieldname
         if key not in post and key2 not in post:
-            if setdefaults and f.DEFAULTVALUE != "": insert_additional(dbo, f.LINKTYPE, linkid, f.ID, f.DEFAULTVALUE)
+            if setdefaults and f.DEFAULTVALUE and f.DEFAULTVALUE != "": insert_additional(dbo, f.LINKTYPE, linkid, f.ID, f.DEFAULTVALUE)
             continue
         if key not in post: key = key2
         val = post[key]
