@@ -2690,14 +2690,10 @@ def clone_from_template(dbo, username, animalid, dob, animaltypeid, speciesid):
         else:
             adjdate = add_days(newbroughtin, dayoffset)
         return dbo.sql_date(adjdate)
-    # Additional Fields (don't include mandatory ones as they are already set by new animal screen)
-    for af in dbo.query("SELECT a.* FROM additional a INNER JOIN additionalfield af ON af.ID = a.AdditionalFieldID WHERE af.Mandatory <> 1 AND a.LinkID = %d AND a.LinkType IN (%s)" % (cloneanimalid, additional.ANIMAL_IN)):
-        dbo.insert("additional", {
-            "LinkType":             af.linktype,
-            "LinkID":               animalid,
-            "AdditionalFieldID":    af.additionalfieldid,
-            "Value":                af.value
-        }, generateID=False, writeAudit=False, setRecordVersion=False)
+    # Additional Fields (don't include newrecord ones or ones with default values as they are already set by the new animal screen)
+    for af in dbo.query("SELECT a.* FROM additional a INNER JOIN additionalfield af ON af.ID = a.AdditionalFieldID " \
+        "WHERE af.NewRecord <> 1 AND af.DefaultValue = '' AND a.LinkID = %d AND a.LinkType IN (%s)" % (cloneanimalid, additional.ANIMAL_IN)):
+        additional.insert_additional(dbo, af.linktype, animalid, af.additionalfieldid, af.value)
     # Vaccinations
     for v in dbo.query("SELECT * FROM animalvaccination WHERE AnimalID = ?", [cloneanimalid]):
         newdate = adjust_date(v.daterequired)

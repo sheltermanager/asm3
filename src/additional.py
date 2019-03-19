@@ -180,18 +180,12 @@ def delete_field(dbo, username, fid):
     Deletes the selected additional field, along with all data held by it.
     """
     dbo.delete("additionalfield", fid, username)
-    dbo.execute("DELETE FROM additional WHERE AdditionalFieldID = ?", [fid] )
-
-def delete_values_for_link(dbo, linkid, linktype = "animal"):
-    """
-    Deletes all additional field values stored for a link.
-    """
-    inclause = clause_for_linktype(linktype)
-    dbo.execute("DELETE FROM additional WHERE LinkType IN (%s) AND LinkID = %d" % (inclause, linkid))
+    dbo.delete("additional", "AdditionalFieldID=%d" % fid)
 
 def insert_additional(dbo, linktype, linkid, additionalfieldid, value):
     """ Inserts an additional field record """
     try:
+        dbo.delete("additional", "LinkType=%s AND LinkID=%s AND AdditionalFieldID=%s" % (linktype, linkid, additionalfieldid))
         dbo.insert("additional", {
             "LinkType":             linktype,
             "LinkID":               linkid,
@@ -203,8 +197,7 @@ def insert_additional(dbo, linktype, linkid, additionalfieldid, value):
 
 def save_values_for_link(dbo, post, linkid, linktype = "animal", setdefaults=False):
     """
-    Saves incoming additional field values from a form, clearing any
-    existing values first.
+    Saves incoming additional field values from a form.
     linkid: The link to the parent record
     linktype: The class of parent record
     setdefaults: If True, will set default values for any keys not supplied
@@ -212,16 +205,20 @@ def save_values_for_link(dbo, post, linkid, linktype = "animal", setdefaults=Fal
     Keys of either a.MANDATORY.ID can be used (ASM internal forms)
         or keys of the form additionalFIELDNAME (ASM online forms)
     """
-    delete_values_for_link(dbo, linkid, linktype)
-    af = get_field_definitions(dbo, linktype)
     l = dbo.locale
-    for f in af:
+
+    for f in get_field_definitions(dbo, linktype):
+
         key = "a.%s.%s" % (f.mandatory, f.id)
         key2 = "additional%s" % f.fieldname
+
         if key not in post and key2 not in post:
-            if setdefaults and f.DEFAULTVALUE and f.DEFAULTVALUE != "": insert_additional(dbo, f.LINKTYPE, linkid, f.ID, f.DEFAULTVALUE)
+            if setdefaults and f.DEFAULTVALUE and f.DEFAULTVALUE != "": 
+                insert_additional(dbo, f.LINKTYPE, linkid, f.ID, f.DEFAULTVALUE)
             continue
-        if key not in post: key = key2
+
+        elif key not in post: key = key2
+
         val = post[key]
         if f.fieldtype == YESNO:
             val = str(post.boolean(key))

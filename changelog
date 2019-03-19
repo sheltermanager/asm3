@@ -1,6 +1,7 @@
 42
 ================
 
+19/03/19 Fix conflicts with template animals and additional fields
 18/03/19 Do not show user table filters due to Chrome autofill bug
 18/03/19 Batch should update young offshelter animal ages for desex reports
 18/03/19 Support for PERSONMEMBERSHIPNUMBER CSV import column
