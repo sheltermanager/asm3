@@ -152,6 +152,16 @@ for d in asm.csv_to_list(LOG_FILENAME, remove_non_ascii=True):
         a.DateBroughtIn = ed
         a.CreatedBy = d["User_Id"]
 
+    elif d["Weight"] != "0":
+        a.Weight = float(d["Weight"])
+        l = asm.Log()
+        logs.append(l)
+        l.LogTypeID = 1 # Weight
+        l.LinkID = a.ID
+        l.LinkType = 0
+        l.Date = ed
+        l.Comments = d["Weight"]
+
     elif d["Action"] == "Veterinary" and d["Log_Description"] == "Desexed":
         a.Neutered = 1
         a.NeuteredDate = ed
