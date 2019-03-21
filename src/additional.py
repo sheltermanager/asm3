@@ -197,7 +197,9 @@ def insert_additional(dbo, linktype, linkid, additionalfieldid, value):
 
 def save_values_for_link(dbo, post, linkid, linktype = "animal", setdefaults=False):
     """
-    Saves incoming additional field values from a form.
+    Saves incoming additional field values from a record.
+    Clears existing additional field values before saving (this is because forms
+        don't send blank values)
     linkid: The link to the parent record
     linktype: The class of parent record
     setdefaults: If True, will set default values for any keys not supplied
@@ -206,6 +208,8 @@ def save_values_for_link(dbo, post, linkid, linktype = "animal", setdefaults=Fal
         or keys of the form additionalFIELDNAME (ASM online forms)
     """
     l = dbo.locale
+
+    dbo.delete("additional", "LinkType IN (%s) AND LinkID=%s" % (clause_for_linktype(linktype), linkid))
 
     for f in get_field_definitions(dbo, linktype):
 
