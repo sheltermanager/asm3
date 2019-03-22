@@ -113,7 +113,7 @@ def set_excluded(dbo, username, mid, exclude = 1):
     """
     Marks the media with id excluded from publishing.
     """
-    dbo.update("media", mid, { "ExcludeFromPublish": exclude }, username, setLastChanged=False)
+    dbo.update("media", mid, { "ExcludeFromPublish": exclude, "Date": dbo.now() }, username, setLastChanged=False)
 
 def get_name_for_id(dbo, mid):
     return dbo.query_string("SELECT MediaName FROM media WHERE ID = ?", [mid])
