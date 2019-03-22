@@ -24,7 +24,7 @@ VERSIONS = (
     34002, 34003, 34004, 34005, 34006, 34007, 34008, 34009, 34010, 34011, 34012,
     34013, 34014, 34015, 34016, 34017, 34018, 34019, 34020, 34021, 34022, 34100,
     34101, 34102, 34103, 34104, 34105, 34106, 34107, 34108, 34109, 34110, 34111,
-    34112, 34200
+    34112, 34200, 34201
 )
 
 LATEST_VERSION = VERSIONS[-1]
@@ -663,12 +663,14 @@ def sql_structure(dbo):
         fstr("PickupTown", True),
         fstr("PickupCounty", True),
         fstr("PickupPostcode", True),
+        fstr("PickupCountry", True),
         fdate("PickupDateTime"),
         fint("DropoffOwnerID"),
         fstr("DropoffAddress", True),
         fstr("DropoffTown", True),
         fstr("DropoffCounty", True),
         fstr("DropoffPostcode", True),
+        fstr("DropoffCountry", True),
         fdate("DropoffDateTime"),
         fint("Status"),
         fint("Miles", True),
@@ -1139,6 +1141,7 @@ def sql_structure(dbo):
         fstr("OwnerTown", True),
         fstr("OwnerCounty", True),
         fstr("OwnerPostcode", True),
+        fstr("OwnerCountry", True),
         fstr("LatLong", True),
         fstr("HomeTelephone", True),
         fstr("WorkTelephone", True),
@@ -1204,6 +1207,7 @@ def sql_structure(dbo):
     sql += index("owner_JurisdictionID", "owner", "JurisdictionID")
     sql += index("owner_OwnerInitials", "owner", "OwnerInitials")
     sql += index("owner_OwnerPostcode", "owner", "OwnerPostcode")
+    sql += index("owner_OwnerCountry", "owner", "OwnerCountry")
     sql += index("owner_OwnerSurname", "owner", "OwnerSurname")
     sql += index("owner_OwnerTitle", "owner", "OwnerTitle")
     sql += index("owner_OwnerTown", "owner", "OwnerTown")
@@ -5000,4 +5004,14 @@ def update_34200(dbo):
     # Add audittrail.ParentLinks
     add_column(dbo, "audittrail", "ParentLinks", dbo.type_shorttext)
     add_index(dbo, "audittrail_ParentLinks", "audittrail", "ParentLinks")
+
+def update_34201(dbo):
+    # Add owner.OwnerCountry, animaltransport.PickupCountry, animaltransport.DropoffCountry
+    add_column(dbo, "owner", "OwnerCountry", dbo.type_shorttext)
+    add_index(dbo, "owner_OwnerCountry", "owner", "OwnerCountry")
+    add_column(dbo, "animaltransport", "PickupCountry", dbo.type_shorttext)
+    add_column(dbo, "animaltransport", "DropoffCountry", dbo.type_shorttext)
+    dbo.execute_dbupdate("UPDATE owner SET OwnerCountry=''")
+    dbo.execute_dbupdate("UPDATE animaltransport SET PickupCountry='', DropoffCountry=''")
+
 

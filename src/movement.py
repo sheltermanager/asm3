@@ -73,11 +73,13 @@ def get_transport_query(dbo):
         "d.OwnerTown AS DriverOwnerTown, p.OwnerTown AS PickupOwnerTown, dr.OwnerTown AS DropoffOwnerTown, " \
         "d.OwnerCounty AS DriverOwnerCounty, p.OwnerCounty AS PickupOwnerCounty, dr.OwnerCounty AS DropoffOwnerCounty, " \
         "d.OwnerPostcode AS DriverOwnerPostcode, p.OwnerPostcode AS PickupOwnerPostcode, dr.OwnerPostcode AS DropoffOwnerPostcode, " \
+        "d.OwnerCountry AS DriverOwnerCountry, p.OwnerCountry AS PickupOwnerCountry, dr.OwnerCountry AS DropoffOwnerCountry, " \
         "d.EmailAddress AS DriverEmailAddress, p.EmailAddress AS PickupEmailAddress, dr.EmailAddress AS DropoffEmailAddress, " \
         "d.HomeTelephone AS DriverHomeTelephone, p.HomeTelephone AS PickupHomeTelephone, dr.HomeTelephone AS DropoffHomeTelephone, " \
         "d.WorkTelephone AS DriverWorkTelephone, p.WorkTelephone AS PickupWorkTelephone, dr.WorkTelephone AS DropoffWorkTelephone, " \
         "d.MobileTelephone AS DriverMobileTelephone, p.MobileTelephone AS PickupMobileTelephone, dr.MobileTelephone AS DropoffMobileTelephone, " \
-        "t.PickupAddress, t.PickupTown, t.PickupCounty, t.PickupPostcode, t.DropoffAddress, t.DropoffTown, t.DropoffCounty, t.DropoffPostcode, " \
+        "t.PickupAddress, t.PickupTown, t.PickupCounty, t.PickupPostcode, t.PickupCountry, " \
+        "t.DropoffAddress, t.DropoffTown, t.DropoffCounty, t.DropoffPostcode, t.DropoffCountry, " \
         "ma.MediaName AS WebsiteMediaName, ma.Date AS WebsiteMediaDate, " \
         "a.AnimalName, a.ShelterCode, a.ShortCode, s.SpeciesName, a.BreedName, x.Sex " \
         "FROM animaltransport t " \
@@ -790,12 +792,14 @@ def insert_transport_from_form(dbo, username, post):
         "PickupTown":           post["pickuptown"],
         "PickupCounty":         post["pickupcounty"],
         "PickupPostcode":       post["pickuppostcode"],
+        "PickupCountry":        post["pickupcountry"],
         "PickupDateTime":       post.datetime("pickupdate", "pickuptime"),
         "DropoffOwnerID":       post.integer("dropoff"),
         "DropoffAddress":       post["dropoffaddress"],
         "DropoffTown":          post["dropofftown"],
         "DropoffCounty":        post["dropoffcounty"],
         "DropoffPostcode":      post["dropoffpostcode"],
+        "DropoffCountry":       post["dropoffcountry"],
         "DropoffDateTime":      post.datetime("dropoffdate", "dropofftime"),
         "Status":               post.integer("status"),
         "Miles":                post.integer("miles"),

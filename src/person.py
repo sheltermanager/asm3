@@ -626,6 +626,7 @@ def insert_person_from_form(dbo, post, username, geocode=True):
         "OwnerTown":        post["town"],
         "OwnerCounty":      post["county"],
         "OwnerPostcode":    post["postcode"],
+        "OwnerCountry":     post["country"],
         "LatLong":          post["latlong"],
         "HomeTelephone":    post["hometelephone"],
         "WorkTelephone":    post["worktelephone"],
@@ -697,7 +698,7 @@ def insert_person_from_form(dbo, post, username, geocode=True):
             "%s" % (newvalue))
 
     # Look up a geocode for the person's address
-    if geocode: update_geocode(dbo, pid, "", post["address"], post["town"], post["county"], post["postcode"])
+    if geocode: update_geocode(dbo, pid, "", post["address"], post["town"], post["county"], post["postcode"], post["country"])
 
     return pid
 
@@ -737,6 +738,7 @@ def update_person_from_form(dbo, post, username, geocode=True):
         "OwnerTown":        post["town"],
         "OwnerCounty":      post["county"],
         "OwnerPostcode":    post["postcode"],
+        "OwnerCountry":     post["country"],
         "LatLong":          post["latlong"],
         "HomeTelephone":    post["hometelephone"],
         "WorkTelephone":    post["worktelephone"],
@@ -778,7 +780,7 @@ def update_person_from_form(dbo, post, username, geocode=True):
     additional.save_values_for_link(dbo, post, pid, "person")
 
     # Check/update the geocode for the person's address
-    if geocode: update_geocode(dbo, pid, post["latlong"], post["address"], post["town"], post["county"], post["postcode"])
+    if geocode: update_geocode(dbo, pid, post["latlong"], post["address"], post["town"], post["county"], post["postcode"], post["country"])
 
 def update_flags(dbo, username, personid, flags):
     """
@@ -848,6 +850,7 @@ def merge_person_details(dbo, username, personid, d, force=False):
     merge("town", "OWNERTOWN")
     merge("county", "OWNERCOUNTY")
     merge("postcode", "OWNERPOSTCODE")
+    merge("country", "OWNERCOUNTRY")
     merge("hometelephone", "HOMETELEPHONE")
     merge("worktelephone", "WORKTELEPHONE")
     merge("mobiletelephone", "MOBILETELEPHONE")
@@ -916,6 +919,7 @@ def merge_person(dbo, username, personid, mergepersonid):
     mp["town"] = mp.OWNERTOWN
     mp["county"] = mp.OWNERCOUNTY
     mp["postcode"] = mp.OWNERPOSTCODE
+    mp["country"] = mp.OWNERCOUNTRY
     mp["hometelephone"] = mp.HOMETELEPHONE
     mp["worktelephone"] = mp.WORKTELEPHONE
     mp["mobiletelephone"] = mp.MOBILETELEPHONE
@@ -1013,7 +1017,7 @@ def update_pass_homecheck(dbo, user, personid, comments):
         com += "\n" + comments
         dbo.update("owner", personid, { "Comments": "%s\n%s" % (com, comments) }, user)
 
-def update_geocode(dbo, personid, latlon="", address="", town="", county="", postcode=""):
+def update_geocode(dbo, personid, latlon="", address="", town="", county="", postcode="", country=""):
     """
     Looks up the geocode for this person with the address info given.
     If latlon is already set to a value, checks the address hash to see if it
@@ -1021,18 +1025,19 @@ def update_geocode(dbo, personid, latlon="", address="", town="", county="", pos
     """
     # If an address hasn't been specified, look it up from the personid given
     if address == "":
-        row = dbo.first_row(dbo.query("SELECT OwnerAddress, OwnerTown, OwnerCounty, OwnerPostcode FROM owner WHERE ID=?", [personid]))
+        row = dbo.first_row(dbo.query("SELECT OwnerAddress, OwnerTown, OwnerCounty, OwnerPostcode, OwnerCountry FROM owner WHERE ID=?", [personid]))
         address = row.OWNERADDRESS
         town = row.OWNERTOWN
         county = row.OWNERCOUNTY
         postcode = row.OWNERPOSTCODE
+        country = row.OWNERCOUNTRY
     # If a latlon has been passed and it contains a hash of the address elements,
     # then the address hasn't changed since the last geocode was done - do nothing
     if latlon is not None and latlon != "":
-        if latlon.find(geo.address_hash(address, town, county, postcode)) != -1:
+        if latlon.find(geo.address_hash(address, town, county, postcode, country)) != -1:
             return latlon
     # Do the geocode
-    latlon = geo.get_lat_long(dbo, address, town, county, postcode)
+    latlon = geo.get_lat_long(dbo, address, town, county, postcode, country)
     update_latlong(dbo, personid, latlon)
     return latlon
 

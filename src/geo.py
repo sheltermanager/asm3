@@ -148,14 +148,14 @@ class Smcom(GeoProvider):
             return "0,0,%s" % h
 
 
-def address_hash(address, town, county, postcode):
+def address_hash(address, town, county, postcode, country):
     """ Produces a hash of the address to include with latlon values """
-    addrhash = "%s%s%s%s" % (address, town, county, postcode)
+    addrhash = "%s%s%s%s%s" % (address, town, county, postcode, country)
     addrhash = addrhash.replace(" ", "").replace(",", "").replace("\n", "")
     if len(addrhash) > 220: addrhash = addrhash[0:220]
     return addrhash
 
-def get_lat_long(dbo, address, town, county, postcode, country = None):
+def get_lat_long(dbo, address, town, county, postcode, country = ""):
     """
     Looks up a latitude and longitude from an address using the set geocoding provider 
     and returns them as lat,long,hash
@@ -174,7 +174,7 @@ def get_lat_long(dbo, address, town, county, postcode, country = None):
         # Use the country passed. If no country was passed, check
         # if one has been set with the shelter details in settings,
         # otherwise use the country from the user's locale.
-        if country is None: 
+        if country is None or country == "": 
             country = configuration.organisation_country(dbo)
             if country == "": country = i18n.get_country(dbo.locale)
 

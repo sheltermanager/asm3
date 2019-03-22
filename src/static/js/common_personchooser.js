@@ -90,6 +90,7 @@
                         '<th>' + _("City") + '</th>',
                         '<th>' + _("State") + '</th>',
                         '<th>' + _("Zipcode") + '</th>',
+                        (!config.bool("HideCountry") ? '<th>' + _("Country") + '</th>' : ""),
                     '</tr>',
                 '</thead>',
                 '<tbody></tbody>',
@@ -141,6 +142,10 @@
                 '<tr>',
                 '<td><label>' + _("Zipcode") + '</label></td>',
                 '<td><input class="asm-textbox chooser" data="postcode" type="textbox" /></td>',
+                '</tr>',
+                '<tr class="personchooser-countryrow">',
+                '<td><label>' + _("Country") + '</label></td>',
+                '<td><input class="asm-textbox chooser personchooser-country" data="country" type="textbox" /></td>',
                 '</tr>',
                 '<tr>',
                 '<td><label>' + _("Home Phone") + '</label></td>',
@@ -221,6 +226,11 @@
                 dialogadd.find(".personchooser-jurisdictionrow").hide();
             }
 
+            // Hide country if option set
+            if (config.bool("HideCountry")) {
+                dialogadd.find(".personchooser-countryrow").hide();
+            }
+
             // Hide GDPR if option not on
             if (!config.bool("ShowGDPRContactOptIn")) {
                 dialogadd.find(".personchooser-gdprrow").hide();
@@ -298,6 +308,8 @@
                     if (config.bool("MultiSiteEnabled")) {
                         dialogadd.find(".personchooser-site").select("value", asm.siteid);
                     }
+                    // Default the country
+                    dialogadd.find(".personchooser-country").val(config.str("OrganisationCountry"));
                     // If we have a filter, set the appropriate person flags to match
                     if (self.options.filter) {
                         dialogadd.find(".personchooser-flags option[value='" + self.options.filter + "']").prop("selected", true);
@@ -435,7 +447,9 @@
                         rec.OWNERNAME + " - " + rec.OWNERCODE + "</a></span>";
                     if (self.options.mode == "full") {
                         disp += "<br/>" + rec.OWNERADDRESS + "<br/>" + rec.OWNERTOWN + "<br/>" + rec.OWNERCOUNTY + 
-                            "<br/>" + rec.OWNERPOSTCODE + "<br/>" + rec.HOMETELEPHONE + "<br/>" + rec.WORKTELEPHONE + 
+                            "<br/>" + rec.OWNERPOSTCODE + 
+                            (!config.bool("HideCountry") ? "<br/>" + rec.OWNERCOUNTRY : "") +
+                            "<br/>" + rec.HOMETELEPHONE + "<br/>" + rec.WORKTELEPHONE + 
                             "<br/>" + rec.MOBILETELEPHONE + "<br/>" + rec.EMAILADDRESS;
                     }
                     display.html(disp);
@@ -480,6 +494,7 @@
                         h += "<td>" + p.OWNERTOWN + "</td>";
                         h += "<td>" + p.OWNERCOUNTY + "</td>";
                         h += "<td>" + p.OWNERPOSTCODE + "</td>";
+                        if (!config.bool("HideCountry")) { h += "<td>" + p.OWNERCOUNTRY + "</td>"; }
                         h += "</tr>";
                     });
                     dialog.find("table > tbody").html(h);
@@ -495,7 +510,9 @@
                             "\">" + rec.OWNERNAME + " - " + rec.OWNERCODE + "</a></span>";
                         if (self.options.mode == "full") {
                             disp += "<br/>" + rec.OWNERADDRESS + "<br/>" + rec.OWNERTOWN + "<br/>" + rec.OWNERCOUNTY + "<br/>" + 
-                                rec.OWNERPOSTCODE + "<br/>" + rec.HOMETELEPHONE + "<br/>" + rec.WORKTELEPHONE + "<br/>" + 
+                                rec.OWNERPOSTCODE + 
+                                (!config.bool("HideCountry") ? "<br/>" + rec.OWNERCOUNTRY : "") +
+                                "<br/>" + rec.HOMETELEPHONE + "<br/>" + rec.WORKTELEPHONE + "<br/>" + 
                                 rec.MOBILETELEPHONE + "<br/>" + rec.EMAILADDRESS;
                         }
                         display.html(disp);
@@ -541,7 +558,9 @@
                     self.selected = rec;
                     var disp = "<span class=\"justlink\"><a class=\"asm-embed-name\" href=\"person?id=" + rec.ID + "\">" + rec.OWNERNAME + "</a></span>";
                     if (self.options.mode == "full") {
-                        disp += "<br/>" + rec.OWNERADDRESS + "<br/>" + rec.OWNERTOWN + "<br/>" + rec.OWNERCOUNTY + "<br/>" + rec.OWNERPOSTCODE + "<br/>" + rec.HOMETELEPHONE + "<br/>" + rec.WORKTELEPHONE + "<br/>" + rec.MOBILETELEPHONE + "<br/>" + rec.EMAILADDRESS;
+                        disp += "<br/>" + rec.OWNERADDRESS + "<br/>" + rec.OWNERTOWN + "<br/>" + rec.OWNERCOUNTY + "<br/>" + rec.OWNERPOSTCODE + 
+                            (!config.bool("HideCountry") ? "<br/>" + rec.OWNERCOUNTRY : "") + 
+                            "<br/>" + rec.HOMETELEPHONE + "<br/>" + rec.WORKTELEPHONE + "<br/>" + rec.MOBILETELEPHONE + "<br/>" + rec.EMAILADDRESS;
                     }
                     display.html(disp);
                     node.find(".personchooser-banned").val(rec.ISBANNED);
@@ -619,7 +638,9 @@
                     else {
                         var disp = "<span class=\"justlink\"><a class=\"asm-embed-name\" href=\"#\">" + rec.OWNERNAME + "</a></span>";
                         if (self.options.mode == "full") {
-                            disp += "<br/>" + rec.OWNERADDRESS + "<br/>" + rec.OWNERTOWN + "<br/>" + rec.OWNERCOUNTY + "<br/>" + rec.OWNERPOSTCODE + "<br/>" + rec.HOMETELEPHONE + "<br/>" + rec.WORKTELEPHONE + "<br/>" + rec.MOBILETELEPHONE + "<br/>" + rec.EMAILADDRESS;
+                            disp += "<br/>" + rec.OWNERADDRESS + "<br/>" + rec.OWNERTOWN + "<br/>" + rec.OWNERCOUNTY + "<br/>" + rec.OWNERPOSTCODE + 
+                                (!config.bool("HideCountry") ? "<br/>" + rec.OWNERCOUNTRY : "") + 
+                                "<br/>" + rec.HOMETELEPHONE + "<br/>" + rec.WORKTELEPHONE + "<br/>" + rec.MOBILETELEPHONE + "<br/>" + rec.EMAILADDRESS;
                         }
                         dialogsimilar.find(".similar-person").html(disp);
                         // When the user clicks the name of the similar person,

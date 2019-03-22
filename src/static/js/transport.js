@@ -56,6 +56,8 @@ $(function() {
                     { json_field: "PICKUPTOWN", post_field: "pickuptown", label: _("City"), type: "text" },
                     { json_field: "PICKUPCOUNTY", post_field: "pickupcounty", label: _("State"), type: "text" },
                     { json_field: "PICKUPPOSTCODE", post_field: "pickuppostcode", label: _("Zipcode"), type: "text" },
+                    { json_field: "PICKUPCOUNTRY", post_field: "pickupcountry", label: _("Country"), type: "text", 
+                        hideif: function() { return config.bool("HideCountry"); }},
                     { json_field: "PICKUPDATETIME", post_field: "pickupdate", label: _("on"), type: "date", validation: "notblank", defaultval: new Date() },
                     { json_field: "PICKUPDATETIME", post_field: "pickuptime", label: _("at"), type: "time", validation: "notblank", defaultval: format.time(new Date()) },
                     { json_field: "DROPOFFOWNERID", post_field: "dropoff", label: _("Dropoff"), personmode: "brief", type: "person" },
@@ -63,7 +65,8 @@ $(function() {
                     { json_field: "DROPOFFTOWN", post_field: "dropofftown", label: _("City"), type: "text" },
                     { json_field: "DROPOFFCOUNTY", post_field: "dropoffcounty", label: _("State"), type: "text" },
                     { json_field: "DROPOFFPOSTCODE", post_field: "dropoffpostcode", label: _("Zipcode"), type: "text" },
-
+                    { json_field: "DROPOFFCOUNTRY", post_field: "dropoffcountry", label: _("Country"), type: "text", 
+                        hideif: function() { return config.bool("HideCountry"); }},
                     { json_field: "DROPOFFDATETIME", post_field: "dropoffdate", label: _("on"), type: "date", validation: "notblank", defaultval: new Date() },
                     { json_field: "DROPOFFDATETIME", post_field: "dropofftime", label: _("at"), type: "time", validation: "notblank", defaultval: format.time(new Date()) }
                 ]
@@ -123,7 +126,8 @@ $(function() {
                     { field: "DRIVER", display: _("Driver"), formatter: function(row) {
                             if (row.DRIVEROWNERID) {
                                 return html.person_link(row.DRIVEROWNERID, row.DRIVEROWNERNAME) + '<br />' +
-                                    row.DRIVEROWNERADDRESS + "<br/>" + row.DRIVEROWNERTOWN + "<br />" + row.DRIVEROWNERCOUNTY + " " + row.DRIVEROWNERPOSTCODE;
+                                    row.DRIVEROWNERADDRESS + "<br/>" + row.DRIVEROWNERTOWN + "<br />" + row.DRIVEROWNERCOUNTY + " " + row.DRIVEROWNERPOSTCODE +
+                                    (!config.bool("HideCountry") ? "<br/>" + row.DRIVEROWNERCOUNTRY : "");
                             }
                             return "";
                         }
@@ -131,9 +135,11 @@ $(function() {
                     { field: "PICKUP", display: _("Pickup"), formatter: function(row) {
                             if (row.PICKUPOWNERID && row.PICKUPOWNERID != "0") {
                                 return html.person_link(row.PICKUPOWNERID, row.PICKUPOWNERNAME) + '<br />' +
-                                    row.PICKUPADDRESS + "<br/>" + row.PICKUPTOWN + "<br />" + row.PICKUPCOUNTY + " " + row.PICKUPPOSTCODE;
+                                    row.PICKUPADDRESS + "<br/>" + row.PICKUPTOWN + "<br />" + row.PICKUPCOUNTY + " " + row.PICKUPPOSTCODE + 
+                                    (!config.bool("HideCountry") ? "<br/>" + row.PICKUPCOUNTRY : "");
                             }
-                            return row.PICKUPADDRESS + "<br/>" + row.PICKUPTOWN + "<br/>" + row.PICKUPCOUNTY + "<br/>" + row.PICKUPPOSTCODE;
+                            return row.PICKUPADDRESS + "<br/>" + row.PICKUPTOWN + "<br/>" + row.PICKUPCOUNTY + "<br/>" + row.PICKUPPOSTCODE + 
+                                (!config.bool("HideCountry") ? "<br/>" + row.PICKUPCOUNTRY : "");
                         }
                     },
                     { field: "PICKUPDATETIME", display: _("at"), initialsort: true, initialsortdirection: "desc",
@@ -144,9 +150,11 @@ $(function() {
                     { field: "DROPOFF", display: _("Dropoff"), formatter: function(row) {
                             if (row.DROPOFFOWNERID && row.DROPOFFOWNERID != "0") {
                                 return html.person_link(row.DROPOFFOWNERID, row.DROPOFFOWNERNAME) + '<br />' +
-                                    row.DROPOFFADDRESS + "<br/>" + row.DROPOFFTOWN + "<br/>" + row.DROPOFFCOUNTY + "<br/>" + row.DROPOFFPOSTCODE;
+                                    row.DROPOFFADDRESS + "<br/>" + row.DROPOFFTOWN + "<br/>" + row.DROPOFFCOUNTY + "<br/>" + row.DROPOFFPOSTCODE + 
+                                    (!config.bool("HideCountry") ? "<br/>" + row.DROPOFFCOUNTRY : "");
                             }
-                            return row.DROPOFFADDRESS + "<br/>" + row.DROPOFFTOWN + "<br/>" + row.DROPOFFCOUNTY + "<br/>" + row.DROPOFFPOSTCODE;
+                            return row.DROPOFFADDRESS + "<br/>" + row.DROPOFFTOWN + "<br/>" + row.DROPOFFCOUNTY + "<br/>" + row.DROPOFFPOSTCODE + 
+                                (!config.bool("HideCountry") ? "<br/>" + row.DROPOFFCOUNTRY : "");
                         }
                     },
                     { field: "DROPOFFDATETIME", display: _("at"), 
@@ -302,6 +310,7 @@ $(function() {
                 row.DRIVEROWNERTOWN = $("#driver").personchooser("get_selected").OWNERTOWN; 
                 row.DRIVEROWNERCOUNTY = $("#driver").personchooser("get_selected").OWNERCOUNTY; 
                 row.DRIVEROWNERPOSTCODE = $("#driver").personchooser("get_selected").OWNERPOSTCODE; 
+                row.DRIVEROWNERCOUNTRY = $("#driver").personchooser("get_selected").OWNERCOUNTRY; 
             }
             if (row.PICKUPOWNERID && row.PICKUPOWNERID != "0") { 
                 row.PICKUPOWNERNAME = $("#pickup").personchooser("get_selected").OWNERNAME; 
@@ -309,6 +318,7 @@ $(function() {
                 row.PICKUPOWNERTOWN = $("#pickup").personchooser("get_selected").OWNERTOWN; 
                 row.PICKUPOWNERCOUNTY = $("#pickup").personchooser("get_selected").OWNERCOUNTY; 
                 row.PICKUPOWNERPOSTCODE = $("#pickup").personchooser("get_selected").OWNERPOSTCODE; 
+                row.PICKUPOWNERCOUNTRY = $("#pickup").personchooser("get_selected").OWNERCOUNTRY; 
             }
             if (row.DROPOFFOWNERID && row.DROPOFFOWNERID != "0") { 
                 row.DROPOFFOWNERNAME = $("#dropoff").personchooser("get_selected").OWNERNAME; 
@@ -316,6 +326,7 @@ $(function() {
                 row.DROPOFFOWNERTOWN = $("#dropoff").personchooser("get_selected").OWNERTOWN; 
                 row.DROPOFFOWNERCOUNTY = $("#dropoff").personchooser("get_selected").OWNERCOUNTY; 
                 row.DROPOFFOWNERPOSTCODE = $("#dropoff").personchooser("get_selected").OWNERPOSTCODE; 
+                row.DROPOFFOWNERCOUNTRY = $("#dropoff").personchooser("get_selected").OWNERCOUNTRY; 
             }
         }, 
 
@@ -361,12 +372,14 @@ $(function() {
                 $("#pickuptown").val(rec.OWNERTOWN);
                 $("#pickupcounty").val(rec.OWNERCOUNTY);
                 $("#pickuppostcode").val(rec.OWNERPOSTCODE);
+                $("#pickupcountry").val(rec.OWNERCOUNTRY);
             });
             $("#dropoff").personchooser().bind("personchooserchange", function(event, rec) { 
                 $("#dropoffaddress").val(rec.OWNERADDRESS.replace("\n", ", "));
                 $("#dropofftown").val(rec.OWNERTOWN);
                 $("#dropoffcounty").val(rec.OWNERCOUNTY);
                 $("#dropoffpostcode").val(rec.OWNERPOSTCODE);
+                $("#dropoffcountry").val(rec.OWNERCOUNTRY);
             });
 
             // Add click handlers to templates

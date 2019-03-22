@@ -74,9 +74,9 @@ FORM_FIELDS = [
     "description", "reason", "size", "species", "breed", "agegroup", "color", "colour", 
     "arealost", "areafound", "areapostcode", "areazipcode",
     "animalname", "reserveanimalname",
-    "callnotes", "dispatchaddress", "dispatchcity", "dispatchstate", "dispatchzipcode",
-    "transporttype", "pickupaddress", "pickuptown", "pickupcity", "pickupcounty", "pickupstate", "pickuppostcode", "pickupzipcode", "pickupdate", "pickuptime",
-    "dropoffaddress", "dropofftown", "dropoffcity", "dropoffcounty", "dropoffstate", "dropoffpostcode", "dropoffzipcode", "dropoffdate", "dropofftime"
+    "callnotes", "dispatchaddress", "dispatchcity", "dispatchstate", "dispatchzipcode", "transporttype", 
+    "pickupaddress", "pickuptown", "pickupcity", "pickupcounty", "pickupstate", "pickuppostcode", "pickupzipcode", "pickupcountry", "pickupdate", "pickuptime",
+    "dropoffaddress", "dropofftown", "dropoffcity", "dropoffcounty", "dropoffstate", "dropoffpostcode", "dropoffzipcode", "dropoffcountry", "dropoffdate", "dropofftime"
 ]
 
 class FormHTMLParser(HTMLParser):
@@ -1037,6 +1037,7 @@ def create_transport(dbo, username, collationid):
         if f.FIELDNAME == "pickupstate": d["pickupcounty"] = f.VALUE
         if f.FIELDNAME == "pickuppostcode": d["pickuppostcode"] = f.VALUE
         if f.FIELDNAME == "pickupzipcode": d["pickuppostcode"] = f.VALUE
+        if f.FIELDNAME == "pickupcountry": d["pickupcountry"] = f.VALUE
         if f.FIELDNAME == "pickupdate": d["pickupdate"] = f.VALUE
         if f.FIELDNAME == "pickuptime": d["pickuptime"] = f.VALUE
         if f.FIELDNAME == "dropoffaddress": d["dropoffaddress"] = f.VALUE
@@ -1046,6 +1047,7 @@ def create_transport(dbo, username, collationid):
         if f.FIELDNAME == "dropoffstate": d["dropoffcounty"] = f.VALUE
         if f.FIELDNAME == "dropoffpostcode": d["dropoffpostcode"] = f.VALUE
         if f.FIELDNAME == "dropoffzipcode": d["dropoffpostcode"] = f.VALUE
+        if f.FIELDNAME == "dropoffcountry": d["dropoffcountry"] = f.VALUE
         if f.FIELDNAME == "dropoffdate": d["dropoffdate"] = f.VALUE
         if f.FIELDNAME == "dropofftime": d["dropofftime"] = f.VALUE
         if f.FIELDNAME == "transporttype": d["type"] = guess_transporttype(dbo, f.VALUE)

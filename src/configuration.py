@@ -202,6 +202,7 @@ DEFAULTS = {
     "GeocodeWithPostcodeOnly": "No",
     "GenerateDocumentLog": "No",
     "GenerateDocumentLogType": "5",
+    "HideCountry": "Yes",
     "HoldChangeLog": "Yes",
     "HoldChangeLogType": "3",
     "IncidentPermissions": "No",
