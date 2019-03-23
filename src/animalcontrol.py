@@ -324,7 +324,7 @@ def get_traploan_two_dates(dbo, start, end):
     return dbo.query(get_traploan_query(dbo) + \
         "WHERE ReturnDate Is Null AND ReturnDueDate >= ? AND ReturnDueDate <= ?", (start, end))
 
-def update_dispatch_geocode(dbo, incidentid, latlon="", address="", town="", county="", postcode=""):
+def update_dispatch_geocode(dbo, incidentid, latlon="", address="", town="", county="", postcode="", country=""):
     """
     Looks up the geocode for this incident with the address info given.
     If latlon is already set to a value, checks the address hash to see if it
@@ -340,7 +340,7 @@ def update_dispatch_geocode(dbo, incidentid, latlon="", address="", town="", cou
     # If a latlon has been passed and it contains a hash of the address elements,
     # then the address hasn't changed since the last geocode was done - do nothing
     if latlon is not None and latlon != "":
-        if latlon.find(geo.address_hash(address, town, county, postcode)) != -1:
+        if latlon.find(geo.address_hash(address, town, county, postcode, country)) != -1:
             return latlon
     # Do the geocode
     latlon = geo.get_lat_long(dbo, address, town, county, postcode)
