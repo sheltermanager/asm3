@@ -522,7 +522,7 @@ def animal_tags(dbo, a, includeAdditional=True, includeCosts=True, includeDiet=T
             "MEDICALLASTTREATMENTGIVEN": "d:LASTTREATMENTGIVEN",
             "MEDICALCOST":              "c:COST"
         }
-        tags.update(table_tags(dbo, d, medical.get_regimens(dbo, a["ID"], not iic), "TREATMENTNAME", "STATUS", "STATUS"))
+        tags.update(table_tags(dbo, d, medical.get_regimens(dbo, a["ID"], not iic), "TREATMENTNAME", "NEXTTREATMENTDUE", "LASTTREATMENTGIVEN"))
 
     # Diet
     if includeDiet:
@@ -1314,57 +1314,29 @@ def table_tags(dbo, d, rows, typefield = "", recentduefield = "", recentgivenfie
 
         # Due suffixed tags
         if recentduefield != "":
-            # STATUS is an edge case for medical rows only - all the
-            # others have some kind of date
-            if recentduefield == "STATUS":
-                t = r[typefield]
-                # If the type is somehow null, we can't do anything
-                if t is None: continue
-                # Is this the first type with STATUS==0 (active) we've seen?
-                # If so, create the tags with due as a suffix.
-                if t not in recentdue and r[recentduefield] == 0:
-                    recentdue[t] = r
-                    t = t.upper().replace(" ", "").replace("/", "")
-                    for k, v in d.iteritems():
-                        tags[k + "DUE" + t] = table_get_value(l, r, v)
-            else:
-                t = r[typefield]
-                # If the type is somehow null, we can't do anything
-                if t is None: continue
-                # Is this the first type with a due date and blank given date we've seen?
-                # If so, create the tags with due as a suffix
-                if t not in recentdue and r[recentduefield] is not None and r[recentgivenfield] is None:
-                    recentdue[t] = r
-                    t = t.upper().replace(" ", "").replace("/", "")
-                    for k, v in d.iteritems():
-                        tags[k + "DUE" + t] = table_get_value(l, r, v)
+            t = r[typefield]
+            # If the type is somehow null, we can't do anything
+            if t is None: continue
+            # Is this the first type with a due date and blank given date we've seen?
+            # If so, create the tags with due as a suffix
+            if t not in recentdue and r[recentduefield] is not None and r[recentgivenfield] is None:
+                recentdue[t] = r
+                t = t.upper().replace(" ", "").replace("/", "")
+                for k, v in d.iteritems():
+                    tags[k + "DUE" + t] = table_get_value(l, r, v)
 
         # Recent suffixed tags
         if recentgivenfield != "":
-            # STATUS is an edge case for medical rows only - all the
-            # others have some kind of date
-            if recentgivenfield == "STATUS":
-                t = r[typefield]
-                # If the type is somehow null, we can't do anything
-                if t is None: continue
-                # Is this the first type with STATUS==2 (complete) we've seen?
-                # If so, create the tags with recent as a suffix.
-                if t not in recentgiven and r[recentgivenfield] == 2:
-                    recentgiven[t] = r
-                    t = t.upper().replace(" ", "").replace("/", "")
-                    for k, v in d.iteritems():
-                        tags[k + "RECENT" + t] = table_get_value(l, r, v)
-            else:
-                t = r[typefield]
-                # If the type is somehow null, we can't do anything
-                if t is None: continue
-                # Is this the first type with a date we've seen?
-                # If so, create the tags with recent as a suffix
-                if t not in recentgiven and r[recentgivenfield] is not None:
-                    recentgiven[t] = r
-                    t = t.upper().replace(" ", "").replace("/", "")
-                    for k, v in d.iteritems():
-                        tags[k + "RECENT" + t] = table_get_value(l, r, v)
+            t = r[typefield]
+            # If the type is somehow null, we can't do anything
+            if t is None: continue
+            # Is this the first type with a date we've seen?
+            # If so, create the tags with recent as a suffix
+            if t not in recentgiven and r[recentgivenfield] is not None:
+                recentgiven[t] = r
+                t = t.upper().replace(" ", "").replace("/", "")
+                for k, v in d.iteritems():
+                    tags[k + "RECENT" + t] = table_get_value(l, r, v)
     return tags
 
 def substitute_tags_plain(searchin, tags):

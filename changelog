@@ -1,6 +1,7 @@
 42
 ================
 
+24/03/19 Medical wordkeys should be based on NextTreatmentDue/LastTreatmentGiven
 22/03/19 Add OwnerCountry field and country to transport #264
 19/03/19 Fix conflicts with template animals and additional fields
 18/03/19 Do not show user table filters due to Chrome autofill bug
