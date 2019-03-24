@@ -8,8 +8,8 @@ import utils
 # flake8: noqa - we have a lot of locales and this is convenient
 from locales import *
 
-VERSION = "42u [Sun 24 Mar 09:22:07 GMT 2019]"
-BUILD = "03240922"
+VERSION = "42u [Sun 24 Mar 13:18:22 GMT 2019]"
+BUILD = "03241318"
 
 DMY = ( "%d/%m/%Y", "%d/%m/%y" )
 MDY = ( "%m/%d/%Y", "%m/%d/%y" )
@@ -91,6 +91,7 @@ locale_maps = {
     "en_NZ":    ( "English", "New Zealand", DMY, DOLLAR, PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ".", "," ),
     "en_TH":    ( "English", "Thailand", DMY, "&#x0e3f;", PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ".", "," ),
     "en_TW":    ( "English", "Taiwan", DMY, DOLLAR, PLURAL_ENGLISH, CURRENCY_PREFIX, 0, ".", "," ),
+    "en_TW2":   ( "English", "Taiwan $0.00", DMY, DOLLAR, PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ".", "," ),
     "en_VN":    ( "English", "Vietnam", DMY, "&#8363;", PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ".", "," ),
     "en_ZA":    ( "English", "South Africa", YMD, "R", PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ",", " "),
     "bg":       ( "Bulgarian", "Bulgaria", DMY, "&#x043b;&#x0432;", PLURAL_ENGLISH, CURRENCY_SUFFIX, 2, ",", " "),
