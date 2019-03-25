@@ -1031,6 +1031,12 @@ def update_geocode(dbo, personid, latlon="", address="", town="", county="", pos
         county = row.OWNERCOUNTY
         postcode = row.OWNERPOSTCODE
         country = row.OWNERCOUNTRY
+    # If we're allowing manual entry of latlon values and we have a non-empty
+    # value, do nothing so that changes to address don't overwrite it
+    # If someone has deleted the values, a latlon of ,,HASH is returned so
+    # we allow the geocode to be regenerated in that case.
+    if configuration.show_lat_long(dbo) and latlon is not None and latlon != "" and not latlon.startswith(",,"):
+        return latlon
     # If a latlon has been passed and it contains a hash of the address elements,
     # then the address hasn't changed since the last geocode was done - do nothing
     if latlon is not None and latlon != "":

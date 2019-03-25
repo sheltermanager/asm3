@@ -337,6 +337,12 @@ def update_dispatch_geocode(dbo, incidentid, latlon="", address="", town="", cou
         town = row.DISPATCHTOWN
         county = row.DISPATCHCOUNTY
         postcode = row.DISPATCHPOSTCODE
+    # If we're allowing manual entry of latlon values and we have a non-empty
+    # value, do nothing so that changes to address don't overwrite it
+    # If someone has deleted the values, a latlon of ,,HASH is returned so
+    # we allow the geocode to be regenerated in that case.
+    if configuration.show_lat_long(dbo) and latlon is not None and latlon != "" and not latlon.startswith(",,"):
+        return latlon
     # If a latlon has been passed and it contains a hash of the address elements,
     # then the address hasn't changed since the last geocode was done - do nothing
     if latlon is not None and latlon != "":

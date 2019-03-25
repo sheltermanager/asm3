@@ -279,6 +279,7 @@ DEFAULTS = {
     "ShowDeceasedHomePage": "Yes",
     "ShowFullCommentsInTables": "No",
     "ShowAlertsHomePage": "Yes", 
+    "ShowLatLong": "No",
     "ShowTimelineHomePage": "Yes", 
     "ShowStatsHomePage": "thismonth", 
     "ShowFirstTime": "Yes",
@@ -1099,6 +1100,9 @@ def show_cost_paid(dbo):
 
 def show_gdpr_contact_optin(dbo):
     return cboolean(dbo, "ShowGDPRContactOptIn", DEFAULTS["ShowGDPRContactOptIn"] == "Yes")
+
+def show_lat_long(dbo):
+    return cboolean(dbo, "ShowLatLong", DEFAULTS["ShowLatLong"] == "Yes")
 
 def show_stats_home_page(dbo):
     return cstring(dbo, "ShowStatsHomePage", DEFAULTS["ShowStatsHomePage"])
