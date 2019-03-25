@@ -324,16 +324,20 @@ reference).
 Options are available to override the desex flag to send all your animals and mark
 whether you will fly animals between states for adoption.
 
-PetRescue have a "best feature" tagline that they show at the top of listings.
-By default, this value is set to "Looking for love" on all listings. You are
-allowed 25 letters and can override the tagline on a per-animal basis. To do
-this, you need to create an additional field with the name "bestfeature" for
-your animal records and set the tagline value.
+PetRescue have a number of extra fields that you can set by creating additional
+animal fields with certain names in your database. The system responds to the
+field names, you can label them anything you want, they must have one of the
+links to animal records.
 
-Similarly PetRescue have a "needs constant care" attribute that can be used to
-indicate that an adoptable cannot be left by itself. This can be set with an
-additional field called "needsconstantcare" of type "Yes/No" to allow you to
-set it for your animals.
+* bestfeature (Text): PetRescue show a tagline at the top of listings.  By default,
+  this value is set to "Looking for love" on all listings. You are allowed 25
+  letters and can override the tagline on a per-animal basis.
+
+* needsconstantcare (Yes/No): This can be used to indicate that an adoptable
+  cannot be left by itself.
+
+* breederid (Text): Dogs located in QLD with a date of birth after 26th May
+  2017 require a breeder number.
 
 .. note:: PetRescue integration relies on you naming your breeds and species with the same values that they do. If a breed does not match one of the PetRescue breeds, ASM will send it as "Mixed Breed" instead. 
 
