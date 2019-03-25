@@ -154,6 +154,10 @@ class PetRescuePublisher(AbstractPublisher):
                 if "BESTFEATURE" in an and an.BESTFEATURE != "":
                     best_feature = an.BESTFEATURE
 
+                breeder_id = ""
+                if "BREEDERID" in an and an.BREEDERID != "":
+                    breeder_id = an.BREEDERID
+
                 needs_constant_care = False
                 if "NEEDSCONSTANTCARE" in an and an.NEEDSCONSTANTCARE != "" and an.NEEDSCONSTANTCARE != "0":
                     needs_constant_care = True
@@ -204,6 +208,7 @@ class PetRescuePublisher(AbstractPublisher):
                     "adoption_fee":             i18n.format_currency_no_symbol(self.locale, an.FEE),
                     "species_name":             an.SPECIESNAME,
                     "breed_names":              self.get_breed_names(an), # [breed1,breed2] or [breed1]
+                    "breeder_id":               breeder_id, # mandatory for QLD dogs born after 2017-05-26
                     "mix":                      an.CROSSBREED == 1, # true | false
                     "date_of_birth":            i18n.format_date("%Y-%m-%d", an.DATEOFBIRTH), # iso
                     "gender":                   an.SEXNAME.lower(), # male | female
