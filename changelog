@@ -1,6 +1,7 @@
 42
 ================
 
+28/03/19 Add TransportReference field to link related transports together
 25/03/19 Do not update geocode on address changes if manual entry is on
 25/03/19 Add support for breeder_id PetRescue field
 24/03/19 Add en_TW2 for English/Taiwan with 2 decimal place currency

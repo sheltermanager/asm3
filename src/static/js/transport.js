@@ -44,6 +44,7 @@ $(function() {
                     { json_field: "ANIMALID", post_field: "animal", label: _("Animal"), type: "animal" },
                     { json_field: "ANIMALS", post_field: "animals", label: _("Animals"), type: "animalmulti" },
                     { json_field: "DRIVEROWNERID", post_field: "driver", label: _("Driver"), type: "person", personfilter: "driver" },
+                    { json_field: "TRANSPORTREFERENCE", post_field: "reference", label: _("Reference"), type: "text" },
                     { json_field: "TRANSPORTTYPEID", post_field: "type", label: _("Type"), type: "select", options: { rows: controller.transporttypes, displayfield: "TRANSPORTTYPENAME", valuefield: "ID" }},
                     { json_field: "STATUS", post_field: "status", label: _("Status"), type: "select", options: { rows: statuses, displayfield: "NAME", valuefield: "ID" }},
                     { json_field: "MILES", post_field: "miles", label: transport.miles_label(), type: "number", defaultval: 0 },
@@ -102,6 +103,7 @@ $(function() {
                 columns: [
                     { field: "TRANSPORTTYPENAME", display: _("Type") },
                     { field: "STATUS", display: _("Status"), formatter: function(row) { return statusmap[row.STATUS]; }},
+                    { field: "TRANSPORTREFERENCE", display: _("Reference")},
                     { field: "IMAGE", display: "", 
                         formatter: function(row) {
                             if (!row.ANIMALID) { return ""; }

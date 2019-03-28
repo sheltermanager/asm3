@@ -24,7 +24,7 @@ VERSIONS = (
     34002, 34003, 34004, 34005, 34006, 34007, 34008, 34009, 34010, 34011, 34012,
     34013, 34014, 34015, 34016, 34017, 34018, 34019, 34020, 34021, 34022, 34100,
     34101, 34102, 34103, 34104, 34105, 34106, 34107, 34108, 34109, 34110, 34111,
-    34112, 34200, 34201
+    34112, 34200, 34201, 34202
 )
 
 LATEST_VERSION = VERSIONS[-1]
@@ -655,6 +655,7 @@ def sql_structure(dbo):
 
     sql += table("animaltransport", (
         fid(),
+        fstr("TransportReference", True),
         fint("AnimalID"),
         fint("TransportTypeID"),
         fint("DriverOwnerID"),
@@ -677,6 +678,7 @@ def sql_structure(dbo):
         fint("Cost"),
         fdate("CostPaidDate", True),
         flongstr("Comments") ))
+    sql += index("animaltransport_TransportReference", "animaltransport", "TransportReference")
     sql += index("animaltransport_AnimalID", "animaltransport", "AnimalID")
     sql += index("animaltransport_DriverOwnerID", "animaltransport", "DriverOwnerID")
     sql += index("animaltransport_PickupOwnerID", "animaltransport", "PickupOwnerID")
@@ -5014,4 +5016,9 @@ def update_34201(dbo):
     dbo.execute_dbupdate("UPDATE owner SET OwnerCountry=''")
     dbo.execute_dbupdate("UPDATE animaltransport SET PickupCountry='', DropoffCountry=''")
 
+def update_34202(dbo):
+    # Add animaltransport.TransportReference
+    add_column(dbo, "animaltransport", "TransportReference", dbo.type_shorttext)
+    add_index(dbo, "animaltransport_TransportReference", "animaltransport", "TransportReference")
+    dbo.execute_dbupdate("UPDATE animaltransport SET TransportReference=''")
 

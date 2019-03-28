@@ -784,6 +784,7 @@ def insert_transport_from_form(dbo, username, post):
         raise utils.ASMValidationError(i18n._("Transports must have valid pickup and dropoff dates and times.", l))
 
     return dbo.insert("animaltransport", {
+        "TransportReference":   post["reference"],
         "AnimalID":             post.integer("animal"),
         "TransportTypeID":      post.integer("type"),
         "DriverOwnerID":        post.integer("driver"),
@@ -820,6 +821,7 @@ def update_transport_from_form(dbo, username, post):
     transportid = post.integer("transportid")
 
     dbo.update("animaltransport", transportid, {
+        "TransportReference":   post["reference"],
         "AnimalID":             post.integer("animal"),
         "TransportTypeID":      post.integer("type"),
         "DriverOwnerID":        post.integer("driver"),
