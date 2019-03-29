@@ -278,6 +278,10 @@ def getdate_ddmmmyy(s):
     s = remove_time(s)
     return parse_date(s, "%d-%b-%y")
 
+def getdate_jackcess(s):
+    """ Parses dates in the Jackcess format: Thu Apr 23 00:00:00 BST 2015 """
+    return parse_date(s, "%a %b %d %H:%M:%S %Z %Y")
+
 def getdate_iso(s):
     s = remove_time(s)
     return parse_date(s, "%Y-%m-%d")

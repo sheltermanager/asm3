@@ -4,19 +4,20 @@ import asm, os
 
 """
 Import script for ShelterBuddy MDB/SQL Server export with QueryExpress
+
+Use ~/usr/access2csv-master/access2csv (which uses Jackcess)
+
+cd ~/usr/access2csv-master
+./access2csv --with-header --input ~/Downloads/*.accdb --output ~/Downloads/
+
+Make an /images folder in PATH below if you have photos or documents to import.
+
 2nd June, 2012 - 23rd Feb, 2017
 """
 
-PATH = "data/shelterbuddy_ag1328/"
-MDB_FILE = "4Paws.mdb"
-TABLES = "animaltype lookupconsultmedications tbladdress tbladoption tblanimal tblanimalbreeds tblanimalvacc tblanimalvettreatments tbldocument tblmedications tblnotes tblpaymenttypes tblperson tblreceiptentry tblspecies tblsuburblist tbltaghistory users"
+PATH = "data/shelterbuddy_dy1865/"
 
-# Unpack the MDB before we start (needs doing manually if we've got a SQLExpress version)
-if MDB_FILE != "": 
-    os.system("cd %s && for i in %s; do mdb-export %s $i > $i.csv; done" % (PATH, TABLES, MDB_FILE))
-
-# If the shelterbuddy docs_* folders are available, dump all the jpgs
-# in a folder called images in the path and delete any matching doc*_th_*.jpg
+START_ID = 500
 
 def getsex12(s):
     """ 1 = Male, 2 = Female """
@@ -44,8 +45,8 @@ def findowner(recnum = ""):
     return None
 
 def getdate(s):
-    if s.find("/1900") != -1 or s.find("/00") != -1: return None
-    return asm.getdate_mmddyy(s)
+    if s.find(" 1900") != -1: return None
+    return asm.getdate_jackcess(s)
 
 def getsbnotes(animalid):
     global animalnotes
@@ -130,6 +131,7 @@ vacctype = {}
 medtype = {}
 animalnotes = {}
 users = {}
+phonenumbers = {}
 
 owners = []
 ownerdonations = []
@@ -141,45 +143,50 @@ animals = []
 animalmedicals = []
 animalvaccinations = []
 
-asm.setid("animal", 100)
-asm.setid("dbfs", 400)
-asm.setid("media", 100)
-asm.setid("owner", 100)
-asm.setid("ownerdonation", 100)
-asm.setid("adoption", 100)
-asm.setid("animalvaccination", 100)
-asm.setid("animalmedical", 100)
-asm.setid("animalmedicaltreatment", 100)
+asm.setid("animal", START_ID)
+asm.setid("dbfs", START_ID)
+asm.setid("media", START_ID)
+asm.setid("owner", START_ID)
+asm.setid("ownerdonation", START_ID)
+asm.setid("adoption", START_ID)
+asm.setid("animalvaccination", START_ID)
+asm.setid("animalmedical", START_ID)
+asm.setid("animalmedicaltreatment", START_ID)
 
-print "DELETE FROM animal WHERE ID >= 100;"
-print "DELETE FROM animalvaccination WHERE ID >= 100;"
-print "DELETE FROM animalmedical WHERE ID >= 100;"
-print "DELETE FROM animalmedicaltreatment WHERE ID >= 100;"
-print "DELETE FROM dbfs WHERE ID >= 100;"
-print "DELETE FROM media WHERE ID >= 100;"
-print "DELETE FROM owner WHERE ID >= 100;"
-print "DELETE FROM ownerdonation WHERE ID >= 100;"
-print "DELETE FROM adoption WHERE ID >= 100;"
+print "DELETE FROM animal WHERE ID >= %s;" % START_ID
+print "DELETE FROM animalvaccination WHERE ID >= %s;" % START_ID
+print "DELETE FROM animalmedical WHERE ID >= %s;" % START_ID
+print "DELETE FROM animalmedicaltreatment WHERE ID >= %s;" % START_ID
+print "DELETE FROM dbfs WHERE ID >= %s;" % START_ID
+print "DELETE FROM media WHERE ID >= %s;" % START_ID
+print "DELETE FROM owner WHERE ID >= %s;" % START_ID
+print "DELETE FROM ownerdonation WHERE ID >= %s;" % START_ID
+print "DELETE FROM adoption WHERE ID >= %s;" % START_ID
 
 # load lookups into memory
-cnotes = asm.csv_to_list(PATH + "tblnotes.csv")
-cspecies = asm.csv_to_list(PATH + "tblspecies.csv")
-cbreeds = asm.csv_to_list(PATH + "tblanimalbreeds.csv")
-ctypes = asm.csv_to_list(PATH + "animaltype.csv")
-cpaymentmethods = asm.csv_to_list(PATH + "tblpaymenttypes.csv")
+cnotes = asm.csv_to_list(PATH + "tblNotes.csv")
+cspecies = asm.csv_to_list(PATH + "tblSpecies.csv")
+cbreeds = asm.csv_to_list(PATH + "tblAnimalBreeds.csv")
+ctypes = asm.csv_to_list(PATH + "AnimalType.csv")
+cpaymentmethods = asm.csv_to_list(PATH + "tblPaymentTypes.csv")
 
-# tbldocument.csv
-for row in asm.csv_to_list(PATH + "tbldocument.csv"):
+# tblDocument.csv
+for row in asm.csv_to_list(PATH + "tblDocument.csv"):
     if row["objectypeid"] == "0" and row["extension"] == "jpg" and row["isDefault"] == "-1":
         documents[row["objectid"]] = PATH + "images/doc_%s.jpg" % row["docID"]
 
-# tblnotes
+# tblNotes
 for r in cnotes:
     if r["fieldText"] != "":
         animalnotes[r["animalID"]] = r["fieldText"]
 
-# tblsuburblist.csv
-for row in asm.csv_to_list(PATH + "tblsuburblist.csv"):
+# tblPhoneNumber
+for r in asm.csv_to_list(PATH + "tblPhoneNumber.csv"):
+    if r["enteredValue"] != "": 
+        phonenumbers[r["Id"]] = r["phoneTypeId"] + " " + r["enteredValue"]
+
+# tblSuburblist.csv
+for row in asm.csv_to_list(PATH + "tblSuburbList.csv"):
     s = SBSuburb()
     s.id = row["ID"].strip()
     s.suburb = row["Suburb"]
@@ -187,28 +194,28 @@ for row in asm.csv_to_list(PATH + "tblsuburblist.csv"):
     s.state = row["state"]
     suburbs[s.id] = s
 
-# tblstreets.csv
-for row in asm.csv_to_list(PATH + "tblstreets.csv"):
+# tblStreets.csv
+for row in asm.csv_to_list(PATH + "tblStreets.csv"):
     streets[row["type_id"]] = row["name"]
     
-# tblanimalvacc.csv
+# tblAnimalVacc.csv
 print "DELETE FROM vaccinationtype WHERE ID > 200;"
-for row in asm.csv_to_list(PATH + "tblanimalvacc.csv"):
+for row in asm.csv_to_list(PATH + "tblAnimalVacc.csv"):
     vc = row["vaccCode"].strip()
-    vt = row["description"]
+    vt = row["description"] + " " + row["dep_type"]
     vacctype[vc] = vt
     print "INSERT INTO vaccinationtype VALUES (%s, '%s');" % (vc, vt.replace("'", "`"))
 
 # lookupconsultmedications.csv
-for row in asm.csv_to_list(PATH + "lookupconsultmedications.csv"):
+for row in asm.csv_to_list(PATH + "lookupConsultMedications.csv"):
     medtype[row["ID"]] = row["description"]
 
 # users.csv
-for row in asm.csv_to_list(PATH + "users.csv"):
+for row in asm.csv_to_list(PATH + "Users.csv"):
     users[row["UserID"]] = row["Username"]
 
-# tbladdress.csv
-for row in asm.csv_to_list(PATH + "tbladdress.csv"):
+# tblAddress.csv
+for row in asm.csv_to_list(PATH + "tblAddress.csv"):
     s = SBAddress()
     s.id = row["id"].strip()
     s.streetNum = row["streetNum"]
@@ -224,8 +231,8 @@ for row in asm.csv_to_list(PATH + "tbladdress.csv"):
         s.state = sb.state
     addresses[s.id] = s
 
-# tblanimal.csv
-for row in asm.csv_to_list(PATH + "tblanimal.csv"):
+# tblAnimal.csv
+for row in asm.csv_to_list(PATH + "tblAnimal.csv"):
     a = asm.Animal()
     animals.append(a)
     ppa[row["AnimalID"]] = a
@@ -249,6 +256,8 @@ for row in asm.csv_to_list(PATH + "tblanimal.csv"):
         breed2col = getsbbreednamefromspeciesid(row["secondarySpeciesID"])
     a.AnimalTypeID = asm.type_id_for_name(typecol)
     a.SpeciesID = asm.species_id_for_name(typecol)
+    if typecol == "Puppy": a.SpeciesID = 1
+    if typecol == "Kitten": a.SpeciesID = 2
     a.BreedID = asm.breed_id_for_name(breedcol)
     a.Breed2ID = asm.breed_id_for_name(breed2col)
     if row["DateIN"].strip() != "": 
@@ -281,7 +290,7 @@ for row in asm.csv_to_list(PATH + "tblanimal.csv"):
     a.BaseColourID = asm.colour_id_for_name(row["Colour"])
     a.ShelterLocation = 1
     a.generateCode(asm.type_name_for_id(a.AnimalTypeID))
-    a.ReasonForEntry = row["dep_sReason"]
+    if "dep_sReason" in row: a.ReasonForEntry = row["dep_sReason"]
     if row["sOther"] != "":
         a.ReasonForEntry = row["sOther"]
     a.EntryReasonID = 11
@@ -308,8 +317,8 @@ for row in asm.csv_to_list(PATH + "tblanimal.csv"):
         if imagedata is not None:
             asm.animal_image(a.ID, imagedata)
 
-# tblperson.csv
-for row in asm.csv_to_list(PATH + "tblperson.csv"):
+# tblPerson.csv
+for row in asm.csv_to_list(PATH + "tblPerson.csv"):
     o = asm.Owner()
     owners.append(o)
     ppo[row["recnum"]] = o
@@ -317,9 +326,9 @@ for row in asm.csv_to_list(PATH + "tblperson.csv"):
     o.OwnerForeNames = row["FirstName"]
     o.OwnerSurname = row["LastName"]
     o.OwnerName = o.OwnerForeNames + " " + o.OwnerSurname
-    o.HomeTelephone = row["dep_HomePhone"]
-    o.WorkTelephone = row["dep_WorkPhone"]
-    o.MobileTelephone = row["dep_MobilePhone"]
+    if "dep_HomePhone" in row: o.HomeTelephone = row["dep_HomePhone"]
+    if "dep_WorkPhone" in row: o.WorkTelephone = row["dep_WorkPhone"]
+    if "dep_MobilePhone" in row: o.MobileTelephone = row["dep_MobilePhone"]
     if addresses.has_key(row["physicalAddress"].strip()):
         a = addresses[row["physicalAddress"].strip()]
         o.OwnerAddress = a.address()
@@ -327,8 +336,20 @@ for row in asm.csv_to_list(PATH + "tblperson.csv"):
         o.OwnerCounty = a.state
         o.OwnerPostcode = a.postcode
 
-# tbladoption.csv
-for row in asm.csv_to_list(PATH + "tbladoption.csv"):
+# tblPersonPhoneNumber.csv
+for row in asm.csv_to_list(PATH + "tblPersonPhoneNumber.csv"):
+    if row["PersonId"] in ppo and row["PhoneNumberId"] in phonenumbers:
+        o = ppo[row["PersonId"]]
+        ptype, num = phonenumbers[row["PhoneNumberId"]].split(" ", 1)
+        if ptype == "1":
+            o.HomeTelephone = num
+        elif ptype == "2":
+            o.WorkTelephone = num
+        elif ptype == "3":
+            o.MobileTelephone = num
+
+# tblAdoption.csv
+for row in asm.csv_to_list(PATH + "tblAdoption.csv"):
     # Find the animal and owner for this movement
     a = findanimal(row["animalid"])
     o = findowner(row["recnum"])
@@ -343,8 +364,8 @@ for row in asm.csv_to_list(PATH + "tbladoption.csv"):
         a.ActiveMovementType = 1
         a.ActiveMovementID = m.ID
 
-# tblanimalvettreatments.csv
-for row in asm.csv_to_list(PATH + "tblanimalvettreatments.csv"):
+# tblAnimalVetTreatments.csv
+for row in asm.csv_to_list(PATH + "tblAnimalVetTreatments.csv"):
     av = asm.AnimalVaccination()
     av.DateRequired = getdate(row["dueDate"])
     if av.DateRequired is None:
@@ -356,8 +377,9 @@ for row in asm.csv_to_list(PATH + "tblanimalvettreatments.csv"):
     av.VaccinationID = int(row["vacc"].strip())
     animalvaccinations.append(av)
 
-# tblmedications.csv
-for row in asm.csv_to_list(PATH + "tblmedications.csv"):
+# tblMedications.csv
+"""
+for row in asm.csv_to_list(PATH + "tblMedications.csv"):
     a = findanimal(row["animalID"])
     if a is None: continue
     startdate = getdate(row["datefrom"])
@@ -366,9 +388,10 @@ for row in asm.csv_to_list(PATH + "tblmedications.csv"):
     comments = row["notes"]
     if startdate is not None:
         animalmedicals.append(asm.animal_regimen_single(a.ID, startdate, treatmentname, dosage, comments))
+"""
 
-# tblreceiptentry.csv
-for row in asm.csv_to_list(PATH + "tblreceiptentry.csv"):
+# tblReceiptEntry.csv
+for row in asm.csv_to_list(PATH + "tblReceiptEntry.csv"):
     od = asm.OwnerDonation()
     od.DonationTypeID = 1
     pm = getsbpaymentmethod(row["dep_paymentMethod"])
