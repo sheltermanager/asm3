@@ -87,7 +87,7 @@ smcom-stable-dumpsessions: version clean minify
 	rsync --exclude '*.pyc' --delete -r src/* root@$(DEPLOY_HOST):/usr/local/lib/asm_stable.new
 	ssh root@$(DEPLOY_HOST) "/root/scripts/sheltermanager_sync_asm.py syncstable dumpsessions"
 
-smcom-stable-tgz:
+smcom-stable-tgz: version clean minify
 	@echo "[smcom stable tgz] ======================"
 	rsync --exclude '*.pyc' --delete -r src/* root@$(DEPLOY_HOST):/usr/local/lib/asm_stable.new
 	ssh root@$(DEPLOY_HOST) "/root/scripts/sheltermanager_sync_asm.py syncstabletgz"
