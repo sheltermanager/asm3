@@ -91,12 +91,12 @@ class PostedData(object):
         else:
             return None
 
-    def integer(self, field):
+    def integer(self, field, default=0):
         """ Returns an integer key from a datafield """
         if field in self.data:
             return cint(self.data[field])
         else:
-            return 0
+            return default
 
     def integer_list(self, field):
         """
@@ -114,31 +114,31 @@ class PostedData(object):
         else:
             return []
 
-    def floating(self, field):
+    def floating(self, field, default=0.0):
         """ Returns a float key from a datafield """
         if field in self.data:
             return cfloat(self.data[field])
         else:
-            return float(0)
+            return default
 
-    def string(self, field, strip = True):
+    def string(self, field, strip=True, default=""):
         """ Returns a string key from a datafield """
         if field in self.data:
             s = encode_html(self.data[field])
             if strip: s = s.strip()
             return s
         else:
-            return ""
+            return default
 
-    def filename(self):
+    def filename(self, default=""):
         if "filechooser" in self.data:
             return encode_html(self.data.filechooser.filename)
-        return ""
+        return default
 
-    def filedata(self):
+    def filedata(self, default=""):
         if "filechooser" in self.data:
             return self.data.filechooser.value
-        return ""
+        return default
 
     def __contains__(self, key):
         return key in self.data
