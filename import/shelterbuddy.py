@@ -329,6 +329,8 @@ for row in asm.csv_to_list(PATH + "tblPerson.csv"):
     if "dep_HomePhone" in row: o.HomeTelephone = row["dep_HomePhone"]
     if "dep_WorkPhone" in row: o.WorkTelephone = row["dep_WorkPhone"]
     if "dep_MobilePhone" in row: o.MobileTelephone = row["dep_MobilePhone"]
+    if "origin" in row and row["origin"].find("Foster") != -1: o.IsFosterer = 1
+    if "origin" in row and row["origin"].find("Volunteer") != -1: o.IsVolunteer = 1
     if addresses.has_key(row["physicalAddress"].strip()):
         a = addresses[row["physicalAddress"].strip()]
         o.OwnerAddress = a.address()
@@ -347,6 +349,25 @@ for row in asm.csv_to_list(PATH + "tblPersonPhoneNumber.csv"):
             o.WorkTelephone = num
         elif ptype == "3":
             o.MobileTelephone = num
+
+# tblFosterInstructions.csv
+for row in asm.csv_to_list(PATH + "tblFosterInstructions.csv"):
+    # Find the animal and owner for this movement
+    a = findanimal(row["animalID"])
+    o = findowner(row["recnum"])
+    if a != None and o != None:
+        o.IsFosterer = 1
+        m = asm.Movement()
+        movements.append(m)
+        m.OwnerID = o.ID
+        m.AnimalID = a.ID
+        m.MovementDate = getdate(row["dateIn"])
+        m.ReturnDate = getdate(row["dateDue"])
+        m.Comments = row["careInstructions"]
+        m.MovementType = 2
+        a.Archived = 0
+        a.ActiveMovementType = 2
+        a.ActiveMovementID = m.ID
 
 # tblAdoption.csv
 for row in asm.csv_to_list(PATH + "tblAdoption.csv"):
