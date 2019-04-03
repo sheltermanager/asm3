@@ -392,6 +392,8 @@ for row in asm.csv_to_list(PATH + "tblAnimalVetTreatments.csv"):
     if av.DateRequired is None:
         av.DateRequired = getdate(row["addDateTime"])
     av.DateOfVaccination = getdate(row["dateGiven"])
+    if av.DateOfVaccination is None: 
+        av.DateOfVaccination = av.DateRequired
     a = findanimal(row["animalid"])
     if a is None: continue
     av.AnimalID = a.ID
