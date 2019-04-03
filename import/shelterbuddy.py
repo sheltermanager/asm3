@@ -287,7 +287,8 @@ for row in asm.csv_to_list(PATH + "tblAnimal.csv"):
     if a.IdentichipNumber != "": a.Identichipped = 1
     a.Sex = getsex12(row["Sex"])
     a.Weight = asm.cfloat(row["weight"])
-    a.BaseColourID = asm.colour_id_for_name(row["Colour"])
+    if "size" in row: a.Size = asm.size_id_for_name(row["size"])
+    a.BaseColourID = asm.colour_id_for_name(row["Colour"], firstWordOnly=True)
     a.ShelterLocation = 1
     a.generateCode(asm.type_name_for_id(a.AnimalTypeID))
     if "dep_sReason" in row: a.ReasonForEntry = row["dep_sReason"]
