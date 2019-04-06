@@ -948,6 +948,7 @@
                     if (v.halfsize) { d += " asm-halftextbox"; }
                     d += "\" ";
                     d += "data-json=\"" + v.json_field + "\" data-post=\"" + v.post_field + "\" ";
+                    d += "autocomplete=\"new-password\" ";
                     if (v.readonly) { d += " data-noedit=\"true\" "; }
                     if (v.validation) { d += "data-validation=\"" + v.validation + "\" "; }
                     if (v.tooltip) { d += "title=\"" + html.title(v.tooltip) + "\""; }
@@ -1084,6 +1085,7 @@
                     if (v.halfsize) { d += " asm-halftextbox"; }
                     d += "\" ";
                     d += "data-json=\"" + v.json_field + "\" data-post=\"" + v.post_field + "\" ";
+                    d += "autocomplete=\"new-password\" ";
                     if (v.readonly) { d += " data-noedit=\"true\" "; }
                     if (v.validation) { d += "data-validation=\"" + v.validation + "\" "; }
                     if (v.tooltip) { d += "title=\"" + html.title(v.tooltip) + "\""; }
@@ -1096,6 +1098,7 @@
                     if (v.halfsize) { d += " asm-halftextbox"; }
                     d += "\" ";
                     d += "data-json=\"" + v.json_field + "\" data-post=\"" + v.post_field + "\" ";
+                    d += "autocomplete=\"new-password\" ";
                     if (v.readonly) { d += " data-noedit=\"true\" "; }
                     if (v.validation) { d += "data-validation=\"" + v.validation + "\" "; }
                     if (v.tooltip) { d += "title=\"" + html.title(v.tooltip) + "\""; }
@@ -1108,6 +1111,7 @@
                     if (v.halfsize) { d += " asm-halftextbox"; }
                     d += "\" ";
                     d += "data-json=\"" + v.json_field + "\" data-post=\"" + v.post_field + "\" ";
+                    d += "autocomplete=\"new-password\" ";
                     if (v.readonly) { d += " data-noedit=\"true\" "; }
                     if (v.validation) { d += "data-validation=\"" + v.validation + "\" "; }
                     if (v.tooltip) { d += "title=\"" + html.title(v.tooltip) + "\""; }
