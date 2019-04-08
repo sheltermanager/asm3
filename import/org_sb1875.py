@@ -40,13 +40,14 @@ asm.setid("owner", START_ID)
 asm.setid("adoption", START_ID)
 
 print "\\set ON_ERROR_STOP\nBEGIN;"
-print "DELETE FROM animal WHERE ID >= %s AND CreatedBy = 'conversion';" % START_ID
-print "DELETE FROM animalmedical WHERE ID >= %s AND CreatedBy = 'conversion';" % START_ID
-print "DELETE FROM animaltest WHERE ID >= %s AND CreatedBy = 'conversion';" % START_ID
-print "DELETE FROM animalvaccination WHERE ID >= %s AND CreatedBy = 'conversion';" % START_ID
-print "DELETE FROM log WHERE ID >= %s AND CreatedBy = 'conversion';" % START_ID
-print "DELETE FROM owner WHERE ID >= %s AND CreatedBy = 'conversion';" % START_ID
-print "DELETE FROM adoption WHERE ID >= %s AND CreatedBy = 'conversion';" % START_ID
+print "DELETE FROM animal WHERE ID >= %s;" % START_ID
+print "DELETE FROM animalmedical WHERE ID >= %s;" % START_ID
+print "DELETE FROM animalmedicaltreatment WHERE ID >= %s;" % START_ID
+print "DELETE FROM animaltest WHERE ID >= %s;" % START_ID
+print "DELETE FROM animalvaccination WHERE ID >= %s;" % START_ID
+print "DELETE FROM log WHERE ID >= %s;" % START_ID
+print "DELETE FROM owner WHERE ID >= %s;" % START_ID
+print "DELETE FROM adoption WHERE ID >= %s;" % START_ID
 
 # Deal with people first
 for d in asm.csv_to_list(PERSON_FILENAME, remove_non_ascii=True):
