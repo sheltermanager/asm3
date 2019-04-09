@@ -1,0 +1,41 @@
+Homechecks by Date
+###
+Auditing
+###
+Any
+###
+All people who were homechecked between two dates.
+###
+en
+###
+SELECT OwnerName, OwnerAddress, OwnerTown, OwnerCounty, OwnerPostcode, HomeTelephone, MobileTelephone, EmailAddress, DateLastHomeChecked
+FROM owner
+WHERE IDCheck = 1 AND DateLastHomeChecked >= '$ASK DATE Homechecked between$' AND DateLastHomeChecked <= '$ASK DATE and$' 
+ORDER BY DateLastHomeChecked, OwnerName
+###
+$$HEADER
+<table border="1">
+<tr>
+<th>Date</th>
+<th>Person</th>
+</tr>
+HEADER$$
+
+$$BODY
+<tr>
+<td>$DATELASTHOMECHECKED</td>
+<td><b>$OWNERNAME</b><br />
+$OWNERADDRESS<br />
+$OWNERTOWN<br />
+$OWNERCOUNTY<br />
+$OWNERPOSTCODE<br />
+$EMAILADDRESS<br />
+H: $HOMETELEPHONE 
+C: $MOBILETELEPHONE</td>
+</tr>
+BODY$$
+
+$$FOOTER
+</table>
+<h2>Total homechecks: {COUNT.OWNERNAME}</h2>
+FOOTER$$
