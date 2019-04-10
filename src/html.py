@@ -601,6 +601,7 @@ def menu_structure(l, publisherlist, reports, mailmerges):
             ( users.VIEW_MOVEMENT, "", "tagretailer", "move_book_retailer", "asm-icon-blank", _("Retailer book", l) ),
             ( users.VIEW_TRANSPORT, "", "tagtransport", "transport", "asm-icon-transport", _("Transport book", l) ),
             ( users.VIEW_MOVEMENT, "", "tagtrial", "move_book_trial_adoption", "asm-icon-trial", _("Trial adoption book", l) ),
+            ( users.VIEW_MOVEMENT, "", "tagsoftrelease", "move_book_soft_release", "asm-icon-blank", _("Soft release book", l) ),
             ( "", "", "", "--break", "", "" ),
             ( users.ADD_MOVEMENT, "", "", "--cat", "asm-icon-animal", _("In", l) ),
             ( users.ADD_ANIMAL, "", "alt+shift+n", "animal_new", "asm-icon-animal-add", _("Induct a new animal", l) ),

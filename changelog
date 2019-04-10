@@ -1,6 +1,7 @@
 42
 ================
 
+10/04/19 Support soft release to wild #520
 06/04/19 More autocomplete hints to prevent autofill of number/curency fields
 30/03/19 Person match fields could not be set by csv import due to insert bug
 28/03/19 Add TransportReference field to link related transports together

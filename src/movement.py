@@ -175,6 +175,14 @@ def get_recent_unneutered_adoptions(dbo, months = 1):
         "AND m.MovementDate > ? AND a.Neutered = 0 " \
         "ORDER BY m.MovementDate DESC", [dbo.today(offset=months*-31)])
 
+def get_soft_releases(dbo):
+    """
+    Returns a list of soft release movements. 
+    """
+    return dbo.query(get_movement_query(dbo) + \
+        "WHERE m.IsTrial = 1 AND m.MovementType = 7 AND (m.ReturnDate Is Null OR m.ReturnDate > ?) " \
+        "ORDER BY m.TrialEndDate", [dbo.today()])
+
 def get_trial_adoptions(dbo):
     """
     Returns a list of trial adoption movements. 

@@ -65,7 +65,8 @@ QUICKLINKS_SET = {
     54: ("staff_rota", "asm-icon-rota", i18n._("Staff Rota")),
     55: ("move_reclaim", "", i18n._("Reclaim an animal")),
     56: ("donation", "asm-icon-donation", i18n._("Payment book")),
-    57: ("calendarview?ev=c", "asm-icon-calendar", i18n._("Clinic Calendar"))
+    57: ("calendarview?ev=c", "asm-icon-calendar", i18n._("Clinic Calendar")),
+    58: ("move_book_soft_release", "", i18n._("Soft release book"))
 }
 
 # Default configuration values for unset items. This is so they
@@ -289,6 +290,8 @@ DEFAULTS = {
     "ShowWeightInLbs": "Yes",
     "ShowWeightUnitsInLog": "Yes",
     "SMTPPort": "25",
+    "SoftReleases": "No",
+    "SoftReleaseOnShelter": "No",
     "StickyTableHeaders": "Yes",
     "TableHeadersVisible": "Yes",
     "TemplatesForNonShelter": "No",
@@ -1139,6 +1142,9 @@ def smtp_server_password(dbo):
 
 def smtp_server_tls(dbo):
     return cboolean(dbo, "SMTPServerUseTLS")
+
+def softrelease_on_shelter(dbo):
+    return cboolean(dbo, "SoftReleaseOnShelter", DEFAULTS["SoftReleaseOnShelter"] == "Yes")
 
 def use_short_shelter_codes(dbo):
     return cboolean(dbo, "UseShortShelterCodes")

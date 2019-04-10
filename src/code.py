@@ -3767,6 +3767,24 @@ class move_book_retailer(JSONEndpoint):
             "templates": template.get_document_templates(dbo)
         }
 
+class move_book_soft_release(JSONEndpoint):
+    url = "move_book_soft_release"
+    js_module = "movements"
+    get_permissions = users.VIEW_MOVEMENT
+
+    def controller(self, o):
+        dbo = o.dbo
+        movements = extmovement.get_soft_releases(dbo)
+        al.debug("got %d movements" % len(movements), "code.move_book_soft_release", dbo)
+        return {
+            "name": "move_book_soft_release",
+            "rows": movements,
+            "movementtypes": extlookups.get_movement_types(dbo),
+            "reservationstatuses": extlookups.get_reservation_statuses(dbo),
+            "returncategories": extlookups.get_entryreasons(dbo),
+            "templates": template.get_document_templates(dbo)
+        }
+
 class move_book_trial_adoption(JSONEndpoint):
     url = "move_book_trial_adoption"
     js_module = "movements"

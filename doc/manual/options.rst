@@ -602,6 +602,14 @@ the reservation for you after this time.
   option, trial adoptions are still shown in the Shelter View and on shelter
   searches/reports.
 
+* Our shelter does soft releases, allow us to mark these on movement screens:
+  When creating a released to wild movement, this allows for a soft release
+  to be made. A soft release is one where the animal is monitored for some
+  time after release.
+
+* Treat Soft Releases as shelter inventory: Animals on soft release will be 
+  kept in the shelter's inventory.
+
 * Warn when adopting an unaltered animal: If the animal has not been 
   neutered/spayed, show a warning when trying to adopt it. 
 

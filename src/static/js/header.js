@@ -68,7 +68,8 @@ $(function() {
         54: ["staff_rota", "asm-icon-rota", _("Staff Rota")],
         55: ["move_reclaim", "", _("Reclaim an animal")],
         56: ["donation", "asm-icon-donation", _("Payment book")],
-        57: ["calendarview?ev=c", "asm-icon-calendar", _("Clinic Calendar")]
+        57: ["calendarview?ev=c", "asm-icon-calendar", _("Clinic Calendar")],
+        58: ["move_book_soft_release", "", _("Soft release book")]
     };
 
     /** Functions related to rendering and binding to events for the page
@@ -275,6 +276,10 @@ $(function() {
                 // If trial adoptions are not enabled, hide any menu entries
                 if (!config.bool("TrialAdoptions")) {
                     $(".tagtrial").hide();
+                }
+                // Same for soft releases
+                if (!config.bool("SoftReleases")) {
+                    $(".tagsoftrelease").hide();
                 }
                 // Same for waiting list
                 if (config.bool("DisableWaitingList")) {

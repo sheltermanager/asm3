@@ -3172,7 +3172,8 @@ def update_all_animal_statuses(dbo):
     cfg = {
         "foster_on_shelter": configuration.foster_on_shelter(dbo),
         "retailer_on_shelter": configuration.retailer_on_shelter(dbo),
-        "trial_on_shelter": configuration.trial_on_shelter(dbo)
+        "trial_on_shelter": configuration.trial_on_shelter(dbo),
+        "softrelease_on_shelter": configuration.softrelease_on_shelter(dbo)
     }
 
     asynctask.set_progress_max(dbo, len(animals))
@@ -3212,7 +3213,8 @@ def update_foster_animal_statuses(dbo):
     cfg = {
         "foster_on_shelter": configuration.foster_on_shelter(dbo),
         "retailer_on_shelter": configuration.retailer_on_shelter(dbo),
-        "trial_on_shelter": configuration.trial_on_shelter(dbo)
+        "trial_on_shelter": configuration.trial_on_shelter(dbo),
+        "softrelease_on_shelter": configuration.softrelease_on_shelter(dbo)
     }
 
     for a in animals:
@@ -3249,7 +3251,8 @@ def update_on_shelter_animal_statuses(dbo):
     cfg = {
         "foster_on_shelter": configuration.foster_on_shelter(dbo),
         "retailer_on_shelter": configuration.retailer_on_shelter(dbo),
-        "trial_on_shelter": configuration.trial_on_shelter(dbo)
+        "trial_on_shelter": configuration.trial_on_shelter(dbo),
+        "softrelease_on_shelter": configuration.softrelease_on_shelter(dbo)
     }
 
     asynctask.set_progress_max(dbo, len(animals))
@@ -3291,7 +3294,7 @@ def update_animal_status(dbo, animalid, a = None, movements = None, animalupdate
     onshelter = True
     diedoffshelter = False
     hasreserve = False
-    hastrial = False
+    hastrialadoption = False
     haspermanentfoster = False
     lastreturn = None
     mostrecententrydate = None
@@ -3323,10 +3326,12 @@ def update_animal_status(dbo, animalid, a = None, movements = None, animalupdate
         cfg_foster_on_shelter = configuration.foster_on_shelter(dbo)
         cfg_retailer_on_shelter = configuration.retailer_on_shelter(dbo)
         cfg_trial_on_shelter = configuration.trial_on_shelter(dbo)
+        cfg_softrelease_on_shelter = configuration.softrelease_on_shelter(dbo)
     else:
         cfg_foster_on_shelter = cfg["foster_on_shelter"]
         cfg_retailer_on_shelter = cfg["retailer_on_shelter"]
         cfg_trial_on_shelter = cfg["trial_on_shelter"]
+        cfg_softrelease_on_shelter = cfg["softrelease_on_shelter"]
 
     for m in movements:
 
@@ -3341,6 +3346,7 @@ def update_animal_status(dbo, animalid, a = None, movements = None, animalupdate
         if m.movementtype == movement.FOSTER and cfg_foster_on_shelter: exitmovement = False
         elif m.movementtype == movement.RETAILER and cfg_retailer_on_shelter: exitmovement = False
         elif m.movementtype == movement.ADOPTION and m.istrial == 1 and cfg_trial_on_shelter: exitmovement = False
+        elif m.movementtype == movement.RELEASED and m.istrial == 1 and cfg_softrelease_on_shelter: exitmovement = False
 
         # Is this movement active right now?
         if (m.movementdate and m.movementdate <= today and not m.returndate or \
@@ -3360,7 +3366,7 @@ def update_animal_status(dbo, animalid, a = None, movements = None, animalupdate
 
             # Is this an active trial adoption?
             if m.movementtype == movement.ADOPTION and m.istrial == 1:
-                hastrial = True
+                hastrialadoption = True
 
             # Is this a permanent foster?
             if m.movementtype == movement.FOSTER and m.ispermanentfoster == 1:
@@ -3390,7 +3396,7 @@ def update_animal_status(dbo, animalid, a = None, movements = None, animalupdate
     # Override the other flags if this animal is dead or non-shelter
     if a.deceaseddate or a.nonshelteranimal == 1:
         onshelter = False
-        hastrial = False
+        hastrialadoption = False
         hasreserve = False
         haspermanentfoster = False
 
@@ -3422,7 +3428,7 @@ def update_animal_status(dbo, animalid, a = None, movements = None, animalupdate
        a.activemovementreturn == activemovementreturn and \
        a.diedoffshelter == b2i(diedoffshelter) and \
        a.hasactivereserve == b2i(hasreserve) and \
-       a.hastrialadoption == b2i(hastrial) and \
+       a.hastrialadoption == b2i(hastrialadoption) and \
        a.haspermanentfoster == b2i(haspermanentfoster) and \
        a.mostrecententrydate == mostrecententrydate and \
        a.displaylocation == qlocname:
@@ -3437,7 +3443,7 @@ def update_animal_status(dbo, animalid, a = None, movements = None, animalupdate
     a.activemovementreturn = activemovementreturn
     a.diedoffshelter = b2i(diedoffshelter)
     a.hasactivereserve = b2i(hasreserve)
-    a.hastrialadoption = b2i(hastrial)
+    a.hastrialadoption = b2i(hastrialadoption)
     a.haspermanentfoster = b2i(haspermanentfoster)
     a.mostrecententrydate = mostrecententrydate
     a.displaylocation = qlocname
@@ -3456,7 +3462,7 @@ def update_animal_status(dbo, animalid, a = None, movements = None, animalupdate
             b2i(diedoffshelter),
             qlocname,
             b2i(hasreserve),
-            b2i(hastrial),
+            b2i(hastrialadoption),
             b2i(haspermanentfoster),
             mostrecententrydate,
             animalid
@@ -3472,7 +3478,7 @@ def update_animal_status(dbo, animalid, a = None, movements = None, animalupdate
             "DiedOffShelter":       b2i(diedoffshelter),
             "DisplayLocation":      qlocname,
             "HasActiveReserve":     b2i(hasreserve),
-            "HasTrialAdoption":     b2i(hastrial),
+            "HasTrialAdoption":     b2i(hastrialadoption),
             "HasPermanentFoster":   b2i(haspermanentfoster),
             "MostRecentEntryDate":  mostrecententrydate
         })
