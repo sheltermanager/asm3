@@ -11,7 +11,7 @@ en
 SELECT o.OwnerCode, o.OwnerName, o.OwnerAddress, o.OwnerTown, o.OwnerCounty, o.OwnerPostcode, o.EmailAddress, o.AdditionalFlags
 FROM owner o
 WHERE o.IsFosterer= 1 AND 
-0 = (SELECT COUNT(ID) FROM media m WHERE m.LinkID = a.ID AND m.LinkTypeID = 3)
+0 = (SELECT COUNT(ID) FROM media m WHERE m.LinkID = o.ID AND m.LinkTypeID = 3)
 ORDER BY o.OwnerName
 ###
 $$HEADER
@@ -52,7 +52,7 @@ en
 SELECT o.OwnerCode, o.OwnerName, o.OwnerAddress, o.OwnerTown, o.OwnerCounty, o.OwnerPostcode, o.EmailAddress, o.AdditionalFlags
 FROM owner o
 WHERE o.IsStaff= 1 AND 
-0 = (SELECT COUNT(ID) FROM media m WHERE m.LinkID = a.ID AND m.LinkTypeID = 3)
+0 = (SELECT COUNT(ID) FROM media m WHERE m.LinkID = o.ID AND m.LinkTypeID = 3)
 ORDER BY o.OwnerName
 ###
 $$HEADER
@@ -93,7 +93,7 @@ en
 SELECT o.OwnerCode, o.OwnerName, o.OwnerAddress, o.OwnerTown, o.OwnerCounty, o.OwnerPostcode, o.EmailAddress, o.AdditionalFlags
 FROM owner o
 WHERE o.IsVolunteer= 1 AND 
-0 = (SELECT COUNT(ID) FROM media m WHERE m.LinkID = a.ID AND m.LinkTypeID = 3)
+0 = (SELECT COUNT(ID) FROM media m WHERE m.LinkID = o.ID AND m.LinkTypeID = 3)
 ORDER BY o.OwnerName
 ###
 $$HEADER
