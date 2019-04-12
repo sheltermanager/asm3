@@ -1,6 +1,7 @@
 42
 ================
 
+12/04/19 Found should be able to support 9-digit chip numbers starting with 1
 10/04/19 Support soft release to wild #520
 06/04/19 More autocomplete hints to prevent autofill of number/curency fields
 30/03/19 Person match fields could not be set by csv import due to insert bug
