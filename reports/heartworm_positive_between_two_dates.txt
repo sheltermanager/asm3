@@ -25,8 +25,7 @@ INNER JOIN animaltype t ON t.ID = a.AnimalTypeID
 INNER JOIN species s ON s.ID = a.SpeciesID
 INNER JOIN lksex sx ON sx.ID = a.Sex
 INNER JOIN internallocation i ON i.ID = a.ShelterLocation
-WHERE a.Archived = 0
-AND a.HeartwormTested = 1 AND a.HeartwormTestResult = 2 AND a.HeartwormTestDate >= '$ASK DATE Testing positive between$' AND a.HeartwormTestDate <= '$ASK DATE and$'
+WHERE a.HeartwormTested = 1 AND a.HeartwormTestResult = 2 AND a.HeartwormTestDate >= '$ASK DATE Testing positive between$' AND a.HeartwormTestDate <= '$ASK DATE and$'
 ORDER BY s.SpeciesName, a.AnimalName
 ###
 $$HEADER
