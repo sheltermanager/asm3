@@ -15,7 +15,7 @@ Make an /images folder in PATH below if you have photos or documents to import.
 2nd June, 2012 - 23rd Feb, 2017
 """
 
-PATH = "data/shelterbuddy_dy1865/"
+PATH = "/home/robin/tmp/asm3_import_data/shelterbuddy_dy1865/"
 
 START_ID = 500
 

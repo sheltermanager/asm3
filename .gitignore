@@ -7,7 +7,6 @@ install/deb/sheltermanager3
 src/static/pages/changelog.txt
 scripts/jsmin/jsmin
 src/static/js/min
-import/data
 doc/manual/_build
 cordova/asm/platforms
 .DS_Store

@@ -11,10 +11,10 @@ Import script for "To Your Rescue" databases exported as CSV
 
 START_ID = 200
 
-ANIMAL_FILENAME = "data/zw1754_tyr/animals_Table.xlsx.csv"
-PERSON_FILENAME = "data/zw1754_tyr/people_Table.xlsx.csv"
-HEALTH_FILENAME = "data/zw1754_tyr/animalHealth_Table.xlsx.csv"
-MILESTONE_FILENAME = "data/zw1754_tyr/animalMilestones_Table.xlsx.csv"
+ANIMAL_FILENAME = "/home/robin/tmp/asm3_import_data/zw1754_tyr/animals_Table.xlsx.csv"
+PERSON_FILENAME = "/home/robin/tmp/asm3_import_data/zw1754_tyr/people_Table.xlsx.csv"
+HEALTH_FILENAME = "/home/robin/tmp/asm3_import_data/zw1754_tyr/animalHealth_Table.xlsx.csv"
+MILESTONE_FILENAME = "/home/robin/tmp/asm3_import_data/zw1754_tyr/animalMilestones_Table.xlsx.csv"
 
 def getdate(d):
     return asm.getdate_guess(d)

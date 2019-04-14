@@ -14,7 +14,7 @@ animals.csv, people.csv, placements.csv, medical.csv
 Complete rewrite for new library and customer, 18th July 2017
 """
 
-PATH = "data/trackabeast_ec1882"
+PATH = "/home/robin/tmp/asm3_import_data/trackabeast_ec1882"
 
 def getspecies(s):
     """ Looks up the species, returns Cat if nothing matches """

@@ -9,7 +9,7 @@ It can be accessed by going to adminShelter and then System->Misc->Downloads
 7th July, 2015 - 18th May, 2016
 """
 
-PATH = "data/ishelters_sh1078/"
+PATH = "/home/robin/tmp/asm3_import_data/ishelters_sh1078/"
 
 # Files needed
 # adoptions.csv, animals.csv, checkins.csv, donations.csv, allmedical.csv, people.csv, releases.csv

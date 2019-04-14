@@ -8,7 +8,7 @@ Import script for Multiple Options SQL Server databases exported to MDB and then
 7th September, 2015 - 8th Feb, 2018
 """
 
-PATH = "data/multiops_dm1807"
+PATH = "/home/robin/tmp/asm3_import_data/multiops_dm1807"
 START_ID = 500
 IMPORT_IMAGES = False
 ADOPT_LONGER_THAN_DAYS = 0 # All animals on shelter longer than this, auto adopt to unknown owner (default 365)

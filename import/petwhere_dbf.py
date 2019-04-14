@@ -16,7 +16,7 @@ Pay attention to the encoding - we had one where ascii was fine, but the last im
 9th March, 2016 - 27th April, 2016
 """
 
-PATH = "data/petwhere_tg1077"
+PATH = "/home/robin/tmp/asm3_import_data/petwhere_tg1077"
 
 owners = []
 ownerlicence = []
