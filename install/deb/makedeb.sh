@@ -115,8 +115,8 @@ Section: contrib
 Priority: optional
 Architecture: all
 Essential: no
-Depends: debconf, python-webpy, python-pil, python-memcache, python-requests, python-mysqldb, python-psycopg2
-Suggests: mysql-server, imagemagick, wkhtmltopdf, python-sqlite3
+Depends: debconf, python-pil, python-memcache, python-requests, python-mysqldb, python-psycopg2
+Suggests: mysql-server, imagemagick, wkhtmltopdf, python-sqlite
 Installed-Size: `du -s -k sheltermanager3 | awk '{print$1}'`
 Maintainer: ASM Team [info@sheltermanager.com]
 Provides: sheltermanager3
