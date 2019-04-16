@@ -392,6 +392,22 @@ days.
     http://localhost:5000/service?method=html_deceased_animals&template=littlebox&speciesid=1&days=60
     http://localhost:5000/service?method=html_deceased_animals
 
+html_held_animals
+----------------------
+
+.. rubric:: Cache time: 30 minutes
+
+Returns a complete HTML document containing an HTML page of current held animals.
+
+You can pass an HTML template name in an optional "template" parameter (leaving
+it off will cause animalview to be used). It is also possible to pass
+speciesid=X or animaltypeid=X parameters to only output animals of that species
+and type. In the default dataset, speciesid=1 is Dogs and speciesid=2 is cats.
+
+    http://localhost:5000/service?method=html_deceased_animals&template=littlebox&speciesid=1
+    http://localhost:5000/service?method=html_deceased_animals
+
+
 html_report
 -----------
 
