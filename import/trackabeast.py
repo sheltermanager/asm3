@@ -176,6 +176,7 @@ for d in asm.csv_to_list("%s/placements.csv" % PATH):
             m.OwnerID = o.ID
             m.AnimalID = a.ID
             m.MovementDate = getdate(d["Placement Date"])
+            if m.MovementDate is None: m.MovementDate = a.DateBroughtIn
             if d["Placement Status"].strip() == "Adopted":
                 m.MovementType = 1
                 a.Archived = 1
