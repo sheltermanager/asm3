@@ -303,12 +303,12 @@ for row in asm.csv_to_list(PATH + "tblAnimal.csv"):
     comments += "\nCircumstance: " + row["circumstance"]
     a.HiddenAnimalDetails = comments
     a.AnimalComments = getsbnotes(row["AnimalID"])
-    if row["euthanasiaType"] != "0":
+    a.DeceasedDate = getdate(row["DeceasedDate"])
+    if a.DeceasedDate is not None:
         a.Archived = 1
-        a.DeceasedDate = a.DateBroughtIn
-        a.PutToSleep = 1
+        if row["euthanasiaType"] != "0": a.PutToSleep = 1
         a.PTSReasonID = 4
-    if row["crueltyCase"] == "TRUE":
+    if row["crueltyCase"] == "1":
         a.CrueltyCase = 1
     a.CreatedBy = "conversion/%s" % users[row["AddAdminID"]]
     a.LastChangedDate = getdate(row["AddDateTime"])
