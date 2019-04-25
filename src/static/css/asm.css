@@ -271,6 +271,11 @@ select:disabled, input:disabled, textarea:disabled {
     font-size: 80%;
 }
 
+/** ONLINE FORMS =================== */
+#dialog-viewer-content td {
+    border-bottom: 1px dotted #aaa;
+}
+
 .asm-animal-emblems {
     white-space: nowrap;
 }
