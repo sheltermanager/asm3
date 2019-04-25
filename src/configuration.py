@@ -120,7 +120,7 @@ DEFAULTS = {
     "AutoRemoveDocumentMedia": "No",
     "AutoRemoveDMYears": "0",
     "AutoRemoveHoldDays": "0",
-    "AutoRemoveIncomingFormsDays": "14",
+    "AutoRemoveIncomingFormsDays": "28",
     "AFDefaultBreed": "221",
     "AFDefaultCoatType": "0",
     "AFDefaultColour": "1",

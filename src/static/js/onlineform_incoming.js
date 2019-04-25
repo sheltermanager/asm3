@@ -284,7 +284,8 @@ $(function() {
             s += this.render_buttonmenus();
             s += html.content_header(_("Incoming Forms"));
             s += html.info(_("Incoming forms are online forms that have been completed and submitted by people on the web.") + 
-                "<br />" + _("You can use incoming forms to create new records or attach them to existing records."));
+                "<br />" + _("You can use incoming forms to create new records or attach them to existing records.") +
+                "<br />" + _("Incoming forms will be automatically removed after {0} days.").replace("{0}", config.str("AutoRemoveIncomingFormsDays")) );
             s += tableform.buttons_render(this.buttons);
             s += tableform.table_render(this.table);
             s += html.content_footer();
