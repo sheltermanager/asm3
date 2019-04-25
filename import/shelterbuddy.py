@@ -142,6 +142,7 @@ movements = []
 animals = []
 animalmedicals = []
 animalvaccinations = []
+logs = []
 
 asm.setid("animal", START_ID)
 asm.setid("dbfs", START_ID)
@@ -152,6 +153,7 @@ asm.setid("adoption", START_ID)
 asm.setid("animalvaccination", START_ID)
 asm.setid("animalmedical", START_ID)
 asm.setid("animalmedicaltreatment", START_ID)
+asm.setid("log", START_ID)
 
 print "DELETE FROM animal WHERE ID >= %s;" % START_ID
 print "DELETE FROM animalvaccination WHERE ID >= %s;" % START_ID
@@ -162,6 +164,7 @@ print "DELETE FROM media WHERE ID >= %s;" % START_ID
 print "DELETE FROM owner WHERE ID >= %s;" % START_ID
 print "DELETE FROM ownerdonation WHERE ID >= %s;" % START_ID
 print "DELETE FROM adoption WHERE ID >= %s;" % START_ID
+print "DELETE FROM log WHERE ID >= %s;" % START_ID
 
 # load lookups into memory
 cnotes = asm.csv_to_list(PATH + "tblNotes.csv")
@@ -432,6 +435,22 @@ for row in asm.csv_to_list(PATH + "tblReceiptEntry.csv"):
     od.Comments = comments
     ownerdonations.append(od)
 
+# tblQuestionAnswersHistory (behaviour -> Logs)
+for row in asm.csv_to_list(PATH + "tblQuestionAnswersHistory.csv"):
+    if row["questionType"] != "behaviour": continue
+    a = findanimal(row["animalID"])
+    if a is None: continue
+    a.ExtraID += row["questionText"] + " = " + row["answerText"] + "\n" 
+for a in animals:
+    if a.ExtraID != "":
+        l = asm.Log()
+        l.LogTypeID = 3
+        l.Date = a.DateBroughtIn
+        l.LinkID = a.ID
+        l.LinkType = 0
+        l.Comments = a.ExtraID
+        logs.append(l)
+
 """
 # Used to populate an additional field called Tag with any SB tag number set
 for row in asm.csv_to_list(PATH + "tbltaghistory.csv"):
@@ -455,8 +474,10 @@ for od in ownerdonations:
     print od
 for m in movements:
     print m
+for l in logs:
+    print l
 
-asm.stderr_summary(animals=animals, animalmedicals=animalmedicals, animalvaccinations=animalvaccinations, owners=owners, ownerdonations=ownerdonations, movements=movements)
+asm.stderr_summary(animals=animals, animalmedicals=animalmedicals, animalvaccinations=animalvaccinations, logs=logs, owners=owners, ownerdonations=ownerdonations, movements=movements)
 
 print "DELETE FROM configuration WHERE ItemName LIKE 'DBView%';"
 print "COMMIT;"
