@@ -1459,6 +1459,14 @@ def report_criteria(dbo, crit, locationfilter = "", siteid = 0):
             <input class="asm-animalchooser" id="report-%s" data-post="%s" type="hidden" />
             </td>
             </tr>""" % ( _("Animal", l), name, name )
+        elif rtype == "ANIMALS":
+            s += """
+            <tr>
+            <td>%s</td>
+            <td>
+            <input class="asm-animalchoosermulti" id="report-%s" data-post="%s" type="hidden" />
+            </td>
+            </tr>""" % ( _("Animals", l), name, name )
         elif rtype == "ANIMALFLAG":
             s += """
             <tr>
@@ -1604,6 +1612,12 @@ def report_criteria_mobile(dbo, crit, locationfilter = "", siteid = 0):
             <select id="report-%s" data-post="%s">%s</select>
             </div>
             """ % (name, _("Animal", l), name, name, options_animals(dbo))
+        elif rtype == "ANIMALS":
+            s += """
+            <div data-role=\"fieldcontain\"><label for=\"%s\">%s</label>
+            <select multiple=\"multiple\" id="report-%s" data-post="%s">%s</select>
+            </div>
+            """ % (name, _("Animals", l), name, name, options_animals_on_shelter(dbo))
         elif rtype == "ANIMALFLAG":
             s += """
             <div data-role=\"fieldcontain\"><label for=\"%s\">%s</label>
