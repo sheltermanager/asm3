@@ -1451,6 +1451,7 @@
          * Returns true if ADDITIONALFLAGS in s contains flag f
          */
         is_animal_flag: function(s, f) {
+            if (!s || !f) { return false; }
             var rv = false;
             $.each(s.split("|"), function(i, v) {
                 if (v == f) { rv = true; }
