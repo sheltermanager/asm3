@@ -284,6 +284,17 @@ select:disabled, input:disabled, textarea:disabled {
     margin-left: 1px;
 }
 
+.asm-animal-emblems .custom {
+    margin-left: 1px;
+    cursor: default;
+	border-radius: 3px;
+    color: #fff;
+    background-color: #cc00ff;
+    border: 1px solid black;
+    padding: 2px;
+    white-space: nowrap;
+}
+
 .asm-search-name {
     font-size: 150%;
     font-weight: bold;

@@ -1448,6 +1448,17 @@
         },
 
         /**
+         * Returns true if ADDITIONALFLAGS in s contains flag f
+         */
+        is_animal_flag: function(s, f) {
+            var rv = false;
+            $.each(s.split("|"), function(i, v) {
+                if (v == f) { rv = true; }
+            });
+            return rv;
+        },
+
+        /**
          * Renders an animal link from the record given.
          * a: An animal or brief animal record
          * o: Options to pass on to animal_emblems
@@ -1606,6 +1617,12 @@
             if (config.bool("EmblemQuarantine") && a.ISQUARANTINE == 1 && (a.ARCHIVED == 0 || a.ACTIVEMOVEMENTTYPE == 2) ) {
                 s.push(html.icon("quarantine", _("Quarantine")));
             }
+            $.each([1,2,3,4,5,6,7,8,9,10], function(i, v) {
+                var cflag = config.str("EmblemsCustomFlag" + v), cemblem = config.str("EmblemsCustomValue" + v);
+                if (cflag && cemblem && html.is_animal_flag(a.ADDITIONALFLAGS, cflag)) {
+                    s.push('<span class="custom" title="' + html.title(cflag) + '">' + cemblem + '</span>');
+                }
+            });
             s.push("</span>");
             if (o && o.showunit && a.SHELTERLOCATIONUNIT && a.ARCHIVED == 0 && !a.ACTIVEMOVEMENTTYPE ) {
                 s.push(' <span class="asm-search-locationunit" title="' + html.title(_("Unit")) + '">' + a.SHELTERLOCATIONUNIT + '</span>');

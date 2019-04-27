@@ -4141,6 +4141,7 @@ class options(JSONEndpoint):
         c = {
             "accounts": financial.get_accounts(dbo),
             "animalfindcolumns": html.json_animalfindcolumns(dbo),
+            "animalflags": extlookups.get_animal_flags(dbo),
             "breeds": extlookups.get_breeds(dbo),
             "coattypes": extlookups.get_coattypes(dbo),
             "colours": extlookups.get_basecolours(dbo),
