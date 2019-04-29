@@ -715,6 +715,7 @@ def web_login(post, session, remoteip, path):
                 va = []
                 af = dbo.query("SELECT AnimalID FROM adoption WHERE MovementType=2 AND OwnerID=? AND MovementDate<=? AND (ReturnDate Is Null OR ReturnDate>?)", \
                     ( user.OWNERID, dbo.today(), dbo.today() ))
+                va.append("0")
                 for r in af:
                     va.append(str(r.ANIMALID))
                 session.visibleanimalids = ",".join(va)
