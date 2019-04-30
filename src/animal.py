@@ -1484,6 +1484,7 @@ def get_location_filter_clause(locationfilter = "", tablequalifier = "", siteid 
     if tablequalifier != "" and not tablequalifier.endswith("."): tablequalifier += "."
     if tablequalifier == "": tablequalifier = "animal."
     clauses = []
+    hasvisibleidsfilter = locationfilter.find("-12") != -1
     # Strip anything that has set visibleanimalids as they are not locations or movement types
     locationfilter = ",".join([ l for l in locationfilter.split(",") if l not in ("-12",) ])
     if locationfilter != "":
@@ -1498,7 +1499,12 @@ def get_location_filter_clause(locationfilter = "", tablequalifier = "", siteid 
         clauses.append("il.SiteID = %s" % siteid)
     if visibleanimalids != "":
         clauses.append("%(tq)sID IN (%(va)s)" % { "tq": tablequalifier, "va": visibleanimalids })
-    c = " AND ".join(clauses)
+    # Special case - the only location filter the user has is one of the visible ids
+    # filters like "My Fosters" - but they don't have any IDs listed.
+    # if we don't restrict them now, they'll see everything since we'll be left with no clauses
+    if visibleanimalids == "" and hasvisibleidsfilter and locationfilter == "":
+        clauses.append("%sID IN (0)" % tablequalifier)
+    c = "(" + " OR ".join(clauses) + ")"
     # If we've got nothing left by this point, don't add a prefix/suffix/where
     if c == "": return ""
     if andprefix:
