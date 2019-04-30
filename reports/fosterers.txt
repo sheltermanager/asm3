@@ -13,7 +13,7 @@ OwnerName,
 OwnerAddress, OwnerTown, OwnerCounty, OwnerPostcode, HomeTelephone, MobileTelephone,
 Comments,
 AdditionalFlags,
-(SELECT COUNT(*) FROM adoption WHERE OwnerID = owner.ID AND (ReturnDate Is Null OR ReturnDate > '$CURRENT_DATE$')) AS ActiveFosters,
+(SELECT COUNT(*) FROM adoption WHERE MovementType = 2 AND OwnerID = owner.ID AND (ReturnDate Is Null OR ReturnDate > '$CURRENT_DATE$')) AS ActiveFosters,
 FosterCapacity
 FROM owner
 WHERE IsFosterer = 1 
