@@ -8,7 +8,7 @@ $(function() {
     var lookups = {
 
         // locales where the publisher column/fields appear
-        publisher_locales: [ "en", "en_AU", "en_CA", "en_GB", "en_MX", "es_MX" ],
+        publisher_locales: [ "en", "en_CA", "en_GB", "en_MX", "es_MX" ],
 
         model: function() {
 
@@ -54,6 +54,9 @@ $(function() {
                     { hideif: function() { return !controller.hasunits; },
                         json_field: "UNITS", post_field: "units", label: _("Units"), type: "textarea", 
                         callout: _("Comma separated list of units for this location, eg: 1,2,3,4,Isolation,Pen 5") },
+                    { hideif: function() { return !controller.hasvat; },
+                        json_field: "ISVAT", post_field: "vat", label: _("Sales Tax"), type: "select", 
+                        options: '<option value="0">' + _("No") + '</option><option value="1">' + _("Yes") + '</option>' },
                     { hideif: function() { return controller.descfield == ""; },
                         json_field: controller.descfield, post_field: "lookupdesc", label: _("Description"), type: "textarea" }
                 ]
@@ -114,6 +117,8 @@ $(function() {
                         }
                     },
                     { field: "UNITS", display: _("Units"), hideif: function(row) { return !controller.hasunits; }},
+                    { field: "ISVAT", display: _("Sales Tax"), hideif: function(row) { return !controller.hasvat; }, 
+                        formatter: function(row) { return row.ISVAT == 1 ? _("Yes") : _("No"); }},
                     { field: "DEFAULTCOST", display: _("Default Cost"), formatter: tableform.format_currency,
                         hideif: function(row) { return !controller.hasdefaultcost; }}
                 ]

@@ -250,8 +250,11 @@ $(function() {
         },
 
         type_change: function() {
-            var dc = common.get_field(controller.donationtypes, $("#type").select("value"), "DEFAULTCOST");
+            var dc = common.get_field(controller.donationtypes, $("#type").select("value"), "DEFAULTCOST"),
+                dv = common.get_field(controller.donationtypes, $("#type").select("value"), "ISVAT");
             $("#unitprice, #amount").currency("value", dc);
+            $("#vat").prop("checked", dv == 1);
+            $("#vat").change();
             if (config.bool("DonationQuantities")) {
                 $("#amount").currency("value", format.to_int($("#quantity").val()) * $("#unitprice").currency("value"));
             }

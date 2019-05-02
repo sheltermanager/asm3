@@ -800,9 +800,12 @@
             // Change the default amount when the payment type changes
             $("#donationtype" + i).change(function() {
                 var dc = common.get_field(self.options.controller.donationtypes, $("#donationtype" + i).select("value"), "DEFAULTCOST");
+                var dv = common.get_field(self.options.controller.donationtypes, $("#donationtype" + i).select("value"), "ISVAT");
                 $("#quantity" + i).val("1");
                 $("#unitprice" + i).currency("value", dc);
                 $("#amount" + i).currency("value", dc);
+                $("#vat" + i).prop("checked", dv == 1);
+                $("#vat" + i).change();
                 self.update_totals();
             });
             // Recalculate when quantity or unit price changes

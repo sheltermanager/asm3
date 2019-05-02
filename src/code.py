@@ -3198,6 +3198,7 @@ class lookups(JSONEndpoint):
         table = list(extlookups.LOOKUP_TABLES[tablename])
         table[0] = translate(table[0], l)
         table[2] = translate(table[2], l)
+        modifiers = table[4].split(" ")
         rows = extlookups.get_lookup(dbo, tablename, table[1])
         al.debug("edit lookups for %s, got %d rows" % (tablename, len(rows)), "code.lookups", dbo)
         return {
@@ -3211,16 +3212,17 @@ class lookups(JSONEndpoint):
             "namefield": table[1].upper(),
             "namelabel": table[2],
             "descfield": table[3].upper(),
-            "hasspecies": table[4] == 1,
-            "haspfspecies": table[5] == 1,
-            "haspfbreed": table[6] == 1,
-            "hasapcolour": table[7] == 1,
-            "hasdefaultcost": table[8] == 1,
-            "hasunits": table[9] == 1,
-            "hassite": table[10] == 1,
-            "canadd": table[11] == 1,
-            "candelete": table[12] == 1,
-            "canretire": table[13] == 1,
+            "hasspecies": "species" in modifiers,
+            "haspfspecies": "pubspec" in modifiers,
+            "haspfbreed": "pubbreed" in modifiers,
+            "hasapcolour": "pubcol" in modifiers,
+            "hasdefaultcost": "cost" in modifiers,
+            "hasunits": "units" in modifiers,
+            "hassite": "site" in modifiers,
+            "hasvat": "vat" in modifiers, 
+            "canadd": "add" in modifiers,
+            "candelete": "del" in modifiers,
+            "canretire": "ret" in modifiers,
             "species": extlookups.get_species(dbo),
             "tables": html.json_lookup_tables(l)
         }
@@ -3228,12 +3230,12 @@ class lookups(JSONEndpoint):
     def post_create(self, o):
         post = o.post
         return extlookups.insert_lookup(o.dbo, post["lookup"], post["lookupname"], post["lookupdesc"], \
-            post.integer("species"), post["pfbreed"], post["pfspecies"], post["apcolour"], post["units"], post.integer("site"), post.integer("defaultcost"), post.integer("retired"))
+            post.integer("species"), post["pfbreed"], post["pfspecies"], post["apcolour"], post["units"], post.integer("site"), post.integer("defaultcost"), post.integer("vat"), post.integer("retired"))
 
     def post_update(self, o):
         post = o.post
         extlookups.update_lookup(o.dbo, post.integer("id"), post["lookup"], post["lookupname"], post["lookupdesc"], \
-            post.integer("species"), post["pfbreed"], post["pfspecies"], post["apcolour"], post["units"], post.integer("site"), post.integer("defaultcost"), post.integer("retired"))
+            post.integer("species"), post["pfbreed"], post["pfspecies"], post["apcolour"], post["units"], post.integer("site"), post.integer("defaultcost"), post.integer("vat"), post.integer("retired"))
 
     def post_delete(self, o):
         for lid in o.post.integer_list("ids"):

@@ -1,6 +1,7 @@
 42
 ================
 
+02/05/19 Allow VAT/GST to be selectively chosen by payment type #568
 29/04/19 Fix bug where using "My Fosters" with no fosters shows all
 27/04/19 Allow custom emblems to be set for additional animal flags #58
 26/04/19 Show additional fields on person records under person links #593
