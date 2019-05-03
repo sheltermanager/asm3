@@ -156,7 +156,7 @@
 
         /** Formats a value as comments (truncates to one line or shows full with \n -> <br/> based on config) */
         format_comments: function(row, v) {
-            if (config.bool("ShowFullCommentsInTables")) { return v.replace(/\n/g, "<br />"); }
+            if (config.bool("ShowFullCommentsInTables")) { return common.nulltostr(v).replace(/\n/g, "<br />"); }
             return html.truncate(v, 80);
         },
 
