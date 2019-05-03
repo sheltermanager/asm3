@@ -4433,7 +4433,7 @@ msgstr ""
 msgid ""
 "Entering 'notforadoption' in the search box will show you all shelter "
 "animals with the not for adoption flag set."
-msgstr "Entrer "non disponible pour adoption' dans la boîte de recherche "
+msgstr "Entrer 'non disponible pour adoption' dans la boîte de recherche "
 "affichera tous les animaux qui sont marqués comme non adoptable."
 
 #: main.js
@@ -11047,8 +11047,8 @@ msgstr "Cet animal est déjà lié à un incident"
 
 #: csvimport_paypal.js
 msgid "The CSV file should be created by PayPal's \"All Activity\" report."
-msgstr "Le fichier CSV devrait être crée par le rapport PayPal /"toute "
-"les activités." "
+msgstr "Le fichier CSV devrait être crée par le rapport PayPal \"toute "
+"les activités\"."
 
 #: animal.js
 msgid "The SmartTag PETID number"
@@ -11437,7 +11437,7 @@ msgstr "Ces champs vous autorisent à déduire de l'inventaire en fonction "
 msgid ""
 "These fields allow you to deduct stock for the treatment(s) given. This "
 "single deduction should cover the selected treatments being administered."
-msgstr ""Ces champs vous autorisent à déduire de l'inventaire en fonction "
+msgstr "Ces champs vous autorisent à déduire de l'inventaire en fonction "
 "des traitements donnés. Cette simple déduction devrait couvrir les "
 "traitements qui sont effectués."
 
@@ -11445,9 +11445,9 @@ msgstr ""Ces champs vous autorisent à déduire de l'inventaire en fonction "
 msgid ""
 "These fields allow you to deduct stock for the vaccination(s) given. This "
 "single deduction should cover the selected vaccinations being administered."
-msgstr ""Ces champs vous autorisent à déduire de l'inventaire en fonction "
+msgstr "Ces champs vous autorisent à déduire de l'inventaire en fonction "
 "des vaccinations données. Cette simple déduction devrait couvrir les "
-"vaccinations qui sont effectuées.""
+"vaccinations qui sont effectuées."
 
 #: options.js
 msgid ""
