@@ -2673,15 +2673,12 @@ def diagnostic(dbo):
             "(SELECT COUNT(*) FROM media WHERE LinkID = animal.ID AND LinkTypeID = 0) AS TotalMedia, " \
             "(SELECT COUNT(*) FROM media WHERE LinkID = animal.ID AND LinkTypeID = 0 AND WebsitePhoto = 1) AS TotalWeb, " \
             "(SELECT COUNT(*) FROM media WHERE LinkID = animal.ID AND LinkTypeID = 0 AND DocPhoto = 1) AS TotalDoc, " \
-            "(SELECT ID FROM media WHERE LinkID = animal.ID AND LinkTypeID = 0 AND MediaName LIKE '%.jpg' %s) AS FirstImage " \
-            "FROM animal" % dbo.sql_limit(1)):
+            "(SELECT MAX(ID) FROM media WHERE LinkID = animal.ID AND LinkTypeID = 0 AND MediaName LIKE '%.jpg') AS LatestImage " \
+            "FROM animal"):
             if a["TOTALMEDIA"] > 0 and a["TOTALWEB"] > 1:
-                # Too many web preferreds
-                dbo.execute("UPDATE media SET WebsitePhoto = 0 WHERE LinkID = %d AND LinkTypeID = 0 AND ID <> %d" % (a["ID"], a["FIRSTIMAGE"]))
-                duplicatepic += 1
-            if a["TOTALMEDIA"] > 0 and a["TOTALDOC"] > 1:
-                # Too many doc preferreds
-                dbo.execute("UPDATE media SET DocPhoto = 0 WHERE LinkID = %d AND LinkTypeID = 0 AND ID <> %d" % (a["ID"], a["FIRSTIMAGE"]))
+                # Too many preferred images
+                dbo.execute("UPDATE media SET DocPhoto=0, WebsitePhoto=0 WHERE LinkID = ? AND LinkTypeID = 0 AND ID <> ?", (a.ID, a.LATESTIMAGE))
+                dbo.execute("UPDATE media SET DocPhoto=1, WebsitePhoto=1 WHERE ID = ?", [a.LATESTIMAGE])
                 duplicatepic += 1
         return duplicatepic
 
@@ -2697,6 +2694,23 @@ def diagnostic(dbo):
         "orphaned waiting list animals": orphan("animalwaitinglist", "owner", "animalwaitinglist.OwnerID", "owner.ID"),
         "duplicate preferred images": mediapref()
     }
+
+def fix_preferred_photos(dbo):
+    """
+    Resets the web and doc preferred flags on all photos to the latest one for animal/people records.
+    This is useful in situations where users have borked them by running queries in the past.
+    This should only be used as a last resort as all previous preferred photo info will be deleted.
+    """
+    dbo.execute("UPDATE media SET WebsitePhoto=0, DocPhoto=0")
+    # Animals
+    ra = dbo.execute("UPDATE media INNER JOIN " \
+        "(SELECT MAX(ID) AS NewPref, LinkID FROM media WHERE MediaName LIKE '%.jpg' AND LinkTypeID = 0 GROUP BY LinkID) z " \
+        "ON z.NewPref=media.ID SET WebsitePhoto=1, DocPhoto=1")
+    # People
+    ra += dbo.execute("UPDATE media INNER JOIN " \
+        "(SELECT MAX(ID) AS NewPref, LinkID FROM media WHERE MediaName LIKE '%.jpg' AND LinkTypeID = 3 GROUP BY LinkID) z " \
+        "ON z.NewPref=media.ID SET WebsitePhoto=1, DocPhoto=1")
+    return ra
 
 def check_for_updates(dbo):
     """
