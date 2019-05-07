@@ -1,6 +1,7 @@
 42
 ================
 
+07/05/19 When importing CSV/PayPal records include importing username #600
 02/05/19 Allow VAT/GST to be selectively chosen by payment type #568
 29/04/19 Fix bug where using "My Fosters" with no fosters shows all
 27/04/19 Allow custom emblems to be set for additional animal flags #58

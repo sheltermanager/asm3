@@ -217,7 +217,7 @@ def row_error(errors, rowtype, rowno, row, e, dbo, exinfo):
     al.error("row %d %s: (%s): %s" % (rowno, rowtype, str(row), errmsg), "csvimport.row_error", dbo, exinfo)
     errors.append( (rowno, str(row), errmsg) )
 
-def csvimport(dbo, csvdata, encoding = "utf8", createmissinglookups = False, cleartables = False, checkduplicates = False):
+def csvimport(dbo, csvdata, encoding = "utf8", user = "", createmissinglookups = False, cleartables = False, checkduplicates = False):
     """
     Imports the csvdata.
     createmissinglookups: If a lookup value is given that's not in our data, add it
@@ -228,6 +228,11 @@ def csvimport(dbo, csvdata, encoding = "utf8", createmissinglookups = False, cle
     # the Python CSV importer barfing.
     csvdata = csvdata.replace("\r\n", "\n")
     csvdata = csvdata.replace("\r", "\n")
+
+    if user == "":
+        user = "import"
+    else:
+        user = "import/%s" % user
 
     reader = None
     if encoding == "utf8":
@@ -459,7 +464,7 @@ def csvimport(dbo, csvdata, encoding = "utf8", createmissinglookups = False, cle
                         if len(dups) > 0:
                             a["originalowner"] = str(dups[0]["ID"])
                     if "originalowner" not in a:
-                        ooid = person.insert_person_from_form(dbo, utils.PostedData(p, dbo.locale), "import", geocode=False)
+                        ooid = person.insert_person_from_form(dbo, utils.PostedData(p, dbo.locale), user, geocode=False)
                         a["originalowner"] = str(ooid)
                         # Identify an ORIGINALOWNERADDITIONAL additional fields and create them
                         create_additional_fields(dbo, row, errors, rowno, "ORIGINALOWNERADDITIONAL", "person", ooid)
@@ -471,13 +476,13 @@ def csvimport(dbo, csvdata, encoding = "utf8", createmissinglookups = False, cle
                     if dup is not None:
                         animalid = dup["ID"]
                 if animalid == 0:
-                    animalid, newcode = animal.insert_animal_from_form(dbo, utils.PostedData(a, dbo.locale), "import")
+                    animalid, newcode = animal.insert_animal_from_form(dbo, utils.PostedData(a, dbo.locale), user)
                     # Identify any ANIMALADDITIONAL additional fields and create them
                     create_additional_fields(dbo, row, errors, rowno, "ANIMALADDITIONAL", "animal", animalid)
                 # If we have some image data, add it to the animal
                 if len(imagedata) > 0:
                     imagepost = utils.PostedData({ "filename": "image.jpg", "filetype": "image/jpeg", "filedata": imagedata }, dbo.locale)
-                    media.attach_file_from_form(dbo, "import", media.ANIMAL, animalid, imagepost)
+                    media.attach_file_from_form(dbo, user, media.ANIMAL, animalid, imagepost)
             except Exception as e:
                 row_error(errors, "animal", rowno, row, e, dbo, sys.exc_info())
 
@@ -543,15 +548,15 @@ def csvimport(dbo, csvdata, encoding = "utf8", createmissinglookups = False, cle
                     if len(dups) > 0:
                         personid = dups[0].ID
                         # Merge flags and any extra details
-                        person.merge_flags(dbo, "import", personid, flags)
-                        person.merge_gdpr_flags(dbo, "import", personid, p["gdprcontactoptin"])
+                        person.merge_flags(dbo, user, personid, flags)
+                        person.merge_gdpr_flags(dbo, user, personid, p["gdprcontactoptin"])
                         # If we deduplicated on the email address, and address details are
                         # present, assume that they are newer than the ones we had and update them
                         # (we do this by setting force=True parameter to merge_person_details,
                         # otherwise we do a regular merge which only fills in any blanks)
-                        person.merge_person_details(dbo, "import", personid, p, force=dups[0].EMAILADDRESS == p["emailaddress"])
+                        person.merge_person_details(dbo, user, personid, p, force=dups[0].EMAILADDRESS == p["emailaddress"])
                 if personid == 0:
-                    personid = person.insert_person_from_form(dbo, utils.PostedData(p, dbo.locale), "import", geocode=False)
+                    personid = person.insert_person_from_form(dbo, utils.PostedData(p, dbo.locale), user, geocode=False)
                     # Identify any PERSONADDITIONAL additional fields and create them
                     create_additional_fields(dbo, row, errors, rowno, "PERSONADDITIONAL", "person", personid)
             except Exception as e:
@@ -571,7 +576,7 @@ def csvimport(dbo, csvdata, encoding = "utf8", createmissinglookups = False, cle
             m["comments"] = gks(row, "MOVEMENTCOMMENTS")
             m["returncategory"] = str(configuration.default_entry_reason(dbo))
             try:
-                movementid = movement.insert_movement_from_form(dbo, "import", utils.PostedData(m, dbo.locale))
+                movementid = movement.insert_movement_from_form(dbo, user, utils.PostedData(m, dbo.locale))
             except Exception as e:
                 row_error(errors, "movement", rowno, row, e, dbo, sys.exc_info())
 
@@ -592,7 +597,7 @@ def csvimport(dbo, csvdata, encoding = "utf8", createmissinglookups = False, cle
             if d["payment"] == "0":
                 d["payment"] = "1"
             try:
-                financial.insert_donation_from_form(dbo, "import", utils.PostedData(d, dbo.locale))
+                financial.insert_donation_from_form(dbo, user, utils.PostedData(d, dbo.locale))
             except Exception as e:
                 row_error(errors, "payment", rowno, row, e, dbo, sys.exc_info())
             if movementid != 0: movement.update_movement_donation(dbo, movementid)
@@ -611,7 +616,7 @@ def csvimport(dbo, csvdata, encoding = "utf8", createmissinglookups = False, cle
             v["manufacturer"] = gks(row, "VACCINATIONMANUFACTURER")
             v["comments"] = gks(row, "VACCINATIONCOMMENTS")
             try:
-                medical.insert_vaccination_from_form(dbo, "import", utils.PostedData(v, dbo.locale))
+                medical.insert_vaccination_from_form(dbo, user, utils.PostedData(v, dbo.locale))
             except Exception as e:
                 row_error(errors, "vaccination", rowno, row, e, dbo, sys.exc_info())
 
@@ -626,7 +631,7 @@ def csvimport(dbo, csvdata, encoding = "utf8", createmissinglookups = False, cle
             m["singlemulti"] = "0" # single treatment
             m["status"] = "2" # completed
             try:
-                medical.insert_regimen_from_form(dbo, "import", utils.PostedData(m, dbo.locale))
+                medical.insert_regimen_from_form(dbo, user, utils.PostedData(m, dbo.locale))
             except Exception as e:
                 row_error(errors, "medical", rowno, row, e, dbo, sys.exc_info())
 
@@ -643,7 +648,7 @@ def csvimport(dbo, csvdata, encoding = "utf8", createmissinglookups = False, cle
             l["expirydate"] = gkd(dbo, row, "LICENSEEXPIRESDATE")
             l["comments"] = gks(row, "LICENSECOMMENTS")
             try:
-                financial.insert_licence_from_form(dbo, "import", utils.PostedData(l, dbo.locale))
+                financial.insert_licence_from_form(dbo, user, utils.PostedData(l, dbo.locale))
             except Exception as e:
                 row_error(errors, "license", rowno, row, e, dbo, sys.exc_info())
 
@@ -655,7 +660,7 @@ def csvimport(dbo, csvdata, encoding = "utf8", createmissinglookups = False, cle
     h.append("</table>")
     return "".join(h)
 
-def csvimport_paypal(dbo, csvdata, donationtypeid, donationpaymentid, flags):
+def csvimport_paypal(dbo, csvdata, donationtypeid, donationpaymentid, flags, user = ""):
     """
     Imports a PayPal CSV file of transactions.
     """
@@ -668,6 +673,11 @@ def csvimport_paypal(dbo, csvdata, donationtypeid, donationpaymentid, flags):
         if n4 != "" and n4 in r: return r[n4]
         if n5 != "" and n5 in r: return r[n5]
         return ""
+
+    if user == "":
+        user = "import"
+    else:
+        user = "import/%s" % user
 
     reader = utils.UnicodeCSVDictReader(StringIO(csvdata))
     data = list(reader)
@@ -729,10 +739,10 @@ def csvimport_paypal(dbo, csvdata, donationtypeid, donationpaymentid, flags):
             if len(dups) > 0:
                 personid = dups[0]["ID"]
                 # Merge flags and any extra details
-                person.merge_flags(dbo, "import", personid, flags)
-                person.merge_person_details(dbo, "import", personid, p)
+                person.merge_flags(dbo, user, personid, flags)
+                person.merge_person_details(dbo, user, personid, p)
             if personid == 0:
-                personid = person.insert_person_from_form(dbo, utils.PostedData(p, dbo.locale), "import", geocode=False)
+                personid = person.insert_person_from_form(dbo, utils.PostedData(p, dbo.locale), user, geocode=False)
         except Exception as e:
             row_error(errors, "person", rowno, r, e, dbo, sys.exc_info())
 
@@ -752,7 +762,7 @@ def csvimport_paypal(dbo, csvdata, donationtypeid, donationpaymentid, flags):
             d["type"] = str(donationtypeid)
             d["payment"] = str(donationpaymentid)
             try:
-                financial.insert_donation_from_form(dbo, "import", utils.PostedData(d, dbo.locale))
+                financial.insert_donation_from_form(dbo, user, utils.PostedData(d, dbo.locale))
             except Exception as e:
                 row_error(errors, "payment", rowno, r, e, dbo, sys.exc_info())
 

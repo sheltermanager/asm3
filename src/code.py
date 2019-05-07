@@ -2106,7 +2106,7 @@ class csvimport(JSONEndpoint):
 
     def post_all(self, o):
         l = o.locale
-        asynctask.function_task(o.dbo, _("Import a CSV file", l), extcsvimport.csvimport, o.dbo, o.post.filedata(), o.post["encoding"], 
+        asynctask.function_task(o.dbo, _("Import a CSV file", l), extcsvimport.csvimport, o.dbo, o.post.filedata(), o.post["encoding"], o.user, 
             o.post.boolean("createmissinglookups") == 1, o.post.boolean("cleartables") == 1, o.post.boolean("checkduplicates") == 1)
         self.redirect("task")
 
@@ -2125,7 +2125,7 @@ class csvimport_paypal(JSONEndpoint):
     def post_all(self, o):
         l = o.locale
         asynctask.function_task(o.dbo, _("Import a PayPal CSV file", l), extcsvimport.csvimport_paypal, o.dbo, \
-            o.post.filedata(), o.post.integer("type"), o.post.integer("payment"), o.post["flags"])
+            o.post.filedata(), o.post.integer("type"), o.post.integer("payment"), o.post["flags"], o.user)
         self.redirect("task")
 
 class diary(ASMEndpoint):
