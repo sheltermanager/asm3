@@ -37,7 +37,7 @@ VALID_FIELDS = [
     "ORIGINALOWNERLASTNAME", "ORIGINALOWNERADDRESS", "ORIGINALOWNERCITY",
     "ORIGINALOWNERSTATE", "ORIGINALOWNERZIPCODE", "ORIGINALOWNERJURISDICTION", "ORIGINALOWNERHOMEPHONE",
     "ORIGINALOWNERWORKPHONE", "ORIGINALOWNERCELLPHONE", "ORIGINALOWNEREMAIL",
-    "DONATIONDATE", "DONATIONAMOUNT", "DONATIONCHECKNUMBER", "DONATIONCOMMENTS", "DONATIONTYPE", "DONATIONPAYMENT", 
+    "DONATIONDATE", "DONATIONAMOUNT", "DONATIONFEE", "DONATIONCHECKNUMBER", "DONATIONCOMMENTS", "DONATIONTYPE", "DONATIONPAYMENT", 
     "LICENSETYPE", "LICENSENUMBER", "LICENSEFEE", "LICENSEISSUEDATE", "LICENSEEXPIRESDATE", "LICENSECOMMENTS",
     "PERSONTITLE", "PERSONINITIALS", "PERSONFIRSTNAME", "PERSONLASTNAME", "PERSONNAME",
     "PERSONADDRESS", "PERSONCITY", "PERSONSTATE",
@@ -587,6 +587,7 @@ def csvimport(dbo, csvdata, encoding = "utf8", user = "", createmissinglookups =
             d["animal"] = str(animalid)
             d["movement"] = str(movementid)
             d["amount"] = str(gkc(row, "DONATIONAMOUNT"))
+            d["fee"] = str(gkc(row, "DONATIONFEE"))
             d["comments"] = gks(row, "DONATIONCOMMENTS")
             d["received"] = gkd(dbo, row, "DONATIONDATE", True)
             d["chequenumber"] = gks(row, "DONATIONCHECKNUMBER")
@@ -748,12 +749,15 @@ def csvimport_paypal(dbo, csvdata, donationtypeid, donationpaymentid, flags, use
 
         # Donation info
         net = utils.cint(utils.cfloat(v(r, "Net")) * 100)
+        fee = utils.cint(utils.cfloat(v(r, "Fee")) * 100)
         if personid != 0 and net > 0:
             d = {}
             d["person"] = str(personid)
             d["animal"] = "0"
             d["movement"] = "0"
             d["amount"] = str(net)
+            d["fee"] = str(fee)
+            d["chequenumber"] = str(v(r, "Transaction ID"))
             comments = "PayPal ID: %s \nItem: %s %s \nCurrency: %s \nGross: %s \nFee: %s \nSubject: %s \nNote: %s" % \
                 ( v(r, "Transaction ID"), v(r, "Item ID", "Item Number"), v(r, "Item Title"), v(r, "Currency"), 
                 v(r, "Gross"), v(r, "Fee"), v(r, "Subject"), v(r, "Note") )

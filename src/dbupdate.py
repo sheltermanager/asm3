@@ -24,7 +24,7 @@ VERSIONS = (
     34002, 34003, 34004, 34005, 34006, 34007, 34008, 34009, 34010, 34011, 34012,
     34013, 34014, 34015, 34016, 34017, 34018, 34019, 34020, 34021, 34022, 34100,
     34101, 34102, 34103, 34104, 34105, 34106, 34107, 34108, 34109, 34110, 34111,
-    34112, 34200, 34201, 34202, 34203
+    34112, 34200, 34201, 34202, 34203, 34204
 )
 
 LATEST_VERSION = VERSIONS[-1]
@@ -1254,6 +1254,7 @@ def sql_structure(dbo):
         fint("Quantity", True),
         fint("UnitPrice", True),
         fint("IsGiftAid"),
+        fint("Fee", True), 
         fint("IsVAT", True),
         ffloat("VATRate", True),
         fint("VATAmount", True),
@@ -5043,4 +5044,9 @@ def update_34203(dbo):
     # Add donationtype.IsVAT
     add_column(dbo, "donationtype", "IsVAT", dbo.type_integer)
     dbo.execute_dbupdate("UPDATE donationtype SET IsVAT = 0")
+
+def update_34204(dbo):
+    # Add ownerdonation.Fee
+    add_column(dbo, "ownerdonation", "Fee", dbo.type_integer)
+    dbo.execute_dbupdate("UPDATE ownerdonation SET Fee = 0")
 

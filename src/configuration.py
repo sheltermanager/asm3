@@ -170,6 +170,7 @@ DEFAULTS = {
     "DisableRetailer": "No",
     "DocumentWordProcessor": "HTML",
     "DonationDateOverride": "No",
+    "DonationFees": "Yes",
     "DonationQuantities": "No",
     "DonationTargetAccount": "9",
     "DonationTrxOverride": "No",

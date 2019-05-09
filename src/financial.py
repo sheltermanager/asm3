@@ -49,7 +49,7 @@ def get_donation_query(dbo):
         "od.Donation, p.PaymentName, od.IsGiftAid, lk.Name AS IsGiftAidName, od.Frequency, " \
         "od.Quantity, od.UnitPrice, " \
         "fr.Frequency AS FrequencyName, od.NextCreated, " \
-        "od.ReceiptNumber, od.ChequeNumber, od.IsVAT, od.VATRate, od.VATAmount, " \
+        "od.ReceiptNumber, od.ChequeNumber, od.Fee, od.IsVAT, od.VATRate, od.VATAmount, " \
         "od.CreatedBy, od.CreatedDate, od.LastChangedBy, od.LastChangedDate, " \
         "od.Comments, o.OwnerTitle, o.OwnerInitials, o.OwnerSurname, o.OwnerForenames, " \
         "o.OwnerName, a.AnimalName, a.ShelterCode, a.ShortCode, a.ID AS AnimalID, o.ID AS OwnerID, " \
@@ -560,6 +560,7 @@ def insert_donations_from_form(dbo, username, post, donationdate, force_receive 
             "giftaid"               : post["giftaid%d" % i],
             "chequenumber"          : post["chequenumber%d" % i],
             "receiptnumber"         : post["receiptnumber"],
+            "fee"                   : post["fee%d" % i],
             "comments"              : post["comments%d" % i],
             "vat"                   : post["vat%d" % i],
             "vatrate"               : post["vatrate%d" % i],
@@ -590,6 +591,7 @@ def insert_donation_from_form(dbo, username, post):
         "NextCreated":          0,
         "ChequeNumber":         post["chequenumber"],
         "ReceiptNumber":        post["receiptnumber"],
+        "Fee":                  post.integer("fee"),
         "IsGiftAid":            post.boolean("giftaid"),
         "IsVAT":                post.boolean("vat"),
         "VATRate":              post.floating("vatrate"),
@@ -628,6 +630,7 @@ def update_donation_from_form(dbo, username, post):
         "Date":                 post.date("received"),
         "ChequeNumber":         post["chequenumber"],
         "ReceiptNumber":        post["receiptnumber"],
+        "Fee":                  post.integer("fee"),
         "IsGiftAid":            post.boolean("giftaid"),
         "IsVAT":                post.boolean("vat"),
         "VATRate":              post.floating("vatrate"),

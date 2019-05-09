@@ -71,6 +71,8 @@ DONATIONDATE
     The date the donation amount on this line was received. If movement columns are present, it will be attached to the movement as well as the person. If no person columns are present, having this column in the CSV file will cause an error.
 DONATIONAMOUNT
     The amount of the donation on this line (as a floating point number)
+DONATIONFEE
+   The amount of any transaction fee in handling the donation
 DONATIONCHECKNUMBER
     The cheque/check number for the donation
 DONATIONCOMMENTS

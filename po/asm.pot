@@ -4681,7 +4681,7 @@ msgstr ""
 msgid "February"
 msgstr ""
 
-#: licence_renewal.js licence.js
+#: licence_renewal.js donations.js licence.js
 msgid "Fee"
 msgstr ""
 
@@ -5725,6 +5725,10 @@ msgstr ""
 msgid ""
 "If you don't select any locations, publishers will include animals in all "
 "locations."
+msgstr ""
+
+#: donations.js
+msgid "If you were charged a transaction fee for receiving this payment, the amount"
 msgstr ""
 
 #: dbupdate.py
@@ -9551,7 +9555,7 @@ msgstr ""
 msgid "Saint Bernard St. Bernard"
 msgstr ""
 
-#: common_widgets.js donations.js clinic_appointment.js
+#: common_widgets.js donations.js clinic_appointment.js lookups.js
 msgid "Sales Tax"
 msgstr ""
 
@@ -12888,6 +12892,10 @@ msgstr ""
 
 #: options.js
 msgid "When receiving payments, allow a quantity and unit price to be set"
+msgstr ""
+
+#: options.js
+msgid "When receiving payments, allow a transaction fee to be set"
 msgstr ""
 
 #: options.js

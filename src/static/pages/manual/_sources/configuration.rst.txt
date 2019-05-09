@@ -292,6 +292,9 @@ email or name and address to try and automatically attach payments to existing
 person records where possible. If an existing record cannot be found, a new
 person will be created.
 
+The net amount will be used as the payment amount and the PayPal transaction
+fee will be recorded with the payment.
+
 Trigger Batch Processes
 -----------------------
 

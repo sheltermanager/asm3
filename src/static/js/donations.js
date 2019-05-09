@@ -33,6 +33,9 @@ $(function() {
                     { json_field: "UNITPRICE", post_field: "unitprice", label: _("Unit Price"), type: "currency", 
                         hideif: function() { return !config.bool("DonationQuantities"); } },
                     { json_field: "DONATION", post_field: "amount", label: _("Amount"), type: "currency" },
+                    { json_field: "FEE", post_field: "fee", label: _("Fee"), type: "currency", 
+                        hideif: function() { return !config.bool("DonationFees"); }, 
+                        callout: _("If you were charged a transaction fee for receiving this payment, the amount") },
                     { json_field: "", post_field: "destaccount", label: _("Deposit Account"), 
                         hideif: function() { return !config.bool("DonationTrxOverride"); }, 
                         defaultval: config.integer("DonationTargetAccount"),
@@ -105,6 +108,7 @@ $(function() {
                     { field: "RECEIPTNUMBER", display: _("Receipt No") },
                     { field: "QUANTITY", display: _("Qty"), hideif: function() { return !config.bool("DonationQuantities"); } },
                     { field: "DONATION", display: _("Amount"), formatter: tableform.format_currency },
+                    { field: "FEE", display: _("Fee"), formatter: tableform.format_currency, hideif: function() { return !config.bool("DonationFees"); }},
                     { field: "VATAMOUNT", display: _("Tax"), formatter: tableform.format_currency, hideif: function() { return !config.bool("VATEnabled"); } },
                     { field: "PERSON", display: _("Person"),
                         formatter: function(row) {

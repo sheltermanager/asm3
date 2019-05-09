@@ -46,6 +46,10 @@ ASM contains a full double entry accounting package. The options here are:
   adding payments to the system, allow a quantity and unit price to be included
   for multiple item purchases/payments.
 
+* When receiving payments, allow a transaction fee to be set: Allows a 
+  transaction fee to be recorded with the payment (eg: The cut taken by
+  services like PayPal, Amazon Payments, Google Wallet, Stripe, etc).
+
 * When receiving payments, allow recording of sales tax with a default rate of %:
   ASM can calculate and store sales tax/VAT/GST amounts on payments you receive
   for taxable goods. Enabling this option will add a tickbox to all payment
