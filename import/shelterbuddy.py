@@ -309,8 +309,11 @@ for row in asm.csv_to_list(PATH + "tblAnimal.csv"):
     a.DeceasedDate = getdate(row["DeceasedDate"])
     if a.DeceasedDate is not None:
         a.Archived = 1
-        if row["euthanasiaType"] != "0": a.PutToSleep = 1
-        a.PTSReasonID = 4
+        a.PTSReasonID = 2
+        # StatusID == 2 is euth in SB - there is no lookup table for statuses
+        if row["euthanasiaType"] != "0" or row["StatusID"] == "2": 
+            a.PutToSleep = 1
+            a.PTSReasonID = 4
     if row["crueltyCase"] == "1":
         a.CrueltyCase = 1
     a.CreatedBy = "conversion/%s" % users[row["AddAdminID"]]
