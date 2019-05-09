@@ -136,6 +136,7 @@
                 'class="asm3-adoptable-link" ',
                 'href="{baseurl}/service?account={account}&method=animal_view&animalid={animalid}">',
             '<img class="asm3-adoptable-thumbnail" ',
+                'alt="{animalname}" ',
                 'src="{baseurl}/service?account={account}&method=animal_thumbnail&animalid={animalid}&d={mediadate}" />',
             '<br />',
             '<span class="asm3-adoptable-name">{animalname}</span>',

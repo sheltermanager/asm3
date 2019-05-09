@@ -1,6 +1,7 @@
 42
 ================
 
+09/05/19 Output animal name in alt attribute of adoptable_js #587
 09/05/19 Allow transaction fees with payments, set by PayPal import #566
 07/05/19 When importing CSV/PayPal records include importing username #600
 02/05/19 Allow VAT/GST to be selectively chosen by payment type #568
