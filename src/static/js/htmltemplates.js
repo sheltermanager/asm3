@@ -94,7 +94,13 @@ $(function() {
                                  tableform.table_update(table);
                              });
                      } 
-                 }
+                 },
+
+                { id: "preview", text: _("Preview"), icon: "web", enabled: "one",
+                    click: function() {
+                        $("#dialog-preview").dialog("open");
+                    }
+                }
             ];
             this.dialog = dialog;
             this.buttons = buttons;
@@ -105,6 +111,7 @@ $(function() {
             var s = "";
             this.model();
             s += tableform.dialog_render(this.dialog);
+            s += this.render_previewdialog();
             s += html.content_header(_("HTML Publishing Templates"));
             s += tableform.buttons_render(this.buttons);
             s += tableform.table_render(this.table);
@@ -117,6 +124,7 @@ $(function() {
             tableform.dialog_bind(this.dialog);
             tableform.buttons_bind(this.buttons);
             tableform.table_bind(this.table, this.buttons);
+            this.bind_previewdialog();
 
             // Only allow letters and numbers in the template names, no spaces
             /*jslint regexp: true */
@@ -127,8 +135,50 @@ $(function() {
             });
         },
 
+        render_previewdialog: function() {
+            return [
+                '<div id="dialog-preview" style="display: none" title="' + html.title(_("Preview")) + '">',
+                html.info(_("Preview allows you to test your HTML templates while bypassing server side caching and without making your animals adoptable")),
+                '<table width="100%">',
+                '<tr>',
+                '<td><label for="animals">' + _("Animals") + '</label></td>',
+                '<td><input id="animals" data="animals" type="hidden" class="asm-animalchoosermulti" /></td>',
+                '</tr>',
+                '</table>',
+                '</div>'
+            ].join("\n");
+        },
+
+        bind_previewdialog: function() {
+
+            var previewbuttons = { }, table = htmltemplates.table;
+            previewbuttons[_("Preview")] = function() {
+                validate.reset("dialog-preview");
+                if (!validate.notblank([ "animals" ])) { return; }
+                $("#dialog-preview").disable_dialog_buttons();
+                var ids = tableform.table_ids(table);
+                common.route("htmltemplates_preview?template=" + ids + "&animals=" + $("#animals").val(), true);
+            };
+            previewbuttons[_("Cancel")] = function() {
+                $("#dialog-preview").dialog("close");
+            };
+
+            $("#dialog-preview").dialog({
+                autoOpen: false,
+                width: 550,
+                modal: true,
+                dialogClass: "dialogshadow",
+                show: dlgfx.edit_show,
+                hide: dlgfx.edit_hide,
+                buttons: previewbuttons
+            });
+
+        },
+
         destroy: function() {
             tableform.dialog_destroy();
+            common.widget_destroy("#dialog-preview");
+            common.widget_destroy("#animals");
         },
 
         name: "htmltemplates",

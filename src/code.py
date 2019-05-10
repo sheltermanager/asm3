@@ -37,6 +37,7 @@ import onlineform as extonlineform
 import person as extperson
 import publish as extpublish
 import publishers.base
+import publishers.html
 import publishers.vetenvoy
 import reports as extreports
 import search as extsearch
@@ -2850,6 +2851,17 @@ class htmltemplates(JSONEndpoint):
     def post_delete(self, o):
         for name in o.post["names"].split(","):
             if name != "": template.delete_html_template(o.dbo, o.user, name)
+
+class htmltemplates_preview(ASMEndpoint):
+    url = "htmltemplates_preview"
+
+    def content(self, o):
+        template = o.post["template"].replace(",", "")
+        rows = extanimal.get_animals_ids(o.dbo, "DateBroughtIn", "SELECT ID FROM animal WHERE ID IN (%s)" % o.post["animals"], limit=10)
+        extadditional.append_to_results(o.dbo, rows, "animal")
+        self.content_type("text/html")
+        self.cache_control(0)
+        return publishers.html.animals_to_page(o.dbo, rows, template)
 
 class incident(JSONEndpoint):
     url = "incident"
