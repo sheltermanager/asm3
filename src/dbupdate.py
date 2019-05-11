@@ -3413,7 +3413,7 @@ def update_3308(dbo):
     dbo.execute_dbupdate("INSERT INTO testtype (ID, TestName, DefaultCost) VALUES (3, '" + _("Heartworm", l) + "', 0)")
 
 def update_3309(dbo):
-    fiv = dbo.query("SELECT ID, CombiTestDate, CombiTestResult FROM animal WHERE CombiTested = 1")
+    fiv = dbo.query("SELECT ID, CombiTestDate, CombiTestResult FROM animal WHERE CombiTested = 1 AND CombiTestDate Is Not Null")
     al.debug("found %d fiv results to convert" % len(fiv), "update_3309", dbo)
     for f in fiv:
         try:
@@ -3429,7 +3429,7 @@ def update_3309(dbo):
             }, user="dbupdate", generateID=False, writeAudit=False)
         except Exception as err:
             al.error("fiv: " + str(err), "dbupdate.update_3309", dbo)
-    flv = dbo.query("SELECT ID, CombiTestDate, FLVResult FROM animal WHERE CombiTested = 1")
+    flv = dbo.query("SELECT ID, CombiTestDate, FLVResult FROM animal WHERE CombiTested = 1 AND CombiTestDate Is Not Null")
     al.debug("found %d flv results to convert" % len(flv), "update_3309", dbo)
     for f in flv:
         try:
@@ -3445,7 +3445,7 @@ def update_3309(dbo):
             }, user="dbupdate", generateID=False, writeAudit=False)
         except Exception as err:
             al.error("flv: " + str(err), "dbupdate.update_3309", dbo)
-    hw = dbo.query("SELECT ID, HeartwormTestDate, HeartwormTestResult FROM animal WHERE HeartwormTested = 1")
+    hw = dbo.query("SELECT ID, HeartwormTestDate, HeartwormTestResult FROM animal WHERE HeartwormTested = 1 AND HeartwormTestDate Is Not Null")
     al.debug("found %d heartworm results to convert" % len(hw), "update_3309", dbo)
     for f in hw:
         try:
