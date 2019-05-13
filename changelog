@@ -1,6 +1,7 @@
 42
 ================
 
+13/05/19 Allow payment and cost types to be unlinked from accounts
 13/05/19 Only allow bank accounts to be used for destination override #605
 10/05/19 Allow preview of HTML templates that bypasses cache #603
 09/05/19 Register old-style 10-digit hex HomeAgain chips with Found
