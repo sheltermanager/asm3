@@ -161,7 +161,7 @@ def get_accounts(dbo, onlyactive = False, onlybank = False):
         afilter = "AND a.Archived = 0"
     bfilter = ""
     if onlybank:
-        bfilter = "AND a.AccountType = %d" % BANK
+        bfilter = "AND a.AccountType IN (%d,%d)" % (ASSET, BANK)
     roles = dbo.query("SELECT ar.*, r.RoleName FROM accountsrole ar INNER JOIN role r ON ar.RoleID = r.ID")
     accounts = dbo.query("SELECT a.*, at.AccountType AS AccountTypeName, " \
         "dt.DonationName, " \
