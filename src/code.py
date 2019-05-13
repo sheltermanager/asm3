@@ -1054,7 +1054,7 @@ class accounts(JSONEndpoint):
         if o.post["offset"] == "all":
             accounts = financial.get_accounts(dbo)
         else:
-            accounts = financial.get_accounts(dbo, True)
+            accounts = financial.get_accounts(dbo, onlyactive=True)
         al.debug("got %d accounts" % len(accounts), "code.accounts", dbo)
         return {
             "accounttypes": extlookups.get_account_types(dbo),
@@ -1405,7 +1405,7 @@ class animal_donations(JSONEndpoint):
             "tabcounts": extanimal.get_satellite_counts(dbo, animalid)[0],
             "name": "animal_donations",
             "donationtypes": extlookups.get_donation_types(dbo),
-            "accounts": financial.get_accounts(dbo),
+            "accounts": financial.get_accounts(dbo, onlybank=True),
             "paymenttypes": extlookups.get_payment_types(dbo),
             "frequencies": extlookups.get_donation_frequencies(dbo),
             "templates": template.get_document_templates(dbo)
@@ -2596,7 +2596,7 @@ class donation(JSONEndpoint):
         return {
             "name": "donation",
             "donationtypes": extlookups.get_donation_types(dbo),
-            "accounts": financial.get_accounts(dbo),
+            "accounts": financial.get_accounts(dbo, onlybank=True),
             "paymenttypes": extlookups.get_payment_types(dbo),
             "frequencies": extlookups.get_donation_frequencies(dbo),
             "templates": template.get_document_templates(dbo),
@@ -2639,7 +2639,7 @@ class donation_receive(JSONEndpoint):
         return {
             "donationtypes": extlookups.get_donation_types(dbo),
             "paymenttypes": extlookups.get_payment_types(dbo),
-            "accounts": financial.get_accounts(dbo)
+            "accounts": financial.get_accounts(dbo, onlybank=True)
         }
 
     def post_create(self, o):
@@ -3124,7 +3124,7 @@ class licence_renewal(JSONEndpoint):
             "donationtypes": extlookups.get_donation_types(dbo),
             "licencetypes": extlookups.get_licence_types(dbo),
             "paymenttypes": extlookups.get_payment_types(dbo),
-            "accounts": financial.get_accounts(dbo)
+            "accounts": financial.get_accounts(dbo, onlybank=True)
         }
 
     def post_all(self, o):
@@ -3646,7 +3646,7 @@ class move_adopt(JSONEndpoint):
         dbo = o.dbo
         return {
             "donationtypes": extlookups.get_donation_types(dbo),
-            "accounts": financial.get_accounts(dbo),
+            "accounts": financial.get_accounts(dbo, onlybank=True),
             "paymenttypes": extlookups.get_payment_types(dbo)
         }
 
@@ -3877,7 +3877,7 @@ class move_reclaim(JSONEndpoint):
         dbo = o.dbo
         return {
             "donationtypes": extlookups.get_donation_types(dbo),
-            "accounts": financial.get_accounts(dbo),
+            "accounts": financial.get_accounts(dbo, onlybank=True),
             "paymenttypes": extlookups.get_payment_types(dbo)
         }
 
@@ -3908,7 +3908,7 @@ class move_reserve(JSONEndpoint):
         dbo = o.dbo
         return {
             "donationtypes": extlookups.get_donation_types(dbo),
-            "accounts": financial.get_accounts(dbo),
+            "accounts": financial.get_accounts(dbo, onlybank=True),
             "paymenttypes": extlookups.get_payment_types(dbo),
             "reservationstatuses": extlookups.get_reservation_statuses(dbo)
         }
@@ -4153,7 +4153,7 @@ class options(JSONEndpoint):
     def controller(self, o):
         dbo = o.dbo
         c = {
-            "accounts": financial.get_accounts(dbo),
+            "accounts": financial.get_accounts(dbo, onlybank=True),
             "animalfindcolumns": html.json_animalfindcolumns(dbo),
             "animalflags": extlookups.get_animal_flags(dbo),
             "breeds": extlookups.get_breeds(dbo),
@@ -4332,7 +4332,7 @@ class person_donations(JSONEndpoint):
             "tabcounts": extperson.get_satellite_counts(dbo, p["ID"])[0],
             "name": "person_donations",
             "donationtypes": extlookups.get_donation_types(dbo),
-            "accounts": financial.get_accounts(dbo),
+            "accounts": financial.get_accounts(dbo, onlybank=True),
             "paymenttypes": extlookups.get_payment_types(dbo),
             "frequencies": extlookups.get_donation_frequencies(dbo),
             "templates": template.get_document_templates(dbo),

@@ -143,21 +143,25 @@ def get_account_id(dbo, code):
     """
     return dbo.query_int("SELECT ID FROM accounts WHERE Code = ?", [code])
     
-def get_accounts(dbo, onlyactive = False):
+def get_accounts(dbo, onlyactive = False, onlybank = False):
     """
     Returns all of the accounts with reconciled/balance figures
     ID, CODE, DESCRIPTION, ACCOUNTTYPE, DONATIONTYPEID, RECONCILED, BALANCE, VIEWROLEIDS, VIEWROLES, EDITROLEIDS, EDITROLES
     If an accounting period has been set, balances are calculated from that point.
     onlyactive: If set to true, only accounts with ARCHIVED == 0 are returned
+    onlybank: If set to true, only accounts with ACCOUNTTYPE = 1 are returned
     """
     l = dbo.locale
     pfilter = ""
     aperiod = configuration.accounting_period(dbo)
     if aperiod != "":
-        pfilter = " AND TrxDate >= %s" % dbo.sql_date(i18n.display2python(l, aperiod), wrapParens=True, includeTime=False)
+        pfilter = " AND a.TrxDate >= %s" % dbo.sql_date(i18n.display2python(l, aperiod), wrapParens=True, includeTime=False)
     afilter = ""
     if onlyactive:
-        afilter = "WHERE Archived = 0 "
+        afilter = "AND a.Archived = 0"
+    bfilter = ""
+    if onlybank:
+        bfilter = "AND a.AccountType = %d" % BANK
     roles = dbo.query("SELECT ar.*, r.RoleName FROM accountsrole ar INNER JOIN role r ON ar.RoleID = r.ID")
     accounts = dbo.query("SELECT a.*, at.AccountType AS AccountTypeName, " \
         "dt.DonationName, " \
@@ -167,8 +171,9 @@ def get_accounts(dbo, onlyactive = False):
         "(SELECT SUM(Amount) FROM accountstrx WHERE Reconciled = 1 AND SourceAccountID = a.ID%s) AS recsrc " \
         "FROM accounts a " \
         "INNER JOIN lksaccounttype at ON at.ID = a.AccountType " \
-        "LEFT OUTER JOIN donationtype dt ON dt.ID = a.DonationTypeID %s " \
-        "ORDER BY a.AccountType, a.Code" % (pfilter, pfilter, pfilter, pfilter, afilter))
+        "LEFT OUTER JOIN donationtype dt ON dt.ID = a.DonationTypeID " \
+        "WHERE a.ID > 0 %s %s " \
+        "ORDER BY a.AccountType, a.Code" % (pfilter, pfilter, pfilter, pfilter, afilter, bfilter))
     for a in accounts:
         dest = a.dest
         src = a.src
