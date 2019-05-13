@@ -155,7 +155,7 @@ def get_accounts(dbo, onlyactive = False, onlybank = False):
     pfilter = ""
     aperiod = configuration.accounting_period(dbo)
     if aperiod != "":
-        pfilter = " AND a.TrxDate >= %s" % dbo.sql_date(i18n.display2python(l, aperiod), wrapParens=True, includeTime=False)
+        pfilter = " AND TrxDate >= %s" % dbo.sql_date(i18n.display2python(l, aperiod), wrapParens=True, includeTime=False)
     afilter = ""
     if onlyactive:
         afilter = "AND a.Archived = 0"
