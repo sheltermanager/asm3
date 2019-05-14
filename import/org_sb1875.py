@@ -10,9 +10,9 @@ Import script for sb1875 csv files
 
 START_ID = 1000
 
-ANIMAL_FILENAME = "data/sb1875_csv/ASM_Animal_Master.csv"
-LOG_FILENAME = "data/sb1875_csv/ASM_Animal_Log.csv"
-PERSON_FILENAME = "data/sb1875_csv/ASM_People.csv"
+ANIMAL_FILENAME = "/home/robin/tmp/asm3_import_data/sb1875_csv/ASM_Animal_Master.csv"
+LOG_FILENAME = "/home/robin/tmp/asm3_import_data/sb1875_csv/ASM_Animal_Log.csv"
+PERSON_FILENAME = "/home/robin/tmp/asm3_import_data/sb1875_csv/ASM_People.csv"
 
 def getdate(d):
     if d == "02/01/1900": return None # Weird quirk of their files
@@ -154,7 +154,10 @@ for d in asm.csv_to_list(LOG_FILENAME, remove_non_ascii=True):
         a.CreatedBy = d["User_Id"]
 
     elif d["Weight"] != "0":
-        a.Weight = float(d["Weight"])
+        try:
+            a.Weight = float(d["Weight"])
+        except ValueError:
+            pass
         l = asm.Log()
         logs.append(l)
         l.LogTypeID = 1 # Weight
