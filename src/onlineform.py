@@ -37,6 +37,7 @@ FIELDTYPE_SIGNATURE = 13
 FIELDTYPE_LOOKUP_MULTI = 14
 FIELDTYPE_GDPR_CONTACT_OPTIN = 15
 FIELDTYPE_TIME = 16
+FIELDTYPE_IMAGE = 17
 
 # Types as used in JSON representations
 FIELDTYPE_MAP = {
@@ -56,7 +57,8 @@ FIELDTYPE_MAP = {
     "SIGNATURE": 13,
     "LOOKUP_MULTI": 14,
     "GDPR_CONTACT_OPTIN": 15,
-    "TIME": 16
+    "TIME": 16,
+    "IMAGE": 17
 }
 
 FIELDTYPE_MAP_REVERSE = {v: k for k, v in FIELDTYPE_MAP.items()}
@@ -247,6 +249,9 @@ def get_onlineform_html(dbo, formid, completedocument = True):
             h.append('<input type="hidden" name="%s" value="" />' % html.escape(fname))
             h.append('<div class="asm-onlineform-signature" style="width: 500px; height: 200px" data-name="%s"></div>' % ( html.escape(fname) ))
             h.append('<br/><button type="button" class="asm-onlineform-signature-clear" data-clear="%s">%s</button>' % ( html.escape(fname), i18n._("Clear", l) ))
+        elif f.FIELDTYPE == FIELDTYPE_IMAGE:
+            h.append('<input type="hidden" name="%s" value="" />' % html.escape(fname))
+            h.append('<input class="asm-onlineform-image" type="file" data-name="%s" />' % html.escape(fname))
         h.append('</td>')
         h.append('</tr>')
     h.append('</table>')
