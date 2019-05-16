@@ -799,6 +799,24 @@ def guess_transporttype(dbo, s):
     if guess != 0: return guess
     return dbo.query_int("SELECT ID FROM transporttype ORDER BY ID")
 
+def attach_form(dbo, username, linktype, linkid, collationid):
+    """
+    Attaches the incoming form to the media tab. Finds any images in the form
+    and attaches those as images in the media tab of linktype/linkid.
+    """
+    formname = get_onlineformincoming_name(dbo, collationid)
+    formhtml = get_onlineformincoming_html_print(dbo, [collationid,])
+    media.create_document_media(dbo, username, linktype, linkid, formname, formhtml )
+    fields = get_onlineformincoming_detail(dbo, collationid)
+    for f in fields:
+        if f.VALUE.startswith("data:image/jpeg"):
+            d = {
+                "filename":     "image.jpg",
+                "filetype":     "image/jpeg",
+                "filedata":     f.VALUE,
+            }
+            media.attach_file_from_form(dbo, username, linktype, linkid, utils.PostedData(d, dbo.locale))
+
 def attach_animal(dbo, username, collationid):
     """
     Finds the existing shelter animal with "animalname" and
@@ -820,9 +838,7 @@ def attach_animal(dbo, username, collationid):
         raise utils.ASMValidationError(i18n._("There is not enough information in the form to attach to a shelter animal record (need an animal name).", l))
     if animalid == 0:
         raise utils.ASMValidationError(i18n._("Could not find animal with name '{0}'", l).format(animalname))
-    formname = get_onlineformincoming_name(dbo, collationid)
-    formhtml = get_onlineformincoming_html_print(dbo, [collationid,])
-    media.create_document_media(dbo, username, media.ANIMAL, animalid, formname, formhtml )
+    attach_form(dbo, username, media.ANIMAL, animalid, collationid)
     return (collationid, animalid, animal.get_animal_namecode(dbo, animalid))
 
 def create_person(dbo, username, collationid):
@@ -891,10 +907,7 @@ def create_person(dbo, username, collationid):
             latlon = geo.get_lat_long(dbo, d["address"], d["town"], d["county"], d["postcode"])
             if latlon is not None: person.update_latlong(dbo, personid, latlon)
     personname = person.get_person_name_code(dbo, personid)
-    # Attach the form to the person
-    formname = get_onlineformincoming_name(dbo, collationid)
-    formhtml = get_onlineformincoming_html_print(dbo, [collationid,])
-    media.create_document_media(dbo, username, media.PERSON, personid, formname, formhtml )
+    attach_form(dbo, username, media.PERSON, personid, collationid)
     # Was there a reserveanimalname field? If so, create reservation(s) to the person if possible
     for k, v in d.iteritems():
         if k.startswith("reserveanimalname"):
@@ -933,10 +946,7 @@ def create_animalcontrol(dbo, username, collationid):
     d["caller"] = personid
     # Create the incident 
     incidentid = animalcontrol.insert_animalcontrol_from_form(dbo, utils.PostedData(d, dbo.locale), username)
-    # Attach the form to the incident
-    formname = get_onlineformincoming_name(dbo, collationid)
-    formhtml = get_onlineformincoming_html_print(dbo, [collationid,])
-    media.create_document_media(dbo, username, media.ANIMALCONTROL, incidentid, formname, formhtml )
+    attach_form(dbo, username, media.ANIMALCONTROL, incidentid, collationid)
     return (collationid, incidentid, utils.padleft(incidentid, 6) + " - " + personname)
 
 def create_lostanimal(dbo, username, collationid):
@@ -973,10 +983,7 @@ def create_lostanimal(dbo, username, collationid):
     d["owner"] = personid
     # Create the lost animal
     lostanimalid = lostfound.insert_lostanimal_from_form(dbo, utils.PostedData(d, dbo.locale), username)
-    # Attach the form to the lost animal
-    formname = get_onlineformincoming_name(dbo, collationid)
-    formhtml = get_onlineformincoming_html_print(dbo, [collationid,])
-    media.create_document_media(dbo, username, media.LOSTANIMAL, lostanimalid, formname, formhtml )
+    attach_form(dbo, username, media.LOSTANIMAL, lostanimalid, collationid)
     return (collationid, lostanimalid, utils.padleft(lostanimalid, 6) + " - " + personname)
   
 def create_foundanimal(dbo, username, collationid):
@@ -1013,10 +1020,7 @@ def create_foundanimal(dbo, username, collationid):
     d["owner"] = personid
     # Create the found animal
     foundanimalid = lostfound.insert_foundanimal_from_form(dbo, utils.PostedData(d, dbo.locale), username)
-    # Attach the form to the found animal
-    formname = get_onlineformincoming_name(dbo, collationid)
-    formhtml = get_onlineformincoming_html_print(dbo, [collationid,])
-    media.create_document_media(dbo, username, media.FOUNDANIMAL, foundanimalid, formname, formhtml )
+    attach_form(dbo, username, media.FOUNDANIMAL, foundanimalid, collationid)
     return (collationid, foundanimalid, utils.padleft(foundanimalid, 6) + " - " + personname)
 
 def create_transport(dbo, username, collationid):
@@ -1067,10 +1071,7 @@ def create_transport(dbo, username, collationid):
         raise utils.ASMValidationError(i18n._("Could not find animal with name '{0}'", l).format(animalname))
     # Create the transport
     movement.insert_transport_from_form(dbo, username, utils.PostedData(d, dbo.locale))
-    # Attach the form to the animal
-    formname = get_onlineformincoming_name(dbo, collationid)
-    formhtml = get_onlineformincoming_html_print(dbo, [collationid,])
-    media.create_document_media(dbo, username, media.ANIMAL, animalid, formname, formhtml )
+    attach_form(dbo, username, media.ANIMAL, animalid, collationid)
     return (collationid, animalid, animal.get_animal_namecode(dbo, animalid))
 
 def create_waitinglist(dbo, username, collationid):
@@ -1098,10 +1099,7 @@ def create_waitinglist(dbo, username, collationid):
     d["owner"] = personid
     # Create the waiting list
     wlid = waitinglist.insert_waitinglist_from_form(dbo, utils.PostedData(d, dbo.locale), username)
-    # Attach the form to the waiting list
-    formname = get_onlineformincoming_name(dbo, collationid)
-    formhtml = get_onlineformincoming_html_print(dbo, [collationid,])
-    media.create_document_media(dbo, username, media.WAITINGLIST, wlid, formname, formhtml )
+    attach_form(dbo, username, media.WAITINGLIST, wlid, collationid)
     return (collationid, wlid, utils.padleft(wlid, 6) + " - " + personname)
 
 def auto_remove_old_incoming_forms(dbo):

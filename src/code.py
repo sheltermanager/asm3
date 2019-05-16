@@ -3981,18 +3981,14 @@ class onlineform_incoming(JSONEndpoint):
         dbo = o.dbo
         collationid = o.post.integer("collationid")
         animalid = o.post.integer("animalid")
-        formname = extonlineform.get_onlineformincoming_name(dbo, collationid)
-        formhtml = extonlineform.get_onlineformincoming_html_print(dbo, [collationid,] )
-        extmedia.create_document_media(dbo, o.user, extmedia.ANIMAL, animalid, formname, formhtml )
+        extonlineform.attach_form(dbo, o.user, extmedia.ANIMAL, animalid, collationid)
         return animalid
 
     def post_attachperson(self, o):
         dbo = o.dbo
         collationid = o.post.integer("collationid")
         personid = o.post.integer("personid")
-        formname = extonlineform.get_onlineformincoming_name(dbo, collationid)
-        formhtml = extonlineform.get_onlineformincoming_html_print(dbo, [collationid,] )
-        extmedia.create_document_media(dbo, session.user, extmedia.PERSON, personid, formname, formhtml )
+        extonlineform.attach_form(dbo, o.user, extmedia.PERSON, personid, collationid)
         return personid 
 
     def post_animal(self, o):
