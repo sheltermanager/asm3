@@ -2674,7 +2674,7 @@ def diagnostic(dbo):
             "(SELECT COUNT(*) FROM media WHERE LinkID = animal.ID AND LinkTypeID = 0) AS TotalMedia, " \
             "(SELECT COUNT(*) FROM media WHERE LinkID = animal.ID AND LinkTypeID = 0 AND WebsitePhoto = 1) AS TotalWeb, " \
             "(SELECT COUNT(*) FROM media WHERE LinkID = animal.ID AND LinkTypeID = 0 AND DocPhoto = 1) AS TotalDoc, " \
-            "(SELECT MAX(ID) FROM media WHERE LinkID = animal.ID AND LinkTypeID = 0 AND MediaName LIKE '%.jpg') AS LatestImage " \
+            "(SELECT MAX(ID) FROM media WHERE LinkID = animal.ID AND LinkTypeID = 0 AND ExcludeFromPublish = 0 AND MediaName LIKE '%.jpg') AS LatestImage " \
             "FROM animal"):
             if a["TOTALMEDIA"] > 0 and a["TOTALWEB"] > 1:
                 # Too many preferred images

@@ -556,14 +556,14 @@ def delete_media(dbo, username, mid):
     # Was it the web or doc preferred? If so, make the first image for the link
     # the web or doc preferred instead
     if mr.WEBSITEPHOTO == 1:
-        ml = dbo.first_row(dbo.query("SELECT * FROM media WHERE LinkID = ? AND LinkTypeID = ? " \
-            "AND MediaMimeType = 'image/jpeg' " \
-            "ORDER BY ID", (mr.LINKID, mr.LINKTYPEID)))
+        ml = dbo.first_row(dbo.query("SELECT ID FROM media WHERE LinkID = ? AND LinkTypeID = ? " \
+            "AND MediaMimeType = 'image/jpeg' AND ExcludeFromPublish = 0 " \
+            "ORDER BY ID DESC", (mr.LINKID, mr.LINKTYPEID)))
         if ml: dbo.update("media", ml.ID, { "WebsitePhoto": 1 })
     if mr.DOCPHOTO == 1:
-        ml = dbo.first_row(dbo.query("SELECT * FROM media WHERE LinkID = ? AND LinkTypeID = ? " \
-            "AND MediaMimeType = 'image/jpeg' " \
-            "ORDER BY ID", (mr.LINKID, mr.LINKTYPEID)))
+        ml = dbo.first_row(dbo.query("SELECT ID FROM media WHERE LinkID = ? AND LinkTypeID = ? " \
+            "AND MediaMimeType = 'image/jpeg' AND ExcludeFromPublish = 0 " \
+            "ORDER BY ID DESC", (mr.LINKID, mr.LINKTYPEID)))
         if ml: dbo.update("media", ml.ID, { "DocPhoto": 1 })
 
 def rotate_media(dbo, username, mid, clockwise = True):

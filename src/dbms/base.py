@@ -428,8 +428,8 @@ class Database(object):
             if setRecordVersion: values["RecordVersion"] = self.get_recordversion()
         values = self.encode_str_before_write(values)
         iid = 0
-        if type(where) == int: 
-            iid = where
+        if utils.cint(where) > 0:
+            iid = utils.cint(where)
             where = "ID=%s" % where
         sql = "UPDATE %s SET %s WHERE %s" % ( table, ",".join( ["%s=?" % x for x in values.iterkeys()] ), where )
         if iid > 0: 
@@ -449,8 +449,8 @@ class Database(object):
             writeAudit: If True, writes an audit record for the delete
             returns the number of rows deleted
         """
-        if type(where) == int: 
-            where = "ID=%d" % where
+        if utils.cint(where) > 0:
+            where = "ID=%s" % utils.cint(where)
         if writeAudit and user != "":
             audit.delete_rows(self, user, table, where)
         return self.execute("DELETE FROM %s WHERE %s" % (table, where))

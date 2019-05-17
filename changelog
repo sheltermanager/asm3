@@ -1,6 +1,8 @@
 42
 ================
 
+17/05/19 When deleting preferred media choose only non-exclude photos #608
+17/05/19 Fix for non-int ID types coming back from MySQLdb driver #608
 16/05/19 Include separate copy of online form images on media tab #607
 15/05/19 Set default entry reason when creating animal from waiting list
 15/05/19 Online form image field type #160
