@@ -10,7 +10,7 @@ en
 ###
 SELECT
 OwnerName,
-OwnerAddress, OwnerTown, OwnerCounty, OwnerPostcode, HomeTelephone, MobileTelephone,
+OwnerAddress, OwnerTown, OwnerCounty, OwnerPostcode, HomeTelephone, MobileTelephone, EmailAddress, 
 Comments,
 AdditionalFlags,
 (SELECT COUNT(*) FROM adoption WHERE MovementType = 2 AND OwnerID = owner.ID AND (ReturnDate Is Null OR ReturnDate > '$CURRENT_DATE$')) AS ActiveFosters,
@@ -36,7 +36,8 @@ $$BODY
 <td>$OWNERADDRESS<br/>
 $OWNERTOWN $OWNERCOUNTY $OWNERPOSTCODE<br/>
 H: $HOMETELEPHONE<br/>
-M: $MOBILETELEPHONE</td>
+M: $MOBILETELEPHONE<br/>
+E: $EMAILADDRESS</td>
 <td>$ADDITIONALFLAGS</td>
 <td>$COMMENTS</td>
 <td>$ACTIVEFOSTERS / $FOSTERCAPACITY</td>
