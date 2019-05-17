@@ -87,7 +87,7 @@ def get_animal_data(dbo, pc=None, animalid=0, include_additional_fields=False, r
         """
         for r in rows:
             if r.ID == aid:
-                a.ANIMALNAME = "%s, %s" % (a.ANIMALNAME, r.ANIMALNAME)
+                a.ANIMALNAME = "%s / %s" % (a.ANIMALNAME, r.ANIMALNAME)
                 rows.remove(r)
                 al.debug("merged animal %d into %d" % (aid, a["ID"]), "publishers.base.get_animal_data", dbo)
                 break
