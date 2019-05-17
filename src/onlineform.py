@@ -699,7 +699,7 @@ def insert_onlineformincoming_from_form(dbo, post, remoteip):
 
     for fld in get_onlineformincoming_detail(dbo, collationid):
         if fieldssofar < 3:
-            # Don't include raw markup or signature fields in the preview
+            # Don't include raw markup or signature/image fields in the preview
             if fld.VALUE.startswith("RAW::") or fld.VALUE.startswith("data:"): continue
             fieldssofar += 1
             preview.append( "%s: %s" % (fld.LABEL, fld.VALUE ))
