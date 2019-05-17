@@ -1,6 +1,7 @@
 42
 ================
 
+17/05/19 Use a generator function for Export Animals as CSV #609
 17/05/19 Use / instead of , as bonded animal separator to workaround PF bug
 17/05/19 When deleting preferred media choose only non-exclude photos #608
 17/05/19 Fix for non-int ID types coming back from MySQLdb driver #608

@@ -787,20 +787,49 @@ def csvexport_animals(dbo, dataset, animalids = "", includephoto = False):
     """
     l = dbo.locale
     q = ""
+    
     if dataset == "all": q = "SELECT ID FROM animal ORDER BY ID"
     elif dataset == "shelter": q = "SELECT ID FROM animal WHERE Archived=0 ORDER BY ID"
     elif dataset == "nonshelter": q = "SELECT ID FROM animal WHERE NonShelterAnimal=1 ORDER BY ID"
     elif dataset == "selshelter": q = "SELECT ID FROM animal WHERE ID IN (%s) ORDER BY ID" % animalids
+    
     ids = dbo.query(q)
-    rows = []
+
+    keys = [ "ANIMALCODE", "ANIMALNAME", "ANIMALIMAGE", "ANIMALSEX", "ANIMALTYPE", "ANIMALCOLOR", "ANIMALBREED1",
+        "ANIMALBREED2", "ANIMALDOB", "ANIMALLOCATION", "ANIMALUNIT", "ANIMALSPECIES", "ANIMALCOMMENTS",
+        "ANIMALHIDDENDETAILS", "ANIMALHEALTHPROBLEMS", "ANIMALMARKINGS", "ANIMALREASONFORENTRY", "ANIMALNEUTERED",
+        "ANIMALNEUTEREDDATE", "ANIMALMICROCHIP", "ANIMALMICROCHIPDATE", "ANIMALENTRYDATE", "ANIMALDECEASEDDATE",
+        "ANIMALNOTFORADOPTION", "ANIMALNONSHELTER", "ANIMALGOODWITHCATS", "ANIMALGOODWITHDOGS", "ANIMALGOODWITHKIDS",
+        "ANIMALHOUSETRAINED", "ORIGINALOWNERTITLE", "ORIGINALOWNERINITIALS", "ORIGINALOWNERFIRSTNAME",
+        "ORIGINALOWNERLASTNAME", "ORIGINALOWNERADDRESS", "ORIGINALOWNERCITY", "ORIGINALOWNERSTATE", "ORIGINALOWNERZIPCODE",
+        "ORIGINALOWNERHOMEPHONE", "ORIGINALOWNERWORKPHONE", "ORIGINALOWNERCELLPHONE", "ORIGINALOWNEREMAIL", "MOVEMENTTYPE",
+        "MOVEMENTDATE", "PERSONTITLE", "PERSONINITIALS", "PERSONFIRSTNAME", "PERSONLASTNAME", "PERSONADDRESS", "PERSONCITY",
+        "PERSONSTATE", "PERSONZIPCODE", "PERSONFOSTERER", "PERSONHOMEPHONE", "PERSONWORKPHONE", "PERSONCELLPHONE", "PERSONEMAIL",
+        "VACCINATIONTYPE", "VACCINATIONDUEDATE", "VACCINATIONGIVENDATE", "VACCINATIONEXPIRESDATE", "VACCINATIONMANUFACTURER",
+        "VACCINATIONBATCHNUMBER", "VACCINATIONCOMMENTS", "MEDICALNAME", "MEDICALDOSAGE", "MEDICALGIVENDATE", "MEDICALCOMMENTS" ]
+    
+    def tocsv(row):
+        r = []
+        for k in keys:
+            if k in row: 
+                r.append("\"%s\"" % row[k])
+            else:
+                r.append("\"\"")
+        return ",".join(r) + "\n"
+
+    firstrow = True
     for aid in ids:
-        row = collections.OrderedDict()
+
+        if firstrow:
+            firstrow = False
+            yield ",".join(keys) + "\n"
+
+        row = {}
         a = animal.get_animal(dbo, aid.ID)
         if a is None: continue
+
         row["ANIMALCODE"] = a["SHELTERCODE"]
         row["ANIMALNAME"] = a["ANIMALNAME"]
-        if includephoto: 
-            row["ANIMALIMAGE"] = ""
         if a["WEBSITEIMAGECOUNT"] > 0 and includephoto:
             mdate, mdata = media.get_image_file_data(dbo, "animal", a["ID"])
             row["ANIMALIMAGE"] = "data:image/jpg;base64,%s" % base64.b64encode(mdata)
@@ -857,20 +886,10 @@ def csvexport_animals(dbo, dataset, animalids = "", includephoto = False):
         row["PERSONWORKPHONE"] = a["CURRENTOWNERWORKTELEPHONE"]
         row["PERSONCELLPHONE"] = a["CURRENTOWNERMOBILETELEPHONE"]
         row["PERSONEMAIL"] = a["CURRENTOWNEREMAILADDRESS"]
-        row["VACCINATIONTYPE"] = ""
-        row["VACCINATIONDUEDATE"] = ""
-        row["VACCINATIONGIVENDATE"] = ""
-        row["VACCINATIONEXPIRESDATE"] = ""
-        row["VACCINATIONMANUFACTURER"] = ""
-        row["VACCINATIONBATCHNUMBER"] = ""
-        row["VACCINATIONCOMMENTS"] = ""
-        row["MEDICALNAME"] = ""
-        row["MEDICALDOSAGE"] = ""
-        row["MEDICALGIVENDATE"] = ""
-        row["MEDICALCOMMENTS"] = ""
-        rows.append(row)
+        yield tocsv(row)
+
         for v in medical.get_vaccinations(dbo, a["ID"]):
-            row = collections.OrderedDict()
+            row = {}
             row["VACCINATIONTYPE"] = v["VACCINATIONTYPE"]
             row["VACCINATIONDUEDATE"] = i18n.python2display(l, v["DATEREQUIRED"])
             row["VACCINATIONGIVENDATE"] = i18n.python2display(l, v["DATEOFVACCINATION"])
@@ -880,22 +899,18 @@ def csvexport_animals(dbo, dataset, animalids = "", includephoto = False):
             row["VACCINATIONCOMMENTS"] = v["COMMENTS"]
             row["ANIMALCODE"] = a["SHELTERCODE"]
             row["ANIMALNAME"] = a["ANIMALNAME"]
-            rows.append(row)
+            yield tocsv(row)
+
         for m in medical.get_regimens(dbo, a["ID"]):
-            row = collections.OrderedDict()
+            row = {}
             row["MEDICALNAME"] = m["TREATMENTNAME"]
             row["MEDICALDOSAGE"] = m["DOSAGE"]
             row["MEDICALGIVENDATE"] = i18n.python2display(l, m["STARTDATE"])
             row["MEDICALCOMMENTS"] = m["COMMENTS"]
             row["ANIMALCODE"] = a["SHELTERCODE"]
             row["ANIMALNAME"] = a["ANIMALNAME"]
-            rows.append(row)
+            yield tocsv(row)
+
         del a
-    if len(rows) == 0: return ""
-    keys = rows[0].keys()
-    out = StringIO()
-    dict_writer = csv.DictWriter(out, keys)
-    dict_writer.writeheader()
-    dict_writer.writerows(rows)
-    return out.getvalue()
+        del row
 

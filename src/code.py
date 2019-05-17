@@ -2092,10 +2092,15 @@ class csvexport(JSONEndpoint):
     url = "csvexport"
     get_permissions = users.USE_SQL_INTERFACE
 
-    def post_all(self, o):
+class csvexport_animals(GeneratorEndpoint):
+    url = "csvexport_animals"
+    get_permissions = users.USE_SQL_INTERFACE
+
+    def content(self, o):
         self.content_type("text/csv")
         self.header("Content-Disposition", u"attachment; filename=export.csv")
-        return extcsvimport.csvexport_animals(o.dbo, o.post["filter"], o.post["animals"], o.post.boolean("includeimage") == 1)
+        if LARGE_FILES_CHUNKED: self.header("Transfer-Encoding", "chunked")
+        for x in extcsvimport.csvexport_animals(o.dbo, o.post["filter"], o.post["animals"], o.post.boolean("includeimage") == 1): yield x
 
 class csvimport(JSONEndpoint):
     url = "csvimport"
