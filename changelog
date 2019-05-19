@@ -1,6 +1,7 @@
 42
 ================
 
+19/05/19 Add html_flagged_animals service call #610
 19/05/19 Include submitted images as attachments with online form emails #160
 19/05/19 Allow proper mimetypes instead of forcing octet-stream #405
 19/05/19 Allow send_email to handle multiple attachments #405
