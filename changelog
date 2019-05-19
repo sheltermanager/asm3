@@ -1,6 +1,9 @@
 42
 ================
 
+19/05/19 Include submitted images as attachments with online form emails #160
+19/05/19 Allow proper mimetypes instead of forcing octet-stream #405
+19/05/19 Allow send_email to handle multiple attachments #405
 17/05/19 Use a generator function for Export Animals as CSV #609
 17/05/19 Use / instead of , as bonded animal separator to workaround PF bug
 17/05/19 When deleting preferred media choose only non-exclude photos #608

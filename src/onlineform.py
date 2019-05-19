@@ -3,6 +3,7 @@
 import al
 import animal
 import animalcontrol
+import base64
 import configuration
 import geo
 import i18n
@@ -620,6 +621,7 @@ def insert_onlineformincoming_from_form(dbo, post, remoteip):
     lastname = ""
     animalnamelabel = ""
     animalname = ""
+    images = []
     post.data["formreceived"] = "%s %s" % (i18n.python2display(dbo.locale, posteddate), i18n.format_time(posteddate))
 
     for k, v in post.data.iteritems():
@@ -668,6 +670,11 @@ def insert_onlineformincoming_from_form(dbo, post, remoteip):
                             dbo.update("onlineformincoming", "CollationID=%s" % collationid, {
                                 "Flags":    flags
                             })
+                        # We decode images and put them into an images list so that they can
+                        # be included as attachments with confirmation emails.
+                        if fieldtype == FIELDTYPE_IMAGE and v.startswith("data:image/jpeg"):
+                            # Remove prefix of data:image/jpeg;base64, and decode
+                            images.append( ("%s.jpg" % fieldname, "image/jpeg", base64.b64decode(v[v.find(",")+1:])) )
 
             # Do the insert
             dbo.insert("onlineformincoming", {
@@ -714,13 +721,17 @@ def insert_onlineformincoming_from_form(dbo, post, remoteip):
         "INNER JOIN onlineformincoming oi ON oi.FormName = o.Name " \
         "WHERE oi.CollationID = ?", [collationid])
 
+    # The submitted form for including in emails
+    formdata = get_onlineformincoming_html_print(dbo, [collationid,])
+
     if submitteremail != "" and submitteremail.find("@") != -1 and emailsubmitter == 1:
         # Get the confirmation message. Prepend it to a copy of the submission
         body = dbo.query_string("SELECT o.EmailMessage FROM onlineform o " \
             "INNER JOIN onlineformincoming oi ON oi.FormName = o.Name " \
             "WHERE oi.CollationID = ?", [collationid])
-        body += "\n" + get_onlineformincoming_html_print(dbo, [collationid,])
-        utils.send_email(dbo, configuration.email(dbo), submitteremail, "", "", i18n._("Submission received: {0}", l).format(formname), body, "html", exceptions=False)
+        body += "\n" + formdata
+        utils.send_email(dbo, configuration.email(dbo), submitteremail, "", "", i18n._("Submission received: {0}", l).format(formname), 
+            body, "html", images, exceptions=False)
 
     # Did the original form specify some email addresses to send 
     # incoming submissions to?
@@ -732,7 +743,7 @@ def insert_onlineformincoming_from_form(dbo, post, remoteip):
         replyto = submitteremail 
         if replyto == "": replyto = configuration.email(dbo)
         utils.send_email(dbo, replyto, email, "", "", "%s - %s" % (formname, ", ".join(preview)), 
-            get_onlineformincoming_html_print(dbo, [collationid,]), "html", exceptions=False)
+            formdata, "html", images, exceptions=False)
 
     # Did the form submission have a value in an "emailsubmissionto" field?
     if emailsubmissionto is not None and emailsubmissionto.strip() != "":
@@ -740,7 +751,7 @@ def insert_onlineformincoming_from_form(dbo, post, remoteip):
         replyto = submitteremail 
         if replyto == "": replyto = configuration.email(dbo)
         utils.send_email(dbo, replyto, emailsubmissionto, "", "", "%s - %s" % (formname, ", ".join(preview)), 
-            get_onlineformincoming_html_print(dbo, [collationid,]), "html", exceptions=False)
+            formdata, "html", images, exceptions=False)
 
     return collationid
 

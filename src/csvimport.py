@@ -5,9 +5,7 @@ import al
 import animal
 import asynctask
 import base64
-import collections
 import configuration
-import csv
 import datetime
 import dbupdate
 import financial
