@@ -694,7 +694,6 @@ def get_stats(dbo, age=120):
     if statperiod == "thismonth": statdate = first_of_month(statdate)
     if statperiod == "thisyear": statdate = first_of_year(statdate)
     if statperiod == "alltime": statdate = datetime.datetime(1900, 1, 1)
-    countfrom = dbo.sql_date(statdate)
     return dbo.query_named_params("SELECT " \
         "(SELECT COUNT(*) FROM animal WHERE NonShelterAnimal = 0 AND DateBroughtIn >= :from) AS Entered," \
         "(SELECT COUNT(*) FROM adoption WHERE MovementDate >= :from AND MovementType = :adoption) AS Adopted," \
@@ -710,7 +709,7 @@ def get_stats(dbo, age=120):
             "(SELECT SUM(Cost) FROM animalmedical WHERE StartDate >= :from) + " \
             "(SELECT SUM(Cost) FROM animaltransport WHERE PickupDateTime >= :from) AS Costs " \
         "FROM lksmovementtype WHERE ID=1", 
-        { "from": countfrom, "adoption": movement.ADOPTION, "reclaimed": movement.RECLAIMED, "transfer": movement.TRANSFER },
+        { "from": statdate, "adoption": movement.ADOPTION, "reclaimed": movement.RECLAIMED, "transfer": movement.TRANSFER },
         age=age)
 
 def embellish_timeline(l, rows):
@@ -920,7 +919,7 @@ def get_timeline(dbo, limit = 500, age = 120):
             { "limit": dbo.sql_limit(limit) }
     # We use end of today rather than now() for 2 reasons - 
     # 1. so it picks up all items for today and 2. now() invalidates query_cache effectively
-    endoftoday = dbo.sql_date(dbo.today(settime="23:59:59"))
+    endoftoday = dbo.today(settime="23:59:59")
     return embellish_timeline(dbo.locale, dbo.query_cache(sql, [ endoftoday ], age=age))
 
 def calc_time_on_shelter(dbo, animalid, a = None):
