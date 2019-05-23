@@ -420,6 +420,18 @@ for row in asm.csv_to_list(PATH + "tblMedications.csv"):
         animalmedicals.append(asm.animal_regimen_single(a.ID, startdate, treatmentname, dosage, comments))
 """
 
+# tblAnimalVetMedicalNote.csv
+for row in asm.csv_to_list(PATH + "tblAnimalVetMedicalNote.csv"):
+    a = findanimal(row["animalID"])
+    if a is None: continue
+    l = asm.Log()
+    l.LogTypeID=3
+    l.Date = getdate(row["createDate"])
+    l.LinkID = a.ID
+    l.LinkType = 0
+    l.Comments = row["noteText"]
+    logs.append(l)
+
 # tblReceiptEntry.csv
 for row in asm.csv_to_list(PATH + "tblReceiptEntry.csv"):
     od = asm.OwnerDonation()
