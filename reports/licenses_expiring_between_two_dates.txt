@@ -4,7 +4,7 @@ Animal Control
 ###
 33307/Any
 ###
-Licenses that expire between the two dates given
+Licenses that expire between the two dates given and have not been renewed
 ###
 en
 ###
@@ -19,6 +19,7 @@ INNER JOIN owner o ON o.ID = ol.OwnerID
 LEFT OUTER JOIN animal a ON a.ID = ol.AnimalID 
 WHERE ol.ExpiryDate >= '$ASK DATE Enter the from date$'
 AND ol.ExpiryDate <= '$ASK DATE Enter the to date$' AND a.DeceasedDate Is Null
+AND NOT EXISTS(SELECT ID FROM ownerlicence WHERE OwnerID=o.ID AND ExpiryDate > '$CURRENT_DATE$')
 ORDER BY ol.ExpiryDate
 ###
 $$HEADER
