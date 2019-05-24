@@ -741,10 +741,6 @@ msgstr ""
 msgid "Adoption Fee"
 msgstr ""
 
-#: animal_find.js
-msgid "Adoption Number"
-msgstr ""
-
 #: dbupdate.py
 msgid "Adoption fee donations"
 msgstr ""
@@ -1329,7 +1325,7 @@ msgid "Animal shortcode format"
 msgstr ""
 
 #: transport.js incident.js medical.js vaccination.js csvexport.js roles.js
-#: animal_bulk.js test.js html.py reports.py
+#: animal_bulk.js test.js htmltemplates.js html.py reports.py
 msgid "Animals"
 msgstr ""
 
@@ -2100,7 +2096,7 @@ msgstr ""
 #: onlineforms.js reports.js sql.js onlineform_incoming.js common_widgets.js
 #: common_tableform.js common.js common_animalchoosermulti.js accounts_trx.js
 #: roles.js main.js test.js animal.js clinic_appointment.js
-#: common_animalchooser.js media.js person_new.js
+#: common_animalchooser.js media.js htmltemplates.js person_new.js
 msgid "Cancel"
 msgstr ""
 
@@ -5739,7 +5735,7 @@ msgstr ""
 msgid "Illyrian Sheepdog"
 msgstr ""
 
-#: animal_find_results.js html.py
+#: animal_find_results.js onlineform.js html.py
 msgid "Image"
 msgstr ""
 
@@ -7241,8 +7237,8 @@ msgstr ""
 msgid "Movement Date"
 msgstr ""
 
-#: move_reclaim.js move_retailer.js move_reserve.js move_transfer.js
-#: movements.js move_adopt.js move_foster.js
+#: move_reclaim.js move_retailer.js animal_find.js move_reserve.js
+#: move_transfer.js movements.js move_adopt.js move_foster.js
 msgid "Movement Number"
 msgstr ""
 
@@ -8550,8 +8546,14 @@ msgstr ""
 msgid "Press F11 in HTML or SQL code editing boxes to edit in fullscreen mode"
 msgstr ""
 
-#: onlineform_incoming.js
+#: onlineform_incoming.js htmltemplates.js
 msgid "Preview"
+msgstr ""
+
+#: htmltemplates.js
+msgid ""
+"Preview allows you to test your HTML templates while bypassing server side "
+"caching and without making your animals adoptable"
 msgstr ""
 
 #: common.js
