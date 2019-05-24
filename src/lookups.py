@@ -31,7 +31,7 @@ LOOKUP_TABLES = {
     "citationtype":     (_("Citation Types"), "CitationName", _("Citation Type"), "CitationDescription", "add del ret cost", ("ownercitation.CitationTypeID",)),
     "lksclinicstatus":  (_("Clinic Statuses"), "Status", _("Status"), "", "", ("clinicappointment.Status",)),
     "costtype":         (_("Cost Types"), "CostTypeName", _("Cost Type"), "CostTypeDescription", "add del ret cost", ("animalcost.CostTypeID",)),
-    "deathreason":      (_("Death Reasons"), "ReasonName", _("Reason"), "ReasonDescription", "add, del ret", ("animal.PTSReasonID",)),
+    "deathreason":      (_("Death Reasons"), "ReasonName", _("Reason"), "ReasonDescription", "add del ret", ("animal.PTSReasonID",)),
     "diet":             (_("Diets"), "DietName", _("Diet"), "DietDescription", "add del ret", ("animaldiet.DietID",)),
     "donationpayment":  (_("Payment Methods"), "PaymentName", _("Type"), "PaymentDescription", "add del ret", ("ownerdonation.DonationPaymentID",)),
     "donationtype":     (_("Payment Types"), "DonationName", _("Type"), "DonationDescription", "add del ret cost vat", ("ownerdonation.DonationTypeID", "accounts.DonationTypeID")),
