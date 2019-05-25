@@ -4,6 +4,7 @@ import additional
 import al
 import animal
 import asynctask
+import audit
 import configuration
 import datetime
 import dbfs
@@ -981,6 +982,7 @@ def merge_person(dbo, username, personid, mergepersonid):
     reparent("diary", "LinkID", "LinkType", diary.PERSON)
     reparent("log", "LinkID", "LinkType", log.PERSON)
     dbo.delete("owner", mergepersonid, username)
+    audit.move(dbo, username, "owner", personid, "", "Merged animal %d -> %d" % (mergepersonid, personid))
 
 def merge_duplicate_people(dbo, username):
     """

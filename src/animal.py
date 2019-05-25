@@ -2845,6 +2845,7 @@ def merge_animal(dbo, username, animalid, mergeanimalid):
     reparent("diary", "LinkID", "LinkType", diary.ANIMAL)
     reparent("log", "LinkID", "LinkType", log.ANIMAL)
     dbo.delete("animal", mergeanimalid, username)
+    audit.move(dbo, username, "animal", animalid, "", "Merged animal %d -> %d" % (mergeanimalid, animalid))
 
 def update_daily_boarding_cost(dbo, username, animalid, cost):
     """
