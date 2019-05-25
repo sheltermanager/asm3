@@ -40,21 +40,24 @@ uo.OwnerSurname = "Unknown Owner"
 uo.OwnerName = uo.OwnerSurname
 
 def process_licence(d, dt):
-    o = asm.Owner()
-    owners.append(o)
-    name = d["Owner"]
-    firstname = ""
-    lastname = name
-    if name.find(",") != -1:
-        firstname, lastname = name.split(",", 1)
-    ppo[name] = o
-    o.OwnerForeNames = firstname
-    o.OwnerSurname = lastname
-    o.OwnerName = name
-    o.OwnerAddress = d["Address"]
-    o.OwnerTown = "Burnsville"
-    o.OwnerCounty = "MN"
-    o.HomeTelephone = d["Phone"]
+    if d["Owner"] in ppo:
+        o = ppo[d["Owner"]]
+    else:
+        o = asm.Owner()
+        owners.append(o)
+        name = d["Owner"]
+        firstname = ""
+        lastname = name
+        if name.find(",") != -1:
+            firstname, lastname = name.split(",", 1)
+        ppo[name] = o
+        o.OwnerForeNames = firstname
+        o.OwnerSurname = lastname
+        o.OwnerName = name
+        o.OwnerAddress = d["Address"]
+        o.OwnerTown = "Burnsville"
+        o.OwnerCounty = "MN"
+        o.HomeTelephone = d["Phone"]
     ol = asm.OwnerLicence()
     ol.LicenceType = 1
     ol.OwnerID = o.ID
