@@ -49,6 +49,12 @@ print "DELETE FROM log WHERE ID >= %s;" % START_ID
 print "DELETE FROM owner WHERE ID >= %s;" % START_ID
 print "DELETE FROM adoption WHERE ID >= %s;" % START_ID
 
+# Create an unknown owner
+uo = asm.Owner()
+owners.append(uo)
+uo.OwnerSurname = "Unknown Owner"
+uo.OwnerName = uo.OwnerSurname
+
 # Deal with people first
 for d in asm.csv_to_list(PERSON_FILENAME, remove_non_ascii=True):
     # Each row contains a person
@@ -132,28 +138,19 @@ for d in asm.csv_to_list(ANIMAL_FILENAME, remove_non_ascii=True):
     a.ReasonForEntry = entrycomments
     a.EntryReasonID = 17 # Surrender
     if d["Pound_Reason"] == "Stray": a.EntryReasonID = 7
-    # If this animal is not a resident, such as just to see the vet mark it non-shelter
-    if d["Pound_Reason"] not in ( "Stray", "Pound", "Owner Surrender" ): 
-        a.NonShelterAnimal = 1
-        a.Archived = 1
+    #if d["InShelterSearchFlag"] == "N":
+    #    a.Archived = 1
 
 # Animal log, recording medical history and linking adoptions/surrenderers/etc
 for d in asm.csv_to_list(LOG_FILENAME, remove_non_ascii=True):
 
     a = ppa[d["Animal_Identifier"]]
-    o = None
-    ed = getdate(d["Entry_date"])
-
-    if not ed: continue
+    o = uo
     if d["People_ctr"] != "": o = ppo[d["People_ctr"]]
+    ed = getdate(d["Entry_date"])
+    if not ed: continue
 
-    if d["Action"] == "Admission" and d["Log_Description"] == "Owner Surrender" and o:
-        a.OriginalOwnerID = o.ID
-        a.BroughtInByOwnerID = o.ID
-        a.DateBroughtIn = ed
-        a.CreatedBy = d["User_Id"]
-
-    elif d["Weight"] != "0":
+    if d["Weight"] != "0" and d["Weight"] != "":
         try:
             a.Weight = float(d["Weight"])
         except ValueError:
@@ -165,6 +162,12 @@ for d in asm.csv_to_list(LOG_FILENAME, remove_non_ascii=True):
         l.LinkType = 0
         l.Date = ed
         l.Comments = d["Weight"]
+
+    if d["Action"] == "Admission" and d["Log_Description"] == "Owner Surrender" and o:
+        a.OriginalOwnerID = o.ID
+        a.BroughtInByOwnerID = o.ID
+        a.DateBroughtIn = ed
+        a.CreatedBy = d["User_Id"]
 
     elif d["Action"] == "Veterinary" and d["Log_Description"] == "Desexed":
         a.Neutered = 1
@@ -192,7 +195,7 @@ for d in asm.csv_to_list(LOG_FILENAME, remove_non_ascii=True):
         av.Comments = "Type: %s\n%s" % (d["Log_Description"], d["Log_Notes"])
         av.CreatedBy = d["User_Id"]
 
-    elif d["Action"] == "Foster Care" and d["Log_Description"] == "Foster Care" and o:
+    elif d["Action"] == "Foster Care" and d["Log_Description"] == "Foster Care":
         o.IsFosterer = 1
         m = asm.Movement()
         m.AnimalID = a.ID
@@ -207,15 +210,14 @@ for d in asm.csv_to_list(LOG_FILENAME, remove_non_ascii=True):
         a.LastChangedDate = ed
         movements.append(m)
 
-    elif d["Action"] == "Foster Care" and d["Log_Description"] == "Carer Return" and o:
+    elif d["Action"] == "Foster Care" and d["Log_Description"] == "Carer Return":
         # Return this person's most recent foster
         for m in movements:
             if m.AnimalID == a.ID and m.ReturnDate is None and m.MovementType == 2 and m.OwnerID == o.ID:
                 m.ReturnDate = ed
-                a.Archived = 0 # Return to shelter so another movement takes it away again
                 break
 
-    elif d["Action"] == "Adoption" and o:
+    elif d["Action"] == "Adoption":
         m = asm.Movement()
         m.AnimalID = a.ID
         m.OwnerID = o.ID
@@ -229,7 +231,7 @@ for d in asm.csv_to_list(LOG_FILENAME, remove_non_ascii=True):
         a.LastChangedDate = ed
         movements.append(m)
 
-    elif d["Action"] == "Claim" and o:
+    elif d["Action"] == "Claim":
         m = asm.Movement()
         m.AnimalID = a.ID
         m.OwnerID = o.ID
@@ -251,13 +253,12 @@ for d in asm.csv_to_list(LOG_FILENAME, remove_non_ascii=True):
         a.PTSReason = d["Log_Description"] + ": " + d["Log_Notes"]
         a.LastChangedDate = ed
 
-    elif d["Action"] == "Return" and o:
+    elif d["Action"] == "Return":
         # Return the most recent adoption for this animal/person
         for m in movements:
             if m.AnimalID == a.ID and m.ReturnDate is None and m.MovementType == 1 and m.OwnerID == o.ID:
                 m.ReturnDate = ed
                 m.ReturnedReasonID = 17 # Surrender
-                a.Archived = 0 # Return to shelter so another movement takes it away again
                 break
 
     elif d["Action"] == "VetCatDischarge":
