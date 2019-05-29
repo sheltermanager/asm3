@@ -27,7 +27,7 @@ a.AnimalComments,
 s.SpeciesName
 FROM animal a
 LEFT OUTER JOIN species s ON s.ID = a.SpeciesID
-WHERE IsHold=1 AND HoldUntilDate > '$CURRENT_DATE$'
+WHERE IsHold=1 
 ORDER BY s.SpeciesName, a.AnimalName
 ###
 $$HEADER
