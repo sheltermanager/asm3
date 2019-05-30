@@ -217,7 +217,7 @@ for d in asm.csv_to_list(LOG_FILENAME, remove_non_ascii=True):
                 m.ReturnDate = ed
                 break
 
-    elif d["Action"] == "Adoption":
+    elif d["Action"] == "Adoption" or d["Action"] == "Exit Log":
         m = asm.Movement()
         m.AnimalID = a.ID
         m.OwnerID = o.ID
@@ -242,6 +242,20 @@ for d in asm.csv_to_list(LOG_FILENAME, remove_non_ascii=True):
         a.ActiveMovementID = m.ID
         a.ActiveMovementDate = m.MovementDate
         a.ActiveMovementType = 5
+        a.LastChangedDate = ed
+        movements.append(m)
+
+    elif d["Action"] == "Outlet Transfer":
+        m = asm.Movement()
+        m.AnimalID = a.ID
+        m.OwnerID = o.ID
+        m.MovementType = 3
+        m.MovementDate = ed
+        m.Comments = d["Log_Notes"]
+        a.Archived = 1
+        a.ActiveMovementID = m.ID
+        a.ActiveMovementDate = m.MovementDate
+        a.ActiveMovementType = 3
         a.LastChangedDate = ed
         movements.append(m)
 
