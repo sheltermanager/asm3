@@ -1,6 +1,7 @@
 42
 ================
 
+31/05/19 Fix for Chrome F11 bug (finally!) #512
 30/05/19 Add en_AE locale for UAE
 25/05/19 Record animal/person merge record IDs in audit trail
 19/05/19 Fix bug where date was being cast incorrectly by get_stats
