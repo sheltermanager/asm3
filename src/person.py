@@ -943,7 +943,7 @@ def merge_person(dbo, username, personid, mergepersonid):
     # Merge any flags from the target
     merge_flags(dbo, username, personid, mp.ADDITIONALFLAGS)
 
-    # Mergy any GDPR flags from the target
+    # Merge any GDPR flags from the target
     merge_gdpr_flags(dbo, username, personid, mp.GDPRCONTACTOPTIN)
 
     # Reparent all satellite records
