@@ -264,6 +264,7 @@ DEFAULTS = {
     "QuicklinksAllScreens": "No",
     "ReceiptNumberNext": "0",
     "RecordSearchLimit": "1000",
+    "ReloadMedical": "Yes",
     "RetailerOnShelter": "Yes",
     "ReturnFostersOnAdoption": "Yes",
     "ReturnFostersOnTransfer": "Yes",

@@ -367,7 +367,43 @@ $(function() {
                     tableform.fields_post(dialog.fields, "mode=create", "medical")
                         .then(function(response) {
                             tableform.dialog_close();
-                            common.route_reload();
+                            if (config.bool("ReloadMedical")) {
+                                common.route_reload();
+                            }
+                            else {
+                                // If we aren't reloading automatically, show a placeholder row that
+                                // cannot be interacted with so the user knows their record was
+                                // created and they need to reload the screen.
+                                var a = controller.animal;
+                                if (!a) { a = $("#animal").animalchooser("get_selected"); }
+                                var nr = {
+                                    TREATMENTID: 0,
+                                    COMPOSITEID: "",
+                                    ANIMALID: a.ID,
+                                    ANIMALNAME: a.ANIMALNAME,
+                                    SHORTCODE: a.SHORTCODE,
+                                    SHELTERCODE: a.SHELTERCODE,
+                                    ACCEPTANCENUMBER: a.ACCEPTANCENUMBER,
+                                    SPECIESNAME: a.SPECIESNAME,
+                                    LOCATIONNAME: a.LOCATIONNAME,
+                                    WEBSITEMEDIANAME: a.WEBSITEMEDIANAME,
+                                    WEBSITEMEDIADATE: a.WEBSITEMEDIADATE,
+                                    TREATMENTNAME: $("#treatmentname").val(),
+                                    DOSAGE: $("#dosage").val(),
+                                    COMMENTS: $("#comments").val(),
+                                    TREATMENTCOMMENTS: "",
+                                    STARTDATE: format.date_iso($("#startdate").val()),
+                                    NAMEDSTATUS: '<a href="javascript:location.reload(true)">' + _("Reload page ...") + '</a>',
+                                    NAMEDFREQUENCY: "",
+                                    NAMEDNUMBEROFTREATMENTS: "",
+                                    TREATMENTNUMBER: "",
+                                    TOTALTREATMENTS: "",
+                                    TREATMENTSREMAINING: "",
+                                    TREATMENTSGIVEN: ""
+                                };
+                                controller.rows.unshift(nr);
+                                tableform.table_update(medical.table);
+                            }
                         })
                         .fail(function() {
                             tableform.dialog_enable_buttons();   

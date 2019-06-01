@@ -546,6 +546,14 @@ Medical
   with outstanding medical/vacc/tests that have left the shelter will be shown
   in medical books and the medical calendar.
 
+* Reload the medical book/tab automatically after adding new medical items: If
+  selected, reloads the screen automatically after adding a new medical
+  regimen. If this option is not enabled, a placeholder row will be shown for
+  the new medical item instead and the status column will show a link to reload
+  the screen. This option is useful if you have a full medical book or animals
+  with a lot of medical items who are frequently treated and reload times are
+  long.
+
 * When entering vaccinations, default the last batch number and manufacturer
   for that type: If ticked, when entering a given vaccination, the batch number
   and manufacturer will be copied from the last vaccination on record of the

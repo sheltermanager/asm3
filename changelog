@@ -1,6 +1,7 @@
 42
 ================
 
+01/06/19 Option to disable auto reload of medical book/tab on new
 31/05/19 Fix for Chrome F11 bug (finally!) #512
 30/05/19 Add en_AE locale for UAE
 25/05/19 Record animal/person merge record IDs in audit trail
