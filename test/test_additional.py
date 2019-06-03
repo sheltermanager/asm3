@@ -72,9 +72,6 @@ class TestAdditional(unittest.TestCase):
         post = utils.PostedData(data, "en")
         additional.update_field_from_form(base.get_dbo(), "test", post)
 
-    def test_delete_values_for_link(self):
-        additional.delete_values_for_link(base.get_dbo(), 0, "animal")
-
     def test_save_values_for_link(self):
         additional.save_values_for_link(base.get_dbo(), utils.PostedData({}, "en"), 0, "animal")
 
