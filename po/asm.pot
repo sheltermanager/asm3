@@ -2699,6 +2699,10 @@ msgstr ""
 msgid "Coonhound"
 msgstr ""
 
+#: movements.js
+msgid "Coordinator"
+msgstr ""
+
 #: animal.js
 msgid ""
 "Copy description to the notes field of the web preferred media for this "
@@ -6485,6 +6489,10 @@ msgstr ""
 msgid "Link an animal"
 msgstr ""
 
+#: users.js
+msgid "Link this user account to a staff person record."
+msgstr ""
+
 #: media.js
 msgid "Link to an external web resource"
 msgstr ""
@@ -7826,6 +7834,10 @@ msgstr ""
 msgid "Once assigned, codes cannot be changed"
 msgstr ""
 
+#: users.js
+msgid "Once linked, a user account cannot access and edit its linked person record."
+msgstr ""
+
 #: service.py mobile.py
 msgid "Once signed, this document cannot be edited or tampered with."
 msgstr ""
@@ -8988,6 +9000,14 @@ msgstr ""
 
 #: mobile.py
 msgid "Reload"
+msgstr ""
+
+#: medical.js
+msgid "Reload page ..."
+msgstr ""
+
+#: options.js
+msgid "Reload the medical book/tab automatically after adding new medical items"
 msgstr ""
 
 #: litters.js

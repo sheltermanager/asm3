@@ -41,7 +41,10 @@ $(function() {
                     { json_field: "SITEID", post_field: "site", label: _("Site"), type: "select", 
                         options: '<option value="0">' + _("(all)") + '</option>' +  
                             html.list_to_options(controller.sites, "ID", "SITENAME") },
-                    { json_field: "OWNERID", post_field: "person", label: _("Staff record"), type: "person", personfilter: "staff" },
+                    { json_field: "OWNERID", post_field: "person", label: _("Staff record"), type: "person", personfilter: "staff",
+                        callout: _("Link this user account to a staff person record.") + " " +
+                                 _("Once linked, a user account cannot access and edit its linked person record.")
+                    },
                     { json_field: "LOCATIONFILTER", post_field: "locationfilter", label: _("Location Filter"), type: "selectmulti", 
                         options: { rows: controller.internallocations, valuefield: "ID", displayfield: "LOCATIONNAME" },
                         hideif: function() { return !config.bool("LocationFiltersEnabled"); },
