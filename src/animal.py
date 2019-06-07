@@ -81,7 +81,7 @@ def get_animal_query(dbo):
         "oo.WorkTelephone AS OriginalOwnerWorkTelephone, " \
         "oo.MobileTelephone AS OriginalOwnerMobileTelephone, " \
         "oo.EmailAddress AS OriginalOwnerEmailAddress, " \
-        "(SELECT JurisdictionName FROM jurisdiction WHERE ID = oo.JurisdictionID) AS OriginalOwnerJurisdiction, " \
+        "oj.JurisdictionName AS OriginalOwnerJurisdiction, " \
         "co.ID AS CurrentOwnerID, " \
         "co.OwnerName AS CurrentOwnerName, " \
         "co.OwnerTitle AS CurrentOwnerTitle, " \
@@ -96,7 +96,7 @@ def get_animal_query(dbo):
         "co.WorkTelephone AS CurrentOwnerWorkTelephone, " \
         "co.MobileTelephone AS CurrentOwnerMobileTelephone, " \
         "co.EmailAddress AS CurrentOwnerEmailAddress, " \
-        "(SELECT JurisdictionName FROM jurisdiction WHERE ID = co.JurisdictionID) AS CurrentOwnerJurisdiction, " \
+        "cj.JurisdictionName AS CurrentOwnerJurisdiction, " \
         "bo.OwnerName AS BroughtInByOwnerName, " \
         "bo.OwnerAddress AS BroughtInByOwnerAddress, " \
         "bo.OwnerTown AS BroughtInByOwnerTown, " \
@@ -106,7 +106,7 @@ def get_animal_query(dbo):
         "bo.WorkTelephone AS BroughtInByWorkTelephone, " \
         "bo.MobileTelephone AS BroughtInByMobileTelephone, " \
         "bo.EmailAddress AS BroughtInByEmailAddress, " \
-        "(SELECT JurisdictionName FROM jurisdiction WHERE ID = bo.JurisdictionID) AS BroughtInByJurisdiction, " \
+        "bj.JurisdictionName AS BroughtInByJurisdiction, " \
         "ro.ID AS ReservedOwnerID, " \
         "ro.OwnerName AS ReservedOwnerName, " \
         "ro.OwnerAddress AS ReservedOwnerAddress, " \
@@ -117,7 +117,7 @@ def get_animal_query(dbo):
         "ro.WorkTelephone AS ReservedOwnerWorkTelephone, " \
         "ro.MobileTelephone AS ReservedOwnerMobileTelephone, " \
         "ro.EmailAddress AS ReservedOwnerEmailAddress, " \
-        "(SELECT JurisdictionName FROM jurisdiction WHERE ID = ro.JurisdictionID) AS ReservedOwnerJurisdiction, " \
+        "rj.JurisdictionName AS ReservedOwnerJurisdiction, " \
         "ao.OwnerName AS AdoptionCoordinatorName, " \
         "ao.HomeTelephone AS AdoptionCoordinatorHomeTelephone, " \
         "ao.WorkTelephone AS AdoptionCoordinatorWorkTelephone, " \
@@ -149,28 +149,29 @@ def get_animal_query(dbo):
         "am.LastChangedBy AS ActiveMovementLastChangedBy, " \
         "am.LastChangedDate AS ActiveMovementLastChangedDate, " \
         "CASE " \
-        "WHEN EXISTS(SELECT ItemValue FROM configuration WHERE ItemName Like 'UseShortShelterCodes' AND ItemValue = 'Yes') " \
-        "THEN a.ShortCode ELSE a.ShelterCode " \
+            "WHEN EXISTS(SELECT ItemValue FROM configuration WHERE ItemName Like 'UseShortShelterCodes' AND ItemValue = 'Yes') " \
+            "THEN a.ShortCode ELSE a.ShelterCode " \
         "END AS Code, " \
         "CASE " \
-        "WHEN a.Archived = 0 AND a.ActiveMovementType = 1 AND a.HasTrialAdoption = 1 THEN " \
-        "(SELECT MovementType FROM lksmovementtype WHERE ID=11) " \
-        "WHEN a.Archived = 0 AND a.ActiveMovementType = 2 AND a.HasPermanentFoster = 1 THEN " \
-        "(SELECT MovementType FROM lksmovementtype WHERE ID=12) " \
-        "WHEN a.Archived = 0 AND a.ActiveMovementType IN (2, 8, 13) THEN " \
-        "(SELECT MovementType FROM lksmovementtype WHERE ID=a.ActiveMovementType) " \
-        "WHEN a.Archived = 1 AND a.DeceasedDate Is Not Null THEN " \
-        "(SELECT ReasonName FROM deathreason WHERE ID = a.PTSReasonID) " \
-        "WHEN a.Archived = 1 AND a.DeceasedDate Is Null AND a.ActiveMovementID <> 0 THEN " \
-        "(SELECT MovementType FROM lksmovementtype WHERE ID=a.ActiveMovementType) " \
-        "ELSE " \
-        "(SELECT LocationName FROM internallocation WHERE ID=a.ShelterLocation) " \
+            "WHEN a.Archived = 0 AND a.ActiveMovementType = 1 AND a.HasTrialAdoption = 1 THEN " \
+            "(SELECT MovementType FROM lksmovementtype WHERE ID=11) " \
+            "WHEN a.Archived = 0 AND a.ActiveMovementType = 2 AND a.HasPermanentFoster = 1 THEN " \
+            "(SELECT MovementType FROM lksmovementtype WHERE ID=12) " \
+            "WHEN a.Archived = 0 AND a.ActiveMovementType IN (2, 8, 13) THEN " \
+            "(SELECT MovementType FROM lksmovementtype WHERE ID=a.ActiveMovementType) " \
+            "WHEN a.Archived = 1 AND a.DeceasedDate Is Not Null THEN " \
+            "(SELECT ReasonName FROM deathreason WHERE ID = a.PTSReasonID) " \
+            "WHEN a.Archived = 1 AND a.DeceasedDate Is Null AND a.ActiveMovementID <> 0 THEN " \
+            "(SELECT MovementType FROM lksmovementtype WHERE ID=a.ActiveMovementType) " \
+            "ELSE " \
+            "(SELECT LocationName FROM internallocation WHERE ID=a.ShelterLocation) " \
         "END AS DisplayLocationName, " \
         "web.ID AS WebsiteMediaID, " \
         "web.MediaName AS WebsiteMediaName, " \
         "web.Date AS WebsiteMediaDate, " \
         "web.MediaNotes AS WebsiteMediaNotes, " \
-        "(SELECT COUNT(*) FROM media mtc WHERE MediaMimeType = 'image/jpeg' AND mtc.LinkTypeID = 0 AND mtc.LinkID = a.ID AND ExcludeFromPublish = 0) AS WebsiteImageCount, " \
+        "(SELECT COUNT(*) FROM media mtc WHERE MediaMimeType = 'image/jpeg' AND mtc.LinkTypeID = 0 AND mtc.LinkID = a.ID " \
+            "AND ExcludeFromPublish = 0) AS WebsiteImageCount, " \
         "doc.MediaName AS DocMediaName, " \
         "doc.Date AS DocMediaDate, " \
         "vid.MediaName AS WebsiteVideoURL, " \
@@ -228,17 +229,21 @@ def get_animal_query(dbo):
         "LEFT OUTER JOIN owner cv ON cv.ID = a.CurrentVetID " \
         "LEFT OUTER JOIN owner nv ON nv.ID = a.NeuteredByVetID " \
         "LEFT OUTER JOIN owner oo ON oo.ID = a.OriginalOwnerID " \
+        "LEFT OUTER JOIN jurisdiction oj ON oj.ID = oo.JurisdictionID " \
         "LEFT OUTER JOIN owner bo ON bo.ID = a.BroughtInByOwnerID " \
+        "LEFT OUTER JOIN jurisdiction bj ON bj.ID = bo.JurisdictionID " \
         "LEFT OUTER JOIN owner ao ON ao.ID = a.AdoptionCoordinatorID " \
         "LEFT OUTER JOIN adoption am ON am.ID = a.ActiveMovementID " \
         "LEFT OUTER JOIN users au ON au.UserName = am.CreatedBy " \
         "LEFT OUTER JOIN owner co ON co.ID = am.OwnerID " \
+        "LEFT OUTER JOIN jurisdiction cj ON cj.ID = co.JurisdictionID " \
         "LEFT OUTER JOIN animalcontrolanimal aca ON a.ID=aca.AnimalID and aca.AnimalControlID = (SELECT MAX(saca.AnimalControlID) FROM animalcontrolanimal saca WHERE saca.AnimalID = a.ID) " \
         "LEFT OUTER JOIN animalcontrol ac ON ac.ID = aca.AnimalControlID " \
         "LEFT OUTER JOIN incidenttype itn ON itn.ID = ac.IncidentTypeID " \
         "LEFT OUTER JOIN adoption ar ON ar.ID = (SELECT MAX(sar.ID) FROM adoption sar WHERE sar.AnimalID = a.ID AND sar.MovementType = 0 AND sar.MovementDate Is Null AND sar.ReservationDate Is Not Null AND sar.ReservationCancelledDate Is Null) " \
         "LEFT OUTER JOIN reservationstatus ars ON ars.ID = ar.ReservationStatusID " \
-        "LEFT OUTER JOIN owner ro ON ro.ID = ar.OwnerID" % {
+        "LEFT OUTER JOIN owner ro ON ro.ID = ar.OwnerID " \
+        "LEFT OUTER JOIN jurisdiction rj ON rj.ID = ro.JurisdictionID " % {
             "today": dbo.sql_today(),
             "twodaysago":  dbo.sql_date(dbo.today(offset=-2))
         }

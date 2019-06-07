@@ -225,6 +225,8 @@ BroughtInByMobilePhone
     (BroughtInByCellPhone for US users)
 BroughtInByEmail
     The email address of the person who brought the animal in
+BroughtInByJurisdiction
+    The jurisdiction of the person who brought the animal in
 BroughtInBy Additional Fields
     Additional fields on the brought in by person can be accessed via BroughtInByFIELDNAME
 OriginalOwnerAddress
@@ -245,6 +247,8 @@ OriginalOwnerMobilePhone
     The original owner's mobile phone number 
 OriginalOwnerEmail
     The original owner's email address 
+OriginalOwnerJurisdiction
+    The jurisdiction of the original owner
 OriginalOwner Additional Fields
     Additional fields on the original owner can be accessed via OriginalOwnerFIELDNAME
 CurrentOwnerName
@@ -265,6 +269,8 @@ CurrentOwnerMobilePhone
     Current owner's cell/mobile phone number
 CurrentOwnerEmail 
     Current owner's email address
+CurrentOwnerJurisdiction
+    The jurisdiction of the current owner
 CurrentOwner Additional Fields
     Additional fields on the current owner can be accessed via CurrentOwnerFIELDNAME
 ReservedOwnerName
@@ -285,6 +291,8 @@ ReservedOwnerMobilePhone
     Reserved owner's cell/mobile phone number
 ReservedOwnerEmail 
     Reserved owner's email address
+ReservedOwnerJurisdiction
+    The jurisdiction of the reserving owner
 ReservationStatus
     The active reservation/application status
 CurrentVetName
