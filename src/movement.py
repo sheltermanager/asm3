@@ -51,13 +51,15 @@ def get_movement_query(dbo):
         "(SELECT MovementType FROM lksmovementtype WHERE ID=10) " \
         "WHEN m.MovementDate Is Null AND m.ReservationDate Is Not Null THEN " \
         "(SELECT MovementType FROM lksmovementtype WHERE ID=9) " \
-        "ELSE l.MovementType END AS DisplayLocationName, co.OwnerName AS CurrentOwnerName " \
+        "ELSE l.MovementType END AS DisplayLocationName, co.OwnerName AS CurrentOwnerName, " \
+        "a.AdoptionCoordinatorID, ac.OwnerName AS AdoptionCoordinatorName " \
         "FROM adoption m " \
         "LEFT OUTER JOIN reservationstatus rs ON rs.ID = m.ReservationStatusID " \
         "LEFT OUTER JOIN lksmovementtype l ON l.ID = m.MovementType " \
         "INNER JOIN animal a ON m.AnimalID = a.ID " \
         "LEFT OUTER JOIN adoption ad ON a.ActiveMovementID = ad.ID " \
         "LEFT OUTER JOIN owner co ON co.ID = ad.OwnerID " \
+        "LEFT OUTER JOIN owner ac ON ac.ID = a.AdoptionCoordinatorID " \
         "LEFT OUTER JOIN internallocation il ON il.ID = a.ShelterLocation " \
         "LEFT OUTER JOIN media ma ON ma.LinkID = a.ID AND ma.LinkTypeID = 0 AND ma.WebsitePhoto = 1 " \
         "LEFT OUTER JOIN entryreason rr ON m.ReturnedReasonID = rr.ID " \

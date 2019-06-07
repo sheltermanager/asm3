@@ -133,6 +133,17 @@ $(function() {
                             return "";
                         }
                     },
+                    { field: "ADOPTIONCOORDINATORNAME", display: _("Coordinator"),
+                        hideif: function(row) {
+                            // Don't show if adoption coordinators aren't on
+                            if (config.bool("DontShowAdoptionCoordinator")) { return true; }
+                            // Don't show this column if we aren't reservation, foster or trial adoption book
+                            return controller.name != "move_book_reservation" && controller.name != "move_book_trial_adoption" && controller.name != "move_book_foster";
+                        },
+                        formatter: function(row, v) {
+                            return html.person_link(row.ADOPTIONCOORDINATORID, row.ADOPTIONCOORDINATORNAME);
+                        }
+                    },
                     { field: "RETURNDATE", display: _("Returned"), 
                         formatter: function(row) {
                             var rv = format.date(row.RETURNDATE);
