@@ -339,6 +339,15 @@ links to animal records.
 * breederid (Text): Dogs located in QLD with a date of birth after 26th May
   2017 require a breeder number.
 
+* bredincareofgroup (Yes/No): Indicates the animal was bred whilst in the care
+  of the group. Setting this to true makes breederid mandatory for all listings
+  in South Australia after July 2018.
+
+* sourcenumber (Text): Required for all cat and dog listings in Victoria
+
+* rehomingorganisationid (Text): For cats and dogs in NSW, this field OR a
+  microchip number OR breederid must be supplied.
+
 .. note:: PetRescue integration relies on you naming your breeds and species with the same values that they do. If a breed does not match one of the PetRescue breeds, ASM will send it as "Mixed Breed" instead. 
 
 rescuegroups.org

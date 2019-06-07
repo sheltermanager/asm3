@@ -158,9 +158,21 @@ class PetRescuePublisher(AbstractPublisher):
                 if "BREEDERID" in an and an.BREEDERID != "":
                     breeder_id = an.BREEDERID
 
+                source_number = ""
+                if "SOURCENUMBER" in an and an.SOURCENUMBER != "":
+                    source_number = an.BREEDERID
+
                 needs_constant_care = False
                 if "NEEDSCONSTANTCARE" in an and an.NEEDSCONSTANTCARE != "" and an.NEEDSCONSTANTCARE != "0":
                     needs_constant_care = True
+
+                bred_in_care_of_group = False
+                if "BREDINCAREOFGROUP" in an and an.BREDINCAREOFGROUP != "" and an.BREDINCAREOFGROUP != "0":
+                    bred_in_care_of_group = True
+
+                rehoming_organisation_id = ""
+                if "REHOMINGORGANISATIONID" in an and an.REHOMINGORGANISATIONID != "":
+                    rehoming_organisation_id = an.REHOMINGORGANISATIONID
 
                 # Check whether we've been vaccinated, wormed and hw treated
                 vaccinated = medical.get_vaccinated(self.dbo, an.ID)
@@ -208,7 +220,10 @@ class PetRescuePublisher(AbstractPublisher):
                     "adoption_fee":             i18n.format_currency_no_symbol(self.locale, an.FEE),
                     "species_name":             an.SPECIESNAME,
                     "breed_names":              self.get_breed_names(an), # [breed1,breed2] or [breed1]
-                    "breeder_id":               breeder_id, # mandatory for QLD dogs born after 2017-05-26
+                    "breeder_id":               breeder_id, # mandatory for QLD dogs born after 2017-05-26 or South Aus where bred_in_care_of_group==true after 2018-07-01
+                    "source_number":            source_number, # mandatory for Victoria cats and dogs
+                    "rehoming_organisation_id": rehoming_organisation_id, # required for NSW, this OR microchip or breeder_id is mandatory
+                    "bred_in_care_of_group":    bred_in_care_of_group, 
                     "mix":                      an.CROSSBREED == 1, # true | false
                     "date_of_birth":            i18n.format_date("%Y-%m-%d", an.DATEOFBIRTH), # iso
                     "gender":                   an.SEXNAME.lower(), # male | female
