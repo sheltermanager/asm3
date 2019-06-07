@@ -81,6 +81,7 @@ def get_animal_query(dbo):
         "oo.WorkTelephone AS OriginalOwnerWorkTelephone, " \
         "oo.MobileTelephone AS OriginalOwnerMobileTelephone, " \
         "oo.EmailAddress AS OriginalOwnerEmailAddress, " \
+        "(SELECT JurisdictionName FROM jurisdiction WHERE ID = oo.JurisdictionID) AS OriginalOwnerJurisdiction, " \
         "co.ID AS CurrentOwnerID, " \
         "co.OwnerName AS CurrentOwnerName, " \
         "co.OwnerTitle AS CurrentOwnerTitle, " \
@@ -95,6 +96,7 @@ def get_animal_query(dbo):
         "co.WorkTelephone AS CurrentOwnerWorkTelephone, " \
         "co.MobileTelephone AS CurrentOwnerMobileTelephone, " \
         "co.EmailAddress AS CurrentOwnerEmailAddress, " \
+        "(SELECT JurisdictionName FROM jurisdiction WHERE ID = co.JurisdictionID) AS CurrentOwnerJurisdiction, " \
         "bo.OwnerName AS BroughtInByOwnerName, " \
         "bo.OwnerAddress AS BroughtInByOwnerAddress, " \
         "bo.OwnerTown AS BroughtInByOwnerTown, " \
@@ -104,6 +106,7 @@ def get_animal_query(dbo):
         "bo.WorkTelephone AS BroughtInByWorkTelephone, " \
         "bo.MobileTelephone AS BroughtInByMobileTelephone, " \
         "bo.EmailAddress AS BroughtInByEmailAddress, " \
+        "(SELECT JurisdictionName FROM jurisdiction WHERE ID = bo.JurisdictionID) AS BroughtInByJurisdiction, " \
         "ro.ID AS ReservedOwnerID, " \
         "ro.OwnerName AS ReservedOwnerName, " \
         "ro.OwnerAddress AS ReservedOwnerAddress, " \
@@ -114,6 +117,7 @@ def get_animal_query(dbo):
         "ro.WorkTelephone AS ReservedOwnerWorkTelephone, " \
         "ro.MobileTelephone AS ReservedOwnerMobileTelephone, " \
         "ro.EmailAddress AS ReservedOwnerEmailAddress, " \
+        "(SELECT JurisdictionName FROM jurisdiction WHERE ID = ro.JurisdictionID) AS ReservedOwnerJurisdiction, " \
         "ao.OwnerName AS AdoptionCoordinatorName, " \
         "ao.HomeTelephone AS AdoptionCoordinatorHomeTelephone, " \
         "ao.WorkTelephone AS AdoptionCoordinatorWorkTelephone, " \
@@ -212,9 +216,9 @@ def get_animal_query(dbo):
         "LEFT OUTER JOIN internallocation il ON il.ID = a.ShelterLocation " \
         "LEFT OUTER JOIN site se ON se.ID = il.SiteID " \
         "LEFT OUTER JOIN pickuplocation pl ON pl.ID = a.PickupLocationID " \
-        "LEFT OUTER JOIN media web ON web.LinkID = a.ID AND web.LinkTypeID = 0 AND web.WebsitePhoto = 1 " \
-        "LEFT OUTER JOIN media vid ON vid.LinkID = a.ID AND vid.LinkTypeID = 0 AND vid.WebsiteVideo = 1 " \
-        "LEFT OUTER JOIN media doc ON doc.LinkID = a.ID AND doc.LinkTypeID = 0 AND doc.DocPhoto = 1 " \
+        "LEFT OUTER JOIN media web ON web.ID = (SELECT MAX(ID) FROM media sweb WHERE sweb.LinkID = a.ID AND sweb.LinkTypeID = 0 AND sweb.WebsitePhoto = 1) " \
+        "LEFT OUTER JOIN media vid ON vid.ID = (SELECT MAX(ID) FROM media svid WHERE svid.LinkID = a.ID AND svid.LinkTypeID = 0 AND svid.WebsiteVideo = 1) " \
+        "LEFT OUTER JOIN media doc ON doc.ID = (SELECT MAX(ID) FROM media sdoc WHERE sdoc.LinkID = a.ID AND sdoc.LinkTypeID = 0 AND sdoc.DocPhoto = 1) " \
         "LEFT OUTER JOIN breed bd ON bd.ID = a.BreedID " \
         "LEFT OUTER JOIN breed bd2 ON bd2.ID = a.Breed2ID " \
         "LEFT OUTER JOIN lkcoattype ct ON ct.ID = a.CoatType " \
@@ -232,7 +236,7 @@ def get_animal_query(dbo):
         "LEFT OUTER JOIN animalcontrolanimal aca ON a.ID=aca.AnimalID and aca.AnimalControlID = (SELECT MAX(saca.AnimalControlID) FROM animalcontrolanimal saca WHERE saca.AnimalID = a.ID) " \
         "LEFT OUTER JOIN animalcontrol ac ON ac.ID = aca.AnimalControlID " \
         "LEFT OUTER JOIN incidenttype itn ON itn.ID = ac.IncidentTypeID " \
-        "LEFT OUTER JOIN adoption ar ON ar.AnimalID = a.ID AND ar.MovementType = 0 AND ar.MovementDate Is Null AND ar.ReservationDate Is Not Null AND ar.ReservationCancelledDate Is Null AND ar.ID = (SELECT MAX(sar.ID) FROM adoption sar WHERE sar.AnimalID = a.ID AND sar.MovementType = 0 AND sar.MovementDate Is Null AND sar.ReservationDate Is Not Null AND sar.ReservationCancelledDate Is Null) " \
+        "LEFT OUTER JOIN adoption ar ON ar.ID = (SELECT MAX(sar.ID) FROM adoption sar WHERE sar.AnimalID = a.ID AND sar.MovementType = 0 AND sar.MovementDate Is Null AND sar.ReservationDate Is Not Null AND sar.ReservationCancelledDate Is Null) " \
         "LEFT OUTER JOIN reservationstatus ars ON ars.ID = ar.ReservationStatusID " \
         "LEFT OUTER JOIN owner ro ON ro.ID = ar.OwnerID" % {
             "today": dbo.sql_today(),
