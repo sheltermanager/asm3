@@ -95,10 +95,16 @@ def delete_rows(dbo, username, tablename, condition):
         for r in dbo.query("SELECT * FROM %s WHERE %s" % (tablename, condition)):
             parentlinks = get_parent_links(r, tablename)
             action(dbo, DELETE, username, tablename, r.ID, parentlinks, dump_row(dbo, tablename, r.ID))
-            insert_deletion(dbo, username, tablename, r.ID, parentlinks, dbo.row_to_insert_sql(tablename, r))
     else:
         # otherwise, stuff all the deleted rows into one delete action
         action(dbo, DELETE, username, tablename, 0, "", str(rows))
+
+def insert_deletions(dbo, username, tablename, condition):
+    rows = dbo.query("SELECT * FROM %s WHERE %s" % (tablename, condition))
+    if len(rows) > 0 and "ID" in rows[0]:
+        for r in dbo.query("SELECT * FROM %s WHERE %s" % (tablename, condition)):
+            parentlinks = get_parent_links(r, tablename)
+            insert_deletion(dbo, username, tablename, r.ID, parentlinks, dbo.row_to_insert_sql(tablename, r))
 
 def insert_deletion(dbo, username, tablename, linkid, parentlinks, restoresql):
     """

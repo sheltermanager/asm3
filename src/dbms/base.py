@@ -441,18 +441,21 @@ class Database(object):
             audit.edit(self, user, table, iid, audit.get_parent_links(values, table), audit.map_diff(preaudit, postaudit))
         return rows_affected
 
-    def delete(self, table, where, user="", writeAudit=True):
+    def delete(self, table, where, user="", writeAudit=True, writeDeletion=True):
         """ Deletes row ID=iid from table 
             table: The table to delete from
             where: Either a where clause or an int ID value for ID=where
             user: The user account doing the delete
             writeAudit: If True, writes an audit record for the delete
+            writeDeletion: If True, writes a record to the deletion table
             returns the number of rows deleted
         """
         if utils.cint(where) > 0:
             where = "ID=%s" % utils.cint(where)
         if writeAudit and user != "":
             audit.delete_rows(self, user, table, where)
+        if writeDeletion and user != "":
+            audit.insert_deletions(self, user, table, where)
         return self.execute("DELETE FROM %s WHERE %s" % (table, where))
 
     def install_stored_procedures(self):
