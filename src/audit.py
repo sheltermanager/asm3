@@ -1,7 +1,6 @@
 #!/usr/bin/python
 
 import al
-import i18n
 
 ADD = 0
 EDIT = 1
@@ -94,10 +93,25 @@ def delete_rows(dbo, username, tablename, condition):
     # If there's an ID column, log an audited delete for each row
     if len(rows) > 0 and "ID" in rows[0]:
         for r in dbo.query("SELECT * FROM %s WHERE %s" % (tablename, condition)):
-            action(dbo, DELETE, username, tablename, r["ID"], get_parent_links(r, tablename), dump_row(dbo, tablename, r["ID"]))
+            parentlinks = get_parent_links(r, tablename)
+            action(dbo, DELETE, username, tablename, r.ID, parentlinks, dump_row(dbo, tablename, r.ID))
+            insert_deletion(dbo, username, tablename, r.ID, parentlinks, dbo.row_to_insert_sql(tablename, r))
     else:
         # otherwise, stuff all the deleted rows into one delete action
         action(dbo, DELETE, username, tablename, 0, "", str(rows))
+
+def insert_deletion(dbo, username, tablename, linkid, parentlinks, restoresql):
+    """
+    Adds a row to the deletions table so that an item can be undeleted later
+    """
+    dbo.insert("deletion", {
+        "ID":           linkid,
+        "TableName":    tablename,
+        "DeletedBy":    username,
+        "Date":         dbo.now(),
+        "IDList":       parentlinks,
+        "RestoreSQL":   restoresql
+    }, generateID=False, writeAudit=False)
 
 def move(dbo, username, tablename, linkid, parentlinks, description):
     action(dbo, MOVE, username, tablename, linkid, parentlinks, description)
@@ -129,9 +143,16 @@ def action(dbo, action, username, tablename, linkid, parentlinks, description):
 def clean(dbo):
     """
     Deletes audit trail records older than three months
+    Deletes deletion records older than six months
     """
-    d = i18n.subtract_days(i18n.now(), 93)
+    # Audit records
+    d = dbo.today(offset=-93)
     count = dbo.query_int("SELECT COUNT(*) FROM audittrail WHERE AuditDate < ?", [ d ])
     al.debug("removing %d audit records older than 93 days." % count, "audit.clean", dbo)
     dbo.execute("DELETE FROM audittrail WHERE AuditDate < ?", [ d ])
+    # Deletion records
+    d = dbo.today(offset=-182)
+    count = dbo.query_int("SELECT COUNT(*) FROM deletion WHERE Date < ?", [ d ])
+    al.debug("removing %d deletion records older than 182 days." % count, "audit.clean", dbo)
+    dbo.execute("DELETE FROM deletion WHERE Date < ?", [ d ])
 
