@@ -1,5 +1,5 @@
 /*jslint browser: true, forin: true, eqeq: true, white: true, sloppy: true, vars: true, nomen: true */
-/*global $, jQuery, _, asm, common, config, controller, dlgfx, format, header, html, validate */
+/*global $, jQuery, _, asm, common, config, controller, dlgfx, edit_header, format, header, html, validate */
 
 $(function() {
 
@@ -188,7 +188,9 @@ $(function() {
                 if (nofosters < capacity) { extraclasses = "asm-shelterview-unit-available"; }
                 if (nofosters == 0 && activeonly) { return; }
                 h.push('<p class="asm-menu-category"><a href="' + loclink + '">' + 
-                    p.OWNERNAME + ' (' + nofosters + '/' + capacity + ')</a></p>' +
+                    p.OWNERNAME + ' (' + nofosters + '/' + capacity + ')</a> ' +
+                    '<span class="asm-search-personflags">' + edit_header.person_flags(p) + '</span>' + 
+                    '</p>' +
                     '<div style="min-height: 110px" class="persondroptarget ' + extraclasses + '" data-person="' + p.ID + '">' +
                     fh.join("\n") +
                     '</div>');

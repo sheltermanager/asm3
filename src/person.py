@@ -136,7 +136,7 @@ def get_shelterview_fosterers(dbo, siteid = 0):
     """
     sitefilter = ""
     if siteid is not None and siteid != 0: sitefilter = "AND o.SiteID = %s" % siteid
-    return dbo.query("SELECT o.ID, o.OwnerName, o.FosterCapacity FROM owner o WHERE o.IsFosterer = 1 %s ORDER BY o.OwnerName" % sitefilter)
+    return dbo.query("SELECT o.ID, o.OwnerName, o.FosterCapacity, o.AdditionalFlags FROM owner o WHERE o.IsFosterer = 1 %s ORDER BY o.OwnerName" % sitefilter)
 
 def get_staff_volunteers(dbo, siteid = 0):
     """

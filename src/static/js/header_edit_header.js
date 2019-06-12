@@ -429,7 +429,7 @@ $(function() {
                 '</td>',
                 '<td>',
                 '<h2>' + html.icon("person", _("Person")) + p.OWNERNAME + ' - ' + p.OWNERCODE + '</h2>',
-                '<p><span style="font-style: italic">' + flags + '</span><br/>',
+                '<p><span class="asm-search-personflags">' + flags + '</span><br/>',
                 html.truncate(p.COMMENTS) + '</p>',
                 '</td>',
                 '</tr></table>',
