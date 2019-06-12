@@ -437,8 +437,8 @@ class Database(object):
         rows_affected = self.execute(sql, values.values(), override_lock=setOverrideDBLock)
         if iid > 0:
             postaudit = self.query_row(table, iid)
-        if user != "" and iid > 0 and writeAudit: 
-            audit.edit(self, user, table, iid, audit.get_parent_links(values, table), audit.map_diff(preaudit, postaudit))
+        if user != "" and iid > 0 and writeAudit:
+            audit.edit(self, user, table, iid, audit.get_parent_links(values, table), audit.map_diff(preaudit, postaudit, audit.get_readable_fields_for_table(table)))
         return rows_affected
 
     def delete(self, table, where, user="", writeAudit=True, writeDeletion=True):

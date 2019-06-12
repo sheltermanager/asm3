@@ -9,6 +9,20 @@ MOVE = 3
 LOGIN = 4
 LOGOUT = 5
 
+# The columns from these tables that are human readable references so
+# that when map_diff is called we can show something more legible than
+# just the record's ID number to help the user identify it.
+READABLE_FIELDS = {
+    "accounts":     [ "CODE", "DESCRIPTION" ],
+    "accountstrx":  [ "DESCRIPTION" ],
+    "additionalfield": [ "FIELDNAME" ],
+    "animal":       [ "ANIMALNAME", "SHELTERCODE", "SHORTCODE" ],
+    "customreport": [ "TITLE" ],
+    "owner":        [ "OWNERNAME" ],
+    "role":         [ "ROLENAME" ],
+    "users":        [ "USERNAME", "REALNAME" ]
+}
+
 def get_audit_for_link(dbo, tablename, linkid):
     """ Returns the audit records for a particular link and table """
     parentlinks = "%%%s=%s %%" % (tablename, linkid)
@@ -38,6 +52,15 @@ def get_parent_links(row, tablename = ""):
         elif values["LINKTYPE"] == 1: pl.append( "owner=%s " % values["LINKID"])
         elif values["LINKTYPE"] == 6: pl.append( "animalcontrol=%s " % values["LINKID"])
     return "".join(pl)
+
+def get_readable_fields_for_table(tablename):
+    """
+    Given a tablename, returns the list of fields that are human readable and can
+    be supplied to the ref argument of map_diff
+    """
+    if tablename in READABLE_FIELDS:
+        return READABLE_FIELDS[tablename]
+    return []
 
 def map_diff(row1, row2, ref = []):
     """
