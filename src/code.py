@@ -857,6 +857,8 @@ class main(JSONEndpoint):
             dbupdate.install_db_views(dbo)
             dbupdate.install_db_sequences(dbo)
             dbupdate.install_db_stored_procedures(dbo)
+        # Install recommended reports if no reports are currently installed
+        if dbo.query_int("SELECT COUNT(ID) FROM customreport") == 0: extreports.install_recommended_smcom_reports(dbo, o.user)
         # News
         news = configuration.asm_news(dbo)
         # Welcome dialog
@@ -4891,6 +4893,7 @@ class reports(JSONEndpoint):
         al.debug("editing %d reports" % len(reports), "code.reports", dbo)
         return {
             "categories": "|".join(extreports.get_categories(dbo)),
+            "recommended": extreports.RECOMMENDED_REPORTS,
             "header": header,
             "footer": footer,
             "roles": users.get_roles(dbo),

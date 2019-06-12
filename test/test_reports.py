@@ -57,6 +57,6 @@ class TestReports(unittest.TestCase):
         reports.execute(base.get_dbo(), self.nid)
 
     def test_smcom_reports(self):
-        reports.install_smcom_reports(base.get_dbo(), "test", [1]) # Calls get_reports to do the install
+        reports.install_recommended_smcom_reports(base.get_dbo(), "test") # Calls get_reports to do the install
 
     

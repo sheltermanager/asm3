@@ -47,6 +47,24 @@ on $$DATE$$ by $$USER$$
 </html>
 """
 
+RECOMMENDED_REPORTS = [
+    "Active Donors", "Active Fosters", "Active Members", "Adoptions by Date with Addresses",
+    "Animal Entry Reasons", "Animal Return Reasons", "Animals Inducted by Date and Species",
+    "Animals Without Photo Media", "Annual Figures (by species)", "Annual Figures (by type)",
+    "Asilomar Figures (Live)", "Audit Trail: All Changes by Date", "Audit Trail: All Changes by Specific user",
+    "Audit Trail: Deletions by Date", "Average Time On Shelter By Species", "Banned Owners",
+    "Brought In Figures", "Cage Card", "Deceased Reasons by Species and Date",
+    "Detailed Shelter Inventory", "In/Out", "In/Out by Species", "In/Out with Donations",
+    "Intakes by Date with Outcomes", "Long Term Animals", "Medical Diary", 
+    "Monthly Adoptions By Species", 
+    "Monthly Figures (by species)", "Monthly Figures (by type)", "Most Common Name",
+    "Non-Microchipped Animals", "Non-Neutered/Spayed Animals Aged Over 6 Months",
+    "Payment Breakdown By Date", "Print Animal Record", "Print Animal Record (for adopters)", 
+    "Reserves without Homechecks", "Returned Animals", "shelteranimalscount.org matrix", 
+    "Shelter Inventory", "Shelter Inventory with Pictures by Location", "Shelter Inventory at Date", 
+    "Vaccination Diary (Off Shelter)", "Vaccination Diary (On Shelter)"
+]
+
 def get_all_report_titles(dbo):
     """
     Returns a list of titles for every report on the system, does not
@@ -433,6 +451,33 @@ def get_smcom_reports(dbo):
             reports.append(d)
     return reports
 
+def install_smcom_report(dbo, user, r):
+    """
+    Installs the sheltermanager.com report r (an item from get_smcom_reports)
+    """
+    data = {"title" : r["TITLE"], 
+        "category" : r["CATEGORY"], 
+        "sql" : r["SQL"],
+        "html": r["HTML"], 
+        "description" : r["DESCRIPTION"],
+        "omitheaderfooter" : r["DATABASE"].find("omitheader") != -1 and "on" or "",
+        "omitcriteria" : r["DATABASE"].find("omitcriteria") != -1 and "on" or ""}
+    insert_report_from_form(dbo, user, utils.PostedData(data, dbo.locale))
+    # If the report has some subreports, install those too
+    if r["SUBREPORTS"] != "":
+        b = r["SUBREPORTS"].split("+++")
+        while len(b) >= 3:
+            dbo.delete("customreport", "Title LIKE '%s'" % b[0].strip().replace("'", "`"))
+            data["title"] = b[0]
+            data["sql"] = b[1]
+            data["html"] = b[2]
+            insert_report_from_form(dbo, user, utils.PostedData(data, dbo.locale))
+            # Reduce the list by the 3 elements we just saw
+            if len(b) > 3:
+                b = b[3:]
+            else:
+                break
+
 def install_smcom_reports(dbo, user, ids):
     """
     Installs the sheltermanager.com reports with the ids given
@@ -440,29 +485,16 @@ def install_smcom_reports(dbo, user, ids):
     """
     reports = get_smcom_reports(dbo)
     for r in reports:
-        if r["ID"] in ids:
-            data = {"title" : r["TITLE"], 
-                "category" : r["CATEGORY"], 
-                "sql" : r["SQL"],
-                "html": r["HTML"], 
-                "description" : r["DESCRIPTION"],
-                "omitheaderfooter" : r["DATABASE"].find("omitheader") != -1 and "on" or "",
-                "omitcriteria" : r["DATABASE"].find("omitcriteria") != -1 and "on" or ""}
-            insert_report_from_form(dbo, user, utils.PostedData(data, dbo.locale))
-            # If the report has some subreports, install those too
-            if r["SUBREPORTS"] != "":
-                b = r["SUBREPORTS"].split("+++")
-                while len(b) >= 3:
-                    dbo.delete("customreport", "Title LIKE '%s'" % b[0].strip().replace("'", "`"))
-                    data["title"] = b[0]
-                    data["sql"] = b[1]
-                    data["html"] = b[2]
-                    insert_report_from_form(dbo, user, utils.PostedData(data, dbo.locale))
-                    # Reduce the list by the 3 elements we just saw
-                    if len(b) > 3:
-                        b = b[3:]
-                    else:
-                        break
+        if r["ID"] in ids: install_smcom_report(dbo, user, r)
+
+def install_recommended_smcom_reports(dbo, user):
+    """
+    Installs the recommended set of reports from sheltermanger.com
+    This is usually called on login if there aren't any reports in the system currently.
+    """
+    reports = get_smcom_reports(dbo)
+    for r in reports:
+        if r["TITLE"] in RECOMMENDED_REPORTS: install_smcom_report(dbo, user, r)
 
 def get_reports_menu(dbo, roleids = "", superuser = False):
     """
