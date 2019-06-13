@@ -83,9 +83,9 @@ def get_animal_data(dbo, pc=None, animalid=0, include_additional_fields=False, r
     def merge_animal(a, aid):
         """
         Find the animal in rows with animalid, merge it into a and
-        then remove it from the set.
+        then remove it from the set. Sort by the animal ID and go backwards.
         """
-        for r in rows:
+        for r in reversed(sorted(rows, key=lambda k: k["ID"])):
             if r.ID == aid:
                 a.ANIMALNAME = "%s / %s" % (a.ANIMALNAME, r.ANIMALNAME)
                 rows.remove(r)
@@ -93,7 +93,9 @@ def get_animal_data(dbo, pc=None, animalid=0, include_additional_fields=False, r
                 break
 
     if pc.bondedAsSingle:
-        for r in rows:
+        # Sort the list by the Animal ID so that the first entered bonded animal
+        # always "wins" and becomes the first to be output
+        for r in sorted(rows, key=lambda k: k["ID"]):
             if r.BONDEDANIMALID is not None and r.BONDEDANIMALID != 0:
                 merge_animal(r, r.BONDEDANIMALID)
             if r.BONDEDANIMAL2ID is not None and r.BONDEDANIMAL2ID != 0:

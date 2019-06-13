@@ -1,6 +1,7 @@
 43
 ================
 
+13/06/19 Fix the order of output for bonded animals to their IDs #620
 12/06/19 Include readable fields when auditing changes (eg: users -> USERNAME)
 12/06/19 Show additional person flags in fosterer mode of shelterview #597
 12/06/19 Install recommended reports on home page if none installed #576
