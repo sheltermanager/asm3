@@ -96,9 +96,9 @@ def get_animal_data(dbo, pc=None, animalid=0, include_additional_fields=False, r
         # Sort the list by the Animal ID so that the first entered bonded animal
         # always "wins" and becomes the first to be output
         for r in sorted(rows, key=lambda k: k["ID"]):
-            if r.BONDEDANIMALID is not None and r.BONDEDANIMALID != 0:
+            if r.BONDEDANIMALID is not None and r.BONDEDANIMALID != 0 and "REMOVE" not in r:
                 merge_animal(r, r.BONDEDANIMALID)
-            if r.BONDEDANIMAL2ID is not None and r.BONDEDANIMAL2ID != 0:
+            if r.BONDEDANIMAL2ID is not None and r.BONDEDANIMAL2ID != 0 and "REMOVE" not in r:
                 merge_animal(r, r.BONDEDANIMAL2ID)
         # Remove the unwanted rows
         for r in rows:
