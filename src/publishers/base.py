@@ -85,10 +85,10 @@ def get_animal_data(dbo, pc=None, animalid=0, include_additional_fields=False, r
         Find the animal in rows with animalid, merge it into a and
         then remove it from the set. Sort by the animal ID and go backwards.
         """
-        for r in reversed(sorted(rows, key=lambda k: k["ID"])):
+        for r in rows:
             if r.ID == aid:
                 a.ANIMALNAME = "%s / %s" % (a.ANIMALNAME, r.ANIMALNAME)
-                rows.remove(r)
+                r.REMOVE = True # Flag this row for removal
                 al.debug("merged animal %d into %d" % (aid, a["ID"]), "publishers.base.get_animal_data", dbo)
                 break
 
@@ -100,6 +100,10 @@ def get_animal_data(dbo, pc=None, animalid=0, include_additional_fields=False, r
                 merge_animal(r, r.BONDEDANIMALID)
             if r.BONDEDANIMAL2ID is not None and r.BONDEDANIMAL2ID != 0:
                 merge_animal(r, r.BONDEDANIMAL2ID)
+        # Remove the unwanted rows
+        for r in rows:
+            if "REMOVE" in r and r.REMOVE:
+                rows.remove(r)
 
     # If animalid was set, only return that row or an empty set if it wasn't present
     if animalid != 0:
