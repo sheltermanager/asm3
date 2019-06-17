@@ -2141,7 +2141,7 @@ class diary(ASMEndpoint):
 
     def post_create(self, o):
         self.check(users.ADD_DIARY)
-        extdiary.insert_diary_from_form(o.dbo, o.user, o.post.integer("linktypeid"), o.post.integer("linkid"), o.post)
+        return extdiary.insert_diary_from_form(o.dbo, o.user, o.post.integer("linktypeid"), o.post.integer("linkid"), o.post)
 
     def post_update(self, o):
         self.check(users.EDIT_MY_DIARY_NOTES)
