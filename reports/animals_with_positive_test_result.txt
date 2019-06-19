@@ -12,8 +12,8 @@ SELECT a.ShelterCode, a.AnimalName,
 s.SpeciesName, a.BreedName, a.AnimalAge,
 CASE WHEN a.ActiveMovementID > 0 THEN fo.OwnerName ELSE il.LocationName END AS Location,
 a.DateBroughtIn,
-(SELECT tt.TestTypeName FROM animaltest att INNER JOIN testtype tt ON att.TestTypeID = tt.ID 
-    WHERE animaltest.AnimalID = a.ID AND TestResultID=3 AND DateOfTest Is Not Null ORDER BY DateOfTest DESC LIMIT 1) AS PositiveTest
+(SELECT tt.TestName FROM animaltest att INNER JOIN testtype tt ON att.TestTypeID = tt.ID 
+    WHERE att.AnimalID = a.ID AND TestResultID=3 AND DateOfTest Is Not Null ORDER BY DateOfTest DESC LIMIT 1) AS PositiveTest
 FROM animal a
 INNER JOIN internallocation il ON il.ID = a.ShelterLocation
 INNER JOIN species s ON s.ID = a.SpeciesID
