@@ -122,6 +122,7 @@ for d in asm.csv_to_list(ANIMAL_FILENAME, remove_non_ascii=True):
     if a.NeuteredDate is not None: a.Neutered = 1
     a.IdentichipNumber = d["Microchip_no"]
     a.Identichip2Number = d["Alternate_Chip_No"]
+    asm.additional_field(2, 5, a.ID, d["Microchip_Type"] # MChipType additional field
     if a.IdentichipNumber != "": a.Identichipped = 1
     a.IdentichipDate = asm.getdate_ddmmyyyy(d["Date_Microchipped"])
     a.IsGoodWithCats = 2
