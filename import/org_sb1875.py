@@ -108,7 +108,12 @@ for d in asm.csv_to_list(ANIMAL_FILENAME, remove_non_ascii=True):
     asm.additional_field("Legacy_Tag_No_Q", 0, a.ID, d["Tag_no_qualifier"])
     a.ShortCode = "%s:%s" % (d["Tag_no"], d["Tag_no_qualifier"])
     a.ShelterCode = a.ShortCode
-    asm.breed_ids(a, d["Breed"], d["Cross_Breed"])
+    a.BreedID = asm.breed_from_db(d["Breed"], 1)
+    a.BreedName = d["Breed"]
+    if d["Cross_Breed"] != "":
+        a.Breed2ID = asm.breed_from_db(d["Cross_Breed"], 1)
+        a.CrossBreed = 1
+        a.BreedName = "%s / %s" % (d["Breed"], d["Cross_Breed"])
     a.BaseColourID = asm.colour_id_for_names(d["Base_Colour"], d["Secondary_Colour"])
     a.AnimalComments = d["Notes"]
     a.Sex = asm.getsex_mf(d["Sex"])
