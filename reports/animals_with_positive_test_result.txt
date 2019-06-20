@@ -10,18 +10,18 @@ en
 ###
 SELECT a.ShelterCode, a.AnimalName,
 s.SpeciesName, a.BreedName, a.AnimalAge,
-CASE WHEN a.ActiveMovementID > 0 THEN fo.OwnerName ELSE il.LocationName END AS Location,
+a.DisplayLocation,
 a.DateBroughtIn,
-(SELECT tt.TestName FROM animaltest att INNER JOIN testtype tt ON att.TestTypeID = tt.ID 
-    WHERE att.AnimalID = a.ID AND TestResultID=3 AND DateOfTest Is Not Null ORDER BY DateOfTest DESC LIMIT 1) AS PositiveTest
-FROM animal a
+tt.TestName
+FROM animaltest att
+INNER JOIN testtype tt ON tt.ID = att.TestTypeID
+INNER JOIN animal a ON att.AnimalID = a.ID
 INNER JOIN internallocation il ON il.ID = a.ShelterLocation
 INNER JOIN species s ON s.ID = a.SpeciesID
 LEFT OUTER JOIN lksmovementtype mt ON mt.ID = a.ActiveMovementType
 LEFT OUTER JOIN adoption ad ON ad.ID = a.ActiveMovementID
 LEFT OUTER JOIN owner fo ON ad.OwnerID = fo.ID
-WHERE a.Archived = 0
-AND EXISTS(SELECT att.ID FROM animaltest att INNER JOIN testtype tt ON att.TestTypeID = tt.ID WHERE att.AnimalID = a.ID AND TestResultID=3 AND DateOfTest Is Not Null)
+WHERE a.Archived = 0 AND TestResultID = 3 AND DateOfTest Is Not Null 
 ORDER BY a.AnimalName
 ###
 $$HEADER
@@ -45,9 +45,9 @@ $$BODY
 <td>$SPECIESNAME</td>
 <td>$BREEDNAME</td>
 <td>$ANIMALAGE</td>
-<td>$LOCATION</td>
+<td>$DISPLAYLOCATION</td>
 <td>$DATEBROUGHTIN</td>
-<td>$POSITIVETEST</td>
+<td>$TESTNAME</td>
 </tr>
 BODY$$
 
