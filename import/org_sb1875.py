@@ -114,7 +114,8 @@ for d in asm.csv_to_list(ANIMAL_FILENAME, remove_non_ascii=True):
         a.Breed2ID = asm.breed_from_db(d["Cross_Breed"], 1)
         a.CrossBreed = 1
         a.BreedName = "%s / %s" % (d["Breed"], d["Cross_Breed"])
-    a.BaseColourID = asm.colour_id_for_names(d["Base_Colour"], d["Secondary_Colour"])
+    #a.BaseColourID = asm.colour_id_for_names(d["Base_Colour"], d["Secondary_Colour"])
+    a.BaseColourID = asm.colour_from_db(d["Base_Colour"])
     a.AnimalComments = d["Notes"]
     a.Sex = asm.getsex_mf(d["Sex"])
     a.Size = asm.size_id_for_name(d["Size"])
@@ -122,7 +123,7 @@ for d in asm.csv_to_list(ANIMAL_FILENAME, remove_non_ascii=True):
     if a.NeuteredDate is not None: a.Neutered = 1
     a.IdentichipNumber = d["Microchip_no"]
     a.Identichip2Number = d["Alternate_Chip_No"]
-    asm.additional_field(2, 5, a.ID, d["Microchip_Type"] # MChipType additional field
+    asm.additional_field("MChipType", 5, a.ID, d["Microchip_Type"]) # MChipType additional field
     if a.IdentichipNumber != "": a.Identichipped = 1
     a.IdentichipDate = asm.getdate_ddmmyyyy(d["Date_Microchipped"])
     a.IsGoodWithCats = 2

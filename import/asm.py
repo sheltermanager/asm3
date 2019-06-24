@@ -417,7 +417,7 @@ def colour_id_for_names(name1, name2, default = 1):
             return int(cid)
     return default
 
-def colour_from_db(name, default = 2):
+def colour_from_db(name, default = 1):
     """ Looks up the colour in the db when the conversion is run, assign to BaseColourID """
     return "COALESCE((SELECT ID FROM basecolour WHERE lower(BaseColour) LIKE lower('%s') LIMIT 1), %d)" % (name.strip(), default)
 
