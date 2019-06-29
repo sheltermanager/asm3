@@ -147,14 +147,14 @@ for d in asm.csv_to_list(ANIMAL_FILENAME, remove_non_ascii=True):
     entrycomments += "\nWhere Found: " + d["Where_found"]
     entrycomments += "\nStreet Found: " + d["Street_Found_In"]
     a.ReasonForEntry = entrycomments
-    a.EntryReasonID = 17 # Surrender
-    if d["Pound_Reason"] == "Stray": a.EntryReasonID = 7
+    a.EntryReasonID = asm.entryreason_from_db(d["Pound_Reason"])
     #if d["InShelterSearchFlag"] == "N":
     #    a.Archived = 1
 
 # Animal log, recording medical history and linking adoptions/surrenderers/etc
 for d in asm.csv_to_list(LOG_FILENAME, remove_non_ascii=True):
 
+    if d["Animal_Identifier"] not in ppa: continue
     a = ppa[d["Animal_Identifier"]]
     o = uo
     if d["People_ctr"] != "": o = ppo[d["People_ctr"]]
