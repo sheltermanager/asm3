@@ -49,6 +49,8 @@ print "DELETE FROM log WHERE ID >= %s;" % START_ID
 print "DELETE FROM owner WHERE ID >= %s;" % START_ID
 print "DELETE FROM adoption WHERE ID >= %s;" % START_ID
 
+print "DELETE FROM media;" # They want media cleared out, shouldn't be enough to worry about orphans
+
 # Create an unknown owner
 uo = asm.Owner()
 owners.append(uo)
@@ -104,8 +106,8 @@ for d in asm.csv_to_list(ANIMAL_FILENAME, remove_non_ascii=True):
         a.DateOfBirth = asm.subtract_days(a.DateBroughtIn, 365)
     a.CreatedDate = a.DateBroughtIn
     a.LastChangedDate = a.DateBroughtIn
-    asm.additional_field("Legacy_Tag_No", 0, a.ID, d["Tag_no"])
-    asm.additional_field("Legacy_Tag_No_Q", 0, a.ID, d["Tag_no_qualifier"])
+    #asm.additional_field("Legacy_Tag_No", 0, a.ID, d["Tag_no"])
+    #asm.additional_field("Legacy_Tag_No_Q", 0, a.ID, d["Tag_no_qualifier"])
     a.ShortCode = "%s:%s" % (d["Tag_no"], d["Tag_no_qualifier"])
     a.ShelterCode = a.ShortCode
     a.BreedID = asm.breed_from_db(d["Breed"], 1)
@@ -121,6 +123,8 @@ for d in asm.csv_to_list(ANIMAL_FILENAME, remove_non_ascii=True):
     a.Size = asm.size_id_for_name(d["Size"])
     a.NeuteredDate = getdate(d["Date_Desexed"])
     if a.NeuteredDate is not None: a.Neutered = 1
+    a.IsNotForRegistration = 0
+    a.IsNotAvailableForAdoption = 1
     a.IdentichipNumber = d["Microchip_no"]
     a.Identichip2Number = d["Alternate_Chip_No"]
     asm.additional_field("MChipType", 5, a.ID, d["Microchip_Type"]) # MChipType additional field
@@ -274,7 +278,7 @@ for d in asm.csv_to_list(LOG_FILENAME, remove_non_ascii=True):
         a.PTSReason = d["Log_Description"] + ": " + d["Log_Notes"]
         a.LastChangedDate = ed
 
-    elif d["Action"] == "Return":
+    elif d["Action"] == "Return" or d["Action"] == "ReAdmission":
         # Return the most recent adoption for this animal/person
         for m in movements:
             if m.AnimalID == a.ID and m.ReturnDate is None and m.MovementType == 1 and m.OwnerID == o.ID:
