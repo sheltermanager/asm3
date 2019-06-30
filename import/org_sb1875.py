@@ -85,16 +85,7 @@ for d in asm.csv_to_list(ANIMAL_FILENAME, remove_non_ascii=True):
     a = asm.Animal()
     animals.append(a)
     ppa[d["Animal_Identifier"]] = a
-    if d["Species"] == "Cat":
-        a.AnimalTypeID = 11 # Unwanted Cat
-        if d["Pound_Reason"] == "Stray":
-            a.AnimalTypeID = 12 # Stray Cat
-    elif d["Species"] == "Dog":
-        a.AnimalTypeID = 2 # Unwanted Dog
-        if d["Pound_Reason"] == "Stray":
-            a.AnimalTypeID = 10 # Stray Dog
-    else:
-        a.AnimalTypeID = 40 # Misc
+    a.AnimalTypeID = asm.type_from_db(d["Pound_Reason"])
     a.SpeciesID = asm.species_id_for_name(d["Species"])
     a.AnimalName = d["Name"]
     if a.AnimalName.strip() == "":
@@ -147,7 +138,7 @@ for d in asm.csv_to_list(ANIMAL_FILENAME, remove_non_ascii=True):
     entrycomments += "\nWhere Found: " + d["Where_found"]
     entrycomments += "\nStreet Found: " + d["Street_Found_In"]
     a.ReasonForEntry = entrycomments
-    a.EntryReasonID = asm.entryreason_from_db(d["Pound_Reason"])
+    a.EntryReasonID = 17 # Surrender
     #if d["InShelterSearchFlag"] == "N":
     #    a.Archived = 1
 
