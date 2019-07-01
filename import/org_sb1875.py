@@ -120,6 +120,9 @@ for d in asm.csv_to_list(ANIMAL_FILENAME, remove_non_ascii=True):
     a.Identichip2Number = d["Alternate_Chip_No"]
     asm.additional_field("MChipType", 5, a.ID, d["Microchip_Type"]) # MChipType additional field
     if a.IdentichipNumber != "": a.Identichipped = 1
+    if a.IdentichipNumber == "0": 
+        a.Identichipped = 0
+        a.IdentichipNumber = ""
     a.IdentichipDate = asm.getdate_ddmmyyyy(d["Date_Microchipped"])
     a.IsGoodWithCats = 2
     a.IsGoodWithDogs = 2
