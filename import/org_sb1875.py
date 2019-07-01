@@ -270,9 +270,9 @@ for d in asm.csv_to_list(LOG_FILENAME, remove_non_ascii=True):
         a.LastChangedDate = ed
 
     elif d["Action"] == "Return" or d["Action"] == "ReAdmission":
-        # Return the most recent adoption for this animal/person
+        # Return the most recent exit movement for this animal/person
         for m in movements:
-            if m.AnimalID == a.ID and m.ReturnDate is None and m.MovementType == 1 and m.OwnerID == o.ID:
+            if m.AnimalID == a.ID and m.ReturnDate is None and m.MovementType not in (2, 8) and m.OwnerID == o.ID:
                 m.ReturnDate = ed
                 m.ReturnedReasonID = 17 # Surrender
                 break
