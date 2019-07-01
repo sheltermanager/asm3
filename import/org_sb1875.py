@@ -108,7 +108,7 @@ for d in asm.csv_to_list(ANIMAL_FILENAME, remove_non_ascii=True):
         a.CrossBreed = 1
         a.BreedName = "%s / %s" % (d["Breed"], d["Cross_Breed"])
     #a.BaseColourID = asm.colour_id_for_names(d["Base_Colour"], d["Secondary_Colour"])
-    a.BaseColourID = asm.colour_from_db(d["Base_Colour"])
+    a.BaseColourID = asm.colour_from_db(d["Base_"])
     a.AnimalComments = d["Notes"]
     a.Sex = asm.getsex_mf(d["Sex"])
     a.Size = asm.size_id_for_name(d["Size"])
@@ -144,6 +144,9 @@ for d in asm.csv_to_list(ANIMAL_FILENAME, remove_non_ascii=True):
     a.EntryReasonID = 17 # Surrender
     #if d["InShelterSearchFlag"] == "N":
     #    a.Archived = 1
+    if d["Location"] != "": a.ShelterLocation = asm.location_from_db(d["Location"])
+    if d["Unit"] != "": a.ShelterLocationUnit = d["Unit"]
+
 
 # Animal log, recording medical history and linking adoptions/surrenderers/etc
 for d in asm.csv_to_list(LOG_FILENAME, remove_non_ascii=True):
@@ -162,7 +165,7 @@ for d in asm.csv_to_list(LOG_FILENAME, remove_non_ascii=True):
             pass
         l = asm.Log()
         logs.append(l)
-        l.LogTypeID = 1 # Weight
+        l.LogTypeID = 4 # Weight
         l.LinkID = a.ID
         l.LinkType = 0
         l.Date = ed
