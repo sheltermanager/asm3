@@ -586,10 +586,12 @@ from an adoption or fostering for example)</dd>
 <dd>A readable string of the animal’s status, eg: Hold, Reserved, Quarantine, Adoptable</dd>
 <dt>HasValidMedia</dt>
 <dd>“Yes” if the animal has a photo flagged for website generation</dd>
-<dt>WebMediaFilename</dt>
-<dd>The filename of the animal’s default picture</dd>
-<dt>WebMediaNotes</dt>
-<dd>The notes to accompany the picture</dd>
+</dl>
+<p>WebMediaFilename
+WebMediaNotes</p>
+<blockquote>
+<div>The notes to accompany the picture</div></blockquote>
+<dl class="docutils">
 <dt>WebMediaNew</dt>
 <dd>“Yes” if the animal has not been published via the web publishing tool</dd>
 <dt>WebMediaUpdated</dt>
@@ -956,6 +958,8 @@ fields are:</p>
 <dd>The type of log</dd>
 <dt>LogDate</dt>
 <dd>The date of the log</dd>
+<dt>LogTime</dt>
+<dd>The time of the log</dd>
 <dt>LogComments</dt>
 <dd>The log entry</dd>
 <dt>LogCreatedBy</dt>
@@ -1018,7 +1022,8 @@ movements.</p>
 <h2>Person Keys<a class="headerlink" href="#person-keys" title="Permalink to this headline">¶</a></h2>
 <p>Person keys are available for documents generated from the person and movement
 screens, they are also available for documents generated from the payment
-and licence tabs as well as lost animal, found animal and waiting list.</p>
+and licence tabs as well as lost animal, found animal and waiting list.
+Log keys are available for people, but prefixed with PersonLog instead of just Log.</p>
 <dl class="docutils">
 <dt>OwnerTitle</dt>
 <dd>The person’s title</dd>
@@ -1163,7 +1168,8 @@ keys are also present.</p>
 <div class="section" id="incident-keys">
 <h2>Incident Keys<a class="headerlink" href="#incident-keys" title="Permalink to this headline">¶</a></h2>
 <p>Incident keys are only available for documents generated with the document button
-on a single incident.</p>
+on a single incident. Log keys are available for incidents, but prefixed with
+IncidentLog instead of just Log.</p>
 <dl class="docutils">
 <dt>IncidentNumber</dt>
 <dd>The unique incident number</dd>
@@ -1277,6 +1283,13 @@ on a single incident.</p>
 <dd>The victim’s work number</dd>
 <dt>VictimMobileTelephone / VictimCellTelephone</dt>
 <dd>The victim’s mobile number</dd>
+<dt>DocumentImgLink</dt>
+<dd>An &lt;img&gt; tag containing a link to the incident’s preferred document image.
+The image will be 200px high. You can also suffix a pixel height in
+increments of 100 upto 500px if you would like the image to be larger, eg:
+&lt;&lt;DocumentImgLink300&gt;&gt;, &lt;&lt;DocumentImgLink400&gt;&gt;, &lt;&lt;DocumentImgLink500&gt;&gt;</dd>
+<dt>DocumentImgSrc</dt>
+<dd>Just the src attribute value for an image link to the preferred document image.</dd>
 </dl>
 </div>
 <div class="section" id="incident-animal-keys">

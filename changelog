@@ -1,6 +1,7 @@
 43
 ================
 
+02/07/19 Add LogTime keys and DocumentImgSrc/Link for incidents #624
 02/07/19 Fix fault uploading extra images due to bad unload #556
 13/06/19 Use mark and sweep algorithm for removal #620
 13/06/19 Fix the order of output for bonded animals to their IDs #620

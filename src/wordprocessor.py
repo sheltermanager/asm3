@@ -644,6 +644,7 @@ def animal_tags(dbo, a, includeAdditional=True, includeCosts=True, includeDiet=T
         d = {
             "LOGNAME":                  "LOGTYPENAME",
             "LOGDATE":                  "d:DATE",
+            "LOGTIME":                  "t:DATE",
             "LOGCOMMENTS":              "COMMENTS",
             "LOGCREATEDBY":             "CREATEDBY"
         }
@@ -727,7 +728,13 @@ def animalcontrol_tags(dbo, ac):
         "VICTIMHOMETELEPHONE":  utils.nulltostr(ac["VICTIMHOMETELEPHONE"]),
         "VICTIMWORKTELEPHONE":  utils.nulltostr(ac["VICTIMWORKTELEPHONE"]),
         "VICTIMMOBILETELEPHONE":  utils.nulltostr(ac["VICTIMMOBILETELEPHONE"]),
-        "VICTIMCELLTELEPHONE":  utils.nulltostr(ac["VICTIMMOBILETELEPHONE"])
+        "VICTIMCELLTELEPHONE":  utils.nulltostr(ac["VICTIMMOBILETELEPHONE"]),
+        "DOCUMENTIMGSRC"        : html.doc_img_src(dbo, ac),
+        "DOCUMENTIMGLINK"       : "<img height=\"200\" src=\"" + html.doc_img_src(dbo, ac) + "\" >",
+        "DOCUMENTIMGLINK200"    : "<img height=\"200\" src=\"" + html.doc_img_src(dbo, ac) + "\" >",
+        "DOCUMENTIMGLINK300"    : "<img height=\"300\" src=\"" + html.doc_img_src(dbo, ac) + "\" >",
+        "DOCUMENTIMGLINK400"    : "<img height=\"400\" src=\"" + html.doc_img_src(dbo, ac) + "\" >",
+        "DOCUMENTIMGLINK500"    : "<img height=\"500\" src=\"" + html.doc_img_src(dbo, ac) + "\" >"
     }
 
     # Linked animals
@@ -761,6 +768,7 @@ def animalcontrol_tags(dbo, ac):
     d = {
         "INCIDENTLOGNAME":            "LOGTYPENAME",
         "INCIDENTLOGDATE":            "d:DATE",
+        "INCIDENTLOGTIME":            "t:DATE",
         "INCIDENTLOGCOMMENTS":        "COMMENTS",
         "INCIDENTLOGCREATEDBY":       "CREATEDBY"
     }
@@ -884,6 +892,7 @@ def foundanimal_tags(dbo, a):
     d = {
         "LOGNAME":            "LOGTYPENAME",
         "LOGDATE":            "d:DATE",
+        "LOGTIME":            "t:DATE",
         "LOGCOMMENTS":        "COMMENTS",
         "LOGCREATEDBY":       "CREATEDBY"
     }
@@ -924,6 +933,7 @@ def lostanimal_tags(dbo, a):
     d = {
         "LOGNAME":            "LOGTYPENAME",
         "LOGDATE":            "d:DATE",
+        "LOGTIME":            "t:DATE",
         "LOGCOMMENTS":        "COMMENTS",
         "LOGCREATEDBY":       "CREATEDBY"
     }
@@ -1112,6 +1122,7 @@ def person_tags(dbo, p, includeImg=False):
     d = {
         "PERSONLOGNAME":            "LOGTYPENAME",
         "PERSONLOGDATE":            "d:DATE",
+        "PERSONLOGTIME":            "t:DATE",
         "PERSONLOGCOMMENTS":        "COMMENTS",
         "PERSONLOGCREATEDBY":       "CREATEDBY"
     }
@@ -1229,6 +1240,7 @@ def waitinglist_tags(dbo, a):
     d = {
         "LOGNAME":            "LOGTYPENAME",
         "LOGDATE":            "d:DATE",
+        "LOGTIME":            "t:DATE",
         "LOGCOMMENTS":        "COMMENTS",
         "LOGCREATEDBY":       "CREATEDBY"
     }
@@ -1248,10 +1260,12 @@ def append_tags(tags1, tags2):
 def table_get_value(l, row, k):
     """
     Returns row[k], looking for a type prefix in k -
-    c: currency, d: date
+    c: currency, d: date, t: time, y: yesno, f: float
     """
     if k.find("d:") != -1: 
         s = python2display(l, row[k.replace("d:", "")])
+    if k.find("t:") != -1: 
+        s = format_time(row[k.replace("t:", "")])
     elif k.find("c:") != -1:
         s = format_currency_no_symbol(l, row[k.replace("c:", "")])
     elif k.find("y:") != -1:

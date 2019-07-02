@@ -388,7 +388,6 @@ AdoptionStatus
 HasValidMedia
     "Yes" if the animal has a photo flagged for website generation 
 WebMediaFilename
-    The filename of the animal's default picture 
 WebMediaNotes
     The notes to accompany the picture 
 WebMediaNew
@@ -768,6 +767,8 @@ LogName
     The type of log 
 LogDate
     The date of the log  
+LogTime
+    The time of the log  
 LogComments
     The log entry
 LogCreatedBy
@@ -831,6 +832,8 @@ Person Keys
 Person keys are available for documents generated from the person and movement
 screens, they are also available for documents generated from the payment 
 and licence tabs as well as lost animal, found animal and waiting list.
+Log keys are available for people, but prefixed with PersonLog instead of just Log.
+
 
 OwnerTitle 
     The person's title
@@ -976,7 +979,8 @@ Incident Keys
 -------------
 
 Incident keys are only available for documents generated with the document button
-on a single incident.
+on a single incident. Log keys are available for incidents, but prefixed with
+IncidentLog instead of just Log.
 
 IncidentNumber
     The unique incident number
@@ -1090,6 +1094,13 @@ VictimWorkTelephone
     The victim's work number
 VictimMobileTelephone / VictimCellTelephone
     The victim's mobile number
+DocumentImgLink
+    An <img> tag containing a link to the incident's preferred document image.
+    The image will be 200px high. You can also suffix a pixel height in
+    increments of 100 upto 500px if you would like the image to be larger, eg:
+    <<DocumentImgLink300>>, <<DocumentImgLink400>>, <<DocumentImgLink500>>
+DocumentImgSrc
+    Just the src attribute value for an image link to the preferred document image.
 
 Incident Animal Keys
 --------------------
