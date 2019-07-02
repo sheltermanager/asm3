@@ -140,7 +140,8 @@ $(function() {
         },
 
         destroy: function() {
-            $("#dialog-rename").dialog("destroy");
+            common.widget_destroy("#dialog-rename");
+            tableform.dialog_destroy();
         },
 
 
