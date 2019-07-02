@@ -1264,7 +1264,7 @@ def table_get_value(l, row, k):
     """
     if k.find("d:") != -1: 
         s = python2display(l, row[k.replace("d:", "")])
-    if k.find("t:") != -1: 
+    elif k.find("t:") != -1: 
         s = format_time(row[k.replace("t:", "")])
     elif k.find("c:") != -1:
         s = format_currency_no_symbol(l, row[k.replace("c:", "")])
