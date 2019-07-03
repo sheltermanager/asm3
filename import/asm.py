@@ -179,6 +179,12 @@ def cfloat(s):
     except:
         return 0.0
 
+def good_with(s):
+    """ Returns 0 = unknown, 1 = no, 2 = yes for good with fields """
+    if s.lower().find("no") != -1: return 1
+    if s.lower().find("yes") != -1: return 2
+    return 0
+
 def get_currency(s):
     if s.strip() == "": return 0
     s = s.replace("$", "")
