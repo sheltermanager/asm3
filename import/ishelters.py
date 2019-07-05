@@ -9,7 +9,7 @@ It can be accessed by going to adminShelter and then System->Misc->Downloads
 7th July, 2015 - 18th May, 2016
 """
 
-PATH = "/home/robin/tmp/asm3_import_data/ishelters_sh1078/"
+PATH = "/home/robin/tmp/asm3_import_data/ishelters_cm2044/"
 
 # Files needed
 # adoptions.csv, animals.csv, checkins.csv, donations.csv, allmedical.csv, people.csv, releases.csv
@@ -78,7 +78,7 @@ for row in asm.csv_to_list(PATH + "people.csv"):
     o.WorkTelephone = row["work phone"]
     o.MobileTelephone = row["cell phone"]
     o.EmailAddress = row["primary email"]
-    o.OwnerAddress = row["address"] + " " + row["second address line"]
+    o.OwnerAddress = "%s %s" % (row["address"], row["second address line"])
     o.OwnerTown = row["city"]
     o.OwnerCounty = row["region/state"]
     o.OwnerPostcode = row["postalCode"]
@@ -93,6 +93,7 @@ for row in asm.csv_to_list(PATH + "people.csv"):
 
 # animals.csv
 for row in asm.csv_to_list(PATH + "animals.csv"):
+    if row["name"] is None: continue
     a = asm.Animal()
     animals.append(a)
     ppa[row["id"]] = a
@@ -109,6 +110,7 @@ for row in asm.csv_to_list(PATH + "animals.csv"):
     a.BaseColourID = asm.colour_id_for_name(row["primary color"])
     a.Sex = asm.getsex_mf(row["sex"])
     a.DateBroughtIn = asm.getdate_iso(row["time entered"])
+    if a.DateBroughtIn is None: a.DateBroughtIn = asm.now()
     a.DateOfBirth = asm.getdate_iso(row["birth date"])
     if a.DateOfBirth is None: a.DateOfBirth = asm.getdate_iso(row["time entered"])
     a.NeuteredDate = asm.getdate_iso(row["neutered/spayed date"])
@@ -202,12 +204,13 @@ for row in asm.csv_to_list(PATH + "donations.csv"):
     od = asm.OwnerDonation()
     ownerdonations.append(od)
     od.DonationTypeID = 1
-    pm = row["Method"]
+    pm = ""
+    if "Method" in row: pm = row["Method"]
     od.DonationPaymentID = 1
     if pm.find("Check") != -1: od.DonationPaymentID = 2
     if pm.find("Credit Card") != -1: od.DonationPaymentID = 3
     if pm.find("Debit Card") != -1: od.DonationPaymentID = 4
-    od.ChequeNumber = row["Method Details"]
+    if "Method Details" in row: od.ChequeNumber = row["Method Details"]
     od.Date = asm.getdate_iso(row["Date Donated"])
     if od.Date is None: od.Date = asm.getdate_iso(row["Date Pledged"])
     od.OwnerID = o.ID

@@ -407,6 +407,7 @@ colours = (
 )
 
 def colour_id_for_name(name, firstWordOnly = False, default = 1):
+    if name is None: return default
     if firstWordOnly:
         if name.find(" ") != -1: name = name[0:name.find(" ")]
         if name.find("/") != -1: name = name[0:name.find("/")]
@@ -919,6 +920,7 @@ breeds = (
 )
 
 def breed_id_for_name(name, default = 1):
+    if name is None: return default
     if name.find(" x") != -1 or name.find(" X") != -1:
         name = name.replace(" x", "").replace(" X", "")
     # try a complete match first
@@ -2276,10 +2278,10 @@ class Owner:
             self.OwnerSurname = name[lastspace+1:]
     def __str__(self):
         if self.OwnerName.strip() == "":
-            self.OwnerName = self.OwnerForeNames + " " + self.OwnerSurname
+            self.OwnerName = "%s %s" % (self.OwnerForeNames, self.OwnerSurname)
         if self.OwnerCode.strip() == "":
             prefix = "XX"
-            if len(self.OwnerSurname) >= 2 and not self.OwnerSurname.startswith("&"):
+            if self.OwnerSurname and len(self.OwnerSurname) >= 2 and not self.OwnerSurname.startswith("&"):
                 prefix = self.OwnerSurname[0:2].upper()
             self.OwnerCode = "%s%s" % (prefix, padleft(self.ID, 6))
         s = (
