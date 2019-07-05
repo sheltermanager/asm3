@@ -1,6 +1,7 @@
 43
 ================
 
+05/07/19 Allow html_flagged_animals to search all animals #628
 02/07/19 Add LogTime keys and DocumentImgSrc/Link for incidents #624
 02/07/19 Fix fault uploading extra images due to bad unload #556
 13/06/19 Use mark and sweep algorithm for removal #620

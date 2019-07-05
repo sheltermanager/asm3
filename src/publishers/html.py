@@ -56,16 +56,19 @@ def get_deceased_animals(dbo, daysdeceased=0, style="", speciesid=0, animaltypei
         "ORDER BY %s" % orderby, [ dbo.today(daysdeceased * -1)] )
     return animals_to_page(dbo, animals, style=style, speciesid=speciesid, animaltypeid=animaltypeid)
 
-def get_flagged_animals(dbo, style="", speciesid=0, animaltypeid=0, flag=""):
+def get_flagged_animals(dbo, style="", speciesid=0, animaltypeid=0, flag="", allanimals=0):
     """ Returns a page of animals with a particular flag.
     style: The HTML publishing template to use
     speciesid: 0 for all species, or a specific one
     animaltypeid: 0 for all animal types or a specific one
     flag: The flag to show for
+    allanimals: 0 = only search shelter animals, 1 = all animals
     """
-    animals = dbo.query("%s WHERE a.Archived = 0 " \
-        "AND AdditionalFlags LIKE ? ORDER BY a.DateBroughtIn DESC" % animal.get_animal_query(dbo),
-        "%%%s|%%" % flag)
+    afilter = ""
+    if allanimals == 0: afilter = "a.Archived = 0 AND "
+    animals = dbo.query(animal.get_animal_query(dbo) + " WHERE " + afilter + "AdditionalFlags LIKE ? ORDER BY a.DateBroughtIn DESC", 
+        ["%%%s|%%" % flag],
+        limit = configuration.record_search_limit(dbo))
     return animals_to_page(dbo, animals, style=style, speciesid=speciesid, animaltypeid=animaltypeid)
 
 def get_held_animals(dbo, style="", speciesid=0, animaltypeid=0):

@@ -337,9 +337,12 @@ def handler(post, path, remoteip, referer, querystring):
                 speciesid=post.integer("speciesid"), animaltypeid=post.integer("animaltypeid")))
 
     elif method == "html_flagged_animals":
+        if post["flag"] == "":
+            al.error("html_flagged_animals requested with no flag.", "service.handler", dbo)
+            return ("text/plain", 0, 0, "ERROR: Invalid flag")
         return set_cached_response(cache_key, "text/html", 10800, 1800, \
-            publishers.html.get_held_animals(dbo, style=post["template"], \
-                speciesid=post.integer("speciesid"), animaltypeid=post.integer("animaltypeid"), flag=post["flag"]))
+            publishers.html.get_flagged_animals(dbo, style=post["template"], \
+                speciesid=post.integer("speciesid"), animaltypeid=post.integer("animaltypeid"), flag=post["flag"], allanimals=post.integer("all")))
 
     elif method == "html_held_animals":
         return set_cached_response(cache_key, "text/html", 10800, 1800, \

@@ -569,11 +569,13 @@ that have a particular flag.</p>
 it off will cause animalview to be used). It is also possible to pass
 speciesid=X or animaltypeid=X parameters to only output animals of that species
 and type. In the default dataset, speciesid=1 is Dogs and speciesid=2 is cats.</p>
-<p>In addition, a “flag” parameter can be passed to specify the flag you want the
-returned animals to have. If no flag is set, all shelter animals are returned.</p>
+<p>A “flag” parameter must be passed to specify the flag you want the returned
+animals to have. If no flag is set, an error is returned. An “allanimals=1”
+parameter can optionally be passed if you’d like all animals to be included,
+not just shelter animals.</p>
 <blockquote>
-<div><a class="reference external" href="http://localhost:5000/service?method=html_flagged_animals&amp;template=littlebox&amp;speciesid=1&amp;flag=Needs+Foster">http://localhost:5000/service?method=html_flagged_animals&amp;template=littlebox&amp;speciesid=1&amp;flag=Needs+Foster</a>
-<a class="reference external" href="http://localhost:5000/service?method=html_flagged_animals">http://localhost:5000/service?method=html_flagged_animals</a></div></blockquote>
+<div><a class="reference external" href="http://localhost:5000/service?method=html_flagged_animals&amp;template=littlebox&amp;speciesid=1&amp;allanimals=1&amp;flag=Needs+Foster">http://localhost:5000/service?method=html_flagged_animals&amp;template=littlebox&amp;speciesid=1&amp;allanimals=1&amp;flag=Needs+Foster</a>
+<a class="reference external" href="http://localhost:5000/service?method=html_flagged_animals&amp;flag=At+Risk">http://localhost:5000/service?method=html_flagged_animals&amp;flag=At+Risk</a></div></blockquote>
 </div>
 <div class="section" id="html-held-animals">
 <h2>html_held_animals<a class="headerlink" href="#html-held-animals" title="Permalink to this headline">¶</a></h2>
