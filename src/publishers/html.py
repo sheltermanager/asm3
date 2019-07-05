@@ -66,7 +66,7 @@ def get_flagged_animals(dbo, style="", speciesid=0, animaltypeid=0, flag="", all
     """
     afilter = ""
     if allanimals == 0: afilter = "a.Archived = 0 AND "
-    animals = dbo.query(animal.get_animal_query(dbo) + " WHERE " + afilter + "AdditionalFlags LIKE ? ORDER BY a.DateBroughtIn DESC", 
+    animals = dbo.query(animal.get_animal_query(dbo) + " WHERE " + afilter + "a.AdditionalFlags LIKE ? ORDER BY a.DateBroughtIn DESC", 
         ["%%%s|%%" % flag],
         limit = configuration.record_search_limit(dbo))
     return animals_to_page(dbo, animals, style=style, speciesid=speciesid, animaltypeid=animaltypeid)
