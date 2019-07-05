@@ -54,7 +54,7 @@ def create_vacc(vaccname, vaccdate, vaccrenew):
         "Distemper": 1,
         "Lepto": 3,
         "Bordetella": 6,
-        "Influenza": 5
+        "Influenza": 10
     }
     given = getdate(vaccdate)
     if given is not None:
@@ -77,6 +77,7 @@ def create_vacc(vaccname, vaccdate, vaccrenew):
 for d in asm.csv_to_list(FILENAME, remove_non_ascii=True):
     # Each row contains an animal with intake and outcome info:
     a = asm.Animal()
+    flags = ""
     animals.append(a)
     a.SpeciesID = asm.species_id_for_name(d["Type"])
     a.AnimalTypeID = 11
@@ -150,13 +151,22 @@ for d in asm.csv_to_list(FILENAME, remove_non_ascii=True):
     comments += "\nColor: " + d["Color"]
     comments += "\nLocation: " + d["Location"] + " " + d["Haven location"]
     comments += "\nTr.Color: " + d["Tcolor"]
-    comments += "\nGood with dogs notes: " + d["Good w/ dogs notes"]
+    comments += "\nGood with cats: " + d["Good w/ cats"]
+    comments += "\nGood with dogs: " + d["Good w/ dogs"] + " " + d["Good w/ dogs notes"]
+    comments += "\nGood with kids: " + d["Good w/ children"]
     comments += "\nEnergy: " + d["Energy level"]
     comments += "\nBehavior: " + d["Behavior Notes"]
     comments += "\nKennel Card Notes: " + d["Kennel Card Notes"]
     a.HiddenAnimalDetails = comments
-
     a.AnimalComments = d["About"]
+
+    if d["Where from?"].startswith("DV"):
+        flags += "Domestic Violence|"
+
+    if d["Pit?"] == "Yes":
+        flags += "Pitbull"
+
+    asm.additional_field("CollarColor", 6, a.ID, d["Tcolor"])
 
     if d["Kennel Card Notes"].strip() != "":
         l = asm.Log()
@@ -175,6 +185,14 @@ for d in asm.csv_to_list(FILENAME, remove_non_ascii=True):
         l.LinkType = 0
         l.Date = a.DateBroughtIn
         l.Comments = "Behavior: " + d["Behavior Notes"]
+
+    l = asm.Log()
+    logs.append(l)
+    l.LogTypeID = 3 # History
+    l.LinkID = a.ID
+    l.LinkType = 0
+    l.Date = a.DateBroughtIn
+    l.Comments = "Diet: Food-Dry (cups 2x/day) = %s %s" % ( d["Food-Dry (cups 2x/day)"], d["Food-Special"] )
 
     dateout = getdate(d["Date Out"])
 
