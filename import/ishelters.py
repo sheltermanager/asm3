@@ -12,7 +12,7 @@ It can be accessed by going to adminShelter and then System->Misc->Downloads
 PATH = "/home/robin/tmp/asm3_import_data/ishelters_cm2044/"
 
 # Files needed
-# adoptions.csv, animals.csv, checkins.csv, donations.csv, allmedical.csv, people.csv, releases.csv
+# adoptions.csv, animals.csv, checkins.csv, donations.csv, allmedical.csv, movements.csv, people.csv, releases.csv
 
 def getentryreason(s):
     er = {
@@ -67,8 +67,14 @@ ro = asm.Owner()
 ro.OwnerSurname = "Unknown Reclaim Owner"
 owners.append(ro)
 
+uo = asm.Owner()
+uo.OwnerSurname = "Unknown Adopter"
+owners.append(uo)
+
+
 # people.csv
 for row in asm.csv_to_list(PATH + "people.csv"):
+    if row["last name"] is None: continue
     o = asm.Owner()
     ppo[row["id"]] = o
     owners.append(o)
@@ -113,14 +119,16 @@ for row in asm.csv_to_list(PATH + "animals.csv"):
     if a.DateBroughtIn is None: a.DateBroughtIn = asm.now()
     a.DateOfBirth = asm.getdate_iso(row["birth date"])
     if a.DateOfBirth is None: a.DateOfBirth = asm.getdate_iso(row["time entered"])
+    if a.DateOfBirth is None: a.DateOfBirth = a.DateBroughtIn
     a.NeuteredDate = asm.getdate_iso(row["neutered/spayed date"])
     if a.NeuteredDate is not None: a.Neutered = 1
     a.Archived = 0
     a.IdentichipNumber = row["microchip #"]
     if a.IdentichipNumber != "": a.Identichipped = 1
     a.HiddenAnimalDetails = "Original Breed: %s/%s, Color: %s\n%s" % (row["primary breed"], row["secondary breed"], row["primary color"], row["hidden comments"])
-    a.AnimalComments = row["general comments"]
-    a.Markings = row["distinctive features"]
+    a.HiddenAnimalDetails = a.HiddenAnimalDetails.replace("\\", "/")
+    a.AnimalComments = ("%s" % row["general comments"]).replace("\\", "/")
+    a.Markings = ("%s" % row["distinctive features"]).replace("\\", "/")
     a.DeceasedDate = asm.getdate_iso(row["date of death"])
     a.PTSReason = row["reason of death"]
     a.RabiesTag = row["tag #"]
@@ -193,6 +201,38 @@ for row in asm.csv_to_list(PATH + "releases.csv"):
     a.Archived = 1
     a.ActiveMovementDate = m.MovementDate
     a.ActiveMovementID = m.ID
+
+# movements.csv
+for row in asm.csv_to_list(PATH + "movements.csv"):
+    a = None
+    lastadopted = "0"
+    if ppa.has_key(row["Animal Id"]): a = ppa[row["Animal Id"]]
+    if a is None: continue
+    if row["Location"] == "Adopted" and row["Animal Id"] != lastadopted: # quite a few duplicate rows together
+        m = asm.Movement()
+        movements.append(m)
+        m.OwnerID = uo.ID
+        m.AnimalID = a.ID
+        m.MovementDate = asm.getdate_iso(row["Moved On"])
+        m.MovementType = 1
+        m.Comments = row["Comments"]
+        a.Archived = 1
+        a.ActiveMovementDate = m.MovementDate
+        a.ActiveMovementType = 1
+        a.ActiveMovementID = m.ID
+        lastadopted = row["Animal Id"]
+    elif row["Location"] == "Transferred to another agency":
+        m = asm.Movement()
+        movements.append(m)
+        m.OwnerID = to.ID
+        m.AnimalID = a.ID
+        m.MovementDate = asm.getdate_iso(row["Moved On"])
+        m.MovementType = 3
+        m.Comments = row["Comments"]
+        a.Archived = 1
+        a.ActiveMovementDate = m.MovementDate
+        a.ActiveMovementType = 3
+        a.ActiveMovementID = m.ID
 
 # donations.csv
 for row in asm.csv_to_list(PATH + "donations.csv"):
