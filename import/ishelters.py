@@ -67,6 +67,10 @@ ro = asm.Owner()
 ro.OwnerSurname = "Unknown Reclaim Owner"
 owners.append(ro)
 
+fo = asm.Owner()
+fo.OwnerSurname = "Unknown Foster Owner"
+owners.append(fo)
+
 uo = asm.Owner()
 uo.OwnerSurname = "Unknown Adopter"
 owners.append(uo)
@@ -208,7 +212,7 @@ for row in asm.csv_to_list(PATH + "movements.csv"):
     lastadopted = "0"
     if ppa.has_key(row["Animal Id"]): a = ppa[row["Animal Id"]]
     if a is None: continue
-    if row["Location"] == "Adopted" and row["Animal Id"] != lastadopted: # quite a few duplicate rows together
+    if a.ActiveMovementDate is None and row["Location"] == "Adopted" and row["Animal Id"] != lastadopted: # quite a few duplicate rows together
         m = asm.Movement()
         movements.append(m)
         m.OwnerID = uo.ID
@@ -221,6 +225,18 @@ for row in asm.csv_to_list(PATH + "movements.csv"):
         a.ActiveMovementType = 1
         a.ActiveMovementID = m.ID
         lastadopted = row["Animal Id"]
+    elif row["Location"] == "Foster Care":
+        m = asm.Movement()
+        movements.append(m)
+        m.OwnerID = fo.ID
+        m.AnimalID = a.ID
+        m.MovementDate = asm.getdate_iso(row["Moved On"])
+        m.MovementType = 2
+        m.Comments = row["Comments"]
+        a.Archived = 0
+        a.ActiveMovementDate = m.MovementDate
+        a.ActiveMovementType = 2
+        a.ActiveMovementID = m.ID
     elif row["Location"] == "Transferred to another agency":
         m = asm.Movement()
         movements.append(m)
@@ -265,17 +281,17 @@ for row in asm.csv_to_list(PATH + "allmedical.csv"):
     if not ppa.has_key(row["Animal Id"]): continue
     a = ppa[row["Animal Id"]]
     dg = asm.getdate_iso(row["Date Given"])
-    if dg is None: dg = a.DateBroughtIn
     if row["Type of Medical Entry"] == "Vaccination":
         av = asm.AnimalVaccination()
         animalvaccinations.append(av)
         av.AnimalID = a.ID
         av.DateRequired = asm.getdate_iso(row["Date Needed"])
         av.DateOfVaccination = dg
+        if av.DateOfVaccination is not None and av.DateRequired is not None and av.DateOfVaccination < av.DateRequired: av.DateOfVaccination = None # If given date is before required, throw it away
         if av.DateRequired is None: av.DateRequired = av.DateOfVaccination
         av.VaccinationID = asm.vaccinationtype_id_for_name(row["Vaccination"], True)
         av.Comments = "%s %s" % (row["Comments"], row["Hidden comments"])
-    else:
+    elif dg is not None:
         animalmedicals.append(asm.animal_regimen_single(a.ID, dg, "%s %s" % (row["Medical Procedure Type"], row["Medication Name"]), row["Medication Dose"], "%s %s" % (row["Comments"], row["Hidden comments"])))
 
 # Now that everything else is done, output stored records
