@@ -314,6 +314,15 @@ for row in asm.csv_to_list(PATH + "allmedical.csv"):
         if dg is None: dg = a.DateBroughtIn
         animaltests.append( asm.animal_test(a.ID, dg, dg, row["Diagnostic Test Name"], row["Diagnostic Test Result"], "%s %s" % (row["Comments"], row["Hidden comments"])) )
 
+    elif row["Type of Medical Entry"] == "Medical Condition":
+        if dg is None: dg = asm.getdate_iso(row["Medical Condition Noticed On"])
+        if dg is None: dg = a.DateBroughtIn
+        animalmedicals.append(asm.animal_regimen_single(a.ID, dg, row["Medical Condition Name"], "N/A", "%s %s" % (row["Comments"], row["Hidden comments"])))
+
+    elif row["Type of Medical Entry"] == "Medical Procedure":
+        if dg is None: dg = a.DateBroughtIn
+        animalmedicals.append(asm.animal_regimen_single(a.ID, dg, row["Medical Procedure Type"], "N/A", "%s %s" % (row["Comments"], row["Hidden comments"])))
+
     elif dg is not None:
         animalmedicals.append(asm.animal_regimen_single(a.ID, dg, "%s %s" % (row["Medical Procedure Type"], row["Medication Name"]), row["Medication Dose"], "%s %s" % (row["Comments"], row["Hidden comments"])))
 
