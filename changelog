@@ -1,6 +1,7 @@
 43
 ================
 
+11/07/19 IPv6 IP restriction support #631
 05/07/19 Allow html_flagged_animals to search all animals #628
 02/07/19 Add LogTime keys and DocumentImgSrc/Link for incidents #624
 02/07/19 Fix fault uploading extra images due to bad unload #556

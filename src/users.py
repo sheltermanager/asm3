@@ -275,25 +275,34 @@ def authenticate_ip(user, remoteip):
     # notation.
     restrictions = user.IPRESTRICTION.split(" ")
     for r in restrictions:
-        address = r
-        size = "32"
-        # if there's a slash, extract CIDR size
-        if r.count("/") == 1:
-            address, size = r.split("/")
-        # We should have 4 numbers for the dotted quads
-        if address.count(".") != 3:
-            continue
-        q1, q2, q3, q4 = address.split(".")
-        # Depending on the size selected, we check a smaller or
-        # larger chunk of the remote ip for a match.
-        if size == "32" and remoteip == address:
-            return True
-        if size == "24" and remoteip.startswith("%s.%s.%s." % (q1, q2, q3)):
-            return True
-        if size == "16" and remoteip.startswith("%s.%s." % (q1, q2)):
-            return True
-        if size == "8" and remoteip.startswith("%s." % q1):
-            return True
+        if r.find(".") != -1:
+            # IPv4 restriction
+            address = r
+            size = "32"
+            # if there's a slash, extract CIDR size
+            if r.count("/") == 1:
+                address, size = r.split("/")
+            # We should have 4 numbers for the dotted quads
+            if address.count(".") != 3:
+                continue
+            q1, q2, q3, q4 = address.split(".")
+            # Depending on the size selected, we check a smaller or
+            # larger chunk of the remote ip for a match.
+            if size == "32" and remoteip == address:
+                return True
+            if size == "24" and remoteip.startswith("%s.%s.%s." % (q1, q2, q3)):
+                return True
+            if size == "16" and remoteip.startswith("%s.%s." % (q1, q2)):
+                return True
+            if size == "8" and remoteip.startswith("%s." % q1):
+                return True
+        elif r.find(":") != -1:
+            # IPv6 restriction
+            # This is much simpler, treat the restriction as a prefix
+            # and verify that the remoteip we've been given starts
+            # with the prefix
+            if remoteip.startswith(r):
+                return True
     return False
 
 def hash_password(plaintext, scheme = "pbkdf2"):

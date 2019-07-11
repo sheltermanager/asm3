@@ -5660,9 +5660,10 @@ msgstr ""
 
 #: users.js
 msgid ""
-"IP restriction is a space-separated list of IP netblocks in CIDR notation "
-"that this user is *only* permitted to login from (eg: 192.168.0.0/24 "
-"127.0.0.0/8). If left blank, the user can login from any address."
+"IP restriction is a space-separated list of IPv4 addresses or IPv6 prefixes "
+"that this user is *only* permitted to login from. If left blank, the user "
+"can login from any IP address. Eg: 192.168.0.0/24 172.16.38.21 "
+"2001:db8:abcd:0012"
 msgstr ""
 
 #: dbupdate.py
