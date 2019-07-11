@@ -35,6 +35,7 @@ print "\\set ON_ERROR_STOP\nBEGIN;"
 
 animals = []
 animalmedicals = []
+animaltests = []
 animalvaccinations = []
 owners = []
 ownerdonations = []
@@ -46,6 +47,7 @@ asm.setid("adoption", 100)
 asm.setid("animal", 100)
 asm.setid("animalmedical", 100)
 asm.setid("animalmedicaltreatment", 100)
+asm.setid("animaltest", 100)
 asm.setid("animalvaccination", 100)
 asm.setid("owner", 100)
 asm.setid("ownerdonation", 100)
@@ -54,9 +56,11 @@ print "DELETE FROM adoption WHERE ID >= 100;"
 print "DELETE FROM animal WHERE ID >= 100;"
 print "DELETE FROM animalmedical WHERE ID >= 100;"
 print "DELETE FROM animalmedicaltreatment WHERE ID >= 100;"
+print "DELETE FROM animaltest WHERE ID >= 100;"
 print "DELETE FROM animalvaccination WHERE ID >= 100;"
 print "DELETE FROM owner WHERE ID >= 100;"
 print "DELETE FROM ownerdonation WHERE ID >= 100;"
+print "DELETE FROM testtype;"
 print "DELETE FROM vaccinationtype;"
 
 to = asm.Owner()
@@ -136,6 +140,7 @@ for row in asm.csv_to_list(PATH + "animals.csv"):
     a.DeceasedDate = asm.getdate_iso(row["date of death"])
     a.PTSReason = row["reason of death"]
     a.RabiesTag = row["tag #"]
+    a.IsNotForRegistration = 0
 
     a.InTheShelter = row["in the shelter"]
 
@@ -276,21 +281,37 @@ for row in asm.csv_to_list(PATH + "donations.csv"):
     od.Comments = "%s %s" % (row["Type"], row["Comments"])
 
 # allmedical.csv
+vx = {} # lookup of animal ID to vaccinations for speed
 for row in asm.csv_to_list(PATH + "allmedical.csv"):
     a = None
     if not ppa.has_key(row["Animal Id"]): continue
     a = ppa[row["Animal Id"]]
     dg = asm.getdate_iso(row["Date Given"])
+    dn = asm.getdate_iso(row["Date Needed"])
+
     if row["Type of Medical Entry"] == "Vaccination":
-        av = asm.AnimalVaccination()
-        animalvaccinations.append(av)
-        av.AnimalID = a.ID
-        av.DateRequired = asm.getdate_iso(row["Date Needed"])
-        av.DateOfVaccination = dg
-        if av.DateOfVaccination is not None and av.DateRequired is not None and av.DateOfVaccination < av.DateRequired: av.DateOfVaccination = None # If given date is before required, throw it away
-        if av.DateRequired is None: av.DateRequired = av.DateOfVaccination
-        av.VaccinationID = asm.vaccinationtype_id_for_name(row["Vaccination"], True)
-        av.Comments = "%s %s" % (row["Comments"], row["Hidden comments"])
+        if a.ID not in vx: vx[a.ID] = []
+        # Create a vacc with just the needed date
+        if dn is not None:
+            av = asm.animal_vaccination(a.ID, dn, None, row["Vaccination"], "%s %s" % (row["Comments"], row["Hidden comments"]))
+            animalvaccinations.append(av)
+            vx[a.ID].append(av)
+        # now, go back through our vaccinations to find any for this animal with a needed date that matches the given date
+        # so we can mark them given. This is because ishelters store pairs of given and next needed, where we store needed and given.
+        gotone = False
+        for v in vx[a.ID]:
+            if v.AnimalID == a.ID and v.DateOfVaccination is None and v.DateRequired == dg: 
+                v.DateOfVaccination = dg
+                gotone = True
+        if not gotone and dg is not None:
+            # We didn't find one, record it as a standalone vacc
+            av = asm.animal_vaccination(a.ID, dg, dg, row["Vaccination"], "%s %s" % (row["Comments"], row["Hidden comments"]))
+            animalvaccinations.append(av)
+
+    elif row["Type of Medical Entry"] == "Diagnostic Test":
+        if dg is None: dg = a.DateBroughtIn
+        animaltests.append( asm.animal_test(a.ID, dg, dg, row["Diagnostic Test Name"], row["Diagnostic Test Result"], "%s %s" % (row["Comments"], row["Hidden comments"])) )
+
     elif dg is not None:
         animalmedicals.append(asm.animal_regimen_single(a.ID, dg, "%s %s" % (row["Medical Procedure Type"], row["Medication Name"]), row["Medication Dose"], "%s %s" % (row["Comments"], row["Hidden comments"])))
 
@@ -300,6 +321,8 @@ for a in animals:
     print a
 for am in animalmedicals:
     print am
+for at in animaltests:
+    print at
 for av in animalvaccinations:
     print av
 for o in owners:
@@ -310,8 +333,11 @@ for m in movements:
     print m
 for k, v in asm.vaccinationtypes.iteritems():
     print v
+for k, v in asm.testtypes.iteritems():
+    print v
 
-asm.stderr_summary(animals=animals, animalmedicals=animalmedicals, animalvaccinations=animalvaccinations, owners=owners, movements=movements, ownerdonations=ownerdonations)
+
+asm.stderr_summary(animals=animals, animalmedicals=animalmedicals, animaltests=animaltests, animalvaccinations=animalvaccinations, owners=owners, movements=movements, ownerdonations=ownerdonations)
 
 print "DELETE FROM configuration WHERE ItemName Like 'VariableAnimalDataUpdated';"
 print "DELETE FROM configuration WHERE ItemName LIKE 'DBView%';"

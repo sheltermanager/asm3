@@ -69,18 +69,60 @@ pickuplocations = {}
 customcolours = {}
 
 # Dictionary of entry reasons
-entryreasons = {}
+entryreasons = {
+    "Marriage/Relationship split": 1,
+    "Allergies": 2,
+    "Biting": 3,
+    "Unable to Cope": 4,
+    "Unsuitable Accommodation": 5,
+    "Died": 6,
+    "Stray": 7,
+    "Sick/Injured": 8,
+    "Unable to Afford": 9,
+    "Abuse": 10,
+    "Abandoned": 11,
+    "Boarding": 12,
+    "Born in Shelter": 13,
+    "TNR - Trap/Neuter/Release": 14,
+    "Transfer from Other Shelter": 15,
+    "Transfer from Municipal Shelter": 16,
+    "Surrender": 17,
+    "Too Many Animals": 18
+}
 
 # Dictionary of donation types
 donationtypes = {
+#    "Donation": 1,
+#    "Adoption Fee": 2,
+#    "Waiting List Donation": 3,
+#    "Entry Donation": 4,
+#    "Animal Sponsorship": 5,
+#    "In-Kind Donation": 6
 }
 
 # Dictionary of test types
 testtypes = {
+#    "FIV": 1,
+#    "FLV": 2,
+#    "Heartworm": 3
 }
 
 # Dictionary of vaccination types
 vaccinationtypes = {
+#    "Distemper": 1,
+#    "Hepatitis": 2,
+#    "Leptospirosis": 3,
+#    "Rabies": 4,
+#    "Parainfluenza": 5,
+#    "Bordetella": 6, 
+#    "Parvovirus": 7,
+#    "DHLPP": 8,
+#    "FVRCP": 9,
+#    "Chlamydophila": 10,
+#    "FIV": 11,
+#    "FeLV": 12,
+#    "FIPV": 13,
+#    "FECV/FeCoV": 14
 }
 
 def atoi(s):
@@ -1367,6 +1409,30 @@ def animal_image(animalid, imagedata):
     print "INSERT INTO dbfs (id, name, path, url, content) VALUES (%d, '%s', '%s', 'base64:', '%s');" % (dbfsid, medianame, "/animal/" + str(animalid), encoded)
     print "UPDATE media SET DBFSID = %d WHERE ID = %d;" % (dbfsid, mediaid)
 
+def animal_test(animalid, required, given, typename, resultname, comments = ""):
+    """ Returns an animaltest object """
+    result = 1 # Unknown
+    if resultname.lower().find("egative"): result = 2
+    elif resultname.lower().find("ositive"): result = 3
+    av = AnimalTest()
+    av.AnimalID = animalid
+    av.DateRequired = required
+    av.DateOfTest = given
+    av.TestTypeID = testtype_id_for_name(typename, True)
+    av.TestResultID = result
+    av.Comments = comments
+    return av
+
+def animal_vaccination(animalid, required, given, typename, comments = ""):
+    """ Returns an animalvaccination object """
+    av = AnimalVaccination()
+    av.AnimalID = animalid
+    av.DateRequired = required
+    av.DateOfVaccination = given
+    av.VaccinationID = vaccinationtype_id_for_name(typename, True)
+    av.Comments = comments
+    return av
+
 def animal_regimen_single(animalid, dategiven, treatmentname, dosage = "", comments = ""):
     """ Writes a regimen and treatment record for a single given treatment """
     regimenid = getid("animalmedical")
@@ -1654,7 +1720,7 @@ class TestType:
         s = (
             ( "ID", di(self.ID) ),
             ( "TestName", ds(self.Name) ),
-            ( "TestDescription", ds(self.Description) )
+            ( "TestDescription", ds(self.Description) ),
             ( "DefaultCost", df(self.DefaultCost) ),
             )
         return makesql("testtype", s)
