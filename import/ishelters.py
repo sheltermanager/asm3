@@ -231,6 +231,7 @@ for row in asm.csv_to_list(PATH + "movements.csv"):
         a.ActiveMovementID = m.ID
         lastadopted = row["Animal Id"]
     elif row["Location"] == "Foster Care":
+        if a.ActiveMovementDate and a.ActiveMovementDate > asm.getdate_iso(row["Moved On"]): continue # Don't bother if the current active adoption is newer than this one
         m = asm.Movement()
         movements.append(m)
         m.OwnerID = fo.ID
