@@ -19,15 +19,15 @@ AnimalLocationHistory
 PETFINDER_ID = ""
 START_ID = 200
 
-INTAKE_FILENAME = "/home/robin/tmp/asm3_import_data/petpoint_zd1690/animals.csv"
-MEMO_FILENAME = ""
-LOCATION_FILENAME = "/home/robin/tmp/asm3_import_data/petpoint_zd1690/locations.csv"
-PERSON_FILENAME = "/home/robin/tmp/asm3_import_data/petpoint_zd1690/people.csv"
-VACC_FILENAME = "/home/robin/tmp/asm3_import_data/petpoint_zd1690/vacc.csv"
-TEST_FILENAME = "/home/robin/tmp/asm3_import_data/petpoint_zd1690/tests.csv"
+INTAKE_FILENAME = "/home/robin/tmp/asm3_import_data/petpoint_sm2047/animals.csv"
+MEMO_FILENAME = "/home/robin/tmp/asm3_import_data/petpoint_sm2047/memo.csv"
+LOCATION_FILENAME = "/home/robin/tmp/asm3_import_data/petpoint_sm2047/locations.csv"
+PERSON_FILENAME = "/home/robin/tmp/asm3_import_data/petpoint_sm2047/people.csv"
+VACC_FILENAME = "/home/robin/tmp/asm3_import_data/petpoint_sm2047/vacc.csv"
+TEST_FILENAME = "/home/robin/tmp/asm3_import_data/petpoint_sm2047/tests.csv"
 
 # Whether or not the vaccine and test files are in two row stacked format
-MEDICAL_TWO_ROW_FORMAT = True
+MEDICAL_TWO_ROW_FORMAT = False
 
 def findowner(ownername = ""):
     """ Looks for an owner with the given name in the collection
@@ -37,8 +37,10 @@ def findowner(ownername = ""):
             return o
     return None
 
-def getdate(d):
-    return asm.getdate_guess(d)
+def getdate(d, noblanks=False):
+    rv = asm.getdate_guess(d)
+    if noblanks and rv is None: rv = asm.now()
+    return rv
 
 # --- START OF CONVERSION ---
 
@@ -107,7 +109,9 @@ if PERSON_FILENAME != "":
         o.ExcludeFromBulkEmail = asm.iif(d["Contact By Email"] == "Yes", 1, 0)
 
 # Sort the data on intake date ascending
-for d in sorted(asm.csv_to_list(INTAKE_FILENAME), key=lambda k: getdate(k["Intake Date"])):
+for d in sorted(asm.csv_to_list(INTAKE_FILENAME), key=lambda k: getdate(k["Intake Date"], True)):
+    # If it's a repeat of the header row, skip
+    if d["Animal ID"] == "Animal ID": continue
     # Each row contains an animal, intake and outcome
     if ppa.has_key(d["Animal ID"]):
         a = ppa[d["Animal ID"]]
@@ -324,6 +328,7 @@ for d in sorted(asm.csv_to_list(INTAKE_FILENAME), key=lambda k: getdate(k["Intak
 if MEMO_FILENAME != "":
     idfield = "AnimalID"
     for d in asm.csv_to_list(MEMO_FILENAME):
+        if d["textbox20"] == "textbox20": continue
         if not d.has_key(idfield): idfield = "Name"
         if ppa.has_key(d[idfield]):
             a = ppa[d[idfield]]
@@ -339,13 +344,16 @@ if MEMO_FILENAME != "":
 
 # Extract color info from location history
 if LOCATION_FILENAME != "":
+    idfield = "textbox15"
+    colfield = "textbox59"
     for d in asm.csv_to_list(LOCATION_FILENAME):
-        if ppa.has_key(d["Animal#"]):
-            name1, name2 = d["Color"].split("/", 1)
-            a = ppa[d["Animal#"]]
+        if d[idfield] == idfield: continue
+        if ppa.has_key(d[idfield]):
+            name1, name2 = d[colfield].split("/", 1)
+            a = ppa[d[idfield]]
             a.BaseColourID = asm.colour_id_for_names(name1, name2)
             if a.HiddenAnimalDetails.find("color:") == -1:
-                a.HiddenAnimalDetails += ", color: " + d["Color"]
+                a.HiddenAnimalDetails += ", color: " + d[colfield]
 
 def process_vacc(animalno, vaccdate = None, vaccexpires = None, vaccname = ""):
     """ Processes a vaccination record. PP have multiple formats of this data file """
@@ -398,8 +406,9 @@ if VACC_FILENAME != "":
             odd = not odd
     else:
         for v in vacc:
-            process_vacc(v["AnimalID"], getdate(v["Date"]), None, v["RecordType3"])
-            #process_vacc(v["StatusDateTime3"], getdate(v["BodyWeight"]), None, v["RecordType3"]) # Once saw a broken version of this file like this
+            if v["AnimalID"] == "AnimalID": continue
+            #process_vacc(v["AnimalID"], getdate(v["Date"]), None, v["RecordType3"])
+            process_vacc(v["StatusDateTime3"], getdate(v["BodyWeight"]), None, v["RecordType3"]) # Once saw a broken version of this file like this
 
 def process_test(animalno, testdate = None, testname = "", result = ""):
     """ Process a test record """
@@ -457,6 +466,7 @@ if TEST_FILENAME != "":
             odd = not odd
     else:
         for t in test:
+            if t["AnimalID"] == "AnimalID": continue
             process_test(t["AnimalID"], getdate(t["ItemStatusDateTime"]), t["TestForCondition"], t["Result"])
 
 # Run back through the animals, if we have any that are still

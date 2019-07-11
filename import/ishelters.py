@@ -302,6 +302,7 @@ for row in asm.csv_to_list(PATH + "allmedical.csv"):
         for v in vx[a.ID]:
             if v.AnimalID == a.ID and v.DateOfVaccination is None and v.DateRequired == dg: 
                 v.DateOfVaccination = dg
+                v.Comments += " %s %s" % (row["Comments"], row["Hidden comments"])
                 gotone = True
         if not gotone and dg is not None:
             # We didn't find one, record it as a standalone vacc
