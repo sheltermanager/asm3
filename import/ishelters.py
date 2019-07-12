@@ -320,6 +320,7 @@ for row in asm.csv_to_list(PATH + "allmedical.csv"):
         animalmedicals.append(asm.animal_regimen_single(a.ID, dg, row["Medical Condition Name"], "N/A", "%s %s" % (row["Comments"], row["Hidden comments"])))
 
     elif row["Type of Medical Entry"] == "Medical Procedure":
+        if dg is None: dg = dn
         if dg is None: dg = a.DateBroughtIn
         animalmedicals.append(asm.animal_regimen_single(a.ID, dg, row["Medical Procedure Type"], "N/A", "%s %s" % (row["Comments"], row["Hidden comments"])))
 
