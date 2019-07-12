@@ -258,9 +258,9 @@
         });
     };
 
-    // Textbox that should only contain CIDR IP subnets
+    // Textbox that should only contain CIDR IP subnets or IPv6 HEX/colon
     $.fn.ipnumber = function() {
-        var allowed = [ '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '.', '/', ' ' ];
+        var allowed = [ '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '.', '/', ' ', 'a', 'b', 'c', 'd', 'e', 'f', ':' ];
         this.each(function() {
             $(this).keypress(function(e) {
                 var k = e.charCode || e.keyCode;
