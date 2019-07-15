@@ -106,7 +106,7 @@ def get_animal_data(dbo, pc=None, animalid=0, include_additional_fields=False, r
     if pc.bondedAsSingle:
         # Sort the list by the Animal ID so that the first entered bonded animal
         # always "wins" and becomes the first to be output
-        rows = [ r for r in sorted(rows, key=lambda k: k["ID"]) if check_bonding(r) ]
+        rows = [ r for r in sorted(rows, key=lambda k: k.ID) if check_bonding(r) ]
 
     # If animalid was set, only return that row or an empty set if it wasn't present
     if animalid != 0:
@@ -114,6 +114,16 @@ def get_animal_data(dbo, pc=None, animalid=0, include_additional_fields=False, r
             if r.ID == animalid:
                 return [ r ]
         return []
+
+    # Ordering
+    if pc.order == 0:
+        rows = sorted(rows, key=lambda k: k.MOSTRECENTENTRYDATE)
+    elif pc.order == 1:
+        rows = reversed(sorted(rows, key=lambda k: k.MOSTRECENTENTRYDATE))
+    elif pc.order == 2:
+        rows = sorted(rows, key=lambda k: k.ANIMALNAME)
+    else:
+        rows = sorted(rows, key=lambda k: k.MOSTRECENTENTRYDATE)
 
     # If a limit was set, throw away extra rows
     # (we do it here instead of a LIMIT clause as there's extra logic that throws
@@ -166,16 +176,7 @@ def get_animal_data_query(dbo, pc, animalid=0):
         moveor.append("(a.ActiveMovementType = %d)" % movement.FOSTER)
     if pc.includeTrial:
         moveor.append("(a.ActiveMovementType = %d AND a.HasTrialAdoption = 1)" % movement.ADOPTION)
-    sql += " AND (" + " OR ".join(moveor) + "))"
-    # Ordering
-    if pc.order == 0:
-        sql += " ORDER BY a.MostRecentEntryDate"
-    elif pc.order == 1:
-        sql += " ORDER BY a.MostRecentEntryDate DESC"
-    elif pc.order == 2:
-        sql += " ORDER BY a.AnimalName"
-    else:
-        sql += " ORDER BY a.MostRecentEntryDate"
+    sql += " AND (" + " OR ".join(moveor) + ")) ORDER BY a.ID"
     return sql
 
 def get_microchip_data(dbo, patterns, publishername, allowintake = True, organisation_email = ""):
