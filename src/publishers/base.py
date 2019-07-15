@@ -83,27 +83,30 @@ def get_animal_data(dbo, pc=None, animalid=0, include_additional_fields=False, r
     def merge_animal(a, aid):
         """
         Find the animal in rows with animalid, merge it into a and
-        then remove it from the set. Sort by the animal ID and go backwards.
+        then remove it from the set.
         """
         for r in rows:
             if r.ID == aid:
                 a.ANIMALNAME = "%s / %s" % (a.ANIMALNAME, r.ANIMALNAME)
                 r.REMOVE = True # Flag this row for removal
-                al.debug("merged animal %d into %d" % (aid, a["ID"]), "publishers.base.get_animal_data", dbo)
+                al.debug("merged animal %d into %d" % (aid, a.ID), "publishers.base.get_animal_data", dbo)
                 break
+    
+    def check_bonding(r):
+        """ Verifies if this row is bonded to another animal and handles 
+            the merge. Returns TRUE if this row should be added to the set """
+        if "REMOVE" in r and r.REMOVE: 
+            return False
+        if r.BONDEDANIMALID is not None and r.BONDEDANIMALID != 0:
+            merge_animal(r, r.BONDEDANIMALID)
+        if r.BONDEDANIMAL2ID is not None and r.BONDEDANIMAL2ID != 0:
+            merge_animal(r, r.BONDEDANIMAL2ID)
+        return True
 
     if pc.bondedAsSingle:
         # Sort the list by the Animal ID so that the first entered bonded animal
         # always "wins" and becomes the first to be output
-        for r in sorted(rows, key=lambda k: k["ID"]):
-            if r.BONDEDANIMALID is not None and r.BONDEDANIMALID != 0 and "REMOVE" not in r:
-                merge_animal(r, r.BONDEDANIMALID)
-            if r.BONDEDANIMAL2ID is not None and r.BONDEDANIMAL2ID != 0 and "REMOVE" not in r:
-                merge_animal(r, r.BONDEDANIMAL2ID)
-        # Remove the unwanted rows
-        for r in rows:
-            if "REMOVE" in r and r.REMOVE:
-                rows.remove(r)
+        rows = [ r for r in sorted(rows, key=lambda k: k["ID"]) if check_bonding(r) ]
 
     # If animalid was set, only return that row or an empty set if it wasn't present
     if animalid != 0:
