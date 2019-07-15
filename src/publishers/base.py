@@ -119,7 +119,7 @@ def get_animal_data(dbo, pc=None, animalid=0, include_additional_fields=False, r
     if pc.order == 0:
         rows = sorted(rows, key=lambda k: k.MOSTRECENTENTRYDATE)
     elif pc.order == 1:
-        rows = reversed(sorted(rows, key=lambda k: k.MOSTRECENTENTRYDATE))
+        rows = list(reversed(sorted(rows, key=lambda k: k.MOSTRECENTENTRYDATE)))
     elif pc.order == 2:
         rows = sorted(rows, key=lambda k: k.ANIMALNAME)
     else:
