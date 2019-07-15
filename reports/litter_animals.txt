@@ -10,7 +10,7 @@ en
 ###
 SELECT a.ShelterCode, a.AnimalName,
 t.AnimalType, s.SpeciesName, a.BreedName,
-l.AcceptanceNumber, l.NumberInLitter, l.Comments
+l.AcceptanceNumber, l.NumberInLitter, l.Comments, l.CachedAnimalsLeft
 FROM animallitter l 
 INNER JOIN animal a ON a.AcceptanceNumber = l.AcceptanceNumber
 INNER JOIN species s ON a.SpeciesID = s.ID
@@ -34,7 +34,7 @@ $$HEAD
 </tr>
 $$FOOT
 </table>
-<p>Total remaining in litter: {COUNT.ShelterCode} of $NUMBERINLITTER</p>
+<p>Total remaining in litter: $CACHEDANIMALSLEFT of $NUMBERINLITTER</p>
 GROUP$$
 
 $$BODY
