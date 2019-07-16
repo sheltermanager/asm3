@@ -509,6 +509,7 @@ species = (
 )
 
 def species_id_for_name(name):
+    if name is None: return 1
     for sid, sname in species:
         if sname.upper().find(name.upper()) != -1:
             return int(sid)
@@ -1131,6 +1132,7 @@ types = (
 )
 
 def type_id_for_name(name):
+    if name is None: return 2
     for tid, tname in types:
         if tname.upper().find(name.upper()) != -1:
             return int(tid)
