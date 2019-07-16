@@ -81,7 +81,7 @@ owners.append(uo)
 
 
 # people.csv
-for row in asm.csv_to_list(PATH + "people.csv"):
+for row in asm.csv_to_list(PATH + "people.csv", remove_non_ascii=True):
     if row["last name"] is None: continue
     o = asm.Owner()
     ppo[row["id"]] = o
@@ -106,7 +106,7 @@ for row in asm.csv_to_list(PATH + "people.csv"):
     if types.find("Foster") != -1: o.IsFosterer = 1
 
 # animals.csv
-for row in asm.csv_to_list(PATH + "animals.csv"):
+for row in asm.csv_to_list(PATH + "animals.csv", remove_non_ascii=True):
     if row["name"] is None: continue
     a = asm.Animal()
     animals.append(a)
@@ -145,7 +145,7 @@ for row in asm.csv_to_list(PATH + "animals.csv"):
     a.InTheShelter = row["in the shelter"]
 
 # checkins.csv
-for row in asm.csv_to_list(PATH + "checkins.csv"):
+for row in asm.csv_to_list(PATH + "checkins.csv", remove_non_ascii=True):
     a = None
     if ppa.has_key(row["Animal Id"]): a = ppa[row["Animal Id"]]
     if a is None: continue
@@ -158,7 +158,7 @@ for row in asm.csv_to_list(PATH + "checkins.csv"):
     a.EntryReasonID = getentryreason(row["Type of Check-In"])
 
 # adoptions.csv
-for row in asm.csv_to_list(PATH + "adoptions.csv"):
+for row in asm.csv_to_list(PATH + "adoptions.csv", remove_non_ascii=True):
     o = None
     if ppo.has_key(row["Adopter Id"]): o = ppo[row["Adopter Id"]]
     a = None
@@ -187,7 +187,7 @@ for row in asm.csv_to_list(PATH + "adoptions.csv"):
         od.Donation = asm.get_currency(row["Fee"])
 
 # releases.csv
-for row in asm.csv_to_list(PATH + "releases.csv"):
+for row in asm.csv_to_list(PATH + "releases.csv", remove_non_ascii=True):
     a = None
     if ppa.has_key(row["Animal Id"]): a = ppa[row["Animal Id"]]
     if a is None: continue
@@ -212,7 +212,7 @@ for row in asm.csv_to_list(PATH + "releases.csv"):
     a.ActiveMovementID = m.ID
 
 # movements.csv
-for row in asm.csv_to_list(PATH + "movements.csv"):
+for row in asm.csv_to_list(PATH + "movements.csv", remove_non_ascii=True):
     a = None
     lastadopted = "0"
     if ppa.has_key(row["Animal Id"]): a = ppa[row["Animal Id"]]
@@ -257,7 +257,7 @@ for row in asm.csv_to_list(PATH + "movements.csv"):
         a.ActiveMovementID = m.ID
 
 # donations.csv
-for row in asm.csv_to_list(PATH + "donations.csv"):
+for row in asm.csv_to_list(PATH + "donations.csv", remove_non_ascii=True):
     o = None
     if ppo.has_key(row["Person Id"]): o = ppo[row["Person Id"]]
     if o is None: continue
@@ -283,7 +283,7 @@ for row in asm.csv_to_list(PATH + "donations.csv"):
 
 # allmedical.csv
 vx = {} # lookup of animal ID to vaccinations for speed
-for row in asm.csv_to_list(PATH + "allmedical.csv"):
+for row in asm.csv_to_list(PATH + "allmedical.csv", remove_non_ascii=True):
     a = None
     if not ppa.has_key(row["Animal Id"]): continue
     a = ppa[row["Animal Id"]]
