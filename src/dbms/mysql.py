@@ -1,7 +1,7 @@
 #!/usr/bin/python
 
 import utils
-from base import Database
+from .base import Database
 
 try:
     import MySQLdb

@@ -14,7 +14,7 @@
 
 """
 import al
-from base import Database
+from .base import Database
 
 try:
     import ibm_db_dbi

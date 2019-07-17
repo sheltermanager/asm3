@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-from base import Database
+from .base import Database
 
 class DatabaseHSQLDB(Database):
     type_shorttext = "VARCHAR(1024)"

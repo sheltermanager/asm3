@@ -1,6 +1,7 @@
 43
 ================
 
+17/07/19 Some preliminary Python3 work #634
 15/07/19 Minor bug fix to bonded animal merging when publishing
 11/07/19 IPv6 IP restriction support #631
 05/07/19 Allow html_flagged_animals to search all animals #628

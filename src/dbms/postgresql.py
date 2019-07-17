@@ -1,7 +1,7 @@
 #!/usr/bin/python
 
 import al
-from base import Database
+from .base import Database
 
 try:
     import psycopg2

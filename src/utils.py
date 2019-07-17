@@ -7,7 +7,6 @@ import csv as extcsv
 import datetime
 import decimal
 import hashlib
-import htmlentitydefs
 import json as extjson
 import os
 import re
@@ -16,10 +15,9 @@ import smtplib
 import subprocess
 import sys
 import tempfile
-import thread
-import urllib2
 import users
 import web
+
 from email.mime.base import MIMEBase
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
@@ -28,7 +26,16 @@ from email.utils import make_msgid, formatdate
 from email import Charset, Encoders
 from i18n import _, display2python, format_currency_no_symbol, format_time, python2display, VERSION
 from cStringIO import StringIO
-from sitedefs import BASE_URL, SMTP_SERVER, FROM_ADDRESS, HTML_TO_PDF
+from sitedefs import BASE_URL, SMTP_SERVER, FROM_ADDRESS, HTML_TO_PDF, PYTHON2, PYTHON3
+
+if PYTHON2:
+    import htmlentitydefs
+    import thread
+    import urllib2
+elif PYTHON3:
+    import html.entities.entitydefs as htmlentitydefs
+    import _thread as thread
+    import urllib.request as urllib2
 
 # Global reference to the Python websession. This is used to allow
 # debug mode with webpy by keeping a global single copy of the

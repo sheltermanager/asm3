@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-from base import Database
+from .base import Database
 
 try:
     import sqlite3

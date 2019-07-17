@@ -6,11 +6,15 @@ uses md5sums of the key as filenames.
 """
 
 import al
-import cPickle as pickle
 import hashlib
 import os
 import time
-from sitedefs import DISK_CACHE
+from sitedefs import DISK_CACHE, PYTHON2, PYTHON3
+
+if PYTHON2:
+    import cPickle as pickle
+elif PYTHON3:
+    import pickle
 
 def _getfilename(key):
     """

@@ -66,6 +66,10 @@ def get_dict(k, dv = {}):
     if v == "": return dv
     return json.loads(v)
 
+# Convenience flags for Python interpreter version
+PYTHON2 = sys.version_info[0] < 2
+PYTHON3 = sys.version_info[0] > 2
+
 # The base URL to the ASM installation as seen by the client (should not end with /)
 BASE_URL = get_string("base_url", "http://localhost:5000")
 
