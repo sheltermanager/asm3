@@ -160,7 +160,7 @@ class PetRescuePublisher(AbstractPublisher):
 
                 source_number = ""
                 if "SOURCENUMBER" in an and an.SOURCENUMBER != "":
-                    source_number = an.BREEDERID
+                    source_number = an.SOURCENUMBER
 
                 needs_constant_care = False
                 if "NEEDSCONSTANTCARE" in an and an.NEEDSCONSTANTCARE != "" and an.NEEDSCONSTANTCARE != "0":
