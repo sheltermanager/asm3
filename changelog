@@ -1,6 +1,7 @@
 43
 ================
 
+18/07/19 Add DONATIONGIFTAID CSV import field #630
 17/07/19 Petrescue: Bad access to SOURCENUMBER
 17/07/19 Some preliminary Python3 work #634
 15/07/19 Minor bug fix to bonded animal merging when publishing

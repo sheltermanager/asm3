@@ -81,6 +81,8 @@ DONATIONPAYMENT
     The payment method to use (should correspond to a payment method in your database, eg: Cash)
 DONATIONTYPE
     The payment type to use (should correspond to a payment type in your database).
+DONATIONGIFTAID
+    Y / N if the payment should have the giftaid flag set
 LICENSETYPE
     The license type to use (licenses need at least person info)
 LICENSENUMBER
