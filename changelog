@@ -1,6 +1,7 @@
 43
 ================
 
+18/07/19 Prevent negatives and zeroes being used in regimens
 18/07/19 Add DONATIONGIFTAID CSV import field #630
 17/07/19 Petrescue: Bad access to SOURCENUMBER
 17/07/19 Some preliminary Python3 work #634

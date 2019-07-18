@@ -159,6 +159,9 @@ $(function() {
 
         /* Recalculate ends after period and update screen*/
         change_values: function() {
+            $.each([ "#timingrule", "#timingrulenofrequencies", "#totalnumberoftreatments" ], function(i, v) {
+                if ($(v).val() == "0" || $(v).val().indexOf("-") != -1) { $(v).val("1"); }
+            });
             if ($("#treatmentrule").val() == "0") {
                 $("#treatmentrulecalc").fadeIn();
                 $("#displaytotalnumberoftreatments").text( parseInt($("#timingrule").val(), 10) * parseInt($("#totalnumberoftreatments").val(), 10));
