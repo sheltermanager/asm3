@@ -280,6 +280,7 @@ DEFAULTS = {
     "ShowCostAmount": "Yes",
     "ShowCostPaid": "No",
     "ShowDeceasedHomePage": "Yes",
+    "ShowFinancialHomePage": "Yes",
     "ShowFullCommentsInTables": "No",
     "ShowAlertsHomePage": "Yes", 
     "ShowLatLong": "No",

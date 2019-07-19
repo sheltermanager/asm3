@@ -5528,6 +5528,10 @@ msgstr ""
 msgid "Hide deceased animals from the home page"
 msgstr ""
 
+#: options.js
+msgid "Hide financial stats from the home page"
+msgstr ""
+
 #: dbupdate.py
 msgid "High"
 msgstr ""
@@ -5661,13 +5665,15 @@ msgstr ""
 #: users.js
 msgid ""
 "IP restriction is a space-separated list of IPv4 addresses or IPv6 prefixes "
-"that this user is *only* permitted to login from. If left blank, the user "
-"can login from any IP address. Eg: 192.168.0.0/24 172.16.38.21 "
-"2001:db8:abcd:0012"
+"that this user is ONLY permitted to login from."
 msgstr ""
 
 #: dbupdate.py
 msgid "Ibizan Hound"
+msgstr ""
+
+#: users.js
+msgid "If left blank, the user can login from any IP address."
 msgstr ""
 
 #: movements.js move_adopt.js
