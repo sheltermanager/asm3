@@ -532,8 +532,8 @@ for adoption).
   :menuselection:`ASM --> Timeline` menu option.
 
 * Hide financial stats from the home page: If this option is on, the stats
-  line showing how much money has been received in payments will be hidden
-  from the home page.
+  lines showing how much money has been received in payments or spent in
+  costs will be hidden from the home page.
 
 Lost and Found
 --------------
