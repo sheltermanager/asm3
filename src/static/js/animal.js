@@ -1068,6 +1068,7 @@ $(function() {
                 $("#kilosrow").hide();
                 $("#poundsrow").show();
                 $("#weightlb, #weightoz").change(lboz_to_fraction);
+                fraction_to_lboz();
             }
             else if (config.bool("ShowWeightInLbsFraction")) {
                 $("#kglabel").html(_("lb"));
