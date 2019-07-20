@@ -10154,7 +10154,11 @@ msgid "Show transactions from"
 msgstr ""
 
 #: options.js
-msgid "Show weight as lb rather than kg"
+msgid "Show weights as decimal lb"
+msgstr ""
+
+#: options.js
+msgid "Show weights as lb and oz"
 msgstr ""
 
 #: timeline.js html.py

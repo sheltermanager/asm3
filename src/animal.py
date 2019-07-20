@@ -2001,7 +2001,7 @@ def insert_animal_from_form(dbo, post, username):
         weight = str(post.floating("weight"))
         units = ""
         if configuration.show_weight_units_in_log(dbo):
-            units = configuration.show_weight_in_lbs(dbo) and " lb" or " kg"
+            units = (configuration.show_weight_in_lbs(dbo) or configuration.show_weight_in_lbs_fraction(dbo)) and " lb" or " kg"
         log.add_log(dbo, username, log.ANIMAL, nextid, configuration.weight_change_log_type(dbo),
             "%s%s" % (weight, units))
 
@@ -2088,7 +2088,7 @@ def update_animal_from_form(dbo, post, username):
             weight = str(post.floating("weight"))
             units = ""
             if configuration.show_weight_units_in_log(dbo):
-                units = configuration.show_weight_in_lbs(dbo) and " lb" or " kg"
+                units = (configuration.show_weight_in_lbs(dbo) or configuration.show_weight_in_lbs_fraction(dbo)) and " lb" or " kg"
             log.add_log(dbo, username, log.ANIMAL, aid, configuration.weight_change_log_type(dbo),
                 "%s%s" % (weight, units))
 

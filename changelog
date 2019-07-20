@@ -1,6 +1,7 @@
 43
 ================
 
+20/07/19 Allow decimal fraction lb weights #596
 19/07/19 Allow option to hide financial stats on the home page
 18/07/19 Prevent negatives and zeroes being used in regimens
 18/07/19 Add DONATIONGIFTAID CSV import field #630
