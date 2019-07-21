@@ -1,6 +1,7 @@
 43
 ================
 
+21/07/19 Show trial adoption as an adoption status in shelter view
 20/07/19 Allow decimal fraction lb weights #596
 19/07/19 Allow option to hide financial stats on the home page
 18/07/19 Prevent negatives and zeroes being used in regimens
