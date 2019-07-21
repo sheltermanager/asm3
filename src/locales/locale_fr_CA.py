@@ -2670,7 +2670,7 @@ val = {"" : "Project-Id-Version: ASM3\nReport-Msgid-Bugs-To: db@sheltermanager.c
 "Remove the picked up fields from animal entry details" : "Supprimer les champs de ramassage dans les d&#233;tails de l'animal",
 "Media Notes" : "Remarques m&#233;dia",
 "New Document" : "Nouveau Document",
-"Fr" : "Fran&#231;ais",
+"Fr" : "Ve",
 "The type of unit in the container, eg: tablet, vial, etc." : "Le type d'unit&#233;s dans le contenant, ex: tablette, fioles, etc.",
 "Pomeranian" : "Pomeranian",
 "An animal cannot have multiple open movements." : "Un animal ne peut avoir plusieurs d&#233;placements en cours.",
