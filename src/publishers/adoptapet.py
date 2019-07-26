@@ -95,6 +95,7 @@ class AdoptAPetPublisher(FTPPublisher):
             "Newfoundland Dog=Newfoundland\n" \
             "Norweigan Lundehund=Shepherd (Unknown Type)\n" \
             "Peruvian Inca Orchid=Shepherd (Unknown Type)\n" \
+            "Pit Bull Terrier=American Pit Bull Terrier\n" \
             "Poodle=Poodle (Standard)\n" \
             "Retriever=Retriever (Unknown Type)\n" \
             "Saint Bernard St. Bernard=St. Bernard\n" \
