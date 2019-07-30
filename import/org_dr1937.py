@@ -18,6 +18,7 @@ def getdate(d):
 # --- START OF CONVERSION ---
 
 owners = []
+ownerdonations = []
 movements = []
 animals = []
 animaltests = []
@@ -31,6 +32,7 @@ asm.setid("animalmedicaltreatment", START_ID)
 asm.setid("animalvaccination", START_ID)
 asm.setid("log", START_ID)
 asm.setid("owner", START_ID)
+asm.setid("ownerdonation", START_ID)
 asm.setid("adoption", START_ID)
 
 print "\\set ON_ERROR_STOP\nBEGIN;"
@@ -40,6 +42,7 @@ print "DELETE FROM animalmedicaltreatment WHERE ID >= %s;" % START_ID
 print "DELETE FROM animalvaccination WHERE ID >= %s;" % START_ID
 print "DELETE FROM log WHERE ID >= %s;" % START_ID
 print "DELETE FROM owner WHERE ID >= %s;" % START_ID
+print "DELETE FROM ownerdonation WHERE ID >= %s;" % START_ID
 print "DELETE FROM adoption WHERE ID >= %s;" % START_ID
 
 # Create an unknown owner
@@ -223,6 +226,24 @@ for d in asm.csv_to_list(FILENAME, remove_non_ascii=True):
         a.LastChangedDate = dateout
         movements.append(m)
 
+        # If there's $100 in the Spay/Neu Dep column, that means a deposit was
+        # taken for spaying/neutering. 
+        # If the word "returned" is present, make it $0 (eg: $100 returned to adopter)
+        # If the word "NOT" is present, do nothing (eg: $100 dep NOT taken)
+        # If $100 is not present, do nothing
+        if d["Spay/Neu Dep"].startswith("$100") and d["Spay/Neu Dep"].find("NOT") == -1:
+            amt = 10000
+            if d["Spay/Neu Dep"].find("returned") != -1: amt = 0
+            od = asm.OwnerDonation()
+            od.DonationTypeID = 7
+            od.DonationPaymentID = 1
+            od.Date = m.MovementDate
+            od.OwnerID = o.ID
+            od.AnimalID = a.ID
+            od.Donation = amt
+            od.Comments = d["Spay/Neu Dep"]
+            ownerdonations.append(od)
+
     if dateout is not None and d["Adoption Status"] == "Returned to owner":
         m = asm.Movement()
         m.AnimalID = a.ID
@@ -274,12 +295,14 @@ for av in animalvaccinations:
     print av
 for o in owners:
     print o
+for o in ownerdonations:
+    print o
 for m in movements:
     print m
 for l in logs:
     print l
 
-asm.stderr_summary(animals=animals, animaltests=animaltests, animalmedicals=animalmedicals, animalvaccinations=animalvaccinations, logs=logs, owners=owners, movements=movements)
+asm.stderr_summary(animals=animals, animaltests=animaltests, animalmedicals=animalmedicals, animalvaccinations=animalvaccinations, logs=logs, owners=owners, ownerdonations=ownerdonations, movements=movements)
 
 print "DELETE FROM configuration WHERE ItemName LIKE 'DBView%';"
 print "COMMIT;"
