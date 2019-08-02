@@ -1266,8 +1266,11 @@ class animal_bulk(JSONEndpoint):
             "movementtypes": extlookups.get_movement_types(dbo)
         }
 
-    def post_all(self, o):
-        return extanimal.update_animals_from_form(o.dbo, o.post, o.user)
+    def post_update(self, o):
+        return extanimal.update_animals_from_form(o.dbo, o.user, o.post)
+
+    def post_delete(self, o):
+        return extanimal.delete_animals_from_form(o.dbo, o.user, o.post)
 
 class animal_clinic(JSONEndpoint):
     url = "animal_clinic"

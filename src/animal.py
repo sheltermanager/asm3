@@ -2214,7 +2214,7 @@ def update_animal_from_form(dbo, post, username):
     # Update any diary notes linked to this animal
     update_diary_linkinfo(dbo, aid)
 
-def update_animals_from_form(dbo, post, username):
+def update_animals_from_form(dbo, username, post):
     """
     Batch updates multiple animal records from the bulk form
     """
@@ -2259,6 +2259,9 @@ def update_animals_from_form(dbo, post, username):
     if post["neutereddate"] != "":
         dbo.execute("UPDATE animal SET Neutered = 1, NeuteredDate = %s WHERE ID IN (%s)" % (dbo.sql_date(post.date("neutereddate")), post["animals"]))
         aud.append("NeuteredDate = %s" % post["neutereddate"])
+    if post["neuteringvet"] != "" and post["neuteringvet"] != "0":
+        dbo.execute("UPDATE animal SET NeuteredByVetID = %d WHERE ID IN (%s)" % (post.integer("neuteringvet"), post["animals"]))
+        aud.append("NeuteredByVetID = %s" % post["neuteringvet"])
     if post["currentvet"] != "" and post["currentvet"] != "0":
         dbo.execute("UPDATE animal SET CurrentVetID = %d WHERE ID IN (%s)" % (post.integer("currentvet"), post["animals"]))
         aud.append("CurrentVetID = %s" % post["currentvet"])
@@ -2788,12 +2791,12 @@ def clone_from_template(dbo, username, animalid, dob, animaltypeid, speciesid):
             "Description":          c.description
         }, username, writeAudit=False)
 
-def delete_animal(dbo, username, animalid):
+def delete_animal(dbo, username, animalid, ignore_movements=False):
     """
     Deletes an animal and all its satellite records.
     """
     l = dbo.locale
-    if dbo.query_int("SELECT COUNT(ID) FROM adoption WHERE AnimalID=?", [animalid]):
+    if not ignore_movements and dbo.query_int("SELECT COUNT(ID) FROM adoption WHERE AnimalID=?", [animalid]):
         raise utils.ASMValidationError(_("This animal has movements and cannot be removed.", l))
     dbo.delete("media", "LinkID=%d AND LinkTypeID=%d" % (animalid, media.ANIMAL), username)
     dbo.delete("diary", "LinkID=%d AND LinkType=%d" % (animalid, diary.ANIMAL), username)
@@ -2805,6 +2808,14 @@ def delete_animal(dbo, username, animalid):
         dbo.delete(t, "AnimalID=%d" % animalid, username)
     dbo.delete("animal", animalid, username)
     dbfs.delete_path(dbo, "/animal/%d" % animalid)
+
+def delete_animals_from_form(dbo, username, post):
+    """
+    Batch deletes animals from the bulk form
+    """
+    for animalid in post.integer_list("animals"):
+        delete_animal(dbo, username, animalid, ignore_movements=True)
+    return len(post.integer_list("animals"))
 
 def merge_animal(dbo, username, animalid, mergeanimalid):
     """

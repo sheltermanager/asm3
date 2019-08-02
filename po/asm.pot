@@ -1987,7 +1987,8 @@ msgstr ""
 msgid "Burmilla"
 msgstr ""
 
-#: medical.js vaccination.js diary.js person_investigation.js log.js
+#: medical.js vaccination.js diary.js person_investigation.js animal_bulk.js
+#: log.js
 msgid "By"
 msgstr ""
 
@@ -3343,10 +3344,10 @@ msgstr ""
 #: citations.js onlineform_incoming.js common_tableform.js stocklevel.js
 #: traploan.js common.js donations.js person_investigation.js onlineform.js
 #: waitinglist.js document_repository.js accounts_trx.js diarytask.js roles.js
-#: rota.js accounts.js main.js staff_rota.js lostfound.js test.js animal.js
-#: animal_diet.js clinic_appointment.js diarytasks.js additional.js lookups.js
-#: media.js log.js htmltemplates.js movements.js person_vouchers.js licence.js
-#: clinic_invoice.js
+#: rota.js accounts.js main.js animal_bulk.js staff_rota.js lostfound.js
+#: test.js animal.js animal_diet.js clinic_appointment.js diarytasks.js
+#: additional.js lookups.js media.js log.js htmltemplates.js movements.js
+#: person_vouchers.js licence.js clinic_invoice.js
 msgid "Delete"
 msgstr ""
 
@@ -3504,6 +3505,10 @@ msgstr ""
 
 #: waitinglist.js
 msgid "Delete this waiting list entry"
+msgstr ""
+
+#: animal_bulk.js
+msgid "Deleting..."
 msgstr ""
 
 #: dbupdate.py
@@ -11619,6 +11624,10 @@ msgstr ""
 msgid "This week"
 msgstr ""
 
+#: animal_bulk.js
+msgid "This will permanently remove the selected animals, are you sure?"
+msgstr ""
+
 #: common_tableform.js
 msgid "This will permanently remove the selected records, are you sure?"
 msgstr ""
@@ -12006,7 +12015,7 @@ msgstr ""
 msgid "Trial"
 msgstr ""
 
-#: publish_options.js common.js movements.js dbupdate.py
+#: publish_options.js common.js shelterview.js movements.js dbupdate.py
 msgid "Trial Adoption"
 msgstr ""
 
@@ -13314,6 +13323,10 @@ msgstr ""
 
 #: lostfound.py
 msgid "{0} - {1} {2} ({3}), contact {4} ({5}) - lost in {6}, postcode {7}, on {8}"
+msgstr ""
+
+#: animal_bulk.js
+msgid "{0} animals successfully deleted."
 msgstr ""
 
 #: animal_bulk.js

@@ -1,6 +1,8 @@
 43
 ================
 
+02/08/19 Allow bulk deletion of animals #641
+02/08/19 Allow setting of altered by on bulk change animals #642
 21/07/19 Show trial adoption as an adoption status in shelter view
 20/07/19 Allow decimal fraction lb weights #596
 19/07/19 Allow option to hide financial stats on the home page

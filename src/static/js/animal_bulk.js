@@ -1,5 +1,5 @@
 /*jslint browser: true, forin: true, eqeq: true, white: true, sloppy: true, vars: true, nomen: true */
-/*global $, jQuery, _, asm, common, config, controller, dlgfx, format, header, html, validate */
+/*global $, jQuery, _, asm, common, config, controller, dlgfx, format, header, html, tableform, validate */
 
 $(function() {
 
@@ -133,6 +133,15 @@ $(function() {
                 '</td>',
                 '</tr>',
 
+                '<tr id="neuteringvetrow">',
+                '<td>',
+                '<label for="neuteringvet">' + _("By") + '</label>',
+                '</td>',
+                '<td>',
+                '<input id="neuteringvet" data-post="neuteringvet" data-mode="brief" data-filter="vet" type="hidden" class="asm-personchooser" />',
+                '</td>',
+                '</tr>',
+
                 '<tr id="holdrow">',
                 '<td>',
                 '<label for="holduntil">' + _("Hold until") + '</label>',
@@ -203,7 +212,8 @@ $(function() {
 
                 '</table>',
                 '<div class="centered">',
-                '<button id="bulk">' + html.icon("animal") + ' ' + _("Update") + '</button>',
+                '<button id="button-update">' + html.icon("animal") + ' ' + _("Update") + '</button> ',
+                '<button id="button-delete">' + html.icon("delete") + ' ' + _("Delete") + '</button>',
                 '</div>',
                 html.content_footer()
             ].join("\n");
@@ -214,20 +224,42 @@ $(function() {
             // Litter autocomplete
             $("#litterid").autocomplete({source: html.decode(controller.autolitters)});
 
-            $("#bulk").button().click(function() {
+            $("#button-update").button().click(function() {
                 if (!validate.notblank([ "animals" ])) { return; }
-                $("#bulk").button("disable");
+                $("#button-update").button("disable");
                 header.show_loading(_("Updating..."));
-                var formdata = $("input, select, textarea").toPOST();
+                var formdata = "mode=update&" + $("input, select, textarea").toPOST();
                 common.ajax_post("animal_bulk", formdata)
                     .then(function(data) {
                         header.hide_loading();
                         header.show_info(_("{0} animals successfully updated.").replace("{0}", data));
                     })
                     .always(function() {
-                        $("#bulk").button("enable");
+                        $("#button-update").button("enable");
                     });
             });
+
+            $("#button-delete").button().click(function() {
+                if (!validate.notblank([ "animals" ])) { return; }
+                tableform.delete_dialog(null, _("This will permanently remove the selected animals, are you sure?"))
+                    .then(function() {
+                        $("#button-delete").button("disable");
+                        header.show_loading(_("Deleting..."));
+                        var formdata = "mode=delete&" + $("input, select, textarea").toPOST();
+                        common.ajax_post("animal_bulk", formdata)
+                            .then(function(data) {
+                                header.hide_loading();
+                                header.show_info(_("{0} animals successfully deleted.").replace("{0}", data));
+                                $("#animals").animalchoosermulti("clear");
+                            })
+                            .always(function() {
+                                $("#button-delete").button("enable");
+                            });
+                    });
+            });
+
+            if (!common.has_permission("ca")) { $("#button-update").hide(); }
+            if (!common.has_permission("da")) { $("#button-delete").hide(); }
 
             // Remove any retired lookups from the lists
             $(".asm-selectbox").select("removeRetiredOptions");
