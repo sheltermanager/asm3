@@ -390,6 +390,17 @@ def get_links(dbo, pid):
         "INNER JOIN additionalfield aff ON aff.ID = af.AdditionalFieldID " \
         "INNER JOIN owner o ON o.ID = af.LinkID " \
         "WHERE af.Value = '%d' AND aff.FieldType = %s AND aff.LinkType IN (%s) " % ( int(pid), additional.PERSON_LOOKUP, additional.clause_for_linktype("person") ) 
+    # Additional field (link from incident)
+    sql += "UNION SELECT 'AFI' AS TYPE, " \
+        "aff.FieldLabel AS TYPEDISPLAY, ac.LastChangedDate AS DDATE, ac.ID AS LINKID, " \
+        "t.IncidentName AS LINKDISPLAY, " \
+        "ac.DispatchAddress AS FIELD2, " \
+        "'' AS DMOD " \
+        "FROM additional af " \
+        "INNER JOIN additionalfield aff ON aff.ID = af.AdditionalFieldID " \
+        "INNER JOIN animalcontrol ac ON ac.ID = af.LinkID " \
+        "INNER JOIN incidenttype t ON ac.IncidentTypeID = t.ID " \
+        "WHERE af.Value = '%d' AND aff.FieldType = %s AND aff.LinkType IN (%s) " % ( int(pid), additional.PERSON_LOOKUP, additional.clause_for_linktype("incident") ) 
     # Sort and done
     sql += "ORDER BY DDATE DESC, LINKDISPLAY "
     return dbo.query(sql)
