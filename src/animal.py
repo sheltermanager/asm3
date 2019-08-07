@@ -18,8 +18,12 @@ import utils
 from i18n import _, date_diff, date_diff_days, format_diff, python2display, subtract_years, subtract_months, add_days, subtract_days, monday_of_week, first_of_month, last_of_month, first_of_year
 from random import choice
 
+# Sorts for functions
 ASCENDING = 0
 DESCENDING = 1
+
+# ID type keys used in the ExtraIDs column
+IDTYPE_SAVOURLIFE = "savourlife"
 
 def get_animal_query(dbo):
     """
@@ -1305,6 +1309,37 @@ def get_shelter_code(dbo, animalid):
     Returns the shelter code for animalid
     """
     return dbo.query_string("SELECT ShelterCode FROM animal WHERE ID = ?", [animalid])
+
+def get_extra_id(dbo, a, idtype=IDTYPE_SAVOURLIFE):
+    """
+    Retrieves a value from the ExtraIDs field, which is stored
+    in the form:  key1=value1|key2=value2 ...
+    a: An animal result from get_animal_query containing ExtraIDs
+    idtype: A string key, use one of the IDTYPE_ constants above
+    Returns the extra ID or None if there was no match
+    """
+    for x in a.EXTRAIDS.split("|"):
+        k, v = x.split("=")
+        if k == idtype:
+            return v
+    return None
+
+def set_extra_id(dbo, user, a, idtype, idvalue):
+    """
+    Stores a value in the ExtraIDs field for an animal, which is stored
+    in the form:  key1=value1|key2=value2 ...
+    a: An animal result from get_animal_query containing ExtraIDs and ID
+    idtype: A string key, use one of the IDTYPE_ constants above
+    idvalue: The value of the key.
+    """
+    ids = []
+    ids.append( "idtype=%s" % idvalue )
+    for x in a.EXTRAIDS.split("|"):
+        k, v = x.split("=")
+        if k != idtype: ids.append( "%s=%s" % (k, v))
+    extraids = "|".join(ids)
+    dbo.update("animal", a.ID, { "ExtraIDs": extraids }, user)
+    return extraids
 
 def get_animal_namecode(dbo, animalid):
     """

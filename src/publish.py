@@ -8,7 +8,7 @@ import al
 import collections
 import configuration
 
-import publishers.adoptapet, publishers.anibaseuk, publishers.foundanimals, publishers.helpinglostpets, publishers.html, publishers.maddiesfund, publishers.petfinder, publishers.petlink, publishers.petrescue, publishers.petslocateduk, publishers.pettracuk, publishers.rescuegroups, publishers.smarttag, publishers.vetenvoy
+import publishers.adoptapet, publishers.anibaseuk, publishers.foundanimals, publishers.helpinglostpets, publishers.html, publishers.maddiesfund, publishers.petfinder, publishers.petlink, publishers.petrescue, publishers.petslocateduk, publishers.pettracuk, publishers.rescuegroups, publishers.saveourlife, publishers.smarttag, publishers.vetenvoy
 
 from publishers.base import PublishCriteria
 
@@ -41,6 +41,11 @@ PUBLISHER_LIST["pf"] = {
 PUBLISHER_LIST["pr"] = {
     "label":    "Publish to PetRescue.com.au",
     "class":    publishers.petrescue.PetRescuePublisher,
+    "locales":  "en_AU"
+}
+PUBLISHER_LIST["sl"] = {
+    "label":    "Publish to SaveOurLife.com.au",
+    "class":    publishers.saveourlife.SaveOurLifePublisher,
     "locales":  "en_AU"
 }
 PUBLISHER_LIST["pcuk"] = {

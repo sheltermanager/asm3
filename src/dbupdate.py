@@ -24,7 +24,7 @@ VERSIONS = (
     34002, 34003, 34004, 34005, 34006, 34007, 34008, 34009, 34010, 34011, 34012,
     34013, 34014, 34015, 34016, 34017, 34018, 34019, 34020, 34021, 34022, 34100,
     34101, 34102, 34103, 34104, 34105, 34106, 34107, 34108, 34109, 34110, 34111,
-    34112, 34200, 34201, 34202, 34203, 34204
+    34112, 34200, 34201, 34202, 34203, 34204, 34300
 )
 
 LATEST_VERSION = VERSIONS[-1]
@@ -223,6 +223,7 @@ def sql_structure(dbo):
         flongstr("Markings"),
         fstr("ShelterCode"),
         fstr("ShortCode"),
+        fstr("ExtraIDs", True),
         # ASM2_COMPATIBILITY
         fint("UniqueCodeID", True),
         fdate("SmartTagSentDate", True),
@@ -317,6 +318,7 @@ def sql_structure(dbo):
         fint("DailyBoardingCost", True),
         fstr("AnimalAge", True) ))
     sql += index("animal_AnimalShelterCode", "animal", "ShelterCode", True)
+    sql += index("animal_AnimalExtraIDs", "animal", "ExtraIDs")
     sql += index("animal_AnimalTypeID", "animal", "AnimalTypeID")
     sql += index("animal_AnimalName", "animal", "AnimalName")
     sql += index("animal_AnimalSpecies", "animal", "SpeciesID")
@@ -5049,4 +5051,10 @@ def update_34204(dbo):
     # Add ownerdonation.Fee
     add_column(dbo, "ownerdonation", "Fee", dbo.type_integer)
     dbo.execute_dbupdate("UPDATE ownerdonation SET Fee = 0")
+
+def update_34300(dbo):
+    # Add animal.ExtraIDs
+    add_column(dbo, "animal", "ExtraIDs", dbo.type_shorttext)
+    add_index(dbo, "animal_ExtraIDs", "animal", "ExtraIDs")
+    dbo.execute_dbupdate("UPDATE animal SET ExtraIDs = ''")
 

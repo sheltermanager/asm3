@@ -1081,6 +1081,15 @@ def rescuegroups_password(dbo):
 def retailer_on_shelter(dbo):
     return cboolean(dbo, "RetailerOnShelter", DEFAULTS["RetailerOnShelter"] == "Yes")
 
+def saveourlife_username(dbo):
+    return cstring(dbo, "SaveOurLifeUsername")
+
+def saveourlife_password(dbo):
+    return cstring(dbo, "SaveOurLifePassword")
+
+def saveourlife_interstate(dbo):
+    return cboolean(dbo, "PetRescueInterstate")
+
 def scale_pdfs(dbo):
     return cboolean(dbo, "ScalePDFs", DEFAULTS["ScalePDFs"] == "Yes")
 
