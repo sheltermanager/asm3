@@ -11,10 +11,12 @@ en
 $VAR from DATE Adopted between$
 $VAR to DATE and$
 
-SELECT adoption.AnimalID, ShelterCode, AnimalName, MostRecentEntryDate, MovementDate, 
+SELECT adoption.AnimalID, adoption.OwnerID, 
+ShelterCode, AnimalName, MostRecentEntryDate, MovementDate, 
 species.SpeciesName, animal.TimeOnShelter, animal.DaysOnShelter, animal.IdentichipNumber,
 animaltype.AnimalType AS theType,
-animal.BreedName,
+animal.BreedName, 
+animal.OriginalOwnerID, 
 oo.OwnerName AS OOName, oo.OwnerAddress AS OOAddress, oo.OwnerTown AS OOTown, oo.OwnerCounty AS OOCounty, oo.OwnerPostcode AS OOPostcode, 
 oo.EmailAddress AS OOEmail,
 no.OwnerName, no.OwnerAddress,
@@ -51,14 +53,14 @@ $$BODY<tr>
 <td>$IdentichipNumber</td>
 <td>$MostRecentEntryDate</td>
 <td>$TimeOnShelter ($DaysOnShelter days)</td>
-<td><i>$OOName</i><br/>
+<td><a target="_blank" href="person?id=$ORIGINALOWNERID">$OOName</a><br/>
 $OOAddress<br/>
 $OOTown<br/>
 $OOCounty<br/>
 $OOPostcode<br/>
 $OOEmail</td>
 <td>$MOVEMENTDATE</td>
-<td><i>$OwnerName</i><br/>
+<td><a target="_blank" href="person?id=$OWNERID">$OwnerName</a><br/>
 $OwnerAddress<br/>
 $OwnerTown<br/>
 $OwnerCounty<br/>
