@@ -11,7 +11,7 @@ en
 $VAR from DATE Adopted between$
 $VAR to DATE and$
 
-SELECT ShelterCode, AnimalName, MostRecentEntryDate, MovementDate, 
+SELECT adoption.AnimalID, ShelterCode, AnimalName, MostRecentEntryDate, MovementDate, 
 species.SpeciesName, animal.TimeOnShelter, animal.DaysOnShelter, animal.IdentichipNumber,
 animaltype.AnimalType AS theType,
 animal.BreedName,
@@ -45,7 +45,7 @@ HEADER$$
 
 $$BODY<tr>
 <td>$SHELTERCODE</td>
-<td>$ANIMALNAME</td>
+<td><a target="_blank" href="animal?id=$ANIMALID">$ANIMALNAME</a></td>
 <td>$theType</td>
 <td>$BreedName</td>
 <td>$IdentichipNumber</td>
