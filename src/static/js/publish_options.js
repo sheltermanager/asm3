@@ -16,8 +16,8 @@ $(function() {
                 '<li class="localeus localeca localeau hasmaddiesfund"><a href="#tab-maddiesfund">Maddie\'s Fund Publisher</a></li>',
                 '<li class="localeus localeca localemx"><a href="#tab-petfinder">PetFinder Publisher</a></li>',
                 '<li class="localegb haspetslocated"><a href="#tab-petslocated">PetsLocated Publisher</a></li>',
-                '<li class="localeau"><a href="#tab-petrescue haspetrescue">PetRescue Publisher</a></li>', 
-                '<li class="localeau"><a href="#tab-savourlife hassavourlife">SavourLife Publisher</a></li>', 
+                '<li class="localeau haspetrescue"><a href="#tab-petrescue">PetRescue Publisher</a></li>', 
+                '<li class="localeau hassavourlife"><a href="#tab-savourlife">SavourLife Publisher</a></li>', 
                 '<li class="localeus"><a href="#tab-rescuegroups">RescueGroups Publisher</a></li>',
                 '<li class="localegb"><a href="#tab-pettrac">AVID UK Microchips</a></li>',
                 '<li class="localegb"><a href="#tab-anibase">Identibase UK Microchips</a></li>',
@@ -1020,7 +1020,7 @@ $(function() {
             if (!controller.haspetlink) { $(".haspetlink").hide(); }
             if (!controller.haspetrescue) { $(".haspetrescue").hide(); }
             if (!controller.haspetslocated) { $(".haspetslocated").hide(); }
-            if (!controller.hassaveourlife) { $(".hassavourlife").hide(); }
+            if (!controller.hassavourlife) { $(".hassavourlife").hide(); }
             if (!controller.hasvevendor) { $(".hasvevendor").hide(); }
             if (!controller.hassmarttag) { $(".hassmarttag").hide(); }
 
