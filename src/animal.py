@@ -2398,8 +2398,9 @@ def update_location_unit(dbo, username, animalid, newlocationid, newunit = ""):
                     newlocation += "-" + newunit
                 log.add_log(dbo, username, log.ANIMAL, animalid, configuration.location_change_log_type(dbo), 
                     _("{0} {1}: Moved from {2} to {3}", l).format(sheltercode, animalname, oldlocation, newlocation))
-    # If this animal has an active movement, return it first
-    activemovementid = dbo.query_int("SELECT ActiveMovementID FROM animal WHERE ID = ?", [animalid])
+    # If this animal has an active movement at today's date or older, return it first
+    # (the date check is to make sure we don't accidentally return future adoptions)
+    activemovementid = dbo.query_int("SELECT ActiveMovementID FROM animal WHERE ID = ? AND ActiveMovementID > 0 AND ActiveMovementDate <= ?", (animalid, dbo.today()))
     if activemovementid > 0:
         movement.return_movement(dbo, activemovementid, animalid)
     # Change the location
