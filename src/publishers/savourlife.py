@@ -7,22 +7,22 @@ import sys
 import utils
 
 from base import AbstractPublisher
-from sitedefs import SERVICE_URL, SAVEOURLIFE_URL, SAVEOURLIFE_API_KEY
+from sitedefs import SERVICE_URL, SAVOURLIFE_URL, SAVOURLIFE_API_KEY
 
-class SaveOurLifePublisher(AbstractPublisher):
+class SavourLifePublisher(AbstractPublisher):
     """
-    Handles publishing to saveourlife.com.au
+    Handles publishing to savourlife.com.au
     Note: They ONLY deal with dogs.
     """
     def __init__(self, dbo, publishCriteria):
         publishCriteria.uploadDirectly = True
         publishCriteria.thumbnails = False
         AbstractPublisher.__init__(self, dbo, publishCriteria)
-        self.initLog("savourlife", "SaveOurLife Publisher")
+        self.initLog("savourlife", "SavourLife Publisher")
 
     def get_breed_id(self, an):
         """
-        Returns a saveourlife breed for an animal.
+        Returns a savourlife breed for an animal.
         """
         breed = an.BREEDNAME1
         if an.CROSSBREED == 1:
@@ -30,7 +30,7 @@ class SaveOurLifePublisher(AbstractPublisher):
         for k, v in DOG_BREEDS.iteritems():
             if v.lower().find(breed.lower()) != -1:
                 return int(k)
-        self.log("'%s' is not a valid SaveOurLife breed, using default 'Cross Breed'" % an.BREEDNAME1)
+        self.log("'%s' is not a valid SavourLife breed, using default 'Cross Breed'" % an.BREEDNAME1)
         return 305
 
     def utf8_to_ascii(self, s):
@@ -63,26 +63,26 @@ class SaveOurLifePublisher(AbstractPublisher):
 
     def run(self):
         
-        self.log("SaveOurLifePublisher starting...")
+        self.log("SavourLifePublisher starting...")
 
         if self.isPublisherExecuting(): return
         self.updatePublisherProgress(0)
         self.setLastError("")
         self.setStartPublishing()
 
-        username = configuration.saveourlife_username(self.dbo)
-        password = configuration.saveourlife_password(self.dbo)
-        interstate = configuration.saveourlife_interstate(self.dbo)
+        username = configuration.savourlife_username(self.dbo)
+        password = configuration.savourlife_password(self.dbo)
+        interstate = configuration.savourlife_interstate(self.dbo)
         postcode = configuration.organisation_postcode(self.dbo)
         suburb = configuration.organisation_town(self.dbo)
         state = configuration.organisation_county(self.dbo)
 
         if username == "":
-            self.setLastError("No SaveOurLife username has been set.")
+            self.setLastError("No SavourLife username has been set.")
             return
 
         if password == "":
-            self.setLastError("No SaveOurLife password has been set.")
+            self.setLastError("No SavourLife password has been set.")
             return
 
         if postcode == "" or suburb == "" or state == "":
@@ -99,8 +99,8 @@ class SaveOurLifePublisher(AbstractPublisher):
             return
 
         # Authenticate first to get our token
-        url = SAVEOURLIFE_URL + "getToken"
-        jsondata = '{ "Username": "%s", "Password": "%s", "Key": "%s" }' % ( username, password, SAVEOURLIFE_API_KEY )
+        url = SAVOURLIFE_URL + "getToken"
+        jsondata = '{ "Username": "%s", "Password": "%s", "Key": "%s" }' % ( username, password, SAVOURLIFE_API_KEY )
         r = utils.post_json(url, jsondata)
         if r["status"] != 200:
             self.logError("HTTP %d, headers: %s, response: %s" % (r["status"], r["headers"], r["response"]))
@@ -165,9 +165,9 @@ class SaveOurLifePublisher(AbstractPublisher):
                 for m in photos:
                     photo_urls.append("%s?account=%s&method=dbfs_image&title=%s" % (SERVICE_URL, self.dbo.database, m.MEDIANAME))
 
-                # Do we already have a SaveOurLife ID for this animal?
+                # Do we already have a SavourLife ID for this animal?
                 # This function returns None if no match is found
-                dogid = animal.get_extra_id(self.dbo, an, animal.IDTYPE_SAVEOURLIFE)
+                dogid = animal.get_extra_id(self.dbo, an, animal.IDTYPE_SAVOURLIFE)
 
                 # Construct a dictionary of info for this animal
                 data = {
@@ -207,7 +207,7 @@ class SaveOurLifePublisher(AbstractPublisher):
                 }
 
                 # PetRescue will insert/update accordingly based on whether DogId is null or not
-                url = SAVEOURLIFE_URL + "setDog"
+                url = SAVOURLIFE_URL + "setDog"
                 jsondata = utils.json(data)
                 self.log("Sending POST to %s to create/update listing: %s" % (url, jsondata))
                 r = utils.post_json(url, jsondata)
@@ -224,7 +224,7 @@ class SaveOurLifePublisher(AbstractPublisher):
 
         try:
             # Get a list of all animals that we sent to SOL recently (14 days)
-            prevsent = self.dbo.query("SELECT AnimalID FROM animalpublished WHERE SentDate>=? AND PublishedTo='saveourlife'", [self.dbo.today(offset=-14)])
+            prevsent = self.dbo.query("SELECT AnimalID FROM animalpublished WHERE SentDate>=? AND PublishedTo='savourlife'", [self.dbo.today(offset=-14)])
             
             # Build a list of IDs we just sent, along with a list of ids for animals
             # that we previously sent and are not in the current sent list.
@@ -244,14 +244,14 @@ class SaveOurLifePublisher(AbstractPublisher):
 
         # Cancel the inactive listings - we can only do this for adoptions, so we're going to 
         # end up ignoring a lot of listings that will need to be manually removed by
-        # SaveOurLife - this is what they requested and the way they want it.
+        # SavourLife - this is what they requested and the way they want it.
         for an in animals:
             try:
 
                 # We're not an adoption, don't do anything
                 if an.ACTIVEMOVEMENTTYPE != 1: continue
 
-                dogid = animal.get_extra_id(self.dbo, an, animal.IDTYPE_SAVEOURLIFE)
+                dogid = animal.get_extra_id(self.dbo, an, animal.IDTYPE_SAVOURLIFE)
 
                 data = {
                     "Username":     username,
@@ -260,7 +260,7 @@ class SaveOurLifePublisher(AbstractPublisher):
                     "EnquiryNumber": "" # FIXME: WHAT IS THIS?
                 }
 
-                url = SAVEOURLIFE_URL + "setDogAdopted"
+                url = SAVOURLIFE_URL + "setDogAdopted"
                 jsondata = utils.json(data)
                 self.log("Sending POST to %s to mark animal '%s - %s' adopted: %s" % (url, an.SHELTERCODE, an.ANIMALNAME, jsondata))
                 r = utils.post_json(url, jsondata)

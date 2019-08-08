@@ -1081,14 +1081,14 @@ def rescuegroups_password(dbo):
 def retailer_on_shelter(dbo):
     return cboolean(dbo, "RetailerOnShelter", DEFAULTS["RetailerOnShelter"] == "Yes")
 
-def saveourlife_username(dbo):
-    return cstring(dbo, "SaveOurLifeUsername")
+def savourlife_username(dbo):
+    return cstring(dbo, "SavourLifeUsername")
 
-def saveourlife_password(dbo):
-    return cstring(dbo, "SaveOurLifePassword")
+def savourlife_password(dbo):
+    return cstring(dbo, "SavourLifePassword")
 
-def saveourlife_interstate(dbo):
-    return cboolean(dbo, "PetRescueInterstate")
+def savourlife_interstate(dbo):
+    return cboolean(dbo, "SavourLifeInterstate")
 
 def scale_pdfs(dbo):
     return cboolean(dbo, "ScalePDFs", DEFAULTS["ScalePDFs"] == "Yes")

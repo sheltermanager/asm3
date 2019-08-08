@@ -17,7 +17,7 @@ $(function() {
                 '<li class="localeus localeca localemx"><a href="#tab-petfinder">PetFinder Publisher</a></li>',
                 '<li class="localegb haspetslocated"><a href="#tab-petslocated">PetsLocated Publisher</a></li>',
                 '<li class="localeau"><a href="#tab-petrescue haspetrescue">PetRescue Publisher</a></li>', 
-                '<li class="localeau"><a href="#tab-saveourlife hassaveourlife">SaveOurLife Publisher</a></li>', 
+                '<li class="localeau"><a href="#tab-savourlife hassavourlife">SavourLife Publisher</a></li>', 
                 '<li class="localeus"><a href="#tab-rescuegroups">RescueGroups Publisher</a></li>',
                 '<li class="localegb"><a href="#tab-pettrac">AVID UK Microchips</a></li>',
                 '<li class="localegb"><a href="#tab-anibase">Identibase UK Microchips</a></li>',
@@ -571,19 +571,19 @@ $(function() {
             ].join("\n");
         },
 
-        render_saveourlife: function() {
+        render_savourlife: function() {
             return [
-                '<div id="tab-saveourlife">',
-                html.info('Signup at <a href="http://saveourlife.com.au">saveourlife.com.au</a>'),
+                '<div id="tab-savourlife">',
+                html.info('Signup at <a href="http://savourlife.com.au">savourlife.com.au</a>'),
                 '<p><input id="enabledsl" type="checkbox" class="asm-checkbox enablecheck" /><label for="enabledsl">' + _("Enabled") + '</label></p>',
                 '<table>',
                 '<tr>',
                 '<td><label for="slusername">Username</label></td>',
-                '<td><input id="slusername" type="text" class="asm-textbox cfg" data="SaveOurLifeUsername" /></td>',
+                '<td><input id="slusername" type="text" class="asm-textbox cfg" data="SavourLifeUsername" /></td>',
                 '</tr>',
                 '<tr>',
                 '<td><label for="slpassword">Password</label></td>',
-                '<td><input id="slpassword" type="text" class="asm-textbox cfg" data="SaveOurLifePassword" /></td>',
+                '<td><input id="slpassword" type="text" class="asm-textbox cfg" data="SavourLifePassword" /></td>',
                 '</tr>',
                 '<tr>',
                 '<td><label for="slinterstate">Mark as interstate</label>',
@@ -591,7 +591,7 @@ $(function() {
                 'Set to yes if you will fly adoptable animals to other states',
                 '</span>',
                 '</td>',
-                '<td><select id="slinterstate" class="asm-selectbox cfg" data="SaveOurLifeInterstate">',
+                '<td><select id="slinterstate" class="asm-selectbox cfg" data="SavourLifeInterstate">',
                 '<option>No</option><option>Yes</option></select></td>',
                 '</tr>',
                 '</table>',
@@ -869,7 +869,7 @@ $(function() {
                 this.render_htmlftp(),
                 this.render_petfinder(),
                 this.render_petrescue(), 
-                this.render_saveourlife(), 
+                this.render_savourlife(), 
                 this.render_petslocated(),
                 this.render_rescuegroups(),
                 this.render_adoptapet(),
@@ -1020,7 +1020,7 @@ $(function() {
             if (!controller.haspetlink) { $(".haspetlink").hide(); }
             if (!controller.haspetrescue) { $(".haspetrescue").hide(); }
             if (!controller.haspetslocated) { $(".haspetslocated").hide(); }
-            if (!controller.hassaveourlife) { $(".hassaveourlife").hide(); }
+            if (!controller.hassaveourlife) { $(".hassavourlife").hide(); }
             if (!controller.hasvevendor) { $(".hasvevendor").hide(); }
             if (!controller.hassmarttag) { $(".hassmarttag").hide(); }
 
