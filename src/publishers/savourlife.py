@@ -1,5 +1,6 @@
 #!/usr/bin/python
 
+import additional
 import animal
 import configuration
 import medical
@@ -129,9 +130,20 @@ class SavourLifePublisher(AbstractPublisher):
                 else: size = 10
 
                 # They're probably going to need this at some point, but current API doesn't have it
+                # and they've set a global breeder number value for the whole organisation
                 #breeder_id = ""
                 #if "BREEDERID" in an and an.BREEDERID != "":
                 #    breeder_id = an.BREEDERID
+
+                # The enquiry number is given by the savourlife website to the potential adopter,
+                # they pass it on to the shelter (who should add it to the animal record) so
+                # that it's set when we mark the animal adopted with savourlife. This gets the
+                # new adopter free food.
+                # It's unlikely that there will be an enquirynumber while the animal is still adoptable
+                # but it's possible so we check it here just in case.
+                enquirynumber = None
+                if "ENQUIRYNUMBER" in an and an.ENQUIRYNUMBER != "":
+                    enquirynumber = an.ENQUIRYNUMBER
 
                 # Check whether we've been vaccinated, wormed and hw treated
                 vaccinated = medical.get_vaccinated(self.dbo, an.ID)
@@ -182,7 +194,7 @@ class SavourLifePublisher(AbstractPublisher):
                     "State":                    location_state_abbr,
                     "Postcode":                 location_postcode,
                     "DOB":                      an.DATEOFBIRTH, # json handler should translate this to ISO
-                    "enquiryNo":                None, # FIXME: What is this?
+                    "enquiryNo":                enquirynumber, # valid enquiry number or null if we don't have one
                     "AdoptionFee":              an.FEE / 100.0,
                     "IsDesexed":                an.Neutered == 1,
                     "IsWormed":                 wormed,
@@ -233,47 +245,58 @@ class SavourLifePublisher(AbstractPublisher):
             animalids_to_cancel = set([ str(x.ANIMALID) for x in prevsent if x.ANIMALID not in animalids_just_sent])
 
             # Get the animal records for the ones we need to mark saved
-            if len(animalids_to_cancel) == 0:
-                animals = []
-            else:
+            if len(animalids_to_cancel) > 0:
+
                 animals = self.dbo.query("SELECT ID, ShelterCode, AnimalName, ActiveMovementDate, ActiveMovementType, DeceasedDate " \
                     "FROM animal a WHERE ID IN (%s)" % ",".join(animalids_to_cancel))
 
+                # Append the additional fields so we can get the enquiry number
+                additional.append_to_results(self.dbo, animals, "animal")
+
+                # Cancel the inactive listings - we can only do this for adoptions, so we're going to 
+                # end up ignoring a lot of listings that will need to be manually removed by
+                # SavourLife - this is what they requested and the way they want it.
+                for an in animals:
+                    try:
+
+                        # The animal is not adopted, don't do anything
+                        if an.ACTIVEMOVEMENTTYPE != 1: continue
+
+                        # The savourlife dogid field that they returned when we first sent the record
+                        dogid = animal.get_extra_id(self.dbo, an, animal.IDTYPE_SAVOURLIFE)
+
+                        # The enquiry number is given by the savourlife website to the potential adopter,
+                        # they pass it on to the shelter (who should add it to the animal record) so
+                        # that it's set when we mark the animal adopted with savourlife. This gets the
+                        # new adopter free food.
+                        enquirynumber = None
+                        if "ENQUIRYNUMBER" in an and an.ENQUIRYNUMBER != "":
+                            enquirynumber = an.ENQUIRYNUMBER
+
+                        data = {
+                            "Username":     username,
+                            "Token":        token,
+                            "DogId":        dogid,
+                            "EnquiryNumber": enquirynumber
+                        }
+
+                        url = SAVOURLIFE_URL + "setDogAdopted"
+                        jsondata = utils.json(data)
+                        self.log("Sending POST to %s to mark animal '%s - %s' adopted: %s" % (url, an.SHELTERCODE, an.ANIMALNAME, jsondata))
+                        r = utils.post_json(url, jsondata)
+
+                        if r["status"] != 200:
+                            self.logError("HTTP %d, headers: %s, response: %s" % (r["status"], r["headers"], self.utf8_to_ascii(r["response"])))
+                        else:
+                            self.log("HTTP %d, headers: %s, response: %s" % (r["status"], r["headers"], self.utf8_to_ascii(r["response"])))
+                            self.logSuccess("Processed: %s: %s (%d of %d)" % ( an["SHELTERCODE"], an["ANIMALNAME"], anCount, len(animals)))
+                            processed.append(an)
+
+                    except Exception as err:
+                        self.logError("Failed calling setDogAdopted for %s - %s: %s" % (an.SHELTERCODE, an.ANIMALNAME, err), sys.exc_info())
+
         except Exception as err:
             self.logError("Failed finding potential dogs to mark adopted: %s" % err, sys.exc_info())
-
-        # Cancel the inactive listings - we can only do this for adoptions, so we're going to 
-        # end up ignoring a lot of listings that will need to be manually removed by
-        # SavourLife - this is what they requested and the way they want it.
-        for an in animals:
-            try:
-
-                # We're not an adoption, don't do anything
-                if an.ACTIVEMOVEMENTTYPE != 1: continue
-
-                dogid = animal.get_extra_id(self.dbo, an, animal.IDTYPE_SAVOURLIFE)
-
-                data = {
-                    "Username":     username,
-                    "Token":        token,
-                    "DogId":        dogid,
-                    "EnquiryNumber": "" # FIXME: WHAT IS THIS?
-                }
-
-                url = SAVOURLIFE_URL + "setDogAdopted"
-                jsondata = utils.json(data)
-                self.log("Sending POST to %s to mark animal '%s - %s' adopted: %s" % (url, an.SHELTERCODE, an.ANIMALNAME, jsondata))
-                r = utils.post_json(url, jsondata)
-
-                if r["status"] != 200:
-                    self.logError("HTTP %d, headers: %s, response: %s" % (r["status"], r["headers"], self.utf8_to_ascii(r["response"])))
-                else:
-                    self.log("HTTP %d, headers: %s, response: %s" % (r["status"], r["headers"], self.utf8_to_ascii(r["response"])))
-                    self.logSuccess("Processed: %s: %s (%d of %d)" % ( an["SHELTERCODE"], an["ANIMALNAME"], anCount, len(animals)))
-                    processed.append(an)
-
-            except Exception as err:
-                self.logError("Failed calling setDogAdopted for %s - %s: %s" % (an.SHELTERCODE, an.ANIMALNAME, err), sys.exc_info())
 
         # Mark sent animals published
         self.markAnimalsPublished(processed, first=True)
