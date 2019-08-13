@@ -15,12 +15,12 @@ SELECT * FROM
 
 SELECT
 'Regimen' AS mtype, a.ShelterCode, a.AnimalName, a.ID AS AID,
-t.AnimalType, s.SpeciesName, a.DisplayLocation,
+t.AnimalType, sp.SpeciesName, a.DisplayLocation,
 am.TreatmentsGiven, am.TotalNumberOfTreatments, am.Dosage, 
 am.TreatmentName, am.StartDate, am.Comments
 FROM animal a
 INNER JOIN animaltype t ON t.ID = a.AnimalTypeID
-INNER JOIN species s ON s.ID = a.SpeciesID
+INNER JOIN species sp ON s.ID = a.SpeciesID
 INNER JOIN internallocation il ON il.ID = a.ShelterLocation
 INNER JOIN animalmedical am ON a.ID = am.AnimalID
 WHERE a.ID = $@aid$ AND am.StartDate <= '$CURRENT_DATE$'
