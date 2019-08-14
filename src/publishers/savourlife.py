@@ -40,6 +40,14 @@ class SavourLifePublisher(AbstractPublisher):
         """
         return utils.encode_html(s.decode("utf-8"))
 
+    def good_with(self, x):
+        """
+        Translates our good with fields Unknown/No/Yes to SOL's NULL/False/True
+        """
+        if x == 0: return None
+        elif x == 1: return False
+        else: return True
+
     def replace_html_entities(self, s):
         """
         Replaces well known HTML entities with ASCII characters (mainly aimed at smartquotes)
@@ -102,12 +110,20 @@ class SavourLifePublisher(AbstractPublisher):
         # Authenticate first to get our token
         url = SAVOURLIFE_URL + "getToken"
         jsondata = '{ "Username": "%s", "Password": "%s", "Key": "%s" }' % ( username, password, SAVOURLIFE_API_KEY )
-        r = utils.post_json(url, jsondata)
-        if r["status"] != 200:
-            self.logError("HTTP %d, headers: %s, response: %s" % (r["status"], r["headers"], r["response"]))
+        self.log("Token request to %s: %s" % ( url, jsondata))
+        try:
+            r = utils.post_json(url, jsondata)
+            if r["status"] != 200:
+                self.logError("HTTP %d, headers: %s, response: %s" % (r["status"], r["headers"], r["response"]))
+                return
+            token = r["response"]
+            if token.find("\"") != -1: token = token.replace("\"", "")
+            self.log("Token received: %s" % token)
+        except Exception as err:
+            self.setLastError("Authentication failed.")
+            self.logError("Failed getting token: %s" % err, sys.exc_info())
+            self.cleanup()
             return
-        token = r["response"]
-        self.log("Token received: %s" % token)
 
         anCount = 0
         for an in animals:
@@ -202,11 +218,11 @@ class SavourLifePublisher(AbstractPublisher):
                     "IsHeartWormed":            hwtreated,
                     "Code":                     an.SHELTERCODE,
                     "IsMale":                   an.SEX == 1,
-                    "RequirementOtherDogs":     self.goodwith(an.ISGOODWITHDOGS),
+                    "RequirementOtherDogs":     self.good_with(an.ISGOODWITHDOGS),
                     "RequirementOtherAnimals":  None,
-                    "RequirementOtherCats":     self.goodwith(an.ISGOODWITHCATS),
-                    "RequirementKidsOver5":     self.goodwith(an.ISGOODWITHCHILDREN),
-                    "RequirementKidsUnder5":    self.goodwith(an.ISGOODWITHCHILDREN),
+                    "RequirementOtherCats":     self.good_with(an.ISGOODWITHCATS),
+                    "RequirementKidsOver5":     self.good_with(an.ISGOODWITHCHILDREN),
+                    "RequirementKidsUnder5":    self.good_with(an.ISGOODWITHCHILDREN),
                     "SpecialNeeds":             "",
                     "MedicalIssues":            self.replace_html_entities(an.HEALTHPROBLEMS),
                     "InterstateAdoptionAvailable": interstate, 

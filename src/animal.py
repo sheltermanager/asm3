@@ -1318,10 +1318,11 @@ def get_extra_id(dbo, a, idtype=IDTYPE_SAVOURLIFE):
     idtype: A string key, use one of the IDTYPE_ constants above
     Returns the extra ID or None if there was no match
     """
-    for x in a.EXTRAIDS.split("|"):
-        k, v = x.split("=")
-        if k == idtype:
-            return v
+    if "EXTRAIDS" in a and a.EXTRAIDS is not None:
+        for x in a.EXTRAIDS.split("|"):
+            k, v = x.split("=")
+            if k == idtype:
+                return v
     return None
 
 def set_extra_id(dbo, user, a, idtype, idvalue):
@@ -1334,7 +1335,9 @@ def set_extra_id(dbo, user, a, idtype, idvalue):
     """
     ids = []
     ids.append( "idtype=%s" % idvalue )
-    for x in a.EXTRAIDS.split("|"):
+    extraids = a.EXTRAIDS 
+    if extraids is None: extraids = ""
+    for x in extraids.split("|"):
         k, v = x.split("=")
         if k != idtype: ids.append( "%s=%s" % (k, v))
     extraids = "|".join(ids)
@@ -2727,10 +2730,15 @@ def clone_from_template(dbo, username, animalid, dob, animaltypeid, speciesid):
     if cloneanimalid == 0:
         return
     # Any animal fields that should be copied to the new record
-    copyfrom = dbo.first_row( dbo.query("SELECT DateBroughtIn, Fee, AnimalComments FROM animal WHERE ID = ?", [cloneanimalid]) )
+    copyfrom = dbo.first_row( dbo.query("SELECT IsNotAvailableForAdoption, IsNotForRegistration, IsHold, AdditionalFlags, DateBroughtIn, " \
+        "Fee, AnimalComments FROM animal WHERE ID = ?", [cloneanimalid]) )
     broughtin = copyfrom.datebroughtin
     newbroughtin = dbo.query_date("SELECT DateBroughtIn FROM animal WHERE ID = ?", [animalid])
     dbo.update("animal", animalid, {
+        "IsNotAvailableForAdoption": copyfrom.isnotavailableforadoption,
+        "IsNotForRegistration":     copyfrom.isnotforregistration,
+        "IsHold":                   copyfrom.ishold,
+        "AdditionalFlags":          copyfrom.additionalflags,
         "Fee":                      copyfrom.fee,
         "AnimalComments":           copyfrom.animalcomments
     }, username, writeAudit=False)
