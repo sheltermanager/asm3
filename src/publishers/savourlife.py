@@ -116,8 +116,7 @@ class SavourLifePublisher(AbstractPublisher):
             if r["status"] != 200:
                 self.logError("HTTP %d, headers: %s, response: %s" % (r["status"], r["headers"], r["response"]))
                 return
-            token = r["response"]
-            if token.find("\"") != -1: token = token.replace("\"", "")
+            token = r["response"].replace("\"", "")
             self.log("Token received: %s" % token)
         except Exception as err:
             self.setLastError("Authentication failed.")
