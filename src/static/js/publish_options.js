@@ -574,7 +574,7 @@ $(function() {
         render_savourlife: function() {
             return [
                 '<div id="tab-savourlife">',
-                html.info('Signup at <a href="http://savourlife.com.au">savourlife.com.au</a>'),
+                html.info('Signup at <a href="http://savourlife.com.au">savour-life.com.au</a>'),
                 '<p><input id="enabledsl" type="checkbox" class="asm-checkbox enablecheck" /><label for="enabledsl">' + _("Enabled") + '</label></p>',
                 '<table>',
                 '<tr>',

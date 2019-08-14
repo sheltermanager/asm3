@@ -372,10 +372,10 @@ publishers.
 
 .. warning:: The RescueGroups.org publisher uses the publisher breeds and species mappings, so you should make sure that you have mappings for all your breeds and species before using the publisher (the publisher will give an error message if any species or breeds do not have mappings).
 
-savourlife.com.au
+savour-life.com.au
 ----------------
 
-ASM can integrate with savourlife.com.au and upload your animals for adoption
+ASM can integrate with savour-life.com.au and upload your animals for adoption
 directly to your account with them. 
 
 You will need to go to :menuselection:`Publishing --> Set Publishing Options`
