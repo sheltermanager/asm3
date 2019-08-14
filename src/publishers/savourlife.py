@@ -34,6 +34,29 @@ class SavourLifePublisher(AbstractPublisher):
         self.log("'%s' is not a valid SavourLife breed, using default 'Cross Breed'" % an.BREEDNAME1)
         return 305
 
+    def get_state(self, s):
+        """
+        Returns an Australian state abbreviation or empty string if a state name could not be found in s.
+        If s is already a 2 or 3 letter code, we just return it.
+        """
+        if len(s) == 2 or len(s) == 3: return s.upper()
+        states = {
+            "NSW":  [ "New South Wales", "ales" ],
+            "QLD":  [ "Queensland", "ueen" ],
+            "SA":   [ "South Australia", "outh" ],
+            "TAS":  [ "Tasmania", "mania" ],
+            "VIC":  [ "Victoria", "oria" ],
+            "WA":   [ "Western Australia", "ester" ],
+            "ACT":  [ "Australian Capital Territory", "apital" ],
+            "JBT":  [ "Jervis Bay Territory", "ervis" ],
+            "NT":   [ "Northern Territory", "orther" ]
+        }
+        for k, v in states.iteritems():
+            for p in v:
+                if s.find(p) != -1:
+                    return k
+        return ""
+
     def utf8_to_ascii(self, s):
         """
         PR return their responses as UTF8.
@@ -174,13 +197,13 @@ class SavourLifePublisher(AbstractPublisher):
 
                 # Use the fosterer's postcode, state and suburb if available
                 location_postcode = postcode
-                location_state_abbr = state
+                location_state_abbr = self.get_state(state)
                 location_suburb = suburb
                 if an.ACTIVEMOVEMENTID and an.ACTIVEMOVEMENTTYPE == 2:
                     fr = self.dbo.first_row(self.dbo.query("SELECT OwnerTown, OwnerCounty, OwnerPostcode FROM adoption m " \
                         "INNER JOIN owner o ON m.OwnerID = o.ID WHERE m.ID=?", [ an.ACTIVEMOVEMENTID ]))
                     if fr is not None and fr.OWNERPOSTCODE: location_postcode = fr.OWNERPOSTCODE
-                    if fr is not None and fr.OWNERCOUNTY: location_state_abbr = fr.OWNERCOUNTY
+                    if fr is not None and fr.OWNERCOUNTY: location_state_abbr = self.get_state(fr.OWNERCOUNTY)
                     if fr is not None and fr.OWNERTOWN: location_suburb = fr.OWNERTOWN
 
                 # Build a list of immutable photo URLs
@@ -210,7 +233,7 @@ class SavourLifePublisher(AbstractPublisher):
                     "Postcode":                 location_postcode,
                     "DOB":                      an.DATEOFBIRTH, # json handler should translate this to ISO
                     "enquiryNo":                enquirynumber, # valid enquiry number or null if we don't have one
-                    "AdoptionFee":              an.FEE / 100.0,
+                    "AdoptionFee":              utils.cint(an.FEE) / 100.0,
                     "IsDesexed":                an.Neutered == 1,
                     "IsWormed":                 wormed,
                     "IsVaccinated":             vaccinated,
@@ -233,7 +256,7 @@ class SavourLifePublisher(AbstractPublisher):
                     "IsOnHold":                 an.HASACTIVERESERVE == 1
                 }
 
-                # PetRescue will insert/update accordingly based on whether DogId is null or not
+                # SavourLife will insert/update accordingly based on whether DogId is null or not
                 url = SAVOURLIFE_URL + "setDog"
                 jsondata = utils.json(data)
                 self.log("Sending POST to %s to create/update listing: %s" % (url, jsondata))
@@ -245,6 +268,12 @@ class SavourLifePublisher(AbstractPublisher):
                     self.log("HTTP %d, headers: %s, response: %s" % (r["status"], r["headers"], self.utf8_to_ascii(r["response"])))
                     self.logSuccess("Processed: %s: %s (%d of %d)" % ( an["SHELTERCODE"], an["ANIMALNAME"], anCount, len(animals)))
                     processed.append(an)
+
+                    # If we didn't have a dogid, extract it from the response and store it
+                    # so future postings will update this dog's listing.
+                    if dogid is None:
+                        dogid = r["response"]
+                        animal.set_extra_id(self.dbo, "pub::savourlife", an, animal.IDTYPE_SAVOURLIFE, dogid)  
 
             except Exception as err:
                 self.logError("Failed processing animal: %s, %s" % (str(an["SHELTERCODE"]), err), sys.exc_info())

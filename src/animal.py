@@ -1316,13 +1316,14 @@ def get_extra_id(dbo, a, idtype=IDTYPE_SAVOURLIFE):
     in the form:  key1=value1|key2=value2 ...
     a: An animal result from get_animal_query containing ExtraIDs
     idtype: A string key, use one of the IDTYPE_ constants above
-    Returns the extra ID or None if there was no match
+    Returns the extra ID (string) or None if there was no match
     """
     if "EXTRAIDS" in a and a.EXTRAIDS is not None:
         for x in a.EXTRAIDS.split("|"):
-            k, v = x.split("=")
-            if k == idtype:
-                return v
+            if x.find("=") != -1:
+                k, v = x.split("=")
+                if k == idtype:
+                    return v
     return None
 
 def set_extra_id(dbo, user, a, idtype, idvalue):
@@ -1331,15 +1332,16 @@ def set_extra_id(dbo, user, a, idtype, idvalue):
     in the form:  key1=value1|key2=value2 ...
     a: An animal result from get_animal_query containing ExtraIDs and ID
     idtype: A string key, use one of the IDTYPE_ constants above
-    idvalue: The value of the key.
+    idvalue: The value of the key (will be coerced to string).
     """
     ids = []
-    ids.append( "idtype=%s" % idvalue )
+    ids.append( "%s=%s" % (idtype, idvalue) ) 
     extraids = a.EXTRAIDS 
     if extraids is None: extraids = ""
     for x in extraids.split("|"):
-        k, v = x.split("=")
-        if k != idtype: ids.append( "%s=%s" % (k, v))
+        if x.find("=") != -1:
+            k, v = x.split("=")
+            if k != idtype: ids.append( "%s=%s" % (k, v))
     extraids = "|".join(ids)
     dbo.update("animal", a.ID, { "ExtraIDs": extraids }, user)
     return extraids
