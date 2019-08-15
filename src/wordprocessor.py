@@ -524,6 +524,7 @@ def animal_tags(dbo, a, includeAdditional=True, includeCosts=True, includeDiet=T
             "MEDICALTREATMENTSREMAINING": "TREATMENTSREMAINING",
             "MEDICALNEXTTREATMENTDUE":  "d:NEXTTREATMENTDUE",
             "MEDICALLASTTREATMENTGIVEN": "d:LASTTREATMENTGIVEN",
+            "MEDICALLASTTREATMENTCOMMENTS": "LASTTREATMENTCOMMENTS",
             "MEDICALCOST":              "c:COST"
         }
         tags.update(table_tags(dbo, d, medical.get_regimens(dbo, a["ID"], not iic), "TREATMENTNAME", "NEXTTREATMENTDUE", "LASTTREATMENTGIVEN"))

@@ -1,6 +1,7 @@
 43
 ================
 
+15/08/19 Add <<MedicalLastTreatmentCommentsX>> token
 14/08/19 Copy flags when cloning from template #632
 12/08/19 Update hungarian translation (NOE Allatotthon Titkarsag)
 08/08/19 Prevent drag and drop returning future adoptions #643
