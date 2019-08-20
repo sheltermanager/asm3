@@ -44,7 +44,7 @@ PUBLISHER_LIST["pr"] = {
     "locales":  "en_AU"
 }
 PUBLISHER_LIST["sl"] = {
-    "label":    "Publish to SavourLife.com.au",
+    "label":    "Publish to Savour-Life.com.au",
     "class":    publishers.savourlife.SavourLifePublisher,
     "locales":  "en_AU"
 }
