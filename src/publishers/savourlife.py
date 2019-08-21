@@ -311,6 +311,9 @@ class SavourLifePublisher(AbstractPublisher):
                         # The savourlife dogid field that they returned when we first sent the record
                         dogid = animal.get_extra_id(self.dbo, an, animal.IDTYPE_SAVOURLIFE)
 
+                        # If there isn't a dogid, stop now because we can't do anything
+                        if dogid is None: continue
+
                         # The enquiry number is given by the savourlife website to the potential adopter,
                         # they pass it on to the shelter (who should add it to the animal record) so
                         # that it's set when we mark the animal adopted with savourlife. This gets the
