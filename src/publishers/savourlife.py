@@ -137,7 +137,9 @@ class SavourLifePublisher(AbstractPublisher):
         try:
             r = utils.post_json(url, jsondata)
             if r["status"] != 200:
+                self.setLastError("Authentication failed.")
                 self.logError("HTTP %d, headers: %s, response: %s" % (r["status"], r["headers"], r["response"]))
+                self.cleanup()
                 return
             token = r["response"].replace("\"", "")
             self.log("Token received: %s" % token)
@@ -334,7 +336,9 @@ class SavourLifePublisher(AbstractPublisher):
                         else:
                             self.log("HTTP %d, headers: %s, response: %s" % (r["status"], r["headers"], self.utf8_to_ascii(r["response"])))
                             self.logSuccess("Processed: %s: %s (%d of %d)" % ( an["SHELTERCODE"], an["ANIMALNAME"], anCount, len(animals)))
-                            processed.append(an)
+                            # It used to be that we updated animalpublished for this animal to get sentdate to today
+                            # we don't do this now so that we'll update dead listings every day for however many days we
+                            # look back, but that's it
 
                     except Exception as err:
                         self.logError("Failed calling setDogAdopted for %s - %s: %s" % (an.SHELTERCODE, an.ANIMALNAME, err), sys.exc_info())
