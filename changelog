@@ -1,6 +1,7 @@
 43
 ================
 
+22/08/19 Fix DONATIONGIFTAID type - check not integer
 22/08/19 Prevent clone_from_template breaking default flags #647
 15/08/19 Add <<MedicalLastTreatmentCommentsX>> token
 14/08/19 Copy flags when cloning from template #632

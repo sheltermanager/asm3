@@ -404,7 +404,7 @@ def csvimport(dbo, csvdata, encoding = "utf8", user = "", createmissinglookups =
             a["hiddenanimaldetails"] = gks(row, "ANIMALHIDDENDETAILS")
             a["healthproblems"] = gks(row, "ANIMALHEALTHPROBLEMS")
             a["notforadoption"] = gkbi(row, "ANIMALNOTFORADOPTION")
-            a["nonshelter"] = gkbi(row, "ANIMALNONSHELTER")
+            a["nonshelter"] = gkbc(row, "ANIMALNONSHELTER")
             a["housetrained"] = gkynu(row, "ANIMALHOUSETRAINED")
             a["goodwithcats"] = gkynu(row, "ANIMALGOODWITHCATS")
             a["goodwithdogs"] = gkynu(row, "ANIMALGOODWITHDOGS")
@@ -592,7 +592,7 @@ def csvimport(dbo, csvdata, encoding = "utf8", user = "", createmissinglookups =
             d["type"] = gkl(dbo, row, "DONATIONTYPE", "donationtype", "DonationName", createmissinglookups)
             if d["type"] == "0":
                 d["type"] = str(configuration.default_donation_type(dbo))
-            d["giftaid"] = gkbi(row, "DONATIONGIFTAID")
+            d["giftaid"] = gkbc(row, "DONATIONGIFTAID")
             d["payment"] = gkl(dbo, row, "DONATIONPAYMENT", "donationpayment", "PaymentName", createmissinglookups)
             if d["payment"] == "0":
                 d["payment"] = "1"
