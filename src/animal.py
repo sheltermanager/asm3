@@ -2736,11 +2736,13 @@ def clone_from_template(dbo, username, animalid, dob, animaltypeid, speciesid):
         "Fee, AnimalComments FROM animal WHERE ID = ?", [cloneanimalid]) )
     broughtin = copyfrom.datebroughtin
     newbroughtin = dbo.query_date("SELECT DateBroughtIn FROM animal WHERE ID = ?", [animalid])
+    # Only set flags on the new record if they are set on the template - just copying them
+    # meant that we were clearing defaults if they were set for not for adoption etc.
+    if copyfrom.isnotavailableforadoption == 1: dbo.update("animal", animalid, { "IsNotAvailableForAdoption": 1 })
+    if copyfrom.isnotforregistration == 1: dbo.update("animal", animalid, { "IsNotForRegistration": 1 })
+    if copyfrom.ishold == 1: dbo.update("animal", animalid, { "IsHold": 1 })
+    if copyfrom.additionalflags and copyfrom.additionalflags != "": dbo.update("animal", animalid, { "AdditionalFlags": copyfrom.additionalflags })
     dbo.update("animal", animalid, {
-        "IsNotAvailableForAdoption": copyfrom.isnotavailableforadoption,
-        "IsNotForRegistration":     copyfrom.isnotforregistration,
-        "IsHold":                   copyfrom.ishold,
-        "AdditionalFlags":          copyfrom.additionalflags,
         "Fee":                      copyfrom.fee,
         "AnimalComments":           copyfrom.animalcomments
     }, username, writeAudit=False)
