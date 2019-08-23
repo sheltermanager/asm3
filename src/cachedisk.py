@@ -9,13 +9,15 @@ import al
 import hashlib
 import os
 import time
+
 from sitedefs import DISK_CACHE
+from sitedefs import PYTHON2, PYTHON3
 
-# Python2
-import cPickle as pickle
+if PYTHON2:
+    import cPickle as pickle
 
-# Python3
-# import pickle
+if PYTHON3:
+    import pickle
 
 def _getfilename(key):
     """

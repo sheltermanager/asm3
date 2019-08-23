@@ -11,6 +11,10 @@ copy it from scripts/asm3.conf.example
 # Provides site-wide definitions, reading them from a configuration file
 import codecs, os, sys, json
 
+# Convenience flags for Python interpreter version
+PYTHON2 = sys.version_info[0] < 2
+PYTHON3 = sys.version_info[0] > 2
+
 # The map of values loaded from the config file
 cfg = None
 
@@ -65,10 +69,6 @@ def get_dict(k, dv = {}):
     v = get_string(k)
     if v == "": return dv
     return json.loads(v)
-
-# Convenience flags for Python interpreter version
-PYTHON2 = sys.version_info[0] < 2
-PYTHON3 = sys.version_info[0] > 2
 
 # The base URL to the ASM installation as seen by the client (should not end with /)
 BASE_URL = get_string("base_url", "http://localhost:5000")

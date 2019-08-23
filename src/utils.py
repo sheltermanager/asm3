@@ -24,19 +24,22 @@ from email.mime.multipart import MIMEMultipart
 from email.header import Header
 from email.utils import make_msgid, formatdate
 from email import Charset, Encoders
+
 from i18n import _, display2python, format_currency_no_symbol, format_time, python2display, VERSION
 from cStringIO import StringIO
+
 from sitedefs import BASE_URL, SMTP_SERVER, FROM_ADDRESS, HTML_TO_PDF
+from sitedefs import PYTHON2, PYTHON3
 
-# PYTHON2
-import htmlentitydefs
-import thread
-import urllib2
+if PYTHON2:
+    import htmlentitydefs
+    import thread
+    import urllib2
 
-# PYTHON3
-#import html.entities.entitydefs as htmlentitydefs
-#import _thread as thread
-#import urllib.request as urllib2
+if PYTHON3:
+    import html.entities.entitydefs as htmlentitydefs
+    import _thread as thread
+    import urllib.request as urllib2
 
 # Global reference to the Python websession. This is used to allow
 # debug mode with webpy by keeping a global single copy of the
