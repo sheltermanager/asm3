@@ -174,8 +174,8 @@ def get_recent_unneutered_adoptions(dbo, months = 1):
     """
     return dbo.query(get_movement_query(dbo) + \
         "WHERE m.MovementType = 1 AND m.MovementDate Is Not Null AND m.ReturnDate Is Null " \
-        "AND m.MovementDate > ? AND a.Neutered = 0 " \
-        "ORDER BY m.MovementDate DESC", [dbo.today(offset=months*-31)])
+        "AND m.MovementDate > ? AND a.Neutered = 0 AND a.SpeciesID IN ( " + configuration.alert_species_neuter(dbo) + ") " \
+        "ORDER BY m.MovementDate DESC" , [dbo.today(offset=months*-31)])
 
 def get_soft_releases(dbo):
     """

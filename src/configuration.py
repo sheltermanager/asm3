@@ -140,6 +140,8 @@ DEFAULTS = {
     "AFDefaultTestType": "1",
     "AFDefaultVaccinationType": "1",
     "AFNonShelterType": "40",
+    "AlertSpeciesMicrochip": "1,2",
+    "AlertSpeciesNeuter": "1,2",
     "AvidReRegistration": "No", 
     "AvidRegisterOverseas": "No",
     "AvidOverseasOriginCountry": "",
@@ -495,6 +497,16 @@ def age_group(dbo, band):
 
 def age_group_name(dbo, band):
     return cstring(dbo, "AgeGroup%dName" % band)
+
+def alert_species_microchip(dbo):
+    s = cstring(dbo, "AlertSpeciesMicrochip", DEFAULTS["AlertSpeciesMicrochip"])
+    if s == "": return "0" # Always return something due to IN clauses of queries
+    return s
+
+def alert_species_neuter(dbo):
+    s = cstring(dbo, "AlertSpeciesNeuter", DEFAULTS["AlertSpeciesNeuter"])
+    if s == "": return "0" # Always return something due to IN clauses of queries
+    return s
 
 def all_diary_home_page(dbo):
     return cboolean(dbo, "AllDiaryHomePage")

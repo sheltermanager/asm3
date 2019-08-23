@@ -119,6 +119,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#petfinder-com">petfinder.com</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#petrescue-com-au">petrescue.com.au</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#rescuegroups-org">rescuegroups.org</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#savour-life-com-au">savour-life.com.au</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#petslocated-com">petslocated.com</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#avid-pettrac-uk">AVID/PETtrac UK</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#identichip-anibase-uk">idENTICHIP/Anibase UK</a></li>
@@ -473,8 +474,8 @@ reference).</p>
 whether you will fly animals between states for adoption.</p>
 <p>PetRescue have a number of extra fields that you can set by creating additional
 animal fields with certain names in your database. The system responds to the
-field names, you can label them anything you want, they must have one of the
-links to animal records.</p>
+field names, you can label them anything you want, they must be linked to
+animal records.</p>
 <ul class="simple">
 <li>bestfeature (Text): PetRescue show a tagline at the top of listings.  By default,
 this value is set to “Looking for love” on all listings. You are allowed 25
@@ -516,6 +517,30 @@ publishers.</p>
 <div class="admonition warning">
 <p class="first admonition-title">Warning</p>
 <p class="last">The RescueGroups.org publisher uses the publisher breeds and species mappings, so you should make sure that you have mappings for all your breeds and species before using the publisher (the publisher will give an error message if any species or breeds do not have mappings).</p>
+</div>
+</div>
+<div class="section" id="savour-life-com-au">
+<h2>savour-life.com.au<a class="headerlink" href="#savour-life-com-au" title="Permalink to this headline">¶</a></h2>
+<p>ASM can integrate with savour-life.com.au and upload your animals for adoption
+directly to your account with them.</p>
+<p>You will need to go to <span class="menuselection">Publishing ‣ Set Publishing Options</span>
+first and view the SavourLife panel. Here, you should enter the username and
+password given to you by SavourLife. The options for filtering animals are the
+same as for other publishers, although ASM will only send dogs (Species 1) as
+SavourLife will not accept listings for other species of animals.</p>
+<p>SavourLife have extra fields that you can set by creating additional
+fields with certain names in your database. The system responds to the field
+names, you can label them anything you want, they must be linked to animal
+records.</p>
+<ul class="simple">
+<li>enquirynumber (Text): SavourLife will give potential adopters an enquiry
+number that can be given to the shelter. This enquiry number is used to link
+adopters with the adopted animal and qualify them for free food from
+SavourLife.</li>
+</ul>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">SavourLife integration relies on you naming your breeds and species with the same values that they do. If a breed does not match one of the SavourLife breeds, ASM will send it as “Mixed Breed” instead.</p>
 </div>
 </div>
 <div class="section" id="petslocated-com">

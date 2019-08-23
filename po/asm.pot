@@ -871,7 +871,7 @@ msgstr ""
 msgid "Alaskan Malamute"
 msgstr ""
 
-#: main.js publish_logs.js
+#: main.js options.js publish_logs.js
 msgid "Alerts"
 msgstr ""
 
@@ -10028,6 +10028,14 @@ msgstr ""
 
 #: options.js
 msgid "Show alerts on the home page"
+msgstr ""
+
+#: options.js
+msgid "Show an alert when these species of animals are not altered"
+msgstr ""
+
+#: options.js
+msgid "Show an alert when these species of animals are not microchipped"
 msgstr ""
 
 #: options.js

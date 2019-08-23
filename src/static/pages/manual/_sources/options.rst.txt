@@ -540,6 +540,14 @@ for adoption).
   lines showing how much money has been received in payments or spent in
   costs will be hidden from the home page.
 
+* Show an alert when these species of animals are not microchipped: The microchip
+  alerts on the home page and emblems will only be shown for these species of
+  animals (by default, dogs and cats)
+
+* Show an alert when these species of animals are not altered: The recently
+  adopted/unneutered animal alerts on the home page and emblems will only be 
+  shown for these species of animals (by default, dogs and cats)
+
 Lost and Found
 --------------
 

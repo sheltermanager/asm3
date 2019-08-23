@@ -578,7 +578,7 @@ def get_animals_not_microchipped(dbo):
     """
     Returns all shelter animals who have not been microchipped
     """
-    return dbo.query(get_animal_query(dbo) + " WHERE a.Identichipped = 0 AND a.Archived = 0")
+    return dbo.query(get_animal_query(dbo) + " WHERE a.Identichipped = 0 AND a.Archived = 0 AND a.SpeciesID IN (" + configuration.alert_species_microchip(dbo) + ")")
 
 def get_animals_hold(dbo):
     """
@@ -638,6 +638,8 @@ def get_alerts(dbo, locationfilter = "", siteid = 0, visibleanimalids = "", age 
     endoftoday = dbo.sql_date(dbo.today(settime="23:59:59"))
     locationfilter = get_location_filter_clause(locationfilter=locationfilter, siteid=siteid, visibleanimalids=visibleanimalids, andprefix=True)
     shelterfilter = ""
+    alertchip = configuration.alert_species_microchip(dbo)
+    alertneuter = configuration.alert_species_neuter(dbo)
     if not configuration.include_off_shelter_medical(dbo):
         shelterfilter = " AND (Archived = 0 OR ActiveMovementType = 2)"
     sql = "SELECT " \
@@ -671,9 +673,9 @@ def get_alerts(dbo, locationfilter = "", siteid = 0, visibleanimalids = "", age 
             "AND ReservationCancelledDate Is Null AND MovementType = 0 AND MovementDate Is Null) AS longrsv," \
         "(SELECT COUNT(*) FROM animal LEFT OUTER JOIN internallocation il ON il.ID = animal.ShelterLocation " \
             "WHERE Neutered = 0 AND ActiveMovementType = 1 AND " \
-            "ActiveMovementDate > %(onemonth)s %(locfilter)s) AS notneu," \
+            "ActiveMovementDate > %(onemonth)s %(locfilter)s AND SpeciesID IN ( %(alertneuter)s ) ) AS notneu," \
         "(SELECT COUNT(*) FROM animal LEFT OUTER JOIN internallocation il ON il.ID = animal.ShelterLocation " \
-            "WHERE Identichipped = 0 AND Archived = 0 %(locfilter)s) AS notchip, " \
+            "WHERE Identichipped = 0 AND Archived = 0 %(locfilter)s AND SpeciesID IN ( %(alertchip)s ) ) AS notchip, " \
         "(SELECT COUNT(*) FROM animal LEFT OUTER JOIN internallocation il ON il.ID = animal.ShelterLocation " \
             "WHERE Archived = 0 AND IsNotAvailableForAdoption = 1 %(locfilter)s) AS notadopt, " \
         "(SELECT COUNT(*) FROM animal WHERE Archived = 0 AND IsHold = 1 AND HoldUntilDate = %(tomorrow)s) AS holdtoday, " \
@@ -694,7 +696,7 @@ def get_alerts(dbo, locationfilter = "", siteid = 0, visibleanimalids = "", age 
         "(SELECT COUNT(*) FROM publishlog WHERE Alerts > 0 AND PublishDateTime >= %(today)s) AS publish " \
         "FROM lksmovementtype WHERE ID=1" \
             % { "today": today, "endoftoday": endoftoday, "tomorrow": tomorrow, "oneweek": oneweek, "oneyear": oneyear, "onemonth": onemonth, 
-                "futuremonth": futuremonth, "locfilter": locationfilter, "shelterfilter": shelterfilter }
+                "futuremonth": futuremonth, "locfilter": locationfilter, "shelterfilter": shelterfilter, "alertchip": alertchip, "alertneuter": alertneuter }
     return dbo.query_cache(sql, age=age)
 
 def get_stats(dbo, age=120):

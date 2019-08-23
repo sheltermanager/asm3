@@ -549,6 +549,8 @@ MedicalNextTreatmentDue
     The date of the next due treatment in the regimen
 MedicalLastTreatmentGiven
     The date the last treatment was given in the regimen
+MedicalLastTreatmentComments
+    The comments attached to the last treatment given
 MedicalCost
     The cost of this medical regimen
 MedicalComments
