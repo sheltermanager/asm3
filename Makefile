@@ -27,7 +27,7 @@ clean:
 	@echo "[clean] ============================"
 	rm -f cscope*
 	rm -f tags
-	rm -f src/*.py
+	rm -f src/*.pyc
 	rm -f src/asm3/*.pyc
 	rm -f src/asm3/dbms/*.pyc
 	rm -f src/asm3/locales/*.pyc
