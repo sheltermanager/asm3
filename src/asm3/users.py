@@ -333,8 +333,6 @@ def verify_password(plaintext, passwordhash):
     """
     if passwordhash.startswith("pbkdf2:"):
         scheme, algorithm, salt, iterations, phash = passwordhash.split(":")
-        print(asm3.pbkdf2.pbkdf2_hex(plaintext, salt, iterations=int(iterations), hashfunc=getattr(hashlib, algorithm)))
-        print(phash)
         return asm3.pbkdf2.pbkdf2_hex(plaintext, salt, iterations=int(iterations), hashfunc=getattr(hashlib, algorithm)) == phash
     elif passwordhash.startswith("plain:"):
         return plaintext == passwordhash[passwordhash.find(":")+1:]
