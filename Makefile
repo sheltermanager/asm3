@@ -37,10 +37,10 @@ version:
 	# Include me in any release target to stamp the 
 	# build date
 	@echo "[version] =========================="
-	sed "s/^VERSION =.*/VERSION = \"`cat VERSION` [`date`]\"/" src/i18n.py > i18ndt.py
+	sed "s/^VERSION =.*/VERSION = \"`cat VERSION` [`date`]\"/" src/asm3/i18n.py > i18ndt.py
 	sed "s/^BUILD =.*/BUILD = \"`date +%m%d%H%M`\"/" i18ndt.py > i18njs.py
 	rm -f i18ndt.py
-	mv -f i18njs.py src/i18n.py
+	mv -f i18njs.py src/asm3/i18n.py
 	cp changelog src/static/pages/changelog.txt
 
 minify:

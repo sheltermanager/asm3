@@ -25,7 +25,7 @@ def read_config_file():
     """
     global cfg
     fname = ""
-    insconf = os.path.dirname(os.path.abspath(__file__)) + os.sep + "asm3.conf"
+    insconf = os.path.dirname(os.path.abspath(__file__)) + os.sep + ".." + os.sep + "asm3.conf"
     homeconf = os.path.expanduser("~") + os.sep + ".asm3.conf"
     if "ASM3_CONF" in os.environ and os.environ["ASM3_CONF"] != "": fname = os.environ["ASM3_CONF"]
     elif os.path.exists(insconf): fname = insconf

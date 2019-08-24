@@ -22,7 +22,7 @@ import asm3.waitinglist
 from asm3.i18n import _, format_currency_no_symbol, format_time, now, python2display, yes_no
 from asm3.sitedefs import BASE_URL, QR_IMG_SRC
 
-import sys, zipfile
+import zipfile
 
 def org_tags(dbo, username):
     """

@@ -12,7 +12,6 @@ from asm3.sitedefs import SCALE_PDF_DURING_ATTACH, SCALE_PDF_CMD
 import base64
 import datetime
 import os
-import sys
 import tempfile
 import zipfile
 from PIL import ExifTags, Image
