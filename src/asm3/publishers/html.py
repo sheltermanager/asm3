@@ -324,7 +324,7 @@ class HTMLPublisher(FTPPublisher):
         # Remove original owner and other sensitive info from javascript database
         # before saving it
         for a in animals:
-            for k in a.iterkeys():
+            for k in a.keys():
                 if k.startswith("ORIGINALOWNER") or k.startswith("BROUGHTINBY") \
                     or k.startswith("RESERVEDOWNER") or k.startswith("CURRENTOWNER") \
                     or k == "DISPLAYLOCATION":
@@ -633,7 +633,7 @@ class HTMLPublisher(FTPPublisher):
         self.markAnimalsPublished(animals)
 
         # Upload the pages
-        for k, v in pages.iteritems():
+        for k, v in pages.items():
             self.log("Saving page to disk: %s (%d bytes)" % (k, len(v + footer)))
             self.saveFile(os.path.join(self.publishDir, self.escapePageName(k)), v + footer)
             self.log("Saved page to disk: %s" % k)
@@ -755,7 +755,7 @@ class HTMLPublisher(FTPPublisher):
             self.clearExistingHTML()
 
         # Upload the new pages
-        for k, v in pages.iteritems():
+        for k, v in pages.items():
             self.log("Saving page to disk: %s (%d bytes)" % (k, len(v)))
             self.saveFile(os.path.join(self.publishDir, k), v)
             self.log("Saved page to disk: %s" % k)
@@ -941,7 +941,7 @@ class HTMLPublisher(FTPPublisher):
         self.markAnimalsPublished(animals)
 
         # Upload the pages
-        for k, v in pages.iteritems():
+        for k, v in pages.items():
             self.log("Saving page to disk: %s (%d bytes)" % (k, len(v + footer)))
             self.saveFile(os.path.join(self.publishDir, self.escapePageName(k)), v + footer)
             self.log("Saved page to disk: %s" % k)

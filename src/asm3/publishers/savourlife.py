@@ -29,7 +29,7 @@ class SavourLifePublisher(AbstractPublisher):
         breed = an.BREEDNAME1
         if an.CROSSBREED == 1:
             breed = "%s cross" % breed
-        for k, v in DOG_BREEDS.iteritems():
+        for k, v in DOG_BREEDS.items():
             if v.lower().find(breed.lower()) != -1:
                 return int(k)
         self.log("'%s' is not a valid SavourLife breed, using default 'Cross Breed'" % an.BREEDNAME1)
@@ -52,7 +52,7 @@ class SavourLifePublisher(AbstractPublisher):
             "JBT":  [ "Jervis Bay Territory", "ervis" ],
             "NT":   [ "Northern Territory", "orther" ]
         }
-        for k, v in states.iteritems():
+        for k, v in states.items():
             for p in v:
                 if s.find(p) != -1:
                     return k
@@ -90,7 +90,7 @@ class SavourLifePublisher(AbstractPublisher):
             "8242": "'", # prime (stopwatch)
             "8243": "\"", # double prime
         }
-        for k, v in ENTITIES.iteritems():
+        for k, v in ENTITIES.items():
             s = s.replace("&#" + k + ";", v)
         return s
 

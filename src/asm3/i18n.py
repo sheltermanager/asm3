@@ -245,7 +245,7 @@ def get_locale_map(locale, index):
 def get_locales():
     locales = []
     # Build a list of locale, display name
-    for k, v in locale_maps.iteritems():
+    for k, v in locale_maps.items():
         if k.find("_") != -1 and k != "en":
             locales.append( (k, "%s (%s)" % (v[LM_LANGUAGE], v[LM_COUNTRY])) )
         else:

@@ -3514,7 +3514,7 @@ class mailmerge(JSONEndpoint):
         # construct a list of field tokens for the email helper
         fields = []
         if len(rows) > 0:
-            for fname in sorted(rows[0].iterkeys()):
+            for fname in sorted(rows[0].keys()):
                 fields.append(fname)
         # send the selection form
         title = _("Mail Merge - {0}", l).format(title)
@@ -5020,7 +5020,7 @@ class schemajs(ASMEndpoint):
                     try:
                         if realtable in tobj:
                             row = tobj[realtable].copy()
-                            for k in row.iterkeys():
+                            for k in row.keys():
                                 if k.endswith("ID") and k != "ID":
                                     row[k.replace("ID", "NAME")] = ""
                             tobj[t] = row
@@ -5125,7 +5125,7 @@ class sql(JSONEndpoint):
             if o.post["table"].strip() == "": return ""
             rows = o.dbo.query("SELECT * FROM %s" % o.post["table"], limit=1)
             if len(rows) == 0: return ""
-            return "|".join(sorted(rows[0].iterkeys()))
+            return "|".join(sorted(rows[0].keys()))
         except Exception as err:
             asm3.al.error("%s" % str(err), "code.sql", o.dbo)
             raise asm3.utils.ASMValidationError(str(err))

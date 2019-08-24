@@ -129,7 +129,7 @@ def xml(results):
     s = ""
     for row in results:
         cr = "    <row>\n"
-        for k, v in row.iteritems():
+        for k, v in row.items():
             if v is None:
                 v = "null"
             v = str(v)
@@ -150,7 +150,7 @@ def table(results):
     """
     if len(results) == 0: return ""
     s = "<thead>\n<tr>\n"
-    cols = sorted(results[0].iterkeys())
+    cols = sorted(results[0].keys())
     for c in cols:
         s += "<th>%s</th>\n" % c
     s += "</thead>\n<tbody>\n"
@@ -536,7 +536,7 @@ def menu_structure(l, publisherlist, reports, mailmerges):
     mailmerges: A list of tuples containing the report/mailmerge url and name
     """
     publishers = []
-    for k, v in publisherlist.iteritems():
+    for k, v in publisherlist.items():
         if k == "html": # HTML requires translated text, where other publishers are localised/English
             publishers.append(("", "", "", "publish?mode=html", "asm-icon-blank", _("Publish HTML via FTP", l) ))
         else:
@@ -745,7 +745,7 @@ def json_animalfindcolumns(dbo):
 
 def json_lookup_tables(l):
     aslist = []
-    for k, v in asm3.lookups.LOOKUP_TABLES.iteritems():
+    for k, v in asm3.lookups.LOOKUP_TABLES.items():
         if k.startswith("lks") and not k == "lksize":
             # static tables only appear in non-English locales
             # for translation purposes and to stop people messing 
@@ -804,7 +804,7 @@ def json_personfindcolumns(dbo):
 def json_quicklinks(dbo):
     l = dbo.locale
     ql = []
-    for k, v in asm3.configuration.QUICKLINKS_SET.iteritems():
+    for k, v in asm3.configuration.QUICKLINKS_SET.items():
         ql.append( ( str(k), translate(v[2], l) ) )
     ql = findcolumns_sort(ql)
     findcolumns_selectedtofront(ql, asm3.configuration.quicklinks_id(dbo))

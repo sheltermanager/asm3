@@ -206,7 +206,7 @@ class Database(object):
         """ Fix and encode/decode any string values before storing them in the database.
             string column names with an asterisk will not do XSS escaping.
         """
-        for k, v in values.copy().iteritems(): # Work from a copy to prevent iterator problems
+        for k, v in values.copy().items(): # Work from a copy to prevent iterator problems
             if asm3.utils.is_str(v) or asm3.utils.is_unicode(v):
                 if not DB_DECODE_HTML_ENTITIES:         # Store HTML entities as is
                     v = asm3.utils.encode_html(v)            # Turn any unicode chars into HTML entities
@@ -410,7 +410,7 @@ class Database(object):
         elif "ID" in values:
             iid = values["ID"]
         values = self.encode_str_before_write(values)
-        sql = "INSERT INTO %s (%s) VALUES (%s)" % ( table, ",".join(values.iterkeys()), self.sql_placeholders(values) )
+        sql = "INSERT INTO %s (%s) VALUES (%s)" % ( table, ",".join(values.keys()), self.sql_placeholders(values) )
         self.execute(sql, values.values(), override_lock=setOverrideDBLock)
         if writeAudit and iid != 0 and user != "":
             asm3.audit.create(self, user, table, iid, asm3.audit.get_parent_links(values, table), asm3.audit.dump_row(self, table, iid))
@@ -435,7 +435,7 @@ class Database(object):
         if asm3.utils.cint(where) > 0:
             iid = asm3.utils.cint(where)
             where = "ID=%s" % where
-        sql = "UPDATE %s SET %s WHERE %s" % ( table, ",".join( ["%s=?" % x for x in values.iterkeys()] ), where )
+        sql = "UPDATE %s SET %s WHERE %s" % ( table, ",".join( ["%s=?" % x for x in values.keys()] ), where )
         if iid > 0: 
             preaudit = self.query_row(table, iid)
         rows_affected = self.execute(sql, values.values(), override_lock=setOverrideDBLock)
@@ -820,7 +820,7 @@ class Database(object):
         fields = []
         donefields = False
         values = []
-        for k in sorted(r.iterkeys()):
+        for k in sorted(r.keys()):
             if not donefields:
                 fields.append(k)
             values.append(self.sql_value(r[k]))

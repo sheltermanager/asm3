@@ -794,7 +794,7 @@ class Report:
 
         # Replace any fields in the block based on the last row
         # in the group
-        for k, v in rs[gd.lastGroupEndPosition].iteritems():
+        for k, v in rs[gd.lastGroupEndPosition].items():
             out = self._ReplaceFields(out, k, self._DisplayValue(k, v))
 
         # Replace any of our special header/footer tokens
@@ -1436,7 +1436,7 @@ class Report:
                 if r[0] not in values:
                     values[r[0]] = []
                 values[r[0]].append("[%s, %s]" % (self.dbo.encode_str_after_read(r[1]), r[2]))
-            for k, v in values.iteritems():
+            for k, v in values.items():
                 self._Append("{ label: '%s', \n" % label(k))
                 self._Append("data: [%s], \n%s\n },\n" % (",".join(v), mode))
             # Remove trailing comma
@@ -1722,7 +1722,7 @@ class Report:
             # Make a temp string to hold the body block 
             # while we substitute fields for tags
             tempbody = cbody
-            for k, v in rs[row].iteritems():
+            for k, v in rs[row].items():
                 tempbody = self._ReplaceFields(tempbody, k, self._DisplayValue(k, v))
 
             # Update the last value for each group

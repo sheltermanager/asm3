@@ -4744,7 +4744,7 @@ def update_34014(dbo):
         "%html"          : "text/html",
         "http%"          : "text/url"
     }
-    for k, v in types.iteritems():
+    for k, v in types.items():
         dbo.execute_dbupdate("UPDATE media SET MediaMimeType = ? WHERE LOWER(MediaName) LIKE ?", (v, k))
     dbo.execute_dbupdate("UPDATE media SET MediaMimeType = 'application/octet-stream' WHERE MediaMimeType Is Null")
 

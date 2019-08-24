@@ -814,7 +814,7 @@ def csv(l, rows, cols = None, includeheader = True):
     out = UnicodeCSVWriter(strio)
     if cols is None:
         cols = []
-        for k, v in rows[0].iteritems():
+        for k, v in rows[0].items():
             cols.append(k)
         cols = sorted(cols)
     if includeheader: 
@@ -1332,7 +1332,7 @@ def send_email(dbo, replyadd, toadd, ccadd = "", bccadd = "", subject = "", body
         if "password" in SMTP_SERVER: password = SMTP_SERVER["password"]
         if "usetls" in SMTP_SERVER: usetls = SMTP_SERVER["usetls"]
         if "headers" in SMTP_SERVER: 
-            for k, v in SMTP_SERVER["headers"].iteritems():
+            for k, v in SMTP_SERVER["headers"].items():
                 add_header(msg, k, v)
      
     # Use sendmail or SMTP for the transport depending on config

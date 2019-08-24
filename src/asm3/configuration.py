@@ -396,7 +396,7 @@ def csave(dbo, username, post):
         # Only update the value in the database if it's new or changed
         if k not in cmap or cmap[k] != v: cset(dbo, k, v, sanitiseXSS = sanitiseXSS, invalidateConfigCache = False)
 
-    for k in post.data.iterkeys():
+    for k in post.data.keys():
         if k == "mode" or k == "filechooser": continue
         v = post.string(k, False)
         if k == "EmailSignature":

@@ -74,7 +74,7 @@ class PetRescuePublisher(AbstractPublisher):
             "8242": "'", # prime (stopwatch)
             "8243": "\"", # double prime
         }
-        for k, v in ENTITIES.iteritems():
+        for k, v in ENTITIES.items():
             s = s.replace("&#" + k + ";", v)
         return s
 

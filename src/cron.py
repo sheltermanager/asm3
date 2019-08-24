@@ -197,7 +197,7 @@ def maint_animal_figures_annual(dbo):
 def maint_db_diagnostic(dbo):
     try:
         d = dbupdate.diagnostic(dbo)
-        for k, v in d.iteritems():
+        for k, v in d.items():
             print("%s: %s" % (k, v))
     except:
         em = str(sys.exc_info()[0])
@@ -457,7 +457,7 @@ def run(dbo, mode):
     al.info("end %s: elapsed %0.2f secs" % (mode, elapsed), "cron.run", dbo)
 
 def run_all_map_databases(mode):
-    for alias in MULTIPLE_DATABASES_MAP.iterkeys():
+    for alias in MULTIPLE_DATABASES_MAP.keys():
         dbo = db.get_database(alias)
         dbo.timeout = 0
         dbo.connection = dbo.connect()

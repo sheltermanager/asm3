@@ -198,7 +198,7 @@ def strip_personal_data(rows):
         include_current: If False, strips CURRENTOWNER tokens (typically foster for shelter animals)
     """
     for r in rows:
-        for k in r.iterkeys():
+        for k in r.keys():
             if k.startswith("CURRENTOWNER") or k.startswith("ORIGINALOWNER") or k.startswith("BROUGHTINBY") or k.startswith("RESERVEDOWNER"):
                 r[k] = ""
     return rows

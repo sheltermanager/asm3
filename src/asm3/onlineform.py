@@ -333,7 +333,7 @@ def import_onlineform_html(dbo, h):
         tooltip = ""
         fieldtype = "TEXT"
         tag = "input"
-        for k, v in control.iteritems():
+        for k, v in control.items():
             if k == "name": 
                 name = v
                 label = v
@@ -630,7 +630,7 @@ def insert_onlineformincoming_from_form(dbo, post, remoteip):
     images = []
     post.data["formreceived"] = "%s %s" % (asm3.i18n.python2display(dbo.locale, posteddate), asm3.i18n.format_time(posteddate))
 
-    for k, v in post.data.iteritems():
+    for k, v in post.data.items():
 
         if k not in IGNORE_FIELDS and not k.startswith("asmSelect"):
             label = ""
@@ -926,7 +926,7 @@ def create_person(dbo, username, collationid):
     personname = asm3.person.get_person_name_code(dbo, personid)
     attach_form(dbo, username, asm3.media.PERSON, personid, collationid)
     # Was there a reserveanimalname field? If so, create reservation(s) to the person if possible
-    for k, v in d.iteritems():
+    for k, v in d.items():
         if k.startswith("reserveanimalname"):
             try:
                 asm3.movement.insert_reserve_for_animal_name(dbo, username, personid, formreceived, v)

@@ -70,7 +70,7 @@ def get_animal_data(dbo, pc=None, animalid=0, include_additional_fields=False, r
     # Strip any personal data if requested
     if strip_personal_data:
         for r in rows:
-            for k in r.iterkeys():
+            for k in r.keys():
                 if k.startswith("ORIGINALOWNER") or k.startswith("BROUGHTINBY") or k.startswith("CURRENTOWNER") or k.startswith("RESERVEDOWNER"):
                     r[k] = ""
 
@@ -841,7 +841,7 @@ class AbstractPublisher(threading.Thread):
                 m = a["FAILMESSAGE"]
             inclause[str(a["ID"])] = m
         # build a batch for inserting animalpublished entries into the table
-        for k, v in inclause.iteritems():
+        for k, v in inclause.items():
             batch.append( ( int(k), self.publisherKey, asm3.i18n.now(self.dbo.timezone), v ) )
         if len(inclause) == 0: return
         self.dbo.execute("DELETE FROM animalpublished WHERE PublishedTo = '%s' AND AnimalID IN (%s)" % (self.publisherKey, ",".join(inclause)))

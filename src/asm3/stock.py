@@ -175,7 +175,7 @@ def stock_take_from_mobile_form(dbo, username, post):
     if post.integer("usagetype") == 0:
         raise asm3.utils.ASMValidationError("No usage type passed")
 
-    for k in post.data.iterkeys():
+    for k in post.data.keys():
         if k.startswith("sl"):
             slid = asm3.utils.cint(k.replace("sl", ""))
             sl = get_stocklevel(dbo, slid)

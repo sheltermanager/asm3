@@ -1306,7 +1306,7 @@ def table_tags(dbo, d, rows, typefield = "", recentduefield = "", recentgivenfie
     for i, r in enumerate(rows, 1):
         
         # Create the indexed tags
-        for k, v in d.iteritems():
+        for k, v in d.items():
             tags[k + str(i)] = table_get_value(l, r, v)
 
         # Type suffixed tags
@@ -1321,14 +1321,14 @@ def table_tags(dbo, d, rows, typefield = "", recentduefield = "", recentgivenfie
             if t not in uniquetypes:
                 uniquetypes[t] = r
                 t = t.upper().replace(" ", "").replace("/", "")
-                for k, v in d.iteritems():
+                for k, v in d.items():
                     tags[k + t] = table_get_value(l, r, v)
 
     # Go backwards through rows
     for i, r in enumerate(reversed(rows), 1):
 
         # Create reversed index tags
-        for k, v in d.iteritems():
+        for k, v in d.items():
             tags[k + "LAST" + str(i)] = table_get_value(l, r, v)
 
         # Due suffixed tags
@@ -1341,7 +1341,7 @@ def table_tags(dbo, d, rows, typefield = "", recentduefield = "", recentgivenfie
             if t not in recentdue and r[recentduefield] is not None and r[recentgivenfield] is None:
                 recentdue[t] = r
                 t = t.upper().replace(" ", "").replace("/", "")
-                for k, v in d.iteritems():
+                for k, v in d.items():
                     tags[k + "DUE" + t] = table_get_value(l, r, v)
 
         # Recent suffixed tags
@@ -1354,7 +1354,7 @@ def table_tags(dbo, d, rows, typefield = "", recentduefield = "", recentgivenfie
             if t not in recentgiven and r[recentgivenfield] is not None:
                 recentgiven[t] = r
                 t = t.upper().replace(" ", "").replace("/", "")
-                for k, v in d.iteritems():
+                for k, v in d.items():
                     tags[k + "RECENT" + t] = table_get_value(l, r, v)
     return tags
 

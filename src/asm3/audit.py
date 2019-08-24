@@ -36,7 +36,7 @@ def get_parent_links(row, tablename = ""):
     # Make values an upper-case key copy of row, since query values can be
     # camel case and result rows are upper case
     values = dict( (k.upper(),v) for k,v in row.items())
-    for k, v in values.iteritems():
+    for k, v in values.items():
         if k in ( "ANIMALID", "OWNERID", "ANIMALCONTROLID" ):
             pl.append( "%s=%s " % ( k.lower().replace("id", ""), v ))
     if tablename == "media" and "LINKTYPEID" in values and "LINKID" in values:
@@ -88,7 +88,7 @@ def map_diff(row1, row2, ref = []):
         if rv in row1:
             s += str(row1[rv]) + " "
     s += ">>> "
-    for k, v in row1.iteritems():
+    for k, v in row1.items():
         if k in row2:
             if str(row1[k]) != str(row2[k]):
                 s += k + ": " + str(row1[k]) + " ==> " + str(row2[k]) + ", "
