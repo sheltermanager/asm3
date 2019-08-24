@@ -3,57 +3,56 @@
 import unittest
 import base
 
-import dbfs
-#import utils
+import asm3.dbfs
 
 class TestDBFS(unittest.TestCase):
 
     def setUp(self):
-        dbfs.put_string_filepath(base.get_dbo(), "/reports/nopic.jpg", "fake_jpg_image_data")
+        asm3.dbfs.put_string_filepath(base.get_dbo(), "/reports/nopic.jpg", "fake_jpg_image_data")
 
     def tearDown(self):
-        dbfs.delete_filepath(base.get_dbo(), "/reports/nopic.jpg")
+        asm3.dbfs.delete_filepath(base.get_dbo(), "/reports/nopic.jpg")
 
     def test_create_path(self):
-        dbfs.create_path(base.get_dbo(), "/", "test")
-        dbfs.delete_path(base.get_dbo(), "test")
-        dbfs.delete(base.get_dbo(), "test")
-        dbfs.delete_filepath(base.get_dbo(), "/test")
+        asm3.dbfs.create_path(base.get_dbo(), "/", "test")
+        asm3.dbfs.delete_path(base.get_dbo(), "test")
+        asm3.dbfs.delete(base.get_dbo(), "test")
+        asm3.dbfs.delete_filepath(base.get_dbo(), "/test")
 
     def test_get_string_filepath(self):
-        assert len(dbfs.get_string_filepath(base.get_dbo(), "/reports/nopic.jpg")) > 0
+        assert len(asm3.dbfs.get_string_filepath(base.get_dbo(), "/reports/nopic.jpg")) > 0
 
     def test_get_string(self):
-        assert len(dbfs.get_string(base.get_dbo(), "nopic.jpg", "/reports")) > 0
+        assert len(asm3.dbfs.get_string(base.get_dbo(), "nopic.jpg", "/reports")) > 0
 
     def test_put_string_filepath(self):
         content = "123test"
-        dbfs.put_string_filepath(base.get_dbo(), "/reports/test.txt", content)
-        assert content == dbfs.get_string_filepath(base.get_dbo(), "/reports/test.txt")
-        dbfs.delete_filepath(base.get_dbo(), "/reports/test.txt")
+        asm3.dbfs.put_string_filepath(base.get_dbo(), "/reports/test.txt", content)
+        assert content == asm3.dbfs.get_string_filepath(base.get_dbo(), "/reports/test.txt")
+        asm3.dbfs.delete_filepath(base.get_dbo(), "/reports/test.txt")
 
     def test_file_exists(self):
         content = "123test"
-        dbfs.put_string_filepath(base.get_dbo(), "/reports/test.txt", content)
-        assert dbfs.file_exists(base.get_dbo(), "test.txt")
+        asm3.dbfs.put_string_filepath(base.get_dbo(), "/reports/test.txt", content)
+        assert asm3.dbfs.file_exists(base.get_dbo(), "test.txt")
 
     def test_list_contents(self):
-        assert len(dbfs.list_contents(base.get_dbo(), "/reports")) > 0
+        assert len(asm3.dbfs.list_contents(base.get_dbo(), "/reports")) > 0
 
     def test_get_document_repository(self):
-        dbfs.get_document_repository(base.get_dbo())
+        asm3.dbfs.get_document_repository(base.get_dbo())
 
     def test_upload_document_repository(self):
-        dbfs.upload_document_repository(base.get_dbo(), "", "testdr.txt", "content")
-        assert dbfs.get_string_filepath(base.get_dbo(), "/document_repository/testdr.txt") == "content"
+        asm3.dbfs.upload_document_repository(base.get_dbo(), "", "testdr.txt", "content")
+        assert asm3.dbfs.get_string_filepath(base.get_dbo(), "/document_repository/testdr.txt") == "content"
 
     def test_get_report_images(self):
-        assert len(dbfs.get_report_images(base.get_dbo())) > 0
+        assert len(asm3.dbfs.get_report_images(base.get_dbo())) > 0
 
     def test_delete_orphaned_media(self):
-        dbfs.delete_orphaned_media(base.get_dbo())
+        asm3.dbfs.delete_orphaned_media(base.get_dbo())
 
     def test_switch_storage(self):
-        dbfs.switch_storage(base.get_dbo())
+        asm3.dbfs.switch_storage(base.get_dbo())
 
 

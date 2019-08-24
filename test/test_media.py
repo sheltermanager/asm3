@@ -3,8 +3,8 @@
 import unittest
 import base, base64
 
-import animal, media
-import utils
+import asm3.animal, asm3.media
+import asm3.utils
 
 class TestMedia(unittest.TestCase):
 
@@ -16,15 +16,15 @@ class TestMedia(unittest.TestCase):
             "entryreason": "1",
             "species": "1"
         }
-        post = utils.PostedData(data, "en")
-        nid, code = animal.insert_animal_from_form(base.get_dbo(), post, "test")
+        post = asm3.utils.PostedData(data, "en")
+        nid, code = asm3.animal.insert_animal_from_form(base.get_dbo(), post, "test")
         f = open(base.PATH + "../src/media/reports/nopic.jpg", "rb")
         data = f.read()
         f.close()
-        post = utils.PostedData({ "filename": "image.jpg", "filetype": "image/jpeg", "filedata": "data:image/jpeg;base64," + base64.b64encode(data) }, "en")
-        media.attach_file_from_form(base.get_dbo(), "test", media.ANIMAL, nid, post)
-        animal.delete_animal(base.get_dbo(), "test", nid)
+        post = asm3.utils.PostedData({ "filename": "image.jpg", "filetype": "image/jpeg", "filedata": "data:image/jpeg;base64," + base64.b64encode(data) }, "en")
+        asm3.media.attach_file_from_form(base.get_dbo(), "test", asm3.media.ANIMAL, nid, post)
+        asm3.animal.delete_animal(base.get_dbo(), "test", nid)
  
     def test_remove_expired_media(self):
-        media.remove_expired_media(base.get_dbo())
+        asm3.media.remove_expired_media(base.get_dbo())
 

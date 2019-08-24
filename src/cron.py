@@ -5,28 +5,29 @@ import os, sys
 # Add our modules to the sys.path
 sys.path.append(os.getcwd())
 
-import al
-import audit
-import animal
-import cachedisk
-import clinic
-import configuration
-import db
-import dbfs
-import dbupdate
-import diary
-import i18n
-import lostfound
-import media
-import movement
-import onlineform
-import person
-import publish
-import reports as extreports
+from asm3 import al
+from asm3 import audit
+from asm3 import animal
+from asm3 import cachedisk
+from asm3 import clinic
+from asm3 import configuration
+from asm3 import db
+from asm3 import dbfs
+from asm3 import dbupdate
+from asm3 import diary
+from asm3 import i18n
+from asm3 import lostfound
+from asm3 import media
+from asm3 import movement
+from asm3 import onlineform
+from asm3 import person
+from asm3 import publish
+from asm3 import reports as extreports
+from asm3 import utils
+from asm3 import waitinglist
+from asm3.sitedefs import LOCALE, TIMEZONE, MULTIPLE_DATABASES, MULTIPLE_DATABASES_TYPE, MULTIPLE_DATABASES_MAP
+
 import time
-import utils
-import waitinglist
-from sitedefs import LOCALE, TIMEZONE, MULTIPLE_DATABASES, MULTIPLE_DATABASES_TYPE, MULTIPLE_DATABASES_MAP
 
 def ttask(fn, dbo):
     """ Runs a function and times how long it takes """

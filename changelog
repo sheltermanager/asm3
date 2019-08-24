@@ -1,6 +1,8 @@
 43
 ================
 
+24/08/19 Polyglot code to support Python3 (tagged PYTHON3) #634
+24/08/19 Refactored into asm3 package to avoid Py3 collisions #634
 23/08/19 Options for microchip/neuter alerts on specific species #638
 22/08/19 Fix DONATIONGIFTAID type - check not integer
 22/08/19 Prevent clone_from_template breaking default flags #647

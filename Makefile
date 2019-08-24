@@ -15,7 +15,7 @@ distwin32: dist
 tags:
 	@echo "[tags] ============================"
 	rm -f tag
-	ctags -f tags src/*.py src/publishers/*.py src/dbms/*.py src/static/js/*.js
+	ctags -f tags src/*.py src/asm3/*.py src/asm3/publishers/*.py src/asm3/dbms/*.py src/static/js/*.js
 
 cscope:
 	@echo "[cscope] ==========================="
@@ -27,10 +27,11 @@ clean:
 	@echo "[clean] ============================"
 	rm -f cscope*
 	rm -f tags
-	rm -f src/*.pyc
-	rm -f src/dbms/*.pyc
-	rm -f src/locales/*.pyc
-	rm -f src/publishers/*.pyc
+	rm -f src/*.py
+	rm -f src/asm3/*.pyc
+	rm -f src/asm3/dbms/*.pyc
+	rm -f src/asm3/locales/*.pyc
+	rm -f src/asm3/publishers/*.pyc
 
 version:
 	# Include me in any release target to stamp the 
@@ -60,11 +61,7 @@ compilejsmin:
 
 compilepy:
 	@echo "[compile python] ====================="
-	@# 800 lines per method, 35 returns, 20 args, 60 locals
-	@# pychecker -L 800 -R 35 -J 20 -K 60 -j -b al,email,httplib,multiprocessing,subprocess,threading,web src/*.py src/dbms/*.py src/publishers/*.py
-	@# pylint --disable=C src/*.py
-	@# flake8 --config=scripts/flake8 src/*.py src/dbms/*.py src/publishers/*.py src/locales/*.py
-	flake8 --config=scripts/flake8 src/*.py src/dbms/*.py src/publishers/*.py
+	flake8 --config=scripts/flake8 src/*.py src/asm3/*.py src/asm3/dbms/*.py src/asm3/publishers/*.py
 
 smcom-dev: version clean minify
 	@echo "[smcom dev eur01] ===================="
@@ -100,7 +97,7 @@ pot:
 translation:
 	@echo "[translation] ======================"
 	cd po && ./po_to_python.py
-	mv po/locale*py src/locales
+	mv po/locale*py src/asm3/locales
 
 icons:
 	@echo "[icons] ==========================="

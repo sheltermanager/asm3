@@ -2,7 +2,6 @@
 
 import unittest
 import base
-import dbupdate
 
 fullsuite = []
 
@@ -124,7 +123,8 @@ fullsuite.append(suitewl)
 
 if __name__ == "__main__":
     base.reset_db()
-    dbupdate.install(base.get_dbo())
+    import asm3.dbupdate
+    asm3.dbupdate.install(base.get_dbo())
     s = unittest.TestSuite(fullsuite)
     #s = unittest.TestSuite([suitereports]) # How to run a single suite of tests
     runner = unittest.TextTestRunner()

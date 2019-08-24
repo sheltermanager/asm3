@@ -3,11 +3,10 @@
 import unittest
 import base
 
-import animalname
-import utils
+import asm3.animalname
 
 class TestAnimalName(unittest.TestCase):
 
     def test_get_random_name(self):
-        assert "" != animalname.get_random_name()
+        assert "" != asm3.animalname.get_random_name()
 

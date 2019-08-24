@@ -3,7 +3,7 @@
 import unittest
 import base
 
-import csvimport
+import asm3.csvimport
 
 class TestCSVImport(unittest.TestCase):
 
@@ -12,5 +12,5 @@ class TestCSVImport(unittest.TestCase):
 
     def test_csvimport(self):
         csvdata = "ANIMALNAME,ANIMALSEX,ANIMALAGE\n\"TestioCSV\",\"Male\",\"2\"\n"
-        csvimport.csvimport(base.get_dbo(), csvdata)
+        asm3.csvimport.csvimport(base.get_dbo(), csvdata)
 
