@@ -560,7 +560,10 @@ def substring(s, start, end = None):
         ur = us[start:]
     else:
         ur = us[start:end]
-    return ur.encode("ascii", "xmlcharrefreplace")
+    if sys.version_info[0] > 2: # PYTHON3 - keep the string as unicode for lang features
+        return ur.encode("ascii", "xmlcharrefreplace").decode("ascii")
+    else:
+        return ur.encode("ascii", "xmlcharrefreplace")
 
 def stringio(contents = ""):
     if contents != "": return StringIO(contents)
@@ -1001,9 +1004,14 @@ def read_text_file(name):
     """
     Reads a text file and returns the result as a string.
     """
-    with codecs.open(name, 'r', encoding='utf8') as f:
-        text = f.read()
-    return text.encode("ascii", "xmlcharrefreplace")
+    if sys.version_info[0] > 2: # PYTHON3
+        with codecs.open(name, 'r', encoding='utf8') as f:
+            text = f.read()
+        return text.encode("ascii", "xmlcharrefreplace").decode("ascii")
+    else:
+        with codecs.open(name, 'r', encoding='utf8') as f:
+            text = f.read()
+        return text.encode("ascii", "xmlcharrefreplace")
 
 def read_binary_file(name):
     """

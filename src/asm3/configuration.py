@@ -153,7 +153,7 @@ DEFAULTS = {
     "CreateBoardingCostOnAdoption": "Yes",
     "CreateCostTrx": "No",
     "CreateDonationTrx": "Yes",
-    "CodingFormat": "TYYYNNN",
+    "CodingFormat": "TYYYYNNN",
     "ShortCodingFormat": "NNT",
     "DefaultAnimalAge": "1.0", 
     "DefaultDailyBoardingCost": "2000",

@@ -411,7 +411,7 @@ class Database(object):
             iid = values["ID"]
         values = self.encode_str_before_write(values)
         sql = "INSERT INTO %s (%s) VALUES (%s)" % ( table, ",".join(values.keys()), self.sql_placeholders(values) )
-        self.execute(sql, values.values(), override_lock=setOverrideDBLock)
+        self.execute(sql, list(values.values()), override_lock=setOverrideDBLock)
         if writeAudit and iid != 0 and user != "":
             asm3.audit.create(self, user, table, iid, asm3.audit.get_parent_links(values, table), asm3.audit.dump_row(self, table, iid))
         return iid
@@ -438,7 +438,7 @@ class Database(object):
         sql = "UPDATE %s SET %s WHERE %s" % ( table, ",".join( ["%s=?" % x for x in values.keys()] ), where )
         if iid > 0: 
             preaudit = self.query_row(table, iid)
-        rows_affected = self.execute(sql, values.values(), override_lock=setOverrideDBLock)
+        rows_affected = self.execute(sql, list(values.values()), override_lock=setOverrideDBLock)
         if iid > 0:
             postaudit = self.query_row(table, iid)
         if user != "" and iid > 0 and writeAudit:

@@ -2461,9 +2461,9 @@ def install_default_templates(dbo, removeFirst = False):
             "IsBuiltIn": builtin
         })
     def add_html_template_from_files(name):
-        head = asm3.utils.read_binary_file(dbo.installpath + "media/internet/%s/head.html" % name)
-        foot = asm3.utils.read_binary_file(dbo.installpath + "media/internet/%s/foot.html" % name)
-        body = asm3.utils.read_binary_file(dbo.installpath + "media/internet/%s/body.html" % name)
+        head = asm3.utils.read_text_file(dbo.installpath + "media/internet/%s/head.html" % name)
+        foot = asm3.utils.read_text_file(dbo.installpath + "media/internet/%s/foot.html" % name)
+        body = asm3.utils.read_text_file(dbo.installpath + "media/internet/%s/body.html" % name)
         add_html_template(name, head, body, foot, 0)
     path = dbo.installpath
     if removeFirst:
@@ -5007,7 +5007,7 @@ def update_34108(dbo):
     dbo.insert("templatedocument", {
         "Name":     "clinic_invoice.html",
         "Path":     "/templates",
-        "Content":  base64.b64encode( asm3.utils.read_binary_file( dbo.installpath + "media/templates/clinic_invoice.html" ) )
+        "Content":  base64.b64encode( asm3.utils.read_text_file( dbo.installpath + "media/templates/clinic_invoice.html" ) )
     })
 
 def update_34109(dbo):
