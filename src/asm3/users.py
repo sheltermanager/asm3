@@ -10,7 +10,6 @@ import asm3.i18n
 import asm3.pbkdf2
 import asm3.utils
 
-import base64
 import hashlib
 import os
 import sys
@@ -317,7 +316,7 @@ def hash_password(plaintext, scheme = "pbkdf2"):
     elif scheme == "pbkdf2":
         PBKDF2_ITERATIONS = 10000
         PBKDF2_ALGORITHM = "sha1"
-        salt = base64.b64encode(os.urandom(16))
+        salt = asm3.utils.base64encode(os.urandom(16))
         h = asm3.pbkdf2.pbkdf2_hex(plaintext, salt, iterations=PBKDF2_ITERATIONS, hashfunc=getattr(hashlib, PBKDF2_ALGORITHM))
         return "pbkdf2:%s:%s:%d:%s" % (PBKDF2_ALGORITHM, salt, PBKDF2_ITERATIONS, h)
     elif scheme == "md5" or scheme == "md5java":

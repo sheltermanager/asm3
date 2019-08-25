@@ -18,7 +18,6 @@ import asm3.utils
 import asm3.waitinglist
 from asm3.sitedefs import BASE_URL, ASMSELECT_CSS, ASMSELECT_JS, JQUERY_JS, JQUERY_UI_JS, JQUERY_UI_CSS, SIGNATURE_JS, TIMEPICKER_CSS, TIMEPICKER_JS, TOUCHPUNCH_JS
 
-import base64
 import sys
 import web
 
@@ -680,7 +679,7 @@ def insert_onlineformincoming_from_form(dbo, post, remoteip):
                         # be included as attachments with confirmation emails.
                         if fieldtype == FIELDTYPE_IMAGE and v.startswith("data:image/jpeg"):
                             # Remove prefix of data:image/jpeg;base64, and decode
-                            images.append( ("%s.jpg" % fieldname, "image/jpeg", base64.b64decode(v[v.find(",")+1:])) )
+                            images.append( ("%s.jpg" % fieldname, "image/jpeg", asm3.utils.base64decode(v[v.find(",")+1:])) )
 
             # Do the insert
             dbo.insert("onlineformincoming", {

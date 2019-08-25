@@ -4,8 +4,6 @@ import asm3.audit
 import asm3.configuration
 import asm3.utils
 
-import base64
-
 def get_html_template(dbo, name):
     """ Returns a tuple of the header, body and footer values for template name """
     rows = dbo.query("SELECT * FROM templatehtml WHERE Name = ?", [name])
@@ -50,7 +48,7 @@ def get_document_templates(dbo):
 
 def get_document_template_content(dbo, dtid):
     """ Returns the document template content for a given ID """
-    return base64.b64decode( dbo.query_string("SELECT Content FROM templatedocument WHERE ID = ?", [dtid]) )
+    return asm3.utils.base64decode( dbo.query_string("SELECT Content FROM templatedocument WHERE ID = ?", [dtid]) )
 
 def get_document_template_name(dbo, dtid):
     """ Returns the name for a document template with an ID """
@@ -78,7 +76,7 @@ def create_document_template(dbo, username, name, ext = ".html", content = "<p><
     dtid = dbo.insert("templatedocument", {
         "Name":     name,
         "Path":     path,
-        "Content":  base64.b64encode(content)
+        "Content":  asm3.utils.base64encode(content)
     })
     asm3.audit.create(dbo, username, "templatedocument", dtid, "", "id: %d, name: %s" % (dtid, name))
     return dtid
@@ -116,7 +114,7 @@ def rename_document_template(dbo, username, dtid, newname):
 def update_document_template_content(dbo, dtid, content):
     """ Changes the content of a template """
     dbo.update("templatedocument", dtid, {
-        "Content":  base64.b64encode(content)
+        "Content":  asm3.utils.base64encode(content)
     })
 
 def sanitise_path(path):

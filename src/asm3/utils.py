@@ -6,6 +6,7 @@ import asm3.users
 
 from asm3.sitedefs import SMTP_SERVER, FROM_ADDRESS, HTML_TO_PDF
 
+import base64
 import codecs
 import csv as extcsv
 import datetime
@@ -654,6 +655,14 @@ def list_overlap(l1, l2):
         if l in l2:
             return True
     return False
+
+def base64encode(s):
+    """ Wrapper for base64 encoding """
+    return base64.b64encode(s)
+
+def base64decode(s):
+    """ Wrapper for base64 decoding """
+    return base64.b64decode(s)
 
 def regex_multi(pattern, findin):
     """

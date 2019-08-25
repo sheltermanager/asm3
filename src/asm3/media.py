@@ -9,7 +9,6 @@ import asm3.log
 import asm3.utils
 from asm3.sitedefs import SCALE_PDF_DURING_ATTACH, SCALE_PDF_CMD
 
-import base64
 import datetime
 import os
 import tempfile
@@ -264,7 +263,7 @@ def attach_file_from_form(dbo, username, linktype, linkid, post):
             filedata = filedata[filedata.find(",")+1:]
             # Browser escaping turns base64 pluses back into spaces, so switch back
             filedata = filedata.replace(" ", "+")
-        filedata = base64.b64decode(filedata)
+        filedata = asm3.utils.base64decode(filedata)
         asm3.al.debug("received data URI '%s' (%d bytes)" % (filename, len(filedata)), "media.attach_file_from_form", dbo)
         if ext == "":
             msg = "could not determine extension from file.type '%s', abandoning" % filetype

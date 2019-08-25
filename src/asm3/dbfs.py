@@ -6,7 +6,6 @@ import asm3.smcom
 import asm3.utils
 from asm3.sitedefs import DBFS_STORE, DBFS_FILESTORAGE_FOLDER, DBFS_S3_BUCKET
 
-import base64
 import mimetypes
 import os, sys
 import web
@@ -73,7 +72,7 @@ class B64DBStorage(DBFSStorage):
         if len(r) == 0:
             raise DBFSError("Could not find content for ID %s" % dbfsid)
         try:
-            return base64.b64decode(r[0][0])
+            return asm3.utils.base64decode(r[0][0])
         except:
             em = str(sys.exc_info()[0])
             raise DBFSError("Failed unpacking base64 content with ID %s: %s" % (dbfsid, em))
@@ -81,7 +80,7 @@ class B64DBStorage(DBFSStorage):
     def put(self, dbfsid, filename, filedata):
         """ Stores the file data and returns a URL """
         url = "base64:"
-        s = base64.b64encode(filedata)
+        s = asm3.utils.base64encode(filedata)
         self.dbo.execute("UPDATE dbfs SET URL = ?, Content = ? WHERE ID = ?", (url, s, dbfsid))
         return url
 

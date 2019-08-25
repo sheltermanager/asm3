@@ -14,7 +14,6 @@ import asm3.movement
 import asm3.person
 import asm3.utils
 
-import base64
 import datetime
 import re
 import sys
@@ -429,7 +428,7 @@ def csvimport(dbo, csvdata, encoding = "utf8", user = "", createmissinglookups =
                 r = asm3.utils.get_image_url(imagedata, timeout=5000)
                 if r["status"] == 200:
                     asm3.al.debug("retrieved image from %s (%s bytes)" % (imagedata, len(r["response"])), "csvimport.csvimport", dbo)
-                    imagedata = "data:image/jpeg;base64,%s" % base64.b64encode(r["response"])
+                    imagedata = "data:image/jpeg;base64,%s" % asm3.utils.base64encode(r["response"])
                 else:
                     row_error(errors, "animal", rowno, row, "error reading image from '%s': %s" % (imagedata, r), dbo, sys.exc_info())
                     continue
@@ -831,7 +830,7 @@ def csvexport_animals(dbo, dataset, animalids = "", includephoto = False):
         row["ANIMALNAME"] = a["ANIMALNAME"]
         if a["WEBSITEIMAGECOUNT"] > 0 and includephoto:
             mdate, mdata = asm3.media.get_image_file_data(dbo, "animal", a["ID"])
-            row["ANIMALIMAGE"] = "data:image/jpg;base64,%s" % base64.b64encode(mdata)
+            row["ANIMALIMAGE"] = "data:image/jpg;base64,%s" % asm3.utils.base64encode(mdata)
         row["ANIMALSEX"] = a["SEXNAME"]
         row["ANIMALTYPE"] = a["ANIMALTYPENAME"]
         row["ANIMALCOLOR"] = a["BASECOLOURNAME"]

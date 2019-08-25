@@ -17,7 +17,7 @@ import asm3.smcom
 import asm3.utils
 from asm3.i18n import _
 
-import os, sys, base64
+import os, sys
 
 VERSIONS = ( 
     2870, 3000, 3001, 3002, 3003, 3004, 3005, 3006, 3007, 3008, 3009, 3010, 3050,
@@ -2449,7 +2449,7 @@ def install_default_templates(dbo, removeFirst = False):
         dbo.insert("templatedocument", {
             "Name":     name,
             "Path":     path,
-            "Content":  base64.b64encode( asm3.utils.read_binary_file(filename) )
+            "Content":  asm3.utils.base64encode( asm3.utils.read_binary_file(filename) )
         })
     def add_html_template(name, head, body, foot, builtin):
         dbo.execute_dbupdate("DELETE FROM templatehtml WHERE Name = ?", [name])
@@ -2583,7 +2583,7 @@ def dump_dbfs_base64(dbo):
                 pass
         if content != "":
             url = "base64:"
-            content = base64.b64encode(content)
+            content = asm3.utils.base64encode(content)
         yield "INSERT INTO dbfs (ID, Name, Path, URL, Content) VALUES (%d, '%s', '%s', '%s', '%s');\n" % (r["ID"], r["NAME"], r["PATH"], url, content)
         del content
 
@@ -4879,7 +4879,7 @@ def update_34101(dbo):
             "ID":       nextid,
             "Name":     row.name,
             "Path":     row.path,
-            "Content":  base64.b64encode(content)
+            "Content":  asm3.utils.base64encode(content)
         }, generateID=False, setOverrideDBLock=True)
         nextid += 1
 
@@ -5007,7 +5007,7 @@ def update_34108(dbo):
     dbo.insert("templatedocument", {
         "Name":     "clinic_invoice.html",
         "Path":     "/templates",
-        "Content":  base64.b64encode( asm3.utils.read_text_file( dbo.installpath + "media/templates/clinic_invoice.html" ) )
+        "Content":  asm3.utils.base64encode( asm3.utils.read_text_file( dbo.installpath + "media/templates/clinic_invoice.html" ) )
     })
 
 def update_34109(dbo):
