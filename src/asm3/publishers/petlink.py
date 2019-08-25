@@ -7,7 +7,6 @@ import asm3.utils
 from .base import AbstractPublisher, get_microchip_data
 from asm3.sitedefs import PETLINK_BASE_URL
 
-import base64
 import sys
 
 UPLOAD_URL = PETLINK_BASE_URL + "api/restapi/signup/mass-import?filename=import.csv&mediumId=sheltermanager"
@@ -191,7 +190,7 @@ class PetLinkPublisher(AbstractPublisher):
 
         # POST the csv data
         headers = {
-            "Authorization": "Basic %s" % base64.b64encode("%s:%s" % (plemail, password)),
+            "Authorization": "Basic %s" % asm3.utils.base64encode("%s:%s" % (plemail, password)),
             "Content-Type":  "text/csv"
         }
         self.log("Uploading data file (%d csv lines) to %s..." % (len(csv), UPLOAD_URL))

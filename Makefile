@@ -31,6 +31,7 @@ clean:
 	rm -f src/asm3/*.pyc
 	rm -f src/asm3/dbms/*.pyc
 	rm -f src/asm3/locales/*.pyc
+	rm -f src/asm3/pbkdf2/*.pyc
 	rm -f src/asm3/publishers/*.pyc
 
 version:

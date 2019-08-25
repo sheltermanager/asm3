@@ -1,7 +1,6 @@
 #!/usr/bin/python
 
 import os, sys
-import base64
 import collections
 import mimetypes
 import web
@@ -2557,7 +2556,7 @@ class document_repository(JSONEndpoint):
             if filedata.startswith("data:"):
                 filedata = filedata[filedata.find(",")+1:]
                 filedata = filedata.replace(" ", "+") # Unescape turns pluses back into spaces, which breaks base64
-            filedata = base64.b64decode(filedata)
+            filedata = asm3.utils.base64decode(filedata)
         else:
             # Otherwise it's an old style file input
             filename = asm3.utils.filename_only(o.post.data.filechooser.filename)

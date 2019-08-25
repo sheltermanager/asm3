@@ -354,12 +354,21 @@ def is_unicode(s):
     else:
         return isinstance(s, unicode) # noqa: F821
 
+def cbytes(s, encoding = "utf-8"):
+    """
+    Converts a unicode str to a utf-8 bytes string
+    """
+    if sys.version_info[0] > 2: # PYTHON3
+        if isinstance(s, str): return s.encode("utf-8")
+    return s # Already byte string for python 2
+
 def cunicode(s, encoding = "utf8"):
     """
     Converts a UTF-8 encoded str to unicode
     """
-    if sys.version_info[0] > 2: # PYTHON3 - should already be unicode
-        return s
+    if sys.version_info[0] > 2: # PYTHON3 - str should already be unicode, but convert bytes strings if we've got one
+        if isinstance(s, bytes): return s.decode("utf-8")
+        return str(s)
     else:
         return unicode(s, encoding) # noqa: F821
 
@@ -415,8 +424,6 @@ def iif(c, t, f):
 def nulltostr(s):
     try:
         if s is None: return ""
-        if is_unicode(s):
-            s = s.encode("ascii", "xmlcharrefreplace")
         return str(s)
     except:
         em = "[" + str(sys.exc_info()[0]) + "]"
@@ -659,15 +666,30 @@ def list_overlap(l1, l2):
 
 def base64encode(s):
     """ Wrapper for base64 encoding """
-    if sys.version_info[0] > 2 and isinstance(s, str): # PYTHON3 - only byte strings can be encoded, if we're given a unicode string, convert to ascii
-        return base64.b64encode( s.encode("ascii") )
+    if sys.version_info[0] > 2 and isinstance(s, str): # PYTHON3 - only byte strings can be encoded, if we're given a unicode string, convert it
+        return base64.b64encode( s.encode("utf-8") )
     return base64.b64encode(s)
 
 def base64decode(s):
     """ Wrapper for base64 decoding """
-    if sys.version_info[0] > 2 and isinstance(s, str): # PYTHON3 - only byte strings can be decoded, if we're given a unicode string, convert to ascii
-        return base64.b64decode( s.encode("ascii") )
+    if sys.version_info[0] > 2 and isinstance(s, str): # PYTHON3 - only byte strings can be decoded, if we're given a unicode string, convert it
+        return base64.b64decode( s.encode("utf-8") )
     return base64.b64decode(s)
+
+def pbkdf2_hash_hex(plaintext, salt="", algorithm="sha1", iterations=1000):
+    """ Returns a hex pbkdf2 hash of the plaintext given. 
+        If salt is not given, a random salt is generated.
+        We have implementations for both python2 and python3
+        The return type is str whatever version of python.
+    """
+    if salt == "": salt = base64.b64encode(os.urandom(16))
+    hashfunc = getattr(hashlib, algorithm)
+    if sys.version_info[0] > 2: # PYTHON3
+        import asm3.pbkdf2.pbkdf23
+        return str(asm3.pbkdf2.pbkdf23.pbkdf2(hashfunc, cbytes(plaintext), cbytes(salt), iterations, 24).hex())
+    else:
+        import asm3.pbkdf2.pbkdf22
+        return str(asm3.pbkdf2.pbkdf22.pbkdf2_hex(cbytes(plaintext), cbytes(salt), iterations, 24, hashfunc))
 
 def regex_multi(pattern, findin):
     """

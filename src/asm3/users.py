@@ -7,7 +7,6 @@ import asm3.configuration
 import asm3.db
 import asm3.dbupdate
 import asm3.i18n
-import asm3.pbkdf2
 import asm3.utils
 
 import hashlib
@@ -317,10 +316,10 @@ def hash_password(plaintext, scheme = "pbkdf2"):
         PBKDF2_ITERATIONS = 10000
         PBKDF2_ALGORITHM = "sha1"
         salt = asm3.utils.base64encode(os.urandom(16))
-        h = asm3.pbkdf2.pbkdf2_hex(plaintext, salt, iterations=PBKDF2_ITERATIONS, hashfunc=getattr(hashlib, PBKDF2_ALGORITHM))
-        return "pbkdf2:%s:%s:%d:%s" % (PBKDF2_ALGORITHM, salt, PBKDF2_ITERATIONS, h)
+        h = asm3.utils.pbkdf2_hash_hex(plaintext, salt, PBKDF2_ALGORITHM, PBKDF2_ITERATIONS)
+        return "pbkdf2:%s:%s:%d:%s" % (PBKDF2_ALGORITHM, asm3.utils.cunicode(salt), PBKDF2_ITERATIONS, h)
     elif scheme == "md5" or scheme == "md5java":
-        h = hashlib.md5(plaintext).hexdigest()
+        h = hashlib.md5(asm3.utils.cbytes(plaintext)).hexdigest()
         if scheme == "md5java" and h.startswith("0"): h = h[1:]
         return "%s:%s" % (scheme, h)
 
@@ -332,7 +331,7 @@ def verify_password(plaintext, passwordhash):
     """
     if passwordhash.startswith("pbkdf2:"):
         scheme, algorithm, salt, iterations, phash = passwordhash.split(":")
-        return asm3.pbkdf2.pbkdf2_hex(plaintext, salt, iterations=int(iterations), hashfunc=getattr(hashlib, algorithm)) == phash
+        return asm3.utils.pbkdf2_hash_hex(plaintext, salt, algorithm, int(iterations)) == phash
     elif passwordhash.startswith("plain:"):
         return plaintext == passwordhash[passwordhash.find(":")+1:]
     elif passwordhash.startswith("md5:"):
@@ -341,7 +340,7 @@ def verify_password(plaintext, passwordhash):
         return hash_password(plaintext, "md5java") == passwordhash
     else:
         # Fall back to assuming historic undecorated md5
-        md5py = hashlib.md5(plaintext).hexdigest()
+        md5py = hashlib.md5(asm3.utils.cbytes(plaintext)).hexdigest()
         md5java = md5py
         if md5java.startswith("0"): md5java = md5java[1:]
         return passwordhash == md5py or passwordhash == md5java
