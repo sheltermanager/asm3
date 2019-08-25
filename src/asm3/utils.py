@@ -21,6 +21,7 @@ import subprocess
 import sys
 import tempfile
 import web
+import zipfile
 
 if sys.version_info[0] > 2: # PYTHON3
     from html.entities import entitydefs as htmlentitydefs
@@ -658,10 +659,14 @@ def list_overlap(l1, l2):
 
 def base64encode(s):
     """ Wrapper for base64 encoding """
+    if sys.version_info[0] > 2 and isinstance(s, str): # PYTHON3 - only byte strings can be encoded, if we're given a unicode string, convert to ascii
+        return base64.b64encode( s.encode("ascii") )
     return base64.b64encode(s)
 
 def base64decode(s):
     """ Wrapper for base64 decoding """
+    if sys.version_info[0] > 2 and isinstance(s, str): # PYTHON3 - only byte strings can be decoded, if we're given a unicode string, convert to ascii
+        return base64.b64decode( s.encode("ascii") )
     return base64.b64decode(s)
 
 def regex_multi(pattern, findin):
@@ -751,10 +756,20 @@ class UnicodeCSVReader(object):
         row = self.reader.next()
         return [ self.process(s) for s in row ]
 
+    def __next__(self):
+        """ 
+        PYTHON3
+        __next__() -> unicode
+        This function reads and returns the next line as a Unicode string.
+        """
+        row = self.reader.__next__()
+        return [ self.process(s) for s in row ]
+
     def process(self, s):
         """ Process an element """
         x = cunicode(s, self.encoding) # decode to unicode with selected encoding
         x = x.encode("ascii", "xmlcharrefreplace") # encode back to ascii, using XML entities
+        if sys.version_info[0] > 2: x = x.decode("ascii") # PYTHON3 - back to unicode str
         if x.startswith("\""): x = x[1:] # strip any unwanted quotes from the beginning
         if x.endswith("\""): x = x[0:len(x)-1] # ... and end
         return x
@@ -772,6 +787,14 @@ class UnicodeCSVDictReader(object):
         self.cols = self.reader.next()
 
     def next(self):
+        row = self.reader.next()
+        d = {}
+        for (c, r) in zip(self.cols, row):
+            d[c] = r
+        return d
+
+    def __next__(self):
+        """ PYTHON3 """
         row = self.reader.next()
         d = {}
         for (c, r) in zip(self.cols, row):
@@ -1008,6 +1031,38 @@ def post_xml(url, xml, headers = {}):
     Posts an XML document to a URL
     """
     return post_data(url, xml, contenttype="text/xml", headers=headers)
+
+def zip_extract(zipfilename, filename):
+    """
+    Reads zipfile zipfilename and extracts filename, returning its contents as a bytes string.
+    """
+    with open(zipfilename, "rb") as zff:
+        zf = zipfile.ZipFile(zff, "r")
+        content = zf.open(filename).read()
+        return content
+
+def zip_extract_text(zipfilename, filename):
+    """
+    Reads the text file filename from zipfilename
+    """
+    return str(zip_extract(zipfilename, filename))
+
+def zip_replace(zipfilename, filename, content):
+    """
+    Reads zipfilename, then replaces filename with content and returns the new zip file as a bytes string.
+    """
+    with open(zipfilename, "rb") as zff:
+        zf = zipfile.ZipFile(zff, "r")
+        zo = stringio()
+        zfo = zipfile.ZipFile(zo, "w", zipfile.ZIP_DEFLATED)
+        for f in zf.namelist():
+            if f == filename:
+                zfo.writestr(filename, content)
+            else:
+                zfo.writestr(f, zf.open(f).read())
+        zf.close()
+        zfo.close()
+        return zo.getvalue()
 
 def read_text_file(name):
     """

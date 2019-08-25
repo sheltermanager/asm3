@@ -7,7 +7,7 @@ import asm3.i18n
 import asm3.movement
 import asm3.utils
 
-import zipfile, sys
+import sys
 
 BANK = 1
 CREDITCARD = 2
@@ -1226,11 +1226,10 @@ def giftaid_spreadsheet(dbo, path, fromdate, todate):
     # Get the zip file containing our tax year template and load
     # it into an in-memory file
     try:
-        ods = open(path + "static/docs/giftaid.ods", "rb")
-        zf = zipfile.ZipFile(ods, "r")
+        # Load the content.xml file from the template ods
+        templateods = path + "static/docs/giftaid.ods"
+        content = asm3.utils.zip_extract_text(templateods, "content.xml")
 
-        # Load the content.xml file
-        content = zf.open("content.xml").read()
         dons = dbo.query("SELECT od.Date AS DonationDate, od.Donation AS DonationAmount, o.* " \
             "FROM ownerdonation od " \
             "INNER JOIN owner o ON od.OwnerID = o.ID " \
@@ -1283,18 +1282,9 @@ def giftaid_spreadsheet(dbo, path, fromdate, todate):
         content = content.replace("54,321,000.00</text:p>", str(dontotal) + "</text:p>", 1)
         content = content.replace("office:value=\"54321000\"", "office:value=\"" + str(dontotal) + "\"", 1)
 
-        # Write the replacement file
-        zo = asm3.utils.stringio()
-        zfo = zipfile.ZipFile(zo, "w")
-        for f in zf.namelist():
-            if f == "content.xml":
-                zfo.writestr("content.xml", content)
-            else:
-                zfo.writestr(f, zf.open(f).read())
-        zf.close()
-        zfo.close()
-        # Return the zip data
-        return zo.getvalue()
+        # Update the file and return the replacement zip 
+        return asm3.utils.zip_replace(templateods, "content.xml", content)
+
     except Exception as zderr:
         asm3.al.error("failed generating spreadsheet: %s" % str(zderr), "financial.giftaid_spreadsheet", dbo, sys.exc_info())
         raise asm3.utils.ASMError("Failed generating spreadsheet: %s" % str(zderr))
