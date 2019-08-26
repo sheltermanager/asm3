@@ -601,11 +601,11 @@ def scale_image(imagedata, resizespec):
         size = w, w
         if h > w: size = h, h
         # Load the image data into a StringIO object and scale it
-        file_data = asm3.utils.stringio(imagedata)
+        file_data = asm3.utils.bytesio(imagedata)
         im = Image.open(file_data)
         im.thumbnail(size, Image.ANTIALIAS)
         # Save the scaled down image data into another string for return
-        output = asm3.utils.stringio()
+        output = asm3.utils.bytesio()
         im.save(output, "JPEG")
         scaled_data = output.getvalue()
         output.close()
@@ -620,7 +620,7 @@ def auto_rotate_image(dbo, imagedata):
     image in the EXIF data. 
     """
     try:
-        inputd = asm3.utils.stringio(imagedata)
+        inputd = asm3.utils.bytesio(imagedata)
         im = Image.open(inputd)
         for orientation in ExifTags.TAGS.keys():
             if ExifTags.TAGS[orientation] == "Orientation":
@@ -632,7 +632,7 @@ def auto_rotate_image(dbo, imagedata):
         if exif[orientation] == 3:   im = im.transpose(Image.ROTATE_180)
         elif exif[orientation] == 6: im = im.transpose(Image.ROTATE_270)
         elif exif[orientation] == 8: im = im.transpose(Image.ROTATE_90)
-        output = asm3.utils.stringio()
+        output = asm3.utils.bytesio()
         im.save(output, "JPEG")
         rotated_data = output.getvalue()
         output.close()
@@ -647,13 +647,13 @@ def rotate_image(imagedata, clockwise = True):
     clockwise: Rotate 90 degrees clockwise, if false rotates anticlockwise
     """
     try:
-        inputd = asm3.utils.stringio(imagedata)
+        inputd = asm3.utils.bytesio(imagedata)
         im = Image.open(inputd)
         if clockwise:
             im = im.transpose(Image.ROTATE_270)
         else:
             im = im.transpose(Image.ROTATE_90)
-        output = asm3.utils.stringio()
+        output = asm3.utils.bytesio()
         im.save(output, "JPEG")
         rotated_data = output.getvalue()
         output.close()
@@ -751,13 +751,13 @@ def scale_odt(filedata):
     in the root or in the "ObjectReplacements" folder. Everything in the "Pictures"
     folder is also removed.
     """
-    odt = asm3.utils.stringio(filedata)
+    odt = asm3.utils.bytesio(filedata)
     try:
         zf = zipfile.ZipFile(odt, "r")
     except zipfile.BadZipfile:
         return ""
     # Write the replacement file
-    zo = asm3.utils.stringio()
+    zo = asm3.utils.bytesio()
     zfo = zipfile.ZipFile(zo, "w", zipfile.ZIP_DEFLATED)
     for info in zf.infolist():
         # Skip any object or image files to save space

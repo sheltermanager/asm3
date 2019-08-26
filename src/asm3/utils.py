@@ -1012,10 +1012,10 @@ def get_image_url(url, headers = {}, cookies = {}, timeout = None):
     # requests timeout is seconds/float, but some may call this with integer ms instead so convert
     if timeout is not None and timeout > 1000: timeout = timeout / 1000.0
     r = requests.get(url, headers = headers, cookies=cookies, timeout=timeout, stream=True)
-    s = stringio()
+    b = bytesio()
     for chunk in r:
         s.write(chunk) # default from requests is 128 byte chunks
-    return { "cookies": r.cookies, "headers": r.headers, "response": s.getvalue(), "status": r.status_code, "requestheaders": r.request.headers, "requestbody": r.request.body }
+    return { "cookies": r.cookies, "headers": r.headers, "response": b.getvalue(), "status": r.status_code, "requestheaders": r.request.headers, "requestbody": r.request.body }
 
 def post_data(url, data, contenttype = "", httpmethod = "", headers = {}):
     """
@@ -1222,7 +1222,7 @@ def generate_label_pdf(dbo, locale, records, papersize, units, hpitch, vpitch, w
     if papersize == "letter":
         psize = letter
 
-    fout = stringio()
+    fout = bytesio()
     doc = SimpleDocTemplate(fout, pagesize=psize, leftMargin = lmargin * unit, topMargin = tmargin * unit, rightMargin = 0, bottomMargin = 0)
     col = 0
     row = 0
