@@ -1014,7 +1014,7 @@ def get_image_url(url, headers = {}, cookies = {}, timeout = None):
     r = requests.get(url, headers = headers, cookies=cookies, timeout=timeout, stream=True)
     b = bytesio()
     for chunk in r:
-        s.write(chunk) # default from requests is 128 byte chunks
+        b.write(chunk) # default from requests is 128 byte chunks
     return { "cookies": r.cookies, "headers": r.headers, "response": b.getvalue(), "status": r.status_code, "requestheaders": r.request.headers, "requestbody": r.request.body }
 
 def post_data(url, data, contenttype = "", httpmethod = "", headers = {}):
