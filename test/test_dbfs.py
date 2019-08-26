@@ -1,4 +1,4 @@
-#!/usr/bin/python env
+
 
 import unittest
 import base
@@ -8,7 +8,7 @@ import asm3.dbfs
 class TestDBFS(unittest.TestCase):
 
     def setUp(self):
-        asm3.dbfs.put_string_filepath(base.get_dbo(), "/reports/nopic.jpg", "fake_jpg_image_data")
+        asm3.dbfs.put_string_filepath(base.get_dbo(), "/reports/nopic.jpg", b"fake_jpg_image_data")
 
     def tearDown(self):
         asm3.dbfs.delete_filepath(base.get_dbo(), "/reports/nopic.jpg")
@@ -26,13 +26,13 @@ class TestDBFS(unittest.TestCase):
         assert len(asm3.dbfs.get_string(base.get_dbo(), "nopic.jpg", "/reports")) > 0
 
     def test_put_string_filepath(self):
-        content = "123test"
+        content = b"123test"
         asm3.dbfs.put_string_filepath(base.get_dbo(), "/reports/test.txt", content)
         assert content == asm3.dbfs.get_string_filepath(base.get_dbo(), "/reports/test.txt")
         asm3.dbfs.delete_filepath(base.get_dbo(), "/reports/test.txt")
 
     def test_file_exists(self):
-        content = "123test"
+        content = b"123test"
         asm3.dbfs.put_string_filepath(base.get_dbo(), "/reports/test.txt", content)
         assert asm3.dbfs.file_exists(base.get_dbo(), "test.txt")
 
@@ -43,8 +43,8 @@ class TestDBFS(unittest.TestCase):
         asm3.dbfs.get_document_repository(base.get_dbo())
 
     def test_upload_document_repository(self):
-        asm3.dbfs.upload_document_repository(base.get_dbo(), "", "testdr.txt", "content")
-        assert asm3.dbfs.get_string_filepath(base.get_dbo(), "/document_repository/testdr.txt") == "content"
+        asm3.dbfs.upload_document_repository(base.get_dbo(), "", "testdr.txt", b"content")
+        assert asm3.dbfs.get_string_filepath(base.get_dbo(), "/document_repository/testdr.txt") == b"content"
 
     def test_get_report_images(self):
         assert len(asm3.dbfs.get_report_images(base.get_dbo())) > 0

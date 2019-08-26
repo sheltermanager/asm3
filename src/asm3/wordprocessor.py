@@ -1411,25 +1411,25 @@ def substitute_template(dbo, templateid, tags, imdata = None):
     imdata is the preferred image for the record and since html uses
     URLs, only applies to ODT templates.
     """
-    templatedata = asm3.template.get_document_template_content(dbo, templateid)
+    templatedata = asm3.template.get_document_template_content(dbo, templateid) # bytes
     templatename = asm3.template.get_document_template_name(dbo, templateid)
     if templatename.endswith(".html"):
         # Translate any user signature placeholder
-        templatedata = templatedata.replace("signature:user", "&lt;&lt;UserSignatureSrc&gt;&gt;")
+        templatedata = asm3.utils.bytes2str(templatedata).replace("signature:user", "&lt;&lt;UserSignatureSrc&gt;&gt;")
         return substitute_tags(templatedata, tags)
     elif templatename.endswith(".odt"):
         try:
             odt = asm3.utils.stringio(templatedata)
             zf = zipfile.ZipFile(odt, "r")
             # Load the content.xml file and substitute the tags
-            content = zf.open("content.xml").read()
+            content = asm3.utils.bytes2str(zf.open("content.xml").read())
             content = substitute_tags(content, tags)
             # Write the replacement file
-            zo = asm3.utils.stringio()
+            zo = asm3.utils.bytesio()
             zfo = zipfile.ZipFile(zo, "w", zipfile.ZIP_DEFLATED)
             for info in zf.infolist():
                 if info.filename == "content.xml":
-                    zfo.writestr("content.xml", content)
+                    zfo.writestr("content.xml", asm3.utils.str2bytes(content))
                 elif imdata is not None and (info.file_size == 2897 or info.file_size == 7701):
                     # If the image is the old placeholder.jpg or our default nopic.jpg, substitute for the record image
                     zfo.writestr(info.filename, imdata)

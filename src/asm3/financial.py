@@ -1228,7 +1228,7 @@ def giftaid_spreadsheet(dbo, path, fromdate, todate):
     try:
         # Load the content.xml file from the template ods
         templateods = path + "static/docs/giftaid.ods"
-        content = asm3.utils.zip_extract_text(templateods, "content.xml")
+        content = asm3.utils.bytes2str(asm3.utils.zip_extract(templateods, "content.xml"))
 
         dons = dbo.query("SELECT od.Date AS DonationDate, od.Donation AS DonationAmount, o.* " \
             "FROM ownerdonation od " \
@@ -1283,7 +1283,7 @@ def giftaid_spreadsheet(dbo, path, fromdate, todate):
         content = content.replace("office:value=\"54321000\"", "office:value=\"" + str(dontotal) + "\"", 1)
 
         # Update the file and return the replacement zip 
-        return asm3.utils.zip_replace(templateods, "content.xml", content)
+        return asm3.utils.zip_replace(templateods, "content.xml", asm3.utils.str2bytes(content))
 
     except Exception as zderr:
         asm3.al.error("failed generating spreadsheet: %s" % str(zderr), "financial.giftaid_spreadsheet", dbo, sys.exc_info())

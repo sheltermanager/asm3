@@ -27,7 +27,7 @@ if sys.version_info[0] > 2: # PYTHON3
     from html.entities import entitydefs as htmlentitydefs
     import _thread as thread
     import urllib.request as urllib2
-    from io import StringIO
+    from io import BytesIO, StringIO
     from email.mime.base import MIMEBase
     from email.mime.text import MIMEText
     from email.mime.multipart import MIMEMultipart
@@ -40,6 +40,7 @@ else:
     import thread
     import urllib2
     from cStringIO import StringIO
+    from io import BytesIO
     from email.mime.base import MIMEBase
     from email.mime.text import MIMEText
     from email.mime.multipart import MIMEMultipart
@@ -319,6 +320,10 @@ class SimpleSearchBuilder(object):
         self.ors.append(clause)
         self.values.append(self.qlike)
 
+def is_bytes(f):
+    """ Returns true if the f is a bytes string """
+    return isinstance(f, bytes)
+
 def is_currency(f):
     """ Returns true if the field with name f is a currency field """
     CURRENCY_FIELDS = "AMT AMOUNT DONATION DAILYBOARDINGCOST COSTAMOUNT COST FEE LICENCEFEE DEPOSITAMOUNT FINEAMOUNT UNITPRICE VATAMOUNT"
@@ -354,7 +359,17 @@ def is_unicode(s):
     else:
         return isinstance(s, unicode) # noqa: F821
 
-def cbytes(s, encoding = "utf-8"):
+def cunicode(s, encoding = "utf-8"):
+    """
+    Converts a UTF-8 encoded bytes str to unicode
+    """
+    if sys.version_info[0] > 2: # PYTHON3 - str should already be unicode, but convert bytes strings if we've got one
+        if is_bytes(s): return s.decode(encoding)
+        return str(s)
+    else:
+        return unicode(s, encoding) # noqa: F821
+
+def str2bytes(s, encoding = "utf-8"):
     """
     Converts a unicode str to a utf-8 bytes string
     """
@@ -362,15 +377,13 @@ def cbytes(s, encoding = "utf-8"):
         if isinstance(s, str): return s.encode("utf-8")
     return s # Already byte string for python 2
 
-def cunicode(s, encoding = "utf8"):
+def bytes2str(s, encoding = "utf-8"):
     """
-    Converts a UTF-8 encoded str to unicode
+    Converts a utf-8 bytes string to a unicode str
     """
-    if sys.version_info[0] > 2: # PYTHON3 - str should already be unicode, but convert bytes strings if we've got one
+    if sys.version_info[0] > 2: # PYTHON3
         if isinstance(s, bytes): return s.decode("utf-8")
-        return str(s)
-    else:
-        return unicode(s, encoding) # noqa: F821
+    return s # Already byte string for python 2
 
 def atoi(s):
     """
@@ -578,6 +591,10 @@ def stringio(contents = ""):
     if contents != "": return StringIO(contents)
     return StringIO()
 
+def bytesio(contents = ""):
+    if contents != "": return BytesIO(contents)
+    return BytesIO()
+
 def strip_html_tags(s):
     """
     Removes all html tags from a string, leaving just the
@@ -665,16 +682,25 @@ def list_overlap(l1, l2):
     return False
 
 def base64encode(s):
-    """ Wrapper for base64 encoding """
-    if sys.version_info[0] > 2 and isinstance(s, str): # PYTHON3 - only byte strings can be encoded, if we're given a unicode string, convert it
-        return base64.b64encode( s.encode("utf-8") )
-    return base64.b64encode(s)
+    """ Base64 encodes s, returning the result as a string """
+    if sys.version_info[0] > 2: # PYTHON3 
+        if not is_bytes(s): s = s.encode("utf-8") # Only byte strings can be encoded so convert first
+        return base64.b64encode(s).decode("utf-8") # Return the encoded value as a string rather than bytes
+    return base64.b64encode(s) # Python 2 behaviour
 
 def base64decode(s):
-    """ Wrapper for base64 decoding """
-    if sys.version_info[0] > 2 and isinstance(s, str): # PYTHON3 - only byte strings can be decoded, if we're given a unicode string, convert it
-        return base64.b64decode( s.encode("utf-8") )
-    return base64.b64decode(s)
+    """ Base64 decodes s, returning the result as bytes """
+    if sys.version_info[0] > 2: # PYTHON3 
+        if not is_bytes(s): s = s.encode("utf-8") # Only byte strings can be decoded so convert first
+        return base64.b64decode(s)
+    return base64.b64decode(s) # Python 2 behaviour
+
+def base64decode_str(s):
+    """ Base64 decodes, returning the result as a str. """
+    rv = base64decode(s)
+    if sys.version_info[0] > 2: # PYTHON3
+        return rv.decode("utf-8")
+    return rv # Python 2 bytes/str interchangeable
 
 def pbkdf2_hash_hex(plaintext, salt="", algorithm="sha1", iterations=1000):
     """ Returns a hex pbkdf2 hash of the plaintext given. 
@@ -686,10 +712,10 @@ def pbkdf2_hash_hex(plaintext, salt="", algorithm="sha1", iterations=1000):
     hashfunc = getattr(hashlib, algorithm)
     if sys.version_info[0] > 2: # PYTHON3
         import asm3.pbkdf2.pbkdf23
-        return str(asm3.pbkdf2.pbkdf23.pbkdf2(hashfunc, cbytes(plaintext), cbytes(salt), iterations, 24).hex())
+        return str(asm3.pbkdf2.pbkdf23.pbkdf2(hashfunc, str2bytes(plaintext), str2bytes(salt), iterations, 24).hex())
     else:
         import asm3.pbkdf2.pbkdf22
-        return str(asm3.pbkdf2.pbkdf22.pbkdf2_hex(cbytes(plaintext), cbytes(salt), iterations, 24, hashfunc))
+        return str(asm3.pbkdf2.pbkdf22.pbkdf2_hex(str2bytes(plaintext), str2bytes(salt), iterations, 24, hashfunc))
 
 def regex_multi(pattern, findin):
     """
@@ -1063,23 +1089,17 @@ def zip_extract(zipfilename, filename):
         content = zf.open(filename).read()
         return content
 
-def zip_extract_text(zipfilename, filename):
-    """
-    Reads the text file filename from zipfilename
-    """
-    return str(zip_extract(zipfilename, filename))
-
 def zip_replace(zipfilename, filename, content):
     """
-    Reads zipfilename, then replaces filename with content and returns the new zip file as a bytes string.
+    Reads zipfilename, then replaces filename with content (bytes string) and returns the new zip file as a bytes string.
     """
     with open(zipfilename, "rb") as zff:
         zf = zipfile.ZipFile(zff, "r")
-        zo = stringio()
+        zo = bytesio()
         zfo = zipfile.ZipFile(zo, "w", zipfile.ZIP_DEFLATED)
         for f in zf.namelist():
             if f == filename:
-                zfo.writestr(filename, content)
+                zfo.writestr(f, content)
             else:
                 zfo.writestr(f, zf.open(f).read())
         zf.close()
@@ -1121,7 +1141,7 @@ def pdf_count_pages(filedata):
 
 def html_to_pdf(htmldata, baseurl = "", account = ""):
     """
-    Converts HTML content to PDF and returns the PDF file data.
+    Converts HTML content to PDF and returns the PDF file data as bytes.
     """
     # Allow orientation and papersize to be set
     # with directives in the document source - eg: <!-- pdf orientation landscape, pdf papersize letter -->
@@ -1169,7 +1189,7 @@ def html_to_pdf(htmldata, baseurl = "", account = ""):
     # Use temp files
     inputfile = tempfile.NamedTemporaryFile(suffix=".html", delete=False)
     outputfile = tempfile.NamedTemporaryFile(suffix=".pdf", delete=False)
-    inputfile.write(header + htmldata + footer)
+    inputfile.write(str2bytes(header + htmldata + footer))
     inputfile.flush()
     inputfile.close()
     outputfile.close()
@@ -1178,7 +1198,7 @@ def html_to_pdf(htmldata, baseurl = "", account = ""):
     if code > 0:
         asm3.al.error("code %s returned from '%s': %s" % (code, cmdline, output), "utils.html_to_pdf")
         return "ERROR"
-    with open(outputfile.name, "r") as f:
+    with open(outputfile.name, "rb") as f:
         pdfdata = f.read()
     os.unlink(inputfile.name)
     os.unlink(outputfile.name)

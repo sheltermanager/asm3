@@ -227,7 +227,7 @@ def check_create_path(dbo, path):
 
 def get_string_filepath(dbo, filepath):
     """
-    Gets DBFS file contents as a string. Returns
+    Gets DBFS file contents as a bytes string. Returns
     an empty string if the file is not found. Splits
     filepath into the name and path to do it.
     """
@@ -237,7 +237,7 @@ def get_string_filepath(dbo, filepath):
 
 def get_string(dbo, name, path = ""):
     """
-    Gets DBFS file contents as a string.
+    Gets DBFS file contents as a bytes string.
     If no path is supplied, just finds the first file with that name
     in the dbfs (useful for media files, which have unique names)
     """
@@ -254,7 +254,7 @@ def get_string(dbo, name, path = ""):
 
 def get_string_id(dbo, dbfsid):
     """
-    Gets DBFS file contents as a string. Returns
+    Gets DBFS file contents as a bytes string. Returns
     an empty string if the file is not found.
     """
     r = dbo.query("SELECT URL FROM dbfs WHERE ID=?", [dbfsid])
@@ -293,7 +293,7 @@ def put_file(dbo, name, path, filepath):
 
 def put_string(dbo, name, path, contents):
     """
-    Stores the file contents at the name and path. If the file exists, overwrites it.
+    Stores the file contents (as a bytes string) at the name and path. If the file exists, overwrites it.
     """
     check_create_path(dbo, path)
     name = name.replace("'", "")
@@ -310,7 +310,7 @@ def put_string(dbo, name, path, contents):
 
 def put_string_id(dbo, dbfsid, name, contents):
     """
-    Stores the file contents at the id given.
+    Stores the file contents (bytes string) at the id given.
     """
     o = DBFSStorage(dbo)
     o.put(dbfsid, name, contents)
@@ -318,7 +318,7 @@ def put_string_id(dbo, dbfsid, name, contents):
 
 def put_string_filepath(dbo, filepath, contents):
     """
-    Stores the file contents at the name/path given.
+    Stores the file contents (bytes string) at the name/path given.
     """
     name = filepath[filepath.rfind("/")+1:]
     path = filepath[0:filepath.rfind("/")]
@@ -326,7 +326,7 @@ def put_string_filepath(dbo, filepath, contents):
 
 def replace_string(dbo, content, name, path = ""):
     """
-    Replaces the file contents given as a string in the dbfs
+    Replaces the file contents given as a bytes string in the dbfs
     with the name and path given. If no path is given, looks it
     up by just the name.
     """

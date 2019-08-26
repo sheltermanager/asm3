@@ -47,14 +47,14 @@ def get_document_templates(dbo):
     return dbo.query("SELECT ID, Name, Path FROM templatedocument %s ORDER BY Path, Name" % where)
 
 def get_document_template_content(dbo, dtid):
-    """ Returns the document template content for a given ID """
+    """ Returns the document template content for a given ID as a string """
     return asm3.utils.base64decode( dbo.query_string("SELECT Content FROM templatedocument WHERE ID = ?", [dtid]) )
 
 def get_document_template_name(dbo, dtid):
     """ Returns the name for a document template with an ID """
     return dbo.query_string("SELECT Name FROM templatedocument WHERE ID = ?", [dtid])
 
-def create_document_template(dbo, username, name, ext = ".html", content = "<p></p>"):
+def create_document_template(dbo, username, name, ext = ".html", content = b"<p></p>"):
     """
     Creates a document template from the name given.
     If there's no extension, adds it
@@ -76,7 +76,7 @@ def create_document_template(dbo, username, name, ext = ".html", content = "<p><
     dtid = dbo.insert("templatedocument", {
         "Name":     name,
         "Path":     path,
-        "Content":  asm3.utils.base64encode(content)
+        "Content":  asm3.utils.bytes2str(asm3.utils.base64encode(content))
     })
     asm3.audit.create(dbo, username, "templatedocument", dtid, "", "id: %d, name: %s" % (dtid, name))
     return dtid
@@ -114,7 +114,7 @@ def rename_document_template(dbo, username, dtid, newname):
 def update_document_template_content(dbo, dtid, content):
     """ Changes the content of a template """
     dbo.update("templatedocument", dtid, {
-        "Content":  asm3.utils.base64encode(content)
+        "Content":  asm3.utils.bytes2str(asm3.utils.base64encode(content))
     })
 
 def sanitise_path(path):
