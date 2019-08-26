@@ -2495,6 +2495,7 @@ def clone_animal(dbo, username, animalid):
         "IsHouseTrained":   a.ishousetrained,
         "IsNotAvailableForAdoption": a.isnotavailableforadoption,
         "IsHold":           a.ishold,
+        "AdditionalFlags":  a.additionalflags, 
         "HoldUntilDate":    a.holduntildate,
         "IsQuarantine":     a.isquarantine,
         "HasSpecialNeeds":  a.hasspecialneeds,
