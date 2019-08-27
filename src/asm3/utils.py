@@ -779,7 +779,8 @@ def escape_tinymce(content):
     (god this is confusing), which need to be double
     escaped or tinymce breaks. 
     """
-    c = strip_non_ascii(content)
+    c = bytes2str(content)
+    c = strip_non_ascii(c)
     c = c.replace("&gt;", "&amp;gt;")
     c = c.replace("&lt;", "&amp;lt;")
     c = c.replace("<", "&lt;")

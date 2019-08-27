@@ -1593,13 +1593,13 @@ class Report:
                 return
 
             ghtml = self.html[groupstart:groupend]
-            ghstart = asm3.html.find("$$HEAD")
+            ghstart = ghtml.find("$$HEAD")
             if ghstart == -1:
                 self._p("A group block of your report is invalid (no group $$HEAD)")
                 return
 
             ghstart += 6
-            ghend = asm3.html.find("$$FOOT", ghstart)
+            ghend = ghtml.find("$$FOOT", ghstart)
 
             if ghend == -1:
                 self._p("A group block of your report is invalid (no group $$FOOT)")
