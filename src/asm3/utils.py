@@ -1019,11 +1019,12 @@ def get_image_url(url, headers = {}, cookies = {}, timeout = None):
 
 def post_data(url, data, contenttype = "", httpmethod = "", headers = {}):
     """
-    Posts data to a URL as the body
+    Posts data (str or bytes) to a URL as the body
     httpmethod: POST by default
     """
     try:
         if contenttype != "": headers["Content-Type"] = contenttype
+        if sys.version_info[0] > 2 and isinstance(data, str): data = str2bytes(data) # PYTHON3
         req = urllib2.Request(url, data, headers)
         if httpmethod != "": req.get_method = lambda: httpmethod
         resp = urllib2.urlopen(req)
@@ -1064,19 +1065,19 @@ def post_multipart(url, fields = None, files = None, headers = {}, cookies = {})
 
 def post_json(url, json, headers = {}):
     """
-    Posts a JSON document to a URL
+    Posts a JSON document to a URL. json can be str or bytes
     """
     return post_data(url, json, contenttype="application/json", headers=headers)
 
 def patch_json(url, json, headers = {}):
     """
-    Posts a JSON document to a URL with the PATCH HTTP method
+    Posts a JSON document to a URL with the PATCH HTTP method. json can be str or bytes
     """
     return post_data(url, json, contenttype="application/json", httpmethod="PATCH", headers=headers)
 
 def post_xml(url, xml, headers = {}):
     """
-    Posts an XML document to a URL
+    Posts an XML document to a URL. xml can be str or bytes.
     """
     return post_data(url, xml, contenttype="text/xml", headers=headers)
 

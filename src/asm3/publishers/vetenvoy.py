@@ -297,7 +297,7 @@ class VetEnvoyUSMicrochipPublisher(AbstractPublisher):
 
             # Now post the XML signup document
             asm3.al.debug("Posting signup document: %s" % x, "VetEnvoyMicrochipPublisher.signup", dbo)
-            r = asm3.utils.post_xml(VETENVOY_US_BASE_URL + "AutoSignup/" + conversationid, x, authheaders)
+            r = asm3.utils.post_xml(VETENVOY_US_BASE_URL + "AutoSignup/" + conversationid, asm3.utils.str2bytes(x), authheaders)
             asm3.al.debug("Response %d, HTTP headers: %s, body: %s" % (r["status"], r["headers"], r["response"]), "VetEnvoyMicrochipPublisher.signup", dbo)
             if r["status"] != 200: raise Exception(r["response"])
 
