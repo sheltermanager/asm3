@@ -77,6 +77,7 @@ class SavourLifePublisher(AbstractPublisher):
         Replaces well known HTML entities with ASCII characters (mainly aimed at smartquotes)
         """
         ENTITIES = {
+            "160":  " ", # non-breaking space
             "8211": "-", # endash
             "8212": "--", # emdash
             "8216": "'", # left single quote
@@ -89,6 +90,7 @@ class SavourLifePublisher(AbstractPublisher):
             "8230": "...", # ellipsis
             "8242": "'", # prime (stopwatch)
             "8243": "\"", # double prime
+            "10004": "*", # tick
         }
         for k, v in ENTITIES.items():
             s = s.replace("&#" + k + ";", v)
