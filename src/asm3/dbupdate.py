@@ -2686,10 +2686,10 @@ def diagnostic(dbo):
     def mediapref():
         duplicatepic = 0
         for a in dbo.query("SELECT ID, " \
-            "(SELECT COUNT(*) FROM media WHERE LinkID = asm3.animal.ID AND LinkTypeID = 0) AS TotalMedia, " \
-            "(SELECT COUNT(*) FROM media WHERE LinkID = asm3.animal.ID AND LinkTypeID = 0 AND WebsitePhoto = 1) AS TotalWeb, " \
-            "(SELECT COUNT(*) FROM media WHERE LinkID = asm3.animal.ID AND LinkTypeID = 0 AND DocPhoto = 1) AS TotalDoc, " \
-            "(SELECT MAX(ID) FROM media WHERE LinkID = asm3.animal.ID AND LinkTypeID = 0 AND ExcludeFromPublish = 0 AND MediaName LIKE '%.jpg') AS LatestImage " \
+            "(SELECT COUNT(*) FROM media WHERE LinkID = animal.ID AND LinkTypeID = 0) AS TotalMedia, " \
+            "(SELECT COUNT(*) FROM media WHERE LinkID = animal.ID AND LinkTypeID = 0 AND WebsitePhoto = 1) AS TotalWeb, " \
+            "(SELECT COUNT(*) FROM media WHERE LinkID = animal.ID AND LinkTypeID = 0 AND DocPhoto = 1) AS TotalDoc, " \
+            "(SELECT MAX(ID) FROM media WHERE LinkID = animal.ID AND LinkTypeID = 0 AND ExcludeFromPublish = 0 AND MediaName LIKE '%.jpg') AS LatestImage " \
             "FROM animal"):
             if a["TOTALMEDIA"] > 0 and a["TOTALWEB"] > 1:
                 # Too many preferred images
@@ -2699,15 +2699,15 @@ def diagnostic(dbo):
         return duplicatepic
 
     return {
-        "orphaned adoptions": orphan("adoption", "animal", "adoption.AnimalID", "asm3.animal.ID"),
+        "orphaned adoptions": orphan("adoption", "animal", "adoption.AnimalID", "animal.ID"),
         "orphaned found animals": orphan("animalfound", "owner", "animalfound.OwnerID", "owner.ID"),
         "orphaned lost animals": orphan("animallost", "owner", "animallost.OwnerID", "owner.ID"),
-        "orphaned medical": orphan("animalmedical", "animal", "animalasm3.medical.AnimalID", "asm3.animal.ID"),
+        "orphaned medical": orphan("animalmedical", "animal", "animalmedical.AnimalID", "animal.ID"),
         "orphaned payments": orphan("ownerdonation", "owner", "ownerdonation.OwnerID", "owner.ID"),
-        "orphaned tests": orphan("animaltest", "animal", "animaltest.AnimalID", "asm3.animal.ID"),
-        "orphaned treatments": orphan("animalmedicaltreatment", "animal", "animalmedicaltreatment.AnimalID", "asm3.animal.ID"),
-        "orphaned vacc": orphan("animalvaccination", "animal", "animalvaccination.AnimalID", "asm3.animal.ID"),
-        "orphaned waiting list animals": orphan("animalwaitinglist", "owner", "animalasm3.waitinglist.OwnerID", "owner.ID"),
+        "orphaned tests": orphan("animaltest", "animal", "animaltest.AnimalID", "animal.ID"),
+        "orphaned treatments": orphan("animalmedicaltreatment", "animal", "animalmedicaltreatment.AnimalID", "animal.ID"),
+        "orphaned vacc": orphan("animalvaccination", "animal", "animalvaccination.AnimalID", "animal.ID"),
+        "orphaned waiting list animals": orphan("animalwaitinglist", "owner", "animalwaitinglist.OwnerID", "owner.ID"),
         "duplicate preferred images": mediapref()
     }
 
@@ -3165,7 +3165,7 @@ def update_3201(dbo):
 
 def update_3202(dbo):
     # Set default value for HasTrialAdoption
-    dbo.execute_dbupdate("UPDATE animal SET HasTrialAdoption = 1 WHERE EXISTS(SELECT ID FROM adoption ad WHERE ad.IsTrial = 1 AND ad.AnimalID = asm3.animal.ID)")
+    dbo.execute_dbupdate("UPDATE animal SET HasTrialAdoption = 1 WHERE EXISTS(SELECT ID FROM adoption ad WHERE ad.IsTrial = 1 AND ad.AnimalID = animal.ID)")
 
 def update_3203(dbo):
     l = dbo.locale
@@ -3206,9 +3206,9 @@ def update_3212(dbo):
         "lksposneg.Name", "species.SpeciesName", "species.SpeciesDescription", "lkurgency.Urgency", 
         "vaccinationtype.VaccinationType", "vaccinationtype.VaccinationDescription", "voucher.VoucherName", "voucher.VoucherDescription",
         "accounts.Code", "accounts.Description", "accountstrx.Description",
-        "asm3.animal.TimeOnShelter", "animal.AnimalAge", "animalfigures.Heading", "animalfiguresannual.Heading", 
-        "animalfiguresannual.GroupHeading", "animalasm3.waitinglist.AnimalDescription",
-        "animalasm3.medical.TreatmentName", "animalmedical.Dosage", "diary.Subject", "diary.LinkInfo",
+        "animal.TimeOnShelter", "animal.AnimalAge", "animalfigures.Heading", "animalfiguresannual.Heading", 
+        "animalfiguresannual.GroupHeading", "animalwaitinglist.AnimalDescription",
+        "animalmedical.TreatmentName", "animalmedical.Dosage", "diary.Subject", "diary.LinkInfo",
         "medicalprofile.TreatmentName", "medicalprofile.Dosage", "medicalprofile.ProfileName" ]
     for f in fields:
         table, field = f.split(".")
@@ -3223,23 +3223,23 @@ def update_3213(dbo):
         dbo.execute_dbupdate("ALTER TABLE animal ADD DisplayLocationName %s" % dbo.type_shorttext)
         dbo.execute_dbupdate("ALTER TABLE animal ADD DisplayLocationString %s" % dbo.type_shorttext)
     except Exception as err:
-        asm3.al.error("failed creating asm3.animal.DisplayLocationName/String: %s" % str(err), "dbupdate.update_3213", dbo)
+        asm3.al.error("failed creating animal.DisplayLocationName/String: %s" % str(err), "dbupdate.update_3213", dbo)
 
     # Default the values for them
     dbo.execute_dbupdate("UPDATE animal SET DisplayLocationName = " \
         "CASE " \
-        "WHEN asm3.animal.Archived = 0 AND animal.ActiveMovementType = 2 THEN " \
-        "(SELECT MovementType FROM lksmovementtype WHERE ID=asm3.animal.ActiveMovementType) " \
-        "WHEN asm3.animal.Archived = 0 AND animal.ActiveMovementType = 1 AND animal.HasTrialAdoption = 1 THEN " \
+        "WHEN animal.Archived = 0 AND animal.ActiveMovementType = 2 THEN " \
+        "(SELECT MovementType FROM lksmovementtype WHERE ID=animal.ActiveMovementType) " \
+        "WHEN animal.Archived = 0 AND animal.ActiveMovementType = 1 AND animal.HasTrialAdoption = 1 THEN " \
         "(SELECT MovementType FROM lksmovementtype WHERE ID=11) " \
-        "WHEN asm3.animal.Archived = 1 AND animal.DeceasedDate Is Not Null AND animal.ActiveMovementID = 0 THEN " \
-        "(SELECT ReasonName FROM deathreason WHERE ID = asm3.animal.PTSReasonID) " \
-        "WHEN asm3.animal.Archived = 1 AND animal.DeceasedDate Is Not Null AND animal.ActiveMovementID <> 0 THEN " \
-        "(SELECT MovementType FROM lksmovementtype WHERE ID=asm3.animal.ActiveMovementType) " \
-        "WHEN asm3.animal.Archived = 1 AND animal.DeceasedDate Is Null AND animal.ActiveMovementID <> 0 THEN " \
-        "(SELECT MovementType FROM lksmovementtype WHERE ID=asm3.animal.ActiveMovementType) " \
+        "WHEN animal.Archived = 1 AND animal.DeceasedDate Is Not Null AND animal.ActiveMovementID = 0 THEN " \
+        "(SELECT ReasonName FROM deathreason WHERE ID = animal.PTSReasonID) " \
+        "WHEN animal.Archived = 1 AND animal.DeceasedDate Is Not Null AND animal.ActiveMovementID <> 0 THEN " \
+        "(SELECT MovementType FROM lksmovementtype WHERE ID=animal.ActiveMovementType) " \
+        "WHEN animal.Archived = 1 AND animal.DeceasedDate Is Null AND animal.ActiveMovementID <> 0 THEN " \
+        "(SELECT MovementType FROM lksmovementtype WHERE ID=animal.ActiveMovementType) " \
         "ELSE " \
-        "(SELECT LocationName FROM internallocation WHERE ID=asm3.animal.ShelterLocation) " \
+        "(SELECT LocationName FROM internallocation WHERE ID=animal.ShelterLocation) " \
         "END")
     dbo.execute_dbupdate("UPDATE animal SET DisplayLocationString = DisplayLocationName")
 
@@ -3257,7 +3257,7 @@ def update_3215(dbo):
     try:
         dbo.execute_dbupdate("ALTER TABLE animal ADD DisplayLocation %s" % dbo.type_shorttext)
     except:
-        asm3.al.error("failed creating asm3.animal.DisplayLocation.", "dbupdate.update_3215", dbo)
+        asm3.al.error("failed creating animal.DisplayLocation.", "dbupdate.update_3215", dbo)
     try:
         dbo.execute_dbupdate("UPDATE animal SET DisplayLocation = DisplayLocationString")
     except:
@@ -3325,15 +3325,15 @@ def update_3223(dbo):
     # they really shouldn't. Let's switch those fields to be TEXT instead.
     if dbo.dbtype != "POSTGRESQL": return
     fields = [ "activeuser.Messages", "additionalfield.LookupValues", "additional.Value", "adoption.ReasonForReturn", 
-        "adoption.Comments", "asm3.animal.Markings", "animal.HiddenAnimalDetails", "animal.AnimalComments", "animal.ReasonForEntry", 
-        "asm3.animal.ReasonNO", "animal.HealthProblems", "animal.PTSReason", "animalcost.Description", "animal.AnimalComments", 
+        "adoption.Comments", "animal.Markings", "animal.HiddenAnimalDetails", "animal.AnimalComments", "animal.ReasonForEntry", 
+        "animal.ReasonNO", "animal.HealthProblems", "animal.PTSReason", "animalcost.Description", "animal.AnimalComments", 
         "animalfound.DistFeat", "animalfound.Comments", "animallitter.Comments", "animallost.DistFeat", "animallost.Comments", 
-        "animalasm3.medical.Comments", "animalmedicaltreatment.Comments", "animalvaccination.Comments", "animalasm3.waitinglist.ReasonForWantingToPart", 
-        "animalasm3.waitinglist.ReasonForRemoval", "animalwaitinglist.Comments", "audittrail.Description", "customreport.Description", 
+        "animalmedical.Comments", "animalmedicaltreatment.Comments", "animalvaccination.Comments", "animalwaitinglist.ReasonForWantingToPart", 
+        "animalwaitinglist.ReasonForRemoval", "animalwaitinglist.Comments", "audittrail.Description", "customreport.Description", 
         "diary.Subject", "diary.Note", "diarytaskdetail.Subject", "diarytaskdetail.Note", "log.Comments", "media.MediaNotes", 
         "medicalprofile.Comments", "messages.Message", "owner.Comments", "owner.AdditionalFlags", "owner.HomeCheckAreas", 
         "ownerdonation.Comments", "ownerinvestigation.Notes", "ownervoucher.Comments", "role.SecurityMap", "users.SecurityMap", 
-        "users.IPRestriction", "asm3.configuration.ItemValue", "customreport.SQLCommand", "customreport.HTMLBody" ]
+        "users.IPRestriction", "configuration.ItemValue", "customreport.SQLCommand", "customreport.HTMLBody" ]
     for f in fields:
         table, field = f.split(".")
         try:
@@ -4296,7 +4296,7 @@ def update_33707(dbo):
         "AnimalID INTEGER NOT NULL)"
     dbo.execute_dbupdate(sql)
     add_index(dbo, "animalcontrolanimal_AnimalControlIDAnimalID", "animalcontrolanimal", "AnimalControlID, AnimalID", True)
-    # Copy the existing links from asm3.animalcontrol.AnimalID
+    # Copy the existing links from animalcontrol.AnimalID
     for ac in dbo.query("SELECT ID, AnimalID FROM animalcontrol WHERE AnimalID Is Not Null AND AnimalID <> 0"):
         dbo.execute_dbupdate("INSERT INTO animalcontrolanimal (AnimalControlID, AnimalID) VALUES (%d, %d)" % (ac["ID"], ac["ANIMALID"]))
     # Remove the animalid field from animalcontrol
@@ -4452,7 +4452,7 @@ def update_33800(dbo):
         dbo.execute_dbupdate("UPDATE %s SET IsRetired = 0" % t)
 
 def update_33801(dbo):
-    # Add asm3.animal.PickupAddress, animalvaccination.AdministeringVetID and animalmedicaltreatment.AdministeringVetID
+    # Add animal.PickupAddress, animalvaccination.AdministeringVetID and animalmedicaltreatment.AdministeringVetID
     add_column(dbo, "animal", "PickupAddress", dbo.type_shorttext)
     add_column(dbo, "animalmedicaltreatment", "AdministeringVetID", "INTEGER")
     add_column(dbo, "animalvaccination", "AdministeringVetID", "INTEGER")
@@ -5066,7 +5066,7 @@ def update_34204(dbo):
     dbo.execute_dbupdate("UPDATE ownerdonation SET Fee = 0")
 
 def update_34300(dbo):
-    # Add asm3.animal.ExtraIDs
+    # Add animal.ExtraIDs
     add_column(dbo, "animal", "ExtraIDs", dbo.type_shorttext)
     add_index(dbo, "animal_ExtraIDs", "animal", "ExtraIDs")
     dbo.execute_dbupdate("UPDATE animal SET ExtraIDs = ''")
