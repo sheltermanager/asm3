@@ -220,6 +220,15 @@ class SavourLifePublisher(AbstractPublisher):
                 for m in photos:
                     photo_urls.append("%s?account=%s&method=dbfs_image&title=%s" % (SERVICE_URL, self.dbo.database, m.MEDIANAME))
 
+                # MicrochipDetails should be "No" if we don't have one, the actual number for VIC or NSW (2XXX or 3XXX postcode)
+                # or "Yes" for others.
+                microchipdetails = "No"
+                if an.IDENTICHIPNUMBER != "":
+                    if location_postcode.startswith("2") or location_postcode.startswith("3"):
+                        microchipdetails = an.IDENTICHIPNUMBER
+                    else:
+                        microchipdetails = "Yes"
+
                 # Do we already have a SavourLife ID for this animal?
                 # This function returns None if no match is found
                 dogid = asm3.animal.get_extra_id(self.dbo, an, asm3.animal.IDTYPE_SAVOURLIFE)
@@ -257,7 +266,7 @@ class SavourLifePublisher(AbstractPublisher):
                     "BondedPair":               an.BONDEDANIMALID is not None and an.BONDEDANIMALID > 0,
                     "SizeWhenAdult":            size,
                     "IsSaved":                  an.ACTIVEMOVEMENTTYPE == 1,
-                    "MicrochipDetails":         an.IDENTICHIPNUMBER, 
+                    "MicrochipDetails":         microchipdetails,
                     "IsOnHold":                 an.HASACTIVERESERVE == 1
                 }
 
