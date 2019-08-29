@@ -764,6 +764,14 @@ def delete_onlineformincoming(dbo, username, collationid):
     """
     Deletes the specified onlineformincoming set
     """
+    # Write an entry to the deletions table for the incoming form rows
+    # This is a special case because onlineformincoming does not have an ID field, 
+    # so the generic deletions handling in dbms.base.delete cannot do it.
+    rows = dbo.query("SELECT * FROM onlineformincoming WHERE CollationID=%s" % collationid)
+    sql = []
+    for r in rows:
+        sql.append(dbo.row_to_insert_sql("onlineformincoming", r))
+    asm3.audit.insert_deletion(dbo, username, "onlineformincoming", collationid, "", "".join(sql))
     dbo.delete("onlineformincoming", "CollationID=%s" % collationid, username)
 
 def guess_agegroup(dbo, s):
