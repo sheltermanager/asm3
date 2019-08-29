@@ -1,6 +1,7 @@
 43
 ================
 
+29/08/19 Only override destination account if received was blank
 27/08/19 Splash screen should cover the container #653
 26/08/19 Clone animal should include all flags
 24/08/19 Polyglot code to support Python3 (tagged PYTHON3) #634

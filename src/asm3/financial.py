@@ -621,6 +621,8 @@ def update_donation_from_form(dbo, username, post):
     if post["receiptnumber"] == "":
         post.data["receiptnumber"] = dbo.query_string("SELECT ReceiptNumber FROM ownerdonation WHERE ID = ?", [donationid])
 
+    receiveddate = dbo.query_date("SELECT Date FROM ownerdonation WHERE ID = ?", [donationid])
+
     dbo.update("ownerdonation", donationid, {
         "OwnerID":              post.integer("person"),
         "AnimalID":             post.integer("animal"),
@@ -643,7 +645,7 @@ def update_donation_from_form(dbo, username, post):
         "Comments":             post["comments"]
     }, username)
 
-    if asm3.configuration.donation_trx_override(dbo):
+    if asm3.configuration.donation_trx_override(dbo) and receiveddate is None:
         update_matching_donation_transaction(dbo, username, donationid, post.integer("destaccount"))
     else:
         update_matching_donation_transaction(dbo, username, donationid)
