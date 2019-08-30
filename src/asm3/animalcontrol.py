@@ -269,7 +269,7 @@ def check_view_permission(dbo, username, session, acid):
         return True
     # Does the user have any of the view roles?
     userroles = []
-    for ur in dbo.query("SELECT RoleID FROM userrole INNER JOIN users ON userrole.UserID = asm3.users.ID WHERE users.UserName LIKE ?", [username]):
+    for ur in dbo.query("SELECT RoleID FROM userrole INNER JOIN users ON userrole.UserID = users.ID WHERE users.UserName LIKE ?", [username]):
         userroles.append(ur.ROLEID)
     hasperm = False
     for ur in userroles:
