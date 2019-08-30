@@ -138,7 +138,7 @@ class PetFinderPublisher(FTPPublisher):
                 else:
                     line.append("\"\"")
                 # Has shots
-                line.append(self.pfYesNo(asm3.asm3.medical.get_vaccinated(self.dbo, int(an["ID"]))))
+                line.append(self.pfYesNo(asm3.medical.get_vaccinated(self.dbo, int(an["ID"]))))
                 # Altered
                 line.append(self.pfYesNo(an["NEUTERED"] == 1))
                 # No Dogs
