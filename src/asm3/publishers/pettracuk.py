@@ -114,71 +114,8 @@ class PETtracUKPublisher(AbstractPublisher):
                     self.resetPublisherProgress()
                     return
 
-                # Validate certain items aren't blank so we aren't registering bogus data
-                if asm3.utils.nulltostr(an["CURRENTOWNERADDRESS"].strip()) == "":
-                    self.logError("Address for the new owner is blank, cannot process")
-                    continue 
-
-                if asm3.utils.nulltostr(an["CURRENTOWNERPOSTCODE"].strip()) == "":
-                    self.logError("Postal code for the new owner is blank, cannot process")
-                    continue
-
-                # Make sure the length is actually suitable
-                if not len(an["IDENTICHIPNUMBER"]) in (9, 10, 15):
-                    self.logError("Microchip length is not 9, 10 or 15, cannot process")
-                    continue
-
-                # Sort out breed
-                breed = an["BREEDNAME"]
-                if breed.find("Domestic Long") != -1: breed = "DLH"
-                if breed.find("Domestic Short") != -1: breed = "DSH"
-                if breed.find("Domestic Medium") != -1: breed = "DSLH"
-
-                # Sort out species
-                species = an["SPECIESNAME"]
-                if species.find("Dog") != -1: species = "Canine"
-                elif species.find("Cat") != -1: species = "Feline"
-                elif species.find("Bird") != -1: species = "Avian"
-                elif species.find("Horse") != -1: species = "Equine"
-                elif species.find("Reptile") != -1: species = "Reptilian"
-                else: species = "Other"
-
-                # Build the animal POST data
-                fields = {
-                    "orgpostcode": orgpostcode,
-                    "orgname": orgname, 
-                    "orgserial": orgserial,
-                    "orgpassword": orgpassword,
-                    "version": "1.1",
-                    "microchip": an["IDENTICHIPNUMBER"],
-                    "implantdate": asm3.i18n.format_date("%Y%m%d", an["IDENTICHIPDATE"]),
-                    "prefix": an["CURRENTOWNERTITLE"],
-                    "surname": an["CURRENTOWNERSURNAME"],
-                    "firstname": an["CURRENTOWNERFORENAMES"],
-                    "address1": an["CURRENTOWNERADDRESS"],
-                    "city": an["CURRENTOWNERTOWN"],
-                    "county": an["CURRENTOWNERCOUNTY"],
-                    "postcode": an["CURRENTOWNERPOSTCODE"],
-                    "telhome": an["CURRENTOWNERHOMETELEPHONE"],
-                    "telwork": an["CURRENTOWNERWORKTELEPHONE"],
-                    "telmobile": an["CURRENTOWNERMOBILETELEPHONE"],
-                    "telalternative": "",
-                    "email": an["CURRENTOWNEREMAILADDRESS"],
-                    "petname": an["ANIMALNAME"],
-                    "petgender": an["SEXNAME"][0:1],
-                    "petdob": asm3.i18n.format_date("%Y%m%d", an["DATEOFBIRTH"]),
-                    "petspecies": species,
-                    "petbreed": breed,
-                    "petneutered": an["NEUTERED"] == 1 and "true" or "false",
-                    "petcolour": an["BASECOLOURNAME"],
-                    "selfreg": "true", # register the shelter as alternative contact
-                    "test": "false" # if true, tells avid not to make any data changes
-                }
-
-                # If we're registering overseas chips and this chip isn't an AVID
-                # one, set the origincountry parameter
-                if registeroverseas and not an["IDENTICHIPNUMBER"].startswith("977"):
-                    fields["origincountry"] = overseasorigin
+                if not self.validate(an): continue
+                fields = self.processAnimal(an, orgname, orgserial, orgpostcode, orgpassword, registeroverseas, overseasorigin)
 
                 self.log("HTTP POST request %s: %s" % (PETTRAC_UK_POST_URL, str(fields)))
                 r = asm3.utils.post_form(PETTRAC_UK_POST_URL, fields)
@@ -229,5 +166,79 @@ class PETtracUKPublisher(AbstractPublisher):
 
         self.saveLog()
         self.setPublisherComplete()
+
+    def processAnimal(self, an, orgname="", orgserial="", orgpostcode="", orgpassword="", registeroverseas=False, overseasorigin=""):
+        """ Generate a dictionary of data to post from an animal record """
+        # Sort out breed
+        breed = an["BREEDNAME"]
+        if breed.find("Domestic Long") != -1: breed = "DLH"
+        if breed.find("Domestic Short") != -1: breed = "DSH"
+        if breed.find("Domestic Medium") != -1: breed = "DSLH"
+
+        # Sort out species
+        species = an["SPECIESNAME"]
+        if species.find("Dog") != -1: species = "Canine"
+        elif species.find("Cat") != -1: species = "Feline"
+        elif species.find("Bird") != -1: species = "Avian"
+        elif species.find("Horse") != -1: species = "Equine"
+        elif species.find("Reptile") != -1: species = "Reptilian"
+        else: species = "Other"
+
+        # Build the animal POST data
+        fields = {
+            "orgpostcode": orgpostcode,
+            "orgname": orgname, 
+            "orgserial": orgserial,
+            "orgpassword": orgpassword,
+            "version": "1.1",
+            "microchip": an["IDENTICHIPNUMBER"],
+            "implantdate": asm3.i18n.format_date("%Y%m%d", an["IDENTICHIPDATE"]),
+            "prefix": an["CURRENTOWNERTITLE"],
+            "surname": an["CURRENTOWNERSURNAME"],
+            "firstname": an["CURRENTOWNERFORENAMES"],
+            "address1": an["CURRENTOWNERADDRESS"],
+            "city": an["CURRENTOWNERTOWN"],
+            "county": an["CURRENTOWNERCOUNTY"],
+            "postcode": an["CURRENTOWNERPOSTCODE"],
+            "telhome": an["CURRENTOWNERHOMETELEPHONE"],
+            "telwork": an["CURRENTOWNERWORKTELEPHONE"],
+            "telmobile": an["CURRENTOWNERMOBILETELEPHONE"],
+            "telalternative": "",
+            "email": an["CURRENTOWNEREMAILADDRESS"],
+            "petname": an["ANIMALNAME"],
+            "petgender": an["SEXNAME"][0:1],
+            "petdob": asm3.i18n.format_date("%Y%m%d", an["DATEOFBIRTH"]),
+            "petspecies": species,
+            "petbreed": breed,
+            "petneutered": an["NEUTERED"] == 1 and "true" or "false",
+            "petcolour": an["BASECOLOURNAME"],
+            "selfreg": "true", # register the shelter as alternative contact
+            "test": "false" # if true, tells avid not to make any data changes
+        }
+
+        # If we're registering overseas chips and this chip isn't an AVID
+        # one, set the origincountry parameter
+        if registeroverseas and not an["IDENTICHIPNUMBER"].startswith("977"):
+            fields["origincountry"] = overseasorigin
+
+        return fields
+
+    def validate(self, an):
+        """ Validate an animal record is ok to send """
+        # Validate certain items aren't blank so we aren't registering bogus data
+        if asm3.utils.nulltostr(an["CURRENTOWNERADDRESS"]).strip() == "":
+            self.logError("Address for the new owner is blank, cannot process")
+            return False 
+
+        if asm3.utils.nulltostr(an["CURRENTOWNERPOSTCODE"]).strip() == "":
+            self.logError("Postal code for the new owner is blank, cannot process")
+            return False
+
+        # Make sure the length is actually suitable
+        if not len(an["IDENTICHIPNUMBER"]) in (9, 10, 15):
+            self.logError("Microchip length is not 9, 10 or 15, cannot process")
+            return False
+    
+        return True
 
 

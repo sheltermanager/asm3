@@ -61,10 +61,7 @@ class VetEnvoyUSMicrochipPublisher(AbstractPublisher):
         return "Miscellaneous"
 
     def run(self):
-        def xe(s): 
-            if s is None: return ""
-            return s.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
-        
+       
         self.log(self.publisherName + " starting...")
 
         if self.isPublisherExecuting(): return
@@ -99,77 +96,10 @@ class VetEnvoyUSMicrochipPublisher(AbstractPublisher):
                     self.resetPublisherProgress()
                     return
 
-                # Validate certain items aren't blank so we aren't registering bogus data
-                if asm3.utils.nulltostr(an["CURRENTOWNERADDRESS"].strip()) == "":
-                    self.logError("Address for the new owner is blank, cannot process")
-                    continue 
-
-                if asm3.utils.nulltostr(an["CURRENTOWNERPOSTCODE"].strip()) == "":
-                    self.logError("Postal code for the new owner is blank, cannot process")
-                    continue
-
-                if an["IDENTICHIPDATE"] is None:
-                    self.logError("Microchip date cannot be blank, cannot process")
-                    continue
-
-                # Make sure the length is actually suitable
-                if not len(an["IDENTICHIPNUMBER"]) in (9, 10, 15):
-                    self.logError("Microchip length is not 9, 10 or 15, cannot process")
-                    continue
-
                 # Construct the XML document
-                x = '<?xml version="1.0" encoding="UTF-8"?>\n' \
-                    '<MicrochipRegistration ' \
-                    'version="1.32" ' \
-                    'xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ' \
-                    'xsi:schemaLocation="https://www.vetenvoytest.com/partner/files/Chip%201.32.xsd">' \
-                    '<Identification>' \
-                    ' <PracticeID>' + userid + '</PracticeID>' \
-                    ' <PinNo></PinNo>' \
-                    ' <Source></Source>' \
-                    '</Identification>' \
-                    '<OwnerDetails>' \
-                    ' <Salutation>' + xe(an["CURRENTOWNERTITLE"]) + '</Salutation>' \
-                    ' <Initials>' + xe(an["CURRENTOWNERINITIALS"]) + '</Initials>' \
-                    ' <Forenames>' + xe(an["CURRENTOWNERFORENAMES"]) + '</Forenames>' \
-                    ' <Surname>' + xe(an["CURRENTOWNERSURNAME"]) + '</Surname>' \
-                    ' <Address>' \
-                    '  <Line1>'+ xe(an["CURRENTOWNERADDRESS"]) + '</Line1>' \
-                    '  <LineOther>'+ xe(an["CURRENTOWNERTOWN"]) + '</LineOther>' \
-                    '  <PostalCode>' + xe(an["CURRENTOWNERPOSTCODE"]) + '</PostalCode>' \
-                    '  <County_State>'+ xe(an["CURRENTOWNERCOUNTY"]) + '</County_State>' \
-                    '  <Country>USA</Country>' \
-                    ' </Address>' \
-                    ' <DaytimePhone><Number>' + xe(an["CURRENTOWNERWORKTELEPHONE"]) + '</Number><Note/></DaytimePhone>' \
-                    ' <EveningPhone><Number>' + xe(an["CURRENTOWNERHOMETELEPHONE"]) + '</Number><Note/></EveningPhone>' \
-                    ' <MobilePhone><Number>' + xe(an["CURRENTOWNERMOBILETELEPHONE"]) + '</Number><Note/></MobilePhone>' \
-                    ' <EmergencyPhone><Number/><Note/></EmergencyPhone>' \
-                    ' <OtherPhone><Number/><Note/></OtherPhone>' \
-                    ' <EmailAddress>' + xe(an["CURRENTOWNEREMAILADDRESS"]) + '</EmailAddress>' \
-                    ' <Fax />' \
-                    '</OwnerDetails>' \
-                    '<PetDetails>' \
-                    '  <Name>' + xe(an["ANIMALNAME"]) + '</Name>' \
-                    '  <Species>' + self.get_vetenvoy_species(an["SPECIESID"]) + '</Species>' \
-                    '  <Breed><FreeText>' + xe(an["BREEDNAME"]) + '</FreeText><Code/></Breed>' \
-                    '  <DateOfBirth>' + asm3.i18n.format_date("%m/%d/%Y", an["DATEOFBIRTH"]) + '</DateOfBirth>' \
-                    '  <Gender>' + an["SEXNAME"][0:1] + '</Gender>' \
-                    '  <Colour>' + xe(an["BASECOLOURNAME"]) + '</Colour>' \
-                    '  <Markings>' + xe(an["MARKINGS"]) + '</Markings>' \
-                    '  <Neutered>' + (an["NEUTERED"] == 1 and "true" or "false") + '</Neutered>' \
-                    '  <NotableConditions>' + xe(an["HEALTHPROBLEMS"]) + '</NotableConditions>' \
-                    '</PetDetails>' \
-                    '<MicrochipDetails>' \
-                    '  <MicrochipNumber>' + xe(an["IDENTICHIPNUMBER"]) + '</MicrochipNumber>' \
-                    '  <ImplantDate>' + asm3.i18n.format_date("%m/%d/%Y", an["IDENTICHIPDATE"]) + '</ImplantDate>' \
-                    '  <ImplanterName>' + xe(an["CREATEDBY"]) + '</ImplanterName>' \
-                    '</MicrochipDetails>' \
-                    '<ThirdPartyDisclosure>true</ThirdPartyDisclosure>' \
-                    '<ReceiveMail>true</ReceiveMail>' \
-                    '<ReceiveEmail>true</ReceiveEmail>' \
-                    '<Authorisation>true</Authorisation>' \
-                    '</MicrochipRegistration>'
-
+                if not self.validate(an): continue
+                x = self.processAnimal(an, userid)
+                                
                 # Build our auth headers
                 authheaders = {
                     "UserId": userid,
@@ -246,6 +176,85 @@ class VetEnvoyUSMicrochipPublisher(AbstractPublisher):
 
         self.saveLog()
         self.setPublisherComplete()
+
+    def processAnimal(self, an, userid=""):
+        """ Returns an VetXML document from an animal """
+        def xe(s): 
+            if s is None: return ""
+            return s.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
+        return '<?xml version="1.0" encoding="UTF-8"?>\n' \
+            '<MicrochipRegistration ' \
+            'version="1.32" ' \
+            'xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ' \
+            'xsi:schemaLocation="https://www.vetenvoytest.com/partner/files/Chip%201.32.xsd">' \
+            '<Identification>' \
+            ' <PracticeID>' + userid + '</PracticeID>' \
+            ' <PinNo></PinNo>' \
+            ' <Source></Source>' \
+            '</Identification>' \
+            '<OwnerDetails>' \
+            ' <Salutation>' + xe(an["CURRENTOWNERTITLE"]) + '</Salutation>' \
+            ' <Initials>' + xe(an["CURRENTOWNERINITIALS"]) + '</Initials>' \
+            ' <Forenames>' + xe(an["CURRENTOWNERFORENAMES"]) + '</Forenames>' \
+            ' <Surname>' + xe(an["CURRENTOWNERSURNAME"]) + '</Surname>' \
+            ' <Address>' \
+            '  <Line1>'+ xe(an["CURRENTOWNERADDRESS"]) + '</Line1>' \
+            '  <LineOther>'+ xe(an["CURRENTOWNERTOWN"]) + '</LineOther>' \
+            '  <PostalCode>' + xe(an["CURRENTOWNERPOSTCODE"]) + '</PostalCode>' \
+            '  <County_State>'+ xe(an["CURRENTOWNERCOUNTY"]) + '</County_State>' \
+            '  <Country>USA</Country>' \
+            ' </Address>' \
+            ' <DaytimePhone><Number>' + xe(an["CURRENTOWNERWORKTELEPHONE"]) + '</Number><Note/></DaytimePhone>' \
+            ' <EveningPhone><Number>' + xe(an["CURRENTOWNERHOMETELEPHONE"]) + '</Number><Note/></EveningPhone>' \
+            ' <MobilePhone><Number>' + xe(an["CURRENTOWNERMOBILETELEPHONE"]) + '</Number><Note/></MobilePhone>' \
+            ' <EmergencyPhone><Number/><Note/></EmergencyPhone>' \
+            ' <OtherPhone><Number/><Note/></OtherPhone>' \
+            ' <EmailAddress>' + xe(an["CURRENTOWNEREMAILADDRESS"]) + '</EmailAddress>' \
+            ' <Fax />' \
+            '</OwnerDetails>' \
+            '<PetDetails>' \
+            '  <Name>' + xe(an["ANIMALNAME"]) + '</Name>' \
+            '  <Species>' + self.get_vetenvoy_species(an["SPECIESID"]) + '</Species>' \
+            '  <Breed><FreeText>' + xe(an["BREEDNAME"]) + '</FreeText><Code/></Breed>' \
+            '  <DateOfBirth>' + asm3.i18n.format_date("%m/%d/%Y", an["DATEOFBIRTH"]) + '</DateOfBirth>' \
+            '  <Gender>' + an["SEXNAME"][0:1] + '</Gender>' \
+            '  <Colour>' + xe(an["BASECOLOURNAME"]) + '</Colour>' \
+            '  <Markings>' + xe(an["MARKINGS"]) + '</Markings>' \
+            '  <Neutered>' + (an["NEUTERED"] == 1 and "true" or "false") + '</Neutered>' \
+            '  <NotableConditions>' + xe(an["HEALTHPROBLEMS"]) + '</NotableConditions>' \
+            '</PetDetails>' \
+            '<MicrochipDetails>' \
+            '  <MicrochipNumber>' + xe(an["IDENTICHIPNUMBER"]) + '</MicrochipNumber>' \
+            '  <ImplantDate>' + asm3.i18n.format_date("%m/%d/%Y", an["IDENTICHIPDATE"]) + '</ImplantDate>' \
+            '  <ImplanterName>' + xe(an["CREATEDBY"]) + '</ImplanterName>' \
+            '</MicrochipDetails>' \
+            '<ThirdPartyDisclosure>true</ThirdPartyDisclosure>' \
+            '<ReceiveMail>true</ReceiveMail>' \
+            '<ReceiveEmail>true</ReceiveEmail>' \
+            '<Authorisation>true</Authorisation>' \
+            '</MicrochipRegistration>'
+
+    def validate(self, an):
+        """ Validates an animal record is ok to send """
+        # Validate certain items aren't blank so we aren't registering bogus data
+        if asm3.utils.nulltostr(an["CURRENTOWNERADDRESS"]).strip() == "":
+            self.logError("Address for the new owner is blank, cannot process")
+            return False 
+
+        if asm3.utils.nulltostr(an["CURRENTOWNERPOSTCODE"]).strip() == "":
+            self.logError("Postal code for the new owner is blank, cannot process")
+            return False
+
+        if an["IDENTICHIPDATE"] is None:
+            self.logError("Microchip date cannot be blank, cannot process")
+            return False
+
+        # Make sure the length is actually suitable
+        if not len(an["IDENTICHIPNUMBER"]) in (9, 10, 15):
+            self.logError("Microchip length is not 9, 10 or 15, cannot process")
+            return False
+
+        return True
 
     @staticmethod
     def signup(dbo, post):

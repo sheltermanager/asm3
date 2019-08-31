@@ -66,7 +66,6 @@ class HelpingLostPetsPublisher(FTPPublisher):
         anCount = 0
         for an in foundanimals:
             try:
-                line = []
                 anCount += 1
                 self.log("Processing Found Animal: %d: %s (%d of %d)" % ( an["ID"], an["COMMENTS"], anCount, len(foundanimals)))
 
@@ -76,52 +75,11 @@ class HelpingLostPetsPublisher(FTPPublisher):
                     self.resetPublisherProgress()
                     return
 
-                # OrgID
-                line.append("\"%s\"" % shelterid)
-                # PetID
-                line.append("\"F%d\"" % an["ID"])
-                # Status
-                line.append("\"Found\"")
-                # Name
-                line.append("\"%d\"" % an["ID"])
-                # Species
-                line.append("\"%s\"" % an["SPECIESNAME"])
-                # Sex
-                line.append("\"%s\"" % an["SEXNAME"])
-                # PrimaryBreed
-                line.append("\"%s\"" % an["BREEDNAME"])
-                # SecondaryBreed
-                line.append("\"\"")
-                # Age, one of Baby, Young, Adult, Senior - just happens to match our default age groups
-                line.append("\"%s\"" % an["AGEGROUP"])
-                # Altered - don't have
-                line.append("\"\"")
-                # Size, one of Small, Medium or Large or X-Large - also don't have
-                line.append("\"\"")
-                # ZipPostal
-                line.append("\"%s\"" % an["AREAPOSTCODE"])
-                # Description
-                notes = str(an["DISTFEAT"]) + "\n" + str(an["COMMENTS"]) + "\n" + str(an["AREAFOUND"])
-                # Strip carriage returns
-                notes = notes.replace("\r\n", "<br />")
-                notes = notes.replace("\r", "<br />")
-                notes = notes.replace("\n", "<br />")
-                notes = notes.replace("\"", "&ldquo;")
-                notes = notes.replace("\'", "&lsquo;")
-                notes = notes.replace("\`", "&lsquo;")
-                line.append("\"%s\"" % notes)
-                # Photo
-                line.append("\"\"")
-                # Colour
-                line.append("\"%s\"" % an["BASECOLOURNAME"])
-                # MedicalConditions
-                line.append("\"\"")
-                # LastUpdated
-                line.append("\"%s\"" % asm3.i18n.python2unix(an["LASTCHANGEDDATE"]))
-                # Add to our CSV file
-                csv.append(",".join(line))
+                csv.append( self.processFoundAnimal(an, shelterid) )
+
                 # Mark success in the log
                 self.logSuccess("Processed Found Animal: %d: %s (%d of %d)" % ( an["ID"], an["COMMENTS"], anCount, len(foundanimals)))
+
             except Exception as err:
                 self.logError("Failed processing found animal: %s, %s" % (str(an["ID"]), err), sys.exc_info())
 
@@ -129,7 +87,6 @@ class HelpingLostPetsPublisher(FTPPublisher):
         anCount = 0
         for an in animals:
             try:
-                line = []
                 anCount += 1
                 self.log("Processing: %s: %s (%d of %d)" % ( an["SHELTERCODE"], an["ANIMALNAME"], anCount, len(animals)))
                 self.updatePublisherProgress(self.getProgress(anCount, len(animals)))
@@ -142,59 +99,12 @@ class HelpingLostPetsPublisher(FTPPublisher):
 
                 # Upload one image for this animal
                 self.uploadImage(an, an["WEBSITEMEDIANAME"], an["SHELTERCODE"] + ".jpg")
-                # OrgID
-                line.append("\"%s\"" % shelterid)
-                # PetID
-                line.append("\"A%d\"" % an["ID"])
-                # Status
-                line.append("\"Adoptable\"")
-                # Name
-                line.append("\"%s\"" % an["ANIMALNAME"])
-                # Species
-                line.append("\"%s\"" % an["SPECIESNAME"])
-                # Sex
-                line.append("\"%s\"" % an["SEXNAME"])
-                # PrimaryBreed
-                line.append("\"%s\"" % an["BREEDNAME1"])
-                # SecondaryBreed
-                if an["CROSSBREED"] == 1:
-                    line.append("\"%s\"" % an["BREEDNAME2"])
-                else:
-                    line.append("\"\"")
-                # Age, one of Baby, Young, Adult, Senior
-                ageinyears = asm3.i18n.date_diff_days(an["DATEOFBIRTH"], asm3.i18n.now(self.dbo.timezone))
-                ageinyears /= 365.0
-                agename = "Adult"
-                if ageinyears < 0.5: agename = "Baby"
-                elif ageinyears < 2: agename = "Young"
-                elif ageinyears < 9: agename = "Adult"
-                else: agename = "Senior"
-                line.append("\"%s\"" % agename)
-                # Altered
-                line.append("%s" % self.hlpYesNo(an["NEUTERED"] == 1))
-                # Size, one of Small, Medium or Large or X-Large
-                ansize = "Medium"
-                if an["SIZE"] == 0 : ansize = "X-Large"
-                elif an["SIZE"] == 1: ansize = "Large"
-                elif an["SIZE"] == 2: ansize = "Medium"
-                elif an["SIZE"] == 3: ansize = "Small"
-                line.append("\"%s\"" % ansize)
-                # ZipPostal
-                line.append("\"%s\"" % asm3.configuration.helpinglostpets_postal(self.dbo))
-                # Description
-                line.append("\"%s\"" % self.getDescription(an, True))
-                # Photo
-                line.append("\"%s.jpg\"" % an["SHELTERCODE"])
-                # Colour
-                line.append("\"%s\"" % an["BASECOLOURNAME"])
-                # MedicalConditions
-                line.append("\"%s\"" % an["HEALTHPROBLEMS"])
-                # LastUpdated
-                line.append("\"%s\"" % asm3.i18n.python2unix(an["LASTCHANGEDDATE"]))
-                # Add to our CSV file
-                csv.append(",".join(line))
+
+                csv.append( self.processAnimal(an, shelterid) )
+
                 # Mark success in the log
                 self.logSuccess("Processed: %s: %s (%d of %d)" % ( an["SHELTERCODE"], an["ANIMALNAME"], anCount, len(animals)))
+
             except Exception as err:
                 self.logError("Failed processing animal: %s, %s" % (str(an["SHELTERCODE"]), err), sys.exc_info())
 
@@ -215,4 +125,106 @@ class HelpingLostPetsPublisher(FTPPublisher):
         self.saveLog()
         self.setPublisherComplete()
 
+    def processFoundAnimal(self, an, shelterid=""):
+        """
+        Processes a found animal and returns a CSV line
+        """
+        line = []
+        # OrgID
+        line.append("\"%s\"" % shelterid)
+        # PetID
+        line.append("\"F%d\"" % an["ID"])
+        # Status
+        line.append("\"Found\"")
+        # Name
+        line.append("\"%d\"" % an["ID"])
+        # Species
+        line.append("\"%s\"" % an["SPECIESNAME"])
+        # Sex
+        line.append("\"%s\"" % an["SEXNAME"])
+        # PrimaryBreed
+        line.append("\"%s\"" % an["BREEDNAME"])
+        # SecondaryBreed
+        line.append("\"\"")
+        # Age, one of Baby, Young, Adult, Senior - just happens to match our default age groups
+        line.append("\"%s\"" % an["AGEGROUP"])
+        # Altered - don't have
+        line.append("\"\"")
+        # Size, one of Small, Medium or Large or X-Large - also don't have
+        line.append("\"\"")
+        # ZipPostal
+        line.append("\"%s\"" % an["AREAPOSTCODE"])
+        # Description
+        notes = str(an["DISTFEAT"]) + "\n" + str(an["COMMENTS"]) + "\n" + str(an["AREAFOUND"])
+        # Strip carriage returns
+        notes = notes.replace("\r\n", "<br />")
+        notes = notes.replace("\r", "<br />")
+        notes = notes.replace("\n", "<br />")
+        notes = notes.replace("\"", "&ldquo;")
+        notes = notes.replace("\'", "&lsquo;")
+        notes = notes.replace("\`", "&lsquo;")
+        line.append("\"%s\"" % notes)
+        # Photo
+        line.append("\"\"")
+        # Colour
+        line.append("\"%s\"" % an["BASECOLOURNAME"])
+        # MedicalConditions
+        line.append("\"\"")
+        # LastUpdated
+        line.append("\"%s\"" % asm3.i18n.python2unix(an["LASTCHANGEDDATE"]))
+        return ",".join(line)
+
+    def processAnimal(self, an, shelterid=""):
+        """ Process an animal record and return a CSV line """
+        line = []
+        # OrgID
+        line.append("\"%s\"" % shelterid)
+        # PetID
+        line.append("\"A%d\"" % an["ID"])
+        # Status
+        line.append("\"Adoptable\"")
+        # Name
+        line.append("\"%s\"" % an["ANIMALNAME"])
+        # Species
+        line.append("\"%s\"" % an["SPECIESNAME"])
+        # Sex
+        line.append("\"%s\"" % an["SEXNAME"])
+        # PrimaryBreed
+        line.append("\"%s\"" % an["BREEDNAME1"])
+        # SecondaryBreed
+        if an["CROSSBREED"] == 1:
+            line.append("\"%s\"" % an["BREEDNAME2"])
+        else:
+            line.append("\"\"")
+        # Age, one of Baby, Young, Adult, Senior
+        ageinyears = asm3.i18n.date_diff_days(an["DATEOFBIRTH"], asm3.i18n.now(self.dbo.timezone))
+        ageinyears /= 365.0
+        agename = "Adult"
+        if ageinyears < 0.5: agename = "Baby"
+        elif ageinyears < 2: agename = "Young"
+        elif ageinyears < 9: agename = "Adult"
+        else: agename = "Senior"
+        line.append("\"%s\"" % agename)
+        # Altered
+        line.append("%s" % self.hlpYesNo(an["NEUTERED"] == 1))
+        # Size, one of Small, Medium or Large or X-Large
+        ansize = "Medium"
+        if an["SIZE"] == 0 : ansize = "X-Large"
+        elif an["SIZE"] == 1: ansize = "Large"
+        elif an["SIZE"] == 2: ansize = "Medium"
+        elif an["SIZE"] == 3: ansize = "Small"
+        line.append("\"%s\"" % ansize)
+        # ZipPostal
+        line.append("\"%s\"" % asm3.configuration.helpinglostpets_postal(self.dbo))
+        # Description
+        line.append("\"%s\"" % self.getDescription(an, True))
+        # Photo
+        line.append("\"%s.jpg\"" % an["SHELTERCODE"])
+        # Colour
+        line.append("\"%s\"" % an["BASECOLOURNAME"])
+        # MedicalConditions
+        line.append("\"%s\"" % an["HEALTHPROBLEMS"])
+        # LastUpdated
+        line.append("\"%s\"" % asm3.i18n.python2unix(an["LASTCHANGEDDATE"]))
+        return ",".join(line)
 

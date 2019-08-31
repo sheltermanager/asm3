@@ -92,7 +92,6 @@ class RescueGroupsPublisher(FTPPublisher):
         anCount = 0
         for an in animals:
             try:
-                line = []
                 anCount += 1
                 self.log("Processing: %s: %s (%d of %d)" % ( an["SHELTERCODE"], an["ANIMALNAME"], anCount, len(animals)))
                 self.updatePublisherProgress(self.getProgress(anCount, len(animals)))
@@ -106,99 +105,9 @@ class RescueGroupsPublisher(FTPPublisher):
 
                 # Upload images for this animal
                 totalimages = self.uploadImages(an, False, 4)
-                # orgID
-                line.append("\"%s\"" % shelterid)
-                # ID
-                line.append("\"%s\"" % str(an["ID"]))
-                # Status
-                line.append("\"Available\"")
-                # Last updated (Unix timestamp)
-                line.append("\"%s\"" % str(time.mktime(an["LASTCHANGEDDATE"].timetuple())))
-                # rescue ID (ID of animal at the rescue)
-                line.append("\"%s\"" % an["SHELTERCODE"])
-                # Name
-                line.append("\"%s\"" % an["ANIMALNAME"].replace("\"", "\"\""))
-                # Summary (no idea what this is for)
-                line.append("\"\"")
-                # Species
-                line.append("\"%s\"" % an["PETFINDERSPECIES"])
-                # Readable breed
-                line.append("\"%s\"" % an["BREEDNAME"])
-                # Primary breed
-                line.append("\"%s\"" % an["PETFINDERBREED"])
-                # Secondary breed
-                line.append("\"%s\"" % self.getPublisherBreed(an, 2))
-                # Sex
-                line.append("\"%s\"" % an["SEXNAME"])
-                # Mixed
-                line.append("\"%s\"" % self.rgYesNo(an["CROSSBREED"] == 1))
-                # dogs (good with)
-                line.append("\"%s\"" % self.rgYesNoBlank(an["ISGOODWITHDOGS"]))
-                # cats (good with)
-                line.append("\"%s\"" % self.rgYesNoBlank(an["ISGOODWITHCATS"]))
-                # kids (good with)
-                line.append("\"%s\"" % self.rgYesNoBlank(an["ISGOODWITHCHILDREN"]))
-                # declawed
-                line.append("\"%s\"" % self.rgYesNo(an["DECLAWED"] == 1))
-                # housetrained
-                line.append("\"%s\"" % self.rgYesNoBlank(an["ISHOUSETRAINED"]))
-                # Age, one of Adult, Baby, Senior and Young
-                ageinyears = asm3.i18n.date_diff_days(an["DATEOFBIRTH"], asm3.i18n.now(self.dbo.timezone))
-                ageinyears /= 365.0
-                agename = "Adult"
-                if ageinyears < 0.5: agename = "Baby"
-                elif ageinyears < 2: agename = "Young"
-                elif ageinyears < 9: agename = "Adult"
-                else: agename = "Senior"
-                line.append("\"%s\"" % agename)
-                # Special needs
-                if an["CRUELTYCASE"] == 1:
-                    line.append("\"1\"")
-                elif an["HASSPECIALNEEDS"] == 1:
-                    line.append("\"1\"")
-                else:
-                    line.append("\"\"")
-                # Altered
-                line.append("\"%s\"" % self.rgYesNo(an["NEUTERED"] == 1))
-                # Size, one of S, M, L, XL
-                ansize = "M"
-                if an["SIZE"] == 0: ansize = "XL"
-                elif an["SIZE"] == 1: ansize = "L"
-                elif an["SIZE"] == 2: ansize = "M"
-                elif an["SIZE"] == 3: ansize = "S"
-                line.append("\"%s\"" % ansize)
-                # uptodate (Has shots)
-                line.append("\"%s\"" % self.rgYesNo(asm3.medical.get_vaccinated(self.dbo, int(an["ID"]))))
-                # colour
-                line.append("\"%s\"" % an["BASECOLOURNAME"])
-                # coatLength (not implemented)
-                line.append("\"\"")
-                # pattern (not implemented)
-                line.append("\"\"")
-                # courtesy
-                if an["ISCOURTESY"] == 1:
-                    line.append("\"Yes\"")
-                else:
-                    line.append("\"\"")
-                # Description
-                line.append("\"%s\"" % self.getDescription(an, crToBr=True))
-                # pic1-pic4
-                if totalimages > 0:
-                    # UploadAll isn't on, there was just one image with sheltercode == name
-                    if not self.pc.uploadAllImages:
-                        line.append("\"%s.jpg\",\"\",\"\",\"\"" % an["SHELTERCODE"])
-                    else:
-                        # Output an entry for each image we uploaded,
-                        # upto a maximum of 4
-                        for i in range(1, 5):
-                            if totalimages >= i:
-                                line.append("\"%s-%d.jpg\"" % (an["SHELTERCODE"], i))
-                            else:
-                                line.append("\"\"")
-                else:
-                    line.append("\"\",\"\",\"\",\"\"")
-                # Add to our CSV file
-                csv.append(",".join(line))
+
+                csv.append( self.processAnimal(an, totalimages, shelterid) )
+
                 # Mark success in the log
                 self.logSuccess("Processed: %s: %s (%d of %d)" % ( an["SHELTERCODE"], an["ANIMALNAME"], anCount, len(animals)))
             except Exception as err:
@@ -220,4 +129,98 @@ class RescueGroupsPublisher(FTPPublisher):
         self.log(header + "\n".join(csv))
         self.cleanup()
 
-
+    def processAnimal(self, an, totalimages=0, shelterid=""):
+        """ Process an animal and return a CSV line. totalimages = the number of images we uploaded for this animal """
+        line = []
+        # orgID
+        line.append("\"%s\"" % shelterid)
+        # ID
+        line.append("\"%s\"" % str(an["ID"]))
+        # Status
+        line.append("\"Available\"")
+        # Last updated (Unix timestamp)
+        line.append("\"%s\"" % str(time.mktime(an["LASTCHANGEDDATE"].timetuple())))
+        # rescue ID (ID of animal at the rescue)
+        line.append("\"%s\"" % an["SHELTERCODE"])
+        # Name
+        line.append("\"%s\"" % an["ANIMALNAME"].replace("\"", "\"\""))
+        # Summary (no idea what this is for)
+        line.append("\"\"")
+        # Species
+        line.append("\"%s\"" % an["PETFINDERSPECIES"])
+        # Readable breed
+        line.append("\"%s\"" % an["BREEDNAME"])
+        # Primary breed
+        line.append("\"%s\"" % an["PETFINDERBREED"])
+        # Secondary breed
+        line.append("\"%s\"" % self.getPublisherBreed(an, 2))
+        # Sex
+        line.append("\"%s\"" % an["SEXNAME"])
+        # Mixed
+        line.append("\"%s\"" % self.rgYesNo(an["CROSSBREED"] == 1))
+        # dogs (good with)
+        line.append("\"%s\"" % self.rgYesNoBlank(an["ISGOODWITHDOGS"]))
+        # cats (good with)
+        line.append("\"%s\"" % self.rgYesNoBlank(an["ISGOODWITHCATS"]))
+        # kids (good with)
+        line.append("\"%s\"" % self.rgYesNoBlank(an["ISGOODWITHCHILDREN"]))
+        # declawed
+        line.append("\"%s\"" % self.rgYesNo(an["DECLAWED"] == 1))
+        # housetrained
+        line.append("\"%s\"" % self.rgYesNoBlank(an["ISHOUSETRAINED"]))
+        # Age, one of Adult, Baby, Senior and Young
+        ageinyears = asm3.i18n.date_diff_days(an["DATEOFBIRTH"], asm3.i18n.now(self.dbo.timezone))
+        ageinyears /= 365.0
+        agename = "Adult"
+        if ageinyears < 0.5: agename = "Baby"
+        elif ageinyears < 2: agename = "Young"
+        elif ageinyears < 9: agename = "Adult"
+        else: agename = "Senior"
+        line.append("\"%s\"" % agename)
+        # Special needs
+        if an["CRUELTYCASE"] == 1:
+            line.append("\"1\"")
+        elif an["HASSPECIALNEEDS"] == 1:
+            line.append("\"1\"")
+        else:
+            line.append("\"\"")
+        # Altered
+        line.append("\"%s\"" % self.rgYesNo(an["NEUTERED"] == 1))
+        # Size, one of S, M, L, XL
+        ansize = "M"
+        if an["SIZE"] == 0: ansize = "XL"
+        elif an["SIZE"] == 1: ansize = "L"
+        elif an["SIZE"] == 2: ansize = "M"
+        elif an["SIZE"] == 3: ansize = "S"
+        line.append("\"%s\"" % ansize)
+        # uptodate (Has shots)
+        line.append("\"%s\"" % self.rgYesNo(asm3.medical.get_vaccinated(self.dbo, int(an["ID"]))))
+        # colour
+        line.append("\"%s\"" % an["BASECOLOURNAME"])
+        # coatLength (not implemented)
+        line.append("\"\"")
+        # pattern (not implemented)
+        line.append("\"\"")
+        # courtesy
+        if an["ISCOURTESY"] == 1:
+            line.append("\"Yes\"")
+        else:
+            line.append("\"\"")
+        # Description
+        line.append("\"%s\"" % self.getDescription(an, crToBr=True))
+        # pic1-pic4
+        if totalimages > 0:
+            # UploadAll isn't on, there was just one image with sheltercode == name
+            if not self.pc.uploadAllImages:
+                line.append("\"%s.jpg\",\"\",\"\",\"\"" % an["SHELTERCODE"])
+            else:
+                # Output an entry for each image we uploaded,
+                # upto a maximum of 4
+                for i in range(1, 5):
+                    if totalimages >= i:
+                        line.append("\"%s-%d.jpg\"" % (an["SHELTERCODE"], i))
+                    else:
+                        line.append("\"\"")
+        else:
+            line.append("\"\",\"\",\"\",\"\"")
+        return ",".join(line)

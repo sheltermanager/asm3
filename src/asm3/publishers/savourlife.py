@@ -26,7 +26,7 @@ class SavourLifePublisher(AbstractPublisher):
         """
         Returns a savourlife breed for an asm3.animal.
         """
-        breed = an.BREEDNAME1
+        breed = asm3.utils.nulltostr(an.BREEDNAME1)
         if an.CROSSBREED == 1:
             breed = "%s cross" % breed
         for k, v in DOG_BREEDS.items():
@@ -165,110 +165,12 @@ class SavourLifePublisher(AbstractPublisher):
                     self.resetPublisherProgress()
                     self.cleanup()
                     return
-      
-                # Size is 10 = small, 20 = medium, 30 = large, 40 = x large
-                size = ""
-                if an.SIZE == 2: size = 20
-                elif an.SIZE < 2: size = 30
-                else: size = 10
-
-                # They're probably going to need this at some point, but current API doesn't have it
-                # and they've set a global breeder number value for the whole organisation
-                #breeder_id = ""
-                #if "BREEDERID" in an and an.BREEDERID != "":
-                #    breeder_id = an.BREEDERID
-
-                # The enquiry number is given by the savourlife website to the potential adopter,
-                # they pass it on to the shelter (who should add it to the animal record) so
-                # that it's set when we mark the animal adopted with savourlife. This gets the
-                # new adopter free food.
-                # It's unlikely that there will be an enquirynumber while the animal is still adoptable
-                # but it's possible so we check it here just in case.
-                enquirynumber = None
-                if "ENQUIRYNUMBER" in an and an.ENQUIRYNUMBER != "":
-                    enquirynumber = an.ENQUIRYNUMBER
-
-                # Check whether we've been vaccinated, wormed and hw treated
-                vaccinated = asm3.medical.get_vaccinated(self.dbo, an.ID)
-                sixmonths = self.dbo.today(offset=-182)
-                hwtreated = self.dbo.query_int("SELECT COUNT(*) FROM animalmedical WHERE LOWER(TreatmentName) LIKE ? " \
-                    "AND LOWER(TreatmentName) LIKE ? AND StartDate>? AND AnimalID=?", ("%heart%", "%worm%", sixmonths, an.ID)) > 0
-                wormed = self.dbo.query_int("SELECT COUNT(*) FROM animalmedical WHERE LOWER(TreatmentName) LIKE ? " \
-                    "AND LOWER(TreatmentName) NOT LIKE ? AND StartDate>? AND AnimalID=?", ("%worm%", "%heart%", sixmonths, an.ID)) > 0
-                # PR want a null value to hide never-treated animals, so we
-                # turn False into a null.
-                if not hwtreated: hwtreated = None
-                if not wormed: wormed = None
-
-                # Use the fosterer's postcode, state and suburb if available
-                location_postcode = postcode
-                location_state_abbr = self.get_state(state)
-                location_suburb = suburb
-                if an.ACTIVEMOVEMENTID and an.ACTIVEMOVEMENTTYPE == 2:
-                    fr = self.dbo.first_row(self.dbo.query("SELECT OwnerTown, OwnerCounty, OwnerPostcode FROM adoption m " \
-                        "INNER JOIN owner o ON m.OwnerID = o.ID WHERE m.ID=?", [ an.ACTIVEMOVEMENTID ]))
-                    if fr is not None and fr.OWNERPOSTCODE: location_postcode = fr.OWNERPOSTCODE
-                    if fr is not None and fr.OWNERCOUNTY: location_state_abbr = self.get_state(fr.OWNERCOUNTY)
-                    if fr is not None and fr.OWNERTOWN: location_suburb = fr.OWNERTOWN
-
-                # Build a list of immutable photo URLs
-                photo_urls = []
-                photos = self.dbo.query("SELECT MediaName FROM media " \
-                    "WHERE LinkTypeID = 0 AND LinkID = ? AND MediaMimeType = 'image/jpeg' " \
-                    "AND (ExcludeFromPublish = 0 OR ExcludeFromPublish Is Null) " \
-                    "ORDER BY WebsitePhoto DESC, ID", [an.ID])
-                for m in photos:
-                    photo_urls.append("%s?account=%s&method=dbfs_image&title=%s" % (SERVICE_URL, self.dbo.database, m.MEDIANAME))
-
-                # MicrochipDetails should be "No" if we don't have one, the actual number for VIC or NSW (2XXX or 3XXX postcode)
-                # or "Yes" for others.
-                microchipdetails = "No"
-                if an.IDENTICHIPNUMBER != "":
-                    if location_postcode.startswith("2") or location_postcode.startswith("3"):
-                        microchipdetails = an.IDENTICHIPNUMBER
-                    else:
-                        microchipdetails = "Yes"
 
                 # Do we already have a SavourLife ID for this animal?
                 # This function returns None if no match is found
                 dogid = asm3.animal.get_extra_id(self.dbo, an, asm3.animal.IDTYPE_SAVOURLIFE)
 
-                # Construct a dictionary of info for this animal
-                data = {
-                    "Username":                 username,
-                    "Token":                    token,
-                    "DogId":                    dogid, # None in here translates to null and creates a new record
-                    "Description":              self.replace_html_entities(self.getDescription(an)),
-                    "DogName":                  an.ANIMALNAME.title(),
-                    "Images":                   photo_urls,
-                    "BreedId":                  self.get_breed_id(an),
-                    "Suburb":                   location_suburb,
-                    "State":                    location_state_abbr,
-                    "Postcode":                 location_postcode,
-                    "DOB":                      an.DATEOFBIRTH, # json handler should translate this to ISO
-                    "enquiryNo":                enquirynumber, # valid enquiry number or null if we don't have one
-                    "AdoptionFee":              asm3.utils.cint(an.FEE) / 100.0,
-                    "IsDesexed":                an.Neutered == 1,
-                    "IsWormed":                 wormed,
-                    "IsVaccinated":             vaccinated,
-                    "IsHeartWormed":            hwtreated,
-                    "Code":                     an.SHELTERCODE,
-                    "IsMale":                   an.SEX == 1,
-                    "RequirementOtherDogs":     self.good_with(an.ISGOODWITHDOGS),
-                    "RequirementOtherAnimals":  None,
-                    "RequirementOtherCats":     self.good_with(an.ISGOODWITHCATS),
-                    "RequirementKidsOver5":     self.good_with(an.ISGOODWITHCHILDREN),
-                    "RequirementKidsUnder5":    self.good_with(an.ISGOODWITHCHILDREN),
-                    "SpecialNeeds":             "",
-                    "MedicalIssues":            self.replace_html_entities(an.HEALTHPROBLEMS),
-                    "InterstateAdoptionAvailable": interstate, 
-                    "FosterCareRequired":       False,
-                    "BondedPair":               an.BONDEDANIMALID is not None and an.BONDEDANIMALID > 0,
-                    "SizeWhenAdult":            size,
-                    "IsSaved":                  an.ACTIVEMOVEMENTTYPE == 1,
-                    "MicrochipDetails":         microchipdetails,
-                    "IsOnHold":                 an.HASACTIVERESERVE == 1
-                }
+                data = self.processAnimal(an, dogid, postcode, state, suburb, username, token, interstate)
 
                 # SavourLife will insert/update accordingly based on whether DogId is null or not
                 url = SAVOURLIFE_URL + "setDog"
@@ -365,6 +267,108 @@ class SavourLifePublisher(AbstractPublisher):
         self.markAnimalsPublished(processed, first=True)
 
         self.cleanup()
+
+    def processAnimal(self, an, dogid="", postcode="", state="", suburb="", username="", token="", interstate=False):
+        """ Processes an animal record and returns a data dictionary for upload as JSON """
+        # Size is 10 = small, 20 = medium, 30 = large, 40 = x large
+        size = ""
+        if an.SIZE == 2: size = 20
+        elif an.SIZE < 2: size = 30
+        else: size = 10
+
+        # They're probably going to need this at some point, but current API doesn't have it
+        # and they've set a global breeder number value for the whole organisation
+        #breeder_id = ""
+        #if "BREEDERID" in an and an.BREEDERID != "":
+        #    breeder_id = an.BREEDERID
+
+        # The enquiry number is given by the savourlife website to the potential adopter,
+        # they pass it on to the shelter (who should add it to the animal record) so
+        # that it's set when we mark the animal adopted with savourlife. This gets the
+        # new adopter free food.
+        # It's unlikely that there will be an enquirynumber while the animal is still adoptable
+        # but it's possible so we check it here just in case.
+        enquirynumber = None
+        if "ENQUIRYNUMBER" in an and an.ENQUIRYNUMBER != "":
+            enquirynumber = an.ENQUIRYNUMBER
+
+        # Check whether we've been vaccinated, wormed and hw treated
+        vaccinated = asm3.medical.get_vaccinated(self.dbo, an.ID)
+        sixmonths = self.dbo.today(offset=-182)
+        hwtreated = self.dbo.query_int("SELECT COUNT(*) FROM animalmedical WHERE LOWER(TreatmentName) LIKE ? " \
+            "AND LOWER(TreatmentName) LIKE ? AND StartDate>? AND AnimalID=?", ("%heart%", "%worm%", sixmonths, an.ID)) > 0
+        wormed = self.dbo.query_int("SELECT COUNT(*) FROM animalmedical WHERE LOWER(TreatmentName) LIKE ? " \
+            "AND LOWER(TreatmentName) NOT LIKE ? AND StartDate>? AND AnimalID=?", ("%worm%", "%heart%", sixmonths, an.ID)) > 0
+        # PR want a null value to hide never-treated animals, so we
+        # turn False into a null.
+        if not hwtreated: hwtreated = None
+        if not wormed: wormed = None
+
+        # Use the fosterer's postcode, state and suburb if available
+        location_postcode = postcode
+        location_state_abbr = self.get_state(state)
+        location_suburb = suburb
+        if an.ACTIVEMOVEMENTID and an.ACTIVEMOVEMENTTYPE == 2:
+            fr = self.dbo.first_row(self.dbo.query("SELECT OwnerTown, OwnerCounty, OwnerPostcode FROM adoption m " \
+                "INNER JOIN owner o ON m.OwnerID = o.ID WHERE m.ID=?", [ an.ACTIVEMOVEMENTID ]))
+            if fr is not None and fr.OWNERPOSTCODE: location_postcode = fr.OWNERPOSTCODE
+            if fr is not None and fr.OWNERCOUNTY: location_state_abbr = self.get_state(fr.OWNERCOUNTY)
+            if fr is not None and fr.OWNERTOWN: location_suburb = fr.OWNERTOWN
+
+        # Build a list of immutable photo URLs
+        photo_urls = []
+        photos = self.dbo.query("SELECT MediaName FROM media " \
+            "WHERE LinkTypeID = 0 AND LinkID = ? AND MediaMimeType = 'image/jpeg' " \
+            "AND (ExcludeFromPublish = 0 OR ExcludeFromPublish Is Null) " \
+            "ORDER BY WebsitePhoto DESC, ID", [an.ID])
+        for m in photos:
+            photo_urls.append("%s?account=%s&method=dbfs_image&title=%s" % (SERVICE_URL, self.dbo.database, m.MEDIANAME))
+
+        # MicrochipDetails should be "No" if we don't have one, the actual number for VIC or NSW (2XXX or 3XXX postcode)
+        # or "Yes" for others.
+        microchipdetails = "No"
+        if an.IDENTICHIPNUMBER != "":
+            if location_postcode.startswith("2") or location_postcode.startswith("3"):
+                microchipdetails = an.IDENTICHIPNUMBER
+            else:
+                microchipdetails = "Yes"
+
+        # Construct a dictionary of info for this animal
+        return {
+            "Username":                 username,
+            "Token":                    token,
+            "DogId":                    dogid, # None in here translates to null and creates a new record
+            "Description":              self.replace_html_entities(self.getDescription(an)),
+            "DogName":                  an.ANIMALNAME.title(),
+            "Images":                   photo_urls,
+            "BreedId":                  self.get_breed_id(an),
+            "Suburb":                   location_suburb,
+            "State":                    location_state_abbr,
+            "Postcode":                 location_postcode,
+            "DOB":                      an.DATEOFBIRTH, # json handler should translate this to ISO
+            "enquiryNo":                enquirynumber, # valid enquiry number or null if we don't have one
+            "AdoptionFee":              asm3.utils.cint(an.FEE) / 100.0,
+            "IsDesexed":                an.Neutered == 1,
+            "IsWormed":                 wormed,
+            "IsVaccinated":             vaccinated,
+            "IsHeartWormed":            hwtreated,
+            "Code":                     an.SHELTERCODE,
+            "IsMale":                   an.SEX == 1,
+            "RequirementOtherDogs":     self.good_with(an.ISGOODWITHDOGS),
+            "RequirementOtherAnimals":  None,
+            "RequirementOtherCats":     self.good_with(an.ISGOODWITHCATS),
+            "RequirementKidsOver5":     self.good_with(an.ISGOODWITHCHILDREN),
+            "RequirementKidsUnder5":    self.good_with(an.ISGOODWITHCHILDREN),
+            "SpecialNeeds":             "",
+            "MedicalIssues":            self.replace_html_entities(an.HEALTHPROBLEMS),
+            "InterstateAdoptionAvailable": interstate, 
+            "FosterCareRequired":       False,
+            "BondedPair":               an.BONDEDANIMALID is not None and an.BONDEDANIMALID > 0,
+            "SizeWhenAdult":            size,
+            "IsSaved":                  an.ACTIVEMOVEMENTTYPE == 1,
+            "MicrochipDetails":         microchipdetails,
+            "IsOnHold":                 an.HASACTIVERESERVE == 1
+        }
 
 
 

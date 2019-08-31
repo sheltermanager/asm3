@@ -81,7 +81,6 @@ class SmartTagPublisher(FTPPublisher):
         anCount = 0
         for an in animals:
             try:
-                line = []
                 anCount += 1
                 self.log("Processing: %s: %s (%d of %d)" % ( an["SHELTERCODE"], an["ANIMALNAME"], anCount, len(animals)))
                 self.updatePublisherProgress(self.getProgress(anCount, len(animals)))
@@ -95,108 +94,9 @@ class SmartTagPublisher(FTPPublisher):
 
                 # Upload one image for this animal with the name shelterid_animalid-1.jpg
                 self.uploadImage(an, an["WEBSITEMEDIANAME"], "%s_%d-1.jpg" % (shelterid, an["ID"]))
-                # accountid
-                line.append("\"%s\"" % shelterid)
-                # sourcesystem
-                line.append("\"ASM\"")
-                # sourcesystemanimalkey (corresponds to image name)
-                line.append("\"%d\"" % an["ID"])
-                # sourcesystemownerkey
-                line.append("\"%s\"" % str(an["CURRENTOWNERID"]))
-                # signupidassigned, signuptype
-                if self.stIsSmartTagPrefix(an["IDENTICHIPNUMBER"]):
-                    # if we have a smarttag microchip number, use that instead of the tag
-                    # since it's unlikely someone will want both
-                    line.append("\"%s\"" % an["IDENTICHIPNUMBER"])
-                    line.append("\"IDTAG-LIFETIME\"")
-                else:
-                    line.append("\"%s\"" % an["SMARTTAGNUMBER"])
-                    sttype = "IDTAG-ANNUAL"
-                    if an["SMARTTAGTYPE"] == 1: sttype = "IDTAG-5 YEAR"
-                    if an["SMARTTAGTYPE"] == 2: sttype = "IDTAG-LIFETIME"
-                    line.append("\"%s\"" % sttype)
-                # signupeffectivedate
-                line.append("\"" + asm3.i18n.python2display(self.locale, an["SMARTTAGDATE"]) + "\"")
-                # signupbatchpostdt - only used by resending mechanism and we don't do that
-                line.append("\"\"")
-                # feecharged
-                line.append("\"\"")
-                # feecollected
-                line.append("\"\"")
-                # owner related stuff
-                address = an["CURRENTOWNERADDRESS"]
-                houseno = asm3.utils.address_house_number(address)
-                streetname = asm3.utils.address_street_name(address)
-                # ownerfname
-                line.append("\"%s\"" % an["CURRENTOWNERFORENAMES"])
-                # ownermname
-                line.append("\"\"")
-                #ownerlname
-                line.append("\"%s\"" % an["CURRENTOWNERSURNAME"])
-                # addressstreetnumber
-                line.append("\"%s\"" % houseno)
-                # addressstreetdir
-                line.append("\"\"")
-                # addressstreetname
-                line.append("\"%s\"" % streetname)
-                # addressstreettype
-                line.append("\"\"")
-                # addresscity
-                line.append("\"%s\"" % an["CURRENTOWNERTOWN"])
-                # addressstate
-                line.append("\"%s\"" % an["CURRENTOWNERCOUNTY"])
-                # addresspostal
-                line.append("\"%s\"" % an["CURRENTOWNERPOSTCODE"])
-                # addressctry
-                line.append("\"USA\"")
-                # owneremail
-                line.append("\"%s\"" % an["CURRENTOWNEREMAILADDRESS"])
-                # owneremail2
-                line.append("\"\"")
-                # owneremail3
-                line.append("\"\"")
-                # ownerhomephone
-                line.append("\"%s\"" % an["CURRENTOWNERHOMETELEPHONE"])
-                # ownerworkphone
-                line.append("\"%s\"" % an["CURRENTOWNERWORKTELEPHONE"])
-                # ownerthirdphone
-                line.append("\"%s\"" % an["CURRENTOWNERMOBILETELEPHONE"])
-                # petname
-                line.append("\"%s\"" % an["ANIMALNAME"].replace("\"", "\"\""))
-                # species
-                line.append("\"%s\"" % an["SPECIESNAME"])
-                # primarybreed
-                line.append("\"%s\"" % an["BREEDNAME1"])
-                # crossbreed (second breed)
-                if an["CROSSBREED"] == 1:
-                    line.append("\"%s\"" % an["BREEDNAME2"])
-                else:
-                    line.append("\"\"")
-                # purebred
-                line.append("\"%s\"" % self.stYesNo(an["CROSSBREED"] == 0))
-                # gender
-                line.append("\"%s\"" % an["SEXNAME"])
-                # sterilized
-                line.append("\"%s\"" % self.stYesNo(an["NEUTERED"] == 1))
-                # primarycolor
-                line.append("\"%s\"" % an["BASECOLOURNAME"])
-                # secondcolor
-                line.append("\"\"")
-                # sizecategory
-                line.append("\"%s\"" % an["SIZENAME"])
-                # agecategory
-                line.append("\"%s\"" % an["AGEGROUP"])
-                # declawed
-                line.append("\"%s\"" % self.stYesNo(an["DECLAWED"] == 1))
-                # animalstatus (one of DECEASED, ADOPTED or NOT ADOPTED)
-                if an["DECEASEDDATE"] is not None:
-                    line.append("\"DECEASED\"")
-                elif an["ACTIVEMOVEMENTTYPE"] == 1 and an["ACTIVEMOVEMENTDATE"] is not None:
-                    line.append("\"ADOPTED\"")
-                else:
-                    line.append("\"NOT ADOPTED\"")
-                # Add to our CSV file
-                csv.append(",".join(line))
+
+                csv.append( self.processAnimal(an, shelterid) )
+
                 # Mark success in the log
                 self.logSuccess("Processed: %s: %s (%d of %d)" % ( an["SHELTERCODE"], an["ANIMALNAME"], anCount, len(animals)))
             except Exception as err:
@@ -222,4 +122,108 @@ class SmartTagPublisher(FTPPublisher):
         self.log(header + "\n".join(csv))
         self.cleanup()
 
+    def processAnimal(self, an, shelterid=""):
+        """ Process an animal record and return a CSV line """
+        line = []
+        # accountid
+        line.append("\"%s\"" % shelterid)
+        # sourcesystem
+        line.append("\"ASM\"")
+        # sourcesystemanimalkey (corresponds to image name)
+        line.append("\"%d\"" % an["ID"])
+        # sourcesystemownerkey
+        line.append("\"%s\"" % str(an["CURRENTOWNERID"]))
+        # signupidassigned, signuptype
+        if self.stIsSmartTagPrefix(an["IDENTICHIPNUMBER"]):
+            # if we have a smarttag microchip number, use that instead of the tag
+            # since it's unlikely someone will want both
+            line.append("\"%s\"" % an["IDENTICHIPNUMBER"])
+            line.append("\"IDTAG-LIFETIME\"")
+        else:
+            line.append("\"%s\"" % an["SMARTTAGNUMBER"])
+            sttype = "IDTAG-ANNUAL"
+            if an["SMARTTAGTYPE"] == 1: sttype = "IDTAG-5 YEAR"
+            if an["SMARTTAGTYPE"] == 2: sttype = "IDTAG-LIFETIME"
+            line.append("\"%s\"" % sttype)
+        # signupeffectivedate
+        line.append("\"" + asm3.i18n.python2display(self.locale, an["SMARTTAGDATE"]) + "\"")
+        # signupbatchpostdt - only used by resending mechanism and we don't do that
+        line.append("\"\"")
+        # feecharged
+        line.append("\"\"")
+        # feecollected
+        line.append("\"\"")
+        # owner related stuff
+        address = an["CURRENTOWNERADDRESS"]
+        houseno = asm3.utils.address_house_number(address)
+        streetname = asm3.utils.address_street_name(address)
+        # ownerfname
+        line.append("\"%s\"" % an["CURRENTOWNERFORENAMES"])
+        # ownermname
+        line.append("\"\"")
+        #ownerlname
+        line.append("\"%s\"" % an["CURRENTOWNERSURNAME"])
+        # addressstreetnumber
+        line.append("\"%s\"" % houseno)
+        # addressstreetdir
+        line.append("\"\"")
+        # addressstreetname
+        line.append("\"%s\"" % streetname)
+        # addressstreettype
+        line.append("\"\"")
+        # addresscity
+        line.append("\"%s\"" % an["CURRENTOWNERTOWN"])
+        # addressstate
+        line.append("\"%s\"" % an["CURRENTOWNERCOUNTY"])
+        # addresspostal
+        line.append("\"%s\"" % an["CURRENTOWNERPOSTCODE"])
+        # addressctry
+        line.append("\"USA\"")
+        # owneremail
+        line.append("\"%s\"" % an["CURRENTOWNEREMAILADDRESS"])
+        # owneremail2
+        line.append("\"\"")
+        # owneremail3
+        line.append("\"\"")
+        # ownerhomephone
+        line.append("\"%s\"" % an["CURRENTOWNERHOMETELEPHONE"])
+        # ownerworkphone
+        line.append("\"%s\"" % an["CURRENTOWNERWORKTELEPHONE"])
+        # ownerthirdphone
+        line.append("\"%s\"" % an["CURRENTOWNERMOBILETELEPHONE"])
+        # petname
+        line.append("\"%s\"" % an["ANIMALNAME"].replace("\"", "\"\""))
+        # species
+        line.append("\"%s\"" % an["SPECIESNAME"])
+        # primarybreed
+        line.append("\"%s\"" % an["BREEDNAME1"])
+        # crossbreed (second breed)
+        if an["CROSSBREED"] == 1:
+            line.append("\"%s\"" % an["BREEDNAME2"])
+        else:
+            line.append("\"\"")
+        # purebred
+        line.append("\"%s\"" % self.stYesNo(an["CROSSBREED"] == 0))
+        # gender
+        line.append("\"%s\"" % an["SEXNAME"])
+        # sterilized
+        line.append("\"%s\"" % self.stYesNo(an["NEUTERED"] == 1))
+        # primarycolor
+        line.append("\"%s\"" % an["BASECOLOURNAME"])
+        # secondcolor
+        line.append("\"\"")
+        # sizecategory
+        line.append("\"%s\"" % an["SIZENAME"])
+        # agecategory
+        line.append("\"%s\"" % an["AGEGROUP"])
+        # declawed
+        line.append("\"%s\"" % self.stYesNo(an["DECLAWED"] == 1))
+        # animalstatus (one of DECEASED, ADOPTED or NOT ADOPTED)
+        if an["DECEASEDDATE"] is not None:
+            line.append("\"DECEASED\"")
+        elif an["ACTIVEMOVEMENTTYPE"] == 1 and an["ACTIVEMOVEMENTDATE"] is not None:
+            line.append("\"ADOPTED\"")
+        else:
+            line.append("\"NOT ADOPTED\"")
+        return ",".join(line)
 

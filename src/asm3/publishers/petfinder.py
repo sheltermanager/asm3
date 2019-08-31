@@ -89,7 +89,6 @@ class PetFinderPublisher(FTPPublisher):
         anCount = 0
         for an in animals:
             try:
-                line = []
                 anCount += 1
                 self.log("Processing: %s: %s (%d of %d)" % ( an["SHELTERCODE"], an["ANIMALNAME"], anCount, len(animals)))
                 self.updatePublisherProgress(self.getProgress(anCount, len(animals)))
@@ -103,62 +102,9 @@ class PetFinderPublisher(FTPPublisher):
 
                 # Upload images for this animal
                 self.uploadImages(an, False, 3)
-                # Mapped species
-                line.append("\"%s\"" % an["PETFINDERSPECIES"])
-                # Breed 1
-                line.append("\"%s\"" % an["PETFINDERBREED"])
-                # Age, one of Adult, Baby, Senior and Young
-                ageindays = asm3.i18n.date_diff_days(an["DATEOFBIRTH"], asm3.i18n.now(self.dbo.timezone))
-                agename = "Adult"
-                if ageindays < agebands[0]: agename = "Baby"
-                elif ageindays < agebands[1]: agename = "Young"
-                elif ageindays < agebands[2]: agename = "Adult"
-                else: agename = "Senior"
-                line.append("\"%s\"" % agename)
-                # Name
-                line.append("\"%s\"" % an["ANIMALNAME"].replace("\"", "\"\""))
-                # Size, one of S, M, L, XL
-                ansize = "M"
-                if an["SIZE"] == 0: ansize = "XL"
-                elif an["SIZE"] == 1: ansize = "L"
-                elif an["SIZE"] == 2: ansize = "M"
-                elif an["SIZE"] == 3: ansize = "S"
-                line.append("\"%s\"" % ansize)
-                # Sex, one of M or F
-                sexname = "M"
-                if an["SEX"] == 0: sexname = "F"
-                line.append("\"%s\"" % sexname)
-                # Description
-                line.append("\"%s\"" % self.getDescription(an, False, True))
-                # Special needs
-                if an["CRUELTYCASE"] == 1:
-                    line.append("\"1\"")
-                elif an["HASSPECIALNEEDS"] == 1:
-                    line.append("\"1\"")
-                else:
-                    line.append("\"\"")
-                # Has shots
-                line.append(self.pfYesNo(asm3.medical.get_vaccinated(self.dbo, int(an["ID"]))))
-                # Altered
-                line.append(self.pfYesNo(an["NEUTERED"] == 1))
-                # No Dogs
-                line.append(self.pfYesNo(an["ISGOODWITHDOGS"] == 1))
-                # No Cats
-                line.append(self.pfYesNo(an["ISGOODWITHCATS"] == 1))
-                # No Kids
-                line.append(self.pfYesNo(an["ISGOODWITHCHILDREN"] == 1))
-                # No Claws
-                line.append(self.pfYesNo(an["DECLAWED"] == 1))
-                # Housebroken
-                line.append(self.pfYesNo(an["ISHOUSETRAINED"] == 0))
-                # ID
-                line.append("\"%s\"" % an["SHELTERCODE"])
-                # Breed 2
-                line.append("\"%s\"" % self.getPublisherBreed(an, 2))
-                # Mix
-                line.append(self.pfYesNo(an["CROSSBREED"] == 1))
-                # Add to our CSV file
-                csv.append(",".join(line))
+
+                csv.append( self.processAnimal(an, agebands) )
+
                 # Mark success in the log
                 self.logSuccess("Processed: %s: %s (%d of %d)" % ( an["SHELTERCODE"], an["ANIMALNAME"], anCount, len(animals)))
             except Exception as err:
@@ -206,4 +152,62 @@ class PetFinderPublisher(FTPPublisher):
         self.log(mapfile)
         self.cleanup()
 
+    def processAnimal(self, an, agebands = [ 182, 730, 3285 ]):
+        """ Processes an animal and returns a CSV line """
+        line = []
+        # Mapped species
+        line.append("\"%s\"" % an["PETFINDERSPECIES"])
+        # Breed 1
+        line.append("\"%s\"" % an["PETFINDERBREED"])
+        # Age, one of Adult, Baby, Senior and Young
+        ageindays = asm3.i18n.date_diff_days(an["DATEOFBIRTH"], asm3.i18n.now(self.dbo.timezone))
+        agename = "Adult"
+        if ageindays < agebands[0]: agename = "Baby"
+        elif ageindays < agebands[1]: agename = "Young"
+        elif ageindays < agebands[2]: agename = "Adult"
+        else: agename = "Senior"
+        line.append("\"%s\"" % agename)
+        # Name
+        line.append("\"%s\"" % an["ANIMALNAME"].replace("\"", "\"\""))
+        # Size, one of S, M, L, XL
+        ansize = "M"
+        if an["SIZE"] == 0: ansize = "XL"
+        elif an["SIZE"] == 1: ansize = "L"
+        elif an["SIZE"] == 2: ansize = "M"
+        elif an["SIZE"] == 3: ansize = "S"
+        line.append("\"%s\"" % ansize)
+        # Sex, one of M or F
+        sexname = "M"
+        if an["SEX"] == 0: sexname = "F"
+        line.append("\"%s\"" % sexname)
+        # Description
+        line.append("\"%s\"" % self.getDescription(an, False, True))
+        # Special needs
+        if an["CRUELTYCASE"] == 1:
+            line.append("\"1\"")
+        elif an["HASSPECIALNEEDS"] == 1:
+            line.append("\"1\"")
+        else:
+            line.append("\"\"")
+        # Has shots
+        line.append(self.pfYesNo(asm3.medical.get_vaccinated(self.dbo, int(an["ID"]))))
+        # Altered
+        line.append(self.pfYesNo(an["NEUTERED"] == 1))
+        # No Dogs
+        line.append(self.pfYesNo(an["ISGOODWITHDOGS"] == 1))
+        # No Cats
+        line.append(self.pfYesNo(an["ISGOODWITHCATS"] == 1))
+        # No Kids
+        line.append(self.pfYesNo(an["ISGOODWITHCHILDREN"] == 1))
+        # No Claws
+        line.append(self.pfYesNo(an["DECLAWED"] == 1))
+        # Housebroken
+        line.append(self.pfYesNo(an["ISHOUSETRAINED"] == 0))
+        # ID
+        line.append("\"%s\"" % an["SHELTERCODE"])
+        # Breed 2
+        line.append("\"%s\"" % self.getPublisherBreed(an, 2))
+        # Mix
+        line.append(self.pfYesNo(an["CROSSBREED"] == 1))
+        return ",".join(line)
 

@@ -66,7 +66,6 @@ class FoundAnimalsPublisher(FTPPublisher):
         success = []
         for an in animals:
             try:
-                line = []
                 anCount += 1
                 self.log("Processing: %s: %s (%d of %d)" % ( an["SHELTERCODE"], an["ANIMALNAME"], anCount, len(animals)))
                 self.updatePublisherProgress(self.getProgress(anCount, len(animals)))
@@ -78,77 +77,13 @@ class FoundAnimalsPublisher(FTPPublisher):
                     self.cleanup()
                     return
 
-                # Validate certain items aren't blank so we aren't registering bogus data
-                if asm3.utils.nulltostr(an["CURRENTOWNERADDRESS"].strip()) == "":
-                    self.logError("Address for the new owner is blank, cannot process")
-                    continue 
+                if not self.validate(an): continue
+                csv.append( self.processAnimal(an, org, email) )
 
-                if asm3.utils.nulltostr(an["CURRENTOWNERPOSTCODE"].strip()) == "":
-                    self.logError("Postal code for the new owner is blank, cannot process")
-                    continue
-
-                # Make sure the length is actually suitable
-                if not len(an["IDENTICHIPNUMBER"]) in (9, 10, 15):
-                    self.logError("Microchip length is not 9, 10 or 15, cannot process")
-                    continue
-
-                servicedate = an["ACTIVEMOVEMENTDATE"] or an["MOSTRECENTENTRYDATE"]
-                if an["NONSHELTERANIMAL"] == 1: servicedate = an["IDENTICHIPDATE"]
-                if servicedate < self.dbo.today(offset=-365*3):
-                    self.logError("Service date is older than 3 years, ignoring")
-                    continue
-
-                # First Name
-                line.append("\"%s\"" % an["CURRENTOWNERFORENAMES"])
-                # Last Name
-                line.append("\"%s\"" % an["CURRENTOWNERSURNAME"])
-                # Email Address
-                line.append("\"%s\"" % an["CURRENTOWNEREMAILADDRESS"])
-                # Address 1
-                line.append("\"%s\"" % an["CURRENTOWNERADDRESS"])
-                # Address 2
-                line.append("\"\"")
-                # City
-                line.append("\"%s\"" % an["CURRENTOWNERTOWN"])
-                # State
-                line.append("\"%s\"" % an["CURRENTOWNERCOUNTY"])
-                # Zip Code
-                line.append("\"%s\"" % an["CURRENTOWNERPOSTCODE"])
-                # Home Phone
-                line.append("\"%s\"" % an["CURRENTOWNERHOMETELEPHONE"])
-                # Work Phone
-                line.append("\"%s\"" % an["CURRENTOWNERWORKTELEPHONE"])
-                # Cell Phone
-                line.append("\"%s\"" % an["CURRENTOWNERMOBILETELEPHONE"])
-                # Pet Name
-                line.append("\"%s\"" % an["ANIMALNAME"])
-                # Microchip Number
-                line.append("\"%s\"" % an["IDENTICHIPNUMBER"])
-                # Service Date
-                line.append("\"%s\"" % asm3.i18n.format_date("%m/%d/%Y", servicedate))
-                # Date of Birth
-                line.append("\"%s\"" % asm3.i18n.format_date("%m/%d/%Y", an["DATEOFBIRTH"]))
-                # Species
-                line.append("\"%s\"" % an["PETFINDERSPECIES"])
-                # Sex
-                line.append("\"%s\"" % an["SEXNAME"])
-                # Spayed/Neutered
-                line.append("\"%s\"" % asm3.utils.iif(an["NEUTERED"] == 1, "Yes", "No"))
-                # Primary Breed
-                line.append("\"%s\"" % an["PETFINDERBREED"])
-                # Secondary Breed
-                line.append("\"%s\"" % an["PETFINDERBREED2"])
-                # Color
-                line.append("\"%s\"" % an["BASECOLOURNAME"])
-                # Implanting Organization
-                line.append("\"%s\"" % org)
-                # Rescue Group Email
-                line.append("\"%s\"" % email)
-                # Add to our CSV file
-                csv.append(",".join(line))
                 # Mark success in the log
                 self.logSuccess("Processed: %s: %s (%d of %d)" % ( an["SHELTERCODE"], an["ANIMALNAME"], anCount, len(animals)))
                 success.append(an)
+
             except Exception as err:
                 self.logError("Failed processing animal: %s, %s" % (str(an["SHELTERCODE"]), err), sys.exc_info())
 
@@ -172,5 +107,85 @@ class FoundAnimalsPublisher(FTPPublisher):
         self.log("-- FILE DATA --")
         self.log(header + "\n".join(csv))
         self.cleanup()
+
+    def processAnimal(self, an, org="", email=""):
+        """
+        Return an animal as a line of the CSV to be submitted
+        """
+        line = []
+        servicedate = an["ACTIVEMOVEMENTDATE"] or an["MOSTRECENTENTRYDATE"]
+        if an["NONSHELTERANIMAL"] == 1: servicedate = an["IDENTICHIPDATE"]
+
+        # First Name
+        line.append("\"%s\"" % an["CURRENTOWNERFORENAMES"])
+        # Last Name
+        line.append("\"%s\"" % an["CURRENTOWNERSURNAME"])
+        # Email Address
+        line.append("\"%s\"" % an["CURRENTOWNEREMAILADDRESS"])
+        # Address 1
+        line.append("\"%s\"" % an["CURRENTOWNERADDRESS"])
+        # Address 2
+        line.append("\"\"")
+        # City
+        line.append("\"%s\"" % an["CURRENTOWNERTOWN"])
+        # State
+        line.append("\"%s\"" % an["CURRENTOWNERCOUNTY"])
+        # Zip Code
+        line.append("\"%s\"" % an["CURRENTOWNERPOSTCODE"])
+        # Home Phone
+        line.append("\"%s\"" % an["CURRENTOWNERHOMETELEPHONE"])
+        # Work Phone
+        line.append("\"%s\"" % an["CURRENTOWNERWORKTELEPHONE"])
+        # Cell Phone
+        line.append("\"%s\"" % an["CURRENTOWNERMOBILETELEPHONE"])
+        # Pet Name
+        line.append("\"%s\"" % an["ANIMALNAME"])
+        # Microchip Number
+        line.append("\"%s\"" % an["IDENTICHIPNUMBER"])
+        # Service Date
+        line.append("\"%s\"" % asm3.i18n.format_date("%m/%d/%Y", servicedate))
+        # Date of Birth
+        line.append("\"%s\"" % asm3.i18n.format_date("%m/%d/%Y", an["DATEOFBIRTH"]))
+        # Species
+        line.append("\"%s\"" % an["PETFINDERSPECIES"])
+        # Sex
+        line.append("\"%s\"" % an["SEXNAME"])
+        # Spayed/Neutered
+        line.append("\"%s\"" % asm3.utils.iif(an["NEUTERED"] == 1, "Yes", "No"))
+        # Primary Breed
+        line.append("\"%s\"" % an["PETFINDERBREED"])
+        # Secondary Breed
+        line.append("\"%s\"" % an["PETFINDERBREED2"])
+        # Color
+        line.append("\"%s\"" % an["BASECOLOURNAME"])
+        # Implanting Organization
+        line.append("\"%s\"" % org)
+        # Rescue Group Email
+        line.append("\"%s\"" % email)
+        return ",".join(line)
+
+    def validate(self, an):
+        """ Validate an animal record is ok to send """
+        # Validate certain items aren't blank so we aren't registering bogus data
+        if asm3.utils.nulltostr(an["CURRENTOWNERADDRESS"]).strip() == "":
+            self.logError("Address for the new owner is blank, cannot process")
+            return False 
+
+        if asm3.utils.nulltostr(an["CURRENTOWNERPOSTCODE"]).strip() == "":
+            self.logError("Postal code for the new owner is blank, cannot process")
+            return False
+
+        # Make sure the length is actually suitable
+        if not len(an["IDENTICHIPNUMBER"]) in (9, 10, 15):
+            self.logError("Microchip length is not 9, 10 or 15, cannot process")
+            return False
+
+        servicedate = an["ACTIVEMOVEMENTDATE"] or an["MOSTRECENTENTRYDATE"]
+        if an["NONSHELTERANIMAL"] == 1: servicedate = an["IDENTICHIPDATE"]
+        if servicedate < self.dbo.today(offset=-365*3):
+            self.logError("Service date is older than 3 years, ignoring")
+            return False
+
+        return True
 
 

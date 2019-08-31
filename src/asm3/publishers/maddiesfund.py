@@ -73,31 +73,12 @@ class MaddiesFundPublisher(AbstractPublisher):
         else:
             return ""
 
-    def run(self):
-        
-        self.log("Maddies Fund Publisher starting...")
-
-        BATCH_SIZE = 250 # How many animals to send in one POST
-        PERIOD = 214 # How many days to go back when checking for fosters and adoptions (7 months * 30.5 = 214 days)
-
-        if self.isPublisherExecuting(): return
-        self.updatePublisherProgress(0)
-        self.setLastError("")
-        self.setStartPublishing()
-
-        username = asm3.configuration.maddies_fund_username(self.dbo)
-        password = asm3.configuration.maddies_fund_password(self.dbo)
-        organisation = asm3.configuration.organisation(self.dbo)
-
-        if username == "" or password == "":
-            self.setLastError("username and password all need to be set for Maddies Fund Publisher")
-            self.cleanup()
-            return
-
+    def getData(self, periodindays):
+        """ Returns the animal data for periodindays """
         # Send all fosters and adoptions for the period that haven't been sent since they last had a change.
         # (we use lastchangeddate instead of sent date because MPA want an update when a number of key
         #  animal fields change, such as neuter status, microchip info, rabies tag, etc)
-        cutoff = asm3.i18n.subtract_days(asm3.i18n.now(self.dbo.timezone), PERIOD)
+        cutoff = asm3.i18n.subtract_days(asm3.i18n.now(self.dbo.timezone), periodindays)
         sql = "%s WHERE a.ActiveMovementType IN (1,2) " \
             "AND a.ActiveMovementDate >= ? AND a.DeceasedDate Is Null AND a.NonShelterAnimal = 0 " \
             "AND NOT EXISTS(SELECT AnimalID FROM animalpublished WHERE AnimalID = a.ID AND PublishedTo = 'maddiesfund' AND SentDate >= %s) " \
@@ -121,7 +102,31 @@ class MaddiesFundPublisher(AbstractPublisher):
         sql = "%s WHERE a.Archived = 0 AND " \
             "EXISTS(SELECT p.AnimalID FROM animalpublished p INNER JOIN animalvaccination av ON av.AnimalID = a.ID WHERE p.AnimalID = a.ID AND " \
             "p.PublishedTo = 'maddiesfund' AND (p.SentDate < av.CreatedDate OR p.SentDate < av.LastChangedDate))" % asm3.animal.get_animal_query(self.dbo)
-        animals += self.dbo.query(sql, [cutoff], distincton="ID")
+        animals += self.dbo.query(sql, distincton="ID")
+        return animals
+
+    def run(self):
+        
+        self.log("Maddies Fund Publisher starting...")
+
+        BATCH_SIZE = 250 # How many animals to send in one POST
+        PERIOD = 214 # How many days to go back when checking for fosters and adoptions (7 months * 30.5 = 214 days)
+
+        if self.isPublisherExecuting(): return
+        self.updatePublisherProgress(0)
+        self.setLastError("")
+        self.setStartPublishing()
+
+        username = asm3.configuration.maddies_fund_username(self.dbo)
+        password = asm3.configuration.maddies_fund_password(self.dbo)
+        organisation = asm3.configuration.organisation(self.dbo)
+
+        if username == "" or password == "":
+            self.setLastError("username and password all need to be set for Maddies Fund Publisher")
+            self.cleanup()
+            return
+
+        animals = self.getData(PERIOD)
 
         if len(animals) == 0:
             self.setLastError("No animals found to publish.")
@@ -158,84 +163,7 @@ class MaddiesFundPublisher(AbstractPublisher):
                     self.resetPublisherProgress()
                     return
 
-                # Build an adoption JSON object containing the adopter and animal
-                a = {
-                    "PetID": an["ID"],
-                    "PetCode": an["SHELTERCODE"],
-                    "Site": organisation,
-                    "PetName": an["ANIMALNAME"],
-                    "PetStatus": self.getPetStatus(an),
-                    "PetLitterID": an["ACCEPTANCENUMBER"],
-                    "GroupType": asm3.utils.iif(asm3.utils.nulltostr(an["ACCEPTANCENUMBER"]) != "", "Litter", ""),
-                    "PetSpecies": an["SPECIESNAME"],
-                    "PetSex": an["SEXNAME"],
-                    "DateofBirth": self.getDate(an["DATEOFBIRTH"]), 
-                    "SpayNeuterStatus": asm3.utils.iif(an["NEUTERED"] == 1, "Spayed/Neutered", ""),
-                    "Breed": an["BREEDNAME"],
-                    "Color": an["BASECOLOURNAME"],
-                    "SecondaryColor": "",
-                    "Pattern": "",
-                    "HealthStatus": an["ASILOMARINTAKECATEGORY"] + 1, # We're zero based, they use 1-base
-                    "PetBiography": an["ANIMALCOMMENTS"],
-                    "Photo": "%s?method=animal_image&account=%s&animalid=%s" % (SERVICE_URL, self.dbo.database, an["ID"]),
-                    "Microchip": an["IDENTICHIPNUMBER"],
-                    "MicrochipIssuer": asm3.lookups.get_microchip_manufacturer(self.dbo.locale, an["IDENTICHIPNUMBER"]),
-                    "RelationshipType": self.getRelationshipType(an),
-                    "FosterCareDate": self.getDate(an["ACTIVEMOVEMENTDATE"]),
-                    "FosterEndDate": "",
-                    "RabiesTag": an["RABIESTAG"],
-
-                    "ID": an["CURRENTOWNERID"],
-                    "Firstname": an["CURRENTOWNERFORENAMES"],
-                    "Lastname": an["CURRENTOWNERSURNAME"],
-                    "EmailAddress": self.getEmail(an["CURRENTOWNEREMAILADDRESS"]),
-                    "Street": an["CURRENTOWNERADDRESS"],
-                    "Apartment": "",
-                    "City": an["CURRENTOWNERTOWN"],
-                    "State": an["CURRENTOWNERCOUNTY"],
-                    "Zipcode": an["CURRENTOWNERPOSTCODE"],
-                    "ContactNumber": an["CURRENTOWNERHOMETELEPHONE"],
-                    "Organization": organisation,
-                }
-
-                # Build a list of intake histories - use the initial one first
-                ph = [
-                    {
-                        "IntakeType": an["ENTRYREASONNAME"],
-                        "IntakeDate": self.getDate(an["DATEBROUGHTIN"]),
-                        "City": asm3.utils.nulltostr(an["BROUGHTINBYOWNERTOWN"]),
-                        "State": asm3.utils.nulltostr(an["BROUGHTINBYOWNERCOUNTY"]),
-                        "LengthOwned": ""
-                    }
-                ]
-                # Then any exit movements where the animal was returned
-                for ra in asm3.movement.get_animal_movements(self.dbo, an["ID"]):
-                    if ra["MOVEMENTTYPE"] > 0 and ra["MOVEMENTTYPE"] not in (2, 8) and ra["RETURNDATE"] is not None:
-                        ph.append({
-                            "IntakeType": ra["RETURNEDREASONNAME"],
-                            "IntakeDate": self.getDate(ra["RETURNDATE"]),
-                            "City": asm3.utils.nulltostr(ra["OWNERTOWN"]),
-                            "State": asm3.utils.nulltostr(ra["OWNERCOUNTY"]),
-                            "LengthOwned": "" # We don't have this info
-                        })
-                a["PetHistoryDetails"] = ph
-                
-                # Next add vaccination histories
-                vh = []
-                for v in asm3.medical.get_vaccinations(self.dbo, an["ID"]):
-                    vh.append({
-                        "VaccinationRecordNumber": str(v["ID"]),
-                        "VaccinationStatus": asm3.utils.iif(v["DATEOFVACCINATION"] is not None, "Completed", "Scheduled"),
-                        "VaccinationStatusDateTime": self.getDate(v["DATEREQUIRED"]),
-                        "Vaccine": v["VACCINATIONTYPE"],
-                        "Type": "", # Live/Killed - we don't keep this info yet, see issue #281
-                        "Manufacturer": asm3.utils.nulltostr(v["MANUFACTURER"]),
-                        "VaccineLot": asm3.utils.nulltostr(v["BATCHNUMBER"]),
-                        "VaccinationNotes": v["COMMENTS"],
-                        "Length": "", # Not sure what this value is for - advised to ignore by MPA devs
-                        "RevaccinationDate": self.getDate(v["DATEEXPIRES"])
-                    })
-                a["PetVaccinationDetails"] = vh
+                a = self.processAnimal(an, organisation)
 
                 thisbatch.append(a)
                 processed.append(an)
@@ -262,4 +190,84 @@ class MaddiesFundPublisher(AbstractPublisher):
 
         self.cleanup()
 
+    def processAnimal(self, an, organisation=""):
+        """ Builds an adoption object (dict) containing the adopter and animal """
+        a = {
+            "PetID": an["ID"],
+            "PetCode": an["SHELTERCODE"],
+            "Site": organisation,
+            "PetName": an["ANIMALNAME"],
+            "PetStatus": self.getPetStatus(an),
+            "PetLitterID": an["ACCEPTANCENUMBER"],
+            "GroupType": asm3.utils.iif(asm3.utils.nulltostr(an["ACCEPTANCENUMBER"]) != "", "Litter", ""),
+            "PetSpecies": an["SPECIESNAME"],
+            "PetSex": an["SEXNAME"],
+            "DateofBirth": self.getDate(an["DATEOFBIRTH"]), 
+            "SpayNeuterStatus": asm3.utils.iif(an["NEUTERED"] == 1, "Spayed/Neutered", ""),
+            "Breed": an["BREEDNAME"],
+            "Color": an["BASECOLOURNAME"],
+            "SecondaryColor": "",
+            "Pattern": "",
+            "HealthStatus": an["ASILOMARINTAKECATEGORY"] + 1, # We're zero based, they use 1-base
+            "PetBiography": an["ANIMALCOMMENTS"],
+            "Photo": "%s?method=animal_image&account=%s&animalid=%s" % (SERVICE_URL, self.dbo.database, an["ID"]),
+            "Microchip": an["IDENTICHIPNUMBER"],
+            "MicrochipIssuer": asm3.lookups.get_microchip_manufacturer(self.dbo.locale, an["IDENTICHIPNUMBER"]),
+            "RelationshipType": self.getRelationshipType(an),
+            "FosterCareDate": self.getDate(an["ACTIVEMOVEMENTDATE"]),
+            "FosterEndDate": "",
+            "RabiesTag": an["RABIESTAG"],
+
+            "ID": an["CURRENTOWNERID"],
+            "Firstname": an["CURRENTOWNERFORENAMES"],
+            "Lastname": an["CURRENTOWNERSURNAME"],
+            "EmailAddress": self.getEmail(an["CURRENTOWNEREMAILADDRESS"]),
+            "Street": an["CURRENTOWNERADDRESS"],
+            "Apartment": "",
+            "City": an["CURRENTOWNERTOWN"],
+            "State": an["CURRENTOWNERCOUNTY"],
+            "Zipcode": an["CURRENTOWNERPOSTCODE"],
+            "ContactNumber": an["CURRENTOWNERHOMETELEPHONE"],
+            "Organization": organisation,
+        }
+
+        # Build a list of intake histories - use the initial one first
+        ph = [
+            {
+                "IntakeType": an["ENTRYREASONNAME"],
+                "IntakeDate": self.getDate(an["DATEBROUGHTIN"]),
+                "City": asm3.utils.nulltostr(an["BROUGHTINBYOWNERTOWN"]),
+                "State": asm3.utils.nulltostr(an["BROUGHTINBYOWNERCOUNTY"]),
+                "LengthOwned": ""
+            }
+        ]
+        # Then any exit movements where the animal was returned
+        for ra in asm3.movement.get_animal_movements(self.dbo, an["ID"]):
+            if ra["MOVEMENTTYPE"] > 0 and ra["MOVEMENTTYPE"] not in (2, 8) and ra["RETURNDATE"] is not None:
+                ph.append({
+                    "IntakeType": ra["RETURNEDREASONNAME"],
+                    "IntakeDate": self.getDate(ra["RETURNDATE"]),
+                    "City": asm3.utils.nulltostr(ra["OWNERTOWN"]),
+                    "State": asm3.utils.nulltostr(ra["OWNERCOUNTY"]),
+                    "LengthOwned": "" # We don't have this info
+                })
+        a["PetHistoryDetails"] = ph
+        
+        # Next add vaccination histories
+        vh = []
+        for v in asm3.medical.get_vaccinations(self.dbo, an["ID"]):
+            vh.append({
+                "VaccinationRecordNumber": str(v["ID"]),
+                "VaccinationStatus": asm3.utils.iif(v["DATEOFVACCINATION"] is not None, "Completed", "Scheduled"),
+                "VaccinationStatusDateTime": self.getDate(v["DATEREQUIRED"]),
+                "Vaccine": v["VACCINATIONTYPE"],
+                "Type": "", # Live/Killed - we don't keep this info yet, see issue #281
+                "Manufacturer": asm3.utils.nulltostr(v["MANUFACTURER"]),
+                "VaccineLot": asm3.utils.nulltostr(v["BATCHNUMBER"]),
+                "VaccinationNotes": v["COMMENTS"],
+                "Length": "", # Not sure what this value is for - advised to ignore by MPA devs
+                "RevaccinationDate": self.getDate(v["DATEEXPIRES"])
+            })
+        a["PetVaccinationDetails"] = vh
+        return a
 

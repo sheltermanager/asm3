@@ -75,7 +75,6 @@ class PetLinkPublisher(AbstractPublisher):
 
         for an in animals:
             try:
-                line = []
                 anCount += 1
                 self.log("Processing: %s: %s (%d of %d) - %s %s" % \
                     ( an["SHELTERCODE"], an["ANIMALNAME"], anCount, len(animals), an["IDENTICHIPNUMBER"], an["CURRENTOWNERNAME"] ))
@@ -87,97 +86,15 @@ class PetLinkPublisher(AbstractPublisher):
                     self.resetPublisherProgress()
                     return
 
-                # If the microchip number isn't 15 digits, skip it
-                if len(an["IDENTICHIPNUMBER"].strip()) != 15:
-                    self.logError("Chip number failed validation (%s not 15 digits), skipping." % an["IDENTICHIPNUMBER"])
-                    continue
+                if not self.validate(an): continue
+                csv.append( self.processAnimal(an) )
 
-                # Validate certain items aren't blank so we aren't trying to register
-                # things that PetLink will bounce back anyway
-                if asm3.utils.nulltostr(an["CURRENTOWNERTOWN"]).strip() == "":
-                    self.logError("City for the new owner is blank, cannot process")
-                    continue 
-
-                if asm3.utils.nulltostr(an["CURRENTOWNERCOUNTY"]).strip() == "":
-                    self.logError("State for the new owner is blank, cannot process")
-                    continue 
-
-                if asm3.utils.nulltostr(an["CURRENTOWNERPOSTCODE"]).strip() == "":
-                    self.logError("Zipcode for the new owner is blank, cannot process")
-                    continue
-
-                # If there's no email or phone, PetLink won't accept it
-                email = asm3.utils.nulltostr(an["CURRENTOWNEREMAILADDRESS"]).strip()
-                homephone = asm3.utils.nulltostr(an["CURRENTOWNERHOMETELEPHONE"]).strip()
-                workphone = asm3.utils.nulltostr(an["CURRENTOWNERWORKTELEPHONE"]).strip()
-                mobilephone = asm3.utils.nulltostr(an["CURRENTOWNERMOBILETELEPHONE"]).strip()
-                if email == "" and homephone == "" and workphone == "" and mobilephone == "":
-                    self.logError("No email address or phone number for owner, skipping.")
-                    continue
-               
-                # If there's no phone, we can't set the chip password so skip it
-                if homephone == "" and workphone == "" and mobilephone == "":
-                    self.logError("No phone number for owner, skipping.")
-                    continue
-
-                # Get the phone number and strip it of non-numeric data
-                phone = homephone or mobilephone or workphone
-                phone = "".join(c for c in phone if c.isdigit())
-
-                # If we don't have an email address, use phone@petlink.tmp
-                if email == "":
-                    email = "%s@petlink.tmp" % phone
-
-                # Software
-                line.append("\"ASM\"")
-                # TransactionType
-                line.append("\"%s\"" % ( self.getLastPublishedDate(an["ID"]) is None and 'N' or 'T' ))
-                # MicrochipID
-                line.append("\"%s\"" % ( an["IDENTICHIPNUMBER"] ))
-                # FirstName
-                line.append("\"%s\"" % ( an["CURRENTOWNERFORENAMES"] ))
-                # LastName
-                line.append("\"%s\"" % ( an["CURRENTOWNERSURNAME"] ))
-                # Address
-                line.append("\"%s\"" % ( an["CURRENTOWNERADDRESS"] ))
-                # City
-                line.append("\"%s\"" % ( an["CURRENTOWNERTOWN"] ))
-                # State
-                line.append("\"%s\"" % ( an["CURRENTOWNERCOUNTY"] ))
-                # ZipCode
-                line.append("\"%s\"" % ( an["CURRENTOWNERPOSTCODE"] ))
-                # Country
-                line.append("\"USA\"")
-                # Phone1
-                line.append("\"%s\"" % ( an["CURRENTOWNERHOMETELEPHONE"] ))
-                # Phone2
-                line.append("\"%s\"" % ( an["CURRENTOWNERWORKTELEPHONE"] ))
-                # Phone3
-                line.append("\"%s\"" % ( an["CURRENTOWNERMOBILETELEPHONE"] ))
-                # Email (mandatory)
-                line.append("\"%s\"" % ( email ))
-                # Chip Password (stripped phone number)
-                line.append("\"%s\"" % phone)
-                # Date_of_Implant (yy-mm-dd)
-                line.append("\"%s\"" % asm3.i18n.format_date("%y-%m-%d", an["IDENTICHIPDATE"]))
-                # PetName
-                line.append("\"%s\"" % an["ANIMALNAME"])
-                # Species
-                line.append("\"%s\"" % an["SPECIESNAME"])
-                # Breed (or "Mixed Breed" for crossbreeds, Other for animals not cats and dogs)
-                line.append("\"%s\"" % self.plBreed(an["BREEDNAME1"], an["SPECIESNAME"], an["CROSSBREED"]))
-                # Gender
-                line.append("\"%s\"" % an["SEXNAME"])
-                # Spayed_Neutered (y or n)
-                line.append("\"%s\"" % self.plYesNo(an["NEUTERED"]))
-                # ColorMarkings (our BaseColour field)
-                line.append("\"%s\"" % an["BASECOLOURNAME"])
-                # Add to our data file.  
-                csv.append(",".join(line))
                 # Remember we included this one
                 processed_animals.append(an)
+
                 # Mark success in the log
                 self.logSuccess("Processed: %s: %s (%d of %d)" % ( an["SHELTERCODE"], an["ANIMALNAME"], anCount, len(animals)))
+
             except Exception as err:
                 self.logError("Failed processing animal: %s, %s" % (str(an["SHELTERCODE"]), err), sys.exc_info())
 
@@ -283,5 +200,107 @@ class PetLinkPublisher(AbstractPublisher):
 
         self.saveLog()
         self.setPublisherComplete()
+
+    def processAnimal(self, an):
+        """ Process an animal record and return a CSV line """
+        
+        email = asm3.utils.nulltostr(an["CURRENTOWNEREMAILADDRESS"]).strip()
+        homephone = asm3.utils.nulltostr(an["CURRENTOWNERHOMETELEPHONE"]).strip()
+        workphone = asm3.utils.nulltostr(an["CURRENTOWNERWORKTELEPHONE"]).strip()
+        mobilephone = asm3.utils.nulltostr(an["CURRENTOWNERMOBILETELEPHONE"]).strip()
+
+        # Get the non-blank phone number and strip it of non-numeric data
+        phone = homephone or mobilephone or workphone
+        phone = "".join(c for c in phone if c.isdigit())
+
+        # If we don't have an email address, use phone@petlink.tmp
+        if email == "":
+            email = "%s@petlink.tmp" % phone
+
+        line = []
+        # Software
+        line.append("\"ASM\"")
+        # TransactionType
+        line.append("\"%s\"" % ( self.getLastPublishedDate(an["ID"]) is None and 'N' or 'T' ))
+        # MicrochipID
+        line.append("\"%s\"" % ( an["IDENTICHIPNUMBER"] ))
+        # FirstName
+        line.append("\"%s\"" % ( an["CURRENTOWNERFORENAMES"] ))
+        # LastName
+        line.append("\"%s\"" % ( an["CURRENTOWNERSURNAME"] ))
+        # Address
+        line.append("\"%s\"" % ( an["CURRENTOWNERADDRESS"] ))
+        # City
+        line.append("\"%s\"" % ( an["CURRENTOWNERTOWN"] ))
+        # State
+        line.append("\"%s\"" % ( an["CURRENTOWNERCOUNTY"] ))
+        # ZipCode
+        line.append("\"%s\"" % ( an["CURRENTOWNERPOSTCODE"] ))
+        # Country
+        line.append("\"USA\"")
+        # Phone1
+        line.append("\"%s\"" % ( an["CURRENTOWNERHOMETELEPHONE"] ))
+        # Phone2
+        line.append("\"%s\"" % ( an["CURRENTOWNERWORKTELEPHONE"] ))
+        # Phone3
+        line.append("\"%s\"" % ( an["CURRENTOWNERMOBILETELEPHONE"] ))
+        # Email (mandatory)
+        line.append("\"%s\"" % ( email ))
+        # Chip Password (stripped phone number)
+        line.append("\"%s\"" % phone)
+        # Date_of_Implant (yy-mm-dd)
+        line.append("\"%s\"" % asm3.i18n.format_date("%y-%m-%d", an["IDENTICHIPDATE"]))
+        # PetName
+        line.append("\"%s\"" % an["ANIMALNAME"])
+        # Species
+        line.append("\"%s\"" % an["SPECIESNAME"])
+        # Breed (or "Mixed Breed" for crossbreeds, Other for animals not cats and dogs)
+        line.append("\"%s\"" % self.plBreed(an["BREEDNAME1"], an["SPECIESNAME"], an["CROSSBREED"]))
+        # Gender
+        line.append("\"%s\"" % an["SEXNAME"])
+        # Spayed_Neutered (y or n)
+        line.append("\"%s\"" % self.plYesNo(an["NEUTERED"]))
+        # ColorMarkings (our BaseColour field)
+        line.append("\"%s\"" % an["BASECOLOURNAME"])
+        return ",".join(line)
+
+    def validate(self, an):
+        """ Validate an animal record is ok to send """
+
+        # If the microchip number isn't 15 digits, skip it
+        if len(an["IDENTICHIPNUMBER"].strip()) != 15:
+            self.logError("Chip number failed validation (%s not 15 digits), skipping." % an["IDENTICHIPNUMBER"])
+            return False
+
+        # Validate certain items aren't blank so we aren't trying to register
+        # things that PetLink will bounce back anyway
+        if asm3.utils.nulltostr(an["CURRENTOWNERTOWN"]).strip() == "":
+            self.logError("City for the new owner is blank, cannot process")
+            return False 
+
+        if asm3.utils.nulltostr(an["CURRENTOWNERCOUNTY"]).strip() == "":
+            self.logError("State for the new owner is blank, cannot process")
+            return False 
+
+        if asm3.utils.nulltostr(an["CURRENTOWNERPOSTCODE"]).strip() == "":
+            self.logError("Zipcode for the new owner is blank, cannot process")
+            return False
+
+        # If there's no email or phone, PetLink won't accept it
+        email = asm3.utils.nulltostr(an["CURRENTOWNEREMAILADDRESS"]).strip()
+        homephone = asm3.utils.nulltostr(an["CURRENTOWNERHOMETELEPHONE"]).strip()
+        workphone = asm3.utils.nulltostr(an["CURRENTOWNERWORKTELEPHONE"]).strip()
+        mobilephone = asm3.utils.nulltostr(an["CURRENTOWNERMOBILETELEPHONE"]).strip()
+        if email == "" and homephone == "" and workphone == "" and mobilephone == "":
+            self.logError("No email address or phone number for owner, skipping.")
+            return False
+       
+        # If there's no phone, we can't set the chip password so skip it
+        if homephone == "" and workphone == "" and mobilephone == "":
+            self.logError("No phone number for owner, skipping.")
+            return False
+
+        return True
+
 
 

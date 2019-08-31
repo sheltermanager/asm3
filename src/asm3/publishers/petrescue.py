@@ -129,138 +129,8 @@ class PetRescuePublisher(AbstractPublisher):
                     self.resetPublisherProgress()
                     self.cleanup()
                     return
-       
-                isdog = an.SPECIESID == 1
-                iscat = an.SPECIESID == 2
-
-                ageinyears = asm3.i18n.date_diff_days(an.DATEOFBIRTH, asm3.i18n.now())
-               
-                size = ""
-                if an.SIZE == 2: size = "medium"
-                elif an.SIZE < 2: size = "large"
-                else: size = "small"
-
-                coat = ""
-                if an.COATTYPE == 0: coat = "short"
-                elif an.COATTYPE == 1: coat = "long"
-                else: coat = "medium_coat"
-
-                origin = ""
-                if an.ISTRANSFER == 1 and str(an.BROUGHTINBYOWNERNAME).lower().find("pound") == -1: origin = "shelter_transfer"
-                elif an.ISTRANSFER == 1 and str(an.BROUGHTINBYOWNERNAME).lower().find("pound") != -1: origin = "pound_transfer"
-                elif an.ORIGINALOWNERID > 0: origin = "owner_surrender"
-                else: origin = "community_cat"
-
-                best_feature = "Looking for love"
-                if "BESTFEATURE" in an and an.BESTFEATURE != "":
-                    best_feature = an.BESTFEATURE
-
-                breeder_id = ""
-                if "BREEDERID" in an and an.BREEDERID != "":
-                    breeder_id = an.BREEDERID
-
-                source_number = ""
-                if "SOURCENUMBER" in an and an.SOURCENUMBER != "":
-                    source_number = an.SOURCENUMBER
-
-                needs_constant_care = False
-                if "NEEDSCONSTANTCARE" in an and an.NEEDSCONSTANTCARE != "" and an.NEEDSCONSTANTCARE != "0":
-                    needs_constant_care = True
-
-                bred_in_care_of_group = False
-                if "BREDINCAREOFGROUP" in an and an.BREDINCAREOFGROUP != "" and an.BREDINCAREOFGROUP != "0":
-                    bred_in_care_of_group = True
-
-                rehoming_organisation_id = ""
-                if "REHOMINGORGANISATIONID" in an and an.REHOMINGORGANISATIONID != "":
-                    rehoming_organisation_id = an.REHOMINGORGANISATIONID
-
-                # Check whether we've been vaccinated, wormed and hw treated
-                vaccinated = asm3.medical.get_vaccinated(self.dbo, an.ID)
-                sixmonths = self.dbo.today(offset=-182)
-                hwtreated = isdog and self.dbo.query_int("SELECT COUNT(*) FROM animalmedical WHERE LOWER(TreatmentName) LIKE ? " \
-                    "AND LOWER(TreatmentName) LIKE ? AND StartDate>? AND AnimalID=?", ("%heart%", "%worm%", sixmonths, an.ID)) > 0
-                wormed = (isdog or iscat) and self.dbo.query_int("SELECT COUNT(*) FROM animalmedical WHERE LOWER(TreatmentName) LIKE ? " \
-                    "AND LOWER(TreatmentName) NOT LIKE ? AND StartDate>? AND AnimalID=?", ("%worm%", "%heart%", sixmonths, an.ID)) > 0
-                # PR want a null value to hide never-treated animals, so we
-                # turn False into a null.
-                if not hwtreated: hwtreated = None
-                if not wormed: wormed = None
-
-                # Use the fosterer's postcode, state and suburb if available
-                location_postcode = postcode
-                location_state_abbr = state
-                location_suburb = suburb
-                if an.ACTIVEMOVEMENTID and an.ACTIVEMOVEMENTTYPE == 2:
-                    fr = self.dbo.first_row(self.dbo.query("SELECT OwnerTown, OwnerCounty, OwnerPostcode FROM adoption m " \
-                        "INNER JOIN owner o ON m.OwnerID = o.ID WHERE m.ID=?", [ an.ACTIVEMOVEMENTID ]))
-                    if fr is not None and fr.OWNERPOSTCODE: location_postcode = fr.OWNERPOSTCODE
-                    if fr is not None and fr.OWNERCOUNTY: location_state_abbr = fr.OWNERCOUNTY
-                    if fr is not None and fr.OWNERTOWN: location_suburb = fr.OWNERTOWN
-
-                # Build a list of immutable photo URLs
-                photo_urls = []
-                photos = self.dbo.query("SELECT MediaName FROM media " \
-                    "WHERE LinkTypeID = 0 AND LinkID = ? AND MediaMimeType = 'image/jpeg' " \
-                    "AND (ExcludeFromPublish = 0 OR ExcludeFromPublish Is Null) " \
-                    "ORDER BY WebsitePhoto DESC, ID", [an.ID])
-                for m in photos:
-                    photo_urls.append("%s?account=%s&method=dbfs_image&title=%s" % (SERVICE_URL, self.dbo.database, m.MEDIANAME))
-
-                # Only send microchip_number for locations with a Victoria postcode 3xxx
-                microchip_number = ""
-                if location_postcode.startswith("3"):
-                    microchip_number = asm3.utils.iif(an.IDENTICHIPPED == 1, an.IDENTICHIPNUMBER, "")
-
-                # Construct a dictionary of info for this animal
-                data = {
-                    "remote_id":                str(an.ID), # animal identifier in ASM
-                    "remote_source":            "SM%s" % self.dbo.database, # system/database identifier
-                    "name":                     an.ANIMALNAME.title(), # animal name (title case, they validate against caps)
-                    "shelter_code":             an.SHELTERCODE,
-                    "adoption_fee":             asm3.i18n.format_currency_no_symbol(self.locale, an.FEE),
-                    "species_name":             an.SPECIESNAME,
-                    "breed_names":              self.get_breed_names(an), # [breed1,breed2] or [breed1]
-                    "breeder_id":               breeder_id, # mandatory for QLD dogs born after 2017-05-26 or South Aus where bred_in_care_of_group==true after 2018-07-01
-                    "source_number":            source_number, # mandatory for Victoria cats and dogs
-                    "rehoming_organisation_id": rehoming_organisation_id, # required for NSW, this OR microchip or breeder_id is mandatory
-                    "bred_in_care_of_group":    bred_in_care_of_group, 
-                    "mix":                      an.CROSSBREED == 1, # true | false
-                    "date_of_birth":            asm3.i18n.format_date("%Y-%m-%d", an.DATEOFBIRTH), # iso
-                    "gender":                   an.SEXNAME.lower(), # male | female
-                    "personality":              self.replace_html_entities(self.getDescription(an)), # 20-4000 chars of free type
-                    "best_feature":             best_feature, # 25 chars free type, defaults to "Looking for love" requires BESTFEATURE additional field
-                    "location_postcode":        location_postcode, # shelter/fosterer postcode
-                    "location_state_abbr":      location_state_abbr, # shelter/fosterer state
-                    "location_suburb":          location_suburb, # shelter/fosterer suburb
-                    "microchip_number":         microchip_number, 
-                    "desexed":                  an.NEUTERED == 1 or all_desexed, # true | false, validates to always true according to docs
-                    "contact_method":           "email", # email | phone
-                    "size":                     asm3.utils.iif(isdog, size, ""), # dogs only - small | medium | high
-                    "senior":                   isdog and ageinyears > (7 * 365), # dogs only, true | false
-                    "vaccinated":               vaccinated, # cats, dogs, rabbits, true | false
-                    "wormed":                   wormed, # cats & dogs, true | false
-                    "heart_worm_treated":       hwtreated, # dogs only, true | false
-                    "coat":                     coat, # Only applies to cats and guinea pigs, but we send for everything: short | medium_coat | long
-                    "intake_origin":            asm3.utils.iif(iscat, origin, ""), # cats only, community_cat | owner_surrender | pound_transfer | shelter_transfer
-                    "incompatible_with_cats":   an.ISGOODWITHCATS == 1,
-                    "incompatible_with_dogs":   an.ISGOODWITHDOGS == 1,
-                    "incompatible_with_kids_under_5": an.ISGOODWITHCHILDREN == 1,
-                    "incompatible_with_kids_6_to_12": an.ISGOODWITHCHILDREN == 1,
-                    "needs_constant_care":      needs_constant_care,
-                    "adoption_process":         "", # 4,000 chars how to adopt
-                    "contact_details_source":   "self", # self | user | group
-                    "contact_preferred_method": "email", # email | phone
-                    "contact_name":             contact_name, # name of contact details owner
-                    "contact_number":           contact_number, # number to enquire about adoption
-                    "contact_email":            contact_email, # email to enquire about adoption
-                    "foster_needed":            False, # true | false
-                    "interstate":               interstate, # true | false - can the animal be flown to another state for adoption
-                    "medical_notes":            "", # DISABLED an.HEALTHPROBLEMS, # 4,000 characters medical notes
-                    "multiple_animals":         an.BONDEDANIMALID > 0 or an.BONDEDANIMAL2ID > 0, # More than one animal included in listing true | false
-                    "photo_urls":               photo_urls, # List of photo URL strings
-                    "status":                   "active" # active | removed | on_hold | rehomed | suspended | group_suspended
-                }
+      
+                data = self.processAnimal(an, all_desexed, interstate, suburb, state, postcode, contact_name, contact_number, contact_email)
 
                 # PetRescue will insert/update accordingly based on whether remote_id/remote_source exists
                 url = PETRESCUE_URL + "listings"
@@ -328,6 +198,139 @@ class PetRescuePublisher(AbstractPublisher):
 
         self.cleanup()
 
+    def processAnimal(self, an, all_desexed=False, interstate=False, suburb="", state="", postcode="", contact_name="", contact_number="", contact_email=""):
+        """ Processes an animal record and returns a data dictionary to upload as JSON """
+        isdog = an.SPECIESID == 1
+        iscat = an.SPECIESID == 2
+
+        ageinyears = asm3.i18n.date_diff_days(an.DATEOFBIRTH, asm3.i18n.now())
+       
+        size = ""
+        if an.SIZE == 2: size = "medium"
+        elif an.SIZE < 2: size = "large"
+        else: size = "small"
+
+        coat = ""
+        if an.COATTYPE == 0: coat = "short"
+        elif an.COATTYPE == 1: coat = "long"
+        else: coat = "medium_coat"
+
+        origin = ""
+        if an.ISTRANSFER == 1 and str(an.BROUGHTINBYOWNERNAME).lower().find("pound") == -1: origin = "shelter_transfer"
+        elif an.ISTRANSFER == 1 and str(an.BROUGHTINBYOWNERNAME).lower().find("pound") != -1: origin = "pound_transfer"
+        elif an.ORIGINALOWNERID > 0: origin = "owner_surrender"
+        else: origin = "community_cat"
+
+        best_feature = "Looking for love"
+        if "BESTFEATURE" in an and an.BESTFEATURE != "":
+            best_feature = an.BESTFEATURE
+
+        breeder_id = ""
+        if "BREEDERID" in an and an.BREEDERID != "":
+            breeder_id = an.BREEDERID
+
+        source_number = ""
+        if "SOURCENUMBER" in an and an.SOURCENUMBER != "":
+            source_number = an.SOURCENUMBER
+
+        needs_constant_care = False
+        if "NEEDSCONSTANTCARE" in an and an.NEEDSCONSTANTCARE != "" and an.NEEDSCONSTANTCARE != "0":
+            needs_constant_care = True
+
+        bred_in_care_of_group = False
+        if "BREDINCAREOFGROUP" in an and an.BREDINCAREOFGROUP != "" and an.BREDINCAREOFGROUP != "0":
+            bred_in_care_of_group = True
+
+        rehoming_organisation_id = ""
+        if "REHOMINGORGANISATIONID" in an and an.REHOMINGORGANISATIONID != "":
+            rehoming_organisation_id = an.REHOMINGORGANISATIONID
+
+        # Check whether we've been vaccinated, wormed and hw treated
+        vaccinated = asm3.medical.get_vaccinated(self.dbo, an.ID)
+        sixmonths = self.dbo.today(offset=-182)
+        hwtreated = isdog and self.dbo.query_int("SELECT COUNT(*) FROM animalmedical WHERE LOWER(TreatmentName) LIKE ? " \
+            "AND LOWER(TreatmentName) LIKE ? AND StartDate>? AND AnimalID=?", ("%heart%", "%worm%", sixmonths, an.ID)) > 0
+        wormed = (isdog or iscat) and self.dbo.query_int("SELECT COUNT(*) FROM animalmedical WHERE LOWER(TreatmentName) LIKE ? " \
+            "AND LOWER(TreatmentName) NOT LIKE ? AND StartDate>? AND AnimalID=?", ("%worm%", "%heart%", sixmonths, an.ID)) > 0
+        # PR want a null value to hide never-treated animals, so we
+        # turn False into a null.
+        if not hwtreated: hwtreated = None
+        if not wormed: wormed = None
+
+        # Use the fosterer's postcode, state and suburb if available
+        location_postcode = postcode
+        location_state_abbr = state
+        location_suburb = suburb
+        if an.ACTIVEMOVEMENTID and an.ACTIVEMOVEMENTTYPE == 2:
+            fr = self.dbo.first_row(self.dbo.query("SELECT OwnerTown, OwnerCounty, OwnerPostcode FROM adoption m " \
+                "INNER JOIN owner o ON m.OwnerID = o.ID WHERE m.ID=?", [ an.ACTIVEMOVEMENTID ]))
+            if fr is not None and fr.OWNERPOSTCODE: location_postcode = fr.OWNERPOSTCODE
+            if fr is not None and fr.OWNERCOUNTY: location_state_abbr = fr.OWNERCOUNTY
+            if fr is not None and fr.OWNERTOWN: location_suburb = fr.OWNERTOWN
+
+        # Build a list of immutable photo URLs
+        photo_urls = []
+        photos = self.dbo.query("SELECT MediaName FROM media " \
+            "WHERE LinkTypeID = 0 AND LinkID = ? AND MediaMimeType = 'image/jpeg' " \
+            "AND (ExcludeFromPublish = 0 OR ExcludeFromPublish Is Null) " \
+            "ORDER BY WebsitePhoto DESC, ID", [an.ID])
+        for m in photos:
+            photo_urls.append("%s?account=%s&method=dbfs_image&title=%s" % (SERVICE_URL, self.dbo.database, m.MEDIANAME))
+
+        # Only send microchip_number for locations with a Victoria postcode 3xxx
+        microchip_number = ""
+        if location_postcode.startswith("3"):
+            microchip_number = asm3.utils.iif(an.IDENTICHIPPED == 1, an.IDENTICHIPNUMBER, "")
+
+        # Construct and return a dictionary of info for this animal
+        return {
+            "remote_id":                str(an.ID), # animal identifier in ASM
+            "remote_source":            "SM%s" % self.dbo.database, # system/database identifier
+            "name":                     an.ANIMALNAME.title(), # animal name (title case, they validate against caps)
+            "shelter_code":             an.SHELTERCODE,
+            "adoption_fee":             asm3.i18n.format_currency_no_symbol(self.locale, an.FEE),
+            "species_name":             an.SPECIESNAME,
+            "breed_names":              self.get_breed_names(an), # [breed1,breed2] or [breed1]
+            "breeder_id":               breeder_id, # mandatory for QLD dogs born after 2017-05-26 or South Aus where bred_in_care_of_group==true after 2018-07-01
+            "source_number":            source_number, # mandatory for Victoria cats and dogs
+            "rehoming_organisation_id": rehoming_organisation_id, # required for NSW, this OR microchip or breeder_id is mandatory
+            "bred_in_care_of_group":    bred_in_care_of_group, 
+            "mix":                      an.CROSSBREED == 1, # true | false
+            "date_of_birth":            asm3.i18n.format_date("%Y-%m-%d", an.DATEOFBIRTH), # iso
+            "gender":                   an.SEXNAME.lower(), # male | female
+            "personality":              self.replace_html_entities(self.getDescription(an)), # 20-4000 chars of free type
+            "best_feature":             best_feature, # 25 chars free type, defaults to "Looking for love" requires BESTFEATURE additional field
+            "location_postcode":        location_postcode, # shelter/fosterer postcode
+            "location_state_abbr":      location_state_abbr, # shelter/fosterer state
+            "location_suburb":          location_suburb, # shelter/fosterer suburb
+            "microchip_number":         microchip_number, 
+            "desexed":                  an.NEUTERED == 1 or all_desexed, # true | false, validates to always true according to docs
+            "contact_method":           "email", # email | phone
+            "size":                     asm3.utils.iif(isdog, size, ""), # dogs only - small | medium | high
+            "senior":                   isdog and ageinyears > (7 * 365), # dogs only, true | false
+            "vaccinated":               vaccinated, # cats, dogs, rabbits, true | false
+            "wormed":                   wormed, # cats & dogs, true | false
+            "heart_worm_treated":       hwtreated, # dogs only, true | false
+            "coat":                     coat, # Only applies to cats and guinea pigs, but we send for everything: short | medium_coat | long
+            "intake_origin":            asm3.utils.iif(iscat, origin, ""), # cats only, community_cat | owner_surrender | pound_transfer | shelter_transfer
+            "incompatible_with_cats":   an.ISGOODWITHCATS == 1,
+            "incompatible_with_dogs":   an.ISGOODWITHDOGS == 1,
+            "incompatible_with_kids_under_5": an.ISGOODWITHCHILDREN == 1,
+            "incompatible_with_kids_6_to_12": an.ISGOODWITHCHILDREN == 1,
+            "needs_constant_care":      needs_constant_care,
+            "adoption_process":         "", # 4,000 chars how to adopt
+            "contact_details_source":   "self", # self | user | group
+            "contact_preferred_method": "email", # email | phone
+            "contact_name":             contact_name, # name of contact details owner
+            "contact_number":           contact_number, # number to enquire about adoption
+            "contact_email":            contact_email, # email to enquire about adoption
+            "foster_needed":            False, # true | false
+            "interstate":               interstate, # true | false - can the animal be flown to another state for adoption
+            "medical_notes":            "", # DISABLED an.HEALTHPROBLEMS, # 4,000 characters medical notes
+            "multiple_animals":         an.BONDEDANIMALID > 0 or an.BONDEDANIMAL2ID > 0, # More than one animal included in listing true | false
+            "photo_urls":               photo_urls, # List of photo URL strings
+            "status":                   "active" # active | removed | on_hold | rehomed | suspended | group_suspended
+        }
 
 
 # These breed lists were retrieved by doing:
