@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: ASM3\n"
 "Report-Msgid-Bugs-To: db@sheltermanager.com\n"
 "POT-Creation-Date: 2013-01-24 10:55+0000\n"
-"PO-Revision-Date: 2019-08-12 10:38+0200\n"
+"PO-Revision-Date: 2019-08-26 07:23+0200\n"
 "Last-Translator: Bolevácz Elisabeth <bolevaczbetti@gmail.com>\n"
 "Language-Team: Hungarian <hu@li.org>\n"
 "Language: hu\n"
@@ -23,14 +23,14 @@ msgstr ""
 
 #: options.js
 msgid " days."
-msgstr " napok"
+msgstr " napok."
 
 #: options.js incident_new.js person.js person_find.js clinic_appointment.js
 #: lostfound_find.js log.js waitinglist_results.js person_new.js users.js
 #: incident.js animal_find.js incident_find.js common_personchooser.js
 #: stocklevel.js common.js html.py
 msgid "(all)"
-msgstr "összes"
+msgstr "(összes)"
 
 #: person.js
 msgid "(any)"
@@ -42,7 +42,7 @@ msgstr "(bárki)"
 
 #: animal.js animal_new.js
 msgid "(available)"
-msgstr "Örökbe fogadható"
+msgstr "(elérhető)"
 
 #: person_find_results.js csvimport.py
 msgid "(blank)"
@@ -50,23 +50,23 @@ msgstr "(üres)"
 
 #: animal_find.js
 msgid "(both)"
-msgstr "mindkettő"
+msgstr "(mindkettő)"
 
 #: main.js clinic_calendar.js html.py
 msgid "(everyone)"
-msgstr "mindenki"
+msgstr "(mindenki)"
 
 #: users.js
 msgid "(master user, not editable)"
-msgstr "kiemelt felhasználó, nem szerkeszthető"
+msgstr "(kiemelt felhasználó, nem szerkeszthető)"
 
 #: animal_bulk.js
 msgid "(no change)"
-msgstr "nincs változás"
+msgstr "(nincs változás)"
 
 #: medical.js test.js vaccination.js
 msgid "(no deduction)"
-msgstr "nincs csökkenés"
+msgstr "(nincs csökkenés)"
 
 #: shelterview.js html.py
 msgid "(none)"
@@ -117,17 +117,14 @@ msgid "6 months"
 msgstr "6 hónap"
 
 #: publish_options.js
-#, fuzzy
 msgid "6 weeks"
 msgstr "6 hét"
 
 #: publish_options.js
-#, fuzzy
 msgid "8 weeks"
 msgstr "8 hét"
 
 #: publish_options.js
-#, fuzzy
 msgid "9 months"
 msgstr "9 hónap"
 
@@ -145,7 +142,7 @@ msgstr "Ezen személy által látogatható körzetek listája - pl. S60 S61"
 
 #: movements.js
 msgid "A movement must have a reservation date or type."
-msgstr "Az átsoroláshoz szükséges a foglalás dátuma vagy típusa"
+msgstr "A mozgatáshoz szükséges a foglalás dátuma vagy típusa."
 
 #: movement.py
 msgid "A person is required for this movement type."
@@ -161,7 +158,7 @@ msgstr "A referencia szám rövidítése"
 
 #: task.js
 msgid "A task is already running."
-msgstr "Egy feladat folyamatban van"
+msgstr "Egy feladat már folyamatban van."
 
 #: movements.js move_transfer.js move_reclaim.js move_adopt.js move_retailer.js
 #: move_reserve.js move_foster.js
@@ -205,7 +202,7 @@ msgid ""
 msgstr ""
 "Az ASM segítségével rögzítheti az Ön Menhelyének havi és éves adatait. "
 "Telepítse a Havi adatok (Monthly Figures) és Éves adatok (Annual Figures) "
-"beszámolókat a Settings-Reports-Browse sheltermanager.com-ról."
+"beszámolókat a Settings-Reports-Browse sheltermanager.com-ról"
 
 #: main.js
 msgid ""
@@ -261,7 +258,7 @@ msgstr "Fiók kód nem lehet üres."
 
 #: login.js
 msgid "Account disabled."
-msgstr "Fiók letiltva"
+msgstr "Fiók letiltva."
 
 #: dbupdate.py
 msgid "Accountant"
@@ -284,9 +281,8 @@ msgid "Active Incidents"
 msgstr "Aktív esetek"
 
 #: traploan.js
-#, fuzzy
 msgid "Active Trap Loans"
-msgstr "Aktív csapda kölcsönzések"
+msgstr "Jelenlegi csapda kölcsönzések"
 
 #: main.js
 msgid "Active users: {0}"
@@ -297,7 +293,6 @@ msgid "Add"
 msgstr "Hozzáad"
 
 #: roles.js
-#, fuzzy
 msgid "Add Accounts"
 msgstr "Fiók hozzáadása"
 
@@ -360,7 +355,7 @@ msgstr "Vizsgálat hozzáadása"
 
 #: clinic_invoice.js
 msgid "Add Invoice Item"
-msgstr ""
+msgstr "Számla elem hozzáadása"
 
 #: roles.js
 msgid "Add Licenses"
@@ -627,7 +622,6 @@ msgid "Add transport"
 msgstr "Transzport hozzáadása"
 
 #: traploan.js
-#, fuzzy
 msgid "Add trap loan"
 msgstr "Csapda kölcsönzés hozzáadása"
 
@@ -785,11 +779,11 @@ msgstr "Speciális keresés"
 
 #: options.js
 msgid "Advanced find animal screen defaults to on shelter"
-msgstr "Részletes állat keresés képernyőjének beállításai "
+msgstr "Részletes állat keresés képernyőjének beállításai   "
 
 #: dbupdate.py
 msgid "Affenpinscher"
-msgstr "majompincsi"
+msgstr "Majompincsi"
 
 #: dbupdate.py
 msgid "Afghan Hound"
@@ -805,7 +799,7 @@ msgid ""
 "user to this URL"
 msgstr ""
 "Miután a felhasználó az engedélyezésre kattint és ASM elfogadta a "
-"nyomtatványt, irányítsa át erre az URL-re."
+"nyomtatványt, irányítsa át erre az URL-re"
 
 #: movements.js animal_find_results.js mobile.py html.py person.py
 msgid "Age"
@@ -871,7 +865,7 @@ msgstr "Kortól"
 
 #: person.js
 msgid "Aged To"
-msgstr "korig"
+msgstr "Éves korig"
 
 #: dbupdate.py
 msgid "Aggression"
@@ -879,15 +873,15 @@ msgstr "Agresszió"
 
 #: dbupdate.py
 msgid "Airedale Terrier"
-msgstr "airedale terrier"
+msgstr "Airedale terrier"
 
 #: dbupdate.py
 msgid "Akbash"
-msgstr "akbash"
+msgstr "Akbash"
 
 #: dbupdate.py
 msgid "Akita"
-msgstr "akita"
+msgstr "Akita"
 
 #: dbupdate.py
 msgid "Alaskan Malamute"
@@ -923,7 +917,7 @@ msgstr "Valamennyi rögzített állatmenhely."
 
 #: search.py
 msgid "All animals matching current publishing options."
-msgstr "A jelen közzétételi opcióknak megfelelő valamennyi állat. "
+msgstr "A jelen közzétételi opcióknak megfelelő valamennyi állat."
 
 #: search.py
 msgid "All animals on the shelter."
@@ -967,7 +961,7 @@ msgstr "Összes rögzített támogató."
 
 #: search.py
 msgid "All drivers on file."
-msgstr "Összes rögzített fuvaros"
+msgstr "Összes rögzített fuvaros."
 
 #: csvimport.js
 msgid ""
@@ -979,7 +973,7 @@ msgstr ""
 
 #: main.js
 msgid "All fields should be completed."
-msgstr "Az összes mező kitöltendő!"
+msgstr "Az összes mező kitöltendő."
 
 #: search.py
 msgid "All fosterers on file."
@@ -987,11 +981,11 @@ msgstr "Az összes regisztrált ideiglenes befogadó."
 
 #: search.py
 msgid "All homechecked owners on file."
-msgstr "Összes regisztrált, ellenőrzött örökbefogadó"
+msgstr "Összes lelátogatott örökbefogadó listája."
 
 #: search.py
 msgid "All homecheckers on file."
-msgstr "Összes regisztrált kontrollt végző személy"
+msgstr "Összes lelátogatást végző személy listája."
 
 #: search.py
 msgid "All members on file."
@@ -1011,7 +1005,7 @@ msgstr "Összes regisztrált átvevő."
 
 #: search.py
 msgid "All staff on file."
-msgstr "Összes dolgozó listája"
+msgstr "Összes dolgozó listája."
 
 #: options.js
 msgid "All time"
@@ -1116,7 +1110,7 @@ msgstr "Amerikai"
 
 #: dbupdate.py
 msgid "American Bulldog"
-msgstr "amerikai bulldog"
+msgstr "Amerikai bulldog"
 
 #: dbupdate.py
 msgid "American Curl"
@@ -1128,11 +1122,11 @@ msgstr "amerikai eszkimókutya"
 
 #: dbupdate.py
 msgid "American Fuzzy Lop"
-msgstr "American Fuzzy Lop (nyúl)"
+msgstr "Amerikai Fuzzy Lop (nyúl)"
 
 #: dbupdate.py
 msgid "American Sable"
-msgstr "American Sable (nyúl)"
+msgstr "Amerikai Sable (nyúl)"
 
 #: dbupdate.py
 msgid "American Shorthair"
@@ -1161,7 +1155,7 @@ msgstr "Kor években, pl. 1, 0.5"
 
 #: movement.py
 msgid "An animal cannot have multiple open movements."
-msgstr "Egy állat esetében nem lehet több esemény folyamatban."
+msgstr "Egy állat esetében nem lehet több mozgatás folyamatban."
 
 #: reports.js
 msgid ""
@@ -1206,7 +1200,7 @@ msgstr "Állat nevének megadása"
 
 #: dbupdate.py
 msgid "Animal - Additional"
-msgstr "Állat - egyéb"
+msgstr "Állat - Egyéb"
 
 #: dbupdate.py
 msgid "Animal - Death"
@@ -1278,7 +1272,7 @@ msgstr "ASM"
 
 #: code.py
 msgid "Animal Shelter Manager Login"
-msgstr "Belépés"
+msgstr "ASM Belépés"
 
 #: dbupdate.py
 msgid "Animal Sponsorship"
@@ -1286,7 +1280,7 @@ msgstr "Állat támogatója"
 
 #: html.py
 msgid "Animal Type"
-msgstr "Állatfaj"
+msgstr "Állat faja"
 
 #: lookups.py
 msgid "Animal Types"
@@ -1307,6 +1301,8 @@ msgstr "Állat kód formátum"
 #: person.js
 msgid "Animal comments MUST contain this phrase in order to match."
 msgstr ""
+"Az állathoz kapcsolódó megjegyzésnek tartalmazni kell ezt a kifejezést az "
+"egyezéshez."
 
 #: header.js html.py configuration.py
 msgid "Animal control calendar"
@@ -1345,9 +1341,8 @@ msgid "Animal picked up"
 msgstr "Állat begyüjtve"
 
 #: options.js
-#, fuzzy
 msgid "Animal shortcode format"
-msgstr "Állat kód formátum"
+msgstr "Állat rövidkód formátuma"
 
 #: roles.js medical.js csvexport.js incident.js test.js transport.js
 #: animal_bulk.js vaccination.js html.py
@@ -2042,12 +2037,10 @@ msgid "CSV of incident data"
 msgstr "Eset adataihoz tartozó CSV"
 
 #: sql.js
-#, fuzzy
 msgid "CSV of license data"
 msgstr "Licenc adatok CSV-je"
 
 #: sql.js
-#, fuzzy
 msgid "CSV of payment data"
 msgstr "Fizetési adatok CSV-je"
 
@@ -2214,7 +2207,7 @@ msgstr "Mobiltelefon"
 
 #: dbupdate.py
 msgid "Champagne D'Argent"
-msgstr ""
+msgstr "Champagne D'Argent fajta nyúl"
 
 #: common_tableform.js common.js
 msgid "Change"
@@ -2492,9 +2485,8 @@ msgid "City"
 msgstr "Város"
 
 #: person_find.js
-#, fuzzy
 msgid "City contains"
-msgstr "Kód tartalma"
+msgstr "Város tartalmaz"
 
 #: person.js person_new.js common_personchooser.js
 msgid "Class"
@@ -2540,11 +2532,11 @@ msgstr "Állatok másolása"
 
 #: staff_rota.js
 msgid "Clone Rota"
-msgstr "Sorrend másolása"
+msgstr "Beosztás másolása"
 
 #: staff_rota.js
 msgid "Clone the rota this week to another week"
-msgstr "Eheti sorrend átmásolása másik hétre"
+msgstr "Eheti beosztás átmásolása másik hétre"
 
 #: animal.js
 msgid "Cloning..."
@@ -2560,7 +2552,7 @@ msgstr "Clumber Spaniel"
 
 #: dbupdate.py
 msgid "Clydesdale"
-msgstr "Clydesdale"
+msgstr "Clydesdale ló"
 
 #: html.py
 msgid "Coat"
@@ -2713,21 +2705,20 @@ msgid "Confirmation message"
 msgstr "Megerősítő üzenet"
 
 #: transport.js
-#, fuzzy
 msgid "Confirmed"
-msgstr "Megerősítés"
+msgstr "Megerősitett"
 
 #: html.py
 msgid "Consulting Room"
-msgstr ""
+msgstr "Tárgyaló"
 
 #: clinic_appointment.js
 msgid "Consulting Room - {0}"
-msgstr ""
+msgstr "Tárgyaló terem - {0}"
 
 #: dbupdate.py
 msgid "Consumed"
-msgstr "Elpusztult"
+msgstr "Elfogyasztott"
 
 #: lostfound_find_results.js lostfound_new.js waitinglist.js waitinglist_new.js
 #: lostfound.js lostfound.py
@@ -2864,6 +2855,8 @@ msgstr "Költség feljegyzés létrehozása"
 #: clinic_appointment.js
 msgid "Create a due or received payment record from this appointment"
 msgstr ""
+"Hozzon létre esedékes vagy beérkezett fizetési nyilvántartást erről a "
+"találkozóból."
 
 #: animal.js
 msgid "Create a new animal by copying this one"
@@ -3005,7 +2998,7 @@ msgstr "DD = mai nap"
 
 #: sql.js
 msgid "DDL dump (DB2)"
-msgstr ""
+msgstr "DDL dump (DB2)"
 
 #: sql.js
 msgid "DDL dump (MySQL)"
@@ -3022,7 +3015,7 @@ msgstr "DHLPP"
 #: person.js
 msgid ""
 "DO NOT use this field to store notes about what the person is looking for."
-msgstr ""
+msgstr "NE használja ezt a mezőt annak rögzítésére, hogy a személy mit keres."
 
 #: animal.py
 msgid "DOA {0}"
@@ -3612,7 +3605,6 @@ msgid "Diary"
 msgstr "Napló"
 
 #: person.js animal.js
-#, fuzzy
 msgid "Diary Task"
 msgstr "Napló feladat"
 
@@ -3897,7 +3889,7 @@ msgstr "Fájl áthelyezése ide "
 
 #: transport.js
 msgid "Dropoff"
-msgstr ""
+msgstr "Lemorzsolódás"
 
 #: dbupdate.py
 msgid "Duck"
@@ -3954,7 +3946,7 @@ msgstr "EE = állat beviteli kategóriájának első és második betűje"
 
 #: dbupdate.py
 msgid "Eclectus"
-msgstr ""
+msgstr "Eclectus"
 
 #: common.js
 msgid "Edit"
@@ -4550,9 +4542,8 @@ msgid "Expense::"
 msgstr "Költség"
 
 #: dbupdate.py
-#, fuzzy
 msgid "Expenses::Board"
-msgstr "Kiadások::Élelmiszerek"
+msgstr "Kiadások: Élelmezés"
 
 #: dbupdate.py
 msgid "Expenses::Electricity"
@@ -4957,9 +4948,8 @@ msgid "First name(s)"
 msgstr "Keresztnév(nevek)"
 
 #: dbupdate.py
-#, fuzzy
 msgid "First offence"
-msgstr "Első sérülés"
+msgstr "Első támadás"
 
 #: dbupdate.py
 msgid "Fish"
@@ -5192,7 +5182,6 @@ msgid "From Other"
 msgstr "Máshonnan"
 
 #: movement.py
-#, fuzzy
 msgid "From retailer is only valid on adoption movements."
 msgstr "A kiskereskedőtől való érkeztetés csak az örökbefogadásnál érvényes."
 
@@ -5351,14 +5340,12 @@ msgid "Give"
 msgstr "Ad"
 
 #: medical.js
-#, fuzzy
 msgid "Give Treatments"
 msgstr "Szükséges kezelések"
 
 #: vaccination.js
-#, fuzzy
 msgid "Give Vaccination"
-msgstr "Szükésges oltások"
+msgstr "Szükésges oltás"
 
 #: medical.js vaccination.js
 msgid "Given"
@@ -5511,7 +5498,6 @@ msgid "HTML"
 msgstr "HTML"
 
 #: htmltemplates.js
-#, fuzzy
 msgid "HTML Publishing Templates"
 msgstr "HTML közzétételi sablonok szerkesztése"
 
@@ -5733,7 +5719,7 @@ msgstr "Szobatiszta"
 
 #: dbupdate.py
 msgid "Hovawart"
-msgstr "hovawart"
+msgstr "Hovawart"
 
 #: waitinglist.js waitinglist_new.js
 msgid "How urgent is it that we take this animal?"
@@ -5741,7 +5727,7 @@ msgstr "Mennyire sürgős az állat fogadása?"
 
 #: dbupdate.py
 msgid "Husky"
-msgstr "husky"
+msgstr "Husky"
 
 #: main.js
 msgid "I've finished, Don't show me this popup again."
@@ -6500,7 +6486,7 @@ msgstr "Legrégebben módosítva"
 
 #: common.js
 msgid "Leave"
-msgstr "Szabadság"
+msgstr "Oldal elhagyása"
 
 #: dbupdate.py
 msgid "Leave of absence"
@@ -6523,9 +6509,8 @@ msgid "Leptospirosis"
 msgstr "Leptospirosis"
 
 #: mailmerge.js
-#, fuzzy
 msgid "Letter"
-msgstr "szetter"
+msgstr "Levél"
 
 #: dbupdate.py
 msgid "Lhasa Apso"
@@ -6626,9 +6611,8 @@ msgstr "Lista"
 
 #: animal.js medical.js animal_find.js test.js animal_new.js animal_bulk.js
 #: vaccination.js reports.py html.py
-#, fuzzy
 msgid "Litter"
-msgstr "szetter"
+msgstr "Alom"
 
 #: animal_find_results.js litters.js html.py
 msgid "Litter Ref"
@@ -6643,9 +6627,8 @@ msgid "Littermates"
 msgstr "Alomtársak"
 
 #: common_animalchoosermulti.js roles.js litters.js animal.py
-#, fuzzy
 msgid "Litters"
-msgstr "szetter"
+msgstr "Almok"
 
 #: litters.js
 msgid "Litters need at least a required date and number."
@@ -6818,19 +6801,16 @@ msgid "Lost Animal"
 msgstr "Elveszett állat"
 
 #: dbupdate.py
-#, fuzzy
 msgid "Lost Animal - Additional"
-msgstr "Állat - egyéb"
+msgstr "Elveszett állat - Egyéb "
 
 #: dbupdate.py
-#, fuzzy
 msgid "Lost Animal - Details"
-msgstr "Állat - Részletek"
+msgstr "Elveszett állat - Részletek"
 
 #: person.py
-#, fuzzy
 msgid "Lost Animal Contact"
-msgstr "Talált állathoz tartozó kapcsolat"
+msgstr "Elveszett állathoz tartozó kapcsolat"
 
 #: diary.py
 msgid "Lost Animal: {0}"
@@ -6842,30 +6822,28 @@ msgstr "Elveszett és megtalált"
 
 #: lostfound_new.js lostfound.js
 msgid "Lost and found entries must have a contact"
-msgstr "Az elveszett és megtalált bejegyzésekhez kapcsolattartó szükséges"
+msgstr ""
+"Az elveszett és megtalált bejegyzésekhez kapcsolattartó megadása szükséges"
 
 #: diary.js log.js lostfound.js media.js
 msgid "Lost animal - {0} {1} [{2}]"
 msgstr "Elveszett állat - {0} {1} [{2}]"
 
 #: search.py
-#, fuzzy
 msgid "Lost animal entries matching '{0}'."
 msgstr "Talált állatra vonatkozó bejegyzések megegyeznek '{0}'"
 
 #: lostfound_new.js
-#, fuzzy
 msgid "Lost animal entry {0} successfully created."
-msgstr "TaláltElveszett állat bejegyzése {0} sikeresen létrehozva"
+msgstr "Talált állat bejegyzése {0} sikeresen létrehozva"
 
 #: lostfound.py
 msgid "Lost animals must have a contact"
 msgstr "Elveszett állatokhoz kapcsolattartó szükséges"
 
 #: search.py
-#, fuzzy
 msgid "Lost animals reported in the last 30 days."
-msgstr "Az utóbbi 30 napon bejelentett talált állatok"
+msgstr "Az utóbbi 30 napon bejelentett elveszett állatok."
 
 #: lostfound_find.js
 msgid "Lost from"
@@ -7034,7 +7012,7 @@ msgstr "Kezelések megjelölése elvégzettként"
 
 #: dbupdate.py
 msgid "Marketer"
-msgstr "Marketing szakember"
+msgstr "Forgalmazó"
 
 #: animal.js animal_find.js mobile.py
 msgid "Markings"
@@ -7053,9 +7031,8 @@ msgid "Mastiff"
 msgstr "masztiff"
 
 #: animal.js lostfound.js lostfound.py
-#, fuzzy
 msgid "Match"
-msgstr "Tétel"
+msgstr "Egyezés"
 
 #: roles.js
 msgid "Match Lost and Found"
@@ -7125,8 +7102,8 @@ msgstr "Egészségügyi profilok"
 msgid ""
 "Medical profiles need a profile name, treatment, dosage and frequencies."
 msgstr ""
-"Az egészségügyi profilokhoz név, kezelés, gyógyszermennyiség és "
-"gyógyszerezési információk megadása szükséges."
+"Az egészségügyi profilokhoz név, kezelés, dózis és kezelési gyakoriásg "
+"megadása szükséges. "
 
 #: medical.js
 msgid ""
@@ -7137,13 +7114,12 @@ msgstr ""
 "intervallumokra"
 
 #: mobile.py
-#, fuzzy
 msgid "Medicate"
-msgstr "Egészségügyi"
+msgstr "Gyógykezelés"
 
 #: mobile.py
 msgid "Medicate Animal"
-msgstr "Állat gyógyszerezése"
+msgstr "Gyógykezelés alatt álló állat"
 
 #: dbupdate.py
 msgid "Medium"
@@ -7172,7 +7148,7 @@ msgstr "Személy összevonása"
 
 #: animal.js
 msgid "Merge another animal into this one"
-msgstr ""
+msgstr "Másik állat összevonása ezzel"
 
 #: person.js
 msgid "Merge another person into this one"
@@ -7200,12 +7176,11 @@ msgstr "Üzenet a következőtől: {0}"
 
 #: common_widgets.js
 msgid "Message successfully sent to {0}"
-msgstr ""
+msgstr "Üzenet sikeresen elküldésre került  {0}"
 
 #: mobile.py
-#, fuzzy
 msgid "Messages"
-msgstr "Üzenet"
+msgstr "Üzenetek"
 
 #: mailmerge.js
 msgid "Messages successfully sent"
@@ -7216,9 +7191,8 @@ msgid "Method"
 msgstr "Módszer"
 
 #: common_animalchooser.js animal_find_results.js header_edit_header.js
-#, fuzzy
 msgid "Microchip"
-msgstr "Chippezett"
+msgstr "Microchip"
 
 #: html.py
 msgid "Microchip Date"
@@ -7254,7 +7228,7 @@ msgstr "törpe pincser"
 
 #: common_widgets.js
 msgid "Minutes"
-msgstr "Perc"
+msgstr "Percek"
 
 #: dbupdate.py
 msgid "Missouri Foxtrotter"
@@ -7345,9 +7319,8 @@ msgstr ""
 "megtekintse azok nevének első betűinek begépelésével"
 
 #: options.js search.py
-#, fuzzy
 msgid "Most recently changed"
-msgstr "Legrégebben módosítva"
+msgstr "Legutóbb módosítva"
 
 #: options.js search.py
 msgid "Most relevant"
@@ -7371,9 +7344,8 @@ msgid "Mouse"
 msgstr "Egér"
 
 #: move_retailer.js common.js html.py
-#, fuzzy
 msgid "Move"
-msgstr "Egyik sem"
+msgstr "Mozgatás"
 
 #: move_retailer.js html.py
 msgid "Move an animal to a retailer"
@@ -7401,9 +7373,8 @@ msgid "Movement Type"
 msgstr "Mozgatás típusa"
 
 #: lookups.py
-#, fuzzy
 msgid "Movement Types"
-msgstr "Mozgatás típusa"
+msgstr "Mozgatás típusok"
 
 #: movement.py
 msgid "Movement dates clash with an existing movement."
@@ -7453,21 +7424,19 @@ msgstr "Musztáng"
 
 #: users.js
 msgid "My Fosters"
-msgstr ""
+msgstr "Ideigleneseim"
 
 #: mobile.py
-#, fuzzy
 msgid "My Incidents"
-msgstr "Eset hozzáadása"
+msgstr "Eseményeim"
 
 #: mobile.py
 msgid "My Undispatched Incidents"
-msgstr ""
+msgstr "Feladatlan eseményeim"
 
 #: header.js html.py configuration.py
-#, fuzzy
 msgid "My diary notes"
-msgstr "Összes napló jegyzet"
+msgstr "Összes napló jegyzetem"
 
 #: header.js
 msgid "My sheltermanager.com account"
@@ -7496,9 +7465,8 @@ msgid "Name"
 msgstr "Név"
 
 #: waitinglist_results.js
-#, fuzzy
 msgid "Name Contains"
-msgstr "Kód tartalma"
+msgstr "Név tartalmazza"
 
 #: person.js
 msgid "Name and Address"
@@ -7509,9 +7477,8 @@ msgid "Name cannot be blank"
 msgstr "A név nem lehet üres"
 
 #: person_find.js
-#, fuzzy
 msgid "Name contains"
-msgstr "Kód tartalma"
+msgstr "Név tartalmazza"
 
 #: dbupdate.py
 msgid "Neapolitan Mastiff"
@@ -7556,7 +7523,7 @@ msgstr "Új fiók"
 
 #: clinic_appointment.js
 msgid "New Appointment"
-msgstr ""
+msgstr "Új megbeszélt időpont"
 
 #: citations.js
 msgid "New Citation"
@@ -7575,9 +7542,8 @@ msgid "New Diet"
 msgstr "Új Étrend"
 
 #: media.js
-#, fuzzy
 msgid "New Document"
-msgstr "Tétel hozzáadása"
+msgstr "Új dokumentum"
 
 #: additional.js
 msgid "New Field"
@@ -7593,7 +7559,7 @@ msgstr "új-guineai éneklő kutya"
 
 #: clinic_invoice.js
 msgid "New Item"
-msgstr ""
+msgstr "Új elem"
 
 #: licence.js
 msgid "New License"
@@ -7608,9 +7574,8 @@ msgid "New Log"
 msgstr "Új napló"
 
 #: movements.js
-#, fuzzy
 msgid "New Movement"
-msgstr "Tétel hozzáadása"
+msgstr "Új áthelyezés"
 
 #: move_adopt.js
 msgid "New Owner"
@@ -7630,7 +7595,7 @@ msgstr "Új profil"
 
 #: additional.js
 msgid "New Record"
-msgstr ""
+msgstr "Új feljegyzés"
 
 #: medical.js
 msgid "New Regimen"
@@ -7653,19 +7618,16 @@ msgid "New Task"
 msgstr "Új feladat"
 
 #: htmltemplates.js
-#, fuzzy
 msgid "New Template"
-msgstr "Sablon hozzáadása"
+msgstr "Új formanyomtatvány"
 
 #: test.js
-#, fuzzy
 msgid "New Test"
-msgstr "Új költség"
+msgstr "Új teszt"
 
 #: transport.js
-#, fuzzy
 msgid "New Transport"
-msgstr "Transzport hozzáadása"
+msgstr "Új transzport"
 
 #: traploan.js
 msgid "New Trap Loan"
@@ -7676,9 +7638,8 @@ msgid "New User"
 msgstr "Új felhasználó"
 
 #: vaccination.js
-#, fuzzy
 msgid "New Vaccination"
-msgstr "Oltások hozzáadása"
+msgstr "Új oltás"
 
 #: person_vouchers.js
 msgid "New Voucher"
@@ -7693,23 +7654,20 @@ msgid "New Zealand"
 msgstr "Új-Zéland"
 
 #: diarytasks.js
-#, fuzzy
 msgid "New diary task"
-msgstr "Összes napló jegyzet"
+msgstr "Új napló jegyzet"
 
 #: onlineform.js
-#, fuzzy
 msgid "New form field"
-msgstr "Nyomtatványmező hozzáadása"
+msgstr "Új nyomtatványmező "
 
 #: report_images.js document_templates.js
 msgid "New name"
 msgstr "Új név"
 
 #: onlineforms.js
-#, fuzzy
 msgid "New online form"
-msgstr "Online nyomtatvány hozzárendelése"
+msgstr "Új online nyomtatvány"
 
 #: users.js change_password.js
 msgid "New password and confirmation password don't match."
@@ -7720,9 +7678,8 @@ msgid "New task detail"
 msgstr "Új feladat részletei"
 
 #: document_templates.js
-#, fuzzy
 msgid "New template"
-msgstr "Sablon hozzáadása"
+msgstr "Új nyomtatvány"
 
 #: dbupdate.py
 msgid "Newfoundland Dog"
@@ -7757,7 +7714,7 @@ msgstr "Nincs leírás"
 
 #: person.js person.py
 msgid "No longer retained"
-msgstr ""
+msgstr "A továbbiakban nem visszatartott"
 
 #: lostfound.py person.py
 msgid "No matches found."
@@ -7773,7 +7730,7 @@ msgstr "Nincs közzététel folyamatban"
 
 #: timeline.js search.js
 msgid "No results found."
-msgstr "Nincs találat."
+msgstr "Nincsenek találatok."
 
 #: sql.js
 msgid "No results."
@@ -7801,15 +7758,15 @@ msgstr "nem menhelyi állat"
 
 #: csvexport.js
 msgid "Non-Shelter Animals"
-msgstr ""
+msgstr "Nem menhelyi állatok"
 
 #: users.js
 msgid "Non-shelter Animals"
-msgstr ""
+msgstr "Nem menhelyi állatok"
 
 #: dbupdate.py
 msgid "None"
-msgstr "Egyik sem"
+msgstr "Kikerülők"
 
 #: dbupdate.py
 msgid "Norfolk Terrier"
@@ -7841,17 +7798,15 @@ msgstr "Norwich terrier"
 
 #: dbupdate.py
 msgid "Not Arrived"
-msgstr ""
+msgstr "Nem érkezett meg"
 
 #: html.py
-#, fuzzy
 msgid "Not Available For Adoption"
-msgstr "Örökbefogadható"
+msgstr "Nem örökbefogadható"
 
 #: animal_find_results.js
-#, fuzzy
 msgid "Not Available for Adoption"
-msgstr "Örökbefogadható"
+msgstr "Nem örökbefogadható"
 
 #: options.js header_edit_header.js animal_bulk.js shelterview.js common.js
 #: html.py
@@ -7859,25 +7814,22 @@ msgid "Not For Adoption"
 msgstr "Nem örökbefogadható"
 
 #: options.js common.js
-#, fuzzy
 msgid "Not Microchipped"
-msgstr "Chippezett"
+msgstr "Nem chipezett"
 
 #: accounts_trx.js
 msgid "Not Reconciled"
 msgstr "Nem egyeztetett"
 
 #: header_edit_header.js
-#, fuzzy
 msgid "Not available for adoption"
-msgstr "Örökbefogadható"
+msgstr "Nem örökbefogadható"
 
 #: incident_find.js
 msgid "Not dispatched"
 msgstr "Nincs elküldve"
 
 #: header.js configuration.py
-#, fuzzy
 msgid "Not for adoption"
 msgstr "Nem örökbefogadható"
 
@@ -7890,21 +7842,18 @@ msgid "Not in chosen publisher location"
 msgstr "Nem található a kiválasztott kiadói helyszínen"
 
 #: accounts_trx.js
-#, fuzzy
 msgid "Not reconciled"
 msgstr "Nem egyeztetett"
 
 #: diary.js diarytask.js log.js log_new.js mobile.py
-#, fuzzy
 msgid "Note"
-msgstr "Egyik sem"
+msgstr "Jegyzet"
 
 #: move_deceased.js onlineform.js incident_new.js person_investigation.js
 #: animal.js incident.js media.js incident_find.js incident_find_results.js
 #: mobile.py dbupdate.py
-#, fuzzy
 msgid "Notes"
-msgstr "Egyik sem"
+msgstr "Jegyzetek"
 
 #: move_deceased.js animal.js
 msgid "Notes about the death of the animal"
@@ -7974,18 +7923,16 @@ msgid "Old English Sheepdog"
 msgstr "óangol juhászkutya"
 
 #: change_password.js
-#, fuzzy
 msgid "Old Password"
-msgstr "Új jelszó"
+msgstr "Régi jelszó"
 
 #: reports.js
 msgid "Omit criteria"
 msgstr "Kritérium kihagyása"
 
 #: reports.js
-#, fuzzy
 msgid "Omit header/footer"
-msgstr "Fejléc/Lábléc szerkesztése"
+msgstr "Fejléc/Lábléc elhagyása"
 
 #: animal.py
 msgid "On Foster (in figures)"
@@ -8014,11 +7961,11 @@ msgstr "Aláírás után a dokumentum nem módosítható vagy változtatható me
 
 #: medical.py
 msgid "One Off"
-msgstr "Egyedi"
+msgstr "Egyszeri"
 
 #: dbupdate.py
 msgid "One-Off"
-msgstr "Egyedi"
+msgstr "Egyszeri"
 
 #: onlineform.js code.py
 msgid "Online Form: {0}"
@@ -8095,7 +8042,7 @@ msgstr "Nyitó egyenlegek"
 msgid ""
 "Optional, the date the vaccination \"wears off\" and needs to be "
 "administered again"
-msgstr ""
+msgstr "Opcionálisan az a dátum, amikor a oltás lejár, és újra be kell adni"
 
 #: options.js html.py
 msgid "Options"
@@ -8114,7 +8061,6 @@ msgid "Organisation"
 msgstr "Szervezet"
 
 #: options.js person.js person_new.js common_personchooser.js
-#, fuzzy
 msgid "Organization"
 msgstr "Szervezet"
 
@@ -8174,9 +8120,8 @@ msgid "Out Between"
 msgstr "Között"
 
 #: animal.py
-#, fuzzy
 msgid "Out SubTotal"
-msgstr "In SubTotal"
+msgstr "Részösszegen kivül"
 
 #: publish_options.js
 msgid "Output a deceased animals page"
@@ -8208,7 +8153,7 @@ msgstr "Lejárt"
 
 #: movement.py
 msgid "Overdue medical items"
-msgstr ""
+msgstr "Lejárt egészségügyi elemek"
 
 #: dbupdate.py
 msgid "Overtime"
@@ -8231,7 +8176,6 @@ msgid "Owner given citation"
 msgstr "Tulajdonos általi hivatkozás"
 
 #: animal.js animal_bulk.js
-#, fuzzy
 msgid "Owners Vet"
 msgstr "Tulajdonos állatorvosa"
 
@@ -8325,7 +8269,7 @@ msgstr "patterdale terrier"
 
 #: dbupdate.py
 msgid "PayPal"
-msgstr ""
+msgstr "PayPal"
 
 #: calendarview.js common_widgets.js
 msgid "Payment"
@@ -8352,7 +8296,6 @@ msgid "Payment Types"
 msgstr "Fizetési módok"
 
 #: html.py
-#, fuzzy
 msgid "Payment book"
 msgstr "Fizetési könyv"
 
@@ -8365,9 +8308,8 @@ msgid "Payment of {0} successfully received ({1})."
 msgstr " {0} általi fizetés sikeresen megérkezett ({1})"
 
 #: header_edit_header.js roles.js
-#, fuzzy
 msgid "Payments"
-msgstr "Fizetés"
+msgstr "Kifizetések"
 
 #: donations.js
 msgid "Payments need at least one date, an amount and a person."
@@ -8450,9 +8392,8 @@ msgid "Percheron"
 msgstr "Percheron ló"
 
 #: test.js
-#, fuzzy
 msgid "Perform"
-msgstr "Végrehajtva"
+msgstr "Végrehajtás"
 
 #: mobile.py
 msgid "Perform Homecheck"
@@ -8495,9 +8436,8 @@ msgid "Person - Type"
 msgstr "Személy - típus"
 
 #: onlineforms.js lookups.py
-#, fuzzy
 msgid "Person Flags"
-msgstr "Személy zászlók"
+msgstr "Személy Zászlók"
 
 #: html.py
 msgid "Person looking for report"
@@ -8538,7 +8478,7 @@ msgstr "Telefon"
 
 #: person_find.js
 msgid "Phone contains"
-msgstr ""
+msgstr "A telefon tartalmazza"
 
 #: mobile.py
 msgid "Photo successfully uploaded."
@@ -8714,7 +8654,7 @@ msgstr "Pozitív/Negatív"
 
 #: header_edit_header.js onlineform.py
 msgid "Post"
-msgstr ""
+msgstr "Postáz"
 
 #: dbupdate.py
 msgid "Postage costs"
@@ -8763,7 +8703,7 @@ msgstr "Előző"
 
 #: common.js
 msgid "Previous Adopter"
-msgstr ""
+msgstr "Korábbi örökbefogadó"
 
 #: onlineform_incoming.js
 msgid "Print"
@@ -8782,7 +8722,6 @@ msgid "Printable Manual"
 msgstr "Nyomtatható leírás"
 
 #: options.js
-#, fuzzy
 msgid "Printing word processor documents uses hidden iframe and window.print"
 msgstr ""
 "A word processzoros dokumentumok nyomtatásához rejtett iframe és windows."
@@ -8893,9 +8832,8 @@ msgid "Pumi"
 msgstr "pumi"
 
 #: animal.py
-#, fuzzy
 msgid "Puppies (under {0} months)"
-msgstr "Kölyök cicák ({0} hónapos kor alatt)"
+msgstr "Kölykök ( {0} hónapnál fiatalabb)"
 
 #: dbupdate.py
 msgid "Purchased"
@@ -8976,9 +8914,8 @@ msgid "Ragdoll"
 msgstr "Ragdoll macska"
 
 #: header_edit_header.js waitinglist_results.js html.py
-#, fuzzy
 msgid "Rank"
-msgstr "Bank"
+msgstr "Besorol"
 
 #: dbupdate.py
 msgid "Rat"
@@ -9009,10 +8946,9 @@ msgstr "Ok"
 
 #: clinic_appointment.js
 msgid "Reason For Appointment"
-msgstr ""
+msgstr "Az időpont célja"
 
 #: animal_find_results.js html.py
-#, fuzzy
 msgid "Reason Not From Owner"
 msgstr "Indoklás nem a tulajdonos által"
 
@@ -9025,7 +8961,6 @@ msgid "Reason for entry"
 msgstr "Bejegyzés oka"
 
 #: animal.js
-#, fuzzy
 msgid "Reason not from Owner"
 msgstr "Indoklás nem a tulajdonos által"
 
@@ -9035,7 +8970,7 @@ msgstr "Annak oka, hogy a tulajdonosok miért nem maguk hozták be az állatot"
 
 #: batch.js code.py
 msgid "Recalculate ALL animal ages/times"
-msgstr ""
+msgstr "Számítsa ki újra az ÖSSZES állat korát/idejét"
 
 #: batch.js code.py
 msgid "Recalculate ALL animal locations"
@@ -9051,7 +8986,7 @@ msgstr "Befogadó sz."
 
 #: donations.js
 msgid "Receipt/Invoice"
-msgstr "Befogadó/Számla"
+msgstr "Nyugta/Számla"
 
 #: donation_receive.js donations.js
 msgid "Receive"
@@ -9068,27 +9003,27 @@ msgstr "Fizetés befogadása"
 #: donation_receive.js clinic_appointment.js donations.js common_widgets.js
 #: onlineform_incoming.js
 msgid "Received"
-msgstr "Fogadott"
+msgstr "Érkezett"
 
 #: donations.js
 msgid "Received in last day"
-msgstr "Előző napon befogadott"
+msgstr "Előző napon érkezett"
 
 #: donations.js
 msgid "Received in last month"
-msgstr "Előző hónapban befogadott"
+msgstr "Előző hónapban érkezett"
 
 #: donations.js
 msgid "Received in last week"
-msgstr "Előző héten befogadott"
+msgstr "Előző héten érkezett"
 
 #: donations.js
 msgid "Received in last year"
-msgstr "Előző évben befogadva"
+msgstr "Előző évben érkezett"
 
 #: donations.js
 msgid "Received today"
-msgstr "Ma befogadva"
+msgstr "Ma érkezett"
 
 #: options.js code.py
 msgid "Recently Adopted"
@@ -9104,7 +9039,7 @@ msgstr "Mostanában menhelyre bekerült"
 
 #: options.js code.py
 msgid "Recently Fostered"
-msgstr "Mostanában ideiglenes befogadónál"
+msgstr "Mostanában ideiglenes befogadóhoz került "
 
 #: header.js configuration.py
 msgid "Recently deceased"
@@ -9133,9 +9068,8 @@ msgstr ""
 "rendelkeznie"
 
 #: move_reclaim.js
-#, fuzzy
 msgid "Reclaim successfully created."
-msgstr "Az örökbe fogadás sikeresen megtörtént."
+msgstr "A visszakövetelés sikeresen létrehozva."
 
 #: animal_find.js dbupdate.py
 msgid "Reclaimed"
@@ -9175,9 +9109,8 @@ msgstr ""
 "'Elveszett és megtalált állatok összehasonlítása' jelentés újra generálása"
 
 #: batch.js code.py
-#, fuzzy
 msgid "Regenerate 'Person looking for' report"
-msgstr "'Személy keresi' jelentés újra generálása"
+msgstr "'Személy keres' jelentés újra generálása"
 
 #: batch.js code.py
 msgid "Regenerate annual animal figures for"
@@ -9193,7 +9126,7 @@ msgstr "Személyek neveinek újra generálása a kiválogatott formátumban"
 
 #: animal_bulk.js
 msgid "Register Microchip"
-msgstr ""
+msgstr "Regisztrálja a microchipet"
 
 #: publish_options.js
 #, fuzzy
@@ -9238,20 +9171,21 @@ msgstr "Eltávolít"
 
 #: options.js
 msgid "Remove HTML and PDF document media after this many years"
-msgstr ""
+msgstr "HTML és PDF dokumentum tartalmak eltávolítása sok év után."
 
 #: options.js
 msgid "Remove clinic functionality from screens and menus"
-msgstr ""
+msgstr "Távolítsa el a klinikai funkciókat a képernyőkről és a menükből"
 
 #: options.js
-#, fuzzy
 msgid "Remove fine-grained animal control incident permissions"
-msgstr "Távolítsa el a megszűrt állat ellenőrzési esemény engedélyket"
+msgstr ""
+"Távolítsa el a finom szemcsés, állatok elleni védekezésre vonatközó "
+"engedélyeket"
 
 #: options.js
 msgid "Remove holds after"
-msgstr ""
+msgstr "Távolítsa el az ezt követő fenntartásokat"
 
 #: options.js
 msgid "Remove move menu and the movements tab from animal and person screens"
@@ -9261,7 +9195,7 @@ msgstr ""
 
 #: person.js
 msgid "Remove personally identifiable data"
-msgstr ""
+msgstr "Távolítsa el a személyesen azonosítható adatokat"
 
 #: publish_options.js
 msgid "Remove previously published files before uploading"
@@ -9270,27 +9204,25 @@ msgstr "Korábban közzétett fájlok eltávolítása feltöltés előtt"
 #: options.js
 msgid "Remove retailer functionality from the movement screens and menus"
 msgstr ""
+"Távolítsa el a kiskereskedő funkciót a mozgásképernyőkről és a menükből"
 
 #: options.js
-#, fuzzy
 msgid "Remove short shelter code box from the animal details screen"
 msgstr ""
 "Rövid menhelyi kód box eltávolítása az állatok információs képernyőjéről"
 
 #: options.js
-#, fuzzy
 msgid "Remove the FIV/L test fields from animal health details"
-msgstr "A karomvágás mező eltávolítása az állat egészségügyi infóiból"
+msgstr "Távolítsa el a FIV / L tesztmezőket az állat-egészségügyi adataiból"
 
 #: options.js
-#, fuzzy
 msgid "Remove the Litter ID field from animal details"
-msgstr "Szőrzet típusa mező eltávolítása az állat adataiból"
+msgstr "Távolítsa el az Alom azonosító mezőt az állat adataiból"
 
 #: options.js
-#, fuzzy
 msgid "Remove the Rabies Tag field from animal health details"
-msgstr "A karomvágás mező eltávolítása az állat egészségügyi infóiból"
+msgstr ""
+"Távolítsa el a veszettség címke mezőt az állat egészségügyi információiból"
 
 #: options.js
 msgid "Remove the adoption coordinator field from animal entry details"
@@ -9303,13 +9235,11 @@ msgstr "Örökbefogadási díj mező eltávolítása az állat adataiból"
 
 #: options.js
 msgid "Remove the animal control functionality from menus and screens"
-msgstr ""
-"Az állat kontrollfunkciójának eltávolítása a menükből és képernyőképekről"
+msgstr "Az állat kontroll funkció eltávolítása a menükből és képernyőképekről"
 
 #: options.js
-#, fuzzy
 msgid "Remove the bonded with fields from animal entry details"
-msgstr "Szőrzet típusa mező eltávolítása az állat adataiból"
+msgstr "Távolítsa el az 'Összekapcsolva ' mezőket az állat leírásából"
 
 #: options.js
 msgid "Remove the city/state fields from person details"
@@ -9332,79 +9262,65 @@ msgid "Remove the good with fields from animal notes"
 msgstr "A kompatibilitásra vonatkozó mező eltávolítása az állat jegyzeteiből"
 
 #: options.js
-#, fuzzy
 msgid "Remove the heartworm test fields from animal health details"
-msgstr "A karomvágás mező eltávolítása az állat egészségügyi infóiból"
+msgstr "A szívféreg teszt mező eltávolítása az állat egészségügyi infóiból"
 
 #: options.js
 msgid "Remove the insurance number field from the movement screens"
 msgstr "Biztosítási szám mező eltávolítása a mozgatási képernyőkről"
 
 #: options.js
-#, fuzzy
 msgid "Remove the location unit field from animal details"
-msgstr "Örökbefogadási díj mező eltávolítása az állat adataiból"
+msgstr "Helymeghatározó egység mező eltávolítása az állat adataiból"
 
 #: options.js
 msgid "Remove the microchip fields from animal identification details"
 msgstr "Microchip mező eltávolítása az állat azonosítási adatai közül"
 
 #: options.js
-#, fuzzy
 msgid "Remove the neutered fields from animal health details"
-msgstr "A karomvágás mező eltávolítása az állat egészségügyi infóiból"
+msgstr ""
+"Az ivartalanításra vonatkozó mező eltávolítása az állat egészségügyi infóiból"
 
 #: options.js
 msgid "Remove the online form functionality from menus"
 msgstr "Az online nyomtatvány funkció eltávolítása a menükből"
 
 #: options.js
-#, fuzzy
 msgid "Remove the picked up fields from animal entry details"
-msgstr "Szőrzet típusa mező eltávolítása az állat adataiból"
+msgstr "A felvételi mező eltávolítása az állat adataiból"
 
 #: options.js
-#, fuzzy
 msgid "Remove the rota functionality from menus and screens"
-msgstr ""
-"Az állat kontrollfunkciójának eltávolítása a menükből és képernyőképekről"
+msgstr "A rota funkció eltávolítása a menükből és képernyőképekről"
 
 #: options.js
-#, fuzzy
 msgid "Remove the size field from animal details"
-msgstr "Szőrzet típusa mező eltávolítása az állat adataiból"
+msgstr "A méret mező eltávolítása az állat adataiból"
 
 #: options.js
-#, fuzzy
 msgid "Remove the stock control functionality from menus and screens"
-msgstr ""
-"Az állat kontrollfunkciójának eltávolítása a menükből és képernyőképekről"
+msgstr "Távolítsa el a készletkezelési funkciókat a menükből és a képernyőkről"
 
 #: options.js
 msgid "Remove the tattoo fields from animal identification details"
 msgstr "Tetoválási mező eltávolítása az állat azonosítási adatai közül"
 
 #: options.js
-#, fuzzy
 msgid "Remove the transport functionality from menus and screens"
-msgstr ""
-"Az állat kontrollfunkciójának eltávolítása a menükből és képernyőképekről"
+msgstr "Távolítsa el a szállítási funkciókat a menükből és a képernyőkről"
 
 #: options.js
-#, fuzzy
 msgid "Remove the trap loan functionality from menus and screens"
-msgstr ""
-"Az állat kontrollfunkciójának eltávolítása a menükből és képernyőképekről"
+msgstr "Csapda kölcsönzés eltávolítása a menükből és képernyőképekről"
 
 #: options.js
-#, fuzzy
 msgid "Remove the weight field from animal details"
-msgstr "Szőrzet típusa mező eltávolítása az állat adataiból"
+msgstr "Súly mező eltávolítása az állat adataiból"
 
 #: header_edit_header.js waitinglist_results.js
-#, fuzzy
 msgid "Removed"
-msgstr "Eltávolít"
+msgstr "Eltávolított"
 
 #: report_images.js document_templates.js
 msgid "Rename"
@@ -9455,9 +9371,8 @@ msgid "Required"
 msgstr "Szükséges"
 
 #: medical.py
-#, fuzzy
 msgid "Required date must be a valid date"
-msgstr "A költség dátuma érvényes dátum kell legyen"
+msgstr "A kért dátuma érvényes dátum kell legyen"
 
 #: vaccination.js
 msgid "Reschedule"
@@ -9500,7 +9415,6 @@ msgid "Reservation date cannot be after cancellation date."
 msgstr "A foglalás dátuma nem lehet későbbi mint a törlés dátuma"
 
 #: move_reserve.js
-#, fuzzy
 msgid "Reservation successfully created."
 msgstr "Az örökbe fogadás sikeresen megtörtént."
 
@@ -9509,9 +9423,8 @@ msgid "Reservations must have a valid reservation date."
 msgstr "A foglaláshoz szükséges érvényes foglalási dátum"
 
 #: move_reserve.js
-#, fuzzy
 msgid "Reserve"
-msgstr "Fogadott"
+msgstr "Foglal"
 
 #: header.js move_reserve.js html.py configuration.py
 msgid "Reserve an animal"
@@ -9519,9 +9432,8 @@ msgstr "Állat foglalása"
 
 #: options.js animal_find_results.js animal_find.js shelterview.js common.js
 #: html.py
-#, fuzzy
 msgid "Reserved"
-msgstr "Fogadott"
+msgstr "Foglalt"
 
 #: lostfound_new.js incident_new.js waitinglist_new.js person_new.js
 #: animal_new.js
@@ -9541,7 +9453,6 @@ msgid "Responded"
 msgstr "Válaszolt"
 
 #: incident_find.js
-#, fuzzy
 msgid "Responded Between"
 msgstr "Ezen időszakban megválaszolva"
 
@@ -9570,24 +9481,23 @@ msgstr "Kiskereskedő"
 
 #: users.js
 msgid "Retailer Animals"
-msgstr ""
+msgstr "Kiskereskedőnél lévő állatok"
 
 #: movements.js
 msgid "Retailer Book"
-msgstr ""
+msgstr "Kiskereskedői nyilvántartás"
 
 #: header.js html.py configuration.py
 msgid "Retailer book"
-msgstr ""
+msgstr "Kiskereskedői nyilvántartás"
 
 #: move_retailer.js
 msgid "Retailer movement successfully created."
-msgstr ""
+msgstr "Kiskereskedői mozgatás sikeresen megtörtént. "
 
 #: movement.py
-#, fuzzy
 msgid "Retailer movements must have a valid movement date."
-msgstr "Örökbe fogadási tételekhez érvényes örökbe fogadási dátum szükséges."
+msgstr "A kiskereskedői mozgatáshoz érvényes dátumot kell rendelni."
 
 #: dbupdate.py
 msgid "Retriever"
@@ -9614,12 +9524,10 @@ msgid "Return an animal from adoption"
 msgstr "Örökbefogadott állat visszahelyezése"
 
 #: movements.js header.js html.py configuration.py
-#, fuzzy
 msgid "Return an animal from another movement"
 msgstr "Állat visszahelyezése más mozgatásból"
 
 #: movements.js
-#, fuzzy
 msgid "Return an animal from transfer"
 msgstr "Állat visszahelyezése transzferből"
 
@@ -9637,7 +9545,7 @@ msgstr "Visszaadva"
 
 #: movements.js person.py
 msgid "Returned By"
-msgstr ""
+msgstr "Visszaadta "
 
 #: animal.py
 msgid "Returned To Owner"
@@ -9661,7 +9569,7 @@ msgstr "Visszatérő"
 
 #: animal.py
 msgid "Returns {0}"
-msgstr "Visszajön {0}"
+msgstr "Visszaérkezések {0}"
 
 #: publish_options.js
 msgid "Reupload animal images every time"
@@ -9706,23 +9614,23 @@ msgstr "Rozellapapagáj"
 
 #: dbupdate.py
 msgid "Rostered day off"
-msgstr ""
+msgstr "Felosztott szabadnap"
 
 #: header_edit_header.js roles.js
 msgid "Rota"
-msgstr ""
+msgstr "Beosztás"
 
 #: lookups.py
 msgid "Rota Types"
-msgstr ""
+msgstr "Beosztás típusok"
 
 #: staff_rota.js
 msgid "Rota cloned successfully."
-msgstr ""
+msgstr "Beosztás sikeres másolása."
 
 #: media.js
 msgid "Rotate image 90 degrees anticlockwis"
-msgstr ""
+msgstr "Kép elforgatása 90 fokkal óramutató járásval ellentétes irányba"
 
 #: media.js
 msgid "Rotate image 90 degrees clockwise"
@@ -9734,11 +9642,11 @@ msgstr "rottweiler"
 
 #: dbupdate.py
 msgid "Rough"
-msgstr ""
+msgstr "Érdes"
 
 #: mailmerge.js
 msgid "Rows"
-msgstr "Sor"
+msgstr "Sorok"
 
 #: dbupdate.py
 msgid "Ruddy"
@@ -9762,7 +9670,7 @@ msgstr "SM fiók"
 
 #: header_edit_header.js onlineform.py
 msgid "SMS"
-msgstr ""
+msgstr "SMS"
 
 #: reports.js
 msgid "SQL"
@@ -9773,17 +9681,14 @@ msgid "SQL Interface"
 msgstr "SQL Interface"
 
 #: sql.js
-#, fuzzy
 msgid "SQL dump"
 msgstr "SQL kuka"
 
 #: sql.js
-#, fuzzy
 msgid "SQL dump (ASM2 HSQLDB Format)"
 msgstr "SQL kuka (ASM2 HSQLDB formátum)"
 
 #: reports.js sql.js
-#, fuzzy
 msgid ""
 "SQL editor: Press F11 to go full screen and press CTRL+SPACE to autocomplete "
 "table and column names"
@@ -9800,9 +9705,8 @@ msgid "SQL is syntactically correct."
 msgstr "SQL mondattanilag korrekt."
 
 #: options.js
-#, fuzzy
 msgid "SS = first and second letter of animal species"
-msgstr "EE = állat beviteli kategóriájának első és második betűje"
+msgstr "SS = állat beviteli kategóriájának első és második betűje"
 
 #: common.js
 msgid "Sa"
@@ -9851,29 +9755,25 @@ msgid "Save and leave"
 msgstr "Mentés és kilépés"
 
 #: incident.js
-#, fuzzy
 msgid "Save this incident"
-msgstr "Ennek az eseménynek a törlése"
+msgstr "Esemény mentése"
 
 #: person.js animal.js
-#, fuzzy
 msgid "Save this person"
-msgstr "Ennek a személynek a rögzítése"
+msgstr "Személy mentése"
 
 #: lostfound.js
 msgid "Save this record"
 msgstr "Bejegyzés mentése"
 
 #: waitinglist.js
-#, fuzzy
 msgid "Save this waiting list entry"
-msgstr "Ennek a várólist bejegyzésnek a törlése"
+msgstr "Ennek a várólista feljegyzésnek a mentése"
 
 #: options.js person.js waitinglist.js animal_costs.js animal.js incident.js
 #: lostfound.js publish_options.js
-#, fuzzy
 msgid "Saving..."
-msgstr "Áthelyezés..."
+msgstr "Mentés...."
 
 #: publish_options.js
 msgid "Scale published animal images to"
@@ -9909,7 +9809,7 @@ msgstr "Jegyzet"
 
 #: dbupdate.py
 msgid "Seal"
-msgstr ""
+msgstr "Hitelesít"
 
 #: dbupdate.py
 msgid "Sealyham Terrier"
@@ -9930,7 +9830,7 @@ msgstr "Keresésnél kiadott '{0}' eredmény"
 
 #: options.js
 msgid "Search sort order"
-msgstr ""
+msgstr "Keresési sorrend"
 
 #: additional.js
 msgid "Searchable"
@@ -9948,11 +9848,11 @@ msgstr "Kiválasztás"
 
 #: common_personchooser.js onlineform_incoming.js
 msgid "Select a person"
-msgstr ""
+msgstr "Személy kiválasztása"
 
 #: onlineform_incoming.js
 msgid "Select a person to attach this form to."
-msgstr ""
+msgstr "Válasszon ki egy személyt akihez csatolja ezt az űrlapot."
 
 #: person.js
 msgid ""
@@ -9960,18 +9860,21 @@ msgid ""
 "removed, and their movements, diary notes, log entries, etc. will be "
 "reattached to this record."
 msgstr ""
+"Válasszon ki egy személyt, akit bele szeretne vonni ebbe a feljegyzésbe. A "
+"kiválasztott személyt eltávolítják, és mozgásait, naplójegyzeteit, "
+"naplóbejegyzéseit stb. újra csatolják ehhez a rekordhoz."
 
 #: reports.js
 msgid "Select all"
-msgstr ""
+msgstr "Összes kiválsztása "
 
 #: common_animalchooser.js onlineform_incoming.js
 msgid "Select an animal"
-msgstr ""
+msgstr "Válasszon egy állatot"
 
 #: onlineform_incoming.js
 msgid "Select an animal to attach this form to."
-msgstr ""
+msgstr "Válasszon egy állatot, amelyhez ezt a nyomtatványt csatolja."
 
 #: animal.js
 msgid ""
@@ -9979,51 +9882,56 @@ msgid ""
 "removed, and their movements, diary notes, log entries, etc. will be "
 "reattached to this record."
 msgstr ""
+"Válasszon egy állatot, amellyet összevonnak ezzel a feljegyzéssel. A "
+"kiválasztott állatot eltávolítják, és mozgásait, naplójegyzeteit, "
+"naplóbejegyzéseit stb. újra csatolják ehhez a feljegyzéshez."
 
 #: animal.js
 msgid "Select animal to merge"
-msgstr ""
+msgstr "Válassza ki az egyesiteni kívánt állatot "
 
 #: common_animalchoosermulti.js
 msgid "Select animals"
-msgstr ""
+msgstr "Válasszon ki állatokat"
 
 #: person.js animal.js
 msgid "Select date for diary task"
-msgstr ""
+msgstr "Válasszon ki  dátumot ehhez a napló feladathoz"
 
 #: person.js
 msgid "Select person to merge"
-msgstr ""
+msgstr "Válassza ki az egyesíteni kívánt személyt"
 
 #: reports.js
 msgid "Select recommended"
-msgstr ""
+msgstr "Válassza az ajánlott lehetőséget"
 
 #: csvexport.js
 msgid "Selected On-Shelter Animals"
-msgstr ""
+msgstr "Kiválasztott menhelyen lévő állatok"
 
 #: dbupdate.py
 msgid "Selkirk Rex"
-msgstr ""
+msgstr "Selkirk rex macskafajta"
 
 #: common_widgets.js mobile.py
 msgid "Send"
-msgstr ""
+msgstr "Elküld"
 
 #: mailmerge.js
 msgid "Send Emails"
-msgstr ""
+msgstr "Emaileket küld"
 
 #: options.js
 msgid ""
 "Send a weekly email to fosterers with medical information about their animals"
 msgstr ""
+"Heti e-mail küldése az ideiglenes befogadóknak az állatokra vonatkozó orvosi "
+"információkkal"
 
 #: onlineforms.js
 msgid "Send confirmation email to form submitter"
-msgstr ""
+msgstr "Küldjön megerősítő e-mailt az űrlap benyújtójának"
 
 #: mailmerge.js
 msgid "Send emails"
@@ -10031,7 +9939,7 @@ msgstr "Emailek küldése"
 
 #: roles.js
 msgid "Send mass emails and perform mail merges"
-msgstr "Kör-emailek küldése és körlevelek küldése"
+msgstr "Küldjön tömeg e-maileket és hajtson végre cím összevonásokat"
 
 #: main.js mobile.py
 msgid "Send via email"
@@ -10047,11 +9955,11 @@ msgstr ""
 
 #: common_widgets.js
 msgid "Sending..."
-msgstr ""
+msgstr "Küldés...."
 
 #: dbupdate.py
 msgid "Senior"
-msgstr "Senior"
+msgstr "Idős"
 
 #: media.js
 msgid "Sent to mobile signing pad."
@@ -10089,6 +9997,8 @@ msgstr "Állítsa 0-ra, hogy soha ne frissítse sürgősséggel"
 #: users.js
 msgid "Set wether or not this user account can log in to the user interface."
 msgstr ""
+"Állítsa be, hogy ez a  felhasználói fiók be tud-e jelentkezni vagy sem a "
+"felhasználói felületbe."
 
 #: dbupdate.py
 msgid "Setter"
@@ -10099,6 +10009,9 @@ msgid ""
 "Setting a location filter will prevent this user seeing animals who are not "
 "in these locations on shelterview, find animal and search."
 msgstr ""
+"A helyszűrő beállítása megakadályozza, hogy ez a felhasználó állatokat "
+"nézzen meg, akik nem ezen a helyen láthatók menhelynézetben, állatokat "
+"találjon vagy keressen."
 
 #: html.py
 msgid "Settings"
@@ -10106,15 +10019,15 @@ msgstr "Beállítások"
 
 #: main.js
 msgid "Settings, Lookup data"
-msgstr "Beállítások, adatok keresése"
+msgstr "Beállítások, Adatok keresése"
 
 #: main.js
 msgid "Settings, Options"
-msgstr "Beállítások, opciók"
+msgstr "Beállítások, Opciók"
 
 #: main.js
 msgid "Settings, Reports"
-msgstr "Beállítások, jelentések"
+msgstr "Beállítások, Relentések"
 
 #: main.js
 msgid "Settings, System user accounts"
@@ -10153,7 +10066,7 @@ msgstr "Megosztások"
 
 #: dbupdate.py
 msgid "Sheep"
-msgstr ""
+msgstr "Birka "
 
 #: dbupdate.py
 msgid "Sheep Dog"
@@ -10161,7 +10074,7 @@ msgstr "juhászkutya"
 
 #: person_find_results.js header_edit_header.js html.py dbupdate.py
 msgid "Shelter"
-msgstr ""
+msgstr "Menhely"
 
 #: onlineform.js
 #, fuzzy
@@ -10175,11 +10088,11 @@ msgstr "nem menhelyi állat"
 
 #: options.js
 msgid "Shelter Details"
-msgstr ""
+msgstr "Menhely adatai"
 
 #: lostfound.py
 msgid "Shelter animal {0} '{1}'"
-msgstr ""
+msgstr "Menhelyi állat {0} '{1}'"
 
 #: header.js configuration.py
 #, fuzzy
@@ -10188,7 +10101,7 @@ msgstr "nem menhelyi állat"
 
 #: animal.js animal_new.js animal.py
 msgid "Shelter code cannot be blank"
-msgstr ""
+msgstr "Menhely kódja nem maradhat üresen."
 
 #: animal.py
 #, fuzzy
@@ -10197,27 +10110,27 @@ msgstr "Ez a microchip szám {0} már más állathoz lett hozzárendelve. "
 
 #: main.js
 msgid "Shelter stats (all time)"
-msgstr ""
+msgstr "Menhelyi statisztika (összes)"
 
 #: main.js
 msgid "Shelter stats (this month)"
-msgstr ""
+msgstr "Menhelyi statisztika (ehavi)"
 
 #: main.js
 msgid "Shelter stats (this week)"
-msgstr ""
+msgstr "Menhelyi statisztika (eheti)"
 
 #: main.js
 msgid "Shelter stats (this year)"
-msgstr ""
+msgstr "Menhelyi statisztika (ez évi)"
 
 #: main.js
 msgid "Shelter stats (today)"
-msgstr ""
+msgstr "Menhelyi statisztika (mai)"
 
 #: options.js header.js shelterview.js html.py configuration.py
 msgid "Shelter view"
-msgstr ""
+msgstr "Menhely nézet"
 
 #: dbupdate.py
 msgid "Shepherd"
@@ -10233,7 +10146,7 @@ msgstr "shiba inu"
 
 #: dbupdate.py
 msgid "Shift"
-msgstr ""
+msgstr "Váltás"
 
 #: dbupdate.py
 msgid "Shih Tzu"
@@ -10241,68 +10154,69 @@ msgstr "shih tzu"
 
 #: dbupdate.py
 msgid "Short"
-msgstr ""
+msgstr "Rövid"
 
 #: options.js
 msgid "Show GDPR Contact Opt-In field on person screens"
-msgstr ""
+msgstr "Mutassa a GDPR kapcsolat Opt-In mezőt a személy képernyőjén"
 
 #: options.js
 msgid "Show PDF files inline instead of sending them as attachments"
 msgstr ""
+"Mutassa a PDF fájlokat inline formátumban, és ne mellékletekként küldje el "
+"őket"
 
 #: options.js
 msgid "Show a cost field on medical/test/vaccination screens"
-msgstr ""
+msgstr "Mutasson egy költségmezőt az orvosi / teszt / oltási nézetekben"
 
 #: options.js
 msgid "Show a minimap of the address on person screens"
-msgstr ""
+msgstr "Mutassa meg a cím minitérképét a személy képernyőjén"
 
 #: options.js
 msgid "Show a separate paid date field with costs"
-msgstr ""
+msgstr "Mutasson egy külön, fizetett dátummezőt a költségekkel"
 
 #: options.js
 msgid "Show alerts on the home page"
-msgstr ""
+msgstr "Figyelmeztetése megjelenítése a honlapon"
 
 #: options.js
 msgid "Show animal thumbnails in movement and medical books"
-msgstr ""
+msgstr "Mutassa az állat ikonképét a mozgási és az orvosi könyvekben"
 
 #: publish_options.js
 msgid "Show animals adopted"
-msgstr ""
+msgstr "Mutassa az örökbefogadott állatokat"
 
 #: options.js
 msgid "Show codes on the shelter view screen"
-msgstr ""
+msgstr "Kódok megjelenítése a menhely nézet képernyőn"
 
 #: options.js
 msgid "Show complete comments in table views"
-msgstr ""
+msgstr "Összes megjegyzés megjelenítése táblázat nézetben"
 
 #: options.js
 msgid "Show empty locations"
-msgstr ""
+msgstr "Üres helyek mutatása"
 
 #: additional.js
 msgid "Show on new record screens"
-msgstr ""
+msgstr "Megjelenítés új felvételi képernyőkön"
 
 #: options.js
 msgid "Show quick links on all pages"
-msgstr ""
+msgstr "Gyors linkek megjelenítése az összes oldalon"
 
 #: options.js
 msgid "Show quick links on the home page"
-msgstr ""
+msgstr "Gyors linkek megjelenítése a honlapon"
 
 #: options.js
-#, fuzzy
 msgid "Show report menu items in collapsed categories"
-msgstr "Jelentés menüpontok megjelenítése összeomlott kategóriákban"
+msgstr "Jelenítse meg a jelentés menüelemeit összecsukott kategóriákban"
 
 #: options.js
 msgid "Show short shelter codes on screens"
@@ -10342,7 +10256,7 @@ msgstr "A teljes napló megjelenítése a honlapon (nem csak az én jegyzeteimet
 
 #: options.js
 msgid "Show the hold fields"
-msgstr "Várakoztatási mező megjelenítése"
+msgstr "Fenntartások mező megjelenítése"
 
 #: options.js
 msgid "Show the internal location field"
@@ -10354,7 +10268,7 @@ msgstr "Az alom azonosító mezőjének megjelenítése"
 
 #: options.js
 msgid "Show the location unit field"
-msgstr "Az elhelyezkedési egység mező megjelenítése"
+msgstr "Az elhelyezői egység mező megjelenítése"
 
 #: options.js
 msgid "Show the microchip fields"
@@ -10378,7 +10292,7 @@ msgstr "Behozatal időpontja mező megjelenítése"
 
 #: options.js
 msgid "Show the transfer in field"
-msgstr "Beszállítási mező megjelenítése"
+msgstr "Átszállítási mező megjelenítése"
 
 #: options.js
 msgid "Show the weight field"
@@ -10402,15 +10316,15 @@ msgstr "Súlyok lb-ben való megjelenítése kg helyett"
 
 #: timeline.js html.py
 msgid "Showing {0} timeline events."
-msgstr ""
+msgstr "Idővonal események  {0} mutatása"
 
 #: dbupdate.py
 msgid "Siamese"
-msgstr ""
+msgstr "Sziámi macska"
 
 #: dbupdate.py
 msgid "Siberian"
-msgstr ""
+msgstr "Szibériai"
 
 #: dbupdate.py
 msgid "Siberian Husky"
@@ -10418,47 +10332,47 @@ msgstr "szibériai husky"
 
 #: dbupdate.py
 msgid "Sick leave"
-msgstr ""
+msgstr "Betegállomány"
 
 #: dbupdate.py
 msgid "Sick/Injured"
-msgstr ""
+msgstr "Beteg/Sérült"
 
 #: dbupdate.py
 msgid "Sick/injured animal"
-msgstr ""
+msgstr "Beteg/sérült állat"
 
 #: media.js mobile.py service.py
 msgid "Sign"
-msgstr ""
+msgstr "Aláir"
 
 #: media.js
 msgid "Sign document"
-msgstr ""
+msgstr "Irja alá a dokumentumot"
 
 #: media.js
 msgid "Sign on screen"
-msgstr ""
+msgstr "Képernyőn történtő aláirás"
 
 #: onlineform.js change_user_settings.js
 msgid "Signature"
-msgstr ""
+msgstr "Aláírás"
 
 #: media.js
 msgid "Signed"
-msgstr ""
+msgstr "Aláirt"
 
 #: mobile.py service.py
 msgid "Signing"
-msgstr ""
+msgstr "Aláírás"
 
 #: mobile.py service.py
 msgid "Signing Pad"
-msgstr ""
+msgstr "Aláíró rész"
 
 #: publish_options.js
 msgid "Signup"
-msgstr ""
+msgstr "Feliratkozás"
 
 #: dbupdate.py
 #, fuzzy
@@ -10467,35 +10381,35 @@ msgstr "skye terrier"
 
 #: dbupdate.py
 msgid "Silver"
-msgstr ""
+msgstr "Ezüst"
 
 #: dbupdate.py
 msgid "Silver Fox"
-msgstr ""
+msgstr "Ezüst róka"
 
 #: dbupdate.py
 msgid "Silver Marten"
-msgstr ""
+msgstr "Silver Marten nyúl"
 
 #: animal_new.js
 msgid "Similar Animal"
-msgstr ""
+msgstr "Hasonló állat"
 
 #: person_new.js common_personchooser.js
 msgid "Similar Person"
-msgstr ""
+msgstr "Hasonló személy"
 
 #: person_find.js animal_find.js
 msgid "Simple"
-msgstr ""
+msgstr "Egyszerű"
 
 #: dbupdate.py
 msgid "Singapura"
-msgstr ""
+msgstr "Szingapúri macska"
 
 #: medical.js medicalprofile.js
 msgid "Single Treatment"
-msgstr ""
+msgstr "Egyszeri kezelés"
 
 #: incident_new.js person.js person_new.js users.js incident.js
 #: common_personchooser.js lookups.js html.py lookups.py
@@ -10503,25 +10417,22 @@ msgid "Site"
 msgstr "Hely"
 
 #: lookups.py
-#, fuzzy
 msgid "Sites"
 msgstr "Webhelyek"
 
 #: person.js waitinglist.js animal_find_results.js waitinglist_results.js
 #: animal.js waitinglist_new.js animal_find.js animal_new.js mobile.py html.py
 #: person.py lookups.py
-#, fuzzy
 msgid "Size"
 msgstr "Méret"
 
 #: lookups.py
-#, fuzzy
 msgid "Sizes"
 msgstr "Méretek"
 
 #: dbupdate.py
 msgid "Skunk"
-msgstr ""
+msgstr "Bűzösborz"
 
 #: dbupdate.py
 msgid "Skye Terrier"
@@ -10533,11 +10444,11 @@ msgstr "arab agár"
 
 #: dbupdate.py
 msgid "Small"
-msgstr ""
+msgstr "Kicsi"
 
 #: animal.js
 msgid "SmartTag PETID"
-msgstr ""
+msgstr "OkosCimke PETID"
 
 #: dbupdate.py
 msgid "Smooth Fox Terrier"
@@ -10545,56 +10456,60 @@ msgstr "foxi"
 
 #: dbupdate.py
 msgid "Snake"
-msgstr ""
+msgstr "Kígyó"
 
 #: dbupdate.py
 msgid "Snowshoe"
-msgstr ""
+msgstr "Hócipő"
 
 #: animal.js
 msgid "Social"
-msgstr ""
+msgstr "Társas"
 
 #: dbupdate.py
 msgid "Softbill (Other)"
-msgstr ""
+msgstr "Puhacsőrű (egyéb)"
 
 #: dbupdate.py
-#, fuzzy
 msgid "Sold"
-msgstr "Segítség"
+msgstr "Eladott "
 
 #: dbupdate.py
 msgid "Somali"
-msgstr ""
+msgstr "Szomáli macska"
 
 #: batch.js
 msgid ""
 "Some batch processes may take a few minutes to run and could prevent other "
 "users being able to use the system for a short time."
 msgstr ""
+"Egyes összevont folyamatok néhány percet vehetnek igénybe, és "
+"megakadályozhatják, hogy más felhasználók rövid ideig használják a rendszert."
 
 #: main.js
 msgid ""
 "Some browsers allow shortcut keys, press SHIFT+ALT+A in Chrome or Firefox to "
 "jump to the animal adoption screen."
 msgstr ""
+"Egyes böngészők lehetővé teszik a gyorsbillentyűk használatát, nyomja meg a "
+"SHIFT + ALT + A billentyűket a Chrome-ban vagy a Firefox-ban, hogy ugorjon "
+"az állatok befogadására szolgáló képernyőre."
 
 #: common_tableform.js
 msgid "Some info text"
-msgstr ""
+msgstr "Néhány információ szöveg"
 
 #: dbupdate.py
 msgid "Sorrel"
-msgstr ""
+msgstr "Sorrel fajta ló"
 
 #: dbupdate.py
 msgid "Sorrel Tortoiseshell"
-msgstr ""
+msgstr "Sorrel fajta ló Teknőctarka"
 
 #: service.py
 msgid "Sorry, this document has already been signed"
-msgstr ""
+msgstr "Sajnálom, ezt a dokumentumot már aláírták"
 
 #: dbupdate.py
 msgid "South Russian Ovcharka"
@@ -10606,7 +10521,7 @@ msgstr "spániel"
 
 #: options.js animal_find_results.js animal.js common.js mobile.py html.py
 msgid "Special Needs"
-msgstr ""
+msgstr "Különleges igények"
 
 #: lostfound_find_results.js options.js lostfound_new.js onlineform.js
 #: common_animalchooser.js movements.js person.js waitinglist.js
@@ -10616,20 +10531,22 @@ msgstr ""
 #: animal_new.js vaccination.js shelterview.js mobile.py reports.py html.py
 #: person.py lookups.py
 msgid "Species"
-msgstr ""
+msgstr "Fajták "
 
 #: search.py
 msgid "Species A-Z"
-msgstr ""
+msgstr "Fajták A-Z"
 
 #: search.py
 msgid "Species Z-A"
-msgstr ""
+msgstr "Fajták Z-A"
 
 #: lookups.js
 msgid ""
 "Species to use when publishing to third party services and adoption sites"
 msgstr ""
+"Használható fajok, amikor harmadik felek szolgáltatásaiban és örökbefogadási "
+"webhelyeken teszik közzé"
 
 #: vaccination.js
 msgid ""
@@ -10638,10 +10555,14 @@ msgid ""
 "vaccination needs to be given every year, set the reschedule date to be 1 "
 "year from today."
 msgstr ""
+"Az átütemezési dátum megadásával a kiválasztott oltásokról másolatokat "
+"készít, és megjelöli őket az átütemezés dátumán. Példa: Ha ezt a vakcinát "
+"minden évben be kell adni, akkor állítsa be az átütemezés dátumát a mai "
+"naptól 1 évre."
 
 #: dbupdate.py
 msgid "Sphynx (hairless cat)"
-msgstr ""
+msgstr "Szfinx (kanadai szőrtelen macska)"
 
 #: dbupdate.py
 msgid "Spitz"
@@ -10649,11 +10570,11 @@ msgstr "spicc"
 
 #: publish_options.js
 msgid "Split baby/adult age at"
-msgstr ""
+msgstr "Kölyök/felnőtt kor szétválasztása ekkor"
 
 #: publish_options.js
 msgid "Split species pages with a baby/adult prefix"
-msgstr ""
+msgstr "Ossza fel a fajok oldalakat kölyök  / felnőtt előtaggal"
 
 #: dbupdate.py
 msgid "Sponsorship donations"
@@ -10662,19 +10583,19 @@ msgstr "Szponzorok adományai"
 #: person_find_results.js staff_rota.js header_edit_header.js onlineforms.js
 #: common.js html.py dbupdate.py
 msgid "Staff"
-msgstr ""
+msgstr "Személyzet"
 
 #: staff_rota.js header.js configuration.py
 msgid "Staff Rota"
-msgstr ""
+msgstr "Személyzet beosztása"
 
 #: users.js
 msgid "Staff record"
-msgstr ""
+msgstr "Személyzet  nyilvántartása"
 
 #: html.py
 msgid "Staff rota"
-msgstr ""
+msgstr "Személyzet beosztása"
 
 #: dbupdate.py
 msgid "Staffordshire Bull Terrier"
@@ -10682,7 +10603,7 @@ msgstr "staffordshire bullterrier"
 
 #: dbupdate.py
 msgid "Standard"
-msgstr ""
+msgstr "Szabvány"
 
 #: dbupdate.py
 msgid "Standardbred"
@@ -10690,122 +10611,123 @@ msgstr ""
 
 #: animal_diet.js medical.js
 msgid "Start Date"
-msgstr ""
+msgstr "Kezdő dátum"
 
 #: animal.py
 msgid "Start Of Day"
-msgstr ""
+msgstr "A nap kezdete "
 
 #: rota.js
 msgid "Start Time"
-msgstr ""
+msgstr "Kezdési  idő"
 
 #: options.js
 msgid "Start at"
-msgstr ""
+msgstr "Kezdés ekkor"
 
 #: litters.js
 msgid "Start date"
-msgstr ""
+msgstr "Kezdő dátum"
 
 #: medical.py
-#, fuzzy
 msgid "Start date must be a valid date"
-msgstr "A költség dátuma érvényes dátum kell legyen"
+msgstr "A kezdő dátum érvényes kell legyen"
 
 #: reports.js
 msgid "Start of year"
-msgstr ""
+msgstr "Év kezdete"
 
 #: medical.js
 msgid "Started"
-msgstr "Kezdet"
+msgstr "Elkezdődött "
 
 #: staff_rota.js litters.js
 msgid "Starts"
-msgstr ""
+msgstr "Kezdések"
 
 #: person_find_results.js options.js incident_new.js person.js
 #: waitinglist_results.js person_new.js incident.js common_personchooser.js
 #: transport.js mobile.py html.py
 msgid "State"
-msgstr ""
+msgstr "Állam"
 
 #: person_find.js
-#, fuzzy
 msgid "State contains"
-msgstr "Kód tartalma"
+msgstr "Megállapítás tartalma"
 
 #: dbupdate.py
 msgid "Stationary costs"
-msgstr "Irodaszer számlák"
+msgstr "Irodaszer költségek"
 
 #: options.js
 msgid "Stats"
-msgstr ""
+msgstr "Statisztikák"
 
 #: options.js
 msgid "Stats period"
-msgstr ""
+msgstr "Statisztikai időszak"
 
 #: options.js
 msgid ""
 "Stats show running figures for the selected period of animals entering and "
 "leaving the shelter on the home page."
 msgstr ""
+"A statisztikák a menhelyre érkező és onnan távozó állatok kiválasztott "
+"időszakának futó adatait mutatják a honlapon."
 
 #: options.js movements.js person.js clinic_appointment.js medical.js
 #: move_reserve.js transport.js shelterview.js lookups.py
 msgid "Status"
-msgstr ""
+msgstr "Állapot"
 
 #: options.js shelterview.js
 msgid "Status and Species"
-msgstr ""
+msgstr "Állapot és faj"
 
 #: common.js
 msgid "Stay"
-msgstr ""
+msgstr "Tartózkodás"
 
 #: stocklevel.js html.py
 msgid "Stock"
-msgstr ""
+msgstr "Készlet"
 
 #: roles.js
 msgid "Stock Control"
-msgstr ""
+msgstr "Készlet kontroll"
 
 #: header.js configuration.py
 msgid "Stock Levels"
-msgstr ""
+msgstr "Készlet szintjei"
 
 #: lookups.py
 msgid "Stock Locations"
-msgstr ""
+msgstr "Készlethelyek"
 
 #: mobile.py
 msgid "Stock Take"
-msgstr ""
+msgstr "Készletből elvétel"
 
 #: lookups.py
 msgid "Stock Usage Type"
-msgstr ""
+msgstr "Készlet felhasználásának típusa"
 
 #: stock.py
 msgid "Stock level must have a name"
-msgstr ""
+msgstr "A készlet szintjének névvel kell rendelkeznie"
 
 #: stock.py
 msgid "Stock level must have a unit"
-msgstr ""
+msgstr "A készlet szintjének egységgel kell rendelkeznie"
 
 #: stocklevel.js
 msgid "Stock needs a name and unit."
-msgstr ""
+msgstr "A készletnek névvel és egységgel kell rendelkeznie"
 
 #: dbupdate.py
+#, fuzzy
 msgid "Stocktake"
-msgstr ""
+msgstr "Készlethiány"
 
 #: animal_find.js dbupdate.py animal.py
 msgid "Stolen"
@@ -10813,103 +10735,104 @@ msgstr "Lopott"
 
 #: animal.py
 msgid "Stolen {0}"
-msgstr ""
+msgstr "Lopott {0}"
 
 #: task.js
 msgid "Stop"
-msgstr ""
+msgstr "Leállít"
 
 #: publish.js
 msgid "Stop Publishing"
-msgstr ""
+msgstr "A közzététel leállítása"
 
 #: dbupdate.py
 msgid "Stores"
-msgstr ""
+msgstr "Raktárok"
 
 #: dbupdate.py
 msgid "Stray"
-msgstr ""
+msgstr "Kóbor"
 
 #: common.js
+#, fuzzy
 msgid "Su"
-msgstr ""
+msgstr "Su"
 
 #: animal.py
 msgid "SubTotal"
-msgstr ""
+msgstr "Részösszeg"
 
 #: diary.js diarytask.js mailmerge.js common_widgets.js mobile.py
 msgid "Subject"
-msgstr ""
+msgstr "Tárgy"
 
 #: onlineform.py
 msgid "Submission received: {0}"
-msgstr ""
+msgstr "Beadvány érkezett: {0}"
 
 #: publish_logs.js
 msgid "Success"
-msgstr ""
+msgstr "Siker"
 
 #: onlineform_incoming.js
 msgid "Successfully attached to {0}"
-msgstr ""
+msgstr "Sikeresen csatolva a következőhöz: {0}"
 
 #: dbupdate.py
 msgid "Sugar Glider"
-msgstr ""
+msgstr "Törpe erszényesmókus"
 
 #: calendarview.js clinic_calendar.js common.js
 msgid "Sun"
-msgstr ""
+msgstr "Vas"
 
 #: options.js reports.js calendarview.js clinic_calendar.js common.js
 msgid "Sunday"
-msgstr ""
+msgstr "Vasárnap"
 
 #: users.js
 msgid "Super user"
-msgstr ""
+msgstr "Superuser"
 
 #: users.js
 msgid "Superuser"
-msgstr ""
+msgstr "Superuser"
 
 #: person_find_results.js
 msgid "Surname"
-msgstr ""
+msgstr "Vezetéknév"
 
 #: dbupdate.py
 msgid "Surrender"
-msgstr ""
+msgstr "Lemondó"
 
 #: dbupdate.py
 msgid "Surrender Pickup"
-msgstr ""
+msgstr "Lemondótól felvétel"
 
 #: incident_new.js animal.js incident.js incident_find_results.js
 msgid "Suspect"
-msgstr ""
+msgstr "Gyanusított "
 
 #: incident.js mobile.py
 msgid "Suspect 1"
-msgstr ""
+msgstr "Gyanusított 1 "
 
 #: incident.js mobile.py
 msgid "Suspect 2"
-msgstr ""
+msgstr "Gyanusított 2"
 
 #: incident.js mobile.py
 msgid "Suspect 3"
-msgstr ""
+msgstr "Gyanusított 3"
 
 #: incident.js mobile.py
 msgid "Suspect/Animal"
-msgstr ""
+msgstr "Gyanusított/Állat"
 
 #: dbupdate.py
 msgid "Swan"
-msgstr ""
+msgstr "Hattyú"
 
 #: dbupdate.py
 msgid "Swedish Vallhund"
@@ -10917,40 +10840,39 @@ msgstr "svéd vallhund"
 
 #: reports.js
 msgid "Syntax check this SQL"
-msgstr ""
+msgstr "Szintaxis ellenőrizze ezt az SQL-t"
 
 #: roles.js html.py
 msgid "System"
-msgstr ""
+msgstr "Rendszer"
 
 #: dbupdate.py
 msgid "System Admin"
-msgstr ""
+msgstr "Rendszergazda"
 
 #: options.js
 msgid "System Options"
-msgstr ""
+msgstr "Rendszerbeállítások"
 
 #: html.py
 msgid "System user accounts"
-msgstr ""
+msgstr "Rendszer felhasználói fiókok"
 
 #: options.js
 msgid "T = first letter of animal type"
-msgstr ""
+msgstr "T = állat típusának első betűje"
 
 #: movements.js
 msgid "TNR"
-msgstr ""
+msgstr "BIV"
 
 #: dbupdate.py
 msgid "TNR - Trap/Neuter/Release"
-msgstr ""
+msgstr "BIV - Befogás/Ivartalanítás/Visszaengedéls"
 
 #: options.js
-#, fuzzy
 msgid "TT = first and second letter of animal type"
-msgstr "EE = állat beviteli kategóriájának első és második betűje"
+msgstr "TT = állat típusának első és második betűje"
 
 #: dbupdate.py
 msgid "Tabby"
@@ -10958,63 +10880,65 @@ msgstr "cirmos"
 
 #: dbupdate.py
 msgid "Tabby and White"
-msgstr ""
+msgstr "Cirmos-fehér"
 
 #: common_widgets.js
 msgid "Take another payment"
-msgstr ""
+msgstr "Újabb fizetés beszedése"
 
 #: incident_new.js incident.js mobile.py
 msgid "Taken By"
-msgstr ""
+msgstr "Ezen személy által hozott"
 
 #: dbupdate.py
 msgid "Tan"
-msgstr ""
+msgstr "Cser"
 
 #: dbupdate.py
 msgid "Tan and Black"
-msgstr ""
+msgstr "Fekete-cser"
 
 #: dbupdate.py
 msgid "Tan and White"
-msgstr ""
+msgstr "Barna-fehér"
 
 #: task.js
 msgid "Task complete."
-msgstr ""
+msgstr "Feladat teljesitve."
 
 #: diarytask.js
 msgid "Task items are executed in order of index, lowest to highest"
 msgstr ""
+"A feladat elemeit a tárgymutató sorrendjében hajtják végre, a "
+"legalacsonyabbtól a legmagasabbig"
 
 #: animal_find_results.js animal.js animal_new.js mobile.py
 msgid "Tattoo"
-msgstr ""
+msgstr "Tetoválás"
 
 #: html.py
 msgid "Tattoo Date"
-msgstr ""
+msgstr "Tetoválás dátuma"
 
 #: animal_find.js html.py
 msgid "Tattoo Number"
-msgstr ""
+msgstr "Tetoválási szám"
 
 #: clinic_appointment.js donations.js
 msgid "Tax"
-msgstr ""
+msgstr "Adó"
 
 #: donations.js
 msgid "Tax Amount"
-msgstr ""
+msgstr "Adó összege"
 
 #: clinic_appointment.js donations.js
 msgid "Tax Rate %"
-msgstr ""
+msgstr "Adókulcs %"
 
 #: options.js dbupdate.py
 msgid "Telephone"
-msgstr ""
+msgstr "Telefon"
 
 #: dbupdate.py
 msgid "Telephone Bills"
@@ -11022,85 +10946,82 @@ msgstr "Telefon számlák"
 
 #: document_templates.js
 msgid "Template"
-msgstr ""
+msgstr "Formanyomtatvány"
 
 #: document_templates.js
 msgid "Template Name"
-msgstr ""
+msgstr "Formanyomtatvány neve"
 
 #: document_templates.js
 msgid ""
 "Template names can include a path portion with /, eg: Vets/Rabies Certificate"
 msgstr ""
+"A formanyomtatvány nevek tartalmazhatnak egy elérési utat, például /, "
+"például: Állatorvosok / veszettség igazolás"
 
 #: dbupdate.py
 msgid "Tennessee Walker"
-msgstr ""
+msgstr "Tennessee sétáló ló"
 
 #: dbupdate.py
 msgid "Terrapin"
-msgstr ""
+msgstr "Gyémántteknős"
 
 #: dbupdate.py
 msgid "Terrier"
 msgstr "terrier"
 
 #: header_edit_header.js calendarview.js mobile.py
-#, fuzzy
 msgid "Test"
-msgstr "Következő"
+msgstr "Teszt"
 
 #: mobile.py
-#, fuzzy
 msgid "Test Animal"
-msgstr "Elveszett állat"
+msgstr "Tesztelendő állat"
 
 #: test.js
 msgid "Test Book"
-msgstr ""
+msgstr "Tesztkönyv"
 
 #: mobile.py
 msgid "Test Performed"
-msgstr ""
+msgstr "Teszt elvégezve"
 
 #: lookups.py
 msgid "Test Results"
-msgstr ""
+msgstr "Teszt eredmények"
 
 #: lookups.py
-#, fuzzy
 msgid "Test Types"
-msgstr "Költség típusok"
+msgstr "Teszt típusok"
 
 #: html.py
 msgid "Test book"
-msgstr ""
+msgstr "Tesztkönyv"
 
 #: mobile.py
 msgid "Test marked as performed for {0} - {1}"
-msgstr ""
+msgstr "A teszt elvégzettként megjelölve: {0} - {1}"
 
 #: roles.js html.py
-#, fuzzy
 msgid "Tests"
-msgstr "Következő"
+msgstr "Tesztek"
 
 #: test.js
 msgid "Tests need an animal and at least a required date."
-msgstr ""
+msgstr "A tesztekhez állatra és legalább egy előírt időpontra van szükség."
 
 #: onlineform.js common_tableform.js dbupdate.py
-#, fuzzy
 msgid "Text"
-msgstr "Következő"
+msgstr "Szöveg"
 
 #: csvimport.js
 msgid "Text Encoding"
-msgstr ""
+msgstr "Szöveg kódolása"
 
 #: common.js
 msgid "Th"
-msgstr ""
+msgstr "Cs"
 
 #: dbupdate.py
 msgid "Thai Ridgeback"
@@ -11108,58 +11029,61 @@ msgstr "thai ridgeback"
 
 #: main.js
 msgid "Thank you for choosing Animal Shelter Manager for your shelter!"
-msgstr ""
+msgstr "Köszönjük, hogy az ASM-t választotta."
 
 #: service.py
 msgid "Thank you, the document is now signed."
-msgstr ""
+msgstr "Köszönöm, a dokumentum már aláírásra került."
 
 #: animalcontrol.py
 msgid "That animal is already linked to the incident"
-msgstr ""
+msgstr "Ez az állat már kapcsolódik az eseményhez"
 
 #: csvimport_paypal.js
 msgid "The CSV file should be created by PayPal's \"All Activity\" report."
 msgstr ""
+"A CSV fájlt a PayPal \"Minden tevékenység\" jelentéssel kell létrehoznia."
 
 #: animal.js
 msgid "The SmartTag PETID number"
-msgstr ""
+msgstr "Az OkosCimke PETID száma"
 
 #: animal.js
 msgid "The SmartTag type"
-msgstr ""
+msgstr "Az OkosCímke típusa"
 
 #: media.js
 msgid ""
 "The URL is the address of a web resource, eg: www.youtube.com/watch?v=xxxxxx"
-msgstr ""
+msgstr "Az URL egy webes forrás címe, például: www.youtube.com/watch?v=xxxxxx"
 
 #: animal.js
 msgid "The animal name"
-msgstr ""
+msgstr "Az állat neve"
 
 #: animal.py
 msgid "The animal record to merge must be different from the original."
-msgstr ""
+msgstr "Az összevonandó állat regisztrációjának különböznie kell a eredetitől."
 
 #: animal.js
 msgid "The animal sex"
-msgstr ""
+msgstr "Az állat neme"
 
 #: animal.js
 msgid "The base color of this animal"
-msgstr ""
+msgstr "Az állat alapszíne"
 
 #: animal.js
 msgid "The coat type of this animal"
-msgstr ""
+msgstr "Az állat szőrzetének típusa"
 
 #: onlineforms.js
 msgid ""
 "The confirmation email message to send to the form submitter. Leave blank to "
 "send a copy of the completed form."
 msgstr ""
+"A megerősítő e-mail üzenertet kell küldeni az űrlap benyújtójának. Egy "
+"kitöltött nyomtatvány másolatának küldléséhez hagyja üresen. "
 
 #: sql.js
 msgid ""
@@ -12216,9 +12140,8 @@ msgid "Treat trial adoptions as part of the shelter inventory"
 msgstr ""
 
 #: medicalprofile.js mobile.py
-#, fuzzy
 msgid "Treatment"
-msgstr "kezelések"
+msgstr "Kezelés"
 
 #: mobile.py
 msgid "Treatment Given"
@@ -12234,9 +12157,8 @@ msgid "Treatment name cannot be blank"
 msgstr "Profil név nem maradhat üresen"
 
 #: html.py
-#, fuzzy
 msgid "Treatments"
-msgstr "kezelések"
+msgstr "Kezelések"
 
 #: dbupdate.py
 msgid "Treeing Walker Coonhound"
@@ -12859,7 +12781,7 @@ msgstr "Várólista megtekintése"
 
 #: html.py
 msgid "View animals matching publishing options"
-msgstr " Közzétételi opcióknak megfelelő állatok megtekintése"
+msgstr "Közzétételi opcióknak megfelelő állatok megtekintése"
 
 #: animal.js
 msgid "View littermates"
@@ -13024,13 +12946,12 @@ msgid "Warn when creating multiple reservations on the same animal"
 msgstr ""
 
 #: options.js
-#, fuzzy
 msgid "Warnings"
-msgstr "Jelölések"
+msgstr "Figyelmeztetések"
 
 #: dbupdate.py
 msgid "Wasted"
-msgstr ""
+msgstr "Elpazarolt"
 
 #: dbupdate.py
 msgid "Water Bills"
@@ -13038,23 +12959,23 @@ msgstr "Vízszámlák"
 
 #: common.js
 msgid "We"
-msgstr ""
+msgstr "Sze"
 
 #: calendarview.js clinic_calendar.js common.js
 msgid "Wed"
-msgstr ""
+msgstr "Szer"
 
 #: reports.js calendarview.js clinic_calendar.js common.js
 msgid "Wednesday"
-msgstr ""
+msgstr "Szerda"
 
 #: calendarview.js clinic_calendar.js
 msgid "Week"
-msgstr ""
+msgstr "Hét"
 
 #: staff_rota.js
 msgid "Week beginning {0}"
-msgstr ""
+msgstr "A hét kezdete: {0}  "
 
 #: dbupdate.py
 msgid "Weekly"
@@ -13066,7 +12987,7 @@ msgstr ""
 
 #: dbupdate.py
 msgid "Weimaraner"
-msgstr "weimari vizsla"
+msgstr "Weimari vizsla"
 
 #: main.js
 msgid "Welcome!"
@@ -13074,19 +12995,19 @@ msgstr ""
 
 #: dbupdate.py
 msgid "Welsh Corgi"
-msgstr "welsh corgi"
+msgstr "Welsh corgi"
 
 #: dbupdate.py
 msgid "Welsh Springer Spaniel"
-msgstr "welsh springer spániel"
+msgstr "Welsh springer spániel"
 
 #: dbupdate.py
 msgid "Welsh Terrier"
-msgstr "welsh terrier"
+msgstr "Welsh terrier"
 
 #: dbupdate.py
 msgid "West Highland White Terrier Westie"
-msgstr "westie"
+msgstr "Westie"
 
 #: dbupdate.py
 msgid "Wheaten Terrier"
@@ -13202,7 +13123,7 @@ msgstr ""
 
 #: dbupdate.py
 msgid "Whippet"
-msgstr "whippet"
+msgstr "Whippet"
 
 #: dbupdate.py
 msgid "White"
@@ -13210,7 +13131,7 @@ msgstr "Fehér"
 
 #: dbupdate.py
 msgid "White German Shepherd"
-msgstr "fehér németjuhász"
+msgstr "Fehér németjuhász"
 
 #: dbupdate.py
 msgid "White and Black"
@@ -13218,19 +13139,19 @@ msgstr "Fehér és fekete"
 
 #: dbupdate.py
 msgid "White and Brindle"
-msgstr "fehér és tigriscsíkos"
+msgstr "Tigriscsíkos/fehér"
 
 #: dbupdate.py
 msgid "White and Brown"
-msgstr "fehér és barna"
+msgstr "Barna/fehér"
 
 #: dbupdate.py
 msgid "White and Grey"
-msgstr "fehér és szürke"
+msgstr "Szürke/fehér"
 
 #: dbupdate.py
 msgid "White and Liver"
-msgstr "fehér és májbarna"
+msgstr "Májbarna/fehér"
 
 #: dbupdate.py
 msgid "White and Tabby"
@@ -13250,7 +13171,7 @@ msgstr ""
 
 #: dbupdate.py
 msgid "Wire-haired Pointing Griffon"
-msgstr "drótszőrű griffon"
+msgstr "Drótszőrű griffon"
 
 #: dbupdate.py
 msgid "Wirehaired Terrier"
@@ -13287,20 +13208,19 @@ msgstr ""
 
 #: options.js
 msgid "XXX or XX = number unique for this year"
-msgstr ""
+msgstr "XXX vagy XX = egyedi szám ebben az évben"
 
 #: dbupdate.py
 msgid "Xoloitzcuintle/Mexican Hairless"
-msgstr "mexikói meztelen kutya"
+msgstr "Mexikói meztelen kutya"
 
 #: options.js
 msgid "YY or YYYY = current year"
-msgstr ""
+msgstr "YY vagy YYYY = folyó év"
 
 #: dbupdate.py
-#, fuzzy
 msgid "Yellow Labrador Retriever"
-msgstr "fekete labrador retriever"
+msgstr "Sárga  labrador retriever"
 
 #: dbupdate.py
 msgid "Yellow and Grey"
@@ -13311,41 +13231,49 @@ msgstr "Sárga és Szürke"
 #: sql.js publish_options.js mobile.py i18n.py onlineform.py dbupdate.py
 #: wordprocessor.py
 msgid "Yes"
-msgstr ""
+msgstr "Igen"
 
 #: onlineform.js dbupdate.py lookups.py
 msgid "Yes/No"
-msgstr ""
+msgstr "Igen/Nem"
 
 #: lookups.py
 msgid "Yes/No/Unknown"
-msgstr ""
+msgstr "Igen/Nem/Nem ismert"
 
 #: dbupdate.py
 msgid "Yorkshire Terrier Yorkie"
-msgstr "yorkshire terrier"
+msgstr "Yorkshire terrier"
 
 #: main.js
 msgid ""
 "You can bookmark search results, animals, people and most data entry screens."
 msgstr ""
+"Megjelölheti a keresési eredményeket, az állatokat, az embereket és a "
+"legtöbb adatbeviteli képernyőt."
 
 #: main.js
 msgid ""
 "You can drag and drop animals in shelter view to change their locations."
 msgstr ""
+"Menhely nézetben áthúzhatja és áthelyezheti az állatokat új helyszínre. "
 
 #: main.js
 msgid ""
 "You can middle click a link to open it in a new browser tab (push the wheel "
 "on most modern mice)."
 msgstr ""
+"A linkre kattintva középső kattintással megnyithatja azt egy új böngésző "
+"lapon (nyomja meg a kereket a legtöbb modern egérnél)."
 
 #: main.js
 msgid ""
 "You can override the search result sort by adding one of the following to "
 "the end of your search - sort:az, sort:za, sort:mr, sort:lr"
 msgstr ""
+"A keresési eredmény sorrendjét felülírhatja, ha hozzáadja a keresés végéhez "
+"a következők egyikét - csoportosit: az, csoportosit: za, csoportosit: mr, "
+"csoportosit: lr"
 
 #: main.js
 msgid ""
@@ -13353,16 +13281,23 @@ msgid ""
 "p: to search only people, wl: to search waiting list entries, la: to search "
 "lost animals and fa: to search found animals."
 msgstr ""
+"Előfordulhat, hogy a kifejezést a keresőmezőben a következővel írja be: a: "
+"csak állatok keresése, p: csak emberek keresése, wl: a várólistán szereplő "
+"bejegyzések keresése, la: az elveszett állatok és a fa keresése: a megtalált "
+"állatok keresése."
 
 #: main.js
 msgid ""
 "You can set a default amount for different payment types in the Settings- "
 "Lookup Data screen. Very handy when creating adoptions."
 msgstr ""
+"Beállíthat egy alapértelmezett összeget a különféle fizetési módokhoz a "
+"Beállítások - Keresési adatok képernyőn. Nagyon praktikus örökbefogadások "
+"létrehozásakor."
 
 #: main.js
 msgid "You can sort tables by clicking on the column headings."
-msgstr ""
+msgstr "A táblázatokat rendezheti az oszlopok fejlécére kattintva."
 
 #: main.js
 msgid ""
@@ -13370,42 +13305,53 @@ msgid ""
 "Reports-Extra Images screen to override the login splash screen and logo in "
 "the upper left corner of the application."
 msgstr ""
+"A logo.jpg és a splash.jpg nevű képeket feltöltheti a Beállítások- "
+"Jelentések-Extra képek képernyőre, hogy felülbírálja a bejelentkezési "
+"képernyőt és logot az alkalmazás bal felső sarkában."
 
 #: onlineform_incoming.js
 msgid ""
 "You can use incoming forms to create new records or attach them to existing "
 "records."
 msgstr ""
+"A bejövő nyomtatványokkal új feljegyzéseket hozhat létre, vagy csatolhatja "
+"azokat a meglévő feljegyzésekhez."
 
 #: movement.py
 msgid "You can't have a return without a movement."
-msgstr ""
+msgstr "Mozgatás nélkül nem lehet visszavétel."
 
 #: animal_find_results.js
 msgid ""
 "You didn't specify any search criteria, so an on-shelter search was assumed."
 msgstr ""
+"Nem határozott meg keresési kritériumokat, ezért a keresést a menhelyen lévő "
+"állatokra indítottuk."
 
 #: header.js common.js
 msgid "You have unsaved changes, are you sure you want to leave this page?"
 msgstr ""
+"Az oldalon el nem mentett változtatások vannak, biztosan el akarja hagyni "
+"ezt az oldalt?"
 
 #: animal.py
 msgid "You must supply a code."
-msgstr ""
+msgstr "Meg kell adnia egy kódot. "
 
 #: dbupdate.py
 msgid "Young Adult"
-msgstr ""
+msgstr "Fiatal felnőtt"
 
 #: csvimport.js
 msgid "Your CSV file should have a header row with field names ASM recognises."
 msgstr ""
+"CSV-fájljának fejléc sorának az ASM által felismert mezőnevekkel kell "
+"rendelkeznie."
 
 #: main.js
 msgid ""
 "Your sheltermanager.com account is due to expire on {0}, please renew {1}"
-msgstr ""
+msgstr "A sheltermanager.com fiókod {0} napján jár le, kérjük, újítd meg {1}"
 
 #: lostfound_find_results.js person_find_results.js options.js lostfound_new.js
 #: incident_new.js person.js lostfound_find.js waitinglist_results.js
@@ -13413,45 +13359,43 @@ msgstr ""
 #: common_personchooser.js transport.js incident_find_results.js mobile.py
 #: html.py
 msgid "Zipcode"
-msgstr ""
+msgstr "Irányítószám"
 
 #: person_find.js
-#, fuzzy
 msgid "Zipcode contains"
-msgstr "Kód tartalma"
+msgstr "Az irányítószám tartalmaz"
 
 #: options.js
 msgid "[None]"
-msgstr ""
+msgstr "[Egyik sem]"
 
 #: publish_options.js
 msgid "after connecting, chdir to"
-msgstr ""
+msgstr "csatlakozás után, chdir to"
 
 #: animal_find.js incident_find.js
 msgid "and"
-msgstr ""
+msgstr "és"
 
 #: options.js
 msgid "are sent to"
-msgstr ""
+msgstr "elküldve "
 
 #: staff_rota.js reports.js transport.js
 msgid "at"
-msgstr ""
+msgstr "-kor"
 
 #: mailmerge.js
 msgid "cm"
-msgstr ""
+msgstr "cm"
 
 #: header_edit_header.js medical.js medicalprofile.js medical.py
 msgid "days"
-msgstr "napon"
+msgstr "napok"
 
 #: wordprocessor.py
-#, fuzzy
 msgid "estimate"
-msgstr "Becsült"
+msgstr "becsült"
 
 #: header.js
 msgid ""
@@ -13460,63 +13404,66 @@ msgid ""
 "retailers, staff, fosterers, volunteers, homecheckers, members, activelost, "
 "activefound"
 msgstr ""
+"szűrők: a: állat, p: személy, wl: várólista, la: elveszett állat, fa: talált "
+"állat alapvető kulcsszavak: onshelter / os, notforadoption, aco, tiltott, "
+"adományozók, elhunyt, állatorvosok, kiskereskedők, személyzet, ideiglenes "
+"befogadók, önkéntesek, lelátogatók, tagok , aktív veszteség, aktív alap"
 
 #: mailmerge.js
 msgid "inches"
-msgstr ""
+msgstr "hüvelyk"
 
 #: shelterview.js
 msgid "invalid"
-msgstr ""
+msgstr "érvénytelen"
 
 #: animal.js animal_new.js wordprocessor.py
 msgid "kg"
-msgstr ""
+msgstr "kg"
 
 #: animal.js animal_new.js wordprocessor.py
 msgid "lb"
-msgstr ""
+msgstr "font"
 
 #: main.js
 msgid "less"
-msgstr ""
+msgstr "kevesebb"
 
 #: clinic_appointment.js
 msgid "mins"
-msgstr ""
+msgstr "percek"
 
 #: medical.js medicalprofile.js medical.py
-#, fuzzy
 msgid "months"
-msgstr "3 hónap"
+msgstr "hónapok"
 
 #: main.js
 msgid "more"
-msgstr ""
+msgstr "több"
 
 #: person.js transport.js animal_bulk.js
 msgid "on"
-msgstr ""
+msgstr "ekkor"
 
 #: person.js
 msgid "or"
-msgstr ""
+msgstr "vagy"
 
 #: animal_new.js
 msgid "or estimated age in years"
-msgstr ""
+msgstr "vagy becsült kor években"
 
 #: animal.js animal_new.js wordprocessor.py
 msgid "oz"
-msgstr ""
+msgstr "uncia"
 
 #: accounts_trx.js animal_bulk.js
 msgid "to"
-msgstr ""
+msgstr "-ig"
 
 #: timeline.js
 msgid "today"
-msgstr ""
+msgstr "ma"
 
 #: medical.js medicalprofile.js
 msgid "treatments"
@@ -13524,521 +13471,523 @@ msgstr "kezelések"
 
 #: medical.js medicalprofile.js
 msgid "treatments, every"
-msgstr ""
+msgstr "kezelések, összes"
 
 #: medical.js medical.py
 msgid "weekdays"
-msgstr ""
+msgstr "hétköznapok"
 
 #: medical.js medicalprofile.js medical.py
 msgid "weeks"
-msgstr "héten"
+msgstr "hetek"
 
 #: waitinglist.js
 msgid "weeks after last contact."
-msgstr ""
+msgstr "az utolsó kapcsolatfelvétel óta eltelt hetek"
 
 #: medical.js medicalprofile.js medical.py
 msgid "years"
-msgstr ""
+msgstr "évek"
 
 #: timeline.js
 msgid "yesterday"
-msgstr ""
+msgstr "tegnap"
 
 #: animal.py
 msgid "{0} (under {1} months)"
-msgstr ""
+msgstr "{0} ({1} hónap alatt)"
 
 #: animal_diet.js movements.js clinic_appointment.js donations.js diary.js
 #: log.js animal_costs.js animal.js medical.js media.js test.js licence.js
 #: transport.js vaccination.js
 msgid "{0} - {1} ({2} {3} aged {4})"
-msgstr ""
+msgstr "{0} - {1} ({2} {3} {4} éves)"
 
 #: html.py animal.py
 msgid "{0} - {1} {2}"
-msgstr ""
+msgstr "{0} - {1} {2}"
 
 #: lostfound.py
 msgid ""
 "{0} - {1} {2} ({3}), contact {4} ({5}) - lost in {6}, postcode {7}, on {8}"
 msgstr ""
+"{0} - {1} {2} ({3}), kapcsolattartó {4} ({5}) - elveszett a {6} -ben, {7} "
+"irányítószám, {8} -kor"
 
 #: animal_bulk.js
 msgid "{0} animals successfully updated."
-msgstr ""
+msgstr "{0} állatok sikeresen frissítve"
 
 #: header_additional.js
-#, fuzzy
 msgid "{0} cannot be blank"
-msgstr "A név nem lehet üres"
+msgstr "{0} nem lehet üres"
 
 #: header_edit_header.js
 msgid "{0} fine, paid"
-msgstr ""
+msgstr "{0} eredmény, fizetve"
 
 #: header_edit_header.js
 msgid "{0} fine, unpaid"
-msgstr ""
+msgstr "{0} eredmény, kifizetetlen"
 
 #: main.js
 msgid "{0} incurred in costs"
-msgstr ""
+msgstr "{0} felmerült költségek"
 
 #: task.js publish.js
 msgid "{0} is running ({1}&#37; complete)."
-msgstr ""
+msgstr "A(z) {0} fut ({1} és # 37; kész)."
 
 #: clinic_appointment.js
 msgid "{0} payment records created."
-msgstr ""
+msgstr "{0} létrehozott fizetési nyilvántartások."
 
 #: main.js
 msgid "{0} received"
-msgstr ""
+msgstr "{0} érkezett"
 
 #: mailmerge.js
 msgid "{0} record(s) match the mail merge."
-msgstr ""
+msgstr "{0} nyilvántartás(ok) megegyeznek a levélegyesítéssel."
 
 #: sql.js
-#, fuzzy
 msgid "{0} results."
-msgstr "Nincs találat."
+msgstr "{0} találat"
 
 #: code.py
 msgid "{0} rows affected."
-msgstr ""
+msgstr "{0} sor érintett."
 
 #: common_animalchoosermulti.js
 msgid "{0} selected"
-msgstr ""
+msgstr "{0} kiválasztott "
 
 #: medical.py
 msgid "{0} treatments every {1} days"
-msgstr ""
+msgstr "{0} kezelés minden {1} napokon"
 
 #: medical.py
 msgid "{0} treatments every {1} months"
-msgstr ""
+msgstr "{0} kezelés {1} havonta"
 
 #: medical.py
 msgid "{0} treatments every {1} weekdays"
-msgstr ""
+msgstr "{0} kezelések minden {1} hétköznap"
 
 #: medical.py
 msgid "{0} treatments every {1} weeks"
-msgstr ""
+msgstr "{0} kezelés minden {1} héten"
 
 #: medical.py
 msgid "{0} treatments every {1} years"
-msgstr ""
+msgstr "{0} kezelés {1} évente"
 
 #: medical.py
 msgid "{0} {1} ({2} treatments)"
-msgstr ""
+msgstr "{0} {1} ({2} kezelések)"
 
 #: header_edit_header.js
 msgid "{0} {1} aged {2}"
-msgstr ""
+msgstr "{0} {1} {2} éves"
 
 #: search.js movement.py
 msgid "{0} {1} {2} aged {3}"
-msgstr ""
+msgstr "{0} {1} {2} {3} éves"
 
 #: animal.py
 msgid "{0} {1}: Moved from {2} to {3}"
-msgstr ""
+msgstr "{0} {1}: {2} -ről {3} -re áthelyezve"
 
 #: animal.py
 msgid "{0} {1}: adopted by {2}"
-msgstr ""
+msgstr "{0} {1}: örökbefogadva {2}által"
 
 #: animal.py
 msgid "{0} {1}: altered"
-msgstr ""
+msgstr "{0} {1}: megváltoztatva"
 
 #: animal.py
 msgid "{0} {1}: available for adoption"
-msgstr ""
+msgstr "{0} {1}: örökbefogadható"
 
 #: animal.py
 msgid "{0} {1}: died ({2})"
-msgstr ""
+msgstr "{0} {1}: meghalt ({2})"
 
 #: animal.py
 msgid "{0} {1}: entered the shelter"
-msgstr ""
+msgstr "{0} {1}: menhelyre érkezett"
 
 #: animal.py
 msgid "{0} {1}: escaped"
-msgstr ""
+msgstr "{0} {1}: megszökött"
 
 #: animal.py
 msgid "{0} {1}: euthanised ({2})"
-msgstr ""
+msgstr "{0} {1}: elaltatva ({2})"
 
 #: animal.py
 msgid "{0} {1}: fostered to {2}"
-msgstr ""
+msgstr "{0} {1}: ideiglenesen befogadva {2} által"
 
 #: animal.py
 msgid "{0} {1}: held"
-msgstr ""
+msgstr "{0} {1}: fenntartott"
 
 #: animal.py
 msgid "{0} {1}: microchipped"
-msgstr ""
+msgstr "{0} {1}: chipezett"
 
 #: animal.py
 msgid "{0} {1}: not available for adoption"
-msgstr ""
+msgstr "{0} {1}: nem örökbefogadható"
 
 #: animal.py
 msgid "{0} {1}: quarantined"
-msgstr ""
+msgstr "{0} {1}: karanténba került"
 
 #: animal.py
 msgid "{0} {1}: received {2}"
-msgstr ""
+msgstr "{0} {1}: érkezett {2}"
 
 #: animal.py
 msgid "{0} {1}: reclaimed by {2}"
-msgstr ""
+msgstr "{0} {1}: visszakövetelve {2} által"
 
 #: animal.py
 msgid "{0} {1}: released"
-msgstr ""
+msgstr "{0} {1}: szabadon engedve "
 
 #: animal.py
 msgid "{0} {1}: reserved by {2}"
-msgstr ""
+msgstr "{0} {1}: foglalva {2} által"
 
 #: animal.py
 msgid "{0} {1}: returned by {2}"
-msgstr ""
+msgstr "{0} {1}: visszahozva {2} által"
 
 #: animal.py
 msgid "{0} {1}: sent to retailer {2}"
-msgstr ""
+msgstr "{0} {1}: kiskereskedőhöz továbbítva {2}"
 
 #: animal.py
 msgid "{0} {1}: stolen"
-msgstr ""
+msgstr "{0} {1}: ellopták"
 
 #: animal.py
 msgid "{0} {1}: tested positive for FIV"
-msgstr ""
+msgstr "{0} {1}: FIV tesztje pozitív"
 
 #: animal.py
 msgid "{0} {1}: tested positive for FeLV"
-msgstr ""
+msgstr "{0} {1}: FeLV tesztje pozitív"
 
 #: animal.py
 msgid "{0} {1}: tested positive for Heartworm"
-msgstr ""
+msgstr "{0} {1}: szívféreg tesztje pozitív"
 
 #: animal.py
 msgid "{0} {1}: transferred to {2}"
-msgstr ""
+msgstr "{0} {1}: átkerült a (z) {2} -be"
 
 #: staff_rota.js
 msgid "{0}, Week {1}"
-msgstr ""
+msgstr "{0}, hét {1}"
 
 #: common.js
 msgid ""
 "{0}: Entered shelter {1}, Last changed on {2} by {3}. {4} {5} {6} aged {7}"
 msgstr ""
+"{0}: Menhelyre került {1}, Utoljára {2}-on módosította {3}. {4} {5} {6} {7} "
+"éves"
 
 #: animal.py
 msgid "{0}: closed {1} ({2})"
-msgstr ""
+msgstr "{0}: lezárva {1} ({2})"
 
 #: animal.py
 msgid "{0}: opened {1}"
-msgstr ""
+msgstr "{0}: nyitva {1}"
 
 #: animal.py
 msgid "{0}: waiting list - {1}"
-msgstr ""
+msgstr "{0}: várólista - {1}"
 
 #: html.py animal.py
 msgid "{0}: {1} {2} - {3} {4}"
-msgstr ""
+msgstr "{0}: {1} {2} - {3} {4}"
 
 #: animal.py
 msgid "{2}: found in {1}: {0}"
-msgstr ""
+msgstr "{2}: megtalálható a {1} -ban: {0}"
 
 #: animal.py
 msgid "{2}: lost in {1}: {0}"
-msgstr ""
+msgstr "{2}: elveszett a(z) {1} -ban: {0}"
 
 #: main.js
 msgid "{plural0} animal as dead on arrival"
-msgstr ""
+msgstr "{0} állat meghalt érkezéskor"
 
 #: main.js
 msgid "{plural0} animal control call due for followup today"
-msgstr ""
+msgstr "{0} állat kontroll hívás esedékes a mai napra"
 
 #: main.js
 msgid "{plural0} animal died"
-msgstr ""
+msgstr "{0} állat meghalt"
 
 #: main.js
 msgid "{plural0} animal entered the shelter"
-msgstr ""
+msgstr "{0} állat került a menhelyre"
 
 #: main.js
 msgid "{plural0} animal has a hold ending today"
-msgstr ""
+msgstr "{0} állat van foglalva a mai napig "
 
 #: main.js
-#, fuzzy
 msgid "{plural0} animal has been on the shelter longer than {0} months"
 msgstr "Valamennyi állat, amely több mint {0} hónapja van a menhelyen."
 
 #: main.js
 msgid "{plural0} animal is not available for adoption"
-msgstr ""
+msgstr "{0} állat nem örökbefogadható"
 
 #: main.js
 msgid "{plural0} animal was adopted"
-msgstr ""
+msgstr "{0} állatot fogadtak örökbe"
 
 #: main.js
 msgid "{plural0} animal was euthanized"
-msgstr ""
+msgstr "{0} állat elaltatva."
 
 #: main.js
 msgid "{plural0} animal was reclaimed by its owner"
-msgstr ""
+msgstr "{0} állat visszakövetelve a tulajdonos által"
 
 #: main.js
 msgid "{plural0} animal was transferred to another shelter"
-msgstr ""
+msgstr "{0} átszállítva másik menhelyre "
 
 #: i18n.py
 msgid "{plural0} day."
-msgstr ""
+msgstr "{0} nap."
 
 #: main.js
 msgid "{plural0} incomplete animal control call"
-msgstr ""
+msgstr "{0} elvégzetlen állat kontroll hívás"
 
 #: main.js
 msgid "{plural0} item of stock expires in the next month"
-msgstr ""
+msgstr "{0} raktáron lévő termék a következő hónapban jár le"
 
 #: main.js
 msgid "{plural0} item of stock has expired"
-msgstr ""
+msgstr "{0} raktáron lévő lejárt termék"
 
 #: main.js
 msgid "{plural0} medical treatment needs to be administered today"
-msgstr ""
+msgstr "{0} gyógykezelést a mai napon kell elvégezni"
 
 #: i18n.py
 msgid "{plural0} month."
-msgstr ""
+msgstr "{0} hónap."
 
 #: main.js
 msgid "{plural0} new online form submission"
-msgstr ""
+msgstr "{0} új online űrlap benyújtása"
 
 #: main.js
 msgid "{plural0} person has an overdue payment"
-msgstr ""
+msgstr "{0} személy késedelmes fizetéssel rendelkezik"
 
 #: main.js
 msgid "{plural0} person with an active reservation has not been homechecked"
-msgstr ""
+msgstr "{0} aktív foglalással rendelkező személy nem volt még lelátogatva"
 
 #: main.js
 msgid "{plural0} potential match for a lost animal"
-msgstr ""
+msgstr "{0} potenciális egyezés elveszett állat esetén"
 
 #: main.js
 msgid "{plural0} recent publisher run had errors"
-msgstr ""
+msgstr "{0} kiadói újabb futtatás hibákat tartalmazott"
 
 #: main.js
 msgid "{plural0} reservation has been active over a week without adoption"
 msgstr ""
+"{0} gazdijelölt megjelölés egy héten át aktív volt, de örökbefogadás nem "
+"történt"
 
 #: search.js
 msgid "{plural0} result found in {1} seconds. Order: {2}"
-msgstr ""
+msgstr "{0} eredmény létrehozása {1} másodperc alatt. Rendelés: {2}"
 
 #: main.js
 msgid "{plural0} shelter animal has not been microchipped"
-msgstr ""
+msgstr "{0} menhelyi állat nem lett chipezve"
 
 #: main.js
 msgid "{plural0} shelter animal has people looking for them"
-msgstr ""
+msgstr "{0} menhelyi állatok, amelyekre van érdeklődő"
 
 #: main.js
 msgid "{plural0} test needs to be performed today"
-msgstr ""
+msgstr "{0} tesztet kell a mai napon elvégezni"
 
 #: main.js
 msgid "{plural0} transport does not have a driver assigned"
-msgstr ""
+msgstr "{0} a transzporthoz nincs sofőr hozzárendelve"
 
 #: main.js
 msgid "{plural0} trap is overdue for return"
-msgstr ""
+msgstr "{0} csapdát nem hoztak vissza a megjelölt időben"
 
 #: main.js
 msgid "{plural0} trial adoption has ended"
-msgstr ""
+msgstr "{0} próbaidő lejárt "
 
 #: main.js
 msgid "{plural0} unaltered animal has been adopted in the last month"
-msgstr ""
+msgstr "{0} az elmúlt hónapban örökbefogadott állatok"
 
 #: main.js
 msgid "{plural0} undispatched animal control call"
-msgstr ""
+msgstr "{0} el nem végzett állati kontroll hívás"
 
 #: main.js
 msgid "{plural0} unpaid fine"
-msgstr ""
+msgstr "{0} kifizetetlen bírság"
 
 #: main.js
 msgid "{plural0} urgent entry on the waiting list"
-msgstr ""
+msgstr "{0} sürgős bejegyzés a várólistán"
 
 #: main.js
 msgid "{plural0} vaccination has expired"
-msgstr ""
+msgstr "{0} lejárt oltás"
 
 #: main.js
 msgid "{plural0} vaccination needs to be administered today"
-msgstr ""
+msgstr "{0} ma esedékes oltások"
 
 #: i18n.py
 msgid "{plural0} week."
-msgstr ""
+msgstr "{0} hét."
 
 #: i18n.py
 msgid "{plural0} year."
-msgstr ""
+msgstr "{0} év."
 
 #: main.js
 msgid "{plural1} animal control calls due for followup today"
-msgstr ""
+msgstr "{1} mai nap esedékes állat kontroll hívások"
 
 #: main.js
 msgid "{plural1} animals are not available for adoption"
-msgstr ""
+msgstr "{1} nem örökbefogadható állat"
 
 #: main.js
 msgid "{plural1} animals died"
-msgstr ""
+msgstr "{1} meghalt állatok"
 
 #: main.js
 msgid "{plural1} animals entered the shelter"
-msgstr ""
+msgstr "{1} menhelyre került állat"
 
 #: main.js
-#, fuzzy
 msgid "{plural1} animals have been on the shelter longer than {0} months"
 msgstr "Valamennyi állat, amely több mint {0} hónapja van a menhelyen."
 
 #: main.js
 msgid "{plural1} animals have holds ending today"
-msgstr ""
+msgstr "{1} gazdijelöltnek fenntartott kutya előjegyzése lejár"
 
 #: main.js
 msgid "{plural1} animals were adopted"
-msgstr ""
+msgstr "{1} örökbefogadott állat"
 
 #: main.js
 msgid "{plural1} animals were dead on arrival"
-msgstr ""
+msgstr "{1} beérkezéskor meghalt kutyák "
 
 #: main.js
 msgid "{plural1} animals were euthanized"
-msgstr ""
+msgstr "{1} elaltatott állat"
 
 #: main.js
 msgid "{plural1} animals were reclaimed by their owners"
-msgstr ""
+msgstr "{1} eredeti gazda által visszakövetelet állat"
 
 #: main.js
 msgid "{plural1} animals were transferred to other shelters"
-msgstr ""
+msgstr "{1} állat átszállítása másik menhelyre"
 
 #: i18n.py
 msgid "{plural1} days."
-msgstr ""
+msgstr "{1} napok."
 
 #: main.js
 msgid "{plural1} incomplete animal control calls"
-msgstr ""
+msgstr "{1} befejeztlen állat kontroll hívás"
 
 #: main.js
 msgid "{plural1} items of stock expire in the next month"
-msgstr ""
+msgstr "{1} raktáron lévő termék a jövő hónapban lejár"
 
 #: main.js
 msgid "{plural1} items of stock have expired"
-msgstr ""
+msgstr "{1} lejárt raktáron lévő termék"
 
 #: main.js
 msgid "{plural1} medical treatments need to be administered today"
-msgstr ""
+msgstr "{1} mai napon esedékes gyógykezelések"
 
 #: i18n.py
 msgid "{plural1} months."
-msgstr "{plural1}  hónap."
+msgstr "{1} hónap."
 
 #: main.js
 msgid "{plural1} new online form submissions"
-msgstr "{plural1}  új online nyomtatvány engedélyezése"
+msgstr "{1} új online nyomtatvány benyújtása"
 
 #: main.js
 msgid "{plural1} people have overdue payments"
-msgstr "{plural1}  személynek lejárt a fizetési határideje"
+msgstr "{1} személynek van kifizetetlen tartozása"
 
 #: main.js
 msgid "{plural1} people with active reservations have not been homechecked"
-msgstr ""
-"{plural1}  aktív foglalással rendelkező személy még nem lett lelátogatva"
+msgstr "{1} gazdijelölt még nem lett lelátogatva"
 
 #: main.js
 msgid "{plural1} potential matches for lost animals"
-msgstr "{plural1}  potenciális találatok elveszett állatokra"
+msgstr "{1} potenciális egyezések elveszett állatokra"
 
 #: main.js
 msgid "{plural1} recent publisher runs had errors"
-msgstr "{plural1}  legutóbbi közzétételi futtatások hibásak voltak"
+msgstr "{1} legutóbbi közzétételi futtatások hibásak voltak"
 
 #: main.js
 msgid "{plural1} reservations have been active over a week without adoption"
 msgstr ""
-"{plural1}  a foglalás több mint egy hétig volt érvényes örökbefogadás nélkül"
+"{1} gazdijelölt megjelölés egy héten át aktív volt, de örökbefogadás nem "
+"történt"
 
 #: search.js
 msgid "{plural1} results found in {1} seconds. Order: {2}"
-msgstr "{plural1} keresési találat {1} másodperc alatt. Utasítás: {2}"
+msgstr "{1} keresési találat {1} másodperc alatt. Utasítás: {2}"
 
 #: main.js
 msgid "{plural1} shelter animals have not been microchipped"
-msgstr "{plural1} mikrocsippel el nem látott állatok"
+msgstr "{1} mikrochippel nem rendelkező állat"
 
 #: main.js
 msgid "{plural1} shelter animals have people looking for them"
-msgstr "{plural1} menhelyi állatok, akire van gazdijelölt"
+msgstr "{1} menhelyi állatok, amelyekre van érdeklődő"
 
 #: main.js
 msgid "{plural1} tests need to be performed today"
-msgstr "{plural1} tesztek elvégzése ma szükséges"
+msgstr "{1} mai napon elvégzendő teszt"
 
 #: main.js
 msgid "{plural1} transports do not have a driver assigned"
@@ -14046,264 +13995,261 @@ msgstr "{plural1} nincs sofőr hozzárendelve a szállításokhoz "
 
 #: main.js
 msgid "{plural1} traps are overdue for return"
-msgstr "{plural1} csapdák visszaadása esedékes"
+msgstr "{1} csapdát nem hoztak vissza a megjelölt időben"
 
 #: main.js
 msgid "{plural1} trial adoptions have ended"
-msgstr "{plural1} peres örökbefogadások befejeződtek"
+msgstr "{1} próbaidő lejárt "
 
 #: main.js
-#, fuzzy
 msgid "{plural1} unaltered animals have been adopted in the last month"
-msgstr ""
-"{plural1} változatlan állatok kerültek örökbefogadásra az elmúlt hónapban"
+msgstr "{1} az elmúlt hónapban örökbefogadott állat"
 
 #: main.js
 msgid "{plural1} undispatched animal control calls"
-msgstr "{plural1} megválaszolatlan állat ellenőrzési hívások"
+msgstr "{1} el nem végzett állat kontroll hívások"
 
 #: main.js
 msgid "{plural1} unpaid fines"
-msgstr "{plural1} kifizetetlen büntetések"
+msgstr "{1} kifizetetlen büntetések"
 
 #: main.js
 msgid "{plural1} urgent entries on the waiting list"
-msgstr "{plural1} sürgős bekerülők a várólistán"
+msgstr "{1} sürgős feljegyzések a várólistán"
 
 #: main.js
 msgid "{plural1} vaccinations have expired"
-msgstr "{plural1} oltások lejártak"
+msgstr "{1} oltás lejárt"
 
 #: main.js
 msgid "{plural1} vaccinations need to be administered today"
-msgstr ""
+msgstr "{1} mai napon esedékes oltás "
 
 #: i18n.py
 msgid "{plural1} weeks."
-msgstr ""
+msgstr "{1} hetek"
 
 #: i18n.py
 msgid "{plural1} years."
-msgstr ""
+msgstr "{1} évek."
 
 #: main.js
 msgid "{plural2} animal control calls due for followup today"
-msgstr ""
+msgstr "{1} mai nap esedékes állat kontroll hívások"
 
 #: main.js
 msgid "{plural2} animals are not available for adoption"
-msgstr ""
+msgstr "{2} nem örökbefogadható állat"
 
 #: main.js
 msgid "{plural2} animals died"
-msgstr ""
+msgstr "{2} meghalt állat"
 
 #: main.js
 msgid "{plural2} animals entered the shelter"
-msgstr ""
+msgstr "{2} menhelyre került állat"
 
 #: main.js
-#, fuzzy
 msgid "{plural2} animals have been on the shelter longer than {0} months"
-msgstr "Valamennyi állat, amely több mint {0} hónapja van a menhelyen."
+msgstr "Valamennyi állat, amely több mint {0} hónapja van a menhelyen"
 
 #: main.js
 msgid "{plural2} animals have holds ending today"
-msgstr ""
+msgstr "{2} gazdijelöltnek fenntartott kutya előjegyzése lejár"
 
 #: main.js
 msgid "{plural2} animals were adopted"
-msgstr ""
+msgstr "{2} örökbefogadott állat"
 
 #: main.js
 msgid "{plural2} animals were dead on arrival"
-msgstr ""
+msgstr "{2} bekerüléskor halott állat"
 
 #: main.js
 msgid "{plural2} animals were euthanized"
-msgstr ""
+msgstr "{2} elaltatott állat"
 
 #: main.js
 msgid "{plural2} animals were reclaimed by their owners"
-msgstr ""
+msgstr "{2} eredeti gazda álltal visszakövetelt állat "
 
 #: main.js
 msgid "{plural2} animals were transferred to other shelters"
-msgstr ""
+msgstr "{2} más menhelyre átszállított állat"
 
 #: i18n.py
 msgid "{plural2} days."
-msgstr ""
+msgstr "{2} napok."
 
 #: main.js
 msgid "{plural2} incomplete animal control calls"
-msgstr ""
+msgstr "{2} befejezetlen állat kontroll hívás"
 
 #: main.js
 msgid "{plural2} items of stock expire in the next month"
-msgstr ""
+msgstr "{2} raktáron lévő termék a követekző hónapban lejár"
 
 #: main.js
 msgid "{plural2} items of stock have expired"
-msgstr ""
+msgstr "{2} raktáron lévő termék szavatossága lejárt"
 
 #: main.js
 msgid "{plural2} medical treatments need to be administered today"
-msgstr ""
+msgstr "{2} mai napon esedékes gyógykezelések"
 
 #: i18n.py
 msgid "{plural2} months."
-msgstr ""
+msgstr "{2} hónapok."
 
 #: main.js
 msgid "{plural2} new online form submissions"
-msgstr ""
+msgstr "{2} új online nyomtatvány benyújtása"
 
 #: main.js
 msgid "{plural2} people have overdue payments"
-msgstr ""
+msgstr "{2} személynek van kifizetetlen tartozása "
 
 #: main.js
 msgid "{plural2} people with active reservations have not been homechecked"
-msgstr ""
+msgstr "{2} gazdijelölt még nem lett lelátogatva"
 
 #: main.js
 msgid "{plural2} potential matches for lost animals"
-msgstr ""
+msgstr "{2} potenciális egyezések elveszett állatokra"
 
 #: main.js
 msgid "{plural2} recent publisher runs had errors"
-msgstr ""
+msgstr "{2} legutóbbi közzétételi futtatások hibásak voltak"
 
 #: main.js
 msgid "{plural2} reservations have been active over a week without adoption"
 msgstr ""
+"{2} gazdijelölt megjelölés egy héten át aktív volt, de örökbefogadás nem "
+"történt"
 
 #: search.js
 msgid "{plural2} results found in {1} seconds. Order: {2}"
-msgstr ""
+msgstr " {2 keresési találat {1} másodperc alatt. Utasítás: {2}"
 
 #: main.js
 msgid "{plural2} shelter animals have not been microchipped"
-msgstr ""
+msgstr "{2} mikrochippel nem rendelkező állat"
 
 #: main.js
 msgid "{plural2} shelter animals have people looking for them"
-msgstr ""
+msgstr "{2} menhelyi állatok, amelyekre van érdeklődő"
 
 #: main.js
 msgid "{plural2} tests need to be performed today"
-msgstr ""
+msgstr "{2} mai napon elvégzendő teszt"
 
 #: main.js
 msgid "{plural2} transports do not have a driver assigned"
-msgstr ""
+msgstr "{2} transzporthoz nincs hozzárendelve sofőr"
 
 #: main.js
 msgid "{plural2} traps are overdue for return"
-msgstr ""
+msgstr "{2} csapdát nem hoztak vissza a megjelölt időben"
 
 #: main.js
 msgid "{plural2} trial adoptions have ended"
-msgstr ""
+msgstr "{2} próbaidő vége"
 
 #: main.js
 msgid "{plural2} unaltered animals have been adopted in the last month"
-msgstr ""
+msgstr "{2} az elmúlt hónapban örökbefogadott állat"
 
 #: main.js
 msgid "{plural2} undispatched animal control calls"
-msgstr ""
+msgstr "{2} el nem végzett állat kontroll hívások"
 
 #: main.js
 msgid "{plural2} unpaid fines"
-msgstr ""
+msgstr "{2} kifizetetlen büntetések"
 
 #: main.js
 msgid "{plural2} urgent entries on the waiting list"
-msgstr ""
+msgstr "{} sürgős feljegyzések a várólistán"
 
 #: main.js
 msgid "{plural2} vaccinations have expired"
-msgstr ""
+msgstr "{plural2} lejárt oltások."
 
 #: main.js
 msgid "{plural2} vaccinations need to be administered today"
-msgstr ""
+msgstr "{plural2} mai nap beadandó oltások. "
 
 #: i18n.py
 msgid "{plural2} weeks."
-msgstr ""
+msgstr "{plural2} hetek."
 
 #: i18n.py
 msgid "{plural2} years."
-msgstr ""
+msgstr "{plural2} évek."
 
 #: main.js
 msgid "{plural3} animal control calls due for followup today"
-msgstr ""
+msgstr "{plural3} mai nap elvégzendő állat ellenőrző hívások "
 
 #: main.js
 msgid "{plural3} animals are not available for adoption"
-msgstr ""
+msgstr "{plural3} nem orokbefogadható állatok"
 
 #: main.js
 msgid "{plural3} animals died"
-msgstr ""
+msgstr "{plural3} meghalt állatok"
 
 #: main.js
 msgid "{plural3} animals entered the shelter"
-msgstr ""
+msgstr "{plural3} menhelyre ékrezett állatok"
 
 #: main.js
-#, fuzzy
 msgid "{plural3} animals have been on the shelter longer than {0} months"
-msgstr "Valamennyi állat, amely több mint {0} hónapja van a menhelyen."
+msgstr "{plural3} több mint {0} hónapja a menhelyen lévő állatok"
 
 #: main.js
 msgid "{plural3} animals have holds ending today"
-msgstr ""
+msgstr "{plural3} mai nappal lejáró állat előjegyzések."
 
 #: main.js
 msgid "{plural3} animals were adopted"
-msgstr ""
+msgstr "{plural3}  orokbefogadott állatok"
 
 #: main.js
 msgid "{plural3} animals were dead on arrival"
-msgstr ""
+msgstr "{plural3} halva érkezett állatok"
 
 #: main.js
 msgid "{plural3} animals were euthanized"
-msgstr ""
+msgstr "{plural3} elaltatott állatok"
 
 #: main.js
 msgid "{plural3} animals were reclaimed by their owners"
-msgstr ""
+msgstr "{plural3} eredeti gazdájuk által visszakövetelt állatok"
 
 #: main.js
 msgid "{plural3} animals were transferred to other shelters"
-msgstr ""
+msgstr "{plural3} állatok átszállítása más menhelyekre"
 
 #: i18n.py
 msgid "{plural3} days."
-msgstr ""
+msgstr "{plural3} napok."
 
 #: main.js
 msgid "{plural3} incomplete animal control calls"
-msgstr ""
+msgstr "{plural3} befejezetlen állat ellenőrző hívások"
 
 #: main.js
 msgid "{plural3} items of stock expire in the next month"
-msgstr ""
+msgstr "{plural3} a raktárkészletek a jövő hónapban lejárnak"
 
 #: main.js
-#, fuzzy
 msgid "{plural3} items of stock have expired"
-msgstr "{plural3} az állomány elemei lejártak"
+msgstr "{plural3} a raktárkészletek lejártak"
 
 #: main.js
 msgid "{plural3} medical treatments need to be administered today"
-msgstr "{plural3} gyógyszeres kezelés adminisztrálást igényel a mai napon"
+msgstr "{plural3} mai napra esedékes elvégzendő gyógykezelések"
 
 #: i18n.py
 msgid "{plural3} months."
@@ -14311,31 +14257,30 @@ msgstr "{plural3} hónapok"
 
 #: main.js
 msgid "{plural3} new online form submissions"
-msgstr "{plural3} új online nyomtatvány engedélyezése"
+msgstr "{plural3} új online nyomtatvány beadása"
 
 #: main.js
 msgid "{plural3} people have overdue payments"
 msgstr "{plural3} személynek lejárt fizetési kötelezettsége áll fenn"
 
 #: main.js
-#, fuzzy
 msgid "{plural3} people with active reservations have not been homechecked"
-msgstr "{plural3} aktív foglalással rendelkező személy nem lett lelátogatva"
+msgstr ""
+"{plural3} aktív foglalással rendelkező személyek még  nem lettek lelátogatva."
 
 #: main.js
 msgid "{plural3} potential matches for lost animals"
 msgstr "{plural3} potenciális egyezések elveszett állatokra"
 
 #: main.js
-#, fuzzy
 msgid "{plural3} recent publisher runs had errors"
 msgstr "{plural3} legutóbbi közzétételek hibásak voltak"
 
 #: main.js
 msgid "{plural3} reservations have been active over a week without adoption"
 msgstr ""
-"{plural3} A foglalások több mint egy hetesek, de még nem történt meg az "
-"örökbefogadás"
+"{plural3} A foglalások több mint egy hetesek, de az örökbefogadás még nem "
+"történt meg. "
 
 #: search.js
 msgid "{plural3} results found in {1} seconds. Order: {2}"
@@ -14351,11 +14296,11 @@ msgstr "{plural3} menhelyi állatok, amelyekre van érdeklődő"
 
 #: main.js
 msgid "{plural3} tests need to be performed today"
-msgstr "{plural3} ma kell megcsinálni a teszteket"
+msgstr "{plural3} mai nappal elvégzendő tesztek. "
 
 #: main.js
 msgid "{plural3} transports do not have a driver assigned"
-msgstr "{plural3} a transzporthoz nincs hozzárendelt sofőr"
+msgstr "{plural3} a transzporthoz nincs sofőr hozzárendelve."
 
 #: main.js
 msgid "{plural3} traps are overdue for return"
@@ -14363,36 +14308,36 @@ msgstr "{plural3} a csapdák vissza hozatalának határideje lejárt"
 
 #: main.js
 msgid "{plural3} trial adoptions have ended"
-msgstr ""
+msgstr "{plural3} a próbaidő lejárt."
 
 #: main.js
 msgid "{plural3} unaltered animals have been adopted in the last month"
-msgstr ""
+msgstr "{plural3} az elmúlt hónapban örökbefogadott állat"
 
 #: main.js
 msgid "{plural3} undispatched animal control calls"
-msgstr ""
+msgstr "{plural3} el nem végzett állat ellenőrző hívások"
 
 #: main.js
 msgid "{plural3} unpaid fines"
-msgstr ""
+msgstr "{plural3} kifizetetlen díjak."
 
 #: main.js
 msgid "{plural3} urgent entries on the waiting list"
-msgstr ""
+msgstr "{plural3} sürgős esetek a várólistán."
 
 #: main.js
 msgid "{plural3} vaccinations have expired"
-msgstr ""
+msgstr "{plural3} oltások lejártak."
 
 #: main.js
 msgid "{plural3} vaccinations need to be administered today"
-msgstr ""
+msgstr "{plural3} ma beadandó oltások. "
 
 #: i18n.py
 msgid "{plural3} weeks."
-msgstr ""
+msgstr "{plural3}  hetek."
 
 #: i18n.py
 msgid "{plural3} years."
-msgstr ""
+msgstr "{plural3} évek."
