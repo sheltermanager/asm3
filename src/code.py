@@ -886,6 +886,9 @@ class main(JSONEndpoint):
         if dbo.query_int("SELECT COUNT(ID) FROM customreport") == 0: asm3.reports.install_recommended_smcom_reports(dbo, o.user)
         # News
         news = asm3.configuration.asm_news(dbo)
+        if news == "":
+            news = asm3.utils.get_asm_news(dbo)
+            asm3.configuration.asm_news(dbo, news)
         # Welcome dialog
         showwelcome = False
         if asm3.configuration.show_first_time_screen(dbo) and session.superuser == 1:

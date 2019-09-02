@@ -1,10 +1,11 @@
 #!/usr/bin/python
 
+import asm3.al
 import asm3.configuration
 import asm3.i18n
 import asm3.users
 
-from asm3.sitedefs import SMTP_SERVER, FROM_ADDRESS, HTML_TO_PDF
+from asm3.sitedefs import SMTP_SERVER, FROM_ADDRESS, HTML_TO_PDF, URL_NEWS
 
 import base64
 import codecs
@@ -990,6 +991,16 @@ def md5_hash(s):
     m.update(s)
     s = m.hexdigest()
     return s
+
+def get_asm_news(dbo):
+    """ Retrieves the latest asm news from the server """
+    try:
+        s = get_url(URL_NEWS)["response"]
+        asm3.al.debug("Retrieved ASM news, got %d bytes" % len(s), "utils.get_asm_news", dbo)
+        return s
+    except:
+        em = str(sys.exc_info()[0])
+        asm3.al.error("Failed reading ASM news: %s" % em, "utils.get_asm_news", dbo)
 
 def get_url(url, headers = {}, cookies = {}, timeout = None):
     """

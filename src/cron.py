@@ -59,7 +59,7 @@ def daily(dbo):
             ttask(dbupdate.install_db_stored_procedures, dbo)
 
         # Get the latest news from sheltermanager.com
-        configuration.asm_news(dbo, update=True)
+        configuration.asm_news(dbo, utils.get_asm_news(dbo))
 
         # Update on shelter and foster animal location fields
         ttask(animal.update_on_shelter_animal_statuses, dbo)

@@ -4,10 +4,8 @@ import asm3.al
 import asm3.audit
 import asm3.cachemem
 import asm3.i18n
-import asm3.utils
-from asm3.sitedefs import LOCALE, TIMEZONE, URL_NEWS
 
-import sys
+from asm3.sitedefs import LOCALE, TIMEZONE
 
 QUICKLINKS_SET = {
     1: ("animal_find", "asm-icon-animal-find", asm3.i18n._("Find animal")),
@@ -548,17 +546,11 @@ def anonymise_personal_data(dbo):
 def anonymise_after_years(dbo):
     return cint(dbo, "AnonymiseAfterYears", DEFAULTS["AnonymiseAfterYears"])
 
-def asm_news(dbo, update=False):
-    s = cstring(dbo, "ASMNews")
-    if s == "" or update:
-        try:
-            s = asm3.utils.get_url(URL_NEWS)["response"]
-            asm3.al.debug("Updated ASM news, got %d bytes" % len(s), "configuration.asm_news", dbo)
-            cset(dbo, "ASMNews", s, sanitiseXSS = False)
-        except:
-            em = str(sys.exc_info()[0])
-            asm3.al.error("Failed reading ASM news: %s" % em, "configuration.asm_news", dbo)
-    return s
+def asm_news(dbo, news=""):
+    if news != "":
+        cset(dbo, "ASMNews", news, sanitiseXSS = False)
+    else:
+        return cstring(dbo, "ASMNews")
 
 def auto_cancel_reserves_days(dbo):
     return cint(dbo, "AutoCancelReservesDays", int(DEFAULTS["AutoCancelReservesDays"]))
