@@ -1,6 +1,5 @@
 #!/usr/bin/python
 
-import asm3.utils
 from asm3.sitedefs import LOG_LOCATION, LOG_DEBUG
 
 import logging
@@ -32,9 +31,9 @@ else:
 def fixed_chars(s, chars=10):
     # Forces a string to be chars in length by padding or truncating
     if len(s) > chars:
-        return asm3.utils.truncate(s, chars)
-    if len(s) < chars:
-        return asm3.utils.spaceright(s, chars)
+        s = s[0:chars]
+    elif len(s) < chars:
+        s = s + " " * (chars-len(s))
     return s
 
 def debug(msg, location = "[]", dbo = None):
@@ -66,6 +65,8 @@ def logmsg(mtype, msg, location, dbo):
     # If we have a dbo, prepend the database name to the message
     if dbo is not None:
         msg = "%s %s" % (fixed_chars(dbo.database, 6), msg)
+    # Restrict message to a max of 1024 chars to prevent "Message too long" exceptions
+    if len(msg) > 1024: msg = msg[0:1024]
     try:
         if mtype == 0:
             logger.debug(msg)

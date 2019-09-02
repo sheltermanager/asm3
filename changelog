@@ -1,6 +1,7 @@
 43
 ================
 
+02/09/19 Fix "message too long" errors from logger
 31/08/19 Refactor publishers and write unit tests #655
 29/08/19 Make sure manual deletion of online forms can be restored #654
 29/08/19 Only override destination account if received was blank
