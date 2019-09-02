@@ -4,8 +4,6 @@ import datetime
 import json
 import time
 
-import asm3.utils
-
 # flake8: noqa - we have a lot of locales and this is convenient
 from asm3.locales import *
 
@@ -428,14 +426,19 @@ def parse_time(d, t):
     """
     Parses the time t and combines it with python date d
     """
+    def cint(s):
+        try:
+            return int(s)
+        except:
+            return 0
     if d is None: return None
     tbits = t.split(":")
     hour = 0
     minute = 0
     second = 0
-    if len(tbits) > 0: hour = asm3.utils.cint(tbits[0])
-    if len(tbits) > 1: minute = asm3.utils.cint(tbits[1])
-    if len(tbits) > 2: second = asm3.utils.cint(tbits[2])
+    if len(tbits) > 0: hour = cint(tbits[0])
+    if len(tbits) > 1: minute = cint(tbits[1])
+    if len(tbits) > 2: second = cint(tbits[2])
     t = datetime.time(hour, minute, second)
     d = d.combine(d, t)
     return d
