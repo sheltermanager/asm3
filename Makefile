@@ -125,7 +125,7 @@ test: version
 tests:
 	@echo "[tests] ========================"
 	cd test && python suite.py
-	rm -f test/*.pyc
+	rm -f test/*.pyc && rm -rf test/__pycache__
 
 testsdb:
 	@echo "[testsdb] ========================"
