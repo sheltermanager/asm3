@@ -28,17 +28,17 @@ clean:
 	rm -f cscope*
 	rm -f tags
 	rm -f src/*.pyc
-	rm -f src/__pycache__
+	rm -rf src/__pycache__
 	rm -f src/asm3/*.pyc
-	rm -f src/asm3/__pycache__
+	rm -rf src/asm3/__pycache__
 	rm -f src/asm3/dbms/*.pyc
-	rm -f src/asm3/dbms/__pycache__
+	rm -rf src/asm3/dbms/__pycache__
 	rm -f src/asm3/locales/*.pyc
-	rm -f src/asm3/locales/__pycache__
+	rm -rf src/asm3/locales/__pycache__
 	rm -f src/asm3/pbkdf2/*.pyc
-	rm -f src/asm3/pbkdf2/__pycache__
+	rm -rf src/asm3/pbkdf2/__pycache__
 	rm -f src/asm3/publishers/*.pyc
-	rm -f src/asm3/publishers/__pycache__
+	rm -rf src/asm3/publishers/__pycache__
 
 version:
 	# Include me in any release target to stamp the 
