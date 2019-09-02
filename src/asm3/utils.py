@@ -561,28 +561,22 @@ def padright(num, digits):
 
 def truncate(s, length = 100):
     """
-    Truncates a string to length. If the string is longer than
-    length, appends ...
-    Removes any unicode sequences
-    HTML entities count as one character
+    Truncates a string to length.
     """
-    if s is None: s = ""
-    s = strip_html_tags(s)
-    s = strip_non_ascii(s)
-    if len(decode_html(s)) < length: return s
-    return "%s..." % substring(s, 0, length)
+    if s is None: return ""
+    if len(s) > length: return s[0:length]
+    return s
 
-def substring(s, start, end = None):
+def decoded_substring(s, start, end = None):
     """
-    Returns a substring. If s contains any HTML/unicode escape sequences, they
-    are evaluated and count as one char.
+    Returns a substring, decoding any HTML entities in s first so that they count as one character.
     """
     us = decode_html(s)
     if end is None or end > len(us):
         ur = us[start:]
     else:
         ur = us[start:end]
-    if sys.version_info[0] > 2: # PYTHON3 - keep the string as unicode for lang features
+    if sys.version_info[0] > 2: # PYTHON3 - keep the string as unicode str for lang features
         return ur.encode("ascii", "xmlcharrefreplace").decode("ascii")
     else:
         return ur.encode("ascii", "xmlcharrefreplace")
