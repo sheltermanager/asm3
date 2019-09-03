@@ -81,7 +81,8 @@ def update_stocklevel_from_form(dbo, post, username):
     """
     l = dbo.locale
     slid = post.integer("stocklevelid")
-
+    if slid == 0:
+        raise asm3.utils.ASMValidationError("Invalid stock level")
     if post["name"] == "":
         raise asm3.utils.ASMValidationError(_("Stock level must have a name", l))
     if post["unitname"] == "":
@@ -144,6 +145,7 @@ def insert_stockusage(dbo, username, slid, diff, usagedate, usagetype, comments)
     """
     Inserts a new stock usage record
     """
+    if slid == 0: raise asm3.utils.ASMValidationError("Invalid stock level")
     return dbo.insert("stockusage", {
         "StockUsageTypeID":     usagetype,
         "StockLevelID":         slid,
@@ -159,6 +161,7 @@ def deduct_stocklevel_from_form(dbo, username, post):
     the stocklevel.
     """
     item = post.integer("item")
+    if item == 0: raise asm3.utils.ASMValidationError("Invalid stock level")
     quantity = post.floating("quantity")
     usagetype = post.integer("usagetype")
     usagedate = post.date("usagedate")
