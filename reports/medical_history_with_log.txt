@@ -4,7 +4,7 @@ Medical
 ###
 3309/Any
 ###
-Medical regimens, vaccination and tests with logs for an animal
+Medical regimens, vaccinations, tests, neuter/spay and microchip implants with logs for an animal
 ###
 en
 ###
@@ -50,6 +50,39 @@ INNER JOIN species sp ON sp.ID = a.SpeciesID
 INNER JOIN testtype tt ON at.TestTypeID = tt.ID
 INNER JOIN internallocation il ON il.ID = a.ShelterLocation
 WHERE a.ID = $@aid$ AND at.DateOfTest Is Not Null
+
+UNION SELECT
+'Microchip' AS mtype, a.ShelterCode, a.AnimalName, a.ID AS AID,
+t.AnimalType, sp.SpeciesName, a.DisplayLocation,
+'1' AS TreatmentsGiven, '1' AS TotalNumberOfTreatments, '' AS Dosage,
+'Microchip Implanted' AS TreatmentName, a.IdentichipDate AS StartDate, a.IdentichipNumber AS Comments
+FROM animal a
+INNER JOIN animaltype t ON t.ID = a.AnimalTypeID
+INNER JOIN species sp ON sp.ID = a.SpeciesID
+INNER JOIN internallocation il ON il.ID = a.ShelterLocation
+WHERE a.ID = $@aid$ AND a.IdentichipDate Is Not Null
+
+UNION SELECT
+'Microchip' AS mtype, a.ShelterCode, a.AnimalName, a.ID AS AID,
+t.AnimalType, sp.SpeciesName, a.DisplayLocation,
+'1' AS TreatmentsGiven, '1' AS TotalNumberOfTreatments, '' AS Dosage,
+'Microchip Implanted' AS TreatmentName, a.Identichip2Date AS StartDate, a.Identichip2Number AS Comments
+FROM animal a
+INNER JOIN animaltype t ON t.ID = a.AnimalTypeID
+INNER JOIN species sp ON sp.ID = a.SpeciesID
+INNER JOIN internallocation il ON il.ID = a.ShelterLocation
+WHERE a.ID = $@aid$ AND a.Identichip2Date Is Not Null
+
+UNION SELECT
+'Neuter/Spay' AS mtype, a.ShelterCode, a.AnimalName, a.ID AS AID,
+t.AnimalType, sp.SpeciesName, a.DisplayLocation,
+'1' AS TreatmentsGiven, '1' AS TotalNumberOfTreatments, '' AS Dosage,
+'Neutered/Spayed' AS TreatmentName, a.NeuteredDate AS StartDate, '' AS Comments
+FROM animal a
+INNER JOIN animaltype t ON t.ID = a.AnimalTypeID
+INNER JOIN species sp ON sp.ID = a.SpeciesID
+INNER JOIN internallocation il ON il.ID = a.ShelterLocation
+WHERE a.ID = $@aid$ AND a.NeuteredDate Is Not Null
 
 UNION SELECT
 'Log' AS mtype, a.ShelterCode, a.AnimalName, a.ID AS AID,
