@@ -2899,7 +2899,7 @@ class htmltemplates_preview(ASMEndpoint):
         asm3.additional.append_to_results(o.dbo, rows, "animal")
         self.content_type("text/html")
         self.cache_control(0)
-        return asm3.publishers.asm3.html.animals_to_page(o.dbo, rows, template)
+        return asm3.publishers.html.animals_to_page(o.dbo, rows, template)
 
 class incident(JSONEndpoint):
     url = "incident"
