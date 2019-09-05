@@ -8,7 +8,7 @@ Import script for PetPal databases exported as CSV
 20th Jan, 2017
 """
 
-PATH = "data/petpal_za1225.csv"
+PATH = "/home/robin/tmp/asm3_import_data/petpal_za1225.csv"
 
 # The shelter's petfinder ID for grabbing animal images for adoptable animals
 PETFINDER_ID = ""

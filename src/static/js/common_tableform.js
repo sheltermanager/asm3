@@ -156,7 +156,7 @@
 
         /** Formats a value as comments (truncates to one line or shows full with \n -> <br/> based on config) */
         format_comments: function(row, v) {
-            if (config.bool("ShowFullCommentsInTables")) { return v.replace(/\n/g, "<br />"); }
+            if (config.bool("ShowFullCommentsInTables")) { return common.nulltostr(v).replace(/\n/g, "<br />"); }
             return html.truncate(v, 80);
         },
 
@@ -358,7 +358,15 @@
 
             // Apply tablesorter widget
             var options = {};
-            if (table.showfilter || (table.rows && table.rows.length > 9)) { options.filter = true; }
+            // If whether or not to show filters is explicitly set, do that
+            options.filter = false;
+            if (table.hasOwnProperty("showfilter")) { 
+                options.filter = table.showfilter; 
+            }
+            // Otherwise, show the filters if there are 10+ rows in the table
+            else if (table.rows && table.rows.length > 9) { 
+                options.filter = true; 
+            }
             $("#tableform").table(options);
 
             // And the default sort
@@ -940,6 +948,7 @@
                     if (v.halfsize) { d += " asm-halftextbox"; }
                     d += "\" ";
                     d += "data-json=\"" + v.json_field + "\" data-post=\"" + v.post_field + "\" ";
+                    d += "autocomplete=\"new-password\" ";
                     if (v.readonly) { d += " data-noedit=\"true\" "; }
                     if (v.validation) { d += "data-validation=\"" + v.validation + "\" "; }
                     if (v.tooltip) { d += "title=\"" + html.title(v.tooltip) + "\""; }
@@ -1076,6 +1085,7 @@
                     if (v.halfsize) { d += " asm-halftextbox"; }
                     d += "\" ";
                     d += "data-json=\"" + v.json_field + "\" data-post=\"" + v.post_field + "\" ";
+                    d += "autocomplete=\"new-password\" ";
                     if (v.readonly) { d += " data-noedit=\"true\" "; }
                     if (v.validation) { d += "data-validation=\"" + v.validation + "\" "; }
                     if (v.tooltip) { d += "title=\"" + html.title(v.tooltip) + "\""; }
@@ -1088,6 +1098,7 @@
                     if (v.halfsize) { d += " asm-halftextbox"; }
                     d += "\" ";
                     d += "data-json=\"" + v.json_field + "\" data-post=\"" + v.post_field + "\" ";
+                    d += "autocomplete=\"new-password\" ";
                     if (v.readonly) { d += " data-noedit=\"true\" "; }
                     if (v.validation) { d += "data-validation=\"" + v.validation + "\" "; }
                     if (v.tooltip) { d += "title=\"" + html.title(v.tooltip) + "\""; }
@@ -1100,6 +1111,7 @@
                     if (v.halfsize) { d += " asm-halftextbox"; }
                     d += "\" ";
                     d += "data-json=\"" + v.json_field + "\" data-post=\"" + v.post_field + "\" ";
+                    d += "autocomplete=\"new-password\" ";
                     if (v.readonly) { d += " data-noedit=\"true\" "; }
                     if (v.validation) { d += "data-validation=\"" + v.validation + "\" "; }
                     if (v.tooltip) { d += "title=\"" + html.title(v.tooltip) + "\""; }

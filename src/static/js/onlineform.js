@@ -19,6 +19,7 @@ $(function() {
         { "ID": 7, "NAME": _("Breed") },
         { "ID": 8, "NAME": _("Species") },
         { "ID": 9, "NAME": _("Raw Markup") },
+        { "ID": 17, "NAME": _("Image") },
         { "ID": 13, "NAME": _("Signature") },
         { "ID": 15, "NAME": _("GDPR Contact Opt-In") }
     ];

@@ -8,7 +8,7 @@ Import script for Ark CSV, covers people, animals, payments, licences and compla
 2nd Sep, 2015
 """
 
-PATH = "data/multiops_zg0861"
+PATH = "/home/robin/tmp/asm3_import_data/multiops_zg0861"
 
 owners = []
 ownerdonations = []

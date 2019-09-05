@@ -204,7 +204,6 @@ $(function() {
                 '<!-- Third column, embedded map placeholder -->',
                 '</td>',
                 '<td width="35%">',
-                '<input type="hidden" id="latlong" data-json="DISPATCHLATLONG" data-post="dispatchlatlong" />',
                 '<div id="embeddedmap" style="z-index: 1; width: 100%; height: 300px; color: #000" />',
                 '<!-- end outer table -->',
                 '</td>',

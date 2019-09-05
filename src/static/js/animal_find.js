@@ -189,7 +189,7 @@ $(function() {
                 '<input id="outbetweento" data="outbetweento" class="asm-textbox asm-datebox" />',
                 '</td>',
                 '<td>',
-                '<label for="adoptionno">' + _("Adoption Number") + '</label>',
+                '<label for="adoptionno">' + _("Movement Number") + '</label>',
                 '</td>',
                 '<td>',
                 '<input id="adoptionno" data="adoptionno" class="asm-textbox" />',

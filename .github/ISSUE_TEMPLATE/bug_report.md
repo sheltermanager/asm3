@@ -1,8 +1,20 @@
 ---
 name: Bug report
 about: Create a report to help us improve
+title: ''
+labels: ''
+assignees: ''
 
 ---
+
+# PLEASE DO NOT FILE ISSUES UNLESS YOU ARE A SOFTWARE DEVELOPER AND CONTRIBUTOR TO ASM.
+
+If you are a sheltermanager.com customer needing support, please email help@sheltermanager.com
+
+If you are an open source user needing help, please use the forum at https://sheltermanager.com/site/en_forum.html
+
+----------------------------------------------------
+
 
 **Describe the bug**
 A clear and concise description of what the bug is.

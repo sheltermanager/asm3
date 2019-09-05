@@ -15,7 +15,7 @@ distwin32: dist
 tags:
 	@echo "[tags] ============================"
 	rm -f tag
-	ctags -f tags src/*.py
+	ctags -f tags src/*.py src/publishers/*.py src/dbms/*.py src/static/js/*.js
 
 cscope:
 	@echo "[cscope] ==========================="
@@ -63,6 +63,7 @@ compilepy:
 	@# 800 lines per method, 35 returns, 20 args, 60 locals
 	@# pychecker -L 800 -R 35 -J 20 -K 60 -j -b al,email,httplib,multiprocessing,subprocess,threading,web src/*.py src/dbms/*.py src/publishers/*.py
 	@# pylint --disable=C src/*.py
+	@# flake8 --config=scripts/flake8 src/*.py src/dbms/*.py src/publishers/*.py src/locales/*.py
 	flake8 --config=scripts/flake8 src/*.py src/dbms/*.py src/publishers/*.py
 
 smcom-dev: version clean minify
@@ -87,7 +88,7 @@ smcom-stable-dumpsessions: version clean minify
 	rsync --exclude '*.pyc' --delete -r src/* root@$(DEPLOY_HOST):/usr/local/lib/asm_stable.new
 	ssh root@$(DEPLOY_HOST) "/root/scripts/sheltermanager_sync_asm.py syncstable dumpsessions"
 
-smcom-stable-tgz:
+smcom-stable-tgz: version clean minify
 	@echo "[smcom stable tgz] ======================"
 	rsync --exclude '*.pyc' --delete -r src/* root@$(DEPLOY_HOST):/usr/local/lib/asm_stable.new
 	ssh root@$(DEPLOY_HOST) "/root/scripts/sheltermanager_sync_asm.py syncstabletgz"

@@ -271,12 +271,28 @@ select:disabled, input:disabled, textarea:disabled {
     font-size: 80%;
 }
 
+/** ONLINE FORMS =================== */
+#dialog-viewer-content td {
+    border-bottom: 1px dotted #aaa;
+}
+
 .asm-animal-emblems {
     white-space: nowrap;
 }
 
 .asm-animal-emblems .asm-icon {
     margin-left: 1px;
+}
+
+.asm-animal-emblems .custom {
+    margin-left: 1px;
+    cursor: default;
+	border-radius: 3px;
+    color: #fff;
+    background-color: #cc00ff;
+    border: 1px solid black;
+    padding: 2px;
+    white-space: nowrap;
 }
 
 .asm-search-name {

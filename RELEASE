@@ -10,7 +10,7 @@
    run /var/www/public/deb/makerepo.sh on public to rebuild Debian repository.
 
 *. Write release note and update smcom_www and "make site":
-        site/en_news.html 
+        site/en_news.m 
         site/rss.xml 
         site/en_header.t (new version number)
         repo/asm_news.html 

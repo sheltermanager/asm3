@@ -12,7 +12,7 @@ will install all the software you need to run ASM. If you are using the
 sheltermanager3 deb package it already has dependencies set for these
 and will install them for you.
 
-* apt-get install make python python-pil python-webpy python-mysqldb python-psycopg2
+* apt-get install make python python-webpy python-pil python-mysqldb python-psycopg2
 
 Extra, non-mandatory packages:
 
@@ -24,7 +24,7 @@ Extra, non-mandatory packages:
 
 Packages necessary for building static checkers, installers and manuals:
 
-* apt-get install exuberant-ctags nodejs pychecker python-sphinx python-sphinx-rtd-theme texlive-latex-base texlive-latex-extra
+* apt-get install exuberant-ctags nodejs pychecker python-sphinx python-sphinx-rtd-theme texlive-latex-base texlive-latex-extra latexmk
 
 If you're using Debian and want to do development, you can use "make deps"
 to install the needed dependencies.

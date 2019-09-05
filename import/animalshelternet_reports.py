@@ -14,7 +14,7 @@ Requires the following reports:
 28th April 2017
 """
 
-PATH = "data/asn_ba1385"
+PATH = "/home/robin/tmp/asm3_import_data/asn_ba1385"
 
 START_ID = 2500
 

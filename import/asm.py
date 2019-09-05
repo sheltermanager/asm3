@@ -278,6 +278,10 @@ def getdate_ddmmmyy(s):
     s = remove_time(s)
     return parse_date(s, "%d-%b-%y")
 
+def getdate_jackcess(s):
+    """ Parses dates in the Jackcess format: Thu Apr 23 00:00:00 BST 2015 """
+    return parse_date(s, "%a %b %d %H:%M:%S %Z %Y")
+
 def getdate_iso(s):
     s = remove_time(s)
     return parse_date(s, "%Y-%m-%d")
@@ -406,7 +410,7 @@ def colour_id_for_name(name, firstWordOnly = False, default = 1):
     return default
 
 def colour_id_for_names(name1, name2, default = 1):
-    if name1 == name2 or name2.strip() == "":
+    if name1 == name2 or name2.strip() == "" or name2.lower() == "unknown" or name2.lower() == "n/a":
         return colour_id_for_name(name1, True)
     for cid, cname in colours:
         if cname.upper().find(name1.upper()) != -1 and cname.upper().find(name2.upper()) != -1:
@@ -737,6 +741,7 @@ breeds = (
 ("239","Cymric"),
 ("240","Devon Rex"),
 ("243","Domestic Long Hair"),
+("243","Domestic Semi L/H"),
 ("243","DLH"),
 ("252","Domestic Medium Hair"),
 ("252","DMH"),

@@ -152,7 +152,16 @@ The types are outlined below:
   select the date. The value substituted is the date selected by the user in
   SQL string format appropriate for the database you are using.
 
-* $ASK ANIMAL$ - requests an animal. The value substituted is the animal ID. 
+* $ASK ANIMAL$ - requests a shelter animal. The value substituted is the animal ID. 
+
+* $ASK FSANIMAL$ - requests a foster animal. The value substituted is the
+  animal ID. 
+
+* $ASK ALLANIMAL$ - requests any animal. The value substituted is the animal ID. 
+
+* $ASK ANIMALS$ - requests one or more shelter animals. The value substituted
+  is a comma separated list of animal IDs, useful for putting in an IN clause
+  (eg: AnimalID IN ($ASK ANIMALS$))
 
 * $ASK ANIMALFLAG$ - requests an animal flag.
 
@@ -193,6 +202,8 @@ The types are outlined below:
 * $ASK STRING message$ - requests a string value from the user (eg: Name,
   Address, etc.). A box is popped up containing the message and the user is
   given a text box to enter the string in. The value substituted is the string. 
+
+.. note:: ANIMAL, FSANIMAL and ALLANIMAL are identical in the desktop interface. They produce different choices in the mobile interface.
 
 VAR
 ^^^

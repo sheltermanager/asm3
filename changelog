@@ -1,6 +1,51 @@
 42
 ================
 
+01/06/19 Option to disable auto reload of medical book/tab on new
+31/05/19 Fix for Chrome F11 bug (finally!) #512
+30/05/19 Add en_AE locale for UAE
+25/05/19 Record animal/person merge record IDs in audit trail
+19/05/19 Fix bug where date was being cast incorrectly by get_stats
+19/05/19 Add html_flagged_animals service call #610
+19/05/19 Include submitted images as attachments with online form emails #160
+19/05/19 Allow proper mimetypes instead of forcing octet-stream #405
+19/05/19 Allow send_email to handle multiple attachments #405
+17/05/19 Use a generator function for Export Animals as CSV #609
+17/05/19 Use / instead of , as bonded animal separator to workaround PF bug
+17/05/19 When deleting preferred media choose only non-exclude photos #608
+17/05/19 Fix for non-int ID types coming back from MySQLdb driver #608
+16/05/19 Include separate copy of online form images on media tab #607
+15/05/19 Set default entry reason when creating animal from waiting list
+15/05/19 Online form image field type #160
+13/05/19 Allow payment and cost types to be unlinked from accounts
+13/05/19 Only allow bank accounts to be used for destination override #605
+10/05/19 Allow preview of HTML templates that bypasses cache #603
+09/05/19 Register old-style 10-digit hex HomeAgain chips with Found
+09/05/19 Output animal name in alt attribute of adoptable_js #587
+09/05/19 Allow transaction fees with payments, set by PayPal import #566
+07/05/19 When importing CSV/PayPal records include importing username #600
+02/05/19 Allow VAT/GST to be selectively chosen by payment type #568
+29/04/19 Fix bug where using "My Fosters" with no fosters shows all
+27/04/19 Allow custom emblems to be set for additional animal flags #58
+26/04/19 Show additional fields on person records under person links #593
+26/04/19 Add ASK ANIMALS report criteria tag #542
+25/04/19 Keep incoming forms around for 28 days, show how long on screen #592
+25/04/19 Show ruled lines between incoming form preview fields #590
+22/04/19 Diary cutoff on calendar is 6 months to match other areas
+17/04/19 Add Calibri font to document editor
+16/04/19 Add html_held_animals service call
+12/04/19 Found should be able to support 9-digit chip numbers starting with 1
+10/04/19 Support soft release to wild #520
+06/04/19 More autocomplete hints to prevent autofill of number/curency fields
+30/03/19 Person match fields could not be set by csv import due to insert bug
+28/03/19 Add TransportReference field to link related transports together
+25/03/19 Do not update geocode on address changes if manual entry is on
+25/03/19 Add support for breeder_id PetRescue field
+24/03/19 Add en_TW2 for English/Taiwan with 2 decimal place currency
+24/03/19 Medical wordkeys should be based on NextTreatmentDue/LastTreatmentGiven
+22/03/19 Add OwnerCountry field and country to transport #264
+19/03/19 Fix conflicts with template animals and additional fields
+18/03/19 Do not show user table filters due to Chrome autofill bug
 18/03/19 Batch should update young offshelter animal ages for desex reports
 18/03/19 Support for PERSONMEMBERSHIPNUMBER CSV import column
 17/03/19 Allow editing of lat/long directly near minimaps #578

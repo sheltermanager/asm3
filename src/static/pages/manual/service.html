@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Service API &mdash; ASM 42u documentation</title>
+  <title>Service API &mdash; ASM 42 documentation</title>
   
 
   
@@ -60,7 +60,7 @@
             
             
               <div class="version">
-                42u
+                42
               </div>
             
           
@@ -124,6 +124,8 @@
 <li class="toctree-l2"><a class="reference internal" href="#html-adoptable-animals">html_adoptable_animals</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#html-adopted-animals">html_adopted_animals</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#html-deceased-animals">html_deceased_animals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#html-flagged-animals">html_flagged_animals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#html-held-animals">html_held_animals</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#html-report">html_report</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#json-adoptable-animal-and-xml-adoptable-animal">json_adoptable_animal and xml_adoptable_animal</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#json-adoptable-animals-and-xml-adoptable-animals">json_adoptable_animals and xml_adoptable_animals</a></li>
@@ -556,6 +558,33 @@ go back. If you do not set it, the default is animals deceased in the last 30
 days.</p>
 <blockquote>
 <div><a class="reference external" href="http://localhost:5000/service?method=html_deceased_animals&amp;template=littlebox&amp;speciesid=1&amp;days=60">http://localhost:5000/service?method=html_deceased_animals&amp;template=littlebox&amp;speciesid=1&amp;days=60</a>
+<a class="reference external" href="http://localhost:5000/service?method=html_deceased_animals">http://localhost:5000/service?method=html_deceased_animals</a></div></blockquote>
+</div>
+<div class="section" id="html-flagged-animals">
+<h2>html_flagged_animals<a class="headerlink" href="#html-flagged-animals" title="Permalink to this headline">¶</a></h2>
+<p class="rubric">Cache time: 30 minutes</p>
+<p>Returns a complete HTML document containing an HTML page of shelter animals
+that have a particular flag.</p>
+<p>You can pass an HTML template name in an optional “template” parameter (leaving
+it off will cause animalview to be used). It is also possible to pass
+speciesid=X or animaltypeid=X parameters to only output animals of that species
+and type. In the default dataset, speciesid=1 is Dogs and speciesid=2 is cats.</p>
+<p>In addition, a “flag” parameter can be passed to specify the flag you want the
+returned animals to have. If no flag is set, all shelter animals are returned.</p>
+<blockquote>
+<div><a class="reference external" href="http://localhost:5000/service?method=html_flagged_animals&amp;template=littlebox&amp;speciesid=1&amp;flag=Needs+Foster">http://localhost:5000/service?method=html_flagged_animals&amp;template=littlebox&amp;speciesid=1&amp;flag=Needs+Foster</a>
+<a class="reference external" href="http://localhost:5000/service?method=html_flagged_animals">http://localhost:5000/service?method=html_flagged_animals</a></div></blockquote>
+</div>
+<div class="section" id="html-held-animals">
+<h2>html_held_animals<a class="headerlink" href="#html-held-animals" title="Permalink to this headline">¶</a></h2>
+<p class="rubric">Cache time: 30 minutes</p>
+<p>Returns a complete HTML document containing an HTML page of current held animals.</p>
+<p>You can pass an HTML template name in an optional “template” parameter (leaving
+it off will cause animalview to be used). It is also possible to pass
+speciesid=X or animaltypeid=X parameters to only output animals of that species
+and type. In the default dataset, speciesid=1 is Dogs and speciesid=2 is cats.</p>
+<blockquote>
+<div><a class="reference external" href="http://localhost:5000/service?method=html_deceased_animals&amp;template=littlebox&amp;speciesid=1">http://localhost:5000/service?method=html_deceased_animals&amp;template=littlebox&amp;speciesid=1</a>
 <a class="reference external" href="http://localhost:5000/service?method=html_deceased_animals">http://localhost:5000/service?method=html_deceased_animals</a></div></blockquote>
 </div>
 <div class="section" id="html-report">

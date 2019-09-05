@@ -14,7 +14,7 @@ animals.csv, people.csv, placements.csv, medical.csv
 Complete rewrite for new library and customer, 18th July 2017
 """
 
-PATH = "data/trackabeast_ec1882"
+PATH = "/home/robin/tmp/asm3_import_data/trackabeast_ec1882"
 
 def getspecies(s):
     """ Looks up the species, returns Cat if nothing matches """
@@ -176,6 +176,7 @@ for d in asm.csv_to_list("%s/placements.csv" % PATH):
             m.OwnerID = o.ID
             m.AnimalID = a.ID
             m.MovementDate = getdate(d["Placement Date"])
+            if m.MovementDate is None: m.MovementDate = a.DateBroughtIn
             if d["Placement Status"].strip() == "Adopted":
                 m.MovementType = 1
                 a.Archived = 1

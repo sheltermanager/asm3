@@ -28,7 +28,7 @@ change the View to Export and then hit Export as CSV.
 
 """
 
-PATH = "data/rg_st1945"
+PATH = "/home/robin/tmp/asm3_import_data/rg_st1945"
 
 DEFAULT_BREED = 261 # default to dsh
 PETFINDER_ID = "" # Shouldn't be needed if Picture 1 is present

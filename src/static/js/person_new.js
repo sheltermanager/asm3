@@ -56,6 +56,10 @@ $(function() {
                 '<td><label for="postcode">' + _("Zipcode") + '</label></td>',
                 '<td><input class="asm-textbox newform" id="postcode" data="postcode" type="textbox" /></td>',
                 '</tr>',
+                '<tr id="countryrow">',
+                '<td><label for="country">' + _("Country") + '</label></td>',
+                '<td><input class="asm-textbox newform" id="country" data="country" type="textbox" /></td>',
+                '</tr>',
                 '<tr>',
                 '<td><label for="hometelephone">' + _("Home Phone") + '</label></td>',
                 '<td><input class="asm-textbox newform" id="hometelephone" data="hometelephone" type="textbox" /></td>',
@@ -217,6 +221,8 @@ $(function() {
                 $(".towncounty").hide();
             }
 
+            $("#countryrow").toggle( !config.bool("HideCountry") );
+
             $("#gdprcontactoptinrow").toggle( config.bool("ShowGDPRContactOptIn") );
 
             if (config.bool("DisableAnimalControl")) {
@@ -266,6 +272,7 @@ $(function() {
 
         reset: function() {
             $(".newform").val("").change();
+            $("#country").val( config.str("OrganisationCountry") );
             $(".asm-checkbox").prop("checked", false).change();
             $(".asm-personchooser").personchooser("clear");
             $("#flags option").prop("selected", false);

@@ -109,7 +109,7 @@ ELSE '' END AS AgeGroup,
 1 AS Adopted
 FROM adoption m
 INNER JOIN animal a ON a.ID = m.AnimalID
-WHERE m.MovementDate >= '$@from$' AND m.MovementDate <= '$@to$'
+WHERE m.MovementDate >= '$@from$' AND m.MovementDate <= '$@to$' AND m.MovementType = 1
 AND NonShelterAnimal = 0
 AND SpeciesID IN (1, 2)
 ORDER BY AgeGroup

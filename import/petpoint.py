@@ -19,12 +19,12 @@ AnimalLocationHistory
 PETFINDER_ID = ""
 START_ID = 200
 
-INTAKE_FILENAME = "data/petpoint_zd1690/animals.csv"
+INTAKE_FILENAME = "/home/robin/tmp/asm3_import_data/petpoint_zd1690/animals.csv"
 MEMO_FILENAME = ""
-LOCATION_FILENAME = "data/petpoint_zd1690/locations.csv"
-PERSON_FILENAME = "data/petpoint_zd1690/people.csv"
-VACC_FILENAME = "data/petpoint_zd1690/vacc.csv"
-TEST_FILENAME = "data/petpoint_zd1690/tests.csv"
+LOCATION_FILENAME = "/home/robin/tmp/asm3_import_data/petpoint_zd1690/locations.csv"
+PERSON_FILENAME = "/home/robin/tmp/asm3_import_data/petpoint_zd1690/people.csv"
+VACC_FILENAME = "/home/robin/tmp/asm3_import_data/petpoint_zd1690/vacc.csv"
+TEST_FILENAME = "/home/robin/tmp/asm3_import_data/petpoint_zd1690/tests.csv"
 
 # Whether or not the vaccine and test files are in two row stacked format
 MEDICAL_TWO_ROW_FORMAT = True

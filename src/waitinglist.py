@@ -365,6 +365,7 @@ def create_animal(dbo, username, wlid):
         "broughtinby":          str(a["OWNERID"]),
         "originalowner":        str(a["OWNERID"]),
         "animaltype":           configuration.default_type(dbo),
+        "entryreason":          configuration.default_entry_reason(dbo),
         "breed1":               configuration.default_breed(dbo),
         "breed2":               configuration.default_breed(dbo),
         "basecolour":           configuration.default_colour(dbo),

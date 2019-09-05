@@ -3,6 +3,7 @@
 import al
 import animal
 import animalcontrol
+import base64
 import configuration
 import geo
 import i18n
@@ -37,6 +38,7 @@ FIELDTYPE_SIGNATURE = 13
 FIELDTYPE_LOOKUP_MULTI = 14
 FIELDTYPE_GDPR_CONTACT_OPTIN = 15
 FIELDTYPE_TIME = 16
+FIELDTYPE_IMAGE = 17
 
 # Types as used in JSON representations
 FIELDTYPE_MAP = {
@@ -56,7 +58,8 @@ FIELDTYPE_MAP = {
     "SIGNATURE": 13,
     "LOOKUP_MULTI": 14,
     "GDPR_CONTACT_OPTIN": 15,
-    "TIME": 16
+    "TIME": 16,
+    "IMAGE": 17
 }
 
 FIELDTYPE_MAP_REVERSE = {v: k for k, v in FIELDTYPE_MAP.items()}
@@ -74,9 +77,9 @@ FORM_FIELDS = [
     "description", "reason", "size", "species", "breed", "agegroup", "color", "colour", 
     "arealost", "areafound", "areapostcode", "areazipcode",
     "animalname", "reserveanimalname",
-    "callnotes", "dispatchaddress", "dispatchcity", "dispatchstate", "dispatchzipcode",
-    "transporttype", "pickupaddress", "pickuptown", "pickupcity", "pickupcounty", "pickupstate", "pickuppostcode", "pickupzipcode", "pickupdate", "pickuptime",
-    "dropoffaddress", "dropofftown", "dropoffcity", "dropoffcounty", "dropoffstate", "dropoffpostcode", "dropoffzipcode", "dropoffdate", "dropofftime"
+    "callnotes", "dispatchaddress", "dispatchcity", "dispatchstate", "dispatchzipcode", "transporttype", 
+    "pickupaddress", "pickuptown", "pickupcity", "pickupcounty", "pickupstate", "pickuppostcode", "pickupzipcode", "pickupcountry", "pickupdate", "pickuptime",
+    "dropoffaddress", "dropofftown", "dropoffcity", "dropoffcounty", "dropoffstate", "dropoffpostcode", "dropoffzipcode", "dropoffcountry", "dropoffdate", "dropofftime"
 ]
 
 class FormHTMLParser(HTMLParser):
@@ -247,6 +250,9 @@ def get_onlineform_html(dbo, formid, completedocument = True):
             h.append('<input type="hidden" name="%s" value="" />' % html.escape(fname))
             h.append('<div class="asm-onlineform-signature" style="width: 500px; height: 200px" data-name="%s"></div>' % ( html.escape(fname) ))
             h.append('<br/><button type="button" class="asm-onlineform-signature-clear" data-clear="%s">%s</button>' % ( html.escape(fname), i18n._("Clear", l) ))
+        elif f.FIELDTYPE == FIELDTYPE_IMAGE:
+            h.append('<input type="hidden" name="%s" value="" />' % html.escape(fname))
+            h.append('<input class="asm-onlineform-image" type="file" data-name="%s" />' % html.escape(fname))
         h.append('</td>')
         h.append('</tr>')
     h.append('</table>')
@@ -615,6 +621,7 @@ def insert_onlineformincoming_from_form(dbo, post, remoteip):
     lastname = ""
     animalnamelabel = ""
     animalname = ""
+    images = []
     post.data["formreceived"] = "%s %s" % (i18n.python2display(dbo.locale, posteddate), i18n.format_time(posteddate))
 
     for k, v in post.data.iteritems():
@@ -663,6 +670,11 @@ def insert_onlineformincoming_from_form(dbo, post, remoteip):
                             dbo.update("onlineformincoming", "CollationID=%s" % collationid, {
                                 "Flags":    flags
                             })
+                        # We decode images and put them into an images list so that they can
+                        # be included as attachments with confirmation emails.
+                        if fieldtype == FIELDTYPE_IMAGE and v.startswith("data:image/jpeg"):
+                            # Remove prefix of data:image/jpeg;base64, and decode
+                            images.append( ("%s.jpg" % fieldname, "image/jpeg", base64.b64decode(v[v.find(",")+1:])) )
 
             # Do the insert
             dbo.insert("onlineformincoming", {
@@ -694,7 +706,7 @@ def insert_onlineformincoming_from_form(dbo, post, remoteip):
 
     for fld in get_onlineformincoming_detail(dbo, collationid):
         if fieldssofar < 3:
-            # Don't include raw markup or signature fields in the preview
+            # Don't include raw markup or signature/image fields in the preview
             if fld.VALUE.startswith("RAW::") or fld.VALUE.startswith("data:"): continue
             fieldssofar += 1
             preview.append( "%s: %s" % (fld.LABEL, fld.VALUE ))
@@ -709,13 +721,17 @@ def insert_onlineformincoming_from_form(dbo, post, remoteip):
         "INNER JOIN onlineformincoming oi ON oi.FormName = o.Name " \
         "WHERE oi.CollationID = ?", [collationid])
 
+    # The submitted form for including in emails
+    formdata = get_onlineformincoming_html_print(dbo, [collationid,])
+
     if submitteremail != "" and submitteremail.find("@") != -1 and emailsubmitter == 1:
         # Get the confirmation message. Prepend it to a copy of the submission
         body = dbo.query_string("SELECT o.EmailMessage FROM onlineform o " \
             "INNER JOIN onlineformincoming oi ON oi.FormName = o.Name " \
             "WHERE oi.CollationID = ?", [collationid])
-        body += "\n" + get_onlineformincoming_html_print(dbo, [collationid,])
-        utils.send_email(dbo, configuration.email(dbo), submitteremail, "", "", i18n._("Submission received: {0}", l).format(formname), body, "html", exceptions=False)
+        body += "\n" + formdata
+        utils.send_email(dbo, configuration.email(dbo), submitteremail, "", "", i18n._("Submission received: {0}", l).format(formname), 
+            body, "html", images, exceptions=False)
 
     # Did the original form specify some email addresses to send 
     # incoming submissions to?
@@ -727,7 +743,7 @@ def insert_onlineformincoming_from_form(dbo, post, remoteip):
         replyto = submitteremail 
         if replyto == "": replyto = configuration.email(dbo)
         utils.send_email(dbo, replyto, email, "", "", "%s - %s" % (formname, ", ".join(preview)), 
-            get_onlineformincoming_html_print(dbo, [collationid,]), "html", exceptions=False)
+            formdata, "html", images, exceptions=False)
 
     # Did the form submission have a value in an "emailsubmissionto" field?
     if emailsubmissionto is not None and emailsubmissionto.strip() != "":
@@ -735,7 +751,7 @@ def insert_onlineformincoming_from_form(dbo, post, remoteip):
         replyto = submitteremail 
         if replyto == "": replyto = configuration.email(dbo)
         utils.send_email(dbo, replyto, emailsubmissionto, "", "", "%s - %s" % (formname, ", ".join(preview)), 
-            get_onlineformincoming_html_print(dbo, [collationid,]), "html", exceptions=False)
+            formdata, "html", images, exceptions=False)
 
     return collationid
 
@@ -794,6 +810,24 @@ def guess_transporttype(dbo, s):
     if guess != 0: return guess
     return dbo.query_int("SELECT ID FROM transporttype ORDER BY ID")
 
+def attach_form(dbo, username, linktype, linkid, collationid):
+    """
+    Attaches the incoming form to the media tab. Finds any images in the form
+    and attaches those as images in the media tab of linktype/linkid.
+    """
+    formname = get_onlineformincoming_name(dbo, collationid)
+    formhtml = get_onlineformincoming_html_print(dbo, [collationid,])
+    media.create_document_media(dbo, username, linktype, linkid, formname, formhtml )
+    fields = get_onlineformincoming_detail(dbo, collationid)
+    for f in fields:
+        if f.VALUE.startswith("data:image/jpeg"):
+            d = {
+                "filename":     "image.jpg",
+                "filetype":     "image/jpeg",
+                "filedata":     f.VALUE,
+            }
+            media.attach_file_from_form(dbo, username, linktype, linkid, utils.PostedData(d, dbo.locale))
+
 def attach_animal(dbo, username, collationid):
     """
     Finds the existing shelter animal with "animalname" and
@@ -815,9 +849,7 @@ def attach_animal(dbo, username, collationid):
         raise utils.ASMValidationError(i18n._("There is not enough information in the form to attach to a shelter animal record (need an animal name).", l))
     if animalid == 0:
         raise utils.ASMValidationError(i18n._("Could not find animal with name '{0}'", l).format(animalname))
-    formname = get_onlineformincoming_name(dbo, collationid)
-    formhtml = get_onlineformincoming_html_print(dbo, [collationid,])
-    media.create_document_media(dbo, username, media.ANIMAL, animalid, formname, formhtml )
+    attach_form(dbo, username, media.ANIMAL, animalid, collationid)
     return (collationid, animalid, animal.get_animal_namecode(dbo, animalid))
 
 def create_person(dbo, username, collationid):
@@ -886,10 +918,7 @@ def create_person(dbo, username, collationid):
             latlon = geo.get_lat_long(dbo, d["address"], d["town"], d["county"], d["postcode"])
             if latlon is not None: person.update_latlong(dbo, personid, latlon)
     personname = person.get_person_name_code(dbo, personid)
-    # Attach the form to the person
-    formname = get_onlineformincoming_name(dbo, collationid)
-    formhtml = get_onlineformincoming_html_print(dbo, [collationid,])
-    media.create_document_media(dbo, username, media.PERSON, personid, formname, formhtml )
+    attach_form(dbo, username, media.PERSON, personid, collationid)
     # Was there a reserveanimalname field? If so, create reservation(s) to the person if possible
     for k, v in d.iteritems():
         if k.startswith("reserveanimalname"):
@@ -928,10 +957,7 @@ def create_animalcontrol(dbo, username, collationid):
     d["caller"] = personid
     # Create the incident 
     incidentid = animalcontrol.insert_animalcontrol_from_form(dbo, utils.PostedData(d, dbo.locale), username)
-    # Attach the form to the incident
-    formname = get_onlineformincoming_name(dbo, collationid)
-    formhtml = get_onlineformincoming_html_print(dbo, [collationid,])
-    media.create_document_media(dbo, username, media.ANIMALCONTROL, incidentid, formname, formhtml )
+    attach_form(dbo, username, media.ANIMALCONTROL, incidentid, collationid)
     return (collationid, incidentid, utils.padleft(incidentid, 6) + " - " + personname)
 
 def create_lostanimal(dbo, username, collationid):
@@ -968,10 +994,7 @@ def create_lostanimal(dbo, username, collationid):
     d["owner"] = personid
     # Create the lost animal
     lostanimalid = lostfound.insert_lostanimal_from_form(dbo, utils.PostedData(d, dbo.locale), username)
-    # Attach the form to the lost animal
-    formname = get_onlineformincoming_name(dbo, collationid)
-    formhtml = get_onlineformincoming_html_print(dbo, [collationid,])
-    media.create_document_media(dbo, username, media.LOSTANIMAL, lostanimalid, formname, formhtml )
+    attach_form(dbo, username, media.LOSTANIMAL, lostanimalid, collationid)
     return (collationid, lostanimalid, utils.padleft(lostanimalid, 6) + " - " + personname)
   
 def create_foundanimal(dbo, username, collationid):
@@ -1008,10 +1031,7 @@ def create_foundanimal(dbo, username, collationid):
     d["owner"] = personid
     # Create the found animal
     foundanimalid = lostfound.insert_foundanimal_from_form(dbo, utils.PostedData(d, dbo.locale), username)
-    # Attach the form to the found animal
-    formname = get_onlineformincoming_name(dbo, collationid)
-    formhtml = get_onlineformincoming_html_print(dbo, [collationid,])
-    media.create_document_media(dbo, username, media.FOUNDANIMAL, foundanimalid, formname, formhtml )
+    attach_form(dbo, username, media.FOUNDANIMAL, foundanimalid, collationid)
     return (collationid, foundanimalid, utils.padleft(foundanimalid, 6) + " - " + personname)
 
 def create_transport(dbo, username, collationid):
@@ -1037,6 +1057,7 @@ def create_transport(dbo, username, collationid):
         if f.FIELDNAME == "pickupstate": d["pickupcounty"] = f.VALUE
         if f.FIELDNAME == "pickuppostcode": d["pickuppostcode"] = f.VALUE
         if f.FIELDNAME == "pickupzipcode": d["pickuppostcode"] = f.VALUE
+        if f.FIELDNAME == "pickupcountry": d["pickupcountry"] = f.VALUE
         if f.FIELDNAME == "pickupdate": d["pickupdate"] = f.VALUE
         if f.FIELDNAME == "pickuptime": d["pickuptime"] = f.VALUE
         if f.FIELDNAME == "dropoffaddress": d["dropoffaddress"] = f.VALUE
@@ -1046,6 +1067,7 @@ def create_transport(dbo, username, collationid):
         if f.FIELDNAME == "dropoffstate": d["dropoffcounty"] = f.VALUE
         if f.FIELDNAME == "dropoffpostcode": d["dropoffpostcode"] = f.VALUE
         if f.FIELDNAME == "dropoffzipcode": d["dropoffpostcode"] = f.VALUE
+        if f.FIELDNAME == "dropoffcountry": d["dropoffcountry"] = f.VALUE
         if f.FIELDNAME == "dropoffdate": d["dropoffdate"] = f.VALUE
         if f.FIELDNAME == "dropofftime": d["dropofftime"] = f.VALUE
         if f.FIELDNAME == "transporttype": d["type"] = guess_transporttype(dbo, f.VALUE)
@@ -1060,10 +1082,7 @@ def create_transport(dbo, username, collationid):
         raise utils.ASMValidationError(i18n._("Could not find animal with name '{0}'", l).format(animalname))
     # Create the transport
     movement.insert_transport_from_form(dbo, username, utils.PostedData(d, dbo.locale))
-    # Attach the form to the animal
-    formname = get_onlineformincoming_name(dbo, collationid)
-    formhtml = get_onlineformincoming_html_print(dbo, [collationid,])
-    media.create_document_media(dbo, username, media.ANIMAL, animalid, formname, formhtml )
+    attach_form(dbo, username, media.ANIMAL, animalid, collationid)
     return (collationid, animalid, animal.get_animal_namecode(dbo, animalid))
 
 def create_waitinglist(dbo, username, collationid):
@@ -1091,10 +1110,7 @@ def create_waitinglist(dbo, username, collationid):
     d["owner"] = personid
     # Create the waiting list
     wlid = waitinglist.insert_waitinglist_from_form(dbo, utils.PostedData(d, dbo.locale), username)
-    # Attach the form to the waiting list
-    formname = get_onlineformincoming_name(dbo, collationid)
-    formhtml = get_onlineformincoming_html_print(dbo, [collationid,])
-    media.create_document_media(dbo, username, media.WAITINGLIST, wlid, formname, formhtml )
+    attach_form(dbo, username, media.WAITINGLIST, wlid, collationid)
     return (collationid, wlid, utils.padleft(wlid, 6) + " - " + personname)
 
 def auto_remove_old_incoming_forms(dbo):

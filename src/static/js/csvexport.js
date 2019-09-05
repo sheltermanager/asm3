@@ -9,7 +9,7 @@ $(function() {
             return [
                 html.content_header(_("Export Animals as CSV")),
                 '<div class="centered" style="max-width: 900px; margin-left: auto; margin-right: auto">',
-                '<form id="csvform" action="csvexport" method="post">',
+                '<form id="csvform" action="csvexport_animals" method="get">',
                 html.info(_("Export a CSV file of animal records that ASM can import into another database.") + '<br/>' +
                     _("Please see the manual for more information.")),
                 '<table>',

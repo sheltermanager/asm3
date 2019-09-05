@@ -24,7 +24,7 @@ VERSIONS = (
     34002, 34003, 34004, 34005, 34006, 34007, 34008, 34009, 34010, 34011, 34012,
     34013, 34014, 34015, 34016, 34017, 34018, 34019, 34020, 34021, 34022, 34100,
     34101, 34102, 34103, 34104, 34105, 34106, 34107, 34108, 34109, 34110, 34111,
-    34112, 34200
+    34112, 34200, 34201, 34202, 34203, 34204
 )
 
 LATEST_VERSION = VERSIONS[-1]
@@ -655,6 +655,7 @@ def sql_structure(dbo):
 
     sql += table("animaltransport", (
         fid(),
+        fstr("TransportReference", True),
         fint("AnimalID"),
         fint("TransportTypeID"),
         fint("DriverOwnerID"),
@@ -663,18 +664,21 @@ def sql_structure(dbo):
         fstr("PickupTown", True),
         fstr("PickupCounty", True),
         fstr("PickupPostcode", True),
+        fstr("PickupCountry", True),
         fdate("PickupDateTime"),
         fint("DropoffOwnerID"),
         fstr("DropoffAddress", True),
         fstr("DropoffTown", True),
         fstr("DropoffCounty", True),
         fstr("DropoffPostcode", True),
+        fstr("DropoffCountry", True),
         fdate("DropoffDateTime"),
         fint("Status"),
         fint("Miles", True),
         fint("Cost"),
         fdate("CostPaidDate", True),
         flongstr("Comments") ))
+    sql += index("animaltransport_TransportReference", "animaltransport", "TransportReference")
     sql += index("animaltransport_AnimalID", "animaltransport", "AnimalID")
     sql += index("animaltransport_DriverOwnerID", "animaltransport", "DriverOwnerID")
     sql += index("animaltransport_PickupOwnerID", "animaltransport", "PickupOwnerID")
@@ -901,6 +905,7 @@ def sql_structure(dbo):
         fstr("DonationName"),
         fstr("DonationDescription", True),
         fint("DefaultCost", True),
+        fint("IsVAT", True),
         fint("IsRetired", True) ), False)
 
     sql += table("donationpayment", (
@@ -1139,6 +1144,7 @@ def sql_structure(dbo):
         fstr("OwnerTown", True),
         fstr("OwnerCounty", True),
         fstr("OwnerPostcode", True),
+        fstr("OwnerCountry", True),
         fstr("LatLong", True),
         fstr("HomeTelephone", True),
         fstr("WorkTelephone", True),
@@ -1204,6 +1210,7 @@ def sql_structure(dbo):
     sql += index("owner_JurisdictionID", "owner", "JurisdictionID")
     sql += index("owner_OwnerInitials", "owner", "OwnerInitials")
     sql += index("owner_OwnerPostcode", "owner", "OwnerPostcode")
+    sql += index("owner_OwnerCountry", "owner", "OwnerCountry")
     sql += index("owner_OwnerSurname", "owner", "OwnerSurname")
     sql += index("owner_OwnerTitle", "owner", "OwnerTitle")
     sql += index("owner_OwnerTown", "owner", "OwnerTown")
@@ -1247,6 +1254,7 @@ def sql_structure(dbo):
         fint("Quantity", True),
         fint("UnitPrice", True),
         fint("IsGiftAid"),
+        fint("Fee", True), 
         fint("IsVAT", True),
         ffloat("VATRate", True),
         fint("VATAmount", True),
@@ -2474,6 +2482,7 @@ def install_default_templates(dbo, removeFirst = False):
     add_document_template_from_file("receipt_tax.html", "/templates", path + "media/templates/receipt_tax.html")
     add_document_template_from_file("reclaim_release.html", "/templates", path + "media/templates/reclaim_release.html")
     add_document_template_from_file("reserved.html", "/templates", path + "media/templates/reserved.html")
+    add_document_template_from_file("spay_neuter_voucher.html", "/templates", path + "media/templates/spay_neuter_voucher.html")
     add_document_template_from_file("rspca_adoption.html", "/templates/rspca", path + "media/templates/rspca/rspca_adoption.html")
     add_document_template_from_file("rspca_behaviour_observations_cat.html", "/templates/rspca", path + "media/templates/rspca/rspca_behaviour_observations_cat.html")
     add_document_template_from_file("rspca_behaviour_observations_dog.html", "/templates/rspca", path + "media/templates/rspca/rspca_behaviour_observations_dog.html")
@@ -2584,7 +2593,7 @@ def dump_smcom(dbo):
     Dumps the database in a convenient format for import to sheltermanager.com
     generator function.
     """
-    for x in dump(dbo, includeDBFS = False, includeConfig = False, includeUsers = False, includeLKS = False, deleteDBV = True, deleteViewSeq = True, wrapTransaction = True):
+    for x in dump(dbo, includeDBFS = False, includeConfig = False, includeUsers = True, includeLKS = False, deleteDBV = True, deleteViewSeq = True, wrapTransaction = True):
         yield x
 
 def dump_merge(dbo, deleteViewSeq = True):
@@ -2665,15 +2674,12 @@ def diagnostic(dbo):
             "(SELECT COUNT(*) FROM media WHERE LinkID = animal.ID AND LinkTypeID = 0) AS TotalMedia, " \
             "(SELECT COUNT(*) FROM media WHERE LinkID = animal.ID AND LinkTypeID = 0 AND WebsitePhoto = 1) AS TotalWeb, " \
             "(SELECT COUNT(*) FROM media WHERE LinkID = animal.ID AND LinkTypeID = 0 AND DocPhoto = 1) AS TotalDoc, " \
-            "(SELECT ID FROM media WHERE LinkID = animal.ID AND LinkTypeID = 0 AND MediaName LIKE '%.jpg' %s) AS FirstImage " \
-            "FROM animal" % dbo.sql_limit(1)):
+            "(SELECT MAX(ID) FROM media WHERE LinkID = animal.ID AND LinkTypeID = 0 AND ExcludeFromPublish = 0 AND MediaName LIKE '%.jpg') AS LatestImage " \
+            "FROM animal"):
             if a["TOTALMEDIA"] > 0 and a["TOTALWEB"] > 1:
-                # Too many web preferreds
-                dbo.execute("UPDATE media SET WebsitePhoto = 0 WHERE LinkID = %d AND LinkTypeID = 0 AND ID <> %d" % (a["ID"], a["FIRSTIMAGE"]))
-                duplicatepic += 1
-            if a["TOTALMEDIA"] > 0 and a["TOTALDOC"] > 1:
-                # Too many doc preferreds
-                dbo.execute("UPDATE media SET DocPhoto = 0 WHERE LinkID = %d AND LinkTypeID = 0 AND ID <> %d" % (a["ID"], a["FIRSTIMAGE"]))
+                # Too many preferred images
+                dbo.execute("UPDATE media SET DocPhoto=0, WebsitePhoto=0 WHERE LinkID = ? AND LinkTypeID = 0 AND ID <> ?", (a.ID, a.LATESTIMAGE))
+                dbo.execute("UPDATE media SET DocPhoto=1, WebsitePhoto=1 WHERE ID = ?", [a.LATESTIMAGE])
                 duplicatepic += 1
         return duplicatepic
 
@@ -2689,6 +2695,23 @@ def diagnostic(dbo):
         "orphaned waiting list animals": orphan("animalwaitinglist", "owner", "animalwaitinglist.OwnerID", "owner.ID"),
         "duplicate preferred images": mediapref()
     }
+
+def fix_preferred_photos(dbo):
+    """
+    Resets the web and doc preferred flags on all photos to the latest one for animal/people records.
+    This is useful in situations where users have borked them by running queries in the past.
+    This should only be used as a last resort as all previous preferred photo info will be deleted.
+    """
+    dbo.execute("UPDATE media SET WebsitePhoto=0, DocPhoto=0")
+    # Animals
+    ra = dbo.execute("UPDATE media INNER JOIN " \
+        "(SELECT MAX(ID) AS NewPref, LinkID FROM media WHERE MediaName LIKE '%.jpg' AND LinkTypeID = 0 GROUP BY LinkID) z " \
+        "ON z.NewPref=media.ID SET WebsitePhoto=1, DocPhoto=1")
+    # People
+    ra += dbo.execute("UPDATE media INNER JOIN " \
+        "(SELECT MAX(ID) AS NewPref, LinkID FROM media WHERE MediaName LIKE '%.jpg' AND LinkTypeID = 3 GROUP BY LinkID) z " \
+        "ON z.NewPref=media.ID SET WebsitePhoto=1, DocPhoto=1")
+    return ra
 
 def check_for_updates(dbo):
     """
@@ -2821,6 +2844,7 @@ def update_3000(dbo):
     dbfs.put_file(dbo, "receipt.html", "/templates", path + "media/templates/receipt.html")
     dbfs.put_file(dbo, "receipt_tax.html", "/templates", path + "media/templates/receipt_tax.html")
     dbfs.put_file(dbo, "reserved.html", "/templates", path + "media/templates/reserved.html")
+    dbfs.put_file(dbo, "spay_neuter_voucher.html", "/templates", path + "media/templates/spay_neuter_voucher.html")
     dbfs.create_path(dbo, "/templates", "rspca")
     dbfs.put_file(dbo, "rspca_adoption.html", "/templates/rspca", path + "media/templates/rspca/rspca_adoption.html")
     dbfs.put_file(dbo, "rspca_behaviour_observations_cat.html", "/templates/rspca", path + "media/templates/rspca/rspca_behaviour_observations_cat.html")
@@ -3389,7 +3413,7 @@ def update_3308(dbo):
     dbo.execute_dbupdate("INSERT INTO testtype (ID, TestName, DefaultCost) VALUES (3, '" + _("Heartworm", l) + "', 0)")
 
 def update_3309(dbo):
-    fiv = dbo.query("SELECT ID, CombiTestDate, CombiTestResult FROM animal WHERE CombiTested = 1")
+    fiv = dbo.query("SELECT ID, CombiTestDate, CombiTestResult FROM animal WHERE CombiTested = 1 AND CombiTestDate Is Not Null")
     al.debug("found %d fiv results to convert" % len(fiv), "update_3309", dbo)
     for f in fiv:
         try:
@@ -3405,7 +3429,7 @@ def update_3309(dbo):
             }, user="dbupdate", generateID=False, writeAudit=False)
         except Exception as err:
             al.error("fiv: " + str(err), "dbupdate.update_3309", dbo)
-    flv = dbo.query("SELECT ID, CombiTestDate, FLVResult FROM animal WHERE CombiTested = 1")
+    flv = dbo.query("SELECT ID, CombiTestDate, FLVResult FROM animal WHERE CombiTested = 1 AND CombiTestDate Is Not Null")
     al.debug("found %d flv results to convert" % len(flv), "update_3309", dbo)
     for f in flv:
         try:
@@ -3421,7 +3445,7 @@ def update_3309(dbo):
             }, user="dbupdate", generateID=False, writeAudit=False)
         except Exception as err:
             al.error("flv: " + str(err), "dbupdate.update_3309", dbo)
-    hw = dbo.query("SELECT ID, HeartwormTestDate, HeartwormTestResult FROM animal WHERE HeartwormTested = 1")
+    hw = dbo.query("SELECT ID, HeartwormTestDate, HeartwormTestResult FROM animal WHERE HeartwormTested = 1 AND HeartwormTestDate Is Not Null")
     al.debug("found %d heartworm results to convert" % len(hw), "update_3309", dbo)
     for f in hw:
         try:
@@ -5000,4 +5024,29 @@ def update_34200(dbo):
     # Add audittrail.ParentLinks
     add_column(dbo, "audittrail", "ParentLinks", dbo.type_shorttext)
     add_index(dbo, "audittrail_ParentLinks", "audittrail", "ParentLinks")
+
+def update_34201(dbo):
+    # Add owner.OwnerCountry, animaltransport.PickupCountry, animaltransport.DropoffCountry
+    add_column(dbo, "owner", "OwnerCountry", dbo.type_shorttext)
+    add_index(dbo, "owner_OwnerCountry", "owner", "OwnerCountry")
+    add_column(dbo, "animaltransport", "PickupCountry", dbo.type_shorttext)
+    add_column(dbo, "animaltransport", "DropoffCountry", dbo.type_shorttext)
+    dbo.execute_dbupdate("UPDATE owner SET OwnerCountry=''")
+    dbo.execute_dbupdate("UPDATE animaltransport SET PickupCountry='', DropoffCountry=''")
+
+def update_34202(dbo):
+    # Add animaltransport.TransportReference
+    add_column(dbo, "animaltransport", "TransportReference", dbo.type_shorttext)
+    add_index(dbo, "animaltransport_TransportReference", "animaltransport", "TransportReference")
+    dbo.execute_dbupdate("UPDATE animaltransport SET TransportReference=''")
+
+def update_34203(dbo):
+    # Add donationtype.IsVAT
+    add_column(dbo, "donationtype", "IsVAT", dbo.type_integer)
+    dbo.execute_dbupdate("UPDATE donationtype SET IsVAT = 0")
+
+def update_34204(dbo):
+    # Add ownerdonation.Fee
+    add_column(dbo, "ownerdonation", "Fee", dbo.type_integer)
+    dbo.execute_dbupdate("UPDATE ownerdonation SET Fee = 0")
 

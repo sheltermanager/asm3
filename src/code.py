@@ -37,6 +37,7 @@ import onlineform as extonlineform
 import person as extperson
 import publish as extpublish
 import publishers.base
+import publishers.html
 import publishers.vetenvoy
 import reports as extreports
 import search as extsearch
@@ -656,7 +657,7 @@ class media(ASMEndpoint):
             content = dbfs.get_string(dbo, m["MEDIANAME"])
             if m["MEDIANAME"].endswith("html"):
                 content = utils.fix_relative_document_uris(content, BASE_URL, MULTIPLE_DATABASES and dbo.database or "")
-            utils.send_email(dbo, post["from"], emailadd, post["cc"], post["bcc"], m["MEDIANOTES"], post["body"], "html", content, m["MEDIANAME"])
+            utils.send_email(dbo, post["from"], emailadd, post["cc"], post["bcc"], m["MEDIANOTES"], post["body"], "html", [ (m["MEDIANAME"], "text/html", content) ])
             if post.boolean("addtolog"):
                 extlog.add_log(dbo, o.user, extmedia.get_log_from_media_type(m["LINKTYPEID"]), m["LINKID"], post.integer("logtype"), "[%s] %s :: %s" % (emailadd, m["MEDIANOTES"], utils.html_email_to_plain(post["body"])))
         return emailadd
@@ -676,7 +677,7 @@ class media(ASMEndpoint):
             if not m["MEDIANAME"].endswith("html"): continue
             content = dbfs.get_string(dbo, m["MEDIANAME"])
             contentpdf = utils.html_to_pdf(content, BASE_URL, MULTIPLE_DATABASES and dbo.database or "")
-            utils.send_email(dbo, post["from"], emailadd, post["cc"], post["bcc"], m["MEDIANOTES"], post["body"], "html", contentpdf, "document.pdf")
+            utils.send_email(dbo, post["from"], emailadd, post["cc"], post["bcc"], m["MEDIANOTES"], post["body"], "html", [ ("document.pdf", "application/pdf", contentpdf ) ])
             if post.boolean("addtolog"):
                 extlog.add_log(dbo, o.user, extmedia.get_log_from_media_type(m["LINKTYPEID"]), m["LINKID"], post.integer("logtype"), "[%s] %s :: %s" % (emailadd, m["MEDIANOTES"], utils.html_email_to_plain(post["body"])))
         return emailadd
@@ -1053,7 +1054,7 @@ class accounts(JSONEndpoint):
         if o.post["offset"] == "all":
             accounts = financial.get_accounts(dbo)
         else:
-            accounts = financial.get_accounts(dbo, True)
+            accounts = financial.get_accounts(dbo, onlyactive=True)
         al.debug("got %d accounts" % len(accounts), "code.accounts", dbo)
         return {
             "accounttypes": extlookups.get_account_types(dbo),
@@ -1404,7 +1405,7 @@ class animal_donations(JSONEndpoint):
             "tabcounts": extanimal.get_satellite_counts(dbo, animalid)[0],
             "name": "animal_donations",
             "donationtypes": extlookups.get_donation_types(dbo),
-            "accounts": financial.get_accounts(dbo),
+            "accounts": financial.get_accounts(dbo, onlybank=True),
             "paymenttypes": extlookups.get_payment_types(dbo),
             "frequencies": extlookups.get_donation_frequencies(dbo),
             "templates": template.get_document_templates(dbo)
@@ -2091,10 +2092,15 @@ class csvexport(JSONEndpoint):
     url = "csvexport"
     get_permissions = users.USE_SQL_INTERFACE
 
-    def post_all(self, o):
+class csvexport_animals(GeneratorEndpoint):
+    url = "csvexport_animals"
+    get_permissions = users.USE_SQL_INTERFACE
+
+    def content(self, o):
         self.content_type("text/csv")
         self.header("Content-Disposition", u"attachment; filename=export.csv")
-        return extcsvimport.csvexport_animals(o.dbo, o.post["filter"], o.post["animals"], o.post.boolean("includeimage") == 1)
+        if LARGE_FILES_CHUNKED: self.header("Transfer-Encoding", "chunked")
+        for x in extcsvimport.csvexport_animals(o.dbo, o.post["filter"], o.post["animals"], o.post.boolean("includeimage") == 1): yield x
 
 class csvimport(JSONEndpoint):
     url = "csvimport"
@@ -2106,7 +2112,7 @@ class csvimport(JSONEndpoint):
 
     def post_all(self, o):
         l = o.locale
-        asynctask.function_task(o.dbo, _("Import a CSV file", l), extcsvimport.csvimport, o.dbo, o.post.filedata(), o.post["encoding"], 
+        asynctask.function_task(o.dbo, _("Import a CSV file", l), extcsvimport.csvimport, o.dbo, o.post.filedata(), o.post["encoding"], o.user, 
             o.post.boolean("createmissinglookups") == 1, o.post.boolean("cleartables") == 1, o.post.boolean("checkduplicates") == 1)
         self.redirect("task")
 
@@ -2125,7 +2131,7 @@ class csvimport_paypal(JSONEndpoint):
     def post_all(self, o):
         l = o.locale
         asynctask.function_task(o.dbo, _("Import a PayPal CSV file", l), extcsvimport.csvimport_paypal, o.dbo, \
-            o.post.filedata(), o.post.integer("type"), o.post.integer("payment"), o.post["flags"])
+            o.post.filedata(), o.post.integer("type"), o.post.integer("payment"), o.post["flags"], o.user)
         self.redirect("task")
 
 class diary(ASMEndpoint):
@@ -2595,7 +2601,7 @@ class donation(JSONEndpoint):
         return {
             "name": "donation",
             "donationtypes": extlookups.get_donation_types(dbo),
-            "accounts": financial.get_accounts(dbo),
+            "accounts": financial.get_accounts(dbo, onlybank=True),
             "paymenttypes": extlookups.get_payment_types(dbo),
             "frequencies": extlookups.get_donation_frequencies(dbo),
             "templates": template.get_document_templates(dbo),
@@ -2638,7 +2644,7 @@ class donation_receive(JSONEndpoint):
         return {
             "donationtypes": extlookups.get_donation_types(dbo),
             "paymenttypes": extlookups.get_payment_types(dbo),
-            "accounts": financial.get_accounts(dbo)
+            "accounts": financial.get_accounts(dbo, onlybank=True)
         }
 
     def post_create(self, o):
@@ -2850,6 +2856,17 @@ class htmltemplates(JSONEndpoint):
     def post_delete(self, o):
         for name in o.post["names"].split(","):
             if name != "": template.delete_html_template(o.dbo, o.user, name)
+
+class htmltemplates_preview(ASMEndpoint):
+    url = "htmltemplates_preview"
+
+    def content(self, o):
+        template = o.post["template"].replace(",", "")
+        rows = extanimal.get_animals_ids(o.dbo, "DateBroughtIn", "SELECT ID FROM animal WHERE ID IN (%s)" % o.post["animals"], limit=10)
+        extadditional.append_to_results(o.dbo, rows, "animal")
+        self.content_type("text/html")
+        self.cache_control(0)
+        return publishers.html.animals_to_page(o.dbo, rows, template)
 
 class incident(JSONEndpoint):
     url = "incident"
@@ -3112,7 +3129,7 @@ class licence_renewal(JSONEndpoint):
             "donationtypes": extlookups.get_donation_types(dbo),
             "licencetypes": extlookups.get_licence_types(dbo),
             "paymenttypes": extlookups.get_payment_types(dbo),
-            "accounts": financial.get_accounts(dbo)
+            "accounts": financial.get_accounts(dbo, onlybank=True)
         }
 
     def post_all(self, o):
@@ -3198,6 +3215,7 @@ class lookups(JSONEndpoint):
         table = list(extlookups.LOOKUP_TABLES[tablename])
         table[0] = translate(table[0], l)
         table[2] = translate(table[2], l)
+        modifiers = table[4].split(" ")
         rows = extlookups.get_lookup(dbo, tablename, table[1])
         al.debug("edit lookups for %s, got %d rows" % (tablename, len(rows)), "code.lookups", dbo)
         return {
@@ -3211,16 +3229,17 @@ class lookups(JSONEndpoint):
             "namefield": table[1].upper(),
             "namelabel": table[2],
             "descfield": table[3].upper(),
-            "hasspecies": table[4] == 1,
-            "haspfspecies": table[5] == 1,
-            "haspfbreed": table[6] == 1,
-            "hasapcolour": table[7] == 1,
-            "hasdefaultcost": table[8] == 1,
-            "hasunits": table[9] == 1,
-            "hassite": table[10] == 1,
-            "canadd": table[11] == 1,
-            "candelete": table[12] == 1,
-            "canretire": table[13] == 1,
+            "hasspecies": "species" in modifiers,
+            "haspfspecies": "pubspec" in modifiers,
+            "haspfbreed": "pubbreed" in modifiers,
+            "hasapcolour": "pubcol" in modifiers,
+            "hasdefaultcost": "cost" in modifiers,
+            "hasunits": "units" in modifiers,
+            "hassite": "site" in modifiers,
+            "hasvat": "vat" in modifiers, 
+            "canadd": "add" in modifiers,
+            "candelete": "del" in modifiers,
+            "canretire": "ret" in modifiers,
             "species": extlookups.get_species(dbo),
             "tables": html.json_lookup_tables(l)
         }
@@ -3228,12 +3247,12 @@ class lookups(JSONEndpoint):
     def post_create(self, o):
         post = o.post
         return extlookups.insert_lookup(o.dbo, post["lookup"], post["lookupname"], post["lookupdesc"], \
-            post.integer("species"), post["pfbreed"], post["pfspecies"], post["apcolour"], post["units"], post.integer("site"), post.integer("defaultcost"), post.integer("retired"))
+            post.integer("species"), post["pfbreed"], post["pfspecies"], post["apcolour"], post["units"], post.integer("site"), post.integer("defaultcost"), post.integer("vat"), post.integer("retired"))
 
     def post_update(self, o):
         post = o.post
         extlookups.update_lookup(o.dbo, post.integer("id"), post["lookup"], post["lookupname"], post["lookupdesc"], \
-            post.integer("species"), post["pfbreed"], post["pfspecies"], post["apcolour"], post["units"], post.integer("site"), post.integer("defaultcost"), post.integer("retired"))
+            post.integer("species"), post["pfbreed"], post["pfspecies"], post["apcolour"], post["units"], post.integer("site"), post.integer("defaultcost"), post.integer("vat"), post.integer("retired"))
 
     def post_delete(self, o):
         for lid in o.post.integer_list("ids"):
@@ -3632,7 +3651,7 @@ class move_adopt(JSONEndpoint):
         dbo = o.dbo
         return {
             "donationtypes": extlookups.get_donation_types(dbo),
-            "accounts": financial.get_accounts(dbo),
+            "accounts": financial.get_accounts(dbo, onlybank=True),
             "paymenttypes": extlookups.get_payment_types(dbo)
         }
 
@@ -3767,6 +3786,24 @@ class move_book_retailer(JSONEndpoint):
             "templates": template.get_document_templates(dbo)
         }
 
+class move_book_soft_release(JSONEndpoint):
+    url = "move_book_soft_release"
+    js_module = "movements"
+    get_permissions = users.VIEW_MOVEMENT
+
+    def controller(self, o):
+        dbo = o.dbo
+        movements = extmovement.get_soft_releases(dbo)
+        al.debug("got %d movements" % len(movements), "code.move_book_soft_release", dbo)
+        return {
+            "name": "move_book_soft_release",
+            "rows": movements,
+            "movementtypes": extlookups.get_movement_types(dbo),
+            "reservationstatuses": extlookups.get_reservation_statuses(dbo),
+            "returncategories": extlookups.get_entryreasons(dbo),
+            "templates": template.get_document_templates(dbo)
+        }
+
 class move_book_trial_adoption(JSONEndpoint):
     url = "move_book_trial_adoption"
     js_module = "movements"
@@ -3845,7 +3882,7 @@ class move_reclaim(JSONEndpoint):
         dbo = o.dbo
         return {
             "donationtypes": extlookups.get_donation_types(dbo),
-            "accounts": financial.get_accounts(dbo),
+            "accounts": financial.get_accounts(dbo, onlybank=True),
             "paymenttypes": extlookups.get_payment_types(dbo)
         }
 
@@ -3876,7 +3913,7 @@ class move_reserve(JSONEndpoint):
         dbo = o.dbo
         return {
             "donationtypes": extlookups.get_donation_types(dbo),
-            "accounts": financial.get_accounts(dbo),
+            "accounts": financial.get_accounts(dbo, onlybank=True),
             "paymenttypes": extlookups.get_payment_types(dbo),
             "reservationstatuses": extlookups.get_reservation_statuses(dbo)
         }
@@ -3949,18 +3986,14 @@ class onlineform_incoming(JSONEndpoint):
         dbo = o.dbo
         collationid = o.post.integer("collationid")
         animalid = o.post.integer("animalid")
-        formname = extonlineform.get_onlineformincoming_name(dbo, collationid)
-        formhtml = extonlineform.get_onlineformincoming_html_print(dbo, [collationid,] )
-        extmedia.create_document_media(dbo, o.user, extmedia.ANIMAL, animalid, formname, formhtml )
+        extonlineform.attach_form(dbo, o.user, extmedia.ANIMAL, animalid, collationid)
         return animalid
 
     def post_attachperson(self, o):
         dbo = o.dbo
         collationid = o.post.integer("collationid")
         personid = o.post.integer("personid")
-        formname = extonlineform.get_onlineformincoming_name(dbo, collationid)
-        formhtml = extonlineform.get_onlineformincoming_html_print(dbo, [collationid,] )
-        extmedia.create_document_media(dbo, session.user, extmedia.PERSON, personid, formname, formhtml )
+        extonlineform.attach_form(dbo, o.user, extmedia.PERSON, personid, collationid)
         return personid 
 
     def post_animal(self, o):
@@ -4121,8 +4154,9 @@ class options(JSONEndpoint):
     def controller(self, o):
         dbo = o.dbo
         c = {
-            "accounts": financial.get_accounts(dbo),
+            "accounts": financial.get_accounts(dbo, onlybank=True),
             "animalfindcolumns": html.json_animalfindcolumns(dbo),
+            "animalflags": extlookups.get_animal_flags(dbo),
             "breeds": extlookups.get_breeds(dbo),
             "coattypes": extlookups.get_coattypes(dbo),
             "colours": extlookups.get_basecolours(dbo),
@@ -4299,7 +4333,7 @@ class person_donations(JSONEndpoint):
             "tabcounts": extperson.get_satellite_counts(dbo, p["ID"])[0],
             "name": "person_donations",
             "donationtypes": extlookups.get_donation_types(dbo),
-            "accounts": financial.get_accounts(dbo),
+            "accounts": financial.get_accounts(dbo, onlybank=True),
             "paymenttypes": extlookups.get_payment_types(dbo),
             "frequencies": extlookups.get_donation_frequencies(dbo),
             "templates": template.get_document_templates(dbo),

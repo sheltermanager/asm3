@@ -601,6 +601,7 @@ def menu_structure(l, publisherlist, reports, mailmerges):
             ( users.VIEW_MOVEMENT, "", "tagretailer", "move_book_retailer", "asm-icon-blank", _("Retailer book", l) ),
             ( users.VIEW_TRANSPORT, "", "tagtransport", "transport", "asm-icon-transport", _("Transport book", l) ),
             ( users.VIEW_MOVEMENT, "", "tagtrial", "move_book_trial_adoption", "asm-icon-trial", _("Trial adoption book", l) ),
+            ( users.VIEW_MOVEMENT, "", "tagsoftrelease", "move_book_soft_release", "asm-icon-blank", _("Soft release book", l) ),
             ( "", "", "", "--break", "", "" ),
             ( users.ADD_MOVEMENT, "", "", "--cat", "asm-icon-animal", _("In", l) ),
             ( users.ADD_ANIMAL, "", "alt+shift+n", "animal_new", "asm-icon-animal-add", _("Induct a new animal", l) ),
@@ -1458,6 +1459,14 @@ def report_criteria(dbo, crit, locationfilter = "", siteid = 0):
             <input class="asm-animalchooser" id="report-%s" data-post="%s" type="hidden" />
             </td>
             </tr>""" % ( _("Animal", l), name, name )
+        elif rtype == "ANIMALS":
+            s += """
+            <tr>
+            <td>%s</td>
+            <td>
+            <input class="asm-animalchoosermulti" id="report-%s" data-post="%s" type="hidden" />
+            </td>
+            </tr>""" % ( _("Animals", l), name, name )
         elif rtype == "ANIMALFLAG":
             s += """
             <tr>
@@ -1603,6 +1612,12 @@ def report_criteria_mobile(dbo, crit, locationfilter = "", siteid = 0):
             <select id="report-%s" data-post="%s">%s</select>
             </div>
             """ % (name, _("Animal", l), name, name, options_animals(dbo))
+        elif rtype == "ANIMALS":
+            s += """
+            <div data-role=\"fieldcontain\"><label for=\"%s\">%s</label>
+            <select multiple=\"multiple\" id="report-%s" data-post="%s">%s</select>
+            </div>
+            """ % (name, _("Animals", l), name, name, options_animals_on_shelter(dbo))
         elif rtype == "ANIMALFLAG":
             s += """
             <div data-role=\"fieldcontain\"><label for=\"%s\">%s</label>

@@ -56,6 +56,28 @@ def get_deceased_animals(dbo, daysdeceased=0, style="", speciesid=0, animaltypei
         "ORDER BY %s" % orderby, [ dbo.today(daysdeceased * -1)] )
     return animals_to_page(dbo, animals, style=style, speciesid=speciesid, animaltypeid=animaltypeid)
 
+def get_flagged_animals(dbo, style="", speciesid=0, animaltypeid=0, flag=""):
+    """ Returns a page of animals with a particular flag.
+    style: The HTML publishing template to use
+    speciesid: 0 for all species, or a specific one
+    animaltypeid: 0 for all animal types or a specific one
+    flag: The flag to show for
+    """
+    animals = dbo.query("%s WHERE a.Archived = 0 " \
+        "AND AdditionalFlags LIKE ? ORDER BY a.DateBroughtIn DESC" % animal.get_animal_query(dbo),
+        "%%%s|%%" % flag)
+    return animals_to_page(dbo, animals, style=style, speciesid=speciesid, animaltypeid=animaltypeid)
+
+def get_held_animals(dbo, style="", speciesid=0, animaltypeid=0):
+    """ Returns a page of currently held animals.
+    style: The HTML publishing template to use
+    speciesid: 0 for all species, or a specific one
+    animaltypeid: 0 for all animal types or a specific one
+    """
+    animals = dbo.query(animal.get_animal_query(dbo) + \
+        " WHERE a.IsHold = 1 AND a.Archived = 0 ORDER BY a.DateBroughtIn DESC")
+    return animals_to_page(dbo, animals, style=style, speciesid=speciesid, animaltypeid=animaltypeid)
+
 def animals_to_page(dbo, animals, style="", speciesid=0, animaltypeid=0, locationid=0):
     """ Returns a page of animals.
     animals: A resultset containing animal records

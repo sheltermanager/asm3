@@ -5,6 +5,11 @@ $(function() {
     var accounts = {
 
         model: function() {
+
+            // Add empty values to the cost and payment types so that they can be unlinked
+            controller.costtypes.unshift({ ID: 0, COSTTYPENAME: "" });
+            controller.donationtypes.unshift({ ID: 0, DONATIONNAME: "" });
+
             var dialog = {
                 add_title: _("Add account"),
                 edit_title: _("Edit account"),

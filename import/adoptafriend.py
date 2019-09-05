@@ -20,7 +20,7 @@ ShelAnml.mdb:
 26th January, 2015, rewritten with new kit 27th October, 2015
 """
 
-PATH = "data/aaf_rs1140/"
+PATH = "/home/robin/tmp/asm3_import_data/aaf_rs1140/"
 
 # For use with fields that just contain the sex
 def getincidenttype(ctype):

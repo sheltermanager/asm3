@@ -9,7 +9,7 @@ Import script for ARK DBF databases, covers people, animals, payments, licences 
 21st March, 2015
 """
 
-PATH = "data/ark_mc0834"
+PATH = "/home/robin/tmp/asm3_import_data/ark_mc0834"
 
 owners = []
 ownerdonations = []

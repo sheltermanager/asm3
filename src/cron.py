@@ -202,6 +202,14 @@ def maint_db_diagnostic(dbo):
         em = str(sys.exc_info()[0])
         al.error("FAIL: uncaught error running maint_db_diagnostic: %s" % em, "cron.maint_db_diagnostic", dbo, sys.exc_info())
 
+def maint_db_fix_preferred_photos(dbo):
+    try:
+        d = dbupdate.fix_preferred_photos(dbo)
+        print("Fixed %d" % d)
+    except:
+        em = str(sys.exc_info()[0])
+        al.error("FAIL: uncaught error running maint_db_fix_preferred_photos: %s" % em, "cron.maint_db_fix_preferred_photos", dbo, sys.exc_info())
+
 def maint_db_dump(dbo):
     try:
         for x in dbupdate.dump(dbo):
@@ -409,6 +417,8 @@ def run(dbo, mode):
         maint_animal_figures_annual(dbo)
     elif mode == "maint_db_diagnostic":
         maint_db_diagnostic(dbo)
+    elif mode == "maint_db_fix_preferred_photos":
+        maint_db_fix_preferred_photos(dbo)
     elif mode == "maint_db_dump":
         maint_db_dump(dbo)
     elif mode == "maint_db_dump_dbfs_base64":
@@ -499,6 +509,7 @@ def print_usage():
     print("       maint_animal_figures - calculate all monthly/annual figures for all time")
     print("       maint_animal_figures_annual - calculate all annual figures for all time")
     print("       maint_db_diagnostic - run database diagnostics")
+    print("       maint_db_fix_preferred_photos - fix/reset preferred flags for all photo media to latest")
     print("       maint_db_dump - produce a dump of INSERT statements to recreate the db")
     print("       maint_db_dump_dbfs_base64 - dump the dbfs table and include all content as base64")
     print("       maint_db_dump_merge - produce a dump of INSERT statements, renumbering IDs to +100000")

@@ -647,6 +647,8 @@ TransportState / TransportCounty
    The pickup state / county
 TransportPickupZipcode / TransportPickupPostcode
    The pickup zipcode/postcode
+TransportPickupCountry
+   The pickup country
 TransportPickupEmail
    The email address of the pickup contact
 TransportPickupHomePhone
@@ -667,6 +669,8 @@ TransportDropoffState / TransportDropoffCounty
    The dropoff state / county
 TransportDropoffZipcode / TransportDropoffPostcode
    The dropoff zipcode / postcode
+TransportDropoffCountry
+   The dropoff country
 TransportDropoffEmail
    The email address of the dropoff contact
 TransportDropoffHomePhone

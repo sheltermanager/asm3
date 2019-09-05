@@ -46,6 +46,10 @@ ASM contains a full double entry accounting package. The options here are:
   adding payments to the system, allow a quantity and unit price to be included
   for multiple item purchases/payments.
 
+* When receiving payments, allow a transaction fee to be set: Allows a 
+  transaction fee to be recorded with the payment (eg: The cut taken by
+  services like PayPal, Amazon Payments, Google Wallet, Stripe, etc).
+
 * When receiving payments, allow recording of sales tax with a default rate of %:
   ASM can calculate and store sales tax/VAT/GST amounts on payments you receive
   for taxable goods. Enabling this option will add a tickbox to all payment
@@ -542,6 +546,14 @@ Medical
   with outstanding medical/vacc/tests that have left the shelter will be shown
   in medical books and the medical calendar.
 
+* Reload the medical book/tab automatically after adding new medical items: If
+  selected, reloads the screen automatically after adding a new medical
+  regimen. If this option is not enabled, a placeholder row will be shown for
+  the new medical item instead and the status column will show a link to reload
+  the screen. This option is useful if you have a full medical book or animals
+  with a lot of medical items who are frequently treated and reload times are
+  long.
+
 * When entering vaccinations, default the last batch number and manufacturer
   for that type: If ticked, when entering a given vaccination, the batch number
   and manufacturer will be copied from the last vaccination on record of the
@@ -601,6 +613,14 @@ the reservation for you after this time.
 * Treat Trial Adoptions as shelter inventory: As with the Foster as inventory
   option, trial adoptions are still shown in the Shelter View and on shelter
   searches/reports.
+
+* Our shelter does soft releases, allow us to mark these on movement screens:
+  When creating a released to wild movement, this allows for a soft release
+  to be made. A soft release is one where the animal is monitored for some
+  time after release.
+
+* Treat Soft Releases as shelter inventory: Animals on soft release will be 
+  kept in the shelter's inventory.
 
 * Warn when adopting an unaltered animal: If the animal has not been 
   neutered/spayed, show a warning when trying to adopt it. 
@@ -677,11 +697,15 @@ Remove
 * Remove the trap loan functionality from menus: Setting this option removes
   the trap loan link from the menu and the trap loan tab on the person screen.
 
-* Remove the town/county (city and state) fields from the owner screen: Setting
-  this option will prevent ASM from presenting the user with additional fields
-  to store the city and state information. These are handy for group owner
-  searches, but not all shelters want or need them and prefer to keep the
-  complete address in the address box. 
+* Remove the city/state fields from person details: Setting this option will
+  prevent ASM from presenting the user with additional fields to store the city
+  and state information. These are handy for group owner searches, but not all
+  shelters want or need them and prefer to keep the complete address in the
+  address box. 
+
+* Remove the country field from person details: Setting this option will 
+  hide the country field from person addresses. This option is on by default 
+  since most shelters only deal with one country.
 
 * Remove the insurance number field from the movement screens: Setting this
   option hides the insurance number field and button from :menuselection:`Move

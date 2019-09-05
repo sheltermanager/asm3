@@ -9,7 +9,7 @@ Report18 (vacc.csv)
 17th Jan 2018
 """
 
-PATH = "data/shelterbuddy_zw1610/"
+PATH = "/home/robin/tmp/asm3_import_data/shelterbuddy_zw1610/"
 
 def getdate(s):
     return asm.getdate_yyyymmdd(s)

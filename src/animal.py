@@ -694,7 +694,6 @@ def get_stats(dbo, age=120):
     if statperiod == "thismonth": statdate = first_of_month(statdate)
     if statperiod == "thisyear": statdate = first_of_year(statdate)
     if statperiod == "alltime": statdate = datetime.datetime(1900, 1, 1)
-    countfrom = dbo.sql_date(statdate)
     return dbo.query_named_params("SELECT " \
         "(SELECT COUNT(*) FROM animal WHERE NonShelterAnimal = 0 AND DateBroughtIn >= :from) AS Entered," \
         "(SELECT COUNT(*) FROM adoption WHERE MovementDate >= :from AND MovementType = :adoption) AS Adopted," \
@@ -710,7 +709,7 @@ def get_stats(dbo, age=120):
             "(SELECT SUM(Cost) FROM animalmedical WHERE StartDate >= :from) + " \
             "(SELECT SUM(Cost) FROM animaltransport WHERE PickupDateTime >= :from) AS Costs " \
         "FROM lksmovementtype WHERE ID=1", 
-        { "from": countfrom, "adoption": movement.ADOPTION, "reclaimed": movement.RECLAIMED, "transfer": movement.TRANSFER },
+        { "from": statdate, "adoption": movement.ADOPTION, "reclaimed": movement.RECLAIMED, "transfer": movement.TRANSFER },
         age=age)
 
 def embellish_timeline(l, rows):
@@ -920,7 +919,7 @@ def get_timeline(dbo, limit = 500, age = 120):
             { "limit": dbo.sql_limit(limit) }
     # We use end of today rather than now() for 2 reasons - 
     # 1. so it picks up all items for today and 2. now() invalidates query_cache effectively
-    endoftoday = dbo.sql_date(dbo.today(settime="23:59:59"))
+    endoftoday = dbo.today(settime="23:59:59")
     return embellish_timeline(dbo.locale, dbo.query_cache(sql, [ endoftoday ], age=age))
 
 def calc_time_on_shelter(dbo, animalid, a = None):
@@ -1484,6 +1483,7 @@ def get_location_filter_clause(locationfilter = "", tablequalifier = "", siteid 
     if tablequalifier != "" and not tablequalifier.endswith("."): tablequalifier += "."
     if tablequalifier == "": tablequalifier = "animal."
     clauses = []
+    hasvisibleidsfilter = locationfilter.find("-12") != -1
     # Strip anything that has set visibleanimalids as they are not locations or movement types
     locationfilter = ",".join([ l for l in locationfilter.split(",") if l not in ("-12",) ])
     if locationfilter != "":
@@ -1498,7 +1498,12 @@ def get_location_filter_clause(locationfilter = "", tablequalifier = "", siteid 
         clauses.append("il.SiteID = %s" % siteid)
     if visibleanimalids != "":
         clauses.append("%(tq)sID IN (%(va)s)" % { "tq": tablequalifier, "va": visibleanimalids })
-    c = " AND ".join(clauses)
+    # Special case - the only location filter the user has is one of the visible ids
+    # filters like "My Fosters" - but they don't have any IDs listed.
+    # if we don't restrict them now, they'll see everything since we'll be left with no clauses
+    if visibleanimalids == "" and hasvisibleidsfilter and locationfilter == "":
+        clauses.append("%sID IN (0)" % tablequalifier)
+    c = "(" + " OR ".join(clauses) + ")"
     # If we've got nothing left by this point, don't add a prefix/suffix/where
     if c == "": return ""
     if andprefix:
@@ -2690,14 +2695,10 @@ def clone_from_template(dbo, username, animalid, dob, animaltypeid, speciesid):
         else:
             adjdate = add_days(newbroughtin, dayoffset)
         return dbo.sql_date(adjdate)
-    # Additional Fields (don't include mandatory ones as they are already set by new animal screen)
-    for af in dbo.query("SELECT a.* FROM additional a INNER JOIN additionalfield af ON af.ID = a.AdditionalFieldID WHERE af.Mandatory <> 1 AND a.LinkID = %d AND a.LinkType IN (%s)" % (cloneanimalid, additional.ANIMAL_IN)):
-        dbo.insert("additional", {
-            "LinkType":             af.linktype,
-            "LinkID":               animalid,
-            "AdditionalFieldID":    af.additionalfieldid,
-            "Value":                af.value
-        }, generateID=False, writeAudit=False, setRecordVersion=False)
+    # Additional Fields (don't include newrecord ones or ones with default values as they are already set by the new animal screen)
+    for af in dbo.query("SELECT a.* FROM additional a INNER JOIN additionalfield af ON af.ID = a.AdditionalFieldID " \
+        "WHERE af.NewRecord <> 1 AND af.DefaultValue = '' AND a.LinkID = %d AND a.LinkType IN (%s)" % (cloneanimalid, additional.ANIMAL_IN)):
+        additional.insert_additional(dbo, af.linktype, animalid, af.additionalfieldid, af.value)
     # Vaccinations
     for v in dbo.query("SELECT * FROM animalvaccination WHERE AnimalID = ?", [cloneanimalid]):
         newdate = adjust_date(v.daterequired)
@@ -2844,6 +2845,7 @@ def merge_animal(dbo, username, animalid, mergeanimalid):
     reparent("diary", "LinkID", "LinkType", diary.ANIMAL)
     reparent("log", "LinkID", "LinkType", log.ANIMAL)
     dbo.delete("animal", mergeanimalid, username)
+    audit.move(dbo, username, "animal", animalid, "", "Merged animal %d -> %d" % (mergeanimalid, animalid))
 
 def update_daily_boarding_cost(dbo, username, animalid, cost):
     """
@@ -3176,7 +3178,8 @@ def update_all_animal_statuses(dbo):
     cfg = {
         "foster_on_shelter": configuration.foster_on_shelter(dbo),
         "retailer_on_shelter": configuration.retailer_on_shelter(dbo),
-        "trial_on_shelter": configuration.trial_on_shelter(dbo)
+        "trial_on_shelter": configuration.trial_on_shelter(dbo),
+        "softrelease_on_shelter": configuration.softrelease_on_shelter(dbo)
     }
 
     asynctask.set_progress_max(dbo, len(animals))
@@ -3216,7 +3219,8 @@ def update_foster_animal_statuses(dbo):
     cfg = {
         "foster_on_shelter": configuration.foster_on_shelter(dbo),
         "retailer_on_shelter": configuration.retailer_on_shelter(dbo),
-        "trial_on_shelter": configuration.trial_on_shelter(dbo)
+        "trial_on_shelter": configuration.trial_on_shelter(dbo),
+        "softrelease_on_shelter": configuration.softrelease_on_shelter(dbo)
     }
 
     for a in animals:
@@ -3253,7 +3257,8 @@ def update_on_shelter_animal_statuses(dbo):
     cfg = {
         "foster_on_shelter": configuration.foster_on_shelter(dbo),
         "retailer_on_shelter": configuration.retailer_on_shelter(dbo),
-        "trial_on_shelter": configuration.trial_on_shelter(dbo)
+        "trial_on_shelter": configuration.trial_on_shelter(dbo),
+        "softrelease_on_shelter": configuration.softrelease_on_shelter(dbo)
     }
 
     asynctask.set_progress_max(dbo, len(animals))
@@ -3295,7 +3300,7 @@ def update_animal_status(dbo, animalid, a = None, movements = None, animalupdate
     onshelter = True
     diedoffshelter = False
     hasreserve = False
-    hastrial = False
+    hastrialadoption = False
     haspermanentfoster = False
     lastreturn = None
     mostrecententrydate = None
@@ -3327,10 +3332,12 @@ def update_animal_status(dbo, animalid, a = None, movements = None, animalupdate
         cfg_foster_on_shelter = configuration.foster_on_shelter(dbo)
         cfg_retailer_on_shelter = configuration.retailer_on_shelter(dbo)
         cfg_trial_on_shelter = configuration.trial_on_shelter(dbo)
+        cfg_softrelease_on_shelter = configuration.softrelease_on_shelter(dbo)
     else:
         cfg_foster_on_shelter = cfg["foster_on_shelter"]
         cfg_retailer_on_shelter = cfg["retailer_on_shelter"]
         cfg_trial_on_shelter = cfg["trial_on_shelter"]
+        cfg_softrelease_on_shelter = cfg["softrelease_on_shelter"]
 
     for m in movements:
 
@@ -3345,6 +3352,7 @@ def update_animal_status(dbo, animalid, a = None, movements = None, animalupdate
         if m.movementtype == movement.FOSTER and cfg_foster_on_shelter: exitmovement = False
         elif m.movementtype == movement.RETAILER and cfg_retailer_on_shelter: exitmovement = False
         elif m.movementtype == movement.ADOPTION and m.istrial == 1 and cfg_trial_on_shelter: exitmovement = False
+        elif m.movementtype == movement.RELEASED and m.istrial == 1 and cfg_softrelease_on_shelter: exitmovement = False
 
         # Is this movement active right now?
         if (m.movementdate and m.movementdate <= today and not m.returndate or \
@@ -3364,7 +3372,7 @@ def update_animal_status(dbo, animalid, a = None, movements = None, animalupdate
 
             # Is this an active trial adoption?
             if m.movementtype == movement.ADOPTION and m.istrial == 1:
-                hastrial = True
+                hastrialadoption = True
 
             # Is this a permanent foster?
             if m.movementtype == movement.FOSTER and m.ispermanentfoster == 1:
@@ -3394,7 +3402,7 @@ def update_animal_status(dbo, animalid, a = None, movements = None, animalupdate
     # Override the other flags if this animal is dead or non-shelter
     if a.deceaseddate or a.nonshelteranimal == 1:
         onshelter = False
-        hastrial = False
+        hastrialadoption = False
         hasreserve = False
         haspermanentfoster = False
 
@@ -3426,7 +3434,7 @@ def update_animal_status(dbo, animalid, a = None, movements = None, animalupdate
        a.activemovementreturn == activemovementreturn and \
        a.diedoffshelter == b2i(diedoffshelter) and \
        a.hasactivereserve == b2i(hasreserve) and \
-       a.hastrialadoption == b2i(hastrial) and \
+       a.hastrialadoption == b2i(hastrialadoption) and \
        a.haspermanentfoster == b2i(haspermanentfoster) and \
        a.mostrecententrydate == mostrecententrydate and \
        a.displaylocation == qlocname:
@@ -3441,7 +3449,7 @@ def update_animal_status(dbo, animalid, a = None, movements = None, animalupdate
     a.activemovementreturn = activemovementreturn
     a.diedoffshelter = b2i(diedoffshelter)
     a.hasactivereserve = b2i(hasreserve)
-    a.hastrialadoption = b2i(hastrial)
+    a.hastrialadoption = b2i(hastrialadoption)
     a.haspermanentfoster = b2i(haspermanentfoster)
     a.mostrecententrydate = mostrecententrydate
     a.displaylocation = qlocname
@@ -3460,7 +3468,7 @@ def update_animal_status(dbo, animalid, a = None, movements = None, animalupdate
             b2i(diedoffshelter),
             qlocname,
             b2i(hasreserve),
-            b2i(hastrial),
+            b2i(hastrialadoption),
             b2i(haspermanentfoster),
             mostrecententrydate,
             animalid
@@ -3476,7 +3484,7 @@ def update_animal_status(dbo, animalid, a = None, movements = None, animalupdate
             "DiedOffShelter":       b2i(diedoffshelter),
             "DisplayLocation":      qlocname,
             "HasActiveReserve":     b2i(hasreserve),
-            "HasTrialAdoption":     b2i(hastrial),
+            "HasTrialAdoption":     b2i(hastrialadoption),
             "HasPermanentFoster":   b2i(haspermanentfoster),
             "MostRecentEntryDate":  mostrecententrydate
         })

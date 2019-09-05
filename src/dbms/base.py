@@ -288,7 +288,7 @@ class Database(object):
             return rv
         except Exception as err:
             al.error(str(err), "Database.execute", self, sys.exc_info())
-            al.error("failing sql: %s" % sql, "Database.execute", self)
+            al.error("failing sql: %s %s" % (sql, params), "Database.execute", self)
             try:
                 # An error can leave a connection in unusable state, 
                 # rollback any attempted changes.
@@ -331,7 +331,7 @@ class Database(object):
             return rv
         except Exception as err:
             al.error(str(err), "Database.execute_many", self, sys.exc_info())
-            al.error("failing sql: %s" % sql, "Database.execute_many", self)
+            al.error("failing sql: %s %s" % (sql, params), "Database.execute_many", self)
             try:
                 # An error can leave a connection in unusable state, 
                 # rollback any attempted changes.
@@ -428,8 +428,8 @@ class Database(object):
             if setRecordVersion: values["RecordVersion"] = self.get_recordversion()
         values = self.encode_str_before_write(values)
         iid = 0
-        if type(where) == int: 
-            iid = where
+        if utils.cint(where) > 0:
+            iid = utils.cint(where)
             where = "ID=%s" % where
         sql = "UPDATE %s SET %s WHERE %s" % ( table, ",".join( ["%s=?" % x for x in values.iterkeys()] ), where )
         if iid > 0: 
@@ -449,8 +449,8 @@ class Database(object):
             writeAudit: If True, writes an audit record for the delete
             returns the number of rows deleted
         """
-        if type(where) == int: 
-            where = "ID=%d" % where
+        if utils.cint(where) > 0:
+            where = "ID=%s" % utils.cint(where)
         if writeAudit and user != "":
             audit.delete_rows(self, user, table, where)
         return self.execute("DELETE FROM %s WHERE %s" % (table, where))
@@ -562,7 +562,7 @@ class Database(object):
             return l
         except Exception as err:
             al.error(str(err), "Database.query", self, sys.exc_info())
-            al.error("failing sql: %s" % sql, "Database.query", self)
+            al.error("failing sql: %s %s" % (sql, params), "Database.query", self)
             raise err
         finally:
             try:
@@ -610,7 +610,7 @@ class Database(object):
             return cn
         except Exception as err:
             al.error(str(err), "Database.query_columns", self, sys.exc_info())
-            al.error("failing sql: %s" % sql, "Database.query_columns", self)
+            al.error("failing sql: %s %s" % (sql, params), "Database.query_columns", self)
             raise err
         finally:
             try:
@@ -660,7 +660,7 @@ class Database(object):
             self.cursor_close(c, s)
         except Exception as err:
             al.error(str(err), "Database.query_generator", self, sys.exc_info())
-            al.error("failing sql: %s" % sql, "Database.query_generator", self)
+            al.error("failing sql: %s %s" % (sql, params), "Database.query_generator", self)
             raise err
         finally:
             try:
@@ -729,7 +729,7 @@ class Database(object):
             return d
         except Exception as err:
             al.error(str(err), "Database.query_tuple", self, sys.exc_info())
-            al.error("failing sql: %s" % sql, "Database.query_tuple", self)
+            al.error("failing sql: %s %s" % (sql, params), "Database.query_tuple", self)
             raise err
         finally:
             try:
@@ -762,7 +762,7 @@ class Database(object):
             return (d, cn)
         except Exception as err:
             al.error(str(err), "Database.query_tuple_columns", self, sys.exc_info())
-            al.error("failing sql: %s" % sql, "Database.query_tuple_columns", self)
+            al.error("failing sql: %s %s" % (sql, params), "Database.query_tuple_columns", self)
             raise err
         finally:
             try:

@@ -800,9 +800,12 @@
             // Change the default amount when the payment type changes
             $("#donationtype" + i).change(function() {
                 var dc = common.get_field(self.options.controller.donationtypes, $("#donationtype" + i).select("value"), "DEFAULTCOST");
+                var dv = common.get_field(self.options.controller.donationtypes, $("#donationtype" + i).select("value"), "ISVAT");
                 $("#quantity" + i).val("1");
                 $("#unitprice" + i).currency("value", dc);
                 $("#amount" + i).currency("value", dc);
+                $("#vat" + i).prop("checked", dv == 1);
+                $("#vat" + i).change();
                 self.update_totals();
             });
             // Recalculate when quantity or unit price changes
@@ -1256,13 +1259,13 @@
                     autofocus: false,
                     extraKeys: {
                         "F11": function(cm) {
-                            cm.setOption("fullScreen", !cm.getOption("fullScreen"));
+                            self.fullscreen(cm, !cm.getOption("fullScreen"));
                         },
                         "Shift-Ctrl-F": function(cm) {
-                            cm.setOption("fullScreen", !cm.getOption("fullScreen"));
+                            self.fullscreen(cm, !cm.getOption("fullScreen"));
                         },
                         "Esc": function(cm) {
-                            if (cm.getOption("fullScreen")) { cm.setOption("fullScreen", false); }
+                            self.fullscreen(cm, false);
                         }
                     }
                 });
@@ -1291,6 +1294,26 @@
 
         destroy: function() {
             this.options.editor.destroy();
+        },
+
+        fullscreen: function(cm, fs) {
+            // FIX FOR CHROME: If this code editor is inside a jquery dialog, Chrome will not render
+            // the portion of the editor that is outside the dialog when it goes fullscreen.
+            // To work around this, we record the position, height and width of the dialog before
+            // going into fullscreen, make the dialog fill the screen and then restore it 
+            // when leaving fullscreen as a workaround.
+            var dlg = this.element.closest("div.ui-dialog");
+            if (dlg) {
+                if (fs) {
+                    this.dlgheight = dlg.height(); this.dlgwidth = dlg.width(); this.dlgtop = dlg.position().top; this.dlgleft = dlg.position().left;
+                    dlg.height("100%"); dlg.width("100%"); dlg.css("top", 0); dlg.css("left", 0);
+                }
+                else {
+                    dlg.height(this.dlgheight); dlg.width(this.dlgwidth); dlg.css("top", this.dlgtop); dlg.css("left", this.dlgleft);
+                }
+            }
+            // END CHROME FIX
+            cm.setOption("fullScreen", fs);
         },
 
         refresh: function() {
@@ -1325,13 +1348,13 @@
                     autofocus: false,
                     extraKeys: {
                         "F11": function(cm) {
-                            cm.setOption("fullScreen", !cm.getOption("fullScreen"));
+                            self.fullscreen(cm, !cm.getOption("fullScreen"));
                         },
                         "Shift-Ctrl-F": function(cm) {
-                            cm.setOption("fullScreen", !cm.getOption("fullScreen"));
+                            self.fullscreen(cm, !cm.getOption("fullScreen"));
                         },
                         "Esc": function(cm) {
-                            if (cm.getOption("fullScreen")) { cm.setOption("fullScreen", false); }
+                            self.fullscreen(cm, false);
                         },
                         "Ctrl-Space": "autocomplete"
                     },
@@ -1362,6 +1385,26 @@
 
         destroy: function() {
             this.options.editor.destroy();
+        },
+
+        fullscreen: function(cm, fs) {
+            // FIX FOR CHROME: If this code editor is inside a jquery dialog, Chrome will not render
+            // the portion of the editor that is outside the dialog when it goes fullscreen.
+            // To work around this, we record the position, height and width of the dialog before
+            // going into fullscreen, make the dialog fill the screen and then restore it 
+            // when leaving fullscreen as a workaround.
+            var dlg = this.element.closest("div.ui-dialog");
+            if (dlg) {
+                if (fs) {
+                    this.dlgheight = dlg.height(); this.dlgwidth = dlg.width(); this.dlgtop = dlg.position().top; this.dlgleft = dlg.position().left;
+                    dlg.height("100%"); dlg.width("100%"); dlg.css("top", 0); dlg.css("left", 0);
+                }
+                else {
+                    dlg.height(this.dlgheight); dlg.width(this.dlgwidth); dlg.css("top", this.dlgtop); dlg.css("left", this.dlgleft);
+                }
+            }
+            // END CHROME FIX
+            cm.setOption("fullScreen", fs);
         },
 
         refresh: function() {

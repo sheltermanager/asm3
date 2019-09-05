@@ -9,7 +9,7 @@ produces animals.csv, adoption_contacts.csv, relinquishment_contacts.csv
 9th March, 2018
 """
 
-PATH = "data/hospitium_hs1402"
+PATH = "/home/robin/tmp/asm3_import_data/hospitium_hs1402"
 START_ID = 500
 
 def getdate(d):

@@ -58,6 +58,7 @@ $(function() {
                       "Arial=arial,helvetica,sans-serif",
                       "Arial Black=arial black,avant garde",
                       "Book Antiqua=book_antiquaregular,palatino",
+                      "Calibri=calibri,sans-serif",
                       "Courier New=courier_new,courier",
                       "Lucida Console=lucida_console,courier",
                       "Georgia=georgia,palatino",

@@ -1448,6 +1448,18 @@
         },
 
         /**
+         * Returns true if ADDITIONALFLAGS in s contains flag f
+         */
+        is_animal_flag: function(s, f) {
+            if (!s || !f) { return false; }
+            var rv = false;
+            $.each(s.split("|"), function(i, v) {
+                if (v == f) { rv = true; }
+            });
+            return rv;
+        },
+
+        /**
          * Renders an animal link from the record given.
          * a: An animal or brief animal record
          * o: Options to pass on to animal_emblems
@@ -1606,6 +1618,12 @@
             if (config.bool("EmblemQuarantine") && a.ISQUARANTINE == 1 && (a.ARCHIVED == 0 || a.ACTIVEMOVEMENTTYPE == 2) ) {
                 s.push(html.icon("quarantine", _("Quarantine")));
             }
+            $.each([1,2,3,4,5,6,7,8,9,10], function(i, v) {
+                var cflag = config.str("EmblemsCustomFlag" + v), cemblem = config.str("EmblemsCustomValue" + v);
+                if (cflag && cemblem && html.is_animal_flag(a.ADDITIONALFLAGS, cflag)) {
+                    s.push('<span class="custom" title="' + html.title(cflag) + '">' + cemblem + '</span>');
+                }
+            });
             s.push("</span>");
             if (o && o.showunit && a.SHELTERLOCATIONUNIT && a.ARCHIVED == 0 && !a.ACTIVEMOVEMENTTYPE ) {
                 s.push(' <span class="asm-search-locationunit" title="' + html.title(_("Unit")) + '">' + a.SHELTERLOCATIONUNIT + '</span>');
@@ -2087,6 +2105,23 @@
             // step 2 / final - render the 50% sized canvas to the final canvas at the correct size
             ctx.drawImage(oc, 0, 0, oc.width, oc.height, 0, 0, canvas.width, canvas.height);
             return canvas.toDataURL("image/jpeg");
+        },
+
+        /** Returns a list of all US states as a set of option tags */
+        states_us_options: function() {
+            var US_STATES = [ ["Alabama","AL"], ["Alaska","AK"], ["Arizona","AZ"], ["Arkansas","AR"], ["California","CA"], ["Colorado","CO"],
+                ["Connecticut","CT"], ["Delaware","DE"], ["Florida","FL"], ["Georgia","GA"], ["Hawaii","HI"], ["Idaho","ID"], ["Illinois","IL"],
+                ["Indiana","IN"], ["Iowa","IA"], ["Kansas","KS"], ["Kentucky","KY"], ["Louisiana","LA"], ["Maine","ME"], ["Maryland","MD"],
+                ["Massachusetts","MA"], ["Michigan","MI"], ["Minnesota","MN"], ["Mississippi","MS"], ["Missouri","MO"], ["Montana","MT"],
+                ["Nebraska","NE"], ["Nevada","NV"], ["New Hampshire","NH"], ["New Jersey","NJ"], ["New Mexico","NM"], ["New York","NY"],
+                ["North Carolina","NC"], ["North Dakota","ND"], ["Ohio","OH"], ["Oklahoma","OK"], ["Oregon","OR"], ["Pennsylvania","PA"],
+                ["Rhode Island","RI"], ["South Carolina","SC"], ["South Dakota","SD"], ["Tennessee","TN"], ["Texas","TX"], ["Utah","UT"],
+                ["Vermont","VT"], ["Virginia","VA"], ["Washington","WA"], ["West Virginia","WV"], ["Wisconsin","WI"],["Wyoming","WY"]
+            ], opts = [];
+            $.each(US_STATES, function(i, v) {
+                opts.push('<option value="' + v[1] + '">' + v[1] + " - " + v[0] + '</option>');
+            });
+            return opts.join("\n");
         },
 
         /** 

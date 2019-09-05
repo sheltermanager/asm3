@@ -87,7 +87,7 @@ def get_animal_data(dbo, pc=None, animalid=0, include_additional_fields=False, r
         """
         for r in rows:
             if r.ID == aid:
-                a.ANIMALNAME = "%s, %s" % (a.ANIMALNAME, r.ANIMALNAME)
+                a.ANIMALNAME = "%s / %s" % (a.ANIMALNAME, r.ANIMALNAME)
                 rows.remove(r)
                 al.debug("merged animal %d into %d" % (aid, a["ID"]), "publishers.base.get_animal_data", dbo)
                 break
@@ -277,7 +277,7 @@ def get_microchip_data_query(dbo, patterns, publishername, movementtypes = "1", 
     """
     pclauses = []
     for p in patterns:
-        if p.startswith("9") or p.startswith("0"):
+        if p.startswith("9") or p.startswith("0") or p.startswith("1") or p.startswith("4"):
             pclauses.append("(a.IdentichipNumber IS NOT NULL AND a.IdentichipNumber LIKE '%s%%')" % p)
             pclauses.append("(a.Identichip2Number IS NOT NULL AND a.Identichip2Number LIKE '%s%%')" % p)
         else:

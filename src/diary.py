@@ -83,6 +83,8 @@ def get_between_two_dates(dbo, user, start, end):
     start: Start date
     end: End date
     """
+    sixmonths = dbo.today(offset = -182)
+    if start < sixmonths: start = sixmonths
     return dbo.query("SELECT d.*, cast(DiaryDateTime AS time) AS DiaryTime " \
         "FROM diary d WHERE %s " \
         "AND DateCompleted Is Null AND DiaryDateTime >= ? AND DiaryDateTime <= ? " \

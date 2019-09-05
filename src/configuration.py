@@ -65,7 +65,8 @@ QUICKLINKS_SET = {
     54: ("staff_rota", "asm-icon-rota", i18n._("Staff Rota")),
     55: ("move_reclaim", "", i18n._("Reclaim an animal")),
     56: ("donation", "asm-icon-donation", i18n._("Payment book")),
-    57: ("calendarview?ev=c", "asm-icon-calendar", i18n._("Clinic Calendar"))
+    57: ("calendarview?ev=c", "asm-icon-calendar", i18n._("Clinic Calendar")),
+    58: ("move_book_soft_release", "", i18n._("Soft release book"))
 }
 
 # Default configuration values for unset items. This is so they
@@ -119,7 +120,7 @@ DEFAULTS = {
     "AutoRemoveDocumentMedia": "No",
     "AutoRemoveDMYears": "0",
     "AutoRemoveHoldDays": "0",
-    "AutoRemoveIncomingFormsDays": "14",
+    "AutoRemoveIncomingFormsDays": "28",
     "AFDefaultBreed": "221",
     "AFDefaultCoatType": "0",
     "AFDefaultColour": "1",
@@ -169,6 +170,7 @@ DEFAULTS = {
     "DisableRetailer": "No",
     "DocumentWordProcessor": "HTML",
     "DonationDateOverride": "No",
+    "DonationFees": "Yes",
     "DonationQuantities": "No",
     "DonationTargetAccount": "9",
     "DonationTrxOverride": "No",
@@ -202,6 +204,7 @@ DEFAULTS = {
     "GeocodeWithPostcodeOnly": "No",
     "GenerateDocumentLog": "No",
     "GenerateDocumentLogType": "5",
+    "HideCountry": "Yes",
     "HoldChangeLog": "Yes",
     "HoldChangeLogType": "3",
     "IncidentPermissions": "No",
@@ -261,6 +264,7 @@ DEFAULTS = {
     "QuicklinksAllScreens": "No",
     "ReceiptNumberNext": "0",
     "RecordSearchLimit": "1000",
+    "ReloadMedical": "Yes",
     "RetailerOnShelter": "Yes",
     "ReturnFostersOnAdoption": "Yes",
     "ReturnFostersOnTransfer": "Yes",
@@ -278,6 +282,7 @@ DEFAULTS = {
     "ShowDeceasedHomePage": "Yes",
     "ShowFullCommentsInTables": "No",
     "ShowAlertsHomePage": "Yes", 
+    "ShowLatLong": "No",
     "ShowTimelineHomePage": "Yes", 
     "ShowStatsHomePage": "thismonth", 
     "ShowFirstTime": "Yes",
@@ -287,6 +292,8 @@ DEFAULTS = {
     "ShowWeightInLbs": "Yes",
     "ShowWeightUnitsInLog": "Yes",
     "SMTPPort": "25",
+    "SoftReleases": "No",
+    "SoftReleaseOnShelter": "No",
     "StickyTableHeaders": "Yes",
     "TableHeadersVisible": "Yes",
     "TemplatesForNonShelter": "No",
@@ -1099,6 +1106,9 @@ def show_cost_paid(dbo):
 def show_gdpr_contact_optin(dbo):
     return cboolean(dbo, "ShowGDPRContactOptIn", DEFAULTS["ShowGDPRContactOptIn"] == "Yes")
 
+def show_lat_long(dbo):
+    return cboolean(dbo, "ShowLatLong", DEFAULTS["ShowLatLong"] == "Yes")
+
 def show_stats_home_page(dbo):
     return cstring(dbo, "ShowStatsHomePage", DEFAULTS["ShowStatsHomePage"])
 
@@ -1134,6 +1144,9 @@ def smtp_server_password(dbo):
 
 def smtp_server_tls(dbo):
     return cboolean(dbo, "SMTPServerUseTLS")
+
+def softrelease_on_shelter(dbo):
+    return cboolean(dbo, "SoftReleaseOnShelter", DEFAULTS["SoftReleaseOnShelter"] == "Yes")
 
 def use_short_shelter_codes(dbo):
     return cboolean(dbo, "UseShortShelterCodes")

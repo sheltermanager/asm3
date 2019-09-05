@@ -4,6 +4,7 @@ import additional
 import al
 import animal
 import asynctask
+import audit
 import configuration
 import datetime
 import dbfs
@@ -235,6 +236,7 @@ def get_links(dbo, pid):
         "WHEN a.Archived = 1 AND a.DeceasedDate Is Not Null AND a.ActiveMovementID = 0 THEN dr.ReasonName " \
         "WHEN a.Archived = 1 AND a.DeceasedDate Is Null AND a.ActiveMovementID <> 0 THEN mt.MovementType " \
         "ELSE il.LocationName END", "')'"))
+    # Original Owner
     sql = "SELECT 'OO' AS TYPE, " \
         "%s AS TYPEDISPLAY, a.DateBroughtIn AS DDATE, a.ID AS LINKID, " \
         "%s AS LINKDISPLAY, " \
@@ -245,8 +247,9 @@ def get_links(dbo, pid):
         "INNER JOIN species s ON s.ID = a.SpeciesID " \
         "LEFT OUTER JOIN internallocation il ON il.ID = a.ShelterLocation " \
         "LEFT OUTER JOIN deathreason dr ON dr.ID = a.PTSReasonID " \
-        "WHERE OriginalOwnerID = %d " \
-        "UNION SELECT 'BI' AS TYPE, " \
+        "WHERE OriginalOwnerID = %d " % (dbo.sql_value(_("Original Owner", l)), linkdisplay, animalextra, int(pid))
+    # Brought In By
+    sql += "UNION SELECT 'BI' AS TYPE, " \
         "%s AS TYPEDISPLAY, a.DateBroughtIn AS DDATE, a.ID AS LINKID, " \
         "%s AS LINKDISPLAY, " \
         "%s AS FIELD2, " \
@@ -256,8 +259,9 @@ def get_links(dbo, pid):
         "INNER JOIN species s ON s.ID = a.SpeciesID " \
         "LEFT OUTER JOIN internallocation il ON il.ID = a.ShelterLocation " \
         "LEFT OUTER JOIN deathreason dr ON dr.ID = a.PTSReasonID " \
-        "WHERE BroughtInByOwnerID = %d " \
-        "UNION SELECT 'RO' AS TYPE, " \
+        "WHERE BroughtInByOwnerID = %d " % (dbo.sql_value(_("Brought In By", l)), linkdisplay, animalextra, int(pid))
+    # Returned By
+    sql += "UNION SELECT 'RO' AS TYPE, " \
         "%s AS TYPEDISPLAY, m.ReturnDate AS DDATE, a.ID AS LINKID, " \
         "%s AS LINKDISPLAY, " \
         "%s AS FIELD2, " \
@@ -268,8 +272,9 @@ def get_links(dbo, pid):
         "INNER JOIN species s ON s.ID = a.SpeciesID " \
         "LEFT OUTER JOIN internallocation il ON il.ID = a.ShelterLocation " \
         "LEFT OUTER JOIN deathreason dr ON dr.ID = a.PTSReasonID " \
-        "WHERE m.ReturnedByOwnerID = %d " \
-        "UNION SELECT 'AO' AS TYPE, " \
+        "WHERE m.ReturnedByOwnerID = %d " % (dbo.sql_value(_("Returned By", l)), linkdisplay, animalextra, int(pid))
+    # Adoption Coordinator
+    sql += "UNION SELECT 'AO' AS TYPE, " \
         "%s AS TYPEDISPLAY, a.DateBroughtIn AS DDATE, a.ID AS LINKID, " \
         "%s AS LINKDISPLAY, " \
         "%s AS FIELD2, " \
@@ -279,8 +284,9 @@ def get_links(dbo, pid):
         "INNER JOIN species s ON s.ID = a.SpeciesID " \
         "LEFT OUTER JOIN internallocation il ON il.ID = a.ShelterLocation " \
         "LEFT OUTER JOIN deathreason dr ON dr.ID = a.PTSReasonID " \
-        "WHERE AdoptionCoordinatorID = %d " \
-        "UNION SELECT 'OV' AS TYPE, " \
+        "WHERE AdoptionCoordinatorID = %d " % (dbo.sql_value(_("Adoption Coordinator", l)), linkdisplay, animalextra, int(pid))
+    # Owner Vet
+    sql += "UNION SELECT 'OV' AS TYPE, " \
         "%s AS TYPEDISPLAY, a.DateBroughtIn AS DDATE, a.ID AS LINKID, " \
         "%s AS LINKDISPLAY, " \
         "%s AS FIELD2, " \
@@ -290,8 +296,9 @@ def get_links(dbo, pid):
         "INNER JOIN species s ON s.ID = a.SpeciesID " \
         "LEFT OUTER JOIN internallocation il ON il.ID = a.ShelterLocation " \
         "LEFT OUTER JOIN deathreason dr ON dr.ID = a.PTSReasonID " \
-        "WHERE OwnersVetID = %d " \
-        "UNION SELECT 'CV' AS TYPE, " \
+        "WHERE OwnersVetID = %d " % (dbo.sql_value(_("Owner Vet", l)), linkdisplay, animalextra, int(pid))
+    # Current Vet
+    sql += "UNION SELECT 'CV' AS TYPE, " \
         "%s AS TYPEDISPLAY, a.DateBroughtIn AS DDATE, a.ID AS LINKID, " \
         "%s AS LINKDISPLAY, " \
         "%s AS FIELD2, " \
@@ -301,8 +308,9 @@ def get_links(dbo, pid):
         "INNER JOIN species s ON s.ID = a.SpeciesID " \
         "LEFT OUTER JOIN internallocation il ON il.ID = a.ShelterLocation " \
         "LEFT OUTER JOIN deathreason dr ON dr.ID = a.PTSReasonID " \
-        "WHERE CurrentVetID = %d " \
-        "UNION SELECT 'AV' AS TYPE, " \
+        "WHERE CurrentVetID = %d " % (dbo.sql_value(_("Current Vet", l)), linkdisplay, animalextra, int(pid))
+    # Altering Vet
+    sql += "UNION SELECT 'AV' AS TYPE, " \
         "%s AS TYPEDISPLAY, a.DateBroughtIn AS DDATE, a.ID AS LINKID, " \
         "%s AS LINKDISPLAY, " \
         "%s AS FIELD2, " \
@@ -312,46 +320,55 @@ def get_links(dbo, pid):
         "INNER JOIN species s ON s.ID = a.SpeciesID " \
         "LEFT OUTER JOIN internallocation il ON il.ID = a.ShelterLocation " \
         "LEFT OUTER JOIN deathreason dr ON dr.ID = a.PTSReasonID " \
-        "WHERE NeuteredByVetID = %d " \
-        "UNION SELECT 'WL' AS TYPE, " \
+        "WHERE NeuteredByVetID = %d " % (dbo.sql_value(_("Altering Vet", l)), linkdisplay, animalextra, int(pid))
+    # Waiting List
+    sql += "UNION SELECT 'WL' AS TYPE, " \
         "%s AS TYPEDISPLAY, a.DatePutOnList AS DDATE, a.ID AS LINKID, " \
         "s.SpeciesName AS LINKDISPLAY, " \
         "a.AnimalDescription AS FIELD2, '' AS DMOD FROM animalwaitinglist a " \
-        "INNER JOIN species s ON s.ID = a.SpeciesID WHERE a.OwnerID = %d " \
-        "UNION SELECT 'LA' AS TYPE, " \
+        "INNER JOIN species s ON s.ID = a.SpeciesID WHERE a.OwnerID = %d " % (dbo.sql_value(_("Waiting List Contact", l)), int(pid))
+    # Lost Animal
+    sql += "UNION SELECT 'LA' AS TYPE, " \
         "%s AS TYPEDISPLAY, a.DateLost AS DDATE, a.ID AS LINKID, " \
         "s.SpeciesName AS LINKDISPLAY, " \
         "a.DistFeat AS FIELD2, '' AS DMOD FROM animallost a " \
-        "INNER JOIN species s ON s.ID = a.AnimalTypeID WHERE a.OwnerID = %d " \
-        "UNION SELECT 'FA' AS TYPE, " \
+        "INNER JOIN species s ON s.ID = a.AnimalTypeID WHERE a.OwnerID = %d " % (dbo.sql_value(_("Lost Animal Contact", l)), int(pid))
+    # Found Animal
+    sql += "UNION SELECT 'FA' AS TYPE, " \
         "%s AS TYPEDISPLAY, a.DateFound AS DDATE, a.ID AS LINKID, " \
         "s.SpeciesName AS LINKDISPLAY, " \
         "a.DistFeat AS FIELD2, '' AS DMOD FROM animalfound a " \
-        "INNER JOIN species s ON s.ID = a.AnimalTypeID WHERE a.OwnerID = %d " \
-        "UNION SELECT 'AC' AS TYPE, " \
+        "INNER JOIN species s ON s.ID = a.AnimalTypeID WHERE a.OwnerID = %d " % (dbo.sql_value(_("Found Animal Contact", l)), int(pid))
+    # Incident Suspect
+    sql += "UNION SELECT 'AC' AS TYPE, " \
         "%s AS TYPEDISPLAY, a.IncidentDateTime AS DDATE, a.ID AS LINKID, " \
         "ti.IncidentName AS LINKDISPLAY, " \
         "a.CallNotes AS FIELD2, '' AS DMOD FROM animalcontrol a " \
-        "INNER JOIN incidenttype ti ON ti.ID = a.IncidentTypeID WHERE a.OwnerID = %d OR a.Owner2ID = %d OR a.Owner3ID = %d " \
-        "UNION SELECT 'AC' AS TYPE, " \
+        "INNER JOIN incidenttype ti ON ti.ID = a.IncidentTypeID WHERE a.OwnerID = %d OR a.Owner2ID = %d OR a.Owner3ID = %d " % \
+            (dbo.sql_value(_("Animal Control Incident", l)), int(pid), int(pid), int(pid))
+    # Incident Caller
+    sql += "UNION SELECT 'AC' AS TYPE, " \
         "%s AS TYPEDISPLAY, a.IncidentDateTime AS DDATE, a.ID AS LINKID, " \
         "ti.IncidentName AS LINKDISPLAY, " \
         "a.CallNotes AS FIELD2, '' AS DMOD FROM animalcontrol a " \
-        "INNER JOIN incidenttype ti ON ti.ID = a.IncidentTypeID WHERE a.CallerID = %d " \
-        "UNION SELECT 'AC' AS TYPE, " \
+        "INNER JOIN incidenttype ti ON ti.ID = a.IncidentTypeID WHERE a.CallerID = %d " % (dbo.sql_value(_("Animal Control Caller", l)), int(pid))
+    # Incident Victim
+    sql += "UNION SELECT 'AC' AS TYPE, " \
         "%s AS TYPEDISPLAY, a.IncidentDateTime AS DDATE, a.ID AS LINKID, " \
         "ti.IncidentName AS LINKDISPLAY, " \
         "a.CallNotes AS FIELD2, '' AS DMOD FROM animalcontrol a " \
-        "INNER JOIN incidenttype ti ON ti.ID = a.IncidentTypeID WHERE a.VictimID = %d " \
-        "UNION SELECT 'AT' AS TYPE, " \
+        "INNER JOIN incidenttype ti ON ti.ID = a.IncidentTypeID WHERE a.VictimID = %d " % (dbo.sql_value(_("Animal Control Victim", l)), int(pid))
+    # Transport Driver
+    sql += "UNION SELECT 'AT' AS TYPE, " \
         "%s AS TYPEDISPLAY, t.PickupDateTime AS DDATE, t.AnimalID AS LINKID, " \
         "%s LINKDISPLAY, " \
         "t.DropOffAddress AS FIELD2, '' AS DMOD FROM animaltransport t " \
         "INNER JOIN animal a ON a.ID = t.AnimalID " \
-        "WHERE t.DriverOwnerID = %d " \
-        "UNION SELECT 'AP' AS TYPE, " \
+        "WHERE t.DriverOwnerID = %d " % (dbo.sql_value(_("Driver", l)), linkdisplay, int(pid))
+    # Additional field (link from animal)
+    sql += "UNION SELECT 'AFA' AS TYPE, " \
         "aff.FieldLabel AS TYPEDISPLAY, a.LastChangedDate AS DDATE, a.ID AS LINKID, " \
-        "%s LINKDISPLAY, " \
+        "%s AS LINKDISPLAY, " \
         "%s AS FIELD2, " \
         "CASE WHEN a.DeceasedDate Is Not Null THEN 'D' ELSE '' END AS DMOD " \
         "FROM additional af " \
@@ -361,23 +378,20 @@ def get_links(dbo, pid):
         "LEFT OUTER JOIN internallocation il ON il.ID = a.ShelterLocation " \
         "LEFT OUTER JOIN lksmovementtype mt ON mt.ID = a.ActiveMovementType " \
         "LEFT OUTER JOIN deathreason dr ON dr.ID = a.PTSReasonID " \
-        "WHERE af.Value = '%d' AND aff.FieldType = %s AND aff.LinkType IN (%s) " \
-        "ORDER BY DDATE DESC, LINKDISPLAY" \
-        % ( dbo.sql_value(_("Original Owner", l)), linkdisplay, animalextra, int(pid), 
-        dbo.sql_value(_("Brought In By", l)), linkdisplay, animalextra, int(pid),
-        dbo.sql_value(_("Returned By", l)), linkdisplay, animalextra, int(pid),
-        dbo.sql_value(_("Adoption Coordinator", l)), linkdisplay, animalextra, int(pid),
-        dbo.sql_value(_("Owner Vet", l)), linkdisplay, animalextra, int(pid), 
-        dbo.sql_value(_("Current Vet", l)), linkdisplay, animalextra, int(pid),
-        dbo.sql_value(_("Altering Vet", l)), linkdisplay, animalextra, int(pid),
-        dbo.sql_value(_("Waiting List Contact", l)), int(pid), 
-        dbo.sql_value(_("Lost Animal Contact", l)), int(pid),
-        dbo.sql_value(_("Found Animal Contact", l)), int(pid),
-        dbo.sql_value(_("Animal Control Incident", l)), int(pid), int(pid), int(pid), 
-        dbo.sql_value(_("Animal Control Caller", l)), int(pid), 
-        dbo.sql_value(_("Animal Control Victim", l)), int(pid),
-        dbo.sql_value(_("Driver", l)), linkdisplay, int(pid),
-        linkdisplay, animalextra, int(pid), additional.PERSON_LOOKUP, additional.clause_for_linktype("animal") ) 
+        "WHERE af.Value = '%d' AND aff.FieldType = %s AND aff.LinkType IN (%s) " % \
+            ( linkdisplay, animalextra, int(pid), additional.PERSON_LOOKUP, additional.clause_for_linktype("animal") ) 
+    # Additional field (link from person)
+    sql += "UNION SELECT 'AFP' AS TYPE, " \
+        "aff.FieldLabel AS TYPEDISPLAY, o.LastChangedDate AS DDATE, o.ID AS LINKID, " \
+        "o.OwnerName AS LINKDISPLAY, " \
+        "o.OwnerAddress AS FIELD2, " \
+        "CASE WHEN o.IsDeceased=1 THEN 'D' ELSE '' END AS DMOD " \
+        "FROM additional af " \
+        "INNER JOIN additionalfield aff ON aff.ID = af.AdditionalFieldID " \
+        "INNER JOIN owner o ON o.ID = af.LinkID " \
+        "WHERE af.Value = '%d' AND aff.FieldType = %s AND aff.LinkType IN (%s) " % ( int(pid), additional.PERSON_LOOKUP, additional.clause_for_linktype("person") ) 
+    # Sort and done
+    sql += "ORDER BY DDATE DESC, LINKDISPLAY "
     return dbo.query(sql)
 
 def get_investigation(dbo, personid, sort = ASCENDING):
@@ -626,6 +640,7 @@ def insert_person_from_form(dbo, post, username, geocode=True):
         "OwnerTown":        post["town"],
         "OwnerCounty":      post["county"],
         "OwnerPostcode":    post["postcode"],
+        "OwnerCountry":     post["country"],
         "LatLong":          post["latlong"],
         "HomeTelephone":    post["hometelephone"],
         "WorkTelephone":    post["worktelephone"],
@@ -640,24 +655,24 @@ def insert_person_from_form(dbo, post, username, geocode=True):
         "FosterCapacity":   post.integer("fostercapacity"),
         "HomeCheckAreas":   post["areas"],
         "DateLastHomeChecked": post.date("homechecked"),
-        "HomeCheckedBy":    0,
-        "MatchActive":      0,
-        "MatchAdded":       None,
-        "MatchExpires":     None,
-        "MatchSex":         -1,
-        "MatchSize":        -1,
-        "MatchColour":      -1,
-        "MatchAgeFrom":     0,
-        "MatchAgeTo":       0,
-        "MatchAnimalType":  -1,
-        "MatchSpecies":     -1,
-        "MatchBreed":       -1,
-        "MatchBreed2":      -1,
-        "MatchGoodWithCats": -1,
-        "MatchGoodWithDogs": -1,
-        "MatchGoodWithChildren": -1,
-        "MatchHouseTrained": -1,
-        "MatchCommentsContain": "",
+        "HomeCheckedBy":    post.integer("homecheckedby"),
+        "MatchActive":      post.integer("matchactive"),
+        "MatchAdded":       post.date("matchadded"),
+        "MatchExpires":     post.date("matchexpires"),
+        "MatchSex":         post.integer("matchsex", -1),
+        "MatchSize":        post.integer("matchsize", -1),
+        "MatchColour":      post.integer("matchcolour", -1),
+        "MatchAgeFrom":     post.floating("agedfrom"),
+        "MatchAgeTo":       post.floating("agedto"),
+        "MatchAnimalType":  post.integer("matchtype", -1),
+        "MatchSpecies":     post.integer("matchspecies", -1),
+        "MatchBreed":       post.integer("matchbreed1", -1),
+        "MatchBreed2":      post.integer("matchbreed2", -1),
+        "MatchGoodWithCats": post.integer("matchgoodwithcats", -1),
+        "MatchGoodWithDogs": post.integer("matchgoodwithdogs", -1),
+        "MatchGoodWithChildren": post.integer("matchgoodwithchildren", -1),
+        "MatchHouseTrained": post.integer("matchhousetrained", -1),
+        "MatchCommentsContain": post["commentscontain"],
         # Flags are updated afterwards, but cannot be null
         "IDCheck":                  0,
         "ExcludeFromBulkEmail":     0,
@@ -697,7 +712,7 @@ def insert_person_from_form(dbo, post, username, geocode=True):
             "%s" % (newvalue))
 
     # Look up a geocode for the person's address
-    if geocode: update_geocode(dbo, pid, "", post["address"], post["town"], post["county"], post["postcode"])
+    if geocode: update_geocode(dbo, pid, "", post["address"], post["town"], post["county"], post["postcode"], post["country"])
 
     return pid
 
@@ -737,6 +752,7 @@ def update_person_from_form(dbo, post, username, geocode=True):
         "OwnerTown":        post["town"],
         "OwnerCounty":      post["county"],
         "OwnerPostcode":    post["postcode"],
+        "OwnerCountry":     post["country"],
         "LatLong":          post["latlong"],
         "HomeTelephone":    post["hometelephone"],
         "WorkTelephone":    post["worktelephone"],
@@ -778,7 +794,7 @@ def update_person_from_form(dbo, post, username, geocode=True):
     additional.save_values_for_link(dbo, post, pid, "person")
 
     # Check/update the geocode for the person's address
-    if geocode: update_geocode(dbo, pid, post["latlong"], post["address"], post["town"], post["county"], post["postcode"])
+    if geocode: update_geocode(dbo, pid, post["latlong"], post["address"], post["town"], post["county"], post["postcode"], post["country"])
 
 def update_flags(dbo, username, personid, flags):
     """
@@ -848,6 +864,7 @@ def merge_person_details(dbo, username, personid, d, force=False):
     merge("town", "OWNERTOWN")
     merge("county", "OWNERCOUNTY")
     merge("postcode", "OWNERPOSTCODE")
+    merge("country", "OWNERCOUNTRY")
     merge("hometelephone", "HOMETELEPHONE")
     merge("worktelephone", "WORKTELEPHONE")
     merge("mobiletelephone", "MOBILETELEPHONE")
@@ -916,6 +933,7 @@ def merge_person(dbo, username, personid, mergepersonid):
     mp["town"] = mp.OWNERTOWN
     mp["county"] = mp.OWNERCOUNTY
     mp["postcode"] = mp.OWNERPOSTCODE
+    mp["country"] = mp.OWNERCOUNTRY
     mp["hometelephone"] = mp.HOMETELEPHONE
     mp["worktelephone"] = mp.WORKTELEPHONE
     mp["mobiletelephone"] = mp.MOBILETELEPHONE
@@ -925,7 +943,7 @@ def merge_person(dbo, username, personid, mergepersonid):
     # Merge any flags from the target
     merge_flags(dbo, username, personid, mp.ADDITIONALFLAGS)
 
-    # Mergy any GDPR flags from the target
+    # Merge any GDPR flags from the target
     merge_gdpr_flags(dbo, username, personid, mp.GDPRCONTACTOPTIN)
 
     # Reparent all satellite records
@@ -964,6 +982,7 @@ def merge_person(dbo, username, personid, mergepersonid):
     reparent("diary", "LinkID", "LinkType", diary.PERSON)
     reparent("log", "LinkID", "LinkType", log.PERSON)
     dbo.delete("owner", mergepersonid, username)
+    audit.move(dbo, username, "owner", personid, "", "Merged animal %d -> %d" % (mergepersonid, personid))
 
 def merge_duplicate_people(dbo, username):
     """
@@ -1013,7 +1032,7 @@ def update_pass_homecheck(dbo, user, personid, comments):
         com += "\n" + comments
         dbo.update("owner", personid, { "Comments": "%s\n%s" % (com, comments) }, user)
 
-def update_geocode(dbo, personid, latlon="", address="", town="", county="", postcode=""):
+def update_geocode(dbo, personid, latlon="", address="", town="", county="", postcode="", country=""):
     """
     Looks up the geocode for this person with the address info given.
     If latlon is already set to a value, checks the address hash to see if it
@@ -1021,18 +1040,25 @@ def update_geocode(dbo, personid, latlon="", address="", town="", county="", pos
     """
     # If an address hasn't been specified, look it up from the personid given
     if address == "":
-        row = dbo.first_row(dbo.query("SELECT OwnerAddress, OwnerTown, OwnerCounty, OwnerPostcode FROM owner WHERE ID=?", [personid]))
+        row = dbo.first_row(dbo.query("SELECT OwnerAddress, OwnerTown, OwnerCounty, OwnerPostcode, OwnerCountry FROM owner WHERE ID=?", [personid]))
         address = row.OWNERADDRESS
         town = row.OWNERTOWN
         county = row.OWNERCOUNTY
         postcode = row.OWNERPOSTCODE
+        country = row.OWNERCOUNTRY
+    # If we're allowing manual entry of latlon values and we have a non-empty
+    # value, do nothing so that changes to address don't overwrite it
+    # If someone has deleted the values, a latlon of ,,HASH is returned so
+    # we allow the geocode to be regenerated in that case.
+    if configuration.show_lat_long(dbo) and latlon is not None and latlon != "" and not latlon.startswith(",,"):
+        return latlon
     # If a latlon has been passed and it contains a hash of the address elements,
     # then the address hasn't changed since the last geocode was done - do nothing
     if latlon is not None and latlon != "":
-        if latlon.find(geo.address_hash(address, town, county, postcode)) != -1:
+        if latlon.find(geo.address_hash(address, town, county, postcode, country)) != -1:
             return latlon
     # Do the geocode
-    latlon = geo.get_lat_long(dbo, address, town, county, postcode)
+    latlon = geo.get_lat_long(dbo, address, town, county, postcode, country)
     update_latlong(dbo, personid, latlon)
     return latlon
 

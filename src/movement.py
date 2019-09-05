@@ -73,11 +73,13 @@ def get_transport_query(dbo):
         "d.OwnerTown AS DriverOwnerTown, p.OwnerTown AS PickupOwnerTown, dr.OwnerTown AS DropoffOwnerTown, " \
         "d.OwnerCounty AS DriverOwnerCounty, p.OwnerCounty AS PickupOwnerCounty, dr.OwnerCounty AS DropoffOwnerCounty, " \
         "d.OwnerPostcode AS DriverOwnerPostcode, p.OwnerPostcode AS PickupOwnerPostcode, dr.OwnerPostcode AS DropoffOwnerPostcode, " \
+        "d.OwnerCountry AS DriverOwnerCountry, p.OwnerCountry AS PickupOwnerCountry, dr.OwnerCountry AS DropoffOwnerCountry, " \
         "d.EmailAddress AS DriverEmailAddress, p.EmailAddress AS PickupEmailAddress, dr.EmailAddress AS DropoffEmailAddress, " \
         "d.HomeTelephone AS DriverHomeTelephone, p.HomeTelephone AS PickupHomeTelephone, dr.HomeTelephone AS DropoffHomeTelephone, " \
         "d.WorkTelephone AS DriverWorkTelephone, p.WorkTelephone AS PickupWorkTelephone, dr.WorkTelephone AS DropoffWorkTelephone, " \
         "d.MobileTelephone AS DriverMobileTelephone, p.MobileTelephone AS PickupMobileTelephone, dr.MobileTelephone AS DropoffMobileTelephone, " \
-        "t.PickupAddress, t.PickupTown, t.PickupCounty, t.PickupPostcode, t.DropoffAddress, t.DropoffTown, t.DropoffCounty, t.DropoffPostcode, " \
+        "t.PickupAddress, t.PickupTown, t.PickupCounty, t.PickupPostcode, t.PickupCountry, " \
+        "t.DropoffAddress, t.DropoffTown, t.DropoffCounty, t.DropoffPostcode, t.DropoffCountry, " \
         "ma.MediaName AS WebsiteMediaName, ma.Date AS WebsiteMediaDate, " \
         "a.AnimalName, a.ShelterCode, a.ShortCode, s.SpeciesName, a.BreedName, x.Sex " \
         "FROM animaltransport t " \
@@ -172,6 +174,14 @@ def get_recent_unneutered_adoptions(dbo, months = 1):
         "WHERE m.MovementType = 1 AND m.MovementDate Is Not Null AND m.ReturnDate Is Null " \
         "AND m.MovementDate > ? AND a.Neutered = 0 " \
         "ORDER BY m.MovementDate DESC", [dbo.today(offset=months*-31)])
+
+def get_soft_releases(dbo):
+    """
+    Returns a list of soft release movements. 
+    """
+    return dbo.query(get_movement_query(dbo) + \
+        "WHERE m.IsTrial = 1 AND m.MovementType = 7 AND (m.ReturnDate Is Null OR m.ReturnDate > ?) " \
+        "ORDER BY m.TrialEndDate", [dbo.today()])
 
 def get_trial_adoptions(dbo):
     """
@@ -782,6 +792,7 @@ def insert_transport_from_form(dbo, username, post):
         raise utils.ASMValidationError(i18n._("Transports must have valid pickup and dropoff dates and times.", l))
 
     return dbo.insert("animaltransport", {
+        "TransportReference":   post["reference"],
         "AnimalID":             post.integer("animal"),
         "TransportTypeID":      post.integer("type"),
         "DriverOwnerID":        post.integer("driver"),
@@ -790,12 +801,14 @@ def insert_transport_from_form(dbo, username, post):
         "PickupTown":           post["pickuptown"],
         "PickupCounty":         post["pickupcounty"],
         "PickupPostcode":       post["pickuppostcode"],
+        "PickupCountry":        post["pickupcountry"],
         "PickupDateTime":       post.datetime("pickupdate", "pickuptime"),
         "DropoffOwnerID":       post.integer("dropoff"),
         "DropoffAddress":       post["dropoffaddress"],
         "DropoffTown":          post["dropofftown"],
         "DropoffCounty":        post["dropoffcounty"],
         "DropoffPostcode":      post["dropoffpostcode"],
+        "DropoffCountry":       post["dropoffcountry"],
         "DropoffDateTime":      post.datetime("dropoffdate", "dropofftime"),
         "Status":               post.integer("status"),
         "Miles":                post.integer("miles"),
@@ -816,6 +829,7 @@ def update_transport_from_form(dbo, username, post):
     transportid = post.integer("transportid")
 
     dbo.update("animaltransport", transportid, {
+        "TransportReference":   post["reference"],
         "AnimalID":             post.integer("animal"),
         "TransportTypeID":      post.integer("type"),
         "DriverOwnerID":        post.integer("driver"),
@@ -824,12 +838,14 @@ def update_transport_from_form(dbo, username, post):
         "PickupTown":           post["pickuptown"],
         "PickupCounty":         post["pickupcounty"],
         "PickupPostcode":       post["pickuppostcode"],
+        "PickupCountry":        post["pickupcountry"],
         "PickupDateTime":       post.datetime("pickupdate", "pickuptime"),
         "DropoffOwnerID":       post.integer("dropoff"),
         "DropoffAddress":       post["dropoffaddress"],
         "DropoffTown":          post["dropofftown"],
         "DropoffCounty":        post["dropoffcounty"],
         "DropoffPostcode":      post["dropoffpostcode"],
+        "DropoffCountry":       post["dropoffcountry"],
         "DropoffDateTime":      post.datetime("dropoffdate", "dropofftime"),
         "Status":               post.integer("status"),
         "Miles":                post.integer("miles"),

@@ -336,6 +336,16 @@ def handler(post, path, remoteip, referer, querystring):
             publishers.html.get_deceased_animals(dbo, daysdeceased=post.integer("days"), style=post["template"], \
                 speciesid=post.integer("speciesid"), animaltypeid=post.integer("animaltypeid")))
 
+    elif method == "html_flagged_animals":
+        return set_cached_response(cache_key, "text/html", 10800, 1800, \
+            publishers.html.get_held_animals(dbo, style=post["template"], \
+                speciesid=post.integer("speciesid"), animaltypeid=post.integer("animaltypeid"), flag=post["flag"]))
+
+    elif method == "html_held_animals":
+        return set_cached_response(cache_key, "text/html", 10800, 1800, \
+            publishers.html.get_held_animals(dbo, style=post["template"], \
+                speciesid=post.integer("speciesid"), animaltypeid=post.integer("animaltypeid")))
+
     elif method == "json_adoptable_animals":
         users.check_permission_map(l, user["SUPERUSER"], securitymap, users.VIEW_ANIMAL)
         rs = publishers.base.get_animal_data(dbo, None, include_additional_fields = True)
