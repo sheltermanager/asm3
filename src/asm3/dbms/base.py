@@ -432,7 +432,7 @@ class Database(object):
             if setRecordVersion: values["RecordVersion"] = self.get_recordversion()
         values = self.encode_str_before_write(values)
         iid = 0
-        if asm3.utils.cint(where) > 0:
+        if asm3.utils.is_numeric(where):
             iid = asm3.utils.cint(where)
             where = "ID=%s" % where
         sql = "UPDATE %s SET %s WHERE %s" % ( table, ",".join( ["%s=?" % x for x in values.keys()] ), where )
@@ -454,7 +454,7 @@ class Database(object):
             writeDeletion: If True, writes a record to the deletion table
             returns the number of rows deleted
         """
-        if asm3.utils.cint(where) > 0:
+        if asm3.utils.is_numeric(where):
             where = "ID=%s" % asm3.utils.cint(where)
         if writeAudit and user != "":
             asm3.audit.delete_rows(self, user, table, where)
