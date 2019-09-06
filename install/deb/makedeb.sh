@@ -61,7 +61,7 @@ echo '#!/bin/sh
 ### END INIT INFO
 DAEMON=/usr/bin/env
 RUNAS=www-data
-ARGS="python /usr/lib/sheltermanager3/code.py 5000"
+ARGS="python3 /usr/lib/sheltermanager3/code.py 5000"
 PIDFILE="/var/run/sheltermanager3.pid"
 WD=/usr/lib/sheltermanager3
 . /lib/lsb/init-functions
@@ -95,7 +95,7 @@ After=network.target syslog.target
 
 [Service]
 Type=simple
-ExecStart=/usr/bin/python code.py 5000
+ExecStart=/usr/bin/python3 code.py 5000
 Restart=on-failure
 WorkingDirectory=/usr/lib/sheltermanager3
 User=www-data
@@ -115,8 +115,8 @@ Section: contrib
 Priority: optional
 Architecture: all
 Essential: no
-Depends: debconf, python-webpy, python-pil, python-memcache, python-requests, python-mysqldb, python-psycopg2
-Suggests: mysql-server, imagemagick, wkhtmltopdf, python-sqlite
+Depends: debconf, python3-pil, python3-memcache, python3-requests, python3-mysqldb, python3-psycopg2
+Suggests: mysql-server, imagemagick, wkhtmltopdf, python3-sqlite
 Installed-Size: `du -s -k sheltermanager3 | awk '{print$1}'`
 Maintainer: ASM Team [info@sheltermanager.com]
 Provides: sheltermanager3
@@ -153,7 +153,7 @@ chmod +x sheltermanager3/DEBIAN/prerm
 # Generate the sheltermanager3.cron.daily script
 echo "#!/bin/sh
 cd /usr/lib/sheltermanager3
-python cron.py all
+python3 cron.py all
 " > sheltermanager3/etc/cron.daily/sheltermanager3
 chmod +x sheltermanager3/etc/cron.daily/sheltermanager3
 

@@ -15,7 +15,7 @@ distwin32: dist
 tags:
 	@echo "[tags] ============================"
 	rm -f tag
-	ctags -f tags src/*.py src/asm3/*.py src/asm3/publishers/*.py src/asm3/dbms/*.py src/static/js/*.js
+	ctags -f tags src/*.py src/web/*.py src/asm3/*.py src/asm3/publishers/*.py src/asm3/dbms/*.py src/static/js/*.js
 
 cscope:
 	@echo "[cscope] ==========================="
@@ -29,6 +29,8 @@ clean:
 	rm -f tags
 	rm -f src/*.pyc
 	rm -rf src/__pycache__
+	rm -f src/web/*.pyc
+	rm -rf src/web/__pycache__
 	rm -f src/asm3/*.pyc
 	rm -rf src/asm3/__pycache__
 	rm -f src/asm3/dbms/*.pyc

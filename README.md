@@ -18,9 +18,9 @@ Extra, non-mandatory packages:
 
 * apt-get install imagemagick (for scaling/compressing PDFs to save on storage)
 * apt-get install wkhtmltopdf (for creating PDFs from HTML document templates)
-* apt-get install python-reportlab (for creating mailing label PDFs)
-* apt-get install python-requests (needed for all HTTPS publishers - PetLink, MeetAPet, VetEnvoy)
-* apt-get install python-boto3 (needed for Amazon S3 media storage)
+* apt-get install python3-reportlab (for creating mailing label PDFs)
+* apt-get install python3-requests (needed for all HTTPS publishers - PetLink, MeetAPet, VetEnvoy)
+* apt-get install python3-boto3 (needed for Amazon S3 media storage)
 
 Packages necessary for building static checkers, installers and manuals:
 
@@ -108,7 +108,7 @@ These routines include recalculating denormalised data such as animal age, time
 on shelter, updating the waiting list and publishing to the internet.
 
 To run them, make sure the environment is setup as before and run
-python cron.py all
+python3 cron.py all
 
 See the cron.py file for more information on mode parameters to run 
 specific tasks only.
