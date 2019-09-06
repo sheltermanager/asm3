@@ -101,7 +101,7 @@ smcom-stable-tgz: version clean minify
 
 pot:
 	@echo "[template] ========================="
-	python po/extract_strings.py > po/asm.pot
+	python3 po/extract_strings.py > po/asm.pot
 
 translation:
 	@echo "[translation] ======================"
@@ -122,22 +122,22 @@ manual:
 
 test: version
 	@echo "[test] ========================="
-	cd src && python code.py 5000
+	cd src && python3 code.py 5000
 
 tests:
 	@echo "[tests] ========================"
-	cd test && python suite.py
+	cd test && python3 suite.py
 	rm -f test/*.pyc && rm -rf test/__pycache__
 
 testsdb:
 	@echo "[testsdb] ========================"
 	mysql -u root -proot -e "DROP DATABASE IF EXISTS asmunittest"
 	mysql -u root -proot -e "CREATE DATABASE asmunittest"
-	cd src && python cron.py maint_db_install MYSQL localhost 3306 root root asmunittest asmunittest
+	cd src && python3 cron.py maint_db_install MYSQL localhost 3306 root root asmunittest asmunittest
 
 deps:
 	@echo "[deps] ========================="
-	apt-get install python python-imaging python-webpy python-mysqldb python-psycopg2 python-requests python-memcache python-reportlab
+	apt-get install python3 python3-pil python3-mysqldb python3-psycopg2 python3-requests python3-memcache python3-reportlab
 	apt-get install exuberant-ctags nodejs flake8 imagemagick wkhtmltopdf
 	apt-get install python-sphinx python-sphinx-rtd-theme texlive-latex-base texlive-latex-extra
 

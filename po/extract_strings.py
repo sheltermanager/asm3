@@ -18,7 +18,7 @@ strings = {}
 
 def extract_strings(fname, s):
     for x in re.findall("\\_\\(['\"](.+?)['\"],? ?l?\\)", s):
-        if strings.has_key(x):
+        if x in strings:
             if strings[x].find(fname) == -1:
                 strings[x] += " " + fname
         else:
@@ -32,7 +32,7 @@ def output_msgid(s):
     else:
         m += "\"\n"
         bits = textwrap.wrap(s, width=76)
-        for i in xrange(0, len(bits)):
+        for i in range(0, len(bits)):
             if i == len(bits) -1:
                 m += "\"%s\"\n" % bits[i]
             else:
@@ -74,13 +74,13 @@ msgstr ""
 
 """
 
-for string, fname in iter(sorted(strings.iteritems())):
+for string, fname in iter(sorted(strings.items())):
     locs = textwrap.wrap(fname, width=76)
     for l in locs:
         pot += "#: %s\n" % l
     pot += output_msgid(string)
     pot += "msgstr \"\"\n\n"
 
-print pot
+print(pot)
 
 
