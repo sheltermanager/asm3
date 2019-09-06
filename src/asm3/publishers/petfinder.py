@@ -25,6 +25,10 @@ class PetFinderPublisher(FTPPublisher):
             asm3.configuration.petfinder_password(dbo))
         self.initLog("petfinder", "PetFinder Publisher")
 
+    def pfDate(self, d):
+        """ Returns a CSV entry for a date in YYYY-MM-DD """
+        return "\"%s\"" % asm3.i18n.format_date("%Y-%m-%d", d)
+
     def pfYesNo(self, condition):
         """
         Returns a CSV entry for yes or no based on the condition
@@ -33,6 +37,15 @@ class PetFinderPublisher(FTPPublisher):
             return "\"1\""
         else:
             return "\"\""
+
+    def pfImageUrl(self, urls, index):
+        """
+        Returns image URL index from urls, returning an empty string if it does not exist.
+        """
+        try:
+            return urls[index]
+        except IndexError:
+            return ""
 
     def run(self):
 
@@ -62,14 +75,6 @@ class PetFinderPublisher(FTPPublisher):
             self.cleanup()
             return
 
-        # Build a list of age bands for petfinder ages. It's
-        # a list of integers in days for each band.
-        # The defaults are 6 months, 2 years and 9 years. 
-        agebands = asm3.configuration.petfinder_age_bands(self.dbo)
-        if agebands == "" or len(agebands.split(",")) != 3:
-            agebands = "182,730,3285"
-        agebands = [ int(i) for i in agebands.split(",") ]
-
         if not self.openFTPSocket(): 
             self.setLastError("Failed opening FTP socket.")
             if self.logSearch("530 Login") != -1:
@@ -78,11 +83,18 @@ class PetFinderPublisher(FTPPublisher):
             self.cleanup()
             return
 
-        # Do the images first
+        # Make sure necessary folders exist
         self.mkdir("import")
         self.chdir("import")
         self.mkdir("photos")
-        self.chdir("photos", "import/photos")
+
+        # Build a list of age bands for petfinder ages. It's
+        # a list of integers in days for each band.
+        # The defaults are 6 months, 2 years and 9 years. 
+        agebands = asm3.configuration.petfinder_age_bands(self.dbo)
+        if agebands == "" or len(agebands.split(",")) != 3:
+            agebands = "182,730,3285"
+        agebands = [ int(i) for i in agebands.split(",") ]
 
         csv = []
 
@@ -100,13 +112,11 @@ class PetFinderPublisher(FTPPublisher):
                     self.cleanup()
                     return
 
-                # Upload images for this animal
-                self.uploadImages(an, False, 3)
-
                 csv.append( self.processAnimal(an, agebands) )
 
                 # Mark success in the log
                 self.logSuccess("Processed: %s: %s (%d of %d)" % ( an["SHELTERCODE"], an["ANIMALNAME"], anCount, len(animals)))
+
             except Exception as err:
                 self.logError("Failed processing animal: %s, %s" % (str(an["SHELTERCODE"]), err), sys.exc_info())
 
@@ -137,12 +147,26 @@ class PetFinderPublisher(FTPPublisher):
             "#14:HouseBroken=HouseBroken\n" \
             "#15:Id=Id\n" \
             "#16:Breed2=Breed2\n" \
+            "#17:Mix=Mix\n" \
+            "#18:arrival_date=arrival_date\n" \
+            "#19:birth_date=birth_date\n" \
+            "#20:adoption_fee=adoption_fee\n" \
+            "#21:display_adoption_fee=display_adoption_fee\n" \
+            "#22:special_needs_notes=special_needs_notes\n" \
+            "#23:no_other=no_other\n" \
+            "#24:no_other_note=no_other_note\n" \
+            "#25:photo1=photo1\n" \
+            "#26:photo2=photo2\n" \
+            "#27:photo3=photo3\n" \
+            "#28:photo4=photo4\n" \
+            "#29:photo5=photo5\n" \
+            "#30:photo6=photo6\n" \
+            "#31:tags=tags\n" \
             "#ALLOWUPDATE:Y\n" \
             "#HEADER:N" % shelterid
         self.saveFile(os.path.join(self.publishDir, shelterid + "import.cfg"), mapfile)
         self.saveFile(os.path.join(self.publishDir, shelterid), "\n".join(csv))
         self.log("Uploading datafile and map, %s %s" % (shelterid, shelterid + "import.cfg"))
-        self.chdir("..", "import")
         self.upload(shelterid)
         self.upload(shelterid + "import.cfg")
         self.log("Uploaded %s %s" % ( shelterid, shelterid + "import.cfg"))
@@ -156,11 +180,11 @@ class PetFinderPublisher(FTPPublisher):
         """ Processes an animal and returns a CSV line """
         line = []
         # Mapped species
-        line.append("\"%s\"" % an["PETFINDERSPECIES"])
+        line.append("\"%s\"" % an.PETFINDERSPECIES)
         # Breed 1
-        line.append("\"%s\"" % an["PETFINDERBREED"])
+        line.append("\"%s\"" % an.PETFINDERBREED)
         # Age, one of Adult, Baby, Senior and Young
-        ageindays = asm3.i18n.date_diff_days(an["DATEOFBIRTH"], asm3.i18n.now(self.dbo.timezone))
+        ageindays = asm3.i18n.date_diff_days(an.DATEOFBIRTH, asm3.i18n.now(self.dbo.timezone))
         agename = "Adult"
         if ageindays < agebands[0]: agename = "Baby"
         elif ageindays < agebands[1]: agename = "Young"
@@ -168,46 +192,71 @@ class PetFinderPublisher(FTPPublisher):
         else: agename = "Senior"
         line.append("\"%s\"" % agename)
         # Name
-        line.append("\"%s\"" % an["ANIMALNAME"].replace("\"", "\"\""))
+        line.append("\"%s\"" % an.ANIMALNAME.replace("\"", "\"\""))
         # Size, one of S, M, L, XL
         ansize = "M"
-        if an["SIZE"] == 0: ansize = "XL"
-        elif an["SIZE"] == 1: ansize = "L"
-        elif an["SIZE"] == 2: ansize = "M"
-        elif an["SIZE"] == 3: ansize = "S"
+        if an.SIZE == 0: ansize = "XL"
+        elif an.SIZE == 1: ansize = "L"
+        elif an.SIZE == 2: ansize = "M"
+        elif an.SIZE == 3: ansize = "S"
         line.append("\"%s\"" % ansize)
         # Sex, one of M or F
         sexname = "M"
-        if an["SEX"] == 0: sexname = "F"
+        if an.SEX == 0: sexname = "F"
         line.append("\"%s\"" % sexname)
         # Description
         line.append("\"%s\"" % self.getDescription(an, False, True))
         # Special needs
-        if an["CRUELTYCASE"] == 1:
+        if an.CRUELTYCASE == 1:
             line.append("\"1\"")
-        elif an["HASSPECIALNEEDS"] == 1:
+        elif an.HASSPECIALNEEDS == 1:
             line.append("\"1\"")
         else:
             line.append("\"\"")
         # Has shots
-        line.append(self.pfYesNo(asm3.medical.get_vaccinated(self.dbo, int(an["ID"]))))
+        line.append(self.pfYesNo(asm3.medical.get_vaccinated(self.dbo, int(an.ID))))
         # Altered
-        line.append(self.pfYesNo(an["NEUTERED"] == 1))
+        line.append(self.pfYesNo(an.NEUTERED == 1))
         # No Dogs
-        line.append(self.pfYesNo(an["ISGOODWITHDOGS"] == 1))
+        line.append(self.pfYesNo(an.ISGOODWITHDOGS == 1))
         # No Cats
-        line.append(self.pfYesNo(an["ISGOODWITHCATS"] == 1))
+        line.append(self.pfYesNo(an.ISGOODWITHCATS == 1))
         # No Kids
-        line.append(self.pfYesNo(an["ISGOODWITHCHILDREN"] == 1))
+        line.append(self.pfYesNo(an.ISGOODWITHCHILDREN == 1))
         # No Claws
-        line.append(self.pfYesNo(an["DECLAWED"] == 1))
+        line.append(self.pfYesNo(an.DECLAWED == 1))
         # Housebroken
-        line.append(self.pfYesNo(an["ISHOUSETRAINED"] == 0))
+        line.append(self.pfYesNo(an.ISHOUSETRAINED == 0))
         # ID
-        line.append("\"%s\"" % an["SHELTERCODE"])
+        line.append("\"%s\"" % an.SHELTERCODE)
         # Breed 2
         line.append("\"%s\"" % self.getPublisherBreed(an, 2))
         # Mix
-        line.append(self.pfYesNo(an["CROSSBREED"] == 1))
+        line.append(self.pfYesNo(an.CROSSBREED == 1))
+        # Arrival Date
+        line.append(self.pfDate(an.MOSTRECENTENTRYDATE))
+        # Birth Date
+        line.append(self.pfDate(an.DATEOFBIRTH))
+        # Adoption Fee
+        line.append("\"%0.2f\"" % (an.FEE / 100))
+        # Display adoption fee?
+        line.append(self.pfYesNo(an.FEE > 0))
+        # Special Needs Notes : Not used
+        line.append("\"\"")
+        # No Other pets?
+        line.append("\"%s\"" % (self.pfYesNo(False)))
+        # No Other Note
+        line.append("\"\"")
+        # photo1-6
+        urls = self.getPhotoUrls(an.ID)
+        line.append("\"%s\"" % self.pfImageUrl(urls, 0)) # photo1
+        line.append("\"%s\"" % self.pfImageUrl(urls, 1)) # photo2
+        line.append("\"%s\"" % self.pfImageUrl(urls, 2)) # photo3
+        line.append("\"%s\"" % self.pfImageUrl(urls, 3)) # photo4
+        line.append("\"%s\"" % self.pfImageUrl(urls, 4)) # photo5
+        line.append("\"%s\"" % self.pfImageUrl(urls, 5)) # photo6
+        # Tags
+        line.append("\"\"")
+
         return ",".join(line)
 

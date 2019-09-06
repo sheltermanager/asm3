@@ -11,7 +11,7 @@ import asm3.media
 import asm3.movement
 import asm3.utils
 import asm3.wordprocessor
-from asm3.sitedefs import MULTIPLE_DATABASES_PUBLISH_DIR, MULTIPLE_DATABASES_PUBLISH_FTP
+from asm3.sitedefs import MULTIPLE_DATABASES_PUBLISH_DIR, MULTIPLE_DATABASES_PUBLISH_FTP, SERVICE_URL
 
 import ftplib
 import glob
@@ -558,6 +558,19 @@ class AbstractPublisher(threading.Thread):
         """
         return 0 == self.dbo.query_int("SELECT COUNT(*) FROM basecolour " \
             "WHERE AdoptAPetColour Is Null OR AdoptAPetColour = ''")
+
+    def getPhotoUrls(self, animalid):
+        """
+        Returns a list of photo URLs for animalid. The preferred is always first.
+        """
+        photo_urls = []
+        photos = self.dbo.query("SELECT MediaName FROM media " \
+            "WHERE LinkTypeID = 0 AND LinkID = ? AND MediaMimeType = 'image/jpeg' " \
+            "AND (ExcludeFromPublish = 0 OR ExcludeFromPublish Is Null) " \
+            "ORDER BY WebsitePhoto DESC, ID", [animalid])
+        for m in photos:
+            photo_urls.append("%s?account=%s&method=dbfs_image&title=%s" % (SERVICE_URL, self.dbo.database, m.MEDIANAME))
+        return photo_urls
 
     def getPublisherBreed(self, an, b1or2 = 1):
         """

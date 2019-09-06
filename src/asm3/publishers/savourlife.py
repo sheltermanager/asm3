@@ -7,7 +7,7 @@ import asm3.medical
 import asm3.utils
 
 from .base import AbstractPublisher
-from asm3.sitedefs import SERVICE_URL, SAVOURLIFE_URL, SAVOURLIFE_API_KEY
+from asm3.sitedefs import SAVOURLIFE_URL, SAVOURLIFE_API_KEY
 
 import sys
 
@@ -315,15 +315,6 @@ class SavourLifePublisher(AbstractPublisher):
             if fr is not None and fr.OWNERCOUNTY: location_state_abbr = self.get_state(fr.OWNERCOUNTY)
             if fr is not None and fr.OWNERTOWN: location_suburb = fr.OWNERTOWN
 
-        # Build a list of immutable photo URLs
-        photo_urls = []
-        photos = self.dbo.query("SELECT MediaName FROM media " \
-            "WHERE LinkTypeID = 0 AND LinkID = ? AND MediaMimeType = 'image/jpeg' " \
-            "AND (ExcludeFromPublish = 0 OR ExcludeFromPublish Is Null) " \
-            "ORDER BY WebsitePhoto DESC, ID", [an.ID])
-        for m in photos:
-            photo_urls.append("%s?account=%s&method=dbfs_image&title=%s" % (SERVICE_URL, self.dbo.database, m.MEDIANAME))
-
         # MicrochipDetails should be "No" if we don't have one, the actual number for VIC or NSW (2XXX or 3XXX postcode)
         # or "Yes" for others.
         microchipdetails = "No"
@@ -340,7 +331,7 @@ class SavourLifePublisher(AbstractPublisher):
             "DogId":                    dogid, # None in here translates to null and creates a new record
             "Description":              self.replace_html_entities(self.getDescription(an)),
             "DogName":                  an.ANIMALNAME.title(),
-            "Images":                   photo_urls,
+            "Images":                   self.getPhotoUrls(an.ID),
             "BreedId":                  self.get_breed_id(an),
             "Suburb":                   location_suburb,
             "State":                    location_state_abbr,

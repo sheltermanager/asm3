@@ -6,7 +6,7 @@ import asm3.medical
 import asm3.utils
 
 from .base import AbstractPublisher
-from asm3.sitedefs import SERVICE_URL, PETRESCUE_URL
+from asm3.sitedefs import PETRESCUE_URL
 
 import sys
 
@@ -268,15 +268,6 @@ class PetRescuePublisher(AbstractPublisher):
             if fr is not None and fr.OWNERCOUNTY: location_state_abbr = fr.OWNERCOUNTY
             if fr is not None and fr.OWNERTOWN: location_suburb = fr.OWNERTOWN
 
-        # Build a list of immutable photo URLs
-        photo_urls = []
-        photos = self.dbo.query("SELECT MediaName FROM media " \
-            "WHERE LinkTypeID = 0 AND LinkID = ? AND MediaMimeType = 'image/jpeg' " \
-            "AND (ExcludeFromPublish = 0 OR ExcludeFromPublish Is Null) " \
-            "ORDER BY WebsitePhoto DESC, ID", [an.ID])
-        for m in photos:
-            photo_urls.append("%s?account=%s&method=dbfs_image&title=%s" % (SERVICE_URL, self.dbo.database, m.MEDIANAME))
-
         # Only send microchip_number for locations with a Victoria postcode 3xxx
         microchip_number = ""
         if location_postcode.startswith("3"):
@@ -328,7 +319,7 @@ class PetRescuePublisher(AbstractPublisher):
             "interstate":               interstate, # true | false - can the animal be flown to another state for adoption
             "medical_notes":            "", # DISABLED an.HEALTHPROBLEMS, # 4,000 characters medical notes
             "multiple_animals":         an.BONDEDANIMALID > 0 or an.BONDEDANIMAL2ID > 0, # More than one animal included in listing true | false
-            "photo_urls":               photo_urls, # List of photo URL strings
+            "photo_urls":               self.getPhotoUrls(an.ID), # List of photo URL strings
             "status":                   "active" # active | removed | on_hold | rehomed | suspended | group_suspended
         }
 
