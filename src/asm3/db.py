@@ -1,4 +1,3 @@
-#!/usr/bin/python
 
 import asm3.dbms.hsqldb, asm3.dbms.mysql, asm3.dbms.postgresql, asm3.dbms.sqlite, asm3.dbms.db2
 import asm3.smcom 

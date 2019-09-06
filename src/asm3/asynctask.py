@@ -1,4 +1,3 @@
-#!/usr/bin/python
 
 """
 Module for helping run tasks asynchronously and updating/getting progress.

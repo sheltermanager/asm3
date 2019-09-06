@@ -1,4 +1,3 @@
-#!/usr/bin/python
 
 """
 Service functions for external applications.

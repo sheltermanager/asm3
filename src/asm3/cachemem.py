@@ -1,4 +1,3 @@
-#!/usr/bin/python
 
 from asm3.sitedefs import MEMCACHED_SERVER
 

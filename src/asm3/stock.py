@@ -1,4 +1,3 @@
-#!/usr/bin/python
 
 import asm3.utils
 from asm3.i18n import _, now, python2display

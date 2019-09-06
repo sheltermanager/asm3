@@ -1,4 +1,3 @@
-#!/usr/bin/python
 
 """
 Module for generating random pet names from a large set.

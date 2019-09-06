@@ -1,4 +1,3 @@
-#!/usr/bin/python
 
 """
     Module containing all functions/classes for internet publishing

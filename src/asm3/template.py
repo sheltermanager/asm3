@@ -1,4 +1,3 @@
-#!/usr/bin/python
 
 import asm3.audit
 import asm3.configuration

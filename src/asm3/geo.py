@@ -1,4 +1,3 @@
-#!/usr/bin/python
 
 """
     Geocoding module. Supports google and nominatim

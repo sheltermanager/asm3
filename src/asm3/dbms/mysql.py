@@ -1,4 +1,3 @@
-#!/usr/bin/python
 
 import asm3.utils
 from .base import Database

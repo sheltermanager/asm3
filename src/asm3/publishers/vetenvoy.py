@@ -1,4 +1,3 @@
-#!/usr/bin/python
 
 import asm3.al
 import asm3.configuration

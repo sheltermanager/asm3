@@ -1,4 +1,3 @@
-#!/usr/bin/python
 """
    DB2 and Derby database support for Animal Shelter Manager (ASM)
    

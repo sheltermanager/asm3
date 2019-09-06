@@ -1,4 +1,3 @@
-#!/usr/bin/python
 
 import asm3.i18n
 import asm3.utils

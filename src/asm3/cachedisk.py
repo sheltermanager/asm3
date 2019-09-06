@@ -1,4 +1,3 @@
-#!/usr/bin/python
 
 """
 Implements a python disk cache in a similar way to memcache,

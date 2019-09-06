@@ -1,4 +1,3 @@
-#!/usr/bin/python
 
 import asm3.configuration
 import asm3.financial

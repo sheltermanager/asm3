@@ -1,4 +1,3 @@
-#!/usr/bin/python
 
 import asm3.additional
 import asm3.animal

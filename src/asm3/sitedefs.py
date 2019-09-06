@@ -1,4 +1,3 @@
-#!/usr/bin/python
 
 """
 WARNING: YOU SHOULD NO LONGER EDIT THIS FILE BY HAND!

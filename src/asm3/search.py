@@ -1,4 +1,3 @@
-#!/usr/bin/python
 
 """
 Main ASM search functionality

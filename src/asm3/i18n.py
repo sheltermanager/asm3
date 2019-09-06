@@ -1,4 +1,3 @@
-#!/usr/bin/python
 
 import datetime
 import json
@@ -7,8 +6,8 @@ import time
 # flake8: noqa - we have a lot of locales and this is convenient
 from asm3.locales import *
 
-VERSION = "43u [Fri  6 Sep 19:19:44 BST 2019]"
-BUILD = "09061919"
+VERSION = "43u [Fri  6 Sep 19:46:20 BST 2019]"
+BUILD = "09061946"
 
 DMY = ( "%d/%m/%Y", "%d/%m/%y" )
 MDY = ( "%m/%d/%Y", "%m/%d/%y" )
