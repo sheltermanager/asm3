@@ -227,7 +227,8 @@ class StaticApp(SimpleHTTPRequestHandler):
             if etag == client_etag:
                 self.send_response(304, "Not Modified")
                 self.start_response(self.status, self.headers)
-                raise StopIteration()
+                return 
+                # raise StopIteration() - breaks in 3.7
         except OSError:
             pass # Probably a 404
 

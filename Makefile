@@ -137,7 +137,7 @@ testsdb:
 
 deps:
 	@echo "[deps] ========================="
-	apt-get install python3 python3-pil python3-mysqldb python3-psycopg2 python3-requests python3-memcache python3-reportlab
+	apt-get install python3 python3-cheroot python3-pil python3-mysqldb python3-psycopg2 python3-requests python3-memcache python3-reportlab
 	apt-get install exuberant-ctags nodejs flake8 imagemagick wkhtmltopdf
 	apt-get install python-sphinx python-sphinx-rtd-theme texlive-latex-base texlive-latex-extra
 
