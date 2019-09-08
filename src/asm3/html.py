@@ -110,7 +110,7 @@ def asm_rollup_scripts(path):
     # Read them all into a buffer and send it back
     buf = []
     for i in jsfiles:
-        buf.append( asm3.utils.read_binary_file("%sstatic/js/%s" % (path, js_minified_name(i))) )
+        buf.append( asm3.utils.read_text_file("%sstatic/js/%s" % (path, js_minified_name(i))) )
     return "\n".join(buf)
 
 def asm_css_tag(filename):
