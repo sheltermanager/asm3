@@ -3,13 +3,14 @@
 import os, sys
 import collections
 import mimetypes
-import web
 
 # The path to the folder containing the ASM3 modules
 PATH = os.path.dirname(os.path.abspath(__file__)) + os.sep
 
 # Put the rest of our modules on the path
 sys.path.append(PATH)
+
+import web
 
 import asm3.al
 import asm3.additional
