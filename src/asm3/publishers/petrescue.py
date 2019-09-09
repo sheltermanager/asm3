@@ -53,7 +53,7 @@ class PetRescuePublisher(AbstractPublisher):
         """
         PR return their responses as UTF8.
         """
-        return asm3.utils.encode_html(s.decode("utf-8"))
+        return asm3.utils.encode_html(asm3.utils.cunicode(s))
 
     def replace_html_entities(self, s):
         """

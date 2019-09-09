@@ -586,7 +586,7 @@ class Database(object):
         without doing any caching and is equivalent to Database.query()
         """
         if not CACHE_COMMON_QUERIES: return self.query(sql, params=params, limit=limit)
-        cache_key = asm3.utils.md5_hash("%s:%s:%s" % (self.database, sql, params))
+        cache_key = asm3.utils.md5_hash_hex("%s:%s:%s" % (self.database, sql, params))
         results = asm3.cachemem.get(cache_key)
         if results is not None:
             return results

@@ -59,9 +59,9 @@ class SavourLifePublisher(AbstractPublisher):
 
     def utf8_to_ascii(self, s):
         """
-        PR return their responses as UTF8.
+        SL return their responses as UTF8.
         """
-        return asm3.utils.encode_html(s.decode("utf-8"))
+        return asm3.utils.encode_html(asm3.utils.cunicode(s))
 
     def good_with(self, x):
         """

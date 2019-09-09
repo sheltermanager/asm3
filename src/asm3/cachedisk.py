@@ -55,7 +55,7 @@ def get(key):
         if not os.path.exists(fname): return None
 
         # Pull the entry out
-        with open(fname, "r") as f:
+        with open(fname, "rb") as f:
             o = pickle.load(f)
 
         # Has the entry expired?
@@ -83,7 +83,7 @@ def put(key, value, ttl):
         }
 
         # Write the entry
-        with open(fname, "w") as f:
+        with open(fname, "wb") as f:
             pickle.dump(o, f)
 
     except Exception as err:
@@ -103,7 +103,7 @@ def touch(key, ttlremaining = 0, newttl = 0):
         if not os.path.exists(fname): return None
 
         # Pull the entry out
-        with open(fname, "r") as f:
+        with open(fname, "rb") as f:
             o = pickle.load(f)
 
         # Has the entry expired?
@@ -115,7 +115,7 @@ def touch(key, ttlremaining = 0, newttl = 0):
         # Is there less than ttlremaining to expiry? If so update it to newttl
         if o["expires"] - now < ttlremaining:
             o["expires"] = now + newttl
-            with open(fname, "w") as f:
+            with open(fname, "wb") as f:
                 pickle.dump(o, f)
 
         return o["value"]
@@ -138,12 +138,12 @@ def remove_expired():
         with open(fpath, "rb") as f:
             chunk = f.read(75)
         # Look for our float expiry time
-        sp = chunk.find("F")
+        sp = chunk.find(b"F")
         if sp == -1: 
             # If we didn't find it, remove the file anyway - we don't know what this is
             os.unlink(fpath)
         else:
-            ep = chunk.find("\n", sp)
+            ep = chunk.find(b"\n", sp)
             expires = float(chunk[sp+1:ep])
             if time.time() > expires:
                 os.unlink(fpath)

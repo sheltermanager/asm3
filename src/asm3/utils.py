@@ -1003,7 +1003,7 @@ def get_asm_news(dbo):
 
 def get_url(url, headers = {}, cookies = {}, timeout = None):
     """
-    Retrieves a URL
+    Retrieves a URL as text
     """
     # requests timeout is seconds/float, but some may call this with integer ms instead so convert
     if timeout is not None and timeout > 1000: timeout = timeout / 1000.0
@@ -1012,7 +1012,7 @@ def get_url(url, headers = {}, cookies = {}, timeout = None):
 
 def get_image_url(url, headers = {}, cookies = {}, timeout = None):
     """
-    Retrives an image from a URL
+    Retrives an image from a URL as bytes string in response
     """
     # requests timeout is seconds/float, but some may call this with integer ms instead so convert
     if timeout is not None and timeout > 1000: timeout = timeout / 1000.0
@@ -1025,17 +1025,32 @@ def get_image_url(url, headers = {}, cookies = {}, timeout = None):
 def post_data(url, data, contenttype = "", httpmethod = "", headers = {}):
     """
     Posts data (str or bytes) to a URL as the body
-    httpmethod: POST by default
+    httpmethod: POST by default.
+    Returns dict of requestheaders (dict), requestbody (bytes), headers (str), response (str) and status (int)
     """
-    try:
-        if contenttype != "": headers["Content-Type"] = contenttype
-        if sys.version_info[0] > 2 and isinstance(data, str): data = str2bytes(data) # PYTHON3
-        req = urllib2.Request(url, data, headers)
-        if httpmethod != "": req.get_method = lambda: httpmethod
-        resp = urllib2.urlopen(req)
-        return { "requestheaders": headers, "requestbody": data, "headers": resp.info().headers, "response": resp.read(), "status": resp.getcode() }
-    except urllib2.HTTPError as e:
-        return { "requestheaders": headers, "requestbody": data, "headers": e.info().headers, "response": e.read(), "status": e.getcode() }
+    # PYTHON3
+    # Separate implementations here due to change in HTTPMessage response object
+    # between 2 and 3. (.headers disappears to be replaced with as_string() due to new superclass)
+    if sys.version_info[0] > 2:
+        try:
+            if contenttype != "": headers["Content-Type"] = contenttype
+            if isinstance(data, str): data = str2bytes(data)
+            req = urllib2.Request(url, data, headers)
+            if httpmethod != "": req.get_method = lambda: httpmethod
+            resp = urllib2.urlopen(req)
+            return { "requestheaders": headers, "requestbody": data, "headers": resp.info().as_string(), "response": bytes2str(resp.read()), "status": resp.getcode() }
+        except urllib2.HTTPError as e:
+            return { "requestheaders": headers, "requestbody": data, "headers": e.info().as_string(), "response": bytes2str(e.read()), "status": e.getcode() }
+    # PYTHON2
+    else:
+        try:
+            if contenttype != "": headers["Content-Type"] = contenttype
+            req = urllib2.Request(url, data, headers)
+            if httpmethod != "": req.get_method = lambda: httpmethod
+            resp = urllib2.urlopen(req)
+            return { "requestheaders": headers, "requestbody": data, "headers": resp.info().headers, "response": resp.read(), "status": resp.getcode() }
+        except urllib2.HTTPError as e:
+            return { "requestheaders": headers, "requestbody": data, "headers": e.info().headers, "response": e.read(), "status": e.getcode() }
 
 def post_form(url, fields, headers = {}, cookies = {}):
     """

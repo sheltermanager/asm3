@@ -866,7 +866,7 @@ class AbstractPublisher(threading.Thread):
 
     def saveFile(self, path, contents):
         try:
-            f = open(path, "wb")
+            f = open(path, "w")
             f.write(contents)
             f.flush()
             f.close()
