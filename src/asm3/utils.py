@@ -982,12 +982,12 @@ def substitute_tags(searchin, tags, use_xml_escaping = True, opener = "&lt;&lt;"
             break
     return s
 
-def md5_hash(s):
+def md5_hash_hex(s):
     """
     Returns an md5 hash of a string
     """
     m = hashlib.md5()
-    m.update(s)
+    m.update(str2bytes(s))
     s = m.hexdigest()
     return s
 

@@ -8,7 +8,6 @@ import asm3.dbupdate
 import asm3.i18n
 import asm3.utils
 
-import hashlib
 import os
 import sys
 
@@ -318,7 +317,7 @@ def hash_password(plaintext, scheme = "pbkdf2"):
         h = asm3.utils.pbkdf2_hash_hex(plaintext, salt, PBKDF2_ALGORITHM, PBKDF2_ITERATIONS)
         return "pbkdf2:%s:%s:%d:%s" % (PBKDF2_ALGORITHM, asm3.utils.bytes2str(salt), PBKDF2_ITERATIONS, h)
     elif scheme == "md5" or scheme == "md5java":
-        h = hashlib.md5(asm3.utils.str2bytes(plaintext)).hexdigest()
+        h = asm3.utils.md5_hash_hex(plaintext)
         if scheme == "md5java" and h.startswith("0"): h = h[1:]
         return "%s:%s" % (scheme, h)
 
@@ -339,7 +338,7 @@ def verify_password(plaintext, passwordhash):
         return hash_password(plaintext, "md5java") == passwordhash
     else:
         # Fall back to assuming historic undecorated md5
-        md5py = hashlib.md5(asm3.utils.str2bytes(plaintext)).hexdigest()
+        md5py = asm3.utils.md5_hash_hex(plaintext)
         md5java = md5py
         if md5java.startswith("0"): md5java = md5java[1:]
         return passwordhash == md5py or passwordhash == md5java

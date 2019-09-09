@@ -26,6 +26,8 @@ def _getfilename(key):
     if not os.path.exists(DISK_CACHE):
         os.mkdir(DISK_CACHE)
     m = hashlib.md5()
+    if sys.version_info[0] > 2 and isinstance(key, str): # PYTHON3
+        key = key.encode("utf-8")
     m.update(key)
     fname = "%s%s%s" % (DISK_CACHE, os.path.sep, m.hexdigest())
     return fname
