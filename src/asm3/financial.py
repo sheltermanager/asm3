@@ -869,7 +869,10 @@ def update_matching_donation_transaction(dbo, username, odid, destinationaccount
         maps = asm3.configuration.donation_account_mappings(dbo)
         if str(d.DONATIONTYPEID) in maps:
             target = maps[str(d.DONATIONTYPEID)]
-            asm3.al.debug("Found override for donationtype %s, got new target account %s" % (str(d["DONATIONTYPEID"]), str(target)), "financial.update_matching_donation_transaction", dbo)
+            asm3.al.debug("Found override for donationtype %s, got new target account %s" % (d.DONATIONTYPEID, target), "financial.update_matching_donation_transaction", dbo)
+            if not asm3.utils.is_numeric(target):
+                asm3.al.error("Target account '%s' is not valid, falling back to default from config" % target, "financial.update_matching_donation_transaction", dbo)
+                target = asm3.configuration.donation_target_account(dbo)
 
     # Is the donation for a negative amount? If so, flip the accounts
     # round as this is a refund donation and make the amount positive.
