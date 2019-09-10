@@ -1,6 +1,7 @@
 43
 ================
 
+10/09/19 PetFinder require a specific order for the new format #644
 09/09/19 Fix errors when account mappings are blank
 06/09/19 Extra PetFinder fields send photo URLs instead #644
 03/09/19 Validation when updating stock levels that we have valid ID
