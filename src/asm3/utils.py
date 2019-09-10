@@ -921,6 +921,13 @@ def fix_relative_document_uris(s, baseurl, account = "" ):
         s = s.replace(f, baseurl + "/service?method=" + m + "&account=" + account + "&" + p + "=")
     return s
 
+def generator2str(fn, *args):
+    """ Iterates a generator function, passing args and returning the output as a buffer """
+    out = stringio()
+    for x in fn(*args):
+        out.write(x)
+    return out.getvalue()
+
 def substitute_tags(searchin, tags, use_xml_escaping = True, opener = "&lt;&lt;", closer = "&gt;&gt;"):
     """
     Substitutes the dictionary of tags in "tags" for any found

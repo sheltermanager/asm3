@@ -334,6 +334,8 @@ class GeneratorEndpoint(ASMEndpoint):
     """Base class for endpoints that use generators for their content """
     def GET(self):
         self.check(self.get_permissions)
+        if LARGE_FILES_CHUNKED: 
+            self.header("Transfer-Encoding", "chunked")
         for x in self.content(self._params()):
             yield x
 
@@ -2126,15 +2128,14 @@ class csvexport(JSONEndpoint):
     url = "csvexport"
     get_permissions = asm3.users.USE_SQL_INTERFACE
 
-class csvexport_animals(GeneratorEndpoint):
+class csvexport_animals(ASMEndpoint):
     url = "csvexport_animals"
     get_permissions = asm3.users.USE_SQL_INTERFACE
 
     def content(self, o):
         self.content_type("text/csv")
         self.header("Content-Disposition", u"attachment; filename=export.csv")
-        if LARGE_FILES_CHUNKED: self.header("Transfer-Encoding", "chunked")
-        for x in asm3.csvimport.csvexport_animals(o.dbo, o.post["filter"], o.post["animals"], o.post.boolean("includeimage") == 1): yield x
+        return asm3.utils.generator2str( asm3.csvimport.csvexport_animals, o.dbo, o.post["filter"], o.post["animals"], o.post.boolean("includeimage") == 1 )
 
 class csvimport(JSONEndpoint):
     url = "csvimport"
@@ -5177,7 +5178,7 @@ class sql(JSONEndpoint):
                 output.append("ERROR: %s" % str(err))
         return "\n\n".join(output)
 
-class sql_dump(GeneratorEndpoint):
+class sql_dump(ASMEndpoint):
     url = "sql_dump"
     get_permissions = asm3.users.USE_SQL_INTERFACE
 
@@ -5186,70 +5187,69 @@ class sql_dump(GeneratorEndpoint):
         dbo = o.dbo
         mode = o.post["mode"]
         self.content_type("text/plain")
-        if LARGE_FILES_CHUNKED: self.header("Transfer-Encoding", "chunked")
         if mode == "dumpsql":
             asm3.al.info("%s executed SQL database dump" % str(session.user), "code.sql", dbo)
             self.header("Content-Disposition", "attachment; filename=\"dump.sql\"")
-            for x in asm3.dbupdate.dump(dbo): yield x
+            return asm3.utils.generator2str(asm3.dbupdate.dump, dbo)
         if mode == "dumpsqlmedia":
             asm3.al.info("%s executed SQL database dump (base64/media)" % str(session.user), "code.sql", dbo)
             self.header("Content-Disposition", "attachment; filename=\"media.sql\"")
-            for x in asm3.dbupdate.dump_dbfs_base64(dbo): yield x
+            return asm3.utils.generator2str(asm3.dbupdate.dump_dbfs_base64, dbo)
         if mode == "dumpddlmysql":
             asm3.al.info("%s executed DDL dump MySQL" % str(session.user), "code.sql", dbo)
             self.header("Content-Disposition", "attachment; filename=\"ddl_mysql.sql\"")
             dbo2 = asm3.db.get_dbo("MYSQL")
             dbo2.locale = dbo.locale
-            yield asm3.dbupdate.sql_structure(dbo2)
-            yield asm3.dbupdate.sql_default_data(dbo2).replace("|=", ";")
+            return asm3.dbupdate.sql_structure(dbo2)
+            return asm3.dbupdate.sql_default_data(dbo2).replace("|=", ";")
         if mode == "dumpddlpostgres":
             asm3.al.info("%s executed DDL dump PostgreSQL" % str(session.user), "code.sql", dbo)
             self.header("Content-Disposition", "attachment; filename=\"ddl_postgresql.sql\"")
             dbo2 = asm3.db.get_dbo("POSTGRESQL")
             dbo2.locale = dbo.locale
-            yield asm3.dbupdate.sql_structure(dbo2)
-            yield asm3.dbupdate.sql_default_data(dbo2).replace("|=", ";")
+            return asm3.dbupdate.sql_structure(dbo2)
+            return asm3.dbupdate.sql_default_data(dbo2).replace("|=", ";")
         if mode == "dumpddldb2":
             asm3.al.info("%s executed DDL dump DB2" % str(session.user), "code.sql", dbo)
             self.header("Content-Disposition", "attachment; filename=\"ddl_db2.sql\"")
             dbo2 = asm3.db.get_dbo("DB2")
             dbo2.locale = dbo.locale
-            yield asm3.dbupdate.sql_structure(dbo2)
-            yield asm3.dbupdate.sql_default_data(dbo2).replace("|=", ";")
+            return asm3.dbupdate.sql_structure(dbo2)
+            return asm3.dbupdate.sql_default_data(dbo2).replace("|=", ";")
         elif mode == "dumpsqlasm2":
             # ASM2_COMPATIBILITY
             asm3.al.info("%s executed SQL database dump (ASM2 HSQLDB)" % str(session.user), "code.sql", dbo)
             self.header("Content-Disposition", "attachment; filename=\"asm2.sql\"")
-            for x in asm3.dbupdate.dump_hsqldb(dbo): yield x
+            return asm3.utils.generator2str(asm3.dbupdate.dump_hsqldb, dbo)
         elif mode == "dumpsqlasm2nomedia":
             # ASM2_COMPATIBILITY
             asm3.al.info("%s executed SQL database dump (ASM2 HSQLDB, without media)" % str(session.user), "code.sql", dbo)
             self.header("Content-Disposition", "attachment; filename=\"asm2.sql\"")
-            for x in asm3.dbupdate.dump_hsqldb(dbo, includeDBFS = False): yield x
+            return asm3.utils.generator2str(asm3.dbupdate.dump_hsqldb, dbo, includeDBFS = False)
         elif mode == "animalcsv":
             asm3.al.debug("%s executed CSV animal dump" % str(session.user), "code.sql", dbo)
             self.header("Content-Disposition", "attachment; filename=\"animal.csv\"")
-            yield asm3.utils.csv(l, asm3.animal.get_animal_find_advanced(dbo, { "logicallocation" : "all", "filter" : "includedeceased,includenonshelter" }))
+            return asm3.utils.csv(l, asm3.animal.get_animal_find_advanced(dbo, { "logicallocation" : "all", "filter" : "includedeceased,includenonshelter" }))
         elif mode == "medicalcsv":
             asm3.al.debug("%s executed CSV medical dump" % str(session.user), "code.sql", dbo)
             self.header("Content-Disposition", "attachment; filename=\"medical.csv\"")
-            yield asm3.utils.csv(l, asm3.medical.get_medical_export(dbo))
+            return asm3.utils.csv(l, asm3.medical.get_medical_export(dbo))
         elif mode == "personcsv":
             asm3.al.debug("%s executed CSV person dump" % str(session.user), "code.sql", dbo)
             self.header("Content-Disposition", "attachment; filename=\"person.csv\"")
-            yield asm3.utils.csv(l, asm3.person.get_person_find_simple(dbo, "", session.user, includeStaff=True, includeVolunteers=True))
+            return asm3.utils.csv(l, asm3.person.get_person_find_simple(dbo, "", session.user, includeStaff=True, includeVolunteers=True))
         elif mode == "incidentcsv":
             asm3.al.debug("%s executed CSV incident dump" % str(session.user), "code.sql", dbo)
             self.header("Content-Disposition", "attachment; filename=\"incident.csv\"")
-            yield asm3.utils.csv(l, asm3.animalcontrol.get_animalcontrol_find_advanced(dbo, { "filter" : "" }, 0))
+            return asm3.utils.csv(l, asm3.animalcontrol.get_animalcontrol_find_advanced(dbo, { "filter" : "" }, 0))
         elif mode == "licencecsv":
             asm3.al.debug("%s executed CSV licence dump" % str(session.user), "code.sql", dbo)
             self.header("Content-Disposition", "attachment; filename=\"licence.csv\"")
-            yield asm3.utils.csv(l, asm3.financial.get_licence_find_simple(dbo, ""))
+            return asm3.utils.csv(l, asm3.financial.get_licence_find_simple(dbo, ""))
         elif mode == "paymentcsv":
             asm3.al.debug("%s executed CSV payment dump" % str(session.user), "code.sql", dbo)
             self.header("Content-Disposition", "attachment; filename=\"payment.csv\"")
-            yield asm3.utils.csv(l, asm3.financial.get_donations(dbo, "m10000"))
+            return asm3.utils.csv(l, asm3.financial.get_donations(dbo, "m10000"))
 
 class staff_rota(JSONEndpoint):
     url = "staff_rota"
