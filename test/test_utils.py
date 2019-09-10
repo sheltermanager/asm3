@@ -15,3 +15,8 @@ class TestUtils(unittest.TestCase):
     def test_send_email(self):
         asm3.utils.send_email( base.get_dbo(), "tests@example.com", "example@example.com", subject="Test", body="Test suite", exceptions=False )
 
+    def test_csv(self):
+        data = [ { "FIELD1": "VAL1&#63;", "FIELD2": "Test" }, { "FIELD1": "MORE&#euro;", "FIELD2": "OK" } ]
+        c = asm3.utils.csv("en", data)
+        assert isinstance(c, bytes)
+        assert c.startswith(b"\"FIELD1")

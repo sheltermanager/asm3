@@ -35,6 +35,7 @@ if sys.version_info[0] > 2: # PYTHON3
     from email.utils import make_msgid, formatdate
     from email.charset import Charset
     import email.encoders as Encoders
+    unichr = chr # decode_html needs this
 else:
     import htmlentitydefs
     import thread
@@ -847,56 +848,27 @@ class UnicodeCSVDictReader(object):
     def __iter__(self):
         return self
 
-class UnicodeCSVWriter(object):
-    """
-    A CSV writer which will write rows to CSV file "f",
-    which is encoded in the given encoding.
-    """
-    def __init__(self, f, dialect=extcsv.excel, encoding="utf-8", **kwds):
-        # Redirect output to a queue
-        self.queue = stringio()
-        self.writer = extcsv.writer(self.queue, dialect=dialect, **kwds)
-        self.stream = f
-        self.encoder = codecs.getincrementalencoder(encoding)()
-
-    def writerow(self, row):
-        outbuf = []
-        for s in row:
-            if is_unicode(s):
-                outbuf.append(s.encode("utf-8"))
-            else:
-                outbuf.append(s)
-        self.writer.writerow(outbuf)
-        # Fetch UTF-8 output from the queue ...
-        data = self.queue.getvalue()
-        data = data.decode("utf-8")
-        # ... and reencode it into the target encoding
-        data = self.encoder.encode(data)
-        # write to the target stream
-        self.stream.write(data)
-        # empty queue
-        self.queue.truncate(0)
-
-    def writerows(self, rows):
-        for row in rows:
-            self.writerow(row)
-
 def csv(l, rows, cols = None, includeheader = True):
     """
     Creates a CSV file from a set of resultset rows. If cols has been 
     supplied as a list of strings, fields will be output in that
     order.
+    The file is constructed as a list of unicode strings and returned as a utf-8 encoded string.
     """
     if rows is None or len(rows) == 0: return ""
-    strio = stringio()
-    out = UnicodeCSVWriter(strio)
+    out = stringio()
+    def writerow(row):
+        for i, r in enumerate(row):
+            out.write(u"\"%s\"" % r)
+            if i < len(row)-1: out.write(u",")
+        out.write(u"\n")
     if cols is None:
         cols = []
         for k, v in rows[0].items():
             cols.append(k)
         cols = sorted(cols)
     if includeheader: 
-        out.writerow(cols)
+        writerow(cols)
     for r in rows:
         rd = []
         for c in cols:
@@ -915,8 +887,8 @@ def csv(l, rows, cols = None, includeheader = True):
                 rd.append(decode_html(dateportion))
             else:
                 rd.append(decode_html(r[c]))
-        out.writerow(rd)
-    return strio.getvalue()
+        writerow(rd)
+    return out.getvalue().encode("utf-8")
 
 def fix_relative_document_uris(s, baseurl, account = "" ):
     """

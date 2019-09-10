@@ -14,3 +14,6 @@ class TestCSVImport(unittest.TestCase):
         csvdata = "ANIMALNAME,ANIMALSEX,ANIMALAGE\n\"TestioCSV\",\"Male\",\"2\"\n"
         asm3.csvimport.csvimport(base.get_dbo(), csvdata)
 
+    def test_csvexport_animals(self):
+        asm3.csvimport.csvexport_animals(base.get_dbo(), "all")
+
