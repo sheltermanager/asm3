@@ -118,18 +118,18 @@ class FuncThread(threading.Thread):
         handles putting exceptions in lasterror and storing the returnvalue too.
     """
     def __init__(self, dbo, target, *args):
-        self._target = target
-        self._args = args
-        self._dbo = dbo
+        self.target = target
+        self.args = args
+        self.dbo = dbo
         threading.Thread.__init__(self)
  
     def run(self):
         try:
-            set_return_value(self._dbo, self._target(*self._args))
+            set_return_value(self.dbo, self.target(*self.args))
         except Exception as err:
-            set_last_error(self._dbo, str(err))
+            set_last_error(self.dbo, str(err))
         finally:
-            reset(self._dbo)
+            reset(self.dbo)
 
 def function_task(dbo, taskname, fn, *args):
     """ Runs the function fn with tuple of args, wrapping it as an async task 
