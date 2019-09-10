@@ -3552,7 +3552,7 @@ class mailmerge(JSONEndpoint):
         org_tags = asm3.wordprocessor.org_tags(dbo, session.user)
         c = []
         for d in rows:
-            c.append( asm3.wordprocessor.substitute_tags(templatecontent, asm3.wordprocessor.append_tags(d, org_tags)) )
+            c.append( asm3.wordprocessor.substitute_tags(asm3.utils.bytes2str(templatecontent), asm3.wordprocessor.append_tags(d, org_tags)) )
         content = '<div class="mce-pagebreak" style="page-break-before: always; clear: both; border: 0">&nbsp;</div>'.join(c)
         self.content_type("text/html")
         self.cache_control(0)

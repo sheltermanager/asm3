@@ -46,7 +46,7 @@ def get_document_templates(dbo):
     return dbo.query("SELECT ID, Name, Path FROM templatedocument %s ORDER BY Path, Name" % where)
 
 def get_document_template_content(dbo, dtid):
-    """ Returns the document template content for a given ID as a string """
+    """ Returns the document template content for a given ID as bytes """
     return asm3.utils.base64decode( dbo.query_string("SELECT Content FROM templatedocument WHERE ID = ?", [dtid]) )
 
 def get_document_template_name(dbo, dtid):

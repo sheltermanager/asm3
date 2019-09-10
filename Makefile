@@ -75,8 +75,7 @@ compilepy:
 smcom-dev: version clean minify
 	@echo "[smcom dev eur01] ===================="
 	rsync --progress --exclude '*.pyc' --exclude '__pycache__' --delete -r src/ root@$(DEPLOY_HOST):/usr/local/lib/asm_dev.new
-	#ssh root@$(DEPLOY_HOST) "/root/scripts/sheltermanager_sync_asm.py syncdev only_eur01"
-	ssh root@$(DEPLOY_HOST) "/root/scripts/sheltermanager_sync_asm.py syncdev only_us16"
+	ssh root@$(DEPLOY_HOST) "/root/scripts/sheltermanager_sync_asm.py syncdev only_eur01"
 
 smcom-dev-all: version clean minify
 	@echo "[smcom dev all] ======================"
