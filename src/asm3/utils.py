@@ -1212,7 +1212,8 @@ def generate_label_pdf(dbo, locale, records, papersize, units, hpitch, vpitch, w
     all units themselves should be floats, cols and rows should be ints
     """
     #from reportlab.lib import colors
-    from reportlab.lib.pagesizes import letter, A4, inch, cm
+    from reportlab.lib.pagesizes import letter, A4
+    from reportlab.lib.units import inch, cm
     from reportlab.platypus import SimpleDocTemplate, Table, TableStyle
 
     unit = inch

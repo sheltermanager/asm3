@@ -15,6 +15,11 @@ class TestUtils(unittest.TestCase):
     def test_send_email(self):
         asm3.utils.send_email( base.get_dbo(), "tests@example.com", "example@example.com", subject="Test", body="Test suite", exceptions=False )
 
+
+    def test_generate_label_pdf(self):
+        rows = [ { "OWNERNAME": "test", "OWNERADDRESS": "test", "OWNERCOUNTY": "test", "OWNERTOWN": "test", "OWNERPOSTCODE": "test" } ]
+        asm3.utils.generate_label_pdf(base.get_dbo(), "en", rows, "A4", "cm", 1.0, 1.0, 5.0, 5.0, 0, 0, 2, 3)
+
     def test_csv(self):
         data = [ { "FIELD1": "VAL1&#63;", "FIELD2": "Test" }, { "FIELD1": "MORE&#euro;", "FIELD2": "OK" } ]
         c = asm3.utils.csv("en", data)
