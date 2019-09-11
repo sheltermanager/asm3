@@ -1,6 +1,7 @@
 43
 ================
 
+11/09/19 Final PetFinder change to send images by FTP for now #644
 10/09/19 PetFinder require a specific order for the new format #644
 09/09/19 Fix errors when account mappings are blank
 06/09/19 Extra PetFinder fields send photo URLs instead #644
