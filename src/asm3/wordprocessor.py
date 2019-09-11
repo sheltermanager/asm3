@@ -1418,7 +1418,7 @@ def substitute_template(dbo, templateid, tags, imdata = None):
         return substitute_tags(templatedata, tags)
     elif templatename.endswith(".odt"):
         try:
-            odt = asm3.utils.stringio(templatedata)
+            odt = asm3.utils.bytesio(templatedata)
             zf = zipfile.ZipFile(odt, "r")
             # Load the content.xml file and substitute the tags
             content = asm3.utils.bytes2str(zf.open("content.xml").read())
