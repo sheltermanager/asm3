@@ -12,7 +12,7 @@ will install all the software you need to run ASM. If you are using the
 sheltermanager3 deb package it already has dependencies set for these
 and will install them for you.
 
-* apt-get install make python3 python3-cheroot python3-pil python3-mysqldb python3-psycopg2
+* apt-get install make python3 python3-webpy python3-pil python3-mysqldb python3-psycopg2
 
 Extra, non-mandatory packages:
 
@@ -118,7 +118,7 @@ The Debian package automatically adds the daily tasks to /etc/cron.daily
 Using Apache/WSGI
 -----------------
 
-To use Apache/WSGI instead of the CherryPy WSGI server, then (these 
+To use Apache/WSGI instead of the built in WSGI server, then (these 
 instructions assume Debian):
 
 1. Stop the sheltermanager3 service running and remove it from the
@@ -129,7 +129,7 @@ instructions assume Debian):
    
 2. Install apache2 with mod_wsgi. Make sure mod_wsgi is enabled.
 
-   * apt-get install apache2 libapache2-mod-wsgi
+   * apt-get install apache2 libapache2-mod-wsgi-py3
    * a2enmod wsgi
 
 3. Add the WSGI config to your Apache site config. The default site config
@@ -139,7 +139,6 @@ instructions assume Debian):
 
 ```
 WSGIScriptAlias /asm /usr/lib/sheltermanager3/code.py/
-WSGIPythonPath /usr/lib/python2.7:/usr/lib/python2.7/dist-packages:/usr/lib/sheltermanager3:/usr/lib/sheltermanager3/locale
 Alias /asm/static /usr/lib/sheltermanager3/static
 AddType text/html .py
 <Directory /usr/lib/sheltermanager3>
@@ -148,7 +147,7 @@ AddType text/html .py
 ```
 
    This assumes that your ASM3 is located at /usr/lib/sheltermanager3
-   (the default for our Debian package) and Python2.7
+   (the default for our Debian package)
 
 4. Restart Apache and navigate to http://localhost/asm
 
