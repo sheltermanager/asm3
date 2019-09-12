@@ -24,7 +24,7 @@ Extra, non-mandatory packages:
 
 Packages necessary for building static checkers, installers and manuals:
 
-* apt-get install exuberant-ctags nodejs pychecker python-sphinx python-sphinx-rtd-theme texlive-latex-base texlive-latex-extra latexmk
+* apt-get install exuberant-ctags nodejs pychecker python3-sphinx python3-sphinx-rtd-theme texlive-latex-base texlive-latex-extra latexmk
 
 If you're using Debian and want to do development, you can use "make deps"
 to install the needed dependencies.

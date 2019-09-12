@@ -369,8 +369,6 @@ DisplayWeight
     The animal's weight, shown as either kg or lb/oz according to system display options
 SpeciesName
     The animal's species 
-ReclaimedDate
-    The date (if applicable) that the animal was reclaimed by its owner 
 MostRecentEntry / MostRecentEntryDate
     The date the animal most recently entered the shelter (if it was returned
     from an adoption or fostering for example) 
