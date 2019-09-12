@@ -472,10 +472,7 @@ class rollupjs(ASMEndpoint):
         # b=build is passed as a parameter and to invalidate caching
         self.content_type("text/javascript")
         self.cache_control(CACHE_ONE_YEAR)
-        rollup = asm3.cachemem.get("rollup")
-        if rollup is None:
-            rollup = asm3.html.asm_rollup_scripts(PATH)
-            asm3.cachemem.put("rollup", rollup, 60)
+        rollup = asm3.html.asm_rollup_scripts(PATH)
         return rollup
 
 class configjs(ASMEndpoint):
