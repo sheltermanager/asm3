@@ -15,7 +15,7 @@ distwin32: dist
 tags:
 	@echo "[tags] ============================"
 	rm -f tag
-	ctags -f tags src/*.py src/web/*.py src/asm3/*.py src/asm3/publishers/*.py src/asm3/dbms/*.py src/static/js/*.js
+	ctags -f tags src/*.py src/asm3/*.py src/asm3/publishers/*.py src/asm3/dbms/*.py src/static/js/*.js
 
 cscope:
 	@echo "[cscope] ==========================="
@@ -29,8 +29,6 @@ clean:
 	rm -f tags
 	rm -f src/*.pyc
 	rm -rf src/__pycache__
-	rm -f src/web/*.pyc
-	rm -rf src/web/__pycache__
 	rm -f src/asm3/*.pyc
 	rm -rf src/asm3/__pycache__
 	rm -f src/asm3/dbms/*.pyc
@@ -137,7 +135,9 @@ testsdb:
 
 deps:
 	@echo "[deps] ========================="
-	apt-get install python3 python3-cheroot python3-pil python3-mysqldb python3-psycopg2 python3-requests python3-memcache python3-reportlab
+	apt-get install python3 python3-pip python3-pil python3-mysqldb python3-psycopg2 python3-requests python3-memcache python3-reportlab
 	apt-get install exuberant-ctags nodejs flake8 imagemagick wkhtmltopdf
 	apt-get install python-sphinx python-sphinx-rtd-theme texlive-latex-base texlive-latex-extra
+	#apt-get install python3-webpy # Broken in buster, use below for now
+	pip3 install git+https://github.com/webpy/webpy#egg=web.py
 
