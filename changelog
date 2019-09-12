@@ -1,6 +1,7 @@
 43
 ================
 
+12/09/19 Validate against invalid estimated ages
 12/09/19 Fix display of additional field labels on find results
 12/09/19 Allow additional fields in waiting list results #657
 12/09/19 Fix textarea bug that can cause labels to overlap

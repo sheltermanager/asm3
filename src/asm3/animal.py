@@ -1849,8 +1849,11 @@ def insert_animal_from_form(dbo, post, username):
     post.data["id"] = nextid
 
     if post["dateofbirth"] == "" or post.date("dateofbirth") is None:
+        estimatedage = post.floating("estimatedage")
+        if estimatedage <= 0 or estimatedage > 100:
+            raise asm3.utils.ASMValidationError(_("Estimated age '{0}' is not valid.", l).format(estimatedage))
         estimateddob = 1
-        dob = subtract_years(dbo.today(), post.floating("estimatedage"))
+        dob = subtract_years(dbo.today(), estimatedage)
     else:
         estimateddob = 0
         dob = post.date("dateofbirth")
