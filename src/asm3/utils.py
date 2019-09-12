@@ -362,7 +362,7 @@ def is_unicode(s):
 
 def cunicode(s, encoding = "utf-8"):
     """
-    Converts a UTF-8 encoded bytes str to unicode
+    Converts a value to a unicode string
     """
     if sys.version_info[0] > 2: # PYTHON3 - str should already be unicode, but convert bytes strings if we've got one
         if is_bytes(s): return s.decode(encoding)
@@ -396,7 +396,7 @@ def atoi(s):
 
 def cint(s):
     """
-    Converts a string to an int, coping with None and non-int values
+    Converts a value to an int, coping with None and non-int values
     """
     try:
         return int(s)
@@ -405,7 +405,7 @@ def cint(s):
 
 def cfloat(s):
     """
-    Converts a string to a float, coping with None and non-numeric values
+    Converts a value to a float, coping with None and non-numeric values
     """
     try:
         return float(s)

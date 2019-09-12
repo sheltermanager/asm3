@@ -835,6 +835,9 @@ def json_waitinglistcolumns(dbo):
         ( "ReasonForRemoval", _("Removal Reason", l) ),
         ( "Comments", _("Comments") )
         ]
+    fd = asm3.additional.get_field_definitions(dbo, "waitinglist")
+    for f in fd:
+        cols.append( (f["FIELDNAME"], f["FIELDLABEL"]) )
     cols = findcolumns_sort(cols)
     findcolumns_selectedtofront(cols, asm3.configuration.waiting_list_view_columns(dbo))
     return cols

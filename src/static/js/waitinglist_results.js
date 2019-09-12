@@ -1,5 +1,5 @@
 /*jslint browser: true, forin: true, eqeq: true, white: true, sloppy: true, vars: true, nomen: true */
-/*global $, jQuery, _, asm, common, config, controller, dlgfx, edit_header, format, header, html, tableform, validate */
+/*global $, jQuery, _, asm, additional, common, config, controller, dlgfx, edit_header, format, header, html, tableform, validate */
 
 $(function() {
 
@@ -138,7 +138,7 @@ $(function() {
                     if (row.hasOwnProperty(name.toUpperCase())) {
                         value = row[name.toUpperCase()];
                     }
-                    var formatted = waitinglist_results.format_column(row, name, value);
+                    var formatted = waitinglist_results.format_column(row, name, value, controller.additional);
                     if (name == "OwnerName") {
                         formatted = link + formatted + "</a></span>";
                     }
@@ -245,7 +245,7 @@ $(function() {
             var names = waitinglist_results.column_names();
             var labels = [];
             $.each(names, function(i, name) {
-                labels.push(waitinglist_results.column_label(name));
+                labels.push(waitinglist_results.column_label(name, controller.additional));
             });
             return labels;
         },
@@ -258,9 +258,10 @@ $(function() {
         },
 
         /**
-         * Returns the i18n translated label for a column with name
+         * Returns the i18n translated label for a column with name.
+         * add - additional fields to scan for labels
          */
-        column_label: function(name) {
+        column_label: function(name, add) {
             var labels = {
                 "CreatedBy": _("Created By"),
                 "Rank": _("Rank"),
@@ -288,6 +289,10 @@ $(function() {
             if (labels.hasOwnProperty(name)) {
                 return labels[name];
             }
+            if (add) {
+                var addrow = common.get_row(add, name, "FIELDNAME");
+                if (addrow) { return addrow.FIELDLABEL; }
+            }
             return name;
         },
 
@@ -296,8 +301,9 @@ $(function() {
          * row: A row from the get_waitinglist query
          * name: The name of the column
          * value: The value of the row/column to format from the resultset
+         * add: The additional row results
          */
-        format_column: function(row, name, value) {
+        format_column: function(row, name, value, add) {
             var DATE_FIELDS = [ "DatePutOnList", "DateRemovedFromList" ],
             STRING_FIELDS = [ "CreatedBy", "OwnerName", "OwnerAddress", "OwnerTown", "OwnerCounty", 
                 "OwnerPostcode", "HomeTelephone", "WorkTelephone", "MobileTelephone", 
@@ -323,6 +329,28 @@ $(function() {
             else if ($.inArray(name, YES_NO_FIELDS) > -1) {
                 if (value == 0) { rv = _("No"); }
                 if (value == 1) { rv = _("Yes"); }
+            }
+            else if (add) {
+                $.each(add, function(i, v) {
+                    if (v.LINKID == row.ID && v.FIELDNAME.toLowerCase() == name.toLowerCase()) {
+                        if (v.FIELDTYPE == additional.YESNO) { 
+                            rv = v.VALUE == "1" ? _("Yes") : _("No");
+                        }
+                        else if (v.FIELDTYPE == additional.MONEY) {
+                            rv = format.currency(v.VALUE);
+                        }
+                        else if (v.FIELDTYPE == additional.ANIMAL_LOOKUP) {
+                            rv = '<a href="animal?id=' + v.VALUE + '">' + v.ANIMALNAME + '</a>';
+                        }
+                        else if (v.FIELDTYPE == additional.PERSON_LOOKUP) {
+                            rv = html.person_link(v.VALUE, v.OWNERNAME);
+                        }
+                        else {
+                            rv = v.VALUE;
+                        }
+                        return false; // break
+                    }
+                });
             }
             return rv;
         },

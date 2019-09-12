@@ -643,10 +643,10 @@
          * id: The ID field value to find
          */
         get_row: function(rows, id, idcolumn) {
-            var rv = null, idv = parseInt(id, 10);
+            var rv = null;
             if (!idcolumn) { idcolumn = "ID"; }
             $.each(rows, function(i, v) {
-                if (v[idcolumn] == idv) {
+                if (v[idcolumn] == id) {
                     rv = v;
                     return false;
                 }

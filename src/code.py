@@ -5711,9 +5711,13 @@ class waitinglist_results(JSONEndpoint):
         sizefilter = asm3.utils.iif(post["size"] == "", -1, post.integer("size"))
         rows = asm3.waitinglist.get_waitinglist(dbo, priorityfloor, speciesfilter, sizefilter,
             post["addresscontains"], post.integer("includeremoved"), post["namecontains"], post["descriptioncontains"])
+        add = None
+        if len(rows) > 0: 
+            add = asm3.additional.get_additional_fields_ids(dbo, rows, "waitinglist")
         asm3.al.debug("found %d results" % (len(rows)), "code.waitinglist_results", dbo)
         return {
             "rows": rows,
+            "additional": add, 
             "seladdresscontains": post["addresscontains"],
             "seldescriptioncontains": post["descriptioncontains"],
             "selincluderemoved": post.integer("includeremoved"),
