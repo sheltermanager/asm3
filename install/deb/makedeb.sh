@@ -38,7 +38,7 @@ echo "/var/log/asm3.log
         delaycompress
         compress
         postrotate
-                invoke-rc.d rsyslog rotate > /dev/null
+        invoke-rc.d rsyslog rotate > /dev/null
         endscript
 }" > sheltermanager3/etc/logrotate.d/asm3
 
@@ -116,7 +116,7 @@ Priority: optional
 Architecture: all
 Essential: no
 Depends: debconf, python3-webpy, python3-pil, python3-memcache, python3-requests, python3-mysqldb, python3-psycopg2
-Suggests: mysql-server, imagemagick, wkhtmltopdf, python3-sqlite
+Suggests: apache2, libapache2-mod-wsgi-py3 mysql-server, imagemagick, wkhtmltopdf, python3-sqlite
 Installed-Size: `du -s -k sheltermanager3 | awk '{print$1}'`
 Maintainer: ASM Team [info@sheltermanager.com]
 Provides: sheltermanager3
