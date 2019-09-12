@@ -1205,7 +1205,8 @@
 
         _create: function() {
             
-            var style = "margin-left: -56px; margin-top: -24px; height: 16px",
+            var buttonstyle = "margin-left: -56px; margin-top: -24px; height: 16px",
+                fixmarginstyle = "margin-left: 32px; margin-top: 24px;",
                 t = $(this.element[0]),
                 self = this;
 
@@ -1216,7 +1217,7 @@
             var zbid = t.attr("id") + "-zb";
 
             t.wrap("<span style='white-space: nowrap'></span>");
-            t.after("<button id='" + zbid + "' style='" + style + "'></button>");
+            t.after("<button id='" + zbid + "' style='" + buttonstyle + "'></button>" + "<span style='" + fixmarginstyle + "'></span>");
 
             // When zoom button is clicked
             $("#" + zbid).button({ text: false, icons: { primary: "ui-icon-zoomin" }}).click(function() {
