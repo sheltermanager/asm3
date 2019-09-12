@@ -856,12 +856,12 @@ def csv(l, rows, cols = None, includeheader = True):
     The file is constructed as a list of unicode strings and returned as a utf-8 encoded string.
     """
     if rows is None or len(rows) == 0: return ""
-    out = stringio()
+    lines = []
     def writerow(row):
+        line = []
         for i, r in enumerate(row):
-            out.write(u"\"%s\"" % r)
-            if i < len(row)-1: out.write(u",")
-        out.write(u"\n")
+            line.append(u"\"%s\"" % r)
+        lines.append(u",".join(line))
     if cols is None:
         cols = []
         for k, v in rows[0].items():
@@ -888,7 +888,7 @@ def csv(l, rows, cols = None, includeheader = True):
             else:
                 rd.append(decode_html(r[c]))
         writerow(rd)
-    return out.getvalue().encode("utf-8")
+    return u"\n".join(lines).encode("utf-8")
 
 def fix_relative_document_uris(s, baseurl, account = "" ):
     """

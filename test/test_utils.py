@@ -21,7 +21,7 @@ class TestUtils(unittest.TestCase):
         asm3.utils.generate_label_pdf(base.get_dbo(), "en", rows, "A4", "cm", 1.0, 1.0, 5.0, 5.0, 0, 0, 2, 3)
 
     def test_csv(self):
-        data = [ { "FIELD1": "VAL1&#63;", "FIELD2": "Test" }, { "FIELD1": "MORE&#euro;", "FIELD2": "OK" } ]
+        data = [ { "FIELD1": "VAL1&#2019;", "FIELD2": "Test" }, { "FIELD1": "MORE&#euro;", "FIELD2": "OK" } ]
         c = asm3.utils.csv("en", data)
         assert isinstance(c, bytes)
         assert c.startswith(b"\"FIELD1")

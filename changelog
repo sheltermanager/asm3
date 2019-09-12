@@ -1,6 +1,7 @@
 43
 ================
 
+12/09/19 Py2/3 compatible unicode fix for CSV exporting #634
 11/09/19 Final PetFinder change to send images by FTP for now #644
 10/09/19 PetFinder require a specific order for the new format #644
 09/09/19 Fix errors when account mappings are blank
