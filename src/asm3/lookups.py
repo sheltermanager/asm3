@@ -98,7 +98,7 @@ MICROCHIP_MANUFACTURERS = [
     { "length": 15, "regex": r"^90007900", "name": "PetLog", "locales": "en_GB" },
     { "length": 15, "regex": r"^900008", "name": "Orthana Intertrade", "locales": "" },
     { "length": 15, "regex": r"^900023", "name": "Asian Information Technology", "locales": "" },
-    { "length": 15, "regex": r"^900026", "name": "Petsafe", "locales": "" },
+    { "length": 15, "regex": r"^900026", "name": "DT Japan", "locales": "" },
     { "length": 15, "regex": r"^900042", "name": "Royal Tag", "locales": "" },
     { "length": 15, "regex": r"^900088", "name": "Insprovet", "locales": "" },
     { "length": 15, "regex": r"^900111000", "name": "International Pet Registry", "locales": "" },
@@ -150,6 +150,7 @@ MICROCHIP_MANUFACTURERS = [
     { "length": 15, "regex": r"^991001911", "name": "911PetChip", "locales": "en" },
     { "length": 15, "regex": r"^9910010", "name": "AKC Reunite", "locales": "en" },
     { "length": 15, "regex": r"^9910039", "name": "911PetChip", "locales": "en" },
+    { "length": 15, "regex": r"^992", "name": "International Pet Registry", "locales": "" },
     { "length": 15, "regex": r"^999", "name": "Transponder Test", "locales": ""}
 ]
 
