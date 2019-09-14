@@ -194,8 +194,8 @@ class SavourLifePublisher(AbstractPublisher):
                 self.logError("Failed processing animal: %s, %s" % (str(an["SHELTERCODE"]), err), sys.exc_info())
 
         try:
-            # Get a list of all animals that we sent to SOL recently (14 days)
-            prevsent = self.dbo.query("SELECT AnimalID FROM animalpublished WHERE SentDate>=? AND PublishedTo='savourlife'", [self.dbo.today(offset=-14)])
+            # Get a list of all animals that we sent to SOL recently (6 weeks)
+            prevsent = self.dbo.query("SELECT AnimalID FROM animalpublished WHERE SentDate>=? AND PublishedTo='savourlife'", [self.dbo.today(offset=-42)])
             
             # Build a list of IDs we just sent, along with a list of ids for animals
             # that we previously sent and are not in the current sent list.
