@@ -451,7 +451,8 @@ def filename_only(filename):
 
 def json_parse(s):
     """
-    Parses json and returns an object tree
+    Parses json and returns an object tree.
+    s can be either a bytes string or str
     """
     return extjson.loads(s)
 

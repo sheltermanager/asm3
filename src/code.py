@@ -4163,7 +4163,7 @@ class onlineforms(JSONEndpoint):
         asm3.onlineform.set_onlineform_headerfooter(o.dbo, o.post["header"], o.post["footer"])
 
     def post_import(self, o):
-        fd = o.post.filedata()
+        fd = asm3.utils.bytes2str(o.post.filedata())
         if fd.startswith("{"):
             asm3.onlineform.import_onlineform_json(o.dbo, o.post.filedata())
         else:
