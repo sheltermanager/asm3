@@ -173,7 +173,7 @@ class PetRescuePublisher(AbstractPublisher):
             try:
                 status = "on_hold"
                 if an.ACTIVEMOVEMENTDATE is not None and an.ACTIVEMOVEMENTTYPE == 1: status = "rehomed"
-                if an.DECEASEDDATE is not None: status = "removed"
+                if an.DECEASEDDATE is not None or (an.ACTIVEMOVEMENTDATE is not None and an.ACTIVEMOVEMENTTYPE != 2): status = "removed"
 
                 # We have the last status update in the LastStatus field (which is animalpublished.Extra for this animal)
                 # Don't send the same update again.
