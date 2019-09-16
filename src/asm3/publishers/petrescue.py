@@ -148,12 +148,12 @@ class PetRescuePublisher(AbstractPublisher):
                 self.logError("Failed processing animal: %s, %s" % (str(an["SHELTERCODE"]), err), sys.exc_info())
 
         try:
-            # Get a list of all animals that we sent to PR recently (6 weeks)
-            prevsent = self.dbo.query("SELECT AnimalID FROM animalpublished WHERE SentDate>=? AND PublishedTo='petrescue'", [self.dbo.today(offset=-42)])
+            # Get a list of all animals that we sent to PR recently (6 months)
+            prevsent = self.dbo.query("SELECT AnimalID FROM animalpublished WHERE SentDate>=? AND PublishedTo='petrescue'", [self.dbo.today(offset=-182)])
             
             # Build a list of IDs we just sent, along with a list of ids for animals
             # that we previously sent and are not in the current sent list.
-            # This identifies the listings we need to cancel
+            # This identifies the listings we potentially need to cancel
             animalids_just_sent = set([ x.ID for x in animals ])
             animalids_to_cancel = set([ str(x.ANIMALID) for x in prevsent if x.ANIMALID not in animalids_just_sent])
 
@@ -161,7 +161,8 @@ class PetRescuePublisher(AbstractPublisher):
             if len(animalids_to_cancel) == 0:
                 animals = []
             else:
-                animals = self.dbo.query("SELECT ID, ShelterCode, AnimalName, ActiveMovementDate, ActiveMovementType, DeceasedDate " \
+                animals = self.dbo.query("SELECT ID, ShelterCode, AnimalName, ActiveMovementDate, ActiveMovementType, DeceasedDate, " \
+                    "(SELECT Extra FROM animalpublished WHERE AnimalID=a.ID AND PublishedTo='petrescue') AS LastStatus " \
                     "FROM animal a WHERE ID IN (%s)" % ",".join(animalids_to_cancel))
 
         except Exception as err:
@@ -173,21 +174,27 @@ class PetRescuePublisher(AbstractPublisher):
                 status = "on_hold"
                 if an.ACTIVEMOVEMENTDATE is not None and an.ACTIVEMOVEMENTTYPE == 1: status = "rehomed"
                 if an.DECEASEDDATE is not None: status = "removed"
-                data = { "status": status }
-                jsondata = asm3.utils.json(data)
-                url = PETRESCUE_URL + "listings/%s/SM%s" % (an.ID, self.dbo.database)
 
-                self.log("Sending PATCH to %s to update existing listing: %s" % (url, jsondata))
-                r = asm3.utils.patch_json(url, jsondata, headers=headers)
+                # We have the last status update in the LastStatus field (which is animalpublished.Extra for this animal)
+                # Don't send the same update again.
+                if an.LASTSTATUS != status:
 
-                if r["status"] == 200:
-                    self.log("HTTP %d, headers: %s, response: %s" % (r["status"], r["headers"], self.utf8_to_ascii(r["response"])))
-                    self.logSuccess("%s - %s: Marked with new status %s" % (an.SHELTERCODE, an.ANIMALNAME, status))
-                    # It used to be that we updated animalpublished for this animal to get sentdate to today
-                    # we don't do this now so that we'll update dead listings every day for however many days we
-                    # look back, but that's it
-                else:
-                    self.logError("HTTP %d, headers: %s, response: %s" % (r["status"], r["headers"], self.utf8_to_ascii(r["response"])))
+                    data = { "status": status }
+                    jsondata = asm3.utils.json(data)
+                    url = PETRESCUE_URL + "listings/%s/SM%s" % (an.ID, self.dbo.database)
+
+                    self.log("Sending PATCH to %s to update existing listing: %s" % (url, jsondata))
+                    r = asm3.utils.patch_json(url, jsondata, headers=headers)
+
+                    if r["status"] == 200:
+                        self.log("HTTP %d, headers: %s, response: %s" % (r["status"], r["headers"], self.utf8_to_ascii(r["response"])))
+                        self.logSuccess("%s - %s: Marked with new status %s" % (an.SHELTERCODE, an.ANIMALNAME, status))
+
+                        # Update animalpublished for this animal with the status we just sent in the Extra field
+                        # so that it can be picked up next time.
+                        self.markAnimalPublished(an.ID, extra = status)
+                    else:
+                        self.logError("HTTP %d, headers: %s, response: %s" % (r["status"], r["headers"], self.utf8_to_ascii(r["response"])))
 
             except Exception as err:
                 self.logError("Failed closing listing for %s - %s: %s" % (an.SHELTERCODE, an.ANIMALNAME, err), sys.exc_info())

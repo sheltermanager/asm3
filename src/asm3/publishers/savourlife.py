@@ -194,8 +194,8 @@ class SavourLifePublisher(AbstractPublisher):
                 self.logError("Failed processing animal: %s, %s" % (str(an["SHELTERCODE"]), err), sys.exc_info())
 
         try:
-            # Get a list of all animals that we sent to SOL recently (6 weeks)
-            prevsent = self.dbo.query("SELECT AnimalID FROM animalpublished WHERE SentDate>=? AND PublishedTo='savourlife'", [self.dbo.today(offset=-42)])
+            # Get a list of all animals that we sent to SOL recently (6 months)
+            prevsent = self.dbo.query("SELECT AnimalID FROM animalpublished WHERE SentDate>=? AND PublishedTo='savourlife'", [self.dbo.today(offset=-182)])
             
             # Build a list of IDs we just sent, along with a list of ids for animals
             # that we previously sent and are not in the current sent list.
@@ -206,7 +206,8 @@ class SavourLifePublisher(AbstractPublisher):
             # Get the animal records for the ones we need to mark saved
             if len(animalids_to_cancel) > 0:
 
-                animals = self.dbo.query("SELECT ID, ShelterCode, AnimalName, ActiveMovementDate, ActiveMovementType, DeceasedDate " \
+                animals = self.dbo.query("SELECT ID, ShelterCode, AnimalName, ActiveMovementDate, ActiveMovementType, DeceasedDate, " \
+                    "(SELECT Extra FROM animalpublished WHERE AnimalID=a.ID AND PublishedTo='savourlife') AS LastStatus " \
                     "FROM animal a WHERE ID IN (%s)" % ",".join(animalids_to_cancel))
 
                 # Append the additional fields so we can get the enquiry number
@@ -220,6 +221,9 @@ class SavourLifePublisher(AbstractPublisher):
 
                         # The animal is not adopted, don't do anything
                         if an.ACTIVEMOVEMENTTYPE != 1: continue
+
+                        # If we already sent this update, don't do anything
+                        if an.LASTSTATUS == "adopted": continue
 
                         # The savourlife dogid field that they returned when we first sent the record
                         dogid = asm3.animal.get_extra_id(self.dbo, an, asm3.animal.IDTYPE_SAVOURLIFE)
@@ -252,9 +256,10 @@ class SavourLifePublisher(AbstractPublisher):
                         else:
                             self.log("HTTP %d, headers: %s, response: %s" % (r["status"], r["headers"], self.utf8_to_ascii(r["response"])))
                             self.logSuccess("Processed: %s: %s (%d of %d)" % ( an["SHELTERCODE"], an["ANIMALNAME"], anCount, len(animals)))
-                            # It used to be that we updated animalpublished for this animal to get sentdate to today
-                            # we don't do this now so that we'll update dead listings every day for however many days we
-                            # look back, but that's it
+
+                            # Update animalpublished for this animal with the status we just sent in the Extra field
+                            # so that it can be picked up next time and we won't do this again.
+                            self.markAnimalPublished(an.ID, extra = "adopted")
 
                     except Exception as err:
                         self.logError("Failed calling setDogAdopted for %s - %s: %s" % (an.SHELTERCODE, an.ANIMALNAME, err), sys.exc_info())

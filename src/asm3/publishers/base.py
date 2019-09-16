@@ -784,17 +784,19 @@ class AbstractPublisher(threading.Thread):
         """
         return self.dbo.query_date("SELECT SentDate FROM animalpublished WHERE AnimalID = ? AND PublishedTo = ?", (animalid, self.publisherKey))
 
-    def markAnimalPublished(self, animalid, datevalue = None):
+    def markAnimalPublished(self, animalid, datevalue = None, extra = ""):
         """
         Marks an animal published at the current date/time for this publisher
         animalid:    The animal id to update
+        extra:       The extra text field to set
         """
         if datevalue is None: datevalue = asm3.i18n.now(self.dbo.timezone)
         self.markAnimalUnpublished(animalid)
         self.dbo.insert("animalpublished", {
             "AnimalID":     animalid,
             "PublishedTo":  self.publisherKey,
-            "SentDate":     datevalue
+            "SentDate":     datevalue,
+            "Extra":        extra
         }, generateID=False)
 
     def markAnimalFirstPublished(self, animalid):
