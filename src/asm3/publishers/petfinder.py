@@ -232,7 +232,10 @@ class PetFinderPublisher(FTPPublisher):
         # coat_length
         line.append("\"\"") # nope
         # Adoption Fee
-        line.append("\"%0.2f\"" % (an.FEE / 100))
+        if an.FEE > 0:
+            line.append("\"%0.2f\"" % (an.FEE / 100))
+        else:
+            line.append("\"\"") # send 0 fees as a blank as PF seem to ignore their own display adoption fee flag below
         # Display adoption fee?
         line.append(self.pfYesNo(an.FEE > 0))
         # Adoption fee waived
