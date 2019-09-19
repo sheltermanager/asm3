@@ -59,9 +59,6 @@ websession = None
 # Global reference to the current code path
 PATH = os.path.dirname(os.path.abspath(__file__)) + os.sep + ".." + os.sep
 
-# Regex for counting pages in PDF file data
-pdfcountpages = re.compile(r"/Type\s*/Page([^s]|$)", re.MULTILINE | re.DOTALL)
-
 class PostedData(object):
     """
     Helper class for reading fields from the web.py web.input object
@@ -1136,9 +1133,15 @@ def write_binary_file(name, data):
 
 def pdf_count_pages(filedata):
     """
-    Given a PDF in filedata, returns the number of pages.
+    Given a PDF in filedata (bytes string), returns the number of pages.
     """
-    return len(pdfcountpages.findall(filedata))
+    pattern = b"/Type/Page\n"
+    pages = 0
+    x = filedata.find(pattern)
+    while x > -1:
+        pages += 1
+        x = filedata.find(pattern)
+    return pages
 
 def html_to_pdf(htmldata, baseurl = "", account = ""):
     """
