@@ -1135,12 +1135,10 @@ def pdf_count_pages(filedata):
     """
     Given a PDF in filedata (bytes string), returns the number of pages.
     """
-    pattern = b"/Type/Page\n"
+    patterns = [ b"/Type/Page", b"/Type /Page" ]
     pages = 0
-    x = filedata.find(pattern)
-    while x > -1:
-        pages += 1
-        x = filedata.find(pattern)
+    for p in patterns:
+        pages += filedata.count(p)
     return pages
 
 def html_to_pdf(htmldata, baseurl = "", account = ""):
