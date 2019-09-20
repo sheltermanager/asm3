@@ -24,9 +24,9 @@ HEADER$$
 
 $$GROUP_SpeciesName
 $$HEAD
-<h2>$Species</h2>
+<h2>$SpeciesName</h2>
 $$FOOT
-<h2>Total $Species: {COUNT.ShelterCode}</h2>
+<h2>Total $SpeciesName: {COUNT.ShelterCode}</h2>
 GROUP$$
 
 $$GROUP_Sex
@@ -43,7 +43,7 @@ $$HEAD
 </tr>
 $$FOOT
 </table>
-<h3>Total $Sex $Species: {COUNT.ShelterCode}</h3>
+<h3>Total $Sex $SpeciesName: {COUNT.ShelterCode}</h3>
 GROUP$$
 
 $$BODY
