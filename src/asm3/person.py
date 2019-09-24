@@ -637,6 +637,10 @@ def insert_person_from_form(dbo, post, username, geocode=True):
     Creates a new person record from incoming form data
     Returns the ID of the new record
     """
+    l = dbo.locale
+    if post["surname"].strip() == "":
+        raise asm3.utils.ASMValidationError(_("Person must have a surname.", l))
+
     pid = dbo.get_id("owner")
     dbo.insert("owner", {
         "ID":               pid,
@@ -735,6 +739,9 @@ def update_person_from_form(dbo, post, username, geocode=True):
     l = dbo.locale
     if not dbo.optimistic_check("owner", post.integer("id"), post.integer("recordversion")):
         raise asm3.utils.ASMValidationError(_("This record has been changed by another user, please reload.", l))
+
+    if post["surname"].strip() == "":
+        raise asm3.utils.ASMValidationError(_("Person must have a surname.", l))
 
     pid = post.integer("id")
 
