@@ -353,6 +353,18 @@ GoodWithChildren
     "Yes/No/Unknown" 
 HouseTrained
     "Yes/No/Unknown" 
+DisplayCatsIfGoodWith
+    Outputs "Cats" if this animal is good with cats
+DisplayDogsIfGoodWith
+    Outputs "Dogs" if this animal is good with dogs
+DisplayChildrenIfGoodWith
+    Outputs "Children" if this animal is good with children
+DisplayCatsIfBadWith
+    Outputs "Cats" if this animal is bad with cats
+DisplayDogsIfBadWith
+    Outputs "Dogs" if this animal is bad with dogs
+DisplayChildrenIfBadWith
+    Outputs "Children" if this animal is bad with children
 EntryCategory
     The entry category of the animal 
 ReasonForEntry
