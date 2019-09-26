@@ -18,6 +18,7 @@ class PetFinderPublisher(FTPPublisher):
     Handles publishing to PetFinder.com
     """
     def __init__(self, dbo, publishCriteria):
+        publishCriteria.forceReupload = True
         publishCriteria.uploadDirectly = True
         publishCriteria.thumbnails = False
         publishCriteria.checkSocket = True
