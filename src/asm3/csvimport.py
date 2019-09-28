@@ -215,10 +215,12 @@ def row_error(errors, rowtype, rowno, row, e, dbo, exinfo):
 
 def csvimport(dbo, csvdata, encoding = "utf8", user = "", createmissinglookups = False, cleartables = False, checkduplicates = False):
     """
-    Imports the csvdata.
+    Imports the csvdata (bytes string)
     createmissinglookups: If a lookup value is given that's not in our data, add it
     cleartables: Clear down the animal, owner and adoption tables before import
     """
+
+    csvdata = asm3.utils.bytes2str(csvdata)
 
     # Convert line endings to standard unix lf to prevent
     # the Python CSV importer barfing.

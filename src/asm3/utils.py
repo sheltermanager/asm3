@@ -36,6 +36,7 @@ if sys.version_info[0] > 2: # PYTHON3
     from email.charset import Charset
     import email.encoders as Encoders
     unichr = chr # decode_html needs this
+    extcsv.field_size_limit(512 * 1024) # Python 3 has a limit of 128k for csv fields, make it 512k
 else:
     import htmlentitydefs
     import thread
