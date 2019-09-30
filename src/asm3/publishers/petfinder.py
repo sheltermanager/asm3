@@ -175,7 +175,7 @@ class PetFinderPublisher(FTPPublisher):
         else: agename = "Senior"
         line.append("\"%s\"" % agename)
         # Description
-        line.append("\"%s\"" % self.getDescription(an, False, True))
+        line.append("\"%s\"" % self.getDescription(an, crToHE=True, replaceSmart=True))
         # Type (Species)
         line.append("\"%s\"" % an.PETFINDERSPECIES)
         # Status

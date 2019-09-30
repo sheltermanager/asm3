@@ -55,28 +55,6 @@ class PetRescuePublisher(AbstractPublisher):
         """
         return asm3.utils.encode_html(asm3.utils.cunicode(s))
 
-    def replace_html_entities(self, s):
-        """
-        Replaces well known HTML entities with ASCII characters (mainly aimed at smartquotes)
-        """
-        ENTITIES = {
-            "8211": "-", # endash
-            "8212": "--", # emdash
-            "8216": "'", # left single quote
-            "8217": "'", # right single quote
-            "8218": ",", # single low quote (comma)
-            "8220": "\"", # left double quotes
-            "8221": "\"", # right double quotes
-            "8222": ",,", # double low quote (comma comma)
-            "8226": "*", # bullet
-            "8230": "...", # ellipsis
-            "8242": "'", # prime (stopwatch)
-            "8243": "\"", # double prime
-        }
-        for k, v in ENTITIES.items():
-            s = s.replace("&#" + k + ";", v)
-        return s
-
     def run(self):
         
         self.log("PetRescuePublisher starting...")
@@ -295,7 +273,7 @@ class PetRescuePublisher(AbstractPublisher):
             "mix":                      an.CROSSBREED == 1, # true | false
             "date_of_birth":            asm3.i18n.format_date("%Y-%m-%d", an.DATEOFBIRTH), # iso
             "gender":                   an.SEXNAME.lower(), # male | female
-            "personality":              self.replace_html_entities(self.getDescription(an)), # 20-4000 chars of free type
+            "personality":              self.getDescription(an, replaceSmart=True), # 20-4000 chars of free type
             "best_feature":             best_feature, # 25 chars free type, defaults to "Looking for love" requires BESTFEATURE additional field
             "location_postcode":        location_postcode, # shelter/fosterer postcode
             "location_state_abbr":      location_state_abbr, # shelter/fosterer state

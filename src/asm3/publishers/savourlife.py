@@ -71,30 +71,6 @@ class SavourLifePublisher(AbstractPublisher):
         elif x == 1: return False
         else: return True
 
-    def replace_html_entities(self, s):
-        """
-        Replaces well known HTML entities with ASCII characters (mainly aimed at smartquotes)
-        """
-        ENTITIES = {
-            "160":  " ", # non-breaking space
-            "8211": "-", # endash
-            "8212": "--", # emdash
-            "8216": "'", # left single quote
-            "8217": "'", # right single quote
-            "8218": ",", # single low quote (comma)
-            "8220": "\"", # left double quotes
-            "8221": "\"", # right double quotes
-            "8222": ",,", # double low quote (comma comma)
-            "8226": "*", # bullet
-            "8230": "...", # ellipsis
-            "8242": "'", # prime (stopwatch)
-            "8243": "\"", # double prime
-            "10004": "*", # tick
-        }
-        for k, v in ENTITIES.items():
-            s = s.replace("&#" + k + ";", v)
-        return s
-
     def run(self):
         
         self.log("SavourLifePublisher starting...")
@@ -333,7 +309,7 @@ class SavourLifePublisher(AbstractPublisher):
             "Username":                 username,
             "Token":                    token,
             "DogId":                    dogid, # None in here translates to null and creates a new record
-            "Description":              self.replace_html_entities(self.getDescription(an)),
+            "Description":              self.getDescription(an, replaceSmart=True),
             "DogName":                  an.ANIMALNAME.title(),
             "Images":                   self.getPhotoUrls(an.ID),
             "BreedId":                  self.get_breed_id(an),
@@ -355,7 +331,7 @@ class SavourLifePublisher(AbstractPublisher):
             "RequirementKidsOver5":     self.good_with(an.ISGOODWITHCHILDREN),
             "RequirementKidsUnder5":    self.good_with(an.ISGOODWITHCHILDREN),
             "SpecialNeeds":             "",
-            "MedicalIssues":            self.replace_html_entities(an.HEALTHPROBLEMS),
+            "MedicalIssues":            self.replaceSmartHTMLEntities(an.HEALTHPROBLEMS),
             "InterstateAdoptionAvailable": interstate, 
             "FosterCareRequired":       False,
             "BondedPair":               an.BONDEDANIMALID is not None and an.BONDEDANIMALID > 0,

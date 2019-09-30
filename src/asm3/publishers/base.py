@@ -750,13 +750,36 @@ class AbstractPublisher(threading.Thread):
         if self.tempPublishDir:
             shutil.rmtree(self.publishDir, True)
 
-    def getDescription(self, an, crToBr = False, crToHE = False, crToLF = True):
+    def replaceSmartHTMLEntities(self, s):
+        """
+        Replaces well known "smart" HTML entities with ASCII characters (mainly aimed at smartquotes)
+        """
+        ENTITIES = {
+            "8211": "-", # endash
+            "8212": "--", # emdash
+            "8216": "'", # left single quote
+            "8217": "'", # right single quote
+            "8218": ",", # single low quote (comma)
+            "8220": "\"", # left double quotes
+            "8221": "\"", # right double quotes
+            "8222": ",,", # double low quote (comma comma)
+            "8226": "*", # bullet
+            "8230": "...", # ellipsis
+            "8242": "'", # prime (stopwatch)
+            "8243": "\"", # double prime
+        }
+        for k, v in ENTITIES.items():
+            s = s.replace("&#" + k + ";", v)
+        return s
+
+    def getDescription(self, an, crToBr = False, crToHE = False, crToLF = True, replaceSmart = False):
         """
         Returns the description/bio for an asm3.animal.
         an: The animal record
         crToBr: Convert line breaks to <br /> tags
         crToHE: Convert line breaks to html entity &#10;
         crToLF: Convert line breaks to LF
+        replaceSmart: Replace smart HTML entities (mainly apostrophes and quotes) with regular ASCII
         """
         # Note: WEBSITEMEDIANOTES becomes ANIMALCOMMENTS in get_animal_data when publisher_use_comments is on
         notes = asm3.utils.nulltostr(an["WEBSITEMEDIANOTES"])
@@ -774,6 +797,9 @@ class AbstractPublisher(threading.Thread):
         notes = notes.replace("\r\n", cr)
         notes = notes.replace("\r", cr)
         notes = notes.replace("\n", cr)
+        # Smart quotes and apostrophes
+        if replaceSmart:
+            notes = self.replaceSmartHTMLEntities(notes)
         # Escape speechmarks
         notes = notes.replace("\"", "\"\"")
         return notes

@@ -1,6 +1,7 @@
 43
 ================
 
+30/09/19 Convert smartquotes to ASCII before sending to PetFinder
 28/09/19 Up the report items to 120 before switching to accordion
 28/09/19 Updated Spanish translation (Marga Gomis)
 26/09/19 PetFinder: always reupload images due to FTP bug at PF
