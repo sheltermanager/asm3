@@ -33,6 +33,7 @@ AND NOT EXISTS(SELECT ID FROM ownerrota WHERE OwnerID = o.ID)
 AND NOT EXISTS(SELECT ID FROM ownertraploan WHERE OwnerID = o.ID)
 AND NOT EXISTS(SELECT ID FROM ownervoucher WHERE OwnerID = o.ID)
 AND NOT EXISTS(SELECT ID FROM users WHERE OwnerID = o.ID)
+AND NOT o.IsVolunteer=1 AND NOT o.IsStaff=1 
 ORDER BY o.OwnerName
 ###
 $$HEADER

@@ -41,14 +41,19 @@ $(function() {
                     { json_field: "SITEID", post_field: "site", label: _("Site"), type: "select", 
                         options: '<option value="0">' + _("(all)") + '</option>' +  
                             html.list_to_options(controller.sites, "ID", "SITENAME") },
-                    { json_field: "OWNERID", post_field: "person", label: _("Staff record"), type: "person", personfilter: "staff" },
+                    { json_field: "OWNERID", post_field: "person", label: _("Staff record"), type: "person", personfilter: "staff",
+                        callout: _("Link this user account to a staff person record.") + " " +
+                                 _("Once linked, a user account cannot access and edit its linked person record.")
+                    },
                     { json_field: "LOCATIONFILTER", post_field: "locationfilter", label: _("Location Filter"), type: "selectmulti", 
                         options: { rows: controller.internallocations, valuefield: "ID", displayfield: "LOCATIONNAME" },
                         hideif: function() { return !config.bool("LocationFiltersEnabled"); },
                         callout: _("Setting a location filter will prevent this user seeing animals who are not in these locations on shelterview, find animal and search.")
                     },
                     { json_field: "IPRESTRICTION", post_field: "iprestriction", label: _("IP Restriction"), type: "text", classes: "asm-ipbox",
-                      callout: _("IP restriction is a space-separated list of IP netblocks in CIDR notation that this user is *only* permitted to login from (eg: 192.168.0.0/24 127.0.0.0/8). If left blank, the user can login from any address.")
+                        callout: _("IP restriction is a space-separated list of IPv4 addresses or IPv6 prefixes that this user is ONLY permitted to login from.") + " " + 
+                            _("If left blank, the user can login from any IP address.") + 
+                            "\nex: 192.168.0.0/24 172.16.38.21 2001:db8:abcd:0012"
                     }
                 ]
             };

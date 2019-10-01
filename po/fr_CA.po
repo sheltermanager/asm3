@@ -5160,7 +5160,7 @@ msgstr "Foxhound"
 
 #: common.js
 msgid "Fr"
-msgstr "Français"
+msgstr "Ve"
 
 #: dbupdate.py
 msgid "French Bulldog"

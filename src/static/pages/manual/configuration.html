@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Configuration &mdash; ASM 42 documentation</title>
+  <title>Configuration &mdash; ASM 43u documentation</title>
   
 
   
@@ -60,7 +60,7 @@
             
             
               <div class="version">
-                42
+                43u
               </div>
             
           
@@ -330,7 +330,11 @@ record. You can also set the role permission to forbid them opening any other
 person record with the “Staff” flag if you wish to lock a user from opening any
 staff person records.</p>
 <p>Setting an IP restriction will only allow that user account to login from IP
-addresses that match the set.</p>
+addresses that match the set. IP restrictions should be separated with spaces
+and can be either complete IPv4 of IPv6 addresses, IPv4 blocks in CIDR notation
+or IPv6 prefixes. Eg:</p>
+<blockquote>
+<div>192.168.1.0/24 172.16.31.34 2001:db8:abcd:0012</div></blockquote>
 <div class="section" id="location-filter">
 <h3>Location Filter<a class="headerlink" href="#location-filter" title="Permalink to this headline">¶</a></h3>
 <p>Setting a location filter (a group of internal locations) for a user account

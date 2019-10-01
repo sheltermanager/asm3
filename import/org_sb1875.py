@@ -49,6 +49,8 @@ print "DELETE FROM log WHERE ID >= %s;" % START_ID
 print "DELETE FROM owner WHERE ID >= %s;" % START_ID
 print "DELETE FROM adoption WHERE ID >= %s;" % START_ID
 
+print "DELETE FROM media;" # They want media cleared out, shouldn't be enough to worry about orphans
+
 # Create an unknown owner
 uo = asm.Owner()
 owners.append(uo)
@@ -83,16 +85,7 @@ for d in asm.csv_to_list(ANIMAL_FILENAME, remove_non_ascii=True):
     a = asm.Animal()
     animals.append(a)
     ppa[d["Animal_Identifier"]] = a
-    if d["Species"] == "Cat":
-        a.AnimalTypeID = 11 # Unwanted Cat
-        if d["Pound_Reason"] == "Stray":
-            a.AnimalTypeID = 12 # Stray Cat
-    elif d["Species"] == "Dog":
-        a.AnimalTypeID = 2 # Unwanted Dog
-        if d["Pound_Reason"] == "Stray":
-            a.AnimalTypeID = 10 # Stray Dog
-    else:
-        a.AnimalTypeID = 40 # Misc
+    a.AnimalTypeID = asm.type_from_db(d["Pound_Reason"])
     a.SpeciesID = asm.species_id_for_name(d["Species"])
     a.AnimalName = d["Name"]
     if a.AnimalName.strip() == "":
@@ -104,20 +97,32 @@ for d in asm.csv_to_list(ANIMAL_FILENAME, remove_non_ascii=True):
         a.DateOfBirth = asm.subtract_days(a.DateBroughtIn, 365)
     a.CreatedDate = a.DateBroughtIn
     a.LastChangedDate = a.DateBroughtIn
-    asm.additional_field("Legacy_Tag_No", 0, a.ID, d["Tag_no"])
-    asm.additional_field("Legacy_Tag_No_Q", 0, a.ID, d["Tag_no_qualifier"])
+    #asm.additional_field("Legacy_Tag_No", 0, a.ID, d["Tag_no"])
+    #asm.additional_field("Legacy_Tag_No_Q", 0, a.ID, d["Tag_no_qualifier"])
     a.ShortCode = "%s:%s" % (d["Tag_no"], d["Tag_no_qualifier"])
     a.ShelterCode = a.ShortCode
-    asm.breed_ids(a, d["Breed"], d["Cross_Breed"])
-    a.BaseColourID = asm.colour_id_for_names(d["Base_Colour"], d["Secondary_Colour"])
+    a.BreedID = asm.breed_from_db(d["Breed"], 1)
+    a.BreedName = d["Breed"]
+    if d["Cross_Breed"] != "":
+        a.Breed2ID = asm.breed_from_db(d["Cross_Breed"], 1)
+        a.CrossBreed = 1
+        a.BreedName = "%s / %s" % (d["Breed"], d["Cross_Breed"])
+    #a.BaseColourID = asm.colour_id_for_names(d["Base_Colour"], d["Secondary_Colour"])
+    a.BaseColourID = asm.colour_from_db(d["Base_"])
     a.AnimalComments = d["Notes"]
     a.Sex = asm.getsex_mf(d["Sex"])
     a.Size = asm.size_id_for_name(d["Size"])
     a.NeuteredDate = getdate(d["Date_Desexed"])
     if a.NeuteredDate is not None: a.Neutered = 1
+    a.IsNotForRegistration = 0
+    a.IsNotAvailableForAdoption = 1
     a.IdentichipNumber = d["Microchip_no"]
     a.Identichip2Number = d["Alternate_Chip_No"]
+    asm.additional_field("MChipType", 5, a.ID, d["Microchip_Type"]) # MChipType additional field
     if a.IdentichipNumber != "": a.Identichipped = 1
+    if a.IdentichipNumber == "0": 
+        a.Identichipped = 0
+        a.IdentichipNumber = ""
     a.IdentichipDate = asm.getdate_ddmmyyyy(d["Date_Microchipped"])
     a.IsGoodWithCats = 2
     a.IsGoodWithDogs = 2
@@ -137,13 +142,16 @@ for d in asm.csv_to_list(ANIMAL_FILENAME, remove_non_ascii=True):
     entrycomments += "\nStreet Found: " + d["Street_Found_In"]
     a.ReasonForEntry = entrycomments
     a.EntryReasonID = 17 # Surrender
-    if d["Pound_Reason"] == "Stray": a.EntryReasonID = 7
     #if d["InShelterSearchFlag"] == "N":
     #    a.Archived = 1
+    if d["Location"] != "": a.ShelterLocation = asm.location_from_db(d["Location"])
+    if d["Unit"] != "": a.ShelterLocationUnit = d["Unit"]
+
 
 # Animal log, recording medical history and linking adoptions/surrenderers/etc
 for d in asm.csv_to_list(LOG_FILENAME, remove_non_ascii=True):
 
+    if d["Animal_Identifier"] not in ppa: continue
     a = ppa[d["Animal_Identifier"]]
     o = uo
     if d["People_ctr"] != "": o = ppo[d["People_ctr"]]
@@ -157,7 +165,7 @@ for d in asm.csv_to_list(LOG_FILENAME, remove_non_ascii=True):
             pass
         l = asm.Log()
         logs.append(l)
-        l.LogTypeID = 1 # Weight
+        l.LogTypeID = 4 # Weight
         l.LinkID = a.ID
         l.LinkType = 0
         l.Date = ed
@@ -267,10 +275,10 @@ for d in asm.csv_to_list(LOG_FILENAME, remove_non_ascii=True):
         a.PTSReason = d["Log_Description"] + ": " + d["Log_Notes"]
         a.LastChangedDate = ed
 
-    elif d["Action"] == "Return":
-        # Return the most recent adoption for this animal/person
+    elif d["Action"] == "Return" or d["Action"] == "ReAdmission":
+        # Return the most recent exit movement for this animal/person
         for m in movements:
-            if m.AnimalID == a.ID and m.ReturnDate is None and m.MovementType == 1 and m.OwnerID == o.ID:
+            if m.AnimalID == a.ID and m.ReturnDate is None and m.MovementType not in (2, 8) and m.OwnerID == o.ID:
                 m.ReturnDate = ed
                 m.ReturnedReasonID = 17 # Surrender
                 break

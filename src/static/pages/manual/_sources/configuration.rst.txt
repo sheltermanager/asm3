@@ -161,7 +161,11 @@ person record with the “Staff” flag if you wish to lock a user from opening 
 staff person records.
 
 Setting an IP restriction will only allow that user account to login from IP
-addresses that match the set.
+addresses that match the set. IP restrictions should be separated with spaces
+and can be either complete IPv4 of IPv6 addresses, IPv4 blocks in CIDR notation
+or IPv6 prefixes. Eg:
+
+   192.168.1.0/24 172.16.31.34 2001:db8:abcd:0012
 
 Location Filter
 ^^^^^^^^^^^^^^^^

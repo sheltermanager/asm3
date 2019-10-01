@@ -1,0 +1,1140 @@
+
+import asm3.al
+import asm3.animal
+import asm3.animalcontrol
+import asm3.configuration
+import asm3.geo
+import asm3.i18n
+import asm3.html
+import asm3.lookups
+import asm3.lostfound
+import asm3.media
+import asm3.movement
+import asm3.person
+import asm3.publishers.base
+import asm3.template
+import asm3.utils
+import asm3.waitinglist
+from asm3.sitedefs import BASE_URL, ASMSELECT_CSS, ASMSELECT_JS, JQUERY_JS, JQUERY_UI_JS, JQUERY_UI_CSS, SIGNATURE_JS, TIMEPICKER_CSS, TIMEPICKER_JS, TOUCHPUNCH_JS
+
+import sys
+import web
+
+if sys.version_info[0] > 2: # PYTHON3
+    from html.parser import HTMLParser
+else:
+    from HTMLParser import HTMLParser
+
+FIELDTYPE_YESNO = 0
+FIELDTYPE_TEXT = 1
+FIELDTYPE_NOTES = 2
+FIELDTYPE_LOOKUP = 3
+FIELDTYPE_SHELTERANIMAL = 4
+FIELDTYPE_ADOPTABLEANIMAL = 5
+FIELDTYPE_COLOUR = 6
+FIELDTYPE_BREED = 7
+FIELDTYPE_SPECIES = 8
+FIELDTYPE_RAWMARKUP = 9
+FIELDTYPE_DATE = 10
+FIELDTYPE_CHECKBOX = 11
+FIELDTYPE_RADIOGROUP = 12
+FIELDTYPE_SIGNATURE = 13
+FIELDTYPE_LOOKUP_MULTI = 14
+FIELDTYPE_GDPR_CONTACT_OPTIN = 15
+FIELDTYPE_TIME = 16
+FIELDTYPE_IMAGE = 17
+
+# Types as used in JSON representations
+FIELDTYPE_MAP = {
+    "YESNO": 0,
+    "TEXT": 1,
+    "NOTES": 2,
+    "LOOKUP": 3,
+    "SHELTERANIMAL": 4,
+    "ADOPTABLEANIMAL": 5,
+    "COLOUR": 6,
+    "BREED": 7,
+    "SPECIES": 8,
+    "RAWMARKUP": 9,
+    "DATE": 10,
+    "CHECKBOX": 11,
+    "RADIOGROUP": 12,
+    "SIGNATURE": 13,
+    "LOOKUP_MULTI": 14,
+    "GDPR_CONTACT_OPTIN": 15,
+    "TIME": 16,
+    "IMAGE": 17
+}
+
+FIELDTYPE_MAP_REVERSE = {v: k for k, v in FIELDTYPE_MAP.items()}
+
+JSKEY_NAME = 'magicASJSkey'
+JSKEY_VALUE = '918273645'
+
+# Online field names that we recognise and will attempt to map to
+# known fields when importing from submitted forms
+FORM_FIELDS = [
+    "emailsubmissionto",
+    "title", "initials", "firstname", "forenames", "surname", "lastname", "address",
+    "town", "city", "county", "state", "postcode", "zipcode", "hometelephone", 
+    "worktelephone", "mobiletelephone", "celltelephone", "emailaddress", "excludefrombulkemail", "gdprcontactoptin",
+    "description", "reason", "size", "species", "breed", "agegroup", "color", "colour", 
+    "arealost", "areafound", "areapostcode", "areazipcode",
+    "animalname", "reserveanimalname",
+    "callnotes", "dispatchaddress", "dispatchcity", "dispatchstate", "dispatchzipcode", "transporttype", 
+    "pickupaddress", "pickuptown", "pickupcity", "pickupcounty", "pickupstate", "pickuppostcode", "pickupzipcode", "pickupcountry", "pickupdate", "pickuptime",
+    "dropoffaddress", "dropofftown", "dropoffcity", "dropoffcounty", "dropoffstate", "dropoffpostcode", "dropoffzipcode", "dropoffcountry", "dropoffdate", "dropofftime"
+]
+
+class FormHTMLParser(HTMLParser):
+    tag = ""
+    title = ""
+    controls = None
+
+    def handle_starttag(self, tag, attrs):
+        self.tag = tag
+        if self.controls is None: self.controls = []
+        if tag == "select" or tag == "input" or tag == "textarea":
+            ad = { "tag": tag }
+            for k, v in attrs:
+                ad[k] = v
+            self.controls.append(ad)
+
+    def handle_data(self, data):
+        if self.tag == "title":
+            self.title = data
+
+def get_onlineform(dbo, formid):
+    """ Returns the online form with ID formid """
+    return dbo.first_row(dbo.query("SELECT * FROM onlineform WHERE ID = ?", [formid]))
+
+def get_onlineforms(dbo):
+    """ Return all online forms """
+    return dbo.query("SELECT *, (SELECT COUNT(*) FROM onlineformfield WHERE OnlineFormID = onlineform.ID) AS NumberOfFields FROM onlineform ORDER BY Name")
+
+def get_onlineform_html(dbo, formid, completedocument = True):
+    """ Get the selected online form as HTML """
+    h = []
+    l = dbo.locale
+    form = get_onlineform(dbo, formid)
+    if form is None: raise asm3.utils.ASMValidationError("Online form %d does not exist")
+    formfields = get_onlineformfields(dbo, formid)
+    if completedocument:
+        header = get_onlineform_header(dbo)
+        # Calculate the date format and add our extra script
+        # references into the header block
+        df = asm3.i18n.get_display_date_format(l)
+        df = df.replace("%Y", "yy").replace("%m", "mm").replace("%d", "dd")
+        extra = "<script>\nDATE_FORMAT = '%s';\n</script>\n" % df
+        extra += asm3.html.css_tag(JQUERY_UI_CSS.replace("%(theme)s", "smoothness")) + \
+            asm3.html.css_tag(ASMSELECT_CSS) + \
+            asm3.html.css_tag(TIMEPICKER_CSS) + \
+            asm3.html.script_tag(JQUERY_JS) + \
+            asm3.html.script_tag(JQUERY_UI_JS) + \
+            asm3.html.script_tag(TOUCHPUNCH_JS) + \
+            asm3.html.script_tag(SIGNATURE_JS) + \
+            asm3.html.script_tag(ASMSELECT_JS) + \
+            asm3.html.script_tag(TIMEPICKER_JS) + \
+            asm3.html.asm_script_tag("onlineform_extra.js") + \
+            "</head>"
+        header = header.replace("</head>", extra)
+        h.append(header.replace("$$TITLE$$", form["NAME"]))
+        h.append('<h2 class="asm-onlineform-title">%s</h2>' % form["NAME"])
+        if form["DESCRIPTION"] is not None and form["DESCRIPTION"] != "":
+            h.append('<p class="asm-onlineform-description">%s</p>' % form["DESCRIPTION"])
+        h.append(asm3.utils.nulltostr(form["HEADER"]))
+    h.append('<form action="%s/service" method="post" accept-charset="utf-8">' % BASE_URL)
+    h.append('<input type="hidden" name="method" value="online_form_post" />')
+    h.append('<input type="hidden" name="account" value="%s" />' % dbo.alias)
+    h.append('<input type="hidden" name="redirect" value="%s" />' % form["REDIRECTURLAFTERPOST"])
+    h.append('<input type="hidden" name="flags" value="%s" />' % form["SETOWNERFLAGS"])
+    h.append('<input type="hidden" name="formname" value="%s" />' % asm3.html.escape(form["NAME"]))
+    h.append('<table class="asm-onlineform-table">')
+    for f in formfields:
+        fname = f.FIELDNAME + "_" + str(f.ID)
+        h.append('<tr class="asm-onlineform-tr">')
+        if f.FIELDTYPE == FIELDTYPE_RAWMARKUP:
+            h.append('<td class="asm-onlineform-td" colspan="2">')
+        elif f.FIELDTYPE == FIELDTYPE_CHECKBOX:
+            h.append('<td class="asm-onlineform-td"></td><td class="asm-onlineform-td">')
+        else:
+            # Add label and cell wrapper if it's not raw markup or a checkbox
+            h.append('<td class="asm-onlineform-td">')
+            h.append('<label for="f%d">%s</label>' % ( f.ID, f.LABEL ))
+            h.append('</td>')
+            h.append('<td class="asm-onlineform-td">')
+        required = ""
+        requiredtext = ""
+        if f.MANDATORY == 1: 
+            required = "required=\"required\""
+            requiredtext = "required=\"required\" pattern=\".*\S+.*\""
+            h.append('<span class="asm-onlineform-required" style="color: #ff0000;">*</span>')
+        else:
+            h.append('<span class="asm-onlineform-notrequired" style="visibility: hidden">*</span>')
+        if f.FIELDTYPE == FIELDTYPE_YESNO:
+            h.append('<select class="asm-onlineform-yesno" name="%s" title="%s"><option>%s</option><option>%s</option></select>' % \
+                ( asm3.html.escape(fname), asm3.utils.nulltostr(f.TOOLTIP), asm3.i18n._("No", l), asm3.i18n._("Yes", l)))
+        elif f.FIELDTYPE == FIELDTYPE_CHECKBOX:
+            h.append('<input class="asm-onlineform-check" type="checkbox" name="%s" %s /> <label for="f%d">%s</label>' % \
+                ( asm3.html.escape(fname), required, f.ID, f.LABEL))
+        elif f.FIELDTYPE == FIELDTYPE_TEXT:
+            h.append('<input class="asm-onlineform-text" type="text" name="%s" title="%s" %s />' % ( asm3.html.escape(fname), asm3.utils.nulltostr(f.TOOLTIP), requiredtext))
+        elif f.FIELDTYPE == FIELDTYPE_DATE:
+            h.append('<input class="asm-onlineform-date" type="text" name="%s" title="%s" %s />' % ( asm3.html.escape(fname), asm3.utils.nulltostr(f.TOOLTIP), requiredtext))
+        elif f.FIELDTYPE == FIELDTYPE_TIME:
+            h.append('<input class="asm-onlineform-time" type="text" name="%s" title="%s" %s />' % ( asm3.html.escape(fname), asm3.utils.nulltostr(f.TOOLTIP), requiredtext))
+        elif f.FIELDTYPE == FIELDTYPE_NOTES:
+            h.append('<textarea class="asm-onlineform-notes" name="%s" title="%s" %s></textarea>' % ( asm3.html.escape(fname), asm3.utils.nulltostr(f.TOOLTIP), requiredtext))
+        elif f.FIELDTYPE == FIELDTYPE_LOOKUP:
+            h.append('<select class="asm-onlineform-lookup" name="%s" title="%s" %s>' % ( asm3.html.escape(fname), asm3.utils.nulltostr(f.TOOLTIP), required))
+            for lv in asm3.utils.nulltostr(f["LOOKUPS"]).split("|"):
+                h.append('<option>%s</option>' % lv)
+            h.append('</select>')
+        elif f.FIELDTYPE == FIELDTYPE_LOOKUP_MULTI:
+            h.append('<input type="hidden" name="%s" value="" />' % asm3.html.escape(fname))
+            h.append('<select class="asm-onlineform-lookupmulti" multiple="multiple" data-name="%s" data-required="%s" title="%s">' % ( asm3.html.escape(fname), asm3.utils.iif(required != "", "required", ""), asm3.utils.nulltostr(f.TOOLTIP)))
+            for lv in asm3.utils.nulltostr(f.LOOKUPS).split("|"):
+                h.append('<option>%s</option>' % lv)
+            h.append('</select>')
+        elif f.FIELDTYPE == FIELDTYPE_RADIOGROUP:
+            h.append('<div class="asm-onlineform-radiogroup" style="display: inline-block">')
+            for lv in asm3.utils.nulltostr(f.LOOKUPS).split("|"):
+                h.append('<input type="radio" class="asm-onlineform-radio" name="%s" value="%s" %s /> %s<br />' % (asm3.html.escape(fname), lv, required, lv))
+            h.append('</div>')
+        elif f.FIELDTYPE == FIELDTYPE_SHELTERANIMAL:
+            h.append('<select class="asm-onlineform-shelteranimal" name="%s" title="%s" %s>' % ( asm3.html.escape(fname), asm3.utils.nulltostr(f.TOOLTIP), required))
+            h.append('<option></option>')
+            rs = asm3.animal.get_animals_on_shelter_namecode(dbo)
+            rs = sorted(rs, key=lambda k: k["ANIMALNAME"])
+            for a in rs:
+                h.append('<option value="%(name)s::%(code)s">%(name)s (%(species)s - %(code)s)</option>' % \
+                    { "name": a.ANIMALNAME, "code": a.SHELTERCODE, "species": a.SPECIESNAME})
+            h.append('</select>')
+        elif f.FIELDTYPE == FIELDTYPE_ADOPTABLEANIMAL:
+            h.append('<select class="asm-onlineform-adoptableanimal" name="%s" title="%s" %s>' % ( asm3.html.escape(fname), asm3.utils.nulltostr(f.TOOLTIP), required))
+            h.append('<option></option>')
+            pc = asm3.publishers.base.PublishCriteria(asm3.configuration.publisher_presets(dbo))
+            rs = asm3.publishers.base.get_animal_data(dbo, pc, include_additional_fields = True)
+            rs = sorted(rs, key=lambda k: k["ANIMALNAME"])
+            for a in rs:
+                h.append('<option value="%(name)s::%(code)s">%(name)s (%(species)s - %(code)s)</option>' % \
+                    { "name": a.ANIMALNAME, "code": a.SHELTERCODE, "species": a.SPECIESNAME})
+            h.append('</select>')
+        elif f.FIELDTYPE == FIELDTYPE_GDPR_CONTACT_OPTIN:
+            h.append('<input type="hidden" name="%s" value="" />' % asm3.html.escape(fname))
+            h.append('<select class="asm-onlineform-gdprcontactoptin asm-onlineform-lookupmulti" multiple="multiple" data-name="%s" data-required="%s" title="%s">' % ( asm3.html.escape(fname), asm3.utils.iif(required != "", "required", ""), asm3.utils.nulltostr(f.TOOLTIP)))
+            h.append('<option value="declined">%s</option>' % asm3.i18n._("Declined", l))
+            h.append('<option value="email">%s</option>' % asm3.i18n._("Email", l))
+            h.append('<option value="post">%s</option>' % asm3.i18n._("Post", l))
+            h.append('<option value="sms">%s</option>' % asm3.i18n._("SMS", l))
+            h.append('<option value="phone">%s</option>' % asm3.i18n._("Phone", l))
+            h.append('</select>')
+        elif f.FIELDTYPE == FIELDTYPE_COLOUR:
+            h.append('<select class="asm-onlineform-colour" name="%s" title="%s" %s>' % ( asm3.html.escape(fname), asm3.utils.nulltostr(f.TOOLTIP), required))
+            for l in asm3.lookups.get_basecolours(dbo):
+                if l.ISRETIRED != 1:
+                    h.append('<option>%s</option>' % l.BASECOLOUR)
+            h.append('</select>')
+        elif f.FIELDTYPE == FIELDTYPE_BREED:
+            h.append('<select class="asm-onlineform-breed" name="%s" title="%s" %s>' % ( asm3.html.escape(fname), asm3.utils.nulltostr(f.TOOLTIP), required))
+            for l in asm3.lookups.get_breeds(dbo):
+                if l.ISRETIRED != 1:
+                    h.append('<option>%s</option>' % l.BREEDNAME)
+            h.append('</select>')
+        elif f.FIELDTYPE == FIELDTYPE_SPECIES:
+            h.append('<select class="asm-onlineform-species" name="%s" title="%s" %s>' % ( asm3.html.escape(fname), asm3.utils.nulltostr(f.TOOLTIP), required))
+            for l in asm3.lookups.get_species(dbo):
+                if l.ISRETIRED != 1:
+                    h.append('<option>%s</option>' % l.SPECIESNAME)
+            h.append('</select>')
+        elif f.FIELDTYPE == FIELDTYPE_RAWMARKUP:
+            h.append('<input type="hidden" name="%s" value="raw" />' % asm3.html.escape(fname))
+            h.append(asm3.utils.nulltostr(f.TOOLTIP))
+        elif f.FIELDTYPE == FIELDTYPE_SIGNATURE:
+            h.append('<input type="hidden" name="%s" value="" />' % asm3.html.escape(fname))
+            h.append('<div class="asm-onlineform-signature" style="width: 500px; height: 200px" data-name="%s"></div>' % ( asm3.html.escape(fname) ))
+            h.append('<br/><button type="button" class="asm-onlineform-signature-clear" data-clear="%s">%s</button>' % ( asm3.html.escape(fname), asm3.i18n._("Clear", l) ))
+        elif f.FIELDTYPE == FIELDTYPE_IMAGE:
+            h.append('<input type="hidden" name="%s" value="" />' % asm3.html.escape(fname))
+            h.append('<input class="asm-onlineform-image" type="file" data-name="%s" />' % asm3.html.escape(fname))
+        h.append('</td>')
+        h.append('</tr>')
+    h.append('</table>')
+    if asm3.configuration.online_form_verify_jskey(dbo):
+        h.append('<script>')
+        h.append('document.write("<input " + \n"type=" + "\'hidden\'" + \n" name=" + "\'%s\'" + \n" value=" + "\'%s\'" + " />");' % (JSKEY_NAME, JSKEY_VALUE))
+        h.append('</script>')
+    h.append('<p style="text-align: center"><input type="submit" value="Submit" /></p>')
+    h.append('</form>')
+    if completedocument:
+        h.append(asm3.utils.nulltostr(form.FOOTER))
+        footer = get_onlineform_footer(dbo)
+        h.append(footer.replace("$$TITLE$$", form.NAME))
+    return "\n".join(h)
+
+def get_onlineform_json(dbo, formid):
+    """
+    Get the selected online form as a JSON document
+    """
+    form = get_onlineform(dbo, formid)
+    if form is None: raise asm3.utils.ASMValidationError("Online form %d does not exist")
+    formfields = get_onlineformfields(dbo, formid)
+    fd = { "name": form.NAME, "description": form.DESCRIPTION, "header": form.HEADER, "footer": form.FOOTER }
+    ff = []
+    for f in formfields:
+        ff.append({ "name": f.FIELDNAME, "label": f.LABEL, "type": FIELDTYPE_MAP_REVERSE[f.FIELDTYPE],
+            "mandatory": asm3.utils.iif(f.MANDATORY == 1, True, False), "index": f.DISPLAYINDEX,
+            "lookups": f.LOOKUPS, "tooltip": f.TOOLTIP})
+    fd["fields"] = ff
+    return asm3.utils.json(fd, True)
+
+def import_onlineform_json(dbo, j):
+    """
+    Imports an online form from a JSON document
+    """
+    fd = asm3.utils.json_parse(j)
+    data = {
+        "name": fd["name"],
+        "description": fd["description"],
+        "header": fd["header"],
+        "footer": fd["footer"]
+    }
+    fid = insert_onlineform_from_form(dbo, "import", asm3.utils.PostedData(data, dbo.locale))
+    for f in fd["fields"]:
+        data = { "formid": str(fid),
+            "fieldname": f["name"],
+            "fieldtype": str(FIELDTYPE_MAP[f["type"]]),
+            "label": f["label"],
+            "displayindex": f["index"],
+            "mandatory": asm3.utils.iif(f["mandatory"], "1", "0"),
+            "lookups": f["lookups"],
+            "tooltip": f["tooltip"]
+        }
+        insert_onlineformfield_from_form(dbo, "import", asm3.utils.PostedData(data, dbo.locale))
+
+def import_onlineform_html(dbo, h):
+    """
+    Imports an online form from an HTML document
+    """
+    p = FormHTMLParser()
+    p.feed(h)
+    data = {
+        "name": p.title,
+        "description": "",
+        "header": "",
+        "footer": ""
+    }
+    fid = insert_onlineform_from_form(dbo, "import", asm3.utils.PostedData(data, dbo.locale))
+    for i, control in enumerate(p.controls):
+        name = ""
+        label = ""
+        tooltip = ""
+        fieldtype = "TEXT"
+        tag = "input"
+        for k, v in control.items():
+            if k == "name": 
+                name = v
+                label = v
+            if k == "tag": tag = v
+            if k == "title": tooltip = v
+        if tag == "select": fieldtype = "LOOKUP"
+        if tag == "textarea": fieldtype = "NOTES"
+        # without a name, we have nothing
+        if name == "": continue
+        data = { "formid": str(fid),
+            "fieldname": name,
+            "fieldtype": str(FIELDTYPE_MAP[fieldtype]),
+            "label": label,
+            "displayindex": i * 10,
+            "mandatory": "0",
+            "lookups": "",
+            "tooltip": tooltip
+        }
+        insert_onlineformfield_from_form(dbo, "import", asm3.utils.PostedData(data, dbo.locale))
+
+def get_onlineform_header(dbo):
+    header, body, footer = asm3.template.get_html_template(dbo, "onlineform")
+    if header == "": header = "<!DOCTYPE html>\n" \
+        "<html>\n" \
+       "<head>\n" \
+       "<title>$$TITLE$$</title>\n" \
+       "<meta http-equiv='Content-Type' content='text/html; charset=utf-8' />\n" \
+       "<link type=\"text/css\" href=\"https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700\" rel=\"stylesheet\">\n" \
+       "<style>\n" \
+       "body { font-family: \"Lato\",\"proxima-nova\",\"Helvetica Neue\",Arial,sans-serif; }\n" \
+       "input:focus, textarea:focus, select:focus { box-shadow: 0 0 5px #3a87cd; border: 1px solid #3a87cd; }\n" \
+       "input, textarea, select { border: 1px solid #aaa; }\n" \
+       ".asm-onlineform-title, .asm-onlineform-description { text-align: center; }\n" \
+       ".asm-onlineform-table { margin-left: auto; margin-right: auto }\n" \
+       ".asm-onlineform-td:first-child { max-width: 400px; }\n" \
+       ".asm-onlineform-td:nth-child(2) { white-space: nowrap; }\n" \
+       "textarea { width: 300px; height: 150px; }\n" \
+       "</style>\n" \
+       "</head>\n" \
+       "<body>"
+    return header
+
+def get_onlineform_footer(dbo):
+    header, body, footer = asm3.template.get_html_template(dbo, "onlineform")
+    if footer == "": footer = "</body>\n</html>"
+    return footer
+
+def set_onlineform_headerfooter(dbo, head, foot):
+    asm3.template.update_html_template(dbo, "", "onlineform", head, "", foot, True)
+
+def get_onlineform_name(dbo, formid):
+    """ Returns the name of a form """
+    return dbo.query_string("SELECT Name FROM onlineform WHERE ID = ?", [formid])
+
+def get_onlineformfields(dbo, formid):
+    """ Return all fields for a form """
+    return dbo.query("SELECT * FROM onlineformfield WHERE OnlineFormID = ? ORDER BY DisplayIndex", [formid])
+
+def get_onlineformincoming_formheader(dbo, collationid):
+    """
+    Given a collation id for an incoming form, try and find the
+    original onlineform header.
+    """
+    return dbo.query_string("SELECT o.Header FROM onlineform o " \
+        "INNER JOIN onlineformincoming oi ON oi.FormName = o.Name " \
+        "WHERE oi.CollationID = ?", [collationid])
+
+def get_onlineformincoming_formfooter(dbo, collationid):
+    """
+    Given a collation id for an incoming form, try and find the
+    original onlineform footer.
+    """
+    return dbo.query_string("SELECT o.Footer FROM onlineform o " \
+        "INNER JOIN onlineformincoming oi ON oi.FormName = o.Name " \
+        "WHERE oi.CollationID = ?", [collationid])
+
+def get_onlineformincoming_headers(dbo):
+    """ Returns all incoming form posts """
+    return dbo.query("SELECT DISTINCT f.CollationID, f.FormName, f.PostedDate, f.Host, f.Preview " \
+        "FROM onlineformincoming f ORDER BY f.PostedDate")
+
+def get_onlineformincoming_detail(dbo, collationid):
+    """ Returns the detail lines for an incoming post """
+    return dbo.query("SELECT * FROM onlineformincoming WHERE CollationID = ? ORDER BY DisplayIndex", [collationid])
+
+def get_onlineformincoming_html(dbo, collationid, includeRaw = False):
+    """ Returns an HTML fragment of the incoming form data """
+    h = []
+    h.append('<table width="100%">')
+    for f in get_onlineformincoming_detail(dbo, collationid):
+        label = f.LABEL
+        if label is None or label == "": label = f.FIELDNAME
+        v = f.VALUE
+        if v.startswith("RAW::") and not includeRaw: 
+            continue
+        if v.startswith("RAW::"): 
+            h.append('<tr>')
+            h.append('<td colspan="2">%s</td>' % v[5:])
+            h.append('</tr>')
+        elif v.startswith("data:"):
+            h.append('<tr>')
+            h.append('<td>%s</td>' % label )
+            h.append('<td><img src="%s" border="0" /></td>' % v)
+            h.append('</tr>')
+        else:
+            h.append('<tr>')
+            h.append('<td>%s</td>' % label )
+            h.append('<td>%s</td>' % v)
+            h.append('</tr>')
+    h.append('</table>')
+    return "\n".join(h)
+
+def get_onlineformincoming_plain(dbo, collationid):
+    """ Returns a plain text fragment of the incoming form data """
+    h = []
+    for f in get_onlineformincoming_detail(dbo, collationid):
+        if f.VALUE.startswith("RAW::") or f.VALUE.startswith("data:"): continue
+        label = f.LABEL
+        if label is None or label == "": label = f.FIELDNAME
+        h.append("%s: %s\n" % (label, f.VALUE))
+    return "\n".join(h)
+
+def get_onlineformincoming_html_print(dbo, ids):
+    """
+    Returns a complete printable version of the online form
+    (header/footer wrapped around the html call above)
+    ids: A list of integer ids
+    """
+    header = get_onlineform_header(dbo)
+    headercontent = header[header.find("<body>")+6:]
+    header = header[0:header.find("<body>")+6]
+    footer = get_onlineform_footer(dbo)
+    footercontent = footer[0:footer.find("</body>")]
+    h = []
+    h.append(header)
+    for i, collationid in enumerate(ids):
+        h.append(headercontent)
+        formheader = get_onlineformincoming_formheader(dbo, collationid)
+        h.append(formheader)
+        h.append(get_onlineformincoming_html(dbo, asm3.utils.cint(collationid), True))
+        formfooter = get_onlineformincoming_formfooter(dbo, collationid)
+        h.append(formfooter)
+        h.append(footercontent)
+        if i < len(ids)-1:
+            h.append('<div style="page-break-before: always;"></div>')
+    h.append("</body></html>")
+    return "\n".join(h)
+
+def get_onlineformincoming_name(dbo, collationid):
+    """ Returns the form name for a collation id """
+    return dbo.query_string("SELECT FormName FROM onlineformincoming WHERE CollationID = ? %s" % dbo.sql_limit(1), [collationid])
+
+def get_animal_id_from_field(dbo, name):
+    """ Used for ADOPTABLE/SHELTER animal fields, gets the ID from the value """
+    if name.find("::") != -1:
+        animalcode = name.split("::")[1]
+        aid = dbo.query_int("SELECT ID FROM animal WHERE ShelterCode = ? ORDER BY ID DESC", [animalcode])
+    else:
+        aid = dbo.query_int("SELECT ID FROM animal WHERE LOWER(AnimalName) LIKE ? ORDER BY ID DESC", [name.lower()])
+    return aid
+
+def insert_onlineform_from_form(dbo, username, post):
+    """
+    Create an onlineform record from posted data
+    """
+    return dbo.insert("onlineform", {
+        "Name":                 post["name"],
+        "RedirectUrlAfterPOST": post["redirect"],
+        "SetOwnerFlags":        post["flags"],
+        "EmailAddress":         post["email"],
+        "EmailSubmitter":       post.boolean("emailsubmitter"),
+        "*EmailMessage":        post["emailmessage"],
+        "*Header":              post["header"],
+        "*Footer":              post["footer"],
+        "*Description":         post["description"]
+    }, username, setCreated=False)
+
+def update_onlineform_from_form(dbo, username, post):
+    """
+    Update an onlineform record from posted data
+    """
+    return dbo.update("onlineform", post.integer("formid"), {
+        "Name":                 post["name"],
+        "RedirectUrlAfterPOST": post["redirect"],
+        "SetOwnerFlags":        post["flags"],
+        "EmailAddress":         post["email"],
+        "EmailSubmitter":       post.boolean("emailsubmitter"),
+        "*EmailMessage":        post["emailmessage"],
+        "*Header":              post["header"],
+        "*Footer":              post["footer"],
+        "*Description":         post["description"]
+    }, username, setLastChanged=False)
+
+def delete_onlineform(dbo, username, formid):
+    """
+    Deletes the specified onlineform and fields
+    """
+    dbo.execute("DELETE FROM onlineformfield WHERE OnlineFormID = ?", [formid])
+    dbo.delete("onlineform", formid, username)
+
+def clone_onlineform(dbo, username, formid):
+    """
+    Clones formid
+    """
+    l = dbo.locale
+    f = get_onlineform(dbo, formid)
+    if f is None: return
+
+    nfid = dbo.insert("onlineform", {
+        "Name":                 asm3.i18n._("Copy of {0}", l).format(f.NAME),
+        "RedirectUrlAfterPOST": f.REDIRECTURLAFTERPOST,
+        "SetOwnerFlags":        f.SETOWNERFLAGS,
+        "EmailAddress":         f.EMAILADDRESS,
+        "EmailSubmitter":       f.EMAILSUBMITTER,
+        "*EmailMessage":        f.EMAILMESSAGE,
+        "*Header":              f.HEADER,
+        "*Footer":              f.FOOTER,
+        "*Description":         f.DESCRIPTION
+    }, username, setCreated=False)
+
+    for ff in get_onlineformfields(dbo, formid):
+        dbo.insert("onlineformfield", {
+            "OnlineFormID":     nfid,
+            "FieldName":        ff.FIELDNAME,
+            "FieldType":        ff.FIELDTYPE,
+            "Label":            ff.LABEL,
+            "DisplayIndex":     ff.DISPLAYINDEX,
+            "Mandatory":        ff.MANDATORY,
+            "Lookups":          ff.LOOKUPS,
+            "*Tooltip":          ff.TOOLTIP
+        })
+
+def insert_onlineformfield_from_form(dbo, username, post):
+    """
+    Create an onlineformfield record from posted data
+    """
+    return dbo.insert("onlineformfield", {
+        "OnlineFormID":     post.integer("formid"),
+        "FieldName":        post["fieldname"],
+        "FieldType":        post.integer("fieldtype"),
+        "Label":            post["label"],
+        "DisplayIndex":     post.integer("displayindex"),
+        "Mandatory":        post.boolean("mandatory"),
+        "Lookups":          post["lookups"],
+        "*Tooltip":         post["tooltip"]
+    }, username, setCreated=False)
+
+def update_onlineformfield_from_form(dbo, username, post):
+    """
+    Update an onlineformfield record from posted data
+    """
+    dbo.update("onlineformfield", post.integer("formfieldid"), {
+        "FieldName":        post["fieldname"],
+        "FieldType":        post.integer("fieldtype"),
+        "Label":            post["label"],
+        "DisplayIndex":     post.integer("displayindex"),
+        "Mandatory":        post.boolean("mandatory"),
+        "Lookups":          post["lookups"],
+        "*Tooltip":         post["tooltip"]
+    }, username, setLastChanged=False)
+
+def delete_onlineformfield(dbo, username, fieldid):
+    """
+    Deletes the specified onlineformfield
+    """
+    dbo.delete("onlineformfield", fieldid, username)
+
+def insert_onlineformincoming_from_form(dbo, post, remoteip):
+    """
+    Create onlineformincoming records from posted data. We 
+    create a row for every key/value pair in the posted data
+    with a unique collation ID.
+    """
+    # If we are using a js generated field to protect against
+    # spambots, verify it is there
+    if asm3.configuration.online_form_verify_jskey(dbo):
+        if post[JSKEY_NAME] != JSKEY_VALUE:
+            raise asm3.utils.ASMValidationError("Invalid verification key")
+
+    IGNORE_FIELDS = [ JSKEY_NAME, "formname", "flags", "redirect", "account", "filechooser", "method" ]
+    l = dbo.locale
+    collationid = dbo.query_int("SELECT MAX(CollationID) FROM onlineformincoming") + 1
+    formname = post["formname"]
+    posteddate = asm3.i18n.now(dbo.timezone)
+    flags = post["flags"]
+    submitteremail = ""
+    emailsubmissionto = ""
+    firstnamelabel = ""
+    firstname = ""
+    lastnamelabel = ""
+    lastname = ""
+    animalnamelabel = ""
+    animalname = ""
+    images = []
+    post.data["formreceived"] = "%s %s" % (asm3.i18n.python2display(dbo.locale, posteddate), asm3.i18n.format_time(posteddate))
+
+    for k, v in post.data.items():
+
+        if k not in IGNORE_FIELDS and not k.startswith("asmSelect"):
+            label = ""
+            displayindex = 0
+            fieldname = k
+            fieldtype = FIELDTYPE_TEXT
+            tooltip = ""
+
+            # Form fields should have a _ONLINEFORMFIELD.ID suffix we can use to get the
+            # original label and display position.
+            if k.find("_") != -1:
+                fid = asm3.utils.cint(k[k.rfind("_")+1:])
+                fieldname = k[0:k.rfind("_")]
+                if fid != 0:
+                    fld = dbo.first_row(dbo.query("SELECT FieldType, Label, Tooltip, DisplayIndex FROM onlineformfield WHERE ID = ?", [fid]))
+                    if fld is not None:
+                        label = fld.LABEL
+                        displayindex = fld.DISPLAYINDEX
+                        fieldtype = fld.FIELDTYPE
+                        tooltip = fld.TOOLTIP
+                        # Store a few known fields for access later
+                        if fieldname == "emailaddress": 
+                            submitteremail = v.strip()
+                        if fieldname == "emailsubmissionto":
+                            emailsubmissionto = v.strip()
+                        if fieldname == "firstname": 
+                            firstname = v.strip()
+                            firstnamelabel = label
+                        if fieldname == "lastname": 
+                            lastname = v.strip()
+                            lastnamelabel = label
+                        if fieldname == "animalname" or fieldname == "reserveanimalname":
+                            animalname = v.strip()
+                            animalnamelabel = label
+                        # If it's a raw markup field, store the markup as the value
+                        if fieldtype == FIELDTYPE_RAWMARKUP:
+                            v = "RAW::%s" % tooltip
+                        # If we have a checkbox field with a tooltip, it contains additional
+                        # person flags, add them to our set
+                        if fieldtype == FIELDTYPE_CHECKBOX and asm3.utils.nulltostr(tooltip) != "" and (v == "checked" or v == "on"):
+                            if flags != "": flags += ","
+                            flags += tooltip
+                            dbo.update("onlineformincoming", "CollationID=%s" % collationid, {
+                                "Flags":    flags
+                            })
+                        # We decode images and put them into an images list so that they can
+                        # be included as attachments with confirmation emails.
+                        if fieldtype == FIELDTYPE_IMAGE and v.startswith("data:image/jpeg"):
+                            # Remove prefix of data:image/jpeg;base64, and decode
+                            images.append( ("%s.jpg" % fieldname, "image/jpeg", asm3.utils.base64decode(v[v.find(",")+1:])) )
+
+            # Do the insert
+            dbo.insert("onlineformincoming", {
+                "CollationID":      collationid,
+                "FormName":         formname,
+                "PostedDate":       posteddate,
+                "Flags":            flags,
+                "FieldName":        fieldname,
+                "Label":            label,
+                "DisplayIndex":     displayindex,
+                "Host":             remoteip,
+                asm3.utils.iif(fieldtype == FIELDTYPE_RAWMARKUP, "*Value", "Value"): v # don't XSS escape raw markup by prefixing fieldname with *
+            }, generateID=False, setCreated=False)
+
+    # Sort out the preview of the first few fields
+    fieldssofar = 0
+    preview = []
+
+    # If we have first and last name, include them in the preview
+    if firstname != "" and lastname != "":
+        preview.append("%s: %s" % (firstnamelabel, firstname))
+        preview.append("%s: %s" % (lastnamelabel, lastname))
+        fieldssofar += 2
+
+    # If we have an animal name, include that too
+    if animalname != "":
+        preview.append("%s: %s" % (animalnamelabel, animalname))
+        fieldssofar += 1
+
+    for fld in get_onlineformincoming_detail(dbo, collationid):
+        if fieldssofar < 3:
+            # Don't include raw markup or signature/image fields in the preview
+            if fld.VALUE.startswith("RAW::") or fld.VALUE.startswith("data:"): continue
+            fieldssofar += 1
+            preview.append( "%s: %s" % (fld.LABEL, fld.VALUE ))
+    
+    dbo.update("onlineformincoming", "CollationID=%s" % collationid, { 
+        "Preview": ", ".join(preview) 
+    })
+
+    # Do we have a valid emailaddress for the submitter and EmailSubmitter is set? 
+    # If so, send them a copy of their submission
+    emailsubmitter = dbo.query_int("SELECT o.EmailSubmitter FROM onlineform o " \
+        "INNER JOIN onlineformincoming oi ON oi.FormName = o.Name " \
+        "WHERE oi.CollationID = ?", [collationid])
+
+    # The submitted form for including in emails
+    formdata = get_onlineformincoming_html_print(dbo, [collationid,])
+
+    if submitteremail != "" and submitteremail.find("@") != -1 and emailsubmitter == 1:
+        # Get the confirmation message. Prepend it to a copy of the submission
+        body = dbo.query_string("SELECT o.EmailMessage FROM onlineform o " \
+            "INNER JOIN onlineformincoming oi ON oi.FormName = o.Name " \
+            "WHERE oi.CollationID = ?", [collationid])
+        body += "\n" + formdata
+        asm3.utils.send_email(dbo, asm3.configuration.email(dbo), submitteremail, "", "", asm3.i18n._("Submission received: {0}", l).format(formname), 
+            body, "html", images, exceptions=False)
+
+    # Did the original form specify some email addresses to send 
+    # incoming submissions to?
+    email = dbo.query_string("SELECT o.EmailAddress FROM onlineform o " \
+        "INNER JOIN onlineformincoming oi ON oi.FormName = o.Name " \
+        "WHERE oi.CollationID = ?", [collationid])
+    if email is not None and email.strip() != "":
+        # If a submitter email is set, use that to reply to instead
+        replyto = submitteremail 
+        if replyto == "": replyto = asm3.configuration.email(dbo)
+        asm3.utils.send_email(dbo, replyto, email, "", "", "%s - %s" % (formname, ", ".join(preview)), 
+            formdata, "html", images, exceptions=False)
+
+    # Did the form submission have a value in an "emailsubmissionto" field?
+    if emailsubmissionto is not None and emailsubmissionto.strip() != "":
+        # If a submitter email is set, use that to reply to instead
+        replyto = submitteremail 
+        if replyto == "": replyto = asm3.configuration.email(dbo)
+        asm3.utils.send_email(dbo, replyto, emailsubmissionto, "", "", "%s - %s" % (formname, ", ".join(preview)), 
+            formdata, "html", images, exceptions=False)
+
+    return collationid
+
+def delete_onlineformincoming(dbo, username, collationid):
+    """
+    Deletes the specified onlineformincoming set
+    """
+    # Write an entry to the deletions table for the incoming form rows
+    # This is a special case because onlineformincoming does not have an ID field, 
+    # so the generic deletions handling in dbms.base.delete cannot do it.
+    rows = dbo.query("SELECT * FROM onlineformincoming WHERE CollationID=%s" % collationid)
+    sql = []
+    for r in rows:
+        sql.append(dbo.row_to_insert_sql("onlineformincoming", r))
+    asm3.audit.insert_deletion(dbo, username, "onlineformincoming", collationid, "", "".join(sql))
+    dbo.delete("onlineformincoming", "CollationID=%s" % collationid, username)
+
+def guess_agegroup(dbo, s):
+    """ Guesses an agegroup, returns the third band (adult by default) if no match is found """
+    s = str(s).lower()
+    for g in asm3.configuration.age_groups(dbo):
+        if g.lower() == s:
+            return g
+    return asm3.configuration.age_group_name(dbo, 3)
+
+def guess_breed(dbo, s):
+    """ Guesses a breed, returns the default if no match is found """
+    s = str(s).lower()
+    guess = dbo.query_int("SELECT ID FROM breed WHERE LOWER(BreedName) LIKE ?", ["%%%s%%" % s])
+    if guess != 0: return guess
+    return asm3.configuration.default_breed(dbo)
+
+def guess_colour(dbo, s):
+    """ Guesses a colour, returns the default if no match is found """
+    s = str(s).lower()
+    guess = dbo.query_int("SELECT ID FROM basecolour WHERE LOWER(BaseColour) LIKE ?", ["%%%s%%" % s])
+    if guess != 0: return guess
+    return asm3.configuration.default_colour(dbo)
+
+def guess_sex(dummy, s):
+    """ Guesses a sex """
+    if s.lower().startswith("m"):
+        return 1
+    return 0
+
+def guess_size(dbo, s):
+    """ Guesses a size """
+    s = str(s).lower()
+    guess = dbo.query_int("SELECT ID FROM lksize WHERE LOWER(Size) LIKE ?", ["%%%s%%" % s])
+    if guess != 0: return guess
+    return asm3.configuration.default_size(dbo)
+
+def guess_species(dbo, s):
+    """ Guesses a species, returns the default if no match is found """
+    s = str(s).lower()
+    guess = dbo.query_int("SELECT ID FROM species WHERE LOWER(SpeciesName) LIKE ?", [s])
+    if guess != 0: return guess
+    return asm3.configuration.default_species(dbo)
+
+def guess_transporttype(dbo, s):
+    """ Guesses a transporttype """
+    s = str(s).lower()
+    guess = dbo.query_int("SELECT ID FROM transporttype WHERE LOWER(TransportTypeName) LIKE ?", [s])
+    if guess != 0: return guess
+    return dbo.query_int("SELECT ID FROM transporttype ORDER BY ID")
+
+def attach_form(dbo, username, linktype, linkid, collationid):
+    """
+    Attaches the incoming form to the media tab. Finds any images in the form
+    and attaches those as images in the media tab of linktype/linkid.
+    """
+    formname = get_onlineformincoming_name(dbo, collationid)
+    formhtml = get_onlineformincoming_html_print(dbo, [collationid,])
+    asm3.media.create_document_media(dbo, username, linktype, linkid, formname, formhtml )
+    fields = get_onlineformincoming_detail(dbo, collationid)
+    for f in fields:
+        if f.VALUE.startswith("data:image/jpeg"):
+            d = {
+                "filename":     "image.jpg",
+                "filetype":     "image/jpeg",
+                "filedata":     f.VALUE,
+            }
+            asm3.media.attach_file_from_form(dbo, username, linktype, linkid, asm3.utils.PostedData(d, dbo.locale))
+
+def attach_animal(dbo, username, collationid):
+    """
+    Finds the existing shelter animal with "animalname" and
+    attaches the form to it as person asm3.media.
+    Return value is a tuple of collationid, animalid, animal code/name
+    """
+    l = dbo.locale
+    fields = get_onlineformincoming_detail(dbo, collationid)
+    animalname = ""
+    has_name = False
+    animalid = 0
+    for f in fields:
+        if f.FIELDNAME == "animalname": 
+            animalname = f.VALUE
+            animalid = get_animal_id_from_field(dbo, animalname)
+            has_name = True
+            break
+    if not has_name:
+        raise asm3.utils.ASMValidationError(asm3.i18n._("There is not enough information in the form to attach to a shelter animal record (need an animal name).", l))
+    if animalid == 0:
+        raise asm3.utils.ASMValidationError(asm3.i18n._("Could not find animal with name '{0}'", l).format(animalname))
+    attach_form(dbo, username, asm3.media.ANIMAL, animalid, collationid)
+    return (collationid, animalid, asm3.animal.get_animal_namecode(dbo, animalid))
+
+def create_person(dbo, username, collationid):
+    """
+    Creates a person record from the incoming form data with collationid.
+    Also, attaches the form to the person as asm3.media.
+    The return value is tuple of collationid, personid, personname
+    """
+    l = dbo.locale
+    fields = get_onlineformincoming_detail(dbo, collationid)
+    d = {}
+    d["ownertype"] = "1" # Person class of individual/couple
+    flags = None
+    formreceived = asm3.i18n.python2display(l, dbo.now())
+    for f in fields:
+        if flags is None: flags = f.FLAGS
+        if f.FIELDNAME == "title": d["title"] = f.VALUE
+        if f.FIELDNAME == "initials": d["initials"] = f.VALUE
+        if f.FIELDNAME == "forenames": d["forenames"] = f.VALUE
+        if f.FIELDNAME == "firstname": d["forenames"] = f.VALUE
+        if f.FIELDNAME == "surname": d["surname"] = f.VALUE
+        if f.FIELDNAME == "lastname": d["surname"] = f.VALUE
+        if f.FIELDNAME == "address": d["address"] = f.VALUE
+        if f.FIELDNAME == "town": d["town"] = f.VALUE
+        if f.FIELDNAME == "city": d["town"] = f.VALUE
+        if f.FIELDNAME == "county": d["county"] = f.VALUE
+        if f.FIELDNAME == "state": d["county"] = f.VALUE
+        if f.FIELDNAME == "postcode": d["postcode"] = f.VALUE
+        if f.FIELDNAME == "zipcode": d["postcode"] = f.VALUE
+        if f.FIELDNAME == "hometelephone": d["hometelephone"] = f.VALUE
+        if f.FIELDNAME == "worktelephone": d["worktelephone"] = f.VALUE
+        if f.FIELDNAME == "mobiletelephone": d["mobiletelephone"] = f.VALUE
+        if f.FIELDNAME == "celltelephone": d["mobiletelephone"] = f.VALUE
+        if f.FIELDNAME == "emailaddress": d["emailaddress"] = f.VALUE
+        if f.FIELDNAME == "excludefrombulkemail" and f.VALUE != "" and f.VALUE != asm3.i18n._("No", l): d["excludefrombulkemail"] = "on"
+        if f.FIELDNAME == "gdprcontactoptin": d["gdprcontactoptin"] = f.VALUE
+        if f.FIELDNAME.startswith("reserveanimalname"): d[f.FIELDNAME] = f.VALUE
+        if f.FIELDNAME.startswith("additional"): d[f.FIELDNAME] = f.VALUE
+        if f.FIELDNAME == "formreceived" and f.VALUE.find(" ") != -1: 
+            recdate, rectime = f.VALUE.split(" ")
+            formreceived = asm3.i18n.parse_time( asm3.i18n.display2python(l, recdate), rectime )
+    d["flags"] = flags
+    # Have we got enough info to create the person record? We just need a surname
+    if "surname" not in d:
+        raise asm3.utils.ASMValidationError(asm3.i18n._("There is not enough information in the form to create a person record (need a surname).", l))
+    # Does this person already exist?
+    personid = 0
+    if "surname" in d and "forenames" in d and "address" in d:
+        demail = ""
+        if "emailaddress" in d: demail = d["emailaddress"]
+        similar = asm3.person.get_person_similar(dbo, demail, d["surname"], d["forenames"], d["address"])
+        if len(similar) > 0:
+            personid = similar[0].ID
+            # Merge flags and any extra details
+            asm3.person.merge_flags(dbo, username, personid, flags)
+            # NOTE: Do not do this in future - delete_values_for_link is called so even if you only wanted
+            # to update fields present in the form, this call will delete ALL of them.
+            # additional.save_values_for_link(dbo, asm3.utils.PostedData(d, dbo.locale), personid, "person")
+            if "gdprcontactoptin" in d: asm3.person.merge_gdpr_flags(dbo, "import", personid, d["gdprcontactoptin"])
+            asm3.person.merge_person_details(dbo, username, personid, d)
+    # Create the person record if we didn't find one
+    if personid == 0:
+        personid = asm3.person.insert_person_from_form(dbo, asm3.utils.PostedData(d, dbo.locale), username)
+        # Since we created a brand new person, try and get a geocode for the address if present
+        if "address" in d and "town" in d and "county" in d and "postcode" in d:
+            latlon = asm3.geo.get_lat_long(dbo, d["address"], d["town"], d["county"], d["postcode"])
+            if latlon is not None: asm3.person.update_latlong(dbo, personid, latlon)
+    personname = asm3.person.get_person_name_code(dbo, personid)
+    attach_form(dbo, username, asm3.media.PERSON, personid, collationid)
+    # Was there a reserveanimalname field? If so, create reservation(s) to the person if possible
+    for k, v in d.items():
+        if k.startswith("reserveanimalname"):
+            try:
+                asm3.movement.insert_reserve_for_animal_name(dbo, username, personid, formreceived, v)
+            except Exception as err:
+                asm3.al.warn("could not create reservation for %d on %s (%s)" % (personid, v, err), "create_person", dbo)
+                web.ctx.status = "200 OK" # ASMValidationError sets status to 500
+    return (collationid, personid, personname)
+
+def create_animalcontrol(dbo, username, collationid):
+    """
+    Creates a animal control/incident record from the incoming form data with 
+    collationid.
+    Also, attaches the form to the incident as asm3.media.
+    """
+    l = dbo.locale
+    fields = get_onlineformincoming_detail(dbo, collationid)
+    d = {}
+    d["incidentdate"] = asm3.i18n.python2display(l, asm3.i18n.now(dbo.timezone))
+    d["incidenttime"] = asm3.i18n.format_time_now(dbo.timezone)
+    d["calldate"] = d["incidentdate"]
+    d["calltime"] = d["incidenttime"]
+    d["incidenttype"] = 1
+    for f in fields:
+        if f.FIELDNAME == "callnotes": d["callnotes"] = f.VALUE
+        if f.FIELDNAME == "dispatchaddress": d["dispatchaddress"] = f.VALUE
+        if f.FIELDNAME == "dispatchcity": d["dispatchtown"] = f.VALUE
+        if f.FIELDNAME == "dispatchstate": d["dispatchcounty"] = f.VALUE
+        if f.FIELDNAME == "dispatchzipcode": d["dispatchpostcode"] = f.VALUE
+    # Have we got enough info to create the animal control record? We need notes and dispatchaddress
+    if "callnotes" not in d or "dispatchaddress" not in d:
+        raise asm3.utils.ASMValidationError(asm3.i18n._("There is not enough information in the form to create an incident record (need call notes and dispatch address).", l))
+    # We need the person/caller record before we create the incident
+    collationid, personid, personname = create_person(dbo, username, collationid)
+    d["caller"] = personid
+    # Create the incident 
+    incidentid = asm3.animalcontrol.insert_animalcontrol_from_form(dbo, asm3.utils.PostedData(d, dbo.locale), username)
+    attach_form(dbo, username, asm3.media.ANIMALCONTROL, incidentid, collationid)
+    return (collationid, incidentid, asm3.utils.padleft(incidentid, 6) + " - " + personname)
+
+def create_lostanimal(dbo, username, collationid):
+    """
+    Creates a lost animal record from the incoming form data with collationid.
+    Also, attaches the form to the lost animal as asm3.media.
+    """
+    l = dbo.locale
+    fields = get_onlineformincoming_detail(dbo, collationid)
+    d = {}
+    d["datelost"] = asm3.i18n.python2display(l, asm3.i18n.now(dbo.timezone))
+    d["datereported"] = asm3.i18n.python2display(l, asm3.i18n.now(dbo.timezone))
+    for f in fields:
+        if f.FIELDNAME == "species": d["species"] = guess_species(dbo, f.VALUE)
+        if f.FIELDNAME == "sex": d["sex"] = guess_sex(dbo, f.VALUE)
+        if f.FIELDNAME == "breed": d["breed"] = guess_breed(dbo, f.VALUE)
+        if f.FIELDNAME == "agegroup": d["agegroup"] = guess_agegroup(dbo, f.VALUE)
+        if f.FIELDNAME == "color": d["colour"] = guess_colour(dbo, f.VALUE)
+        if f.FIELDNAME == "colour": d["colour"] = guess_colour(dbo, f.VALUE)
+        if f.FIELDNAME == "description": d["markings"] = f.VALUE
+        if f.FIELDNAME == "arealost": d["arealost"] = f.VALUE
+        if f.FIELDNAME == "areapostcode": d["areapostcode"] = f.VALUE
+        if f.FIELDNAME == "areazipcode": d["areazipcode"] = f.VALUE
+    if "species" not in d: d["species"] = guess_species(dbo, "")
+    if "sex" not in d: d["sex"] = guess_sex(dbo, "")
+    if "breed" not in d: d["breed"] = guess_breed(dbo, "")
+    if "agegroup" not in d: d["agegroup"] = guess_agegroup(dbo, "")
+    if "colour" not in d: d["colour"] = guess_colour(dbo, "")
+    # Have we got enough info to create the lost animal record? We need a description and arealost
+    if "markings" not in d or "arealost" not in d:
+        raise asm3.utils.ASMValidationError(asm3.i18n._("There is not enough information in the form to create a lost animal record (need a description and area lost).", l))
+    # We need the person record before we create the lost animal
+    collationid, personid, personname = create_person(dbo, username, collationid)
+    d["owner"] = personid
+    # Create the lost animal
+    lostanimalid = asm3.lostfound.insert_lostanimal_from_form(dbo, asm3.utils.PostedData(d, dbo.locale), username)
+    attach_form(dbo, username, asm3.media.LOSTANIMAL, lostanimalid, collationid)
+    return (collationid, lostanimalid, asm3.utils.padleft(lostanimalid, 6) + " - " + personname)
+  
+def create_foundanimal(dbo, username, collationid):
+    """
+    Creates a found animal record from the incoming form data with collationid.
+    Also, attaches the form to the found animal as asm3.media.
+    """
+    l = dbo.locale
+    fields = get_onlineformincoming_detail(dbo, collationid)
+    d = {}
+    d["datefound"] = asm3.i18n.python2display(l, asm3.i18n.now(dbo.timezone))
+    d["datereported"] = asm3.i18n.python2display(l, asm3.i18n.now(dbo.timezone))
+    for f in fields:
+        if f.FIELDNAME == "species": d["species"] = guess_species(dbo, f.VALUE)
+        if f.FIELDNAME == "sex": d["sex"] = guess_sex(dbo, f.VALUE)
+        if f.FIELDNAME == "breed": d["breed"] = guess_breed(dbo, f.VALUE)
+        if f.FIELDNAME == "agegroup": d["agegroup"] = guess_agegroup(dbo, f.VALUE)
+        if f.FIELDNAME == "color": d["colour"] = guess_colour(dbo, f.VALUE)
+        if f.FIELDNAME == "colour": d["colour"] = guess_colour(dbo, f.VALUE)
+        if f.FIELDNAME == "description": d["markings"] = f.VALUE
+        if f.FIELDNAME == "areafound": d["areafound"] = f.VALUE
+        if f.FIELDNAME == "areapostcode": d["areapostcode"] = f.VALUE
+        if f.FIELDNAME == "areazipcode": d["areazipcode"] = f.VALUE
+    if "species" not in d: d["species"] = guess_species(dbo, "")
+    if "sex" not in d: d["sex"] = guess_sex(dbo, "")
+    if "breed" not in d: d["breed"] = guess_breed(dbo, "")
+    if "agegroup" not in d: d["agegroup"] = guess_agegroup(dbo, "")
+    if "colour" not in d: d["colour"] = guess_colour(dbo, "")
+    # Have we got enough info to create the found animal record? We need a description and areafound
+    if "markings" not in d or "areafound" not in d:
+        raise asm3.utils.ASMValidationError(asm3.i18n._("There is not enough information in the form to create a found animal record (need a description and area found).", l))
+    # We need the person record before we create the found animal
+    collationid, personid, personname = create_person(dbo, username, collationid)
+    d["owner"] = personid
+    # Create the found animal
+    foundanimalid = asm3.lostfound.insert_foundanimal_from_form(dbo, asm3.utils.PostedData(d, dbo.locale), username)
+    attach_form(dbo, username, asm3.media.FOUNDANIMAL, foundanimalid, collationid)
+    return (collationid, foundanimalid, asm3.utils.padleft(foundanimalid, 6) + " - " + personname)
+
+def create_transport(dbo, username, collationid):
+    """
+    Creates a transport record from the incoming form data with collationid.
+    Also, attaches the form to the animal as asm3.media.
+    """
+    l = dbo.locale
+    fields = get_onlineformincoming_detail(dbo, collationid)
+    d = {}
+    animalid = 0
+    animalname = ""
+    for f in fields:
+        if f.FIELDNAME == "animalname": 
+            animalname = f.VALUE
+            animalid = get_animal_id_from_field(dbo, animalname)
+            d["animal"] = str(animalid)
+        if f.FIELDNAME == "description": d["comments"] = f.VALUE
+        if f.FIELDNAME == "pickupaddress": d["pickupaddress"] = f.VALUE
+        if f.FIELDNAME == "pickupcity": d["pickuptown"] = f.VALUE
+        if f.FIELDNAME == "pickuptown": d["pickuptown"] = f.VALUE
+        if f.FIELDNAME == "pickupcounty": d["pickupcounty"] = f.VALUE
+        if f.FIELDNAME == "pickupstate": d["pickupcounty"] = f.VALUE
+        if f.FIELDNAME == "pickuppostcode": d["pickuppostcode"] = f.VALUE
+        if f.FIELDNAME == "pickupzipcode": d["pickuppostcode"] = f.VALUE
+        if f.FIELDNAME == "pickupcountry": d["pickupcountry"] = f.VALUE
+        if f.FIELDNAME == "pickupdate": d["pickupdate"] = f.VALUE
+        if f.FIELDNAME == "pickuptime": d["pickuptime"] = f.VALUE
+        if f.FIELDNAME == "dropoffaddress": d["dropoffaddress"] = f.VALUE
+        if f.FIELDNAME == "dropoffcity": d["dropofftown"] = f.VALUE
+        if f.FIELDNAME == "dropofftown": d["dropofftown"] = f.VALUE
+        if f.FIELDNAME == "dropoffcounty": d["dropoffcounty"] = f.VALUE
+        if f.FIELDNAME == "dropoffstate": d["dropoffcounty"] = f.VALUE
+        if f.FIELDNAME == "dropoffpostcode": d["dropoffpostcode"] = f.VALUE
+        if f.FIELDNAME == "dropoffzipcode": d["dropoffpostcode"] = f.VALUE
+        if f.FIELDNAME == "dropoffcountry": d["dropoffcountry"] = f.VALUE
+        if f.FIELDNAME == "dropoffdate": d["dropoffdate"] = f.VALUE
+        if f.FIELDNAME == "dropofftime": d["dropofftime"] = f.VALUE
+        if f.FIELDNAME == "transporttype": d["type"] = guess_transporttype(dbo, f.VALUE)
+    if "type" not in d:
+        d["type"] = guess_transporttype(dbo, "nomatchesusedefault")
+    # Have we got enough info to create the transport record? We need an animal to attach to
+    if "animal" not in d:
+        raise asm3.utils.ASMValidationError(asm3.i18n._("There is not enough information in the form to create a transport record (need animalname).", l))
+    if "pickupdate" not in d or "dropoffdate" not in d or d["pickupdate"] == "" or d["dropoffdate"] == "":
+        raise asm3.utils.ASMValidationError(asm3.i18n._("There is not enough information in the form to create a transport record (need pickupdate and dropoffdate).", l))
+    if animalid == 0:
+        raise asm3.utils.ASMValidationError(asm3.i18n._("Could not find animal with name '{0}'", l).format(animalname))
+    # Create the transport
+    asm3.movement.insert_transport_from_form(dbo, username, asm3.utils.PostedData(d, dbo.locale))
+    attach_form(dbo, username, asm3.media.ANIMAL, animalid, collationid)
+    return (collationid, animalid, asm3.animal.get_animal_namecode(dbo, animalid))
+
+def create_waitinglist(dbo, username, collationid):
+    """
+    Creates a waitinglist record from the incoming form data with collationid.
+    Also, attaches the form to the waiting list as asm3.media.
+    """
+    l = dbo.locale
+    fields = get_onlineformincoming_detail(dbo, collationid)
+    d = {}
+    d["dateputon"] = asm3.i18n.python2display(l, asm3.i18n.now(dbo.timezone))
+    d["urgency"] = str(asm3.configuration.waiting_list_default_urgency(dbo))
+    for f in fields:
+        if f.FIELDNAME == "size": d["size"] = guess_size(dbo, f.VALUE)
+        if f.FIELDNAME == "species": d["species"] = guess_species(dbo, f.VALUE)
+        if f.FIELDNAME == "description": d["description"] = f.VALUE
+        if f.FIELDNAME == "reason": d["reasonforwantingtopart"] = f.VALUE
+    if "size" not in d: d["size"] = guess_size(dbo, "nomatchesusedefault")
+    if "species" not in d: d["species"] = guess_species(dbo, "nomatchesusedefault")
+    # Have we got enough info to create the waiting list record? We need a description
+    if "description" not in d:
+        raise asm3.utils.ASMValidationError(asm3.i18n._("There is not enough information in the form to create a waiting list record (need a description).", l))
+    # We need the person record before we create the waiting list
+    collationid, personid, personname = create_person(dbo, username, collationid)
+    d["owner"] = personid
+    # Create the waiting list
+    wlid = asm3.waitinglist.insert_waitinglist_from_form(dbo, asm3.utils.PostedData(d, dbo.locale), username)
+    attach_form(dbo, username, asm3.media.WAITINGLIST, wlid, collationid)
+    return (collationid, wlid, asm3.utils.padleft(wlid, 6) + " - " + personname)
+
+def auto_remove_old_incoming_forms(dbo):
+    """
+    Automatically removes incoming forms older than the daily amount set
+    """
+    removeafter = asm3.configuration.auto_remove_incoming_forms_days(dbo)
+    if removeafter <= 0:
+        asm3.al.debug("auto remove incoming forms is off.", "onlineform.auto_remove_old_incoming_forms", dbo)
+        return
+    removecutoff = dbo.today(offset=removeafter*-1)
+    asm3.al.debug("remove date: incoming forms < %s" % removecutoff, "onlineform.auto_remove_old_incoming_forms", dbo)
+    count = dbo.execute("DELETE FROM onlineformincoming WHERE PostedDate < ?", [removecutoff])
+    asm3.al.debug("removed %s incoming forms older than %s days" % (count, removeafter), "onlineform.auto_remove_old_incoming_forms", dbo)
+

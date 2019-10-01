@@ -405,11 +405,13 @@ it off will cause animalview to be used). It is also possible to pass
 speciesid=X or animaltypeid=X parameters to only output animals of that species
 and type. In the default dataset, speciesid=1 is Dogs and speciesid=2 is cats.
 
-In addition, a "flag" parameter can be passed to specify the flag you want the
-returned animals to have. If no flag is set, all shelter animals are returned.
+A "flag" parameter must be passed to specify the flag you want the returned
+animals to have. If no flag is set, an error is returned. An "allanimals=1"
+parameter can optionally be passed if you'd like all animals to be included,
+not just shelter animals.
 
-    http://localhost:5000/service?method=html_flagged_animals&template=littlebox&speciesid=1&flag=Needs+Foster
-    http://localhost:5000/service?method=html_flagged_animals
+    http://localhost:5000/service?method=html_flagged_animals&template=littlebox&speciesid=1&allanimals=1&flag=Needs+Foster
+    http://localhost:5000/service?method=html_flagged_animals&flag=At+Risk
 
 
 html_held_animals

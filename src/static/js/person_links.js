@@ -43,6 +43,7 @@ $(function() {
                 if (li.TYPE == "AT") { s.push('<a href="animal_transport?id=' + li.LINKID + '">' + li.LINKDISPLAY + '</a>'); }
                 if (li.TYPE == "AFA") { s.push('<a href="animal?id=' + li.LINKID + '">' + li.LINKDISPLAY + '</a>'); }
                 if (li.TYPE == "AFP") { s.push('<a href="person?id=' + li.LINKID + '">' + li.LINKDISPLAY + '</a>'); }
+                if (li.TYPE == "AFI") { s.push('<a href="incident?id=' + li.LINKID + '">' + li.LINKDISPLAY + '</a>'); }
                 if (li.DMOD.indexOf("D") != -1) { s.push( html.icon("death", _("Deceased"))); }
                 s.push('</td>');
                 s.push('<td ' + tdclass + '>' + li.FIELD2 + '</td>');

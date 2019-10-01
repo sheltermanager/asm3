@@ -11,7 +11,7 @@ en
 SELECT s.SpeciesName, COUNT(a.ID) AS NumberOfAnimals, SUM(DaysOnShelter) AS DaysInCare, ROUND(AVG(DaysOnShelter)) AS AvgDaysInCare
 FROM animal a
 INNER JOIN species s ON s.ID = a.SpeciesID 
-WHERE a.MostRecentEntryDate >= '$ASK DATE Animals arriving between$' AND a.MostRecentEntryDate <= '$ASK DATE and$'
+WHERE a.NonShelterAnimal = 0 AND a.MostRecentEntryDate >= '$ASK DATE Animals arriving between$' AND a.MostRecentEntryDate <= '$ASK DATE and$'
 GROUP BY s.SpeciesName
 ORDER BY s.SpeciesName
 ###

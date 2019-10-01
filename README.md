@@ -12,19 +12,19 @@ will install all the software you need to run ASM. If you are using the
 sheltermanager3 deb package it already has dependencies set for these
 and will install them for you.
 
-* apt-get install make python python-webpy python-pil python-mysqldb python-psycopg2
+* apt-get install make python3 python3-webpy python3-pil python3-mysqldb python3-psycopg2
 
 Extra, non-mandatory packages:
 
 * apt-get install imagemagick (for scaling/compressing PDFs to save on storage)
 * apt-get install wkhtmltopdf (for creating PDFs from HTML document templates)
-* apt-get install python-reportlab (for creating mailing label PDFs)
-* apt-get install python-requests (needed for all HTTPS publishers - PetLink, MeetAPet, VetEnvoy)
-* apt-get install python-boto3 (needed for Amazon S3 media storage)
+* apt-get install python3-reportlab (for creating mailing label PDFs)
+* apt-get install python3-requests (needed for all HTTPS publishers - PetLink, MeetAPet, VetEnvoy)
+* apt-get install python3-boto3 (needed for Amazon S3 media storage)
 
 Packages necessary for building static checkers, installers and manuals:
 
-* apt-get install exuberant-ctags nodejs pychecker python-sphinx python-sphinx-rtd-theme texlive-latex-base texlive-latex-extra latexmk
+* apt-get install exuberant-ctags nodejs pychecker python3-sphinx python3-sphinx-rtd-theme texlive-latex-base texlive-latex-extra latexmk
 
 If you're using Debian and want to do development, you can use "make deps"
 to install the needed dependencies.
@@ -35,8 +35,8 @@ Logging
 ASM logs to the Unix syslog USER facility (/var/log/user.log for most installs)
 by default. This can be changed in the configuration.
 
-Configuring a database
-----------------------
+Configuring ASM
+---------------
 
 If you used the debian package, edit the file /etc/asm3.conf
 
@@ -66,35 +66,42 @@ ASM will look for it's config file in this order until it finds one:
 3. In $HOME/.asm3.conf (the home directory of the user running asm3)
 4. In /etc/asm3.conf
 
-Starting the service
---------------------
+Setting up Apache/WSGI
+----------------------
 
-The Debian package creates an init.d script called sheltermanager3 and
-a systemd unit called sheltermanager3. Both are automatically added to the correct 
-runlevels after package installation.
+Set up Apache to serve the application.
 
-After configuration, run:
+1. Install apache2 with mod_wsgi. Make sure mod_wsgi is enabled.
 
-    service sheltermanager3 restart
+   * apt-get install apache2 libapache2-mod-wsgi-py3
+   * a2enmod wsgi
 
-To reload the service with your new configuration.
+2. Add the WSGI config to your Apache site config. The default site config
+   as installed by Debian is in /etc/apache2/sites-available/default
+   
+   Add this at the bottom of the file (outside of the VirtualHost tag).
 
-For manual setups, run "python code.py 5000" to start the service. An
-HTTP server will start running on port 5000, listening on all 
-interfaces.
+```
+WSGIScriptAlias /asm /usr/lib/sheltermanager3/code.py/
+Alias /asm/static /usr/lib/sheltermanager3/static
+AddType text/html .py
+<Directory /usr/lib/sheltermanager3>
+    Require all granted
+</Directory>
+```
 
-You can change the HTTP server binding by passing a local interface
-IP and a different port if you prefer. Eg: "python code.py 127.0.0.1:4999"
-to only listen for connections from the local machine on port 4999.
+   This assumes that your ASM3 is located at /usr/lib/sheltermanager3
+   (the default for our Debian package)
 
-Visit http://localhost:5000 with your web browser to connect to
-the service.
+3. Restart Apache and navigate to http://localhost/asm
+
+    * service apache2 restart
 
 Creating the default database
 -----------------------------
 
-After the ASM service has started, visit http://localhost:5000/database
-to create the database schema (hitting just http://localhost:5000 will
+After the ASM service has started, visit http://localhost/asm/database
+to create the database schema (hitting just http://localhost/asm will
 redirect there if no database has been setup yet).
 
 Daily tasks
@@ -108,50 +115,11 @@ These routines include recalculating denormalised data such as animal age, time
 on shelter, updating the waiting list and publishing to the internet.
 
 To run them, make sure the environment is setup as before and run
-python cron.py all
+python3 cron.py all
 
 See the cron.py file for more information on mode parameters to run 
 specific tasks only.
 
 The Debian package automatically adds the daily tasks to /etc/cron.daily 
-
-Using Apache/WSGI
------------------
-
-To use Apache/WSGI instead of the CherryPy WSGI server, then (these 
-instructions assume Debian):
-
-1. Stop the sheltermanager3 service running and remove it from the
-   existing system runlevels:
-   
-   * service sheltermanager3 stop
-   * update-rc.d sheltermanager3 remove
-   
-2. Install apache2 with mod_wsgi. Make sure mod_wsgi is enabled.
-
-   * apt-get install apache2 libapache2-mod-wsgi
-   * a2enmod wsgi
-
-3. Add the WSGI config to your Apache site config. The default site config
-   as installed by Debian is in /etc/apache2/sites-available/default
-   
-   Add this at the bottom of the file (outside of the VirtualHost tag).
-
-```
-WSGIScriptAlias /asm /usr/lib/sheltermanager3/code.py/
-WSGIPythonPath /usr/lib/python2.7:/usr/lib/python2.7/dist-packages:/usr/lib/sheltermanager3:/usr/lib/sheltermanager3/locale
-Alias /asm/static /usr/lib/sheltermanager3/static
-AddType text/html .py
-<Directory /usr/lib/sheltermanager3>
-    Require all granted
-</Directory>
-```
-
-   This assumes that your ASM3 is located at /usr/lib/sheltermanager3
-   (the default for our Debian package) and Python2.7
-
-4. Restart Apache and navigate to http://localhost/asm
-
-    * service apache2 restart
 
 

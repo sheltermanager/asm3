@@ -487,28 +487,28 @@ AND NonShelterAnimal = 0) AS JuniorCatOtherLive,
 
 (SELECT COUNT(*) FROM animal 
 WHERE DeceasedDate >= '$@from$' AND DeceasedDate <= '$@to$'
-AND NonShelterAnimal = 0 AND DiedOffShelter = 0
+AND NonShelterAnimal = 0 AND DiedOffShelter = 0 AND IsDOA = 0 
 AND PutToSleep = 0 AND AsilomarOwnerRequestedEuthanasia = 0
 AND SpeciesID = 1
 AND DateOfBirth < DeceasedDate - INTERVAL '5 months') AS AdultDogDiedCare,
 
 (SELECT COUNT(*) FROM animal 
 WHERE DeceasedDate >= '$@from$' AND DeceasedDate <= '$@to$'
-AND NonShelterAnimal = 0 AND DiedOffShelter = 0
+AND NonShelterAnimal = 0 AND DiedOffShelter = 0 AND IsDOA = 0 
 AND PutToSleep = 0 AND AsilomarOwnerRequestedEuthanasia = 0
 AND SpeciesID = 1
 AND DateOfBirth >= DeceasedDate - INTERVAL '5 months') AS JuniorDogDiedCare,
 
 (SELECT COUNT(*) FROM animal 
 WHERE DeceasedDate >= '$@from$' AND DeceasedDate <= '$@to$'
-AND NonShelterAnimal = 0 AND DiedOffShelter = 0
+AND NonShelterAnimal = 0 AND DiedOffShelter = 0 AND IsDOA = 0 
 AND PutToSleep = 0 AND AsilomarOwnerRequestedEuthanasia = 0
 AND SpeciesID = 2
 AND DateOfBirth < DeceasedDate - INTERVAL '5 months') AS AdultCatDiedCare,
 
 (SELECT COUNT(*) FROM animal 
 WHERE DeceasedDate >= '$@from$' AND DeceasedDate <= '$@to$'
-AND NonShelterAnimal = 0 AND DiedOffShelter = 0
+AND NonShelterAnimal = 0 AND DiedOffShelter = 0 AND IsDOA = 0 
 AND PutToSleep = 0 AND AsilomarOwnerRequestedEuthanasia = 0
 AND SpeciesID = 2
 AND DateOfBirth >= DeceasedDate - INTERVAL '5 months') AS JuniorCatDiedCare,
@@ -1415,14 +1415,14 @@ AND NonShelterAnimal = 0) AS "Other Live Outcome Feline Up To 5 Months",
 
 (SELECT COUNT(*) FROM animal 
 WHERE DeceasedDate >= '$@from$' AND DeceasedDate <= '$@to$'
-AND NonShelterAnimal = 0 AND DiedOffShelter = 0
+AND NonShelterAnimal = 0 AND DiedOffShelter = 0 AND IsDOA = 0 
 AND PutToSleep = 0 AND AsilomarOwnerRequestedEuthanasia = 0
 AND SpeciesID = 1
 AND DateOfBirth < DeceasedDate - INTERVAL '5 months') AS "Died In Care Canine Adult",
 
 (SELECT COUNT(*) FROM animal 
 WHERE DeceasedDate >= '$@from$' AND DeceasedDate <= '$@to$'
-AND NonShelterAnimal = 0 AND DiedOffShelter = 0
+AND NonShelterAnimal = 0 AND DiedOffShelter = 0 AND IsDOA = 0 
 AND PutToSleep = 0 AND AsilomarOwnerRequestedEuthanasia = 0
 AND SpeciesID = 1
 AND DateOfBirth >= DeceasedDate - INTERVAL '5 months') AS "Died In Care Canine Up To 5 Months",
@@ -1431,14 +1431,14 @@ AND DateOfBirth >= DeceasedDate - INTERVAL '5 months') AS "Died In Care Canine U
 
 (SELECT COUNT(*) FROM animal 
 WHERE DeceasedDate >= '$@from$' AND DeceasedDate <= '$@to$'
-AND NonShelterAnimal = 0 AND DiedOffShelter = 0
+AND NonShelterAnimal = 0 AND DiedOffShelter = 0 AND IsDOA = 0 
 AND PutToSleep = 0 AND AsilomarOwnerRequestedEuthanasia = 0
 AND SpeciesID = 2
 AND DateOfBirth < DeceasedDate - INTERVAL '5 months') AS "Died In Care Feline Adult",
 
 (SELECT COUNT(*) FROM animal 
 WHERE DeceasedDate >= '$@from$' AND DeceasedDate <= '$@to$'
-AND NonShelterAnimal = 0 AND DiedOffShelter = 0
+AND NonShelterAnimal = 0 AND DiedOffShelter = 0 AND IsDOA = 0 
 AND PutToSleep = 0 AND AsilomarOwnerRequestedEuthanasia = 0
 AND SpeciesID = 2
 AND DateOfBirth >= DeceasedDate - INTERVAL '5 months') AS "Died In Care Feline Up To 5 Months",

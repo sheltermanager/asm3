@@ -16,7 +16,8 @@ $(function() {
                 '<li class="localeus localeca localeau hasmaddiesfund"><a href="#tab-maddiesfund">Maddie\'s Fund Publisher</a></li>',
                 '<li class="localeus localeca localemx"><a href="#tab-petfinder">PetFinder Publisher</a></li>',
                 '<li class="localegb haspetslocated"><a href="#tab-petslocated">PetsLocated Publisher</a></li>',
-                '<li class="localeau"><a href="#tab-petrescue">PetRescue Publisher</a></li>', 
+                '<li class="localeau haspetrescue"><a href="#tab-petrescue">PetRescue Publisher</a></li>', 
+                '<li class="localeau hassavourlife"><a href="#tab-savourlife">SavourLife Publisher</a></li>', 
                 '<li class="localeus"><a href="#tab-rescuegroups">RescueGroups Publisher</a></li>',
                 '<li class="localegb"><a href="#tab-pettrac">AVID UK Microchips</a></li>',
                 '<li class="localegb"><a href="#tab-anibase">Identibase UK Microchips</a></li>',
@@ -570,6 +571,34 @@ $(function() {
             ].join("\n");
         },
 
+        render_savourlife: function() {
+            return [
+                '<div id="tab-savourlife">',
+                html.info('Signup at <a href="http://savourlife.com.au">savour-life.com.au</a>'),
+                '<p><input id="enabledsl" type="checkbox" class="asm-checkbox enablecheck" /><label for="enabledsl">' + _("Enabled") + '</label></p>',
+                '<table>',
+                '<tr>',
+                '<td><label for="slusername">Username</label></td>',
+                '<td><input id="slusername" type="text" class="asm-textbox cfg" data="SavourLifeUsername" /></td>',
+                '</tr>',
+                '<tr>',
+                '<td><label for="slpassword">Password</label></td>',
+                '<td><input id="slpassword" type="text" class="asm-textbox cfg" data="SavourLifePassword" /></td>',
+                '</tr>',
+                '<tr>',
+                '<td><label for="slinterstate">Mark as interstate</label>',
+                '<span id="callout-slinterstate" class="asm-callout">',
+                'Set to yes if you will fly adoptable animals to other states',
+                '</span>',
+                '</td>',
+                '<td><select id="slinterstate" class="asm-selectbox cfg" data="SavourLifeInterstate">',
+                '<option>No</option><option>Yes</option></select></td>',
+                '</tr>',
+                '</table>',
+                '</div>'
+            ].join("\n");
+        },
+
         render_rescuegroups: function() {
             return [
                 '<div id="tab-rescuegroups">',
@@ -840,6 +869,7 @@ $(function() {
                 this.render_htmlftp(),
                 this.render_petfinder(),
                 this.render_petrescue(), 
+                this.render_savourlife(), 
                 this.render_petslocated(),
                 this.render_rescuegroups(),
                 this.render_adoptapet(),
@@ -979,7 +1009,7 @@ $(function() {
             $(".localegb").hide();
             $(".localemx").hide();
             if (asm.locale == "en") { $(".localeus").show(); }
-            if (asm.locale == "en_AU" && controller.haspetrescue) { $(".localeau").show(); }
+            if (asm.locale == "en_AU") { $(".localeau").show(); }
             if (asm.locale == "en_GB") { $(".localegb").show(); }
             if (asm.locale == "en_CA" || asm.locale == "fr_CA") { $(".localeca").show(); }
             if (asm.locale == "en_MX" || asm.locale == "es_MX") { $(".localemx").show(); }
@@ -988,7 +1018,9 @@ $(function() {
             if (!controller.hasfoundanimals) { $(".hasfoundanimals").hide(); }
             if (!controller.hasmaddiesfund) { $(".hasmaddiesfund").hide(); }
             if (!controller.haspetlink) { $(".haspetlink").hide(); }
+            if (!controller.haspetrescue) { $(".haspetrescue").hide(); }
             if (!controller.haspetslocated) { $(".haspetslocated").hide(); }
+            if (!controller.hassavourlife) { $(".hassavourlife").hide(); }
             if (!controller.hasvevendor) { $(".hasvevendor").hide(); }
             if (!controller.hassmarttag) { $(".hassmarttag").hide(); }
 

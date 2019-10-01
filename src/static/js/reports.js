@@ -3,24 +3,6 @@
 
 $(function() {
 
-    var recommended = [
-        "Active Donors", "Active Fosters", "Active Members", "Adoptions by Date with Addresses",
-        "Animal Entry Reasons", "Animal Return Reasons", "Animals Inducted by Date and Species",
-        "Animals Without Photo Media", "Annual Figures (by species)", "Annual Figures (by type)",
-        "Asilomar Figures (Live)", "Audit Trail: All Changes by Date", "Audit Trail: All Changes by Specific user",
-        "Audit Trail: Deletions by Date", "Average Time On Shelter By Species", "Banned Owners",
-        "Brought In Figures", "Cage Card", "Deceased Reasons by Species and Date",
-        "Detailed Shelter Inventory", "In/Out", "In/Out by Species", "In/Out with Donations",
-        "Intakes by Date with Outcomes", "Long Term Animals", "Medical Diary", 
-        "Monthly Adoptions By Species", 
-        "Monthly Figures (by species)", "Monthly Figures (by type)", "Most Common Name",
-        "Non-Microchipped Animals", "Non-Neutered/Spayed Animals Aged Over 6 Months",
-        "Payment Breakdown By Date", "Print Animal Record", "Print Animal Record (for adopters)", 
-        "Reserves without Homechecks", "Returned Animals", "shelteranimalscount.org matrix", 
-        "Shelter Inventory", "Shelter Inventory with Pictures by Location", "Shelter Inventory at Date", 
-        "Vaccination Diary (Off Shelter)", "Vaccination Diary (On Shelter)"
-    ];
-
     var emailhours = [
         { display: _("With overnight batch"), value: -1 },
         { display: "00:00", value: 0 },
@@ -381,7 +363,7 @@ $(function() {
                 .click(function() {
                     $("#table-smcom .smcom-title").each(function() {
                         var td = $(this);
-                        $.each(recommended, function(i, v) {
+                        $.each(controller.recommended, function(i, v) {
                             if (td.text() == v) {
                                 td.parent().find("input").attr("checked", true);
                                 td.parent().find("td").addClass("ui-state-highlight");

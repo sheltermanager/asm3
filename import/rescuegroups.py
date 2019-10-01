@@ -28,7 +28,7 @@ change the View to Export and then hit Export as CSV.
 
 """
 
-PATH = "/home/robin/tmp/asm3_import_data/rg_st1945"
+PATH = "/home/robin/tmp/asm3_import_data/rg_tn2023"
 
 DEFAULT_BREED = 261 # default to dsh
 PETFINDER_ID = "" # Shouldn't be needed if Picture 1 is present
@@ -146,9 +146,9 @@ for d in asm.csv_to_list("%s/Animals.csv" % PATH):
     a.ShelterLocation = 1
     if "Size Potential (General)" in d: a.Size = size_id_for_name(d["Size Potential (General)"])
     if "Declawed" in d: a.Declawed = d["Declawed"] == "Yes" and 1 or 0
-    a.HasSpecialNeeds = d["Special Needs"] == "Yes" and 1 or 0
+    if "Special Needs" in d: a.HasSpecialNeeds = d["Special Needs"] == "Yes" and 1 or 0
     a.EntryReasonID = 1
-    a.Neutered = d["Altered"] == "Yes" and 1 or 0
+    if "Altered" in d: a.Neutered = d["Altered"] == "Yes" and 1 or 0
     if "Housetrained" in d and d["Housetrained"] == "Yes": a.IsHouseTrained = 0
     if "OK with Dogs" in d and d["OK with Dogs"] == "Yes": a.IsGoodWithDogs = 0
     if "OK with Kids" in d and d["OK with Kids"] == "Yes": a.IsGoodWithChildren = 0

@@ -225,6 +225,8 @@ BroughtInByMobilePhone
     (BroughtInByCellPhone for US users)
 BroughtInByEmail
     The email address of the person who brought the animal in
+BroughtInByJurisdiction
+    The jurisdiction of the person who brought the animal in
 BroughtInBy Additional Fields
     Additional fields on the brought in by person can be accessed via BroughtInByFIELDNAME
 OriginalOwnerAddress
@@ -245,6 +247,8 @@ OriginalOwnerMobilePhone
     The original owner's mobile phone number 
 OriginalOwnerEmail
     The original owner's email address 
+OriginalOwnerJurisdiction
+    The jurisdiction of the original owner
 OriginalOwner Additional Fields
     Additional fields on the original owner can be accessed via OriginalOwnerFIELDNAME
 CurrentOwnerName
@@ -265,6 +269,8 @@ CurrentOwnerMobilePhone
     Current owner's cell/mobile phone number
 CurrentOwnerEmail 
     Current owner's email address
+CurrentOwnerJurisdiction
+    The jurisdiction of the current owner
 CurrentOwner Additional Fields
     Additional fields on the current owner can be accessed via CurrentOwnerFIELDNAME
 ReservedOwnerName
@@ -285,6 +291,8 @@ ReservedOwnerMobilePhone
     Reserved owner's cell/mobile phone number
 ReservedOwnerEmail 
     Reserved owner's email address
+ReservedOwnerJurisdiction
+    The jurisdiction of the reserving owner
 ReservationStatus
     The active reservation/application status
 CurrentVetName
@@ -345,6 +353,18 @@ GoodWithChildren
     "Yes/No/Unknown" 
 HouseTrained
     "Yes/No/Unknown" 
+DisplayCatsIfGoodWith
+    Outputs "Cats" if this animal is good with cats
+DisplayDogsIfGoodWith
+    Outputs "Dogs" if this animal is good with dogs
+DisplayChildrenIfGoodWith
+    Outputs "Children" if this animal is good with children
+DisplayCatsIfBadWith
+    Outputs "Cats" if this animal is bad with cats
+DisplayDogsIfBadWith
+    Outputs "Dogs" if this animal is bad with dogs
+DisplayChildrenIfBadWith
+    Outputs "Children" if this animal is bad with children
 EntryCategory
     The entry category of the animal 
 ReasonForEntry
@@ -361,8 +381,6 @@ DisplayWeight
     The animal's weight, shown as either kg or lb/oz according to system display options
 SpeciesName
     The animal's species 
-ReclaimedDate
-    The date (if applicable) that the animal was reclaimed by its owner 
 MostRecentEntry / MostRecentEntryDate
     The date the animal most recently entered the shelter (if it was returned
     from an adoption or fostering for example) 
@@ -380,7 +398,6 @@ AdoptionStatus
 HasValidMedia
     "Yes" if the animal has a photo flagged for website generation 
 WebMediaFilename
-    The filename of the animal's default picture 
 WebMediaNotes
     The notes to accompany the picture 
 WebMediaNew
@@ -542,6 +559,8 @@ MedicalNextTreatmentDue
     The date of the next due treatment in the regimen
 MedicalLastTreatmentGiven
     The date the last treatment was given in the regimen
+MedicalLastTreatmentComments
+    The comments attached to the last treatment given
 MedicalCost
     The cost of this medical regimen
 MedicalComments
@@ -760,6 +779,8 @@ LogName
     The type of log 
 LogDate
     The date of the log  
+LogTime
+    The time of the log  
 LogComments
     The log entry
 LogCreatedBy
@@ -823,6 +844,8 @@ Person Keys
 Person keys are available for documents generated from the person and movement
 screens, they are also available for documents generated from the payment 
 and licence tabs as well as lost animal, found animal and waiting list.
+Log keys are available for people, but prefixed with PersonLog instead of just Log.
+
 
 OwnerTitle 
     The person's title
@@ -968,7 +991,8 @@ Incident Keys
 -------------
 
 Incident keys are only available for documents generated with the document button
-on a single incident.
+on a single incident. Log keys are available for incidents, but prefixed with
+IncidentLog instead of just Log.
 
 IncidentNumber
     The unique incident number
@@ -1082,6 +1106,13 @@ VictimWorkTelephone
     The victim's work number
 VictimMobileTelephone / VictimCellTelephone
     The victim's mobile number
+DocumentImgLink
+    An <img> tag containing a link to the incident's preferred document image.
+    The image will be 200px high. You can also suffix a pixel height in
+    increments of 100 upto 500px if you would like the image to be larger, eg:
+    <<DocumentImgLink300>>, <<DocumentImgLink400>>, <<DocumentImgLink500>>
+DocumentImgSrc
+    Just the src attribute value for an image link to the preferred document image.
 
 Incident Animal Keys
 --------------------

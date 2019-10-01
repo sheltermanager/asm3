@@ -1,32 +1,33 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
 
 import os, sys
 
 # Add our modules to the sys.path
 sys.path.append(os.getcwd())
 
-import al
-import audit
-import animal
-import cachedisk
-import clinic
-import configuration
-import db
-import dbfs
-import dbupdate
-import diary
-import i18n
-import lostfound
-import media
-import movement
-import onlineform
-import person
-import publish
-import reports as extreports
+from asm3 import al
+from asm3 import audit
+from asm3 import animal
+from asm3 import cachedisk
+from asm3 import clinic
+from asm3 import configuration
+from asm3 import db
+from asm3 import dbfs
+from asm3 import dbupdate
+from asm3 import diary
+from asm3 import i18n
+from asm3 import lostfound
+from asm3 import media
+from asm3 import movement
+from asm3 import onlineform
+from asm3 import person
+from asm3 import publish
+from asm3 import reports as extreports
+from asm3 import utils
+from asm3 import waitinglist
+from asm3.sitedefs import LOCALE, TIMEZONE, MULTIPLE_DATABASES, MULTIPLE_DATABASES_TYPE, MULTIPLE_DATABASES_MAP
+
 import time
-import utils
-import waitinglist
-from sitedefs import LOCALE, TIMEZONE, MULTIPLE_DATABASES, MULTIPLE_DATABASES_TYPE, MULTIPLE_DATABASES_MAP
 
 def ttask(fn, dbo):
     """ Runs a function and times how long it takes """
@@ -58,7 +59,7 @@ def daily(dbo):
             ttask(dbupdate.install_db_stored_procedures, dbo)
 
         # Get the latest news from sheltermanager.com
-        configuration.asm_news(dbo, update=True)
+        configuration.asm_news(dbo, utils.get_asm_news(dbo))
 
         # Update on shelter and foster animal location fields
         ttask(animal.update_on_shelter_animal_statuses, dbo)
@@ -196,7 +197,7 @@ def maint_animal_figures_annual(dbo):
 def maint_db_diagnostic(dbo):
     try:
         d = dbupdate.diagnostic(dbo)
-        for k, v in d.iteritems():
+        for k, v in d.items():
             print("%s: %s" % (k, v))
     except:
         em = str(sys.exc_info()[0])
@@ -456,7 +457,7 @@ def run(dbo, mode):
     al.info("end %s: elapsed %0.2f secs" % (mode, elapsed), "cron.run", dbo)
 
 def run_all_map_databases(mode):
-    for alias in MULTIPLE_DATABASES_MAP.iterkeys():
+    for alias in MULTIPLE_DATABASES_MAP.keys():
         dbo = db.get_database(alias)
         dbo.timeout = 0
         dbo.connection = dbo.connect()

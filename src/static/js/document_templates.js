@@ -200,6 +200,8 @@ $(function() {
         },
 
         destroy: function() {
+            common.widget_destroy("#dialog-newodt");
+            common.widget_destroy("#dialog-rename");
             tableform.dialog_destroy();
         },
 

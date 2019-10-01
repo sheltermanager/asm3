@@ -392,8 +392,13 @@ Display
 * Allow editing of latitude/longitude with minimaps: Allow the latitude/longitude
   geocodes to be hand edited in a field near the minimap and address.
 
-* Show weight as lb rather than kg: Change the field label on the animal weight
-  field to lb instead of the usual kg.
+* Show weights as lb and oz: Enter and show weights with separate pounds and
+  ounces. eg: 5 lbs and 6 oz
+
+* Show weights as decimal lb: Enter and show weights in lbs, allowing decimal
+  fractions, eg: 5.50 lbs
+  If neither this or the previous show weights option is set, weights are shown
+  in kg, eg: 20.1 kg
 
 * Show complete comments in table views: When viewing comments or log notes in
   tables, show the complete text instead of truncating it to 80 characters and
@@ -530,6 +535,18 @@ for adoption).
   hidden.  This option does not apply to the full timeline view, accessed by
   clicking the Timeline heading on the home page or from the
   :menuselection:`ASM --> Timeline` menu option.
+
+* Hide financial stats from the home page: If this option is on, the stats
+  lines showing how much money has been received in payments or spent in
+  costs will be hidden from the home page.
+
+* Show an alert when these species of animals are not microchipped: The microchip
+  alerts on the home page and emblems will only be shown for these species of
+  animals (by default, dogs and cats)
+
+* Show an alert when these species of animals are not altered: The recently
+  adopted/unneutered animal alerts on the home page and emblems will only be 
+  shown for these species of animals (by default, dogs and cats)
 
 Lost and Found
 --------------

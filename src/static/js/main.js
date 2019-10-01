@@ -490,12 +490,12 @@ $(function() {
                     ]) + '<br />';
             }
 
-            if (stats.DONATIONS > 0 && common.has_permission("ovod")) {
+            if (stats.DONATIONS > 0 && common.has_permission("ovod") && config.bool("ShowFinancialHomePage")) {
                 s += html.icon("donation") + ' ' + 
                     _("{0} received").replace("{0}", format.currency(stats.DONATIONS))
                     + '<br />';
             }
-            if (stats.COSTS > 0 && common.has_permission("cvad")) {
+            if (stats.COSTS > 0 && common.has_permission("cvad") && config.bool("ShowFinancialHomePage")) {
                 s += html.icon("cost") + ' ' + 
                     _("{0} incurred in costs").replace("{0}", format.currency(stats.COSTS))
                     + '<br />';

@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Appendix: Wordkeys &mdash; ASM 42 documentation</title>
+  <title>Appendix: Wordkeys &mdash; ASM 43u documentation</title>
   
 
   
@@ -59,7 +59,7 @@
             
             
               <div class="version">
-                42
+                43u
               </div>
             
           
@@ -424,6 +424,8 @@ animal’s date of birth.</dd>
 <dd>(BroughtInByCellPhone for US users)</dd>
 <dt>BroughtInByEmail</dt>
 <dd>The email address of the person who brought the animal in</dd>
+<dt>BroughtInByJurisdiction</dt>
+<dd>The jurisdiction of the person who brought the animal in</dd>
 <dt>BroughtInBy Additional Fields</dt>
 <dd>Additional fields on the brought in by person can be accessed via BroughtInByFIELDNAME</dd>
 <dt>OriginalOwnerAddress</dt>
@@ -444,6 +446,8 @@ animal’s date of birth.</dd>
 <dd>The original owner’s mobile phone number</dd>
 <dt>OriginalOwnerEmail</dt>
 <dd>The original owner’s email address</dd>
+<dt>OriginalOwnerJurisdiction</dt>
+<dd>The jurisdiction of the original owner</dd>
 <dt>OriginalOwner Additional Fields</dt>
 <dd>Additional fields on the original owner can be accessed via OriginalOwnerFIELDNAME</dd>
 <dt>CurrentOwnerName</dt>
@@ -464,6 +468,8 @@ animal’s date of birth.</dd>
 <dd>Current owner’s cell/mobile phone number</dd>
 <dt>CurrentOwnerEmail</dt>
 <dd>Current owner’s email address</dd>
+<dt>CurrentOwnerJurisdiction</dt>
+<dd>The jurisdiction of the current owner</dd>
 <dt>CurrentOwner Additional Fields</dt>
 <dd>Additional fields on the current owner can be accessed via CurrentOwnerFIELDNAME</dd>
 <dt>ReservedOwnerName</dt>
@@ -484,6 +490,8 @@ animal’s date of birth.</dd>
 <dd>Reserved owner’s cell/mobile phone number</dd>
 <dt>ReservedOwnerEmail</dt>
 <dd>Reserved owner’s email address</dd>
+<dt>ReservedOwnerJurisdiction</dt>
+<dd>The jurisdiction of the reserving owner</dd>
 <dt>ReservationStatus</dt>
 <dd>The active reservation/application status</dd>
 <dt>CurrentVetName</dt>
@@ -544,6 +552,18 @@ animal’s date of birth.</dd>
 <dd>“Yes/No/Unknown”</dd>
 <dt>HouseTrained</dt>
 <dd>“Yes/No/Unknown”</dd>
+<dt>DisplayCatsIfGoodWith</dt>
+<dd>Outputs “Cats” if this animal is good with cats</dd>
+<dt>DisplayDogsIfGoodWith</dt>
+<dd>Outputs “Dogs” if this animal is good with dogs</dd>
+<dt>DisplayChildrenIfGoodWith</dt>
+<dd>Outputs “Children” if this animal is good with children</dd>
+<dt>DisplayCatsIfBadWith</dt>
+<dd>Outputs “Cats” if this animal is bad with cats</dd>
+<dt>DisplayDogsIfBadWith</dt>
+<dd>Outputs “Dogs” if this animal is bad with dogs</dd>
+<dt>DisplayChildrenIfBadWith</dt>
+<dd>Outputs “Children” if this animal is bad with children</dd>
 <dt>EntryCategory</dt>
 <dd>The entry category of the animal</dd>
 <dt>ReasonForEntry</dt>
@@ -560,8 +580,6 @@ animal’s date of birth.</dd>
 <dd>The animal’s weight, shown as either kg or lb/oz according to system display options</dd>
 <dt>SpeciesName</dt>
 <dd>The animal’s species</dd>
-<dt>ReclaimedDate</dt>
-<dd>The date (if applicable) that the animal was reclaimed by its owner</dd>
 <dt>MostRecentEntry / MostRecentEntryDate</dt>
 <dd>The date the animal most recently entered the shelter (if it was returned
 from an adoption or fostering for example)</dd>
@@ -578,10 +596,12 @@ from an adoption or fostering for example)</dd>
 <dd>A readable string of the animal’s status, eg: Hold, Reserved, Quarantine, Adoptable</dd>
 <dt>HasValidMedia</dt>
 <dd>“Yes” if the animal has a photo flagged for website generation</dd>
-<dt>WebMediaFilename</dt>
-<dd>The filename of the animal’s default picture</dd>
-<dt>WebMediaNotes</dt>
-<dd>The notes to accompany the picture</dd>
+</dl>
+<p>WebMediaFilename
+WebMediaNotes</p>
+<blockquote>
+<div>The notes to accompany the picture</div></blockquote>
+<dl class="docutils">
 <dt>WebMediaNew</dt>
 <dd>“Yes” if the animal has not been published via the web publishing tool</dd>
 <dt>WebMediaUpdated</dt>
@@ -735,6 +755,8 @@ a status of complete, while the Due keyword looks for active medical regimens.</
 <dd>The date of the next due treatment in the regimen</dd>
 <dt>MedicalLastTreatmentGiven</dt>
 <dd>The date the last treatment was given in the regimen</dd>
+<dt>MedicalLastTreatmentComments</dt>
+<dd>The comments attached to the last treatment given</dd>
 <dt>MedicalCost</dt>
 <dd>The cost of this medical regimen</dd>
 <dt>MedicalComments</dt>
@@ -948,6 +970,8 @@ fields are:</p>
 <dd>The type of log</dd>
 <dt>LogDate</dt>
 <dd>The date of the log</dd>
+<dt>LogTime</dt>
+<dd>The time of the log</dd>
 <dt>LogComments</dt>
 <dd>The log entry</dd>
 <dt>LogCreatedBy</dt>
@@ -1010,7 +1034,8 @@ movements.</p>
 <h2>Person Keys<a class="headerlink" href="#person-keys" title="Permalink to this headline">¶</a></h2>
 <p>Person keys are available for documents generated from the person and movement
 screens, they are also available for documents generated from the payment
-and licence tabs as well as lost animal, found animal and waiting list.</p>
+and licence tabs as well as lost animal, found animal and waiting list.
+Log keys are available for people, but prefixed with PersonLog instead of just Log.</p>
 <dl class="docutils">
 <dt>OwnerTitle</dt>
 <dd>The person’s title</dd>
@@ -1155,7 +1180,8 @@ keys are also present.</p>
 <div class="section" id="incident-keys">
 <h2>Incident Keys<a class="headerlink" href="#incident-keys" title="Permalink to this headline">¶</a></h2>
 <p>Incident keys are only available for documents generated with the document button
-on a single incident.</p>
+on a single incident. Log keys are available for incidents, but prefixed with
+IncidentLog instead of just Log.</p>
 <dl class="docutils">
 <dt>IncidentNumber</dt>
 <dd>The unique incident number</dd>
@@ -1269,6 +1295,13 @@ on a single incident.</p>
 <dd>The victim’s work number</dd>
 <dt>VictimMobileTelephone / VictimCellTelephone</dt>
 <dd>The victim’s mobile number</dd>
+<dt>DocumentImgLink</dt>
+<dd>An &lt;img&gt; tag containing a link to the incident’s preferred document image.
+The image will be 200px high. You can also suffix a pixel height in
+increments of 100 upto 500px if you would like the image to be larger, eg:
+&lt;&lt;DocumentImgLink300&gt;&gt;, &lt;&lt;DocumentImgLink400&gt;&gt;, &lt;&lt;DocumentImgLink500&gt;&gt;</dd>
+<dt>DocumentImgSrc</dt>
+<dd>Just the src attribute value for an image link to the preferred document image.</dd>
 </dl>
 </div>
 <div class="section" id="incident-animal-keys">

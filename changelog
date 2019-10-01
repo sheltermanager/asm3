@@ -1,3 +1,68 @@
+43
+================
+
+30/09/19 Convert smartquotes to ASCII before sending to PetFinder
+28/09/19 Up the report items to 120 before switching to accordion
+28/09/19 Updated Spanish translation (Marga Gomis)
+26/09/19 PetFinder: always reupload images due to FTP bug at PF
+25/09/19 Add DisplayXIfGoodWith and DisplayXIfBadWith keys
+16/09/19 PetRescue: Look back 6 months, dont repeat status updates #662
+12/09/19 Validate against invalid estimated ages
+12/09/19 Fix display of additional field labels on find results
+12/09/19 Allow additional fields in waiting list results #657
+12/09/19 Fix textarea bug that can cause labels to overlap
+12/09/19 Py2/3 compatible unicode fix for CSV exporting #634
+11/09/19 Final PetFinder change to send images by FTP for now #644
+10/09/19 PetFinder require a specific order for the new format #644
+09/09/19 Fix errors when account mappings are blank
+06/09/19 Extra PetFinder fields send photo URLs instead #644
+03/09/19 Validation when updating stock levels that we have valid ID
+03/09/19 Remove circular deps between al, utils, i18n and configuration
+02/09/19 Fix "message too long" errors from logger
+31/08/19 Refactor publishers and write unit tests #655
+29/08/19 Make sure manual deletion of online forms can be restored #654
+29/08/19 Only override destination account if received was blank
+27/08/19 Splash screen should cover the container #653
+26/08/19 Clone animal should include all flags
+24/08/19 Polyglot code to support Python3 (tagged PYTHON3) #634
+24/08/19 Refactored into asm3 package to avoid Py3 collisions #634
+23/08/19 Options for microchip/neuter alerts on specific species #638
+22/08/19 Fix DONATIONGIFTAID type - check not integer
+22/08/19 Prevent clone_from_template breaking default flags #647
+15/08/19 Add <<MedicalLastTreatmentCommentsX>> token
+14/08/19 Copy flags when cloning from template #632
+12/08/19 Update hungarian translation (NOE Allatotthon Titkarsag)
+08/08/19 Prevent drag and drop returning future adoptions #643
+07/08/19 SavourLife.com.au publisher (Australia)
+07/08/19 ExtraIDs column to hold animal IDs from 3rd party systems
+03/08/19 Show person links for additional fields linked to incidents
+02/08/19 Allow bulk deletion of animals #641
+02/08/19 Allow setting of altered by on bulk change animals #642
+21/07/19 Show trial adoption as an adoption status in shelter view
+20/07/19 Allow decimal fraction lb weights #596
+19/07/19 Allow option to hide financial stats on the home page
+18/07/19 Prevent negatives and zeroes being used in regimens
+18/07/19 Add DONATIONGIFTAID CSV import field #630
+17/07/19 Petrescue: Bad access to SOURCENUMBER
+17/07/19 Some preliminary Python3 work #634
+15/07/19 Minor bug fix to bonded animal merging when publishing
+11/07/19 IPv6 IP restriction support #631
+05/07/19 Allow html_flagged_animals to search all animals #628
+02/07/19 Add LogTime keys and DocumentImgSrc/Link for incidents #624
+02/07/19 Fix fault uploading extra images due to bad unload #556
+13/06/19 Use mark and sweep algorithm for removal #620
+13/06/19 Fix the order of output for bonded animals to their IDs #620
+12/06/19 Include readable fields when auditing changes (eg: users -> USERNAME)
+12/06/19 Show additional person flags in fosterer mode of shelterview #597
+12/06/19 Install recommended reports on home page if none installed #576
+11/06/19 Add undelete backend support #391
+07/06/19 Callout/info for staff record on user account #505
+07/06/19 Show adoption coordinator in foster, reserve, trial books #618
+07/06/19 PetRescue: Add new mandatory regional fields
+07/06/19 Fix to prevent multiple favourite images showing duplicates
+07/06/19 Add Current/Reserved/BroughtInBy/Original OwnerJuridsiction keys
+04/06/19 Add new Portugese translation (Stelmo Barbosa)
+
 42
 ================
 

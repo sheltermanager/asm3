@@ -10,6 +10,7 @@ src/static/js/min
 doc/manual/_build
 cordova/asm/platforms
 .DS_Store
+.vscode
 /.project
 /.pydevproject
 scripts/ansible/archives

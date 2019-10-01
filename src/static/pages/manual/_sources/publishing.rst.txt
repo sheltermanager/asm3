@@ -326,8 +326,8 @@ whether you will fly animals between states for adoption.
 
 PetRescue have a number of extra fields that you can set by creating additional
 animal fields with certain names in your database. The system responds to the
-field names, you can label them anything you want, they must have one of the
-links to animal records.
+field names, you can label them anything you want, they must be linked to
+animal records.
 
 * bestfeature (Text): PetRescue show a tagline at the top of listings.  By default,
   this value is set to "Looking for love" on all listings. You are allowed 25
@@ -338,6 +338,15 @@ links to animal records.
 
 * breederid (Text): Dogs located in QLD with a date of birth after 26th May
   2017 require a breeder number.
+
+* bredincareofgroup (Yes/No): Indicates the animal was bred whilst in the care
+  of the group. Setting this to true makes breederid mandatory for all listings
+  in South Australia after July 2018.
+
+* sourcenumber (Text): Required for all cat and dog listings in Victoria
+
+* rehomingorganisationid (Text): For cats and dogs in NSW, this field OR a
+  microchip number OR breederid must be supplied.
 
 .. note:: PetRescue integration relies on you naming your breeds and species with the same values that they do. If a breed does not match one of the PetRescue breeds, ASM will send it as "Mixed Breed" instead. 
 
@@ -362,6 +371,30 @@ publishers.
 .. warning:: If you are using the “Upload all images” option, ASM will only send the first 4 images (the first is always the preferred) as RescueGroups.org do not support more than 4 images per animal.
 
 .. warning:: The RescueGroups.org publisher uses the publisher breeds and species mappings, so you should make sure that you have mappings for all your breeds and species before using the publisher (the publisher will give an error message if any species or breeds do not have mappings).
+
+savour-life.com.au
+----------------
+
+ASM can integrate with savour-life.com.au and upload your animals for adoption
+directly to your account with them. 
+
+You will need to go to :menuselection:`Publishing --> Set Publishing Options`
+first and view the SavourLife panel. Here, you should enter the username and
+password given to you by SavourLife. The options for filtering animals are the
+same as for other publishers, although ASM will only send dogs (Species 1) as
+SavourLife will not accept listings for other species of animals.
+
+SavourLife have extra fields that you can set by creating additional 
+fields with certain names in your database. The system responds to the field
+names, you can label them anything you want, they must be linked to animal
+records.
+
+* enquirynumber (Text): SavourLife will give potential adopters an enquiry 
+  number that can be given to the shelter. This enquiry number is used to link
+  adopters with the adopted animal and qualify them for free food from
+  SavourLife.
+
+.. note:: SavourLife integration relies on you naming your breeds and species with the same values that they do. If a breed does not match one of the SavourLife breeds, ASM will send it as "Mixed Breed" instead. 
 
 petslocated.com
 ---------------

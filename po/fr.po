@@ -5142,7 +5142,7 @@ msgstr "Foxhound"
 
 #: common.js
 msgid "Fr"
-msgstr ""
+msgstr "Ve"
 
 #: dbupdate.py
 msgid "French Bulldog"
@@ -5162,7 +5162,7 @@ msgstr ""
 
 #: calendarview.js clinic_calendar.js common.js
 msgid "Fri"
-msgstr ""
+msgstr "Ven"
 
 #: reports.js calendarview.js clinic_calendar.js common.js
 msgid "Friday"

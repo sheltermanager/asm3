@@ -101,7 +101,7 @@ $(function() {
             var names = person_find_results.column_names();
             var labels = [];
             $.each(names, function(i, name) {
-                labels.push(person_find_results.column_label(name));
+                labels.push(person_find_results.column_label(name, controller.additional));
             });
             return labels;
         },
@@ -158,16 +158,8 @@ $(function() {
                 return labels[name];
             }
             if (add) {
-                var alabel;
-                $.each(add, function(i, v) {
-                    if (v.FIELDNAME.toLowerCase() == name.toLowerCase()) {
-                        alabel = v.FIELDLABEL;
-                        return false; // break
-                    }
-                });
-                if (alabel) {
-                    return alabel;
-                }
+                var addrow = common.get_row(add, name, "FIELDNAME");
+                if (addrow) { return addrow.FIELDLABEL; }
             }
             return name;
         },
