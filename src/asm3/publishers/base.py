@@ -755,6 +755,7 @@ class AbstractPublisher(threading.Thread):
         Replaces well known "smart" HTML entities with ASCII characters (mainly aimed at smartquotes)
         """
         ENTITIES = {
+            "180":  "'", # spacing acute
             "8211": "-", # endash
             "8212": "--", # emdash
             "8216": "'", # left single quote
@@ -766,7 +767,13 @@ class AbstractPublisher(threading.Thread):
             "8226": "*", # bullet
             "8230": "...", # ellipsis
             "8242": "'", # prime (stopwatch)
-            "8243": "\"", # double prime
+            "8243": "\"", # double prime,
+            "10003": "/", # check
+            "10004": "/", # heavy check
+            "10005": "x", # multiplication x
+            "10006": "x", # heavy multiplication x
+            "10007": "x", # ballot x
+            "10008": "x"  # heavy ballot x
         }
         for k, v in ENTITIES.items():
             s = s.replace("&#" + k + ";", v)
