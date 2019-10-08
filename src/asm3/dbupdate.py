@@ -2620,19 +2620,25 @@ def dump_merge(dbo, deleteViewSeq = True):
     def fix_and_dump(table, fields):
         rows = dbo.query("SELECT * FROM %s" % table)
         for r in rows:
+            # Add ID_OFFSET to all ID fields in the rows
             for f in fields:
                 f = f.upper()
+                # Don't add anything to these two, but prefix them so merging is obvious
                 if f == "ADOPTIONNUMBER" or f == "SHELTERCODE":
                     r[f] = "MG" + r[f]
                 elif r[f] is not None:
                     r[f] += ID_OFFSET
+            # Make any lookup values we copy over inactive
+            if "ISRETIRED" in r: 
+                r.ISRETIRED = 1 
             s.append(dbo.row_to_insert_sql(table, r, escapeCR = ""))
 
     fix_and_dump("additional", [ "AdditionalFieldID", "LinkID" ])
     fix_and_dump("additionalfield", [ "ID" ])
     fix_and_dump("adoption", [ "ID", "AnimalID", "AdoptionNumber", "OwnerID", "RetailerID", "OriginalRetailerMovementID" ])
     fix_and_dump("animal", [ "ID", "AnimalTypeID", "ShelterLocation", "ShelterCode", "BondedAnimalID", "BondedAnimal2ID", "OwnersVetID", "CurrentVetID", "OriginalOwnerID", "BroughtInByOwnerID", "ActiveMovementID" ])
-    fix_and_dump("animalcontrol", [ "ID", "CallerID", "VictimID", "OwnerID", "Owner2ID", "Owner3ID", "AnimalID" ])
+    fix_and_dump("animalcontrol", [ "ID", "CallerID", "VictimID", "OwnerID", "Owner2ID", "Owner3ID" ])
+    fix_and_dump("animalcontrolanimal", [ "AnimalID", "AnimalControlID" ])
     fix_and_dump("animalcost", [ "ID", "AnimalID", "CostTypeID" ])
     fix_and_dump("costtype", [ "ID", ])
     fix_and_dump("animaldiet", [ "ID", "AnimalID" ])
