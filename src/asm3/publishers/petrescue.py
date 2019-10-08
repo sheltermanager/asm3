@@ -66,7 +66,7 @@ class PetRescuePublisher(AbstractPublisher):
 
         token = asm3.configuration.petrescue_token(self.dbo)
         all_desexed = asm3.configuration.petrescue_all_desexed(self.dbo)
-        interstate = asm3.configuration.petrescue_interstate(self.dbo)
+        adoptable_in = asm3.configuration.petrescue_adoptable_in(self.dbo)
         postcode = asm3.configuration.organisation_postcode(self.dbo)
         suburb = asm3.configuration.organisation_town(self.dbo)
         state = asm3.configuration.organisation_county(self.dbo)
@@ -107,7 +107,7 @@ class PetRescuePublisher(AbstractPublisher):
                     self.cleanup()
                     return
       
-                data = self.processAnimal(an, all_desexed, interstate, suburb, state, postcode, contact_name, contact_number, contact_email)
+                data = self.processAnimal(an, all_desexed, adoptable_in, suburb, state, postcode, contact_name, contact_number, contact_email)
 
                 # PetRescue will insert/update accordingly based on whether remote_id/remote_source exists
                 url = PETRESCUE_URL + "listings"
@@ -182,7 +182,7 @@ class PetRescuePublisher(AbstractPublisher):
 
         self.cleanup()
 
-    def processAnimal(self, an, all_desexed=False, interstate=False, suburb="", state="", postcode="", contact_name="", contact_number="", contact_email=""):
+    def processAnimal(self, an, all_desexed=False, adoptable_in="", suburb="", state="", postcode="", contact_name="", contact_number="", contact_email=""):
         """ Processes an animal record and returns a data dictionary to upload as JSON """
         isdog = an.SPECIESID == 1
         iscat = an.SPECIESID == 2
@@ -252,9 +252,13 @@ class PetRescuePublisher(AbstractPublisher):
             if fr is not None and fr.OWNERCOUNTY: location_state_abbr = fr.OWNERCOUNTY
             if fr is not None and fr.OWNERTOWN: location_suburb = fr.OWNERTOWN
 
-        # Only send microchip_number for locations with a Victoria postcode 3xxx
+        # Only send microchip_number for animals listed in or located in Victoria or New South Wales
+        # Since people can enter any old rubbish in the state field, we use postcode to figure out
+        # location - 2XXX = NSW, 3XXX = VIC
         microchip_number = ""
-        if location_postcode.startswith("3"):
+        adoptable_in_list = adoptable_in.split(",")
+        if "VIC" in adoptable_in_list or "NSW" in adoptable_in_list or \
+            location_postcode.startswith("2") or location_postcode.startswith("3"):
             microchip_number = asm3.utils.iif(an.IDENTICHIPPED == 1, an.IDENTICHIPNUMBER, "")
 
         # Construct and return a dictionary of info for this animal
@@ -300,7 +304,7 @@ class PetRescuePublisher(AbstractPublisher):
             "contact_number":           contact_number, # number to enquire about adoption
             "contact_email":            contact_email, # email to enquire about adoption
             "foster_needed":            False, # true | false
-            "interstate":               interstate, # true | false - can the animal be flown to another state for adoption
+            "adoptable_in_abbrs":       adoptable_in_list, # array of states for adoption in: ACT NSW NT QLD SA TAS VIC WA 
             "medical_notes":            "", # DISABLED an.HEALTHPROBLEMS, # 4,000 characters medical notes
             "multiple_animals":         an.BONDEDANIMALID > 0 or an.BONDEDANIMAL2ID > 0, # More than one animal included in listing true | false
             "photo_urls":               self.getPhotoUrls(an.ID), # List of photo URL strings

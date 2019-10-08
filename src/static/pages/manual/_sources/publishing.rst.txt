@@ -321,8 +321,11 @@ Publish to PetRescue.com.au in place of the normal internet publisher. The
 options for filtering animals are the same (see previous section for
 reference).
 
-Options are available to override the desex flag to send all your animals and mark
-whether you will fly animals between states for adoption.
+Options are available to override the desex flag to send all your animals and to 
+indicate which states you will adopt animals to. These are necessary as some
+states have different rules on whether a microchip number or other identifier 
+is needed. The state the animal is currently located in (from the fosterer
+record if available or shelter details) is implicitly added to this set.
 
 PetRescue have a number of extra fields that you can set by creating additional
 animal fields with certain names in your database. The system responds to the

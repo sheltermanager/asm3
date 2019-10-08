@@ -957,14 +957,14 @@ def organisation_telephone(dbo):
 def owner_name_format(dbo):
     return cstring(dbo, "OwnerNameFormat", DEFAULTS["OwnerNameFormat"])
 
+def petrescue_adoptable_in(dbo):
+    return cboolean(dbo, "PetRescueAdoptableIn")
+
 def petrescue_all_desexed(dbo):
     return cboolean(dbo, "PetRescueAllDesexed")
 
 def petrescue_email(dbo):
     return cstring(dbo, "PetRescueEmail")
-
-def petrescue_interstate(dbo):
-    return cboolean(dbo, "PetRescueInterstate")
 
 def petrescue_token(dbo):
     return cstring(dbo, "PetRescueToken")
