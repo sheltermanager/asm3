@@ -9,9 +9,9 @@ from asm3.sitedefs import PETFINDER_FTP_HOST
 import os
 import sys
 
-# PetFinder currently can't support photo URLs with querystring parameters
-# When this value is True, we send the images by FTP. Once they can support photo URLs, set this to false.
-SEND_IMAGES_BY_FTP = True
+# When this value is True, we send the images to PetFinder via FTP.
+# Otherwise, they are included as photo URLs to the service API in the datafile.
+SEND_IMAGES_BY_FTP = False
 
 class PetFinderPublisher(FTPPublisher):
     """

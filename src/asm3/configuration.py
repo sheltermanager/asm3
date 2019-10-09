@@ -958,7 +958,7 @@ def owner_name_format(dbo):
     return cstring(dbo, "OwnerNameFormat", DEFAULTS["OwnerNameFormat"])
 
 def petrescue_adoptable_in(dbo):
-    return cboolean(dbo, "PetRescueAdoptableIn")
+    return cstring(dbo, "PetRescueAdoptableIn")
 
 def petrescue_all_desexed(dbo):
     return cboolean(dbo, "PetRescueAllDesexed")
