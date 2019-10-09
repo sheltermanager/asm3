@@ -885,7 +885,7 @@ def csv(l, rows, cols = None, includeheader = True):
                     dateportion = "%s %s" % (dateportion, timeportion)
                 rd.append(decode_html(dateportion))
             else:
-                rd.append(decode_html(r[c]))
+                rd.append(decode_html(r[c]).replace("\"", "\"\"")) # Escape any double quotes in strings
         writerow(rd)
     return u"\n".join(lines).encode("utf-8")
 
