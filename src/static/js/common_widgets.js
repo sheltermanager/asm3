@@ -623,6 +623,7 @@
             if (o.subject) {
                 $("#emailsubject").val(o.subject); 
             }
+            $("#emailaddtolog").prop("checked", true);
             $("#emailsubject").focus();
         }
     });
