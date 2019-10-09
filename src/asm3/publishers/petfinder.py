@@ -4,14 +4,10 @@ import asm3.i18n
 import asm3.medical
 
 from .base import FTPPublisher
-from asm3.sitedefs import PETFINDER_FTP_HOST
+from asm3.sitedefs import PETFINDER_FTP_HOST, PETFINDER_SEND_PHOTOS_BY_FTP
 
 import os
 import sys
-
-# When this value is True, we send the images to PetFinder via FTP.
-# Otherwise, they are included as photo URLs to the service API in the datafile.
-SEND_IMAGES_BY_FTP = False
 
 class PetFinderPublisher(FTPPublisher):
     """
@@ -117,7 +113,7 @@ class PetFinderPublisher(FTPPublisher):
                     self.cleanup()
                     return
 
-                if SEND_IMAGES_BY_FTP:
+                if PETFINDER_SEND_PHOTOS_BY_FTP:
                     self.uploadImages(an, False, 3)
 
                 csv.append( self.processAnimal(an, agebands) )
@@ -204,7 +200,7 @@ class PetFinderPublisher(FTPPublisher):
         # Mix
         line.append(self.pfYesNo(an.CROSSBREED == 1))
         # photo1-6
-        if SEND_IMAGES_BY_FTP:
+        if PETFINDER_SEND_PHOTOS_BY_FTP:
             # Send blanks for the 6 images if we already sent them by FTP
             line.append("\"\"")
             line.append("\"\"")

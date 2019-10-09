@@ -1,7 +1,7 @@
 43
 ================
 
-09/10/19 PetFinder: Send photo URLs instead of images via FTP
+09/10/19 PetFinder: Option to send photo URLs instead of images via FTP
 08/10/19 PetRescue: support for states animals are adoptable in
 30/09/19 Convert smartquotes to ASCII before sending to PetFinder
 28/09/19 Up the report items to 120 before switching to accordion

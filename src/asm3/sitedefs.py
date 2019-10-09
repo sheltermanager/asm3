@@ -247,6 +247,7 @@ HELPINGLOSTPETS_FTP_HOST = get_string("helpinglostpets_ftp_host", "www.helpinglo
 MADDIES_FUND_TOKEN_URL = get_string("maddies_fund_token_url", "")
 MADDIES_FUND_UPLOAD_URL = get_string("maddies_fund_upload_url", "")
 PETFINDER_FTP_HOST = get_string("petfinder_ftp_host", "members.petfinder.com")
+PETFINDER_SEND_PHOTOS_BY_FTP = get_boolean("petfinder_send_photos_by_ftp", True)
 PETRESCUE_URL = get_string("petrescue_url", "")
 RESCUEGROUPS_FTP_HOST = get_string("rescuegroups_ftp_host", "ftp.rescuegroups.org")
 SAVOURLIFE_API_KEY = get_string("savourlife_api_key", "")
