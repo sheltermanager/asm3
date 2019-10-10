@@ -1154,7 +1154,9 @@
         },
 
         currency_to_float: function(c) {
-            // Remove everything that isn't a digit, sign or our decimal mark
+            // Remove any HTML entities since the numbers inside will mess us up
+            c = c.replace(new RegExp("&[^;]+;", "ig"), '');
+            // Remove anything else that isn't a digit, sign or our decimal mark
             c = c.replace(new RegExp("[^0-9\\" + asm.currencyradix + "\\-]", "g"), '');
             c = $.trim(c);
             // Some currency formats (eg: Russian py6. and Indian Rs. have a 
