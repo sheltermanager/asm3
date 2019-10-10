@@ -872,7 +872,7 @@ def csv(l, rows, cols = None, includeheader = True):
         rd = []
         for c in cols:
             if is_currency(c):
-                rd.append(decode_html(asm3.i18n.format_currency_no_symbol(l, r[c])))
+                rd.append(asm3.i18n.format_currency_no_symbol(l, r[c]))
             elif is_date(r[c]):
                 timeportion = "00:00:00"
                 dateportion = ""
@@ -883,9 +883,11 @@ def csv(l, rows, cols = None, includeheader = True):
                     pass # Don't stop the show for bad dates/times
                 if timeportion != "00:00:00": # include time if non-midnight
                     dateportion = "%s %s" % (dateportion, timeportion)
-                rd.append(decode_html(dateportion))
+                rd.append(dateportion)
+            elif is_str(r[c]):
+                rd.append(decode_html(r[c].replace("\"", "\"\""))) # Escape any double quotes in strings
             else:
-                rd.append(decode_html(r[c]).replace("\"", "\"\"")) # Escape any double quotes in strings
+                rd.append(r[c])
         writerow(rd)
     return u"\n".join(lines).encode("utf-8")
 
