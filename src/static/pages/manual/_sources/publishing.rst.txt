@@ -271,13 +271,6 @@ ASM can send data to Maddie's Fund/MPA - an application to provide information
 and interactive help to fosterers, adopters and other caregivers. Basic data on
 the animal and contact information for the adopter/fosterer is sent.
 
-meetapet.com
-------------
-
-ASM can send adoptable animal information to www.meetapet.com, an adoption
-website. After signing up with them, you will need to get a secret and shelter
-key from them in order to send them data.
-
 petfinder.com
 -------------
 
@@ -294,9 +287,6 @@ filtering animals are the same (see previous section for reference).
 
 If you have some that are not mapped, the publisher will fail with an error
 message.
-
-The “Upload all available images” option will upload all animal photos to
-PetFinder instead of just the preferred.
 
 PetFinder has some quirks in that they indicate an unknown crossbreed by having
 a blank secondary breed with the crossbreed flag set. Since ASM doesn't allow
