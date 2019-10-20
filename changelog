@@ -1,6 +1,7 @@
 43
 ================
 
+20/10/19 Retain audit records for 6 months instead of 3 #681
 09/10/19 Logging sent emails should be the default #665
 09/10/19 CSV exports not escaping double quotes #676
 09/10/19 PetFinder: Option to send photo URLs instead of images via FTP

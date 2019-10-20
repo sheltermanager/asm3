@@ -8,6 +8,12 @@ MOVE = 3
 LOGIN = 4
 LOGOUT = 5
 
+# How many days to retain records in the audittrail table before removing them
+RETAIN_AUDIT_RECORDS = -182
+
+# How many days to retain records in the deletion table before removing them
+RETAIN_DELETION_RECORDS = -182
+
 # The columns from these tables that are human readable references so
 # that when map_diff is called we can show something more legible than
 # just the record's ID number to help the user identify it.
@@ -170,17 +176,17 @@ def action(dbo, action, username, tablename, linkid, parentlinks, description):
 
 def clean(dbo):
     """
-    Deletes audit trail records older than three months
+    Deletes audit trail records older than six months
     Deletes deletion records older than six months
     """
     # Audit records
-    d = dbo.today(offset=-93)
+    d = dbo.today(offset=RETAIN_AUDIT_RECORDS)
     count = dbo.query_int("SELECT COUNT(*) FROM audittrail WHERE AuditDate < ?", [ d ])
-    asm3.al.debug("removing %d audit records older than 93 days." % count, "audit.clean", dbo)
+    asm3.al.debug("removing %d audit records older than %d days." % (count, RETAIN_AUDIT_RECORDS), "audit.clean", dbo)
     dbo.execute("DELETE FROM audittrail WHERE AuditDate < ?", [ d ])
     # Deletion records
-    d = dbo.today(offset=-182)
+    d = dbo.today(offset=RETAIN_DELETION_RECORDS)
     count = dbo.query_int("SELECT COUNT(*) FROM deletion WHERE Date < ?", [ d ])
-    asm3.al.debug("removing %d deletion records older than 182 days." % count, "audit.clean", dbo)
+    asm3.al.debug("removing %d deletion records older than %d days." % (count, RETAIN_DELETION_RECORDS), "audit.clean", dbo)
     dbo.execute("DELETE FROM deletion WHERE Date < ?", [ d ])
 
