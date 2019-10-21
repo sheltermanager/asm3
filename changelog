@@ -1,6 +1,7 @@
 43
 ================
 
+21/10/19 Use (any sex) instead of (any gender) as default filter text
 20/10/19 Add entry category to bulk change animals #669
 20/10/19 Retain audit records for 6 months instead of 3 #681
 09/10/19 Logging sent emails should be the default #665

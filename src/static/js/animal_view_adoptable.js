@@ -221,7 +221,7 @@
             breedoptions: construct_options("(any breed)", "BREEDNAME", "BREEDNAME"),
             ageoptions: construct_options("(any age)", "AGEGROUP", "AGEGROUP"),
             sizeoptions: construct_options("(any size)", "SIZE", "SIZENAME"),
-            sexoptions: construct_options("(any gender)", "SEX", "SEXNAME")
+            sexoptions: construct_options("(any sex)", "SEX", "SEXNAME")
         });
 
         adoptables.sort(sort_single(sort_order));
