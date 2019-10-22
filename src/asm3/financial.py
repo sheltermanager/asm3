@@ -204,16 +204,22 @@ def get_accounts(dbo, onlyactive = False, onlybank = False):
         a.editroles = "|".join(editrolenames)
     return accounts
 
-def get_balance_to_date(dbo, accountid, todate):
+def get_balance_to_date(dbo, accountid, todate, reconciled=BOTH):
     """
     Returns the balance of accountid to todate.
+    reconciled: One of RECONCILED, NONRECONCILED or BOTH to indicate the transactions to include in the balance.
     """
     aid = int(accountid)
+    recfilter = ""
+    if reconciled == RECONCILED:
+        recfilter = " AND Reconciled = 1"
+    elif reconciled == NONRECONCILED:
+        recfilter = " AND Reconciled = 0"
     r = dbo.first_row( dbo.query("SELECT a.AccountType, " \
-        "(SELECT SUM(Amount) FROM accountstrx WHERE SourceAccountID = a.ID AND TrxDate < ?) AS withdrawal," \
-        "(SELECT SUM(Amount) FROM accountstrx WHERE DestinationAccountID = a.ID AND TrxDate < ?) AS deposit " \
+        "(SELECT SUM(Amount) FROM accountstrx WHERE SourceAccountID = a.ID AND TrxDate < ? %s) AS withdrawal," \
+        "(SELECT SUM(Amount) FROM accountstrx WHERE DestinationAccountID = a.ID AND TrxDate < ? %s) AS deposit " \
         "FROM accounts a " \
-        "WHERE a.ID = ?", (todate, todate, aid)) )
+        "WHERE a.ID = ?" % (recfilter, recfilter), (todate, todate, aid)) )
     deposit = r.deposit
     withdrawal = r.withdrawal
     if deposit is None: deposit = 0
@@ -222,16 +228,22 @@ def get_balance_to_date(dbo, accountid, todate):
     #if r.accounttype == INCOME or r.accounttype == EXPENSE: balance = abs(balance)
     return balance
 
-def get_balance_fromto_date(dbo, accountid, fromdate, todate):
+def get_balance_fromto_date(dbo, accountid, fromdate, todate, reconciled=BOTH):
     """
     Returns the balance of accountid from fromdate to todate.
+    reconciled: One of RECONCILED, NONRECONCILED or BOTH to indicate the transactions to include in the balance.
     """
     aid = int(accountid)
+    recfilter = ""
+    if reconciled == RECONCILED:
+        recfilter = " AND Reconciled = 1"
+    elif reconciled == NONRECONCILED:
+        recfilter = " AND Reconciled = 0"
     r = dbo.first_row( dbo.query("SELECT a.AccountType, " \
-        "(SELECT SUM(Amount) FROM accountstrx WHERE SourceAccountID = a.ID AND TrxDate >= ? AND TrxDate < ?) AS withdrawal," \
-        "(SELECT SUM(Amount) FROM accountstrx WHERE DestinationAccountID = a.ID AND TrxDate >= ? AND TrxDate < ?) AS deposit " \
+        "(SELECT SUM(Amount) FROM accountstrx WHERE SourceAccountID = a.ID AND TrxDate >= ? AND TrxDate < ? %s) AS withdrawal," \
+        "(SELECT SUM(Amount) FROM accountstrx WHERE DestinationAccountID = a.ID AND TrxDate >= ? AND TrxDate < ? %s) AS deposit " \
         "FROM accounts a " \
-        "WHERE a.ID = ?", (fromdate, todate, fromdate, todate, aid)) )
+        "WHERE a.ID = ?" % (recfilter, recfilter), (fromdate, todate, fromdate, todate, aid)) )
     deposit = r.deposit
     withdrawal = r.withdrawal
     if deposit is None: deposit = 0
@@ -248,7 +260,7 @@ def mark_reconciled(dbo, trxid):
         "Reconciled": 1
     })
 
-def get_transactions(dbo, accountid, datefrom, dateto, reconciled):
+def get_transactions(dbo, accountid, datefrom, dateto, reconciled=BOTH):
     """
     Gets a list of transactions for the account given, between
     two python dates. PERSONID and PERSONNAME are returned for
@@ -298,9 +310,9 @@ def get_transactions(dbo, accountid, datefrom, dateto, reconciled):
         "ORDER BY t.TrxDate, t.ID" % ( dbo.sql_date(datefrom, includeTime=False), dbo.sql_date(dateto, includeTime=False), recfilter, accountid, accountid))
     balance = 0
     if period != "":
-        balance = get_balance_fromto_date(dbo, accountid, asm3.i18n.display2python(l, period), datefrom)
+        balance = get_balance_fromto_date(dbo, accountid, asm3.i18n.display2python(l, period), datefrom, reconciled)
     else:
-        balance = get_balance_to_date(dbo, accountid, datefrom)
+        balance = get_balance_to_date(dbo, accountid, datefrom, reconciled)
     for r in rows:
         # Error scenario - this account is both source and destination
         if r.sourceaccountid == accountid and r.destinationaccountid == accountid:
