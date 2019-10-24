@@ -1,6 +1,7 @@
 43
 ================
 
+24/10/19 Show date deceased in left shelter for on-shelter death #658
 21/10/19 Calculate balances based on reconciled filter #685
 21/10/19 Use (any sex) instead of (any gender) as default filter text
 20/10/19 Add entry category to bulk change animals #669

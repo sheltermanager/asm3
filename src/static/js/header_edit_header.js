@@ -108,6 +108,13 @@ $(function() {
             if (a.IDENTICHIPPED == 1) {
                 chipinfo = '<tr><td>' + _("Microchip") + ':</td><td><b>' + a.IDENTICHIPNUMBER + " " + common.nulltostr(a.IDENTICHIP2NUMBER) + '</b></td></tr>';
             }
+            var leftshelterdate = "";
+            if (a.ARCHIVED == 1 && a.DECEASEDDATE && a.DIEDOFFSHELTER == 0) { 
+                leftshelterdate = format.date(a.DECEASEDDATE); 
+            }
+            else if (a.ARCHIVED == 1) { 
+                leftshelterdate = format.date(a.ACTIVEMOVEMENTDATE); 
+            }
             var first_column = [
                 '<input type="hidden" id="animalid" value="' + a.ID + '" />',
                 '<div class="asm-grid">',
@@ -142,7 +149,7 @@ $(function() {
                 '</tr>',
                 hold,
                 '<tr>',
-                '<td id="hleftshel">' + _("Left shelter") + ':</td><td><b>' + (a.ARCHIVED == 1 ? format.date(a.ACTIVEMOVEMENTDATE) : "") + '</b></td>',
+                '<td id="hleftshel">' + _("Left shelter") + ':</td><td><b>' + leftshelterdate + '</b></td>',
                 '</tr>',
                 '<tr>',
                 '<td id="htimeonshel">' + _("Time on shelter") + ':</td><td><b>' + a.TIMEONSHELTER + ' (' + a.DAYSONSHELTER + ' ' + _("days") + ')</b></td>',
