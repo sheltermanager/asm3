@@ -961,7 +961,7 @@ def licence_tags(dbo, li):
         "LICENCECOMMENTS":      li["COMMENTS"],
         "LICENSETYPENAME":      li["LICENCETYPENAME"],
         "LICENSENUMBER":        li["LICENCENUMBER"],
-        "LICENSEFEE":           li["LICENCEFEE"],
+        "LICENSEFEE":           format_currency_no_symbol(l, li["LICENCEFEE"]),
         "LICENSEISSUED":        python2display(l, li["ISSUEDATE"]),
         "LICENSEEXPIRES":       python2display(l, li["EXPIRYDATE"]),
         "LICENSECOMMENTS":      li["COMMENTS"]

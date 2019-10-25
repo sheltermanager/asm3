@@ -1,6 +1,7 @@
 43
 ================
 
+25/10/19 Fix bad formatting of <<LicenseFee>> wordkey
 24/10/19 Show date deceased in left shelter for on-shelter death #658
 21/10/19 Calculate balances based on reconciled filter #685
 21/10/19 Use (any sex) instead of (any gender) as default filter text
