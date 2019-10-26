@@ -21,7 +21,7 @@ FROM log l
 INNER JOIN logtype lt ON lt.ID = l.logtypeid
 WHERE l.date >= '$ASK DATE Enter the from date$'
 AND l.date <= '$ASK DATE Enter the to date$ 23:59:59'
-AND l.comments LIKE 'ES01%' AND NOT EXISTS(SELECT ID FROM log WHERE LinkType = l.linktype AND LinkID = l.linkid AND Comments LIKE 'ES02%')
+AND l.comments LIKE 'ES01%' AND NOT EXISTS(SELECT ID FROM log WHERE LinkType = l.linktype AND LinkID = l.linkid AND Comments LIKE 'ES02%' AND Date >= l.date)
 ORDER BY lt.logtypename, l.date desc
 ###
 $$HEADER
