@@ -700,7 +700,7 @@ class media(ASMEndpoint):
             if len(m) == 0: self.notfound()
             m = m[0]
             if not m["MEDIANAME"].endswith("html"): continue
-            content = asm3.dbfs.get_string(dbo, m["MEDIANAME"])
+            content = asm3.utils.bytes2str(asm3.dbfs.get_string(dbo, m["MEDIANAME"]))
             contentpdf = asm3.utils.html_to_pdf(content, BASE_URL, MULTIPLE_DATABASES and dbo.database or "")
             asm3.utils.send_email(dbo, post["from"], emailadd, post["cc"], post["bcc"], m["MEDIANOTES"], post["body"], "html", [ ("document.pdf", "application/pdf", contentpdf ) ])
             if post.boolean("addtolog"):
