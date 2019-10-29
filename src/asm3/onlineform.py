@@ -2,6 +2,7 @@
 import asm3.al
 import asm3.animal
 import asm3.animalcontrol
+import asm3.cachemem
 import asm3.configuration
 import asm3.geo
 import asm3.i18n
@@ -18,6 +19,7 @@ import asm3.waitinglist
 from asm3.sitedefs import BASE_URL, ASMSELECT_CSS, ASMSELECT_JS, JQUERY_JS, JQUERY_UI_JS, JQUERY_UI_CSS, SIGNATURE_JS, TIMEPICKER_CSS, TIMEPICKER_JS, TOUCHPUNCH_JS
 
 import sys
+import threading
 import web
 
 if sys.version_info[0] > 2: # PYTHON3
@@ -86,6 +88,8 @@ FORM_FIELDS = [
     "dropoffaddress", "dropofftown", "dropoffcity", "dropoffcounty", "dropoffstate", "dropoffpostcode", "dropoffzipcode", "dropoffcountry", "dropoffdate", "dropofftime"
 ]
 
+collationidlock = threading.Lock()
+
 class FormHTMLParser(HTMLParser):
     tag = ""
     title = ""
@@ -103,6 +107,18 @@ class FormHTMLParser(HTMLParser):
     def handle_data(self, data):
         if self.tag == "title":
             self.title = data
+
+def get_collationid(dbo):
+    """ Returns the next collation ID value for online forms and increments it.
+        A cache value is used with single thread access (slight overkill for multi-db installs, but simple and quick). 
+        If no value is found, the latest from the table+1 is used and cached. """
+    with collationidlock:
+        key = "%s_collationid" % dbo.database
+        nci = asm3.cachemem.increment(key)
+        if nci is None:
+            nci = 1 + dbo.query_int("SELECT MAX(CollationID) FROM onlineformincoming")
+            asm3.cachemem.put(key, nci + 1, 86400)
+        return nci
 
 def get_onlineform(dbo, formid):
     """ Returns the online form with ID formid """
@@ -611,9 +627,10 @@ def insert_onlineformincoming_from_form(dbo, post, remoteip):
         if post[JSKEY_NAME] != JSKEY_VALUE:
             raise asm3.utils.ASMValidationError("Invalid verification key")
 
+    collationid = get_collationid(dbo)
+
     IGNORE_FIELDS = [ JSKEY_NAME, "formname", "flags", "redirect", "account", "filechooser", "method" ]
     l = dbo.locale
-    collationid = dbo.query_int("SELECT MAX(CollationID) FROM onlineformincoming") + 1
     formname = post["formname"]
     posteddate = asm3.i18n.now(dbo.timezone)
     flags = post["flags"]
