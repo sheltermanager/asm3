@@ -106,7 +106,7 @@ INNER JOIN animaltype t ON t.ID = a.AnimalTypeID
 INNER JOIN species p ON p.ID = a.SpeciesID
 INNER JOIN internallocation i ON i.ID = a.ShelterLocation
 INNER JOIN lksex s ON s.ID = a.Sex
-WHERE a.Neutered = 0 AND DateOfBirth <= (now() - interval '6 months')
+WHERE a.Neutered = 0 AND DateOfBirth <= (now() - interval '6 months') AND DeceasedDate Is Null 
 ORDER BY t.AnimalType, a.AnimalName
 ###
 $$HEADER
