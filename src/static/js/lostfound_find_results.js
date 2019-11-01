@@ -80,6 +80,7 @@ $(function() {
 
         bind: function() {
             $("#searchresults").table();
+            $("#searchresults").trigger("sorton", [[[4, 0]]]); // Sort on date descending (col 4, 0=desc)
         },
 
         name: "lostfound_find_results",

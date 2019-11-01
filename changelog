@@ -1,6 +1,7 @@
 43
 ================
 
+01/11/19 Default sort for lost/found is date desc
 29/10/19 Fix online form race condition in collation id generator #690
 25/10/19 Fix bad formatting of <<LicenseFee>> wordkey
 24/10/19 Show date deceased in left shelter for on-shelter death #658
