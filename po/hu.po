@@ -651,7 +651,7 @@ msgstr "Hozzáadva"
 
 #: main.js header_edit_header.js common_tableform.js
 msgid "Added by {0} on {1}"
-msgstr "Hozzáadva (0) által (1)-kor"
+msgstr "Hozzáadva {0} által {1}-kor"
 
 #: person.js waitinglist.js animal.js incident.js lostfound.js
 msgid "Additional"
@@ -1424,7 +1424,7 @@ msgstr "A találkozó dátuma érvényes dátum kell legyen"
 
 #: clinic_invoice.js clinic.py
 msgid "Appointment {0}. {1} on {2} for {3}"
-msgstr "Találkozó (0), (1) (2)-án (3)-nak"
+msgstr "Találkozó {0}, {1} {2}-án {3}-nak"
 
 #: clinic_appointment.js
 msgid "Appointments need a date and time."
@@ -3063,7 +3063,7 @@ msgstr "Dátum"
 
 #: financial.py
 msgid "Date '{0}' is not valid."
-msgstr "Dátum '(0)' érvénytelen"
+msgstr "Dátum '{0}' érvénytelen"
 
 #: animal.js animal_new.js mobile.py html.py
 msgid "Date Brought In"
@@ -5060,7 +5060,7 @@ msgstr "Ideiglenesen befogadott állat"
 
 #: movement.py
 msgid "Fostered to {0} since {1}"
-msgstr "Ideiglenesen befogadva (0) által (0) óta "
+msgstr "Ideiglenesen befogadva {0} által {1} óta "
 
 #: person_find_results.js options.js animal_find_results.js
 #: header_edit_header.js onlineforms.js animal_new.js shelterview.js common.js
@@ -5639,7 +5639,7 @@ msgstr "Visszatartás:"
 
 #: common.js animal.py
 msgid "Hold until {0}"
-msgstr "Előjegyzés (0)-ig"
+msgstr "Előjegyzés {0}-ig"
 
 #: dbupdate.py
 msgid "Holland Lop"
@@ -6636,7 +6636,7 @@ msgstr "Az almokhoz legalább egy dátum és szám megadása szükséges."
 
 #: animal.py
 msgid "Live Releases {0}"
-msgstr "Élő kiadások (0)"
+msgstr "Élő kiadások {0}"
 
 #: dbupdate.py
 msgid "Liver"
@@ -7945,11 +7945,11 @@ msgstr "Menhelyen"
 #: code.py
 msgid "On shelter for {0} days, daily cost {1}, cost record total <b>{2}</b>"
 msgstr ""
-"{0} napja a menhelyen, napi költség (1), teljes költség feljegyzés <b>{2}</b>"
+"{0} napja a menhelyen, napi költség {1}, teljes költség feljegyzés <b>{2}</b>"
 
 #: animal_costs.js
 msgid "On shelter for {0} days. Total cost: {1}"
-msgstr "{0} napja a menhelyen. Teljes költség (1)"
+msgstr "{0} napja a menhelyen. Teljes költség {1}"
 
 #: options.js
 msgid "Once assigned, codes cannot be changed"
