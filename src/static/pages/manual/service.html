@@ -361,11 +361,11 @@ species) to all as well as the CLOSE link text:</p>
 filter based on other elements in the page. The callback receives the complete
 animal record and must return true if the record is to be included in the list
 of thumbnails.</p>
-<p>For example, to only output animals with an animal type of dog, you could use
+<p>For example, to only output animals with a species of dog, you could use
 this callback:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">script</span><span class="o">&gt;</span>
 <span class="n">function</span> <span class="n">asm3_adoptable_filter</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">arr</span><span class="p">)</span> <span class="p">{</span>
-    <span class="k">return</span> <span class="n">a</span><span class="o">.</span><span class="n">ANIMALTYPENAME</span> <span class="o">==</span> <span class="s2">&quot;D (Dog)&quot;</span><span class="p">;</span>
+    <span class="k">return</span> <span class="n">a</span><span class="o">.</span><span class="n">SPECIESNAME</span> <span class="o">==</span> <span class="s2">&quot;Dog&quot;</span><span class="p">;</span>
 <span class="p">}</span>
 <span class="o">&lt;/</span><span class="n">script</span><span class="o">&gt;</span>
 <span class="o">&lt;</span><span class="n">div</span> <span class="nb">id</span><span class="o">=</span><span class="s2">&quot;asm3-adoptables&quot;</span> <span class="o">/&gt;</span>

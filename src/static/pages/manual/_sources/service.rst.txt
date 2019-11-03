@@ -173,12 +173,12 @@ filter based on other elements in the page. The callback receives the complete
 animal record and must return true if the record is to be included in the list
 of thumbnails.
 
-For example, to only output animals with an animal type of dog, you could use
+For example, to only output animals with a species of dog, you could use
 this callback::
 
     <script>
     function asm3_adoptable_filter(a, index, arr) {
-        return a.ANIMALTYPENAME == "D (Dog)";
+        return a.SPECIESNAME == "Dog";
     }
     </script>
     <div id="asm3-adoptables" />
