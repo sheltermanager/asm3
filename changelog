@@ -1,6 +1,7 @@
 43
 ================
 
+04/11/19 Find animal rename Comments contain to Description contains #688
 01/11/19 PICKUPLOCATION and PICKUPADDRESS wordkeys only display for pickup
 01/11/19 Default sort for lost/found is date desc
 29/10/19 Fix online form race condition in collation id generator #690

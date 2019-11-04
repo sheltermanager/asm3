@@ -222,7 +222,7 @@ $(function() {
                 '</tr>',
                 '<tr>',
                 '<td>',
-                '<label for="comments">' + _("Comments Contain") + '</label>',
+                '<label for="comments">' + _("Description Contains") + '</label>',
                 '</td>',
                 '<td>',
                 '<input id="comments" data="comments" class="asm-textbox" />',
