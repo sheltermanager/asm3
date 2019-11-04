@@ -2137,6 +2137,12 @@ def update_animal_from_form(dbo, post, username):
             asm3.log.add_log(dbo, username, asm3.log.ANIMAL, aid, asm3.configuration.weight_change_log_type(dbo),
                 "%s%s" % (weight, units))
 
+    # If the animal is newly deceased, mark any diary notes completed
+    if post.date("deceaseddate") is not None:
+        olddecdate = dbo.query_date("SELECT DeceasedDate FROM animal WHERE ID=?", [aid])
+        if olddecdate != post.date("deceaseddate"):
+            asm3.diary.complete_diary_notes_for_animal(dbo, username, aid)
+
     # Sort out any flags
     def bi(b): 
         return b and 1 or 0
@@ -2368,6 +2374,8 @@ def update_deceased_from_form(dbo, username, post):
     # Update denormalised fields after the deceased change
     update_animal_status(dbo, animalid)
     update_variable_animal_data(dbo, animalid)
+    # Close any diary notes related to this animal
+    asm3.diary.complete_diary_notes_for_animal(dbo, username, animalid)
 
 def update_diary_linkinfo(dbo, animalid, a = None, diaryupdatebatch = None):
     """

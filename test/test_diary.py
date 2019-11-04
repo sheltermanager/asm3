@@ -43,6 +43,9 @@ class TestDiary(unittest.TestCase):
     def test_complete_diary_note(self):
         asm3.diary.complete_diary_note(base.get_dbo(), "user", self.nid)
 
+    def test_complete_diary_notes_for_animal(self):
+        asm3.diary.complete_diary_notes_for_animal(base.get_dbo(), "user", 1)
+
     def test_rediarise_diary_note(self):
         asm3.diary.rediarise_diary_note(base.get_dbo(), "user", self.nid, base.today())
 

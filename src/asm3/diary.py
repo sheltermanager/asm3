@@ -145,6 +145,14 @@ def complete_diary_note(dbo, username, diaryid):
         "DateCompleted": dbo.today()
     }, username)
 
+def complete_diary_notes_for_animal(dbo, username, animalid):
+    """
+    Marks all diary notes for an animal complete.
+    """
+    dbo.update("diary", "LinkType=%d AND LinkID=%d" % (ANIMAL, animalid), {
+        "DateCompleted": dbo.today()
+    }, username)
+
 def rediarise_diary_note(dbo, username, diaryid, newdate):
     """
     Moves a diary note on to the date supplied (newdate is a python date)
