@@ -490,7 +490,14 @@ def animal_tags(dbo, a, includeAdditional=True, includeCosts=True, includeDiet=T
             "VACCINATIONADMINISTERINGVETZIPCODE":   "ADMINISTERINGVETPOSTCODE",
             "VACCINATIONADMINISTERINGVETEMAIL":     "ADMINISTERINGVETEMAIL"
         }
-        tags.update(table_tags(dbo, d, asm3.medical.get_vaccinations(dbo, a["ID"], not iic), "VACCINATIONTYPE", "DATEREQUIRED", "DATEOFVACCINATION"))
+        vaccinations = asm3.medical.get_vaccinations(dbo, a["ID"], not iic)
+        tags.update(table_tags(dbo, d, vaccinations, "VACCINATIONTYPE", "DATEREQUIRED", "DATEOFVACCINATION"))
+        tags["ANIMALVACCINATIONS"] = html_table(l, vaccinations, (
+            ( "VACCINATIONTYPE", _("Type", l) ),
+            ( "DATEREQUIRED", _("Due", l)),
+            ( "DATEOFVACCINATION", _("Given", l)),
+            ( "COMMENTS", _("Comments", l)) 
+        ))
 
         # Tests
         d = {
@@ -512,9 +519,16 @@ def animal_tags(dbo, a, includeAdditional=True, includeCosts=True, includeDiet=T
             "TESTADMINISTERINGVETPOSTCODE":  "ADMINISTERINGVETPOSTCODE",
             "TESTADMINISTERINGVETZIPCODE":   "ADMINISTERINGVETPOSTCODE",
             "TESTADMINISTERINGVETEMAIL":     "ADMINISTERINGVETEMAIL"
-
         }
-        tags.update(table_tags(dbo, d, asm3.medical.get_tests(dbo, a["ID"], not iic), "TESTNAME", "DATEREQUIRED", "DATEOFTEST"))
+        tests = asm3.medical.get_tests(dbo, a["ID"], not iic)
+        tags.update(table_tags(dbo, d, tests, "TESTNAME", "DATEREQUIRED", "DATEOFTEST"))
+        tags["ANIMALTESTS"] = html_table(l, tests, (
+            ( "TESTNAME", _("Type", l) ),
+            ( "DATEREQUIRED", _("Required", l)),
+            ( "DATEOFTEST", _("Performed", l)),
+            ( "RESULTNAME", _("Result", l)),
+            ( "COMMENTS", _("Comments", l)) 
+        ))
 
         # Medical
         d = {
@@ -532,7 +546,15 @@ def animal_tags(dbo, a, includeAdditional=True, includeCosts=True, includeDiet=T
             "MEDICALLASTTREATMENTCOMMENTS": "LASTTREATMENTCOMMENTS",
             "MEDICALCOST":              "c:COST"
         }
-        tags.update(table_tags(dbo, d, asm3.medical.get_regimens(dbo, a["ID"], not iic), "TREATMENTNAME", "NEXTTREATMENTDUE", "LASTTREATMENTGIVEN"))
+        medicals = asm3.medical.get_regimens(dbo, a["ID"], not iic)
+        tags.update(table_tags(dbo, d, medicals, "TREATMENTNAME", "NEXTTREATMENTDUE", "LASTTREATMENTGIVEN"))
+        tags["ANIMALMEDICALS"] = html_table(l, medicals, (
+            ( "TREATMENTNAME", _("Treatment", l) ),
+            ( "DOSAGE", _("Dosage", l) ),
+            ( "LASTTREATMENTGIVEN", _("Given", l)),
+            ( "NEXTTREATMENTDUE", _("Due", l)),
+            ( "COMMENTS", _("Comments", l)) 
+        ))
 
     # Diet
     if includeDiet:
@@ -654,7 +676,14 @@ def animal_tags(dbo, a, includeAdditional=True, includeCosts=True, includeDiet=T
             "LOGCOMMENTS":              "COMMENTS",
             "LOGCREATEDBY":             "CREATEDBY"
         }
-        tags.update(table_tags(dbo, d, asm3.log.get_logs(dbo, asm3.log.ANIMAL, a["ID"], 0, asm3.log.ASCENDING), "LOGTYPENAME", "DATE", "DATE"))
+        logs = asm3.log.get_logs(dbo, asm3.log.ANIMAL, a["ID"], 0, asm3.log.ASCENDING)
+        tags.update(table_tags(dbo, d, logs, "LOGTYPENAME", "DATE", "DATE"))
+        tags["ANIMALLOGS"] = html_table(l, logs, (
+            ( "DATE", _("Date", l)),
+            ( "LOGTYPENAME", _("Type", l)),
+            ( "CREATEDBY", _("By", l)),
+            ( "COMMENTS", _("Comments", l))
+        ))
 
     return tags
 
@@ -1263,6 +1292,35 @@ def append_tags(tags1, tags2):
     tags.update(tags2)
     return tags
 
+def html_table(l, rows, cols):
+    """
+    Generates an HTML table for TinyMCE from rows, choosing the cols.
+    cols is a list of tuples containing the field name from rows and a localised column name for output.
+    Eg: ( ( "ID", "Text for ID field" ) )
+    """
+    h = []
+    h.append("<table border=\"1\">")
+    h.append("<thead><tr>")
+    for colfield, coltext in cols:
+        h.append("<th>%s</th>" % coltext)
+    h.append("</tr></thead>")
+    h.append("<tbody>")
+    for r in rows:
+        h.append("<tr>")
+        for colfield, coltext in cols:
+            if asm3.utils.is_date(r[colfield]):
+                h.append("<td>%s</td>" % python2display(l, r[colfield]))
+            elif r[colfield] is None:
+                h.append("<td></td>")
+            elif asm3.utils.is_str(r[colfield]) or asm3.utils.is_unicode(r[colfield]):
+                h.append("<td>%s</td>" % r[colfield].replace("\n", "<br/>"))
+            else:
+                h.append("<td>%s</td>" % r[colfield])
+        h.append("</tr>")
+    h.append("</tbody>")
+    h.append("</table>")
+    return "".join(h)
+
 def table_get_value(l, row, k):
     """
     Returns row[k], looking for a type prefix in k -
@@ -1394,11 +1452,12 @@ def substitute_tags(searchin, tags, use_xml_escaping = True, opener = "&lt;&lt;"
                 if newval is not None:
                     newval = str(newval)
                     # Escape xml entities unless the replacement tag is an image
-                    # or it contains HTML entities or <br tags
+                    # or it contains HTML entities or <br> tags or <table> tags
                     if use_xml_escaping and \
                        not newval.lower().startswith("<img") and \
                        not newval.lower().find("&#") != -1 and \
-                       not newval.lower().find("<br/>") != -1:
+                       not newval.lower().find("<br") != -1 and \
+                       not newval.lower().find("<table") != -1:
                         newval = newval.replace("&", "&amp;")
                         newval = newval.replace("<", "&lt;")
                         newval = newval.replace(">", "&gt;")

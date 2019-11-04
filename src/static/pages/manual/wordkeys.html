@@ -136,6 +136,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#found-animal-keys">Found Animal Keys</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#waiting-list-keys">Waiting List Keys</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#clinic-keys">Clinic Keys</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#table-keys">Table Keys</a></li>
 </ul>
 </li>
 </ul>
@@ -1474,6 +1475,27 @@ appointments.</p>
 <dd>The tax rate applied to the invoice</dd>
 <dt>InvoiceTotal</dt>
 <dd>The total of invoice amount and VAT/Tax</dd>
+</dl>
+</div>
+<div class="section" id="table-keys">
+<h2>Table Keys<a class="headerlink" href="#table-keys" title="Permalink to this headline">¶</a></h2>
+<p>These are special keys that insert a table into your document that contains the
+complete data from a tab.</p>
+<p>These keys do not allow the flexibility of formatting that the other keys
+offer, but they do offer a simple way of putting an animal’s medical history
+into a document without having to create a table containing many “just in case”
+placeholder keys.</p>
+<p>They will also dynamically expand the document according to how many records
+there are.  Records are output in ascending order of date.</p>
+<dl class="docutils">
+<dt>AnimalVaccinations</dt>
+<dd>Inserts a table containing all the animal’s vaccinations into the document</dd>
+<dt>AnimalTests</dt>
+<dd>Inserts a table containing all of the animal’s recorded tests into the document</dd>
+<dt>AnimalMedicals</dt>
+<dd>Inserts a table containing all of the animal’s medical treatments</dd>
+<dt>AnimalLogs</dt>
+<dd>Inserts a table containing all of the animal’s log entries</dd>
 </dl>
 </div>
 </div>
