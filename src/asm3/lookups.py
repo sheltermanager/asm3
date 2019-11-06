@@ -975,7 +975,7 @@ def get_lookup(dbo, tablename, namefield):
         return dbo.query("SELECT b.*, s.SpeciesName FROM breed b LEFT OUTER JOIN species s ON s.ID = b.SpeciesID ORDER BY b.BreedName")
     return dbo.query("SELECT * FROM %s ORDER BY %s" % ( tablename, namefield ))
 
-def insert_lookup(dbo, lookup, name, desc="", speciesid=0, pfbreed="", pfspecies="", apcolour="", units="", site=1, defaultcost=0, vat=0, retired=0):
+def insert_lookup(dbo, username, lookup, name, desc="", speciesid=0, pfbreed="", pfspecies="", apcolour="", units="", site=1, defaultcost=0, vat=0, retired=0):
     t = LOOKUP_TABLES[lookup]
     nid = 0
     if lookup == "basecolour":
@@ -984,7 +984,7 @@ def insert_lookup(dbo, lookup, name, desc="", speciesid=0, pfbreed="", pfspecies
             "BaseColourDescription":    desc,
             "AdoptAPetColour":          apcolour,
             "IsRetired":                retired
-        })
+        }, username, setCreated=False)
     elif lookup == "breed":
         return dbo.insert("breed", {
             "BreedName":        name,
@@ -992,7 +992,7 @@ def insert_lookup(dbo, lookup, name, desc="", speciesid=0, pfbreed="", pfspecies
             "PetFinderBreed":   pfbreed,
             "SpeciesID":        speciesid,
             "IsRetired":        retired
-        })
+        }, username, setCreated=False)
     elif lookup == "internallocation":
         return dbo.insert("internallocation", {
             "LocationName":         name,
@@ -1000,21 +1000,21 @@ def insert_lookup(dbo, lookup, name, desc="", speciesid=0, pfbreed="", pfspecies
             "Units":                units,
             "SiteID":               site,
             "IsRetired":            retired
-        })
+        }, username, setCreated=False)
     elif lookup == "species":
         return dbo.insert("species", {
             "SpeciesName":          name,
             "SpeciesDescription":   desc,
             "PetFinderSpecies":     pfspecies,
             "IsRetired":            retired
-        })
+        }, username, setCreated=False)
     elif lookup == "costtype":
         nid = dbo.insert(lookup, {
             t[LOOKUP_NAMEFIELD]:    name,
             t[LOOKUP_DESCFIELD]:    desc,
             "DefaultCost":          defaultcost,
             "IsRetired":            retired
-        })
+        }, username, setCreated=False)
         # Create matching cost type account
         if asm3.configuration.create_cost_trx(dbo): asm3.financial.insert_account_from_costtype(dbo, nid, name, desc)
         return nid
@@ -1025,7 +1025,7 @@ def insert_lookup(dbo, lookup, name, desc="", speciesid=0, pfbreed="", pfspecies
             "DefaultCost":          defaultcost,
             "IsVAT":                vat,
             "IsRetired":            retired
-        })
+        }, username, setCreated=False)
         # Create a matching account if we have a donation type
         if asm3.configuration.create_donation_trx(dbo): asm3.financial.insert_account_from_donationtype(dbo, nid, name, desc)
         return nid
@@ -1036,26 +1036,26 @@ def insert_lookup(dbo, lookup, name, desc="", speciesid=0, pfbreed="", pfspecies
             t[LOOKUP_DESCFIELD]:    desc,
             "DefaultCost":          defaultcost,
             "IsRetired":            retired
-        })
+        }, username, setCreated=False)
         return nid
     elif lookup == "lkownerflags" or lookup == "lkanimalflags":
         return dbo.insert(lookup, {
             t[LOOKUP_NAMEFIELD]:    name.replace(",", " ").replace("|", " ") # sanitise bad values for flags
-        })
+        }, username, setCreated=False)
     elif t[LOOKUP_DESCFIELD] == "":
         # No description
         if t[LOOKUP_MODIFIERS].find("ret") != -1:
-            return dbo.insert(lookup, { t[LOOKUP_NAMEFIELD]: name, "IsRetired": retired })    
+            return dbo.insert(lookup, { t[LOOKUP_NAMEFIELD]: name, "IsRetired": retired }, username, setCreated=False)    
         else:
-            return dbo.insert(lookup, { t[LOOKUP_NAMEFIELD]: name })    
+            return dbo.insert(lookup, { t[LOOKUP_NAMEFIELD]: name }, username, setCreated=False)    
     else:
         # Name/Description
         if t[LOOKUP_MODIFIERS].find("ret") != -1:
-            return dbo.insert(lookup, { t[LOOKUP_NAMEFIELD]: name, t[LOOKUP_DESCFIELD]: desc, "IsRetired": retired })    
+            return dbo.insert(lookup, { t[LOOKUP_NAMEFIELD]: name, t[LOOKUP_DESCFIELD]: desc, "IsRetired": retired }, username, setCreated=False)
         else:
-            return dbo.insert(lookup, { t[LOOKUP_NAMEFIELD]: name, t[LOOKUP_DESCFIELD]: desc })    
+            return dbo.insert(lookup, { t[LOOKUP_NAMEFIELD]: name, t[LOOKUP_DESCFIELD]: desc }, username, setCreated=False)
 
-def update_lookup(dbo, iid, lookup, name, desc="", speciesid=0, pfbreed="", pfspecies="", apcolour="", units="", site=1, defaultcost=0, vat=0, retired=0):
+def update_lookup(dbo, username, iid, lookup, name, desc="", speciesid=0, pfbreed="", pfspecies="", apcolour="", units="", site=1, defaultcost=0, vat=0, retired=0):
     t = LOOKUP_TABLES[lookup]
     if lookup == "basecolour":
         dbo.update("basecolour", iid, { 
@@ -1063,7 +1063,7 @@ def update_lookup(dbo, iid, lookup, name, desc="", speciesid=0, pfbreed="", pfsp
             "BaseColourDescription":    desc,
             "AdoptAPetColour":          apcolour,
             "IsRetired":                retired
-        })
+        }, username, setLastChanged=False)
     elif lookup == "breed":
         dbo.update("breed", iid, {
             "BreedName":            name,
@@ -1071,7 +1071,7 @@ def update_lookup(dbo, iid, lookup, name, desc="", speciesid=0, pfbreed="", pfsp
             "PetFinderBreed":       pfbreed,
             "SpeciesID":            speciesid,
             "IsRetired":            retired
-        })
+        }, username, setLastChanged=False)
     elif lookup == "internallocation":
         dbo.update("internallocation", iid, {
             "LocationName":         name,
@@ -1079,14 +1079,14 @@ def update_lookup(dbo, iid, lookup, name, desc="", speciesid=0, pfbreed="", pfsp
             "Units":                units,
             "SiteID":               site,
             "IsRetired":            retired
-        })
+        }, username, setLastChanged=False)
     elif lookup == "species":
         dbo.update("species", iid, {
             "SpeciesName":          name,
             "SpeciesDescription":   desc,
             "PetFinderSpecies":     pfspecies,
             "IsRetired":            retired
-        })
+        }, username, setLastChanged=False)
     elif lookup == "donationtype":
         dbo.update(lookup, iid, {
             t[LOOKUP_NAMEFIELD]:    name,
@@ -1094,7 +1094,7 @@ def update_lookup(dbo, iid, lookup, name, desc="", speciesid=0, pfbreed="", pfsp
             "DefaultCost":          defaultcost,
             "IsVAT":                vat,
             "IsRetired":            retired
-        })
+        }, username, setLastChanged=False)
     elif lookup == "costtype" or lookup == "testtype" or lookup == "voucher" or lookup == "vaccinationtype" \
         or lookup == "traptype" or lookup == "licencetype" or lookup == "citationtype":
         dbo.update(lookup, iid, {
@@ -1102,11 +1102,11 @@ def update_lookup(dbo, iid, lookup, name, desc="", speciesid=0, pfbreed="", pfsp
             t[LOOKUP_DESCFIELD]:    desc,
             "DefaultCost":          defaultcost,
             "IsRetired":            retired
-        })
+        }, username, setLastChanged=False)
     elif lookup == "lkownerflags" or lookup == "lkanimalflags":
         oldflag = dbo.query_string("SELECT Flag FROM %s WHERE ID = ?" % lookup, [iid])
         newflag = name.replace(",", " ").replace("|", " ")
-        dbo.update(lookup, iid, { t[LOOKUP_NAMEFIELD]: newflag })
+        dbo.update(lookup, iid, { t[LOOKUP_NAMEFIELD]: newflag }, username, setLastChanged=False)
         # Update the text in flags fields where appropriate
         if lookup == "lkownerflags":
             dbo.execute("UPDATE owner SET AdditionalFlags = %s WHERE AdditionalFlags LIKE ?" % dbo.sql_replace("AdditionalFlags"), (oldflag, newflag, "%%%s%%" % oldflag))
@@ -1115,28 +1115,28 @@ def update_lookup(dbo, iid, lookup, name, desc="", speciesid=0, pfbreed="", pfsp
     elif t[LOOKUP_DESCFIELD] == "":
         # No description
         if t[LOOKUP_MODIFIERS].find("ret") != -1:
-            dbo.update(lookup, iid, { t[LOOKUP_NAMEFIELD]: name, "IsRetired": retired })
+            dbo.update(lookup, iid, { t[LOOKUP_NAMEFIELD]: name, "IsRetired": retired }, username, setLastChanged=False)
         else:
-            dbo.update(lookup, iid, { t[LOOKUP_NAMEFIELD]: name })
+            dbo.update(lookup, iid, { t[LOOKUP_NAMEFIELD]: name }, username, setLastChanged=False)
     else:
         # Name/Description
         if t[LOOKUP_MODIFIERS].find("ret") != -1:
-            dbo.update(lookup, iid, { t[LOOKUP_NAMEFIELD]: name, t[LOOKUP_DESCFIELD]: desc, "IsRetired": retired })
+            dbo.update(lookup, iid, { t[LOOKUP_NAMEFIELD]: name, t[LOOKUP_DESCFIELD]: desc, "IsRetired": retired }, username, setLastChanged=False)
         else:
-            dbo.update(lookup, iid, { t[LOOKUP_NAMEFIELD]: name, t[LOOKUP_DESCFIELD]: desc })
+            dbo.update(lookup, iid, { t[LOOKUP_NAMEFIELD]: name, t[LOOKUP_DESCFIELD]: desc }, username, setLastChanged=False)
 
-def update_lookup_retired(dbo, lookup, iid, retired):
+def update_lookup_retired(dbo, username, lookup, iid, retired):
     """ Updates lookup item with ID=iid, setting IsRetired=retired """
-    dbo.update(lookup, iid, { "IsRetired": retired })
+    dbo.update(lookup, iid, { "IsRetired": retired }, username, setLastChanged=False)
 
-def delete_lookup(dbo, lookup, iid):
+def delete_lookup(dbo, username, lookup, iid):
     l = dbo.locale
     t = LOOKUP_TABLES[lookup]
     for fv in t[LOOKUP_FOREIGNKEYS]:
         table, field = fv.split(".")
         if 0 < dbo.query_int("SELECT COUNT(*) FROM %s WHERE %s = %s" % (table, field, iid)):
             raise asm3.utils.ASMValidationError(_("This item is referred to in the database ({0}) and cannot be deleted until it is no longer in use.", l).format(fv))
-    dbo.delete(lookup, iid)
+    dbo.delete(lookup, iid, username)
 
 def get_microchip_manufacturer(l, chipno):
     """

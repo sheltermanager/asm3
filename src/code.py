@@ -94,7 +94,7 @@ def session_manager():
     # Set session parameters, 24 hour timeout
     web.config.session_parameters["cookie_name"] = "asm_session_id"
     web.config.session_parameters["cookie_path"] = "/"
-    web.config.session_parameters["timeout"] = 3600 * 24
+    web.config.session_parameters["timeout"] = 86400
     web.config.session_parameters["ignore_change_ip"] = True
     web.config.session_parameters["secure"] = SESSION_SECURE_COOKIE
     sess = None
@@ -3279,25 +3279,25 @@ class lookups(JSONEndpoint):
 
     def post_create(self, o):
         post = o.post
-        return asm3.lookups.insert_lookup(o.dbo, post["lookup"], post["lookupname"], post["lookupdesc"], \
+        return asm3.lookups.insert_lookup(o.dbo, o.user, post["lookup"], post["lookupname"], post["lookupdesc"], \
             post.integer("species"), post["pfbreed"], post["pfspecies"], post["apcolour"], post["units"], post.integer("site"), post.integer("defaultcost"), post.integer("vat"), post.integer("retired"))
 
     def post_update(self, o):
         post = o.post
-        asm3.lookups.update_lookup(o.dbo, post.integer("id"), post["lookup"], post["lookupname"], post["lookupdesc"], \
+        asm3.lookups.update_lookup(o.dbo, o.user, post.integer("id"), post["lookup"], post["lookupname"], post["lookupdesc"], \
             post.integer("species"), post["pfbreed"], post["pfspecies"], post["apcolour"], post["units"], post.integer("site"), post.integer("defaultcost"), post.integer("vat"), post.integer("retired"))
 
     def post_delete(self, o):
         for lid in o.post.integer_list("ids"):
-            asm3.lookups.delete_lookup(o.dbo, o.post["lookup"], lid)
+            asm3.lookups.delete_lookup(o.dbo, o.user, o.post["lookup"], lid)
 
     def post_active(self, o):
         for lid in o.post.integer_list("ids"):
-            asm3.lookups.update_lookup_retired(o.dbo, o.post["lookup"], lid, 0)
+            asm3.lookups.update_lookup_retired(o.dbo, o.user, o.post["lookup"], lid, 0)
 
     def post_inactive(self, o):
         for lid in o.post.integer_list("ids"):
-            asm3.lookups.update_lookup_retired(o.dbo, o.post["lookup"], lid, 1)
+            asm3.lookups.update_lookup_retired(o.dbo, o.user, o.post["lookup"], lid, 1)
 
 class lostanimal(JSONEndpoint):
     url = "lostanimal"
