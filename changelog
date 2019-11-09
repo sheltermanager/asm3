@@ -1,6 +1,7 @@
 43
 ================
 
+09/11/19 Export animals as CSV should be async due to CDN #692
 06/11/19 Write audit records for changes to lookups #666
 04/11/19 Wordkeys for medical and log history #689
 04/11/19 Complete diary notes on death of animal #259

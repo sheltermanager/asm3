@@ -3,6 +3,7 @@ import asm3.additional
 import asm3.al
 import asm3.animal
 import asm3.asynctask
+import asm3.cachedisk
 import asm3.configuration
 import asm3.dbupdate
 import asm3.financial
@@ -786,6 +787,7 @@ def csvexport_animals(dbo, dataset, animalids = "", includephoto = False):
     """
     l = dbo.locale
     q = ""
+    out = asm3.utils.stringio()
     
     if dataset == "all": q = "SELECT ID FROM animal ORDER BY ID"
     elif dataset == "shelter": q = "SELECT ID FROM animal WHERE Archived=0 ORDER BY ID"
@@ -817,15 +819,21 @@ def csvexport_animals(dbo, dataset, animalids = "", includephoto = False):
         return ",".join(r) + "\n"
 
     firstrow = True
+    asm3.asynctask.set_progress_max(dbo, len(ids))
     for aid in ids:
+
+        # Should we stop?
+        if asm3.asynctask.get_cancel(dbo): break
 
         if firstrow:
             firstrow = False
-            yield ",".join(keys) + "\n"
+            out.write(",".join(keys) + "\n")
 
         row = {}
         a = asm3.animal.get_animal(dbo, aid.ID)
         if a is None: continue
+
+        asm3.asynctask.increment_progress_value(dbo)
 
         row["ANIMALCODE"] = a["SHELTERCODE"]
         row["ANIMALNAME"] = a["ANIMALNAME"]
@@ -885,7 +893,7 @@ def csvexport_animals(dbo, dataset, animalids = "", includephoto = False):
         row["PERSONWORKPHONE"] = a["CURRENTOWNERWORKTELEPHONE"]
         row["PERSONCELLPHONE"] = a["CURRENTOWNERMOBILETELEPHONE"]
         row["PERSONEMAIL"] = a["CURRENTOWNEREMAILADDRESS"]
-        yield tocsv(row)
+        out.write(tocsv(row))
 
         for v in asm3.medical.get_vaccinations(dbo, a["ID"]):
             row = {}
@@ -898,7 +906,7 @@ def csvexport_animals(dbo, dataset, animalids = "", includephoto = False):
             row["VACCINATIONCOMMENTS"] = v["COMMENTS"]
             row["ANIMALCODE"] = a["SHELTERCODE"]
             row["ANIMALNAME"] = a["ANIMALNAME"]
-            yield tocsv(row)
+            out.write(tocsv(row))
 
         for m in asm3.medical.get_regimens(dbo, a["ID"]):
             row = {}
@@ -908,8 +916,15 @@ def csvexport_animals(dbo, dataset, animalids = "", includephoto = False):
             row["MEDICALCOMMENTS"] = m["COMMENTS"]
             row["ANIMALCODE"] = a["SHELTERCODE"]
             row["ANIMALNAME"] = a["ANIMALNAME"]
-            yield tocsv(row)
+            out.write(tocsv(row))
 
         del a
         del row
+
+    # Generate a disk cache key and store the data in the cache so it can be retrieved for the next hour
+    key = asm3.utils.md5_hash_hex("%s_csva_%s" % (dbo.database, asm3.utils.unixtime()))
+    asm3.cachedisk.put(key, out.getvalue(), 3600)
+    h = '<p>%s <a target="_blank" href="csvexport_animals?get=%s"><b>%s</b></p>' % ( \
+        asm3.i18n._("Export complete ({0} entries).", l).format(len(ids)), key, asm3.i18n._("Download File", l) )
+    return h
 

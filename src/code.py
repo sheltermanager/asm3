@@ -2131,9 +2131,18 @@ class csvexport_animals(ASMEndpoint):
     get_permissions = asm3.users.USE_SQL_INTERFACE
 
     def content(self, o):
-        self.content_type("text/csv")
-        self.header("Content-Disposition", u"attachment; filename=export.csv")
-        return asm3.utils.generator2str( asm3.csvimport.csvexport_animals, o.dbo, o.post["filter"], o.post["animals"], o.post.boolean("includeimage") == 1 )
+        # If we're retrieving an already saved export, serve it.
+        if o.post["get"] != "":
+            self.content_type("text/csv")
+            self.header("Content-Disposition", u"attachment; filename=export.csv")
+            v = asm3.cachedisk.get(o.post["get"])
+            if v is None: self.notfound()
+            return v
+        else:
+            l = o.locale
+            asm3.asynctask.function_task(o.dbo, _("Export Animals as CSV", l), asm3.csvimport.csvexport_animals, 
+                o.dbo, o.post["filter"], o.post["animals"], o.post.boolean("includeimage") == 1)
+            self.redirect("task")
 
 class csvimport(JSONEndpoint):
     url = "csvimport"
@@ -2145,8 +2154,10 @@ class csvimport(JSONEndpoint):
 
     def post_all(self, o):
         l = o.locale
-        asm3.asynctask.function_task(o.dbo, _("Import a CSV file", l), asm3.csvimport.csvimport, o.dbo, o.post.filedata(), o.post["encoding"], o.user, 
-            o.post.boolean("createmissinglookups") == 1, o.post.boolean("cleartables") == 1, o.post.boolean("checkduplicates") == 1)
+        asm3.asynctask.function_task(o.dbo, _("Import a CSV file", l), asm3.csvimport.csvimport, 
+            o.dbo, o.post.filedata(), o.post["encoding"], o.user, 
+            o.post.boolean("createmissinglookups") == 1, o.post.boolean("cleartables") == 1, 
+            o.post.boolean("checkduplicates") == 1)
         self.redirect("task")
 
 class csvimport_paypal(JSONEndpoint):

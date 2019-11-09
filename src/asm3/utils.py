@@ -20,6 +20,7 @@ import smtplib
 import subprocess
 import sys
 import tempfile
+import time
 import web
 import zipfile
 
@@ -538,6 +539,10 @@ def spaceright(s, spaces):
     if len(s) > spaces: return s
     nr = spaces - len(s)
     return s + sp[0:nr]
+
+def unixtime():
+    """ Returns Unix time (seconds since epoch 01/01/1970) """
+    return time.time()
 
 def padleft(num, digits):
     """
