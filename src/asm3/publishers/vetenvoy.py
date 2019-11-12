@@ -349,7 +349,7 @@ class AKCReunitePublisher(VetEnvoyUSMicrochipPublisher):
         AbstractPublisher.__init__(self, dbo, publishCriteria)
         if not asm3.configuration.vetenvoy_akcreunite_enabled(dbo): return
         VetEnvoyUSMicrochipPublisher.__init__(self, dbo, publishCriteria, "AKC Reunite Publisher", "akcreunite", VETENVOY_US_AKC_REUNITE_RECIPIENTID, 
-            ['0006', '0007', '956'])
+            ['0006', '0007', '956', '9910010'])
 
 
 
