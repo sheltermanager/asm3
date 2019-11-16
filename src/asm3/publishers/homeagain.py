@@ -5,23 +5,22 @@ import asm3.i18n
 import asm3.utils
 
 from .base import AbstractPublisher, get_microchip_data
-from asm3.sitedefs import VETENVOY_US_VENDOR_USERID, VETENVOY_US_VENDOR_PASSWORD, VETENVOY_US_HOMEAGAIN_RECIPIENTID, VETENVOY_US_AKC_REUNITE_RECIPIENTID, VETENVOY_US_BASE_URL, VETENVOY_US_SYSTEM_ID
+from asm3.sitedefs import HOMEAGAIN_BASE_URL, HOMEAGAIN_VENDOR_PASSWORD
 
 import re
 import sys
 
-class VetEnvoyUSMicrochipPublisher(AbstractPublisher):
+class HomeAgainPublisher(AbstractPublisher):
     """
-    Handles updating animal microchips via recipients of
-    the VetEnvoy system in the US
+    Handles updating HomeAgain animal microchips
     """
-    def __init__(self, dbo, publishCriteria, publisherName, publisherKey, recipientId, microchipPatterns):
+    def __init__(self, dbo, publishCriteria):
         publishCriteria.uploadDirectly = True
         publishCriteria.thumbnails = False
         AbstractPublisher.__init__(self, dbo, publishCriteria)
-        self.initLog(publisherKey, publisherName)
-        self.recipientId = recipientId
-        self.microchipPatterns = microchipPatterns
+        self.initLog("homeagain", "HomeAgain Publisher")
+        self.recipientId = "d2639458-e97d-428f-b5a9-c864346b40d7" # TODO: Necessary any more?
+        self.microchipPatterns = [ '985' ]
 
     def getHeader(self, headers, header):
         """ Returns a header from the headers list of a get_url call """
@@ -30,7 +29,7 @@ class VetEnvoyUSMicrochipPublisher(AbstractPublisher):
                 return h.strip()
         return ""
 
-    def get_vetenvoy_species(self, asmspeciesid):
+    def get_homeagain_species(self, asmspeciesid):
         SPECIES_MAP = {
             1:  "Canine",
             2:  "Feline",
@@ -68,11 +67,11 @@ class VetEnvoyUSMicrochipPublisher(AbstractPublisher):
         self.setLastError("")
         self.setStartPublishing()
 
-        userid = asm3.configuration.vetenvoy_user_id(self.dbo)
-        userpassword = asm3.configuration.vetenvoy_user_password(self.dbo)
+        userid = asm3.configuration.homeagain_user_id(self.dbo)
+        userpassword = asm3.configuration.homeagain_user_password(self.dbo)
 
         if userid == "" or userpassword == "":
-            self.setLastError("VetEnvoy userid and userpassword must be set")
+            self.setLastError("HomeAgain userid and userpassword must be set")
             return
 
         animals = get_microchip_data(self.dbo, self.microchipPatterns, self.publisherKey)
@@ -103,13 +102,13 @@ class VetEnvoyUSMicrochipPublisher(AbstractPublisher):
                 authheaders = {
                     "UserId": userid,
                     "UserPassword": userpassword,
-                    "VendorPassword": VETENVOY_US_VENDOR_PASSWORD,
-                    "RecipientId": self.recipientId
+                    "VendorPassword": HOMEAGAIN_VENDOR_PASSWORD, # TODO: Necessary?
+                    "RecipientId": self.recipientId # TODO: Necessary?
                 }
 
                 # Start a new conversation with VetEnvoy's microchip handler
-                url = VETENVOY_US_BASE_URL + "Chip/NewConversationId"
-                self.log("Contacting vetenvoy to start a new conversation: %s" % url)
+                url = HOMEAGAIN_BASE_URL + "Chip/NewConversationId"
+                self.log("Contacting HomeAgain to start a new conversation: %s" % url)
                 try:
                     r = asm3.utils.get_url(url, authheaders)
                     self.log("Got response: %s" % r["response"])
@@ -122,7 +121,7 @@ class VetEnvoyUSMicrochipPublisher(AbstractPublisher):
 
                     # Now post the XML document
                     self.log("Posting microchip registration document: %s" % x)
-                    r = asm3.utils.post_xml(VETENVOY_US_BASE_URL + "Chip/" + conversationid, x, authheaders)
+                    r = asm3.utils.post_xml(HOMEAGAIN_BASE_URL + "Chip/" + conversationid, x, authheaders)
                     self.log("Response %d, HTTP headers: %s, body: %s" % (r["status"], r["headers"], r["response"]))
                     if r["status"] != 200: raise Exception(r["response"])
 
@@ -144,10 +143,6 @@ class VetEnvoyUSMicrochipPublisher(AbstractPublisher):
                         self.logError("received HomeAgain 54101 'account not found' response header - abandoning run and disabling publisher")
                         asm3.configuration.publishers_enabled_disable(self.dbo, "veha")
                         break
-                    if str(r["headers"]).find("54101") != -1 and str(r["headers"]).find("sender not recognized") != -1:
-                        self.logError("received AKC Reunite 54101 'sender not recognized' response header - abandoning run and disabling publisher")
-                        asm3.configuration.publishers_enabled_disable(self.dbo, "vear")
-                        break
                     
                     if not wassuccess:
                         self.logError("no successful response header %s received" % str(SUCCESS))
@@ -162,22 +157,19 @@ class VetEnvoyUSMicrochipPublisher(AbstractPublisher):
             except Exception as err:
                 self.logError("Failed processing animal: %s, %s" % (str(an["SHELTERCODE"]), err), sys.exc_info())
 
-        # Only mark processed if we aren't using VetEnvoy's test URL
-        if len(processed_animals) > 0 and VETENVOY_US_BASE_URL.find("test") == -1:
+        # Mark success/failures
+        if len(processed_animals) > 0:
             self.log("successfully processed %d animals, marking sent" % len(processed_animals))
             self.markAnimalsPublished(processed_animals)
-        if len(failed_animals) > 0 and VETENVOY_US_BASE_URL.find("test") == -1:
+        if len(failed_animals) > 0:
             self.log("failed processing %d animals, marking failed" % len(failed_animals))
             self.markAnimalsPublishFailed(failed_animals)
-
-        if VETENVOY_US_BASE_URL.find("test") != -1:
-            self.log("VetEnvoy test mode, not marking animals published")
 
         self.saveLog()
         self.setPublisherComplete()
 
     def processAnimal(self, an, userid=""):
-        """ Returns an VetXML document from an animal """
+        """ Returns a VetXML document from an animal """
         def xe(s): 
             if s is None: return ""
             return s.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
@@ -213,7 +205,7 @@ class VetEnvoyUSMicrochipPublisher(AbstractPublisher):
             '</OwnerDetails>' \
             '<PetDetails>' \
             '  <Name>' + xe(an["ANIMALNAME"]) + '</Name>' \
-            '  <Species>' + self.get_vetenvoy_species(an["SPECIESID"]) + '</Species>' \
+            '  <Species>' + self.get_homeagain_species(an["SPECIESID"]) + '</Species>' \
             '  <Breed><FreeText>' + xe(an["BREEDNAME"]) + '</FreeText><Code/></Breed>' \
             '  <DateOfBirth>' + asm3.i18n.format_date("%m/%d/%Y", an["DATEOFBIRTH"]) + '</DateOfBirth>' \
             '  <Gender>' + an["SEXNAME"][0:1] + '</Gender>' \
@@ -254,102 +246,5 @@ class VetEnvoyUSMicrochipPublisher(AbstractPublisher):
             return False
 
         return True
-
-    @staticmethod
-    def signup(dbo, post):
-        """
-        Handle automatically signing up for VetEnvoy's services.
-        Return value on success is a tuple of userid, userpassword
-        Errors are thrown to the caller
-        """
-        def xe(s): 
-            if s is None: return ""
-            return s.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
-        x = '<?xml version="1.0" encoding="UTF-8"?>\n' \
-            '<Signup xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ' \
-            'xmlns:xsd="http://www.w3.org/2001/XMLSchema" ' \
-            'xmlns="http://www.vetenvoy.com/schemas/signup" version="1.01">' \
-            '<GeneralContact>' \
-            '<Title>' + xe(post["title"]) + '</Title>' \
-            '<FirstName>' + xe(post["firstname"]) + '</FirstName>' \
-            '<LastName>' + xe(post["lastname"]) + '</LastName>' \
-            '<Phone>' + xe(post["phone"]) + '</Phone>' \
-            '<Email>' + xe(post["email"]) + '</Email>' \
-            '<PositionInPractice>' + xe(post["position"]) + '</PositionInPractice>' \
-            '</GeneralContact>' \
-            '<PracticeDetails>' \
-            '<PracticeName>' + xe(post["practicename"]) + '</PracticeName>' \
-            '<Address>' + xe(post["address"]) + '</Address>' \
-            '<PostalCode>' + xe(post["zipcode"]) + '</PostalCode>' \
-            '<SystemId>' + VETENVOY_US_SYSTEM_ID + '</SystemId>' \
-            '</PracticeDetails>' \
-            '</Signup>'
-        # Build our auth headers
-        authheaders = {
-            "UserId": VETENVOY_US_VENDOR_USERID,
-            "UserPassword": VETENVOY_US_VENDOR_PASSWORD,
-            "VendorPassword": VETENVOY_US_VENDOR_PASSWORD
-        }
-        # Start a new conversation with VetEnvoy's signup handler
-        url = VETENVOY_US_BASE_URL + "AutoSignup/NewConversationId"
-        asm3.al.debug("Contacting VetEnvoy to start a new signup conversation: %s" % url, "VetEnvoyMicrochipPublisher.signup", dbo)
-        try:
-
-            r = asm3.utils.get_url(url, authheaders)
-            asm3.al.debug("Got response: %s" % r["response"], "VetEnvoyMicrochipPublisher.signup", dbo)
-            conversationid = re.findall('c id="(.+?)"', r["response"])
-            if len(conversationid) == 0:
-                raise Exception("Could not parse conversation id, abandoning")
-            conversationid = conversationid[0]
-            asm3.al.debug("Got conversationid: %s" % conversationid, "VetEnvoyMicrochipPublisher.signup", dbo)
-
-            # Now post the XML signup document
-            asm3.al.debug("Posting signup document: %s" % x, "VetEnvoyMicrochipPublisher.signup", dbo)
-            r = asm3.utils.post_xml(VETENVOY_US_BASE_URL + "AutoSignup/" + conversationid, asm3.utils.str2bytes(x), authheaders)
-            asm3.al.debug("Response %d, HTTP headers: %s, body: %s" % (r["status"], r["headers"], r["response"]), "VetEnvoyMicrochipPublisher.signup", dbo)
-            if r["status"] != 200: raise Exception(r["response"])
-
-            # Extract the id and pwd attributes
-            userid = re.findall('u id="(.+?)"', r["response"])
-            userpwd = re.findall('pwd="(.+?)"', r["response"])
-            if len(userid) == 0 or len(userpwd) == 0:
-                raise Exception("Could not parse id and pwd from body, abandoning")
-            userid = userid[0]
-            userpwd = userpwd[0]
-            return (userid, userpwd)
-
-        except Exception as err:
-            em = str(err)
-            asm3.al.error("Failed during autosignup: %s" % em, "VetEnvoyMicrochipPublisher.signup", dbo, sys.exc_info())
-            raise asm3.utils.ASMValidationError("Failed during autosignup")
-
-class AllVetEnvoyPublisher(AbstractPublisher):
-    """ Publisher class that runs all VetEnvoy publishers in one go. This is needed because
-        all of VetEnvoy is enabled at once rather than individuals publishers """
-    homeagain = None
-    akcreunite = None
-
-    def __init__(self, dbo, publishCriteria):
-        self.homeagain = VEHomeAgainPublisher(dbo, publishCriteria)
-        self.akcreunite = VEAKCReunitePublisher(dbo, publishCriteria)
-
-    def run(self):
-        self.homeagain.run()
-        self.akcreunite.run()
-
-class VEHomeAgainPublisher(VetEnvoyUSMicrochipPublisher):
-    def __init__(self, dbo, publishCriteria):
-        AbstractPublisher.__init__(self, dbo, publishCriteria)
-        if not asm3.configuration.vetenvoy_homeagain_enabled(dbo): return
-        VetEnvoyUSMicrochipPublisher.__init__(self, dbo, publishCriteria, "HomeAgain Publisher", "homeagain", VETENVOY_US_HOMEAGAIN_RECIPIENTID, 
-            ['985',])
-
-class VEAKCReunitePublisher(VetEnvoyUSMicrochipPublisher):
-    def __init__(self, dbo, publishCriteria):
-        AbstractPublisher.__init__(self, dbo, publishCriteria)
-        if not asm3.configuration.vetenvoy_akcreunite_enabled(dbo): return
-        VetEnvoyUSMicrochipPublisher.__init__(self, dbo, publishCriteria, "AKC Reunite Publisher", "akcreunite", VETENVOY_US_AKC_REUNITE_RECIPIENTID, 
-            ['0006', '0007', '956', '9910010'])
-
 
 

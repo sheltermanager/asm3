@@ -1,6 +1,7 @@
 43
 ================
 
+16/11/19 First draft of direct HomeAgain registration service
 12/11/19 Remove arbitrary 100 link limit on home page
 12/11/19 Send 9910010 chips to AKC
 09/11/19 Export animals as CSV should be async due to CDN #692

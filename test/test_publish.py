@@ -86,6 +86,13 @@ class TestPublish(unittest.TestCase):
         a = asm3.publishers.base.get_animal_data(base.get_dbo())[0]
         assert asm3.publishers.helpinglostpets.HelpingLostPetsPublisher(base.get_dbo(), pc).processAnimal(a) is not None
 
+    # homeagain
+    def test_homeagain(self):
+        pc = asm3.publishers.base.PublishCriteria()
+        a = asm3.publishers.base.get_animal_data(base.get_dbo())[0]
+        assert asm3.publishers.homeagain.HomeAgainPublisher(base.get_dbo(), pc).processAnimal(a) is not None
+        asm3.publishers.homeagain.HomeAgainPublisher(base.get_dbo(), pc).validate(a)
+
     # maddiesfund
     def test_maddiesfund(self):
         pc = asm3.publishers.base.PublishCriteria()

@@ -22,9 +22,10 @@ $(function() {
                 '<li class="localegb"><a href="#tab-pettrac">AVID UK Microchips</a></li>',
                 '<li class="localegb"><a href="#tab-anibase">Identibase UK Microchips</a></li>',
                 '<li class="localeus hasfoundanimals"><a href="#tab-foundanimals">FoundAnimals Microchips</a></li>',
+                '<li class="localeus hashomeagain"><a href="#tab-homeagain">HomeAgain Microchips</a></li>',
                 '<li class="localeus localeca localemx haspetlink"><a href="#tab-petlink">PetLink Microchips</a></li>',
                 '<li class="localeus hassmarttag"><a href="#tab-smarttag">SmartTag Tags/Microchips</a></li>',
-                '<li class="localeus hasvevendor"><a href="#tab-vetenvoy">VetEnvoy Microchips</a></li>',
+                '<li class="localeus hasvetenvoy"><a href="#tab-vetenvoy">VetEnvoy Microchips</a></li>',
                 '</ul>'
             ].join("\n");
         },
@@ -709,6 +710,28 @@ $(function() {
             ].join("\n");
         },
 
+        render_homeagain: function() {
+            return [
+                '<div id="tab-homeagain">',
+                html.info('HomeAgain allow ASM to automatically register microchips provided by HomeAgain and AKC Reunite<br />' +
+                    'Find out more at <a href="http://www.vetenvoy.com">www.vetenvoy.com</a>, ' +
+                    '<a href="http://www.homeagain.com">www.homeagain.com</a> and ' +
+                    '<a href="http://www.akcreunite.org">www.akcreunite.org</a>'),
+                '<p><input id="enabledha" type="checkbox" class="asm-checkbox enablecheck" /><label for="enabledha">' + _("Enabled") + '</label></p>',
+                '<table>',
+                '<tr>',
+                '<td><label for="hauserid">HomeAgain User ID</label></td>',
+                '<td><input id="hauserid" type="text" class="asm-doubletextbox cfg" disabled="disabled" data="HomeAgainUserId" /></td>',
+                '</tr>',
+                '<tr>',
+                '<td><label for="hauserpassword">HomeAgain User Password</label></td>',
+                '<td><input id="hauserpassword" type="text" class="asm-doubletextbox cfg" disabled="disabled" data="HomeAgainUserPassword" /></td>',
+                '</tr>',
+                '</table>',
+                '</div>'
+            ].join("\n");
+        },
+
         render_maddiesfund: function() {
             return [
                 '<div id="tab-maddiesfund">',
@@ -883,6 +906,7 @@ $(function() {
                 this.render_rescuegroups(),
                 this.render_adoptapet(),
                 this.render_foundanimals(),
+                this.render_homeagain(),
                 this.render_maddiesfund(),
                 this.render_helpinglostpets(),
                 this.render_smarttag(),
@@ -1025,12 +1049,13 @@ $(function() {
 
             // Disable services that require sitedef setup
             if (!controller.hasfoundanimals) { $(".hasfoundanimals").hide(); }
+            if (!controller.hashomeagain) { $(".hashomeagain").hide(); }
             if (!controller.hasmaddiesfund) { $(".hasmaddiesfund").hide(); }
             if (!controller.haspetlink) { $(".haspetlink").hide(); }
             if (!controller.haspetrescue) { $(".haspetrescue").hide(); }
             if (!controller.haspetslocated) { $(".haspetslocated").hide(); }
             if (!controller.hassavourlife) { $(".hassavourlife").hide(); }
-            if (!controller.hasvevendor) { $(".hasvevendor").hide(); }
+            if (!controller.hasvetenvoy) { $(".hasvetenvoy").hide(); }
             if (!controller.hassmarttag) { $(".hassmarttag").hide(); }
 
             // Components
@@ -1119,9 +1144,8 @@ $(function() {
                 $("#dialog-vetenvoy").dialog("open");
             });
 
-            // Only show the VetEnvoy signup button if we have
-            // a System Vendor user/password and no userid set
-            if (controller.hasvesys && !config.str("VetEnvoyUserId")) {
+            // Only show the VetEnvoy signup button if we no userid set
+            if (!config.str("VetEnvoyUserId")) {
                 $("#button-vesignup").show();
                 // Set default signup values from what we know of the shelter already
                 $("#vepraticename").val(config.str("Organisation"));

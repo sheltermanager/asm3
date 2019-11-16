@@ -802,6 +802,12 @@ def hold_change_log(dbo):
 def hold_change_log_type(dbo):
     return cint(dbo, "HoldChangeLogType", DEFAULTS["HoldChangeLogType"])
 
+def homeagain_user_id(dbo):
+    return cstring(dbo, "HomeAgainUserId")
+
+def homeagain_user_password(dbo):
+    return cstring(dbo, "HomeAgainUserPassword")
+
 def include_incomplete_medical_doc(dbo):
     return cboolean(dbo, "IncludeIncompleteMedicalDoc", DEFAULTS["IncludeIncompleteMedicalDoc"] == "Yes")
 

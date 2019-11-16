@@ -60,7 +60,7 @@ PUBLISHER_LIST["rg"] = {
 }
 PUBLISHER_LIST["vear"] = {
     "label":    "Register animals with AKC Reunite Microchips (via VetEnvoy)",
-    "class":    asm3.publishers.vetenvoy.AKCReunitePublisher,
+    "class":    asm3.publishers.vetenvoy.VEAKCReunitePublisher,
     "locales":  "en"
 }
 PUBLISHER_LIST["abuk"] = {
@@ -78,9 +78,14 @@ PUBLISHER_LIST["fa"] = {
     "class":    asm3.publishers.foundanimals.FoundAnimalsPublisher,
     "locales":  "en"
 }
+PUBLISHER_LIST["ha"] = {
+    "label":    "Register animals with HomeAgain Microchips",
+    "class":    asm3.publishers.homeagain.HomeAgainPublisher,
+    "locales":  "en"
+}
 PUBLISHER_LIST["veha"] = {
     "label":    "Register animals with HomeAgain Microchips (via VetEnvoy)",
-    "class":    asm3.publishers.vetenvoy.HomeAgainPublisher,
+    "class":    asm3.publishers.vetenvoy.VEHomeAgainPublisher,
     "locales":  "en"
 }
 PUBLISHER_LIST["pl"] = {
