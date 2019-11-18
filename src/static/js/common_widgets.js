@@ -166,15 +166,20 @@
                 filter_cssFilter: "tablesorter-filter",
                 filter_ignoreCase: true,
                 textExtraction: function(node) {
-                    // custom extraction function turns display dates 
-                    // into iso dates behind the scenes for 
-                    // alphanumeric sorting
-                    var s = $(node).text();
-                    if (s.split("/").length == 3) {
+                    // this function controls how text is extracted from cells for
+                    // sorting purposes.
+                    var s = $(node).text(), h = $(node).html();
+                    // If the text looks like a date, turn it into YYYY-MM-DD for sorting
+                    if (s.indexOf("/") != -1 && s.split("/").length == 3) {
                         var rv = format.date_iso(s);
                         if (!rv) { return ""; }
                         rv = rv.replace(/\-/g, "").replace(/\:/g, "").replace("T", "");
                         return rv;
+                    }
+                    // If we have custom emblems in the text, throw away the first word as it will
+                    // be the letters of the emblems and skew any sorting.
+                    if (h.indexOf("class=\"custom\"") != -1 && s.indexOf(" ") != -1) {
+                        s = s.substring(s.indexOf(" ")+1);
                     }
                     return s;
                 }
