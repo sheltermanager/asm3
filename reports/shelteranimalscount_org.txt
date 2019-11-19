@@ -235,7 +235,7 @@ AND NonShelterAnimal = 0) AS JuniorCatSurrender,
 
 (SELECT COUNT(*) FROM animal
 INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
-WHERE ReasonName NOT LIKE '%Surrender%' AND IsTransfer = 0 AND ReasonName NOT LIKE '%Stray%'
+WHERE ReasonName NOT LIKE '%Surrender%' AND IsTransfer = 0 AND ReasonName NOT LIKE '%Stray%' AND ReasonName NOT LIKE '%TNR%'
 AND AsilomarOwnerRequestedEuthanasia = 0
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID = 1
@@ -244,7 +244,7 @@ AND NonShelterAnimal = 0) AS AdultDogOtherIntake,
 
 (SELECT COUNT(*) FROM animal 
 INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
-WHERE ReasonName NOT LIKE '%Surrender%' AND IsTransfer = 0 AND ReasonName NOT LIKE '%Stray%'
+WHERE ReasonName NOT LIKE '%Surrender%' AND IsTransfer = 0 AND ReasonName NOT LIKE '%Stray%' AND ReasonName NOT LIKE '%TNR%'
 AND AsilomarOwnerRequestedEuthanasia = 0
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID = 1
@@ -253,7 +253,7 @@ AND NonShelterAnimal = 0) AS JuniorDogOtherIntake,
 
 (SELECT COUNT(*) FROM animal
 INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
-WHERE ReasonName NOT LIKE '%Surrender%' AND IsTransfer = 0 AND ReasonName NOT LIKE '%Stray%'
+WHERE ReasonName NOT LIKE '%Surrender%' AND IsTransfer = 0 AND ReasonName NOT LIKE '%Stray%' AND ReasonName NOT LIKE '%TNR%'
 AND AsilomarOwnerRequestedEuthanasia = 0
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID = 2
@@ -262,7 +262,7 @@ AND NonShelterAnimal = 0) AS AdultCatOtherIntake,
 
 (SELECT COUNT(*) FROM animal 
 INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
-WHERE ReasonName NOT LIKE '%Surrender%' AND IsTransfer = 0 AND ReasonName NOT LIKE '%Stray%'
+WHERE ReasonName NOT LIKE '%Surrender%' AND IsTransfer = 0 AND ReasonName NOT LIKE '%Stray%' AND ReasonName NOT LIKE '%TNR%'
 AND AsilomarOwnerRequestedEuthanasia = 0
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID = 2
@@ -458,7 +458,8 @@ AND NonShelterAnimal = 0) AS JuniorCatReturnToField,
 
 (SELECT COUNT(*) FROM animal
 INNER JOIN adoption ON animal.ID = adoption.AnimalID 
-WHERE MovementType IN (4, 6)
+INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
+WHERE MovementType IN (4, 6, 7) AND ReasonName NOT LIKE '%TNR%'
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID = 1
 AND DateOfBirth < MovementDate - INTERVAL '5 months' 
@@ -466,7 +467,8 @@ AND NonShelterAnimal = 0) AS AdultDogOtherLive,
 
 (SELECT COUNT(*) FROM animal
 INNER JOIN adoption ON animal.ID = adoption.AnimalID 
-WHERE MovementType IN (4, 6)
+INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
+WHERE MovementType IN (4, 6, 7) AND ReasonName NOT LIKE '%TNR%'
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID = 1
 AND DateOfBirth >= MovementDate - INTERVAL '5 months' 
@@ -474,7 +476,8 @@ AND NonShelterAnimal = 0) AS JuniorDogOtherLive,
 
 (SELECT COUNT(*) FROM animal
 INNER JOIN adoption ON animal.ID = adoption.AnimalID 
-WHERE MovementType IN (4, 6)
+INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
+WHERE MovementType IN (4, 6, 7) AND ReasonName NOT LIKE '%TNR%'
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID = 2
 AND DateOfBirth < MovementDate - INTERVAL '5 months' 
@@ -482,7 +485,8 @@ AND NonShelterAnimal = 0) AS AdultCatOtherLive,
 
 (SELECT COUNT(*) FROM animal
 INNER JOIN adoption ON animal.ID = adoption.AnimalID 
-WHERE MovementType IN (4, 6)
+INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
+WHERE MovementType IN (4, 6, 7) AND ReasonName NOT LIKE '%TNR%'
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID = 2
 AND DateOfBirth >= MovementDate - INTERVAL '5 months' 
@@ -1180,7 +1184,7 @@ AND NonShelterAnimal = 0) AS "Transferred In From Agency Feline Up To 5 Months",
 
 (SELECT COUNT(*) FROM animal
 INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
-WHERE IsTransfer = 0 AND ReasonName NOT LIKE '%Stray%' AND ReasonName NOT LIKE '%Surrender%'
+WHERE IsTransfer = 0 AND ReasonName NOT LIKE '%Stray%' AND ReasonName NOT LIKE '%Surrender%' AND ReasonName NOT LIKE '%TNR%'
 AND AsilomarOwnerRequestedEuthanasia = 0
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID = 1
@@ -1189,7 +1193,7 @@ AND NonShelterAnimal = 0) AS "Other Intakes Canine Adult",
 
 (SELECT COUNT(*) FROM animal 
 INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
-WHERE IsTransfer = 0 AND ReasonName NOT LIKE '%Stray%' AND ReasonName NOT LIKE '%Surrender%'
+WHERE IsTransfer = 0 AND ReasonName NOT LIKE '%Stray%' AND ReasonName NOT LIKE '%Surrender%' AND ReasonName NOT LIKE '%TNR%'
 AND AsilomarOwnerRequestedEuthanasia = 0
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID = 1
@@ -1200,7 +1204,7 @@ AND NonShelterAnimal = 0) AS "Other Intakes Canine Up To 5 Months",
 
 (SELECT COUNT(*) FROM animal
 INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
-WHERE IsTransfer = 0 AND ReasonName NOT LIKE '%Stray%' AND ReasonName NOT LIKE '%Surrender%'
+WHERE IsTransfer = 0 AND ReasonName NOT LIKE '%Stray%' AND ReasonName NOT LIKE '%Surrender%' AND ReasonName NOT LIKE '%TNR%'
 AND AsilomarOwnerRequestedEuthanasia = 0
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID = 2
@@ -1209,7 +1213,7 @@ AND NonShelterAnimal = 0) AS "Other Intakes Feline Adult",
 
 (SELECT COUNT(*) FROM animal 
 INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
-WHERE IsTransfer = 0 AND ReasonName NOT LIKE '%Stray%' AND ReasonName NOT LIKE '%Surrender%'
+WHERE IsTransfer = 0 AND ReasonName NOT LIKE '%Stray%' AND ReasonName NOT LIKE '%Surrender%' AND ReasonName NOT LIKE '%TNR%'
 AND AsilomarOwnerRequestedEuthanasia = 0
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID = 2
@@ -1389,7 +1393,8 @@ AND NonShelterAnimal = 0) AS "Returned To Field Feline Up To 5 Months",
 
 (SELECT COUNT(*) FROM animal
 INNER JOIN adoption ON animal.ID = adoption.AnimalID 
-WHERE MovementType IN (4, 6)
+INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
+WHERE MovementType IN (4, 6, 7) AND ReasonName NOT LIKE '%TNR%'
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID = 1
 AND DateOfBirth < MovementDate - INTERVAL '5 months' 
@@ -1397,7 +1402,8 @@ AND NonShelterAnimal = 0) AS "Other Live Outcome Canine Adult",
 
 (SELECT COUNT(*) FROM animal
 INNER JOIN adoption ON animal.ID = adoption.AnimalID 
-WHERE MovementType IN (4, 6)
+INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
+WHERE MovementType IN (4, 6, 7) AND ReasonName NOT LIKE '%TNR%'
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID = 1
 AND DateOfBirth >= MovementDate - INTERVAL '5 months' 
@@ -1407,7 +1413,8 @@ AND NonShelterAnimal = 0) AS "Other Live Outcome Canine Up To 5 Months",
 
 (SELECT COUNT(*) FROM animal
 INNER JOIN adoption ON animal.ID = adoption.AnimalID 
-WHERE MovementType IN (4, 6)
+INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
+WHERE MovementType IN (4, 6, 7) AND ReasonName NOT LIKE '%TNR%'
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID = 2
 AND DateOfBirth < MovementDate - INTERVAL '5 months' 
@@ -1415,7 +1422,8 @@ AND NonShelterAnimal = 0) AS "Other Live Outcome Feline Adult",
 
 (SELECT COUNT(*) FROM animal
 INNER JOIN adoption ON animal.ID = adoption.AnimalID 
-WHERE MovementType IN (4, 6)
+INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
+WHERE MovementType IN (4, 6, 7) AND ReasonName NOT LIKE '%TNR%'
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID = 2
 AND DateOfBirth >= MovementDate - INTERVAL '5 months' 
