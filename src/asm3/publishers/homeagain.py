@@ -98,14 +98,16 @@ class HomeAgainPublisher(AbstractPublisher):
                                 
                 # Build our auth headers
                 authheaders = {
-                    "UserId": userid,
-                    "UserPassword": userpassword
+                    #"UserId": userid,
+                    #"UserPassword": userpassword
+                    "VeUserId": userid,
+                    "VePassword": userpassword
                 }
 
-                url = HOMEAGAIN_BASE_URL
+                url = HOMEAGAIN_BASE_URL + "/Chip"
                 try:
                     # Post our VetXML document
-                    self.log("Posting microchip registration document: %s" % x)
+                    self.log("Posting microchip registration document to %s: %s" % (url, x))
                     r = asm3.utils.post_xml(url, x, authheaders)
                     self.log("Response %d, HTTP headers: %s, body: %s" % (r["status"], r["headers"], r["response"]))
                     if r["status"] != 200: raise Exception(r["response"])
