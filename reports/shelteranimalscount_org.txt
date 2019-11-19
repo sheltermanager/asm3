@@ -13,6 +13,7 @@ $VAR to DATE Enter to date$
 
 -- requires that you have a Surrender entry category for surrenders
 -- requires that you have a Stray entry category for strays
+-- requires that you have a TNR entry category to exclude TNR from Return To Field
 
 SELECT 
 
@@ -417,7 +418,8 @@ AND NonShelterAnimal = 0) AS JuniorCatTransferOut,
 
 (SELECT COUNT(*) FROM animal
 INNER JOIN adoption ON animal.ID = adoption.AnimalID 
-WHERE MovementType = 7
+INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
+WHERE MovementType = 7 AND ReasonName NOT LIKE '%TNR%'
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID = 1
 AND DateOfBirth < MovementDate - INTERVAL '5 months' 
@@ -425,7 +427,8 @@ AND NonShelterAnimal = 0) AS AdultDogReturnToField,
 
 (SELECT COUNT(*) FROM animal
 INNER JOIN adoption ON animal.ID = adoption.AnimalID 
-WHERE MovementType = 7
+INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
+WHERE MovementType = 7 AND ReasonName NOT LIKE '%TNR%'
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID = 1
 AND DateOfBirth >= MovementDate - INTERVAL '5 months' 
@@ -433,7 +436,8 @@ AND NonShelterAnimal = 0) AS JuniorDogReturnToField,
 
 (SELECT COUNT(*) FROM animal
 INNER JOIN adoption ON animal.ID = adoption.AnimalID 
-WHERE MovementType = 7
+INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
+WHERE MovementType = 7 AND ReasonName NOT LIKE '%TNR%'
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID = 2
 AND DateOfBirth < MovementDate - INTERVAL '5 months' 
@@ -441,7 +445,8 @@ AND NonShelterAnimal = 0) AS AdultCatReturnToField,
 
 (SELECT COUNT(*) FROM animal
 INNER JOIN adoption ON animal.ID = adoption.AnimalID 
-WHERE MovementType = 7
+INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
+WHERE MovementType = 7 AND ReasonName NOT LIKE '%TNR%'
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID = 2
 AND DateOfBirth >= MovementDate - INTERVAL '5 months' 
@@ -966,6 +971,7 @@ $VAR to DATE ending on$
 
 -- requires that you have a Surrender entry category for surrenders
 -- requires that you have a Stray entry category for strays
+-- requires that you have a TNR entry category to exclude TNR from Return To Field
 
 SELECT 
 
@@ -1340,7 +1346,8 @@ AND NonShelterAnimal = 0) AS "Transfer To Another Agency Feline Up To 5 Months",
 
 (SELECT COUNT(*) FROM animal
 INNER JOIN adoption ON animal.ID = adoption.AnimalID 
-WHERE MovementType = 7
+INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
+WHERE MovementType = 7 AND ReasonName NOT LIKE '%TNR%'
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID = 1
 AND DateOfBirth < MovementDate - INTERVAL '5 months' 
@@ -1348,7 +1355,8 @@ AND NonShelterAnimal = 0) AS "Returned To Field Canine Adult",
 
 (SELECT COUNT(*) FROM animal
 INNER JOIN adoption ON animal.ID = adoption.AnimalID 
-WHERE MovementType = 7
+INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
+WHERE MovementType = 7 AND ReasonName NOT LIKE '%TNR%'
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID = 1
 AND DateOfBirth >= MovementDate - INTERVAL '5 months' 
@@ -1358,7 +1366,8 @@ AND NonShelterAnimal = 0) AS "Returned To Field Canine Up To 5 Months",
 
 (SELECT COUNT(*) FROM animal
 INNER JOIN adoption ON animal.ID = adoption.AnimalID 
-WHERE MovementType = 7
+INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
+WHERE MovementType = 7 AND ReasonName NOT LIKE '%TNR%'
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID = 2
 AND DateOfBirth < MovementDate - INTERVAL '5 months' 
@@ -1366,7 +1375,8 @@ AND NonShelterAnimal = 0) AS "Returned To Field Feline Adult",
 
 (SELECT COUNT(*) FROM animal
 INNER JOIN adoption ON animal.ID = adoption.AnimalID 
-WHERE MovementType = 7
+INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
+WHERE MovementType = 7 AND ReasonName NOT LIKE '%TNR%'
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID = 2
 AND DateOfBirth >= MovementDate - INTERVAL '5 months' 
