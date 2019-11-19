@@ -730,7 +730,7 @@ $$BODY
 </tr>
 
 <tr>
-<td>Intake: Stray/At Large</td>
+<td>Intake: Stray/At Large<sup>1</sup></td>
 <td>$AdultDogStray</td>
 <td>$JuniorDogStray</td>
 <td>0</td>
@@ -740,7 +740,7 @@ $$BODY
 </tr>
 
 <tr>
-<td>Intake: Relinquished by Owner</td>
+<td>Intake: Relinquished by Owner<sup>2</sup></td>
 <td>$AdultDogSurrender</td>
 <td>$JuniorDogSurrender</td>
 <td>0</td>
@@ -750,7 +750,7 @@ $$BODY
 </tr>
 
 <tr>
-<td>Intake: Owner-Intended Euthanasia</td>
+<td>Intake: Owner-Intended Euthanasia<sup>3</sup></td>
 <td>$AdultDogRequestedEuth</td>
 <td>$JuniorDogRequestedEuth</td>
 <td>0</td>
@@ -760,7 +760,7 @@ $$BODY
 </tr>
 
 <tr>
-<td>Intake: Transferred In</td>
+<td>Intake: Transferred In<sup>4</sup></td>
 <td>$AdultDogTransferIn</td>
 <td>$JuniorDogTransferIn</td>
 <td>0</td>
@@ -770,7 +770,7 @@ $$BODY
 </tr>
 
 <tr>
-<td>Intake: Returns</td>
+<td>Intake: Returns<sup>5</sup></td>
 <td>$AdultDogReturn</td>
 <td>$JuniorDogReturn</td>
 <td>0</td>
@@ -820,7 +820,7 @@ $$BODY
 </tr>
 
 <tr>
-<td>Live Outcomes: Returned To Field</td>
+<td>Live Outcomes: Returned To Field<sup>6</sup></td>
 <td>$AdultDogReturnToField</td>
 <td>$JuniorDogReturnToField</td>
 <td>0</td>
@@ -958,6 +958,14 @@ BODY$$
 
 $$FOOTER
 </table>
+<p>
+<sup>1</sup> Animals with a "Stray" entry category.<br/>
+<sup>2</sup> Animals with a "Surrender" entry category.<br/>
+<sup>3</sup> Animals where "Euthanasia requested" is set in the asilomar section of Entry.<br/>
+<sup>4</sup> Animals where the "Transfer In" box is ticked in Entry.<br/>
+<sup>5</sup> Animals that have an adoption movement with a return date set.<br/>
+<sup>6</sup> Animals with a "Released to wild" or "TNR" movement but the entry category is NOT TNR.
+</p>
 FOOTER$$
 &&&
 shelteranimalscount.org monthly CSV export
