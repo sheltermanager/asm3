@@ -11,6 +11,7 @@ en
 $VAR from DATE Enter from date$
 $VAR to DATE Enter to date$
 
+-- requires that you have a Surrender entry category for surrenders
 -- requires that you have a Stray entry category for strays
 
 SELECT 
@@ -195,7 +196,7 @@ AND NonShelterAnimal = 0) AS JuniorCatRequestedEuth,
 
 (SELECT COUNT(*) FROM animal
 INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
-WHERE OriginalOwnerID > 0 AND ReasonName NOT LIKE '%Stray%' AND IsTransfer = 0
+WHERE ReasonName LIKE '%Surrender%' AND IsTransfer = 0
 AND AsilomarOwnerRequestedEuthanasia = 0
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID = 1
@@ -204,7 +205,7 @@ AND NonShelterAnimal = 0) AS AdultDogSurrender,
 
 (SELECT COUNT(*) FROM animal 
 INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
-WHERE OriginalOwnerID > 0 AND ReasonName NOT LIKE '%Stray%' AND IsTransfer = 0
+WHERE ReasonName LIKE '%Surrender%' AND IsTransfer = 0
 AND AsilomarOwnerRequestedEuthanasia = 0
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID = 1
@@ -213,7 +214,7 @@ AND NonShelterAnimal = 0) AS JuniorDogSurrender,
 
 (SELECT COUNT(*) FROM animal
 INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
-WHERE OriginalOwnerID > 0 AND ReasonName NOT LIKE '%Stray%' AND IsTransfer = 0
+WHERE ReasonName LIKE '%Surrender%' AND IsTransfer = 0
 AND AsilomarOwnerRequestedEuthanasia = 0
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID = 2
@@ -222,7 +223,7 @@ AND NonShelterAnimal = 0) AS AdultCatSurrender,
 
 (SELECT COUNT(*) FROM animal 
 INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
-WHERE OriginalOwnerID > 0 AND ReasonName NOT LIKE '%Stray%' AND IsTransfer = 0
+WHERE ReasonName LIKE '%Surrender%' AND IsTransfer = 0
 AND AsilomarOwnerRequestedEuthanasia = 0
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID = 2
@@ -233,7 +234,7 @@ AND NonShelterAnimal = 0) AS JuniorCatSurrender,
 
 (SELECT COUNT(*) FROM animal
 INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
-WHERE OriginalOwnerID = 0 AND IsTransfer = 0 AND ReasonName NOT LIKE '%Stray%'
+WHERE ReasonName NOT LIKE '%Surrender%' AND IsTransfer = 0 AND ReasonName NOT LIKE '%Stray%'
 AND AsilomarOwnerRequestedEuthanasia = 0
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID = 1
@@ -242,7 +243,7 @@ AND NonShelterAnimal = 0) AS AdultDogOtherIntake,
 
 (SELECT COUNT(*) FROM animal 
 INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
-WHERE OriginalOwnerID = 0 AND IsTransfer = 0 AND ReasonName NOT LIKE '%Stray%'
+WHERE ReasonName NOT LIKE '%Surrender%' AND IsTransfer = 0 AND ReasonName NOT LIKE '%Stray%'
 AND AsilomarOwnerRequestedEuthanasia = 0
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID = 1
@@ -251,7 +252,7 @@ AND NonShelterAnimal = 0) AS JuniorDogOtherIntake,
 
 (SELECT COUNT(*) FROM animal
 INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
-WHERE OriginalOwnerID = 0 AND IsTransfer = 0 AND ReasonName NOT LIKE '%Stray%'
+WHERE ReasonName NOT LIKE '%Surrender%' AND IsTransfer = 0 AND ReasonName NOT LIKE '%Stray%'
 AND AsilomarOwnerRequestedEuthanasia = 0
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID = 2
@@ -260,7 +261,7 @@ AND NonShelterAnimal = 0) AS AdultCatOtherIntake,
 
 (SELECT COUNT(*) FROM animal 
 INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
-WHERE OriginalOwnerID = 0 AND IsTransfer = 0 AND ReasonName NOT LIKE '%Stray%'
+WHERE ReasonName NOT LIKE '%Surrender%' AND IsTransfer = 0 AND ReasonName NOT LIKE '%Stray%'
 AND AsilomarOwnerRequestedEuthanasia = 0
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID = 2
@@ -963,6 +964,7 @@ en
 $VAR from DATE Month starting on$
 $VAR to DATE ending on$
 
+-- requires that you have a Surrender entry category for surrenders
 -- requires that you have a Stray entry category for strays
 
 SELECT 
@@ -1014,7 +1016,7 @@ AND NonShelterAnimal = 0) AS "Stray At Large Feline Up To 5 Months",
 
 (SELECT COUNT(*) FROM animal
 INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
-WHERE OriginalOwnerID > 0 AND ReasonName NOT LIKE '%Stray%' AND IsTransfer = 0
+WHERE ReasonName LIKE '%Surrender%' AND IsTransfer = 0
 AND AsilomarOwnerRequestedEuthanasia = 0
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID = 1
@@ -1031,7 +1033,7 @@ AS "Relinquished By Owner Canine Adult",
 
 (SELECT COUNT(*) FROM animal 
 INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
-WHERE OriginalOwnerID > 0 AND ReasonName NOT LIKE '%Stray%' AND IsTransfer = 0
+WHERE ReasonName LIKE '%Surrender%' AND IsTransfer = 0
 AND AsilomarOwnerRequestedEuthanasia = 0
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID = 1
@@ -1050,7 +1052,7 @@ AS "Relinquished By Owner Canine Up To 5 Months",
 
 (SELECT COUNT(*) FROM animal
 INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
-WHERE OriginalOwnerID > 0 AND ReasonName NOT LIKE '%Stray%' AND IsTransfer = 0
+WHERE ReasonName LIKE '%Surrender%' AND IsTransfer = 0
 AND AsilomarOwnerRequestedEuthanasia = 0
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID = 2
@@ -1067,7 +1069,7 @@ AS "Relinquished By Owner Feline Adult",
 
 (SELECT COUNT(*) FROM animal 
 INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
-WHERE OriginalOwnerID > 0 AND ReasonName NOT LIKE '%Stray%' AND IsTransfer = 0
+WHERE ReasonName LIKE '%Surrender%' AND IsTransfer = 0
 AND AsilomarOwnerRequestedEuthanasia = 0
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID = 2
@@ -1172,7 +1174,7 @@ AND NonShelterAnimal = 0) AS "Transferred In From Agency Feline Up To 5 Months",
 
 (SELECT COUNT(*) FROM animal
 INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
-WHERE OriginalOwnerID = 0 AND IsTransfer = 0 AND ReasonName NOT LIKE '%Stray%'
+WHERE IsTransfer = 0 AND ReasonName NOT LIKE '%Stray%' AND ReasonName NOT LIKE '%Surrender%'
 AND AsilomarOwnerRequestedEuthanasia = 0
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID = 1
@@ -1181,7 +1183,7 @@ AND NonShelterAnimal = 0) AS "Other Intakes Canine Adult",
 
 (SELECT COUNT(*) FROM animal 
 INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
-WHERE OriginalOwnerID = 0 AND IsTransfer = 0 AND ReasonName NOT LIKE '%Stray%'
+WHERE IsTransfer = 0 AND ReasonName NOT LIKE '%Stray%' AND ReasonName NOT LIKE '%Surrender%'
 AND AsilomarOwnerRequestedEuthanasia = 0
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID = 1
@@ -1192,7 +1194,7 @@ AND NonShelterAnimal = 0) AS "Other Intakes Canine Up To 5 Months",
 
 (SELECT COUNT(*) FROM animal
 INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
-WHERE OriginalOwnerID = 0 AND IsTransfer = 0 AND ReasonName NOT LIKE '%Stray%'
+WHERE IsTransfer = 0 AND ReasonName NOT LIKE '%Stray%' AND ReasonName NOT LIKE '%Surrender%'
 AND AsilomarOwnerRequestedEuthanasia = 0
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID = 2
@@ -1201,7 +1203,7 @@ AND NonShelterAnimal = 0) AS "Other Intakes Feline Adult",
 
 (SELECT COUNT(*) FROM animal 
 INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
-WHERE OriginalOwnerID = 0 AND IsTransfer = 0 AND ReasonName NOT LIKE '%Stray%'
+WHERE IsTransfer = 0 AND ReasonName NOT LIKE '%Stray%' AND ReasonName NOT LIKE '%Surrender%'
 AND AsilomarOwnerRequestedEuthanasia = 0
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID = 2

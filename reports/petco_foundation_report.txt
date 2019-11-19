@@ -137,9 +137,9 @@ WHEN a.SpeciesID = 2 THEN 'Kittens'
 ELSE 'Other' END AS AgeGroup,
 1 AS AllSources,
 CASE WHEN IsTransfer = 1 THEN 1 ELSE 0 END AS Transfers, 
-CASE WHEN OriginalOwnerID > 0 THEN 1 ELSE 0 END AS OwnerSurrender,
+CASE WHEN ReasonName LIKE '%Surrender%' THEN 1 ELSE 0 END AS OwnerSurrender,
 CASE WHEN ReasonName LIKE '%Stray%' THEN 1 ELSE 0 END AS Stray,
-CASE WHEN ReasonName NOT LIKE '%Surrender%' AND OriginalOwnerID = 0 AND IsTransfer = 0 THEN 1 ELSE 0 END AS OtherSources
+CASE WHEN ReasonName NOT LIKE '%Surrender%' AND IsTransfer = 0 THEN 1 ELSE 0 END AS OtherSources
 FROM animal a
 INNER JOIN entryreason er ON er.ID = a.EntryReasonID
 WHERE DateBroughtIn >= '$PARENTARG1$' AND DateBroughtIn <= '$PARENTARG2$'
