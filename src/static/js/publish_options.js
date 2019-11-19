@@ -713,10 +713,7 @@ $(function() {
         render_homeagain: function() {
             return [
                 '<div id="tab-homeagain">',
-                html.info('HomeAgain allow ASM to automatically register microchips provided by HomeAgain and AKC Reunite<br />' +
-                    'Find out more at <a href="http://www.vetenvoy.com">www.vetenvoy.com</a>, ' +
-                    '<a href="http://www.homeagain.com">www.homeagain.com</a> and ' +
-                    '<a href="http://www.akcreunite.org">www.akcreunite.org</a>'),
+                html.info('Find out more at <a href="http://www.homeagain.com">www.homeagain.com</a>'),
                 '<p><input id="enabledha" type="checkbox" class="asm-checkbox enablecheck" /><label for="enabledha">' + _("Enabled") + '</label></p>',
                 '<table>',
                 '<tr>',

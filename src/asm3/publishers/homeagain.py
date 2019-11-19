@@ -5,9 +5,8 @@ import asm3.i18n
 import asm3.utils
 
 from .base import AbstractPublisher, get_microchip_data
-from asm3.sitedefs import HOMEAGAIN_BASE_URL, HOMEAGAIN_VENDOR_PASSWORD
+from asm3.sitedefs import HOMEAGAIN_BASE_URL
 
-import re
 import sys
 
 class HomeAgainPublisher(AbstractPublisher):
@@ -19,7 +18,6 @@ class HomeAgainPublisher(AbstractPublisher):
         publishCriteria.thumbnails = False
         AbstractPublisher.__init__(self, dbo, publishCriteria)
         self.initLog("homeagain", "HomeAgain Publisher")
-        self.recipientId = "d2639458-e97d-428f-b5a9-c864346b40d7" # TODO: Necessary any more?
         self.microchipPatterns = [ '985' ]
 
     def getHeader(self, headers, header):
@@ -101,27 +99,14 @@ class HomeAgainPublisher(AbstractPublisher):
                 # Build our auth headers
                 authheaders = {
                     "UserId": userid,
-                    "UserPassword": userpassword,
-                    "VendorPassword": HOMEAGAIN_VENDOR_PASSWORD, # TODO: Necessary?
-                    "RecipientId": self.recipientId # TODO: Necessary?
+                    "UserPassword": userpassword
                 }
 
-                # Start a new conversation with VetEnvoy's microchip handler
-                url = HOMEAGAIN_BASE_URL + "Chip/NewConversationId"
-                self.log("Contacting HomeAgain to start a new conversation: %s" % url)
+                url = HOMEAGAIN_BASE_URL
                 try:
-                    r = asm3.utils.get_url(url, authheaders)
-                    self.log("Got response: %s" % r["response"])
-                    conversationid = re.findall('c id="(.+?)"', r["response"])
-                    if len(conversationid) == 0:
-                        self.log("Could not parse conversation id, abandoning run")
-                        break
-                    conversationid = conversationid[0]
-                    self.log("Got conversationid: %s" % conversationid)
-
-                    # Now post the XML document
+                    # Post our VetXML document
                     self.log("Posting microchip registration document: %s" % x)
-                    r = asm3.utils.post_xml(HOMEAGAIN_BASE_URL + "Chip/" + conversationid, x, authheaders)
+                    r = asm3.utils.post_xml(url, x, authheaders)
                     self.log("Response %d, HTTP headers: %s, body: %s" % (r["status"], r["headers"], r["response"]))
                     if r["status"] != 200: raise Exception(r["response"])
 
