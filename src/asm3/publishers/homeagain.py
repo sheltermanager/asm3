@@ -104,7 +104,7 @@ class HomeAgainPublisher(AbstractPublisher):
                     "VePassword": userpassword
                 }
 
-                url = HOMEAGAIN_BASE_URL + "/Chip"
+                url = HOMEAGAIN_BASE_URL + "/Chip/conversation"
                 try:
                     # Post our VetXML document
                     self.log("Posting microchip registration document to %s: %s" % (url, x))
