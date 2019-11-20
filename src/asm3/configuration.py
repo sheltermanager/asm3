@@ -198,6 +198,7 @@ DEFAULTS = {
     "FirstDayOfWeek": "1",
     "FosterOnShelter": "Yes",
     "FostererEmails": "No", 
+    "FostererEmailOverdueDays": "-30",
     "ShowGDPRContactOptIn": "No",
     "GDPRContactChangeLog": "No",
     "GDPRContactChangeLogType": "6",
@@ -753,6 +754,9 @@ def foster_on_shelter(dbo):
 
 def fosterer_emails(dbo):
     return cboolean(dbo, "FostererEmails", DEFAULTS["FostererEmails"] == "Yes")
+
+def fosterer_email_overdue_days(dbo):
+    return cint(dbo, "FostererEmailOverdueDays", DEFAULTS["FostererEmailOverdueDays"])
 
 def foundanimals_email(dbo):
     return cstring(dbo, "FoundAnimalsEmail")

@@ -909,6 +909,10 @@ def send_fosterer_emails(dbo):
         asm3.al.debug("now.weekday != 0: no need to send fosterer emails", "movement.send_fosterer_emails", dbo)
         return
 
+    # Number of days to go back when looking for overdue medical items (negative integer, default -30)
+    overduedays = asm3.configuration.fosterer_email_overdue_days(dbo)
+    asm3.al.debug("go back %s days when considering overdue medical items" % overduedays, "movement.send_fosterer_emails", dbo)
+
     activefosterers = dbo.query("SELECT ID, OwnerName, EmailAddress FROM owner " \
         "WHERE EmailAddress <> '' AND EXISTS(SELECT OwnerID FROM adoption WHERE OwnerID = owner.ID AND MovementType = 2 AND MovementDate <= ? " \
         "AND (ReturnDate Is Null OR ReturnDate > ?)) ORDER BY OwnerName", ( dbo.today(), dbo.today() ))
@@ -941,7 +945,7 @@ def send_fosterer_emails(dbo):
 
             lines.append("")
 
-            overdue = asm3.medical.get_combined_due(dbo, a.ANIMALID, dbo.today(offset=-30), dbo.today(offset=-1))
+            overdue = asm3.medical.get_combined_due(dbo, a.ANIMALID, dbo.today(offset=overduedays), dbo.today(offset=-1))
             if len(overdue) > 0:
                 lines.append(asm3.i18n._("Overdue medical items", l))
                 lines.append(UNDERLINE)
