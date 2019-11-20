@@ -273,37 +273,72 @@ AND NonShelterAnimal = 0) AS JuniorCatOtherIntake,
 
 (SELECT COUNT(*) FROM animal
 INNER JOIN adoption ON animal.ID = adoption.AnimalID 
-WHERE MovementType NOT IN (2,8)
+WHERE MovementType = 1
 AND ReturnDate >= '$@from$' AND ReturnDate <= '$@to$' 
 AND SpeciesID = 1
 AND DateOfBirth < ReturnDate - INTERVAL '5 months' 
-AND NonShelterAnimal = 0) AS AdultDogReturn,
+AND NonShelterAnimal = 0) AS AdultDogAdoptionReturn,
 
 (SELECT COUNT(*) FROM animal
 INNER JOIN adoption ON animal.ID = adoption.AnimalID 
-WHERE MovementType NOT IN (2,8)
+WHERE MovementType = 1
 AND ReturnDate >= '$@from$' AND ReturnDate <= '$@to$' 
 AND SpeciesID = 1
 AND DateOfBirth >= ReturnDate - INTERVAL '5 months' 
-AND NonShelterAnimal = 0) AS JuniorDogReturn,
+AND NonShelterAnimal = 0) AS JuniorDogAdoptionReturn,
 
 (SELECT COUNT(*) FROM animal
 INNER JOIN adoption ON animal.ID = adoption.AnimalID 
-WHERE MovementType NOT IN (2,8)
+WHERE MovementType = 1
 AND ReturnDate >= '$@from$' AND ReturnDate <= '$@to$' 
 AND SpeciesID = 2
 AND DateOfBirth < ReturnDate - INTERVAL '5 months' 
-AND NonShelterAnimal = 0) AS AdultCatReturn,
+AND NonShelterAnimal = 0) AS AdultCatAdoptionReturn,
 
 (SELECT COUNT(*) FROM animal
 INNER JOIN adoption ON animal.ID = adoption.AnimalID 
-WHERE MovementType NOT IN (2,8)
+WHERE MovementType = 1
 AND ReturnDate >= '$@from$' AND ReturnDate <= '$@to$' 
 AND SpeciesID = 2
 AND DateOfBirth >= ReturnDate - INTERVAL '5 months' 
-AND NonShelterAnimal = 0) AS JuniorCatReturn,
+AND NonShelterAnimal = 0) AS JuniorCatAdoptionReturn,
 
 
+
+
+
+
+(SELECT COUNT(*) FROM animal
+INNER JOIN adoption ON animal.ID = adoption.AnimalID 
+WHERE MovementType NOT IN (1,2,8)
+AND ReturnDate >= '$@from$' AND ReturnDate <= '$@to$' 
+AND SpeciesID = 1
+AND DateOfBirth < ReturnDate - INTERVAL '5 months' 
+AND NonShelterAnimal = 0) AS AdultDogOtherReturn,
+
+(SELECT COUNT(*) FROM animal
+INNER JOIN adoption ON animal.ID = adoption.AnimalID 
+WHERE MovementType NOT IN (1,2,8)
+AND ReturnDate >= '$@from$' AND ReturnDate <= '$@to$' 
+AND SpeciesID = 1
+AND DateOfBirth >= ReturnDate - INTERVAL '5 months' 
+AND NonShelterAnimal = 0) AS JuniorDogOtherReturn,
+
+(SELECT COUNT(*) FROM animal
+INNER JOIN adoption ON animal.ID = adoption.AnimalID 
+WHERE MovementType NOT IN (1,2,8)
+AND ReturnDate >= '$@from$' AND ReturnDate <= '$@to$' 
+AND SpeciesID = 2
+AND DateOfBirth < ReturnDate - INTERVAL '5 months' 
+AND NonShelterAnimal = 0) AS AdultCatOtherReturn,
+
+(SELECT COUNT(*) FROM animal
+INNER JOIN adoption ON animal.ID = adoption.AnimalID 
+WHERE MovementType NOT IN (1,2,8)
+AND ReturnDate >= '$@from$' AND ReturnDate <= '$@to$' 
+AND SpeciesID = 2
+AND DateOfBirth >= ReturnDate - INTERVAL '5 months' 
+AND NonShelterAnimal = 0) AS JuniorCatOtherReturn,
 
 
 
@@ -770,12 +805,22 @@ $$BODY
 </tr>
 
 <tr>
-<td>Intake: Returns<sup>5</sup></td>
-<td>$AdultDogReturn</td>
-<td>$JuniorDogReturn</td>
+<td>Intake: Adoption Returns<sup>5</sup></td>
+<td>$AdultDogAdoptionReturn</td>
+<td>$JuniorDogAdoptionReturn</td>
 <td>0</td>
-<td>$AdultCatReturn</td>
-<td>$JuniorCatReturn</td>
+<td>$AdultCatAdoptionReturn</td>
+<td>$JuniorCatAdoptionReturn</td>
+<td>0</td>
+</tr>
+
+<tr>
+<td>Intake: Other Returns<sup>6</sup></td>
+<td>$AdultDogOtherReturn</td>
+<td>$JuniorDogOtherReturn</td>
+<td>0</td>
+<td>$AdultCatOtherReturn</td>
+<td>$JuniorCatOtherReturn</td>
 <td>0</td>
 </tr>
 
@@ -820,7 +865,7 @@ $$BODY
 </tr>
 
 <tr>
-<td>Live Outcomes: Returned To Field<sup>6</sup></td>
+<td>Live Outcomes: Returned To Field<sup>7</sup></td>
 <td>$AdultDogReturnToField</td>
 <td>$JuniorDogReturnToField</td>
 <td>0</td>
@@ -964,7 +1009,8 @@ $$FOOTER
 <sup>3</sup> Animals where "Euthanasia requested" is set in the asilomar section of Entry.<br/>
 <sup>4</sup> Animals where the "Transfer In" box is ticked in Entry.<br/>
 <sup>5</sup> Animals that have an adoption movement with a return date set.<br/>
-<sup>6</sup> Animals with a "Released to wild" or "TNR" movement but the entry category is NOT TNR.
+<sup>6</sup> Animals that have non-foster or retailer movement with a return date set.<br/>
+<sup>7</sup> Animals with a "Released to wild" or "TNR" movement but the entry category is NOT TNR.
 </p>
 FOOTER$$
 &&&
