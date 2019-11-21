@@ -80,6 +80,7 @@ LEFT OUTER JOIN lksmovementtype mt ON mt.ID = a.ActiveMovementType
 LEFT OUTER JOIN adoption ad ON ad.ID = a.ActiveMovementID
 LEFT OUTER JOIN owner fo ON ad.OwnerID = fo.ID
 WHERE TestResultID = 3 AND DateOfTest Is Not Null 
+AND DateOfTest >= '$ASK DATE Testing positive between$' AND DateOfTest <= '$ASK DATE and$'
 AND tt.TestName LIKE '%$ASK STRING Enter partial test name (blank for all)$%'
 ORDER BY a.AnimalName
 ###
