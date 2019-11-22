@@ -15,7 +15,9 @@
      *            cleared (after user clicks the clear button)
      */
     $.widget("asm.animalchooser", {
-        
+
+        selected: null,
+
         options: {
             id: 0,
             rec: {},
@@ -112,6 +114,7 @@
          * Empties the widget
          */
         clear: function(fireclearedevent) {
+            this.selected = null;
             this.element.val("0");
             this.options.id = 0;
             this.options.rec = {};
@@ -120,7 +123,7 @@
         },
 
         is_empty: function() {
-            return this.options.id == 0;
+            return this.selected == null;
         },
 
         destroy: function() {

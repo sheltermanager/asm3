@@ -87,7 +87,7 @@ $(function() {
             h.push(html.content_header(this.title()));
             h.push(html.info(_("Appointment {0}. {1} on {2} for {3}")
                 .replace("{0}", format.padleft(controller.appointment.ID, 6))
-                .replace("{1}", controller.appointment.OWNERNAME)
+                .replace("{1}", controller.appointment.OWNERNAME != null ? controller.appointment.OWNERNAME : _("Shelter"))
                 .replace("{2}", format.date(controller.appointment.DATETIME) + " " + format.time(controller.appointment.DATETIME))
                 .replace("{3}", controller.appointment.ANIMALNAME)
                 ));

@@ -33,7 +33,8 @@ $(function() {
                     { json_field: "APPTFOR", post_field: "for", label: _("For"), type: "select", 
                         options: { rows: controller.forlist, displayfield: "USERNAME", valuefield: "USERNAME" }},
                     { json_field: "OWNERID", post_field: "person", label: _("Person"), type: "person" },
-                    { json_field: "ANIMALID", post_field: "animal", label: _("Animal"), type: "select" },
+                    { json_field: "ANIMALID", post_field: "personanimal", label: _("Animal"), type: "select" },
+                    { json_field: "ANIMALID", post_field: "animal", label: _("Animal"), type: "animal" },
                     { json_field: "STATUS", post_field: "status", label: _("Status"), type: "select", 
                         options: { displayfield: "STATUS", valuefield: "ID", rows: controller.clinicstatuses }},
                     { json_field: "DATETIME", post_field: "appt", label: _("Appointment"), type: "datetime" },
@@ -56,7 +57,7 @@ $(function() {
                 edit: function(row) {
                     tableform.fields_populate_from_json(dialog.fields, row);
                     clinic_appointment.dialog_row = row;
-                    clinic_appointment.update_animals(row.OWNERID);
+                    clinic_appointment.show_person_animals(false);
                     tableform.dialog_show_edit(dialog, row)
                             .then(function() {
                                 if (!clinic_appointment.validation()) { tableform.dialog_enable_buttons(); return; }
@@ -162,9 +163,18 @@ $(function() {
                                 $("#vatrate").val(config.number("VATRate"));
                             }
                             $("#person").personchooser("clear");
+                            $("#animal").animalchooser("clear");
                             if (controller.person) {
                                 $("#person").personchooser("loadbyid", controller.person.ID);
-                                clinic_appointment.update_animals(controller.person.ID);
+                                clinic_appointment.update_person_animals(controller.person.ID);
+                                clinic_appointment.show_person_animals(true);
+                            }
+                            else {
+                                clinic_appointment.show_person_animals(false);
+                            }
+                            if (controller.animal) {
+                                $("#animal").animalchooser("loadbyid", controller.animal.ID);
+                                clinic_appointment.show_person_animals(false);
                             }
                         }})
                         .then(function() {
@@ -274,8 +284,15 @@ $(function() {
         },
 
         set_extra_fields: function(row) {
-            row.ANIMALNAME = common.get_field(clinic_appointment.animals, row.ANIMALID, "ANIMALNAME");
-            row.SHELTERCODE = common.get_field(clinic_appointment.animals, row.ANIMALID, "SHELTERCODE");
+            if (!$("#animal").animalchooser("is_empty")) {
+                row.ANIMALNAME = $("#animal").animalchooser("get_selected").ANIMALNAME;
+                row.SHELTERCODE = $("#animal").animalchooser("get_selected").SHELTERCODE;
+            }
+            else {
+                row.ANIMALID = $("#personanimal").val();
+                row.ANIMALNAME = common.get_field(clinic_appointment.personanimals, $("#personanimal").val(), "ANIMALNAME");
+                row.SHELTERCODE = common.get_field(clinic_appointment.personanimals, $("#personanimal").val(), "SHELTERCODE");
+            }
             if (controller.person) {
                 row.OWNERNAME = controller.person.OWNERNAME;
                 row.OWNERADDRESS = controller.person.OWNERADDRESS;
@@ -294,19 +311,30 @@ $(function() {
             row.LASTCHANGEDBY = asm.user;
         },
 
-        update_animals: function(personid) {
+        show_person_animals: function(b) {
+            if (b) {
+                $("#personanimal").closest("tr").show();
+                $("#animal").closest("tr").hide();
+            }
+            else {
+                $("#personanimal").closest("tr").hide();
+                $("#animal").closest("tr").show();
+            }
+        },
+
+        update_person_animals: function(personid) {
             common.ajax_post("clinic_appointment", "mode=personanimals&personid=" + personid)
                 .then(function(result) {
                     var h = "<option value=\"0\"></option>";
-                    clinic_appointment.animals = jQuery.parseJSON(result);
-                    $.each(clinic_appointment.animals, function(i,v) {
+                    clinic_appointment.personanimals = jQuery.parseJSON(result);
+                    $.each(clinic_appointment.personanimals, function(i,v) {
                         h += "<option value=\"" + v.ID + "\">";
                         h += v.ANIMALNAME + " - " + v.SHELTERCODE + " (" + v.SEXNAME + " " + v.BREEDNAME + " " + v.SPECIESNAME + ")";
                         h += "</option>";
                     });
-                    $("#animal").html(h);
+                    $("#personanimal").html(h);
                     if (clinic_appointment.dialog_row && clinic_appointment.dialog_row.ANIMALID) {
-                        $("#animal").select("value", clinic_appointment.dialog_row.ANIMALID);
+                        $("#personanimal").select("value", clinic_appointment.dialog_row.ANIMALID);
                     }
                     $("#movement").closest("tr").fadeIn();
                 });
@@ -410,7 +438,13 @@ $(function() {
 
             $("#person").personchooser().bind("personchooserchange", function(event, rec) {
                 clinic_appointment.lastperson = rec;
-                clinic_appointment.update_animals(rec.ID);
+                clinic_appointment.update_person_animals(rec.ID);
+                clinic_appointment.show_person_animals(true);
+            });
+
+            $("#person").personchooser().bind("personchoosercleared", function(event) {
+                $("#personanimal").val("0");
+                clinic_appointment.show_person_animals(false);
             });
 
             $("#person").personchooser().bind("personchooserloaded", function(event, rec) {
@@ -433,7 +467,14 @@ $(function() {
         },
 
         validation: function() {
-            if (!validate.notzero(["person"])) { return false; }
+            if ($("#person").personchooser("is_empty") && $("#animal").animalchooser("is_empty")) {
+                validate.notzero(["animal"]);
+                return false;
+            }
+            if (!$("#person").personchooser("is_empty") && $("#personanimal").val() == "0") {
+                validate.notzero(["personanimal"]);
+                return false;
+            }
             if (!validate.notblank([ "apptdate", "appttime" ])) { return false; }
             return true;
         },

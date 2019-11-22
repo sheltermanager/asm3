@@ -1870,8 +1870,12 @@ class calendar_events(ASMEndpoint):
                     "link": "animal_test?id=%d" % t["ANIMALID"] })
         if "c" in ev and self.checkb(asm3.users.VIEW_CLINIC):
             for c in asm3.clinic.get_appointments_two_dates(dbo, start, end, o.post["apptfor"], o.siteid):
-                sub = "%s - %s" % (c.OWNERNAME, c.ANIMALNAME)
-                tit = "%s - %s (%s) %s" % (c.OWNERNAME, c.ANIMALNAME, c.APPTFOR, c.REASONFORAPPOINTMENT)
+                if c.OWNERNAME is not None:
+                    sub = "%s - %s" % (c.OWNERNAME, c.ANIMALNAME)
+                    tit = "%s - %s (%s) %s" % (c.OWNERNAME, c.ANIMALNAME, c.APPTFOR, c.REASONFORAPPOINTMENT)
+                else:
+                    sub = "%s" % c.ANIMALNAME
+                    tit = "%s (%s) %s" % (c.ANIMALNAME, c.APPTFOR, c.REASONFORAPPOINTMENT)
                 events.append({ 
                     "title": sub, 
                     "allDay": False, 

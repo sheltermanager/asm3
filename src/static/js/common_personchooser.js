@@ -22,7 +22,9 @@
      *            cleared (after user clicks the clear button)
      */
     $.widget("asm.personchooser", {
-        
+
+        selected: null,
+
         options: {
             id: 0,
             rec: {},
@@ -664,11 +666,12 @@
             this.element.val("0");
             this.options.id = 0;
             this.options.display.html("");
+            this.selected = null;
             if (fireclearedevent) { this._trigger("cleared", null); }
         },
 
         is_empty: function() {
-            return this.options.id == 0;
+            return this.selected == null;
         },
 
         /**
