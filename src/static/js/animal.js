@@ -792,7 +792,7 @@ $(function() {
                 '</div>',
                 edit_header.animal_edit_header(controller.animal, "animal", controller.tabcounts),
                 tableform.buttons_render([
-                    { id: "save", text: _("Save"), icon: "save", tooltip: _("Save this person") },
+                    { id: "save", text: _("Save"), icon: "save", tooltip: _("Save this animal") },
                     { id: "clone", text: _("Clone"), icon: "copy", tooltip: _("Create a new animal by copying this one") },
                     { id: "merge", text: _("Merge"), icon: "copy", tooltip: _("Merge another animal into this one") },
                     { id: "delete", text: _("Delete"), icon: "delete", tooltip: _("Delete this animal") },

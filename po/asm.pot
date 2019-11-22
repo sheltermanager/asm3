@@ -1611,7 +1611,7 @@ msgstr ""
 msgid "Comments"
 msgstr ""
 
-#: person.js animal_find.js
+#: person.js
 msgid "Comments Contain"
 msgstr ""
 
@@ -2370,7 +2370,7 @@ msgstr ""
 msgid "Description"
 msgstr ""
 
-#: waitinglist_results.js
+#: waitinglist_results.js animal_find.js
 msgid "Description Contains"
 msgstr ""
 
@@ -3017,7 +3017,8 @@ msgstr ""
 msgid "Entry"
 msgstr ""
 
-#: animal_new.js animal_find.js animal.js options.js shelterview.js
+#: animal_new.js animal_find.js animal_bulk.js animal.js options.js
+#: shelterview.js
 msgid "Entry Category"
 msgstr ""
 
@@ -3117,7 +3118,7 @@ msgstr ""
 msgid "Export"
 msgstr ""
 
-#: csvexport.js
+#: csvexport.js code.py
 msgid "Export Animals as CSV"
 msgstr ""
 
@@ -6465,11 +6466,15 @@ msgstr ""
 msgid "Save and leave"
 msgstr ""
 
+#: animal.js
+msgid "Save this animal"
+msgstr ""
+
 #: incident.js
 msgid "Save this incident"
 msgstr ""
 
-#: person.js animal.js
+#: person.js
 msgid "Save this person"
 msgstr ""
 
@@ -6700,7 +6705,7 @@ msgstr ""
 msgid "Shared weblink"
 msgstr ""
 
-#: header_edit_header.js person_find_results.js
+#: header_edit_header.js clinic_invoice.js person_find_results.js
 msgid "Shelter"
 msgstr ""
 
@@ -7478,7 +7483,7 @@ msgstr ""
 msgid "The default username is 'user' with the password 'letmein'"
 msgstr ""
 
-#: animal_new.js animal.js
+#: animal_new.js animal_bulk.js animal.js
 msgid "The entry reason for this animal"
 msgstr ""
 
