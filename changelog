@@ -1,6 +1,7 @@
 43
 ================
 
+23/11/19 Include manufacturer in <<AnimalVaccinations>>
 22/11/19 Allow shelter animals to be booked into clinic #625
 20/11/19 Hidden config for overdue days on fosterer emails
 18/11/19 Do not include custom emblems when sorting tables #663
