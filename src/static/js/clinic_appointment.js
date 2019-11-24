@@ -34,7 +34,7 @@ $(function() {
                         options: { rows: controller.forlist, displayfield: "USERNAME", valuefield: "USERNAME" }},
                     { json_field: "OWNERID", post_field: "person", label: _("Person"), type: "person" },
                     { json_field: "ANIMALID", post_field: "personanimal", label: _("Animal"), type: "select" },
-                    { json_field: "ANIMALID", post_field: "animal", label: _("Animal"), type: "animal" },
+                    { json_field: "ANIMALID", post_field: "animal", label: _("Animal"), type: "animal", animalfilter: "shelter" },
                     { json_field: "STATUS", post_field: "status", label: _("Status"), type: "select", 
                         options: { displayfield: "STATUS", valuefield: "ID", rows: controller.clinicstatuses }},
                     { json_field: "DATETIME", post_field: "appt", label: _("Appointment"), type: "datetime" },

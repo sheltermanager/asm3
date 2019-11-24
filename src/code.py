@@ -1873,9 +1873,11 @@ class calendar_events(ASMEndpoint):
                 if c.OWNERNAME is not None:
                     sub = "%s - %s" % (c.OWNERNAME, c.ANIMALNAME)
                     tit = "%s - %s (%s) %s" % (c.OWNERNAME, c.ANIMALNAME, c.APPTFOR, c.REASONFORAPPOINTMENT)
+                    link = "person_clinic?id=%d" % c.OWNERID
                 else:
                     sub = "%s" % c.ANIMALNAME
                     tit = "%s (%s) %s" % (c.ANIMALNAME, c.APPTFOR, c.REASONFORAPPOINTMENT)
+                    link = "animal_clinic?id=%d" % c.ANIMALID
                 events.append({ 
                     "title": sub, 
                     "allDay": False, 
@@ -1883,7 +1885,7 @@ class calendar_events(ASMEndpoint):
                     "end": add_minutes(c.DATETIME, 20),
                     "tooltip": tit, 
                     "icon": "health",
-                    "link": "person_clinic?id=%d" % c.OWNERID })
+                    "link": link })
         if "p" in ev and self.checkb(asm3.users.VIEW_DONATION):
             for p in asm3.financial.get_donations_due_two_dates(dbo, start, end):
                 sub = "%s - %s" % (p["DONATIONNAME"], p["OWNERNAME"])

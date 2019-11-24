@@ -907,6 +907,7 @@
          *        markup: "<input type='text' value='raw' />",
          *        options: { displayfield: "DISPLAY", valuefield: "VALUE", rows: [ {rows} ] }, (only valid for select type)
          *        options: "<option>test</option>" also valid
+         *        animalfilter: "all",   (only valid for animal and animalmulti types)
          *        personfilter: "all",   (only valid for person type)
          *        personmode: "full",    (only valid for person type)
          *        change: function(changeevent), 
