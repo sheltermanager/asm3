@@ -486,6 +486,9 @@ $(function() {
                 $("#timebroughtin").val(format.time(new Date()));
             }
 
+            // Update units according to any location selected
+            animal_new.update_units();
+
             // Currency defaults
             $("#fee").currency("value", 0);
         },
