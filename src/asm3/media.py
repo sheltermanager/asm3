@@ -119,6 +119,26 @@ def get_name_for_id(dbo, mid):
 def get_notes_for_id(dbo, mid):
     return dbo.query_string("SELECT MediaNotes FROM media WHERE ID = ?", [mid])
 
+def get_media_export(dbo):
+    """
+    Produces a dataset of all media with link info for export
+    """
+    return dbo.query("SELECT m.*, " \
+        "CASE " \
+        "WHEN m.LinkTypeID = 0 THEN (SELECT %s FROM animal WHERE ID = m.LinkID) " \
+        "WHEN m.LinkTypeID = 3 THEN (SELECT OwnerName FROM owner WHERE ID = m.LinkID) " \
+        "WHEN m.LinkTypeID = 1 THEN %s " \
+        "WHEN m.LinkTypeID = 2 THEN %s " \
+        "WHEN m.LinkTypeID = 5 THEN %s " \
+        "WHEN m.LinkTypeID = 6 THEN %s " \
+        "ELSE '' END AS LinkText " \
+        "ORDER BY m.ID" % ( \
+            dbo.sql_concat([ "AnimalName", "' - '", "ShelterCode" ]),
+            dbo.sql_concat([ "'Lost Animal '", "m.LinkID" ]),
+            dbo.sql_concat([ "'Found Animal '", "m.LinkID" ]),
+            dbo.sql_concat([ "'Waiting List '", "m.LinkID" ]),
+            dbo.sql_concat([ "'Incident '", "m.LinkID" ])  ))
+
 def get_media_file_data(dbo, mid):
     """
     Gets a piece of media by id. Returns None if the media record does not exist.

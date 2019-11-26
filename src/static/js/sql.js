@@ -31,6 +31,7 @@ $(function() {
                         // ASM2_COMPATIBILITY
                         "animalcsv|" + _("CSV of animal/adopter data"), 
                         "medicalcsv|" + _("CSV of animal/medical data"), 
+                        "mediacsv|" + _("CSV of media data"), 
                         "personcsv|" + _("CSV of person data"),
                         "incidentcsv|" + _("CSV of incident data"),
                         "licencecsv|" + _("CSV of license data"),

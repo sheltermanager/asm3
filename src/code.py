@@ -5245,6 +5245,10 @@ class sql_dump(ASMEndpoint):
             asm3.al.debug("%s executed CSV animal dump" % str(session.user), "code.sql", dbo)
             self.header("Content-Disposition", "attachment; filename=\"animal.csv\"")
             return asm3.utils.csv(l, asm3.animal.get_animal_find_advanced(dbo, { "logicallocation" : "all", "filter" : "includedeceased,includenonshelter" }))
+        elif mode == "mediacsv":
+            asm3.al.debug("%s executed CSV media dump" % str(session.user), "code.sql", dbo)
+            self.header("Content-Disposition", "attachment; filename=\"media.csv\"")
+            return asm3.utils.csv(l, asm3.media.get_media_export(dbo))
         elif mode == "medicalcsv":
             asm3.al.debug("%s executed CSV medical dump" % str(session.user), "code.sql", dbo)
             self.header("Content-Disposition", "attachment; filename=\"medical.csv\"")
