@@ -1,6 +1,7 @@
 43
 ================
 
+26/11/19 Fix name2codepoint python3 reference
 25/11/19 Add animal: Reload unit list on reset
 24/11/19 Clinic: add shelter filter, fix bug in calendar links
 23/11/19 Include manufacturer in <<AnimalVaccinations>>

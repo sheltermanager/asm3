@@ -25,7 +25,7 @@ import web
 import zipfile
 
 if sys.version_info[0] > 2: # PYTHON3
-    from html.entities import entitydefs as htmlentitydefs
+    from html.entities import name2codepoint
     import _thread as thread
     import urllib.request as urllib2
     from io import BytesIO, StringIO
@@ -39,7 +39,7 @@ if sys.version_info[0] > 2: # PYTHON3
     unichr = chr # decode_html needs this
     extcsv.field_size_limit(512 * 1024) # Python 3 has a limit of 128k for csv fields, make it 512k
 else:
-    import htmlentitydefs
+    from htmlentitydefs import name2codepoint
     import thread
     import urllib2
     from cStringIO import StringIO
@@ -644,8 +644,8 @@ def decode_html(s):
         hits.remove(amp)
     for hit in hits:
         name = hit[1:-1]
-        if name in htmlentitydefs.name2codepoint:
-            s = s.replace(hit, to_char(htmlentitydefs.name2codepoint[name]))
+        if name in name2codepoint:
+            s = s.replace(hit, to_char(name2codepoint[name]))
     s = s.replace(amp, "&")
     return s
 
