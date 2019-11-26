@@ -132,6 +132,7 @@ def get_media_export(dbo):
         "WHEN m.LinkTypeID = 5 THEN %s " \
         "WHEN m.LinkTypeID = 6 THEN %s " \
         "ELSE '' END AS LinkText " \
+        "FROM media m " \
         "ORDER BY m.ID" % ( \
             dbo.sql_concat([ "AnimalName", "' - '", "ShelterCode" ]),
             dbo.sql_concat([ "'Lost Animal '", "m.LinkID" ]),
