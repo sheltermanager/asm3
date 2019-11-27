@@ -98,10 +98,8 @@ class HomeAgainPublisher(AbstractPublisher):
                                 
                 # Build our auth headers
                 authheaders = {
-                    #"UserId": userid,
-                    #"UserPassword": userpassword
-                    "VeUserId": userid,
-                    "VePassword": userpassword
+                    "UserId": userid,
+                    "UserPassword": userpassword
                 }
 
                 url = HOMEAGAIN_BASE_URL + "/Chip/conversation"
