@@ -1,6 +1,7 @@
 43
 ================
 
+28/11/19 Consistent limit of now+30 for datebroughtin
 28/11/19 First version of standalone AKC Reunite publisher
 26/11/19 Fix name2codepoint python3 reference
 25/11/19 Add animal: Reload unit list on reset

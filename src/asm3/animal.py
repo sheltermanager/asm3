@@ -1899,7 +1899,7 @@ def insert_animal_from_form(dbo, post, username):
             raise asm3.utils.ASMValidationError(_("Microchip number {0} has already been allocated to another animal.", l).format(post["microchipnumber"]))
     if dob > dbo.today():
         raise asm3.utils.ASMValidationError(_("Date of birth cannot be in the future.", l))
-    if datebroughtin > dbo.today(offset=20):
+    if datebroughtin > dbo.today(offset=30):
         raise asm3.utils.ASMValidationError(_("Date brought in cannot be in the future.", l))
 
     # Set default brought in by if we have one and none was set
@@ -2088,7 +2088,7 @@ def update_animal_from_form(dbo, post, username):
         raise asm3.utils.ASMValidationError(_("Date brought in cannot be blank", l))
     if post.datetime("datebroughtin", "timebroughtin") is None:
         raise asm3.utils.ASMValidationError(_("Date brought in is not valid", l))
-    if post.datetime("datebroughtin", "timebroughtin") > dbo.today(offset=6):
+    if post.datetime("datebroughtin", "timebroughtin") > dbo.today(offset=30):
         raise asm3.utils.ASMValidationError(_("Date brought in cannot be in the future.", l))
     if post["sheltercode"] == "":
         raise asm3.utils.ASMValidationError(_("Shelter code cannot be blank", l))
