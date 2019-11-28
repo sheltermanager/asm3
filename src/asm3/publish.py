@@ -6,7 +6,7 @@
 import asm3.al
 import asm3.configuration
 
-import asm3.publishers.adoptapet, asm3.publishers.anibaseuk, asm3.publishers.foundanimals, asm3.publishers.homeagain, asm3.publishers.helpinglostpets, asm3.publishers.html, asm3.publishers.maddiesfund, asm3.publishers.petfinder, asm3.publishers.petlink, asm3.publishers.petrescue, asm3.publishers.petslocateduk, asm3.publishers.pettracuk, asm3.publishers.rescuegroups, asm3.publishers.savourlife, asm3.publishers.smarttag, asm3.publishers.vetenvoy
+import asm3.publishers.adoptapet, asm3.publishers.akcreunite, asm3.publishers.anibaseuk, asm3.publishers.foundanimals, asm3.publishers.homeagain, asm3.publishers.helpinglostpets, asm3.publishers.html, asm3.publishers.maddiesfund, asm3.publishers.petfinder, asm3.publishers.petlink, asm3.publishers.petrescue, asm3.publishers.petslocateduk, asm3.publishers.pettracuk, asm3.publishers.rescuegroups, asm3.publishers.savourlife, asm3.publishers.smarttag
 
 from asm3.publishers.base import PublishCriteria
 
@@ -58,9 +58,9 @@ PUBLISHER_LIST["rg"] = {
     "class":    asm3.publishers.rescuegroups.RescueGroupsPublisher,
     "locales":  "en"
 }
-PUBLISHER_LIST["vear"] = {
-    "label":    "Register animals with AKC Reunite Microchips (via VetEnvoy)",
-    "class":    asm3.publishers.vetenvoy.VEAKCReunitePublisher,
+PUBLISHER_LIST["ak"] = {
+    "label":    "Register animals with AKC Reunite Microchips",
+    "class":    asm3.publishers.akcreunite.AKCReunitePublisher,
     "locales":  "en"
 }
 PUBLISHER_LIST["abuk"] = {
@@ -81,11 +81,6 @@ PUBLISHER_LIST["fa"] = {
 PUBLISHER_LIST["ha"] = {
     "label":    "Register animals with HomeAgain Microchips",
     "class":    asm3.publishers.homeagain.HomeAgainPublisher,
-    "locales":  "en"
-}
-PUBLISHER_LIST["veha"] = {
-    "label":    "Register animals with HomeAgain Microchips (via VetEnvoy)",
-    "class":    asm3.publishers.vetenvoy.VEHomeAgainPublisher,
     "locales":  "en"
 }
 PUBLISHER_LIST["pl"] = {

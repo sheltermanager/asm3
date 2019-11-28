@@ -21,6 +21,7 @@ $(function() {
                 '<li class="localeus"><a href="#tab-rescuegroups">RescueGroups Publisher</a></li>',
                 '<li class="localegb"><a href="#tab-pettrac">AVID UK Microchips</a></li>',
                 '<li class="localegb"><a href="#tab-anibase">Identibase UK Microchips</a></li>',
+                '<li class="localeus hasakcreunite"><a href="#tab-akcreunite">AKC Reunite Microchips</a></li>',
                 '<li class="localeus hasfoundanimals"><a href="#tab-foundanimals">FoundAnimals Microchips</a></li>',
                 '<li class="localeus hashomeagain"><a href="#tab-homeagain">HomeAgain Microchips</a></li>',
                 '<li class="localeus localeca localemx haspetlink"><a href="#tab-petlink">PetLink Microchips</a></li>',
@@ -684,6 +685,21 @@ $(function() {
             ].join("\n");
         },
 
+        render_akcreunite: function() {
+            return [
+                '<div id="tab-akcreunite">',
+                html.info('Find out more at <a href="http://www.akcreunite.org">www.akcreunite.org</a>'),
+                '<p><input id="enabledak" type="checkbox" class="asm-checkbox enablecheck" /><label for="enabledak">' + _("Enabled") + '</label></p>',
+                '<table>',
+                '<tr>',
+                '<td><label for="akenrollmentid">AKC Enrollment Source ID</label></td>',
+                '<td><input id="akenrollmentid" type="text" class="asm-doubletextbox cfg" disabled="disabled" data="AKCEnrollmentSourceID" /></td>',
+                '</tr>',
+                '</table>',
+                '</div>'
+            ].join("\n");
+        },
+
         render_foundanimals: function() {
             return [
                 '<div id="tab-foundanimals">',
@@ -902,6 +918,7 @@ $(function() {
                 this.render_petslocated(),
                 this.render_rescuegroups(),
                 this.render_adoptapet(),
+                this.render_akcreunite(),
                 this.render_foundanimals(),
                 this.render_homeagain(),
                 this.render_maddiesfund(),
@@ -1045,6 +1062,7 @@ $(function() {
             if (asm.locale == "en_MX" || asm.locale == "es_MX") { $(".localemx").show(); }
 
             // Disable services that require sitedef setup
+            if (!controller.hasakcreunite) { $(".hasakcreunite").hide(); }
             if (!controller.hasfoundanimals) { $(".hasfoundanimals").hide(); }
             if (!controller.hashomeagain) { $(".hashomeagain").hide(); }
             if (!controller.hasmaddiesfund) { $(".hasmaddiesfund").hide(); }

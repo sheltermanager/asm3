@@ -237,6 +237,9 @@ MULTIPLE_DATABASES_MAP = get_dict("multiple_databases_map")
 
 # FTP hosts and URLs for third party publishing services
 ADOPTAPET_FTP_HOST = get_string("adoptapet_ftp_host", "autoupload.adoptapet.com")
+AKC_REUNITE_BASE_URL = get_string("akc_reunite_base_url", "")
+AKC_REUNITE_USER = get_string("akc_reunite_user", "")
+AKC_REUNITE_PASSWORD = get_string("akc_reunite_password", "")
 ANIBASE_BASE_URL = get_string("anibase_base_url", "")
 ANIBASE_API_USER = get_string("anibase_api_user", "")
 ANIBASE_API_KEY = get_string("anibase_api_key", "")

@@ -66,6 +66,13 @@ class TestPublish(unittest.TestCase):
         a = asm3.publishers.base.get_animal_data(base.get_dbo())[0]
         assert asm3.publishers.adoptapet.AdoptAPetPublisher(base.get_dbo(), pc).processAnimal(a) is not None
 
+    # akcreunite
+    def test_akcreunite(self):
+        pc = asm3.publishers.base.PublishCriteria()
+        a = asm3.publishers.base.get_animal_data(base.get_dbo())[0]
+        assert asm3.publishers.akcreunite.AKCReunitePublisher(base.get_dbo(), pc).processAnimal(a) is not None
+        asm3.publishers.akcreunite.AKCReunitePublisher(base.get_dbo(), pc).validate(a)
+
     # anibase
     def test_anibase(self):
         pc = asm3.publishers.base.PublishCriteria()

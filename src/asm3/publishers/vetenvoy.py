@@ -4,6 +4,10 @@ import asm3.configuration
 import asm3.i18n
 import asm3.utils
 
+# NO LONGER USED AS WE HAVE DIRECT INTEGRATION WITH AKC REUNITE AND HOMEAGAIN
+# THIS CODE LEFT HERE IN CASE WE USE THEM FOR OTHER SERVICES IN FUTURE.
+# ============================================================================
+
 from .base import AbstractPublisher, get_microchip_data
 from asm3.sitedefs import VETENVOY_US_VENDOR_USERID, VETENVOY_US_VENDOR_PASSWORD, VETENVOY_US_HOMEAGAIN_RECIPIENTID, VETENVOY_US_AKC_REUNITE_RECIPIENTID, VETENVOY_US_BASE_URL, VETENVOY_US_SYSTEM_ID
 

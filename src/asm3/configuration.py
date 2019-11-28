@@ -497,6 +497,9 @@ def age_group(dbo, band):
 def age_group_name(dbo, band):
     return cstring(dbo, "AgeGroup%dName" % band)
 
+def akc_enrollmentsourceid(dbo):
+    return cstring(dbo, "AKCEnrollmentSourceID")
+
 def alert_species_microchip(dbo):
     s = cstring(dbo, "AlertSpeciesMicrochip", DEFAULTS["AlertSpeciesMicrochip"])
     if s == "": return "0" # Always return something due to IN clauses of queries
