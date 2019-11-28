@@ -17,7 +17,7 @@ FROM animal a
 INNER JOIN species s ON s.ID = a.SpeciesID
 INNER JOIN entryreason e ON e.ID = a.EntryReasonID
 WHERE a.DateBroughtIn >= '$ASK DATE Animals entering the shelter between$' AND a.DateBroughtIn <= '$ASK DATE and$'
-AND NonShelterAnimal = 0 AND HasPermanentFoster = 0
+AND NonShelterAnimal = 0 AND NOT EXISTS(SELECT ID FROM adoption WHERE IsPermanentFoster=1 AND AnimalID=a.ID)
 ORDER BY e.ReasonName, a.DateBroughtIn
 ###
 $$HEADER

@@ -15,7 +15,7 @@ a.DateBroughtIn, a.TimeOnShelter, a.DaysOnShelter, a.AnimalAge
 FROM animal a
 INNER JOIN species s ON s.ID = a.SpeciesID
 INNER JOIN entryreason e ON e.ID = a.EntryReasonID
-WHERE a.Archived = 0 AND NonShelterAnimal = 0 AND HasPermanentFoster = 0
+WHERE a.Archived = 0 AND NonShelterAnimal = 0 AND NOT EXISTS(SELECT ID FROM adoption WHERE IsPermanentFoster=1 AND AnimalID=a.ID)
 ORDER BY s.SpeciesName, a.DateBroughtIn
 ###
 $$HEADER
