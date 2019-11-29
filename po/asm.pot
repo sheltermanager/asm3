@@ -1244,6 +1244,10 @@ msgid "CSV of license data"
 msgstr ""
 
 #: sql.js
+msgid "CSV of media data"
+msgstr ""
+
+#: sql.js
 msgid "CSV of payment data"
 msgstr ""
 
@@ -9166,6 +9170,12 @@ msgstr ""
 
 #: mailmerge.js
 msgid "{0} record(s) match the mail merge."
+msgstr ""
+
+#: medical.js
+msgid ""
+"{0} records displayed, use the 'Medical History' report to see all records "
+"for this animal."
 msgstr ""
 
 #: sql.js
