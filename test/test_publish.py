@@ -195,11 +195,11 @@ class TestPublish(unittest.TestCase):
         a = asm3.publishers.base.get_animal_data(base.get_dbo())[0]
         assert asm3.publishers.smarttag.SmartTagPublisher(base.get_dbo(), pc).processAnimal(a) is not None
 
-    # vetenvoy
-    def test_vetenvoy(self):
-        pc = asm3.publishers.base.PublishCriteria()
-        a = asm3.publishers.base.get_animal_data(base.get_dbo())[0]
-        assert asm3.publishers.vetenvoy.VetEnvoyUSMicrochipPublisher(base.get_dbo(), pc, "ve", "ve", "ve", [ "9" ]).processAnimal(a) is not None
-        asm3.publishers.vetenvoy.VetEnvoyUSMicrochipPublisher(base.get_dbo(), pc, "ve", "ve", "ve", [ "9" ]).validate(a)
+    # vetenvoy - redundant and not imported by publish.py any more
+    #def test_vetenvoy(self):
+    #    pc = asm3.publishers.base.PublishCriteria()
+    #    a = asm3.publishers.base.get_animal_data(base.get_dbo())[0]
+    #    assert asm3.publishers.vetenvoy.VetEnvoyUSMicrochipPublisher(base.get_dbo(), pc, "ve", "ve", "ve", [ "9" ]).processAnimal(a) is not None
+    #    asm3.publishers.vetenvoy.VetEnvoyUSMicrochipPublisher(base.get_dbo(), pc, "ve", "ve", "ve", [ "9" ]).validate(a)
 
 

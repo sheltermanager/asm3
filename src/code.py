@@ -1604,12 +1604,14 @@ class animal_medical(JSONEndpoint):
         a = asm3.animal.get_animal(dbo, o.post.integer("id"))
         if a is None: self.notfound()
         self.check_animal(a)
-        med = asm3.medical.get_regimens_treatments(dbo, o.post.integer("id"))
+        limit = asm3.configuration.medical_item_display_limit(dbo)
+        med = asm3.medical.get_regimens_treatments(dbo, o.post.integer("id"), limit=limit)
         profiles = asm3.medical.get_profiles(dbo)
         asm3.al.debug("got %d medical entries for animal %s %s" % (len(med), a["CODE"], a["ANIMALNAME"]), "code.animal_medical", dbo)
         return {
             "profiles": profiles,
             "rows": med,
+            "overlimit": len(med) == limit and limit or 0,
             "name": "animal_medical",
             "tabcounts": asm3.animal.get_satellite_counts(dbo, a["ID"])[0],
             "stockitems": asm3.stock.get_stock_items(dbo),
@@ -3617,6 +3619,7 @@ class medical(JSONEndpoint):
         return {
             "profiles": profiles,
             "rows": med,
+            "overlimit": 0,
             "newmed": o.post.integer("newmed") == 1,
             "name": "medical",
             "stockitems": asm3.stock.get_stock_items(dbo),

@@ -257,7 +257,7 @@ def get_regimens(dbo, animalid, onlycomplete = False, sort = ASCENDING_REQUIRED)
     # Now add our extra named fields
     return embellish_regimen(l, rows)
 
-def get_regimens_treatments(dbo, animalid, sort = DESCENDING_REQUIRED):
+def get_regimens_treatments(dbo, animalid, sort = DESCENDING_REQUIRED, limit = 0):
     """
     Returns a recordset of medical regimens and treatments for an animal:
     TREATMENTNAME, COST, COMMENTS, NAMEDFREQUENCY, NAMEDNUMBEROFTREATMENTS,
@@ -275,7 +275,7 @@ def get_regimens_treatments(dbo, animalid, sort = DESCENDING_REQUIRED):
         sql += "ORDER BY amt.DateRequired DESC"
     elif sort == DESCENDING_GIVEN:
         sql += "ORDER BY amt.DateGiven DESC"
-    rows = dbo.query(sql)
+    rows = dbo.query(sql, limit=limit)
     # Now add our extra named fields
     return embellish_regimen(l, rows)
 

@@ -278,12 +278,14 @@ $(function() {
             else {
                 s += html.content_header(_("Medical Book"));
             }
+            if (controller.overlimit > 0) {
+                s += html.info(_("{0} records displayed, use the 'Medical History' report to see all records for this animal.").replace("{0}", controller.overlimit));
+            }
             s += tableform.buttons_render(this.buttons);
             s += tableform.table_render(this.table);
             s += html.content_footer();
             return s;
         },
-
 
         /** Removes selected treatments from the local json */
         remove_selected_treatments: function() {

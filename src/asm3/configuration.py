@@ -237,6 +237,7 @@ DEFAULTS = {
     "MaxMediaFileSize": "1000",
     "MediaAllowJPG": "Yes",
     "MediaAllowPDF": "Yes",
+    "MedicalItemDisplayLimit": "500",
     "MicrochipRegisterMovements": "1,5",
     "MovementDonationsDefaultDue": "No",
     "MovementNumberOverride": "No",
@@ -931,6 +932,9 @@ def media_allow_jpg(dbo):
 def media_allow_pdf(dbo):
     return cboolean(dbo, "MediaAllowPDF", DEFAULTS["MediaAllowPDF"] == "Yes")
 
+def medical_item_display_limit(dbo):
+    return cint(dbo, "MedicalItemDisplayLimit", DEFAULTS["MedicalItemDisplayLimit"])
+
 def microchip_register_movements(dbo):
     return cstring(dbo, "MicrochipRegisterMovements", DEFAULTS["MicrochipRegisterMovements"])
 
@@ -1049,7 +1053,7 @@ def publisher_use_comments(dbo):
     return cboolean(dbo, "PublisherUseComments", DEFAULTS["PublisherUseComments"] == "Yes")
 
 def record_search_limit(dbo):
-    return cint(dbo, "RecordSearchLimit", 1000)
+    return cint(dbo, "RecordSearchLimit", DEFAULTS["RecordSearchLimit"])
 
 def return_fosters_on_adoption(dbo):
     return cboolean(dbo, "ReturnFostersOnAdoption", DEFAULTS["ReturnFostersOnAdoption"] == "Yes")
