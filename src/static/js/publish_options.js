@@ -729,7 +729,7 @@ $(function() {
         render_homeagain: function() {
             return [
                 '<div id="tab-homeagain">',
-                html.info('Find out more at <a href="http://www.homeagain.com">www.homeagain.com</a>'),
+                html.info('Signup at <a href="http://homeagain.4act.com">http://homeagain.4act.com</a> or contact HomeAgain Customer Service on (800) 341-5785 for more information.'),
                 '<p><input id="enabledha" type="checkbox" class="asm-checkbox enablecheck" /><label for="enabledha">' + _("Enabled") + '</label></p>',
                 '<table>',
                 '<tr>',
