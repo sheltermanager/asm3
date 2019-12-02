@@ -86,30 +86,31 @@ class AKCReunitePublisher(AbstractPublisher):
                     self.log("Posting microchip registration document to %s: %s" % (url, j))
                     r = asm3.utils.post_json(url, j, authheaders)
                     self.log("Response %d, HTTP headers: %s, body: %s" % (r["status"], r["headers"], r["response"]))
-                    if r["status"] != 200: raise Exception(r["response"])
 
-                    # Look in the response for successful results
+                    # Weirdly, AKC return a 202 status code for success
+                    if r["status"] not in (200, 202): raise Exception(r["response"])
+
+                    # Examine the response for successful codes
+                    jr = asm3.utils.json_parse(r["response"])
                     wassuccess = False
-                    SUCCESS = ( "54000", "54100", "54108" )
-                    for code in SUCCESS:
-                        if str(r["response"]).find(code) != -1:
-                            self.log("successful %s response found, marking processed" % code)
-                            processed_animals.append(an)
-                            # Mark success in the log
-                            self.logSuccess("Processed: %s: %s (%d of %d)" % ( an["SHELTERCODE"], an["ANIMALNAME"], anCount, len(animals)))
-                            wassuccess = True
-                            break
+                    if jr["responseCode"] in ( 54000, 54100, 54108 ):
+                        self.log("successful %s response found, marking processed" % jr["responseCode"])
+                        processed_animals.append(an)
+                        # Mark success in the log
+                        self.logSuccess("Processed: %s: %s (%d of %d)" % ( an["SHELTERCODE"], an["ANIMALNAME"], anCount, len(animals)))
+                        wassuccess = True
+                        break
 
-                    # If we saw an account not found message, there's no point sending 
+                    # If we got a sender not recognised message, there's no point sending 
                     # anything else as they will all trigger the same error
-                    if str(r["response"]).find("54101") != -1:
+                    if jr["responseCode"] == 54101:
                         self.logError("received 54101 'sender not recognized' response - abandoning run and disabling publisher")
                         asm3.configuration.publishers_enabled_disable(self.dbo, "ak")
                         break
                     
                     if not wassuccess:
-                        self.logError("no successful response %s received" % str(SUCCESS))
-                        an["FAILMESSAGE"] = "%s" % r["response"]
+                        self.logError("no successful 54000, 54100, 54108 response received")
+                        an["FAILMESSAGE"] = "%s" % jr["responseMessage"]
                         failed_animals.append(an)
 
                 except Exception as err:
@@ -148,7 +149,7 @@ class AKCReunitePublisher(AbstractPublisher):
                 "firstName":    an.CURRENTOWNERFORENAMES,
                 "lastName":     an.CURRENTOWNERSURNAME,
                 "phone": {
-                    "number":   an.CURRENTOWNERHOMETELEPHONE,
+                    "number":   an.CURRENTOWNERMOBILETELEPHONE or an.CURRENTOWNERHOMETELEPHONE or an.CURRENTOWNERWORKTELEPHONE,
                     "extension": "",
                     "country":  "USA"
                 },
