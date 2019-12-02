@@ -453,6 +453,13 @@ sends their information and new owner info to Anibase to update their records.
 ASM tracks the date Anibase was last updated, so if the animal is returned and
 adopted again, another update will be done automatically.
 
+AKC Reunite
+----------
+
+ASM can register microchips with AKC Reunite, part of the American Kennel Club,
+who supply microchips to US organisations and pet owners. AKC microchips are 
+either 15-digits, starting with 956 or 10-digits, starting with 0006 or 0007.
+
 FoundAnimals
 -------
 
@@ -466,6 +473,12 @@ to configure in ASM.
 ASM will attempt to register all microchips with foundanimals.org and as with
 the other chip registration publishers, will track when it last updated a
 chip with them in case of subsequent adoption or reclaim.
+
+HomeAgain
+----------
+
+ASM can register microchips with HomeAgain, a company that supplies microchips
+to US shelters and pet owners. HomeAgain microchips are 15-digits, starting with 985.
 
 PetLink
 -------
@@ -497,17 +510,4 @@ again to the new owner.
 SmartTag also supply ISO microchips. ASM will also register SmartTag microchips
 (15 digits starting with 90007400) in a similar manner to ASM's other chip
 registration publishers.
-
-VetEnvoy US (HomeAgain and AKC Reunite)
----------------------------------------
-
-ASM can also use the VetEnvoy service in the US to register microchips with
-HomeAgain and AKC Reunite.
-
-ASM will find all HomeAgain microchips (15 digits starting with 985) and AKC
-Reunite microchips (15 digits starting with 956) that have been adopted and
-will register the animal and new owner information. As with the other microchip
-providers, ASM will register the chip again if the animal is returned and
-adopted to a new owner.
-
 

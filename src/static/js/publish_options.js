@@ -688,7 +688,8 @@ $(function() {
         render_akcreunite: function() {
             return [
                 '<div id="tab-akcreunite">',
-                html.info('Find out more at <a href="http://www.akcreunite.org">www.akcreunite.org</a>'),
+                html.info('Find out more at <a href="http://www.akcreunite.org">www.akcreunite.org</a> and contact ' +
+                    '<a href="mailto:microchip@akcreunite.org">microchip@akcreunite.org</a> to register.'),
                 '<p><input id="enabledak" type="checkbox" class="asm-checkbox enablecheck" /><label for="enabledak">' + _("Enabled") + '</label></p>',
                 '<table>',
                 '<tr>',
