@@ -87,8 +87,8 @@ class AKCReunitePublisher(AbstractPublisher):
                     r = asm3.utils.post_json(url, j, authheaders)
                     self.log("Response %d, HTTP headers: %s, body: %s" % (r["status"], r["headers"], r["response"]))
 
-                    # Weirdly, AKC return a 202 status code for success
-                    if r["status"] not in (200, 202): raise Exception(r["response"])
+                    # AKC return a 202 Accepted status code for success
+                    if r["status"] not in (200, 202, 204): raise Exception(r["response"])
 
                     # Examine the response for successful codes
                     jr = asm3.utils.json_parse(r["response"])
