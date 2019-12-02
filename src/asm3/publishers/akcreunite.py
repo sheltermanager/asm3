@@ -185,9 +185,7 @@ class AKCReunitePublisher(AbstractPublisher):
         }
         # If we don't have a first name, set one.
         if o["primaryContact"]["firstName"] == "":
-            o["primaryContact"]["businessName"] = o["primaryContact"]["lastName"]
-            del o["primaryContact"]["firstName"]
-            del o["primaryContact"]["lastName"]
+            o["primaryContact"]["firstName"] = "org"
         return asm3.utils.json(o)
 
     def validate(self, an):
