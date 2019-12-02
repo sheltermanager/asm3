@@ -73,9 +73,11 @@ class AKCReunitePublisher(AbstractPublisher):
                 if not self.validate(an): continue
                 j = self.processAnimal(an, enrollmentsourceid, orgname, orgtel, orgemail, orgaddress, orgtown, orgcounty, orgpostcode)
                                 
-                # Build our Basic AUTH headers
+                # Build our Basic AUTH and other headers
                 authheaders = {
-                    "Authorization": "Basic %s" % asm3.utils.base64encode("%s:%s" % (AKC_REUNITE_USER, AKC_REUNITE_PASSWORD))
+                    "Authorization": "Basic %s" % asm3.utils.base64encode("%s:%s" % (AKC_REUNITE_USER, AKC_REUNITE_PASSWORD)),
+                    "Accept": "application/json",
+                    "Content-Type": "application/json"
                 }
 
                 url = AKC_REUNITE_BASE_URL + "/cares-ws/services/prs/enrollment"
@@ -169,7 +171,7 @@ class AKCReunitePublisher(AbstractPublisher):
                     "extension": "",
                     "country":  "USA"
                 },
-                "emailaddress": orgemail,
+                "emailAddress": orgemail,
                 "address": {
                     "street":   orgaddress,
                     "streetExtra": "",
@@ -179,9 +181,13 @@ class AKCReunitePublisher(AbstractPublisher):
                     "country":  "USA"
                 }
             },
-            "microchipId":      an.IDENTICHIPNUMBER,
-            "sourceRefNumber":  "A42424333" # TODO: WHAT IS THIS ?
+            "microchipId":      an.IDENTICHIPNUMBER
         }
+        # If we don't have a first name, set one.
+        if o["primaryContact"]["firstName"] == "":
+            o["primaryContact"]["businessName"] = o["primaryContact"]["lastName"]
+            del o["primaryContact"]["firstName"]
+            del o["primaryContact"]["lastName"]
         return asm3.utils.json(o)
 
     def validate(self, an):
