@@ -8,6 +8,10 @@ from asm3.sitedefs import FOUNDANIMALS_FTP_HOST, FOUNDANIMALS_FTP_USER, FOUNDANI
 
 import os, sys
 
+VALIDATE_YES = 0
+VALIDATE_NO = 1
+VALIDATE_FAIL = 2
+
 class FoundAnimalsPublisher(FTPPublisher):
     """
     Handles publishing to foundanimals.org
@@ -63,6 +67,7 @@ class FoundAnimalsPublisher(FTPPublisher):
 
         anCount = 0
         success = []
+        fail = []
         for an in animals:
             try:
                 anCount += 1
@@ -76,24 +81,29 @@ class FoundAnimalsPublisher(FTPPublisher):
                     self.cleanup()
                     return
 
-                if not self.validate(an): continue
-                csv.append( self.processAnimal(an, org, email) )
-
-                # Mark success in the log
-                self.logSuccess("Processed: %s: %s (%d of %d)" % ( an["SHELTERCODE"], an["ANIMALNAME"], anCount, len(animals)))
-                success.append(an)
+                v = self.validate(an)
+                if v == VALIDATE_NO: 
+                    continue
+                elif v == VALIDATE_YES:
+                    csv.append( self.processAnimal(an, org, email) )
+                    success.append(an)
+                    self.logSuccess("Processed: %s: %s (%d of %d)" % ( \
+                        an["SHELTERCODE"], an["ANIMALNAME"], anCount, len(animals)))
+                elif v == VALIDATE_FAIL:
+                    fail.append(an)
 
             except Exception as err:
                 self.logError("Failed processing animal: %s, %s" % (str(an["SHELTERCODE"]), err), sys.exc_info())
+
+        # Mark published
+        self.markAnimalsPublished(success)
+        self.markAnimalsPublishFailed(fail)
 
         # Bail if we didn't have anything to do
         if len(csv) == 0:
             self.log("No data left to send to foundanimals")
             self.cleanup()
             return
-
-        # Mark published
-        self.markAnimalsPublished(success)
 
         header = "First Name,Last Name,Email Address,Address 1,Address 2,City,State,Zip Code," \
             "Home Phone,Work Phone,Cell Phone,Pet Name,Microchip Number,Service Date," \
@@ -168,23 +178,24 @@ class FoundAnimalsPublisher(FTPPublisher):
         # Validate certain items aren't blank so we aren't registering bogus data
         if asm3.utils.nulltostr(an["CURRENTOWNERADDRESS"]).strip() == "":
             self.logError("Address for the new owner is blank, cannot process")
-            return False 
+            return VALIDATE_NO 
 
         if asm3.utils.nulltostr(an["CURRENTOWNERPOSTCODE"]).strip() == "":
             self.logError("Postal code for the new owner is blank, cannot process")
-            return False
+            return VALIDATE_NO
 
         # Make sure the length is actually suitable
         if not len(an["IDENTICHIPNUMBER"]) in (9, 10, 15):
             self.logError("Microchip length is not 9, 10 or 15, cannot process")
-            return False
+            return VALIDATE_NO
 
         servicedate = an["ACTIVEMOVEMENTDATE"] or an["MOSTRECENTENTRYDATE"]
         if an["NONSHELTERANIMAL"] == 1: servicedate = an["IDENTICHIPDATE"]
         if servicedate < self.dbo.today(offset=-365*3):
-            self.logError("Service date is older than 3 years, ignoring")
-            return False
+            an["FAILMESSAGE"] = "Service date is older than 3 years, marking failed"
+            self.logError(an["FAILMESSAGE"])
+            return VALIDATE_FAIL
 
-        return True
+        return VALIDATE_YES
 
 
