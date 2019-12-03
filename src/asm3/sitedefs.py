@@ -39,7 +39,8 @@ def read_config_file():
         with codecs.open(fname, 'r', encoding='utf8') as f:
             lines = f.readlines()
         for l in lines:
-            if l.find("#") != -1: l = l[0:l.find("#")]
+            if l.find("#") != -1 and l.find("{") == -1: 
+                l = l[0:l.find("#")]
             if l.find("=") != -1:
                 k, v = l.split("=", 1)
                 cfg[k.strip()] = v.strip()
