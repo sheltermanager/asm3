@@ -1,5 +1,5 @@
-/*jslint browser: true, forin: true, eqeq: true, plusplus: true, white: true, sloppy: true, vars: true, nomen: true */
-/*global $, console, jQuery, ExifRestorer, Modernizr, Mousetrap, Path */
+/*jslint bitwise: true, browser: true, forin: true, eqeq: true, plusplus: true, white: true, sloppy: true, vars: true, nomen: true */
+/*global $, console, performance, jQuery, ExifRestorer, Modernizr, Mousetrap, Path */
 /*global alert, asm, atob, btoa, header, _, escape, unescape */
 /*global consts: true, common: true, config: true, controller: true, dlgfx: true, format: true, html: true, log: true, validate: true */
 
@@ -47,6 +47,27 @@
 
         base64_decode: function(i) {
             return decodeURIComponent(atob(i));
+        },
+
+        /**
+         * Generates a type 4 UUID
+         */
+        generate_uuid: function() {
+            // Timestamp
+            var d = new Date().getTime(); 
+            // Time in microseconds since page-load or 0 if unsupported
+            var d2 = (performance && performance.now && (performance.now()*1000)) || 0;
+            return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+                var r = Math.random() * 16;//random number between 0 and 16
+                if (d > 0){ // Use timestamp until depleted
+                    r = (d + r) % 16 | 0;
+                    d = Math.floor(d/16);
+                } else { // Use microseconds since page-load if supported
+                    r = (d2 + r) % 16 | 0;
+                    d2 = Math.floor(d2/16);
+                }
+                return (c === 'x' ? r : (r & 0x3 | 0x8)).toString(16);
+            });
         },
 
         /**

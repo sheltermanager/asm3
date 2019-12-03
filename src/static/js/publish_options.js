@@ -689,8 +689,9 @@ $(function() {
             return [
                 '<div id="tab-akcreunite">',
                 html.info('Find out more at <a href="http://www.akcreunite.org">www.akcreunite.org</a> and contact ' +
-                    '<a href="mailto:microchip@akcreunite.org">microchip@akcreunite.org</a> to register.'),
+                    '<a href="mailto:microchip@akcreunite.org">microchip@akcreunite.org</a> to register your Id.'),
                 '<p><input id="enabledak" type="checkbox" class="asm-checkbox enablecheck" /><label for="enabledak">' + _("Enabled") + '</label></p>',
+                '<p><button id="button-akenroll">Generate an Enrollment Source Id for AKC Reunite</button></p>',
                 '<table>',
                 '<tr>',
                 '<td><label for="akenrollmentid">AKC Enrollment Source ID</label></td>',
@@ -1172,6 +1173,20 @@ $(function() {
             }
             else {
                 $("#button-vesignup").hide();
+            }
+
+            // Pushing the AKC generate enrollment id button generates an id
+            $("#button-akenroll").button().click(function() {
+                $("#akenrollmentid").val( common.generate_uuid() );
+                $("#button-akenroll").hide();
+            });
+
+            // Only show the AKC enrollment id button if none is set
+            if (!config.str("AKCEnrollmentSourceID") || common.trim(config.str("AKCEnrollmentSourceID")) == "") {
+                $("#button-akenroll").show();
+            }
+            else {
+                $("#button-akenroll").hide();
             }
 
             validate.bind_dirty();
