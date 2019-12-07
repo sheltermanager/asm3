@@ -688,13 +688,15 @@ $(function() {
         render_akcreunite: function() {
             return [
                 '<div id="tab-akcreunite">',
-                html.info('Find out more at <a href="http://www.akcreunite.org">www.akcreunite.org</a> and contact ' +
-                    '<a href="mailto:microchip@akcreunite.org">microchip@akcreunite.org</a> to register your Id.'),
+                html.info('Learn about AKC Reunite microchips and auto-uploading pet enrollment information at ' +
+                    '<a target="_blank" href="https://www.akcreunite.org/shelters">https://www.akcreunite.org/shelters</a>.<br/>' +
+                    'Request auto-uploads of pet microchip information to AKC Reunite at ' +
+                    '<a target="_blank" href="https://www.akcreunite.org/auto-upload/">https://www.akcreunite.org/auto-upload</a>.'),
                 '<p><input id="enabledak" type="checkbox" class="asm-checkbox enablecheck" /><label for="enabledak">' + _("Enabled") + '</label></p>',
                 '<p><button id="button-akenroll">Generate an Enrollment Source Id for AKC Reunite</button></p>',
                 '<table>',
                 '<tr>',
-                '<td><label for="akenrollmentid">AKC Enrollment Source ID</label></td>',
+                '<td><label for="akenrollmentid">AKC Reunite Enrollment Source ID</label></td>',
                 '<td><input id="akenrollmentid" type="text" class="asm-doubletextbox cfg" disabled="disabled" data="AKCEnrollmentSourceID" /></td>',
                 '</tr>',
                 '</table>',
@@ -731,7 +733,7 @@ $(function() {
         render_homeagain: function() {
             return [
                 '<div id="tab-homeagain">',
-                html.info('Signup at <a href="http://homeagain.4act.com">http://homeagain.4act.com</a> or contact HomeAgain Customer Service on (800) 341-5785 for more information.'),
+                html.info('Signup at <a href="http://homeagain.4act.com">http://homeagain.4act.com</a> or contact HomeAgain Customer Service on <a href="tel:1-800-341-5785">(800) 341-5785</a> for more information.'),
                 '<p><input id="enabledha" type="checkbox" class="asm-checkbox enablecheck" /><label for="enabledha">' + _("Enabled") + '</label></p>',
                 '<table>',
                 '<tr>',
