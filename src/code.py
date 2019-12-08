@@ -346,7 +346,7 @@ class JSONEndpoint(ASMEndpoint):
 
     def controller(self, o):
         """ Virtual function to be overridden - return controller as a dict """
-        pass
+        return {}
 
     def GET(self):
         """ Handle a GET, deal with permissions, session and JSON responses """
