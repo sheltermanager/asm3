@@ -11,8 +11,6 @@ doc/manual/_build
 cordova/asm/platforms
 .DS_Store
 .vscode
-/.project
-/.pydevproject
 scripts/ansible/archives
 scripts/ansible/roles
 scripts/ansible/*.retry
