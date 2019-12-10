@@ -251,9 +251,12 @@
 
                     // Add a thumbnail for each shelter animal to the results
                     $.each(self.rows, function(i, a) {
+                        var loc = '<input type="hidden" class="locationid" data="{locid}" />'.replace("{locid}", a.SHELTERLOCATION);
+                        // If the animal has an active movement, don't include their last location, add a hook for the movement type instead
+                        if (a.ACTIVEMOVEMENTTYPE > 0) { loc = '<input type="hidden" class="activemovementtype" data="{mtype}" />'.replace("{mtype}", a.ACTIVEMOVEMENTTYPE); }
                         results.append( '<div class="asm-animalchoosermulti-result">' + 
                             html.animal_link_thumb(a, { showselector: true, showunit: true, showlocation: true }) + 
-                            '<input type="hidden" class="locationid" data="{locid}" />'.replace("{locid}", a.SHELTERLOCATION) +
+                            loc + 
                             '<input type="hidden" class="speciesid" data="{speciesid}" />'.replace("{speciesid}", a.SPECIESID) +
                             '<input type="hidden" class="litterid" data="{litterid}" />'.replace("{litterid}", self.litterid_escape(a.ACCEPTANCENUMBER)) +
                         '</div>' );
@@ -262,6 +265,16 @@
                     results.on("click", "input[type='checkbox']", function(e) {
                         self.update_status();
                     });
+
+                    // Add virtual locations for Foster and Retailer
+                    if (self.id_used("ACTIVEMOVEMENTTYPE", 2)) {
+                        locations.append('<span style="white-space: nowrap"><input type="checkbox" class="mtypecheck" data="2" id="mtype8" />' +
+                            '<label for="mtype2">' + _("Foster") + '</label></span>');
+                    }
+                    if (self.id_used("ACTIVEMOVEMENTTYPE", 8)) {
+                        locations.append('<span style="white-space: nowrap"><input type="checkbox" class="mtypecheck" data="8" id="mtype8" />' +
+                            '<label for="mtype8">' + _("Retailer") + '</label></span>');
+                    }
 
                     // Add a checkbox for each location and make clicking it auto select those animals
                     $.each(self.rowlocations, function(i, l) {
@@ -273,9 +286,16 @@
                     locations.off("click", "input[type='checkbox']");
                     locations.on("click", "input[type='checkbox']", function(e) {
                         var tn = $(this);
-                        var aset = results.find(".locationid[data='" + tn.attr("data") + "']").each(function() {
-                            $(this).closest("div").find(".animalselect").prop("checked", tn.prop("checked"));
-                        });
+                        if (tn.hasClass("loccheck")) {
+                            results.find(".locationid[data='" + tn.attr("data") + "']").each(function() {
+                                $(this).closest("div").find(".animalselect").prop("checked", tn.prop("checked"));
+                            });
+                        }
+                        else if (tn.hasClass("mtypecheck")) {
+                            results.find(".activemovementtype[data='" + tn.attr("data") + "']").each(function() {
+                                $(this).closest("div").find(".animalselect").prop("checked", tn.prop("checked"));
+                            });
+                        }
                         self.update_status();
                     });
 

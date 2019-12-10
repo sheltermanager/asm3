@@ -1,6 +1,7 @@
 43
 ================
 
+10/12/19 Show fosters in a separate category in multi chooser #691
 03/12/19 Fix bug with use of # in dict config items #702
 02/12/19 Debugging/tweaks of new AKC integration
 02/12/19 found.org stop sending items overn 3 years old #697
