@@ -183,7 +183,7 @@ def get_onlineform_html(dbo, formid, completedocument = True):
         requiredtext = ""
         if f.MANDATORY == 1: 
             required = "required=\"required\""
-            requiredtext = "required=\"required\" pattern=\".*\S+.*\""
+            requiredtext = "required=\"required\" pattern=\".*\\S+.*\""
             h.append('<span class="asm-onlineform-required" style="color: #ff0000;">*</span>')
         else:
             h.append('<span class="asm-onlineform-notrequired" style="visibility: hidden">*</span>')
@@ -369,7 +369,7 @@ def import_onlineform_html(dbo, h):
         insert_onlineformfield_from_form(dbo, "import", asm3.utils.PostedData(data, dbo.locale))
 
 def get_onlineform_header(dbo):
-    header, body, footer = asm3.template.get_html_template(dbo, "onlineform")
+    header = asm3.template.get_html_template(dbo, "onlineform")[0]
     if header == "": header = "<!DOCTYPE html>\n" \
         "<html>\n" \
        "<head>\n" \
@@ -391,7 +391,7 @@ def get_onlineform_header(dbo):
     return header
 
 def get_onlineform_footer(dbo):
-    header, body, footer = asm3.template.get_html_template(dbo, "onlineform")
+    footer = asm3.template.get_html_template(dbo, "onlineform")[2]
     if footer == "": footer = "</body>\n</html>"
     return footer
 

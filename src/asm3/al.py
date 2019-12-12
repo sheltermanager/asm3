@@ -58,7 +58,6 @@ def error(msg, location = "[]", dbo = None, ei=None):
     logmsg(3, msg, location, dbo)
 
 def logmsg(mtype, msg, location, dbo):
-    msg = str(msg)
     # Prepend location
     msg = "%s %s" % (fixed_chars(location, 30), msg)
     # If we have a dbo, prepend the database name to the message
