@@ -246,6 +246,9 @@ if os.path.exists("%s/Contacts.csv" % PATH):
         if "Groups" in d:
             if d["Groups"].find("Do Not Adopt") != -1: o.IsBanned = 1
             if d["Groups"].find("Other Rescue") != -1: o.IsShelter = 1
+            if d["Groups"].find("Caretaker/Foster") != -1: o.IsFosterer = 1
+            if d["Groups"].find("Volunteer") != -1: o.IsVolunteer = 1
+            if d["Groups"].find("Microchip Clinic") != -1: o.IsVet = 1
         ppo[o.OwnerName] = o
 
 if os.path.exists("%s/Adoptions.csv" % PATH):
