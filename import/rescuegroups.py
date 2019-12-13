@@ -21,6 +21,10 @@ Will also import data from RG All Contacts report, called Contacts.csv:
 
 Address, Comment, Email, First Name, Last Name, Phone (Cell), Phone (Home)
 
+If you have the RG report called "Adoptions", you need to include Animal ID and Last Name/First Name
+for the importer to process those adoptions. These fields are expected:
+
+Animal ID, Date, First Name, Last Name, Fee Paid
 
 I think if people haven't paid for their "Data Management Service" they aren't allowed to
 run any reports. This export will also work with CSVs extracted from Animals->Animal List,
@@ -28,16 +32,21 @@ change the View to Export and then hit Export as CSV.
 
 """
 
-PATH = "/home/robin/tmp/asm3_import_data/rg_tn2023"
+PATH = "/home/robin/tmp/asm3_import_data/rg_taradrumm"
 
 DEFAULT_BREED = 261 # default to dsh
 PETFINDER_ID = "" # Shouldn't be needed if Picture 1 is present
+IMPORT_PICTURES = False 
 
 RG_AWS_PREFIX = "https://s3.amazonaws.com/filestore.rescuegroups.org" # To resolve URLs from the "Picture 1" field of imports
 
 animals = []
 owners = []
+ownerdonations = []
 movements = []
+
+ppa = {}
+ppo = {}
 
 asm.setid("adoption", 100)
 asm.setid("animal", 100)
@@ -63,12 +72,12 @@ uo.OwnerSurname = "Unknown Owner"
 uo.OwnerName = "Unknown Owner"
 uo.Comments = "Catchall for adopted animal data from RescueGroups"
 
-print "\\set ON_ERROR_STOP\nBEGIN;"
-print "DELETE FROM adoption WHERE ID >= 100;"
-print "DELETE FROM animal WHERE ID >= 100;"
-print "DELETE FROM owner WHERE ID >= 100;"
-print "DELETE FROM media WHERE ID >= 100;"
-print "DELETE FROM dbfs WHERE ID >= 300;"
+print("\\set ON_ERROR_STOP\nBEGIN;")
+print("DELETE FROM adoption WHERE ID >= 100;")
+print("DELETE FROM animal WHERE ID >= 100;")
+print("DELETE FROM owner WHERE ID >= 100;")
+print("DELETE FROM media WHERE ID >= 100;")
+print("DELETE FROM dbfs WHERE ID >= 300;")
 pfpage = ""
 if PETFINDER_ID != "":
     pfpage = asm.petfinder_get_adoptable(PETFINDER_ID)
@@ -88,6 +97,7 @@ for d in asm.csv_to_list("%s/Animals.csv" % PATH):
     if "Animal ID" in d:
         a.ShelterCode = "RG%s" % d["Animal ID"]
         a.ShortCode = a.ShelterCode
+        ppa[d["Animal ID"]] = a
     else:
         a.generateCode()
     a.AnimalName = d["Name"]
@@ -164,8 +174,20 @@ for d in asm.csv_to_list("%s/Animals.csv" % PATH):
     if "Internal ID" in d and "Location" in d: a.HiddenAnimalDetails += ", internal: " + d["Internal ID"] + ", location: " + d["Location"]
     a.CreatedDate = a.DateBroughtIn
     a.LastChangedDate = a.DateBroughtIn
-    # If the animal is adopted, send it to our unknown owner
-    if d["Status"] in ("Adopted", "Transferred", "Escaped", "Stolen"):
+    # If the animal is adopted and we don't have an adoptions file, mark it to an unknown owner
+    if d["Status"] == "Adopted" and not os.path.exists("%s/Adoptions.csv" % PATH):
+        m = asm.Movement()
+        movements.append(m)
+        m.OwnerID = uo.ID
+        m.AnimalID = a.ID
+        m.MovementDate = broughtin
+        m.MovementType = 1
+        a.ActiveMovementType = m.MovementType
+        a.ActiveMovementDate = m.MovementDate
+        a.ActiveMovementID = m.ID
+        a.Archived = 1
+    # Mark the animal removed for other statuses 
+    elif d["Status"] in ("Transferred", "Escaped", "Stolen"):
         mt = { "Adopted": 1, "Transferred": 3, "Escaped": 4, "Stolen": 6 }[d["Status"]]
         m = asm.Movement()
         movements.append(m)
@@ -189,7 +211,7 @@ for d in asm.csv_to_list("%s/Animals.csv" % PATH):
         a.Archived = 1
 
     # Now do the dbfs and media inserts for a photo if one is available
-    if "Picture 1" in d and d["Picture 1"] != "":
+    if IMPORT_PICTURES and "Picture 1" in d and d["Picture 1"] != "":
         pic1 = d["Picture 1"]
         picurl = "%s/%s" % (RG_AWS_PREFIX, pic1)
         # Check for locally saved photo first
@@ -218,20 +240,55 @@ if os.path.exists("%s/Contacts.csv" % PATH):
         #o.OwnerCounty = d["State"]
         #o.OwnerPostcode = d["Zipcode"]
         o.EmailAddress = d["Email"]
-        o.HomeTelephone = d["Phone (Home)"]
-        o.MobileTelephone = d["Phone (Cell)"]
+        o.HomeTelephone = d["Home Phone"]
+        o.MobileTelephone = d["Cell Phone"]
         o.Comments = d["Comment"]
+        if "Groups" in d:
+            if d["Groups"].find("Do Not Adopt") != -1: o.IsBanned = 1
+            if d["Groups"].find("Other Rescue") != -1: o.IsShelter = 1
+        ppo[o.OwnerName] = o
+
+if os.path.exists("%s/Adoptions.csv" % PATH):
+    for d in asm.csv_to_list("%s/Adoptions.csv" % PATH):
+        oname = d["First Name"] + " " + d["Last Name"]
+        o = None
+        if oname in ppo: o = ppo[oname]
+        a = None
+        if d["Animal ID"] in ppa: a = ppa[d["Animal ID"]]
+        if o and a:
+            m = asm.Movement()
+            m.AnimalID = a.ID
+            m.OwnerID = o.ID
+            m.MovementType = 1
+            m.MovementDate = getdate(d["Date"])
+            a.Archived = 1
+            a.ActiveMovementID = m.ID
+            a.ActiveMovementDate = m.MovementDate
+            a.ActiveMovementType = 1
+            a.LastChangedDate = m.MovementDate
+            movements.append(m)
+            fee = asm.get_currency(d["Fee Paid"])
+            if fee > 0:
+                od = asm.OwnerDonation()
+                od.DonationTypeID = 1
+                od.DonationPaymentID = 1
+                od.Date = m.MovementDate
+                od.OwnerID = o.ID
+                od.Donation = fee
+                ownerdonations.append(od)
 
 # Now that everything else is done, output stored records
 for a in animals:
-    print a
+    print (a)
 for o in owners:
-    print o
+    print (o)
 for m in movements:
-    print m
+    print (m)
+for od in ownerdonations:
+    print (od)
 
-asm.stderr_summary(animals=animals, owners=owners, movements=movements)
+asm.stderr_summary(animals=animals, owners=owners, movements=movements, ownerdonations=ownerdonations)
 
-print "DELETE FROM configuration WHERE ItemName LIKE 'DBView%';"
-print "COMMIT;"
+print("DELETE FROM configuration WHERE ItemName LIKE 'DBView%';")
+print("COMMIT;")
 
