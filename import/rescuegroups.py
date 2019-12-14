@@ -236,8 +236,8 @@ if os.path.exists("%s/Contacts.csv" % PATH):
         # Each row contains a person
         o = asm.Owner()
         owners.append(o)
-        o.OwnerForeNames = d["First Name"]
-        o.OwnerSurname = d["Last Name"]
+        o.OwnerForeNames = d["First Name"].strip()
+        o.OwnerSurname = d["Last Name"].strip()
         o.OwnerName = o.OwnerForeNames + " " + o.OwnerSurname
         o.OwnerAddress = d["Address"]
         o.OwnerTown = d["City"]
@@ -257,7 +257,7 @@ if os.path.exists("%s/Contacts.csv" % PATH):
 
 if os.path.exists("%s/Adoptions.csv" % PATH):
     for d in asm.csv_to_list("%s/Adoptions.csv" % PATH):
-        oname = d["First Name"] + " " + d["Last Name"]
+        oname = d["First Name"].strip() + " " + d["Last Name"].strip()
         o = None
         if oname in ppo: o = ppo[oname]
         a = None
@@ -283,6 +283,11 @@ if os.path.exists("%s/Adoptions.csv" % PATH):
                 od.OwnerID = o.ID
                 od.Donation = fee
                 ownerdonations.append(od)
+
+# Allow shelter animals to have their chips registered
+for a in animals:
+    if a.Archived == 0:
+        a.IsNotForRegistration = 0
 
 # Now that everything else is done, output stored records
 for a in animals:
