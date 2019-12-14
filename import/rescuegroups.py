@@ -36,7 +36,7 @@ PATH = "/home/robin/tmp/asm3_import_data/rg_taradrumm"
 
 DEFAULT_BREED = 261 # default to dsh
 PETFINDER_ID = "" # Shouldn't be needed if Picture 1 is present
-IMPORT_PICTURES = False 
+IMPORT_PICTURES = True 
 
 RG_AWS_PREFIX = "https://s3.amazonaws.com/filestore.rescuegroups.org" # To resolve URLs from the "Picture 1" field of imports
 
@@ -51,6 +51,7 @@ ppo = {}
 asm.setid("adoption", 100)
 asm.setid("animal", 100)
 asm.setid("owner", 100)
+asm.setid("ownerdonation", 100)
 asm.setid("media", 100)
 asm.setid("dbfs", 300)
 
@@ -76,6 +77,7 @@ print("\\set ON_ERROR_STOP\nBEGIN;")
 print("DELETE FROM adoption WHERE ID >= 100;")
 print("DELETE FROM animal WHERE ID >= 100;")
 print("DELETE FROM owner WHERE ID >= 100;")
+print("DELETE FROM ownerdonation WHERE ID >= 100;")
 print("DELETE FROM media WHERE ID >= 100;")
 print("DELETE FROM dbfs WHERE ID >= 300;")
 pfpage = ""
@@ -103,8 +105,10 @@ for d in asm.csv_to_list("%s/Animals.csv" % PATH):
     a.AnimalName = d["Name"]
 
     broughtin = asm.today()
-    if "Created" in d:
+    if "Created" in d and d["Created"] != "":
         broughtin = getdate(d["Created"])
+    if "Received Date" in d and d["Received Date"] != "":
+        broughtin = getdate(d["Received Date"])
     a.DateBroughtIn = broughtin
 
     dob = broughtin
@@ -236,9 +240,9 @@ if os.path.exists("%s/Contacts.csv" % PATH):
         o.OwnerSurname = d["Last Name"]
         o.OwnerName = o.OwnerForeNames + " " + o.OwnerSurname
         o.OwnerAddress = d["Address"]
-        #o.OwnerTown = d["City"]
-        #o.OwnerCounty = d["State"]
-        #o.OwnerPostcode = d["Zipcode"]
+        o.OwnerTown = d["City"]
+        o.OwnerCounty = d["State"]
+        o.OwnerPostcode = d["Zipcode"]
         o.EmailAddress = d["Email"]
         o.HomeTelephone = d["Home Phone"]
         o.MobileTelephone = d["Cell Phone"]
