@@ -3412,7 +3412,7 @@ msgstr ""
 msgid "Forms need a name."
 msgstr ""
 
-#: publish_options.js common.js move_foster.js
+#: publish_options.js common.js common_animalchoosermulti.js move_foster.js
 msgid "Foster"
 msgstr ""
 
@@ -6301,8 +6301,9 @@ msgstr ""
 msgid "Results"
 msgstr ""
 
-#: move_retailer.js onlineforms.js animal_find.js common.js options.js
-#: shelterview.js header_edit_header.js movements.js person_find_results.js
+#: move_retailer.js onlineforms.js animal_find.js common.js
+#: common_animalchoosermulti.js options.js shelterview.js header_edit_header.js
+#: movements.js person_find_results.js
 msgid "Retailer"
 msgstr ""
 

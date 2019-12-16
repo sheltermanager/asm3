@@ -365,6 +365,20 @@ def get_links(dbo, pid):
         "t.DropOffAddress AS FIELD2, '' AS DMOD FROM animaltransport t " \
         "INNER JOIN animal a ON a.ID = t.AnimalID " \
         "WHERE t.DriverOwnerID = %d " % (dbo.sql_value(_("Driver", l)), linkdisplay, int(pid))
+    # Transport Pickup
+    sql += "UNION SELECT 'AT' AS TYPE, " \
+        "%s AS TYPEDISPLAY, t.PickupDateTime AS DDATE, t.AnimalID AS LINKID, " \
+        "%s LINKDISPLAY, " \
+        "t.PickupAddress AS FIELD2, '' AS DMOD FROM animaltransport t " \
+        "INNER JOIN animal a ON a.ID = t.AnimalID " \
+        "WHERE t.PickupOwnerID = %d " % (dbo.sql_value(_("Pickup Address", l)), linkdisplay, int(pid))
+    # Transport Dropoff
+    sql += "UNION SELECT 'AT' AS TYPE, " \
+        "%s AS TYPEDISPLAY, t.DropoffDateTime AS DDATE, t.AnimalID AS LINKID, " \
+        "%s LINKDISPLAY, " \
+        "t.DropoffAddress AS FIELD2, '' AS DMOD FROM animaltransport t " \
+        "INNER JOIN animal a ON a.ID = t.AnimalID " \
+        "WHERE t.DropoffOwnerID = %d " % (dbo.sql_value(_("Dropoff Address", l)), linkdisplay, int(pid))
     # Additional field (link from animal)
     sql += "UNION SELECT 'AFA' AS TYPE, " \
         "aff.FieldLabel AS TYPEDISPLAY, a.LastChangedDate AS DDATE, a.ID AS LINKID, " \

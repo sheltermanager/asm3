@@ -1,6 +1,7 @@
 43
 ================
 
+16/12/19 Show pickup/dropoff on person links #706
 12/12/19 Lint fixes to onlineform and bad required pattern
 12/12/19 Logging should not convert the msg string
 10/12/19 Show fosters in a separate category in multi chooser #691
