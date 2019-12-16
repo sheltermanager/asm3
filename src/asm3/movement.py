@@ -276,6 +276,10 @@ def validate_movement_form_data(dbo, post):
         if 0 == dbo.query_int("SELECT COUNT(*) FROM adoption WHERE AnimalID = ? AND MovementType = ?", ( animalid, RETAILER )):
             asm3.al.debug("movement has a retailerid set but has never been to a retailer.", "movement.validate_movement_form_data", dbo)
             raise asm3.utils.ASMValidationError(asm3.i18n._("This movement cannot be from a retailer when the animal has no prior retailer movements.", l))
+    # Movement date cannot be before brought in date
+    if movementdate is not None and movementdate < dbo.query_date("SELECT DateBroughtIn FROM animal WHERE ID = ?", [animalid]):
+        asm3.al.debug("movement date is before date brought in", "movement.validate_movement_form_data", dbo)
+        raise asm3.utils.ASMValidationError(asm3.i18n._("Movement date cannot be before brought in date.", l))
     # You can't have a return without a movement
     if movementdate is None and returndate is not None:
         asm3.al.debug("movement is returned without a movement date.", "movement.validate_movement_form_data", dbo)
