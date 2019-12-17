@@ -1043,7 +1043,7 @@ def clinic_tags(dbo, c):
     l = dbo.locale
     tags = {
         "ID":                   asm3.utils.padleft(c.ID, 6),
-        "APPOINTMENTFOR"        : c.APPTFOR,
+        "APPOINTMENTFOR"        : asm3.users.get_real_name(dbo, c.APPTFOR),
         "APPOINTMENTDATE"       : python2display(l, c.DATETIME),
         "APPOINTMENTTIME"       : format_time(c.DATETIME),
         "STATUS"                : c.CLINICSTATUSNAME,
