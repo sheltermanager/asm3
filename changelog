@@ -1,6 +1,6 @@
 43
 ================
-
+17/12/19 Add support for french microship ID #707
 16/12/19 Movement date cannot be before intake date #651
 16/12/19 Show pickup/dropoff on person links #706
 12/12/19 Lint fixes to onlineform and bad required pattern
