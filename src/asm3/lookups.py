@@ -151,7 +151,8 @@ MICROCHIP_MANUFACTURERS = [
     { "length": 15, "regex": r"^9910010", "name": "AKC Reunite", "locales": "en" },
     { "length": 15, "regex": r"^9910039", "name": "911PetChip", "locales": "en" },
     { "length": 15, "regex": r"^992", "name": "International Pet Registry", "locales": "" },
-    { "length": 15, "regex": r"^999", "name": "Transponder Test", "locales": ""}
+    { "length": 15, "regex": r"^999", "name": "Transponder Test", "locales": ""},
+    { "length": 15, "regex": r"^250", "name": "I-CAD", "locales": ""},
 ]
 
 VISUAL_THEMES = [
