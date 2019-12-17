@@ -1041,9 +1041,16 @@ def clinic_tags(dbo, c):
     Generates a list of tags from a clinic result (asm3.clinic.get_appointment)
     """
     l = dbo.locale
+    u = asm3.users.get_users(dbo,c.APPTFOR)
+    realname = ""
+
+    if len(u) > 0:
+        u = u[0]
+        realname = asm3.utils.nulltostr(u["REALNAME"])
+
     tags = {
         "ID":                   asm3.utils.padleft(c.ID, 6),
-        "APPOINTMENTFOR"        : c.APPTFOR,
+        "APPOINTMENTFOR"        : realname,
         "APPOINTMENTDATE"       : python2display(l, c.DATETIME),
         "APPOINTMENTTIME"       : format_time(c.DATETIME),
         "STATUS"                : c.CLINICSTATUSNAME,
