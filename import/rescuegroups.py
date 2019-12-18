@@ -36,7 +36,8 @@ PATH = "/home/robin/tmp/asm3_import_data/rg_taradrumm"
 
 DEFAULT_BREED = 261 # default to dsh
 PETFINDER_ID = "" # Shouldn't be needed if Picture 1 is present
-IMPORT_PICTURES = True 
+IMPORT_PICTURES = False 
+DATE_FORMAT = "DMY" # Normally MDY
 
 RG_AWS_PREFIX = "https://s3.amazonaws.com/filestore.rescuegroups.org" # To resolve URLs from the "Picture 1" field of imports
 
@@ -52,11 +53,15 @@ asm.setid("adoption", 100)
 asm.setid("animal", 100)
 asm.setid("owner", 100)
 asm.setid("ownerdonation", 100)
-asm.setid("media", 100)
-asm.setid("dbfs", 300)
+if IMPORT_PICTURES:
+    asm.setid("media", 100)
+    asm.setid("dbfs", 300)
 
 def getdate(s):
-    return asm.getdate_mmddyyyy(s)
+    if DATE_FORMAT == "DMY":
+        return asm.getdate_ddmmyyyy(s)
+    else:
+        return asm.getdate_mmddyyyy(s)
 
 def size_id_for_name(name):
     return {
@@ -78,8 +83,9 @@ print("DELETE FROM adoption WHERE ID >= 100;")
 print("DELETE FROM animal WHERE ID >= 100;")
 print("DELETE FROM owner WHERE ID >= 100;")
 print("DELETE FROM ownerdonation WHERE ID >= 100;")
-print("DELETE FROM media WHERE ID >= 100;")
-print("DELETE FROM dbfs WHERE ID >= 300;")
+if IMPORT_PICTURES:
+    print("DELETE FROM media WHERE ID >= 100;")
+    print("DELETE FROM dbfs WHERE ID >= 300;")
 pfpage = ""
 if PETFINDER_ID != "":
     pfpage = asm.petfinder_get_adoptable(PETFINDER_ID)
@@ -97,8 +103,8 @@ for d in asm.csv_to_list("%s/Animals.csv" % PATH):
     a.AnimalTypeID = animaltype
     a.SpeciesID = asm.species_id_for_name(d["Species"])
     if "Animal ID" in d:
-        a.ShelterCode = "RG%s" % d["Animal ID"]
-        a.ShortCode = a.ShelterCode
+        a.ShortCode = "RG%s" % d["Animal ID"]
+        a.ShelterCode = "%s %s" % (a.ShortCode, a.ID)
         ppa[d["Animal ID"]] = a
     else:
         a.generateCode()
@@ -123,7 +129,7 @@ for d in asm.csv_to_list("%s/Animals.csv" % PATH):
         elif d["General Age"].find("Senior") != -1:
             dob = asm.subtract_days(asm.today(), 2555)
     if "Birthdate" in d and d["Birthdate"] != "":
-        dob = asm.getdate_mmddyyyy(d["Birthdate"])
+        dob = getdate(d["Birthdate"])
         a.EstimatedDOB = 0
     a.DateOfBirth = dob
     a.Sex = 1
@@ -173,8 +179,9 @@ for d in asm.csv_to_list("%s/Animals.csv" % PATH):
     if "Description (no html)" in d: a.AnimalComments = d["Description (no html)"]
     summary = ""
     if "Summary" in d: summary = d["Summary"]
+    if "Origin" in d: origin = d["Origin"]
     a.HiddenAnimalDetails = summary + ", original breed: " + breed1 + " " + breed2 + ", color: " + \
-        d["Color (General)"] + ", status: " + d["Status"]
+        d["Color (General)"] + ", status: " + d["Status"] + ", origin: " + origin
     if "Internal ID" in d and "Location" in d: a.HiddenAnimalDetails += ", internal: " + d["Internal ID"] + ", location: " + d["Location"]
     a.CreatedDate = a.DateBroughtIn
     a.LastChangedDate = a.DateBroughtIn
