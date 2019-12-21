@@ -100,7 +100,6 @@ class AKCReunitePublisher(AbstractPublisher):
                         # Mark success in the log
                         self.logSuccess("Processed: %s: %s (%d of %d)" % ( an["SHELTERCODE"], an["ANIMALNAME"], anCount, len(animals)))
                         wassuccess = True
-                        break
 
                     # If we got a sender not recognised message, there's no point sending 
                     # anything else as they will all trigger the same error
