@@ -36,7 +36,6 @@ COUNT(a.ID) AS total
 FROM animal a
 INNER JOIN species s ON s.ID = a.SpeciesID
 WHERE CAST(EXTRACT(YEAR FROM a.DateBroughtIn) AS INTEGER) = $ASK STRING Which year to display for?$
-AND a.DateBroughtIn = 1
 GROUP BY s.SpeciesName, EXTRACT(MONTH FROM a.DateBroughtIn)
 ###
 GRAPH BARS
