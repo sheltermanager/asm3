@@ -1,6 +1,7 @@
 43
 ================
 
+21/12/19 Retry AKC for 54103 and 54107 errors
 17/12/19 Complete French translation (Roxanne ENGINDENIZ & Julian POIDEVIN) #699
 17/12/19 Added support for French microchip ID #707
 17/12/19 AppointmentFor wordkey shows real name #705

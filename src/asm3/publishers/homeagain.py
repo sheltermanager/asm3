@@ -120,7 +120,6 @@ class HomeAgainPublisher(AbstractPublisher):
                             # Mark success in the log
                             self.logSuccess("Processed: %s: %s (%d of %d)" % ( an["SHELTERCODE"], an["ANIMALNAME"], anCount, len(animals)))
                             wassuccess = True
-                            break
 
                     # If we saw an account not found message, there's no point sending 
                     # anything else as they will all trigger the same error

@@ -100,7 +100,6 @@ class AKCReunitePublisher(AbstractPublisher):
                         # Mark success in the log
                         self.logSuccess("Processed: %s: %s (%d of %d)" % ( an["SHELTERCODE"], an["ANIMALNAME"], anCount, len(animals)))
                         wassuccess = True
-                        break
 
                     # If we got a sender not recognised message, there's no point sending 
                     # anything else as they will all trigger the same error
@@ -108,6 +107,12 @@ class AKCReunitePublisher(AbstractPublisher):
                         self.logError("received 54101 'sender not recognized' response - abandoning run and disabling publisher")
                         asm3.configuration.publishers_enabled_disable(self.dbo, "ak")
                         break
+
+                    # Temporary or data errors - do nothing so we try again next time
+                    # 54103 = Data failed validation
+                    # 54107 = Database unavailable, try later
+                    if jr["responseCode"] == 54103 or jr["responseCode"] == 54107:
+                        continue
                     
                     if not wassuccess:
                         self.logError("no successful 54000, 54100, 54108 response received")

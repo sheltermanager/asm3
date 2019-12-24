@@ -234,6 +234,8 @@ def good_with(s):
     return 0
 
 def get_currency(s):
+    if s is None: return 0
+    if type(s) == int or type(s) == float: return int(s * 100)
     if s.strip() == "": return 0
     s = s.replace("$", "")
     s = s.replace("&nbsp;", "")
