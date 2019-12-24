@@ -210,9 +210,9 @@ $(function() {
                 "AnimalComments", "ReasonForEntry", "HealthProblems", "PTSReason", "PickupAddress", 
                 "RabiesTag", "TimeOnShelter", "DaysOnShelter", "AnimalAge", "ShelterLocationUnit" ],
             YES_NO_UNKNOWN_FIELDS = [ "IsGoodWithCats", "IsGoodWithDogs", "IsGoodWithChildren",
-                "IsHouseTrained", "IsNotAvailableForAdoption", "IsHold", "IsPickup", "IsQuarantine" ],
+                "IsHouseTrained" ],
             YES_NO_FIELDS = [ "Neutered", "CombiTested", "HeartwormTested", "Declawed", 
-                "HasActiveReserve", "HasSpecialNeeds" ],
+                "HasActiveReserve", "HasSpecialNeeds", "IsHold", "IsNotAvailableForAdoption", "IsPickup", "IsQuarantine" ],
             POS_NEG_UNKNOWN_FIELDS = [ "CombiTestResult", "FLVResult", "HeartwormTestResult" ],
             rv = "";
             if (name == "AnimalTypeID") { rv = row.ANIMALTYPENAME; }
