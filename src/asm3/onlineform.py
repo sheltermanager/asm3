@@ -78,7 +78,7 @@ JSKEY_VALUE = '918273645'
 FORM_FIELDS = [
     "emailsubmissionto",
     "title", "initials", "firstname", "forenames", "surname", "lastname", "address",
-    "town", "city", "county", "state", "postcode", "zipcode", "hometelephone", 
+    "town", "city", "county", "state", "postcode", "zipcode", "country", "hometelephone", 
     "worktelephone", "mobiletelephone", "celltelephone", "emailaddress", "excludefrombulkemail", "gdprcontactoptin",
     "description", "reason", "size", "species", "breed", "agegroup", "color", "colour", 
     "arealost", "areafound", "areapostcode", "areazipcode",
@@ -908,6 +908,7 @@ def create_person(dbo, username, collationid):
         if f.FIELDNAME == "state": d["county"] = f.VALUE
         if f.FIELDNAME == "postcode": d["postcode"] = f.VALUE
         if f.FIELDNAME == "zipcode": d["postcode"] = f.VALUE
+        if f.FIELDNAME == "country": d["country"] = f.VALUE
         if f.FIELDNAME == "hometelephone": d["hometelephone"] = f.VALUE
         if f.FIELDNAME == "worktelephone": d["worktelephone"] = f.VALUE
         if f.FIELDNAME == "mobiletelephone": d["mobiletelephone"] = f.VALUE
