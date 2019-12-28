@@ -117,6 +117,16 @@ class PetLinkPublisher(AbstractPublisher):
             self.log("req hdr: %s, \nreq data: %s" % (r["requestheaders"], r["requestbody"]))
             self.log("resp hdr: %s, \nresp body: %s" % (r["headers"], response))
 
+            # If we got back an empty response body, that means the username
+            # and password were wrong. We save a new log that just contains the
+            # error instead so that the user does not see success messages.
+            if len(response) == 0:
+                self.initLog("petlink", "PetLink Publisher")
+                self.logError("Received empty response body, username and password must be incorrect.")
+                self.saveLog()
+                self.setLastError("Incorrect username and password.")
+                return
+
             jresp = asm3.utils.json_parse(response)
             
             # Look for remote exceptions
