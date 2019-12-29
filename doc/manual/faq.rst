@@ -75,6 +75,21 @@ format contains T for the type, the type field will be locked for editing when
 this option is on. If your coding format has any of YYYY, MM or DD for a
 portion of the date brought in, that field will be locked too.
 
+When I create a payment I get "No source account found for donation type, can't create trx"?
+--------------------------------------------------------------------------------------------
+
+You've turned on the option to have payments create matching accounting transactions
+under :menuselection:`Settings --> Options --> Accounts`
+
+The error is occurring because your payment type is not linked to an income
+account under :menuselection:`Financial --> Accounts`. To fix this, either
+disable the option to create matching accounting transactions if you are not
+using the accounts. Or, you can create a new income account in the accounts
+screen and link it to your payment type with the dropdown.
+
+The message itself is only a warning to tell you an accounting transaction could not be
+created, it is not stopping your payment from being created.
+
 Why can't I view my person record?
 ----------------------------------
 
