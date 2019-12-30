@@ -66,13 +66,15 @@ $(function() {
                 title = "",
                 i, 
                 d = format.date_js(controller.startdate),
-                year = d.getFullYear(),
-                thisweekno = format.date_weeknumber(d),
                 weekno = 1,
                 selattr = "",
-                w = format.first_iso_monday_of_year(d),
-                weekoptions = [];
-
+                weekoptions = [],
+                // We add 6 days when calling these two functions so that if
+                // d is in the last week of the year, we show the dropdown list
+                // for the next year instead of the one we are leaving.
+                w = format.first_iso_monday_of_year(common.add_days(d, 6)),
+                thisweekno = format.date_weeknumber(common.add_days(d, 6));
+            
             // Generate a list of options for every week of the year
             while (weekno <= 52) {
                 selattr = "";
