@@ -60,8 +60,12 @@ class FoundAnimalsPublisher(FTPPublisher):
         # foundanimals.org want data files called mmddyyyy_HHMMSS.csv in the shelter's own folder
         dateportion = asm3.i18n.format_date("%m%d%Y_%H%M%S", asm3.i18n.now(self.dbo.timezone))
         outputfile = "%s.csv" % dateportion
+
         self.mkdir(folder)
-        self.chdir(folder)
+        if not self.chdir(folder):
+            self.setLastError("Failed issuing chdir to '%s'" % folder)
+            self.cleanup()
+            return
 
         csv = []
 

@@ -1132,7 +1132,8 @@ class FTPPublisher(AbstractPublisher):
             self.log("mkdir %s: already exists (%s)" % (newdir, err))
 
     def chdir(self, newdir, fromroot = ""):
-        if not self.pc.uploadDirectly: return
+        """ Changes FTP folder. Returns True on success, False for failure """
+        if not self.pc.uploadDirectly: return True
         self.log("FTP chdir to %s" % newdir)
         try:
             self.socket.cwd(newdir)
@@ -1140,8 +1141,10 @@ class FTPPublisher(AbstractPublisher):
                 self.currentDir = newdir
             else:
                 self.currentDir = fromroot
+            return True
         except Exception as err:
             self.logError("chdir %s: %s" % (newdir, err), sys.exc_info())
+            return False
 
     def delete(self, filename):
         try:

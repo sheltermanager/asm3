@@ -1,6 +1,7 @@
 43
 ================
 
+31/12/19 found.org: Fail if we could not chdir to FTP folder
 30/12/19 Fix bug displaying rota week dropdown in first week of year
 28/12/19 PetLink: cancel and remove successes if username/pass is wrong #713
 28/12/19 Set person country field when creating from online form #714
