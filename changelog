@@ -1,6 +1,7 @@
 43
 ================
 
+02/01/20 Consistent post_data return types between Python 2 and 3
 31/12/19 found.org: Fail if we could not chdir to FTP folder
 30/12/19 Fix bug displaying rota week dropdown in first week of year
 28/12/19 PetLink: cancel and remove successes if username/pass is wrong #713

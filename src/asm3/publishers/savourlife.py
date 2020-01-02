@@ -57,12 +57,6 @@ class SavourLifePublisher(AbstractPublisher):
                     return k
         return ""
 
-    def utf8_to_ascii(self, s):
-        """
-        SL return their responses as UTF8.
-        """
-        return asm3.utils.encode_html(asm3.utils.cunicode(s))
-
     def good_with(self, x):
         """
         Translates our good with fields Unknown/No/Yes to SOL's NULL/False/True
@@ -154,9 +148,9 @@ class SavourLifePublisher(AbstractPublisher):
                 r = asm3.utils.post_json(url, jsondata)
 
                 if r["status"] != 200:
-                    self.logError("HTTP %d, headers: %s, response: %s" % (r["status"], r["headers"], self.utf8_to_ascii(r["response"])))
+                    self.logError("HTTP %d, headers: %s, response: %s" % (r["status"], r["headers"], r["response"]))
                 else:
-                    self.log("HTTP %d, headers: %s, response: %s" % (r["status"], r["headers"], self.utf8_to_ascii(r["response"])))
+                    self.log("HTTP %d, headers: %s, response: %s" % (r["status"], r["headers"], r["response"]))
                     self.logSuccess("Processed: %s: %s (%d of %d)" % ( an["SHELTERCODE"], an["ANIMALNAME"], anCount, len(animals)))
                     processed.append(an)
 
@@ -228,9 +222,9 @@ class SavourLifePublisher(AbstractPublisher):
                         r = asm3.utils.post_json(url, jsondata)
 
                         if r["status"] != 200:
-                            self.logError("HTTP %d, headers: %s, response: %s" % (r["status"], r["headers"], self.utf8_to_ascii(r["response"])))
+                            self.logError("HTTP %d, headers: %s, response: %s" % (r["status"], r["headers"], r["response"]))
                         else:
-                            self.log("HTTP %d, headers: %s, response: %s" % (r["status"], r["headers"], self.utf8_to_ascii(r["response"])))
+                            self.log("HTTP %d, headers: %s, response: %s" % (r["status"], r["headers"], r["response"]))
                             self.logSuccess("Processed: %s: %s (%d of %d)" % ( an["SHELTERCODE"], an["ANIMALNAME"], anCount, len(animals)))
 
                             # Update animalpublished for this animal with the status we just sent in the Extra field

@@ -112,7 +112,7 @@ class PetLinkPublisher(AbstractPublisher):
         self.log("Uploading data file (%d csv lines) to %s..." % (len(csv), UPLOAD_URL))
         try:
             r = asm3.utils.post_data(UPLOAD_URL, "\n".join(csv), headers=headers)
-            response = r["response"].decode("utf-8").encode("ascii", "xmlcharrefreplace")
+            response = r["response"]
 
             self.log("req hdr: %s, \nreq data: %s" % (r["requestheaders"], r["requestbody"]))
             self.log("resp hdr: %s, \nresp body: %s" % (r["headers"], response))

@@ -49,12 +49,6 @@ class PetRescuePublisher(AbstractPublisher):
         self.log("'%s' is not a valid PetRescue breed, using default '%s'" % (bname, default_breed))
         return default_breed
 
-    def utf8_to_ascii(self, s):
-        """
-        PR return their responses as UTF8.
-        """
-        return asm3.utils.encode_html(asm3.utils.cunicode(s))
-
     def run(self):
         
         self.log("PetRescuePublisher starting...")
@@ -116,9 +110,9 @@ class PetRescuePublisher(AbstractPublisher):
                 r = asm3.utils.post_json(url, jsondata, headers=headers)
 
                 if r["status"] != 200:
-                    self.logError("HTTP %d, headers: %s, response: %s" % (r["status"], r["headers"], self.utf8_to_ascii(r["response"])))
+                    self.logError("HTTP %d, headers: %s, response: %s" % (r["status"], r["headers"], r["response"]))
                 else:
-                    self.log("HTTP %d, headers: %s, response: %s" % (r["status"], r["headers"], self.utf8_to_ascii(r["response"])))
+                    self.log("HTTP %d, headers: %s, response: %s" % (r["status"], r["headers"], r["response"]))
                     self.logSuccess("Processed: %s: %s (%d of %d)" % ( an["SHELTERCODE"], an["ANIMALNAME"], anCount, len(animals)))
                     processed.append(an)
 
@@ -165,14 +159,14 @@ class PetRescuePublisher(AbstractPublisher):
                     r = asm3.utils.patch_json(url, jsondata, headers=headers)
 
                     if r["status"] == 200:
-                        self.log("HTTP %d, headers: %s, response: %s" % (r["status"], r["headers"], self.utf8_to_ascii(r["response"])))
+                        self.log("HTTP %d, headers: %s, response: %s" % (r["status"], r["headers"], r["response"]))
                         self.logSuccess("%s - %s: Marked with new status %s" % (an.SHELTERCODE, an.ANIMALNAME, status))
 
                         # Update animalpublished for this animal with the status we just sent in the Extra field
                         # so that it can be picked up next time.
                         self.markAnimalPublished(an.ID, extra = status)
                     else:
-                        self.logError("HTTP %d, headers: %s, response: %s" % (r["status"], r["headers"], self.utf8_to_ascii(r["response"])))
+                        self.logError("HTTP %d, headers: %s, response: %s" % (r["status"], r["headers"], r["response"]))
 
             except Exception as err:
                 self.logError("Failed closing listing for %s - %s: %s" % (an.SHELTERCODE, an.ANIMALNAME, err), sys.exc_info())

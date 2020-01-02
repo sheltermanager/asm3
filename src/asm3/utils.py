@@ -1033,9 +1033,9 @@ def post_data(url, data, contenttype = "", httpmethod = "", headers = {}):
             req = urllib2.Request(url, data, headers)
             if httpmethod != "": req.get_method = lambda: httpmethod
             resp = urllib2.urlopen(req)
-            return { "requestheaders": headers, "requestbody": data, "headers": resp.info().headers, "response": resp.read(), "status": resp.getcode() }
+            return { "requestheaders": headers, "requestbody": data, "headers": resp.info().headers, "response": encode_html(cunicode(resp.read())), "status": resp.getcode() }
         except urllib2.HTTPError as e:
-            return { "requestheaders": headers, "requestbody": data, "headers": e.info().headers, "response": e.read(), "status": e.getcode() }
+            return { "requestheaders": headers, "requestbody": data, "headers": e.info().headers, "response": encode_html(cunicode(e.read())), "status": e.getcode() }
 
 def post_form(url, fields, headers = {}, cookies = {}):
     """
