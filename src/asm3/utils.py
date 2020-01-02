@@ -651,15 +651,17 @@ def decode_html(s):
 
 def encode_html(s):
     """
-    Encodes Unicode strings as HTML entities in an ASCII string
+    Accepts python2 unicode strings or python3 unicode str or utf-8 bytes
+    returns ascii str with HTML entities
     """
     if s is None: return ""
     if sys.version_info[0] > 2: # PYTHON3 - replace the entities but keep the string as unicode for lang features
+        if is_bytes(s): s = bytes2str(s) # If someone has fed us a byte string, turn it into a str
         return s.encode("ascii", "xmlcharrefreplace").decode("ascii")
+    # PYTHON2
     if is_str(s):
         return cunicode(s).encode("ascii", "xmlcharrefreplace")
-    else:
-        return s.encode("ascii", "xmlcharrefreplace")
+    return s.encode("ascii", "xmlcharrefreplace")
 
 def html_to_uri(s):
     """
