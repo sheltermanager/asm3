@@ -153,9 +153,9 @@ WHEN a.SpeciesID = 2 AND a.DateOfBirth < ad.ReturnDate - INTERVAL '5 months' THE
 WHEN a.SpeciesID = 2 THEN 'Kittens' 
 ELSE 'Other' END AS AgeGroup,
 1 AS AllSources,
+0 AS Transfers,
 1 AS OwnerSurrender,
 0 AS Stray,
-0 AS Transfers,
 0 AS OtherSources
 FROM adoption ad
 INNER JOIN animal a ON ad.AnimalID = a.ID
