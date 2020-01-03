@@ -18,14 +18,8 @@ import asm3.utils
 import asm3.waitinglist
 from asm3.sitedefs import BASE_URL, ASMSELECT_CSS, ASMSELECT_JS, JQUERY_JS, JQUERY_UI_JS, JQUERY_UI_CSS, SIGNATURE_JS, TIMEPICKER_CSS, TIMEPICKER_JS, TOUCHPUNCH_JS
 
-import sys
 import threading
 import web
-
-if sys.version_info[0] > 2: # PYTHON3
-    from html.parser import HTMLParser
-else:
-    from HTMLParser import HTMLParser
 
 FIELDTYPE_YESNO = 0
 FIELDTYPE_TEXT = 1
@@ -89,24 +83,6 @@ FORM_FIELDS = [
 ]
 
 collationidlock = threading.Lock()
-
-class FormHTMLParser(HTMLParser):
-    tag = ""
-    title = ""
-    controls = None
-
-    def handle_starttag(self, tag, attrs):
-        self.tag = tag
-        if self.controls is None: self.controls = []
-        if tag == "select" or tag == "input" or tag == "textarea":
-            ad = { "tag": tag }
-            for k, v in attrs:
-                ad[k] = v
-            self.controls.append(ad)
-
-    def handle_data(self, data):
-        if self.tag == "title":
-            self.title = data
 
 def get_collationid(dbo):
     """ Returns the next collation ID value for online forms and increments it.
@@ -332,7 +308,7 @@ def import_onlineform_html(dbo, h):
     """
     Imports an online form from an HTML document
     """
-    p = FormHTMLParser()
+    p = asm3.utils.FormHTMLParser()
     p.feed(h)
     data = {
         "name": p.title,

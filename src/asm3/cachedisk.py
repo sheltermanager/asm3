@@ -8,15 +8,11 @@ import asm3.al
 
 import hashlib
 import os
+import pickle
 import sys
 import time
 
 from asm3.sitedefs import DISK_CACHE
-
-if sys.version_info[0] > 2: # PYTHON3
-    import pickle
-else:
-    import cPickle as pickle
 
 def _getfilename(key):
     """

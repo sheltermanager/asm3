@@ -29,6 +29,7 @@ if sys.version_info[0] > 2: # PYTHON3
     import _thread as thread
     import urllib.request as urllib2
     from io import BytesIO, StringIO
+    from html.parser import HTMLParser
     from email.mime.base import MIMEBase
     from email.mime.text import MIMEText
     from email.mime.multipart import MIMEMultipart
@@ -44,6 +45,7 @@ else:
     import urllib2
     from cStringIO import StringIO
     from io import BytesIO
+    from HTMLParser import HTMLParser
     from email.mime.base import MIMEBase
     from email.mime.text import MIMEText
     from email.mime.multipart import MIMEMultipart
@@ -319,6 +321,25 @@ class SimpleSearchBuilder(object):
     def add_clause(self, clause):
         self.ors.append(clause)
         self.values.append(self.qlike)
+
+class FormHTMLParser(HTMLParser):
+    """ Class for parsing HTML forms and extracting the input/select/textarea tags """
+    tag = ""
+    title = ""
+    controls = None
+
+    def handle_starttag(self, tag, attrs):
+        self.tag = tag
+        if self.controls is None: self.controls = []
+        if tag == "select" or tag == "input" or tag == "textarea":
+            ad = { "tag": tag }
+            for k, v in attrs:
+                ad[k] = v
+            self.controls.append(ad)
+
+    def handle_data(self, data):
+        if self.tag == "title":
+            self.title = data
 
 def is_bytes(f):
     """ Returns true if the f is a bytes string """
