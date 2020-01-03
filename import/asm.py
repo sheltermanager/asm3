@@ -1343,6 +1343,12 @@ def date_diff(date1, date2):
         months = int((months / 52.0) * 12)
         return "%d years %d months." % (years, months)
 
+def todatetime(d):
+    """ If d is a datetime.date returns it as a datetime.datetime """
+    if d is None: return None
+    if type(d) == datetime.date: d = datetime.datetime.combine(d, datetime.time())
+    return d
+
 def add_days(d, dy):
     if d is None: return d
     return d + datetime.timedelta(days=dy)

@@ -4,18 +4,20 @@ import asm
 from dbfread import DBF
 
 """
-Import script for ARK DBF databases, covers people, animals, payments, licences and complaints
+Import script for ARK DBF databases, covers people, animals, payments, events, licences and complaints
 
 21st March, 2015
 Last changed: 23rd Dec, 2019
 """
 
 PATH = "/home/robin/tmp/asm3_import_data/ark_im2058"
+START_ID = 100
 
 owners = []
 ownerdonations = []
 ownerlicences = []
 movements = []
+logs = []
 animals = []
 animalcontrol = []
 ppa = {}
@@ -27,20 +29,28 @@ arkspecies = {
     "E": 24 # Horse
 }
 
-asm.setid("animal", 100)
-asm.setid("owner", 100)
-asm.setid("ownerdonation", 100)
-asm.setid("ownerlicence", 100)
-asm.setid("adoption", 100)
-asm.setid("animalcontrol", 100)
+asm.setid("animal", START_ID)
+asm.setid("owner", START_ID)
+asm.setid("ownerdonation", START_ID)
+asm.setid("ownerlicence", START_ID)
+asm.setid("adoption", START_ID)
+asm.setid("animalcontrol", START_ID)
+asm.setid("log", START_ID)
 
 print("\\set ON_ERROR_STOP\nBEGIN;")
-print("DELETE FROM animal WHERE ID >= 100;")
-print("DELETE FROM animalcontrol WHERE ID >= 100;")
-print("DELETE FROM owner WHERE ID >= 100;")
-print("DELETE FROM ownerdonation WHERE ID >= 100;")
-print("DELETE FROM ownerlicence WHERE ID >= 100;")
-print("DELETE FROM adoption WHERE ID >= 100;")
+print("DELETE FROM animal WHERE ID >= %s;" % START_ID)
+print("DELETE FROM animalcontrol WHERE ID >= %s;" % START_ID)
+print("DELETE FROM owner WHERE ID >= %s;" % START_ID)
+print("DELETE FROM ownerdonation WHERE ID >= %s;" % START_ID)
+print("DELETE FROM ownerlicence WHERE ID >= %s;" % START_ID)
+print("DELETE FROM adoption WHERE ID >= %s;" % START_ID)
+print("DELETE FROM log WHERE ID >= %s;" % START_ID)
+
+# Create an unknown owner
+uo = asm.Owner()
+owners.append(uo)
+uo.OwnerSurname = "Unknown Owner"
+uo.OwnerName = uo.OwnerSurname
 
 for p in DBF("%s/NAMES.DBF" % PATH):
     o = asm.Owner()
@@ -95,7 +105,7 @@ for d in DBF("%s/ANIMALS.DBF" % PATH):
         a.CrossBreed = 1
         a.Breed2ID = 442
         a.BreedName = asm.breed_name_for_id(a.BreedID) + " / " + asm.breed_name_for_id(a.Breed2ID)
-    a.DateBroughtIn = d["DATE_SURR"]
+    a.DateBroughtIn = asm.todatetime(d["DATE_SURR"])
     if a.DateBroughtIn is None: a.DateBroughtIn = asm.now()
     a.NeuteredDate = d["NEUTER_DAT"]
     if a.NeuteredDate is not None:
@@ -131,7 +141,7 @@ for d in DBF("%s/ANIMALS.DBF" % PATH):
             m.AnimalID = a.ID
             m.OwnerID = o.ID
             m.MovementType = 1
-            m.MovementDate = d["DATE_DISPO"]
+            m.MovementDate = asm.todatetime(d["DATE_DISPO"])
             if d["RECLAIMED"] == "X": 
                 m.MovementType = 5
             m.LastChangedDate = m.MovementDate
@@ -190,6 +200,25 @@ for c in DBF("%s/CMPLAINT.DBF" % PATH, encoding="cp1252"):
     if c["CMPL_TEXT"] != "": comments += "\nCompleted: %s" % c["CMPL_TEXT"]
     ac.CallNotes = comments
 
+for c in DBF("%s/AN_EVNTS.DBF" % PATH, encoding="cp1252"):
+    if c["ID_NUM"] not in ppa: continue
+    a = ppa[c["ID_NUM"]]
+    l = asm.Log()
+    logs.append(l)
+    l.LogTypeID = 3
+    l.LinkID = a.ID
+    l.LinkType = 0
+    l.Date = c["DATE_DONE"]
+    if l.Date is None: l.Date = asm.now()
+    l.Comments = "%s %s" % (c["TYPE"], c["DESCRIP"])
+    l.CreatedBy = c["LAST_USER"]
+    l.CreatedDate = c["LAST_TIME"]
+    l.LastChangedBy = c["LAST_USER"]
+    l.LastChangedDate = c["LAST_TIME"]
+
+# Adopt out any animals still on shelter to an unknown owner
+asm.adopt_older_than(animals, movements, uo.ID, 0)
+
 for a in animals:
     print(a)
 for o in owners:
@@ -202,8 +231,10 @@ for ol in ownerlicences:
     print(ol)
 for ac in animalcontrol:
     print(ac)
+for l in logs:
+    print(l)
 
-asm.stderr_summary(animals=animals, owners=owners, movements=movements, ownerlicences=ownerlicences, ownerdonations=ownerdonations, animalcontrol=animalcontrol)
+asm.stderr_summary(animals=animals, logs=logs, owners=owners, movements=movements, ownerlicences=ownerlicences, ownerdonations=ownerdonations, animalcontrol=animalcontrol)
 
 print("DELETE FROM configuration WHERE ItemName LIKE 'DBView%';")
 print("COMMIT;")

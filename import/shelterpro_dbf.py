@@ -503,18 +503,7 @@ if NOTE_IMPORT:
 
 # Run back through the animals, if we have any that are still
 # on shelter after 2 years, add an adoption to an unknown owner
-for a in animals:
-    if a.Archived == 0 and a.DateBroughtIn < asm.subtract_days(asm.now(), 365*2):
-        m = asm.Movement()
-        m.AnimalID = a.ID
-        m.OwnerID = uo.ID
-        m.MovementType = 1
-        m.MovementDate = a.DateBroughtIn
-        a.Archived = 1
-        a.ActiveMovementID = m.ID
-        a.ActiveMovementDate = a.DateBroughtIn
-        a.ActiveMovementType = 1
-        movements.append(m)
+asm.adopt_older_than(animals, movements, uo.ID, 365*2)
 
 # Now that everything else is done, output stored records
 for a in animals:
