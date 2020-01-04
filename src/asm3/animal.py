@@ -1662,11 +1662,11 @@ def get_active_litters_brief(dbo):
             disp = _("{0}: {1} {2} - {3} {4}", l).format(
                 i.mothercode, i.mothername,
                 i.acceptancenumber, i.speciesname,
-                i.comments[:40])
+                asm3.utils.truncate(i.comments, 40))
         else:
             disp = _("{0} - {1} {2}", l).format(
                 i.acceptancenumber, i.speciesname,
-                i.comments[:40])
+                asm3.utils.truncate(i.comments, 40))
         rv.append( { "label": disp, "value": i.acceptancenumber } )
     return rv
 
