@@ -123,6 +123,8 @@ class PetLinkPublisher(AbstractPublisher):
             if len(response) == 0:
                 self.initLog("petlink", "PetLink Publisher")
                 self.logError("Received empty response body, username and password must be incorrect.")
+                self.successes = 0
+                self.alerts = 1
                 self.saveLog()
                 self.setLastError("Incorrect username and password.")
                 return
