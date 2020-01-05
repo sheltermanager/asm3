@@ -1043,7 +1043,7 @@ def handler_viewanimal(session, l, dbo, a, af, diet, vacc, test, med, logs, home
     h.append(table_end())
     h.append(table())
     h.append(tr( _("Type", l), a["ANIMALTYPENAME"]))
-    h.append(tr( _("Location", l), a["DISPLAYLOCATIONNAME"]))
+    h.append(tr( _("Location", l), a["DISPLAYLOCATION"]))
     h.append(tr( _("Color", l), a["BASECOLOURNAME"]))
     h.append(tr( _("Coat Type", l), a["COATTYPENAME"]))
     h.append(tr( _("Size", l), a["SIZENAME"]))
