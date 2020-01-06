@@ -2009,7 +2009,7 @@ val = {"" : "Project-Id-Version: ASM3\nReport-Msgid-Bugs-To: db@sheltermanager.c
 "Age Group 8" : "8. korcsoport",
 "Default Brought In By" : "Alap&#233;rtelmez&#233;st l&#233;trehozta",
 "Neutered" : "Ivartalan&#237;tott",
-"Delete" : "T&#246;rl&#233;s",
+"Delete" : "T&#246;r&#246;l",
 "Rename" : "&#193;tnevez&#233;s",
 "Generate document from this license" : "Dokumentum l&#233;trehoz&#225;sa err&#337;l az enged&#233;lyr&#337;l",
 "Video Link" : "Vide&#243; link",

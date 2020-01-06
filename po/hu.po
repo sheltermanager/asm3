@@ -3399,7 +3399,7 @@ msgstr "A kódok és rövidített kódok alapértelmezett formátumai TYYYYNNN �
 #: transport.js onlineform_incoming.js common_tableform.js vaccination.js
 #: medicalprofile.js common.js
 msgid "Delete"
-msgstr "Törlés"
+msgstr "Töröl"
 
 #: roles.js
 msgid "Delete Accounts"
