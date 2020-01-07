@@ -43,7 +43,7 @@ class FoundAnimalsPublisher(FTPPublisher):
             self.cleanup()
             return
 
-        animals = get_microchip_data(self.dbo, ["9", "0", "1", "2", "3", "4", "5", "6", "7", "8"], "foundanimals", allowintake=True, organisation_email=email)
+        animals = get_microchip_data(self.dbo, ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"], "foundanimals", allowintake=True, organisation_email=email)
         if len(animals) == 0:
             self.setLastError("No animals found to publish.")
             self.cleanup(save_log=False)

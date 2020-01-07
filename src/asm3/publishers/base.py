@@ -286,7 +286,7 @@ def get_microchip_data_query(dbo, patterns, publishername, movementtypes = "1", 
     """
     pclauses = []
     for p in patterns:
-        if len(p) > 0 and p[0] in [ "0", "1", "2", "3", "4", "5", "6", ",7", "8", "9"]:
+        if len(p) > 0 and p[0] in [ "0", "1", "2", "3", "4", "5", "6", "7", "8", "9"]:
             pclauses.append("(a.IdentichipNumber IS NOT NULL AND a.IdentichipNumber LIKE '%s%%')" % p)
             pclauses.append("(a.Identichip2Number IS NOT NULL AND a.Identichip2Number LIKE '%s%%')" % p)
         else:
