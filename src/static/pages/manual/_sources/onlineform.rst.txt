@@ -104,6 +104,14 @@ data, or explicitly attach the form to existing records.
 * Attach Animal (via animalname): Attaches the form to a single animal
   record based on the animalname field in the form itself.
 
+* Create Animal: Searches for an animal record matching the code field on the 
+  form if present. If a match is found, the form is attached to that animal,
+  otherwise a new animal record is created. While you can use the Species
+  and Breed field types with the breed1/breed2/color fields, you can also
+  use your own lookup lists containing subsets of these items for users
+  to choose from. When creating animals, the animalname and one of dateofbirth
+  or age are mandatory.
+
 * Create Person: Searches for a person record matching either the email address
   if present, or the firstname, lastname and address fields on the form. If a
   match is found, the form is attached to that person. If no match is found, a
@@ -138,7 +146,7 @@ column to give you a clickable link to the newly created record as well so you
 can view it. 
 
 You can safely delete incoming forms once they have been attached to a record.
-The system will also remove incoming forms older than 2 weeks by default.
+The system will also remove incoming forms older than 4 weeks by default.
 
 Importing
 ---------

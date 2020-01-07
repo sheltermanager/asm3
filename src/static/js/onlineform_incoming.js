@@ -68,12 +68,14 @@ $(function() {
                         + '" href="#">' + html.icon("person-find") + ' ' + _("Person") + '</a></li>',
                     '<li id="button-attachanimal" class="asm-menu-item"><a '
                         + '" href="#">' + html.icon("animal-find") + ' ' + _("Animal") + '</a></li>',
-                    '<li id="button-animal" class="asm-menu-item"><a '
+                    '<li id="button-attachanimalbyname" class="asm-menu-item"><a '
                         + '" href="#">' + html.icon("animal-find") + ' ' + _("Animal (via animalname field)") + '</a></li>',
                 '</ul>',
                 '</div>',
                 '<div id="button-create-body" class="asm-menu-body">',
                 '<ul class="asm-menu-list">',
+                    '<li id="button-animal" class="asm-menu-item"><a '
+                        + '" href="#">' + html.icon("animal-add") + ' ' + _("Animal") + '</a></li>',
                     '<li id="button-person" class="asm-menu-item"><a '
                         + '" href="#">' + html.icon("person-add") + ' ' + _("Person") + '</a></li>',
                     '<li id="button-lostanimal" class="asm-menu-item"><a '
@@ -99,6 +101,9 @@ $(function() {
             });
             $("#button-attachanimal").click(function() {
                 $("#dialog-attach-animal").dialog("open");
+            });
+            $("#button-attachanimalbyname").click(function() {
+                onlineform_incoming.create_record("attachanimalbyname", "animal");
             });
             $("#button-animal").click(function() {
                 onlineform_incoming.create_record("animal", "animal");

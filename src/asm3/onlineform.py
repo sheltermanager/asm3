@@ -77,6 +77,7 @@ FORM_FIELDS = [
     "description", "reason", "size", "species", "breed", "agegroup", "color", "colour", 
     "arealost", "areafound", "areapostcode", "areazipcode",
     "animalname", "reserveanimalname",
+    "code", "microchip", "age", "dateofbirth", "entryreason", "markings", "comments", "hiddencomments", "type", "species", "breed1", "breed2", "color", "sex", 
     "callnotes", "dispatchaddress", "dispatchcity", "dispatchstate", "dispatchzipcode", "transporttype", 
     "pickupaddress", "pickuptown", "pickupcity", "pickupcounty", "pickupstate", "pickuppostcode", "pickupzipcode", "pickupcountry", "pickupdate", "pickuptime",
     "dropoffaddress", "dropofftown", "dropoffcity", "dropoffcounty", "dropoffstate", "dropoffpostcode", "dropoffzipcode", "dropoffcountry", "dropoffdate", "dropofftime"
@@ -774,6 +775,13 @@ def guess_agegroup(dbo, s):
             return g
     return asm3.configuration.age_group_name(dbo, 3)
 
+def guess_animaltype(dbo, s):
+    """ Guesses an animal type, returns the default if no match is found """
+    s = str(s).lower()
+    guess = dbo.query_int("SELECT ID FROM animaltype WHERE LOWER(AnimalType) LIKE ?", ["%%%s%%" % s])
+    if guess != 0: return guess
+    return asm3.configuration.default_type(dbo)
+
 def guess_breed(dbo, s):
     """ Guesses a breed, returns the default if no match is found """
     s = str(s).lower()
@@ -787,6 +795,13 @@ def guess_colour(dbo, s):
     guess = dbo.query_int("SELECT ID FROM basecolour WHERE LOWER(BaseColour) LIKE ?", ["%%%s%%" % s])
     if guess != 0: return guess
     return asm3.configuration.default_colour(dbo)
+
+def guess_entryreason(dbo, s):
+    """ Guesses an entry reason, returns the default if no match is found """
+    s = str(s).lower()
+    guess = dbo.query_int("SELECT ID FROM entryreason WHERE LOWER(ReasonName) LIKE ?", ["%%%s%%" % s])
+    if guess != 0: return guess
+    return asm3.configuration.default_entry_reason(dbo)
 
 def guess_sex(dummy, s):
     """ Guesses a sex """
@@ -857,10 +872,65 @@ def attach_animal(dbo, username, collationid):
     attach_form(dbo, username, asm3.media.ANIMAL, animalid, collationid)
     return (collationid, animalid, asm3.animal.get_animal_namecode(dbo, animalid))
 
+def create_animal(dbo, username, collationid):
+    """
+    Creates an animal record from the incoming form data with collationid.
+    Also, attaches the form to the animal as media.
+    The return value is a tuple of collationid, animalid, sheltercode - animalname
+    "animalname", "code", "microchip", "age", "dateofbirth", "entryreason", "markings", "comments", "hiddencomments", "type", "species", "breed1", "breed", "color", "sex"
+    """
+    l = dbo.locale
+    fields = get_onlineformincoming_detail(dbo, collationid)
+    # formreceived = asm3.i18n.python2display(l, dbo.now())
+    d = {}
+    for f in fields:
+        if f.FIELDNAME == "animalname": d["animalname"] = f.VALUE
+        if f.FIELDNAME == "code": 
+            d["sheltercode"] = f.VALUE
+            d["shortcode"] = f.VALUE
+        if f.FIELDNAME == "dateofbirth": d["dateofbirth"] = f.VALUE
+        if f.FIELDNAME == "age": d["estimatedage"] = f.VALUE
+        if f.FIELDNAME == "markings": d["markings"] = f.VALUE
+        if f.FIELDNAME == "comments": d["comments"] = f.VALUE
+        if f.FIELDNAME == "microchip": 
+            d["microchipped"] = "1"
+            d["microchipnumber"] = f.VALUE
+        if f.FIELDNAME == "hiddencomments": d["hiddenanimaldetails"] = f.VALUE
+        if f.FIELDNAME == "entryreason": d["entryreason"] = str(guess_entryreason(dbo, f.VALUE))
+        if f.FIELDNAME == "type": d["animaltype"] = str(guess_animaltype(dbo, f.VALUE))
+        if f.FIELDNAME == "species": d["species"] = str(guess_species(dbo, f.VALUE))
+        if f.FIELDNAME == "breed1": d["breed1"] = str(guess_breed(dbo, f.VALUE))
+        if f.FIELDNAME == "breed2": d["breed2"] = str(guess_breed(dbo, f.VALUE))
+        if f.FIELDNAME == "color": d["basecolour"] = str(guess_colour(dbo, f.VALUE))
+        if f.FIELDNAME == "sex": d["sex"] = str(guess_sex(dbo, f.VALUE))
+        if f.FIELDNAME.startswith("additional"): d[f.FIELDNAME] = f.VALUE
+        #if f.FIELDNAME == "formreceived" and f.VALUE.find(" ") != -1: 
+        #    recdate, rectime = f.VALUE.split(" ")
+        #    formreceived = asm3.i18n.parse_time( asm3.i18n.display2python(l, recdate), rectime )
+        #    TODO: May be useful in future if we need to create other records from this form
+    # Have we got enough info to create the animal record? We need a name at a minimum
+    if "animalname" not in d and ("dateofbirth" not in d or "age" not in d):
+        raise asm3.utils.ASMValidationError(asm3.i18n._("There is not enough information in the form to create an animal record (need animalname and dateofbirth or age).", l))
+    # Does this animal code already exist?
+    animalid = 0
+    if "code" in d and d["code"] != "":
+        similar = asm3.animal.get_animal_sheltercode(dbo, d["code"])
+        if similar is not None:
+            animalid = similar.ID
+            # TODO: doesn't exist yet
+            # additional.merge_values_for_link(dbo, asm3.utils.PostedData(d, dbo.locale), animalid, "animal")
+            # TODO: what would we merge realistically?
+            # asm3.person.merge_animal_details(dbo, username, animalid, d)
+    # Create the animal record if we didn't find one
+    if animalid == 0:
+        animalid, sheltercode = asm3.animal.insert_animal_from_form(dbo, asm3.utils.PostedData(d, dbo.locale), username)
+    attach_form(dbo, username, asm3.media.ANIMAL, animalid, collationid)
+    return (collationid, animalid, "%s - %s" % (sheltercode, d["animalname"]))
+
 def create_person(dbo, username, collationid):
     """
     Creates a person record from the incoming form data with collationid.
-    Also, attaches the form to the person as asm3.media.
+    Also, attaches the form to the person as media.
     The return value is tuple of collationid, personid, personname
     """
     l = dbo.locale
@@ -964,7 +1034,7 @@ def create_animalcontrol(dbo, username, collationid):
     # Create the incident 
     incidentid = asm3.animalcontrol.insert_animalcontrol_from_form(dbo, asm3.utils.PostedData(d, dbo.locale), username)
     attach_form(dbo, username, asm3.media.ANIMALCONTROL, incidentid, collationid)
-    return (collationid, incidentid, asm3.utils.padleft(incidentid, 6) + " - " + personname)
+    return (collationid, incidentid, "%s - %s" % (asm3.utils.padleft(incidentid, 6), personname))
 
 def create_lostanimal(dbo, username, collationid):
     """
@@ -1001,7 +1071,7 @@ def create_lostanimal(dbo, username, collationid):
     # Create the lost animal
     lostanimalid = asm3.lostfound.insert_lostanimal_from_form(dbo, asm3.utils.PostedData(d, dbo.locale), username)
     attach_form(dbo, username, asm3.media.LOSTANIMAL, lostanimalid, collationid)
-    return (collationid, lostanimalid, asm3.utils.padleft(lostanimalid, 6) + " - " + personname)
+    return (collationid, lostanimalid, "%s - %s" % (asm3.utils.padleft(lostanimalid, 6), personname))
   
 def create_foundanimal(dbo, username, collationid):
     """
@@ -1038,7 +1108,7 @@ def create_foundanimal(dbo, username, collationid):
     # Create the found animal
     foundanimalid = asm3.lostfound.insert_foundanimal_from_form(dbo, asm3.utils.PostedData(d, dbo.locale), username)
     attach_form(dbo, username, asm3.media.FOUNDANIMAL, foundanimalid, collationid)
-    return (collationid, foundanimalid, asm3.utils.padleft(foundanimalid, 6) + " - " + personname)
+    return (collationid, foundanimalid, "%s - %s" % (asm3.utils.padleft(foundanimalid, 6), personname))
 
 def create_transport(dbo, username, collationid):
     """
@@ -1117,7 +1187,7 @@ def create_waitinglist(dbo, username, collationid):
     # Create the waiting list
     wlid = asm3.waitinglist.insert_waitinglist_from_form(dbo, asm3.utils.PostedData(d, dbo.locale), username)
     attach_form(dbo, username, asm3.media.WAITINGLIST, wlid, collationid)
-    return (collationid, wlid, asm3.utils.padleft(wlid, 6) + " - " + personname)
+    return (collationid, wlid, "%s - %s" % (asm3.utils.padleft(wlid, 6), personname))
 
 def auto_remove_old_incoming_forms(dbo):
     """

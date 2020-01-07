@@ -4042,6 +4042,14 @@ class onlineform_incoming(JSONEndpoint):
         asm3.onlineform.attach_form(dbo, o.user, asm3.media.ANIMAL, animalid, collationid)
         return animalid
 
+    def post_attachanimalbyname(self, o):
+        self.check(asm3.users.ADD_MEDIA)
+        rv = []
+        for pid in o.post.integer_list("ids"):
+            collationid, animalid, animalname = asm3.onlineform.attach_animal(o.dbo, o.user, pid)
+            rv.append("%d|%d|%s" % (collationid, animalid, animalname))
+        return "^$".join(rv)
+
     def post_attachperson(self, o):
         dbo = o.dbo
         collationid = o.post.integer("collationid")
@@ -4053,7 +4061,7 @@ class onlineform_incoming(JSONEndpoint):
         self.check(asm3.users.ADD_MEDIA)
         rv = []
         for pid in o.post.integer_list("ids"):
-            collationid, animalid, animalname = asm3.onlineform.attach_animal(o.dbo, o.user, pid)
+            collationid, animalid, animalname = asm3.onlineform.create_animal(o.dbo, o.user, pid)
             rv.append("%d|%d|%s" % (collationid, animalid, animalname))
         return "^$".join(rv)
 

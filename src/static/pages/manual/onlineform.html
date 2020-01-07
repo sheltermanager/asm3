@@ -265,6 +265,13 @@ form to them as media.</li>
 form to them as media.</li>
 <li>Attach Animal (via animalname): Attaches the form to a single animal
 record based on the animalname field in the form itself.</li>
+<li>Create Animal: Searches for an animal record matching the code field on the
+form if present. If a match is found, the form is attached to that animal,
+otherwise a new animal record is created. While you can use the Species
+and Breed field types with the breed1/breed2/color fields, you can also
+use your own lookup lists containing subsets of these items for users
+to choose from. When creating animals, the animalname and one of dateofbirth
+or age are mandatory.</li>
 <li>Create Person: Searches for a person record matching either the email address
 if present, or the firstname, lastname and address fields on the form. If a
 match is found, the form is attached to that person. If no match is found, a
@@ -293,7 +300,7 @@ lost/found animal or waiting list). The screen will put a link in the Link
 column to give you a clickable link to the newly created record as well so you
 can view it.</p>
 <p>You can safely delete incoming forms once they have been attached to a record.
-The system will also remove incoming forms older than 2 weeks by default.</p>
+The system will also remove incoming forms older than 4 weeks by default.</p>
 <div class="section" id="importing">
 <h2>Importing<a class="headerlink" href="#importing" title="Permalink to this headline">¶</a></h2>
 <p>ASM also allows importing of online forms from files.</p>
