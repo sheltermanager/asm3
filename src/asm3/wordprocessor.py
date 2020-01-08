@@ -19,7 +19,6 @@ import asm3.users
 import asm3.utils
 import asm3.waitinglist
 from asm3.i18n import _, format_currency_no_symbol, format_time, now, python2display, yes_no
-from asm3.sitedefs import BASE_URL, QR_IMG_SRC
 
 import zipfile
 
@@ -139,7 +138,6 @@ def animal_tags(dbo, a, includeAdditional=True, includeCosts=True, includeDiet=T
     includeAdoptionStatus in particular is expensive. If you don't need some of the tags, you can not include them.
     """
     l = dbo.locale
-    qr = QR_IMG_SRC % { "url": BASE_URL + "/animal?id=%d" % a["ID"], "size": "150x150" }
     animalage = a["ANIMALAGE"]
     if animalage and animalage.endswith("."): 
         animalage = animalage[0:len(animalage)-1]
@@ -391,7 +389,11 @@ def animal_tags(dbo, a, includeAdditional=True, includeCosts=True, includeDiet=T
         "DOCUMENTIMGLINK500"    : "<img height=\"500\" src=\"" + asm3.html.doc_img_src(dbo, a) + "\" >",
         "DOCUMENTIMGTHUMBSRC"   : asm3.html.thumbnail_img_src(dbo, a, "animalthumb"),
         "DOCUMENTIMGTHUMBLINK"  : "<img src=\"" + asm3.html.thumbnail_img_src(dbo, a, "animalthumb") + "\" />",
-        "DOCUMENTQRLINK"        : "<img src=\"%s\" />" % qr,
+        "DOCUMENTQRLINK"        : "<img src=\"%s\" />" % asm3.html.qr_animal_img_src(a.ID),
+        "DOCUMENTQRLINK200"     : "<img src=\"%s\" />" % asm3.html.qr_animal_img_src(a.ID, "200x200"),
+        "DOCUMENTQRLINK150"     : "<img src=\"%s\" />" % asm3.html.qr_animal_img_src(a.ID, "150x150"),
+        "DOCUMENTQRLINK100"     : "<img src=\"%s\" />" % asm3.html.qr_animal_img_src(a.ID, "100x100"),
+        "DOCUMENTQRLINK50"      : "<img src=\"%s\" />" % asm3.html.qr_animal_img_src(a.ID, "50x50"),
         "ADOPTIONSTATUS"        : asm3.publishers.base.get_adoption_status(dbo, a),
         "ANIMALISADOPTABLE"     : asm3.utils.iif(asm3.publishers.base.is_animal_adoptable(dbo, a), _("Yes", l), _("No", l)),
         "ANIMALONSHELTER"       : yes_no(l, a["ARCHIVED"] == 0),

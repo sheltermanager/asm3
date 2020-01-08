@@ -10,6 +10,7 @@ import asm3.users
 import asm3.utils
 
 from asm3.i18n import BUILD, _, translate, format_currency, format_date, get_locales, now, python2display, python2unix
+from asm3.sitedefs import QR_IMG_SRC
 from asm3.sitedefs import BASE_URL, LOCALE, MINIFY_JS, ROLLUP_JS
 from asm3.sitedefs import ASMSELECT_CSS, ASMSELECT_JS, BASE64_JS, CODEMIRROR_CSS, CODEMIRROR_JS, CODEMIRROR_BASE, EXIFRESTORER_JS, FLOT_JS, FLOT_PIE_JS, FULLCALENDAR_JS, FULLCALENDAR_CSS, JQUERY_JS, JQUERY_UI_JS, JQUERY_UI_CSS, MOMENT_JS, MOUSETRAP_JS, PATH_JS, SIGNATURE_JS, TABLESORTER_CSS, TABLESORTER_JS, TABLESORTER_WIDGETS_JS, TIMEPICKER_CSS, TIMEPICKER_JS, TINYMCE_4_JS, TOUCHPUNCH_JS
 
@@ -862,6 +863,13 @@ def findcolumns_selectedtofront(cols, vals):
                 cols.insert(0, cols.pop(i))
                 break
     return vals
+
+def qr_animal_img_src(animalid, size = "150x150"):
+    """
+    Returns an img src attribute for a QR code to an animal.
+    size is a sizespec eg: 150x150
+    """
+    return QR_IMG_SRC % { "url": BASE_URL + "/animal?id=%s" % animalid, "size": size }
 
 def thumbnail_img_src(dbo, row, mode):
     """
