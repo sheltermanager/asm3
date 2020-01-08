@@ -52,6 +52,7 @@ $$BODY
 BODY$$
 
 $$FOOTER
+<p><b>Total payments: {SUM.amt.2} (Tax: {SUM.vatamount.2})</b></p>
 FOOTER$$
 
 &&&
@@ -109,6 +110,7 @@ $$BODY
 BODY$$
 
 $$FOOTER
+<p><b>Total payments: {SUM.amt.2} (Tax: {SUM.vatamount.2})</b></p>
 FOOTER$$
 
 &&&
@@ -167,6 +169,7 @@ $$BODY
 BODY$$
 
 $$FOOTER
+<p><b>Total payments: {SUM.amt.2} (Tax: {SUM.vatamount.2})</b></p>
 FOOTER$$
 &&&
 Payment Breakdown By Type and Method
@@ -228,6 +231,7 @@ $$BODY
 BODY$$
 
 $$FOOTER
+<p><b>Total payments: {SUM.amt.2} (Tax: {SUM.vatamount.2})</b></p>
 FOOTER$$
 
 &&&
@@ -344,6 +348,7 @@ $ownerpostcode</td>
 BODY$$
 
 $$FOOTER
+<p><b>Total payments: {SUM.amt.2} (Tax: {SUM.vatamount.2})</b></p>
 FOOTER$$
 
 &&&
@@ -406,6 +411,7 @@ $$BODY
 BODY$$
 
 $$FOOTER
+<p><b>Total payments: {SUM.amt.2}</b></p>
 FOOTER$$
 &&&
 Payment Breakdown By Person
@@ -469,6 +475,7 @@ $$BODY
 BODY$$
 
 $$FOOTER
+<p><b>Total payments: {SUM.amt.2} (Tax: {SUM.vatamount.2})</b></p>
 FOOTER$$
 
 &&&
@@ -534,6 +541,7 @@ $$BODY
 BODY$$
 
 $$FOOTER
+<p><b>Total payments: {SUM.amt.2} (Tax: {SUM.vatamount.2})</b></p>
 FOOTER$$
 
 &&&
@@ -652,6 +660,7 @@ $sex $speciesname aged $animalage
 BODY$$
 
 $$FOOTER
+<p><b>Total payments: {SUM.amt.2} (Tax: {SUM.vatamount.2})</b></p>
 FOOTER$$
 &&&
 Payment Breakdown By Receipt Number
