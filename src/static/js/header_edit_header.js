@@ -121,7 +121,7 @@ $(function() {
                 '<div class="asm-grid-col-3">',
                     '<table><tr>',
                     '<td align="center">',
-                        '<a href="' + html.img_src(a, "animal") + '">',
+                        '<a target="_blank" href="' + html.img_src(a, "animal") + '">',
                         '<img onerror="image_error(this)" class="' + html.animal_link_thumb_classes(a) + '" src="' + html.thumbnail_src(a, "animalthumb") + '" />',
                         '</a>',
                         mediaprompt,

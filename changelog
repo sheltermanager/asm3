@@ -1,6 +1,7 @@
 43
 ================
 
+09/01/20 Workaround for Google Chrome 70 back bug from photo #716
 08/01/20 Tokens for DocumentImgQRLink50/100/150/200 for size
 07/01/20 Allow online forms to create new animal records #563
 02/01/20 Consistent post_data return types between Python 2 and 3
