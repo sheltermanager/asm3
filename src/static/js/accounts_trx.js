@@ -138,7 +138,7 @@ $(function() {
                 if (t.PERSONNAME) {
                     desc += html.person_link(t.PERSONID, t.PERSONNAME);
                 }
-                if (t.DONATIONANIMALCODE) {
+                if (t.DONATIONANIMALID) {
                     desc += " " + html.icon("right") + " " + 
                         '<a href="animal?id=' + t.DONATIONANIMALID + '">' +
                         t.DONATIONANIMALCODE + " - " + 

@@ -292,11 +292,11 @@ def get_transactions(dbo, accountid, datefrom, dateto, reconciled=BOTH):
         "a.AnimalName AS DonationAnimalName, " \
         "CASE " \
         "WHEN EXISTS(SELECT ItemValue FROM configuration WHERE ItemName Like 'UseShortShelterCodes' AND ItemValue = 'Yes') " \
-        "THEN a.ShelterCode ELSE a.ShortCode END AS DonationAnimalCode, " \
+        "THEN a.ShortCode ELSE a.ShelterCode END AS DonationAnimalCode, " \
         "aca.AnimalName AS CostAnimalName, aca.ID AS CostAnimalID, " \
         "CASE " \
         "WHEN EXISTS(SELECT ItemValue FROM configuration WHERE ItemName Like 'UseShortShelterCodes' AND ItemValue = 'Yes') " \
-        "THEN aca.ShelterCode ELSE aca.ShortCode END AS CostAnimalCode " \
+        "THEN aca.ShortCode ELSE aca.ShelterCode END AS CostAnimalCode " \
         "FROM accountstrx t " \
         "LEFT OUTER JOIN accounts srcac ON srcac.ID = t.SourceAccountID " \
         "LEFT OUTER JOIN accounts destac ON destac.ID = t.DestinationAccountID " \
