@@ -13,7 +13,7 @@ $(function() {
                 '<li><a href="#tab-htmlftp">' + _("HTML/FTP Publisher") + '</a></li>',
                 '<li class="localeus localeca localemx"><a href="#tab-adoptapet">AdoptAPet Publisher</a></li>',
                 '<li><a href="#tab-helpinglostpets">HelpingLostPets Publisher</a></li>',
-                '<li class="localeus localeca localeau hasmaddiesfund"><a href="#tab-maddiesfund">Maddie\'s Fund Publisher</a></li>',
+                '<li class="english hasmaddiesfund"><a href="#tab-maddiesfund">Maddie\'s Fund Publisher</a></li>',
                 '<li class="localeus localeca localemx"><a href="#tab-petfinder">PetFinder Publisher</a></li>',
                 '<li class="localegb haspetslocated"><a href="#tab-petslocated">PetsLocated Publisher</a></li>',
                 '<li class="localeau haspetrescue"><a href="#tab-petrescue">PetRescue Publisher</a></li>', 
@@ -1059,6 +1059,8 @@ $(function() {
             $(".localeca").hide();
             $(".localegb").hide();
             $(".localemx").hide();
+            $(".english").hide();
+            if (asm.locale.indexOf("en") == 0) { $(".english").show(); }
             if (asm.locale == "en") { $(".localeus").show(); }
             if (asm.locale == "en_AU") { $(".localeau").show(); }
             if (asm.locale == "en_GB") { $(".localegb").show(); }
