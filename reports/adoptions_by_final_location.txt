@@ -19,8 +19,8 @@ no.OwnerName, no.OwnerAddress,
 no.OwnerTown, no.OwnerCounty,
 no.OwnerPostcode, no.EmailAddress, no.HomeTelephone, no.WorkTelephone, no.MobileTelephone,
 CASE 
-WHEN EXISTS(SELECT ID FROM adoption ad WHERE ad.AnimalID = adoption.AnimalID AND ad.MovementDate < adoption.MovementDate AND ad.MovementType = 8) THEN 'Retailer - ' || (SELECT ro.OwnerName FROM owner ro INNER JOIN adoption ad ON ad.OwnerID = ro.ID WHERE ad.MovementDate < adoption.MovementDate AND ad.MovementType = 8 AND ad.AnimalID = adoption.AnimalID LIMIT 1)
-WHEN EXISTS(SELECT ID FROM adoption ad WHERE ad.AnimalID = adoption.AnimalID AND ad.MovementDate < adoption.MovementDate AND ad.MovementType = 2) THEN 'Foster - ' || (SELECT fo.OwnerName FROM owner fo INNER JOIN adoption ad ON ad.OwnerID = fo.ID WHERE ad.MovementDate < adoption.MovementDate AND ad.MovementType = 2 AND ad.AnimalID = adoption.AnimalID LIMIT 1)
+WHEN EXISTS(SELECT ID FROM adoption ad WHERE ad.AnimalID = adoption.AnimalID AND ad.MovementDate < adoption.MovementDate AND ad.ReturnDate = adoption.MovementDate AND ad.MovementType = 8) THEN 'Retailer - ' || (SELECT ro.OwnerName FROM owner ro INNER JOIN adoption ad ON ad.OwnerID = ro.ID WHERE ad.MovementDate < adoption.MovementDate AND ad.ReturnDate = adoption.MovementDate AND ad.MovementType = 8 AND ad.AnimalID = adoption.AnimalID LIMIT 1)
+WHEN EXISTS(SELECT ID FROM adoption ad WHERE ad.AnimalID = adoption.AnimalID AND ad.MovementDate < adoption.MovementDate AND ad.ReturnDate = adoption.MovementDate AND ad.MovementType = 2) THEN 'Foster - ' || (SELECT fo.OwnerName FROM owner fo INNER JOIN adoption ad ON ad.OwnerID = fo.ID WHERE ad.MovementDate < adoption.MovementDate AND ad.ReturnDate = adoption.MovementDate AND ad.MovementType = 2 AND ad.AnimalID = adoption.AnimalID LIMIT 1)
 ELSE (SELECT LocationName FROM internallocation WHERE ID = animal.ShelterLocation) 
 END AS LastLocation
 FROM adoption
