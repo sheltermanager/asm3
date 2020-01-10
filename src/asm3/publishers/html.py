@@ -132,7 +132,7 @@ def animals_to_page(dbo, animals, style="", speciesid=0, animaltypeid=0, locatio
     
 def get_animal_view(dbo, animalid):
     """ Constructs the animal view page to the asm3.template. """
-    a = dbo.first_row(get_animal_data(dbo, animalid=animalid, include_additional_fields=True, strip_personal_data=True))
+    a = dbo.first_row(get_animal_data(dbo, animalid=animalid, include_additional_fields=True, strip_personal_data=False))
     # If the animal is not adoptable, bail out
     if a is None: raise asm3.utils.ASMPermissionError("animal is not adoptable (None)")
     if not is_animal_adoptable(dbo, a): raise asm3.utils.ASMPermissionError("animal is not adoptable (False)")
