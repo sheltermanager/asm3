@@ -622,6 +622,14 @@ PaymentAnimalShortCode
     The short shelter code of the animal the payment is linked to
 PaymentPersonName
     The name of the person the payment is linked to
+PaymentPersonAddress
+   The address of the person the payment is linked to
+PaymentPersonCity / PaymentPersonTown
+   The city of the person the payment is linked to
+PaymentPersonState / PaymentPersonCounty
+   The state of the person the payment is linked to
+PaymentPersonZipcode / PaymentPersonPostcode
+   The zipcode of the person the payment is linked to
 PaymentTotalDue
     The total of all selected payments that have a due date and no received date
 PaymentTotalReceived

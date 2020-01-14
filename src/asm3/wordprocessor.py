@@ -871,6 +871,13 @@ def donation_tags(dbo, donations):
             "PAYMENTANIMALSHELTERCODE"+i : p["SHELTERCODE"],
             "PAYMENTANIMALSHORTCODE"+i : p["SHORTCODE"],
             "PAYMENTPERSONNAME"+i   : p["OWNERNAME"],
+            "PAYMENTPERSONADDRESS"+i : p["OWNERADDRESS"],
+            "PAYMENTPERSONTOWN"+i   : p["OWNERTOWN"],
+            "PAYMENTPERSONCITY"+i   : p["OWNERTOWN"],
+            "PAYMENTPERSONCOUNTY"+i  : p["OWNERCOUNTY"],
+            "PAYMENTPERSONSTATE"+i  : p["OWNERCOUNTY"],
+            "PAYMENTPERSONPOSTCODE"+i : p["OWNERPOSTCODE"],
+            "PAYMENTPERSONZIPCODE"+i : p["OWNERPOSTCODE"]
         }
         tags.update(x)
         if i == "": return # Don't add a total for the compatibility row

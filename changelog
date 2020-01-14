@@ -1,6 +1,7 @@
 43
 ================
 
+14/01/20 Add PaymentPersonAddress/City/State/Zipcode wordkeys
 10/01/20 Enable Maddies publisher for all English speakers
 10/01/20 Bug displaying animals in transactions with no shortcode
 09/01/20 Workaround for Google Chrome 70 back bug from photo #716
