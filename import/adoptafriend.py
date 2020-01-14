@@ -18,9 +18,10 @@ ShelAnml.mdb:
     record.csv
 
 26th January, 2015, rewritten with new kit 27th October, 2015
+Last change 14th January, 2020
 """
 
-PATH = "/home/robin/tmp/asm3_import_data/aaf_rs1140/"
+PATH = "/home/robin/tmp/asm3_import_data/aaf_ch2183/"
 
 # For use with fields that just contain the sex
 def getincidenttype(ctype):
@@ -234,11 +235,12 @@ for row in asm.csv_to_list(PATH + "record.csv", strip=True):
     a.IsGoodWithCats = row["RAnimals"] == 1 and 0 or 1
     if row["DeclawType"] != "": a.Declawed = 1
     origin = row["ROriginOfAnimal"]
-    if len(origin) < 3:
-        origin = "Surrender"
     disp = row["RDisposition"]
-    a.EntryReasonID = asm.entryreason_id_for_name(origin, True)
-    if origin.startswith("Transfer"):
+    a.EntryReasonID = 17 # Surrender
+    if origin.startswith("Stray"):
+        a.EntryReasonID = 7
+    elif origin.startswith("Transfer"):
+        a.EntryReasonID = 15
         a.IsTransfer = 1
     elif origin.startswith("Euthan"):
         a.DeceasedDate = a.DateBroughtIn
@@ -251,6 +253,7 @@ for row in asm.csv_to_list(PATH + "record.csv", strip=True):
         a.PutToSleep = 1
         a.Archived = 1
     if disp.startswith("DOA"):
+        a.EntryReasonID = 6
         a.DeceasedDate = a.DateBroughtIn
         a.IsDOA = 1
         a.Archived = 1
