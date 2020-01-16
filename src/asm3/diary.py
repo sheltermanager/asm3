@@ -69,7 +69,7 @@ def user_role_where_clause(dbo, user = "", includecreatedby = True):
     roles = asm3.users.get_roles_for_user(dbo, user)
     createdby = ""
     if includecreatedby: createdby = "OR CreatedBy = %s" % dbo.sql_value(user)
-    if len(roles) == 0: return "DiaryForName = %s %s" % (dbo.sql_value(user), createdby)
+    if len(roles) == 0: return "(DiaryForName = %s %s)" % (dbo.sql_value(user), createdby)
     sroles = []
     for r in roles:
         sroles.append(dbo.sql_value(r))
