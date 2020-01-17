@@ -93,6 +93,10 @@
         };
     };
 
+    var sort_shuffle = function (a, b) {  
+        return 0.5 - Math.random();
+    };
+
     var construct_options = function(defaultlabel, valuefield, labelfield) {
         var h = [], seenvalues = {};
         h.push('<option value="">' + translate(defaultlabel) + '</option>');
@@ -151,6 +155,7 @@
 
         var hostdiv = document.getElementById("asm3-adoptable-list"), 
             h = [],
+            c = 0,
             selspecies = document.getElementById("asm3-select-species").value,
             selbreed = document.getElementById("asm3-select-breed").value,
             selagegroup = document.getElementById("asm3-select-agegroup").value,
@@ -173,9 +178,10 @@
             if (typeof asm3_adoptable_extra !== 'undefined') {
                 extra = asm3_adoptable_extra(item);
             }
-            
-            if (limit > 0 && index >= limit) { return; }
 
+            c = c + 1;
+            if (limit > 0 && c > limit) { return; }
+            
             h.push(substitute(thumbnail_template, {
                 account: account,
                 baseurl: baseurl,
@@ -224,7 +230,12 @@
             sexoptions: construct_options("(any sex)", "SEX", "SEXNAME")
         });
 
-        adoptables.sort(sort_single(sort_order));
+        if (sort_order == "SHUFFLE") {
+            adoptables.sort(sort_shuffle);
+        }
+        else {
+            adoptables.sort(sort_single(sort_order));
+        }
         render_adoptables();
 
         document.getElementById("asm3-select-species").addEventListener("change", render_adoptables);

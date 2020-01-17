@@ -214,6 +214,15 @@ an at symbol @ to do a numeric sort rather than a string/alphanumeric sort::
     <div id="asm3-adoptables" />
     <script src="http://localhost:5000/service?method=animal_view_adoptable_js"></script>
 
+A special sort keyword of SHUFFLE can also be used, if instead of sorting you'd like the
+adoptable animals to be output in a random order::
+   
+    <script>
+    asm3_adoptable_sort = "SHUFFLE";
+    </script>
+    <div id="asm3-adoptables" />
+    <script src="http://localhost:5000/service?method=animal_view_adoptable_js"></script>
+
 Extra Content
 ^^^^^^^^^^^^^
 

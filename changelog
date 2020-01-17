@@ -1,6 +1,7 @@
 43
 ================
 
+17/01/20 Fix limit bug in adoptable_js add SHUFFLE sort #717
 16/01/20 Fix OR bug that incorrectly showed completed diary notes for user
 14/01/20 Add PaymentPersonAddress/City/State/Zipcode wordkeys
 10/01/20 Enable Maddies publisher for all English speakers
