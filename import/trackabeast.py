@@ -12,9 +12,11 @@ animals.csv, people.csv, placements.csv, medical.csv
 13th January, 2012
 
 Complete rewrite for new library and customer, 18th July 2017
+Add ability to get placements from animals file if placements not available 17th Jan 2020
 """
 
 PATH = "/home/robin/tmp/asm3_import_data/trackabeast_db2180"
+USE_PLACEMENTS_FILE = False
 
 def getspecies(s):
     """ Looks up the species, returns Cat if nothing matches """
@@ -72,6 +74,35 @@ ppa = {}
 
 # List of trackids we've seen for people so far
 ppo = {}
+pponame = {}
+
+for d in asm.csv_to_list("%s/people.csv" % PATH):
+
+    # New owner record if we haven't seen this trackid before
+    trackid = d["TrackID"].strip()
+    if not trackid in ppo:
+        extradata = ""
+        o = asm.Owner()
+        ppo[trackid] = o
+        o.OwnerForeNames = d["First Name"]
+        o.OwnerSurname = d["Last Name"]
+        o.OwnerName = "%s %s" % (o.OwnerForeNames, o.OwnerSurname)
+        pponame[o.OwnerName] = o
+        o.EmailAddress = d["Email 1"]
+        o.OwnerAddress = "%s %s %s" % (d["Address 1"], d["Address 2"], d["Address 3"])
+        o.OwnerTown = d["City"]
+        o.OwnerCounty = d["State"]
+        o.OwnerPostcode = d["Zip"]
+        o.HomeTelephone = d["Home Phone"]
+        o.MobileTelephone = d["Cell Phone"]
+        o.WorkTelephone = d["Work Phone"]
+        o.IsVolunteer = d["Vol"] == "Y" and 1 or 0
+        o.IsFosterer = d["Foster"] == "Y" and 1 or 0
+        o.IsStaff = d["Staff"] == "Y" and 1 or 0
+        o.IsBanned = d["Do Not Adopt"].strip() == "Y" and 1 or 0
+        o.ExcludeFromBulkEmail = d["Send Mail"] == "Y" and 0 or 1
+        o.Comments = d["Comments"]
+        owners.append(o)
 
 for d in asm.csv_to_list("%s/animals.csv" % PATH):
 
@@ -119,73 +150,91 @@ for d in asm.csv_to_list("%s/animals.csv" % PATH):
         a.BaseColourID = asm.colour_id_for_name(d["Color"])
         a.ShelterLocation = 1
         a.generateCode("Dog")
-        if d["Placement Status"].strip() == "Deceased": 
+        if d["Placement Status"] == "Deceased": 
             a.DeceasedDate = getdate(d["Placement Date"])
             a.Archived = 1
+        elif d["Placement Status"] == "Euthanized": 
+            a.DeceasedDate = getdate(d["Placement Date"])
+            a.PutToSleep = 1
+            a.Archived = 1
+
         a.CreatedDate = a.DateBroughtIn
         a.LastChangedDate = a.DateBroughtIn
         animals.append(a)
 
-for d in asm.csv_to_list("%s/people.csv" % PATH):
+        # We don't have a placements file, use placement status to decide what to do
+        if not USE_PLACEMENTS_FILE:
+            if d["Placement Status"] == "Adopted" or d["Placement Status"] == "Fostered" or d["Placement Status"] == "Reclaimed":
+                # Find the person 
+                o = None
+                oname = "%s %s" % (d["First Name"], d["Last Name"])
+                if oname in pponame:
+                    o = pponame[oname]
+                if o is None:
+                    asm.stderr("could not find person record for %s" % oname)
+                    continue
+                m = asm.Movement()
+                m.OwnerID = o.ID
+                m.AnimalID = a.ID
+                m.MovementDate = getdate(d["Placement Date"])
+                if m.MovementDate is None: m.MovementDate = a.DateBroughtIn
+                if d["Placement Status"].strip() == "Adopted":
+                    m.MovementType = 1
+                    a.Archived = 1
+                elif d["Placement Status"].strip() == "Reclaimed":
+                    m.MovementType = 5
+                    a.Archived = 1
+                elif d["Placement Status"].strip() == "Fostered":
+                    m.MovementType = 2
+                movements.append(m)
+                a.ActiveMovementID = m.ID
+                a.ActiveMovementDate = m.MovementDate
+                a.ActiveMovementType = m.MovementType
 
-    # New owner record if we haven't seen this trackid before
-    trackid = d["TrackID"].strip()
-    if not trackid in ppo:
-        extradata = ""
-        o = asm.Owner()
-        ppo[trackid] = o
-        o.OwnerForeNames = d["First Name"]
-        o.OwnerSurname = d["Last Name"]
-        o.EmailAddress = d["Email 1"]
-        o.OwnerAddress = "%s %s %s" % (d["Address 1"], d["Address 2"], d["Address 3"])
-        o.OwnerTown = d["City"]
-        o.OwnerCounty = d["State"]
-        o.OwnerPostcode = d["Zip"]
-        o.HomeTelephone = d["Home Phone"]
-        o.MobileTelephone = d["Cell Phone"]
-        o.WorkTelephone = d["Work Phone"]
-        o.IsVolunteer = d["Vol"] == "Y" and 1 or 0
-        o.IsFosterer = d["Foster"] == "Y" and 1 or 0
-        o.IsStaff = d["Staff"] == "Y" and 1 or 0
-        o.IsBanned = d["Do Not Adopt"].strip() == "Y" and 1 or 0
-        o.ExcludeFromBulkEmail = d["Send Mail"] == "Y" and 0 or 1
-        o.Comments = d["Comments"]
-        owners.append(o)
+if USE_PLACEMENTS_FILE:
+    for d in asm.csv_to_list("%s/placements.csv" % PATH):
 
-for d in asm.csv_to_list("%s/placements.csv" % PATH):
+        # Find the animal and owner for this placement
+        a = None
+        o = None
+        if d["AnimalID"] in ppa:
+            a = ppa[d["AnimalID"]]
+        if d["PersonID"] in ppo:
+            o = ppo[d["PersonID"]]
 
-    # Find the animal and owner for this placement
-    a = None
-    o = None
-    if d["AnimalID"] in ppa:
-        a = ppa[d["AnimalID"]]
-    if d["PersonID"] in ppo:
-        o = ppo[d["PersonID"]]
+        # Is it a death movement? If so, just mark the animal deceased
+        if d["Placement Status"] == "Deceased" and a is not None:
+            a.DeceasedDate = getdate(d["Placement Date"])
+            a.PTSReason = d["Comments"]
+            a.Archived = 1
+            continue
 
-    # Is it a death movement? If so, just mark the animal deceased
-    if d["Placement Status"].strip() == "Deceased" and a is not None:
-        a.DeceasedDate = getdate(d["Placement Date"])
-        a.PTSReason = d["Comments"]
-        a.Archived = 1
-        continue
+        if d["Placement Status"] == "Euthanized" and a is not None:
+            a.DeceasedDate = getdate(d["Placement Date"])
+            a.PutToSleep = 1
+            a.PTSReason = d["Comments"]
+            a.Archived = 1
+            continue
 
-    # Adoption or Foster
-    if d["Placement Status"].strip() == "Adopted" or d["Placement Status"].strip() == "Fostered":
-        if o is not None and a is not None:
-            m = asm.Movement()
-            m.OwnerID = o.ID
-            m.AnimalID = a.ID
-            m.MovementDate = getdate(d["Placement Date"])
-            if m.MovementDate is None: m.MovementDate = a.DateBroughtIn
-            if d["Placement Status"].strip() == "Adopted":
-                m.MovementType = 1
-                a.Archived = 1
-            if d["Placement Status"].strip() == "Fostered":
-                m.MovementType = 2
-            movements.append(m)
-            a.ActiveMovementID = m.ID
-            a.ActiveMovementDate = m.MovementDate
-            a.ActiveMovementType = m.MovementType
+        if d["Placement Status"] == "Adopted" or d["Placement Status"] == "Fostered" or d["Placement Status"] == "Reclaimed":
+            if o is not None and a is not None:
+                m = asm.Movement()
+                m.OwnerID = o.ID
+                m.AnimalID = a.ID
+                m.MovementDate = getdate(d["Placement Date"])
+                if m.MovementDate is None: m.MovementDate = a.DateBroughtIn
+                if d["Placement Status"].strip() == "Adopted":
+                    m.MovementType = 1
+                    a.Archived = 1
+                elif d["Placement Status"].strip() == "Reclaimed":
+                    m.MovementType = 5
+                    a.Archived = 1
+                elif d["Placement Status"].strip() == "Fostered":
+                    m.MovementType = 2
+                movements.append(m)
+                a.ActiveMovementID = m.ID
+                a.ActiveMovementDate = m.MovementDate
+                a.ActiveMovementType = m.MovementType
 
 vaccmap = {
     "FVRCP": 9,
