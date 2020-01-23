@@ -39,8 +39,8 @@ $$HEAD
 <td><b>Unit</b></td>
 <td><b>Code</b></td>
 <td><b>Name</b></td>
-<td><b>Type</b></td>
 <td><b>Microchip</b></td>
+<td><b>Type</b></td>
 <td><b>Age</b></td>
 <td><b>Breed</b></td>
 <td><b>Sex</b></td>
@@ -57,8 +57,8 @@ $$BODY
 <td>$shelterlocationunit</td>
 <td>$sheltercode</td>
 <td>$animalname</td>
-<td>$animaltype</td>
 <td>$identichipnumber</td>
+<td>$animaltype</td>
 <td>$animalage</td>
 <td>$breedname</td>
 <td>$sex</td>

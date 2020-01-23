@@ -10,7 +10,8 @@ en
 ###
 $VAR thedate DATE Inventory at date$
 SELECT 
-ShelterCode, 
+ShelterCode,
+IdentichipNumber,
 AnimalName,
 age('$@thedate$', MostRecentEntryDate)::text AS TimeOnShelter,
 EXTRACT(DAY FROM '$@thedate$'::timestamp - MostRecentEntryDate)::integer AS DaysOnShelter, 
@@ -53,6 +54,7 @@ $$HEAD
 <table border=1><tr>
 <td><b>Code</b></td>
 <td><b>Name</b></td>
+<td><b>Microchip</b></td>
 <td><b>Type</b></td>
 <td><b>Breed</b></td>
 <td><b>Age</b></td>
@@ -69,6 +71,7 @@ GROUP$$
 $$BODY<tr>
 <td>$SHELTERCODE</td>
 <td>$ANIMALNAME</td>
+<td>$IDENTICHIPNUMBER</td>
 <td>$ANIMALTYPE</td>
 <td>$BREEDNAME</td>
 <td>$ANIMALAGE ($AGEGROUP)</td>
