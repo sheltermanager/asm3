@@ -490,8 +490,8 @@ def get_person_find_advanced(dbo, criteria, username, includeStaff = False, incl
        filter - built in or additional flags, ANDed
        gdpr - one or more gdpr contact values ANDed
     """
-
-    ss = asm3.utils.AdvancedSearchBuilder(dbo, asm3.utils.PostedData(criteria, dbo.locale))
+    post = asm3.utils.PostedData(criteria, dbo.locale)
+    ss = asm3.utils.AdvancedSearchBuilder(dbo, post)
     ss.add_words("name", "o.OwnerName")
     ss.add_str("code", "o.OwnerCode")
     ss.add_str("createdby", "o.CreatedBy")
@@ -506,8 +506,8 @@ def get_person_find_advanced(dbo, criteria, username, includeStaff = False, incl
     ss.add_words("comments", "o.Comments")
     ss.add_words("medianotes", "web.MediaNotes")
 
-    if "filter" in criteria:
-        for flag in criteria["filter"].split(","):
+    if "filter" in post:
+        for flag in post["filter"].split(","):
             if flag == "aco": ss.ands.append("o.IsACO=1")
             elif flag == "banned": ss.ands.append("o.IsBanned=1")
             elif flag == "coordinator": ss.ands.append("o.IsAdoptionCoordinator=1")
@@ -530,8 +530,8 @@ def get_person_find_advanced(dbo, criteria, username, includeStaff = False, incl
                 ss.ands.append("LOWER(o.AdditionalFlags) LIKE ?")
                 ss.values.append("%%%s|%%" % flag.lower())
 
-    if "gdpr" in criteria:
-        for g in criteria["gdpr"].split(","):
+    if "gdpr" in post:
+        for g in post["gdpr"].split(","):
             ss.ands.append("o.GDPRContactOptIn LIKE ?")
             ss.values.append("%%%s%%" % g)
 
