@@ -53,7 +53,7 @@ LOOKUP_TABLES = {
     "pickuplocation":   (_("Pickup Locations"), "LocationName", _("Location"), "LocationDescription", "add del ret", ("animal.PickupLocationID",)),
     "reservationstatus": (_("Reservation Statuses"), "StatusName", _("Status"), "StatusDescription", "add del ret", ("adoption.ReservationStatusID",)),
     "site":             (_("Sites"), "SiteName", _("Site"), "", "add del", ("users.SiteID","internallocation.SiteID")),
-    "species":          (_("Species"), "SpeciesName", _("Species"), "SpeciesDescription", "add del ret pubspec", ("animal.SpeciesID", "animallost.AnimalTypeID", "animalfound.AnimalTypeID")),
+    "species":          (_("Species"), "SpeciesName", _("Species"), "SpeciesDescription", "add del ret pubspec", ("animal.SpeciesID", "onlineformfield.SpeciesID", "animallost.AnimalTypeID", "animalfound.AnimalTypeID")),
     "stocklocation":    (_("Stock Locations"), "LocationName", _("Location"), "LocationDescription", "add del ret", ("stocklevel.StockLocationID",)),
     "stockusagetype":   (_("Stock Usage Type"), "UsageTypeName", _("Usage Type"), "UsageTypeDescription", "add del ret", ("stockusage.StockUsageTypeID",)),
     "lkurgency":        (_("Urgencies"), "Urgency", _("Urgency"), "", "", ("animalwaitinglist.Urgency",)),

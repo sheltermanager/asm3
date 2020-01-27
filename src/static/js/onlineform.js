@@ -24,9 +24,14 @@ $(function() {
         { "ID": 15, "NAME": _("GDPR Contact Opt-In") }
     ];
 
+
     var onlineform = {
 
         model: function() {
+            
+            var species = controller.species;
+            species.unshift( { "ID": -1, "SPECIESNAME": _("(all)") });
+
             var dialog = {
                 add_title: _("Add form field"),
                 edit_title: _("Edit form field"),
@@ -38,12 +43,13 @@ $(function() {
                 fields: [
                     { json_field: "FIELDNAME", post_field: "fieldname", label: _("Name"), type: "text", validation: "notblank" }, 
                     { json_field: "FIELDTYPE", post_field: "fieldtype", label: _("Type"), type: "select", options: {
-                        valuefield: "ID", displayfield: "NAME", 
-                        rows: fieldtypes }},
+                        valuefield: "ID", displayfield: "NAME", rows: fieldtypes }},
                     { json_field: "LABEL", post_field: "label", label: _("Label"), type: "text", validation: "notblank" }, 
                     { json_field: "DISPLAYINDEX", post_field: "displayindex", label: _("Display Index"), type: "number" }, 
                     { json_field: "MANDATORY", post_field: "mandatory", label: _("Mandatory"), type: "check" },
                     { json_field: "LOOKUPS", post_field: "lookups", label: _("Lookups"), type: "textarea" }, 
+                    { json_field: "SPECIESID", post_field: "species", label: _("Species"), type: "select", options: {
+                        valuefield: "ID", displayfield: "SPECIESNAME", rows: species } }, 
                     { json_field: "TOOLTIP", post_field: "tooltip", label: _("Tooltip"), type: "textarea" }
                 ]
             };
@@ -52,7 +58,7 @@ $(function() {
                 rows: controller.rows,
                 idcolumn: "ID",
                 edit: function(row) {
-                    tableform.dialog_show_edit(dialog, row, { onload: onlineform.check_lookups })
+                    tableform.dialog_show_edit(dialog, row, { onload: onlineform.check_controls })
                         .then(function() {
                             tableform.fields_update_row(dialog.fields, row);
                             return tableform.fields_post(dialog.fields, "mode=update&formfieldid=" + row.ID, "onlineform");
@@ -78,7 +84,7 @@ $(function() {
             var buttons = [
                  { id: "new", text: _("New form field"), icon: "new", enabled: "always", 
                      click: function() { 
-                         tableform.dialog_show_add(dialog, { onload: onlineform.check_lookups })
+                         tableform.dialog_show_add(dialog, { onload: onlineform.check_controls })
                              .then(function() {
                                 return tableform.fields_post(dialog.fields, "mode=create&formid=" + controller.formid, "onlineform");
                              })
@@ -115,16 +121,21 @@ $(function() {
             this.buttons = buttons;
         },
 
-        /** Check if we should show the lookups row (only
-          * valid if the field type is lookup)
+        /** Check which dialog controls should be shown
           */
-        check_lookups: function() {
+        check_controls: function() {
             var ft = $("#fieldtype").select("value");
             if (ft == 3 || ft == 12 || ft == 14) {
                 $("#lookups").closest("tr").fadeIn();
             }
             else {
                 $("#lookups").closest("tr").fadeOut();
+            }
+            if (ft == 4 || ft == 5) {
+                $("#species").closest("tr").fadeIn();
+            }
+            else {
+                $("#species").closest("tr").fadeOut();
             }
             if (ft == 9) {
                 $("#tooltip").closest("tr").find("label").html(_("Markup"));
@@ -159,7 +170,7 @@ $(function() {
             });
 
             // Show/hide the lookup values box if type changes
-            $("#fieldtype").change(this.check_lookups);
+            $("#fieldtype").change(this.check_controls);
 
             // Prompt with our recognised fields in the autocomplete
             $("#fieldname").autocomplete({ source: controller.formfields }); 

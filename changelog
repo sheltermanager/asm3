@@ -1,6 +1,7 @@
 43
 ================
 
+27/01/20 Allow a species to be chosen for online form adoptables #613
 26/01/20 Advanced search cannot find flags with extended chars #715
 17/01/20 Fix limit bug in adoptable_js add SHUFFLE sort #717
 16/01/20 Fix OR bug that incorrectly showed completed diary notes for user

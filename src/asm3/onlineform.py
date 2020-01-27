@@ -200,6 +200,7 @@ def get_onlineform_html(dbo, formid, completedocument = True):
             rs = asm3.animal.get_animals_on_shelter_namecode(dbo)
             rs = sorted(rs, key=lambda k: k["ANIMALNAME"])
             for a in rs:
+                if f.SPECIESID > 0 and a.SPECIESID != f.SPECIESID: continue
                 h.append('<option value="%(name)s::%(code)s">%(name)s (%(species)s - %(code)s)</option>' % \
                     { "name": a.ANIMALNAME, "code": a.SHELTERCODE, "species": a.SPECIESNAME})
             h.append('</select>')
@@ -210,6 +211,7 @@ def get_onlineform_html(dbo, formid, completedocument = True):
             rs = asm3.publishers.base.get_animal_data(dbo, pc, include_additional_fields = True)
             rs = sorted(rs, key=lambda k: k["ANIMALNAME"])
             for a in rs:
+                if f.SPECIESID > 0 and a.SPECIESID != f.SPECIESID: continue
                 h.append('<option value="%(name)s::%(code)s">%(name)s (%(species)s - %(code)s)</option>' % \
                     { "name": a.ANIMALNAME, "code": a.SHELTERCODE, "species": a.SPECIESNAME})
             h.append('</select>')
@@ -569,6 +571,7 @@ def insert_onlineformfield_from_form(dbo, username, post):
         "DisplayIndex":     post.integer("displayindex"),
         "Mandatory":        post.boolean("mandatory"),
         "Lookups":          post["lookups"],
+        "SpeciesID":        post.integer("species"),
         "*Tooltip":         post["tooltip"]
     }, username, setCreated=False)
 
@@ -583,6 +586,7 @@ def update_onlineformfield_from_form(dbo, username, post):
         "DisplayIndex":     post.integer("displayindex"),
         "Mandatory":        post.boolean("mandatory"),
         "Lookups":          post["lookups"],
+        "SpeciesID":        post.integer("species"),
         "*Tooltip":         post["tooltip"]
     }, username, setLastChanged=False)
 

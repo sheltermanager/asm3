@@ -4145,6 +4145,7 @@ class onlineform(JSONEndpoint):
             "formid": formid,
             "formname": formname,
             "formfields": asm3.onlineform.FORM_FIELDS,
+            "species": asm3.lookups.get_species(dbo),
             "title": title
         }
 

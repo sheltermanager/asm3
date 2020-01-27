@@ -36,7 +36,7 @@ VERSIONS = (
     34002, 34003, 34004, 34005, 34006, 34007, 34008, 34009, 34010, 34011, 34012,
     34013, 34014, 34015, 34016, 34017, 34018, 34019, 34020, 34021, 34022, 34100,
     34101, 34102, 34103, 34104, 34105, 34106, 34107, 34108, 34109, 34110, 34111,
-    34112, 34200, 34201, 34202, 34203, 34204, 34300
+    34112, 34200, 34201, 34202, 34203, 34204, 34300, 34301
 )
 
 LATEST_VERSION = VERSIONS[-1]
@@ -1128,6 +1128,7 @@ def sql_structure(dbo):
         fint("Mandatory", True),
         fstr("Label"),
         flongstr("Lookups", True),
+        fint("SpeciesID", True),
         flongstr("Tooltip", True)), False)
     sql += index("onlineformfield_OnlineFormID", "onlineformfield", "OnlineFormID")
 
@@ -5083,4 +5084,10 @@ def update_34300(dbo):
     add_column(dbo, "animal", "ExtraIDs", dbo.type_shorttext)
     add_index(dbo, "animal_ExtraIDs", "animal", "ExtraIDs")
     dbo.execute_dbupdate("UPDATE animal SET ExtraIDs = ''")
+
+def update_34301(dbo):
+    # Add onlineformfield.SpeciesID
+    add_column(dbo, "onlineformfield", "SpeciesID", dbo.type_integer)
+    dbo.execute_dbupdate("UPDATE onlineformfield SET SpeciesID = -1")
+
 
