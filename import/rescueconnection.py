@@ -16,7 +16,7 @@ START_ID = 200
 
 ANIMALS = "/home/robin/tmp/asm3_import_data/rc_li2142/animals.csv"
 
-PICTURE_IMPORT = False
+PICTURE_IMPORT = True
 PICTURES = "/home/robin/tmp/asm3_import_data/rc_li2142/photos/final"
 
 def getdate(d, noblanks=False):
