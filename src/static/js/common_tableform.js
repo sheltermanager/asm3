@@ -1333,7 +1333,12 @@
                 else if (v.type == "selectmulti") {
                     n.children().prop("selected", false);
                     $.each(String(row[v.json_field]).split(/[|,]+/), function(mi, mv) {
-                        n.find("[value='" + mv + "']").prop("selected", true);
+                        n.find("option").each(function() {
+                            var ot = $(this), ov = $(this).prop("value");
+                            if (html.decode(mv) == html.decode(ov)) {
+                                ot.prop("selected", true);
+                            }
+                        });
                     });
                     n.change();
                 }
