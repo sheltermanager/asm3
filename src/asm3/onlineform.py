@@ -886,7 +886,7 @@ def create_animal(dbo, username, collationid):
     l = dbo.locale
     fields = get_onlineformincoming_detail(dbo, collationid)
     # formreceived = asm3.i18n.python2display(l, dbo.now())
-    d = {}
+    d = { "estimatedage": "", "dateofbirth": "" }
     for f in fields:
         if f.FIELDNAME == "animalname": d["animalname"] = f.VALUE
         if f.FIELDNAME == "code": 
@@ -913,8 +913,10 @@ def create_animal(dbo, username, collationid):
         #    formreceived = asm3.i18n.parse_time( asm3.i18n.display2python(l, recdate), rectime )
         #    TODO: May be useful in future if we need to create other records from this form
     # Have we got enough info to create the animal record? We need a name at a minimum
-    if "animalname" not in d and ("dateofbirth" not in d or "age" not in d):
-        raise asm3.utils.ASMValidationError(asm3.i18n._("There is not enough information in the form to create an animal record (need animalname and dateofbirth or age).", l))
+    if "animalname" not in d:
+        raise asm3.utils.ASMValidationError(asm3.i18n._("There is not enough information in the form to create an animal record (need animalname).", l))
+    # Are date of birth and age blank? Assume an age of 1.0 if they are
+    if d["dateofbirth"] == "" and d["estimatedage"] == "": d["estimatedage"] = "1.0"
     # Does this animal code already exist?
     animalid = 0
     if "code" in d and d["code"] != "":
