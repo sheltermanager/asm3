@@ -26,6 +26,7 @@ INNER JOIN animal ON adoption.AnimalID = animal.ID
 INNER JOIN owner ON adoption.OwnerID = owner.ID
 INNER JOIN species ON species.ID = animal.SpeciesID
 WHERE adoption.ReturnDate Is Not Null
+AND adoption.MovementType = 1
 AND animal.DeceasedDate Is Null
 AND MONTH(animal.DateOfBirth) = $@monthno$
 ORDER BY DAY(animal.DateOfBirth)
@@ -85,6 +86,7 @@ INNER JOIN animal ON adoption.AnimalID = animal.ID
 INNER JOIN owner ON adoption.OwnerID = owner.ID
 INNER JOIN species ON species.ID = animal.SpeciesID
 WHERE adoption.ReturnDate Is Not Null
+AND adoption.MovementType = 1
 AND animal.DeceasedDate Is Null
 AND EXTRACT(MONTH FROM animal.DateOfBirth)::INTEGER = $@monthno$
 ORDER BY EXTRACT(DAY FROM animal.DateOfBirth)::INTEGER
