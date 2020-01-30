@@ -404,7 +404,7 @@ class AdoptAPetPublisher(FTPPublisher):
         else: agename = "Senior"
         line.append("\"%s\"" % agename)
         # Name
-        line.append("\"%s\"" % an["ANIMALNAME"].replace("\"", "\"\""))
+        line.append("\"%s\"" % an["ANIMALNAME"])
         # Size, one of S, M, L, XL
         ansize = "M"
         if an["SIZE"] == 0: ansize = "XL"
@@ -446,6 +446,5 @@ class AdoptAPetPublisher(FTPPublisher):
         line.append(self.apHairLength(an))
         # YouTube Video URL
         line.append(self.apYouTubeURL(an["WEBSITEVIDEOURL"]))
-
-        return ",".join(line)
+        return self.csvLine(line)
 

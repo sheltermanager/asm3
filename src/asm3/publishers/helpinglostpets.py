@@ -225,5 +225,5 @@ class HelpingLostPetsPublisher(FTPPublisher):
         line.append("\"%s\"" % an["HEALTHPROBLEMS"])
         # LastUpdated
         line.append("\"%s\"" % asm3.i18n.python2unix(an["LASTCHANGEDDATE"]))
-        return ",".join(line)
+        return self.csvLine(line)
 

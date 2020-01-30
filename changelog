@@ -1,6 +1,7 @@
 43
 ================
 
+30/01/20 Add full CSV escaping/quoting to all publishers
 28/01/20 Better date of birth handling creating animals from forms
 27/01/20 Unicode bug in tableform multiselect (affected form flags)
 27/01/20 Allow a species to be chosen for online form adoptables #613

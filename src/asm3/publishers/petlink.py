@@ -273,7 +273,7 @@ class PetLinkPublisher(AbstractPublisher):
         line.append("\"%s\"" % self.plYesNo(an["NEUTERED"]))
         # ColorMarkings (our BaseColour field)
         line.append("\"%s\"" % an["BASECOLOURNAME"])
-        return ",".join(line)
+        return self.csvLine(line)
 
     def validate(self, an):
         """ Validate an animal record is ok to send """

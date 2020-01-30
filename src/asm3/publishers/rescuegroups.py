@@ -142,7 +142,7 @@ class RescueGroupsPublisher(FTPPublisher):
         # rescue ID (ID of animal at the rescue)
         line.append("\"%s\"" % an["SHELTERCODE"])
         # Name
-        line.append("\"%s\"" % an["ANIMALNAME"].replace("\"", "\"\""))
+        line.append("\"%s\"" % an["ANIMALNAME"])
         # Summary (no idea what this is for)
         line.append("\"\"")
         # Species
@@ -222,4 +222,4 @@ class RescueGroupsPublisher(FTPPublisher):
                         line.append("\"\"")
         else:
             line.append("\"\",\"\",\"\",\"\"")
-        return ",".join(line)
+        return self.csvLine(line)

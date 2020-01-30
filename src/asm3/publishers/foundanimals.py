@@ -175,7 +175,7 @@ class FoundAnimalsPublisher(FTPPublisher):
         line.append("\"%s\"" % org)
         # Rescue Group Email
         line.append("\"%s\"" % email)
-        return ",".join(line)
+        return self.csvLine(line)
 
     def validate(self, an):
         """ Validate an animal record is ok to send """

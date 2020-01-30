@@ -191,7 +191,7 @@ class SmartTagPublisher(FTPPublisher):
         # ownerthirdphone
         line.append("\"%s\"" % an["CURRENTOWNERMOBILETELEPHONE"])
         # petname
-        line.append("\"%s\"" % an["ANIMALNAME"].replace("\"", "\"\""))
+        line.append("\"%s\"" % an["ANIMALNAME"])
         # species
         line.append("\"%s\"" % an["SPECIESNAME"])
         # primarybreed
@@ -224,5 +224,5 @@ class SmartTagPublisher(FTPPublisher):
             line.append("\"ADOPTED\"")
         else:
             line.append("\"NOT ADOPTED\"")
-        return ",".join(line)
+        return self.csvLine(line)
 

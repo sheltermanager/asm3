@@ -558,6 +558,23 @@ class AbstractPublisher(threading.Thread):
         return 0 == self.dbo.query_int("SELECT COUNT(*) FROM basecolour " \
             "WHERE AdoptAPetColour Is Null OR AdoptAPetColour = ''")
 
+    def csvLine(self, items):
+        """
+        Takes a list of CSV line items and returns them as a comma 
+        separated string, appropriately quoted and escaped.
+        If any items are quoted, the quoting is removed before doing any escaping.
+        """
+        l = []
+        for i in items:
+            # Remove start/end quotes if present
+            if i.startswith("\""): i = i[1:]
+            if i.endswith("\""): i = i[0:-1]
+            # Escape any quotes in the value
+            i = i.replace("\"", "\"\"")
+            # Add quoting
+            l.append("\"%s\"" % i)
+        return ",".join(l)
+
     def getPhotoUrls(self, animalid):
         """
         Returns a list of photo URLs for animalid. The preferred is always first.

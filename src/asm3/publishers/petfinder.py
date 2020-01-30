@@ -146,7 +146,7 @@ class PetFinderPublisher(FTPPublisher):
         # Internal
         line.append("\"%s\"" % an.SHELTERCODE)
         # AnimalName
-        line.append("\"%s\"" % an.ANIMALNAME.replace("\"", "\"\""))
+        line.append("\"%s\"" % an.ANIMALNAME)
         # PrimaryBreed
         line.append("\"%s\"" % an.PETFINDERBREED)
         # SecondaryBreed
@@ -245,5 +245,5 @@ class PetFinderPublisher(FTPPublisher):
         line.append("\"\"")
         # Tags
         line.append("\"\"")
-        return ",".join(line)
+        return self.csvLine(line)
 
