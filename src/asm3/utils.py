@@ -1345,6 +1345,7 @@ def send_email(dbo, replyadd, toadd, ccadd = "", bccadd = "", subject = "", body
     contenttype is either "plain" or "html"
     attachments: A list of tuples in the form (filename, mimetype, data)
     exceptions: If True, throws exceptions due to sending problems
+
     returns True on success
 
     For HTML emails, a plaintext part is converted and added. If the HTML
@@ -1492,9 +1493,11 @@ def send_email(dbo, replyadd, toadd, ccadd = "", bccadd = "", subject = "", body
             p = subprocess.Popen(["/usr/sbin/sendmail", "-t", "-oi"], stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             stdoutdata, stderrdata = p.communicate(str2bytes(msg.as_string()))
             if p.returncode != 0: raise Exception("%s %s" % (stdoutdata, stderrdata))
+            return True
         except Exception as err:
             asm3.al.error("sendmail: %s" % str(err), "utils.send_email", dbo)
             if exceptions: raise ASMError(str(err))
+            return False
     else:
         try:
             smtp = smtplib.SMTP(host, port)
@@ -1503,9 +1506,11 @@ def send_email(dbo, replyadd, toadd, ccadd = "", bccadd = "", subject = "", body
             if password.strip() != "":
                 smtp.login(username, password)
             smtp.sendmail(fromadd, tolist, msg.as_string())
+            return True
         except Exception as err:
             asm3.al.error("smtp: %s" % str(err), "utils.send_email", dbo)
             if exceptions: raise ASMError(str(err))
+            return False
 
 def send_bulk_email(dbo, fromadd, subject, body, rows, contenttype):
     """

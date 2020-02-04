@@ -420,6 +420,15 @@ def get_security_map(dbo, username):
         rv += str(m.SECURITYMAP)
     return rv
 
+def get_site(dbo, username):
+    """
+    Returns a user's site or 0 if it doesn't have one.
+    """
+    try:
+        return dbo.query_int("SELECT SiteID FROM users WHERE UserName LIKE ?", [username])
+    except:
+        return 0
+
 def get_users_and_roles(dbo):
     """
     Returns a single list of all users and roles together,

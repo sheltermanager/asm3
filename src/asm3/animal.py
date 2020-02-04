@@ -12,6 +12,7 @@ import asm3.log
 import asm3.lookups
 import asm3.media
 import asm3.movement
+import asm3.users
 import asm3.utils
 from asm3.i18n import _, date_diff, date_diff_days, format_diff, python2display, subtract_years, subtract_months, add_days, subtract_days, monday_of_week, first_of_month, last_of_month, first_of_year
 
@@ -1924,6 +1925,18 @@ def insert_animal_from_form(dbo, post, username):
     if "notforregistration" in post:
         notforregistration = post.integer("notforregistration")
 
+    # If this user is in a site, make sure that the location
+    # chosen is in their site. If it isn't, override the location
+    # to the first one in their site to make sure they can see
+    # the animal after creation.
+    shelterlocation = post.integer("internallocation")
+    usite = asm3.users.get_site(dbo, username)
+    if usite > 0:
+        lsite = dbo.query_int("SELECT SiteID FROM internallocation WHERE ID=?", [shelterlocation])
+        # If location site doesn't match user site, swap to the first location in the user's site
+        if lsite != usite:
+            shelterlocation = dbo.query_int("SELECT ID FROM internallocation WHERE SiteID=? ORDER BY ID", [usite])
+
     dbo.insert("animal", {
         "ID":               nextid,
         "AnimalName":       post["animalname"],
@@ -1942,7 +1955,7 @@ def insert_animal_from_form(dbo, post, username):
         "Crossbreed":       post.boolean("crossbreed"),
         "AcceptanceNumber": post["litterid"],
         "BaseColourID":     post.integer("basecolour"),
-        "ShelterLocation":  post.integer("internallocation"),
+        "ShelterLocation":  shelterlocation,
         "ShelterLocationUnit": post["unit"],
         "NonShelterAnimal": post.boolean("nonshelter"),
         "CrueltyCase":      0,
