@@ -75,3 +75,6 @@ class TestAdditional(unittest.TestCase):
     def test_save_values_for_link(self):
         asm3.additional.save_values_for_link(base.get_dbo(), asm3.utils.PostedData({}, "en"), 0, "animal")
 
+    def test_merge_values_for_link(self):
+        asm3.additional.merge_values_for_link(base.get_dbo(), asm3.utils.PostedData({}, "en"), 0, "animal")
+

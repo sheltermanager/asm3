@@ -1,6 +1,7 @@
 43
 ================
 
+04/02/20 Merge additional fields on existing when processing online forms #712
 04/02/20 Set animal location to user's site if default is invisible #723
 30/01/20 Add full CSV escaping/quoting to all publishers
 28/01/20 Better date of birth handling creating animals from forms

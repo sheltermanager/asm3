@@ -923,8 +923,8 @@ def create_animal(dbo, username, collationid):
         similar = asm3.animal.get_animal_sheltercode(dbo, d["code"])
         if similar is not None:
             animalid = similar.ID
-            # TODO: doesn't exist yet
-            # additional.merge_values_for_link(dbo, asm3.utils.PostedData(d, dbo.locale), animalid, "animal")
+            # Merge additional fields
+            asm3.additional.merge_values_for_link(dbo, asm3.utils.PostedData(d, dbo.locale), animalid, "animal")
             # TODO: what would we merge realistically?
             # asm3.person.merge_animal_details(dbo, username, animalid, d)
     # Create the animal record if we didn't find one
@@ -987,9 +987,8 @@ def create_person(dbo, username, collationid):
             personid = similar[0].ID
             # Merge flags and any extra details
             asm3.person.merge_flags(dbo, username, personid, flags)
-            # NOTE: Do not do this in future - delete_values_for_link is called so even if you only wanted
-            # to update fields present in the form, this call will delete ALL of them.
-            # additional.save_values_for_link(dbo, asm3.utils.PostedData(d, dbo.locale), personid, "person")
+            # Merge additional fields
+            asm3.additional.merge_values_for_link(dbo, asm3.utils.PostedData(d, dbo.locale), personid, "person")
             if "gdprcontactoptin" in d: asm3.person.merge_gdpr_flags(dbo, "import", personid, d["gdprcontactoptin"])
             asm3.person.merge_person_details(dbo, username, personid, d)
     # Create the person record if we didn't find one
