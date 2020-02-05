@@ -24,9 +24,9 @@ LEFT OUTER JOIN owner o3 ON o3.ID = ac.Owner3ID
 LEFT OUTER JOIN owner vo ON vo.ID = ac.VictimID
 LEFT OUTER JOIN incidenttype ti ON ti.ID = ac.IncidentTypeID
 LEFT OUTER JOIN incidentcompleted ci ON ci.ID = ac.IncidentCompletedID
-WHERE (ac.FollowupDateTime <= '$CURRENT_DATE$ 23:59:59' AND ac.FollowupComplete Is Null)
-OR (ac.FollowupDateTime2 <= '$CURRENT_DATE$ 23:59:59' AND ac.FollowupComplete2 Is Null)
-OR (ac.FollowupDateTime3 <= '$CURRENT_DATE$ 23:59:59' AND ac.FollowupComplete3 Is Null)
+WHERE (ac.FollowupDateTime <= '$CURRENT_DATE$ 23:59:59' AND ac.FollowupComplete=0)
+OR (ac.FollowupDateTime2 <= '$CURRENT_DATE$ 23:59:59' AND ac.FollowupComplete2=0)
+OR (ac.FollowupDateTime3 <= '$CURRENT_DATE$ 23:59:59' AND ac.FollowupComplete3=0)
 ORDER BY ti.IncidentName, ac.FollowupDateTime
 ###
 $$HEADER
