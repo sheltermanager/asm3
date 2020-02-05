@@ -1937,6 +1937,13 @@ def insert_animal_from_form(dbo, post, username):
         if lsite != usite:
             shelterlocation = dbo.query_int("SELECT ID FROM internallocation WHERE SiteID=? ORDER BY ID", [usite])
 
+    # If the option is on, write an intial record for the internal location
+    if asm3.configuration.location_change_log(dbo):
+        newlocation = dbo.query_string("SELECT LocationName FROM internallocation WHERE ID = ?", [shelterlocation])
+        if post["unit"] != "": newlocation += "-" + post["unit"]
+        asm3.log.add_log(dbo, username, asm3.log.ANIMAL, nextid, asm3.configuration.location_change_log_type(dbo), 
+            _("{0} {1}: Moved from {2} to {3}", l).format(sheltercode, post["animalname"], "*", newlocation))
+
     dbo.insert("animal", {
         "ID":               nextid,
         "AnimalName":       post["animalname"],
