@@ -422,9 +422,11 @@ SUBREPORT_AnimalPrintMovement
 +++
 SELECT ad.*, mt.MovementType,
 o.OwnerName, o.OwnerAddress, o.OwnerTown, o.OwnerCounty, o.OwnerPostcode, o.HomeTelephone, o.MobileTelephone, o.EmailAddress,
-rb.OwnerName AS ReturnedBy
+rb.OwnerName AS ReturnedBy, 
+CASE WHEN ad.ReturnDate Is Not Null AND ad.MovementType IN (1,5) THEN er.ReasonName ELSE '' END AS ReturnedReasonName 
 FROM adoption ad
 INNER JOIN lksmovementtype mt ON mt.ID = ad.MovementType
+LEFT OUTER JOIN entryreason er ON er.ID = ad.ReturnedReasonID
 LEFT OUTER JOIN owner o ON o.ID = ad.OwnerID
 LEFT OUTER JOIN owner rb ON rb.ID = ad.ReturnedByOwnerID 
 WHERE ad.AnimalID = $PARENTKEY$
@@ -436,7 +438,7 @@ $$HEADER
 HEADER$$
 $$BODY
 <tr><td>$ADOPTIONNUMBER</td><td><b>$OWNERNAME</b><br />$OWNERADDRESS</br />$OWNERTOWN $OWNERCOUNTY $OWNERPOSTCODE<br />H: $HOMETELEPHONE<br />M: $MOBILETELEPHONE<br />$EMAILADDRESS</td>
-<td>$RESERVATIONDATE</td><td>$RESERVATIONCANCELLEDDATE</td><td>$MOVEMENTDATE</td><td>$MOVEMENTTYPE</td><td>$RETURNDATE $RETURNEDBY</td><td>$REASONFORRETURN</td><td>$COMMENTS</td></tr>
+<td>$RESERVATIONDATE</td><td>$RESERVATIONCANCELLEDDATE</td><td>$MOVEMENTDATE</td><td>$MOVEMENTTYPE</td><td>$RETURNDATE $RETURNEDBY</td><td>$RETURNEDREASONNAME $REASONFORRETURN</td><td>$COMMENTS</td></tr>
 BODY$$
 $$FOOTER
 </table>
