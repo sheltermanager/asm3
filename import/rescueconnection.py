@@ -74,7 +74,10 @@ for d in asm.csv_to_list(ANIMALS, strip=True, remove_non_ascii=True):
     asm.breed_ids(a, d["Breeds"], d["CrossBreed"])
     a.Neutered = d["Altered"] == "Yes" and 1 or 0
     a.BaseColourID = asm.colour_id_for_name(d["Color"])
-    a.Size = asm.size_id_for_name(d["Size"])
+    a.Size = 2 
+    if d["Size"] == "L": a.Size = 1
+    if d["Size"] == "XL": a.Size = 0
+    if d["Size"] == "S": a.Size = 3
     a.Weight = asm.cfloat(d["Weight"])
     a.Declawed = d["Declawed"] == "Yes" and 1 or 0
     a.HouseTrained = d["Housetrained"] == "Yes" and 2 or 1
@@ -84,13 +87,14 @@ for d in asm.csv_to_list(ANIMALS, strip=True, remove_non_ascii=True):
     a.GoodWithDogs = d["Needs home without dogs"] == "Yes" and 1 or 0
 
     a.HealthProblems = d["Known issues"]
-    if d["Entry Category"].startswith("Stray"):
+    ec = d["Entry Category"].strip().lower()
+    if ec.startswith("stray"):
         a.EntryReasonID = 7
-    elif d["Entry Category"].startswith("Surrender"):
+    elif ec.startswith("surrender"):
         a.EntryReasonID = 17
-    elif d["Entry Category"].startswith("Born"):
+    elif ec.startswith("born"):
         a.EntryReasonID = 13
-    elif d["Entry Category"].startswith("Transfer"):
+    elif ec.startswith("transfer"):
         a.EntryReasonID = 15
         a.TransferIn = 1
     a.ReasonForEntry = d["Source/origin"]
