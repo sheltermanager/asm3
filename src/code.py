@@ -444,11 +444,7 @@ class image(ASMEndpoint):
     url = "image"
 
     def content(self, o):
-        try:
-            lastmod, imagedata = asm3.media.get_image_file_data(session.dbo, o.post["mode"], o.post["id"], o.post.integer("seq"), False)
-        except Exception as err:
-            asm3.al.error("%s" % str(err), "code.image", o.dbo)
-            return ""
+        lastmod, imagedata = asm3.media.get_image_file_data(session.dbo, o.post["mode"], o.post["id"], o.post.integer("seq"), False)
         if imagedata != "NOPIC":
             self.content_type("image/jpeg")
             if o.post["date"] != "":

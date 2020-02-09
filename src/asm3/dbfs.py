@@ -161,12 +161,13 @@ class S3Storage(DBFSStorage):
             return cachedata
         object_key = "%s/%s" % (self.dbo.database, url.replace("s3:", ""))
         try:
+            asm3.al.debug("GET: %s" % object_key, "S3Storage.get", self.dbo)
             response = self.s3client.get_object(Bucket=DBFS_S3_BUCKET, Key=object_key)
             body = response["Body"].read()
-            asm3.al.debug("GET: %s" % object_key, "S3Storage.get", self.dbo)
             asm3.cachedisk.put(cachekey, body, cachettl)
             return body
         except Exception as err:
+            asm3.al.error(str(err), "dbfs.S3Storage.get", self.dbo)
             raise DBFSError("Failed retrieving from S3: %s" % err)
 
     def put(self, dbfsid, filename, filedata):
@@ -175,22 +176,24 @@ class S3Storage(DBFSStorage):
         object_key = "%s/%s%s" % (self.dbo.database, dbfsid, extension)
         url = "s3:%s%s" % (dbfsid, extension)
         try:
-            self.s3client.put_object(Bucket=DBFS_S3_BUCKET, Key=object_key, Body=filedata)
             asm3.al.debug("PUT: %s" % object_key, "S3Storage.put", self.dbo)
+            self.s3client.put_object(Bucket=DBFS_S3_BUCKET, Key=object_key, Body=filedata)
             asm3.cachedisk.put(self._cache_key(url), filedata, self._cache_ttl(filename))
             self.dbo.execute("UPDATE dbfs SET URL = ?, Content = '' WHERE ID = ?", (url, dbfsid))
             return url
         except Exception as err:
+            asm3.al.error(str(err), "dbfs.S3Storage.put", self.dbo)
             raise DBFSError("Failed storing in S3: %s" % err)
 
     def delete(self, url):
         """ Deletes the file data """
         object_key = "%s/%s" % (self.dbo.database, url.replace("s3:", ""))
         try:
-            self.s3client.delete_object(Bucket=DBFS_S3_BUCKET, Key=object_key)
             asm3.al.debug("DELETE: %s" % object_key, "S3Storage.delete", self.dbo)
+            self.s3client.delete_object(Bucket=DBFS_S3_BUCKET, Key=object_key)
             asm3.cachedisk.delete(self._cache_key(url))
         except Exception as err:
+            asm3.al.error(str(err), "dbfs.S3Storage.delete", self.dbo)
             raise DBFSError("Failed deleting from S3: %s" % err)
 
     def url_prefix(self):
