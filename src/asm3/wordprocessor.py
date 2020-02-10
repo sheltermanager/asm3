@@ -1574,6 +1574,7 @@ def generate_clinic_doc(dbo, templateid, appointmentid, username):
     c = asm3.clinic.get_appointment(dbo, appointmentid)
     if c is None: raise asm3.utils.ASMValidationError("%d is not a valid clinic appointment ID" % appointmentid)
     tags = clinic_tags(dbo, c)
+    tags = append_tags(tags, org_tags(dbo, username))
     a = asm3.animal.get_animal(dbo, c.ANIMALID)
     if a is not None:
         tags = append_tags(tags, animal_tags(dbo, a, includeAdditional=True, includeCosts=False, includeDiet=False, includeDonations=False, \
