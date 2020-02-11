@@ -18,7 +18,7 @@ import asm3.template
 import asm3.users
 import asm3.utils
 import asm3.waitinglist
-from asm3.i18n import _, format_currency_no_symbol, format_time, now, python2display, yes_no
+from asm3.i18n import _, format_currency, format_currency_no_symbol, format_time, now, python2display, yes_no
 
 import zipfile
 
@@ -594,7 +594,8 @@ def animal_tags(dbo, a, includeAdditional=True, includeCosts=True, includeDiet=T
             "PAYMENTVATAMOUNT":         "c:VATAMOUNT",
             "PAYMENTTAXAMOUNT":         "c:VATAMOUNT"
         }
-        tags.update(table_tags(dbo, d, asm3.financial.get_animal_donations(dbo, a["ID"]), "DONATIONNAME", "DATEDUE", "DATE"))
+        dons = asm3.financial.get_animal_donations(dbo, a["ID"])
+        tags.update(table_tags(dbo, d, dons, "DONATIONNAME", "DATEDUE", "DATE"))
 
     # Transport
     if includeTransport:
@@ -1043,6 +1044,14 @@ def movement_tags(dbo, m):
         "TRANSFERDATE":                 asm3.utils.iif(m["MOVEMENTTYPE"] == asm3.movement.TRANSFER, python2display(l, m["MOVEMENTDATE"]), ""),
         "TRIALENDDATE":                 asm3.utils.iif(m["MOVEMENTTYPE"] == asm3.movement.ADOPTION, python2display(l, m["TRIALENDDATE"]), "")
     }
+    dons = asm3.financial.get_movement_donations(dbo, m["ID"])
+    tags["MOVEMENTPAYMENTS"] = html_table(l, dons, (
+        ( "DATE", _("Date", l) ),
+        ( "RECEIPTNUMBER", _("Receipt", l) ),
+        ( "DONATIONNAME", _("Type", l) ),
+        ( "PAYMENTNAME", _("Method", l) ),
+        ( "DONATION", _("Amount", l) )
+    ))
     return tags    
 
 def clinic_tags(dbo, c):
@@ -1320,6 +1329,8 @@ def html_table(l, rows, cols):
         for colfield, coltext in cols:
             if asm3.utils.is_date(r[colfield]):
                 h.append("<td>%s</td>" % python2display(l, r[colfield]))
+            elif asm3.utils.is_currency(colfield):
+                h.append("<td>%s</td>" % format_currency(l, r[colfield]))
             elif r[colfield] is None:
                 h.append("<td></td>")
             elif asm3.utils.is_str(r[colfield]) or asm3.utils.is_unicode(r[colfield]):

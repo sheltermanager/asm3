@@ -1301,9 +1301,8 @@ These are special keys that insert a table into your document that contains the
 complete data from a tab. 
 
 These keys do not allow the flexibility of formatting that the other keys
-offer, but they do offer a simple way of putting an animal's medical history
-into a document without having to create a table containing many "just in case"
-placeholder keys. 
+offer, but they do offer a simple way of putting bulk data into a document without 
+having to create a table containing many "just in case" placeholder keys. 
 
 They will also dynamically expand the document according to how many records
 there are.  Records are output in ascending order of date.
@@ -1316,4 +1315,7 @@ AnimalMedicals
    Inserts a table containing all of the animal's medical treatments
 AnimalLogs
    Inserts a table containing all of the animal's log entries
+MovementPayments
+   Inserts a table containing all of the payments for the active movement for
+   the person, animal or movement the document is being generated for.
 
