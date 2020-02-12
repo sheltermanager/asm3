@@ -2652,13 +2652,13 @@ def clone_animal(dbo, username, animalid):
     for di in dbo.query("SELECT * FROM diary WHERE LinkType = 1 AND LinkID = ?", [animalid]):
         dbo.insert("diary", {
             "LinkID":               nid,
-            "LinkType":             1,
+            "LinkType":             asm3.diary.ANIMAL,
             "DiaryDateTime":        di.diarydatetime,
             "DiaryForName":         di.diaryforname,
             "Subject":              di.subject,
             "Note":                 di.note,
             "DateCompleted":        di.datecompleted,
-            "LinkInfo":             asm3.diary.get_link_info(dbo, 1, nid)
+            "LinkInfo":             asm3.diary.get_link_info(dbo, asm3.diary.ANIMAL, nid)
         }, username, writeAudit=False)
     # Media
     for me in dbo.query("SELECT * FROM media WHERE LinkTypeID = ? AND LinkID = ?", (asm3.media.ANIMAL, animalid)):
@@ -2874,6 +2874,19 @@ def clone_from_template(dbo, username, animalid, dob, animaltypeid, speciesid):
             "CostDate":             newdate,
             "CostAmount":           c.costamount,
             "Description":          c.description
+        }, username, writeAudit=False)
+    # Diary
+    for di in dbo.query("SELECT * FROM diary WHERE LinkType = 1 AND LinkID = ?", [cloneanimalid]):
+        newdate = adjust_date(di.diarydatetime)
+        dbo.insert("diary", {
+            "LinkID":               animalid,
+            "LinkType":             asm3.diary.ANIMAL,
+            "DiaryDateTime":        newdate,
+            "DiaryForName":         di.diaryforname,
+            "Subject":              di.subject,
+            "Note":                 di.note,
+            "DateCompleted":        None,
+            "LinkInfo":             asm3.diary.get_link_info(dbo, asm3.diary.ANIMAL, animalid)
         }, username, writeAudit=False)
 
 def delete_animal(dbo, username, animalid, ignore_movements=False):
