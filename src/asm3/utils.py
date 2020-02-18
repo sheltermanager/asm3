@@ -886,12 +886,12 @@ def csv(l, rows, cols = None, includeheader = True):
     lines = []
     def writerow(row):
         line = []
-        for i, r in enumerate(row):
+        for r in row:
             line.append(u"\"%s\"" % r)
         lines.append(u",".join(line))
     if cols is None:
         cols = []
-        for k, v in rows[0].items():
+        for k in rows[0].keys():
             cols.append(k)
         cols = sorted(cols)
     if includeheader: 
@@ -913,7 +913,7 @@ def csv(l, rows, cols = None, includeheader = True):
                     dateportion = "%s %s" % (dateportion, timeportion)
                 rd.append(dateportion)
             elif is_str(r[c]):
-                rd.append(decode_html(r[c].replace("\"", "\"\""))) # Escape any double quotes in strings
+                rd.append(decode_html(r[c].replace("\"", "''"))) # Escape any double quotes in strings
             else:
                 rd.append(r[c])
         writerow(rd)
