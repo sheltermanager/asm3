@@ -123,6 +123,8 @@ class SmartTagPublisher(FTPPublisher):
 
     def processAnimal(self, an, shelterid=""):
         """ Process an animal record and return a CSV line """
+        reccountry = an.CURRENTOWNERCOUNTRY
+        if reccountry is None or reccountry == "": reccountry = "USA"
         line = []
         # accountid
         line.append("\"%s\"" % shelterid)
@@ -177,7 +179,7 @@ class SmartTagPublisher(FTPPublisher):
         # addresspostal
         line.append("\"%s\"" % an["CURRENTOWNERPOSTCODE"])
         # addressctry
-        line.append("\"USA\"")
+        line.append("\"%s\"" % reccountry)
         # owneremail
         line.append("\"%s\"" % an["CURRENTOWNEREMAILADDRESS"])
         # owneremail2

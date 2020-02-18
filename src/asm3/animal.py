@@ -82,6 +82,7 @@ def get_animal_query(dbo):
         "oo.OwnerTown AS OriginalOwnerTown, " \
         "oo.OwnerCounty AS OriginalOwnerCounty, " \
         "oo.OwnerPostcode AS OriginalOwnerPostcode, " \
+        "oo.OwnerCountry AS OriginalOwnerCountry, " \
         "oo.HomeTelephone AS OriginalOwnerHomeTelephone, " \
         "oo.WorkTelephone AS OriginalOwnerWorkTelephone, " \
         "oo.MobileTelephone AS OriginalOwnerMobileTelephone, " \
@@ -97,6 +98,7 @@ def get_animal_query(dbo):
         "co.OwnerTown AS CurrentOwnerTown, " \
         "co.OwnerCounty AS CurrentOwnerCounty, " \
         "co.OwnerPostcode AS CurrentOwnerPostcode, " \
+        "co.OwnerCountry AS CurrentOwnerCountry, " \
         "co.HomeTelephone AS CurrentOwnerHomeTelephone, " \
         "co.WorkTelephone AS CurrentOwnerWorkTelephone, " \
         "co.MobileTelephone AS CurrentOwnerMobileTelephone, " \

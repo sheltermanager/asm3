@@ -140,6 +140,8 @@ class AKCReunitePublisher(AbstractPublisher):
 
     def processAnimal(self, an, enrollmentsourceid="", orgname="", orgtel="", orgemail="", orgaddress="", orgtown="", orgcounty="", orgpostcode=""):
         """ Returns a JSON document from an animal """
+        reccountry = an.CURRENTOWNERCOUNTRY
+        if reccountry is None or reccountry == "": reccountry = "USA"
         o = {
             "enrollmentSourceId": enrollmentsourceid,
             "pet": {
@@ -157,7 +159,7 @@ class AKCReunitePublisher(AbstractPublisher):
                 "phone": {
                     "number":   an.CURRENTOWNERMOBILETELEPHONE or an.CURRENTOWNERHOMETELEPHONE or an.CURRENTOWNERWORKTELEPHONE,
                     "extension": "",
-                    "country":  "USA"
+                    "country":  reccountry
                 },
                 "emailAddress": an.CURRENTOWNEREMAILADDRESS,
                 "emailOptIn":   True,
@@ -167,7 +169,7 @@ class AKCReunitePublisher(AbstractPublisher):
                     "city":     an.CURRENTOWNERTOWN,
                     "stateProvince": an.CURRENTOWNERCOUNTY,
                     "postalCode": an.CURRENTOWNERPOSTCODE,
-                    "country":  "USA"
+                    "country":  reccountry
                 },
                 "mailOptIn":    False
             },

@@ -185,6 +185,8 @@ class VetEnvoyUSMicrochipPublisher(AbstractPublisher):
         def xe(s): 
             if s is None: return ""
             return s.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
+        reccountry = an["CURRENTOWNERCOUNTRY"]
+        if reccountry is None or reccountry == "": reccountry = "USA"
         return '<?xml version="1.0" encoding="UTF-8"?>\n' \
             '<MicrochipRegistration ' \
             'version="1.32" ' \
@@ -205,7 +207,7 @@ class VetEnvoyUSMicrochipPublisher(AbstractPublisher):
             '  <LineOther>'+ xe(an["CURRENTOWNERTOWN"]) + '</LineOther>' \
             '  <PostalCode>' + xe(an["CURRENTOWNERPOSTCODE"]) + '</PostalCode>' \
             '  <County_State>'+ xe(an["CURRENTOWNERCOUNTY"]) + '</County_State>' \
-            '  <Country>USA</Country>' \
+            '  <Country>' + reccountry + '</Country>' \
             ' </Address>' \
             ' <DaytimePhone><Number>' + xe(an["CURRENTOWNERWORKTELEPHONE"]) + '</Number><Note/></DaytimePhone>' \
             ' <EveningPhone><Number>' + xe(an["CURRENTOWNERHOMETELEPHONE"]) + '</Number><Note/></EveningPhone>' \

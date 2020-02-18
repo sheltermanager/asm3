@@ -219,6 +219,8 @@ class PetLinkPublisher(AbstractPublisher):
         homephone = asm3.utils.nulltostr(an["CURRENTOWNERHOMETELEPHONE"]).strip()
         workphone = asm3.utils.nulltostr(an["CURRENTOWNERWORKTELEPHONE"]).strip()
         mobilephone = asm3.utils.nulltostr(an["CURRENTOWNERMOBILETELEPHONE"]).strip()
+        reccountry = an.CURRENTOWNERCOUNTRY
+        if reccountry is None or reccountry == "": reccountry = "USA"
 
         # Get the non-blank phone number and strip it of non-numeric data
         phone = homephone or mobilephone or workphone
@@ -248,7 +250,7 @@ class PetLinkPublisher(AbstractPublisher):
         # ZipCode
         line.append("\"%s\"" % ( an["CURRENTOWNERPOSTCODE"] ))
         # Country
-        line.append("\"USA\"")
+        line.append("\"%s\"" % ( reccountry ))
         # Phone1
         line.append("\"%s\"" % ( an["CURRENTOWNERHOMETELEPHONE"] ))
         # Phone2
