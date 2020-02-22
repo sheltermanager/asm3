@@ -147,7 +147,7 @@ $(document).ready(function() {
     };
 
     // Load all date and time picker widgets
-    $(".asm-onlineform-date").datepicker({ dateFormat: DATE_FORMAT });
+    $(".asm-onlineform-date").datepicker({ dateFormat: DATE_FORMAT, changeMonth: true, changeYear: true, yearRange: "-75:+3" });
     $(".asm-onlineform-time").timepicker();
 
     // Load all signature widgets and implement the clear button functionality
