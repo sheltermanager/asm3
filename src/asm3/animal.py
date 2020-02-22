@@ -1379,7 +1379,7 @@ def get_animals_on_shelter_namecode(dbo):
     Returns a resultset containing the ID, name and code
     of all on shelter animals.
     """
-    return dbo.query("SELECT animal.ID, AnimalName, ShelterCode, ShortCode, SpeciesName, " \
+    return dbo.query("SELECT animal.ID, AnimalName, ShelterCode, ShortCode, SpeciesID, SpeciesName, " \
         "CASE WHEN EXISTS(SELECT ItemValue FROM configuration WHERE ItemName Like 'UseShortShelterCodes' AND ItemValue = 'Yes') " \
         "THEN ShortCode ELSE ShelterCode END AS Code " \
         "FROM animal " \
