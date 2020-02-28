@@ -799,6 +799,26 @@ class AbstractPublisher(threading.Thread):
             s = s.replace("&#" + k + ";", v)
         return s
 
+    def getLocaleForCountry(self, c):
+        """
+        Some third party sites only accept a locale in their country field rather than
+        a name. This is most common in the US where some shelters have dealings with
+        people over the border in Mexico and Canada.
+        """
+        c2l = {
+            "United States of America": "US",
+            "United States":            "US",
+            "USA":                      "US",
+            "Mexico":                   "MX",
+            "Canada":                   "CA"
+        }
+        if c is None or c == "": return "US" # Assume US as this is only really used by US publishers
+        if len(c) == 2: return c # Already a country code
+        for k in c2l.keys():
+            if c.lower() == k.lower():
+                return c2l[k]
+        return "US" # Fall back to US if no match
+
     def getDescription(self, an, crToBr = False, crToHE = False, crToLF = True, replaceSmart = False):
         """
         Returns the description/bio for an asm3.animal.

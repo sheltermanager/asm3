@@ -1,6 +1,7 @@
 43
 ================
 
+28/02/20 PetLink only allow 2-letter ISO codes in country field
 22/02/20 Add year dropdown to online form datepicker
 19/02/20 Bug in SavourLife that prevented adopted animals being removed
 18/02/20 PetLink, SmartTag, HomeAgain, AKC: Send person country #733
