@@ -6,8 +6,8 @@ import time
 # flake8: noqa - we have a lot of locales and this is convenient
 from asm3.locales import *
 
-VERSION = "43u [Fri 28 Feb 16:17:49 GMT 2020]"
-BUILD = "02281617"
+VERSION = "43u [Fri 28 Feb 21:31:48 GMT 2020]"
+BUILD = "02282131"
 
 DMY = ( "%d/%m/%Y", "%d/%m/%y" )
 MDY = ( "%m/%d/%Y", "%m/%d/%y" )
@@ -474,6 +474,7 @@ def add_years(date, years = 1.0):
     Adds years to a date, returning a new datetime
     """
     if date is None: return None
+    if date.day == 29 and date.month == 2: return date + datetime.timedelta(days = int(years * 365.0)) # Leap years break calendar years
     if years == int(years): return date.replace( year = date.year + int(years))
     return date + datetime.timedelta(days = int(years * 365.0))
 
@@ -517,7 +518,8 @@ def subtract_years(date, years = 1.0):
     Subtracts years from date, returning a new datetime
     """
     if date is None: return None
-    if years == int(years): return date.replace( year = date.year - int(years))
+    if date.day == 29 and date.month == 2: return date - datetime.timedelta(days = int(years * 365.0)) # Leap years break calendar years
+    if years == int(years): return date.replace( year = date.year - int(years)) # Go back a calendar year if it's a whole year
     return date - datetime.timedelta(days = int(years * 365.0))
 
 def subtract_months(date, months = 1):
