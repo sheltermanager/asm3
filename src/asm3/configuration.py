@@ -301,6 +301,7 @@ DEFAULTS = {
     "StickyTableHeaders": "Yes",
     "TableHeadersVisible": "Yes",
     "TemplatesForNonShelter": "No",
+    "ThumbnailSize": "150x150",
     "Timezone": "-5",
     "TrialAdoptions": "No",
     "TrialOnShelter": "No",
@@ -1192,6 +1193,9 @@ def third_party_publisher_sig(dbo):
 
 def templates_for_nonshelter(dbo):
     return cboolean(dbo, "TemplatesForNonShelter", DEFAULTS["TemplatesForNonShelter"] == "Yes")
+
+def thumbnail_size(dbo):
+    return cstring(dbo, "ThumbnailSize", DEFAULTS["ThumbnailSize"])
 
 def timezone(dbo):
     return cfloat(dbo, "Timezone", TIMEZONE)

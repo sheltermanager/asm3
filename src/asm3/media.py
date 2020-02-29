@@ -25,6 +25,9 @@ MEDIATYPE_FILE = 0
 MEDIATYPE_DOCUMENT_LINK = 1
 MEDIATYPE_VIDEO_LINK = 2
 
+DEFAULT_RESIZE_SPEC = "640x640" # If no valid resize spec is configured, the default to use
+MAX_PDF_PAGES = 50 # Do not scale PDFs with more than this many pages
+
 def mime_type(filename):
     """
     Returns the mime type for a file with the given name
@@ -178,7 +181,7 @@ def get_image_file_data(dbo, mode, iid, seq = 0, justdate = False):
     def thumb_mrec(mm):
         if len(mm) == 0: return thumb_nopic()
         if justdate: return mm[0].DATE
-        return (mm[0].DATE, scale_thumbnail(asm3.dbfs.get_string(dbo, mm[0].MEDIANAME)))
+        return (mm[0].DATE, scale_image(asm3.dbfs.get_string(dbo, mm[0].MEDIANAME), asm3.configuration.thumbnail_size(dbo)))
 
     if mode == "animal":
         if seq == 0:
@@ -702,13 +705,6 @@ def remove_expired_media(dbo, username = "system"):
             dbo.execute("DELETE FROM media WHERE MediaType = ? AND MediaMimeType <> 'image/jpeg' AND Date < ?", ( MEDIATYPE_FILE, cutoff ))
             asm3.al.debug("removed %d expired document media items (remove after years)" % len(rows), "media.remove_expired_media", dbo)
 
-def scale_thumbnail(imagedata):
-    """
-    Scales the given imagedata down to slightly larger than our thumbnail size 
-    (150px on the longest side)
-    """
-    return scale_image(imagedata, "150x150")
-
 def scale_image_file(inimage, outimage, resizespec):
     """
     Scales the given image file from inimage to outimage
@@ -717,7 +713,7 @@ def scale_image_file(inimage, outimage, resizespec):
     # If we haven't been given a valid resizespec,
     # use a default value.
     if resizespec.count("x") != 1:
-        resizespec = "640x640"
+        resizespec = DEFAULT_RESIZE_SPEC
     # Turn the scalespec into a tuple of the largest side
     ws, hs = resizespec.split("x")
     w = int(ws)
@@ -729,12 +725,6 @@ def scale_image_file(inimage, outimage, resizespec):
     im.thumbnail(size, Image.ANTIALIAS)
     im.save(outimage, "JPEG")
 
-def scale_thumbnail_file(inimage, outimage):
-    """
-    Scales the given image to a thumbnail
-    """
-    scale_image_file(inimage, outimage, "150x150")
-
 def scale_pdf(filedata):
     """
     Scales the given PDF filedata down and returns the compressed PDF data.
@@ -742,8 +732,8 @@ def scale_pdf(filedata):
     # If there are more than 50 pages, it's going to take forever to scale -
     # don't even bother trying. 
     pagecount = asm3.utils.pdf_count_pages(filedata)
-    if pagecount > 50:
-        asm3.al.error("Abandon PDF scaling - has > 50 pages (%s found)" % pagecount, "media.scale_pdf")
+    if pagecount > MAX_PDF_PAGES:
+        asm3.al.error("Abandon PDF scaling - has > %d pages (%s found)" % (MAX_PDF_PAGES, pagecount), "media.scale_pdf")
         return filedata
     inputfile = tempfile.NamedTemporaryFile(suffix=".pdf", delete=False)
     outputfile = tempfile.NamedTemporaryFile(suffix=".pdf", delete=False)

@@ -72,6 +72,10 @@ The All Publishers tab allows you to set options common to all internet publishe
 * Order published animals by: Sorts the list of animals before they are
   published.
 
+* Thumbnail size: Controls the size of thumbnails the system generates for adoptable 
+  animal publishers (in particular the ones used by the javascript include 
+  method of website integration). The size is for the thumbnail's longest side.
+
 * Animal descriptions: This determines the source of the main description for
   animals when being published. For the HTML/FTP publisher, this is the source
   of the $$WebMediaNotes$$ token. Set to “Use animal comments” to use the
@@ -104,7 +108,7 @@ feed readers.
   in a template to get the thumbnail image for the current animal. 
 
 * Thumbnail size: The desired length in pixels of the longest side of the
-  thumbnail.
+  generated thumbnail.
 
 * Output a separate page for each animal type: Output extra pages of the form
   ANIMALTYPE.EXTENSION, eg: Miscellaneous.html. This means you can reference
@@ -155,13 +159,9 @@ feed readers.
   per page, however the more animals you put on a page, the longer the page
   will take to load.
 
-* Scale published images to: Modern digital cameras can take very high quality
-  images - so much so that they could take a very long time for users to
-  download (particularly for people with modems). Also, if your shelter's
-  connection to the internet is over a modem, it could take a long time for the
-  site to upload. This box allows you to reduce the size of your images to
-  scaled JPEGs with the resolutions specified. ASM scales down pictures when
-  you attach them under the media tab, so unless you want to make them smaller
+* Scale published images to: This box allows you to reduce the size of your
+  animal images to a particular resolution.  ASM scales down pictures when you
+  attach them under the media tab, so unless you want to make them smaller
   still, it's best to leave this at No Scaling.  
   
 * Publish to folder: Choose the folder where output is to be generated. 
