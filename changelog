@@ -1,6 +1,7 @@
 43
 ================
 
+29/02/20 Chrome shuffle bug: detect Back and force reload #716
 29/02/20 Allow configurable thumbnail size under publishing options
 28/02/20 PetLink only allow 2-letter ISO codes in country field
 22/02/20 Add year dropdown to online form datepicker

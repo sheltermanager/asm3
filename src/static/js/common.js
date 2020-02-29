@@ -242,6 +242,10 @@
                 navigator.userAgent.toLowerCase().indexOf("iphone") != -1;
         },
 
+        is_chrome: function() {
+            return navigator.userAgent.toLowerCase().indexOf("chrome") != -1;
+        },
+
         is_safari: function() {
             return navigator.userAgent.toLowerCase().indexOf("safari") != -1;
         },

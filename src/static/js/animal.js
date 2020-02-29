@@ -1606,6 +1606,11 @@ $(function() {
             // Dirty handling
             validate.bind_dirty([ "animal_" ]);
 
+            // Chrome breaks input fields when returning from a non-client route 
+            // Detecting that the page has been loaded via the back button and forcing a reload works around this #716
+            if (common.is_chrome() && window.performance && window.performance.navigation.type === window.performance.navigation.TYPE_BACK_FORWARD) {
+                window.location.reload();
+            }
         },
 
         destroy: function() {
