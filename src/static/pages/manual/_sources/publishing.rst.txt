@@ -323,11 +323,11 @@ and indicate this to PetRescue via the following rules:
 * If the animal has at least 1 previously given vaccination on file and there
   are no vaccinations outstanding, the vaccination flag is set.
 
-* If the animal has a medical treatment containing the word "wormed" and not
+* If the animal has a medical treatment containing the word "worm" and not
   the word "heart" in the last 6 months, the wormed flag is set.
 
 * If the animal has a medical treatment containing the words "heart" and
-  "wormed" in the last 6 months, the heartworm treated flag is set.
+  "worm" in the last 6 months, the heartworm treated flag is set.
 
 PetRescue have a number of extra fields that you can set by creating additional
 animal fields with certain names in your database. The system responds to the
@@ -395,11 +395,11 @@ and indicate this to SavourLife via the following rules:
 * If the animal has at least 1 previously given vaccination on file and there
   are no vaccinations outstanding, the vaccination flag is set.
 
-* If the animal has a medical treatment containing the word "wormed" and not
+* If the animal has a medical treatment containing the word "worm" and not
   the word "heart" in the last 6 months, the wormed flag is set.
 
 * If the animal has a medical treatment containing the words "heart" and
-  "wormed" in the last 6 months, the heartworm treated flag is set.
+  "worm" in the last 6 months, the heartworm treated flag is set.
 
 SavourLife have extra fields that you can set by creating additional 
 fields with certain names in your database. The system responds to the field
