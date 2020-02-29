@@ -389,6 +389,18 @@ password given to you by SavourLife. The options for filtering animals are the
 same as for other publishers, although ASM will only send dogs (Species 1) as
 SavourLife will not accept listings for other species of animals.
 
+ASM will determined if your dogs are vaccinated, wormed or heartworm treated
+and indicate this to SavourLife via the following rules:
+
+* If the animal has at least 1 previously given vaccination on file and there
+  are no vaccinations outstanding, the vaccination flag is set.
+
+* If the animal has a medical treatment containing the word "wormed" and not
+  the word "heart" in the last 6 months, the wormed flag is set.
+
+* If the animal has a medical treatment containing the words "heart" and
+  "wormed" in the last 6 months, the heartworm treated flag is set.
+
 SavourLife have extra fields that you can set by creating additional 
 fields with certain names in your database. The system responds to the field
 names, you can label them anything you want, they must be linked to animal
