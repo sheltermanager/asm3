@@ -2354,6 +2354,16 @@
             };
             // Default state
             validate.dirty(false);
+            // Fix for Chrome 79.0.3925+ bug. 
+            // https://chromium.googlesource.com/chromium/src/+/8bdd4fc873801be72f20f7cb5746059526098d99
+            // A race condition causes Chrome to reload saved control state into the wrong input fields
+            // when the user clicks back from a non-client route page (typically preferred pictures or reports).
+            // Here, we detect that the page was loaded by the back button and force a full reload to work around it #716
+            // We do it here because it only affects bottom level screens with input fields that require the dirty/save functionality.
+            if (common.is_chrome() && window.performance && window.performance.navigation.type === window.performance.navigation.TYPE_BACK_FORWARD) {
+                window.location.reload();
+            }
+
         },
 
         unbind_dirty: function() {
