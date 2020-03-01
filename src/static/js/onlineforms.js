@@ -143,33 +143,7 @@ $(function() {
         },
 
         load_person_flags: function() {
-            var field_option = function(post, label) {
-                return '<option value="' + post + '">' + label + '</option>\n';
-            };
-            var flag_option = function(flag) {
-                return '<option value="' + html.title(flag) + '">' + flag + '</option>';
-            };
-            var h = [
-                field_option("aco", _("ACO")),
-                field_option("banned", _("Banned")),
-                field_option("donor", _("Donor")),
-                field_option("driver", _("Driver")),
-                field_option("fosterer", _("Fosterer")),
-                field_option("homechecked", _("Homechecked")),
-                field_option("homechecker", _("Homechecker")),
-                field_option("member", _("Member")),
-                field_option("shelter", _("Other Shelter")),
-                field_option("retailer", _("Retailer")),
-                field_option("staff", _("Staff")),
-                asm.locale == "en_GB" ? field_option("giftaid", _("UK Giftaid")) : "",
-                field_option("vet", _("Vet")),
-                field_option("volunteer", _("Volunteer"))
-            ];
-            $.each(controller.flags, function(i, v) {
-                h.push(flag_option(v.FLAG));
-            });
-            $("#flags").html(h.join("\n"));
-            $("#flags").change();
+            html.person_flag_options(null, controller.flags, $("#flags"));
         },
 
         render_headfoot: function() {
