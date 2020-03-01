@@ -702,7 +702,7 @@
                 buttons: b,
                 open: function() {
                     var bp = $("#dialog-tableform").parent().find(".ui-dialog-buttonpane");
-                    if (bp.find("#dialog-tableform-spinner").size() == 0) {
+                    if (bp.find("#dialog-tableform-spinner").length == 0) {
                         bp.append('<img id="dialog-tableform-spinner" style="display: none; height: 16px" src="static/images/wait/rolling_3a87cd.svg" />');
                     }
                     // Any code editor widgets need to be refreshed on load
@@ -841,7 +841,7 @@
                     
                     var bp = $("#dialog-tableform").parent().find(".ui-dialog-buttonpane");
                     
-                    if (bp.find("#dialog-tableform-activity").size() == 0 && row.CREATEDBY && row.CREATEDDATE && row.LASTCHANGEDBY && row.LASTCHANGEDDATE) {
+                    if (bp.find("#dialog-tableform-activity").length == 0 && row.CREATEDBY && row.CREATEDDATE && row.LASTCHANGEDBY && row.LASTCHANGEDDATE) {
                         var activity = 
                             _("Added by {0} on {1}").replace("{0}", row.CREATEDBY)
                                 .replace("{1}", format.date(row.CREATEDDATE) + " " + format.time(row.LASTCHANGEDDATE)) + '<br/>' +
@@ -855,7 +855,7 @@
                         });
                     }
                     
-                    if (bp.find("#dialog-tableform-spinner").size() == 0) {
+                    if (bp.find("#dialog-tableform-spinner").length == 0) {
                         bp.append('<img id="dialog-tableform-spinner" style="display: none; height: 16px" src="static/images/wait/rolling_3a87cd.svg" />');
                     }
 

@@ -991,7 +991,7 @@
             var id = this.element.attr("id");
             var body = $("#" + id + "-body");
             this.options.menu = body;
-            if (body.find(".asm-menu-item").size() == 0) {
+            if (body.find(".asm-menu-item").length == 0) {
                 button.addClass("ui-state-disabled").addClass("ui-button-disabled");
             }
             

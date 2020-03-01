@@ -336,7 +336,7 @@ $(function() {
                     $(this).remove();
                 }
             });
-            if($('#breed option').size() == 0) {
+            if($('#breed option').length == 0) {
                 $('#breed').append("<option value='1'>"+$('#species option:selected').text()+"</option>");
             }
         },

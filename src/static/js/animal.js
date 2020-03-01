@@ -833,7 +833,7 @@ $(function() {
                     $(this).remove();
                 }
             });
-            if($('#breed1 option').size() == 0) {
+            if($('#breed1 option').length == 0) {
                 $('#breed1').append("<option value='0'>"+$('#species option:selected').text() + "</option>");
             }
             $('optgroup', $('#breed2')).remove();
@@ -843,7 +843,7 @@ $(function() {
                     $(this).remove();
                 }
             });
-            if ($('#breed2 option').size() == 0) {
+            if ($('#breed2 option').length == 0) {
                 $('#breed2').append("<option value='0'>"+$('#species option:selected').text()+"</option>");
             }
         },
@@ -971,7 +971,7 @@ $(function() {
             }
 
             // Not having any active litters disables join litter button
-            if ($("#sellitter option").size() == 0) {
+            if ($("#sellitter option").length == 0) {
                 $("#button-litterjoin").button("disable");
             }
 

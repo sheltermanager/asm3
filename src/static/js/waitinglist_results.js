@@ -158,7 +158,7 @@ $(function() {
             });
 
             $("#table-waitinglist").on("change", "input", function() {
-                if ($("#table-waitinglist input:checked").size() > 0) {
+                if ($("#table-waitinglist input:checked").length > 0) {
                     $("#button-delete").button("option", "disabled", false); 
                     $("#button-complete").button("option", "disabled", false); 
                     $(".bhighlight").button("option", "disabled", false); 

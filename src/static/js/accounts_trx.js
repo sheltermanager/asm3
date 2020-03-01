@@ -188,7 +188,7 @@ $(function() {
             };
 
             $("#table-trx input:checkbox").change(function() {
-                if ($("#table-trx input:checked").size() > 0) {
+                if ($("#table-trx input:checked").length > 0) {
                     $("#button-delete").button("option", "disabled", false); 
                     $("#button-reconcile").button("option", "disabled", false); 
                 }

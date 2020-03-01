@@ -511,7 +511,7 @@ $(function() {
                     $(this).closest(".asm-mediaicon").removeClass("ui-state-highlight");
                 }
 
-                if ($(".asm-mediaicons input:checked").size() > 0) {
+                if ($(".asm-mediaicons input:checked").length > 0) {
                     $("#button-delete").button("option", "disabled", false); 
                 }
                 else {
@@ -528,7 +528,7 @@ $(function() {
 
                 // Only allow the image preferred buttons to be pressed if the
                 // selection size is one and the selection is an image
-                if ($(".asm-mediaicons input:checked").size() == 1) {
+                if ($(".asm-mediaicons input:checked").length == 1) {
                     $(".asm-mediaicons input:checked").each(function() {
                         var mname = $(this).parent().parent().find(".media-name").val();
                         if (media.is_jpeg(mname)) { 
@@ -540,7 +540,7 @@ $(function() {
 
                 // Only allow the video preferred button to be pressed if the
                 // selection size is one and the selection is a video link
-                if ($(".asm-mediaicons input:checked").size() == 1) {
+                if ($(".asm-mediaicons input:checked").length == 1) {
                     $(".asm-mediaicons input:checked").each(function() {
                         var mtype = $(this).parent().parent().find(".media-type").val();
                         if (mtype == 2) {
@@ -560,7 +560,7 @@ $(function() {
                 });
 
                 // Only allow the email button to be pressed if we have a selection 
-                if ($(".asm-mediaicons input:checked").size() > 0) {
+                if ($(".asm-mediaicons input:checked").length > 0) {
                     $("#button-email").button("option", "disabled", false); 
                 }
 

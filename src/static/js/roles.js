@@ -260,13 +260,13 @@ $(function() {
             $("#table-roles").table();
 
             $("#table-roles input").change(function() {
-                if ($("#table-roles input:checked").size() > 0) {
+                if ($("#table-roles input:checked").length > 0) {
                     $("#button-delete").button("option", "disabled", false); 
                 }
                 else {
                     $("#button-delete").button("option", "disabled", true); 
                 }
-                if ($("#table-roles input:checked").size() == 1) {
+                if ($("#table-roles input:checked").length == 1) {
                     $("#button-clone").button("option", "disabled", false);
                 }
                 else {

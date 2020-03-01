@@ -8,7 +8,7 @@ $(document).ready(function() {
     // mobile login:
     // if all the boxes were filled in (because they were passed by parameters
     // when the backend constructed the page), submit it automatically
-    if ($("#loginform").size() > 0 && $("#username").val() && $("#password").val()) {
+    if ($("#loginform").length > 0 && $("#username").val() && $("#password").val()) {
         $("#loginform").submit();
     }
 
