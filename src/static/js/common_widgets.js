@@ -169,12 +169,14 @@
                     // this function controls how text is extracted from cells for
                     // sorting purposes.
                     var s = $(node).text(), h = $(node).html();
-                    // If the text looks like a date, turn it into YYYY-MM-DD for sorting
-                    if (s.indexOf("/") != -1 && s.split("/").length == 3) {
-                        var rv = format.date_iso(s);
-                        if (!rv) { return ""; }
-                        rv = rv.replace(/\-/g, "").replace(/\:/g, "").replace("T", "");
-                        return rv;
+                    // If the text contains a date, turn it into YYYY-MM-DD for sorting
+                    if (s.indexOf("/") != -1) { 
+                        if (s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})/)) {
+                            var rv = format.date_iso(s);
+                            if (!rv) { return ""; }
+                            rv = rv.replace(/\-/g, "").replace(/\:/g, "").replace("T", "");
+                            return rv;
+                        }
                     }
                     // If we have custom emblems in the text, throw away the first word as it will
                     // be the letters of the emblems and skew any sorting.

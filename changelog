@@ -1,6 +1,7 @@
 43
 ================
 
+02/03/20 Fix bug that caused 2 slashes in a value to break table sorting
 01/03/20 Use standard flag code for online forms (fix missing exclude bulk)
 29/02/20 Chrome shuffle bug: detect Back and force reload #716
 29/02/20 Allow configurable thumbnail size under publishing options
