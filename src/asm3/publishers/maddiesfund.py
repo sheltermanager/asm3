@@ -87,7 +87,7 @@ class MaddiesFundPublisher(AbstractPublisher):
         # Now find animals who have been sent previously and are now deceased (using sent date against deceased to prevent re-sends) 
         sql = "%s WHERE a.DeceasedDate Is Not Null AND a.DeceasedDate >= ? AND " \
             "EXISTS(SELECT AnimalID FROM animalpublished WHERE AnimalID = a.ID AND " \
-            "PublishedTo = 'maddiesfund' AND SentDate < a.DeceasedDate)" % asm3.animal.get_animal_query(self.dbo)
+            "PublishedTo = 'maddiesfund' AND SentDate <= a.DeceasedDate)" % asm3.animal.get_animal_query(self.dbo)
         animals += self.dbo.query(sql, [cutoff], distincton="ID")
 
         # Now find shelter animals who have been sent previously and are back (using sent date against return to prevent re-sends)
