@@ -213,7 +213,7 @@ Comments AS Item3,
 'Changed Log' AS Type FROM log
 INNER JOIN logtype ON log.LogTypeID = logtype.ID
 WHERE LastChangedDate >= '$@from$' AND DATE(LastChangedDate) <= '$@to$'
-) dummy ORDER BY TheDate DESC, User
+) dummy ORDER BY User, TheDate DESC
 
 
 ###
@@ -459,7 +459,7 @@ Comments AS Item3,
 'Changed Log' AS Type FROM log
 INNER JOIN logtype ON log.LogTypeID = logtype.ID
 WHERE LastChangedDate >= '$@from$' AND LastChangedDate::date <= '$@to$'
-) dummy ORDER BY TheDate DESC, User
+) dummy ORDER BY User, TheDate DESC
 
 
 ###
