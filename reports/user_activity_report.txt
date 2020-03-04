@@ -213,16 +213,16 @@ Comments AS Item3,
 'Changed Log' AS Type FROM log
 INNER JOIN logtype ON log.LogTypeID = logtype.ID
 WHERE LastChangedDate >= '$@from$' AND DATE(LastChangedDate) <= '$@to$'
-) dummy ORDER BY User, TheDate DESC
+) dummy ORDER BY TheUser, TheDate DESC
 
 
 ###
 $$HEADER
 HEADER$$
 
-$$GROUP_User
+$$GROUP_TheUser
 $$HEAD
-<h2>$User</h2>
+<h2>$TheUser</h2>
 <table border=1><tr>
 <td><b>Date</b></td>
 <td><b>Item</b></td>
@@ -466,9 +466,9 @@ WHERE LastChangedDate >= '$@from$' AND LastChangedDate::date <= '$@to$'
 $$HEADER
 HEADER$$
 
-$$GROUP_User
+$$GROUP_TheUser
 $$HEAD
-<h2>$User</h2>
+<h2>$TheUser</h2>
 <table border=1><tr>
 <td><b>Date</b></td>
 <td><b>Item</b></td>
