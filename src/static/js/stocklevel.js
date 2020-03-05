@@ -82,18 +82,14 @@ $(function() {
                     { field: "NAME", display: _("Name"), initialsort: controller.sortexp != 1 },
                     { field: "STOCKLOCATIONNAME", display: _("Location") },
                     { field: "UNITNAME", display: _("Unit") },
-                    { field: "TOTAL", display: _("Total") },
-                    { field: "BALANCE", display: _("Balance") },
+                    { field: "BALANCE", display: _("Balance"), formatter: function(row) {
+                        return row.BALANCE + " / " + row.TOTAL;
+                    }},
                     { field: "COST", display: _("Cost"), formatter: tableform.format_currency },
                     { field: "UNITPRICE", display: _("Unit Price"), formatter: tableform.format_currency },
-                    { field: "VALUE", display: _("Value"), formatter: function(row) {
-                            if (row.UNITPRICE && row.BALANCE) {
-                                return format.currency(row.UNITPRICE * row.BALANCE);
-                            }
-                            return "";
-                        }},
                     { field: "BATCHNUMBER", display: _("Batch") },
-                    { field: "EXPIRY", display: _("Expiry"), formatter: tableform.format_date, initialsort: controller.sortexp == 1 }
+                    { field: "EXPIRY", display: _("Expiry"), formatter: tableform.format_date, initialsort: controller.sortexp == 1 },
+                    { field: "DESCRIPTION", display: _("Description") }
                 ]
             };
 
