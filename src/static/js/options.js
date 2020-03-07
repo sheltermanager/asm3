@@ -5,6 +5,7 @@ $(function() {
 
     var BACKGROUND_COLOURS = {
         "asm":              "#ffffff",
+        "base":             "#ffffff",
         "black-tie":        "#333333",
         "blitzer":          "#cc0000",
         "cupertino":        "#deedf7",

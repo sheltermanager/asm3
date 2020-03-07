@@ -1,6 +1,7 @@
 43
 ================
 
+07/03/20 Upgrade to JQuery 3.4.1 and JQueryUI 1.12.1 #739
 05/03/20 Show description on stock level screen
 02/03/20 Fix bug that caused 2 slashes in a value to break table sorting
 01/03/20 Use standard flag code for online forms (fix missing exclude bulk)

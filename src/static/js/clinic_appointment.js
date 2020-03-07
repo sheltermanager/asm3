@@ -486,7 +486,7 @@ $(function() {
         },
 
         name: "clinic_appointment",
-        animation: "book",
+        animation: function() { return controller.name.indexOf("clinic_") == 0 ? "book" : "formtab"; },
         title:  function() { 
             var t = "";
             if (controller.name == "animal_clinic") {
