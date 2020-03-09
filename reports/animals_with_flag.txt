@@ -40,4 +40,58 @@ BODY$$
 $$FOOTER
 </table>
 FOOTER$$
+&&&
+Non-shelter animals with flag
+###
+Auditing
+###
+33713/Any
+###
+Non-shelter animals with a particular flag.
+###
+en
+###
+$VAR flag ANIMALFLAG$
+
+SELECT a.AnimalName, a.ShelterCode, t.AnimalType, a.AdditionalFlags,
+o.ID AS OwnerID, 
+o.OwnerName, o.OwnerAddress, o.OwnerTown, o.OwnerCounty, o.OwnerPostcode, 
+o.EmailAddress, o.HomeTelephone, o.WorkTelephone, o.MobileTelephone
+FROM animal a
+INNER JOIN animaltype t ON t.ID = a.AnimalTypeID
+INNER JOIN owner o ON a.OriginalOwnerID = o.ID
+WHERE a.IsNonShelterAnimal = 1 AND (a.AdditionalFlags LIKE '$@flag$|%' OR a.AdditionalFlags LIKE '%$@flag$|') 
+ORDER BY t.AnimalType, a.AnimalName
+###
+$$HEADER
+<table border="1">
+<tr>
+<th>Name</th>
+<th>Code</th>
+<th>Type</th>
+<th>Owner</th>
+<th>Flags</th>
+</tr>
+HEADER$$
+
+$$BODY
+<tr>
+<td>$ANIMALNAME</td>
+<td>$SHELTERCODE</td>
+<td>$ANIMALTYPE</td>
+<td><a target="_blank" href="person?id=$OWNERID">$OwnerName</a><br/>
+$OwnerAddress<br/>
+$OwnerTown<br/>
+$OwnerCounty<br/>
+$OwnerPostcode<br/>
+$EmailAddress<br/>
+H: $HOMETELEPHONE, W: $WORKTELEPHONE, C: $MOBILETELEPHONE
+</td>
+<td>$ADDITIONALFLAGS</td>
+</tr>
+BODY$$
+
+$$FOOTER
+</table>
+FOOTER$$
 
