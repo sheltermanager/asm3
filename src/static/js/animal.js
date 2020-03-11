@@ -650,7 +650,7 @@ $(function() {
                 '</td>',
                 '<td>',
                 '<select class="asm-selectbox" id="goodwithkids" data-json="ISGOODWITHCHILDREN" data-post="goodwithkids">',
-                html.list_to_options(controller.ynun, "ID", "NAME"),
+                html.list_to_options(controller.ynunk, "ID", "NAME"),
                 '</select>',
                 '</td>',
                 '</tr>',

@@ -11,14 +11,6 @@ $(function() {
         10: _("Cancelled"),
         11: _("Completed")
     };
-    var statuses = [
-        { ID: 1, NAME: _("New") },
-        { ID: 2, NAME: _("Confirmed") },
-        { ID: 3, NAME: _("Hold") },
-        { ID: 4, NAME: _("Scheduled") },
-        { ID: 10, NAME: _("Cancelled") },
-        { ID: 11, NAME: _("Completed") }
-    ];
     var statusmenu = [
         "1|" + _("New"),
         "2|" + _("Confirmed"),
@@ -46,7 +38,7 @@ $(function() {
                     { json_field: "DRIVEROWNERID", post_field: "driver", label: _("Driver"), type: "person", personfilter: "driver" },
                     { json_field: "TRANSPORTREFERENCE", post_field: "reference", label: _("Reference"), type: "text" },
                     { json_field: "TRANSPORTTYPEID", post_field: "type", label: _("Type"), type: "select", options: { rows: controller.transporttypes, displayfield: "TRANSPORTTYPENAME", valuefield: "ID" }},
-                    { json_field: "STATUS", post_field: "status", label: _("Status"), type: "select", options: { rows: statuses, displayfield: "NAME", valuefield: "ID" }},
+                    { json_field: "STATUS", post_field: "status", label: _("Status"), type: "select", options: { rows: controller.statuses, displayfield: "NAME", valuefield: "ID" }},
                     { json_field: "MILES", post_field: "miles", label: transport.miles_label(), type: "number", defaultval: 0 },
                     { json_field: "COST", post_field: "cost", label: _("Cost"), type: "currency", hideif: function() { return !config.bool("ShowCostAmount"); } },
                     { json_field: "COSTPAIDDATE", post_field: "costpaid", label: _("Paid"), type: "date", hideif: function() { return !config.bool("ShowCostPaid"); } },

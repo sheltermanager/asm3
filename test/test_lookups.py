@@ -54,6 +54,8 @@ class TestLookups(unittest.TestCase):
         assert len(asm3.lookups.get_urgencies(base.get_dbo())) > 0
         assert len(asm3.lookups.get_test_types(base.get_dbo())) > 0
         assert len(asm3.lookups.get_test_results(base.get_dbo())) > 0
+        assert len(asm3.lookups.get_transport_statuses(base.get_dbo())) > 0
+        assert len(asm3.lookups.get_transport_types(base.get_dbo())) > 0
         assert len(asm3.lookups.get_vaccination_types(base.get_dbo())) > 0
         assert len(asm3.lookups.get_voucher_types(base.get_dbo())) > 0
         assert len(asm3.lookups.get_yesno(base.get_dbo())) > 0

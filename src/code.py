@@ -1232,7 +1232,8 @@ class animal(JSONEndpoint):
             "sharebutton": SHARE_BUTTON,
             "tabcounts": asm3.animal.get_satellite_counts(dbo, a["ID"])[0],
             "templates": asm3.template.get_document_templates(dbo),
-            "ynun": asm3.lookups.get_ynun(dbo)
+            "ynun": asm3.lookups.get_ynun(dbo),
+            "ynunk": asm3.lookups.get_ynunk(dbo)
         }
 
     def post_save(self, o):
@@ -1714,6 +1715,7 @@ class animal_transport(JSONEndpoint):
             "name": "animal_transport",
             "animal": a,
             "tabcounts": asm3.animal.get_satellite_counts(dbo, a["ID"])[0],
+            "statuses": asm3.lookups.get_transport_statuses(dbo),
             "templates": asm3.template.get_document_templates(dbo),
             "transporttypes": asm3.lookups.get_transport_types(dbo),
             "rows": transports
@@ -5481,6 +5483,7 @@ class transport(JSONEndpoint):
         asm3.al.debug("got %d transports" % len(transports), "code.transport", dbo)
         return {
             "name": "transport",
+            "statuses": asm3.lookups.get_transport_statuses(dbo),
             "templates": asm3.template.get_document_templates(dbo),
             "transporttypes": asm3.lookups.get_transport_types(dbo),
             "rows": transports

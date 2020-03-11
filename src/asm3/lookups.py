@@ -49,6 +49,7 @@ LOOKUP_TABLES = {
     "lksize":           (_("Sizes"), "Size", _("Size"), "", "", ("animal.Size",)),
     "lksyesno":         (_("Yes/No"), "Name", _("Yes/No"), "", "", ("animal.Neutered",)),
     "lksynun":          (_("Yes/No/Unknown"), "Name", _("Yes/No/Unknown"), "", "", ("animal.IsHouseTrained",)),
+    "lksynunk":         (_("Good with kids"), "Name", _("Good with kids"), "", "", ("animal.IsGoodWithChildren",)),
     "lksposneg":        (_("Positive/Negative"), "Name", _("Positive/Negative"), "", "", ("animal.CombiTestResult",)),
     "pickuplocation":   (_("Pickup Locations"), "LocationName", _("Location"), "LocationDescription", "add del ret", ("animal.PickupLocationID",)),
     "reservationstatus": (_("Reservation Statuses"), "StatusName", _("Status"), "StatusDescription", "add del ret", ("adoption.ReservationStatusID",)),
@@ -59,6 +60,7 @@ LOOKUP_TABLES = {
     "lkurgency":        (_("Urgencies"), "Urgency", _("Urgency"), "", "", ("animalwaitinglist.Urgency",)),
     "testtype":         (_("Test Types"), "TestName", _("Type"), "TestDescription", "add del ret cost", ("animaltest.TestTypeID",)),
     "testresult":       (_("Test Results"), "ResultName", _("Result"), "ResultDescription", "add del ret", ("animaltest.TestResultID",)),
+    "lkstransportstatus": (_("Transport Statuses"), "Name", _("Status"), "", "", ("animaltransport.Status",)),
     "transporttype":    (_("Transport Types"), "TransportTypeName", _("Type"), "TransportTypeDescription", "add del ret", ("animaltransport.TransportTypeID",)),
     "traptype":         (_("Trap Types"), "TrapTypeName", _("Type"), "TrapTypeDescription", "add del ret cost", ("ownertraploan.TrapTypeID",)),
     "vaccinationtype":  (_("Vaccination Types"), "VaccinationType", _("Type"), "VaccinationDescription", "add del ret cost", ("animalvaccination.VaccinationID",)),
@@ -1238,6 +1240,9 @@ def get_test_types(dbo):
 def get_test_results(dbo):
     return dbo.query("SELECT * FROM testresult ORDER BY ResultName")
 
+def get_transport_statuses(dbo):
+    return dbo.query("SELECT * FROM lkstransportstatus ORDER BY ID")
+
 def get_transport_types(dbo):
     return dbo.query("SELECT * FROM transporttype ORDER BY TransportTypeName")
 
@@ -1256,4 +1261,6 @@ def get_yesno(dbo):
 def get_ynun(dbo):
     return dbo.query("SELECT * FROM lksynun ORDER BY Name")
 
+def get_ynunk(dbo):
+    return dbo.query("SELECT * FROM lksynunk ORDER BY Name")
 

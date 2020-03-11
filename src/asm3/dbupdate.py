@@ -36,7 +36,7 @@ VERSIONS = (
     34002, 34003, 34004, 34005, 34006, 34007, 34008, 34009, 34010, 34011, 34012,
     34013, 34014, 34015, 34016, 34017, 34018, 34019, 34020, 34021, 34022, 34100,
     34101, 34102, 34103, 34104, 34105, 34106, 34107, 34108, 34109, 34110, 34111,
-    34112, 34200, 34201, 34202, 34203, 34204, 34300, 34301
+    34112, 34200, 34201, 34202, 34203, 34204, 34300, 34301, 34302, 34303
 )
 
 LATEST_VERSION = VERSIONS[-1]
@@ -54,7 +54,8 @@ TABLES = ( "accounts", "accountsrole", "accountstrx", "additional", "additionalf
     "entryreason", "incidentcompleted", "incidenttype", "internallocation", "jurisdiction", "licencetype", "lkanimalflags", "lkcoattype", 
     "lkownerflags", "lksaccounttype", "lksclinicstatus", "lksdiarylink", "lksdonationfreq", "lksex", 
     "lksfieldlink", "lksfieldtype", "lksize", "lksloglink", "lksmedialink", "lksmediatype", "lksmovementtype", "lksposneg", "lksrotatype", 
-    "lksyesno", "lksynun", "lkurgency", "lkworktype", "log", "logtype", "media", "medicalprofile", "messages", "onlineform", 
+    "lksyesno", "lksynun", "lksynunk", "lkstransportstatus", "lkurgency", "lkworktype", 
+    "log", "logtype", "media", "medicalprofile", "messages", "onlineform", 
     "onlineformfield", "onlineformincoming", "owner", "ownercitation", "ownerdonation", "ownerinvestigation", 
     "ownerlicence", "ownerlookingfor", "ownerrota", "ownertraploan", "ownervoucher", "pickuplocation", "publishlog", 
     "reservationstatus", "role", "site", "species", "stocklevel", "stocklocation", "stockusage", "stockusagetype", 
@@ -1015,6 +1016,9 @@ def sql_structure(dbo):
     sql += table("lksrotatype", (
         fid(), fstr("RotaType") ), False)
 
+    sql += table("lkstransportstatus", (
+        fid(), fstr("Name") ), False)
+
     sql += table("lkurgency", ( 
         fid(), fstr("Urgency") ), False)
 
@@ -1022,6 +1026,9 @@ def sql_structure(dbo):
         fid(), fstr("Name") ), False)
 
     sql += table("lksynun", (
+        fid(), fstr("Name") ), False)
+
+    sql += table("lksynunk", (
         fid(), fstr("Name") ), False)
 
     sql += table("lksposneg", (
@@ -2239,6 +2246,11 @@ def sql_default_data(dbo, skip_config = False):
     sql += lookup1("lksynun", "Name", 0, _("Yes", l))
     sql += lookup1("lksynun", "Name", 1, _("No", l))
     sql += lookup1("lksynun", "Name", 2, _("Unknown", l))
+    sql += lookup1("lksynunk", "Name", 0, _("Yes", l))
+    sql += lookup1("lksynunk", "Name", 1, _("No", l))
+    sql += lookup1("lksynunk", "Name", 2, _("Unknown", l))
+    sql += lookup1("lksynunk", "Name", 5, _("Over 5", l))
+    sql += lookup1("lksynunk", "Name", 12, _("Over 12", l))
     sql += lookup1("lksposneg", "Name", 0, _("Unknown", l))
     sql += lookup1("lksposneg", "Name", 1, _("Negative", l))
     sql += lookup1("lksposneg", "Name", 2, _("Positive", l))
@@ -2253,6 +2265,12 @@ def sql_default_data(dbo, skip_config = False):
     sql += lookup1("lksrotatype", "RotaType", 17, _("Sick leave", l))
     sql += lookup1("lksrotatype", "RotaType", 18, _("Training", l))
     sql += lookup1("lksrotatype", "RotaType", 19, _("Unavailable", l))
+    sql += lookup1("lkstransportstatus", "Name", 1, _("New", l))
+    sql += lookup1("lkstransportstatus", "Name", 2, _("Confirmed", l))
+    sql += lookup1("lkstransportstatus", "Name", 3, _("Hold", l))
+    sql += lookup1("lkstransportstatus", "Name", 4, _("Scheduled", l))
+    sql += lookup1("lkstransportstatus", "Name", 10, _("Cancelled", l))
+    sql += lookup1("lkstransportstatus", "Name", 11, _("Completed", l))
     sql += lookup1("lkurgency", "Urgency", 1, _("Urgent", l))
     sql += lookup1("lkurgency", "Urgency", 2, _("High", l))
     sql += lookup1("lkurgency", "Urgency", 3, _("Medium", l))
@@ -5090,4 +5108,27 @@ def update_34301(dbo):
     add_column(dbo, "onlineformfield", "SpeciesID", dbo.type_integer)
     dbo.execute_dbupdate("UPDATE onlineformfield SET SpeciesID = -1")
 
+def update_34302(dbo):
+    # Add lksynunk
+    l = dbo.locale
+    sql = "CREATE TABLE lksynunk ( ID INTEGER NOT NULL PRIMARY KEY, " \
+        "Name %(short)s NOT NULL)" % { "short": dbo.type_shorttext }
+    dbo.execute_dbupdate(sql)
+    dbo.execute_dbupdate("INSERT INTO lksynunk VALUES (0, ?)", [ _("Unknown", l) ])
+    dbo.execute_dbupdate("INSERT INTO lksynunk VALUES (1, ?)", [ _("No", l) ])
+    dbo.execute_dbupdate("INSERT INTO lksynunk VALUES (2, ?)", [ _("Yes", l) ])
+    dbo.execute_dbupdate("INSERT INTO lksynunk VALUES (5, ?)", [ _("Over 5", l) ])
+    dbo.execute_dbupdate("INSERT INTO lksynunk VALUES (12, ?)", [ _("Over 12", l) ])
 
+def update_34303(dbo):
+    # Add lkstransportstatus
+    l = dbo.locale
+    sql = "CREATE TABLE lkstransportstatus ( ID INTEGER NOT NULL PRIMARY KEY, " \
+        "Name %(short)s NOT NULL)" % { "short": dbo.type_shorttext }
+    dbo.execute_dbupdate(sql)
+    dbo.execute_dbupdate("INSERT INTO lkstransportstatus VALUES (1, ?)", [ _("New", l) ])
+    dbo.execute_dbupdate("INSERT INTO lkstransportstatus VALUES (2, ?)", [ _("Confirmed", l) ])
+    dbo.execute_dbupdate("INSERT INTO lkstransportstatus VALUES (3, ?)", [ _("Hold", l) ])
+    dbo.execute_dbupdate("INSERT INTO lkstransportstatus VALUES (4, ?)", [ _("Scheduled", l) ])
+    dbo.execute_dbupdate("INSERT INTO lkstransportstatus VALUES (10, ?)", [ _("Cancelled", l) ])
+    dbo.execute_dbupdate("INSERT INTO lkstransportstatus VALUES (11, ?)", [ _("Completed", l) ])

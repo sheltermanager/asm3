@@ -82,9 +82,11 @@ def get_transport_query(dbo):
         "t.PickupAddress, t.PickupTown, t.PickupCounty, t.PickupPostcode, t.PickupCountry, " \
         "t.DropoffAddress, t.DropoffTown, t.DropoffCounty, t.DropoffPostcode, t.DropoffCountry, " \
         "ma.MediaName AS WebsiteMediaName, ma.Date AS WebsiteMediaDate, " \
-        "a.AnimalName, a.ShelterCode, a.ShortCode, s.SpeciesName, a.BreedName, x.Sex " \
+        "a.AnimalName, a.ShelterCode, a.ShortCode, s.SpeciesName, a.BreedName, x.Sex, " \
+        "st.Name AS StatusName " \
         "FROM animaltransport t " \
         "INNER JOIN transporttype tt ON tt.ID = t.TransportTypeID " \
+        "LEFT OUTER JOIN lkstransportstatus st ON st.ID = t.Status " \
         "LEFT OUTER JOIN animal a ON t.AnimalID = a.ID " \
         "LEFT OUTER JOIN species s ON s.ID = a.SpeciesID " \
         "LEFT OUTER JOIN lksex x ON x.ID = a.Sex " \

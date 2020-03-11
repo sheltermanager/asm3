@@ -1,6 +1,8 @@
 43
 ================
 
+11/03/20 Add missing lkstransportstatus #742
+11/03/20 Extra categories for good with children #454
 07/03/20 Upgrade to JQuery 3.4.1 and JQueryUI 1.12.1 #739
 05/03/20 Show description on stock level screen
 02/03/20 Fix bug that caused 2 slashes in a value to break table sorting

@@ -202,7 +202,7 @@ def get_animal_query(dbo):
         "(SELECT Name FROM lksyesno l WHERE l.ID = a.IsDOA) AS IsDOAName, " \
         "(SELECT Name FROM lksyesno l WHERE l.ID = a.IsTransfer) AS IsTransferName, " \
         "(SELECT Name FROM lksyesno l WHERE l.ID = a.IsPickup) AS IsPickupName, " \
-        "(SELECT Name FROM lksynun l WHERE l.ID = a.IsGoodWithChildren) AS IsGoodWithChildrenName, " \
+        "(SELECT Name FROM lksynunk l WHERE l.ID = a.IsGoodWithChildren) AS IsGoodWithChildrenName, " \
         "(SELECT Name FROM lksynun l WHERE l.ID = a.IsGoodWithCats) AS IsGoodWithCatsName, " \
         "(SELECT Name FROM lksynun l WHERE l.ID = a.IsGoodWithDogs) AS IsGoodWithDogsName, " \
         "(SELECT Name FROM lksynun l WHERE l.ID = a.IsHouseTrained) AS IsHouseTrainedName, " \
