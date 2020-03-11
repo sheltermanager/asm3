@@ -1259,8 +1259,8 @@ def get_yesno(dbo):
     return dbo.query("SELECT * FROM lksyesno ORDER BY Name")
 
 def get_ynun(dbo):
-    return dbo.query("SELECT * FROM lksynun ORDER BY Name")
+    return dbo.query("SELECT * FROM lksynun ORDER BY ID")
 
 def get_ynunk(dbo):
-    return dbo.query("SELECT * FROM lksynunk ORDER BY Name")
+    return dbo.query("SELECT * FROM lksynunk ORDER BY ID")
 

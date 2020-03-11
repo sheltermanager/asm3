@@ -61,9 +61,9 @@ class SavourLifePublisher(AbstractPublisher):
         """
         Translates our good with fields Unknown/No/Yes to SOL's NULL/False/True
         """
-        if x == 0: return None
+        if x == 0: return True
         elif x == 1: return False
-        else: return True
+        else: return None
 
     def run(self):
         

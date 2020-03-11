@@ -5114,9 +5114,9 @@ def update_34302(dbo):
     sql = "CREATE TABLE lksynunk ( ID INTEGER NOT NULL PRIMARY KEY, " \
         "Name %(short)s NOT NULL)" % { "short": dbo.type_shorttext }
     dbo.execute_dbupdate(sql)
-    dbo.execute_dbupdate("INSERT INTO lksynunk VALUES (0, ?)", [ _("Unknown", l) ])
+    dbo.execute_dbupdate("INSERT INTO lksynunk VALUES (0, ?)", [ _("Yes", l) ])
     dbo.execute_dbupdate("INSERT INTO lksynunk VALUES (1, ?)", [ _("No", l) ])
-    dbo.execute_dbupdate("INSERT INTO lksynunk VALUES (2, ?)", [ _("Yes", l) ])
+    dbo.execute_dbupdate("INSERT INTO lksynunk VALUES (2, ?)", [ _("Unknown", l) ])
     dbo.execute_dbupdate("INSERT INTO lksynunk VALUES (5, ?)", [ _("Over 5", l) ])
     dbo.execute_dbupdate("INSERT INTO lksynunk VALUES (12, ?)", [ _("Over 12", l) ])
 
