@@ -56,6 +56,12 @@ The All Publishers tab allows you to set options common to all internet publishe
   Animals who are marked as held awaiting reclaim will *not* be registered until
   after the hold is removed.
 
+* Update adoption websites every: Some adoption websites will accept updates
+  more frequently than the 24 hour default. Setting this option to a value
+  smaller than 24 will update those services at the chosen interval. Services
+  affected by this value are PetFinder, AdoptAPet, PetRescue, SavourLife and
+  Maddie's Pet Assistant
+
 * Reupload animal images every time: Ticking this box will tell the publisher
   to reupload images for all the animals published. Normally, ASM will not
   upload an image it has previously uploaded to save bandwidth. ASM will detect
