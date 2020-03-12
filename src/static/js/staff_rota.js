@@ -114,7 +114,7 @@ $(function() {
                 }
                 // If there are some flags set in the filter box, make sure this person has them before
                 // rendering their row
-                if ($("#flags").val()) {
+                if ($("#flags").val().length > 0) {
                     if (!p.ADDITIONALFLAGS) { return; }
                     if (!common.array_overlap($("#flags").val(), p.ADDITIONALFLAGS.split("|"))) { return ; }
                 }
@@ -303,15 +303,13 @@ $(function() {
                 $("#flags option[value='" + v + "']").remove();
             });
             $("#flags").change();
-            // Default the staff flag to selected
-            $("#flags option[value='staff']").prop("selected", true);
             // Mark set any flags that were passed from the backend as params to the page
             if (controller.flagsel) {
                 $.each(controller.flagsel.split("|"), function(i, v) {
                     $("#flags option[value='" + v + "']").prop("selected", true); 
                 });
+                $("#flags").change();
             }
-            $("#flags").change();
             staff_rota.generate_table();
         },
 
