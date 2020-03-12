@@ -261,6 +261,7 @@ DEFAULTS = {
     "PublisherUseComments": "Yes",
     "PublisherIgnoreFTPOverride": "No",
     "PublisherPresets": "includefosters excludeunder=12",
+    "PublisherSub24Frequency": "0",
     "QuicklinksID": "40,46,25,31,34,19,20",
     "QuicklinksHomeScreen": "Yes",
     "QuicklinksAllScreens": "No",
@@ -1070,6 +1071,9 @@ def publisher_presets(dbo):
 
 def publisher_ignore_ftp_override(dbo):
     return cboolean(dbo, "PublisherIgnoreFTPOverride", DEFAULTS["PublisherIgnoreFTPOverride"] == "Yes")
+
+def publisher_sub24_frequency(dbo):
+    return cint(dbo, "PublisherSub24Frequency", DEFAULTS["PublisherSub24Frequency"])
 
 def publishers_enabled(dbo):
     return cstring(dbo, "PublishersEnabled")

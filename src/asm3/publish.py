@@ -16,82 +16,98 @@ PUBLISHER_LIST = collections.OrderedDict()
 PUBLISHER_LIST["html"] = {
     "label":    "Publish HTML via FTP",
     "class":    asm3.publishers.html.HTMLPublisher,
-    "locales":  ""
+    "locales":  "",
+    "sub24hour": False
 }
 PUBLISHER_LIST["ap"] = {
     "label":    "Publish to AdoptAPet.com",
     "class":    asm3.publishers.adoptapet.AdoptAPetPublisher,
-    "locales":  "en en_CA fr_CA en_MX es_MX"
+    "locales":  "en en_CA fr_CA en_MX es_MX",
+    "sub24hour": True
 }
 PUBLISHER_LIST["hlp"] = {
     "label":    "Publish to HelpingLostPets.com",
     "class":    asm3.publishers.helpinglostpets.HelpingLostPetsPublisher,
-    "locales":  ""
+    "locales":  "",
+    "sub24hour": False
 }
 PUBLISHER_LIST["mf"] = {
     "label":    "Publish to Maddie's Pet Assistant",
     "class":    asm3.publishers.maddiesfund.MaddiesFundPublisher,
-    "locales":  "en en_CA en_AU"
+    "locales":  "en en_CA en_AU",
+    "sub24hour": True
 }
 PUBLISHER_LIST["pf"] = {
     "label":    "Publish to PetFinder.com",
     "class":    asm3.publishers.petfinder.PetFinderPublisher,
-    "locales":  "en en_CA en_MX es_MX"
+    "locales":  "en en_CA en_MX es_MX",
+    "sub24hour": True
 }
 PUBLISHER_LIST["pr"] = {
     "label":    "Publish to PetRescue.com.au",
     "class":    asm3.publishers.petrescue.PetRescuePublisher,
-    "locales":  "en_AU"
+    "locales":  "en_AU",
+    "sub24hour": True
 }
 PUBLISHER_LIST["sl"] = {
     "label":    "Publish to Savour-Life.com.au",
     "class":    asm3.publishers.savourlife.SavourLifePublisher,
-    "locales":  "en_AU"
+    "locales":  "en_AU",
+    "sub24hour": True
 }
 PUBLISHER_LIST["pcuk"] = {
     "label":    "Publish to PetsLocated.com",
     "class":    asm3.publishers.petslocateduk.PetsLocatedUKPublisher,
-    "locales":  "en_GB"
+    "locales":  "en_GB",
+    "sub24hour": False
 }
 PUBLISHER_LIST["rg"] = {
     "label":    "Publish to RescueGroups.org",
     "class":    asm3.publishers.rescuegroups.RescueGroupsPublisher,
-    "locales":  "en"
+    "locales":  "en",
+    "sub24hour": False
 }
 PUBLISHER_LIST["ak"] = {
     "label":    "Register animals with AKC Reunite Microchips",
     "class":    asm3.publishers.akcreunite.AKCReunitePublisher,
-    "locales":  "en"
+    "locales":  "en",
+    "sub24hour": False
 }
 PUBLISHER_LIST["abuk"] = {
     "label":    "Register animals with Identibase UK Microchips",
     "class":    asm3.publishers.anibaseuk.AnibaseUKPublisher,
-    "locales":  "en_GB"
+    "locales":  "en_GB",
+    "sub24hour": False
 }
 PUBLISHER_LIST["ptuk"] = {
     "label":    "Register animals with AVID UK Microchips",
     "class":    asm3.publishers.pettracuk.PETtracUKPublisher,
-    "locales":  "en_GB"
+    "locales":  "en_GB",
+    "sub24hour": False
 }
 PUBLISHER_LIST["fa"] = {
     "label":    "Register animal microchips with FoundAnimals.org",
     "class":    asm3.publishers.foundanimals.FoundAnimalsPublisher,
-    "locales":  "en"
+    "locales":  "en",
+    "sub24hour": False
 }
 PUBLISHER_LIST["ha"] = {
     "label":    "Register animals with HomeAgain Microchips",
     "class":    asm3.publishers.homeagain.HomeAgainPublisher,
-    "locales":  "en"
+    "locales":  "en",
+    "sub24hour": False
 }
 PUBLISHER_LIST["pl"] = {
     "label":    "Register animals with PetLink Microchips",
     "class":    asm3.publishers.petlink.PetLinkPublisher,
-    "locales":  "en en_CA en_MX es_MX"
+    "locales":  "en en_CA en_MX es_MX",
+    "sub24hour": False
 }
 PUBLISHER_LIST["st"] = {
     "label":    "Register animals with SmartTag Pet ID",
     "class":    asm3.publishers.smarttag.SmartTagPublisher,
-    "locales":  "en"
+    "locales":  "en",
+    "sub24hour": False
 }
 
 def delete_old_publish_logs(dbo):

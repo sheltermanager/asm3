@@ -142,12 +142,36 @@ def reports_email(dbo):
 def publish_3pty(dbo):
     try:
         publishers = configuration.publishers_enabled(dbo)
+        freq = configuration.publisher_sub24_frequency(dbo)
         for p in publishers.split(" "):
-            if p != "html": # We do html/ftp publishing separate from others
-                publish.start_publisher(dbo, p, user="system", newthread=False)
+            # Services that we do more frequently than 24 hours are handled by 3pty_sub24
+            if publish.PUBLISHER_LIST[p]["sub24hour"] and freq != 24: continue
+            # We do html/ftp publishing separate from other publishers
+            if p == "html": continue
+            publish.start_publisher(dbo, p, user="system", newthread=False)
     except:
         em = str(sys.exc_info()[0])
         al.error("FAIL: uncaught error running third party publishers: %s" % em, "cron.publish_3pty", dbo, sys.exc_info())
+
+def publish_3pty_sub24(dbo):
+    try:
+        publishers = configuration.publishers_enabled(dbo)
+        freq = configuration.publisher_sub24_frequency(dbo)
+        hournow = dbo.today().hour
+        hourstorun = [0,12]
+        if freq == 0: return # 24 hour mode is covered by regular publish_3pty with the batch
+        if freq == 2: hourstorun = [0,2,4,6,8,10,12,14,16,18,20,22]
+        if freq == 4: hourstorun = [1,5,9,13,17,21]
+        if freq == 6: hourstorun = [3,9,13,19]
+        if freq == 8: hourstorun = [1,9,17]
+        for p in publishers.split(" "):
+            if not publish.PUBLISHER_LIST[p]["sub24hour"]: continue
+            if hournow in hourstorun:
+                publish.start_publisher(dbo, p, user="system", newthread=False)
+    except:
+        em = str(sys.exc_info()[0])
+        al.error("FAIL: uncaught error running sub24 third party publishers: %s" % em, "cron.publish_3pty_sub24", dbo, sys.exc_info())
+
 
 def publish_html(dbo):
     try :
@@ -396,6 +420,8 @@ def run(dbo, mode):
         reports_email(dbo)
     elif mode == "publish_3pty":
         publish_3pty(dbo)
+    elif mode == "publish_3pty_sub24":
+        publish_3pty_sub24(dbo)
     elif mode == "publish_html":
         publish_html(dbo)
     elif mode == "maint_recode_all":
