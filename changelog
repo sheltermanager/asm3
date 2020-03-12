@@ -1,6 +1,7 @@
 43
 ================
 
+12/03/20 Fix JQuery Mobile by adding JQuery 2.2.4 #739
 12/03/20 Show alert for clinic appointments due today #635
 12/03/20 Configurable publisher frequency for adoption websites #686
 12/03/20 Use Credit/Debit instead of Deposit/Withdrawal labels #393

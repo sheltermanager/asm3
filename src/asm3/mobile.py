@@ -18,7 +18,7 @@ import asm3.users
 import asm3.utils
 from asm3.i18n import _, python2display, now, add_days, add_months, add_years, format_currency, format_time
 from asm3.sitedefs import MULTIPLE_DATABASES
-from asm3.sitedefs import ELECTRONIC_SIGNATURES, JQUERY_JS, JQUERY_MOBILE_CSS, JQUERY_MOBILE_JS, JQUERY_UI_JS, SIGNATURE_JS, MOMENT_JS, TOUCHPUNCH_JS
+from asm3.sitedefs import ELECTRONIC_SIGNATURES, JQUERY_JS, JQUERY_MOBILE_CSS, JQUERY_MOBILE_JS, JQUERY_MOBILE_JQUERY_JS, JQUERY_UI_JS, SIGNATURE_JS, MOMENT_JS, TOUCHPUNCH_JS
 
 def header(l):
     return """<!DOCTYPE html>
@@ -42,7 +42,7 @@ def header(l):
     """ % {
         "title":    _("Animal Shelter Manager", l),
         "css":      asm3.html.asm_css_tag("asm-icon.css"),
-        "scripts":  asm3.html.script_tag(JQUERY_JS) + \
+        "scripts":  asm3.html.script_tag(JQUERY_MOBILE_JQUERY_JS) + \
             asm3.html.css_tag(JQUERY_MOBILE_CSS) + \
             asm3.html.script_tag(JQUERY_MOBILE_JS) + \
             asm3.html.asm_script_tag("mobile.js")
