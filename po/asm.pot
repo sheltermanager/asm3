@@ -23,8 +23,8 @@ msgstr ""
 
 #: common_personchooser.js users.js incident.js waitinglist_results.js
 #: person.js animal_find.js stocklevel.js incident_find.js common.js
-#: lostfound_find.js options.js person_find.js clinic_appointment.js log.js
-#: incident_new.js person_new.js
+#: onlineform.js lostfound_find.js options.js person_find.js
+#: clinic_appointment.js log.js incident_new.js person_new.js
 msgid "(all)"
 msgstr ""
 
@@ -157,7 +157,7 @@ msgstr ""
 msgid "A4"
 msgstr ""
 
-#: incident_find_results.js onlineforms.js common.js header_edit_header.js
+#: incident_find_results.js common.js header_edit_header.js
 #: person_find_results.js
 msgid "ACO"
 msgstr ""
@@ -1110,7 +1110,7 @@ msgstr ""
 msgid "Balance"
 msgstr ""
 
-#: onlineforms.js common.js header_edit_header.js person_find_results.js
+#: common.js header_edit_header.js person_find_results.js
 msgid "Banned"
 msgstr ""
 
@@ -1853,6 +1853,10 @@ msgstr ""
 msgid "Creating..."
 msgstr ""
 
+#: accounts_trx.js
+msgid "Credit"
+msgstr ""
+
 #: animal_new.js animal.js
 msgid "Crossbreed"
 msgstr ""
@@ -2011,6 +2015,10 @@ msgstr ""
 
 #: animal.js
 msgid "Death"
+msgstr ""
+
+#: accounts_trx.js
+msgid "Debit"
 msgstr ""
 
 #: clinic_calendar.js calendarview.js common.js
@@ -2355,7 +2363,7 @@ msgstr ""
 msgid "Deleting..."
 msgstr ""
 
-#: traploan.js accounts_trx.js
+#: traploan.js
 msgid "Deposit"
 msgstr ""
 
@@ -2556,7 +2564,7 @@ msgstr ""
 msgid "Done"
 msgstr ""
 
-#: onlineforms.js common.js header_edit_header.js person_find_results.js
+#: common.js header_edit_header.js person_find_results.js
 msgid "Donor"
 msgstr ""
 
@@ -2568,7 +2576,7 @@ msgstr ""
 msgid "Download"
 msgstr ""
 
-#: transport.js onlineforms.js common.js header_edit_header.js
+#: transport.js common.js header_edit_header.js
 msgid "Driver"
 msgstr ""
 
@@ -3444,8 +3452,8 @@ msgstr ""
 msgid "Fostered Animals"
 msgstr ""
 
-#: animal_new.js animal_find_results.js onlineforms.js common.js options.js
-#: shelterview.js header_edit_header.js person_find_results.js
+#: animal_new.js animal_find_results.js common.js options.js shelterview.js
+#: header_edit_header.js person_find_results.js
 msgid "Fosterer"
 msgstr ""
 
@@ -3788,7 +3796,7 @@ msgstr ""
 msgid "Homecheck areas"
 msgstr ""
 
-#: onlineforms.js common.js header_edit_header.js person_find_results.js
+#: common.js header_edit_header.js person_find_results.js
 msgid "Homechecked"
 msgstr ""
 
@@ -3796,8 +3804,7 @@ msgstr ""
 msgid "Homechecked by"
 msgstr ""
 
-#: person.js onlineforms.js common.js header_edit_header.js
-#: person_find_results.js
+#: person.js common.js header_edit_header.js person_find_results.js
 msgid "Homechecker"
 msgstr ""
 
@@ -4700,7 +4707,7 @@ msgstr ""
 msgid "Medical regimens need an animal, name, dosage, a start date and frequencies."
 msgstr ""
 
-#: onlineforms.js common.js header_edit_header.js person_find_results.js
+#: common.js header_edit_header.js person_find_results.js
 msgid "Member"
 msgstr ""
 
@@ -5356,7 +5363,7 @@ msgstr ""
 msgid "Other Account"
 msgstr ""
 
-#: onlineforms.js common.js
+#: common.js
 msgid "Other Shelter"
 msgstr ""
 
@@ -6301,9 +6308,9 @@ msgstr ""
 msgid "Results"
 msgstr ""
 
-#: move_retailer.js onlineforms.js animal_find.js common.js
-#: common_animalchoosermulti.js options.js shelterview.js header_edit_header.js
-#: movements.js person_find_results.js
+#: move_retailer.js animal_find.js common.js common_animalchoosermulti.js
+#: options.js shelterview.js header_edit_header.js movements.js
+#: person_find_results.js
 msgid "Retailer"
 msgstr ""
 
@@ -7049,8 +7056,7 @@ msgstr ""
 msgid "Split species pages with a baby/adult prefix"
 msgstr ""
 
-#: onlineforms.js common.js staff_rota.js header_edit_header.js
-#: person_find_results.js
+#: common.js staff_rota.js header_edit_header.js person_find_results.js
 msgid "Staff"
 msgstr ""
 
@@ -8213,7 +8219,7 @@ msgstr ""
 msgid "Type of animal links to show"
 msgstr ""
 
-#: onlineforms.js common.js
+#: common.js
 msgid "UK Giftaid"
 msgstr ""
 
@@ -8460,16 +8466,11 @@ msgstr ""
 msgid "Valid tokens for the subject and text"
 msgstr ""
 
-#: stocklevel.js
-msgid "Value"
-msgstr ""
-
 #: mailmerge.js
 msgid "Vertical Pitch"
 msgstr ""
 
-#: onlineforms.js common.js test.js header_edit_header.js
-#: person_find_results.js
+#: common.js test.js header_edit_header.js person_find_results.js
 msgid "Vet"
 msgstr ""
 
@@ -8657,8 +8658,7 @@ msgstr ""
 msgid "Visual Theme"
 msgstr ""
 
-#: onlineforms.js common.js staff_rota.js header_edit_header.js
-#: person_find_results.js
+#: common.js staff_rota.js header_edit_header.js person_find_results.js
 msgid "Volunteer"
 msgstr ""
 
@@ -8887,10 +8887,6 @@ msgstr ""
 
 #: reports.js
 msgid "With overnight batch"
-msgstr ""
-
-#: accounts_trx.js
-msgid "Withdrawal"
 msgstr ""
 
 #: common.js
