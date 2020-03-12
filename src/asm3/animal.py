@@ -739,6 +739,7 @@ def embellish_timeline(l, rows):
           "MICROCHIP": ( _("{0} {1}: microchipped", l), "microchip" ),
           "NEUTERED": ( _("{0} {1}: altered", l), "health" ),
           "RESERVED": ( _("{0} {1}: reserved by {2}", l), "reservation" ),
+          "CANCRESERVE": ( _("{0} {1}: cancelled reservation to {2}", l), "reservation"),
           "ADOPTED": ( _("{0} {1}: adopted by {2}", l), "movement" ),
           "FOSTERED": ( _("{0} {1}: fostered to {2}", l), "movement" ),
           "TRANSFER": ( _("{0} {1}: transferred to {2}", l), "movement" ),
@@ -796,6 +797,12 @@ def get_timeline(dbo, limit = 500, age = 120):
             "INNER JOIN owner ON adoption.OwnerID = owner.ID " \
             "WHERE NonShelterAnimal = 0 AND MovementDate Is Null AND ReservationDate Is Not Null " \
             "ORDER BY ReservationDate DESC, animal.ID %(limit)s) " \
+        "UNION ALL (SELECT 'animal_movements' AS LinkTarget, 'CANCRESERVE' AS Category, ReservationCancelledDate AS EventDate, animal.ID, " \
+            "ShelterCode AS Text1, AnimalName AS Text2, owner.OwnerName AS Text3, adoption.LastChangedBy FROM animal " \
+            "INNER JOIN adoption ON adoption.AnimalID = animal.ID " \
+            "INNER JOIN owner ON adoption.OwnerID = owner.ID " \
+            "WHERE NonShelterAnimal = 0 AND MovementDate Is Null AND ReservationDate Is Not Null AND ReservationCancelledDate Is Not Null " \
+            "ORDER BY ReservationCancelledDate DESC, animal.ID %(limit)s) " \
         "UNION ALL (SELECT 'animal_movements' AS LinkTarget, 'ADOPTED' AS Category, MovementDate AS EventDate, animal.ID, " \
             "ShelterCode AS Text1, AnimalName AS Text2, owner.OwnerName AS Text3, adoption.LastChangedBy FROM animal " \
             "INNER JOIN adoption ON adoption.AnimalID = animal.ID " \
