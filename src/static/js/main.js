@@ -57,10 +57,10 @@ $(function() {
             if (!controller.alerts || controller.alerts.length == 0) { return; }
             alerts = controller.alerts[0];
             var totalalerts = alerts.DUEVACC + alerts.EXPVACC + alerts.DUETEST + alerts.DUEMED + 
-                alerts.URGENTWL +  alerts.LONGRSV + alerts.DUEDON + alerts.ENDTRIAL + alerts.NOTNEU + 
-                alerts.PUBLISH + alerts.LOOKFOR + alerts.LOSTFOUND + alerts.INFORM + alerts.ACUNFINE + 
-                alerts.ACUNDISP + alerts.ACUNCOMP + alerts.ACFOLL + alerts.TLOVER + alerts.STEXP + 
-                alerts.STEXPSOON + alerts.TRNODRV;
+                alerts.DUECLINIC + alerts.URGENTWL +  alerts.LONGRSV + alerts.DUEDON + alerts.ENDTRIAL + 
+                alerts.NOTNEU + alerts.PUBLISH + alerts.LOOKFOR + alerts.LOSTFOUND + alerts.INFORM + 
+                alerts.ACUNFINE + alerts.ACUNDISP + alerts.ACUNCOMP + alerts.ACFOLL + alerts.TLOVER + 
+                alerts.STEXP + alerts.STEXPSOON + alerts.TRNODRV;
             if (config.bool("EmblemNotForAdoption")) {
                 totalalerts += alerts.NOTADOPT;
             }
@@ -114,6 +114,16 @@ $(function() {
                             _("{plural3} medical treatments need to be administered today")
                         ]) + '</a><br />';
                 }
+                if (alerts.DUECLINIC > 0 && common.has_permission("vcl")) {
+                    s += '<a href="clinic_waitingroom">' + html.icon("health") + ' ' + 
+                        common.ntranslate(alerts.DUECLINIC, [
+                            _("{plural0} clinic appointment today"),
+                            _("{plural1} clinic appointments today"),
+                            _("{plural2} clinic appointments today"),
+                            _("{plural3} clinic appointments today")
+                        ]) + '</a><br />';
+                }
+
                 if (alerts.URGENTWL > 0 && common.has_permission("vwl")) {
                     s += '<a href="waitinglist_results?priorityfloor=1">' + html.icon("waitinglist") + ' ' + 
                         common.ntranslate(alerts.URGENTWL, [
