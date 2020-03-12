@@ -165,7 +165,7 @@ def get_animal_data_query(dbo, pc, animalid=0):
     sql += " AND NOT EXISTS(SELECT ID FROM adoption WHERE MovementType = 1 AND AnimalID = a.ID AND MovementDate > %s)" % dbo.sql_value(dbo.today())
     # Build a set of OR clauses based on any movements/locations
     moveor = []
-    if len(pc.internalLocations) > 0 and pc.internalLocations[0].strip() != "null":
+    if len(pc.internalLocations) > 0 and pc.internalLocations[0].strip() != "null" and "".join(pc.internalLocations) != "":
         moveor.append("(a.Archived = 0 AND a.ActiveMovementID = 0 AND a.ShelterLocation IN (%s))" % ",".join(pc.internalLocations))
     else:
         moveor.append("(a.Archived = 0 AND a.ActiveMovementID = 0)")
