@@ -303,13 +303,15 @@ $(function() {
                 $("#flags option[value='" + v + "']").remove();
             });
             $("#flags").change();
-            // Mark set any that were passed during page load
+            // Default the staff flag to selected
+            $("#flags option[value='staff']").prop("selected", true);
+            // Mark set any flags that were passed from the backend as params to the page
             if (controller.flagsel) {
                 $.each(controller.flagsel.split("|"), function(i, v) {
                     $("#flags option[value='" + v + "']").prop("selected", true); 
                 });
-                $("#flags").change();
             }
+            $("#flags").change();
             staff_rota.generate_table();
         },
 

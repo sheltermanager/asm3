@@ -1,6 +1,7 @@
 43
 ================
 
+12/03/20 Fix staff rota display after JQUI update
 11/03/20 Add missing lkstransportstatus #742
 11/03/20 Extra categories for good with children #454
 07/03/20 Upgrade to JQuery 3.4.1 and JQueryUI 1.12.1 #739
