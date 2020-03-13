@@ -145,7 +145,7 @@ def publish_3pty(dbo):
         freq = configuration.publisher_sub24_frequency(dbo)
         for p in publishers.split(" "):
             # Services that we do more frequently than 24 hours are handled by 3pty_sub24
-            if publish.PUBLISHER_LIST[p]["sub24hour"] and freq != 24: continue
+            if publish.PUBLISHER_LIST[p]["sub24hour"] and freq != 0: continue
             # We do html/ftp publishing separate from other publishers
             if p == "html": continue
             publish.start_publisher(dbo, p, user="system", newthread=False)
@@ -160,10 +160,11 @@ def publish_3pty_sub24(dbo):
         hournow = dbo.today().hour
         hourstorun = [0,12]
         if freq == 0: return # 24 hour mode is covered by regular publish_3pty with the batch
-        if freq == 2: hourstorun = [0,2,4,6,8,10,12,14,16,18,20,22]
-        if freq == 4: hourstorun = [1,5,9,13,17,21]
-        if freq == 6: hourstorun = [3,9,13,19]
-        if freq == 8: hourstorun = [1,9,17]
+        elif freq == 2: hourstorun = [0,2,4,6,8,10,12,14,16,18,20,22]
+        elif freq == 4: hourstorun = [1,5,9,13,17,21]
+        elif freq == 6: hourstorun = [3,9,13,19]
+        elif freq == 8: hourstorun = [1,9,17]
+        elif freq == 12: hourstorun = [0,12]
         for p in publishers.split(" "):
             if not publish.PUBLISHER_LIST[p]["sub24hour"]: continue
             if hournow in hourstorun:
@@ -171,7 +172,6 @@ def publish_3pty_sub24(dbo):
     except:
         em = str(sys.exc_info()[0])
         al.error("FAIL: uncaught error running sub24 third party publishers: %s" % em, "cron.publish_3pty_sub24", dbo, sys.exc_info())
-
 
 def publish_html(dbo):
     try :
