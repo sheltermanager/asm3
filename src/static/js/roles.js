@@ -350,9 +350,9 @@ $(function() {
                 var rolename = $(rrow + ".role-name").val();
                 var perms = $(rrow + ".role-map").val().replace(/\*/g, "").split(" ");
                 $("#rolename").val(_("Copy of {0}").replace("{0}", rolename));
-                $(".token").attr("checked", false);
+                $(".token").prop("checked", false);
                 $.each(perms, function(i, v) {
-                    $("#" + v).prop("checked", true);
+                    if (v) { $("#" + v).prop("checked", true); }
                 });
                 validate.reset("dialog-add");
                 $("#dialog-add").dialog("option", "buttons", addbuttons);
