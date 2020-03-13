@@ -334,7 +334,7 @@ $(function() {
             $("#button-new").button().click(function() {
                validate.reset("dialog-add");
                $("#dialog-add .asm-textbox").val("");
-               $("#dialog-add input:checkbox").attr("checked", false);
+               $("#dialog-add input:checkbox").prop("checked", false);
                $("#dialog-add").dialog("option", "buttons", addbuttons);
                $("#dialog-add").dialog("option", "title", _("Add role"));
                $("#dialog-add").dialog("open"); 
@@ -386,9 +386,9 @@ $(function() {
                 $("#roleid").val($(this).attr("data"));
                 $("#rolename").val($(rrow + ".role-name").val());
                 var perms = $(rrow + ".role-map").val().replace(/\*/g, "").split(" ");
-                $(".token").attr("checked", false);
+                $(".token").prop("checked", false);
                 $.each(perms, function(i, v) {
-                    $("#" + v).prop("checked", true);
+                    if (v) { $("#" + v).prop("checked", true); }
                 });
                 $("#dialog-add").dialog("option", "buttons", editbuttons);
                 $("#dialog-add").dialog("option", "title", _("Edit role"));
