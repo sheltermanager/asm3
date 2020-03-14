@@ -4740,33 +4740,22 @@ class person_traploan(JSONEndpoint):
 
 class person_vouchers(JSONEndpoint):
     url = "person_vouchers"
+    js_module = "vouchers"
     get_permissions = asm3.users.VIEW_VOUCHER
 
     def controller(self, o):
         dbo = o.dbo
         p = asm3.person.get_person(dbo, o.post.integer("id"))
         if p is None: self.notfound()
-        vouchers = asm3.financial.get_vouchers(dbo, o.post.integer("id"))
-        asm3.al.debug("got %d vouchers" % len(vouchers), "code.person_vouchers", dbo)
+        vouchers = asm3.financial.get_person_vouchers(dbo, o.post.integer("id"))
+        asm3.al.debug("got %d person vouchers" % len(vouchers), "code.person_vouchers", dbo)
         return {
-            "vouchertypes": asm3.lookups.get_voucher_types(dbo),
+            "name": "person_vouchers",
             "rows": vouchers,
             "person": p,
-            "tabcounts": asm3.person.get_satellite_counts(dbo, p["ID"])[0]
+            "tabcounts": asm3.person.get_satellite_counts(dbo, p["ID"])[0],
+            "vouchertypes": asm3.lookups.get_voucher_types(dbo)
         }
-
-    def post_create(self, o):
-        self.check(asm3.users.ADD_VOUCHER)
-        return asm3.financial.insert_voucher_from_form(o.dbo, o.user, o.post)
-
-    def post_update(self, o):
-        self.check(asm3.users.CHANGE_VOUCHER)
-        asm3.financial.update_voucher_from_form(o.dbo, o.user, o.post)
-
-    def post_delete(self, o):
-        self.check(asm3.users.DELETE_VOUCHER)
-        for vid in o.post.integer_list("ids"):
-            asm3.financial.delete_voucher(o.dbo, o.user, vid)
 
 class publish(JSONEndpoint):
     url = "publish"
@@ -5607,6 +5596,37 @@ class vaccination(JSONEndpoint):
         newdate = o.post.date("newdate")
         for vid in o.post.integer_list("ids"):
             asm3.medical.update_vaccination_required(o.dbo, o.user, vid, newdate)
+
+class voucher(JSONEndpoint):
+    url = "voucher"
+    js_module = "vouchers"
+    get_permissions = asm3.users.VIEW_VOUCHER
+
+    def controller(self, o):
+        dbo = o.dbo
+        offset = o.post["offset"]
+        if offset == "": offset = "i31"
+        vouchers = asm3.financial.get_vouchers(dbo, offset)
+        asm3.al.debug("got %d vouchers for %s" % (len(vouchers), offset), "code.person_vouchers", dbo)
+        return {
+            "name": "voucher",
+            "rows": vouchers,
+            "templates": asm3.template.get_document_templates(dbo),
+            "vouchertypes": asm3.lookups.get_voucher_types(dbo)
+        }
+
+    def post_create(self, o):
+        self.check(asm3.users.ADD_VOUCHER)
+        return asm3.financial.insert_voucher_from_form(o.dbo, o.user, o.post)
+
+    def post_update(self, o):
+        self.check(asm3.users.CHANGE_VOUCHER)
+        asm3.financial.update_voucher_from_form(o.dbo, o.user, o.post)
+
+    def post_delete(self, o):
+        self.check(asm3.users.DELETE_VOUCHER)
+        for vid in o.post.integer_list("ids"):
+            asm3.financial.delete_voucher(o.dbo, o.user, vid)
 
 class waitinglist(JSONEndpoint):
     url = "waitinglist"

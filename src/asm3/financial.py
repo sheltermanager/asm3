@@ -104,10 +104,12 @@ def get_licence_query(dbo):
 def get_voucher_query(dbo):
     return "SELECT ov.*, v.VoucherName, o.OwnerName, " \
         "o.OwnerAddress, o.OwnerTown, o.OwnerCounty, o.OwnerPostcode, " \
-        "o.HomeTelephone, o.WorkTelephone, o.MobileTelephone, o.EmailAddress, o.AdditionalFlags " \
+        "o.HomeTelephone, o.WorkTelephone, o.MobileTelephone, o.EmailAddress, o.AdditionalFlags, " \
+        "a.AnimalName, a.ShelterCode, a.ShortCode " \
         "FROM ownervoucher ov " \
         "INNER JOIN voucher v ON v.ID = ov.VoucherID " \
-        "INNER JOIN owner o ON o.ID = ov.OwnerID "
+        "INNER JOIN owner o ON o.ID = ov.OwnerID " \
+        "LEFT OUTER JOIN animal a ON ov.AnimalID = a.ID "
 
 def get_account_code(dbo, accountid):
     """
@@ -530,14 +532,30 @@ def get_licences(dbo, offset = "i31"):
         return dbo.query(get_licence_query(dbo) + " WHERE ol.ExpiryDate >= ? AND ol.ExpiryDate <= ? ORDER BY ol.ExpiryDate DESC", 
             (dbo.today(offsetdays*-1), dbo.today()))
 
-def get_vouchers(dbo, personid):
+def get_person_vouchers(dbo, personid):
     """
-    Returns a list of vouchers for an owner
-    ID, VOUCHERNAME, VOUCHERID, DATEISSUED, DATEEXPIRED,
-    VALUE, COMMENTS
+    Returns a list of vouchers for a person
     """
     return dbo.query(get_voucher_query(dbo) + \
         "WHERE ov.OwnerID = ? ORDER BY ov.DateIssued", [personid])
+
+def get_vouchers(dbo, offset = "i31"):
+    """
+    Returns a list of vouchers 
+    offset is i to go backwards on issue date
+    or e to go forwards on expiry date
+    or p to go backwards on presented date
+    """
+    offsetdays = asm3.utils.cint(offset[1:])
+    if offset.startswith("i"):
+        return dbo.query(get_voucher_query(dbo) + " WHERE ov.DateIssued >= ? AND ov.DateIssued <= ? ORDER BY ov.DateIssued DESC", 
+            (dbo.today(offsetdays*-1), dbo.today()))
+    if offset.startswith("p"):
+        return dbo.query(get_voucher_query(dbo) + " WHERE ov.DatePresented >= ? AND ov.DatePresented <= ? ORDER BY ov.DatePresented DESC", 
+            (dbo.today(offsetdays*-1), dbo.today()))
+    if offset.startswith("e"):
+        return dbo.query(get_voucher_query(dbo) + " WHERE ov.DateExpired >= ? AND ov.DateExpired <= ? ORDER BY ov.DateExpired DESC", 
+            (dbo.today(), dbo.today(offsetdays)))
 
 def insert_donations_from_form(dbo, username, post, donationdate, force_receive = False, personid = 0, animalid = 0, movementid = 0, ignorezero = True):
     """
@@ -1104,23 +1122,35 @@ def insert_voucher_from_form(dbo, username, post):
     """
     Creates a voucher record from posted form data 
     """
-    return dbo.insert("ownervoucher", {
-        "OwnerID":      post.integer("personid"),
+    vid = dbo.insert("ownervoucher", {
+        "AnimalID":     post.integer("animal"),
+        "OwnerID":      post.integer("person"),
         "VoucherID":    post.integer("type"),
+        "VoucherCode":  post["vouchercode"],
         "DateIssued":   post.date("issued"),
         "DateExpired":  post.date("expires"),
+        "DatePresented": post.date("presented"),
         "Value":        post.integer("amount"),
         "Comments":     post["comments"]
     }, username)
+    vouchercode = post["vouchercode"]
+    if vouchercode == "": 
+        vouchercode = asm3.utils.padleft(vid, 6)
+        dbo.update("ownervoucher", vid, { "VoucherCode": vouchercode } )
+    return "%s|%s" % (vid, vouchercode)    
 
 def update_voucher_from_form(dbo, username, post):
     """
     Updates a voucher record from posted form data
     """
     dbo.update("ownervoucher", post.integer("voucherid"), {
+        "AnimalID":      post.integer("animal"),
+        "OwnerID":      post.integer("person"),
         "VoucherID":    post.integer("type"),
+        "VoucherCode":  post["vouchercode"],
         "DateIssued":   post.date("issued"),
         "DateExpired":  post.date("expires"),
+        "DatePresented": post.date("presented"),
         "Value":        post.integer("amount"),
         "Comments":     post["comments"]
     }, username)

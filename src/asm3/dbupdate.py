@@ -36,7 +36,7 @@ VERSIONS = (
     34002, 34003, 34004, 34005, 34006, 34007, 34008, 34009, 34010, 34011, 34012,
     34013, 34014, 34015, 34016, 34017, 34018, 34019, 34020, 34021, 34022, 34100,
     34101, 34102, 34103, 34104, 34105, 34106, 34107, 34108, 34109, 34110, 34111,
-    34112, 34200, 34201, 34202, 34203, 34204, 34300, 34301, 34302, 34303
+    34112, 34200, 34201, 34202, 34203, 34204, 34300, 34301, 34302, 34303, 34304
 )
 
 LATEST_VERSION = VERSIONS[-1]
@@ -1357,13 +1357,19 @@ def sql_structure(dbo):
         fid(),
         fint("OwnerID"),
         fint("VoucherID"),
+        fint("AnimalID", True),
+        fstr("VoucherCode", True),
         fdate("DateIssued"),
         fdate("DateExpired"),
+        fdate("DatePresented", True),
         fint("Value"),
         flongstr("Comments", True) ))
+    sql += index("ownervoucher_AnimalID", "ownervoucher", "AnimalID")
     sql += index("ownervoucher_OwnerID", "ownervoucher", "OwnerID")
     sql += index("ownervoucher_VoucherID", "ownervoucher", "VoucherID")
+    sql += index("ownervoucher_VoucherCode", "ownervoucher", "VoucherCode")
     sql += index("ownervoucher_DateExpired", "ownervoucher", "DateExpired")
+    sql += index("ownervoucher_DatePresented", "ownervoucher", "DatePresented")
 
     sql += table("pickuplocation", (
         fid(),
@@ -4360,12 +4366,7 @@ def update_33711(dbo):
     add_column(dbo, "ownerdonation", "ReceiptNumber", dbo.type_shorttext)
     add_index(dbo, "ownerdonation_ReceiptNumber", "ownerdonation", "ReceiptNumber")
     # Use ID to prepopulate existing records
-    if dbo.dbtype == "POSTGRESQL":
-        dbo.execute_dbupdate("UPDATE ownerdonation SET ReceiptNumber = LPAD(ID::text, 8, '0')")
-    elif dbo.dbtype == "MYSQL":
-        dbo.execute_dbupdate("UPDATE ownerdonation SET ReceiptNumber = LPAD(ID, 8, '0')")
-    else:
-        dbo.execute_dbupdate("UPDATE ownerdonation SET ReceiptNumber = ID")
+    dbo.execute_dbupdate("UPDATE ownerdonation SET ReceiptNumber = %s" % dbo.sql_zero_pad_left("ID", 8))
 
 def update_33712(dbo):
     # Add ownerdonation Sales Tax/VAT fields
@@ -5132,3 +5133,14 @@ def update_34303(dbo):
     dbo.execute_dbupdate("INSERT INTO lkstransportstatus VALUES (4, ?)", [ _("Scheduled", l) ])
     dbo.execute_dbupdate("INSERT INTO lkstransportstatus VALUES (10, ?)", [ _("Cancelled", l) ])
     dbo.execute_dbupdate("INSERT INTO lkstransportstatus VALUES (11, ?)", [ _("Completed", l) ])
+
+def update_34304(dbo):
+    # Add new ownervoucher columns
+    add_column(dbo, "ownervoucher", "AnimalID", dbo.type_integer)
+    add_column(dbo, "ownervoucher", "DatePresented", dbo.type_datetime)
+    add_column(dbo, "ownervoucher", "VoucherCode", dbo.type_shorttext)
+    add_index(dbo, "ownervoucher_AnimalID", "ownervoucher", "AnimalID")
+    add_index(dbo, "ownervoucher_DatePresented", "ownervoucher", "DatePresented")
+    add_index(dbo, "ownervoucher_VoucherCode", "ownervoucher", "VoucherCode")
+    # Set the default vouchercode to ID padded to 6 digits
+    dbo.execute_dbupdate("UPDATE ownervoucher SET VoucherCode = %s" % dbo.sql_zero_pad_left("ID", 6))
