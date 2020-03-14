@@ -97,6 +97,17 @@ class PetFinderPublisher(FTPPublisher):
             agebands = "182,730,3285"
         agebands = [ int(i) for i in agebands.split(",") ]
 
+        # It's part of PetFinder's TOS that they will not list animals that
+        # are either unaltered, or the shelter will not pre-pay the cost
+        # of sterilisation after adoption.
+        # At least one of our customers cannot offer this, using a deposit
+        # scheme instead which is not covered. They still want to display 
+        #  unaltered animals on their own website, so the single "Include unaltered" 
+        # publishing option is not enough for them. We need an extra
+        # config switch to prevent sending unaltered animals to PetFinder
+        # in these cases.
+        hide_unaltered = asm3.configuration.petfinder_hide_unaltered(self.dbo)
+
         csv = []
 
         anCount = 0
@@ -115,6 +126,9 @@ class PetFinderPublisher(FTPPublisher):
 
                 if PETFINDER_SEND_PHOTOS_BY_FTP:
                     self.uploadImages(an, False, 3)
+
+                if hide_unaltered and an.NEUTERED == 0:
+                    continue
 
                 csv.append( self.processAnimal(an, agebands) )
 

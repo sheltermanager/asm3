@@ -997,6 +997,9 @@ def person_search_columns(dbo):
 def petfinder_age_bands(dbo):
     return cstring(dbo, "PetFinderAgeBands")
 
+def petfinder_hide_unaltered(dbo):
+    return cboolean(dbo, "PetFinderHideUnaltered", False)
+
 def petfinder_user(dbo):
     return cstring(dbo, "PetFinderFTPUser")
 
