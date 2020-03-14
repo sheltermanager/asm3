@@ -71,6 +71,19 @@
         },
 
         /**
+         * Generates a random code of length chars 
+         */
+        generate_random_code(length) {
+            var result = "";
+            var c = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+            var cl = c.length;
+            for ( var i = 0; i < length; i++ ) {
+                result += c.charAt(Math.floor(Math.random() * cl));
+            }
+            return result;
+        },
+
+        /**
          * Translates a phrase that deals with a number of
          * something so the correct plural can be used.
          * number: The number of items

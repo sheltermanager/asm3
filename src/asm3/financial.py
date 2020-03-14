@@ -539,6 +539,12 @@ def get_person_vouchers(dbo, personid):
     return dbo.query(get_voucher_query(dbo) + \
         "WHERE ov.OwnerID = ? ORDER BY ov.DateIssued", [personid])
 
+def get_voucher(dbo, voucherid):
+    """
+    Returns a single voucher record
+    """
+    return dbo.first_row(dbo.query(get_voucher_query(dbo) + " WHERE ov.ID = ?", [voucherid]))
+
 def get_vouchers(dbo, offset = "i31"):
     """
     Returns a list of vouchers 
@@ -1122,7 +1128,7 @@ def insert_voucher_from_form(dbo, username, post):
     """
     Creates a voucher record from posted form data 
     """
-    vid = dbo.insert("ownervoucher", {
+    return dbo.insert("ownervoucher", {
         "AnimalID":     post.integer("animal"),
         "OwnerID":      post.integer("person"),
         "VoucherID":    post.integer("type"),
@@ -1133,11 +1139,6 @@ def insert_voucher_from_form(dbo, username, post):
         "Value":        post.integer("amount"),
         "Comments":     post["comments"]
     }, username)
-    vouchercode = post["vouchercode"]
-    if vouchercode == "": 
-        vouchercode = asm3.utils.padleft(vid, 6)
-        dbo.update("ownervoucher", vid, { "VoucherCode": vouchercode } )
-    return "%s|%s" % (vid, vouchercode)    
 
 def update_voucher_from_form(dbo, username, post):
     """

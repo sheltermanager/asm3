@@ -2364,6 +2364,10 @@ class document_gen(ASMEndpoint):
             loglinktype = asm3.log.ANIMAL
             logid = asm3.movement.get_transport(dbo, post.integer_list("id")[0])["ANIMALID"]
             content = asm3.wordprocessor.generate_transport_doc(dbo, dtid, post.integer_list("id"), o.user)
+        elif linktype == "VOUCHER":
+            loglinktype = asm3.log.PERSON
+            logid = asm3.financial.get_voucher(dbo, post.integer("id"))["OWNERID"]
+            content = asm3.wordprocessor.generate_voucher_doc(dbo, dtid, post.integer("id"), o.user)
         elif linktype == "WAITINGLIST":
             loglinktype = asm3.log.WAITINGLIST
             logid = asm3.waitinglist.get_waitinglist_by_id(dbo, post.integer("id"))["OWNERID"]
@@ -2438,6 +2442,14 @@ class document_gen(ASMEndpoint):
             tempname += " - " + asm3.animal.get_animal_namecode(dbo, animalid)
             asm3.media.create_document_media(dbo, session.user, asm3.media.ANIMAL, animalid, tempname, post["document"])
             self.redirect("animal_media?id=%d" % animalid)
+        elif linktype == "VOUCHER":
+            v = asm3.financial.get_voucher(dbo, recid)
+            if v is None:
+                raise asm3.utils.ASMValidationError("%d is not a valid voucher id" % recid)
+            ownerid = v["OWNERID"]
+            tempname += " - " + asm3.person.get_person_name(dbo, ownerid)
+            asm3.media.create_document_media(dbo, session.user, asm3.media.PERSON, ownerid, tempname, post["document"])
+            self.redirect("person_media?id=%d" % ownerid)
         elif linktype == "LICENCE":
             l = asm3.financial.get_licence(dbo, recid)
             if l is None:

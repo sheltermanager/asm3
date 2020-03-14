@@ -18,10 +18,10 @@ $(function() {
                     { json_field: "OWNERID", post_field: "person", label: _("Person"), type: "person", validation: "notzero" },
                     { json_field: "ANIMALID", post_field: "animal", label: _("Animal (optional)"), type: "animal" },
                     { json_field: "VOUCHERID", post_field: "type", label: _("Type"), type: "select", options: { displayfield: "VOUCHERNAME", valuefield: "ID", rows: controller.vouchertypes }},
-                    { json_field: "VOUCHERCODE", post_field: "vouchercode", label: _("Code"), type: "text", callout: _("Specify a unique code to identify this voucher, or leave blank to have the system create one") },
+                    { json_field: "VOUCHERCODE", post_field: "vouchercode", label: _("Code"), type: "text", callout: _("Specify a unique code to identify this voucher") },
                     { json_field: "DATEISSUED", post_field: "issued", label: _("Issued"), type: "date", validation: "notblank", defaultval: new Date() },
                     { json_field: "DATEEXPIRED", post_field: "expires", label: _("Expires"), type: "date", validation: "notblank", defaultval: new Date() },
-                    { json_field: "DATEPRESENTED", post_field: "presented", label: _("Presented"), type: "date", callout: _("The date this voucher was used") },
+                    { json_field: "DATEPRESENTED", post_field: "presented", label: _("Redeemed"), type: "date", callout: _("The date this voucher was used") },
                     { json_field: "VALUE", post_field: "amount", label: _("Amount"), type: "currency" },
                     { json_field: "COMMENTS", post_field: "comments", label: _("Comments"), type: "textarea" }
                 ]
@@ -54,7 +54,7 @@ $(function() {
                     { field: "VOUCHERCODE", display: _("Code") },
                     { field: "DATEISSUED", display: _("Issued"), initialsort: true, initialsortdirection: "desc", formatter: tableform.format_date },
                     { field: "DATEEXPIRED", display: _("Expires"), formatter: tableform.format_date },
-                    { field: "DATEPRESENTED", display: _("Presented"), formatter: tableform.format_date },
+                    { field: "DATEPRESENTED", display: _("Redeemed"), formatter: tableform.format_date },
                     { field: "VALUE", display: _("Amount"), formatter: tableform.format_currency },
                     { field: "PERSON", display: _("Person"),
                         formatter: function(row) {
@@ -89,10 +89,9 @@ $(function() {
                             onadd: function() {
                                 tableform.fields_post(dialog.fields, "mode=create", "voucher")
                                     .then(function(response) {
-                                        var row = {}, idcode = response.split("|");
+                                        var row = {};
+                                        row.ID = response;
                                         tableform.fields_update_row(dialog.fields, row);
-                                        row.ID = idcode[0];
-                                        row.VOUCHERCODE = idcode[1];
                                         vouchers.set_extra_fields(row);
                                         controller.rows.push(row);
                                         tableform.table_update(table);
@@ -111,6 +110,7 @@ $(function() {
                                 if (controller.person) {
                                     $("#person").personchooser("loadbyid", controller.person.ID);
                                 }
+                                $("#vouchercode").val(common.generate_random_code(8));
                                 vouchers.vouchertype_change();
                             }
                         }); 

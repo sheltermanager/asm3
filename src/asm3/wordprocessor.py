@@ -1262,6 +1262,25 @@ def transport_tags(dbo, transports):
         add_to_tags(str(i+1), t)
     return tags
 
+def voucher_tags(dbo, v):
+    """
+    Generates a list of tags from a voucher result 
+    (from anything using asm3.financial.get_voucher_query)
+    """
+    l = dbo.locale
+    tags = {
+        "VOUCHERANIMALNAME":    v["ANIMALNAME"],
+        "VOUCHERSHELTERCODE":   v["SHELTERCODE"],
+        "VOUCHERTYPENAME":      v["VOUCHERTYPENAME"],
+        "VOUCHERCODE":          v["VOUCHERCODE"],
+        "VOUCHERVALUE":         format_currency_no_symbol(l, v["VALUE"]),
+        "VOUCHERISSUED":        python2display(l, v["DATEISSUED"]),
+        "VOUCHEREXPIRES":       python2display(l, v["DATEEXPIRED"]),
+        "VOUCHERREDEEMED":      python2display(l, v["DATEPRESENTED"]),
+        "VOUCHERCOMMENTS":      v["COMMENTS"]
+    }
+    return tags
+
 def waitinglist_tags(dbo, a):
     """
     Generates a list of tags from a waiting list result (asm3.waitinglist.get_waitinglist_by_id)
@@ -1700,6 +1719,22 @@ def generate_transport_doc(dbo, templateid, transportids, username):
     if len(tt) == 0: 
         raise asm3.utils.ASMValidationError("%s does not contain any valid transport IDs" % transportids)
     tags = transport_tags(dbo, tt)
+    tags = append_tags(tags, org_tags(dbo, username))
+    return substitute_template(dbo, templateid, tags)
+
+def generate_voucher_doc(dbo, templateid, voucherid, username):
+    """
+    Generates a voucher document from a template
+    templateid: The ID of the template
+    voucherid: The ID of the voucher to generate for
+    """
+    v = asm3.financial.get_voucher(dbo, voucherid)
+    if v is None:
+        raise asm3.utils.ASMValidationError("%d is not a valid voucher ID" % voucherid)
+    tags = person_tags(dbo, asm3.person.get_person(dbo, v["OWNERID"]))
+    if v["ANIMALID"] is not None and v["ANIMALID"] != 0:
+        tags = append_tags(tags, animal_tags(dbo, asm3.animal.get_animal(dbo, v["ANIMALID"])))
+    tags = append_tags(tags, voucher_tags(dbo, v))
     tags = append_tags(tags, org_tags(dbo, username))
     return substitute_template(dbo, templateid, tags)
 
