@@ -157,7 +157,7 @@ def publish_3pty_sub24(dbo):
     try:
         publishers = configuration.publishers_enabled(dbo)
         freq = configuration.publisher_sub24_frequency(dbo)
-        hournow = dbo.today().hour
+        hournow = dbo.now().hour
         hourstorun = [0,12]
         if freq == 0: return # 24 hour mode is covered by regular publish_3pty with the batch
         elif freq == 2: hourstorun = [0,2,4,6,8,10,12,14,16,18,20,22]
