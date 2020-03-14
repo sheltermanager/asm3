@@ -158,16 +158,15 @@ def publish_3pty_sub24(dbo):
         publishers = configuration.publishers_enabled(dbo)
         freq = configuration.publisher_sub24_frequency(dbo)
         hournow = dbo.now().hour
-        hourstorun = [0,12]
+        al.debug("chosen freq %s, current hour %s" % (freq, hournow), "cron.publish_3pty_sub24", dbo)
         if freq == 0: return # 24 hour mode is covered by regular publish_3pty with the batch
-        elif freq == 2: hourstorun = [0,2,4,6,8,10,12,14,16,18,20,22]
-        elif freq == 4: hourstorun = [1,5,9,13,17,21]
-        elif freq == 6: hourstorun = [3,9,13,19]
-        elif freq == 8: hourstorun = [1,9,17]
-        elif freq == 12: hourstorun = [0,12]
+        elif freq == 2 and hournow not in [0,2,4,6,8,10,12,14,16,18,20,22]: return
+        elif freq == 4 and hournow not in [1,5,9,13,17,21]: return
+        elif freq == 6 and hournow not in [3,9,13,19]: return
+        elif freq == 8 and hournow not in [1,9,17]: return
+        elif freq == 12 and hournow not in [0,12]: return
         for p in publishers.split(" "):
-            if not publish.PUBLISHER_LIST[p]["sub24hour"]: continue
-            if hournow in hourstorun:
+            if publish.PUBLISHER_LIST[p]["sub24hour"]:
                 publish.start_publisher(dbo, p, user="system", newthread=False)
     except:
         em = str(sys.exc_info()[0])
