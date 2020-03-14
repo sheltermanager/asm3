@@ -1271,7 +1271,7 @@ def voucher_tags(dbo, v):
     tags = {
         "VOUCHERANIMALNAME":    v["ANIMALNAME"],
         "VOUCHERSHELTERCODE":   v["SHELTERCODE"],
-        "VOUCHERTYPENAME":      v["VOUCHERTYPENAME"],
+        "VOUCHERTYPENAME":      v["VOUCHERNAME"],
         "VOUCHERCODE":          v["VOUCHERCODE"],
         "VOUCHERVALUE":         format_currency_no_symbol(l, v["VALUE"]),
         "VOUCHERISSUED":        python2display(l, v["DATEISSUED"]),

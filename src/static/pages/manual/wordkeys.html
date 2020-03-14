@@ -130,6 +130,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#citation-keys">Citation Keys</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#traploan-keys">Traploan Keys</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#licence-keys">Licence Keys</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#voucher-keys">Voucher Keys</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#incident-keys">Incident Keys</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#incident-animal-keys">Incident Animal Keys</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#lost-animal-keys">Lost Animal Keys</a></li>
@@ -768,7 +769,7 @@ a status of complete, while the Due keyword looks for active medical regimens.</
 <h2>Payment Keys<a class="headerlink" href="#payment-keys" title="Permalink to this headline">¶</a></h2>
 <p>If you are creating a document from the animal or person records, then the same
 rules apply as for vaccinations and medical records when accessing payments.
-payments. The Recent keyword looks for payments that have been received and Due
+The Recent keyword looks for payments that have been received and Due
 for non-received payments.</p>
 <p>However, if you create an invoice/receipt document from the payment tab of a
 person or animal record (or the payment book), you can select multiple payments
@@ -1184,6 +1185,29 @@ keys are also present.</p>
 <dd>The date the licence expires</dd>
 <dt>LicenceComments</dt>
 <dd>Any comments from the licence record</dd>
+</dl>
+</div>
+<div class="section" id="voucher-keys">
+<h2>Voucher Keys<a class="headerlink" href="#voucher-keys" title="Permalink to this headline">¶</a></h2>
+<p>Voucher keys are only available for documents generated for a single voucher
+under the voucher tab or the voucher book. Keys for the person the voucher
+has been issued to are also present and if the licence is linked to an animal,
+animal keys are also present.</p>
+<dl class="docutils">
+<dt>VoucherTypeName</dt>
+<dd>The type of voucher</dd>
+<dt>VoucherCode</dt>
+<dd>The voucher’s unique code</dd>
+<dt>VoucherValue</dt>
+<dd>The amount the voucher can be redeemed for if appropriate</dd>
+<dt>VoucherIssued</dt>
+<dd>The date the voucher was issued</dd>
+<dt>VoucherExpires</dt>
+<dd>The date the voucher expires</dd>
+<dt>VoucherRedeemed</dt>
+<dd>The date the voucher was redeemed/used</dd>
+<dt>VoucherComments</dt>
+<dd>Any comments about the voucher</dd>
 </dl>
 </div>
 <div class="section" id="incident-keys">

@@ -130,7 +130,7 @@ $(function() {
                              });
                      } 
                  },
-                 { id: "document", text: _("Document"), icon: "document", enabled: "multi", perm: "gaf", 
+                 { id: "document", text: _("Document"), icon: "document", enabled: "one", perm: "gaf", 
                      tooltip: _("Generate document from this voucher"), type: "buttonmenu" },
                  { id: "offset", type: "dropdownfilter", 
                     options: [
@@ -244,8 +244,7 @@ $(function() {
                 // Update the href as it is clicked so default browser behaviour
                 // continues on to open the link in a new window
                 var template_name = $(this).attr("data");
-                var ids = tableform.table_ids(vouchers.table);
-                $(this).prop("href", "document_gen?linktype=VOUCHER&id=" + ids + "&dtid=" + template_name);
+                $(this).prop("href", "document_gen?linktype=VOUCHER&id=" + tableform.table_selected_row(vouchers.table).ID + "&dtid=" + template_name);
             });
 
         },

@@ -572,7 +572,7 @@ Payment Keys
 
 If you are creating a document from the animal or person records, then the same
 rules apply as for vaccinations and medical records when accessing payments.
-payments. The Recent keyword looks for payments that have been received and Due 
+The Recent keyword looks for payments that have been received and Due 
 for non-received payments.
 
 However, if you create an invoice/receipt document from the payment tab of a
@@ -994,6 +994,29 @@ LicenceExpires
     The date the licence expires
 LicenceComments
     Any comments from the licence record
+
+Voucher Keys
+------------
+
+Voucher keys are only available for documents generated for a single voucher
+under the voucher tab or the voucher book. Keys for the person the voucher
+has been issued to are also present and if the licence is linked to an animal,
+animal keys are also present.
+
+VoucherTypeName
+   The type of voucher
+VoucherCode
+   The voucher's unique code
+VoucherValue
+   The amount the voucher can be redeemed for if appropriate
+VoucherIssued
+   The date the voucher was issued
+VoucherExpires
+   The date the voucher expires
+VoucherRedeemed
+   The date the voucher was redeemed/used
+VoucherComments
+   Any comments about the voucher
 
 Incident Keys
 -------------
