@@ -128,6 +128,7 @@ class PetFinderPublisher(FTPPublisher):
                     self.uploadImages(an, False, 3)
 
                 if hide_unaltered and an.NEUTERED == 0:
+                    self.log("%s is unaltered and petfinder_hide_unaltered == true" % an["ANIMALNAME"])
                     continue
 
                 csv.append( self.processAnimal(an, agebands) )
