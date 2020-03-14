@@ -573,7 +573,7 @@ msgstr ""
 msgid "Add vaccination"
 msgstr ""
 
-#: person_vouchers.js
+#: vouchers.js
 msgid "Add voucher"
 msgstr ""
 
@@ -844,7 +844,7 @@ msgstr ""
 msgid "Always show an emblem to indicate the current location"
 msgstr ""
 
-#: common_widgets.js donations.js clinic_appointment.js person_vouchers.js
+#: vouchers.js common_widgets.js donations.js clinic_appointment.js
 #: clinic_invoice.js
 msgid "Amount"
 msgstr ""
@@ -859,7 +859,7 @@ msgid ""
 "this report to"
 msgstr ""
 
-#: search.js transport.js move_reclaim.js incident.js medical.js
+#: search.js transport.js vouchers.js move_reclaim.js incident.js medical.js
 #: move_deceased.js move_retailer.js vaccination.js onlineform_incoming.js
 #: donations.js log_new.js test.js animal.js clinic_appointment.js
 #: diarytasks.js move_reserve.js move_transfer.js header_edit_header.js
@@ -875,7 +875,7 @@ msgstr ""
 msgid "Animal '{0}' successfully marked deceased."
 msgstr ""
 
-#: licence_renewal.js donation_receive.js licence.js
+#: vouchers.js licence_renewal.js donation_receive.js licence.js
 msgid "Animal (optional)"
 msgstr ""
 
@@ -1571,8 +1571,8 @@ msgstr ""
 msgid "Coat Type"
 msgstr ""
 
-#: animal_new.js common_personchooser.js animal_find_results.js person.js
-#: animal_find.js accounts.js animal.js common_animalchooser.js
+#: vouchers.js animal_new.js common_personchooser.js animal_find_results.js
+#: person.js animal_find.js accounts.js animal.js common_animalchooser.js
 msgid "Code"
 msgstr ""
 
@@ -1605,13 +1605,12 @@ msgstr ""
 msgid "Comma separated list of units for this location, eg: 1,2,3,4,Isolation,Pen 5"
 msgstr ""
 
-#: transport.js waitinglist_new.js medicalprofile.js litters.js
+#: transport.js vouchers.js waitinglist_new.js medicalprofile.js litters.js
 #: waitinglist_results.js person.js medical.js vaccination.js diary.js
 #: citations.js common_widgets.js stocklevel.js traploan.js donations.js
 #: waitinglist.js rota.js accounts.js staff_rota.js lostfound.js test.js
 #: animal_diet.js clinic_appointment.js header_edit_header.js log.js
-#: movements.js person_vouchers.js licence.js lostfound_new.js
-#: person_find_results.js
+#: movements.js licence.js lostfound_new.js person_find_results.js
 msgid "Comments"
 msgstr ""
 
@@ -2190,16 +2189,16 @@ msgstr ""
 msgid "Defaults formats for code and shortcode are TYYYYNNN and NNT"
 msgstr ""
 
-#: document_templates.js report_images.js transport.js medicalprofile.js
-#: litters.js users.js incident.js waitinglist_results.js person.js
-#: animal_costs.js vaccination.js diary.js onlineforms.js reports.js
+#: document_templates.js report_images.js transport.js vouchers.js
+#: medicalprofile.js litters.js users.js incident.js waitinglist_results.js
+#: person.js animal_costs.js vaccination.js diary.js onlineforms.js reports.js
 #: citations.js onlineform_incoming.js common_tableform.js stocklevel.js
 #: traploan.js common.js donations.js person_investigation.js onlineform.js
 #: waitinglist.js document_repository.js accounts_trx.js diarytask.js roles.js
 #: rota.js accounts.js main.js animal_bulk.js staff_rota.js lostfound.js
 #: test.js animal.js animal_diet.js clinic_appointment.js diarytasks.js
 #: additional.js lookups.js media.js log.js htmltemplates.js movements.js
-#: person_vouchers.js licence.js clinic_invoice.js
+#: licence.js clinic_invoice.js
 msgid "Delete"
 msgstr ""
 
@@ -2519,8 +2518,8 @@ msgstr ""
 msgid "Do not show"
 msgstr ""
 
-#: transport.js incident.js person.js waitinglist.js lostfound.js animal.js
-#: clinic_appointment.js movements.js licence.js
+#: transport.js vouchers.js incident.js person.js waitinglist.js lostfound.js
+#: animal.js clinic_appointment.js movements.js licence.js
 msgid "Document"
 msgstr ""
 
@@ -2837,7 +2836,7 @@ msgstr ""
 msgid "Edit vaccination"
 msgstr ""
 
-#: person_vouchers.js
+#: vouchers.js
 msgid "Edit voucher"
 msgstr ""
 
@@ -3114,8 +3113,12 @@ msgstr ""
 msgid "Expired in the last week"
 msgstr ""
 
-#: litters.js person.js vaccination.js main.js person_vouchers.js licence.js
+#: vouchers.js litters.js person.js vaccination.js main.js licence.js
 msgid "Expires"
+msgstr ""
+
+#: vouchers.js
+msgid "Expiring in next month"
 msgstr ""
 
 #: licence_renewal.js stocklevel.js person_find_results.js
@@ -3557,6 +3560,10 @@ msgstr ""
 msgid "Generate a random name for this animal"
 msgstr ""
 
+#: vouchers.js
+msgid "Generate a unique voucher code"
+msgstr ""
+
 #: clinic_appointment.js
 msgid "Generate document from this appointment"
 msgstr ""
@@ -3571,6 +3578,10 @@ msgstr ""
 
 #: transport.js
 msgid "Generate document from this transport"
+msgstr ""
+
+#: vouchers.js
+msgid "Generate document from this voucher"
 msgstr ""
 
 #: move_gendoc.js
@@ -4182,8 +4193,12 @@ msgstr ""
 msgid "Issue a new insurance number for this animal/adoption"
 msgstr ""
 
-#: licence_renewal.js person_vouchers.js licence.js
+#: vouchers.js licence_renewal.js licence.js
 msgid "Issued"
+msgstr ""
+
+#: vouchers.js
+msgid "Issued in last month"
 msgstr ""
 
 #: licence.js
@@ -5050,7 +5065,7 @@ msgstr ""
 msgid "New Vaccination"
 msgstr ""
 
-#: person_vouchers.js
+#: vouchers.js
 msgid "New Voucher"
 msgstr ""
 
@@ -5215,7 +5230,7 @@ msgstr ""
 
 #: incident.js incident_find_results.js licence_renewal.js incident_find.js
 #: waitinglist.js lostfound.js lostfound_find.js animal.js
-#: lostfound_find_results.js person_vouchers.js person_find_results.js
+#: lostfound_find_results.js person_find_results.js
 msgid "Number"
 msgstr ""
 
@@ -5530,10 +5545,10 @@ msgstr ""
 msgid "Permanent Foster"
 msgstr ""
 
-#: search.js person.js licence_renewal.js citations.js onlineform_incoming.js
-#: traploan.js donations.js donation_receive.js rota.js log_new.js
-#: staff_rota.js clinic_appointment.js diarytasks.js header_edit_header.js
-#: movements.js licence.js
+#: search.js vouchers.js person.js licence_renewal.js citations.js
+#: onlineform_incoming.js traploan.js donations.js donation_receive.js rota.js
+#: log_new.js staff_rota.js clinic_appointment.js diarytasks.js
+#: header_edit_header.js movements.js licence.js
 msgid "Person"
 msgstr ""
 
@@ -5652,6 +5667,10 @@ msgstr ""
 
 #: options.js
 msgid "Prefill new media notes with the filename if left blank"
+msgstr ""
+
+#: vouchers.js
+msgid "Presented in last month"
 msgstr ""
 
 #: main.js
@@ -5956,6 +5975,10 @@ msgstr ""
 
 #: accounts_trx.js accounts.js
 msgid "Reconciled"
+msgstr ""
+
+#: vouchers.js
+msgid "Redeemed"
 msgstr ""
 
 #: onlineforms.js
@@ -7040,6 +7063,10 @@ msgstr ""
 msgid "Species to use when publishing to third party services and adoption sites"
 msgstr ""
 
+#: vouchers.js
+msgid "Specify a unique code to identify this voucher"
+msgstr ""
+
 #: vaccination.js
 msgid ""
 "Specifying a reschedule date will make copies of the selected vaccinations "
@@ -7488,6 +7515,10 @@ msgstr ""
 
 #: person.js
 msgid "The date this person was homechecked."
+msgstr ""
+
+#: vouchers.js
+msgid "The date this voucher was used"
 msgstr ""
 
 #: login.js
@@ -8203,15 +8234,15 @@ msgstr ""
 msgid "Twitter"
 msgstr ""
 
-#: transport.js animal_new.js users.js incident.js animal_find_results.js
-#: person.js animal_costs.js person_links.js incident_find_results.js
-#: vaccination.js animal_find.js reports.js licence_renewal.js citations.js
-#: common_widgets.js traploan.js mailmerge.js donations.js onlineform.js
-#: document_repository.js rota.js accounts.js log_new.js animal_bulk.js
-#: staff_rota.js test.js animal.js options.js animal_diet.js
-#: clinic_appointment.js diarytasks.js additional.js common_animalchooser.js
-#: shelterview.js media.js log.js movements.js incident_new.js
-#: person_vouchers.js csvimport_paypal.js licence.js
+#: transport.js vouchers.js animal_new.js users.js incident.js
+#: animal_find_results.js person.js animal_costs.js person_links.js
+#: incident_find_results.js vaccination.js animal_find.js reports.js
+#: licence_renewal.js citations.js common_widgets.js traploan.js mailmerge.js
+#: donations.js onlineform.js document_repository.js rota.js accounts.js
+#: log_new.js animal_bulk.js staff_rota.js test.js animal.js options.js
+#: animal_diet.js clinic_appointment.js diarytasks.js additional.js
+#: common_animalchooser.js shelterview.js media.js log.js movements.js
+#: incident_new.js csvimport_paypal.js licence.js
 msgid "Type"
 msgstr ""
 
@@ -8290,6 +8321,10 @@ msgstr ""
 
 #: animal_bulk.js
 msgid "Update"
+msgstr ""
+
+#: publish_options.js
+msgid "Update adoption websites every"
 msgstr ""
 
 #: publish_options.js
@@ -8662,11 +8697,15 @@ msgstr ""
 msgid "Volunteer"
 msgstr ""
 
+#: vouchers.js
+msgid "Voucher Book"
+msgstr ""
+
 #: roles.js header_edit_header.js
 msgid "Vouchers"
 msgstr ""
 
-#: person_vouchers.js
+#: vouchers.js
 msgid "Vouchers need an issue and expiry date."
 msgstr ""
 
@@ -9123,9 +9162,9 @@ msgstr ""
 msgid "yesterday"
 msgstr ""
 
-#: transport.js medical.js animal_costs.js vaccination.js diary.js donations.js
-#: test.js animal.js animal_diet.js clinic_appointment.js media.js log.js
-#: movements.js licence.js
+#: transport.js vouchers.js medical.js animal_costs.js vaccination.js diary.js
+#: donations.js test.js animal.js animal_diet.js clinic_appointment.js media.js
+#: log.js movements.js licence.js
 msgid "{0} - {1} ({2} {3} aged {4})"
 msgstr ""
 
@@ -9147,6 +9186,10 @@ msgstr ""
 
 #: header_edit_header.js
 msgid "{0} fine, unpaid"
+msgstr ""
+
+#: publish_options.js
+msgid "{0} hours"
 msgstr ""
 
 #: main.js
@@ -9245,6 +9288,10 @@ msgstr ""
 
 #: main.js
 msgid "{plural0} animal was transferred to another shelter"
+msgstr ""
+
+#: main.js
+msgid "{plural0} clinic appointment today"
 msgstr ""
 
 #: main.js
@@ -9384,6 +9431,10 @@ msgid "{plural1} animals were transferred to other shelters"
 msgstr ""
 
 #: main.js
+msgid "{plural1} clinic appointments today"
+msgstr ""
+
+#: main.js
 msgid "{plural1} incomplete animal control calls"
 msgstr ""
 
@@ -9520,6 +9571,10 @@ msgid "{plural2} animals were transferred to other shelters"
 msgstr ""
 
 #: main.js
+msgid "{plural2} clinic appointments today"
+msgstr ""
+
+#: main.js
 msgid "{plural2} incomplete animal control calls"
 msgstr ""
 
@@ -9653,6 +9708,10 @@ msgstr ""
 
 #: main.js
 msgid "{plural3} animals were transferred to other shelters"
+msgstr ""
+
+#: main.js
+msgid "{plural3} clinic appointments today"
 msgstr ""
 
 #: main.js

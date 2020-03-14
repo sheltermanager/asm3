@@ -110,7 +110,6 @@ $(function() {
                                 if (controller.person) {
                                     $("#person").personchooser("loadbyid", controller.person.ID);
                                 }
-                                $("#vouchercode").val(common.generate_random_code(8));
                                 vouchers.vouchertype_change();
                             }
                         }); 
@@ -238,6 +237,14 @@ $(function() {
             });
 
             $("#type").change(vouchers.vouchertype_change);
+
+            // Generate code button
+            $("#vouchercode").after('<button id="button-code">' + _("Generate a unique voucher code") + '</button>');
+            $("#button-code")
+                .button({ icons: { primary: "ui-icon-refresh" }, text: false })
+                .click(function() {
+                    $("#vouchercode").val(common.generate_random_code(8));
+                });
 
             // Add click handlers to templates
             $(".templatelink").click(function() {
