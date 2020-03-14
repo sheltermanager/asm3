@@ -1061,7 +1061,7 @@ def create_lostanimal(dbo, username, collationid):
         if f.FIELDNAME == "description": d["markings"] = f.VALUE
         if f.FIELDNAME == "arealost": d["arealost"] = f.VALUE
         if f.FIELDNAME == "areapostcode": d["areapostcode"] = f.VALUE
-        if f.FIELDNAME == "areazipcode": d["areazipcode"] = f.VALUE
+        if f.FIELDNAME == "areazipcode": d["areapostcode"] = f.VALUE
     if "species" not in d: d["species"] = guess_species(dbo, "")
     if "sex" not in d: d["sex"] = guess_sex(dbo, "")
     if "breed" not in d: d["breed"] = guess_breed(dbo, "")
@@ -1098,7 +1098,7 @@ def create_foundanimal(dbo, username, collationid):
         if f.FIELDNAME == "description": d["markings"] = f.VALUE
         if f.FIELDNAME == "areafound": d["areafound"] = f.VALUE
         if f.FIELDNAME == "areapostcode": d["areapostcode"] = f.VALUE
-        if f.FIELDNAME == "areazipcode": d["areazipcode"] = f.VALUE
+        if f.FIELDNAME == "areazipcode": d["areapostcode"] = f.VALUE
     if "species" not in d: d["species"] = guess_species(dbo, "")
     if "sex" not in d: d["sex"] = guess_sex(dbo, "")
     if "breed" not in d: d["breed"] = guess_breed(dbo, "")
