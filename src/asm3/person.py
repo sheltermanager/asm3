@@ -1223,6 +1223,52 @@ def send_email_from_form(dbo, username, post):
         asm3.log.add_log(dbo, username, asm3.log.PERSON, post.integer("personid"), logtype, asm3.utils.html_email_to_plain(body))
     return rv
 
+def lookingfor_summary(dbo, personid, p = None):
+    """
+    Generates the summary text for the type of animal a person is looking for. 
+    personid: The person to generate for OR 
+    p:        A person record with key fields for MATCH*NAME present to save looking up the record
+    """
+    l = dbo.locale
+    if p is None:
+        p = dbo.first_row(dbo.query("SELECT owner.*, " \
+            "(SELECT Size FROM lksize WHERE ID = owner.MatchSize) AS MatchSizeName, " \
+            "(SELECT BaseColour FROM basecolour WHERE ID = owner.MatchColour) AS MatchColourName, " \
+            "(SELECT Sex FROM lksex WHERE ID = owner.MatchSex) AS MatchSexName, " \
+            "(SELECT BreedName FROM breed WHERE ID = owner.MatchBreed) AS MatchBreedName, " \
+            "(SELECT AnimalType FROM animaltype WHERE ID = owner.MatchAnimalType) AS MatchAnimalTypeName, " \
+            "(SELECT SpeciesName FROM species WHERE ID = owner.MatchSpecies) AS MatchSpeciesName " \
+            "FROM owner WHERE owner.ID = ?", [personid]))
+    c = []
+    if p.MATCHANIMALTYPE != -1: 
+        c.append(p.MATCHANIMALTYPENAME)
+    if p.MATCHSPECIES != -1: 
+        c.append(p.MATCHSPECIESNAME)
+    if p.MATCHBREED != -1: 
+        c.append(p.MATCHBREEDNAME)
+    if p.MATCHSEX != -1: 
+        c.append(p.MATCHSEXNAME)
+    if p.MATCHSIZE != -1: 
+        c.append(p.MATCHSIZENAME)
+    if p.MATCHCOLOUR != -1: 
+        c.append(p.MATCHCOLOURNAME)
+    if p.MATCHGOODWITHCHILDREN == 0: 
+        c.append(_("Good with kids", l))
+    if p.MATCHGOODWITHCATS == 0: 
+        c.append(_("Good with cats", l))
+    if p.MATCHGOODWITHDOGS == 0: 
+        c.append(_("Good with dogs", l))
+    if p.MATCHHOUSETRAINED == 0: 
+        c.append(_("Housetrained", l))
+    if p.MATCHAGEFROM >= 0 and p.MATCHAGETO > 0: 
+        c.append(_("Age", l) + (" %0.2f - %0.2f" % (p.MATCHAGEFROM, p.MATCHAGETO)))
+    if p.MATCHCOMMENTSCONTAIN is not None and p.MATCHCOMMENTSCONTAIN != "":
+        c.append(_("Comments Contain", l) + ": " + p.MATCHCOMMENTSCONTAIN)
+    summary = ""
+    if len(c) > 0:
+        summary = ", ".join(x for x in c if x is not None)
+    return summary
+
 def lookingfor_report(dbo, username = "system", personid = 0, limit = 0):
     """
     Generates the person looking for report
@@ -1278,55 +1324,42 @@ def lookingfor_report(dbo, username = "system", personid = 0, limit = 0):
         asm3.asynctask.increment_progress_value(dbo)
         ands = [ "a.Archived=0", "a.IsNotAvailableForAdoption=0", "a.HasActiveReserve=0", "a.CrueltyCase=0", "a.DeceasedDate Is Null" ]
         v = [] # query values
-        c = [] # readable criteria
         if p.MATCHANIMALTYPE != -1: 
             ands.append("a.AnimalTypeID=?")
             v.append(p.MATCHANIMALTYPE)
-            c.append(p.MATCHANIMALTYPENAME)
         if p.MATCHSPECIES != -1: 
             ands.append("a.SpeciesID=?")
             v.append(p.MATCHSPECIES)
-            c.append(p.MATCHSPECIESNAME)
         if p.MATCHBREED != -1: 
             ands.append("(a.BreedID=? OR a.Breed2ID=?)")
             v.append(p.MATCHBREED)
             v.append(p.MATCHBREED)
-            c.append(p.MATCHBREEDNAME)
         if p.MATCHSEX != -1: 
             ands.append("a.Sex=?")
             v.append(p.MATCHSEX)
-            c.append(p.MATCHSEXNAME)
         if p.MATCHSIZE != -1: 
             ands.append("a.Size=?")
             v.append(p.MATCHSIZE)
-            c.append(p.MATCHSIZENAME)
         if p.MATCHCOLOUR != -1: 
             ands.append("a.BaseColourID=?")
             v.append(p.MATCHCOLOUR)
-            c.append(p.MATCHCOLOURNAME)
         if p.MATCHGOODWITHCHILDREN == 0: 
             ands.append("a.IsGoodWithChildren=0")
-            c.append(_("Good with kids", l))
         if p.MATCHGOODWITHCATS == 0: 
             ands.append("a.IsGoodWithCats=0")
-            c.append(_("Good with cats", l))
         if p.MATCHGOODWITHDOGS == 0: 
             ands.append("a.IsGoodWithDogs=0")
-            c.append(_("Good with dogs", l))
         if p.MATCHHOUSETRAINED == 0: 
             ands.append("a.IsHouseTrained=0")
-            c.append(_("Housetrained", l))
         if p.MATCHAGEFROM >= 0 and p.MATCHAGETO > 0: 
             ands.append("a.DateOfBirth BETWEEN ? AND ?")
             v.append(subtract_years(now(dbo.timezone), p.MATCHAGETO))
             v.append(subtract_years(now(dbo.timezone), p.MATCHAGEFROM))
-            c.append(_("Age", l) + (" %0.2f - %0.2f" % (p.MATCHAGEFROM, p.MATCHAGETO)))
         if p.MATCHCOMMENTSCONTAIN is not None and p.MATCHCOMMENTSCONTAIN != "":
             for w in str(p.MATCHCOMMENTSCONTAIN).split(" "):
                 ands.append("(a.AnimalComments LIKE ? OR a.HiddenAnimalDetails LIKE ?)")
                 v.append("%%%s%%" % w)
                 v.append("%%%s%%" % w)
-            c.append(_("Comments Contain", l) + ": " + p.MATCHCOMMENTSCONTAIN)
 
         animals = dbo.query(asm3.animal.get_animal_query(dbo) + " WHERE " + " AND ".join(ands) + " ORDER BY a.LastChangedDate DESC", v)
 
@@ -1336,10 +1369,8 @@ def lookingfor_report(dbo, username = "system", personid = 0, limit = 0):
             h.append( "<p style='font-size: 8pt'>%s</p>" % p.COMMENTS)
 
         # Summary of owner criteria
-        summary = ""
-        if len(c) > 0:
-            summary = ", ".join(x for x in c if x is not None)
-            h.append( "<p style='font-size: 8pt'>(%s: %s)</p>" % (_("Looking for", l), summary) )
+        summary = lookingfor_summary(dbo, p.ID, p)
+        h.append( "<p style='font-size: 8pt'>(%s: %s)</p>" % (_("Looking for", l), summary) )
 
         # Match info
         outputheader = False

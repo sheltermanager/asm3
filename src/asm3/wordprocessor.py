@@ -1156,6 +1156,7 @@ def person_tags(dbo, p, includeImg=False):
         "HOMECHECKEDBYCELLTELEPHONE": p["HOMECHECKEDBYMOBILETELEPHONE"],
         "MEMBERSHIPNUMBER"      : p["MEMBERSHIPNUMBER"],
         "MEMBERSHIPEXPIRYDATE"  : python2display(l, p["MEMBERSHIPEXPIRYDATE"]),
+        "OWNERLOOKINGFOR"       : asm3.person.lookingfor_summary(dbo, p["ID"])
     }
 
     if includeImg:

@@ -899,6 +899,8 @@ OwnerCounty
     (OwnerState for US users) 
 OwnerPostcode 
     (OwnerZipcode for US users) 
+OwnerLookingFor
+    A summary of the "Looking for" slider on the person's record
 Jurisdiction
     The person's jurisdiction
 WorkTelephone 
