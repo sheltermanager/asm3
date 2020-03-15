@@ -724,9 +724,14 @@ $(function() {
         render_diaryandmessages: function() {
             return [
                 '<div id="tab-diaryandmessages">',
+                '<p class="asm-header">' + _("Diary") + '</p>',
                 '<p>',
                 '<input data="AllDiaryHomePage" id="alldiaryhomepage" class="asm-checkbox" type="checkbox" /> <label for="alldiaryhomepage">' + _("Show the full diary (instead of just my notes) on the home page") + '</label><br />',
-                '<input data="EmailDiaryNotes" id="emaildiarynotes" class="asm-checkbox" type="checkbox" /> <label for="emaildiarynotes">' + _("Email users their diary notes each day") + '</label><br />',
+                '<input data="EmailDiaryNotes" id="emaildiarynotes" class="asm-checkbox" type="checkbox" /> <label for="emaildiarynotes">' + _("Email users their outstanding diary notes once per day") + '</label><br />',
+                '<input data="EmailDiaryOnChange" id="emaildiaryonchange" class="asm-checkbox" type="checkbox" /> <label for="emaildiaryonchange">' + _("Email users immediately when a diary note assigned to them is created or updated") + '</label><br />',
+                '<input data="EmailDiaryOnComplete" id="emaildiaryoncomplete" class="asm-checkbox" type="checkbox" /> <label for="emaildiaryoncomplete">' + _("Email diary note creators when a diary note is marked complete") + '</label>',
+                '</p>',
+                '<p class="asm-header">' + _("Messages") + '</p>',
                 '<input data="EmailMessages" id="emailmessages" class="asm-checkbox" type="checkbox" /> <label for="emailmessages">' + _("When a message is created, email it to each matching user") + '</label>',
                 '</p>',
                 '</div>'

@@ -58,6 +58,50 @@ def email_uncompleted_upto_today(dbo):
                 asm3.utils.send_email(dbo, asm3.configuration.email(dbo), u.emailaddress, "", "", 
                     asm3.i18n._("Diary notes for: {0}", l).format(asm3.i18n.python2display(l, dbo.now())), s, exceptions=False)
 
+def email_note_on_change(dbo, n, username):
+    """
+    Emails the recipients of a diary note n with the note content
+    username the user triggering the send by adding/updating a diary
+    """
+    if not asm3.configuration.email_diary_on_change(dbo): return
+    l = dbo.locale
+    allusers = asm3.users.get_users(dbo)
+    s = asm3.i18n._("Diary change triggered by {0} on {1}", l).format(username, asm3.i18n.python2display(l, dbo.now()))
+    s += "\n\n" + asm3.i18n.python2display(l, n.diarydatetime) + " "
+    s += n.subject
+    if n.linkinfo is not None and n.linkinfo != "": s += " / " + n.linkinfo
+    s += "\n" + n.note + "\n\n" + n.comments
+    for u in allusers:
+        if u.emailaddress and u.emailaddress.strip() != "":
+            # Is this note relevant for this user?
+            if (n.diaryforname == "*") \
+            or (n.diaryforname == u.username) \
+            or (u.roles.find(n.diaryforname) != -1):
+                # Yes, send it to them
+                asm3.utils.send_email(dbo, asm3.configuration.email(dbo), u.emailaddress, "", "", 
+                    asm3.i18n._("Diary update: {0}", l).format(n.subject), s, exceptions=False)
+
+def email_note_on_complete(dbo, n, username):
+    """
+    Emails the creator of a diary note n with the note's content 
+    username the user triggering the send by completing a diary
+    """
+    if not asm3.configuration.email_diary_on_change(dbo): return
+    l = dbo.locale
+    allusers = asm3.users.get_users(dbo)
+    s = asm3.i18n._("Diary completion triggered by {0} on {1}", l).format(username, asm3.i18n.python2display(l, dbo.now()))
+    s += "\n\n" + asm3.i18n.python2display(l, n.diarydatetime) + " "
+    s += n.subject
+    if n.linkinfo is not None and n.linkinfo != "": s += " / " + n.linkinfo
+    s += "\n" + n.note + "\n\n" + n.comments
+    for u in allusers:
+        if u.emailaddress and u.emailaddress.strip() != "":
+            # Is this note relevant for this user?
+            if (n.createdby == u.username):
+                # Yes, send it to them
+                asm3.utils.send_email(dbo, asm3.configuration.email(dbo), u.emailaddress, "", "", 
+                    asm3.i18n._("Diary complete: {0}", l).format(n.subject), s, exceptions=False)
+
 def user_role_where_clause(dbo, user = "", includecreatedby = True):
     """
     Returns a suitable where clause for filtering diary notes
@@ -144,6 +188,7 @@ def complete_diary_note(dbo, username, diaryid):
     dbo.update("diary", diaryid, {
         "DateCompleted": dbo.today()
     }, username)
+    email_note_on_complete(dbo, get_diary(dbo, diaryid), username)
 
 def complete_diary_notes_for_animal(dbo, username, animalid):
     """
@@ -152,6 +197,8 @@ def complete_diary_notes_for_animal(dbo, username, animalid):
     dbo.update("diary", "LinkType=%d AND LinkID=%d" % (ANIMAL, animalid), {
         "DateCompleted": dbo.today()
     }, username)
+    for n in dbo.query("SELECT ID FROM diary WHERE LinkType=%d AND LinkID=%d" % (ANIMAL, animalid)):
+        email_note_on_complete(dbo, get_diary(dbo, n.id), username)
 
 def rediarise_diary_note(dbo, username, diaryid, newdate):
     """
@@ -160,6 +207,7 @@ def rediarise_diary_note(dbo, username, diaryid, newdate):
     dbo.update("diary", diaryid, {
         "DiaryDateTime": newdate
     }, username)
+    email_note_on_change(dbo, get_diary(dbo, diaryid), username)
 
 def get_animal_tasks(dbo):
     """
@@ -271,7 +319,7 @@ def insert_diary_from_form(dbo, username, linktypeid, linkid, post):
 
     linkinfo = get_link_info(dbo, linktypeid, linkid)
 
-    return dbo.insert("diary", {
+    diaryid = dbo.insert("diary", {
         "LinkID":           linkid,
         "LinkType":         linktypeid,
         "LinkInfo":         linkinfo,
@@ -282,6 +330,9 @@ def insert_diary_from_form(dbo, username, linktypeid, linkid, post):
         "Comments":         post["comments"],
         "DateCompleted":    post.date("completed")
     }, username)
+
+    email_note_on_change(dbo, get_diary(dbo, diaryid), username)
+    return diaryid
 
 def insert_diary(dbo, username, linktypeid, linkid, diarydate, diaryfor, subject, note):
     """
@@ -296,7 +347,7 @@ def insert_diary(dbo, username, linktypeid, linkid, diarydate, diaryfor, subject
     if linkid != 0:
         linkinfo = get_link_info(dbo, linktypeid, linkid)
 
-    return dbo.insert("diary", {
+    diaryid = dbo.insert("diary", {
         "LinkID":           linkid,
         "LinkType":         linktypeid,
         "LinkInfo":         linkinfo,
@@ -305,6 +356,9 @@ def insert_diary(dbo, username, linktypeid, linkid, diarydate, diaryfor, subject
         "Subject":          subject,
         "Note":             note
     }, username)
+
+    email_note_on_change(dbo, get_diary(dbo, diaryid), username)
+    return diaryid
 
 def update_diary_from_form(dbo, username, post):
     """
@@ -335,6 +389,11 @@ def update_diary_from_form(dbo, username, post):
         "Comments":         post["comments"],
         "DateCompleted":    post.date("completed")
     }, username)
+
+    if post.date("completed") is not None:
+        email_note_on_change(dbo, get_diary(dbo, diaryid), username)
+    else:
+        email_note_on_complete(dbo, get_diary(dbo, diaryid), username)
 
 def execute_diary_task(dbo, username, tasktype, taskid, linkid, selecteddate):
     """

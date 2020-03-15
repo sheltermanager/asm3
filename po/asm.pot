@@ -2402,7 +2402,7 @@ msgstr ""
 msgid "Dialog title"
 msgstr ""
 
-#: calendarview.js roles.js header_edit_header.js
+#: calendarview.js roles.js options.js header_edit_header.js
 msgid "Diary"
 msgstr ""
 
@@ -2878,6 +2878,10 @@ msgstr ""
 msgid "Email address"
 msgstr ""
 
+#: options.js
+msgid "Email diary note creators when a diary note is marked complete"
+msgstr ""
+
 #: media.js
 msgid "Email document for electronic signature"
 msgstr ""
@@ -2917,7 +2921,13 @@ msgid "Email this person"
 msgstr ""
 
 #: options.js
-msgid "Email users their diary notes each day"
+msgid ""
+"Email users immediately when a diary note assigned to them is created or "
+"updated"
+msgstr ""
+
+#: options.js
+msgid "Email users their outstanding diary notes once per day"
 msgstr ""
 
 #: publish_options.js
@@ -4768,6 +4778,10 @@ msgstr ""
 
 #: common_widgets.js
 msgid "Message successfully sent to {0}"
+msgstr ""
+
+#: options.js
+msgid "Messages"
 msgstr ""
 
 #: mailmerge.js

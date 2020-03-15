@@ -117,7 +117,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#costs">Costs</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#data-protection">Data Protection</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#defaults">Defaults</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#diary">Diary</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#diary-and-messages">Diary and Messages</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#display">Display</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#documents">Documents</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#insurance">Insurance</a></li>
@@ -502,13 +502,27 @@ weight so you can track the history of an animal’s wieght with reports and
 graphs.</li>
 </ul>
 </div>
-<div class="section" id="diary">
-<h2>Diary<a class="headerlink" href="#diary" title="Permalink to this headline">¶</a></h2>
-<p>The diary tab allows you to set whether you would like to see the complete
-diary on the home page, or just the diary notes for the current user. You can
-also set whether you would like diary notes emailed to each user every day –
-for this to work, you must have configured the system’s email in the email
-section of the screen and your users must have an email address set.</p>
+<div class="section" id="diary-and-messages">
+<h2>Diary and Messages<a class="headerlink" href="#diary-and-messages" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>Show the full diary (instead of just my notes) on the home page: If this option
+is on, all users will see the full list of outstanding diary notes on their home page.</li>
+<li>Email users their outstanding diary notes once per day: This option will cause
+the system to send users an email containing their outstanding diary notes.
+The system will send it as part of the overnight batch, which depending on
+your recommended locale/cron times will be between midnight and 4am.
+For this option to work, you must have configured the system email in
+the Email tab of this screen and your users must have email addresses set.</li>
+<li>Email users immediately when a diary note assigned to them is created or
+updated: This option will cause an email be sent to any users a diary note is
+assigned to as soon as you create or make a change to it.</li>
+<li>Email diary note creators when a diary note is marked complete: This option
+will have an email sent to the person who created a diary note the moment
+that it is marked complete by a user.</li>
+<li>When a message is created, email it to each matching user: In addition to
+showing messages on the home page for a user, send it via email. The message
+is sent immediately as soon as the message is created.</li>
+</ul>
 </div>
 <div class="section" id="display">
 <h2>Display<a class="headerlink" href="#display" title="Permalink to this headline">¶</a></h2>

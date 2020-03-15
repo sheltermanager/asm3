@@ -360,14 +360,30 @@ records.
   weight so you can track the history of an animal's wieght with reports and
   graphs.
 
-Diary 
------
+Diary and Messages
+------------------
 
-The diary tab allows you to set whether you would like to see the complete
-diary on the home page, or just the diary notes for the current user. You can
-also set whether you would like diary notes emailed to each user every day –
-for this to work, you must have configured the system's email in the email
-section of the screen and your users must have an email address set.
+* Show the full diary (instead of just my notes) on the home page: If this option
+  is on, all users will see the full list of outstanding diary notes on their home page.
+
+* Email users their outstanding diary notes once per day: This option will cause
+  the system to send users an email containing their outstanding diary notes. 
+  The system will send it as part of the overnight batch, which depending on
+  your recommended locale/cron times will be between midnight and 4am.
+  For this option to work, you must have configured the system email in
+  the Email tab of this screen and your users must have email addresses set.
+
+* Email users immediately when a diary note assigned to them is created or
+  updated: This option will cause an email be sent to any users a diary note is
+  assigned to as soon as you create or make a change to it. 
+
+* Email diary note creators when a diary note is marked complete: This option
+  will have an email sent to the person who created a diary note the moment
+  that it is marked complete by a user.
+
+* When a message is created, email it to each matching user: In addition to
+  showing messages on the home page for a user, send it via email. The message
+  is sent immediately as soon as the message is created.
 
 Display
 -------

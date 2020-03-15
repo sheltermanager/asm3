@@ -178,6 +178,8 @@ DEFAULTS = {
     "DontShowCombi": "Yes",
     "DontShowHeartworm": "Yes",
     "EmailDiaryNotes": "Yes", 
+    "EmailDiaryOnChange": "No",
+    "EmailDiaryOnComplete": "No",
     "EmailMessages": "Yes", 
     "EmblemAlwaysLocation": "No",
     "EmblemBonded": "Yes",
@@ -751,6 +753,12 @@ def email(dbo):
 
 def email_diary_notes(dbo):
     return cboolean(dbo, "EmailDiaryNotes", DEFAULTS["EmailDiaryNotes"] == "Yes")
+
+def email_diary_on_change(dbo):
+    return cboolean(dbo, "EmailDiaryOnChange", DEFAULTS["EmailDiaryOnChange"] == "Yes")
+
+def email_diary_on_complete(dbo):
+    return cboolean(dbo, "EmailDiaryOnComplete", DEFAULTS["EmailDiaryOnComplete"] == "Yes")
 
 def email_messages(dbo):
     return cboolean(dbo, "EmailMessages", DEFAULTS["EmailMessages"] == "Yes")
