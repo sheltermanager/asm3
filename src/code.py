@@ -4766,6 +4766,7 @@ class person_vouchers(JSONEndpoint):
             "rows": vouchers,
             "person": p,
             "tabcounts": asm3.person.get_satellite_counts(dbo, p["ID"])[0],
+            "templates": asm3.template.get_document_templates(dbo),
             "vouchertypes": asm3.lookups.get_voucher_types(dbo)
         }
 
