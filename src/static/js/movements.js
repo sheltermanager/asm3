@@ -83,7 +83,7 @@ $(function() {
                     if (controller.name == "move_book_reservation" && row.RESERVATIONDATE) {
                         var od = format.date_js(row.RESERVATIONDATE), odd = config.integer("ReservesOverdueDays");
                         if (!odd) { odd = 7; }
-                        od.setDate(od.getDate() + odd)
+                        od.setDate(od.getDate() + odd);
                         return od < common.today_no_time();
                     }
                     return false;
