@@ -128,14 +128,14 @@ def animal_tags_publisher(dbo, a, includeAdditional=True):
     database calls for each asm3.animal.
     """
     return animal_tags(dbo, a, includeAdditional=includeAdditional, includeCosts=False, includeDiet=True, \
-        includeDonations=False, includeFutureOwner=False, includeIsVaccinated=True, includeLogs=False, includeMedical=False, includeTransport=False)
+        includeDonations=False, includeFutureOwner=False, includeIsVaccinated=True, includeLitterMates=False, \
+        includeLogs=False, includeMedical=False, includeTransport=False)
 
 def animal_tags(dbo, a, includeAdditional=True, includeCosts=True, includeDiet=True, includeDonations=True, \
-        includeFutureOwner=True, includeIsVaccinated=True, includeLogs=True, includeMedical=True, includeTransport=True):
+        includeFutureOwner=True, includeIsVaccinated=True, includeLitterMates=True, includeLogs=True, \
+        includeMedical=True, includeTransport=True):
     """
-    Generates a list of tags from an animal result (the deep type from
-    calling asm3.animal.get_animal)
-    includeAdoptionStatus in particular is expensive. If you don't need some of the tags, you can not include them.
+    Generates a list of tags from an animal result (the deep type from calling asm3.animal.get_animal)
     """
     l = dbo.locale
     animalage = a["ANIMALAGE"]
@@ -670,6 +670,14 @@ def animal_tags(dbo, a, includeAdditional=True, includeCosts=True, includeDiet=T
             "TOTALCOSTS": format_currency_no_symbol(l, dailyboardingcost * daysonshelter + totalcosts)
         }
         tags = append_tags(tags, costtags)
+
+    if includeLitterMates:
+        # Littermates
+        lm = dbo.query("SELECT AnimalName, ShelterCode FROM animal WHERE AcceptanceNumber = ? AND ID <> ?", [ a["ACCEPTANCENUMBER"], a["ID"] ])
+        tags["LITTERMATES"] = html_table(l, lm, (
+            ( "SHELTERCODE", _("Code", l)),
+            ( "ANIMALNAME", _("Name", l))
+        ))
 
     if includeLogs:
         # Logs
