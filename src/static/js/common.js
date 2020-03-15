@@ -73,11 +73,12 @@
         /**
          * Generates a random code of length chars 
          */
-        generate_random_code(length) {
+        generate_random_code: function(length) {
             var result = "";
+            var i = 0;
             var c = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
             var cl = c.length;
-            for ( var i = 0; i < length; i++ ) {
+            for ( i = 0; i < length; i++ ) {
                 result += c.charAt(Math.floor(Math.random() * cl));
             }
             return result;
