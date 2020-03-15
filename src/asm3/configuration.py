@@ -270,6 +270,7 @@ DEFAULTS = {
     "ReceiptNumberNext": "0",
     "RecordSearchLimit": "1000",
     "ReloadMedical": "Yes",
+    "ReservesOverdueDays": "7",
     "RetailerOnShelter": "Yes",
     "ReturnFostersOnAdoption": "Yes",
     "ReturnFostersOnTransfer": "Yes",

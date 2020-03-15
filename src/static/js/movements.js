@@ -78,10 +78,12 @@ $(function() {
                         });
                 },
                 overdue: function(row) {
-                    // If this is the reservation book, overdue is determined by reservation being older than a week
+                    // If this is the reservation book, overdue is determined by reservation being 
+                    // older than a pre-set period (default 1 week)
                     if (controller.name == "move_book_reservation" && row.RESERVATIONDATE) {
-                        var od = format.date_js(row.RESERVATIONDATE);
-                        od.setDate(od.getDate() + 7);
+                        var od = format.date_js(row.RESERVATIONDATE), odd = config.integer("ReservesOverdueDays");
+                        if (!odd) { odd = 7; }
+                        od.setDate(od.getDate() + odd)
                         return od < common.today_no_time();
                     }
                     return false;
@@ -108,7 +110,7 @@ $(function() {
                     { field: "MOVEMENTNAME", display: _("Type") }, 
                     { field: "MOVEMENTDATE", display: _("Date"), 
                         initialsort: controller.name != "move_book_trial_adoption", 
-                        initialsortdirection: controller.name == "move_book_reservation" ? "asc" : "desc", 
+                        initialsortdirection: controller.name == "desc", 
                         formatter: function(row, v) { 
                             // If we're only a reservation, use the reserve date instead
                             if (row.MOVEMENTTYPE == 0) {
