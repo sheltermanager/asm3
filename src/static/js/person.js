@@ -492,6 +492,55 @@ $(function() {
                 $(".tag-individual").fadeIn();
             }
 
+            // if the member flag is selected and membership number is blank,
+            // default the membership number from the person id.
+            if ($("#flags option[value='member']").is(":selected")) {
+                if ($.trim($("#membershipnumber").val()) == "") {
+                    $("#membershipnumber").val( 
+                        format.padleft($("#personid").val(), 10));
+                }
+            }
+
+            if ($("#flags option[value='member']").is(":selected")) {
+                $("label[for='membershipnumber']").html(_("Membership Number"));
+                $("#membershipnumber").prop("title", _("If this person is a member, their membership number"));
+                $("#membershipnumber").closest("tr").fadeIn();
+                $("#membershipexpires").closest("tr").fadeIn();
+            }
+
+            // If the vet flag is selected, change the membership number label
+            // and hide the expiry field so we can use membership for licence
+            if ($("#flags option[value='vet']").is(":selected")) {
+                $("label[for='membershipnumber']").html(_("License Number"));
+                $("#membershipnumber").prop("title", _("The veterinary license number."));
+                $("#membershipnumber").closest("tr").fadeIn();
+                $("#membershipexpires").closest("tr").fadeOut();
+            }
+
+            // If neither member or vet flag is set, hide the membership number field
+            if (!$("#flags option[value='vet']").is(":selected") && !$("#flags option[value='member']").is(":selected")) {
+                $("#membershipnumber").closest("tr").fadeOut();
+                $("#membershipexpires").closest("tr").fadeOut();
+            }
+
+            // If the fosterer flag is set, show/hide the fosterer capacity field
+            if ($("#flags option[value='fosterer']").is(":selected")) {
+                $("#fostercapacity").closest("tr").fadeIn();
+            }
+            else {
+                $("#fostercapacity").closest("tr").fadeOut();
+            }
+
+            // If the homechecked flag is set, show/hide the homechecked by/date fields
+            if ($("#flags option[value='homechecked']").is(":selected")) {
+                $("#homecheckedby").closest("tr").fadeIn();
+                $("#homechecked").closest("tr").fadeIn();
+            }
+            else {
+                $("#homecheckedby").closest("tr").fadeOut();
+                $("#homechecked").closest("tr").fadeOut();
+            }
+
             // Hide additional accordion section if there aren't
             // any additional fields declared
             var ac = $("#asm-additional-accordion");
@@ -656,69 +705,10 @@ $(function() {
                 });
             });
 
-            var set_membership_flag = function() {
-                // Called when the membership number field is changed - if it has something
-                // in it, then set the member flag (only for non-vets)
-                if ($("#membershipnumber").val() != "" && !$("#flags option[value='vet']").is(":selected")) {
-                    $("#flags option[value='member']").prop("selected", "selected");
-                    $("#flags").change();
-                }
-            };
-
-            var set_homechecked_flag = function() {
-                if (config.bool("DontDefaultHomechecked")) { return; }
-                $("#flags option[value='homechecked']").prop("selected", "selected");
-                $("#flags").change();
-            };
-
-            var set_fosterer_flag = function() {
-                if (format.to_int($("#fostercapacity").val())) {
-                    $("#flags option[value='fosterer']").prop("selected", "selected");
-                    $("#flags").change();
-                }
-            };
-
-            $("#homecheckedby").personchooser().bind("personchooserchange", function(event, rec) {
-                set_homechecked_flag();
-            });
-
             // Controls that update the screen when changed
             $("#ownertype").change(person.enable_widgets);
             $("#matchactive").change(person.enable_widgets);
-            $("#homechecked").keyup(set_homechecked_flag);
-            $("#homechecked").change(set_homechecked_flag);
-            $("#membershipnumber").keyup(set_membership_flag).change(set_membership_flag);
-            $("#membershipexpires").change(set_membership_flag);
-            $("#fostercapacity").keyup(set_fosterer_flag).change(set_fosterer_flag);
-
-            $("#flags").change(function() {
-                // if the member flag is selected and membership number is blank,
-                // default the membership number from the person id.
-                if ($("#flags option[value='member']").is(":selected")) {
-                    if ($.trim($("#membershipnumber").val()) == "") {
-                        $("#membershipnumber").val( 
-                            format.padleft($("#personid").val(), 10));
-                    }
-                }
-
-                // If the vet flag is selected, change the membership number label
-                // and hide the expiry field so we can use membership for licence
-                if ($("#flags option[value='vet']").is(":selected")) {
-                    $("label[for='membershipnumber']").html(_("License Number"));
-                    $("#membershipnumber").attr("title", _("The veterinary license number."));
-                    $("#membershipexpires").closest("tr").fadeOut();
-                    $("#homecheckedby").closest("tr").fadeOut();
-                    $("#homechecked").closest("tr").fadeOut();
-                }
-                else {
-                    $("label[for='membershipnumber']").html(_("Membership Number"));
-                    $("#membershipnumber").attr("title", _("If this person is a member, their membership number"));
-                    $("#membershipexpires").closest("tr").fadeIn();
-                    $("#homecheckedby").closest("tr").fadeIn();
-                    $("#homechecked").closest("tr").fadeIn();
-                }
-
-            });
+            $("#flags").change(person.enable_widgets);
 
             validate.save = function(callback) {
                 if (!person.validation()) { header.hide_loading(); return; }
