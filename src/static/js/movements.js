@@ -110,7 +110,7 @@ $(function() {
                     { field: "MOVEMENTNAME", display: _("Type") }, 
                     { field: "MOVEMENTDATE", display: _("Date"), 
                         initialsort: controller.name != "move_book_trial_adoption", 
-                        initialsortdirection: controller.name == "desc", 
+                        initialsortdirection: "desc", 
                         formatter: function(row, v) { 
                             // If we're only a reservation, use the reserve date instead
                             if (row.MOVEMENTTYPE == 0) {
