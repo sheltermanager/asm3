@@ -506,7 +506,7 @@ def get_person_find_advanced(dbo, criteria, username, includeStaff = False, incl
     ss.add_words("comments", "o.Comments")
     ss.add_words("medianotes", "web.MediaNotes")
 
-    if "filter" in post:
+    if "filter" in post and post["filter"].strip() != "":
         for flag in post["filter"].split(","):
             if flag == "aco": ss.ands.append("o.IsACO=1")
             elif flag == "banned": ss.ands.append("o.IsBanned=1")
@@ -530,7 +530,7 @@ def get_person_find_advanced(dbo, criteria, username, includeStaff = False, incl
                 ss.ands.append("LOWER(o.AdditionalFlags) LIKE ?")
                 ss.values.append("%%%s|%%" % flag.lower())
 
-    if "gdpr" in post and post["gdpr"] != "":
+    if "gdpr" in post and post["gdpr"].strip() != "":
         for g in post["gdpr"].split(","):
             ss.ands.append("o.GDPRContactOptIn LIKE ?")
             ss.values.append("%%%s%%" % g)
