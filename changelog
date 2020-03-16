@@ -1,6 +1,7 @@
 43
 ================
 
+16/03/20 Person advanced search/phone contains not searching home phone #748
 15/03/20 Refactor visibility of type slider fields #181
 15/03/20 Reservation book sort desc, config for overdue display #725
 15/03/20 OwnerLookingFor person wordkey #693

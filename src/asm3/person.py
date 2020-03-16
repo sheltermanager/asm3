@@ -530,7 +530,7 @@ def get_person_find_advanced(dbo, criteria, username, includeStaff = False, incl
                 ss.ands.append("LOWER(o.AdditionalFlags) LIKE ?")
                 ss.values.append("%%%s|%%" % flag.lower())
 
-    if "gdpr" in post:
+    if "gdpr" in post and post["gdpr"] != "":
         for g in post["gdpr"].split(","):
             ss.ands.append("o.GDPRContactOptIn LIKE ?")
             ss.values.append("%%%s%%" % g)

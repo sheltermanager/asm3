@@ -221,7 +221,8 @@ class AdvancedSearchBuilder(object):
     def add_str_pair(self, cfield, field, field2): 
         """ Adds a clause for a posted value to one of two string fields """
         if self.post[cfield] != "":
-            x = "%%%s%%" % self.post[cfield].lower()
+            x = self.post[cfield].lower().replace("'", "`")
+            x = "%%%s%%" % x
             self.ands.append("(LOWER(%s) LIKE ? OR LOWER(%s) LIKE ?)" % (field, field2))
             self.values.append(x)
             self.values.append(x)
@@ -229,7 +230,8 @@ class AdvancedSearchBuilder(object):
     def add_str_triplet(self, cfield, field, field2, field3): 
         """ Adds a clause for a posted value to one of three string fields """
         if self.post[cfield] != "":
-            x = "%%%s%%" % self.post[cfield].lower()
+            x = self.post[cfield].lower().replace("'", "`")
+            x = "%%%s%%" % x
             self.ands.append("(LOWER(%s) LIKE ? OR LOWER(%s) LIKE ? OR LOWER(%s) LIKE ?)" % (field, field2, field3))
             self.values.append(x)
             self.values.append(x)
