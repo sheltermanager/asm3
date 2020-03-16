@@ -1183,7 +1183,6 @@ def update_treatment_given(dbo, username, amtid, newdate, by = "", vetid = 0, co
     """
     Marks a treatment record as given on newdate, assuming that newdate is valid.
     """
-    if by == "": by = username
     amid = dbo.query_int("SELECT AnimalMedicalID FROM animalmedicaltreatment WHERE ID = ?", [amtid])
     dbo.update("animalmedicaltreatment", amtid, {
         "AdministeringVetID":   vetid,

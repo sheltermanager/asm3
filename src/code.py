@@ -3676,6 +3676,11 @@ class medical(JSONEndpoint):
         if post.integer("item") != -1:
             asm3.stock.deduct_stocklevel_from_form(session.dbo, session.user, post)
 
+    def post_undo(self, o):
+        self.check(asm3.users.BULK_COMPLETE_MEDICAL)
+        for mid in o.post.integer_list("ids"):
+            asm3.medical.update_treatment_given(o.dbo, o.user, mid, None)
+
     def post_required(self, o):
         self.check(asm3.users.BULK_COMPLETE_MEDICAL)
         newdate = o.post.date("newdate")
