@@ -175,6 +175,7 @@ $(function() {
                 "PickupLocationID": _("Pickup Location"), 
                 "IsQuarantine":  _("Quarantine"),
                 "HasSpecialNeeds":  _("Special Needs"),
+                "AdditionalFlags": _("Flags"),
                 "ShelterLocation":  _("Location"),
                 "ShelterLocationUnit":  _("Unit"),
                 "Fosterer": _("Fosterer"),
@@ -233,6 +234,9 @@ $(function() {
                 if (row.ACTIVEMOVEMENTTYPE == 2) {
                     rv = html.person_link(row.CURRENTOWNERID, row.CURRENTOWNERNAME);
                 }
+            }
+            else if ( name == "AdditionalFlags") {
+                rv = edit_header.animal_flags(row);
             }
             else if ( name == "Size") { rv = row.SIZENAME; }
             else if ( name == "Weight") { 

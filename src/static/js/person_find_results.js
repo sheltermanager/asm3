@@ -150,6 +150,8 @@ $(function() {
                 "IsRetailer":  _("Retailer"),
                 "IsVet":  _("Vet"),
                 "IsGiftAid":  _("GiftAid"),
+                "AdditionalFlags": _("Flags"),
+                "LookingForSummary": _("Looking For"),
                 "HomeCheckAreas":  _("Areas"),
                 "DateLastHomeChecked":  _("Homechecked"),
                 "HomeCheckedBy":  _("Checked By")
@@ -176,7 +178,7 @@ $(function() {
             STRING_FIELDS = [ "CreatedBy", "OwnerTitle", "OwnerInitials", "OwnerForenames", "OwnerSurname",
                 "OwnerName", "OwnerAddress", "OwnerTown", "OwnerCounty", "OwnerPostcode",
                 "HomeTelephone", "WorkTelephone", "MobileTelephone", "EmailAddress",
-                "Comments", "MembershipNumber", "HomeCheckAreas" ],
+                "Comments", "MembershipNumber", "HomeCheckAreas", "LookingForSummary" ],
             YES_NO_FIELDS = [ "IDCheck", "IsBanned", "IsVolunteer", "IsHomeChecker", 
                 "IsMember", "IsDonor", "IsShelter", "IsACO", "IsStaff", "IsFosterer",
                 "IsRetailer", "IsVet", "IsGiftAid" ],
@@ -196,6 +198,9 @@ $(function() {
             else if ($.inArray(name, YES_NO_FIELDS) > -1) {
                 if (value == 0) { rv = _("No"); }
                 if (value == 1) { rv = _("Yes"); }
+            }
+            else if ( name == "AdditionalFlags") {
+                rv = edit_header.person_flags(row);
             }
             else if ( name == "Image" ) {
                 rv = "<img class=\"asm-thumbnail thumbnailshadow\" src=\"" + html.thumbnail_src(row, "animalthumb") + "\" />";

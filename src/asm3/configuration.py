@@ -253,7 +253,7 @@ DEFAULTS = {
     "OwnerNameCheck": "Yes",
     "OwnerNameFormat": "{ownertitle} {ownerforenames} {ownersurname}",
     "OwnerSearchColumns": "OwnerCode,OwnerName,OwnerSurname," \
-        "MembershipNumber,IsBanned,IDCheck,OwnerAddress," \
+        "MembershipNumber,AdditionalFlags,OwnerAddress," \
         "OwnerTown,OwnerCounty,OwnerPostcode,HomeTelephone,WorkTelephone," \
         "MobileTelephone,EmailAddress",
     "PetsLocatedIncludeShelter": "No",

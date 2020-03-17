@@ -726,6 +726,7 @@ def json_animalfindcolumns(dbo):
         ( "PickupLocationID", _("Pickup Location", l) ),
         ( "IsQuarantine", _("Quarantine", l) ),
         ( "HasSpecialNeeds", _("Special Needs", l) ),
+        ( "AdditionalFlags", _("Flags", l) ),
         ( "ShelterLocation", _("Location", l) ),
         ( "ShelterLocationUnit", _("Unit", l) ),
         ( "Fosterer", _("Fosterer", l) ),
@@ -791,6 +792,8 @@ def json_personfindcolumns(dbo):
         ( "IsRetailer", _("Retailer", l) ),
         ( "IsVet", _("Vet", l) ),
         ( "IsGiftAid", _("GiftAid", l) ),
+        ( "AdditionalFlags", _("Flags", l) ),
+        ( "LookingForSummary", _("Looking For", l) ),
         ( "HomeCheckAreas", _("Homecheck Areas", l) ),
         ( "DateLastHomeChecked", _("Homecheck Date", l) ),
         ( "HomeCheckedBy", _("Homechecked By", l) )
