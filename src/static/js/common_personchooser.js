@@ -406,6 +406,7 @@
                         html.list_to_options(self.options.sites, "ID", "SITENAME"));
                     // Add jurisdictions
                     dialogadd.find(".personchooser-jurisdiction").html(html.list_to_options(self.options.jurisdictions, "ID", "JURISDICTIONNAME"));
+                    dialogadd.find(".personchooser-jurisdiction").select("removeRetiredOptions", "all");
                     // Add new additional fields
                     dialogadd.find("table").append(additional.additional_new_fields(d.additional, false, "additional chooser"));
 
