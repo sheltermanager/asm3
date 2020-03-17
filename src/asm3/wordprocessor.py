@@ -524,6 +524,8 @@ def animal_tags(dbo, a, includeAdditional=True, includeCosts=True, includeDiet=T
             "TESTADMINISTERINGVETEMAIL":     "ADMINISTERINGVETEMAIL"
         }
         tests = asm3.medical.get_tests(dbo, a["ID"], not iic)
+        for t in tests:
+            if t.DATEOFTEST is None: t.RESULTNAME = "" # Do not show a result for ungiven tests
         tags.update(table_tags(dbo, d, tests, "TESTNAME", "DATEREQUIRED", "DATEOFTEST"))
         tags["ANIMALTESTS"] = html_table(l, tests, (
             ( "TESTNAME", _("Type", l) ),
