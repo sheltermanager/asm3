@@ -1,10 +1,10 @@
-Microchip Registration
+Microchips registered between two dates by publisher
 ###
 Microchip
 ###
-2730/Any
+33202/Any
 ###
-Owner, microchip and animal information for all animals adopted between two dates
+Owner, microchip and animal information for all animals published to a chip registry between two dates
 ###
 en
 ###
@@ -15,23 +15,24 @@ o.HomeTelephone, o.WorkTelephone, a.BreedName, o.EmailAddress, s.SpeciesName,
 (SELECT Sex FROM lksex WHERE ID = a.Sex) AS Gender,
 (SELECT Name FROM lksyesno WHERE ID = a.Neutered) AS IsNeutered,
 a.DateOfBirth, a.AnimalAge, m.MovementDate, 
-a.Markings
-FROM adoption m 
-INNER JOIN animal a ON a.ID = m.AnimalID
-INNER JOIN owner o ON o.ID = m.OwnerID
-INNER JOIN species s ON s.ID = a.SpeciesID
-WHERE m.MovementDate >= '$ASK DATE Enter the earliest adoption date$'
-AND m.MovementDate <= '$ASK DATE Enter the latest adoption date$'
-AND m.MovementType = 1 
-AND a.DeceasedDate Is Null
-ORDER BY s.SpeciesName, m.MovementDate
+a.Markings,
+p.PublishedTo, p.SentDate 
+FROM animalpublished p 
+INNER JOIN animal a ON a.ID = p.AnimalID
+LEFT OUTER JOIN adoption m ON m.ID = a.ActiveMovementID
+LEFT OUTER JOIN owner o ON o.ID = m.OwnerID
+LEFT OUTER JOIN species s ON s.ID = a.SpeciesID
+WHERE p.SentDate >= '$ASK DATE Published between $'
+AND p.SentDate <= '$ASK DATE and $'
+AND p.PublishedTo IN ('foundanimals', 'petlink', 'akcreunite', 'homeagain', 'smarttag', 'anibaseuk', 'pettracuk' )
+ORDER BY p.PublishedTo, p.SentDate
 ###
 $$HEADER
 HEADER$$
 
-$$GROUP_SpeciesName
+$$GROUP_PublishedTo
 $$HEAD
-<h2>$SpeciesName</h2>
+<h2>$PublishedTo</h2>
 <table border="1">
 <tr>
 <th>Name</th>
@@ -44,11 +45,11 @@ $$HEAD
 <th>Neutered</th>
 <th>DOB</th>
 <th>Age</th>
-<th>Adopted</th>
+<th>Date</th>
 </tr>
 $$FOOT
 </table>
-<h2>Total $SpeciesName: {COUNT.SPECIESNAME}</h2>
+<h2>Total $PublishedTo: {COUNT.PUBLISHEDTO}</h2>
 GROUP$$
 
 $$BODY
@@ -71,7 +72,7 @@ $EMAILADDRESS
 <td>$ISNEUTERED</td>
 <td>$DATEOFBIRTH</td>
 <td>$ANIMALAGE</td>
-<td>$MOVEMENTDATE</td>
+<td>$SENTDATE</td>
 </tr>
 BODY$$
 
