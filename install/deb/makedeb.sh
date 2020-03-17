@@ -42,6 +42,9 @@ echo "/var/log/asm3.log
         endscript
 }" > sheltermanager3/etc/logrotate.d/asm3
 
+# Add our repository to the list file
+echo "deb [trusted=yes] http://public.sheltermanager.com/deb/ ./" > sheltermanager3/etc/apt/sources.list.d/sheltermanager3.list
+
 # Generate the control file
 #echo "Generating control file..."
 echo "Package: sheltermanager3
