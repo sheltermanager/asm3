@@ -245,7 +245,7 @@ $(function() {
 
         render_homechecker: function() {
             return [
-                '<h3><a href="#">' + _("Homechecker") + '</a></h3>',
+                '<h3 id="accordion-homechecker"><a href="#">' + _("Homechecker") + '</a></h3>',
                 '<div>',
                 '<!-- outer table -->',
                 '<table width="100%">',
@@ -539,6 +539,15 @@ $(function() {
             else {
                 $("#homecheckedby").closest("tr").fadeOut();
                 $("#homechecked").closest("tr").fadeOut();
+            }
+
+            // Hide the homechecker section if this person isn't a homechecker
+            if ($("#flags option[value='homechecker']").is(":selected")) {
+                $("#accordion-homechecker").show();
+            }
+            else {
+                $("#accordion-homechecker").hide();
+                $("#accordion-homechecker").next().hide();
             }
 
             // Hide additional accordion section if there aren't
