@@ -72,6 +72,7 @@ class TestDiary(unittest.TestCase):
 
     def test_update_diary_from_form(self):
         data = {
+            "diaryid":     str(self.nid),
             "diarydate":   base.today_display(),
             "diarytime":   "09:00",
             "diaryfor":    "user",

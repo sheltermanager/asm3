@@ -80,7 +80,7 @@ class TestFinancial(unittest.TestCase):
         asm3.financial.get_licences(base.get_dbo())
 
     def test_get_vouchers(self):
-        asm3.financial.get_vouchers(base.get_dbo(), 0)
+        asm3.financial.get_vouchers(base.get_dbo())
 
     def test_receive_donation(self):
         data = {
