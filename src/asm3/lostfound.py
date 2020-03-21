@@ -495,7 +495,7 @@ def match(dbo, lostanimalid = 0, foundanimalid = 0, animalid = 0, limit = 0):
                     m.fcontactname = _("Shelter animal {0} '{1}'", l).format(a["CODE"], a["ANIMALNAME"])
                     m.fmicrochip = a["IDENTICHIPNUMBER"]
                     m.fcontactnumber = a["SPECIESNAME"]
-                    m.fareafound = _("On Shelter", l)
+                    m.fareafound = "%s, %s" % (a["ORIGINALOWNERADDRESS"], a["ORIGINALOWNERTOWN"])
                     m.fareapostcode = a["ORIGINALOWNERPOSTCODE"]
                     m.fagegroup = a["AGEGROUP"]
                     m.fsexid = a["SEX"]
