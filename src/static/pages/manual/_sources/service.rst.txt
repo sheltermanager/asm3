@@ -69,14 +69,18 @@ animal_view
 
 .. rubric:: Cache time: 2 minutes
 
-Returns a webpage with information for one animal, constructed from the
-animal_view HTML publishing template (editable at :menuselection:`Publishing ->
+Returns a webpage with information for one adoptable animal, constructed from the
+animalview HTML publishing template (editable at :menuselection:`Publishing ->
 Edit HTML publishing templates`). Pass the id of the animal::
 
     http://localhost:5000/service?method=animal_view&animalid=520
 
 When you use :menuselection:`Share --> Link to this animal` on an animal's record, 
 it is this service call that the system redirects you to.
+
+If the animal is no longer adoptable, an error page will be displayed. If you prefer, you
+can create an HTML publishing template called "animalviewnotadoptable" that will display
+instead for animals that can no longer be adopted.
 
 animal_view_adoptable_js
 ------------------------
@@ -308,7 +312,7 @@ animal_view_adoptable_html
 
 Returns a complete HTML document that references animal_view_adoptable_js to
 show a list of adoptable animals. It looks for an HTML template called
-"animalviewadoptable" and falls back to a basic internal template if it does
+"animalviewadoptables" and falls back to a basic internal template if it does
 not exist.
 
     http://localhost:5000/service?method=&animal_view_adoptable_html
