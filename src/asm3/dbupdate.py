@@ -5156,7 +5156,7 @@ def update_34304(dbo):
 def update_34305(dbo):
     # Add vaccinationtype.RescheduleDays
     add_column(dbo, "vaccinationtype", "RescheduleDays", dbo.type_integer)
-    dbo.execute_dbupdate("UPDATE vaccinationtype SET RescheduleDays = 365 WHERE RescheduleDays Is Null")
+    dbo.execute_dbupdate("UPDATE vaccinationtype SET RescheduleDays = 0 WHERE RescheduleDays Is Null")
     # Add animallost.MicrochipNumber and animalfound.MicrochipNumber
     add_column(dbo, "animallost", "MicrochipNumber", dbo.type_shorttext)
     add_column(dbo, "animalfound", "MicrochipNumber", dbo.type_shorttext)

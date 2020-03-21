@@ -10,6 +10,20 @@ $(function() {
         // locales where the publisher column/fields appear
         publisher_locales: [ "en", "en_CA", "en_GB", "en_MX", "es_MX" ],
 
+        reschedule_options: [ 
+            { "ID": 0, "NAME": _("Never") },
+            { "ID": 7, "NAME": _("1 week") },
+            { "ID": 14, "NAME": _("{0} weeks").replace("{0}", "2") },
+            { "ID": 21, "NAME": _("{0} weeks").replace("{0}", "3") },
+            { "ID": 28, "NAME": _("{0} weeks").replace("{0}", "4") },
+            { "ID": 56, "NAME": _("{0} weeks").replace("{0}", "8") },
+            { "ID": 84, "NAME": _("{0} weeks").replace("{0}", "12") },
+            { "ID": 182, "NAME": _("{0} weeks").replace("{0}", "26") },
+            { "ID": 365, "NAME": _("1 year") },
+            { "ID": 730, "NAME": _("{0} years").replace("{0}", "2") },
+            { "ID": 1825, "NAME": _("{0} years").replace("{0}", "5") }
+        ],
+
         model: function() {
 
             // The list of tables has two elements for value/label,
@@ -46,6 +60,9 @@ $(function() {
                         json_field: "ADOPTAPETCOLOUR", post_field: "apcolour", label: _("Publisher Color"), type: "select", 
                         callout: _("Color to use when publishing to third party services and adoption sites"),
                         options: controller.adoptapetcolours },
+                    { hideif: function() { return !controller.hasrescheduledays; },
+                        json_field: "RESCHEDULEDAYS", post_field: "rescheduledays", label: _("Reschedule for"), type: "select",
+                        options: { rows: lookups.reschedule_options, valuefield: "ID", displayfield: "NAME" }},
                     { hideif: function() { return !controller.hasdefaultcost; },
                         json_field: "DEFAULTCOST", post_field: "defaultcost", label: _("Default Cost"), type: "currency" },
                     { hideif: function() { return !controller.hassite; },
@@ -119,6 +136,16 @@ $(function() {
                     { field: "UNITS", display: _("Units"), hideif: function(row) { return !controller.hasunits; }},
                     { field: "ISVAT", display: _("Sales Tax"), hideif: function(row) { return !controller.hasvat; }, 
                         formatter: function(row) { return row.ISVAT == 1 ? _("Yes") : _("No"); }},
+                    { field: "RESCHEDULEDAYS", display: _("Reschedule for"), 
+                        hideif: function(row) { return !controller.hasrescheduledays; },
+                        formatter: function(row) { 
+                            var rv = String(row.RESCHEDULEDAYS);
+                            $.each(lookups.reschedule_options, function(i, v) {
+                                if (row.RESCHEDULEDAYS == v.ID) { rv = v.NAME; }
+                            });
+                            return rv;
+                        }
+                    },
                     { field: "DEFAULTCOST", display: _("Default Cost"), formatter: tableform.format_currency,
                         hideif: function(row) { return !controller.hasdefaultcost; }}
                 ]

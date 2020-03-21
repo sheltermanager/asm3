@@ -323,14 +323,14 @@
             return new Date(d.getFullYear(), d.getMonth(), d.getDate(), 0, 0, 0);
         },
 
-        /** Adds days to date */
+        /** Adds days to js date */
         add_days: function(date, days) {
             var d = new Date();
             d.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
             return d;
         },
 
-        /** Subtracts days from date */
+        /** Subtracts days from js date */
         subtract_days: function(date, days) {
             var d = new Date();
             d.setTime(date.getTime() + 60 - (days * 24 * 60 * 60 * 1000));

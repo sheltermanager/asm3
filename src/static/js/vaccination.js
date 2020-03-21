@@ -173,6 +173,8 @@ $(function() {
                         });
                         $("#usagecomments").val(comments);
                         $("#givennewdate").datepicker("setDate", new Date());
+                        var rd = vaccination.calc_reschedule_date(new Date());
+                        if (rd) { $("#rescheduledate").datepicker("setDate", rd); }
                         $("#givenexpires, #givenbatch, #givenmanufacturer").val("");
                         vaccination.set_given_batch(vacctype);
                         $("#usagetype").select("firstvalue");
@@ -395,7 +397,7 @@ $(function() {
                 '</tr>',
                 '<tr>',
                 '<td><label for="rescheduledate">' + _("Reschedule") + '</label>',
-                '<span id="callout-rescheduledate" class="asm-callout">' + _("Specifying a reschedule date will make copies of the selected vaccinations and mark them to be given on the reschedule date. Example: If this vaccination needs to be given every year, set the reschedule date to be 1 year from today.") + '</span>',
+                //'<span id="callout-rescheduledate" class="asm-callout">' + _("Specifying a reschedule date will make copies of the selected vaccinations and mark them to be given on the reschedule date. Example: If this vaccination needs to be given every year, set the reschedule date to be 1 year from today.") + '</span>',
                 '</td>',
                 '<td><input id="rescheduledate" data="rescheduledate" type="text" class="asm-textbox asm-datebox asm-field" /></td>',
                 '</tr>',
@@ -489,13 +491,15 @@ $(function() {
             // When the vacc type is changed, update the default cost and batch/manufacturer
             $("#type").change(function() {
                 vaccination.set_default_cost();
+                vaccination.set_expiry_date();
                 vaccination.set_last_batch();
             });
 
             // When focus leaves the given date, update the batch/manufacturer
-            $("#given").blur(function() {
-                vaccination.set_last_batch();
-            });
+            $("#given").blur(vaccination.set_last_batch);
+
+            // When the given date is changed, update the expiry date
+            $("#given").change(vaccination.set_expiry_date);
 
             // Remember the currently selected animal when it changes so we can add
             // its name and code to the local set
@@ -534,18 +538,35 @@ $(function() {
         /** Sets the default cost based on the selected vaccination type */
         set_default_cost: function() {
             if (!vaccination.enable_default_cost) { return; }
-            var seltype = $("#type").val();
-            $.each(controller.vaccinationtypes, function(i, v) {
-                if (seltype == v.ID) {
-                    if (v.DEFAULTCOST) {
-                        $("#cost").currency("value", v.DEFAULTCOST);
-                    }
-                    else {
-                        $("#cost").currency("value", 0);
-                    }
-                    return true;
-                }
-            });
+            var cost = common.get_field(controller.vaccinationtypes, $("#type").val(), "DEFAULTCOST");
+            if (cost) { 
+                $("#cost").currency("value", cost); 
+            }
+            else {
+                $("#cost").currency("value", 0);
+            }
+        },
+
+        /** Calculates the expiry date for the selected vaccination type
+         *  based on rescheduledays.
+         *  requires a given date to be set.
+         */
+        set_expiry_date: function() {
+            if (!$("#given").val()) { return; }
+            var gd = format.date_js(format.date_iso($("#given").val()));
+            var ed = vaccination.calc_reschedule_date(gd);
+            if (!ed) { $("#expires").val(""); return; }
+            $("#expires").datepicker("setDate", ed);
+        },
+
+        /** Calculates the reschedule date from date and returns
+         * it as a js date.
+         * returns a js date or null if there's a problem.
+         */
+        calc_reschedule_date: function(date) {
+            var reschedule = format.to_int(common.get_field(controller.vaccinationtypes, $("#type").val(), "RESCHEDULEDAYS"));
+            if (!reschedule) { return null; }
+            return common.add_days(date, reschedule);
         },
 
         /** Sets the batch number and manufacturer fields based on the last 

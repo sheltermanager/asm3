@@ -17,6 +17,7 @@ import re
 #   pubspec - has a PetFinderSpecies column (species)
 #   pubbreed - has a PetFinderBreed column (breed)
 #   pubcol - has an AdoptAPetColour column (basecolour)
+#   sched - has a RescheduleDays column (vaccinationtype)
 #   cost - has a DefaultCost column (citationtype, costtype, donationtype, licencetype)
 #   units - has Units column (internallocation)
 #   site - has SiteID column (internallocation)
@@ -63,7 +64,7 @@ LOOKUP_TABLES = {
     "lkstransportstatus": (_("Transport Statuses"), "Name", _("Status"), "", "", ("animaltransport.Status",)),
     "transporttype":    (_("Transport Types"), "TransportTypeName", _("Type"), "TransportTypeDescription", "add del ret", ("animaltransport.TransportTypeID",)),
     "traptype":         (_("Trap Types"), "TrapTypeName", _("Type"), "TrapTypeDescription", "add del ret cost", ("ownertraploan.TrapTypeID",)),
-    "vaccinationtype":  (_("Vaccination Types"), "VaccinationType", _("Type"), "VaccinationDescription", "add del ret cost", ("animalvaccination.VaccinationID",)),
+    "vaccinationtype":  (_("Vaccination Types"), "VaccinationType", _("Type"), "VaccinationDescription", "add del ret cost sched", ("animalvaccination.VaccinationID",)),
     "voucher":          (_("Voucher Types"), "VoucherName", _("Type"), "VoucherDescription", "add del ret cost", ("ownervoucher.VoucherID",)),
     "lkworktype":       (_("Work Types"), "WorkType", _("Type"), "", "add del", ("ownerrota.WorkTypeID",))
 }
@@ -979,7 +980,7 @@ def get_lookup(dbo, tablename, namefield):
         return dbo.query("SELECT b.*, s.SpeciesName FROM breed b LEFT OUTER JOIN species s ON s.ID = b.SpeciesID ORDER BY b.BreedName")
     return dbo.query("SELECT * FROM %s ORDER BY %s" % ( tablename, namefield ))
 
-def insert_lookup(dbo, username, lookup, name, desc="", speciesid=0, pfbreed="", pfspecies="", apcolour="", units="", site=1, defaultcost=0, vat=0, retired=0):
+def insert_lookup(dbo, username, lookup, name, desc="", speciesid=0, pfbreed="", pfspecies="", apcolour="", units="", site=1, rescheduledays=0, defaultcost=0, vat=0, retired=0):
     t = LOOKUP_TABLES[lookup]
     nid = 0
     if lookup == "basecolour":
@@ -1033,12 +1034,20 @@ def insert_lookup(dbo, username, lookup, name, desc="", speciesid=0, pfbreed="",
         # Create a matching account if we have a donation type
         if asm3.configuration.create_donation_trx(dbo): asm3.financial.insert_account_from_donationtype(dbo, nid, name, desc)
         return nid
-    elif lookup == "testtype" or lookup == "voucher" or lookup == "vaccinationtype" \
-        or lookup == "traptype" or lookup == "licencetype" or lookup == "citationtype":
+    elif lookup == "testtype" or lookup == "voucher" or lookup == "traptype" or lookup == "licencetype" or lookup == "citationtype":
         nid = dbo.insert(lookup, {
             t[LOOKUP_NAMEFIELD]:    name,
             t[LOOKUP_DESCFIELD]:    desc,
             "DefaultCost":          defaultcost,
+            "IsRetired":            retired
+        }, username, setCreated=False)
+        return nid
+    elif lookup == "vaccinationtype":
+        nid = dbo.insert(lookup, {
+            t[LOOKUP_NAMEFIELD]:    name,
+            t[LOOKUP_DESCFIELD]:    desc,
+            "DefaultCost":          defaultcost,
+            "RescheduleDays":       rescheduledays,
             "IsRetired":            retired
         }, username, setCreated=False)
         return nid
@@ -1059,7 +1068,7 @@ def insert_lookup(dbo, username, lookup, name, desc="", speciesid=0, pfbreed="",
         else:
             return dbo.insert(lookup, { t[LOOKUP_NAMEFIELD]: name, t[LOOKUP_DESCFIELD]: desc }, username, setCreated=False)
 
-def update_lookup(dbo, username, iid, lookup, name, desc="", speciesid=0, pfbreed="", pfspecies="", apcolour="", units="", site=1, defaultcost=0, vat=0, retired=0):
+def update_lookup(dbo, username, iid, lookup, name, desc="", speciesid=0, pfbreed="", pfspecies="", apcolour="", units="", site=1, rescheduledays=0, defaultcost=0, vat=0, retired=0):
     t = LOOKUP_TABLES[lookup]
     if lookup == "basecolour":
         dbo.update("basecolour", iid, { 
@@ -1099,11 +1108,19 @@ def update_lookup(dbo, username, iid, lookup, name, desc="", speciesid=0, pfbree
             "IsVAT":                vat,
             "IsRetired":            retired
         }, username, setLastChanged=False)
-    elif lookup == "costtype" or lookup == "testtype" or lookup == "voucher" or lookup == "vaccinationtype" \
+    elif lookup == "costtype" or lookup == "testtype" or lookup == "voucher" \
         or lookup == "traptype" or lookup == "licencetype" or lookup == "citationtype":
         dbo.update(lookup, iid, {
             t[LOOKUP_NAMEFIELD]:    name,
             t[LOOKUP_DESCFIELD]:    desc,
+            "DefaultCost":          defaultcost,
+            "IsRetired":            retired
+        }, username, setLastChanged=False)
+    elif lookup == "vaccinationtype":
+        dbo.update(lookup, iid, {
+            t[LOOKUP_NAMEFIELD]:    name,
+            t[LOOKUP_DESCFIELD]:    desc,
+            "RescheduleDays":       rescheduledays,
             "DefaultCost":          defaultcost,
             "IsRetired":            retired
         }, username, setLastChanged=False)
