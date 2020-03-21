@@ -133,6 +133,12 @@ $(function() {
                 '</td>',
                 '</tr>',
                 '<tr>',
+                '<td><label for="microchip">' + _("Microchip") + '</label></td>',
+                '<td><input id="microchip" data-json="MICROCHIPNUMBER" data-post="microchip" type="text" class="asm-textbox" />',
+                ' <span id="microchipbrand"></span>',
+                '</td>',
+                '</tr>',
+                '<tr>',
                 '<td>',
                 '<label for="comments">' + _("Comments") + '</label></td>',
                 '<td><textarea id="comments" data-json="COMMENTS" data-post="comments" rows="5" class="asm-textarea"></textarea></td>',
@@ -169,6 +175,9 @@ $(function() {
             if (an.find(".additional").length == 0) {
                 ac.hide(); an.hide();
             }
+
+            // Show the microchip manufacturer
+            html.microchip_manufacturer("#microchip", "#microchipbrand");
 
             if (!common.has_permission("aa")) { $("#button-toanimal").hide(); }
             if (!common.has_permission("awl")) { $("#button-towaitinglist").hide(); }
@@ -259,6 +268,9 @@ $(function() {
             $("#owner").personchooser().bind("personchooserloaded", function(event, rec) {
                 lostfound.current_person = rec;
             });
+
+            // Handlers for when on-screen fields are edited
+            $("#microchip").change(lostfound.enable_widgets);
 
             // Email dialog for sending emails
             $("#emailform").emailform();

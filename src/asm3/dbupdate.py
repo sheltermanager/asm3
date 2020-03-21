@@ -36,7 +36,8 @@ VERSIONS = (
     34002, 34003, 34004, 34005, 34006, 34007, 34008, 34009, 34010, 34011, 34012,
     34013, 34014, 34015, 34016, 34017, 34018, 34019, 34020, 34021, 34022, 34100,
     34101, 34102, 34103, 34104, 34105, 34106, 34107, 34108, 34109, 34110, 34111,
-    34112, 34200, 34201, 34202, 34203, 34204, 34300, 34301, 34302, 34303, 34304
+    34112, 34200, 34201, 34202, 34203, 34204, 34300, 34301, 34302, 34303, 34304,
+    34305
 )
 
 LATEST_VERSION = VERSIONS[-1]
@@ -529,6 +530,7 @@ def sql_structure(dbo):
         flongstr("DistFeat", False),
         fstr("AreaFound"),
         fstr("AreaPostcode"),
+        fstr("MicrochipNumber", True),
         fint("OwnerID"),
         fdate("ReturnToOwnerDate", True),
         flongstr("Comments") ))
@@ -536,6 +538,7 @@ def sql_structure(dbo):
     sql += index("animalfound_AnimalTypeID", "animalfound", "AnimalTypeID")
     sql += index("animalfound_AreaFound", "animalfound", "AreaFound")
     sql += index("animalfound_AreaPostcode", "animalfound", "AreaPostcode")
+    sql += index("animalfound_MicrochipNumber", "animalfound", "MicrochipNumber")
 
     sql += table("animallitter", (
         fid(),
@@ -562,12 +565,14 @@ def sql_structure(dbo):
         flongstr("DistFeat", False),
         fstr("AreaLost"),
         fstr("AreaPostcode"),
+        fstr("MicrochipNumber", True),
         fint("OwnerID"),
         flongstr("Comments") ))
     sql += index("animallost_DateFound", "animallost", "DateFound")
     sql += index("animallost_AnimalTypeID", "animallost", "AnimalTypeID")
     sql += index("animallost_AreaLost", "animallost", "AreaLost")
     sql += index("animallost_AreaPostcode", "animallost", "AreaPostcode")
+    sql += index("animallost_MicrochipNumber", "animallost", "MicrochipNumber")
 
     sql += table("animallostfoundmatch", (
         fint("AnimalLostID"),
@@ -581,6 +586,7 @@ def sql_structure(dbo):
         fint("LostSex", True),
         fint("LostSpeciesID", True),
         fint("LostBreedID", True),
+        fstr("LostMicrochipNumber", True),
         flongstr("LostFeatures", True),
         fint("LostBaseColourID", True),
         fdate("LostDate", True),
@@ -592,6 +598,7 @@ def sql_structure(dbo):
         fint("FoundSex", True),
         fint("FoundSpeciesID", True),
         fint("FoundBreedID", True),
+        fstr("FoundMicrochipNumber", True),
         flongstr("FoundFeatures", True),
         fint("FoundBaseColourID", True),
         fdate("FoundDate", True),
@@ -1537,6 +1544,7 @@ def sql_structure(dbo):
         fid(),
         fstr("VaccinationType"),
         fstr("VaccinationDescription", True),
+        fint("RescheduleDays", True),
         fint("DefaultCost", True),
         fint("IsRetired", True) ), False)
     return sql
@@ -5144,3 +5152,16 @@ def update_34304(dbo):
     add_index(dbo, "ownervoucher_VoucherCode", "ownervoucher", "VoucherCode")
     # Set the default vouchercode to ID padded to 6 digits
     dbo.execute_dbupdate("UPDATE ownervoucher SET VoucherCode = %s" % dbo.sql_zero_pad_left("ID", 6))
+
+def update_34305(dbo):
+    # Add vaccinationtype.RescheduleDays
+    add_column(dbo, "vaccinationtype", "RescheduleDays", dbo.type_integer)
+    dbo.execute_dbupdate("UPDATE vaccinationtype SET RescheduleDays = 365 WHERE RescheduleDays Is Null")
+    # Add animallost.MicrochipNumber and animalfound.MicrochipNumber
+    add_column(dbo, "animallost", "MicrochipNumber", dbo.type_shorttext)
+    add_column(dbo, "animalfound", "MicrochipNumber", dbo.type_shorttext)
+    add_index(dbo, "animallost_MicrochipNumber", "animallost", "MicrochipNumber")
+    add_index(dbo, "animalfound_MicrochipNumber", "animalfound", "MicrochipNumber")
+    # Add animallostfoundmatch.LostMicrochipNumber/FoundMicrochipNumber
+    add_column(dbo, "animallostfoundmatch", "LostMicrochipNumber", dbo.type_shorttext)
+    add_column(dbo, "animallostfoundmatch", "FoundMicrochipNumber", dbo.type_shorttext)

@@ -231,6 +231,7 @@ DEFAULTS = {
     "MatchSex": "5",
     "MatchAreaLost": "5",
     "MatchFeatures": "5",
+    "MatchMicrochip": "50",
     "MatchPostcode": "5",
     "MatchColour": "5",
     "MatchIncludeShelter": "Yes",
@@ -905,37 +906,40 @@ def map_provider_key_override(dbo):
     return cstring(dbo, "MapProviderKeyOverride")
 
 def match_species(dbo):
-    return cint(dbo, "MatchSpecies", 5)
+    return cint(dbo, "MatchSpecies", DEFAULTS["MatchSpecies"])
 
 def match_breed(dbo):
-    return cint(dbo, "MatchBreed", 5)
+    return cint(dbo, "MatchBreed", DEFAULTS["MatchBreed"])
 
 def match_age(dbo):
-    return cint(dbo, "MatchAge", 5)
+    return cint(dbo, "MatchAge", DEFAULTS["MatchAge"])
 
 def match_sex(dbo):
-    return cint(dbo, "MatchSex", 5)
+    return cint(dbo, "MatchSex", DEFAULTS["MatchSex"])
 
 def match_area_lost(dbo):
-    return cint(dbo, "MatchAreaLost", 5)
+    return cint(dbo, "MatchAreaLost", DEFAULTS["MatchAreaLost"])
 
 def match_features(dbo):
-    return cint(dbo, "MatchFeatures", 5)
+    return cint(dbo, "MatchFeatures", DEFAULTS["MatchFeatures"])
+
+def match_microchip(dbo):
+    return cint(dbo, "MatchMicrochip", DEFAULTS["MatchMicrochip"])
 
 def match_postcode(dbo):
-    return cint(dbo, "MatchPostcode", 5)
+    return cint(dbo, "MatchPostcode", DEFAULTS["MatchPostcode"])
 
 def match_colour(dbo):
-    return cint(dbo, "MatchColour", 5)
+    return cint(dbo, "MatchColour", DEFAULTS["MatchColour"])
 
 def match_include_shelter(dbo):
     return cboolean(dbo, "MatchIncludeShelter", True)
 
 def match_within2weeks(dbo):
-    return cint(dbo, "MatchWithin2Weeks", 5)
+    return cint(dbo, "MatchWithin2Weeks", DEFAULTS["MatchWithin2Weeks"])
 
 def match_point_floor(dbo):
-    return cint(dbo, "MatchPointFloor", 20)
+    return cint(dbo, "MatchPointFloor", DEFAULTS["MatchPointFloor"])
 
 def media_allow_jpg(dbo):
     return cboolean(dbo, "MediaAllowJPG", DEFAULTS["MediaAllowJPG"] == "Yes")

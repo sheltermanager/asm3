@@ -1138,32 +1138,8 @@ $(function() {
         },
 
         show_microchip_supplier: function() {
-            var pair = function(microchipnumber, microchipbrand) {
-                var m, 
-                    n = $(microchipnumber).val();
-                if (!n) { 
-                    $(microchipbrand).fadeOut();
-                    return;
-                }
-                $.each(controller.microchipmanufacturers, function(i, v) {
-                    if (n.length == v.length && new RegExp(v.regex).test(n)) {
-                        if (v.locales == "" || $.inArray(asm.locale, v.locales.split(" ")) != -1) {
-                            m = "<span style='font-weight: bold'>" + v.name + "</span>";
-                            return false;
-                        }
-                    }
-                });
-                if (!m && (n.length != 9 && n.length != 10 && n.length != 15)) {
-                    m = "<span style='font-weight: bold; color: red'>" + _("Invalid microchip number length") + "</span>";
-                }
-                if (!m) {
-                    m = "<span style='font-weight: bold; color: red'>" + _("Unknown microchip brand") + "</span>";
-                }
-                $(microchipbrand).html(m);
-                $(microchipbrand).fadeIn();
-            };
-            pair("#microchipnumber", "#microchipbrand");
-            pair("#microchipnumber2", "#microchipbrand2");
+            html.microchip_manufacturer("#microchipnumber", "#microchipbrand");
+            html.microchip_manufacturer("#microchipnumber2", "#microchipbrand2");
         },
 
         /** Validates the form fields prior to saving */

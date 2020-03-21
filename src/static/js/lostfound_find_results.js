@@ -24,6 +24,7 @@ $(function() {
                 '<tr>',
                 '<th>' + _("Number") + '</th>',
                 '<th>' + _("Contact") + '</th>',
+                '<th>' + _("Microchip") + '</th>',
                 '<th>' + _("Area") + '</th>',
                 '<th>' + _("Zipcode") + '</th>',
                 '<th>' + _("Date") + '</th>',
@@ -54,6 +55,7 @@ $(function() {
                     h.push('<td><a href="foundanimal?id=' + r.ID + '">' + format.padleft(r.ID, 6) + '</a></td>');
                 }
                 h.push('<td>' + html.person_link(r.OWNERID, r.OWNERNAME) + '</td>');
+                h.push('<td>' + common.nulltostr(r.MICROCHIPNUMBER) + '</td>');
                 if (lostfound_find_results.mode == "lost") {
                     h.push('<td>' + r.AREALOST + '</td>');
                 }

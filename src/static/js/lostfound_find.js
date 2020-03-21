@@ -27,6 +27,14 @@ $(function() {
                 '</tr>',
                 '<tr>',
                 '<td>',
+                '<label for="microchip">' + _("Microchip") + '</label>',
+                '</td>',
+                '<td>',
+                '<input id="microchip" data="microchip" class="asm-textbox" />',
+                '</td>',
+                '</tr>',
+                '<tr>',
+                '<td>',
                 '<label for="area">' + _("Area") + '</label>',
                 '</td>',
                 '<td>',
@@ -178,7 +186,7 @@ $(function() {
 
             // Only show the breeds for the selected species
             // The (all) option is displayed by default
-            var changebreedselect1 = function() {
+            var change_breed_select = function() {
                 $('optgroup', $('#breed')).remove();
                 $('#breedp optgroup').clone().appendTo($('#breed'));
                 $('#breed').append("<option value=''>(all)</option>");
@@ -194,12 +202,9 @@ $(function() {
                 $('#breed').append("<option value='-1'>" + _("(all)") + "</option>");
                 $('#breed').val(-1);
             };
+            $('#species').change(change_breed_select);
+            change_breed_select();
 
-            changebreedselect1();
-
-            $('#species').change(function() {
-                changebreedselect1();
-            });
         },
 
         name: "lostfound_find",

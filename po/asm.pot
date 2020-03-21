@@ -3388,8 +3388,9 @@ msgstr ""
 msgid "First name(s)"
 msgstr ""
 
-#: common_personchooser.js person.js animal_find.js onlineform.js animal.js
-#: options.js person_find.js shelterview.js person_new.js csvimport_paypal.js
+#: common_personchooser.js animal_find_results.js person.js animal_find.js
+#: onlineform.js animal.js options.js person_find.js shelterview.js
+#: person_new.js csvimport_paypal.js person_find_results.js
 msgid "Flags"
 msgstr ""
 
@@ -4167,7 +4168,7 @@ msgstr ""
 msgid "Invalid email address '{0}'"
 msgstr ""
 
-#: animal.js
+#: common.js
 msgid "Invalid microchip number length"
 msgstr ""
 
@@ -4504,7 +4505,7 @@ msgstr ""
 msgid "Longest On Shelter"
 msgstr ""
 
-#: person.js
+#: person.js person_find_results.js
 msgid "Looking For"
 msgstr ""
 
@@ -4792,7 +4793,9 @@ msgstr ""
 msgid "Method"
 msgstr ""
 
-#: animal_find_results.js common_animalchooser.js header_edit_header.js
+#: animal_find_results.js lostfound.js lostfound_find.js
+#: common_animalchooser.js lostfound_find_results.js header_edit_header.js
+#: lostfound_new.js
 msgid "Microchip"
 msgstr ""
 
@@ -5120,7 +5123,7 @@ msgid "Next"
 msgstr ""
 
 #: publish_options.js users.js animal_find_results.js waitinglist_results.js
-#: sql.js accounts.js lostfound_find.js additional.js lookups.js
+#: sql.js onlineform.js accounts.js lostfound_find.js additional.js lookups.js
 #: person_find_results.js
 msgid "No"
 msgstr ""
@@ -5645,6 +5648,10 @@ msgstr ""
 
 #: options.js
 msgid "Points for matching lost/found area"
+msgstr ""
+
+#: options.js
+msgid "Points for matching microchip"
 msgstr ""
 
 #: options.js
@@ -8288,6 +8295,14 @@ msgstr ""
 msgid "Under {0} weeks old"
 msgstr ""
 
+#: medical.js
+msgid "Undo"
+msgstr ""
+
+#: medical.js
+msgid "Undo given treatments"
+msgstr ""
+
 #: search.js animal_new.js animal_find_results.js stocklevel.js common.js
 #: animal.js header_edit_header.js
 msgid "Unit"
@@ -8309,7 +8324,7 @@ msgstr ""
 msgid "Unknown"
 msgstr ""
 
-#: animal.js
+#: common.js
 msgid "Unknown microchip brand"
 msgstr ""
 
@@ -8964,7 +8979,7 @@ msgid "YY or YYYY = current year"
 msgstr ""
 
 #: publish_options.js users.js animal_find_results.js waitinglist_results.js
-#: sql.js accounts.js lostfound_find.js additional.js lookups.js
+#: sql.js onlineform.js accounts.js lostfound_find.js additional.js lookups.js
 #: person_find_results.js
 msgid "Yes"
 msgstr ""

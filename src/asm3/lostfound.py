@@ -25,6 +25,7 @@ class LostFoundMatch:
     lsexname = ""
     lspeciesid = 0
     lspeciesname = ""
+    lmicrochip = ""
     lbreedid = 0
     lbreedname = ""
     ldistinguishingfeatures = ""
@@ -42,6 +43,7 @@ class LostFoundMatch:
     fsexname = ""
     fspeciesid = 0
     fspeciesname = ""
+    fmicrochip = ""
     fbreedid = 0
     fbreedname = ""
     fdistinguishingfeatures = ""
@@ -54,8 +56,8 @@ class LostFoundMatch:
     def toParams(self):
         """ Returns batch parameters for database insert """
         return (self.lid, self.fid, self.fanimalid, self.lcontactname, self.lcontactnumber, self.larealost, self.lareapostcode, self.lagegroup,
-                self.lsexid, self.lspeciesid, self.lbreedid, self.ldistinguishingfeatures, self.lbasecolourid, self.ldatelost, self.fcontactname,
-                self.fcontactnumber, self.fareafound, self.fareapostcode, self.fagegroup, self.fsexid, self.fspeciesid, self.fbreedid,
+                self.lsexid, self.lspeciesid, self.lbreedid, self.ldistinguishingfeatures, self.lbasecolourid, self.ldatelost, self.lmicrochip, self.fmicrochip,
+                self.fcontactname, self.fcontactnumber, self.fareafound, self.fareapostcode, self.fagegroup, self.fsexid, self.fspeciesid, self.fbreedid,
                 self.fdistinguishingfeatures, self.fbasecolourid, self.fdatefound, self.matchpoints)
 
 def get_foundanimal_query(dbo):
@@ -125,7 +127,7 @@ def get_lostanimal_find_simple(dbo, query = "", limit = 0, siteid = 0):
         ss.values.append(dbo.today(offset=-30))
     else:
         if asm3.utils.is_numeric(query): ss.add_field_value("a.ID", asm3.utils.cint(query))
-        ss.add_fields([ "o.OwnerName", "a.AreaLost", "a.AreaPostcode" ])
+        ss.add_fields([ "o.OwnerName", "a.AreaLost", "a.AreaPostcode", "a.MicrochipNumber" ])
         ss.add_clause("EXISTS(SELECT ad.Value FROM additional ad " \
             "INNER JOIN additionalfield af ON af.ID = ad.AdditionalFieldID AND af.Searchable = 1 " \
             "WHERE ad.LinkID=a.ID AND ad.LinkType IN (%s) AND LOWER(ad.Value) LIKE ?)" % asm3.additional.LOSTANIMAL_IN)
@@ -151,7 +153,7 @@ def get_foundanimal_find_simple(dbo, query = "", limit = 0, siteid = 0):
         ss.values.append(dbo.today(offset=-30))
     else:
         if asm3.utils.is_numeric(query): ss.add_field_value("a.ID", asm3.utils.cint(query))
-        ss.add_fields([ "o.OwnerName", "a.AreaFound", "a.AreaPostcode" ])
+        ss.add_fields([ "o.OwnerName", "a.AreaFound", "a.AreaPostcode", "a.MicrochipNumber" ])
         ss.add_clause("EXISTS(SELECT ad.Value FROM additional ad " \
             "INNER JOIN additionalfield af ON af.ID = ad.AdditionalFieldID AND af.Searchable = 1 " \
             "WHERE ad.LinkID=a.ID AND ad.LinkType IN (%s) AND LOWER(ad.Value) LIKE ?)" % asm3.additional.FOUNDANIMAL_IN)
@@ -166,6 +168,7 @@ def get_lostanimal_find_advanced(dbo, criteria, limit = 0, siteid = 0):
     criteria: A dictionary of criteria
        number - string partial pattern
        contact - string partial pattern
+       microchip - string partial pattern
        area - string partial pattern
        postcode - string partial pattern
        features - string partial pattern
@@ -187,6 +190,7 @@ def get_lostanimal_find_advanced(dbo, criteria, limit = 0, siteid = 0):
     if siteid != 0: ss.ands.append("(o.SiteID = 0 OR o.SiteID = %d)" % siteid)
     ss.add_id("number", "a.ID")
     ss.add_str("contact", "o.OwnerName")
+    ss.add_str("microchip", "a.MicrochipNumber")
     ss.add_str("area", "a.AreaLost")
     ss.add_str("postcode", "a.AreaPostcode")
     ss.add_str("features", "a.DistFeat")
@@ -209,6 +213,7 @@ def get_foundanimal_find_advanced(dbo, criteria, limit = 0, siteid = 0):
     criteria: A dictionary of criteria
        number - string partial pattern
        contact - string partial pattern
+       microchip - string partial pattern
        area - string partial pattern
        postcode - string partial pattern
        features - string partial pattern
@@ -230,6 +235,7 @@ def get_foundanimal_find_advanced(dbo, criteria, limit = 0, siteid = 0):
     if siteid != 0: ss.ands.append("(o.SiteID = 0 OR o.SiteID = %d)" % siteid)
     ss.add_id("number", "a.ID")
     ss.add_str("contact", "o.OwnerName")
+    ss.add_str("microchip", "a.MicrochipNumber")
     ss.add_str("area", "a.AreaFound")
     ss.add_str("postcode", "a.AreaPostcode")
     ss.add_str("features", "a.DistFeat")
@@ -340,6 +346,7 @@ def match(dbo, lostanimalid = 0, foundanimalid = 0, animalid = 0, limit = 0):
     matchfeatures = asm3.configuration.match_features(dbo)
     matchpostcode = asm3.configuration.match_postcode(dbo)
     matchcolour = asm3.configuration.match_colour(dbo)
+    matchmicrochip = asm3.configuration.match_microchip(dbo)
     matchdatewithin2weeks = asm3.configuration.match_within2weeks(dbo)
     matchmax = matchspecies + matchbreed + matchage + matchsex + \
         matcharealost + matchfeatures + matchpostcode + matchcolour + \
@@ -394,6 +401,7 @@ def match(dbo, lostanimalid = 0, foundanimalid = 0, animalid = 0, limit = 0):
         if animalid == 0:
             for fa in foundanimals:
                 matchpoints = 0
+                if la["MICROCHIPNUMBER"] == fa["MICROCHIPNUMBER"]: matchpoints += matchmicrochip
                 if la["ANIMALTYPEID"] == fa["ANIMALTYPEID"]: matchpoints += matchspecies
                 if la["BREEDID"] == fa["BREEDID"]: matchpoints += matchbreed
                 if la["AGEGROUP"] == fa["AGEGROUP"]: matchpoints += matchage
@@ -408,6 +416,7 @@ def match(dbo, lostanimalid = 0, foundanimalid = 0, animalid = 0, limit = 0):
                     m = LostFoundMatch(dbo)
                     m.lid = la["ID"]
                     m.lcontactname = la["OWNERNAME"]
+                    m.lmicrochip = la["MICROCHIPNUMBER"]
                     m.lcontactnumber = la["HOMETELEPHONE"]
                     m.larealost = la["AREALOST"]
                     m.lareapostcode = la["AREAPOSTCODE"]
@@ -425,6 +434,7 @@ def match(dbo, lostanimalid = 0, foundanimalid = 0, animalid = 0, limit = 0):
                     m.fid = fa["ID"]
                     m.fanimalid = 0
                     m.fcontactname = fa["OWNERNAME"]
+                    m.fmicrochip = fa["MICROCHIPNUMBER"]
                     m.fcontactnumber = fa["HOMETELEPHONE"]
                     m.fareafound = fa["AREAFOUND"]
                     m.fareapostcode = fa["AREAPOSTCODE"]
@@ -450,6 +460,7 @@ def match(dbo, lostanimalid = 0, foundanimalid = 0, animalid = 0, limit = 0):
         if includeshelter:
             for a in shelteranimals:
                 matchpoints = 0
+                if la["MICROCHIPNUMBER"] == a["IDENTICHIPNUMBER"]: matchpoints += matchmicrochip
                 if la["ANIMALTYPEID"] == a["SPECIESID"]: matchpoints += matchspecies
                 if la["BREEDID"] == a["BREEDID"] or la["BREEDID"] == a["BREED2ID"]: matchpoints += matchbreed
                 if la["BASECOLOURID"] == a["BASECOLOURID"]: matchpoints += matchcolour
@@ -464,6 +475,7 @@ def match(dbo, lostanimalid = 0, foundanimalid = 0, animalid = 0, limit = 0):
                     m = LostFoundMatch(dbo)
                     m.lid = la["ID"]
                     m.lcontactname = la["OWNERNAME"]
+                    m.lmicrochip = la["MICROCHIPNUMBER"]
                     m.lcontactnumber = la["HOMETELEPHONE"]
                     m.larealost = la["AREALOST"]
                     m.lareapostcode = la["AREAPOSTCODE"]
@@ -481,6 +493,7 @@ def match(dbo, lostanimalid = 0, foundanimalid = 0, animalid = 0, limit = 0):
                     m.fid = 0
                     m.fanimalid = a["ID"]
                     m.fcontactname = _("Shelter animal {0} '{1}'", l).format(a["CODE"], a["ANIMALNAME"])
+                    m.fmicrochip = a["IDENTICHIPNUMBER"]
                     m.fcontactnumber = a["SPECIESNAME"]
                     m.fareafound = _("On Shelter", l)
                     m.fareapostcode = a["ORIGINALOWNERPOSTCODE"]
@@ -506,6 +519,7 @@ def match(dbo, lostanimalid = 0, foundanimalid = 0, animalid = 0, limit = 0):
         dbo.execute("DELETE FROM animallostfoundmatch")
         sql = "INSERT INTO animallostfoundmatch (AnimalLostID, AnimalFoundID, AnimalID, LostContactName, LostContactNumber, " \
             "LostArea, LostPostcode, LostAgeGroup, LostSex, LostSpeciesID, LostBreedID, LostFeatures, LostBaseColourID, LostDate, " \
+            "LostMicrochipNumber, FoundMicrochipNumber, " \
             "FoundContactName, FoundContactNumber, FoundArea, FoundPostcode, FoundAgeGroup, FoundSex, FoundSpeciesID, FoundBreedID, " \
             "FoundFeatures, FoundBaseColourID, FoundDate, MatchPoints) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)"
         if len(batch) > 0:
@@ -539,7 +553,7 @@ def match_report(dbo, username = "system", lostanimalid = 0, foundanimalid = 0, 
                     h.append(hr())
                 h.append(p(_("{0} - {1} {2} ({3}), contact {4} ({5}) - lost in {6}, postcode {7}, on {8}", l).format( \
                     m.lid, "%s %s %s" % (m.lagegroup, m.lbasecolourname, m.lsexname), \
-                    "%s/%s" % (m.lspeciesname,m.lbreedname), \
+                    "%s/%s %s" % (m.lspeciesname, m.lbreedname, m.lmicrochip), \
                     m.ldistinguishingfeatures, m.lcontactname, m.lcontactnumber, m.larealost, m.lareapostcode,
                     python2display(l, m.ldatelost))))
                 h.append("<table border=\"1\" width=\"100%\"><tr>")
@@ -550,6 +564,7 @@ def match_report(dbo, username = "system", lostanimalid = 0, foundanimalid = 0, 
                 h.append("<th>%s</th>" % _("Date Found", l))
                 h.append("<th>%s</th>" % _("Contact", l))
                 h.append("<th>%s</th>" % _("Number", l))
+                h.append("<th>%s</th>" % _("Microchip", l))
                 h.append("<th>%s</th>" % _("Match", l))
                 h.append("</tr>")
                 lastid = m.lid
@@ -561,6 +576,7 @@ def match_report(dbo, username = "system", lostanimalid = 0, foundanimalid = 0, 
             h.append(td(python2display(l, m.fdatefound)))
             h.append(td(m.fcontactname))
             h.append(td(m.fcontactnumber))
+            h.append(td(m.fmicrochip))
             h.append(td(str(m.matchpoints) + "%"))
             h.append("</tr>")
         h.append("</tr></table>")
@@ -626,6 +642,7 @@ def update_lostanimal_from_form(dbo, post, username):
         "DistFeat":         post["markings"],
         "AreaLost":         post["arealost"],
         "AreaPostcode":     post["areapostcode"],
+        "MicrochipNumber":  post["microchip"],
         "OwnerID":          post.integer("owner"),
         "Comments":         post["comments"]
     }, username)
@@ -656,6 +673,7 @@ def insert_lostanimal_from_form(dbo, post, username):
         "DistFeat":         post["markings"],
         "AreaLost":         post["arealost"],
         "AreaPostcode":     post["areapostcode"],
+        "MicrochipNumber":  post["microchip"],
         "OwnerID":          post.integer("owner"),
         "Comments":         post["comments"]
     }, username)
@@ -695,6 +713,7 @@ def update_foundanimal_from_form(dbo, post, username):
         "DistFeat":         post["markings"],
         "AreaFound":        post["areafound"],
         "AreaPostcode":     post["areapostcode"],
+        "MicrochipNumber":  post["microchip"],
         "OwnerID":          post.integer("owner"),
         "Comments":         post["comments"]
     }, username)
@@ -725,6 +744,7 @@ def insert_foundanimal_from_form(dbo, post, username):
         "DistFeat":         post["markings"],
         "AreaFound":        post["areafound"],
         "AreaPostcode":     post["areapostcode"],
+        "MicrochipNumber":  post["microchip"],
         "OwnerID":          post.integer("owner"),
         "Comments":         post["comments"]
     }, username)
@@ -751,6 +771,8 @@ def create_animal_from_found(dbo, username, aid):
         "breed1":               a["BREEDID"],
         "breed2":               a["BREEDID"],
         "basecolour":           str(a["BASECOLOURID"]),
+        "microchipped":         asm3.utils.iif(a["MICROCHIPNUMBER"] is not None and a["MICROCHIPNUMBER"] != "", "1", "0"),
+        "microchipnumber":      a["MICROCHIPNUMBER"],
         "size":                 asm3.configuration.default_size(dbo),
         "internallocation":     asm3.configuration.default_location(dbo),
         "dateofbirth":          python2display(l, subtract_years(now(dbo.timezone))),
@@ -761,7 +783,7 @@ def create_animal_from_found(dbo, username, aid):
     if asm3.configuration.manual_codes(dbo):
         data["sheltercode"] = "FA" + str(aid)
         data["shortcode"] = "FA" + str(aid)
-    nextid, code = asm3.animal.insert_animal_from_form(dbo, asm3.utils.PostedData(data, l), username)
+    nextid, dummy = asm3.animal.insert_animal_from_form(dbo, asm3.utils.PostedData(data, l), username)
     return nextid
 
 def create_waitinglist_from_found(dbo, username, aid):
