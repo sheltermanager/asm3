@@ -243,11 +243,6 @@ $(function() {
                 { id: "undo", text: _("Undo"), icon: "cross", enabled: "multi", perm: "mcam",
                     tooltip: _("Undo given treatments"),
                     click: function() {
-                       $.each(controller.rows, function(i, v) {
-                           if (tableform.table_id_selected(v.COMPOSITEID)) {
-                               comments += "[" + v.SHELTERCODE + " - " + v.ANIMALNAME + "] ";
-                           }
-                       });
                         common.ajax_post("medical", "mode=undo&ids=" + medical.selected_treatment_ids())
                             .then(function() {
                                 $.each(controller.rows, function(i, v) {

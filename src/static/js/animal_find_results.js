@@ -1,5 +1,5 @@
 /*jslint browser: true, forin: true, eqeq: true, white: true, sloppy: true, vars: true, nomen: true */
-/*global $, _, asm, additional, common, config, controller, dlgfx, format, header, html, validate */
+/*global $, _, asm, additional, common, config, controller, edit_header, dlgfx, format, header, html, validate */
 
 $(function() {
 

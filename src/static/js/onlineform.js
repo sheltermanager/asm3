@@ -78,7 +78,7 @@ $(function() {
                         return common.get_field(fieldtypes, row.FIELDTYPE, "NAME");
                     }},
                     { field: "MANDATORY", display: _("Mandatory"), formatter: function(row) {
-                        return row.MANDATORY == 1 ? _("Yes") : _("No")
+                        return row.MANDATORY == 1 ? _("Yes") : _("No");
                     }},
                     { field: "LABEL", display: _("Label") }
                 ]
