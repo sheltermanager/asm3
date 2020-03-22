@@ -125,7 +125,12 @@ $(function() {
                             return config.bool("DontShowLitterID");
                         }
                     },
-                    { field: "SPECIESNAME", display: _("Species") },
+                    { field: "SPECIESNAME", display: _("Species"),
+                        hideif: function(row) {
+                            // Don't show for animal records
+                            if (controller.animal) { return true; }
+                        }
+                    },
                     { field: "LOCATIONNAME", display: _("Location"),
                         formatter: function(row) {
                             var s = row.LOCATIONNAME;

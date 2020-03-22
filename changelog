@@ -1,6 +1,7 @@
 43
 ================
 
+22/03/20 Remove species/litter fields from animal medical tabs
 22/03/20 Import/Export animal tests and override key duplicate values #541
 21/03/20 Show original owner address when matching lost to shelter animals #45
 21/03/20 Optional animalviewnotadoptable template for unavailable animals #501
