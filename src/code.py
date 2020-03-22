@@ -5263,7 +5263,9 @@ class sql_dump(ASMEndpoint):
         elif mode == "animalcsv":
             asm3.al.debug("%s executed CSV animal dump" % str(session.user), "code.sql", dbo)
             self.header("Content-Disposition", "attachment; filename=\"animal.csv\"")
-            return asm3.utils.csv(l, asm3.animal.get_animal_find_advanced(dbo, { "logicallocation" : "all", "filter" : "includedeceased,includenonshelter" }))
+            rows = asm3.animal.get_animal_find_advanced(dbo, { "logicallocation" : "all", "filter" : "includedeceased,includenonshelter" })
+            asm3.additional.append_to_results(dbo, rows, "animal")
+            return asm3.utils.csv(l, rows)
         elif mode == "mediacsv":
             asm3.al.debug("%s executed CSV media dump" % str(session.user), "code.sql", dbo)
             self.header("Content-Disposition", "attachment; filename=\"media.csv\"")
@@ -5275,11 +5277,15 @@ class sql_dump(ASMEndpoint):
         elif mode == "personcsv":
             asm3.al.debug("%s executed CSV person dump" % str(session.user), "code.sql", dbo)
             self.header("Content-Disposition", "attachment; filename=\"person.csv\"")
-            return asm3.utils.csv(l, asm3.person.get_person_find_simple(dbo, "", session.user, includeStaff=True, includeVolunteers=True))
+            rows = asm3.person.get_person_find_simple(dbo, "", session.user, includeStaff=True, includeVolunteers=True)
+            asm3.additional.append_to_results(dbo, rows, "person")
+            return asm3.utils.csv(l, rows)
         elif mode == "incidentcsv":
             asm3.al.debug("%s executed CSV incident dump" % str(session.user), "code.sql", dbo)
             self.header("Content-Disposition", "attachment; filename=\"incident.csv\"")
-            return asm3.utils.csv(l, asm3.animalcontrol.get_animalcontrol_find_advanced(dbo, { "filter" : "" }, 0))
+            rows = asm3.animalcontrol.get_animalcontrol_find_advanced(dbo, { "filter" : "" }, 0)
+            asm3.additional.append_to_results(dbo, rows, "incident")
+            return asm3.utils.csv(l, rows)
         elif mode == "licencecsv":
             asm3.al.debug("%s executed CSV licence dump" % str(session.user), "code.sql", dbo)
             self.header("Content-Disposition", "attachment; filename=\"licence.csv\"")
