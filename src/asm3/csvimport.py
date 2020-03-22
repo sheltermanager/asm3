@@ -29,6 +29,7 @@ VALID_FIELDS = [
     "ANIMALHOUSETRAINED", "ANIMALHEALTHPROBLEMS", "ANIMALIMAGE",
     "VACCINATIONTYPE", "VACCINATIONDUEDATE", "VACCINATIONGIVENDATE", "VACCINATIONEXPIRESDATE", 
     "VACCINATIONMANUFACTURER", "VACCINATIONBATCHNUMBER", "VACCINATIONCOMMENTS", 
+    "TESTTYPE", "TESTDUEDATE", "TESTPERFORMEDDATE", "TESTRESULT", "TESTCOMMENTS",
     "MEDICALNAME", "MEDICALDOSAGE", "MEDICALGIVENDATE", "MEDICALCOMMENTS",
     "ORIGINALOWNERTITLE", "ORIGINALOWNERINITIALS", "ORIGINALOWNERFIRSTNAME",
     "ORIGINALOWNERLASTNAME", "ORIGINALOWNERADDRESS", "ORIGINALOWNERCITY",
@@ -252,6 +253,7 @@ def csvimport(dbo, csvdata, encoding = "utf8", user = "", createmissinglookups =
     hasanimal = False
     hasanimalname = False
     hasmed = False
+    hastest = False
     hasvacc = False
     hasperson = False
     haspersonlastname = False
@@ -270,6 +272,7 @@ def csvimport(dbo, csvdata, encoding = "utf8", user = "", createmissinglookups =
         if col == "ANIMALNAME": hasanimalname = True
         if col.startswith("ORIGINALOWNER"): hasoriginalowner = True
         if col.startswith("VACCINATION"): hasvacc = True
+        if col.startswith("TEST"): hastest = True
         if col.startswith("MEDICAL"): hasmed = True
         if col.startswith("LICENSE"): haslicence = True
         if col == "LICENSENUMBER": haslicencenumber = True
@@ -325,6 +328,11 @@ def csvimport(dbo, csvdata, encoding = "utf8", user = "", createmissinglookups =
     # If we have any vacc fields, we need an animal
     if hasvacc and not hasanimal:
         asm3.asynctask.set_last_error(dbo, "Your CSV file has vaccination fields, but no animal to apply them to")
+        return
+
+    # If we have any test fields, we need an animal
+    if hastest and not hasanimal:
+        asm3.asynctask.set_last_error(dbo, "Your CSV file has test fields, but no animal to apply them to")
         return
 
     # If we have licence fields, we need a number
@@ -473,9 +481,23 @@ def csvimport(dbo, csvdata, encoding = "utf8", user = "", createmissinglookups =
                 if checkduplicates:
                     dup = asm3.animal.get_animal_sheltercode(dbo, a["sheltercode"])
                     if dup is not None:
-                        animalid = dup["ID"]
+                        animalid = dup.ID
+                        # The animal is not a duplicate. Update certain key fields if they are present
+                        if a["healthproblems"] != "":
+                            dbo.update("animal", dup.ID, { "HealthProblems": a["healthproblems"] }, user)
+                        if a["microchipnumber"] != "":
+                            dbo.update("animal", dup.ID, { 
+                                "Identichipped": 1,
+                                "IdentichipNumber": a["microchipnumber"],
+                                "IdentichipDate": asm3.i18n.display2python(dbo.locale, a["microchipdate"])
+                            }, user)
+                        if a["neutered"] == "on":
+                            dbo.update("animal", dup.ID, { 
+                                "Neutered": 1, 
+                                "NeuteredDate": asm3.i18n.display2python(dbo.locale, a["neutereddate"]) 
+                            }, user)
                 if animalid == 0:
-                    animalid, newcode = asm3.animal.insert_animal_from_form(dbo, asm3.utils.PostedData(a, dbo.locale), user)
+                    animalid, dummy = asm3.animal.insert_animal_from_form(dbo, asm3.utils.PostedData(a, dbo.locale), user)
                     # Identify any ANIMALADDITIONAL additional fields and create them
                     create_additional_fields(dbo, row, errors, rowno, "ANIMALADDITIONAL", "animal", animalid)
                 # If we have some image data, add it to the animal
@@ -620,6 +642,20 @@ def csvimport(dbo, csvdata, encoding = "utf8", user = "", createmissinglookups =
                 asm3.medical.insert_vaccination_from_form(dbo, user, asm3.utils.PostedData(v, dbo.locale))
             except Exception as e:
                 row_error(errors, "vaccination", rowno, row, e, dbo, sys.exc_info())
+
+        # Test?
+        if hastest and animalid != 0 and gks(row, "TESTDUEDATE") != "":
+            v = {}
+            v["animal"] = str(animalid)
+            v["type"] = gkl(dbo, row, "TESTTYPE", "testtype", "TestName", createmissinglookups)
+            v["result"] = gkl(dbo, row, "TESTRESULT", "testresult", "ResultName", createmissinglookups)
+            v["required"] = gkd(dbo, row, "TESTDUEDATE", True)
+            v["given"] = gkd(dbo, row, "TESTPERFORMEDDATE")
+            v["comments"] = gks(row, "TESTCOMMENTS")
+            try:
+                asm3.medical.insert_test_from_form(dbo, user, asm3.utils.PostedData(v, dbo.locale))
+            except Exception as e:
+                row_error(errors, "test", rowno, row, e, dbo, sys.exc_info())
 
         # Medical?
         if hasmed and animalid != 0 and gks(row, "MEDICALGIVENDATE") != "" and gks(row, "MEDICALNAME") != "":
@@ -806,6 +842,7 @@ def csvexport_animals(dbo, dataset, animalids = "", includephoto = False):
         "ORIGINALOWNERHOMEPHONE", "ORIGINALOWNERWORKPHONE", "ORIGINALOWNERCELLPHONE", "ORIGINALOWNEREMAIL", "MOVEMENTTYPE",
         "MOVEMENTDATE", "PERSONTITLE", "PERSONINITIALS", "PERSONFIRSTNAME", "PERSONLASTNAME", "PERSONADDRESS", "PERSONCITY",
         "PERSONSTATE", "PERSONZIPCODE", "PERSONFOSTERER", "PERSONHOMEPHONE", "PERSONWORKPHONE", "PERSONCELLPHONE", "PERSONEMAIL",
+        "TESTTYPE", "TESTRESULT", "TESTDUEDATE", "TESTPERFORMEDDATE", "TESTCOMMENTS",
         "VACCINATIONTYPE", "VACCINATIONDUEDATE", "VACCINATIONGIVENDATE", "VACCINATIONEXPIRESDATE", "VACCINATIONMANUFACTURER",
         "VACCINATIONBATCHNUMBER", "VACCINATIONCOMMENTS", "MEDICALNAME", "MEDICALDOSAGE", "MEDICALGIVENDATE", "MEDICALCOMMENTS" ]
     
@@ -838,7 +875,7 @@ def csvexport_animals(dbo, dataset, animalids = "", includephoto = False):
         row["ANIMALCODE"] = a["SHELTERCODE"]
         row["ANIMALNAME"] = a["ANIMALNAME"]
         if a["WEBSITEIMAGECOUNT"] > 0 and includephoto:
-            mdate, mdata = asm3.media.get_image_file_data(dbo, "animal", a["ID"])
+            dummy, mdata = asm3.media.get_image_file_data(dbo, "animal", a["ID"])
             row["ANIMALIMAGE"] = "data:image/jpg;base64,%s" % asm3.utils.base64encode(mdata)
         row["ANIMALSEX"] = a["SEXNAME"]
         row["ANIMALTYPE"] = a["ANIMALTYPENAME"]
@@ -904,6 +941,17 @@ def csvexport_animals(dbo, dataset, animalids = "", includephoto = False):
             row["VACCINATIONMANUFACTURER"] = v["MANUFACTURER"]
             row["VACCINATIONBATCHNUMBER"] = v["BATCHNUMBER"]
             row["VACCINATIONCOMMENTS"] = v["COMMENTS"]
+            row["ANIMALCODE"] = a["SHELTERCODE"]
+            row["ANIMALNAME"] = a["ANIMALNAME"]
+            out.write(tocsv(row))
+
+        for t in asm3.medical.get_tests(dbo, a["ID"]):
+            row = {}
+            row["TESTTYPE"] = t["TESTNAME"]
+            row["TESTRESULT"] = t["RESULTNAME"]
+            row["TESTDUEDATE"] = asm3.i18n.python2display(l, t["DATEREQUIRED"])
+            row["TESTPERFORMEDDATE"] = asm3.i18n.python2display(l, t["DATEOFTEST"])
+            row["TESTCOMMENTS"] = t["COMMENTS"]
             row["ANIMALCODE"] = a["SHELTERCODE"]
             row["ANIMALNAME"] = a["ANIMALNAME"]
             out.write(tocsv(row))

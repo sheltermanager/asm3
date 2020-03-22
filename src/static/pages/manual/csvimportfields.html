@@ -182,7 +182,16 @@
             
   <div class="section" id="appendix-csv-file-import-fields">
 <span id="csvimportfields"></span><h1>Appendix: CSV file import fields<a class="headerlink" href="#appendix-csv-file-import-fields" title="Permalink to this headline">¶</a></h1>
-<p>ASM will recognise columns with the following names when importing CSV files. Where you wish to supply multiple rows for the same animal (such as for vaccinations or regimens), make sure you have a populated ANIMALCODE column, similarly for multiple rows to people (such as movements, licenses, etc) make sure you have populated person data.</p>
+<p>ASM will recognise columns with the following names when importing CSV files.
+Where you wish to supply multiple rows for the same animal (such as for
+vaccinations or regimens), make sure you have a populated ANIMALCODE column,
+similarly for multiple rows to people (such as movements, licenses, etc) make
+sure you have populated person data.</p>
+<p>When processing animal records that already exist, there are certain key fields
+that will be overwritten on the existing animal from the CSV data. These fields
+are ANIMALNEUTERED[DATE], ANIMALMICROCHIP[DATE] and ANIMALHEALTHPROBLEMS. This
+allows you to use a spreadsheet of data on chipping/neutering days and import
+that data to your existing animals afterwards.</p>
 <dl class="docutils">
 <dt>ANIMALCODE</dt>
 <dd>A code for the animal. If supplied, it will set the sheltercode and short sheltercode fields. If not supplied, the system will generate a code for the animal to the appropriate scheme. If you have manual codes turned on and no animal code is supplied, an error message will be displayed and the import abandoned.</dd>
@@ -391,6 +400,16 @@ Additional flags that you have added to the system should exactly match their fl
 <dd>The animal this person is looking for will have this value in its comments</dd>
 <dt>PERSONADDITIONAL&lt;fieldname&gt;</dt>
 <dd>If you have person additional fields defined, you can put the uppercased version of their name as a suffix to this. Eg, for an additional field called DateOfBirth PERSONADDITIONALDATEOFBIRTH</dd>
+<dt>TESTTYPE</dt>
+<dd>The type of test on this line</dd>
+<dt>TESTRESULT</dt>
+<dd>The test result</dd>
+<dt>TESTDUEDATE</dt>
+<dd>The due date for the test</dd>
+<dt>TESTPERFORMEDDATE</dt>
+<dd>The date the test was performed</dd>
+<dt>TESTCOMMENTS</dt>
+<dd>Any comments for the test</dd>
 <dt>VACCINATIONTYPE</dt>
 <dd>The type of vaccination on this line</dd>
 <dt>VACCINATIONDUEDATE</dt>
