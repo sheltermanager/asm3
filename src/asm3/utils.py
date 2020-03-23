@@ -919,7 +919,8 @@ def csv(l, rows, cols = None, includeheader = True):
             else:
                 rd.append(r[c])
         writerow(rd)
-    return u"\n".join(lines).encode("utf-8")
+    # Manually include a UTF-8 BOM to prevent Excel mangling files
+    return (u"\ufeff" + u"\n".join(lines)).encode("utf-8")
 
 def fix_relative_document_uris(s, baseurl, account = "" ):
     """
