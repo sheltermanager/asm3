@@ -4,13 +4,13 @@
 * To view and modify this theme, visit http://jqueryui.com/themeroller/?scope=&folderName=custom-theme&bgImgOpacityError=95&bgImgOpacityHighlight=55&bgImgOpacityActive=65&bgImgOpacityHover=75&bgImgOpacityDefault=75&bgImgOpacityContent=75&bgImgOpacityHeader=75&cornerRadiusShadow=8px&offsetLeftShadow=-8px&offsetTopShadow=-8px&thicknessShadow=8px&opacityShadow=30&bgImgOpacityShadow=0&bgTextureShadow=flat&bgColorShadow=%23aaaaaa&opacityOverlay=30&bgImgOpacityOverlay=0&bgTextureOverlay=flat&bgColorOverlay=%23aaaaaa&iconColorError=%23cd0a0a&fcError=%23cd0a0a&borderColorError=%23cd0a0a&bgTextureError=inset_hard&bgColorError=%23fef1ec&iconColorHighlight=%233a87cd&fcHighlight=%233a87cd&borderColorHighlight=%233a87cd&bgTextureHighlight=inset_hard&bgColorHighlight=%23d9edf7&iconColorActive=%23fff&fcActive=%23fff&borderColorActive=%233a87cd&bgTextureActive=flat&bgColorActive=%233a87cd&iconColorHover=%23454545&fcHover=%23212121&borderColorHover=%23999999&bgTextureHover=inset_hard&bgColorHover=%23d9edf7&iconColorDefault=%23888888&fcDefault=%23555555&borderColorDefault=%23d3d3d3&bgTextureDefault=flat&bgColorDefault=%23fff&iconColorContent=%23222222&fcContent=%23222222&borderColorContent=%23aaaaaa&bgTextureContent=flat&bgColorContent=%23ffffff&iconColorHeader=%23222222&fcHeader=%23222222&borderColorHeader=%23aaaaaa&bgTextureHeader=inset_hard&bgColorHeader=%23eaeaea&cornerRadius=4px&fwDefault=normal&fsDefault=1.1em&ffDefault=Verdana%2CArial%2Csans-serif
 * Copyright jQuery Foundation and other contributors; Licensed MIT */
 
-/* Manually added - highlight focused input field borders */
+/** --- BEGIN MANUAL ADDITIONS --- */
+/* Highlight the focused input field with a border style */
 input:focus, textarea:focus, select:focus {
   box-shadow: 0 0 5px #3a87cd;
   border: 1px solid #3a87cd;
 }
-
-/* Manually added - highlight action button in dialogs */
+/* Highlight the default action button in dialogs */
 .asm-dialog-actionbutton {
     border: 1px solid #3a87cd !important;
     background: #3a87cd !important;
@@ -20,14 +20,40 @@ input:focus, textarea:focus, select:focus {
 .asm-dialog-actionbutton:hover {
     opacity: 0.7 !important;
 }
-
-/* Manually added - use action button hover for quicklinks */
+/* Use action button styling for quicklinks when hovering */
 .asm-quicklinks a:hover {
-    border: 1px solid #3a87cd !important;
-    background: #3a87cd !important;
-    color: #fff !important;
-    text-decoration: none !important;
+    border: 1px solid #3a87cd;
+    background: #3a87cd;
+    color: #fff;
+    text-decoration: none;
 }
+/* Style the fullcalendar buttons to match our action buttons */
+.fc-button {
+    background-image: none;
+}
+.fc-button.fc-state-default:hover {
+    opacity: 0.7;
+	border: 1px solid #999999;
+	background: #d9edf7 url("images/ui-bg_inset-hard_75_d9edf7_1x100.png") 50% 50% repeat-x;
+	font-weight: normal;
+	color: #212121;
+}
+.fc-button.fc-state-active:hover {
+    border: 1px solid #3a87cd;
+    background: #3a87cd;
+    color: #fff;
+    opacity: 0.7;
+}
+.fc-state-default {
+    background-color: #fff;
+}
+.fc-state-active, .fc-state-disabled {
+    border: 1px solid #3a87cd;
+    background: #3a87cd;
+    color: #fff;
+}
+/** --- END MANUAL ADDITIONS --- */
+
 
 
 

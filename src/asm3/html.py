@@ -212,7 +212,6 @@ def bare_header(title, theme = "asm", locale = LOCALE, config_db = "asm", config
         '</noscript>\n' % {
             "title": title, 
             "scripts": 
-                css_tag(JQUERY_UI_CSS % { "theme": theme}, "jqt") +
                 css_tag(ASMSELECT_CSS) + 
                 css_tag(CODEMIRROR_CSS) + 
                 css_tag(CODEMIRROR_BASE + "addon/display/fullscreen.css") + 
@@ -220,6 +219,7 @@ def bare_header(title, theme = "asm", locale = LOCALE, config_db = "asm", config
                 css_tag(FULLCALENDAR_CSS) +
                 css_tag(TABLESORTER_CSS) + 
                 css_tag(TIMEPICKER_CSS) + 
+                css_tag(JQUERY_UI_CSS % { "theme": theme}, "jqt") +
                 asm_css_tag("asm-icon.css") +
                 asm_css_tag("asm.css") + 
                 script_tag("static/lib/modernizr/modernizr.min.js") + 
