@@ -1178,7 +1178,7 @@ def handler_viewincident(session, l, dbo, a, amls, cit, dia, logs, homelink, pos
     h.append(tr( _("Type", l), a["INCIDENTNAME"]))
     h.append(tr( _("Incident Date/Time", l), dt(a["INCIDENTDATETIME"])))
     h.append(tr( _("Notes", l), a["CALLNOTES"]))
-    h.append(tr( _("Completion Date", l), python2display(l, a["COMPLETEDDATE"])))
+    h.append(tr( _("Completion Date/Time", l), dt(a["COMPLETEDDATE"])))
     comptp = a["COMPLETEDNAME"]
     if a["COMPLETEDDATE"] is None:
         comptp = jqm_select("comptype", 

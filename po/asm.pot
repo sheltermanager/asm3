@@ -1648,7 +1648,7 @@ msgid "Completed notes upto today"
 msgstr ""
 
 #: incident.js
-msgid "Completion Date"
+msgid "Completion Date/Time"
 msgstr ""
 
 #: incident.js

@@ -53,8 +53,9 @@ $(function() {
                 '<td><textarea id="callnotes" data-json="CALLNOTES" data-post="callnotes" class="asm-textarea" rows="3"></textarea></td>',
                 '</tr>',
                 '<tr>',
-                '<td><label for="completeddate">' + _("Completion Date") + '</label></td>',
-                '<td><input id="completeddate" data-json="COMPLETEDDATE" data-post="completeddate" class="asm-textbox asm-datebox" />',
+                '<td><label for="completeddate">' + _("Completion Date/Time") + '</label></td>',
+                '<td><input id="completeddate" data-json="COMPLETEDDATE" data-post="completeddate" class="asm-halftextbox asm-datebox" />',
+                '<input id="completedtime" data-json="COMPLETEDDATE" data-post="completedtime" class="asm-halftextbox asm-timebox" /></td>',
                 '</tr>',
                 '<tr>',
                 '<td><label for="completedtype">' + _("Completion Type") + '</label></td>',
@@ -421,7 +422,7 @@ $(function() {
             }
 
             // times
-            if (!validate.validtime([ "incidenttime", "calltime", "dispatchtime", "respondedtime", 
+            if (!validate.validtime([ "incidenttime", "calltime", "completedtime", "dispatchtime", "respondedtime", 
                 "followuptime", "followuptime2", "followuptime3" ])) { 
                 return false; 
             }
