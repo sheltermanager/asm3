@@ -420,6 +420,10 @@ Display
   tables, show the complete text instead of truncating it to 80 characters and
   fitting the text onto one line.
 
+* Show ID numbers when editing lookup data: When browsing lookup data under
+  :menuselection:`Settings --> Lookup Data`, show the internal system ID numbers.
+  This is handy for looking up IDs when writing reports.
+
 * Keep table headers visible when scrolling: If selected, when scrolling down
   long tables their headers will float at the top of the screen to remind you
   of the column headings.

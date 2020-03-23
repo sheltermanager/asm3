@@ -291,6 +291,7 @@ DEFAULTS = {
     "ShowFullCommentsInTables": "No",
     "ShowAlertsHomePage": "Yes", 
     "ShowLatLong": "No",
+    "ShowLookupDataID": "No",
     "ShowTimelineHomePage": "Yes", 
     "ShowStatsHomePage": "thismonth", 
     "ShowFirstTime": "Yes",

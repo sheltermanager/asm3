@@ -113,6 +113,9 @@ $(function() {
                 },
                 columns: [
                     { field: controller.namefield, display: controller.namelabel, initialsort: true },
+                    { field: "ID", display: _("ID"), hideif: function(row) {
+                        return !config.bool("ShowLookupDataID");
+                    }},
                     { field: "SPECIESNAME", display: _("Species"), hideif: function(row) {
                         return !controller.hasspecies;
                     }},

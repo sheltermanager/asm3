@@ -80,11 +80,11 @@ msgstr ""
 msgid "({0} given, {1} remaining)"
 msgstr ""
 
-#: publish_options.js
+#: publish_options.js lookups.js
 msgid "1 week"
 msgstr ""
 
-#: publish_options.js
+#: publish_options.js lookups.js
 msgid "1 year"
 msgstr ""
 
@@ -3850,6 +3850,10 @@ msgstr ""
 msgid "I've finished, Don't show me this popup again."
 msgstr ""
 
+#: lookups.js
+msgid "ID"
+msgstr ""
+
 #: users.js
 msgid "IP Restriction"
 msgstr ""
@@ -4959,6 +4963,10 @@ msgstr ""
 
 #: animal_find_results.js
 msgid "Negative"
+msgstr ""
+
+#: lookups.js
+msgid "Never"
 msgstr ""
 
 #: document_templates.js report_images.js transport.js person_investigation.js
@@ -6274,6 +6282,10 @@ msgstr ""
 msgid "Reschedule"
 msgstr ""
 
+#: lookups.js
+msgid "Reschedule for"
+msgstr ""
+
 #: movements.js
 msgid "Reservation"
 msgstr ""
@@ -6807,6 +6819,10 @@ msgstr ""
 
 #: options.js
 msgid "Show GDPR Contact Opt-In field on person screens"
+msgstr ""
+
+#: options.js
+msgid "Show ID numbers when editing lookup data"
 msgstr ""
 
 #: options.js
@@ -9257,6 +9273,14 @@ msgstr ""
 
 #: common_animalchoosermulti.js
 msgid "{0} selected"
+msgstr ""
+
+#: lookups.js
+msgid "{0} weeks"
+msgstr ""
+
+#: lookups.js
+msgid "{0} years"
 msgstr ""
 
 #: header_edit_header.js
