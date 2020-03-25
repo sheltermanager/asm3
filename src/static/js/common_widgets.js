@@ -1405,7 +1405,7 @@
             // going into fullscreen, make the dialog fill the screen and then restore it 
             // when leaving fullscreen as a workaround.
             var dlg = this.element.closest("div.ui-dialog");
-            if (dlg) {
+            if (dlg.length > 0) {
                 if (fs) {
                     this.dlgheight = dlg.height(); this.dlgwidth = dlg.width(); this.dlgtop = dlg.position().top; this.dlgleft = dlg.position().left;
                     dlg.height("100%"); dlg.width("100%"); dlg.css("top", 0); dlg.css("left", 0);
