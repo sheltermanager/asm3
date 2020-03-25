@@ -350,7 +350,7 @@ def match(dbo, lostanimalid = 0, foundanimalid = 0, animalid = 0, limit = 0):
     matchdatewithin2weeks = asm3.configuration.match_within2weeks(dbo)
     matchmax = matchspecies + matchbreed + matchage + matchsex + \
         matcharealost + matchfeatures + matchpostcode + matchcolour + \
-        matchdatewithin2weeks
+        matchmicrochip + matchdatewithin2weeks
     matchpointfloor = asm3.configuration.match_point_floor(dbo)
     includeshelter = asm3.configuration.match_include_shelter(dbo)
     fullmatch = animalid == 0 and lostanimalid == 0 and foundanimalid == 0
