@@ -401,7 +401,7 @@ def match(dbo, lostanimalid = 0, foundanimalid = 0, animalid = 0, limit = 0):
         if animalid == 0:
             for fa in foundanimals:
                 matchpoints = 0
-                if la["MICROCHIPNUMBER"] == fa["MICROCHIPNUMBER"]: matchpoints += matchmicrochip
+                if la["MICROCHIPNUMBER"] != "" and la["MICROCHIPNUMBER"] == fa["MICROCHIPNUMBER"]: matchpoints += matchmicrochip
                 if la["ANIMALTYPEID"] == fa["ANIMALTYPEID"]: matchpoints += matchspecies
                 if la["BREEDID"] == fa["BREEDID"]: matchpoints += matchbreed
                 if la["AGEGROUP"] == fa["AGEGROUP"]: matchpoints += matchage
@@ -460,7 +460,7 @@ def match(dbo, lostanimalid = 0, foundanimalid = 0, animalid = 0, limit = 0):
         if includeshelter:
             for a in shelteranimals:
                 matchpoints = 0
-                if la["MICROCHIPNUMBER"] == a["IDENTICHIPNUMBER"]: matchpoints += matchmicrochip
+                if la["MICROCHIPNUMBER"] != "" and la["MICROCHIPNUMBER"] == a["IDENTICHIPNUMBER"]: matchpoints += matchmicrochip
                 if la["ANIMALTYPEID"] == a["SPECIESID"]: matchpoints += matchspecies
                 if la["BREEDID"] == a["BREEDID"] or la["BREEDID"] == a["BREED2ID"]: matchpoints += matchbreed
                 if la["BASECOLOURID"] == a["BASECOLOURID"]: matchpoints += matchcolour
