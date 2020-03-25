@@ -990,7 +990,8 @@ def create_person(dbo, username, collationid):
             # Merge additional fields
             asm3.additional.merge_values_for_link(dbo, asm3.utils.PostedData(d, dbo.locale), personid, "person")
             if "gdprcontactoptin" in d: asm3.person.merge_gdpr_flags(dbo, "import", personid, d["gdprcontactoptin"])
-            asm3.person.merge_person_details(dbo, username, personid, d)
+            # Merge person details and force form ones to override existing ones if present
+            asm3.person.merge_person_details(dbo, username, personid, d, force=True)
     # Create the person record if we didn't find one
     if personid == 0:
         personid = asm3.person.insert_person_from_form(dbo, asm3.utils.PostedData(d, dbo.locale), username)
