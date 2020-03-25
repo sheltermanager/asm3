@@ -365,8 +365,8 @@ def page_sign(dbo, session, username):
         for mid in ids.strip().split(","):
             if mid.strip() != "": 
                 docnotes.append(asm3.media.get_notes_for_id(dbo, int(mid)))
-                mdate, medianame, mimetype, contents = asm3.media.get_media_file_data(dbo, int(mid))
-                d.append(contents)
+                dummy, dummy, dummy, contents = asm3.media.get_media_file_data(dbo, int(mid))
+                d.append(asm3.utils.bytes2str(contents))
                 d.append("<hr />")
         h.append("<p><b>%s: %s</b></p>" % (_("Signing", l), ", ".join(docnotes)))
         h.append('<p><a id="reviewlink" href="#">%s</a></p>' % _("View Document", l))
@@ -793,7 +793,7 @@ def handler(session, post):
 
     elif mode == "aa":
         pc(asm3.users.ADD_ANIMAL)
-        nid, ncode = asm3.animal.insert_animal_from_form(dbo, post, user)
+        nid, dummy = asm3.animal.insert_animal_from_form(dbo, post, user)
         return "GO mobile_post?posttype=va&id=%d" % nid
 
     elif mode == "aincs":

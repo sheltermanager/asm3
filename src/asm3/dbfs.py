@@ -450,7 +450,7 @@ def get_document_repository(dbo):
     rows = dbo.query("SELECT ID, Name, Path FROM dbfs WHERE " \
         "Path Like '/document_repository%' AND Name Like '%.%' ORDER BY Path, Name")
     for r in rows:
-        mimetype, encoding = mimetypes.guess_type("file://" + r.name, strict=False)
+        mimetype, dummy = mimetypes.guess_type("file://" + r.name, strict=False)
         r["MIMETYPE"] = mimetype
     return rows
 

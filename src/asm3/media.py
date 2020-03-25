@@ -148,7 +148,7 @@ def get_media_file_data(dbo, mid):
     Gets a piece of media by id. Returns None if the media record does not exist.
     id: The media id
     Returns a tuple containing the last modified date, media name, 
-    mime type and file data
+    mime type and file data as bytes
     """
     mm = get_media_by_id(dbo, mid)
     if len(mm) == 0: return (None, "", "", "")
@@ -692,7 +692,7 @@ def remove_expired_media(dbo, username = "system"):
     """
     rows = dbo.query("SELECT ID, DBFSID FROM media WHERE RetainUntil Is Not Null AND RetainUntil < ?", [ dbo.today() ])
     for r in rows:
-        asm3.dbfs.delete_id(r.dbfsid) 
+        asm3.dbfs.delete_id(dbo, r.dbfsid) 
     dbo.execute("DELETE FROM media WHERE RetainUntil Is Not Null AND RetainUntil < ?", [ dbo.today() ])
     asm3.al.debug("removed %d expired media items (retain until)" % len(rows), "media.remove_expired_media", dbo)
     if asm3.configuration.auto_remove_document_media(dbo):
@@ -701,7 +701,7 @@ def remove_expired_media(dbo, username = "system"):
             cutoff = dbo.today(years * -365)
             rows = dbo.query("SELECT ID, DBFSID FROM media WHERE MediaType = ? AND MediaMimeType <> 'image/jpeg' AND Date < ?", ( MEDIATYPE_FILE, cutoff ))
             for r in rows:
-                asm3.dbfs.delete_id(r.dbfsid) 
+                asm3.dbfs.delete_id(dbo, r.dbfsid) 
             dbo.execute("DELETE FROM media WHERE MediaType = ? AND MediaMimeType <> 'image/jpeg' AND Date < ?", ( MEDIATYPE_FILE, cutoff ))
             asm3.al.debug("removed %d expired document media items (remove after years)" % len(rows), "media.remove_expired_media", dbo)
 
