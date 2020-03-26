@@ -620,7 +620,7 @@ $(function() {
         /**
          * Returns a bunch of <li> tags with links to create document templates.
          * templates: A set of template rows from the dbfs
-         * mode: ANIMAL or PERSON
+         * linktype: A valid generation mode for document_gen
          * id: The record ID
          */
         template_list: function(templates, linktype, id) {
@@ -633,6 +633,27 @@ $(function() {
                 }
                 s.push('<li class="asm-menu-item"><a target="_blank" class="templatelink" data="' + t.ID + '" href="document_gen?linktype=' + linktype + '&id=' + id + '&dtid=' + t.ID + '">' + t.NAME + '</a></li>');
             });
+            return s.join("\n");
+        },
+
+        /**
+         * Returns option tags from a list of HTML document templates.
+         * The values are the template IDs
+         */
+        template_list_options: function(templates) {
+            var s = [];
+            var lastpath = "";
+            s.push('<option value=""></option>');
+            $.each(templates, function(i, t) {
+                if (t.NAME.indexOf(".html") == -1) { return; }
+                if (t.PATH != lastpath) {
+                    if (lastpath != "") { s.push('</optgroup>'); }
+                    s.push('<optgroup label="' + t.PATH + '">');
+                    lastpath = t.PATH;
+                }
+                s.push('<option value="' + t.ID + '">' + t.NAME + '</option>');
+            });
+            if (lastpath != "") { s.push('</optgroup>'); }
             return s.join("\n");
         },
 

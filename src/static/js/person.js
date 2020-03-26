@@ -794,7 +794,8 @@ $(function() {
                     formdata: "mode=email&personid=" + $("#personid").val(),
                     name: $("#forenames").val() + " " + $("#surname").val(),
                     email: $("#email").val(),
-                    logtypes: controller.logtypes
+                    logtypes: controller.logtypes,
+                    templates: controller.templates
                 });
             });
 

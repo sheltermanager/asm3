@@ -107,6 +107,11 @@ $(function() {
                 '<tr>',
                 '<td colspan="2">',
                 '<div id="emailbody" data="body" data-height="300px" data-margin-top="24px" class="asm-richtextarea"></div>',
+                '<p>',
+                '<label for="emailtemplate">' + _("Template") + '</label>',
+                '<select id="emailtemplate" class="asm-selectbox">',
+                '</select>',
+                '</p>',
                 '</td>',
                 '<td>',
                 '<div class="ui-state-highlight ui-corner-all" style="margin-top: 5px; padding: 0 .7em;">',
@@ -204,6 +209,15 @@ $(function() {
             } 
             else {
                 $("#emailfrom").val(html.decode(config.str("Organisation")) + " <" + config.str("EmailAddress") + ">");
+                $("#emailtemplate").html( edit_header.template_list_options(controller.templates) );
+                $("#emailtemplate").change(function() {
+                    var formdata = "mode=getcontent&dtid=" + $("#emailtemplate").val();
+                    header.show_loading(_("Loading..."));
+                    common.ajax_post("document_templates", formdata, function(result) {
+                        $("#emailbody").html(result); 
+                    });
+                });
+
             }
         },
 

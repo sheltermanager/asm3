@@ -1588,6 +1588,7 @@ class animal_media(JSONEndpoint):
             "logtypes": asm3.lookups.get_log_types(dbo),
             "newmedia": o.post.integer("newmedia") == 1,
             "name": self.url,
+            "templates": asm3.template.get_document_templates(dbo),
             "sigtype": ELECTRONIC_SIGNATURES
         }
 
@@ -2646,6 +2647,10 @@ class document_templates(JSONEndpoint):
         for t in o.post.integer_list("ids"):
             asm3.template.delete_document_template(o.dbo, o.user, t)
 
+    def post_getcontent(self, o):
+        self.content_type("text/html")
+        return asm3.template.get_document_template_content(o.dbo, o.post.integer("dtid"))
+
     def post_rename(self, o):
         asm3.template.rename_document_template(o.dbo, o.user, o.post.integer("dtid"), o.post["newname"])
 
@@ -2853,6 +2858,7 @@ class foundanimal_media(JSONEndpoint):
             "linktypeid": asm3.media.FOUNDANIMAL,
             "logtypes": asm3.lookups.get_log_types(dbo),
             "name": self.url,
+            "templates": asm3.template.get_document_templates(dbo),
             "sigtype": ELECTRONIC_SIGNATURES
         }
 
@@ -3113,6 +3119,7 @@ class incident_media(JSONEndpoint):
             "linktypeid": asm3.media.ANIMALCONTROL,
             "logtypes": asm3.lookups.get_log_types(dbo),
             "name": self.url,
+            "templates": asm3.template.get_document_templates(dbo),
             "sigtype": ELECTRONIC_SIGNATURES
         }
 
@@ -3461,6 +3468,7 @@ class lostanimal_media(JSONEndpoint):
             "linktypeid": asm3.media.LOSTANIMAL,
             "logtypes": asm3.lookups.get_log_types(dbo),
             "name": self.url, 
+            "templates": asm3.template.get_document_templates(dbo),
             "sigtype": ELECTRONIC_SIGNATURES
         }
 
@@ -4658,6 +4666,7 @@ class person_media(JSONEndpoint):
             "linktypeid": asm3.media.PERSON,
             "logtypes": asm3.lookups.get_log_types(dbo),
             "name": self.url,
+            "templates": asm3.template.get_document_templates(dbo),
             "sigtype": ELECTRONIC_SIGNATURES
         }
 
@@ -5755,6 +5764,7 @@ class waitinglist_media(JSONEndpoint):
             "linktypeid": asm3.media.WAITINGLIST,
             "logtypes": asm3.lookups.get_log_types(dbo),
             "name": self.url,
+            "templates": asm3.template.get_document_templates(dbo),
             "sigtype": ELECTRONIC_SIGNATURES
         }
 

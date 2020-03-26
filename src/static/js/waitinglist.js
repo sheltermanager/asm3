@@ -247,7 +247,8 @@ $(function() {
                     formdata: "mode=email&wlid=" + $("#waitinglistid").val(),
                     name: waitinglist.current_person.OWNERFORENAMES + " " + waitinglist.current_person.OWNERSURNAME,
                     email: waitinglist.current_person.EMAILADDRESS,
-                    logtypes: controller.logtypes
+                    logtypes: controller.logtypes,
+                    templates: controller.templates
                 });
             });
 

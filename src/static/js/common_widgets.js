@@ -1,6 +1,6 @@
 /*jslint browser: true, forin: true, eqeq: true, plusplus: true, white: true, regexp: true, sloppy: true, vars: true, nomen: true */
 /*global $, console, jQuery, CodeMirror, Mousetrap, tinymce */
-/*global asm, common, config, dlgfx, format, html, header, schema, validate, _, escape, unescape */
+/*global asm, common, config, dlgfx, edit_header, format, html, header, schema, validate, _, escape, unescape */
 
 (function($) {
 
@@ -552,6 +552,12 @@
                 '</tr>',
                 '</table>',
                 '<div id="emailbody" data="body" data-margin-top="24px" data-height="300px" class="asm-richtextarea"></div>',
+                '<p>',
+                '<label for="emailtemplate">' + _("Template") + '</label>',
+                '<select id="emailtemplate" class="asm-selectbox">',
+                '<option value=""></option>',
+                '</select>',
+                '</p>',
                 '</div>'
             ].join("\n"));
             $("#emailbody").richtextarea();
@@ -572,6 +578,7 @@
          * subject:    The default subject (optional)
          * message:    The default message (otpional)
          * logtypes:   The logtypes to populate the attach as log box (optional)
+         * templates:  The list of email document templates (optional)
          *    Eg: show({ post: "person", formdata: "mode=email&personid=52", name: "Bob Smith", email: "bob@smith.com" })
          */
         show: function(o) {
@@ -608,6 +615,19 @@
             }
             else {
                 $("#emaillogtype").closest("tr").hide();
+            }
+            if (o.templates) {
+                $("#emailtemplate").html( edit_header.template_list_options(o.templates) );
+                $("#emailtemplate").change(function() {
+                    var formdata = "mode=getcontent&dtid=" + $("#emailtemplate").val();
+                    header.show_loading(_("Loading..."));
+                    common.ajax_post("document_templates", formdata, function(result) {
+                        $("#emailbody").html(result); 
+                    });
+                });
+            }
+            else {
+                $("#emailtemplate").closest("tr").hide();
             }
             var mailaddresses = [];
             var conf_org = html.decode(config.str("Organisation").replace(",", ""));

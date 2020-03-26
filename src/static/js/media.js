@@ -786,6 +786,7 @@ $(function() {
                         "&ids=" + $(".asm-mediaicons input").tableCheckedData(),
                     name: defaultname,
                     email: defaultemail,
+                    templates: controller.templates,
                     logtypes: controller.logtypes
                 });
             });
@@ -798,6 +799,7 @@ $(function() {
                         "&ids=" + $(".asm-mediaicons input").tableCheckedData(),
                     name: defaultname,
                     email: defaultemail,
+                    templates: controller.templates,
                     logtypes: controller.logtypes
                 });
             });
@@ -813,6 +815,7 @@ $(function() {
                         "&ids=" + $(".asm-mediaicons input").tableCheckedData(),
                     name: defaultname,
                     email: defaultemail,
+                    templates: controller.templates,
                     logtypes: controller.logtypes,
                     message: _("Please use the links below to electronically sign these documents.")
                 });

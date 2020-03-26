@@ -294,7 +294,8 @@ $(function() {
                     formdata: "mode=email&lfid=" + $("#lfid").val() + "&lfmode=" + lostfound.mode,
                     name: lostfound.current_person.OWNERFORENAMES + " " + lostfound.current_person.OWNERSURNAME,
                     email: lostfound.current_person.EMAILADDRESS,
-                    logtypes: controller.logtypes
+                    logtypes: controller.logtypes,
+                    templates: controller.templates
                 });
             });
 
