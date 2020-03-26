@@ -4454,6 +4454,10 @@ msgid "Location Filter"
 msgstr ""
 
 #: options.js shelterview.js
+msgid "Location and Breed"
+msgstr ""
+
+#: options.js shelterview.js
 msgid "Location and Species"
 msgstr ""
 
