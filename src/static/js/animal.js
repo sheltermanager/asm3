@@ -646,7 +646,7 @@ $(function() {
                 '</tr>',
                 '<tr class="goodwith">',
                 '<td>',
-                '<label for="goodwithkids">' + _("Good with kids") + '</label>',
+                '<label for="goodwithkids">' + _("Good with children") + '</label>',
                 '</td>',
                 '<td>',
                 '<select class="asm-selectbox" id="goodwithkids" data-json="ISGOODWITHCHILDREN" data-post="goodwithkids">',

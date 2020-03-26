@@ -3659,6 +3659,14 @@ msgstr ""
 msgid "Go the system users screen and add user accounts for your staff."
 msgstr ""
 
+#: shelterview.js
+msgid "Good With"
+msgstr ""
+
+#: options.js
+msgid "Good with"
+msgstr ""
+
 #: animal_find_results.js
 msgid "Good with Cats"
 msgstr ""
@@ -3671,19 +3679,27 @@ msgstr ""
 msgid "Good with Dogs"
 msgstr ""
 
-#: person.js animal_find.js animal_bulk.js animal.js
+#: person.js animal_find.js animal_bulk.js animal.js shelterview.js
 msgid "Good with cats"
 msgstr ""
 
-#: person.js animal_find.js
+#: person.js animal_find.js animal.js shelterview.js
 msgid "Good with children"
 msgstr ""
 
-#: person.js animal_find.js animal_bulk.js animal.js
+#: shelterview.js
+msgid "Good with children over 12"
+msgstr ""
+
+#: shelterview.js
+msgid "Good with children over 5"
+msgstr ""
+
+#: person.js animal_find.js animal_bulk.js animal.js shelterview.js
 msgid "Good with dogs"
 msgstr ""
 
-#: animal_bulk.js animal.js
+#: animal_bulk.js
 msgid "Good with kids"
 msgstr ""
 
@@ -3839,6 +3855,7 @@ msgid "Hours"
 msgstr ""
 
 #: animal_find_results.js person.js animal_find.js animal_bulk.js animal.js
+#: shelterview.js
 msgid "Housetrained"
 msgstr ""
 
@@ -4435,7 +4452,7 @@ msgstr ""
 msgid "Litters need at least a required date and number."
 msgstr ""
 
-#: onlineform_incoming.js common.js header.js
+#: onlineform_incoming.js common_widgets.js common.js mailmerge.js header.js
 msgid "Loading..."
 msgstr ""
 
@@ -7352,7 +7369,7 @@ msgstr ""
 msgid "Telephone"
 msgstr ""
 
-#: document_templates.js
+#: document_templates.js common_widgets.js mailmerge.js
 msgid "Template"
 msgstr ""
 

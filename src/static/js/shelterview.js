@@ -30,26 +30,72 @@ $(function() {
          * multiple times in this one if it has multiple flags.
          */
         render_flags: function() {
-            var h = [];
+            var h = [], ht = [], c = 0;
             $.each(controller.flags, function(i, f) {
-                // Output the flag
-                h.push('<p class="asm-menu-category">' + f.FLAG + '</p>');
-                // Output every animal who has this flag
+                ht = [];
+                c = 0;
+                // Build output for every animal who has this flag
                 $.each(controller.animals, function(ia, a) {
                     if (!a.ADDITIONALFLAGS) { return; }
                     var aflags = a.ADDITIONALFLAGS.split("|");
                     $.each(aflags, function(x, af) {
                         if (af == f.FLAG) {
-                            h.push(shelterview.render_animal(a, false, !a.ACTIVEMOVEMENTTYPE && a.ARCHIVED == 0));
+                            c += 1;
+                            ht.push(shelterview.render_animal(a, false, !a.ACTIVEMOVEMENTTYPE && a.ARCHIVED == 0));
                         }
                     });
                 });
+                // Output the flag if some animals had it
+                if (c > 0) {
+                    h.push('<p class="asm-menu-category">' + f.FLAG + ' (' + c + ')</p>');
+                    h.push(ht.join("\n"));
+                }
             });
             // Output all animals who don't have any flags
-            h.push('<p class="asm-menu-category">' + _("(none)") + '</p>');
+            ht = [];
+            c = 0; 
             $.each(controller.animals, function(ia, a) {
                 if (!a.ADDITIONALFLAGS || a.ADDITIONALFLAGS == '|') {
-                    h.push(shelterview.render_animal(a, false, !a.ACTIVEMOVEMENTTYPE && a.ARCHIVED == 0));
+                    c += 1;
+                    ht.push(shelterview.render_animal(a, false, !a.ACTIVEMOVEMENTTYPE && a.ARCHIVED == 0));
+                }
+            });
+            if (c > 0) {
+                h.push('<p class="asm-menu-category">' + _("(none)") + ' (' + c + ')</p>');
+                h.push(ht.join("\n"));
+            }
+            // Load the whole thing into the DOM
+            $("#viewcontainer").html(h.join("\n"));
+        },
+
+        /** 
+         * Renders a specialised shelterview that shows good with
+         * and housetrained, along with all animals that have a positive value.
+         * It's a special view because the same animal can appear
+         * multiple times in this one if it has multiple matches.
+         */
+        render_goodwith: function() {
+            var h = [];
+            var gw = [
+                [ "ISGOODWITHCATS", 0, _("Good with cats") ],
+                [ "ISGOODWITHDOGS", 0, _("Good with dogs") ],
+                [ "ISGOODWITHCHILDREN", 0, _("Good with children") ],
+                [ "ISGOODWITHCHILDREN", 5, _("Good with children over 5") ],
+                [ "ISGOODWITHCHILDREN", 12, _("Good with children over 12") ],
+                [ "ISHOUSETRAINED", 0, _("Housetrained") ],
+            ];
+            $.each(gw, function(i, v) {
+                var ht = [], c = 0;
+                $.each(controller.animals, function(ia, a) {
+                    if (a[v[0]] == v[1]) {
+                        c += 1;
+                        ht.push(shelterview.render_animal(a, false, !a.ACTIVEMOVEMENTTYPE && a.ARCHIVED == 0));
+                    }
+                });
+                // Output the category and matching animals if there were any
+                if (c > 0) {
+                    h.push('<p class="asm-menu-category">' + v[2] + ' (' + c + ')</p>');
+                    h.push(ht.join("\n"));
                 }
             });
             // Load the whole thing into the DOM
@@ -430,6 +476,9 @@ $(function() {
             else if (viewmode == "fostereractive") {
                 this.render_foster_available(true);
             }
+            else if (viewmode == "goodwith") {
+                this.render_goodwith();
+            }
             else if (viewmode == "location") {
                 this.render_view("DISPLAYLOCATIONNAME", "", "DISPLAYLOCATIONNAME,ANIMALNAME", true, false);
             }
@@ -521,6 +570,7 @@ $(function() {
             h.push('<option value="flags">' + _("Flags") + '</option>');
             h.push('<option value="fosterer">' + _("Fosterer") + '</option>');
             h.push('<option value="fostereractive">' + _("Fosterer (Active Only)") + '</option>');
+            h.push('<option value="goodwith">' + _("Good With") + '</option>');
             h.push('<option value="location">' + _("Location") + '</option>');
             h.push('<option value="locationbreed">' + _("Location and Breed") + '</option>');
             h.push('<option value="locationspecies">' + _("Location and Species") + '</option>');
