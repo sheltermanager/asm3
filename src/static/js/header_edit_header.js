@@ -564,6 +564,9 @@ $(function() {
             if (p.ISDECEASED == 1) {
                 flags.push("<span style=\"color: red\">" + _("Deceased") + "</span>");
             }
+            if (p.ISADOPTER == 1) {
+                flags.push(_("Adopter"));
+            }
             if (p.ISADOPTIONCOORDINATOR == 1) {
                 flags.push(_("Adoption Coordinator"));
             }
@@ -604,7 +607,7 @@ $(function() {
                 flags.push(_("Exclude from bulk email"));
             }
             if (p.ADDITIONALFLAGS != null) {
-                var stock = [ "aco", "banned", "coordinator", "deceased", "donor", "driver", "excludefrombulkemail",
+                var stock = [ "aco", "adopter", "banned", "coordinator", "deceased", "donor", "driver", "excludefrombulkemail",
                     "fosterer", "homechecked", "homechecker", "member", "shelter", "retailer", "staff", "giftaid", 
                     "vet", "volunteer"];
                 $.each(p.ADDITIONALFLAGS.split("|"), function(i, v) {

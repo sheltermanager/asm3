@@ -37,7 +37,7 @@ VERSIONS = (
     34013, 34014, 34015, 34016, 34017, 34018, 34019, 34020, 34021, 34022, 34100,
     34101, 34102, 34103, 34104, 34105, 34106, 34107, 34108, 34109, 34110, 34111,
     34112, 34200, 34201, 34202, 34203, 34204, 34300, 34301, 34302, 34303, 34304,
-    34305
+    34305, 34306
 )
 
 LATEST_VERSION = VERSIONS[-1]
@@ -1191,6 +1191,7 @@ def sql_structure(dbo):
         fint("IsMember", True),
         fdate("MembershipExpiryDate", True),
         fstr("MembershipNumber", True),
+        fint("IsAdopter", True),
         fint("IsAdoptionCoordinator", True),
         fint("IsDonor", True),
         fint("IsDriver", True),
@@ -1246,6 +1247,7 @@ def sql_structure(dbo):
     sql += index("owner_SiteID", "owner", "SiteID")
     sql += index("owner_IDCheck", "owner", "IDCheck")
     sql += index("owner_IsACO", "owner", "IsACO")
+    sql += index("owner_IsAdopter", "owner", "IsAdopter")
     sql += index("owner_IsAdoptionCoordinator", "owner", "IsAdoptionCoordinator")
     sql += index("owner_IsFosterer", "owner", "IsFosterer")
     sql += index("owner_IsRetailer", "owner", "IsRetailer")
@@ -5165,3 +5167,10 @@ def update_34305(dbo):
     # Add animallostfoundmatch.LostMicrochipNumber/FoundMicrochipNumber
     add_column(dbo, "animallostfoundmatch", "LostMicrochipNumber", dbo.type_shorttext)
     add_column(dbo, "animallostfoundmatch", "FoundMicrochipNumber", dbo.type_shorttext)
+
+def update_34306(dbo):
+    # Add owner.IsAdopter flag
+    add_column(dbo, "owner", "IsAdopter", dbo.type_integer)
+    add_index(dbo, "owner_IsAdopter", "owner", "IsAdopter")
+    dbo.execute_dbupdate("UPDATE owner SET IsAdopter = (SELECT COUNT(*) FROM adoption WHERE OwnerID = owner.ID AND MovementType=1 AND MovementDate Is Not Null AND ReturnDate Is Null)")
+    dbo.execute_dbupdate("UPDATE owner SET IsAdopter = 1 WHERE IsAdopter > 0")

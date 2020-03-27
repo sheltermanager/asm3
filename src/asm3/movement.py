@@ -5,6 +5,7 @@ import asm3.configuration
 import asm3.financial
 import asm3.medical
 import asm3.i18n
+import asm3.person
 import asm3.utils
 
 NO_MOVEMENT = 0
@@ -402,7 +403,7 @@ def insert_movement_from_form(dbo, username, post):
     asm3.animal.update_animal_status(dbo, animalid)
     asm3.animal.update_variable_animal_data(dbo, animalid)
     update_movement_donation(dbo, movementid)
-
+    asm3.person.update_adopter_flag(dbo, username, post.integer("person"))
     return movementid
 
 def update_movement_from_form(dbo, username, post):
@@ -438,6 +439,7 @@ def update_movement_from_form(dbo, username, post):
     asm3.animal.update_animal_status(dbo, post.integer("animal"))
     asm3.animal.update_variable_animal_data(dbo, post.integer("animal"))
     update_movement_donation(dbo, movementid)
+    asm3.person.update_adopter_flag(dbo, username, post.integer("person"))
 
 def delete_movement(dbo, username, mid):
     """
@@ -446,10 +448,12 @@ def delete_movement(dbo, username, mid):
     animalid = dbo.query_int("SELECT AnimalID FROM adoption WHERE ID = ?", [mid])
     if animalid == 0:
         raise asm3.utils.ASMError("Trying to delete a movement that does not exist")
+    personid = dbo.query_int("SELECT OwnerID FROM adoption WHERE ID = ?", [mid])
     dbo.execute("UPDATE ownerdonation SET MovementID = 0 WHERE MovementID = ?", [mid])
     dbo.delete("adoption", mid, username)
     asm3.animal.update_animal_status(dbo, animalid)
     asm3.animal.update_variable_animal_data(dbo, animalid)
+    asm3.person.update_adopter_flag(dbo, username, personid)
 
 def return_movement(dbo, movementid, animalid = 0, returndate = None):
     """
@@ -459,8 +463,10 @@ def return_movement(dbo, movementid, animalid = 0, returndate = None):
     """
     if returndate is None: returndate = dbo.today()
     if animalid == 0: animalid = dbo.query_int("SELECT AnimalID FROM adoption WHERE ID = ?", [movementid])
+    personid = dbo.query_int("SELECT OwnerID FROM adoption WHERE ID = ?", [movementid])
     dbo.update("adoption", movementid, { "ReturnDate": returndate })
     asm3.animal.update_animal_status(dbo, animalid)
+    asm3.person.update_adopter_flag(dbo, username, personid)
 
 def insert_adoption_from_form(dbo, username, post, creating = [], create_payments = True):
     """

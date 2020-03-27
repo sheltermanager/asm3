@@ -510,6 +510,7 @@ def get_person_find_advanced(dbo, criteria, username, includeStaff = False, incl
     if "filter" in post and post["filter"].strip() != "":
         for flag in post["filter"].split(","):
             if flag == "aco": ss.ands.append("o.IsACO=1")
+            elif flag == "adopter": ss.ands.append("o.IsAdopter=1")
             elif flag == "banned": ss.ands.append("o.IsBanned=1")
             elif flag == "coordinator": ss.ands.append("o.IsAdoptionCoordinator=1")
             elif flag == "deceased": ss.ands.append("o.IsDeceased=1")
@@ -706,6 +707,7 @@ def insert_person_from_form(dbo, post, username, geocode=True):
         # Flags are updated afterwards, but cannot be null
         "IDCheck":                  0,
         "ExcludeFromBulkEmail":     0,
+        "IsAdopter":                0,
         "IsAdoptionCoordinator":    0,
         "IsBanned":                 0,
         "IsVolunteer":              0,
@@ -829,6 +831,14 @@ def update_person_from_form(dbo, post, username, geocode=True):
     # Check/update the geocode for the person's address
     if geocode: update_geocode(dbo, pid, post["latlong"], post["address"], post["town"], post["county"], post["postcode"], post["country"])
 
+def update_remove_flag(dbo, username, personid, flag):
+    """
+    Removes flag from personid. Does nothing if the person deos not have the flag.
+    """
+    flags = dbo.query_string("SELECT AdditionalFlags FROM owner WHERE ID = ?", [personid])
+    if flags.find("%s|" % flag) != -1:
+        update_flags(dbo, username, personid, flags.replace("%s|" % flag, "").split("|"))
+
 def update_flags(dbo, username, personid, flags):
     """
     Updates the flags on a person record from a list of flags
@@ -838,6 +848,7 @@ def update_flags(dbo, username, personid, flags):
 
     homechecked = bi("homechecked" in flags)
     banned = bi("banned" in flags)
+    adopter = bi("adopter" in flags)
     coordinator = bi("coordinator" in flags)
     volunteer = bi("volunteer" in flags)
     member = bi("member" in flags)
@@ -858,6 +869,7 @@ def update_flags(dbo, username, personid, flags):
     dbo.update("owner", personid, {
         "IDCheck":                  homechecked,
         "ExcludeFromBulkEmail":     excludefrombulkemail,
+        "IsAdopter":                adopter,
         "IsAdoptionCoordinator":    coordinator,
         "IsBanned":                 banned,
         "IsVolunteer":              volunteer,
@@ -875,6 +887,18 @@ def update_flags(dbo, username, personid, flags):
         "IsGiftAid":                giftaid,
         "AdditionalFlags":          flagstr
     }, username)
+
+def update_adopter_flag(dbo, username, personid):
+    """
+    Sets or removes the adopter flag on personid if it has any open adoption movements
+    """
+    if personid is None or personid == 0: return
+    oa = dbo.query_int("SELECT COUNT(*) FROM adoption WHERE MovementType=1 AND " \
+        "MovementDate Is Not Null AND ReturnDate Is Null AND OwnerID=?", [personid])
+    if oa > 0:
+        merge_flags(dbo, username, personid, "adopter")
+    else:
+        update_remove_flag(dbo, username, personid, "adopter")
 
 def merge_person_details(dbo, username, personid, d, force=False):
     """
