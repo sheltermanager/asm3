@@ -24,4 +24,4 @@ class TestUtils(unittest.TestCase):
         data = [ { "FIELD1": "VAL1&#2019;", "FIELD2": "Test" }, { "FIELD1": "MORE&#euro;", "FIELD2": "OK" } ]
         c = asm3.utils.csv("en", data)
         assert isinstance(c, bytes)
-        assert c.startswith(b"\"FIELD1")
+        assert c.find(b"\"FIELD1") != -1
