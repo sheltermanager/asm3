@@ -17,7 +17,7 @@ a.BreedName,
 sx.Sex,
 t.AnimalType,
 s.SpeciesName,
-o.OwnerAddress, o.OwnerTown, o.OwnerCounty, o.OwnerPostcode, o.HomeTelephone, o.MobileTelephone,
+o.OwnerAddress, o.OwnerTown, o.OwnerCounty, o.OwnerPostcode, o.EmailAddress, o.HomeTelephone, o.MobileTelephone,
 CASE
 WHEN a.ActiveMovementType = 2 THEN 'Foster - ' || o.OwnerName
 WHEN a.ActiveMovementType = 8 THEN 'Retailer - ' || o.OwnerName 
@@ -38,7 +38,7 @@ HEADER$$
 $$GROUP_DisplayLocationName
 $$HEAD
 <h2>$DisplayLocationName</h2>
-<p>$OWNERADDRESS $OWNERTOWN $OWNERCOUNTY $OWNERPOSTCODE<br/>$HOMETELEPHONE $MOBILETELEPHONE</p>
+<p>$OWNERADDRESS $OWNERTOWN $OWNERCOUNTY $OWNERPOSTCODE<br/>$EMAILADDRESS $HOMETELEPHONE $MOBILETELEPHONE</p>
 $$FOOT
 <p><b>Total $DisplayLocationName: {COUNT.LocationName}</b></p>
 GROUP$$
