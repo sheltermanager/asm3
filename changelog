@@ -1,6 +1,7 @@
 43
 ================
 
+27/03/20 Allow dotted/hyphenated date formats for locales #700
 27/03/20 Do not count trial adoptions on annual figures
 26/03/20 Shelter view "good with" section, add counts to flag mode
 26/03/20 Email templates in dialogs and mail merges #502
