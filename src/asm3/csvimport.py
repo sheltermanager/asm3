@@ -80,10 +80,10 @@ def gkd(dbo, m, f, usetoday = False):
     # If there's a space, then I guess we have time info - throw it away
     if lv.find(" ") > 0:
         lv = lv[0:lv.find(" ")]
-    # Now split it by either / or -
+    # Now split it by either / or - or .
     b = lv.split("/")
-    if lv.find("-") != -1:
-        b = lv.split("-")
+    if lv.find("-") != -1: b = lv.split("-")
+    if lv.find(".") != -1: b = lv.split(".")
     # We should have three date bits now
     if len(b) != 3:
         # We don't have a valid date, if use today is on return that
@@ -97,8 +97,8 @@ def gkd(dbo, m, f, usetoday = False):
             if asm3.utils.cint(b[0]) > 1900:
                 # it's Y/M/D
                 d = datetime.datetime(asm3.utils.cint(b[0]), asm3.utils.cint(b[1]), asm3.utils.cint(b[2]))
-            elif dbo.locale == "en":
-                # Assume it's M/D/Y for US
+            elif dbo.locale == "en" or dbo.locale == "en_CA":
+                # Assume it's M/D/Y for US and Canada
                 d = datetime.datetime(asm3.utils.cint(b[2]), asm3.utils.cint(b[0]), asm3.utils.cint(b[1]))
             else:
                 # Assume it's D/M/Y
