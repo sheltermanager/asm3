@@ -8,6 +8,7 @@ from asm3.locales import *
 
 VERSION = "43u [Fri Mar 27 22:39:29 CET 2020]"
 BUILD = "03272239"
+
 DMY = ( "%d/%m/%Y", "%d/%m/%y" )
 HDMY = ( "%d-%m-%Y", "%d-%m-%y" )
 DDMY = ( "%d.%m.%Y", "%d.%m.%y" )

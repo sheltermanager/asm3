@@ -2374,7 +2374,7 @@ def update_animals_from_form(dbo, username, post):
             fm = asm3.movement.get_animal_movements(dbo, animalid)
             for m in fm:
                 if m.movementtype == asm3.movement.FOSTER and not m.returndate:
-                    asm3.movement.return_movement(dbo, m["ID"], animalid, post.date("movementdate"))
+                    asm3.movement.return_movement(dbo, m["ID"], username, animalid, post.date("movementdate"))
             move_dict = {
                 "person"                : post["moveto"],
                 "animal"                : str(animalid),
@@ -2457,7 +2457,7 @@ def update_location_unit(dbo, username, animalid, newlocationid, newunit = ""):
     # (the date check is to make sure we don't accidentally return future adoptions)
     activemovementid = dbo.query_int("SELECT ActiveMovementID FROM animal WHERE ID = ? AND ActiveMovementID > 0 AND ActiveMovementDate <= ?", (animalid, dbo.today()))
     if activemovementid > 0:
-        asm3.movement.return_movement(dbo, activemovementid, animalid)
+        asm3.movement.return_movement(dbo, activemovementid, username, animalid)
     # Change the location
     dbo.execute("UPDATE animal SET ShelterLocation = ?, ShelterLocationUnit = ? WHERE ID = ?", (newlocationid, newunit, animalid))
     asm3.audit.edit(dbo, username, "animal", animalid, "", "%s: moved to location: %s, unit: %s" % ( animalid, newlocationid, newunit ))

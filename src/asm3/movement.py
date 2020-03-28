@@ -455,7 +455,7 @@ def delete_movement(dbo, username, mid):
     asm3.animal.update_variable_animal_data(dbo, animalid)
     asm3.person.update_adopter_flag(dbo, username, personid)
 
-def return_movement(dbo, movementid, animalid = 0, returndate = None):
+def return_movement(dbo, movementid, username, animalid = 0, returndate = None):
     """
     Returns a movement with the date given. If animalid is not supplied, it
     will be looked up from the movement given. If returndate is not supplied,
@@ -520,13 +520,13 @@ def insert_adoption_from_form(dbo, username, post, creating = [], create_payment
     fm = get_animal_movements(dbo, post.integer("animal"))
     for m in fm:
         if m.MOVEMENTTYPE == FOSTER and m.RETURNDATE is None:
-            return_movement(dbo, m["ID"], post.integer("animal"), post.date("movementdate"))
+            return_movement(dbo, m["ID"], username, post.integer("animal"), post.date("movementdate"))
     # Is this animal current at a retailer? If so, return it from the
     # retailer and set the originalretailermovement and retailerid fields
     # on our new adoption movement so it can be linked back
     for m in fm:
         if m.MOVEMENTTYPE == RETAILER and m.RETURNDATE is None:
-            return_movement(dbo, m.ID, post.integer("animal"), post.date("movementdate"))
+            return_movement(dbo, m.ID, username, post.integer("animal"), post.date("movementdate"))
             move_dict["originalretailermovement"] = str(m.ID)
             move_dict["retailer"] = str(m["OWNERID"])
     # Did we say we'd like to flag the owner as homechecked?
@@ -592,7 +592,7 @@ def insert_foster_from_form(dbo, username, post):
             if m.OWNERID == post.integer("person"):
                 raise asm3.utils.ASMValidationError(asm3.i18n._("Already fostered to this person.", l))
             else:
-                return_movement(dbo, m.ID, post.integer("animal"), post.date("fosterdate"))
+                return_movement(dbo, m.ID, username, post.integer("animal"), post.date("fosterdate"))
     # Create the foster movement
     move_dict = {
         "person"                : post["person"],
@@ -636,13 +636,13 @@ def insert_reclaim_from_form(dbo, username, post):
     fm = get_animal_movements(dbo, post.integer("animal"))
     for m in fm:
         if m.MOVEMENTTYPE == FOSTER and m.RETURNDATE is None:
-            return_movement(dbo, m.ID, post.integer("animal"), post.date("movementdate"))
+            return_movement(dbo, m.ID, username, post.integer("animal"), post.date("movementdate"))
     # Is this animal current at a retailer? If so, return it from the
     # retailer and set the originalretailermovement and retailerid fields
     # on our new adoption movement so it can be linked back
     for m in fm:
         if m.MOVEMENTTYPE == RETAILER and m.RETURNDATE is None:
-            return_movement(dbo, m["ID"], post.integer("animal"), post.date("movementdate"))
+            return_movement(dbo, m["ID"], username, post.integer("animal"), post.date("movementdate"))
             move_dict["originalretailermovement"] = str(m.ID)
             move_dict["retailer"] = str(m.OWNERID)
     # If the animal was flagged as not available for adoption, then it
@@ -686,7 +686,7 @@ def insert_transfer_from_form(dbo, username, post):
     fm = get_animal_movements(dbo, post.integer("animal"))
     for m in fm:
         if m.MOVEMENTTYPE == FOSTER and m.RETURNDATE is None:
-            return_movement(dbo, m["ID"], post.integer("animal"), post.date("transferdate"))
+            return_movement(dbo, m["ID"], username, post.integer("animal"), post.date("transferdate"))
     # Create the transfer movement
     move_dict = {
         "person"                : post["person"],
@@ -771,7 +771,7 @@ def insert_retailer_from_form(dbo, username, post):
     fm = get_animal_movements(dbo, post.integer("animal"))
     for m in fm:
         if m.MOVEMENTTYPE == FOSTER and m.RETURNDATE is None:
-            return_movement(dbo, m.ID, post.integer("animal"), post.date("retailerdate"))
+            return_movement(dbo, m.ID, username, post.integer("animal"), post.date("retailerdate"))
     # Create the retailer movement
     move_dict = {
         "person"                : post["person"],
