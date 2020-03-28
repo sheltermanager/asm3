@@ -9,7 +9,7 @@ since none of it is helpful to us, but still reads and writes
 pot/po files for launchpad. Thanks for nothing gettext team!
 """
 
-import os, re, textwrap
+import os, re, textwrap, datetime
 
 src = os.listdir("src")
 js = os.listdir("src/static/js")
@@ -55,24 +55,23 @@ for p in src:
 
 pot = """
 # ASM Translation Strings
-# Copyright (C) 2013 Robin Rawson-Tetley
+# Copyright (C) 2013-2020 Robin Rawson-Tetley
 # This file is distributed under the same license as the ASM3 package.
-# Robin Rawson-Tetley <robin@rawsontetley.org>, 2013.
-#
-#, fuzzy
+# Robin Rawson-Tetley <robin@sheltermanager.com>, 2020.
+
 msgid ""
 msgstr ""
 "Project-Id-Version: ASM3\\n"
-"Report-Msgid-Bugs-To: db@sheltermanager.com\\n"
-"POT-Creation-Date: 2013-01-24 10:55+0000\\n"
-"Last-Translator: Robin Rawson-Tetley <robin@rawsontetley.org>\\n"
-"Language-Team: en <robin@rawsontetley.org>\\n"
+"Report-Msgid-Bugs-To: robin@sheltermanager.com\\n"
+"POT-Creation-Date: %s+0000\\n"
+"Last-Translator: Robin Rawson-Tetley <robin@sheltermanager.com>\\n"
+"Language-Team: en <robin@sheltermanager.com>\\n"
 "Language: en\\n"
 "MIME-Version: 1.0\\n"
 "Content-Type: text/plain; charset=UTF-8\\n"
 "Content-Transfer-Encoding: 8bit\\n"
 
-"""
+""" % ( datetime.datetime.strftime(datetime.datetime.today(), "%Y-%m-%d %H:%M") )
 
 for string, fname in iter(sorted(strings.items())):
     locs = textwrap.wrap(fname, width=76)
