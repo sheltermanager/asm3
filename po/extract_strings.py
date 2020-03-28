@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
 
 """
 Extract all strings from our python code and js/templates
@@ -11,8 +11,7 @@ pot/po files for launchpad. Thanks for nothing gettext team!
 
 import os, re, textwrap, datetime
 
-src = os.listdir("src")
-js = os.listdir("src/static/js")
+src = [ "src", "src/asm3", "src/static/js" ]
 
 strings = {}
 
@@ -39,19 +38,12 @@ def output_msgid(s):
                 m += "\"%s \"\n" % bits[i]
         return m
 
-for j in js:
-    if j.endswith(".js") and not j.startswith("jquery"):
-        f = open("src/static/js/" + j, "r")
-        s = f.read()
-        f.close()
-        extract_strings(j, s)
-
-for p in src:
-    if p.endswith(".py"):
-        f = open("src/" + p, "r")
-        s = f.read()
-        f.close()
-        extract_strings(p, s)
+for folder in src:
+    for fname in os.listdir(folder):
+        if fname.endswith(".js") or fname.endswith(".py"):
+            with open("%s/%s" % (folder, fname), "rb") as f:
+                s = f.read().decode("utf-8")
+            extract_strings(fname, s)
 
 pot = """
 # ASM Translation Strings
