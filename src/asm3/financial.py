@@ -878,8 +878,8 @@ def update_matching_donation_transaction(dbo, username, odid, destinationaccount
     # users problem if they picked the wrong donationtype/account
     trxid = dbo.query_int("SELECT ID FROM accountstrx WHERE OwnerDonationID = ?", [odid])
     if trxid != 0:
-        asm3.al.debug("Already have an existing transaction, updating amount to %d" % d["DONATION"], "financial.update_matching_donation_transaction", dbo)
-        dbo.execute("UPDATE accountstrx SET Amount = ? WHERE ID = ?", (d.DONATION, trxid))
+        asm3.al.debug("Already have an existing transaction, updating amount to %d" % abs(d.DONATION), "financial.update_matching_donation_transaction", dbo)
+        dbo.execute("UPDATE accountstrx SET Amount = ? WHERE ID = ?", (abs(d.DONATION), trxid))
         return
 
     # Get the source account for this type of donation, use the first income account on file for that type
