@@ -99,7 +99,7 @@ smcom-stable-tgz: version clean minify
 
 pot:
 	@echo "[template] ========================="
-	python3 po/extract_strings.py > po/asm.pot
+	po/extract_strings.py > po/asm.pot
 
 translation:
 	@echo "[translation] ======================"

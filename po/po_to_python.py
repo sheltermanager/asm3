@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
 
 # Converts all .po files in the current directory to 
 # python modules for use with asm
@@ -12,10 +12,9 @@ dirlist = os.listdir(".")
 for pofile in dirlist:
     if pofile.endswith(".po"):
 
-        print "Processing: " + pofile
-        f = open(pofile, "r")
-        lines = f.readlines()
-        f.close()
+        print("Processing: %s" % pofile)
+        with open(pofile, "r") as f:
+            lines = f.readlines()
        
         # Parse the po file into a dictionary
         strings = {}
@@ -40,21 +39,19 @@ for pofile in dirlist:
             if mode == "k":
                 k += chopvalue(l)
             elif mode == "v":
-                l = l.decode("utf-8")
-                v += chopvalue(l.encode("ascii", "xmlcharrefreplace"))
+                v += chopvalue(l)
         
         # Build up the python representation of it and write it out
         s = "# " + pofile + "\n\n"
         s += "val = {"
         first = True
-        for k, v in strings.iteritems():
-                if not first: s += ",\n"
-                first = False
-                s += "\"%s\" : \"%s\"" % (k, v)
+        for k, v in strings.items():
+            if k == "": continue
+            if not first: s += ",\n"
+            first = False
+            s += "\"%s\" : \"%s\"" % (k, v)
         s += "\n}\n"
         outfile = "locale_" + pofile.replace(".po", ".py")
-        f = open(outfile, "w")
-        f.write(s)
-        f.flush()
-        f.close()
+        with open(outfile, "wb") as f:
+            f.write(s.encode("ascii", "xmlcharrefreplace"))
 
