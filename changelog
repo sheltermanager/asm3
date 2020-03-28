@@ -1,6 +1,7 @@
 43
 ================
 
+28/03/20 Do not create negative accounting transactions #756
 28/03/20 Assume M/D/Y when importing dates in en_CA locale
 28/03/20 Complete French translation (Julian Poidevin) #753
 27/03/20 Built-in adopter person flag #726
