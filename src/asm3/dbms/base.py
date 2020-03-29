@@ -1,7 +1,7 @@
 
 import asm3.al
 import asm3.audit
-import asm3.cachemem
+import asm3.cachedisk
 import asm3.i18n
 import asm3.utils
 
@@ -586,12 +586,12 @@ class Database(object):
         without doing any caching and is equivalent to Database.query()
         """
         if not CACHE_COMMON_QUERIES: return self.query(sql, params=params, limit=limit)
-        cache_key = asm3.utils.md5_hash_hex("%s:%s:%s" % (self.database, sql, params))
-        results = asm3.cachemem.get(cache_key)
+        cache_key = "%s:%s:%s" % (self.database, sql, params)
+        results = asm3.cachedisk.get(cache_key)
         if results is not None:
             return results
         results = self.query(sql, params=params, limit=limit, distincton=distincton)
-        asm3.cachemem.put(cache_key, results, age)
+        asm3.cachedisk.put(cache_key, results, age)
         return results
 
     def query_columns(self, sql, params=None):
