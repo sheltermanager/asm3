@@ -2480,6 +2480,14 @@ class document_gen(ASMEndpoint):
         else:
             raise asm3.utils.ASMValidationError("Linktype '%s' is invalid, cannot save" % linktype)
 
+    def post_emailtemplate(self, o):
+        self.content_type("text/html")
+        # If a personid has been supplied, substitute the document tokens first
+        if o.post.integer("personid") != 0:
+            return asm3.wordprocessor.generate_person_doc(o.dbo, o.post.integer("dtid"), o.post.integer("personid"), o.user)
+        else:
+            return asm3.template.get_document_template_content(o.dbo, o.post.integer("dtid"))
+
     def post_pdf(self, o):
         self.check(asm3.users.VIEW_MEDIA)
         dbo = o.dbo
@@ -2654,10 +2662,6 @@ class document_templates(JSONEndpoint):
     def post_delete(self, o):
         for t in o.post.integer_list("ids"):
             asm3.template.delete_document_template(o.dbo, o.user, t)
-
-    def post_getcontent(self, o):
-        self.content_type("text/html")
-        return asm3.template.get_document_template_content(o.dbo, o.post.integer("dtid"))
 
     def post_rename(self, o):
         asm3.template.rename_document_template(o.dbo, o.user, o.post.integer("dtid"), o.post["newname"])

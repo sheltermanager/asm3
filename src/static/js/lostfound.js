@@ -295,6 +295,7 @@ $(function() {
                     name: lostfound.current_person.OWNERFORENAMES + " " + lostfound.current_person.OWNERSURNAME,
                     email: lostfound.current_person.EMAILADDRESS,
                     logtypes: controller.logtypes,
+                    personid: controller.animal.OWNERID,
                     templates: controller.templates
                 });
             });

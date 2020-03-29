@@ -795,6 +795,7 @@ $(function() {
                     name: $("#forenames").val() + " " + $("#surname").val(),
                     email: $("#email").val(),
                     logtypes: controller.logtypes,
+                    personid: controller.person.ID,
                     templates: controller.templates
                 });
             });

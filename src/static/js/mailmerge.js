@@ -211,9 +211,9 @@ $(function() {
                 $("#emailfrom").val(html.decode(config.str("Organisation")) + " <" + config.str("EmailAddress") + ">");
                 $("#emailtemplate").html( edit_header.template_list_options(controller.templates) );
                 $("#emailtemplate").change(function() {
-                    var formdata = "mode=getcontent&dtid=" + $("#emailtemplate").val();
+                    var formdata = "mode=emailtemplate&dtid=" + $("#emailtemplate").val();
                     header.show_loading(_("Loading..."));
-                    common.ajax_post("document_templates", formdata, function(result) {
+                    common.ajax_post("document_gen", formdata, function(result) {
                         $("#emailbody").html(result); 
                     });
                 });

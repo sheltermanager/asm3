@@ -82,7 +82,7 @@ $(function() {
                 [ "ISGOODWITHCHILDREN", 0, _("Good with children") ],
                 [ "ISGOODWITHCHILDREN", 5, _("Good with children over 5") ],
                 [ "ISGOODWITHCHILDREN", 12, _("Good with children over 12") ],
-                [ "ISHOUSETRAINED", 0, _("Housetrained") ],
+                [ "ISHOUSETRAINED", 0, _("Housetrained") ]
             ];
             $.each(gw, function(i, v) {
                 var ht = [], c = 0;

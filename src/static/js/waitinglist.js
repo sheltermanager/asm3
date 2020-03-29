@@ -248,6 +248,7 @@ $(function() {
                     name: waitinglist.current_person.OWNERFORENAMES + " " + waitinglist.current_person.OWNERSURNAME,
                     email: waitinglist.current_person.EMAILADDRESS,
                     logtypes: controller.logtypes,
+                    personid: controller.animal.OWNERID,
                     templates: controller.templates
                 });
             });
