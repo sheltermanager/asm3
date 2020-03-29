@@ -4219,9 +4219,9 @@ class onlineforms(JSONEndpoint):
     def post_import(self, o):
         fd = asm3.utils.bytes2str(o.post.filedata())
         if fd.startswith("{"):
-            asm3.onlineform.import_onlineform_json(fd)
+            asm3.onlineform.import_onlineform_json(o.dbo, fd)
         else:
-            asm3.onlineform.import_onlineform_html(fd)
+            asm3.onlineform.import_onlineform_html(o.dbo, fd)
         self.redirect("onlineforms")
 
 class onlineform_json(ASMEndpoint):
