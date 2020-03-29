@@ -444,7 +444,15 @@ class image(ASMEndpoint):
     url = "image"
 
     def content(self, o):
-        lastmod, imagedata = asm3.media.get_image_file_data(session.dbo, o.post["mode"], o.post["id"], o.post.integer("seq"), False)
+        try:
+            lastmod, imagedata = asm3.media.get_image_file_data(session.dbo, o.post["mode"], o.post["id"], o.post.integer("seq"), False)
+        except Exception as err:
+            # This call in this endpoint produces a lot of errors when people try to access 
+            # images via unsubstituted tokens in documents, etc. 
+            # Log them instead of throwing an error that will end up in our error box
+            asm3.al.error(str(err), "code.image", o.dbo, sys.exc_info())
+            raise asm3.utils.ASMError("invalid image call")
+
         if imagedata != "NOPIC":
             self.content_type("image/jpeg")
             if o.post["date"] != "":
