@@ -2,6 +2,7 @@
 import asm3.al
 import asm3.audit
 import asm3.cachemem
+import asm3.cachedisk
 import asm3.i18n
 
 from asm3.sitedefs import LOCALE, TIMEZONE
@@ -444,17 +445,17 @@ def csave(dbo, username, post):
 def get_map(dbo):
     """ Returns a map of the config items, using a read-through cache to save database calls """
     CACHE_KEY = "%s_config" % dbo.database
-    cmap = asm3.cachemem.get(CACHE_KEY)
+    cmap = asm3.cachedisk.get(CACHE_KEY)
     if cmap is None:
         rows = dbo.query("SELECT ItemName, ItemValue FROM configuration ORDER BY ItemName")
         cmap = DEFAULTS.copy()
         for r in rows:
             cmap[r.itemname] = r.itemvalue
-        asm3.cachemem.put(CACHE_KEY, cmap, 3600) # one hour cache means direct database updates show up eventually
+        asm3.cachedisk.put(CACHE_KEY, cmap, 3600) # one hour cache means direct database updates show up eventually
     return cmap
 
 def invalidate_config_cache(dbo):
-    asm3.cachemem.delete("%s_config" % dbo.database)
+    asm3.cachedisk.delete("%s_config" % dbo.database)
 
 def account_period_totals(dbo):
     return cboolean(dbo, "AccountPeriodTotals")
