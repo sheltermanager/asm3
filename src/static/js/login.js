@@ -133,13 +133,13 @@ $(function() {
                 success: function(data) {
                     $("#loginspinner").fadeOut();
                     if (data == "OK") { 
-                        $(".asm-reset-ok").fadeIn("slow");
+                        $(".asm-reset-ok").fadeIn("slow").delay(10000).fadeOut("slow");
                     }
                     else if (data == "NOEMAIL") {
                         $(".asm-login-reset-error").fadeIn("slow").delay(3000).fadeOut("slow");
                     }
                     else if (data == "MASTER") {
-                        $(".asm-login-reset-master").fadeIn("slow").delay(3000).fadeOut("slow");
+                        $(".asm-login-reset-master").fadeIn("slow").delay(8000).fadeOut("slow");
                     }
                     else {
                         $(".asm-login-error").fadeIn("slow").delay(3000).fadeOut("slow");
