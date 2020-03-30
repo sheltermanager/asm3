@@ -4814,3 +4814,10 @@ Zzo
 
 def get_random_name():
     return random.choice(NAMES)
+
+def get_random_single_word_name():
+    """ Returns only names that are a single word """
+    while True:
+        name = get_random_name()
+        if name .find(" ") == -1:
+            return name

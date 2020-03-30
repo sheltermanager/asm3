@@ -8,7 +8,7 @@ $(function() {
             var h = [
                 '<div id="asm-login-window" class="dialogshadow" style="display: none">',
                 '<div id="asm-login-splash" />',
-                '<table width="100%" style="margin-left: auto; margin-right: auto; text-align: right; padding: 10px">',
+                '<table width="auto" style="margin-left: auto; margin-right: auto; text-align: right; padding: 10px">',
                 '<tr class="asm-account-row hidden">',
                 '<td>',
                     '<label for="database">' + (controller.smcom ? _("SM Account") : _("Database")) + '</label>',
@@ -33,15 +33,12 @@ $(function() {
                     '<input class="asm-textbox ui-widget" id="password" name="password" type="password" />',
                 '</td>',
                 '</tr>',
-                '<tr>',
-                '<td>',
-                '</td>',
-                '<td>',
+                '</table>',
+
+                '<div class="centered" style="padding-bottom: 10px">',
                     '<input class="asm-checkbox" id="rememberme" name="rememberme" type="checkbox" />',
                     '<label for="rememberme">' + _("Remember me on this computer") + '</label>',
-                '</td>',
-                '</tr>',
-                '</table>',
+                '</div>',
 
                 '<div class="centered" style="padding: 5px">',
                     '<button id="loginbutton" class="ui-priority-primary asm-dialog-actionbutton">',
@@ -50,9 +47,6 @@ $(function() {
                         '<img id="loginspinner" src="static/images/wait/rolling_white.svg" style="display: none; vertical-align: middle; height: 16px" />',
                     '</button>',
                 '</div>',
-                '<div class="centered" style="margin-bottom: 5px">',
-                    '<span id="forgottenpassword" style="display: none; margin-top: 5px;"><a href="#"></a></span>',
-                '</div>',
                 '<div class="centered asm-login-fail" style="display: none">',
                     '<div class="ui-state-error">',
                         '<p>',
@@ -60,6 +54,9 @@ $(function() {
                             _("Invalid username or password."),
                         '</p>',
                     '</div>',
+                '</div>',
+                '<div class="centered" style="margin-bottom: 5px">',
+                    '<span id="resetpassword" style="display: none; margin-top: 5px;"><a href="#">Reset my password</a></span>',
                 '</div>',
                 '<div class="centered asm-login-disabled" style="display: none">',
                     '<div class="ui-state-error">',
@@ -77,12 +74,36 @@ $(function() {
                         '</p>',
                     '</div>',
                 '</div>',
-                '<div class="centered asm-login-tip" style="display: none">',
-                '<div class="ui-state-highlight" style="margin-top: 20px; padding: 0 .7em">',
-                '<p><span class="ui-icon ui-icon-info" style="float: left; margin-right: .3em;"></span>',
-                _("The default username is 'user' with the password 'letmein'"),
-                '</p>',
+                '<div class="centered asm-reset-ok" style="display: none">',
+                    '<div class="ui-state-highlight" style="margin-top: 20px; padding: 0 .7em">',
+                        '<p><span class="ui-icon ui-icon-info" style="float: left; margin-right: .3em;"></span>',
+                        _("Password reset information has been sent to your email."),
+                    '</p>',
+                    '</div>',
                 '</div>',
+                '<div class="centered asm-login-reset-error" style="display: none">',
+                    '<div class="ui-state-error">',
+                        '<p>',
+                            '<span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em;"></span>',
+                            _("User does not exist or have a valid email address."),
+                        '</p>',
+                    '</div>',
+                '</div>',
+                '<div class="centered asm-login-reset-master" style="display: none">',
+                    '<div class="ui-state-error">',
+                        '<p>',
+                            '<span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em;"></span>',
+                            _("The sheltermanager.com admin account password cannot be changed here, please visit {0}").replace("{0}", 
+                            "<a href=\"https://sheltermanager.com/my/\">https://sheltermanager.com/my/</a>"),
+                        '</p>',
+                    '</div>',
+                '</div>',
+                '<div class="centered asm-login-tip" style="display: none">',
+                    '<div class="ui-state-highlight" style="margin-top: 20px; padding: 0 .7em">',
+                        '<p><span class="ui-icon ui-icon-info" style="float: left; margin-right: .3em;"></span>',
+                        _("The default username is 'user' with the password 'letmein'"),
+                    '</p>',
+                    '</div>',
                 '</div>',
                 '<div class="centered emergencynotice" style="display: none">',
                     '<div class="ui-state-error">',
@@ -97,6 +118,39 @@ $(function() {
 
             ].join("\n");
             return h;
+        },
+
+        reset_password: function() {
+            $("#loginspinner").fadeIn();
+            $("#resetpassword").fadeOut();
+            $.ajax({
+                type: "POST",
+                url: "login",
+                data: { "mode": "reset",
+                    "database":  $("#database").val(),
+                    "username": $("#username").val()
+                },
+                success: function(data) {
+                    $("#loginspinner").fadeOut();
+                    if (data == "OK") { 
+                        $(".asm-reset-ok").fadeIn("slow");
+                    }
+                    else if (data == "NOEMAIL") {
+                        $(".asm-login-reset-error").fadeIn("slow").delay(3000).fadeOut("slow");
+                    }
+                    else if (data == "MASTER") {
+                        $(".asm-login-reset-master").fadeIn("slow").delay(3000).fadeOut("slow");
+                    }
+                    else {
+                        $(".asm-login-error").fadeIn("slow").delay(3000).fadeOut("slow");
+                    }
+                },
+                error: function() {
+                    $("#loginspinner").fadeOut();
+                    $(".asm-login-error").fadeIn("slow").delay(3000).fadeOut("slow");
+                    $("input#username").focus();
+                }
+            });
         },
 
         login: function() {
@@ -123,6 +177,11 @@ $(function() {
                         $(".asm-login-fail").fadeIn("slow").delay(3000).fadeOut("slow");
                         $("input#username").focus();
                         $("#loginbutton").button("enable");
+                        // Show the reset password link if we have a username or username/database pair
+                        if ((controller.multipledatabases && $("#username").val() != "" && $("#database").val() != "") 
+                            || (!controller.multipledatabases && $("#username").val() != "")) { 
+                            $("#resetpassword").fadeIn();
+                        }
                     }
                     else if (String(data).indexOf("DISABLED") != -1) {
                         $(".asm-login-disabled").fadeIn("slow").delay(3000).fadeOut("slow");
@@ -208,12 +267,6 @@ $(function() {
             // Show things
             $("#asm-login-window").fadeIn("slow");
 
-            if (controller.forgottenpassword) {
-                $("#forgottenpassword a").attr("href", controller.forgottenpassword);
-                $("#forgottenpassword a").html(controller.forgottenpasswordlabel);
-                $("#forgottenpassword").show();
-            }
-
             if (controller.emergencynotice) {
                 $(".emergencynoticetext").html(controller.emergencynotice);
                 $(".emergencynotice").fadeIn("slow");
@@ -246,6 +299,9 @@ $(function() {
                 $("#loginbutton").button();
                 self.login();
             }
+
+            // Bind the reset password handerl
+            $("#resetpassword").click(self.reset_password);
 
             // If we weren't passed a username or password, have a look
             // to see if we remembered one previously

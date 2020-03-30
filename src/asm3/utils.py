@@ -21,6 +21,7 @@ import subprocess
 import sys
 import tempfile
 import time
+import uuid
 import web
 import zipfile
 
@@ -725,6 +726,10 @@ def base64decode_str(s):
     if sys.version_info[0] > 2: # PYTHON3
         return rv.decode("utf-8")
     return rv # Python 2 bytes/str interchangeable
+
+def uuid_str():
+    """ Returns a type 4 UUID as a string """
+    return str(uuid.uuid4())
 
 def pbkdf2_hash_hex(plaintext, salt="", algorithm="sha1", iterations=1000):
     """ Returns a hex pbkdf2 hash of the plaintext given. 

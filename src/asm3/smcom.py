@@ -10,7 +10,7 @@ import os, sys
 import web
 
 # Regex to remove invalid chars from an entered database
-INVALID_REMOVE = re.compile('[\/\.\*\?\ ]')
+INVALID_REMOVE = re.compile(r'[\/\.\*\?\ ]')
 
 try:
     sys.path.append("/root/asmdb")

@@ -295,13 +295,6 @@ SHARE_BUTTON = get_string("share_button", "shareweb,shareemail")
 # Type of electronic signing device available
 ELECTRONIC_SIGNATURES = get_string("electronic_signatures", "")
 
-# If you want a forgotten password link on the login page,
-# the URL it should link to
-FORGOTTEN_PASSWORD = get_string("forgotten_password", "")
-
-# The text to show on the link
-FORGOTTEN_PASSWORD_LABEL = get_string("forgotten_password_label", "")
-
 # If you have an emergency notice you'd like displaying on the
 # login and home screens, set a filename here for the content
 # (if the file does not exist or has no content, nothing will

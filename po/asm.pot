@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ASM3\n"
 "Report-Msgid-Bugs-To: robin@sheltermanager.com\n"
-"POT-Creation-Date: 2020-03-28 08:50+0000\n"
+"POT-Creation-Date: 2020-03-30 11:41+0000\n"
 "Last-Translator: Robin Rawson-Tetley <robin@sheltermanager.com>\n"
 "Language-Team: en <robin@sheltermanager.com>\n"
 "Language: en\n"
@@ -8254,6 +8254,10 @@ msgstr ""
 msgid "Password is incorrect."
 msgstr ""
 
+#: login.js
+msgid "Password reset information has been sent to your email."
+msgstr ""
+
 #: change_password.js
 msgid "Password successfully changed."
 msgstr ""
@@ -9451,6 +9455,10 @@ msgstr ""
 
 #: users.js
 msgid "Reset Password"
+msgstr ""
+
+#: code.py
+msgid "Reset password request"
 msgstr ""
 
 #: mobile.py incident.js
@@ -11050,6 +11058,10 @@ msgstr ""
 msgid "That animal is already linked to the incident"
 msgstr ""
 
+#: code.py
+msgid "The ASM password for {0} has been reset to:"
+msgstr ""
+
 #: csvimport_paypal.js
 msgid "The CSV file should be created by PayPal's \"All Activity\" report."
 msgstr ""
@@ -11308,7 +11320,7 @@ msgstr ""
 msgid "The shelter reference number"
 msgstr ""
 
-#: change_password.js
+#: login.js change_password.js
 msgid ""
 "The sheltermanager.com admin account password cannot be changed here, please "
 "visit {0}"
@@ -11629,6 +11641,10 @@ msgstr ""
 msgid ""
 "This item is referred to in the database ({0}) and cannot be deleted until "
 "it is no longer in use."
+msgstr ""
+
+#: code.py
+msgid "This link will remain active for 10 minutes."
 msgstr ""
 
 #: options.js
@@ -11961,6 +11977,10 @@ msgstr ""
 
 #: header.js
 msgid "To continue using ASM, please renew {0}"
+msgstr ""
+
+#: code.py
+msgid "To reset your ASM password, please follow this link:"
 msgstr ""
 
 #: staff_rota.js
@@ -12522,6 +12542,10 @@ msgstr ""
 msgid ""
 "User accounts that will only ever call the Service API should set this to "
 "No."
+msgstr ""
+
+#: login.js
+msgid "User does not exist or have a valid email address."
 msgstr ""
 
 #: html.py

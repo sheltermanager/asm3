@@ -54,7 +54,7 @@ import asm3.wordprocessor
 
 from asm3.i18n import _, BUILD, translate, get_version, get_display_date_format, get_currency_prefix, get_currency_symbol, get_currency_dp, get_currency_radix, get_currency_digit_grouping, get_locales, parse_date, python2display, add_minutes, add_days, subtract_days, subtract_months, first_of_month, last_of_month, monday_of_week, sunday_of_week, first_of_year, last_of_year, now, format_currency, i18nstringsjs
 
-from asm3.sitedefs import BASE_URL, DEPLOYMENT_TYPE, ELECTRONIC_SIGNATURES, EMERGENCY_NOTICE, FORGOTTEN_PASSWORD, FORGOTTEN_PASSWORD_LABEL, AKC_REUNITE_BASE_URL, HOMEAGAIN_BASE_URL, LARGE_FILES_CHUNKED, LOCALE, JQUERY_UI_CSS, LEAFLET_CSS, LEAFLET_JS, MULTIPLE_DATABASES, MULTIPLE_DATABASES_PUBLISH_URL, MULTIPLE_DATABASES_PUBLISH_FTP, ADMIN_EMAIL, EMAIL_ERRORS, MADDIES_FUND_TOKEN_URL, MANUAL_HTML_URL, MANUAL_PDF_URL, MANUAL_FAQ_URL, MANUAL_VIDEO_URL, MAP_LINK, MAP_PROVIDER, MAP_PROVIDER_KEY, OSM_MAP_TILES, FOUNDANIMALS_FTP_USER, PETLINK_BASE_URL, PETRESCUE_URL, PETSLOCATED_FTP_USER, QR_IMG_SRC, SAVOURLIFE_URL, SERVICE_URL, SESSION_SECURE_COOKIE, SESSION_DEBUG, SHARE_BUTTON, SMARTTAG_FTP_USER, SMCOM_LOGIN_URL, SMCOM_PAYMENT_LINK
+from asm3.sitedefs import BASE_URL, DEPLOYMENT_TYPE, ELECTRONIC_SIGNATURES, EMERGENCY_NOTICE, AKC_REUNITE_BASE_URL, HOMEAGAIN_BASE_URL, LARGE_FILES_CHUNKED, LOCALE, JQUERY_UI_CSS, LEAFLET_CSS, LEAFLET_JS, MULTIPLE_DATABASES, MULTIPLE_DATABASES_PUBLISH_URL, MULTIPLE_DATABASES_PUBLISH_FTP, ADMIN_EMAIL, EMAIL_ERRORS, MADDIES_FUND_TOKEN_URL, MANUAL_HTML_URL, MANUAL_PDF_URL, MANUAL_FAQ_URL, MANUAL_VIDEO_URL, MAP_LINK, MAP_PROVIDER, MAP_PROVIDER_KEY, OSM_MAP_TILES, FOUNDANIMALS_FTP_USER, PETLINK_BASE_URL, PETRESCUE_URL, PETSLOCATED_FTP_USER, QR_IMG_SRC, SAVOURLIFE_URL, SERVICE_URL, SESSION_SECURE_COOKIE, SESSION_DEBUG, SHARE_BUTTON, SMARTTAG_FTP_USER, SMCOM_LOGIN_URL, SMCOM_PAYMENT_LINK
 
 CACHE_ONE_HOUR = 3600
 CACHE_ONE_DAY = 86400
@@ -1023,8 +1023,6 @@ class login(ASMEndpoint):
              "locale": l,
              "hasanimals": has_animals,
              "customsplash": custom_splash,
-             "forgottenpassword": FORGOTTEN_PASSWORD,
-             "forgottenpasswordlabel": FORGOTTEN_PASSWORD_LABEL,
              "emergencynotice": emergency_notice(),
              "smaccount": post["smaccount"],
              "husername": post["username"],
@@ -1043,6 +1041,35 @@ class login(ASMEndpoint):
 
     def post_all(self, o):
         return asm3.users.web_login(o.post, session, self.remote_ip(), PATH)
+
+    def post_reset(self, o):
+        dbo = asm3.db.get_database(o.post["database"])
+        if dbo.database in ("WRONGSERVER", "FAIL", "DISABLED"): return "FAIL"
+        asm3.al.info("password reset request from %s for %s:%s" % (self.remote_ip(), o.post["database"], o.post["username"]), "code.login", dbo)
+        l = dbo.locale
+        # This cannot be used to reset the SM master password
+        if asm3.smcom.active() and o.post["username"].lower() == dbo.database:
+            asm3.al.error("failed password reset: master user %s cannot be reset here" % o.post["username"], "code.login", dbo)
+            return "MASTER"
+        # Find the user id and email address for the username given
+        userid = dbo.query_int("SELECT ID FROM users WHERE LOWER(UserName) LIKE ?", [o.post["username"].lower()])
+        email = dbo.query_string("SELECT EmailAddress FROM users WHERE ID=?", [userid])
+        if email == "": 
+            asm3.al.error("failed password reset: user %s does not exist or have an email address" % o.post["username"], "code.login", dbo)
+            return "NOEMAIL"
+        # Generate a random cache key for this reset
+        cache_key = asm3.utils.uuid_str()
+        # Store info about this reset in the cache for 10 minutes
+        asm3.cachedisk.put(cache_key, { "username": o.post["username"], "userid": userid,
+            "database": o.post["database"], "email": email }, 600)
+        # Construct the reset link
+        resetlink = "%s/reset_password?token=%s" % (BASE_URL, cache_key)
+        # Send the email
+        asm3.utils.send_email(dbo, asm3.configuration.email(dbo), email, "", "",
+            _("Reset password request", l),
+            _("To reset your ASM password, please follow this link:", l) + "\n\n" + resetlink + "\n\n" +
+            _("This link will remain active for 10 minutes.", l))
+        return "OK"
 
 class login_jsonp(ASMEndpoint):
     url = "login_jsonp"
@@ -1079,6 +1106,27 @@ class logout(ASMEndpoint):
         asm3.users.update_user_activity(o.dbo, o.user, False)
         asm3.users.logout(o.session, self.remote_ip())
         self.redirect(url)
+
+class reset_password(ASMEndpoint):
+    url = "reset_password"
+    check_logged_in = False
+
+    def content(self, o):
+        token = o.post["token"]
+        rinfo = asm3.cachedisk.get(token)
+        if rinfo is None: raise asm3.utils.ASMValidationError("invalid token")
+        dbo = asm3.db.get_database(rinfo["database"])
+        if dbo.database in ("FAIL", "DISABLED", "WRONGSERVER"): raise asm3.utils.ASMValidationError("bad database")
+        # Reset their password to something random and send an email with the new password
+        l = dbo.locale
+        newpass = asm3.animalname.get_random_single_word_name()
+        asm3.users.reset_password(dbo, rinfo["userid"], newpass)
+        asm3.al.info("reset password for %s to %s" % (rinfo["username"], newpass), "code.reset_password", dbo)
+        asm3.utils.send_email(dbo, asm3.configuration.email(dbo), rinfo["email"], "", "", 
+            _("Reset password request", l),
+            _("The ASM password for {0} has been reset to:", l).format(rinfo["username"]) + 
+            "\n\n    " + newpass)
+        self.redirect("static/pages/password_reset.html")
 
 class accounts(JSONEndpoint):
     url = "accounts"
