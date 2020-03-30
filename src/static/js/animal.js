@@ -945,6 +945,14 @@ $(function() {
                 $("#broughtinby").personchooser("set_filter", "all");
             }
 
+            // Change the Original Owner text if this record is non-shelter
+            if ($("#flags option[value='nonshelter']").is(":selected")) {
+                $("label[for='originalowner']").html(_("Owner"));
+            }
+            else {
+                $("label[for='originalowner']").html(_("Original Owner"));
+            }
+
             // If the user ticked hold, there's no hold until date and
             // we have an auto remove days period, default the date
             if ($("#hold").is(":checked") && $("#holduntil").val() == "" && config.integer("AutoRemoveHoldDays") > 0) {
