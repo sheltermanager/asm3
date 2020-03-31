@@ -20,6 +20,7 @@ $(function() {
                 '<option value="genallvariable">' + _("Recalculate ALL animal ages/times") + '</option>',
                 '<option value="genlookingfor">' + _("Regenerate 'Person looking for' report") + '</option>',
                 '<option value="genownername">' + _("Regenerate person names in selected format") + '</option>',
+                '<option value="genownerflags">' + _("Regenerate person flags column") + '</option>',
                 '<option value="genlostfound">' + _("Regenerate 'Match lost and found animals' report") + '</option>',
                 '<option value="genfigyear">' + _("Regenerate annual animal figures for") + '</option>',
                 '<option value="genfigmonth">' + _("Regenerate monthly animal figures for") + '</option>',

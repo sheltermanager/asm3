@@ -1,6 +1,7 @@
 43
 ================
 
+31/03/20 Trigger batch can regenerate person additionalflag column #762
 31/03/20 Only force code change if year/month are not now #761
 30/03/20 Password reset mechanism from login page #758
 29/03/20 Also use disk rather than RAM for common query cache

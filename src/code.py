@@ -1841,6 +1841,10 @@ class batch(JSONEndpoint):
         l = o.locale
         asm3.asynctask.function_task(o.dbo, _("Regenerate person names in selected format", l), asm3.person.update_owner_names, o.dbo)
 
+    def post_genownerflags(self, o):
+        l = o.locale
+        asm3.asynctask.function_task(o.dbo, _("Regenerate person flags column", l), asm3.person.update_missing_builtin_flags, o.dbo)
+
     def post_genlostfound(self, o):
         l = o.locale
         asm3.asynctask.function_task(o.dbo, _("Regenerate 'Match lost and found animals' report", l), asm3.lostfound.update_match_report, o.dbo)

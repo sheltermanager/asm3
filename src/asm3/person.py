@@ -1453,6 +1453,55 @@ def lookingfor_last_match_count(dbo):
     """
     return dbo.query_int("SELECT COUNT(*) FROM ownerlookingfor")
 
+def update_missing_builtin_flags(dbo):
+    """
+    Goes through all people records and verifies that if they have one of
+    the IsX flag columns set that the builtin value is present in the
+    AdditionalFlags column.
+    This is needed because many of the IsX values pre-date the AdditionalFlags
+    column, but there are many reports that use it solely as the method of
+    determining flags.
+    """
+    builtins = (
+        ("ExcludeFromBulkEmail", "excludefrombulkemail"),
+        ("IDCheck", "homechecked"),
+        ("IsBanned", "banned"),
+        ("IsVolunteer", "volunteer"),
+        ("IsHomeChecker", "homechecker"),
+        ("IsMember", "member"),
+        ("IsAdopter", "adopter"),
+        ("IsAdoptionCoordinator", "coordinator"),
+        ("IsDonor", "donor"),
+        ("IsDriver", "driver"),
+        ("IsShelter", "shelter"),
+        ("IsACO", "aco"),
+        ("IsStaff", "staff"),
+        ("IsFosterer", "fosterer"),
+        ("IsRetailer", "retailer"),
+        ("IsVet", "vet"),
+        ("IsGiftAid", "giftaid")
+    )
+    people = dbo.query("SELECT ID, AdditionalFlags, ExcludeFromBulkEmail, IDCheck, IsBanned, IsVolunteer, " \
+        "IsHomeChecker, IsMember, IsAdopter, IsAdoptionCoordinator, IsDonor, IsDriver, " \
+        "IsShelter, IsACO, IsStaff, IsFosterer, IsRetailer, IsVet, IsGiftAid FROM owner ORDER BY ID")
+    batch = []
+    asm3.asynctask.set_progress_max(dbo, len(people))
+    for p in people:
+        asm3.asynctask.increment_progress_value(dbo)
+        c = False
+        for column, flag in builtins:
+            if p.ADDITIONALFLAGS is None: 
+                p.ADDITIONALFLAGS = ""
+            if p[column.upper()] == 1 and p.ADDITIONALFLAGS.find(flag) == -1:
+                c = True
+                p.ADDITIONALFLAGS += "%s|" % flag
+        if c:
+            batch.append([ p.ADDITIONALFLAGS, p.ID ])
+    if len(batch) > 0:
+        dbo.execute_many("UPDATE owner SET AdditionalFlags=? WHERE ID=?", batch)
+    asm3.al.debug("updated %d person flags" % len(batch), "person.update_missing_builtin_flags", dbo)
+    return "OK %d" % len(batch)
+
 def update_missing_geocodes(dbo):
     """
     Goes through all people records without geocodes and completes
