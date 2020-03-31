@@ -1351,11 +1351,20 @@ $(function() {
                 if (config.bool("ManualCodes")) { 
                     return;
                 }
-                if (config.str("CodingFormat").indexOf("Y") != -1 ||
-                    config.str("CodingFormat").indexOf("M") != -1 ||
-                    config.str("ShortCodingFormat").indexOf("Y") != -1 ||
+                var dbin = $("#datebroughtin").datepicker("getDate"), today = new Date();
+                if (config.str("CodingFormat").indexOf("M") != -1 ||
                     config.str("ShortCodingFormat").indexOf("M") != -1) {
-                    animal.generate_code();
+                    // If the month is not this month, regenerate the code
+                    if (dbin && dbin.getMonth() != today.getMonth()) {
+                        animal.generate_code();
+                    }
+                }
+                if (config.str("CodingFormat").indexOf("Y") != -1 ||
+                    config.str("ShortCodingFormat").indexOf("Y") != -1) {
+                    // If the year is not this year, regenerate the code
+                    if (dbin && dbin.getYear() != today.getYear()) {
+                        animal.generate_code();
+                    }
                 }
             });
 
