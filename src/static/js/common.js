@@ -1681,6 +1681,13 @@
          * ICON, DESCRIPTION
          */
         event_text: function(e, o) {
+            // If the user does not have permission to see person records, hide events
+            // that involve people
+            var PEOPLE_EVENTS = { "RESERVED": true, "CANCRESERVE": true, "ADOPTED": true, 
+                "FOSTERED": true, "TRANSFER": true, "RECLAIMED": true, "RETAILER": true, 
+                "RETURNED": true, "INCIDENTOPEN": true, "INCIDENTCLOSE": true, 
+                "LOST": true, "FOUND": true, "WAITINGLIST": true };
+            if (PEOPLE_EVENTS[e.CATEGORY] && !common.has_permission("vo")) { return ""; }
             var h = "";
             if (o && o.includedate) {
                 h += '<span class="asm-timeline-small-date">' + format.date(e.EVENTDATE) + '</span> ';

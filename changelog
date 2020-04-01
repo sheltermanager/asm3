@@ -1,6 +1,7 @@
 43
 ================
 
+01/04/20 Hide timeline entries involving people if user does not have permission
 01/04/20 Hide location emblem if user does not have view person permission
 31/03/20 Trigger batch can regenerate person additionalflag column #762
 31/03/20 Only force code change if year/month are not now #761
