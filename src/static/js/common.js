@@ -1598,10 +1598,10 @@
                 if (a.ARCHIVED == 0 && !a.ACTIVEMOVEMENTTYPE && a.SHELTERLOCATIONNAME) {
                     s.push(html.icon("location", _("On Shelter") + " / " + a.SHELTERLOCATIONNAME + " " + common.nulltostr(a.SHELTERLOCATIONUNIT)));
                 }
-                else if (a.ACTIVEMOVEMENTTYPE == 2 && a.DISPLAYLOCATIONNAME && a.CURRENTOWNERNAME) {
+                else if (a.ACTIVEMOVEMENTTYPE == 2 && a.DISPLAYLOCATIONNAME && a.CURRENTOWNERNAME && common.has_permission("vo")) {
                     s.push(html.icon("person", a.DISPLAYLOCATIONNAME + " / " + a.CURRENTOWNERNAME));
                 }
-                else if (a.NONSHELTERANIMAL == 0 && a.DISPLAYLOCATIONNAME && a.CURRENTOWNERNAME) {
+                else if (a.NONSHELTERANIMAL == 0 && a.DISPLAYLOCATIONNAME && a.CURRENTOWNERNAME && common.has_permission("vo")) {
                     s.push(html.icon("movement", a.DISPLAYLOCATIONNAME + " / " + a.CURRENTOWNERNAME));
                 }
             }
