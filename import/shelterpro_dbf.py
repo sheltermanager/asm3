@@ -235,6 +235,7 @@ for row in canimal:
     a.Size = getsize(asm.strip(row["WEIGHT"]))
     a.BaseColourID = asm.colour_id_for_names(asm.strip(row["FURCOLR1"]), asm.strip(row["FURCOLR2"]))
     a.IdentichipNumber = asm.strip(row["MICROCHIP"])
+    if a.IdentichipNumber <> "": a.Identichipped = 1
     comments = "Original breed: " + asm.strip(row["BREED1"]) + "/" + asm.strip(row["CROSSBREED"]) + ", age: " + age
     comments += ",Color: " + asm.strip(row["FURCOLR1"]) + "/" + asm.strip(row["FURCOLR2"])
     comments += ", Coat: " + asm.strip(row["COAT"])
@@ -307,6 +308,9 @@ if SHELTER_IMPORT:
         if row["OWNERATDIS"] in ppo:
             o = ppo[row["OWNERATDIS"]]
 
+        dispmeth = asm.strip(row["DISPMETH"])
+        dispdate = row["DISPDATE"]
+
         # Apply other fields
         if row["ARIVREAS"] == "QUARANTINE":
             a.IsQuarantine = 1
@@ -317,13 +321,13 @@ if SHELTER_IMPORT:
             a.EntryReasonID = 7
 
         # Adoptions
-        if row["DISPMETH"] == "ADOPTED":
+        if dispmeth == "ADOPTED":
             if a is None or o is None: continue
             m = asm.Movement()
             m.AnimalID = a.ID
             m.OwnerID = o.ID
             m.MovementType = 1
-            m.MovementDate = row["DISPDATE"]
+            m.MovementDate = dispdate
             a.Archived = 1
             a.ActiveMovementID = m.ID
             a.ActiveMovementDate = m.MovementDate
@@ -331,13 +335,13 @@ if SHELTER_IMPORT:
             movements.append(m)
 
         # Reclaims
-        elif row["DISPMETH"] == "RETURN TO OWNER":
+        elif dispmeth == "RETURN TO OWNER":
             if a is None or o is None: continue
             m = asm.Movement()
             m.AnimalID = a.ID
             m.OwnerID = o.ID
             m.MovementType = 5
-            m.MovementDate = row["DISPDATE"]
+            m.MovementDate = dispdate
             a.Archived = 1
             a.ActiveMovementID = m.ID
             a.ActiveMovementDate = m.MovementDate
@@ -345,14 +349,14 @@ if SHELTER_IMPORT:
             movements.append(m)
 
         # Released or Other
-        elif row["DISPMETH"].startswith("RELEASED") or row["DISPMETH"] == "OTHER":
+        elif dispmeth == "RELEASED" or dispmeth == "OTHER":
             if a is None or o is None: continue
             m = asm.Movement()
             m.AnimalID = a.ID
             m.OwnerID = 0
             m.MovementType = 7
-            m.MovementDate = row["DISPDATE"]
-            m.Comments = row["DISPMETH"]
+            m.MovementDate = dispdate
+            m.Comments = dispmeth
             a.Archived = 1
             a.ActiveMovementDate = m.MovementDate
             a.ActiveMovementID = m.ID
@@ -360,25 +364,25 @@ if SHELTER_IMPORT:
             movements.append(m)
 
         # Holding
-        elif row["DISPMETH"] == "" and row["ANIMSTAT"] == "HOLDING":
+        elif dispmeth == "" and row["ANIMSTAT"] == "HOLDING":
             a.IsHold = 1
             a.Archived = 0
 
         # Deceased
-        elif row["DISPMETH"] == "DECEASED":
-            a.DeceasedDate = row["DISPDATE"]
+        elif dispmeth == "DECEASED":
+            a.DeceasedDate = dispdate
             a.PTSReasonID = 2 # Died
             a.Archived = 1
 
         # Euthanized
-        elif row["DISPMETH"] == "EUTHANIZED":
-            a.DeceasedDate = row["DISPDATE"]
+        elif dispmeth == "EUTHANIZED":
+            a.DeceasedDate = dispdate
             a.PutToSleep = 1
             a.PTSReasonID = 4 # Sick/Injured
             a.Archived = 1
 
         # If the outcome is blank, it's on the shelter
-        elif row["DISPMETH"].strip() == "":
+        elif dispmeth == "":
             a.Archived = 0
 
         # It's the name of an organisation that received the animal
@@ -388,8 +392,8 @@ if SHELTER_IMPORT:
             m.AnimalID = a.ID
             m.OwnerID = to.ID
             m.MovementType = 3
-            m.MovementDate = row["DISPDATE"]
-            m.Comments = row["DISPMETH"]
+            m.MovementDate = dispdate
+            m.Comments = dispmeth
             a.Archived = 1
             a.ActiveMovementID = m.ID
             a.ActiveMovementType = 3

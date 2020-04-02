@@ -1423,6 +1423,7 @@ def animal_image(animalid, imagedata):
     mediaid = getid("media")
     medianame = str(mediaid) + '.jpg'
     encoded = base64.b64encode(imagedata)
+    if sys.version_info[0] > 2: encoded = encoded.decode("ascii") # PYTHON3
     print("UPDATE media SET websitephoto = 0, docphoto = 0 WHERE linkid = %d AND linktypeid = 0;" % animalid)
     print("INSERT INTO media (id, medianame, medianotes, mediasize, mediamimetype, websitephoto, docphoto, newsincelastpublish, updatedsincelastpublish, " \
         "excludefrompublish, linkid, linktypeid, recordversion, date) VALUES (%d, '%s', %s, %s, 'image/jpeg', 1, 1, 0, 0, 0, %d, 0, 0, %s);" % \
