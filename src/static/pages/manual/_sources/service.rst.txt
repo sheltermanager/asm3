@@ -439,8 +439,8 @@ it off will cause animalview to be used). It is also possible to pass
 speciesid=X or animaltypeid=X parameters to only output animals of that species
 and type. In the default dataset, speciesid=1 is Dogs and speciesid=2 is cats.
 
-    http://localhost:5000/service?method=html_deceased_animals&template=littlebox&speciesid=1
-    http://localhost:5000/service?method=html_deceased_animals
+    http://localhost:5000/service?method=html_held_animals&template=littlebox&speciesid=1
+    http://localhost:5000/service?method=html_held_animals
 
 
 html_report
