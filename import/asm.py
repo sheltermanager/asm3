@@ -651,6 +651,7 @@ breeds = (
 ("90","French Bulldog"),
 ("91","German Pinscher"),
 ("92","German Shepherd Dog"),
+("92","GSD"),
 ("93","German Shorthaired Pointer"),
 ("94","German Wirehaired Pointer"),
 ("95","Glen of Imaal Terrier"),
@@ -716,6 +717,8 @@ breeds = (
 ("155","Petit Basset Griffon Vendeen"),
 ("156","Pharaoh Hound"),
 ("157","Pit Bull Terrier"),
+("157","Pitbull Terrier"),
+("157","Pitbull"),
 ("158","Plott Hound"),
 ("159","Portugese Podengo"),
 ("160","Pointer"),
@@ -1161,7 +1164,10 @@ def strip(s):
     """
     Remove any unicode or control characters and whitespace
     """
-    if type(s) != str and type(s) != unicode: return s
+    if sys.version_info[0] > 2: 
+        if type(s) != str: return s # PYTHON3
+    else:
+        if type(s) != str and type(s) != unicode: return s # PYTHON2
     return ("".join(i for i in s if ord(i) >= 32 and ord(i)<128)).strip()
 
 def strip_unicode(s):
