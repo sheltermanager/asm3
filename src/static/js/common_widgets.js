@@ -165,15 +165,17 @@
                 filter_columnFilters: options.filter,
                 filter_cssFilter: "tablesorter-filter",
                 filter_ignoreCase: true,
-                textExtraction: function(node) {
+                textExtraction: function(node, table, cellIndex) {
                     // this function controls how text is extracted from cells for
                     // sorting purposes.
                     var s = $(node).text(), h = $(node).html();
                     // If the text contains a date, turn it into YYYY-MM-DD for sorting
+                    // We use a char class of .-/ as any of these can be date separators.
                     if (s && s.length >= 10 && s.length <= 20 ) {
                         if (s.match(/\d+[\/\.\-]\d+[\/\.\-]\d+/)) {
                             var rv = format.date_iso(s);
                             if (!rv) { return ""; }
+                            rv = rv.replace(/[\-\:T]/g, "");
                             return rv;
                         }
                     }

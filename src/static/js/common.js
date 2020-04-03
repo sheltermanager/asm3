@@ -1281,7 +1281,10 @@
                 time = d.substring(d.indexOf(" ")+1);
                 d = d.substring(0, d.indexOf(" "));
             }
-            var fbits = asm.dateformat.split("/"), dbits = d.split("/");
+            // Substitute other date separators for / first
+            d = d.replace(/[\.\-]/g, "/");
+            var dformat = asm.dateformat.replace(/[\.\-]/g, "/");
+            var fbits = dformat.split("/"), dbits = d.split("/");
             if (fbits.length < 3 || dbits.length < 3) { return null; }
             var year, month, day, i;
             for (i = 0; i < 3; i++) {
