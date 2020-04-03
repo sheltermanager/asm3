@@ -1276,15 +1276,18 @@
                     format.padleft((d.getMonth() + 1), 2) + "-" + 
                     format.padleft(d.getDate(), 2) + "T00:00:00";
             }
+            // Remove any whitespace and extract time
+            d = $.trim(d);
             if (d.indexOf(" ") != -1 && d.indexOf(":") != -1) {
-                // There's a time component, save it
                 time = d.substring(d.indexOf(" ")+1);
                 d = d.substring(0, d.indexOf(" "));
             }
             // Substitute other date separators for / first
             d = d.replace(/[\.\-]/g, "/");
             var dformat = asm.dateformat.replace(/[\.\-]/g, "/");
-            var fbits = dformat.split("/"), dbits = d.split("/");
+            // Chop up date and format, then parse
+            var fbits = dformat.split("/");
+            var dbits = d.split("/");
             if (fbits.length < 3 || dbits.length < 3) { return null; }
             var year, month, day, i;
             for (i = 0; i < 3; i++) {
@@ -1302,7 +1305,9 @@
                     day = format.padleft(dbits[i], 2);
                 }
             }
-            return year + "-" + month + "-" + day + "T" + time;
+            var rv = year + "-" + month + "-" + day + "T" + time;
+            log.trace("date_iso: in: '" + d + "', out: '" + rv + "'");
+            return rv;
         },
 
         /**
