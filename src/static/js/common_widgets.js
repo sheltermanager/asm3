@@ -170,12 +170,10 @@
                     // sorting purposes.
                     var s = $(node).text(), h = $(node).html();
                     // If the text contains a date, turn it into YYYY-MM-DD for sorting
-                    if (s.indexOf("/") != -1) {
-                        var db = s.split("/");
-                        if (db.length == 3 && format.to_int(db[0]) > 0 && format.to_int(db[1]) > 0) {
+                    if (s && s.length >= 10 && s.length <= 20 ) {
+                        if (s.match(/\d+[\/\.\-]\d+[\/\.\-]\d+/)) {
                             var rv = format.date_iso(s);
                             if (!rv) { return ""; }
-                            rv = rv.replace(/\-/g, "").replace(/\:/g, "").replace("T", "");
                             return rv;
                         }
                     }
