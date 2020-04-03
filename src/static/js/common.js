@@ -1276,7 +1276,7 @@
                     format.padleft((d.getMonth() + 1), 2) + "-" + 
                     format.padleft(d.getDate(), 2) + "T00:00:00";
             }
-            // Remove any whitespace and extract time
+            // d is String, Extract time if present
             d = $.trim(d);
             if (d.indexOf(" ") != -1 && d.indexOf(":") != -1) {
                 time = d.substring(d.indexOf(" ")+1);
@@ -1306,7 +1306,7 @@
                 }
             }
             var rv = year + "-" + month + "-" + day + "T" + time;
-            log.trace("date_iso: in: '" + d + "', out: '" + rv + "'");
+            log.trace("format.date_iso: in: '" + d + "', out: '" + rv + "'");
             return rv;
         },
 

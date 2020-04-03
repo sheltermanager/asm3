@@ -1,6 +1,6 @@
 /*jslint browser: true, forin: true, eqeq: true, plusplus: true, white: true, regexp: true, sloppy: true, vars: true, nomen: true */
 /*global $, console, jQuery, CodeMirror, Mousetrap, tinymce */
-/*global asm, common, config, dlgfx, edit_header, format, html, header, schema, validate, _, escape, unescape */
+/*global asm, common, config, dlgfx, edit_header, format, html, header, log, schema, validate, _, escape, unescape */
 
 (function($) {
 
@@ -168,7 +168,7 @@
                 textExtraction: function(node, table, cellIndex) {
                     // this function controls how text is extracted from cells for
                     // sorting purposes.
-                    var s = $(node).text(), h = $(node).html();
+                    var s = $.trim($(node).text()), h = $(node).html();
                     // If the text contains a date, turn it into YYYY-MM-DD for sorting
                     // We use a char class of .-/ as any of these can be date separators.
                     if (s && s.length >= 10 && s.length <= 20 ) {
@@ -184,6 +184,7 @@
                     if (h.indexOf("class=\"custom\"") != -1 && s.indexOf(" ") != -1) {
                         s = s.substring(s.indexOf(" ")+1);
                     }
+                    log.trace("table.textExtraction: " + s);
                     return s;
                 }
             });
