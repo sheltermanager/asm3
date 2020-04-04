@@ -17,7 +17,11 @@ $(function() {
             else {
                 h.push('class="asm-shelterview-animal" ');
             }
-            h.push('data="' + a.ID + '">');
+            h.push('data-animal="' + a.ID + '" ');
+            h.push('data-location="' + a.SHELTERLOCATION + '" ');
+            h.push('data-unit="' + a.SHELTERLOCATIONUNIT + '" ');
+            h.push('data-person="' + a.CURRENTOWNERID + '" ')
+            h.push('>');
             h.push(html.animal_link_thumb(a, {showunit: showunit}));
             h.push('</div>');
             return h.join("\n");
@@ -194,7 +198,10 @@ $(function() {
                     drop: function(event, ui) {
                         var locationid = $(this).attr("data-location");
                         var unit = $(this).attr("data-unit");
-                        var animalid = $(ui.draggable).attr("data");
+                        var animalid = $(ui.draggable).attr("data-animal");
+                        var curlocationid = $(ui.draggable).attr("data-location");
+                        var curunit = $(ui.draggable).attr("data-unit");
+                        if (locationid == curlocationid && unit == curunit) { shelterview.reload(); return; } // Same location and unit, do nothing
                         var droptarget = $(this);
                         header.show_loading(_("Moving..."));
                         common.ajax_post("shelterview", "mode=moveunit&locationid=" + locationid + "&unit=" + encodeURIComponent(unit) + "&animalid=" + animalid)
@@ -256,7 +263,9 @@ $(function() {
                     },
                     drop: function(event, ui) {
                         var personid = $(this).attr("data-person");
-                        var animalid = $(ui.draggable).attr("data");
+                        var animalid = $(ui.draggable).attr("data-animal");
+                        var curpersonid = $(ui.draggable).attr("data-person");
+                        if (curpersonid == personid) { shelterview.reload(); return; } // Same person, do nothing
                         var droptarget = $(this);
                         header.show_loading(_("Moving..."));
                         common.ajax_post("shelterview", "mode=movefoster&personid=" + personid + "&animalid=" + animalid)
@@ -408,7 +417,9 @@ $(function() {
                     drop: function(event, ui) {
                         var locationid = $(this).attr("data-location");
                         var locationname = common.get_field(controller.locations, locationid, "LOCATIONNAME");
-                        var animalid = $(ui.draggable).attr("data");
+                        var animalid = $(ui.draggable).attr("data-animal");
+                        var curlocationid = $(ui.draggable).attr("data-location");
+                        if (locationid == curlocationid) { shelterview.reload(); return; } // Same location, do nothing
                         var droptarget = $(this);
                         header.show_loading(_("Moving..."));
                         common.ajax_post("shelterview", "mode=movelocation&locationid=" + locationid + "&animalid=" + animalid)

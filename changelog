@@ -1,6 +1,7 @@
 43
 ================
 
+04/04/20 Prevent drag and drop firing for same location #765
 03/04/20 Fix broken date sort caused by #700
 01/04/20 Hide timeline entries involving people if user does not have permission
 01/04/20 Hide location emblem if user does not have view person permission
