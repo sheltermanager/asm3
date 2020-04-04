@@ -199,7 +199,11 @@ class ASMEndpoint(object):
         l = session.locale
         if l is None:
             l = LOCALE
-        post = asm3.utils.PostedData(web.input(filechooser = {}), l)
+        try:
+            post = asm3.utils.PostedData(web.input(filechooser = {}), l)
+        except Exception as err:
+            asm3.al.error("Failed unpacking params: %s" % str(err), "ASMEndpoint._params", session.dbo, sys.exc_info())
+            post = asm3.utils.PostedData({}, l)
         return web.utils.storage( post=post, dbo=session.dbo, locale=l, user=session.user, session=session, \
             siteid = session.siteid, locationfilter = session.locationfilter, staffid = session.staffid,
             visibleanimalids = session.visibleanimalids )
