@@ -542,24 +542,27 @@ class AbstractPublisher(threading.Thread):
 
     def checkMappedSpecies(self):
         """
-        Returns True if all species have been mapped for publishers
+        Returns True if all shelter animal species have been mapped for publishers.
         """
         return 0 == self.dbo.query_int("SELECT COUNT(*) FROM species " \
-            "WHERE PetFinderSpecies Is Null OR PetFinderSpecies = ''")
+            "WHERE ID IN (SELECT SpeciesID FROM animal WHERE Archived=0) " \
+            "AND (PetFinderSpecies Is Null OR PetFinderSpecies = '')")
 
     def checkMappedBreeds(self):
         """
-        Returns True if all breeds have been mapped for publishers
+        Returns True if all shelter animal breeds have been mapped for publishers
         """
         return 0 == self.dbo.query_int("SELECT COUNT(*) FROM breed " + \
-            "WHERE PetFinderBreed Is Null OR PetFinderBreed = ''")
+            "WHERE ID IN (SELECT BreedID FROM animal WHERE Archived=0 UNION SELECT Breed2ID FROM animal WHERE Archived=0) " \
+            "AND (PetFinderBreed Is Null OR PetFinderBreed = '')")
 
     def checkMappedColours(self):
         """
-        Returns True if all colours have been mapped for publishers
+        Returns True if all shelter animal colours have been mapped for publishers
         """
         return 0 == self.dbo.query_int("SELECT COUNT(*) FROM basecolour " \
-            "WHERE AdoptAPetColour Is Null OR AdoptAPetColour = ''")
+            "WHERE ID IN (SELECT BaseColourID FROM animal WHERE Archived=0) AND " \
+            "(AdoptAPetColour Is Null OR AdoptAPetColour = '')")
 
     def csvLine(self, items):
         """
@@ -1070,11 +1073,14 @@ class FTPPublisher(AbstractPublisher):
     def unxssPass(self, s):
         """
         Passwords stored in the config table are subject to XSS escaping, so
-        any >, < or & in the password will have been escaped - turn them back again
+        any >, < or & in the password will have been escaped - turn them back again.
+        Also, many people copy and paste FTP passwords for PetFinder and AdoptAPet
+        and include extra spaces on the end, so strip it.
         """
         s = s.replace("&lt;", "<")
         s = s.replace("&gt;", ">")
         s = s.replace("&amp;", "&")
+        s = s.strip()
         return s
 
     def openFTPSocket(self):

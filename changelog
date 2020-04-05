@@ -1,6 +1,8 @@
 43
 ================
 
+05/04/20 When publisher checks mappings, only consider current shelter animals
+05/04/20 Remove whitespace from FTP passwords
 04/04/20 Log and fail gracefully for badly encoded unicode parameters in input
 04/04/20 Prevent drag and drop firing for same location #765
 03/04/20 Fix broken date sort caused by #700
