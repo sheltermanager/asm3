@@ -43,7 +43,6 @@ def get(key):
     Retrieves a value from our disk cache. Returns None if the
     value is not found or has expired.
     """
-    f = None
     try:
         fname = _getfilename(key)
 
@@ -69,7 +68,6 @@ def put(key, value, ttl):
     Stores a value in our disk cache with a time to live of ttl. The value
     will be removed if it is accessed past the ttl.
     """
-    f = None
     try:
         fname = _getfilename(key)
 
@@ -91,7 +89,6 @@ def touch(key, ttlremaining = 0, newttl = 0):
     This can be used to make our timed expiry cache into a sort of hybrid with LRU.
     Returns None if the value is not found or has expired.
     """
-    f = None
     try:
         fname = _getfilename(key)
 
