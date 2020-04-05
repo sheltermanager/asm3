@@ -14,6 +14,8 @@ $VAR to DATE Enter to date$
 -- requires that you have a Surrender entry category for surrenders
 -- requires that you have a Stray entry category for strays
 -- requires that you have a TNR entry category to exclude TNR from Return To Field
+-- has a extra sections for adoption returns and DOA that are not present on the SAC form
+-- the CSV import version below adds adoption returns to surrender count, and omits DOA from intake instead
 
 SELECT 
 
@@ -560,6 +562,39 @@ AND DateOfBirth >= DeceasedDate - INTERVAL '5 months') AS JuniorCatDiedCare,
 
 
 
+
+(SELECT COUNT(*) FROM animal 
+WHERE DeceasedDate >= '$@from$' AND DeceasedDate <= '$@to$'
+AND NonShelterAnimal = 0 AND DiedOffShelter = 0 AND IsDOA = 1 
+AND PutToSleep = 0 AND AsilomarOwnerRequestedEuthanasia = 0
+AND SpeciesID = 1
+AND DateOfBirth < DeceasedDate - INTERVAL '5 months') AS AdultDogDOA,
+
+(SELECT COUNT(*) FROM animal 
+WHERE DeceasedDate >= '$@from$' AND DeceasedDate <= '$@to$'
+AND NonShelterAnimal = 0 AND DiedOffShelter = 0 AND IsDOA = 1 
+AND PutToSleep = 0 AND AsilomarOwnerRequestedEuthanasia = 0
+AND SpeciesID = 1
+AND DateOfBirth >= DeceasedDate - INTERVAL '5 months') AS JuniorDogDOA,
+
+(SELECT COUNT(*) FROM animal 
+WHERE DeceasedDate >= '$@from$' AND DeceasedDate <= '$@to$'
+AND NonShelterAnimal = 0 AND DiedOffShelter = 0 AND IsDOA = 1 
+AND PutToSleep = 0 AND AsilomarOwnerRequestedEuthanasia = 0
+AND SpeciesID = 2
+AND DateOfBirth < DeceasedDate - INTERVAL '5 months') AS AdultCatDOA,
+
+(SELECT COUNT(*) FROM animal 
+WHERE DeceasedDate >= '$@from$' AND DeceasedDate <= '$@to$'
+AND NonShelterAnimal = 0 AND DiedOffShelter = 0 AND IsDOA = 1 
+AND PutToSleep = 0 AND AsilomarOwnerRequestedEuthanasia = 0
+AND SpeciesID = 2
+AND DateOfBirth >= DeceasedDate - INTERVAL '5 months') AS JuniorCatDOA,
+
+
+
+
+
 (SELECT COUNT(*) FROM animal 
 WHERE DeceasedDate >= '$@from$' AND DeceasedDate <= '$@to$'
 AND NonShelterAnimal = 0 AND DiedOffShelter = 0
@@ -896,6 +931,16 @@ $$BODY
 </tr>
 
 <tr>
+<td>Other Outcomes: Dead on Arrival</td>
+<td>$AdultDogDOA</td>
+<td>$JuniorDogDOA</td>
+<td>0</td>
+<td>$AdultCatDOA</td>
+<td>$JuniorCatDOA</td>
+<td>0</td>
+</tr>
+
+<tr>
 <td>Other Outcomes: Lost in Care</td>
 <td>0</td>
 <td>0</td>
@@ -1041,7 +1086,7 @@ extract(MONTH FROM DATE '$@from$')::integer AS "Record Month",
 
 (SELECT COUNT(*) FROM animal
 INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
-WHERE ReasonName LIKE '%Stray%' AND IsTransfer = 0
+WHERE ReasonName LIKE '%Stray%' AND IsTransfer = 0 AND IsDOA = 0 
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID = 1
 AND DateOfBirth < DateBroughtIn - INTERVAL '5 months' 
@@ -1049,7 +1094,7 @@ AND NonShelterAnimal = 0) AS "Stray At Large Canine Adult",
 
 (SELECT COUNT(*) FROM animal 
 INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
-WHERE ReasonName LIKE '%Stray%' AND IsTransfer = 0
+WHERE ReasonName LIKE '%Stray%' AND IsTransfer = 0 AND IsDOA = 0 
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID = 1
 AND DateOfBirth >= DateBroughtIn - INTERVAL '5 months' 
@@ -1059,7 +1104,7 @@ AND NonShelterAnimal = 0) AS "Stray At Large Canine Up To 5 Months",
 
 (SELECT COUNT(*) FROM animal
 INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
-WHERE ReasonName LIKE '%Stray%' AND IsTransfer = 0
+WHERE ReasonName LIKE '%Stray%' AND IsTransfer = 0 AND IsDOA = 0 
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID = 2
 AND DateOfBirth < DateBroughtIn - INTERVAL '5 months' 
@@ -1067,7 +1112,7 @@ AND NonShelterAnimal = 0) AS "Stray At Large Feline Adult",
 
 (SELECT COUNT(*) FROM animal 
 INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
-WHERE ReasonName LIKE '%Stray%' AND IsTransfer = 0
+WHERE ReasonName LIKE '%Stray%' AND IsTransfer = 0 AND IsDOA = 0 
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID = 2
 AND DateOfBirth >= DateBroughtIn - INTERVAL '5 months' 
@@ -1239,7 +1284,7 @@ AND NonShelterAnimal = 0) AS "Transferred In From Agency Feline Up To 5 Months",
 (SELECT COUNT(*) FROM animal
 INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
 WHERE IsTransfer = 0 AND ReasonName NOT LIKE '%Stray%' AND ReasonName NOT LIKE '%Surrender%' AND ReasonName NOT LIKE '%TNR%'
-AND AsilomarOwnerRequestedEuthanasia = 0
+AND AsilomarOwnerRequestedEuthanasia = 0 AND IsDOA = 0 
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID = 1
 AND DateOfBirth < DateBroughtIn - INTERVAL '5 months' 
@@ -1248,7 +1293,7 @@ AND NonShelterAnimal = 0) AS "Other Intakes Canine Adult",
 (SELECT COUNT(*) FROM animal 
 INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
 WHERE IsTransfer = 0 AND ReasonName NOT LIKE '%Stray%' AND ReasonName NOT LIKE '%Surrender%' AND ReasonName NOT LIKE '%TNR%'
-AND AsilomarOwnerRequestedEuthanasia = 0
+AND AsilomarOwnerRequestedEuthanasia = 0 AND IsDOA = 0 
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID = 1
 AND DateOfBirth >= DateBroughtIn - INTERVAL '5 months' 
@@ -1259,7 +1304,7 @@ AND NonShelterAnimal = 0) AS "Other Intakes Canine Up To 5 Months",
 (SELECT COUNT(*) FROM animal
 INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
 WHERE IsTransfer = 0 AND ReasonName NOT LIKE '%Stray%' AND ReasonName NOT LIKE '%Surrender%' AND ReasonName NOT LIKE '%TNR%'
-AND AsilomarOwnerRequestedEuthanasia = 0
+AND AsilomarOwnerRequestedEuthanasia = 0 AND IsDOA = 0 
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID = 2
 AND DateOfBirth < DateBroughtIn - INTERVAL '5 months' 
@@ -1268,7 +1313,7 @@ AND NonShelterAnimal = 0) AS "Other Intakes Feline Adult",
 (SELECT COUNT(*) FROM animal 
 INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
 WHERE IsTransfer = 0 AND ReasonName NOT LIKE '%Stray%' AND ReasonName NOT LIKE '%Surrender%' AND ReasonName NOT LIKE '%TNR%'
-AND AsilomarOwnerRequestedEuthanasia = 0
+AND AsilomarOwnerRequestedEuthanasia = 0 AND IsDOA = 0 
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID = 2
 AND DateOfBirth >= DateBroughtIn - INTERVAL '5 months' 
