@@ -84,7 +84,7 @@ class QueryBuilder(object):
         if v == "":
             self.swhere += k + " "
         else:
-            self.swhere += "%s %s ? " % (k, operator, v)
+            self.swhere += "%s %s ? " % (k, operator)
             self.values.append(v)
     
     def like(self, k, v, cond = "and"):
@@ -132,7 +132,7 @@ class Database(object):
 
     def connect(self):
         """ Virtual: Connect to the database and return the connection """
-        pass
+        return None
 
     def cursor_open(self):
         """ Returns a tuple containing an open connection and cursor.
@@ -587,7 +587,7 @@ class Database(object):
         """
         if not CACHE_COMMON_QUERIES: return self.query(sql, params=params, limit=limit)
         cache_key = "%s:%s:%s" % (self.database, sql, params)
-        results = asm3.cachedisk.get(cache_key)
+        results = asm3.cachedisk.get(cache_key, expectedtype=list)
         if results is not None:
             return results
         results = self.query(sql, params=params, limit=limit, distincton=distincton)

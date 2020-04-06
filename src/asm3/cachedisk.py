@@ -38,10 +38,13 @@ def delete(key):
     except Exception as err:
         asm3.al.error(str(err), "cachedisk.delete")
 
-def get(key):
+def get(key, expectedtype=None):
     """
     Retrieves a value from our disk cache. Returns None if the
     value is not found or has expired.
+    expectedtype: A type if one is expected. This was added due to an MD5 collision
+    that caused an image to be read as a config dictionary, which wiped out someone's
+    config and caused all the database updates to be re-run.
     """
     try:
         fname = _getfilename(key)
@@ -56,6 +59,10 @@ def get(key):
         # Has the entry expired?
         if o["expires"] < time.time():
             delete(key)
+            return None
+
+        # Is the value of the type we're expecting?
+        if expectedtype is not None and type(o["value"]) != expectedtype:
             return None
 
         return o["value"]

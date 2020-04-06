@@ -445,7 +445,7 @@ def csave(dbo, username, post):
 def get_map(dbo):
     """ Returns a map of the config items, using a read-through cache to save database calls """
     CACHE_KEY = "%s_config" % dbo.database
-    cmap = asm3.cachedisk.get(CACHE_KEY)
+    cmap = asm3.cachedisk.get(CACHE_KEY, expectedtype=dict)
     if cmap is None:
         rows = dbo.query("SELECT ItemName, ItemValue FROM configuration ORDER BY ItemName")
         cmap = DEFAULTS.copy()

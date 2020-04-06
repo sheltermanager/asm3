@@ -3466,7 +3466,8 @@ def update_3307(dbo):
     dbo.execute_dbupdate(sql)
 
 def update_3308(dbo):
-    # Create intial data for testtype and testresult tables
+    # Create initial data for testtype and testresult tables
+    if dbo.query_int("SELECT COUNT(*) FROM testtype") > 0: return
     l = dbo.locale
     dbo.execute_dbupdate("INSERT INTO testresult (ID, ResultName) VALUES (1, '" + _("Unknown", l) + "')")
     dbo.execute_dbupdate("INSERT INTO testresult (ID, ResultName) VALUES (2, '" + _("Negative", l) + "')")
@@ -3476,6 +3477,7 @@ def update_3308(dbo):
     dbo.execute_dbupdate("INSERT INTO testtype (ID, TestName, DefaultCost) VALUES (3, '" + _("Heartworm", l) + "', 0)")
 
 def update_3309(dbo):
+    if dbo.query_int("SELECT COUNT(*) FROM animaltest") > 0: return
     fiv = dbo.query("SELECT ID, CombiTestDate, CombiTestResult FROM animal WHERE CombiTested = 1 AND CombiTestDate Is Not Null")
     asm3.al.debug("found %d fiv results to convert" % len(fiv), "update_3309", dbo)
     for f in fiv:

@@ -1,6 +1,8 @@
 43
 ================
 
+06/04/20 animaltest dbupdate creates every time instead of checking
+06/04/20 Check types from disk cache in case of collisions
 05/04/20 When publisher checks mappings, only consider current shelter animals
 05/04/20 Remove whitespace from FTP passwords
 04/04/20 Log and fail gracefully for badly encoded unicode parameters in input
