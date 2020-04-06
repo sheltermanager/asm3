@@ -46,6 +46,7 @@ class DatabaseMySQL(Database):
         if s is None: return ""
         if asm3.utils.is_str(s):
             s = MySQLdb.escape_string(s)
+            s = asm3.utils.bytes2str(s) # MySQLdb.escape_string can return bytes on python3
         elif asm3.utils.is_unicode(s):
             # Encode the string as UTF-8 for MySQL escape_string 
             # then decode it back into unicode before continuing
