@@ -83,7 +83,8 @@ def session_manager():
             asm3.cachedisk.delete(key, "sessions")
             if SESSION_DEBUG: asm3.al.debug("delitem(%s)" % (key), "ASMSessionStore.__delitem__")
         def cleanup(self, timeout):
-            pass # Not needed, we assign ttl values to cache
+            if SESSION_DEBUG: asm3.al.debug("cleanup(%s)" % (timeout), "ASMSessionStore.__cleanup")
+            asm3.cachedisk.remove_expired("sessions")
     # Set session parameters, 24 hour timeout
     web.config.session_parameters["cookie_name"] = "asm_session_id"
     web.config.session_parameters["cookie_path"] = "/"

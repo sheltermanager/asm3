@@ -35,12 +35,12 @@ def _getfilename(key, path):
         os.mkdir(DISK_CACHE)
     if path != "":
         path = _sanitise_path(path)
-        path = "%s%s%s" % (DISK_CACHE, os.path.sep, path)
+        path = os.path.join(DISK_CACHE, path)
         if not os.path.exists(path):
             os.mkdir(path)
     else:
         path = DISK_CACHE
-    fname = "%s%s%s" % (path, os.path.sep, m.hexdigest())
+    fname = os.path.join(path, m.hexdigest())
     return fname
 
 def delete(key, path):
@@ -157,7 +157,7 @@ def touch(key, path, ttlremaining = 0, newttl = 0):
 def remove_expired(path):
     """
     Runs through the cache and deletes any files that have expired
-    for cache/dbo.database
+    for cache/path
     """
     if DISK_CACHE == "": return
     cache_path = os.path.join(DISK_CACHE, path)
