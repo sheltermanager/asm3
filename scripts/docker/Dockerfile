@@ -9,7 +9,7 @@ WORKDIR /tmp/asm3/install/deb
 RUN ./makedeb.sh && rm -rf sheltermanager3
 
 RUN apt-get update \
-    && apt-get install -y make python3 python3-pil python3-webpy python3-mysqldb python3-psycopg2 memcached python3-memcache \
+    && apt-get install -y make python3 python3-pil python3-webpy python3-mysqldb python3-psycopg2 \
     && apt-get install -y imagemagick \
     && apt-get install -y wkhtmltopdf \
     && apt-get install -y python3-reportlab \
