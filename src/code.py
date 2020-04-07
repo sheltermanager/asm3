@@ -18,7 +18,6 @@ import asm3.animal
 import asm3.animalcontrol
 import asm3.asynctask
 import asm3.audit
-import asm3.cachemem
 import asm3.clinic
 import asm3.configuration
 import asm3.csvimport
@@ -64,30 +63,26 @@ CACHE_ONE_YEAR = 31536000
 
 def session_manager():
     """
-    Sort out our session manager. We use a global in the utils module
-    to hold the session to make sure if the app/code.py is reloaded it
-    always gets the same session manager.
+    Initialise the session manager. 
+    We use a global in the utils module to hold the session to make sure 
+    if the app/code.py is reloaded it always gets the same session manager.
     """
-    class MemCacheStore(web.session.Store):
-        """ 
-        A session manager that uses either an in-memory dictionary or memcache
-        (if available).
-        """
+    class ASMSessionStore(web.session.Store):
         def __contains__(self, key):
-            rv = asm3.cachemem.get(key) is not None
-            if SESSION_DEBUG: asm3.al.debug("contains(%s)=%s" % (key, rv), "MemCacheStore.__contains__")
+            rv = asm3.cachedisk.get(key, "sessions") is not None
+            if SESSION_DEBUG: asm3.al.debug("contains(%s)=%s" % (key, rv), "ASMSessionStore.__contains__")
             return rv
         def __getitem__(self, key):
-            rv = asm3.cachemem.get(key)
-            if SESSION_DEBUG: asm3.al.debug("getitem(%s)=%s" % (key, rv), "MemCacheStore.__getitem__")
+            rv = asm3.cachedisk.get(key, "sessions")
+            if SESSION_DEBUG: asm3.al.debug("getitem(%s)=%s" % (key, rv), "ASMSessionStore.__getitem__")
             return rv
         def __setitem__(self, key, value):
-            rv = asm3.cachemem.put(key, value, web.config.session_parameters["timeout"])
-            if SESSION_DEBUG: asm3.al.debug("setitem(%s, %s)=%s" % (key, value, rv), "MemCacheStore.__setitem__")
+            rv = asm3.cachedisk.put(key, "sessions", value, web.config.session_parameters["timeout"])
+            if SESSION_DEBUG: asm3.al.debug("setitem(%s, %s)=%s" % (key, value, rv), "ASMSessionStore.__setitem__")
             return rv
         def __delitem__(self, key):
-            rv = asm3.cachemem.delete(key)
-            if SESSION_DEBUG: asm3.al.debug("delitem(%s)=%s" % (key, rv), "MemCacheStore.__delitem__")
+            rv = asm3.cachedisk.delete(key, "sessions")
+            if SESSION_DEBUG: asm3.al.debug("delitem(%s)=%s" % (key, rv), "ASMSessionStore.__delitem__")
             return rv
         def cleanup(self, timeout):
             pass # Not needed, we assign values to memcache with timeout
@@ -99,7 +94,7 @@ def session_manager():
     web.config.session_parameters["secure"] = SESSION_SECURE_COOKIE
     sess = None
     if asm3.utils.websession is None:
-        sess = web.session.Session(app, MemCacheStore(), initializer={"user" : None, "dbo" : None, "locale" : None, 
+        sess = web.session.Session(app, ASMSessionStore(), initializer={"user" : None, "dbo" : None, "locale" : None, 
             "searches" : [], "siteid": None, "locationfilter": None, "staffid": None, "visibleanimalids": "" })
         asm3.utils.websession = sess
     else:
@@ -1064,7 +1059,7 @@ class login(ASMEndpoint):
         # Generate a random cache key for this reset
         cache_key = asm3.utils.uuid_str()
         # Store info about this reset in the cache for 10 minutes
-        asm3.cachedisk.put(cache_key, { "username": o.post["username"], "userid": userid,
+        asm3.cachedisk.put(cache_key, "", { "username": o.post["username"], "userid": userid,
             "database": o.post["database"], "email": email }, 600)
         # Construct the reset link
         resetlink = "%s/reset_password?token=%s" % (BASE_URL, cache_key)
@@ -1117,7 +1112,7 @@ class reset_password(ASMEndpoint):
 
     def content(self, o):
         token = o.post["token"]
-        rinfo = asm3.cachedisk.get(token)
+        rinfo = asm3.cachedisk.get(token, "")
         if rinfo is None: raise asm3.utils.ASMValidationError("invalid token")
         dbo = asm3.db.get_database(rinfo["database"])
         if dbo.database in ("FAIL", "DISABLED", "WRONGSERVER"): raise asm3.utils.ASMValidationError("bad database")
@@ -2206,7 +2201,7 @@ class csvexport_animals(ASMEndpoint):
         if o.post["get"] != "":
             self.content_type("text/csv")
             self.header("Content-Disposition", u"attachment; filename=export.csv")
-            v = asm3.cachedisk.get(o.post["get"])
+            v = asm3.cachedisk.get(o.post["get"], o.dbo.database)
             if v is None: self.notfound()
             return v
         else:
@@ -5113,7 +5108,7 @@ class schemajs(ASMEndpoint):
             self.content_type("text/javascript")
             self.cache_control(CACHE_ONE_YEAR)
             CACHE_KEY = "schema"
-            tobj = asm3.cachemem.get(CACHE_KEY)
+            tobj = asm3.cachedisk.get(CACHE_KEY, "schema")
             if tobj is None:
                 tobj = {}
                 for t in asm3.dbupdate.TABLES:
@@ -5141,7 +5136,7 @@ class schemajs(ASMEndpoint):
                             tobj[t] = row
                     except Exception as err:
                         asm3.al.error("%s" % str(err), "code.schemajs", dbo)
-                asm3.cachemem.put(CACHE_KEY, tobj, 86400)
+                asm3.cachedisk.put(CACHE_KEY, "schema", tobj, 86400)
             return "schema = %s;" % asm3.utils.json(tobj)
         else:
             # Not logged in

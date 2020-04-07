@@ -587,11 +587,11 @@ class Database(object):
         """
         if not CACHE_COMMON_QUERIES: return self.query(sql, params=params, limit=limit)
         cache_key = "%s:%s:%s" % (self.database, sql, params)
-        results = asm3.cachedisk.get(cache_key, expectedtype=list)
+        results = asm3.cachedisk.get(cache_key, self.database, expectedtype=list)
         if results is not None:
             return results
         results = self.query(sql, params=params, limit=limit, distincton=distincton)
-        asm3.cachedisk.put(cache_key, results, age)
+        asm3.cachedisk.put(cache_key, self.database, results, age)
         return results
 
     def query_columns(self, sql, params=None):

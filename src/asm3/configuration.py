@@ -1,7 +1,6 @@
 
 import asm3.al
 import asm3.audit
-import asm3.cachemem
 import asm3.cachedisk
 import asm3.i18n
 
@@ -147,6 +146,7 @@ DEFAULTS = {
     "BoardingCostType": "1",
     "CancelReservesOnAdoption": "Yes",
     "CloneAnimalIncludeLogs": "Yes",
+    "CollationIDNext": "0",
     "CostSourceAccount": "9",
     "CreateBoardingCostOnAdoption": "Yes",
     "CreateCostTrx": "No",
@@ -444,18 +444,17 @@ def csave(dbo, username, post):
 
 def get_map(dbo):
     """ Returns a map of the config items, using a read-through cache to save database calls """
-    CACHE_KEY = "%s_config" % dbo.database
-    cmap = asm3.cachedisk.get(CACHE_KEY, expectedtype=dict)
+    cmap = asm3.cachedisk.get("config", dbo.database, expectedtype=dict)
     if cmap is None:
         rows = dbo.query("SELECT ItemName, ItemValue FROM configuration ORDER BY ItemName")
         cmap = DEFAULTS.copy()
         for r in rows:
             cmap[r.itemname] = r.itemvalue
-        asm3.cachedisk.put(CACHE_KEY, cmap, 3600) # one hour cache means direct database updates show up eventually
+        asm3.cachedisk.put("config", dbo.database, cmap, 3600) # one hour cache means direct database updates show up eventually
     return cmap
 
 def invalidate_config_cache(dbo):
-    asm3.cachedisk.delete("%s_config" % dbo.database)
+    asm3.cachedisk.delete("config", dbo.database)
 
 def account_period_totals(dbo):
     return cboolean(dbo, "AccountPeriodTotals")
@@ -630,6 +629,14 @@ def coding_format(dbo):
 def coding_format_short(dbo):
     return cstring(dbo, "ShortCodingFormat", DEFAULTS["ShortCodingFormat"])
 
+def collation_id_next(dbo):
+    """ Returns the CollationIDNext value and increments it """
+    nrn = cint(dbo, "CollationIDNext", 0)
+    if nrn == 0:
+        nrn = 1 + dbo.query_int("SELECT MAX(CollationID) FROM onlineformincoming")
+    cset(dbo, "CollationIDNext", str(nrn + 1))
+    return nrn
+
 def cost_source_account(dbo):
     return cint(dbo, "CostSourceAccount", DEFAULTS["CostSourceAccount"])
 
@@ -650,17 +657,15 @@ def db_lock(dbo):
     Locks the database for updates, returns True if the lock was
     successful.
     """
-    cache_key = "%s_db_update_lock" % dbo.database
-    if asm3.cachemem.get(cache_key): return False
-    asm3.cachemem.put(cache_key, "YES", 60 * 5)
+    if asm3.cachedisk.get("db_update_lock", dbo.database): return False
+    asm3.cachedisk.put("db_update_lock", dbo.database, "YES", 60 * 5)
     return True
 
 def db_unlock(dbo):
     """
     Marks the database as unlocked for updates
     """
-    cache_key = "%s_db_update_lock" % dbo.database
-    asm3.cachemem.delete(cache_key)
+    asm3.cachedisk.delete("db_update_lock", dbo.database)
 
 def db_view_seq_version(dbo, newval = None):
     if newval is None:

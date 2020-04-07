@@ -970,8 +970,8 @@ def csvexport_animals(dbo, dataset, animalids = "", includephoto = False):
         del row
 
     # Generate a disk cache key and store the data in the cache so it can be retrieved for the next hour
-    key = asm3.utils.md5_hash_hex("%s_csva_%s" % (dbo.database, asm3.utils.unixtime()))
-    asm3.cachedisk.put(key, out.getvalue(), 3600)
+    key = asm3.utils.uuid_str()
+    asm3.cachedisk.put(key, dbo.database, out.getvalue(), 3600)
     h = '<p>%s <a target="_blank" href="csvexport_animals?get=%s"><b>%s</b></p>' % ( \
         asm3.i18n._("Export complete ({0} entries).", l).format(len(ids)), key, asm3.i18n._("Download File", l) )
     return h

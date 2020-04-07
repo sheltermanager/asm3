@@ -156,7 +156,7 @@ class S3Storage(DBFSStorage):
         """ Returns the file data for url, reads through the disk cache """
         cachekey = self._cache_key(url)
         cachettl = self._cache_ttl(url)
-        cachedata = asm3.cachedisk.touch(cachekey, ttlremaining=86400, newttl=cachettl) # Use touch to refresh items expiring in less than 24 hours
+        cachedata = asm3.cachedisk.touch(cachekey, self.dbo.database, ttlremaining=86400, newttl=cachettl) # Use touch to refresh items expiring in less than 24 hours
         if cachedata is not None:
             return cachedata
         object_key = "%s/%s" % (self.dbo.database, url.replace("s3:", ""))
@@ -164,7 +164,7 @@ class S3Storage(DBFSStorage):
             asm3.al.debug("GET: %s" % object_key, "S3Storage.get", self.dbo)
             response = self.s3client.get_object(Bucket=DBFS_S3_BUCKET, Key=object_key)
             body = response["Body"].read()
-            asm3.cachedisk.put(cachekey, body, cachettl)
+            asm3.cachedisk.put(cachekey, self.dbo.database, body, cachettl)
             return body
         except Exception as err:
             asm3.al.error(str(err), "dbfs.S3Storage.get", self.dbo)
@@ -178,7 +178,7 @@ class S3Storage(DBFSStorage):
         try:
             asm3.al.debug("PUT: %s" % object_key, "S3Storage.put", self.dbo)
             self.s3client.put_object(Bucket=DBFS_S3_BUCKET, Key=object_key, Body=filedata)
-            asm3.cachedisk.put(self._cache_key(url), filedata, self._cache_ttl(filename))
+            asm3.cachedisk.put(self._cache_key(url), self.dbo.database, filedata, self._cache_ttl(filename))
             self.dbo.execute("UPDATE dbfs SET URL = ?, Content = '' WHERE ID = ?", (url, dbfsid))
             return url
         except Exception as err:
@@ -191,7 +191,7 @@ class S3Storage(DBFSStorage):
         try:
             asm3.al.debug("DELETE: %s" % object_key, "S3Storage.delete", self.dbo)
             self.s3client.delete_object(Bucket=DBFS_S3_BUCKET, Key=object_key)
-            asm3.cachedisk.delete(self._cache_key(url))
+            asm3.cachedisk.delete(self._cache_key(url), self.dbo.database)
         except Exception as err:
             asm3.al.error(str(err), "dbfs.S3Storage.delete", self.dbo)
             raise DBFSError("Failed deleting from S3: %s" % err)

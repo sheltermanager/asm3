@@ -1,6 +1,7 @@
 44
 ================
 
+07/04/20 Switch all caching to ASM internal disk cache
 06/04/20 Selecting OwnerAddress twice in get_donation_query breaks view
 
 43

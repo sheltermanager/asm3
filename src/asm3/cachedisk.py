@@ -9,36 +9,60 @@ import asm3.al
 import hashlib
 import os
 import pickle
+import re
 import sys
 import time
 
 from asm3.sitedefs import DISK_CACHE
 
-def _getfilename(key):
+def _sanitise_path(path):
+    """
+    Make sure the path we've been given is safe to use, it should only
+    contain letters and numbers
+    """
+    return re.sub(r'[\W_]+', '', path)
+
+def _getfilename(key, path):
     """
     Calculates the filename from the key
     (md5 hash)
     """
-    if not os.path.exists(DISK_CACHE):
-        os.mkdir(DISK_CACHE)
     m = hashlib.md5()
     if sys.version_info[0] > 2 and isinstance(key, str): # PYTHON3
         key = key.encode("utf-8")
     m.update(key)
-    fname = "%s%s%s" % (DISK_CACHE, os.path.sep, m.hexdigest())
+    if not os.path.exists(DISK_CACHE):
+        os.mkdir(DISK_CACHE)
+    if path != "":
+        path = _sanitise_path(path)
+        path = "%s%s%s" % (DISK_CACHE, os.path.sep, path)
+        if not os.path.exists(path):
+            os.mkdir(path)
+    else:
+        path = DISK_CACHE
+    fname = "%s%s%s" % (path, os.path.sep, m.hexdigest())
     return fname
 
-def delete(key):
+def delete(key, path):
     """
     Removes a value from our disk cache.
     """
     try:
-        fname = _getfilename(key)
+        fname = _getfilename(key, path)
         os.unlink(fname)
     except Exception as err:
         asm3.al.error(str(err), "cachedisk.delete")
 
-def get(key, expectedtype=None):
+def increment(key, path, ttl):
+    """
+    Retrieves a value from our disk cache, increments it and returns the value
+    """
+    v = get(key, path, int)
+    v += 1
+    put(key, path, v, ttl)
+    return v
+
+def get(key, path, expectedtype=None):
     """
     Retrieves a value from our disk cache. Returns None if the
     value is not found or has expired.
@@ -47,7 +71,7 @@ def get(key, expectedtype=None):
     config and caused all the database updates to be re-run.
     """
     try:
-        fname = _getfilename(key)
+        fname = _getfilename(key, path)
 
         # No cache entry found, bail
         if not os.path.exists(fname): return None
@@ -58,7 +82,7 @@ def get(key, expectedtype=None):
 
         # Has the entry expired?
         if o["expires"] < time.time():
-            delete(key)
+            delete(key, path)
             return None
 
         # Is the value of the type we're expecting?
@@ -70,13 +94,13 @@ def get(key, expectedtype=None):
         asm3.al.error(str(err), "cachedisk.get")
         return None
 
-def put(key, value, ttl):
+def put(key, path, value, ttl):
     """
     Stores a value in our disk cache with a time to live of ttl. The value
     will be removed if it is accessed past the ttl.
     """
     try:
-        fname = _getfilename(key)
+        fname = _getfilename(key, path)
 
         o = {
             "expires": time.time() + ttl,
@@ -90,14 +114,14 @@ def put(key, value, ttl):
     except Exception as err:
         asm3.al.error(str(err), "cachedisk.put")
 
-def touch(key, ttlremaining = 0, newttl = 0):
+def touch(key, path, ttlremaining = 0, newttl = 0):
     """
     Retrieves a value from our disk cache and updates its ttl if there is less than ttlremaining until expiry.
     This can be used to make our timed expiry cache into a sort of hybrid with LRU.
     Returns None if the value is not found or has expired.
     """
     try:
-        fname = _getfilename(key)
+        fname = _getfilename(key, path)
 
         # No cache entry found, bail
         if not os.path.exists(fname): return None
@@ -109,7 +133,7 @@ def touch(key, ttlremaining = 0, newttl = 0):
         # Has the entry expired?
         now = time.time()
         if o["expires"] < now:
-            delete(key)
+            delete(key, path)
             return None
 
         # Is there less than ttlremaining to expiry? If so update it to newttl
@@ -123,28 +147,27 @@ def touch(key, ttlremaining = 0, newttl = 0):
         asm3.al.error(str(err), "cachedisk.touch")
         return None
 
-def remove_expired():
+def remove_expired(path):
     """
-    Runs through the cache and deletes any files that have expired.
-    To make this process quick, we look at the raw file content to 
-    extract the expires value.
-    If the Python pickle format ever changes, this might mess us up.
+    Runs through the cache and deletes any files that have expired
+    for cache/dbo.database
     """
     if DISK_CACHE == "": return
-    for fname in os.listdir(DISK_CACHE):
-        if fname.startswith("."): continue
-        fpath = "%s/%s" % (DISK_CACHE, fname)
-        chunk = ""
-        with open(fpath, "rb") as f:
-            chunk = f.read(75)
-        # Look for our float expiry time
-        sp = chunk.find(b"F")
-        if sp == -1: 
-            # If we didn't find it, remove the file anyway - we don't know what this is
-            os.unlink(fpath)
-        else:
-            ep = chunk.find(b"\n", sp)
-            expires = float(chunk[sp+1:ep])
-            if time.time() > expires:
-                os.unlink(fpath)
-
+    cache_path = os.path.join(DISK_CACHE, path)
+    checked = 0
+    removed = 0
+    for root, dummy, files in os.walk(cache_path):
+        for name in files:
+            if name.startswith("."): continue
+            checked += 1
+            try:
+                fpath = os.path.join(root, name)
+                with open(fpath, "rb") as f:
+                    o = pickle.load(f)
+                if o["expires"] < time.time():
+                    os.unlink(fpath)
+                    removed += 1
+            except:
+                # Move to the next entry if there are problems
+                pass
+    asm3.al.debug("removed %s expired disk cache entries (%s checked)", "cachedisk.remove_expired")

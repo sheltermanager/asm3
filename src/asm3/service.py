@@ -10,7 +10,6 @@ for others.
 import asm3.al
 import asm3.animal
 import asm3.cachedisk
-import asm3.cachemem
 import asm3.configuration
 import asm3.db
 import asm3.dbfs
@@ -41,7 +40,7 @@ AUTH_METHODS = [
     "xml_recent_changes", "json_recent_changes", "jsonp_recent_changes"
 ]
 
-def flood_protect(method, remoteip, ttl, message = ""):
+def flood_protect(method, account, remoteip, ttl, message = ""):
     """ Checks to see if we've had a request for method from remoteip since ttl seconds ago.
     If we haven't, we record this as the last time we saw a request
     from this ip address for that method. Otherwise, an error is thrown.
@@ -50,10 +49,10 @@ def flood_protect(method, remoteip, ttl, message = ""):
     ttl: The protection period (one request per ttl seconds)
     """
     cache_key = "m%sr%s" % (method, str(remoteip).replace(", ", "")) # X-FORWARDED-FOR can be a list, remove commas
-    v = asm3.cachemem.get(cache_key)
+    v = asm3.cachedisk.get(cache_key, account)
     #asm3.al.debug("method: %s, remoteip: %s, ttl: %d, cacheval: %s" % (method, remoteip, ttl, v), "service.flood_protect")
     if v is None:
-        asm3.cachemem.put(cache_key, "x", ttl)
+        asm3.cachedisk.put(cache_key, account, "x", ttl)
     else:
         if message == "":
             message = "You have already called '%s' in the last %d seconds, please wait before trying again." % (method, ttl)
@@ -68,17 +67,17 @@ def hotlink_protect(method, referer):
     if referer != "" and IMAGE_HOTLINKING_ONLY_FROM_DOMAIN != "" and not fromhldomain:
         raise asm3.utils.ASMPermissionError("Hotlinking to %s from %s is forbidden" % (method, referer))
 
-def get_cached_response(cache_key):
+def get_cached_response(cache_key, path):
     """ Gets a service call response from the cache based on its key.
     If no entry is found, None is returned.
     """
     if not CACHE_SERVICE_RESPONSES: return None
-    response = asm3.cachedisk.get(cache_key)
+    response = asm3.cachedisk.get(cache_key, path)
     if response is None or len(response) != 4: return None
     #asm3.al.debug("GET: %s (%d bytes)" % (cache_key, len(response[2])), "service.get_cached_response")
     return response
 
-def set_cached_response(cache_key, mime, clientage, serverage, content):
+def set_cached_response(cache_key, path, mime, clientage, serverage, content):
     """ Sets a service call response in the cache and returns it
     methods can use this as a passthrough to return the response.
     cache_key: The constructed cache key from the parameters
@@ -90,7 +89,7 @@ def set_cached_response(cache_key, mime, clientage, serverage, content):
     response = (mime, clientage, serverage, content)
     if not CACHE_SERVICE_RESPONSES: return response
     #asm3.al.debug("PUT: %s (%d bytes)" % (cache_key, len(content)), "service.set_cached_response")
-    asm3.cachedisk.put(cache_key, response, serverage)
+    asm3.cachedisk.put(cache_key, path, response, serverage)
     return response
 
 def sign_document_page(dbo, mid):
@@ -225,7 +224,7 @@ def handler(post, path, remoteip, referer, querystring):
     cache_key = querystring.replace(" ", "")
 
     # Do we have a cached response for these parameters?
-    cached_response = get_cached_response(cache_key)
+    cached_response = get_cached_response(cache_key, account)
     if cached_response is not None:
         asm3.al.debug("cache hit for %s" % (cache_key), "service.handler")
         return cached_response
@@ -278,7 +277,7 @@ def handler(post, path, remoteip, referer, querystring):
         else:
             mediadate, data = asm3.media.get_image_file_data(dbo, "animal", asm3.utils.cint(animalid), seq)
             if data == "NOPIC": mediadate, data = asm3.media.get_image_file_data(dbo, "nopic", 0)
-            return set_cached_response(cache_key, "image/jpeg", 86400, 3600, data)
+            return set_cached_response(cache_key, account, "image/jpeg", 86400, 3600, data)
 
     elif method =="animal_thumbnail":
         if asm3.utils.cint(animalid) == 0:
@@ -287,29 +286,29 @@ def handler(post, path, remoteip, referer, querystring):
         else:
             mediadate, data = asm3.media.get_image_file_data(dbo, "animalthumb", asm3.utils.cint(animalid), seq)
             if data == "NOPIC": mediadate, data = asm3.media.get_image_file_data(dbo, "nopic", 0)
-            return set_cached_response(cache_key, "image/jpeg", 86400, 86400, data)
+            return set_cached_response(cache_key, account, "image/jpeg", 86400, 86400, data)
 
     elif method == "animal_view":
         if asm3.utils.cint(animalid) == 0:
             asm3.al.error("animal_view failed, %s is not an animalid" % str(animalid), "service.handler", dbo)
             return ("text/plain", 0, 0, "ERROR: Invalid animalid")
         else:
-            return set_cached_response(cache_key, "text/html", 86400, 120, asm3.publishers.html.get_animal_view(dbo, asm3.utils.cint(animalid)))
+            return set_cached_response(cache_key, account, "text/html", 86400, 120, asm3.publishers.html.get_animal_view(dbo, asm3.utils.cint(animalid)))
 
     elif method == "animal_view_adoptable_js":
-        return set_cached_response(cache_key, "application/javascript", 10800, 600, asm3.publishers.html.get_animal_view_adoptable_js(dbo))
+        return set_cached_response(cache_key, account, "application/javascript", 10800, 600, asm3.publishers.html.get_animal_view_adoptable_js(dbo))
 
     elif method == "animal_view_adoptable_html":
-        return set_cached_response(cache_key, "text/html", 86400, 120, asm3.publishers.html.get_animal_view_adoptable_html(dbo))
+        return set_cached_response(cache_key, account, "text/html", 86400, 120, asm3.publishers.html.get_animal_view_adoptable_html(dbo))
 
     elif method =="dbfs_image":
         hotlink_protect("dbfs_image", referer)
-        return set_cached_response(cache_key, "image/jpeg", 86400, 86400, asm3.utils.iif(title.startswith("/"),
+        return set_cached_response(cache_key, account, "image/jpeg", 86400, 86400, asm3.utils.iif(title.startswith("/"),
             asm3.dbfs.get_string_filepath(dbo, title), asm3.dbfs.get_string(dbo, title)))
 
     elif method =="extra_image":
         hotlink_protect("extra_image", referer)
-        return set_cached_response(cache_key, "image/jpeg", 86400, 86400, asm3.dbfs.get_string(dbo, title, "/reports"))
+        return set_cached_response(cache_key, account, "image/jpeg", 86400, 86400, asm3.dbfs.get_string(dbo, title, "/reports"))
 
     elif method == "json_adoptable_animal":
         if asm3.utils.cint(animalid) == 0:
@@ -318,20 +317,20 @@ def handler(post, path, remoteip, referer, querystring):
         else:
             asm3.users.check_permission_map(l, user["SUPERUSER"], securitymap, asm3.users.VIEW_ANIMAL)
             rs = asm3.publishers.base.get_animal_data(dbo, None, asm3.utils.cint(animalid), include_additional_fields = True)
-            return set_cached_response(cache_key, "application/json", 3600, 3600, asm3.utils.json(rs))
+            return set_cached_response(cache_key, account, "application/json", 3600, 3600, asm3.utils.json(rs))
 
     elif method == "html_adoptable_animals":
-        return set_cached_response(cache_key, "text/html", 10800, 1800, \
+        return set_cached_response(cache_key, account, "text/html", 10800, 1800, \
             asm3.publishers.html.get_adoptable_animals(dbo, style=post["template"], \
                 speciesid=post.integer("speciesid"), animaltypeid=post.integer("animaltypeid"), locationid=post.integer("locationid")))
 
     elif method == "html_adopted_animals":
-        return set_cached_response(cache_key, "text/html", 10800, 1800, \
+        return set_cached_response(cache_key, account, "text/html", 10800, 1800, \
             asm3.publishers.html.get_adopted_animals(dbo, daysadopted=post.integer("days"), style=post["template"], \
                 speciesid=post.integer("speciesid"), animaltypeid=post.integer("animaltypeid")))
 
     elif method == "html_deceased_animals":
-        return set_cached_response(cache_key, "text/html", 10800, 1800, \
+        return set_cached_response(cache_key, account, "text/html", 10800, 1800, \
             asm3.publishers.html.get_deceased_animals(dbo, daysdeceased=post.integer("days"), style=post["template"], \
                 speciesid=post.integer("speciesid"), animaltypeid=post.integer("animaltypeid")))
 
@@ -339,12 +338,12 @@ def handler(post, path, remoteip, referer, querystring):
         if post["flag"] == "":
             asm3.al.error("html_flagged_animals requested with no flag.", "service.handler", dbo)
             return ("text/plain", 0, 0, "ERROR: Invalid flag")
-        return set_cached_response(cache_key, "text/html", 10800, 1800, \
+        return set_cached_response(cache_key, account, "text/html", 10800, 1800, \
             asm3.publishers.html.get_flagged_animals(dbo, style=post["template"], \
                 speciesid=post.integer("speciesid"), animaltypeid=post.integer("animaltypeid"), flag=post["flag"], allanimals=post.integer("all")))
 
     elif method == "html_held_animals":
-        return set_cached_response(cache_key, "text/html", 10800, 1800, \
+        return set_cached_response(cache_key, account, "text/html", 10800, 1800, \
             asm3.publishers.html.get_held_animals(dbo, style=post["template"], \
                 speciesid=post.integer("speciesid"), animaltypeid=post.integer("animaltypeid")))
 
@@ -352,7 +351,7 @@ def handler(post, path, remoteip, referer, querystring):
         asm3.users.check_permission_map(l, user["SUPERUSER"], securitymap, asm3.users.VIEW_ANIMAL)
         rs = asm3.publishers.base.get_animal_data(dbo, None, include_additional_fields = True)
         if strip_personal: rs = strip_personal_data(rs)
-        return set_cached_response(cache_key, "application/json", 3600, 3600, asm3.utils.json(rs))
+        return set_cached_response(cache_key, account, "application/json", 3600, 3600, asm3.utils.json(rs))
 
     elif method == "jsonp_adoptable_animals":
         asm3.users.check_permission_map(l, user["SUPERUSER"], securitymap, asm3.users.VIEW_ANIMAL)
@@ -367,18 +366,18 @@ def handler(post, path, remoteip, referer, querystring):
         else:
             asm3.users.check_permission_map(l, user["SUPERUSER"], securitymap, asm3.users.VIEW_ANIMAL)
             rs = asm3.publishers.base.get_animal_data(dbo, None, asm3.utils.cint(animalid), include_additional_fields = True)
-            return set_cached_response(cache_key, "application/xml", 3600, 3600, asm3.html.xml(rs))
+            return set_cached_response(cache_key, account, "application/xml", 3600, 3600, asm3.html.xml(rs))
 
     elif method == "xml_adoptable_animals":
         asm3.users.check_permission_map(l, user["SUPERUSER"], securitymap, asm3.users.VIEW_ANIMAL)
         rs = asm3.publishers.base.get_animal_data(dbo, None, include_additional_fields = True)
         if strip_personal: rs = strip_personal_data(rs)
-        return set_cached_response(cache_key, "application/xml", 3600, 3600, asm3.html.xml(rs))
+        return set_cached_response(cache_key, account, "application/xml", 3600, 3600, asm3.html.xml(rs))
 
     elif method == "json_found_animals":
         asm3.users.check_permission_map(l, user["SUPERUSER"], securitymap, asm3.users.VIEW_FOUND_ANIMAL)
         rs = asm3.lostfound.get_foundanimal_last_days(dbo)
-        return set_cached_response(cache_key, "application/json", 3600, 3600, asm3.utils.json(rs))
+        return set_cached_response(cache_key, account, "application/json", 3600, 3600, asm3.utils.json(rs))
 
     elif method == "jsonp_found_animals":
         asm3.users.check_permission_map(l, user["SUPERUSER"], securitymap, asm3.users.VIEW_FOUND_ANIMAL)
@@ -388,12 +387,12 @@ def handler(post, path, remoteip, referer, querystring):
     elif method == "xml_found_animals":
         asm3.users.check_permission_map(l, user["SUPERUSER"], securitymap, asm3.users.VIEW_FOUND_ANIMAL)
         rs = asm3.lostfound.get_foundanimal_last_days(dbo)
-        return set_cached_response(cache_key, "application/json", 3600, 3600, asm3.html.xml(rs))
+        return set_cached_response(cache_key, account, "application/json", 3600, 3600, asm3.html.xml(rs))
 
     elif method == "json_lost_animals":
         asm3.users.check_permission_map(l, user["SUPERUSER"], securitymap, asm3.users.VIEW_LOST_ANIMAL)
         rs = asm3.lostfound.get_lostanimal_last_days(dbo)
-        return set_cached_response(cache_key, "application/json", 3600, 3600, asm3.utils.json(rs))
+        return set_cached_response(cache_key, account, "application/json", 3600, 3600, asm3.utils.json(rs))
 
     elif method == "jsonp_lost_animals":
         asm3.users.check_permission_map(l, user["SUPERUSER"], securitymap, asm3.users.VIEW_LOST_ANIMAL)
@@ -403,12 +402,12 @@ def handler(post, path, remoteip, referer, querystring):
     elif method == "xml_lost_animals":
         asm3.users.check_permission_map(l, user["SUPERUSER"], securitymap, asm3.users.VIEW_LOST_ANIMAL)
         rs = asm3.lostfound.get_lostanimal_last_days(dbo)
-        return set_cached_response(cache_key, "application/json", 3600, 3600, asm3.html.xml(rs))
+        return set_cached_response(cache_key, account, "application/json", 3600, 3600, asm3.html.xml(rs))
 
     elif method == "json_recent_adoptions":
         asm3.users.check_permission_map(l, user["SUPERUSER"], securitymap, asm3.users.VIEW_ANIMAL)
         rs = asm3.movement.get_recent_adoptions(dbo)
-        return set_cached_response(cache_key, "application/json", 3600, 3600, asm3.utils.json(rs))
+        return set_cached_response(cache_key, account, "application/json", 3600, 3600, asm3.utils.json(rs))
 
     elif method == "jsonp_recent_adoptions":
         asm3.users.check_permission_map(l, user["SUPERUSER"], securitymap, asm3.users.VIEW_ANIMAL)
@@ -418,14 +417,14 @@ def handler(post, path, remoteip, referer, querystring):
     elif method == "xml_recent_adoptions":
         asm3.users.check_permission_map(l, user["SUPERUSER"], securitymap, asm3.users.VIEW_ANIMAL)
         rs = asm3.movement.get_recent_adoptions(dbo)
-        return set_cached_response(cache_key, "application/xml", 3600, 3600, asm3.html.xml(rs))
+        return set_cached_response(cache_key, account, "application/xml", 3600, 3600, asm3.html.xml(rs))
 
     elif method == "html_report":
         asm3.users.check_permission_map(l, user["SUPERUSER"], securitymap, asm3.users.VIEW_REPORT)
         crid = asm3.reports.get_id(dbo, title)
         p = asm3.reports.get_criteria_params(dbo, crid, post)
         rhtml = asm3.reports.execute(dbo, crid, username, p)
-        return set_cached_response(cache_key, "text/html", 600, 600, rhtml)
+        return set_cached_response(cache_key, account, "text/html", 600, 600, rhtml)
 
     elif method == "csv_mail" or method == "csv_report":
         asm3.users.check_permission_map(l, user["SUPERUSER"], securitymap, asm3.users.VIEW_REPORT)
@@ -433,7 +432,7 @@ def handler(post, path, remoteip, referer, querystring):
         p = asm3.reports.get_criteria_params(dbo, crid, post)
         rows, cols = asm3.reports.execute_query(dbo, crid, username, p)
         mcsv = asm3.utils.csv(l, rows, cols, True)
-        return set_cached_response(cache_key, "text/csv", 600, 600, mcsv)
+        return set_cached_response(cache_key, account, "text/csv", 600, 600, mcsv)
 
     elif method == "jsonp_recent_changes":
         asm3.users.check_permission_map(l, user["SUPERUSER"], securitymap, asm3.users.VIEW_ANIMAL)
@@ -443,12 +442,12 @@ def handler(post, path, remoteip, referer, querystring):
     elif method == "json_recent_changes":
         asm3.users.check_permission_map(l, user["SUPERUSER"], securitymap, asm3.users.VIEW_ANIMAL)
         sa = asm3.animal.get_recent_changes(dbo)
-        return set_cached_response(cache_key, "application/json", 3600, 3600, asm3.utils.json(sa))
+        return set_cached_response(cache_key, account, "application/json", 3600, 3600, asm3.utils.json(sa))
 
     elif method == "xml_recent_changes":
         asm3.users.check_permission_map(l, user["SUPERUSER"], securitymap, asm3.users.VIEW_ANIMAL)
         sa = asm3.animal.get_recent_changes(dbo)
-        return set_cached_response(cache_key, "application/xml", 3600, 3600, asm3.html.xml(sa))
+        return set_cached_response(cache_key, account, "application/xml", 3600, 3600, asm3.html.xml(sa))
 
     elif method == "jsonp_shelter_animals":
         asm3.users.check_permission_map(l, user["SUPERUSER"], securitymap, asm3.users.VIEW_ANIMAL)
@@ -460,17 +459,17 @@ def handler(post, path, remoteip, referer, querystring):
         asm3.users.check_permission_map(l, user["SUPERUSER"], securitymap, asm3.users.VIEW_ANIMAL)
         sa = asm3.animal.get_shelter_animals(dbo)
         if strip_personal: sa = strip_personal_data(sa)
-        return set_cached_response(cache_key, "application/json", 3600, 3600, asm3.utils.json(sa))
+        return set_cached_response(cache_key, account, "application/json", 3600, 3600, asm3.utils.json(sa))
 
     elif method == "xml_shelter_animals":
         asm3.users.check_permission_map(l, user["SUPERUSER"], securitymap, asm3.users.VIEW_ANIMAL)
         sa = asm3.animal.get_shelter_animals(dbo)
         if strip_personal: sa = strip_personal_data(sa)
-        return set_cached_response(cache_key, "application/xml", 3600, 3600, asm3.html.xml(sa))
+        return set_cached_response(cache_key, account, "application/xml", 3600, 3600, asm3.html.xml(sa))
 
     elif method == "rss_timeline":
         asm3.users.check_permission_map(l, user["SUPERUSER"], securitymap, asm3.users.VIEW_ANIMAL)
-        return set_cached_response(cache_key, "application/rss+xml", 3600, 3600, asm3.html.timeline_rss(dbo))
+        return set_cached_response(cache_key, account, "application/rss+xml", 3600, 3600, asm3.html.timeline_rss(dbo))
 
     elif method == "upload_animal_image":
         asm3.users.check_permission_map(l, user["SUPERUSER"], securitymap, asm3.users.ADD_MEDIA)
@@ -480,15 +479,15 @@ def handler(post, path, remoteip, referer, querystring):
     elif method == "online_form_html":
         if formid == 0:
             raise asm3.utils.ASMError("method online_form_html requires a valid formid")
-        return set_cached_response(cache_key, "text/html; charset=utf-8", 120, 120, asm3.onlineform.get_onlineform_html(dbo, formid))
+        return set_cached_response(cache_key, account, "text/html; charset=utf-8", 120, 120, asm3.onlineform.get_onlineform_html(dbo, formid))
 
     elif method == "online_form_json":
         if formid == 0:
             raise asm3.utils.ASMError("method online_form_json requires a valid formid")
-        return set_cached_response(cache_key, "application/json; charset=utf-8", 30, 30, asm3.onlineform.get_onlineform_json(dbo, formid))
+        return set_cached_response(cache_key, account, "application/json; charset=utf-8", 30, 30, asm3.onlineform.get_onlineform_json(dbo, formid))
 
     elif method == "online_form_post":
-        flood_protect("online_form_post", remoteip, 15)
+        flood_protect("online_form_post", account, remoteip, 15)
         asm3.onlineform.insert_onlineformincoming_from_form(dbo, post, remoteip)
         redirect = post["redirect"]
         if redirect == "":
@@ -499,7 +498,7 @@ def handler(post, path, remoteip, referer, querystring):
         if formid == 0:
             raise asm3.utils.ASMError("method sign_document requires a valid formid")
         if post["sig"] == "":
-            return set_cached_response(cache_key, "text/html", 2, 2, sign_document_page(dbo, formid))
+            return set_cached_response(cache_key, account, "text/html", 2, 2, sign_document_page(dbo, formid))
         else:
             asm3.media.sign_document(dbo, "service", formid, post["sig"], post["signdate"])
             asm3.media.create_log(dbo, "service", formid, "ES02", _("Document signed", l))

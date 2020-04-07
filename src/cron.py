@@ -361,7 +361,7 @@ def maint_deduplicate_people(dbo):
 
 def maint_disk_cache(dbo):
     try:
-        cachedisk.remove_expired()
+        cachedisk.remove_expired(dbo.database)
     except:
         em = str(sys.exc_info()[0])
         al.error("FAIL: uncaught error running remove_expired: %s" % em, "cron.maint_disk_cache", dbo, sys.exc_info())

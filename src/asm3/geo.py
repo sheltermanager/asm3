@@ -4,7 +4,7 @@
 """
 
 import asm3.al
-import asm3.cachemem
+import asm3.cachedisk
 import asm3.configuration
 import asm3.i18n
 import asm3.utils
@@ -191,7 +191,7 @@ def get_lat_long(dbo, address, town, county, postcode, country = ""):
 
         # Check the cache in case we already requested this address
         cachekey = "nom:" + g.q
-        v = asm3.cachemem.get(cachekey)
+        v = asm3.cachedisk.get(cachekey, dbo.database)
         if v is not None:
             asm3.al.debug("cache hit for address: %s = %s" % (cachekey, v), "geo.get_lat_long", dbo)
             return v
@@ -201,7 +201,7 @@ def get_lat_long(dbo, address, town, county, postcode, country = ""):
 
         # Parse the response to a lat/long value
         latlon = g.parse()
-        asm3.cachemem.put(cachekey, latlon, 86400)
+        asm3.cachedisk.put(cachekey, dbo.database, latlon, 86400)
 
         if GEO_SLEEP_AFTER > 0:
             time.sleep(GEO_SLEEP_AFTER)
