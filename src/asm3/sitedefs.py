@@ -143,12 +143,6 @@ SESSION_SECURE_COOKIE = get_boolean("session_secure_cookie", False)
 # Output debug info on sessions
 SESSION_DEBUG = get_boolean("session_debug", False)
 
-# The host/port that memcached is running on if it is to be used.
-# If memcache is not available, an in memory dictionary will be
-# used instead.
-#MEMCACHED_SERVER = "127.0.0.1:11211"
-MEMCACHED_SERVER = get_string("memcached_server", "")
-
 # Where to store media files.
 # database - media files are base64 encoded in the dbfs.content db column
 # file - media files are stored in a folder 

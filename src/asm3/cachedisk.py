@@ -177,4 +177,4 @@ def remove_expired(path):
             except:
                 # Move to the next entry if there are problems
                 pass
-    asm3.al.debug("removed %s expired disk cache entries (%s checked)", "cachedisk.remove_expired")
+    asm3.al.debug("removed %s expired disk cache entries for '%s' (%s checked)" % (removed, path, checked), "cachedisk.remove_expired")
