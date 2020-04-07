@@ -53,6 +53,13 @@ def delete(key, path):
     except Exception as err:
         asm3.al.error(str(err), "cachedisk.delete")
 
+def exists(key, path):
+    """
+    Returns true if a key exists in the cache (does not unpack and check expiry)
+    """
+    fname = _getfilename(key, path)
+    return os.path.exists(fname)
+
 def increment(key, path, ttl):
     """
     Retrieves a value from our disk cache, increments it and returns the value

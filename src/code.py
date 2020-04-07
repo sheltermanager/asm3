@@ -69,7 +69,7 @@ def session_manager():
     """
     class ASMSessionStore(web.session.Store):
         def __contains__(self, key):
-            rv = asm3.cachedisk.get(key, "sessions") is not None
+            rv = asm3.cachedisk.exists(key, "sessions")
             if SESSION_DEBUG: asm3.al.debug("contains(%s)=%s" % (key, rv), "ASMSessionStore.__contains__")
             return rv
         def __getitem__(self, key):
@@ -77,15 +77,13 @@ def session_manager():
             if SESSION_DEBUG: asm3.al.debug("getitem(%s)=%s" % (key, rv), "ASMSessionStore.__getitem__")
             return rv
         def __setitem__(self, key, value):
-            rv = asm3.cachedisk.put(key, "sessions", value, web.config.session_parameters["timeout"])
-            if SESSION_DEBUG: asm3.al.debug("setitem(%s, %s)=%s" % (key, value, rv), "ASMSessionStore.__setitem__")
-            return rv
+            asm3.cachedisk.put(key, "sessions", value, web.config.session_parameters["timeout"])
+            if SESSION_DEBUG: asm3.al.debug("setitem(%s, %s)" % (key, value), "ASMSessionStore.__setitem__")
         def __delitem__(self, key):
-            rv = asm3.cachedisk.delete(key, "sessions")
-            if SESSION_DEBUG: asm3.al.debug("delitem(%s)=%s" % (key, rv), "ASMSessionStore.__delitem__")
-            return rv
+            asm3.cachedisk.delete(key, "sessions")
+            if SESSION_DEBUG: asm3.al.debug("delitem(%s)" % (key), "ASMSessionStore.__delitem__")
         def cleanup(self, timeout):
-            pass # Not needed, we assign values to memcache with timeout
+            pass # Not needed, we assign ttl values to cache
     # Set session parameters, 24 hour timeout
     web.config.session_parameters["cookie_name"] = "asm_session_id"
     web.config.session_parameters["cookie_path"] = "/"
