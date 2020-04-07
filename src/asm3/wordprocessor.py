@@ -41,6 +41,7 @@ def org_tags(dbo, username):
     orgcounty = asm3.configuration.organisation_county(dbo)
     orgpostcode = asm3.configuration.organisation_postcode(dbo)
     orgtel = asm3.configuration.organisation_telephone(dbo)
+    orgemail = asm3.configuration.email(dbo)
     tags = {
         "ORGANISATION"          : orgname,
         "ORGANISATIONADDRESS"   : orgaddress,
@@ -48,12 +49,14 @@ def org_tags(dbo, username):
         "ORGANISATIONCOUNTY"    : orgcounty,
         "ORGANISATIONPOSTCODE"  : orgpostcode,
         "ORGANISATIONTELEPHONE" : orgtel,
+        "ORGANISATIONEMAIL"     : orgemail,
         "ORGANIZATION"          : orgname,
         "ORGANIZATIONADDRESS"   : orgaddress,
         "ORGANIZATIONCITY"      : orgtown,
         "ORGANIZATIONSTATE"     : orgcounty,
         "ORGANIZATIONZIPCODE"   : orgpostcode,
         "ORGANIZATIONTELEPHONE" : orgtel,
+        "ORGANIZATIONEMAIL"     : orgemail,
         "DATE"                  : python2display(dbo.locale, now(dbo.timezone)),
         "USERNAME"              : username,
         "USERREALNAME"          : realname,

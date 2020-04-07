@@ -24,6 +24,8 @@ OrganisationPostcode / OrganizationZipcode
     The shelter's zip or postal code
 OrganisationTelephone / OrganizationTelephone
     The shelter's telephone number
+OrganisationEmail / OrganizationEmail
+   The shelter's email address
 Date
     Today's date
 Username
