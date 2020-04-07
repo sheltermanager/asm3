@@ -8,9 +8,9 @@ import asm3.service
 class TestService(unittest.TestCase):
 
     def test_flood_protect(self):
-        asm3.service.flood_protect("animal_image", "1.1.1.1", 60)
+        asm3.service.flood_protect("animal_image", "account", "1.1.1.1", 60)
         try:
-            asm3.service.flood_protect("animal_image", "1.1.1.1", 60)
+            asm3.service.flood_protect("animal_image", "account", "1.1.1.1", 60)
             assert False
         except:
             assert True
