@@ -12,6 +12,7 @@ import os
 import pickle
 import re
 import sys
+import threading
 import time
 
 from asm3.sitedefs import DISK_CACHE
@@ -30,39 +31,21 @@ def _is_hex(s):
     except:
         return False
 
+threadlock = threading.Lock()
+
 def _lrunpickle(fname):
     """ Reads a file and returns the unpickled contents, using flock to lock the file """
-    try:
-        fd = open(fname, "rb")
-        retries = 20
-        while retries > 0:
-            try:
-                fcntl.flock(fd, fcntl.LOCK_EX | fcntl.LOCK_NB)
-                break
-            except IOError:
-                retries -= 1
-                time.sleep(0.1)
-        return pickle.load(fd)
-    finally:
-        fcntl.flock(fd, fcntl.LOCK_UN) 
-        fd.close()
+    with threadlock:
+        with open(fname, "rb") as fd:
+            fcntl.flock(fd, fcntl.LOCK_EX)
+            return pickle.load(fd)
 
 def _lwpickle(fname, o):
     """ Pickles and writes o to fname, using flock to lock the file """
-    try:
-        fd = open(fname, "wb")
-        retries = 20
-        while retries > 0:
-            try:
-                fcntl.flock(fd, fcntl.LOCK_EX | fcntl.LOCK_NB)
-                break
-            except IOError:
-                retries -= 1
-                time.sleep(0.1)
-        pickle.dump(o, fd)
-    finally:
-        fcntl.flock(fd, fcntl.LOCK_UN) 
-        fd.close()
+    with threadlock:
+        with open(fname, "wb") as fd:
+            fcntl.flock(fd, fcntl.LOCK_EX)
+            pickle.dump(o, fd)
 
 def _getfilename(key, path):
     """
@@ -125,47 +108,39 @@ def get(key, path, expectedtype=None):
     that caused an image to be read as a config dictionary, which wiped out someone's
     config and caused all the database updates to be re-run.
     """
-    try:
-        fname = _getfilename(key, path)
+    fname = _getfilename(key, path)
 
-        # No cache entry found, bail
-        if not os.path.exists(fname): return None
+    # No cache entry found, bail
+    if not os.path.exists(fname): return None
 
-        # Pull the entry out
-        o = _lrunpickle(fname)
+    # Pull the entry out
+    o = _lrunpickle(fname)
 
-        # Has the entry expired?
-        if o["expires"] < time.time():
-            delete(key, path)
-            return None
-
-        # Is the value of the type we're expecting?
-        if expectedtype is not None and type(o["value"]) != expectedtype:
-            return None
-
-        return o["value"]
-    except Exception as err:
-        asm3.al.error(str(err), "cachedisk.get")
+    # Has the entry expired?
+    if o["expires"] < time.time():
+        delete(key, path)
         return None
+
+    # Is the value of the type we're expecting?
+    if expectedtype is not None and type(o["value"]) != expectedtype:
+        return None
+
+    return o["value"]
 
 def put(key, path, value, ttl):
     """
     Stores a value in our disk cache with a time to live of ttl. The value
     will be removed if it is accessed past the ttl.
     """
-    try:
-        fname = _getfilename(key, path)
+    fname = _getfilename(key, path)
 
-        o = {
-            "expires": time.time() + ttl,
-            "value": value
-        }
+    o = {
+        "expires": time.time() + ttl,
+        "value": value
+    }
 
-        # Write the entry
-        _lwpickle(fname, o)
-
-    except Exception as err:
-        asm3.al.error(str(err), "cachedisk.put")
+    # Write the entry
+    _lwpickle(fname, o)
 
 def touch(key, path, ttlremaining = 0, newttl = 0):
     """
@@ -173,32 +148,28 @@ def touch(key, path, ttlremaining = 0, newttl = 0):
     This can be used to make our timed expiry cache into a sort of hybrid with LRU.
     Returns None if the value is not found or has expired.
     """
-    try:
-        fname = _getfilename(key, path)
+    fname = _getfilename(key, path)
 
-        # No cache entry found, bail
-        if not os.path.exists(fname): return None
+    # No cache entry found, bail
+    if not os.path.exists(fname): return None
 
-        # Pull the entry out
-        with open(fname, "rb") as f:
-            o = pickle.load(f)
+    # Pull the entry out
+    with open(fname, "rb") as f:
+        o = pickle.load(f)
 
-        # Has the entry expired?
-        now = time.time()
-        if o["expires"] < now:
-            delete(key, path)
-            return None
-
-        # Is there less than ttlremaining to expiry? If so update it to newttl
-        if o["expires"] - now < ttlremaining:
-            o["expires"] = now + newttl
-            with open(fname, "wb") as f:
-                pickle.dump(o, f)
-
-        return o["value"]
-    except Exception as err:
-        asm3.al.error(str(err), "cachedisk.touch")
+    # Has the entry expired?
+    now = time.time()
+    if o["expires"] < now:
+        delete(key, path)
         return None
+
+    # Is there less than ttlremaining to expiry? If so update it to newttl
+    if o["expires"] - now < ttlremaining:
+        o["expires"] = now + newttl
+        with open(fname, "wb") as f:
+            pickle.dump(o, f)
+
+    return o["value"]
 
 def remove_expired(path):
     """
