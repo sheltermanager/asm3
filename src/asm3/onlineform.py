@@ -785,6 +785,8 @@ def guess_breed(dbo, s):
 def guess_colour(dbo, s):
     """ Guesses a colour, returns the default if no match is found """
     s = str(s).lower()
+    guess = dbo.query_int("SELECT ID FROM basecolour WHERE LOWER(BaseColour) LIKE ?", ["%s%%" % s])
+    if guess != 0: return guess
     guess = dbo.query_int("SELECT ID FROM basecolour WHERE LOWER(BaseColour) LIKE ?", ["%%%s%%" % s])
     if guess != 0: return guess
     return asm3.configuration.default_colour(dbo)
@@ -896,6 +898,7 @@ def create_animal(dbo, username, collationid):
         if f.FIELDNAME == "breed2": d["breed2"] = str(guess_breed(dbo, f.VALUE))
         if f.FIELDNAME == "color": d["basecolour"] = str(guess_colour(dbo, f.VALUE))
         if f.FIELDNAME == "sex": d["sex"] = str(guess_sex(dbo, f.VALUE))
+        if f.FIELDNAME == "size": d["size"] = str(guess_size(dbo, f.VALUE))
         if f.FIELDNAME.startswith("additional"): d[f.FIELDNAME] = f.VALUE
         #if f.FIELDNAME == "formreceived" and f.VALUE.find(" ") != -1: 
         #    recdate, rectime = f.VALUE.split(" ")
@@ -918,6 +921,8 @@ def create_animal(dbo, username, collationid):
             # asm3.person.merge_animal_details(dbo, username, animalid, d)
     # Create the animal record if we didn't find one
     if animalid == 0:
+        # Set some default values that the form couldn't set
+        d["internallocation"] = asm3.configuration.default_location(dbo)
         animalid, sheltercode = asm3.animal.insert_animal_from_form(dbo, asm3.utils.PostedData(d, dbo.locale), username)
     attach_form(dbo, username, asm3.media.ANIMAL, animalid, collationid)
     return (collationid, animalid, "%s - %s" % (sheltercode, d["animalname"]))

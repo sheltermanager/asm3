@@ -36,7 +36,7 @@ def _getfilename(key, path):
     """
     # Is the key already a hash? ie. 32 or 40 chars and hex?
     # If so, don't waste time hashing it again.
-    if (len(key) == 32 or len(key) == 40) and  _is_hex(key):
+    if (len(key) == 32 or len(key) == 40) and _is_hex(key):
         pass
     else:
         m = hashlib.md5()
