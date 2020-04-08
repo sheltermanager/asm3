@@ -785,7 +785,7 @@ def guess_breed(dbo, s):
 def guess_colour(dbo, s):
     """ Guesses a colour, returns the default if no match is found """
     s = str(s).lower()
-    guess = dbo.query_int("SELECT ID FROM basecolour WHERE LOWER(BaseColour) LIKE ?", ["%s%%" % s])
+    guess = dbo.query_int("SELECT ID FROM basecolour WHERE LOWER(BaseColour) LIKE ?", ["%s" % s])
     if guess != 0: return guess
     guess = dbo.query_int("SELECT ID FROM basecolour WHERE LOWER(BaseColour) LIKE ?", ["%%%s%%" % s])
     if guess != 0: return guess

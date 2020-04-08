@@ -6,6 +6,7 @@ uses md5sums of the key as filenames.
 
 import asm3.al
 
+import fcntl
 import hashlib
 import os
 import pickle
@@ -28,6 +29,40 @@ def _is_hex(s):
         return True
     except:
         return False
+
+def _lrunpickle(fname):
+    """ Reads a file and returns the unpickled contents, using flock to lock the file """
+    try:
+        fd = open(fname, "rb")
+        retries = 20
+        while retries > 0:
+            try:
+                fcntl.flock(fd, fcntl.LOCK_EX | fcntl.LOCK_NB)
+                break
+            except IOError:
+                retries -= 1
+                time.sleep(0.1)
+        return pickle.load(fd)
+    finally:
+        fcntl.flock(fd, fcntl.LOCK_UN) 
+        fd.close()
+
+def _lwpickle(fname, o):
+    """ Pickles and writes o to fname, using flock to lock the file """
+    try:
+        fd = open(fname, "wb")
+        retries = 20
+        while retries > 0:
+            try:
+                fcntl.flock(fd, fcntl.LOCK_EX | fcntl.LOCK_NB)
+                break
+            except IOError:
+                retries -= 1
+                time.sleep(0.1)
+        pickle.dump(o, fd)
+    finally:
+        fcntl.flock(fd, fcntl.LOCK_UN) 
+        fd.close()
 
 def _getfilename(key, path):
     """
@@ -97,8 +132,7 @@ def get(key, path, expectedtype=None):
         if not os.path.exists(fname): return None
 
         # Pull the entry out
-        with open(fname, "rb") as f:
-            o = pickle.load(f)
+        o = _lrunpickle(fname)
 
         # Has the entry expired?
         if o["expires"] < time.time():
@@ -128,8 +162,7 @@ def put(key, path, value, ttl):
         }
 
         # Write the entry
-        with open(fname, "wb") as f:
-            pickle.dump(o, f)
+        _lwpickle(fname, o)
 
     except Exception as err:
         asm3.al.error(str(err), "cachedisk.put")
