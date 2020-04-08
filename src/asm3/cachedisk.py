@@ -22,15 +22,28 @@ def _sanitise_path(path):
     """
     return re.sub(r'[\W_]+', '', path)
 
+def _is_hex(s):
+    try:
+        int(s, 16)
+        return True
+    except:
+        return False
+
 def _getfilename(key, path):
     """
     Calculates the filename from the key
     (md5 hash)
     """
-    m = hashlib.md5()
-    if sys.version_info[0] > 2 and isinstance(key, str): # PYTHON3
-        key = key.encode("utf-8")
-    m.update(key)
+    # Is the key already a hash? ie. 32 or 40 chars and hex?
+    # If so, don't waste time hashing it again.
+    if (len(key) == 32 or len(key) == 40) and  _is_hex(key):
+        pass
+    else:
+        m = hashlib.md5()
+        if sys.version_info[0] > 2 and isinstance(key, str): # PYTHON3
+            key = key.encode("utf-8")
+        m.update(key)
+        key = m.hexdigest()
     if not os.path.exists(DISK_CACHE):
         os.mkdir(DISK_CACHE)
     if path != "":
@@ -40,7 +53,7 @@ def _getfilename(key, path):
             os.mkdir(path)
     else:
         path = DISK_CACHE
-    fname = os.path.join(path, m.hexdigest())
+    fname = os.path.join(path, key)
     return fname
 
 def delete(key, path):
