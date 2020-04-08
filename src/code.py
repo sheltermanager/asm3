@@ -75,6 +75,7 @@ def session_manager():
         def __getitem__(self, key):
             rv = asm3.cachedisk.get(key, "sessions")
             if SESSION_DEBUG: asm3.al.debug("getitem(%s)=%s" % (key, rv), "ASMSessionStore.__getitem__")
+            if rv is None: raise KeyError(key)
             return rv
         def __setitem__(self, key, value):
             asm3.cachedisk.put(key, "sessions", value, web.config.session_parameters["timeout"])
