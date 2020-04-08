@@ -132,7 +132,7 @@ class Database(object):
 
     def connect(self):
         """ Virtual: Connect to the database and return the connection """
-        return None
+        raise NotImplementedError()
 
     def cursor_open(self):
         """ Returns a tuple containing an open connection and cursor.

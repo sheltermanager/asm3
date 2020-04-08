@@ -84,7 +84,7 @@ class GeoProvider(object):
 
     def parse(self):
         """ Virtual method, returns latlon value by parsing response/json_response """
-        pass
+        raise NotImplementedError()
 
 class Nominatim(GeoProvider):
     """ Geocoding support from Nominatim """
