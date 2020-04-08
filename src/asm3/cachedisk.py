@@ -128,7 +128,7 @@ def get(key, path, expectedtype=None):
 
         return o["value"]
     except Exception as err:
-        asm3.al.error(str(err), "cachedisk.get")
+        asm3.al.error("%s/%s: %s" % (path, key, err), "cachedisk.get")
 
 def put(key, path, value, ttl):
     """
@@ -146,8 +146,7 @@ def put(key, path, value, ttl):
         # Write the entry
         _lwpickle(fname, o)
     except Exception as err:
-        asm3.al.error(str(err), "cachedisk.get")
-
+        asm3.al.error("%s/%s: %s" % (path, key, err), "cachedisk.put")
 
 def touch(key, path, ttlremaining = 0, newttl = 0):
     """
@@ -179,7 +178,7 @@ def touch(key, path, ttlremaining = 0, newttl = 0):
 
         return o["value"]
     except Exception as err:
-        asm3.al.error(str(err), "cachedisk.get")
+        asm3.al.error("%s/%s: %s" % (path, key, err), "cachedisk.touch")
 
 
 def remove_expired(path):
