@@ -1,10 +1,9 @@
 44
 ================
 
-08/04/20 Use flock around disk cache to prevent session bugs
+08/04/20 Use flock/mutex around disk cache to prevent multiprocess bugs
 08/04/20 Online form create animal not setting size or default location
 07/04/20 Add missing OrganisationEmail wordkey
-07/04/20 Switch all caching to ASM internal disk cache
 06/04/20 Selecting OwnerAddress twice in get_donation_query breaks view
 
 43

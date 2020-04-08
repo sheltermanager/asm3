@@ -18,6 +18,7 @@ import asm3.animal
 import asm3.animalcontrol
 import asm3.asynctask
 import asm3.audit
+import asm3.cachemem
 import asm3.clinic
 import asm3.configuration
 import asm3.csvimport
@@ -63,29 +64,33 @@ CACHE_ONE_YEAR = 31536000
 
 def session_manager():
     """
-    Initialise the session manager. 
-    We use a global in the utils module to hold the session to make sure 
-    if the app/code.py is reloaded it always gets the same session manager.
+    Sort out our session manager. We use a global in the utils module
+    to hold the session to make sure if the app/code.py is reloaded it
+    always gets the same session manager.
     """
-    class ASMSessionStore(web.session.Store):
+    class MemCacheStore(web.session.Store):
+        """ 
+        A session manager that uses either an in-memory dictionary or memcache
+        (if available).
+        """
         def __contains__(self, key):
-            rv = asm3.cachedisk.exists(key, "sessions")
-            if SESSION_DEBUG: asm3.al.debug("contains(%s)=%s" % (key, rv), "ASMSessionStore.__contains__")
+            rv = asm3.cachemem.get(key) is not None
+            if SESSION_DEBUG: asm3.al.debug("contains(%s)=%s" % (key, rv), "MemCacheStore.__contains__")
             return rv
         def __getitem__(self, key):
-            rv = asm3.cachedisk.get(key, "sessions")
-            if SESSION_DEBUG: asm3.al.debug("getitem(%s)=%s" % (key, rv), "ASMSessionStore.__getitem__")
-            if rv is None: raise IOError(key)
+            rv = asm3.cachemem.get(key)
+            if SESSION_DEBUG: asm3.al.debug("getitem(%s)=%s" % (key, rv), "MemCacheStore.__getitem__")
             return rv
         def __setitem__(self, key, value):
-            asm3.cachedisk.put(key, "sessions", value, web.config.session_parameters["timeout"])
-            if SESSION_DEBUG: asm3.al.debug("setitem(%s, %s)" % (key, value), "ASMSessionStore.__setitem__")
+            rv = asm3.cachemem.put(key, value, web.config.session_parameters["timeout"])
+            if SESSION_DEBUG: asm3.al.debug("setitem(%s, %s)=%s" % (key, value, rv), "MemCacheStore.__setitem__")
+            return rv
         def __delitem__(self, key):
-            asm3.cachedisk.delete(key, "sessions")
-            if SESSION_DEBUG: asm3.al.debug("delitem(%s)" % (key), "ASMSessionStore.__delitem__")
+            rv = asm3.cachemem.delete(key)
+            if SESSION_DEBUG: asm3.al.debug("delitem(%s)=%s" % (key, rv), "MemCacheStore.__delitem__")
+            return rv
         def cleanup(self, timeout):
-            if SESSION_DEBUG: asm3.al.debug("cleanup(%s)" % (timeout), "ASMSessionStore.__cleanup")
-            asm3.cachedisk.remove_expired("sessions")
+            pass # Not needed, we assign values to memcache with timeout
     # Set session parameters, 24 hour timeout
     web.config.session_parameters["cookie_name"] = "asm_session_id"
     web.config.session_parameters["cookie_path"] = "/"
@@ -94,7 +99,7 @@ def session_manager():
     web.config.session_parameters["secure"] = SESSION_SECURE_COOKIE
     sess = None
     if asm3.utils.websession is None:
-        sess = web.session.Session(app, ASMSessionStore(), initializer={"user" : None, "dbo" : None, "locale" : None, 
+        sess = web.session.Session(app, MemCacheStore(), initializer={"user" : None, "dbo" : None, "locale" : None, 
             "searches" : [], "siteid": None, "locationfilter": None, "staffid": None, "visibleanimalids": "" })
         asm3.utils.websession = sess
     else:
