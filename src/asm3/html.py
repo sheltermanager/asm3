@@ -9,7 +9,7 @@ import asm3.person
 import asm3.users
 import asm3.utils
 
-from asm3.i18n import BUILD, _, translate, format_currency, format_date, get_locales, now, python2display, python2unix
+from asm3.i18n import BUILD, _, translate, format_currency, format_date, get_locales, now, python2display, python2unix, real_locale
 from asm3.sitedefs import QR_IMG_SRC
 from asm3.sitedefs import BASE_URL, LOCALE, MINIFY_JS, ROLLUP_JS
 from asm3.sitedefs import ASMSELECT_CSS, ASMSELECT_JS, BASE64_JS, CODEMIRROR_CSS, CODEMIRROR_JS, CODEMIRROR_BASE, EXIFRESTORER_JS, FLOT_JS, FLOT_PIE_JS, FULLCALENDAR_JS, FULLCALENDAR_CSS, JQUERY_JS, JQUERY_UI_JS, JQUERY_UI_CSS, MOMENT_JS, MOUSETRAP_JS, PATH_JS, SIGNATURE_JS, TABLESORTER_CSS, TABLESORTER_JS, TABLESORTER_WIDGETS_JS, TIMEPICKER_CSS, TIMEPICKER_JS, TINYMCE_4_JS, TOUCHPUNCH_JS
@@ -18,6 +18,7 @@ import os
 
 BACKGROUND_COLOURS = {
     "asm":              "#ffffff",
+    "base":             "#ffffff",
     "black-tie":        "#333333",
     "blitzer":          "#cc0000",
     "cupertino":        "#deedf7",
@@ -61,6 +62,12 @@ def css_tag(uri, idattr=""):
     if idattr != "": idattr = "id=\"%s\"" % idattr
     return "<link rel=\"stylesheet\" type=\"text/css\" href=\"%s\" %s />\n" % (uri, idattr)
 
+def asm_css_tag(filename):
+    """
+    Returns a path to one of our stylesheets
+    """
+    return "<link rel=\"stylesheet\" type=\"text/css\" href=\"static/css/%s?b=%s\" />\n" % (filename, BUILD)
+
 def script_tag(uri, idattr=""):
     """
     Returns a script tag to a resource.
@@ -72,7 +79,7 @@ def asm_script_tag(filename):
     """
     Returns a path to our caching script loader for a javascript file
     """
-    return "<script type=\"text/javascript\" src=\"x.js?v=%s&k=%s\"></script>\n" % (js_minified_name(filename), BUILD)
+    return "<script type=\"text/javascript\" src=\"static/js/%s?b=%s\"></script>\n" % (js_minified_name(filename), BUILD)
 
 def asm_script_tags(path):
     """
@@ -92,33 +99,6 @@ def asm_script_tags(path):
     for i in jsfiles:
         buf.append(asm_script_tag(i))
     return "".join(buf)
-
-def asm_rollup_scripts(path):
-    """
-    Returns the content of all ASM javascript files, rolled up into a single file in the
-    correct load order.
-    """
-    jsfiles = [ "common.js", "common_map.js", "common_widgets.js", "common_animalchooser.js",
-        "common_animalchoosermulti.js", "common_personchooser.js", "common_tableform.js", "header.js",
-        "header_additional.js", "header_edit_header.js" ]
-    exclude = [ "animal_view_adoptable.js", "document_edit.js", "mobile.js", "mobile_sign.js", 
-        "onlineform_extra.js" ]
-    # Read our available js files and append them to this list, not including ones
-    # we've explicitly added above (since they are in correct load order)
-    for i in os.listdir(path + "static/js"):
-        if i not in jsfiles and i not in exclude and not i.startswith(".") and i.endswith(".js"):
-            jsfiles.append(i)
-    # Read them all into a buffer and send it back
-    buf = []
-    for i in jsfiles:
-        buf.append( asm3.utils.read_text_file("%sstatic/js/%s" % (path, js_minified_name(i))) )
-    return "\n".join(buf)
-
-def asm_css_tag(filename):
-    """
-    Returns a path to our caching css loader for a stylesheet
-    """
-    return "<link rel=\"stylesheet\" type=\"text/css\" href=\"x.css?v=%s&k=%s\" />\n" % (filename, BUILD)
 
 def xml(results):
     """
@@ -178,16 +158,16 @@ def bare_header(title, theme = "asm", locale = LOCALE, config_db = "asm", config
     if config_db == "asm" and config_ts == "0":
         config_ts = python2unix(now())
     def script_i18n(l):
-        return "<script type=\"text/javascript\" src=\"i18n.js?l=%s&k=%s\"></script>\n" % (l, BUILD)
+        return "<script type=\"text/javascript\" src=\"static/js/locales/locale_%s.js?b=%s\"></script>\n" % (real_locale(l), BUILD)
     def script_config():
         return "<script type=\"text/javascript\" src=\"config.js?db=%s&ts=%s\"></script>\n" % (config_db, config_ts)
     def script_schema():
-        return "<script type=\"text/javascript\" src=\"schema.js?k=%s\"></script>\n" % (BUILD)
+        return asm_script_tag("min/schema.min.js") # statically generated regardless of MINIFY_JS
     # Use the default if we have no locale
     if locale is None: locale = LOCALE
     # Load the asm scripts
     if ROLLUP_JS:
-        asm_scripts = script_tag("rollup.js?b=%s" % BUILD)
+        asm_scripts = asm_script_tag("min/rollup.min.js")
     else:
         asm_scripts = asm_script_tags(asm3.utils.PATH) 
     # Set the body colour from the theme
@@ -247,8 +227,8 @@ def bare_header(title, theme = "asm", locale = LOCALE, config_db = "asm", config
                 script_tag(TINYMCE_4_JS) +
                 script_tag(PATH_JS) + 
                 script_config() + 
-                script_schema() + 
                 script_i18n(locale) + 
+                script_schema() + 
                 asm_scripts,
             "bgcol": bgcol }
 

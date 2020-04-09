@@ -1,6 +1,7 @@
 44
 ================
 
+09/04/20 Refactor to generate all possible js statically #770
 08/04/20 Use flock/mutex around disk cache to prevent multiprocess bugs
 08/04/20 Online form create animal not setting size or default location
 07/04/20 Add missing OrganisationEmail wordkey

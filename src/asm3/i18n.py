@@ -6,8 +6,8 @@ import time
 # flake8: noqa - we have a lot of locales and this is convenient
 from asm3.locales import *
 
-VERSION = "44u [Wed  8 Apr 16:38:21 BST 2020]"
-BUILD = "04081638"
+VERSION = "44u [Thu  9 Apr 15:24:08 BST 2020]"
+BUILD = "04091524"
 
 DMY = ( "%d/%m/%Y", "%d/%m/%y" )
 HDMY = ( "%d-%m-%Y", "%d-%m-%y" )
@@ -675,38 +675,3 @@ def today():
     d = datetime.datetime.now()
     return datetime.datetime(d.year, d.month, d.day)
 
-def i18nstringsjs(l):
-    """
-    Returns a javascript format file containing the language file
-    """
-    langs = "{}"
-    try:
-        lang = globals()["locale_" + real_locale(l)]
-        langs = json.dumps(lang.val)
-    except:
-        pass
-    s = "i18n_lang = " + langs + ";\n"
-    s += """
-(function($) {
-    _ = function(key) {
-        try {
-            var v = key;
-            if (i18n_lang.hasOwnProperty(key)) {
-                if ($.trim(i18n_lang[key]) != "" && i18n_lang[key].indexOf("??") != 0 && i18n_lang[key].indexOf("(??") != 0) {
-                    v = i18n_lang[key];
-                }
-                else {
-                    v = key;
-                }
-            }
-            else {
-                v = key;
-            }
-            return $("<div></div>").html(v).text();
-        }
-        catch (err) {
-            return "[error]";
-        }
-    };
-}) (jQuery);\n"""
-    return s

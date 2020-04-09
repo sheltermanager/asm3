@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 
 import os, sys
-import collections
 import mimetypes
 
 # The path to the folder containing the ASM3 modules
@@ -52,7 +51,7 @@ import asm3.utils
 import asm3.waitinglist
 import asm3.wordprocessor
 
-from asm3.i18n import _, BUILD, translate, get_version, get_display_date_format, get_currency_prefix, get_currency_symbol, get_currency_dp, get_currency_radix, get_currency_digit_grouping, get_locales, parse_date, python2display, add_minutes, add_days, subtract_days, subtract_months, first_of_month, last_of_month, monday_of_week, sunday_of_week, first_of_year, last_of_year, now, format_currency, i18nstringsjs
+from asm3.i18n import _, BUILD, translate, get_version, get_display_date_format, get_currency_prefix, get_currency_symbol, get_currency_dp, get_currency_radix, get_currency_digit_grouping, get_locales, parse_date, python2display, add_minutes, add_days, subtract_days, subtract_months, first_of_month, last_of_month, monday_of_week, sunday_of_week, first_of_year, last_of_year, now, format_currency
 
 from asm3.sitedefs import BASE_URL, DEPLOYMENT_TYPE, ELECTRONIC_SIGNATURES, EMERGENCY_NOTICE, AKC_REUNITE_BASE_URL, HOMEAGAIN_BASE_URL, LARGE_FILES_CHUNKED, LOCALE, JQUERY_UI_CSS, LEAFLET_CSS, LEAFLET_JS, MULTIPLE_DATABASES, MULTIPLE_DATABASES_PUBLISH_URL, MULTIPLE_DATABASES_PUBLISH_FTP, ADMIN_EMAIL, EMAIL_ERRORS, MADDIES_FUND_TOKEN_URL, MANUAL_HTML_URL, MANUAL_PDF_URL, MANUAL_FAQ_URL, MANUAL_VIDEO_URL, MAP_LINK, MAP_PROVIDER, MAP_PROVIDER_KEY, OSM_MAP_TILES, FOUNDANIMALS_FTP_USER, PETLINK_BASE_URL, PETRESCUE_URL, PETSLOCATED_FTP_USER, QR_IMG_SRC, SAVOURLIFE_URL, SERVICE_URL, SESSION_SECURE_COOKIE, SESSION_DEBUG, SHARE_BUTTON, SMARTTAG_FTP_USER, SMCOM_LOGIN_URL, SMCOM_PAYMENT_LINK
 
@@ -472,17 +471,6 @@ class image(ASMEndpoint):
             if o.post["nopic"] == "404": self.notfound()
             self.redirect("image?db=%s&mode=nopic" % o.dbo.database)
 
-class rollupjs(ASMEndpoint):
-    url = "rollup.js"
-    check_logged_in = False
-
-    def content(self, o):
-        # b=build is passed as a parameter and to invalidate caching
-        self.content_type("text/javascript")
-        self.cache_control(CACHE_ONE_YEAR)
-        rollup = asm3.html.asm_rollup_scripts(PATH)
-        return rollup
-
 class configjs(ASMEndpoint):
     url = "config.js"
     check_logged_in = False
@@ -572,50 +560,6 @@ class configjs(ASMEndpoint):
             "publishers": asm3.publish.PUBLISHER_LIST
         }
         return "asm = %s;" % asm3.utils.json(c)
-
-class css(ASMEndpoint):
-    url = "x.css"
-    check_logged_in = False
-
-    def content(self, o):
-        # k=build is passed to invalidate cache
-        v = o.post["v"]
-        csspath = "%sstatic/css/%s" % (PATH, v)
-        if v.find("..") != -1: self.notfound() # prevent escaping our PATH
-        if not os.path.exists(csspath): self.notfound()
-        if v == "": self.notfound()
-        content = asm3.utils.read_binary_file(csspath)
-        self.content_type("text/css")
-        self.cache_control(CACHE_ONE_YEAR)
-        return content
-
-class i18njs(ASMEndpoint):
-    url = "i18n.js"
-    check_logged_in = False
-
-    def content(self, o):
-        # k=build is passed to invalidate cache
-        l = o.post["l"]
-        if l == "": l = LOCALE
-        self.content_type("text/javascript")
-        self.cache_control(CACHE_ONE_YEAR)
-        return i18nstringsjs(l)
-
-class js(ASMEndpoint):
-    url = "x.js"
-    check_logged_in = False
-
-    def content(self, o):
-        # k=build is passed to invalidate cache
-        v = o.post["v"]
-        jspath = "%sstatic/js/%s" % (PATH, v)
-        if v.find("..") != -1: self.notfound() # prevent escaping our PATH
-        if not os.path.exists(jspath): self.notfound()
-        if v == "": self.notfound()
-        content = asm3.utils.read_binary_file(jspath)
-        self.content_type("text/javascript")
-        self.cache_control(CACHE_ONE_YEAR)
-        return content
 
 class jserror(ASMEndpoint):
     """
@@ -5101,53 +5045,6 @@ class roles(JSONEndpoint):
     def post_delete(self, o):
         for rid in o.post.integer_list("ids"):
             asm3.users.delete_role(o.dbo, o.user, rid)
-
-class schemajs(ASMEndpoint):
-    url = "schema.js"
-    check_logged_in = False
-
-    def content(self, o):
-        # Return schema of all database tables, includes k=build param to invalidate cache
-        if self.is_loggedin(o.session) and o.dbo is not None:
-            dbo = o.dbo
-            self.content_type("text/javascript")
-            self.cache_control(CACHE_ONE_YEAR)
-            CACHE_KEY = "schema"
-            tobj = asm3.cachedisk.get(CACHE_KEY, "schema")
-            if tobj is None:
-                tobj = {}
-                for t in asm3.dbupdate.TABLES:
-                    try:
-                        rows, cols = dbo.query_tuple_columns("SELECT * FROM %s" % t, limit=1)
-                        trow = collections.OrderedDict()
-                        for c in sorted(cols):
-                            trow[c] = ""
-                        tobj[t] = trow
-                    except Exception as err:
-                        asm3.al.error("%s" % str(err), "code.schemajs", dbo)
-                # Derive the extra *NAME fields from *ID in view tables.
-                # We do this instead of reading a row from the view. 
-                # This is because MySQL view performance can be absolutely 
-                # horrible on large tables as it implements views
-                # by creating a temporary table (which has none of the indexes).
-                for t in asm3.dbupdate.VIEWS:
-                    realtable = t.replace("v_", "")
-                    try:
-                        if realtable in tobj:
-                            row = tobj[realtable].copy()
-                            for k in row.keys():
-                                if k.endswith("ID") and k != "ID":
-                                    row[k.replace("ID", "NAME")] = ""
-                            tobj[t] = row
-                    except Exception as err:
-                        asm3.al.error("%s" % str(err), "code.schemajs", dbo)
-                asm3.cachedisk.put(CACHE_KEY, "schema", tobj, 86400)
-            return "schema = %s;" % asm3.utils.json(tobj)
-        else:
-            # Not logged in
-            self.content_type("text/javascript")
-            self.cache_control(0)
-            return ""
 
 class search(JSONEndpoint):
     url = "search"

@@ -1,9 +1,9 @@
 DEPLOY_HOST=servicedx.sheltermanager.com
 WWW_HOST=wwwdx.sheltermanager.com
 
-all:	compile clean tags minify
+all:	compile clean tags rollup schema
 
-dist:	version clean minify
+dist:	version clean rollup schema
 	rm -rf build
 	mkdir build
 	tar -czvf build/sheltermanager3-`cat VERSION`-src.tar.gz changelog LICENSE src README.md scripts/asm3.conf.example scripts/wsgi
@@ -56,6 +56,17 @@ minify:
 	mkdir -p src/static/js/min
 	for i in src/static/js/*.js; do echo $$i; cat $$i | scripts/jsmin/jsmin > src/static/js/min/`basename $$i .js`.min.js; done
 
+rollup: minify
+	# Generate a rollup file of all javascript files
+	@echo "[rollup] ============================="
+	scripts/rollup/rollup.py > src/static/js/min/rollup.min.js
+
+schema:
+	# Generate a JSON schema of the database for use when editing
+	# SQL within the program
+	@echo "[schema] ============================="
+	scripts/schema/schema.py > src/static/js/min/schema.min.js
+
 compile: compilejs compilepy compilejsmin
 
 compilejs:
@@ -70,29 +81,29 @@ compilepy:
 	@echo "[compile python] ====================="
 	flake8 --config=scripts/flake8 src/*.py src/asm3/*.py src/asm3/dbms/*.py src/asm3/publishers/*.py
 
-smcom-dev: version clean minify
-	@echo "[smcom dev eur01 us17] ===================="
+smcom-dev: version clean schema
+	@echo "[smcom dev us17] ===================="
 	rsync --progress --exclude '*.pyc' --exclude '__pycache__' --delete -r src/ root@$(DEPLOY_HOST):/usr/local/lib/asm_dev.new
-	ssh root@$(DEPLOY_HOST) "/root/scripts/sheltermanager_sync_asm.py syncdev only_eur01 only_us17"
+	ssh root@$(DEPLOY_HOST) "/root/scripts/sheltermanager_sync_asm.py syncdev only_us17"
 
-smcom-dev-all: version clean minify
+smcom-dev-all: version clean schema
 	@echo "[smcom dev all] ======================"
 	rsync --progress --exclude '*.pyc' --exclude '__pycache__' --delete -r src/ root@$(DEPLOY_HOST):/usr/local/lib/asm_dev.new
 	ssh root@$(DEPLOY_HOST) "/root/scripts/sheltermanager_sync_asm.py syncdev"
 
-smcom-stable: version clean minify
+smcom-stable: version clean rollup schema
 	@echo "[smcom stable] ======================="
 	@# Having a BREAKING_CHANGES file prevents accidental deploy to stable without dumping sessions or doing it on a schedule
 	@if [ -f BREAKING_CHANGES ]; then echo "Cannot deploy due to breaking DB changes" && exit 1; fi;
 	rsync --progress --exclude '*.pyc' --exclude '__pycache__' --delete -r src/ root@$(DEPLOY_HOST):/usr/local/lib/asm_stable.new
 	ssh root@$(DEPLOY_HOST) "/root/scripts/sheltermanager_sync_asm.py syncstable"
 
-smcom-stable-dumpsessions: version clean minify
+smcom-stable-dumpsessions: version clean rollup schema
 	@echo "[smcom stable dumpsessions] ==================="
 	rsync --exclude '*.pyc' --exclude '__pycache__' --delete -r src/ root@$(DEPLOY_HOST):/usr/local/lib/asm_stable.new
 	ssh root@$(DEPLOY_HOST) "/root/scripts/sheltermanager_sync_asm.py syncstable dumpsessions"
 
-smcom-stable-tgz: version clean minify
+smcom-stable-tgz: version clean rollup schema
 	@echo "[smcom stable tgz] ======================"
 	rsync --exclude '*.pyc' --exclude '__pycache__' --delete -r src/ root@$(DEPLOY_HOST):/usr/local/lib/asm_stable.new
 	ssh root@$(DEPLOY_HOST) "/root/scripts/sheltermanager_sync_asm.py syncstabletgz"
@@ -103,8 +114,9 @@ pot:
 
 translation:
 	@echo "[translation] ======================"
-	cd po && ./po_to_python.py
+	cd po && ./po_to_python_js.py
 	mv po/locale*py src/asm3/locales
+	mv po/locale*js src/static/js/locales
 
 icons:
 	@echo "[icons] ==========================="
@@ -126,12 +138,6 @@ tests:
 	@echo "[tests] ========================"
 	cd test && python3 suite.py
 	rm -f test/*.pyc && rm -rf test/__pycache__
-
-testsdb:
-	@echo "[testsdb] ========================"
-	mysql -u root -proot -e "DROP DATABASE IF EXISTS asmunittest"
-	mysql -u root -proot -e "CREATE DATABASE asmunittest"
-	cd src && python3 cron.py maint_db_install MYSQL localhost 3306 root root asmunittest asmunittest
 
 deps:
 	@echo "[deps] ========================="
