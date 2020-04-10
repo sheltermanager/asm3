@@ -74,7 +74,7 @@ def get_cached_response(cache_key, path):
     if not CACHE_SERVICE_RESPONSES: return None
     response = asm3.cachedisk.get(cache_key, path)
     if response is None or len(response) != 4: return None
-    asm3.al.debug("GET: %s (%d bytes)" % (cache_key, len(response[2])), "service.get_cached_response")
+    asm3.al.debug("GET: %s (%d bytes)" % (cache_key, len(response[3])), "service.get_cached_response")
     return response
 
 def set_cached_response(cache_key, path, mime, clientage, serverage, content):
