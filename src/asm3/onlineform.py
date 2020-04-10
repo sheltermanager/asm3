@@ -606,11 +606,11 @@ def insert_onlineformincoming_from_form(dbo, post, remoteip):
     flags = post["flags"]
     submitteremail = ""
     emailsubmissionto = ""
-    firstnamelabel = ""
+    firstnamefld = ""
     firstname = ""
-    lastnamelabel = ""
+    lastnamefld = ""
     lastname = ""
-    animalnamelabel = ""
+    animalnamefld = ""
     animalname = ""
     images = []
     post.data["formreceived"] = "%s %s" % (asm3.i18n.python2display(dbo.locale, posteddate), asm3.i18n.format_time(posteddate))
@@ -643,13 +643,13 @@ def insert_onlineformincoming_from_form(dbo, post, remoteip):
                             emailsubmissionto = v.strip()
                         if fieldname == "firstname": 
                             firstname = v.strip()
-                            firstnamelabel = label
+                            firstnamefld = fieldname
                         if fieldname == "lastname": 
                             lastname = v.strip()
-                            lastnamelabel = label
+                            lastnamefld = fieldname
                         if fieldname == "animalname" or fieldname == "reserveanimalname":
                             animalname = v.strip()
-                            animalnamelabel = label
+                            animalnamefld = fieldname
                         # If it's a raw markup field, store the markup as the value
                         if fieldtype == FIELDTYPE_RAWMARKUP:
                             v = "RAW::%s" % tooltip
@@ -686,13 +686,13 @@ def insert_onlineformincoming_from_form(dbo, post, remoteip):
 
     # If we have first and last name, include them in the preview
     if firstname != "" and lastname != "":
-        preview.append("%s: %s" % (firstnamelabel, firstname))
-        preview.append("%s: %s" % (lastnamelabel, lastname))
+        preview.append("%s: %s" % (firstnamefld, firstname))
+        preview.append("%s: %s" % (lastnamefld, lastname))
         fieldssofar += 2
 
     # If we have an animal name, include that too
     if animalname != "":
-        preview.append("%s: %s" % (animalnamelabel, animalname))
+        preview.append("%s: %s" % (animalnamefld, animalname))
         fieldssofar += 1
 
     for fld in get_onlineformincoming_detail(dbo, collationid):
