@@ -25,6 +25,7 @@ cscope:
 
 clean:
 	@echo "[clean] ============================"
+	rm -f src/static/js/min/*.min.js
 	rm -f cscope*
 	rm -f tags
 	rm -f src/*.pyc
@@ -61,7 +62,7 @@ rollup: minify
 	@echo "[rollup] ============================="
 	scripts/rollup/rollup.py > src/static/js/min/rollup.min.js
 
-schema:
+schema: 
 	# Generate a JSON schema of the database for use when editing
 	# SQL within the program
 	@echo "[schema] ============================="
@@ -81,12 +82,12 @@ compilepy:
 	@echo "[compile python] ====================="
 	flake8 --config=scripts/flake8 src/*.py src/asm3/*.py src/asm3/dbms/*.py src/asm3/publishers/*.py
 
-smcom-dev: version clean schema
+smcom-dev: version clean rollup schema
 	@echo "[smcom dev us17] ===================="
 	rsync --progress --exclude '*.pyc' --exclude '__pycache__' --delete -r src/ root@$(DEPLOY_HOST):/usr/local/lib/asm_dev.new
 	ssh root@$(DEPLOY_HOST) "/root/scripts/sheltermanager_sync_asm.py syncdev only_us17"
 
-smcom-dev-all: version clean schema
+smcom-dev-all: version clean rollup schema
 	@echo "[smcom dev all] ======================"
 	rsync --progress --exclude '*.pyc' --exclude '__pycache__' --delete -r src/ root@$(DEPLOY_HOST):/usr/local/lib/asm_dev.new
 	ssh root@$(DEPLOY_HOST) "/root/scripts/sheltermanager_sync_asm.py syncdev"
@@ -144,6 +145,5 @@ deps:
 	apt-get install python3 python3-pip python3-pil python3-mysqldb python3-psycopg2 python3-memcache python3-requests python3-reportlab
 	apt-get install python3-sphinx python3-sphinx-rtd-theme texlive-latex-base texlive-latex-extra
 	apt-get install exuberant-ctags nodejs flake8 imagemagick wkhtmltopdf
-	#apt-get install python3-webpy # Broken in buster, use below for now
-	pip3 install git+https://github.com/webpy/webpy#egg=web.py
+	apt-get install python3-webpy # See README for fix
 
