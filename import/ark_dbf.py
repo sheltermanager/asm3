@@ -1,7 +1,6 @@
 #!/usr/bin/python3
 
 import asm
-from dbfread import DBF
 
 """
 Import script for ARK DBF databases, covers people, animals, payments, events, licences and complaints
@@ -10,7 +9,7 @@ Import script for ARK DBF databases, covers people, animals, payments, events, l
 Last changed: 23rd Dec, 2019
 """
 
-PATH = "/home/robin/tmp/asm3_import_data/ark_im2058"
+PATH = "/home/robin/tmp/asm3_import_data/ark_em2030"
 START_ID = 100
 
 owners = []
@@ -52,7 +51,7 @@ owners.append(uo)
 uo.OwnerSurname = "Unknown Owner"
 uo.OwnerName = uo.OwnerSurname
 
-for p in DBF("%s/NAMES.DBF" % PATH):
+for p in asm.read_dbf("%s/NAMES.DBF" % PATH):
     o = asm.Owner()
     owners.append(o)
     ppo[p["ID"]] = o
@@ -68,7 +67,7 @@ for p in DBF("%s/NAMES.DBF" % PATH):
     comments += "\n%s" % asm.nulltostr(p["NAMES_TXT"])
     o.Comments = comments
 
-for d in DBF("%s/ANIMALS.DBF" % PATH):
+for d in asm.read_dbf("%s/ANIMALS.DBF" % PATH):
     a = asm.Animal()
     animals.append(a)
     ppa[d["ID_NUM"]] = a
@@ -149,7 +148,7 @@ for d in DBF("%s/ANIMALS.DBF" % PATH):
             a.ActiveMovementType = m.MovementType
             a.ActiveMovementDate = m.MovementDate
 
-for p in DBF("%s/PAYMENTS.DBF" % PATH):
+for p in asm.read_dbf("%s/PAYMENTS.DBF" % PATH):
     od = asm.OwnerDonation()
     ownerdonations.append(od)
     if p["PMNT_ID"] in ppo:
@@ -161,7 +160,7 @@ for p in DBF("%s/PAYMENTS.DBF" % PATH):
         if p["PMNT_CODE"] == "ADP":
             od.DonationTypeID = 2
 
-for l in DBF("%s/LICENSE.DBF" % PATH):
+for l in asm.read_dbf("%s/LICENSE.DBF" % PATH):
     ol = asm.OwnerLicence()
     ownerlicences.append(ol)
     if l["OWNER_ID"] in ppo:
@@ -175,7 +174,7 @@ for l in DBF("%s/LICENSE.DBF" % PATH):
         ol.ExpiryDate = l["LIC_EXDATE"]
         if ol.ExpiryDate is None: ol.ExpiryDate = asm.parse_date("2015-01-01", "%Y-%m-%d")
 
-for c in DBF("%s/CMPLAINT.DBF" % PATH, encoding="cp1252"):
+for c in asm.read_dbf("%s/CMPLAINT.DBF" % PATH):
     ac = asm.AnimalControl()
     animalcontrol.append(ac)
     if c["FROM_ID"] != "" and c["FROM_ID"] in ppo:
@@ -200,7 +199,7 @@ for c in DBF("%s/CMPLAINT.DBF" % PATH, encoding="cp1252"):
     if c["CMPL_TEXT"] != "": comments += "\nCompleted: %s" % c["CMPL_TEXT"]
     ac.CallNotes = comments
 
-for c in DBF("%s/AN_EVNTS.DBF" % PATH, encoding="cp1252"):
+for c in asm.read_dbf("%s/AN_EVNTS.DBF" % PATH):
     if c["ID_NUM"] not in ppa: continue
     a = ppa[c["ID_NUM"]]
     l = asm.Log()

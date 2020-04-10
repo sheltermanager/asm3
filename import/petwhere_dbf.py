@@ -1,7 +1,6 @@
 #!/usr/bin/python
 
 import asm
-from dbfread import DBF
 
 """
 Import script for Petwhere DBF databases, 
@@ -42,14 +41,14 @@ print "DELETE FROM ownerdonation WHERE ID >= 100;"
 
 # pre-load address and residences mappings
 addresses = {}
-for a in DBF("%s/ADDRESS.DBF" % PATH):
+for a in asm.read_dbf("%s/ADDRESS.DBF" % PATH):
     addresses[a["ADDRESSNO"]] = a
 
 residences = {}
-for r in DBF("%s/RESIDENC.DBF" % PATH):
+for r in asm.read_dbf("%s/RESIDENC.DBF" % PATH):
     residences[r["PERSONNO"]] = r
 
-for p in DBF("%s/PERSON.DBF" % PATH):
+for p in asm.read_dbf("%s/PERSON.DBF" % PATH):
     if p["PERSONNO"] == "New": continue
     o = asm.Owner()
     owners.append(o)
@@ -75,7 +74,7 @@ for p in DBF("%s/PERSON.DBF" % PATH):
         comments += "\nDOB: %s" % p["DOB"]
     o.Comments = comments
 
-for d in DBF("%s/ANIMAL.DBF" % PATH):
+for d in asm.read_dbf("%s/ANIMAL.DBF" % PATH):
     if d["ANIMALNO"] == "New": continue
     a = asm.Animal()
     animals.append(a)
@@ -137,7 +136,7 @@ for d in DBF("%s/ANIMAL.DBF" % PATH):
     a.Archived = 1
 
 # Mark the orignal owner of the animal based on the ownershp table
-for s in DBF("%s/OWNERSHP.DBF" % PATH):
+for s in asm.read_dbf("%s/OWNERSHP.DBF" % PATH):
     a = None
     o = None
     if ppo.has_key(s["PERSONNO"]):
@@ -147,7 +146,7 @@ for s in DBF("%s/OWNERSHP.DBF" % PATH):
     if a is not None and o is not None and s["RELATIONSH"].find("Owner") != -1:
         a.OriginalOwnerID = o.ID
 
-for p in DBF("%s/PAYMENTS.DBF" % PATH):
+for p in asm.read_dbf("%s/PAYMENTS.DBF" % PATH):
     od = asm.OwnerDonation()
     ownerdonation.append(od)
     if ppo.has_key(p["PERSONNO"]):
@@ -162,7 +161,7 @@ for p in DBF("%s/PAYMENTS.DBF" % PATH):
         if p["CHARGEAMT"] > 0: od.DonationPaymentID = 3 # CC
         if p["CHECKREF"].strip() != "": od.ChequeNumber = p["CHECKREF"]
 
-for l in DBF("%s/LICENSES.DBF" % PATH):
+for l in asm.read_dbf("%s/LICENSES.DBF" % PATH):
     if l["LUPTDT"] is None or l["LICENSENO"].strip() == "": continue
     if ppa.has_key(l["ANIMALNO"]):
         a = ppa[l["ANIMALNO"]]
@@ -195,7 +194,7 @@ typemap = {
 }
 
 try:
-    for c in DBF("%s/COMPLNTS.DBF" % PATH, encoding="latin1"):
+    for c in asm.read_dbf("%s/COMPLNTS.DBF" % PATH, encoding="latin1"):
         ac = asm.AnimalControl()
         animalcontrol.append(ac)
         if c["COMPLANANT"] != "Unspecified" and ppo.has_key(c["COMPLANANT"]):
@@ -225,7 +224,7 @@ try:
 except:
     pass # we had a corrupted file from a customer, that's why this is here
 
-for c in DBF("%s/BITES.DBF" % PATH, encoding="latin1"):
+for c in asm.read_dbf("%s/BITES.DBF" % PATH, encoding="latin1"):
     ac = asm.AnimalControl()
     animalcontrol.append(ac)
     if c["VICTIMNO"] != "Unspecified" and ppo.has_key(c["VICTIMNO"]):

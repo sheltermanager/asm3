@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-import asm, datetime, dbfread, os
+import asm, datetime, os
 
 """
 Import script for Shelterpro databases in DBF format
@@ -41,7 +41,7 @@ class ExtraFieldParser(dbfread.FieldParser):
             return data
 
 def open_dbf(name):
-    return dbfread.DBF("%s/%s.DBF" % (PATH, name.upper()), encoding="latin1", parserclass=ExtraFieldParser)
+    return asm.read_dbf(name)
 
 def gettype(animaldes):
     spmap = {

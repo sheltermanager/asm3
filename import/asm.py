@@ -52,6 +52,8 @@ Also has some useful helper functions for reading CSVs and parsing values, eg:
 import csv, datetime, re, time
 import os, sys, base64, requests
 
+import dbfread
+
 if sys.version_info[0] > 2: # PYTHON3
     import urllib.request as urllib2
     from io import StringIO
@@ -214,6 +216,18 @@ def csv_to_list_cols(fname, cols, strip = False, remove_control = False, upperca
             row = {k.upper(): v for k, v in row.iteritems()}
         o.append(row)
     return o
+
+""" when faced with a field type it doesn't understand, dbfread can produce an error
+    'Unknown field type xx'. This parser returns anything unrecognised as binary data """
+class ExtraFieldParser(dbfread.FieldParser):
+    def parse(self, field, data):
+        try:
+            return dbfread.FieldParser.parse(self, field, data)
+        except ValueError:
+            return data
+
+def read_dbf(name, encoding="cp1252"):
+    return dbfread.DBF(name, encoding=encoding, parserclass=ExtraFieldParser)
 
 def cint(s):
     try:
