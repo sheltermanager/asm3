@@ -1,7 +1,7 @@
 
 import asm3.al
 import asm3.audit
-import asm3.cachedisk
+import asm3.cachemem
 import asm3.configuration
 import asm3.db
 import asm3.dbupdate
@@ -460,7 +460,7 @@ def get_active_users(dbo):
     Returns a list of active users on the system
     USERNAME, SINCE, MESSAGES
     """
-    return asm3.utils.nulltostr(asm3.cachedisk.get("activity", dbo.database))
+    return asm3.utils.nulltostr(asm3.cachemem.get("activity_%s" % dbo.database))
 
 def logout(session, remoteip = ""):
     """
@@ -480,7 +480,7 @@ def update_user_activity(dbo, user, timenow = True):
     If timenow is False, removes this user from the active list.
     """
     if dbo is None or user is None: return
-    ac = asm3.utils.nulltostr(asm3.cachedisk.get("activity", dbo.database))
+    ac = asm3.utils.nulltostr(asm3.cachemem.get("activity_%s" % dbo.database))
     # Prune old activity and remove the current user
     nc = []
     for a in ac.split(","):
@@ -503,7 +503,7 @@ def update_user_activity(dbo, user, timenow = True):
     # Add this user with the new time 
     if timenow: 
         nc.append("%s=%s" % (user, asm3.i18n.format_date("%Y-%m-%d %H:%M:%S", asm3.i18n.now(dbo.timezone))))
-    asm3.cachedisk.put("activity", dbo.database, ",".join(nc), 3600 * 8)
+    asm3.cachemem.put("activity_%s" % dbo.database, ",".join(nc), 3600 * 8)
 
 def get_personid(dbo, user):
     """
