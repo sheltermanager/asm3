@@ -6,8 +6,8 @@ import time
 # flake8: noqa - we have a lot of locales and this is convenient
 from asm3.locales import *
 
-VERSION = "44u [Fri 10 Apr 08:45:14 BST 2020]"
-BUILD = "04100845"
+VERSION = "44u [Fri 10 Apr 09:05:40 BST 2020]"
+BUILD = "04100905"
 
 DMY = ( "%d/%m/%Y", "%d/%m/%y" )
 HDMY = ( "%d-%m-%Y", "%d-%m-%y" )
@@ -77,6 +77,7 @@ locale_maps = {
     "en_CR":    ( "English", "Costa Rica", DMY, "&#8353;", PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ".", "," ),
     "en_CY":    ( "English", "Cyprus", DMY, EURO, PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ".", "," ),
     "en_ES":    ( "English", "Spain", DMY, EURO, PLURAL_ENGLISH, CURRENCY_SUFFIX, 2, ",", " " ),
+    "en_HK":    ( "English", "Hong Kong", HDMY, DOLLAR, PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ".", "," ),
     "en_KH":    ( "English", "Cambodia", DMY, DOLLAR, PLURAL_ENGLISH, CURRENCY_SUFFIX, 2, ".", "," ),
     "en_KW":    ( "English", "Kuwait", DMY, "KD", PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ".", "," ),
     "en_KY":    ( "English", "Caymen Islands", DMY, DOLLAR, PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ".", "," ),
@@ -149,7 +150,7 @@ def real_locale(locale = "en"):
     #   en_CA (Canada)
     #   en_GB (UK)
     if locale in ("en_AE", "en_BE", "en_BG", "en_BQ", "en_CH", "en_CN", "en_CY", "en_ES", 
-        "en_IE", "en_IN", "en_JP", "en_KH", "en_LB", "en_LU", "en_MY", "en_NA", "en_PH", 
+        "en_HK", "en_IE", "en_IN", "en_JP", "en_KH", "en_LB", "en_LU", "en_MY", "en_NA", "en_PH", 
         "en_QA", "en_TH", "en_TW", "en_TW2", "en_VN", "en_ZA"):
         locale = "en_GB"
     if locale in ("en_AW", "en_BH", "en_CO", "en_CR", "en_KW", "en_KY", "en_IL", "en_LB", 
