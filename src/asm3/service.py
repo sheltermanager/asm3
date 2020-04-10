@@ -50,7 +50,7 @@ def flood_protect(method, account, remoteip, ttl, message = ""):
     """
     cache_key = "m%sr%s" % (method, str(remoteip).replace(", ", "")) # X-FORWARDED-FOR can be a list, remove commas
     v = asm3.cachedisk.get(cache_key, account)
-    #asm3.al.debug("method: %s, remoteip: %s, ttl: %d, cacheval: %s" % (method, remoteip, ttl, v), "service.flood_protect")
+    asm3.al.debug("method: %s, remoteip: %s, ttl: %d, cacheval: %s" % (method, remoteip, ttl, v), "service.flood_protect")
     if v is None:
         asm3.cachedisk.put(cache_key, account, "x", ttl)
     else:
@@ -74,7 +74,7 @@ def get_cached_response(cache_key, path):
     if not CACHE_SERVICE_RESPONSES: return None
     response = asm3.cachedisk.get(cache_key, path)
     if response is None or len(response) != 4: return None
-    #asm3.al.debug("GET: %s (%d bytes)" % (cache_key, len(response[2])), "service.get_cached_response")
+    asm3.al.debug("GET: %s (%d bytes)" % (cache_key, len(response[2])), "service.get_cached_response")
     return response
 
 def set_cached_response(cache_key, path, mime, clientage, serverage, content):
@@ -88,7 +88,7 @@ def set_cached_response(cache_key, path, mime, clientage, serverage, content):
     """
     response = (mime, clientage, serverage, content)
     if not CACHE_SERVICE_RESPONSES: return response
-    #asm3.al.debug("PUT: %s (%d bytes)" % (cache_key, len(content)), "service.set_cached_response")
+    asm3.al.debug("PUT: %s (%d bytes)" % (cache_key, len(content)), "service.set_cached_response")
     asm3.cachedisk.put(cache_key, path, response, serverage)
     return response
 
