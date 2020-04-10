@@ -6,8 +6,8 @@ import time
 # flake8: noqa - we have a lot of locales and this is convenient
 from asm3.locales import *
 
-VERSION = "44u [Fri 10 Apr 08:35:11 BST 2020]"
-BUILD = "04100835"
+VERSION = "44u [Fri 10 Apr 08:45:14 BST 2020]"
+BUILD = "04100845"
 
 DMY = ( "%d/%m/%Y", "%d/%m/%y" )
 HDMY = ( "%d-%m-%Y", "%d-%m-%y" )
@@ -148,10 +148,12 @@ def real_locale(locale = "en"):
     #   en_AU (Australia)
     #   en_CA (Canada)
     #   en_GB (UK)
-    if locale in ("en_AE", "en_BE", "en_BG", "en_BQ", "en_CH", "en_CY", "en_ES", "en_IE", "en_IN", "en_KH", "en_LU", 
-                  "en_MY", "en_NA", "en_PH", "en_TH", "en_TW", "en_TW2", "en_VN", "en_ZA"):
+    if locale in ("en_AE", "en_BE", "en_BG", "en_BQ", "en_CH", "en_CN", "en_CY", "en_ES", 
+        "en_IE", "en_IN", "en_JP", "en_KH", "en_LB", "en_LU", "en_MY", "en_NA", "en_PH", 
+        "en_QA", "en_TH", "en_TW", "en_TW2", "en_VN", "en_ZA"):
         locale = "en_GB"
-    if locale in ("en_BH", "en_CO", "en_KY", "en_KW", "en_IL", "en_LB", "en_MX"):
+    if locale in ("en_AW", "en_BH", "en_CO", "en_CR", "en_KW", "en_KY", "en_IL", "en_LB", 
+        "en_MX"):
         locale = "en"
     if locale in ("en_NZ",):
         locale = "en_AU"
