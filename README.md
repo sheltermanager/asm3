@@ -40,7 +40,7 @@ if you deploy your application with mod_wsgi, uwsgi, etc.
 You can fix it manually by editing
 /usr/lib/python3/dist-packages/web/httpserver.py and adding the new line
 self.directory = os.getcwd() at line 198 at the bottom of the __init__
-function:
+function, like this:
 
 ```
 class StaticApp(SimpleHTTPRequestHandler):
@@ -49,7 +49,7 @@ class StaticApp(SimpleHTTPRequestHandler):
         self.headers = []
         self.environ = environ
         self.start_response = start_response
-        **self.directory = os.getcwd()**
+        self.directory = os.getcwd()
 ```
 
 You do not need this fix if you are deploying your application to run with
