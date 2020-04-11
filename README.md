@@ -58,12 +58,14 @@ If you did not, copy scripts/asm3.conf.example to /etc/asm3.conf and then edit i
 
 Set the following values:
 
+```
 asm3_dbtype = (POSTGRESQL, MYSQL or SQLITE)
 asm3_dbhost = (hostname of your server)
 asm3_dbport = (port of your server if using tcp)
 asm3_dbusername = 
 asm3_dbpassword = 
 asm3_dbname = (name of the database, can be file path if type is SQLITE)
+```
 
 If you are using MySQL or POSTGRESQL, make sure you have issued a CREATE DATABASE
 and the database already exists (however the schema can be empty).
