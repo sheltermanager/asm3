@@ -192,6 +192,7 @@ class ASMEndpoint(object):
     get_permissions = ( )  # List of permissions needed to GET
     post_permissions = ( ) # List of permissions needed to POST
     check_logged_in = True # Check whether we have a valid login
+    user_activity = True   # Hitting this endpoint qualifies as user activity
     login_url = "login"    # The url to go to if not logged in
 
     def _params(self):
@@ -243,8 +244,8 @@ class ASMEndpoint(object):
             if path.startswith("/"): path = path[1:]
             query = str(web.ctx.query)
             raise web.seeother("%s/%s?target=%s%s" % (BASE_URL, loginpage, path, query))
-        else:
-            # update the last user activity
+        elif self.user_activity:
+            # update the last user activity if logged in
             asm3.users.update_user_activity(session.dbo, session.user)
 
     def content(self, o):
@@ -445,6 +446,7 @@ class database(ASMEndpoint):
 
 class image(ASMEndpoint):
     url = "image"
+    user_activity = False
 
     def content(self, o):
         try:
@@ -474,6 +476,7 @@ class image(ASMEndpoint):
 class configjs(ASMEndpoint):
     url = "config.js"
     check_logged_in = False
+    user_activity = False
 
     def content(self, o):
         # db is the database name and ts is the date/time the config was
@@ -568,6 +571,7 @@ class jserror(ASMEndpoint):
     Errors are logged and emailed to the admin if EMAIL_ERRORS is set.
     """
     url = "jserror"
+    user_activity = False
 
     def post_all(self, o):
         dbo = o.dbo

@@ -1,6 +1,7 @@
 44
 ================
 
+11/04/20 Don't update user activity on some endpoints for performance
 10/04/20 Use field names for online form preview to save space
 10/04/20 Remove foster only restriction on coordinator/fosterer shelterview
 10/04/20 Add Hong Kong locale
