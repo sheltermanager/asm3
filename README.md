@@ -85,7 +85,7 @@ Set up Apache to serve the application.
 The version 44 Debian package has libapache2-mod-wsgi-py3 as a dependency and
 will install Apache 2 if you don't already have it available. 
 
-For older versions of, install Apache with:
+For older versions, install Apache with:
 
 ```
 apt-get install apache2 libapache2-mod-wsgi-py3
