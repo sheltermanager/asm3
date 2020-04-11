@@ -35,13 +35,26 @@ Debian python3-webpy
 
 The version of web.py currently packaged in Debian Buster (and possibly Ubuntu)
 as python3-webpy has a fault. It cannot serve static content and will only work
-with mod_wsgi, uwsgi, etc.
+if you deploy your application with mod_wsgi, uwsgi, etc.
 
 You can fix it manually by editing
-/usr/lib/python3/dist-packages/web/httpserver.py and adding this new line at
-line 198 at the bottom of the __init__ function:
+/usr/lib/python3/dist-packages/web/httpserver.py and adding the new line
+self.directory = os.getcwd() at line 198 at the bottom of the __init__
+function:
 
-self.directory = os.getcwd()
+```
+class StaticApp(SimpleHTTPRequestHandler):
+    """WSGI application for serving static files."""
+    def __init__(self, environ, start_response):
+        self.headers = []
+        self.environ = environ
+        self.start_response = start_response
+        **self.directory = os.getcwd()**
+```
+
+You do not need this fix if you are deploying your application to run with
+Apache as recommended, this only applies to running a standalone server via
+code.py from the command line.
 
 Logging
 -------
