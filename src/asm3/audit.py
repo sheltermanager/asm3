@@ -150,11 +150,11 @@ def insert_deletion(dbo, username, tablename, linkid, parentlinks, restoresql):
 def move(dbo, username, tablename, linkid, parentlinks, description):
     action(dbo, MOVE, username, tablename, linkid, parentlinks, description)
 
-def login(dbo, username, remoteip = ""):
-    action(dbo, LOGIN, username, "users", 0, "", "login from %s" % remoteip)
+def login(dbo, username, remoteip = "", useragent = ""):
+    action(dbo, LOGIN, username, "users", 0, "", "login from %s [%s]" % (remoteip, useragent))
 
-def logout(dbo, username, remoteip = ""):
-    action(dbo, LOGOUT, username, "users", 0, "", "logout from %s" % remoteip)
+def logout(dbo, username, remoteip = "", useragent = ""):
+    action(dbo, LOGOUT, username, "users", 0, "", "logout from %s [%s]" % (remoteip, useragent))
 
 def action(dbo, action, username, tablename, linkid, parentlinks, description):
     """

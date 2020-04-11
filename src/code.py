@@ -743,7 +743,7 @@ class mobile_login(ASMEndpoint):
         return asm3.mobile.page_login(o.locale, o.post)
 
     def post_all(self, o):
-        self.redirect( asm3.mobile.login(o.post, o.session, self.remote_ip(), PATH) )
+        self.redirect( asm3.mobile.login(o.post, o.session, self.remote_ip(), self.user_agent(), PATH) )
 
 class mobile_logout(ASMEndpoint):
     url = "mobile_logout"
@@ -756,7 +756,7 @@ class mobile_logout(ASMEndpoint):
         elif MULTIPLE_DATABASES and o.dbo is not None and o.dbo.alias is not None:
             url = "mobile_login?smaccount=" + o.dbo.alias
         asm3.users.update_user_activity(o.dbo, o.user, False)
-        asm3.users.logout(o.session, self.remote_ip())
+        asm3.users.logout(o.session, self.remote_ip(), self.user_agent())
         self.redirect(url)
 
 class mobile_post(ASMEndpoint):
@@ -992,7 +992,7 @@ class login(ASMEndpoint):
         return s
 
     def post_all(self, o):
-        return asm3.users.web_login(o.post, session, self.remote_ip(), PATH)
+        return asm3.users.web_login(o.post, session, self.remote_ip(), self.user_agent(), PATH)
 
     def post_reset(self, o):
         dbo = asm3.db.get_database(o.post["database"])
@@ -1029,7 +1029,7 @@ class login_jsonp(ASMEndpoint):
 
     def content(self, o):
         self.content_type("text/javascript")
-        return "%s({ response: '%s' })" % (o.post["callback"], asm3.users.web_login(o.post, o.session, self.remote_ip(), PATH))
+        return "%s({ response: '%s' })" % (o.post["callback"], asm3.users.web_login(o.post, o.session, self.remote_ip(), self.user_agent(), PATH))
 
 class login_splash(ASMEndpoint):
     url = "login_splash"
@@ -1056,7 +1056,7 @@ class logout(ASMEndpoint):
         elif MULTIPLE_DATABASES and o.dbo is not None and o.dbo.alias is not None:
             url = "login?smaccount=" + o.dbo.alias
         asm3.users.update_user_activity(o.dbo, o.user, False)
-        asm3.users.logout(o.session, self.remote_ip())
+        asm3.users.logout(o.session, self.remote_ip(), self.user_agent())
         self.redirect(url)
 
 class reset_password(ASMEndpoint):

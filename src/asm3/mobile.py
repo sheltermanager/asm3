@@ -1387,11 +1387,11 @@ def handler_stocklocation(l, homelink, locationname, sl, su):
     h.append("</body></html>")
     return "\n".join(h)
 
-def login(post, session, remoteip, path):
+def login(post, session, remoteip, useragent, path):
     """
     Handles the login post
     """
-    url = asm3.users.web_login(post, session, remoteip, path)
+    url = asm3.users.web_login(post, session, remoteip, useragent, path)
     if url == "FAIL" or url == "DISABLED":
         return "mobile_login"
     else:
