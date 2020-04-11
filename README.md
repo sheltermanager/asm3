@@ -7,10 +7,10 @@ See the file LICENSE in this directory for details.
 Dependencies
 ------------
 
-If you are using a Debian-based system (eg: Ubuntu), then the following
-will install all the software you need to run ASM. If you are using the 
-sheltermanager3 deb package it already has dependencies set for these
-and will install them for you.
+If you are using a Debian-based system (eg: Ubuntu), then the following will
+install all the software you need to build and run ASM. If you are using the
+sheltermanager3 deb package it already has dependencies set for these and will
+install them for you.
 
 * apt-get install make python3 python3-webpy python3-pil python3-mysqldb python3-psycopg2
 
@@ -54,26 +54,21 @@ Configuring ASM
 
 If you used the debian package, edit the file /etc/asm3.conf
 
-If you did not, copy scripts/asm3.conf.example to /etc/asm3.conf and edit it.
+If you did not, copy scripts/asm3.conf.example to /etc/asm3.conf and then edit it.
 
 Set the following values:
 
 asm3_dbtype = (POSTGRESQL, MYSQL or SQLITE)
-
 asm3_dbhost = (hostname of your server)
-
 asm3_dbport = (port of your server if using tcp)
-
 asm3_dbusername = 
-
 asm3_dbpassword = 
-
 asm3_dbname = (name of the database, can be file path if type is SQLITE)
 
 If you are using MySQL or POSTGRESQL, make sure you have issued a CREATE DATABASE
 and the database already exists (however the schema can be empty).
 
-ASM will look for it's config file in this order until it finds one:
+ASM will look for its config file in this order until it finds one:
 
 1. In an environment variable called ASM3_CONF
 2. In $INSTALL_DIR/asm3.conf (the folder asm3 python modules are installed in)
@@ -85,37 +80,43 @@ Setting up Apache/WSGI
 
 Set up Apache to serve the application.
 
-1. Install apache2 with mod_wsgi. Make sure mod_wsgi is enabled.
+The version 44 Debian package has libapache2-mod-wsgi-py3 as a dependency and
+will install Apache 2 if you don't already have it available. 
 
-   * apt-get install apache2 libapache2-mod-wsgi-py3
-   * a2enmod wsgi
-
-2. Add the WSGI config to your Apache site config. The default site config
-   as installed by Debian is in /etc/apache2/sites-available/default
-   
-   Add this at the bottom of the file (outside of the VirtualHost tag).
+For older versions of, install Apache with:
 
 ```
-WSGIScriptAlias /asm /usr/lib/sheltermanager3/code.py/
-Alias /asm/static /usr/lib/sheltermanager3/static
-AddType text/html .py
+apt-get install apache2 libapache2-mod-wsgi-py3
+```
+
+As of version 44, the package will also include a site file
+/etc/apache2/sites-available/asm3.conf with the following content:
+
+```
+WSGIScriptAlias /asm3 /usr/lib/sheltermanager3/code.py/
+Alias /asm3/static /usr/lib/sheltermanager3/static
 <Directory /usr/lib/sheltermanager3>
     Require all granted
 </Directory>
 ```
 
-   This assumes that your ASM3 is located at /usr/lib/sheltermanager3
-   (the default for our Debian package)
+For older versions, you will have to create this file manually.
 
-3. Restart Apache and navigate to http://localhost/asm
+Once Apache is installed and you have the site file, to activate ASM, run:
 
-    * service apache2 restart
+```
+a2enmod wsgi
+a2ensite asm3
+service apache2 restart
+```
+
+You should now be able to visit ASM at http://localhost/asm3
 
 Creating the default database
 -----------------------------
 
-After the ASM service has started, visit http://localhost/asm/database
-to create the database schema (hitting just http://localhost/asm will
+After the ASM service has started, visit http://localhost/asm3/database
+to create the database schema (hitting just http://localhost/asm3 will
 redirect there if no database has been setup yet).
 
 Daily tasks
@@ -126,7 +127,7 @@ should be run a few hours before people will start inputting for the
 day.
 
 These routines include recalculating denormalised data such as animal age, time
-on shelter, updating the waiting list and publishing to the internet.
+on shelter, updating the waiting list and publishing data externally.
 
 To run them, make sure the environment is setup as before and run
 python3 cron.py all

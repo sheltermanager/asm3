@@ -8,6 +8,7 @@ rm -rf sheltermanager3
 # Remake the paths
 mkdir -p sheltermanager3/usr/share/doc/sheltermanager3
 mkdir -p sheltermanager3/usr/lib/sheltermanager3
+mkdir -p sheltermanager3/etc/apache2/sites-available
 mkdir -p sheltermanager3/etc/apt/sources.list.d
 mkdir -p sheltermanager3/etc/cron.daily
 mkdir -p sheltermanager3/etc/init.d
@@ -24,6 +25,13 @@ cp ../../README.md sheltermanager3/usr/share/doc/sheltermanager3
 
 # Add the example config
 cp ../../scripts/asm3.conf.example sheltermanager3/etc/asm3.conf
+
+# Add apache config
+echo "WSGIScriptAlias /asm3 /usr/lib/sheltermanager3/code.py/
+Alias /asm3/static /usr/lib/sheltermanager3/static
+<Directory /usr/lib/sheltermanager3>
+    Require all granted
+</Directory>" > sheltermanager3/etc/apache2/sites-available/asm3.conf
 
 # Add logging
 echo "local3.*                          -/var/log/asm3.log" > sheltermanager3/etc/rsyslog.d/asm3.conf
@@ -53,8 +61,8 @@ Section: contrib
 Priority: optional
 Architecture: all
 Essential: no
-Depends: debconf, python3-webpy, python3-pil, python3-memcache, python3-requests, python3-mysqldb, python3-psycopg2
-Suggests: apache2, libapache2-mod-wsgi-py3, mysql-server, imagemagick, wkhtmltopdf, python3-sqlite
+Depends: debconf, memcached, libapache2-mod-wsgi-py3, python3-webpy, python3-pil, python3-memcache, python3-requests, python3-mysqldb, python3-psycopg2, python3-sqlite
+Suggests: mysql-server, imagemagick, wkhtmltopdf
 Installed-Size: `du -s -k sheltermanager3 | awk '{print$1}'`
 Maintainer: ASM Team [info@sheltermanager.com]
 Provides: sheltermanager3
