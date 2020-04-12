@@ -643,13 +643,13 @@ def insert_onlineformincoming_from_form(dbo, post, remoteip):
                             emailsubmissionto = v.strip()
                         if fieldname == "firstname": 
                             firstname = v.strip()
-                            firstnamefld = fieldname
+                            firstnamefld = asm3.i18n._("First", l)
                         if fieldname == "lastname": 
                             lastname = v.strip()
-                            lastnamefld = fieldname
+                            lastnamefld = asm3.i18n._("Last", l)
                         if fieldname == "animalname" or fieldname == "reserveanimalname":
                             animalname = v.strip()
-                            animalnamefld = fieldname
+                            animalnamefld = asm3.i18n._("Name", l)
                         # If it's a raw markup field, store the markup as the value
                         if fieldtype == FIELDTYPE_RAWMARKUP:
                             v = "RAW::%s" % tooltip

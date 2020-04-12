@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ASM3\n"
 "Report-Msgid-Bugs-To: robin@sheltermanager.com\n"
-"POT-Creation-Date: 2020-03-30 11:41+0000\n"
+"POT-Creation-Date: 2020-04-12 10:35+0000\n"
 "Last-Translator: Robin Rawson-Tetley <robin@sheltermanager.com>\n"
 "Language-Team: en <robin@sheltermanager.com>\n"
 "Language: en\n"
@@ -4928,6 +4928,10 @@ msgstr ""
 msgid "Finnish Spitz"
 msgstr ""
 
+#: onlineform.py
+msgid "First"
+msgstr ""
+
 #: options.js
 msgid "First Last"
 msgstr ""
@@ -6435,6 +6439,10 @@ msgstr ""
 msgid "Large"
 msgstr ""
 
+#: onlineform.py
+msgid "Last"
+msgstr ""
+
 #: options.js
 msgid "Last First"
 msgstr ""
@@ -7448,7 +7456,7 @@ msgstr ""
 msgid "NNN or NN = number unique for this type of animal for this year"
 msgstr ""
 
-#: html.py mobile.py person.py wordprocessor.py animal_new.js
+#: html.py mobile.py person.py onlineform.py wordprocessor.py animal_new.js
 #: common_personchooser.js medicalprofile.js animal_find_results.js
 #: waitinglist_results.js medical.js onlineforms.js animal_find.js
 #: onlineform_incoming.js stocklevel.js onlineform.js roles.js animal.js
@@ -8166,7 +8174,7 @@ msgstr ""
 msgid "Owl"
 msgstr ""
 
-#: dbupdate.py animal_new.js move_reclaim.js
+#: dbupdate.py animal_new.js move_reclaim.js animal.js
 msgid "Owner"
 msgstr ""
 
@@ -9125,6 +9133,10 @@ msgstr ""
 
 #: code.py batch.js
 msgid "Regenerate monthly animal figures for"
+msgstr ""
+
+#: code.py batch.js
+msgid "Regenerate person flags column"
 msgstr ""
 
 #: code.py batch.js
@@ -11320,9 +11332,15 @@ msgstr ""
 msgid "The shelter reference number"
 msgstr ""
 
-#: login.js change_password.js
+#: change_password.js
 msgid ""
 "The sheltermanager.com admin account password cannot be changed here, please "
+"visit {0}"
+msgstr ""
+
+#: login.js
+msgid ""
+"The sheltermanager.com admin account password cannot be reset here, please "
 "visit {0}"
 msgstr ""
 
