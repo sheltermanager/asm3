@@ -38,6 +38,8 @@ description
     The description for the lost, found or waiting list animal
 reason
     The reason the person is putting their animal on the waiting list
+type
+   The animal type for the animal. ASM will try and guess based on the text which one is meant. Use a lookup field to limit the choices to known items.
 species
     The species of the animal. ASM will try and guess based on the text which one is meant. Use a lookup field to limit the choices to known items (or use the Species field type)
 breed
