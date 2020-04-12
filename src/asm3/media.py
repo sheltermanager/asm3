@@ -553,7 +553,7 @@ def update_file_content(dbo, username, mid, content):
     """
     Updates the dbfs content for the file pointed to by media record mid
     """
-    m = dbo.first_row(dbo.query_int("SELECT DBFSID, MediaName FROM media WHERE ID=?", [mid]))
+    m = dbo.first_row(dbo.query("SELECT DBFSID, MediaName FROM media WHERE ID=?", [mid]))
     if m is None: raise IOError("media id %s does not exist" % mid)
     if m.DBFSID == 0: raise IOError("cannot update contents of DBFSID 0")
     asm3.dbfs.put_string_id(dbo, m.DBFSID, m.MEDIANAME, content)
