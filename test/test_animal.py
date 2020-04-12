@@ -76,7 +76,6 @@ class TestAnimal(unittest.TestCase):
         assert True == asm3.animal.get_has_animals(base.get_dbo())
         assert True == asm3.animal.get_has_animal_on_shelter(base.get_dbo())
         asm3.animal.get_animals_owned_by(base.get_dbo(), 1)
-        asm3.animal.get_preferred_web_media_name(base.get_dbo(), self.nid)
 
     def test_get_animals_namecode(self):
         assert len(asm3.animal.get_animals_namecode(base.get_dbo())) > 0

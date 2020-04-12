@@ -1720,21 +1720,6 @@ def get_satellite_counts(dbo, animalid):
         "FROM animal a WHERE a.ID = ?", \
         (asm3.media.ANIMAL, asm3.diary.ANIMAL, asm3.log.ANIMAL, animalid))
 
-def get_preferred_web_media_name(dbo, animalid):
-    """
-    Returns the name of the preferred media image for publishing to the
-    web. If no preferred is found, returns the first image available for
-    the animal. If the animal has no images, an empty string is returned.
-    """
-    mrec = dbo.query("SELECT * FROM media WHERE LinkID = ? AND LinkTypeID = 0 AND MediaMimeType = 'image/jpeg'", [animalid])
-    for m in mrec:
-        if m.websitephoto == 1:
-            return m.medianame
-    if len(mrec) > 0:
-        return mrec[0].medianame
-    else:
-        return ""
-
 def get_random_name(dbo, sex = 0):
     """
     Returns a random animal name from the database. It will ignore names
@@ -2703,9 +2688,9 @@ def clone_animal(dbo, username, animalid):
         }, generateID=False)
         # Now clone the dbfs item pointed to by this media item if it's a file
         if me.mediatype == asm3.media.MEDIATYPE_FILE:
-            filedata = asm3.dbfs.get_string(dbo, me.medianame)
+            filedata = asm3.dbfs.get_string_id(dbo, me.DBFSID)
             dbfsid = asm3.dbfs.put_string(dbo, medianame, "/animal/%d" % nid, filedata)
-            dbo.execute("UPDATE media SET DBFSID = ?, MediaSize = ? WHERE ID = ?", ( dbfsid, len(filedata), mediaid ))
+            dbo.update("media", mediaid, { "DBFSID": dbfsid, "MediaSize": len(filedata) })
     # Movements
     for mv in dbo.query("SELECT * FROM adoption WHERE AnimalID = ?", [animalid]):
         nadid = dbo.get_id("adoption")

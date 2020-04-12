@@ -1,6 +1,7 @@
 44
 ================
 
+12/04/20 Use DBFSID when accessing media for speed/accuracy
 11/04/20 Audit user agent on login/logout #772
 11/04/20 Don't update user activity on some endpoints for performance
 10/04/20 Use field names for online form preview to save space

@@ -153,7 +153,7 @@ def get_media_file_data(dbo, mid):
     mm = get_media_by_id(dbo, mid)
     if len(mm) == 0: return (None, "", "", "")
     mm = mm[0]
-    return mm.DATE, mm.MEDIANAME, mm.MEDIAMIMETYPE, asm3.dbfs.get_string(dbo, mm.MEDIANAME)
+    return mm.DATE, mm.MEDIANAME, mm.MEDIAMIMETYPE, asm3.dbfs.get_string_id(dbo, mm.DBFSID)
 
 def get_image_file_data(dbo, mode, iid, seq = 0, justdate = False):
     """
@@ -177,11 +177,11 @@ def get_image_file_data(dbo, mode, iid, seq = 0, justdate = False):
     def mrec(mm):
         if len(mm) == 0: return nopic()
         if justdate: return mm[0].DATE
-        return (mm[0].DATE, asm3.dbfs.get_string(dbo, mm[0].MEDIANAME))
+        return (mm[0].DATE, asm3.dbfs.get_string_id(dbo, mm[0].DBFSID))
     def thumb_mrec(mm):
         if len(mm) == 0: return thumb_nopic()
         if justdate: return mm[0].DATE
-        return (mm[0].DATE, scale_image(asm3.dbfs.get_string(dbo, mm[0].MEDIANAME), asm3.configuration.thumbnail_size(dbo)))
+        return (mm[0].DATE, scale_image(asm3.dbfs.get_string_id(dbo, mm[0].DBFSID), asm3.configuration.thumbnail_size(dbo)))
 
     if mode == "animal":
         if seq == 0:
@@ -551,9 +551,12 @@ def has_signature(dbo, mid):
 
 def update_file_content(dbo, username, mid, content):
     """
-    Updates the dbfs content for the file pointed to by id
+    Updates the dbfs content for the file pointed to by media record mid
     """
-    asm3.dbfs.replace_string(dbo, content, get_name_for_id(dbo, mid))
+    m = dbo.first_row(dbo.query_int("SELECT DBFSID, MediaName FROM media WHERE ID=?", [mid]))
+    if m is None: raise IOError("media id %s does not exist" % mid)
+    if m.DBFSID == 0: raise IOError("cannot update contents of DBFSID 0")
+    asm3.dbfs.put_string_id(dbo, m.DBFSID, m.MEDIANAME, content)
     dbo.update("media", mid, { "Date": dbo.now(), "MediaSize": len(content) }, username, setLastChanged=False)
 
 def update_media_notes(dbo, username, mid, notes):
@@ -571,7 +574,7 @@ def delete_media(dbo, username, mid):
     mr = dbo.first_row(dbo.query("SELECT * FROM media WHERE ID=?", [mid]))
     if not mr: return
     try:
-        asm3.dbfs.delete(dbo, mr.MEDIANAME)
+        asm3.dbfs.delete_id(dbo, mr.DBFSID)
     except Exception as err:
         asm3.al.error(str(err), "media.delete_media", dbo)
     dbo.delete("media", mid, username)
@@ -600,11 +603,10 @@ def rotate_media(dbo, username, mid, clockwise = True):
     if ext != ".jpg" and ext != ".jpeg":
         raise asm3.utils.ASMError("Image is not a JPEG file, cannot rotate")
     # Load the image data
-    path = get_dbfs_path(mr.LINKID, mr.LINKTYPEID)
-    imagedata = asm3.dbfs.get_string(dbo, mn, path)
+    imagedata = asm3.dbfs.get_string_id(dbo, mr.DBFSID)
     imagedata = rotate_image(imagedata, clockwise)
     # Store it back in the dbfs and add an entry to the audit trail
-    asm3.dbfs.put_string(dbo, mn, path, imagedata)
+    asm3.dbfs.put_string_id(dbo, mr.DBFSID, mn, imagedata)
     # Update the date stamp on the media record
     dbo.update("media", mid, { "Date": dbo.now(), "MediaSize": len(imagedata) })
     asm3.audit.edit(dbo, username, "media", mid, "", "media id %d rotated, clockwise=%s" % (mid, str(clockwise)))
@@ -808,18 +810,16 @@ def scale_all_animal_images(dbo):
     Goes through all animal images in the database and scales
     them to the current incoming media scaling factor.
     """
-    mp = dbo.query("SELECT ID, MediaName FROM media WHERE MediaMimeType = 'image/jpeg' AND LinkTypeID = 0")
+    mp = dbo.query("SELECT ID, DBFSID, MediaName FROM media WHERE MediaMimeType = 'image/jpeg' AND LinkTypeID = 0")
     for i, m in enumerate(mp):
-        filepath = dbo.query_string("SELECT Path FROM dbfs WHERE Name = ?", [m.MEDIANAME])
-        name = str(m.MEDIANAME)
         inputfile = tempfile.NamedTemporaryFile(suffix=".jpg", delete=False)
         outputfile = tempfile.NamedTemporaryFile(suffix=".jpg", delete=False)
-        odata = asm3.dbfs.get_string(dbo, name)
+        odata = asm3.dbfs.get_string_id(dbo, m.DBFSID)
         inputfile.write(odata)
         inputfile.flush()
         inputfile.close()
         outputfile.close()
-        asm3.al.debug("scaling %s (%d of %d)" % (name, i, len(mp)), "media.scale_all_animal_images", dbo)
+        asm3.al.debug("scaling %s (%d of %d)" % (m.MEDIANAME, i, len(mp)), "media.scale_all_animal_images", dbo)
         try:
             scale_image_file(inputfile.name, outputfile.name, asm3.configuration.incoming_media_scaling(dbo))
         except Exception as err:
@@ -829,7 +829,7 @@ def scale_all_animal_images(dbo):
         os.unlink(inputfile.name)
         os.unlink(outputfile.name)
         # Update the image file data
-        asm3.dbfs.put_string(dbo, name, filepath, data)
+        asm3.dbfs.put_string_id(dbo, m.DBFSID, m.MEDIANAME, data)
         dbo.update("media", m.ID, { "MediaSize": len(data) })
     asm3.al.debug("scaled %d images" % len(mp), "media.scale_all_animal_images", dbo)
 
@@ -838,21 +838,19 @@ def scale_all_odt(dbo):
     Goes through all odt files attached to records in the database and 
     scales them down (throws away images and objects so only the text remains to save space)
     """
-    mo = dbo.query("SELECT ID, MediaName FROM media WHERE MediaMimeType = 'application/vnd.oasis.opendocument.text'")
+    mo = dbo.query("SELECT ID, DBFSID, MediaName FROM media WHERE MediaMimeType = 'application/vnd.oasis.opendocument.text'")
     total = 0
     for i, m in enumerate(mo):
-        name = str(m.MEDIANAME)
-        asm3.al.debug("scaling %s (%d of %d)" % (name, i, len(mo)), "media.scale_all_odt", dbo)
-        odata = asm3.dbfs.get_string(dbo, name)
+        asm3.al.debug("scaling %s (%d of %d)" % (m.MEDIANAME, i, len(mo)), "media.scale_all_odt", dbo)
+        odata = asm3.dbfs.get_string_id(dbo, m.DBFSID)
         if odata == "":
-            asm3.al.error("file %s does not exist" % name, "media.scale_all_odt", dbo)
+            asm3.al.error("file %s does not exist" % m.MEDIANAME, "media.scale_all_odt", dbo)
             continue
-        path = dbo.query_string("SELECT Path FROM dbfs WHERE Name = ?", [name])
         ndata = scale_odt(odata)
         if len(ndata) < 512:
-            asm3.al.error("scaled odt %s came back at %d bytes, abandoning" % (name, len(ndata)), "scale_all_odt", dbo)
+            asm3.al.error("scaled odt %s came back at %d bytes, abandoning" % (m.MEDIANAME, len(ndata)), "scale_all_odt", dbo)
         else:
-            asm3.dbfs.put_string(dbo, name, path, ndata)
+            asm3.dbfs.put_string_id(dbo, m.DBFSID, m.MEDIANAME, ndata)
             dbo.update("media", m.ID, { "MediaSize": len(ndata) }) 
             total += 1
     asm3.al.debug("scaled %d of %d odts" % (total, len(mo)), "media.scale_all_odt", dbo)
@@ -861,16 +859,15 @@ def scale_all_pdf(dbo):
     """
     Goes through all PDFs in the database and attempts to scale them down.
     """
-    mp = dbo.query("SELECT ID, MediaName FROM media WHERE MediaMimeType = 'application/pdf' ORDER BY ID DESC")
+    mp = dbo.query("SELECT ID, DBFSID, MediaName FROM media WHERE MediaMimeType = 'application/pdf' ORDER BY ID DESC")
     total = 0
     for i, m in enumerate(mp):
-        dbfsid = dbo.query_string("SELECT ID FROM dbfs WHERE Name = ?", [m.MEDIANAME])
-        odata = asm3.dbfs.get_string_id(dbo, dbfsid)
+        odata = asm3.dbfs.get_string_id(dbo, m.DBFSID)
         data = scale_pdf(odata)
         asm3.al.debug("scaling %s (%d of %d): old size %d, new size %d" % (m.MEDIANAME, i, len(mp), len(odata), len(data)), "check_and_scale_pdfs", dbo)
         # Store the new compressed PDF file data - if it's smaller
         if len(data) < len(odata):
-            asm3.dbfs.put_string_id(dbo, dbfsid, m.MEDIANAME, data)
+            asm3.dbfs.put_string_id(dbo, m.DBFSID, m.MEDIANAME, data)
             dbo.update("media", m.ID, { "MediaSize": len(data) })
             total += 1
     asm3.al.debug("scaled %d of %d pdfs" % (total, len(mp)), "media.scale_all_pdf", dbo)
