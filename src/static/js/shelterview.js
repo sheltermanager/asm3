@@ -20,7 +20,7 @@ $(function() {
             h.push('data-animal="' + a.ID + '" ');
             h.push('data-location="' + a.SHELTERLOCATION + '" ');
             h.push('data-unit="' + a.SHELTERLOCATIONUNIT + '" ');
-            h.push('data-person="' + a.CURRENTOWNERID + '" ')
+            h.push('data-person="' + a.CURRENTOWNERID + '" ');
             h.push('>');
             h.push(html.animal_link_thumb(a, {showunit: showunit}));
             h.push('</div>');

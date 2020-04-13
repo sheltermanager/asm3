@@ -2371,6 +2371,9 @@ def update_animals_from_form(dbo, username, post):
                 "returncategory"        : str(default_return_reason)
             }
             asm3.movement.insert_movement_from_form(dbo, username, asm3.utils.PostedData(move_dict, dbo.locale))
+    if post.integer("logtytpe") != -1:
+        for animalid in post.integer_list("animals"):
+            asm3.log.add_log(dbo, username, asm3.log.ANIMAL, animalid, post.integer("logtype"), post["lognotes"], post.date("logdate") )
     # Record the user as making the last change to this record and create audit records for the changes
     dbo.execute("UPDATE animal SET LastChangedBy = %s, LastChangedDate = %s WHERE ID IN (%s)" % (dbo.sql_value(username), dbo.sql_now(), post["animals"]))
     if len(aud) > 0:

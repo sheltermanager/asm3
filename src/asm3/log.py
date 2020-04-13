@@ -14,12 +14,16 @@ ANIMALCONTROL = 6
 ASCENDING = 0
 DESCENDING = 1
 
-def add_log(dbo, username, linktype, linkid, logtypeid, logtext):
+def add_log(dbo, username, linktype, linkid, logtypeid, logtext, logdatetime = None):
+    """
+    Adds a log entry. If logdatetime is blank, the date/time now is used.
+    """
+    if logdatetime is None: logdatetime = dbo.now()
     return dbo.insert("log", {
         "LogTypeID":        logtypeid,
         "LinkID":           linkid,
         "LinkType":         linktype,
-        "Date":             dbo.now(),
+        "Date":             logdatetime,
         "Comments":         logtext
     }, username)
 

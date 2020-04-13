@@ -1292,11 +1292,13 @@ class animal_bulk(JSONEndpoint):
         dbo = o.dbo
         return {
             "ynun": asm3.lookups.get_ynun(dbo),
+            "ynunk": asm3.lookups.get_ynunk(dbo),
             "animaltypes": asm3.lookups.get_animal_types(dbo),
             "autolitters": asm3.animal.get_active_litters_brief(dbo),
             "flags": asm3.lookups.get_animal_flags(dbo),
             "entryreasons": asm3.lookups.get_entryreasons(dbo),
             "internallocations": asm3.lookups.get_internal_locations(dbo, o.locationfilter, o.siteid),
+            "logtypes": asm3.lookups.get_log_types(dbo),
             "movementtypes": asm3.lookups.get_movement_types(dbo)
         }
 

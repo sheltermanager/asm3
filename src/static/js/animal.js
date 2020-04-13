@@ -50,7 +50,7 @@ $(function() {
                 '<div>',
                 '<table width="100%">',
                 '<tr>',
-                '<!-- left table -->',
+                // left table
                 '<td width="40%">',
                 '<table>',
                 '<tr>',
@@ -128,12 +128,12 @@ $(function() {
                 '</td>',
                 '</tr>',
                 '</table>',
-                '<!-- right table -->',
+                // right table
                 '<td>',
                 '<table>',
                 '<tr>',
                 '<td>',
-                '<!-- second column-->',
+                // second column
                 '<table class="additionaltarget" data="to2">',
                 '<tr>',
                 '<td><label for="species">' + _("Species") + '</label></td>',
@@ -199,15 +199,15 @@ $(function() {
                 '<td><label for="fee">' + _("Adoption Fee") + '</label></td>',
                 '<td><input id="fee" data-json="FEE" data-post="fee" class="asm-currencybox asm-textbox" /></td>',
                 '</tr>',
-                '<!-- end second column -->',
+                // end second column
                 '</table>',
                 '</td>',
                 '</tr>',
-                '<!-- end right table -->',
+                // end right table
                 '</table>',
                 '</td>',
 
-                '<!-- end outer table -->',
+                // end outer table
                 '</tr>',
                 '</table>',
                 '</div>'
@@ -218,11 +218,11 @@ $(function() {
             return [
                 '<h3><a href="#">' + _("Entry") + '</a></h3>',
                 '<div>',
-                '<!-- outer table -->',
+                // outer table
                 '<table width="100%">',
                 '<tr>',
                 '<td width="50%">',
-                '<!-- left table -->',
+                // left table
                 '<table width="100%">',
                 '<tr id="coordinatorrow">',
                 '<td valign="top" class="bottomborder">',
@@ -249,7 +249,7 @@ $(function() {
                 '</td>',
                 '</tr>',
                 '</table>',
-                '<!-- right table -->',
+                // right table
                 '</td>',
                 '<td width="50%">',
                 '<table width="100%" class="additionaltarget" data="to4">',
@@ -378,7 +378,7 @@ $(function() {
                 '</td>',
                 '</tr>',
                 '</table>',
-                '<!-- end outer table -->',
+                // end outer table
                 '</td>',
                 '</tr>',
                 '</table>',
@@ -389,11 +389,11 @@ $(function() {
         render_health_and_identification: function() {
             return [
                 '<h3><a href="#">' + _("Health and Identification") + ' <span id="tabhealth" style="display: none" class="asm-icon asm-icon-health"></span></a></h3><div>',
-                '<!-- Outer table -->',
+                // outer table
                 '<table width="100%">',
                 '<tr>',
                 '<td>',
-                '<!-- Tested flags -->',
+                // tested flags
                 '<table>',
                 '<tr id="microchiprow">',
                 '<td nowrap="nowrap">',
@@ -500,9 +500,9 @@ $(function() {
                 '<label for="specialneeds">' + _("Special Needs") + '</label>',
                 '</td>',
                 '</tr>',
-                '<!-- end flag table -->',
+                // end flag table
                 '</table>',
-                '<!-- separate table for additional fields -->',
+                // separate table for additional fields
                 '<table class="additionaltarget" data="to5">',
                 '<tr id="rabiestagrow">',
                 '<td><label for="rabiestag">' + _("Rabies Tag") + '</label></td>',
@@ -512,7 +512,7 @@ $(function() {
                 '</table>',
                 '</td>',
                 '<td>',
-                '<!-- health problems/vet fields -->',
+                // health problems/vet fields
                 '<label for="healthproblems">' + _("Health Problems") + '</label><br />',
                 '<textarea id="healthproblems" title="' + html.title(_("Any health problems the animal has")) + '" data-json="HEALTHPROBLEMS" data-post="healthproblems" class="asm-textarea" rows="4"></textarea>',
                 '<table>',
@@ -535,7 +535,7 @@ $(function() {
                 '</td>',
                 '</tr>',
                 '</table>',
-                '<!-- end outer table -->',
+                // end outer table
                 '</td>',
                 '</tr>',
                 '</table>',
@@ -587,11 +587,11 @@ $(function() {
             return [
                 '<h3><a href="#">' + _("Notes") + '</a></h3>',
                 '<div>',
-                '<!-- Outer table -->',
+                // outer table
                 '<table width="100%">',
                 '<tr>',
                 '<td>',
-                '<!-- Comments table -->',
+                // comments table
                 '<table>',
                 '<tr id="markingsrow">',
                 '<td>',
@@ -622,7 +622,7 @@ $(function() {
                 '</table>',
                 '</td>',
                 '<td>',
-                '<!-- Good with table -->',
+                // good with table
                 '<table class="additionaltarget" data="to3">',
                 '<tr class="goodwith">',
                 '<td>',
@@ -664,9 +664,9 @@ $(function() {
                 '</select>',
                 '</td>',
                 '</tr>',
-                '<!-- end good with -->',
+                // end good with
                 '</table>',
-                '<!-- end outer table -->',
+                // end outer table
                 '</td>',
                 '</tr>',
                 '</table>',
