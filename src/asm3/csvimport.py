@@ -467,7 +467,7 @@ def csvimport(dbo, csvdata, encoding = "utf8", user = "", createmissinglookups =
                 p["emailaddress"] = gks(row, "ORIGINALOWNEREMAIL")
                 try:
                     if checkduplicates:
-                        dups = asm3.person.get_person_similar(dbo, p["emailaddress"], p["surname"], p["forenames"], p["address"])
+                        dups = asm3.person.get_person_similar(dbo, p["emailaddress"], p["mobiletelephone"], p["surname"], p["forenames"], p["address"])
                         if len(dups) > 0:
                             a["originalowner"] = str(dups[0]["ID"])
                     if "originalowner" not in a:
@@ -565,7 +565,7 @@ def csvimport(dbo, csvdata, encoding = "utf8", user = "", createmissinglookups =
                 if "PERSONMATCHCOMMENTSCONTAIN" in cols: p["matchcommentscontain"] = gks(row, "PERSONMATCHCOMMENTSCONTAIN")
             try:
                 if checkduplicates:
-                    dups = asm3.person.get_person_similar(dbo, p["emailaddress"], p["surname"], p["forenames"], p["address"])
+                    dups = asm3.person.get_person_similar(dbo, p["emailaddress"], p["mobiletelephone"], p["surname"], p["forenames"], p["address"])
                     if len(dups) > 0:
                         personid = dups[0].ID
                         # Merge flags and any extra details
@@ -772,7 +772,7 @@ def csvimport_paypal(dbo, csvdata, donationtypeid, donationpaymentid, flags, use
         p["emailaddress"] = v(r, "From Email Address")
         p["flags"] = flags
         try:
-            dups = asm3.person.get_person_similar(dbo, p["emailaddress"], p["surname"], p["forenames"], p["address"])
+            dups = asm3.person.get_person_similar(dbo, p["emailaddress"], p["hometelephone"], p["surname"], p["forenames"], p["address"])
             if len(dups) > 0:
                 personid = dups[0]["ID"]
                 # Merge flags and any extra details

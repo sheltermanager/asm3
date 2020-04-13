@@ -849,6 +849,10 @@ class Database(object):
             x += 1
         return queries
 
+    def sql_atoi(self, fieldexpr):
+        """ Removes all but the numbers from fieldexpr """
+        return self.sql_regexp_replace(fieldexpr, r"[^0123456789]", "")
+
     def sql_cast(self, expr, newtype):
         """ Writes a database independent cast for expr to newtype """
         return "CAST(%s AS %s)" % (expr, newtype)
@@ -889,6 +893,12 @@ class Database(object):
     def sql_limit(self, x):
         """ Writes a limit clause to X items """
         return "LIMIT %s" % x
+
+    def sql_regexp_replace(self, fieldexpr, pattern="?", replacestr="?"):
+        """ Writes a regexp replace expression that replaces characters matching pattern with replacestr """
+        if pattern != "?": pattern = "'%s'" % pattern
+        if replacestr != "?": replacestr = "'%s'" % self.escape(replacestr)
+        return "REGEXP_REPLACE(%s, %s, %s)" % (fieldexpr, pattern, replacestr)
 
     def sql_replace(self, fieldexpr, findstr="?", replacestr="?"):
         """ Writes a replace expression that finds findstr in fieldexpr, replacing with replacestr """

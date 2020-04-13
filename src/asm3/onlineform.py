@@ -975,8 +975,10 @@ def create_person(dbo, username, collationid):
     personid = 0
     if "surname" in d and "forenames" in d and "address" in d:
         demail = ""
+        dmobile = ""
         if "emailaddress" in d: demail = d["emailaddress"]
-        similar = asm3.person.get_person_similar(dbo, demail, d["surname"], d["forenames"], d["address"])
+        if "mobiletelephone" in d: dmobile = d["mobiletelephone"]
+        similar = asm3.person.get_person_similar(dbo, demail, dmobile, d["surname"], d["forenames"], d["address"])
         if len(similar) > 0:
             personid = similar[0].ID
             # Merge flags and any extra details

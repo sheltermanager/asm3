@@ -21,5 +21,9 @@ class DatabaseSQLite3(Database):
         """ SQLite does not have a GREATEST() function, MAX() should be used instead """
         return "MAX(%s)" % ",".join(items)
 
+    def sql_regexp_replace(self, fieldexpr, pattern="?", replacestr="?"):
+        """ SQLite does not have a regexp replace function. Do nothing. """
+        return fieldexpr
+
     def switch_param_placeholder(self, sql):
         return sql # SQLite3 driver wants ? placeholders rather than usual %s so leave as is

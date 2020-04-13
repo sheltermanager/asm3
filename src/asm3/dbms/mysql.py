@@ -65,6 +65,12 @@ class DatabaseMySQL(Database):
         """ Writes a database independent cast for expr to a char """
         return self.sql_cast(expr, "CHAR")
 
+    def sql_regexp_replace(self, fieldexpr, pattern="?", replacestr="?"):
+        """ Writes a regexp replace expression that replaces characters matching pattern with replacestr """
+        if pattern != "?": pattern = "'%s'" % pattern
+        if replacestr != "?": replacestr = "'%s'" % self.escape(replacestr)
+        return "REGEXP_REPLACE(%s, %s, %s)" % (fieldexpr, pattern, replacestr)
+
     def sql_zero_pad_left(self, fieldexpr, digits):
         """ Writes a function that zero pads an expression with zeroes to digits """
         return "LPAD(%s, %s, '0')" % (fieldexpr, digits)

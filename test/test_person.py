@@ -31,7 +31,7 @@ class TestPerson(unittest.TestCase):
         asm3.person.get_person(base.get_dbo(), self.nid)
 
     def test_get_person_similar(self):
-        assert len(asm3.person.get_person_similar(base.get_dbo(), "", "Testing", "Test", "123 street")) > 0
+        assert len(asm3.person.get_person_similar(base.get_dbo(), "", "", "Testing", "Test", "123 street")) > 0
 
     def test_get_person_name(self):
         assert "" != asm3.person.get_person_name(base.get_dbo(), self.nid)

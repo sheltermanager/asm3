@@ -84,9 +84,9 @@ def embellish_adoption_warnings(dbo, p):
         p.INCIDENT = warn.INCIDENT
     return p
 
-def get_person_similar(dbo, email = "", surname = "", forenames = "", address = ""):
+def get_person_similar(dbo, email = "", mobile = "", surname = "", forenames = "", address = ""):
     """
-    Returns people with similar email, names and addresses to those supplied.
+    Returns people with similar email, mobile, names and addresses to those supplied.
     """
     # Consider the first word rather than first address line - typically house
     # number/name and unlikely to be the same for different people
@@ -99,11 +99,14 @@ def get_person_similar(dbo, email = "", surname = "", forenames = "", address = 
     surname = surname.replace("'", "`").lower().strip()
     email = email.replace("'", "`").lower().strip()
     eq = []
+    mq = []
     if email != "" and email.find("@") != -1 and email.find(".") != -1:
         eq = dbo.query(get_person_query(dbo) + " WHERE LOWER(o.EmailAddress) LIKE ?", [email])
+    if mobile != "":
+        mq = dbo.query(get_person_query(dbo) + " WHERE %s LIKE ?" % dbo.sql_atoi("o.MobileTelephone") , [str(asm3.utils.atoi(mobile))])
     per = dbo.query(get_person_query(dbo) + " WHERE LOWER(o.OwnerSurname) LIKE ? AND " \
         "LOWER(o.OwnerForeNames) LIKE ? AND LOWER(o.OwnerAddress) LIKE ?", (surname, forenames + "%", address + "%"))
-    return eq + per
+    return eq + mq + per
 
 def get_person_name(dbo, personid):
     """
@@ -500,7 +503,7 @@ def get_person_find_advanced(dbo, criteria, username, includeStaff = False, incl
     ss.add_str("town", "o.OwnerTown")
     ss.add_str("county", "o.OwnerCounty")
     ss.add_str("postcode", "o.OwnerPostcode")
-    ss.add_str_triplet("phone", "o.HomeTelephone", "o.WorkTelephone", "o.MobileTelephone")
+    ss.add_phone_triplet("phone", "o.HomeTelephone", "o.WorkTelephone", "o.MobileTelephone")
     ss.add_id("jurisdiction", "o.JurisdictionID")
     ss.add_str("email", "o.EmailAddress")
     ss.add_words("homecheck", "o.HomeCheckAreas")
