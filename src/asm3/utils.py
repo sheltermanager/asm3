@@ -250,6 +250,7 @@ class AdvancedSearchBuilder(object):
         """ Adds a clause for a posted value to one of three telephone fields """
         if self.post[cfield] != "":
             x = asm3.utils.atoi(self.post[cfield])
+            if x < 999: return # need at least 4 digits for searching phone numbers
             x = "%%%s%%" % x
             self.ands.append("(%s LIKE ? OR %s LIKE ? OR %s LIKE ?)" % (self.dbo.sql_atoi(field), self.dbo.sql_atoi(field2), self.dbo.sql_atoi(field3)))
             self.values.append(x)
@@ -311,8 +312,10 @@ class SimpleSearchBuilder(object):
 
     def add_field_phone(self, field):
         """ Adds a phone number field to search """
+        x = asm3.utils.atoi(self.qlike)
+        if x < 999: return # need at least 4 digits for searching phone numbers
         self.ors.append("%s LIKE ?" % self.dbo.sql_atoi(field))
-        self.values.append("%%%s%%" % asm3.utils.atoi(self.qlike))
+        self.values.append("%%%s%%" % x)
 
     def add_fields(self, fieldlist):
         """ Add clauses for many fields in one list """
