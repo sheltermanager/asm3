@@ -1,6 +1,7 @@
 44
 ================
 
+13/04/20 Assign IDs and link labels correctly on online forms
 13/04/20 Deduplicate owners on cell/mobile phone number #436
 13/04/20 Strip non-numbers from phone number fields and query in search #776
 13/04/20 Add log creation to bulk change animals #773
