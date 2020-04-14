@@ -404,6 +404,7 @@ def animal_tags(dbo, a, includeAdditional=True, includeCosts=True, includeDiet=T
         "ANIMALPERMANENTFOSTER" : yes_no(l, a["HASPERMANENTFOSTER"] == 1),
         "ANIMALATRETAILER"      : yes_no(l, a["ACTIVEMOVEMENTTYPE"] == asm3.movement.RETAILER),
         "ANIMALISRESERVED"      : yes_no(l, a["HASACTIVERESERVE"] == 1),
+        "RESERVATIONDATE"       : python2display(l, a["RESERVATIONDATE"]),
         "ADOPTIONID"            : a["ACTIVEMOVEMENTADOPTIONNUMBER"],
         "OUTCOMEDATE"           : asm3.utils.iif(a["DECEASEDDATE"] is None, python2display(l, a["ACTIVEMOVEMENTDATE"]), python2display(l, a["DECEASEDDATE"])),
         "OUTCOMETYPE"           : asm3.utils.iif(a["ARCHIVED"] == 1, a["DISPLAYLOCATIONNAME"], "")

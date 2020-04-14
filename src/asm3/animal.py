@@ -125,12 +125,13 @@ def get_animal_query(dbo):
         "ro.MobileTelephone AS ReservedOwnerMobileTelephone, " \
         "ro.EmailAddress AS ReservedOwnerEmailAddress, " \
         "rj.JurisdictionName AS ReservedOwnerJurisdiction, " \
+        "ar.ReservationDate AS ReservationDate, " \
+        "ars.StatusName AS ReservationStatusName, " \
         "ao.OwnerName AS AdoptionCoordinatorName, " \
         "ao.HomeTelephone AS AdoptionCoordinatorHomeTelephone, " \
         "ao.WorkTelephone AS AdoptionCoordinatorWorkTelephone, " \
         "ao.MobileTelephone AS AdoptionCoordinatorMobileTelephone, " \
         "ao.EmailAddress AS AdoptionCoordinatorEmailAddress, " \
-        "ars.StatusName AS ReservationStatusName, " \
         "er.ReasonName AS EntryReasonName, " \
         "dr.ReasonName AS PTSReasonName, " \
         "il.LocationName AS ShelterLocationName, " \
