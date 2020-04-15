@@ -22,7 +22,8 @@ class DatabaseSQLite3(Database):
         return "MAX(%s)" % ",".join(items)
 
     def sql_regexp_replace(self, fieldexpr, pattern="?", replacestr="?"):
-        """ SQLite does not have a regexp replace function. Do nothing. """
+        """ SQLite does not have a regexp replace function. Do nothing but at least warn the user. """
+        print("WARNING: SQLite cannot regexp_replace('%s', '%s', '%s')"% (fieldexpr, pattern, replacestr))
         return fieldexpr
 
     def switch_param_placeholder(self, sql):

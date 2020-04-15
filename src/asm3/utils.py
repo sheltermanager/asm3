@@ -249,9 +249,9 @@ class AdvancedSearchBuilder(object):
     def add_phone_triplet(self, cfield, field, field2, field3): 
         """ Adds a clause for a posted value to one of three telephone fields """
         if self.post[cfield] != "":
-            x = asm3.utils.atoi(self.post[cfield])
-            if x < 99999: return # need at least 6 digits for searching phone numbers
-            x = "%%%s%%" % x
+            x = atoi(self.post[cfield])
+            if x < 999: return # 4 digits required or likely to be far too many results
+            x = "%%%s%%" % atoi(self.post[cfield])
             self.ands.append("(%s LIKE ? OR %s LIKE ? OR %s LIKE ?)" % (self.dbo.sql_atoi(field), self.dbo.sql_atoi(field2), self.dbo.sql_atoi(field3)))
             self.values.append(x)
             self.values.append(x)
@@ -311,9 +311,15 @@ class SimpleSearchBuilder(object):
         self.values.append(value)
 
     def add_field_phone(self, field):
-        """ Adds a phone number field to search """
-        x = asm3.utils.atoi(self.qlike)
-        if x < 99999: return # need at least 6 digits for searching phone numbers
+        """ Adds a phone number field to search 
+            Simple search needs at least 6 digits for searching phone numbers to
+            avoid phone numbers being returned when the intention was an owner code or 
+            address (US postal addresses frequently have 4-5 digit house numbers).
+            We do nothing if the search term does not start with a number.
+        """
+        if len(self.q) == 0 or not is_numeric(self.q[0]): return
+        x = atoi(self.q)
+        if x < 99999: return # minimum 6 digits for searching phone numbers
         self.ors.append("%s LIKE ?" % self.dbo.sql_atoi(field))
         self.values.append("%%%s%%" % x)
 
@@ -434,9 +440,7 @@ def atoi(s):
     """
     Converts only the numeric portion of a string to an integer
     """
-    x = re.findall('\d+', s)
-    if x is None or len(x) == 0: return 0
-    return cint(x[0])
+    return cint(re.sub(r'[^0-9]', "", s))
 
 def cint(s):
     """
