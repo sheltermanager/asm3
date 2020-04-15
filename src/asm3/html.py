@@ -1208,6 +1208,7 @@ def options_person_flags(dbo):
     l = dbo.locale
     pf = asm3.lookups.get_person_flags(dbo)
     s += option(_("ACO", l), "aco")
+    s += option(_("Adopter", l), "adopter")
     s += option(_("Banned", l), "banned")
     s += option(_("Adoption Coordinator", l), "coordinator")
     s += option(_("Deceased", l), "deceased")
