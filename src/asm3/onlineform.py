@@ -646,10 +646,10 @@ def insert_onlineformincoming_from_form(dbo, post, remoteip):
                             emailsubmissionto = v.strip()
                         if fieldname == "firstname": 
                             firstname = v.strip()
-                            firstnamelabel = asm3.i18n._("First", l)
+                            firstnamelabel = label
                         if fieldname == "lastname": 
                             lastname = v.strip()
-                            lastnamelabel = asm3.i18n._("Last", l)
+                            lastnamelabel = label
                         if fieldname == "animalname" or fieldname == "reserveanimalname":
                             animalname = v.strip()
                             animalnamelabel = asm3.i18n._("Name", l)
