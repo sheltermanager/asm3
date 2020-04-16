@@ -1,6 +1,7 @@
 44
 ================
 
+16/04/20 Fix unicode email header handling #771
 16/04/20 Py3 fix for signing page service call
 16/04/20 Restrict online form field labels to match field length
 15/04/20 Require at least 6 digits for searching phone numbers

@@ -1404,27 +1404,18 @@ def send_email(dbo, replyadd, toadd, ccadd = "", bccadd = "", subject = "", body
     def add_header(msg, header, value):
         """
         Adds a header to the message, expands any HTML entities
-        and re-encodes as utf-8 before adding to the message if necessary.
-        If the message doesn't contain HTML entities, then it is just
-        added normally as 7-bit ascii
+        and relies on Python's email.header.Header class to
+        handle encoding to UTF-8 and outputting as quoted printable
+        where necessary.
         """
-        value = value.replace("\n", "") # line breaks are not allowed in headers
-        if value.find("&#") != -1:
-            # Is this an address field? If so, parse the addresses and 
-            # encode the descriptions
-            if header in ("To", "From", "Cc", "Bcc", "Bounces-To", "Reply-To"):
-                addresses = value.split(",")
-                newval = ""
-                for a in addresses:
-                    description, address = parse_email(a)
-                    if newval != "": newval += ", "
-                    newval += "\"%s\" <%s>" % (Header(decode_html(description).encode("utf-8"), "utf-8"), address)
-                msg[header] = newval
-            else:
-                h = Header(decode_html(value).encode("utf-8"), "utf-8")
-                msg[header] = h
+        # Is this an address field? If so output the address(es)
+        # as straight UTF-8. Some email clients support this and
+        # some don't, but if you use QP or Base64 encoding on 
+        # addresses many mail servers will fail to even route the message.
+        if header in ("To", "From", "Cc", "Bcc", "Bounces-To", "Reply-To"):
+            msg[header] = decode_html(value).encode("utf-8")
         else:
-            msg[header] = value
+            msg[header] = Header(decode_html(value))
 
     # If the email is plain text, but contains HTML escape characters, 
     # switch it to being an html message instead and make sure line 
@@ -1454,7 +1445,6 @@ def send_email(dbo, replyadd, toadd, ccadd = "", bccadd = "", subject = "", body
     add_header(msg, "Message-ID", make_msgid())
     add_header(msg, "Date", formatdate())
     add_header(msg, "X-Mailer", "Animal Shelter Manager %s" % asm3.i18n.VERSION)
-    subject = truncate(subject, 69) # limit subject to 78 chars - "Subject: "
     add_header(msg, "Subject", subject)
     add_header(msg, "From", fromadd)
     add_header(msg, "Reply-To", replyadd)
