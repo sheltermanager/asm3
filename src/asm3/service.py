@@ -170,7 +170,7 @@ def sign_document_page(dbo, mid):
     docnotes = []
     docnotes.append(asm3.media.get_notes_for_id(dbo, int(mid)))
     mdate, medianame, mimetype, contents = asm3.media.get_media_file_data(dbo, int(mid))
-    d.append(contents)
+    d.append(asm3.utils.bytes2str(contents))
     d.append("<hr />")
     h.append("<p><b>%s: %s</b></p>" % (_("Signing", l), ", ".join(docnotes)))
     h.append('<p><a id="reviewlink" href="#">%s</a></p>' % _("View Document", l))

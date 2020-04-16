@@ -44,7 +44,7 @@ $(function() {
                     { json_field: "FIELDNAME", post_field: "fieldname", label: _("Name"), type: "text", validation: "notblank" }, 
                     { json_field: "FIELDTYPE", post_field: "fieldtype", label: _("Type"), type: "select", options: {
                         valuefield: "ID", displayfield: "NAME", rows: fieldtypes }},
-                    { json_field: "LABEL", post_field: "label", label: _("Label"), type: "text", validation: "notblank" }, 
+                    { json_field: "LABEL", post_field: "label", label: _("Label"), type: "text", maxlength: 1000, validation: "notblank" }, 
                     { json_field: "DISPLAYINDEX", post_field: "displayindex", label: _("Display Index"), type: "number" }, 
                     { json_field: "MANDATORY", post_field: "mandatory", label: _("Mandatory"), type: "check" },
                     { json_field: "LOOKUPS", post_field: "lookups", label: _("Lookups"), type: "textarea" }, 

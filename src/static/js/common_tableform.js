@@ -900,6 +900,7 @@
          *        defaultval: expression or function to evaluate.
          *        height/width/margintop: "css expr",
          *        validation: "notblank|notzero|validemail",
+         *        maxlength: (omit or number of chars limit for text/textarea),
          *        classes: "extraclass anotherone",
          *        tooltip: _("Text"), 
          *        callout: _("Text"), mixed markup allowed
@@ -952,7 +953,8 @@
                     d += "autocomplete=\"new-password\" ";
                     if (v.readonly) { d += " data-noedit=\"true\" "; }
                     if (v.validation) { d += "data-validation=\"" + v.validation + "\" "; }
-                    if (v.tooltip) { d += "title=\"" + html.title(v.tooltip) + "\""; }
+                    if (v.tooltip) { d += "title=\"" + html.title(v.tooltip) + "\" "; }
+                    if (v.maxlength) { d += "maxlength=" + v.maxlength; }
                     d += "/>";
                     if (!v.justwidget) { d += "</td></tr>"; }
                 }
@@ -970,7 +972,8 @@
                     d += "data-json=\"" + v.json_field + "\" data-post=\"" + v.post_field + "\" ";
                     if (v.readonly) { d += " data-noedit=\"true\" "; }
                     if (v.validation) { d += "data-validation=\"" + v.validation + "\" "; }
-                    if (v.tooltip) { d += "title=\"" + html.title(v.tooltip) + "\""; }
+                    if (v.tooltip) { d += "title=\"" + html.title(v.tooltip) + "\" "; }
+                    if (v.maxlength) { d += "maxlength=" + v.maxlength; }
                     d += "></textarea>";
                     if (!v.justwidget) { d += "</td></tr>"; }
                 }

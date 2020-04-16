@@ -1,6 +1,8 @@
 44
 ================
 
+16/04/20 Py3 fix for signing page service call
+16/04/20 Restrict online form field labels to match field length
 15/04/20 Require at least 6 digits for searching phone numbers
 14/04/20 Add ReservationDate wordkey for active reserve on animals #777
 13/04/20 Assign IDs and link labels correctly on online forms
