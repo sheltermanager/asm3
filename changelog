@@ -1,6 +1,7 @@
 44
 ================
 
+16/04/20 Refactor decode_html to use HTMLParser and remove cruft
 16/04/20 Fix unicode email header handling #771
 16/04/20 Py3 fix for signing page service call
 16/04/20 Restrict online form field labels to match field length

@@ -26,7 +26,6 @@ import web
 import zipfile
 
 if sys.version_info[0] > 2: # PYTHON3
-    from html.entities import name2codepoint
     import _thread as thread
     import urllib.request as urllib2
     from io import BytesIO, StringIO
@@ -36,12 +35,9 @@ if sys.version_info[0] > 2: # PYTHON3
     from email.mime.multipart import MIMEMultipart
     from email.header import Header
     from email.utils import make_msgid, formatdate
-    from email.charset import Charset
     import email.encoders as Encoders
-    unichr = chr # decode_html needs this
     extcsv.field_size_limit(512 * 1024) # Python 3 has a limit of 128k for csv fields, make it 512k
 else:
-    from htmlentitydefs import name2codepoint
     import thread
     import urllib2
     from cStringIO import StringIO
@@ -52,7 +48,7 @@ else:
     from email.mime.multipart import MIMEMultipart
     from email.header import Header
     from email.utils import make_msgid, formatdate
-    from email import Charset, Encoders
+    from email import Encoders
 
 
 # Global reference to the Python websession. This is used to allow
@@ -658,45 +654,10 @@ def strip_non_ascii(s):
 
 def decode_html(s):
     """
-    Decodes HTML entities and returns a unicode string.
+    Decodes HTML entities in ascii string s and returns a unicode string.
     """
-    def to_char(p):
-        return unichr(p) # noqa: F821
-    # It's empty, return an empty string
-    if s is None: return ""
-    # It's not a string, we can't deal with this
-    if not is_str(s): return s
-    matches = re.findall("&#\d+;", s)
-    if len(matches) > 0:
-        hits = set(matches)
-        for hit in hits:
-            name = hit[2:-1]
-            try:
-                entnum = int(name)
-                s = s.replace(hit, to_char(entnum))
-            except ValueError:
-                pass
-    matches = re.findall("&#[xX][0-9a-fA-F]+;", s)
-    if len(matches) > 0:
-        hits = set(matches)
-        for hit in hits:
-            hexv = hit[3:-1]
-            try:
-                entnum = int(hexv, 16)
-                s = s.replace(hit, to_char(entnum))
-            except ValueError:
-                pass
-    matches = re.findall("&\w+;", s)
-    hits = set(matches)
-    amp = "&amp;"
-    if amp in hits:
-        hits.remove(amp)
-    for hit in hits:
-        name = hit[1:-1]
-        if name in name2codepoint:
-            s = s.replace(hit, to_char(name2codepoint[name]))
-    s = s.replace(amp, "&")
-    return s
+    parser = HTMLParser()
+    return parser.unescape(s)
 
 def encode_html(s):
     """
@@ -1384,22 +1345,15 @@ def send_email(dbo, replyadd, toadd, ccadd = "", bccadd = "", subject = "", body
     For HTML emails, a plaintext part is converted and added. If the HTML
     does not have html/body tags, they are also added.
     """
+
     def parse_email(s):
-        # Returns a tuple of description and address
-        s = s.strip()
-        fp = s.find("<")
-        ep = s.find(">")
-        description = s
-        address = s
-        if fp != -1 and ep != -1:
-            description = s[0:fp].strip()
-            address = s[fp+1:ep].strip()
-        return (description, address)
+        """ Returns a tuple of realname and address from an email """
+        if s.find("<") == -1: return ("", s.strip())
+        return ( s[0:s.find("<")].strip(), s[s.find("<")+1:].replace(">", "").strip() )
 
     def strip_email(s):
         # Just returns the address portion of an email
-        description, address = parse_email(s)
-        return address
+        return parse_email(s)[1]
 
     def add_header(msg, header, value):
         """
@@ -1408,12 +1362,26 @@ def send_email(dbo, replyadd, toadd, ccadd = "", bccadd = "", subject = "", body
         handle encoding to UTF-8 and outputting as quoted printable
         where necessary.
         """
-        # Is this an address field? If so output the address(es)
-        # as straight UTF-8. Some email clients support this and
-        # some don't, but if you use QP or Base64 encoding on 
-        # addresses many mail servers will fail to even route the message.
-        if header in ("To", "From", "Cc", "Bcc", "Bounces-To", "Reply-To"):
-            msg[header] = decode_html(value).encode("utf-8")
+        if header in ("From", "To", "Cc", "Bcc", "Bounces-To", "Reply-To"):
+            # We cannot support UTF-8/QP encoded addresses because
+            # it blows up sSMTP and other mail servers.
+            # Instead, only include ascii chars and throw the rest away.
+            # We don't use xmlcharref as elsewhere because the HTML entities
+            # aren't really human readable and the semi-colons will cause some
+            # mail servers to see the address as mulitple addresses.
+            msg[header] = Header(decode_html(value).encode("ascii", "replace"))
+        elif header in ("DISABLED"):
+            # INFO: This code supports using QP-encoded UTF-8 for the realname
+            # portion of email addresses in the headers listed above.
+            # This condition will never be hit and this code is not active 
+            # because too many email providers and servers do not support this.
+            h = Header()
+            for a in value.split(","):
+                if len(str(h)) > 0: h.append(",", "ascii")
+                realname, address = parse_email(a)
+                h.append(decode_html(realname)) # auto uses utf-8 for non-ascii
+                h.append(address, "ascii")
+            msg[header] = h
         else:
             msg[header] = Header(decode_html(value))
 
@@ -1423,7 +1391,6 @@ def send_email(dbo, replyadd, toadd, ccadd = "", bccadd = "", subject = "", body
     if body.find("&#") != -1 and contenttype == "plain":
         contenttype = "html"
         body = body.replace("\n", "<br />")
-        Charset.add_charset("utf-8", Charset.QP, Charset.QP, "utf-8")
 
     # If the message is HTML, but does not contain an HTML tag, assume it's
     # a document fragment and wrap it (this lowers spamassassin scores)
@@ -1442,15 +1409,15 @@ def send_email(dbo, replyadd, toadd, ccadd = "", bccadd = "", subject = "", body
 
     # Construct the mime message
     msg = MIMEMultipart("mixed")
+    add_header(msg, "From", fromadd)
+    add_header(msg, "To", toadd)
+    if ccadd != "": add_header(msg, "Cc", ccadd)
+    add_header(msg, "Reply-To", replyadd)
+    add_header(msg, "Bounces-To", replyadd)
     add_header(msg, "Message-ID", make_msgid())
     add_header(msg, "Date", formatdate())
     add_header(msg, "X-Mailer", "Animal Shelter Manager %s" % asm3.i18n.VERSION)
     add_header(msg, "Subject", subject)
-    add_header(msg, "From", fromadd)
-    add_header(msg, "Reply-To", replyadd)
-    add_header(msg, "Bounces-To", replyadd)
-    add_header(msg, "To", toadd)
-    if ccadd != "": add_header(msg, "Cc", ccadd)
 
     # Create an alternative part with plain text and html messages
     msgbody = MIMEMultipart("alternative")
@@ -1488,7 +1455,7 @@ def send_email(dbo, replyadd, toadd, ccadd = "", bccadd = "", subject = "", body
 
     asm3.al.debug("from: %s, reply-to: %s, to: %s, subject: %s, body: %s" % \
         (fromadd, replyadd, str(tolist), subject, body), "utils.send_email", dbo)
-    
+
     # Load the server config over default vars
     sendmail = True
     host = ""
