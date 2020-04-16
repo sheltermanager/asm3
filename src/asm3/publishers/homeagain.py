@@ -123,7 +123,7 @@ class HomeAgainPublisher(AbstractPublisher):
 
                     # If we saw an account not found message, there's no point sending 
                     # anything else as they will all trigger the same error
-                    if str(r["headers"]).find("54101") != -1 and str(r["headers"]).find("Account Not Found") != -1:
+                    if str(r["headers"]).find("54101") != -1:
                         self.logError("received HomeAgain 54101 'account not found' response header - abandoning run and disabling publisher")
                         asm3.configuration.publishers_enabled_disable(self.dbo, "veha")
                         break
