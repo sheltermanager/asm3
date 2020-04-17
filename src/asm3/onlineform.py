@@ -858,7 +858,7 @@ def attach_animal(dbo, username, collationid):
     has_name = False
     animalid = 0
     for f in fields:
-        if f.FIELDNAME == "animalname": 
+        if f.FIELDNAME == "animalname" or f.FIELDNAME == "reserveanimalname": 
             animalname = f.VALUE
             animalid = get_animal_id_from_field(dbo, animalname)
             has_name = True
