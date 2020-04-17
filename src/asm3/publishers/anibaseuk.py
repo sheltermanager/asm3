@@ -27,7 +27,7 @@ class AnibaseUKPublisher(AbstractPublisher):
             4:  "Rodent",
             5:  "Rodent",
             7:  "Rabbit",
-            9:  "Polecat",
+            9:  "Ferret",
             11: "Reptilian",
             12: "Tortoise",
             13: "Reptilian",
