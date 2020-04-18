@@ -1,6 +1,7 @@
 44
 ================
 
+18/04/20 Do not deactive found.org if login fails
 17/04/20 Consider reserveanimalname when using online form Attach->Animal
 17/04/20 identibase/anibaseuk incorrectly using US date format
 16/04/20 Refactor decode_html to use HTMLParser and remove cruft

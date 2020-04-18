@@ -51,9 +51,12 @@ class FoundAnimalsPublisher(FTPPublisher):
 
         if not self.openFTPSocket(): 
             self.setLastError("Failed to open FTP socket.")
-            if self.logSearch("530 Login") != -1:
-                self.log("Found 530 Login incorrect: disabling FoundAnimals publisher.")
-                asm3.configuration.publishers_enabled_disable(self.dbo, "fa")
+            # INFO: This makes no sense as the user is not in control of the FTP
+            # credentials to found. Their FTP service failed recently and as a 
+            # result all customers stopped sending to found
+            # if self.logSearch("530 Login") != -1:
+            #    self.log("Found 530 Login incorrect: disabling FoundAnimals publisher.")
+            #    asm3.configuration.publishers_enabled_disable(self.dbo, "fa")
             self.cleanup()
             return
 
