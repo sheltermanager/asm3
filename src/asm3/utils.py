@@ -1402,6 +1402,7 @@ def send_email(dbo, replyadd, toadd, ccadd = "", bccadd = "", subject = "", body
     fromadd = fromadd.replace("{organisation}", asm3.configuration.organisation(dbo))
     fromadd = fromadd.replace("{alias}", dbo.alias)
     fromadd = fromadd.replace("{database}", dbo.database)
+    fromadd = fromadd.replace(",", "") # commas blow up address parsing
 
     # Check for any problems in the reply address, such as unclosed address
     if replyadd.find("<") != -1 and replyadd.find(">") == -1:
