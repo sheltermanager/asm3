@@ -19,7 +19,7 @@ $(document).ready(function() {
         // Is this an image? If not, stop now
         if (!file.type.match('image.*')) { alert("File is not an image"); field.val(""); return; }
 
-        var max_width = 300, max_height = 300;
+        var max_width = 640, max_height = 640;
 
         // Read the file to an image tag, then render it to
         // an HTML5 canvas to scale it
