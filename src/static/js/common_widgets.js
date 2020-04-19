@@ -169,6 +169,14 @@
                     // this function controls how text is extracted from cells for
                     // sorting purposes.
                     var s = $.trim($(node).text()), h = $(node).html();
+                    // If there's a data-sort attribute somewhere in the cell, use that
+                    if (h.indexOf("data-sort") != -1) {
+                        var fq = h.indexOf("data-sort");
+                        fq = h.indexOf("\"", fq);
+                        rv = h.substring(fq+1, h.indexOf("\"", fq+1));
+                        if (rv.indexOf(":") != -1) { rv = rv.replace(/[\-\:T]/g, ""); }
+                        return rv;
+                    }
                     // If the text contains a date, turn it into YYYY-MM-DD for sorting
                     // We use a char class of .-/ as any of these can be date separators.
                     if (s && s.length >= 10 && s.length <= 20 ) {

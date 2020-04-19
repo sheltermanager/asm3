@@ -209,7 +209,7 @@ $(function() {
             STRING_FIELDS = [ "AnimalName", "BreedName", "CreatedBy", "Markings", "AcceptanceNumber", 
                 "AgeGroup", "IdentichipNumber", "TattooNumber", "HiddenAnimalDetails", 
                 "AnimalComments", "ReasonForEntry", "HealthProblems", "PTSReason", "PickupAddress", 
-                "RabiesTag", "TimeOnShelter", "DaysOnShelter", "AnimalAge", "ShelterLocationUnit" ],
+                "RabiesTag", "DaysOnShelter", "ShelterLocationUnit" ],
             YES_NO_UNKNOWN_FIELDS = [ "IsGoodWithCats", "IsGoodWithDogs", "IsGoodWithChildren",
                 "IsHouseTrained" ],
             YES_NO_FIELDS = [ "Neutered", "CombiTested", "HeartwormTested", "Declawed", 
@@ -224,6 +224,12 @@ $(function() {
             else if ( name == "EntryReasonID") { rv = row.ENTRYREASONNAME; }
             else if ( name == "PickupLocationID") { rv = row.PICKUPLOCATIONNAME; }
             else if ( name == "PTSReasonID") { rv = row.DECEASEDDATE ? row.PTSREASONNAME : ""; }
+            else if ( name == "AnimalAge") {
+                rv  = '<span data-sort="' + row.DATEOFBIRTH + '"></span>' + row.ANIMALAGE;
+            }
+            else if ( name == "TimeOnShelter") {
+                rv  = '<span data-sort="' + row.DAYSONSHELTER + '"></span>' + row.TIMEONSHELTER;
+            }
             else if ( name == "ShelterLocation") { 
                 rv = row.DISPLAYLOCATIONNAME; 
                 if (row.SHELTERLOCATIONUNIT && !row.ACTIVEMOVEMENTID) {
