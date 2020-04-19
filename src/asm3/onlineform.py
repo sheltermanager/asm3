@@ -137,24 +137,24 @@ def get_onlineform_html(dbo, formid, completedocument = True):
         cname = asm3.html.escape(fname)
         fid = "f%d" % f.ID
         h.append('<tr class="asm-onlineform-tr">')
-        if f.FIELDTYPE == FIELDTYPE_RAWMARKUP:
-            h.append('<td class="asm-onlineform-td" colspan="2">')
-        elif f.FIELDTYPE == FIELDTYPE_CHECKBOX:
-            h.append('<td class="asm-onlineform-td"></td><td class="asm-onlineform-td">')
-        else:
-            # Add label and cell wrapper if it's not raw markup or a checkbox
-            h.append('<td class="asm-onlineform-td">')
-            h.append('<label for="%s">%s</label>' % ( fid, f.LABEL ))
-            h.append('</td>')
-            h.append('<td class="asm-onlineform-td">')
         required = ""
         requiredtext = ""
+        requiredspan = '<span class="asm-onlineform-notrequired"></span>'
+        requiredspan = ""
         if f.MANDATORY == 1: 
             required = "required=\"required\""
             requiredtext = "required=\"required\" pattern=\".*\\S+.*\""
-            h.append('<span class="asm-onlineform-required" style="color: #ff0000;">*</span>')
+            requiredspan = '<span class="asm-onlineform-required" style="color: #ff0000; float: right;">*</span>'
+        if f.FIELDTYPE == FIELDTYPE_RAWMARKUP:
+            h.append('<td class="asm-onlineform-td" colspan="2">')
+        elif f.FIELDTYPE == FIELDTYPE_CHECKBOX:
+            h.append('<td class="asm-onlineform-td">%s</td><td class="asm-onlineform-td">' % requiredspan)
         else:
-            h.append('<span class="asm-onlineform-notrequired" style="visibility: hidden">*</span>')
+            # Add label and cell wrapper if it's not raw markup or a checkbox
+            h.append('<td class="asm-onlineform-td">')
+            h.append('<label for="%s">%s %s</label>' % ( fid, f.LABEL, requiredspan ))
+            h.append('</td>')
+            h.append('<td class="asm-onlineform-td">')
         if f.FIELDTYPE == FIELDTYPE_YESNO:
             h.append('<select class="asm-onlineform-yesno" id="%s" name="%s" title="%s"><option>%s</option><option>%s</option></select>' % \
                 ( fid, cname, asm3.utils.nulltostr(f.TOOLTIP), asm3.i18n._("No", l), asm3.i18n._("Yes", l)))

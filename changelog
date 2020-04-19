@@ -1,6 +1,8 @@
 44
 ================
 
+19/04/20 Online forms: put required indicator with label to prevent wrap issues
+19/04/20 Remove unreadable mandatory column from form editor, use label indicator
 19/04/20 Do not set reply-to header on form notifications if email submitter off #781
 19/04/20 Increase quality of online form images to 640px
 19/04/20 Add fortnightly payment frequency
