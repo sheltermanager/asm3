@@ -12,7 +12,7 @@ import datetime
 import os
 import tempfile
 import zipfile
-from PIL import ExifTags, Image
+from PIL import Image
 
 ANIMAL = 0
 LOSTANIMAL = 1
@@ -644,19 +644,32 @@ def auto_rotate_image(dbo, imagedata):
     Automatically rotate an image according to the orientation of the
     image in the EXIF data. 
     """
+    EXIF_ORIENTATION = 274
+    OR_TO_ROTATE = {            # Map of EXIF Orientation to image rotation
+        1: 0,                   # Correct orientation, no adjustment
+        2: 0,                   # Mirrored
+        3: Image.ROTATE_180,    # 180 degrees, image is upside down
+        4: Image.ROTATE_180,    # 180 degrees, upside down and mirrored
+        5: Image.ROTATE_270,    # 90 degrees, image on its side
+        6: Image.ROTATE_270,    # 90 degrees, on side and mirrored
+        7: Image.ROTATE_90,     # 270 degrees, image on far side
+        8: Image.ROTATE_90      # 270 degrees, on far side and mirrored
+    }
     try:
         inputd = asm3.utils.bytesio(imagedata)
         im = Image.open(inputd)
-        for orientation in ExifTags.TAGS.keys():
-            if ExifTags.TAGS[orientation] == "Orientation":
-                break
         if not hasattr(im, "_getexif") or im._getexif() is None:
-            asm3.al.debug("image has no EXIF data, abandoning rotate", "media.auto_rotate_image", dbo)
+            asm3.al.warn("image has no EXIF data, abandoning rotate", "media.auto_rotate_image", dbo)
             return imagedata
         exif = dict(im._getexif().items())
-        if exif[orientation] == 3:   im = im.transpose(Image.ROTATE_180)
-        elif exif[orientation] == 6: im = im.transpose(Image.ROTATE_270)
-        elif exif[orientation] == 8: im = im.transpose(Image.ROTATE_90)
+        if EXIF_ORIENTATION not in exif:
+            asm3.al.warn("image EXIF data has no orientation", "media.auto_rotate_image", dbo)
+            return imagedata
+        rotation_factor = OR_TO_ROTATE[exif[EXIF_ORIENTATION]]
+        if rotation_factor == 0: 
+            asm3.al.debug("image is already correctly rotated (EXIF==%s)" % exif[EXIF_ORIENTATION], "media.auto_rotate_image", dbo)
+            return imagedata
+        im = im.transpose(rotation_factor)
         output = asm3.utils.bytesio()
         im.save(output, "JPEG")
         rotated_data = output.getvalue()
