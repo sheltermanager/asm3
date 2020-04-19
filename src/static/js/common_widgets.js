@@ -173,23 +173,21 @@
                     if (h.indexOf("data-sort") != -1) {
                         var fq = h.indexOf("data-sort");
                         fq = h.indexOf("\"", fq);
-                        rv = h.substring(fq+1, h.indexOf("\"", fq+1));
-                        if (rv.indexOf(":") != -1) { rv = rv.replace(/[\-\:T]/g, ""); }
-                        return rv;
+                        s = h.substring(fq+1, h.indexOf("\"", fq+1));
+                        if (s.indexOf(":") != -1) { s = s.replace(/[\-\:T]/g, ""); }
                     }
                     // If the text contains a date, turn it into YYYY-MM-DD for sorting
                     // We use a char class of .-/ as any of these can be date separators.
-                    if (s && s.length >= 10 && s.length <= 20 ) {
+                    else if (s && s.length >= 10 && s.length <= 20 ) {
                         if (s.match(/\d+[\/\.\-]\d+[\/\.\-]\d+/)) {
-                            var rv = format.date_iso(s);
-                            if (!rv) { return ""; }
-                            rv = rv.replace(/[\-\:T]/g, "");
-                            return rv;
+                            s = format.date_iso(s);
+                            if (!s) { return ""; }
+                            s = s.replace(/[\-\:T]/g, "");
                         }
                     }
                     // If we have custom emblems in the text, throw away the first word as it will
                     // be the letters of the emblems and skew any sorting.
-                    if (h.indexOf("class=\"custom\"") != -1 && s.indexOf(" ") != -1) {
+                    else if (h.indexOf("class=\"custom\"") != -1 && s.indexOf(" ") != -1) {
                         s = s.substring(s.indexOf(" ")+1);
                     }
                     log.trace("table.textExtraction: " + s);
