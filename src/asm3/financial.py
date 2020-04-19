@@ -29,10 +29,11 @@ LAST_MONTH = 3
 LAST_WEEK = 4
 
 WEEKLY = 1
-MONTHLY = 2
-QUARTERLY = 3
-HALF_YEARLY = 4
-ANNUALLY = 5
+FORTNIGHTLY = 2
+MONTHLY = 3
+QUARTERLY = 4
+HALF_YEARLY = 5
+ANNUALLY = 6
 
 ASCENDING = 0
 DESCENDING = 1
@@ -736,13 +737,15 @@ def check_create_next_donation(dbo, username, odid):
         nextdue = d.DATEDUE
         if d.FREQUENCY == WEEKLY:
             nextdue = asm3.i18n.add_days(nextdue, 7)
-        if d.FREQUENCY == MONTHLY:
+        elif d.FREQUENCY == FORTNIGHTLY:
+            nextdue = asm3.i18n.add_days(nextdue, 14)
+        elif d.FREQUENCY == MONTHLY:
             nextdue = asm3.i18n.add_months(nextdue, 1)
-        if d.FREQUENCY == QUARTERLY:
+        elif d.FREQUENCY == QUARTERLY:
             nextdue = asm3.i18n.add_months(nextdue, 3)
-        if d.FREQUENCY == HALF_YEARLY:
+        elif d.FREQUENCY == HALF_YEARLY:
             nextdue = asm3.i18n.add_months(nextdue, 6)
-        if d.FREQUENCY == ANNUALLY:
+        elif d.FREQUENCY == ANNUALLY:
             nextdue = asm3.i18n.add_years(nextdue, 1)
         asm3.al.debug("Next donation due %s" % str(nextdue), "financial.check_create_next_donation", dbo)
 

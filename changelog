@@ -1,6 +1,7 @@
 44
 ================
 
+19/04/20 Add fortnightly payment frequency
 19/04/20 Gracefully handle exif orientation missing in auto-rotate
 18/04/20 Do not deactive found.org if login fails
 17/04/20 Consider reserveanimalname when using online form Attach->Animal

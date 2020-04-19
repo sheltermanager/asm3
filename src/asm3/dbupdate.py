@@ -37,7 +37,7 @@ VERSIONS = (
     34013, 34014, 34015, 34016, 34017, 34018, 34019, 34020, 34021, 34022, 34100,
     34101, 34102, 34103, 34104, 34105, 34106, 34107, 34108, 34109, 34110, 34111,
     34112, 34200, 34201, 34202, 34203, 34204, 34300, 34301, 34302, 34303, 34304,
-    34305, 34306
+    34305, 34306, 34400
 )
 
 LATEST_VERSION = VERSIONS[-1]
@@ -2215,10 +2215,11 @@ def sql_default_data(dbo, skip_config = False):
     sql += lookup1("lksdiarylink", "LinkType", 7, _("Incident", l))
     sql += lookup1("lksdonationfreq", "Frequency", 0, _("One-Off", l))
     sql += lookup1("lksdonationfreq", "Frequency", 1, _("Weekly", l))
-    sql += lookup1("lksdonationfreq", "Frequency", 2, _("Monthly", l))
-    sql += lookup1("lksdonationfreq", "Frequency", 3, _("Quarterly", l))
-    sql += lookup1("lksdonationfreq", "Frequency", 4, _("Half-Yearly", l))
-    sql += lookup1("lksdonationfreq", "Frequency", 5, _("Annually", l))
+    sql += lookup1("lksdonationfreq", "Frequency", 2, _("Fortnightly", l))
+    sql += lookup1("lksdonationfreq", "Frequency", 3, _("Monthly", l))
+    sql += lookup1("lksdonationfreq", "Frequency", 4, _("Quarterly", l))
+    sql += lookup1("lksdonationfreq", "Frequency", 5, _("Half-Yearly", l))
+    sql += lookup1("lksdonationfreq", "Frequency", 6, _("Annually", l))
     sql += lookup1("lksfieldlink", "LinkType", 0, _("Animal - Additional", l))
     sql += lookup1("lksfieldlink", "LinkType", 2, _("Animal - Details", l))
     sql += lookup1("lksfieldlink", "LinkType", 3, _("Animal - Notes", l))
@@ -5176,3 +5177,15 @@ def update_34306(dbo):
     add_index(dbo, "owner_IsAdopter", "owner", "IsAdopter")
     dbo.execute_dbupdate("UPDATE owner SET IsAdopter = (SELECT COUNT(*) FROM adoption WHERE OwnerID = owner.ID AND MovementType=1 AND MovementDate Is Not Null AND ReturnDate Is Null)")
     dbo.execute_dbupdate("UPDATE owner SET IsAdopter = 1 WHERE IsAdopter > 0")
+
+def update_34400(dbo):
+    # Add new lksdonationfreq for fortnightly with ID 2
+    # This requires renumbering the existing frequencies up one as there was no spare slot
+    if dbo.query_int("SELECT MAX(ID) FROM lksdonationfreq") == 6: return # We already did this
+    l = dbo.locale
+    dbo.execute_dbupdate("UPDATE lksdonationfreq SET ID=6 WHERE ID=5")
+    dbo.execute_dbupdate("UPDATE lksdonationfreq SET ID=5 WHERE ID=4")
+    dbo.execute_dbupdate("UPDATE lksdonationfreq SET ID=4 WHERE ID=3")
+    dbo.execute_dbupdate("UPDATE lksdonationfreq SET ID=3 WHERE ID=2")
+    dbo.execute_dbupdate("UPDATE ownerdonation SET Frequency=Frequency+1 WHERE Frequency IN (2,3,4,5)")
+    dbo.execute_dbupdate("INSERT INTO lksdonationfreq (ID, Frequency) VALUES (2, ?)", [ _("Fortnightly", l) ])
