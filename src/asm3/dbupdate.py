@@ -91,13 +91,13 @@ def sql_structure(dbo):
     """
     Returns the SQL necessary to create the database for the type specified
     """
-    def table(name, fields, includechange = True):
+    def table(name, fields, includechange = True, changenullable = False):
         if includechange:
             cf = (fint("RecordVersion", True),
-                fstr("CreatedBy"),
-                fdate("CreatedDate"),
-                fstr("LastChangedBy"),
-                fdate("LastChangedDate"))
+                fstr("CreatedBy", changenullable),
+                fdate("CreatedDate", changenullable),
+                fstr("LastChangedBy", changenullable),
+                fdate("LastChangedDate", changenullable))
             return "%s;\n" % dbo.ddl_add_table(name, ",".join(fields + cf))
         return "%s;\n" % dbo.ddl_add_table(name, ",".join(fields))
     def index(name, table, fieldlist, unique = False, partial = False):
@@ -549,8 +549,7 @@ def sql_structure(dbo):
         fint("CachedAnimalsLeft"),
         fdate("InvalidDate", True),
         fint("NumberInLitter"),
-        flongstr("Comments"),
-        fint("RecordVersion", True)), False)
+        flongstr("Comments")), True, True)
 
     sql += table("animallost", (
         fid(),
