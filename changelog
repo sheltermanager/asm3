@@ -1,6 +1,7 @@
 44
 ================
 
+19/04/20 Do not set reply-to header on form notifications if email submitter off #781
 19/04/20 Increase quality of online form images to 640px
 19/04/20 Add fortnightly payment frequency
 19/04/20 Gracefully handle exif orientation missing in auto-rotate
