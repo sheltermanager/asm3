@@ -1,6 +1,7 @@
 44
 ================
 
+19/04/20 Add released/TNR stats to home page #679
 19/04/20 Add nullable change fields to animallitter to match ASM2 imports #496
 19/04/20 Cell data-sort attribute, fix timeonshelter/age sorts in results #780
 19/04/20 Online forms: put required indicator with label to prevent wrap issues

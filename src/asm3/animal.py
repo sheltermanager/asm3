@@ -723,6 +723,8 @@ def get_stats(dbo, age=120):
         "(SELECT COUNT(*) FROM adoption WHERE MovementDate >= :from AND MovementType = :adoption) AS Adopted," \
         "(SELECT COUNT(*) FROM adoption WHERE MovementDate >= :from AND MovementType = :reclaimed) AS Reclaimed, " \
         "(SELECT COUNT(*) FROM adoption WHERE MovementDate >= :from AND MovementType = :transfer) AS Transferred, " \
+        "(SELECT COUNT(*) FROM adoption INNER JOIN animal ON animal.ID=adoption.AnimalID WHERE SpeciesID <> 2 AND MovementDate >= :from AND MovementType = :released) AS Released, " \
+        "(SELECT COUNT(*) FROM adoption INNER JOIN animal ON animal.ID=adoption.AnimalID WHERE SpeciesID = 2 AND MovementDate >= :from AND MovementType = :released) AS TNR, " \
         "(SELECT COUNT(*) FROM animal WHERE NonShelterAnimal = 0 AND DiedOffShelter = 0 AND DeceasedDate >= :from AND PutToSleep = 1) AS PTS, " \
         "(SELECT COUNT(*) FROM animal WHERE NonShelterAnimal = 0 AND DiedOffShelter = 0 AND DeceasedDate >= :from AND PutToSleep = 0 AND IsDOA = 0) AS Died, " \
         "(SELECT COUNT(*) FROM animal WHERE NonShelterAnimal = 0 AND DiedOffShelter = 0 AND DeceasedDate >= :from AND PutToSleep = 0 AND IsDOA = 1) AS DOA, " \
@@ -733,7 +735,11 @@ def get_stats(dbo, age=120):
             "(SELECT SUM(Cost) FROM animalmedical WHERE StartDate >= :from) + " \
             "(SELECT SUM(Cost) FROM animaltransport WHERE PickupDateTime >= :from) AS Costs " \
         "FROM lksmovementtype WHERE ID=1", 
-        { "from": statdate, "adoption": asm3.movement.ADOPTION, "reclaimed": asm3.movement.RECLAIMED, "transfer": asm3.movement.TRANSFER },
+        { "from": statdate, 
+        "adoption": asm3.movement.ADOPTION, 
+        "reclaimed": asm3.movement.RECLAIMED, 
+        "transfer": asm3.movement.TRANSFER,
+        "released": asm3.movement.RELEASED},
         age=age)
 
 def embellish_timeline(l, rows):

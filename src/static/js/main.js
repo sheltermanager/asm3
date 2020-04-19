@@ -475,6 +475,22 @@ $(function() {
                     _("{plural3} animals were transferred to other shelters")
                     ]) + '<br />';
             }
+            if (stats.RELEASED > 0 && common.has_permission("vamv")) {
+                s += html.icon("book") + ' ' + common.ntranslate(stats.RELEASED, [
+                    _("{plural0} animal was released to wild"),
+                    _("{plural1} animals were released to wild"),
+                    _("{plural2} animals were released to wild"),
+                    _("{plural3} animals were released to wild")
+                    ]) + '<br />';
+            }
+            if (stats.TNR > 0 && common.has_permission("vamv")) {
+                s += html.icon("book") + ' ' + common.ntranslate(stats.TNR, [
+                    _("{plural0} animal was TNR"),
+                    _("{plural1} animals were TNR"),
+                    _("{plural2} animals were TNR"),
+                    _("{plural3} animals were TNR")
+                    ]) + '<br />';
+            }
             if (stats.PTS > 0 && common.has_permission("va") && config.bool("ShowDeceasedHomePage")) {
                 s += html.icon("death") + ' ' + common.ntranslate(stats.PTS, [
                     _("{plural0} animal was euthanized"),
