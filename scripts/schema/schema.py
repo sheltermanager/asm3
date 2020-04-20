@@ -5,7 +5,7 @@
 
 import web, json
 
-db = web.database( dbn = "sqlite", db = "/home/robin/tmp/asm3.db" )
+db = web.database( dbn = "sqlite", db = "scripts/schema/schema.db" )
 
 VIEWS = [ "adoption", "animal", "animalcontrol", "animalfound", "animallost", "animalmedicaltreatment", 
     "animaltest", "animalvaccination", "animalwaitinglist", "owner", "ownercitation", "ownerdonation", 
