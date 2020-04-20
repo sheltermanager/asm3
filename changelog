@@ -1,6 +1,7 @@
 44
 ================
 
+20/04/20 Set online form explicit font sizes (fixes Chrome mobile) #787
 20/04/20 Py3 fix for signing documents
 19/04/20 Add released/TNR stats to home page #679
 19/04/20 Add nullable change fields to animallitter to match ASM2 imports #496

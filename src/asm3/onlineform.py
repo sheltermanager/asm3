@@ -356,6 +356,7 @@ def get_onlineform_header(dbo):
        ".asm-onlineform-td:first-child { max-width: 400px; }\n" \
        ".asm-onlineform-td:nth-child(2) { white-space: nowrap; }\n" \
        "textarea { width: 300px; height: 150px; }\n" \
+       "input, textarea, select, label { font-size: 110%; }\n" \
        "</style>\n" \
        "</head>\n" \
        "<body>"
