@@ -62,11 +62,16 @@ rollup: minify
 	@echo "[rollup] ============================="
 	scripts/rollup/rollup.py > src/static/js/min/rollup.min.js
 
-schema: 
+schema: scripts/schema/schema.db
 	# Generate a JSON schema of the database for use when editing
 	# SQL within the program
 	@echo "[schema] ============================="
 	scripts/schema/schema.py > src/static/js/min/schema.min.js
+
+scripts/schema/schema.db:
+	# Updates the schema.db sqlite database used for building the schema.js file.
+	@echo "[schema.db] =========================="
+	scripts/schema/make_db.py
 
 compile: compilejs compilepy compilejsmin
 
@@ -142,7 +147,8 @@ tests:
 
 deps:
 	@echo "[deps] ========================="
-	apt-get install python3 python3-pip python3-pil python3-mysqldb python3-psycopg2 python3-memcache python3-requests python3-reportlab
+	apt-get install python3 python3-pip python3-pil python3-mysqldb python3-psycopg2
+	apt-get install python3-memcache python3-requests python3-reportlab
 	apt-get install python3-sphinx python3-sphinx-rtd-theme texlive-latex-base texlive-latex-extra
 	apt-get install exuberant-ctags nodejs flake8 imagemagick wkhtmltopdf
 	apt-get install python3-webpy # See README for fix

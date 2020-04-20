@@ -6,6 +6,7 @@ tags
 install/deb/sheltermanager3
 src/static/pages/changelog.txt
 scripts/jsmin/jsmin
+scripts/schema/schema.db
 src/static/js/min
 doc/manual/_build
 cordova/asm/platforms
