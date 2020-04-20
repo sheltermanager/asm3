@@ -5135,19 +5135,7 @@ class sql(JSONEndpoint):
 
     def controller(self, o):
         asm3.al.debug("%s opened SQL interface" % o.user, "code.sql", o.dbo)
-        return {
-            "tables": asm3.dbupdate.TABLES + asm3.dbupdate.VIEWS
-        }
-
-    def post_cols(self, o):
-        try:
-            if o.post["table"].strip() == "": return ""
-            rows = o.dbo.query("SELECT * FROM %s" % o.post["table"], limit=1)
-            if len(rows) == 0: return ""
-            return "|".join(sorted(rows[0].keys()))
-        except Exception as err:
-            asm3.al.error("%s" % str(err), "code.sql", o.dbo)
-            raise asm3.utils.ASMValidationError(str(err))
+        return {}
 
     def post_exec(self, o):
         sql = o.post["sql"].strip()

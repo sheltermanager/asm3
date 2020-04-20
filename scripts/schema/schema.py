@@ -26,7 +26,7 @@ for v in VIEWS:
         cname = col.name
         cols[cname] = ""
         if cname.endswith("ID") and cname != "ID":
-            cols[cname.replace("ID", "NAME")] = ""
+            cols[cname.replace("ID", "Name")] = ""
     tables["v_%s" % v] = cols
 
 print("schema=%s;" % json.dumps(tables))
