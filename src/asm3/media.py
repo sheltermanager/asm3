@@ -522,7 +522,7 @@ def sign_document(dbo, username, mid, sigurl, signdate):
     SIG_PLACEHOLDER = "signature:placeholder"
     date, medianame, mimetype, content = get_media_file_data(dbo, mid)
     # Is this an HTML document?
-    if content.find("<p") == -1 and content.find("<td") == -1:
+    if mimetype != "text/html":
         asm3.al.error("document %s is not HTML" % mid, "media.sign_document", dbo)
         raise asm3.utils.ASMValidationError("Cannot sign a non-HTML document")
     # Has this document already been signed? 
@@ -530,6 +530,7 @@ def sign_document(dbo, username, mid, sigurl, signdate):
         asm3.al.error("document %s has already been signed" % mid, "media.sign_document", dbo)
         raise asm3.utils.ASMValidationError("Document is already signed")
     # Does the document have a signing placeholder image? If so, replace it
+    content = asm3.utils.bytes2str(content)
     if content.find(SIG_PLACEHOLDER) != -1:
         asm3.al.debug("document %s: found signature placeholder" % mid, "media.sign_document", dbo)
         content = content.replace(SIG_PLACEHOLDER, sigurl)
@@ -543,6 +544,7 @@ def sign_document(dbo, username, mid, sigurl, signdate):
     # Create a hash of the contents and store it with the media record
     dbo.update("media", mid, { "SignatureHash": asm3.utils.md5_hash_hex(content) })
     # Update the dbfs contents
+    content = asm3.utils.str2bytes(content)
     update_file_content(dbo, username, mid, content)
 
 def has_signature(dbo, mid):
@@ -552,6 +554,7 @@ def has_signature(dbo, mid):
 def update_file_content(dbo, username, mid, content):
     """
     Updates the dbfs content for the file pointed to by media record mid
+    content should be a bytes string
     """
     m = dbo.first_row(dbo.query("SELECT DBFSID, MediaName FROM media WHERE ID=?", [mid]))
     if m is None: raise IOError("media id %s does not exist" % mid)
@@ -598,25 +601,20 @@ def rotate_media(dbo, username, mid, clockwise = True):
     mr = dbo.first_row(dbo.query("SELECT * FROM media WHERE ID=?", [mid]))
     if not mr: raise asm3.utils.ASMError("Record does not exist")
     # If it's not a jpg image, we can stop right now
-    mn = mr.MEDIANAME
-    ext = mn[mn.rfind("."):].lower()
-    if ext != ".jpg" and ext != ".jpeg":
-        raise asm3.utils.ASMError("Image is not a JPEG file, cannot rotate")
-    # Load the image data
+    if mr.MEDIAMIMETYPE != "image/jpeg": raise asm3.utils.ASMError("Image is not a JPEG file, cannot rotate")
+    # Load and rotate the image
     imagedata = asm3.dbfs.get_string_id(dbo, mr.DBFSID)
     imagedata = rotate_image(imagedata, clockwise)
-    # Store it back in the dbfs and add an entry to the audit trail
-    asm3.dbfs.put_string_id(dbo, mr.DBFSID, mn, imagedata)
-    # Update the date stamp on the media record
-    dbo.update("media", mid, { "Date": dbo.now(), "MediaSize": len(imagedata) })
+    # Update it
+    update_file_content(dbo, username, mid, imagedata)
     asm3.audit.edit(dbo, username, "media", mid, "", "media id %d rotated, clockwise=%s" % (mid, str(clockwise)))
 
 def scale_image(imagedata, resizespec):
     """
     Produce a scaled version of an image. 
-    imagedata - The image to scale
+    imagedata - The image to scale (bytes string)
     resizespec - a string in WxH format
-    returns the scaled image data
+    returns the scaled image data or the original data if there was a problem.
     """
     try:
         # Turn the scalespec into a tuple of the largest side
