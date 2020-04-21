@@ -1054,7 +1054,7 @@ $(function() {
             return [
                 '<div id="tab-processors">',
                 html.info(_("ASM can talk to payment processors and request payment from your customers and donors.")),
-                '<p><label for="currencycode">Request payments in</label>',
+                '<p><label for="currencycode">' + _("Request payments in") + '</label>',
                 '<select id="currencycode" class="asm-selectbox" data="CurrencyCode">',
                 html.list_to_options(controller.currencies, "CODE", "DISPLAY"),
                 '</select>',

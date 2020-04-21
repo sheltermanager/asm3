@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ASM3\n"
 "Report-Msgid-Bugs-To: robin@sheltermanager.com\n"
-"POT-Creation-Date: 2020-04-12 10:35+0000\n"
+"POT-Creation-Date: 2020-04-21 16:27+0000\n"
 "Last-Translator: Robin Rawson-Tetley <robin@sheltermanager.com>\n"
 "Language-Team: en <robin@sheltermanager.com>\n"
 "Language: en\n"
@@ -189,6 +189,12 @@ msgstr ""
 msgid "ASM News"
 msgstr ""
 
+#: options.js
+msgid ""
+"ASM can talk to payment processors and request payment from your customers "
+"and donors."
+msgstr ""
+
 #: main.js
 msgid ""
 "ASM can track detailed monthly and annual figures for your shelter. Install "
@@ -356,7 +362,7 @@ msgstr ""
 msgid "Add Litter"
 msgstr ""
 
-#: mobile.py roles.js
+#: mobile.py roles.js animal_bulk.js
 msgid "Add Log"
 msgstr ""
 
@@ -719,7 +725,7 @@ msgstr ""
 msgid "Adopted Transferred In {0}"
 msgstr ""
 
-#: common.js header_edit_header.js
+#: html.py common.js header_edit_header.js
 msgid "Adopter"
 msgstr ""
 
@@ -4240,6 +4246,10 @@ msgstr ""
 msgid "Email person"
 msgstr ""
 
+#: donations.js
+msgid "Email request for payment"
+msgstr ""
+
 #: options.js
 msgid "Email signature"
 msgstr ""
@@ -4928,10 +4938,6 @@ msgstr ""
 msgid "Finnish Spitz"
 msgstr ""
 
-#: onlineform.py
-msgid "First"
-msgstr ""
-
 #: options.js
 msgid "First Last"
 msgstr ""
@@ -5012,6 +5018,10 @@ msgstr ""
 
 #: onlineforms.js
 msgid "Forms need a name."
+msgstr ""
+
+#: dbupdate.py
+msgid "Fortnightly"
 msgstr ""
 
 #: dbupdate.py publish_options.js common.js common_animalchoosermulti.js
@@ -6185,10 +6195,6 @@ msgstr ""
 msgid "Internal Locations"
 msgstr ""
 
-#: code.py
-msgid "Invalid email address"
-msgstr ""
-
 #: common.js
 msgid "Invalid email address '{0}'"
 msgstr ""
@@ -6437,10 +6443,6 @@ msgstr ""
 
 #: dbupdate.py
 msgid "Large"
-msgstr ""
-
-#: onlineform.py
-msgid "Last"
 msgstr ""
 
 #: options.js
@@ -7696,7 +7698,7 @@ msgstr ""
 
 #: mobile.py onlineform.py i18n.py dbupdate.py wordprocessor.py
 #: publish_options.js users.js animal_find_results.js waitinglist_results.js
-#: sql.js onlineform.js accounts.js lostfound_find.js additional.js lookups.js
+#: sql.js accounts.js lostfound_find.js additional.js lookups.js
 #: person_find_results.js
 msgid "No"
 msgstr ""
@@ -8282,8 +8284,12 @@ msgstr ""
 msgid "Patterdale Terrier (Fell Terrier)"
 msgstr ""
 
-#: dbupdate.py
+#: dbupdate.py donations.js
 msgid "PayPal"
+msgstr ""
+
+#: options.js
+msgid "PayPal Business Email"
 msgstr ""
 
 #: calendarview.js common_widgets.js
@@ -8300,6 +8306,10 @@ msgstr ""
 
 #: lookups.py
 msgid "Payment Methods"
+msgstr ""
+
+#: options.js
+msgid "Payment Processors"
 msgstr ""
 
 #: html.py reports.py accounts.js
@@ -8565,6 +8575,10 @@ msgstr ""
 
 #: mailmerge.js
 msgid "Please tighten the scope of your email campaign to {0} emails or less."
+msgstr ""
+
+#: donations.js
+msgid "Please use the link below to pay."
 msgstr ""
 
 #: media.js
@@ -9375,6 +9389,14 @@ msgstr ""
 msgid "Reports"
 msgstr ""
 
+#: donations.js
+msgid "Request Payment"
+msgstr ""
+
+#: options.js
+msgid "Request payments in"
+msgstr ""
+
 #: media.js
 msgid "Request signature by email"
 msgstr ""
@@ -9951,6 +9973,10 @@ msgstr ""
 msgid ""
 "Send a weekly email to fosterers with medical information about their "
 "animals"
+msgstr ""
+
+#: donations.js
+msgid "Send an email request for payment via a payment processor"
 msgstr ""
 
 #: onlineforms.js
@@ -11681,6 +11707,10 @@ msgid ""
 "retailer movements."
 msgstr ""
 
+#: donations.js
+msgid "This payment has already been received"
+msgstr ""
+
 #: move_reserve.js
 msgid "This person has an animal control incident against them"
 msgstr ""
@@ -13297,7 +13327,7 @@ msgstr ""
 
 #: mobile.py onlineform.py i18n.py dbupdate.py wordprocessor.py
 #: publish_options.js users.js animal_find_results.js waitinglist_results.js
-#: sql.js onlineform.js accounts.js lostfound_find.js additional.js lookups.js
+#: sql.js accounts.js lostfound_find.js additional.js lookups.js
 #: person_find_results.js
 msgid "Yes"
 msgstr ""
@@ -13814,6 +13844,10 @@ msgid "{plural0} animal is not available for adoption"
 msgstr ""
 
 #: main.js
+msgid "{plural0} animal was TNR"
+msgstr ""
+
+#: main.js
 msgid "{plural0} animal was adopted"
 msgstr ""
 
@@ -13823,6 +13857,10 @@ msgstr ""
 
 #: main.js
 msgid "{plural0} animal was reclaimed by its owner"
+msgstr ""
+
+#: main.js
+msgid "{plural0} animal was released to wild"
 msgstr ""
 
 #: main.js
@@ -13966,6 +14004,10 @@ msgid "{plural1} animals have holds ending today"
 msgstr ""
 
 #: main.js
+msgid "{plural1} animals were TNR"
+msgstr ""
+
+#: main.js
 msgid "{plural1} animals were adopted"
 msgstr ""
 
@@ -13979,6 +14021,10 @@ msgstr ""
 
 #: main.js
 msgid "{plural1} animals were reclaimed by their owners"
+msgstr ""
+
+#: main.js
+msgid "{plural1} animals were released to wild"
 msgstr ""
 
 #: main.js
@@ -14122,6 +14168,10 @@ msgid "{plural2} animals have holds ending today"
 msgstr ""
 
 #: main.js
+msgid "{plural2} animals were TNR"
+msgstr ""
+
+#: main.js
 msgid "{plural2} animals were adopted"
 msgstr ""
 
@@ -14135,6 +14185,10 @@ msgstr ""
 
 #: main.js
 msgid "{plural2} animals were reclaimed by their owners"
+msgstr ""
+
+#: main.js
+msgid "{plural2} animals were released to wild"
 msgstr ""
 
 #: main.js
@@ -14278,6 +14332,10 @@ msgid "{plural3} animals have holds ending today"
 msgstr ""
 
 #: main.js
+msgid "{plural3} animals were TNR"
+msgstr ""
+
+#: main.js
 msgid "{plural3} animals were adopted"
 msgstr ""
 
@@ -14291,6 +14349,10 @@ msgstr ""
 
 #: main.js
 msgid "{plural3} animals were reclaimed by their owners"
+msgstr ""
+
+#: main.js
+msgid "{plural3} animals were released to wild"
 msgstr ""
 
 #: main.js
