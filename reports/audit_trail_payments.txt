@@ -1,0 +1,46 @@
+Audit Trail: Payment Processor Transactions by Date
+###
+Auditing
+###
+34400/Any
+###
+All login/logout events between two dates, grouped by user.
+###
+en
+###
+SELECT AuditDate, UserName, TableName, Description,
+CASE 
+WHEN Action = 6 THEN 'PAYMENT PROCESSOR'
+END AS Action
+FROM audittrail
+WHERE
+Action IN (6) AND
+AuditDate >= '$ASK DATE Enter the from date$' AND AuditDate <= '$ASK DATE Enter the to date$ 23:59:59'
+ORDER BY UserName, AuditDate
+###
+$$HEADER
+HEADER$$
+
+$$GROUP_UserName
+$$HEAD
+<h2>$UserName</h2>
+<table>
+<tr>
+<td><b>Date</b></td>
+<td><b>Action</b></td>
+<td></td>
+</tr>
+$$FOOT
+</table>
+GROUP$$
+
+$$BODY
+<tr>
+<td>$AUDITDATE</td>
+<td>$ACTION</td>
+<td>$DESCRIPTION</td>
+</tr>
+BODY$$
+
+$$FOOTER
+FOOTER$$

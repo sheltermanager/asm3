@@ -35,6 +35,7 @@ import asm3.medical
 import asm3.mobile
 import asm3.movement
 import asm3.onlineform
+import asm3.paymentprocessor.paypal
 import asm3.person
 import asm3.publish
 import asm3.publishers.base
@@ -193,18 +194,21 @@ class ASMEndpoint(object):
     post_permissions = ( ) # List of permissions needed to POST
     check_logged_in = True # Check whether we have a valid login
     user_activity = True   # Hitting this endpoint qualifies as user activity
+    use_web_input = True   # Unpack values with webpy's web.input()
     login_url = "login"    # The url to go to if not logged in
+    data = None            # Request data posted to this endpoint
 
     def _params(self):
         l = session.locale
         if l is None:
             l = LOCALE
+        post = asm3.utils.PostedData({}, l)
         try:
-            post = asm3.utils.PostedData(web.input(filechooser = {}), l)
+            if self.use_web_input: post = asm3.utils.PostedData(web.input(filechooser = {}), l)
+            self.data = web.data()
         except Exception as err:
             asm3.al.error("Failed unpacking params: %s" % str(err), "ASMEndpoint._params", session.dbo, sys.exc_info())
-            post = asm3.utils.PostedData({}, l)
-        return web.utils.storage( post=post, dbo=session.dbo, locale=l, user=session.user, session=session, \
+        return web.utils.storage( data=self.data, post=post, dbo=session.dbo, locale=l, user=session.user, session=session, \
             siteid = session.siteid, locationfilter = session.locationfilter, staffid = session.staffid,
             visibleanimalids = session.visibleanimalids )
 
@@ -267,6 +271,16 @@ class ASMEndpoint(object):
     def content_type(self, ct):
         """ Sends a content-type header """
         self.header("Content-Type", ct)
+
+    def data_param(self, p):
+        """ Returns a URL encoded parameter from the data stream.
+            This is useful for some services where they send data in
+            odd encodings (eg: PayPal use cp1252) and we can't use 
+            web.input, which assumes utf-8 """
+        for b in self.data.split("&"):
+            if b.startswith(p):
+                return b.split("=")[1]
+        return ""
 
     def header(self, key, value):
         """ Set the response header key to value """
@@ -628,10 +642,7 @@ class media(ASMEndpoint):
         self.check(asm3.users.EMAIL_PERSON)
         dbo = o.dbo
         post = o.post
-        l = o.locale
         emailadd = post["to"]
-        if emailadd == "" or emailadd.find("@") == -1:
-            raise asm3.utils.ASMValidationError(_("Invalid email address", l))
         for mid in post.integer_list("ids"):
             m = asm3.media.get_media_by_id(dbo, mid)
             if len(m) == 0: self.notfound()
@@ -648,10 +659,7 @@ class media(ASMEndpoint):
         self.check(asm3.users.EMAIL_PERSON)
         dbo = o.dbo
         post = o.post
-        l = o.locale
         emailadd = post["to"]
-        if emailadd == "" or emailadd.find("@") == -1:
-            raise asm3.utils.ASMValidationError(_("Invalid email address", l))
         for mid in post.integer_list("ids"):
             m = asm3.media.get_media_by_id(dbo, mid)
             if len(m) == 0: self.notfound()
@@ -670,8 +678,6 @@ class media(ASMEndpoint):
         post = o.post
         l = o.locale
         emailadd = post["to"]
-        if emailadd == "" or emailadd.find("@") == -1:
-            raise asm3.utils.ASMValidationError(_("Invalid email address", l))
         body = []
         body.append(post["body"])
         for mid in post.integer_list("ids"):
@@ -960,7 +966,7 @@ class login(ASMEndpoint):
             dbo = asm3.db.get_database(post["smaccount"])
             if dbo.database == "WRONGSERVER":
                 self.redirect(SMCOM_LOGIN_URL)
-            elif dbo.database != "FAIL" and dbo.database != "DISABLED":
+            elif dbo.database not in asm3.db.ERROR_VALUES:
                 custom_splash = asm3.dbfs.file_exists(dbo, "splash.jpg")
                 l = asm3.configuration.locale(dbo)
 
@@ -996,7 +1002,7 @@ class login(ASMEndpoint):
 
     def post_reset(self, o):
         dbo = asm3.db.get_database(o.post["database"])
-        if dbo.database in ("WRONGSERVER", "FAIL", "DISABLED"): return "FAIL"
+        if dbo.database in asm3.db.ERROR_VALUES: return "FAIL"
         asm3.al.info("password reset request from %s for %s:%s" % (self.remote_ip(), o.post["database"], o.post["username"]), "code.login", dbo)
         l = dbo.locale
         # This cannot be used to reset the SM master password
@@ -1068,7 +1074,7 @@ class reset_password(ASMEndpoint):
         rinfo = asm3.cachedisk.get(token, "")
         if rinfo is None: raise asm3.utils.ASMValidationError("invalid token")
         dbo = asm3.db.get_database(rinfo["database"])
-        if dbo.database in ("FAIL", "DISABLED", "WRONGSERVER"): raise asm3.utils.ASMValidationError("bad database")
+        if dbo.database in asm3.db.ERROR_VALUES: raise asm3.utils.ASMValidationError("bad database")
         # Reset their password to something random and send an email with the new password
         l = dbo.locale
         newpass = asm3.animalname.get_random_single_word_name()
@@ -2706,6 +2712,20 @@ class donation(JSONEndpoint):
         for did in o.post.integer_list("ids"):
             asm3.financial.delete_donation(o.dbo, o.user, did)
 
+    def post_emailrequest(self, o):
+        self.check(asm3.users.EMAIL_PERSON)
+        dbo = o.dbo
+        post = o.post
+        emailadd = post["to"]
+        body = []
+        body.append(post["body"])
+        url = "%s?account=%s&method=checkout&payref=%s" % (SERVICE_URL, dbo.database, post["payref"])
+        body.append("<p><a href=\"%s\">%s</a></p>" % (url, post["payref"]))
+        if post.boolean("addtolog"):
+            asm3.log.add_log(dbo, o.user, asm3.log.PERSON, post.integer("person"), post.integer("logtype"), "[%s] %s :: %s" % (emailadd, post["subject"], asm3.utils.html_email_to_plain("\n".join(body))))
+        asm3.utils.send_email(dbo, post["from"], emailadd, post["cc"], post["bcc"], post["subject"], "\n".join(body), "html")
+        return emailadd
+
     def post_nextreceipt(self, o):
         return asm3.financial.get_next_receipt_number(o.dbo)
 
@@ -4265,6 +4285,7 @@ class options(JSONEndpoint):
             "coattypes": asm3.lookups.get_coattypes(dbo),
             "colours": asm3.lookups.get_basecolours(dbo),
             "costtypes": asm3.lookups.get_costtypes(dbo),
+            "currencies": asm3.lookups.CURRENCIES,
             "deathreasons": asm3.lookups.get_deathreasons(dbo),
             "donationtypes": asm3.lookups.get_donation_types(dbo),
             "entryreasons": asm3.lookups.get_entryreasons(dbo),
@@ -4292,6 +4313,21 @@ class options(JSONEndpoint):
     def post_save(self, o):
         asm3.configuration.csave(o.dbo, o.user, o.post)
         self.reload_config()
+
+class pp_paypal(ASMEndpoint):
+    url = "pp_paypal"
+    check_logged_in = False
+    use_web_input = False
+
+    def post_all(self, o):
+        asm3.al.debug(o.data, "code.pp_paypal")
+        dbname = self.data_param("custom")
+        dbo = asm3.db.get_database(dbname)
+        if dbo.database in asm3.db.ERROR_VALUES:
+            asm3.al.error("invalid database '%s'" % dbname, "code.pp_paypal")
+            raise asm3.utils.ASMError("invalid database")
+        p = asm3.paymentprocessor.paypal.PayPal(dbo)
+        p.receive(o.data)
 
 class person(JSONEndpoint):
     url = "person"

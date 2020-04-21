@@ -169,7 +169,7 @@ def sign_document_page(dbo, mid):
     d = []
     docnotes = []
     docnotes.append(asm3.media.get_notes_for_id(dbo, int(mid)))
-    mdate, medianame, mimetype, contents = asm3.media.get_media_file_data(dbo, int(mid))
+    dummy, dummy, dummy, contents = asm3.media.get_media_file_data(dbo, int(mid))
     d.append(asm3.utils.bytes2str(contents))
     d.append("<hr />")
     h.append("<p><b>%s: %s</b></p>" % (_("Signing", l), ", ".join(docnotes)))
@@ -235,7 +235,7 @@ def handler(post, path, remoteip, referer, querystring):
 
     dbo = asm3.db.get_database(account)
 
-    if dbo.database in ( "FAIL", "DISABLED", "WRONGSERVER" ):
+    if dbo.database in asm3.db.ERROR_VALUES:
         asm3.al.error("auth failed - invalid smaccount %s from %s (%s)" % (account, remoteip, dbo.database), "service.handler", dbo)
         return ("text/plain", 0, 0, "ERROR: Invalid database (%s)" % dbo.database)
 
@@ -275,8 +275,8 @@ def handler(post, path, remoteip, referer, querystring):
             asm3.al.error("animal_image failed, %s is not an animalid" % str(animalid), "service.handler", dbo)
             return ("text/plain", 0, 0, "ERROR: Invalid animalid")
         else:
-            mediadate, data = asm3.media.get_image_file_data(dbo, "animal", asm3.utils.cint(animalid), seq)
-            if data == "NOPIC": mediadate, data = asm3.media.get_image_file_data(dbo, "nopic", 0)
+            dummy, data = asm3.media.get_image_file_data(dbo, "animal", asm3.utils.cint(animalid), seq)
+            if data == "NOPIC": dummy, data = asm3.media.get_image_file_data(dbo, "nopic", 0)
             return set_cached_response(cache_key, account, "image/jpeg", 86400, 3600, data)
 
     elif method =="animal_thumbnail":
@@ -284,8 +284,8 @@ def handler(post, path, remoteip, referer, querystring):
             asm3.al.error("animal_thumbnail failed, %s is not an animalid" % str(animalid), "service.handler", dbo)
             return ("text/plain", 0, 0, "ERROR: Invalid animalid")
         else:
-            mediadate, data = asm3.media.get_image_file_data(dbo, "animalthumb", asm3.utils.cint(animalid), seq)
-            if data == "NOPIC": mediadate, data = asm3.media.get_image_file_data(dbo, "nopic", 0)
+            dummy, data = asm3.media.get_image_file_data(dbo, "animalthumb", asm3.utils.cint(animalid), seq)
+            if data == "NOPIC": dummy, data = asm3.media.get_image_file_data(dbo, "nopic", 0)
             return set_cached_response(cache_key, account, "image/jpeg", 86400, 86400, data)
 
     elif method == "animal_view":
@@ -300,6 +300,11 @@ def handler(post, path, remoteip, referer, querystring):
 
     elif method == "animal_view_adoptable_html":
         return set_cached_response(cache_key, account, "text/html", 86400, 120, asm3.publishers.html.get_animal_view_adoptable_html(dbo))
+
+    elif method == "checkout":
+        # TODO: base64 decode receipt/return parameters if that's how they've been supplied
+        processor = asm3.financial.get_payment_processor(dbo, post["processor"])
+        return set_cached_response(cache_key, account, "text/html", 120, 120, processor.checkoutPage(post["payref"], post["return"], title))
 
     elif method =="dbfs_image":
         hotlink_protect("dbfs_image", referer)

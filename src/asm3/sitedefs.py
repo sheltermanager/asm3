@@ -272,6 +272,9 @@ VETENVOY_US_SYSTEM_ID = get_string("vetenvoy_us_system_id", "20")
 VETENVOY_US_HOMEAGAIN_RECIPIENTID = get_string("vetenvoy_us_homeagain_recipientid", "")
 VETENVOY_US_AKC_REUNITE_RECIPIENTID = get_string("vetenvoy_us_akc_reunite_recipientid", "")
 
+# Config for payment processing services
+PAYPAL_VALIDATE_IPN_URL = get_string("paypal_validate_ipn_url", "")
+
 # Override the html publishDir with a fixed value and forbid
 # editing in the UI.
 # {alias} will be substituted for the current database alias 

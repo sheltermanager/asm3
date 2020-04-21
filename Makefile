@@ -36,6 +36,8 @@ clean:
 	rm -rf src/asm3/dbms/__pycache__
 	rm -f src/asm3/locales/*.pyc
 	rm -rf src/asm3/locales/__pycache__
+	rm -f src/asm3/paymentprocessor/*.pyc
+	rm -rf src/asm3/paymentprocessor/__pycache__
 	rm -f src/asm3/pbkdf2/*.pyc
 	rm -rf src/asm3/pbkdf2/__pycache__
 	rm -f src/asm3/publishers/*.pyc
@@ -85,7 +87,7 @@ compilejsmin:
 
 compilepy:
 	@echo "[compile python] ====================="
-	flake8 --config=scripts/flake8 src/*.py src/asm3/*.py src/asm3/dbms/*.py src/asm3/publishers/*.py
+	flake8 --config=scripts/flake8 src/*.py src/asm3/*.py src/asm3/dbms/*.py src/asm3/publishers/*.py src/asm3/paymentprocessor/*.py
 
 smcom-dev: clean version rollup schema
 	@echo "[smcom dev us17] ===================="

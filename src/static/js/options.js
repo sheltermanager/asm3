@@ -69,6 +69,7 @@ $(function() {
                 '<li><a href="#tab-lostandfound">' + _("Lost and Found") + '</a></li>',
                 '<li><a href="#tab-medical">' + _("Medical") + '</a></li>',
                 '<li><a href="#tab-movements">' + _("Movements") + '</a></li>',
+                '<li><a href="#tab-processors">' + _("Payment Processors") + '</a></li>',
                 '<li><a href="#tab-quicklinks">' + _("Quicklinks") + '</a></li>',
                 '<li><a href="#tab-unwanted">' + _("Remove") + '</a></li>',
                 '<li><a href="#tab-search">' + _("Search") + '</a></li>',
@@ -1049,6 +1050,25 @@ $(function() {
             ].join("\n");
         },
 
+        render_processors: function() {
+            return [
+                '<div id="tab-processors">',
+                html.info(_("ASM can talk to payment processors and request payment from your customers and donors.")),
+                '<p><label for="currencycode">Request payments in</label>',
+                '<select id="currencycode" class="asm-selectbox" data="CurrencyCode">',
+                html.list_to_options(controller.currencies, "CODE", "DISPLAY"),
+                '</select>',
+                '<hr/>',
+                '<p class="centered"><img src="static/images/ui/logo_paypal_100.png" /></p>',
+                '<table>',
+                '<tr><td><label for="paypalemail">' + _("PayPal Business Email") + '</label></td>',
+                '<td><input data="PayPalEmail" id="paypalemail" type="text" class="asm-textbox asm-doubletextbox" /></td></tr>',
+                '</table>',
+                '<hr/>',
+                '</div>'
+            ].join("\n");
+        },
+
         render_quicklinks: function() {
             return [
                 '<div id="tab-quicklinks">',
@@ -1235,6 +1255,7 @@ $(function() {
                 this.render_lostandfound(),
                 this.render_medical(),
                 this.render_movements(),
+                this.render_processors(),
                 this.render_quicklinks(),
                 this.render_search(),
                 this.render_shelterview(),

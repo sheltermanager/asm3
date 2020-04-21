@@ -93,7 +93,7 @@ def map_diff(row1, row2, ref = []):
         if rv in row1:
             s += str(row1[rv]) + " "
     s += ">>> "
-    for k, v in row1.items():
+    for k in row1.keys():
         if k in row2:
             if str(row1[k]) != str(row2[k]):
                 s += k + ": " + str(row1[k]) + " ==> " + str(row2[k]) + ", "

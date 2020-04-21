@@ -4,6 +4,8 @@ import asm3.smcom
 
 from asm3.sitedefs import DB_TYPE, MULTIPLE_DATABASES, MULTIPLE_DATABASES_MAP, MULTIPLE_DATABASES_TYPE
 
+ERROR_VALUES = ( "FAIL", "DISABLED", "WRONGSERVER" )
+
 def get_dbo(t = None):
     """ Returns a dbo object for the current database backend, or type t if supplied """
     m = {

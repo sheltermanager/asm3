@@ -216,6 +216,8 @@ $(function() {
                  },
                  { id: "document", text: _("Receipt/Invoice"), icon: "document", enabled: "multi", perm: "gaf", 
                      tooltip: _("Generate document from this payment"), type: "buttonmenu" },
+                 { id: "processor", text: _("Request Payment"), icon: "web", enabled: "one", perm: "emo", 
+                     tooltip: _("Send an email request for payment via a payment processor"), type: "buttonmenu" },
                  { id: "offset", type: "dropdownfilter", 
                      options: [ 
                         "m0|" + _("Received today"),
@@ -332,6 +334,14 @@ $(function() {
                 '<ul class="asm-menu-list">' +
                 edit_header.template_list(controller.templates, "DONATION", 0) +
                 '</ul></div>';
+            s += '<div id="button-processor-body" class="asm-menu-body">' + 
+                '<ul class="asm-menu-list">';
+            if (config.str("PayPalEmail")) {
+                s += '<li id="button-paypal" class="processorbutton asm-menu-item"><a '
+                        + '" target="_blank" href="#">' + html.icon("paypal") + ' ' + _("PayPal") + '</a></li>';
+            }
+            s += '</ul></div>';
+            s += '<div id="emailform" />';
             if (controller.name == "animal_donations") {
                 s += edit_header.animal_edit_header(controller.animal, "donations", controller.tabcounts);
             }
@@ -418,6 +428,33 @@ $(function() {
                 }
             });
 
+            $("#emailform").emailform();
+
+            // Payment processor handling
+            var payment_processor_email_dialog = function(processor_name) {
+                var row = tableform.table_selected_row(donations.table);
+                $("#button-processor").asmmenu("hide_all");
+                header.hide_error();
+                if (!row) { return; }
+                if (row.DATE) { header.show_error(_("This payment has already been received")); return; }
+                $("#emailform").emailform("show", {
+                    title: _("Email request for payment"),
+                    post: "donation",
+                    formdata: "mode=emailrequest&processor=" + processor_name + "&person=" + 
+                        row.OWNERID + "&payref=" + row.OWNERCODE + "-" + row.RECEIPTNUMBER,
+                    name: row.OWNERNAME,
+                    email: row.EMAILADDRESS,
+                    personid: row.OWNERID,
+                    templates: controller.templates,
+                    logtypes: controller.logtypes,
+                    message: _("Please use the link below to pay.")
+                });
+            };
+            $("#button-paypal").click(function() {
+                payment_processor_email_dialog("paypal");
+                return false;
+            });
+
             // Add click handlers to templates
             $(".templatelink").click(function() {
                 // Update the href as it is clicked so default browser behaviour
@@ -442,6 +479,7 @@ $(function() {
         destroy: function() {
             common.widget_destroy("#animal");
             common.widget_destroy("#person");
+            common.widget_destroy("#emailform");
             tableform.dialog_destroy();
             this.create_semaphore = false;
             this.lastanimal = null;

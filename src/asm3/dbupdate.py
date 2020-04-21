@@ -37,7 +37,7 @@ VERSIONS = (
     34013, 34014, 34015, 34016, 34017, 34018, 34019, 34020, 34021, 34022, 34100,
     34101, 34102, 34103, 34104, 34105, 34106, 34107, 34108, 34109, 34110, 34111,
     34112, 34200, 34201, 34202, 34203, 34204, 34300, 34301, 34302, 34303, 34304,
-    34305, 34306, 34400
+    34305, 34306, 34400, 34401
 )
 
 LATEST_VERSION = VERSIONS[-1]
@@ -1277,7 +1277,9 @@ def sql_structure(dbo):
         fint("MovementID", True),
         fint("DonationTypeID"),
         fint("DonationPaymentID", True),
+        fstr("ReceiptNumber", True),
         fstr("ChequeNumber", True),
+        flongstr("PaymentProcessorData", True),
         fdate("Date", True),
         fdate("DateDue", True),
         fint("Donation"),
@@ -1290,7 +1292,6 @@ def sql_structure(dbo):
         fint("VATAmount", True),
         fint("Frequency"),
         fint("NextCreated", True),
-        fstr("ReceiptNumber", True),
         flongstr("Comments") ))
     sql += index("ownerdonation_OwnerID", "ownerdonation", "OwnerID")
     sql += index("ownerdonation_ReceiptNumber", "ownerdonation", "ReceiptNumber")
@@ -5188,3 +5189,7 @@ def update_34400(dbo):
     dbo.execute_dbupdate("UPDATE lksdonationfreq SET ID=3 WHERE ID=2")
     dbo.execute_dbupdate("UPDATE ownerdonation SET Frequency=Frequency+1 WHERE Frequency IN (2,3,4,5)")
     dbo.execute_dbupdate("INSERT INTO lksdonationfreq (ID, Frequency) VALUES (2, ?)", [ _("Fortnightly", l) ])
+
+def update_34401(dbo):
+    # Add ownerdonation.PaymentProcessorData
+    add_column(dbo, "ownerdonation", "PaymentProcessorData", dbo.type_longtext)

@@ -4,6 +4,7 @@ import asm3.audit
 import asm3.configuration
 import asm3.i18n
 import asm3.movement
+import asm3.paymentprocessor.paypal
 import asm3.utils
 
 import sys
@@ -58,7 +59,7 @@ def get_donation_query(dbo):
         "od.ReceiptNumber, od.ChequeNumber, od.Fee, od.IsVAT, od.VATRate, od.VATAmount, " \
         "od.CreatedBy, od.CreatedDate, od.LastChangedBy, od.LastChangedDate, " \
         "od.Comments, o.OwnerTitle, o.OwnerInitials, o.OwnerSurname, o.OwnerForenames, " \
-        "o.OwnerName, o.OwnerAddress, o.OwnerTown, o.OwnerCounty, o.OwnerPostcode, " \
+        "o.OwnerName, o.OwnerCode, o.OwnerAddress, o.OwnerTown, o.OwnerCounty, o.OwnerPostcode, " \
         "o.HomeTelephone, o.WorkTelephone, o.MobileTelephone, o.EmailAddress, o.AdditionalFlags, " \
         "a.AnimalName, a.ShelterCode, a.ShortCode, a.ID AS AnimalID, o.ID AS OwnerID, " \
         "a.HasActiveReserve, a.HasTrialAdoption, a.CrueltyCase, a.NonShelterAnimal, " \
@@ -704,16 +705,21 @@ def delete_donation(dbo, username, did):
     dbo.delete("ownerdonation", did, username)
     asm3.movement.update_movement_donation(dbo, movementid)
 
-def receive_donation(dbo, username, did):
+def receive_donation(dbo, username, did, chequenumber = "", amount = 0, vat = 0, fee = 0, rawdata = ""):
     """
-    Marks a donation received
+    Marks a donation received. If any of the optional parameters are passed, they are updated.
+    The monetary amounts are expected to be integer currency amounts, not floats.
     """
     if id is None or did == "": return
     row = dbo.first_row(dbo.query("SELECT * FROM ownerdonation WHERE ID = ?", [did]))
     
-    dbo.update("ownerdonation", did, {
-        "Date":     dbo.today()
-    }, username)
+    d = { "Date": dbo.today() }
+    if fee > 0: d["Fee"] = fee
+    if amount > 0: d["Donation"] = amount
+    if vat > 0: d["VAT"] = amount
+    if chequenumber != "": d["ChequeNumber"] = chequenumber
+    d["PaymentProcessorData"] = rawdata
+    dbo.update("ownerdonation", did, d, username)
 
     asm3.audit.edit(dbo, username, "ownerdonation", did, asm3.audit.get_parent_links(row), "receipt %s, id %s: received" % (row.RECEIPTNUMBER, did))
     update_matching_donation_transaction(dbo, username, did)
@@ -1250,6 +1256,15 @@ def delete_licence(dbo, username, lid):
     Deletes a licence record
     """
     dbo.delete("ownerlicence", lid, username)
+
+def get_payment_processor(dbo, name):
+    """
+    Returns a new payment processor object for name
+    """
+    if name == "paypal": 
+        return asm3.paymentprocessor.paypal.PayPal(dbo)
+    else:
+        raise KeyError("No payment processor available for '%s'" % name)
 
 def giftaid_spreadsheet(dbo, path, fromdate, todate):
     """

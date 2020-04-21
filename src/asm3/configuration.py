@@ -152,6 +152,7 @@ DEFAULTS = {
     "CreateCostTrx": "No",
     "CreateDonationTrx": "Yes",
     "CodingFormat": "TYYYYNNN",
+    "CurrencyCode": "USD",
     "ShortCodingFormat": "NNT",
     "DefaultAnimalAge": "1.0", 
     "DefaultDailyBoardingCost": "2000",
@@ -646,6 +647,9 @@ def create_cost_trx(dbo):
 def create_donation_trx(dbo):
     return cboolean(dbo, "CreateDonationTrx")
 
+def currency_code(dbo):
+    return cstring(dbo, "CurrencyCode", DEFAULTS["CurrencyCode"])
+
 def dbv(dbo, v = None):
     if v is None:
         return cstring(dbo, "DBV", "2870")
@@ -995,6 +999,9 @@ def organisation_telephone(dbo):
 
 def owner_name_format(dbo):
     return cstring(dbo, "OwnerNameFormat", DEFAULTS["OwnerNameFormat"])
+
+def paypal_email(dbo):
+    return cstring(dbo, "PayPalEmail")
 
 def petrescue_adoptable_in(dbo):
     return cstring(dbo, "PetRescueAdoptableIn")

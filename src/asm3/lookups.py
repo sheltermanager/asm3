@@ -158,6 +158,14 @@ MICROCHIP_MANUFACTURERS = [
     { "length": 15, "regex": r"^999", "name": "Transponder Test", "locales": ""}
 ]
 
+CURRENCIES = [
+    { "CODE": "GBP", "DISPLAY": "GBP - Pound Sterling"},
+    { "CODE": "USD", "DISPLAY": "USD - United States Dollar"},
+    { "CODE": "AUD", "DISPLAY": "AUD - Australian Dollar"},
+    { "CODE": "CAD", "DISPLAY": "CAD - Canadian Dollar"},
+    { "CODE": "EUR", "DISPLAY": "EUR - Euro"}
+]
+
 VISUAL_THEMES = [
     ( "asm", "ASM" ),
     ( "base", "Base" ),
