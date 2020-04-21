@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ASM3\n"
 "Report-Msgid-Bugs-To: robin@sheltermanager.com\n"
-"POT-Creation-Date: 2020-03-28 08:50+0000\n"
-"PO-Revision-Date: 2020-03-28 14:27+0100\n"
+"POT-Creation-Date: 2020-04-21 16:27+0000\n"
+"PO-Revision-Date: 2020-04-21 18:21+0200\n"
 "Last-Translator: Julian POIDEVIN <poidevin.julian@gmail.com>\n"
 "Language-Team: \n"
 "Language: fr\n"
@@ -196,6 +196,14 @@ msgstr "ASM 3 est compatible avec votre iPad et autres tablettes."
 msgid "ASM News"
 msgstr "L'actualité d'ASM"
 
+#: options.js
+msgid ""
+"ASM can talk to payment processors and request payment from your customers "
+"and donors."
+msgstr ""
+"ASM peut interagir avec des plateformes de paiement et demander des "
+"paiements à vos clients et donateurs."
+
 #: main.js
 msgid ""
 "ASM can track detailed monthly and annual figures for your shelter. Install "
@@ -370,7 +378,7 @@ msgstr "Ajouter des licences"
 msgid "Add Litter"
 msgstr "Ajouter une portée"
 
-#: mobile.py roles.js
+#: mobile.py roles.js animal_bulk.js
 msgid "Add Log"
 msgstr "Ajouter un journal"
 
@@ -735,7 +743,7 @@ msgstr "Animaux adoptés"
 msgid "Adopted Transferred In {0}"
 msgstr "Adoptés transférés dans {0}"
 
-#: common.js header_edit_header.js
+#: html.py common.js header_edit_header.js
 msgid "Adopter"
 msgstr "Adoptant"
 
@@ -4317,6 +4325,10 @@ msgstr "Envoyer le média par email"
 msgid "Email person"
 msgstr "Email de la personne"
 
+#: donations.js
+msgid "Email request for payment"
+msgstr "Envoyer une demande de paiement par e-mail"
+
 #: options.js
 msgid "Email signature"
 msgstr "Signature mail"
@@ -5106,6 +5118,10 @@ msgstr "URL du formulaire"
 #: onlineforms.js
 msgid "Forms need a name."
 msgstr "Le formulaire a besoin d'un nom."
+
+#: dbupdate.py
+msgid "Fortnightly"
+msgstr "Bimensuel"
 
 #: dbupdate.py publish_options.js common.js common_animalchoosermulti.js
 #: move_foster.js
@@ -6322,10 +6338,6 @@ msgstr "Emplacement interne"
 #: lookups.py
 msgid "Internal Locations"
 msgstr "Emplacements internes"
-
-#: code.py
-msgid "Invalid email address"
-msgstr "Adresse email invalide"
 
 #: common.js
 msgid "Invalid email address '{0}'"
@@ -7607,7 +7619,7 @@ msgstr "N (Animal extra-refuge)"
 msgid "NNN or NN = number unique for this type of animal for this year"
 msgstr "NNN ou NN = nombre unique pour ce type d'animal pour cette année"
 
-#: html.py mobile.py person.py wordprocessor.py animal_new.js
+#: html.py mobile.py person.py onlineform.py wordprocessor.py animal_new.js
 #: common_personchooser.js medicalprofile.js animal_find_results.js
 #: waitinglist_results.js medical.js onlineforms.js animal_find.js
 #: onlineform_incoming.js stocklevel.js onlineform.js roles.js animal.js
@@ -7847,7 +7859,7 @@ msgstr "Suivant"
 
 #: mobile.py onlineform.py i18n.py dbupdate.py wordprocessor.py
 #: publish_options.js users.js animal_find_results.js waitinglist_results.js
-#: sql.js onlineform.js accounts.js lostfound_find.js additional.js lookups.js
+#: sql.js accounts.js lostfound_find.js additional.js lookups.js
 #: person_find_results.js
 msgid "No"
 msgstr "Non"
@@ -8345,7 +8357,7 @@ msgstr "Heures supplémentaires"
 msgid "Owl"
 msgstr "Hibou"
 
-#: dbupdate.py animal_new.js move_reclaim.js
+#: dbupdate.py animal_new.js move_reclaim.js animal.js
 msgid "Owner"
 msgstr "Propriétaire"
 
@@ -8433,6 +8445,12 @@ msgstr "Le mot de passe pour '{0}' a été réinitialisé."
 msgid "Password is incorrect."
 msgstr "Mot de passe incorrect."
 
+#: login.js
+msgid "Password reset information has been sent to your email."
+msgstr ""
+"Des informations concernant la réinitialisation du mot de passe ont été "
+"envoyées à votre adresse e-mail."
+
 #: change_password.js
 msgid "Password successfully changed."
 msgstr "Mot de passe modifié avec succès."
@@ -8449,9 +8467,13 @@ msgstr "Chemin"
 msgid "Patterdale Terrier (Fell Terrier)"
 msgstr "Terrier Patterdale"
 
-#: dbupdate.py
+#: dbupdate.py donations.js
 msgid "PayPal"
 msgstr "PayPal"
+
+#: options.js
+msgid "PayPal Business Email"
+msgstr "E-mail professionnel PayPal"
 
 #: calendarview.js common_widgets.js
 msgid "Payment"
@@ -8468,6 +8490,10 @@ msgstr "Paiement à partir de"
 #: lookups.py
 msgid "Payment Methods"
 msgstr "Modes de paiement"
+
+#: options.js
+msgid "Payment Processors"
+msgstr "Plateformes de paiement"
 
 #: html.py reports.py accounts.js
 msgid "Payment Type"
@@ -8741,6 +8767,10 @@ msgid "Please tighten the scope of your email campaign to {0} emails or less."
 msgstr ""
 "Veuillez réduire l''étendue de votre campagne d'e-mailing à {0} e-mails ou "
 "moins."
+
+#: donations.js
+msgid "Please use the link below to pay."
+msgstr "Veuillez utiliser le lien ci-dessous pour payer."
 
 #: media.js
 msgid "Please use the links below to electronically sign these documents."
@@ -9327,6 +9357,10 @@ msgid "Regenerate monthly animal figures for"
 msgstr "Régénérer les chiffres mensuels pour l'animal pour"
 
 #: code.py batch.js
+msgid "Regenerate person flags column"
+msgstr "Régénérer la colonne des étiquettes de contact"
+
+#: code.py batch.js
 msgid "Regenerate person names in selected format"
 msgstr "Régénérer les noms des contacts au format sélectionné"
 
@@ -9579,6 +9613,14 @@ msgstr "Reporter un nouvel incident"
 msgid "Reports"
 msgstr "Rapports"
 
+#: donations.js
+msgid "Request Payment"
+msgstr "Demander un paiement"
+
+#: options.js
+msgid "Request payments in"
+msgstr "Demander les paiements dans"
+
 #: media.js
 msgid "Request signature by email"
 msgstr "Demander la signature par email"
@@ -9673,6 +9715,10 @@ msgstr "Réinitialiser"
 #: users.js
 msgid "Reset Password"
 msgstr "Réinitialiser le mot de passe"
+
+#: code.py
+msgid "Reset password request"
+msgstr "Demande de réinitialisation de mot de passe"
 
 #: mobile.py incident.js
 msgid "Respond"
@@ -10166,6 +10212,11 @@ msgid ""
 msgstr ""
 "Envoyer un e-mail hebdomadaire aux familles d'accueil avec des informations "
 "médicales sur leurs animaux"
+
+#: donations.js
+msgid "Send an email request for payment via a payment processor"
+msgstr ""
+"Envoyer une demande de paiement par e-mail via une plateforme de paiement"
 
 #: onlineforms.js
 msgid "Send confirmation email to form submitter"
@@ -11316,6 +11367,10 @@ msgstr "Merci, le document est maintenant signé."
 msgid "That animal is already linked to the incident"
 msgstr "Cet animal est déjà lié à l'incident"
 
+#: code.py
+msgid "The ASM password for {0} has been reset to:"
+msgstr "Le mot de passe ASM pour {0} a été réinitialisé à :"
+
 #: csvimport_paypal.js
 msgid "The CSV file should be created by PayPal's \"All Activity\" report."
 msgstr ""
@@ -11593,6 +11648,14 @@ msgid ""
 msgstr ""
 "Le mot de passe du compte admin de sheltermanager.com ne peut être modifié "
 "ici, veuillez consultez {0}"
+
+#: login.js
+msgid ""
+"The sheltermanager.com admin account password cannot be reset here, please "
+"visit {0}"
+msgstr ""
+"Le mot de passe du compte administrateur de shelmanager.com ne peut pas être "
+"réinitialisé ici, veuillez visiter {0}"
 
 #: animal.js
 msgid "The size of this animal"
@@ -11972,6 +12035,10 @@ msgstr ""
 "Cet élément est référencé dans la base de données ({0}) et ne peut pas être "
 "supprimé tant qu'il n'est plus utilisé."
 
+#: code.py
+msgid "This link will remain active for 10 minutes."
+msgstr "Ce lien restera actif pendant 10 minutes."
+
 #: options.js
 msgid ""
 "This many years after creation of a person record, the name, address and "
@@ -11991,6 +12058,10 @@ msgid ""
 msgstr ""
 "Ce mouvement ne peut pas provenir d'un revendeur lorsque l'animal n'a aucun "
 "mouvement de revente antérieur."
+
+#: donations.js
+msgid "This payment has already been received"
+msgstr "Ce paiement a déjà été reçu"
 
 #: move_reserve.js
 msgid "This person has an animal control incident against them"
@@ -12350,6 +12421,10 @@ msgstr ""
 #: header.js
 msgid "To continue using ASM, please renew {0}"
 msgstr "Pour continuer à utiliser ASM, veuillez renouveler {0}"
+
+#: code.py
+msgid "To reset your ASM password, please follow this link:"
+msgstr "Pour réinitialiser votre mot de passe ASM, veuillez suivre ce lien:"
 
 #: staff_rota.js
 msgid "To week beginning"
@@ -12927,6 +13002,10 @@ msgid ""
 msgstr ""
 "Les comptes d'utilisateurs qui n'appelleront jamais l'API de service doivent "
 "définir ce paramètre sur Non."
+
+#: login.js
+msgid "User does not exist or have a valid email address."
+msgstr "L'utilisateur n'existe pas ou n'a pas d'adresse e-mail valide."
 
 #: html.py
 msgid "User roles"
@@ -13713,7 +13792,7 @@ msgstr "Jaune et gris"
 
 #: mobile.py onlineform.py i18n.py dbupdate.py wordprocessor.py
 #: publish_options.js users.js animal_find_results.js waitinglist_results.js
-#: sql.js onlineform.js accounts.js lostfound_find.js additional.js lookups.js
+#: sql.js accounts.js lostfound_find.js additional.js lookups.js
 #: person_find_results.js
 msgid "Yes"
 msgstr "Oui"
@@ -14276,6 +14355,10 @@ msgid "{plural0} animal is not available for adoption"
 msgstr "{plural0} animal n'est pas disponible à l'adoption"
 
 #: main.js
+msgid "{plural0} animal was TNR"
+msgstr "{plural0} animal a été CSR (Capturés Stérilisés Relâchés)"
+
+#: main.js
 msgid "{plural0} animal was adopted"
 msgstr "{plural0} animal a été adopté"
 
@@ -14286,6 +14369,10 @@ msgstr "{plural0} animal a été euthanasié"
 #: main.js
 msgid "{plural0} animal was reclaimed by its owner"
 msgstr "{plural0} animal a été réclamé par son propriétaire"
+
+#: main.js
+msgid "{plural0} animal was released to wild"
+msgstr "{plural0} animal a été remis en liberté"
 
 #: main.js
 msgid "{plural0} animal was transferred to another shelter"
@@ -14433,6 +14520,10 @@ msgid "{plural1} animals have holds ending today"
 msgstr "{plural1} animaux ont des détentions se terminant aujourd'hui"
 
 #: main.js
+msgid "{plural1} animals were TNR"
+msgstr "{plural1} animaux ont été CSR (Capturés Stérilisés Relâchés)"
+
+#: main.js
 msgid "{plural1} animals were adopted"
 msgstr "{plural1} animaux ont été adoptés"
 
@@ -14447,6 +14538,10 @@ msgstr "{plural1} animaux ont été euthanasiés"
 #: main.js
 msgid "{plural1} animals were reclaimed by their owners"
 msgstr "{plural1} animaux ont été réclamés par leur propriétaire"
+
+#: main.js
+msgid "{plural1} animals were released to wild"
+msgstr "{plural1} animaux ont été remis en liberté"
 
 #: main.js
 msgid "{plural1} animals were transferred to other shelters"
@@ -14594,6 +14689,10 @@ msgid "{plural2} animals have holds ending today"
 msgstr "{plural2} animaux ont des détentions se terminant aujourd'hui"
 
 #: main.js
+msgid "{plural2} animals were TNR"
+msgstr "{plural2} animaux ont été CSR (Capturés Stérilisés Relâchés)"
+
+#: main.js
 msgid "{plural2} animals were adopted"
 msgstr "{plural2} animaux ont été adoptés"
 
@@ -14608,6 +14707,10 @@ msgstr "{plural2} animaux ont été euthanasiés"
 #: main.js
 msgid "{plural2} animals were reclaimed by their owners"
 msgstr "{plural2} animaux ont été réclamés par leur propriétaire"
+
+#: main.js
+msgid "{plural2} animals were released to wild"
+msgstr "{plural2} animaux ont été remis en liberté"
 
 #: main.js
 msgid "{plural2} animals were transferred to other shelters"
@@ -14755,6 +14858,10 @@ msgid "{plural3} animals have holds ending today"
 msgstr "{plural3} les animaux ont des détentions se terminant aujourd'hui"
 
 #: main.js
+msgid "{plural3} animals were TNR"
+msgstr "{plural3} animaux ont été CSR (Capturés Stérilisés Relâchés)"
+
+#: main.js
 msgid "{plural3} animals were adopted"
 msgstr "{plural3} animaux ont été adoptés"
 
@@ -14769,6 +14876,10 @@ msgstr "{plural3} animaux ont été euthanasiés"
 #: main.js
 msgid "{plural3} animals were reclaimed by their owners"
 msgstr "{plural3} animaux ont été réclamés par leur propriétaire"
+
+#: main.js
+msgid "{plural3} animals were released to wild"
+msgstr "{plural3} animaux ont été remis en liberté"
 
 #: main.js
 msgid "{plural3} animals were transferred to other shelters"
@@ -14891,6 +15002,9 @@ msgstr "{plural3} semaines."
 #: i18n.py
 msgid "{plural3} years."
 msgstr "{plural3} années."
+
+#~ msgid "Invalid email address"
+#~ msgstr "Adresse email invalide"
 
 #~ msgid "Value"
 #~ msgstr "Valeur"
