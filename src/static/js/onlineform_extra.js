@@ -52,7 +52,7 @@ $(document).ready(function() {
             canvas.width = img_width;
             ctx.drawImage(img, 0, 0, img_width, img_height);
             var datauri = canvas.toDataURL("image/jpeg");
-            if (datauri.length > 75000) { alert("Scaled image is too large"); return; }
+            if (datauri.length > 384000) { alert("Scaled image is too large"); field.val(""); return; }
             $("input[name='" + field.attr("data-name") + "']").val( datauri );
         };
         imreader.readAsDataURL(file);
