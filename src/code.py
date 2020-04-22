@@ -4315,6 +4315,10 @@ class options(JSONEndpoint):
         self.reload_config()
 
 class pp_paypal(ASMEndpoint):
+    """ 
+    PayPal IPN endpoint. If we return anything but 200 OK with an
+    empty body, PayPal will retry the IPN at a later time. 
+    """
     url = "pp_paypal"
     check_logged_in = False
     use_web_input = False
@@ -4325,9 +4329,16 @@ class pp_paypal(ASMEndpoint):
         dbo = asm3.db.get_database(dbname)
         if dbo.database in asm3.db.ERROR_VALUES:
             asm3.al.error("invalid database '%s'" % dbname, "code.pp_paypal")
-            raise asm3.utils.ASMError("invalid database")
-        p = asm3.paymentprocessor.paypal.PayPal(dbo)
-        p.receive(o.data)
+            return
+        try:
+            p = asm3.paymentprocessor.paypal.PayPal(dbo)
+            p.receive(o.data)
+        except asm3.paymentprocessor.paypal.PayPalError:
+            # PayPalError subclasses are thrown when there is a problem with the 
+            # data PayPal have sent, but we do not want them to send it again.
+            # By catching these and returning a 200 empty body, they will not
+            # send it again.
+            return
 
 class person(JSONEndpoint):
     url = "person"

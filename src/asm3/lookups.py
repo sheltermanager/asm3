@@ -159,11 +159,29 @@ MICROCHIP_MANUFACTURERS = [
 ]
 
 CURRENCIES = [
-    { "CODE": "GBP", "DISPLAY": "GBP - Pound Sterling"},
     { "CODE": "USD", "DISPLAY": "USD - United States Dollar"},
     { "CODE": "AUD", "DISPLAY": "AUD - Australian Dollar"},
+    { "CODE": "BRL", "DISPLAY": "BRL - Brazilian Real"},
     { "CODE": "CAD", "DISPLAY": "CAD - Canadian Dollar"},
-    { "CODE": "EUR", "DISPLAY": "EUR - Euro"}
+    { "CODE": "CHF", "DISPLAY": "CHF - Swiss Franc"},
+    { "CODE": "CZK", "DISPLAY": "CZK - Czech Koruna"},
+    { "CODE": "DKK", "DISPLAY": "DKK - Danish Krone"},
+    { "CODE": "EUR", "DISPLAY": "EUR - Euro"},
+    { "CODE": "GBP", "DISPLAY": "GBP - Pound Sterling"},
+    { "CODE": "HKD", "DISPLAY": "HKD - Hong Kong Dollar"},
+    { "CODE": "HUF", "DISPLAY": "HUF - Hungarian Forint"},
+    { "CODE": "INR", "DISPLAY": "INR - Indian Rupee"},
+    { "CODE": "ILS", "DISPLAY": "ILS - Israeli New Sheqel"},
+    { "CODE": "JPY", "DISPLAY": "JPY - Japanese Yen"},
+    { "CODE": "MYR", "DISPLAY": "MYR - Malaysian Ringgit"},
+    { "CODE": "MXN", "DISPLAY": "MXN - Mexican Peso"},
+    { "CODE": "NOK", "DISPLAY": "NOK - Norwegian Krone"},
+    { "CODE": "NZD", "DISPLAY": "NZD - New Zealand Dollar"},
+    { "CODE": "PLN", "DISPLAY": "PLN - Polish Zloty"},
+    { "CODE": "RUB", "DISPLAY": "RUB - Russian Ruble"},
+    { "CODE": "SEK", "DISPLAY": "SEK - Swedish Krona"},
+    { "CODE": "TWD", "DISPLAY": "TWD - Taiwan New Dollar"},
+    { "CODE": "THB", "DISPLAY": "THB - Thai Baht"},
 ]
 
 VISUAL_THEMES = [

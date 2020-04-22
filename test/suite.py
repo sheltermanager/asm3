@@ -1,4 +1,4 @@
-#!/usr/bin/python env
+#!/usr/bin/env python3
 
 import unittest
 import base
@@ -81,6 +81,10 @@ import test_onlineform
 suiteonlineform = unittest.makeSuite(test_onlineform.TestOnlineForm, 'test')
 fullsuite.append(suiteonlineform)
 
+import test_paymentprocessor
+suitepaymentprocessor = unittest.makeSuite(test_paymentprocessor.TestPaymentProcessor, 'test')
+fullsuite.append(suitepaymentprocessor)
+
 import test_person
 suiteperson = unittest.makeSuite(test_person.TestPerson, 'test')
 fullsuite.append(suiteperson)
@@ -126,7 +130,7 @@ if __name__ == "__main__":
     import asm3.dbupdate
     asm3.dbupdate.install(base.get_dbo())
     s = unittest.TestSuite(fullsuite)
-    #s = unittest.TestSuite([suiteutils]) # How to run a single suite of tests
+    #s = unittest.TestSuite([suitepaymentprocessor]) # How to run a single suite of tests
     runner = unittest.TextTestRunner()
     runner.run(s)
 

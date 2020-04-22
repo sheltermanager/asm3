@@ -55,12 +55,13 @@ class PaymentProcessor(object):
     def isPaymentReceived(self, payref):
         """ Returns False if the payment(s) comprising payref have not been received """
         receiptnumber = self.getReceiptNumber(payref)
-        return None is self.dbo.query_date("select date from ownerdonation where receiptnumber=? and date is null", [receiptnumber])
+        return 0 == self.dbo.query_int("select count(*) from ownerdonation where receiptnumber=? and date is null", [receiptnumber])
 
     def markPaymentReceived(self, payref, trxid, received, vat, fee, rawdata):
         """ 
         Marks all payments in payref received.
         Sets the fee on the first payment and deducts it from the first payment amount.
+        It is expected that received, vat and fee are all integer currency amounts in whole pence.
         """
         receiptnumber = self.getReceiptNumber(payref)
         rows = self.dbo.query("select donation, id from ownerdonation where receiptnumber=?", [receiptnumber])
@@ -68,8 +69,8 @@ class PaymentProcessor(object):
             asm3.financial.receive_donation(self.dbo, "system/%s" % self.name, 
                 r.id, 
                 chequenumber=trxid,
-                fee=asm3.utils.iif(i==0 and fee>0, asm3.utils.cint(fee * 100.0), 0),
-                amount=asm3.utils.iif(i==0 and fee>0, asm3.utils.cint(r.donation - (fee * 100.0)), 0), 
+                fee=asm3.utils.iif(i==0 and fee>0, fee, 0),
+                amount=asm3.utils.iif(i==0 and fee>0, r.donation - fee, 0),
                 rawdata=rawdata )
 
     def validatePaymentReference(self, payref):

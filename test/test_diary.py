@@ -1,4 +1,3 @@
-#!/usr/bin/python env
 
 import unittest
 import base
