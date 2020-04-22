@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ASM3\n"
 "Report-Msgid-Bugs-To: robin@sheltermanager.com\n"
-"POT-Creation-Date: 2020-04-21 16:27+0000\n"
+"POT-Creation-Date: 2020-04-22 12:54+0000\n"
 "Last-Translator: Robin Rawson-Tetley <robin@sheltermanager.com>\n"
 "Language-Team: en <robin@sheltermanager.com>\n"
 "Language: en\n"
@@ -6687,6 +6687,10 @@ msgstr ""
 #: animal_bulk.js test.js animal.js options.js shelterview.js
 #: header_edit_header.js
 msgid "Location"
+msgstr ""
+
+#: options.js shelterview.js
+msgid "Location (No Virtual)"
 msgstr ""
 
 #: users.js
