@@ -47,10 +47,11 @@ def _lwpickle(fname, o):
             fcntl.flock(fd, fcntl.LOCK_EX)
             pickle.dump(o, fd)
 
-def _getfilename(key, path):
+def _getfilename(key, path, mkpath=False):
     """
     Calculates the filename from the key
     (md5 hash)
+    If mkpath is True, creates any missing path directories.
     """
     # Is the key already a hash? ie. 32 or 40 chars and hex?
     # If so, don't waste time hashing it again.
@@ -67,7 +68,7 @@ def _getfilename(key, path):
     if path != "":
         path = _sanitise_path(path)
         path = os.path.join(DISK_CACHE, path)
-        if not os.path.exists(path):
+        if mkpath and not os.path.exists(path):
             os.mkdir(path)
     else:
         path = DISK_CACHE
@@ -136,7 +137,7 @@ def put(key, path, value, ttl):
     will be removed if it is accessed past the ttl.
     """
     try:
-        fname = _getfilename(key, path)
+        fname = _getfilename(key, path, mkpath=True)
 
         o = {
             "expires": time.time() + ttl,
