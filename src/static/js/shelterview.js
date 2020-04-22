@@ -317,6 +317,7 @@ $(function() {
                     grplink = "#";
                     if (groupfield == "SHELTERLOCATIONNAME") {
                         grplink = "animal_find_results?logicallocation=onshelter&shelterlocation=" + a.SHELTERLOCATION;
+                        locationsused.push(a.SHELTERLOCATION);
                     }
                     if (groupfield == "DISPLAYLOCATIONNAME") {
                         grplink = "animal_find_results?logicallocation=onshelter&shelterlocation=" + a.SHELTERLOCATION;
