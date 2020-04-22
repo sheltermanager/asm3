@@ -1453,6 +1453,7 @@ class animal_donations(JSONEndpoint):
             "name": "animal_donations",
             "donationtypes": asm3.lookups.get_donation_types(dbo),
             "accounts": asm3.financial.get_accounts(dbo, onlybank=True),
+            "logtypes": asm3.lookups.get_log_types(dbo), 
             "paymenttypes": asm3.lookups.get_payment_types(dbo),
             "frequencies": asm3.lookups.get_donation_frequencies(dbo),
             "templates": asm3.template.get_document_templates(dbo)
@@ -2693,6 +2694,7 @@ class donation(JSONEndpoint):
             "name": "donation",
             "donationtypes": asm3.lookups.get_donation_types(dbo),
             "accounts": asm3.financial.get_accounts(dbo, onlybank=True),
+            "logtypes": asm3.lookups.get_log_types(dbo), 
             "paymenttypes": asm3.lookups.get_payment_types(dbo),
             "frequencies": asm3.lookups.get_donation_frequencies(dbo),
             "templates": asm3.template.get_document_templates(dbo),
@@ -2719,7 +2721,7 @@ class donation(JSONEndpoint):
         emailadd = post["to"]
         body = []
         body.append(post["body"])
-        url = "%s?account=%s&method=checkout&payref=%s" % (SERVICE_URL, dbo.database, post["payref"])
+        url = "%s?account=%s&method=checkout&processor=%s&payref=%s" % (SERVICE_URL, dbo.database, post["processor"], post["payref"])
         body.append("<p><a href=\"%s\">%s</a></p>" % (url, post["payref"]))
         if post.boolean("addtolog"):
             asm3.log.add_log(dbo, o.user, asm3.log.PERSON, post.integer("person"), post.integer("logtype"), "[%s] %s :: %s" % (emailadd, post["subject"], asm3.utils.html_email_to_plain("\n".join(body))))
@@ -4486,6 +4488,7 @@ class person_donations(JSONEndpoint):
             "name": "person_donations",
             "donationtypes": asm3.lookups.get_donation_types(dbo),
             "accounts": asm3.financial.get_accounts(dbo, onlybank=True),
+            "logtypes": asm3.lookups.get_log_types(dbo), 
             "paymenttypes": asm3.lookups.get_payment_types(dbo),
             "frequencies": asm3.lookups.get_donation_frequencies(dbo),
             "templates": asm3.template.get_document_templates(dbo),
