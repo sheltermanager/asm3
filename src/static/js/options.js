@@ -1058,13 +1058,14 @@ $(function() {
                 '<select id="currencycode" class="asm-selectbox" data="CurrencyCode">',
                 html.list_to_options(controller.currencies, "CODE", "DISPLAY"),
                 '</select>',
+                '<div id="paypal-options">',
                 '<hr/>',
                 '<p class="centered"><img src="static/images/ui/logo_paypal_100.png" /></p>',
                 '<table>',
                 '<tr><td><label for="paypalemail">' + _("PayPal Business Email") + '</label></td>',
                 '<td><input data="PayPalEmail" id="paypalemail" type="text" class="asm-textbox asm-doubletextbox" /></td></tr>',
                 '</table>',
-                '<hr/>',
+                '</div>',
                 '</div>'
             ].join("\n");
         },
@@ -1372,6 +1373,11 @@ $(function() {
             // Hide options not applicable for some locales
             if (asm.locale != "en") {
                 $(".us").hide();
+            }
+
+            // Hide other non-relevant options
+            if (!controller.haspaypal) {
+                $("#paypal-options").hide();
             }
 
             validate.bind_dirty();

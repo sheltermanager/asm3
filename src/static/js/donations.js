@@ -454,6 +454,11 @@ $(function() {
                 payment_processor_email_dialog("paypal");
                 return false;
             });
+            
+            // if there are no available payment processors, hide the button
+            if ($("#button-processor-body li").length == 0) {
+                $("#button-processor").hide();
+            }
 
             // Add click handlers to templates
             $(".templatelink").click(function() {
