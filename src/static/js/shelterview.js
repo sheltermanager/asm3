@@ -432,6 +432,7 @@ $(function() {
                                 $.each(controller.animals, function(i, a) {
                                     if (a.ID == animalid) {
                                         a.SHELTERLOCATION = locationid;
+                                        a.SHELTERLOCATIONNAME = locationname;
                                         a.DISPLAYLOCATIONNAME = locationname;
                                         return false;
                                     }
