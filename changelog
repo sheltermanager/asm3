@@ -1,6 +1,7 @@
 44
 ================
 
+22/04/20 Update fr_CA translation (Stephanie Cordeau)
 21/04/20 Payment processor integration: PayPal support #463
 20/04/20 Remove old redudant table/col code from sql handler
 20/04/20 Set online form explicit font sizes (fixes Chrome mobile) #787
