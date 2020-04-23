@@ -28,6 +28,7 @@ import zipfile
 if sys.version_info[0] > 2: # PYTHON3
     import _thread as thread
     import urllib.request as urllib2
+    import urllib.parse
     from io import BytesIO, StringIO
     from html.parser import HTMLParser
     from email.mime.base import MIMEBase
@@ -40,6 +41,7 @@ if sys.version_info[0] > 2: # PYTHON3
 else:
     import thread
     import urllib2
+    import urllib
     from cStringIO import StringIO
     from io import BytesIO
     from HTMLParser import HTMLParser
@@ -1102,6 +1104,17 @@ def post_xml(url, xml, headers = {}):
     Posts an XML document to a URL. xml can be str or bytes.
     """
     return post_data(url, xml, contenttype="text/xml", headers=headers)
+
+def urlencode(d):
+    """
+    URL encodes a dictionary of key/pair values.
+    """
+    # PYTHON3
+    if sys.version_info[0] > 2: 
+        return urllib.parse.urlencode(d)
+    else:
+        #PYTHON2
+        return urllib.urlencode(d)
 
 def zip_extract(zipfilename, filename):
     """

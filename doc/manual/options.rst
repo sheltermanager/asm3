@@ -686,6 +686,28 @@ the reservation for you after this time.
   to an owner who looks like an owner who brought an animal in. This is a loose
   check based on name and address. 
 
+.. _paymentprocessors:
+
+Payment Processors
+------------------
+
+ASM can be configured to request due payments from your customers via payment
+processors.
+
+* Request payments in: A currency code to request payments in. This should match
+  the currency that you are using in your database as ASM does not perform
+  any kind of currency exchange calculations.
+
+* Redirect to this URL after successful payment: When a customer succesfully
+  completes a payment, this is the page they will be redirected to. If you do not 
+  set a page, the payment processor will show their own payment successful page.
+
+PayPal
+^^^^^^
+
+* PayPal Business Email: The address for your PayPal account where payments will 
+  be sent to.
+
 Quicklinks
 ----------
 

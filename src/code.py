@@ -2724,7 +2724,14 @@ class donation(JSONEndpoint):
         emailadd = post["to"]
         body = []
         body.append(post["body"])
-        url = "%s?account=%s&method=checkout&processor=%s&payref=%s" % (SERVICE_URL, dbo.database, post["processor"], post["payref"])
+        params = { 
+            "account": dbo.database, 
+            "method": "checkout",
+            "processor": post["processor"],
+            "payref": post["payref"],
+            "title": post["subject"] 
+        }
+        url = "%s?%s" % (SERVICE_URL, asm3.utils.urlencode(params))
         body.append("<p><a href=\"%s\">%s</a></p>" % (url, post["payref"]))
         if post.boolean("addtolog"):
             asm3.log.add_log(dbo, o.user, asm3.log.PERSON, post.integer("person"), post.integer("logtype"), "[%s] %s :: %s" % (emailadd, post["subject"], asm3.utils.html_email_to_plain("\n".join(body))))

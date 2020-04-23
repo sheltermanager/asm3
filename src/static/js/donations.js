@@ -297,6 +297,7 @@ $(function() {
                 row.SHELTERCODE = "";
             }
             if (controller.person) {
+                row.OWNERCODE = controller.person.OWNERCODE;
                 row.OWNERNAME = controller.person.OWNERNAME;
                 row.OWNERADDRESS = controller.person.OWNERADDRESS;
                 row.HOMETELEPHONE = controller.person.HOMETELEPHONE;
@@ -304,6 +305,7 @@ $(function() {
                 row.MOBILETELEPHONE = controller.person.MOBILETELEPHONE;
             }
             else if (donations.lastperson) {
+                row.OWNERCODE = donations.lastperson.OWNERCODE;
                 row.OWNERNAME = donations.lastperson.OWNERNAME;
                 row.OWNERADDRESS = donations.lastperson.OWNERADDRESS;
                 row.HOMETELEPHONE = donations.lastperson.HOMETELEPHONE;
@@ -445,6 +447,7 @@ $(function() {
                     name: row.OWNERNAME,
                     email: row.EMAILADDRESS,
                     personid: row.OWNERID,
+                    subject: row.COMMENTS || row.DONATIONNAME,
                     templates: controller.templates,
                     logtypes: controller.logtypes,
                     message: _("Please use the link below to pay.")
