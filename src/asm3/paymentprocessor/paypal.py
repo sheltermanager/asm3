@@ -23,7 +23,7 @@ class PayPal(PaymentProcessor):
         """ 
         Method to return the provider's checkout page 
         payref: The payments we are charging for (str OWNERCODE-RECEIPTNUMBER)
-        return_url: The URL to redirect the browser to when payment is successful
+        return_url: The URL to redirect the browser to when payment is successful.
         item_description: A description of what we are charging for (if blank the payment types are used)
         """
         totalamount = 0

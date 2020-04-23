@@ -1054,10 +1054,15 @@ $(function() {
             return [
                 '<div id="tab-processors">',
                 html.info(_("ASM can talk to payment processors and request payment from your customers and donors.")),
-                '<p><label for="currencycode">' + _("Request payments in") + '</label>',
-                '<select id="currencycode" class="asm-selectbox" data="CurrencyCode">',
+                '<table>',
+                '<tr><td><label for="currencycode">' + _("Request payments in") + '</label></td>',
+                '<td><select id="currencycode" class="asm-selectbox" data="CurrencyCode">',
                 html.list_to_options(controller.currencies, "CODE", "DISPLAY"),
-                '</select>',
+                '</select></td><tr>',
+                '<tr><td>',
+                '<label for="paymentreturn">' + _("Redirect to this URL after successful payment") + '</label></td>',
+                '<td><input data="PaymentReturnUrl" id="paymentreturn" type="text" class="asm-textbox asm-doubletextbox" /></td></tr>',
+                '</table>',
                 '<div id="paypal-options">',
                 '<hr/>',
                 '<p class="centered"><img src="static/images/ui/logo_paypal_100.png" /></p>',
@@ -1066,6 +1071,7 @@ $(function() {
                 '<td><input data="PayPalEmail" id="paypalemail" type="text" class="asm-textbox asm-doubletextbox" /></td></tr>',
                 '</table>',
                 '</div>',
+
                 '</div>'
             ].join("\n");
         },

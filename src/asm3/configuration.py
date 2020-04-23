@@ -1003,6 +1003,9 @@ def owner_name_format(dbo):
 def paypal_email(dbo):
     return cstring(dbo, "PayPalEmail")
 
+def payment_return_url(dbo):
+    return cstring(dbo, "PaymentReturnUrl")
+
 def petrescue_adoptable_in(dbo):
     return cstring(dbo, "PetRescueAdoptableIn")
 

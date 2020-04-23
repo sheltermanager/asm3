@@ -302,9 +302,9 @@ def handler(post, path, remoteip, referer, querystring):
         return set_cached_response(cache_key, account, "text/html", 86400, 120, asm3.publishers.html.get_animal_view_adoptable_html(dbo))
 
     elif method == "checkout":
-        # TODO: base64 decode receipt/return parameters if that's how they've been supplied
         processor = asm3.financial.get_payment_processor(dbo, post["processor"])
-        return set_cached_response(cache_key, account, "text/html", 120, 120, processor.checkoutPage(post["payref"], post["return"], title))
+        return_url = post["return"] or asm3.configuration.payment_return_url(dbo)
+        return set_cached_response(cache_key, account, "text/html", 120, 120, processor.checkoutPage(post["payref"], return_url, title))
 
     elif method =="dbfs_image":
         hotlink_protect("dbfs_image", referer)
