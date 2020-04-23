@@ -1,6 +1,7 @@
 44
 ================
 
+23/04/20 Strip whitespace from incoming form fields
 22/04/20 Disk cache should only mkdir path folders in put operations
 22/04/20 New default online form header with responsive design for mobile
 22/04/20 Add location (no virtual) shelter view mode #791

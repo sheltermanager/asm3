@@ -644,6 +644,7 @@ def insert_onlineformincoming_from_form(dbo, post, remoteip):
             if k.find("_") != -1:
                 fid = asm3.utils.cint(k[k.rfind("_")+1:])
                 fieldname = k[0:k.rfind("_")]
+                v = v.strip() # no reason for whitespace, can't see it in preview and in address fields it makes a mess
                 if fid != 0:
                     fld = dbo.first_row(dbo.query("SELECT FieldType, Label, Tooltip, DisplayIndex FROM onlineformfield WHERE ID = ?", [fid]))
                     if fld is not None:
@@ -653,17 +654,17 @@ def insert_onlineformincoming_from_form(dbo, post, remoteip):
                         tooltip = fld.TOOLTIP
                         # Store a few known fields for access later
                         if fieldname == "emailaddress": 
-                            submitteremail = v.strip()
+                            submitteremail = v
                         if fieldname == "emailsubmissionto":
-                            emailsubmissionto = v.strip()
+                            emailsubmissionto = v
                         if fieldname == "firstname": 
-                            firstname = v.strip()
+                            firstname = v
                             firstnamelabel = label
                         if fieldname == "lastname": 
-                            lastname = v.strip()
+                            lastname = v
                             lastnamelabel = label
                         if fieldname == "animalname" or fieldname == "reserveanimalname":
-                            animalname = v.strip()
+                            animalname = v
                             animalnamelabel = asm3.i18n._("Name", l)
                         # If it's a raw markup field, store the markup as the value
                         if fieldtype == FIELDTYPE_RAWMARKUP:
