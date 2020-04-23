@@ -2,6 +2,13 @@
 import asm3.financial
 import asm3.utils
 
+class ProcessorError(Exception):
+    pass
+class PayRefError(ProcessorError):
+    pass
+class AlreadyReceivedError(ProcessorError):
+    pass
+
 class PaymentProcessor(object):
     """ Abstract class that encapsulates payment processor functionality """
     dbo = None

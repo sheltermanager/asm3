@@ -35,6 +35,7 @@ import asm3.medical
 import asm3.mobile
 import asm3.movement
 import asm3.onlineform
+import asm3.paymentprocessor.base
 import asm3.paymentprocessor.paypal
 import asm3.person
 import asm3.publish
@@ -4336,8 +4337,8 @@ class pp_paypal(ASMEndpoint):
         try:
             p = asm3.paymentprocessor.paypal.PayPal(dbo)
             p.receive(o.data)
-        except asm3.paymentprocessor.paypal.PayPalError:
-            # PayPalError subclasses are thrown when there is a problem with the 
+        except asm3.paymentprocessor.base.ProcessorError:
+            # ProcessorError subclasses are thrown when there is a problem with the 
             # data PayPal have sent, but we do not want them to send it again.
             # By catching these and returning a 200 empty body, they will not
             # send it again.

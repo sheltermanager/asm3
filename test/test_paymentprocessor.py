@@ -3,6 +3,7 @@ import unittest
 import base
 
 import asm3.financial
+import asm3.paymentprocessor.base
 import asm3.paymentprocessor.paypal
 import asm3.utils
 
@@ -66,19 +67,19 @@ class TestPaymentProcessor(unittest.TestCase):
 
     def test_paypal_ipn_incomplete(self):
         ipndata = self.sample_ipn.replace("payment_status=Completed", "payment_status=Pending")
-        with self.assertRaises(asm3.paymentprocessor.paypal.PayPalIncompleteStatusError):
+        with self.assertRaises(asm3.paymentprocessor.paypal.IncompleteStatusError):
             self.paypal.receive(ipndata, validate_ipn=False)
 
     def test_paypal_ipn_badpayref(self):
         ipndata = self.sample_ipn.replace("item_number=T0420124547632NS", "item_number=BAD")
-        with self.assertRaises(asm3.paymentprocessor.paypal.PayPalInvalidPayRefError):
+        with self.assertRaises(asm3.paymentprocessor.base.PayRefError):
             self.paypal.receive(ipndata, validate_ipn=False)
 
     def test_paypal_ipn_invalidpayref(self):
         ownercode = base.get_dbo().query_string("SELECT ownercode FROM owner WHERE ID=?", [self.personid])
         payref = ownercode + "-" + "WONTEXIST"
         ipndata = self.sample_ipn.replace("item_number=T0420124547632NS", "item_number=" + payref)
-        with self.assertRaises(asm3.paymentprocessor.paypal.PayPalInvalidPayRefError):
+        with self.assertRaises(asm3.paymentprocessor.base.PayRefError):
             self.paypal.receive(ipndata, validate_ipn=False)
 
     def test_paypal_ipn_alreadyreceived(self):
@@ -86,7 +87,7 @@ class TestPaymentProcessor(unittest.TestCase):
         recnum = base.get_dbo().query_string("SELECT receiptnumber FROM ownerdonation WHERE ID=?", [self.recid])
         payref = ownercode + "-" + recnum
         ipndata = self.sample_ipn.replace("item_number=T0420124547632NS", "item_number=" + payref)
-        with self.assertRaises(asm3.paymentprocessor.paypal.PayPalAlreadyReceivedError):
+        with self.assertRaises(asm3.paymentprocessor.base.AlreadyReceivedError):
             self.paypal.receive(ipndata, validate_ipn=False)
 
     def test_paypal_ipn_success(self):

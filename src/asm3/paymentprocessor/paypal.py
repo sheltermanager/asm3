@@ -4,19 +4,13 @@ import asm3.configuration
 import asm3.financial
 import asm3.utils
 
-from .base import PaymentProcessor
+from .base import PaymentProcessor, ProcessorError, PayRefError, AlreadyReceivedError
 
 from asm3.sitedefs import BASE_URL, PAYPAL_VALIDATE_IPN_URL
 
-class PayPalError(Exception):
+class IncompleteStatusError(ProcessorError):
     pass
-class PayPalIncompleteStatusError(PayPalError):
-    pass
-class PayPalInvalidPayRefError(PayPalError):
-    pass
-class PayPalAlreadyReceivedError(PayPalError):
-    pass
-class PayPalInvalidIPNError(PayPalError):
+class InvalidIPNError(ProcessorError):
     pass
 
 class PayPal(PaymentProcessor):
@@ -94,17 +88,17 @@ class PayPal(PaymentProcessor):
         # If the payment status is not Completed, forget it
         if status != "Completed":
             asm3.al.error("PayPal status is not 'Completed' ('%s')" % status, "paypal.receive", self.dbo)
-            raise PayPalIncompleteStatusError("payment status is not 'Completed'")
+            raise IncompleteStatusError("payment status is not 'Completed'")
 
         # Check the payref is valid 
         if not self.validatePaymentReference(payref):
             asm3.al.error("payref '%s' failed validation", "paypal.receive", self.dbo)
-            raise PayPalInvalidPayRefError("payref '%s' is invalid" % payref)
+            raise PayRefError("payref '%s' is invalid" % payref)
 
         # Do nothing if we already received payment for this payref
         if self.isPaymentReceived(payref): 
             asm3.al.error("cannot receive payref '%s' again, already received.", "paypal.receive", self.dbo)
-            raise PayPalAlreadyReceivedError("payref '%s' has already been processed." % payref)
+            raise AlreadyReceivedError("payref '%s' has already been processed." % payref)
 
         # Validate the IPN with PayPal by posting it back to them
         # with an extra &cmd=_notify-validate parameter. If they
@@ -114,7 +108,7 @@ class PayPal(PaymentProcessor):
             try:
                 response = asm3.utils.post_data(PAYPAL_VALIDATE_IPN_URL, rawdata + "&cmd=_notify-validate")
                 if response["response"].find("INVALID") != -1: 
-                    raise PayPalInvalidIPNError("PayPal returned an INVALID response")
+                    raise InvalidIPNError("PayPal returned an INVALID response")
             except Exception as e:
                 asm3.al.error("Error validating PayPal IPN: %s" % e, "paypal.receive", self.dbo)
                 raise e
