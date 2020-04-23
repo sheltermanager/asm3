@@ -26,7 +26,7 @@ ANIMALNONSHELTER
 ANIMALNOTFORADOPTION
     Y/N to indicate whether this animal is not available for adoption (Y is not available).
 ANIMALSEX
-    The animal's gender. ASM looks for the initial letter “M” in the string to indicate male.
+    The animal's gender. ASM looks for the initial letter “M” in the string to indicate male, "F" for Female or "U" for Unknown.
 ANIMALTYPE
     The animal's type. This should correspond to one of ASM's animal types from your database.
 ANIMALCOLOR
@@ -203,7 +203,7 @@ PERSONMATCHADDED
 PERSONMATCHEXPIRES
     The date the system should stop looking for matches
 PERSONMATCHSEX
-    The gender of the animal the person is looking for
+    The gender. ASM looks for the initial letter “M” in the string to indicate male, "F" for Female, "U" for Unknown or "A" for any
 PERSONMATCHSIZE
     The size of the animal the person is looking for
 PERSONMATCHCOLOR

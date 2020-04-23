@@ -181,6 +181,18 @@ def gkl(dbo, m, f, table, namefield, create):
         return str(nextid)
     return str(matchid)
 
+def gksx(m, f):
+    """ 
+    Reads a value for Sex from field f in map m
+    """
+    if f not in m: return ""
+    x = m[f].lower()
+    if x.startswith("f"): return "0"
+    elif x.startswith("m"): return "1"
+    elif x.startswith("u"): return "2"
+    elif x.startswith("a"): return "-1"
+    else: return ""
+
 def create_additional_fields(dbo, row, errors, rowno, csvkey = "ANIMALADDITIONAL", linktype = "animal", linkid = 0):
     # Identify any additional fields that may have been specified with
     # ANIMALADDITIONAL<fieldname>
@@ -385,7 +397,7 @@ def csvimport(dbo, csvdata, encoding = "utf8", user = "", createmissinglookups =
             if gks(row, "ANIMALSEX") == "": 
                 a["sex"] = "2" # Default unknown if not set
             else:
-                a["sex"] = gks(row, "ANIMALSEX").lower().startswith("m") and "1" or "0"
+                a["sex"] = gksx(row, "ANIMALSEX")
             a["basecolour"] = gkl(dbo, row, "ANIMALCOLOR", "basecolour", "BaseColour", createmissinglookups)
             if a["basecolour"] == "0":
                 a["basecolour"] = str(asm3.configuration.default_colour(dbo))
@@ -549,11 +561,11 @@ def csvimport(dbo, csvdata, encoding = "utf8", user = "", createmissinglookups =
             if p["matchactive"] == "1":
                 if "PERSONMATCHADDED" in cols: p["matchadded"] = gkd(dbo, row, "PERSONMATCHADDED")
                 if "PERSONMATCHEXPIRES" in cols: p["matchexpires"] = gkd(dbo, row, "PERSONMATCHEXPIRES")
-                if "PERSONMATCHSEX" in cols: p["matchsex"] = gks(row, "PERSONMATCHSEX").lower().startswith("m") and "1" or "0"
+                if "PERSONMATCHSEX" in cols: p["matchsex"] = gksx(row, "PERSONMATCHSEX")
                 if "PERSONMATCHSIZE" in cols: p["matchsize"] = gkl(dbo, row, "PERSONMATCHSIZE", "lksize", "Size", False)
                 if "PERSONMATCHCOLOR" in cols: p["matchcolour"] = gkl(dbo, row, "PERSONMATCHCOLOR", "basecolour", "BaseColour", createmissinglookups)
-                if "PERSONMATCHAGEFROM" in cols: p["matchagefrom"] = gks(row, "PERSONMATCHAGEFROM")
-                if "PERSONMATCHAGETO" in cols: p["matchageto"] = gks(row, "PERSONMATCHAGETO")
+                if "PERSONMATCHAGEFROM" in cols: p["agedfrom"] = gks(row, "PERSONMATCHAGEFROM")
+                if "PERSONMATCHAGETO" in cols: p["agedto"] = gks(row, "PERSONMATCHAGETO")
                 if "PERSONMATCHTYPE" in cols: p["matchanimaltype"] = gkl(dbo, row, "PERSONMATCHTYPE", "animaltype", "AnimalType", createmissinglookups)
                 if "PERSONMATCHSPECIES" in cols: p["matchspecies"] = gkl(dbo, row, "PERSONMATCHSPECIES", "species", "SpeciesName", createmissinglookups)
                 if "PERSONMATCHBREED1" in cols: p["matchbreed"] = gkbr(dbo, row, "PERSONMATCHBREED1", p["matchspecies"], createmissinglookups)
