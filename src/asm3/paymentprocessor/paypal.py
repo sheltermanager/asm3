@@ -92,7 +92,7 @@ class PayPal(PaymentProcessor):
 
         # Check the payref is valid 
         if not self.validatePaymentReference(payref):
-            asm3.al.error("payref '%s' failed validation", "paypal.receive", self.dbo)
+            asm3.al.error("payref '%s' failed validation" % payref, "paypal.receive", self.dbo)
             raise PayRefError("payref '%s' is invalid" % payref)
 
         # Do nothing if we already received payment for this payref
@@ -107,6 +107,7 @@ class PayPal(PaymentProcessor):
         if validate_ipn:
             try:
                 response = asm3.utils.post_data(PAYPAL_VALIDATE_IPN_URL, rawdata + "&cmd=_notify-validate")
+                asm3.al.debug("Verify POST returned: %s" % response["response"], "paypal.receive", self.dbo)
                 if response["response"].find("INVALID") != -1: 
                     raise InvalidIPNError("PayPal returned an INVALID response")
             except Exception as e:

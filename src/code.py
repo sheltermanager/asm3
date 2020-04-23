@@ -197,7 +197,8 @@ class ASMEndpoint(object):
     user_activity = True   # Hitting this endpoint qualifies as user activity
     use_web_input = True   # Unpack values with webpy's web.input()
     login_url = "login"    # The url to go to if not logged in
-    data = None            # Request data posted to this endpoint
+    data = None            # Request data posted to this endpoint as bytes or str if data_encoding is set
+    data_encoding = None   # codec to use for decoding of posted data to str (None to not decode)
 
     def _params(self):
         l = session.locale
@@ -207,6 +208,7 @@ class ASMEndpoint(object):
         try:
             if self.use_web_input: post = asm3.utils.PostedData(web.input(filechooser = {}), l)
             self.data = web.data()
+            if self.data_encoding: self.data = asm3.utils.bytes2str(self.data, encoding=self.data_encoding)
         except Exception as err:
             asm3.al.error("Failed unpacking params: %s" % str(err), "ASMEndpoint._params", session.dbo, sys.exc_info())
         return web.utils.storage( data=self.data, post=post, dbo=session.dbo, locale=l, user=session.user, session=session, \
@@ -4322,10 +4324,13 @@ class pp_paypal(ASMEndpoint):
     """ 
     PayPal IPN endpoint. If we return anything but 200 OK with an
     empty body, PayPal will retry the IPN at a later time. 
+    Note that PayPal send POSTed data encoded as cp1252, so we
+    parse it ourselves using data_param() instead of web.input (hard-coded to utf-8)
     """
     url = "pp_paypal"
     check_logged_in = False
     use_web_input = False
+    data_encoding = "cp1252"
 
     def post_all(self, o):
         asm3.al.debug(o.data, "code.pp_paypal")
