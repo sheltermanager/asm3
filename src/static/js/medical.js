@@ -54,10 +54,12 @@ $(function() {
                     { json_field: "TOTALNUMBEROFTREATMENTS", post_field: "totalnumberoftreatments", justwidget: true, halfsize: true, type: "number", readonly: true, 
                             defaultval: "1" },
                     { type: "raw", justwidget: true, markup:
+                        '<span> ' + _("treatments") + '</span>' },
+                        /*
                         ' <span id="timingrulefrequencyagain">' + _("days") + '</span> ' +
                         '(<span id="displaytotalnumberoftreatments">0</span> ' + _("treatments") + ')' +
                         '</span></span>' +
-                        '</td></tr>'},
+                        '</td></tr>'}, */
                     { json_field: "COMMENTS", post_field: "comments", label: _("Comments"), type: "textarea" }
                 ]
             };
@@ -674,8 +676,8 @@ $(function() {
                 if ($(v).val() == "0" || $(v).val().indexOf("-") != -1) { $(v).val("1"); }
             });
             if ($("#treatmentrule").val() == "0") {
-                $("#displaytotalnumberoftreatments").text( parseInt($("#timingrule").val(), 10) * parseInt($("#totalnumberoftreatments").val(), 10));
-                $("#timingrulefrequencyagain").text($("#timingrulefrequency option[value=\"" + $("#timingrulefrequency").val() + "\"]").text());
+                //$("#displaytotalnumberoftreatments").text( parseInt($("#timingrule").val(), 10) * parseInt($("#totalnumberoftreatments").val(), 10));
+                //$("#timingrulefrequencyagain").text($("#timingrulefrequency option[value=\"" + $("#timingrulefrequency").val() + "\"]").text());
             }
         },
 
