@@ -1,0 +1,310 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Payment Processors &mdash; ASM 43 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Rota" href="rota.html" />
+    <link rel="prev" title="Online Forms" href="onlineform.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> ASM
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                44u
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="foreword.html">Foreword</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gettingstarted.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="searching.html">Search</a></li>
+<li class="toctree-l1"><a class="reference internal" href="animals.html">Animals</a></li>
+<li class="toctree-l1"><a class="reference internal" href="people.html">People</a></li>
+<li class="toctree-l1"><a class="reference internal" href="movements.html">Movements</a></li>
+<li class="toctree-l1"><a class="reference internal" href="documents.html">Documents</a></li>
+<li class="toctree-l1"><a class="reference internal" href="animalcontrol.html">Animal Control</a></li>
+<li class="toctree-l1"><a class="reference internal" href="clinic.html">Clinic</a></li>
+<li class="toctree-l1"><a class="reference internal" href="lostandfound.html">Lost and Found</a></li>
+<li class="toctree-l1"><a class="reference internal" href="waitinglist.html">Waiting List</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generaldiary.html">General Diary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="accounts.html">Accounts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stockcontrol.html">Stock Control</a></li>
+<li class="toctree-l1"><a class="reference internal" href="reports.html">Reports</a></li>
+<li class="toctree-l1"><a class="reference internal" href="litters.html">Litters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="onlineform.html">Online Forms</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Payment Processors</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#requesting-a-payment">Requesting a payment</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#requesting-fulfilment-of-multiple-payments">Requesting fulfilment of multiple payments</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#adoption-self-checkout">Adoption self-checkout</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#license-self-checkout">License self-checkout</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="rota.html">Rota</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mobile.html">Mobile Interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="service.html">Service API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="publishing.html">Publishing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mailmerge.html">Mail Merge Sources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="configuration.html">Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="options.html">Options</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">Appendix: Frequently Asked Questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="csvimportfields.html">Appendix: CSV file import fields</a></li>
+<li class="toctree-l1"><a class="reference internal" href="databasetables.html">Appendix: Database Tables/Columns</a></li>
+<li class="toctree-l1"><a class="reference internal" href="relationships.html">Appendix: Entity Relationship Diagrams</a></li>
+<li class="toctree-l1"><a class="reference internal" href="website.html">Appendix: Integrating with Your Website</a></li>
+<li class="toctree-l1"><a class="reference internal" href="onlineformfields.html">Appendix: Online Form import fields</a></li>
+<li class="toctree-l1"><a class="reference internal" href="wordkeys.html">Appendix: Wordkeys</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">ASM</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Payment Processors</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/paymentprocessors.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="payment-processors">
+<h1>Payment Processors<a class="headerlink" href="#payment-processors" title="Permalink to this headline">¶</a></h1>
+<p>ASM can request due payments from customers via a payment processor. Currently,
+support is available for PayPal, with Stripe to be added shortly.</p>
+<p>For details on configuring payment processors from the options screen at
+<span class="menuselection">Settings ‣ Options ‣ Payment Processors</span>, see
+<a class="reference internal" href="options.html#paymentprocessors"><span class="std std-ref">Payment Processors</span></a></p>
+<div class="section" id="requesting-a-payment">
+<h2>Requesting a payment<a class="headerlink" href="#requesting-a-payment" title="Permalink to this headline">¶</a></h2>
+<p>To request a payment from a customer, first create that payment in either the
+payment tab for a person or animal, or <span class="menuselection">Financial ‣ Payment Book</span></p>
+<p>Your payment should have a due date, but no received date.</p>
+<img alt="_images/processor_1_duepay.png" src="_images/processor_1_duepay.png" />
+<p>Next, request payment from the customer by selecting your payment from the list
+and clicking “Request Payment” followed by the processor you would like to use
+to receive the payment.</p>
+<img alt="_images/processor_2_paypal.png" src="_images/processor_2_paypal.png" />
+<p>The screen will pop up an email dialog, allowing you to complete details of the
+message to be sent requesting the payment. Use document templates to store
+commonly used emails and populate the text by choosing them from the Template
+dropdown at the bottom of the dialog.</p>
+<p>The payment request link will be appended to the bottom of your message after
+you hit Send.</p>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">The subject line of your request email will be used as the description of the item presented to the customer when they pay.</p>
+</div>
+<img alt="_images/processor_3_email.png" src="_images/processor_3_email.png" />
+<p>The resulting email will end up in the customer’s inbox with a clickable
+link to pay with the payment processor.</p>
+<p>Note the payment references that ASM uses are in the form of
+PERSON-RECEIPTNUMBER to prevent one person receiving a payment request from
+changing or guessing another receipt number to try and access another
+customer’s payment.</p>
+<p>The subject line of your email will be used as the payment description at the
+checkout. ASM will default the comments from the selected payment and if they
+are not present, will suggest the payment type.</p>
+<img alt="_images/processor_4_emailrec.png" src="_images/processor_4_emailrec.png" />
+<p>Once payment has been completed, the system will automatically update the
+received date on the payment record. It will also deduct any fee that the
+processor has charged from the payment (if there are multiple payments for this
+receipt number then the fee is deducted from just the first payment instead of
+all payments).</p>
+<p>This is done so that the amount recorded in the accounts and shown on the
+payment reflects the money you actually received.</p>
+<img alt="_images/processor_5_recpay.png" src="_images/processor_5_recpay.png" />
+</div>
+<div class="section" id="requesting-fulfilment-of-multiple-payments">
+<h2>Requesting fulfilment of multiple payments<a class="headerlink" href="#requesting-fulfilment-of-multiple-payments" title="Permalink to this headline">¶</a></h2>
+<p>Payment requests are linked to receipt numbers rather than individual payments.</p>
+<p>While most payments will have their own receipt numbers, it is also possible to
+create multiple due payments on the same receipt number by using the
+<span class="menuselection">Financial ‣ Receive a payment</span> or <span class="menuselection">Move ‣
+Adopt an animal</span> screens.</p>
+<p>For these screens to allow you to set the due date, you need to have set the
+option <span class="menuselection">Settings ‣ Options ‣ Accounts ‣ When receiving
+multiple payments, allow the due and received dates to be set</span></p>
+<p>When choosing a due payment from the Payment Book or a payment tab, the other
+payments with the same receipt number will also be included and added to the
+payment total requested.</p>
+</div>
+<div class="section" id="adoption-self-checkout">
+<h2>Adoption self-checkout<a class="headerlink" href="#adoption-self-checkout" title="Permalink to this headline">¶</a></h2>
+<p>TBA</p>
+</div>
+<div class="section" id="license-self-checkout">
+<h2>License self-checkout<a class="headerlink" href="#license-self-checkout" title="Permalink to this headline">¶</a></h2>
+<p>TBA</p>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="rota.html" class="btn btn-neutral float-right" title="Rota" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="onlineform.html" class="btn btn-neutral float-left" title="Online Forms" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2020, Sheltermanager, Ltd
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

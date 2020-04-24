@@ -2,7 +2,6 @@
 ================
 
 24/04/20 Payment processor integration: Stripe support #463
-24/04/20 Medical profile/regimen show clearer ends after label #793
 23/04/20 csv import: allow import of unknown, fix match age
 23/04/20 Strip whitespace from incoming form fields
 22/04/20 Disk cache should only mkdir path folders in put operations
