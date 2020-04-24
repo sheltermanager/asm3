@@ -26,6 +26,8 @@ offers a whole host of features, including:
 
 * Complete double-entry book keeping system for account management. 
 
+* Request money from customers via third party payment processors.
+
 * Stock control system to manage drugs, food and other items.
 
 * Flexible custom reporting allows editing, saving, emailing, embedding in
