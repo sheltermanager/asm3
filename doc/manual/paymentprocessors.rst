@@ -57,6 +57,9 @@ processor has charged from the payment (if there are multiple payments for this
 receipt number then the fee is deducted from just the first payment instead of
 all payments).
 
+This is done so that the amount recorded in the accounts and shown on the
+payment reflects the money you actually received.
+
 .. image:: images/processor_5_recpay.png
 
 Requesting fulfilment of multiple payments

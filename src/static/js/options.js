@@ -1063,13 +1063,29 @@ $(function() {
                 '<label for="paymentreturn">' + _("Redirect to this URL after successful payment") + '</label></td>',
                 '<td><input data="PaymentReturnUrl" id="paymentreturn" type="text" class="asm-textbox asm-doubletextbox" /></td></tr>',
                 '</table>',
+
                 '<div id="paypal-options">',
                 '<hr/>',
-                '<p class="centered"><img src="static/images/ui/logo_paypal_100.png" /></p>',
+                '<p class="centered"><img height="25px" src="static/images/ui/logo_paypal_100.png" /></p>',
                 '<table>',
                 '<tr><td><label for="paypalemail">' + _("PayPal Business Email") + '</label></td>',
                 '<td><input data="PayPalEmail" id="paypalemail" type="text" class="asm-textbox asm-doubletextbox" /></td></tr>',
                 '</table>',
+                '</div>',
+
+                '<div id="stripe-options">',
+                '<hr/>',
+                '<p class="centered"><img height="25px" src="static/images/ui/logo_stripe_103.png" /></p>',
+                '<table>',
+                '<tr><td><label for="stripekey">' + _("Stripe Key") + '</label></td>',
+                '<td><input data="StripeKey" id="stripekey" type="text" class="asm-textbox asm-doubletextbox" /></td></tr>',
+                '<tr><td><label for="stripesecretkey">' + _("Stripe Secret Key") + '</label></td>',
+                '<td><input data="StripeSecretKey" id="stripesecretkey" type="text" class="asm-textbox asm-doubletextbox" /></td></tr>',
+                '</table>',
+                '<p class="centered">',
+                    _("In the Stripe dashboard, create a webhook to send 'checkout.session.completed' events to {0}")
+                    .replace("{0}", "<br/><b>" + asm.baseurl + "/pp_stripe" + "</b>"),
+                '</p>',
                 '</div>',
 
                 '</div>'

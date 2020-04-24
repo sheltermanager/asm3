@@ -342,6 +342,10 @@ $(function() {
                 s += '<li id="button-paypal" class="processorbutton asm-menu-item"><a '
                         + '" target="_blank" href="#">' + html.icon("paypal") + ' ' + _("PayPal") + '</a></li>';
             }
+            if (config.str("StripeKey")) {
+                s += '<li id="button-stripe" class="processorbutton asm-menu-item"><a '
+                        + '" target="_blank" href="#">' + html.icon("stripe") + ' ' + _("Stripe") + '</a></li>';
+            }
             s += '</ul></div>';
             s += '<div id="emailform" />';
             if (controller.name == "animal_donations") {
@@ -455,6 +459,10 @@ $(function() {
             };
             $("#button-paypal").click(function() {
                 payment_processor_email_dialog("paypal");
+                return false;
+            });
+            $("#button-stripe").click(function() {
+                payment_processor_email_dialog("stripe");
                 return false;
             });
             

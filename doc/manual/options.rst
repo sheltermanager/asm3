@@ -708,6 +708,21 @@ PayPal
 * PayPal Business Email: The address for your PayPal account where payments will 
   be sent to.
 
+Stripe
+^^^^^^
+
+* Stripe Key: Your stripe key. This is usually prefixed with pk
+
+* Stripe Secret Key: Your stripe secret key, usually prefixed with sk
+
+In order for ASM to receive notification that payments have been received, a
+Webhook needs to be created in the Stripe dashboard to receive
+"checkout.session.completed" events under :menuselection:`Developers -->
+Webhooks`
+
+The Payment Processors option tab in ASM will display the URL you need to
+configure for your webhook below the key fields, typically https://HOST/pp_stripe
+
 Quicklinks
 ----------
 

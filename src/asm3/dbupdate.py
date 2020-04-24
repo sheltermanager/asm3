@@ -2111,6 +2111,7 @@ def sql_default_data(dbo, skip_config = False):
     sql += lookup2("donationpayment", "PaymentName", 3, _("Credit Card", l))
     sql += lookup2("donationpayment", "PaymentName", 4, _("Debit Card", l))
     sql += lookup2("donationpayment", "PaymentName", 5, _("PayPal", l))
+    sql += lookup2("donationpayment", "PaymentName", 6, _("Stripe", l))
     sql += lookup2money("donationtype", "DonationName", 1, _("Donation", l))
     sql += lookup2money("donationtype", "DonationName", 2, _("Adoption Fee", l))
     sql += lookup2money("donationtype", "DonationName", 3, _("Waiting List Donation", l))

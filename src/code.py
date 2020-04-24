@@ -37,6 +37,7 @@ import asm3.movement
 import asm3.onlineform
 import asm3.paymentprocessor.base
 import asm3.paymentprocessor.paypal
+import asm3.paymentprocessor.stripe
 import asm3.person
 import asm3.publish
 import asm3.publishers.base
@@ -4352,6 +4353,40 @@ class pp_paypal(ASMEndpoint):
         except asm3.paymentprocessor.base.ProcessorError:
             # ProcessorError subclasses are thrown when there is a problem with the 
             # data PayPal have sent, but we do not want them to send it again.
+            # By catching these and returning a 200 empty body, they will not
+            # send it again.
+            return
+
+class pp_stripe(ASMEndpoint):
+    """
+    Stripe webhook endpoint. Like PayPal, a non-200 return code
+    will force a retry.
+    The payload is utf-8 encoded JSON.
+    """
+    url = "pp_stripe"
+    check_logged_in = False
+    use_web_input = False
+    data_encoding = "utf-8"
+
+    def post_all(self, o):
+        asm3.al.debug(o.data, "code.pp_stripe")
+        j = asm3.utils.json_parse(o.data)
+        client_reference_id = j["data"]["object"]["client_reference_id"]
+        try:
+            dbname = client_reference_id[0:client_reference_id.find("-")]
+            dbo = asm3.db.get_database(dbname)
+            if dbo.database in asm3.db.ERROR_VALUES:
+                asm3.al.error("invalid database '%s'" % dbname, "code.pp_stripe")
+                return
+        except Exception as e:
+            asm3.al.error("failed extracting dbname from client_reference_id: %s" % e, "code.pp_stripe")
+            return
+        try:
+            p = asm3.paymentprocessor.stripe.Stripe(dbo)
+            p.receive(o.data)
+        except asm3.paymentprocessor.base.ProcessorError:
+            # ProcessorError subclasses are thrown when there is a problem with the 
+            # data Stripe have sent, but we do not want them to send it again.
             # By catching these and returning a 200 empty body, they will not
             # send it again.
             return

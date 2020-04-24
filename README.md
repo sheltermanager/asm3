@@ -22,6 +22,7 @@ Extra, non-mandatory packages:
 * apt-get install python3-reportlab (for creating mailing label PDFs)
 * apt-get install python3-requests (needed for HTTP comms to other publishing services)
 * apt-get install python3-boto3 (needed for Amazon S3 media storage)
+* pip/pip3 install stripe (for requesting payments via Stripe)
 
 Packages necessary for building static checkers, installers and manuals:
 

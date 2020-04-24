@@ -60,7 +60,7 @@
             
             
               <div class="version">
-                43
+                44u
               </div>
             
           
@@ -102,6 +102,7 @@
 <li class="toctree-l1"><a class="reference internal" href="reports.html">Reports</a></li>
 <li class="toctree-l1"><a class="reference internal" href="litters.html">Litters</a></li>
 <li class="toctree-l1"><a class="reference internal" href="onlineform.html">Online Forms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="paymentprocessors.html">Payment Processors</a></li>
 <li class="toctree-l1"><a class="reference internal" href="rota.html">Rota</a></li>
 <li class="toctree-l1"><a class="reference internal" href="mobile.html">Mobile Interface</a></li>
 <li class="toctree-l1"><a class="reference internal" href="service.html">Service API</a></li>
@@ -204,7 +205,7 @@ that data to your existing animals afterwards.</p>
 <dt>ANIMALNOTFORADOPTION</dt>
 <dd>Y/N to indicate whether this animal is not available for adoption (Y is not available).</dd>
 <dt>ANIMALSEX</dt>
-<dd>The animal’s gender. ASM looks for the initial letter “M” in the string to indicate male.</dd>
+<dd>The animal’s gender. ASM looks for the initial letter “M” in the string to indicate male, “F” for Female or “U” for Unknown.</dd>
 <dt>ANIMALTYPE</dt>
 <dd>The animal’s type. This should correspond to one of ASM’s animal types from your database.</dd>
 <dt>ANIMALCOLOR</dt>
@@ -381,7 +382,7 @@ Additional flags that you have added to the system should exactly match their fl
 <dt>PERSONMATCHEXPIRES</dt>
 <dd>The date the system should stop looking for matches</dd>
 <dt>PERSONMATCHSEX</dt>
-<dd>The gender of the animal the person is looking for</dd>
+<dd>The gender. ASM looks for the initial letter “M” in the string to indicate male, “F” for Female, “U” for Unknown or “A” for any</dd>
 <dt>PERSONMATCHSIZE</dt>
 <dd>The size of the animal the person is looking for</dd>
 <dt>PERSONMATCHCOLOR</dt>

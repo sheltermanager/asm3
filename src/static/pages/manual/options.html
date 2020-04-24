@@ -60,7 +60,7 @@
             
             
               <div class="version">
-                43
+                44u
               </div>
             
           
@@ -102,6 +102,7 @@
 <li class="toctree-l1"><a class="reference internal" href="reports.html">Reports</a></li>
 <li class="toctree-l1"><a class="reference internal" href="litters.html">Litters</a></li>
 <li class="toctree-l1"><a class="reference internal" href="onlineform.html">Online Forms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="paymentprocessors.html">Payment Processors</a></li>
 <li class="toctree-l1"><a class="reference internal" href="rota.html">Rota</a></li>
 <li class="toctree-l1"><a class="reference internal" href="mobile.html">Mobile Interface</a></li>
 <li class="toctree-l1"><a class="reference internal" href="service.html">Service API</a></li>
@@ -126,6 +127,11 @@
 <li class="toctree-l2"><a class="reference internal" href="#lost-and-found">Lost and Found</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#medical">Medical</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#movements">Movements</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#payment-processors">Payment Processors</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#paypal">PayPal</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#stripe">Stripe</a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="#quicklinks">Quicklinks</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#remove">Remove</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#shelter-view">Shelter View</a></li>
@@ -778,6 +784,39 @@ shelter: The system can check and warn you if you attempt to adopt an animal
 to an owner who looks like an owner who brought an animal in. This is a loose
 check based on name and address.</li>
 </ul>
+</div>
+<div class="section" id="payment-processors">
+<span id="paymentprocessors"></span><h2>Payment Processors<a class="headerlink" href="#payment-processors" title="Permalink to this headline">¶</a></h2>
+<p>ASM can be configured to request due payments from your customers via payment
+processors.</p>
+<ul class="simple">
+<li>Request payments in: A currency code to request payments in. This should match
+the currency that you are using in your database as ASM does not perform
+any kind of currency exchange calculations.</li>
+<li>Redirect to this URL after successful payment: When a customer succesfully
+completes a payment, this is the page they will be redirected to. If you do not
+set a page, the payment processor will show their own payment successful page.</li>
+</ul>
+<div class="section" id="paypal">
+<h3>PayPal<a class="headerlink" href="#paypal" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li>PayPal Business Email: The address for your PayPal account where payments will
+be sent to.</li>
+</ul>
+</div>
+<div class="section" id="stripe">
+<h3>Stripe<a class="headerlink" href="#stripe" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li>Stripe Key: Your stripe key. This is usually prefixed with pk</li>
+<li>Stripe Secret Key: Your stripe secret key, usually prefixed with sk</li>
+</ul>
+<p>In order for ASM to receive notification that payments have been received, a
+Webhook needs to be created in the Stripe dashboard to receive
+“checkout.session.completed” events under <span class="menuselection">Developers ‣
+Webhooks</span></p>
+<p>The Payment Processors option tab in ASM will display the URL you need to
+configure for your webhook below the key fields, typically <a class="reference external" href="https://HOST/pp_stripe">https://HOST/pp_stripe</a></p>
+</div>
 </div>
 <div class="section" id="quicklinks">
 <h2>Quicklinks<a class="headerlink" href="#quicklinks" title="Permalink to this headline">¶</a></h2>
