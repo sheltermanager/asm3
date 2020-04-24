@@ -7,13 +7,14 @@
 # Robin Rawson-Tetley <zanata@sheltermanager.com>, 2017. #zanata
 # Melanie Dubuc <ladymouh@gmail.com>, 2018. #zanata
 # Patricia Voumard <patpit@hotmail.com>, 2019.
+# Stephanie Cordeau <informatique@sosmissdolittle.com>, 2020.
 msgid ""
 msgstr ""
 "Project-Id-Version: ASM3\n"
 "Report-Msgid-Bugs-To: robin@sheltermanager.com\n"
-"POT-Creation-Date: 2020-04-22 12:54+0000\n"
-"PO-Revision-Date: 2020-04-22 23:11-0400\n"
-"Last-Translator: Patricia Voumard <patpit@hotmail.com>\n"
+"POT-Creation-Date: 2020-04-23 10:11+0000\n"
+"PO-Revision-Date: 2020-04-23 13:14-0400\n"
+"Last-Translator: Stephanie Cordeau <informatique@sosmissdolittle.com>\n"
 "Language-Team: \n"
 "Language: fr_CA\n"
 "MIME-Version: 1.0\n"
@@ -449,7 +450,7 @@ msgstr "Ajouter des vaccins"
 
 #: roles.js
 msgid "Add Vouchers"
-msgstr "Ajouter un chèque-cadeau"
+msgstr "Ajouter des chèque-cadeaux"
 
 #: roles.js
 msgid "Add Waiting List"
@@ -2371,7 +2372,7 @@ msgstr "Modifier les vaccinations"
 
 #: roles.js
 msgid "Change Vouchers"
-msgstr "Modifier les chèques-cadeau"
+msgstr "Modifier les chèques-cadeaux"
 
 #: roles.js
 msgid "Change Waiting List"
@@ -3565,7 +3566,7 @@ msgstr "Supprimer les vaccinations"
 
 #: roles.js
 msgid "Delete Vouchers"
-msgstr "Supprimer les chèques-cadeau"
+msgstr "Supprimer les chèques-cadeaux"
 
 #: roles.js
 msgid "Delete Waiting List"
@@ -5371,7 +5372,7 @@ msgstr "Générer un nom au hasard pour cet animal"
 
 #: vouchers.js
 msgid "Generate a unique voucher code"
-msgstr "Générez un code de licence unique"
+msgstr "Générez un code de chèque-cadeau unique"
 
 #: clinic_appointment.js
 msgid "Generate document from this appointment"
@@ -5391,7 +5392,7 @@ msgstr "Générer und ocument à partir de ce transport"
 
 #: vouchers.js
 msgid "Generate document from this voucher"
-msgstr "Générer un document à partir de cette licence"
+msgstr "Générer un document à partir de ce chèque-cadeau"
 
 #: move_gendoc.js
 msgid "Generate documentation"
@@ -7824,7 +7825,7 @@ msgstr "Nouvelle vaccination"
 
 #: vouchers.js
 msgid "New Voucher"
-msgstr "Nouveau bon"
+msgstr "Nouveau chèque-cadeau"
 
 #: waitinglist_results.js
 msgid "New Waiting List Entry"
@@ -9339,6 +9340,10 @@ msgstr "Remis à l'agenda"
 #: onlineforms.js
 msgid "Redirect to URL after POST"
 msgstr "Rediriger vers URL après publication"
+
+#: options.js
+msgid "Redirect to this URL after successful payment"
+msgstr "Rediriger vers cet URL après paiement fait avec succès"
 
 #: lostfound.py transport.js
 msgid "Reference"
@@ -10868,7 +10873,7 @@ msgstr ""
 
 #: vouchers.js
 msgid "Specify a unique code to identify this voucher"
-msgstr "Spécifiez un code unique pour identifier cette licence"
+msgstr "Spécifiez un code unique pour identifier ce chèque-cadeau"
 
 #: vaccination.js
 msgid ""
@@ -11544,7 +11549,7 @@ msgstr "La date à laquelle cette personne a été controlée à son domicile."
 
 #: vouchers.js
 msgid "The date this voucher was used"
-msgstr "La date à laquelle cette licence a été utilisée"
+msgstr "La date à laquelle ce chèque-cadeau a été utilisée"
 
 #: login.js
 msgid "The default username is 'user' with the password 'letmein'"
@@ -13287,7 +13292,7 @@ msgstr "Voir les enregistrement des bénévoles"
 
 #: roles.js
 msgid "View Vouchers"
-msgstr "Voir les chèques-cadeau"
+msgstr "Voir les chèques-cadeaux"
 
 #: roles.js
 msgid "View Waiting List"
@@ -13327,7 +13332,7 @@ msgstr "Bénévole"
 
 #: vouchers.js
 msgid "Voucher Book"
-msgstr "Livre de licences"
+msgstr "Livre de chèques-cadeaux"
 
 #: lookups.py
 msgid "Voucher Types"
@@ -13335,15 +13340,15 @@ msgstr "Type de chèque-cadeau"
 
 #: html.py
 msgid "Voucher book"
-msgstr "Livre de licences"
+msgstr "Livre de chèques-cadeaux"
 
 #: roles.js header_edit_header.js
 msgid "Vouchers"
-msgstr "Chèques-cadeau"
+msgstr "Chèques-cadeaux"
 
 #: vouchers.js
 msgid "Vouchers need an issue and expiry date."
-msgstr "Les chèques-cadeau requiert une date d'émission et d'expiration."
+msgstr "Les chèques-cadeaux nécessitent une date d'émission et d'expiration."
 
 #: movement.py
 msgid "WARNING: This animal has not been microchipped"
