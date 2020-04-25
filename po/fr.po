@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ASM3\n"
 "Report-Msgid-Bugs-To: robin@sheltermanager.com\n"
-"POT-Creation-Date: 2020-04-21 16:27+0000\n"
-"PO-Revision-Date: 2020-04-21 18:21+0200\n"
+"POT-Creation-Date: 2020-04-25 09:09+0000\n"
+"PO-Revision-Date: 2020-04-25 19:07+0200\n"
 "Last-Translator: Julian POIDEVIN <poidevin.julian@gmail.com>\n"
 "Language-Team: \n"
 "Language: fr\n"
@@ -1542,7 +1542,7 @@ msgstr "Attacher un lien"
 
 #: common.js
 msgid "Audit Trail"
-msgstr "Piste d'audit"
+msgstr "Log des évènements"
 
 #: clinic_calendar.js calendarview.js common.js
 msgid "Aug"
@@ -1951,11 +1951,11 @@ msgstr "Brotogeris"
 
 #: animal_find_results.js
 msgid "Brought In"
-msgstr "Apporté dans"
+msgstr "Accueilli le"
 
 #: mobile.py person.py animal_new.js animal.js
 msgid "Brought In By"
-msgstr "Apporté par"
+msgstr "Admis par"
 
 #: dbupdate.py
 msgid "Brown"
@@ -6025,6 +6025,14 @@ msgstr "Entrée"
 msgid "In SubTotal"
 msgstr "En sous-total"
 
+#: options.js
+msgid ""
+"In the Stripe dashboard, create a webhook to send 'checkout.session."
+"completed' events to {0}"
+msgstr ""
+"Dans le tableau de bord Stripe, créez un webhook pour envoyer les événements "
+"'checkout.session.completed' à {0}"
+
 #: publish_options.js
 msgid "In the last month"
 msgstr "Dans le dernier mois"
@@ -6040,6 +6048,14 @@ msgstr "Dans la dernière semaine"
 #: publish_options.js
 msgid "In the last year"
 msgstr "Dans la dernière année"
+
+#: options.js
+msgid ""
+"In your PayPal account, enable Instant Payment Notifications with a URL of "
+"{0}"
+msgstr ""
+"Dans votre compte PayPal, activer les notifications de paiement instantané "
+"avec une URL de {0}"
 
 #: dbupdate.py
 msgid "In-Kind Donation"
@@ -6781,7 +6797,7 @@ msgstr "Référence de la portée"
 
 #: litters.js animal.js
 msgid "Littermates"
-msgstr "Compagnons de portée"
+msgstr "Membres de la portée"
 
 #: animal.py litters.js common_animalchoosermulti.js roles.js
 msgid "Litters"
@@ -6833,6 +6849,10 @@ msgstr "Langue"
 #: header_edit_header.js
 msgid "Location"
 msgstr "Localisation"
+
+#: options.js shelterview.js
+msgid "Location (No Virtual)"
+msgstr "Emplacement (non virtuel)"
 
 #: users.js
 msgid "Location Filter"
@@ -8051,7 +8071,7 @@ msgstr "Numéro"
 
 #: litters.js
 msgid "Number in litter"
-msgstr "Numéro dans la portée"
+msgstr "Nombre dans la portée"
 
 #: diarytasks.js
 msgid "Number of Tasks"
@@ -9200,7 +9220,7 @@ msgstr "Raisons pas du propriétaire"
 
 #: animal.js
 msgid "Reason the owner did not bring in the animal themselves"
-msgstr "Raison le propriétaire n'a pas apporté l'animal lui-même"
+msgstr "Raison pour laquelle le propriétaire n'a pas amené l'animal lui-même"
 
 #: code.py batch.js
 msgid "Recalculate ALL animal ages/times"
@@ -9332,6 +9352,10 @@ msgstr "Rediarisé"
 msgid "Redirect to URL after POST"
 msgstr "Rediriger vers l'URL après le POST"
 
+#: options.js
+msgid "Redirect to this URL after successful payment"
+msgstr "Rediriger vers cette URL après un paiement réussi"
+
 #: lostfound.py transport.js
 msgid "Reference"
 msgstr "Référence"
@@ -9458,7 +9482,7 @@ msgstr ""
 #: options.js
 msgid "Remove short shelter code box from the animal details screen"
 msgstr ""
-"Supprimer la zone de code d'abri court de l'écran des détails de l'animal"
+"Supprimer la zone de code court de refuge de l'écran des détails de l'animal"
 
 #: options.js
 msgid "Remove the FIV/L test fields from animal health details"
@@ -10299,8 +10323,8 @@ msgid ""
 "in these locations on shelterview, find animal and search."
 msgstr ""
 "La définition d'un filtre d'emplacement empêchera cet utilisateur de voir "
-"les animaux qui ne se trouvent pas dans ces emplacements sur la vue de "
-"l'abri, de trouver un animal et de rechercher."
+"les animaux qui ne se trouvent pas dans ces emplacements sur la vue du "
+"refuge, de trouver un animal et de rechercher."
 
 #: html.py
 msgid "Settings"
@@ -10520,7 +10544,7 @@ msgstr "Afficher les éléments du menu de rapport dans les catégories réduite
 
 #: options.js
 msgid "Show short shelter codes on screens"
-msgstr "Afficher les codes d'abri courts sur les écrans"
+msgstr "Afficher les codes courts de refuge sur les écrans"
 
 #: options.js
 msgid "Show the adoption fee field"
@@ -10544,7 +10568,7 @@ msgstr "Afficher le champ de couleur"
 
 #: options.js
 msgid "Show the date brought in field"
-msgstr "Afficher le champ de date où l'animal a été apporté"
+msgstr "Afficher le champ de date où l'animal a été admis"
 
 #: options.js
 msgid "Show the entry category field"
@@ -11078,6 +11102,18 @@ msgstr "Boutiques"
 msgid "Stray"
 msgstr "Errant"
 
+#: dbupdate.py donations.js
+msgid "Stripe"
+msgstr "Stripe"
+
+#: options.js
+msgid "Stripe Key"
+msgstr "Clé Stripe"
+
+#: options.js
+msgid "Stripe Secret Key"
+msgstr "Clé secrète Stripe"
+
 #: common.js
 msgid "Su"
 msgstr "Dim"
@@ -11558,7 +11594,7 @@ msgstr "La raison de l'entrée de cet animal"
 
 #: animal_bulk.js animal.js
 msgid "The litter this animal belongs to"
-msgstr "Portée à laquelle l'animal appartient"
+msgstr "La portée à laquelle appartient cet animal"
 
 #: options.js
 msgid ""
@@ -11951,7 +11987,8 @@ msgstr "Cet animal est actuellement en détention et ne peut pas être adopté."
 #: move_reclaim.js movements.js move_adopt.js
 msgid "This animal is currently quarantined and should not leave the shelter."
 msgstr ""
-"Cet animal est actuellement en quarantaine et ne devrait pas quitter l'abri."
+"Cet animal est actuellement en quarantaine et ne devrait pas quitter le "
+"refuge."
 
 #: movements.js move_adopt.js
 msgid "This animal is marked not for adoption."
@@ -11964,12 +12001,12 @@ msgstr "Cet animal est pucé"
 #: move_reclaim.js move_retailer.js move_reserve.js move_transfer.js
 #: move_adopt.js move_foster.js
 msgid "This animal is not on the shelter."
-msgstr "Cet animal n'est pas dans l'abri."
+msgstr "Cet animal n'est pas dans le refuge."
 
 #: move_reclaim.js movements.js move_adopt.js
 msgid "This animal is part of a cruelty case and should not leave the shelter."
 msgstr ""
-"Cet animal fait partie d'un acte de cruauté et ne doit pas quitter l'abri."
+"Cet animal fait partie d'un cas de cruauté et ne doit pas quitter le refuge."
 
 #: animal_new.js animal.js
 msgid "This animal should be held in case it is reclaimed"
@@ -13142,7 +13179,7 @@ msgstr "Voir les animaux"
 
 #: roles.js
 msgid "View Audit Trail"
-msgstr "Afficher la piste d'audit"
+msgstr "Afficher le log des évènements"
 
 #: roles.js
 msgid "View Citations"
@@ -13298,7 +13335,7 @@ msgstr "Voir les animaux correspondant options de publication"
 
 #: animal.js
 msgid "View littermates"
-msgstr "Voir les compagnons de portée"
+msgstr "Voir les membres de la portée"
 
 #: mailmerge.js
 msgid "View matching records"
@@ -14299,8 +14336,8 @@ msgstr "{0}, semaine {1}"
 msgid ""
 "{0}: Entered shelter {1}, Last changed on {2} by {3}. {4} {5} {6} aged {7}"
 msgstr ""
-"{0}: Entrée dans l'abri {1}, dernière modification le {2} par {3}. {4} {5} "
-"{6} âgés de {7}"
+"{0}: Entrée dans le refuge {1}, dernière modification le {2} par {3}. {4} "
+"{5} {6} âgés de {7}"
 
 #: animal.py
 msgid "{0}: closed {1} ({2})"
