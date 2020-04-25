@@ -38,7 +38,7 @@ class PayPal(PaymentProcessor):
             paymenttypes.append(r.DONATIONNAME)
 
         if item_description == "": item_description = ", ".join(paymenttypes)
-        if return_url == "": return_url = "%sstatic/pages/payment_success.html" % BASE_URL
+        if return_url == "": return_url = "%s/static/pages/payment_success.html" % BASE_URL
 
         d = {
             "cmd":              "_xclick",
