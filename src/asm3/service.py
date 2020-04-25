@@ -303,6 +303,10 @@ def handler(post, path, remoteip, referer, querystring):
 
     elif method == "checkout":
         processor = asm3.financial.get_payment_processor(dbo, post["processor"])
+        if not processor.validatePaymentReference(post["payref"]):
+            return ("text/plain", 0, 0, "ERROR: Invalid payref")
+        if processor.isPaymentReceived(post["payref"]):
+            return ("text/plain", 0, 0, "ERROR: Expired payref")
         return_url = post["return"] or asm3.configuration.payment_return_url(dbo)
         return set_cached_response(cache_key, account, "text/html", 120, 120, processor.checkoutPage(post["payref"], return_url, title))
 

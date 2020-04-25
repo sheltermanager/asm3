@@ -1,6 +1,7 @@
 44
 ================
 
+25/04/20 Validate payrefs before generating checkout pages #463
 24/04/20 Payment processor integration: Stripe support #463
 23/04/20 csv import: allow import of unknown, fix match age
 23/04/20 Strip whitespace from incoming form fields

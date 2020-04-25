@@ -93,6 +93,9 @@ class PaymentProcessor(object):
         b = payref.split("-")
         if len(b) != 2: return False
         ownercode, receipt = payref.split("-")
+        # Each element should be at least 8 chars long and no longer than 12
+        if len(ownercode) < 8 or len(ownercode) > 12: return False
+        if len(receipt) < 8 or len(receipt) > 12: return False
         # Can we find this receipt and owner?
         return 0 != self.dbo.query_int("SELECT COUNT(*) FROM ownerdonation od " \
             "INNER JOIN owner o ON o.ID = od.OwnerID " \
