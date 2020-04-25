@@ -152,6 +152,10 @@ $(document).ready(function() {
 
     // Load all signature widgets and implement the clear button functionality
     try {
+        $(".asm-onlineform-signature").each(function() {
+            $(this).width( Math.min($(window).width()-20, 500 )); // max 500, min viewport width
+            $(this).height(200);
+        });
         $(".asm-onlineform-signature").signature({ guideline: true });
         $(".asm-onlineform-signature-clear").click(function() {
             var signame = $(this).attr("data-clear");
