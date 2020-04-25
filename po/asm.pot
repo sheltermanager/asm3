@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ASM3\n"
 "Report-Msgid-Bugs-To: robin@sheltermanager.com\n"
-"POT-Creation-Date: 2020-04-24 12:57+0000\n"
+"POT-Creation-Date: 2020-04-25 09:09+0000\n"
 "Last-Translator: Robin Rawson-Tetley <robin@sheltermanager.com>\n"
 "Language-Team: en <robin@sheltermanager.com>\n"
 "Language: en\n"
@@ -5907,6 +5907,12 @@ msgstr ""
 
 #: publish_options.js
 msgid "In the last year"
+msgstr ""
+
+#: options.js
+msgid ""
+"In your PayPal account, enable Instant Payment Notifications with a URL of "
+"{0}"
 msgstr ""
 
 #: dbupdate.py

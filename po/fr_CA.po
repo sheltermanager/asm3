@@ -13,7 +13,7 @@ msgstr ""
 "Project-Id-Version: ASM3\n"
 "Report-Msgid-Bugs-To: robin@sheltermanager.com\n"
 "POT-Creation-Date: 2020-04-23 10:11+0000\n"
-"PO-Revision-Date: 2020-04-23 13:14-0400\n"
+"PO-Revision-Date: 2020-04-24 09:31-0400\n"
 "Last-Translator: Stephanie Cordeau <informatique@sosmissdolittle.com>\n"
 "Language-Team: \n"
 "Language: fr_CA\n"
@@ -342,7 +342,7 @@ msgstr "Ajouter un prix"
 
 #: mobile.py roles.js
 msgid "Add Diary"
-msgstr "Ajouter un agenda"
+msgstr "Ajouter à l' agenda"
 
 #: roles.js
 msgid "Add Diets"
@@ -458,7 +458,7 @@ msgstr "Ajouter une liste d'attente"
 
 #: html.py configuration.py main.js header.js
 msgid "Add a diary note"
-msgstr "Ajouter une note au journal"
+msgstr "Ajouter une note à l'agenda"
 
 #: html.py configuration.py header.js
 msgid "Add a found animal"
@@ -510,7 +510,7 @@ msgstr "Ajouter un compte"
 
 #: additional.js
 msgid "Add additional field"
-msgstr "Ajouter un champ additionnel"
+msgstr "Ajouter un champ personnalisé"
 
 #: html.py configuration.py header.js
 msgid "Add an animal to the waiting list"
@@ -530,11 +530,11 @@ msgstr "Ajouter les détails de ce courriel au journal après envoi"
 
 #: diary.js
 msgid "Add diary"
-msgstr "Ajouter un journal"
+msgstr "Ajouter à l'agenda"
 
 #: diarytask.js diarytasks.js
 msgid "Add diary task"
-msgstr "Ajouter une tâche au journal"
+msgstr "Ajouter une tâche d'agenda"
 
 #: animal_diet.js
 msgid "Add diet"
@@ -672,23 +672,23 @@ msgstr "Ajouté par {0} le {1}"
 
 #: incident.js person.js waitinglist.js lostfound.js animal.js
 msgid "Additional"
-msgstr "Supplémentaire"
+msgstr "Champ personnalisé"
 
 #: additional.js
 msgid "Additional Fields"
-msgstr "Champs supplémentaires"
+msgstr "Champs personnalisés"
 
 #: additional.py
 msgid "Additional date field '{0}' contains an invalid date."
-msgstr "Champ supplémentaire de date '{0}' contenant une date non valide."
+msgstr "Champ personnalisé de date '{0}' contient une date non valide."
 
 #: html.py
 msgid "Additional fields"
-msgstr "Champs supplémentaires"
+msgstr "Champs personnalisés"
 
 #: additional.js
 msgid "Additional fields need a name, label and type."
-msgstr "Les champs supplémentaires requièrent un nom, un libellé et un type."
+msgstr "Les champs personnalisés nécessitent un nom, un libellé et un type."
 
 #: html.py mobile.py dbupdate.py transport.js common_personchooser.js
 #: incident.js waitinglist_results.js person.js incident_find_results.js
@@ -971,7 +971,7 @@ msgstr "Tous propriétaires bannis enregistrés."
 
 #: html.py configuration.py header.js
 msgid "All diary notes"
-msgstr "Toutes les notes du journal"
+msgstr "Toutes les notes d'agenda"
 
 #: search.py
 msgid "All donors on file."
@@ -1226,7 +1226,7 @@ msgstr "Nom de l'animal"
 
 #: dbupdate.py
 msgid "Animal - Additional"
-msgstr "Animal - Information supplémentaire"
+msgstr "Animal - Champ personnalisé"
 
 #: dbupdate.py
 msgid "Animal - Death"
@@ -1990,7 +1990,7 @@ msgstr "Perruche ondulée"
 
 #: roles.js
 msgid "Bulk Complete Diary"
-msgstr "Compléter le journal en lot"
+msgstr "Compléter l'agenda en lot"
 
 #: roles.js
 msgid "Bulk Complete Medical Records"
@@ -2937,7 +2937,7 @@ msgstr "Créer des données de coûts de pension lorsque l'animal est adopté"
 
 #: person.js animal.js
 msgid "Create diary notes from a task"
-msgstr "Créer les entrées dans l'agenda à partir d'une tâche"
+msgstr "Créer des notes à l'agenda à partir d'une tâche"
 
 #: csvimport.js
 msgid "Create missing lookup values"
@@ -3680,23 +3680,23 @@ msgstr "Agenda (mode calendrier)"
 
 #: diary.py
 msgid "Diary change triggered by {0} on {1}"
-msgstr "Changement de tâche d'agenda déclenché par {0} le {1}"
+msgstr "Changement d'agenda déclenché par {0} le {1}"
 
 #: diary.py
 msgid "Diary complete: {0}"
-msgstr "Tâche d'agenda complété: {0}"
+msgstr "Agenda complété: {0}"
 
 #: diary.py
 msgid "Diary completion triggered by {0} on {1}"
-msgstr "Tâche d'agenda complété déclenché par {0} le {1}"
+msgstr "Agenda complété déclenché par {0} le {1}"
 
 #: diary.py
 msgid "Diary date cannot be blank"
-msgstr "La date de l'agenda ne peut être vide"
+msgstr "La date à l'agenda ne peut être vide"
 
 #: diary.py
 msgid "Diary date is not valid"
-msgstr "La date de l'agenda n'est pas valide"
+msgstr "La date à l'agenda n'est pas valide"
 
 #: main.js
 msgid "Diary for {0}"
@@ -3704,7 +3704,7 @@ msgstr "Agenda pour {0}"
 
 #: diary.py
 msgid "Diary note cannot be blank"
-msgstr "La note d'agenda ne peut être vide"
+msgstr "La note d'agenda ne peut pas être vide"
 
 #: mobile.py
 msgid "Diary note {0} marked completed"
@@ -3738,7 +3738,7 @@ msgstr "Les tâches d'agenda nécessitent un nom."
 
 #: diary.py
 msgid "Diary update: {0}"
-msgstr "Tâche d'agenda mise à jour: {0}"
+msgstr "Agenda mis à jour: {0}"
 
 #: header_edit_header.js
 msgid "Did not ask"
@@ -4041,7 +4041,7 @@ msgstr "Modifier un rendez-vous"
 
 #: roles.js
 msgid "Edit Diary Tasks"
-msgstr "Modifier des groupes de tâches à l'agenda"
+msgstr "Modifier des tâches à l'agenda"
 
 #: html.py
 msgid "Edit HTML publishing templates"
@@ -4085,7 +4085,7 @@ msgstr "Modifier un compte"
 
 #: additional.js
 msgid "Edit additional field"
-msgstr "Modifier un champ additionnel"
+msgstr "Modifier un champ personnalisé"
 
 #: citations.js
 msgid "Edit citation"
@@ -4097,7 +4097,7 @@ msgstr "Modifier un coût"
 
 #: diary.js
 msgid "Edit diary"
-msgstr "Modifier un agenda"
+msgstr "Modifier l'agenda"
 
 #: diary.js
 msgid "Edit diary notes"
@@ -4169,7 +4169,7 @@ msgstr "Modifier mes tâches d'agenda"
 
 #: diary.js
 msgid "Edit my diary notes"
-msgstr "Modifier mes tâches d'agenda"
+msgstr "Modifier mes notes d'agenda"
 
 #: media.js
 msgid "Edit notes"
@@ -4300,8 +4300,8 @@ msgstr "Adresse courriel"
 #: options.js
 msgid "Email diary note creators when a diary note is marked complete"
 msgstr ""
-"Envoyez un courriel aux créateurs de tâche d'agenda lorsqu'une tâche "
-"d'agenda est marquée comme complétée"
+"Envoyez un courriel aux créateurs de note d'agenda lorsqu'une note d'agenda "
+"est marquée comme complétée"
 
 #: media.js
 msgid "Email document for electronic signature"
@@ -4352,14 +4352,13 @@ msgid ""
 "Email users immediately when a diary note assigned to them is created or "
 "updated"
 msgstr ""
-"Envoyez un courriel aux utilisateurs immédiatement lorsqu'une tâche d'agenda "
+"Envoyez un courriel aux utilisateurs immédiatement lorsqu'une note d'agenda "
 "leur étant attribuée est créée ou mise à jour"
 
 #: options.js
 msgid "Email users their outstanding diary notes once per day"
 msgstr ""
-"Envoyer par courriel les notes des tâches d'agenda aux utilisateurs une fois "
-"par jour"
+"Envoyer par courriel les notes d'agenda aux utilisateurs une fois par jour"
 
 #: dbupdate.py
 msgid "Emu"
@@ -5198,7 +5197,7 @@ msgstr "Animal trouvé"
 
 #: dbupdate.py
 msgid "Found Animal - Additional"
-msgstr "Animal trouvé - Infos supplémentaire"
+msgstr "Animal trouvé - Champ personnalisé"
 
 #: dbupdate.py
 msgid "Found Animal - Details"
@@ -6065,7 +6064,7 @@ msgstr "Incident"
 
 #: dbupdate.py
 msgid "Incident - Additional"
-msgstr "Incident - Additionnel"
+msgstr "Incident - Champ personnalisé"
 
 #: dbupdate.py
 msgid "Incident - Citation"
@@ -6293,7 +6292,7 @@ msgstr "Notes incomplètes jusqu'à aujourd'hui"
 
 #: diarytask.js additional.js
 msgid "Index"
-msgstr "Sommaire"
+msgstr "Indexe"
 
 #: common_personchooser.js person.js person_new.js
 msgid "Individual/Couple"
@@ -6974,11 +6973,11 @@ msgstr "Animal perdu"
 
 #: dbupdate.py
 msgid "Lost Animal - Additional"
-msgstr "Animal perdu - Supplémentaire"
+msgstr "Animal perdu - Champ personnalisé"
 
 #: dbupdate.py
 msgid "Lost Animal - Details"
-msgstr "Animal perdu- Détails"
+msgstr "Animal perdu - Détails"
 
 #: person.py
 msgid "Lost Animal Contact"
@@ -6998,7 +6997,7 @@ msgstr "Les entrées Perdu/trouvé doivent avoir un contact"
 
 #: diary.js lostfound.js media.js log.js
 msgid "Lost animal - {0} {1} [{2}]"
-msgstr "Animaux perdus - {0} {1} [{2}]"
+msgstr "Animal perdu - {0} {1} [{2}]"
 
 #: search.py
 msgid "Lost animal entries matching '{0}'."
@@ -7421,7 +7420,7 @@ msgstr "Tablette de signature électronique"
 
 #: roles.js
 msgid "Modify Additional Fields"
-msgstr "Modifier les champs additionnels"
+msgstr "Modifier les champs personnalisés"
 
 #: roles.js
 msgid "Modify Document Templates"
@@ -7717,7 +7716,7 @@ msgstr "Nouveau frais"
 
 #: diary.js
 msgid "New Diary"
-msgstr "Nouvelle entrée à l'agenda"
+msgstr "Nouvel agenda"
 
 #: animal_diet.js
 msgid "New Diet"
@@ -8244,7 +8243,7 @@ msgstr "Options"
 
 #: mobile.py
 msgid "Or move this diary on to"
-msgstr "Ou déplacer cet entrée d'agenda au"
+msgstr "Ou déplacer cet agenda au"
 
 #: publish_options.js
 msgid "Order published animals by"
@@ -8647,7 +8646,7 @@ msgstr "Contact"
 
 #: dbupdate.py
 msgid "Person - Additional"
-msgstr "Contact - Additionnel"
+msgstr "Contact - Champ personnalisé"
 
 #: dbupdate.py
 msgid "Person - Name and Address"
@@ -9524,7 +9523,7 @@ msgstr "Retirer la fonctionnalité de répertoire de documents des menus"
 
 #: options.js
 msgid "Remove the good with fields from animal notes"
-msgstr "Retirer le champ bon avec des notes de l'animal"
+msgstr "Retirer les champs \"s'entend bien avec\" des remarques de l'animal"
 
 #: options.js
 msgid "Remove the heartworm test fields from animal health details"
@@ -9626,7 +9625,7 @@ msgstr "Demander un paiement"
 
 #: options.js
 msgid "Request payments in"
-msgstr "Demander les paiements dans"
+msgstr "Demander les paiements en"
 
 #: media.js
 msgid "Request signature by email"
@@ -10169,7 +10168,7 @@ msgid ""
 "reattached to this record."
 msgstr ""
 "Sélection un animal à fusionner dans cet enregistrement. L'animal "
-"sélectionné sera supprimé, ainsi que ses déplacements, note d'agenda, "
+"sélectionné sera supprimé, ainsi que ses déplacements, notes d'agenda, "
 "entrées de journal, etc., et sera attaché à cet enregistrement."
 
 #: animal.js
@@ -10507,7 +10506,7 @@ msgstr "Afficher les emplacements vides"
 
 #: additional.js
 msgid "Show on new record screens"
-msgstr "Afficher les nouveaux enregistrement à l'écran"
+msgstr "Afficher ce champs dans les écrans d'ajout d'enregistrement"
 
 #: options.js
 msgid "Show quick links on all pages"
@@ -12277,9 +12276,9 @@ msgid ""
 "HELD AGAINST IT. This action is irreversible, are you sure you want to do "
 "this?"
 msgstr ""
-"Cette action supprimera définitivement ce champ additionnel ainsi que TOUTES "
-"LES DONNÉES DÉJÀ ENREGISTRÉES. La suppression ne peut être annulée, êtes-"
-"vous certain de vouloir continuer?"
+"Cette action supprimera définitivement ce champ personnalisé ainsi que "
+"TOUTES LES DONNÉES DÉJÀ ENREGISTRÉES. La suppression ne peut être annulée, "
+"êtes-vous certain de vouloir continuer?"
 
 #: animal.js
 msgid "This will permanently remove this animal, are you sure?"
@@ -13371,7 +13370,7 @@ msgstr "Liste d'attente"
 
 #: dbupdate.py
 msgid "Waiting List - Additional"
-msgstr "Liste d'attente - Supplémentaire"
+msgstr "Liste d'attente - Champ personnalisé"
 
 #: dbupdate.py
 msgid "Waiting List - Details"
