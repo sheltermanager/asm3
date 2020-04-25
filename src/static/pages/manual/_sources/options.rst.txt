@@ -708,6 +708,13 @@ PayPal
 * PayPal Business Email: The address for your PayPal account where payments will 
   be sent to.
 
+It should not be necessary, but some users have reported problems receiving
+IPN notifcations from PayPal. As a "just in case" measure, click on the Settings/Gear
+icon at the top right of your PayPal account, choose "Account Settings", then 
+"Notifications" and the "Update" link next to "Instant Payment Notifications".
+You can now choose a URL and to receive IPN messages. Use the URL shown below, 
+typically https://HOST/pp_paypal
+
 Stripe
 ^^^^^^
 

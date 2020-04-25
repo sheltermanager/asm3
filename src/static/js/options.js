@@ -1071,6 +1071,10 @@ $(function() {
                 '<tr><td><label for="paypalemail">' + _("PayPal Business Email") + '</label></td>',
                 '<td><input data="PayPalEmail" id="paypalemail" type="text" class="asm-textbox asm-doubletextbox" /></td></tr>',
                 '</table>',
+                '<p class="centered">',
+                    _("In your PayPal account, enable Instant Payment Notifications with a URL of {0}")
+                    .replace("{0}", "<br/><b>" + asm.baseurl + "/pp_paypal" + "</b>"),
+                '</p>',
                 '</div>',
 
                 '<div id="stripe-options">',
