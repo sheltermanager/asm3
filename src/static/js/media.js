@@ -53,6 +53,14 @@ $(function() {
                         });
                 },
                 change: function(rows) {
+                    var all_of_type = function(mime) {
+                        // Returns true if all rows are of type mime
+                        var rv = true;
+                        $.each(rows, function(i, v) {
+                            if (v.MEDIAMIMETYPE != mime) { rv = false; }
+                        });
+                        return rv;
+                    };
                     $("#button-web").button("option", "disabled", true); 
                     $("#button-video").button("option", "disabled", true); 
                     $("#button-doc").button("option", "disabled", true); 
@@ -75,7 +83,7 @@ $(function() {
                     }
                     // Only allow the rotate and include buttons to be pressed if the
                     // selection only contains images
-                    if (rows.length > 0 && rows[0].MEDIAMIMETYPE == "image/jpeg") {
+                    if (rows.length > 0 && all_of_type("image/jpeg")) {
                         $("#button-rotateanti").button("option", "disabled", false); 
                         $("#button-rotateclock").button("option", "disabled", false); 
                         $("#button-include").button("option", "disabled", false); 
@@ -83,12 +91,12 @@ $(function() {
                     }
                     // Only allow the email pdf button to be pressed if the
                     // selection only contains documents
-                    if (rows.length > 0 && rows[0].MEDIAMIMETYPE == "text/html") {
+                    if (rows.length > 0 && all_of_type("text/html")) {
                         $("#button-emailpdf").button("option", "disabled", false); 
                     }
                     // Only allow the sign buttons to be pressed if the
                     // selection only contains unsigned documents
-                    if (rows.length > 0 && rows[0].MEDIAMIMETYPE == "text/html" && !rows[0].SIGNATUREHASH) {
+                    if (rows.length > 0 && all_of_type("text/html") && !rows[0].SIGNATUREHASH) {
                         $("#button-sign").removeClass("ui-state-disabled").removeClass("ui-button-disabled");
                     }
                 },
@@ -586,7 +594,6 @@ $(function() {
 
             $(".asm-tabbar").asmtabs();
             $("#emailform").emailform();
-            $("#emailsubject").closest("tr").hide(); // Subject is completed by the backend
 
             if (Modernizr.canvas) {
                 $("#signature").signature({ guideline: true });
@@ -791,7 +798,7 @@ $(function() {
                 defaultname = controller.animal.CURRENTOWNERNAME;
             }
 
-            $("#button-email").button({disabled: true}).click(function() {
+            $("#button-email").button().click(function() {
                 $("#emailform").emailform("show", {
                     title: _("Email media"),
                     post: "media",
@@ -799,13 +806,14 @@ $(function() {
                         "&ids=" + tableform.table_ids(media.table),
                     name: defaultname,
                     email: defaultemail,
+                    subject: tableform.table_selected_row(media.table).MEDIANOTES,
                     personid: (controller.person && controller.person.ID),
                     templates: controller.templates,
                     logtypes: controller.logtypes
                 });
             });
 
-            $("#button-emailpdf").button({disabled: true}).click(function() {
+            $("#button-emailpdf").button().click(function() {
                 $("#emailform").emailform("show", {
                     title: _("Email PDF"),
                     post: "media",
@@ -813,6 +821,7 @@ $(function() {
                         "&ids=" + tableform.table_ids(media.table),
                     name: defaultname,
                     email: defaultemail,
+                    subject: tableform.table_selected_row(media.table).MEDIANOTES,
                     personid: (controller.person && controller.person.ID),
                     templates: controller.templates,
                     logtypes: controller.logtypes
@@ -830,6 +839,7 @@ $(function() {
                         "&ids=" + tableform.table_ids(media.table),
                     name: defaultname,
                     email: defaultemail,
+                    subject: _("Document signing request"),
                     personid: (controller.person && controller.person.ID),
                     templates: controller.templates,
                     logtypes: controller.logtypes,

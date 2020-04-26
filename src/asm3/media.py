@@ -156,8 +156,7 @@ def get_media_file_data(dbo, mid):
     mime type and file data as bytes
     """
     mm = get_media_by_id(dbo, mid)
-    if len(mm) == 0: return (None, "", "", "")
-    mm = mm[0]
+    if mm is None: return (None, "", "", "")
     return mm.DATE, mm.MEDIANAME, mm.MEDIAMIMETYPE, asm3.dbfs.get_string_id(dbo, mm.DBFSID)
 
 def get_image_file_data(dbo, mode, iid, seq = 0, justdate = False):
@@ -180,13 +179,13 @@ def get_image_file_data(dbo, mode, iid, seq = 0, justdate = False):
         if justdate: return NOPIC_DATE
         return (NOPIC_DATE, "NOPIC")
     def mrec(mm):
-        if len(mm) == 0: return nopic()
-        if justdate: return mm[0].DATE
-        return (mm[0].DATE, asm3.dbfs.get_string_id(dbo, mm[0].DBFSID))
+        if mm is None: return nopic()
+        if justdate: return mm.DATE
+        return (mm.DATE, asm3.dbfs.get_string_id(dbo, mm.DBFSID))
     def thumb_mrec(mm):
-        if len(mm) == 0: return thumb_nopic()
-        if justdate: return mm[0].DATE
-        return (mm[0].DATE, scale_image(asm3.dbfs.get_string_id(dbo, mm[0].DBFSID), asm3.configuration.thumbnail_size(dbo)))
+        if mm is None: return thumb_nopic()
+        if justdate: return mm.DATE
+        return (mm.DATE, scale_image(asm3.dbfs.get_string_id(dbo, mm.DBFSID), asm3.configuration.thumbnail_size(dbo)))
 
     if mode == "animal":
         if seq == 0:
@@ -259,7 +258,7 @@ def get_media(dbo, linktype, linkid):
     return dbo.query("SELECT * FROM media WHERE LinkTypeID = ? AND LinkID = ? ORDER BY Date DESC", ( linktype, linkid ))
 
 def get_media_by_id(dbo, mid):
-    return dbo.query("SELECT * FROM media WHERE ID = ?", [mid] )
+    return dbo.first_row(dbo.query("SELECT * FROM media WHERE ID = ?", [mid] ))
 
 def get_image_media(dbo, linktype, linkid, ignoreexcluded = False):
     if not ignoreexcluded:
@@ -520,7 +519,7 @@ def create_log(dbo, user, mid, logcode = "UK00", message = ""):
         ES02 = Document signed
     message: Some human readable text to accompany the code
     """
-    m = dbo.first_row(get_media_by_id(dbo, mid))
+    m = get_media_by_id(dbo, mid)
     if m is None: return
     logtypeid = asm3.configuration.generate_document_log_type(dbo)
     asm3.log.add_log(dbo, user, get_log_from_media_type(m.LINKTYPEID), m.LINKID, logtypeid, "%s:%s:%s - %s" % (logcode, m.ID, message, m.MEDIANOTES))

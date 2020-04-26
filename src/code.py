@@ -647,16 +647,19 @@ class media(ASMEndpoint):
         dbo = o.dbo
         post = o.post
         emailadd = post["to"]
+        attachments = []
+        notes = []
         for mid in post.integer_list("ids"):
             m = asm3.media.get_media_by_id(dbo, mid)
-            if len(m) == 0: self.notfound()
-            m = m[0]
-            content = asm3.dbfs.get_string(dbo, m["MEDIANAME"])
-            if m["MEDIANAME"].endswith("html"):
+            if m is None: self.notfound()
+            content = asm3.dbfs.get_string(dbo, m.MEDIANAME)
+            if m.MEDIAMIMETYPE == "text/html":
                 content = asm3.utils.fix_relative_document_uris(content, BASE_URL, MULTIPLE_DATABASES and dbo.database or "")
-            asm3.utils.send_email(dbo, post["from"], emailadd, post["cc"], post["bcc"], m["MEDIANOTES"], post["body"], "html", [ (m["MEDIANAME"], "text/html", content) ])
-            if post.boolean("addtolog"):
-                asm3.log.add_log(dbo, o.user, asm3.media.get_log_from_media_type(m["LINKTYPEID"]), m["LINKID"], post.integer("logtype"), "[%s] %s :: %s" % (emailadd, m["MEDIANOTES"], asm3.utils.html_email_to_plain(post["body"])))
+            attachments.append(( m.MEDIANAME, m.MEDIAMIMETYPE, content ))
+            notes.append(m.MEDIANOTES)
+        asm3.utils.send_email(dbo, post["from"], emailadd, post["cc"], post["bcc"], post["subject"], post["body"], "html", attachments)
+        if post.boolean("addtolog"):
+            asm3.log.add_log(dbo, o.user, asm3.media.get_log_from_media_type(m["LINKTYPEID"]), m["LINKID"], post.integer("logtype"), "[%s] %s :: %s" % (emailadd, ", ".join(notes), asm3.utils.html_email_to_plain(post["body"])))
         return emailadd
 
     def post_emailpdf(self, o):
@@ -664,16 +667,19 @@ class media(ASMEndpoint):
         dbo = o.dbo
         post = o.post
         emailadd = post["to"]
+        attachments = []
+        notes = []
         for mid in post.integer_list("ids"):
             m = asm3.media.get_media_by_id(dbo, mid)
-            if len(m) == 0: self.notfound()
-            m = m[0]
-            if not m["MEDIANAME"].endswith("html"): continue
-            content = asm3.utils.bytes2str(asm3.dbfs.get_string(dbo, m["MEDIANAME"]))
+            if m is None: self.notfound()
+            if m.MEDIAMIMETYPE != "text/html": continue
+            content = asm3.utils.bytes2str(asm3.dbfs.get_string(dbo, m.MEDIANAME))
             contentpdf = asm3.utils.html_to_pdf(content, BASE_URL, MULTIPLE_DATABASES and dbo.database or "")
-            asm3.utils.send_email(dbo, post["from"], emailadd, post["cc"], post["bcc"], m["MEDIANOTES"], post["body"], "html", [ ("document.pdf", "application/pdf", contentpdf ) ])
-            if post.boolean("addtolog"):
-                asm3.log.add_log(dbo, o.user, asm3.media.get_log_from_media_type(m["LINKTYPEID"]), m["LINKID"], post.integer("logtype"), "[%s] %s :: %s" % (emailadd, m["MEDIANOTES"], asm3.utils.html_email_to_plain(post["body"])))
+            attachments.append(( "%s.pdf" % m.ID, "application/pdf", contentpdf ))
+            notes.append(m.MEDIANOTES)
+        asm3.utils.send_email(dbo, post["from"], emailadd, post["cc"], post["bcc"], post["subject"], post["body"], "html", attachments)
+        if post.boolean("addtolog"):
+            asm3.log.add_log(dbo, o.user, asm3.media.get_log_from_media_type(m.LINKTYPEID), m.LINKID, post.integer("logtype"), "[%s] %s :: %s" % (emailadd, ", ".join(notes), asm3.utils.html_email_to_plain(post["body"])))
         return emailadd
 
     def post_emailsign(self, o):
@@ -686,14 +692,13 @@ class media(ASMEndpoint):
         body.append(post["body"])
         for mid in post.integer_list("ids"):
             m = asm3.media.get_media_by_id(dbo, mid)
-            if len(m) == 0: raise web.notfound()
-            m = m[0]
-            if not m["MEDIANAME"].endswith("html"): continue
-            body.append("<p><a href=\"%s?account=%s&method=sign_document&formid=%d\">%s</a></p>" % (SERVICE_URL, dbo.database, mid, m["MEDIANOTES"]))
+            if m is None: raise web.notfound()
+            if m.MEDIAMIMETYPE != "text/html": continue
+            body.append("<p><a href=\"%s?account=%s&method=sign_document&formid=%d\">%s</a></p>" % (SERVICE_URL, dbo.database, mid, m.MEDIANOTES))
             if post.boolean("addtolog"):
-                asm3.log.add_log(dbo, o.user, asm3.media.get_log_from_media_type(m["LINKTYPEID"]), m["LINKID"], post.integer("logtype"), "[%s] %s :: %s" % (emailadd, _("Document signing request", l), asm3.utils.html_email_to_plain("\n".join(body))))
+                asm3.log.add_log(dbo, o.user, asm3.media.get_log_from_media_type(m.LINKTYPEID), m.LINKID, post.integer("logtype"), "[%s] %s :: %s" % (emailadd, _("Document signing request", l), asm3.utils.html_email_to_plain("\n".join(body))))
             asm3.media.create_log(dbo, o.user, mid, "ES01", _("Document signing request", l))
-        asm3.utils.send_email(dbo, post["from"], emailadd, post["cc"], post["bcc"], _("Document signing request", l), "\n".join(body), "html")
+            asm3.utils.send_email(dbo, post["from"], emailadd, post["cc"], post["bcc"], post["subject"], "\n".join(body), "html")
         return emailadd
 
     def post_sign(self, o):
