@@ -121,8 +121,8 @@ $(function() {
                             h.push('<img class="asm-thumbnail thumbnailshadow" src="' + linkimage + '" height="' + media.thumbnail_size + 'px" /></a>');
                         }
                         else if (m.MEDIAMIMETYPE == "image/jpeg") {
-                            h.push('<a target="_blank" href="image?mode=media&id=' + m.ID + '&date=' + encodeURIComponent(m.DATE) + '">');
-                            h.push('<img class="asm-thumbnail thumbnailshadow" src="image?mode=media&id=' + m.ID + '&date=' + encodeURIComponent(m.DATE) + '" height="' + media.thumbnail_size + 'px" /></a>');
+                            h.push('<a target="_blank" href="image?db=' + asm.user + '&mode=media&id=' + m.ID + '&date=' + encodeURIComponent(m.DATE) + '">');
+                            h.push('<img class="asm-thumbnail thumbnailshadow" src="image?db=' + asm.user + '&mode=media&id=' + m.ID + '&date=' + encodeURIComponent(m.DATE) + '" height="' + media.thumbnail_size + 'px" /></a>');
                         }
                         else if (m.MEDIAMIMETYPE == "text/html") {
                             h.push('<a target="_blank" href="document_media_edit?id=' + m.ID + '&redirecturl=' + controller.name + '?id=' + m.LINKID + '"> ');
