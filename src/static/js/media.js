@@ -7,7 +7,7 @@ $(function() {
     var media = {
         thumbnail_size: 50, // Size of table thumbnails in px
         retain_for_years: [
-            "0|" + _("Forever"),
+            "0|" + _("Indefinitely"),
             "1|" + _("1 year"),
             "2|" + _("{0} years").replace("{0}", 2),
             "3|" + _("{0} years").replace("{0}", 3),
@@ -16,7 +16,7 @@ $(function() {
             "6|" + _("{0} years").replace("{0}", 6),
             "7|" + _("{0} years").replace("{0}", 7),
             "8|" + _("{0} years").replace("{0}", 8),
-            "9|" + _("{0} years").replace("{0}", 9),
+            "9|" + _("{0} years").replace("{0}", 9)
         ],
 
         model: function() {
@@ -36,6 +36,7 @@ $(function() {
             var table = {
                 rows: controller.media,
                 idcolumn: "ID",
+                truncatelink: 70, // Only use first 70 chars of MEDIANOTES for edit link
                 edit: function(row) {
                     tableform.fields_populate_from_json(dialog.fields, row);
                     tableform.dialog_show_edit(dialog, row)
@@ -130,54 +131,46 @@ $(function() {
                         return h.join("\n");
                     }},
                     { field: "MODIFIERS", display: "", formatter: function(m) {
-                        var h = [];
+                        var h = [], mod_out = function(icon, text) {
+                            h.push('<span style="white-space: nowrap">')
+                            h.push(html.icon(icon, text));
+                            h.push( " " + text + "</span><br/>");
+                        }
                         if (m.MEDIATYPE > 0) {
-                            h.push(html.icon("link", _("Link to an external web resource")));
-                            h.push( " " + _("Link to an external web resource") + "<br/>");
+                            mod_out("link", _("Link to an external web resource"));
                         }
                         if (m.SIGNATUREHASH) {
-                            h.push(html.icon("signature", _("Signed")));
-                            h.push( " " + _("Signed") + "<br/>");
+                            mod_out("signature", _("Signed"));
                         }
                         if (m.WEBSITEPHOTO == 1 && controller.showpreferred) {
-                            h.push(html.icon("web", _("Default image for this record and the web")));
-                            h.push(" " + _("Default image for this record and the web") + "<br/>");
+                            mod_out("web", _("Default image for this record and the web"));
                         }
                         if (m.WEBSITEVIDEO == 1 && controller.showpreferred) {
-                            h.push(html.icon("video", _("Default video for publishing")));
-                            h.push(" " + _("Default video for publishing") + "<br/>");
+                            mod_out("video", _("Default video for publishing"));
                         }
                         if (m.DOCPHOTO == 1 && controller.showpreferred) {
-                            h.push(html.icon("document", _("Default image for documents")));
-                            h.push(" " + _("Default image for documents") + "<br/>");
+                            mod_out("document", _("Default image for documents"));
                         }
                         if (m.MEDIAMIMETYPE == "image/jpeg" && !m.EXCLUDEFROMPUBLISH && controller.name == "animal_media") {
-                            h.push(html.icon("tick", _('Include this image when publishing')));
-                            h.push(" " + _('Include this image when publishing') + "<br/>");
+                            mod_out("tick", _('Include this image when publishing'));
                         }
                         if (m.MEDIAMIMETYPE == "image/jpeg" && m.EXCLUDEFROMPUBLISH && controller.name == "animal_media") {
-                            h.push(html.icon("cross", _('Exclude this image when publishing')));
-                            h.push(" " + _('Exclude this image when publishing') + "<br/>");
+                            mod_out("cross", _('Exclude this image when publishing'));
                         }
                         if (m.RETAINUNTIL) {
                             var ru = _("Retain until {0}").replace("{0}", format.date(m.RETAINUNTIL));
-                            h.push(html.icon("delete", ru));
-                            h.push(" " + ru + "<br/>");
+                            mod_out("delete", ru);
                         }
                         if (config.bool("AutoRemoveDocumentMedia") && config.integer("AutoRemoveDMYears")) {
                             var dd = common.add_days(format.date_js(m.DATE), config.integer("AutoRemoveDMYears") * 365);
                             var ar = _("Auto remove on {0}").replace("{0}", format.date(dd));
-                            h.push(html.icon("delete", ar));
-                            h.push(" " + ar + "<br/>");
+                            mod_out("delete", ar);
                         }
                         return h.join("\n");
                     }},
                     { field: "SIZE", display: _("Size"), formatter: function(m) {
-                        if (m.MEDIASIZE < 1024*1024) {
-                            return Math.floor(m.MEDIASIZE / 1024) + "K";
-                        } else {
-                            return Math.floor(m.MEDIASIZE / 1024 / 1024.0) + "M";
-                        }
+                        if (m.MEDIASIZE < 1024*1024) { return Math.floor(m.MEDIASIZE / 1024) + "K"; }
+                        return Math.floor(m.MEDIASIZE / 1024 / 1024.0) + "M";
                     }},
                     { field: "DATE", display: _("Date"), formatter: tableform.format_date, initialsort: true, initialsortdirection: "desc" },
                     { field: "MEDIAMIMETYPE", display: _("Type") }
@@ -209,6 +202,11 @@ $(function() {
         },
 
         render: function() {
+            // Set a dynamic thumbnail size based on number of elements
+            if (controller.media.length >= 0) { this.thumbnail_size = 100; }
+            if (controller.media.length > 10) { this.thumbnail_size = 70; }
+            if (controller.media.length > 20) { this.thumbnail_size = 50; }
+            if (controller.media.length > 30) { this.thumbnail_size = 30; }
             this.model();
             var h = [
                 tableform.dialog_render(this.dialog),
@@ -230,7 +228,7 @@ $(function() {
                 '<td><input id="filechooser" name="filechooser" type="file" /></td>',
                 '</tr>',
                 '<tr>',
-                '<td><label for="retainfor">' + _("Retain this file") + '</label></td>',
+                '<td><label for="retainfor">' + _("Retain for") + '</label></td>',
                 '<td><select id="retainfor" name="retainfor" class="asm-selectbox">',
                 html.list_to_options(media.retain_for_years),
                 '</select></td>',
