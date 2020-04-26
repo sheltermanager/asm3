@@ -200,8 +200,10 @@
          *
          * table = { rows: {json containing rows}, 
          *   idcolumn: "ID",
+         *   truncatelink: 0, // chars to truncate the edit link to in the leftmost column (0 or falsey value to do nothing)
          *   showfilter: false, // whether to allow searching of columns
          *   edit: function(row) { callback for when a row is edited with the row data }
+         *   change: function(rows) { callback when the selected rows changes with the selected rows }
          *   complete: function(row) { return true if the row should be drawn as complete },
          *   overdue: function(row) { return true if the row should be drawn as overdue },
          *   columns:  [
@@ -243,9 +245,11 @@
                     }
                     t.push("<td class=\"ui-widget-content " + extraclasses + "\">");
                     if (ic == 0 && formatter === undefined) {
+                        var linktext = tableform.format_string(vr, vr[vc.field]);
+                        if (table.truncatelink) { linktext = html.truncate(html.decode(linktext), table.truncatelink); }
                         t.push("<span style=\"white-space: nowrap\">");
                         t.push("<input type=\"checkbox\" data-id=\"" + rowid + "\" title=\"" + html.title(_("Select")) + "\" />");
-                        t.push("<a href=\"#\" class=\"link-edit\" data-id=\"" + rowid + "\">" + tableform.format_string(vr, vr[vc.field]) + "</a>");
+                        t.push("<a href=\"#\" class=\"link-edit\" data-id=\"" + rowid + "\">" + linktext + "</a>");
                         t.push("</span>");
                     }
                     else {
@@ -311,6 +315,9 @@
                     else if (b.type == "buttonmenu") {
                         bn.addClass("ui-state-disabled").addClass("ui-button-disabled");
                     }
+                }
+                if (table.change) {
+                    table.change(tableform.table_selected_rows(table));
                 }
             });
         },
@@ -445,7 +452,7 @@
 
         /**
          * Returns the selected rows in the table.
-         * Returns undefined if nothing is selected.
+         * Returns an empty list if nothing is selected.
          */
         table_selected_rows: function(table) {
             var results = [], selid = $("#tableform input:checked").attr("data-id");
