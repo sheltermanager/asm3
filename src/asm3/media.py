@@ -63,13 +63,14 @@ def get_web_preferred_name(dbo, linktype, linkid):
         "WHERE LinkTypeID = ? AND WebsitePhoto = 1 AND LinkID = ?", (linktype, linkid))
 
 def get_web_preferred(dbo, linktype, linkid):
-    return dbo.query("SELECT * FROM media WHERE LinkTypeID = ? AND " \
-        "WebsitePhoto = 1 AND LinkID = ?", (linktype, linkid))
+    """ Returns the media record for the web preferred (or None if there isn't one) """
+    return dbo.first_row(dbo.query("SELECT * FROM media WHERE LinkTypeID = ? AND " \
+        "LinkID = ? AND WebsitePhoto = 1", (linktype, linkid)))
 
 def get_media_by_seq(dbo, linktype, linkid, seq):
     """ Returns image media by a one-based sequence number. 
         Element 1 is always the preferred.
-        Empty list is returned if the item doesn't exist
+        None is returned if the item doesn't exist
     """
     rows = dbo.query("SELECT * FROM media " \
         "WHERE LinkTypeID = ? AND LinkID = ? " \
@@ -77,9 +78,9 @@ def get_media_by_seq(dbo, linktype, linkid, seq):
         "AND (ExcludeFromPublish = 0 OR ExcludeFromPublish Is Null) " \
         "ORDER BY WebsitePhoto DESC, ID", (linktype, linkid))
     if len(rows) >= seq:
-        return [rows[seq-1],]
+        return rows[seq-1]
     else:
-        return []
+        return None
 
 def get_total_seq(dbo, linktype, linkid):
     return dbo.query_int(dbo, "SELECT COUNT(ID) FROM media WHERE LinkTypeID = ? AND LinkID = ? " \
@@ -114,7 +115,12 @@ def set_excluded(dbo, username, mid, exclude = 1):
     """
     Marks the media with id excluded from publishing.
     """
-    dbo.update("media", mid, { "ExcludeFromPublish": exclude, "Date": dbo.now() }, username, setLastChanged=False)
+    d = { "ExcludeFromPublish": exclude, "Date": dbo.now() }
+    # If we are excluding, we can't be the web or doc or video preferred
+    if exclude == 1:
+        d["WebsitePhoto"] = 0
+        d["DocPhoto"] = 0
+    dbo.update("media", mid, d, username, setLastChanged=False)
 
 def get_name_for_id(dbo, mid):
     return dbo.query_string("SELECT MediaName FROM media WHERE ID = ?", [mid])
@@ -151,8 +157,7 @@ def get_media_file_data(dbo, mid):
     mime type and file data as bytes
     """
     mm = get_media_by_id(dbo, mid)
-    if len(mm) == 0: return (None, "", "", "")
-    mm = mm[0]
+    if mm is None: return (None, "", "", "")
     return mm.DATE, mm.MEDIANAME, mm.MEDIAMIMETYPE, asm3.dbfs.get_string_id(dbo, mm.DBFSID)
 
 def get_image_file_data(dbo, mode, iid, seq = 0, justdate = False):
@@ -175,13 +180,13 @@ def get_image_file_data(dbo, mode, iid, seq = 0, justdate = False):
         if justdate: return NOPIC_DATE
         return (NOPIC_DATE, "NOPIC")
     def mrec(mm):
-        if len(mm) == 0: return nopic()
-        if justdate: return mm[0].DATE
-        return (mm[0].DATE, asm3.dbfs.get_string_id(dbo, mm[0].DBFSID))
+        if mm is None: return nopic()
+        if justdate: return mm.DATE
+        return (mm.DATE, asm3.dbfs.get_string_id(dbo, mm.DBFSID))
     def thumb_mrec(mm):
-        if len(mm) == 0: return thumb_nopic()
-        if justdate: return mm[0].DATE
-        return (mm[0].DATE, scale_image(asm3.dbfs.get_string_id(dbo, mm[0].DBFSID), asm3.configuration.thumbnail_size(dbo)))
+        if mm is None: return thumb_nopic()
+        if justdate: return mm.DATE
+        return (mm.DATE, scale_image(asm3.dbfs.get_string_id(dbo, mm.DBFSID), asm3.configuration.thumbnail_size(dbo)))
 
     if mode == "animal":
         if seq == 0:
@@ -254,7 +259,7 @@ def get_media(dbo, linktype, linkid):
     return dbo.query("SELECT * FROM media WHERE LinkTypeID = ? AND LinkID = ? ORDER BY Date DESC", ( linktype, linkid ))
 
 def get_media_by_id(dbo, mid):
-    return dbo.query("SELECT * FROM media WHERE ID = ?", [mid] )
+    return dbo.first_row(dbo.query("SELECT * FROM media WHERE ID = ?", [mid] ))
 
 def get_image_media(dbo, linktype, linkid, ignoreexcluded = False):
     if not ignoreexcluded:
@@ -352,6 +357,12 @@ def attach_file_from_form(dbo, username, linktype, linkid, post):
         # Are the notes blank and we're defaulting them from the filename?
     elif comments == "" and asm3.configuration.default_media_notes_from_file(dbo):
         comments = asm3.utils.filename_only(filename)
+
+    # Calculate the retain until date from retainfor years
+    retainuntil = None
+    retainfor = post.integer("retainfor")
+    if (retainfor > 0):
+        retainuntil = dbo.today( retainfor * 365 )
     
     # Create the media record
     dbo.insert("media", {
@@ -373,7 +384,8 @@ def attach_file_from_form(dbo, username, linktype, linkid, post):
         "LinkID":               linkid,
         "LinkTypeID":           linktype,
         "Date":                 dbo.now(),
-        "RetainUntil":          None
+        "CreatedDate":          dbo.now(),
+        "RetainUntil":          retainuntil
     }, username, setCreated=False, generateID=False)
 
     # Verify this record has a web/doc default if we aren't excluding it from publishing
@@ -508,7 +520,7 @@ def create_log(dbo, user, mid, logcode = "UK00", message = ""):
         ES02 = Document signed
     message: Some human readable text to accompany the code
     """
-    m = dbo.first_row(get_media_by_id(dbo, mid))
+    m = get_media_by_id(dbo, mid)
     if m is None: return
     logtypeid = asm3.configuration.generate_document_log_type(dbo)
     asm3.log.add_log(dbo, user, get_log_from_media_type(m.LINKTYPEID), m.LINKID, logtypeid, "%s:%s:%s - %s" % (logcode, m.ID, message, m.MEDIANOTES))
@@ -562,9 +574,11 @@ def update_file_content(dbo, username, mid, content):
     asm3.dbfs.put_string_id(dbo, m.DBFSID, m.MEDIANAME, content)
     dbo.update("media", mid, { "Date": dbo.now(), "MediaSize": len(content) }, username, setLastChanged=False)
 
-def update_media_notes(dbo, username, mid, notes):
-    dbo.update("media", mid, { 
-        "MediaNotes": notes,
+def update_media_from_form(dbo, username, post):
+    mediaid = post.integer("mediaid")
+    dbo.update("media", mediaid, { 
+        "MediaNotes": post["medianotes"],
+        "RetainUntil": post.date("retainuntil"),
         "Date":       dbo.now(),
         # ASM2_COMPATIBILITY
         "UpdatedSinceLastPublish": 1

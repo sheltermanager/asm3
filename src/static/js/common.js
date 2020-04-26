@@ -2076,6 +2076,7 @@
         /**
          * Reads a list of objects and produces HTML options from it.
          * If valueprop is undefined, we assume a single list of elements.
+         *     if the values have a pipe delimiter, we assume value/label pairs
          * l: The list object
          * valueprop: The name of the value property
          * displayprop: The name of the display property
@@ -2084,7 +2085,12 @@
             var h = "", retired = "";
             $.each(l, function(i, v) {
                 if (!valueprop) {
-                    h += "<option>" + v + "</option>";
+                    if (v.indexOf("|") == -1) {
+                        h += "<option>" + v + "</option>";
+                    }
+                    else {
+                        h += "<option value=\"" + v.split("|")[0] + "\">" + v.split("|")[1] + "</option>";
+                    }
                 }
                 else {
                     retired = "";

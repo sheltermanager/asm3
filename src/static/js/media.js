@@ -5,9 +5,223 @@
 $(function() {
 
     var media = {
+        thumbnail_size: 50, // Size of table thumbnails in px
+        retain_for_years: [
+            "0|" + _("Indefinitely"),
+            "1|" + _("1 year"),
+            "2|" + _("{0} years").replace("{0}", 2),
+            "3|" + _("{0} years").replace("{0}", 3),
+            "4|" + _("{0} years").replace("{0}", 4),
+            "5|" + _("{0} years").replace("{0}", 5),
+            "6|" + _("{0} years").replace("{0}", 6),
+            "7|" + _("{0} years").replace("{0}", 7),
+            "8|" + _("{0} years").replace("{0}", 8),
+            "9|" + _("{0} years").replace("{0}", 9)
+        ],
+
+        model: function() {
+
+            var dialog = {
+                edit_title: _("Edit media"),
+                edit_perm: 'cam',
+                close_on_ok: true,
+                columns: 1,
+                fields: [
+                    { json_field: "MEDIANOTES", post_field: "medianotes", label: _("Notes"), type: "textarea" },
+                    { json_field: "RETAINUNTIL", post_field: "retainuntil", label: _("Retain Until"), type: "date",
+                        callout: _("Automatically remove this media item on this date") }
+                ]
+            };
+
+            var table = {
+                rows: controller.media,
+                idcolumn: "ID",
+                truncatelink: 70, // Only use first 70 chars of MEDIANOTES for edit link
+                edit: function(row) {
+                    tableform.fields_populate_from_json(dialog.fields, row);
+                    tableform.dialog_show_edit(dialog, row)
+                        .then(function() {
+                            tableform.fields_update_row(dialog.fields, row);
+                            return tableform.fields_post(dialog.fields, "mode=update&mediaid=" + row.ID, "media");
+                        })
+                        .then(function() {
+                            tableform.table_update(table);
+                            tableform.dialog_enable_buttons();
+                        })
+                        .fail(function() {
+                            tableform.dialog_enable_buttons();
+                        });
+                },
+                change: function(rows) {
+                    var all_of_type = function(mime) {
+                        // Returns true if all rows are of type mime
+                        var rv = true;
+                        $.each(rows, function(i, v) {
+                            if (v.MEDIAMIMETYPE != mime) { rv = false; }
+                        });
+                        return rv;
+                    };
+                    $("#button-web").button("option", "disabled", true); 
+                    $("#button-video").button("option", "disabled", true); 
+                    $("#button-doc").button("option", "disabled", true); 
+                    $("#button-rotateanti").button("option", "disabled", true); 
+                    $("#button-rotateclock").button("option", "disabled", true); 
+                    $("#button-include").button("option", "disabled", true); 
+                    $("#button-exclude").button("option", "disabled", true); 
+                    $("#button-emailpdf").button("option", "disabled", true); 
+                    $("#button-sign").addClass("ui-state-disabled").addClass("ui-button-disabled");
+                    // Only allow the image preferred buttons to be pressed if the
+                    // selection size is one and the selection is an image
+                    if (rows.length == 1 && rows[0].MEDIAMIMETYPE == "image/jpeg") { 
+                        $("#button-web").button("option", "disabled", false); 
+                        $("#button-doc").button("option", "disabled", false); 
+                    }
+                    // Only allow the video preferred button to be pressed if the
+                    // selection size is one and the selection is a video link
+                    if (rows.length == 1 && rows[0].MEDIATYPE == 2) {
+                        $("#button-video").button("option", "disabled", false);
+                    }
+                    // Only allow the rotate and include buttons to be pressed if the
+                    // selection only contains images
+                    if (rows.length > 0 && all_of_type("image/jpeg")) {
+                        $("#button-rotateanti").button("option", "disabled", false); 
+                        $("#button-rotateclock").button("option", "disabled", false); 
+                        $("#button-include").button("option", "disabled", false); 
+                        $("#button-exclude").button("option", "disabled", false); 
+                    }
+                    // Only allow the email pdf button to be pressed if the
+                    // selection only contains documents
+                    if (rows.length > 0 && all_of_type("text/html")) {
+                        $("#button-emailpdf").button("option", "disabled", false); 
+                    }
+                    // Only allow the sign buttons to be pressed if the
+                    // selection only contains unsigned documents
+                    if (rows.length > 0 && all_of_type("text/html") && !rows[0].SIGNATUREHASH) {
+                        $("#button-sign").removeClass("ui-state-disabled").removeClass("ui-button-disabled");
+                    }
+                },
+                columns: [
+                    { field: "MEDIANOTES", display: _("Notes") },
+                    { field: "PREVIEW", display: "", formatter: function(m) {
+                        var h = [];
+                        if (m.MEDIATYPE == 1 || m.MEDIATYPE == 2) {
+                            h.push('<a target="_blank" href="' + m.MEDIANAME + '">');
+                            var linkimage = "static/images/ui/file-video.png";
+                            if (m.MEDIATYPE == 1) {
+                                linkimage = "static/images/ui/document-media.png";
+                            }
+                            else if (m.MEDIATYPE == 2) {
+                                if (m.MEDIANAME.indexOf("youtube.com") != -1 || m.MEDIANAME.indexOf("youtu.be") != -1) {
+                                    linkimage = media.youtube_thumbnail(m.MEDIANAME);
+                                    if (!linkimage) {
+                                        linkimage = "static/images/ui/file-video.png";
+                                    }
+                                }
+                            }
+                            h.push('<img class="asm-thumbnail thumbnailshadow" src="' + linkimage + '" height="' + media.thumbnail_size + 'px" /></a>');
+                        }
+                        else if (m.MEDIAMIMETYPE == "image/jpeg") {
+                            h.push('<a target="_blank" href="image?db=' + asm.user + '&mode=media&id=' + m.ID + '&date=' + encodeURIComponent(m.DATE) + '">');
+                            h.push('<img class="asm-thumbnail thumbnailshadow" src="image?db=' + asm.user + '&mode=media&id=' + m.ID + '&date=' + encodeURIComponent(m.DATE) + '" height="' + media.thumbnail_size + 'px" /></a>');
+                        }
+                        else if (m.MEDIAMIMETYPE == "text/html") {
+                            h.push('<a target="_blank" href="document_media_edit?id=' + m.ID + '&redirecturl=' + controller.name + '?id=' + m.LINKID + '"> ');
+                            h.push('<img class="asm-thumbnail thumbnailshadow" src="static/images/ui/document-media.png" height="' + media.thumbnail_size + 'px" /></a>');
+                        }
+                        else if (m.MEDIAMIMETYPE == "application/pdf") {
+                            h.push('<a target="_blank" href="media?id=' + m.ID + '">');
+                            h.push('<img class="asm-thumbnail thumbnailshadow" src="static/images/ui/pdf-media.png" height="' + media.thumbnail_size + 'px" /></a>');
+                        }
+                        else {
+                            h.push('<a target="_blank" href="media?id=' + m.ID + '">');
+                            h.push('<img class="asm-thumbnail thumbnailshadow" src="static/images/ui/file-media.png" height="' + media.thumbnail_size + 'px" /></a>');
+                        }
+                        return h.join("\n");
+                    }},
+                    { field: "MODIFIERS", display: "", formatter: function(m) {
+                        var h = [], mod_out = function(icon, text) {
+                            h.push('<span style="white-space: nowrap">');
+                            h.push(html.icon(icon, text));
+                            h.push( " " + text + "</span><br/>");
+                        };
+                        if (m.MEDIATYPE > 0) {
+                            mod_out("link", _("Link to an external web resource"));
+                        }
+                        if (m.SIGNATUREHASH) {
+                            mod_out("signature", _("Signed"));
+                        }
+                        if (m.WEBSITEPHOTO == 1 && controller.showpreferred) {
+                            mod_out("web", _("Default image for this record and the web"));
+                        }
+                        if (m.WEBSITEVIDEO == 1 && controller.showpreferred) {
+                            mod_out("video", _("Default video for publishing"));
+                        }
+                        if (m.DOCPHOTO == 1 && controller.showpreferred) {
+                            mod_out("document", _("Default image for documents"));
+                        }
+                        if (m.MEDIAMIMETYPE == "image/jpeg" && !m.EXCLUDEFROMPUBLISH && controller.name == "animal_media") {
+                            mod_out("tick", _('Include this image when publishing'));
+                        }
+                        if (m.MEDIAMIMETYPE == "image/jpeg" && m.EXCLUDEFROMPUBLISH && controller.name == "animal_media") {
+                            mod_out("cross", _('Exclude this image when publishing'));
+                        }
+                        if (m.RETAINUNTIL) {
+                            var ru = _("Retain until {0}").replace("{0}", format.date(m.RETAINUNTIL));
+                            mod_out("media-delete", ru);
+                        }
+                        if (config.bool("AutoRemoveDocumentMedia") && config.integer("AutoRemoveDMYears")) {
+                            var dd = common.add_days(format.date_js(m.DATE), config.integer("AutoRemoveDMYears") * 365);
+                            var ar = _("Auto remove on {0}").replace("{0}", format.date(dd));
+                            mod_out("media-delete", ar);
+                        }
+                        return h.join("\n");
+                    }},
+                    { field: "SIZE", display: _("Size"), formatter: function(m) {
+                        var sz = '<span data-sort="' + m.MEDIASIZE + '" />';
+                        if (m.MEDIASIZE < 1024*1024) { sz = Math.floor(m.MEDIASIZE / 1024) + "K"; }
+                        else { sz = Math.floor(m.MEDIASIZE / 1024 / 1024.0) + "M"; }
+                        return sz;
+                    }},
+                    { field: "CREATEDDATE", display: _("Added"), formatter: tableform.format_date },
+                    { field: "DATE", display: _("Updated"), formatter: tableform.format_date, initialsort: true, initialsortdirection: "desc" },
+                    { field: "MEDIAMIMETYPE", display: _("Type") }
+                ]
+            };
+
+            var buttons = [
+                { id: "new", text: _("Attach File"), icon: "media-add", enabled: "always", perm: "aam", tooltip: _("Attach a file") },
+                { id: "newlink", text: _("Attach Link"), icon: "link", enabled: "always", perm: "aam", tooltip: _("Attach a link to a web resource") },
+                { id: "newdoc", text: _("New Document"), icon: "document", enabled: "always", perm: "aam", tooltip: _("Create a new document") },
+                { id: "delete", text: _("Delete"), icon: "media-delete", enabled: "multi", perm: "dam" },
+                { id: "email", text: _("Email"), icon: "email", enabled: "multi", perm: "emo", tooltip: _("Email a copy of the selected media files") },
+                { id: "emailpdf", text: _("Email PDF"), icon: "pdf", enabled: "multi", perm: "emo", tooltip: _("Email a copy of the selected HTML documents as PDFs") },
+                { id: "sign", text: _("Sign"), type: "buttonmenu", icon: "signature" },
+                { id: "rotateanti", icon: "rotate-anti", enabled: "multi", perm: "cam", tooltip: _("Rotate image 90 degrees anticlockwise") },
+                { id: "rotateclock", icon: "rotate-clock", enabled: "multi", perm:" cam", tooltip: _("Rotate image 90 degrees clockwise") },
+                { id: "include", icon: "tick", enabled: "multi", perm: "cam", tooltip: _("Include this image when publishing") }, 
+                { id: "exclude", icon: "cross", enabled: "multi", perm: "cam", tooltip: _("Exclude this image when publishing") },
+                { id: "web", icon: "web", enabled: "one", perm: "cam", tooltip: _("Make this the default image when viewing this record and publishing to the web") },
+                { id: "doc", icon: "document", enabled: "one", perm: "cam", tooltip: _("Make this the default image when creating documents") },
+                { id: "video", icon: "video", enabled: "one", perm: "cam", tooltip: _("Make this the default video link when publishing to the web") },
+                { type: "raw", markup: '<div style="min-height: 40px" class="asm-mediadroptarget"><p>' + _("Drop files here...") + '</p></div>',
+                    hideif: function() { return !Modernizr.filereader || !Modernizr.todataurljpeg || asm.mobileapp; }}
+            ];
+
+            this.dialog = dialog;
+            this.table = table;
+            this.buttons = buttons;
+        },
 
         render: function() {
+            // Set a dynamic thumbnail size based on number of elements
+            if (controller.media.length >= 0) { this.thumbnail_size = 100; }
+            if (controller.media.length > 10) { this.thumbnail_size = 70; }
+            if (controller.media.length > 20) { this.thumbnail_size = 50; }
+            if (controller.media.length > 30) { this.thumbnail_size = 30; }
+            this.model();
             var h = [
+                tableform.dialog_render(this.dialog),
+
                 '<div id="dialog-add" style="display: none" title="' + html.title(_("Attach File")) + '">',
                 '<div id="tipattach" class="ui-state-highlight ui-corner-all" style="margin-top: 20px; padding: 0 .7em">',
                 '<p><span class="ui-icon ui-icon-info" style="float: left; margin-right: .3em;"></span>',
@@ -24,13 +238,17 @@ $(function() {
                 '<td><label for="filechooser">' + _("File") + '</label></td>',
                 '<td><input id="filechooser" name="filechooser" type="file" /></td>',
                 '</tr>',
+                '<tr>',
+                '<td><label for="retainfor">' + _("Retain for") + '</label></td>',
+                '<td><select id="retainfor" name="retainfor" class="asm-selectbox">',
+                html.list_to_options(media.retain_for_years),
+                '</select></td>',
+                '</tr>',
                 '<tr id="commentsrow">',
                 '<td><label for="comments">' + _("Notes") + '</label>',
                 controller.name.indexOf("animal") == 0 ? '<button type="button" id="button-comments">' + _('Copy from animal comments') + '</button>' : "",
                 '</td>',
-                '<td><textarea id="addcomments" name="comments" rows="10" autofocus="autofocus" title=',
-                '"' + html.title(_("If this is the web preferred image, web publishers will use these notes as the animal description")) + '"',
-                ' class="asm-textarea"></textarea>',
+                '<td><textarea id="addcomments" name="comments" rows="10" autofocus="autofocus" class="asm-textarea"></textarea>',
                 '</td>',
                 '</tr>',
                 '</table>',
@@ -57,7 +275,7 @@ $(function() {
                 '</tr>',
                 '<tr>',
                 '<td><label for="linktarget">' + _("URL") + '</label></td>',
-                '<td><input id="linktarget" data="linktarget" class="asm-textbox" /></td>',
+                '<td><input id="linktarget" data="linktarget" class="asm-textbox asm-doubletextbox" /></td>',
                 '</tr>',
                 '<tr id="commentsrow">',
                 '<td><label for="linkcomments">' + _("Notes") + '</label>',
@@ -66,16 +284,6 @@ $(function() {
                 '</td>',
                 '</tr>',
                 '</table>',
-                '</div>',
-
-                '<div id="dialog-edit" style="display: none" title="' + _("Edit media notes") + '">',
-                '<form id="editform" method="post" action="media">',
-                '<input type="hidden" name="linkid" value="' + controller.linkid + '" />',
-                '<input type="hidden" name="linktypeid" value="' + controller.linktypeid + '" />',
-                '<input type="hidden" name="mode" value="update" />',
-                '<input type="hidden" id="mediaid" name="mediaid" value="" />',
-                '<textarea id="editcomments" name="comments" rows="10" class="asm-textarea"></textarea>',
-                '</form>',
                 '</div>',
 
                 '<div id="emailform" />',
@@ -122,119 +330,9 @@ $(function() {
                 h.push(edit_header.incident_edit_header(controller.incident, "media", controller.tabcounts));
             }
 
-            h.push(tableform.buttons_render([
-                { id: "new", text: _("Attach File"), icon: "media-add", perm: "aam", tooltip: _("Attach a file") },
-                { id: "newlink", text: _("Attach Link"), icon: "link", perm: "aam", tooltip: _("Attach a link to a web resource") },
-                { id: "newdoc", text: _("New Document"), icon: "document", perm: "aam", tooltip: _("Create a new document") },
-                { id: "delete", text: _("Delete"), icon: "media-delete", perm: "dam" },
-                { id: "email", text: _("Email"), icon: "email", perm: "emo", tooltip: _("Email a copy of the selected media files") },
-                { id: "emailpdf", text: _("Email PDF"), icon: "pdf", perm: "emo", tooltip: _("Email a copy of the selected HTML documents as PDFs") },
-                { id: "sign", text: _("Sign"), type: "buttonmenu", icon: "signature" },
-                { id: "rotateanti", icon: "rotate-anti", perm: "cam", tooltip: _("Rotate image 90 degrees anticlockwis") },
-                { id: "rotateclock", icon: "rotate-clock", perm:" cam", tooltip: _("Rotate image 90 degrees clockwise") },
-                { id: "web", icon: "web", perm: "cam", tooltip: _("Make this the default image when viewing this record and publishing to the web") },
-                { id: "doc", icon: "document", perm: "cam", tooltip: _("Make this the default image when creating documents") },
-                { id: "video", icon: "video", perm: "cam", tooltip: _("Make this the default video link when publishing to the web") }
-            ]));
-
-            h.push(media.render_items());
+            h.push(tableform.buttons_render(this.buttons)); 
+            h.push(tableform.table_render(this.table));
             h.push(html.content_footer());
-            return h.join("\n");
-        },
-
-        render_items: function() {
-
-            var h = [];
-            h.push('<div class="asm-mediaicons">');
-
-            // Show our drag and drop target for uploading files if the right APIs are available
-            // and we're not in mobile app mode
-            if (Modernizr.canvas && Modernizr.filereader && Modernizr.todataurljpeg && !asm.mobileapp) {
-                h.push('<div class="asm-mediadroptarget"><p>' + _("Drop files here...") + '</p></div>');
-            }
-
-            $.each(controller.media, function(i, m) {
-                h.push('<div class="asm-mediaicon" id="mrow-' + m.ID + '" data="' + m.ID + '" >');
-                h.push('<input type="hidden" class="media-name" value="' + html.title(m.MEDIANAME) + '" />');
-                h.push('<input type="hidden" class="media-type" value="' + html.title(m.MEDIATYPE) + '" />');
-                var fullnotes = html.decode(m.MEDIANOTES),
-                    shortnotes = html.truncate(html.decode(m.MEDIANOTES), 70);
-                if (m.MEDIATYPE == 1 || m.MEDIATYPE == 2) {
-                    h.push('<a target="_blank" href="' + m.MEDIANAME + '">');
-                    var linkimage = "static/images/ui/file-video.png";
-                    if (m.MEDIATYPE == 1) {
-                        linkimage = "static/images/ui/document-media.png";
-                    }
-                    else if (m.MEDIATYPE == 2) {
-                        if (m.MEDIANAME.indexOf("youtube.com") != -1 || m.MEDIANAME.indexOf("youtu.be") != -1) {
-                            linkimage = media.youtube_thumbnail(m.MEDIANAME);
-                            if (!linkimage) {
-                                linkimage = "static/images/ui/file-video.png";
-                            }
-                        }
-                    }
-                    h.push('<img class="asm-thumbnail thumbnailshadow" src="' + linkimage + '" height="70px" ');
-                    h.push('title="' + html.title(fullnotes) + '" /></a>');
-                    h.push('<br />');
-                    h.push('<a class="viewlink" title="' + _('View media') + '" href="' + m.MEDIANAME + '">' + shortnotes + '</a>');
-                }
-                else if (media.is_jpeg(m.MEDIANAME)) {
-                    h.push('<a href="image?mode=media&id=' + m.ID + '&date=' + encodeURIComponent(m.DATE) + '">');
-                    h.push('<img class="asm-thumbnail thumbnailshadow" src="image?mode=media&id=' + m.ID + '&date=' + encodeURIComponent(m.DATE) + '" title="' + html.title(fullnotes) + '" /></a>');
-                }
-                else if (media.is_extension(m.MEDIANAME, "html")) {
-                    h.push('<a href="document_media_edit?id=' + m.ID + '&redirecturl=' + controller.name + '?id=' + m.LINKID + '"> ');
-                    h.push('<img class="asm-thumbnail thumbnailshadow" src="static/images/ui/document-media.png" height="70px" ');
-                    h.push('title="' + html.title(fullnotes) + '" /></a>');
-                    h.push('<br />');
-                    h.push('<a class="viewlink" title="' + _('Edit document') + '" href="document_media_edit?id=' + m.ID + '&redirecturl=' + controller.name + '?id=' + m.LINKID + '">' + shortnotes + '</a>');
-                }
-                else if (media.is_extension(m.MEDIANAME, "pdf")) {
-                    h.push('<a href="media?id=' + m.ID + '">');
-                    h.push('<img class="asm-thumbnail thumbnailshadow" src="static/images/ui/pdf-media.png" height="70px" ');
-                    h.push('title="' + html.title(fullnotes) + '" /></a>');
-                    h.push('<br />');
-                    h.push('<a class="viewlink" title="' + _('View PDF') + '" href="media?id=' + m.ID + '">' + shortnotes + '</a>');
-                }
-                else {
-                    h.push('<a href="media?id=' + m.ID + '">');
-                    h.push('<img class="asm-thumbnail thumbnailshadow" src="static/images/ui/file-media.png" height="70px" ');
-                    h.push('title="' + html.title(fullnotes) + '" /></a>');
-                    h.push('<br />');
-                    h.push('<a class="viewlink" title="' + _('View media') + '" href="media?id=' + m.ID + '">' + shortnotes + '</a>');
-                }
-                h.push('<br />');
-                h.push('<span style="white-space: nowrap">');
-                h.push('<input id="select-' + m.ID + '" class="media-selector" type="checkbox" data="' + m.ID + '" />');
-                h.push('<a href="#" class="media-edit-link" data="' + m.ID + '" title="' + html.title(_("Edit notes")) + '">');
-                h.push(html.icon("edit"));
-                h.push(format.date(m.DATE));
-                h.push('</a>');
-                if (m.MEDIATYPE > 0) {
-                    h.push(html.icon("link", _("Link to an external web resource")));
-                }
-                if (m.SIGNATUREHASH) {
-                    h.push(html.icon("signature", _("Signed")));
-                }
-                if (m.WEBSITEPHOTO == 1 && controller.showpreferred) {
-                    h.push(html.icon("web", _("Default image for this record and the web")));
-                }
-                if (m.WEBSITEVIDEO == 1 && controller.showpreferred) {
-                    h.push(html.icon("video", _("Default video for publishing")));
-                }
-                if (m.DOCPHOTO == 1 && controller.showpreferred) {
-                    h.push(html.icon("document", _("Default image for documents")));
-                }
-                if (media.is_jpeg(m.MEDIANAME) && m.WEBSITEPHOTO == 0 && !m.EXCLUDEFROMPUBLISH && controller.name == "animal_media") {
-                    h.push('<img class="incexc" data="' + m.ID + '" src="static/images/ui/tick.gif" title="' + _('Include this image when publishing') + '" />');
-                }
-                if (media.is_jpeg(m.MEDIANAME) && m.WEBSITEPHOTO == 0 && m.EXCLUDEFROMPUBLISH && controller.name == "animal_media") {
-                    h.push('<img class="incexc" data="' + m.ID + '" src="static/images/ui/cross.gif" title="' + _('Exclude this image when publishing') + '" />');
-                }
-                h.push('</span>');
-                h.push('</div>');
-            });
-            h.push('</div>');
             return h.join("\n");
         },
 
@@ -260,12 +358,13 @@ $(function() {
          * If the file is an image, scales it down first.
          * returns a promise.
          */
-        attach_file: function(file, comments) {
+        attach_file: function(file, retainfor, comments) {
 
             var deferred = $.Deferred();
 
-            // If no comments were supplied, make them an empty string instead
+            // If no values were supplied, make them an empty string instead
             if (!comments) { comments = ""; }
+            if (!retainfor) { retainfor = ""; }
 
             // We're only allowed to upload files of a certain type
             if ( !media.is_jpeg(file.name) && !media.is_extension(file.name, "png") && 
@@ -318,6 +417,7 @@ $(function() {
                         "linkid=" + controller.linkid + 
                         "&linktypeid=" + controller.linktypeid + 
                         "&comments=" + encodeURIComponent(comments) + 
+                        "&retainfor=" + encodeURIComponent(retainfor) + 
                         "&filename=" + encodeURIComponent(file.name) +
                         "&filetype=" + encodeURIComponent(file.type) + 
                         "&filedata=" + encodeURIComponent(finalfile);
@@ -370,7 +470,7 @@ $(function() {
             var newweb, newdoc, hasweb, hasdoc, webcount = 0, doccount = 0;
             if (!controller.showpreferred) { return false; }
             $.each(controller.media, function(i, v) {
-                if (media.is_jpeg(v.MEDIANAME) && !v.EXCLUDEFROMPUBLISH) {
+                if (media.is_jpeg(v.MEDIANAME) && v.EXCLUDEFROMPUBLISH == 0) {
                     if (!newweb) { newweb = v.ID; }
                     if (!newdoc) { newdoc = v.ID; }
                     if (v.WEBSITEPHOTO) { hasweb = true; webcount += 1; }
@@ -444,7 +544,7 @@ $(function() {
 
             // Attach the file with the HTML5 APIs
             header.show_loading(_("Uploading..."));
-            media.attach_file(selectedfile, $("#addcomments").val())
+            media.attach_file(selectedfile, $("#retainfor").val(), $("#addcomments").val())
                 .then(function() {
                     header.hide_loading();
                     common.route_reload(); 
@@ -491,100 +591,15 @@ $(function() {
 
         bind: function() {
 
+            tableform.buttons_bind(this.buttons);
+            tableform.table_bind(this.table, this.buttons);
+
             $(".asm-tabbar").asmtabs();
-            $("#tipattach").show();
             $("#emailform").emailform();
-            $("#emailsubject").closest("tr").hide(); // Subject is completed by the backend
 
             if (Modernizr.canvas) {
                 $("#signature").signature({ guideline: true });
             }
-
-            $(".asm-mediaicons").on("change", "input[type='checkbox']", function() {
-
-                // If the selected element is ticked, apply a highlight style
-                // to the media item
-                if ($(this).is(":checked")) {
-                    $(this).closest(".asm-mediaicon").addClass("ui-state-highlight");
-                }
-                else {
-                    $(this).closest(".asm-mediaicon").removeClass("ui-state-highlight");
-                }
-
-                if ($(".asm-mediaicons input:checked").length > 0) {
-                    $("#button-delete").button("option", "disabled", false); 
-                }
-                else {
-                    $("#button-delete").button("option", "disabled", true); 
-                }
-                $("#button-web").button("option", "disabled", true); 
-                $("#button-video").button("option", "disabled", true); 
-                $("#button-doc").button("option", "disabled", true); 
-                $("#button-rotateanti").button("option", "disabled", true); 
-                $("#button-rotateclock").button("option", "disabled", true); 
-                $("#button-email").button("option", "disabled", true); 
-                $("#button-emailpdf").button("option", "disabled", true); 
-                $("#button-sign").addClass("ui-state-disabled").addClass("ui-button-disabled");
-
-                // Only allow the image preferred buttons to be pressed if the
-                // selection size is one and the selection is an image
-                if ($(".asm-mediaicons input:checked").length == 1) {
-                    $(".asm-mediaicons input:checked").each(function() {
-                        var mname = $(this).parent().parent().find(".media-name").val();
-                        if (media.is_jpeg(mname)) { 
-                            $("#button-web").button("option", "disabled", false); 
-                            $("#button-doc").button("option", "disabled", false); 
-                        }
-                    });
-                }
-
-                // Only allow the video preferred button to be pressed if the
-                // selection size is one and the selection is a video link
-                if ($(".asm-mediaicons input:checked").length == 1) {
-                    $(".asm-mediaicons input:checked").each(function() {
-                        var mtype = $(this).parent().parent().find(".media-type").val();
-                        if (mtype == 2) {
-                            $("#button-video").button("option", "disabled", false);
-                        }
-                    });
-                }
-
-                // Only allow the rotate buttons to be pressed if the
-                // selection only contains images
-                $(".asm-mediaicons input:checked").each(function() {
-                    var mname = $(this).parent().parent().find(".media-name").val();
-                    if (media.is_jpeg(mname)) {
-                        $("#button-rotateanti").button("option", "disabled", false); 
-                        $("#button-rotateclock").button("option", "disabled", false); 
-                    }
-                });
-
-                // Only allow the email button to be pressed if we have a selection 
-                if ($(".asm-mediaicons input:checked").length > 0) {
-                    $("#button-email").button("option", "disabled", false); 
-                }
-
-                // Only allow the email pdf button to be pressed if the
-                // selection only contains documents
-                $(".asm-mediaicons input:checked").each(function() {
-                    var mname = $(this).parent().parent().find(".media-name").val();
-                    if (media.is_extension(mname, "html")) {
-                        $("#button-emailpdf").button("option", "disabled", false); 
-                    }
-                });
-
-                // Only allow the sign buttons to be pressed if the
-                // selection only contains unsigned documents
-                $(".asm-mediaicons input:checked").each(function() {
-                    var mname = $(this).parent().parent().find(".media-name").val();
-                    var issigned = $(this).parent().find(".asm-icon-signature").length > 0;
-                    if (media.is_extension(mname, "html") && !issigned ) {
-                        $("#button-sign").removeClass("ui-state-disabled").removeClass("ui-button-disabled");
-                    }
-                });
-
-
-            });
 
             $(".asm-mediadroptarget").on("dragover", function() {
                 $(".asm-mediadroptarget").addClass("asm-mediadroptarget-hover");
@@ -650,41 +665,12 @@ $(function() {
                 buttons: addlinkbuttons
             });
 
-            var editbuttons = { };
-            editbuttons[_("Save")] = function() {
-                var mediaid = $("#mediaid").val();
-                var formdata = "mode=update&mediaid=" + mediaid;
-                formdata += "&comments=" + encodeURIComponent($("#editcomments").val());
-                $("#dialog-edit").disable_dialog_buttons();
-                common.ajax_post("media", formdata)
-                    .then(function(result) { 
-                        $("#mrow-" + mediaid + " .asm-thumbnail").attr("title", html.title($("#editcomments").val()));
-                        $("#mrow-" + mediaid + " .viewlink").text(html.truncate($("#editcomments").val(), 70));
-                    })
-                    .always(function() {
-                        $("#dialog-edit").dialog("close").enable_dialog_buttons();
-                    });
-            };
-            editbuttons[_("Cancel")] = function() {
-                $("#dialog-edit").dialog("close");
-            };
-
-            $("#dialog-edit").dialog({
-                autoOpen: false,
-                width: 550,
-                modal: true,
-                dialogClass: "dialogshadow",
-                show: dlgfx.edit_show,
-                hide: dlgfx.edit_hide,
-                buttons: editbuttons
-            });
-
             var signbuttons = {};
             signbuttons[_("Sign")] = function() {
                 if ($("#signature").signature("isEmpty")) { return; }
                 $("#dialog-sign").disable_dialog_buttons();
                 var img = $("#signature canvas").get(0).toDataURL("image/png");
-                var formdata = "mode=sign&ids=" + $(".asm-mediaicons input").tableCheckedData();
+                var formdata = "mode=sign&ids=" + tableform.table_ids(media.table);
                 formdata += "&signdate=" + encodeURIComponent(format.date(new Date()) + " " + format.time(new Date()));
                 formdata += "&sig=" + encodeURIComponent(img);
                 media.ajax(formdata);
@@ -727,7 +713,7 @@ $(function() {
 
             $("#button-delete").button({disabled: true}).click(function() {
                 tableform.delete_dialog(function() {
-                    var formdata = "mode=delete&ids=" + $(".asm-mediaicons input").tableCheckedData();
+                    var formdata = "mode=delete&ids=" + tableform.table_ids(media.table);
                     $("#dialog-delete").disable_dialog_buttons();
                     media.ajax(formdata);
                 });
@@ -740,6 +726,12 @@ $(function() {
                 $("#button-video").hide();
             }
 
+            // Only show include/exclude for animals
+            if (controller.name != "animal_media") {
+                $("#button-include").hide();
+                $("#button-exclude").hide();
+            }
+
             // If this browser doesn't support fileinput, disable the attach button
             if (!Modernizr.fileinput) {
                 $("#button-new").button("option", "disabled", true);
@@ -750,15 +742,45 @@ $(function() {
                 $("#button-signscreen").hide();
             }
 
-            $("#button-web").button({disabled: true}).click(function() {
+            $("#button-web").button().click(function() {
                 $("#button-web").button("disable");
-                var formdata = "mode=web&ids=" + $(".asm-mediaicons input").tableCheckedData();
+                var formdata = "mode=web&ids=" + tableform.table_ids(media.table);
                 media.ajax(formdata);
             });
 
-            $("#button-video").button({disabled: true}).click(function() {
+            $("#button-video").button().click(function() {
                 $("#button-video").button("disable");
-                var formdata = "mode=video&ids=" + $(".asm-mediaicons input").tableCheckedData();
+                var formdata = "mode=video&ids=" + tableform.table_ids(media.table);
+                media.ajax(formdata);
+            });
+
+            $("#button-rotateanti").button().click(function() {
+                $("#button-rotateanti").button("disable");
+                var formdata = "mode=rotateanti&ids=" + tableform.table_ids(media.table);
+                media.ajax(formdata);
+            });
+
+            $("#button-rotateclock").button().click(function() {
+                $("#button-rotateclock").button("disable");
+                var formdata = "mode=rotateclock&ids=" + tableform.table_ids(media.table);
+                media.ajax(formdata);
+            });
+
+            $("#button-doc").button().click(function() {
+                $("#button-doc").button("disable");
+                var formdata = "mode=doc&ids=" + tableform.table_ids(media.table);
+                media.ajax(formdata);
+            });
+
+            $("#button-include").button().click(function() {
+                $("#button-include").button("disable");
+                var formdata = "mode=include&ids=" + tableform.table_ids(media.table);
+                media.ajax(formdata);
+            });
+
+            $("#button-exclude").button().click(function() {
+                $("#button-exclude").button("disable");
+                var formdata = "mode=exclude&ids=" + tableform.table_ids(media.table);
                 media.ajax(formdata);
             });
 
@@ -778,28 +800,30 @@ $(function() {
                 defaultname = controller.animal.CURRENTOWNERNAME;
             }
 
-            $("#button-email").button({disabled: true}).click(function() {
+            $("#button-email").button().click(function() {
                 $("#emailform").emailform("show", {
                     title: _("Email media"),
                     post: "media",
                     formdata: "mode=email" +
-                        "&ids=" + $(".asm-mediaicons input").tableCheckedData(),
+                        "&ids=" + tableform.table_ids(media.table),
                     name: defaultname,
                     email: defaultemail,
+                    subject: tableform.table_selected_row(media.table).MEDIANOTES,
                     personid: (controller.person && controller.person.ID),
                     templates: controller.templates,
                     logtypes: controller.logtypes
                 });
             });
 
-            $("#button-emailpdf").button({disabled: true}).click(function() {
+            $("#button-emailpdf").button().click(function() {
                 $("#emailform").emailform("show", {
                     title: _("Email PDF"),
                     post: "media",
                     formdata: "mode=emailpdf" +
-                        "&ids=" + $(".asm-mediaicons input").tableCheckedData(),
+                        "&ids=" + tableform.table_ids(media.table),
                     name: defaultname,
                     email: defaultemail,
+                    subject: tableform.table_selected_row(media.table).MEDIANOTES,
                     personid: (controller.person && controller.person.ID),
                     templates: controller.templates,
                     logtypes: controller.logtypes
@@ -814,9 +838,10 @@ $(function() {
                     title: _("Email document for electronic signature"),
                     post: "media",
                     formdata: "mode=emailsign" +
-                        "&ids=" + $(".asm-mediaicons input").tableCheckedData(),
+                        "&ids=" + tableform.table_ids(media.table),
                     name: defaultname,
                     email: defaultemail,
+                    subject: _("Document signing request"),
                     personid: (controller.person && controller.person.ID),
                     templates: controller.templates,
                     logtypes: controller.logtypes,
@@ -832,7 +857,7 @@ $(function() {
 
             $("#button-signpad").click(function() {
                 $("#button-sign").asmmenu("hide_all");
-                var formdata = "mode=signpad&ids=" + $(".asm-mediaicons input").tableCheckedData();
+                var formdata = "mode=signpad&ids=" + tableform.table_ids(media.table);
                 common.ajax_post("media", formdata)
                     .then(function(result) {
                         header.show_info(_("Sent to mobile signing pad."));
@@ -844,57 +869,6 @@ $(function() {
                 $("#button-sign").hide();
             }
 
-            $("#button-rotateanti").button({disabled: true}).click(function() {
-                $("#button-rotateanti").button("disable");
-                var formdata = "mode=rotateanti&ids=" + $(".asm-mediaicons input").tableCheckedData();
-                media.ajax(formdata);
-            });
-
-            $("#button-rotateclock").button({disabled: true}).click(function() {
-                $("#button-rotateclock").button("disable");
-                var formdata = "mode=rotateclock&ids=" + $(".asm-mediaicons input").tableCheckedData();
-                media.ajax(formdata);
-            });
-
-
-            $("#button-doc").button({disabled: true}).click(function() {
-                $("#button-doc").button("disable");
-                var formdata = "mode=doc&ids=" + $(".asm-mediaicons input").tableCheckedData();
-                media.ajax(formdata);
-            });
-
-            $(".incexc").css("cursor", "pointer").click(function() {
-                var img = $(this), formdata = "";
-                if (img.attr("src").indexOf("tick") != -1) {
-                    // Exclude
-                    formdata = "mode=exclude&mediaid=" + img.attr("data") + "&exclude=1";
-                    common.ajax_post("media", formdata)
-                        .then(function(result) { 
-                            img.attr("src", "static/images/ui/cross.gif");
-                            img.attr("title", _("Exclude this image when publishing"));
-                        });
-                }
-                else {
-                    // Include
-                    formdata = "mode=exclude&mediaid=" + img.attr("data") + "&exclude=0";
-                    common.ajax_post("media", formdata)
-                        .then(function(result) { 
-                            img.attr("src", "static/images/ui/tick.gif");
-                            img.attr("title", _("Include this image when publishing"));
-                        });
-                }
-            });
-
-            $(".media-edit-link")
-            .click(function() {
-                var mid = $(this).attr("data");
-                var mrow = "#mrow-" + mid + " ";
-                var comments = $(mrow + " .asm-thumbnail").attr("title");
-                $("#editcomments").val(comments);
-                $("#mediaid").val(mid);
-                $("#dialog-edit").dialog("open");
-                return false; // prevents # href
-            });
         },
 
         new_link: function() {
@@ -917,9 +891,9 @@ $(function() {
         },
 
         destroy: function() {
+            tableform.dialog_destroy();
             common.widget_destroy("#dialog-add");
             common.widget_destroy("#dialog-addlink");
-            common.widget_destroy("#dialog-edit");
             common.widget_destroy("#dialog-sign");
             common.widget_destroy("#emailform");
         },

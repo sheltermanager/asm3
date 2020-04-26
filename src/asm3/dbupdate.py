@@ -37,7 +37,7 @@ VERSIONS = (
     34013, 34014, 34015, 34016, 34017, 34018, 34019, 34020, 34021, 34022, 34100,
     34101, 34102, 34103, 34104, 34105, 34106, 34107, 34108, 34109, 34110, 34111,
     34112, 34200, 34201, 34202, 34203, 34204, 34300, 34301, 34302, 34303, 34304,
-    34305, 34306, 34400, 34401
+    34305, 34306, 34400, 34401, 34402
 )
 
 LATEST_VERSION = VERSIONS[-1]
@@ -1085,6 +1085,7 @@ def sql_structure(dbo):
         fint("LinkTypeID"),
         fint("RecordVersion", True),
         fdate("Date"),
+        fdate("CreatedDate", True),
         fdate("RetainUntil", True) ), False)
     sql += index("media_DBFSID", "media", "DBFSID")
     sql += index("media_MediaMimeType", "media", "MediaMimeType")
@@ -1093,6 +1094,7 @@ def sql_structure(dbo):
     sql += index("media_WebsitePhoto", "media", "WebsitePhoto")
     sql += index("media_WebsiteVideo", "media", "WebsiteVideo")
     sql += index("media_DocPhoto", "media", "DocPhoto")
+    sql += index("media_CreatedDate", "media", "CreatedDate")
     sql += index("media_Date", "media", "Date")
     sql += index("media_RetainUntil", "media", "RetainUntil")
 
@@ -5194,3 +5196,9 @@ def update_34400(dbo):
 def update_34401(dbo):
     # Add ownerdonation.PaymentProcessorData
     add_column(dbo, "ownerdonation", "PaymentProcessorData", dbo.type_longtext)
+
+def update_34402(dbo):
+    # Add media.CreatedDate
+    add_column(dbo, "media", "CreatedDate", dbo.type_datetime)
+    add_index(dbo, "media_CreatedDate", "media", "CreatedDate")
+    dbo.execute_dbupdate("UPDATE media SET CreatedDate=Date")
