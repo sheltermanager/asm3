@@ -167,12 +167,12 @@ $(function() {
                         }
                         if (m.RETAINUNTIL) {
                             var ru = _("Retain until {0}").replace("{0}", format.date(m.RETAINUNTIL));
-                            mod_out("delete", ru);
+                            mod_out("media-delete", ru);
                         }
                         if (config.bool("AutoRemoveDocumentMedia") && config.integer("AutoRemoveDMYears")) {
                             var dd = common.add_days(format.date_js(m.DATE), config.integer("AutoRemoveDMYears") * 365);
                             var ar = _("Auto remove on {0}").replace("{0}", format.date(dd));
-                            mod_out("delete", ar);
+                            mod_out("media-delete", ar);
                         }
                         return h.join("\n");
                     }},

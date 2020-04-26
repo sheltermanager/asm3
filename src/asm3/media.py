@@ -63,13 +63,14 @@ def get_web_preferred_name(dbo, linktype, linkid):
         "WHERE LinkTypeID = ? AND WebsitePhoto = 1 AND LinkID = ?", (linktype, linkid))
 
 def get_web_preferred(dbo, linktype, linkid):
-    return dbo.query("SELECT * FROM media WHERE LinkTypeID = ? AND " \
-        "WebsitePhoto = 1 AND LinkID = ?", (linktype, linkid))
+    """ Returns the media record for the web preferred (or None if there isn't one) """
+    return dbo.first_row(dbo.query("SELECT * FROM media WHERE LinkTypeID = ? AND " \
+        "LinkID = ? AND WebsitePhoto = 1", (linktype, linkid)))
 
 def get_media_by_seq(dbo, linktype, linkid, seq):
     """ Returns image media by a one-based sequence number. 
         Element 1 is always the preferred.
-        Empty list is returned if the item doesn't exist
+        None is returned if the item doesn't exist
     """
     rows = dbo.query("SELECT * FROM media " \
         "WHERE LinkTypeID = ? AND LinkID = ? " \
@@ -77,9 +78,9 @@ def get_media_by_seq(dbo, linktype, linkid, seq):
         "AND (ExcludeFromPublish = 0 OR ExcludeFromPublish Is Null) " \
         "ORDER BY WebsitePhoto DESC, ID", (linktype, linkid))
     if len(rows) >= seq:
-        return [rows[seq-1],]
+        return rows[seq-1]
     else:
-        return []
+        return None
 
 def get_total_seq(dbo, linktype, linkid):
     return dbo.query_int(dbo, "SELECT COUNT(ID) FROM media WHERE LinkTypeID = ? AND LinkID = ? " \
