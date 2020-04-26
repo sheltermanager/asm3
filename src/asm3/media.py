@@ -384,6 +384,7 @@ def attach_file_from_form(dbo, username, linktype, linkid, post):
         "LinkID":               linkid,
         "LinkTypeID":           linktype,
         "Date":                 dbo.now(),
+        "CreatedDate":          dbo.now(),
         "RetainUntil":          retainuntil
     }, username, setCreated=False, generateID=False)
 

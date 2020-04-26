@@ -132,10 +132,10 @@ $(function() {
                     }},
                     { field: "MODIFIERS", display: "", formatter: function(m) {
                         var h = [], mod_out = function(icon, text) {
-                            h.push('<span style="white-space: nowrap">')
+                            h.push('<span style="white-space: nowrap">');
                             h.push(html.icon(icon, text));
                             h.push( " " + text + "</span><br/>");
-                        }
+                        };
                         if (m.MEDIATYPE > 0) {
                             mod_out("link", _("Link to an external web resource"));
                         }
@@ -172,7 +172,8 @@ $(function() {
                         if (m.MEDIASIZE < 1024*1024) { return Math.floor(m.MEDIASIZE / 1024) + "K"; }
                         return Math.floor(m.MEDIASIZE / 1024 / 1024.0) + "M";
                     }},
-                    { field: "DATE", display: _("Date"), formatter: tableform.format_date, initialsort: true, initialsortdirection: "desc" },
+                    { field: "CREATEDDATE", display: _("Added"), formatter: tableform.format_date },
+                    { field: "DATE", display: _("Updated"), formatter: tableform.format_date, initialsort: true, initialsortdirection: "desc" },
                     { field: "MEDIAMIMETYPE", display: _("Type") }
                 ]
             };
