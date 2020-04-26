@@ -247,6 +247,7 @@
                     if (ic == 0 && formatter === undefined) {
                         var linktext = tableform.format_string(vr, vr[vc.field]);
                         if (table.truncatelink) { linktext = html.truncate(html.decode(linktext), table.truncatelink); }
+                        if (linktext == "") { linktext = _("(blank)"); }
                         t.push("<span style=\"white-space: nowrap\">");
                         t.push("<input type=\"checkbox\" data-id=\"" + rowid + "\" title=\"" + html.title(_("Select")) + "\" />");
                         t.push("<a href=\"#\" class=\"link-edit\" data-id=\"" + rowid + "\">" + linktext + "</a>");
