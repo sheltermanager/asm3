@@ -635,7 +635,7 @@ class media(ASMEndpoint):
 
     def post_update(self, o):
         self.check(asm3.users.CHANGE_MEDIA)
-        asm3.media.update_media_notes(o.dbo, o.user, o.post.integer("mediaid"), o.post["comments"])
+        asm3.media.update_media_from_form(o.dbo, o.user, o.post)
 
     def post_delete(self, o):
         self.check(asm3.users.DELETE_MEDIA)
@@ -729,9 +729,15 @@ class media(ASMEndpoint):
         mid = o.post.integer_list("ids")[0]
         asm3.media.set_doc_preferred(o.dbo, o.user, mid)
 
+    def post_include(self, o):
+        self.check(asm3.users.CHANGE_MEDIA)
+        for mid in o.post.integer_list("ids"):
+            asm3.media.set_excluded(o.dbo, o.user, mid, 0)
+
     def post_exclude(self, o):
         self.check(asm3.users.CHANGE_MEDIA)
-        asm3.media.set_excluded(o.dbo, o.user, o.post.integer("mediaid"), o.post.integer("exclude"))
+        for mid in o.post.integer_list("ids"):
+            asm3.media.set_excluded(o.dbo, o.user, mid, 1)
 
 class mobile(ASMEndpoint):
     url = "mobile"

@@ -1,6 +1,7 @@
 44
 ================
 
+26/04/20 Rewrite media UI to use a table #652
 25/04/20 Stop online form signatures breaking layout in phone/portrait
 25/04/20 Validate payrefs before generating checkout pages #463
 24/04/20 Payment processor integration: Stripe support #463

@@ -114,7 +114,12 @@ def set_excluded(dbo, username, mid, exclude = 1):
     """
     Marks the media with id excluded from publishing.
     """
-    dbo.update("media", mid, { "ExcludeFromPublish": exclude, "Date": dbo.now() }, username, setLastChanged=False)
+    d = { "ExcludeFromPublish": exclude, "Date": dbo.now() }
+    # If we are excluding, we can't be the web or doc or video preferred
+    if exclude == 1:
+        d["WebsitePhoto"] = 0
+        d["DocPhoto"] = 0
+    dbo.update("media", mid, d, username, setLastChanged=False)
 
 def get_name_for_id(dbo, mid):
     return dbo.query_string("SELECT MediaName FROM media WHERE ID = ?", [mid])
@@ -562,9 +567,11 @@ def update_file_content(dbo, username, mid, content):
     asm3.dbfs.put_string_id(dbo, m.DBFSID, m.MEDIANAME, content)
     dbo.update("media", mid, { "Date": dbo.now(), "MediaSize": len(content) }, username, setLastChanged=False)
 
-def update_media_notes(dbo, username, mid, notes):
-    dbo.update("media", mid, { 
-        "MediaNotes": notes,
+def update_media_from_form(dbo, username, post):
+    mediaid = post.integer("mediaid")
+    dbo.update("media", mediaid, { 
+        "MediaNotes": post["medianotes"],
+        "RetainUntil": post.date("retainuntil"),
         "Date":       dbo.now(),
         # ASM2_COMPATIBILITY
         "UpdatedSinceLastPublish": 1

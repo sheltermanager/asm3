@@ -300,7 +300,7 @@
                     changeMonth: true, 
                     changeYear: true,
                     firstDay: config.integer("FirstDayOfWeek"),
-                    yearRange: "-30:+3",
+                    yearRange: "-30:+10",
                     beforeShowDay: function(a) {
                         var day = a.getDay();
                         var rv = false;
@@ -319,7 +319,7 @@
                 $(this).datepicker({ 
                     changeMonth: true, 
                     changeYear: true,
-                    yearRange: "-30:+3",
+                    yearRange: "-30:+10",
                     firstDay: config.integer("FirstDayOfWeek")
                 });
             }
@@ -1261,6 +1261,7 @@
             // When zoom button is clicked
             $("#" + zbid).button({ text: false, icons: { primary: "ui-icon-zoomin" }}).click(function() {
                 self.zoom();
+                return false; // Prevent any textareas in form elements submitting the form
             });
 
         },
