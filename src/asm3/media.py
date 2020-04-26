@@ -357,6 +357,12 @@ def attach_file_from_form(dbo, username, linktype, linkid, post):
         # Are the notes blank and we're defaulting them from the filename?
     elif comments == "" and asm3.configuration.default_media_notes_from_file(dbo):
         comments = asm3.utils.filename_only(filename)
+
+    # Calculate the retain until date from retainfor years
+    retainuntil = None
+    retainfor = post.integer("retainfor")
+    if (retainfor > 0):
+        retainuntil = dbo.today( retainfor * 365 )
     
     # Create the media record
     dbo.insert("media", {
@@ -378,7 +384,7 @@ def attach_file_from_form(dbo, username, linktype, linkid, post):
         "LinkID":               linkid,
         "LinkTypeID":           linktype,
         "Date":                 dbo.now(),
-        "RetainUntil":          None
+        "RetainUntil":          retainuntil
     }, username, setCreated=False, generateID=False)
 
     # Verify this record has a web/doc default if we aren't excluding it from publishing

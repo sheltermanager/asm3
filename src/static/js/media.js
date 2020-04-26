@@ -6,6 +6,18 @@ $(function() {
 
     var media = {
         thumbnail_size: 50, // Size of table thumbnails in px
+        retain_for_years: [
+            "0|" + _("Forever"),
+            "1|" + _("1 year"),
+            "2|" + _("{0} years").replace("{0}", 2),
+            "3|" + _("{0} years").replace("{0}", 3),
+            "4|" + _("{0} years").replace("{0}", 4),
+            "5|" + _("{0} years").replace("{0}", 5),
+            "6|" + _("{0} years").replace("{0}", 6),
+            "7|" + _("{0} years").replace("{0}", 7),
+            "8|" + _("{0} years").replace("{0}", 8),
+            "9|" + _("{0} years").replace("{0}", 9),
+        ],
 
         model: function() {
 
@@ -16,7 +28,8 @@ $(function() {
                 columns: 1,
                 fields: [
                     { json_field: "MEDIANOTES", post_field: "medianotes", label: _("Notes"), type: "textarea" },
-                    { json_field: "RETAINUNTIL", post_field: "retainuntil", label: _("Retain Until"), type: "date" }
+                    { json_field: "RETAINUNTIL", post_field: "retainuntil", label: _("Retain Until"), type: "date",
+                        callout: _("Automatically remove this media item on this date") }
                 ]
             };
 
@@ -216,6 +229,12 @@ $(function() {
                 '<td><label for="filechooser">' + _("File") + '</label></td>',
                 '<td><input id="filechooser" name="filechooser" type="file" /></td>',
                 '</tr>',
+                '<tr>',
+                '<td><label for="retainfor">' + _("Retain this file") + '</label></td>',
+                '<td><select id="retainfor" name="retainfor" class="asm-selectbox">',
+                html.list_to_options(media.retain_for_years),
+                '</select></td>',
+                '</tr>',
                 '<tr id="commentsrow">',
                 '<td><label for="comments">' + _("Notes") + '</label>',
                 controller.name.indexOf("animal") == 0 ? '<button type="button" id="button-comments">' + _('Copy from animal comments') + '</button>' : "",
@@ -247,7 +266,7 @@ $(function() {
                 '</tr>',
                 '<tr>',
                 '<td><label for="linktarget">' + _("URL") + '</label></td>',
-                '<td><input id="linktarget" data="linktarget" class="asm-textbox" /></td>',
+                '<td><input id="linktarget" data="linktarget" class="asm-textbox asm-doubletextbox" /></td>',
                 '</tr>',
                 '<tr id="commentsrow">',
                 '<td><label for="linkcomments">' + _("Notes") + '</label>',
@@ -330,12 +349,13 @@ $(function() {
          * If the file is an image, scales it down first.
          * returns a promise.
          */
-        attach_file: function(file, comments) {
+        attach_file: function(file, retainfor, comments) {
 
             var deferred = $.Deferred();
 
-            // If no comments were supplied, make them an empty string instead
+            // If no values were supplied, make them an empty string instead
             if (!comments) { comments = ""; }
+            if (!retainfor) { retainfor = ""; }
 
             // We're only allowed to upload files of a certain type
             if ( !media.is_jpeg(file.name) && !media.is_extension(file.name, "png") && 
@@ -388,6 +408,7 @@ $(function() {
                         "linkid=" + controller.linkid + 
                         "&linktypeid=" + controller.linktypeid + 
                         "&comments=" + encodeURIComponent(comments) + 
+                        "&retainfor=" + encodeURIComponent(retainfor) + 
                         "&filename=" + encodeURIComponent(file.name) +
                         "&filetype=" + encodeURIComponent(file.type) + 
                         "&filedata=" + encodeURIComponent(finalfile);
@@ -514,7 +535,7 @@ $(function() {
 
             // Attach the file with the HTML5 APIs
             header.show_loading(_("Uploading..."));
-            media.attach_file(selectedfile, $("#addcomments").val())
+            media.attach_file(selectedfile, $("#retainfor").val(), $("#addcomments").val())
                 .then(function() {
                     header.hide_loading();
                     common.route_reload(); 
