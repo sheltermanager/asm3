@@ -471,21 +471,13 @@ select:disabled, input:disabled, textarea:disabled {
 .asm-lostfound-number { color: red; }
 
 /** MEDIA ============================= */
-.asm-mediaicons { 
-    display: block;
-    width: 100%; 
-    padding: 5px;
-    text-align: center;
-}
-.asm-mediaicon {
+.asm-media-thumb { 
     display: inline-block;
-    min-width: 100px; 
-    max-width: 200px;
-    width: auto;
-    text-align: center; 
     vertical-align: middle; 
-    border: 1px solid #aaa; 
-    padding: 5px 
+}
+.asm-media-mods {
+    display: inline-block;
+    vertical-align: middle;
 }
 .asm-mediadroptarget {
     display: inline-block;

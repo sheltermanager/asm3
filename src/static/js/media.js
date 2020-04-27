@@ -103,9 +103,9 @@ $(function() {
                 columns: [
                     { field: "MEDIANOTES", display: _("Notes") },
                     { field: "PREVIEW", display: "", formatter: function(m) {
-                        var h = [];
+                        var h = [ '<div class="asm-media-thumb">' ];
                         if (m.MEDIATYPE == 1 || m.MEDIATYPE == 2) {
-                            h.push('<a target="_blank" href="' + m.MEDIANAME + '">');
+                            h.push('<a style="float: left" target="_blank" href="' + m.MEDIANAME + '">');
                             var linkimage = "static/images/ui/file-video.png";
                             if (m.MEDIATYPE == 1) {
                                 linkimage = "static/images/ui/document-media.png";
@@ -121,29 +121,28 @@ $(function() {
                             h.push('<img class="asm-thumbnail thumbnailshadow" src="' + linkimage + '" height="' + media.thumbnail_size + 'px" /></a>');
                         }
                         else if (m.MEDIAMIMETYPE == "image/jpeg") {
-                            h.push('<a target="_blank" href="image?db=' + asm.user + '&mode=media&id=' + m.ID + '&date=' + encodeURIComponent(m.DATE) + '">');
+                            h.push('<a style="float: left" target="_blank" href="image?db=' + asm.user + '&mode=media&id=' + m.ID + '&date=' + encodeURIComponent(m.DATE) + '">');
                             h.push('<img class="asm-thumbnail thumbnailshadow" src="image?db=' + asm.user + '&mode=media&id=' + m.ID + '&date=' + encodeURIComponent(m.DATE) + '" height="' + media.thumbnail_size + 'px" /></a>');
                         }
                         else if (m.MEDIAMIMETYPE == "text/html") {
-                            h.push('<a target="_blank" href="document_media_edit?id=' + m.ID + '&redirecturl=' + controller.name + '?id=' + m.LINKID + '"> ');
+                            h.push('<a style="float: left" target="_blank" href="document_media_edit?id=' + m.ID + '&redirecturl=' + controller.name + '?id=' + m.LINKID + '"> ');
                             h.push('<img class="asm-thumbnail thumbnailshadow" src="static/images/ui/document-media.png" height="' + media.thumbnail_size + 'px" /></a>');
                         }
                         else if (m.MEDIAMIMETYPE == "application/pdf") {
-                            h.push('<a target="_blank" href="media?id=' + m.ID + '">');
+                            h.push('<a style="float: left" target="_blank" href="media?id=' + m.ID + '">');
                             h.push('<img class="asm-thumbnail thumbnailshadow" src="static/images/ui/pdf-media.png" height="' + media.thumbnail_size + 'px" /></a>');
                         }
                         else {
-                            h.push('<a target="_blank" href="media?id=' + m.ID + '">');
+                            h.push('<a style="float: left" target="_blank" href="media?id=' + m.ID + '">');
                             h.push('<img class="asm-thumbnail thumbnailshadow" src="static/images/ui/file-media.png" height="' + media.thumbnail_size + 'px" /></a>');
                         }
-                        return h.join("\n");
-                    }},
-                    { field: "MODIFIERS", display: "", formatter: function(m) {
-                        var h = [], mod_out = function(icon, text) {
-                            h.push('<span style="white-space: nowrap">');
+                        h.push('</div>');
+                        var mod_out = function(icon, text) {
+                            h.push('<span>');
                             h.push(html.icon(icon, text));
                             h.push( " " + text + "</span><br/>");
                         };
+                        h.push('<div class="asm-media-mods">');
                         if (m.MEDIATYPE > 0) {
                             mod_out("link", _("Link to an external web resource"));
                         }
@@ -174,6 +173,7 @@ $(function() {
                             var ar = _("Auto remove on {0}").replace("{0}", format.date(dd));
                             mod_out("media-delete", ar);
                         }
+                        h.push('</div>');
                         return h.join("\n");
                     }},
                     { field: "SIZE", display: _("Size"), formatter: function(m) {
