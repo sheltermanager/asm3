@@ -56,7 +56,7 @@ $(function() {
                              });
                      } 
                  },
-                { type: "raw", markup: '<div style="min-height: 40px" class="asm-mediadroptarget"><p>' + _("Drop files here...") + '</p></div>',
+                { type: "raw", markup: '<div class="asm-mediadroptarget"><p>' + _("Drop files here...") + '</p></div>',
                     hideif: function() { return !Modernizr.filereader || !Modernizr.todataurljpeg || asm.mobileapp; }}
             ];
             this.dialog = dialog;

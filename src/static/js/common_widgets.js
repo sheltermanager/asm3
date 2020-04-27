@@ -587,6 +587,7 @@
          * logtypes:   The logtypes to populate the attach as log box (optional)
          * templates:  The list of email document templates (optional)
          * personid:   A person to substitute tokens in templates for (optional)
+         * animalid:   An animal to substitute tokens in templates for (optional)
          *    Eg: show({ post: "person", formdata: "mode=email&personid=52", name: "Bob Smith", email: "bob@smith.com" })
          */
         show: function(o) {
@@ -629,6 +630,7 @@
                 $("#emailtemplate").change(function() {
                     var formdata = "mode=emailtemplate&dtid=" + $("#emailtemplate").val();
                     if (o.personid) { formdata += "&personid=" + o.personid; }
+                    if (o.animalid) { formdata += "&animalid=" + o.animalid; }
                     header.show_loading(_("Loading..."));
                     common.ajax_post("document_gen", formdata, function(result) {
                         $("#emailbody").html(result); 
@@ -976,12 +978,10 @@
             });
 
             button.click(function(e) {
-                var topval = button.offset().top + $(button).height() + 14;
-                var leftval = button.offset().left;
                 popup.css({
-                    "position": "absolute",
-                    "left": leftval + "px",
-                    "top": topval + "px",
+                    "position": "fixed",
+                    "left": e.pageX + "px",
+                    "top": e.pageY + "px",
                     "z-index": "9999",
                     "max-width": "500px"
                 });
