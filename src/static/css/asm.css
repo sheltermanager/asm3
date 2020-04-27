@@ -490,10 +490,9 @@ select:disabled, input:disabled, textarea:disabled {
 .asm-mediadroptarget {
     display: inline-block;
     min-width: 100px;
-    min-height: 100px;
     text-align: center;
     vertical-align: middle;
-    padding: 20px;
+    padding: 3px;
     color: #ccc;
     border: 4px dashed #ccc;
 }
