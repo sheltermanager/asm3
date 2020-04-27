@@ -978,12 +978,10 @@
             });
 
             button.click(function(e) {
-                var topval = button.offset().top + $(button).height() + 14;
-                var leftval = button.offset().left;
                 popup.css({
-                    "position": "absolute",
-                    "left": leftval + "px",
-                    "top": topval + "px",
+                    "position": "fixed",
+                    "left": e.pageX + "px",
+                    "top": e.pageY + "px",
                     "z-index": "9999",
                     "max-width": "500px"
                 });
