@@ -178,6 +178,7 @@ $(function() {
                     }},
                     { field: "SIZE", display: _("Size"), formatter: function(m) {
                         var sz = '<span data-sort="' + m.MEDIASIZE + '" />';
+                        if (m.MEDIATYPE != 0) { return sz; } // do not show a size for non-files
                         if (m.MEDIASIZE < 1024*1024) { sz = Math.floor(m.MEDIASIZE / 1024) + "K"; }
                         else { sz = Math.floor(m.MEDIASIZE / 1024 / 1024.0) + "M"; }
                         return sz;
