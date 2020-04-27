@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ASM3\n"
 "Report-Msgid-Bugs-To: robin@sheltermanager.com\n"
-"POT-Creation-Date: 2020-04-25 09:09+0000\n"
+"POT-Creation-Date: 2020-04-27 13:12+0000\n"
 "Last-Translator: Robin Rawson-Tetley <robin@sheltermanager.com>\n"
 "Language-Team: en <robin@sheltermanager.com>\n"
 "Language: en\n"
@@ -39,7 +39,7 @@ msgstr ""
 msgid "(available)"
 msgstr ""
 
-#: csvimport.py person_find_results.js
+#: csvimport.py common_tableform.js person_find_results.js
 msgid "(blank)"
 msgstr ""
 
@@ -87,7 +87,7 @@ msgstr ""
 msgid "1 week"
 msgstr ""
 
-#: publish_options.js lookups.js
+#: publish_options.js lookups.js media.js
 msgid "1 year"
 msgstr ""
 
@@ -642,7 +642,7 @@ msgstr ""
 msgid "Add {0}"
 msgstr ""
 
-#: person.js
+#: person.js media.js
 msgid "Added"
 msgstr ""
 
@@ -1532,6 +1532,10 @@ msgstr ""
 msgid "Auto log users out after this many minutes of inactivity"
 msgstr ""
 
+#: media.js
+msgid "Auto remove on {0}"
+msgstr ""
+
 #: waitinglist.py
 msgid "Auto removed due to lack of owner contact."
 msgstr ""
@@ -1544,6 +1548,10 @@ msgstr ""
 
 #: waitinglist.js
 msgid "Automatically remove"
+msgstr ""
+
+#: media.js
+msgid "Automatically remove this media item on this date"
 msgstr ""
 
 #: options.js
@@ -3777,8 +3785,16 @@ msgstr ""
 msgid "Document signed"
 msgstr ""
 
-#: code.py
+#: code.py media.js
 msgid "Document signing request"
+msgstr ""
+
+#: search.py
+msgid "Document signing requests issued in the last month that are unsigned"
+msgstr ""
+
+#: search.py
+msgid "Document signing requests received in the last week"
 msgstr ""
 
 #: html.py
@@ -4038,10 +4054,6 @@ msgstr ""
 msgid "Edit diet"
 msgstr ""
 
-#: media.js
-msgid "Edit document"
-msgstr ""
-
 #: onlineform.js
 msgid "Edit form field"
 msgstr ""
@@ -4071,7 +4083,7 @@ msgid "Edit log"
 msgstr ""
 
 #: media.js
-msgid "Edit media notes"
+msgid "Edit media"
 msgstr ""
 
 #: medicalprofile.js
@@ -4092,10 +4104,6 @@ msgstr ""
 
 #: diary.js
 msgid "Edit my diary notes"
-msgstr ""
-
-#: media.js
-msgid "Edit notes"
 msgstr ""
 
 #: onlineforms.js
@@ -5793,12 +5801,6 @@ msgid ""
 "confirmation email to it"
 msgstr ""
 
-#: media.js
-msgid ""
-"If this is the web preferred image, web publishers will use these notes as "
-"the animal description"
-msgstr ""
-
 #: person.js
 msgid ""
 "If this person is a fosterer, the maximum number of animals they can care "
@@ -6152,6 +6154,10 @@ msgstr ""
 
 #: diary.js
 msgid "Incomplete notes upto today"
+msgstr ""
+
+#: media.js
+msgid "Indefinitely"
 msgstr ""
 
 #: diarytask.js additional.js
@@ -9570,6 +9576,18 @@ msgstr ""
 msgid "Retailer movements must have a valid movement date."
 msgstr ""
 
+#: media.js
+msgid "Retain Until"
+msgstr ""
+
+#: media.js
+msgid "Retain for"
+msgstr ""
+
+#: media.js
+msgid "Retain until {0}"
+msgstr ""
+
 #: dbupdate.py
 msgid "Retriever"
 msgstr ""
@@ -9699,7 +9717,7 @@ msgid "Rota cloned successfully."
 msgstr ""
 
 #: media.js
-msgid "Rotate image 90 degrees anticlockwis"
+msgid "Rotate image 90 degrees anticlockwise"
 msgstr ""
 
 #: media.js
@@ -9814,7 +9832,7 @@ msgstr ""
 
 #: mobile.py change_user_settings.js publish_options.js incident.js person.js
 #: medical.js vaccination.js onlineforms.js reports.js waitinglist.js
-#: accounts_trx.js roles.js lostfound.js test.js animal.js media.js
+#: accounts_trx.js roles.js lostfound.js test.js animal.js
 msgid "Save"
 msgstr ""
 
@@ -10494,7 +10512,7 @@ msgstr ""
 
 #: html.py mobile.py person.py lookups.py animal_new.js waitinglist_new.js
 #: animal_find_results.js waitinglist_results.js person.js animal_find.js
-#: waitinglist.js animal.js
+#: waitinglist.js animal.js media.js
 msgid "Size"
 msgstr ""
 
@@ -12494,6 +12512,10 @@ msgstr ""
 msgid "Update the daily boarding cost for this animal"
 msgstr ""
 
+#: media.js
+msgid "Updated"
+msgstr ""
+
 #: code.py
 msgid "Updated database to version {0}"
 msgstr ""
@@ -12837,10 +12859,6 @@ msgstr ""
 msgid "View Movement"
 msgstr ""
 
-#: media.js
-msgid "View PDF"
-msgstr ""
-
 #: roles.js
 msgid "View Payments"
 msgstr ""
@@ -12919,10 +12937,6 @@ msgstr ""
 
 #: mailmerge.js
 msgid "View matching records"
-msgstr ""
-
-#: media.js
-msgid "View media"
 msgstr ""
 
 #: html.py
@@ -13699,7 +13713,7 @@ msgstr ""
 msgid "{0} weeks"
 msgstr ""
 
-#: lookups.js
+#: lookups.js media.js
 msgid "{0} years"
 msgstr ""
 
@@ -13908,6 +13922,14 @@ msgid "{plural0} day."
 msgstr ""
 
 #: main.js
+msgid "{plural0} document signing request has been received in the last week"
+msgstr ""
+
+#: main.js
+msgid "{plural0} document signing request is unsigned"
+msgstr ""
+
+#: main.js
 msgid "{plural0} incomplete animal control call"
 msgstr ""
 
@@ -14069,6 +14091,14 @@ msgstr ""
 
 #: i18n.py
 msgid "{plural1} days."
+msgstr ""
+
+#: main.js
+msgid "{plural1} document signing requests are unsigned"
+msgstr ""
+
+#: main.js
+msgid "{plural1} document signing requests have been received in the last week"
 msgstr ""
 
 #: main.js
@@ -14236,6 +14266,14 @@ msgid "{plural2} days."
 msgstr ""
 
 #: main.js
+msgid "{plural2} document signing requests are unsigned"
+msgstr ""
+
+#: main.js
+msgid "{plural2} document signing requests have been received in the last week"
+msgstr ""
+
+#: main.js
 msgid "{plural2} incomplete animal control calls"
 msgstr ""
 
@@ -14397,6 +14435,14 @@ msgstr ""
 
 #: i18n.py
 msgid "{plural3} days."
+msgstr ""
+
+#: main.js
+msgid "{plural3} document signing requests are unsigned"
+msgstr ""
+
+#: main.js
+msgid "{plural3} document signing requests have been received in the last week"
 msgstr ""
 
 #: main.js

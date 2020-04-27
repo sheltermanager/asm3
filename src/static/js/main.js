@@ -190,19 +190,19 @@ $(function() {
                 if (alerts.UNSIGNED > 0 && common.has_permission("vo")) {
                     s += '<a href="search?q=unsigned">' + html.icon("signature") + ' ' + 
                         common.ntranslate(alerts.UNSIGNED, [
-                            _("{plural0} document signing request is unsigned."),
-                            _("{plural1} document signing requests are unsigned."),
-                            _("{plural2} document signing requests are unsigned."),
-                            _("{plural3} document signing requests are unsigned.")
+                            _("{plural0} document signing request is unsigned"),
+                            _("{plural1} document signing requests are unsigned"),
+                            _("{plural2} document signing requests are unsigned"),
+                            _("{plural3} document signing requests are unsigned")
                         ]) + '</a><br />';
                 }
                 if (alerts.SIGNED > 0 && common.has_permission("vo")) {
-                    s += '<a href="search?q=unsigned">' + html.icon("signature") + ' ' + 
+                    s += '<a href="search?q=signed">' + html.icon("signature") + ' ' + 
                         common.ntranslate(alerts.SIGNED, [
-                            _("{plural0} document signing request has been received in the last week."),
-                            _("{plural1} document signing requests have been received in the last week."),
-                            _("{plural2} document signing requests have been received in the last week."),
-                            _("{plural3} document signing requests have been received in the last week.")
+                            _("{plural0} document signing request has been received in the last week"),
+                            _("{plural1} document signing requests have been received in the last week"),
+                            _("{plural2} document signing requests have been received in the last week"),
+                            _("{plural3} document signing requests have been received in the last week")
                         ]) + '</a><br />';
                 }
                 if (alerts.NOTADOPT > 0 && common.has_permission("va") && config.bool("EmblemNotForAdoption")) {
