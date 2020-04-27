@@ -425,6 +425,7 @@ def attach_link_from_form(dbo, username, linktype, linkid, post):
         "LinkID":               linkid,
         "LinkTypeID":           linktype,
         "Date":                 dbo.now(),
+        "CreatedDate":          dbo.now(),
         "RetainUntil":          None
     }, username, setCreated=False)
 
@@ -472,6 +473,7 @@ def create_blank_document_media(dbo, username, linktype, linkid):
         "LinkID":               linkid,
         "LinkTypeID":           linktype,
         "Date":                 dbo.now(),
+        "CreatedDate":          dbo.now(),
         "RetainUntil":          None
     }, username, setCreated=False, generateID=False)
     return mediaid
@@ -507,6 +509,7 @@ def create_document_media(dbo, username, linktype, linkid, template, content):
         "LinkID":               linkid,
         "LinkTypeID":           linktype,
         "Date":                 dbo.now(),
+        "CreatedDate":          dbo.now(),
         "RetainUntil":          None
     }, username, setCreated=False, generateID=False)
     return mediaid

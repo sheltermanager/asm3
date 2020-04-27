@@ -2694,6 +2694,7 @@ def clone_animal(dbo, username, animalid):
             "LinkID":               nid,
             "LinkTypeID":           asm3.media.ANIMAL,
             "Date":                 me.date,
+            "CreatedDate":          me.createddate,
             "RetainUntil":          me.retainuntil
         }, generateID=False)
         # Now clone the dbfs item pointed to by this media item if it's a file

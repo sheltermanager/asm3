@@ -414,6 +414,7 @@ def create_animal(dbo, username, wlid):
             "LinkID":               nextid,
             "LinkTypeID":           asm3.media.ANIMAL,
             "Date":                 me.date,
+            "CreatedDate":          me.createddate,
             "RetainUntil":          me.retainuntil
         }, generateID=False)
 
