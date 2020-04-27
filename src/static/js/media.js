@@ -105,7 +105,7 @@ $(function() {
                     { field: "PREVIEW", display: "", formatter: function(m) {
                         var h = [ '<div class="asm-media-thumb">' ];
                         if (m.MEDIATYPE == 1 || m.MEDIATYPE == 2) {
-                            h.push('<a style="float: left" target="_blank" href="' + m.MEDIANAME + '">');
+                            h.push('<a href="' + m.MEDIANAME + '">');
                             var linkimage = "static/images/ui/file-video.png";
                             if (m.MEDIATYPE == 1) {
                                 linkimage = "static/images/ui/document-media.png";
@@ -121,19 +121,19 @@ $(function() {
                             h.push('<img class="asm-thumbnail thumbnailshadow" src="' + linkimage + '" height="' + media.thumbnail_size + 'px" /></a>');
                         }
                         else if (m.MEDIAMIMETYPE == "image/jpeg") {
-                            h.push('<a style="float: left" target="_blank" href="image?db=' + asm.user + '&mode=media&id=' + m.ID + '&date=' + encodeURIComponent(m.DATE) + '">');
+                            h.push('<a href="image?db=' + asm.user + '&mode=media&id=' + m.ID + '&date=' + encodeURIComponent(m.DATE) + '">');
                             h.push('<img class="asm-thumbnail thumbnailshadow" src="image?db=' + asm.user + '&mode=media&id=' + m.ID + '&date=' + encodeURIComponent(m.DATE) + '" height="' + media.thumbnail_size + 'px" /></a>');
                         }
                         else if (m.MEDIAMIMETYPE == "text/html") {
-                            h.push('<a style="float: left" target="_blank" href="document_media_edit?id=' + m.ID + '&redirecturl=' + controller.name + '?id=' + m.LINKID + '"> ');
+                            h.push('<a href="document_media_edit?id=' + m.ID + '&redirecturl=' + controller.name + '?id=' + m.LINKID + '"> ');
                             h.push('<img class="asm-thumbnail thumbnailshadow" src="static/images/ui/document-media.png" height="' + media.thumbnail_size + 'px" /></a>');
                         }
                         else if (m.MEDIAMIMETYPE == "application/pdf") {
-                            h.push('<a style="float: left" target="_blank" href="media?id=' + m.ID + '">');
+                            h.push('<a href="media?id=' + m.ID + '">');
                             h.push('<img class="asm-thumbnail thumbnailshadow" src="static/images/ui/pdf-media.png" height="' + media.thumbnail_size + 'px" /></a>');
                         }
                         else {
-                            h.push('<a style="float: left" target="_blank" href="media?id=' + m.ID + '">');
+                            h.push('<a href="media?id=' + m.ID + '">');
                             h.push('<img class="asm-thumbnail thumbnailshadow" src="static/images/ui/file-media.png" height="' + media.thumbnail_size + 'px" /></a>');
                         }
                         h.push('</div>');
