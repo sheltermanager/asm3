@@ -391,6 +391,7 @@ select:disabled, input:disabled, textarea:disabled {
 
 /** SHELTERVIEW ================= */
 .asm-shelterview-animal {
+    vertical-align: top;
     display: inline-block;
     text-align: center;
     border: 1px dotted #ccc;
