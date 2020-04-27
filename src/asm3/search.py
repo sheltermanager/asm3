@@ -43,7 +43,7 @@ def search(dbo, session, q):
     onshelter/os, notforadoption, hold, holdtoday, quarantine, deceased, 
     forpublish, people, vets, retailers, staff, fosterers, volunteers, 
     shelters, aco, banned, homechecked, homecheckers, members, donors, drivers,
-    reservenohomecheck, notmicrochipped
+    reservenohomecheck, notmicrochipped, unsigned, signed
 
     returns a tuple of:
     results, timetaken, explain, sortname
@@ -364,6 +364,16 @@ def search(dbo, session, q):
         explain = _("People with overdue donations.", l)
         if viewperson:
             ar(asm3.person.get_overdue_donations(dbo), "PERSON", personsort)
+
+    elif q == "signed":
+        explain = _("Document signing requests received in the last week", l)
+        if viewperson:
+            ar(asm3.person.get_signed_requests(dbo, 7), "PERSON", personsort)
+
+    elif q == "unsigned":
+        explain = _("Document signing requests issued in the last month that are unsigned", l)
+        if viewperson:
+            ar(asm3.person.get_unsigned_requests(dbo, 31), "PERSON", personsort)
 
     elif q == "activelost":
         explain = _("Lost animals reported in the last 30 days.", l)

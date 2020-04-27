@@ -228,6 +228,24 @@ def get_overdue_donations(dbo):
     return dbo.query(get_person_query(dbo) + " INNER JOIN ownerdonation od ON od.OwnerID = o.ID " \
         "WHERE od.Date Is Null AND od.DateDue Is Not Null AND od.DateDue <= ?", [dbo.today()])
 
+def get_signed_requests(dbo, cutoff=31):
+    """
+    Returns owners that have a fulfilled signing request in the last cutoff days
+    """
+    cutoffdate = dbo.today(cutoff * -1)
+    return dbo.query(get_person_query(dbo) + "INNER JOIN log l ON o.ID = l.LinkID AND l.LinkType=1 " \
+        "AND l.Date >= ? AND l.Comments LIKE 'ES02%%'", [cutoffdate], distincton="ID")
+
+def get_unsigned_requests(dbo, cutoff=31):
+    """
+    Returns owners that have more signing requests in the last cutoff days than signed
+    """
+    cutoffdate = dbo.today(cutoff * -1)
+    return dbo.query(get_person_query(dbo) + "INNER JOIN log l ON o.ID = l.LinkID AND l.LinkType=1 AND l.Date >= ? AND l.Comments LIKE 'ES01%%' " \
+        "WHERE (SELECT COUNT(*) FROM log WHERE LinkID=o.ID AND LinkType=1 AND Date >= ? AND Comments LIKE 'ES01%%') " \
+        " > (SELECT COUNT(*) FROM log WHERE LinkID=o.ID AND LinkType=1 AND Date >= ? AND Comments LIKE 'ES02%%') ", 
+        [cutoffdate, cutoffdate, cutoffdate], distincton="ID")
+
 def get_links(dbo, pid):
     """
     Gets a list of all records that link to this person
