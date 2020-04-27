@@ -809,6 +809,7 @@ $(function() {
                     name: defaultname,
                     email: defaultemail,
                     subject: tableform.table_selected_row(media.table).MEDIANOTES,
+                    animalid: (controller.animal && controller.animal.ID),
                     personid: (controller.person && controller.person.ID),
                     templates: controller.templates,
                     logtypes: controller.logtypes
@@ -824,6 +825,7 @@ $(function() {
                     name: defaultname,
                     email: defaultemail,
                     subject: tableform.table_selected_row(media.table).MEDIANOTES,
+                    animalid: (controller.animal && controller.animal.ID),
                     personid: (controller.person && controller.person.ID),
                     templates: controller.templates,
                     logtypes: controller.logtypes
@@ -842,6 +844,7 @@ $(function() {
                     name: defaultname,
                     email: defaultemail,
                     subject: _("Document signing request"),
+                    animalid: (controller.animal && controller.animal.ID),
                     personid: (controller.person && controller.person.ID),
                     templates: controller.templates,
                     logtypes: controller.logtypes,

@@ -1,6 +1,7 @@
 44
 ================
 
+27/04/20 Substitute animal tokens in email templates #759
 26/04/20 Send media emails as multiple attachments to one message #405
 26/04/20 Keep separate media created date #796
 26/04/20 Retain media UI #343
