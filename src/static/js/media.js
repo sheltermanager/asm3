@@ -25,6 +25,7 @@ $(function() {
                 edit_perm: 'cam',
                 close_on_ok: true,
                 columns: 1,
+                width: 550,
                 fields: [
                     { json_field: "MEDIANOTES", post_field: "medianotes", label: _("Notes"), type: "textarea" },
                     { json_field: "RETAINUNTIL", post_field: "retainuntil", label: _("Retain Until"), type: "date",
