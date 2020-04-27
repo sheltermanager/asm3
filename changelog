@@ -1,6 +1,7 @@
 44
 ================
 
+27/04/20 Online forms: Fix mandatory sig/image bugs caused by required move
 27/04/20 Signed/unsigned document requests search/alerts #507
 27/04/20 Fix all thumbnails to a consistent size with object-fit css
 27/04/20 Use position: fixed with pageX/pageY for positioning callouts
