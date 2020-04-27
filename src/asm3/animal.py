@@ -678,8 +678,8 @@ def get_alerts(dbo, locationfilter = "", siteid = 0, visibleanimalids = "", age 
         "(SELECT COUNT(DISTINCT OwnerID) FROM ownerdonation WHERE DateDue <= %(today)s AND Date Is Null) AS duedon," \
         "(SELECT COUNT(*) FROM adoption WHERE IsTrial = 1 AND ReturnDate Is Null AND MovementType = 1 AND TrialEndDate <= %(today)s) AS endtrial," \
         "(SELECT COUNT(*) FROM log WHERE LinkType=1 AND Date >= %(onemonth)s AND Comments LIKE 'ES01%%') - " \
-        "(SELECT COUNT(*) FROM log WHERE LinkType=1 AND Date >= %(onemonth)s AND Comments LIKE 'ES02%%') AS unsigned, " \
-        "(SELECT COUNT(*) FROM log WHERE LinkType=1 AND Date >= %(oneweek)s AND Comments LIKE 'ES02%%') AS signed, " \
+        "(SELECT COUNT(*) FROM log WHERE LinkType=1 AND Date >= %(onemonth)s AND Comments LIKE 'ES02%%') AS docunsigned, " \
+        "(SELECT COUNT(*) FROM log WHERE LinkType=1 AND Date >= %(oneweek)s AND Comments LIKE 'ES02%%') AS docsigned, " \
         "(SELECT COUNT(*) FROM adoption INNER JOIN animal ON adoption.AnimalID = animal.ID WHERE " \
             "Archived = 0 AND DeceasedDate Is Null AND ReservationDate Is Not Null AND ReservationDate <= %(oneweek)s " \
             "AND ReservationCancelledDate Is Null AND MovementType = 0 AND MovementDate Is Null) AS longrsv," \

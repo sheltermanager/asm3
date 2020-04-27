@@ -189,7 +189,7 @@ $(function() {
                 }
                 if (alerts.UNSIGNED > 0 && common.has_permission("vo")) {
                     s += '<a href="search?q=unsigned">' + html.icon("signature") + ' ' + 
-                        common.ntranslate(alerts.UNSIGNED, [
+                        common.ntranslate(alerts.DOCUNSIGNED, [
                             _("{plural0} document signing request is unsigned"),
                             _("{plural1} document signing requests are unsigned"),
                             _("{plural2} document signing requests are unsigned"),
@@ -198,7 +198,7 @@ $(function() {
                 }
                 if (alerts.SIGNED > 0 && common.has_permission("vo")) {
                     s += '<a href="search?q=signed">' + html.icon("signature") + ' ' + 
-                        common.ntranslate(alerts.SIGNED, [
+                        common.ntranslate(alerts.DOCSIGNED, [
                             _("{plural0} document signing request has been received in the last week"),
                             _("{plural1} document signing requests have been received in the last week"),
                             _("{plural2} document signing requests have been received in the last week"),
