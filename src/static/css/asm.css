@@ -732,19 +732,22 @@ select:disabled, input:disabled, textarea:disabled {
     border: 1px solid #555;
     padding: 5px;
     margin: 5px;
-    max-width: 85px;
-    max-height: 85px;
+    width: 85px;
+    height: 85px;
+    object-fit: contain;
     background-color: #fff;
     border-radius: 2px;
     box-shadow: 3px 3px 5px #888;
 }
 
 .asm-thumbnail-male {
-    background-color: #ffb3ff;
+    /*background-color: #ffb3ff;*/
+    background-color: #dbf2f9;
 }
 
 .asm-thumbnail-female {
-    background-color: #99c2ff;
+    /*background-color: #99c2ff;*/
+    background-color: #f7e1f1;
 }
 
 .asm-textbox, .asm-selectbox {
