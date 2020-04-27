@@ -228,9 +228,9 @@ def get_overdue_donations(dbo):
     return dbo.query(get_person_query(dbo) + " INNER JOIN ownerdonation od ON od.OwnerID = o.ID " \
         "WHERE od.Date Is Null AND od.DateDue Is Not Null AND od.DateDue <= ?", [dbo.today()])
 
-def get_signed_requests(dbo, cutoff=31):
+def get_signed_requests(dbo, cutoff=7):
     """
-    Returns owners that have a fulfilled signing request in the last cutoff days
+    Returns owners that have a fulfilled a signing request in the last cutoff days
     """
     cutoffdate = dbo.today(cutoff * -1)
     return dbo.query(get_person_query(dbo) + "INNER JOIN log l ON o.ID = l.LinkID AND l.LinkType=1 " \
