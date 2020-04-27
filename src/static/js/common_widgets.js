@@ -592,20 +592,24 @@
          */
         show: function(o) {
             var b = {}; 
-            b[_("Send")] = function() { 
-                if (!validate.email($("#emailfrom").val())) { return; }
-                if (!validate.email($("#emailto").val())) { return; }
-                if ($("#emailcc").val() != "" && !validate.email($("#emailcc").val())) { return; }
-                if ($("#emailbcc").val() != "" && !validate.email($("#emailbcc").val())) { return; }
-                if (o.formdata) { o.formdata += "&"; }
-                o.formdata += $("#dialog-email input, #dialog-email select, #dialog-email .asm-richtextarea").toPOST();
-                header.show_loading(_("Sending..."));
-                common.ajax_post(o.post, o.formdata, function() {
-                    var recipients = $("#emailto").val();
-                    if ($("#emailcc").val() != "") { recipients += ", " + $("#emailcc").val(); }
-                    header.show_info(_("Message successfully sent to {0}").replace("{0}", recipients));
-                    $("#dialog-email").dialog("close");
-                });
+            b[_("Send")] = {
+                text: _("Send"),
+                "class": "asm-dialog-actionbutton",
+                click: function() { 
+                    if (!validate.email($("#emailfrom").val())) { return; }
+                    if (!validate.email($("#emailto").val())) { return; }
+                    if ($("#emailcc").val() != "" && !validate.email($("#emailcc").val())) { return; }
+                    if ($("#emailbcc").val() != "" && !validate.email($("#emailbcc").val())) { return; }
+                    if (o.formdata) { o.formdata += "&"; }
+                    o.formdata += $("#dialog-email input, #dialog-email select, #dialog-email .asm-richtextarea").toPOST();
+                    header.show_loading(_("Sending..."));
+                    common.ajax_post(o.post, o.formdata, function() {
+                        var recipients = $("#emailto").val();
+                        if ($("#emailcc").val() != "") { recipients += ", " + $("#emailcc").val(); }
+                        header.show_info(_("Message successfully sent to {0}").replace("{0}", recipients));
+                        $("#dialog-email").dialog("close");
+                    });
+                }
             };
             b[_("Cancel")] = function() { $(this).dialog("close"); };
             $("#dialog-email").dialog({

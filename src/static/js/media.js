@@ -620,7 +620,11 @@ $(function() {
 
 
             var addbuttons = { };
-            addbuttons[_("Attach")] = media.post_file;
+            addbuttons[_("Attach")] = {
+                text: _("Attach"),
+                "class": "asm-dialog-actionbutton",
+                click: media.post_file
+            };
             addbuttons[_("Cancel")] = function() {
                 $("#dialog-add").dialog("close");
             };
@@ -636,21 +640,25 @@ $(function() {
             });
 
             var addlinkbuttons = { };
-            addlinkbuttons[_("Attach")] = function() {
-                if (!validate.notblank([ "linktarget" ])) { return; }
-                $("#dialog-addlink").disable_dialog_buttons();
-                var formdata = "mode=createlink&linkid=" + controller.linkid + 
-                    "&linktypeid=" + controller.linktypeid + 
-                    "&controller=" + controller.name + "&" +
-                    $("#linktype, #linktarget, #linkcomments").toPOST();
-                common.ajax_post("media", formdata)
-                    .then(function() {
-                        $("#dialog-addlink").dialog("close").enable_dialog_buttons();
-                        common.route_reload();
-                    })
-                    .fail(function() {
-                        $("#dialog-addlink").dialog("close").enable_dialog_buttons(); 
-                    });
+            addlinkbuttons[_("Attach")] = {
+                text: _("Attach"),
+                "class": "asm-dialog-actionbutton",
+                click: function() {
+                    if (!validate.notblank([ "linktarget" ])) { return; }
+                    $("#dialog-addlink").disable_dialog_buttons();
+                    var formdata = "mode=createlink&linkid=" + controller.linkid + 
+                        "&linktypeid=" + controller.linktypeid + 
+                        "&controller=" + controller.name + "&" +
+                        $("#linktype, #linktarget, #linkcomments").toPOST();
+                    common.ajax_post("media", formdata)
+                        .then(function() {
+                            $("#dialog-addlink").dialog("close").enable_dialog_buttons();
+                            common.route_reload();
+                        })
+                        .fail(function() {
+                            $("#dialog-addlink").dialog("close").enable_dialog_buttons(); 
+                        });
+                }
             };
             addlinkbuttons[_("Cancel")] = function() {
                 $("#dialog-addlink").dialog("close");
