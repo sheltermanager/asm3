@@ -1,6 +1,7 @@
 44
 ================
 
+28/04/20 Display option to turn off pink/blue borders
 28/04/20 Mask Stripe secret key for security #799
 28/04/20 Fixes for PayPal CSV import encoding (cp1252)
 28/04/20 Refactor/rewrite of CSV parsing for py2/3 compatibility

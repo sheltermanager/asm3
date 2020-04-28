@@ -294,6 +294,7 @@ DEFAULTS = {
     "ShowAlertsHomePage": "Yes", 
     "ShowLatLong": "No",
     "ShowLookupDataID": "No",
+    "ShowSexBorder": "Yes",
     "ShowTimelineHomePage": "Yes", 
     "ShowStatsHomePage": "thismonth", 
     "ShowFirstTime": "Yes",

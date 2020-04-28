@@ -1584,7 +1584,8 @@
          * Returns the classes for animal thumbnails
          */
         animal_link_thumb_classes: function(a) {
-            return "asm-thumbnail thumbnail-shadow " + (a.SEX == 0 ? "asm-thumbnail-female" : (a.SEX == 1 ? "asm-thumbnail-male" : ""));
+            var sxc = (a.SEX == 0 ? "asm-thumbnail-female" : (a.SEX == 1 ? "asm-thumbnail-male" : ""));
+            return "asm-thumbnail thumbnail-shadow " + (config.bool("ShowSexBorder") ? sxc : "");
         },
 
         /**
