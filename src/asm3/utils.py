@@ -8,7 +8,6 @@ from asm3.sitedefs import SMTP_SERVER, FROM_ADDRESS, HTML_TO_PDF, URL_NEWS
 
 import base64
 import codecs
-import csv as extcsv
 import datetime
 import decimal
 import hashlib
@@ -37,7 +36,6 @@ if sys.version_info[0] > 2: # PYTHON3
     from email.header import Header
     from email.utils import make_msgid, formatdate
     import email.encoders as Encoders
-    extcsv.field_size_limit(512 * 1024) # Python 3 has a limit of 128k for csv fields, make it 512k
 else:
     import thread
     import urllib2
@@ -423,7 +421,7 @@ def str2bytes(s, encoding = "utf-8"):
     Converts a unicode str to a utf-8 bytes string
     """
     if sys.version_info[0] > 2: # PYTHON3
-        if isinstance(s, str): return s.encode("utf-8")
+        if isinstance(s, str): return s.encode(encoding)
     return s # Already byte string for python 2
 
 def bytes2str(s, encoding = "utf-8"):
@@ -431,7 +429,7 @@ def bytes2str(s, encoding = "utf-8"):
     Converts a utf-8 bytes string to a unicode str
     """
     if sys.version_info[0] > 2: # PYTHON3
-        if isinstance(s, bytes): return s.decode("utf-8")
+        if isinstance(s, bytes): return s.decode(encoding)
     return s # Already byte string for python 2
 
 def atoi(s):
@@ -804,78 +802,62 @@ def escape_tinymce(content):
     c = c.replace(">", "&gt;")
     return c
 
-class UnicodeCSVReader(object):
+def csv_parse(s):
     """
-    A CSV reader that reads UTF-8 and converts any unicode values to
-    XML entities.
+    Reads CSV data from a unicode string "s" 
+    Assumes data has been decoded appropriately to unicode/str by the caller.
+    Assumes the first row is the column/header names
+    return value is a list of dictionaries.
+    We've basically implemented DictCSVReader ourselves because subclassing 
+    csvreader in a way that works for Python 2 and 3 is a nightmare and more code than
+    just doing it yourself.
     """
-    encoding = "utf-8-sig"
-    def __init__(self, f, dialect=extcsv.excel, encoding="utf-8-sig", **kwds):
-        self.encoding = encoding
-        self.reader = extcsv.reader(f, dialect=dialect, **kwds)
-
-    def next(self):
-        """ 
-        next() -> unicode
-        This function reads and returns the next line as a Unicode string.
-        """
-        row = self.reader.next()
-        return [ self.process(s) for s in row ]
-
-    def __next__(self):
-        """ 
-        PYTHON3
-        __next__() -> unicode
-        This function reads and returns the next line as a Unicode string.
-        """
-        row = self.reader.__next__()
-        return [ self.process(s) for s in row ]
-
-    def process(self, s):
-        """ Process an element """
-        x = cunicode(s, self.encoding) # decode to unicode with selected encoding
-        x = x.encode("ascii", "xmlcharrefreplace") # encode back to ascii, using XML entities
-        if sys.version_info[0] > 2: x = x.decode("ascii") # PYTHON3 - back to unicode str
-        if x.startswith("\""): x = x[1:] # strip any unwanted quotes from the beginning
-        if x.endswith("\""): x = x[0:len(x)-1] # ... and end
-        return x
-
-    def __iter__(self):
-        return self
-
-class UnicodeCSVDictReader(object):
-    """
-    A CSV reader that uses UnicodeCSVReader to handle UTF-8 and returns
-    each row as a dictionary instead.
-    """
-    def __init__(self, f):
-        self.reader = UnicodeCSVReader(f)
-        self.cols = self.reader.next()
-
-    def next(self):
-        row = self.reader.next()
+    s = s.replace("\r\n", "\n")
+    s = s.replace("\r", "\n")
+    rows = [] # parsed rows
+    pos = [0, 0, False] # line start position, item start position and EOF 
+    def readline():
+        # Finds the next line ending and returns the line as a list of items
+        items = []
+        inquoted = False
+        rpos = pos[0] # read position marker, start at the line
+        while True:
+            if s[rpos:rpos+1] == "\"": inquoted = not inquoted
+            if not inquoted and (s[rpos:rpos+1] == "," or s[rpos:rpos+1] == "\n" or rpos == len(s)): 
+                # Hit delimiter, line break or end of file - parse the item
+                item = s[pos[1]:rpos]
+                pos[1] = rpos+1 # advance next item start position
+                if item.startswith("\""): item = item[1:]
+                if item.endswith("\""): item = item[0:len(item)-1]
+                # Turn the item into an ascii/xmlcharrefreplace string
+                item = item.encode("ascii", "xmlcharrefreplace")
+                if sys.version_info[0] > 2: item = item.decode("ascii") # PYTHON3 turn it back into str
+                items.append(item)
+            if not inquoted and (s[rpos:rpos+1] == "\n" or rpos == len(s)):
+                # Hit line break or end of file, move to the next line and return our set
+                pos[0] = rpos+1
+                if rpos == len(s): pos[2] = True # EOF
+                return items
+            rpos += 1
+    # Read the columns from the first row
+    cols = readline()
+    if len(cols) == 0: return rows # Empty file
+    # Iterate the rest of the data and construct dictionaries of the column/rows
+    while True:
+        items = readline()
         d = {}
-        for (c, r) in zip(self.cols, row):
-            d[c] = r
-        return d
-
-    def __next__(self):
-        """ PYTHON3 """
-        row = self.reader.next()
-        d = {}
-        for (c, r) in zip(self.cols, row):
-            d[c] = r
-        return d
-
-    def __iter__(self):
-        return self
+        for i, c in enumerate(cols):
+            if i < len(items): d[c] = items[i]
+        rows.append(d)
+        if pos[2]: break # EOF
+    return rows
 
 def csv(l, rows, cols = None, includeheader = True):
     """
     Creates a CSV file from a set of resultset rows. If cols has been 
     supplied as a list of strings, fields will be output in that
     order.
-    The file is constructed as a list of unicode strings and returned as a utf-8 encoded string.
+    The file is constructed as a list of unicode strings and returned as a utf-8 encoded byte string.
     """
     if rows is None or len(rows) == 0: return ""
     lines = []

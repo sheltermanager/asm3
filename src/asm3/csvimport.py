@@ -229,35 +229,20 @@ def row_error(errors, rowtype, rowno, row, e, dbo, exinfo):
 
 def csvimport(dbo, csvdata, encoding = "utf8", user = "", createmissinglookups = False, cleartables = False, checkduplicates = False):
     """
-    Imports the csvdata (bytes string)
+    Imports csvdata (bytes string, encoded with encoding)
     createmissinglookups: If a lookup value is given that's not in our data, add it
     cleartables: Clear down the animal, owner and adoption tables before import
     """
-
-    csvdata = asm3.utils.bytes2str(csvdata)
-
-    # Convert line endings to standard unix lf to prevent
-    # the Python CSV importer barfing.
-    csvdata = csvdata.replace("\r\n", "\n")
-    csvdata = csvdata.replace("\r", "\n")
 
     if user == "":
         user = "import"
     else:
         user = "import/%s" % user
 
-    reader = None
-    if encoding == "utf8":
-        reader = asm3.utils.UnicodeCSVReader(asm3.utils.stringio(csvdata))
-    else:
-        reader = asm3.utils.UnicodeCSVReader(asm3.utils.stringio(csvdata), encoding=encoding)
+    rows = asm3.utils.csv_parse( asm3.utils.bytes2str(csvdata, encoding=encoding) )
 
     # Make sure we have a valid header
-    cols = None
-    for row in reader:
-        cols = row
-        break
-    if cols is None:
+    if len(rows) == 0:
         asm3.asynctask.set_last_error(dbo, "Your CSV file is empty")
         return
 
@@ -278,6 +263,7 @@ def csvimport(dbo, csvdata, encoding = "utf8", user = "", createmissinglookups =
     hasdonationamount = False
     hasoriginalowner = False
     hasoriginalownerlastname = False
+    cols = rows[0].keys()
     for col in cols:
         if col in VALID_FIELDS: onevalid = True
         if col.startswith("ANIMAL"): hasanimal = True
@@ -356,18 +342,7 @@ def csvimport(dbo, csvdata, encoding = "utf8", user = "", createmissinglookups =
     if haslicence and not (haspersonlastname or haspersonname):
         asm3.asynctask.set_last_error(dbo, "Your CSV file has license fields, but no person to apply the license to")
 
-    # Read the whole CSV file into a list of maps. Note, the
-    # reader has a cursor at the second row already because
-    # we read the header in the first row above
-    data = []
-    for row in reader:
-        currow = {}
-        for i, col in enumerate(row):
-            if i >= len(cols): continue # skip if we run out of cols
-            currow[cols[i]] = col
-        data.append(currow)
-
-    asm3.al.debug("reading CSV data, found %d rows" % len(data), "csvimport.csvimport", dbo)
+    asm3.al.debug("reading CSV data, found %d rows" % len(rows), "csvimport.csvimport", dbo)
 
     # If we're clearing down tables first, do it now
     if cleartables:
@@ -378,10 +353,10 @@ def csvimport(dbo, csvdata, encoding = "utf8", user = "", createmissinglookups =
     # and start importing.
     errors = []
     rowno = 1
-    asm3.asynctask.set_progress_max(dbo, len(data))
-    for row in data:
+    asm3.asynctask.set_progress_max(dbo, len(rows))
+    for row in rows:
 
-        asm3.al.debug("import csv: row %d of %d" % (rowno, len(data)), "csvimport.csvimport", dbo)
+        asm3.al.debug("import csv: row %d of %d" % (rowno, len(rows)), "csvimport.csvimport", dbo)
         asm3.asynctask.increment_progress_value(dbo)
 
         # Should we stop?
@@ -703,7 +678,7 @@ def csvimport(dbo, csvdata, encoding = "utf8", user = "", createmissinglookups =
 
         rowno += 1
 
-    h = [ "<p>%d success, %d errors</p><table>" % (len(data) - len(errors), len(errors)) ]
+    h = [ "<p>%d success, %d errors</p><table>" % (len(rows) - len(errors), len(errors)) ]
     for rowno, row, err in errors:
         h.append("<tr><td>%s</td><td>%s</td><td>%s</td></tr>" % (rowno, row, err))
     h.append("</table>")
@@ -728,13 +703,23 @@ def csvimport_paypal(dbo, csvdata, donationtypeid, donationpaymentid, flags, use
     else:
         user = "import/%s" % user
 
-    reader = asm3.utils.UnicodeCSVDictReader(asm3.utils.stringio(csvdata))
-    data = list(reader)
+    rows = asm3.utils.csv_parse( asm3.utils.bytes2str(csvdata, encoding="cp1252") )
+
     errors = []
     rowno = 1
-    asm3.asynctask.set_progress_max(dbo, len(data))
+    asm3.asynctask.set_progress_max(dbo, len(rows))
 
-    for r in data:
+    if len(rows) == 0:
+        asm3.asynctask.set_last_error(dbo, "CSV file is empty")
+        return
+
+    REQUIRED_FIELDS = [ "Date", "Currency", "Gross", "Fee", "Net", "From Email Address", "Status", "Type" ]
+    for rf in REQUIRED_FIELDS:
+        if rf not in rows[0]:
+            asm3.asynctask.set_last_error(dbo, "This CSV file does not look like a PayPal CSV (missing %s)" % rf)
+            return
+
+    for r in rows:
 
         # Skip blank rows
         if len(r) == 0: continue
@@ -742,13 +727,7 @@ def csvimport_paypal(dbo, csvdata, donationtypeid, donationpaymentid, flags, use
         # Should we stop?
         if asm3.asynctask.get_cancel(dbo): break
 
-        REQUIRED_FIELDS = [ "Date", "Currency", "Gross", "Fee", "Net", "From Email Address", "Status", "Type" ]
-        for rf in REQUIRED_FIELDS:
-            if rf not in r:
-                asm3.asynctask.set_last_error(dbo, "This CSV file does not look like a PayPal CSV (missing %s)" % rf)
-                return
-
-        asm3.al.debug("import paypal csv: row %d of %d" % (rowno, len(data)), "csvimport.csvimport_paypal", dbo)
+        asm3.al.debug("import paypal csv: row %d of %d" % (rowno, len(rows)), "csvimport.csvimport_paypal", dbo)
         asm3.asynctask.increment_progress_value(dbo)
 
         if r["Status"] != "Completed":
@@ -796,9 +775,13 @@ def csvimport_paypal(dbo, csvdata, donationtypeid, donationpaymentid, flags, use
             row_error(errors, "person", rowno, r, e, dbo, sys.exc_info())
 
         # Donation info
-        net = asm3.utils.cint(asm3.utils.cfloat(v(r, "Net")) * 100)
-        fee = asm3.utils.cint(asm3.utils.cfloat(v(r, "Fee")) * 100)
+        gross = asm3.utils.cint(asm3.utils.cfloat(v(r, "Gross")) * 100) 
+        net = asm3.utils.cint(asm3.utils.cfloat(v(r, "Net")) * 100) 
+        fee = abs(asm3.utils.cint(asm3.utils.cfloat(v(r, "Fee")) * 100)) # Fee is a negative amount
+        if net > gross: net = gross # I've seen PayPal files where net/gross are the wrong way around
         if personid != 0 and net > 0:
+            pdate = asm3.i18n.display2python(dbo.locale, v(r, "Date")) # parse the date (we do this to fix 2 digit years, which I've also seen)
+            if pdate is None: pdate = dbo.today() # use today if parsing failed
             d = {}
             d["person"] = str(personid)
             d["animal"] = "0"
@@ -806,11 +789,11 @@ def csvimport_paypal(dbo, csvdata, donationtypeid, donationpaymentid, flags, use
             d["amount"] = str(net)
             d["fee"] = str(fee)
             d["chequenumber"] = str(v(r, "Transaction ID"))
-            comments = "PayPal ID: %s \nItem: %s %s \nCurrency: %s \nGross: %s \nFee: %s \nSubject: %s \nNote: %s" % \
+            comments = "PayPal ID: %s \nItem: %s %s \nCurrency: %s \nGross: %s \nFee: %s \nNet: %s \nSubject: %s \nNote: %s" % \
                 ( v(r, "Transaction ID"), v(r, "Item ID", "Item Number"), v(r, "Item Title"), v(r, "Currency"), 
-                v(r, "Gross"), v(r, "Fee"), v(r, "Subject"), v(r, "Note") )
+                v(r, "Gross"), v(r, "Fee"), v(r, "Net"), v(r, "Subject"), v(r, "Note") )
             d["comments"] = comments
-            d["received"] = v(r, "Date")
+            d["received"] = asm3.i18n.python2display(dbo.locale, pdate)
             d["type"] = str(donationtypeid)
             d["payment"] = str(donationpaymentid)
             try:
@@ -820,7 +803,7 @@ def csvimport_paypal(dbo, csvdata, donationtypeid, donationpaymentid, flags, use
 
         rowno += 1
 
-    h = [ "<p>%d success, %d errors</p><table>" % (len(data) - len(errors), len(errors)) ]
+    h = [ "<p>%d success, %d errors</p><table>" % (len(rows) - len(errors), len(errors)) ]
     for rowno, row, err in errors:
         h.append("<tr><td>%s</td><td>%s</td><td>%s</td></tr>" % (rowno, row, err))
     h.append("</table>")
