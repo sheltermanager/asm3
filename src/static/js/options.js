@@ -1,5 +1,6 @@
 /*jslint browser: true, forin: true, eqeq: true, white: true, sloppy: true, vars: true, nomen: true */
 /*global $, jQuery, _, asm, common, config, controller, dlgfx, format, header, html, validate */
+/*global MASK_VALUE */
 
 $(function() {
 
@@ -1084,7 +1085,7 @@ $(function() {
                 '<tr><td><label for="stripekey">' + _("Stripe Key") + '</label></td>',
                 '<td><input data="StripeKey" id="stripekey" type="text" class="asm-textbox asm-doubletextbox" /></td></tr>',
                 '<tr><td><label for="stripesecretkey">' + _("Stripe Secret Key") + '</label></td>',
-                '<td><input data="StripeSecretKey" id="stripesecretkey" type="text" class="asm-textbox asm-doubletextbox" /></td></tr>',
+                '<td><input data="StripeSecretKey" id="stripesecretkey" type="text" class="asm-textbox asm-doubletextbox asm-mask" /></td></tr>',
                 '</table>',
                 '<p class="centered">',
                     _("In the Stripe dashboard, create a webhook to send 'checkout.session.completed' events to {0}")
@@ -1338,7 +1339,8 @@ $(function() {
                         $(this).richtextarea("value", config.str(d));
                     }
                     else if ($(this).is("input:text")) {
-                        $(this).val( html.decode(config.str(d)));
+                        if ($(this).is(".asm-mask") && config.str(d)) { $(this).val(MASK_VALUE); }
+                        else { $(this).val( html.decode(config.str(d))); }
                     }
                     else if ($(this).is("input:checkbox")) {
                         if (d.indexOf("rc:") != -1) {
