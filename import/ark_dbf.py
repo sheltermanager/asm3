@@ -93,7 +93,6 @@ for d in asm.read_dbf("%s/ANIMALS.DBF" % PATH):
     if d["SURR_ID"] != "":
         if d["SURR_ID"] in ppo:
             a.OriginalOwnerID = ppo[d["SURR_ID"]].ID
-    a.generateCode()
     a.ShortCode = d["ID_NUM"]
     a.Sex = asm.getsex_mf(d["SEX"])
     a.ShelterLocationUnit = d["LOCATION"]
@@ -106,6 +105,7 @@ for d in asm.read_dbf("%s/ANIMALS.DBF" % PATH):
         a.BreedName = asm.breed_name_for_id(a.BreedID) + " / " + asm.breed_name_for_id(a.Breed2ID)
     a.DateBroughtIn = asm.todatetime(d["DATE_SURR"])
     if a.DateBroughtIn is None: a.DateBroughtIn = asm.now()
+    a.generateCode()
     a.NeuteredDate = d["NEUTER_DAT"]
     if a.NeuteredDate is not None:
         a.Neutered = 1
