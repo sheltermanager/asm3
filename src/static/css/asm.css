@@ -742,13 +742,11 @@ select:disabled, input:disabled, textarea:disabled {
 }
 
 .asm-thumbnail-male {
-    /*background-color: #ffb3ff;*/
-    background-color: #dbf2f9;
+    background-color: #99c2ff;
 }
 
 .asm-thumbnail-female {
-    /*background-color: #99c2ff;*/
-    background-color: #f7e1f1;
+    background-color: #ffb3ff;
 }
 
 .asm-textbox, .asm-selectbox {

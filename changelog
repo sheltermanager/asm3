@@ -1,6 +1,7 @@
 44
 ================
 
+28/04/20 Add media screen icon mode after universal user hatred of table #652
 27/04/20 Online forms: Fix mandatory sig/image bugs caused by required move
 27/04/20 Signed/unsigned document requests search/alerts #507
 27/04/20 Fix all thumbnails to a consistent size with object-fit css

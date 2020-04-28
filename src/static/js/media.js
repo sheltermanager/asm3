@@ -5,6 +5,9 @@
 $(function() {
 
     var media = {
+
+        icon_mode_active: true,
+
         retain_for_years: [
             "0|" + _("Indefinitely"),
             "1|" + _("1 year"),
@@ -101,91 +104,36 @@ $(function() {
                     }
                 },
                 columns: [
-                    { field: "MEDIANOTES", display: _("Notes") },
-                    { field: "PREVIEW", display: "", formatter: function(m) {
-                        var h = [ '<div class="asm-media-thumb">' ];
-                        if (m.MEDIATYPE == 1 || m.MEDIATYPE == 2) {
-                            h.push('<a href="' + m.MEDIANAME + '">');
-                            var linkimage = "static/images/ui/file-video.png";
-                            if (m.MEDIATYPE == 1) {
-                                linkimage = "static/images/ui/document-media.png";
-                            }
-                            else if (m.MEDIATYPE == 2) {
-                                if (m.MEDIANAME.indexOf("youtube.com") != -1 || m.MEDIANAME.indexOf("youtu.be") != -1) {
-                                    linkimage = media.youtube_thumbnail(m.MEDIANAME);
-                                    if (!linkimage) {
-                                        linkimage = "static/images/ui/file-video.png";
-                                    }
-                                }
-                            }
-                            h.push('<img class="asm-thumbnail thumbnailshadow" src="' + linkimage + '" /></a>');
-                        }
-                        else if (m.MEDIAMIMETYPE == "image/jpeg") {
-                            h.push('<a href="image?db=' + asm.user + '&mode=media&id=' + m.ID + '&date=' + encodeURIComponent(m.DATE) + '">');
-                            h.push('<img class="asm-thumbnail thumbnailshadow" src="image?db=' + asm.user + '&mode=media&id=' + m.ID + '&date=' + encodeURIComponent(m.DATE) + '" /></a>');
-                        }
-                        else if (m.MEDIAMIMETYPE == "text/html") {
-                            h.push('<a href="document_media_edit?id=' + m.ID + '&redirecturl=' + controller.name + '?id=' + m.LINKID + '"> ');
-                            h.push('<img class="asm-thumbnail thumbnailshadow" src="static/images/ui/document-media.png" /></a>');
-                        }
-                        else if (m.MEDIAMIMETYPE == "application/pdf") {
-                            h.push('<a href="media?id=' + m.ID + '">');
-                            h.push('<img class="asm-thumbnail thumbnailshadow" src="static/images/ui/pdf-media.png" /></a>');
-                        }
-                        else {
-                            h.push('<a href="media?id=' + m.ID + '">');
-                            h.push('<img class="asm-thumbnail thumbnailshadow" src="static/images/ui/file-media.png" /></a>');
-                        }
-                        h.push('</div>');
-                        var mod_out = function(icon, text) {
-                            h.push('<span>');
-                            h.push(html.icon(icon, text));
-                            h.push( " " + text + "</span><br/>");
-                        };
-                        h.push('<div class="asm-media-mods">');
-                        if (m.MEDIATYPE > 0) {
-                            mod_out("link", _("Link to an external web resource"));
-                        }
-                        if (m.SIGNATUREHASH) {
-                            mod_out("signature", _("Signed"));
-                        }
-                        if (m.WEBSITEPHOTO == 1 && controller.showpreferred) {
-                            mod_out("web", _("Default image for this record and the web"));
-                        }
-                        if (m.WEBSITEVIDEO == 1 && controller.showpreferred) {
-                            mod_out("video", _("Default video for publishing"));
-                        }
-                        if (m.DOCPHOTO == 1 && controller.showpreferred) {
-                            mod_out("document", _("Default image for documents"));
-                        }
-                        if (m.MEDIAMIMETYPE == "image/jpeg" && !m.EXCLUDEFROMPUBLISH && controller.name == "animal_media") {
-                            mod_out("tick", _('Include this image when publishing'));
-                        }
-                        if (m.MEDIAMIMETYPE == "image/jpeg" && m.EXCLUDEFROMPUBLISH && controller.name == "animal_media") {
-                            mod_out("cross", _('Exclude this image when publishing'));
-                        }
-                        if (m.RETAINUNTIL) {
-                            var ru = _("Retain until {0}").replace("{0}", format.date(m.RETAINUNTIL));
-                            mod_out("media-delete", ru);
-                        }
-                        if (config.bool("AutoRemoveDocumentMedia") && config.integer("AutoRemoveDMYears")) {
-                            var dd = common.add_days(format.date_js(m.DATE), config.integer("AutoRemoveDMYears") * 365);
-                            var ar = _("Auto remove on {0}").replace("{0}", format.date(dd));
-                            mod_out("media-delete", ar);
-                        }
-                        h.push('</div>');
-                        return h.join("\n");
+                    { field: "MEDIANOTES", classes: "mode-table", display: _("Notes") },
+                    { field: "PREVIEW", classes: "mode-table", display: "", formatter: function(m) {
+                        var h = [];
+                        h.push(media.render_preview_thumbnail(m));
+                        h.push(media.render_mods(m, true));
+                        return h.join("");
                     }},
-                    { field: "SIZE", display: _("Size"), formatter: function(m) {
+                    { field: "SIZE", classes: "mode-table", display: _("Size"), formatter: function(m) {
                         var sz = '<span data-sort="' + m.MEDIASIZE + '" />';
                         if (m.MEDIATYPE != 0) { return sz; } // do not show a size for non-files
                         if (m.MEDIASIZE < 1024*1024) { sz = Math.floor(m.MEDIASIZE / 1024) + "K"; }
                         else { sz = Math.floor(m.MEDIASIZE / 1024 / 1024.0) + "M"; }
                         return sz;
                     }},
-                    { field: "CREATEDDATE", display: _("Added"), formatter: tableform.format_date },
-                    { field: "DATE", display: _("Updated"), formatter: tableform.format_date, initialsort: true, initialsortdirection: "desc" },
-                    { field: "MEDIAMIMETYPE", display: _("Type") }
+                    { field: "CREATEDDATE", classes: "mode-table", display: _("Added"), formatter: tableform.format_date },
+                    { field: "DATE", classes: "mode-table", display: _("Updated"), formatter: tableform.format_date, initialsort: true, initialsortdirection: "desc" },
+                    { field: "MEDIAMIMETYPE", classes: "mode-table", display: _("Type") },
+                    { field: "PREVIEWICON", classes: "mode-icon", display: "", formatter: function(m) {
+                        var h = [];
+                        h.push("<div class=\"centered\">");
+                        h.push(media.render_preview_thumbnail(m, true));
+                        h.push("<br/>");
+                        if (m.MEDIAMIMETYPE != "image/jpeg") { h.push("<span>" + html.truncate(m.MEDIANOTES, 30) + "</span><br/>" ); }
+                        h.push("<span style=\"white-space: nowrap\">");
+                        h.push("<input type=\"checkbox\" data-id=\"" + m.ID + "\" title=\"" + html.title(_("Select")) + "\" />");
+                        h.push("<a href=\"#\" class=\"link-edit\" data-id=\"" + m.ID + "\">" + format.date(m.DATE) + "</a>");
+                        h.push("</span><br/>");
+                        h.push(media.render_mods(m));
+                        return h.join("");
+                    }}
                 ]
             };
 
@@ -204,8 +152,9 @@ $(function() {
                 { id: "web", icon: "web", enabled: "one", perm: "cam", tooltip: _("Make this the default image when viewing this record and publishing to the web") },
                 { id: "doc", icon: "document", enabled: "one", perm: "cam", tooltip: _("Make this the default image when creating documents") },
                 { id: "video", icon: "video", enabled: "one", perm: "cam", tooltip: _("Make this the default video link when publishing to the web") },
-                { type: "raw", markup: '<div class="asm-mediadroptarget"><p>' + _("Drop files here...") + '</p></div>',
-                    hideif: function() { return !Modernizr.filereader || !Modernizr.todataurljpeg || asm.mobileapp; }}
+                { type: "raw", markup: '<div class="asm-mediadroptarget mode-table"><p>' + _("Drop files here...") + '</p></div>',
+                    hideif: function() { return !Modernizr.filereader || !Modernizr.todataurljpeg || asm.mobileapp; }},
+                { id: "viewmode", text: "", icon: "batch", enabled: "always", tooltip: _("Toggle table/icon view") }
             ];
 
             this.dialog = dialog;
@@ -330,6 +279,86 @@ $(function() {
             h.push(tableform.table_render(this.table));
             h.push(html.content_footer());
             return h.join("\n");
+        },
+
+        render_preview_thumbnail: function(m, notestooltip) {
+            var h = [ '<div class="asm-media-thumb">' ];
+            var tt = "";
+            if (notestooltip) { tt = 'title="' + html.title(html.truncate(html.decode(m.MEDIANOTES), 70)) + '"'; }
+            if (m.MEDIATYPE == 1 || m.MEDIATYPE == 2) {
+                h.push('<a href="' + m.MEDIANAME + '">');
+                var linkimage = "static/images/ui/file-video.png";
+                if (m.MEDIATYPE == 1) {
+                    linkimage = "static/images/ui/document-media.png";
+                }
+                else if (m.MEDIATYPE == 2) {
+                    if (m.MEDIANAME.indexOf("youtube.com") != -1 || m.MEDIANAME.indexOf("youtu.be") != -1) {
+                        linkimage = media.youtube_thumbnail(m.MEDIANAME);
+                        if (!linkimage) {
+                            linkimage = "static/images/ui/file-video.png";
+                        }
+                    }
+                }
+                h.push('<img class="asm-thumbnail thumbnailshadow" ' + tt + ' src="' + linkimage + '" /></a>');
+            }
+            else if (m.MEDIAMIMETYPE == "image/jpeg") {
+                h.push('<a href="image?db=' + asm.user + '&mode=media&id=' + m.ID + '&date=' + encodeURIComponent(m.DATE) + '">');
+                h.push('<img class="asm-thumbnail thumbnailshadow" ' + tt + ' src="image?db=' + asm.user + '&mode=media&id=' + m.ID + '&date=' + encodeURIComponent(m.DATE) + '" /></a>');
+            }
+            else if (m.MEDIAMIMETYPE == "text/html") {
+                h.push('<a href="document_media_edit?id=' + m.ID + '&redirecturl=' + controller.name + '?id=' + m.LINKID + '"> ');
+                h.push('<img class="asm-thumbnail thumbnailshadow" ' + tt + ' src="static/images/ui/document-media.png" /></a>');
+            }
+            else if (m.MEDIAMIMETYPE == "application/pdf") {
+                h.push('<a href="media?id=' + m.ID + '">');
+                h.push('<img class="asm-thumbnail thumbnailshadow" ' + tt + ' src="static/images/ui/pdf-media.png" /></a>');
+            }
+            else {
+                h.push('<a href="media?id=' + m.ID + '">');
+                h.push('<img class="asm-thumbnail thumbnailshadow" ' + tt + ' src="static/images/ui/file-media.png" /></a>');
+            }
+            h.push('</div>');
+            return h.join("");
+        },
+
+        render_mods: function(m, withlabels) {
+            var h = [], mod_out = function(icon, text) {
+                if (!withlabels) { h.push(html.icon(icon, text)); }
+                else { h.push('<span>' + html.icon(icon, text) + " " + text + "</span><br/>"); }
+            };
+            h.push('<div class="asm-media-mods">');
+            if (m.MEDIATYPE > 0) {
+                mod_out("link", _("Link to an external web resource"));
+            }
+            if (m.SIGNATUREHASH) {
+                mod_out("signature", _("Signed"));
+            }
+            if (m.WEBSITEPHOTO == 1 && controller.showpreferred) {
+                mod_out("web", _("Default image for this record and the web"));
+            }
+            if (m.WEBSITEVIDEO == 1 && controller.showpreferred) {
+                mod_out("video", _("Default video for publishing"));
+            }
+            if (m.DOCPHOTO == 1 && controller.showpreferred) {
+                mod_out("document", _("Default image for documents"));
+            }
+            if (m.MEDIAMIMETYPE == "image/jpeg" && !m.EXCLUDEFROMPUBLISH && controller.name == "animal_media") {
+                mod_out("tick", _('Include this image when publishing'));
+            }
+            if (m.MEDIAMIMETYPE == "image/jpeg" && m.EXCLUDEFROMPUBLISH && controller.name == "animal_media") {
+                mod_out("cross", _('Exclude this image when publishing'));
+            }
+            if (m.RETAINUNTIL) {
+                var ru = _("Retain until {0}").replace("{0}", format.date(m.RETAINUNTIL));
+                mod_out("media-delete", ru);
+            }
+            if (config.bool("AutoRemoveDocumentMedia") && config.integer("AutoRemoveDMYears")) {
+                var dd = common.add_days(format.date_js(m.DATE), config.integer("AutoRemoveDMYears") * 365);
+                var ar = _("Auto remove on {0}").replace("{0}", format.date(dd));
+                mod_out("media-delete", ar);
+            }
+            h.push('</div>');
+            return h.join("");
         },
 
         /**
@@ -697,6 +726,15 @@ $(function() {
                 buttons: signbuttons
             });
 
+            $("#button-viewmode").button().click(function() {
+                if (media.icon_mode_active) {
+                    media.mode_table();
+                }
+                else {
+                    media.mode_icon();
+                }
+            });
+
             $("#button-new").button().click(function() {
                 media.new_media();
             });
@@ -889,17 +927,44 @@ $(function() {
            $("#dialog-add").dialog("open"); 
         },
 
-        sync: function() {
+        mode_icon: function() {
+            // Switches to icon mode by changing the table
+            // layout and only showing the icon column
+            $(".mode-table").hide();
+            $(".mode-icon").show();
+            $("#tableform thead").hide();
+            $("#tableform").css({ "text-align": "center" });
+            $("#tableform tr").css({ "display": "inline-block", "vertical-align": "bottom" });
+            $(".asm-media-thumb img").css({
+                "min-width": "85px",
+                "min-height": "85px",
+                "width": "85px",
+                "height": "85px",
+                "object-fit": "contain"
+            });
+            if ($("#tableform .asm-mediadroptarget").length == 0) {
+                //$("#tableform tbody").prepend('<tr style="vertical-align: middle; display: inline-block;">' + 
+                //    '<td><div class="asm-mediadroptarget mode-icon" style="min-height: 150px"><p>' + _("Drop files here...") + '</p></td></div></tr>');
+                $("#tableform tbody").prepend('<div class="asm-mediadroptarget mode-icon" style="height: 150px"><p>' + _("Drop files here...") + '</p></div>');
+            }
+            media.icon_mode_active = true;
+        },
 
-            if (controller.newmedia) { media.new_media(); }
-
+        mode_table: function() {
+            // Switches to table mode.
+            $(".mode-icon").hide();
+            $(".mode-table").show();
+            $("#tableform thead").show();
+            $("#tableform").css({ "text-align": "left" });
+            $("#tableform tr").css({ "display": "table-row", "vertical-align": "middle" });
             // Resize the thumbnails based on the number of media records
-            // to fit more on screen
+            // to fit more rows on screen
             var thumbnail_size = 85;
             if (controller.media.length >= 0) { thumbnail_size = 85; }
             if (controller.media.length > 10) { thumbnail_size = 70; }
             if (controller.media.length > 20) { thumbnail_size = 55; }
             if (controller.media.length > 30) { thumbnail_size = 30; }
+            thumbnail_size += "px";
             $(".asm-media-thumb img").css({
                 "min-width": thumbnail_size,
                 "min-height": thumbnail_size,
@@ -907,6 +972,15 @@ $(function() {
                 "height": thumbnail_size,
                 "object-fit": "contain"
             });
+            media.icon_mode_active = false;
+        },
+
+        sync: function() {
+
+            if (controller.newmedia) { media.new_media(); }
+
+            // Start in icon mode
+            this.mode_icon();
 
             // Check if we have pictures but no preferred set and choose one if we don't
             media.check_preferred_images();
