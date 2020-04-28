@@ -626,6 +626,10 @@ $(function() {
                 $("#signature").signature({ guideline: true });
             }
 
+            // Add the icon mode drop target here so that the events
+            // below are attached to both.
+            $("#tableform tbody").prepend('<div class="asm-mediadroptarget mode-icon" style="height: 150px"><p>' + _("Drop files here...") + '</p></div>');
+
             $(".asm-mediadroptarget").on("dragover", function() {
                 $(".asm-mediadroptarget").addClass("asm-mediadroptarget-hover");
                 return false;
@@ -942,11 +946,6 @@ $(function() {
                 "height": "85px",
                 "object-fit": "contain"
             });
-            if ($("#tableform .asm-mediadroptarget").length == 0) {
-                //$("#tableform tbody").prepend('<tr style="vertical-align: middle; display: inline-block;">' + 
-                //    '<td><div class="asm-mediadroptarget mode-icon" style="min-height: 150px"><p>' + _("Drop files here...") + '</p></td></div></tr>');
-                $("#tableform tbody").prepend('<div class="asm-mediadroptarget mode-icon" style="height: 150px"><p>' + _("Drop files here...") + '</p></div>');
-            }
             media.icon_mode_active = true;
         },
 
