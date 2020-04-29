@@ -167,7 +167,7 @@ $(function() {
             validate.reset();
 
             // owner
-            if ($.trim($("#owner").val()) == "0") {
+            if (common.trim($("#owner").val()) == "0") {
                 header.show_error(_("Waiting list entries must have a contact"));
                 $("#asm-details-accordion").accordion("option", "active", 0);
                 validate.highlight("owner");
@@ -175,7 +175,7 @@ $(function() {
             }
 
             // date put on list
-            if ($.trim($("#dateputon").val()) == "") {
+            if (common.trim($("#dateputon").val()) == "") {
                 header.show_error(_("Date put on cannot be blank"));
                 $("#asm-details-accordion").accordion("option", "active", 3);
                 validate.highlight("dateputon");
@@ -183,7 +183,7 @@ $(function() {
             }
 
             // description
-            if ($.trim($("#description").val()) == "") {
+            if (common.trim($("#description").val()) == "") {
                 header.show_error(_("Description cannot be blank"));
                 $("#asm-details-accordion").accordion("option", "active", 0);
                 validate.highlight("description");

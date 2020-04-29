@@ -278,7 +278,7 @@
                 // Validate fields that can't be blank
                 dialogadd.find("label").removeClass(validate.ERROR_LABEL_CLASS);
                 dialogadd.find("input[data='surname']").each(function() {
-                    if ($.trim($(this).val()) == "") {
+                    if (common.trim($(this).val()) == "") {
                         $(this).parent().parent().find("label").addClass(validate.ERROR_LABEL_CLASS);
                         $(this).focus();
                         valid = false;

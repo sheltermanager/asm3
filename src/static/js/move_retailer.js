@@ -71,7 +71,7 @@ $(function() {
                     return false;
                 }
                 // date
-                if ($.trim($("#retailerdate").val()) == "") {
+                if (common.trim($("#retailerdate").val()) == "") {
                     header.show_error(_("This type of movement requires a date."));
                     validate.highlight("retailerdate");
                     return false;

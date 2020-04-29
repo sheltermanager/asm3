@@ -170,7 +170,7 @@
                 textExtraction: function(node, table, cellIndex) {
                     // this function controls how text is extracted from cells for
                     // sorting purposes.
-                    var s = $.trim($(node).text()), h = $(node).html();
+                    var s = common.trim($(node).text()), h = $(node).html();
                     // If there's a data-sort attribute somewhere in the cell, use that
                     if (h.indexOf("data-sort") != -1) {
                         var fq = h.indexOf("data-sort");

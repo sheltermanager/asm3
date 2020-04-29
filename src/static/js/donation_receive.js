@@ -69,7 +69,7 @@ $(function() {
                     return false;
                 }
                 // date
-                if ($.trim($("#received").val()) == "") {
+                if (common.trim($("#received").val()) == "") {
                     header.show_error(_("Payments require a received date"));
                     validate.highlight("received");
                     return false;

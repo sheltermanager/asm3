@@ -56,13 +56,13 @@ $(function() {
                 validate.reset();
 
                 // Password must be supplied
-                if ($.trim($("#newpassword").val()) == "") {
+                if (common.trim($("#newpassword").val()) == "") {
                     header.show_error(_("Passwords cannot be blank."));
                     return false;
                 }
 
                 // New/Confirm must match
-                if ($.trim($("#newpassword").val()) != $.trim($("#confirmpassword").val())) {
+                if (common.trim($("#newpassword").val()) != common.trim($("#confirmpassword").val())) {
                     header.show_error(_("New password and confirmation password don't match."));
                     return false;
                 }

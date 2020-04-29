@@ -294,7 +294,7 @@
         },
 
         trim: function(s) {
-            return $.trim(s);
+            return String(s).trim();
         },
 
         /** 
@@ -1197,7 +1197,7 @@
             c = c.replace(new RegExp("&[^;]+;", "ig"), '');
             // Remove anything else that isn't a digit, sign or our decimal mark
             c = c.replace(new RegExp("[^0-9\\" + asm.currencyradix + "\\-]", "g"), '');
-            c = $.trim(c);
+            c = common.trim(c);
             // Some currency formats (eg: Russian py6. and Indian Rs. have a 
             // dot to finish. If we have a leading dot, it must be one of
             // those formats so remove it.
@@ -1277,7 +1277,7 @@
                     format.padleft(d.getDate(), 2) + "T00:00:00";
             }
             // d is String, Extract time if present
-            d = $.trim(d);
+            d = common.trim(d);
             if (d.indexOf(" ") != -1 && d.indexOf(":") != -1) {
                 time = d.substring(d.indexOf(" ")+1);
                 d = d.substring(0, d.indexOf(" "));

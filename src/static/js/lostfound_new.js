@@ -156,21 +156,21 @@ $(function() {
                 }
 
                 // date lost
-                if (lostfound_new.mode == "lost" && $.trim($("#datelost").val()) == "") {
+                if (lostfound_new.mode == "lost" && common.trim($("#datelost").val()) == "") {
                     header.show_error(_("Date lost cannot be blank."));
                     validate.highlight("datelost");
                     return false;
                 }
 
                 // date found
-                if (lostfound_new.mode == "found" && $.trim($("#datefound").val()) == "") {
+                if (lostfound_new.mode == "found" && common.trim($("#datefound").val()) == "") {
                     header.show_error(_("Date found cannot be blank."));
                     validate.highlight("datefound");
                     return false;
                 }
 
                 // date reported
-                if ($.trim($("#datereported").val()) == "") {
+                if (common.trim($("#datereported").val()) == "") {
                     header.show_error(_("Date reported cannot be blank."));
                     validate.highlight("datereported");
                     return false;

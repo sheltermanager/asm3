@@ -121,7 +121,7 @@ $(function() {
                     return false;
                 }
                 // date
-                if ($.trim($("#movementdate").val()) == "") {
+                if (common.trim($("#movementdate").val()) == "") {
                     header.show_error(_("This type of movement requires a date."));
                     validate.highlight("movementdate");
                     return false;

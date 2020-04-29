@@ -121,7 +121,7 @@ $(document).ready(function() {
         if (is_ios || is_safari || is_ie9) {
             $(".asm-onlineform-date, .asm-onlineform-text, .asm-onlineform-lookup, .asm-onlineform-notes").each(function() {
                 if ($(this).attr("required")) {
-                    var v = $.trim(String($(this).val())); // Throw away whitespace before checking
+                    var v = String($(this).val()).trim(); // Throw away whitespace before checking
                     if (!v) {
                         alert("This field cannot be blank");
                         rv = false;

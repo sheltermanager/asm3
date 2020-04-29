@@ -1364,7 +1364,7 @@ $(function() {
                         var ms = config.str(d).split(",");
                         var bsm = $(this);
                         $.each(ms, function(i, v) {
-                            bsm.find("option[value='" + $.trim(v + "']")).attr("selected", "selected");
+                            bsm.find("option[value='" + common.trim(v + "']")).attr("selected", "selected");
                         });
                         $(this).change();
                     }

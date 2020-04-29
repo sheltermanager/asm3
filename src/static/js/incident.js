@@ -414,7 +414,7 @@ $(function() {
             validate.reset();
 
             // incident date
-            if ($.trim($("#incidentdate").val()) == "") {
+            if (common.trim($("#incidentdate").val()) == "") {
                 header.show_error(_("Incident date cannot be blank"));
                 $("#asm-details-accordion").accordion("option", "active", 0);
                 validate.highlight("incidentdate");

@@ -10,13 +10,13 @@ $(function() {
          */
         description: function(r) {
             var banner = [];
-            if ($.trim(r.HIDDENANIMALDETAILS) != "") {
+            if (common.trim(r.HIDDENANIMALDETAILS) != "") {
                 banner.push(r.HIDDENANIMALDETAILS);
             }
-            if ($.trim(r.MARKINGS) != "") {
+            if (common.trim(r.MARKINGS) != "") {
                 banner.push(r.MARKINGS);
             }
-            if ($.trim(r.ANIMALCOMMENTS) != "") {
+            if (common.trim(r.ANIMALCOMMENTS) != "") {
                 banner.push(r.ANIMALCOMMENTS);
             }
             return banner.join(". ");

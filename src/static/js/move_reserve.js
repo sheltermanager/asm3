@@ -96,7 +96,7 @@ $(function() {
                     return false;
                 }
                 // date
-                if ($.trim($("#reservationdate").val()) == "") {
+                if (common.trim($("#reservationdate").val()) == "") {
                     header.show_error(_("This type of movement requires a date."));
                     validate.highlight("reservationdate");
                     return false;

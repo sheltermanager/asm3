@@ -1158,7 +1158,7 @@ $(function() {
             validate.reset();
 
             // name
-            if ($.trim($("#animalname").val()) == "") {
+            if (common.trim($("#animalname").val()) == "") {
                 header.show_error(_("Name cannot be blank"));
                 $("#asm-details-accordion").accordion("option", "active", 0);
                 validate.highlight("animalname");
@@ -1166,7 +1166,7 @@ $(function() {
             }
 
             // date brought in
-            if ($.trim($("#datebroughtin").val()) == "") {
+            if (common.trim($("#datebroughtin").val()) == "") {
                 header.show_error(_("Date brought in cannot be blank"));
                 $("#asm-details-accordion").accordion("option", "active", 3);
                 validate.highlight("datebroughtin");
@@ -1174,7 +1174,7 @@ $(function() {
             }
 
             // date of birth
-            if ($.trim($("#dateofbirth").val()) == "") {
+            if (common.trim($("#dateofbirth").val()) == "") {
                 header.show_error(_("Date of birth cannot be blank"));
                 $("#asm-details-accordion").accordion("option", "active", 0);
                 validate.highlight("dateofbirth");
@@ -1182,7 +1182,7 @@ $(function() {
             }
 
             // shelter code
-            if ($.trim($("#sheltercode").val()) == "") {
+            if (common.trim($("#sheltercode").val()) == "") {
                 header.show_error(_("Shelter code cannot be blank"));
                 $("#asm-details-accordion").accordion("option", "active", 0);
                 validate.highlight("sheltercode");
