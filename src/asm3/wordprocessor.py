@@ -172,7 +172,7 @@ def animal_tags(dbo, a, includeAdditional=True, includeCosts=True, includeDiet=T
         "ANIMALCREATEDBY"       : a["CREATEDBY"],
         "ANIMALCREATEDDATE"     : python2display(l, a["CREATEDDATE"]),
         "DATEBROUGHTIN"         : python2display(l, a["DATEBROUGHTIN"]),
-        "TIMEBROUGHTIN"         : format_time_custom("%H:%M",a["DATEBROUGHTIN"]),
+        "TIMEBROUGHTIN"         : format_time(a["DATEBROUGHTIN"]),
         "DATEOFBIRTH"           : python2display(l, a["DATEOFBIRTH"]),
         "AGEGROUP"              : a["AGEGROUP"],
         "DISPLAYDOB"            : displaydob,
