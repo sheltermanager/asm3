@@ -91,7 +91,7 @@
                 post.push(pname + "=" + encodeURIComponent(t.currency("value")));
             }
             else if (t.hasClass("asm-richtextarea")) {
-                post.push(encodeURIComponent(t.richtextarea("value")));
+                post.push(pname + "=" + encodeURIComponent(t.richtextarea("value")));
             }
             else if (t.hasClass("asm-mask")) {
                 if (t.val() && t.val() != MASK_VALUE) {
