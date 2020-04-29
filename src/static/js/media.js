@@ -48,8 +48,10 @@ $(function() {
                             return tableform.fields_post(dialog.fields, "mode=update&mediaid=" + row.ID, "media");
                         })
                         .then(function() {
+                            var lastmode = media.icon_mode_active;
                             tableform.table_update(table);
                             tableform.dialog_enable_buttons();
+                            if (lastmode) { media.mode_icon(); } else { media.mode_table(); }
                         })
                         .fail(function() {
                             tableform.dialog_enable_buttons();
