@@ -88,7 +88,7 @@
                 }
             }
             else if (t.hasClass("asm-currencybox")) {
-                post.push("=" + encodeURIComponent(t.currency("value")));
+                post.push(pname + "=" + encodeURIComponent(t.currency("value")));
             }
             else if (t.hasClass("asm-richtextarea")) {
                 post.push(encodeURIComponent(t.richtextarea("value")));
@@ -98,7 +98,7 @@
                     post.push(pname + "=" + encodeURIComponent(t.val()));
                 }
             }
-            else if (t.val() || includeblanks ) {
+            else if (t.val() || includeblanks) {
                 post.push(pname + "=" + encodeURIComponent(t.val()));
             }
         });
