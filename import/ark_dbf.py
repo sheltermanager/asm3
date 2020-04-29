@@ -25,7 +25,8 @@ ppo = {}
 arkspecies = {
     "C": 1, # Dog
     "F": 2, # Cat
-    "E": 24 # Horse
+    "E": 24,# Horse
+    "R": 7  # Rabbit
 }
 
 asm.setid("animal", START_ID)
@@ -91,10 +92,20 @@ for d in asm.read_dbf("%s/ANIMALS.DBF" % PATH):
             a.AnimalTypeID = 12
         else:
             a.AnimalTypeID = 11
+    elif d["SPECIES"] == "R":
+        # Rabbit
+        a.SpeciesID = 7
+        a.AnimalTypeID = 13
+        if d["SURR_CODE"] == "STR":
+            a.EntryReasonID = 11
+    else:
+        # SPECIES == "O" for other, BREED contains species instead
+        a.SpeciesID = asm.species_id_for_name(d["BREED"])
+        a.AnimalTypeID = 13 # Miscellaneous
+        a.EntryReasonID = 11
     if d["SURR_ID"] != "":
         if d["SURR_ID"] in ppo:
             a.OriginalOwnerID = ppo[d["SURR_ID"]].ID
-    a.ShortCode = d["ID_NUM"]
     a.Sex = asm.getsex_mf(d["SEX"])
     a.ShelterLocationUnit = d["LOCATION"]
     a.BreedID = asm.breed_id_for_name(d["BREED"])
@@ -107,6 +118,7 @@ for d in asm.read_dbf("%s/ANIMALS.DBF" % PATH):
     a.DateBroughtIn = asm.todatetime(d["DATE_SURR"])
     if a.DateBroughtIn is None: a.DateBroughtIn = asm.now()
     a.generateCode()
+    a.ShortCode = d["ID_NUM"]
     a.NeuteredDate = d["NEUTER_DAT"]
     if a.NeuteredDate is not None:
         a.Neutered = 1
@@ -126,6 +138,9 @@ for d in asm.read_dbf("%s/ANIMALS.DBF" % PATH):
         a.PutToSleep = 1
         a.Archived = 1
         a.DeceasedDate = d["DATE_DISPO"]
+    if d["CHIP_NUM"] != "":
+        a.Identichipped = 1
+        a.IdentichipNumber = d["CHIP_NUM"]
     comments = "Original breed: %s\nColor: %s" % (d["BREED"].strip(), d["COLOR"].strip())
     if asm.nulltostr(d["PU_LOC"]).strip() != "":
         comments += "\nPicked up from: %s" % d["PU_LOC"]
