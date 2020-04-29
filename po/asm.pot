@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ASM3\n"
 "Report-Msgid-Bugs-To: robin@sheltermanager.com\n"
-"POT-Creation-Date: 2020-04-26 19:10+0000\n"
+"POT-Creation-Date: 2020-04-29 09:52+0000\n"
 "Last-Translator: Robin Rawson-Tetley <robin@sheltermanager.com>\n"
 "Language-Team: en <robin@sheltermanager.com>\n"
 "Language: en\n"
@@ -87,7 +87,7 @@ msgstr ""
 msgid "1 week"
 msgstr ""
 
-#: lookups.js media.js publish_options.js
+#: publish_options.js lookups.js media.js
 msgid "1 year"
 msgstr ""
 
@@ -642,7 +642,7 @@ msgstr ""
 msgid "Add {0}"
 msgstr ""
 
-#: media.js person.js
+#: person.js media.js
 msgid "Added"
 msgstr ""
 
@@ -3788,6 +3788,14 @@ msgstr ""
 msgid "Document signing request"
 msgstr ""
 
+#: search.py
+msgid "Document signing requests issued in the last month that are unsigned"
+msgstr ""
+
+#: search.py
+msgid "Document signing requests received in the last week"
+msgstr ""
+
 #: html.py
 msgid "Document templates"
 msgstr ""
@@ -6151,7 +6159,7 @@ msgstr ""
 msgid "Indefinitely"
 msgstr ""
 
-#: additional.js diarytask.js
+#: diarytask.js additional.js
 msgid "Index"
 msgstr ""
 
@@ -9822,9 +9830,9 @@ msgstr ""
 msgid "Saturday"
 msgstr ""
 
-#: mobile.py lostfound.js medical.js accounts_trx.js change_user_settings.js
-#: waitinglist.js test.js roles.js onlineforms.js vaccination.js
-#: publish_options.js incident.js animal.js person.js reports.js
+#: mobile.py change_user_settings.js publish_options.js incident.js person.js
+#: medical.js vaccination.js onlineforms.js reports.js waitinglist.js
+#: accounts_trx.js roles.js lostfound.js test.js animal.js
 msgid "Save"
 msgstr ""
 
@@ -9922,9 +9930,9 @@ msgstr ""
 msgid "Second offence"
 msgstr ""
 
-#: common_personchooser.js common_tableform.js common.js users.js accounts.js
-#: accounts_trx.js clinic_appointment.js roles.js onlineforms.js
-#: common_animalchoosermulti.js animal.js person.js reports.js diarytasks.js
+#: common_personchooser.js users.js person.js onlineforms.js reports.js
+#: common_tableform.js common.js common_animalchoosermulti.js accounts_trx.js
+#: roles.js accounts.js animal.js clinic_appointment.js diarytasks.js media.js
 msgid "Select"
 msgstr ""
 
@@ -10285,6 +10293,10 @@ msgid "Show on new record screens"
 msgstr ""
 
 #: options.js
+msgid "Show pink and blue borders around animal thumbnails to indicate sex"
+msgstr ""
+
+#: options.js
 msgid "Show quick links on all pages"
 msgstr ""
 
@@ -10501,9 +10513,9 @@ msgstr ""
 msgid "Sites"
 msgstr ""
 
-#: html.py person.py mobile.py lookups.py animal_find.js animal_find_results.js
-#: waitinglist.js animal_new.js media.js waitinglist_results.js animal.js
-#: person.js waitinglist_new.js
+#: html.py mobile.py person.py lookups.py animal_new.js waitinglist_new.js
+#: animal_find_results.js waitinglist_results.js person.js animal_find.js
+#: waitinglist.js animal.js media.js
 msgid "Size"
 msgstr ""
 
@@ -12078,6 +12090,10 @@ msgstr ""
 
 #: common.js calendarview.js clinic_calendar.js options.js
 msgid "Today"
+msgstr ""
+
+#: media.js
+msgid "Toggle table/icon view"
 msgstr ""
 
 #: dbupdate.py
@@ -13913,6 +13929,14 @@ msgid "{plural0} day."
 msgstr ""
 
 #: main.js
+msgid "{plural0} document signing request has been received in the last week"
+msgstr ""
+
+#: main.js
+msgid "{plural0} document signing request issued in the last month is unsigned"
+msgstr ""
+
+#: main.js
 msgid "{plural0} incomplete animal control call"
 msgstr ""
 
@@ -14074,6 +14098,14 @@ msgstr ""
 
 #: i18n.py
 msgid "{plural1} days."
+msgstr ""
+
+#: main.js
+msgid "{plural1} document signing requests have been received in the last week"
+msgstr ""
+
+#: main.js
+msgid "{plural1} document signing requests issued in the last month are unsigned"
 msgstr ""
 
 #: main.js
@@ -14241,6 +14273,14 @@ msgid "{plural2} days."
 msgstr ""
 
 #: main.js
+msgid "{plural2} document signing requests have been received in the last week"
+msgstr ""
+
+#: main.js
+msgid "{plural2} document signing requests issued in the last month are unsigned"
+msgstr ""
+
+#: main.js
 msgid "{plural2} incomplete animal control calls"
 msgstr ""
 
@@ -14402,6 +14442,14 @@ msgstr ""
 
 #: i18n.py
 msgid "{plural3} days."
+msgstr ""
+
+#: main.js
+msgid "{plural3} document signing requests have been received in the last week"
+msgstr ""
+
+#: main.js
+msgid "{plural3} document signing requests issued in the last month are unsigned"
 msgstr ""
 
 #: main.js

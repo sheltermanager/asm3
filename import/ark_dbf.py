@@ -9,8 +9,8 @@ Import script for ARK DBF databases, covers people, animals, payments, events, l
 Last changed: 23rd Dec, 2019
 """
 
-PATH = "/home/robin/tmp/asm3_import_data/ark_em2030"
-START_ID = 100
+PATH = "/home/robin/tmp/asm3_import_data/ark_im2058"
+START_ID = 1000
 
 owners = []
 ownerdonations = []
@@ -55,10 +55,10 @@ for p in asm.read_dbf("%s/NAMES.DBF" % PATH):
     o = asm.Owner()
     owners.append(o)
     ppo[p["ID"]] = o
-    o.OwnerForeNames = p["F_NAME"]
-    o.OwnerSurname = p["L_NAME"]
-    o.OwnerAddress = "%s %s\n%s" % (p["ADR_ST_NUM"], p["ADR_ST_NAM"], p["ADR_LINE2"])
-    o.OwnerTown = p["CITY"]
+    o.OwnerForeNames = p["F_NAME"].title()
+    o.OwnerSurname = p["L_NAME"].title()
+    o.OwnerAddress = "%s %s\n%s" % (p["ADR_ST_NUM"].title(), p["ADR_ST_NAM"].title(), p["ADR_LINE2"].title())
+    o.OwnerTown = p["CITY"].title()
     o.OwnerCounty = p["STATE"]
     o.OwnerPostcode = p["ZIP"]
     o.HomeTelephone = p["H_PHONE"]
@@ -74,6 +74,7 @@ for d in asm.read_dbf("%s/ANIMALS.DBF" % PATH):
     a.AnimalName = d["NAME"]
     if a.AnimalName.strip() == "":
         a.AnimalName = "(unknown)"
+    a.AnimalName = a.AnimalName.title()
     if d["SPECIES"] == "C":
         # Canine
         a.SpeciesID = 1
@@ -93,7 +94,6 @@ for d in asm.read_dbf("%s/ANIMALS.DBF" % PATH):
     if d["SURR_ID"] != "":
         if d["SURR_ID"] in ppo:
             a.OriginalOwnerID = ppo[d["SURR_ID"]].ID
-    a.generateCode()
     a.ShortCode = d["ID_NUM"]
     a.Sex = asm.getsex_mf(d["SEX"])
     a.ShelterLocationUnit = d["LOCATION"]
@@ -106,6 +106,7 @@ for d in asm.read_dbf("%s/ANIMALS.DBF" % PATH):
         a.BreedName = asm.breed_name_for_id(a.BreedID) + " / " + asm.breed_name_for_id(a.Breed2ID)
     a.DateBroughtIn = asm.todatetime(d["DATE_SURR"])
     if a.DateBroughtIn is None: a.DateBroughtIn = asm.now()
+    a.generateCode()
     a.NeuteredDate = d["NEUTER_DAT"]
     if a.NeuteredDate is not None:
         a.Neutered = 1

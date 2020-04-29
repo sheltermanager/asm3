@@ -1,8 +1,12 @@
 /*jslint browser: true, forin: true, eqeq: true, plusplus: true, white: true, regexp: true, sloppy: true, vars: true, nomen: true */
 /*global $, console, jQuery, CodeMirror, Mousetrap, tinymce */
 /*global asm, common, config, dlgfx, edit_header, format, html, header, log, schema, validate, _, escape, unescape */
+/*global MASK_VALUE: true */
 
 (function($) {
+
+    // String shown in asm-mask fields instead of the value
+    MASK_VALUE = "****************";
 
     // Generates a javascript object of parameters by looking
     // at the data attribute of all items matching the
@@ -66,41 +70,39 @@
 
     // Generates a URL encoded form data string of parameters
     // by looking at the data-post or data attribute of all items 
-    // matching the selector
+    // matching the selector. 
+    // includeblanks: true if you want fields with empty values sent instead of omitted.
     $.fn.toPOST = function(includeblanks) {
-        var post = "";
+        var post = [];
         this.each(function() {
             var t = $(this);
             var pname = t.attr("data-post");
             if (!pname) { pname = t.attr("data"); }
             if (!pname) { return; }
             if (t.attr("type") == "checkbox") {
-                if (post != "") { post += "&"; }
                 if (t.is(":checked")) {
-                    post += pname + "=checked";   
+                    post.push(pname + "=checked");
                 }
                 else {
-                    post += pname + "=off";
+                    post.push(pname + "=off");
                 }
             }
             else if (t.hasClass("asm-currencybox")) {
-                if (post != "") { post += "&"; }
-                post += pname + "=" + encodeURIComponent(t.currency("value"));
+                post.push(pname + "=" + encodeURIComponent(t.currency("value")));
             }
             else if (t.hasClass("asm-richtextarea")) {
-                if (post != "") { post += "&"; }
-                post += pname + "=" + encodeURIComponent(t.richtextarea("value"));
+                post.push(pname + "=" + encodeURIComponent(t.richtextarea("value")));
             }
-            else if (t.val()) {
-                if (post != "") { post += "&"; }
-                post += pname + "=" + encodeURIComponent(t.val());
+            else if (t.hasClass("asm-mask")) {
+                if (t.val() && t.val() != MASK_VALUE) {
+                    post.push(pname + "=" + encodeURIComponent(t.val()));
+                }
             }
-            else if (includeblanks) {
-                if (post != "") { post += "&"; }
-                post += pname + "=" + encodeURIComponent(t.val());
+            else if (t.val() || includeblanks) {
+                post.push(pname + "=" + encodeURIComponent(t.val()));
             }
         });
-        return post;
+        return post.join("&");
     };
 
     // Generates a comma separated list of the data attributes of
@@ -592,20 +594,24 @@
          */
         show: function(o) {
             var b = {}; 
-            b[_("Send")] = function() { 
-                if (!validate.email($("#emailfrom").val())) { return; }
-                if (!validate.email($("#emailto").val())) { return; }
-                if ($("#emailcc").val() != "" && !validate.email($("#emailcc").val())) { return; }
-                if ($("#emailbcc").val() != "" && !validate.email($("#emailbcc").val())) { return; }
-                if (o.formdata) { o.formdata += "&"; }
-                o.formdata += $("#dialog-email input, #dialog-email select, #dialog-email .asm-richtextarea").toPOST();
-                header.show_loading(_("Sending..."));
-                common.ajax_post(o.post, o.formdata, function() {
-                    var recipients = $("#emailto").val();
-                    if ($("#emailcc").val() != "") { recipients += ", " + $("#emailcc").val(); }
-                    header.show_info(_("Message successfully sent to {0}").replace("{0}", recipients));
-                    $("#dialog-email").dialog("close");
-                });
+            b[_("Send")] = {
+                text: _("Send"),
+                "class": "asm-dialog-actionbutton",
+                click: function() { 
+                    if (!validate.email($("#emailfrom").val())) { return; }
+                    if (!validate.email($("#emailto").val())) { return; }
+                    if ($("#emailcc").val() != "" && !validate.email($("#emailcc").val())) { return; }
+                    if ($("#emailbcc").val() != "" && !validate.email($("#emailbcc").val())) { return; }
+                    if (o.formdata) { o.formdata += "&"; }
+                    o.formdata += $("#dialog-email input, #dialog-email select, #dialog-email .asm-richtextarea").toPOST();
+                    header.show_loading(_("Sending..."));
+                    common.ajax_post(o.post, o.formdata, function() {
+                        var recipients = $("#emailto").val();
+                        if ($("#emailcc").val() != "") { recipients += ", " + $("#emailcc").val(); }
+                        header.show_info(_("Message successfully sent to {0}").replace("{0}", recipients));
+                        $("#dialog-email").dialog("close");
+                    });
+                }
             };
             b[_("Cancel")] = function() { $(this).dialog("close"); };
             $("#dialog-email").dialog({

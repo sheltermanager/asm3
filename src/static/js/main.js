@@ -187,6 +187,24 @@ $(function() {
                             _("{plural3} trial adoptions have ended")
                         ]) + '</a><br />';
                 }
+                if (alerts.DOCUNSIGNED > 0 && common.has_permission("vo")) {
+                    s += '<a href="search?q=unsigned">' + html.icon("signature") + ' ' + 
+                        common.ntranslate(alerts.DOCUNSIGNED, [
+                            _("{plural0} document signing request issued in the last month is unsigned"),
+                            _("{plural1} document signing requests issued in the last month are unsigned"),
+                            _("{plural2} document signing requests issued in the last month are unsigned"),
+                            _("{plural3} document signing requests issued in the last month are unsigned")
+                        ]) + '</a><br />';
+                }
+                if (alerts.DOCSIGNED > 0 && common.has_permission("vo")) {
+                    s += '<a href="search?q=signed">' + html.icon("signature") + ' ' + 
+                        common.ntranslate(alerts.DOCSIGNED, [
+                            _("{plural0} document signing request has been received in the last week"),
+                            _("{plural1} document signing requests have been received in the last week"),
+                            _("{plural2} document signing requests have been received in the last week"),
+                            _("{plural3} document signing requests have been received in the last week")
+                        ]) + '</a><br />';
+                }
                 if (alerts.NOTADOPT > 0 && common.has_permission("va") && config.bool("EmblemNotForAdoption")) {
                     s += '<a href="search?q=notforadoption">' + html.icon("notforadoption") + ' ' + 
                         common.ntranslate(alerts.NOTADOPT, [

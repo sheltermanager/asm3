@@ -402,6 +402,9 @@ Display
   the rows of the movement and medical books (foster book, reservation book,
   vaccination book, etc.)
 
+* Show pink and blue borders around animal thumbnails to indicate sex: Makes
+  the border around thumbnails pink for girls and blue for boy animals.
+
 * Show a minimap of the address on person screens: Show an embedded map next to the
   person's address on the details screen. Also shows a minimap on the dispatch
   slider of incidents.

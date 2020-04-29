@@ -1,5 +1,6 @@
 /*jslint browser: true, forin: true, eqeq: true, white: true, sloppy: true, vars: true, nomen: true */
 /*global $, jQuery, _, asm, common, config, controller, dlgfx, format, header, html, validate */
+/*global MASK_VALUE */
 
 $(function() {
 
@@ -747,6 +748,7 @@ $(function() {
                 '<!-- <input data="FancyTooltips" id="fancytooltips" class="asm-checkbox" type="checkbox" /> <label for="fancytooltips">' + _("Use fancy tooltips") + '</label><br /> -->',
                 '<input data="rc:DontUseHTML5Scaling" id="disablehtml5scaling" class="asm-checkbox" type="checkbox" /> <label for="disablehtml5scaling">' + _("Use HTML5 client side image scaling where available to speed up image uploads") + '</label><br />',
                 '<input data="PicturesInBooks" id="picsinbooks" class="asm-checkbox" type="checkbox" /> <label for="picsinbooks">' + _("Show animal thumbnails in movement and medical books") + '</label><br />',
+                '<input data="ShowSexBorder" id="sexborder" class="asm-checkbox" type="checkbox" /> <label for="sexborder">' + _("Show pink and blue borders around animal thumbnails to indicate sex") + '</label><br />',
                 '<input data="ShowPersonMiniMap" id="minimap" class="asm-checkbox" type="checkbox" /> <label for="minimap">' + _("Show a minimap of the address on person screens") + '</label><br />',
                 '<input data="ShowLatLong" id="latlong" class="asm-checkbox" type="checkbox" /> <label for="latlong">' + _("Allow editing of latitude/longitude with minimaps") + '</label><br />',
                 '<input data="ShowWeightInLbs" id="showlbs" class="asm-checkbox" type="checkbox" /> <label for="showlbs">' + _("Show weights as lb and oz") + '</label><br />',
@@ -1084,7 +1086,7 @@ $(function() {
                 '<tr><td><label for="stripekey">' + _("Stripe Key") + '</label></td>',
                 '<td><input data="StripeKey" id="stripekey" type="text" class="asm-textbox asm-doubletextbox" /></td></tr>',
                 '<tr><td><label for="stripesecretkey">' + _("Stripe Secret Key") + '</label></td>',
-                '<td><input data="StripeSecretKey" id="stripesecretkey" type="text" class="asm-textbox asm-doubletextbox" /></td></tr>',
+                '<td><input data="StripeSecretKey" id="stripesecretkey" type="text" class="asm-textbox asm-doubletextbox asm-mask" /></td></tr>',
                 '</table>',
                 '<p class="centered">',
                     _("In the Stripe dashboard, create a webhook to send 'checkout.session.completed' events to {0}")
@@ -1338,7 +1340,8 @@ $(function() {
                         $(this).richtextarea("value", config.str(d));
                     }
                     else if ($(this).is("input:text")) {
-                        $(this).val( html.decode(config.str(d)));
+                        if ($(this).is(".asm-mask") && config.str(d)) { $(this).val(MASK_VALUE); }
+                        else { $(this).val( html.decode(config.str(d))); }
                     }
                     else if ($(this).is("input:checkbox")) {
                         if (d.indexOf("rc:") != -1) {

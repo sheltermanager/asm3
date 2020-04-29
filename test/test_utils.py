@@ -14,7 +14,6 @@ class TestUtils(unittest.TestCase):
     def test_send_email(self):
         asm3.utils.send_email( base.get_dbo(), "tests@example.com", "example@example.com", subject="Test", body="Test suite", exceptions=False )
 
-
     def test_generate_label_pdf(self):
         rows = [ { "OWNERNAME": "test", "OWNERADDRESS": "test", "OWNERCOUNTY": "test", "OWNERTOWN": "test", "OWNERPOSTCODE": "test" } ]
         asm3.utils.generate_label_pdf(base.get_dbo(), "en", rows, "A4", "cm", 1.0, 1.0, 5.0, 5.0, 0, 0, 2, 3)
@@ -24,3 +23,11 @@ class TestUtils(unittest.TestCase):
         c = asm3.utils.csv("en", data)
         assert isinstance(c, bytes)
         assert c.find(b"\"FIELD1") != -1
+
+    def test_csv_parse(self):
+        data = u"FIELD1,FIELD2\n\"£,quoted\njunk\",field2"
+        rows = asm3.utils.csv_parse(data)
+        assert len(rows) == 1
+        assert rows[0]["FIELD1"].find("quoted") != -1
+        assert len(rows[0]) == 2
+

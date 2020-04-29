@@ -1,6 +1,15 @@
 44
 ================
 
+29/04/20 Fix introduced bug in saving currency fields
+28/04/20 Display option to turn off pink/blue borders
+28/04/20 Mask Stripe secret key for security #799
+28/04/20 Fixes for PayPal CSV import encoding (cp1252)
+28/04/20 Refactor/rewrite of CSV parsing for py2/3 compatibility
+28/04/20 Add media screen icon mode after universal user hatred of table #652
+27/04/20 Online forms: Fix mandatory sig/image bugs caused by required move
+27/04/20 Signed/unsigned document requests search/alerts #507
+27/04/20 Fix all thumbnails to a consistent size with object-fit css
 27/04/20 Use position: fixed with pageX/pageY for positioning callouts
 27/04/20 Substitute animal tokens in email templates #759
 26/04/20 Send media emails as multiple attachments to one message #405

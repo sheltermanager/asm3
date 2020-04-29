@@ -67,7 +67,7 @@ $(document).ready(function() {
                 var img = $(this).find("canvas").get(0).toDataURL("image/png");
                 var fieldname = $(this).attr("data-name");
                 $("input[name='" + fieldname + "']").val(img);
-                if ($(this).signature("isEmpty") && $(this).parent().find(".asm-onlineform-required").length > 0) {
+                if ($(this).signature("isEmpty") && $(this).attr("data-required")) {
                     alert("Signature is required.");
                     rv = false;
                     return false;
@@ -85,7 +85,7 @@ $(document).ready(function() {
         $(".asm-onlineform-image").each(function() {
             var fieldname = $(this).attr("data-name"),
                 v = $(this).val();
-            if (!v && $(this).parent().find(".asm-onlineform-required").length > 0) {
+            if (!v && $(this).attr("data-required")) {
                 alert("You must attach an image");
                 $(this).focus();
                 rv = false;

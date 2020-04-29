@@ -207,7 +207,14 @@
          *   complete: function(row) { return true if the row should be drawn as complete },
          *   overdue: function(row) { return true if the row should be drawn as overdue },
          *   columns:  [
-         *      { initialsort: true, initialsortdirection: "asc", field: "jsonfield", display: _("Text"), formatter: tableform.format_date, hideif: function(row) } 
+         *      { initialsort: true, 
+         *        initialsortdirection: "asc", 
+         *        field: "jsonfield", 
+         *        classes: "",
+         *        display: _("Text"), 
+         *        formatter: tableform.format_date, 
+         *        hideif: function(row) 
+         *      } 
          *   ]
          *
          * bodyonly: If you only want the tbody contents, set this to true
@@ -239,6 +246,9 @@
                         if (table.overdue(vr)) {
                             extraclasses += " asm-overduerow";
                         }
+                    }
+                    if (vc.classes) {
+                        extraclasses += " " + vc.classes;
                     }
                     if (formatter === tableform.format_currency) {
                         extraclasses += " rightalign";

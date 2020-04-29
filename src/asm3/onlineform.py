@@ -239,11 +239,11 @@ def get_onlineform_html(dbo, formid, completedocument = True):
             h.append(asm3.utils.nulltostr(f.TOOLTIP))
         elif f.FIELDTYPE == FIELDTYPE_SIGNATURE:
             h.append('<input type="hidden" name="%s" value="" />' % cname)
-            h.append('<div class="asm-onlineform-signature" data-name="%s"></div>' % ( cname ))
+            h.append('<div class="asm-onlineform-signature" data-name="%s" data-required="%s"></div>' % ( cname, asm3.utils.iif(required != "", "required", "") ))
             h.append('<br/><button type="button" class="asm-onlineform-signature-clear" data-clear="%s">%s</button>' % ( cname, asm3.i18n._("Clear", l) ))
         elif f.FIELDTYPE == FIELDTYPE_IMAGE:
             h.append('<input type="hidden" name="%s" value="" />' % cname)
-            h.append('<input class="asm-onlineform-image" type="file" id="%s" data-name="%s" />' % (fid, cname))
+            h.append('<input class="asm-onlineform-image" type="file" id="%s" data-name="%s" data-required="%s" />' % (fid, cname, asm3.utils.iif(required != "", "required", "")))
         h.append('</td>')
         h.append('</tr>')
     h.append('</table>')
