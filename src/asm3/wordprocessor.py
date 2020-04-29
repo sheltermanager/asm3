@@ -18,7 +18,7 @@ import asm3.template
 import asm3.users
 import asm3.utils
 import asm3.waitinglist
-from asm3.i18n import _, format_currency, format_currency_no_symbol, format_time, now, python2display, yes_no
+from asm3.i18n import _, format_currency, format_currency_no_symbol, format_time, format_time_custom, now, python2display, yes_no
 
 import zipfile
 
@@ -172,7 +172,7 @@ def animal_tags(dbo, a, includeAdditional=True, includeCosts=True, includeDiet=T
         "ANIMALCREATEDBY"       : a["CREATEDBY"],
         "ANIMALCREATEDDATE"     : python2display(l, a["CREATEDDATE"]),
         "DATEBROUGHTIN"         : python2display(l, a["DATEBROUGHTIN"]),
-        "TIMEBROUGHTIN"         : format_time(a["DATEBROUGHTIN"]),
+        "TIMEBROUGHTIN"         : format_time_custom("%H:%M",a["DATEBROUGHTIN"]),
         "DATEOFBIRTH"           : python2display(l, a["DATEOFBIRTH"]),
         "AGEGROUP"              : a["AGEGROUP"],
         "DISPLAYDOB"            : displaydob,
@@ -1077,14 +1077,14 @@ def clinic_tags(dbo, c):
         "ID":                   asm3.utils.padleft(c.ID, 6),
         "APPOINTMENTFOR"        : asm3.users.get_real_name(dbo, c.APPTFOR),
         "APPOINTMENTDATE"       : python2display(l, c.DATETIME),
-        "APPOINTMENTTIME"       : format_time(c.DATETIME),
+        "APPOINTMENTTIME"       : format_time_custom("%H:%M",c.DATETIME),
         "STATUS"                : c.CLINICSTATUSNAME,
         "ARRIVEDDATE"           : python2display(l, c.ARRIVEDDATETIME),
-        "ARRIVEDTIME"           : format_time(c.ARRIVEDDATETIME),
+        "ARRIVEDTIME"           : format_time_custom("%H:%M",c.ARRIVEDDATETIME),
         "WITHVETDATE"           : python2display(l, c.WITHVETDATETIME),
-        "WITHVETTIME"           : format_time(c.WITHVETDATETIME),
+        "WITHVETTIME"           : format_time_custom("%H:%M",c.WITHVETDATETIME),
         "COMPLETEDDATE"         : python2display(l, c.COMPLETEDDATETIME),
-        "COMPLETEDTIME"         : format_time(c.COMPLETEDDATETIME),
+        "COMPLETEDTIME"         : format_time_custom("%H:%M",c.COMPLETEDDATETIME),
         "REASONFORAPPOINTMENT"  : c.REASONFORAPPOINTMENT,
         "APPOINTMENTCOMMENTS"   : c.COMMENTS,
         "INVOICEAMOUNT"         : format_currency_no_symbol(l, c.AMOUNT),
