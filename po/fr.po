@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ASM3\n"
 "Report-Msgid-Bugs-To: robin@sheltermanager.com\n"
-"POT-Creation-Date: 2020-04-26 19:10+0000\n"
-"PO-Revision-Date: 2020-04-26 19:13+0200\n"
+"POT-Creation-Date: 2020-04-29 09:52+0000\n"
+"PO-Revision-Date: 2020-04-29 17:33+0200\n"
 "Last-Translator: Julian POIDEVIN <poidevin.julian@gmail.com>\n"
 "Language-Team: \n"
 "Language: fr\n"
@@ -92,7 +92,7 @@ msgstr "1 traitement"
 msgid "1 week"
 msgstr "1 semaine"
 
-#: lookups.js media.js publish_options.js
+#: publish_options.js lookups.js media.js
 msgid "1 year"
 msgstr "1 an"
 
@@ -660,7 +660,7 @@ msgstr "Ajouter à la liste d'attente"
 msgid "Add {0}"
 msgstr "Ajouter {0}"
 
-#: media.js person.js
+#: person.js media.js
 msgid "Added"
 msgstr "Ajouté(s)"
 
@@ -3862,6 +3862,16 @@ msgstr "Document signé"
 msgid "Document signing request"
 msgstr "Requête de signature de document"
 
+#: search.py
+msgid "Document signing requests issued in the last month that are unsigned"
+msgstr ""
+"Requêtes de signature de document émises au cours du mois dernier qui n'ont "
+"pas été signées"
+
+#: search.py
+msgid "Document signing requests received in the last week"
+msgstr "Demandes de signature de documents reçues la semaine dernière"
+
 #: html.py
 msgid "Document templates"
 msgstr "Modèles de documents"
@@ -6297,7 +6307,7 @@ msgstr "Notes incomplètes jusqu'à aujourd'hui"
 msgid "Indefinitely"
 msgstr "Indéfiniment"
 
-#: additional.js diarytask.js
+#: diarytask.js additional.js
 msgid "Index"
 msgstr "Index"
 
@@ -10055,9 +10065,9 @@ msgstr "Satin"
 msgid "Saturday"
 msgstr "Samedi"
 
-#: mobile.py lostfound.js medical.js accounts_trx.js change_user_settings.js
-#: waitinglist.js test.js roles.js onlineforms.js vaccination.js
-#: publish_options.js incident.js animal.js person.js reports.js
+#: mobile.py change_user_settings.js publish_options.js incident.js person.js
+#: medical.js vaccination.js onlineforms.js reports.js waitinglist.js
+#: accounts_trx.js roles.js lostfound.js test.js animal.js
 msgid "Save"
 msgstr "Enregistrer"
 
@@ -10155,9 +10165,9 @@ msgstr "Consultable"
 msgid "Second offence"
 msgstr "Seconde infraction"
 
-#: common_personchooser.js common_tableform.js common.js users.js accounts.js
-#: accounts_trx.js clinic_appointment.js roles.js onlineforms.js
-#: common_animalchoosermulti.js animal.js person.js reports.js diarytasks.js
+#: common_personchooser.js users.js person.js onlineforms.js reports.js
+#: common_tableform.js common.js common_animalchoosermulti.js accounts_trx.js
+#: roles.js accounts.js animal.js clinic_appointment.js diarytasks.js media.js
 msgid "Select"
 msgstr "Sélectionner"
 
@@ -10538,6 +10548,12 @@ msgid "Show on new record screens"
 msgstr "Afficher sur de nouveaux écrans d'enregistrement"
 
 #: options.js
+msgid "Show pink and blue borders around animal thumbnails to indicate sex"
+msgstr ""
+"Affichez des bordures roses et bleues autour des miniatures des animaux pour "
+"indiquer le sexe"
+
+#: options.js
 msgid "Show quick links on all pages"
 msgstr "Afficher des liens rapides sur toutes les pages"
 
@@ -10756,9 +10772,9 @@ msgstr "Site"
 msgid "Sites"
 msgstr "Sites"
 
-#: html.py person.py mobile.py lookups.py animal_find.js animal_find_results.js
-#: waitinglist.js animal_new.js media.js waitinglist_results.js animal.js
-#: person.js waitinglist_new.js
+#: html.py mobile.py person.py lookups.py animal_new.js waitinglist_new.js
+#: animal_find_results.js waitinglist_results.js person.js animal_find.js
+#: waitinglist.js animal.js media.js
 msgid "Size"
 msgstr "Taille"
 
@@ -12477,6 +12493,10 @@ msgstr "Au début de la semaine"
 #: common.js calendarview.js clinic_calendar.js options.js
 msgid "Today"
 msgstr "Aujourd'hui"
+
+#: media.js
+msgid "Toggle table/icon view"
+msgstr "Basculer la vue tableau / icône"
 
 #: dbupdate.py
 msgid "Tonkinese"
@@ -14427,6 +14447,16 @@ msgid "{plural0} day."
 msgstr "{plural0} jour."
 
 #: main.js
+msgid "{plural0} document signing request has been received in the last week"
+msgstr "{plural0} demande de signature de document reçue la semaine dernière"
+
+#: main.js
+msgid "{plural0} document signing request issued in the last month is unsigned"
+msgstr ""
+"{plural0} demande de signature de document émise au cours du mois dernier "
+"n'est pas signée"
+
+#: main.js
 msgid "{plural0} incomplete animal control call"
 msgstr "{plural0} appel de contrôle des animaux incomplet"
 
@@ -14594,6 +14624,19 @@ msgstr "{plural1} rendez-vous clinique aujourd'hui"
 #: i18n.py
 msgid "{plural1} days."
 msgstr "{plural1} jours."
+
+#: main.js
+msgid "{plural1} document signing requests have been received in the last week"
+msgstr ""
+"{plural1} demandes de signature de documents ont été reçues dans la dernière "
+"semaine"
+
+#: main.js
+msgid ""
+"{plural1} document signing requests issued in the last month are unsigned"
+msgstr ""
+"{plural1} requêtes de signature de document émises au cours du mois dernier "
+"qui n'ont pas été signées"
 
 #: main.js
 msgid "{plural1} incomplete animal control calls"
@@ -14765,6 +14808,19 @@ msgid "{plural2} days."
 msgstr "{plural2} jours."
 
 #: main.js
+msgid "{plural2} document signing requests have been received in the last week"
+msgstr ""
+"{plural2} demandes de signature de documents ont été reçues dans la dernière "
+"semaine"
+
+#: main.js
+msgid ""
+"{plural2} document signing requests issued in the last month are unsigned"
+msgstr ""
+"{plural2} requêtes de signature de document émises au cours du mois dernier "
+"qui n'ont pas été signées"
+
+#: main.js
 msgid "{plural2} incomplete animal control calls"
 msgstr "{plural2} appels incomplets de contrôle des animaux"
 
@@ -14932,6 +14988,19 @@ msgstr "{plural3} rendez-vous clinique aujourd'hui"
 #: i18n.py
 msgid "{plural3} days."
 msgstr "{plural3} jours."
+
+#: main.js
+msgid "{plural3} document signing requests have been received in the last week"
+msgstr ""
+"{plural3} demandes de signature de documents ont été reçues dans la dernière "
+"semaine"
+
+#: main.js
+msgid ""
+"{plural3} document signing requests issued in the last month are unsigned"
+msgstr ""
+"{plural3} requêtes de signature de document émises au cours du mois dernier "
+"qui n'ont pas été signées"
 
 #: main.js
 msgid "{plural3} incomplete animal control calls"
