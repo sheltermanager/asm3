@@ -2,7 +2,6 @@
 
 var fs, vm, sandbox, filedata, jslintCore = 'jslint-core.js';
 
-print = require('util').puts;
 fs = require('fs');
 vm = require('vm');
 sandbox = {};
@@ -30,7 +29,7 @@ fs.readFile(process.argv[2], "utf8", function(err, data) {
                 if (nextError && nextError.reason && nextError.reason.match(/^Stopping/) !== null) {
                     errorType = ERROR;
                 }
-                print([error.line, error.character, errorType, error.reason].join(":"));
+                console.log([error.line, error.character, errorType, error.reason].join(":"));
             }
         }
     }
