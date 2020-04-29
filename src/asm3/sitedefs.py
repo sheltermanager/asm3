@@ -293,7 +293,7 @@ MULTIPLE_DATABASES_PUBLISH_URL = get_string("multiple_databases_publish_url", ""
 MULTIPLE_DATABASES_PUBLISH_FTP = get_dict("multiple_databases_publish_ftp", None)
 
 # Options available under the share button
-SHARE_BUTTON = get_string("share_button", "shareweb,shareemail")
+SHARE_BUTTON = get_string("share_button", "shareweb,sharepic,shareemail")
 
 # Type of electronic signing device available
 ELECTRONIC_SIGNATURES = get_string("electronic_signatures", "")

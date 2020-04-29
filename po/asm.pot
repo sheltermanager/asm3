@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ASM3\n"
 "Report-Msgid-Bugs-To: robin@sheltermanager.com\n"
-"POT-Creation-Date: 2020-04-29 09:52+0000\n"
+"POT-Creation-Date: 2020-04-29 14:19+0000\n"
 "Last-Translator: Robin Rawson-Tetley <robin@sheltermanager.com>\n"
 "Language-Team: en <robin@sheltermanager.com>\n"
 "Language: en\n"
@@ -6623,6 +6623,10 @@ msgstr ""
 msgid "Link this user account to a staff person record."
 msgstr ""
 
+#: animal.js
+msgid "Link to a photo of this animal"
+msgstr ""
+
 #: media.js
 msgid "Link to an external web resource"
 msgstr ""
@@ -10134,6 +10138,10 @@ msgstr ""
 
 #: animal.js
 msgid "Share"
+msgstr ""
+
+#: animal.js
+msgid "Shared photo"
 msgstr ""
 
 #: animal.js
