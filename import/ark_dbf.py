@@ -9,7 +9,7 @@ Import script for ARK DBF databases, covers people, animals, payments, events, l
 Last changed: 23rd Dec, 2019
 """
 
-PATH = "/home/robin/tmp/asm3_import_data/ark_em2030"
+PATH = "/home/robin/tmp/asm3_import_data/ark_im2058"
 START_ID = 1000
 
 owners = []
