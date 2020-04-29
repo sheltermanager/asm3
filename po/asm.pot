@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ASM3\n"
 "Report-Msgid-Bugs-To: robin@sheltermanager.com\n"
-"POT-Creation-Date: 2020-04-28 18:16+0000\n"
+"POT-Creation-Date: 2020-04-29 09:52+0000\n"
 "Last-Translator: Robin Rawson-Tetley <robin@sheltermanager.com>\n"
 "Language-Team: en <robin@sheltermanager.com>\n"
 "Language: en\n"
@@ -13934,7 +13934,7 @@ msgid "{plural0} document signing request has been received in the last week"
 msgstr ""
 
 #: main.js
-msgid "{plural0} document signing request is unsigned"
+msgid "{plural0} document signing request issued in the last month is unsigned"
 msgstr ""
 
 #: main.js
@@ -14102,11 +14102,11 @@ msgid "{plural1} days."
 msgstr ""
 
 #: main.js
-msgid "{plural1} document signing requests are unsigned"
+msgid "{plural1} document signing requests have been received in the last week"
 msgstr ""
 
 #: main.js
-msgid "{plural1} document signing requests have been received in the last week"
+msgid "{plural1} document signing requests issued in the last month are unsigned"
 msgstr ""
 
 #: main.js
@@ -14274,11 +14274,11 @@ msgid "{plural2} days."
 msgstr ""
 
 #: main.js
-msgid "{plural2} document signing requests are unsigned"
+msgid "{plural2} document signing requests have been received in the last week"
 msgstr ""
 
 #: main.js
-msgid "{plural2} document signing requests have been received in the last week"
+msgid "{plural2} document signing requests issued in the last month are unsigned"
 msgstr ""
 
 #: main.js
@@ -14446,11 +14446,11 @@ msgid "{plural3} days."
 msgstr ""
 
 #: main.js
-msgid "{plural3} document signing requests are unsigned"
+msgid "{plural3} document signing requests have been received in the last week"
 msgstr ""
 
 #: main.js
-msgid "{plural3} document signing requests have been received in the last week"
+msgid "{plural3} document signing requests issued in the last month are unsigned"
 msgstr ""
 
 #: main.js

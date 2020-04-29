@@ -190,10 +190,10 @@ $(function() {
                 if (alerts.DOCUNSIGNED > 0 && common.has_permission("vo")) {
                     s += '<a href="search?q=unsigned">' + html.icon("signature") + ' ' + 
                         common.ntranslate(alerts.DOCUNSIGNED, [
-                            _("{plural0} document signing request is unsigned"),
-                            _("{plural1} document signing requests are unsigned"),
-                            _("{plural2} document signing requests are unsigned"),
-                            _("{plural3} document signing requests are unsigned")
+                            _("{plural0} document signing request issued in the last month is unsigned"),
+                            _("{plural1} document signing requests issued in the last month are unsigned"),
+                            _("{plural2} document signing requests issued in the last month are unsigned"),
+                            _("{plural3} document signing requests issued in the last month are unsigned")
                         ]) + '</a><br />';
                 }
                 if (alerts.DOCSIGNED > 0 && common.has_permission("vo")) {
