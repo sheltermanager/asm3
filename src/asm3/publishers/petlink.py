@@ -260,7 +260,7 @@ class PetLinkPublisher(AbstractPublisher):
         # Chip Password (stripped phone number)
         line.append("\"%s\"" % phone)
         # Date_of_Implant (yy-mm-dd)
-        line.append("\"%s\"" % asm3.i18n.format_date("%y-%m-%d", an["IDENTICHIPDATE"]))
+        line.append("\"%s\"" % asm3.i18n.format_date(an["IDENTICHIPDATE"], "%y-%m-%d"))
         # PetName
         line.append("\"%s\"" % an["ANIMALNAME"])
         # Species

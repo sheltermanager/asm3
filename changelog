@@ -1,6 +1,8 @@
 44
 ================
 
+30/04/20 make format_date and format_time consistent with each other #808
+30/04/20 Omit seconds for word processor clinic output (Julian Poidevin) #808
 29/04/20 Fix display after reloading media table on edit
 29/04/20 Option to share picture from share menu
 29/04/20 Fix introduced bug in saving currency fields

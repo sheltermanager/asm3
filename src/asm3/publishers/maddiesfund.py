@@ -46,7 +46,7 @@ class MaddiesFundPublisher(AbstractPublisher):
 
     def getDate(self, d):
         """ Returns a date in their preferred format of mm/dd/yyyy """
-        return asm3.i18n.format_date("%m/%d/%Y", d)
+        return asm3.i18n.format_date(d, "%m/%d/%Y")
 
     def getEmail(self, s):
         """ Returns only the first email if more than one is specified """

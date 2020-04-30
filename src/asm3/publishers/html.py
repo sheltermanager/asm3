@@ -284,7 +284,7 @@ class HTMLPublisher(FTPPublisher):
         output = searchin
         nav = self.navbar.replace("<a href=\"%d.%s\">%d</a>" % (page, self.pc.extension, page), str(page))
         dateportion = asm3.i18n.python2display(self.locale, asm3.i18n.now(self.dbo.timezone))
-        timeportion = asm3.i18n.format_date("%H:%M:%S", asm3.i18n.now(self.dbo.timezone))
+        timeportion = asm3.i18n.format_time(asm3.i18n.now(self.dbo.timezone))
         if page != -1:
             output = output.replace("$$NAV$$", nav)
         else:

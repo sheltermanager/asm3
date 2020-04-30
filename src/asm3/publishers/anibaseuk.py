@@ -154,7 +154,7 @@ class AnibaseUKPublisher(AbstractPublisher):
             return s.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
 
         implantdate = ""
-        if an["IDENTICHIPDATE"] is not None: implantdate = asm3.i18n.format_date("%d/%m/%Y", an["IDENTICHIPDATE"])
+        if an["IDENTICHIPDATE"] is not None: implantdate = asm3.i18n.format_date(an["IDENTICHIPDATE"], "%d/%m/%Y")
 
         # Construct the XML document
         return '<?xml version="1.0" encoding="UTF-8"?>\n' \

@@ -502,7 +502,7 @@ def update_user_activity(dbo, user, timenow = True):
             continue
     # Add this user with the new time 
     if timenow: 
-        nc.append("%s=%s" % (user, asm3.i18n.format_date("%Y-%m-%d %H:%M:%S", asm3.i18n.now(dbo.timezone))))
+        nc.append("%s=%s" % (user, asm3.i18n.format_date(asm3.i18n.now(dbo.timezone), "%Y-%m-%d %H:%M:%S")))
     asm3.cachemem.put("activity_%s" % dbo.database, ",".join(nc), 3600 * 8)
 
 def get_personid(dbo, user):
@@ -655,7 +655,7 @@ def update_session(session):
             dbo.query_int("SELECT COUNT(*) FROM animal") > 2000
     session.locale = locale
     session.theme = theme
-    session.config_ts = asm3.i18n.format_date("%Y%m%d%H%M%S", asm3.i18n.now())
+    session.config_ts = asm3.i18n.format_date(asm3.i18n.now(), "%Y%m%d%H%M%S")
 
 def web_login(post, session, remoteip, useragent, path):
     """

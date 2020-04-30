@@ -269,7 +269,7 @@ class PetRescuePublisher(AbstractPublisher):
             "rehoming_organisation_id": rehoming_organisation_id, # required for NSW, this OR microchip or breeder_id is mandatory
             "bred_in_care_of_group":    bred_in_care_of_group, 
             "mix":                      an.CROSSBREED == 1, # true | false
-            "date_of_birth":            asm3.i18n.format_date("%Y-%m-%d", an.DATEOFBIRTH), # iso
+            "date_of_birth":            asm3.i18n.format_date(an.DATEOFBIRTH, "%Y-%m-%d"), # iso
             "gender":                   an.SEXNAME.lower(), # male | female
             "personality":              self.getDescription(an, replaceSmart=True), # 20-4000 chars of free type
             "best_feature":             best_feature, # 25 chars free type, defaults to "Looking for love" requires BESTFEATURE additional field
