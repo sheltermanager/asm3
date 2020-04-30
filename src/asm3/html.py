@@ -782,7 +782,7 @@ def json_personfindcolumns(dbo):
     fd = asm3.additional.get_field_definitions(dbo, "person")
     for f in fd:
         cols.append( (f["FIELDNAME"], f["FIELDLABEL"]) )
-    findcolumns_sort(cols)
+    cols = findcolumns_sort(cols)
     findcolumns_selectedtofront(cols, asm3.configuration.person_search_columns(dbo))
     return cols
 
