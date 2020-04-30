@@ -325,6 +325,10 @@ select:disabled, input:disabled, textarea:disabled {
     font-weight: bold;
 }
 
+.asm-search-adoptable {
+    color: green;
+}
+
 .asm-search-notforadoption {
     color: red;
     font-weight: bold;

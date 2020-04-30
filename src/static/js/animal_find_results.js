@@ -125,6 +125,7 @@ $(function() {
          */
         column_label: function(name, add) {
             var labels = {
+                "Adoptable": _("Adoptable"),
                 "AnimalTypeID": _("Type"),
                 "AnimalName": _("Name"),
                 "BaseColourID": _("Color"),
@@ -216,7 +217,12 @@ $(function() {
                 "HasActiveReserve", "HasSpecialNeeds", "IsHold", "IsNotAvailableForAdoption", "IsPickup", "IsQuarantine" ],
             POS_NEG_UNKNOWN_FIELDS = [ "CombiTestResult", "FLVResult", "HeartwormTestResult" ],
             rv = "";
-            if (name == "AnimalTypeID") { rv = row.ANIMALTYPENAME; }
+            if (name == "Adoptable") {
+                var isa = html.is_animal_adoptable(row);
+                rv = '<span class="' + (isa[0] ? "asm-search-adoptable" : "asm-search-notforadoption") + '">' +
+                    isa[1] + '</span>';
+            }
+            else if (name == "AnimalTypeID") { rv = row.ANIMALTYPENAME; }
             else if ( name == "BaseColourID") { rv = row.BASECOLOURNAME; }
             else if ( name == "SpeciesID") { rv = row.SPECIESNAME; }
             else if ( name == "CoatType") { rv = row.COATTYPENAME; }

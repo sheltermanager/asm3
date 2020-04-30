@@ -716,6 +716,7 @@ def json_animalfindcolumns(dbo):
         ( "TimeOnShelter", _("Time On Shelter", l) ),
         ( "DaysOnShelter", _("Days On Shelter", l) ),
         ( "HasActiveReserve", _("Reserved", l) ), 
+        ( "Adoptable", _("Adoptable", l) ),
         ( "Image", _("Image", l) )
         ]
     fd = asm3.additional.get_field_definitions(dbo, "animal")

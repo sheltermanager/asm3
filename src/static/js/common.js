@@ -1448,8 +1448,8 @@
     html = {
 
         /**
-         * Returns true if animal a is adoptable. Looks at current publishing options
-         * and uses the same logic as the backend publisher
+         * Returns a two-item list containing true if animal a is adoptable and the reason.
+         * Looks at current publishing options and uses the same logic as the backend publisher
          */
         is_animal_adoptable: function(a) {
             var p = config.str("PublisherPresets"),
