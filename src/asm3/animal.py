@@ -1695,18 +1695,24 @@ def get_active_litters_brief(dbo):
         rv.append( { "label": disp, "value": i.acceptancenumber } )
     return rv
 
-def get_litters(dbo):
+def get_litters(dbo, offset="m365"):
     """
-    Returns all animal litters in descending order of age. Litters
-    over a year old are ignored.
+    Returns all animal litters in descending order of age. 
+    offset is m to go backwards days, or a for all time
     """
+    offsetdays = asm3.utils.atoi(offset)
+    where = ""
+    v = []
+    if offset.startswith("m"): 
+        where = "WHERE Date >= ? "
+        v.append( dbo.today(offsetdays*-1) )
     return dbo.query("SELECT l.*, a.AnimalName AS MotherName, " \
         "a.ShelterCode AS Mothercode, s.SpeciesName AS SpeciesName " \
         "FROM animallitter l " \
         "LEFT OUTER JOIN animal a ON l.ParentAnimalID = a.ID " \
         "INNER JOIN species s ON l.SpeciesID = s.ID " \
-        "WHERE l.Date >= ? " \
-        "ORDER BY l.Date DESC", [ subtract_years(dbo.today(), 1) ])
+        "%s" \
+        "ORDER BY l.Date DESC" % where, v)
 
 def get_satellite_counts(dbo, animalid):
     """

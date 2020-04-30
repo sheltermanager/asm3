@@ -3293,7 +3293,9 @@ class litters(JSONEndpoint):
 
     def controller(self, o):
         dbo = o.dbo
-        litters = asm3.animal.get_litters(dbo)
+        offset = o.post["offset"]
+        if offset == "": offset = "m365"
+        litters = asm3.animal.get_litters(dbo, offset)
         asm3.al.debug("got %d litters" % len(litters), "code.litters", dbo)
         return {
             "rows": litters,

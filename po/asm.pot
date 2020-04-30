@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ASM3\n"
 "Report-Msgid-Bugs-To: robin@sheltermanager.com\n"
-"POT-Creation-Date: 2020-04-30 11:03+0000\n"
+"POT-Creation-Date: 2020-04-30 13:16+0000\n"
 "Last-Translator: Robin Rawson-Tetley <robin@sheltermanager.com>\n"
 "Language-Team: en <robin@sheltermanager.com>\n"
 "Language: en\n"
@@ -998,7 +998,7 @@ msgstr ""
 msgid "All staff on file."
 msgstr ""
 
-#: options.js
+#: litters.js options.js
 msgid "All time"
 msgstr ""
 
@@ -4195,8 +4195,9 @@ msgid "Electricity Bills"
 msgstr ""
 
 #: html.py mobile.py onlineform.py users.js incident.js waitinglist_results.js
-#: person.js waitinglist.js lostfound.js animal.js options.js person_find.js
-#: media.js header_edit_header.js person_find_results.js
+#: person.js waitinglist.js document_repository.js lostfound.js animal.js
+#: options.js person_find.js media.js header_edit_header.js
+#: person_find_results.js
 msgid "Email"
 msgstr ""
 
@@ -4246,7 +4247,7 @@ msgid ""
 "addresses"
 msgstr ""
 
-#: media.js
+#: document_repository.js media.js
 msgid "Email media"
 msgstr ""
 
@@ -5907,7 +5908,7 @@ msgstr ""
 msgid "In the last week"
 msgstr ""
 
-#: publish_options.js
+#: publish_options.js litters.js
 msgid "In the last year"
 msgstr ""
 
@@ -10023,12 +10024,20 @@ msgid ""
 "animals"
 msgstr ""
 
+#: animal.js
+msgid "Send an email relating to this animal"
+msgstr ""
+
 #: donations.js
 msgid "Send an email request for payment via a payment processor"
 msgstr ""
 
 #: onlineforms.js
 msgid "Send confirmation email to form submitter"
+msgstr ""
+
+#: animal.js
+msgid "Send email"
 msgstr ""
 
 #: mailmerge.js
