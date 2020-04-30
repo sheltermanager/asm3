@@ -1252,6 +1252,7 @@ class animal(JSONEndpoint):
             "flags": asm3.lookups.get_animal_flags(dbo),
             "incidents": asm3.animalcontrol.get_animalcontrol_for_animal(dbo, o.post.integer("id")),
             "internallocations": asm3.lookups.get_internal_locations(dbo, o.locationfilter, o.siteid),
+            "logtypes": asm3.lookups.get_log_types(dbo),
             "pickuplocations": asm3.lookups.get_pickup_locations(dbo),
             "publishhistory": asm3.animal.get_publish_history(dbo, a["ID"]),
             "posneg": asm3.lookups.get_posneg(dbo),
@@ -1271,6 +1272,10 @@ class animal(JSONEndpoint):
     def post_delete(self, o):
         self.check(asm3.users.DELETE_ANIMAL)
         asm3.animal.delete_animal(o.dbo, o.user, o.post.integer("animalid"))
+
+    def post_email(self, o):
+        self.check(asm3.users.EMAIL_PERSON)
+        asm3.animal.send_email_from_form(o.dbo, o.user, o.post)
 
     def post_gencode(self, o):
         post = o.post

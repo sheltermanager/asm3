@@ -755,6 +755,7 @@ $(function() {
                 '</tr>',
                 '</table>',
                 '</div>',
+                '<div id="emailform" />',
                 '<div id="dialog-merge" style="display: none" title="' + html.title(_("Select animal to merge")) + '">',
                 '<div class="ui-state-highlight ui-corner-all" style="margin-top: 20px; padding: 0 .7em">',
                 '<p><span class="ui-icon ui-icon-info" style="float: left; margin-right: .3em;"></span>',
@@ -799,6 +800,7 @@ $(function() {
                     { id: "clone", text: _("Clone"), icon: "copy", tooltip: _("Create a new animal by copying this one") },
                     { id: "merge", text: _("Merge"), icon: "copy", tooltip: _("Merge another animal into this one") },
                     { id: "delete", text: _("Delete"), icon: "delete", tooltip: _("Delete this animal") },
+                    { id: "email", text: _("Email"), icon: "email", tooltip: _("Send an email relating to this animal") },
                     { id: "document", text: _("Document"), type: "buttonmenu", icon: "document", tooltip: _("Generate a document from this animal") },
                     { id: "diarytask", text: _("Diary Task"), type: "buttonmenu", icon: "diary-task", tooltip: _("Create diary notes from a task") },
                     { id: "match", text: _("Match"), icon: "match", tooltip: _("Match this animal with the lost and found database") },
@@ -1121,6 +1123,7 @@ $(function() {
             if (!common.has_permission("aa")) { $("#button-clone").hide(); }
             if (!common.has_permission("da")) { $("#button-merge").hide(); }
             if (!common.has_permission("da")) { $("#button-delete").hide(); }
+            if (!common.has_permission("emo")) { $("#button-email").hide(); }
             if (!common.has_permission("gaf")) { $("#button-document").hide(); }
             if (!common.has_permission("adn")) { $("#button-diarytask").hide(); }
             if (!common.has_permission("vo")) { $("#button-currentowner").hide(); }
@@ -1297,6 +1300,8 @@ $(function() {
 
             // Setup the document/diary task/social menu buttons
             $("#button-diarytask, #button-document, #button-share").asmmenu();
+
+            $("#emailform").emailform();
 
             // If the option isn't set to allow alphanumeric/space
             // characters in microchip and ntattoo numbers, use
@@ -1524,6 +1529,18 @@ $(function() {
                     });
             });
 
+            $("#button-email").button().click(function() {
+                $("#emailform").emailform("show", {
+                    title: _("Send email"),
+                    post: "animal",
+                    formdata: "mode=email&animalid=" + controller.animal.ID,
+                    animalid: controller.animal.ID, 
+                    subject: controller.animal.ANIMALNAME + " - " + controller.animal.CODE,
+                    logtypes: controller.logtypes,
+                    templates: controller.templates
+                });
+            });
+
             $("#button-match").button().click(function() {
                 common.route("lostfound_match?animalid=" + $("#animalid").val());
             });
@@ -1619,6 +1636,7 @@ $(function() {
             common.widget_destroy("#pickedupby", "personchooser");
             common.widget_destroy("#currentvet", "personchooser");
             common.widget_destroy("#ownersvet", "personchooser");
+            common.widget_destroy("#emailform");
         },
 
         name: "animal",

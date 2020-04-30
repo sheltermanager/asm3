@@ -2409,6 +2409,24 @@ def update_deceased_from_form(dbo, username, post):
     # Close any diary notes related to this animal
     asm3.diary.complete_diary_notes_for_animal(dbo, username, animalid)
 
+def send_email_from_form(dbo, username, post):
+    """
+    Sends an email related to an animal from a posted form. Attaches it as
+    a log entry if specified.
+    """
+    emailfrom = post["from"]
+    emailto = post["to"]
+    emailcc = post["cc"]
+    emailbcc = post["bcc"]
+    subject = post["subject"]
+    addtolog = post.boolean("addtolog")
+    logtype = post.integer("logtype")
+    body = post["body"]
+    rv = asm3.utils.send_email(dbo, emailfrom, emailto, emailcc, emailbcc, subject, body, "html")
+    if addtolog == 1:
+        asm3.log.add_log(dbo, username, asm3.log.ANIMAL, post.integer("animalid"), logtype, asm3.utils.html_email_to_plain(body))
+    return rv
+
 def update_diary_linkinfo(dbo, animalid, a = None, diaryupdatebatch = None):
     """
     Updates the linkinfo on diary notes for an animal.
