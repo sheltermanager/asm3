@@ -1,6 +1,7 @@
 44
 ================
 
+30/04/20 Email documents from document repository #687
 30/04/20 Leaving the incoming forms screen deletes processed forms #810
 30/04/20 make format_date and format_time consistent with each other #808
 30/04/20 Omit seconds for word processor clinic output (Julian Poidevin) #808

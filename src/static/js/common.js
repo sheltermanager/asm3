@@ -11,7 +11,8 @@
         fx_speed: 100, 
 
         replace_all: function(str, find, replace) {
-          return str.replace(new RegExp(find, 'g'), replace);
+            if (!str) { return ""; }
+            return str.replace(new RegExp(find, 'g'), replace);
         },
 
         /** Returns the number of times find appears in str */
