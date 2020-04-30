@@ -367,6 +367,20 @@ class FormHTMLParser(HTMLParser):
         if self.tag == "title":
             self.title = data
 
+class ImgSrcHTMLParser(HTMLParser):
+    """
+    Class for parsing HTML files and extracting the img src attributes.
+    Used by the remove_dead_img_src function to verify image links in a
+    document and blank dead ones before feeding to wkhtmltopdf.
+    """
+    links = []
+
+    def handle_starttag(self, tag, attrs):
+        if tag == "img":
+            for k, v in attrs:
+                if k == "src":
+                    self.links.append(v)
+
 def is_bytes(f):
     """ Returns true if the f is a bytes string """
     return isinstance(f, bytes)
@@ -899,7 +913,7 @@ def csv(l, rows, cols = None, includeheader = True):
 
 def fix_relative_document_uris(s, baseurl, account = "" ):
     """
-    Switches the relative uris used in document templates for absolute
+    Switches the relative uris used in s (str) for absolute
     ones to the service so that documents will work outside of 
     the ASM UI.
     """
@@ -926,6 +940,25 @@ def fix_relative_document_uris(s, baseurl, account = "" ):
     for f, m, p in patterns:
         f = f.replace("{account}", account)
         s = s.replace(f, baseurl + "/service?method=" + m + "&account=" + account + "&" + p + "=")
+    return s
+
+def remove_dead_img_src(s):
+    """
+    Finds all the img src values in s (str), verifies that they are absolute links
+    and valid. Removes them if they are not and returns the new document.
+    """
+    p = ImgSrcHTMLParser()
+    p.feed(s)
+    for l in p.links:
+        # not an absolute http or data uri
+        if not l.startswith("http") and not l.startswith("data:") and len(l) > 4:
+            s = s.replace(l, "")
+            continue
+        # retrieve the image - FIXME: should ideally just be a HEAD request
+        response = get_image_url(l)
+        if response["status"] != 200:
+            # remove the link if we got an error retrieving it
+            s = s.replace(l, "")
     return s
 
 def generator2str(fn, *args):
@@ -1203,11 +1236,14 @@ def html_to_pdf(htmldata, baseurl = "", account = ""):
     htmldata = htmldata.replace("font-size: large", "font-size: 18pt")
     htmldata = htmldata.replace("font-size: x-large", "font-size: 24pt")
     htmldata = htmldata.replace("font-size: xx-large", "font-size: 36pt")
+    # Switch relative document uris to absolute service based calls
     htmldata = fix_relative_document_uris(htmldata, baseurl, account)
     # Remove any img tags with signature:placeholder/user as the src
     htmldata = re.sub('<img.*?signature\:.*?\/>', '', htmldata)
     # Fix up any google QR codes where a protocol-less URI has been used
     htmldata = htmldata.replace("\"//chart.googleapis.com", "\"http://chart.googleapis.com")
+    # Remove any img links which are not absolute or dead (wkhtmltopdf chokes on dead links)
+    htmldata = remove_dead_img_src(htmldata)
     # Use temp files
     inputfile = tempfile.NamedTemporaryFile(suffix=".html", delete=False)
     outputfile = tempfile.NamedTemporaryFile(suffix=".pdf", delete=False)
