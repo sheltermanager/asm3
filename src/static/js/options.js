@@ -438,9 +438,45 @@ $(function() {
         },
 
         render_animalemblems: function() {
-            var emblemvalues = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ",
-                emblemoptions = [], i = 0;
+            var emblemvalues = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ@$%^&*!?#",
+                emblemglyphs = [ 
+                    9728,  // Sun
+                    9729,  // Cloud
+                    9731,  // Snowman
+                    9733,  // Star
+                    9742,  // Telephone
+                    9760,  // Skull/Crossbones
+                    9762,  // Radioactive
+                    9763,  // Biohazard
+                    9774,  // Peace
+                    9785,  // Sad face
+                    9787,  // Smiley face
+                    9792,  // Female
+                    9794,  // Male
+                    9850,  // Recycling
+                    9855,  // Disabled
+                    9873,  // Flag
+                    9875,  // Anchor
+                    9888,  // Warning
+                    9986,  // Scissors
+                    9990,  // Telephone location
+                    9999,  // Pencil
+                    10003, // Tick
+                    10004, // Cross
+                    10052, // Snowflake
+                    10084  // Heavy heart
+                ],
+                emblemoptions = [], i = 0,
+                condoptions = '<option></option><option value="has">' + _("if animal has") + 
+                    '</option><option value="not">' + _("if animal does not have") + '</option>';
+            $.each(emblemglyphs, function(i, v) { emblemoptions.push('<option value="&#' + v + ';">&#' + v + ';</option>'); });
             for (i = 0; i < emblemvalues.length; i=i+1) { emblemoptions.push('<option>' + emblemvalues[i] + '</option>'); }
+            var boxes = function(id) {
+                return '<br/>' + 
+                '<select data="EmblemsCustomValue' + id + '" class="asm-selectbox asm-halfselectbox decode"><option></option>' + emblemoptions.join("") + '</select> ' + 
+                ' <select data="EmblemsCustomCond' + id + '" class="asm-selectbox">' + condoptions + '</select>' + 
+                ' <select data="EmblemsCustomFlag' + id + '" class="asm-selectbox"><option></option>' + html.list_to_options(controller.animalflags, "FLAG", "FLAG") + '</select>';
+            };
             return [
                 '<div id="tab-animalemblems">',
                 html.info(_("Animal emblems are the little icons that appear next to animal names in shelter view, the home page and search results.")),
@@ -480,36 +516,7 @@ $(function() {
                 '</p>',
                 '</td><td>',
                 html.info(_("You can assign a custom emblem to your additional animal flags")),
-                '<br/>',
-                '<select data="EmblemsCustomFlag1" class="asm-selectbox"><option></option>' + html.list_to_options(controller.animalflags, "FLAG", "FLAG") + '</select>',
-                '<select data="EmblemsCustomValue1" class="asm-selectbox"><option></option>' + emblemoptions.join("") + '</select>',
-                '<br/>',
-                '<select data="EmblemsCustomFlag2" class="asm-selectbox"><option></option>' + html.list_to_options(controller.animalflags, "FLAG", "FLAG") + '</select>',
-                '<select data="EmblemsCustomValue2" class="asm-selectbox"><option></option>' + emblemoptions.join("") + '</select>',
-                '<br/>',
-                '<select data="EmblemsCustomFlag3" class="asm-selectbox"><option></option>' + html.list_to_options(controller.animalflags, "FLAG", "FLAG") + '</select>',
-                '<select data="EmblemsCustomValue3" class="asm-selectbox"><option></option>' + emblemoptions.join("") + '</select>',
-                '<br/>',
-                '<select data="EmblemsCustomFlag4" class="asm-selectbox"><option></option>' + html.list_to_options(controller.animalflags, "FLAG", "FLAG") + '</select>',
-                '<select data="EmblemsCustomValue4" class="asm-selectbox"><option></option>' + emblemoptions.join("") + '</select>',
-                '<br/>',
-                '<select data="EmblemsCustomFlag5" class="asm-selectbox"><option></option>' + html.list_to_options(controller.animalflags, "FLAG", "FLAG") + '</select>',
-                '<select data="EmblemsCustomValue5" class="asm-selectbox"><option></option>' + emblemoptions.join("") + '</select>',
-                '<br/>',
-                '<select data="EmblemsCustomFlag6" class="asm-selectbox"><option></option>' + html.list_to_options(controller.animalflags, "FLAG", "FLAG") + '</select>',
-                '<select data="EmblemsCustomValue6" class="asm-selectbox"><option></option>' + emblemoptions.join("") + '</select>',
-                '<br/>',
-                '<select data="EmblemsCustomFlag7" class="asm-selectbox"><option></option>' + html.list_to_options(controller.animalflags, "FLAG", "FLAG") + '</select>',
-                '<select data="EmblemsCustomValue7" class="asm-selectbox"><option></option>' + emblemoptions.join("") + '</select>',
-                '<br/>',
-                '<select data="EmblemsCustomFlag8" class="asm-selectbox"><option></option>' + html.list_to_options(controller.animalflags, "FLAG", "FLAG") + '</select>',
-                '<select data="EmblemsCustomValue8" class="asm-selectbox"><option></option>' + emblemoptions.join("") + '</select>',
-                '<br/>',
-                '<select data="EmblemsCustomFlag9" class="asm-selectbox"><option></option>' + html.list_to_options(controller.animalflags, "FLAG", "FLAG") + '</select>',
-                '<select data="EmblemsCustomValue9" class="asm-selectbox"><option></option>' + emblemoptions.join("") + '</select>',
-                '<br/>',
-                '<select data="EmblemsCustomFlag10" class="asm-selectbox"><option></option>' + html.list_to_options(controller.animalflags, "FLAG", "FLAG") + '</select>',
-                '<select data="EmblemsCustomValue10" class="asm-selectbox"><option></option>' + emblemoptions.join("") + '</select>',
+                boxes(1), boxes(2), boxes(3), boxes(4), boxes(5), boxes(6), boxes(7), boxes(8), boxes(9), boxes(10),
                 '</td></tr></table>',
                 '</div>'
             ].join("\n");
@@ -1356,6 +1363,9 @@ $(function() {
                     }
                     else if ($(this).is("input:hidden")) {
                         $(this).val( config.str(d));
+                    }
+                    else if ($(this).is(".asm-selectbox") && $(this).is(".decode")) {
+                        $(this).select("value", html.decode(config.str(d)));
                     }
                     else if ($(this).is(".asm-selectbox") || $(this).is(".asm-doubleselectbox")) {
                         $(this).select("value", config.str(d));

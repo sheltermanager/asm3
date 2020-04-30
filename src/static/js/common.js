@@ -1672,8 +1672,11 @@
                 s.push(html.icon("quarantine", _("Quarantine")));
             }
             $.each([1,2,3,4,5,6,7,8,9,10], function(i, v) {
-                var cflag = config.str("EmblemsCustomFlag" + v), cemblem = config.str("EmblemsCustomValue" + v);
-                if (cflag && cemblem && html.is_animal_flag(a.ADDITIONALFLAGS, cflag)) {
+                var cflag = config.str("EmblemsCustomFlag" + v), ccond = config.str("EmblemsCustomCond" + v), cemblem = config.str("EmblemsCustomValue" + v);
+                if (cflag && cemblem && ccond == "has" && html.is_animal_flag(a.ADDITIONALFLAGS, cflag)) {
+                    s.push('<span class="custom" title="' + html.title(cflag) + '">' + cemblem + '</span>');
+                }
+                if (cflag && cemblem && ccond == "not" && !html.is_animal_flag(a.ADDITIONALFLAGS, cflag)) {
                     s.push('<span class="custom" title="' + html.title(cflag) + '">' + cemblem + '</span>');
                 }
             });

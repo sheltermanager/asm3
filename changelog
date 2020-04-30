@@ -1,6 +1,8 @@
 44
 ================
 
+30/04/20 Show an emblem on NOT flag #805
+30/04/20 Add selection of unicode glyphs to emblems #805
 30/04/20 Fix find person columns not sorting in options #769
 30/04/20 Add "Adoptable" find animal result column #711
 30/04/20 Ability to view old litter records #807
