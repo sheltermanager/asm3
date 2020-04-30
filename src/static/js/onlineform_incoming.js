@@ -285,6 +285,7 @@ $(function() {
          * remove any processed forms.
          */
         remove_processed: function() {
+            if (config.bool("DontRemoveProcessedForms")) { return; }
             var ids=[];
             $.each(controller.rows, function(i, v) {
                 if (v.LINK) { ids.push(v.COLLATIONID); }
