@@ -188,7 +188,7 @@ class AnibaseUKPublisher(AbstractPublisher):
             '  <Name>' + xe(an["ANIMALNAME"]) + '</Name>' \
             '  <Species>' + self.get_vetxml_species(an["SPECIESID"]) + '</Species>' \
             '  <Breed><FreeText>' + xe(an["BREEDNAME"]) + '</FreeText><Code/></Breed>' \
-            '  <DateOfBirth>' + asm3.i18n.format_date("%d/%m/%Y", an["DATEOFBIRTH"]) + '</DateOfBirth>' \
+            '  <DateOfBirth>' + asm3.i18n.format_date(an["DATEOFBIRTH"], "%d/%m/%Y")  + '</DateOfBirth>' \
             '  <Gender>' + an["SEXNAME"][0:1] + '</Gender>' \
             '  <Colour>' + xe(an["BASECOLOURNAME"]) + '</Colour>' \
             '  <Markings>' + xe(an["MARKINGS"]) + '</Markings>' \
