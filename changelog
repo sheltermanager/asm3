@@ -1,6 +1,8 @@
 44
 ================
 
+01/05/20 Add "datelost" and "datefound" online form fields for lost/found
+01/05/20 Add support for "microchip" online form field to lost/found
 01/05/20 Better rewriting of img links in docs, add media_file service call
 01/05/20 Hide auto remove text if option is off #810
 01/05/20 Add created since to person search

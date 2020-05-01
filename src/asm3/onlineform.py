@@ -74,7 +74,7 @@ FORM_FIELDS = [
     "town", "city", "county", "state", "postcode", "zipcode", "country", "hometelephone", 
     "worktelephone", "mobiletelephone", "celltelephone", "emailaddress", "excludefrombulkemail", "gdprcontactoptin",
     "description", "reason", "size", "species", "breed", "agegroup", "color", "colour", 
-    "arealost", "areafound", "areapostcode", "areazipcode",
+    "datelost", "datefound", "arealost", "areafound", "areapostcode", "areazipcode", "microchip",
     "animalname", "reserveanimalname",
     "code", "microchip", "age", "dateofbirth", "entryreason", "markings", "comments", "hiddencomments", "type", "species", "breed1", "breed2", "color", "sex", 
     "callnotes", "dispatchaddress", "dispatchcity", "dispatchstate", "dispatchzipcode", "transporttype", 
@@ -1069,7 +1069,6 @@ def create_lostanimal(dbo, username, collationid):
     l = dbo.locale
     fields = get_onlineformincoming_detail(dbo, collationid)
     d = {}
-    d["datelost"] = asm3.i18n.python2display(l, asm3.i18n.now(dbo.timezone))
     d["datereported"] = asm3.i18n.python2display(l, asm3.i18n.now(dbo.timezone))
     for f in fields:
         if f.FIELDNAME == "species": d["species"] = guess_species(dbo, f.VALUE)
@@ -1079,9 +1078,13 @@ def create_lostanimal(dbo, username, collationid):
         if f.FIELDNAME == "color": d["colour"] = guess_colour(dbo, f.VALUE)
         if f.FIELDNAME == "colour": d["colour"] = guess_colour(dbo, f.VALUE)
         if f.FIELDNAME == "description": d["markings"] = f.VALUE
+        if f.FIELDNAME == "datelost": d["datelost"] = f.VALUE
         if f.FIELDNAME == "arealost": d["arealost"] = f.VALUE
         if f.FIELDNAME == "areapostcode": d["areapostcode"] = f.VALUE
         if f.FIELDNAME == "areazipcode": d["areapostcode"] = f.VALUE
+        if f.FIELDNAME == "microchip": d["microchip"] = f.VALUE
+    if "datelost" not in d or asm3.i18n.display2python(l, d["datelost"]) is None:
+        d["datelost"] = asm3.i18n.python2display(l, asm3.i18n.now(dbo.timezone))
     if "species" not in d: d["species"] = guess_species(dbo, "")
     if "sex" not in d: d["sex"] = guess_sex(dbo, "")
     if "breed" not in d: d["breed"] = guess_breed(dbo, "")
@@ -1106,7 +1109,6 @@ def create_foundanimal(dbo, username, collationid):
     l = dbo.locale
     fields = get_onlineformincoming_detail(dbo, collationid)
     d = {}
-    d["datefound"] = asm3.i18n.python2display(l, asm3.i18n.now(dbo.timezone))
     d["datereported"] = asm3.i18n.python2display(l, asm3.i18n.now(dbo.timezone))
     for f in fields:
         if f.FIELDNAME == "species": d["species"] = guess_species(dbo, f.VALUE)
@@ -1116,9 +1118,13 @@ def create_foundanimal(dbo, username, collationid):
         if f.FIELDNAME == "color": d["colour"] = guess_colour(dbo, f.VALUE)
         if f.FIELDNAME == "colour": d["colour"] = guess_colour(dbo, f.VALUE)
         if f.FIELDNAME == "description": d["markings"] = f.VALUE
+        if f.FIELDNAME == "datefound": d["datefound"] = f.VALUE
         if f.FIELDNAME == "areafound": d["areafound"] = f.VALUE
         if f.FIELDNAME == "areapostcode": d["areapostcode"] = f.VALUE
         if f.FIELDNAME == "areazipcode": d["areapostcode"] = f.VALUE
+        if f.FIELDNAME == "microchip": d["microchip"] = f.VALUE
+    if "datefound" not in d or asm3.i18n.display2python(l, d["datefound"]) is None:
+        d["datefound"] = asm3.i18n.python2display(l, asm3.i18n.now(dbo.timezone))
     if "species" not in d: d["species"] = guess_species(dbo, "")
     if "sex" not in d: d["sex"] = guess_sex(dbo, "")
     if "breed" not in d: d["breed"] = guess_breed(dbo, "")

@@ -52,7 +52,7 @@ class PETtracUKPublisher(AbstractPublisher):
             "hereby agree that it may be disclosed to any person or persons who may be involved in securing the welfare of the " \
             "pet above. PETtrac reserves the right to amend any microchip record in the event that we are subsequently " \
             "provided with additional information.</p>\n"
-        return asm3.utils.html_to_pdf(h)
+        return asm3.utils.html_to_pdf(self.dbo, h)
 
     def run(self):
         
