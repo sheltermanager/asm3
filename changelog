@@ -1,6 +1,7 @@
 44
 ================
 
+01/05/20 Add bounds checking to config numbers, tidy up
 01/05/20 Configuration for removing incoming forms after complaints! #810
 30/04/20 Strip dead img src before feeding to wkhtmltopdf #811
 30/04/20 Show an emblem on NOT flag #805
