@@ -215,10 +215,25 @@
         });
     };
 
-    // Textbox that should only contain numbers
+    // Textbox that should only contain numbers.
+    // data-min and data-max attributes can be used to contain the lower/upper bound
     $.fn.number = function() {
         var allowed = [ '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '.', '-' ];
         this.each(function() {
+            if ($(this).attr("data-min")) {
+                $(this).blur(function(e) {
+                    if (format.to_int($(this).val()) < format.to_int($(this).attr("data-min"))) {
+                        $(this).val($(this).attr("data-min"));
+                    }
+                });
+            }
+            if ($(this).attr("data-max")) {
+                $(this).blur(function(e) {
+                    if (format.to_int($(this).val()) > format.to_int($(this).attr("data-max"))) {
+                        $(this).val($(this).attr("data-max"));
+                    }
+                });
+            }
             $(this).keypress(function(e) {
                 var k = e.charCode || e.keyCode;
                 var ch = String.fromCharCode(k);

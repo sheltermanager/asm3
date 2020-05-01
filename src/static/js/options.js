@@ -70,6 +70,7 @@ $(function() {
                 '<li><a href="#tab-lostandfound">' + _("Lost and Found") + '</a></li>',
                 '<li><a href="#tab-medical">' + _("Medical") + '</a></li>',
                 '<li><a href="#tab-movements">' + _("Movements") + '</a></li>',
+                '<li><a href="#tab-onlineforms">' + _("Online Forms") + '</a></li>',
                 '<li><a href="#tab-processors">' + _("Payment Processors") + '</a></li>',
                 '<li><a href="#tab-quicklinks">' + _("Quicklinks") + '</a></li>',
                 '<li><a href="#tab-unwanted">' + _("Remove") + '</a></li>',
@@ -1059,6 +1060,15 @@ $(function() {
             ].join("\n");
         },
 
+        render_onlineforms: function() {
+            return [
+                '<div id="tab-onlineforms">',
+                '<p><label for="autoremoveforms">' + _("Remove incoming forms after") + '</label> <input data="AutoRemoveIncomingFormsDays" id="autoremoveforms" type="text" data-min="7" data-max="56" class="asm-textbox asm-numberbox" /> ' + _(" days.") + '<br/>',
+                '<input data="rc:DontRemoveProcessedForms" id="removeprocessedforms" class="asm-checkbox" type="checkbox" /> <label for="removeprocessedforms">' + _("Remove processed forms when I leave the incoming forms screens") + '</p>',
+                '</div>'
+            ].join("\n");
+        },
+
         render_processors: function() {
             return [
                 '<div id="tab-processors">',
@@ -1292,6 +1302,7 @@ $(function() {
                 this.render_lostandfound(),
                 this.render_medical(),
                 this.render_movements(),
+                this.render_onlineforms(),
                 this.render_processors(),
                 this.render_quicklinks(),
                 this.render_search(),
