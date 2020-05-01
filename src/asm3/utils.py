@@ -1198,6 +1198,16 @@ def html_to_pdf(dbo, htmldata):
     """
     Converts HTML content to PDF and returns the PDF file data as bytes.
     """
+    if HTML_TO_PDF == "pisa":
+        return html_to_pdf_pisa(dbo, htmldata)
+    else:
+        return html_to_pdf_cmd(dbo, htmldata)
+
+def html_to_pdf_cmd(dbo, htmldata):
+    """
+    Converts HTML content to PDF and returns the PDF file data as bytes.
+    Uses the command line tool specified in HTML_TO_PDF (which is typically wkhtmltopdf)
+    """
     # Allow orientation and papersize to be set
     # with directives in the document source - eg: <!-- pdf orientation landscape, pdf papersize letter -->
     orientation = "portrait"
@@ -1237,7 +1247,7 @@ def html_to_pdf(dbo, htmldata):
     htmldata = htmldata.replace("font-size: x-large", "font-size: 24pt")
     htmldata = htmldata.replace("font-size: xx-large", "font-size: 36pt")
     # Remove any img tags with signature:placeholder/user as the src
-    htmldata = re.sub('<img.*?signature\:.*?\/>', '', htmldata)
+    htmldata = re.sub(r'<img.*?signature\:.*?\/>', '', htmldata)
     # Fix up any google QR codes where a protocol-less URI has been used
     htmldata = htmldata.replace("\"//chart.googleapis.com", "\"http://chart.googleapis.com")
     # Switch relative document uris to absolute service based calls
@@ -1253,7 +1263,7 @@ def html_to_pdf(dbo, htmldata):
     code, output = cmd(cmdline)
     if code > 0:
         asm3.al.error("code %s returned from '%s': %s" % (code, cmdline, output), "utils.html_to_pdf")
-        return "ERROR"
+        return output
     with open(outputfile.name, "rb") as f:
         pdfdata = f.read()
     os.unlink(inputfile.name)
@@ -1263,8 +1273,7 @@ def html_to_pdf(dbo, htmldata):
 def html_to_pdf_pisa(dbo, htmldata):
     """
     Converts HTML content to PDF and returns the PDF file data as bytes.
-    NOTE: Not currently used as wkhtmltopdf is far superior, but this is a pure Python
-    solution and it does work.
+    NOTE: wkhtmltopdf is far superior, but this is a pure Python solution and it does work.
     """
     # Allow orientation and papersize to be set
     # with directives in the document source - eg: <!-- pdf orientation landscape, pdf papersize letter -->
@@ -1299,7 +1308,7 @@ def html_to_pdf_pisa(dbo, htmldata):
     htmldata = htmldata.replace("font-size: x-large", "font-size: 24pt")
     htmldata = htmldata.replace("font-size: xx-large", "font-size: 36pt")
     # Remove any img tags with signature:placeholder/user as the src
-    htmldata = re.sub('<img.*?signature\:.*?\/>', '', htmldata)
+    htmldata = re.sub(r'<img.*?signature\:.*?\/>', '', htmldata)
     # Fix up any google QR codes where a protocol-less URI has been used
     htmldata = htmldata.replace("\"//chart.googleapis.com", "\"http://chart.googleapis.com")
     # Switch relative document uris to absolute service based calls
