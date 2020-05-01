@@ -50,6 +50,7 @@ $(function() {
                         .then(function() {
                             tableform.table_update(table);
                             tableform.dialog_enable_buttons();
+                            if (media.icon_mode_active) { media.mode_icon(); } else { media.mode_table(); }
                         })
                         .fail(function() {
                             tableform.dialog_enable_buttons();
@@ -614,6 +615,32 @@ $(function() {
                 });
         },
 
+        /** Binds the event handlers to a file drop target.
+         *  We do it this way because the one in the table can be dynamically
+         *  removed when the table is updated in icon mode.
+         *  I implemented this as a delegate against #asm-content the first time, but 
+         *  originalEvent.dataTransfer.files is null when the event bubbles up.
+         */
+        bind_droptarget: function(selector) {
+
+            $(selector).on("dragover", function() {
+                $(".asm-mediadroptarget").addClass("asm-mediadroptarget-hover");
+                return false;
+            });
+            $(selector).on("dragleave", function() {
+                $(".asm-mediadroptarget").removeClass("asm-mediadroptarget-hover");
+                return false;
+            });
+            $(selector).on("drop", function(e) {
+                e.stopPropagation();
+                e.preventDefault();
+                $(".asm-mediadroptarget").removeClass("asm-mediadroptarget-hover");
+                media.attach_files(e.originalEvent.dataTransfer.files);
+                return false;
+            });
+
+        },
+
         bind: function() {
 
             tableform.buttons_bind(this.buttons);
@@ -626,26 +653,7 @@ $(function() {
                 $("#signature").signature({ guideline: true });
             }
 
-            // Add the icon mode drop target here so that the events
-            // below are attached to both.
-            $("#tableform tbody").prepend('<div class="asm-mediadroptarget mode-icon" style="height: 150px"><p>' + _("Drop files here...") + '</p></div>');
-
-            $(".asm-mediadroptarget").on("dragover", function() {
-                $(".asm-mediadroptarget").addClass("asm-mediadroptarget-hover");
-                return false;
-            });
-            $(".asm-mediadroptarget").on("dragleave", function() {
-                $(".asm-mediadroptarget").removeClass("asm-mediadroptarget-hover");
-                return false;
-            });
-            $(".asm-mediadroptarget").on("drop", function(e) {
-                e.stopPropagation();
-                e.preventDefault();
-                $(".asm-mediadroptarget").removeClass("asm-mediadroptarget-hover");
-                media.attach_files(e.originalEvent.dataTransfer.files);
-                return false;
-            });
-
+            this.bind_droptarget(".asm-mediadroptarget");
 
             var addbuttons = { };
             addbuttons[_("Attach")] = {
@@ -946,6 +954,11 @@ $(function() {
                 "height": "85px",
                 "object-fit": "contain"
             });
+            // Add the drop icon if it is not present in the table
+            if ($("#tableform .asm-mediadroptarget").length == 0) {
+                $("#tableform tbody").prepend('<div class="asm-mediadroptarget mode-icon" style="height: 150px"><p>' + _("Drop files here...") + '</p></div>');
+                media.bind_droptarget("#tableform .asm-mediadroptarget");
+            }
             media.icon_mode_active = true;
         },
 

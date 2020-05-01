@@ -83,7 +83,7 @@ $(function() {
                     return false;
                 }
                 // date
-                if ($.trim($("#fosterdate").val()) == "") {
+                if (common.trim($("#fosterdate").val()) == "") {
                     header.show_error(_("This type of movement requires a date."));
                     validate.highlight("fosterdate");
                     return false;

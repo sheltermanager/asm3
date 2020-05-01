@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ASM3\n"
 "Report-Msgid-Bugs-To: robin@sheltermanager.com\n"
-"POT-Creation-Date: 2020-04-29 09:52+0000\n"
+"POT-Creation-Date: 2020-04-30 14:01+0000\n"
 "Last-Translator: Robin Rawson-Tetley <robin@sheltermanager.com>\n"
 "Language-Team: en <robin@sheltermanager.com>\n"
 "Language: en\n"
@@ -701,7 +701,7 @@ msgstr ""
 msgid "Adopt an animal"
 msgstr ""
 
-#: animal_find.js shelterview.js animal_bulk.js
+#: html.py animal_find_results.js animal_find.js animal_bulk.js shelterview.js
 msgid "Adoptable"
 msgstr ""
 
@@ -998,7 +998,7 @@ msgstr ""
 msgid "All staff on file."
 msgstr ""
 
-#: options.js
+#: litters.js options.js
 msgid "All time"
 msgstr ""
 
@@ -4193,9 +4193,10 @@ msgstr ""
 msgid "Electricity Bills"
 msgstr ""
 
-#: html.py mobile.py onlineform.py lostfound.js users.js waitinglist.js
-#: person_find_results.js person_find.js media.js waitinglist_results.js
-#: incident.js animal.js person.js options.js header_edit_header.js
+#: html.py mobile.py onlineform.py users.js incident.js waitinglist_results.js
+#: person.js waitinglist.js document_repository.js lostfound.js animal.js
+#: options.js person_find.js media.js header_edit_header.js
+#: person_find_results.js
 msgid "Email"
 msgstr ""
 
@@ -4245,7 +4246,7 @@ msgid ""
 "addresses"
 msgstr ""
 
-#: media.js
+#: document_repository.js media.js
 msgid "Email media"
 msgstr ""
 
@@ -5906,7 +5907,7 @@ msgstr ""
 msgid "In the last week"
 msgstr ""
 
-#: publish_options.js
+#: publish_options.js litters.js
 msgid "In the last year"
 msgstr ""
 
@@ -6141,6 +6142,12 @@ msgstr ""
 msgid ""
 "Incoming forms are online forms that have been completed and submitted by "
 "people on the web."
+msgstr ""
+
+#: onlineform_incoming.js
+msgid ""
+"Incoming forms that have been used to create records will be automatically "
+"removed when you leave this screen."
 msgstr ""
 
 #: onlineform_incoming.js
@@ -6620,6 +6627,10 @@ msgstr ""
 
 #: users.js
 msgid "Link this user account to a staff person record."
+msgstr ""
+
+#: animal.js
+msgid "Link to a photo of this animal"
 msgstr ""
 
 #: media.js
@@ -10012,12 +10023,20 @@ msgid ""
 "animals"
 msgstr ""
 
+#: animal.js
+msgid "Send an email relating to this animal"
+msgstr ""
+
 #: donations.js
 msgid "Send an email request for payment via a payment processor"
 msgstr ""
 
 #: onlineforms.js
 msgid "Send confirmation email to form submitter"
+msgstr ""
+
+#: animal.js
+msgid "Send email"
 msgstr ""
 
 #: mailmerge.js
@@ -10133,6 +10152,10 @@ msgstr ""
 
 #: animal.js
 msgid "Share"
+msgstr ""
+
+#: animal.js
+msgid "Shared photo"
 msgstr ""
 
 #: animal.js

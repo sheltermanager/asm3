@@ -145,8 +145,9 @@ lost/found animal or waiting list). The screen will put a link in the Link
 column to give you a clickable link to the newly created record as well so you
 can view it. 
 
-You can safely delete incoming forms once they have been attached to a record.
-The system will also remove incoming forms older than 4 weeks by default.
+Incoming forms that have been attached to a record will be automatically
+deleted when you leave the screen. The system will also remove incoming forms
+older than 4 weeks by default.
 
 Importing
 ---------

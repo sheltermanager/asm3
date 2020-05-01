@@ -27,7 +27,7 @@ class PetFinderPublisher(FTPPublisher):
 
     def pfDate(self, d):
         """ Returns a CSV entry for a date in YYYY-MM-DD """
-        return "\"%s\"" % asm3.i18n.format_date("%Y-%m-%d", d)
+        return "\"%s\"" % asm3.i18n.format_date(d, "%Y-%m-%d")
 
     def pfYesNo(self, condition):
         """

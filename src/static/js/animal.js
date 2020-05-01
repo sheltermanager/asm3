@@ -702,6 +702,7 @@ $(function() {
                 else if (p == "foundanimals") { t = html.icon("microchip") + " Microchip registered with FoundAnimals"; }
 
                 else if (p == "shareweb") { t = html.icon("web") + " " + _("Shared weblink"); }
+                else if (p == "sharepic") { t = html.icon("media") + " " + _("Shared photo"); }
                 else if (p == "facebook") { t = html.icon("facebook") + " Shared on Facebook"; }
                 else if (p == "twitter") { t = html.icon("twitter") + " Shared on Twitter"; }
                 else if (p == "gplus") { t = html.icon("gplus") + " Shared on Google+"; }
@@ -754,6 +755,7 @@ $(function() {
                 '</tr>',
                 '</table>',
                 '</div>',
+                '<div id="emailform" />',
                 '<div id="dialog-merge" style="display: none" title="' + html.title(_("Select animal to merge")) + '">',
                 '<div class="ui-state-highlight ui-corner-all" style="margin-top: 20px; padding: 0 .7em">',
                 '<p><span class="ui-icon ui-icon-info" style="float: left; margin-right: .3em;"></span>',
@@ -774,6 +776,8 @@ $(function() {
                 '<ul class="asm-menu-list">',
                     '<li id="button-shareweb" class="sharebutton asm-menu-item"><a '
                         + '" target="_blank" href="#">' + html.icon("web") + ' ' + _("Link to this animal") + '</a></li>',
+                    '<li id="button-sharepic" class="sharebutton asm-menu-item"><a '
+                        + '" target="_blank" href="#">' + html.icon("media") + ' ' + _("Link to a photo of this animal") + '</a></li>',
                     '<li id="button-shareemail" class="sharebutton asm-menu-item"><a '
                         + '" target="_blank" href="#">' + html.icon("email") + ' ' + _("Email") + '</a></li>',
                     '<li id="button-social" class="sharebutton asm-menu-category">' + _("Social") + ' </li>',
@@ -796,6 +800,7 @@ $(function() {
                     { id: "clone", text: _("Clone"), icon: "copy", tooltip: _("Create a new animal by copying this one") },
                     { id: "merge", text: _("Merge"), icon: "copy", tooltip: _("Merge another animal into this one") },
                     { id: "delete", text: _("Delete"), icon: "delete", tooltip: _("Delete this animal") },
+                    { id: "email", text: _("Email"), icon: "email", tooltip: _("Send an email relating to this animal") },
                     { id: "document", text: _("Document"), type: "buttonmenu", icon: "document", tooltip: _("Generate a document from this animal") },
                     { id: "diarytask", text: _("Diary Task"), type: "buttonmenu", icon: "diary-task", tooltip: _("Create diary notes from a task") },
                     { id: "match", text: _("Match"), icon: "match", tooltip: _("Match this animal with the lost and found database") },
@@ -1118,6 +1123,7 @@ $(function() {
             if (!common.has_permission("aa")) { $("#button-clone").hide(); }
             if (!common.has_permission("da")) { $("#button-merge").hide(); }
             if (!common.has_permission("da")) { $("#button-delete").hide(); }
+            if (!common.has_permission("emo")) { $("#button-email").hide(); }
             if (!common.has_permission("gaf")) { $("#button-document").hide(); }
             if (!common.has_permission("adn")) { $("#button-diarytask").hide(); }
             if (!common.has_permission("vo")) { $("#button-currentowner").hide(); }
@@ -1158,7 +1164,7 @@ $(function() {
             validate.reset();
 
             // name
-            if ($.trim($("#animalname").val()) == "") {
+            if (common.trim($("#animalname").val()) == "") {
                 header.show_error(_("Name cannot be blank"));
                 $("#asm-details-accordion").accordion("option", "active", 0);
                 validate.highlight("animalname");
@@ -1166,7 +1172,7 @@ $(function() {
             }
 
             // date brought in
-            if ($.trim($("#datebroughtin").val()) == "") {
+            if (common.trim($("#datebroughtin").val()) == "") {
                 header.show_error(_("Date brought in cannot be blank"));
                 $("#asm-details-accordion").accordion("option", "active", 3);
                 validate.highlight("datebroughtin");
@@ -1174,7 +1180,7 @@ $(function() {
             }
 
             // date of birth
-            if ($.trim($("#dateofbirth").val()) == "") {
+            if (common.trim($("#dateofbirth").val()) == "") {
                 header.show_error(_("Date of birth cannot be blank"));
                 $("#asm-details-accordion").accordion("option", "active", 0);
                 validate.highlight("dateofbirth");
@@ -1182,7 +1188,7 @@ $(function() {
             }
 
             // shelter code
-            if ($.trim($("#sheltercode").val()) == "") {
+            if (common.trim($("#sheltercode").val()) == "") {
                 header.show_error(_("Shelter code cannot be blank"));
                 $("#asm-details-accordion").accordion("option", "active", 0);
                 validate.highlight("sheltercode");
@@ -1255,8 +1261,9 @@ $(function() {
                 common.ajax_post("animal", "mode=shared&id=" + controller.animal.ID + "&service=" + service);
             });
 
-            // Web and email
+            // Web, picture and email
             $("#button-shareweb a").attr("href", share_url);
+            $("#button-sharepic a").attr("href", share_image);
             $("#button-shareemail a").attr("href", "mailto:?body=" + enc_share_url);
 
             // Facebook
@@ -1293,6 +1300,8 @@ $(function() {
 
             // Setup the document/diary task/social menu buttons
             $("#button-diarytask, #button-document, #button-share").asmmenu();
+
+            $("#emailform").emailform();
 
             // If the option isn't set to allow alphanumeric/space
             // characters in microchip and ntattoo numbers, use
@@ -1520,6 +1529,18 @@ $(function() {
                     });
             });
 
+            $("#button-email").button().click(function() {
+                $("#emailform").emailform("show", {
+                    title: _("Send email"),
+                    post: "animal",
+                    formdata: "mode=email&animalid=" + controller.animal.ID,
+                    animalid: controller.animal.ID, 
+                    subject: controller.animal.ANIMALNAME + " - " + controller.animal.CODE,
+                    logtypes: controller.logtypes,
+                    templates: controller.templates
+                });
+            });
+
             $("#button-match").button().click(function() {
                 common.route("lostfound_match?animalid=" + $("#animalid").val());
             });
@@ -1615,6 +1636,7 @@ $(function() {
             common.widget_destroy("#pickedupby", "personchooser");
             common.widget_destroy("#currentvet", "personchooser");
             common.widget_destroy("#ownersvet", "personchooser");
+            common.widget_destroy("#emailform");
         },
 
         name: "animal",

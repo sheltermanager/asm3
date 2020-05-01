@@ -500,7 +500,7 @@ $(function() {
 
             // code
             if (config.bool("ManualCodes")) {
-                if ($.trim($("#sheltercode").val()) == "") {
+                if (common.trim($("#sheltercode").val()) == "") {
                     header.show_error(_("Shelter code cannot be blank"));
                     validate.highlight("sheltercode");
                     return false;
@@ -508,14 +508,14 @@ $(function() {
             }
 
             // name
-            if ($.trim($("#animalname").val()) == "") {
+            if (common.trim($("#animalname").val()) == "") {
                 header.show_error(_("Name cannot be blank"));
                 validate.highlight("animalname");
                 return false;
             }
 
             // date of birth
-            if ($.trim($("#dateofbirth").val()) == "" && $.trim($("#estimatedage").val()) == "") {
+            if (common.trim($("#dateofbirth").val()) == "" && common.trim($("#estimatedage").val()) == "") {
                 header.show_error(_("Date of birth cannot be blank"));
                 validate.highlight("dateofbirth");
                 return false;

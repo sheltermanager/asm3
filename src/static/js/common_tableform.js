@@ -40,20 +40,7 @@
                 else if (v.type == "dropdownfilter") {
                     b += '<span style="float: right"><select id="' + v.id + '" title="' + html.title(v.tooltip) + '" class="asm-selectbox">';
                     if (common.is_array(v.options)) {
-                        // If v.options is a  list, then assume
-                        // either value|label or just value for only one item.
-                        $.each(v.options, function(io, vo) {
-                            var opt = vo.split("|");
-                            var val, label;
-                            val = opt[0];
-                            if (opt.length > 1) {
-                                label = opt[1];
-                            }
-                            else {
-                                label = opt[0];
-                            }
-                            b += '<option value="' + val + '">' + label + '</option>';
-                        });
+                        b += html.list_to_options(v.options);
                     }
                     // Assume v.options is a string 
                     else {

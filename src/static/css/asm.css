@@ -325,6 +325,10 @@ select:disabled, input:disabled, textarea:disabled {
     font-weight: bold;
 }
 
+.asm-search-adoptable {
+    color: green;
+}
+
 .asm-search-notforadoption {
     color: red;
     font-weight: bold;
@@ -675,13 +679,6 @@ select:disabled, input:disabled, textarea:disabled {
     width: 197px;
 }
 
-.asm-halfselectbox {
-    width: 95px;
-    background-color: #fff;
-    color: #000;
-    border: 1px solid #555;
-}
-
 .asmSelect {
     width: 197px;
     background-color: #ddd;
@@ -692,6 +689,13 @@ select:disabled, input:disabled, textarea:disabled {
 
 .asm-selectbox {
     width: 197px;
+    background-color: #fff;
+    color: #000;
+    border: 1px solid #555;
+}
+
+.asm-halfselectbox {
+    width: 95px;
     background-color: #fff;
     color: #000;
     border: 1px solid #555;

@@ -60,7 +60,7 @@ $(function() {
                     }
                     var formatted = person_find_results.format_column(row, name, value, controller.additional);
                     if (name == "OwnerName") { 
-                        if ($.trim(value) == "") { 
+                        if (common.trim(value) == "") { 
                             formatted += _("(blank)"); 
                         }
                         formatted = link + formatted + "</a></span>";
@@ -89,7 +89,7 @@ $(function() {
         column_names: function() {
             var cols = [];
             $.each(config.str("OwnerSearchColumns").split(","), function(i, v) {
-                cols.push($.trim(v));
+                cols.push(common.trim(v));
             });
             return cols;
         },

@@ -70,6 +70,7 @@ $(function() {
                 '<li><a href="#tab-lostandfound">' + _("Lost and Found") + '</a></li>',
                 '<li><a href="#tab-medical">' + _("Medical") + '</a></li>',
                 '<li><a href="#tab-movements">' + _("Movements") + '</a></li>',
+                '<li><a href="#tab-onlineforms">' + _("Online Forms") + '</a></li>',
                 '<li><a href="#tab-processors">' + _("Payment Processors") + '</a></li>',
                 '<li><a href="#tab-quicklinks">' + _("Quicklinks") + '</a></li>',
                 '<li><a href="#tab-unwanted">' + _("Remove") + '</a></li>',
@@ -200,7 +201,7 @@ $(function() {
                 '<br />',
                 '<input data="VATEnabled" id="vatenabled" type="checkbox" class="asm-checkbox" />',
                 '<label for="vatenabled">' + _("When receiving payments, allow recording of sales tax with a default rate of") + '</label>',
-                '<input data="VATRate" class="asm-textbox asm-halftextbox asm-numberbox" type="text" />%',
+                '<input data="VATRate" data-min="0" data-max="100" class="asm-textbox asm-halftextbox asm-numberbox" type="text" />%',
                 '<br />',
                 '<input data="DonationDateOverride" id="donationdateoverride" type="checkbox" class="asm-checkbox" />',
                 '<label for="donationdateoverride">' + _("When receiving multiple payments, allow the due and received dates to be set") + '</label>',
@@ -347,42 +348,42 @@ $(function() {
                 '<table>',
                 '<tr>',
                 '<td>' + _("Age Group 1") + '</td>',
-                '<td><input id="agegroup1" type="text" class="asm-numberbox asm-textbox" data="AgeGroup1" /></td>',
+                '<td><input id="agegroup1" type="text" data-max="100" class="asm-numberbox asm-textbox" data="AgeGroup1" /></td>',
                 '<td><input id="agegroup1name" type="text" class="asm-textbox" data="AgeGroup1Name" /></td>',
                 '</tr>',
                 '<tr>',
                 '<td>' + _("Age Group 2") + '</td>',
-                '<td><input id="agegroup2" type="text" class="asm-numberbox asm-textbox" data="AgeGroup2" /></td>',
+                '<td><input id="agegroup2" type="text" data-max="100" class="asm-numberbox asm-textbox" data="AgeGroup2" /></td>',
                 '<td><input id="agegroup2name" type="text" class="asm-textbox" data="AgeGroup2Name" /></td>',
                 '</tr>',
                 '<tr>',
                 '<td>' + _("Age Group 3") + '</td>',
-                '<td><input id="agegroup3" type="text" class="asm-numberbox asm-textbox" data="AgeGroup3" /></td>',
+                '<td><input id="agegroup3" type="text" data-max="100" class="asm-numberbox asm-textbox" data="AgeGroup3" /></td>',
                 '<td><input id="agegroup3name" type="text" class="asm-textbox" data="AgeGroup3Name" /></td>',
                 '</tr>',
                 '<tr>',
                 '<td>' + _("Age Group 4") + '</td>',
-                '<td><input id="agegroup4" type="text" class="asm-numberbox asm-textbox" data="AgeGroup4" /></td>',
+                '<td><input id="agegroup4" type="text" data-max="100" class="asm-numberbox asm-textbox" data="AgeGroup4" /></td>',
                 '<td><input id="agegroup4name" type="text" class="asm-textbox" data="AgeGroup4Name" /></td>',
                 '</tr>',
                 '<tr>',
                 '<td>' + _("Age Group 5") + '</td>',
-                '<td><input id="agegroup5" type="text" class="asm-numberbox asm-textbox" data="AgeGroup5" /></td>',
+                '<td><input id="agegroup5" type="text" data-max="100" class="asm-numberbox asm-textbox" data="AgeGroup5" /></td>',
                 '<td><input id="agegroup5name" type="text" class="asm-textbox" data="AgeGroup5Name" /></td>',
                 '</tr>',
                 '<tr>',
                 '<td>' + _("Age Group 6") + '</td>',
-                '<td><input id="agegroup6" type="text" class="asm-numberbox asm-textbox" data="AgeGroup6" /></td>',
+                '<td><input id="agegroup6" type="text" data-max="100" class="asm-numberbox asm-textbox" data="AgeGroup6" /></td>',
                 '<td><input id="agegroup6name" type="text" class="asm-textbox" data="AgeGroup6Name" /></td>',
                 '</tr>',
                 '<tr>',
                 '<td>' + _("Age Group 7") + '</td>',
-                '<td><input id="agegroup7" type="text" class="asm-numberbox asm-textbox" data="AgeGroup7" /></td>',
+                '<td><input id="agegroup7" type="text" data-max="100" class="asm-numberbox asm-textbox" data="AgeGroup7" /></td>',
                 '<td><input id="agegroup7name" type="text" class="asm-textbox" data="AgeGroup7Name" /></td>',
                 '</tr>',
                 '<tr>',
                 '<td>' + _("Age Group 8") + '</td>',
-                '<td><input id="agegroup8" type="text" class="asm-numberbox asm-textbox" data="AgeGroup8" /></td>',
+                '<td><input id="agegroup8" type="text" data-max="100" class="asm-numberbox asm-textbox" data="AgeGroup8" /></td>',
                 '<td><input id="agegroup8name" type="text" class="asm-textbox" data="AgeGroup8Name" /></td>',
                 '</tr>',
                 '</table>',
@@ -438,9 +439,45 @@ $(function() {
         },
 
         render_animalemblems: function() {
-            var emblemvalues = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ",
-                emblemoptions = [], i = 0;
+            var emblemvalues = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ@$%^&*!?#",
+                emblemglyphs = [ 
+                    9728,  // Sun
+                    9729,  // Cloud
+                    9731,  // Snowman
+                    9733,  // Star
+                    9742,  // Telephone
+                    9760,  // Skull/Crossbones
+                    9762,  // Radioactive
+                    9763,  // Biohazard
+                    9774,  // Peace
+                    9785,  // Sad face
+                    9787,  // Smiley face
+                    9792,  // Female
+                    9794,  // Male
+                    9850,  // Recycling
+                    9855,  // Disabled
+                    9873,  // Flag
+                    9875,  // Anchor
+                    9888,  // Warning
+                    9986,  // Scissors
+                    9990,  // Telephone location
+                    9999,  // Pencil
+                    10003, // Tick
+                    10004, // Cross
+                    10052, // Snowflake
+                    10084  // Heavy heart
+                ],
+                emblemoptions = [], i = 0,
+                condoptions = '<option></option><option value="has">' + _("if animal has") + 
+                    '</option><option value="not">' + _("if animal does not have") + '</option>';
+            $.each(emblemglyphs, function(i, v) { emblemoptions.push('<option value="&#' + v + ';">&#' + v + ';</option>'); });
             for (i = 0; i < emblemvalues.length; i=i+1) { emblemoptions.push('<option>' + emblemvalues[i] + '</option>'); }
+            var boxes = function(id) {
+                return '<br/>' + 
+                '<select data="EmblemsCustomValue' + id + '" class="asm-selectbox asm-halfselectbox decode"><option></option>' + emblemoptions.join("") + '</select> ' + 
+                ' <select data="EmblemsCustomCond' + id + '" class="asm-selectbox">' + condoptions + '</select>' + 
+                ' <select data="EmblemsCustomFlag' + id + '" class="asm-selectbox"><option></option>' + html.list_to_options(controller.animalflags, "FLAG", "FLAG") + '</select>';
+            };
             return [
                 '<div id="tab-animalemblems">',
                 html.info(_("Animal emblems are the little icons that appear next to animal names in shelter view, the home page and search results.")),
@@ -480,36 +517,7 @@ $(function() {
                 '</p>',
                 '</td><td>',
                 html.info(_("You can assign a custom emblem to your additional animal flags")),
-                '<br/>',
-                '<select data="EmblemsCustomFlag1" class="asm-selectbox"><option></option>' + html.list_to_options(controller.animalflags, "FLAG", "FLAG") + '</select>',
-                '<select data="EmblemsCustomValue1" class="asm-selectbox"><option></option>' + emblemoptions.join("") + '</select>',
-                '<br/>',
-                '<select data="EmblemsCustomFlag2" class="asm-selectbox"><option></option>' + html.list_to_options(controller.animalflags, "FLAG", "FLAG") + '</select>',
-                '<select data="EmblemsCustomValue2" class="asm-selectbox"><option></option>' + emblemoptions.join("") + '</select>',
-                '<br/>',
-                '<select data="EmblemsCustomFlag3" class="asm-selectbox"><option></option>' + html.list_to_options(controller.animalflags, "FLAG", "FLAG") + '</select>',
-                '<select data="EmblemsCustomValue3" class="asm-selectbox"><option></option>' + emblemoptions.join("") + '</select>',
-                '<br/>',
-                '<select data="EmblemsCustomFlag4" class="asm-selectbox"><option></option>' + html.list_to_options(controller.animalflags, "FLAG", "FLAG") + '</select>',
-                '<select data="EmblemsCustomValue4" class="asm-selectbox"><option></option>' + emblemoptions.join("") + '</select>',
-                '<br/>',
-                '<select data="EmblemsCustomFlag5" class="asm-selectbox"><option></option>' + html.list_to_options(controller.animalflags, "FLAG", "FLAG") + '</select>',
-                '<select data="EmblemsCustomValue5" class="asm-selectbox"><option></option>' + emblemoptions.join("") + '</select>',
-                '<br/>',
-                '<select data="EmblemsCustomFlag6" class="asm-selectbox"><option></option>' + html.list_to_options(controller.animalflags, "FLAG", "FLAG") + '</select>',
-                '<select data="EmblemsCustomValue6" class="asm-selectbox"><option></option>' + emblemoptions.join("") + '</select>',
-                '<br/>',
-                '<select data="EmblemsCustomFlag7" class="asm-selectbox"><option></option>' + html.list_to_options(controller.animalflags, "FLAG", "FLAG") + '</select>',
-                '<select data="EmblemsCustomValue7" class="asm-selectbox"><option></option>' + emblemoptions.join("") + '</select>',
-                '<br/>',
-                '<select data="EmblemsCustomFlag8" class="asm-selectbox"><option></option>' + html.list_to_options(controller.animalflags, "FLAG", "FLAG") + '</select>',
-                '<select data="EmblemsCustomValue8" class="asm-selectbox"><option></option>' + emblemoptions.join("") + '</select>',
-                '<br/>',
-                '<select data="EmblemsCustomFlag9" class="asm-selectbox"><option></option>' + html.list_to_options(controller.animalflags, "FLAG", "FLAG") + '</select>',
-                '<select data="EmblemsCustomValue9" class="asm-selectbox"><option></option>' + emblemoptions.join("") + '</select>',
-                '<br/>',
-                '<select data="EmblemsCustomFlag10" class="asm-selectbox"><option></option>' + html.list_to_options(controller.animalflags, "FLAG", "FLAG") + '</select>',
-                '<select data="EmblemsCustomValue10" class="asm-selectbox"><option></option>' + emblemoptions.join("") + '</select>',
+                boxes(1), boxes(2), boxes(3), boxes(4), boxes(5), boxes(6), boxes(7), boxes(8), boxes(9), boxes(10),
                 '</td></tr></table>',
                 '</div>'
             ].join("\n");
@@ -762,7 +770,7 @@ $(function() {
                 '<input data="LocationFiltersEnabled" id="locationfilters" class="asm-checkbox" type="checkbox" /> <label for="locationfilters">' + _("Enable location filters") + '</label><br />',
                 '<input data="MultiSiteEnabled" id="multisite" class="asm-checkbox" type="checkbox" /> <label for="multisite">' + _("Enable multiple sites") + '</label><br />',
                 '<input data="InactivityTimer" id="inactivitytimer" class="asm-checkbox" type="checkbox" /> <label for="inactivitytimer">' + _("Auto log users out after this many minutes of inactivity") + '</label>',
-                '<input data="InactivityTimeout" id="inactivitytimeout" class="asm-textbox asm-numberbox" /><br />',
+                '<input data="InactivityTimeout" id="inactivitytimeout" data-min="0" data-max="1440" class="asm-textbox asm-numberbox" /><br />',
                 '<label for="ownernameformat" style="margin-left: 24px">' + _("When displaying person names, use the format") + '</label> ',
                 '<select data="OwnerNameFormat" id="ownernameformat" type="text" class="asm-selectbox">',
                 '<option value="{ownertitle} {ownerforenames} {ownersurname}">' + _("Title First Last") + '</option>',
@@ -912,7 +920,7 @@ $(function() {
                 '</tr>',
                 '<tr>',
                 '<td><label for="linkmax">' + _("Number of animal links to show") + '</label></td>',
-                '<td><input type="text" id="linkmax" data="MainScreenAnimalLinkMax" class="asm-textbox asm-numberbox" /></td>',
+                '<td><input type="text" id="linkmax" data-min="0" data-max="200" data="MainScreenAnimalLinkMax" class="asm-textbox asm-numberbox" /></td>',
                 '</tr>',
                 '</table>',
 
@@ -1023,8 +1031,12 @@ $(function() {
         render_movements: function() {
             return [
                 '<div id="tab-movements">',
-                '<p><label for="cancelunadopted">' + _("Cancel unadopted reservations after") + '</label> <input data="AutoCancelReservesDays" id="cancelunadopted" type="text" class="asm-textbox asm-numberbox" title="' + html.title(_("Cancel unadopted reservations after this many days, or 0 to never cancel")) + '" /> ' + _(" days.") + '</p>',
-                '<p><label for="autoremoveholddays">' + _("Remove holds after") + '</label> <input data="AutoRemoveHoldDays" id="autoremoveholddays" type="text" class="asm-textbox asm-numberbox" title="' + html.title(_("Cancel holds on animals this many days after the brought in date, or 0 to never cancel")) + '" /> ' + _(" days.") + '</p>',
+                '<p><label for="cancelunadopted">' + _("Cancel unadopted reservations after") + '</label>',
+                '<span id="callout-cancelunadopted" class="asm-callout">' + _("Cancel unadopted reservations after this many days, or 0 to never cancel") + '</span>',
+                '<input data="AutoCancelReservesDays" id="cancelunadopted" type="text" data-min="0" data-max="365" class="asm-textbox asm-halftextbox asm-numberbox" /> ' + _(" days.") + '</p>',
+                '<p><label for="autoremoveholddays">' + _("Remove holds after") + '</label>',
+                '<span id="callout-autoremoveholddays" class="asm-callout">' + _("Cancel holds on animals this many days after the brought in date, or 0 to never cancel") + '</span>',
+                '<input data="AutoRemoveHoldDays" id="autoremoveholddays" type="text" data-min="0" data-max="365" class="asm-textbox asm-halftextbox asm-numberbox" /> ' + _(" days.") + '</p>',
                 '<input data="FosterOnShelter" id="fosteronshelter" class="asm-checkbox" type="checkbox" /> <label for="fosteronshelter">' + _("Treat foster animals as part of the shelter inventory") + '</label><br />',
                 '<input data="RetailerOnShelter" id="retaileronshelter" class="asm-checkbox" type="checkbox" /> <label for="retaileronshelter">' + _("Treat animals at retailers as part of the shelter inventory") + '</label><br />',
                 '<input data="CancelReservesOnAdoption" id="cancelresadopt" class="asm-checkbox" type="checkbox" /> <label for="cancelresadopt">' + _("Automatically cancel any outstanding reservations on an animal when it is adopted") + '</label><br />',
@@ -1048,6 +1060,15 @@ $(function() {
                 '<input data="WarnBroughtIn" id="warnbroughtin" class="asm-checkbox" type="checkbox" /> <label for="warnbroughtin">' + _("Warn when adopting to a person who has previously brought an animal to the shelter") + '</label><br />',
                 '<input data="WarnMultipleReserves" id="warnmultiplereseves" class="asm-checkbox" type="checkbox" /> <label for="warnmultiplereserves">' + _("Warn when creating multiple reservations on the same animal") + '</label>',
                 '</p>',
+                '</div>'
+            ].join("\n");
+        },
+
+        render_onlineforms: function() {
+            return [
+                '<div id="tab-onlineforms">',
+                '<p><label for="autoremoveforms">' + _("Remove incoming forms after") + '</label> <input data="AutoRemoveIncomingFormsDays" id="autoremoveforms" type="text" data-min="7" data-max="56" class="asm-halftextbox asm-textbox asm-numberbox" /> ' + _(" days.") + '<br/>',
+                '<input data="rc:DontRemoveProcessedForms" id="removeprocessedforms" class="asm-checkbox" type="checkbox" /> <label for="removeprocessedforms">' + _("Remove processed forms when I leave the incoming forms screens") + '</p>',
                 '</div>'
             ].join("\n");
         },
@@ -1236,7 +1257,7 @@ $(function() {
                 '<span id="callout-wlupdate" class="asm-callout">' + _("Set to 0 to never update urgencies.") + '</span>',
                 '</td>',
                 '<td>',
-                '<input data="WaitingListUrgencyUpdatePeriod" id="wlupdate" class="asm-textbox asm-numberbox" type="text" title="' + _("The period in days before waiting list urgency is increased") + '" />',
+                '<input data="WaitingListUrgencyUpdatePeriod" id="wlupdate" data-min="1" data-max="365" class="asm-textbox asm-numberbox" type="text" title="' + _("The period in days before waiting list urgency is increased") + '" />',
                 '</td>',
                 '</tr>',
                 '<tr>',
@@ -1285,6 +1306,7 @@ $(function() {
                 this.render_lostandfound(),
                 this.render_medical(),
                 this.render_movements(),
+                this.render_onlineforms(),
                 this.render_processors(),
                 this.render_quicklinks(),
                 this.render_search(),
@@ -1357,6 +1379,9 @@ $(function() {
                     else if ($(this).is("input:hidden")) {
                         $(this).val( config.str(d));
                     }
+                    else if ($(this).is(".asm-selectbox") && $(this).is(".decode")) {
+                        $(this).select("value", html.decode(config.str(d)));
+                    }
                     else if ($(this).is(".asm-selectbox") || $(this).is(".asm-doubleselectbox")) {
                         $(this).select("value", config.str(d));
                     }
@@ -1364,7 +1389,7 @@ $(function() {
                         var ms = config.str(d).split(",");
                         var bsm = $(this);
                         $.each(ms, function(i, v) {
-                            bsm.find("option[value='" + $.trim(v + "']")).attr("selected", "selected");
+                            bsm.find("option[value='" + common.trim(v + "']")).attr("selected", "selected");
                         });
                         $(this).change();
                     }

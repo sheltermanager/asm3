@@ -115,7 +115,20 @@ $(function() {
                          var row = tableform.table_selected_row(table);
                          common.route("animal_find_results?mode=ADVANCED&q=&litterid=" + encodeURIComponent(row.ACCEPTANCENUMBER));
                      }
+                 },
+                 { id: "offset", type: "dropdownfilter", 
+                     options: [ "m365|" + _("In the last year"), "a|" + _("All time") ],
+                     click: function(selval) {
+                        common.route("litters?offset=" + selval);
+                     },
+                     hideif: function(row) {
+                         // Don't show for animal records
+                         if (controller.animal) {
+                             return true;
+                         }
+                     }
                  }
+
             ];
             this.dialog = dialog;
             this.buttons = buttons;
@@ -141,6 +154,13 @@ $(function() {
             $("#animal").animalchooser().bind("animalchooserloaded", function(event, rec) { litters.lastanimal = rec; });
         },
 
+        sync: function() {
+            // If an offset is given in the querystring, update the select
+            if (common.querystring_param("offset")) {
+                $("#offset").select("value", common.querystring_param("offset"));
+            }
+        },
+
         set_extra_fields: function(row) {
             row.MOTHERNAME = ""; row.MOTHERCODE = "";
             if (litters.lastanimal) {
@@ -163,7 +183,7 @@ $(function() {
         animation: "book",
         title: function() { return _("Litters"); },
         routes: {
-            "litters": function() { common.module_loadandstart("litters", "litters"); }
+            "litters": function() { common.module_loadandstart("litters", "litters?" + this.rawqs); }
         }
 
     };

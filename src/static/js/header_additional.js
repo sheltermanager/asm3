@@ -174,9 +174,9 @@ $(function() {
                 fh.push('title="' + html.title(f.TOOLTIP) + '" value="' + format.currency(fieldval) + '"/></td>');
             }
             else if (f.FIELDTYPE == additional.LOOKUP) {
-                var opts = [], cv = $.trim(common.nulltostr(fieldval));
+                var opts = [], cv = common.trim(common.nulltostr(fieldval));
                 $.each(f.LOOKUPVALUES.split("|"), function(io, vo) {
-                    vo = $.trim(vo);
+                    vo = common.trim(vo);
                     if (cv == vo) {
                         opts.push('<option selected="selected">' + vo + '</option>');
                     }
@@ -191,9 +191,9 @@ $(function() {
                 fh.push('</select></td>');
             }
             else if (f.FIELDTYPE == additional.MULTI_LOOKUP) {
-                var mopts = [], mcv = $.trim(common.nulltostr(fieldval)).split(",");
+                var mopts = [], mcv = common.trim(common.nulltostr(fieldval)).split(",");
                 $.each(f.LOOKUPVALUES.split("|"), function(io, vo) {
-                    vo = $.trim(vo);
+                    vo = common.trim(vo);
                     if ($.inArray(vo, mcv) != -1) {
                         mopts.push('<option selected="selected">' + vo + '</option>');
                     }
@@ -247,7 +247,7 @@ $(function() {
                     var d = String(t.attr("data-post"));
                     // mandatory additional fields have a post attribute prefixed with a.1
                     if (d.indexOf("a.1") != -1) {
-                        if ($.trim(t.val()) == "") {
+                        if (common.trim(t.val()) == "") {
                             header.show_error(_("{0} cannot be blank").replace("{0}", label.html()));
                             // Find the index of the accordion section this element is in and activate it
                             $("#asm-details-accordion").accordion("option", "active", acchead.index("#asm-details-accordion h3"));
@@ -277,7 +277,7 @@ $(function() {
                     var d = String(t.attr("data-post"));
                     // mandatory additional fields have a post attribute prefixed with a.1
                     if (d.indexOf("a.1") != -1) {
-                        if ($.trim(t.val()) == "") {
+                        if (common.trim(t.val()) == "") {
                             header.show_error(_("{0} cannot be blank").replace("{0}", label.html()));
                             label.addClass(validate.ERROR_LABEL_CLASS);
                             t.focus();

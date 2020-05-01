@@ -1022,7 +1022,7 @@ $(function() {
                         pr += " " + $(this).attr("data") + "=" + $(this).val();
                     }
                 });
-                return encodeURIComponent($.trim(pr));
+                return encodeURIComponent(common.trim(pr));
             };
 
             var cfg_enabled = function() {

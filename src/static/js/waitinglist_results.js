@@ -233,7 +233,7 @@ $(function() {
         column_names: function() {
             var cols = [];
             $.each(config.str("WaitingListViewColumns").split(","), function(i, v) {
-                cols.push($.trim(v));
+                cols.push(common.trim(v));
             });
             return cols;
         },

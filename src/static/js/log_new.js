@@ -68,7 +68,7 @@ $(function() {
                     }
                 }
                 // date
-                if ($.trim($("#logdate").val()) == "") {
+                if (common.trim($("#logdate").val()) == "") {
                     header.show_error(_("Log requires a date."));
                     validate.highlight("logdate");
                     return false;

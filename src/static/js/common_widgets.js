@@ -170,7 +170,7 @@
                 textExtraction: function(node, table, cellIndex) {
                     // this function controls how text is extracted from cells for
                     // sorting purposes.
-                    var s = $.trim($(node).text()), h = $(node).html();
+                    var s = common.trim($(node).text()), h = $(node).html();
                     // If there's a data-sort attribute somewhere in the cell, use that
                     if (h.indexOf("data-sort") != -1) {
                         var fq = h.indexOf("data-sort");
@@ -215,10 +215,25 @@
         });
     };
 
-    // Textbox that should only contain numbers
+    // Textbox that should only contain numbers.
+    // data-min and data-max attributes can be used to contain the lower/upper bound
     $.fn.number = function() {
         var allowed = [ '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '.', '-' ];
         this.each(function() {
+            if ($(this).attr("data-min")) {
+                $(this).blur(function(e) {
+                    if (format.to_int($(this).val()) < format.to_int($(this).attr("data-min"))) {
+                        $(this).val($(this).attr("data-min"));
+                    }
+                });
+            }
+            if ($(this).attr("data-max")) {
+                $(this).blur(function(e) {
+                    if (format.to_int($(this).val()) > format.to_int($(this).attr("data-max"))) {
+                        $(this).val($(this).attr("data-max"));
+                    }
+                });
+            }
             $(this).keypress(function(e) {
                 var k = e.charCode || e.keyCode;
                 var ch = String.fromCharCode(k);
@@ -659,7 +674,7 @@
             }
             $("#emailfrom").autocomplete({source: mailaddresses});
             $("#emailfrom").autocomplete("widget").css("z-index", 1000);
-            $("#emailto").val(common.replace_all(html.decode(o.name), ",", "") + " <" + o.email + ">");
+            if (o.email) { $("#emailto").val(common.replace_all(html.decode(o.name), ",", "") + " <" + o.email + ">"); }
             var msg = config.str("EmailSignature");
             if (o.message) { msg = "<p>" + o.message + "</p>" + msg; }
             else { msg = "<p>&nbsp;</p>" + msg; }

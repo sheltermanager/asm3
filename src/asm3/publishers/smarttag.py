@@ -69,7 +69,7 @@ class SmartTagPublisher(FTPPublisher):
 
         # SmartTag want data files called shelterid_mmddyyyy_HHMMSS.csv in a folder
         # called shelterid_mmddyyyy_HHMMSS
-        dateportion = asm3.i18n.format_date("%m%d%Y_%H%M%S", asm3.i18n.now(self.dbo.timezone))
+        dateportion = asm3.i18n.format_date(asm3.i18n.now(self.dbo.timezone), "%m%d%Y_%H%M%S")
         folder = "%s_%s" % (shelterid, dateportion)
         outputfile = "%s_%s.csv" % (shelterid, dateportion)
         self.mkdir(folder)

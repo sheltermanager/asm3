@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 
 import os, sys
-import mimetypes
 
 # The path to the folder containing the ASM3 modules
 PATH = os.path.dirname(os.path.abspath(__file__)) + os.sep
@@ -1253,6 +1252,7 @@ class animal(JSONEndpoint):
             "flags": asm3.lookups.get_animal_flags(dbo),
             "incidents": asm3.animalcontrol.get_animalcontrol_for_animal(dbo, o.post.integer("id")),
             "internallocations": asm3.lookups.get_internal_locations(dbo, o.locationfilter, o.siteid),
+            "logtypes": asm3.lookups.get_log_types(dbo),
             "pickuplocations": asm3.lookups.get_pickup_locations(dbo),
             "publishhistory": asm3.animal.get_publish_history(dbo, a["ID"]),
             "posneg": asm3.lookups.get_posneg(dbo),
@@ -1272,6 +1272,10 @@ class animal(JSONEndpoint):
     def post_delete(self, o):
         self.check(asm3.users.DELETE_ANIMAL)
         asm3.animal.delete_animal(o.dbo, o.user, o.post.integer("animalid"))
+
+    def post_email(self, o):
+        self.check(asm3.users.EMAIL_PERSON)
+        asm3.animal.send_email_from_form(o.dbo, o.user, o.post)
 
     def post_gencode(self, o):
         post = o.post
@@ -2623,7 +2627,10 @@ class document_repository(JSONEndpoint):
     def controller(self, o):
         documents = asm3.dbfs.get_document_repository(o.dbo)
         asm3.al.debug("got %d documents in repository" % len(documents), "code.document_repository", o.dbo)
-        return { "rows": documents }
+        return { 
+            "rows": documents,
+            "templates": asm3.template.get_document_templates(o.dbo)
+        }
 
     def post_create(self, o):
         self.check(asm3.users.ADD_REPO_DOCUMENT)
@@ -2648,6 +2655,18 @@ class document_repository(JSONEndpoint):
         for i in o.post.integer_list("ids"):
             asm3.dbfs.delete_id(o.dbo, i)
 
+    def post_email(self, o):
+        self.check(asm3.users.EMAIL_PERSON)
+        dbo = o.dbo
+        post = o.post
+        attachments = []
+        for dbfsid in post.integer_list("ids"):
+            name = asm3.dbfs.get_name_for_id(dbo, dbfsid)
+            content = asm3.dbfs.get_string_id(dbo, dbfsid)
+            attachments.append(( name, asm3.media.mime_type(name), content ))
+        asm3.utils.send_email(dbo, post["from"], post["to"], post["cc"], post["bcc"], post["subject"], post["body"], "html", attachments)
+        return post["to"]
+
 class document_repository_file(ASMEndpoint):
     url = "document_repository_file"
     get_permissions = asm3.users.VIEW_REPO_DOCUMENT
@@ -2655,10 +2674,9 @@ class document_repository_file(ASMEndpoint):
     def content(self, o):
         if o.post.integer("dbfsid") != 0:
             name = asm3.dbfs.get_name_for_id(o.dbo, o.post.integer("dbfsid"))
-            mimetype, encoding = mimetypes.guess_type("file://" + name, strict=False)
+            mimetype = asm3.media.mime_type(name)
             disp = "attachment"
-            if mimetype == "application/pdf": 
-                disp = "inline" # Try to show PDFs in place
+            if mimetype == "application/pdf": disp = "inline" # Try to show PDFs in place
             self.content_type(mimetype)
             self.header("Content-Disposition", "%s; filename=\"%s\"" % (disp, name))
             return asm3.dbfs.get_string_id(o.dbo, o.post.integer("dbfsid"))
@@ -3275,7 +3293,9 @@ class litters(JSONEndpoint):
 
     def controller(self, o):
         dbo = o.dbo
-        litters = asm3.animal.get_litters(dbo)
+        offset = o.post["offset"]
+        if offset == "": offset = "m365"
+        litters = asm3.animal.get_litters(dbo, offset)
         asm3.al.debug("got %d litters" % len(litters), "code.litters", dbo)
         return {
             "rows": litters,

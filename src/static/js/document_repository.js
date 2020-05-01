@@ -34,28 +34,40 @@ $(function() {
             };
 
             var buttons = [
-                 { id: "new", text: _("New"), icon: "new", enabled: "always", perm: "ard", 
-                     click: function() { 
-                         tableform.dialog_show_add(dialog)
-                             .then(function() {
-                                $("#form-tableform").submit();
-                             });
+                { id: "new", text: _("New"), icon: "new", enabled: "always", perm: "ard", 
+                    click: function() { 
+                        tableform.dialog_show_add(dialog)
+                            .then(function() {
+                               $("#form-tableform").submit();
+                            });
                      } 
-                 },
-                 { id: "delete", text: _("Delete"), icon: "delete", enabled: "multi", perm: "drd", 
-                     click: function() { 
-                         tableform.delete_dialog()
-                             .then(function() {
-                                tableform.buttons_default_state(buttons);
-                                 var ids = tableform.table_ids(table);
-                                 return common.ajax_post("document_repository", "mode=delete&ids=" + ids);
-                             })
-                             .then(function() {
-                                 tableform.table_remove_selected_from_json(table, controller.rows);
-                                 tableform.table_update(table);
-                             });
-                     } 
-                 },
+                },
+                { id: "delete", text: _("Delete"), icon: "delete", enabled: "multi", perm: "drd", 
+                    click: function() { 
+                        tableform.delete_dialog()
+                            .then(function() {
+                               tableform.buttons_default_state(buttons);
+                                var ids = tableform.table_ids(table);
+                                return common.ajax_post("document_repository", "mode=delete&ids=" + ids);
+                            })
+                            .then(function() {
+                                tableform.table_remove_selected_from_json(table, controller.rows);
+                                tableform.table_update(table);
+                            });
+                    } 
+                },
+                { id: "email", text: _("Email"), icon: "email", enabled: "multi", perm: "emo",
+                    click: function() {
+                        $("#emailform").emailform("show", {
+                            title: _("Email media"),
+                            post: "document_repository",
+                            formdata: "mode=email" +
+                                "&ids=" + tableform.table_ids(table),
+                            subject: tableform.table_selected_row(table).NAME,
+                            templates: controller.templates
+                        });
+                    }
+                },
                 { type: "raw", markup: '<div class="asm-mediadroptarget"><p>' + _("Drop files here...") + '</p></div>',
                     hideif: function() { return !Modernizr.filereader || !Modernizr.todataurljpeg || asm.mobileapp; }}
             ];
@@ -108,6 +120,7 @@ $(function() {
             var s = "";
             this.model();
             s += tableform.dialog_render(this.dialog);
+            s += '<div id="emailform" />';
             s += html.content_header(_("Document Repository"));
             s += html.info(_("This screen allows you to add extra documents to your database, for staff training, reference materials, etc."));
             s += tableform.buttons_render(this.buttons);
@@ -120,6 +133,7 @@ $(function() {
             tableform.dialog_bind(this.dialog);
             tableform.buttons_bind(this.buttons);
             tableform.table_bind(this.table, this.buttons);
+            $("#emailform").emailform();
             // Assign name attribute to the path as we're using straight form POST for uploading
             $("#path").attr("name", "path");
             // Handle drag and drop
@@ -142,6 +156,7 @@ $(function() {
 
         destroy: function() {
             tableform.dialog_destroy();
+            common.widget_destroy("#emailform");
         },
 
         name: "document_repository",

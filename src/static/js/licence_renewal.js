@@ -96,7 +96,7 @@ $(function() {
                     return false;
                 }
                 // date
-                if ($.trim($("#issuedate").val()) == "" || $.trim($("#expirydate").val()) == "") {
+                if (common.trim($("#issuedate").val()) == "" || common.trim($("#expirydate").val()) == "") {
                     header.show_error(_("License requires issued and expiry dates"));
                     validate.highlight("issuedate");
                     return false;

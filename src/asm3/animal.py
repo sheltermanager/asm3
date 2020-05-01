@@ -1695,18 +1695,24 @@ def get_active_litters_brief(dbo):
         rv.append( { "label": disp, "value": i.acceptancenumber } )
     return rv
 
-def get_litters(dbo):
+def get_litters(dbo, offset="m365"):
     """
-    Returns all animal litters in descending order of age. Litters
-    over a year old are ignored.
+    Returns all animal litters in descending order of age. 
+    offset is m to go backwards days, or a for all time
     """
+    offsetdays = asm3.utils.atoi(offset)
+    where = ""
+    v = []
+    if offset.startswith("m"): 
+        where = "WHERE Date >= ? "
+        v.append( dbo.today(offsetdays*-1) )
     return dbo.query("SELECT l.*, a.AnimalName AS MotherName, " \
         "a.ShelterCode AS Mothercode, s.SpeciesName AS SpeciesName " \
         "FROM animallitter l " \
         "LEFT OUTER JOIN animal a ON l.ParentAnimalID = a.ID " \
         "INNER JOIN species s ON l.SpeciesID = s.ID " \
-        "WHERE l.Date >= ? " \
-        "ORDER BY l.Date DESC", [ subtract_years(dbo.today(), 1) ])
+        "%s" \
+        "ORDER BY l.Date DESC" % where, v)
 
 def get_satellite_counts(dbo, animalid):
     """
@@ -2408,6 +2414,24 @@ def update_deceased_from_form(dbo, username, post):
     update_variable_animal_data(dbo, animalid)
     # Close any diary notes related to this animal
     asm3.diary.complete_diary_notes_for_animal(dbo, username, animalid)
+
+def send_email_from_form(dbo, username, post):
+    """
+    Sends an email related to an animal from a posted form. Attaches it as
+    a log entry if specified.
+    """
+    emailfrom = post["from"]
+    emailto = post["to"]
+    emailcc = post["cc"]
+    emailbcc = post["bcc"]
+    subject = post["subject"]
+    addtolog = post.boolean("addtolog")
+    logtype = post.integer("logtype")
+    body = post["body"]
+    rv = asm3.utils.send_email(dbo, emailfrom, emailto, emailcc, emailbcc, subject, body, "html")
+    if addtolog == 1:
+        asm3.log.add_log(dbo, username, asm3.log.ANIMAL, post.integer("animalid"), logtype, asm3.utils.html_email_to_plain(body))
+    return rv
 
 def update_diary_linkinfo(dbo, animalid, a = None, diaryupdatebatch = None):
     """

@@ -151,7 +151,7 @@ class AKCReunitePublisher(AbstractPublisher):
                 "colorMarkings": an.MARKINGS,
                 "genderCode":   an.SEXNAME[0:1],
                 "spayedNeutered": an.NEUTERED == 1,
-                "birthDate":    asm3.i18n.format_date("%m-%d-%Y", an.DATEOFBIRTH),
+                "birthDate":    asm3.i18n.format_date(an.DATEOFBIRTH, "%m-%d-%Y"),
             },
             "primaryContact": {
                 "firstName":    an.CURRENTOWNERFORENAMES,

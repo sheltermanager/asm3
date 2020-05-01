@@ -61,7 +61,7 @@ class FoundAnimalsPublisher(FTPPublisher):
             return
 
         # foundanimals.org want data files called mmddyyyy_HHMMSS.csv in the shelter's own folder
-        dateportion = asm3.i18n.format_date("%m%d%Y_%H%M%S", asm3.i18n.now(self.dbo.timezone))
+        dateportion = asm3.i18n.format_date(asm3.i18n.now(self.dbo.timezone), "%m%d%Y_%H%M%S")
         outputfile = "%s.csv" % dateportion
 
         self.mkdir(folder)
@@ -159,9 +159,9 @@ class FoundAnimalsPublisher(FTPPublisher):
         # Microchip Number
         line.append("\"%s\"" % an["IDENTICHIPNUMBER"])
         # Service Date
-        line.append("\"%s\"" % asm3.i18n.format_date("%m/%d/%Y", servicedate))
+        line.append("\"%s\"" % asm3.i18n.format_date(servicedate, "%m/%d/%Y"))
         # Date of Birth
-        line.append("\"%s\"" % asm3.i18n.format_date("%m/%d/%Y", an["DATEOFBIRTH"]))
+        line.append("\"%s\"" % asm3.i18n.format_date(an["DATEOFBIRTH"], "%m/%d/%Y"))
         # Species
         line.append("\"%s\"" % an["PETFINDERSPECIES"])
         # Sex

@@ -72,7 +72,7 @@ $(function() {
                     return false;
                 }
                 // date
-                if ($.trim($("#transferdate").val()) == "") {
+                if (common.trim($("#transferdate").val()) == "") {
                     header.show_error(_("This type of movement requires a date."));
                     validate.highlight("transferdate");
                     return false;

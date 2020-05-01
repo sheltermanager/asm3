@@ -498,6 +498,7 @@ def get_person_find_advanced(dbo, criteria, username, includeStaff = False, incl
     criteria: A dictionary of criteria
        code - string partial pattern
        createdby - string partial pattern
+       createdsince - date
        name - string partial pattern
        address - string partial pattern
        town - string partial pattern
@@ -517,6 +518,7 @@ def get_person_find_advanced(dbo, criteria, username, includeStaff = False, incl
     ss.add_words("name", "o.OwnerName")
     ss.add_str("code", "o.OwnerCode")
     ss.add_str("createdby", "o.CreatedBy")
+    ss.add_date_since("createdsince", "o.CreatedDate")
     ss.add_str("address", "o.OwnerAddress")
     ss.add_str("town", "o.OwnerTown")
     ss.add_str("county", "o.OwnerCounty")

@@ -172,7 +172,7 @@ def animal_tags(dbo, a, includeAdditional=True, includeCosts=True, includeDiet=T
         "ANIMALCREATEDBY"       : a["CREATEDBY"],
         "ANIMALCREATEDDATE"     : python2display(l, a["CREATEDDATE"]),
         "DATEBROUGHTIN"         : python2display(l, a["DATEBROUGHTIN"]),
-        "TIMEBROUGHTIN"         : format_time(a["DATEBROUGHTIN"]),
+        "TIMEBROUGHTIN"         : format_time(a["DATEBROUGHTIN"], "%H:%M"),
         "DATEOFBIRTH"           : python2display(l, a["DATEOFBIRTH"]),
         "AGEGROUP"              : a["AGEGROUP"],
         "DISPLAYDOB"            : displaydob,
@@ -714,14 +714,14 @@ def animalcontrol_tags(dbo, ac):
     tags = {
         "INCIDENTNUMBER":       asm3.utils.padleft(ac["ACID"], 6),
         "INCIDENTDATE":         python2display(l, ac["INCIDENTDATETIME"]),
-        "INCIDENTTIME":         format_time(ac["INCIDENTDATETIME"]),
+        "INCIDENTTIME":         format_time(ac["INCIDENTDATETIME"], "%H:%M"),
         "INCIDENTTYPENAME":     asm3.utils.nulltostr(ac["INCIDENTNAME"]),
         "CALLDATE":             python2display(l, ac["CALLDATETIME"]),
-        "CALLTIME":             format_time(ac["CALLDATETIME"]),
+        "CALLTIME":             format_time(ac["CALLDATETIME"], "%H:%M"),
         "CALLNOTES":            ac["CALLNOTES"],
         "CALLTAKER":            ac["CALLTAKER"],
         "DISPATCHDATE":         python2display(l, ac["DISPATCHDATETIME"]),
-        "DISPATCHTIME":         format_time(ac["DISPATCHDATETIME"]),
+        "DISPATCHTIME":         format_time(ac["DISPATCHDATETIME"], "%H:%M"),
         "DISPATCHADDRESS":      ac["DISPATCHADDRESS"],
         "DISPATCHTOWN":         ac["DISPATCHTOWN"],
         "DISPATCHCITY":         ac["DISPATCHTOWN"],
@@ -732,13 +732,13 @@ def animalcontrol_tags(dbo, ac):
         "DISPATCHEDACO":        ac["DISPATCHEDACO"],
         "PICKUPLOCATIONNAME":   asm3.utils.nulltostr(ac["LOCATIONNAME"]),
         "RESPONDEDDATE":        python2display(l, ac["RESPONDEDDATETIME"]),
-        "RESPONDEDTIME":        format_time(ac["RESPONDEDDATETIME"]),
+        "RESPONDEDTIME":        format_time(ac["RESPONDEDDATETIME"], "%H:%M"),
         "FOLLOWUPDATE":         python2display(l, ac["FOLLOWUPDATETIME"]),
-        "FOLLOWUPTIME":         format_time(ac["FOLLOWUPDATETIME"]),
+        "FOLLOWUPTIME":         format_time(ac["FOLLOWUPDATETIME"], "%H:%M"),
         "FOLLOWUPDATE2":         python2display(l, ac["FOLLOWUPDATETIME2"]),
-        "FOLLOWUPTIME2":         format_time(ac["FOLLOWUPDATETIME2"]),
+        "FOLLOWUPTIME2":         format_time(ac["FOLLOWUPDATETIME2"], "%H:%M"),
         "FOLLOWUPDATE3":         python2display(l, ac["FOLLOWUPDATETIME3"]),
-        "FOLLOWUPTIME3":         format_time(ac["FOLLOWUPDATETIME3"]),
+        "FOLLOWUPTIME3":         format_time(ac["FOLLOWUPDATETIME3"], "%H:%M"),
         "COMPLETEDDATE":        python2display(l, ac["COMPLETEDDATE"]),
         "COMPLETEDTYPENAME":    asm3.utils.nulltostr(ac["COMPLETEDNAME"]),
         "ANIMALDESCRIPTION":    ac["ANIMALDESCRIPTION"],
@@ -1077,14 +1077,14 @@ def clinic_tags(dbo, c):
         "ID":                   asm3.utils.padleft(c.ID, 6),
         "APPOINTMENTFOR"        : asm3.users.get_real_name(dbo, c.APPTFOR),
         "APPOINTMENTDATE"       : python2display(l, c.DATETIME),
-        "APPOINTMENTTIME"       : format_time(c.DATETIME),
+        "APPOINTMENTTIME"       : format_time(c.DATETIME, "%H:%M"),
         "STATUS"                : c.CLINICSTATUSNAME,
         "ARRIVEDDATE"           : python2display(l, c.ARRIVEDDATETIME),
-        "ARRIVEDTIME"           : format_time(c.ARRIVEDDATETIME),
+        "ARRIVEDTIME"           : format_time(c.ARRIVEDDATETIME, "%H:%M"),
         "WITHVETDATE"           : python2display(l, c.WITHVETDATETIME),
-        "WITHVETTIME"           : format_time(c.WITHVETDATETIME),
+        "WITHVETTIME"           : format_time(c.WITHVETDATETIME, "%H:%M"),
         "COMPLETEDDATE"         : python2display(l, c.COMPLETEDDATETIME),
-        "COMPLETEDTIME"         : format_time(c.COMPLETEDDATETIME),
+        "COMPLETEDTIME"         : format_time(c.COMPLETEDDATETIME, "%H:%M"),
         "REASONFORAPPOINTMENT"  : c.REASONFORAPPOINTMENT,
         "APPOINTMENTCOMMENTS"   : c.COMMENTS,
         "INVOICEAMOUNT"         : format_currency_no_symbol(l, c.AMOUNT),
@@ -1384,7 +1384,7 @@ def table_get_value(l, row, k):
     if k.find("d:") != -1: 
         s = python2display(l, row[k.replace("d:", "")])
     elif k.find("t:") != -1: 
-        s = format_time(row[k.replace("t:", "")])
+        s = format_time(row[k.replace("t:", "")], "%H:%M")
     elif k.find("c:") != -1:
         s = format_currency_no_symbol(l, row[k.replace("c:", "")])
     elif k.find("y:") != -1:

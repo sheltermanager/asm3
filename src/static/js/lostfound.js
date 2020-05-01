@@ -200,28 +200,28 @@ $(function() {
             validate.reset();
 
             // owner
-            if ($.trim($("#owner").val()) == "") {
+            if (common.trim($("#owner").val()) == "") {
                 header.show_error(_("Lost and found entries must have a contact"));
                 validate.highlight("owner");
                 return false;
             }
 
             // date lost
-            if (lostfound.mode == "lost" && $.trim($("#datelost").val()) == "") {
+            if (lostfound.mode == "lost" && common.trim($("#datelost").val()) == "") {
                 header.show_error(_("Date lost cannot be blank"));
                 validate.highlight("datelost");
                 return false;
             }
 
             // date found
-            if (lostfound.mode == "found" && $.trim($("#datefound").val()) == "") {
+            if (lostfound.mode == "found" && common.trim($("#datefound").val()) == "") {
                 header.show_error(_("Date found cannot be blank"));
                 validate.highlight("datefound");
                 return false;
             }
 
             // date reported
-            if ($.trim($("#datereported").val()) == "") {
+            if (common.trim($("#datereported").val()) == "") {
                 header.show_error(_("Date reported cannot be blank"));
                 validate.highlight("datereported");
                 return false;

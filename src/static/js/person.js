@@ -495,7 +495,7 @@ $(function() {
             // if the member flag is selected and membership number is blank,
             // default the membership number from the person id.
             if ($("#flags option[value='member']").is(":selected")) {
-                if ($.trim($("#membershipnumber").val()) == "") {
+                if (common.trim($("#membershipnumber").val()) == "") {
                     $("#membershipnumber").val( 
                         format.padleft($("#personid").val(), 10));
                 }
@@ -585,7 +585,7 @@ $(function() {
             validate.reset();
 
             // name
-            if ($.trim($("#surname").val()) == "") {
+            if (common.trim($("#surname").val()) == "") {
                 header.show_error(_("Name cannot be blank"));
                 $("#asm-details-accordion").accordion("option", "active", 0);
                 validate.highlight("surname");
@@ -593,7 +593,7 @@ $(function() {
             }
 
             // email
-            if ($.trim($("#email").val()) != "") {
+            if (common.trim($("#email").val()) != "") {
                 if (!validate.email($("#email").val())) {
                     return false;
                 }

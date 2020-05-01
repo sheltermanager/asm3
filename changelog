@@ -1,6 +1,23 @@
 44
 ================
 
+01/05/20 Hide auto remove text if option is off #810
+01/05/20 Add created since to person search
+01/05/20 Add bounds checking to config numbers, tidy up
+01/05/20 Configuration for removing incoming forms after complaints! #810
+30/04/20 Strip dead img src before feeding to wkhtmltopdf #811
+30/04/20 Show an emblem on NOT flag #805
+30/04/20 Add selection of unicode glyphs to emblems #805
+30/04/20 Fix find person columns not sorting in options #769
+30/04/20 Add "Adoptable" find animal result column #711
+30/04/20 Ability to view old litter records #807
+30/04/20 Email button on animal records #809
+30/04/20 Email documents from document repository #687
+30/04/20 Leaving the incoming forms screen deletes processed forms #810
+30/04/20 make format_date and format_time consistent with each other #808
+30/04/20 Omit seconds for word processor clinic output (Julian Poidevin) #808
+29/04/20 Fix display after reloading media table on edit
+29/04/20 Option to share picture from share menu
 29/04/20 Fix introduced bug in saving currency fields
 28/04/20 Display option to turn off pink/blue borders
 28/04/20 Mask Stripe secret key for security #799

@@ -1319,8 +1319,8 @@ def giftaid_spreadsheet(dbo, path, fromdate, todate):
                 subearly = True
                 content = content.replace("table:style-name=\"ce21\" office:value-type=\"string\">", 
                     "table:style-name=\"ce36\" office:value-type=\"date\" office:date-value=\"%s\">" % \
-                    asm3.i18n.format_date("%Y-%m-%d", d.DONATIONDATE))
-                content = content.replace("DONEARLIESTDONATION", asm3.i18n.format_date("%d/%m/%y", d.DONATIONDATE))
+                    asm3.i18n.format_date(d.DONATIONDATE, "%Y-%m-%d" ))
+                content = content.replace("DONEARLIESTDONATION", asm3.i18n.format_date(d.DONATIONDATE, "%d/%m/%y"))
             content = content.replace("DONTITLE", xmlescape(d.OWNERTITLE), 1)
             content = content.replace("DONFIRSTNAME", xmlescape(d.OWNERFORENAMES), 1)
             content = content.replace("DONLASTNAME", xmlescape(d.OWNERSURNAME), 1)
@@ -1331,8 +1331,8 @@ def giftaid_spreadsheet(dbo, path, fromdate, todate):
             # Switch the string date format to a real date with the correct value
             content = content.replace("table:style-name=\"ce36\" office:value-type=\"string\">", 
                 "table:style-name=\"ce36\" office:value-type=\"date\" office:date-value=\"%s\">" % \
-                asm3.i18n.format_date("%Y-%m-%d", d["DONATIONDATE"]), 1)
-            content = content.replace("DONDATE", asm3.i18n.format_date("%d/%m/%y", d.DONATIONDATE), 1)
+                asm3.i18n.format_date(d.DONATIONDATE, "%Y-%m-%d"), 1)
+            content = content.replace("DONDATE", asm3.i18n.format_date(d.DONATIONDATE, "%d/%m/%y"), 1)
             donamt = str(float(d.DONATIONAMOUNT) / 100)
             dontotal += float(d.DONATIONAMOUNT) / 100
             content = content.replace("<text:p>54,321.00</text:p>", "<text:p>" + donamt + "</text:p>", 1)

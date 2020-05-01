@@ -11,7 +11,8 @@
         fx_speed: 100, 
 
         replace_all: function(str, find, replace) {
-          return str.replace(new RegExp(find, 'g'), replace);
+            if (!str) { return ""; }
+            return str.replace(new RegExp(find, 'g'), replace);
         },
 
         /** Returns the number of times find appears in str */
@@ -294,7 +295,7 @@
         },
 
         trim: function(s) {
-            return $.trim(s);
+            return String(s).trim();
         },
 
         /** 
@@ -1197,7 +1198,7 @@
             c = c.replace(new RegExp("&[^;]+;", "ig"), '');
             // Remove anything else that isn't a digit, sign or our decimal mark
             c = c.replace(new RegExp("[^0-9\\" + asm.currencyradix + "\\-]", "g"), '');
-            c = $.trim(c);
+            c = common.trim(c);
             // Some currency formats (eg: Russian py6. and Indian Rs. have a 
             // dot to finish. If we have a leading dot, it must be one of
             // those formats so remove it.
@@ -1277,7 +1278,7 @@
                     format.padleft(d.getDate(), 2) + "T00:00:00";
             }
             // d is String, Extract time if present
-            d = $.trim(d);
+            d = common.trim(d);
             if (d.indexOf(" ") != -1 && d.indexOf(":") != -1) {
                 time = d.substring(d.indexOf(" ")+1);
                 d = d.substring(0, d.indexOf(" "));
@@ -1447,8 +1448,8 @@
     html = {
 
         /**
-         * Returns true if animal a is adoptable. Looks at current publishing options
-         * and uses the same logic as the backend publisher
+         * Returns a two-item list containing true if animal a is adoptable and the reason.
+         * Looks at current publishing options and uses the same logic as the backend publisher
          */
         is_animal_adoptable: function(a) {
             var p = config.str("PublisherPresets"),
@@ -1671,8 +1672,11 @@
                 s.push(html.icon("quarantine", _("Quarantine")));
             }
             $.each([1,2,3,4,5,6,7,8,9,10], function(i, v) {
-                var cflag = config.str("EmblemsCustomFlag" + v), cemblem = config.str("EmblemsCustomValue" + v);
-                if (cflag && cemblem && html.is_animal_flag(a.ADDITIONALFLAGS, cflag)) {
+                var cflag = config.str("EmblemsCustomFlag" + v), ccond = config.str("EmblemsCustomCond" + v), cemblem = config.str("EmblemsCustomValue" + v);
+                if (cflag && cemblem && (ccond == "has" || !ccond) && html.is_animal_flag(a.ADDITIONALFLAGS, cflag)) {
+                    s.push('<span class="custom" title="' + html.title(cflag) + '">' + cemblem + '</span>');
+                }
+                if (cflag && cemblem && ccond == "not" && !html.is_animal_flag(a.ADDITIONALFLAGS, cflag)) {
                     s.push('<span class="custom" title="' + html.title(cflag) + '">' + cemblem + '</span>');
                 }
             });

@@ -33,25 +33,25 @@ def mime_type(filename):
     Returns the mime type for a file with the given name
     """
     types = {
-        "jpg"           : "image/jpeg",
-        "jpeg"          : "image/jpeg",
-        "bmp"           : "image/bmp",
-        "gif"           : "image/gif",
-        "png"           : "image/png",
-        "doc"           : "application/msword",
-        "xls"           : "application/vnd.ms-excel",
-        "ppt"           : "application/vnd.ms-powerpoint",
-        "docx"          : "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-        "pptx"          : "application/vnd.openxmlformats-officedocument.presentationml.presentation",
-        "xslx"          : "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-        "odt"           : "application/vnd.oasis.opendocument.text",
-        "sxw"           : "application/vnd.oasis.opendocument.text",
-        "ods"           : "application/vnd.oasis.opendocument.spreadsheet",
-        "odp"           : "application/vnd.oasis.opendocument.presentation",
-        "pdf"           : "application/pdf",
-        "mpg"           : "video/mpg",
-        "mp3"           : "audio/mpeg3",
-        "avi"           : "video/avi"
+        "jpg"   : "image/jpeg",
+        "jpeg"  : "image/jpeg",
+        "bmp"   : "image/bmp",
+        "gif"   : "image/gif",
+        "png"   : "image/png",
+        "doc"   : "application/msword",
+        "xls"   : "application/vnd.ms-excel",
+        "ppt"   : "application/vnd.ms-powerpoint",
+        "docx"  : "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+        "pptx"  : "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+        "xslx"  : "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        "odt"   : "application/vnd.oasis.opendocument.text",
+        "sxw"   : "application/vnd.oasis.opendocument.text",
+        "ods"   : "application/vnd.oasis.opendocument.spreadsheet",
+        "odp"   : "application/vnd.oasis.opendocument.presentation",
+        "pdf"   : "application/pdf",
+        "mpg"   : "video/mpg",
+        "mp3"   : "audio/mpeg3",
+        "avi"   : "video/avi"
     }
     ext = filename[filename.rfind(".")+1:].lower()
     if ext in types:
