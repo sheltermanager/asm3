@@ -1260,6 +1260,58 @@ def html_to_pdf(dbo, htmldata):
     os.unlink(outputfile.name)
     return pdfdata
 
+def html_to_pdf_pisa(dbo, htmldata):
+    """
+    Converts HTML content to PDF and returns the PDF file data as bytes.
+    NOTE: Not currently used as wkhtmltopdf is far superior, but this is a pure Python
+    solution and it does work.
+    """
+    # Allow orientation and papersize to be set
+    # with directives in the document source - eg: <!-- pdf orientation landscape, pdf papersize letter -->
+    orientation = "portrait"
+    # Sort out page size arguments
+    papersize = "A4"
+    if htmldata.find("pdf orientation landscape") != -1: orientation = "landscape"
+    if htmldata.find("pdf orientation portrait") != -1: orientation = "portrait"
+    if htmldata.find("pdf papersize a5") != -1: papersize = "A5"
+    if htmldata.find("pdf papersize a4") != -1: papersize = "A4"
+    if htmldata.find("pdf papersize a3") != -1: papersize = "A3"
+    if htmldata.find("pdf papersize letter") != -1: papersize = "letter"
+    # Zoom - eg: <!-- pdf zoom 0.5 end -->
+    # Not supported in any meaningful way by pisa (not smart scaling)
+    # zm = regex_one("pdf zoom (.+?) end", htmldata)
+    # Margins, top/bottom/left/right eg: <!-- pdf margins 2cm 2cm 2cm 2cm end -->
+    margins = "2cm"
+    mg = regex_one("pdf margins (.+?) end", htmldata)
+    if mg != "":
+        margins = mg
+    header = "<!DOCTYPE html>\n<html>\n<head>"
+    header += '<style>'
+    header += '@page {size: %s %s; margin: %s}' % ( papersize, orientation, margins )
+    header += '</style>' 
+    header += "</head><body>"
+    footer = "</body></html>"
+    htmldata = htmldata.replace("font-size: xx-small", "font-size: 6pt")
+    htmldata = htmldata.replace("font-size: x-small", "font-size: 8pt")
+    htmldata = htmldata.replace("font-size: small", "font-size: 10pt")
+    htmldata = htmldata.replace("font-size: medium", "font-size: 14pt")
+    htmldata = htmldata.replace("font-size: large", "font-size: 18pt")
+    htmldata = htmldata.replace("font-size: x-large", "font-size: 24pt")
+    htmldata = htmldata.replace("font-size: xx-large", "font-size: 36pt")
+    # Remove any img tags with signature:placeholder/user as the src
+    htmldata = re.sub('<img.*?signature\:.*?\/>', '', htmldata)
+    # Fix up any google QR codes where a protocol-less URI has been used
+    htmldata = htmldata.replace("\"//chart.googleapis.com", "\"http://chart.googleapis.com")
+    # Switch relative document uris to absolute service based calls
+    htmldata = fix_relative_document_uris(dbo, htmldata)
+    # Do the conversion
+    from xhtml2pdf import pisa
+    out = bytesio()
+    pdf = pisa.pisaDocument(stringio(header + htmldata + footer), dest=out)
+    if pdf.err:
+        raise IOError(pdf.err)
+    return out.getvalue()
+
 def generate_label_pdf(dbo, locale, records, papersize, units, hpitch, vpitch, width, height, lmargin, tmargin, cols, rows):
     """
     Generates a PDF of labels from the rows given to the measurements provided.
