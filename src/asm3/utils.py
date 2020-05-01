@@ -4,7 +4,7 @@ import asm3.configuration
 import asm3.i18n
 import asm3.users
 
-from asm3.sitedefs import SMTP_SERVER, FROM_ADDRESS, HTML_TO_PDF, URL_NEWS
+from asm3.sitedefs import BASE_URL, MULTIPLE_DATABASES, SMTP_SERVER, FROM_ADDRESS, HTML_TO_PDF, URL_NEWS
 
 import base64
 import codecs
@@ -918,54 +918,47 @@ def csv(l, rows, cols = None, includeheader = True):
     # Manually include a UTF-8 BOM to prevent Excel mangling files
     return (u"\ufeff" + u"\n".join(lines)).encode("utf-8")
 
-def fix_relative_document_uris(s, baseurl, account = "" ):
+def fix_relative_document_uris(dbo, s):
     """
     Switches the relative uris used in s (str) for absolute
     ones to the service so that documents will work outside of 
     the ASM UI.
     """
-    patterns = (
-        # animal images
-        ( "image?mode=animal&amp;id=", "animal_image", "animalid" ),
-        ( "image?db={account}&ampmode=animal&amp;id=", "animal_image", "animalid" ),
-        ( "image?db={account}&mode=animal&id=", "animal_image", "animalid" ),
-        ( "image?db={account}&amp;mode=nopic", "extra_image", "title=nopic.jpg&xx" ),
+    def qsp(q, k):
+        """ returns the value of key k from querystring q """
+        kp = q.find(k + "=")
+        ke = q.find("&", kp)
+        if ke == -1: ke = len(q)
+        if kp != -1 and ke != -1: return q[q.find("=",kp)+1:ke]
+        return ""
 
-        # animal thumbnail images
-        ( "image?mode=animalthumb&amp;id=", "animal_thumbnail", "animalid" ),
-        ( "image?db={account}&amp;mode=animalthumb&amp;id=", "animal_thumbnail", "animalid" ),
-        ( "image?db={account}&mode=animalthumb&id=", "animal_thumbnail", "animalid" ),
+    def url(method, params):
+        account = ""
+        if MULTIPLE_DATABASES: account = "account=%s&" % dbo.database
+        return "%s/service?method=%s&%s%s" % (BASE_URL, method, account, params)
 
-        # report/extra images
-        ( "image?mode=dbfs&amp;id=/reports/", "extra_image", "title" ),
-        ( "image?db={account}&amp;mode=dbfs&amp;id=/reports/", "extra_image", "title" ),
-
-        # any image in the dbfs by path
-        ( "image?mode=dbfs&amp;id=", "dbfs_image", "title" ),
-        ( "image?db={account}&amp;mode=dbfs&amp;id=", "dbfs_image", "title" )
-    )
-    for f, m, p in patterns:
-        f = f.replace("{account}", account)
-        s = s.replace(f, baseurl + "/service?method=" + m + "&account=" + account + "&" + p + "=")
-    return s
-
-def remove_dead_img_src(s):
-    """
-    Finds all the img src values in s (str), verifies that they are absolute links
-    and valid. Removes them if they are not and returns the new document.
-    """
     p = ImgSrcHTMLParser()
     p.feed(s)
     for l in p.links:
-        # not an absolute http or data uri
-        if not l.startswith("http") and not l.startswith("data:") and len(l) > 4:
-            s = s.replace(l, "")
-            continue
-        # retrieve the image - FIXME: should ideally just be a HEAD request
-        response = get_image_url(l)
-        if response["status"] != 200:
-            # remove the link if we got an error retrieving it
-            s = s.replace(l, "")
+        if l.startswith("image?"):
+            l = l.replace("&", "&amp;") # HTMLParser decodes &amp; in urls and breaks s.replace
+            mode = qsp(l, "mode")
+            u = ""
+            if mode == "nopic":
+                u = url("extra_image", "title=nopic.jpg")
+            elif mode == "animal":
+                u = url("animal_image", "animalid=%s" % qsp(l, "animalid"))
+            elif mode == "animalthumbnail":
+                u = url("animalthumb", "id=%s" % qsp(l, "animalid"))
+            elif mode == "dbfs":
+                u = url("dbfs_image", "title=%s" % qsp(l, "id"))
+            elif mode == "media":
+                u = url("media_image", "mediaid=%s" % qsp(l, "id"))
+            s = s.replace(l, u)
+            asm3.al.debug("translate '%s' to '%s'" % (l, u), "utils.fix_relative_document_uris", dbo)
+        elif not l.startswith("http") and not l.startswith("data:"):
+            s = s.replace(l, "") # cannot use this type of url
+            asm3.al.debug("strip invalid url '%s'" % l, "utils.fix_relative_document_uris", dbo)
     return s
 
 def generator2str(fn, *args):
@@ -1201,7 +1194,7 @@ def pdf_count_pages(filedata):
         pages += filedata.count(p)
     return pages
 
-def html_to_pdf(htmldata, baseurl = "", account = ""):
+def html_to_pdf(dbo, htmldata):
     """
     Converts HTML content to PDF and returns the PDF file data as bytes.
     """
@@ -1243,14 +1236,12 @@ def html_to_pdf(htmldata, baseurl = "", account = ""):
     htmldata = htmldata.replace("font-size: large", "font-size: 18pt")
     htmldata = htmldata.replace("font-size: x-large", "font-size: 24pt")
     htmldata = htmldata.replace("font-size: xx-large", "font-size: 36pt")
-    # Switch relative document uris to absolute service based calls
-    htmldata = fix_relative_document_uris(htmldata, baseurl, account)
     # Remove any img tags with signature:placeholder/user as the src
     htmldata = re.sub('<img.*?signature\:.*?\/>', '', htmldata)
     # Fix up any google QR codes where a protocol-less URI has been used
     htmldata = htmldata.replace("\"//chart.googleapis.com", "\"http://chart.googleapis.com")
-    # Remove any img links which are not absolute or dead (wkhtmltopdf chokes on dead links)
-    htmldata = remove_dead_img_src(htmldata)
+    # Switch relative document uris to absolute service based calls
+    htmldata = fix_relative_document_uris(dbo, htmldata)
     # Use temp files
     inputfile = tempfile.NamedTemporaryFile(suffix=".html", delete=False)
     outputfile = tempfile.NamedTemporaryFile(suffix=".pdf", delete=False)
