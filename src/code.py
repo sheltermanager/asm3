@@ -653,7 +653,7 @@ class media(ASMEndpoint):
             if m is None: self.notfound()
             content = asm3.dbfs.get_string(dbo, m.MEDIANAME)
             if m.MEDIAMIMETYPE == "text/html":
-                content = asm3.utils.fix_relative_document_uris(content, BASE_URL, MULTIPLE_DATABASES and dbo.database or "")
+                content = asm3.utils.fix_relative_document_uris(dbo, content)
             attachments.append(( m.MEDIANAME, m.MEDIAMIMETYPE, content ))
             notes.append(m.MEDIANOTES)
         asm3.utils.send_email(dbo, post["from"], emailadd, post["cc"], post["bcc"], post["subject"], post["body"], "html", attachments)
