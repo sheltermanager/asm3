@@ -242,6 +242,13 @@ class AdvancedSearchBuilder(object):
             self.values.append(self.post.date(cfieldfrom))
             self.values.append(self.post.datetime(cfieldto, "dayend"))
 
+    def add_date_since(self, cfield, field):
+        """ Adds a claused for a date range between a cfield and now """
+        if self.post[cfield] != "":
+            self.ands.append("%s >= ? AND %s <= ?" % (field, field))
+            self.values.append(self.post.date(cfield))
+            self.values.append(self.dbo.now())
+
     def add_phone_triplet(self, cfield, field, field2, field3): 
         """ Adds a clause for a posted value to one of three telephone fields """
         if self.post[cfield] != "":
