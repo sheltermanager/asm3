@@ -1,6 +1,7 @@
 44
 ================
 
+02/05/20 Python2 fix for importing CSV files
 01/05/20 Add "datelost" and "datefound" online form fields for lost/found
 01/05/20 Add support for "microchip" online form field to lost/found
 01/05/20 Better rewriting of img links in docs, add media_file service call

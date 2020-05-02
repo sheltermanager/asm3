@@ -429,7 +429,10 @@ def is_unicode(s):
 
 def cunicode(s, encoding = "utf-8"):
     """
-    Converts a value to a unicode string
+    Converts an encoded value to a unicode string
+    returns unicode/Python 2 or str/Python 3
+    If we ever abandon support for Python 2, this method can be removed and
+    all calls to it replaced with bytes2str instead.
     """
     if sys.version_info[0] > 2: # PYTHON3 - str should already be unicode, but convert bytes strings if we've got one
         if is_bytes(s): return s.decode(encoding)
@@ -440,6 +443,7 @@ def cunicode(s, encoding = "utf-8"):
 def str2bytes(s, encoding = "utf-8"):
     """
     Converts a unicode str to a utf-8 bytes string
+    Does nothing on python 2, since bytes == str
     """
     if sys.version_info[0] > 2: # PYTHON3
         if isinstance(s, str): return s.encode(encoding)
@@ -447,11 +451,12 @@ def str2bytes(s, encoding = "utf-8"):
 
 def bytes2str(s, encoding = "utf-8"):
     """
-    Converts a utf-8 bytes string to a unicode str
+    Converts a utf-8 bytes string to a unicode str.
+    Does nothing on python 2, since bytes == str
     """
     if sys.version_info[0] > 2: # PYTHON3
         if isinstance(s, bytes): return s.decode(encoding)
-    return s # Already byte string for python 2
+    return s # Already str for python 2
 
 def atoi(s):
     """
