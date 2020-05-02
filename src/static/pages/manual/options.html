@@ -133,7 +133,12 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#quicklinks">Quicklinks</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#remove">Remove</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#remove">Remove</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#system">System</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#people">People</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#animals">Animals</a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="#shelter-view">Shelter View</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#waiting-list">Waiting List</a></li>
 </ul>
@@ -735,6 +740,24 @@ appropriate visual output to show they are fostered).</li>
 <p class="last">You should use <span class="menuselection">Settings ‣ Trigger Batch Processes</span> and recalculate animal locations after changing this option.</p>
 </div>
 <ul class="simple">
+<li>Treat animals at retailers as part of the shelter inventory: Setting this
+option will make ASM treat animals at a retailer as if they are on the
+shelter (with indications that they are at a retailer).</li>
+<li>Our shelter does trial adoptions, allow us to mark these on movement screens:
+When creating an adoption from <span class="menuselection">Move ‣ Adopt an animal</span>, or
+in any of the movement tabs/screens, show a “trial” tickbox and trial end
+date. This allows for trial adoptions (some shelters call this “Foster to
+Adopt”), which can then be reported on by installing the “Active Trial
+Adoptions” and “Expired Trial Adoptions” reports.</li>
+<li>Treat Trial Adoptions as shelter inventory: As with the Foster as inventory
+option, trial adoptions are still shown in the Shelter View and on shelter
+searches/reports.</li>
+<li>Our shelter does soft releases, allow us to mark these on movement screens:
+When creating a released to wild movement, this allows for a soft release
+to be made. A soft release is one where the animal is monitored for some
+time after release.</li>
+<li>Treat Soft Releases as shelter inventory: Animals on soft release will be
+kept in the shelter’s inventory.</li>
 <li>Automatically cancel any outstanding reservations on an animal when it is
 adopted: Self explanatory.</li>
 <li>Automatically return any outstanding foster movements on an animal when it is
@@ -751,21 +774,6 @@ taken on the <span class="menuselection">Move ‣ Reserve an animal</span> scree
 <li>Allow overriding of the movement number on the Move menu screens: If turned
 on, the movement number field will be visible on all Move menu screens for
 the user to override.</li>
-<li>Our shelter does trial adoptions, allow us to mark these on movement screens:
-When creating an adoption from <span class="menuselection">Move ‣ Adopt an animal</span>, or
-in any of the movement tabs/screens, show a “trial” tickbox and trial end
-date. This allows for trial adoptions (some shelters call this “Foster to
-Adopt”), which can then be reported on by installing the “Active Trial
-Adoptions” and “Expired Trial Adoptions” reports.</li>
-<li>Treat Trial Adoptions as shelter inventory: As with the Foster as inventory
-option, trial adoptions are still shown in the Shelter View and on shelter
-searches/reports.</li>
-<li>Our shelter does soft releases, allow us to mark these on movement screens:
-When creating a released to wild movement, this allows for a soft release
-to be made. A soft release is one where the animal is monitored for some
-time after release.</li>
-<li>Treat Soft Releases as shelter inventory: Animals on soft release will be
-kept in the shelter’s inventory.</li>
 <li>Warn when adopting an unaltered animal: If the animal has not been
 neutered/spayed, show a warning when trying to adopt it.</li>
 <li>Warn when adopting an animal who has not been microchipped: If the animal
@@ -834,6 +842,8 @@ quickly get to some of ASM’s screens without having to open the menus.</p>
 </div>
 <div class="section" id="remove">
 <h2>Remove<a class="headerlink" href="#remove" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="system">
+<h3>System<a class="headerlink" href="#system" title="Permalink to this headline">¶</a></h3>
 <ul class="simple">
 <li>Remove clinic functionality from screens and menus: If your shelter does
 not run a clinic, this option will disable the system’s clinic appointment
@@ -863,6 +873,11 @@ medical/vaccination dialogs.</li>
 the transport book from the menu and the tab from animal records.</li>
 <li>Remove the trap loan functionality from menus: Setting this option removes
 the trap loan link from the menu and the trap loan tab on the person screen.</li>
+</ul>
+</div>
+<div class="section" id="people">
+<h3>People<a class="headerlink" href="#people" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
 <li>Remove the city/state fields from person details: Setting this option will
 prevent ASM from presenting the user with additional fields to store the city
 and state information. These are handy for group owner searches, but not all
@@ -871,9 +886,22 @@ address box.</li>
 <li>Remove the country field from person details: Setting this option will
 hide the country field from person addresses. This option is on by default
 since most shelters only deal with one country.</li>
+<li>Remove the homechecked/by fields from person type according to the homechecked
+flag: This option is on by default and will hide the homechecked by and date
+fields from the person type slider if they don’t have the homechecked flag.
+This option exists because some users prefer to assign the person doing the
+homecheck before the flag to confirm the person is homechecked.</li>
 <li>Remove the insurance number field from the movement screens: Setting this
 option hides the insurance number field and button from <span class="menuselection">Move
 ‣ Adopt an animal</span> and all movement tabs/books.</li>
+</ul>
+</div>
+<div class="section" id="animals">
+<h3>Animals<a class="headerlink" href="#animals" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li>Remove the asilomar fields from the entry/deceased section: (US locales only)
+This option hides the asimilor intake and death category fields from the
+Entry and Deceased sliders.</li>
 <li>Remove the coat type field from the animal screen: If ticked, ASM won’t
 display the coat type dropdown on the animal editing screen. For some
 shelters, keeping coat types is unnecessary (particularly for those that keep
@@ -924,6 +952,7 @@ won’t display the fields that allow an animal to be marked as picked up in a
 particular location or by an ACO (useful for shelters who do not have staff
 picking up animals).</li>
 </ul>
+</div>
 </div>
 <div class="section" id="shelter-view">
 <h2>Shelter View<a class="headerlink" href="#shelter-view" title="Permalink to this headline">¶</a></h2>

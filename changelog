@@ -1,6 +1,7 @@
 44
 ================
 
+02/05/20 Allow homechecked by/date fields to be on all the time #812
 02/05/20 Fix for embedded images in emails #738
 02/05/20 Python2 fix for importing CSV files
 01/05/20 Add "datelost" and "datefound" online form fields for lost/found
