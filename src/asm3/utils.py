@@ -1492,6 +1492,10 @@ def send_email(dbo, replyadd, toadd, ccadd = "", bccadd = "", subject = "", body
     if body.find("<html") == -1 and contenttype == "html":
         body = "<!DOCTYPE html>\n<html>\n<body>\n%s</body></html>" % body
 
+    # Fix any relative image links in the html message
+    if contenttype == "html":
+        body = fix_relative_document_uris(dbo, body)
+
     # Build the from address from our sitedef
     fromadd = FROM_ADDRESS
     fromadd = fromadd.replace("{organisation}", asm3.configuration.organisation(dbo))

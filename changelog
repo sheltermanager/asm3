@@ -1,6 +1,7 @@
 44
 ================
 
+02/05/20 Fix for embedded images in emails #738
 02/05/20 Python2 fix for importing CSV files
 01/05/20 Add "datelost" and "datefound" online form fields for lost/found
 01/05/20 Add support for "microchip" online form field to lost/found
