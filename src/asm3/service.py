@@ -319,6 +319,11 @@ def handler(post, path, remoteip, referer, querystring):
         hotlink_protect("extra_image", referer)
         return set_cached_response(cache_key, account, "image/jpeg", 86400, 86400, asm3.dbfs.get_string(dbo, title, "/reports"))
 
+    elif method =="media_image":
+        hotlink_protect("media_image", referer)
+        return set_cached_response(cache_key, account, "image/jpeg", 86400, 86400, 
+            asm3.dbfs.get_string_id( dbo, dbo.query_int("select dbfsid from media where id = ?", [post.integer("mediaid")]) ))
+
     elif method == "json_adoptable_animal":
         if asm3.utils.cint(animalid) == 0:
             asm3.al.error("json_adoptable_animal failed, %s is not an animalid" % str(animalid), "service.handler", dbo)
@@ -433,6 +438,7 @@ def handler(post, path, remoteip, referer, querystring):
         crid = asm3.reports.get_id(dbo, title)
         p = asm3.reports.get_criteria_params(dbo, crid, post)
         rhtml = asm3.reports.execute(dbo, crid, username, p)
+        rhtml = asm3.utils.fix_relative_document_uris(dbo, rhtml)
         return set_cached_response(cache_key, account, "text/html", 600, 600, rhtml)
 
     elif method == "csv_mail" or method == "csv_report":

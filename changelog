@@ -1,6 +1,14 @@
 44
 ================
 
+03/05/20 Hide asilomar fields for non-dogs and cats #813
+03/05/20 Auto translate relative image links in the html_report service call
+02/05/20 Allow homechecked by/date fields to be on all the time #812
+02/05/20 Fix for embedded images in emails #738
+02/05/20 Python2 fix for importing CSV files
+01/05/20 Add "datelost" and "datefound" online form fields for lost/found
+01/05/20 Add support for "microchip" online form field to lost/found
+01/05/20 Better rewriting of img links in docs, add media_file service call
 01/05/20 Hide auto remove text if option is off #810
 01/05/20 Add created since to person search
 01/05/20 Add bounds checking to config numbers, tidy up

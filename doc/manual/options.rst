@@ -623,6 +623,29 @@ the reservation for you after this time.
 
 .. note:: You should use :menuselection:`Settings --> Trigger Batch Processes` and recalculate animal locations after changing this option.
 
+* Treat animals at retailers as part of the shelter inventory: Setting this 
+  option will make ASM treat animals at a retailer as if they are on the
+  shelter (with indications that they are at a retailer).
+
+* Our shelter does trial adoptions, allow us to mark these on movement screens:
+  When creating an adoption from :menuselection:`Move --> Adopt an animal`, or
+  in any of the movement tabs/screens, show a “trial” tickbox and trial end
+  date. This allows for trial adoptions (some shelters call this “Foster to
+  Adopt”), which can then be reported on by installing the “Active Trial
+  Adoptions” and “Expired Trial Adoptions” reports.
+
+* Treat Trial Adoptions as shelter inventory: As with the Foster as inventory
+  option, trial adoptions are still shown in the Shelter View and on shelter
+  searches/reports.
+
+* Our shelter does soft releases, allow us to mark these on movement screens:
+  When creating a released to wild movement, this allows for a soft release
+  to be made. A soft release is one where the animal is monitored for some
+  time after release.
+
+* Treat Soft Releases as shelter inventory: Animals on soft release will be 
+  kept in the shelter's inventory.
+
 * Automatically cancel any outstanding reservations on an animal when it is
   adopted: Self explanatory.
 
@@ -643,25 +666,6 @@ the reservation for you after this time.
 * Allow overriding of the movement number on the Move menu screens: If turned
   on, the movement number field will be visible on all Move menu screens for
   the user to override.
-
-* Our shelter does trial adoptions, allow us to mark these on movement screens:
-  When creating an adoption from :menuselection:`Move --> Adopt an animal`, or
-  in any of the movement tabs/screens, show a “trial” tickbox and trial end
-  date. This allows for trial adoptions (some shelters call this “Foster to
-  Adopt”), which can then be reported on by installing the “Active Trial
-  Adoptions” and “Expired Trial Adoptions” reports.
-
-* Treat Trial Adoptions as shelter inventory: As with the Foster as inventory
-  option, trial adoptions are still shown in the Shelter View and on shelter
-  searches/reports.
-
-* Our shelter does soft releases, allow us to mark these on movement screens:
-  When creating a released to wild movement, this allows for a soft release
-  to be made. A soft release is one where the animal is monitored for some
-  time after release.
-
-* Treat Soft Releases as shelter inventory: Animals on soft release will be 
-  kept in the shelter's inventory.
 
 * Warn when adopting an unaltered animal: If the animal has not been 
   neutered/spayed, show a warning when trying to adopt it. 
@@ -743,6 +747,9 @@ quickly get to some of ASM's screens without having to open the menus.
 Remove
 ------
 
+System
+^^^^^^
+
 * Remove clinic functionality from screens and menus: If your shelter does
   not run a clinic, this option will disable the system's clinic appointment
   and invoicing functionality from the medical menu and animal/person screens.
@@ -782,6 +789,9 @@ Remove
 * Remove the trap loan functionality from menus: Setting this option removes
   the trap loan link from the menu and the trap loan tab on the person screen.
 
+People
+^^^^^^
+
 * Remove the city/state fields from person details: Setting this option will
   prevent ASM from presenting the user with additional fields to store the city
   and state information. These are handy for group owner searches, but not all
@@ -792,9 +802,22 @@ Remove
   hide the country field from person addresses. This option is on by default 
   since most shelters only deal with one country.
 
+* Remove the homechecked/by fields from person type according to the homechecked 
+  flag: This option is on by default and will hide the homechecked by and date
+  fields from the person type slider if they don't have the homechecked flag.
+  This option exists because some users prefer to assign the person doing the
+  homecheck before the flag to confirm the person is homechecked.
+
 * Remove the insurance number field from the movement screens: Setting this
   option hides the insurance number field and button from :menuselection:`Move
   --> Adopt an animal` and all movement tabs/books.
+
+Animals
+^^^^^^^
+
+* Remove the asilomar fields from the entry/deceased section: (US locales only)
+  This option hides the asimilor intake and death category fields from the
+  Entry and Deceased sliders.
 
 * Remove the coat type field from the animal screen: If ticked, ASM won't
   display the coat type dropdown on the animal editing screen. For some

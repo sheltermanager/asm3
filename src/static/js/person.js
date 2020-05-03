@@ -531,8 +531,9 @@ $(function() {
                 $("#fostercapacity").closest("tr").fadeOut();
             }
 
-            // If the homechecked flag is set, show/hide the homechecked by/date fields
-            if ($("#flags option[value='homechecked']").is(":selected")) {
+            // If the homechecked flag is set, or the option is not on to
+            // hide them, show/hide the homechecked by/date fields
+            if ($("#flags option[value='homechecked']").is(":selected") || !config.bool("HideHomeCheckedNoFlag")) {
                 $("#homecheckedby").closest("tr").fadeIn();
                 $("#homechecked").closest("tr").fadeIn();
             }

@@ -210,6 +210,7 @@ DEFAULTS = {
     "GenerateDocumentLog": "No",
     "GenerateDocumentLogType": "5",
     "HideCountry": "Yes",
+    "HideHomeCheckedNoFlag": "Yes",
     "HoldChangeLog": "Yes",
     "HoldChangeLogType": "3",
     "IncidentPermissions": "No",

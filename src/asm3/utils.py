@@ -4,7 +4,7 @@ import asm3.configuration
 import asm3.i18n
 import asm3.users
 
-from asm3.sitedefs import SMTP_SERVER, FROM_ADDRESS, HTML_TO_PDF, URL_NEWS
+from asm3.sitedefs import BASE_URL, MULTIPLE_DATABASES, SMTP_SERVER, FROM_ADDRESS, HTML_TO_PDF, URL_NEWS
 
 import base64
 import codecs
@@ -429,7 +429,10 @@ def is_unicode(s):
 
 def cunicode(s, encoding = "utf-8"):
     """
-    Converts a value to a unicode string
+    Converts an encoded value to a unicode string
+    returns unicode/Python 2 or str/Python 3
+    If we ever abandon support for Python 2, this method can be removed and
+    all calls to it replaced with bytes2str instead.
     """
     if sys.version_info[0] > 2: # PYTHON3 - str should already be unicode, but convert bytes strings if we've got one
         if is_bytes(s): return s.decode(encoding)
@@ -440,6 +443,7 @@ def cunicode(s, encoding = "utf-8"):
 def str2bytes(s, encoding = "utf-8"):
     """
     Converts a unicode str to a utf-8 bytes string
+    Does nothing on python 2, since bytes == str
     """
     if sys.version_info[0] > 2: # PYTHON3
         if isinstance(s, str): return s.encode(encoding)
@@ -447,11 +451,12 @@ def str2bytes(s, encoding = "utf-8"):
 
 def bytes2str(s, encoding = "utf-8"):
     """
-    Converts a utf-8 bytes string to a unicode str
+    Converts a utf-8 bytes string to a unicode str.
+    Does nothing on python 2, since bytes == str
     """
     if sys.version_info[0] > 2: # PYTHON3
         if isinstance(s, bytes): return s.decode(encoding)
-    return s # Already byte string for python 2
+    return s # Already str for python 2
 
 def atoi(s):
     """
@@ -918,54 +923,47 @@ def csv(l, rows, cols = None, includeheader = True):
     # Manually include a UTF-8 BOM to prevent Excel mangling files
     return (u"\ufeff" + u"\n".join(lines)).encode("utf-8")
 
-def fix_relative_document_uris(s, baseurl, account = "" ):
+def fix_relative_document_uris(dbo, s):
     """
     Switches the relative uris used in s (str) for absolute
     ones to the service so that documents will work outside of 
     the ASM UI.
     """
-    patterns = (
-        # animal images
-        ( "image?mode=animal&amp;id=", "animal_image", "animalid" ),
-        ( "image?db={account}&ampmode=animal&amp;id=", "animal_image", "animalid" ),
-        ( "image?db={account}&mode=animal&id=", "animal_image", "animalid" ),
-        ( "image?db={account}&amp;mode=nopic", "extra_image", "title=nopic.jpg&xx" ),
+    def qsp(q, k):
+        """ returns the value of key k from querystring q """
+        kp = q.find(k + "=")
+        ke = q.find("&", kp)
+        if ke == -1: ke = len(q)
+        if kp != -1 and ke != -1: return q[q.find("=",kp)+1:ke]
+        return ""
 
-        # animal thumbnail images
-        ( "image?mode=animalthumb&amp;id=", "animal_thumbnail", "animalid" ),
-        ( "image?db={account}&amp;mode=animalthumb&amp;id=", "animal_thumbnail", "animalid" ),
-        ( "image?db={account}&mode=animalthumb&id=", "animal_thumbnail", "animalid" ),
+    def url(method, params):
+        account = ""
+        if MULTIPLE_DATABASES: account = "account=%s&" % dbo.database
+        return "%s/service?method=%s&%s%s" % (BASE_URL, method, account, params)
 
-        # report/extra images
-        ( "image?mode=dbfs&amp;id=/reports/", "extra_image", "title" ),
-        ( "image?db={account}&amp;mode=dbfs&amp;id=/reports/", "extra_image", "title" ),
-
-        # any image in the dbfs by path
-        ( "image?mode=dbfs&amp;id=", "dbfs_image", "title" ),
-        ( "image?db={account}&amp;mode=dbfs&amp;id=", "dbfs_image", "title" )
-    )
-    for f, m, p in patterns:
-        f = f.replace("{account}", account)
-        s = s.replace(f, baseurl + "/service?method=" + m + "&account=" + account + "&" + p + "=")
-    return s
-
-def remove_dead_img_src(s):
-    """
-    Finds all the img src values in s (str), verifies that they are absolute links
-    and valid. Removes them if they are not and returns the new document.
-    """
     p = ImgSrcHTMLParser()
     p.feed(s)
     for l in p.links:
-        # not an absolute http or data uri
-        if not l.startswith("http") and not l.startswith("data:") and len(l) > 4:
-            s = s.replace(l, "")
-            continue
-        # retrieve the image - FIXME: should ideally just be a HEAD request
-        response = get_image_url(l)
-        if response["status"] != 200:
-            # remove the link if we got an error retrieving it
-            s = s.replace(l, "")
+        if l.startswith("image?"):
+            l = l.replace("&", "&amp;") # HTMLParser decodes &amp; in urls and breaks s.replace
+            mode = qsp(l, "mode")
+            u = ""
+            if mode == "nopic":
+                u = url("extra_image", "title=nopic.jpg")
+            elif mode == "animal":
+                u = url("animal_image", "animalid=%s" % qsp(l, "animalid"))
+            elif mode == "animalthumbnail":
+                u = url("animalthumb", "id=%s" % qsp(l, "animalid"))
+            elif mode == "dbfs":
+                u = url("dbfs_image", "title=%s" % qsp(l, "id"))
+            elif mode == "media":
+                u = url("media_image", "mediaid=%s" % qsp(l, "id"))
+            s = s.replace(l, u)
+            asm3.al.debug("translate '%s' to '%s'" % (l, u), "utils.fix_relative_document_uris", dbo)
+        elif not l.startswith("http") and not l.startswith("data:"):
+            s = s.replace(l, "") # cannot use this type of url
+            asm3.al.debug("strip invalid url '%s'" % l, "utils.fix_relative_document_uris", dbo)
     return s
 
 def generator2str(fn, *args):
@@ -1201,9 +1199,19 @@ def pdf_count_pages(filedata):
         pages += filedata.count(p)
     return pages
 
-def html_to_pdf(htmldata, baseurl = "", account = ""):
+def html_to_pdf(dbo, htmldata):
     """
     Converts HTML content to PDF and returns the PDF file data as bytes.
+    """
+    if HTML_TO_PDF == "pisa":
+        return html_to_pdf_pisa(dbo, htmldata)
+    else:
+        return html_to_pdf_cmd(dbo, htmldata)
+
+def html_to_pdf_cmd(dbo, htmldata):
+    """
+    Converts HTML content to PDF and returns the PDF file data as bytes.
+    Uses the command line tool specified in HTML_TO_PDF (which is typically wkhtmltopdf)
     """
     # Allow orientation and papersize to be set
     # with directives in the document source - eg: <!-- pdf orientation landscape, pdf papersize letter -->
@@ -1243,14 +1251,12 @@ def html_to_pdf(htmldata, baseurl = "", account = ""):
     htmldata = htmldata.replace("font-size: large", "font-size: 18pt")
     htmldata = htmldata.replace("font-size: x-large", "font-size: 24pt")
     htmldata = htmldata.replace("font-size: xx-large", "font-size: 36pt")
-    # Switch relative document uris to absolute service based calls
-    htmldata = fix_relative_document_uris(htmldata, baseurl, account)
     # Remove any img tags with signature:placeholder/user as the src
-    htmldata = re.sub('<img.*?signature\:.*?\/>', '', htmldata)
+    htmldata = re.sub(r'<img.*?signature\:.*?\/>', '', htmldata)
     # Fix up any google QR codes where a protocol-less URI has been used
     htmldata = htmldata.replace("\"//chart.googleapis.com", "\"http://chart.googleapis.com")
-    # Remove any img links which are not absolute or dead (wkhtmltopdf chokes on dead links)
-    htmldata = remove_dead_img_src(htmldata)
+    # Switch relative document uris to absolute service based calls
+    htmldata = fix_relative_document_uris(dbo, htmldata)
     # Use temp files
     inputfile = tempfile.NamedTemporaryFile(suffix=".html", delete=False)
     outputfile = tempfile.NamedTemporaryFile(suffix=".pdf", delete=False)
@@ -1262,12 +1268,63 @@ def html_to_pdf(htmldata, baseurl = "", account = ""):
     code, output = cmd(cmdline)
     if code > 0:
         asm3.al.error("code %s returned from '%s': %s" % (code, cmdline, output), "utils.html_to_pdf")
-        return "ERROR"
+        return output
     with open(outputfile.name, "rb") as f:
         pdfdata = f.read()
     os.unlink(inputfile.name)
     os.unlink(outputfile.name)
     return pdfdata
+
+def html_to_pdf_pisa(dbo, htmldata):
+    """
+    Converts HTML content to PDF and returns the PDF file data as bytes.
+    NOTE: wkhtmltopdf is far superior, but this is a pure Python solution and it does work.
+    """
+    # Allow orientation and papersize to be set
+    # with directives in the document source - eg: <!-- pdf orientation landscape, pdf papersize letter -->
+    orientation = "portrait"
+    # Sort out page size arguments
+    papersize = "A4"
+    if htmldata.find("pdf orientation landscape") != -1: orientation = "landscape"
+    if htmldata.find("pdf orientation portrait") != -1: orientation = "portrait"
+    if htmldata.find("pdf papersize a5") != -1: papersize = "A5"
+    if htmldata.find("pdf papersize a4") != -1: papersize = "A4"
+    if htmldata.find("pdf papersize a3") != -1: papersize = "A3"
+    if htmldata.find("pdf papersize letter") != -1: papersize = "letter"
+    # Zoom - eg: <!-- pdf zoom 0.5 end -->
+    # Not supported in any meaningful way by pisa (not smart scaling)
+    # zm = regex_one("pdf zoom (.+?) end", htmldata)
+    # Margins, top/bottom/left/right eg: <!-- pdf margins 2cm 2cm 2cm 2cm end -->
+    margins = "2cm"
+    mg = regex_one("pdf margins (.+?) end", htmldata)
+    if mg != "":
+        margins = mg
+    header = "<!DOCTYPE html>\n<html>\n<head>"
+    header += '<style>'
+    header += '@page {size: %s %s; margin: %s}' % ( papersize, orientation, margins )
+    header += '</style>' 
+    header += "</head><body>"
+    footer = "</body></html>"
+    htmldata = htmldata.replace("font-size: xx-small", "font-size: 6pt")
+    htmldata = htmldata.replace("font-size: x-small", "font-size: 8pt")
+    htmldata = htmldata.replace("font-size: small", "font-size: 10pt")
+    htmldata = htmldata.replace("font-size: medium", "font-size: 14pt")
+    htmldata = htmldata.replace("font-size: large", "font-size: 18pt")
+    htmldata = htmldata.replace("font-size: x-large", "font-size: 24pt")
+    htmldata = htmldata.replace("font-size: xx-large", "font-size: 36pt")
+    # Remove any img tags with signature:placeholder/user as the src
+    htmldata = re.sub(r'<img.*?signature\:.*?\/>', '', htmldata)
+    # Fix up any google QR codes where a protocol-less URI has been used
+    htmldata = htmldata.replace("\"//chart.googleapis.com", "\"http://chart.googleapis.com")
+    # Switch relative document uris to absolute service based calls
+    htmldata = fix_relative_document_uris(dbo, htmldata)
+    # Do the conversion
+    from xhtml2pdf import pisa
+    out = bytesio()
+    pdf = pisa.pisaDocument(stringio(header + htmldata + footer), dest=out)
+    if pdf.err:
+        raise IOError(pdf.err)
+    return out.getvalue()
 
 def generate_label_pdf(dbo, locale, records, papersize, units, hpitch, vpitch, width, height, lmargin, tmargin, cols, rows):
     """
@@ -1434,6 +1491,10 @@ def send_email(dbo, replyadd, toadd, ccadd = "", bccadd = "", subject = "", body
     # a document fragment and wrap it (this lowers spamassassin scores)
     if body.find("<html") == -1 and contenttype == "html":
         body = "<!DOCTYPE html>\n<html>\n<body>\n%s</body></html>" % body
+
+    # Fix any relative image links in the html message
+    if contenttype == "html":
+        body = fix_relative_document_uris(dbo, body)
 
     # Build the from address from our sitedef
     fromadd = FROM_ADDRESS

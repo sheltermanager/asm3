@@ -653,7 +653,9 @@ class media(ASMEndpoint):
             if m is None: self.notfound()
             content = asm3.dbfs.get_string(dbo, m.MEDIANAME)
             if m.MEDIAMIMETYPE == "text/html":
-                content = asm3.utils.fix_relative_document_uris(content, BASE_URL, MULTIPLE_DATABASES and dbo.database or "")
+                content = asm3.utils.bytes2str(content)
+                content = asm3.utils.fix_relative_document_uris(dbo, content)
+                content = asm3.utils.str2bytes(content)
             attachments.append(( m.MEDIANAME, m.MEDIAMIMETYPE, content ))
             notes.append(m.MEDIANOTES)
         asm3.utils.send_email(dbo, post["from"], emailadd, post["cc"], post["bcc"], post["subject"], post["body"], "html", attachments)
@@ -673,7 +675,7 @@ class media(ASMEndpoint):
             if m is None: self.notfound()
             if m.MEDIAMIMETYPE != "text/html": continue
             content = asm3.utils.bytes2str(asm3.dbfs.get_string(dbo, m.MEDIANAME))
-            contentpdf = asm3.utils.html_to_pdf(content, BASE_URL, MULTIPLE_DATABASES and dbo.database or "")
+            contentpdf = asm3.utils.html_to_pdf(dbo, content)
             attachments.append(( "%s.pdf" % m.ID, "application/pdf", contentpdf ))
             notes.append(m.MEDIANOTES)
         asm3.utils.send_email(dbo, post["from"], emailadd, post["cc"], post["bcc"], post["subject"], post["body"], "html", attachments)
@@ -2529,7 +2531,7 @@ class document_gen(ASMEndpoint):
         disposition = asm3.configuration.pdf_inline(dbo) and "inline; filename=\"doc.pdf\"" or "attachment; filename=\"doc.pdf\""
         self.content_type("application/pdf")
         self.header("Content-Disposition", disposition)
-        return asm3.utils.html_to_pdf(post["document"], BASE_URL, MULTIPLE_DATABASES and dbo.database or "")
+        return asm3.utils.html_to_pdf(dbo, post["document"])
 
     def post_print(self, o):
         self.check(asm3.users.VIEW_MEDIA)
@@ -2576,7 +2578,7 @@ class document_template_edit(ASMEndpoint):
         disposition = asm3.configuration.pdf_inline(dbo) and "inline; filename=\"doc.pdf\"" or "attachment; filename=\"doc.pdf\""
         self.content_type("application/pdf")
         self.header("Content-Disposition", disposition)
-        return asm3.utils.html_to_pdf(post["document"], BASE_URL, MULTIPLE_DATABASES and dbo.database or "")
+        return asm3.utils.html_to_pdf(dbo, post["document"])
 
     def post_print(self, o):
         post = o.post
@@ -2612,7 +2614,7 @@ class document_media_edit(ASMEndpoint):
         disposition = asm3.configuration.pdf_inline(dbo) and "inline; filename=\"doc.pdf\"" or "attachment; filename=\"doc.pdf\""
         self.content_type("application/pdf")
         self.header("Content-Disposition", disposition)
-        return asm3.utils.html_to_pdf(o.post["document"], BASE_URL, MULTIPLE_DATABASES and dbo.database or "")
+        return asm3.utils.html_to_pdf(dbo, o.post["document"])
 
     def post_print(self, o):
         self.check(asm3.users.VIEW_MEDIA)
