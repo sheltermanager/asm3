@@ -1,6 +1,7 @@
 44
 ================
 
+03/05/20 Don't strip protocol-less absolute URLs from documents when translating
 03/05/20 Hide asilomar fields for non-dogs and cats #813
 03/05/20 Auto translate relative image links in the html_report service call
 02/05/20 Allow homechecked by/date fields to be on all the time #812

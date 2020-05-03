@@ -961,7 +961,7 @@ def fix_relative_document_uris(dbo, s):
                 u = url("media_image", "mediaid=%s" % qsp(l, "id"))
             s = s.replace(l, u)
             asm3.al.debug("translate '%s' to '%s'" % (l, u), "utils.fix_relative_document_uris", dbo)
-        elif not l.startswith("http") and not l.startswith("data:"):
+        elif not l.startswith("http") and not l.startswith("data:") and not l.startswith("//"):
             s = s.replace(l, "") # cannot use this type of url
             asm3.al.debug("strip invalid url '%s'" % l, "utils.fix_relative_document_uris", dbo)
     return s
