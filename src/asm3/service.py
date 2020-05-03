@@ -438,6 +438,7 @@ def handler(post, path, remoteip, referer, querystring):
         crid = asm3.reports.get_id(dbo, title)
         p = asm3.reports.get_criteria_params(dbo, crid, post)
         rhtml = asm3.reports.execute(dbo, crid, username, p)
+        rhtml = asm3.utils.fix_relative_document_uris(dbo, rhtml)
         return set_cached_response(cache_key, account, "text/html", 600, 600, rhtml)
 
     elif method == "csv_mail" or method == "csv_report":

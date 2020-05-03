@@ -1,6 +1,7 @@
 44
 ================
 
+03/05/20 Auto translate relative image links in the html_report service call
 02/05/20 Allow homechecked by/date fields to be on all the time #812
 02/05/20 Fix for embedded images in emails #738
 02/05/20 Python2 fix for importing CSV files
