@@ -343,8 +343,8 @@ $(function() {
                 '<tr class="asilomar">',
                 '<td></td>',
                 '<td>',
-                '<input class="asm-checkbox asilomar" type="checkbox" id="asilomarownerrequested" data-json="ASILOMAROWNERREQUESTEDEUTHANASIA" data-post="asilomarownerrequested" title="' + html.title("The owner requested euthanasia") + '" />',
-                '<label class="asilomar" for="asilomarownerrequested">' + "Owner requested euthanasia" + '</label>',
+                '<input class="asm-checkbox" type="checkbox" id="asilomarownerrequested" data-json="ASILOMAROWNERREQUESTEDEUTHANASIA" data-post="asilomarownerrequested" title="' + html.title("The owner requested euthanasia") + '" />',
+                '<label for="asilomarownerrequested">' + "Owner requested euthanasia" + '</label>',
                 '</td></tr>',
                 '<tr id="bondedwith1row">',
                 '<td>',
@@ -456,13 +456,13 @@ $(function() {
                 '<input id="neuteringvet" data-json="NEUTEREDBYVETID" data-post="neuteringvet" data-mode="brief" data-filter="vet" type="hidden" class="asm-personchooser" />',
                 '</td>',
                 '</tr>',
-                '<tr id="declawedrow">',
+                '<tr id="declawedrow" class="cats">',
                 '<td>',
                 '<input class="asm-checkbox" type="checkbox" id="declawed" data-json="DECLAWED" data-post="declawed" title="' + html.title(_("This animal has been declawed")) + '" />',
                 '<label id="declawed-label" for="declawed">' + _("Declawed") + '</label>',
                 '</td>',
                 '</tr>',
-                '<tr id="heartwormrow">',
+                '<tr id="heartwormrow" class="dogs">',
                 '<td>',
                 '<input class="asm-checkbox" type="checkbox" id="heartwormtested" data-json="HEARTWORMTESTED" data-post="heartwormtested" title="' + html.title(_("This animal has been heartworm tested")) + '" />',
                 '<label for="heartwormtested">' + _("Heartworm Tested") + '</label>',
@@ -476,7 +476,7 @@ $(function() {
                 '</select>',
                 '</td>',
                 '</tr>',
-                '<tr id="fivlrow">',
+                '<tr id="fivlrow" class="cats">',
                 '<td>',
                 '<input class="asm-checkbox" type="checkbox" id="fivltested" data-json="COMBITESTED" data-post="fivltested" title="' + html.title(_("This animal has been FIV/L tested")) + '" />',
                 '<label for="fivltested">' + _("FIV/L Tested") + '</label>',
@@ -504,7 +504,7 @@ $(function() {
                 '</table>',
                 // separate table for additional fields
                 '<table class="additionaltarget" data="to5">',
-                '<tr id="rabiestagrow">',
+                '<tr id="rabiestagrow" class="cats dogs">',
                 '<td><label for="rabiestag">' + _("Rabies Tag") + '</label></td>',
                 '<td><input id="rabiestag" data-json="RABIESTAG" data-post="rabiestag" class="asm-textbox" maxlength="20" />',
                 '</td>',
@@ -915,14 +915,19 @@ $(function() {
                 $("#ptsreason").closest("div").fadeIn();
             }
 
-            // Only show declawed and fiv/l for cats
-            $("#declawedrow, #fivlrow").toggle( $("#species").select("value") == 2 );
+            // If we're a US shelter and this is a cat or a dog, show the asilomar categories
+            if (asm.locale == "en" && !config.bool("DisableAsilomar") &&
+                ($("#species").select("value") == 1 || $("#species").select("value") == 2) ) {
+                $(".asilomar").show();
+            }
+            else {
+                $(".asilomar").hide();
+            }
 
-            // Only show heartworm tested for dogs
-            $("#heartwormrow").toggle( $("#species").select("value") == 1 );
-
-            // Only show rabies tag for cats and dogs
-            $("#rabiestagrow").toggle( $("#species").select("value") == 1 || $("#species").select("value") == 2 );
+            // Show cat and dog specific fields based on species
+            $(".dogs, .cats").hide();
+            if ($("#species").select("value") == 1) { $(".dogs").show(); }
+            if ($("#species").select("value") == 2) { $(".cats").show(); }
 
             // Enable/disable health and identification fields based on checkboxes
             $("#microchipdate, #microchipnumber, #microchiprow2").toggle($("#microchipped").is(":checked"));
@@ -965,14 +970,6 @@ $(function() {
                 holddate += config.integer("AutoRemoveHoldDays") * 86400000;
                 holddate = format.date( new Date(holddate) );
                 $("#holduntil").val(holddate);
-            }
-
-            // If we're a US shelter, show the asilomar categories
-            if (asm.locale == "en" && !config.bool("DisableAsilomar")) {
-                $(".asilomar").show();
-            }
-            else {
-                $(".asilomar").hide();
             }
 
             // If the animal doesn't have a litterid, disable the littermates button
