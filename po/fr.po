@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ASM3\n"
 "Report-Msgid-Bugs-To: robin@sheltermanager.com\n"
-"POT-Creation-Date: 2020-04-29 09:52+0000\n"
-"PO-Revision-Date: 2020-04-29 17:33+0200\n"
+"POT-Creation-Date: 2020-04-30 14:01+0000\n"
+"PO-Revision-Date: 2020-05-03 15:50+0200\n"
 "Last-Translator: Julian POIDEVIN <poidevin.julian@gmail.com>\n"
 "Language-Team: \n"
 "Language: fr\n"
@@ -719,7 +719,7 @@ msgstr "Adopter"
 msgid "Adopt an animal"
 msgstr "Adopter un animal"
 
-#: animal_find.js shelterview.js animal_bulk.js
+#: html.py animal_find_results.js animal_find.js animal_bulk.js shelterview.js
 msgid "Adoptable"
 msgstr "Adoptable"
 
@@ -1025,7 +1025,7 @@ msgstr "Tous les détaillants sur le fichier."
 msgid "All staff on file."
 msgstr "Tout le personnel sur le fichier."
 
-#: options.js
+#: litters.js options.js
 msgid "All time"
 msgstr "Toute la période"
 
@@ -4269,9 +4269,10 @@ msgstr "Mau Égyptien"
 msgid "Electricity Bills"
 msgstr "Factures d'électricité"
 
-#: html.py mobile.py onlineform.py lostfound.js users.js waitinglist.js
-#: person_find_results.js person_find.js media.js waitinglist_results.js
-#: incident.js animal.js person.js options.js header_edit_header.js
+#: html.py mobile.py onlineform.py users.js incident.js waitinglist_results.js
+#: person.js waitinglist.js document_repository.js lostfound.js animal.js
+#: options.js person_find.js media.js header_edit_header.js
+#: person_find_results.js
 msgid "Email"
 msgstr "E-mail"
 
@@ -4326,7 +4327,7 @@ msgstr ""
 "Envoi de formulaires entrants par courrier électronique à cette liste "
 "d'adresses électroniques séparées par des virgules"
 
-#: media.js
+#: document_repository.js media.js
 msgid "Email media"
 msgstr "Envoyer le média par email"
 
@@ -6046,7 +6047,7 @@ msgstr "Dans le dernier trimestre"
 msgid "In the last week"
 msgstr "Dans la dernière semaine"
 
-#: publish_options.js
+#: publish_options.js litters.js
 msgid "In the last year"
 msgstr "Dans la dernière année"
 
@@ -6289,6 +6290,14 @@ msgid ""
 msgstr ""
 "Les formulaires entrants sont des formulaires en ligne qui ont été complétés "
 "et soumis par des internautes."
+
+#: onlineform_incoming.js
+msgid ""
+"Incoming forms that have been used to create records will be automatically "
+"removed when you leave this screen."
+msgstr ""
+"Les formulaires entrants qui ont été utilisés pour créer des enregistrements "
+"seront automatiquement supprimés lorsque vous quitterez cet écran."
 
 #: onlineform_incoming.js
 msgid "Incoming forms will be automatically removed after {0} days."
@@ -6770,6 +6779,10 @@ msgstr "Lier un animal"
 #: users.js
 msgid "Link this user account to a staff person record."
 msgstr "Liez ce compte utilisateur à un enregistrement de membre du personnel."
+
+#: animal.js
+msgid "Link to a photo of this animal"
+msgstr "Lien vers une photo de cet animal"
 
 #: media.js
 msgid "Link to an external web resource"
@@ -10254,6 +10267,10 @@ msgstr ""
 "Envoyer un e-mail hebdomadaire aux familles d'accueil avec des informations "
 "médicales sur leurs animaux"
 
+#: animal.js
+msgid "Send an email relating to this animal"
+msgstr "Envoyer un email concernant cet animal"
+
 #: donations.js
 msgid "Send an email request for payment via a payment processor"
 msgstr ""
@@ -10262,6 +10279,10 @@ msgstr ""
 #: onlineforms.js
 msgid "Send confirmation email to form submitter"
 msgstr "Envoyer un e-mail de confirmation pour envoyer le formulaire"
+
+#: animal.js
+msgid "Send email"
+msgstr "Envoyer un e-mail"
 
 #: mailmerge.js
 msgid "Send emails"
@@ -10385,6 +10406,10 @@ msgstr "Shar Pei"
 #: animal.js
 msgid "Share"
 msgstr "Partager"
+
+#: animal.js
+msgid "Shared photo"
+msgstr "Photo partagée"
 
 #: animal.js
 msgid "Shared weblink"
