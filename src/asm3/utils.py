@@ -874,7 +874,8 @@ def csv_parse(s):
         d = {}
         for i, c in enumerate(cols):
             if i < len(items): d[c] = items[i]
-        rows.append(d)
+        if len(d) > 1: # Don't append empty rows (can also be empty string in first col)
+            rows.append(d)
         if pos[2]: break # EOF
     return rows
 
