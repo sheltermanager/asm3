@@ -119,7 +119,7 @@ BODY$$
 
 $$FOOTER
 <tr>
-<td><i>$AGEGROUP</i></td>
+<td><i>Total</i></td>
 <td><i>{SUM.NumberInShelter.0}</i></td>
 </tr>
 
