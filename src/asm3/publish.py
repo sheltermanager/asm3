@@ -111,8 +111,8 @@ PUBLISHER_LIST["st"] = {
 }
 
 def delete_old_publish_logs(dbo):
-    """ Deletes all publishing logs older than 14 days """
-    KEEP_DAYS = 14
+    """ Deletes all publishing logs older than 3 months """
+    KEEP_DAYS = 93
     cutoff = dbo.today(offset=KEEP_DAYS*-1)
     count = dbo.query_int("SELECT COUNT(*) FROM publishlog WHERE PublishDateTime < ?", [cutoff])
     asm3.al.debug("removing %d publishing logs (keep for %d days)." % (count, KEEP_DAYS), "publish.delete_old_publish_logs", dbo)
