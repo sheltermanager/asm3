@@ -203,7 +203,7 @@ def get_onlineform_html(dbo, formid, completedocument = True):
             rs = asm3.publishers.base.get_animal_data(dbo, pc, include_additional_fields = True)
             rs = sorted(rs, key=lambda k: k["ANIMALNAME"])
             for a in rs:
-                if f.SPECIESID > 0 and a.SPECIESID != f.SPECIESID: continue
+                if f.SPECIESID and f.SPECIESID > 0 and a.SPECIESID != f.SPECIESID: continue
                 h.append('<option value="%(name)s::%(code)s">%(name)s (%(species)s - %(code)s)</option>' % \
                     { "name": a.ANIMALNAME, "code": a.SHELTERCODE, "species": a.SPECIESNAME})
             h.append('</select>')
