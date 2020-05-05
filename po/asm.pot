@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ASM3\n"
 "Report-Msgid-Bugs-To: robin@sheltermanager.com\n"
-"POT-Creation-Date: 2020-04-30 14:01+0000\n"
+"POT-Creation-Date: 2020-05-05 16:58+0000\n"
 "Last-Translator: Robin Rawson-Tetley <robin@sheltermanager.com>\n"
 "Language-Team: en <robin@sheltermanager.com>\n"
 "Language: en\n"
@@ -1334,7 +1334,7 @@ msgid "Animal shortcode format"
 msgstr ""
 
 #: html.py reports.py transport.js incident.js medical.js vaccination.js
-#: csvexport.js roles.js animal_bulk.js test.js htmltemplates.js
+#: csvexport.js roles.js animal_bulk.js test.js options.js htmltemplates.js
 msgid "Animals"
 msgstr ""
 
@@ -2901,6 +2901,10 @@ msgstr ""
 #: html.py animal_find_results.js waitinglist_results.js animal_find.js
 #: person_find.js person_find_results.js
 msgid "Created By"
+msgstr ""
+
+#: person_find.js
+msgid "Created Since"
 msgstr ""
 
 #: options.js
@@ -5768,7 +5772,7 @@ msgstr ""
 msgid "I've finished, Don't show me this popup again."
 msgstr ""
 
-#: lookups.js
+#: additional.js lookups.js
 msgid "ID"
 msgstr ""
 
@@ -8013,7 +8017,7 @@ msgstr ""
 msgid "Online Form: {0}"
 msgstr ""
 
-#: html.py onlineforms.js roles.js
+#: html.py onlineforms.js roles.js options.js
 msgid "Online Forms"
 msgstr ""
 
@@ -8413,7 +8417,7 @@ msgstr ""
 msgid "Pension"
 msgstr ""
 
-#: html.py roles.js
+#: html.py roles.js options.js
 msgid "People"
 msgstr ""
 
@@ -9263,6 +9267,10 @@ msgid "Remove holds after"
 msgstr ""
 
 #: options.js
+msgid "Remove incoming forms after"
+msgstr ""
+
+#: options.js
 msgid "Remove move menu and the movements tab from animal and person screens"
 msgstr ""
 
@@ -9272,6 +9280,10 @@ msgstr ""
 
 #: publish_options.js
 msgid "Remove previously published files before uploading"
+msgstr ""
+
+#: options.js
+msgid "Remove processed forms when I leave the incoming forms screens"
 msgstr ""
 
 #: options.js
@@ -9336,6 +9348,12 @@ msgstr ""
 
 #: options.js
 msgid "Remove the heartworm test fields from animal health details"
+msgstr ""
+
+#: options.js
+msgid ""
+"Remove the homechecked/by fields from person type according to the "
+"homechecked flag"
 msgstr ""
 
 #: options.js
@@ -9689,6 +9707,10 @@ msgstr ""
 
 #: dbupdate.py
 msgid "Rhodesian Ridgeback"
+msgstr ""
+
+#: incident.js person.js
+msgid "Right-click on the map to change the marker location"
 msgstr ""
 
 #: dbupdate.py
@@ -10975,7 +10997,7 @@ msgstr ""
 msgid "Syntax check this SQL"
 msgstr ""
 
-#: html.py roles.js
+#: html.py roles.js options.js
 msgid "System"
 msgstr ""
 
@@ -13554,6 +13576,14 @@ msgid ""
 "keywords: onshelter/os, notforadoption, aco, banned, donors, deceased, vets, "
 "retailers, staff, fosterers, volunteers, homecheckers, members, activelost, "
 "activefound"
+msgstr ""
+
+#: options.js
+msgid "if animal does not have"
+msgstr ""
+
+#: options.js
+msgid "if animal has"
 msgstr ""
 
 #: mailmerge.js

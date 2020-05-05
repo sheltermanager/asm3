@@ -706,8 +706,8 @@
             this.options.lat = this.element.parent().find(".latlong-lat");
             this.options.lng = this.element.parent().find(".latlong-long");
             this.options.hash = this.element.parent().find(".latlong-hash");
-            this.options.lat.blur(function() { self.save(self); });
-            this.options.lng.blur(function() { self.save(self); });
+            this.options.lat.blur(function() { self.save.call(self); });
+            this.options.lng.blur(function() { self.save.call(self); });
         },
         load: function() {
             // Reads the base element value and splits it into the boxes
@@ -716,12 +716,12 @@
             if (bits.length > 1) { this.options.lng.val(bits[1]); }
             if (bits.length > 2) { this.options.hash.val(bits[2]); }
         },
-        save: function(self) {
+        save: function() {
             // Store the entered values back in the base element value
-            var v = self.options.lat.val() + "," +
-                self.options.lng.val() + "," +
-                self.options.hash.val();
-            self.element.val(v);
+            var v = this.options.lat.val() + "," +
+                this.options.lng.val() + "," +
+                this.options.hash.val();
+            this.element.val(v);
         }
     });
 
