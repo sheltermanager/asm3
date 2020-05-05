@@ -410,7 +410,8 @@ Display
   slider of incidents.
 
 * Allow editing of latitude/longitude with minimaps: Allow the latitude/longitude
-  geocodes to be hand edited in a field near the minimap and address.
+  geocodes to be hand edited in fields near the minimap and address. Right clicking
+  on the minimap will add a new pin and update the fields.
 
 * Show weights as lb and oz: Enter and show weights with separate pounds and
   ounces. eg: 5 lbs and 6 oz

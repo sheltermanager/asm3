@@ -228,6 +228,10 @@ class PetLinkPublisher(AbstractPublisher):
         if email == "":
             email = "%s@petlink.tmp" % phone
 
+        # If the email contains more than one address, throw the extra away
+        if email.find(",") != -1 and email.count("@") > 1:
+            email = email[0:email.find(",")].strip()
+
         line = []
         # Software
         line.append("\"ASM\"")
