@@ -19,6 +19,7 @@ Extra, non-mandatory packages:
 * apt-get install python3-memcache memcached (for multiprocess sessions)
 * apt-get install imagemagick (for scaling/compressing PDFs to save on storage)
 * apt-get install wkhtmltopdf (for creating PDFs from HTML document templates)
+* apt-get install python3-xhtml2pdf (pure Python lib for creating PDFs from HTML document templates)
 * apt-get install python3-reportlab (for creating mailing label PDFs)
 * apt-get install python3-requests (needed for HTTP comms to other publishing services)
 * apt-get install python3-boto3 (needed for Amazon S3 media storage)

@@ -1,6 +1,7 @@
 44
 ================
 
+05/05/20 pdf renderer directive to switch to pisa over external cmd
 04/05/20 Filter out empty CSV rows during imports to prevent harmless errors
 04/05/20 AdoptAPet: Missing mapping for Havana->Havana Brown
 04/05/20 Show ID on additional field editing screen

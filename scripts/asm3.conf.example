@@ -118,7 +118,8 @@ scale_pdf_during_attach = false
 scale_pdf_cmd = convert -density 120 -quality 60 %(input)s -compress Jpeg %(output)s
 
 # Shell command to convert HTML to PDF
-html_to_pdf = wkhtmltopdf --orientation %(orientation)s %(papersize)s %(input)s %(output)s
+# html_to_pdf = wkhtmltopdf --orientation %(orientation)s %(papersize)s %(input)s %(output)s
+html_to_pdf = pisa
 
 # Target for viewing an address on a map, {0} is the address
 map_link = https://www.openstreetmap.org/search?query={0}
