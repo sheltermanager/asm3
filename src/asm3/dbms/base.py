@@ -919,7 +919,7 @@ class Database(object):
         if v is None:
             return "null"
         elif asm3.utils.is_unicode(v) or asm3.utils.is_str(v):
-            return "'%s'" % v.replace("'", "`")
+            return "'%s'" % v.replace("'", "''")
         elif type(v) == datetime.datetime:
             return self.sql_date(v)
         else:

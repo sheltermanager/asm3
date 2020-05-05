@@ -1,6 +1,7 @@
 44
 ================
 
+05/05/20 Fix writing of insert SQL to handle apostrophes correctly
 05/05/20 PetLink will not accept more than 1 email address, strip/split if found
 05/05/20 If minimap editing is on, allow right click to move pin #815
 05/05/20 pdf renderer directive to switch to pisa over external cmd
