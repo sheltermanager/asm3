@@ -647,6 +647,13 @@ the reservation for you after this time.
 * Treat Soft Releases as shelter inventory: Animals on soft release will be 
   kept in the shelter's inventory.
 
+* Allow reservations to be created that are not linked to an animal: This
+  option lets you create a reservation without specifying the animal. It also
+  applies to using :menuselection:`Create --> Person` on the incoming forms
+  screen with a reserveanimalname field in the form to allow the person's
+  application to still be tracked through the reservation book even if the
+  person is not interested in a specific animal yet.
+
 * Automatically cancel any outstanding reservations on an animal when it is
   adopted: Self explanatory.
 
@@ -693,6 +700,16 @@ the reservation for you after this time.
   shelter: The system can check and warn you if you attempt to adopt an animal
   to an owner who looks like an owner who brought an animal in. This is a loose
   check based on name and address. 
+
+Online Forms
+------------
+
+* Remove incoming forms after: Automatically remove forms from the incoming queue
+  after this many days.
+
+* Remove processed forms when I leave the incoming forms screen: When navigating
+  away from the incoming forms screen, any forms that have been processed (have
+  a link shown in the rightmost column) will be deleted automatically.
 
 .. _paymentprocessors:
 

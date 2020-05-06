@@ -1120,6 +1120,7 @@
     };
 
     format = {
+
         float_to_dp: function(f, dp) {
             return Math.round(f * Math.pow(10, dp)) / Math.pow(10, dp);
         },
@@ -1397,6 +1398,12 @@
             f = f.replace("%M", this.padleft(d.getMinutes(), 2));
             f = f.replace("%S", this.padleft(d.getSeconds(), 2));
             return f;
+        },
+
+        numbers_only: function(s) {
+            if (!s) { return ""; }
+            /*jslint regexp: true */
+            return s.replace(/[^\d]/g, "");
         },
 
         padleft: function(s, d) {

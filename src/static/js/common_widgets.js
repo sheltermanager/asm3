@@ -176,6 +176,7 @@
                         var fq = h.indexOf("data-sort");
                         fq = h.indexOf("\"", fq);
                         s = h.substring(fq+1, h.indexOf("\"", fq+1));
+                        // Looks like an ISO date/time - strip the punctuation
                         if (s.indexOf(":") != -1) { s = s.replace(/[\-\:T]/g, ""); }
                     }
                     // If the text contains a date, turn it into YYYY-MM-DD for sorting

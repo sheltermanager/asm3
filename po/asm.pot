@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ASM3\n"
 "Report-Msgid-Bugs-To: robin@sheltermanager.com\n"
-"POT-Creation-Date: 2020-05-05 16:58+0000\n"
+"POT-Creation-Date: 2020-05-06 12:47+0000\n"
 "Last-Translator: Robin Rawson-Tetley <robin@sheltermanager.com>\n"
 "Language-Team: en <robin@sheltermanager.com>\n"
 "Language: en\n"
@@ -1044,6 +1044,10 @@ msgstr ""
 
 #: options.js
 msgid "Allow overriding of the movement number on the Move menu screens"
+msgstr ""
+
+#: options.js
+msgid "Allow reservations to be created that are not linked to an animal"
 msgstr ""
 
 #: options.js

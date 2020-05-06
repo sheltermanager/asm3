@@ -26,7 +26,8 @@ def get_movement_query(dbo):
     return "SELECT m.*, o.OwnerTitle, o.OwnerInitials, o.OwnerSurname, o.OwnerForenames, o.OwnerName, " \
         "o.OwnerAddress, o.OwnerTown, o.OwnerCounty, o.OwnerPostcode, o.HomeTelephone, o.WorkTelephone, o.MobileTelephone, " \
         "rs.StatusName AS ReservationStatusName, " \
-        "a.ShelterCode, a.ShortCode, a.AnimalAge, a.AgeGroup, a.AnimalName, a.BreedName, a.Neutered, a.DeceasedDate, a.HasActiveReserve, " \
+        "a.ShelterCode, a.ShortCode, a.AnimalAge, a.DateOfBirth, a.AgeGroup, " \
+        "a.AnimalName, a.BreedName, a.Neutered, a.DeceasedDate, a.HasActiveReserve, " \
         "a.HasTrialAdoption, a.IsHold, a.IsQuarantine, a.HoldUntilDate, a.CrueltyCase, a.NonShelterAnimal, " \
         "a.ActiveMovementType, a.Archived, a.IsNotAvailableForAdoption, " \
         "a.CombiTestResult, a.FLVResult, a.HeartwormTestResult, " \
@@ -56,15 +57,15 @@ def get_movement_query(dbo):
         "FROM adoption m " \
         "LEFT OUTER JOIN reservationstatus rs ON rs.ID = m.ReservationStatusID " \
         "LEFT OUTER JOIN lksmovementtype l ON l.ID = m.MovementType " \
-        "INNER JOIN animal a ON m.AnimalID = a.ID " \
+        "LEFT OUTER JOIN animal a ON m.AnimalID = a.ID " \
         "LEFT OUTER JOIN adoption ad ON a.ActiveMovementID = ad.ID " \
         "LEFT OUTER JOIN owner co ON co.ID = ad.OwnerID " \
         "LEFT OUTER JOIN owner ac ON ac.ID = a.AdoptionCoordinatorID " \
         "LEFT OUTER JOIN internallocation il ON il.ID = a.ShelterLocation " \
         "LEFT OUTER JOIN media ma ON ma.LinkID = a.ID AND ma.LinkTypeID = 0 AND ma.WebsitePhoto = 1 " \
         "LEFT OUTER JOIN entryreason rr ON m.ReturnedReasonID = rr.ID " \
-        "INNER JOIN species s ON a.SpeciesID = s.ID " \
-        "INNER JOIN lksex sx ON sx.ID = a.Sex " \
+        "LEFT OUTER JOIN species s ON a.SpeciesID = s.ID " \
+        "LEFT OUTER JOIN lksex sx ON sx.ID = a.Sex " \
         "LEFT OUTER JOIN owner o ON m.OwnerID = o.ID " \
         "LEFT OUTER JOIN owner r ON m.RetailerID = r.ID "
 
@@ -238,10 +239,11 @@ def validate_movement_form_data(dbo, post):
     if reservationdate is None and reservationcancelled is not None:
         post.data["reservationdate"] = ""
         asm3.al.debug("movement has no reserve or cancelled date", "movement.validate_movement_form_data", dbo)
-    # Animals are always required
+    # Animals are always required, except for reservations with the right option
     if animalid == 0:
-        asm3.al.debug("movement has no animal", "movement.validate_movement_form_data", dbo)
-        raise asm3.utils.ASMValidationError(asm3.i18n._("Movements require an animal", l))
+        if movementtype > 0 or not asm3.configuration.movement_person_only_reserves(dbo):
+            asm3.al.debug("movement has no animal", "movement.validate_movement_form_data", dbo)
+            raise asm3.utils.ASMValidationError(asm3.i18n._("Movements require an animal", l))
     # Owners are required unless type is escaped, stolen or released
     if personid == 0 and movementtype != ESCAPED and movementtype != STOLEN and movementtype != RELEASED:
         asm3.al.debug("movement has no person and is not ESCAPED|STOLEN|RELEASED|TRANSPORT", "movement.validate_movement_form_data", dbo)
@@ -400,10 +402,11 @@ def insert_movement_from_form(dbo, username, post):
         "Comments":                     post["comments"]
     }, username, generateID=False)
 
-    asm3.animal.update_animal_status(dbo, animalid)
-    asm3.animal.update_variable_animal_data(dbo, animalid)
-    update_movement_donation(dbo, movementid)
-    asm3.person.update_adopter_flag(dbo, username, post.integer("person"))
+    if post.integer("animal") > 0:
+        asm3.animal.update_animal_status(dbo, animalid)
+        asm3.animal.update_variable_animal_data(dbo, animalid)
+        update_movement_donation(dbo, movementid)
+        asm3.person.update_adopter_flag(dbo, username, post.integer("person"))
     return movementid
 
 def update_movement_from_form(dbo, username, post):
@@ -436,24 +439,25 @@ def update_movement_from_form(dbo, username, post):
         "Comments":                     post["comments"]
     }, username)
 
-    asm3.animal.update_animal_status(dbo, post.integer("animal"))
-    asm3.animal.update_variable_animal_data(dbo, post.integer("animal"))
-    update_movement_donation(dbo, movementid)
-    asm3.person.update_adopter_flag(dbo, username, post.integer("person"))
+    if post.integer("animal") > 0:
+        asm3.animal.update_animal_status(dbo, post.integer("animal"))
+        asm3.animal.update_variable_animal_data(dbo, post.integer("animal"))
+        update_movement_donation(dbo, movementid)
+        asm3.person.update_adopter_flag(dbo, username, post.integer("person"))
 
 def delete_movement(dbo, username, mid):
     """
     Deletes a movement record
     """
-    animalid = dbo.query_int("SELECT AnimalID FROM adoption WHERE ID = ?", [mid])
-    if animalid == 0:
+    m = dbo.first_row(dbo.query("SELECT * FROM adoption WHERE ID = ?", [mid]))
+    if m is None:
         raise asm3.utils.ASMError("Trying to delete a movement that does not exist")
-    personid = dbo.query_int("SELECT OwnerID FROM adoption WHERE ID = ?", [mid])
     dbo.execute("UPDATE ownerdonation SET MovementID = 0 WHERE MovementID = ?", [mid])
     dbo.delete("adoption", mid, username)
-    asm3.animal.update_animal_status(dbo, animalid)
-    asm3.animal.update_variable_animal_data(dbo, animalid)
-    asm3.person.update_adopter_flag(dbo, username, personid)
+    if m.ANIMALID > 0:
+        asm3.animal.update_animal_status(dbo, m.ANIMALID)
+        asm3.animal.update_variable_animal_data(dbo, m.ANIMALID)
+        asm3.person.update_adopter_flag(dbo, username, m.OWNERID)
 
 def return_movement(dbo, movementid, username, animalid = 0, returndate = None):
     """
@@ -716,8 +720,8 @@ def insert_reserve_for_animal_name(dbo, username, personid, reservationdate, ani
         aid = dbo.query_int("SELECT ID FROM animal WHERE LOWER(AnimalName) LIKE ? ORDER BY ID DESC", [animalname.lower()])
     if 1 == dbo.query_int("SELECT IsBanned FROM owner WHERE ID=?", [personid]):
         raise asm3.utils.ASMValidationError("owner %s is banned from adopting animals - not creating reserve")
-    if aid == 0: 
-        raise asm3.utils.ASMValidationError("could not find an animal for '%s' - not creating reserve" % animalname)
+    if aid == 0 and not asm3.configuration.movement_person_only_reserves(dbo): 
+        raise asm3.utils.ASMValidationError("could not find an animal for '%s', will not create person only reserve" % animalname)
     move_dict = {
         "person"                : str(personid),
         "animal"                : str(aid),

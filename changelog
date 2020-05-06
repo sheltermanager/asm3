@@ -1,6 +1,8 @@
 44
 ================
 
+06/05/20 Make animals optional for reservations #785
+06/05/20 Fix bug in nb locale when issuing update queries
 06/05/20 Fix sorting of notes containing dates in media table view
 05/05/20 Fix writing of insert SQL to handle apostrophes correctly
 05/05/20 PetLink will not accept more than 1 email address, strip/split if found
