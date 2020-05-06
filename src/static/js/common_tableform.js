@@ -195,10 +195,11 @@
          *   overdue: function(row) { return true if the row should be drawn as overdue },
          *   columns:  [
          *      { initialsort: true, 
-         *        initialsortdirection: "asc", 
+         *        initialsortdirection: "asc", // or desc
+         *        sorttext: function(row) { overrides table.textExtraction and sets sort text }
          *        field: "jsonfield", 
-         *        classes: "",
-         *        display: _("Text"), 
+         *        classes: "", // extra classes to add to the td
+         *        display: _("Text"),      
          *        formatter: tableform.format_date, 
          *        hideif: function(row) 
          *      } 
@@ -241,6 +242,9 @@
                         extraclasses += " rightalign";
                     }
                     t.push("<td class=\"ui-widget-content " + extraclasses + "\">");
+                    if (vc.sorttext) {
+                        t.push("<span data-sort=\"" + html.title(html.truncate(vc.sorttext(vr))) + "\" />");
+                    }
                     if (ic == 0 && formatter === undefined) {
                         var linktext = tableform.format_string(vr, vr[vc.field]);
                         if (table.truncatelink) { linktext = html.truncate(html.decode(linktext), table.truncatelink); }
