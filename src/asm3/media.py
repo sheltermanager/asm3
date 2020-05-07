@@ -51,7 +51,9 @@ def mime_type(filename):
         "pdf"   : "application/pdf",
         "mpg"   : "video/mpg",
         "mp3"   : "audio/mpeg3",
-        "avi"   : "video/avi"
+        "avi"   : "video/avi",
+        "htm"   : "text/html",
+        "html"  : "text/html"
     }
     ext = filename[filename.rfind(".")+1:].lower()
     if ext in types:
