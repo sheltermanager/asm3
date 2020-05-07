@@ -146,6 +146,29 @@ $(document).ready(function() {
         return query;
     };
 
+    // Find every visibleif rule and show/hide accordingly
+    var showvisibleif = function() {
+        $("tr").each(function() {
+            var o = $(this);
+            if (!o.attr("data-visibleif")) { return; } // no rule, do nothing
+            // Split rule in to field, cond (=!), value
+            var m = o.attr("data-visibleif").match(new RegExp("(.*)([=!])(.*)"));
+            var field = m[1], cond = m[2], value = m[3];
+            // Find the field and apply the condition
+            $("input, select").each(function() {
+                if ($(this).attr("name") && $(this).attr("name").indexOf(field + "_") == 0) {
+                    if (cond == "=") {
+                        o.toggle( $(this).val() == value );
+                    }
+                    else if (cond == "!") {
+                        o.toggle( $(this).val() != value );
+                    }
+                    return false; // stop iterating fields, we found it
+                }
+            });
+        });
+    };
+
     // Load all date and time picker widgets
     $(".asm-onlineform-date").datepicker({ dateFormat: DATE_FORMAT, changeMonth: true, changeYear: true, yearRange: "-90:+3" });
     $(".asm-onlineform-time").timepicker();
@@ -192,6 +215,10 @@ $(document).ready(function() {
             }
         });
     });
+
+    // Watch all fields for change and determine whether we need to hide or display rows
+    $("body").on("change", "input, select", showvisibleif);
+    showvisibleif(); // set initial state
 
     // Add additional behaviours to when the online form is submitted to validate 
     // components either not supported by HTML5 form validation, or for browsers

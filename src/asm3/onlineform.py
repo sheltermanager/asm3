@@ -133,10 +133,13 @@ def get_onlineform_html(dbo, formid, completedocument = True):
     h.append('<input type="hidden" name="formname" value="%s" />' % asm3.html.escape(form["NAME"]))
     h.append('<table class="asm-onlineform-table">')
     for f in formfields:
-        fname = f.FIELDNAME + "_" + str(f.ID)
+        fname = "%s_%s" % (f.FIELDNAME, f.ID)
         cname = asm3.html.escape(fname)
         fid = "f%d" % f.ID
-        h.append('<tr class="asm-onlineform-tr">')
+        visibleif = ""
+        if f.VISIBLEIF:
+            visibleif = 'data-visibleif="%s"' % f.VISIBLEIF
+        h.append('<tr class="asm-onlineform-tr" %s>' % visibleif)
         required = ""
         requiredtext = ""
         requiredspan = '<span class="asm-onlineform-notrequired"></span>'
@@ -576,6 +579,7 @@ def insert_onlineformfield_from_form(dbo, username, post):
         "Mandatory":        post.boolean("mandatory"),
         "Lookups":          post["lookups"],
         "SpeciesID":        post.integer("species"),
+        "VisibleIf":        post["visibleif"],
         "*Tooltip":         post["tooltip"]
     }, username, setCreated=False)
 
@@ -591,6 +595,7 @@ def update_onlineformfield_from_form(dbo, username, post):
         "Mandatory":        post.boolean("mandatory"),
         "Lookups":          post["lookups"],
         "SpeciesID":        post.integer("species"),
+        "VisibleIf":        post["visibleif"],
         "*Tooltip":         post["tooltip"]
     }, username, setLastChanged=False)
 

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ASM3\n"
 "Report-Msgid-Bugs-To: robin@sheltermanager.com\n"
-"POT-Creation-Date: 2020-05-06 12:47+0000\n"
+"POT-Creation-Date: 2020-05-07 13:05+0000\n"
 "Last-Translator: Robin Rawson-Tetley <robin@sheltermanager.com>\n"
 "Language-Team: en <robin@sheltermanager.com>\n"
 "Language: en\n"
@@ -8063,6 +8063,10 @@ msgstr ""
 msgid "Only show special needs"
 msgstr ""
 
+#: onlineform.js
+msgid "Only show this field based on a conditional expression, eg: field1=dog"
+msgstr ""
+
 #: animal_find.js
 msgid "Only show transfers"
 msgstr ""
@@ -10288,6 +10292,10 @@ msgstr ""
 
 #: options.js
 msgid "Show ID numbers when editing lookup data"
+msgstr ""
+
+#: onlineform.js
+msgid "Show If"
 msgstr ""
 
 #: options.js

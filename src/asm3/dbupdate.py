@@ -37,7 +37,7 @@ VERSIONS = (
     34013, 34014, 34015, 34016, 34017, 34018, 34019, 34020, 34021, 34022, 34100,
     34101, 34102, 34103, 34104, 34105, 34106, 34107, 34108, 34109, 34110, 34111,
     34112, 34200, 34201, 34202, 34203, 34204, 34300, 34301, 34302, 34303, 34304,
-    34305, 34306, 34400, 34401, 34402
+    34305, 34306, 34400, 34401, 34402, 34403
 )
 
 LATEST_VERSION = VERSIONS[-1]
@@ -1144,6 +1144,7 @@ def sql_structure(dbo):
         fstr("Label"),
         flongstr("Lookups", True),
         fint("SpeciesID", True),
+        fstr("VisibleIf", True),
         flongstr("Tooltip", True)), False)
     sql += index("onlineformfield_OnlineFormID", "onlineformfield", "OnlineFormID")
 
@@ -5202,3 +5203,8 @@ def update_34402(dbo):
     add_column(dbo, "media", "CreatedDate", dbo.type_datetime)
     add_index(dbo, "media_CreatedDate", "media", "CreatedDate")
     dbo.execute_dbupdate("UPDATE media SET CreatedDate=Date")
+
+def update_34403(dbo):
+    # Add onlineformfield.VisibleIf
+    add_column(dbo, "onlineformfield", "VisibleIf", dbo.type_shorttext)
+    dbo.execute_dbupdate("UPDATE onlineformfield SET VisibleIf=''")
