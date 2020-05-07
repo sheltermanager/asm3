@@ -1638,10 +1638,11 @@ def generate_person_doc(dbo, templateid, personid, username):
     if p is None: raise asm3.utils.ASMValidationError("%d is not a valid person ID" % personid)
     tags = person_tags(dbo, p, includeImg=True)
     tags = append_tags(tags, org_tags(dbo, username))
-    m = asm3.movement.get_person_movements(dbo, personid)
-    if len(m) > 0: 
-        tags = append_tags(tags, movement_tags(dbo, m[0]))
-        tags = append_tags(tags, animal_tags(dbo, asm3.animal.get_animal(dbo, m[0]["ANIMALID"])))
+    m = dbo.first_row(asm3.movement.get_person_movements(dbo, personid))
+    if m is not None:
+        tags = append_tags(tags, movement_tags(dbo, m))
+        if m.ANIMALID is not None and m.ANIMALID != 0:
+            tags = append_tags(tags, animal_tags(dbo, asm3.animal.get_animal(dbo, m.ANIMALID)))
     return substitute_template(dbo, templateid, tags, im)
 
 def generate_donation_doc(dbo, templateid, donationids, username):
@@ -1654,11 +1655,11 @@ def generate_donation_doc(dbo, templateid, donationids, username):
     if len(dons) == 0: 
         raise asm3.utils.ASMValidationError("%s does not contain any valid donation IDs" % donationids)
     d = dons[0]
-    tags = person_tags(dbo, asm3.person.get_person(dbo, d["OWNERID"]))
-    if d["ANIMALID"] is not None and d["ANIMALID"] != 0:
+    tags = person_tags(dbo, asm3.person.get_person(dbo, d.OWNERID))
+    if d.ANIMALID is not None and d.ANIMALID != 0:
         tags = append_tags(tags, animal_tags(dbo, asm3.animal.get_animal(dbo, d["ANIMALID"]), includeDonations=False))
-    if d["MOVEMENTID"] is not None and d["MOVEMENTID"] != 0:
-        tags = append_tags(tags, movement_tags(dbo, asm3.movement.get_movement(dbo, d["MOVEMENTID"])))
+    if d.MOVEMENTID is not None and d.MOVEMENTID != 0:
+        tags = append_tags(tags, movement_tags(dbo, asm3.movement.get_movement(dbo, d.MOVEMENTID)))
     tags = append_tags(tags, donation_tags(dbo, dons))
     tags = append_tags(tags, org_tags(dbo, username))
     return substitute_template(dbo, templateid, tags)
@@ -1672,7 +1673,7 @@ def generate_foundanimal_doc(dbo, templateid, faid, username):
     a = asm3.lostfound.get_foundanimal(dbo, faid)
     if a is None:
         raise asm3.utils.ASMValidationError("%d is not a valid found animal ID" % faid)
-    tags = person_tags(dbo, asm3.person.get_person(dbo, a["OWNERID"]))
+    tags = person_tags(dbo, asm3.person.get_person(dbo, a.OWNERID))
     tags = append_tags(tags, foundanimal_tags(dbo, a))
     tags = append_tags(tags, org_tags(dbo, username))
     return substitute_template(dbo, templateid, tags)
@@ -1686,7 +1687,7 @@ def generate_lostanimal_doc(dbo, templateid, laid, username):
     a = asm3.lostfound.get_lostanimal(dbo, laid)
     if a is None:
         raise asm3.utils.ASMValidationError("%d is not a valid lost animal ID" % laid)
-    tags = person_tags(dbo, asm3.person.get_person(dbo, a["OWNERID"]))
+    tags = person_tags(dbo, asm3.person.get_person(dbo, a.OWNERID))
     tags = append_tags(tags, lostanimal_tags(dbo, a))
     tags = append_tags(tags, org_tags(dbo, username))
     return substitute_template(dbo, templateid, tags)
@@ -1700,9 +1701,9 @@ def generate_licence_doc(dbo, templateid, licenceid, username):
     l = asm3.financial.get_licence(dbo, licenceid)
     if l is None:
         raise asm3.utils.ASMValidationError("%d is not a valid licence ID" % licenceid)
-    tags = person_tags(dbo, asm3.person.get_person(dbo, l["OWNERID"]))
-    if l["ANIMALID"] is not None and l["ANIMALID"] != 0:
-        tags = append_tags(tags, animal_tags(dbo, asm3.animal.get_animal(dbo, l["ANIMALID"])))
+    tags = person_tags(dbo, asm3.person.get_person(dbo, l.OWNERID))
+    if l.ANIMALID is not None and l.ANIMALID != 0:
+        tags = append_tags(tags, animal_tags(dbo, asm3.animal.get_animal(dbo, l.ANIMALID)))
     tags = append_tags(tags, licence_tags(dbo, l))
     tags = append_tags(tags, org_tags(dbo, username))
     return substitute_template(dbo, templateid, tags)
@@ -1716,9 +1717,10 @@ def generate_movement_doc(dbo, templateid, movementid, username):
     m = asm3.movement.get_movement(dbo, movementid)
     if m is None:
         raise asm3.utils.ASMValidationError("%d is not a valid movement ID" % movementid)
-    tags = animal_tags(dbo, asm3.animal.get_animal(dbo, m["ANIMALID"]), includeDonations=False)
-    if m["OWNERID"] is not None and m["OWNERID"] != 0:
-        tags = append_tags(tags, person_tags(dbo, asm3.person.get_person(dbo, m["OWNERID"])))
+    if m.ANIMALID is not None and m.ANIMALID != 0:
+        tags = animal_tags(dbo, asm3.animal.get_animal(dbo, m.ANIMALID), includeDonations=False)
+    if m.OWNERID is not None and m.OWNERID != 0:
+        tags = append_tags(tags, person_tags(dbo, asm3.person.get_person(dbo, m.OWNERID)))
     tags = append_tags(tags, movement_tags(dbo, m))
     tags = append_tags(tags, donation_tags(dbo, asm3.financial.get_movement_donations(dbo, movementid)))
     tags = append_tags(tags, org_tags(dbo, username))
@@ -1746,9 +1748,9 @@ def generate_voucher_doc(dbo, templateid, voucherid, username):
     v = asm3.financial.get_voucher(dbo, voucherid)
     if v is None:
         raise asm3.utils.ASMValidationError("%d is not a valid voucher ID" % voucherid)
-    tags = person_tags(dbo, asm3.person.get_person(dbo, v["OWNERID"]))
-    if v["ANIMALID"] is not None and v["ANIMALID"] != 0:
-        tags = append_tags(tags, animal_tags(dbo, asm3.animal.get_animal(dbo, v["ANIMALID"])))
+    tags = person_tags(dbo, asm3.person.get_person(dbo, v.OWNERID))
+    if v.ANIMALID is not None and v.ANIMALID != 0:
+        tags = append_tags(tags, animal_tags(dbo, asm3.animal.get_animal(dbo, v.ANIMALID)))
     tags = append_tags(tags, voucher_tags(dbo, v))
     tags = append_tags(tags, org_tags(dbo, username))
     return substitute_template(dbo, templateid, tags)
@@ -1762,7 +1764,7 @@ def generate_waitinglist_doc(dbo, templateid, wlid, username):
     a = asm3.waitinglist.get_waitinglist_by_id(dbo, wlid)
     if a is None:
         raise asm3.utils.ASMValidationError("%d is not a valid waiting list ID" % wlid)
-    tags = person_tags(dbo, asm3.person.get_person(dbo, a["OWNERID"]))
+    tags = person_tags(dbo, asm3.person.get_person(dbo, a.OWNERID))
     tags = append_tags(tags, waitinglist_tags(dbo, a))
     tags = append_tags(tags, org_tags(dbo, username))
     return substitute_template(dbo, templateid, tags)

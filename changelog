@@ -1,6 +1,7 @@
 44
 ================
 
+07/05/20 Fix introduced bug in person docs with no animal on reserve
 06/05/20 Make animals optional for reservations #785
 06/05/20 Fix bug in nb locale when issuing update queries
 06/05/20 Fix sorting of notes containing dates in media table view
