@@ -258,9 +258,9 @@ def get_links(dbo, pid):
         "WHEN a.Archived = 1 AND a.DeceasedDate Is Not Null AND a.ActiveMovementID = 0 THEN dr.ReasonName " \
         "WHEN a.Archived = 1 AND a.DeceasedDate Is Null AND a.ActiveMovementID <> 0 THEN mt.MovementType " \
         "ELSE il.LocationName END", "')'"))
-    # Original Owner
-    sql = "SELECT 'OO' AS TYPE, " \
-        "%s AS TYPEDISPLAY, a.DateBroughtIn AS DDATE, a.ID AS LINKID, " \
+    # Current Owner
+    sql = "SELECT 'CO' AS TYPE, " \
+        "'' AS TYPEDISPLAY, a.LastChangedDate AS DDATE, a.ID AS LINKID, " \
         "%s AS LINKDISPLAY, " \
         "%s AS FIELD2, " \
         "CASE WHEN a.DeceasedDate Is Not Null THEN 'D' ELSE '' END AS DMOD " \
@@ -269,10 +269,22 @@ def get_links(dbo, pid):
         "INNER JOIN species s ON s.ID = a.SpeciesID " \
         "LEFT OUTER JOIN internallocation il ON il.ID = a.ShelterLocation " \
         "LEFT OUTER JOIN deathreason dr ON dr.ID = a.PTSReasonID " \
-        "WHERE OriginalOwnerID = %d " % (dbo.sql_value(_("Original Owner", l)), linkdisplay, animalextra, int(pid))
+        "WHERE a.OwnerID = %d " % (linkdisplay, animalextra, int(pid))
+    # Original Owner
+    sql += "UNION SELECT 'OO' AS TYPE, " \
+        "'' AS TYPEDISPLAY, a.DateBroughtIn AS DDATE, a.ID AS LINKID, " \
+        "%s AS LINKDISPLAY, " \
+        "%s AS FIELD2, " \
+        "CASE WHEN a.DeceasedDate Is Not Null THEN 'D' ELSE '' END AS DMOD " \
+        "FROM animal a " \
+        "LEFT OUTER JOIN lksmovementtype mt ON mt.ID = a.ActiveMovementType " \
+        "INNER JOIN species s ON s.ID = a.SpeciesID " \
+        "LEFT OUTER JOIN internallocation il ON il.ID = a.ShelterLocation " \
+        "LEFT OUTER JOIN deathreason dr ON dr.ID = a.PTSReasonID " \
+        "WHERE OriginalOwnerID = %d " % (linkdisplay, animalextra, int(pid))
     # Brought In By
     sql += "UNION SELECT 'BI' AS TYPE, " \
-        "%s AS TYPEDISPLAY, a.DateBroughtIn AS DDATE, a.ID AS LINKID, " \
+        "'' AS TYPEDISPLAY, a.DateBroughtIn AS DDATE, a.ID AS LINKID, " \
         "%s AS LINKDISPLAY, " \
         "%s AS FIELD2, " \
         "CASE WHEN a.DeceasedDate Is Not Null THEN 'D' ELSE '' END AS DMOD " \
@@ -281,10 +293,10 @@ def get_links(dbo, pid):
         "INNER JOIN species s ON s.ID = a.SpeciesID " \
         "LEFT OUTER JOIN internallocation il ON il.ID = a.ShelterLocation " \
         "LEFT OUTER JOIN deathreason dr ON dr.ID = a.PTSReasonID " \
-        "WHERE BroughtInByOwnerID = %d " % (dbo.sql_value(_("Brought In By", l)), linkdisplay, animalextra, int(pid))
+        "WHERE BroughtInByOwnerID = %d " % (linkdisplay, animalextra, int(pid))
     # Returned By
     sql += "UNION SELECT 'RO' AS TYPE, " \
-        "%s AS TYPEDISPLAY, m.ReturnDate AS DDATE, a.ID AS LINKID, " \
+        "'' AS TYPEDISPLAY, m.ReturnDate AS DDATE, a.ID AS LINKID, " \
         "%s AS LINKDISPLAY, " \
         "%s AS FIELD2, " \
         "CASE WHEN a.DeceasedDate Is Not Null THEN 'D' ELSE '' END AS DMOD " \
@@ -294,10 +306,10 @@ def get_links(dbo, pid):
         "INNER JOIN species s ON s.ID = a.SpeciesID " \
         "LEFT OUTER JOIN internallocation il ON il.ID = a.ShelterLocation " \
         "LEFT OUTER JOIN deathreason dr ON dr.ID = a.PTSReasonID " \
-        "WHERE m.ReturnedByOwnerID = %d " % (dbo.sql_value(_("Returned By", l)), linkdisplay, animalextra, int(pid))
+        "WHERE m.ReturnedByOwnerID = %d " % (linkdisplay, animalextra, int(pid))
     # Adoption Coordinator
     sql += "UNION SELECT 'AO' AS TYPE, " \
-        "%s AS TYPEDISPLAY, a.DateBroughtIn AS DDATE, a.ID AS LINKID, " \
+        "'' AS TYPEDISPLAY, a.DateBroughtIn AS DDATE, a.ID AS LINKID, " \
         "%s AS LINKDISPLAY, " \
         "%s AS FIELD2, " \
         "CASE WHEN a.DeceasedDate Is Not Null THEN 'D' ELSE '' END AS DMOD " \
@@ -306,10 +318,10 @@ def get_links(dbo, pid):
         "INNER JOIN species s ON s.ID = a.SpeciesID " \
         "LEFT OUTER JOIN internallocation il ON il.ID = a.ShelterLocation " \
         "LEFT OUTER JOIN deathreason dr ON dr.ID = a.PTSReasonID " \
-        "WHERE AdoptionCoordinatorID = %d " % (dbo.sql_value(_("Adoption Coordinator", l)), linkdisplay, animalextra, int(pid))
+        "WHERE AdoptionCoordinatorID = %d " % (linkdisplay, animalextra, int(pid))
     # Owner Vet
     sql += "UNION SELECT 'OV' AS TYPE, " \
-        "%s AS TYPEDISPLAY, a.DateBroughtIn AS DDATE, a.ID AS LINKID, " \
+        "'' AS TYPEDISPLAY, a.DateBroughtIn AS DDATE, a.ID AS LINKID, " \
         "%s AS LINKDISPLAY, " \
         "%s AS FIELD2, " \
         "CASE WHEN a.DeceasedDate Is Not Null THEN 'D' ELSE '' END AS DMOD " \
@@ -318,10 +330,10 @@ def get_links(dbo, pid):
         "INNER JOIN species s ON s.ID = a.SpeciesID " \
         "LEFT OUTER JOIN internallocation il ON il.ID = a.ShelterLocation " \
         "LEFT OUTER JOIN deathreason dr ON dr.ID = a.PTSReasonID " \
-        "WHERE OwnersVetID = %d " % (dbo.sql_value(_("Owner Vet", l)), linkdisplay, animalextra, int(pid))
+        "WHERE OwnersVetID = %d " % (linkdisplay, animalextra, int(pid))
     # Current Vet
     sql += "UNION SELECT 'CV' AS TYPE, " \
-        "%s AS TYPEDISPLAY, a.DateBroughtIn AS DDATE, a.ID AS LINKID, " \
+        "'' AS TYPEDISPLAY, a.DateBroughtIn AS DDATE, a.ID AS LINKID, " \
         "%s AS LINKDISPLAY, " \
         "%s AS FIELD2, " \
         "CASE WHEN a.DeceasedDate Is Not Null THEN 'D' ELSE '' END AS DMOD " \
@@ -330,10 +342,10 @@ def get_links(dbo, pid):
         "INNER JOIN species s ON s.ID = a.SpeciesID " \
         "LEFT OUTER JOIN internallocation il ON il.ID = a.ShelterLocation " \
         "LEFT OUTER JOIN deathreason dr ON dr.ID = a.PTSReasonID " \
-        "WHERE CurrentVetID = %d " % (dbo.sql_value(_("Current Vet", l)), linkdisplay, animalextra, int(pid))
+        "WHERE CurrentVetID = %d " % (linkdisplay, animalextra, int(pid))
     # Altering Vet
     sql += "UNION SELECT 'AV' AS TYPE, " \
-        "%s AS TYPEDISPLAY, a.DateBroughtIn AS DDATE, a.ID AS LINKID, " \
+        "'' AS TYPEDISPLAY, a.DateBroughtIn AS DDATE, a.ID AS LINKID, " \
         "%s AS LINKDISPLAY, " \
         "%s AS FIELD2, " \
         "CASE WHEN a.DeceasedDate Is Not Null THEN 'D' ELSE '' END AS DMOD " \
@@ -342,65 +354,67 @@ def get_links(dbo, pid):
         "INNER JOIN species s ON s.ID = a.SpeciesID " \
         "LEFT OUTER JOIN internallocation il ON il.ID = a.ShelterLocation " \
         "LEFT OUTER JOIN deathreason dr ON dr.ID = a.PTSReasonID " \
-        "WHERE NeuteredByVetID = %d " % (dbo.sql_value(_("Altering Vet", l)), linkdisplay, animalextra, int(pid))
+        "WHERE NeuteredByVetID = %d " % (linkdisplay, animalextra, int(pid))
     # Waiting List
     sql += "UNION SELECT 'WL' AS TYPE, " \
-        "%s AS TYPEDISPLAY, a.DatePutOnList AS DDATE, a.ID AS LINKID, " \
+        "'' AS TYPEDISPLAY, a.DatePutOnList AS DDATE, a.ID AS LINKID, " \
         "s.SpeciesName AS LINKDISPLAY, " \
         "a.AnimalDescription AS FIELD2, '' AS DMOD FROM animalwaitinglist a " \
-        "INNER JOIN species s ON s.ID = a.SpeciesID WHERE a.OwnerID = %d " % (dbo.sql_value(_("Waiting List Contact", l)), int(pid))
+        "INNER JOIN species s ON s.ID = a.SpeciesID WHERE a.OwnerID = %d " % (int(pid))
     # Lost Animal
     sql += "UNION SELECT 'LA' AS TYPE, " \
-        "%s AS TYPEDISPLAY, a.DateLost AS DDATE, a.ID AS LINKID, " \
+        "'' AS TYPEDISPLAY, a.DateLost AS DDATE, a.ID AS LINKID, " \
         "s.SpeciesName AS LINKDISPLAY, " \
         "a.DistFeat AS FIELD2, '' AS DMOD FROM animallost a " \
-        "INNER JOIN species s ON s.ID = a.AnimalTypeID WHERE a.OwnerID = %d " % (dbo.sql_value(_("Lost Animal Contact", l)), int(pid))
+        "INNER JOIN species s ON s.ID = a.AnimalTypeID WHERE a.OwnerID = %d " % (int(pid))
     # Found Animal
     sql += "UNION SELECT 'FA' AS TYPE, " \
-        "%s AS TYPEDISPLAY, a.DateFound AS DDATE, a.ID AS LINKID, " \
+        "'' AS TYPEDISPLAY, a.DateFound AS DDATE, a.ID AS LINKID, " \
         "s.SpeciesName AS LINKDISPLAY, " \
         "a.DistFeat AS FIELD2, '' AS DMOD FROM animalfound a " \
-        "INNER JOIN species s ON s.ID = a.AnimalTypeID WHERE a.OwnerID = %d " % (dbo.sql_value(_("Found Animal Contact", l)), int(pid))
+        "INNER JOIN species s ON s.ID = a.AnimalTypeID WHERE a.OwnerID = %d " % (int(pid))
     # Incident Suspect
-    sql += "UNION SELECT 'AC' AS TYPE, " \
-        "%s AS TYPEDISPLAY, a.IncidentDateTime AS DDATE, a.ID AS LINKID, " \
+    sql += "UNION SELECT 'ACS' AS TYPE, " \
+        "'' AS TYPEDISPLAY, a.IncidentDateTime AS DDATE, a.ID AS LINKID, " \
         "ti.IncidentName AS LINKDISPLAY, " \
         "a.CallNotes AS FIELD2, '' AS DMOD FROM animalcontrol a " \
         "INNER JOIN incidenttype ti ON ti.ID = a.IncidentTypeID WHERE a.OwnerID = %d OR a.Owner2ID = %d OR a.Owner3ID = %d " % \
-            (dbo.sql_value(_("Animal Control Incident", l)), int(pid), int(pid), int(pid))
+            (int(pid), int(pid), int(pid))
     # Incident Caller
-    sql += "UNION SELECT 'AC' AS TYPE, " \
-        "%s AS TYPEDISPLAY, a.IncidentDateTime AS DDATE, a.ID AS LINKID, " \
+    sql += "UNION SELECT 'ACC' AS TYPE, " \
+        "'' AS TYPEDISPLAY, a.IncidentDateTime AS DDATE, a.ID AS LINKID, " \
         "ti.IncidentName AS LINKDISPLAY, " \
         "a.CallNotes AS FIELD2, '' AS DMOD FROM animalcontrol a " \
-        "INNER JOIN incidenttype ti ON ti.ID = a.IncidentTypeID WHERE a.CallerID = %d " % (dbo.sql_value(_("Animal Control Caller", l)), int(pid))
+        "INNER JOIN incidenttype ti ON ti.ID = a.IncidentTypeID WHERE a.CallerID = %d " % \
+        (int(pid))
     # Incident Victim
-    sql += "UNION SELECT 'AC' AS TYPE, " \
-        "%s AS TYPEDISPLAY, a.IncidentDateTime AS DDATE, a.ID AS LINKID, " \
+    sql += "UNION SELECT 'ACV' AS TYPE, " \
+        "'' AS TYPEDISPLAY, a.IncidentDateTime AS DDATE, a.ID AS LINKID, " \
         "ti.IncidentName AS LINKDISPLAY, " \
         "a.CallNotes AS FIELD2, '' AS DMOD FROM animalcontrol a " \
-        "INNER JOIN incidenttype ti ON ti.ID = a.IncidentTypeID WHERE a.VictimID = %d " % (dbo.sql_value(_("Animal Control Victim", l)), int(pid))
+        "INNER JOIN incidenttype ti ON ti.ID = a.IncidentTypeID WHERE a.VictimID = %d " % \
+        (int(pid))
     # Transport Driver
-    sql += "UNION SELECT 'AT' AS TYPE, " \
-        "%s AS TYPEDISPLAY, t.PickupDateTime AS DDATE, t.AnimalID AS LINKID, " \
+    sql += "UNION SELECT 'ATD' AS TYPE, " \
+        "'' AS TYPEDISPLAY, t.PickupDateTime AS DDATE, t.AnimalID AS LINKID, " \
         "%s LINKDISPLAY, " \
         "t.DropOffAddress AS FIELD2, '' AS DMOD FROM animaltransport t " \
         "INNER JOIN animal a ON a.ID = t.AnimalID " \
-        "WHERE t.DriverOwnerID = %d " % (dbo.sql_value(_("Driver", l)), linkdisplay, int(pid))
+        "WHERE t.DriverOwnerID = %d " % (linkdisplay, int(pid))
     # Transport Pickup
-    sql += "UNION SELECT 'AT' AS TYPE, " \
-        "%s AS TYPEDISPLAY, t.PickupDateTime AS DDATE, t.AnimalID AS LINKID, " \
+    sql += "UNION SELECT 'ATP' AS TYPE, " \
+        "'' AS TYPEDISPLAY, t.PickupDateTime AS DDATE, t.AnimalID AS LINKID, " \
         "%s LINKDISPLAY, " \
         "t.PickupAddress AS FIELD2, '' AS DMOD FROM animaltransport t " \
         "INNER JOIN animal a ON a.ID = t.AnimalID " \
-        "WHERE t.PickupOwnerID = %d " % (dbo.sql_value(_("Pickup Address", l)), linkdisplay, int(pid))
+        "WHERE t.PickupOwnerID = %d " % (linkdisplay, int(pid))
     # Transport Dropoff
-    sql += "UNION SELECT 'AT' AS TYPE, " \
-        "%s AS TYPEDISPLAY, t.DropoffDateTime AS DDATE, t.AnimalID AS LINKID, " \
+    sql += "UNION SELECT 'ATD' AS TYPE, " \
+        "'' AS TYPEDISPLAY, t.DropoffDateTime AS DDATE, t.AnimalID AS LINKID, " \
         "%s LINKDISPLAY, " \
         "t.DropoffAddress AS FIELD2, '' AS DMOD FROM animaltransport t " \
         "INNER JOIN animal a ON a.ID = t.AnimalID " \
-        "WHERE t.DropoffOwnerID = %d " % (dbo.sql_value(_("Dropoff Address", l)), linkdisplay, int(pid))
+        "WHERE t.DropoffOwnerID = %d " % (linkdisplay, int(pid))
     # Additional field (link from animal)
     sql += "UNION SELECT 'AFA' AS TYPE, " \
         "aff.FieldLabel AS TYPEDISPLAY, a.LastChangedDate AS DDATE, a.ID AS LINKID, " \

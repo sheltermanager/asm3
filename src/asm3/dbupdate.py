@@ -37,7 +37,7 @@ VERSIONS = (
     34013, 34014, 34015, 34016, 34017, 34018, 34019, 34020, 34021, 34022, 34100,
     34101, 34102, 34103, 34104, 34105, 34106, 34107, 34108, 34109, 34110, 34111,
     34112, 34200, 34201, 34202, 34203, 34204, 34300, 34301, 34302, 34303, 34304,
-    34305, 34306, 34400, 34401, 34402, 34403
+    34305, 34306, 34400, 34401, 34402, 34403, 34404
 )
 
 LATEST_VERSION = VERSIONS[-1]
@@ -277,6 +277,7 @@ def sql_structure(dbo):
         flongstr("AnimalComments"),
         fint("OwnersVetID"),
         fint("CurrentVetID"),
+        fint("OwnerID", True),
         fint("OriginalOwnerID"),
         fint("BroughtInByOwnerID"),
         fint("AdoptionCoordinatorID", True),
@@ -354,6 +355,7 @@ def sql_structure(dbo):
     sql += index("animal_CoatType", "animal", "CoatType")
     sql += index("animal_CreatedBy", "animal", "CreatedBy")
     sql += index("animal_CreatedDate", "animal", "CreatedDate")
+    sql += index("animal_OwnerID", "animal", "OwnerID")
     sql += index("animal_CurrentVetID", "animal", "CurrentVetID")
     sql += index("animal_DateBroughtIn", "animal", "DateBroughtIn")
     sql += index("animal_DeceasedDate", "animal", "DeceasedDate")
@@ -5208,3 +5210,16 @@ def update_34403(dbo):
     # Add onlineformfield.VisibleIf
     add_column(dbo, "onlineformfield", "VisibleIf", dbo.type_shorttext)
     dbo.execute_dbupdate("UPDATE onlineformfield SET VisibleIf=''")
+
+def update_34404(dbo):
+    # Add animal.OwnerID
+    add_column(dbo, "animal", "OwnerID", dbo.type_integer)
+    add_index(dbo, "animal_OwnerID", "animal", "OwnerID")
+    # Set currentownerid for non-shelter animals
+    dbo.execute_dbupdate("UPDATE animal SET OwnerID = OriginalOwnerID WHERE NonShelterAnimal=1")
+    # Set currentownerid for animals with an active exit movement
+    dbo.execute_dbupdate("UPDATE animal SET OwnerID = " \
+        "(SELECT OwnerID FROM adoption WHERE ID = animal.ActiveMovementID) " \
+        "WHERE Archived = 1 AND ActiveMovementType IN (1, 3, 5)")
+    # Remove nulls
+    dbo.execute_dbupdate("UPDATE animal SET OwnerID = 0 WHERE OwnerID Is Null")

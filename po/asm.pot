@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ASM3\n"
 "Report-Msgid-Bugs-To: robin@sheltermanager.com\n"
-"POT-Creation-Date: 2020-05-07 13:05+0000\n"
+"POT-Creation-Date: 2020-05-08 12:42+0000\n"
 "Last-Translator: Robin Rawson-Tetley <robin@sheltermanager.com>\n"
 "Language-Team: en <robin@sheltermanager.com>\n"
 "Language: en\n"
@@ -733,7 +733,7 @@ msgstr ""
 msgid "Adoption"
 msgstr ""
 
-#: html.py person.py animal_new.js common.js animal_bulk.js animal.js
+#: html.py animal_new.js person_links.js common.js animal_bulk.js animal.js
 #: options.js shelterview.js header_edit_header.js
 msgid "Adoption Coordinator"
 msgstr ""
@@ -1087,7 +1087,7 @@ msgstr ""
 msgid "Altered Dog - 3 year"
 msgstr ""
 
-#: person.py
+#: person_links.js
 msgid "Altering Vet"
 msgstr ""
 
@@ -1227,11 +1227,11 @@ msgstr ""
 msgid "Animal Control"
 msgstr ""
 
-#: person.py
+#: person_links.js
 msgid "Animal Control Caller"
 msgstr ""
 
-#: person.py
+#: person_links.js
 msgid "Animal Control Incident"
 msgstr ""
 
@@ -1239,7 +1239,7 @@ msgstr ""
 msgid "Animal Control Officer"
 msgstr ""
 
-#: person.py
+#: person_links.js
 msgid "Animal Control Victim"
 msgstr ""
 
@@ -1917,7 +1917,7 @@ msgstr ""
 msgid "Brought In"
 msgstr ""
 
-#: mobile.py person.py animal_new.js animal.js
+#: mobile.py animal_new.js person_links.js animal.js
 msgid "Brought In By"
 msgstr ""
 
@@ -2964,7 +2964,11 @@ msgstr ""
 msgid "Current"
 msgstr ""
 
-#: mobile.py person.py animal_bulk.js animal.js
+#: person_links.js
+msgid "Current Owner"
+msgstr ""
+
+#: mobile.py person_links.js animal_bulk.js animal.js
 msgid "Current Vet"
 msgstr ""
 
@@ -3901,7 +3905,7 @@ msgstr ""
 msgid "Draft"
 msgstr ""
 
-#: html.py person.py transport.js common.js header_edit_header.js
+#: html.py transport.js person_links.js common.js header_edit_header.js
 msgid "Driver"
 msgstr ""
 
@@ -3913,7 +3917,7 @@ msgstr ""
 msgid "Dropoff"
 msgstr ""
 
-#: person.py
+#: person_links.js
 msgid "Dropoff Address"
 msgstr ""
 
@@ -5115,7 +5119,7 @@ msgstr ""
 msgid "Found Animal - Details"
 msgstr ""
 
-#: person.py
+#: person_links.js
 msgid "Found Animal Contact"
 msgstr ""
 
@@ -6866,7 +6870,7 @@ msgstr ""
 msgid "Lost Animal - Details"
 msgstr ""
 
-#: person.py
+#: person_links.js
 msgid "Lost Animal Contact"
 msgstr ""
 
@@ -8129,7 +8133,7 @@ msgstr ""
 msgid "Oriental Tabby"
 msgstr ""
 
-#: mobile.py person.py animal_new.js animal_find.js animal.js
+#: mobile.py animal_new.js person_links.js animal_find.js animal.js
 msgid "Original Owner"
 msgstr ""
 
@@ -8225,7 +8229,7 @@ msgstr ""
 msgid "Owner"
 msgstr ""
 
-#: person.py
+#: person_links.js
 msgid "Owner Vet"
 msgstr ""
 
@@ -8565,7 +8569,7 @@ msgstr ""
 msgid "Pickup"
 msgstr ""
 
-#: html.py person.py animal_find_results.js animal_find.js animal.js
+#: html.py animal_find_results.js person_links.js animal_find.js animal.js
 msgid "Pickup Address"
 msgstr ""
 
@@ -9669,7 +9673,7 @@ msgstr ""
 msgid "Returned"
 msgstr ""
 
-#: person.py movements.js
+#: person_links.js movements.js
 msgid "Returned By"
 msgstr ""
 
@@ -13069,7 +13073,7 @@ msgstr ""
 msgid "Waiting List - Removal"
 msgstr ""
 
-#: person.py
+#: person_links.js
 msgid "Waiting List Contact"
 msgstr ""
 
