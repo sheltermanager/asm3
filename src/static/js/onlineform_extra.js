@@ -157,11 +157,14 @@ $(document).ready(function() {
             // Find the field and apply the condition
             $("input, select").each(function() {
                 if ($(this).attr("name") && $(this).attr("name").indexOf(field + "_") == 0) {
+                    var v = $(this).val();
+                    // Checkboxes always return on for val(), if it's a checkbox, set on/off from checked
+                    if ($(this).attr("type") && $(this).attr("type") == "checkbox") { v = $(this).is(":checked") ? "on" : "off"; }
                     if (cond == "=") {
-                        o.toggle( $(this).val() == value );
+                        o.toggle( v == value );
                     }
                     else if (cond == "!") {
-                        o.toggle( $(this).val() != value );
+                        o.toggle( v != value );
                     }
                     return false; // stop iterating fields, we found it
                 }
