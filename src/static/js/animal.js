@@ -186,7 +186,7 @@ $(function() {
                 '<label for="owner">' + _("Owner") + '</label>',
                 '</td>',
                 '<td>',
-                '<input id="originalowner" data-json="OWNERID" data-post="owner" type="hidden" class="asm-personchooser" />',
+                '<input id="originalowner" data-json="OWNERID" data-mode="brief" data-post="owner" type="hidden" class="asm-personchooser" />',
                 '</td>',
                 '</tr>',
                 '<tr id="animalflags">',

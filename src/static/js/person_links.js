@@ -36,18 +36,17 @@ $(function() {
                 "ACV": [ _("Animal Control Victim"), "incident?id=" ],
                 "ATD": [ _("Driver"), "animal_transport?id=" ],
                 "ATP": [ _("Pickup Address"), "animal_transport?id=" ],
-                "ATD": [ _("Dropoff Address"), "animal_transport?id=" ],
+                "ATR": [ _("Dropoff Address"), "animal_transport?id=" ],
                 "AFA": [ "", "animal?id=" ],
                 "AFP": [ "", "person?id=" ],
                 "AFI": [ "", "incident?id=" ]
-            }
+            };
             $.each(controller.links, function(i, li) {
                 var tdclass = "";
                 if (li.DMOD.indexOf("D") != -1) {
                     tdclass = "style=\"color: red\"";
                 }
-                var info = typemap[li.TYPE]
-                var label = info[0], url = info[1];
+                var info = typemap[li.TYPE], label = info[0], url = info[1];
                 if (label == "") { label = li.TYPEDISPLAY; }
                 s.push('<tr>');
                 s.push('<td ' + tdclass + '>' + label + '</td>');

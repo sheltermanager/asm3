@@ -250,7 +250,6 @@ def get_links(dbo, pid):
     """
     Gets a list of all records that link to this person
     """
-    l = dbo.locale
     linkdisplay = dbo.sql_concat(("a.ShelterCode", "' - '", "a.AnimalName"))
     animalextra = dbo.sql_concat(("a.BreedName", "' '", "s.SpeciesName", "' ('", 
         "CASE WHEN a.Archived = 0 AND a.ActiveMovementType = 2 THEN mt.MovementType " \
@@ -409,7 +408,7 @@ def get_links(dbo, pid):
         "INNER JOIN animal a ON a.ID = t.AnimalID " \
         "WHERE t.PickupOwnerID = %d " % (linkdisplay, int(pid))
     # Transport Dropoff
-    sql += "UNION SELECT 'ATD' AS TYPE, " \
+    sql += "UNION SELECT 'ATR' AS TYPE, " \
         "'' AS TYPEDISPLAY, t.DropoffDateTime AS DDATE, t.AnimalID AS LINKID, " \
         "%s LINKDISPLAY, " \
         "t.DropoffAddress AS FIELD2, '' AS DMOD FROM animaltransport t " \

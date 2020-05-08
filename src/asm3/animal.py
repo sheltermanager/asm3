@@ -49,6 +49,7 @@ def get_animal_query(dbo):
         "ct.CoatType AS CoatTypeName, " \
         "sx.Sex AS SexName, " \
         "sz.Size AS SizeName, " \
+        "o.OwnerName AS OwnerName, " \
         "ov.OwnerName AS OwnersVetName, " \
         "ov.OwnerAddress AS OwnersVetAddress, " \
         "ov.OwnerTown AS OwnersVetTown, " \
@@ -233,6 +234,7 @@ def get_animal_query(dbo):
         "LEFT OUTER JOIN lkcoattype ct ON ct.ID = a.CoatType " \
         "LEFT OUTER JOIN deathreason dr ON dr.ID = a.PTSReasonID " \
         "LEFT OUTER JOIN lksmovementtype mt ON mt.ID = a.ActiveMovementType " \
+        "LEFT OUTER JOIN owner o ON o.ID = a.OwnerID " \
         "LEFT OUTER JOIN owner ov ON ov.ID = a.OwnersVetID " \
         "LEFT OUTER JOIN owner cv ON cv.ID = a.CurrentVetID " \
         "LEFT OUTER JOIN owner nv ON nv.ID = a.NeuteredByVetID " \
