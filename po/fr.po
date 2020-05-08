@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ASM3\n"
 "Report-Msgid-Bugs-To: robin@sheltermanager.com\n"
-"POT-Creation-Date: 2020-04-30 14:01+0000\n"
-"PO-Revision-Date: 2020-05-03 15:50+0200\n"
+"POT-Creation-Date: 2020-05-08 12:42+0000\n"
+"PO-Revision-Date: 2020-05-08 21:55+0200\n"
 "Last-Translator: Julian POIDEVIN <poidevin.julian@gmail.com>\n"
 "Language-Team: \n"
 "Language: fr\n"
@@ -751,8 +751,8 @@ msgstr "Adoptant"
 msgid "Adoption"
 msgstr "Adoption"
 
-#: html.py person.py shelterview.js common.js animal_bulk.js animal_new.js
-#: animal.js options.js header_edit_header.js
+#: html.py animal_new.js person_links.js common.js animal_bulk.js animal.js
+#: options.js shelterview.js header_edit_header.js
 msgid "Adoption Coordinator"
 msgstr "Coordinateur d'adoption"
 
@@ -1078,6 +1078,11 @@ msgstr ""
 "\"Déplacer\""
 
 #: options.js
+msgid "Allow reservations to be created that are not linked to an animal"
+msgstr ""
+"Autoriser la création de réservations qui ne sont pas liées à un animal"
+
+#: options.js
 msgid "Allow use of OpenOffice document templates"
 msgstr "Permettre l'utilisation de modèle de documents OpenOffice"
 
@@ -1114,7 +1119,7 @@ msgstr "Chien castré - 1 an"
 msgid "Altered Dog - 3 year"
 msgstr "Chien castré - 3 ans"
 
-#: person.py
+#: person_links.js
 msgid "Altering Vet"
 msgstr "Vétérinaire réalisant la castration/stérilisation"
 
@@ -1256,11 +1261,11 @@ msgstr "Codes animal"
 msgid "Animal Control"
 msgstr "Service animalier"
 
-#: person.py
+#: person_links.js
 msgid "Animal Control Caller"
 msgstr "Interlocuteur du service animalier"
 
-#: person.py
+#: person_links.js
 msgid "Animal Control Incident"
 msgstr "Incident service animalier"
 
@@ -1268,7 +1273,7 @@ msgstr "Incident service animalier"
 msgid "Animal Control Officer"
 msgstr "Agent du service animalier"
 
-#: person.py
+#: person_links.js
 msgid "Animal Control Victim"
 msgstr "Victime du service animalier"
 
@@ -1370,8 +1375,8 @@ msgstr "Animal récupéré"
 msgid "Animal shortcode format"
 msgstr "Format de code court des animaux"
 
-#: html.py reports.py medical.js animal_bulk.js test.js htmltemplates.js
-#: roles.js transport.js vaccination.js incident.js csvexport.js
+#: html.py reports.py transport.js incident.js medical.js vaccination.js
+#: csvexport.js roles.js animal_bulk.js test.js options.js htmltemplates.js
 msgid "Animals"
 msgstr "Animaux"
 
@@ -1961,7 +1966,7 @@ msgstr "Brotogeris"
 msgid "Brought In"
 msgstr "Accueilli le"
 
-#: person.py mobile.py animal_new.js animal.js
+#: mobile.py animal_new.js person_links.js animal.js
 msgid "Brought In By"
 msgstr "Admis par"
 
@@ -2967,6 +2972,10 @@ msgstr "Créer ce contact"
 msgid "Created By"
 msgstr "Créé par"
 
+#: person_find.js
+msgid "Created Since"
+msgstr "Créé depuis"
+
 #: options.js
 msgid "Creating cost and cost types creates matching accounts and transactions"
 msgstr ""
@@ -3024,7 +3033,11 @@ msgstr "Frisé"
 msgid "Current"
 msgstr "Courant"
 
-#: person.py mobile.py animal_bulk.js animal.js
+#: person_links.js
+msgid "Current Owner"
+msgstr "Propriétaire actuel"
+
+#: mobile.py person_links.js animal_bulk.js animal.js
 msgid "Current Vet"
 msgstr "Vétérinaire actuel"
 
@@ -3807,7 +3820,7 @@ msgstr "Afficher"
 
 #: additional.js onlineform.js
 msgid "Display Index"
-msgstr "Afficher l'index"
+msgstr "Index d'affichage"
 
 #: options.js
 msgid "Display a search button at the right side of the search box"
@@ -3968,7 +3981,7 @@ msgstr "Télécharger fichier"
 msgid "Draft"
 msgstr "Brouillon"
 
-#: html.py person.py common.js transport.js header_edit_header.js
+#: html.py transport.js person_links.js common.js header_edit_header.js
 msgid "Driver"
 msgstr "Conducteur"
 
@@ -3980,7 +3993,7 @@ msgstr "Déposer les fichiers ici..."
 msgid "Dropoff"
 msgstr "Déposer"
 
-#: person.py
+#: person_links.js
 msgid "Dropoff Address"
 msgstr "Adresse de dépôt"
 
@@ -5208,7 +5221,7 @@ msgstr "Animal trouvé - Supplémentaire"
 msgid "Found Animal - Details"
 msgstr "Animal trouvé - Détails"
 
-#: person.py
+#: person_links.js
 msgid "Found Animal Contact"
 msgstr "Contact pour l'animal trouvé"
 
@@ -5882,7 +5895,7 @@ msgstr "Husky"
 msgid "I've finished, Don't show me this popup again."
 msgstr "J'ai terminé, ne plus me montrer ce popup à nouveau."
 
-#: lookups.js
+#: additional.js lookups.js
 msgid "ID"
 msgstr "ID"
 
@@ -7008,7 +7021,7 @@ msgstr "Animal perdu - Supplémentaire"
 msgid "Lost Animal - Details"
 msgstr "Animal perdu - Détails"
 
-#: person.py
+#: person_links.js
 msgid "Lost Animal Contact"
 msgstr "Contact animal perdu"
 
@@ -8185,7 +8198,7 @@ msgstr "Unique"
 msgid "Online Form: {0}"
 msgstr "Formulaire en ligne : {0}"
 
-#: html.py roles.js onlineforms.js
+#: html.py onlineforms.js roles.js options.js
 msgid "Online Forms"
 msgstr "Formulaires en ligne"
 
@@ -8232,6 +8245,12 @@ msgstr "Afficher seulement les ramassages"
 #: animal_find.js
 msgid "Only show special needs"
 msgstr "Afficher seulement les besoins spécifiques"
+
+#: onlineform.js
+msgid "Only show this field based on a conditional expression, eg: field1=dog"
+msgstr ""
+"Afficher uniquement ce champ sur la base d'une expression conditionnelle, "
+"par exemple: champ1 = chien"
 
 #: animal_find.js
 msgid "Only show transfers"
@@ -8297,7 +8316,7 @@ msgstr "Oriental à poil court"
 msgid "Oriental Tabby"
 msgstr "Oriental tigré"
 
-#: person.py mobile.py animal_find.js animal_new.js animal.js
+#: mobile.py animal_new.js person_links.js animal_find.js animal.js
 msgid "Original Owner"
 msgstr "Propriétaire d'origine"
 
@@ -8400,7 +8419,7 @@ msgstr "Hibou"
 msgid "Owner"
 msgstr "Propriétaire"
 
-#: person.py
+#: person_links.js
 msgid "Owner Vet"
 msgstr "Vétérinaire du propriétaire"
 
@@ -8603,7 +8622,7 @@ msgstr "Vérification vétérinaire en attente"
 msgid "Pension"
 msgstr "Pension"
 
-#: html.py roles.js
+#: html.py roles.js options.js
 msgid "People"
 msgstr "Contacts"
 
@@ -8748,7 +8767,7 @@ msgstr "Ramassé par"
 msgid "Pickup"
 msgstr "Ramassage"
 
-#: html.py person.py animal_find.js animal_find_results.js animal.js
+#: html.py animal_find_results.js person_links.js animal_find.js animal.js
 msgid "Pickup Address"
 msgstr "Adresse de ramassage"
 
@@ -9480,6 +9499,10 @@ msgid "Remove holds after"
 msgstr "Supprimer les détentions après"
 
 #: options.js
+msgid "Remove incoming forms after"
+msgstr "Supprimer les formulaires entrants après"
+
+#: options.js
 msgid "Remove move menu and the movements tab from animal and person screens"
 msgstr ""
 "Supprimer le menu et l'onglet \"Mouvements\" des écrans animal et contact"
@@ -9491,6 +9514,12 @@ msgstr "Supprimer les données personnellement identifiables"
 #: publish_options.js
 msgid "Remove previously published files before uploading"
 msgstr "Supprimer les fichiers précédemment publiés avant le téléversement"
+
+#: options.js
+msgid "Remove processed forms when I leave the incoming forms screens"
+msgstr ""
+"Supprimer les formulaires traités lorsque je quitte les écrans des "
+"formulaires entrants"
 
 #: options.js
 msgid "Remove retailer functionality from the movement screens and menus"
@@ -9561,6 +9590,14 @@ msgstr "Retirer le bien avec des champs des notes animales"
 msgid "Remove the heartworm test fields from animal health details"
 msgstr ""
 "Supprimer le champs \"test dirofilariose\" des détails de santé de l'animal"
+
+#: options.js
+msgid ""
+"Remove the homechecked/by fields from person type according to the "
+"homechecked flag"
+msgstr ""
+"Supprimez les champs \"controlé à domicile par\" / de la personne selon le "
+"drapeau de contrôle à domicile"
 
 #: options.js
 msgid "Remove the insurance number field from the movement screens"
@@ -9875,7 +9912,7 @@ msgstr "Retournez ce mouvement et ramenez l'animal au refuge"
 msgid "Returned"
 msgstr "Rendu"
 
-#: person.py movements.js
+#: person_links.js movements.js
 msgid "Returned By"
 msgstr "Rendu par"
 
@@ -9922,6 +9959,11 @@ msgstr "Rhinelander"
 #: dbupdate.py
 msgid "Rhodesian Ridgeback"
 msgstr "Chien de Rhodesie à Crète Dorsale"
+
+#: incident.js person.js
+msgid "Right-click on the map to change the marker location"
+msgstr ""
+"Faites un clic droit sur la carte pour changer l'emplacement du marqueur"
 
 #: dbupdate.py
 msgid "Ringneck/Psittacula"
@@ -10515,6 +10557,10 @@ msgstr "Afficher le champ Opt-In Contact GDPR sur les écrans des contacts"
 #: options.js
 msgid "Show ID numbers when editing lookup data"
 msgstr "Afficher l'ID lors de la modification des données de recherche"
+
+#: onlineform.js
+msgid "Show If"
+msgstr "Afficher si"
 
 #: options.js
 msgid "Show PDF files inline instead of sending them as attachments"
@@ -11250,7 +11296,7 @@ msgstr "Vallhund Suédois"
 msgid "Syntax check this SQL"
 msgstr "Vérifier le syntaxe de ce SQL"
 
-#: html.py roles.js
+#: html.py roles.js options.js
 msgid "System"
 msgstr "Système"
 
@@ -13275,7 +13321,7 @@ msgstr "Afficher les incidents"
 
 #: html.py roles.js
 msgid "View Incoming Forms"
-msgstr "Supprimer formulaires entrants"
+msgstr "Afficher les formulaires entrants"
 
 #: roles.js
 msgid "View Investigations"
@@ -13460,7 +13506,7 @@ msgstr "Liste d'attente - détails"
 msgid "Waiting List - Removal"
 msgstr "Liste d'attente - retrait"
 
-#: person.py
+#: person_links.js
 msgid "Waiting List Contact"
 msgstr "Contact liste d'attente"
 
@@ -14067,6 +14113,14 @@ msgstr ""
 "donateurs, défunt, vétérinaires, détaillants, personnel, familles d'accueil, "
 "bénévoles, controleursdedomicile, membres , activementperdu, "
 "activementretrouvé"
+
+#: options.js
+msgid "if animal does not have"
+msgstr "si l'animal n'a pas"
+
+#: options.js
+msgid "if animal has"
+msgstr "si l'animal a"
 
 #: mailmerge.js
 msgid "inches"
