@@ -38,8 +38,12 @@ $(function() {
                 mediaprompt = '<br /><span style="white-space: nowrap"><a href="animal_media?id=' + a.ID + '&newmedia=1">[ ' + _("Add a photo") + ' ]</a></span>';
             }
             var currentowner = "";
-            if (a.CURRENTOWNERID != null) {
+            if (a.CURRENTOWNERID) {
                 currentowner = " " + html.person_link(a.CURRENTOWNERID, a.CURRENTOWNERNAME);
+            }
+            var owner = "";
+            if (a.OWNERID) {
+                owner = " " + html.person_link(a.OWNERID, a.OWNERNAME);
             }
             var available = "";
             if (a.NONSHELTERANIMAL == 1) {
@@ -81,12 +85,17 @@ $(function() {
                 displaylocation = "<span style=\"color: red\">" + _("Deceased") + " " + html.icon("right") + " " + deathreason + "</span> " + format.date(a.DECEASEDDATE);
             }
             else {
-                displaylocation = a.DISPLAYLOCATIONNAME;
-                if (currentowner != "") {
-                    displaylocation += " " + html.icon("right") + " " + currentowner;
+                if (owner != "" && a.CURRENTOWNERID != a.OWNERID) {
+                    displaylocation = _("Owner") + " " + html.icon("right") + " " + owner;
+                }
+                else if (currentowner != "") {
+                    displaylocation = a.DISPLAYLOCATIONNAME + " " + html.icon("right") + " " + currentowner;
                 }
                 else if (a.SHELTERLOCATIONUNIT && !a.ACTIVEMOVEMENTDATE) {
-                    displaylocation += ' <span class="asm-search-locationunit" title="' + html.title(_("Unit")) + '">' + a.SHELTERLOCATIONUNIT + '</span>';
+                    displaylocation = a.DISPLAYLOCATIONNAME + ' <span class="asm-search-locationunit" title="' + html.title(_("Unit")) + '">' + a.SHELTERLOCATIONUNIT + '</span>';
+                }
+                else {
+                    displaylocation = a.DISPLAYLOCATIONNAME;
                 }
             }
             var animalcontrol = "";

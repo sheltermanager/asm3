@@ -13,20 +13,6 @@ shelter in two different ways without being returned first.
 This system allows you to keep track of all the animal's movements over its
 lifetime to fosters, adopters, etc.
 
-Reservations
-------------
-
-A singular exception to this is reservations - since they are not actually a
-movement (the animal hasn't gone anywhere), you can have one or more
-reservations as well as an open movement. You should turn the reservation into
-an adoption movement when the animal is adopted by the person with the reserve
-and cancel any other outstanding reservations. If it detects multiple
-reservations, ASM will prompt and automatically cancel the other reservations
-for you when you turn one into an adoption using the :menuselection:`Move -->
-Adopt an animal` screen.
-
-.. note:: ASM calls reservations what some shelters call "adoption applications". You can have as many open applications on an animal as you like with an appropriate status, but only one will ever become the animal's adoption.
-
 Any method by which an animal leaves your shelter requires a movement record.
 The only exception is death, which is handled through the animal death tab
 since it can only occur once.
@@ -38,6 +24,27 @@ movements for animals. These actions will automatically validate the animal and
 person to make sure the movement is appropriate, and if the animal is already
 fostered it will be returned first, if it has open reservations/applications
 they will be cancelled, etc.
+
+Reservations
+------------
+
+A singular exception to this is reservations - since they are not actually a
+movement (the animal hasn't gone anywhere) and they represent an adoption
+intention.
+
+You can have one or more reservations as well as an open movement. You should
+turn the reservation into an adoption movement when the animal is adopted by
+the person with the reserve and cancel any other outstanding reservations. If
+it detects multiple reservations, ASM will prompt and automatically cancel the
+other reservations for you when you turn one into an adoption using the
+:menuselection:`Move --> Adopt an animal` screen.
+
+.. note:: ASM calls reservations what some shelters call "adoption applications". You can have as many open applications on an animal as you like with an appropriate status, but only one will ever become the animal's adoption.
+
+In order to help with adoption application tracking, a reservation can be
+created that is not yet linked to an animal. The option
+:menuselection:`Settings --> Options --> Movements --> Allow reservations to be
+created without an animal` needs to be turned on to support this.
 
 Retailer Movements
 ------------------

@@ -180,6 +180,7 @@ $(function() {
                 "ShelterLocation":  _("Location"),
                 "ShelterLocationUnit":  _("Unit"),
                 "Fosterer": _("Fosterer"),
+                "OwnerID": _("Owner"),
                 "Size":  _("Size"),
                 "RabiesTag":  _("RabiesTag"),
                 "TimeOnShelter":  _("On Shelter"),
@@ -222,6 +223,7 @@ $(function() {
                 rv = '<span class="' + (isa[0] ? "asm-search-adoptable" : "asm-search-notforadoption") + '">' +
                     isa[1] + '</span>';
             }
+            else if (name == "OwnerID") { rv = html.person_link(row.OWNERID, row.OWNERNAME); }
             else if (name == "AnimalTypeID") { rv = row.ANIMALTYPENAME; }
             else if ( name == "BaseColourID") { rv = row.BASECOLOURNAME; }
             else if ( name == "SpeciesID") { rv = row.SPECIESNAME; }

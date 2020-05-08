@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Movements &mdash; ASM 43 documentation</title>
+  <title>Movements &mdash; ASM 44u documentation</title>
   
 
   
@@ -198,20 +198,6 @@ than one unreturned movement. This is because the animal cannot leave the
 shelter in two different ways without being returned first.</p>
 <p>This system allows you to keep track of all the animal’s movements over its
 lifetime to fosters, adopters, etc.</p>
-<div class="section" id="reservations">
-<h2>Reservations<a class="headerlink" href="#reservations" title="Permalink to this headline">¶</a></h2>
-<p>A singular exception to this is reservations - since they are not actually a
-movement (the animal hasn’t gone anywhere), you can have one or more
-reservations as well as an open movement. You should turn the reservation into
-an adoption movement when the animal is adopted by the person with the reserve
-and cancel any other outstanding reservations. If it detects multiple
-reservations, ASM will prompt and automatically cancel the other reservations
-for you when you turn one into an adoption using the <span class="menuselection">Move ‣
-Adopt an animal</span> screen.</p>
-<div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">ASM calls reservations what some shelters call “adoption applications”. You can have as many open applications on an animal as you like with an appropriate status, but only one will ever become the animal’s adoption.</p>
-</div>
 <p>Any method by which an animal leaves your shelter requires a movement record.
 The only exception is death, which is handled through the animal death tab
 since it can only occur once.</p>
@@ -221,6 +207,25 @@ movements for animals. These actions will automatically validate the animal and
 person to make sure the movement is appropriate, and if the animal is already
 fostered it will be returned first, if it has open reservations/applications
 they will be cancelled, etc.</p>
+<div class="section" id="reservations">
+<h2>Reservations<a class="headerlink" href="#reservations" title="Permalink to this headline">¶</a></h2>
+<p>A singular exception to this is reservations - since they are not actually a
+movement (the animal hasn’t gone anywhere) and they represent an adoption
+intention.</p>
+<p>You can have one or more reservations as well as an open movement. You should
+turn the reservation into an adoption movement when the animal is adopted by
+the person with the reserve and cancel any other outstanding reservations. If
+it detects multiple reservations, ASM will prompt and automatically cancel the
+other reservations for you when you turn one into an adoption using the
+<span class="menuselection">Move ‣ Adopt an animal</span> screen.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">ASM calls reservations what some shelters call “adoption applications”. You can have as many open applications on an animal as you like with an appropriate status, but only one will ever become the animal’s adoption.</p>
+</div>
+<p>In order to help with adoption application tracking, a reservation can be
+created that is not yet linked to an animal. The option
+<span class="menuselection">Settings ‣ Options ‣ Movements ‣ Allow reservations to be
+created without an animal</span> needs to be turned on to support this.</p>
 </div>
 <div class="section" id="retailer-movements">
 <h2>Retailer Movements<a class="headerlink" href="#retailer-movements" title="Permalink to this headline">¶</a></h2>

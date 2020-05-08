@@ -105,20 +105,27 @@ $(function() {
                     }
                 },
                 columns: [
-                    { field: "MEDIANOTES", classes: "mode-table", display: _("Notes") },
+                    { field: "MEDIANOTES", classes: "mode-table", display: _("Notes"), 
+                        sorttext: function(m) { 
+                            return m.MEDIANOTES; 
+                        }
+                    },
                     { field: "PREVIEW", classes: "mode-table", display: "", formatter: function(m) {
                         var h = [];
                         h.push(media.render_preview_thumbnail(m));
                         h.push(media.render_mods(m, true));
                         return h.join("");
                     }},
-                    { field: "SIZE", classes: "mode-table", display: _("Size"), formatter: function(m) {
-                        var sz = '<span data-sort="' + m.MEDIASIZE + '" />';
-                        if (m.MEDIATYPE != 0) { return sz; } // do not show a size for non-files
-                        if (m.MEDIASIZE < 1024*1024) { sz = Math.floor(m.MEDIASIZE / 1024) + "K"; }
-                        else { sz = Math.floor(m.MEDIASIZE / 1024 / 1024.0) + "M"; }
-                        return sz;
-                    }},
+                    { field: "SIZE", classes: "mode-table", display: _("Size"), 
+                        formatter: function(m) {
+                            if (m.MEDIATYPE != 0) { return ""; } // do not show a size for non-files
+                            if (m.MEDIASIZE < 1024*1024) { return Math.floor(m.MEDIASIZE / 1024) + "K"; }
+                            return Math.floor(m.MEDIASIZE / 1024 / 1024.0) + "M";
+                        }, 
+                        sorttext: function(m) { 
+                            return m.MEDIASIZE; 
+                        }
+                    },
                     { field: "CREATEDDATE", classes: "mode-table", display: _("Added"), formatter: tableform.format_date },
                     { field: "DATE", classes: "mode-table", display: _("Updated"), formatter: tableform.format_date, initialsort: true, initialsortdirection: "desc" },
                     { field: "MEDIAMIMETYPE", classes: "mode-table", display: _("Type") },

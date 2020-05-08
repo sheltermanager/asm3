@@ -74,6 +74,12 @@ specify a scaling amount::
 
     <!-- pdf zoom 0.5 end -->
 
+Most of these options are to wkhtmltopdf, a PDF renderer based on webkit (the
+engine used by the Chrome and Safari web browsers). An alternative, simpler PDF
+engine can also be used by specifying::
+
+   <!-- pdf renderer pisa -->
+
 
 Electronic Signatures
 ---------------------

@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Online Forms &mdash; ASM 43 documentation</title>
+  <title>Online Forms &mdash; ASM 44u documentation</title>
   
 
   
@@ -102,6 +102,11 @@
 <li class="toctree-l1"><a class="reference internal" href="reports.html">Reports</a></li>
 <li class="toctree-l1"><a class="reference internal" href="litters.html">Litters</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Online Forms</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#editing-form-fields">Editing Form Fields</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#show-if-syntax">Show If syntax</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#incoming-forms">Incoming Forms</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#importing">Importing</a></li>
 </ul>
 </li>
@@ -222,6 +227,8 @@ for some of your form fields, by using the format fieldname=value.</p>
 <p class="first admonition-title">Warning</p>
 <p class="last">sheltermanager.com uses a short term 2 minute cache on forms, so if you make changes to a form you’ve recently viewed, you may have to wait 2 minutes for any changes you make to appear.</p>
 </div>
+<div class="section" id="editing-form-fields">
+<h2>Editing Form Fields<a class="headerlink" href="#editing-form-fields" title="Permalink to this headline">¶</a></h2>
 <p>Clicking on the form’s name will allow you to edit the individual fields of
 information the report will take.</p>
 <img alt="_images/onlineform_fields.png" src="_images/onlineform_fields.png" />
@@ -256,6 +263,31 @@ look for an additional field called X and store the submission value in it
 when creating a person record. It will only work for new person records created
 from the form submission and not if the form updates an existing person record
 to prevent overwriting data.</p>
+<div class="section" id="show-if-syntax">
+<h3>Show If syntax<a class="headerlink" href="#show-if-syntax" title="Permalink to this headline">¶</a></h3>
+<p>It is possible to have the system only display some of your form fields based
+on a condition being met. There are many situations where you may want to do
+this to remove unnecessary fields based on previous answers (for example, remove
+questions about the landlord if the person is not renting, or questions about
+dogs if they are surrendering a cat, etc).</p>
+<p>Edit the form field that you want to show or hide based on a condition, and
+enter the condition in the “Show If” box.</p>
+<p>The syntax for show if is:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">fieldname</span><span class="o">=</span><span class="n">X</span>
+</pre></div>
+</div>
+<p>to only show if the form field with fieldname currently has the value X or:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>fieldname!Y
+</pre></div>
+</div>
+<p>to only show if the form field with fieldname does NOT have the value Y.</p>
+<p>If fieldname is a checkbox, you can test for the special keyword “on” to
+indicate you want the box checked. Only check boxes, text boxes and lookup
+fields can be used with Show If at present.</p>
+</div>
+</div>
+<div class="section" id="incoming-forms">
+<h2>Incoming Forms<a class="headerlink" href="#incoming-forms" title="Permalink to this headline">¶</a></h2>
 <img alt="_images/onlineform_incoming.png" src="_images/onlineform_incoming.png" />
 <p>Selecting a form allows you to intelligently create or attach records from the
 data, or explicitly attach the form to existing records.</p>
@@ -302,7 +334,8 @@ column to give you a clickable link to the newly created record as well so you
 can view it.</p>
 <p>Incoming forms that have been attached to a record will be automatically
 deleted when you leave the screen. The system will also remove incoming forms
-older than 4 weeks by default.</p>
+older than 4 weeks by default. Both of these options are configurable.</p>
+</div>
 <div class="section" id="importing">
 <h2>Importing<a class="headerlink" href="#importing" title="Permalink to this headline">¶</a></h2>
 <p>ASM also allows importing of online forms from files.</p>

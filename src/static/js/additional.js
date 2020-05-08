@@ -49,6 +49,9 @@ $(function() {
                 columns: [
                     { field: "FIELDNAME", display: _("Name"), initialsort: true },
                     { field: "FIELDLABEL", display: _("Label") },
+                    { field: "ID", display: _("ID"), hideif: function(row) {
+                        return !config.bool("ShowLookupDataID");
+                    }},
                     { field: "FIELDTYPENAME", display: _("Type") },
                     { field: "LINKTYPENAME", display: _("Link") },
                     { field: "NEWRECORD", display: _("New Record"), formatter: function(row) { if (row.NEWRECORD == 1) { return _("Yes"); } return _("No"); }},

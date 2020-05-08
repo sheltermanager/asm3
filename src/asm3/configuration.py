@@ -247,6 +247,7 @@ DEFAULTS = {
     "MicrochipRegisterMovements": "1,5",
     "MovementDonationsDefaultDue": "No",
     "MovementNumberOverride": "No",
+    "MovementPersonOnlyReserves": "Yes",
     "MultiSiteEnabled": "No", 
     "JSWindowPrint": "Yes",
     "OnlineFormVerifyJSKey": "Yes",
@@ -968,6 +969,9 @@ def microchip_register_movements(dbo):
 
 def movement_donations_default_due(dbo):
     return cboolean(dbo, "MovementDonationsDefaultDue", DEFAULTS["MovementDonationsDefaultDue"] == "Yes")
+
+def movement_person_only_reserves(dbo):
+    return cboolean(dbo, "MovementPersonOnlyReserves", DEFAULTS["MovementPersonOnlyReserves"] == "Yes")
 
 def multi_site_enabled(dbo):
     return cboolean(dbo, "MultiSiteEnabled", DEFAULTS["MultiSiteEnabled"] == "Yes")

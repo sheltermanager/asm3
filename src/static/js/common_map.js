@@ -1,5 +1,5 @@
 /*jslint browser: true, forin: true, eqeq: true, plusplus: true, white: true, sloppy: true, vars: true, nomen: true */
-/*global alert, $, jQuery, google, asm, config, L */
+/*global alert, $, jQuery, google, asm, config, validate, L */
 /*global google_loaded: true, geo: true, mapping: true */
 
 (function($) {
@@ -85,10 +85,22 @@
                     if (v.popuptext) { marker.bindPopup(v.popuptext); }
                     if (v.popupactive) { marker.openPopup(); }
                 });
+                if (config.bool("ShowLatLong")) {
+                    map.on("contextmenu", function (event) {
+                        if ($(".asm-latlong").length == 0) { return; }
+                        var marker = L.marker(event.latlng).addTo(map);
+                        $(".latlong-lat").val(event.latlng.lat);
+                        $(".latlong-long").val(event.latlng.lng);
+                        $(".asm-latlong").latlong("save");
+                        marker.bindPopup(event.latlng.lat + ", " + event.latlng.lng);
+                        marker.openPopup();
+                        validate.dirty(true);
+                    });
+                }
             });
         },
 
-        _google_draw_map: function(divid, zoom, latlong, markers) {
+        _google_draw_map: function(divid, zoom, latlong, markers, latsel, longsel) {
             window._goomapcallback = function() {
                 var ll = latlong.split(",");
                 var mapOptions = {
@@ -114,6 +126,23 @@
                         if (infowindow) { infowindow.open(map, marker); }
                     }
                 });
+                if (config.bool("ShowLatLong")) {
+                    google.maps.event.addListener(map, 'click', function(event) {
+                        if ($(".asm-latlong").length == 0) { return; }
+                        var marker = new google.maps.Marker({
+                            position: event.latLng,
+                            map: map
+                        });
+                        $(".latlong-lat").val(event.latLng.lat());
+                        $(".latlong-long").val(event.latLng.lng());
+                        $(".asm-latlong").latlong("save");
+                        var infowindow = new google.maps.InfoWindow({ content: event.latLng.lat() + ", " + event.latLng.lng() }); 
+                        google.maps.event.addListener(marker, 'click', function() {
+                            infowindow.open(map, marker);
+                        });
+                        validate.dirty(true);
+                    });
+                }
             };
             var key = "";
             if (asm.mapproviderkey) {

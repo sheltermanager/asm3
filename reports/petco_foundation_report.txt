@@ -17,7 +17,6 @@ SELECT
 
 ###
 $$HEADER
-<p>Puppies/Kittens: &lt; 5 months and under</p>
 <table border="1">
 HEADER$$
 
@@ -39,10 +38,8 @@ SUBREPORT_PetcoOnHandBegin
 SELECT 
 '$PARENTARG1$'::timestamp AS StartDate,
 CASE 
-WHEN a.SpeciesID = 1 AND a.DateOfBirth < '$PARENTARG1$'::timestamp - INTERVAL '5 months' THEN 'Dogs'
-WHEN a.SpeciesID = 1 THEN 'Puppies'
-WHEN a.SpeciesID = 2 AND a.DateOfBirth < '$PARENTARG1$'::timestamp - INTERVAL '5 months' THEN 'Cats'
-WHEN a.SpeciesID = 2 THEN 'Kittens' 
+WHEN a.SpeciesID = 1 THEN 'Dogs'
+WHEN a.SpeciesID = 2 THEN 'Cats' 
 ELSE 'Other' END AS AgeGroup,
 1 AS NumberInShelter
 FROM animal a
@@ -79,16 +76,13 @@ $$FOOTER
 
 FOOTER$$
 +++
-
 SUBREPORT_PetcoOnHandEnd
 +++
 SELECT 
 '$PARENTARG1$'::timestamp AS StartDate,
 CASE 
-WHEN a.SpeciesID = 1 AND a.DateOfBirth < '$PARENTARG1$'::timestamp - INTERVAL '5 months' THEN 'Dogs'
-WHEN a.SpeciesID = 1 THEN 'Puppies'
-WHEN a.SpeciesID = 2 AND a.DateOfBirth < '$PARENTARG1$'::timestamp - INTERVAL '5 months' THEN 'Cats'
-WHEN a.SpeciesID = 2 THEN 'Kittens' 
+WHEN a.SpeciesID = 1 THEN 'Dogs'
+WHEN a.SpeciesID = 2 THEN 'Cats' 
 ELSE 'Other' END AS AgeGroup,
 1 AS NumberInShelter
 FROM animal a
@@ -119,7 +113,7 @@ BODY$$
 
 $$FOOTER
 <tr>
-<td><i>$AGEGROUP</i></td>
+<td><i>Total</i></td>
 <td><i>{SUM.NumberInShelter.0}</i></td>
 </tr>
 
@@ -130,16 +124,14 @@ SUBREPORT_PetcoIntakeNumbers
 SELECT * FROM (
 SELECT 
 CASE 
-WHEN a.SpeciesID = 1 AND a.DateOfBirth < a.DateBroughtIn - INTERVAL '5 months' THEN 'Dogs'
-WHEN a.SpeciesID = 1 THEN 'Puppies'
-WHEN a.SpeciesID = 2 AND a.DateOfBirth < a.DateBroughtIn - INTERVAL '5 months' THEN 'Cats'
-WHEN a.SpeciesID = 2 THEN 'Kittens' 
+WHEN a.SpeciesID = 1 THEN 'Dogs'
+WHEN a.SpeciesID = 2 THEN 'Cats' 
 ELSE 'Other' END AS AgeGroup,
 1 AS AllSources,
 CASE WHEN IsTransfer = 1 THEN 1 ELSE 0 END AS Transfers, 
 CASE WHEN ReasonName LIKE '%Surrender%' THEN 1 ELSE 0 END AS OwnerSurrender,
 CASE WHEN ReasonName LIKE '%Stray%' THEN 1 ELSE 0 END AS Stray,
-CASE WHEN ReasonName NOT LIKE '%Surrender%' AND IsTransfer = 0 THEN 1 ELSE 0 END AS OtherSources
+CASE WHEN ReasonName NOT LIKE '%Surrender%' AND ReasonName NOT LIKE '%Stray%' AND IsTransfer = 0 THEN 1 ELSE 0 END AS OtherSources
 FROM animal a
 INNER JOIN entryreason er ON er.ID = a.EntryReasonID
 WHERE DateBroughtIn >= '$PARENTARG1$' AND DateBroughtIn <= '$PARENTARG2$'
@@ -147,10 +139,8 @@ AND NonShelterAnimal = 0
 UNION ALL 
 SELECT 
 CASE 
-WHEN a.SpeciesID = 1 AND a.DateOfBirth < ad.ReturnDate - INTERVAL '5 months' THEN 'Dogs'
-WHEN a.SpeciesID = 1 THEN 'Puppies'
-WHEN a.SpeciesID = 2 AND a.DateOfBirth < ad.ReturnDate - INTERVAL '5 months' THEN 'Cats'
-WHEN a.SpeciesID = 2 THEN 'Kittens' 
+WHEN a.SpeciesID = 1 THEN 'Dogs'
+WHEN a.SpeciesID = 2 THEN 'Cats' 
 ELSE 'Other' END AS AgeGroup,
 1 AS AllSources,
 0 AS Transfers,
@@ -197,31 +187,40 @@ $$FOOTER
 <td><i>{SUM.Transfers.0}</i></td>
 <td><i>{SUM.OtherSources.0}</i></td>
 </tr>
-
 FOOTER$$
 +++
 SUBREPORT_PetcoOutcomes
 +++
-SELECT 
-CASE 
-WHEN a.SpeciesID = 1 AND ad.MovementDate Is Not NULL AND a.DateOfBirth < ad.MovementDate - INTERVAL '5 months' THEN 'Dogs'
-WHEN a.SpeciesID = 1 AND a.DeceasedDate Is Not NULL AND a.DateOfBirth < a.DeceasedDate - INTERVAL '5 months' THEN 'Dogs'
-WHEN a.SpeciesID = 1 THEN 'Puppies'
-WHEN a.SpeciesID = 2 AND ad.MovementDate Is Not NULL AND a.DateOfBirth < ad.MovementDate - INTERVAL '5 months' THEN 'Cats'
-WHEN a.SpeciesID = 2 AND a.DeceasedDate Is Not Null AND a.DateOfBirth < a.DeceasedDate - INTERVAL '5 months' THEN 'Cats'
-WHEN a.SpeciesID = 2 THEN 'Kittens' 
+SELECT * FROM (
+SELECT
+CASE
+WHEN a.SpeciesID = 1 THEN 'Dogs'
+WHEN a.SpeciesID = 2 THEN 'Cats'
 ELSE 'Other' END AS AgeGroup,
-CASE WHEN ad.MovementType = 5 THEN 1 ELSE 0 END AS ReturnedToOwner,
 CASE WHEN ad.MovementType = 1 THEN 1 ELSE 0 END AS Adopted,
 CASE WHEN ad.MovementType = 3 THEN 1 ELSE 0 END AS Transferred,
-CASE WHEN ad.MovementType = 7 THEN 1 ELSE 0 END AS ReturnToField,
-CASE WHEN DeceasedDate Is Not Null AND a.PutToSleep = 1 AND a.IsDOA = 0 THEN 1 ELSE 0 END AS Euthanized,
-CASE WHEN DeceasedDate Is Not Null AND a.PutToSleep = 0 AND a.IsDOA = 0 THEN 1 ELSE 0 END AS DiedInCare,
-CASE WHEN ad.MovementType IN (4,6) OR (ad.MovementType NOT IN (5,1,3,7) AND DeceasedDate Is Not Null AND a.IsDOA = 1) THEN 1 ELSE 0 END AS Other
+CASE WHEN ad.MovementType = 5 THEN 1 ELSE 0 END AS ReturnedToOwner,
+0 AS Euthanized,
+0 AS DiedInCare,
+CASE WHEN ad.MovementType IN (4,6,7) THEN 1 ELSE 0 END AS Other
+FROM adoption ad
+INNER JOIN animal a ON ad.AnimalID = a.ID
+WHERE MovementDate >= '$PARENTARG1$' AND MovementDate <= '$PARENTARG2$' AND NonShelterAnimal = 0
+UNION ALL
+SELECT
+CASE
+WHEN a.SpeciesID = 1 THEN 'Dogs'
+WHEN a.SpeciesID = 2 THEN 'Cats'
+ELSE 'Other' END AS AgeGroup,
+0 AS Adopted,
+0 AS Transferred,
+0 AS ReturnedToOwner,
+CASE WHEN DeceasedDate Is Not Null AND a.DiedOffShelter=0 AND a.PutToSleep = 1 AND a.IsDOA = 0 THEN 1 ELSE 0 END AS Euthanized,
+CASE WHEN DeceasedDate Is Not Null AND a.DiedOffShelter=0 AND a.PutToSleep = 0 AND a.IsDOA = 0 THEN 1 ELSE 0 END AS DiedInCare,
+CASE WHEN DeceasedDate Is Not Null AND a.IsDOA = 1 THEN 1 ELSE 0 END AS Other
 FROM animal a
-LEFT OUTER JOIN adoption ad ON ad.AnimalID = a.ID
-WHERE ((MovementDate >= '$PARENTARG1$' AND MovementDate <= '$PARENTARG2$') OR (DeceasedDate >= '$PARENTARG1$' AND DeceasedDate <= '$PARENTARG2$' AND DiedOffShelter = 0))
-AND NonShelterAnimal = 0
+WHERE DeceasedDate >= '$PARENTARG1$' AND DeceasedDate <= '$PARENTARG2$' AND DiedOffShelter = 0 AND NonShelterAnimal = 0
+) dummy
 ORDER BY AgeGroup
 +++
 $$HEADER
@@ -270,10 +269,8 @@ SUBREPORT_PetcoFoster
 +++
 SELECT 
 CASE 
-WHEN a.SpeciesID = 1 AND ad.MovementDate Is Not NULL AND a.DateOfBirth < ad.MovementDate - INTERVAL '5 months' THEN 'Dogs'
-WHEN a.SpeciesID = 1 THEN 'Puppies'
-WHEN a.SpeciesID = 2 AND ad.MovementDate Is Not NULL AND a.DateOfBirth < ad.MovementDate - INTERVAL '5 months' THEN 'Cats'
-WHEN a.SpeciesID = 2 THEN 'Kittens' 
+WHEN a.SpeciesID = 1 THEN 'Dogs'
+WHEN a.SpeciesID = 2 THEN 'Cats' 
 ELSE 'Other' END AS AgeGroup,
 1 AS Fostered
 FROM animal a
@@ -312,10 +309,8 @@ SUBREPORT_PetcoSpayNeuter
 +++
 SELECT 
 CASE 
-WHEN a.SpeciesID = 1 AND a.DateOfBirth < a.NeuteredDate - INTERVAL '5 months' THEN 'Dogs'
-WHEN a.SpeciesID = 1 THEN 'Puppies'
-WHEN a.SpeciesID = 2 AND a.DateOfBirth < a.NeuteredDate - INTERVAL '5 months' THEN 'Cats'
-WHEN a.SpeciesID = 2 THEN 'Kittens' 
+WHEN a.SpeciesID = 1 THEN 'Dogs'
+WHEN a.SpeciesID = 2 THEN 'Cats' 
 ELSE 'Other' END AS AgeGroup,
 CASE WHEN NonShelterAnimal = 0 AND NOT EXISTS(SELECT MovementDate FROM adoption WHERE MovementType = 7 AND AnimalID = a.ID AND MovementDate >= '$PARENTARG1$' AND MovementDate <= '$PARENTARG2$') THEN 1 ELSE 0 END AS ShelterAnimal,
 CASE WHEN NonShelterAnimal = 1 AND NOT EXISTS(SELECT MovementDate FROM adoption WHERE MovementType = 7 AND AnimalID = a.ID AND MovementDate >= '$PARENTARG1$' AND MovementDate <= '$PARENTARG2$') THEN 1 ELSE 0 END AS PublicAnimal,

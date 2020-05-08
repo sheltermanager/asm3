@@ -47,6 +47,8 @@ $(function() {
                     { json_field: "LABEL", post_field: "label", label: _("Label"), type: "text", maxlength: 1000, validation: "notblank" }, 
                     { json_field: "DISPLAYINDEX", post_field: "displayindex", label: _("Display Index"), type: "number" }, 
                     { json_field: "MANDATORY", post_field: "mandatory", label: _("Mandatory"), type: "check" },
+                    { json_field: "VISIBLEIF", post_field: "visibleif", label: _("Show If"), type: "text", maxlength: 1000,
+                        callout: _("Only show this field based on a conditional expression, eg: field1=dog") },
                     { json_field: "LOOKUPS", post_field: "lookups", label: _("Lookups"), type: "textarea" }, 
                     { json_field: "SPECIESID", post_field: "species", label: _("Species"), type: "select", options: {
                         valuefield: "ID", displayfield: "SPECIESNAME", rows: species } }, 
@@ -79,7 +81,8 @@ $(function() {
                     }},
                     { field: "LABEL", display: _("Label"), formatter: function(row) {
                         return row.LABEL + " " + (row.MANDATORY == 1 ? '<span style="color: #f00">*</span>' : '');
-                    }}
+                    }},
+                    { field: "VISIBLEIF", display: _("Show If") }
                 ]
             };
 

@@ -874,7 +874,8 @@ def csv_parse(s):
         d = {}
         for i, c in enumerate(cols):
             if i < len(items): d[c] = items[i]
-        rows.append(d)
+        if len(d) > 1: # Don't append empty rows (can also be empty string in first col)
+            rows.append(d)
         if pos[2]: break # EOF
     return rows
 
@@ -961,7 +962,7 @@ def fix_relative_document_uris(dbo, s):
                 u = url("media_image", "mediaid=%s" % qsp(l, "id"))
             s = s.replace(l, u)
             asm3.al.debug("translate '%s' to '%s'" % (l, u), "utils.fix_relative_document_uris", dbo)
-        elif not l.startswith("http") and not l.startswith("data:"):
+        elif not l.startswith("http") and not l.startswith("data:") and not l.startswith("//"):
             s = s.replace(l, "") # cannot use this type of url
             asm3.al.debug("strip invalid url '%s'" % l, "utils.fix_relative_document_uris", dbo)
     return s
@@ -1203,7 +1204,7 @@ def html_to_pdf(dbo, htmldata):
     """
     Converts HTML content to PDF and returns the PDF file data as bytes.
     """
-    if HTML_TO_PDF == "pisa":
+    if HTML_TO_PDF == "pisa" or htmldata.find("pdf renderer pisa") != -1:
         return html_to_pdf_pisa(dbo, htmldata)
     else:
         return html_to_pdf_cmd(dbo, htmldata)
