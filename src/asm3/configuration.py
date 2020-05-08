@@ -174,6 +174,7 @@ DEFAULTS = {
     "DonationDateOverride": "No",
     "DonationFees": "Yes",
     "DonationQuantities": "No",
+    "DonationFeeAccount": "0",
     "DonationTargetAccount": "9",
     "DonationTrxOverride": "No",
     "DonationOnMoveReserve": "Yes",
@@ -760,6 +761,9 @@ def donation_account_mappings(dbo):
             accountid = bt[1]
             m[donationtypeid] = accountid
     return m
+
+def donation_fee_account(dbo):
+    return cint(dbo, "DonationFeeAccount", DEFAULTS["DonationFeeAccount"])
 
 def donation_trx_override(dbo):
     return cboolean(dbo, "DonationTrxOverride", DEFAULTS["DonationTrxOverride"] == "Yes")

@@ -153,13 +153,14 @@ def get_account_id(dbo, code):
     """
     return dbo.query_int("SELECT ID FROM accounts WHERE Code = ?", [code])
     
-def get_accounts(dbo, onlyactive = False, onlybank = False):
+def get_accounts(dbo, onlyactive = False, onlybank = False, onlyexpense = False):
     """
     Returns all of the accounts with reconciled/balance figures
     ID, CODE, DESCRIPTION, ACCOUNTTYPE, DONATIONTYPEID, RECONCILED, BALANCE, VIEWROLEIDS, VIEWROLES, EDITROLEIDS, EDITROLES
     If an accounting period has been set, balances are calculated from that point.
     onlyactive: If set to true, only accounts with ARCHIVED == 0 are returned
     onlybank: If set to true, only accounts with ACCOUNTTYPE = 1 are returned
+    onlyexpense: If set to true, only accounts with ACCOUNTTYPE = 4 are returned
     """
     l = dbo.locale
     pfilter = ""
@@ -172,6 +173,9 @@ def get_accounts(dbo, onlyactive = False, onlybank = False):
     bfilter = ""
     if onlybank:
         bfilter = "AND a.AccountType = %d" % BANK
+    efilter = ""
+    if onlyexpense:
+        efilter = "AND a.AccountType = %d" % EXPENSE
     roles = dbo.query("SELECT ar.*, r.RoleName FROM accountsrole ar INNER JOIN role r ON ar.RoleID = r.ID")
     accounts = dbo.query("SELECT a.*, at.AccountType AS AccountTypeName, " \
         "dt.DonationName, " \
@@ -182,8 +186,8 @@ def get_accounts(dbo, onlyactive = False, onlybank = False):
         "FROM accounts a " \
         "INNER JOIN lksaccounttype at ON at.ID = a.AccountType " \
         "LEFT OUTER JOIN donationtype dt ON dt.ID = a.DonationTypeID " \
-        "WHERE a.ID > 0 %s %s " \
-        "ORDER BY a.AccountType, a.Code" % (pfilter, pfilter, pfilter, pfilter, afilter, bfilter))
+        "WHERE a.ID > 0 %s %s %s " \
+        "ORDER BY a.AccountType, a.Code" % (pfilter, pfilter, pfilter, pfilter, afilter, bfilter, efilter))
     for a in accounts:
         dest = a.dest
         src = a.src
@@ -944,7 +948,24 @@ def update_matching_donation_transaction(dbo, username, odid, destinationaccount
         "AnimalCostID":         0,
         "OwnerDonationID":      odid
     }, username)
-    asm3.al.debug("Trx created with ID %d" % int(tid), "financial.update_matching_cost_transaction", dbo)
+    asm3.al.debug("Trx created with ID %d" % int(tid), "financial.update_matching_donation_transaction", dbo)
+
+    # Is there a fee on this payment that we need to create a transaction for?
+    if d.FEE > 0:
+        if asm3.configuration.donation_fee_account(dbo) == 0:
+            asm3.al.error("Could not create fee trx, no option selected", "financial.update_matching_donation_transaction", dbo)
+        else:
+            tid = dbo.insert("accountstrx", {
+                "TrxDate":              d.DATE,
+                "Description":          d.COMMENTS,
+                "Reconciled":           0,
+                "Amount":               d.FEE,
+                "SourceAccountID":      target,
+                "DestinationAccountID": asm3.configuration.donation_fee_account(dbo),
+                "AnimalCostID":         0,
+                "OwnerDonationID":      0
+            }, username)
+            asm3.al.debug("Fee trx created with ID %d" % int(tid), "financial.update_matching_donation_transaction", dbo)
 
 def insert_account_from_costtype(dbo, ctid, name, desc):
     """

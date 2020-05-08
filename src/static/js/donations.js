@@ -423,7 +423,7 @@ $(function() {
             $("#vat").change(function() {
                 if ($(this).is(":checked")) {
                     $("#vatrate").val(config.number("VATRate"));
-                    $("#vatamount").currency("value", common.tax_from_inclusive($("#amount").currency("value"), config.number("VATRate")))
+                    $("#vatamount").currency("value", common.tax_from_inclusive($("#amount").currency("value"), config.number("VATRate")));
                     $("#vatrate").closest("tr").fadeIn();
                     $("#vatamount").closest("tr").fadeIn();
                 }

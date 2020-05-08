@@ -52,13 +52,11 @@ are not present, will suggest the payment type.
 .. image:: images/processor_4_emailrec.png
 
 Once payment has been completed, the system will automatically update the
-received date on the payment record. It will also deduct any fee that the
-processor has charged from the payment (if there are multiple payments for this
-receipt number then the fee is deducted from just the first payment instead of
-all payments).
-
-This is done so that the amount recorded in the accounts and shown on the
-payment reflects the money you actually received.
+received date on the payment record. If you have the option on to create
+matching accounting transactions for received payments, a transaction
+will be written at this point. If you have configured an expense account
+for transaction fees, a transaction will be written to deduct the fee and
+send it to the expense account.
 
 .. image:: images/processor_5_recpay.png
 
