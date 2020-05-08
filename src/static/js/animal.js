@@ -181,6 +181,14 @@ $(function() {
                 '<a class="asm-embed-name" href="animal_find_results?logicallocation=onshelter&shelterlocation=' + controller.animal.SHELTERLOCATION + '">' + controller.animal.SHELTERLOCATIONNAME + ' ' + common.nulltostr(controller.animal.SHELTERLOCATIONUNIT) + '</a>',
                 '</td>',
                 '</tr>',
+                '<tr id="ownerrow">',
+                '<td>',
+                '<label for="owner">' + _("Owner") + '</label>',
+                '</td>',
+                '<td>',
+                '<input id="originalowner" data-json="OWNERID" data-mode="brief" data-post="owner" type="hidden" class="asm-personchooser" />',
+                '</td>',
+                '</tr>',
                 '<tr id="animalflags">',
                 '<td><label for="flags">' + _("Flags") + '</label></td>',
                 '<td>',
@@ -1011,6 +1019,7 @@ $(function() {
                 $("#pickeduprow").hide();
                 $("#holdrow").hide();
                 $("#coordinatorrow").hide();
+                $("#ownerrow").hide();
                 $("#broughtinbyownerrow").hide();
                 $("#originalownerrow td").removeClass("bottomborder");
                 $("#bondedwith1row").hide();
@@ -1019,6 +1028,17 @@ $(function() {
                 $("#reasonforentryrow").hide();
                 $("#reasonnotfromownerrow").hide();
                 $(".asilomar").hide();
+            }
+
+            // If the animal has an exit movement, show the owner field
+            if (controller.animal.ARCHIVED == 1 && 
+                (controller.animal.ACTIVEMOVEMENTTYPE == 1 ||
+                controller.animal.ACTIVEMOVEMENTTYPE == 3 || 
+                controller.animal.ACTIVEMOVEMENTTYPE == 5)) {
+                $("#ownerrow").show();
+            }
+            else {
+                $("#ownerrow").hide();
             }
 
             // CONFIG ===========================
@@ -1626,6 +1646,7 @@ $(function() {
             common.widget_destroy("#mergeanimal", "animalchooser");
             common.widget_destroy("#bonded1", "animalchooser");
             common.widget_destroy("#bonded2", "animalchooser");
+            common.widget_destroy("#owner", "personchooser");
             common.widget_destroy("#originalowner", "personchooser");
             common.widget_destroy("#broughtinby", "personchooser");
             common.widget_destroy("#neuteringvet", "personchooser");

@@ -19,31 +19,40 @@ $(function() {
                 '</thead>',
                 '<tbody>'
             ];
+            var typemap = {
+                "CO": [ _("Current Owner"), "animal?id=" ],
+                "OO": [ _("Original Owner"), "animal?id=" ],
+                "BI": [ _("Brought In By"), "animal?id=" ],
+                "RO": [ _("Returned By"), "animal?id=" ],
+                "AO": [ _("Adoption Coordinator"), "animal?id=" ],
+                "OV": [ _("Owner Vet"), "animal?id=" ],
+                "CV": [ _("Current Vet"), "animal?id=" ],
+                "AV": [ _("Altering Vet"), "animal?id=" ],
+                "WL": [ _("Waiting List Contact"), "waitinglist?id=" ],
+                "LA": [ _("Lost Animal Contact"), "lostanimal?id=" ],
+                "FA": [ _("Found Animal Contact"), "foundanimal?id=" ],
+                "ACS": [ _("Animal Control Incident"), "incident?id=" ],
+                "ACC": [ _("Animal Control Caller"), "incident?id=" ],
+                "ACV": [ _("Animal Control Victim"), "incident?id=" ],
+                "ATD": [ _("Driver"), "animal_transport?id=" ],
+                "ATP": [ _("Pickup Address"), "animal_transport?id=" ],
+                "ATR": [ _("Dropoff Address"), "animal_transport?id=" ],
+                "AFA": [ "", "animal?id=" ],
+                "AFP": [ "", "person?id=" ],
+                "AFI": [ "", "incident?id=" ]
+            };
             $.each(controller.links, function(i, li) {
                 var tdclass = "";
                 if (li.DMOD.indexOf("D") != -1) {
                     tdclass = "style=\"color: red\"";
                 }
+                var info = typemap[li.TYPE], label = info[0], url = info[1];
+                if (label == "") { label = li.TYPEDISPLAY; }
                 s.push('<tr>');
-                s.push('<td ' + tdclass + '>' + li.TYPEDISPLAY + '</td>');
+                s.push('<td ' + tdclass + '>' + label + '</td>');
                 s.push('<td ' + tdclass + '>' + format.date(li.DDATE) + '</td>');
                 s.push('<td ' + tdclass + '>');
-                if (li.TYPE == "OO") { s.push('<a href="animal?id=' + li.LINKID + '">' + li.LINKDISPLAY + '</a>'); }
-                if (li.TYPE == "BI") { s.push('<a href="animal?id=' + li.LINKID + '">' + li.LINKDISPLAY + '</a>'); }
-                if (li.TYPE == "RO") { s.push('<a href="animal?id=' + li.LINKID + '">' + li.LINKDISPLAY + '</a>'); }
-                if (li.TYPE == "AO") { s.push('<a href="animal?id=' + li.LINKID + '">' + li.LINKDISPLAY + '</a>'); }
-                if (li.TYPE == "PB") { s.push('<a href="animal?id=' + li.LINKID + '">' + li.LINKDISPLAY + '</a>'); }
-                if (li.TYPE == "OV") { s.push('<a href="animal?id=' + li.LINKID + '">' + li.LINKDISPLAY + '</a>'); }
-                if (li.TYPE == "CV") { s.push('<a href="animal?id=' + li.LINKID + '">' + li.LINKDISPLAY + '</a>'); }
-                if (li.TYPE == "AV") { s.push('<a href="animal?id=' + li.LINKID + '">' + li.LINKDISPLAY + '</a>'); }
-                if (li.TYPE == "WL") { s.push('<a href="waitinglist?id=' + li.LINKID + '">' + li.LINKDISPLAY + '</a>'); }
-                if (li.TYPE == "LA") { s.push('<a href="lostanimal?id=' + li.LINKID + '">' + li.LINKDISPLAY + '</a>'); }
-                if (li.TYPE == "FA") { s.push('<a href="foundanimal?id=' + li.LINKID + '">' + li.LINKDISPLAY + '</a>'); }
-                if (li.TYPE == "AC") { s.push('<a href="incident?id=' + li.LINKID + '">' + li.LINKDISPLAY + '</a>'); }
-                if (li.TYPE == "AT") { s.push('<a href="animal_transport?id=' + li.LINKID + '">' + li.LINKDISPLAY + '</a>'); }
-                if (li.TYPE == "AFA") { s.push('<a href="animal?id=' + li.LINKID + '">' + li.LINKDISPLAY + '</a>'); }
-                if (li.TYPE == "AFP") { s.push('<a href="person?id=' + li.LINKID + '">' + li.LINKDISPLAY + '</a>'); }
-                if (li.TYPE == "AFI") { s.push('<a href="incident?id=' + li.LINKID + '">' + li.LINKDISPLAY + '</a>'); }
+                s.push('<a href="' + url + li.LINKID + '">' + li.LINKDISPLAY + '</a>');
                 if (li.DMOD.indexOf("D") != -1) { s.push( html.icon("death", _("Deceased"))); }
                 s.push('</td>');
                 s.push('<td ' + tdclass + '>' + li.FIELD2 + '</td>');

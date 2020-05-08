@@ -49,6 +49,7 @@ def get_animal_query(dbo):
         "ct.CoatType AS CoatTypeName, " \
         "sx.Sex AS SexName, " \
         "sz.Size AS SizeName, " \
+        "o.OwnerName AS OwnerName, " \
         "ov.OwnerName AS OwnersVetName, " \
         "ov.OwnerAddress AS OwnersVetAddress, " \
         "ov.OwnerTown AS OwnersVetTown, " \
@@ -233,6 +234,7 @@ def get_animal_query(dbo):
         "LEFT OUTER JOIN lkcoattype ct ON ct.ID = a.CoatType " \
         "LEFT OUTER JOIN deathreason dr ON dr.ID = a.PTSReasonID " \
         "LEFT OUTER JOIN lksmovementtype mt ON mt.ID = a.ActiveMovementType " \
+        "LEFT OUTER JOIN owner o ON o.ID = a.OwnerID " \
         "LEFT OUTER JOIN owner ov ON ov.ID = a.OwnersVetID " \
         "LEFT OUTER JOIN owner cv ON cv.ID = a.CurrentVetID " \
         "LEFT OUTER JOIN owner nv ON nv.ID = a.NeuteredByVetID " \
@@ -257,11 +259,12 @@ def get_animal_query(dbo):
         }
 
 def get_animal_status_query(dbo):
-    return "SELECT a.ID, a.ShelterCode, a.ShortCode, a.AnimalName, a.DeceasedDate, a.DiedOffShelter, a.PutToSleep, " \
+    return "SELECT a.ID, a.ShelterCode, a.ShortCode, a.AnimalName, " \
+        "a.DeceasedDate, a.DiedOffShelter, a.PutToSleep, " \
         "dr.ReasonName AS PTSReasonName, " \
         "il.LocationName AS ShelterLocationName, " \
         "a.ShelterLocationUnit, " \
-        "a.NonShelterAnimal, a.DateBroughtIn, a.Archived, " \
+        "a.NonShelterAnimal, a.DateBroughtIn, a.OriginalOwnerID, a.Archived, " \
         "a.ActiveMovementID, a.ActiveMovementDate, a.ActiveMovementType, a.ActiveMovementReturn, " \
         "a.HasActiveReserve, a.HasTrialAdoption, a.HasPermanentFoster, a.MostRecentEntryDate, a.DisplayLocation " \
         "FROM animal a " \
@@ -368,6 +371,8 @@ def get_animals_brief(animals):
             "NONSHELTERANIMAL": a["NONSHELTERANIMAL"],
             "ORIGINALOWNERID": a["ORIGINALOWNERID"],
             "ORIGINALOWNERNAME": a["ORIGINALOWNERNAME"],
+            "OWNERID": a["OWNERID"],
+            "OWNERNAME": a["OWNERNAME"],
             "PICKUPLOCATIONNAME": a["PICKUPLOCATIONNAME"],
             "SEX" : a["SEX"],
             "SEXNAME" : a["SEXNAME"],
@@ -2017,6 +2022,7 @@ def insert_animal_from_form(dbo, post, username):
         "IsGoodWithDogs":   goodwithdogs,
         "IsGoodWithChildren": goodwithkids,
         "IsHouseTrained":   housetrained,
+        "OwnerID":          post.integer("nsowner"), # only set for non-shelter
         "OriginalOwnerID":  originalowner,
         "BroughtInByOwnerID": dbb,
         "AdoptionCoordinatorID": post.integer("adoptioncoordinator"),
@@ -2261,6 +2267,7 @@ def update_animal_from_form(dbo, post, username):
         "IsGoodWithDogs":       post.integer("goodwithdogs"),
         "IsGoodWithChildren":   post.integer("goodwithkids"),
         "IsHouseTrained":       post.integer("housetrained"),
+        "OwnerID":              post.integer("owner"),
         "OriginalOwnerID":      post.integer("originalowner"),
         "BroughtInByOwnerID":   post.integer("broughtinby"),
         "AdoptionCoordinatorID": post.integer("adoptioncoordinator"),
@@ -3343,6 +3350,7 @@ def update_all_animal_statuses(dbo):
 
     aff = dbo.execute_many("UPDATE animal SET " \
         "Archived = ?, " \
+        "OwnerID = ?, " \
         "ActiveMovementID = ?, " \
         "ActiveMovementDate = ?, " \
         "ActiveMovementType = ?, " \
@@ -3382,6 +3390,7 @@ def update_foster_animal_statuses(dbo):
 
     aff = dbo.execute_many("UPDATE animal SET " \
         "Archived = ?, " \
+        "OwnerID = ?, " \
         "ActiveMovementID = ?, " \
         "ActiveMovementDate = ?, " \
         "ActiveMovementType = ?, " \
@@ -3422,6 +3431,7 @@ def update_on_shelter_animal_statuses(dbo):
 
     aff = dbo.execute_many("UPDATE animal SET " \
         "Archived = ?, " \
+        "OwnerID = ?, " \
         "ActiveMovementID = ?, " \
         "ActiveMovementDate = ?, " \
         "ActiveMovementType = ?, " \
@@ -3458,6 +3468,7 @@ def update_animal_status(dbo, animalid, a = None, movements = None, animalupdate
     haspermanentfoster = False
     lastreturn = None
     mostrecententrydate = None
+    ownerid = 0
     activemovementid = 0
     activemovementdate = None
     activemovementtype = None
@@ -3480,6 +3491,9 @@ def update_animal_status(dbo, animalid, a = None, movements = None, animalupdate
 
     # Start at first intake for most recent entry date
     mostrecententrydate = a.datebroughtin
+
+    # Start with the existing value for the current owner
+    ownerid = a.ownerid
 
     # Just look these up once
     if cfg is None:
@@ -3520,6 +3534,10 @@ def update_animal_status(dbo, animalid, a = None, movements = None, animalupdate
             currentownerid = m.ownerid
             currentownername = m.ownername
 
+            # Does the animal have a current ownerid? Set it if not
+            if ownerid is None or ownerid == 0:
+                ownerid = currentownerid
+
             # If this is an exit movement, take the animal off shelter
             # If this active movement is not an exit movement, keep the animal onshelter
             if exitmovement: onshelter = False
@@ -3555,10 +3573,15 @@ def update_animal_status(dbo, animalid, a = None, movements = None, animalupdate
 
     # Override the other flags if this animal is dead or non-shelter
     if a.deceaseddate or a.nonshelteranimal == 1:
+        ownerid = a.originalownerid
         onshelter = False
         hastrialadoption = False
         hasreserve = False
         haspermanentfoster = False
+
+    # On shelter animals cannot have an ownerid
+    if onshelter:
+        ownerid = 0
 
     # Calculate location and qualified display location
     loc = ""
@@ -3582,21 +3605,23 @@ def update_animal_status(dbo, animalid, a = None, movements = None, animalupdate
 
     # Has anything actually changed?
     if a.archived == b2i(not onshelter) and \
-       a.activemovementid == activemovementid and \
-       a.activemovementdate == activemovementdate and \
-       a.activemovementtype == activemovementtype and \
-       a.activemovementreturn == activemovementreturn and \
-       a.diedoffshelter == b2i(diedoffshelter) and \
-       a.hasactivereserve == b2i(hasreserve) and \
-       a.hastrialadoption == b2i(hastrialadoption) and \
-       a.haspermanentfoster == b2i(haspermanentfoster) and \
-       a.mostrecententrydate == mostrecententrydate and \
-       a.displaylocation == qlocname:
+        a.ownerid == ownerid and \
+        a.activemovementid == activemovementid and \
+        a.activemovementdate == activemovementdate and \
+        a.activemovementtype == activemovementtype and \
+        a.activemovementreturn == activemovementreturn and \
+        a.diedoffshelter == b2i(diedoffshelter) and \
+        a.hasactivereserve == b2i(hasreserve) and \
+        a.hastrialadoption == b2i(hastrialadoption) and \
+        a.haspermanentfoster == b2i(haspermanentfoster) and \
+        a.mostrecententrydate == mostrecententrydate and \
+        a.displaylocation == qlocname:
         # No - don't do anything
         return
 
     # Update our in memory animal
     a.archived = b2i(not onshelter)
+    a.ownerid = ownerid
     a.activemovementid = activemovementid
     a.activemovementdate = activemovementdate
     a.activemovementtype = activemovementtype
@@ -3615,6 +3640,7 @@ def update_animal_status(dbo, animalid, a = None, movements = None, animalupdate
     if animalupdatebatch is not None:
         animalupdatebatch.append((
             b2i(not onshelter),
+            ownerid,
             activemovementid,
             activemovementdate,
             activemovementtype,
@@ -3631,6 +3657,7 @@ def update_animal_status(dbo, animalid, a = None, movements = None, animalupdate
         # Just do the DB update now
         dbo.update("animal", animalid, {
             "Archived":             b2i(not onshelter),
+            "OwnerID":              ownerid,
             "ActiveMovementID":     activemovementid,
             "ActiveMovementDate":   activemovementdate,
             "ActiveMovementType":   activemovementtype,
