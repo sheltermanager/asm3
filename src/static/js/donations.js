@@ -32,7 +32,8 @@ $(function() {
                         hideif: function() { return !config.bool("DonationQuantities"); } },
                     { json_field: "UNITPRICE", post_field: "unitprice", label: _("Unit Price"), type: "currency", 
                         hideif: function() { return !config.bool("DonationQuantities"); } },
-                    { json_field: "DONATION", post_field: "amount", label: _("Amount"), type: "currency" },
+                    { json_field: "DONATION", post_field: "amount", label: _("Amount"), type: "currency",
+                        callout: _("This is the gross payment amount, inclusive of any fees and taxes") },
                     { json_field: "FEE", post_field: "fee", label: _("Fee"), type: "currency", 
                         hideif: function() { return !config.bool("DonationFees"); }, 
                         callout: _("If you were charged a transaction fee for receiving this payment, the amount") },
@@ -422,7 +423,7 @@ $(function() {
             $("#vat").change(function() {
                 if ($(this).is(":checked")) {
                     $("#vatrate").val(config.number("VATRate"));
-                    $("#vatamount").currency("value", ($("#amount").currency("value") / 100) * config.number("VATRate"));
+                    $("#vatamount").currency("value", common.tax_from_inclusive($("#amount").currency("value"), config.number("VATRate")))
                     $("#vatrate").closest("tr").fadeIn();
                     $("#vatamount").closest("tr").fadeIn();
                 }

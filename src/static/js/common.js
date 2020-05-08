@@ -338,6 +338,16 @@
             return d;
         },
 
+        /** Calculates the amount of tax/VAT from amount (an integer currency value)
+         *  at rate (integer percentage).
+         */
+        tax_from_inclusive: function(amount, rate) {
+            var realrate = 1 + (rate / 100),
+                decamt = amount / 100.0,
+                netamt = (decamt / realrate) * 100;
+            return amount - netamt;
+        },
+
         /** URL routing mode - client or server */
         route_mode: "client",
 
