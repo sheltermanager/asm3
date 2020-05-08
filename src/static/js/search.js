@@ -73,7 +73,11 @@ $(function() {
                         }
                         h.push('</span>');
                     }
-                    else if (r.CURRENTOWNERID != null) {
+                    else if (r.OWNERID && r.OWNERID != r.CURRENTOWNERID) {
+                        h.push(_("Owner"));
+                        h.push(html.icon("right") + ' ' + html.person_link(r.OWNERID, r.OWNERNAME));
+                    }
+                    else if (r.CURRENTOWNERID) {
                         h.push(r.DISPLAYLOCATIONNAME);
                         h.push(html.icon("right") + ' ' + html.person_link(r.CURRENTOWNERID, r.CURRENTOWNERNAME));
                     }

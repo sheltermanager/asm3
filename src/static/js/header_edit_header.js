@@ -94,6 +94,9 @@ $(function() {
                 else if (a.SHELTERLOCATIONUNIT && !a.ACTIVEMOVEMENTDATE) {
                     displaylocation = a.DISPLAYLOCATIONNAME + ' <span class="asm-search-locationunit" title="' + html.title(_("Unit")) + '">' + a.SHELTERLOCATIONUNIT + '</span>';
                 }
+                else {
+                    displaylocation = a.DISPLAYLOCATIONNAME;
+                }
             }
             var animalcontrol = "";
             if (a.ANIMALCONTROLINCIDENTID) {
