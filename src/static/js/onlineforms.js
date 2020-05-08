@@ -71,7 +71,9 @@ $(function() {
                             return '<a target="_blank" href="' + asm.serviceurl + u + '">' + u + '</a>';
                         }},
                     { field: "REDIRECTURLAFTERPOST", display: _("Redirect to URL after POST") },
-                    { field: "EMAILADDRESS", display: _("Email submissions to") },
+                    { field: "EMAILADDRESS", display: _("Email submissions to"), formatter: function(row) {
+                        return common.replace_all(row.EMAILADDRESS, ",", "<br/>");
+                    }},
                     { field: "SETOWNERFLAGS", display: _("Person Flags"), formatter: function(row) { return row.SETOWNERFLAGS.split("|").join(", "); }},
                     { field: "NUMBEROFFIELDS", display: _("Number of fields") },
                     { field: "DESCRIPTION", display: _("Description"), formatter: function(row) { return html.truncate(row.DESCRIPTION); } }
