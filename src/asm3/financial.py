@@ -952,20 +952,21 @@ def update_matching_donation_transaction(dbo, username, odid, destinationaccount
 
     # Is there a fee on this payment that we need to create a transaction for?
     if d.FEE > 0:
-        if asm3.configuration.donation_fee_account(dbo) == 0:
-            asm3.al.error("Could not create fee trx, no option selected", "financial.update_matching_donation_transaction", dbo)
-        else:
-            tid = dbo.insert("accountstrx", {
-                "TrxDate":              d.DATE,
-                "Description":          d.COMMENTS,
-                "Reconciled":           0,
-                "Amount":               d.FEE,
-                "SourceAccountID":      target,
-                "DestinationAccountID": asm3.configuration.donation_fee_account(dbo),
-                "AnimalCostID":         0,
-                "OwnerDonationID":      0
-            }, username)
-            asm3.al.debug("Fee trx created with ID %d" % int(tid), "financial.update_matching_donation_transaction", dbo)
+        feeac = asm3.configuration.donation_fee_account(dbo)
+        if 0 == dbo.query_int("SELECT ID FROM account WHERE ID = ?", [feeac]):
+            feeac = dbo.query_int("SELECT ID FROM account WHERE AccountType=? ORDER BY ID", [EXPENSE])
+            asm3.al.error("No expense account configured, falling back to first expense ac %s" % feeac, "financial.update_matching_donation_transaction", dbo)
+        tid = dbo.insert("accountstrx", {
+            "TrxDate":              d.DATE,
+            "Description":          d.COMMENTS,
+            "Reconciled":           0,
+            "Amount":               d.FEE,
+            "SourceAccountID":      target,
+            "DestinationAccountID": feeac,
+            "AnimalCostID":         0,
+            "OwnerDonationID":      0
+        }, username)
+        asm3.al.debug("Fee trx created with ID %d" % int(tid), "financial.update_matching_donation_transaction", dbo)
 
 def insert_account_from_costtype(dbo, ctid, name, desc):
     """
