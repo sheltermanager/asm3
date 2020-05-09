@@ -244,11 +244,11 @@ $(function() {
                 '<div id="button-sign-body" class="asm-menu-body">',
                 '<ul class="asm-menu-list">',
                     '<li id="button-signscreen" class="asm-menu-item"><a '
-                        + '" href="#">' + html.icon("signature") + ' ' + _("Sign on screen") + '</a></li>',
+                        + ' href="#">' + html.icon("signature") + ' ' + _("Sign on screen") + '</a></li>',
                     '<li id="button-signpad" class="sharebutton asm-menu-item"><a '
-                        + '" href="#">' + html.icon("mobile") + ' ' + _("Mobile signing pad") + '</a></li>',
+                        + ' href="#">' + html.icon("mobile") + ' ' + _("Mobile signing pad") + '</a></li>',
                     '<li id="button-signemail" class="sharebutton asm-menu-item"><a '
-                        + '" href="#">' + html.icon("email") + ' ' + _("Request signature by email") + '</a></li>',
+                        + ' href="#">' + html.icon("email") + ' ' + _("Request signature by email") + '</a></li>',
                 '</ul>',
                 '</div>',
 
