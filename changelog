@@ -1,6 +1,7 @@
 44
 ================
 
+09/05/20 Hide HTML5 required attribute from invisible fields so form submits #294
 09/05/20 When no animals available, send blank files to FTP adoption sites #751
 09/05/20 Fix malformed HTML in media/signing menu
 09/05/20 View littermates from litters should include deceased

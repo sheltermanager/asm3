@@ -160,11 +160,21 @@ $(document).ready(function() {
                     var v = $(this).val();
                     // Checkboxes always return on for val(), if it's a checkbox, set on/off from checked
                     if ($(this).attr("type") && $(this).attr("type") == "checkbox") { v = $(this).is(":checked") ? "on" : "off"; }
-                    if (cond == "=") {
-                        o.toggle( v == value );
+                    var toshow = false;
+                    if (cond == "=") { toshow = v == value; }
+                    else if (cond == "!") { toshow = v != value; }
+                    o.toggle(toshow);
+                    if (!toshow) {
+                        // If we just hid a field that had the required attribute, 
+                        // remove it, otherwise the form won't submit
+                        o.find("input, select, textarea").prop("required", false);
                     }
-                    else if (cond == "!") {
-                        o.toggle( v != value );
+                    else {
+                        // Restore the required attribute to the now visible field 
+                        // if the field had it previously.
+                        if (o.find(".asm-onlineform-required").length > 0) {
+                            o.find("input, select, textarea").prop("required", true);
+                        }
                     }
                     return false; // stop iterating fields, we found it
                 }
