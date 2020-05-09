@@ -66,11 +66,13 @@ class RescueGroupsPublisher(FTPPublisher):
             self.setLastError("No RescueGroups.org shelter id has been set.")
             self.cleanup()
             return
+
+        # NOTE: We still publish even if there are no animals. This prevents situations
+        # where the last animal can't be removed from rescuegroups because the shelter
+        # has no animals to send.
         animals = self.getMatchingAnimals()
         if len(animals) == 0:
-            self.setLastError("No animals found to publish.")
-            self.cleanup()
-            return
+            self.logError("No animals found to publish, sending empty file.")
 
         if not self.openFTPSocket(): 
             self.setLastError("Failed opening FTP socket.")

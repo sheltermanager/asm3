@@ -69,11 +69,13 @@ class PetFinderPublisher(FTPPublisher):
             self.setLastError("No PetFinder.com shelter id has been set.")
             self.cleanup()
             return
+
+        # NOTE: We still publish even if there are no animals. This prevents situations
+        # where the last animal can't be removed from PetFinder because the shelter
+        # has no animals to send.
         animals = self.getMatchingAnimals()
         if len(animals) == 0:
-            self.setLastError("No animals found to publish.")
-            self.cleanup()
-            return
+            self.logError("No animals found to publish, sending empty file.")
 
         if not self.openFTPSocket(): 
             self.setLastError("Failed opening FTP socket.")
@@ -102,7 +104,7 @@ class PetFinderPublisher(FTPPublisher):
         # of sterilisation after adoption.
         # At least one of our customers cannot offer this, using a deposit
         # scheme instead which is not covered. They still want to display 
-        #  unaltered animals on their own website, so the single "Include unaltered" 
+        # unaltered animals on their own website, so the single "Include unaltered" 
         # publishing option is not enough for them. We need an extra
         # config switch to prevent sending unaltered animals to PetFinder
         # in these cases.
