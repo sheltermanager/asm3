@@ -264,7 +264,7 @@ def get_animal_status_query(dbo):
         "dr.ReasonName AS PTSReasonName, " \
         "il.LocationName AS ShelterLocationName, " \
         "a.ShelterLocationUnit, " \
-        "a.NonShelterAnimal, a.DateBroughtIn, a.OriginalOwnerID, a.Archived, " \
+        "a.NonShelterAnimal, a.DateBroughtIn, a.OriginalOwnerID, a.Archived, a.OwnerID, " \
         "a.ActiveMovementID, a.ActiveMovementDate, a.ActiveMovementType, a.ActiveMovementReturn, " \
         "a.HasActiveReserve, a.HasTrialAdoption, a.HasPermanentFoster, a.MostRecentEntryDate, a.DisplayLocation " \
         "FROM animal a " \
