@@ -873,6 +873,7 @@ def update_matching_donation_transaction(dbo, username, odid, destinationaccount
     Creates a matching account transaction for a donation or updates
     an existing trx if it already exists
     """
+    l = dbo.locale
     # Don't do anything if we aren't creating matching transactions
     if not asm3.configuration.create_donation_trx(dbo): 
         asm3.al.debug("Create donation trx is off, not creating trx.", "financial.update_matching_donation_transaction", dbo)
@@ -892,8 +893,11 @@ def update_matching_donation_transaction(dbo, username, odid, destinationaccount
 
     # Do we already have an existing transaction for this donation?
     # If we do, we only need to check the amounts as it's now the
-    # users problem if they picked the wrong donationtype/account
-    trxid = dbo.query_int("SELECT ID FROM accountstrx WHERE OwnerDonationID = ?", [odid])
+    # users problem if they picked the wrong donationtype/account.
+    # NOTE: Deliberately choose the first because if a transaction for
+    # any handling fee was created, it will have a higher ID while
+    # still having the same ownerdonation.ID for display/report purposes.
+    trxid = dbo.query_int("SELECT ID FROM accountstrx WHERE OwnerDonationID = ? ORDER BY ID", [odid])
     if trxid != 0:
         asm3.al.debug("Already have an existing transaction, updating amount to %d" % abs(d.DONATION), "financial.update_matching_donation_transaction", dbo)
         dbo.execute("UPDATE accountstrx SET Amount = ? WHERE ID = ?", (abs(d.DONATION), trxid))
@@ -940,7 +944,7 @@ def update_matching_donation_transaction(dbo, username, odid, destinationaccount
     # Create the transaction
     tid = dbo.insert("accountstrx", {
         "TrxDate":              d.DATE,
-        "Description":          d.COMMENTS,
+        "Description":          asm3.i18n._("Transaction Fee", l),
         "Reconciled":           0,
         "Amount":               amount,
         "SourceAccountID":      source,
@@ -964,7 +968,7 @@ def update_matching_donation_transaction(dbo, username, odid, destinationaccount
             "SourceAccountID":      target,
             "DestinationAccountID": feeac,
             "AnimalCostID":         0,
-            "OwnerDonationID":      0
+            "OwnerDonationID":      odid
         }, username)
         asm3.al.debug("Fee trx created with ID %d" % int(tid), "financial.update_matching_donation_transaction", dbo)
 
