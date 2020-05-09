@@ -4327,6 +4327,7 @@ class options(JSONEndpoint):
         dbo = o.dbo
         c = {
             "accounts": asm3.financial.get_accounts(dbo, onlybank=True),
+            "accountsexp": asm3.financial.get_accounts(dbo, onlyexpense=True),
             "animalfindcolumns": asm3.html.json_animalfindcolumns(dbo),
             "animalflags": asm3.lookups.get_animal_flags(dbo),
             "breeds": asm3.lookups.get_breeds(dbo),

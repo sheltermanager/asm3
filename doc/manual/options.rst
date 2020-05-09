@@ -53,7 +53,8 @@ ASM contains a full double entry accounting package. The options here are:
 * When receiving payments, allow recording of sales tax with a default rate of %:
   ASM can calculate and store sales tax/VAT/GST amounts on payments you receive
   for taxable goods. Enabling this option will add a tickbox to all payment
-  screens allowing you to calculate the taxable value.
+  screens allowing you to calculate the taxable value (assumes your amount is
+  gross and inclusive of tax/VAT/GST).
 
 * When receiving multiple payments, allow the due and received dates to be set:
   If this option is on, due and received date columns will be shown when taking
@@ -77,6 +78,11 @@ ASM contains a full double entry accounting package. The options here are:
   payment transaction, it will use the payment type to find the income
   account to use. The destination account here denotes where the money will be
   moved to. If you do not set one, ASM will use the first bank account on file. 
+
+* Expense account for transaction fees: If you are creating matching
+  transactions from payment records and there is a fee present, the system will
+  write a transaction to deduct the fee from the target bank account and send
+  it to the expense account you nominate here.
 
 * Donations of type … are sent to ...: In addition to the default payment
   destination account, you can specify optional mappings, so that when ASM

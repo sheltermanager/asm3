@@ -45,7 +45,7 @@ class PayPal(PaymentProcessor):
             "business":         asm3.configuration.paypal_email(self.dbo),
             "item_name":        item_description,
             "item_number":      payref,
-            "amount":           "%0.2f" % (totalamount / 100.0), 
+            "amount":           "%0.2f" % ((totalamount - totalvat) / 100.0), 
             "currency_code":    asm3.configuration.currency_code(self.dbo),
             "custom":           self.dbo.database,
             "tax_rate":         vatrate,

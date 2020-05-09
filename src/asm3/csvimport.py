@@ -778,7 +778,7 @@ def csvimport_paypal(dbo, csvdata, donationtypeid, donationpaymentid, flags, use
         gross = asm3.utils.cint(asm3.utils.cfloat(v(r, "Gross")) * 100) 
         net = asm3.utils.cint(asm3.utils.cfloat(v(r, "Net")) * 100) 
         fee = abs(asm3.utils.cint(asm3.utils.cfloat(v(r, "Fee")) * 100)) # Fee is a negative amount
-        if net > gross: net = gross # I've seen PayPal files where net/gross are the wrong way around
+        if net > gross: gross = net # I've seen PayPal files where net/gross are the wrong way around
         if personid != 0 and net > 0:
             pdate = asm3.i18n.display2python(dbo.locale, v(r, "Date")) # parse the date (we do this to fix 2 digit years, which I've also seen)
             if pdate is None: pdate = dbo.today() # use today if parsing failed
@@ -786,7 +786,7 @@ def csvimport_paypal(dbo, csvdata, donationtypeid, donationpaymentid, flags, use
             d["person"] = str(personid)
             d["animal"] = "0"
             d["movement"] = "0"
-            d["amount"] = str(net)
+            d["amount"] = str(gross)
             d["fee"] = str(fee)
             d["chequenumber"] = str(v(r, "Transaction ID"))
             comments = "PayPal ID: %s \nItem: %s %s \nCurrency: %s \nGross: %s \nFee: %s \nNet: %s \nSubject: %s \nNote: %s" % \
