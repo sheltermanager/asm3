@@ -619,10 +619,17 @@ Medical
 Movements
 ---------
 
-The movement tab allows a number of days to be set to automatically cancel
-reservations. If an animal is reserved for this period of time and it does not
-result in an adoption (or any kind of movement), ASM will automatically cancel
-the reservation for you after this time.
+* Cancel unadopted reservations after: If an animal is reserved for this period
+  of time and it does not result in an adoption (or any kind of movement), ASM
+  will automatically cancel the reservation for you after this time.
+
+* Highlight unadopted reservations on screen after: If an animal
+  is reserved for this period of time, the system will highlight the reservation
+  on screen (typically in red italics).
+
+* Remove holds after: This value is used to set a default in the "Hold until date"
+  field of new animals. When the date is reached, the hold flag is automatically
+  removed.
 
 * Treat foster animals as part of the shelter inventory: Setting this option
   will make ASM treat fostered animals as if they are on the shelter (with

@@ -1041,6 +1041,8 @@ $(function() {
                 '<p><label for="cancelunadopted">' + _("Cancel unadopted reservations after") + '</label>',
                 '<span id="callout-cancelunadopted" class="asm-callout">' + _("Cancel unadopted reservations after this many days, or 0 to never cancel") + '</span>',
                 '<input data="AutoCancelReservesDays" id="cancelunadopted" type="text" data-min="0" data-max="365" class="asm-textbox asm-halftextbox asm-numberbox" /> ' + _(" days.") + '</p>',
+                '<p><label for="reservesoverdue">' + _("Highlight unadopted reservations after") + '</label>',
+                '<input data="ReservesOverdueDays" id="reservesoverdue" type="text" data-min="1" data-max="365" class="asm-textbox asm-halftextbox asm-numberbox" /> ' + _(" days.") + '</p>',
                 '<p><label for="autoremoveholddays">' + _("Remove holds after") + '</label>',
                 '<span id="callout-autoremoveholddays" class="asm-callout">' + _("Cancel holds on animals this many days after the brought in date, or 0 to never cancel") + '</span>',
                 '<input data="AutoRemoveHoldDays" id="autoremoveholddays" type="text" data-min="0" data-max="365" class="asm-textbox asm-halftextbox asm-numberbox" /> ' + _(" days.") + '</p>',

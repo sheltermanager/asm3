@@ -116,8 +116,8 @@ to only show if the form field with fieldname currently has the value X or::
 to only show if the form field with fieldname does NOT have the value Y.
 
 If fieldname is a checkbox, you can test for the special keyword "on" to
-indicate you want the box checked. Only check boxes, text boxes and lookup
-fields can be used with Show If at present.
+indicate you want the box checked (or "off" for unchecked). Only check boxes, 
+text boxes and lookup fields can be used with Show If at present.
 
 Incoming Forms
 --------------
