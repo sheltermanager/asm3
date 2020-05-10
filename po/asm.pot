@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ASM3\n"
 "Report-Msgid-Bugs-To: robin@sheltermanager.com\n"
-"POT-Creation-Date: 2020-05-08 12:42+0000\n"
+"POT-Creation-Date: 2020-05-10 13:10+0000\n"
 "Last-Translator: Robin Rawson-Tetley <robin@sheltermanager.com>\n"
 "Language-Team: en <robin@sheltermanager.com>\n"
 "Language: en\n"
@@ -109,10 +109,6 @@ msgstr ""
 
 #: publish_options.js
 msgid "6 months"
-msgstr ""
-
-#: publish_options.js
-msgid "6 weeks"
 msgstr ""
 
 #: publish_options.js
@@ -4562,6 +4558,10 @@ msgstr ""
 msgid "Expense"
 msgstr ""
 
+#: options.js
+msgid "Expense account for transaction fees"
+msgstr ""
+
 #: financial.py
 msgid "Expense::"
 msgstr ""
@@ -5662,6 +5662,10 @@ msgstr ""
 
 #: waitinglist_results.js
 msgid "Highlight"
+msgstr ""
+
+#: options.js
+msgid "Highlight unadopted reservations after"
 msgstr ""
 
 #: dbupdate.py
@@ -8225,7 +8229,8 @@ msgstr ""
 msgid "Owl"
 msgstr ""
 
-#: dbupdate.py animal_new.js move_reclaim.js animal.js
+#: html.py dbupdate.py search.js animal_new.js move_reclaim.js
+#: animal_find_results.js animal.js header_edit_header.js
 msgid "Owner"
 msgstr ""
 
@@ -11796,6 +11801,10 @@ msgstr ""
 msgid "This income account is the source for payments received of this type"
 msgstr ""
 
+#: donations.js
+msgid "This is the gross payment amount, inclusive of any fees and taxes"
+msgstr ""
+
 #: lookups.py
 msgid ""
 "This item is referred to in the database ({0}) and cannot be deleted until "
@@ -12190,7 +12199,7 @@ msgstr ""
 msgid "Tosa Inu"
 msgstr ""
 
-#: common_widgets.js stocklevel.js
+#: stocklevel.js
 msgid "Total"
 msgstr ""
 
@@ -12212,6 +12221,10 @@ msgstr ""
 
 #: dbupdate.py
 msgid "Training"
+msgstr ""
+
+#: financial.py
+msgid "Transaction Fee"
 msgstr ""
 
 #: accounts_trx.js
@@ -12575,6 +12588,12 @@ msgstr ""
 
 #: options.js
 msgid "Update system options"
+msgstr ""
+
+#: animal.js
+msgid ""
+"Update the current owner of this animal without returning and creating "
+"movements that affect your figures."
 msgstr ""
 
 #: animal_costs.js
@@ -13670,7 +13689,7 @@ msgstr ""
 msgid "weekdays"
 msgstr ""
 
-#: medical.py medicalprofile.js medical.js
+#: medical.py publish_options.js medicalprofile.js medical.js
 msgid "weeks"
 msgstr ""
 
