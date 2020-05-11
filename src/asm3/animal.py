@@ -2976,10 +2976,13 @@ def merge_animal(dbo, username, animalid, mergeanimalid):
         try:
             if table == "media":
                 dbo.execute("UPDATE media SET LinkID=?, WebsitePhoto=0, WebsiteVideo=0, DocPhoto=0 WHERE LinkID=? AND LinkTypeID=?", (animalid, mergeanimalid, linktype))
-            elif linktype >= 0:
-                dbo.execute("UPDATE %s SET %s = %d WHERE %s = %d AND %s = %d" % (table, field, animalid, field, mergeanimalid, linktypefield, linktype))
+            if linktype >= 0:
+                dbo.update(table, "%s=%s AND %s=%s" % (field, mergeanimalid, linktypefield, linktype), 
+                    { field: animalid }, username, 
+                    setLastChanged=(table != "media"))
             else:
-                dbo.execute("UPDATE %s SET %s = %d WHERE %s = %d" % (table, field, animalid, field, mergeanimalid))
+                dbo.update(table, "%s=%s" % (field, mergeanimalid), 
+                    { field: animalid }, username)
         except Exception as err:
             asm3.al.error("error reparenting: %s -> %s, table=%s, field=%s, linktypefield=%s, linktype=%s, error=%s" % \
                 (mergeanimalid, animalid, table, field, linktypefield, linktype, err), "animal.merge_animal", dbo)
@@ -3006,6 +3009,12 @@ def merge_animal(dbo, username, animalid, mergeanimalid):
     reparent("media", "LinkID", "LinkTypeID", asm3.media.ANIMAL)
     reparent("diary", "LinkID", "LinkType", asm3.diary.ANIMAL)
     reparent("log", "LinkID", "LinkType", asm3.log.ANIMAL)
+
+    # Reparent the audit records for the reparented records in the audit log
+    # by switching ParentLinks to the new ID.
+    dbo.execute("UPDATE audittrail SET ParentLinks = %s WHERE ParentLinks LIKE '%%animal=%s %%'" % \
+        ( dbo.sql_replace("ParentLinks", "'animal=%s '" % mergeanimalid, "'animal=%s '" % animalid), mergeanimalid))
+
     dbo.delete("animal", mergeanimalid, username)
     asm3.audit.move(dbo, username, "animal", animalid, "", "Merged animal %d -> %d" % (mergeanimalid, animalid))
 

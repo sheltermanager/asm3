@@ -1,6 +1,7 @@
 44
 ================
 
+11/05/20 Reparent audit records during merge #792
 10/05/20 Add visible option for when to highlight over due reserves
 10/05/20 Make "exclude under weeks" publishing option an editable number
 09/05/20 Hide HTML5 required attribute from invisible fields so form submits #294

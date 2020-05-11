@@ -1015,10 +1015,18 @@ def merge_person(dbo, username, personid, mergepersonid):
         raise asm3.utils.ASMValidationError("Internal error: Cannot merge ID 0")
 
     def reparent(table, field, linktypefield = "", linktype = -1):
-        if linktype >= 0:
-            dbo.execute("UPDATE %s SET %s = %d WHERE %s = %d AND %s = %d" % (table, field, personid, field, mergepersonid, linktypefield, linktype))
-        else:
-            dbo.execute("UPDATE %s SET %s = %d WHERE %s = %d" % (table, field, personid, field, mergepersonid))
+        try:
+            if linktype >= 0:
+                dbo.update(table, "%s=%s AND %s=%s" % (field, mergepersonid, linktypefield, linktype), 
+                    { field: personid }, username, 
+                    setLastChanged=(table != "media"))
+            else:
+                dbo.update(table, "%s=%s" % (field, mergepersonid), 
+                    { field: personid }, username)
+        except Exception as err:
+            asm3.al.error("error reparenting: %s -> %s, table=%s, field=%s, linktypefield=%s, linktype=%s, error=%s" % \
+                (mergepersonid, personid, table, field, linktypefield, linktype, err), "person.merge_person", dbo)
+
 
     # Merge any contact info
     mp = get_person(dbo, mergepersonid)
@@ -1074,6 +1082,12 @@ def merge_person(dbo, username, personid, mergepersonid):
     reparent("media", "LinkID", "LinkTypeID", asm3.media.PERSON)
     reparent("diary", "LinkID", "LinkType", asm3.diary.PERSON)
     reparent("log", "LinkID", "LinkType", asm3.log.PERSON)
+
+    # Reparent the audit records for the reparented records in the audit log
+    # by switching ParentLinks to the new ID.
+    dbo.execute("UPDATE audittrail SET ParentLinks = %s WHERE ParentLinks LIKE '%%person=%s %%'" % \
+        ( dbo.sql_replace("ParentLinks", "'person=%s '" % mergepersonid, "'person=%s '" % personid), mergepersonid))
+
     dbo.delete("owner", mergepersonid, username)
     asm3.audit.move(dbo, username, "owner", personid, "", "Merged owner %d -> %d" % (mergepersonid, personid))
 
