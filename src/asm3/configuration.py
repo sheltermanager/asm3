@@ -174,7 +174,7 @@ DEFAULTS = {
     "DonationDateOverride": "No",
     "DonationFees": "Yes",
     "DonationQuantities": "No",
-    "DonationFeeAccount": "0",
+    "DonationFeeAccount": "21",
     "DonationTargetAccount": "9",
     "DonationTrxOverride": "No",
     "DonationOnMoveReserve": "Yes",
