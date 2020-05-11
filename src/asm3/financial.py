@@ -944,7 +944,7 @@ def update_matching_donation_transaction(dbo, username, odid, destinationaccount
     # Create the transaction
     tid = dbo.insert("accountstrx", {
         "TrxDate":              d.DATE,
-        "Description":          asm3.i18n._("Transaction Fee", l),
+        "Description":          d.COMMENTS,
         "Reconciled":           0,
         "Amount":               amount,
         "SourceAccountID":      source,
@@ -962,7 +962,7 @@ def update_matching_donation_transaction(dbo, username, odid, destinationaccount
             asm3.al.error("No expense account configured, falling back to first expense ac %s" % feeac, "financial.update_matching_donation_transaction", dbo)
         tid = dbo.insert("accountstrx", {
             "TrxDate":              d.DATE,
-            "Description":          d.COMMENTS,
+            "Description":          asm3.i18n._("Transaction Fee", l),
             "Reconciled":           0,
             "Amount":               d.FEE,
             "SourceAccountID":      target,
