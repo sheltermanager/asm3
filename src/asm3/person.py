@@ -202,6 +202,7 @@ def get_satellite_counts(dbo, personid):
         "(SELECT COUNT(*) FROM ownertraploan ot WHERE ot.OwnerID = o.ID) AS traploan, " \
         "(SELECT COUNT(*) FROM ownervoucher ov WHERE ov.OwnerID = o.ID) AS vouchers, " \
         "((SELECT COUNT(*) FROM animal WHERE AdoptionCoordinatorID = o.ID OR BroughtInByOwnerID = o.ID OR OriginalOwnerID = o.ID OR CurrentVetID = o.ID OR OwnersVetID = o.ID OR NeuteredByVetID = o.ID) + " \
+        "(SELECT COUNT(*) FROM animal INNER JOIN adoption ON adoption.ID = animal.ActiveMovementID WHERE animal.OwnerID = o.ID AND animal.OwnerID <> adoption.OwnerID) + " \
         "(SELECT COUNT(*) FROM adoption WHERE ReturnedByOwnerID = o.ID) + " \
         "(SELECT COUNT(*) FROM animalwaitinglist WHERE OwnerID = o.ID) + " \
         "(SELECT COUNT(*) FROM animalfound WHERE OwnerID = o.ID) + " \
@@ -257,19 +258,20 @@ def get_links(dbo, pid):
         "WHEN a.Archived = 1 AND a.DeceasedDate Is Not Null AND a.ActiveMovementID = 0 THEN dr.ReasonName " \
         "WHEN a.Archived = 1 AND a.DeceasedDate Is Null AND a.ActiveMovementID <> 0 THEN mt.MovementType " \
         "ELSE il.LocationName END", "')'"))
-    # Current Owner
+    # Current Owner (shown for non-shelter matches or where owner <> current movement person)
     sql = "SELECT 'CO' AS TYPE, " \
         "'' AS TYPEDISPLAY, a.LastChangedDate AS DDATE, a.ID AS LINKID, " \
         "%s AS LINKDISPLAY, " \
         "%s AS FIELD2, " \
         "CASE WHEN a.DeceasedDate Is Not Null THEN 'D' ELSE '' END AS DMOD " \
         "FROM animal a " \
+        "LEFT OUTER JOIN adoption ad ON ad.ID = a.ActiveMovementID " \
         "LEFT OUTER JOIN lksmovementtype mt ON mt.ID = a.ActiveMovementType " \
         "INNER JOIN species s ON s.ID = a.SpeciesID " \
         "LEFT OUTER JOIN internallocation il ON il.ID = a.ShelterLocation " \
         "LEFT OUTER JOIN deathreason dr ON dr.ID = a.PTSReasonID " \
-        "WHERE a.OwnerID = %d " % (linkdisplay, animalextra, int(pid))
-    # Original Owner
+        "WHERE a.OwnerID = %d AND (a.NonShelterAnimal=1 OR a.OwnerID <> ad.OwnerID) " % (linkdisplay, animalextra, int(pid))
+    # Original Owner (shelter animals only)
     sql += "UNION SELECT 'OO' AS TYPE, " \
         "'' AS TYPEDISPLAY, a.DateBroughtIn AS DDATE, a.ID AS LINKID, " \
         "%s AS LINKDISPLAY, " \
@@ -280,7 +282,7 @@ def get_links(dbo, pid):
         "INNER JOIN species s ON s.ID = a.SpeciesID " \
         "LEFT OUTER JOIN internallocation il ON il.ID = a.ShelterLocation " \
         "LEFT OUTER JOIN deathreason dr ON dr.ID = a.PTSReasonID " \
-        "WHERE OriginalOwnerID = %d " % (linkdisplay, animalextra, int(pid))
+        "WHERE NonShelterAnimal = 0 AND OriginalOwnerID = %d " % (linkdisplay, animalextra, int(pid))
     # Brought In By
     sql += "UNION SELECT 'BI' AS TYPE, " \
         "'' AS TYPEDISPLAY, a.DateBroughtIn AS DDATE, a.ID AS LINKID, " \

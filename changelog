@@ -1,6 +1,8 @@
 44
 ================
 
+11/05/20 Include owner<>currentowner when showing person links and icon #180
+11/05/20 Do not show original owner/non shelter on person links #180
 11/05/20 Reparent audit records during merge #792
 10/05/20 Add visible option for when to highlight over due reserves
 10/05/20 Make "exclude under weeks" publishing option an editable number
