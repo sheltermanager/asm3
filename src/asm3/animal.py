@@ -2972,17 +2972,17 @@ def merge_animal(dbo, username, animalid, mergeanimalid):
     if animalid == 0 or mergeanimalid == 0:
         raise asm3.utils.ASMValidationError("Internal error: Cannot merge ID 0")
 
-    def reparent(table, field, linktypefield = "", linktype = -1):
+    def reparent(table, field, linktypefield = "", linktype = -1, lastchanged = True):
         try:
             if table == "media":
                 dbo.execute("UPDATE media SET LinkID=?, WebsitePhoto=0, WebsiteVideo=0, DocPhoto=0 WHERE LinkID=? AND LinkTypeID=?", (animalid, mergeanimalid, linktype))
             if linktype >= 0:
                 dbo.update(table, "%s=%s AND %s=%s" % (field, mergeanimalid, linktypefield, linktype), 
                     { field: animalid }, username, 
-                    setLastChanged=(table != "media"))
+                    setLastChanged=lastchanged, setRecordVersion=lastchanged)
             else:
                 dbo.update(table, "%s=%s" % (field, mergeanimalid), 
-                    { field: animalid }, username)
+                    { field: animalid }, username, setLastChanged=lastchanged, setRecordVersion=lastchanged)
         except Exception as err:
             asm3.al.error("error reparenting: %s -> %s, table=%s, field=%s, linktypefield=%s, linktype=%s, error=%s" % \
                 (mergeanimalid, animalid, table, field, linktypefield, linktype, err), "animal.merge_animal", dbo)
@@ -2991,29 +2991,29 @@ def merge_animal(dbo, username, animalid, mergeanimalid):
     reparent("adoption", "AnimalID")
     reparent("animal", "BondedAnimalID")
     reparent("animal", "BondedAnimal2ID")
-    reparent("animalcontrolanimal", "AnimalID")
+    reparent("animalcontrolanimal", "AnimalID", lastchanged=False)
     reparent("animalcost", "AnimalID")
     reparent("animaldiet", "AnimalID")
-    reparent("animallitter", "ParentAnimalID")
-    reparent("animallostfoundmatch", "AnimalID")
+    reparent("animallitter", "ParentAnimalID", lastchanged=False)
+    reparent("animallostfoundmatch", "AnimalID", lastchanged=False)
     reparent("animalmedical", "AnimalID")
     reparent("animalmedicaltreatment", "AnimalID")
-    reparent("animalpublished", "AnimalID")
+    reparent("animalpublished", "AnimalID", lastchanged=False)
     reparent("animaltest", "AnimalID")
     reparent("animaltransport", "AnimalID")
     reparent("animalvaccination", "AnimalID")
     reparent("clinicappointment", "AnimalID")
     reparent("ownerdonation", "AnimalID")
-    reparent("ownerlookingfor", "AnimalID")
+    reparent("ownerlookingfor", "AnimalID", lastchanged=False)
     reparent("ownerlicence", "AnimalID")
-    reparent("media", "LinkID", "LinkTypeID", asm3.media.ANIMAL)
+    reparent("media", "LinkID", "LinkTypeID", asm3.media.ANIMAL, lastchanged=False)
     reparent("diary", "LinkID", "LinkType", asm3.diary.ANIMAL)
     reparent("log", "LinkID", "LinkType", asm3.log.ANIMAL)
 
     # Reparent the audit records for the reparented records in the audit log
     # by switching ParentLinks to the new ID.
     dbo.execute("UPDATE audittrail SET ParentLinks = %s WHERE ParentLinks LIKE '%%animal=%s %%'" % \
-        ( dbo.sql_replace("ParentLinks", "'animal=%s '" % mergeanimalid, "'animal=%s '" % animalid), mergeanimalid))
+        ( dbo.sql_replace("ParentLinks", "animal=%s " % mergeanimalid, "animal=%s " % animalid), mergeanimalid))
 
     dbo.delete("animal", mergeanimalid, username)
     asm3.audit.move(dbo, username, "animal", animalid, "", "Merged animal %d -> %d" % (mergeanimalid, animalid))

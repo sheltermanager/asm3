@@ -1014,15 +1014,15 @@ def merge_person(dbo, username, personid, mergepersonid):
     if personid == 0 or mergepersonid == 0:
         raise asm3.utils.ASMValidationError("Internal error: Cannot merge ID 0")
 
-    def reparent(table, field, linktypefield = "", linktype = -1):
+    def reparent(table, field, linktypefield = "", linktype = -1, lastchanged = True):
         try:
             if linktype >= 0:
                 dbo.update(table, "%s=%s AND %s=%s" % (field, mergepersonid, linktypefield, linktype), 
                     { field: personid }, username, 
-                    setLastChanged=(table != "media"))
+                    setLastChanged=lastchanged, setRecordVersion=lastchanged)
             else:
                 dbo.update(table, "%s=%s" % (field, mergepersonid), 
-                    { field: personid }, username)
+                    { field: personid }, username, setLastChanged=lastchanged, setRecordVersion=lastchanged)
         except Exception as err:
             asm3.al.error("error reparenting: %s -> %s, table=%s, field=%s, linktypefield=%s, linktype=%s, error=%s" % \
                 (mergepersonid, personid, table, field, linktypefield, linktype, err), "person.merge_person", dbo)
@@ -1076,17 +1076,18 @@ def merge_person(dbo, username, personid, mergepersonid):
     reparent("ownerdonation", "OwnerID")
     reparent("ownerinvestigation", "OwnerID")
     reparent("ownerlicence", "OwnerID")
+    reparent("ownerlookingfor", "OwnerID", lastchanged=False)
     reparent("ownertraploan", "OwnerID")
     reparent("ownervoucher", "OwnerID")
     reparent("users", "OwnerID")
-    reparent("media", "LinkID", "LinkTypeID", asm3.media.PERSON)
+    reparent("media", "LinkID", "LinkTypeID", asm3.media.PERSON, lastchanged=False)
     reparent("diary", "LinkID", "LinkType", asm3.diary.PERSON)
     reparent("log", "LinkID", "LinkType", asm3.log.PERSON)
 
     # Reparent the audit records for the reparented records in the audit log
     # by switching ParentLinks to the new ID.
-    dbo.execute("UPDATE audittrail SET ParentLinks = %s WHERE ParentLinks LIKE '%%person=%s %%'" % \
-        ( dbo.sql_replace("ParentLinks", "'person=%s '" % mergepersonid, "'person=%s '" % personid), mergepersonid))
+    dbo.execute("UPDATE audittrail SET ParentLinks = %s WHERE ParentLinks LIKE '%%owner=%s %%'" % \
+        ( dbo.sql_replace("ParentLinks", "owner=%s " % mergepersonid, "owner=%s " % personid), mergepersonid))
 
     dbo.delete("owner", mergepersonid, username)
     asm3.audit.move(dbo, username, "owner", personid, "", "Merged owner %d -> %d" % (mergepersonid, personid))
