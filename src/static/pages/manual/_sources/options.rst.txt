@@ -56,6 +56,15 @@ ASM contains a full double entry accounting package. The options here are:
   screens allowing you to calculate the taxable value (assumes your amount is
   gross and inclusive of tax/VAT/GST).
 
+* When calculating sales tax, assume the payment amount is net and add it:
+  Not everyone charges for items that are inclusive of tax and don't have the 
+  full amount to hand. With this option on, when the system calculates the sales
+  tax/VAT/GST on your payment amount, it will calculate it as if the amount was
+  exclusive of tax and then add it to the amount so that it becomes a gross
+  amount, inclusive of tax. Eg: $50 at 20% will produce $10 tax and the amount
+  will become $60 with this option on. With it off, tax will be calculated
+  as $8.33 for $50.
+
 * When receiving multiple payments, allow the due and received dates to be set:
   If this option is on, due and received date columns will be shown when taking
   payments from the Move screens and Receive a Payment screen.

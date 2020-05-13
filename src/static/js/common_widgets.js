@@ -876,18 +876,19 @@
             $("#amount" + i + ", #vatamount" + i).change(function() {
                 self.update_totals(); 
             });
-            // Recalculate VAT when just amount or rate changes
-            $("#amount" + i + ", #vatrate" + i).change(function() {
-                $("#vatamount" + i).currency("value", 
-                    common.tax_from_inclusive($("#amount" + i).currency("value"), format.to_int($("#vatrate" + i).val())));
-                self.update_totals();
-            });
             // Clicking the VAT checkbox enables and disables the rate/amount fields with defaults
             $("#vat" + i).change(function() {
                 if ($(this).is(":checked")) {
                     $("#vatrate" + i).val(config.number("VATRate"));
-                    $("#vatamount" + i).currency("value", 
-                        common.tax_from_inclusive($("#amount" + i).currency("value"), config.number("VATRate")));
+                    if (!config.bool("VATExclusive")) {
+                        $("#vatamount" + i).currency("value", 
+                            common.tax_from_inclusive($("#amount" + i).currency("value"), format.to_int($("#vatrate" + i).val())));
+                    }
+                    else {
+                        $("#vatamount" + i).currency("value", 
+                            common.tax_from_exclusive($("#amount" + i).currency("value"), format.to_int($("#vatrate" + i).val())));
+                        $("#amount" + i).currency("value", $("#amount" + i).currency("value") + $("#vatamount" + i).currency("value"));
+                    }
                     $("#vatboxes" + i).fadeIn();
                 }
                 else {

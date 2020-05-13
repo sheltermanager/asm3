@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ASM3\n"
 "Report-Msgid-Bugs-To: robin@sheltermanager.com\n"
-"POT-Creation-Date: 2020-05-10 13:10+0000\n"
+"POT-Creation-Date: 2020-05-13 13:45+0000\n"
 "Last-Translator: Robin Rawson-Tetley <robin@sheltermanager.com>\n"
 "Language-Team: en <robin@sheltermanager.com>\n"
 "Language: en\n"
@@ -4592,6 +4592,10 @@ msgstr ""
 
 #: dbupdate.py
 msgid "Expenses::Stationary"
+msgstr ""
+
+#: dbupdate.py
+msgid "Expenses::TransactionFee"
 msgstr ""
 
 #: dbupdate.py
@@ -12227,6 +12231,10 @@ msgstr ""
 msgid "Transaction Fee"
 msgstr ""
 
+#: dbupdate.py
+msgid "Transaction fees"
+msgstr ""
+
 #: accounts_trx.js
 msgid "Transactions"
 msgstr ""
@@ -13284,6 +13292,10 @@ msgstr ""
 
 #: options.js
 msgid "When a message is created, email it to each matching user"
+msgstr ""
+
+#: options.js
+msgid "When calculating sales tax, assume the payment amount is net and add it"
 msgstr ""
 
 #: options.js

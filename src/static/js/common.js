@@ -340,12 +340,23 @@
 
         /** Calculates the amount of tax/VAT from amount (an integer currency value)
          *  at rate (integer percentage).
+         *  assumes that amount is already inclusive of tax.
+         *  Return value is integer currency.
          */
         tax_from_inclusive: function(amount, rate) {
             var realrate = 1 + (rate / 100),
                 decamt = amount / 100.0,
                 netamt = (decamt / realrate) * 100;
             return amount - netamt;
+        },
+
+        /** Calculates the amount of tax/VAT from an amount (an integer currency value)
+         * at rate (integer percentage).
+         *  assumes that amount is exclusive of tax.
+         *  Return value is integer currency.
+         */
+        tax_from_exclusive: function(amount, rate) {
+            return (amount / 100.0) * rate;
         },
 
         /** URL routing mode - client or server */

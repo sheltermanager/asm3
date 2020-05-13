@@ -423,7 +423,13 @@ $(function() {
             $("#vat").change(function() {
                 if ($(this).is(":checked")) {
                     $("#vatrate").val(config.number("VATRate"));
-                    $("#vatamount").currency("value", common.tax_from_inclusive($("#amount").currency("value"), config.number("VATRate")));
+                    if (!config.bool("VATExclusive")) {
+                        $("#vatamount").currency("value", common.tax_from_inclusive($("#amount").currency("value"), config.number("VATRate")));
+                    }
+                    else {
+                        $("#vatamount").currency("value", common.tax_from_exclusive($("#amount").currency("value"), config.number("VATRate")));
+                        $("#amount").currency("value", $("#amount").currency("value") + $("#vatamount").currency("value"));
+                    }
                     $("#vatrate").closest("tr").fadeIn();
                     $("#vatamount").closest("tr").fadeIn();
                 }

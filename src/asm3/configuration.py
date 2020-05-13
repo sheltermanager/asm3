@@ -321,6 +321,7 @@ DEFAULTS = {
     "UseAutoInsurance": "No",
     "UseShortShelterCodes": "Yes", 
     "VATEnabled": "Yes",
+    "VATExclusive": "No",
     "VATRate": "20",
     "VetEnvoyHomeAgainEnabled": "Yes",
     "VetEnvoyAKCReuniteEnabled": "Yes",

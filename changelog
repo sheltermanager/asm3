@@ -1,6 +1,7 @@
 44
 ================
 
+13/05/20 Option to calculate sales tax exclusively
 11/05/20 Include owner<>currentowner when showing person links and icon #180
 11/05/20 Do not show original owner/non shelter on person links #180
 11/05/20 Reparent audit records during merge #792
