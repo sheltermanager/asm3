@@ -994,8 +994,8 @@
             button.click(function(e) {
                 popup.css({
                     "position": "fixed",
-                    "left": e.pageX + "px",
-                    "top": e.pageY + "px",
+                    "left": e.clientX + "px",
+                    "top": e.clientY + "px",
                     "z-index": "9999",
                     "max-width": "500px"
                 });
