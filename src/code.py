@@ -36,7 +36,7 @@ import asm3.movement
 import asm3.onlineform
 import asm3.paymentprocessor.base
 import asm3.paymentprocessor.paypal
-import asm3.paymentprocessor.stripe
+import asm3.paymentprocessor.stripeh
 import asm3.person
 import asm3.publish
 import asm3.publishers.base
@@ -4418,7 +4418,7 @@ class pp_stripe(ASMEndpoint):
             asm3.al.error("failed extracting dbname from client_reference_id: %s" % e, "code.pp_stripe")
             return
         try:
-            p = asm3.paymentprocessor.stripe.Stripe(dbo)
+            p = asm3.paymentprocessor.stripeh.Stripe(dbo)
             p.receive(o.data)
         except asm3.paymentprocessor.base.ProcessorError:
             # ProcessorError subclasses are thrown when there is a problem with the 

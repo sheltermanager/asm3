@@ -37,8 +37,14 @@ class Stripe(PaymentProcessor):
 
         item_description = item_description or ", ".join(paymenttypes)
         client_reference_id = "%s-%s" % (self.dbo.database, payref) # prefix database to payref 
+
+        # Stripe will reject blank URLs
         if return_url == "": return_url = "%s/static/pages/payment_success.html" % BASE_URL
         cancel_url = "%s/static/pages/payment_cancelled.html" % BASE_URL
+
+        # Stripe reject URLs that are not absolute and include the protocol
+        if not return_url.startswith("http"): return_url = "https://%s" % return_url
+
         api_key = asm3.configuration.stripe_secret_key(self.dbo)
         currency = asm3.configuration.currency_code(self.dbo)
 

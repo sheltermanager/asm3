@@ -5,7 +5,7 @@ import asm3.configuration
 import asm3.i18n
 import asm3.movement
 import asm3.paymentprocessor.paypal
-import asm3.paymentprocessor.stripe
+import asm3.paymentprocessor.stripeh
 import asm3.utils
 
 import sys
@@ -1291,7 +1291,7 @@ def get_payment_processor(dbo, name):
     if name == "paypal": 
         return asm3.paymentprocessor.paypal.PayPal(dbo)
     elif name == "stripe":
-        return asm3.paymentprocessor.stripe.Stripe(dbo)
+        return asm3.paymentprocessor.stripeh.Stripe(dbo)
     else:
         raise KeyError("No payment processor available for '%s'" % name)
 
