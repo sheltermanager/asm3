@@ -336,6 +336,7 @@ $(function() {
             $("#nettotal").html(format.currency(net));
             $("#feetotal").html(format.currency(fee));
             $("#vattotal").html(format.currency(vat));
+            $("#totals").toggle(due > 0 || tot > 0 || net > 0 || fee > 0 || vat > 0);
         },
 
         render: function() {
@@ -369,7 +370,7 @@ $(function() {
             }
             s += tableform.buttons_render(this.buttons);
             s += tableform.table_render(this.table);
-            s += '<div class="ui-state-highlight ui-corner-all" style="margin-top: 20px; padding: 0 .7em">';
+            s += '<div id="totals" class="ui-state-highlight ui-corner-all" style="margin-top: 20px; padding: 0 .7em">';
             s += '<p><span class="ui-icon ui-icon-info" style="float: left; margin-right: .3em;"></span>';
             s += '<span id="tdue">' + _("Due") + ': <span class="strong" id="duetotal"></span></span> ';
             s += '<span id="tgross">' + _("Gross") + ': <span class="strong" id="grosstotal"></span></span> ';
