@@ -1,6 +1,8 @@
 44
 ================
 
+14/05/20 Attach license documents to both animal and person
+14/05/20 Fix looking for to use updated good with children values
 14/05/20 Remove taxes/fees from stats
 14/05/20 Add PaymentFee wordkeys, PaymentAmount becomes net for compatibility
 14/05/20 Do not include received payments in payrefs at the checkout

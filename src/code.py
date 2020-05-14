@@ -2497,9 +2497,11 @@ class document_gen(ASMEndpoint):
             l = asm3.financial.get_licence(dbo, recid)
             if l is None:
                 raise asm3.utils.ASMValidationError("%d is not a valid licence id" % recid)
+            animalid = l["ANIMALID"]
             ownerid = l["OWNERID"]
             tempname += " - " + asm3.person.get_person_name(dbo, ownerid)
-            asm3.media.create_document_media(dbo, session.user, asm3.media.PERSON, ownerid, tempname, post["document"])
+            if animalid: asm3.media.create_document_media(dbo, session.user, asm3.media.ANIMAL, animalid, tempname, post["document"])
+            if ownerid: asm3.media.create_document_media(dbo, session.user, asm3.media.PERSON, ownerid, tempname, post["document"])
             self.redirect("person_media?id=%d" % ownerid)
         elif linktype == "MOVEMENT":
             m = asm3.movement.get_movement(dbo, recid)
@@ -2508,8 +2510,8 @@ class document_gen(ASMEndpoint):
             animalid = m["ANIMALID"]
             ownerid = m["OWNERID"]
             tempname = "%s - %s::%s" % (tempname, asm3.animal.get_animal_namecode(dbo, animalid), asm3.person.get_person_name(dbo, ownerid))
-            asm3.media.create_document_media(dbo, session.user, asm3.media.PERSON, ownerid, tempname, post["document"])
-            asm3.media.create_document_media(dbo, session.user, asm3.media.ANIMAL, animalid, tempname, post["document"])
+            if ownerid: asm3.media.create_document_media(dbo, session.user, asm3.media.PERSON, ownerid, tempname, post["document"])
+            if animalid: asm3.media.create_document_media(dbo, session.user, asm3.media.ANIMAL, animalid, tempname, post["document"])
             self.redirect("person_media?id=%d" % ownerid)
         else:
             raise asm3.utils.ASMValidationError("Linktype '%s' is invalid, cannot save" % linktype)
@@ -4459,6 +4461,7 @@ class person(JSONEndpoint):
             "diarytasks": asm3.diary.get_person_tasks(dbo),
             "flags": asm3.lookups.get_person_flags(dbo),
             "ynun": asm3.lookups.get_ynun(dbo),
+            "ynunk": asm3.lookups.get_ynunk(dbo),
             "homecheckhistory": asm3.person.get_homechecked(dbo, p.id),
             "jurisdictions": asm3.lookups.get_jurisdictions(dbo),
             "logtypes": asm3.lookups.get_log_types(dbo),
