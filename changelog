@@ -1,6 +1,7 @@
 44
 ================
 
+14/05/20 Do not include received payments in payrefs at the checkout
 14/05/20 Support for separate tax income transactions, fix gross payments
 14/05/20 Show "Email To" column when editing reports
 14/05/20 Show full totals on payments, fix move_adopt sales tax on fees

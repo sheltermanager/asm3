@@ -53,7 +53,7 @@ class PaymentProcessor(object):
     def getPayments(self, payref):
         """ Returns the list of payment records for payref (largest first) """
         receiptnumber = self.getReceiptNumber(payref)
-        return self.dbo.query(asm3.financial.get_donation_query(self.dbo) + " WHERE od.ReceiptNumber=? ORDER BY od.Donation DESC", [receiptnumber])
+        return self.dbo.query(asm3.financial.get_donation_query(self.dbo) + " WHERE od.ReceiptNumber=? AND od.Date Is Null ORDER BY od.Donation DESC", [receiptnumber])
 
     def getReceiptNumber(self, payref):
         """ Extracts the receipt number from a payref """
