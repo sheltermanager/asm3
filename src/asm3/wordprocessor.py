@@ -590,7 +590,9 @@ def animal_tags(dbo, a, includeAdditional=True, includeCosts=True, includeDiet=T
             "PAYMENTMETHOD":            "PAYMENTNAME",
             "PAYMENTDATE":              "d:DATE",
             "PAYMENTDATEDUE":           "d:DATEDUE",
-            "PAYMENTAMOUNT":            "c:DONATION",
+            "PAYMENTAMOUNT":            "c:NET",
+            "PAYMENTGROSS":             "c:GROSS",
+            "PAYMENTNET":               "c:NET",
             "PAYMENTFEE":               "c:FEE",
             "PAYMENTCOMMENTS":          "COMMENTS",
             "PAYMENTGIFTAID":           "y:ISGIFTAID",
@@ -867,9 +869,9 @@ def donation_tags(dbo, donations):
             "PAYMENTDATEDUE"+i      : python2display(l, p["DATEDUE"]),
             "PAYMENTQUANTITY"+i    : str(p["QUANTITY"]),
             "PAYMENTUNITPRICE"+i   : format_currency_no_symbol(l, p["UNITPRICE"]),
-            "PAYMENTGROSS"+i        : format_currency_no_symbol(l, p["DONATION"]),
-            "PAYMENTNET"+i          : format_currency_no_symbol(l, p["DONATION"] - p["VATAMOUNT"] - p["FEE"]),
-            "PAYMENTAMOUNT"+i       : format_currency_no_symbol(l, p["DONATION"] - p["VATAMOUNT"] - p["FEE"]),
+            "PAYMENTGROSS"+i        : format_currency_no_symbol(l, p["GROSS"]),
+            "PAYMENTNET"+i          : format_currency_no_symbol(l, p["NET"]),
+            "PAYMENTAMOUNT"+i       : format_currency_no_symbol(l, p["NET"]), 
             "PAYMENTFEE"+i          : format_currency_no_symbol(l, p["FEE"]),
             "PAYMENTCOMMENTS"+i     : p["COMMENTS"],
             "PAYMENTCOMMENTSFW"+i   : fw(p["COMMENTS"]),
@@ -904,8 +906,8 @@ def donation_tags(dbo, donations):
             totals["taxrate"] = p["VATRATE"]
         if p["DATE"] is not None: 
             totals["vat"] += asm3.utils.cint(p["VATAMOUNT"])
-            totals["net"] += asm3.utils.cint(p["DONATION"]) - asm3.utils.cint(p["VATAMOUNT"]) - asm3.utils.cint(p["FEE"])
-            totals["gross"] += asm3.utils.cint(p["DONATION"])
+            totals["net"] += asm3.utils.cint(p["NET"])
+            totals["gross"] += asm3.utils.cint(p["GROSS"])
         if p["DATE"] is None: 
             totals["due"] += asm3.utils.cint(p["DONATION"])
     # Add a copy of the donation tags without an index for compatibility

@@ -56,6 +56,8 @@ def get_donation_query(dbo):
     return "SELECT od.ID, od.DonationTypeID, od.DonationPaymentID, dt.DonationName, od.Date, od.DateDue, " \
         "od.Donation, od.MovementID, p.PaymentName, od.IsGiftAid, lk.Name AS IsGiftAidName, od.Frequency, " \
         "od.Quantity, od.UnitPrice, " \
+        "od.Donation AS Gross, " \
+        "od.Donation - COALESCE(od.VATAmount, 0) - COALESCE(od.Fee, 0) AS Net, " \
         "fr.Frequency AS FrequencyName, od.NextCreated, " \
         "od.ReceiptNumber, od.ChequeNumber, od.Fee, od.IsVAT, od.VATRate, od.VATAmount, " \
         "od.CreatedBy, od.CreatedDate, od.LastChangedBy, od.LastChangedDate, " \
