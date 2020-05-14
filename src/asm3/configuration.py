@@ -566,6 +566,7 @@ def anonymise_after_years(dbo):
 
 def asm_news(dbo, news=""):
     if news != "":
+        if news is None: news = ""
         cset(dbo, "ASMNews", news, sanitiseXSS = False)
     else:
         return cstring(dbo, "ASMNews")
