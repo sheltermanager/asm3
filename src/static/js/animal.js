@@ -7,7 +7,7 @@ $(function() {
 
         render_death: function() {
             return [
-                '<h3><a href="#">' + _("Death") + ' <img id="tabdeath" style="display: none" class="asm-icon asm-icon-death"></span></a></h3><div>',
+                '<h3><a href="#">' + _("Death") + ' <span id="tabdeath" style="display: none" class="asm-icon asm-icon-death"></span></a></h3><div>',
                 '<table class="additionaltarget" data="to6">',
                 '<tr>',
                 '<td>',
