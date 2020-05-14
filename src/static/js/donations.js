@@ -319,13 +319,22 @@ $(function() {
         },
 
         calculate_total: function() {
-            var tot = 0, due = 0, vat = 0;
+            var tot = 0, due = 0, vat = 0, net = 0, fee = 0;
             $.each(controller.rows, function(i, v) {
-                if (v.DATE) { tot += v.DONATION; }
+                if (v.DATE) { tot += v.DONATION; net += v.DONATION; }
                 else { due += v.DONATION; }
-                if (v.VATAMOUNT) { vat += v.VATAMOUNT; }
+                if (v.FEE) { fee += v.FEE; net -= v.FEE; }
+                if (v.VATAMOUNT) { vat += v.VATAMOUNT; net -= v.VATAMOUNT }
             });
-            $("#donationtotal").html(format.currency(tot) + " / " + format.currency(due));
+            $("#tdue").toggle(due > 0);
+            $("#tgross").toggle(tot > 0);
+            $("#tnet").toggle(net > 0);
+            $("#tfee").toggle(fee > 0);
+            $("#tvat").toggle(vat > 0);
+            $("#duetotal").html(format.currency(due));
+            $("#grosstotal").html(format.currency(tot));
+            $("#nettotal").html(format.currency(net));
+            $("#feetotal").html(format.currency(fee));
             $("#vattotal").html(format.currency(vat));
         },
 
@@ -362,10 +371,13 @@ $(function() {
             s += tableform.table_render(this.table);
             s += '<div class="ui-state-highlight ui-corner-all" style="margin-top: 20px; padding: 0 .7em">';
             s += '<p><span class="ui-icon ui-icon-info" style="float: left; margin-right: .3em;"></span>';
-            s += _("Total payments") + ': <span class="strong" id="donationtotal"></span> ';
+            s += '<span id="tdue">' + _("Due") + ': <span class="strong" id="duetotal"></span></span> ';
+            s += '<span id="tgross">' + _("Gross") + ': <span class="strong" id="grosstotal"></span></span> ';
             if (config.bool("VATEnabled")) {
-                s += _("Sales Tax") + ': <span class="strong" id="vattotal"></span> ';
+                s += '<span id="tvat">' + _("Sales Tax") + ': <span class="strong" id="vattotal"></span></span> ';
             }
+            s += '<span id="tfee">' + _("Fees") + ': <span class="strong" id="feetotal"></span></span> ';
+            s += '<span id="tnet">' + _("Net") + ': <span class="strong" id="nettotal"></span></span> ';
             s += '</p></div>';
             s += html.content_footer();
             return s;

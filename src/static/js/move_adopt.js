@@ -258,6 +258,10 @@ $(function() {
                 // with the fee from the animal assuming it's nonzero
                 if (!config.bool("DontShowAdoptionFee") && rec.FEE) {
                     $("#amount1").currency("value", rec.FEE);
+                    if ($("#vat1").is(":checked")) { 
+                        // Recalculate the tax
+                        $("#vat1").change();
+                    }
                     $("#feeinfo .subtext").html( _("This animal has an adoption fee of {0}").replace("{0}", format.currency(rec.FEE)));
                     $("#feeinfo").fadeIn();
                 }

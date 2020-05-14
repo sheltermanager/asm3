@@ -1,6 +1,7 @@
 44
 ================
 
+14/05/20 Show full totals on payments, fix move_adopt sales tax on fees
 13/05/20 Rename stripe to stripeh to avoid collisions on Python2
 13/05/20 Option to calculate sales tax exclusively
 11/05/20 Include owner<>currentowner when showing person links and icon #180
