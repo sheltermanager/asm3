@@ -324,7 +324,7 @@ $(function() {
                 if (v.DATE) { tot += v.DONATION; net += v.DONATION; }
                 else { due += v.DONATION; }
                 if (v.FEE) { fee += v.FEE; net -= v.FEE; }
-                if (v.VATAMOUNT) { vat += v.VATAMOUNT; net -= v.VATAMOUNT }
+                if (v.VATAMOUNT) { vat += v.VATAMOUNT; net -= v.VATAMOUNT; }
             });
             $("#tdue").toggle(due > 0);
             $("#tgross").toggle(tot > 0);

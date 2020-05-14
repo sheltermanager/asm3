@@ -1,6 +1,8 @@
 44
 ================
 
+14/05/20 Support for separate tax income transactions, fix gross payments
+14/05/20 Show "Email To" column when editing reports
 14/05/20 Show full totals on payments, fix move_adopt sales tax on fees
 13/05/20 Rename stripe to stripeh to avoid collisions on Python2
 13/05/20 Option to calculate sales tax exclusively

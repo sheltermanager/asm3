@@ -177,6 +177,7 @@ DEFAULTS = {
     "DonationFeeAccount": "21",
     "DonationTargetAccount": "9",
     "DonationTrxOverride": "No",
+    "DonationVATAccount": "22",
     "DonationOnMoveReserve": "Yes",
     "DontShowCombi": "Yes",
     "DontShowHeartworm": "Yes",
@@ -768,6 +769,9 @@ def donation_fee_account(dbo):
 
 def donation_trx_override(dbo):
     return cboolean(dbo, "DonationTrxOverride", DEFAULTS["DonationTrxOverride"] == "Yes")
+
+def donation_vat_account(dbo):
+    return cint(dbo, "DonationVATAccount", DEFAULTS["DonationVATAccount"])
 
 def email(dbo):
     return cstring(dbo, "EmailAddress")

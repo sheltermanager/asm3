@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ASM3\n"
 "Report-Msgid-Bugs-To: robin@sheltermanager.com\n"
-"POT-Creation-Date: 2020-05-13 13:45+0000\n"
+"POT-Creation-Date: 2020-05-14 10:57+0000\n"
 "Last-Translator: Robin Rawson-Tetley <robin@sheltermanager.com>\n"
 "Language-Team: en <robin@sheltermanager.com>\n"
 "Language: en\n"
@@ -4783,6 +4783,10 @@ msgstr ""
 msgid "Fee"
 msgstr ""
 
+#: donations.js
+msgid "Fees"
+msgstr ""
+
 #: dbupdate.py
 msgid "Female"
 msgstr ""
@@ -5528,6 +5532,10 @@ msgstr ""
 msgid "Greyhound"
 msgstr ""
 
+#: donations.js
+msgid "Gross"
+msgstr ""
+
 #: dbupdate.py
 msgid "Guinea Pig"
 msgstr ""
@@ -6107,6 +6115,10 @@ msgstr ""
 msgid "Income"
 msgstr ""
 
+#: options.js
+msgid "Income account for sales tax"
+msgstr ""
+
 #: dbupdate.py
 msgid "Income from an on-site shop"
 msgstr ""
@@ -6133,6 +6145,10 @@ msgstr ""
 
 #: dbupdate.py
 msgid "Income::OpeningBalances"
+msgstr ""
+
+#: dbupdate.py
+msgid "Income::SalesTax"
 msgstr ""
 
 #: dbupdate.py
@@ -7546,6 +7562,10 @@ msgstr ""
 
 #: dbupdate.py
 msgid "Neglect"
+msgstr ""
+
+#: donations.js
+msgid "Net"
 msgstr ""
 
 #: dbupdate.py
@@ -9860,7 +9880,8 @@ msgstr ""
 msgid "Saint Bernard St. Bernard"
 msgstr ""
 
-#: common_widgets.js donations.js clinic_appointment.js lookups.js
+#: dbupdate.py financial.py common_widgets.js donations.js
+#: clinic_appointment.js lookups.js
 msgid "Sales Tax"
 msgstr ""
 
@@ -12209,10 +12230,6 @@ msgstr ""
 
 #: stocklevel.js
 msgid "Total number of units in the container"
-msgstr ""
-
-#: donations.js
-msgid "Total payments"
 msgstr ""
 
 #: dbupdate.py

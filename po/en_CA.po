@@ -4,8 +4,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ASM3\n"
 "Report-Msgid-Bugs-To: robin@sheltermanager.com\n"
-"POT-Creation-Date: 2020-05-13 13:45+0000\n"
-"PO-Revision-Date: 2020-05-13 13:48+0100\n"
+"POT-Creation-Date: 2020-05-14 10:57+0000\n"
+"PO-Revision-Date: 2020-05-14 10:58+0100\n"
 "Last-Translator: Robin Rawson-Tetley <zanata@sheltermanager.com>\n"
 "Language-Team: LANGUAGE <support@sheltermanager.com>\n"
 "Language: en_CA\n"
@@ -731,7 +731,6 @@ msgid "Adopted Transferred In {0}"
 msgstr "Adopted Transferred In {0}"
 
 #: html.py common.js header_edit_header.js
-#| msgid "Adopted"
 msgid "Adopter"
 msgstr "Adopter"
 
@@ -4884,6 +4883,10 @@ msgstr "February"
 msgid "Fee"
 msgstr "Fee"
 
+#: donations.js
+msgid "Fees"
+msgstr "Fees"
+
 #: dbupdate.py
 msgid "Female"
 msgstr "Female"
@@ -5645,6 +5648,10 @@ msgstr "Grey and White"
 msgid "Greyhound"
 msgstr "Greyhound"
 
+#: donations.js
+msgid "Gross"
+msgstr "Gross"
+
 #: dbupdate.py
 msgid "Guinea Pig"
 msgstr "Guinea Pig"
@@ -6251,6 +6258,10 @@ msgstr "Include non-neutered/spayed animals"
 msgid "Income"
 msgstr "Income"
 
+#: options.js
+msgid "Income account for sales tax"
+msgstr "Income account for GST"
+
 #: dbupdate.py
 msgid "Income from an on-site shop"
 msgstr "Income from an on-site shop"
@@ -6278,6 +6289,12 @@ msgstr "Income::Interest"
 #: dbupdate.py
 msgid "Income::OpeningBalances"
 msgstr "Income::OpeningBalances"
+
+#: dbupdate.py
+#, fuzzy
+#| msgid "Income::"
+msgid "Income::SalesTax"
+msgstr "Income::"
 
 #: dbupdate.py
 msgid "Income::Shop"
@@ -7717,6 +7734,12 @@ msgstr "Negative"
 #: dbupdate.py
 msgid "Neglect"
 msgstr "Neglect"
+
+#: donations.js
+#, fuzzy
+#| msgid "Next"
+msgid "Net"
+msgstr "Next"
 
 #: dbupdate.py
 msgid "Netherland Dwarf"
@@ -10093,7 +10116,8 @@ msgstr "Saddlebred"
 msgid "Saint Bernard St. Bernard"
 msgstr "Saint Bernard St. Bernard"
 
-#: common_widgets.js donations.js clinic_appointment.js lookups.js
+#: dbupdate.py financial.py common_widgets.js donations.js
+#: clinic_appointment.js lookups.js
 msgid "Sales Tax"
 msgstr "GST"
 
@@ -12577,10 +12601,6 @@ msgstr "Total"
 #: stocklevel.js
 msgid "Total number of units in the container"
 msgstr "Total number of units in the container"
-
-#: donations.js
-msgid "Total payments"
-msgstr "Total payments"
 
 #: dbupdate.py
 msgid "Toucan"
@@ -15174,6 +15194,9 @@ msgstr "{plural3} weeks."
 #: i18n.py
 msgid "{plural3} years."
 msgstr "{plural3} years."
+
+#~ msgid "Total payments"
+#~ msgstr "Total payments"
 
 #~ msgid "6 weeks"
 #~ msgstr "6 weeks"

@@ -153,7 +153,7 @@ def get_account_id(dbo, code):
     """
     return dbo.query_int("SELECT ID FROM accounts WHERE Code = ?", [code])
     
-def get_accounts(dbo, onlyactive = False, onlybank = False, onlyexpense = False):
+def get_accounts(dbo, onlyactive = False, onlybank = False, onlyexpense = False, onlyincome = False):
     """
     Returns all of the accounts with reconciled/balance figures
     ID, CODE, DESCRIPTION, ACCOUNTTYPE, DONATIONTYPEID, RECONCILED, BALANCE, VIEWROLEIDS, VIEWROLES, EDITROLEIDS, EDITROLES
@@ -176,6 +176,9 @@ def get_accounts(dbo, onlyactive = False, onlybank = False, onlyexpense = False)
     efilter = ""
     if onlyexpense:
         efilter = "AND a.AccountType = %d" % EXPENSE
+    ifilter = ""
+    if onlyincome:
+        ifilter = "AND a.AccountType = %d" % INCOME
     roles = dbo.query("SELECT ar.*, r.RoleName FROM accountsrole ar INNER JOIN role r ON ar.RoleID = r.ID")
     accounts = dbo.query("SELECT a.*, at.AccountType AS AccountTypeName, " \
         "dt.DonationName, " \
@@ -186,8 +189,8 @@ def get_accounts(dbo, onlyactive = False, onlybank = False, onlyexpense = False)
         "FROM accounts a " \
         "INNER JOIN lksaccounttype at ON at.ID = a.AccountType " \
         "LEFT OUTER JOIN donationtype dt ON dt.ID = a.DonationTypeID " \
-        "WHERE a.ID > 0 %s %s %s " \
-        "ORDER BY a.AccountType, a.Code" % (pfilter, pfilter, pfilter, pfilter, afilter, bfilter, efilter))
+        "WHERE a.ID > 0 %s %s %s %s " \
+        "ORDER BY a.AccountType, a.Code" % (pfilter, pfilter, pfilter, pfilter, afilter, bfilter, efilter, ifilter))
     for a in accounts:
         dest = a.dest
         src = a.src
@@ -933,13 +936,20 @@ def update_matching_donation_transaction(dbo, username, odid, destinationaccount
                 target = asm3.configuration.donation_target_account(dbo)
 
     # Is the donation for a negative amount? If so, flip the accounts
-    # round as this is a refund donation and make the amount positive.
+    # round as this is a refund and make the amount positive.
     amount = d.DONATION
+    isrefund = False
     if amount < 0:
         oldtarget = target
         target = source
         source = oldtarget
         amount = abs(amount)
+        isrefund = True
+
+    # Is there a tax portion? If so, remove it from the amount before creating
+    # the transaction as we're going to do a separate transaction for the tax
+    if d.VATAMOUNT > 0 and not isrefund:
+        amount -= d.VATAMOUNT
 
     # Create the transaction
     tid = dbo.insert("accountstrx", {
@@ -954,8 +964,26 @@ def update_matching_donation_transaction(dbo, username, odid, destinationaccount
     }, username)
     asm3.al.debug("Trx created with ID %d" % int(tid), "financial.update_matching_donation_transaction", dbo)
 
+    # Is there a vat/tax portion of this payment that we need to create a transaction for?
+    if d.VATAMOUNT > 0 and not isrefund:
+        vatac = asm3.configuration.donation_vat_account(dbo)
+        if 0 == dbo.query_int("SELECT ID FROM accounts WHERE ID = ?", [vatac]):
+            vatac = dbo.query_int("SELECT ID FROM accounts WHERE AccountType=? ORDER BY ID", [INCOME])
+            asm3.al.error("No vat account configured, falling back to first income ac %s" % vatac, "financial.update_matching_donation_transaction", dbo)
+        tid = dbo.insert("accountstrx", {
+            "TrxDate":              d.DATE,
+            "Description":          asm3.i18n._("Sales Tax", l),
+            "Reconciled":           0,
+            "Amount":               d.VATAMOUNT,
+            "SourceAccountID":      vatac,
+            "DestinationAccountID": target,
+            "AnimalCostID":         0,
+            "OwnerDonationID":      odid
+        }, username)
+        asm3.al.debug("VAT trx created with ID %d" % int(tid), "financial.update_matching_donation_transaction", dbo)
+
     # Is there a fee on this payment that we need to create a transaction for?
-    if d.FEE > 0:
+    if d.FEE > 0 and not isrefund:
         feeac = asm3.configuration.donation_fee_account(dbo)
         if 0 == dbo.query_int("SELECT ID FROM accounts WHERE ID = ?", [feeac]):
             feeac = dbo.query_int("SELECT ID FROM accounts WHERE AccountType=? ORDER BY ID", [EXPENSE])

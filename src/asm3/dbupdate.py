@@ -37,7 +37,7 @@ VERSIONS = (
     34013, 34014, 34015, 34016, 34017, 34018, 34019, 34020, 34021, 34022, 34100,
     34101, 34102, 34103, 34104, 34105, 34106, 34107, 34108, 34109, 34110, 34111,
     34112, 34200, 34201, 34202, 34203, 34204, 34300, 34301, 34302, 34303, 34304,
-    34305, 34306, 34400, 34401, 34402, 34403, 34404
+    34305, 34306, 34400, 34401, 34402, 34403, 34404, 34405
 )
 
 LATEST_VERSION = VERSIONS[-1]
@@ -1629,6 +1629,7 @@ def sql_default_data(dbo, skip_config = False):
     sql += account(19, _("Expenses::Food", l), _("Animal food costs", l), 4, 0, 0)
     sql += account(20, _("Expenses::Board", l), _("Animal board costs", l), 4, 0, 1)
     sql += account(21, _("Expenses::TransactionFee", l), _("Transaction fees", l), 4, 0, 0)
+    sql += account(22, _("Income::SalesTax", l), _("Sales Tax", l), 5, 0, 0)
     sql += lookup2("animaltype", "AnimalType", 2, _("D (Dog)", l))
     sql += lookup2("animaltype", "AnimalType", 10, _("A (Stray Dog)", l))
     sql += lookup2("animaltype", "AnimalType", 11, _("U (Unwanted Cat)", l))
@@ -5224,3 +5225,14 @@ def update_34404(dbo):
         "WHERE Archived = 1 AND ActiveMovementType IN (1, 3, 5)")
     # Remove nulls
     dbo.execute_dbupdate("UPDATE animal SET OwnerID = 0 WHERE OwnerID Is Null")
+
+def update_34405(dbo):
+    # Correct payment amounts to gross where sales tax exists.
+    # This query only updates the amount if the tax value matches
+    # an exclusive of tax calculation.
+    # Eg: amount = 100, vat = 6, rate = 6 - will update amount to 106 because 100 * 0.06 == 6.0
+    #     amount = 106, vat = 6, rate = 6 - will not update as 106 * 0.06 == 6.35
+    dbo.execute_dbupdate("UPDATE ownerdonation SET donation = donation + vatamount, " \
+        "LastChangedBy = %s " \
+        "WHERE isvat = 1 and vatamount > 0 and vatrate > 0 and vatamount = ((donation / 100.0) * vatrate)" % 
+        dbo.sql_concat(["LastChangedBy", "'+dbupdate34405'"]))

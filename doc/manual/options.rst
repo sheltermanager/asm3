@@ -88,6 +88,12 @@ ASM contains a full double entry accounting package. The options here are:
   account to use. The destination account here denotes where the money will be
   moved to. If you do not set one, ASM will use the first bank account on file. 
 
+* Income account for sales tax: If you are creating matching transactions from
+  payment records and there is a tax/VAT/GST value present, the system will
+  write a transaction to deposit the tax into the target bank account from the
+  income account you nominate here, giving you an easy way to track your
+  tax burden while keeping your bank balances correct.
+
 * Expense account for transaction fees: If you are creating matching
   transactions from payment records and there is a fee present, the system will
   write a transaction to deduct the fee from the target bank account and send

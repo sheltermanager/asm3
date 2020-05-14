@@ -130,6 +130,9 @@ $(function() {
                     { field: "VIEWROLES", display: _("Roles"), formatter: function(row) {
                         return common.nulltostr(row.VIEWROLES).replace(/[|]+/g, ", ");
                     }},
+                    { field: "DAILYEMAIL", display: _("Email To"), formatter: function(row) {
+                        return common.replace_all(row.DAILYEMAIL, ",", "\n");
+                    }},
                     { field: "TITLE", display: _("Report Title"), initialsort: true },
                     { field: "DESCRIPTION", display: _("Description") }
                 ]
