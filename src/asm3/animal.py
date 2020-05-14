@@ -736,7 +736,7 @@ def get_stats(dbo, age=120):
         "(SELECT COUNT(*) FROM animal WHERE NonShelterAnimal = 0 AND DiedOffShelter = 0 AND DeceasedDate >= :from AND PutToSleep = 1) AS PTS, " \
         "(SELECT COUNT(*) FROM animal WHERE NonShelterAnimal = 0 AND DiedOffShelter = 0 AND DeceasedDate >= :from AND PutToSleep = 0 AND IsDOA = 0) AS Died, " \
         "(SELECT COUNT(*) FROM animal WHERE NonShelterAnimal = 0 AND DiedOffShelter = 0 AND DeceasedDate >= :from AND PutToSleep = 0 AND IsDOA = 1) AS DOA, " \
-        "(SELECT SUM(Donation) FROM ownerdonation WHERE Date >= :from) AS Donations, " \
+        "(SELECT SUM(Donation) - COALESCE(SUM(VATAmount), 0) - COALESCE(SUM(Fee), 0) FROM ownerdonation WHERE Date >= :from) AS Donations, " \
         "(SELECT SUM(CostAmount) FROM animalcost WHERE CostDate >= :from) + " \
             "(SELECT SUM(Cost) FROM animalvaccination WHERE DateOfVaccination >= :from) + " \
             "(SELECT SUM(Cost) FROM animaltest WHERE DateOfTest >= :from) + " \
