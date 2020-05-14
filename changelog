@@ -1,6 +1,7 @@
 44
 ================
 
+14/05/20 Fix ShowIf to work with radio buttons
 14/05/20 Attach license documents to both animal and person
 14/05/20 Fix looking for to use updated good with children values
 14/05/20 Remove taxes/fees from stats

@@ -160,6 +160,8 @@ $(document).ready(function() {
                     var v = $(this).val();
                     // Checkboxes always return on for val(), if it's a checkbox, set on/off from checked
                     if ($(this).attr("type") && $(this).attr("type") == "checkbox") { v = $(this).is(":checked") ? "on" : "off"; }
+                    // Radio buttons need reading differently to find the selected value
+                    if ($(this).attr("type") && $(this).attr("type") == "radio") { v = $("[name='" + $(this).attr("name") + "']:checked").val(); }
                     var toshow = false;
                     if (cond == "=") { toshow = v == value; }
                     else if (cond == "!") { toshow = v != value; }
