@@ -660,7 +660,8 @@ class media(ASMEndpoint):
             notes.append(m.MEDIANOTES)
         asm3.utils.send_email(dbo, post["from"], emailadd, post["cc"], post["bcc"], post["subject"], post["body"], "html", attachments)
         if post.boolean("addtolog"):
-            asm3.log.add_log(dbo, o.user, asm3.media.get_log_from_media_type(m["LINKTYPEID"]), m["LINKID"], post.integer("logtype"), "[%s] %s :: %s" % (emailadd, ", ".join(notes), asm3.utils.html_email_to_plain(post["body"])))
+            asm3.log.add_log_email(dbo, o.user, asm3.media.get_log_from_media_type(m["LINKTYPEID"]), m["LINKID"], post.integer("logtype"), 
+                emailadd, ", ".join(notes), post["body"])
         return emailadd
 
     def post_emailpdf(self, o):
@@ -680,7 +681,8 @@ class media(ASMEndpoint):
             notes.append(m.MEDIANOTES)
         asm3.utils.send_email(dbo, post["from"], emailadd, post["cc"], post["bcc"], post["subject"], post["body"], "html", attachments)
         if post.boolean("addtolog"):
-            asm3.log.add_log(dbo, o.user, asm3.media.get_log_from_media_type(m.LINKTYPEID), m.LINKID, post.integer("logtype"), "[%s] %s :: %s" % (emailadd, ", ".join(notes), asm3.utils.html_email_to_plain(post["body"])))
+            asm3.log.add_log_email(dbo, o.user, asm3.media.get_log_from_media_type(m.LINKTYPEID), m.LINKID, post.integer("logtype"), 
+                emailadd, ", ".join(notes), post["body"])
         return emailadd
 
     def post_emailsign(self, o):
@@ -697,7 +699,8 @@ class media(ASMEndpoint):
             if m.MEDIAMIMETYPE != "text/html": continue
             body.append("<p><a href=\"%s?account=%s&method=sign_document&formid=%d\">%s</a></p>" % (SERVICE_URL, dbo.database, mid, m.MEDIANOTES))
             if post.boolean("addtolog"):
-                asm3.log.add_log(dbo, o.user, asm3.media.get_log_from_media_type(m.LINKTYPEID), m.LINKID, post.integer("logtype"), "[%s] %s :: %s" % (emailadd, _("Document signing request", l), asm3.utils.html_email_to_plain("\n".join(body))))
+                asm3.log.add_log_email(dbo, o.user, asm3.media.get_log_from_media_type(m.LINKTYPEID), m.LINKID, post.integer("logtype"), 
+                    emailadd, _("Document signing request", l), "".join(body))
             asm3.media.create_log(dbo, o.user, mid, "ES01", _("Document signing request", l))
             asm3.utils.send_email(dbo, post["from"], emailadd, post["cc"], post["bcc"], post["subject"], "\n".join(body), "html")
         return emailadd
@@ -2770,7 +2773,8 @@ class donation(JSONEndpoint):
         url = "%s?%s" % (SERVICE_URL, asm3.utils.urlencode(params))
         body.append("<p><a href=\"%s\">%s</a></p>" % (url, post["payref"]))
         if post.boolean("addtolog"):
-            asm3.log.add_log(dbo, o.user, asm3.log.PERSON, post.integer("person"), post.integer("logtype"), "[%s] %s :: %s" % (emailadd, post["subject"], asm3.utils.html_email_to_plain("\n".join(body))))
+            asm3.log.add_log_email(dbo, o.user, asm3.log.PERSON, post.integer("person"), post.integer("logtype"), 
+                emailadd, post["subject"], "".join(body))
         asm3.utils.send_email(dbo, post["from"], emailadd, post["cc"], post["bcc"], post["subject"], "\n".join(body), "html")
         return emailadd
 

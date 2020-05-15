@@ -31,3 +31,18 @@ class TestUtils(unittest.TestCase):
         assert rows[0]["FIELD1"].find("quoted") != -1
         assert len(rows[0]) == 2
 
+    def test_html_to_text(self):
+        data = "<!DOCTYPE html>" \
+            "<html><body><p>Unordered</p><ul><li>item 1</li><li>item 2</li></ul>" \
+            "<p>Ordered</p><ol><li>item 1</li><li>item 2</li></ol>" \
+            "<div>Nested <span>span content</span></div>" \
+            "<div><p>Nested div content</p></div>" \
+            "<table>" \
+            "<tr><td><p>cell</p><p>1</p></td><td>cell 2</td><td>cell 3</td></tr>" \
+            "<tr><td>cell 4</td><td>cell 5</td><td>cell 6</td></tr>" \
+            "</table></body></html>"
+        plain = asm3.utils.html_to_text(data)
+        assert plain.find("* item 1") != -1
+        assert plain.find("1. item 1") != -1
+        assert plain.find("cell 1") != -1
+

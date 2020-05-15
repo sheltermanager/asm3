@@ -1299,7 +1299,7 @@ def send_email_from_form(dbo, username, post):
     body = post["body"]
     rv = asm3.utils.send_email(dbo, emailfrom, emailto, emailcc, emailbcc, subject, body, "html")
     if addtolog == 1:
-        asm3.log.add_log(dbo, username, asm3.log.PERSON, post.integer("personid"), logtype, asm3.utils.html_email_to_plain(body))
+        asm3.log.add_log_email(dbo, username, asm3.log.PERSON, post.integer("personid"), logtype, emailto, subject, body)
     return rv
 
 def lookingfor_summary(dbo, personid, p = None):

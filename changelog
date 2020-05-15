@@ -1,6 +1,8 @@
 44
 ================
 
+15/05/20 Make sure to/subject included when logging every email #820
+15/05/20 Better HTML to text support for emails #820
 15/05/20 Refactor timeline to work with SQLite so all queries unit tested
 15/05/20 Remove news and cached reports from config and put in disk cache #821
 14/05/20 Fix null error when auto-emailing diary notes

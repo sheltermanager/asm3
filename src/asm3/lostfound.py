@@ -307,7 +307,7 @@ def send_email_from_form(dbo, username, post):
     body = post["body"]
     rv = asm3.utils.send_email(dbo, emailfrom, emailto, emailcc, emailbcc, subject, body, ishtml == 1 and "html" or "plain")
     if addtolog == 1:
-        asm3.log.add_log(dbo, username, post["lfmode"] == "lost" and asm3.log.LOSTANIMAL or asm3.log.FOUNDANIMAL, post.integer("lfid"), logtype, body)
+        asm3.log.add_log_email(dbo, username, post["lfmode"] == "lost" and asm3.log.LOSTANIMAL or asm3.log.FOUNDANIMAL, post.integer("lfid"), logtype, emailto, subject, body)
     return rv
 
 def words(str1, str2, maxpoints):
