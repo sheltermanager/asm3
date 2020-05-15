@@ -864,10 +864,10 @@ class main(JSONEndpoint):
         # Install recommended reports if no reports are currently installed
         if dbo.query_int("SELECT COUNT(ID) FROM customreport") == 0: asm3.reports.install_recommended_smcom_reports(dbo, o.user)
         # News
-        news = asm3.configuration.asm_news(dbo)
-        if news == "":
+        news = asm3.cachedisk.get("news", "news")
+        if news is None:
             news = asm3.utils.get_asm_news(dbo)
-            asm3.configuration.asm_news(dbo, news)
+            asm3.cachedisk.put("news", "news", news, CACHE_ONE_DAY)
         # Welcome dialog
         showwelcome = False
         if asm3.configuration.show_first_time_screen(dbo) and session.superuser == 1:
@@ -915,8 +915,8 @@ class main(JSONEndpoint):
         if asm3.configuration.show_alerts_home_page(dbo):
             alerts = asm3.animal.get_alerts(dbo, o.locationfilter, o.siteid, o.visibleanimalids, age=age)
             if len(alerts) > 0: 
-                alerts[0]["LOOKFOR"] = asm3.configuration.lookingfor_last_match_count(dbo)
-                alerts[0]["LOSTFOUND"] = asm3.configuration.lostfound_last_match_count(dbo)
+                alerts[0]["LOOKFOR"] = asm3.cachedisk.get("lookingfor_lastmatchcount", dbo.database)
+                alerts[0]["LOSTFOUND"] = asm3.cachedisk.get("lostfound_lastmatchcount", dbo.database)
         # Stats
         stats = []
         if asm3.configuration.show_stats_home_page(dbo) != "none":
@@ -3595,8 +3595,8 @@ class lostfound_match(ASMEndpoint):
         self.cache_control(0)
         # If no parameters have been given, use the cached daily copy of the match report
         if lostanimalid == 0 and foundanimalid == 0 and animalid == 0:
-            asm3.al.debug("no parameters given, using cached report at /reports/daily/lost_found_match.html", "code.lostfound_match", dbo)
-            return asm3.configuration.lostfound_report(dbo)
+            asm3.al.debug("no parameters given, using cached report", "code.lostfound_match", dbo)
+            return asm3.cachedisk.get("lostfound_report", dbo.database)
         else:
             asm3.al.debug("match lost=%d, found=%d, animal=%d" % (lostanimalid, foundanimalid, animalid), "code.lostfound_match", dbo)
             return asm3.lostfound.match_report(dbo, session.user, lostanimalid, foundanimalid, animalid)
@@ -4784,7 +4784,7 @@ class person_lookingfor(ASMEndpoint):
     def content(self, o):
         self.content_type("text/html")
         if o.post.integer("personid") == 0:
-            return asm3.configuration.lookingfor_report(o.dbo)
+            return asm3.cachedisk.get("lookingfor_report", o.dbo.database)
         else:
             return asm3.person.lookingfor_report(o.dbo, o.user, o.post.integer("personid"))
 

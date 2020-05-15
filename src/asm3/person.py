@@ -4,6 +4,7 @@ import asm3.al
 import asm3.animal
 import asm3.asynctask
 import asm3.audit
+import asm3.cachedisk
 import asm3.configuration
 import asm3.dbfs
 import asm3.diary
@@ -1577,12 +1578,14 @@ def update_missing_geocodes(dbo):
 
 def update_lookingfor_report(dbo):
     """
-    Updates the latest version of the looking for report 
+    Updates the latest version of the looking for report in the cache
     """
     asm3.al.debug("updating lookingfor report", "person.update_lookingfor_report", dbo)
-    asm3.configuration.lookingfor_report(dbo, lookingfor_report(dbo, limit = 1000))
-    asm3.configuration.lookingfor_last_match_count(dbo, lookingfor_last_match_count(dbo))
-    return "OK %d" % lookingfor_last_match_count(dbo)
+    s = lookingfor_report(dbo, limit=1000)
+    count = lookingfor_last_match_count(dbo)
+    asm3.cachedisk.put("lookingfor_report", dbo.database, s, 86400)
+    asm3.cachedisk.put("lookingfor_lastmatchcount", dbo.database, count, 86400)
+    return "OK %d" % count
 
 def update_anonymise_personal_data(dbo, overrideretainyears = None):
     """

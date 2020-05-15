@@ -1,6 +1,7 @@
 44
 ================
 
+15/05/20 Remove news and cached reports from config and put in disk cache #821
 14/05/20 Fix null error when auto-emailing diary notes
 14/05/20 Fix ShowIf to work with radio buttons
 14/05/20 Attach license documents to both animal and person
