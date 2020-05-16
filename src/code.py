@@ -4193,24 +4193,24 @@ class onlineform_incoming(JSONEndpoint):
         self.check(asm3.users.ADD_LOST_ANIMAL)
         rv = []
         for pid in o.post.integer_list("ids"):
-            collationid, lostanimalid, personname = asm3.onlineform.create_lostanimal(o.dbo, o.user, pid)
-            rv.append("%d|%d|%s|0" % (collationid, lostanimalid, personname))
+            collationid, lostanimalid, personname, status = asm3.onlineform.create_lostanimal(o.dbo, o.user, pid)
+            rv.append("%d|%d|%s|%s" % (collationid, lostanimalid, personname, status))
         return "^$".join(rv)
 
     def post_foundanimal(self, o):
         self.check(asm3.users.ADD_FOUND_ANIMAL)
         rv = []
         for pid in o.post.integer_list("ids"):
-            collationid, foundanimalid, personname = asm3.onlineform.create_foundanimal(o.dbo, o.user, pid)
-            rv.append("%d|%d|%s|0" % (collationid, foundanimalid, personname))
+            collationid, foundanimalid, personname, status = asm3.onlineform.create_foundanimal(o.dbo, o.user, pid)
+            rv.append("%d|%d|%s|%s" % (collationid, foundanimalid, personname, status))
         return "^$".join(rv)
 
     def post_incident(self, o):
         self.check(asm3.users.ADD_INCIDENT)
         rv = []
         for pid in o.post.integer_list("ids"):
-            collationid, incidentid, personname = asm3.onlineform.create_animalcontrol(o.dbo, o.user, pid)
-            rv.append("%d|%d|%s|0" % (collationid, incidentid, personname))
+            collationid, incidentid, personname, status = asm3.onlineform.create_animalcontrol(o.dbo, o.user, pid)
+            rv.append("%d|%d|%s|%s" % (collationid, incidentid, personname, status))
         return "^$".join(rv)
 
     def post_transport(self, o):
@@ -4225,8 +4225,8 @@ class onlineform_incoming(JSONEndpoint):
         self.check(asm3.users.ADD_WAITING_LIST)
         rv = []
         for pid in o.post.integer_list("ids"):
-            collationid, wlid, personname = asm3.onlineform.create_waitinglist(o.dbo, o.user, pid)
-            rv.append("%d|%d|%s|0" % (collationid, wlid, personname))
+            collationid, wlid, personname, status = asm3.onlineform.create_waitinglist(o.dbo, o.user, pid)
+            rv.append("%d|%d|%s|%s" % (collationid, wlid, personname, status))
         return "^$".join(rv)
 
 class onlineform_incoming_print(ASMEndpoint):

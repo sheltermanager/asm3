@@ -1069,12 +1069,12 @@ def create_animalcontrol(dbo, username, collationid):
     if "callnotes" not in d or "dispatchaddress" not in d:
         raise asm3.utils.ASMValidationError(asm3.i18n._("There is not enough information in the form to create an incident record (need call notes and dispatch address).", l))
     # We need the person/caller record before we create the incident
-    collationid, personid, personname = create_person(dbo, username, collationid)
+    collationid, personid, personname, status = create_person(dbo, username, collationid)
     d["caller"] = personid
     # Create the incident 
     incidentid = asm3.animalcontrol.insert_animalcontrol_from_form(dbo, asm3.utils.PostedData(d, dbo.locale), username)
     attach_form(dbo, username, asm3.media.ANIMALCONTROL, incidentid, collationid)
-    return (collationid, incidentid, "%s - %s" % (asm3.utils.padleft(incidentid, 6), personname))
+    return (collationid, incidentid, "%s - %s" % (asm3.utils.padleft(incidentid, 6), personname), status)
 
 def create_lostanimal(dbo, username, collationid):
     """
@@ -1109,12 +1109,12 @@ def create_lostanimal(dbo, username, collationid):
     if "markings" not in d or "arealost" not in d:
         raise asm3.utils.ASMValidationError(asm3.i18n._("There is not enough information in the form to create a lost animal record (need a description and area lost).", l))
     # We need the person record before we create the lost animal
-    collationid, personid, personname = create_person(dbo, username, collationid)
+    collationid, personid, personname, status = create_person(dbo, username, collationid)
     d["owner"] = personid
     # Create the lost animal
     lostanimalid = asm3.lostfound.insert_lostanimal_from_form(dbo, asm3.utils.PostedData(d, dbo.locale), username)
     attach_form(dbo, username, asm3.media.LOSTANIMAL, lostanimalid, collationid)
-    return (collationid, lostanimalid, "%s - %s" % (asm3.utils.padleft(lostanimalid, 6), personname))
+    return (collationid, lostanimalid, "%s - %s" % (asm3.utils.padleft(lostanimalid, 6), personname), status)
   
 def create_foundanimal(dbo, username, collationid):
     """
@@ -1149,12 +1149,12 @@ def create_foundanimal(dbo, username, collationid):
     if "markings" not in d or "areafound" not in d:
         raise asm3.utils.ASMValidationError(asm3.i18n._("There is not enough information in the form to create a found animal record (need a description and area found).", l))
     # We need the person record before we create the found animal
-    collationid, personid, personname = create_person(dbo, username, collationid)
+    collationid, personid, personname, status = create_person(dbo, username, collationid)
     d["owner"] = personid
     # Create the found animal
     foundanimalid = asm3.lostfound.insert_foundanimal_from_form(dbo, asm3.utils.PostedData(d, dbo.locale), username)
     attach_form(dbo, username, asm3.media.FOUNDANIMAL, foundanimalid, collationid)
-    return (collationid, foundanimalid, "%s - %s" % (asm3.utils.padleft(foundanimalid, 6), personname))
+    return (collationid, foundanimalid, "%s - %s" % (asm3.utils.padleft(foundanimalid, 6), personname), status)
 
 def create_transport(dbo, username, collationid):
     """
@@ -1228,12 +1228,12 @@ def create_waitinglist(dbo, username, collationid):
     if "description" not in d:
         raise asm3.utils.ASMValidationError(asm3.i18n._("There is not enough information in the form to create a waiting list record (need a description).", l))
     # We need the person record before we create the waiting list
-    collationid, personid, personname = create_person(dbo, username, collationid)
+    collationid, personid, personname, status = create_person(dbo, username, collationid)
     d["owner"] = personid
     # Create the waiting list
     wlid = asm3.waitinglist.insert_waitinglist_from_form(dbo, asm3.utils.PostedData(d, dbo.locale), username)
     attach_form(dbo, username, asm3.media.WAITINGLIST, wlid, collationid)
-    return (collationid, wlid, "%s - %s" % (asm3.utils.padleft(wlid, 6), personname))
+    return (collationid, wlid, "%s - %s" % (asm3.utils.padleft(wlid, 6), personname), status)
 
 def auto_remove_old_incoming_forms(dbo):
     """
