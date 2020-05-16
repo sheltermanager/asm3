@@ -1,6 +1,7 @@
 44
 ================
 
+16/05/20 Strip base64 data uris from online form emails #823
 15/05/20 Merge person should update new current owner field
 15/05/20 Make sure to/subject included when logging every email #820
 15/05/20 Better HTML to text support for emails #820

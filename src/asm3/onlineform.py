@@ -419,7 +419,7 @@ def get_onlineformincoming_detail(dbo, collationid):
     """ Returns the detail lines for an incoming post """
     return dbo.query("SELECT * FROM onlineformincoming WHERE CollationID = ? ORDER BY DisplayIndex", [collationid])
 
-def get_onlineformincoming_html(dbo, collationid, includeRaw = False):
+def get_onlineformincoming_html(dbo, collationid, include_raw=True, include_images=True):
     """ Returns an HTML fragment of the incoming form data """
     h = []
     h.append('<table width="100%">')
@@ -427,8 +427,8 @@ def get_onlineformincoming_html(dbo, collationid, includeRaw = False):
         label = f.LABEL
         if label is None or label == "": label = f.FIELDNAME
         v = f.VALUE
-        if v.startswith("RAW::") and not includeRaw: 
-            continue
+        if v.startswith("RAW::") and not include_raw: continue
+        if v.startswith("data:") and not include_images: continue
         if v.startswith("RAW::"): 
             h.append('<tr>')
             h.append('<td colspan="2">%s</td>' % v[5:])
@@ -456,11 +456,13 @@ def get_onlineformincoming_plain(dbo, collationid):
         h.append("%s: %s\n" % (label, f.VALUE))
     return "\n".join(h)
 
-def get_onlineformincoming_html_print(dbo, ids):
+def get_onlineformincoming_html_print(dbo, ids, include_raw=True, include_images=True):
     """
     Returns a complete printable version of the online form
     (header/footer wrapped around the html call above)
     ids: A list of integer ids
+    include_raw: Include fields that are raw markup
+    include_images: Include base64 encoded images
     """
     header = get_onlineform_header(dbo)
     headercontent = header[header.find("<body>")+6:]
@@ -473,7 +475,7 @@ def get_onlineformincoming_html_print(dbo, ids):
         h.append(headercontent)
         formheader = get_onlineformincoming_formheader(dbo, collationid)
         h.append(formheader)
-        h.append(get_onlineformincoming_html(dbo, asm3.utils.cint(collationid), True))
+        h.append(get_onlineformincoming_html(dbo, asm3.utils.cint(collationid), include_raw=include_raw, include_images=include_images))
         formfooter = get_onlineformincoming_formfooter(dbo, collationid)
         h.append(formfooter)
         h.append(footercontent)
@@ -733,8 +735,8 @@ def insert_onlineformincoming_from_form(dbo, post, remoteip):
         "INNER JOIN onlineformincoming oi ON oi.FormName = o.Name " \
         "WHERE oi.CollationID = ?", [collationid])
 
-    # The submitted form for including in emails
-    formdata = get_onlineformincoming_html_print(dbo, [collationid,])
+    # The submitted form for including in emails (images are attached so not included)
+    formdata = get_onlineformincoming_html_print(dbo, [collationid,], include_images=False)
 
     if submitteremail != "" and submitteremail.find("@") != -1 and emailsubmitter == 1:
         # Get the confirmation message. Prepend it to a copy of the submission

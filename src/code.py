@@ -4144,7 +4144,7 @@ class onlineform_incoming(JSONEndpoint):
 
     def post_view(self, o):
         self.check(asm3.users.VIEW_INCOMING_FORMS)
-        return asm3.onlineform.get_onlineformincoming_html(o.dbo, o.post.integer("collationid"))
+        return asm3.onlineform.get_onlineformincoming_html(o.dbo, o.post.integer("collationid"), include_raw=False)
 
     def post_delete(self, o):
         self.check(asm3.users.DELETE_INCOMING_FORMS)
