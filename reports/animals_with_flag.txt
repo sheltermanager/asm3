@@ -13,7 +13,7 @@ $VAR flag ANIMALFLAG$
 SELECT a.AnimalName, a.ShelterCode, t.AnimalType, a.DisplayLocation, a.AdditionalFlags
 FROM animal a
 INNER JOIN animaltype t ON t.ID = a.AnimalTypeID
-WHERE a.Archived = 0 AND (a.AdditionalFlags LIKE '$@flag$|%' OR a.AdditionalFlags LIKE '%$@flag$|') 
+WHERE a.Archived = 0 AND a.AdditionalFlags LIKE '%$@flag$|%' 
 ORDER BY t.AnimalType, a.AnimalName
 ###
 $$HEADER
@@ -60,7 +60,7 @@ o.EmailAddress, o.HomeTelephone, o.WorkTelephone, o.MobileTelephone
 FROM animal a
 INNER JOIN animaltype t ON t.ID = a.AnimalTypeID
 INNER JOIN owner o ON a.OriginalOwnerID = o.ID
-WHERE a.IsNonShelterAnimal = 1 AND (a.AdditionalFlags LIKE '$@flag$|%' OR a.AdditionalFlags LIKE '%$@flag$|') 
+WHERE a.IsNonShelterAnimal = 1 AND a.AdditionalFlags LIKE '%$@flag$|%' 
 ORDER BY t.AnimalType, a.AnimalName
 ###
 $$HEADER
