@@ -901,8 +901,10 @@ def create_animal(dbo, username, collationid):
     """
     Creates an animal record from the incoming form data with collationid.
     Also, attaches the form to the animal as media.
-    The return value is a tuple of collationid, animalid, sheltercode - animalname
-    "animalname", "code", "microchip", "age", "dateofbirth", "entryreason", "markings", "comments", "hiddencomments", "type", "species", "breed1", "breed", "color", "sex"
+    The return value is a tuple of collationid, animalid, sheltercode - animalname, status
+    status is 0 for created, 1 for updated existing
+    "animalname", "code", "microchip", "age", "dateofbirth", "entryreason", "markings", 
+    "comments", "hiddencomments", "type", "species", "breed1", "breed", "color", "sex"
     """
     l = dbo.locale
     fields = get_onlineformincoming_detail(dbo, collationid)
@@ -939,11 +941,13 @@ def create_animal(dbo, username, collationid):
         raise asm3.utils.ASMValidationError(asm3.i18n._("There is not enough information in the form to create an animal record (need animalname).", l))
     # Are date of birth and age blank? Assume an age of 1.0 if they are
     if d["dateofbirth"] == "" and d["estimatedage"] == "": d["estimatedage"] = "1.0"
+    status = 0 # default: created new record
     # Does this animal code already exist?
     animalid = 0
     if "code" in d and d["code"] != "":
         similar = asm3.animal.get_animal_sheltercode(dbo, d["code"])
         if similar is not None:
+            status = 1 # updated existing record
             animalid = similar.ID
             # Merge additional fields
             asm3.additional.merge_values_for_link(dbo, asm3.utils.PostedData(d, dbo.locale), animalid, "animal")
@@ -955,13 +959,14 @@ def create_animal(dbo, username, collationid):
         d["internallocation"] = asm3.configuration.default_location(dbo)
         animalid, sheltercode = asm3.animal.insert_animal_from_form(dbo, asm3.utils.PostedData(d, dbo.locale), username)
     attach_form(dbo, username, asm3.media.ANIMAL, animalid, collationid)
-    return (collationid, animalid, "%s - %s" % (sheltercode, d["animalname"]))
+    return (collationid, animalid, "%s - %s" % (sheltercode, d["animalname"]), status)
 
 def create_person(dbo, username, collationid):
     """
     Creates a person record from the incoming form data with collationid.
     Also, attaches the form to the person as media.
-    The return value is tuple of collationid, personid, personname
+    The return value is tuple of collationid, personid, personname, status
+    status is 0 for created, 1 for updated existing, 2 for existing and banned
     """
     l = dbo.locale
     fields = get_onlineformincoming_detail(dbo, collationid)
@@ -1001,6 +1006,7 @@ def create_person(dbo, username, collationid):
     # Have we got enough info to create the person record? We just need a surname
     if "surname" not in d:
         raise asm3.utils.ASMValidationError(asm3.i18n._("There is not enough information in the form to create a person record (need a surname).", l))
+    status = 0 # created
     # Does this person already exist?
     personid = 0
     if "surname" in d and "forenames" in d and "address" in d:
@@ -1011,6 +1017,8 @@ def create_person(dbo, username, collationid):
         similar = asm3.person.get_person_similar(dbo, demail, dmobile, d["surname"], d["forenames"], d["address"])
         if len(similar) > 0:
             personid = similar[0].ID
+            status = 1 # updated existing record
+            if similar[0].ISBANNED == 1: status = 2 # existing record and person banned
             # Merge flags and any extra details
             asm3.person.merge_flags(dbo, username, personid, flags)
             # Merge additional fields
@@ -1035,7 +1043,7 @@ def create_person(dbo, username, collationid):
             except Exception as err:
                 asm3.al.warn("could not create reservation for %d on %s (%s)" % (personid, v, err), "create_person", dbo)
                 web.ctx.status = "200 OK" # ASMValidationError sets status to 500
-    return (collationid, personid, personname)
+    return (collationid, personid, personname, status)
 
 def create_animalcontrol(dbo, username, collationid):
     """

@@ -4177,16 +4177,16 @@ class onlineform_incoming(JSONEndpoint):
         self.check(asm3.users.ADD_MEDIA)
         rv = []
         for pid in o.post.integer_list("ids"):
-            collationid, animalid, animalname = asm3.onlineform.create_animal(o.dbo, o.user, pid)
-            rv.append("%d|%d|%s" % (collationid, animalid, animalname))
+            collationid, animalid, animalname, status = asm3.onlineform.create_animal(o.dbo, o.user, pid)
+            rv.append("%d|%d|%s|%s" % (collationid, animalid, animalname, status))
         return "^$".join(rv)
 
     def post_person(self, o):
         self.check(asm3.users.ADD_PERSON)
         rv = []
         for pid in o.post.integer_list("ids"):
-            collationid, personid, personname = asm3.onlineform.create_person(o.dbo, o.user, pid)
-            rv.append("%d|%d|%s" % (collationid, personid, personname))
+            collationid, personid, personname, status = asm3.onlineform.create_person(o.dbo, o.user, pid)
+            rv.append("%d|%d|%s|%s" % (collationid, personid, personname, status))
         return "^$".join(rv)
 
     def post_lostanimal(self, o):
@@ -4194,7 +4194,7 @@ class onlineform_incoming(JSONEndpoint):
         rv = []
         for pid in o.post.integer_list("ids"):
             collationid, lostanimalid, personname = asm3.onlineform.create_lostanimal(o.dbo, o.user, pid)
-            rv.append("%d|%d|%s" % (collationid, lostanimalid, personname))
+            rv.append("%d|%d|%s|0" % (collationid, lostanimalid, personname))
         return "^$".join(rv)
 
     def post_foundanimal(self, o):
@@ -4202,7 +4202,7 @@ class onlineform_incoming(JSONEndpoint):
         rv = []
         for pid in o.post.integer_list("ids"):
             collationid, foundanimalid, personname = asm3.onlineform.create_foundanimal(o.dbo, o.user, pid)
-            rv.append("%d|%d|%s" % (collationid, foundanimalid, personname))
+            rv.append("%d|%d|%s|0" % (collationid, foundanimalid, personname))
         return "^$".join(rv)
 
     def post_incident(self, o):
@@ -4210,7 +4210,7 @@ class onlineform_incoming(JSONEndpoint):
         rv = []
         for pid in o.post.integer_list("ids"):
             collationid, incidentid, personname = asm3.onlineform.create_animalcontrol(o.dbo, o.user, pid)
-            rv.append("%d|%d|%s" % (collationid, incidentid, personname))
+            rv.append("%d|%d|%s|0" % (collationid, incidentid, personname))
         return "^$".join(rv)
 
     def post_transport(self, o):
@@ -4218,7 +4218,7 @@ class onlineform_incoming(JSONEndpoint):
         rv = []
         for pid in o.post.integer_list("ids"):
             collationid, animalid, animalname = asm3.onlineform.create_transport(o.dbo, o.user, pid)
-            rv.append("%d|%d|%s" % (collationid, animalid, animalname))
+            rv.append("%d|%d|%s|0" % (collationid, animalid, animalname))
         return "^$".join(rv)
 
     def post_waitinglist(self, o):
@@ -4226,7 +4226,7 @@ class onlineform_incoming(JSONEndpoint):
         rv = []
         for pid in o.post.integer_list("ids"):
             collationid, wlid, personname = asm3.onlineform.create_waitinglist(o.dbo, o.user, pid)
-            rv.append("%d|%d|%s" % (collationid, wlid, personname))
+            rv.append("%d|%d|%s|0" % (collationid, wlid, personname))
         return "^$".join(rv)
 
 class onlineform_incoming_print(ASMEndpoint):

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ASM3\n"
 "Report-Msgid-Bugs-To: robin@sheltermanager.com\n"
-"POT-Creation-Date: 2020-05-14 10:57+0000\n"
+"POT-Creation-Date: 2020-05-16 11:44+0000\n"
 "Last-Translator: Robin Rawson-Tetley <robin@sheltermanager.com>\n"
 "Language-Team: en <robin@sheltermanager.com>\n"
 "Language: en\n"
@@ -11860,27 +11860,15 @@ msgstr ""
 msgid "This payment has already been received"
 msgstr ""
 
-#: move_reserve.js
-msgid "This person has an animal control incident against them"
-msgstr ""
-
-#: movements.js move_adopt.js
+#: move_reserve.js movements.js move_adopt.js
 msgid "This person has an animal control incident against them."
 msgstr ""
 
-#: move_reserve.js
-msgid "This person has been banned from adopting animals"
-msgstr ""
-
-#: movements.js move_adopt.js
+#: onlineform_incoming.js move_reserve.js movements.js move_adopt.js
 msgid "This person has been banned from adopting animals."
 msgstr ""
 
-#: move_reserve.js
-msgid "This person has been under investigation"
-msgstr ""
-
-#: movements.js move_adopt.js
+#: move_reserve.js movements.js move_adopt.js
 msgid "This person has been under investigation."
 msgstr ""
 
@@ -11888,11 +11876,7 @@ msgstr ""
 msgid "This person has movements and cannot be removed."
 msgstr ""
 
-#: move_reserve.js
-msgid "This person has not passed a homecheck"
-msgstr ""
-
-#: movements.js move_adopt.js
+#: move_reserve.js movements.js move_adopt.js
 msgid "This person has not passed a homecheck."
 msgstr ""
 
@@ -12631,6 +12615,10 @@ msgstr ""
 
 #: code.py
 msgid "Updated database to version {0}"
+msgstr ""
+
+#: onlineform_incoming.js
+msgid "Updated existing record"
 msgstr ""
 
 #: onlineforms.js reports.js

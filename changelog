@@ -1,6 +1,8 @@
 44
 ================
 
+16/05/20 Show warning icon when create person updates a banned person #586
+16/05/20 Show an icon when online form create animal/person exists #586
 16/05/20 Strip base64 data uris from online form emails #823
 15/05/20 Merge person should update new current owner field
 15/05/20 Make sure to/subject included when logging every email #820

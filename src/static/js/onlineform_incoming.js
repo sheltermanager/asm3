@@ -273,6 +273,12 @@ $(function() {
                              var vb = vr.split("|");
                              if (vb[0] == v.COLLATIONID) {
                                  v.LINK = '<a target="_blank" href="' + target + '?id=' + vb[1] + '">' + vb[2] + '</a>';
+                                 if (vb[3] && vb[3] == 1) {
+                                     v.LINK += " " + html.icon("copy", _("Updated existing record"));
+                                 }
+                                 if (vb[3] && vb[3] == 2) {
+                                     v.LINK += " " + html.icon("warning", _("This person has been banned from adopting animals."));
+                                 }
                              }
                          });
                      });
