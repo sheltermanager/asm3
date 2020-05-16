@@ -1037,7 +1037,10 @@ def create_person(dbo, username, collationid):
     attach_form(dbo, username, asm3.media.PERSON, personid, collationid)
     # Was there a reserveanimalname field? If so, create reservation(s) to the person if possible
     for k, v in d.items():
-        if k.startswith("reserveanimalname"):
+        # This condition means that we only potentially create a blank reservation
+        # for the first reserveanimalname field. Subsequent reserveanimalnameX fields will not create
+        # a reservation if there's no value.
+        if k == "reserveanimalname" or (k.startswith("reserveanimalname") and v != ""):
             try:
                 asm3.movement.insert_reserve_for_animal_name(dbo, username, personid, formreceived, v)
             except Exception as err:
