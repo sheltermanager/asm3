@@ -1,0 +1,28 @@
+{
+  "name": "asm3",
+  "version": "44.0.0",
+  "description": "Animal Shelter Manager v3 (sheltermanager3)",
+  "main": "src/static/js/login.js",
+  "directories": {
+    "doc": "doc",
+    "test": "test"
+  },
+  "dependencies": {
+    "jshint": "^2.11.1",
+    "jsmin": "^1.0.1"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bobintetley/asm3.git"
+  },
+  "author": "Robin Rawson-Tetley",
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://github.com/bobintetley/asm3/issues"
+  },
+  "homepage": "https://github.com/bobintetley/asm3#readme"
+}

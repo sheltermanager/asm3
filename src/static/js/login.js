@@ -1,6 +1,8 @@
 /*jslint browser: true, forin: true, eqeq: true, white: true, sloppy: true, vars: true, nomen: true */
 /*global $, _, common, controller, login: true, Modernizr */
 
+var login;
+
 $(function() {
 
     login = {

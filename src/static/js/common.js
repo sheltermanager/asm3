@@ -3,6 +3,8 @@
 /*global alert, asm, atob, btoa, header, _, escape, unescape */
 /*global consts: true, common: true, config: true, controller: true, dlgfx: true, format: true, html: true, log: true, validate: true */
 
+var common, config, dlgfx, format, html, log, validate;
+
 (function($) {
 
     common = {

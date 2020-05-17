@@ -2,6 +2,8 @@
 /*global $, Mousetrap, Path, _, asm, common, config, controller, format, html */
 /*global header: true */
 
+var header;
+
 $(function() {
 
     // If this is the login or database create page, don't do anything - they don't have headers, 

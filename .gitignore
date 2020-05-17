@@ -2,6 +2,7 @@
 *.swp
 *.apk
 build
+node_modules
 tags
 install/deb/sheltermanager3
 src/static/pages/changelog.txt

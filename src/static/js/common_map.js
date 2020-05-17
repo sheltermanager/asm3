@@ -1,10 +1,10 @@
 /*jslint browser: true, forin: true, eqeq: true, plusplus: true, white: true, sloppy: true, vars: true, nomen: true */
 /*global alert, $, jQuery, google, asm, config, validate, L */
-/*global google_loaded: true, geo: true, mapping: true */
+/*global google_loaded: true, mapping: true */
+
+var mapping, google_loaded = false;
 
 (function($) {
-
-    google_loaded = false;
 
     /**
      * Module to provide map drawing/plotting.
