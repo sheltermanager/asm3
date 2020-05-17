@@ -388,6 +388,48 @@ class ImgSrcHTMLParser(HTMLParser):
                 if k == "src":
                     self.links.append(v)
 
+class PlainTextWriterHTMLParser(HTMLParser):
+    """ Class for parsing HTML and generating a plain text document """
+    tag = ""
+    olmode = False
+    olcount = 1
+    ulmode = False
+    tdmode = False
+    s = []
+
+    def __init__(self):
+        HTMLParser.__init__(self)
+        self.s = []
+
+    def handle_starttag(self, tag, attrs):
+        self.tag = tag
+        if tag == "ol": self.olmode = True
+        if tag == "ul": self.ulmode = True
+        if tag == "td": self.tdmode = True
+
+    def handle_endtag(self, tag):
+        if tag == "ol": 
+            self.olmode = False
+            self.olcount = 1
+        elif tag == "ul": 
+            self.ulmode = False
+        elif tag == "td": 
+            self.tdmode = False
+            self.s.append(" | ")
+        if tag in ( "li", "tr", "p", "div", "br" ) and not self.tdmode: 
+            self.s.append("\n")
+        else:
+            if self.s[len(self.s)-1] != " ": self.s.append(" ")
+
+    def handle_data(self, data):
+        if self.tag == "li" and self.ulmode:
+            self.s.append(" * %s" % data)
+        elif self.tag == "li" and self.olmode:
+            self.s.append(" %s. %s" % (self.olcount, data))
+            self.olcount += 1
+        else:
+            self.s.append(data.strip())
+
 def is_bytes(f):
     """ Returns true if the f is a bytes string """
     return isinstance(f, bytes)
@@ -1200,6 +1242,14 @@ def pdf_count_pages(filedata):
         pages += filedata.count(p)
     return pages
 
+def html_to_text(htmldata):
+    """
+    Converts HTML content to plain text, returning the text as a str
+    """
+    p = PlainTextWriterHTMLParser()
+    p.feed(htmldata)
+    return "".join(p.s)
+
 def html_to_pdf(dbo, htmldata):
     """
     Converts HTML content to PDF and returns the PDF file data as bytes.
@@ -1412,18 +1462,6 @@ def generate_label_pdf(dbo, locale, records, papersize, units, hpitch, vpitch, w
     doc.build(elements)
     return fout.getvalue()
 
-def html_email_to_plain(s):
-    """
-    Turns an HTML email into plain text by converting
-    paragraph closers, br tags and rows into line breaks, then
-    removing the tags.
-    """
-    s = s.replace("</p>", "\n</p>")
-    s = s.replace("<br", "\n<br")
-    s = s.replace("</tr>", "\n</tr>")
-    s = strip_html_tags(s)
-    return s
-
 def send_email(dbo, replyadd, toadd, ccadd = "", bccadd = "", subject = "", body = "", contenttype = "plain", attachments = [], exceptions = True):
     """
     Sends an email.
@@ -1523,9 +1561,9 @@ def send_email(dbo, replyadd, toadd, ccadd = "", bccadd = "", subject = "", body
     # Create an alternative part with plain text and html messages
     msgbody = MIMEMultipart("alternative")
 
-    # Attach the plaintext portion (html_email_to_plain on an already plaintext
-    # email does nothing).
-    msgbody.attach(MIMEText(html_email_to_plain(body), "plain"))
+    # Attach the plaintext portion
+    plaintext = iif(contenttype == "html", html_to_text(body), body)
+    msgbody.attach(MIMEText(plaintext, "plain"))
 
     # Attach the HTML portion if this is an HTML message
     if contenttype == "html":

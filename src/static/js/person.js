@@ -397,7 +397,7 @@ $(function() {
                 '<td><label for="matchgoodwithchildren">' + _("Good with children") + '</label></td>',
                 '<td><select id="matchgoodwithchildren" data-json="MATCHGOODWITHCHILDREN" data-post="matchgoodwithchildren" class="lfs asm-halftextbox selectbox">',
                 '<option value="-1">' + _("(any)") + '</option>',
-                html.list_to_options(controller.ynun, "ID", "NAME"),
+                html.list_to_options(controller.ynunk, "ID", "NAME"),
                 '</select></td>',
                 '</tr>',
                 '<tr>',

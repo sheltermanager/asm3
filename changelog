@@ -1,6 +1,37 @@
 44
 ================
 
+16/05/20 Only potentially create a blank reserve for the first reserveanimalname
+16/05/20 Show warning icon when create person updates a banned person #586
+16/05/20 Show an icon when online form create animal/person exists #586
+16/05/20 Strip base64 data uris from online form emails #823
+15/05/20 Merge person should update new current owner field
+15/05/20 Make sure to/subject included when logging every email #820
+15/05/20 Better HTML to text support for emails #820
+15/05/20 Refactor timeline to work with SQLite so all queries unit tested
+15/05/20 Remove news and cached reports from config and put in disk cache #821
+14/05/20 Fix null error when auto-emailing diary notes
+14/05/20 Fix ShowIf to work with radio buttons
+14/05/20 Attach license documents to both animal and person
+14/05/20 Fix looking for to use updated good with children values
+14/05/20 Remove taxes/fees from stats
+14/05/20 Add PaymentFee wordkeys, PaymentAmount becomes net for compatibility
+14/05/20 Do not include received payments in payrefs at the checkout
+14/05/20 Support for separate tax income transactions, fix gross payments
+14/05/20 Show "Email To" column when editing reports
+14/05/20 Show full totals on payments, fix move_adopt sales tax on fees
+13/05/20 Rename stripe to stripeh to avoid collisions on Python2
+13/05/20 Option to calculate sales tax exclusively
+11/05/20 Include owner<>currentowner when showing person links and icon #180
+11/05/20 Do not show original owner/non shelter on person links #180
+11/05/20 Reparent audit records during merge #792
+10/05/20 Add visible option for when to highlight over due reserves
+10/05/20 Make "exclude under weeks" publishing option an editable number
+09/05/20 Hide HTML5 required attribute from invisible fields so form submits #294
+09/05/20 When no animals available, send blank files to FTP adoption sites #751
+09/05/20 Fix malformed HTML in media/signing menu
+09/05/20 View littermates from litters should include deceased
+08/05/20 Payment amounts should be gross #614
 08/05/20 Add owner field for animals independent of movements #180
 08/05/20 Stack emails vertically in edit online forms to help layout
 07/05/20 Online Form: Skip Logic/Show If functionality #294

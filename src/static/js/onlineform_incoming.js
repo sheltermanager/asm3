@@ -271,8 +271,15 @@ $(function() {
                      $.each(selrows, function(i, v) {
                          $.each(result.split("^$"), function(ir, vr) {
                              var vb = vr.split("|");
-                             if (vb[0] == v.COLLATIONID) {
-                                 v.LINK = '<a target="_blank" href="' + target + '?id=' + vb[1] + '">' + vb[2] + '</a>';
+                             var collationid=vb[0], linkid=vb[1], display=vb[2], status=vb[3];
+                             if (collationid == v.COLLATIONID) {
+                                 v.LINK = '<a target="_blank" href="' + target + '?id=' + linkid + '">' + display + '</a>';
+                                 if (status && status == 1) {
+                                     v.LINK += " " + html.icon("copy", _("Updated existing record"));
+                                 }
+                                 if (status && status == 2) {
+                                     v.LINK += " " + html.icon("warning", _("This person has been banned from adopting animals."));
+                                 }
                              }
                          });
                      });

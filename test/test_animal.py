@@ -173,6 +173,14 @@ class TestAnimal(unittest.TestCase):
         assert nid != 0
         asm3.animal.delete_animal(base.get_dbo(), "test", nid)
 
+    def test_clone_from_template(self):
+        asm3.animal.clone_from_template(base.get_dbo(), "test", self.nid, base.today(), 1, 1)
+
+    def test_merge_animal(self):
+        cid = asm3.animal.clone_animal(base.get_dbo(), "test", self.nid)
+        assert cid != 0
+        asm3.animal.merge_animal(base.get_dbo(), "test", self.nid, cid)
+
     def test_update_daily_boarding_cost(self):
         asm3.animal.update_daily_boarding_cost(base.get_dbo(), "test", self.nid, 1500)
 

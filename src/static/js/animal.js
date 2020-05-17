@@ -7,7 +7,7 @@ $(function() {
 
         render_death: function() {
             return [
-                '<h3><a href="#">' + _("Death") + ' <img id="tabdeath" style="display: none" class="asm-icon asm-icon-death"></span></a></h3><div>',
+                '<h3><a href="#">' + _("Death") + ' <span id="tabdeath" style="display: none" class="asm-icon asm-icon-death"></span></a></h3><div>',
                 '<table class="additionaltarget" data="to6">',
                 '<tr>',
                 '<td>',
@@ -183,7 +183,9 @@ $(function() {
                 '</tr>',
                 '<tr id="ownerrow">',
                 '<td>',
-                '<label for="owner">' + _("Owner") + '</label>',
+                '<label for="owner">' + _("Owner"),
+                '<span class="asm-callout">' + _("Update the current owner of this animal without returning and creating movements that affect your figures.") + '</span>',
+                '</label>',
                 '</td>',
                 '<td>',
                 '<input id="originalowner" data-json="OWNERID" data-mode="brief" data-post="owner" type="hidden" class="asm-personchooser" />',

@@ -53,7 +53,7 @@ class PaymentProcessor(object):
     def getPayments(self, payref):
         """ Returns the list of payment records for payref (largest first) """
         receiptnumber = self.getReceiptNumber(payref)
-        return self.dbo.query(asm3.financial.get_donation_query(self.dbo) + " WHERE od.ReceiptNumber=? ORDER BY od.Donation DESC", [receiptnumber])
+        return self.dbo.query(asm3.financial.get_donation_query(self.dbo) + " WHERE od.ReceiptNumber=? AND od.Date Is Null ORDER BY od.Donation DESC", [receiptnumber])
 
     def getReceiptNumber(self, payref):
         """ Extracts the receipt number from a payref """
@@ -67,7 +67,7 @@ class PaymentProcessor(object):
     def markPaymentReceived(self, payref, trxid, received, vat, fee, rawdata):
         """ 
         Marks all payments in payref received.
-        Sets the fee on the first payment and deducts it from the first payment amount.
+        The fee is only applied to the first payment if there are multiple payments in the payref.
         It is expected that received, vat and fee are all integer currency amounts in whole pence.
         """
         receiptnumber = self.getReceiptNumber(payref)
@@ -77,7 +77,6 @@ class PaymentProcessor(object):
                 r.id, 
                 chequenumber=trxid,
                 fee=asm3.utils.iif(i==0 and fee>0, fee, 0),
-                amount=asm3.utils.iif(i==0 and fee>0, r.donation - fee, 0),
                 rawdata=rawdata )
 
     def validatePaymentReference(self, payref):

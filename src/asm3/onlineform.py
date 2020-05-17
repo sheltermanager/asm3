@@ -195,7 +195,7 @@ def get_onlineform_html(dbo, formid, completedocument = True):
             rs = asm3.animal.get_animals_on_shelter_namecode(dbo)
             rs = sorted(rs, key=lambda k: k["ANIMALNAME"])
             for a in rs:
-                if f.SPECIESID > 0 and a.SPECIESID != f.SPECIESID: continue
+                if f.SPECIESID and f.SPECIESID > 0 and a.SPECIESID != f.SPECIESID: continue
                 h.append('<option value="%(name)s::%(code)s">%(name)s (%(species)s - %(code)s)</option>' % \
                     { "name": a.ANIMALNAME, "code": a.SHELTERCODE, "species": a.SPECIESNAME})
             h.append('</select>')
@@ -419,7 +419,7 @@ def get_onlineformincoming_detail(dbo, collationid):
     """ Returns the detail lines for an incoming post """
     return dbo.query("SELECT * FROM onlineformincoming WHERE CollationID = ? ORDER BY DisplayIndex", [collationid])
 
-def get_onlineformincoming_html(dbo, collationid, includeRaw = False):
+def get_onlineformincoming_html(dbo, collationid, include_raw=True, include_images=True):
     """ Returns an HTML fragment of the incoming form data """
     h = []
     h.append('<table width="100%">')
@@ -427,8 +427,8 @@ def get_onlineformincoming_html(dbo, collationid, includeRaw = False):
         label = f.LABEL
         if label is None or label == "": label = f.FIELDNAME
         v = f.VALUE
-        if v.startswith("RAW::") and not includeRaw: 
-            continue
+        if v.startswith("RAW::") and not include_raw: continue
+        if v.startswith("data:") and not include_images: continue
         if v.startswith("RAW::"): 
             h.append('<tr>')
             h.append('<td colspan="2">%s</td>' % v[5:])
@@ -456,11 +456,13 @@ def get_onlineformincoming_plain(dbo, collationid):
         h.append("%s: %s\n" % (label, f.VALUE))
     return "\n".join(h)
 
-def get_onlineformincoming_html_print(dbo, ids):
+def get_onlineformincoming_html_print(dbo, ids, include_raw=True, include_images=True):
     """
     Returns a complete printable version of the online form
     (header/footer wrapped around the html call above)
     ids: A list of integer ids
+    include_raw: Include fields that are raw markup
+    include_images: Include base64 encoded images
     """
     header = get_onlineform_header(dbo)
     headercontent = header[header.find("<body>")+6:]
@@ -473,7 +475,7 @@ def get_onlineformincoming_html_print(dbo, ids):
         h.append(headercontent)
         formheader = get_onlineformincoming_formheader(dbo, collationid)
         h.append(formheader)
-        h.append(get_onlineformincoming_html(dbo, asm3.utils.cint(collationid), True))
+        h.append(get_onlineformincoming_html(dbo, asm3.utils.cint(collationid), include_raw=include_raw, include_images=include_images))
         formfooter = get_onlineformincoming_formfooter(dbo, collationid)
         h.append(formfooter)
         h.append(footercontent)
@@ -733,8 +735,8 @@ def insert_onlineformincoming_from_form(dbo, post, remoteip):
         "INNER JOIN onlineformincoming oi ON oi.FormName = o.Name " \
         "WHERE oi.CollationID = ?", [collationid])
 
-    # The submitted form for including in emails
-    formdata = get_onlineformincoming_html_print(dbo, [collationid,])
+    # The submitted form for including in emails (images are attached so not included)
+    formdata = get_onlineformincoming_html_print(dbo, [collationid,], include_images=False)
 
     if submitteremail != "" and submitteremail.find("@") != -1 and emailsubmitter == 1:
         # Get the confirmation message. Prepend it to a copy of the submission
@@ -899,8 +901,10 @@ def create_animal(dbo, username, collationid):
     """
     Creates an animal record from the incoming form data with collationid.
     Also, attaches the form to the animal as media.
-    The return value is a tuple of collationid, animalid, sheltercode - animalname
-    "animalname", "code", "microchip", "age", "dateofbirth", "entryreason", "markings", "comments", "hiddencomments", "type", "species", "breed1", "breed", "color", "sex"
+    The return value is a tuple of collationid, animalid, sheltercode - animalname, status
+    status is 0 for created, 1 for updated existing
+    "animalname", "code", "microchip", "age", "dateofbirth", "entryreason", "markings", 
+    "comments", "hiddencomments", "type", "species", "breed1", "breed", "color", "sex"
     """
     l = dbo.locale
     fields = get_onlineformincoming_detail(dbo, collationid)
@@ -937,11 +941,13 @@ def create_animal(dbo, username, collationid):
         raise asm3.utils.ASMValidationError(asm3.i18n._("There is not enough information in the form to create an animal record (need animalname).", l))
     # Are date of birth and age blank? Assume an age of 1.0 if they are
     if d["dateofbirth"] == "" and d["estimatedage"] == "": d["estimatedage"] = "1.0"
+    status = 0 # default: created new record
     # Does this animal code already exist?
     animalid = 0
     if "code" in d and d["code"] != "":
         similar = asm3.animal.get_animal_sheltercode(dbo, d["code"])
         if similar is not None:
+            status = 1 # updated existing record
             animalid = similar.ID
             # Merge additional fields
             asm3.additional.merge_values_for_link(dbo, asm3.utils.PostedData(d, dbo.locale), animalid, "animal")
@@ -953,13 +959,14 @@ def create_animal(dbo, username, collationid):
         d["internallocation"] = asm3.configuration.default_location(dbo)
         animalid, sheltercode = asm3.animal.insert_animal_from_form(dbo, asm3.utils.PostedData(d, dbo.locale), username)
     attach_form(dbo, username, asm3.media.ANIMAL, animalid, collationid)
-    return (collationid, animalid, "%s - %s" % (sheltercode, d["animalname"]))
+    return (collationid, animalid, "%s - %s" % (sheltercode, d["animalname"]), status)
 
 def create_person(dbo, username, collationid):
     """
     Creates a person record from the incoming form data with collationid.
     Also, attaches the form to the person as media.
-    The return value is tuple of collationid, personid, personname
+    The return value is tuple of collationid, personid, personname, status
+    status is 0 for created, 1 for updated existing, 2 for existing and banned
     """
     l = dbo.locale
     fields = get_onlineformincoming_detail(dbo, collationid)
@@ -999,6 +1006,7 @@ def create_person(dbo, username, collationid):
     # Have we got enough info to create the person record? We just need a surname
     if "surname" not in d:
         raise asm3.utils.ASMValidationError(asm3.i18n._("There is not enough information in the form to create a person record (need a surname).", l))
+    status = 0 # created
     # Does this person already exist?
     personid = 0
     if "surname" in d and "forenames" in d and "address" in d:
@@ -1009,6 +1017,8 @@ def create_person(dbo, username, collationid):
         similar = asm3.person.get_person_similar(dbo, demail, dmobile, d["surname"], d["forenames"], d["address"])
         if len(similar) > 0:
             personid = similar[0].ID
+            status = 1 # updated existing record
+            if similar[0].ISBANNED == 1: status = 2 # existing record and person banned
             # Merge flags and any extra details
             asm3.person.merge_flags(dbo, username, personid, flags)
             # Merge additional fields
@@ -1027,13 +1037,16 @@ def create_person(dbo, username, collationid):
     attach_form(dbo, username, asm3.media.PERSON, personid, collationid)
     # Was there a reserveanimalname field? If so, create reservation(s) to the person if possible
     for k, v in d.items():
-        if k.startswith("reserveanimalname"):
+        # This condition means that we only potentially create a blank reservation
+        # for the first reserveanimalname field. Subsequent reserveanimalnameX fields will not create
+        # a reservation if there's no value.
+        if k == "reserveanimalname" or (k.startswith("reserveanimalname") and v != ""):
             try:
                 asm3.movement.insert_reserve_for_animal_name(dbo, username, personid, formreceived, v)
             except Exception as err:
                 asm3.al.warn("could not create reservation for %d on %s (%s)" % (personid, v, err), "create_person", dbo)
                 web.ctx.status = "200 OK" # ASMValidationError sets status to 500
-    return (collationid, personid, personname)
+    return (collationid, personid, personname, status)
 
 def create_animalcontrol(dbo, username, collationid):
     """
@@ -1059,12 +1072,12 @@ def create_animalcontrol(dbo, username, collationid):
     if "callnotes" not in d or "dispatchaddress" not in d:
         raise asm3.utils.ASMValidationError(asm3.i18n._("There is not enough information in the form to create an incident record (need call notes and dispatch address).", l))
     # We need the person/caller record before we create the incident
-    collationid, personid, personname = create_person(dbo, username, collationid)
+    collationid, personid, personname, status = create_person(dbo, username, collationid)
     d["caller"] = personid
     # Create the incident 
     incidentid = asm3.animalcontrol.insert_animalcontrol_from_form(dbo, asm3.utils.PostedData(d, dbo.locale), username)
     attach_form(dbo, username, asm3.media.ANIMALCONTROL, incidentid, collationid)
-    return (collationid, incidentid, "%s - %s" % (asm3.utils.padleft(incidentid, 6), personname))
+    return (collationid, incidentid, "%s - %s" % (asm3.utils.padleft(incidentid, 6), personname), status)
 
 def create_lostanimal(dbo, username, collationid):
     """
@@ -1099,12 +1112,12 @@ def create_lostanimal(dbo, username, collationid):
     if "markings" not in d or "arealost" not in d:
         raise asm3.utils.ASMValidationError(asm3.i18n._("There is not enough information in the form to create a lost animal record (need a description and area lost).", l))
     # We need the person record before we create the lost animal
-    collationid, personid, personname = create_person(dbo, username, collationid)
+    collationid, personid, personname, status = create_person(dbo, username, collationid)
     d["owner"] = personid
     # Create the lost animal
     lostanimalid = asm3.lostfound.insert_lostanimal_from_form(dbo, asm3.utils.PostedData(d, dbo.locale), username)
     attach_form(dbo, username, asm3.media.LOSTANIMAL, lostanimalid, collationid)
-    return (collationid, lostanimalid, "%s - %s" % (asm3.utils.padleft(lostanimalid, 6), personname))
+    return (collationid, lostanimalid, "%s - %s" % (asm3.utils.padleft(lostanimalid, 6), personname), status)
   
 def create_foundanimal(dbo, username, collationid):
     """
@@ -1139,12 +1152,12 @@ def create_foundanimal(dbo, username, collationid):
     if "markings" not in d or "areafound" not in d:
         raise asm3.utils.ASMValidationError(asm3.i18n._("There is not enough information in the form to create a found animal record (need a description and area found).", l))
     # We need the person record before we create the found animal
-    collationid, personid, personname = create_person(dbo, username, collationid)
+    collationid, personid, personname, status = create_person(dbo, username, collationid)
     d["owner"] = personid
     # Create the found animal
     foundanimalid = asm3.lostfound.insert_foundanimal_from_form(dbo, asm3.utils.PostedData(d, dbo.locale), username)
     attach_form(dbo, username, asm3.media.FOUNDANIMAL, foundanimalid, collationid)
-    return (collationid, foundanimalid, "%s - %s" % (asm3.utils.padleft(foundanimalid, 6), personname))
+    return (collationid, foundanimalid, "%s - %s" % (asm3.utils.padleft(foundanimalid, 6), personname), status)
 
 def create_transport(dbo, username, collationid):
     """
@@ -1218,12 +1231,12 @@ def create_waitinglist(dbo, username, collationid):
     if "description" not in d:
         raise asm3.utils.ASMValidationError(asm3.i18n._("There is not enough information in the form to create a waiting list record (need a description).", l))
     # We need the person record before we create the waiting list
-    collationid, personid, personname = create_person(dbo, username, collationid)
+    collationid, personid, personname, status = create_person(dbo, username, collationid)
     d["owner"] = personid
     # Create the waiting list
     wlid = asm3.waitinglist.insert_waitinglist_from_form(dbo, asm3.utils.PostedData(d, dbo.locale), username)
     attach_form(dbo, username, asm3.media.WAITINGLIST, wlid, collationid)
-    return (collationid, wlid, "%s - %s" % (asm3.utils.padleft(wlid, 6), personname))
+    return (collationid, wlid, "%s - %s" % (asm3.utils.padleft(wlid, 6), personname), status)
 
 def auto_remove_old_incoming_forms(dbo):
     """

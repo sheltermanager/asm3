@@ -6,9 +6,9 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: ASM3\n"
-"Report-Msgid-Bugs-To: db@sheltermanager.com\n"
-"POT-Creation-Date: 2013-01-24 10:55+0000\n"
-"PO-Revision-Date: 2019-08-23 15:10+0100\n"
+"Report-Msgid-Bugs-To: robin@sheltermanager.com\n"
+"POT-Creation-Date: 2020-05-14 10:57+0000\n"
+"PO-Revision-Date: 2020-05-16 17:14+0100\n"
 "Last-Translator: Robin Rawson-Tetley <zanata@sheltermanager.com>\n"
 "Language-Team: LANGUAGE <support@sheltermanager.com>\n"
 "Language: en_GB\n"
@@ -23,10 +23,10 @@ msgstr ""
 msgid " days."
 msgstr " days."
 
-#: common_personchooser.js users.js incident.js waitinglist_results.js
+#: html.py common_personchooser.js users.js incident.js waitinglist_results.js
 #: person.js animal_find.js stocklevel.js incident_find.js common.js
-#: lostfound_find.js options.js person_find.js clinic_appointment.js log.js
-#: incident_new.js person_new.js html.py
+#: onlineform.js lostfound_find.js options.js person_find.js
+#: clinic_appointment.js log.js incident_new.js person_new.js
 msgid "(all)"
 msgstr "(all)"
 
@@ -42,7 +42,7 @@ msgstr "(anyone)"
 msgid "(available)"
 msgstr "(available)"
 
-#: person_find_results.js csvimport.py
+#: csvimport.py common_tableform.js person_find_results.js
 msgid "(blank)"
 msgstr "(blank)"
 
@@ -50,7 +50,7 @@ msgstr "(blank)"
 msgid "(both)"
 msgstr "(both)"
 
-#: clinic_calendar.js main.js html.py
+#: html.py clinic_calendar.js main.js
 msgid "(everyone)"
 msgstr "(everyone)"
 
@@ -66,11 +66,11 @@ msgstr "(no change)"
 msgid "(no deduction)"
 msgstr "(no deduction)"
 
-#: shelterview.js html.py
+#: html.py shelterview.js
 msgid "(none)"
 msgstr "(none)"
 
-#: incident.js lostfound.js lostfound_find.js lostfound_new.js html.py
+#: html.py incident.js lostfound.js lostfound_find.js lostfound_new.js
 msgid "(unknown)"
 msgstr "(unknown)"
 
@@ -86,11 +86,11 @@ msgstr "({0} given, {1} remaining)"
 msgid "1 treatment"
 msgstr "1 treatment"
 
-#: publish_options.js
+#: publish_options.js lookups.js
 msgid "1 week"
 msgstr "1 week"
 
-#: publish_options.js
+#: publish_options.js lookups.js media.js
 msgid "1 year"
 msgstr "1 year"
 
@@ -106,17 +106,13 @@ msgstr "3 months"
 msgid "4 weeks"
 msgstr "4 weeks"
 
-#: animal.js html.py
+#: html.py animal.js
 msgid "5 Year"
 msgstr "5 Year"
 
 #: publish_options.js
 msgid "6 months"
 msgstr "6 months"
-
-#: publish_options.js
-msgid "6 weeks"
-msgstr "6 weeks"
 
 #: publish_options.js
 msgid "8 weeks"
@@ -171,8 +167,8 @@ msgstr "A unique reference for this litter"
 msgid "A4"
 msgstr "A4"
 
-#: incident_find_results.js onlineforms.js common.js header_edit_header.js
-#: person_find_results.js html.py
+#: html.py incident_find_results.js common.js header_edit_header.js
+#: person_find_results.js
 msgid "ACO"
 msgstr "ACO"
 
@@ -180,7 +176,7 @@ msgstr "ACO"
 msgid "AM"
 msgstr "AM"
 
-#: main.js html.py mobile.py
+#: html.py mobile.py main.js
 msgid "ASM"
 msgstr "ASM"
 
@@ -191,6 +187,14 @@ msgstr "ASM 3 is compatible with your iPad and other tablets."
 #: main.js
 msgid "ASM News"
 msgstr "ASM News"
+
+#: options.js
+msgid ""
+"ASM can talk to payment processors and request payment from your customers "
+"and donors."
+msgstr ""
+"ASM can talk to payment processors and request payment from your customers "
+"and donors."
 
 #: main.js
 msgid ""
@@ -246,7 +250,7 @@ msgstr "Account Types"
 msgid "Account code '{0}' has already been used."
 msgstr "Account code '{0}' has already been used."
 
-#: accounts_trx.js financial.py
+#: financial.py accounts_trx.js
 msgid "Account code '{0}' is not valid."
 msgstr "Account code '{0}' is not valid."
 
@@ -262,7 +266,7 @@ msgstr "Account disabled."
 msgid "Accountant"
 msgstr "Accountant"
 
-#: roles.js accounts.js options.js header.js html.py configuration.py
+#: html.py configuration.py roles.js accounts.js options.js header.js
 msgid "Accounts"
 msgstr "Accounts"
 
@@ -274,7 +278,7 @@ msgstr "Accounts need a code."
 msgid "Action"
 msgstr "Action"
 
-#: person.js medical.js accounts.js lookups.js medical.py
+#: medical.py person.js medical.js accounts.js lookups.js
 msgid "Active"
 msgstr "Active"
 
@@ -290,7 +294,7 @@ msgstr "Active Trap Loans"
 msgid "Active users: {0}"
 msgstr "Active users: {0}"
 
-#: common_tableform.js common.js accounts_trx.js mobile.py
+#: mobile.py common_tableform.js common.js accounts_trx.js
 msgid "Add"
 msgstr "Add"
 
@@ -298,7 +302,7 @@ msgstr "Add"
 msgid "Add Accounts"
 msgstr "Add Accounts"
 
-#: options.js mobile.py
+#: mobile.py options.js
 msgid "Add Animal"
 msgstr "Add Animal"
 
@@ -326,7 +330,7 @@ msgstr "Add Clinic Appointment"
 msgid "Add Cost"
 msgstr "Add Cost"
 
-#: roles.js mobile.py
+#: mobile.py roles.js
 msgid "Add Diary"
 msgstr "Add Diary"
 
@@ -366,7 +370,7 @@ msgstr "Add Licences"
 msgid "Add Litter"
 msgstr "Add Litter"
 
-#: roles.js mobile.py
+#: mobile.py roles.js animal_bulk.js
 msgid "Add Log"
 msgstr "Add Log"
 
@@ -386,7 +390,7 @@ msgstr "Add Media"
 msgid "Add Medical Records"
 msgstr "Add Medical Records"
 
-#: main.js mobile.py
+#: mobile.py main.js
 msgid "Add Message"
 msgstr "Add Message"
 
@@ -442,27 +446,27 @@ msgstr "Add Vouchers"
 msgid "Add Waiting List"
 msgstr "Add Waiting List"
 
-#: main.js header.js html.py configuration.py
+#: html.py configuration.py main.js header.js
 msgid "Add a diary note"
 msgstr "Add a diary note"
 
-#: header.js html.py configuration.py
+#: html.py configuration.py header.js
 msgid "Add a found animal"
 msgstr "Add a found animal"
 
-#: header.js html.py configuration.py
+#: html.py configuration.py header.js
 msgid "Add a log entry"
 msgstr "Add a log entry"
 
-#: header.js html.py configuration.py
+#: html.py configuration.py header.js
 msgid "Add a lost animal"
 msgstr "Add a lost animal"
 
-#: header.js html.py configuration.py
+#: html.py configuration.py header.js
 msgid "Add a medical regimen"
 msgstr "Add a medical regimen"
 
-#: animal_new.js header.js html.py configuration.py
+#: html.py configuration.py animal_new.js header.js
 msgid "Add a new animal"
 msgstr "Add a new animal"
 
@@ -470,7 +474,7 @@ msgstr "Add a new animal"
 msgid "Add a new log"
 msgstr "Add a new log"
 
-#: person_new.js header.js html.py configuration.py
+#: html.py configuration.py person_new.js header.js
 msgid "Add a new person"
 msgstr "Add a new person"
 
@@ -486,7 +490,7 @@ msgstr "Add a photo"
 msgid "Add a test"
 msgstr "Add a test"
 
-#: header.js html.py configuration.py
+#: html.py configuration.py header.js
 msgid "Add a vaccination"
 msgstr "Add a vaccination"
 
@@ -498,7 +502,7 @@ msgstr "Add account"
 msgid "Add additional field"
 msgstr "Add additional field"
 
-#: header.js html.py configuration.py
+#: html.py configuration.py header.js
 msgid "Add an animal to the waiting list"
 msgstr "Add an animal to the waiting list"
 
@@ -634,7 +638,7 @@ msgstr "Add user"
 msgid "Add vaccination"
 msgstr "Add vaccination"
 
-#: person_vouchers.js
+#: vouchers.js
 msgid "Add voucher"
 msgstr "Add voucher"
 
@@ -646,7 +650,7 @@ msgstr "Add waiting list"
 msgid "Add {0}"
 msgstr "Add {0}"
 
-#: person.js
+#: person.js media.js
 msgid "Added"
 msgstr "Added"
 
@@ -674,10 +678,10 @@ msgstr "Additional fields"
 msgid "Additional fields need a name, label and type."
 msgstr "Additional fields need a name, label and type."
 
-#: transport.js common_personchooser.js incident.js waitinglist_results.js
-#: person.js incident_find_results.js incident_find.js animal.js options.js
-#: header_edit_header.js incident_new.js person_new.js person_find_results.js
-#: html.py mobile.py dbupdate.py
+#: html.py mobile.py dbupdate.py transport.js common_personchooser.js
+#: incident.js waitinglist_results.js person.js incident_find_results.js
+#: incident_find.js animal.js options.js header_edit_header.js incident_new.js
+#: person_new.js person_find_results.js
 msgid "Address"
 msgstr "Address"
 
@@ -701,11 +705,11 @@ msgstr "Administering Vet"
 msgid "Adopt"
 msgstr "Adopt"
 
-#: move_adopt.js header.js html.py configuration.py
+#: html.py configuration.py move_adopt.js header.js
 msgid "Adopt an animal"
 msgstr "Adopt an animal"
 
-#: animal_find.js animal_bulk.js shelterview.js
+#: html.py animal_find_results.js animal_find.js animal_bulk.js shelterview.js
 msgid "Adoptable"
 msgstr "Adoptable"
 
@@ -717,7 +721,7 @@ msgstr "Adoptable Animal"
 msgid "Adoptable and published for the first time"
 msgstr "Adoptable and published for the first time"
 
-#: animal_find.js common.js animal.py
+#: animal.py animal_find.js common.js
 msgid "Adopted"
 msgstr "Adopted"
 
@@ -729,12 +733,16 @@ msgstr "Adopted Animals"
 msgid "Adopted Transferred In {0}"
 msgstr "Adopted Transferred In {0}"
 
-#: publish_options.js dbupdate.py
+#: html.py common.js header_edit_header.js
+msgid "Adopter"
+msgstr "Adopter"
+
+#: dbupdate.py publish_options.js
 msgid "Adoption"
 msgstr "Adoption"
 
-#: animal_new.js common.js animal_bulk.js animal.js options.js shelterview.js
-#: header_edit_header.js html.py person.py
+#: html.py animal_new.js person_links.js common.js animal_bulk.js animal.js
+#: options.js shelterview.js header_edit_header.js
 msgid "Adoption Coordinator"
 msgstr "Adoption Coordinator"
 
@@ -746,7 +754,7 @@ msgstr "Adoption Coordinator and Fosterer"
 msgid "Adoption Event"
 msgstr "Adoption Event"
 
-#: animal_new.js animal_bulk.js animal.js dbupdate.py
+#: dbupdate.py animal_new.js animal_bulk.js animal.js
 msgid "Adoption Fee"
 msgstr "Adoption Fee"
 
@@ -798,13 +806,13 @@ msgstr ""
 "After the user presses submit and ASM has accepted the form, redirect the "
 "user to this URL"
 
-#: animal_find_results.js movements.js html.py mobile.py person.py
+#: html.py mobile.py person.py animal_find_results.js movements.js
 msgid "Age"
 msgstr "Age"
 
-#: incident.js animal_find.js incident_find.js lostfound.js lostfound_find.js
-#: options.js shelterview.js lostfound_find_results.js lostfound_new.js html.py
-#: mobile.py
+#: html.py mobile.py incident.js animal_find.js incident_find.js lostfound.js
+#: lostfound_find.js options.js shelterview.js lostfound_find_results.js
+#: lostfound_new.js
 msgid "Age Group"
 msgstr "Age Group"
 
@@ -948,7 +956,7 @@ msgstr "All animals who have not been microchipped"
 msgid "All banned owners on file."
 msgstr "All banned owners on file."
 
-#: header.js html.py configuration.py
+#: html.py configuration.py header.js
 msgid "All diary notes"
 msgstr "All diary notes"
 
@@ -1004,7 +1012,7 @@ msgstr "All retailers on file."
 msgid "All staff on file."
 msgstr "All staff on file."
 
-#: options.js
+#: litters.js options.js
 msgid "All time"
 msgstr "All time"
 
@@ -1053,14 +1061,18 @@ msgid "Allow overriding of the movement number on the Move menu screens"
 msgstr "Allow overriding of the movement number on the Move menu screens"
 
 #: options.js
+msgid "Allow reservations to be created that are not linked to an animal"
+msgstr "Allow reservations to be created that are not linked to an animal"
+
+#: options.js
 msgid "Allow use of OpenOffice document templates"
 msgstr "Allow use of OpenOffice document templates"
 
-#: options.js search.py
+#: search.py options.js
 msgid "Alphabetically A-Z"
 msgstr "Alphabetically A-Z"
 
-#: options.js search.py
+#: search.py options.js
 msgid "Alphabetically Z-A"
 msgstr "Alphabetically Z-A"
 
@@ -1072,8 +1084,8 @@ msgstr "Already Signed"
 msgid "Already fostered to this person."
 msgstr "Already fostered to this person."
 
-#: animal_new.js animal_find_results.js animal_bulk.js animal.js options.js
-#: shelterview.js html.py
+#: html.py animal_new.js animal_find_results.js animal_bulk.js animal.js
+#: options.js shelterview.js
 msgid "Altered"
 msgstr "Neutered/Spayed"
 
@@ -1089,7 +1101,7 @@ msgstr "Neutered/Spayed Dog - 1 year"
 msgid "Altered Dog - 3 year"
 msgstr "Neutered/Spayed Dog - 3 year"
 
-#: person.py
+#: person_links.js
 msgid "Altering Vet"
 msgstr "Neuter/Spay Vet"
 
@@ -1145,8 +1157,8 @@ msgstr "American Water Spaniel"
 msgid "American Wirehair"
 msgstr "American Wirehair"
 
-#: common_widgets.js donations.js clinic_appointment.js person_vouchers.js
-#: clinic_invoice.js
+#: wordprocessor.py vouchers.js common_widgets.js donations.js
+#: clinic_appointment.js clinic_invoice.js
 msgid "Amount"
 msgstr "Amount"
 
@@ -1174,12 +1186,12 @@ msgstr "Anatolian Shepherd"
 msgid "Angora Rabbit"
 msgstr "Angora Rabbit"
 
-#: search.js transport.js move_reclaim.js incident.js medical.js
-#: move_deceased.js move_retailer.js vaccination.js onlineform_incoming.js
-#: donations.js log_new.js test.js animal.js clinic_appointment.js
-#: diarytasks.js move_reserve.js move_transfer.js header_edit_header.js
-#: movements.js move_adopt.js licence.js move_foster.js html.py mobile.py
-#: dbupdate.py reports.py
+#: html.py mobile.py dbupdate.py reports.py search.js transport.js vouchers.js
+#: move_reclaim.js incident.js medical.js move_deceased.js move_retailer.js
+#: vaccination.js onlineform_incoming.js donations.js log_new.js test.js
+#: animal.js clinic_appointment.js diarytasks.js move_reserve.js
+#: move_transfer.js header_edit_header.js movements.js move_adopt.js licence.js
+#: move_foster.js
 msgid "Animal"
 msgstr "Animal"
 
@@ -1191,7 +1203,7 @@ msgstr "Animal '{0}' created with code {1}"
 msgid "Animal '{0}' successfully marked deceased."
 msgstr "Animal '{0}' successfully marked deceased."
 
-#: licence_renewal.js donation_receive.js licence.js
+#: vouchers.js licence_renewal.js donation_receive.js licence.js
 msgid "Animal (optional)"
 msgstr "Animal (optional)"
 
@@ -1227,15 +1239,15 @@ msgstr "Animal - Notes"
 msgid "Animal Codes"
 msgstr "Animal Codes"
 
-#: roles.js html.py mobile.py
+#: html.py mobile.py roles.js
 msgid "Animal Control"
 msgstr "Animal Control"
 
-#: person.py
+#: person_links.js
 msgid "Animal Control Caller"
 msgstr "Animal Control Caller"
 
-#: person.py
+#: person_links.js
 msgid "Animal Control Incident"
 msgstr "Animal Control Incident"
 
@@ -1243,7 +1255,7 @@ msgstr "Animal Control Incident"
 msgid "Animal Control Officer"
 msgstr "Animal Control Officer"
 
-#: person.py
+#: person_links.js
 msgid "Animal Control Victim"
 msgstr "Animal Control Victim"
 
@@ -1267,7 +1279,7 @@ msgstr "Animal Name"
 msgid "Animal Selection"
 msgstr "Animal Selection"
 
-#: main.js mobile.py
+#: mobile.py main.js
 msgid "Animal Shelter Manager"
 msgstr "Animal Shelter Manager"
 
@@ -1303,7 +1315,7 @@ msgstr "Animal code format"
 msgid "Animal comments MUST contain this phrase in order to match."
 msgstr "Animal comments MUST contain this phrase in order to match."
 
-#: header.js html.py configuration.py
+#: html.py configuration.py header.js
 msgid "Animal control calendar"
 msgstr "Animal control calendar"
 
@@ -1343,8 +1355,8 @@ msgstr "Animal picked up"
 msgid "Animal shortcode format"
 msgstr "Animal shortcode format"
 
-#: transport.js incident.js medical.js vaccination.js csvexport.js roles.js
-#: animal_bulk.js test.js htmltemplates.js html.py reports.py
+#: html.py reports.py transport.js incident.js medical.js vaccination.js
+#: csvexport.js roles.js animal_bulk.js test.js options.js htmltemplates.js
 msgid "Animals"
 msgstr "Animals"
 
@@ -1364,7 +1376,7 @@ msgstr "Animals matching '{0}'."
 msgid "Animals per page"
 msgstr "Animals per page"
 
-#: animal.js html.py
+#: html.py animal.js
 msgid "Annual"
 msgstr "Annual"
 
@@ -1420,7 +1432,7 @@ msgstr "Appointment"
 msgid "Appointment date must be a valid date"
 msgstr "Appointment date must be a valid date"
 
-#: clinic_invoice.js clinic.py
+#: clinic.py clinic_invoice.js
 msgid "Appointment {0}. {1} on {2} for {3}"
 msgstr "Appointment {0}. {1} on {2} for {3}"
 
@@ -1448,7 +1460,7 @@ msgstr "Arabian"
 msgid "Area"
 msgstr "Area"
 
-#: lostfound.js lostfound_new.js lostfound.py
+#: lostfound.py lostfound.js lostfound_new.js
 msgid "Area Found"
 msgstr "Area Found"
 
@@ -1544,6 +1556,10 @@ msgstr "Australian Terrier"
 msgid "Auto log users out after this many minutes of inactivity"
 msgstr "Auto log users out after this many minutes of inactivity"
 
+#: media.js
+msgid "Auto remove on {0}"
+msgstr "Auto remove on {0}"
+
 #: waitinglist.py
 msgid "Auto removed due to lack of owner contact."
 msgstr "Auto removed due to lack of owner contact."
@@ -1559,6 +1575,10 @@ msgstr ""
 #: waitinglist.js
 msgid "Automatically remove"
 msgstr "Automatically remove"
+
+#: media.js
+msgid "Automatically remove this media item on this date"
+msgstr "Automatically remove this media item on this date"
 
 #: options.js
 msgid ""
@@ -1589,7 +1609,6 @@ msgid "B (Boarding Animal)"
 msgstr "B (Boarding Animal)"
 
 #: common_widgets.js
-#| msgid "CC"
 msgid "BCC"
 msgstr "BCC"
 
@@ -1637,8 +1656,7 @@ msgstr "Bank::Deposit"
 msgid "Bank::Savings"
 msgstr "Bank::Savings"
 
-#: onlineforms.js common.js header_edit_header.js person_find_results.js
-#: html.py
+#: html.py common.js header_edit_header.js person_find_results.js
 msgid "Banned"
 msgstr "Banned"
 
@@ -1818,7 +1836,7 @@ msgstr "Bombay"
 msgid "Bonded"
 msgstr "Bonded"
 
-#: animal.js mobile.py
+#: mobile.py animal.js
 msgid "Bonded With"
 msgstr "Bonded With"
 
@@ -1874,10 +1892,10 @@ msgstr "Boxer"
 msgid "Boykin Spaniel"
 msgstr "Boykin Spaniel"
 
-#: animal_new.js animal_find_results.js person.js animal_find.js onlineform.js
-#: lostfound.js lostfound_find.js animal.js common_animalchooser.js
-#: lostfound_find_results.js movements.js lostfound_new.js html.py mobile.py
-#: person.py lookups.py
+#: html.py mobile.py person.py lookups.py animal_new.js animal_find_results.js
+#: person.js animal_find.js onlineform.js lostfound.js lostfound_find.js
+#: animal.js common_animalchooser.js lostfound_find_results.js movements.js
+#: lostfound_new.js
 msgid "Breed"
 msgstr "Breed"
 
@@ -1926,7 +1944,7 @@ msgstr "Brotogeris"
 msgid "Brought In"
 msgstr "Brought In"
 
-#: animal_new.js animal.js mobile.py person.py
+#: mobile.py animal_new.js person_links.js animal.js
 msgid "Brought In By"
 msgstr "Brought In By"
 
@@ -1994,7 +2012,7 @@ msgstr "Bulk Transport"
 msgid "Bulk Vaccination"
 msgstr "Bulk Vaccination"
 
-#: animal_bulk.js html.py
+#: html.py animal_bulk.js
 msgid "Bulk change animals"
 msgstr "Bulk change animals"
 
@@ -2018,8 +2036,8 @@ msgstr "Burmese"
 msgid "Burmilla"
 msgstr "Burmilla"
 
-#: medical.js vaccination.js diary.js person_investigation.js animal_bulk.js
-#: log.js
+#: wordprocessor.py medical.js vaccination.js diary.js person_investigation.js
+#: animal_bulk.js log.js
 msgid "By"
 msgstr "By"
 
@@ -2044,6 +2062,10 @@ msgid "CSV of license data"
 msgstr "CSV of licence data"
 
 #: sql.js
+msgid "CSV of media data"
+msgstr "CSV of media data"
+
+#: sql.js
 msgid "CSV of payment data"
 msgstr "CSV of payment data"
 
@@ -2063,7 +2085,7 @@ msgstr "Cairn Terrier"
 msgid "Calendar View"
 msgstr "Calendar View"
 
-#: calendarview.js main.js header.js configuration.py
+#: configuration.py calendarview.js main.js header.js
 msgid "Calendar view"
 msgstr "Calendar view"
 
@@ -2079,11 +2101,11 @@ msgstr "Californian"
 msgid "Call"
 msgstr "Call"
 
-#: incident.js incident_new.js mobile.py
+#: mobile.py incident.js incident_new.js
 msgid "Call Date/Time"
 msgstr "Call Date/Time"
 
-#: incident.js incident_new.js mobile.py
+#: mobile.py incident.js incident_new.js
 msgid "Caller"
 msgstr "Caller"
 
@@ -2150,7 +2172,7 @@ msgid ""
 msgstr ""
 "Cancel unadopted reservations after this many days, or 0 to never cancel"
 
-#: transport.js dbupdate.py
+#: dbupdate.py transport.js
 msgid "Cancelled"
 msgstr "Cancelled"
 
@@ -2182,7 +2204,7 @@ msgstr "Catahoula Leopard Dog"
 msgid "Category"
 msgstr "Category"
 
-#: mobile.py
+#: mobile.py wordprocessor.py
 msgid "Cats"
 msgstr "Cats"
 
@@ -2202,8 +2224,8 @@ msgstr "Cavalier King Charles Spaniel"
 msgid "Cell"
 msgstr "Mobile"
 
-#: common_personchooser.js waitinglist_results.js person.js person_new.js
-#: person_find_results.js mobile.py
+#: mobile.py common_personchooser.js waitinglist_results.js person.js
+#: person_new.js person_find_results.js
 msgid "Cell Phone"
 msgstr "Mobile Phone"
 
@@ -2355,7 +2377,7 @@ msgstr "Change date required on selected treatments"
 msgid "Changed Mind"
 msgstr "Changed Mind"
 
-#: reports.js reports.py
+#: reports.py reports.js
 msgid "Chart"
 msgstr "Chart"
 
@@ -2423,7 +2445,7 @@ msgstr "Chicken"
 msgid "Chihuahua"
 msgstr "Chihuahua"
 
-#: mobile.py
+#: mobile.py wordprocessor.py
 msgid "Children"
 msgstr "Children"
 
@@ -2475,13 +2497,13 @@ msgstr "Citation Type"
 msgid "Citation Types"
 msgstr "Citation Types"
 
-#: roles.js header_edit_header.js mobile.py
+#: mobile.py roles.js header_edit_header.js
 msgid "Citations"
 msgstr "Citations"
 
-#: transport.js common_personchooser.js incident.js waitinglist_results.js
-#: person.js incident_find_results.js incident_find.js options.js
-#: incident_new.js person_new.js person_find_results.js html.py mobile.py
+#: html.py mobile.py transport.js common_personchooser.js incident.js
+#: waitinglist_results.js person.js incident_find_results.js incident_find.js
+#: options.js incident_new.js person_new.js person_find_results.js
 msgid "City"
 msgstr "Town"
 
@@ -2493,8 +2515,8 @@ msgstr "Town contains"
 msgid "Class"
 msgstr "Class"
 
-#: common_personchooser.js common.js common_animalchoosermulti.js
-#: common_animalchooser.js media.js service.py mobile.py onlineform.py
+#: service.py mobile.py onlineform.py common_personchooser.js common.js
+#: common_animalchoosermulti.js common_animalchooser.js media.js
 msgid "Clear"
 msgstr "Clear"
 
@@ -2502,11 +2524,11 @@ msgstr "Clear"
 msgid "Clear and sign again"
 msgstr "Clear and sign again"
 
-#: calendarview.js roles.js header_edit_header.js html.py
+#: html.py calendarview.js roles.js header_edit_header.js
 msgid "Clinic"
 msgstr "Clinic"
 
-#: clinic_calendar.js header.js html.py configuration.py
+#: html.py configuration.py clinic_calendar.js header.js
 msgid "Clinic Calendar"
 msgstr "Clinic Calendar"
 
@@ -2555,7 +2577,7 @@ msgstr "Clydesdale"
 msgid "Coat"
 msgstr "Coat"
 
-#: animal_find_results.js animal.js mobile.py lookups.py
+#: mobile.py lookups.py animal_find_results.js animal.js
 msgid "Coat Type"
 msgstr "Coat Type"
 
@@ -2579,9 +2601,9 @@ msgstr "Cockatoo"
 msgid "Cocker Spaniel"
 msgstr "Cocker Spaniel"
 
-#: animal_new.js common_personchooser.js animal_find_results.js person.js
-#: animal_find.js accounts.js animal.js common_animalchooser.js html.py
-#: mobile.py person.py
+#: html.py mobile.py person.py wordprocessor.py vouchers.js animal_new.js
+#: common_personchooser.js animal_find_results.js person.js animal_find.js
+#: accounts.js animal.js common_animalchooser.js
 msgid "Code"
 msgstr "Code"
 
@@ -2597,9 +2619,9 @@ msgstr "Code format tokens:"
 msgid "Collie"
 msgstr "Collie"
 
-#: animal_find_results.js person.js animal_find.js onlineform.js lostfound.js
-#: lostfound_find.js animal.js lostfound_find_results.js lostfound_new.js
-#: html.py mobile.py person.py lookups.py
+#: html.py mobile.py person.py lookups.py animal_find_results.js person.js
+#: animal_find.js onlineform.js lostfound.js lostfound_find.js animal.js
+#: lostfound_find_results.js lostfound_new.js
 msgid "Color"
 msgstr "Colour"
 
@@ -2626,17 +2648,17 @@ msgid ""
 msgstr ""
 "Comma separated list of units for this location, eg: 1,2,3,4,Isolation,Pen 5"
 
-#: transport.js waitinglist_new.js medicalprofile.js litters.js
-#: waitinglist_results.js person.js medical.js vaccination.js diary.js
-#: citations.js common_widgets.js stocklevel.js traploan.js donations.js
-#: waitinglist.js rota.js accounts.js staff_rota.js lostfound.js test.js
-#: animal_diet.js clinic_appointment.js header_edit_header.js log.js
-#: movements.js person_vouchers.js licence.js lostfound_new.js
-#: person_find_results.js html.py mobile.py person.py
+#: html.py mobile.py person.py wordprocessor.py transport.js vouchers.js
+#: waitinglist_new.js medicalprofile.js litters.js waitinglist_results.js
+#: person.js medical.js vaccination.js diary.js citations.js common_widgets.js
+#: stocklevel.js traploan.js donations.js waitinglist.js rota.js accounts.js
+#: staff_rota.js lostfound.js test.js animal_diet.js clinic_appointment.js
+#: header_edit_header.js log.js movements.js licence.js lostfound_new.js
+#: person_find_results.js
 msgid "Comments"
 msgstr "Comments"
 
-#: person.js animal_find.js person.py
+#: person.py person.js
 msgid "Comments Contain"
 msgstr "Comments Contain"
 
@@ -2652,7 +2674,7 @@ msgstr "Comments copied to web preferred media."
 msgid "Complaint"
 msgstr "Complaint"
 
-#: incident.js diary.js clinic_appointment.js mobile.py dbupdate.py
+#: mobile.py dbupdate.py incident.js diary.js clinic_appointment.js
 msgid "Complete"
 msgstr "Complete"
 
@@ -2660,8 +2682,8 @@ msgstr "Complete"
 msgid "Complete Tasks"
 msgstr "Complete Tasks"
 
-#: transport.js medical.js incident_find_results.js diary.js animal.js
-#: header_edit_header.js mobile.py medical.py
+#: mobile.py medical.py dbupdate.py transport.js medical.js
+#: incident_find_results.js diary.js animal.js header_edit_header.js
 msgid "Completed"
 msgstr "Completed"
 
@@ -2669,7 +2691,7 @@ msgstr "Completed"
 msgid "Completed Between"
 msgstr "Completed Between"
 
-#: incident_find.js lookups.py
+#: lookups.py incident_find.js
 msgid "Completed Type"
 msgstr "Completed Type"
 
@@ -2677,11 +2699,11 @@ msgstr "Completed Type"
 msgid "Completed notes upto today"
 msgstr "Completed notes upto today"
 
-#: incident.js mobile.py
-msgid "Completion Date"
-msgstr "Completion Date"
+#: mobile.py incident.js
+msgid "Completion Date/Time"
+msgstr "Completion Date/Time"
 
-#: incident.js mobile.py
+#: mobile.py incident.js
 msgid "Completion Type"
 msgstr "Completion Type"
 
@@ -2701,7 +2723,7 @@ msgstr "Confirm Password"
 msgid "Confirmation message"
 msgstr "Confirmation message"
 
-#: transport.js
+#: dbupdate.py transport.js
 msgid "Confirmed"
 msgstr "Confirmed"
 
@@ -2717,8 +2739,8 @@ msgstr "Consulting Room - {0}"
 msgid "Consumed"
 msgstr "Consumed"
 
-#: waitinglist_new.js waitinglist.js lostfound.js lostfound_find_results.js
-#: lostfound_new.js lostfound.py
+#: lostfound.py waitinglist_new.js waitinglist.js lostfound.js
+#: lostfound_find_results.js lostfound_new.js
 msgid "Contact"
 msgstr "Contact"
 
@@ -2739,7 +2761,6 @@ msgid "Coonhound"
 msgstr "Coonhound"
 
 #: movements.js
-#| msgid "Adoption Coordinator"
 msgid "Coordinator"
 msgstr "Coordinator"
 
@@ -2755,7 +2776,7 @@ msgstr ""
 msgid "Copy from animal comments"
 msgstr "Copy from animal comments"
 
-#: reports.js stocklevel.js roles.js animal.py onlineform.py
+#: animal.py onlineform.py reports.js stocklevel.js roles.js
 msgid "Copy of {0}"
 msgstr "Copy of {0}"
 
@@ -2780,7 +2801,7 @@ msgstr "Cost"
 msgid "Cost For"
 msgstr "Cost For"
 
-#: accounts.js lookups.py
+#: lookups.py accounts.js
 msgid "Cost Type"
 msgstr "Cost Type"
 
@@ -2816,7 +2837,7 @@ msgstr "Could not find animal with name '{0}'"
 msgid "Country"
 msgstr "Country"
 
-#: common.js header_edit_header.js html.py
+#: html.py common.js header_edit_header.js
 msgid "Courtesy Listing"
 msgstr "Courtesy Listing"
 
@@ -2919,10 +2940,14 @@ msgstr "Create this message"
 msgid "Create this person"
 msgstr "Create this person"
 
-#: animal_find_results.js waitinglist_results.js animal_find.js person_find.js
-#: person_find_results.js html.py
+#: html.py animal_find_results.js waitinglist_results.js animal_find.js
+#: person_find.js person_find_results.js
 msgid "Created By"
 msgstr "Created By"
+
+#: person_find.js
+msgid "Created Since"
+msgstr "Created Since"
 
 #: options.js
 msgid "Creating cost and cost types creates matching accounts and transactions"
@@ -2944,6 +2969,10 @@ msgstr ""
 msgid "Creating..."
 msgstr "Creating..."
 
+#: accounts_trx.js
+msgid "Credit"
+msgstr "Credit"
+
 #: dbupdate.py
 msgid "Credit Card"
 msgstr "Credit Card"
@@ -2960,7 +2989,7 @@ msgstr "Criteria:"
 msgid "Crossbreed"
 msgstr "Crossbreed"
 
-#: common.js options.js shelterview.js header_edit_header.js html.py
+#: html.py common.js options.js shelterview.js header_edit_header.js
 msgid "Cruelty Case"
 msgstr "Cruelty Case"
 
@@ -2976,7 +3005,11 @@ msgstr "Curly"
 msgid "Current"
 msgstr "Current"
 
-#: animal_bulk.js animal.js mobile.py person.py
+#: person_links.js
+msgid "Current Owner"
+msgstr "Current Owner"
+
+#: mobile.py person_links.js animal_bulk.js animal.js
 msgid "Current Vet"
 msgstr "Current Vet"
 
@@ -3046,16 +3079,16 @@ msgstr "Data"
 msgid "Data Protection"
 msgstr "Data Protection"
 
-#: login.js mobile.py
+#: mobile.py login.js
 msgid "Database"
 msgstr "Database"
 
-#: move_reclaim.js animal_find_results.js person.js animal_costs.js
-#: move_retailer.js person_links.js diary.js citations.js traploan.js common.js
+#: mobile.py dbupdate.py wordprocessor.py move_reclaim.js
+#: animal_find_results.js person.js animal_costs.js move_retailer.js
+#: person_links.js diary.js citations.js traploan.js common.js
 #: person_investigation.js onlineform.js accounts_trx.js log_new.js animal.js
 #: move_reserve.js move_transfer.js lostfound_find_results.js log.js
-#: movements.js move_adopt.js publish_logs.js move_foster.js mobile.py
-#: dbupdate.py
+#: movements.js move_adopt.js publish_logs.js move_foster.js
 msgid "Date"
 msgstr "Date"
 
@@ -3063,11 +3096,11 @@ msgstr "Date"
 msgid "Date '{0}' is not valid."
 msgstr "Date '{0}' is not valid."
 
-#: animal_new.js animal.js html.py mobile.py
+#: html.py mobile.py animal_new.js animal.js
 msgid "Date Brought In"
 msgstr "Date Brought In"
 
-#: lostfound.js header_edit_header.js lostfound_new.js lostfound.py
+#: lostfound.py lostfound.js header_edit_header.js lostfound_new.js
 msgid "Date Found"
 msgstr "Date Found"
 
@@ -3075,11 +3108,11 @@ msgstr "Date Found"
 msgid "Date Lost"
 msgstr "Date Lost"
 
-#: animal_find_results.js html.py
+#: html.py animal_find_results.js
 msgid "Date Of Birth"
 msgstr "Date Of Birth"
 
-#: waitinglist_results.js html.py
+#: html.py waitinglist_results.js
 msgid "Date Put On"
 msgstr "Date Put On"
 
@@ -3095,7 +3128,7 @@ msgstr "Date Reported"
 msgid "Date and notes are mandatory."
 msgstr "Date and notes are mandatory."
 
-#: animal.js animal.py
+#: animal.py animal.js
 msgid "Date brought in cannot be blank"
 msgstr "Date brought in cannot be blank"
 
@@ -3107,7 +3140,7 @@ msgstr "Date brought in cannot be in the future."
 msgid "Date brought in is not valid"
 msgstr "Date brought in is not valid"
 
-#: lostfound.js lostfound.py
+#: lostfound.py lostfound.js
 msgid "Date found cannot be blank"
 msgstr "Date found cannot be blank"
 
@@ -3115,7 +3148,7 @@ msgstr "Date found cannot be blank"
 msgid "Date found cannot be blank."
 msgstr "Date found cannot be blank."
 
-#: lostfound.js lostfound.py
+#: lostfound.py lostfound.js
 msgid "Date lost cannot be blank"
 msgstr "Date lost cannot be blank"
 
@@ -3127,7 +3160,7 @@ msgstr "Date lost cannot be blank."
 msgid "Date of Birth"
 msgstr "Date of Birth"
 
-#: animal_new.js animal.js animal.py
+#: animal.py animal_new.js animal.js
 msgid "Date of birth cannot be blank"
 msgstr "Date of birth cannot be blank"
 
@@ -3147,7 +3180,7 @@ msgstr "Date of last owner contact"
 msgid "Date put on"
 msgstr "Date put on"
 
-#: waitinglist_new.js waitinglist.js waitinglist.py
+#: waitinglist.py waitinglist_new.js waitinglist.js
 msgid "Date put on cannot be blank"
 msgstr "Date put on cannot be blank"
 
@@ -3159,7 +3192,7 @@ msgstr "Date put on list"
 msgid "Date removed"
 msgstr "Date removed"
 
-#: lostfound.js lostfound.py
+#: lostfound.py lostfound.js
 msgid "Date reported cannot be blank"
 msgstr "Date reported cannot be blank"
 
@@ -3211,6 +3244,10 @@ msgstr "Death Reason"
 msgid "Death Reasons"
 msgstr "Death Reasons"
 
+#: accounts_trx.js
+msgid "Debit"
+msgstr "Debit"
+
 #: dbupdate.py
 msgid "Debit Card"
 msgstr "Debit Card"
@@ -3219,8 +3256,8 @@ msgstr "Debit Card"
 msgid "Dec"
 msgstr "Dec"
 
-#: search.js person_links.js animal_find.js common.js options.js
-#: header_edit_header.js html.py animal.py
+#: html.py animal.py search.js person_links.js animal_find.js common.js
+#: options.js header_edit_header.js
 msgid "Deceased"
 msgstr "Deceased"
 
@@ -3232,11 +3269,11 @@ msgstr "Deceased Date"
 msgid "December"
 msgstr "December"
 
-#: animal_find_results.js animal.js html.py mobile.py
+#: html.py mobile.py animal_find_results.js animal.js
 msgid "Declawed"
 msgstr "Declawed"
 
-#: header_edit_header.js onlineform.py
+#: onlineform.py header_edit_header.js
 msgid "Declined"
 msgstr "Declined"
 
@@ -3384,16 +3421,16 @@ msgstr "Defaults"
 msgid "Defaults formats for code and shortcode are TYYYYNNN and NNT"
 msgstr "Defaults formats for code and shortcode are TYYYYNNN and NNT"
 
-#: document_templates.js report_images.js transport.js medicalprofile.js
-#: litters.js users.js incident.js waitinglist_results.js person.js
-#: animal_costs.js vaccination.js diary.js onlineforms.js reports.js
+#: document_templates.js report_images.js transport.js vouchers.js
+#: medicalprofile.js litters.js users.js incident.js waitinglist_results.js
+#: person.js animal_costs.js vaccination.js diary.js onlineforms.js reports.js
 #: citations.js onlineform_incoming.js common_tableform.js stocklevel.js
 #: traploan.js common.js donations.js person_investigation.js onlineform.js
 #: waitinglist.js document_repository.js accounts_trx.js diarytask.js roles.js
 #: rota.js accounts.js main.js animal_bulk.js staff_rota.js lostfound.js
 #: test.js animal.js animal_diet.js clinic_appointment.js diarytasks.js
 #: additional.js lookups.js media.js log.js htmltemplates.js movements.js
-#: person_vouchers.js licence.js clinic_invoice.js
+#: licence.js clinic_invoice.js
 msgid "Delete"
 msgstr "Delete"
 
@@ -3554,7 +3591,6 @@ msgid "Delete this waiting list entry"
 msgstr "Delete this waiting list entry"
 
 #: animal_bulk.js
-#| msgid "Creating..."
 msgid "Deleting..."
 msgstr "Deleting..."
 
@@ -3562,7 +3598,7 @@ msgstr "Deleting..."
 msgid "Denied"
 msgstr "Denied"
 
-#: traploan.js accounts_trx.js
+#: traploan.js
 msgid "Deposit"
 msgstr "Deposit"
 
@@ -3574,19 +3610,19 @@ msgstr "Deposit Account"
 msgid "Deposit Returned"
 msgstr "Deposit Returned"
 
-#: waitinglist_new.js report_export.js incident.js animal_find_results.js
-#: waitinglist_results.js animal_costs.js onlineforms.js reports.js
-#: stocklevel.js incident_find.js waitinglist.js accounts_trx.js accounts.js
-#: animal.js animal_diet.js lookups.js clinic_invoice.js html.py lostfound.py
-#: mobile.py
+#: html.py lostfound.py mobile.py waitinglist_new.js report_export.js
+#: incident.js animal_find_results.js waitinglist_results.js animal_costs.js
+#: onlineforms.js reports.js stocklevel.js incident_find.js waitinglist.js
+#: accounts_trx.js accounts.js animal.js animal_diet.js lookups.js
+#: clinic_invoice.js
 msgid "Description"
 msgstr "Description"
 
-#: waitinglist_results.js
+#: waitinglist_results.js animal_find.js
 msgid "Description Contains"
 msgstr "Description Contains"
 
-#: waitinglist_new.js waitinglist.js waitinglist.py
+#: waitinglist.py waitinglist_new.js waitinglist.js
 msgid "Description cannot be blank"
 msgstr "Description cannot be blank"
 
@@ -3607,7 +3643,7 @@ msgstr "Devon Rex"
 msgid "Dialog title"
 msgstr "Dialog title"
 
-#: calendarview.js roles.js header_edit_header.js html.py mobile.py
+#: html.py mobile.py calendarview.js roles.js options.js header_edit_header.js
 msgid "Diary"
 msgstr "Diary"
 
@@ -3627,9 +3663,21 @@ msgstr "Diary Tasks"
 msgid "Diary and Messages"
 msgstr "Diary and Messages"
 
-#: header.js html.py configuration.py
+#: html.py configuration.py header.js
 msgid "Diary calendar"
 msgstr "Diary calendar"
+
+#: diary.py
+msgid "Diary change triggered by {0} on {1}"
+msgstr "Diary change triggered by {0} on {1}"
+
+#: diary.py
+msgid "Diary complete: {0}"
+msgstr "Diary complete: {0}"
+
+#: diary.py
+msgid "Diary completion triggered by {0} on {1}"
+msgstr "Diary complettion triggered by {0} on {1}"
 
 #: diary.py
 msgid "Diary date cannot be blank"
@@ -3675,6 +3723,10 @@ msgstr "Diary task items need a pivot, subject and note."
 msgid "Diary tasks need a name."
 msgstr "Diary tasks need a name."
 
+#: diary.py
+msgid "Diary update: {0}"
+msgstr "Diary update: {0}"
+
 #: header_edit_header.js
 msgid "Did not ask"
 msgstr "Did not ask"
@@ -3683,7 +3735,7 @@ msgstr "Did not ask"
 msgid "Did you know?"
 msgstr "Did you know?"
 
-#: animal_find_results.js html.py animal.py dbupdate.py
+#: html.py animal.py dbupdate.py animal_find_results.js
 msgid "Died"
 msgstr "Died"
 
@@ -3695,11 +3747,11 @@ msgstr "Died off shelter"
 msgid "Died {0}"
 msgstr "Died {0}"
 
-#: header_edit_header.js mobile.py lookups.py
+#: mobile.py lookups.py header_edit_header.js
 msgid "Diet"
 msgstr "Diet"
 
-#: roles.js lookups.py
+#: lookups.py roles.js
 msgid "Diets"
 msgstr "Diets"
 
@@ -3707,7 +3759,7 @@ msgstr "Diets"
 msgid "Diets need a start date."
 msgstr "Diets need a start date."
 
-#: incident.js header_edit_header.js mobile.py
+#: mobile.py incident.js header_edit_header.js
 msgid "Dispatch"
 msgstr "Dispatch"
 
@@ -3719,7 +3771,7 @@ msgstr "Dispatch Address"
 msgid "Dispatch Between"
 msgstr "Dispatch Between"
 
-#: incident.js incident_find_results.js mobile.py
+#: mobile.py incident.js incident_find_results.js
 msgid "Dispatch Date/Time"
 msgstr "Dispatch Date/Time"
 
@@ -3727,7 +3779,7 @@ msgstr "Dispatch Date/Time"
 msgid "Dispatch {0}: {1}"
 msgstr "Dispatch {0}: {1}"
 
-#: incident.js incident_find.js mobile.py
+#: mobile.py incident.js incident_find.js
 msgid "Dispatched ACO"
 msgstr "Dispatched ACO"
 
@@ -3763,16 +3815,16 @@ msgstr "Do not show"
 msgid "Doberman Pinscher"
 msgstr "Doberman Pinscher"
 
-#: transport.js incident.js person.js waitinglist.js lostfound.js animal.js
-#: clinic_appointment.js movements.js licence.js dbupdate.py
+#: dbupdate.py transport.js vouchers.js incident.js person.js waitinglist.js
+#: lostfound.js animal.js clinic_appointment.js movements.js licence.js
 msgid "Document"
 msgstr "Document"
 
-#: media.js dbupdate.py
+#: dbupdate.py media.js
 msgid "Document Link"
 msgstr "Document Link"
 
-#: document_repository.js roles.js html.py
+#: html.py document_repository.js roles.js
 msgid "Document Repository"
 msgstr "Document Repository"
 
@@ -3788,9 +3840,17 @@ msgstr "Document file"
 msgid "Document signed"
 msgstr "Document signed"
 
-#: code.py
+#: code.py media.js
 msgid "Document signing request"
 msgstr "Document signing request"
+
+#: search.py
+msgid "Document signing requests issued in the last month that are unsigned"
+msgstr "Document signing requests issued in the last month that are unsigned"
+
+#: search.py
+msgid "Document signing requests received in the last week"
+msgstr "Document signing requests received in the last week"
 
 #: html.py
 msgid "Document templates"
@@ -3808,7 +3868,7 @@ msgstr "Dog"
 msgid "Dogo Argentino"
 msgstr "Dogo Argentino"
 
-#: mobile.py
+#: mobile.py wordprocessor.py
 msgid "Dogs"
 msgstr "Dogs"
 
@@ -3844,7 +3904,7 @@ msgstr "Donated"
 msgid "Donation"
 msgstr "Donation"
 
-#: waitinglist_results.js html.py
+#: html.py waitinglist_results.js
 msgid "Donation?"
 msgstr "Donation?"
 
@@ -3864,12 +3924,11 @@ msgstr "Donkey"
 msgid "Donkey/Mule"
 msgstr "Donkey/Mule"
 
-#: onlineforms.js common.js header_edit_header.js person_find_results.js
-#: html.py
+#: html.py common.js header_edit_header.js person_find_results.js
 msgid "Donor"
 msgstr "Donor"
 
-#: medicalprofile.js medical.js
+#: wordprocessor.py medicalprofile.js medical.js
 msgid "Dosage"
 msgstr "Dosage"
 
@@ -3881,12 +3940,15 @@ msgstr "Dove"
 msgid "Download"
 msgstr "Download"
 
+#: csvimport.py
+msgid "Download File"
+msgstr "Download File"
+
 #: dbupdate.py
 msgid "Draft"
 msgstr "Draft"
 
-#: transport.js onlineforms.js common.js header_edit_header.js html.py
-#: person.py
+#: html.py transport.js person_links.js common.js header_edit_header.js
 msgid "Driver"
 msgstr "Driver"
 
@@ -3898,11 +3960,15 @@ msgstr "Drop files here..."
 msgid "Dropoff"
 msgstr "Dropoff"
 
+#: person_links.js
+msgid "Dropoff Address"
+msgstr "Dropoff Address"
+
 #: dbupdate.py
 msgid "Duck"
 msgstr "Duck"
 
-#: citations.js common_widgets.js traploan.js donations.js
+#: wordprocessor.py citations.js common_widgets.js traploan.js donations.js
 #: clinic_appointment.js
 msgid "Due"
 msgstr "Due"
@@ -3991,7 +4057,7 @@ msgstr "Edit Lookups"
 msgid "Edit My Diary Notes"
 msgstr "Edit My Diary Notes"
 
-#: roles.js html.py
+#: html.py roles.js
 msgid "Edit Online Forms"
 msgstr "Edit Online Forms"
 
@@ -4035,17 +4101,13 @@ msgstr "Edit diary notes"
 msgid "Edit diary task"
 msgstr "Edit diary task"
 
-#: header.js html.py configuration.py
+#: html.py configuration.py header.js
 msgid "Edit diary tasks"
 msgstr "Edit diary tasks"
 
 #: animal_diet.js
 msgid "Edit diet"
 msgstr "Edit diet"
-
-#: media.js
-msgid "Edit document"
-msgstr "Edit document"
 
 #: onlineform.js
 msgid "Edit form field"
@@ -4067,7 +4129,7 @@ msgstr "Edit licence"
 msgid "Edit litter"
 msgstr "Edit litter"
 
-#: header.js html.py configuration.py
+#: html.py configuration.py header.js
 msgid "Edit litters"
 msgstr "Edit litters"
 
@@ -4076,8 +4138,8 @@ msgid "Edit log"
 msgstr "Edit log"
 
 #: media.js
-msgid "Edit media notes"
-msgstr "Edit media notes"
+msgid "Edit media"
+msgstr "Edit media"
 
 #: medicalprofile.js
 msgid "Edit medical profile"
@@ -4098,10 +4160,6 @@ msgstr "Edit my  diary notes"
 #: diary.js
 msgid "Edit my diary notes"
 msgstr "Edit my diary notes"
-
-#: media.js
-msgid "Edit notes"
-msgstr "Edit notes"
 
 #: onlineforms.js
 msgid "Edit online form"
@@ -4151,7 +4209,7 @@ msgstr "Edit template"
 msgid "Edit test"
 msgstr "Edit test"
 
-#: header.js html.py configuration.py
+#: html.py configuration.py header.js
 msgid "Edit the current waiting list"
 msgstr "Edit the current waiting list"
 
@@ -4175,7 +4233,7 @@ msgstr "Edit user"
 msgid "Edit vaccination"
 msgstr "Edit vaccination"
 
-#: person_vouchers.js
+#: vouchers.js
 msgid "Edit voucher"
 msgstr "Edit voucher"
 
@@ -4191,9 +4249,10 @@ msgstr "Egyptian Mau"
 msgid "Electricity Bills"
 msgstr "Electricity Bills"
 
-#: users.js incident.js waitinglist_results.js person.js waitinglist.js
-#: lostfound.js animal.js options.js person_find.js media.js
-#: header_edit_header.js person_find_results.js html.py mobile.py onlineform.py
+#: html.py mobile.py onlineform.py users.js incident.js waitinglist_results.js
+#: person.js waitinglist.js document_repository.js lostfound.js animal.js
+#: options.js person_find.js media.js header_edit_header.js
+#: person_find_results.js
 msgid "Email"
 msgstr "Email"
 
@@ -4225,6 +4284,10 @@ msgstr "Email a copy of the selected media files"
 msgid "Email address"
 msgstr "Email address"
 
+#: options.js
+msgid "Email diary note creators when a diary note is marked complete"
+msgstr "Email diary note creators when a diary note is marked complete"
+
 #: media.js
 msgid "Email document for electronic signature"
 msgstr "Email document for electronic signature"
@@ -4241,13 +4304,17 @@ msgstr ""
 "Email incoming form submissions to this comma separated list of email "
 "addresses"
 
-#: media.js
+#: document_repository.js media.js
 msgid "Email media"
 msgstr "Email media"
 
 #: common_widgets.js
 msgid "Email person"
 msgstr "Email person"
+
+#: donations.js
+msgid "Email request for payment"
+msgstr "Email request for payment"
 
 #: options.js
 msgid "Email signature"
@@ -4266,8 +4333,16 @@ msgid "Email this person"
 msgstr "Email this person"
 
 #: options.js
-msgid "Email users their diary notes each day"
-msgstr "Email users their diary notes each day"
+msgid ""
+"Email users immediately when a diary note assigned to them is created or "
+"updated"
+msgstr ""
+"Email users immediately when a diary note assigned to them is created or "
+"updated"
+
+#: options.js
+msgid "Email users their outstanding diary notes once per day"
+msgstr "Email users their outstanding diary notes once per day"
 
 #: dbupdate.py
 msgid "Emu"
@@ -4437,7 +4512,8 @@ msgstr "Entlebucher"
 msgid "Entry"
 msgstr "Entry"
 
-#: animal_new.js animal_find.js animal.js options.js shelterview.js mobile.py
+#: mobile.py animal_new.js animal_find.js animal_bulk.js animal.js options.js
+#: shelterview.js
 msgid "Entry Category"
 msgstr "Entry Category"
 
@@ -4445,7 +4521,7 @@ msgstr "Entry Category"
 msgid "Entry Donation"
 msgstr "Entry Donation"
 
-#: animal_find_results.js html.py mobile.py
+#: html.py mobile.py animal_find_results.js
 msgid "Entry Reason"
 msgstr "Entry Reason"
 
@@ -4465,7 +4541,7 @@ msgstr "Entry reason"
 msgid "Error contacting server."
 msgstr "Error contacting server."
 
-#: animal_find.js animal.py dbupdate.py
+#: animal.py dbupdate.py animal_find.js
 msgid "Escaped"
 msgstr "Escaped"
 
@@ -4481,7 +4557,11 @@ msgstr "Eskimo Dog"
 msgid "Estimate"
 msgstr "Estimate"
 
-#: animal_find_results.js move_deceased.js animal.js animal.py
+#: animal.py
+msgid "Estimated age '{0}' is not valid."
+msgstr "Estimated age '{0}' is not valid."
+
+#: animal.py animal_find_results.js move_deceased.js animal.js
 msgid "Euthanized"
 msgstr "Euthanised"
 
@@ -4497,7 +4577,7 @@ msgstr "Every day"
 msgid "Exclude animals who are aged under"
 msgstr "Exclude animals who are aged under"
 
-#: common.js header_edit_header.js mobile.py
+#: mobile.py common.js header_edit_header.js
 msgid "Exclude from bulk email"
 msgstr "Exclude from bulk email"
 
@@ -4537,6 +4617,10 @@ msgstr "Exotic Shorthair"
 msgid "Expense"
 msgstr "Expense"
 
+#: options.js
+msgid "Expense account for transaction fees"
+msgstr "Expense account for transaction fees"
+
 #: financial.py
 msgid "Expense::"
 msgstr "Expense::"
@@ -4570,6 +4654,10 @@ msgid "Expenses::Stationary"
 msgstr "Expenses::Stationary"
 
 #: dbupdate.py
+msgid "Expenses::TransactionFee"
+msgstr "Expenses::TransactionFee"
+
+#: dbupdate.py
 msgid "Expenses::Water"
 msgstr "Expenses::Water"
 
@@ -4589,10 +4677,13 @@ msgstr "Expired in the last month"
 msgid "Expired in the last week"
 msgstr "Expired in the last week"
 
-#: litters.js person.js vaccination.js main.js person_vouchers.js licence.js
-#: mobile.py
+#: mobile.py vouchers.js litters.js person.js vaccination.js main.js licence.js
 msgid "Expires"
 msgstr "Expires"
+
+#: vouchers.js
+msgid "Expiring in next month"
+msgstr "Expiring in next month"
 
 #: licence_renewal.js stocklevel.js person_find_results.js
 msgid "Expiry"
@@ -4606,7 +4697,7 @@ msgstr "Expiry date"
 msgid "Export"
 msgstr "Export"
 
-#: csvexport.js html.py
+#: code.py html.py csvexport.js
 msgid "Export Animals as CSV"
 msgstr "Export Animals as CSV"
 
@@ -4614,7 +4705,7 @@ msgstr "Export Animals as CSV"
 msgid "Export Report"
 msgstr "Export Report"
 
-#: report_export.js html.py
+#: html.py report_export.js
 msgid "Export Reports as CSV"
 msgstr "Export Reports as CSV"
 
@@ -4625,6 +4716,10 @@ msgid ""
 msgstr ""
 "Export a CSV file of animal records that ASM can import into another "
 "database."
+
+#: csvimport.py
+msgid "Export complete ({0} entries)."
+msgstr "Export complete ({0} entries)."
 
 #: sql.js
 msgid "Export this database in various formats"
@@ -4662,7 +4757,7 @@ msgstr "FECV/FeCoV"
 msgid "FIPV"
 msgstr "FIPV"
 
-#: animal_find_results.js dbupdate.py
+#: dbupdate.py animal_find_results.js
 msgid "FIV"
 msgstr "FIV"
 
@@ -4678,11 +4773,11 @@ msgstr "FIV+"
 msgid "FIV/L Test Date"
 msgstr "FIV/L Test Date"
 
-#: animal_find_results.js animal.js html.py mobile.py
+#: html.py mobile.py animal_find_results.js animal.js
 msgid "FIV/L Tested"
 msgstr "FIV/L Tested"
 
-#: animal_find_results.js dbupdate.py
+#: dbupdate.py animal_find_results.js
 msgid "FLV"
 msgstr "FLV"
 
@@ -4734,8 +4829,8 @@ msgstr "Fawn Tortoiseshell"
 msgid "FeLV"
 msgstr "FeLV"
 
-#: animal_find_results.js lostfound.js lostfound_find.js
-#: lostfound_find_results.js lostfound_new.js html.py
+#: html.py animal_find_results.js lostfound.js lostfound_find.js
+#: lostfound_find_results.js lostfound_new.js
 msgid "Features"
 msgstr "Features"
 
@@ -4750,6 +4845,10 @@ msgstr "February"
 #: licence_renewal.js donations.js licence.js
 msgid "Fee"
 msgstr "Fee"
+
+#: donations.js
+msgid "Fees"
+msgstr "Fees"
 
 #: dbupdate.py
 msgid "Female"
@@ -4775,7 +4874,7 @@ msgstr "Field names should not contain spaces."
 msgid "Fila Brasileiro"
 msgstr "Fila Brasileiro"
 
-#: media.js dbupdate.py
+#: dbupdate.py media.js
 msgid "File"
 msgstr "File"
 
@@ -4811,15 +4910,15 @@ msgstr "Find Incident"
 msgid "Find Lost Animal"
 msgstr "Find Lost Animal"
 
-#: person_find.js mobile.py
+#: mobile.py person_find.js
 msgid "Find Person"
 msgstr "Find Person"
 
-#: header.js html.py configuration.py
+#: html.py configuration.py header.js
 msgid "Find a found animal"
 msgstr "Find a found animal"
 
-#: header.js html.py configuration.py
+#: html.py configuration.py header.js
 msgid "Find a lost animal"
 msgstr "Find a lost animal"
 
@@ -4827,11 +4926,11 @@ msgstr "Find a lost animal"
 msgid "Find aco"
 msgstr "Find aco"
 
-#: header.js configuration.py
+#: configuration.py header.js
 msgid "Find an incident"
 msgstr "Find an incident"
 
-#: common_animalchooser.js header.js html.py configuration.py
+#: html.py configuration.py common_animalchooser.js header.js
 msgid "Find animal"
 msgstr "Find animal"
 
@@ -4883,7 +4982,7 @@ msgstr "Find lost animal returned {0} results."
 msgid "Find member"
 msgstr "Find member"
 
-#: common_personchooser.js header.js html.py configuration.py
+#: html.py configuration.py common_personchooser.js header.js
 msgid "Find person"
 msgstr "Find person"
 
@@ -4955,8 +5054,9 @@ msgstr "Fish"
 msgid "Flag"
 msgstr "Flag"
 
-#: common_personchooser.js person.js animal_find.js onlineform.js animal.js
-#: options.js person_find.js shelterview.js person_new.js csvimport_paypal.js
+#: html.py common_personchooser.js animal_find_results.js person.js
+#: animal_find.js onlineform.js animal.js options.js person_find.js
+#: shelterview.js person_new.js csvimport_paypal.js person_find_results.js
 msgid "Flags"
 msgstr "Flags"
 
@@ -4980,7 +5080,7 @@ msgstr "Followup"
 msgid "Followup Between"
 msgstr "Followup Between"
 
-#: incident.js mobile.py
+#: mobile.py incident.js
 msgid "Followup Date/Time"
 msgstr "Followup Date/Time"
 
@@ -4988,11 +5088,11 @@ msgstr "Followup Date/Time"
 msgid "Footer"
 msgstr "Footer"
 
-#: diary.js diarytask.js main.js clinic_appointment.js mobile.py
+#: mobile.py diary.js diarytask.js main.js clinic_appointment.js
 msgid "For"
 msgstr "For"
 
-#: common_personchooser.js common.js users.py
+#: users.py common_personchooser.js common.js
 msgid "Forbidden"
 msgstr "Forbidden"
 
@@ -5012,7 +5112,12 @@ msgstr "Form URL"
 msgid "Forms need a name."
 msgstr "Forms need a name."
 
-#: publish_options.js common.js move_foster.js dbupdate.py
+#: dbupdate.py
+msgid "Fortnightly"
+msgstr "Fortnightly"
+
+#: dbupdate.py publish_options.js common.js common_animalchoosermulti.js
+#: move_foster.js
 msgid "Foster"
 msgstr "Foster"
 
@@ -5020,7 +5125,7 @@ msgstr "Foster"
 msgid "Foster Book"
 msgstr "Foster Book"
 
-#: person.js mobile.py
+#: mobile.py person.js
 msgid "Foster Capacity"
 msgstr "Foster Capacity"
 
@@ -5028,11 +5133,11 @@ msgstr "Foster Capacity"
 msgid "Foster Transfer"
 msgstr "Foster Transfer"
 
-#: header.js move_foster.js html.py configuration.py
+#: html.py configuration.py header.js move_foster.js
 msgid "Foster an animal"
 msgstr "Foster an animal"
 
-#: header.js html.py configuration.py
+#: html.py configuration.py header.js
 msgid "Foster book"
 msgstr "Foster book"
 
@@ -5056,8 +5161,8 @@ msgstr "Fostered Animals"
 msgid "Fostered to {0} since {1}"
 msgstr "Fostered to {0} since {1}"
 
-#: animal_new.js animal_find_results.js onlineforms.js common.js options.js
-#: shelterview.js header_edit_header.js person_find_results.js html.py
+#: html.py animal_new.js animal_find_results.js common.js options.js
+#: shelterview.js header_edit_header.js person_find_results.js
 msgid "Fosterer"
 msgstr "Fosterer"
 
@@ -5073,7 +5178,7 @@ msgstr "Fosterer Medical Report"
 msgid "Found"
 msgstr "Found"
 
-#: search.js onlineform_incoming.js dbupdate.py
+#: dbupdate.py search.js onlineform_incoming.js
 msgid "Found Animal"
 msgstr "Found Animal"
 
@@ -5085,7 +5190,7 @@ msgstr "Found Animal - Additional"
 msgid "Found Animal - Details"
 msgstr "Found Animal - Details"
 
-#: person.py
+#: person_links.js
 msgid "Found Animal Contact"
 msgstr "Found Animal Contact"
 
@@ -5181,8 +5286,8 @@ msgstr "From retailer is only valid on adoption movements."
 msgid "Future notes"
 msgstr "Future notes"
 
-#: common_personchooser.js person.js onlineform.js person_find.js person_new.js
-#: dbupdate.py
+#: dbupdate.py common_personchooser.js person.js onlineform.js person_find.js
+#: person_new.js
 msgid "GDPR Contact Opt-In"
 msgstr "GDPR Contact Opt-In"
 
@@ -5250,6 +5355,10 @@ msgstr "Generate a new animal code"
 msgid "Generate a random name for this animal"
 msgstr "Generate a random name for this animal"
 
+#: vouchers.js
+msgid "Generate a unique voucher code"
+msgstr "Generate a unique voucher code"
+
 #: clinic_appointment.js
 msgid "Generate document from this appointment"
 msgstr "Generate document from this appointment"
@@ -5265,6 +5374,10 @@ msgstr "Generate document from this payment"
 #: transport.js
 msgid "Generate document from this transport"
 msgstr "Generate document from this transport"
+
+#: vouchers.js
+msgid "Generate document from this voucher"
+msgstr "Generate document from this voucher"
 
 #: move_gendoc.js
 msgid "Generate documentation"
@@ -5310,7 +5423,7 @@ msgstr "Get more reports from sheltermanager.com"
 msgid "Gift Aid"
 msgstr "Gift Aid"
 
-#: person_find_results.js html.py
+#: html.py person_find_results.js
 msgid "GiftAid"
 msgstr "GiftAid"
 
@@ -5338,7 +5451,7 @@ msgstr "Give Treatments"
 msgid "Give Vaccination"
 msgstr "Give Vaccination"
 
-#: medical.js vaccination.js
+#: wordprocessor.py medical.js vaccination.js
 msgid "Given"
 msgstr "Given"
 
@@ -5386,6 +5499,10 @@ msgstr "Golden Retriever"
 msgid "Goldfish"
 msgstr "Goldfish"
 
+#: shelterview.js
+msgid "Good With"
+msgstr "Good With"
+
 #: html.py
 msgid "Good With Cats"
 msgstr "Good With Cats"
@@ -5397,6 +5514,10 @@ msgstr "Good With Children"
 #: html.py
 msgid "Good With Dogs"
 msgstr "Good With Dogs"
+
+#: options.js
+msgid "Good with"
+msgstr "Good with"
 
 #: animal_find_results.js
 msgid "Good with Cats"
@@ -5410,19 +5531,27 @@ msgstr "Good with Children"
 msgid "Good with Dogs"
 msgstr "Good with Dogs"
 
-#: person.js animal_find.js animal_bulk.js animal.js person.py
+#: person.py person.js animal_find.js animal_bulk.js animal.js shelterview.js
 msgid "Good with cats"
 msgstr "Good with cats"
 
-#: person.js animal_find.js person.py
+#: person.py person.js animal_find.js animal.js shelterview.js
 msgid "Good with children"
 msgstr "Good with children"
 
-#: person.js animal_find.js animal_bulk.js animal.js person.py
+#: shelterview.js
+msgid "Good with children over 12"
+msgstr "Good with children over 12"
+
+#: shelterview.js
+msgid "Good with children over 5"
+msgstr "Good with children over 5"
+
+#: person.py person.js animal_find.js animal_bulk.js animal.js shelterview.js
 msgid "Good with dogs"
 msgstr "Good with dogs"
 
-#: animal_bulk.js animal.js person.py
+#: person.py lookups.py animal_bulk.js
 msgid "Good with kids"
 msgstr "Good with kids"
 
@@ -5469,6 +5598,10 @@ msgstr "Grey and White"
 #: dbupdate.py
 msgid "Greyhound"
 msgstr "Greyhound"
+
+#: donations.js
+msgid "Gross"
+msgstr "Gross"
 
 #: dbupdate.py
 msgid "Guinea Pig"
@@ -5522,7 +5655,7 @@ msgstr "Havanese"
 msgid "Header"
 msgstr "Header"
 
-#: animal_find_results.js animal.js html.py mobile.py
+#: html.py mobile.py animal_find_results.js animal.js
 msgid "Health Problems"
 msgstr "Health Problems"
 
@@ -5534,7 +5667,7 @@ msgstr "Health and Identification"
 msgid "Healthy"
 msgstr "Healthy"
 
-#: animal_find_results.js dbupdate.py
+#: dbupdate.py animal_find_results.js
 msgid "Heartworm"
 msgstr "Heartworm"
 
@@ -5546,7 +5679,7 @@ msgstr "Heartworm Test Date"
 msgid "Heartworm Test Result"
 msgstr "Heartworm Test Result"
 
-#: animal_find_results.js animal.js html.py mobile.py
+#: html.py mobile.py animal_find_results.js animal.js
 msgid "Heartworm Tested"
 msgstr "Heartworm Tested"
 
@@ -5558,7 +5691,7 @@ msgstr "Heartworm+"
 msgid "Hedgehog"
 msgstr "Hedgehog"
 
-#: medical.js medical.py
+#: medical.py medical.js
 msgid "Held"
 msgstr "Held"
 
@@ -5582,7 +5715,7 @@ msgstr ""
 msgid "Hidden"
 msgstr "Hidden"
 
-#: animal_find.js animal.js html.py mobile.py
+#: html.py mobile.py animal_find.js animal.js
 msgid "Hidden Comments"
 msgstr "Hidden Comments"
 
@@ -5603,7 +5736,6 @@ msgid "Hide deceased animals from the home page"
 msgstr "Hide deceased animals from the home page"
 
 #: options.js
-#| msgid "Hide deceased animals from the home page"
 msgid "Hide financial stats from the home page"
 msgstr "Hide financial stats from the home page"
 
@@ -5615,6 +5747,10 @@ msgstr "High"
 msgid "Highlight"
 msgstr "Highlight"
 
+#: options.js
+msgid "Highlight unadopted reservations after"
+msgstr "Highlight unadopted reservations after"
+
 #: dbupdate.py
 msgid "Himalayan"
 msgstr "Himalayan"
@@ -5623,8 +5759,8 @@ msgstr "Himalayan"
 msgid "History"
 msgstr "History"
 
-#: transport.js animal_find_results.js animal_find.js common.js options.js
-#: shelterview.js html.py
+#: html.py dbupdate.py transport.js animal_find_results.js animal_find.js
+#: common.js options.js shelterview.js
 msgid "Hold"
 msgstr "Hold"
 
@@ -5632,12 +5768,12 @@ msgstr "Hold"
 msgid "Hold the animal until this date or blank to hold indefinitely"
 msgstr "Hold the animal until this date or blank to hold indefinitely"
 
-#: animal_new.js animal_find_results.js animal_bulk.js animal.js
-#: header_edit_header.js html.py
+#: html.py animal_new.js animal_find_results.js animal_bulk.js animal.js
+#: header_edit_header.js
 msgid "Hold until"
 msgstr "Hold until"
 
-#: common.js animal.py
+#: animal.py common.js
 msgid "Hold until {0}"
 msgstr "Hold until {0}"
 
@@ -5645,12 +5781,12 @@ msgstr "Hold until {0}"
 msgid "Holland Lop"
 msgstr "Holland Lop"
 
-#: header.js html.py mobile.py
+#: html.py mobile.py header.js
 msgid "Home"
 msgstr "Home"
 
-#: common_personchooser.js waitinglist_results.js person.js person_new.js
-#: person_find_results.js mobile.py
+#: mobile.py common_personchooser.js waitinglist_results.js person.js
+#: person_new.js person_find_results.js
 msgid "Home Phone"
 msgstr "Home Phone"
 
@@ -5658,7 +5794,7 @@ msgstr "Home Phone"
 msgid "Home page"
 msgstr "Home page"
 
-#: person.js html.py
+#: html.py person.js
 msgid "Homecheck Areas"
 msgstr "Homecheck Areas"
 
@@ -5674,8 +5810,7 @@ msgstr "Homecheck History"
 msgid "Homecheck areas"
 msgstr "Homecheck areas"
 
-#: onlineforms.js common.js header_edit_header.js person_find_results.js
-#: html.py
+#: html.py common.js header_edit_header.js person_find_results.js
 msgid "Homechecked"
 msgstr "Homechecked"
 
@@ -5687,8 +5822,7 @@ msgstr "Homechecked By"
 msgid "Homechecked by"
 msgstr "Homechecked by"
 
-#: person.js onlineforms.js common.js header_edit_header.js
-#: person_find_results.js html.py
+#: html.py person.js common.js header_edit_header.js person_find_results.js
 msgid "Homechecker"
 msgstr "Homechecker"
 
@@ -5712,8 +5846,8 @@ msgstr "Hound"
 msgid "Hours"
 msgstr "Hours"
 
-#: animal_find_results.js person.js animal_find.js animal_bulk.js animal.js
-#: html.py mobile.py person.py
+#: html.py mobile.py person.py animal_find_results.js person.js animal_find.js
+#: animal_bulk.js animal.js shelterview.js
 msgid "Housetrained"
 msgstr "Housetrained"
 
@@ -5732,6 +5866,10 @@ msgstr "Husky"
 #: main.js
 msgid "I've finished, Don't show me this popup again."
 msgstr "I've finished, Don't show me this popup again."
+
+#: additional.js lookups.js
+msgid "ID"
+msgstr "ID"
 
 #: users.js
 msgid "IP Restriction"
@@ -5768,14 +5906,6 @@ msgid ""
 msgstr ""
 "If this form has a populated email address field during submission, send a "
 "confirmation email to it"
-
-#: media.js
-msgid ""
-"If this is the web preferred image, web publishers will use these notes as "
-"the animal description"
-msgstr ""
-"If this is the web preferred image, web publishers will use these notes as "
-"the animal description"
 
 #: person.js
 msgid ""
@@ -5840,7 +5970,7 @@ msgstr "Iguana"
 msgid "Illyrian Sheepdog"
 msgstr "Illyrian Sheepdog"
 
-#: animal_find_results.js onlineform.js html.py
+#: html.py animal_find_results.js onlineform.js
 msgid "Image"
 msgstr "Image"
 
@@ -5852,11 +5982,11 @@ msgstr "Image file"
 msgid "Import"
 msgstr "Import"
 
-#: csvimport.js html.py code.py
+#: code.py html.py csvimport.js
 msgid "Import a CSV file"
 msgstr "Import a CSV file"
 
-#: csvimport_paypal.js html.py code.py
+#: code.py html.py csvimport_paypal.js
 msgid "Import a PayPal CSV file"
 msgstr "Import a PayPal CSV file"
 
@@ -5864,7 +5994,7 @@ msgstr "Import a PayPal CSV file"
 msgid "Import from file"
 msgstr "Import from file"
 
-#: main.js mobile.py
+#: mobile.py main.js
 msgid "Important"
 msgstr "Important"
 
@@ -5875,6 +6005,14 @@ msgstr "In"
 #: animal.py
 msgid "In SubTotal"
 msgstr "In SubTotal"
+
+#: options.js
+msgid ""
+"In the Stripe dashboard, create a webhook to send 'checkout.session."
+"completed' events to {0}"
+msgstr ""
+"In the Stripe dashboard, create a webhook to send 'checkout.session."
+"completed' events to {0}"
 
 #: publish_options.js
 msgid "In the last month"
@@ -5888,9 +6026,17 @@ msgstr "In the last quarter"
 msgid "In the last week"
 msgstr "In the last week"
 
-#: publish_options.js
+#: publish_options.js litters.js
 msgid "In the last year"
 msgstr "In the last year"
+
+#: options.js
+msgid ""
+"In your PayPal account, enable Instant Payment Notifications with a URL of "
+"{0}"
+msgstr ""
+"In your PayPal account, enable Instant Payment Notifications with a URL of "
+"{0}"
 
 #: dbupdate.py
 msgid "In-Kind Donation"
@@ -5904,8 +6050,8 @@ msgstr "Inactive"
 msgid "Inactive - do not include"
 msgstr "Inactive - do not include"
 
-#: search.js citations.js onlineform_incoming.js header_edit_header.js
-#: dbupdate.py
+#: dbupdate.py search.js citations.js onlineform_incoming.js
+#: header_edit_header.js
 msgid "Incident"
 msgstr "Incident"
 
@@ -5937,7 +6083,7 @@ msgstr "Incident Between"
 msgid "Incident Completed Types"
 msgstr "Incident Completed Types"
 
-#: incident.js incident_find_results.js animal.js incident_new.js mobile.py
+#: mobile.py incident.js incident_find_results.js animal.js incident_new.js
 msgid "Incident Date/Time"
 msgstr "Incident Date/Time"
 
@@ -5949,7 +6095,7 @@ msgstr "Incident Type"
 msgid "Incident Types"
 msgstr "Incident Types"
 
-#: incident.js animalcontrol.py
+#: animalcontrol.py incident.js
 msgid "Incident date cannot be blank"
 msgstr "Incident date cannot be blank"
 
@@ -6061,6 +6207,10 @@ msgstr "Include non-neutered/spayed animals"
 msgid "Income"
 msgstr "Income"
 
+#: options.js
+msgid "Income account for sales tax"
+msgstr "Income account for VAT"
+
 #: dbupdate.py
 msgid "Income from an on-site shop"
 msgstr "Income from an on-site shop"
@@ -6088,6 +6238,10 @@ msgstr "Income::Interest"
 #: dbupdate.py
 msgid "Income::OpeningBalances"
 msgstr "Income::OpeningBalances"
+
+#: dbupdate.py
+msgid "Income::SalesTax"
+msgstr "Income::VAT"
 
 #: dbupdate.py
 msgid "Income::Shop"
@@ -6122,6 +6276,14 @@ msgstr ""
 "people on the web."
 
 #: onlineform_incoming.js
+msgid ""
+"Incoming forms that have been used to create records will be automatically "
+"removed when you leave this screen."
+msgstr ""
+"Incoming forms that have been used to create records will be automatically "
+"removed when you leave this screen."
+
+#: onlineform_incoming.js
 msgid "Incoming forms will be automatically removed after {0} days."
 msgstr "Incoming forms will be automatically removed after {0} days."
 
@@ -6132,6 +6294,10 @@ msgstr "Incomplete incidents"
 #: diary.js
 msgid "Incomplete notes upto today"
 msgstr "Incomplete notes upto today"
+
+#: media.js
+msgid "Indefinitely"
+msgstr "Indefinitely"
 
 #: diarytask.js additional.js
 msgid "Index"
@@ -6145,12 +6311,12 @@ msgstr "Individual/Couple"
 msgid "Induct a new animal"
 msgstr "Induct a new animal"
 
-#: main.js mobile.py
+#: mobile.py main.js
 msgid "Information"
 msgstr "Information"
 
-#: common_personchooser.js person.js person_new.js person_find_results.js
-#: html.py
+#: html.py common_personchooser.js person.js person_new.js
+#: person_find_results.js
 msgid "Initials"
 msgstr "Initials"
 
@@ -6186,15 +6352,11 @@ msgstr "Internal Location"
 msgid "Internal Locations"
 msgstr "Internal Locations"
 
-#: code.py
-msgid "Invalid email address"
-msgstr "Invalid email address"
-
 #: common.js
 msgid "Invalid email address '{0}'"
 msgstr "Invalid email address '{0}'"
 
-#: animal.js lookups.py
+#: lookups.py common.js
 msgid "Invalid microchip number length"
 msgstr "Invalid microchip number length"
 
@@ -6262,9 +6424,13 @@ msgstr "Issue a new insurance number for this animal/adoption"
 msgid "Issue date and expiry date must be valid dates."
 msgstr "Issue date and expiry date must be valid dates."
 
-#: licence_renewal.js person_vouchers.js licence.js
+#: vouchers.js licence_renewal.js licence.js
 msgid "Issued"
 msgstr "Issued"
+
+#: vouchers.js
+msgid "Issued in last month"
+msgstr "Issued in last month"
 
 #: licence.js
 msgid "Issued in the last month"
@@ -6350,9 +6516,9 @@ msgstr "Jun"
 msgid "June"
 msgstr "June"
 
-#: common_personchooser.js incident.js person.js incident_find_results.js
-#: incident_find.js person_find.js incident_new.js person_new.js
-#: person_find_results.js html.py lookups.py
+#: html.py lookups.py common_personchooser.js incident.js person.js
+#: incident_find_results.js incident_find.js person_find.js incident_new.js
+#: person_new.js person_find_results.js
 msgid "Jurisdiction"
 msgstr "Jurisdiction"
 
@@ -6480,7 +6646,7 @@ msgstr "Latency Tester"
 msgid "Latitude/Longitude"
 msgstr "Latitude/Longitude"
 
-#: options.js search.py
+#: search.py options.js
 msgid "Least recently changed"
 msgstr "Least recently changed"
 
@@ -6524,11 +6690,11 @@ msgstr "Liability"
 msgid "Licence for {0} successfully renewed {1} - {2}"
 msgstr "Licence for {0} successfully renewed {1} - {2}"
 
-#: search.js header_edit_header.js mobile.py
+#: mobile.py search.js header_edit_header.js
 msgid "License"
 msgstr "Licence"
 
-#: person.js licence.js mobile.py
+#: mobile.py person.js licence.js
 msgid "License Number"
 msgstr "Licence Number"
 
@@ -6560,11 +6726,11 @@ msgstr "Licence requires issued and expiry dates"
 msgid "Licenses"
 msgstr "Licences"
 
-#: licence.js html.py
+#: html.py licence.js
 msgid "Licensing"
 msgstr "Licensing"
 
-#: animal.js html.py
+#: html.py animal.js
 msgid "Lifetime"
 msgstr "Lifetime"
 
@@ -6584,7 +6750,7 @@ msgstr "Lilac Tortie"
 msgid "Limited to {0} matches"
 msgstr "Limited to {0} matches"
 
-#: incident.js diary.js onlineform_incoming.js additional.js mobile.py
+#: mobile.py incident.js diary.js onlineform_incoming.js additional.js
 msgid "Link"
 msgstr "Link"
 
@@ -6596,6 +6762,10 @@ msgstr "Link an animal"
 msgid "Link this user account to a staff person record."
 msgstr "Link this user account to a staff person record."
 
+#: animal.js
+msgid "Link to a photo of this animal"
+msgstr "Link to a photo of this animal"
+
 #: media.js
 msgid "Link to an external web resource"
 msgstr "Link to an external web resource"
@@ -6604,7 +6774,7 @@ msgstr "Link to an external web resource"
 msgid "Link to this animal"
 msgstr "Link to this animal"
 
-#: header_edit_header.js mobile.py
+#: mobile.py header_edit_header.js
 msgid "Links"
 msgstr "Links"
 
@@ -6612,12 +6782,12 @@ msgstr "Links"
 msgid "List"
 msgstr "List"
 
-#: animal_new.js medical.js vaccination.js animal_find.js animal_bulk.js
-#: test.js animal.js html.py reports.py
+#: html.py reports.py animal_new.js medical.js vaccination.js animal_find.js
+#: animal_bulk.js test.js animal.js
 msgid "Litter"
 msgstr "Litter"
 
-#: litters.js animal_find_results.js html.py
+#: html.py litters.js animal_find_results.js
 msgid "Litter Ref"
 msgstr "Litter Ref"
 
@@ -6629,7 +6799,7 @@ msgstr "Litter Reference"
 msgid "Littermates"
 msgstr "Littermates"
 
-#: litters.js common_animalchoosermulti.js roles.js animal.py
+#: animal.py litters.js common_animalchoosermulti.js roles.js
 msgid "Litters"
 msgstr "Litters"
 
@@ -6657,7 +6827,7 @@ msgstr "Lizard"
 msgid "Llama"
 msgstr "Llama"
 
-#: onlineform_incoming.js common.js header.js
+#: onlineform_incoming.js common_widgets.js common.js mailmerge.js header.js
 msgid "Loading..."
 msgstr "Loading..."
 
@@ -6673,15 +6843,24 @@ msgstr "Local"
 msgid "Locale"
 msgstr "Locale"
 
-#: animal_find_results.js medical.js incident_find_results.js vaccination.js
-#: animal_find.js stocklevel.js animal_bulk.js test.js animal.js options.js
-#: shelterview.js header_edit_header.js html.py mobile.py lookups.py reports.py
+#: html.py mobile.py lookups.py reports.py animal_find_results.js medical.js
+#: incident_find_results.js vaccination.js animal_find.js stocklevel.js
+#: animal_bulk.js test.js animal.js options.js shelterview.js
+#: header_edit_header.js
 msgid "Location"
 msgstr "Location"
+
+#: options.js shelterview.js
+msgid "Location (No Virtual)"
+msgstr "Location (No Virtual)"
 
 #: users.js
 msgid "Location Filter"
 msgstr "Location Filter"
+
+#: options.js shelterview.js
+msgid "Location and Breed"
+msgstr "Location and Breed"
 
 #: options.js shelterview.js
 msgid "Location and Species"
@@ -6699,7 +6878,7 @@ msgstr "Location and Unit"
 msgid "Locations"
 msgstr "Locations"
 
-#: roles.js header_edit_header.js mobile.py
+#: mobile.py roles.js header_edit_header.js
 msgid "Log"
 msgstr "Log"
 
@@ -6739,11 +6918,11 @@ msgstr "Log requires an animal."
 msgid "Log successfully added."
 msgstr "Log successfully added."
 
-#: login.js common.js mobile.py
+#: mobile.py login.js common.js
 msgid "Login"
 msgstr "Login"
 
-#: common.js header.js mobile.py
+#: mobile.py common.js header.js
 msgid "Logout"
 msgstr "Logout"
 
@@ -6755,19 +6934,19 @@ msgstr "Long"
 msgid "Long term"
 msgstr "Long term"
 
-#: options.js code.py
+#: code.py options.js
 msgid "Longest On Shelter"
 msgstr "Longest On Shelter"
 
-#: person.js
+#: html.py person.js person_find_results.js
 msgid "Looking For"
 msgstr "Looking For"
 
-#: person.js person.py
+#: person.py person.js
 msgid "Looking for"
 msgstr "Looking for"
 
-#: onlineform.js dbupdate.py
+#: dbupdate.py onlineform.js
 msgid "Lookup"
 msgstr "Lookup"
 
@@ -6799,7 +6978,7 @@ msgstr "Lory/Lorikeet"
 msgid "Lost"
 msgstr "Lost"
 
-#: search.js onlineform_incoming.js dbupdate.py
+#: dbupdate.py search.js onlineform_incoming.js
 msgid "Lost Animal"
 msgstr "Lost Animal"
 
@@ -6811,7 +6990,7 @@ msgstr "Lost Animal - Additional"
 msgid "Lost Animal - Details"
 msgstr "Lost Animal - Details"
 
-#: person.py
+#: person_links.js
 msgid "Lost Animal Contact"
 msgstr "Lost Animal Contact"
 
@@ -6899,7 +7078,7 @@ msgstr "Macaw"
 msgid "Mail"
 msgstr "Mail"
 
-#: reports.js reports.py
+#: reports.py reports.js
 msgid "Mail Merge"
 msgstr "Mail Merge"
 
@@ -6951,7 +7130,7 @@ msgstr "Manual"
 msgid "Manually enter codes (do not generate)"
 msgstr "Manually enter codes (do not generate)"
 
-#: vaccination.js
+#: wordprocessor.py vaccination.js
 msgid "Manufacturer"
 msgstr "Manufacturer"
 
@@ -6959,11 +7138,11 @@ msgstr "Manufacturer"
 msgid "Manx"
 msgstr "Manx"
 
-#: incident.js person.js reports.js reports.py
+#: reports.py incident.js person.js reports.js
 msgid "Map"
 msgstr "Map"
 
-#: header.js html.py configuration.py
+#: html.py configuration.py header.js
 msgid "Map of active incidents"
 msgstr "Map of active incidents"
 
@@ -6983,7 +7162,7 @@ msgstr "Maremma Sheepdog"
 msgid "Mark Deceased"
 msgstr "Mark Deceased"
 
-#: move_deceased.js header.js html.py configuration.py
+#: html.py configuration.py move_deceased.js header.js
 msgid "Mark an animal deceased"
 msgstr "Mark an animal deceased"
 
@@ -7015,7 +7194,7 @@ msgstr "Mark treatments given"
 msgid "Marketer"
 msgstr "Marketer"
 
-#: animal_find.js animal.js mobile.py
+#: mobile.py animal_find.js animal.js
 msgid "Markings"
 msgstr "Markings"
 
@@ -7031,7 +7210,7 @@ msgstr "Marriage/Relationship split"
 msgid "Mastiff"
 msgstr "Mastiff"
 
-#: lostfound.js animal.js lostfound.py
+#: lostfound.py lostfound.js animal.js
 msgid "Match"
 msgstr "Match"
 
@@ -7043,7 +7222,7 @@ msgstr "Match Lost and Found"
 msgid "Match against other lost/found animals"
 msgstr "Match against other lost/found animals"
 
-#: header.js html.py lostfound.py configuration.py
+#: html.py lostfound.py configuration.py header.js
 msgid "Match lost and found animals"
 msgstr "Match lost and found animals"
 
@@ -7075,7 +7254,7 @@ msgstr "Media Notes"
 msgid "Media notes contain"
 msgstr "Media notes contain"
 
-#: calendarview.js roles.js options.js header_edit_header.js html.py mobile.py
+#: html.py mobile.py calendarview.js roles.js options.js header_edit_header.js
 msgid "Medical"
 msgstr "Medical"
 
@@ -7087,15 +7266,15 @@ msgstr "Medical Book"
 msgid "Medical Profiles"
 msgstr "Medical Profiles"
 
-#: header.js html.py configuration.py
+#: html.py configuration.py header.js
 msgid "Medical book"
 msgstr "Medical book"
 
-#: header.js html.py configuration.py
+#: html.py configuration.py header.js
 msgid "Medical calendar"
 msgstr "Medical calendar"
 
-#: header.js html.py configuration.py
+#: html.py configuration.py header.js
 msgid "Medical profiles"
 msgstr "Medical profiles"
 
@@ -7123,16 +7302,15 @@ msgstr "Medicate Animal"
 msgid "Medium"
 msgstr "Medium"
 
-#: onlineforms.js common.js header_edit_header.js person_find_results.js
-#: html.py
+#: html.py common.js header_edit_header.js person_find_results.js
 msgid "Member"
 msgstr "Member"
 
-#: person.js html.py mobile.py
+#: html.py mobile.py person.js
 msgid "Membership Expiry"
 msgstr "Membership Expiry"
 
-#: person.js html.py mobile.py
+#: html.py mobile.py person.js
 msgid "Membership Number"
 msgstr "Membership Number"
 
@@ -7176,7 +7354,7 @@ msgstr "Message from {0}"
 msgid "Message successfully sent to {0}"
 msgstr "Message successfully sent to {0}"
 
-#: mobile.py
+#: mobile.py options.js
 msgid "Messages"
 msgstr "Messages"
 
@@ -7184,11 +7362,14 @@ msgstr "Messages"
 msgid "Messages successfully sent"
 msgstr "Messages successfully sent"
 
-#: common_widgets.js donations.js clinic_appointment.js csvimport_paypal.js
+#: wordprocessor.py common_widgets.js donations.js clinic_appointment.js
+#: csvimport_paypal.js
 msgid "Method"
 msgstr "Method"
 
-#: animal_find_results.js common_animalchooser.js header_edit_header.js
+#: lostfound.py animal_find_results.js lostfound.js lostfound_find.js
+#: common_animalchooser.js lostfound_find_results.js header_edit_header.js
+#: lostfound_new.js
 msgid "Microchip"
 msgstr "Microchip"
 
@@ -7196,7 +7377,7 @@ msgstr "Microchip"
 msgid "Microchip Date"
 msgstr "Microchip Date"
 
-#: animal_find.js html.py
+#: html.py animal_find.js
 msgid "Microchip Number"
 msgstr "Microchip Number"
 
@@ -7204,7 +7385,7 @@ msgstr "Microchip Number"
 msgid "Microchip number {0} has already been allocated to another animal."
 msgstr "Microchip number {0} has already been allocated to another animal."
 
-#: animal_new.js animal.js mobile.py
+#: mobile.py animal_new.js animal.js
 msgid "Microchipped"
 msgstr "Microchipped"
 
@@ -7316,11 +7497,11 @@ msgstr ""
 "Most browsers will let you visit a record you have been to in this session "
 "by typing part of its name in the address bar."
 
-#: options.js search.py
+#: search.py options.js
 msgid "Most recently changed"
 msgstr "Most recently changed"
 
-#: options.js search.py
+#: search.py options.js
 msgid "Most relevant"
 msgstr "Most relevant"
 
@@ -7340,11 +7521,11 @@ msgstr "Mountain Dog"
 msgid "Mouse"
 msgstr "Mouse"
 
-#: move_retailer.js common.js html.py
+#: html.py move_retailer.js common.js
 msgid "Move"
 msgstr "Move"
 
-#: move_retailer.js html.py
+#: html.py move_retailer.js
 msgid "Move an animal to a retailer"
 msgstr "Move an animal to a retailer"
 
@@ -7352,7 +7533,7 @@ msgstr "Move an animal to a retailer"
 msgid "Moved to animal record {0}"
 msgstr "Moved to animal record {0}"
 
-#: donations.js donation_receive.js dbupdate.py
+#: dbupdate.py donations.js donation_receive.js
 msgid "Movement"
 msgstr "Movement"
 
@@ -7374,6 +7555,10 @@ msgid "Movement Types"
 msgstr "Movement Types"
 
 #: movement.py
+msgid "Movement date cannot be before brought in date."
+msgstr "Movement date cannot be before brought in date."
+
+#: movement.py
 msgid "Movement dates clash with an existing movement."
 msgstr "Movement dates clash with an existing movement."
 
@@ -7385,8 +7570,8 @@ msgstr "Movement numbers must be unique."
 msgid "Movements"
 msgstr "Movements"
 
-#: move_retailer.js move_reserve.js move_transfer.js movements.js
-#: move_foster.js movement.py
+#: movement.py move_retailer.js move_reserve.js move_transfer.js movements.js
+#: move_foster.js
 msgid "Movements require an animal"
 msgstr "Movements require an animal"
 
@@ -7430,7 +7615,7 @@ msgstr "My Incidents"
 msgid "My Undispatched Incidents"
 msgstr "My Un-dispatched Incidents"
 
-#: header.js html.py configuration.py
+#: html.py configuration.py header.js
 msgid "My diary notes"
 msgstr "My diary notes"
 
@@ -7450,12 +7635,12 @@ msgstr "N (Non-Shelter Animal)"
 msgid "NNN or NN = number unique for this type of animal for this year"
 msgstr "NNN or NN = number unique for this type of animal for this year"
 
-#: animal_new.js common_personchooser.js medicalprofile.js
-#: animal_find_results.js waitinglist_results.js medical.js onlineforms.js
-#: animal_find.js onlineform_incoming.js stocklevel.js onlineform.js roles.js
-#: animal.js options.js diarytasks.js additional.js common_animalchooser.js
-#: shelterview.js htmltemplates.js person_find_results.js html.py mobile.py
-#: person.py
+#: html.py mobile.py person.py onlineform.py wordprocessor.py animal_new.js
+#: common_personchooser.js medicalprofile.js animal_find_results.js
+#: waitinglist_results.js medical.js onlineforms.js animal_find.js
+#: onlineform_incoming.js stocklevel.js onlineform.js roles.js animal.js
+#: options.js diarytasks.js additional.js common_animalchooser.js
+#: shelterview.js htmltemplates.js person_find_results.js
 msgid "Name"
 msgstr "Name"
 
@@ -7467,7 +7652,7 @@ msgstr "Name Contains"
 msgid "Name and Address"
 msgstr "Name and Address"
 
-#: animal_new.js person.js animal.js animal.py
+#: animal.py animal_new.js person.js animal.js
 msgid "Name cannot be blank"
 msgstr "Name cannot be blank"
 
@@ -7479,13 +7664,17 @@ msgstr "Name contains"
 msgid "Neapolitan Mastiff"
 msgstr "Neapolitan Mastiff"
 
-#: animal_find_results.js dbupdate.py
+#: dbupdate.py animal_find_results.js
 msgid "Negative"
 msgstr "Negative"
 
 #: dbupdate.py
 msgid "Neglect"
 msgstr "Neglect"
+
+#: donations.js
+msgid "Net"
+msgstr "Net"
 
 #: dbupdate.py
 msgid "Netherland Dwarf"
@@ -7507,8 +7696,12 @@ msgstr "Neutered/Spayed Non-Shelter Animals In {0}"
 msgid "Neutered/Spayed Shelter Animals In {0}"
 msgstr "Neutered/Spayed Shelter Animals In {0}"
 
-#: document_templates.js report_images.js transport.js person_investigation.js
-#: document_repository.js rota.js lookups.js
+#: lookups.js
+msgid "Never"
+msgstr "Never"
+
+#: dbupdate.py document_templates.js report_images.js transport.js
+#: person_investigation.js document_repository.js rota.js lookups.js
 msgid "New"
 msgstr "New"
 
@@ -7636,7 +7829,7 @@ msgstr "New User"
 msgid "New Vaccination"
 msgstr "New Vaccination"
 
-#: person_vouchers.js
+#: vouchers.js
 msgid "New Voucher"
 msgstr "New Voucher"
 
@@ -7684,10 +7877,10 @@ msgstr "Newfoundland Dog"
 msgid "Next"
 msgstr "Next"
 
+#: mobile.py onlineform.py i18n.py dbupdate.py wordprocessor.py
 #: publish_options.js users.js animal_find_results.js waitinglist_results.js
 #: sql.js accounts.js lostfound_find.js additional.js lookups.js
-#: person_find_results.js mobile.py onlineform.py i18n.py dbupdate.py
-#: wordprocessor.py
+#: person_find_results.js
 msgid "No"
 msgstr "No"
 
@@ -7707,7 +7900,7 @@ msgstr "No data."
 msgid "No description"
 msgstr "No description"
 
-#: person.js person.py
+#: person.py person.js
 msgid "No longer retained"
 msgstr "No longer retained"
 
@@ -7743,7 +7936,7 @@ msgstr "No view permission for this report"
 msgid "Noise"
 msgstr "Noise"
 
-#: animal_new.js common.js options.js header_edit_header.js html.py
+#: html.py animal_new.js common.js options.js header_edit_header.js
 msgid "Non-Shelter"
 msgstr "Non-Shelter"
 
@@ -7803,8 +7996,8 @@ msgstr "Not Available For Adoption"
 msgid "Not Available for Adoption"
 msgstr "Not Available for Adoption"
 
-#: common.js animal_bulk.js options.js shelterview.js header_edit_header.js
-#: html.py
+#: html.py common.js animal_bulk.js options.js shelterview.js
+#: header_edit_header.js
 msgid "Not For Adoption"
 msgstr "Not For Adoption"
 
@@ -7824,7 +8017,7 @@ msgstr "Not available for adoption"
 msgid "Not dispatched"
 msgstr "Not dispatched"
 
-#: header.js configuration.py
+#: configuration.py header.js
 msgid "Not for adoption"
 msgstr "Not for adoption"
 
@@ -7840,13 +8033,13 @@ msgstr "Not in chosen publisher location"
 msgid "Not reconciled"
 msgstr "Not reconciled"
 
-#: diary.js diarytask.js log_new.js log.js mobile.py
+#: mobile.py diary.js diarytask.js log_new.js log.js
 msgid "Note"
 msgstr "Note"
 
-#: incident.js move_deceased.js incident_find_results.js incident_find.js
-#: person_investigation.js onlineform.js animal.js media.js incident_new.js
-#: mobile.py dbupdate.py
+#: mobile.py dbupdate.py incident.js move_deceased.js incident_find_results.js
+#: incident_find.js person_investigation.js onlineform.js animal.js media.js
+#: incident_new.js
 msgid "Notes"
 msgstr "Notes"
 
@@ -7870,10 +8063,9 @@ msgstr "November"
 msgid "Now"
 msgstr "Now"
 
-#: incident.js incident_find_results.js licence_renewal.js incident_find.js
-#: waitinglist.js lostfound.js lostfound_find.js animal.js
-#: lostfound_find_results.js person_vouchers.js person_find_results.js
-#: lostfound.py mobile.py dbupdate.py
+#: lostfound.py mobile.py dbupdate.py incident.js incident_find_results.js
+#: licence_renewal.js incident_find.js waitinglist.js lostfound.js
+#: lostfound_find.js animal.js lostfound_find_results.js person_find_results.js
 msgid "Number"
 msgstr "Number"
 
@@ -7933,7 +8125,7 @@ msgstr "Omit header/footer"
 msgid "On Foster (in figures)"
 msgstr "On Foster (in figures)"
 
-#: animal_find_results.js animal_find.js common.js lostfound.py animal.py
+#: animal.py animal_find_results.js animal_find.js common.js
 msgid "On Shelter"
 msgstr "On Shelter"
 
@@ -7967,11 +8159,11 @@ msgstr "One Off"
 msgid "One-Off"
 msgstr "One-Off"
 
-#: onlineform.js code.py
+#: code.py onlineform.js
 msgid "Online Form: {0}"
 msgstr "Online Form: {0}"
 
-#: onlineforms.js roles.js html.py
+#: html.py onlineforms.js roles.js options.js
 msgid "Online Forms"
 msgstr "Online Forms"
 
@@ -8015,6 +8207,10 @@ msgstr "Only show pickups"
 msgid "Only show special needs"
 msgstr "Only show special needs"
 
+#: onlineform.js
+msgid "Only show this field based on a conditional expression, eg: field1=dog"
+msgstr "Only show this field based on a conditional expression, eg: field1=dog"
+
 #: animal_find.js
 msgid "Only show transfers"
 msgstr "Only show transfers"
@@ -8043,7 +8239,7 @@ msgstr ""
 "Optional, the date the vaccination \"wears off\" and needs to be "
 "administered again"
 
-#: options.js html.py
+#: html.py options.js
 msgid "Options"
 msgstr "Options"
 
@@ -8079,7 +8275,7 @@ msgstr "Oriental Short Hair"
 msgid "Oriental Tabby"
 msgstr "Oriental Tabby"
 
-#: animal_new.js animal_find.js animal.js mobile.py person.py
+#: mobile.py animal_new.js person_links.js animal_find.js animal.js
 msgid "Original Owner"
 msgstr "Original Owner"
 
@@ -8095,7 +8291,7 @@ msgstr "Other Account"
 msgid "Other Organisation"
 msgstr "Other Organisation"
 
-#: onlineforms.js common.js html.py
+#: html.py common.js
 msgid "Other Shelter"
 msgstr "Other Shelter"
 
@@ -8104,9 +8300,6 @@ msgid "Otterhound"
 msgstr "Otterhound"
 
 #: options.js
-#| msgid ""
-#| "Our shelter does trial adoptions, allow us to mark these on movement "
-#| "screens"
 msgid ""
 "Our shelter does soft releases, allow us to mark these on movement screens"
 msgstr ""
@@ -8154,6 +8347,14 @@ msgstr "Output an adopted animals page"
 msgid "Output an rss.xml page"
 msgstr "Output an rss.xml page"
 
+#: dbupdate.py
+msgid "Over 12"
+msgstr "Over 12"
+
+#: dbupdate.py
+msgid "Over 5"
+msgstr "Over 5"
+
 #: donations.js
 msgid "Overdue"
 msgstr "Overdue"
@@ -8170,11 +8371,12 @@ msgstr "Overtime"
 msgid "Owl"
 msgstr "Owl"
 
-#: animal_new.js move_reclaim.js dbupdate.py
+#: html.py dbupdate.py search.js animal_new.js move_reclaim.js
+#: animal_find_results.js animal.js header_edit_header.js
 msgid "Owner"
 msgstr "Owner"
 
-#: person.py
+#: person_links.js
 msgid "Owner Vet"
 msgstr "Owner Vet"
 
@@ -8246,7 +8448,7 @@ msgstr "Paso Fino"
 msgid "Pass Homecheck"
 msgstr "Pass Homecheck"
 
-#: users.js login.js mobile.py
+#: mobile.py users.js login.js
 msgid "Password"
 msgstr "Password"
 
@@ -8257,6 +8459,10 @@ msgstr "Password for '{0}' has been reset."
 #: users.py
 msgid "Password is incorrect."
 msgstr "Password is incorrect."
+
+#: login.js
+msgid "Password reset information has been sent to your email."
+msgstr "Password reset information has been sent to your email."
 
 #: change_password.js
 msgid "Password successfully changed."
@@ -8274,9 +8480,13 @@ msgstr "Path"
 msgid "Patterdale Terrier (Fell Terrier)"
 msgstr "Patterdale Terrier (Fell Terrier)"
 
-#: dbupdate.py
+#: dbupdate.py donations.js
 msgid "PayPal"
 msgstr "PayPal"
+
+#: options.js
+msgid "PayPal Business Email"
+msgstr "PayPal Business Email"
 
 #: calendarview.js common_widgets.js
 msgid "Payment"
@@ -8294,7 +8504,11 @@ msgstr "Payment From"
 msgid "Payment Methods"
 msgstr "Payment Methods"
 
-#: accounts.js html.py reports.py
+#: options.js
+msgid "Payment Processors"
+msgstr "Payment Processors"
+
+#: html.py reports.py accounts.js
 msgid "Payment Type"
 msgstr "Payment Type"
 
@@ -8302,11 +8516,11 @@ msgstr "Payment Type"
 msgid "Payment Types"
 msgstr "Payment Types"
 
-#: header.js html.py configuration.py
+#: html.py configuration.py header.js
 msgid "Payment book"
 msgstr "Payment book"
 
-#: header.js html.py configuration.py
+#: html.py configuration.py header.js
 msgid "Payment calendar"
 msgstr "Payment calendar"
 
@@ -8362,7 +8576,7 @@ msgstr "Pending Vet Check"
 msgid "Pension"
 msgstr "Pension"
 
-#: roles.js html.py
+#: html.py roles.js options.js
 msgid "People"
 msgstr "People"
 
@@ -8408,12 +8622,12 @@ msgstr "Perform Homecheck"
 msgid "Perform Test"
 msgstr "Perform Test"
 
-#: test.js
+#: wordprocessor.py test.js
 msgid "Performed"
 msgstr "Performed"
 
-#: animal_find.js common.js shelterview.js movements.js move_foster.js
-#: dbupdate.py
+#: dbupdate.py animal_find.js common.js shelterview.js movements.js
+#: move_foster.js
 msgid "Permanent Foster"
 msgstr "Permanent Foster"
 
@@ -8421,10 +8635,11 @@ msgstr "Permanent Foster"
 msgid "Persian"
 msgstr "Persian"
 
-#: search.js person.js licence_renewal.js citations.js onlineform_incoming.js
-#: traploan.js donations.js donation_receive.js rota.js log_new.js
-#: staff_rota.js clinic_appointment.js diarytasks.js header_edit_header.js
-#: movements.js licence.js html.py mobile.py dbupdate.py reports.py
+#: html.py mobile.py dbupdate.py reports.py search.js vouchers.js person.js
+#: licence_renewal.js citations.js onlineform_incoming.js traploan.js
+#: donations.js donation_receive.js rota.js log_new.js staff_rota.js
+#: clinic_appointment.js diarytasks.js header_edit_header.js movements.js
+#: licence.js
 msgid "Person"
 msgstr "Person"
 
@@ -8440,13 +8655,17 @@ msgstr "Person - Name and Address"
 msgid "Person - Type"
 msgstr "Person - Type"
 
-#: onlineforms.js lookups.py
+#: lookups.py onlineforms.js
 msgid "Person Flags"
 msgstr "Person Flags"
 
 #: html.py
 msgid "Person looking for report"
 msgstr "Person looking for report"
+
+#: person.py
+msgid "Person must have a surname."
+msgstr "Person must have a surname."
 
 #: person_new.js
 msgid "Person successfully created"
@@ -8476,7 +8695,7 @@ msgstr "Pharaoh Hound"
 msgid "Pheasant"
 msgstr "Pheasant"
 
-#: header_edit_header.js mobile.py onlineform.py
+#: mobile.py onlineform.py header_edit_header.js
 msgid "Phone"
 msgstr "Phone"
 
@@ -8488,7 +8707,7 @@ msgstr "Phone contains"
 msgid "Photo successfully uploaded."
 msgstr "Photo successfully uploaded."
 
-#: animal_find_results.js animal.js html.py
+#: html.py animal_find_results.js animal.js
 msgid "Picked Up"
 msgstr "Picked Up"
 
@@ -8500,12 +8719,12 @@ msgstr "Picked Up By"
 msgid "Pickup"
 msgstr "Pickup"
 
-#: animal_find_results.js animal_find.js animal.js html.py
+#: html.py animal_find_results.js person_links.js animal_find.js animal.js
 msgid "Pickup Address"
 msgstr "Pickup Address"
 
-#: incident.js animal_find_results.js incident_find.js animal.js options.js
-#: shelterview.js incident_new.js html.py
+#: html.py incident.js animal_find_results.js incident_find.js animal.js
+#: options.js shelterview.js incident_new.js
 msgid "Pickup Location"
 msgstr "Pickup Location"
 
@@ -8557,6 +8776,10 @@ msgstr "Please select a PDF, HTML or JPG image file to attach"
 msgid "Please tighten the scope of your email campaign to {0} emails or less."
 msgstr "Please tighten the scope of your email campaign to {0} emails or less."
 
+#: donations.js
+msgid "Please use the link below to pay."
+msgstr "Please use the link below to pay."
+
 #: media.js
 msgid "Please use the links below to electronically sign these documents."
 msgstr "Please use the links below to electronically sign these documents."
@@ -8596,6 +8819,10 @@ msgstr "Points for matching features"
 #: options.js
 msgid "Points for matching lost/found area"
 msgstr "Points for matching lost/found area"
+
+#: options.js
+msgid "Points for matching microchip"
+msgstr "Points for matching microchip"
 
 #: options.js
 msgid "Points for matching sex"
@@ -8641,7 +8868,7 @@ msgstr "Portugese Podengo"
 msgid "Portuguese Water Dog"
 msgstr "Portuguese Water Dog"
 
-#: animal_find_results.js dbupdate.py
+#: dbupdate.py animal_find_results.js
 msgid "Positive"
 msgstr "Positive"
 
@@ -8653,7 +8880,7 @@ msgstr "Positive for Heartworm, FIV or FLV"
 msgid "Positive/Negative"
 msgstr "Positive/Negative"
 
-#: header_edit_header.js onlineform.py
+#: onlineform.py header_edit_header.js
 msgid "Post"
 msgstr "Post"
 
@@ -8686,6 +8913,10 @@ msgstr "Premises"
 #: dbupdate.py
 msgid "Presa Canario"
 msgstr "Presa Canario"
+
+#: vouchers.js
+msgid "Presented in last month"
+msgstr "Presented in last month"
 
 #: main.js
 msgid "Press F11 in HTML or SQL code editing boxes to edit in fullscreen mode"
@@ -8731,7 +8962,7 @@ msgstr "Printable Manual"
 msgid "Printing word processor documents uses hidden iframe and window.print"
 msgstr "Printing word processor documents uses hidden iframe and window.print"
 
-#: main.js mobile.py
+#: mobile.py main.js
 msgid "Priority"
 msgstr "Priority"
 
@@ -8779,7 +9010,7 @@ msgstr "Publish to folder"
 msgid "Published to Website"
 msgstr "Published to Website"
 
-#: lookups.js publish_logs.js dbupdate.py
+#: dbupdate.py lookups.js publish_logs.js
 msgid "Publisher"
 msgstr "Publisher"
 
@@ -8799,7 +9030,7 @@ msgstr "Publisher Logs"
 msgid "Publisher Species"
 msgstr "Publisher Species"
 
-#: publish.js html.py
+#: html.py publish.js
 msgid "Publishing"
 msgstr "Publishing"
 
@@ -8856,8 +9087,8 @@ msgstr "Quaker Parakeet"
 msgid "Quantity"
 msgstr "Quantity"
 
-#: animal_find_results.js common.js options.js shelterview.js
-#: header_edit_header.js html.py
+#: html.py animal_find_results.js common.js options.js shelterview.js
+#: header_edit_header.js
 msgid "Quarantine"
 msgstr "Quarantine"
 
@@ -8897,11 +9128,11 @@ msgstr "Rabbit"
 msgid "Rabies"
 msgstr "Rabies"
 
-#: animal_find.js animal.js mobile.py
+#: mobile.py animal_find.js animal.js
 msgid "Rabies Tag"
 msgstr "Rabies Tag"
 
-#: animal_find_results.js html.py
+#: html.py animal_find_results.js
 msgid "RabiesTag"
 msgstr "RabiesTag"
 
@@ -8917,7 +9148,7 @@ msgstr "Ragamuffin"
 msgid "Ragdoll"
 msgstr "Ragdoll"
 
-#: waitinglist_results.js header_edit_header.js html.py
+#: html.py waitinglist_results.js header_edit_header.js
 msgid "Rank"
 msgstr "Rank"
 
@@ -8941,8 +9172,8 @@ msgstr "Read the manual for more information about Animal Shelter Manager."
 msgid "Real name"
 msgstr "Real name"
 
-#: waitinglist_results.js clinic_appointment.js header_edit_header.js
-#: movements.js html.py lookups.py
+#: html.py lookups.py waitinglist_results.js clinic_appointment.js
+#: header_edit_header.js movements.js
 msgid "Reason"
 msgstr "Reason"
 
@@ -8950,7 +9181,7 @@ msgstr "Reason"
 msgid "Reason For Appointment"
 msgstr "Reason For Appointment"
 
-#: animal_find_results.js html.py
+#: html.py animal_find_results.js
 msgid "Reason Not From Owner"
 msgstr "Reason Not From Owner"
 
@@ -8970,17 +9201,21 @@ msgstr "Reason not from Owner"
 msgid "Reason the owner did not bring in the animal themselves"
 msgstr "Reason the owner did not bring in the animal themselves"
 
-#: batch.js code.py
+#: code.py batch.js
 msgid "Recalculate ALL animal ages/times"
 msgstr "Recalculate ALL animal ages/times"
 
-#: batch.js code.py
+#: code.py batch.js
 msgid "Recalculate ALL animal locations"
 msgstr "Recalculate ALL animal locations"
 
-#: batch.js code.py
+#: code.py batch.js
 msgid "Recalculate on-shelter animal locations"
 msgstr "Recalculate on-shelter animal locations"
+
+#: wordprocessor.py
+msgid "Receipt"
+msgstr "Receipt"
 
 #: donations.js donation_receive.js
 msgid "Receipt No"
@@ -8994,7 +9229,7 @@ msgstr "Receipt/Invoice"
 msgid "Receive"
 msgstr "Receive"
 
-#: donation_receive.js header.js html.py configuration.py
+#: html.py configuration.py donation_receive.js header.js
 msgid "Receive a payment"
 msgstr "Receive a payment"
 
@@ -9023,23 +9258,23 @@ msgstr "Received in last year"
 msgid "Received today"
 msgstr "Received today"
 
-#: options.js code.py
+#: code.py options.js
 msgid "Recently Adopted"
 msgstr "Recently Adopted"
 
-#: options.js code.py
+#: code.py options.js
 msgid "Recently Changed"
 msgstr "Recently Changed"
 
-#: options.js code.py
+#: code.py options.js
 msgid "Recently Entered Shelter"
 msgstr "Recently Entered Shelter"
 
-#: options.js code.py
+#: code.py options.js
 msgid "Recently Fostered"
 msgstr "Recently Fostered"
 
-#: header.js configuration.py
+#: configuration.py header.js
 msgid "Recently deceased"
 msgstr "Recently deceased"
 
@@ -9055,7 +9290,7 @@ msgstr "Reception"
 msgid "Reclaim"
 msgstr "Reclaim"
 
-#: move_reclaim.js header.js html.py configuration.py
+#: html.py configuration.py move_reclaim.js header.js
 msgid "Reclaim an animal"
 msgstr "Reclaim an animal"
 
@@ -9067,7 +9302,7 @@ msgstr "Reclaim movements must have a valid reclaim date."
 msgid "Reclaim successfully created."
 msgstr "Reclaim successfully created."
 
-#: animal_find.js dbupdate.py
+#: dbupdate.py animal_find.js
 msgid "Reclaimed"
 msgstr "Reclaimed"
 
@@ -9083,6 +9318,10 @@ msgstr "Reconciled"
 msgid "Redbone Coonhound"
 msgstr "Redbone Coonhound"
 
+#: vouchers.js
+msgid "Redeemed"
+msgstr "Redeemed"
+
 #: mobile.py
 msgid "Rediarised"
 msgstr "Rediarised"
@@ -9091,7 +9330,11 @@ msgstr "Rediarised"
 msgid "Redirect to URL after POST"
 msgstr "Redirect to URL after POST"
 
-#: transport.js lostfound.py
+#: options.js
+msgid "Redirect to this URL after successful payment"
+msgstr "Redirect to this URL after successful payment"
+
+#: lostfound.py transport.js
 msgid "Reference"
 msgstr "Reference"
 
@@ -9099,23 +9342,27 @@ msgstr "Reference"
 msgid "Refresh"
 msgstr "Refresh"
 
-#: batch.js code.py
+#: code.py batch.js
 msgid "Regenerate 'Match lost and found animals' report"
 msgstr "Regenerate 'Match lost and found animals' report"
 
-#: batch.js code.py
+#: code.py batch.js
 msgid "Regenerate 'Person looking for' report"
 msgstr "Regenerate 'Person looking for' report"
 
-#: batch.js code.py
+#: code.py batch.js
 msgid "Regenerate annual animal figures for"
 msgstr "Regenerate annual animal figures for"
 
-#: batch.js code.py
+#: code.py batch.js
 msgid "Regenerate monthly animal figures for"
 msgstr "Regenerate monthly animal figures for"
 
-#: batch.js code.py
+#: code.py batch.js
+msgid "Regenerate person flags column"
+msgstr "Regenerate person flags column"
+
+#: code.py batch.js
 msgid "Regenerate person names in selected format"
 msgstr "Regenerate person names in selected format"
 
@@ -9127,7 +9374,7 @@ msgstr "Register Microchip"
 msgid "Register microchips after"
 msgstr "Register microchips after"
 
-#: animal_find.js movements.js animal.py dbupdate.py
+#: animal.py dbupdate.py animal_find.js movements.js
 msgid "Released To Wild"
 msgstr "Released To Wild"
 
@@ -9161,7 +9408,7 @@ msgstr "Remember me on this computer"
 msgid "Removal"
 msgstr "Removal"
 
-#: waitinglist_results.js html.py
+#: html.py waitinglist_results.js
 msgid "Removal Reason"
 msgstr "Removal Reason"
 
@@ -9190,6 +9437,10 @@ msgid "Remove holds after"
 msgstr "Remove holds after"
 
 #: options.js
+msgid "Remove incoming forms after"
+msgstr "Remove incoming forms after"
+
+#: options.js
 msgid "Remove move menu and the movements tab from animal and person screens"
 msgstr "Remove move menu and the movements tab from animal and person screens"
 
@@ -9200,6 +9451,10 @@ msgstr "Remove personally identifiable data"
 #: publish_options.js
 msgid "Remove previously published files before uploading"
 msgstr "Remove previously published files before uploading"
+
+#: options.js
+msgid "Remove processed forms when I leave the incoming forms screens"
+msgstr "Remove processed forms when I leave the incoming forms screens"
 
 #: options.js
 msgid "Remove retailer functionality from the movement screens and menus"
@@ -9246,7 +9501,6 @@ msgid "Remove the coat type field from animal details"
 msgstr "Remove the coat type field from animal details"
 
 #: options.js
-#| msgid "Remove the city/state fields from person details"
 msgid "Remove the country field from person details"
 msgstr "Remove the country field from person details"
 
@@ -9265,6 +9519,14 @@ msgstr "Remove the good with fields from animal notes"
 #: options.js
 msgid "Remove the heartworm test fields from animal health details"
 msgstr "Remove the heartworm test fields from animal health details"
+
+#: options.js
+msgid ""
+"Remove the homechecked/by fields from person type according to the "
+"homechecked flag"
+msgstr ""
+"Remove the homechecked/by fields from person type according to the "
+"homechecked flag"
 
 #: options.js
 msgid "Remove the insurance number field from the movement screens"
@@ -9334,11 +9596,11 @@ msgstr "Renew Licence"
 msgid "Renew licence"
 msgstr "Renew licence"
 
-#: licence_renewal.js html.py
+#: html.py licence_renewal.js
 msgid "Renew license"
 msgstr "Renew licence"
 
-#: reports.js reports.py
+#: reports.py reports.js
 msgid "Report"
 msgstr "Report"
 
@@ -9346,13 +9608,21 @@ msgstr "Report"
 msgid "Report Title"
 msgstr "Report Title"
 
-#: incident_new.js header.js html.py configuration.py
+#: html.py configuration.py incident_new.js header.js
 msgid "Report a new incident"
 msgstr "Report a new incident"
 
-#: reports.js roles.js html.py mobile.py
+#: html.py mobile.py reports.js roles.js
 msgid "Reports"
 msgstr "Reports"
+
+#: donations.js
+msgid "Request Payment"
+msgstr "Request Payment"
+
+#: options.js
+msgid "Request payments in"
+msgstr "Request payments in"
 
 #: media.js
 msgid "Request signature by email"
@@ -9366,7 +9636,7 @@ msgstr "Requested"
 msgid "Require followup"
 msgstr "Require followup"
 
-#: medical.js vaccination.js test.js
+#: wordprocessor.py medical.js vaccination.js test.js
 msgid "Required"
 msgstr "Required"
 
@@ -9378,7 +9648,11 @@ msgstr "Required date must be a valid date"
 msgid "Reschedule"
 msgstr "Reschedule"
 
-#: movements.js dbupdate.py
+#: lookups.js
+msgid "Reschedule for"
+msgstr "Reschedule for"
+
+#: dbupdate.py movements.js
 msgid "Reservation"
 msgstr "Reservation"
 
@@ -9406,7 +9680,7 @@ msgstr "Reservation Status"
 msgid "Reservation Statuses"
 msgstr "Reservation Statuses"
 
-#: header.js html.py configuration.py
+#: html.py configuration.py header.js
 msgid "Reservation book"
 msgstr "Reservation book"
 
@@ -9426,12 +9700,12 @@ msgstr "Reservations must have a valid reservation date."
 msgid "Reserve"
 msgstr "Reserve"
 
-#: move_reserve.js header.js html.py configuration.py
+#: html.py configuration.py move_reserve.js header.js
 msgid "Reserve an animal"
 msgstr "Reserve an animal"
 
-#: animal_find_results.js animal_find.js common.js options.js shelterview.js
-#: html.py
+#: html.py animal_find_results.js animal_find.js common.js options.js
+#: shelterview.js
 msgid "Reserved"
 msgstr "Reserved"
 
@@ -9444,7 +9718,11 @@ msgstr "Reset"
 msgid "Reset Password"
 msgstr "Reset Password"
 
-#: incident.js mobile.py
+#: code.py
+msgid "Reset password request"
+msgstr "Reset password request"
+
+#: mobile.py incident.js
 msgid "Respond"
 msgstr "Respond"
 
@@ -9456,16 +9734,16 @@ msgstr "Responded"
 msgid "Responded Between"
 msgstr "Responded Between"
 
-#: incident.js incident_find_results.js mobile.py
+#: mobile.py incident.js incident_find_results.js
 msgid "Responded Date/Time"
 msgstr "Responded Date/Time"
 
-#: test.js mobile.py lookups.py
+#: mobile.py lookups.py wordprocessor.py test.js
 msgid "Result"
 msgstr "Result"
 
-#: animal_find_results.js incident_find_results.js lostfound_find_results.js
-#: person_find_results.js mobile.py
+#: mobile.py animal_find_results.js incident_find_results.js
+#: lostfound_find_results.js person_find_results.js
 msgid "Results"
 msgstr "Results"
 
@@ -9473,9 +9751,9 @@ msgstr "Results"
 msgid "Results for '{0}'."
 msgstr "Results for '{0}'."
 
-#: move_retailer.js onlineforms.js animal_find.js common.js options.js
-#: shelterview.js header_edit_header.js movements.js person_find_results.js
-#: html.py dbupdate.py
+#: html.py dbupdate.py move_retailer.js animal_find.js common.js
+#: common_animalchoosermulti.js options.js shelterview.js header_edit_header.js
+#: movements.js person_find_results.js
 msgid "Retailer"
 msgstr "Retailer"
 
@@ -9487,7 +9765,7 @@ msgstr "Retailer Animals"
 msgid "Retailer Book"
 msgstr "Retailer Book"
 
-#: header.js html.py configuration.py
+#: html.py configuration.py header.js
 msgid "Retailer book"
 msgstr "Retailer book"
 
@@ -9498,6 +9776,18 @@ msgstr "Retailer movement successfully created."
 #: movement.py
 msgid "Retailer movements must have a valid movement date."
 msgstr "Retailer movements must have a valid movement date."
+
+#: media.js
+msgid "Retain Until"
+msgstr "Retain Until"
+
+#: media.js
+msgid "Retain for"
+msgstr "Retain for"
+
+#: media.js
+msgid "Retain until {0}"
+msgstr "Retain until {0}"
 
 #: dbupdate.py
 msgid "Retriever"
@@ -9519,11 +9809,11 @@ msgstr "Return Date"
 msgid "Return a transferred animal"
 msgstr "Return a transferred animal"
 
-#: movements.js header.js html.py configuration.py
+#: html.py configuration.py movements.js header.js
 msgid "Return an animal from adoption"
 msgstr "Return an animal from adoption"
 
-#: movements.js header.js html.py configuration.py
+#: html.py configuration.py movements.js header.js
 msgid "Return an animal from another movement"
 msgstr "Return an animal from another movement"
 
@@ -9539,11 +9829,11 @@ msgstr "Return date cannot be before the movement date."
 msgid "Return this movement and bring the animal back to the shelter"
 msgstr "Return this movement and bring the animal back to the shelter"
 
-#: traploan.js lostfound.js movements.js animal.py
+#: animal.py traploan.js lostfound.js movements.js
 msgid "Returned"
 msgstr "Returned"
 
-#: movements.js person.py
+#: person_links.js movements.js
 msgid "Returned By"
 msgstr "Returned By"
 
@@ -9591,6 +9881,10 @@ msgstr "Rhinelander"
 msgid "Rhodesian Ridgeback"
 msgstr "Rhodesian Ridgeback"
 
+#: incident.js person.js
+msgid "Right-click on the map to change the marker location"
+msgstr "Right-click on the map to change the marker location"
+
 #: dbupdate.py
 msgid "Ringneck/Psittacula"
 msgstr "Ringneck/Psittacula"
@@ -9628,7 +9922,7 @@ msgid "Rota cloned successfully."
 msgstr "Rota cloned successfully."
 
 #: media.js
-msgid "Rotate image 90 degrees anticlockwis"
+msgid "Rotate image 90 degrees anticlockwise"
 msgstr "Rotate image 90 degrees anticlockwise"
 
 #: media.js
@@ -9663,11 +9957,11 @@ msgstr "S (Stray Cat)"
 msgid "S = first letter of animal species"
 msgstr "S = first letter of animal species"
 
-#: login.js mobile.py
+#: mobile.py login.js
 msgid "SM Account"
 msgstr "SM Account"
 
-#: header_edit_header.js onlineform.py
+#: onlineform.py header_edit_header.js
 msgid "SMS"
 msgstr "SMS"
 
@@ -9719,7 +10013,8 @@ msgstr "Saddlebred"
 msgid "Saint Bernard St. Bernard"
 msgstr "Saint Bernard St. Bernard"
 
-#: common_widgets.js donations.js clinic_appointment.js lookups.js
+#: dbupdate.py financial.py common_widgets.js donations.js
+#: clinic_appointment.js lookups.js
 msgid "Sales Tax"
 msgstr "VAT"
 
@@ -9743,9 +10038,9 @@ msgstr "Satin"
 msgid "Saturday"
 msgstr "Saturday"
 
-#: change_user_settings.js publish_options.js incident.js person.js medical.js
-#: vaccination.js onlineforms.js reports.js waitinglist.js accounts_trx.js
-#: roles.js lostfound.js test.js animal.js media.js mobile.py
+#: mobile.py change_user_settings.js publish_options.js incident.js person.js
+#: medical.js vaccination.js onlineforms.js reports.js waitinglist.js
+#: accounts_trx.js roles.js lostfound.js test.js animal.js
 msgid "Save"
 msgstr "Save"
 
@@ -9753,11 +10048,15 @@ msgstr "Save"
 msgid "Save and leave"
 msgstr "Save and leave"
 
+#: animal.js
+msgid "Save this animal"
+msgstr "Save this animal"
+
 #: incident.js
 msgid "Save this incident"
 msgstr "Save this incident"
 
-#: person.js animal.js
+#: person.js
 msgid "Save this person"
 msgstr "Save this person"
 
@@ -9778,7 +10077,7 @@ msgstr "Saving..."
 msgid "Scale published animal images to"
 msgstr "Scale published animal images to"
 
-#: transport.js dbupdate.py
+#: dbupdate.py transport.js
 msgid "Scheduled"
 msgstr "Scheduled"
 
@@ -9814,8 +10113,9 @@ msgstr "Seal"
 msgid "Sealyham Terrier"
 msgstr "Sealyham Terrier"
 
-#: common_personchooser.js animal_find.js incident_find.js lostfound_find.js
-#: options.js person_find.js common_animalchooser.js header.js mobile.py
+#: mobile.py common_personchooser.js animal_find.js incident_find.js
+#: lostfound_find.js options.js person_find.js common_animalchooser.js
+#: header.js
 msgid "Search"
 msgstr "Search"
 
@@ -9841,7 +10141,7 @@ msgstr "Second offence"
 
 #: common_personchooser.js users.js person.js onlineforms.js reports.js
 #: common_tableform.js common.js common_animalchoosermulti.js accounts_trx.js
-#: roles.js accounts.js animal.js clinic_appointment.js diarytasks.js
+#: roles.js accounts.js animal.js clinic_appointment.js diarytasks.js media.js
 msgid "Select"
 msgstr "Select"
 
@@ -9913,7 +10213,7 @@ msgstr "Selected On-Shelter Animals"
 msgid "Selkirk Rex"
 msgstr "Selkirk Rex"
 
-#: common_widgets.js mobile.py
+#: mobile.py common_widgets.js
 msgid "Send"
 msgstr "Send"
 
@@ -9927,9 +10227,21 @@ msgid ""
 msgstr ""
 "Send a weekly email to fosterers with medical information about their animals"
 
+#: animal.js
+msgid "Send an email relating to this animal"
+msgstr "Send an email relating to this animal"
+
+#: donations.js
+msgid "Send an email request for payment via a payment processor"
+msgstr "Send an email request for payment via a payment processor"
+
 #: onlineforms.js
 msgid "Send confirmation email to form submitter"
 msgstr "Send confirmation email to form submitter"
+
+#: animal.js
+msgid "Send email"
+msgstr "Send email"
 
 #: mailmerge.js
 msgid "Send emails"
@@ -9939,7 +10251,7 @@ msgstr "Send emails"
 msgid "Send mass emails and perform mail merges"
 msgstr "Send mass emails and perform mail merges"
 
-#: main.js mobile.py
+#: mobile.py main.js
 msgid "Send via email"
 msgstr "Send via email"
 
@@ -9979,7 +10291,7 @@ msgstr "September"
 msgid "Server clock adjustment"
 msgstr "Server clock adjustment"
 
-#: header.js html.py configuration.py
+#: html.py configuration.py header.js
 msgid "Set publishing options"
 msgstr "Set publishing options"
 
@@ -10027,10 +10339,10 @@ msgstr "Settings, Reports"
 msgid "Settings, System user accounts"
 msgstr "Settings, System user accounts"
 
-#: animal_new.js incident.js animal_find_results.js person.js animal_find.js
-#: incident_find.js lostfound.js lostfound_find.js animal.js options.js
-#: common_animalchooser.js shelterview.js lostfound_find_results.js
-#: lostfound_new.js html.py mobile.py person.py lookups.py
+#: html.py mobile.py person.py lookups.py animal_new.js incident.js
+#: animal_find_results.js person.js animal_find.js incident_find.js
+#: lostfound.js lostfound_find.js animal.js options.js common_animalchooser.js
+#: shelterview.js lostfound_find_results.js lostfound_new.js
 msgid "Sex"
 msgstr "Sex"
 
@@ -10051,6 +10363,10 @@ msgid "Share"
 msgstr "Share"
 
 #: animal.js
+msgid "Shared photo"
+msgstr "Shared photo"
+
+#: animal.js
 msgid "Shared weblink"
 msgstr "Shared weblink"
 
@@ -10066,7 +10382,8 @@ msgstr "Sheep"
 msgid "Sheep Dog"
 msgstr "Sheep Dog"
 
-#: header_edit_header.js person_find_results.js html.py dbupdate.py
+#: html.py dbupdate.py header_edit_header.js clinic_invoice.js
+#: person_find_results.js
 msgid "Shelter"
 msgstr "Shelter"
 
@@ -10086,11 +10403,11 @@ msgstr "Shelter Details"
 msgid "Shelter animal {0} '{1}'"
 msgstr "Shelter animal {0} '{1}'"
 
-#: header.js configuration.py
+#: configuration.py header.js
 msgid "Shelter animals"
 msgstr "Shelter animals"
 
-#: animal_new.js animal.js animal.py
+#: animal.py animal_new.js animal.js
 msgid "Shelter code cannot be blank"
 msgstr "Shelter code cannot be blank"
 
@@ -10118,7 +10435,7 @@ msgstr "Shelter stats (this year)"
 msgid "Shelter stats (today)"
 msgstr "Shelter stats (today)"
 
-#: options.js shelterview.js header.js html.py configuration.py
+#: html.py configuration.py options.js shelterview.js header.js
 msgid "Shelter view"
 msgstr "Shelter view"
 
@@ -10151,6 +10468,14 @@ msgid "Show GDPR Contact Opt-In field on person screens"
 msgstr "Show GDPR Contact Opt-In field on person screens"
 
 #: options.js
+msgid "Show ID numbers when editing lookup data"
+msgstr "Show ID numbers when editing lookup data"
+
+#: onlineform.js
+msgid "Show If"
+msgstr "Show If"
+
+#: options.js
 msgid "Show PDF files inline instead of sending them as attachments"
 msgstr "Show PDF files inline instead of sending them as attachments"
 
@@ -10175,7 +10500,6 @@ msgid "Show an alert when these species of animals are not altered"
 msgstr "Show an alert when these species of animals are not neutered/spayed"
 
 #: options.js
-#| msgid "The date the animal was microchipped"
 msgid "Show an alert when these species of animals are not microchipped"
 msgstr "Show an alert when these species of animals are not microchipped"
 
@@ -10202,6 +10526,10 @@ msgstr "Show empty locations"
 #: additional.js
 msgid "Show on new record screens"
 msgstr "Show on new record screens"
+
+#: options.js
+msgid "Show pink and blue borders around animal thumbnails to indicate sex"
+msgstr "Show pink and blue borders around animal thumbnails to indicate sex"
 
 #: options.js
 msgid "Show quick links on all pages"
@@ -10308,16 +10636,14 @@ msgid "Show transactions from"
 msgstr "Show transactions from"
 
 #: options.js
-#| msgid "Show weight as lb rather than kg"
 msgid "Show weights as decimal lb"
 msgstr "Show weights as decimal lb"
 
 #: options.js
-#| msgid "Show weight as lb rather than kg"
 msgid "Show weights as lb and oz"
 msgstr "Show weights as lb and oz"
 
-#: timeline.js html.py
+#: html.py timeline.js
 msgid "Showing {0} timeline events."
 msgstr "Showing {0} timeline events."
 
@@ -10345,7 +10671,7 @@ msgstr "Sick/Injured"
 msgid "Sick/injured animal"
 msgstr "Sick/injured animal"
 
-#: media.js service.py mobile.py
+#: service.py mobile.py media.js
 msgid "Sign"
 msgstr "Sign"
 
@@ -10413,8 +10739,8 @@ msgstr "Singapura"
 msgid "Single Treatment"
 msgstr "Single Treatment"
 
-#: common_personchooser.js users.js incident.js person.js lookups.js
-#: incident_new.js person_new.js html.py lookups.py
+#: html.py lookups.py common_personchooser.js users.js incident.js person.js
+#: lookups.js incident_new.js person_new.js
 msgid "Site"
 msgstr "Site"
 
@@ -10422,9 +10748,9 @@ msgstr "Site"
 msgid "Sites"
 msgstr "Sites"
 
-#: animal_new.js waitinglist_new.js animal_find_results.js
-#: waitinglist_results.js person.js animal_find.js waitinglist.js animal.js
-#: html.py mobile.py person.py lookups.py
+#: html.py mobile.py person.py lookups.py animal_new.js waitinglist_new.js
+#: animal_find_results.js waitinglist_results.js person.js animal_find.js
+#: waitinglist.js animal.js media.js
 msgid "Size"
 msgstr "Size"
 
@@ -10469,16 +10795,14 @@ msgid "Social"
 msgstr "Social"
 
 #: movements.js
-#| msgid "Most relevant"
 msgid "Soft release"
 msgstr "Soft release"
 
-#: movements.js header.js html.py configuration.py
+#: html.py configuration.py movements.js header.js
 msgid "Soft release book"
 msgstr "Soft release book"
 
 #: movements.js
-#| msgid "Trial ends on"
 msgid "Soft release ends on"
 msgstr "Soft release ends on"
 
@@ -10534,17 +10858,17 @@ msgstr "South Russian Ovcharka"
 msgid "Spaniel"
 msgstr "Spaniel"
 
-#: animal_find_results.js common.js animal.js options.js html.py mobile.py
+#: html.py mobile.py animal_find_results.js common.js animal.js options.js
 msgid "Special Needs"
 msgstr "Special Needs"
 
-#: animal_new.js waitinglist_new.js litters.js incident.js
-#: animal_find_results.js waitinglist_results.js person.js medical.js
-#: vaccination.js animal_find.js incident_find.js common_animalchoosermulti.js
-#: onlineform.js waitinglist.js lostfound.js test.js lostfound_find.js
-#: animal.js options.js common_animalchooser.js lookups.js shelterview.js
-#: lostfound_find_results.js movements.js lostfound_new.js html.py mobile.py
-#: person.py lookups.py reports.py
+#: html.py mobile.py person.py lookups.py reports.py animal_new.js
+#: waitinglist_new.js litters.js incident.js animal_find_results.js
+#: waitinglist_results.js person.js medical.js vaccination.js animal_find.js
+#: incident_find.js common_animalchoosermulti.js onlineform.js waitinglist.js
+#: lostfound.js test.js lostfound_find.js animal.js options.js
+#: common_animalchooser.js lookups.js shelterview.js lostfound_find_results.js
+#: movements.js lostfound_new.js
 msgid "Species"
 msgstr "Species"
 
@@ -10565,6 +10889,10 @@ msgid ""
 "Species to use when publishing to third party services and adoption sites"
 msgstr ""
 "Species to use when publishing to third party services and adoption sites"
+
+#: vouchers.js
+msgid "Specify a unique code to identify this voucher"
+msgstr "Specify a unique code to identify this voucher"
 
 #: vaccination.js
 msgid ""
@@ -10598,12 +10926,12 @@ msgstr "Split species pages with a baby/adult prefix"
 msgid "Sponsorship donations"
 msgstr "Sponsorship donations"
 
-#: onlineforms.js common.js staff_rota.js header_edit_header.js
-#: person_find_results.js html.py dbupdate.py
+#: html.py dbupdate.py common.js staff_rota.js header_edit_header.js
+#: person_find_results.js
 msgid "Staff"
 msgstr "Staff"
 
-#: staff_rota.js header.js configuration.py
+#: configuration.py staff_rota.js header.js
 msgid "Staff Rota"
 msgstr "Staff Rota"
 
@@ -10663,9 +10991,9 @@ msgstr "Started"
 msgid "Starts"
 msgstr "Starts"
 
-#: transport.js common_personchooser.js incident.js waitinglist_results.js
-#: person.js options.js incident_new.js person_new.js person_find_results.js
-#: html.py mobile.py
+#: html.py mobile.py transport.js common_personchooser.js incident.js
+#: waitinglist_results.js person.js options.js incident_new.js person_new.js
+#: person_find_results.js
 msgid "State"
 msgstr "County"
 
@@ -10693,8 +11021,8 @@ msgstr ""
 "Stats show running figures for the selected period of animals entering and "
 "leaving the shelter on the home page."
 
-#: transport.js person.js medical.js options.js clinic_appointment.js
-#: move_reserve.js shelterview.js movements.js lookups.py
+#: lookups.py transport.js person.js medical.js options.js
+#: clinic_appointment.js move_reserve.js shelterview.js movements.js
 msgid "Status"
 msgstr "Status"
 
@@ -10706,7 +11034,7 @@ msgstr "Status and Species"
 msgid "Stay"
 msgstr "Stay"
 
-#: stocklevel.js html.py
+#: html.py stocklevel.js
 msgid "Stock"
 msgstr "Stock"
 
@@ -10714,7 +11042,7 @@ msgstr "Stock"
 msgid "Stock Control"
 msgstr "Stock Control"
 
-#: header.js configuration.py
+#: configuration.py header.js
 msgid "Stock Levels"
 msgstr "Stock Levels"
 
@@ -10746,7 +11074,7 @@ msgstr "Stock needs a name and unit."
 msgid "Stocktake"
 msgstr "Stocktake"
 
-#: animal_find.js animal.py dbupdate.py
+#: animal.py dbupdate.py animal_find.js
 msgid "Stolen"
 msgstr "Stolen"
 
@@ -10770,6 +11098,18 @@ msgstr "Stores"
 msgid "Stray"
 msgstr "Stray"
 
+#: dbupdate.py donations.js
+msgid "Stripe"
+msgstr "Stripe"
+
+#: options.js
+msgid "Stripe Key"
+msgstr "Stripe Key"
+
+#: options.js
+msgid "Stripe Secret Key"
+msgstr "Stripe Secret Key"
+
 #: common.js
 msgid "Su"
 msgstr "Su"
@@ -10778,7 +11118,7 @@ msgstr "Su"
 msgid "SubTotal"
 msgstr "SubTotal"
 
-#: diary.js common_widgets.js mailmerge.js diarytask.js mobile.py
+#: mobile.py diary.js common_widgets.js mailmerge.js diarytask.js
 msgid "Subject"
 msgstr "Subject"
 
@@ -10830,19 +11170,19 @@ msgstr "Surrender Pickup"
 msgid "Suspect"
 msgstr "Suspect"
 
-#: incident.js mobile.py
+#: mobile.py incident.js
 msgid "Suspect 1"
 msgstr "Suspect 1"
 
-#: incident.js mobile.py
+#: mobile.py incident.js
 msgid "Suspect 2"
 msgstr "Suspect 2"
 
-#: incident.js mobile.py
+#: mobile.py incident.js
 msgid "Suspect 3"
 msgstr "Suspect 3"
 
-#: incident.js mobile.py
+#: mobile.py incident.js
 msgid "Suspect/Animal"
 msgstr "Suspect/Animal"
 
@@ -10858,7 +11198,7 @@ msgstr "Swedish Vallhund"
 msgid "Syntax check this SQL"
 msgstr "Syntax check this SQL"
 
-#: roles.js html.py
+#: html.py roles.js options.js
 msgid "System"
 msgstr "System"
 
@@ -10906,7 +11246,7 @@ msgstr "Table"
 msgid "Take another payment"
 msgstr "Take another payment"
 
-#: incident.js incident_new.js mobile.py
+#: mobile.py incident.js incident_new.js
 msgid "Taken By"
 msgstr "Taken By"
 
@@ -10930,7 +11270,7 @@ msgstr "Task complete."
 msgid "Task items are executed in order of index, lowest to highest"
 msgstr "Task items are executed in order of index, lowest to highest"
 
-#: animal_new.js animal_find_results.js animal.js mobile.py
+#: mobile.py animal_new.js animal_find_results.js animal.js
 msgid "Tattoo"
 msgstr "Tattoo"
 
@@ -10938,7 +11278,7 @@ msgstr "Tattoo"
 msgid "Tattoo Date"
 msgstr "Tattoo Date"
 
-#: animal_find.js html.py
+#: html.py animal_find.js
 msgid "Tattoo Number"
 msgstr "Tattoo Number"
 
@@ -10954,7 +11294,7 @@ msgstr "VAT Amount"
 msgid "Tax Rate %"
 msgstr "VAT Rate %"
 
-#: options.js dbupdate.py
+#: dbupdate.py options.js
 msgid "Telephone"
 msgstr "Telephone"
 
@@ -10962,7 +11302,7 @@ msgstr "Telephone"
 msgid "Telephone Bills"
 msgstr "Telephone Bills"
 
-#: document_templates.js
+#: document_templates.js common_widgets.js mailmerge.js
 msgid "Template"
 msgstr "Template"
 
@@ -10988,7 +11328,7 @@ msgstr "Terrapin"
 msgid "Terrier"
 msgstr "Terrier"
 
-#: calendarview.js header_edit_header.js mobile.py
+#: mobile.py calendarview.js header_edit_header.js
 msgid "Test"
 msgstr "Test"
 
@@ -11020,7 +11360,7 @@ msgstr "Test book"
 msgid "Test marked as performed for {0} - {1}"
 msgstr "Test marked as performed for {0} - {1}"
 
-#: roles.js html.py
+#: html.py roles.js
 msgid "Tests"
 msgstr "Tests"
 
@@ -11028,7 +11368,7 @@ msgstr "Tests"
 msgid "Tests need an animal and at least a required date."
 msgstr "Tests need an animal and at least a required date."
 
-#: common_tableform.js onlineform.js dbupdate.py
+#: dbupdate.py common_tableform.js onlineform.js
 msgid "Text"
 msgstr "Text"
 
@@ -11055,6 +11395,10 @@ msgstr "Thank you, the document is now signed."
 #: animalcontrol.py
 msgid "That animal is already linked to the incident"
 msgstr "That animal is already linked to the incident"
+
+#: code.py
+msgid "The ASM password for {0} has been reset to:"
+msgstr "The ASM password for {0} has been reset to:"
 
 #: csvimport_paypal.js
 msgid "The CSV file should be created by PayPal's \"All Activity\" report."
@@ -11226,11 +11570,15 @@ msgstr "The date this animal was returned to its owner"
 msgid "The date this person was homechecked."
 msgstr "The date this person was homechecked."
 
+#: vouchers.js
+msgid "The date this voucher was used"
+msgstr "The date this voucher was used"
+
 #: login.js
 msgid "The default username is 'user' with the password 'letmein'"
 msgstr "The default username is 'user' with the password 'letmein'"
 
-#: animal_new.js animal.js
+#: animal_new.js animal_bulk.js animal.js
 msgid "The entry reason for this animal"
 msgstr "The entry reason for this animal"
 
@@ -11326,6 +11674,14 @@ msgstr ""
 "The sheltermanager.com admin account password cannot be changed here, please "
 "visit {0}"
 
+#: login.js
+msgid ""
+"The sheltermanager.com admin account password cannot be reset here, please "
+"visit {0}"
+msgstr ""
+"The sheltermanager.com admin account password cannot be reset here, please "
+"visit {0}"
+
 #: animal.js
 msgid "The size of this animal"
 msgstr "The size of this animal"
@@ -11405,6 +11761,14 @@ msgid ""
 msgstr ""
 "There is not enough information in the form to create a waiting list record "
 "(need a description)."
+
+#: onlineform.py
+msgid ""
+"There is not enough information in the form to create an animal record (need "
+"animalname)."
+msgstr ""
+"There is not enough information in the form to create an animal record (need "
+"animalname)."
 
 #: onlineform.py
 msgid ""
@@ -11596,7 +11960,7 @@ msgid ""
 msgstr ""
 "This animal is currently fostered, it will be automatically returned first."
 
-#: movements.js move_adopt.js movement.py
+#: movement.py movements.js move_adopt.js
 msgid "This animal is currently held and cannot be adopted."
 msgstr "This animal is currently held and cannot be adopted."
 
@@ -11654,7 +12018,7 @@ msgstr "This animal was transferred from another shelter"
 msgid "This code has already been used."
 msgstr "This code has already been used."
 
-#: header.js mobile.py
+#: mobile.py header.js
 msgid ""
 "This database is locked and in read-only mode. You cannot add, change or "
 "delete records."
@@ -11662,7 +12026,7 @@ msgstr ""
 "This database is locked and in read-only mode. You cannot add, change or "
 "delete records."
 
-#: utils.py
+#: code.py
 msgid "This database is locked."
 msgstr "This database is locked."
 
@@ -11678,6 +12042,10 @@ msgstr "This expense account is the source for costs of this type"
 msgid "This income account is the source for payments received of this type"
 msgstr "This income account is the source for payments received of this type"
 
+#: donations.js
+msgid "This is the gross payment amount, inclusive of any fees and taxes"
+msgstr "This is the gross payment amount, inclusive of any fees and taxes"
+
 #: lookups.py
 msgid ""
 "This item is referred to in the database ({0}) and cannot be deleted until "
@@ -11685,6 +12053,10 @@ msgid ""
 msgstr ""
 "This item is referred to in the database ({0}) and cannot be deleted until "
 "it is no longer in use."
+
+#: code.py
+msgid "This link will remain active for 10 minutes."
+msgstr "This link will remain active for 10 minutes."
 
 #: options.js
 msgid ""
@@ -11705,6 +12077,10 @@ msgid ""
 msgstr ""
 "This movement cannot be from a retailer when the animal has no prior "
 "retailer movements."
+
+#: donations.js
+msgid "This payment has already been received"
+msgstr "This payment has already been received"
 
 #: move_reserve.js
 msgid "This person has an animal control incident against them"
@@ -11865,7 +12241,6 @@ msgid "This week"
 msgstr "This week"
 
 #: animal_bulk.js
-#| msgid "This will permanently remove the selected roles, are you sure?"
 msgid "This will permanently remove the selected animals, are you sure?"
 msgstr "This will permanently remove the selected animals, are you sure?"
 
@@ -11963,7 +12338,7 @@ msgstr "Tibetan Terrier"
 msgid "Tiger"
 msgstr "Tiger"
 
-#: diary.js onlineform.js log_new.js log.js dbupdate.py
+#: dbupdate.py diary.js onlineform.js log_new.js log.js
 msgid "Time"
 msgstr "Time"
 
@@ -11971,7 +12346,7 @@ msgstr "Time"
 msgid "Time Brought In"
 msgstr "Time Brought In"
 
-#: waitinglist_results.js html.py
+#: html.py waitinglist_results.js
 msgid "Time On List"
 msgstr "Time On List"
 
@@ -11987,7 +12362,7 @@ msgstr "Time on list"
 msgid "Time on shelter"
 msgstr "Time on shelter"
 
-#: timeline.js header.js html.py configuration.py
+#: html.py configuration.py timeline.js header.js
 msgid "Timeline"
 msgstr "Timeline"
 
@@ -11999,8 +12374,8 @@ msgstr "Timeline ({0})"
 msgid "Times should be in HH:MM format, eg: 09:00, 16:30"
 msgstr "Times should be in HH:MM format, eg: 09:00, 16:30"
 
-#: common_personchooser.js person.js reports.js person_new.js
-#: person_find_results.js html.py
+#: html.py common_personchooser.js person.js reports.js person_new.js
+#: person_find_results.js
 msgid "Title"
 msgstr "Title"
 
@@ -12044,6 +12419,10 @@ msgstr ""
 msgid "To continue using ASM, please renew {0}"
 msgstr "To continue using ASM, please renew {0}"
 
+#: code.py
+msgid "To reset your ASM password, please follow this link:"
+msgstr "To reset your ASM password, please follow this link:"
+
 #: staff_rota.js
 msgid "To week beginning"
 msgstr "To week beginning"
@@ -12051,6 +12430,10 @@ msgstr "To week beginning"
 #: clinic_calendar.js calendarview.js common.js options.js
 msgid "Today"
 msgstr "Today"
+
+#: media.js
+msgid "Toggle table/icon view"
+msgstr "Toggle table/icon view"
 
 #: dbupdate.py
 msgid "Tonkinese"
@@ -12084,17 +12467,13 @@ msgstr "Tortoise"
 msgid "Tosa Inu"
 msgstr "Tosa Inu"
 
-#: common_widgets.js stocklevel.js
+#: stocklevel.js
 msgid "Total"
 msgstr "Total"
 
 #: stocklevel.js
 msgid "Total number of units in the container"
 msgstr "Total number of units in the container"
-
-#: donations.js
-msgid "Total payments"
-msgstr "Total payments"
 
 #: dbupdate.py
 msgid "Toucan"
@@ -12108,6 +12487,14 @@ msgstr "Toy Fox Terrier"
 msgid "Training"
 msgstr "Training"
 
+#: financial.py
+msgid "Transaction Fee"
+msgstr "Transaction Fee"
+
+#: dbupdate.py
+msgid "Transaction fees"
+msgstr "Transaction fees"
+
 #: accounts_trx.js
 msgid "Transactions"
 msgstr "Transactions"
@@ -12116,7 +12503,7 @@ msgstr "Transactions"
 msgid "Transactions need a date and description."
 msgstr "Transactions need a date and description."
 
-#: publish_options.js move_transfer.js dbupdate.py
+#: dbupdate.py publish_options.js move_transfer.js
 msgid "Transfer"
 msgstr "Transfer"
 
@@ -12128,7 +12515,7 @@ msgstr "Transfer In"
 msgid "Transfer To"
 msgstr "Transfer To"
 
-#: move_transfer.js header.js html.py configuration.py
+#: html.py configuration.py move_transfer.js header.js
 msgid "Transfer an animal"
 msgstr "Transfer an animal"
 
@@ -12176,14 +12563,18 @@ msgstr "Transferred Out {0}"
 msgid "Transfers must have a valid transfer date."
 msgstr "Transfers must have a valid transfer date."
 
-#: calendarview.js onlineform_incoming.js roles.js header_edit_header.js
-#: dbupdate.py
+#: dbupdate.py calendarview.js onlineform_incoming.js roles.js
+#: header_edit_header.js
 msgid "Transport"
 msgstr "Transport"
 
-#: transport.js header.js configuration.py
+#: configuration.py transport.js header.js
 msgid "Transport Book"
 msgstr "Transport Book"
+
+#: lookups.py
+msgid "Transport Statuses"
+msgstr "Transport Statuses"
 
 #: lookups.py
 msgid "Transport Types"
@@ -12217,7 +12608,7 @@ msgstr "Trap Types"
 msgid "Trap loan"
 msgstr "Trap loan"
 
-#: header.js html.py configuration.py
+#: html.py configuration.py header.js
 msgid "Trap loans"
 msgstr "Trap loans"
 
@@ -12230,7 +12621,6 @@ msgid "Treat foster animals as part of the shelter inventory"
 msgstr "Treat foster animals as part of the shelter inventory"
 
 #: options.js
-#| msgid "Treat animals at retailers as part of the shelter inventory"
 msgid "Treat soft releases as part of the shelter inventory"
 msgstr "Treat soft releases as part of the shelter inventory"
 
@@ -12238,7 +12628,7 @@ msgstr "Treat soft releases as part of the shelter inventory"
 msgid "Treat trial adoptions as part of the shelter inventory"
 msgstr "Treat trial adoptions as part of the shelter inventory"
 
-#: medicalprofile.js mobile.py
+#: mobile.py wordprocessor.py medicalprofile.js
 msgid "Treatment"
 msgstr "Treatment"
 
@@ -12266,7 +12656,7 @@ msgstr "Treeing Walker Coonhound"
 msgid "Trial"
 msgstr "Trial"
 
-#: publish_options.js common.js shelterview.js movements.js dbupdate.py
+#: dbupdate.py publish_options.js common.js shelterview.js movements.js
 msgid "Trial Adoption"
 msgstr "Trial Adoption"
 
@@ -12274,7 +12664,7 @@ msgstr "Trial Adoption"
 msgid "Trial adoption"
 msgstr "Trial adoption"
 
-#: movements.js header.js html.py configuration.py
+#: html.py configuration.py movements.js header.js
 msgid "Trial adoption book"
 msgstr "Trial adoption book"
 
@@ -12286,7 +12676,7 @@ msgstr "Trial ends on"
 msgid "Tricolour"
 msgstr "Tricolour"
 
-#: roles.js batch.js html.py
+#: html.py roles.js batch.js
 msgid "Trigger Batch Processes"
 msgstr "Trigger Batch Processes"
 
@@ -12326,7 +12716,8 @@ msgstr "Turtle"
 msgid "Twitter"
 msgstr "Twitter"
 
-#: transport.js animal_new.js users.js incident.js animal_find_results.js
+#: html.py mobile.py lookups.py wordprocessor.py reports.py transport.js
+#: vouchers.js animal_new.js users.js incident.js animal_find_results.js
 #: person.js animal_costs.js person_links.js incident_find_results.js
 #: vaccination.js animal_find.js reports.js licence_renewal.js citations.js
 #: common_widgets.js traploan.js mailmerge.js donations.js onlineform.js
@@ -12334,8 +12725,7 @@ msgstr "Twitter"
 #: staff_rota.js test.js animal.js options.js animal_diet.js
 #: clinic_appointment.js diarytasks.js additional.js common_animalchooser.js
 #: shelterview.js media.js log.js movements.js incident_new.js
-#: person_vouchers.js csvimport_paypal.js licence.js html.py mobile.py
-#: lookups.py reports.py
+#: csvimport_paypal.js licence.js
 msgid "Type"
 msgstr "Type"
 
@@ -12347,7 +12737,7 @@ msgstr "Type of animal links to show"
 msgid "U (Unwanted Cat)"
 msgstr "U (Unwanted Cat)"
 
-#: onlineforms.js common.js
+#: common.js
 msgid "UK Giftaid"
 msgstr "UK Giftaid"
 
@@ -12391,8 +12781,16 @@ msgstr "Unavailable"
 msgid "Under {0} weeks old"
 msgstr "Under {0} weeks old"
 
-#: search.js animal_new.js animal_find_results.js stocklevel.js common.js
-#: animal.js header_edit_header.js html.py mobile.py
+#: medical.js
+msgid "Undo"
+msgstr "Undo"
+
+#: medical.js
+msgid "Undo given treatments"
+msgstr "Undo given treatments"
+
+#: html.py mobile.py search.js animal_new.js animal_find_results.js
+#: stocklevel.js common.js animal.js header_edit_header.js
 msgid "Unit"
 msgstr "Unit"
 
@@ -12408,11 +12806,11 @@ msgstr "Unit within the location, eg: pen or cage number"
 msgid "Units"
 msgstr "Units"
 
-#: animal_find_results.js i18n.py dbupdate.py
+#: i18n.py dbupdate.py animal_find_results.js
 msgid "Unknown"
 msgstr "Unknown"
 
-#: animal.js lookups.py
+#: lookups.py common.js
 msgid "Unknown microchip brand"
 msgstr "Unknown microchip brand"
 
@@ -12428,7 +12826,7 @@ msgstr "Unreserved"
 msgid "Unsaved Changes"
 msgstr "Unsaved Changes"
 
-#: medicalprofile.js medical.js medical.py
+#: medical.py medicalprofile.js medical.js
 msgid "Unspecified"
 msgstr "Unspecified"
 
@@ -12436,7 +12834,7 @@ msgstr "Unspecified"
 msgid "Unsuitable Accomodation"
 msgstr "Unsuitable Accomodation"
 
-#: options.js header.js code.py configuration.py
+#: code.py configuration.py options.js header.js
 msgid "Up for adoption"
 msgstr "Up for adoption"
 
@@ -12449,6 +12847,10 @@ msgid "Update"
 msgstr "Update"
 
 #: publish_options.js
+msgid "Update adoption websites every"
+msgstr "Update adoption websites every"
+
+#: publish_options.js
 msgid "Update publishing options"
 msgstr "Update publishing options"
 
@@ -12456,9 +12858,21 @@ msgstr "Update publishing options"
 msgid "Update system options"
 msgstr "Update system options"
 
+#: animal.js
+msgid ""
+"Update the current owner of this animal without returning and creating "
+"movements that affect your figures."
+msgstr ""
+"Update the current owner of this animal without returning and creating "
+"movements that affect your figures."
+
 #: animal_costs.js
 msgid "Update the daily boarding cost for this animal"
 msgstr "Update the daily boarding cost for this animal"
+
+#: media.js
+msgid "Updated"
+msgstr "Updated"
 
 #: code.py
 msgid "Updated database to version {0}"
@@ -12516,7 +12930,7 @@ msgstr "Uploading..."
 msgid "Urgencies"
 msgstr "Urgencies"
 
-#: waitinglist_new.js waitinglist_results.js waitinglist.js html.py lookups.py
+#: html.py lookups.py waitinglist_new.js waitinglist_results.js waitinglist.js
 msgid "Urgency"
 msgstr "Urgency"
 
@@ -12528,7 +12942,7 @@ msgstr "Urgent"
 msgid "Usage Date"
 msgstr "Usage Date"
 
-#: medical.js vaccination.js stocklevel.js test.js mobile.py lookups.py
+#: mobile.py lookups.py medical.js vaccination.js stocklevel.js test.js
 msgid "Usage Type"
 msgstr "Usage Type"
 
@@ -12596,11 +13010,15 @@ msgid ""
 msgstr ""
 "User accounts that will only ever call the Service API should set this to No."
 
+#: login.js
+msgid "User does not exist or have a valid email address."
+msgstr "User does not exist or have a valid email address."
+
 #: html.py
 msgid "User roles"
 msgstr "User roles"
 
-#: change_user_settings.js users.js login.js change_password.js mobile.py
+#: mobile.py change_user_settings.js users.js login.js change_password.js
 msgid "Username"
 msgstr "Username"
 
@@ -12632,7 +13050,7 @@ msgstr "Vaccinate"
 msgid "Vaccinate Animal"
 msgstr "Vaccinate Animal"
 
-#: calendarview.js header_edit_header.js mobile.py
+#: mobile.py calendarview.js header_edit_header.js
 msgid "Vaccination"
 msgstr "Vaccination"
 
@@ -12648,7 +13066,7 @@ msgstr "Vaccination Given"
 msgid "Vaccination Types"
 msgstr "Vaccination Types"
 
-#: header.js html.py configuration.py
+#: html.py configuration.py header.js
 msgid "Vaccination book"
 msgstr "Vaccination book"
 
@@ -12656,7 +13074,7 @@ msgstr "Vaccination book"
 msgid "Vaccination marked as given for {0} - {1}"
 msgstr "Vaccination marked as given for {0} - {1}"
 
-#: roles.js html.py
+#: html.py roles.js
 msgid "Vaccinations"
 msgstr "Vaccinations"
 
@@ -12680,10 +13098,6 @@ msgstr ""
 msgid "Valid tokens for the subject and text"
 msgstr "Valid tokens for the subject and text"
 
-#: stocklevel.js
-msgid "Value"
-msgstr "Value"
-
 #: dbupdate.py
 msgid "Various"
 msgstr "Various"
@@ -12696,8 +13110,8 @@ msgstr "Vertical Pitch"
 msgid "Very Large"
 msgstr "Very Large"
 
-#: onlineforms.js common.js test.js header_edit_header.js
-#: person_find_results.js html.py dbupdate.py
+#: html.py dbupdate.py common.js test.js header_edit_header.js
+#: person_find_results.js
 msgid "Vet"
 msgstr "Vet"
 
@@ -12705,7 +13119,7 @@ msgstr "Vet"
 msgid "Vet Visit"
 msgstr "Vet Visit"
 
-#: incident.js incident_new.js mobile.py
+#: mobile.py incident.js incident_new.js
 msgid "Victim"
 msgstr "Victim"
 
@@ -12713,7 +13127,7 @@ msgstr "Victim"
 msgid "Victim Name"
 msgstr "Victim Name"
 
-#: media.js dbupdate.py
+#: dbupdate.py media.js
 msgid "Video Link"
 msgstr "Video Link"
 
@@ -12773,7 +13187,7 @@ msgstr "View Found Animal"
 msgid "View Incidents"
 msgstr "View Incidents"
 
-#: roles.js html.py
+#: html.py roles.js
 msgid "View Incoming Forms"
 msgstr "View Incoming Forms"
 
@@ -12812,10 +13226,6 @@ msgstr "View Medical Records"
 #: roles.js
 msgid "View Movement"
 msgstr "View Movement"
-
-#: media.js
-msgid "View PDF"
-msgstr "View PDF"
 
 #: roles.js
 msgid "View Payments"
@@ -12897,10 +13307,6 @@ msgstr "View littermates"
 msgid "View matching records"
 msgstr "View matching records"
 
-#: media.js
-msgid "View media"
-msgstr "View media"
-
 #: html.py
 msgid "View publishing logs"
 msgstr "View publishing logs"
@@ -12913,20 +13319,27 @@ msgstr "Visual Theme"
 msgid "Vizsla"
 msgstr "Vizsla"
 
-#: onlineforms.js common.js staff_rota.js header_edit_header.js
-#: person_find_results.js html.py
+#: html.py common.js staff_rota.js header_edit_header.js person_find_results.js
 msgid "Volunteer"
 msgstr "Volunteer"
+
+#: vouchers.js
+msgid "Voucher Book"
+msgstr "Voucher Book"
 
 #: lookups.py
 msgid "Voucher Types"
 msgstr "Voucher Types"
 
+#: html.py
+msgid "Voucher book"
+msgstr "Voucher book"
+
 #: roles.js header_edit_header.js
 msgid "Vouchers"
 msgstr "Vouchers"
 
-#: person_vouchers.js
+#: vouchers.js
 msgid "Vouchers need an issue and expiry date."
 msgstr "Vouchers need an issue and expiry date."
 
@@ -12940,12 +13353,12 @@ msgid ""
 msgstr ""
 "WARNING: This animal is over 6 months old and has not been neutered/spayed"
 
-#: clinic_appointment.js dbupdate.py
+#: dbupdate.py clinic_appointment.js
 msgid "Waiting"
 msgstr "Waiting"
 
-#: search.js waitinglist_results.js onlineform_incoming.js roles.js options.js
-#: header_edit_header.js html.py dbupdate.py
+#: html.py dbupdate.py search.js waitinglist_results.js onlineform_incoming.js
+#: roles.js options.js header_edit_header.js
 msgid "Waiting List"
 msgstr "Waiting List"
 
@@ -12961,7 +13374,7 @@ msgstr "Waiting List - Details"
 msgid "Waiting List - Removal"
 msgstr "Waiting List - Removal"
 
-#: person.py
+#: person_links.js
 msgid "Waiting List Contact"
 msgstr "Waiting List Contact"
 
@@ -12977,7 +13390,7 @@ msgstr "Waiting List {0}"
 msgid "Waiting List: {0}"
 msgstr "Waiting List: {0}"
 
-#: clinic_appointment.js html.py
+#: html.py clinic_appointment.js
 msgid "Waiting Room"
 msgstr "Waiting Room"
 
@@ -12993,7 +13406,7 @@ msgstr "Waiting list donations"
 msgid "Waiting list entries matching '{0}'."
 msgstr "Waiting list entries matching '{0}'."
 
-#: waitinglist_new.js waitinglist.js waitinglist.py
+#: waitinglist.py waitinglist_new.js waitinglist.js
 msgid "Waiting list entries must have a contact"
 msgstr "Waiting list entries must have a contact"
 
@@ -13091,7 +13504,7 @@ msgstr "Week beginning {0}"
 msgid "Weekly"
 msgstr "Weekly"
 
-#: animal_new.js animal.js html.py dbupdate.py
+#: html.py dbupdate.py animal_new.js animal.js
 msgid "Weight"
 msgstr "Weight"
 
@@ -13170,6 +13583,10 @@ msgid "When a message is created, email it to each matching user"
 msgstr "When a message is created, email it to each matching user"
 
 #: options.js
+msgid "When calculating sales tax, assume the payment amount is net and add it"
+msgstr "When calculating VAT, assume the payment amount is net and add it"
+
+#: options.js
 msgid ""
 "When creating payments from the Move menu screens, mark them due instead of "
 "received"
@@ -13224,7 +13641,6 @@ msgid "When receiving payments, allow a quantity and unit price to be set"
 msgstr "When receiving payments, allow a quantity and unit price to be set"
 
 #: options.js
-#| msgid "When receiving payments, allow a quantity and unit price to be set"
 msgid "When receiving payments, allow a transaction fee to be set"
 msgstr "When receiving payments, allow a transaction fee to be set"
 
@@ -13313,7 +13729,7 @@ msgstr "Wire-haired Pointing Griffon"
 msgid "Wirehaired Terrier"
 msgstr "Wirehaired Terrier"
 
-#: clinic_appointment.js dbupdate.py
+#: dbupdate.py clinic_appointment.js
 msgid "With Vet"
 msgstr "With Vet"
 
@@ -13321,20 +13737,16 @@ msgstr "With Vet"
 msgid "With overnight batch"
 msgstr "With overnight batch"
 
-#: accounts_trx.js
-msgid "Withdrawal"
-msgstr "Withdrawal"
-
 #: common.js
 msgid "Wk"
 msgstr "Wk"
 
-#: rota.js staff_rota.js html.py
+#: html.py rota.js staff_rota.js
 msgid "Work"
 msgstr "Work"
 
-#: common_personchooser.js waitinglist_results.js person.js person_new.js
-#: person_find_results.js mobile.py
+#: mobile.py common_personchooser.js waitinglist_results.js person.js
+#: person_new.js person_find_results.js
 msgid "Work Phone"
 msgstr "Work Phone"
 
@@ -13362,14 +13774,14 @@ msgstr "Yellow Labrador Retriever"
 msgid "Yellow and Grey"
 msgstr "Yellow and Grey"
 
+#: mobile.py onlineform.py i18n.py dbupdate.py wordprocessor.py
 #: publish_options.js users.js animal_find_results.js waitinglist_results.js
 #: sql.js accounts.js lostfound_find.js additional.js lookups.js
-#: person_find_results.js mobile.py onlineform.py i18n.py dbupdate.py
-#: wordprocessor.py
+#: person_find_results.js
 msgid "Yes"
 msgstr "Yes"
 
-#: onlineform.js lookups.py dbupdate.py
+#: lookups.py dbupdate.py onlineform.js
 msgid "Yes/No"
 msgstr "Yes/No"
 
@@ -13486,10 +13898,10 @@ msgid ""
 msgstr ""
 "Your sheltermanager.com account is due to expire on {0}, please renew {1}"
 
-#: transport.js common_personchooser.js incident.js waitinglist_results.js
-#: person.js incident_find_results.js incident_find.js lostfound.js
-#: lostfound_find.js options.js lostfound_find_results.js incident_new.js
-#: person_new.js lostfound_new.js person_find_results.js html.py mobile.py
+#: html.py mobile.py transport.js common_personchooser.js incident.js
+#: waitinglist_results.js person.js incident_find_results.js incident_find.js
+#: lostfound.js lostfound_find.js options.js lostfound_find_results.js
+#: incident_new.js person_new.js lostfound_new.js person_find_results.js
 msgid "Zipcode"
 msgstr "Postcode"
 
@@ -13521,7 +13933,7 @@ msgstr "at"
 msgid "cm"
 msgstr "cm"
 
-#: medicalprofile.js medical.js header_edit_header.js medical.py
+#: medical.py medicalprofile.js medical.js header_edit_header.js
 msgid "days"
 msgstr "days"
 
@@ -13541,6 +13953,14 @@ msgstr ""
 "retailers, staff, fosterers, volunteers, homecheckers, members, activelost, "
 "activefound"
 
+#: options.js
+msgid "if animal does not have"
+msgstr "if animal does not have"
+
+#: options.js
+msgid "if animal has"
+msgstr "if animal has"
+
 #: mailmerge.js
 msgid "inches"
 msgstr "inches"
@@ -13549,11 +13969,11 @@ msgstr "inches"
 msgid "invalid"
 msgstr "invalid"
 
-#: animal_new.js animal.js wordprocessor.py
+#: wordprocessor.py animal_new.js animal.js
 msgid "kg"
 msgstr "kg"
 
-#: animal_new.js animal.js wordprocessor.py
+#: wordprocessor.py animal_new.js animal.js
 msgid "lb"
 msgstr "lb"
 
@@ -13565,7 +13985,7 @@ msgstr "less"
 msgid "mins"
 msgstr "mins"
 
-#: medicalprofile.js medical.js medical.py
+#: medical.py medicalprofile.js medical.js
 msgid "months"
 msgstr "months"
 
@@ -13585,7 +14005,7 @@ msgstr "or"
 msgid "or estimated age in years"
 msgstr "or estimated age in years"
 
-#: animal_new.js animal.js wordprocessor.py
+#: wordprocessor.py animal_new.js animal.js
 msgid "oz"
 msgstr "oz"
 
@@ -13605,11 +14025,11 @@ msgstr "treatments"
 msgid "treatments, every"
 msgstr "treatments, every"
 
-#: medical.js medical.py
+#: medical.py medical.js
 msgid "weekdays"
 msgstr "weekday(s)"
 
-#: medicalprofile.js medical.js medical.py
+#: medical.py publish_options.js medicalprofile.js medical.js
 msgid "weeks"
 msgstr "weeks"
 
@@ -13617,7 +14037,7 @@ msgstr "weeks"
 msgid "weeks after last contact."
 msgstr "weeks after last contact."
 
-#: medicalprofile.js medical.js medical.py
+#: medical.py medicalprofile.js medical.js
 msgid "years"
 msgstr "years"
 
@@ -13629,9 +14049,9 @@ msgstr "yesterday"
 msgid "{0} (under {1} months)"
 msgstr "{0} (under {1} months)"
 
-#: transport.js medical.js animal_costs.js vaccination.js diary.js donations.js
-#: test.js animal.js animal_diet.js clinic_appointment.js media.js log.js
-#: movements.js licence.js
+#: transport.js vouchers.js medical.js animal_costs.js vaccination.js diary.js
+#: donations.js test.js animal.js animal_diet.js clinic_appointment.js media.js
+#: log.js movements.js licence.js
 msgid "{0} - {1} ({2} {3} aged {4})"
 msgstr "{0} - {1} ({2} {3} aged {4})"
 
@@ -13646,7 +14066,6 @@ msgstr ""
 "{0} - {1} {2} ({3}), contact {4} ({5}) - lost in {6}, postcode {7}, on {8}"
 
 #: animal_bulk.js
-#| msgid "{0} animals successfully updated."
 msgid "{0} animals successfully deleted."
 msgstr "{0} animals successfully deleted."
 
@@ -13665,6 +14084,10 @@ msgstr "{0} fine, paid"
 #: header_edit_header.js
 msgid "{0} fine, unpaid"
 msgstr "{0} fine, unpaid"
+
+#: publish_options.js
+msgid "{0} hours"
+msgstr "{0} hours"
 
 #: main.js
 msgid "{0} incurred in costs"
@@ -13685,6 +14108,14 @@ msgstr "{0} received"
 #: mailmerge.js
 msgid "{0} record(s) match the mail merge."
 msgstr "{0} record(s) match the mail merge."
+
+#: medical.js
+msgid ""
+"{0} records displayed, use the 'Medical History' report to see all records "
+"for this animal."
+msgstr ""
+"{0} records displayed, use the 'Medical History' report to see all records "
+"for this animal."
 
 #: sql.js
 msgid "{0} results."
@@ -13718,6 +14149,14 @@ msgstr "{0} treatments every {1} weeks"
 msgid "{0} treatments every {1} years"
 msgstr "{0} treatments every {1} years"
 
+#: lookups.js
+msgid "{0} weeks"
+msgstr "{0} weeks"
+
+#: lookups.js media.js
+msgid "{0} years"
+msgstr "{0} years"
+
 #: medical.py
 msgid "{0} {1} ({2} treatments)"
 msgstr "{0} {1} ({2} treatments)"
@@ -13726,7 +14165,7 @@ msgstr "{0} {1} ({2} treatments)"
 msgid "{0} {1} aged {2}"
 msgstr "{0} {1} aged {2}"
 
-#: search.js movement.py
+#: movement.py search.js
 msgid "{0} {1} {2} aged {3}"
 msgstr "{0} {1} {2} aged {3}"
 
@@ -13745,6 +14184,10 @@ msgstr "{0} {1}: neutered/spayed"
 #: animal.py
 msgid "{0} {1}: available for adoption"
 msgstr "{0} {1}: available for adoption"
+
+#: animal.py
+msgid "{0} {1}: cancelled reservation to {2}"
+msgstr "{0} {1}: cancelled reservation to {2}"
 
 #: animal.py
 msgid "{0} {1}: died ({2})"
@@ -13889,6 +14332,10 @@ msgid "{plural0} animal is not available for adoption"
 msgstr "{plural0} animal is not available for adoption"
 
 #: main.js
+msgid "{plural0} animal was TNR"
+msgstr "{plural0} animal was TNR"
+
+#: main.js
 msgid "{plural0} animal was adopted"
 msgstr "{plural0} animal was adopted"
 
@@ -13901,12 +14348,29 @@ msgid "{plural0} animal was reclaimed by its owner"
 msgstr "{plural0} animal was reclaimed by its owner"
 
 #: main.js
+msgid "{plural0} animal was released to wild"
+msgstr "{plural0} animal was released to wild"
+
+#: main.js
 msgid "{plural0} animal was transferred to another shelter"
 msgstr "{plural0} animal was transferred to another shelter"
+
+#: main.js
+msgid "{plural0} clinic appointment today"
+msgstr "{plural0} clinic appointment today"
 
 #: i18n.py
 msgid "{plural0} day."
 msgstr "{plural0} day."
+
+#: main.js
+msgid "{plural0} document signing request has been received in the last week"
+msgstr "{plural0} document signing request has been received in the last week"
+
+#: main.js
+msgid "{plural0} document signing request issued in the last month is unsigned"
+msgstr ""
+"{plural0} document signing request issued in the last month is unsigned"
 
 #: main.js
 msgid "{plural0} incomplete animal control call"
@@ -14038,6 +14502,10 @@ msgid "{plural1} animals have holds ending today"
 msgstr "{plural1} animals have holds ending today"
 
 #: main.js
+msgid "{plural1} animals were TNR"
+msgstr "{plural1} animals were TNR"
+
+#: main.js
 msgid "{plural1} animals were adopted"
 msgstr "{plural1} animals were adopted"
 
@@ -14054,12 +14522,31 @@ msgid "{plural1} animals were reclaimed by their owners"
 msgstr "{plural1} animals were reclaimed by their owners"
 
 #: main.js
+msgid "{plural1} animals were released to wild"
+msgstr "{plural1} animals were released to wild"
+
+#: main.js
 msgid "{plural1} animals were transferred to other shelters"
 msgstr "{plural1} animals were transferred to other shelters"
+
+#: main.js
+msgid "{plural1} clinic appointments today"
+msgstr "{plural1} clinic appointments today"
 
 #: i18n.py
 msgid "{plural1} days."
 msgstr "{plural1} days."
+
+#: main.js
+msgid "{plural1} document signing requests have been received in the last week"
+msgstr ""
+"{plural1} document signing requests have been received in the last week"
+
+#: main.js
+msgid ""
+"{plural1} document signing requests issued in the last month are unsigned"
+msgstr ""
+"{plural1} document signing requests issued in the last month are unsigned"
 
 #: main.js
 msgid "{plural1} incomplete animal control calls"
@@ -14191,6 +14678,10 @@ msgid "{plural2} animals have holds ending today"
 msgstr "{plural2} animals have holds ending today"
 
 #: main.js
+msgid "{plural2} animals were TNR"
+msgstr "{plural2} animals were TNR"
+
+#: main.js
 msgid "{plural2} animals were adopted"
 msgstr "{plural2} animals were adopted"
 
@@ -14207,12 +14698,31 @@ msgid "{plural2} animals were reclaimed by their owners"
 msgstr "{plural2} animals were reclaimed by their owners"
 
 #: main.js
+msgid "{plural2} animals were released to wild"
+msgstr "{plural2} animals were released to wild"
+
+#: main.js
 msgid "{plural2} animals were transferred to other shelters"
 msgstr "{plural2} animals were transferred to other shelters"
+
+#: main.js
+msgid "{plural2} clinic appointments today"
+msgstr "{plural2} clinic appointments today"
 
 #: i18n.py
 msgid "{plural2} days."
 msgstr "{plural2} days."
+
+#: main.js
+msgid "{plural2} document signing requests have been received in the last week"
+msgstr ""
+"{plural2} document signing requests have been received in the last week"
+
+#: main.js
+msgid ""
+"{plural2} document signing requests issued in the last month are unsigned"
+msgstr ""
+"{plural2} document signing requests issued in the last month are unsigned"
 
 #: main.js
 msgid "{plural2} incomplete animal control calls"
@@ -14344,6 +14854,10 @@ msgid "{plural3} animals have holds ending today"
 msgstr "{plural3} animals have holds ending today"
 
 #: main.js
+msgid "{plural3} animals were TNR"
+msgstr "{plural3} animals were TNR"
+
+#: main.js
 msgid "{plural3} animals were adopted"
 msgstr "{plural3} animals were adopted"
 
@@ -14360,12 +14874,32 @@ msgid "{plural3} animals were reclaimed by their owners"
 msgstr "{plural3} animals were reclaimed by their owners"
 
 #: main.js
+msgid "{plural3} animals were released to wild"
+msgstr "{plural3} animals were released to wild"
+
+#: main.js
 msgid "{plural3} animals were transferred to other shelters"
 msgstr "{plural3} animals were transferred to other shelters"
+
+#: main.js
+msgid "{plural3} clinic appointments today"
+msgstr "{plural3} clinic appointments today"
 
 #: i18n.py
 msgid "{plural3} days."
 msgstr "{plural3} days."
+
+#: main.js
+#| msgid "{plural3} unaltered animals have been adopted in the last month"
+msgid "{plural3} document signing requests have been received in the last week"
+msgstr ""
+"{plural3} document signing requests have been received in the last week"
+
+#: main.js
+msgid ""
+"{plural3} document signing requests issued in the last month are unsigned"
+msgstr ""
+"{plural3} document signing requests issued in the last month are unsigned"
 
 #: main.js
 msgid "{plural3} incomplete animal control calls"
@@ -14471,6 +15005,43 @@ msgstr "{plural3} weeks."
 #: i18n.py
 msgid "{plural3} years."
 msgstr "{plural3} years."
+
+#~ msgid "Total payments"
+#~ msgstr "Total payments"
+
+#~ msgid "6 weeks"
+#~ msgstr "6 weeks"
+
+#~ msgid "Edit document"
+#~ msgstr "Edit document"
+
+#~ msgid "Edit media notes"
+#~ msgstr "Edit media notes"
+
+#~ msgid "Edit notes"
+#~ msgstr "Edit notes"
+
+#~ msgid ""
+#~ "If this is the web preferred image, web publishers will use these notes "
+#~ "as the animal description"
+#~ msgstr ""
+#~ "If this is the web preferred image, web publishers will use these notes "
+#~ "as the animal description"
+
+#~ msgid "Invalid email address"
+#~ msgstr "Invalid email address"
+
+#~ msgid "Value"
+#~ msgstr "Value"
+
+#~ msgid "View PDF"
+#~ msgstr "View PDF"
+
+#~ msgid "View media"
+#~ msgstr "View media"
+
+#~ msgid "Withdrawal"
+#~ msgstr "Withdrawal"
 
 #~ msgid "Adoption Number"
 #~ msgstr "Adoption Number"

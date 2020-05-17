@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ASM3\n"
 "Report-Msgid-Bugs-To: robin@sheltermanager.com\n"
-"POT-Creation-Date: 2020-05-08 12:42+0000\n"
+"POT-Creation-Date: 2020-05-16 11:44+0000\n"
 "Last-Translator: Robin Rawson-Tetley <robin@sheltermanager.com>\n"
 "Language-Team: en <robin@sheltermanager.com>\n"
 "Language: en\n"
@@ -109,10 +109,6 @@ msgstr ""
 
 #: publish_options.js
 msgid "6 months"
-msgstr ""
-
-#: publish_options.js
-msgid "6 weeks"
 msgstr ""
 
 #: publish_options.js
@@ -4561,6 +4557,10 @@ msgstr ""
 msgid "Expense"
 msgstr ""
 
+#: options.js
+msgid "Expense account for transaction fees"
+msgstr ""
+
 #: financial.py
 msgid "Expense::"
 msgstr ""
@@ -4591,6 +4591,10 @@ msgstr ""
 
 #: dbupdate.py
 msgid "Expenses::Stationary"
+msgstr ""
+
+#: dbupdate.py
+msgid "Expenses::TransactionFee"
 msgstr ""
 
 #: dbupdate.py
@@ -4776,6 +4780,10 @@ msgstr ""
 
 #: licence_renewal.js donations.js licence.js
 msgid "Fee"
+msgstr ""
+
+#: donations.js
+msgid "Fees"
 msgstr ""
 
 #: dbupdate.py
@@ -5523,6 +5531,10 @@ msgstr ""
 msgid "Greyhound"
 msgstr ""
 
+#: donations.js
+msgid "Gross"
+msgstr ""
+
 #: dbupdate.py
 msgid "Guinea Pig"
 msgstr ""
@@ -5661,6 +5673,10 @@ msgstr ""
 
 #: waitinglist_results.js
 msgid "Highlight"
+msgstr ""
+
+#: options.js
+msgid "Highlight unadopted reservations after"
 msgstr ""
 
 #: dbupdate.py
@@ -6098,6 +6114,10 @@ msgstr ""
 msgid "Income"
 msgstr ""
 
+#: options.js
+msgid "Income account for sales tax"
+msgstr ""
+
 #: dbupdate.py
 msgid "Income from an on-site shop"
 msgstr ""
@@ -6124,6 +6144,10 @@ msgstr ""
 
 #: dbupdate.py
 msgid "Income::OpeningBalances"
+msgstr ""
+
+#: dbupdate.py
+msgid "Income::SalesTax"
 msgstr ""
 
 #: dbupdate.py
@@ -7539,6 +7563,10 @@ msgstr ""
 msgid "Neglect"
 msgstr ""
 
+#: donations.js
+msgid "Net"
+msgstr ""
+
 #: dbupdate.py
 msgid "Netherland Dwarf"
 msgstr ""
@@ -8225,7 +8253,8 @@ msgstr ""
 msgid "Owl"
 msgstr ""
 
-#: dbupdate.py animal_new.js animal.js move_reclaim.js
+#: html.py dbupdate.py search.js animal_new.js move_reclaim.js
+#: animal_find_results.js animal.js header_edit_header.js
 msgid "Owner"
 msgstr ""
 
@@ -9851,7 +9880,8 @@ msgstr ""
 msgid "Saint Bernard St. Bernard"
 msgstr ""
 
-#: lookups.js clinic_appointment.js common_widgets.js donations.js
+#: dbupdate.py financial.py common_widgets.js donations.js
+#: clinic_appointment.js lookups.js
 msgid "Sales Tax"
 msgstr ""
 
@@ -11795,6 +11825,10 @@ msgstr ""
 msgid "This income account is the source for payments received of this type"
 msgstr ""
 
+#: donations.js
+msgid "This is the gross payment amount, inclusive of any fees and taxes"
+msgstr ""
+
 #: lookups.py
 msgid ""
 "This item is referred to in the database ({0}) and cannot be deleted until "
@@ -11825,27 +11859,15 @@ msgstr ""
 msgid "This payment has already been received"
 msgstr ""
 
-#: move_reserve.js
-msgid "This person has an animal control incident against them"
-msgstr ""
-
-#: movements.js move_adopt.js
+#: move_reserve.js movements.js move_adopt.js
 msgid "This person has an animal control incident against them."
 msgstr ""
 
-#: move_reserve.js
-msgid "This person has been banned from adopting animals"
-msgstr ""
-
-#: movements.js move_adopt.js
+#: onlineform_incoming.js move_reserve.js movements.js move_adopt.js
 msgid "This person has been banned from adopting animals."
 msgstr ""
 
-#: move_reserve.js
-msgid "This person has been under investigation"
-msgstr ""
-
-#: movements.js move_adopt.js
+#: move_reserve.js movements.js move_adopt.js
 msgid "This person has been under investigation."
 msgstr ""
 
@@ -11853,11 +11875,7 @@ msgstr ""
 msgid "This person has movements and cannot be removed."
 msgstr ""
 
-#: move_reserve.js
-msgid "This person has not passed a homecheck"
-msgstr ""
-
-#: movements.js move_adopt.js
+#: move_reserve.js movements.js move_adopt.js
 msgid "This person has not passed a homecheck."
 msgstr ""
 
@@ -12189,16 +12207,12 @@ msgstr ""
 msgid "Tosa Inu"
 msgstr ""
 
-#: stocklevel.js common_widgets.js
+#: stocklevel.js
 msgid "Total"
 msgstr ""
 
 #: stocklevel.js
 msgid "Total number of units in the container"
-msgstr ""
-
-#: donations.js
-msgid "Total payments"
 msgstr ""
 
 #: dbupdate.py
@@ -12211,6 +12225,14 @@ msgstr ""
 
 #: dbupdate.py
 msgid "Training"
+msgstr ""
+
+#: financial.py
+msgid "Transaction Fee"
+msgstr ""
+
+#: dbupdate.py
+msgid "Transaction fees"
 msgstr ""
 
 #: accounts_trx.js
@@ -12576,6 +12598,12 @@ msgstr ""
 msgid "Update system options"
 msgstr ""
 
+#: animal.js
+msgid ""
+"Update the current owner of this animal without returning and creating "
+"movements that affect your figures."
+msgstr ""
+
 #: animal_costs.js
 msgid "Update the daily boarding cost for this animal"
 msgstr ""
@@ -12586,6 +12614,10 @@ msgstr ""
 
 #: code.py
 msgid "Updated database to version {0}"
+msgstr ""
+
+#: onlineform_incoming.js
+msgid "Updated existing record"
 msgstr ""
 
 #: onlineforms.js reports.js
@@ -13267,6 +13299,10 @@ msgid "When a message is created, email it to each matching user"
 msgstr ""
 
 #: options.js
+msgid "When calculating sales tax, assume the payment amount is net and add it"
+msgstr ""
+
+#: options.js
 msgid ""
 "When creating payments from the Move menu screens, mark them due instead of "
 "received"
@@ -13669,7 +13705,7 @@ msgstr ""
 msgid "weekdays"
 msgstr ""
 
-#: medical.py medical.js medicalprofile.js
+#: medical.py publish_options.js medicalprofile.js medical.js
 msgid "weeks"
 msgstr ""
 

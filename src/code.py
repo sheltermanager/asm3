@@ -36,7 +36,7 @@ import asm3.movement
 import asm3.onlineform
 import asm3.paymentprocessor.base
 import asm3.paymentprocessor.paypal
-import asm3.paymentprocessor.stripe
+import asm3.paymentprocessor.stripeh
 import asm3.person
 import asm3.publish
 import asm3.publishers.base
@@ -660,7 +660,8 @@ class media(ASMEndpoint):
             notes.append(m.MEDIANOTES)
         asm3.utils.send_email(dbo, post["from"], emailadd, post["cc"], post["bcc"], post["subject"], post["body"], "html", attachments)
         if post.boolean("addtolog"):
-            asm3.log.add_log(dbo, o.user, asm3.media.get_log_from_media_type(m["LINKTYPEID"]), m["LINKID"], post.integer("logtype"), "[%s] %s :: %s" % (emailadd, ", ".join(notes), asm3.utils.html_email_to_plain(post["body"])))
+            asm3.log.add_log_email(dbo, o.user, asm3.media.get_log_from_media_type(m["LINKTYPEID"]), m["LINKID"], post.integer("logtype"), 
+                emailadd, ", ".join(notes), post["body"])
         return emailadd
 
     def post_emailpdf(self, o):
@@ -680,7 +681,8 @@ class media(ASMEndpoint):
             notes.append(m.MEDIANOTES)
         asm3.utils.send_email(dbo, post["from"], emailadd, post["cc"], post["bcc"], post["subject"], post["body"], "html", attachments)
         if post.boolean("addtolog"):
-            asm3.log.add_log(dbo, o.user, asm3.media.get_log_from_media_type(m.LINKTYPEID), m.LINKID, post.integer("logtype"), "[%s] %s :: %s" % (emailadd, ", ".join(notes), asm3.utils.html_email_to_plain(post["body"])))
+            asm3.log.add_log_email(dbo, o.user, asm3.media.get_log_from_media_type(m.LINKTYPEID), m.LINKID, post.integer("logtype"), 
+                emailadd, ", ".join(notes), post["body"])
         return emailadd
 
     def post_emailsign(self, o):
@@ -697,7 +699,8 @@ class media(ASMEndpoint):
             if m.MEDIAMIMETYPE != "text/html": continue
             body.append("<p><a href=\"%s?account=%s&method=sign_document&formid=%d\">%s</a></p>" % (SERVICE_URL, dbo.database, mid, m.MEDIANOTES))
             if post.boolean("addtolog"):
-                asm3.log.add_log(dbo, o.user, asm3.media.get_log_from_media_type(m.LINKTYPEID), m.LINKID, post.integer("logtype"), "[%s] %s :: %s" % (emailadd, _("Document signing request", l), asm3.utils.html_email_to_plain("\n".join(body))))
+                asm3.log.add_log_email(dbo, o.user, asm3.media.get_log_from_media_type(m.LINKTYPEID), m.LINKID, post.integer("logtype"), 
+                    emailadd, _("Document signing request", l), "".join(body))
             asm3.media.create_log(dbo, o.user, mid, "ES01", _("Document signing request", l))
             asm3.utils.send_email(dbo, post["from"], emailadd, post["cc"], post["bcc"], post["subject"], "\n".join(body), "html")
         return emailadd
@@ -864,10 +867,10 @@ class main(JSONEndpoint):
         # Install recommended reports if no reports are currently installed
         if dbo.query_int("SELECT COUNT(ID) FROM customreport") == 0: asm3.reports.install_recommended_smcom_reports(dbo, o.user)
         # News
-        news = asm3.configuration.asm_news(dbo)
-        if news == "":
+        news = asm3.cachedisk.get("news", "news")
+        if news is None:
             news = asm3.utils.get_asm_news(dbo)
-            asm3.configuration.asm_news(dbo, news)
+            asm3.cachedisk.put("news", "news", news, CACHE_ONE_DAY)
         # Welcome dialog
         showwelcome = False
         if asm3.configuration.show_first_time_screen(dbo) and session.superuser == 1:
@@ -915,8 +918,8 @@ class main(JSONEndpoint):
         if asm3.configuration.show_alerts_home_page(dbo):
             alerts = asm3.animal.get_alerts(dbo, o.locationfilter, o.siteid, o.visibleanimalids, age=age)
             if len(alerts) > 0: 
-                alerts[0]["LOOKFOR"] = asm3.configuration.lookingfor_last_match_count(dbo)
-                alerts[0]["LOSTFOUND"] = asm3.configuration.lostfound_last_match_count(dbo)
+                alerts[0]["LOOKFOR"] = asm3.cachedisk.get("lookingfor_lastmatchcount", dbo.database)
+                alerts[0]["LOSTFOUND"] = asm3.cachedisk.get("lostfound_lastmatchcount", dbo.database)
         # Stats
         stats = []
         if asm3.configuration.show_stats_home_page(dbo) != "none":
@@ -2497,9 +2500,11 @@ class document_gen(ASMEndpoint):
             l = asm3.financial.get_licence(dbo, recid)
             if l is None:
                 raise asm3.utils.ASMValidationError("%d is not a valid licence id" % recid)
+            animalid = l["ANIMALID"]
             ownerid = l["OWNERID"]
             tempname += " - " + asm3.person.get_person_name(dbo, ownerid)
-            asm3.media.create_document_media(dbo, session.user, asm3.media.PERSON, ownerid, tempname, post["document"])
+            if animalid: asm3.media.create_document_media(dbo, session.user, asm3.media.ANIMAL, animalid, tempname, post["document"])
+            if ownerid: asm3.media.create_document_media(dbo, session.user, asm3.media.PERSON, ownerid, tempname, post["document"])
             self.redirect("person_media?id=%d" % ownerid)
         elif linktype == "MOVEMENT":
             m = asm3.movement.get_movement(dbo, recid)
@@ -2508,8 +2513,8 @@ class document_gen(ASMEndpoint):
             animalid = m["ANIMALID"]
             ownerid = m["OWNERID"]
             tempname = "%s - %s::%s" % (tempname, asm3.animal.get_animal_namecode(dbo, animalid), asm3.person.get_person_name(dbo, ownerid))
-            asm3.media.create_document_media(dbo, session.user, asm3.media.PERSON, ownerid, tempname, post["document"])
-            asm3.media.create_document_media(dbo, session.user, asm3.media.ANIMAL, animalid, tempname, post["document"])
+            if ownerid: asm3.media.create_document_media(dbo, session.user, asm3.media.PERSON, ownerid, tempname, post["document"])
+            if animalid: asm3.media.create_document_media(dbo, session.user, asm3.media.ANIMAL, animalid, tempname, post["document"])
             self.redirect("person_media?id=%d" % ownerid)
         else:
             raise asm3.utils.ASMValidationError("Linktype '%s' is invalid, cannot save" % linktype)
@@ -2768,7 +2773,8 @@ class donation(JSONEndpoint):
         url = "%s?%s" % (SERVICE_URL, asm3.utils.urlencode(params))
         body.append("<p><a href=\"%s\">%s</a></p>" % (url, post["payref"]))
         if post.boolean("addtolog"):
-            asm3.log.add_log(dbo, o.user, asm3.log.PERSON, post.integer("person"), post.integer("logtype"), "[%s] %s :: %s" % (emailadd, post["subject"], asm3.utils.html_email_to_plain("\n".join(body))))
+            asm3.log.add_log_email(dbo, o.user, asm3.log.PERSON, post.integer("person"), post.integer("logtype"), 
+                emailadd, post["subject"], "".join(body))
         asm3.utils.send_email(dbo, post["from"], emailadd, post["cc"], post["bcc"], post["subject"], "\n".join(body), "html")
         return emailadd
 
@@ -3593,8 +3599,8 @@ class lostfound_match(ASMEndpoint):
         self.cache_control(0)
         # If no parameters have been given, use the cached daily copy of the match report
         if lostanimalid == 0 and foundanimalid == 0 and animalid == 0:
-            asm3.al.debug("no parameters given, using cached report at /reports/daily/lost_found_match.html", "code.lostfound_match", dbo)
-            return asm3.configuration.lostfound_report(dbo)
+            asm3.al.debug("no parameters given, using cached report", "code.lostfound_match", dbo)
+            return asm3.cachedisk.get("lostfound_report", dbo.database)
         else:
             asm3.al.debug("match lost=%d, found=%d, animal=%d" % (lostanimalid, foundanimalid, animalid), "code.lostfound_match", dbo)
             return asm3.lostfound.match_report(dbo, session.user, lostanimalid, foundanimalid, animalid)
@@ -4138,7 +4144,7 @@ class onlineform_incoming(JSONEndpoint):
 
     def post_view(self, o):
         self.check(asm3.users.VIEW_INCOMING_FORMS)
-        return asm3.onlineform.get_onlineformincoming_html(o.dbo, o.post.integer("collationid"))
+        return asm3.onlineform.get_onlineformincoming_html(o.dbo, o.post.integer("collationid"), include_raw=False)
 
     def post_delete(self, o):
         self.check(asm3.users.DELETE_INCOMING_FORMS)
@@ -4171,40 +4177,40 @@ class onlineform_incoming(JSONEndpoint):
         self.check(asm3.users.ADD_MEDIA)
         rv = []
         for pid in o.post.integer_list("ids"):
-            collationid, animalid, animalname = asm3.onlineform.create_animal(o.dbo, o.user, pid)
-            rv.append("%d|%d|%s" % (collationid, animalid, animalname))
+            collationid, animalid, animalname, status = asm3.onlineform.create_animal(o.dbo, o.user, pid)
+            rv.append("%d|%d|%s|%s" % (collationid, animalid, animalname, status))
         return "^$".join(rv)
 
     def post_person(self, o):
         self.check(asm3.users.ADD_PERSON)
         rv = []
         for pid in o.post.integer_list("ids"):
-            collationid, personid, personname = asm3.onlineform.create_person(o.dbo, o.user, pid)
-            rv.append("%d|%d|%s" % (collationid, personid, personname))
+            collationid, personid, personname, status = asm3.onlineform.create_person(o.dbo, o.user, pid)
+            rv.append("%d|%d|%s|%s" % (collationid, personid, personname, status))
         return "^$".join(rv)
 
     def post_lostanimal(self, o):
         self.check(asm3.users.ADD_LOST_ANIMAL)
         rv = []
         for pid in o.post.integer_list("ids"):
-            collationid, lostanimalid, personname = asm3.onlineform.create_lostanimal(o.dbo, o.user, pid)
-            rv.append("%d|%d|%s" % (collationid, lostanimalid, personname))
+            collationid, lostanimalid, personname, status = asm3.onlineform.create_lostanimal(o.dbo, o.user, pid)
+            rv.append("%d|%d|%s|%s" % (collationid, lostanimalid, personname, status))
         return "^$".join(rv)
 
     def post_foundanimal(self, o):
         self.check(asm3.users.ADD_FOUND_ANIMAL)
         rv = []
         for pid in o.post.integer_list("ids"):
-            collationid, foundanimalid, personname = asm3.onlineform.create_foundanimal(o.dbo, o.user, pid)
-            rv.append("%d|%d|%s" % (collationid, foundanimalid, personname))
+            collationid, foundanimalid, personname, status = asm3.onlineform.create_foundanimal(o.dbo, o.user, pid)
+            rv.append("%d|%d|%s|%s" % (collationid, foundanimalid, personname, status))
         return "^$".join(rv)
 
     def post_incident(self, o):
         self.check(asm3.users.ADD_INCIDENT)
         rv = []
         for pid in o.post.integer_list("ids"):
-            collationid, incidentid, personname = asm3.onlineform.create_animalcontrol(o.dbo, o.user, pid)
-            rv.append("%d|%d|%s" % (collationid, incidentid, personname))
+            collationid, incidentid, personname, status = asm3.onlineform.create_animalcontrol(o.dbo, o.user, pid)
+            rv.append("%d|%d|%s|%s" % (collationid, incidentid, personname, status))
         return "^$".join(rv)
 
     def post_transport(self, o):
@@ -4212,15 +4218,15 @@ class onlineform_incoming(JSONEndpoint):
         rv = []
         for pid in o.post.integer_list("ids"):
             collationid, animalid, animalname = asm3.onlineform.create_transport(o.dbo, o.user, pid)
-            rv.append("%d|%d|%s" % (collationid, animalid, animalname))
+            rv.append("%d|%d|%s|0" % (collationid, animalid, animalname))
         return "^$".join(rv)
 
     def post_waitinglist(self, o):
         self.check(asm3.users.ADD_WAITING_LIST)
         rv = []
         for pid in o.post.integer_list("ids"):
-            collationid, wlid, personname = asm3.onlineform.create_waitinglist(o.dbo, o.user, pid)
-            rv.append("%d|%d|%s" % (collationid, wlid, personname))
+            collationid, wlid, personname, status = asm3.onlineform.create_waitinglist(o.dbo, o.user, pid)
+            rv.append("%d|%d|%s|%s" % (collationid, wlid, personname, status))
         return "^$".join(rv)
 
 class onlineform_incoming_print(ASMEndpoint):
@@ -4327,6 +4333,8 @@ class options(JSONEndpoint):
         dbo = o.dbo
         c = {
             "accounts": asm3.financial.get_accounts(dbo, onlybank=True),
+            "accountsexp": asm3.financial.get_accounts(dbo, onlyexpense=True),
+            "accountsinc": asm3.financial.get_accounts(dbo, onlyincome=True),
             "animalfindcolumns": asm3.html.json_animalfindcolumns(dbo),
             "animalflags": asm3.lookups.get_animal_flags(dbo),
             "breeds": asm3.lookups.get_breeds(dbo),
@@ -4417,7 +4425,7 @@ class pp_stripe(ASMEndpoint):
             asm3.al.error("failed extracting dbname from client_reference_id: %s" % e, "code.pp_stripe")
             return
         try:
-            p = asm3.paymentprocessor.stripe.Stripe(dbo)
+            p = asm3.paymentprocessor.stripeh.Stripe(dbo)
             p.receive(o.data)
         except asm3.paymentprocessor.base.ProcessorError:
             # ProcessorError subclasses are thrown when there is a problem with the 
@@ -4457,6 +4465,7 @@ class person(JSONEndpoint):
             "diarytasks": asm3.diary.get_person_tasks(dbo),
             "flags": asm3.lookups.get_person_flags(dbo),
             "ynun": asm3.lookups.get_ynun(dbo),
+            "ynunk": asm3.lookups.get_ynunk(dbo),
             "homecheckhistory": asm3.person.get_homechecked(dbo, p.id),
             "jurisdictions": asm3.lookups.get_jurisdictions(dbo),
             "logtypes": asm3.lookups.get_log_types(dbo),
@@ -4779,7 +4788,7 @@ class person_lookingfor(ASMEndpoint):
     def content(self, o):
         self.content_type("text/html")
         if o.post.integer("personid") == 0:
-            return asm3.configuration.lookingfor_report(o.dbo)
+            return asm3.cachedisk.get("lookingfor_report", o.dbo.database)
         else:
             return asm3.person.lookingfor_report(o.dbo, o.user, o.post.integer("personid"))
 

@@ -903,7 +903,7 @@ class Database(object):
     def sql_replace(self, fieldexpr, findstr="?", replacestr="?"):
         """ Writes a replace expression that finds findstr in fieldexpr, replacing with replacestr """
         if findstr != "?": findstr = "'%s'" % self.escape(findstr)
-        if replacestr != "?": findstr = "'%s'" % self.escape(replacestr)
+        if replacestr != "?": replacestr = "'%s'" % self.escape(replacestr)
         return "REPLACE(%s, %s, %s)" % (fieldexpr, findstr, replacestr)
 
     def sql_substring(self, fieldexpr, pos, chars):

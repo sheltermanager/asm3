@@ -53,7 +53,17 @@ ASM contains a full double entry accounting package. The options here are:
 * When receiving payments, allow recording of sales tax with a default rate of %:
   ASM can calculate and store sales tax/VAT/GST amounts on payments you receive
   for taxable goods. Enabling this option will add a tickbox to all payment
-  screens allowing you to calculate the taxable value.
+  screens allowing you to calculate the taxable value (assumes your amount is
+  gross and inclusive of tax/VAT/GST).
+
+* When calculating sales tax, assume the payment amount is net and add it:
+  Not everyone charges for items that are inclusive of tax and don't have the 
+  full amount to hand. With this option on, when the system calculates the sales
+  tax/VAT/GST on your payment amount, it will calculate it as if the amount was
+  exclusive of tax and then add it to the amount so that it becomes a gross
+  amount, inclusive of tax. Eg: $50 at 20% will produce $10 tax and the amount
+  will become $60 with this option on. With it off, tax will be calculated
+  as $8.33 for $50.
 
 * When receiving multiple payments, allow the due and received dates to be set:
   If this option is on, due and received date columns will be shown when taking
@@ -77,6 +87,17 @@ ASM contains a full double entry accounting package. The options here are:
   payment transaction, it will use the payment type to find the income
   account to use. The destination account here denotes where the money will be
   moved to. If you do not set one, ASM will use the first bank account on file. 
+
+* Income account for sales tax: If you are creating matching transactions from
+  payment records and there is a tax/VAT/GST value present, the system will
+  write a transaction to deposit the tax into the target bank account from the
+  income account you nominate here, giving you an easy way to track your
+  tax burden while keeping your bank balances correct.
+
+* Expense account for transaction fees: If you are creating matching
+  transactions from payment records and there is a fee present, the system will
+  write a transaction to deduct the fee from the target bank account and send
+  it to the expense account you nominate here.
 
 * Donations of type … are sent to ...: In addition to the default payment
   destination account, you can specify optional mappings, so that when ASM
@@ -613,10 +634,17 @@ Medical
 Movements
 ---------
 
-The movement tab allows a number of days to be set to automatically cancel
-reservations. If an animal is reserved for this period of time and it does not
-result in an adoption (or any kind of movement), ASM will automatically cancel
-the reservation for you after this time.
+* Cancel unadopted reservations after: If an animal is reserved for this period
+  of time and it does not result in an adoption (or any kind of movement), ASM
+  will automatically cancel the reservation for you after this time.
+
+* Highlight unadopted reservations on screen after: If an animal
+  is reserved for this period of time, the system will highlight the reservation
+  on screen (typically in red italics).
+
+* Remove holds after: This value is used to set a default in the "Hold until date"
+  field of new animals. When the date is reached, the hold flag is automatically
+  removed.
 
 * Treat foster animals as part of the shelter inventory: Setting this option
   will make ASM treat fostered animals as if they are on the shelter (with

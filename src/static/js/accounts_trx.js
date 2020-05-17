@@ -43,7 +43,7 @@ $(function() {
                 '<tr id="paymentrow">',
                 '<td><label for="person">' + _("Payment From") + '</label></td>',
                 '<td>',
-                '<a id="personlink" class="asm-embed-name" href="#"></a> <img src="static/images/icons/right.gif" />',
+                '<a id="personlink" class="asm-embed-name" href="#"></a> ' + html.icon("right"),
                 '<a id="animallink" class="asm-embed-name" href="#"></a>',
                 '</td>',
                 '</tr>',

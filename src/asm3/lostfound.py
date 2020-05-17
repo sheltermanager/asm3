@@ -3,6 +3,7 @@ import asm3.additional
 import asm3.al
 import asm3.animal
 import asm3.asynctask
+import asm3.cachedisk
 import asm3.configuration
 import asm3.dbfs
 import asm3.diary
@@ -306,7 +307,7 @@ def send_email_from_form(dbo, username, post):
     body = post["body"]
     rv = asm3.utils.send_email(dbo, emailfrom, emailto, emailcc, emailbcc, subject, body, ishtml == 1 and "html" or "plain")
     if addtolog == 1:
-        asm3.log.add_log(dbo, username, post["lfmode"] == "lost" and asm3.log.LOSTANIMAL or asm3.log.FOUNDANIMAL, post.integer("lfid"), logtype, body)
+        asm3.log.add_log_email(dbo, username, post["lfmode"] == "lost" and asm3.log.LOSTANIMAL or asm3.log.FOUNDANIMAL, post.integer("lfid"), logtype, emailto, subject, body)
     return rv
 
 def words(str1, str2, maxpoints):
@@ -596,9 +597,11 @@ def update_match_report(dbo):
     Updates the latest version of the lost/found match report 
     """
     asm3.al.debug("updating lost/found match report", "lostfound.update_match_report", dbo)
-    asm3.configuration.lostfound_report(dbo, match_report(dbo, limit = 1000))
-    asm3.configuration.lostfound_last_match_count(dbo, lostfound_last_match_count(dbo))
-    return "OK %d" % lostfound_last_match_count(dbo)
+    s = match_report(dbo, limit=1000)
+    count = lostfound_last_match_count(dbo)
+    asm3.cachedisk.put("lostfound_report", dbo.database, s, 86400)
+    asm3.cachedisk.put("lostfound_lastmatchcount", dbo.database, count, 86400)
+    return "OK %d" % count
 
 def get_lost_person_name(dbo, aid):
     """

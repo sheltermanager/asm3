@@ -757,7 +757,6 @@
                 '<th class="overrideaccount">' + _("Deposit Account") + '</th>',
                 '<th class="giftaid">' + _("Gift Aid") + '</th>',
                 '<th class="vat">' + _("Sales Tax") + '</th>',
-                '<th class="vat">' + _("Total") + '</th>',
                 '<th>' + _("Comments") + '</th>',
                 '</tr>',
                 '</thead>',
@@ -777,7 +776,6 @@
                 '<td class="overrideaccount"></td>',
                 '<td class="giftaid"></td>',
                 '<td class="vat rightalign strong" id="totalvat"></td>',
-                '<td class="vat rightalign strong" id="totalall"></td>',
                 '<td></td>',
                 '</tr>',
                 '</tfoot>',
@@ -843,9 +841,6 @@
                 '<input id="vatamount{i}" data="vatamount{i}" class="rightalign vatamount asm-textbox asm-halftextbox asm-currencybox" value="0" />',
                 '</span>',
                 '</td>',
-                '<td class="vat centered">',
-                '<input id="total{i}" data="{i}" class="rightalign totalamount asm-textbox asm-halftextbox asm-currencybox" disabled="disabled" />',
-                '</td>',
                 '<td>',
                 '<input id="comments{i}" data="comments{i}" class="asm-textbox" />',
                 '</td>',
@@ -881,16 +876,19 @@
             $("#amount" + i + ", #vatamount" + i).change(function() {
                 self.update_totals(); 
             });
-            // Recalculate VAT when just amount or rate changes
-            $("#amount" + i + ", #vatrate" + i).change(function() {
-                $("#vatamount" + i).currency("value", ($("#amount" + i).currency("value") / 100) * format.to_float($("#vatrate" + i).val()));
-                self.update_totals();
-            });
             // Clicking the VAT checkbox enables and disables the rate/amount fields with defaults
             $("#vat" + i).change(function() {
                 if ($(this).is(":checked")) {
                     $("#vatrate" + i).val(config.number("VATRate"));
-                    $("#vatamount" + i).currency("value", ($("#amount" + i).currency("value") / 100) * format.to_float($("#vatrate" + i).val()));
+                    if (!config.bool("VATExclusive")) {
+                        $("#vatamount" + i).currency("value", 
+                            common.tax_from_inclusive($("#amount" + i).currency("value"), format.to_int($("#vatrate" + i).val())));
+                    }
+                    else {
+                        $("#vatamount" + i).currency("value", 
+                            common.tax_from_exclusive($("#amount" + i).currency("value"), format.to_int($("#vatrate" + i).val())));
+                        $("#amount" + i).currency("value", $("#amount" + i).currency("value") + $("#vatamount" + i).currency("value"));
+                    }
                     $("#vatboxes" + i).fadeIn();
                 }
                 else {
@@ -946,14 +944,8 @@
             $(".vatamount").each(function() {
                 totalvat += $(this).currency("value");
             });
-            $(".totalamount").each(function() {
-                var idx = $(this).attr("data");
-                $(this).currency("value",  $("#amount" + idx).currency("value") + $("#vatamount" + idx).currency("value") );
-            });
-            totalall = totalamt + totalvat;
             $("#totalamount").html(format.currency(totalamt));
             $("#totalvat").html(format.currency(totalvat));
-            $("#totalall").html(format.currency(totalall));
         },
 
         destroy: function() {
@@ -1002,8 +994,8 @@
             button.click(function(e) {
                 popup.css({
                     "position": "fixed",
-                    "left": e.pageX + "px",
-                    "top": e.pageY + "px",
+                    "left": e.clientX + "px",
+                    "top": e.clientY + "px",
                     "z-index": "9999",
                     "max-width": "500px"
                 });

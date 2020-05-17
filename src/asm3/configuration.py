@@ -174,8 +174,10 @@ DEFAULTS = {
     "DonationDateOverride": "No",
     "DonationFees": "Yes",
     "DonationQuantities": "No",
+    "DonationFeeAccount": "21",
     "DonationTargetAccount": "9",
     "DonationTrxOverride": "No",
+    "DonationVATAccount": "22",
     "DonationOnMoveReserve": "Yes",
     "DontShowCombi": "Yes",
     "DontShowHeartworm": "Yes",
@@ -320,6 +322,7 @@ DEFAULTS = {
     "UseAutoInsurance": "No",
     "UseShortShelterCodes": "Yes", 
     "VATEnabled": "Yes",
+    "VATExclusive": "No",
     "VATRate": "20",
     "VetEnvoyHomeAgainEnabled": "Yes",
     "VetEnvoyAKCReuniteEnabled": "Yes",
@@ -561,12 +564,6 @@ def anonymise_personal_data(dbo):
 def anonymise_after_years(dbo):
     return cint(dbo, "AnonymiseAfterYears", DEFAULTS["AnonymiseAfterYears"])
 
-def asm_news(dbo, news=""):
-    if news != "":
-        cset(dbo, "ASMNews", news, sanitiseXSS = False)
-    else:
-        return cstring(dbo, "ASMNews")
-
 def auto_cancel_reserves_days(dbo):
     return cint(dbo, "AutoCancelReservesDays", int(DEFAULTS["AutoCancelReservesDays"]))
 
@@ -761,8 +758,14 @@ def donation_account_mappings(dbo):
             m[donationtypeid] = accountid
     return m
 
+def donation_fee_account(dbo):
+    return cint(dbo, "DonationFeeAccount", DEFAULTS["DonationFeeAccount"])
+
 def donation_trx_override(dbo):
     return cboolean(dbo, "DonationTrxOverride", DEFAULTS["DonationTrxOverride"] == "Yes")
+
+def donation_vat_account(dbo):
+    return cint(dbo, "DonationVATAccount", DEFAULTS["DonationVATAccount"])
 
 def email(dbo):
     return cstring(dbo, "EmailAddress")
@@ -868,30 +871,6 @@ def location_filters_enabled(dbo):
 
 def long_term_months(dbo):
     return cint(dbo, "LongTermMonths", DEFAULTS["LongTermMonths"])
-
-def lookingfor_last_match_count(dbo, newcount = -1):
-    if newcount == -1:
-        return cint(dbo, "LookingForLastMatchCount", 0)
-    else:
-        cset(dbo, "LookingForLastMatchCount", "%d" % newcount)
-
-def lookingfor_report(dbo, newval = ""):
-    if newval == "":
-        return cstring(dbo, "LookingForReport")
-    else:
-        cset(dbo, "LookingForReport", newval, sanitiseXSS = False)
-
-def lostfound_last_match_count(dbo, newcount = -1):
-    if newcount == -1:
-        return cint(dbo, "LostFoundLastMatchCount", 0)
-    else:
-        cset(dbo, "LostFoundLastMatchCount", "%d" % newcount)
-
-def lostfound_report(dbo, newval = ""):
-    if newval == "":
-        return cstring(dbo, "LostFoundReport")
-    else:
-        cset(dbo, "LostFoundReport", newval, sanitiseXSS = False)
 
 def maddies_fund_username(dbo):
     return cstring(dbo, "MaddiesFundUsername")

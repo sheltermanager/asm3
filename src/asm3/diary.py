@@ -48,10 +48,10 @@ def email_uncompleted_upto_today(dbo):
                 if (n.diaryforname == "*") \
                 or (n.diaryforname == u.username) \
                 or (u.roles.find(n.diaryforname) != -1):
-                    s += asm3.i18n.python2display(l, n.diarydatetime) + " "
+                    s += "%s " % asm3.i18n.python2display(l, n.diarydatetime)
                     s += n.subject
-                    if n.linkinfo is not None and n.linkinfo != "": s += " / " + n.linkinfo
-                    s += "\n" + n.note + "\n\n"
+                    if n.linkinfo is not None and n.linkinfo != "": s += " / %s" % n.linkinfo
+                    s += "\n%s\n\n%s" % (n.note, n.comments)
                     totalforuser += 1
             if totalforuser > 0:
                 asm3.al.debug("got %d notes for user %s" % (totalforuser, u.username), "diary.email_uncompleted_upto_today", dbo)
@@ -67,10 +67,10 @@ def email_note_on_change(dbo, n, username):
     l = dbo.locale
     allusers = asm3.users.get_users(dbo)
     s = asm3.i18n._("Diary change triggered by {0} on {1}", l).format(username, asm3.i18n.python2display(l, dbo.now()))
-    s += "\n\n" + asm3.i18n.python2display(l, n.diarydatetime) + " "
+    s += "\n\n%s " % asm3.i18n.python2display(l, n.diarydatetime)
     s += n.subject
-    if n.linkinfo is not None and n.linkinfo != "": s += " / " + n.linkinfo
-    s += "\n" + n.note + "\n\n" + n.comments
+    if n.linkinfo is not None and n.linkinfo != "": s += " / %s" % n.linkinfo
+    s += "\n%s\n\n%s" % (n.note, n.comments)
     for u in allusers:
         if u.emailaddress and u.emailaddress.strip() != "":
             # Is this note relevant for this user?
@@ -90,10 +90,10 @@ def email_note_on_complete(dbo, n, username):
     l = dbo.locale
     allusers = asm3.users.get_users(dbo)
     s = asm3.i18n._("Diary completion triggered by {0} on {1}", l).format(username, asm3.i18n.python2display(l, dbo.now()))
-    s += "\n\n" + asm3.i18n.python2display(l, n.diarydatetime) + " "
+    s += "\n\n%s " % asm3.i18n.python2display(l, n.diarydatetime)
     s += n.subject
-    if n.linkinfo is not None and n.linkinfo != "": s += " / " + n.linkinfo
-    s += "\n" + n.note + "\n\n" + n.comments
+    if n.linkinfo is not None and n.linkinfo != "": s += " / %s" % n.linkinfo
+    s += "\n%s\n\n%s" % (n.note, n.comments)
     for u in allusers:
         if u.emailaddress and u.emailaddress.strip() != "":
             # Is this note relevant for this user?

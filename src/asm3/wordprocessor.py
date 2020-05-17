@@ -590,7 +590,10 @@ def animal_tags(dbo, a, includeAdditional=True, includeCosts=True, includeDiet=T
             "PAYMENTMETHOD":            "PAYMENTNAME",
             "PAYMENTDATE":              "d:DATE",
             "PAYMENTDATEDUE":           "d:DATEDUE",
-            "PAYMENTAMOUNT":            "c:DONATION",
+            "PAYMENTAMOUNT":            "c:NET",
+            "PAYMENTGROSS":             "c:GROSS",
+            "PAYMENTNET":               "c:NET",
+            "PAYMENTFEE":               "c:FEE",
             "PAYMENTCOMMENTS":          "COMMENTS",
             "PAYMENTGIFTAID":           "y:ISGIFTAID",
             "PAYMENTVAT":               "y:ISVAT",
@@ -836,7 +839,7 @@ def donation_tags(dbo, donations):
     """
     l = dbo.locale
     tags = {}
-    totals = { "due": 0, "received": 0, "vat": 0, "total": 0, "taxrate": 0.0 }
+    totals = { "due": 0, "gross": 0, "net": 0, "vat": 0, "taxrate": 0.0 }
     def add_to_tags(i, p): 
         x = { 
             "DONATIONID"+i          : str(p["ID"]),
@@ -866,7 +869,10 @@ def donation_tags(dbo, donations):
             "PAYMENTDATEDUE"+i      : python2display(l, p["DATEDUE"]),
             "PAYMENTQUANTITY"+i    : str(p["QUANTITY"]),
             "PAYMENTUNITPRICE"+i   : format_currency_no_symbol(l, p["UNITPRICE"]),
-            "PAYMENTAMOUNT"+i       : format_currency_no_symbol(l, p["DONATION"]),
+            "PAYMENTGROSS"+i        : format_currency_no_symbol(l, p["GROSS"]),
+            "PAYMENTNET"+i          : format_currency_no_symbol(l, p["NET"]),
+            "PAYMENTAMOUNT"+i       : format_currency_no_symbol(l, p["NET"]), 
+            "PAYMENTFEE"+i          : format_currency_no_symbol(l, p["FEE"]),
             "PAYMENTCOMMENTS"+i     : p["COMMENTS"],
             "PAYMENTCOMMENTSFW"+i   : fw(p["COMMENTS"]),
             "PAYMENTGIFTAID"+i      : p["ISGIFTAIDNAME"],
@@ -899,9 +905,9 @@ def donation_tags(dbo, donations):
         if p["VATRATE"] > totals["taxrate"]:
             totals["taxrate"] = p["VATRATE"]
         if p["DATE"] is not None: 
-            totals["received"] += asm3.utils.cint(p["DONATION"])
             totals["vat"] += asm3.utils.cint(p["VATAMOUNT"])
-            totals["total"] += asm3.utils.cint(p["VATAMOUNT"]) + asm3.utils.cint(p["DONATION"])
+            totals["net"] += asm3.utils.cint(p["NET"])
+            totals["gross"] += asm3.utils.cint(p["GROSS"])
         if p["DATE"] is None: 
             totals["due"] += asm3.utils.cint(p["DONATION"])
     # Add a copy of the donation tags without an index for compatibility
@@ -910,12 +916,14 @@ def donation_tags(dbo, donations):
     for i, d in enumerate(donations):
         add_to_tags(str(i+1), d)
     tags["PAYMENTTOTALDUE"] = format_currency_no_symbol(l, totals["due"])
-    tags["PAYMENTTOTALRECEIVED"] = format_currency_no_symbol(l, totals["received"])
+    tags["PAYMENTTOTALNET"] = format_currency_no_symbol(l, totals["net"])
+    tags["PAYMENTTOTALRECEIVED"] = format_currency_no_symbol(l, totals["net"])
     tags["PAYMENTTOTALVATRATE"] = "%0.2f" % totals["taxrate"]
     tags["PAYMENTTOTALTAXRATE"] = "%0.2f" % totals["taxrate"]
     tags["PAYMENTTOTALVAT"] = format_currency_no_symbol(l, totals["vat"])
     tags["PAYMENTTOTALTAX"] = format_currency_no_symbol(l, totals["vat"])
-    tags["PAYMENTTOTAL"] = format_currency_no_symbol(l, totals["total"])
+    tags["PAYMENTTOTALGROSS"] = format_currency_no_symbol(l, totals["gross"])
+    tags["PAYMENTTOTAL"] = format_currency_no_symbol(l, totals["gross"])
     return tags
 
 def foundanimal_tags(dbo, a):
