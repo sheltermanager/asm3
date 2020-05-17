@@ -3,6 +3,8 @@
 /*global asm, common, config, dlgfx, format, html, validate, header, _, escape, unescape */
 /*global tableform: true */
 
+var tableform;
+
 (function($) {
 
     tableform = {

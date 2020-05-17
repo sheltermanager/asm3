@@ -3,10 +3,10 @@
 /*global asm, common, config, dlgfx, edit_header, format, html, header, log, schema, validate, _, escape, unescape */
 /*global MASK_VALUE: true */
 
-(function($) {
+// String shown in asm-mask fields instead of the value
+var MASK_VALUE = "****************";
 
-    // String shown in asm-mask fields instead of the value
-    MASK_VALUE = "****************";
+(function($) {
 
     // Generates a javascript object of parameters by looking
     // at the data attribute of all items matching the
