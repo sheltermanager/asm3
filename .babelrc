@@ -5,9 +5,7 @@
       {
         //"useBuiltIns": "usage",
         //"corejs": 3,
-        "targets": {
-          "ie":"11"        
-        }
+        "targets": " > 1%, not dead"
       }
     ]
   ]
