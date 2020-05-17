@@ -2,12 +2,12 @@
 
 import os, sys, subprocess
 
-#JSLINT_BIN = "node_modules/jslint/bin/jslint.js"
-JSLINT_BIN = "./runjslint.js"
+JSLINT_BIN = "node_modules/jshint/bin/jshint"
+CFG = "jshint.conf"
 
-#if not os.path.exists(JSLINT_BIN):
-#    print("jslint does not exist, installing from npm")
-#    os.system("npm install jslint")
+if not os.path.exists(JSLINT_BIN):
+    print("jshint does not exist, installing from npm")
+    os.system("npm install jshint")
 
 files = sorted(os.listdir("../../src/static/js"))
 if len(sys.argv) == 2: 
@@ -20,7 +20,7 @@ for f in files:
     print(f)
     filepath = "../../src/static/js/%s" % f
     try:
-        output = subprocess.run([JSLINT_BIN, filepath], check=True, capture_output=True)
+        output = subprocess.run([JSLINT_BIN, "--config", CFG, filepath], check=True, capture_output=True)
         output = output.stdout.decode("utf-8")
         if output.find("OK") == -1 and output.strip() != "": 
             print(output)

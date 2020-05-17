@@ -966,9 +966,11 @@ class login(ASMEndpoint):
         has_animals = True
         custom_splash = False
 
-        # Filter out IE8 and below right now - they just aren't good enough
+        # Filter out Internet Explorer 10 and below altogether.
+        # As all IEs but 11 fit the pattern in the UA of MSIE 6-10.
+        # When we want to ditch IE 11, the pattern to search for is "rv:11.0"
         ua = self.user_agent()
-        if ua.find("MSIE 6") != -1 or ua.find("MSIE 7") != -1 or ua.find("MSIE 8") != -1:
+        if ua.find("MSIE") != -1:
             self.redirect("static/pages/unsupported_ie.html")
 
         # Figure out how to get the default locale and any overridden splash screen

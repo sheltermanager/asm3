@@ -15,4 +15,6 @@ cordova/asm/platforms
 scripts/ansible/archives
 scripts/ansible/roles
 scripts/ansible/*.retry
+scripts/jslint/node_modules
+scripts/jslint/package-lock.json
 BREAKING_CHANGES

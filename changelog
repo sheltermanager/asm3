@@ -1,6 +1,7 @@
 44
 ================
 
+17/05/20 Switch to jshint for static js checking, remove < IE11 support #800
 17/05/20 Fix csv_parse to handle accidentally included UTF8 BOM #826
 17/05/20 Add separate view staff rota and merge animal permissions #682
 16/05/20 Only potentially create a blank reserve for the first reserveanimalname
