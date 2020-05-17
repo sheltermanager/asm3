@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: ASM3\n"
 "Report-Msgid-Bugs-To: robin@sheltermanager.com\n"
 "POT-Creation-Date: 2020-05-16 11:44+0000\n"
-"PO-Revision-Date: 2020-05-17 10:31+0200\n"
+"PO-Revision-Date: 2020-05-17 10:37+0200\n"
 "Last-Translator: Julian POIDEVIN <poidevin.julian@gmail.com>\n"
 "Language-Team: \n"
 "Language: fr\n"
@@ -864,7 +864,7 @@ msgid ""
 "Age groups are assigned based on the age of an animal. The figure in the "
 "left column is the upper limit in years for that group."
 msgstr ""
-"Les tranches d'âges assignées sont basées sur l'age d'un animal. Le chiffre "
+"Les tranches d'âges assignées sont basées sur l'âge d'un animal. Le chiffre "
 "dans la colonne de gauche est la limite supérieure des années pour cette "
 "tranche."
 
@@ -1451,7 +1451,7 @@ msgstr "La date du rendez-vous doit être une date valide"
 
 #: clinic.py clinic_invoice.js
 msgid "Appointment {0}. {1} on {2} for {3}"
-msgstr "Rendez-vous {0}. {1} sur {2} pour {3}"
+msgstr "Rendez-vous {0}. {1} le {2} pour {3}"
 
 #: clinic_appointment.js
 msgid "Appointments need a date and time."
@@ -2032,7 +2032,7 @@ msgstr "Vaccination brutes"
 
 #: html.py animal_bulk.js
 msgid "Bulk change animals"
-msgstr "Modifications brut d'animaux"
+msgstr "Modifications de plusieurs animaux"
 
 #: dbupdate.py
 msgid "Bull Terrier"
@@ -9284,7 +9284,7 @@ msgstr "Raison de l'entrée"
 
 #: animal.js
 msgid "Reason not from Owner"
-msgstr "Raisons pas du propriétaire"
+msgstr "Raison pourquoi animal non amené par le propriétaire"
 
 #: animal.js
 msgid "Reason the owner did not bring in the animal themselves"
