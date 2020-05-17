@@ -8,17 +8,12 @@
     "test": "test"
   },
   "dependencies": {
-    "@babel/cli": "^7.8.4",
-    "@babel/core": "^7.9.6",
-    "@babel/preset-env": "^7.9.6",
-    "core-js": "^3.6.5",
     "jshint": "^2.11.1",
-    "regenerator-runtime": "^0.13.5"
+    "jsmin": "^1.0.1"
   },
   "devDependencies": {},
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "babel --minified -d src/static/js/min src/static/js/*.js "
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",

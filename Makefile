@@ -57,9 +57,8 @@ minify:
 	# Generate minified and compatible versions of all javascript in min folder
 	@echo "[minify] ============================="
 	mkdir -p src/static/js/min
-	rm -f src/static/js/min/*js
-	npm run build
-	for i in src/static/js/min/*.js; do mv $$i src/static/js/min/`basename $$i .js`.min.js; done
+	# for i in src/static/js/*.js; do echo $$i && npx jsmin $$i > src/static/js/min/`basename $$i .js`.min.js; done
+	for i in src/static/js/*.js; do echo $$i; cat $$i | scripts/jsmin/jsmin > src/static/js/min/`basename $$i .js`.min.js; done
 
 rollup: minify
 	# Generate a rollup file of all javascript files
