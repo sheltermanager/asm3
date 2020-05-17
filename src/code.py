@@ -1292,7 +1292,7 @@ class animal(JSONEndpoint):
         return sheltercode + "||" + shortcode + "||" + str(unique) + "||" + str(year)
 
     def post_merge(self, o):
-        self.check(asm3.users.DELETE_ANIMAL)
+        self.check(asm3.users.MERGE_ANIMAL)
         asm3.animal.merge_animal(o.dbo, o.user, o.post.integer("animalid"), o.post.integer("mergeanimalid"))
 
     def post_randomname(self, o):
@@ -5409,7 +5409,7 @@ class sql_dump(ASMEndpoint):
 
 class staff_rota(JSONEndpoint):
     url = "staff_rota"
-    get_permissions = asm3.users.VIEW_ROTA
+    get_permissions = asm3.users.VIEW_STAFF_ROTA
 
     def controller(self, o):
         dbo = o.dbo

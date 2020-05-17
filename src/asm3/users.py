@@ -17,6 +17,7 @@ CHANGE_ANIMAL                   = "ca"
 VIEW_ANIMAL                     = "va"
 DELETE_ANIMAL                   = "da"
 CLONE_ANIMAL                    = "cloa"
+MERGE_ANIMAL                    = "ma"
 
 GENERATE_DOCUMENTS              = "gaf"
 MODIFY_NAME_DATABASE            = "mand"
@@ -183,6 +184,7 @@ DELETE_LICENCE                  = "dapl"
 
 ADD_ROTA                        = "aoro"
 VIEW_ROTA                       = "voro"
+VIEW_STAFF_ROTA                 = "vsro"
 CHANGE_ROTA                     = "coro"
 DELETE_ROTA                     = "doro"
 

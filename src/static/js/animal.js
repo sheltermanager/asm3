@@ -1140,7 +1140,7 @@ $(function() {
 
             if (!common.has_permission("ca")) { $("#button-save").hide(); }
             if (!common.has_permission("aa")) { $("#button-clone").hide(); }
-            if (!common.has_permission("da")) { $("#button-merge").hide(); }
+            if (!common.has_permission("ma")) { $("#button-merge").hide(); }
             if (!common.has_permission("da")) { $("#button-delete").hide(); }
             if (!common.has_permission("emo")) { $("#button-email").hide(); }
             if (!common.has_permission("gaf")) { $("#button-document").hide(); }
