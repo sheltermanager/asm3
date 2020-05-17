@@ -1,15 +1,32 @@
 #!/usr/bin/env python3
 
-import os, sys
+import os, sys, subprocess
 
-for f in sorted(os.listdir("../../src/static/js")):
+#JSLINT_BIN = "node_modules/jslint/bin/jslint.js"
+JSLINT_BIN = "./runjslint.js"
+
+#if not os.path.exists(JSLINT_BIN):
+#    print("jslint does not exist, installing from npm")
+#    os.system("npm install jslint")
+
+files = sorted(os.listdir("../../src/static/js"))
+if len(sys.argv) == 2: 
+    files = [ sys.argv[1] ]
+
+for f in files:
     if f.startswith("jquery"): continue
     if f.startswith("."): continue
     if os.path.isdir("../../src/static/js/%s" % f): continue
     print(f)
-    #output = os.popen("cat ../src/static/js/%s | nodejs runjslint.js" % f).read()
-    output = os.popen("nodejs runjslint.js ../../src/static/js/%s" % f).read()
-    if output.find("ERROR") != -1 or output.find("WARN") != -1:
+    filepath = "../../src/static/js/%s" % f
+    try:
+        output = subprocess.run([JSLINT_BIN, filepath], check=True, capture_output=True)
+        output = output.stdout.decode("utf-8")
+        if output.find("OK") == -1 and output.strip() != "": 
+            print(output)
+            sys.exit(1)
+    except subprocess.CalledProcessError as e:
+        output = e.stdout.decode("utf-8")
         print(output)
         sys.exit(1)
 

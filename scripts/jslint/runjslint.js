@@ -1,3 +1,4 @@
+#!/bin/env node
 /*jslint laxbreak: true */
 
 var fs, vm, sandbox, filedata, jslintCore = 'jslint-core.js';
