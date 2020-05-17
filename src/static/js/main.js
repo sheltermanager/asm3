@@ -788,11 +788,13 @@ $(function() {
 
             $(".messagedelete")
                 .button({ icons: { primary: "ui-icon-trash" }, text: false })
-                .click(async function() {
+                .click(function() {
                 var t = $(this);
                 var formdata = "mode=delmessage&id=" + String(t.attr("data"));
-                await common.ajax_post("main", formdata);
-                t.closest("tr").fadeOut(); 
+                common.ajax_post("main", formdata)
+                    .then(function() { 
+                        t.closest("tr").fadeOut(); 
+                    });
             });
 
             $(".messagetoggle").each(function() {

@@ -2,6 +2,8 @@
 /*global $, _, asm, common, config, format, header, html */
 /*global edit_header: true */
 
+var edit_header;
+
 $(function() {
 
     // If this is the login or database create page, don't do anything - they don't have headers, 

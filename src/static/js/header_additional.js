@@ -2,6 +2,8 @@
 /*global $, _, asm, common, config, format, header, html, validate */
 /*global additional: true */
 
+var additional;
+
 $(function() {
 
     // If this is the login or database create page, don't do anything - they don't have headers, 
