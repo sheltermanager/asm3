@@ -22,7 +22,12 @@ $(function() {
         previewloaded: false,
 
         render: function() {
-
+            var hf = [
+                '<input type="hidden" name="mode" value="{mode}" />',
+                '<input type="hidden" name="mergeparams" data="mergeparams" value="' + encodeURIComponent(controller.mergeparams) + '" />',
+                '<input type="hidden" name="mergereport" data="mergereport" value="' + controller.mergereport + '" />',
+                '<input type="hidden" name="mergetitle" data="mergetitle" value="' + encodeURIComponent(controller.mergetitle) + '" />'
+            ].join("\n");
             return [
                 html.content_header(controller.title),
 
@@ -39,7 +44,7 @@ $(function() {
                 '<h3><a href="#">' + _("Produce a CSV File") + '</a></h3>',
                 '<div>',
                 '<form action="mailmerge" method="post">',
-                '<input type="hidden" name="mode" value="csv" />',
+                hf.replace("{mode}", "csv"),
                 '<p class="centered">',
                 '<input id="includeheader" type="checkbox" name="includeheader" class="asm-checkbox" />',
                 '<label for="includeheader">' + _("Include CSV header line") + '</label>',
@@ -51,7 +56,7 @@ $(function() {
                 '<h3 id="printlabel"><a href="#">' + _("Produce a PDF of printable labels") + '</a></h3>',
                 '<div>',
                 '<form action="mailmerge" method="post">',
-                '<input type="hidden" name="mode" value="labels" />',
+                hf.replace("{mode}", "labels"),
                 '<table width="100%">',
                 '<tr>',
                 '<td><label for="labeltype">' + _("Type") + '</label></td>',
@@ -95,6 +100,7 @@ $(function() {
 
                 '<h3><a href="#">' + _("Send emails") + '</a></h3>',
                 '<div id="sendemail">',
+                hf.replace("{mode}", "email"),
                 '<table width="100%">',
                 '<tr>',
                 '<td><label for="emailfrom">' + _("From") + '</label></td>',
@@ -130,7 +136,7 @@ $(function() {
                 '<h3><a href="#">' + _("Generate documents") + '</a></h3>',
                 '<div>',
                 '<form id="mailmerge-letters" action="mailmerge" method="post">',
-                '<input type="hidden" name="mode" value="document" />',
+                hf.replace("{mode}", "letters"),
                 '<input type="hidden" id="templateid" name="templateid" value = "" />',
                 '<ul class="asm-menu-list">',
                 edit_header.template_list(controller.templates, "#", 0),
@@ -140,6 +146,7 @@ $(function() {
 
                 '<h3 id="lmatching"><a href="#">' + _("View matching records") + '</a></h3>',
                 '<div id="matching">',
+                hf.replace("{mode}", "preview"),
                 '</div>',
                 
                 html.content_footer()
@@ -234,7 +241,8 @@ $(function() {
                 if (ui.newHeader.attr("id") == "lmatching" && !mailmerge.previewloaded) {
                     mailmerge.previewloaded = true;
                     header.show_loading();
-                    common.ajax_post("mailmerge", "mode=preview").then(function(data) {
+                    var formdata = "mode=preview&" + $("#matching input").toPOST();
+                    common.ajax_post("mailmerge", formdata).then(function(data) {
                         // Create a table of matching rows
                         var h = [], d = jQuery.parseJSON(data);
                         h.push("<table><thead><tr>");

@@ -467,7 +467,7 @@ class image(ASMEndpoint):
 
     def content(self, o):
         try:
-            lastmod, imagedata = asm3.media.get_image_file_data(session.dbo, o.post["mode"], o.post["id"], o.post.integer("seq"), False)
+            lastmod, imagedata = asm3.media.get_image_file_data(o.dbo, o.post["mode"], o.post["id"], o.post.integer("seq"), False)
         except Exception as err:
             # This call in this endpoint produces a lot of errors when people try to access 
             # images via unsubstituted tokens in documents, etc. 
@@ -501,7 +501,7 @@ class configjs(ASMEndpoint):
         # updated whenever the user posts to publish_options or options.
         # Both values are used purely to cache the config in the browser, but
         # aren't actually used by the controller here.
-        # post = asm3.utils.PostedData(web.input(db = "", ts = ""), session.locale)
+        # post = asm3.utils.PostedData(web.input(db = "", ts = ""), o.locale)
         if o.user is None:
             # We aren't logged in and can't do anything, don't cache an empty page
             self.content_type("text/javascript")
@@ -789,7 +789,7 @@ class mobile_post(ASMEndpoint):
     login_url = "/mobile_login"
 
     def handle(self, o):
-        s = asm3.mobile.handler(session, o.post)
+        s = asm3.mobile.handler(o.session, o.post)
         if s is None:
             raise asm3.utils.ASMValidationError("mobile handler failed.")
         elif s.startswith("GO "):
@@ -859,7 +859,6 @@ class main(JSONEndpoint):
             newversion = asm3.dbupdate.perform_updates(dbo)
             if newversion != "":
                 dbmessage = _("Updated database to version {0}", l).format(str(newversion))
-                session.configuration = asm3.configuration.get_map(dbo)
         if asm3.dbupdate.check_for_view_seq_changes(dbo):
             asm3.dbupdate.install_db_views(dbo)
             asm3.dbupdate.install_db_sequences(dbo)
@@ -873,7 +872,7 @@ class main(JSONEndpoint):
             asm3.cachedisk.put("news", "news", news, CACHE_ONE_DAY)
         # Welcome dialog
         showwelcome = False
-        if asm3.configuration.show_first_time_screen(dbo) and session.superuser == 1:
+        if asm3.configuration.show_first_time_screen(dbo) and o.session.superuser == 1:
             showwelcome = True
         # Animal links
         linkmode = asm3.configuration.main_screen_animal_link_mode(dbo)
@@ -902,13 +901,13 @@ class main(JSONEndpoint):
         usersandroles = asm3.users.get_users_and_roles(dbo)
         activeusers = asm3.users.get_active_users(dbo)
         # Messages
-        mess = asm3.lookups.get_messages(dbo, session.user, session.roles, session.superuser)
+        mess = asm3.lookups.get_messages(dbo, o.session.user, o.session.roles, o.session.superuser)
         # Diary Notes
         dm = None
         if asm3.configuration.all_diary_home_page(dbo): 
             dm = asm3.diary.get_uncompleted_upto_today(dbo, "", False)
         else:
-            dm = asm3.diary.get_uncompleted_upto_today(dbo, session.user, False)
+            dm = asm3.diary.get_uncompleted_upto_today(dbo, o.user, False)
         # Use a 2 minute cache, with a longer cache time of 15 minutes for big databases
         # on the following complex calls for stats, alerts and the timeline
         age = 120
@@ -928,7 +927,7 @@ class main(JSONEndpoint):
         timeline = []
         if asm3.configuration.show_timeline_home_page(dbo):
             timeline = asm3.animal.get_timeline(dbo, 10, age=age)
-        asm3.al.debug("main for '%s', %d diary notes, %d messages" % (session.user, len(dm), len(mess)), "code.main", dbo)
+        asm3.al.debug("main for '%s', %d diary notes, %d messages" % (o.user, len(dm), len(mess)), "code.main", dbo)
         return {
             "showwelcome": showwelcome,
             "build": BUILD,
@@ -2442,11 +2441,11 @@ class document_gen(ASMEndpoint):
         recid = post.integer("recid")
         if linktype == "ANIMAL":
             tempname += " - " + asm3.animal.get_animal_namecode(dbo, recid)
-            asm3.media.create_document_media(dbo, session.user, asm3.media.ANIMAL, recid, tempname, post["document"])
+            asm3.media.create_document_media(dbo, o.user, asm3.media.ANIMAL, recid, tempname, post["document"])
             self.redirect("animal_media?id=%d" % recid)
         elif linktype == "ANIMALCONTROL":
             tempname += " - " + asm3.utils.padleft(recid, 6)
-            asm3.media.create_document_media(dbo, session.user, asm3.media.ANIMALCONTROL, recid, tempname, post["document"])
+            asm3.media.create_document_media(dbo, o.user, asm3.media.ANIMALCONTROL, recid, tempname, post["document"])
             self.redirect("incident_media?id=%d" % recid)
         elif linktype == "CLINIC":
             c = asm3.clinic.get_appointment(dbo, recid)
@@ -2454,23 +2453,23 @@ class document_gen(ASMEndpoint):
                 raise asm3.utils.ASMValidationError("%d is not a valid clinic id" % recid)
             ownerid = c.OWNERID
             tempname += " - " + c.OWNERNAME
-            asm3.media.create_document_media(dbo, session.user, asm3.media.PERSON, ownerid, tempname, post["document"])
+            asm3.media.create_document_media(dbo, o.user, asm3.media.PERSON, ownerid, tempname, post["document"])
             self.redirect("person_media?id=%d" % ownerid)
         elif linktype == "FOUNDANIMAL":
             tempname += " - " + asm3.utils.padleft(recid, 6)
-            asm3.media.create_document_media(dbo, session.user, asm3.media.FOUNDANIMAL, recid, tempname, post["document"])
+            asm3.media.create_document_media(dbo, o.user, asm3.media.FOUNDANIMAL, recid, tempname, post["document"])
             self.redirect("foundanimal_media?id=%d" % recid)
         elif linktype == "LOSTANIMAL":
             tempname += " - " + asm3.utils.padleft(recid, 6)
-            asm3.media.create_document_media(dbo, session.user, asm3.media.LOSTANIMAL, recid, tempname, post["document"])
+            asm3.media.create_document_media(dbo, o.user, asm3.media.LOSTANIMAL, recid, tempname, post["document"])
             self.redirect("lostanimal_media?id=%d" % recid)
         elif linktype == "PERSON":
             tempname += " - " + asm3.person.get_person_name(dbo, recid)
-            asm3.media.create_document_media(dbo, session.user, asm3.media.PERSON, recid, tempname, post["document"])
+            asm3.media.create_document_media(dbo, o.user, asm3.media.PERSON, recid, tempname, post["document"])
             self.redirect("person_media?id=%d" % recid)
         elif linktype == "WAITINGLIST":
             tempname += " - " + asm3.utils.padleft(recid, 6)
-            asm3.media.create_document_media(dbo, session.user, asm3.media.WAITINGLIST, recid, tempname, post["document"])
+            asm3.media.create_document_media(dbo, o.user, asm3.media.WAITINGLIST, recid, tempname, post["document"])
             self.redirect("waitinglist_media?id=%d" % recid)
         elif linktype == "DONATION":
             d = asm3.financial.get_donations_by_ids(dbo, post.integer_list("recid"))
@@ -2478,7 +2477,7 @@ class document_gen(ASMEndpoint):
                 raise asm3.utils.ASMValidationError("list '%s' does not contain valid ids" % recid)
             ownerid = d[0]["OWNERID"]
             tempname += " - " + asm3.person.get_person_name(dbo, ownerid)
-            asm3.media.create_document_media(dbo, session.user, asm3.media.PERSON, ownerid, tempname, post["document"])
+            asm3.media.create_document_media(dbo, o.user, asm3.media.PERSON, ownerid, tempname, post["document"])
             self.redirect("person_media?id=%d" % ownerid)
         elif linktype == "TRANSPORT":
             t = asm3.movement.get_transports_by_ids(dbo, post.integer_list("recid"))
@@ -2486,7 +2485,7 @@ class document_gen(ASMEndpoint):
                 raise asm3.utils.ASMValidationError("list '%s' does not contain valid ids" % recid)
             animalid = t[0]["ANIMALID"]
             tempname += " - " + asm3.animal.get_animal_namecode(dbo, animalid)
-            asm3.media.create_document_media(dbo, session.user, asm3.media.ANIMAL, animalid, tempname, post["document"])
+            asm3.media.create_document_media(dbo, o.user, asm3.media.ANIMAL, animalid, tempname, post["document"])
             self.redirect("animal_media?id=%d" % animalid)
         elif linktype == "VOUCHER":
             v = asm3.financial.get_voucher(dbo, recid)
@@ -2494,7 +2493,7 @@ class document_gen(ASMEndpoint):
                 raise asm3.utils.ASMValidationError("%d is not a valid voucher id" % recid)
             ownerid = v["OWNERID"]
             tempname += " - " + asm3.person.get_person_name(dbo, ownerid)
-            asm3.media.create_document_media(dbo, session.user, asm3.media.PERSON, ownerid, tempname, post["document"])
+            asm3.media.create_document_media(dbo, o.user, asm3.media.PERSON, ownerid, tempname, post["document"])
             self.redirect("person_media?id=%d" % ownerid)
         elif linktype == "LICENCE":
             l = asm3.financial.get_licence(dbo, recid)
@@ -2503,8 +2502,8 @@ class document_gen(ASMEndpoint):
             animalid = l["ANIMALID"]
             ownerid = l["OWNERID"]
             tempname += " - " + asm3.person.get_person_name(dbo, ownerid)
-            if animalid: asm3.media.create_document_media(dbo, session.user, asm3.media.ANIMAL, animalid, tempname, post["document"])
-            if ownerid: asm3.media.create_document_media(dbo, session.user, asm3.media.PERSON, ownerid, tempname, post["document"])
+            if animalid: asm3.media.create_document_media(dbo, o.user, asm3.media.ANIMAL, animalid, tempname, post["document"])
+            if ownerid: asm3.media.create_document_media(dbo, o.user, asm3.media.PERSON, ownerid, tempname, post["document"])
             self.redirect("person_media?id=%d" % ownerid)
         elif linktype == "MOVEMENT":
             m = asm3.movement.get_movement(dbo, recid)
@@ -2513,8 +2512,8 @@ class document_gen(ASMEndpoint):
             animalid = m["ANIMALID"]
             ownerid = m["OWNERID"]
             tempname = "%s - %s::%s" % (tempname, asm3.animal.get_animal_namecode(dbo, animalid), asm3.person.get_person_name(dbo, ownerid))
-            if ownerid: asm3.media.create_document_media(dbo, session.user, asm3.media.PERSON, ownerid, tempname, post["document"])
-            if animalid: asm3.media.create_document_media(dbo, session.user, asm3.media.ANIMAL, animalid, tempname, post["document"])
+            if ownerid: asm3.media.create_document_media(dbo, o.user, asm3.media.PERSON, ownerid, tempname, post["document"])
+            if animalid: asm3.media.create_document_media(dbo, o.user, asm3.media.ANIMAL, animalid, tempname, post["document"])
             self.redirect("person_media?id=%d" % ownerid)
         else:
             raise asm3.utils.ASMValidationError("Linktype '%s' is invalid, cannot save" % linktype)
@@ -3603,7 +3602,7 @@ class lostfound_match(ASMEndpoint):
             return asm3.cachedisk.get("lostfound_report", dbo.database)
         else:
             asm3.al.debug("match lost=%d, found=%d, animal=%d" % (lostanimalid, foundanimalid, animalid), "code.lostfound_match", dbo)
-            return asm3.lostfound.match_report(dbo, session.user, lostanimalid, foundanimalid, animalid)
+            return asm3.lostfound.match_report(dbo, o.user, lostanimalid, foundanimalid, animalid)
 
 class mailmerge_criteria(JSONEndpoint):
     url = "mailmerge_criteria"
@@ -3636,10 +3635,6 @@ class mailmerge(JSONEndpoint):
         if crit != "" and post["hascriteria"] == "": self.redirect("mailmerge_criteria?id=%d" % crid)
         asm3.al.debug("entering mail merge selection mode for %d" % post.integer("id"), "code.mailmerge", dbo)
         p = asm3.reports.get_criteria_params(dbo, crid, post)
-        # values we store in the session for the post handler to save sending them back every time
-        o.session.mergeparams = p
-        o.session.mergereport = crid
-        o.session.mergetitle = title.replace(" ", "_").replace("\"", "").replace("'", "").lower()
         rows, cols = asm3.reports.execute_query(dbo, crid, o.user, p)
         if rows is None: rows = []
         asm3.al.debug("got merge rows (%d items)" % len(rows), "code.mailmerge", dbo)
@@ -3653,6 +3648,9 @@ class mailmerge(JSONEndpoint):
         return {
             "title": title,
             "fields": fields,
+            "mergeparams": p,
+            "mergereport": crid,
+            "mergetitle": title.replace(" ", "_").replace("\"", "").replace("'", "").lower(),
             "numrows": len(rows),
             "hasperson": "OWNERNAME" in fields and "OWNERADDRESS" in fields and "OWNERTOWN" in fields and "OWNERCOUNTY" in fields and "OWNERPOSTCODE" in fields,
             "templates": asm3.template.get_document_templates(dbo)
@@ -3661,7 +3659,7 @@ class mailmerge(JSONEndpoint):
     def post_email(self, o):
         dbo = o.dbo
         post = o.post
-        rows, cols = asm3.reports.execute_query(dbo, o.session.mergereport, o.user, o.session.mergeparams)
+        rows, cols = asm3.reports.execute_query(dbo, post.integer("mergereport"), o.user, post["mergeparams"])
         fromadd = post["from"]
         subject = post["subject"]
         body = post["body"]
@@ -3670,14 +3668,14 @@ class mailmerge(JSONEndpoint):
     def post_document(self, o):
         dbo = o.dbo
         post = o.post
-        rows, cols = asm3.reports.execute_query(dbo, o.session.mergereport, o.user, o.session.mergeparams)
+        rows, cols = asm3.reports.execute_query(dbo, post.integer("mergereport"), o.user, post["mergeparams"])
         templateid = post.integer("templateid")
         templatecontent = asm3.template.get_document_template_content(dbo, templateid)
         templatename = asm3.template.get_document_template_name(dbo, templateid)
         if not templatename.endswith(".html"):
             raise asm3.utils.ASMValidationError("Only html templates are allowed")
         # Generate a document from the template for each row
-        org_tags = asm3.wordprocessor.org_tags(dbo, session.user)
+        org_tags = asm3.wordprocessor.org_tags(dbo, o.user)
         c = []
         for d in rows:
             c.append( asm3.wordprocessor.substitute_tags(asm3.utils.bytes2str(templatecontent), asm3.wordprocessor.append_tags(d, org_tags)) )
@@ -3691,10 +3689,10 @@ class mailmerge(JSONEndpoint):
     def post_labels(self, o):
         dbo = o.dbo
         post = o.post
-        rows, cols = asm3.reports.execute_query(dbo, o.session.mergereport, o.user, o.session.mergeparams)
+        rows, cols = asm3.reports.execute_query(dbo, post.integer("mergereport"), o.user, post["mergeparams"])
         self.content_type("application/pdf")
         disposition = asm3.configuration.pdf_inline(dbo) and "inline; filename=%s" or "attachment; filename=%s"
-        self.header("Content-Disposition", disposition % o.session.mergetitle + ".pdf")
+        self.header("Content-Disposition", disposition % post["mergetitle"] + ".pdf")
         return asm3.utils.generate_label_pdf(dbo, o.locale, rows, post["papersize"], post["units"],
             post.floating("hpitch"), post.floating("vpitch"), 
             post.floating("width"), post.floating("height"), 
@@ -3704,16 +3702,17 @@ class mailmerge(JSONEndpoint):
     def post_csv(self, o):
         dbo = o.dbo
         post = o.post
-        rows, cols = asm3.reports.execute_query(dbo, o.session.mergereport, o.user, o.session.mergeparams)
+        rows, cols = asm3.reports.execute_query(dbo, post.integer("mergereport"), o.user, post["mergeparams"])
         self.content_type("text/csv")
-        self.header("Content-Disposition", u"attachment; filename=" + asm3.utils.decode_html(o.session.mergetitle) + u".csv")
+        self.header("Content-Disposition", u"attachment; filename=" + asm3.utils.decode_html(post["mergetitle"]) + u".csv")
         includeheader = 1 == post.boolean("includeheader")
         return asm3.utils.csv(o.locale, rows, cols, includeheader)
 
     def post_preview(self, o):
         dbo = o.dbo
-        rows, cols = asm3.reports.execute_query(dbo, o.session.mergereport, o.user, o.session.mergeparams)
-        asm3.al.debug("returning preview rows for %d" % o.session.mergereport, "code.mailmerge", dbo)
+        post = o.post
+        rows, cols = asm3.reports.execute_query(dbo, post.integer("mergereport"), o.user, post["mergeparams"])
+        asm3.al.debug("returning preview rows for %d [%s]" % (post.integer("mergereport"), post["mergetitle"]), "code.mailmerge", dbo)
         return asm3.utils.json(rows)
 
 class medical(JSONEndpoint):
@@ -3775,7 +3774,7 @@ class medical(JSONEndpoint):
         for mid in post.integer_list("ids"):
             asm3.medical.update_treatment_given(o.dbo, o.user, mid, newdate, by, vet, comments)
         if post.integer("item") != -1:
-            asm3.stock.deduct_stocklevel_from_form(session.dbo, session.user, post)
+            asm3.stock.deduct_stocklevel_from_form(o.dbo, o.user, post)
 
     def post_undo(self, o):
         self.check(asm3.users.BULK_COMPLETE_MEDICAL)
@@ -4592,8 +4591,8 @@ class person_embed(ASMEndpoint):
     check_logged_in = False
 
     def content(self, o):
-        if not session.dbo: raise asm3.utils.ASMPermissionError("No session")
-        dbo = session.dbo
+        if not o.dbo: raise asm3.utils.ASMPermissionError("No session")
+        dbo = o.dbo
         self.content_type("application/json")
         self.cache_control(180) # Person data can be cached for a few minutes, useful for multiple widgets on one page
         return asm3.utils.json({
@@ -4665,7 +4664,7 @@ class person_embed(ASMEndpoint):
         self.content_type("application/json")
         dbo = o.dbo
         asm3.al.debug("add new person", "code.person_embed", dbo)
-        pid = asm3.person.insert_person_from_form(dbo, o.post, session.user)
+        pid = asm3.person.insert_person_from_form(dbo, o.post, o.user)
         p = asm3.person.get_person(dbo, pid)
         return asm3.utils.json((p,))
 
@@ -5090,11 +5089,11 @@ class report_export_csv(ASMEndpoint):
         # If this report takes criteria and none were supplied, go to the criteria screen instead to get them
         if crit != "" and post["hascriteria"] == "": self.redirect("report_criteria?id=%d&target=report_export_csv" % crid)
         # Make sure this user has a role that can view the report
-        asm3.reports.check_view_permission(session, crid)
+        asm3.reports.check_view_permission(o.session, crid)
         title = asm3.reports.get_title(dbo, crid)
         filename = title.replace(" ", "_").replace("\"", "").replace("'", "").lower()
         p = asm3.reports.get_criteria_params(dbo, crid, post)
-        rows, cols = asm3.reports.execute_query(dbo, crid, session.user, p)
+        rows, cols = asm3.reports.execute_query(dbo, crid, o.user, p)
         self.content_type("text/csv")
         self.header("Content-Disposition", u"attachment; filename=\"" + asm3.utils.decode_html(filename) + u".csv\"")
         return asm3.utils.csv(o.locale, rows, cols, True)
@@ -5269,7 +5268,7 @@ class smcom_my(ASMEndpoint):
     url = "smcom_my"
 
     def content(self, o):
-        if session.superuser == 1: asm3.smcom.go_smcom_my(o.dbo)
+        if o.session.superuser == 1: asm3.smcom.go_smcom_my(o.dbo)
 
 class sql(JSONEndpoint):
     url = "sql"
@@ -5282,20 +5281,20 @@ class sql(JSONEndpoint):
 
     def post_exec(self, o):
         sql = o.post["sql"].strip()
-        return self.exec_sql(o.dbo, sql)
+        return self.exec_sql(o.dbo, o.user, sql)
 
     def post_execfile(self, o):
         sql = o.post["sqlfile"].strip()
         self.content_type("text/plain")
-        return self.exec_sql_from_file(o.dbo, sql)
+        return self.exec_sql_from_file(o.dbo, o.user, sql)
 
-    def exec_sql(self, dbo, sql):
+    def exec_sql(self, dbo, user, sql):
         l = dbo.locale
         rowsaffected = 0
         try:
             for q in dbo.split_queries(sql):
                 if q == "": continue
-                asm3.al.info("%s query: %s" % (session.user, q), "code.sql", dbo)
+                asm3.al.info("%s query: %s" % (user, q), "code.sql", dbo)
                 if q.lower().startswith("select") or q.lower().startswith("show"):
                     return asm3.html.table(dbo.query(q))
                 else:
@@ -5306,13 +5305,13 @@ class sql(JSONEndpoint):
             asm3.al.error("%s" % str(err), "code.sql", dbo)
             raise asm3.utils.ASMValidationError(str(err))
 
-    def exec_sql_from_file(self, dbo, sql):
+    def exec_sql_from_file(self, dbo, user, sql):
         l = dbo.locale
         output = []
         for q in dbo.split_queries(sql):
             try:
                 if q == "": continue
-                asm3.al.info("%s query: %s" % (session.user, q), "code.sql", dbo)
+                asm3.al.info("%s query: %s" % (user, q), "code.sql", dbo)
                 if q.lower().startswith("select") or q.lower().startswith("show"):
                     output.append(str(dbo.query(q)))
                 else:
@@ -5334,29 +5333,29 @@ class sql_dump(ASMEndpoint):
         mode = o.post["mode"]
         self.content_type("text/plain")
         if mode == "dumpsql":
-            asm3.al.info("%s executed SQL database dump" % str(session.user), "code.sql", dbo)
+            asm3.al.info("%s executed SQL database dump" % o.user, "code.sql", dbo)
             self.header("Content-Disposition", "attachment; filename=\"dump.sql\"")
             return asm3.utils.generator2str(asm3.dbupdate.dump, dbo)
         if mode == "dumpsqlmedia":
-            asm3.al.info("%s executed SQL database dump (base64/media)" % str(session.user), "code.sql", dbo)
+            asm3.al.info("%s executed SQL database dump (base64/media)" % o.user, "code.sql", dbo)
             self.header("Content-Disposition", "attachment; filename=\"media.sql\"")
             return asm3.utils.generator2str(asm3.dbupdate.dump_dbfs_base64, dbo)
         if mode == "dumpddlmysql":
-            asm3.al.info("%s executed DDL dump MySQL" % str(session.user), "code.sql", dbo)
+            asm3.al.info("%s executed DDL dump MySQL" % o.user, "code.sql", dbo)
             self.header("Content-Disposition", "attachment; filename=\"ddl_mysql.sql\"")
             dbo2 = asm3.db.get_dbo("MYSQL")
             dbo2.locale = dbo.locale
             return asm3.dbupdate.sql_structure(dbo2)
             return asm3.dbupdate.sql_default_data(dbo2).replace("|=", ";")
         if mode == "dumpddlpostgres":
-            asm3.al.info("%s executed DDL dump PostgreSQL" % str(session.user), "code.sql", dbo)
+            asm3.al.info("%s executed DDL dump PostgreSQL" % o.user, "code.sql", dbo)
             self.header("Content-Disposition", "attachment; filename=\"ddl_postgresql.sql\"")
             dbo2 = asm3.db.get_dbo("POSTGRESQL")
             dbo2.locale = dbo.locale
             return asm3.dbupdate.sql_structure(dbo2)
             return asm3.dbupdate.sql_default_data(dbo2).replace("|=", ";")
         if mode == "dumpddldb2":
-            asm3.al.info("%s executed DDL dump DB2" % str(session.user), "code.sql", dbo)
+            asm3.al.info("%s executed DDL dump DB2" % o.user, "code.sql", dbo)
             self.header("Content-Disposition", "attachment; filename=\"ddl_db2.sql\"")
             dbo2 = asm3.db.get_dbo("DB2")
             dbo2.locale = dbo.locale
@@ -5364,46 +5363,46 @@ class sql_dump(ASMEndpoint):
             return asm3.dbupdate.sql_default_data(dbo2).replace("|=", ";")
         elif mode == "dumpsqlasm2":
             # ASM2_COMPATIBILITY
-            asm3.al.info("%s executed SQL database dump (ASM2 HSQLDB)" % str(session.user), "code.sql", dbo)
+            asm3.al.info("%s executed SQL database dump (ASM2 HSQLDB)" % o.user, "code.sql", dbo)
             self.header("Content-Disposition", "attachment; filename=\"asm2.sql\"")
             return asm3.utils.generator2str(asm3.dbupdate.dump_hsqldb, dbo)
         elif mode == "dumpsqlasm2nomedia":
             # ASM2_COMPATIBILITY
-            asm3.al.info("%s executed SQL database dump (ASM2 HSQLDB, without media)" % str(session.user), "code.sql", dbo)
+            asm3.al.info("%s executed SQL database dump (ASM2 HSQLDB, without media)" % o.user, "code.sql", dbo)
             self.header("Content-Disposition", "attachment; filename=\"asm2.sql\"")
             return asm3.utils.generator2str(asm3.dbupdate.dump_hsqldb, dbo, includeDBFS = False)
         elif mode == "animalcsv":
-            asm3.al.debug("%s executed CSV animal dump" % str(session.user), "code.sql", dbo)
+            asm3.al.debug("%s executed CSV animal dump" % o.user, "code.sql", dbo)
             self.header("Content-Disposition", "attachment; filename=\"animal.csv\"")
             rows = asm3.animal.get_animal_find_advanced(dbo, { "logicallocation" : "all", "filter" : "includedeceased,includenonshelter" })
             asm3.additional.append_to_results(dbo, rows, "animal")
             return asm3.utils.csv(l, rows)
         elif mode == "mediacsv":
-            asm3.al.debug("%s executed CSV media dump" % str(session.user), "code.sql", dbo)
+            asm3.al.debug("%s executed CSV media dump" % o.user, "code.sql", dbo)
             self.header("Content-Disposition", "attachment; filename=\"media.csv\"")
             return asm3.utils.csv(l, asm3.media.get_media_export(dbo))
         elif mode == "medicalcsv":
-            asm3.al.debug("%s executed CSV medical dump" % str(session.user), "code.sql", dbo)
+            asm3.al.debug("%s executed CSV medical dump" % o.user, "code.sql", dbo)
             self.header("Content-Disposition", "attachment; filename=\"medical.csv\"")
             return asm3.utils.csv(l, asm3.medical.get_medical_export(dbo))
         elif mode == "personcsv":
-            asm3.al.debug("%s executed CSV person dump" % str(session.user), "code.sql", dbo)
+            asm3.al.debug("%s executed CSV person dump" % o.user, "code.sql", dbo)
             self.header("Content-Disposition", "attachment; filename=\"person.csv\"")
-            rows = asm3.person.get_person_find_simple(dbo, "", session.user, includeStaff=True, includeVolunteers=True)
+            rows = asm3.person.get_person_find_simple(dbo, "", o.user, includeStaff=True, includeVolunteers=True)
             asm3.additional.append_to_results(dbo, rows, "person")
             return asm3.utils.csv(l, rows)
         elif mode == "incidentcsv":
-            asm3.al.debug("%s executed CSV incident dump" % str(session.user), "code.sql", dbo)
+            asm3.al.debug("%s executed CSV incident dump" % o.user, "code.sql", dbo)
             self.header("Content-Disposition", "attachment; filename=\"incident.csv\"")
             rows = asm3.animalcontrol.get_animalcontrol_find_advanced(dbo, { "filter" : "" }, 0)
             asm3.additional.append_to_results(dbo, rows, "incident")
             return asm3.utils.csv(l, rows)
         elif mode == "licencecsv":
-            asm3.al.debug("%s executed CSV licence dump" % str(session.user), "code.sql", dbo)
+            asm3.al.debug("%s executed CSV licence dump" % o.user, "code.sql", dbo)
             self.header("Content-Disposition", "attachment; filename=\"licence.csv\"")
             return asm3.utils.csv(l, asm3.financial.get_licence_find_simple(dbo, ""))
         elif mode == "paymentcsv":
-            asm3.al.debug("%s executed CSV payment dump" % str(session.user), "code.sql", dbo)
+            asm3.al.debug("%s executed CSV payment dump" % o.user, "code.sql", dbo)
             self.header("Content-Disposition", "attachment; filename=\"payment.csv\"")
             return asm3.utils.csv(l, asm3.financial.get_donations(dbo, "m10000"))
 
