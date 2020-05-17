@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ASM3\n"
 "Report-Msgid-Bugs-To: robin@sheltermanager.com\n"
-"POT-Creation-Date: 2020-05-08 12:42+0000\n"
-"PO-Revision-Date: 2020-05-08 21:55+0200\n"
+"POT-Creation-Date: 2020-05-16 11:44+0000\n"
+"PO-Revision-Date: 2020-05-17 10:31+0200\n"
 "Last-Translator: Julian POIDEVIN <poidevin.julian@gmail.com>\n"
 "Language-Team: \n"
 "Language: fr\n"
@@ -115,10 +115,6 @@ msgstr "5 ans"
 #: publish_options.js
 msgid "6 months"
 msgstr "6 mois"
-
-#: publish_options.js
-msgid "6 weeks"
-msgstr "6 semaines"
 
 #: publish_options.js
 msgid "8 weeks"
@@ -4657,6 +4653,10 @@ msgstr "Exotic Shorthair"
 msgid "Expense"
 msgstr "Dépense"
 
+#: options.js
+msgid "Expense account for transaction fees"
+msgstr "Compte de dépenses pour les frais de transaction"
+
 #: financial.py
 msgid "Expense::"
 msgstr "Dépenses::"
@@ -4688,6 +4688,10 @@ msgstr "Débit::Courrier"
 #: dbupdate.py
 msgid "Expenses::Stationary"
 msgstr "Débit::Stationnaire"
+
+#: dbupdate.py
+msgid "Expenses::TransactionFee"
+msgstr "Dépenses::Frais de transaction"
 
 #: dbupdate.py
 msgid "Expenses::Water"
@@ -4877,6 +4881,10 @@ msgstr "Février"
 #: licence_renewal.js donations.js licence.js
 msgid "Fee"
 msgstr "Frais"
+
+#: donations.js
+msgid "Fees"
+msgstr "Honoraires"
 
 #: dbupdate.py
 msgid "Female"
@@ -5633,6 +5641,10 @@ msgstr "Gris et blanc"
 msgid "Greyhound"
 msgstr "Lévrier"
 
+#: donations.js
+msgid "Gross"
+msgstr "Brut"
+
 #: dbupdate.py
 msgid "Guinea Pig"
 msgstr "Cochon de Guinée"
@@ -5776,6 +5788,11 @@ msgstr "Haut"
 #: waitinglist_results.js
 msgid "Highlight"
 msgstr "Surligner"
+
+#: options.js
+msgid "Highlight unadopted reservations after"
+msgstr ""
+"Mettre en surbrillance les réservations d'animaux pas encore adoptées après"
 
 #: dbupdate.py
 msgid "Himalayan"
@@ -6244,6 +6261,10 @@ msgstr "Inclure les animaux non castrés/stérilisés"
 msgid "Income"
 msgstr "Recettes"
 
+#: options.js
+msgid "Income account for sales tax"
+msgstr "Compte de revenu pour la taxe de vente"
+
 #: dbupdate.py
 msgid "Income from an on-site shop"
 msgstr "Revenus d'une boutique sur place"
@@ -6271,6 +6292,10 @@ msgstr "Crédit::Intérêt"
 #: dbupdate.py
 msgid "Income::OpeningBalances"
 msgstr "Revenu::Soldesd'ouverture"
+
+#: dbupdate.py
+msgid "Income::SalesTax"
+msgstr "Revenu::Taxe de vente"
 
 #: dbupdate.py
 msgid "Income::Shop"
@@ -7707,6 +7732,10 @@ msgstr "Négatif"
 msgid "Neglect"
 msgstr "Négligence"
 
+#: donations.js
+msgid "Net"
+msgstr "Net"
+
 #: dbupdate.py
 msgid "Netherland Dwarf"
 msgstr "Nain Hollandais"
@@ -8415,7 +8444,8 @@ msgstr "Heures supplémentaires"
 msgid "Owl"
 msgstr "Hibou"
 
-#: dbupdate.py animal_new.js animal.js move_reclaim.js
+#: html.py dbupdate.py search.js animal_new.js move_reclaim.js
+#: animal_find_results.js animal.js header_edit_header.js
 msgid "Owner"
 msgstr "Propriétaire"
 
@@ -10096,7 +10126,8 @@ msgstr "Saddlebred"
 msgid "Saint Bernard St. Bernard"
 msgstr "Saint Bernard"
 
-#: lookups.js clinic_appointment.js common_widgets.js donations.js
+#: dbupdate.py financial.py common_widgets.js donations.js
+#: clinic_appointment.js lookups.js
 msgid "Sales Tax"
 msgstr "Taxe de vente"
 
@@ -12158,6 +12189,10 @@ msgstr "Ce compte de dépenses est à l'origine des coûts de ce type"
 msgid "This income account is the source for payments received of this type"
 msgstr "Ce compte de revenu est la source des paiements reçus de ce type"
 
+#: donations.js
+msgid "This is the gross payment amount, inclusive of any fees and taxes"
+msgstr "Il s'agit du montant total du paiement, tous frais et taxes compris"
+
 #: lookups.py
 msgid ""
 "This item is referred to in the database ({0}) and cannot be deleted until "
@@ -12194,27 +12229,15 @@ msgstr ""
 msgid "This payment has already been received"
 msgstr "Ce paiement a déjà été reçu"
 
-#: move_reserve.js
-msgid "This person has an animal control incident against them"
-msgstr "Cette personne a un incident de contrôle des animaux contre elle"
-
-#: movements.js move_adopt.js
+#: move_reserve.js movements.js move_adopt.js
 msgid "This person has an animal control incident against them."
 msgstr "Cette personne a un incident de contrôle des animaux contre elle."
 
-#: move_reserve.js
-msgid "This person has been banned from adopting animals"
-msgstr "Il a été interdit à cette personne d'adopter des animaux"
-
-#: movements.js move_adopt.js
+#: onlineform_incoming.js move_reserve.js movements.js move_adopt.js
 msgid "This person has been banned from adopting animals."
 msgstr "Il a été interdit à cette personne d'adopter des animaux."
 
-#: move_reserve.js
-msgid "This person has been under investigation"
-msgstr "Cette personne fait l'objet d'une enquête"
-
-#: movements.js move_adopt.js
+#: move_reserve.js movements.js move_adopt.js
 msgid "This person has been under investigation."
 msgstr "Cette personne a fait l'objet d'une enquête."
 
@@ -12222,11 +12245,7 @@ msgstr "Cette personne a fait l'objet d'une enquête."
 msgid "This person has movements and cannot be removed."
 msgstr "Cette personne a des mouvements en cours et ne peut pas être enlevée."
 
-#: move_reserve.js
-msgid "This person has not passed a homecheck"
-msgstr "Cette personne n'a pas subit de validation de domicile"
-
-#: movements.js move_adopt.js
+#: move_reserve.js movements.js move_adopt.js
 msgid "This person has not passed a homecheck."
 msgstr "Cette personne n'a pas subit de validation de domicile."
 
@@ -12601,17 +12620,13 @@ msgstr "Tortue"
 msgid "Tosa Inu"
 msgstr "Tosa Inu"
 
-#: stocklevel.js common_widgets.js
+#: stocklevel.js
 msgid "Total"
 msgstr "Total"
 
 #: stocklevel.js
 msgid "Total number of units in the container"
 msgstr "Nombre total d'unités dans le conteneur"
-
-#: donations.js
-msgid "Total payments"
-msgstr "Paiements totaux"
 
 #: dbupdate.py
 msgid "Toucan"
@@ -12624,6 +12639,14 @@ msgstr "Fox Terrier Nain"
 #: dbupdate.py
 msgid "Training"
 msgstr "Formation"
+
+#: financial.py
+msgid "Transaction Fee"
+msgstr "Frais de transaction"
+
+#: dbupdate.py
+msgid "Transaction fees"
+msgstr "Frais de transaction"
 
 #: accounts_trx.js
 msgid "Transactions"
@@ -12995,6 +13018,14 @@ msgstr "Mettre à jour les options de publication"
 msgid "Update system options"
 msgstr "Mettre à jour les options système"
 
+#: animal.js
+msgid ""
+"Update the current owner of this animal without returning and creating "
+"movements that affect your figures."
+msgstr ""
+"Mettez à jour le propriétaire actuel de cet animal sans retourner l'animale "
+"et sans créer des mouvements qui affectent vos statistiques."
+
 #: animal_costs.js
 msgid "Update the daily boarding cost for this animal"
 msgstr "Mettre à jour le coût journalier de pension pour cet animal"
@@ -13006,6 +13037,10 @@ msgstr "Mis à jour"
 #: code.py
 msgid "Updated database to version {0}"
 msgstr "Base de données mise à jour à la version {0}"
+
+#: onlineform_incoming.js
+msgid "Updated existing record"
+msgstr "Enregistrement existant mis à jour"
 
 #: onlineforms.js reports.js
 msgid "Updated."
@@ -13722,6 +13757,12 @@ msgstr ""
 "correspondant"
 
 #: options.js
+msgid "When calculating sales tax, assume the payment amount is net and add it"
+msgstr ""
+"Lors du calcul de la taxe de vente, supposer que le montant du paiement est "
+"net et y ajouter la taxe"
+
+#: options.js
 msgid ""
 "When creating payments from the Move menu screens, mark them due instead of "
 "received"
@@ -14190,7 +14231,7 @@ msgstr "traitements, chaque"
 msgid "weekdays"
 msgstr "jours de la semaine"
 
-#: medical.py medical.js medicalprofile.js
+#: medical.py publish_options.js medicalprofile.js medical.js
 msgid "weeks"
 msgstr "semaines"
 
@@ -15190,6 +15231,24 @@ msgstr "{plural3} semaines."
 #: i18n.py
 msgid "{plural3} years."
 msgstr "{plural3} années."
+
+#~ msgid "6 weeks"
+#~ msgstr "6 semaines"
+
+#~ msgid "This person has an animal control incident against them"
+#~ msgstr "Cette personne a un incident de contrôle des animaux contre elle"
+
+#~ msgid "This person has been banned from adopting animals"
+#~ msgstr "Il a été interdit à cette personne d'adopter des animaux"
+
+#~ msgid "This person has been under investigation"
+#~ msgstr "Cette personne fait l'objet d'une enquête"
+
+#~ msgid "This person has not passed a homecheck"
+#~ msgstr "Cette personne n'a pas subit de validation de domicile"
+
+#~ msgid "Total payments"
+#~ msgstr "Paiements totaux"
 
 #~ msgid "Edit document"
 #~ msgstr "Éditer le document"
