@@ -882,6 +882,7 @@ def csv_parse(s):
     """
     s = s.replace("\r\n", "\n")
     s = s.replace("\r", "\n")
+    if s[0:3] == "\xef\xbb\xbf": s = s[3:] # strip any BOM if included
     rows = [] # parsed rows
     pos = [0, 0, False] # line start position, item start position and EOF 
     def readline():

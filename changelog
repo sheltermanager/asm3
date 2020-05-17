@@ -1,6 +1,7 @@
 44
 ================
 
+17/05/20 Fix csv_parse to handle accidentally included UTF8 BOM #826
 17/05/20 Add separate view staff rota and merge animal permissions #682
 16/05/20 Only potentially create a blank reserve for the first reserveanimalname
 16/05/20 Show warning icon when create person updates a banned person #586
