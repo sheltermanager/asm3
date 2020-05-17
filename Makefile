@@ -81,7 +81,7 @@ compile: compilejs compilepy compilejsmin
 
 compilejs:
 	@echo "[compile javascript] ================="
-	for i in src/static/js/*.js; do echo $$i; npx jshint $$i; done
+	for i in src/static/js/*.js; do echo $$i; npx jshint --config scripts/jshint.conf $$i; done
 
 compilejsmin:
 	@echo "[compile jsmin] ======================"
