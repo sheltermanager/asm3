@@ -1,6 +1,7 @@
 44
 ================
 
+18/05/20 Add en_BM locale for Bermuda
 18/05/20 Remove build time from home page, add about dialog #824
 18/05/20 Show warning message for IE11 users that support is ending #800
 18/05/20 Refactoring: remove IIFE for common, use const and use strict
