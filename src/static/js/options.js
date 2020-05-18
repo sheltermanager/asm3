@@ -1,8 +1,9 @@
-/*jslint browser: true, forin: true, eqeq: true, white: true, sloppy: true, vars: true, nomen: true */
 /*global $, jQuery, _, asm, common, config, controller, dlgfx, format, header, html, validate */
 /*global MASK_VALUE */
 
 $(function() {
+
+    "use strict";
 
     var BACKGROUND_COLOURS = {
         "asm":              "#ffffff",

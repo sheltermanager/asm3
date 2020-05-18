@@ -1,7 +1,8 @@
-/*jslint browser: true, forin: true, eqeq: true, white: true, sloppy: true, vars: true, nomen: true */
 /*global $, _, asm, common, config, controller, dlgfx, format, header, html, tableform, validate */
 
 $(function() {
+
+    "use strict";
 
     var additional = {
 

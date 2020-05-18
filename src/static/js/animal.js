@@ -1,7 +1,8 @@
-/*jslint browser: true, forin: true, eqeq: true, white: true, sloppy: true, vars: true, nomen: true */
 /*global $, _, asm, common, config, controller, dlgfx, additional, edit_header, format, header, html, log, social, tableform, validate */
 
 $(function() {
+
+    "use strict";
 
     var animal = {
 

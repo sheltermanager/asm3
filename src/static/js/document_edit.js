@@ -1,7 +1,8 @@
-/*jslint browser: true, forin: true, eqeq: true, white: true, sloppy: true, vars: true */
 /*global $, baseurl, buildno, jswindowprint, onlysavewhendirty, pdfenabled, visualaids, readonly, tinymce, tinyMCE */
 
 $(function() {
+
+    "use strict";
    
     var rw_toolbar = "save pdf print | undo redo | fontselect fontsizeselect | bold italic underline forecolor backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent pagebreak | link image";
     var ro_toolbar = "pdf print";

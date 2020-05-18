@@ -1,7 +1,8 @@
-/*jslint browser: true, forin: true, eqeq: true, white: true, sloppy: true, vars: true, nomen: true */
 /*global $, jQuery, _, asm, common, config, controller, dlgfx, edit_header, format, header, html, validate */
 
 $(function() {
+
+    "use strict";
 
     var presets = {
         "Avery 5160" :  [ "letter", "inch", "2.75", "1.0", "0.19", "0.5", "3", "10" ],

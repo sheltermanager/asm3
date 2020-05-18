@@ -579,7 +579,7 @@ class configjs(ASMEndpoint):
                 asm3.reports.get_mailmerges_menu(dbo, o.session.roleids, o.session.superuser)),
             "publishers": asm3.publish.PUBLISHER_LIST
         }
-        return "asm = %s;" % asm3.utils.json(c)
+        return "const asm = %s;" % asm3.utils.json(c)
 
 class jserror(ASMEndpoint):
     """
