@@ -848,19 +848,20 @@ $(function() {
                 let mt = $("#mt" + data + " .mtext");
                 let ldv = $("#long" + data).val();
                 let sdv = $("#short" + data).val();
+                var ar = $(this);
                 if (ldv.length != sdv.length) {
-                    if ($(this).text() == moretext) {
+                    if (ar.text() == moretext) {
                         mt.fadeOut(function() {
                             mt.html(ldv);
                             mt.fadeIn();
-                            $(this).html(lesstext);
+                            ar.html(lesstext);
                         });
                     }
                     else {
                         mt.fadeOut(function() {
                             mt.html(sdv);
                             mt.fadeIn();
-                            $(this).html(moretext);
+                            ar.html(moretext);
                         });
                     }
                 }
