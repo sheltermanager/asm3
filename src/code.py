@@ -4414,17 +4414,21 @@ class pp_stripe(ASMEndpoint):
 
     def post_all(self, o):
         asm3.al.debug(o.data, "code.pp_stripe")
-        j = asm3.utils.json_parse(o.data)
-        client_reference_id = j["data"]["object"]["client_reference_id"]
         try:
+            j = asm3.utils.json_parse(o.data)
+            if "client_reference_id" not in j["data"]["object"]:
+                asm3.al.error("client_reference_id missing, this is not an ASM requested payment", "code.pp_stripe")
+                return # OK 200, this payment notification is not for us
+            client_reference_id = j["data"]["object"]["client_reference_id"]
             dbname = client_reference_id[0:client_reference_id.find("-")]
             dbo = asm3.db.get_database(dbname)
             if dbo.database in asm3.db.ERROR_VALUES:
                 asm3.al.error("invalid database '%s'" % dbname, "code.pp_stripe")
-                return
+                return # OK 200, we can't do anything with this
         except Exception as e:
             asm3.al.error("failed extracting dbname from client_reference_id: %s" % e, "code.pp_stripe")
             return
+
         try:
             p = asm3.paymentprocessor.stripeh.Stripe(dbo)
             p.receive(o.data)
