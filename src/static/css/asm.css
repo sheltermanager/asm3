@@ -249,6 +249,27 @@ select:disabled, input:disabled, textarea:disabled {
 .asm-main-table a { font-weight: bold; }
 .asm-main-table a:hover { text-decoration: underline !important; }
 
+.asm-main-about-version {
+    text-align: center;
+    font-weight: bold;
+    font-size: 120%;
+}
+
+.asm-main-about-version img {
+    border: 0;
+    vertical-align: middle;
+    height: 64px;
+}
+
+.asm-main-about-browser {
+    text-align: center;
+    padding: 5px;
+    border-radius: 5px;
+    border: 1px solid #cc00ff;
+    background-color: #cb6bd6;
+    color: #fff;
+}
+
 /** FOOTER ========================= */
 .asm-footer-version {
     margin-top: 16px;

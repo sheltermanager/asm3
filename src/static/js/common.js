@@ -1,5 +1,5 @@
 /*global $, console, performance, jQuery, ExifRestorer, Modernizr, Mousetrap, Path */
-/*global alert, asm, atob, btoa, header, _, escape, unescape */
+/*global alert, asm, atob, btoa, header, _, escape, unescape, navigator */
 /*global consts: true, common: true, config: true, controller: true, dlgfx: true, format: true, html: true, log: true, validate: true */
 
 "use strict";
@@ -224,6 +224,31 @@ const common = {
         ie610:   navigator.userAgent.match(/MSIE/i),
         ie11:    navigator.userAgent.match(/rv:11.0/),
         mobile:  navigator.userAgent.match(/Android|iPhone|iPod|BlackBerry|Windows Phone|webOS/i)
+    },
+
+    /**
+     * Returns an object containing name and version parameters
+     * for the browser. Uses some funky regex to parse the UA since
+     * navigator.appName and navigator.version are completely useless.
+     */
+    browser_info: function() {
+        let ua=navigator.userAgent,
+            tem,
+            M=ua.match(/(opera|chrome|safari|firefox|msie|trident(?=\/))\/?\s*(\d+)/i) || [];
+        if (/trident/i.test(M[1])) {
+            tem = /\brv[ :]+(\d+)/g.exec(ua) || []; 
+            return { name:'Internet Explorer',version:(tem[1]||'') };
+        }   
+        if (M[1] === 'Chrome') {
+            tem = ua.match(/\bOPR\/(\d+)/);
+            if (tem) { return { name: 'Opera', version:tem[1] }; }
+            tem = ua.match(/\bEdg\/(\d+)/);
+            if (tem) { return { name: 'Edge', version:tem[1] }; }
+        }   
+        M = M[2]? [M[1], M[2]]: [navigator.appName, navigator.appVersion, '-?'];
+        tem = ua.match(/version\/(\d+)/i);
+        if (tem) { M.splice(1,1,tem[1]); }
+        return { name: M[0], version: M[1] };
     },
 
     has_permission: function(flag) {

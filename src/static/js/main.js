@@ -4,25 +4,25 @@ $(function() {
 
     "use strict";
 
-    var main = {
+    let main = {
 
         render_active_users: function() {
-            var s = "", loggedin = _("Active users: {0}"), userlist = [];
+            let s = "", loggedin = _("Active users: {0}"), userlist = [];
             $.each(controller.activeusers.split(","), function(i, u) {
-                var since = u.split("=")[1], user = u.split("=")[0];
+                let since = u.split("=")[1], user = u.split("=")[0];
                 userlist.push("<a class='activeuser' title='" + html.title(since) + "' href='#'>" + user + "</a>");
             });
             s += '<table width="100%" style="font-size: 0.75em; border-top: 1px solid #aaa"><tr><td align="left">' + common.substitute(loggedin, { "0": userlist.join(", ")}) + '</td>';
-            s += common.substitute('<td align="right"><a href="static/pages/changelog.txt">{asm} {version} {user}@{org}</a></td></tr></table>', {
+            s += common.substitute('<td align="right"><a id="link-about" href="#">{asm} {version} {user}@{org}</a></td></tr></table>', {
                 "asm":      _("ASM"),
-                "version":  controller.version,
+                "version":  controller.version.substring(0, controller.version.indexOf(" ")),
                 "user":     asm.user,
                 "org":      config.str("Organisation")});
             return s;
         },
 
         tip: function() {
-            var tips = [ 
+            const tips = [ 
                 _("You can middle click a link to open it in a new browser tab (push the wheel on most modern mice)."),
                 _("You can bookmark search results, animals, people and most data entry screens."),
                 _("Most browsers will let you visit a record you have been to in this session by typing part of its name in the address bar."),
@@ -53,11 +53,11 @@ $(function() {
         },
 
         render_alerts: function() {
-            var s = "", alerts;
+            let s = "", alerts;
             if (!config.bool("ShowAlertsHomePage")) { return; }
             if (!controller.alerts || controller.alerts.length == 0) { return; }
             alerts = controller.alerts[0];
-            var totalalerts = alerts.DUEVACC + alerts.EXPVACC + alerts.DUETEST + alerts.DUEMED + 
+            let totalalerts = alerts.DUEVACC + alerts.EXPVACC + alerts.DUETEST + alerts.DUEMED + 
                 alerts.DUECLINIC + alerts.URGENTWL +  alerts.LONGRSV + alerts.DUEDON + alerts.ENDTRIAL + 
                 alerts.NOTNEU + alerts.PUBLISH + alerts.LOOKFOR + alerts.LOSTFOUND + alerts.INFORM + 
                 alerts.ACUNFINE + alerts.ACUNDISP + alerts.ACUNCOMP + alerts.ACFOLL + alerts.TLOVER + 
@@ -348,7 +348,7 @@ $(function() {
         },
 
         render_animal_links: function() {
-            var s = [];
+            let s = [];
             if (controller.linkname != "none" && controller.animallinks.length > 0) {
                 s.push('<p class="asm-menu-category">' + controller.linkname + '</p>');
                 $.each(controller.animallinks, function(i, a) {
@@ -363,14 +363,14 @@ $(function() {
         },
 
         render_diary: function() {
-            var s = "";
+            let s = "";
             s += '<p class="asm-menu-category"><a href="diary_edit_my">' + common.substitute(_("Diary for {0}"), {"0": asm.user }) + '</a> ';
             s += '<button id="button-adddiary">' + _("Add a diary note") + '</button>';
             s += '<button id="button-diarycal">' + _("Calendar view") + '</button></p>';
             s += '<table class="asm-main-table asm-underlined-rows">';
             s += '<tbody>';
             $.each(controller.diary, function(i, d) {
-                var link = "#";
+                let link = "#";
                 if (d.LINKTYPE == 1) { link = "animal?id=" + d.LINKID; }
                 if (d.LINKTYPE == 2) { link = "person?id=" + d.LINKID; }
                 if (d.LINKTYPE == 3) { link = "lostanimal?id=" + d.LINKID; }
@@ -395,7 +395,7 @@ $(function() {
         },
 
         render_messages: function() {
-            var s = "";
+            let s = "";
 
             s += '<p class="asm-menu-category">' + _("Message Board") + ' <button id="button-addmessage">' + _("Add Message") + '</button></p>';
             s += '<table id="asm-messageboard" class="asm-main-table asm-underlined-rows"><tbody>';
@@ -442,7 +442,7 @@ $(function() {
         },
 
         render_stats: function() {
-            var s = "", stats, displayname;
+            let s = "", stats, displayname;
             if (config.str("ShowStatsHomePage") == "none") { return; }
             if (!controller.stats || controller.stats.length == 0) { return; }
             stats = controller.stats[0];
@@ -550,7 +550,7 @@ $(function() {
         },
 
         render_timeline: function() {
-            var h = [];
+            let h = [];
             if (!config.bool("ShowTimelineHomePage") || !common.has_permission("va")) { return; }
             h.push('<p class="asm-menu-category"><a href="timeline">' + _("Timeline ({0})").replace("{0}", controller.recent.length) + '</a></p><p>');
             $.each(controller.recent, function(i, v) {
@@ -562,7 +562,7 @@ $(function() {
         },
 
         render: function() {
-            var h = [
+            let h = [
             '<div id="dialog-welcome" title="' + _('Welcome!') + '" style="display: none">',
             '<h2 class="centered">' + _("Welcome!") + '</h2>',
             '<div class="ui-state-highlight ui-corner-all" style="margin-top: 5px; padding: 5px;">',
@@ -602,6 +602,20 @@ $(function() {
             '</p>',
             '</div>',
             '</div> ',
+
+            '<div id="dialog-about" style="display: none" title="' + _("About") + '">',
+            '<p class="asm-main-about-version">',
+            '<img src="static/images/logo/icon-128.png" />',
+             _("ASM") + ' ' + controller.version + '</p>',
+             '<p class="asm-main-about-browser">', 
+             common.substitute(_("{browser} version {version}, running on {os}."), {
+                 "browser": "<b>" + common.browser_info().name + "</b>",
+                 "version": "<b>" + common.browser_info().version + "</b>",
+                 "os": "<b>" + navigator.platform + "</b>"
+            }),
+            '</p>',
+            '<iframe style="width: 650px; height: 400px;" src="static/pages/changelog.txt"></iframe>',
+            '</div>',
 
             '<div id="dialog-addmessage" style="display: none" title="' + _("Add message") + '">',
             '<div class="ui-state-highlight ui-corner-all" style="margin-top: 20px; padding: 0 .7em">',
@@ -676,7 +690,7 @@ $(function() {
             }
 
             if (asm.smcom && asm.smcomexpiry) {
-                var warnat = new Date(format.date_js(asm.smcomexpiry).getTime() - (1000 * 60 * 60 * 24 * 5)),
+                let warnat = new Date(format.date_js(asm.smcomexpiry).getTime() - (1000 * 60 * 60 * 24 * 5)),
                     stopwarnat = format.date_js(asm.smcomexpiry),
                     now = new Date();
                 if (now >= warnat && now < stopwarnat) {
@@ -687,14 +701,14 @@ $(function() {
 
             if (!common.has_permission("vdn")) { $("#asm-main-diary").hide(); }
 
-            var b = {}; 
-            b[_("Create this message")] = function() { 
+            let message_buttons = {}; 
+            message_buttons[_("Create this message")] = function() { 
                 if (!validate.notblank(["expires", "message"])) { return; }
                 $("#dialog-addmessage").disable_dialog_buttons();
-                var formdata = "mode=addmessage&" + $("#dialog-addmessage .asm-textbox, #dialog-addmessage textarea, #dialog-addmessage select, #dialog-addmessage .asm-checkbox").toPOST();
+                let formdata = "mode=addmessage&" + $("#dialog-addmessage .asm-textbox, #dialog-addmessage textarea, #dialog-addmessage select, #dialog-addmessage .asm-checkbox").toPOST();
                 common.ajax_post("main", formdata)
                     .then(function() { 
-                        var h = "<tr>\n";
+                        let h = "<tr>\n";
                         h += "<td>\n";
                         h += "<span style=\"white-space: nowrap; padding-right: 5px;\">" + asm.user + "</span>\n";
                         h += "</td><td>";
@@ -721,7 +735,7 @@ $(function() {
                         $("#dialog-addmessage").dialog("close");
                     });
             };
-            b[_("Cancel")] = function() { $(this).dialog("close"); };
+            message_buttons[_("Cancel")] = function() { $(this).dialog("close"); };
 
             $("#dialog-addmessage").dialog({
                 autoOpen: false,
@@ -730,24 +744,24 @@ $(function() {
                 dialogClass: "dialogshadow",
                 show: dlgfx.add_show,
                 hide: dlgfx.add_hide,
-                buttons: b,      
+                buttons: message_buttons,      
                 close: function() {
                     $("#dialog-addmessage .asm-textbox").val("");
                     validate.reset("dialog-addmessage");
                 }
             });
 
-            var wb = {};
-            wb[_("I've finished, Don't show me this popup again.")] = {
+            let welcome_buttons = {};
+            welcome_buttons[_("I've finished, Don't show me this popup again.")] = {
                 text: _("I've finished, Don't show me this popup again."),
                 "class": "asm-dialog-actionbutton",
                 click: function() {
-                    var formdata = "mode=showfirsttimescreen";
+                    let formdata = "mode=showfirsttimescreen";
                     common.ajax_post("main", formdata);
                     $(this).dialog("close");
                 }
             };
-            wb[_("Close")] = function() { $(this).dialog("close"); };
+            welcome_buttons[_("Close")] = function() { $(this).dialog("close"); };
 
             $("#dialog-welcome").dialog({
                 autoOpen: false,
@@ -756,11 +770,31 @@ $(function() {
                 dialogClass: "dialogshadow",
                 show: dlgfx.add_show,
                 hide: dlgfx.add_hide,
-                buttons: wb
+                buttons: welcome_buttons
+            });
+
+            let about_buttons = {};
+            about_buttons[_("Close")] = function() {
+                $(this).dialog("close");
+            };
+
+            $("#dialog-about").dialog({
+                autoOpen: false,
+                width: 680,
+                modal: true,
+                dialogClass: "dialogshadow",
+                show: dlgfx.zoom_show,
+                hide: dlgfx.zoom_hide,
+                buttons: about_buttons
+            });
+
+            $("#link-about").click(function() {
+                $("#dialog-about").dialog("open");
+                return false; // squash href #
             });
 
             $(".activeuser").each(function() {
-               var t = $(this);
+               let t = $(this);
                t.click(function() {
                    $("#forname").select("value", t.text());
                    $("#dialog-addmessage").dialog("open");
@@ -790,45 +824,43 @@ $(function() {
             $(".messagedelete")
                 .button({ icons: { primary: "ui-icon-trash" }, text: false })
                 .click(function() {
-                var t = $(this);
-                var formdata = "mode=delmessage&id=" + String(t.attr("data"));
-                common.ajax_post("main", formdata)
-                    .then(function() { 
-                        t.closest("tr").fadeOut(); 
-                    });
-            });
+                    let t = $(this), formdata = "mode=delmessage&id=" + String(t.attr("data"));
+                    common.ajax_post("main", formdata)
+                        .then(function() { 
+                            t.closest("tr").fadeOut(); 
+                        });
+                });
 
             $(".messagetoggle").each(function() {
-                var data = $(this).attr("data");
-                var moretext = " " + _("more");
-                var ldv = $("#long" + data).val();
-                var sdv = $("#short" + data).val();
+                let data = $(this).attr("data");
+                let moretext = " " + _("more");
+                let ldv = $("#long" + data).val();
+                let sdv = $("#short" + data).val();
                 if (ldv.length != sdv.length) {
                     $(this).html(moretext);
                 }
             });
 
             $(".messagetoggle").click(function() {
-                var data = $(this).attr("data");
-                var moretext = " " + _("more");
-                var lesstext = " " + _("less");
-                var mt = $("#mt" + data + " .mtext");
-                var ldv = $("#long" + data).val();
-                var sdv = $("#short" + data).val();
-                var ar = $(this);
+                let data = $(this).attr("data");
+                let moretext = " " + _("more");
+                let lesstext = " " + _("less");
+                let mt = $("#mt" + data + " .mtext");
+                let ldv = $("#long" + data).val();
+                let sdv = $("#short" + data).val();
                 if (ldv.length != sdv.length) {
                     if ($(this).text() == moretext) {
                         mt.fadeOut(function() {
                             mt.html(ldv);
                             mt.fadeIn();
-                            ar.html(lesstext);
+                            $(this).html(lesstext);
                         });
                     }
                     else {
                         mt.fadeOut(function() {
                             mt.html(sdv);
                             mt.fadeIn();
-                            ar.html(moretext);
+                            $(this).html(moretext);
                         });
                     }
                 }
@@ -890,7 +922,7 @@ $(function() {
 
             // What's the highest news story available in the DOM/newsfeed?
             $("#newswrapper p").each(function() {
-                var t = $(this), ds = format.to_int(t.attr("data-story"));
+                let t = $(this), ds = format.to_int(t.attr("data-story"));
                 if (ds > main.max_news_story) { main.max_news_story = ds; }
             });
 
