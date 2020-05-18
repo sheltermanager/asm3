@@ -898,6 +898,15 @@ $(function() {
             main.max_news_user = format.to_int(common.local_get(asm.user + "_news"));
             $("#newsunread").html( "(" + (main.max_news_story - main.max_news_user) + ")" );
 
+            // Show a warning if we're using ie11
+            if (common.browser_is.ie11) {
+                header.show_info("You are using Internet Explorer 11 as your web browser. Microsoft no longer " +
+                    "recommend the use of this browser, it does not support features needed for modern " + 
+                    "web applications and we cannot guarantee that everything will work as expected.<br/>" +
+                    "ASM will stop supporting this browser from July 2020. We recommend you " + 
+                    "switch to Microsoft Edge, Firefox or Chrome before then.", 45000);
+            }
+
         },
 
         destroy: function() {
