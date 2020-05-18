@@ -265,27 +265,31 @@ $(function() {
          */
         create_record: function(mode, target) {
              header.hide_error();
+             header.show_loading(_("Creating..."));
              var table = onlineform_incoming.table, ids = tableform.table_ids(table);
              common.ajax_post("onlineform_incoming", "mode=" + mode + "&ids=" + ids)
-                 .then(function(result) {
-                     var selrows = tableform.table_selected_rows(table);
-                     $.each(selrows, function(i, v) {
-                         $.each(result.split("^$"), function(ir, vr) {
-                             var vb = vr.split("|");
-                             var collationid=vb[0], linkid=vb[1], display=vb[2], status=vb[3];
-                             if (collationid == v.COLLATIONID) {
-                                 v.LINK = '<a target="_blank" href="' + target + '?id=' + linkid + '">' + display + '</a>';
-                                 if (status && status == 1) {
-                                     v.LINK += " " + html.icon("copy", _("Updated existing record"));
-                                 }
-                                 if (status && status == 2) {
-                                     v.LINK += " " + html.icon("warning", _("This person has been banned from adopting animals."));
-                                 }
-                             }
-                         });
-                     });
-                     tableform.table_update(table);
-                 });
+                .then(function(result) {
+                    var selrows = tableform.table_selected_rows(table);
+                    $.each(selrows, function(i, v) {
+                        $.each(result.split("^$"), function(ir, vr) {
+                            var vb = vr.split("|");
+                            var collationid=vb[0], linkid=vb[1], display=vb[2], status=vb[3];
+                            if (collationid == v.COLLATIONID) {
+                                v.LINK = '<a target="_blank" href="' + target + '?id=' + linkid + '">' + display + '</a>';
+                                if (status && status == 1) {
+                                    v.LINK += " " + html.icon("copy", _("Updated existing record"));
+                                }
+                                if (status && status == 2) {
+                                    v.LINK += " " + html.icon("warning", _("This person has been banned from adopting animals."));
+                                }
+                            }
+                        });
+                    });
+                    tableform.table_update(table);
+                })
+                .always(function() {
+                    header.hide_loading();
+                });
         },
 
         /**
