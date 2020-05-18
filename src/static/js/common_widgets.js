@@ -881,11 +881,11 @@ $.widget("asm.payments", {
                 $("#vatrate" + i).val(config.number("VATRate"));
                 if (!config.bool("VATExclusive")) {
                     $("#vatamount" + i).currency("value", 
-                        common.tax_from_inclusive($("#amount" + i).currency("value"), format.to_int($("#vatrate" + i).val())));
+                        common.tax_from_inclusive($("#amount" + i).currency("value"), format.to_float($("#vatrate" + i).val())));
                 }
                 else {
                     $("#vatamount" + i).currency("value", 
-                        common.tax_from_exclusive($("#amount" + i).currency("value"), format.to_int($("#vatrate" + i).val())));
+                        common.tax_from_exclusive($("#amount" + i).currency("value"), format.to_float($("#vatrate" + i).val())));
                     $("#amount" + i).currency("value", $("#amount" + i).currency("value") + $("#vatamount" + i).currency("value"));
                 }
                 $("#vatboxes" + i).fadeIn();

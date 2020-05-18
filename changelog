@@ -1,6 +1,7 @@
 44
 ================
 
+18/05/20 Fix for payment widget assuming tax rates are whole %
 18/05/20 Show spinner when creating records from incoming forms #829
 18/05/20 Perform S3 delete/put in background to improve responsiveness #829
 18/05/20 Log and do not retry when Stripe notifies us of non-ASM payments
