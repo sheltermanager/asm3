@@ -1,6 +1,7 @@
 44
 ================
 
+18/05/20 Perform S3 delete/put in background to improve responsiveness #829
 18/05/20 Log and do not retry when Stripe notifies us of non-ASM payments
 18/05/20 Add en_BM locale for Bermuda
 18/05/20 Remove build time from home page, add about dialog #824
