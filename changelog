@@ -1,6 +1,8 @@
 44
 ================
 
+19/05/20 Protect csv_report and html_report from abuse #830
+19/05/20 Implement flood protection earlier in the chain #830
 18/05/20 Fix for payment widget assuming tax rates are whole %
 18/05/20 Show spinner when creating records from incoming forms #829
 18/05/20 Perform S3 delete/put in background to improve responsiveness #829

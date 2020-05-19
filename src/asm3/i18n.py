@@ -6,8 +6,8 @@ import time
 # flake8: noqa - we have a lot of locales and this is convenient
 from asm3.locales import *
 
-VERSION = "44u [Mon 18 May 19:39:42 BST 2020]"
-BUILD = "05181939"
+VERSION = "44u [Tue 19 May 10:16:21 BST 2020]"
+BUILD = "05191016"
 
 DMY = ( "%d/%m/%Y", "%d/%m/%y" )
 HDMY = ( "%d-%m-%Y", "%d-%m-%y" )
@@ -506,6 +506,27 @@ def add_minutes(date, nomins = 1):
     """
     if date is None: return None
     return date + datetime.timedelta(minutes = nomins)
+
+def add_seconds(date, nosecs = 1):
+    """
+    Add secs to date, returning a new datetime
+    """
+    if date is None: return None
+    return date + datetime.timedelta(seconds = nosecs)
+
+def subtract_seconds(date, nosecs = 1):
+    """
+    Subtract seconds from date, returning a new datetime
+    """
+    if date is None: return None
+    return date - datetime.timedelta(seconds = nosecs)
+
+def subtract_minutes(date, nomins = 1):
+    """
+    Subtract minutes from date, returning a new datetime
+    """
+    if date is None: return None
+    return date - datetime.timedelta(minutes = nomins)
 
 def subtract_hours(date, nohours = 1):
     """

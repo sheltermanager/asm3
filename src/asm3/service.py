@@ -9,6 +9,7 @@ for others.
 
 import asm3.al
 import asm3.animal
+import asm3.cachemem
 import asm3.cachedisk
 import asm3.configuration
 import asm3.db
@@ -24,7 +25,7 @@ import asm3.publishers.html
 import asm3.reports
 import asm3.users
 import asm3.utils
-from asm3.i18n import _
+from asm3.i18n import _, now, add_seconds, subtract_seconds
 from asm3.sitedefs import JQUERY_JS, JQUERY_UI_JS, MOMENT_JS, SIGNATURE_JS, TOUCHPUNCH_JS
 from asm3.sitedefs import BASE_URL, MULTIPLE_DATABASES, CACHE_SERVICE_RESPONSES, IMAGE_HOTLINKING_ONLY_FROM_DOMAIN
 
@@ -40,23 +41,58 @@ AUTH_METHODS = [
     "xml_recent_changes", "json_recent_changes", "jsonp_recent_changes"
 ]
 
-def flood_protect(method, account, remoteip, ttl, message = ""):
-    """ Checks to see if we've had a request for method from remoteip since ttl seconds ago.
-    If we haven't, we record this as the last time we saw a request
-    from this ip address for that method. Otherwise, an error is thrown.
+# Service methods that require flood protection
+# method, request limit, requests in last seconds, ban period in seconds
+# Eg: 1 / 15 / 30 bans for 30 seconds after 1 request in 15 seconds.
+FLOOD_PROTECT_METHODS = {
+    "online_form_post": [ 1, 15, 15 ],
+    "html_report": [ 5, 30, 60 ],
+    "csv_report": [ 5, 30, 60 ]
+}
+
+def flood_protect(method, remoteip):
+    """ 
+    Implements flood protection for methods.
+    Keeps a list of timestamps in an in memory cache for the method and IP address.
+    If this IP makes more than the request limit for the period, the request is rejected 
+        and the IP banned for a period.
     method: The service method we're protecting
     remoteip: The ip address of the caller
     ttl: The protection period (one request per ttl seconds)
     """
-    cache_key = "m%sr%s" % (method, str(remoteip).replace(", ", "")) # X-FORWARDED-FOR can be a list, remove commas
-    v = asm3.cachedisk.get(cache_key, account)
-    asm3.al.debug("method: %s, remoteip: %s, ttl: %d, cacheval: %s" % (method, remoteip, ttl, v), "service.flood_protect")
+    CACHE_TTL = 120 # Flood protection only operates for a minute or so keep entry alive for a couple
+    remoteip = str(remoteip).replace(", ", "") # X-FORWARDED-FOR can be a list, remove commas
+    cache_key = "m%sr%s" % (method, remoteip)    
+    # Get the entry for this IP
+    v = asm3.cachemem.get(cache_key)
     if v is None:
-        asm3.cachedisk.put(cache_key, account, "x", ttl)
+        v = { "b": None, "h": [ asm3.i18n.now() ] } # b = banned until, h = list of hits as timestamps
+        asm3.cachemem.put(cache_key, v, CACHE_TTL) 
     else:
-        if message == "":
-            message = "You have already called '%s' in the last %d seconds, please wait before trying again." % (method, ttl)
-        raise asm3.utils.ASMError(message)
+        # asm3.al.debug("protecting '%s' from '%s': cache: %s" % (method, remoteip, v), "service.flood_protect")
+        # Is this IP banned?
+        if v["b"] is not None and now() < v["b"]:
+            asm3.al.error("%s is banned from calling '%s' until '%s'" % (remoteip, method, v["b"]), "service.flood_protect")
+            message = "You cannot call '%s' until '%s'" % (method, v["b"])
+            raise asm3.utils.ASMError(message)
+        # Add a hit for now
+        v["h"].append(now())
+        request_limit, periods, banneds = FLOOD_PROTECT_METHODS[method]
+        # Calculate how long ago period in s was and how many requests this IP has made in the period
+        cutoff = subtract_seconds(now(), periods)
+        requests_in_period = 0
+        for d in v["h"]:
+            if d > cutoff: requests_in_period += 1
+        # Are we over the limit?
+        if requests_in_period > request_limit:
+            asm3.al.error("%s has called '%s', %s times in the last %d seconds. Banning until '%s' (%s seconds)" % (remoteip, method, request_limit, periods, v["b"], banneds), "service.flood_protect")
+            message = "You have already called '%s', %s times in the last %d seconds, please wait %d seconds before trying again." % (method, request_limit, periods, banneds)
+            v["b"] = add_seconds(now(), banneds) # Mark this IP banned for this method for the ban period
+            asm3.cachemem.put(cache_key, v, CACHE_TTL)
+            raise asm3.utils.ASMError(message)
+        else:
+            # Update the cache with the new hit and continue
+            asm3.cachemem.put(cache_key, v, CACHE_TTL)
 
 def hotlink_protect(method, referer):
     """ Protect a method from having any referer other than the one we set """
@@ -232,6 +268,10 @@ def handler(post, path, remoteip, referer, querystring):
     # Are we dealing with multiple databases, but no account was specified?
     if account == "" and MULTIPLE_DATABASES:
         return ("text/plain", 0, 0, "ERROR: No database/alias specified")
+
+    # Is flood protection activated for this method?
+    if method in FLOOD_PROTECT_METHODS:
+        flood_protect(method, remoteip)
 
     dbo = asm3.db.get_database(account)
 
@@ -502,7 +542,6 @@ def handler(post, path, remoteip, referer, querystring):
         return set_cached_response(cache_key, account, "application/json; charset=utf-8", 30, 30, asm3.onlineform.get_onlineform_json(dbo, formid))
 
     elif method == "online_form_post":
-        flood_protect("online_form_post", account, remoteip, 15)
         asm3.onlineform.insert_onlineformincoming_from_form(dbo, post, remoteip)
         redirect = post["redirect"]
         if redirect == "":
