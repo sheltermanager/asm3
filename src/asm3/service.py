@@ -148,12 +148,12 @@ def safe_cache_key(method, qs):
     """ 
     Reads the parameters from querystring and throws away 
     any parameters that are not in CACHE_PROTECT_METHODS for the method.
-    If the method appears in AUTH_METHODS, whitelists the account/user/pass params.
+    If the method appears in AUTH_METHODS, whitelists the username/password params.
     """
     if qs.startswith("?"): qs = qs[1:]
-    whitelist = [ "method" ]
+    whitelist = [ "method", "account" ]
     if method in AUTH_METHODS:
-        whitelist += [ "account", "username", "password" ]
+        whitelist += [ "username", "password" ]
     whitelist += CACHE_PROTECT_METHODS[method]
     out = []
     for p in qs.split("&"):
