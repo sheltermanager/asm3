@@ -25,9 +25,9 @@ $(function() {
         render: function() {
             var hf = [
                 '<input type="hidden" name="mode" value="{mode}" />',
-                '<input type="hidden" name="mergeparams" data="mergeparams" value="' + encodeURIComponent(controller.mergeparams) + '" />',
-                '<input type="hidden" name="mergereport" data="mergereport" value="' + controller.mergereport + '" />',
-                '<input type="hidden" name="mergetitle" data="mergetitle" value="' + encodeURIComponent(controller.mergetitle) + '" />'
+                '<input type="hidden" name="mergeparams" data="mergeparams" />',
+                '<input type="hidden" name="mergereport" data="mergereport" />',
+                '<input type="hidden" name="mergetitle" data="mergetitle" />'
             ].join("\n");
             return [
                 html.content_header(controller.title),
@@ -277,6 +277,10 @@ $(function() {
                     " " + _("Sending {0} emails is considered abusive and will damage the reputation of the email server.").replace("{0}", controller.numrows) ) );
             }
 
+            // Set values for extra merge info
+            $("input[name='mergeparams']").val( controller.mergeparams );
+            $("input[name='mergereport']").val( controller.mergereport );
+            $("input[name='mergetitle']").val( controller.mergetitle );
         },
 
         destroy: function() {
