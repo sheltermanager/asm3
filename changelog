@@ -1,6 +1,7 @@
 44
 ================
 
+19/05/20 Add cache-busting protection for common method calls #830
 19/05/20 Protect csv_report and html_report from abuse #830
 19/05/20 Implement flood protection earlier in the chain #830
 18/05/20 Fix for payment widget assuming tax rates are whole %

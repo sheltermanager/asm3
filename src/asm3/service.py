@@ -41,13 +41,54 @@ AUTH_METHODS = [
     "xml_recent_changes", "json_recent_changes", "jsonp_recent_changes"
 ]
 
+# These are service methods that are defended against cache busting
+CACHE_PROTECT_METHODS = {
+    "animal_image": [ "animalid", "seq" ],
+    "animal_thumbnail": [ "animalid", "seq" ],
+    "animal_view": [ "animalid" ],
+    "animal_view_adoptable_js": [], 
+    "animal_view_adoptable_html": [],
+    "checkout": [ "processor", "payref" ],
+    "dbfs_image": [ "title" ],
+    "extra_image": [ "title" ],
+    "media_image": [ "mediaid" ],
+    "json_adoptable_animal": [ "animalid" ],
+    "html_adoptable_animals": [ "speciesid", "animaltypeid", "locationid", "template" ],
+    "html_adopted_animals": [ "days", "template", "speciesid", "animaltypeid" ],
+    "html_deceased_animals": [ "days", "template", "speciesid", "animaltypeid" ],
+    "html_flagged_animals": [ "template", "speciesid", "animaltypeid", "flag", "all" ],
+    "html_held_animals": [ "template", "speciesid", "animaltypeid" ],
+    "json_adoptable_animals": [ "sensitive" ],
+    "xml_adoptable_animal": [ "animalid" ],
+    "xml_adoptable_animals": [ "sensitive" ],
+    "json_found_animals": [],
+    "xml_found_animals": [],
+    "json_lost_animals": [],
+    "xml_lost_animals": [],
+    "json_recent_adoptions": [], 
+    "xml_recent_adoptions": [],
+    # "html_report", "csv_mail", "csv_report" not included due to custom params
+    "json_recent_changes": [], 
+    "xml_recent_changes": [],
+    "json_shelter_animals": [ "sensitive" ],
+    "xml_shelter_animals": [ "sensitive" ],
+    "rss_timeline": [],
+    # "upload_animal_image" is a write method
+    "online_form_html": [ "formid" ],
+    "online_form_json": [ "formid" ]
+    # "online_form_post" is a write method
+    # "sign_document" is a write method
+}
+
 # Service methods that require flood protection
 # method, request limit, requests in last seconds, ban period in seconds
 # Eg: 1 / 15 / 30 bans for 30 seconds after 1 request in 15 seconds.
 FLOOD_PROTECT_METHODS = {
+    "csv_mail": [ 5, 60, 60 ],
+    "csv_report": [ 5, 60, 60 ],
+    "html_report": [ 5, 60, 60 ],
     "online_form_post": [ 1, 15, 15 ],
-    "html_report": [ 5, 30, 60 ],
-    "csv_report": [ 5, 30, 60 ]
+    "upload_animal_image": [ 2, 30, 30 ]
 }
 
 def flood_protect(method, remoteip):
@@ -102,6 +143,24 @@ def hotlink_protect(method, referer):
         if d != "" and referer.find(d) != -1: fromhldomain = True
     if referer != "" and IMAGE_HOTLINKING_ONLY_FROM_DOMAIN != "" and not fromhldomain:
         raise asm3.utils.ASMPermissionError("Hotlinking to %s from %s is forbidden" % (method, referer))
+
+def safe_cache_key(method, qs):
+    """ 
+    Reads the parameters from querystring and throws away 
+    any parameters that are not in CACHE_PROTECT_METHODS for the method.
+    If the method appears in AUTH_METHODS, whitelists the account/user/pass params.
+    """
+    if qs.startswith("?"): qs = qs[1:]
+    whitelist = [ "method" ]
+    if method in AUTH_METHODS:
+        whitelist += [ "account", "username", "password" ]
+    whitelist += CACHE_PROTECT_METHODS[method]
+    out = []
+    for p in qs.split("&"):
+        k, v = p.split("=", 1)
+        if k.lower() in whitelist:
+            out.append("%s=%s" % (k, v))
+    return "&".join(out)
 
 def get_cached_response(cache_key, path):
     """ Gets a service call response from the cache based on its key.
@@ -253,11 +312,17 @@ def handler(post, path, remoteip, referer, querystring):
     method = post["method"]
     animalid = post.integer("animalid")
     formid = post.integer("formid")
+    mediaid = post.integer("mediaid")
     seq = post.integer("seq")
     title = post["title"]
     strip_personal = post.integer("sensitive") == 0
 
+    # If this method is in the cache protected list, only use
+    # whitelisted parameters for the key to prevent callers 
+    # cache-busting by adding junk parameters
     cache_key = querystring.replace(" ", "")
+    if method in CACHE_PROTECT_METHODS:
+        cache_key = safe_cache_key(method, cache_key)
 
     # Do we have a cached response for these parameters?
     cached_response = get_cached_response(cache_key, account)
@@ -362,7 +427,7 @@ def handler(post, path, remoteip, referer, querystring):
     elif method =="media_image":
         hotlink_protect("media_image", referer)
         return set_cached_response(cache_key, account, "image/jpeg", 86400, 86400, 
-            asm3.dbfs.get_string_id( dbo, dbo.query_int("select dbfsid from media where id = ?", [post.integer("mediaid")]) ))
+            asm3.dbfs.get_string_id( dbo, dbo.query_int("select dbfsid from media where id = ?", [mediaid]) ))
 
     elif method == "json_adoptable_animal":
         if asm3.utils.cint(animalid) == 0:
