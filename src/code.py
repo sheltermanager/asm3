@@ -3650,7 +3650,7 @@ class mailmerge(JSONEndpoint):
         return {
             "title": title,
             "fields": fields,
-            "mergeparams": p,
+            "mergeparams": asm3.utils.json(p),
             "mergereport": crid,
             "mergetitle": title.replace(" ", "_").replace("\"", "").replace("'", "").lower(),
             "numrows": len(rows),
@@ -3661,7 +3661,9 @@ class mailmerge(JSONEndpoint):
     def post_email(self, o):
         dbo = o.dbo
         post = o.post
-        rows, cols = asm3.reports.execute_query(dbo, post.integer("mergereport"), o.user, post["mergeparams"])
+        mergeparams = ""
+        if post["mergeparams"] != "": mergeparams = asm3.utils.json_parse(post["mergeparams"])
+        rows, cols = asm3.reports.execute_query(dbo, post.integer("mergereport"), o.user, mergeparams)
         fromadd = post["from"]
         subject = post["subject"]
         body = post["body"]
@@ -3670,7 +3672,9 @@ class mailmerge(JSONEndpoint):
     def post_document(self, o):
         dbo = o.dbo
         post = o.post
-        rows, cols = asm3.reports.execute_query(dbo, post.integer("mergereport"), o.user, post["mergeparams"])
+        mergeparams = ""
+        if post["mergeparams"] != "": mergeparams = asm3.utils.json_parse(post["mergeparams"])
+        rows, cols = asm3.reports.execute_query(dbo, post.integer("mergereport"), o.user, mergeparams)
         templateid = post.integer("templateid")
         templatecontent = asm3.template.get_document_template_content(dbo, templateid)
         templatename = asm3.template.get_document_template_name(dbo, templateid)
@@ -3691,7 +3695,9 @@ class mailmerge(JSONEndpoint):
     def post_labels(self, o):
         dbo = o.dbo
         post = o.post
-        rows, cols = asm3.reports.execute_query(dbo, post.integer("mergereport"), o.user, post["mergeparams"])
+        mergeparams = ""
+        if post["mergeparams"] != "": mergeparams = asm3.utils.json_parse(post["mergeparams"])
+        rows, cols = asm3.reports.execute_query(dbo, post.integer("mergereport"), o.user, mergeparams)
         self.content_type("application/pdf")
         disposition = asm3.configuration.pdf_inline(dbo) and "inline; filename=%s" or "attachment; filename=%s"
         self.header("Content-Disposition", disposition % post["mergetitle"] + ".pdf")
@@ -3704,7 +3710,9 @@ class mailmerge(JSONEndpoint):
     def post_csv(self, o):
         dbo = o.dbo
         post = o.post
-        rows, cols = asm3.reports.execute_query(dbo, post.integer("mergereport"), o.user, post["mergeparams"])
+        mergeparams = ""
+        if post["mergeparams"] != "": mergeparams = asm3.utils.json_parse(post["mergeparams"])
+        rows, cols = asm3.reports.execute_query(dbo, post.integer("mergereport"), o.user, mergeparams)
         self.content_type("text/csv")
         self.header("Content-Disposition", u"attachment; filename=" + asm3.utils.decode_html(post["mergetitle"]) + u".csv")
         includeheader = 1 == post.boolean("includeheader")
@@ -3713,7 +3721,9 @@ class mailmerge(JSONEndpoint):
     def post_preview(self, o):
         dbo = o.dbo
         post = o.post
-        rows, cols = asm3.reports.execute_query(dbo, post.integer("mergereport"), o.user, post["mergeparams"])
+        mergeparams = ""
+        if post["mergeparams"] != "": mergeparams = asm3.utils.json_parse(post["mergeparams"])
+        rows, cols = asm3.reports.execute_query(dbo, post.integer("mergereport"), o.user, mergeparams)
         asm3.al.debug("returning preview rows for %d [%s]" % (post.integer("mergereport"), post["mergetitle"]), "code.mailmerge", dbo)
         return asm3.utils.json(rows)
 
