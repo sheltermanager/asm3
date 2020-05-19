@@ -137,7 +137,7 @@ $(function() {
                 '<h3><a href="#">' + _("Generate documents") + '</a></h3>',
                 '<div>',
                 '<form id="mailmerge-letters" action="mailmerge" method="post">',
-                hf.replace("{mode}", "letters"),
+                hf.replace("{mode}", "document"),
                 '<input type="hidden" id="templateid" name="templateid" value = "" />',
                 '<ul class="asm-menu-list">',
                 edit_header.template_list(controller.templates, "#", 0),

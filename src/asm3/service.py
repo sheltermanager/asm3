@@ -157,9 +157,9 @@ def safe_cache_key(method, qs):
     whitelist += CACHE_PROTECT_METHODS[method]
     out = []
     for p in qs.split("&"):
-        k, v = p.split("=", 1)
-        if k.lower() in whitelist:
-            out.append("%s=%s" % (k, v))
+        b = p.split("=", 1)
+        if len(b) != 2: continue
+        if b[0].lower() in whitelist: out.append(p)
     return "&".join(out)
 
 def get_cached_response(cache_key, path):
