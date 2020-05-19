@@ -126,10 +126,10 @@ def flood_protect(method, remoteip):
             if d > cutoff: requests_in_period += 1
         # Are we over the limit?
         if requests_in_period > request_limit:
-            asm3.al.error("%s has called '%s', %s times in the last %d seconds. Banning until '%s' (%s seconds)" % (remoteip, method, request_limit, periods, v["b"], banneds), "service.flood_protect")
-            message = "You have already called '%s', %s times in the last %d seconds, please wait %d seconds before trying again." % (method, request_limit, periods, banneds)
             v["b"] = add_seconds(now(), banneds) # Mark this IP banned for this method for the ban period
             asm3.cachemem.put(cache_key, v, CACHE_TTL)
+            asm3.al.error("%s has called '%s', %s times in the last %d seconds. Banning until '%s' (%s seconds)" % (remoteip, method, request_limit, periods, v["b"], banneds), "service.flood_protect")
+            message = "You have already called '%s', %s times in the last %d seconds, please wait %d seconds before trying again." % (method, request_limit, periods, banneds)
             raise asm3.utils.ASMError(message)
         else:
             # Update the cache with the new hit and continue
