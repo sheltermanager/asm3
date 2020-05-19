@@ -99,7 +99,6 @@ def flood_protect(method, remoteip):
         and the IP banned for a period.
     method: The service method we're protecting
     remoteip: The ip address of the caller
-    ttl: The protection period (one request per ttl seconds)
     """
     CACHE_TTL = 120 # Flood protection only operates for a minute or so keep entry alive for a couple
     remoteip = str(remoteip).replace(", ", "") # X-FORWARDED-FOR can be a list, remove commas
