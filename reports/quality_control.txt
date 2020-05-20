@@ -1,4 +1,4 @@
-Quality Control Report
+Quality Control
 ###
 Auditing
 ###
