@@ -168,7 +168,7 @@ def get_cached_response(cache_key, path):
     if not CACHE_SERVICE_RESPONSES: return None
     response = asm3.cachedisk.get(cache_key, path)
     if response is None or len(response) != 4: return None
-    asm3.al.debug("GET: %s (%d bytes)" % (cache_key, len(response[3])), "service.get_cached_response")
+    # asm3.al.debug("GET: %s (%d bytes)" % (cache_key, len(response[3])), "service.get_cached_response")
     return response
 
 def set_cached_response(cache_key, path, mime, clientage, serverage, content):
@@ -182,7 +182,7 @@ def set_cached_response(cache_key, path, mime, clientage, serverage, content):
     """
     response = (mime, clientage, serverage, content)
     if not CACHE_SERVICE_RESPONSES: return response
-    asm3.al.debug("PUT: %s (%d bytes)" % (cache_key, len(content)), "service.set_cached_response")
+    # asm3.al.debug("PUT: %s (%d bytes)" % (cache_key, len(content)), "service.set_cached_response")
     asm3.cachedisk.put(cache_key, path, response, serverage)
     return response
 
@@ -326,7 +326,7 @@ def handler(post, path, remoteip, referer, querystring):
     # Do we have a cached response for these parameters?
     cached_response = get_cached_response(cache_key, account)
     if cached_response is not None:
-        asm3.al.debug("cache hit for %s" % (cache_key), "service.handler")
+        asm3.al.debug("cache hit: %s (%d bytes)" % (cache_key, len(cached_response[3])), "service.handler", account)
         return cached_response
 
     # Are we dealing with multiple databases, but no account was specified?
@@ -371,7 +371,7 @@ def handler(post, path, remoteip, referer, querystring):
     l = asm3.configuration.locale(dbo)
     dbo.locale = l
     dbo.timezone = asm3.configuration.timezone(dbo)
-    asm3.al.info("call %s->%s [%s %s]" % (username, method, str(animalid), title), "service.handler", dbo)
+    asm3.al.info("call @%s --> %s [%s]" % (username, method, querystring), "service.handler", dbo)
 
     if method =="animal_image":
         hotlink_protect("animal_image", referer)

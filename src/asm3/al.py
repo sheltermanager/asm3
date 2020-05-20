@@ -62,7 +62,12 @@ def logmsg(mtype, msg, location, dbo):
     msg = "%s %s" % (fixed_chars(location, 30), msg)
     # If we have a dbo, prepend the database name to the message
     if dbo is not None:
-        msg = "%s %s" % (fixed_chars(dbo.database, 6), msg)
+        dbname = ""
+        if type(dbo) == str: 
+            dbname = dbo
+        else: 
+            dbname = dbo.database
+        msg = "%s %s" % (fixed_chars(dbname, 6), msg)
     # Restrict message to a max of 1024 chars to prevent "Message too long" exceptions
     if len(msg) > 1024: msg = msg[0:1024]
     try:
