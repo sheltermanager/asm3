@@ -1,6 +1,7 @@
 44
 ================
 
+20/05/20 PetFinder require the CSV headings to process blank file
 19/05/20 Fix for broken mail merge params after refactoring
 19/05/20 Support RTL when editing documents in Hebrew/Arabic #831
 19/05/20 Add cache-busting protection for common method calls #830

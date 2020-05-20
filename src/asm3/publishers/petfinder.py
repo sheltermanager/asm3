@@ -110,7 +110,12 @@ class PetFinderPublisher(FTPPublisher):
         # in these cases.
         hide_unaltered = asm3.configuration.petfinder_hide_unaltered(self.dbo)
 
-        csv = []
+        csv = [ "ID,Internal,AnimalName,PrimaryBreed,SecondaryBreed,Sex,Size,Age,Desc,Type,Status," \
+            "Shots,Altered,NoDogs,NoCats,NoKids,Housetrained,Declawed,specialNeeds,Mix," \
+            "photo1,photo2,photo3,photo4,photo5,photo6,arrival_date,birth_date," \
+            "primaryColor,secondaryColor,tertiaryColor,coat_length," \
+            "adoption_fee,display_adoption_fee,adoption_fee_waived," \
+            "special_needs_notes,no_other,no_other_note,tags" ]
 
         anCount = 0
         for an in animals:
