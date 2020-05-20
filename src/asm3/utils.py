@@ -419,7 +419,7 @@ class PlainTextWriterHTMLParser(HTMLParser):
         if tag in ( "li", "tr", "p", "div", "br" ) and not self.tdmode: 
             self.s.append("\n")
         else:
-            if len(s) == 0 or self.s[-1] != " ": self.s.append(" ")
+            if len(self.s) == 0 or self.s[-1] != " ": self.s.append(" ")
 
     def handle_data(self, data):
         if self.tag == "li" and self.ulmode:
