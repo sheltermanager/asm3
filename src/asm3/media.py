@@ -664,13 +664,14 @@ def auto_rotate_image(dbo, imagedata):
     EXIF_ORIENTATION = 274
     OR_TO_ROTATE = {            # Map of EXIF Orientation to image rotation
         1: 0,                   # Correct orientation, no adjustment
-        2: 0,                   # Mirrored
-        3: Image.ROTATE_180,    # 180 degrees, image is upside down
-        4: Image.ROTATE_180,    # 180 degrees, upside down and mirrored
-        5: Image.ROTATE_270,    # 90 degrees, image on its side
-        6: Image.ROTATE_270,    # 90 degrees, on side and mirrored
-        7: Image.ROTATE_90,     # 270 degrees, image on far side
-        8: Image.ROTATE_90      # 270 degrees, on far side and mirrored
+        3: Image.ROTATE_180,    # upside down
+        6: Image.ROTATE_270,    # rotated 90 degrees clockwise
+        8: Image.ROTATE_90,     # rotated 90 degrees antilockwise
+        # Flipped orientations        
+        2: 0,
+        7: Image.ROTATE_90,     # rotated 90 degrees anticlockwise
+        4: Image.ROTATE_180,    # upside down
+        5: Image.ROTATE_270     # rotated 90 degrees clockwise
     }
     try:
         inputd = asm3.utils.bytesio(imagedata)
@@ -683,17 +684,19 @@ def auto_rotate_image(dbo, imagedata):
             asm3.al.warn("image EXIF data has no orientation", "media.auto_rotate_image", dbo)
             return imagedata
         rotation_factor = OR_TO_ROTATE[exif[EXIF_ORIENTATION]]
-        if rotation_factor == 0: 
-            asm3.al.debug("image is already correctly rotated (EXIF==%s)" % exif[EXIF_ORIENTATION], "media.auto_rotate_image", dbo)
+        flip = exif[EXIF_ORIENTATION] in (2, 7, 4, 5)
+        if rotation_factor == 0 and not flip: 
+            asm3.al.debug("image is already correctly rotated/flipped (EXIF==%s)" % exif[EXIF_ORIENTATION], "media.auto_rotate_image", dbo)
             return imagedata
-        im = im.transpose(rotation_factor)
+        if rotation_factor != 0: im = im.transpose(rotation_factor)
+        if flip: im = im.transpose(Image.FLIP_LEFT_RIGHT)
         output = asm3.utils.bytesio()
         im.save(output, "JPEG")
-        rotated_data = output.getvalue()
+        transposed_data = output.getvalue()
         output.close()
-        return rotated_data
+        return transposed_data
     except Exception as err:
-        asm3.al.error("failed rotating image: %s" % str(err), "media.auto_rotate_image", dbo)
+        asm3.al.error("failed rotating/flipping image: %s" % str(err), "media.auto_rotate_image", dbo)
         return imagedata
 
 def rotate_image(imagedata, clockwise = True):

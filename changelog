@@ -1,6 +1,7 @@
 44
 ================
 
+21/05/20 Handle flipped EXIF orientations (selfies, etc)
 21/05/20 Support for Chinese characters in mailing labels via unifont
 21/05/20 Make CTRL+A select all transactions in accounts screen
 21/05/20 Minimum lengths when looking for similar cell/email
