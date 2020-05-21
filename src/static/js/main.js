@@ -566,37 +566,37 @@ $(function() {
             '<div id="dialog-welcome" title="' + _('Welcome!') + '" style="display: none">',
             '<h2 class="centered">' + _("Welcome!") + '</h2>',
             '<div class="ui-state-highlight ui-corner-all" style="margin-top: 5px; padding: 5px;">',
-            '<p><span class="ui-icon ui-icon-info" style="float: left; margin-right: .3em;"></span>',
+            '<p><span class="ui-icon ui-icon-info"></span>',
             _("Thank you for choosing Animal Shelter Manager for your shelter!") + '<br/>',
             _("Here are some things you should do before you start adding animals and people to your database."),
             '</p>',
             '</div>',
             '<div class="ui-state-highlight ui-corner-all" style="margin-top: 5px; padding: 5px;">',
-            '<p><span class="ui-icon ui-icon-gear" style="float: left; margin-right: .3em;"></span>',
+            '<p><span class="ui-icon ui-icon-gear"></span>',
             '<a href="options" target="_blank"><b>' + _("Settings, Options") + '</b></a>',
             _("Go the options screen and set your shelter's contact details and other settings."),
             '</p>',
             '</div>',
             '<div class="ui-state-highlight ui-corner-all" style="margin-top: 5px; padding: 5px;">',
-            '<p><span class="ui-icon ui-icon-note" style="float: left; margin-right: .3em;"></span>',
+            '<p><span class="ui-icon ui-icon-note"></span>',
             '<a href="lookups" target="_blank"><b>' + _("Settings, Lookup data") + '</b></a>',
             _("Go the lookup data screen and add/remove breeds, species and animal types according to the animals your shelter deals with."),
             '</p>',
             '</div>',
             '<div class="ui-state-highlight ui-corner-all" style="margin-top: 5px; padding: 5px;">',
-            '<p><span class="ui-icon ui-icon-person" style="float: left; margin-right: .3em;"></span>',
+            '<p><span class="ui-icon ui-icon-person"></span>',
             '<a href="systemusers" target="_blank"><b>' + _("Settings, System user accounts") + '</b></a>',
             _("Go the system users screen and add user accounts for your staff."),
             '</p>',
             '</div>',
             '<div class="ui-state-highlight ui-corner-all" style="margin-top: 5px; padding: 5px;">',
-            '<p><span class="ui-icon ui-icon-print" style="float: left; margin-right: .3em;"></span>',
+            '<p><span class="ui-icon ui-icon-print"></span>',
             '<a href="reports?browse=true" target="_blank"><b>' + _("Settings, Reports") + '</b></a>',
             _("Browse sheltermanager.com and install some reports, charts and mail merges into your new system."),
             '</p>',
             '</div>',
             '<div class="ui-state-highlight ui-corner-all" style="margin-top: 5px; padding: 5px;">',
-            '<p><span class="ui-icon ui-icon-star" style="float: left; margin-right: .3em;"></span>',
+            '<p><span class="ui-icon ui-icon-star"></span>',
             '<a href="static/pages/manual/index.html" target="_blank"><b>' + _("Manual") + '</b></a>',
             _("Read the manual for more information about Animal Shelter Manager."),
             '</p>',
@@ -619,7 +619,7 @@ $(function() {
 
             '<div id="dialog-addmessage" style="display: none" title="' + _("Add message") + '">',
             '<div class="ui-state-highlight ui-corner-all" style="margin-top: 20px; padding: 0 .7em">',
-            '<p><span class="ui-icon ui-icon-info" style="float: left; margin-right: .3em;"></span>',
+            '<p><span class="ui-icon ui-icon-info"></span>',
             _("All fields should be completed."),
             '</p>',
             '</div>',
@@ -654,6 +654,7 @@ $(function() {
             '</div>',
 
             '<div id="asm-content" class="ui-helper-reset ui-widget-content ui-corner-all" style="padding: 10px;">',
+            html.error(_("A new version of ASM is available.") + ' <button id="button-reload">' + _("Reload Application") + '</button>', "newversion"),
             this.render_animal_links(),
             '<div class="asm-main-columns">',
             '<div id="asm-main-diary" class="asm-main-column">',
@@ -700,6 +701,10 @@ $(function() {
             }
 
             if (!common.has_permission("vdn")) { $("#asm-main-diary").hide(); }
+
+            $("#button-reload").button().click(function() {
+                window.location.reload(true);
+            });
 
             let message_buttons = {}; 
             message_buttons[_("Create this message")] = function() { 
@@ -903,13 +908,8 @@ $(function() {
         sync: function() {
 
             // If there's been a new deployment of ASM since we last
-            // downloaded it to the browser, force a page reload to get the new code.
-            // The noreload parameter is to make sure that if something goes wrong
-            // we only do this once and don't keep looping.
-            if (!controller.noreload && asm.build != controller.build) {
-                common.route("main?noreload=1", true);
-                return;
-            }
+            // downloaded it to the browser, prompt the user to reload the page.
+            $("#newversion").toggle( asm.build != controller.build );
 
             // add a class to the html element for desktop or mobile
             if (typeof asm !== "undefined" && asm.mobileapp) { 

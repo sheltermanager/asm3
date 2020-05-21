@@ -15,7 +15,7 @@ $(function() {
                 html.content_header(_("Results")),
                 '<div id="asm-results">',
                 '<div class="ui-state-highlight ui-corner-all" style="margin-top: 5px; padding: 0 .7em">',
-                '<p><span class="ui-icon ui-icon-search" style="float: left; margin-right: .3em;"></span>',
+                '<p><span class="ui-icon ui-icon-search"></span>',
                 (this.mode == "lost" ? _("Find lost animal returned {0} results.") : 
                     _("Find found animal returned {0} results.")).replace("{0}", controller.rows.length),
                 '</p>',

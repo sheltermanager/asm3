@@ -10,7 +10,7 @@ $(function() {
             return [
                 html.content_header(_("Generate documentation")),
                 '<div class="ui-state-highlight ui-corner-all" style="margin-top: 5px; padding: 0 .7em;">',
-                '<p class="centered"><span class="ui-icon ui-icon-info" style="float: left; margin-right: .3em;"></span>',
+                '<p class="centered"><span class="ui-icon ui-icon-info"></span>',
                 common.base64_decode(controller.message),
                 '</p>',
                 '</div>',

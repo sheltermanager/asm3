@@ -527,18 +527,18 @@ const tableform = {
         if (dialog.helper_text) {
             d.push("<div id=\"dialog-tableform-help\" class=\"ui-widget\">");
             d.push("<div class=\"ui-state-highlight ui-corner-all\"><p>");
-            d.push("<span class=\"ui-icon ui-icon-info\" style=\"float: left; margin-right: .3em;\"></span>");
+            d.push("<span class=\"ui-icon ui-icon-info\"></span>");
             d.push("<span id=\"dialog-tableform-help-text\">" + dialog.helper_text + "</span>");
             d.push("</p></div></div>");
         }
         d.push("<div id=\"dialog-tableform-error\" style=\"display: none\" class=\"ui-widget\">");
         d.push("<div class=\"ui-state-error ui-corner-all\"><p>");
-        d.push("<span class=\"ui-icon ui-icon-alert\" style=\"float: left; margin-right: .3em;\"></span>");
+        d.push("<span class=\"ui-icon ui-icon-alert\"></span>");
         d.push("<strong><span id=\"dialog-tableform-error-text\"></span></strong>");
         d.push("</p></div></div>");
         d.push("<div id=\"dialog-tableform-info\" style=\"display: none\" class=\"ui-widget\">");
         d.push("<div class=\"ui-state-highlight ui-corner-all\"><p>");
-        d.push("<span class=\"ui-icon ui-icon-info\" style=\"float: left; margin-right: .3em;\"></span>");
+        d.push("<span class=\"ui-icon ui-icon-info\"></span>");
         d.push("<span id=\"dialog-tableform-info-text\"></span>");
         d.push("</p></div></div>");
         d.push("<div id=\"dialog-tableform-fields\" style=\"margin-top: 5px\"></span>");

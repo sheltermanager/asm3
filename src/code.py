@@ -942,7 +942,6 @@ class main(JSONEndpoint):
             "recent": timeline,
             "stats": stats,
             "animallinks": asm3.animal.get_animals_brief(animallinks),
-            "noreload": o.post.integer("noreload"),
             "diary": dm,
             "mess": mess 
         }

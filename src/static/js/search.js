@@ -28,7 +28,7 @@ $(function() {
             h.push('<div id="asm-content" class="ui-helper-reset ui-widget-content ui-corner-all" style="padding: 10px;">');
             if (controller.explain != "") {
                 h.push('<div class="ui-state-highlight ui-corner-all" style="margin-top: 20px; padding: 0 .7em">' +
-                    '<p><span class="ui-icon ui-icon-search" style="float: left; margin-right: .3em;"></span>' +
+                    '<p><span class="ui-icon ui-icon-search"></span>' +
                     controller.explain + "</p></div>");
             }
             if (controller.results.length == 0) {

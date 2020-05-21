@@ -12,7 +12,7 @@ $(function() {
                 '<input id="movementid" type="hidden" />',
                 html.content_header(_("Foster an animal"), true),
                 '<div id="notonshelter" class="ui-state-error ui-corner-all" style="margin-top: 5px; padding: 0 .7em; width: 60%; margin-left: auto; margin-right: auto">',
-                '<p class="centered"><span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em;"></span>',
+                '<p class="centered"><span class="ui-icon ui-icon-alert"></span>',
                 '<span class="centered">' + _("This animal is not on the shelter.") + '</span>',
                 '</p>',
                 '</div>',

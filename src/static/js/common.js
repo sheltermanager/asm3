@@ -2039,7 +2039,7 @@ const html = {
             containerid ? "id=\"" + containerid + "\" " : "",
             ">",
             "<div class=\"ui-state-error ui-corner-all\"><p>",
-            "<span class=\"ui-icon ui-icon-alert\" style=\"float: left; margin-right: .3em;\"></span>",
+            "<span class=\"ui-icon ui-icon-alert\"></span>",
             s,
             "</p></div></div>"
         ].join("\n");
@@ -2054,7 +2054,7 @@ const html = {
             containerid ? "id=\"" + containerid + "\" " : "",
             ">",
             "<div class=\"ui-state-highlight ui-corner-all\"><p style=\"padding: 4px\">",
-            "<span class=\"ui-icon ui-icon-info\" style=\"float: left; margin-right: .3em;\"></span>",
+            "<span class=\"ui-icon ui-icon-info\"></span>",
             s,
             "</p></div></div>"
         ].join("\n");
@@ -2069,7 +2069,7 @@ const html = {
             containerid ? "id=\"" + containerid + "\" " : "",
             ">",
             "<div class=\"ui-state-highlight ui-corner-all\"><p>",
-            "<span class=\"ui-icon ui-icon-alert\" style=\"float: left; margin-right: .3em;\"></span>",
+            "<span class=\"ui-icon ui-icon-alert\"></span>",
             s,
             "</p></div></div>"
         ].join("\n");

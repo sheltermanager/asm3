@@ -234,7 +234,7 @@ $(function() {
                 '<div id="dialog-headfoot" style="display: none" title="' + html.title(_("Edit Header/Footer")) + '">',
                 '<div class="ui-state-highlight ui-corner-all">',
                     '<p>',
-                        '<span class="ui-icon ui-icon-info" style="float: left; margin-right: .3em;"></span>',
+                        '<span class="ui-icon ui-icon-info"></span>',
                         _("These are the HTML headers and footers used when generating reports."),
                     '</p>',
                 '</div>',

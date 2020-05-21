@@ -160,7 +160,7 @@ $(function() {
             return [
                 '<div id="dialog-attach-person" style="display: none" title="' + html.title(_("Select a person")) + '">',
                 '<div class="ui-state-highlight ui-corner-all" style="margin-top: 20px; padding: 0 .7em">',
-                '<p><span class="ui-icon ui-icon-info" style="float: left; margin-right: .3em;"></span>',
+                '<p><span class="ui-icon ui-icon-info"></span>',
                 _("Select a person to attach this form to."),
                 '</p>',
                 '</div>',
@@ -181,7 +181,7 @@ $(function() {
             return [
                 '<div id="dialog-attach-animal" style="display: none" title="' + html.title(_("Select an animal")) + '">',
                 '<div class="ui-state-highlight ui-corner-all" style="margin-top: 20px; padding: 0 .7em">',
-                '<p><span class="ui-icon ui-icon-info" style="float: left; margin-right: .3em;"></span>',
+                '<p><span class="ui-icon ui-icon-info"></span>',
                 _("Select an animal to attach this form to."),
                 '</p>',
                 '</div>',

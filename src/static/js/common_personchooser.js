@@ -99,7 +99,7 @@ $.widget("asm.personchooser", {
             '</div>',
             '<div class="personchooser-add" style="display: none" title="' + _("Add person") + '">',
             '<div class="ui-state-highlight ui-corner-all" style="margin-top: 20px; padding: 0 .7em">',
-            '<p><span class="ui-icon ui-icon-info" style="float: left; margin-right: .3em;"></span>',
+            '<p><span class="ui-icon ui-icon-info"></span>',
             _("At least the last name should be completed."),
             '</p>',
             '</div>',
