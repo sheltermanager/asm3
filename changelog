@@ -1,6 +1,7 @@
 44
 ================
 
+21/05/20 Make CTRL+A select all transactions in accounts screen
 21/05/20 Minimum lengths when looking for similar cell/email
 21/05/20 Allow < and > operators for Show If #294
 20/05/20 PetFinder require the CSV headings to process blank file

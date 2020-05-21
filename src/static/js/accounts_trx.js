@@ -261,6 +261,12 @@ $(function() {
                     .then(accounts_trx.reload);
             });
 
+            // Allow CTRL+A to select all transactions
+            Mousetrap.bind("ctrl+a", function() {
+                $("#table-trx input[type='checkbox']").prop("checked", true);
+                return false;
+            });
+
             $(".trx-edit-link").click(function() {
                 if (accounts_trx.readonly) { return false; }
                 var row = common.get_row(controller.rows, $(this).attr("data-id"));
