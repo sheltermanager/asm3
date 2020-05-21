@@ -412,10 +412,10 @@ $(function() {
                 s += '</span></td>';
                 s += '<td><span style="white-space: nowrap; padding-right: 5px;">';
                 if (m.PRIORITY == 1) {
-                    s += '<span class="ui-icon ui-icon-alert" title="' + html.title(_('Important')) + '" style="float: left"></span>';
+                    s += '<span class="ui-icon ui-icon-alert" title="' + html.title(_('Important')) + '"></span>';
                 }
                 else {
-                    s += '<span class="ui-icon ui-icon-info" title="' + html.title(_('Information')) + '" style="float: left"></span>';
+                    s += '<span class="ui-icon ui-icon-info" title="' + html.title(_('Information')) + '"></span>';
                 }
                 s += format.date(m.ADDED);
                 s += '</span></td>';
@@ -655,6 +655,11 @@ $(function() {
 
             '<div id="asm-content" class="ui-helper-reset ui-widget-content ui-corner-all" style="padding: 10px;">',
             html.error(_("A new version of ASM is available.") + ' <button id="button-reload">' + _("Reload Application") + '</button>', "newversion"),
+            html.error("You are using Internet Explorer 11 as your web browser. Microsoft no longer " +
+                    "recommend the use of this browser, it does not support features needed for modern " + 
+                    "web applications and we cannot guarantee that everything will work as expected.<br/>" +
+                    "ASM will stop supporting this browser from July 2020. We recommend you " + 
+                    "switch to Microsoft Edge, Firefox or Chrome before then.", "ie11warning"),
             this.render_animal_links(),
             '<div class="asm-main-columns">',
             '<div id="asm-main-diary" class="asm-main-column">',
@@ -668,9 +673,9 @@ $(function() {
             this.render_stats(),
             '<p class="asm-menu-category">',
             '<a id="newstoggle" href="#">',
+            '<span id="newsnav" class="ui-icon ui-icon-triangle-1-e"></span>',
             _("ASM News"),
             '<span id="newsunread"></span>',
-            '<span id="newsnav" class="ui-icon ui-icon-triangle-1-e" style="float: left"></span>',
             '</a>',
             '</p>',
             '<span id="newswrapper" style="display: none">',
@@ -719,10 +724,10 @@ $(function() {
                         h += "</td><td>";
                         h += "<span style=\"white-space: nowrap; padding-right: 5px;\">";
                         if ($("#priority").val() == 1) {
-                            h += '<span class="ui-icon ui-icon-alert" style="float: left"></span>\n';
+                            h += '<span class="ui-icon ui-icon-alert"></span>\n';
                         }
                         else {
-                            h += '<span class="ui-icon ui-icon-info" style="float: left"></span>\n';
+                            h += '<span class="ui-icon ui-icon-info"></span>\n';
                         }
                         h += $("#expires").val();
                         h += "</span></td>";
@@ -907,10 +912,6 @@ $(function() {
 
         sync: function() {
 
-            // If there's been a new deployment of ASM since we last
-            // downloaded it to the browser, prompt the user to reload the page.
-            $("#newversion").toggle( asm.build != controller.build );
-
             // add a class to the html element for desktop or mobile
             if (typeof asm !== "undefined" && asm.mobileapp) { 
                 $("html").removeClass("desktop");
@@ -921,6 +922,13 @@ $(function() {
                 $("html").addClass("desktop"); 
             }
 
+            // If there's been a new deployment of ASM since we last
+            // downloaded it to the browser, prompt the user to reload the page.
+            $("#newversion").toggle( asm.build != controller.build );
+
+            // Show a warning if we're using ie11
+            $("#ie11warning").toggle(common.browser_is.ie11);
+
             // What's the highest news story available in the DOM/newsfeed?
             $("#newswrapper p").each(function() {
                 let t = $(this), ds = format.to_int(t.attr("data-story"));
@@ -930,15 +938,6 @@ $(function() {
             // What's the highest news story this person has seen?
             main.max_news_user = format.to_int(common.local_get(asm.user + "_news"));
             $("#newsunread").html( "(" + (main.max_news_story - main.max_news_user) + ")" );
-
-            // Show a warning if we're using ie11
-            if (common.browser_is.ie11) {
-                header.show_info("You are using Internet Explorer 11 as your web browser. Microsoft no longer " +
-                    "recommend the use of this browser, it does not support features needed for modern " + 
-                    "web applications and we cannot guarantee that everything will work as expected.<br/>" +
-                    "ASM will stop supporting this browser from July 2020. We recommend you " + 
-                    "switch to Microsoft Edge, Firefox or Chrome before then.", 45000);
-            }
 
         },
 

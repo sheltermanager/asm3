@@ -3,15 +3,17 @@
 // This file is included with all online forms and used to load
 // widgets and implement validation behaviour, etc.
 
+// NOTE: This file should try for compatibility with as many browsers
+//       as possible.
 $(document).ready(function() {
 
     "use strict";
 
     var browser_is = {
-        chrome: navigator.userAgent.match(/Chrome/i),
-        safari: navigator.userAgent.match(/Safari/i),
-        ios:    navigator.userAgent.match(/iPad|iPhone|iPod/i),
-        ie9:    navigator.userAgent.match(/MSIE 9/i)
+        chrome: navigator.userAgent.match(/Chrome/i) != null,
+        safari: navigator.userAgent.match(/Safari/i) != null,
+        ios:    navigator.userAgent.match(/iPad|iPhone|iPod/i) != null,
+        ie9:    navigator.userAgent.match(/MSIE 9/i) != null
     };
 
     // Loads and scales an image into an image form field for upload
