@@ -66,10 +66,12 @@ $(function() {
                             "</span>";
                     }},
                     { field: "", display: _("Form URL"), formatter: function(row) {
-                            var u = "?";
+                            let u = "?";
                             if (asm.useraccountalias) { u += "account=" + asm.useraccountalias + "&"; }
                             u += "method=online_form_html&formid=" + row.ID;
-                            return '<a target="_blank" href="' + asm.serviceurl + u + '">' + u + '</a>';
+                            return '<a target="_blank" href="' + asm.serviceurl + u + '">' + u + '</a>' +
+                                ' <button class="clipcopy" data="' + asm.serviceurl + u + '">' + 
+                                _("Copy to the clipboard") + '</button>';
                         }},
                     { field: "REDIRECTURLAFTERPOST", display: _("Redirect to URL after POST") },
                     { field: "EMAILADDRESS", display: _("Email submissions to"), formatter: function(row) {
@@ -241,6 +243,14 @@ $(function() {
             tableform.table_bind(this.table, this.buttons);
             this.bind_headfoot();
             this.load_person_flags();
+
+            $(".clipcopy").button({ icons: { primary: "ui-icon-clipboard" }, text: false })
+            .click(function() {
+                common.copy_to_clipboard($(this).attr("data"));
+                header.show_info(_("Successfully copied to the clipboard."));
+                return false;
+            });
+
         },
 
         destroy: function() {

@@ -1,6 +1,7 @@
 44
 ================
 
+21/05/20 Buttons to copy extra images and form URLs to clipboard #834
 21/05/20 Prompt user to reload when new software is deployed #833
 21/05/20 Fix bad icon alignment, fix no longer needed in JQuery UI
 21/05/20 Handle flipped EXIF orientations (selfies, etc)

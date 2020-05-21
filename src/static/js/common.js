@@ -193,6 +193,22 @@ const common = {
     },
 
     /**
+     * Copies 'text' to the clipboard.
+     * Uses a temporarily created textarea. Note that this has
+     * to be called by code spawned from a click event so that
+     * a user interaction started it.
+     */
+    copy_to_clipboard: function(text) {
+        var input = document.createElement('textarea');
+        input.innerHTML = text;
+        document.body.appendChild(input);
+        input.select();
+        var result = document.execCommand('copy');
+        document.body.removeChild(input);
+        return result;
+    },
+
+    /**
      * Returns true if v is an array
      */
     is_array: function(v) {
@@ -2034,16 +2050,18 @@ const html = {
     /**
      * Returns a text bar containing s with options o
      * id: The containing div id
+     * display: (no default, css display parameter of container)
      * state: highlight (default) | error 
      * icon: info (default, jquery ui icon)
      * padding: (default 5px)
      * margintop: (default not set)
      */
     textbar: function(s, o) {
-        let containerid = "", state = "highlight", icon = "info", padding = "", margintop = "";
+        let containerid = "", display = "", state = "highlight", icon = "info", padding = "", margintop = "";
         if (!o) { o = {}; }
         if (!o.padding) { o.padding = "5px"; }
         if (o.id) { containerid = 'id="' + o.id + '"'; }
+        if (o.display) { display = "display: " + o.display + ";"; }
         if (o.state) { state = o.state; }
         if (o.icon) { icon = o.icon; }
         if (o.padding) { padding = "padding: " + o.padding + ";"; }

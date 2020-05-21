@@ -30,7 +30,9 @@ $(function() {
                     { field: "NAME", display: _("Image file"), initialsort: true },
                     { field: "NAME", display: _("URL"), 
                         formatter: function(row) {
-                            return "image?db=" + asm.useraccount + "&mode=dbfs&id=/reports/" + row.NAME;
+                            let relurl = "image?db=" + asm.useraccount + "&mode=dbfs&id=/reports/" + row.NAME;
+                            return relurl + ' <button type="button" class="clipcopy" data="' + relurl + '">' + 
+                                _("Copy to the clipboard") + '</button>';
                         }
                     }
                 ]
@@ -138,6 +140,13 @@ $(function() {
             tableform.dialog_bind(this.dialog);
             tableform.buttons_bind(this.buttons);
             tableform.table_bind(this.table, this.buttons);
+
+            $(".clipcopy").button({ icons: { primary: "ui-icon-clipboard" }, text: false })
+            .click(function() {
+                common.copy_to_clipboard($(this).attr("data"));
+                header.show_info(_("Successfully copied to the clipboard."));
+                return false;
+            });
         },
 
         destroy: function() {
