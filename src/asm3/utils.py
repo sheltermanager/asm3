@@ -1397,6 +1397,16 @@ def generate_label_pdf(dbo, locale, records, papersize, units, hpitch, vpitch, w
     if papersize == "letter":
         psize = letter
 
+    fontname = "Courier"
+
+    # Most fonts don't include Chinese characters. If this is a locale that needs
+    # them, use the GNU unifont (contains one glyph for every character)
+    if locale in ( "en_CN", "en_TW" ):
+        from reportlab.pdfbase import pdfmetrics
+        from reportlab.pdfbase.ttfonts import TTFont
+        pdfmetrics.registerFont(TTFont('Unifont','unifont.ttf'))
+        fontname = "Unifont"
+
     fout = bytesio()
     doc = SimpleDocTemplate(fout, pagesize=psize, leftMargin = lmargin * unit, topMargin = tmargin * unit, rightMargin = 0, bottomMargin = 0)
     col = 0
@@ -1423,7 +1433,7 @@ def generate_label_pdf(dbo, locale, records, papersize, units, hpitch, vpitch, w
             "ru", "sk", "sl", "sv", "tr" ):
             # European style, postcode precedes city/state on last line
             template = "%(name)s\n%(address)s\n%(postcode)s %(town)s %(county)s"
-        ad = template % { "name": str(rd["OWNERNAME"]).strip(), "address": rd["OWNERADDRESS"], "town": rd["OWNERTOWN"],
+        ad = template % { "name": rd["OWNERNAME"], "address": rd["OWNERADDRESS"], "town": rd["OWNERTOWN"],
             "county": rd["OWNERCOUNTY"], "postcode": rd["OWNERPOSTCODE"] }
         #al.debug("Adding to data col=%d, row=%d, val=%s" % (cold, rowd, ad))
         datad[rowd][cold] = decode_html(ad)
@@ -1432,11 +1442,17 @@ def generate_label_pdf(dbo, locale, records, papersize, units, hpitch, vpitch, w
         #al.debug("Adding data to table: " + str(datad))
         t = Table(datad, cols * [ hpitch * unit ], rows * [ vpitch * unit ])
         t.hAlign = "LEFT"
-        t.setStyle(TableStyle([("VALIGN", (0,0), (-1,-1), "TOP")]))
-        # If we have more than 8 labels vertically, use a smaller font
+        t.setStyle(TableStyle([
+            ("VALIGN", (0,0), (-1,-1), "TOP"),
+            ("FONTNAME", (0,0), (-1,-1), fontname)
+            ]))
+        # If we have more than 8 labels vertically, use a smaller font size
         if rows > 8:
-            t.setStyle(TableStyle([("VALIGN", (0,0), (-1,-1), "TOP"),
-                                   ("FONTSIZE", (0,0), (-1,-1), 8)]))
+            t.setStyle(TableStyle([
+                ("VALIGN", (0,0), (-1,-1), "TOP"),
+                ("FONTSIZE", (0,0), (-1,-1), 8),
+                ("FONTNAME", (0,0), (-1,-1), fontname)
+                ]))
         elements.append(t)
 
     data = newData()
