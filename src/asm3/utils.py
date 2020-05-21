@@ -1401,7 +1401,7 @@ def generate_label_pdf(dbo, locale, records, papersize, units, hpitch, vpitch, w
 
     # Most fonts don't include Chinese characters. If this is a locale that needs
     # them, use the GNU unifont (contains one glyph for every character)
-    if locale in ( "en_CN", "en_TW" ):
+    if locale in ( "en_CN", "en_TW", "en_TW2" ):
         from reportlab.pdfbase import pdfmetrics
         from reportlab.pdfbase.ttfonts import TTFont
         pdfmetrics.registerFont(TTFont('Unifont','unifont.ttf'))
