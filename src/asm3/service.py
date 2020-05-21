@@ -44,7 +44,7 @@ AUTH_METHODS = [
 # These are service methods that are defended against cache busting
 CACHE_PROTECT_METHODS = {
     "animal_image": [ "animalid", "seq" ],
-    "animal_thumbnail": [ "animalid", "seq" ],
+    "animal_thumbnail": [ "animalid", "seq", "d" ],
     "animal_view": [ "animalid" ],
     "animal_view_adoptable_js": [], 
     "animal_view_adoptable_html": [],
