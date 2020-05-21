@@ -1,6 +1,7 @@
 44
 ================
 
+21/05/20 Allow < and > operators for Show If #294
 20/05/20 PetFinder require the CSV headings to process blank file
 19/05/20 Fix for broken mail merge params after refactoring
 19/05/20 Support RTL when editing documents in Hebrew/Arabic #831

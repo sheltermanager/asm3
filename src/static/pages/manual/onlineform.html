@@ -276,14 +276,24 @@ enter the condition in the “Show If” box.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">fieldname</span><span class="o">=</span><span class="n">X</span>
 </pre></div>
 </div>
-<p>to only show if the form field with fieldname currently has the value X or:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>fieldname!Y
+<p>to only show if the form field with fieldname currently has the value X.</p>
+<p>You can also use ! instead of = to only show if the field does NOT have
+the value and &lt; or &gt; to use lesser than or greater than comparisons
+with a fixed value. Eg:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>fieldname!notthis
+fieldname&gt;0
+fieldname&lt;20
 </pre></div>
 </div>
-<p>to only show if the form field with fieldname does NOT have the value Y.</p>
 <p>If fieldname is a checkbox, you can test for the special keyword “on” to
-indicate you want the box checked (or “off” for unchecked). Only check boxes,
-text boxes and lookup fields can be used with Show If at present.</p>
+indicate you want the box checked (or “off” for unchecked):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">mycheck</span><span class="o">=</span><span class="n">on</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Only check boxes, radio buttons, text and lookup fields can be used with Show If</p>
+</div>
 </div>
 </div>
 <div class="section" id="incoming-forms">

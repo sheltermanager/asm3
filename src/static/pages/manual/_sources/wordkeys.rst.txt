@@ -596,8 +596,12 @@ PaymentDate
     The date the payment was received 
 PaymentDateDue
     If this is a recurring payment, the date it is due 
-PaymentAmount 
-    The total amount of the payment
+PaymentGross
+    The total gross amount of the payment, including any fees and taxes
+PaymentFee
+    Any transaction fees incurred on the payment
+PaymentAmount / PaymentNet
+    The net amount of the payment, excludes any fees and taxes
 PaymentQuantity
     (if quantities are enabled) The number of items the payment covers
 PaymentUnitPrice
@@ -633,15 +637,15 @@ PaymentPersonState / PaymentPersonCounty
 PaymentPersonZipcode / PaymentPersonPostcode
    The zipcode of the person the payment is linked to
 PaymentTotalDue
-    The total of all selected payments that have a due date and no received date
-PaymentTotalReceived
-    The total of all selected payments that have a received date
-PaymenTotalTaxRate / PaymentTotalVATRate
+    The gross total of all selected payments that have a due date and no received date
+PaymentTotalNet / PaymentTotalReceived
+    The net total of all selected payments that have a received date
+PaymentTotalTaxRate / PaymentTotalVATRate
     The highest rate of tax applied by any of the selected payments
 PaymentTotalTax / PaymentTotalVAT
     The total of all sales tax/VAT/GST on the selected payments
-PaymentTotal
-    PaymentTotalReceived + PaymentTotalTax
+PaymentTotal / PaymentTotalGross
+    The gross total of all received payments
 
 Transport Keys
 --------------

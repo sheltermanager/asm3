@@ -109,15 +109,22 @@ The syntax for show if is::
 
    fieldname=X
 
-to only show if the form field with fieldname currently has the value X or::
+to only show if the form field with fieldname currently has the value X.
 
-   fieldname!Y
+You can also use ! instead of = to only show if the field does NOT have
+the value and < or > to use lesser than or greater than comparisons
+with a fixed value. Eg::
 
-to only show if the form field with fieldname does NOT have the value Y.
+   fieldname!notthis
+   fieldname>0
+   fieldname<20
 
 If fieldname is a checkbox, you can test for the special keyword "on" to
-indicate you want the box checked (or "off" for unchecked). Only check boxes, 
-text boxes and lookup fields can be used with Show If at present.
+indicate you want the box checked (or "off" for unchecked)::
+
+   mycheck=on
+
+.. note:: Only check boxes, radio buttons, text and lookup fields can be used with Show If
 
 Incoming Forms
 --------------

@@ -155,7 +155,7 @@ $(document).ready(function() {
             var o = $(this);
             if (!o.attr("data-visibleif")) { return; } // no rule, do nothing
             // Split rule in to field, cond (=!), value
-            var m = o.attr("data-visibleif").match(new RegExp("(.*)([=!])(.*)"));
+            var m = o.attr("data-visibleif").match(new RegExp("(.*)([=!<>])(.*)"));
             var field = m[1], cond = m[2], value = m[3];
             // Find the field and apply the condition
             $("input, select").each(function() {
@@ -168,6 +168,8 @@ $(document).ready(function() {
                     var toshow = false;
                     if (cond == "=") { toshow = v == value; }
                     else if (cond == "!") { toshow = v != value; }
+                    else if (cond == ">") { toshow = v > value; }
+                    else if (cond == "<") { toshow = v < value; }
                     o.toggle(toshow);
                     if (!toshow) {
                         // If we just hid a field that had the required attribute, 
