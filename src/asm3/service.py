@@ -390,7 +390,7 @@ def handler(post, path, remoteip, referer, querystring):
         else:
             dummy, data = asm3.media.get_image_file_data(dbo, "animalthumb", asm3.utils.cint(animalid), seq)
             if data == "NOPIC": dummy, data = asm3.media.get_image_file_data(dbo, "nopic", 0)
-            return set_cached_response(cache_key, account, "image/jpeg", 86400, 86400, data)
+            return set_cached_response(cache_key, account, "image/jpeg", 86400, 3600, data)
 
     elif method == "animal_view":
         if asm3.utils.cint(animalid) == 0:
