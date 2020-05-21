@@ -264,6 +264,8 @@ $(function() {
             // Allow CTRL+A to select all transactions
             Mousetrap.bind("ctrl+a", function() {
                 $("#table-trx input[type='checkbox']").prop("checked", true);
+                $("#button-delete").button("option", "disabled", false); 
+                $("#button-reconcile").button("option", "disabled", false); 
                 return false;
             });
 
