@@ -2067,7 +2067,7 @@ const html = {
         if (o.padding) { padding = "padding: " + o.padding + ";"; }
         if (o.margintop) { margintop = "margin-top: " + o.margintop + ";"; }
         return [
-            "<div class=\"ui-widget\" " + containerid + " style=\"" + margintop + "\">",
+            "<div class=\"ui-widget\" " + containerid + " style=\"" + margintop + display + "\">",
             "<div class=\"ui-state-" + state + " ui-corner-all\" style=\"" + padding + "\"><p>",
             "<span class=\"ui-icon ui-icon-" + icon + "\"></span>",
             s,

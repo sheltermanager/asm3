@@ -74,6 +74,11 @@ $(function() {
                                 tableform.dialog_enable_buttons();
                             });
                 },
+                button_click: function() {
+                    if ($(this).attr("data-uri")) {
+                        common.route($(this).attr("data-uri"));
+                    }
+                },
                 complete: function(row) {
                     if (row.STATUS == COMPLETE || row.STATUS == CANCELLED) { return true; }
                     return false;
@@ -85,8 +90,9 @@ $(function() {
                 },
                 columns: [
                     { field: "CLINICSTATUSNAME", display: _("Status"), formatter: function(row) {
-                        var invlink = "<a href=\"clinic_invoice?appointmentid=" + row.ID + "\">" + 
-                            html.icon("accounts", _("Edit invoice")) + '</a>';
+                        var invlink = "<button data-icon=\"cart\" " + 
+                            "data-uri=\"clinic_invoice?appointmentid=" + row.ID + "\">" + 
+                            _("Edit invoice") + '</button>';
                         return '<span style="white-space: nowrap">' +
                             '<input type="checkbox" data-id="' + row.ID + '" title="' + html.title(_("Select")) + '" />' +
                             '<a href="#" data-id="' + row.ID + '" class="link-edit">' + row.CLINICSTATUSNAME + '</a> ' + 

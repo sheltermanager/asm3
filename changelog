@@ -1,6 +1,8 @@
 44
 ================
 
+22/05/20 Use inline buttons for editing in tables for consistent style
+22/05/20 Add copy service URL button for extra images 
 22/05/20 Media disable scaling option did nothing for DnD
 22/05/20 dbms.get_id_cache for safer id generation on non-postgres
 21/05/20 Buttons to copy extra images and form URLs to clipboard #834
