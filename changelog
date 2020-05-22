@@ -1,6 +1,8 @@
 44
 ================
 
+22/05/20 Media disable scaling option did nothing for DnD
+22/05/20 dbms.get_id_cache for safer id generation on non-postgres
 21/05/20 Buttons to copy extra images and form URLs to clipboard #834
 21/05/20 Prompt user to reload when new software is deployed #833
 21/05/20 Fix bad icon alignment, fix no longer needed in JQuery UI

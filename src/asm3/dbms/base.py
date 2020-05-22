@@ -1,6 +1,7 @@
 
 import asm3.al
 import asm3.audit
+import asm3.cachemem
 import asm3.cachedisk
 import asm3.i18n
 import asm3.utils
@@ -355,10 +356,19 @@ class Database(object):
 
     def get_id(self, table):
         """ Returns the next ID for a table """
-        nextid = self.get_id_max(table)
+        nextid = self.get_id_cache(table)
         self.update_asm2_primarykey(table, nextid)
-        asm3.al.debug("get_id: %s -> %d (max)" % (table, nextid), "Database.get_id", self)
+        asm3.al.debug("get_id: %s -> %d (cache_pk)" % (table, nextid), "Database.get_id", self)
         return nextid
+
+    def get_id_cache(self, table):
+        """ Returns the next ID for a table using an in-memory cache. """
+        cache_key = "%s_pk_%s" % (self.database, table)
+        id = asm3.cachemem.increment(cache_key)
+        if id is None:
+            id = self.get_id_max(table)
+            asm3.cachemem.put(cache_key, id, 86400)
+        return id
 
     def get_id_max(self, table):
         """ Returns the next ID for a table using MAX(ID) """
