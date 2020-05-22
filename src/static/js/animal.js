@@ -713,6 +713,7 @@ $(function() {
                 else if (p == "foundanimals") { t = html.icon("microchip") + " Microchip registered with FoundAnimals"; }
 
                 else if (p == "shareweb") { t = html.icon("web") + " " + _("Shared weblink"); }
+                else if (p == "shareemail") { t = html.icon("email") + " " + _("Shared email"); }
                 else if (p == "sharepic") { t = html.icon("media") + " " + _("Shared photo"); }
                 else if (p == "facebook") { t = html.icon("facebook") + " Shared on Facebook"; }
                 else if (p == "twitter") { t = html.icon("twitter") + " Shared on Twitter"; }
