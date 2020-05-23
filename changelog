@@ -1,6 +1,7 @@
 44
 ================
 
+23/05/20 animalthumb translation broken when generating PDF
 22/05/20 Use inline buttons for editing in tables for consistent style
 22/05/20 Add copy service URL button for extra images 
 22/05/20 Media disable scaling option did nothing for DnD
