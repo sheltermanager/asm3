@@ -697,7 +697,8 @@ class media(ASMEndpoint):
             m = asm3.media.get_media_by_id(dbo, mid)
             if m is None: raise web.notfound()
             if m.MEDIAMIMETYPE != "text/html": continue
-            body.append("<p><a href=\"%s?account=%s&method=sign_document&formid=%d\">%s</a></p>" % (SERVICE_URL, dbo.database, mid, m.MEDIANOTES))
+            url = "%s?account=%s&method=sign_document&email=%s&formid=%d" % (SERVICE_URL, dbo.database, asm3.utils.strip_email_address(emailadd).replace("@", "%40"), mid)
+            body.append("<p><a href=\"%s\">%s</a></p>" % (url, m.MEDIANOTES))
             if post.boolean("addtolog"):
                 asm3.log.add_log_email(dbo, o.user, asm3.media.get_log_from_media_type(m.LINKTYPEID), m.LINKID, post.integer("logtype"), 
                     emailadd, _("Document signing request", l), "".join(body))

@@ -1479,6 +1479,15 @@ def generate_label_pdf(dbo, locale, records, papersize, units, hpitch, vpitch, w
     doc.build(elements)
     return fout.getvalue()
 
+def parse_email_address(s):
+    """ Returns a tuple of realname and address from an email """
+    if s.find("<") == -1: return ("", s.strip())
+    return ( s[0:s.find("<")].strip(), s[s.find("<")+1:].replace(">", "").strip() )
+
+def strip_email_address(s):
+    # Just returns the address portion of an email
+    return parse_email_address(s)[1]
+
 def send_email(dbo, replyadd, toadd, ccadd = "", bccadd = "", subject = "", body = "", contenttype = "plain", attachments = [], exceptions = True):
     """
     Sends an email.
@@ -1496,15 +1505,6 @@ def send_email(dbo, replyadd, toadd, ccadd = "", bccadd = "", subject = "", body
     For HTML emails, a plaintext part is converted and added. If the HTML
     does not have html/body tags, they are also added.
     """
-
-    def parse_email(s):
-        """ Returns a tuple of realname and address from an email """
-        if s.find("<") == -1: return ("", s.strip())
-        return ( s[0:s.find("<")].strip(), s[s.find("<")+1:].replace(">", "").strip() )
-
-    def strip_email(s):
-        # Just returns the address portion of an email
-        return parse_email(s)[1]
 
     def add_header(msg, header, value):
         """
@@ -1529,7 +1529,7 @@ def send_email(dbo, replyadd, toadd, ccadd = "", bccadd = "", subject = "", body
             h = Header()
             for a in value.split(","):
                 if len(str(h)) > 0: h.append(",", "ascii")
-                realname, address = parse_email(a)
+                realname, address = parse_email_address(a)
                 h.append(decode_html(realname)) # auto uses utf-8 for non-ascii
                 h.append(address, "ascii")
             msg[header] = h
@@ -1603,11 +1603,11 @@ def send_email(dbo, replyadd, toadd, ccadd = "", bccadd = "", subject = "", body
     # Construct the list of to addresses. We strip email addresses so
     # only the you@domain.com portion remains for us to pass to the
     # SMTP server. 
-    tolist = [strip_email(x) for x in toadd.split(",")]
-    if ccadd != "":  tolist += [strip_email(x) for x in ccadd.split(",")]
-    if bccadd != "": tolist += [strip_email(x) for x in bccadd.split(",")]
+    tolist = [strip_email_address(x) for x in toadd.split(",")]
+    if ccadd != "":  tolist += [strip_email_address(x) for x in ccadd.split(",")]
+    if bccadd != "": tolist += [strip_email_address(x) for x in bccadd.split(",")]
 
-    replyadd = strip_email(replyadd)
+    replyadd = strip_email_address(replyadd)
 
     asm3.al.debug("from: %s, reply-to: %s, to: %s, subject: %s, body: %s" % \
         (fromadd, replyadd, str(tolist), subject, body), "utils.send_email", dbo)

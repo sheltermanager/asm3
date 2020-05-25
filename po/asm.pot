@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ASM3\n"
 "Report-Msgid-Bugs-To: robin@sheltermanager.com\n"
-"POT-Creation-Date: 2020-05-22 12:26+0000\n"
+"POT-Creation-Date: 2020-05-25 10:40+0000\n"
 "Last-Translator: Robin Rawson-Tetley <robin@sheltermanager.com>\n"
 "Language-Team: en <robin@sheltermanager.com>\n"
 "Language: en\n"
@@ -4275,6 +4275,10 @@ msgstr ""
 msgid ""
 "Email incoming form submissions to this comma separated list of email "
 "addresses"
+msgstr ""
+
+#: service.py
+msgid "Email me a signed copy of the document at {0}"
 msgstr ""
 
 #: document_repository.js media.js
@@ -10580,6 +10584,10 @@ msgstr ""
 
 #: media.js
 msgid "Signed"
+msgstr ""
+
+#: service.py
+msgid "Signed Document"
 msgstr ""
 
 #: service.py mobile.py
