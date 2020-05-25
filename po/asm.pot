@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ASM3\n"
 "Report-Msgid-Bugs-To: robin@sheltermanager.com\n"
-"POT-Creation-Date: 2020-05-25 10:40+0000\n"
+"POT-Creation-Date: 2020-05-25 12:23+0000\n"
 "Last-Translator: Robin Rawson-Tetley <robin@sheltermanager.com>\n"
 "Language-Team: en <robin@sheltermanager.com>\n"
 "Language: en\n"
@@ -500,6 +500,10 @@ msgstr ""
 
 #: html.py configuration.py header.js
 msgid "Add an animal to the waiting list"
+msgstr ""
+
+#: options.js
+msgid "Add an extra message to the fosterer email"
 msgstr ""
 
 #: citations.js
@@ -5840,6 +5844,10 @@ msgstr ""
 msgid "Ibizan Hound"
 msgstr ""
 
+#: options.js
+msgid "If blank, the address from the Email tab will be used"
+msgstr ""
+
 #: users.js
 msgid "If left blank, the user can login from any IP address."
 msgstr ""
@@ -9501,6 +9509,10 @@ msgstr ""
 
 #: html.py licence_renewal.js
 msgid "Renew license"
+msgstr ""
+
+#: options.js
+msgid "Replies to the fosterer email should go to"
 msgstr ""
 
 #: reports.py reports.js
@@ -13281,6 +13293,10 @@ msgstr ""
 
 #: dbupdate.py
 msgid "Weekly"
+msgstr ""
+
+#: options.js
+msgid "Weekly Fosterer Email"
 msgstr ""
 
 #: html.py dbupdate.py animal_new.js animal.js

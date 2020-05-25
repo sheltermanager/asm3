@@ -413,7 +413,7 @@ def csave(dbo, username, post):
     for k in post.data.keys():
         if k == "mode" or k == "filechooser": continue
         v = post.string(k, False)
-        if k == "EmailSignature":
+        if k in ("EmailSignature", "FostererEmailsMsg"):
             # It's HTML - don't XSS escape it
             put(k, v, sanitiseXSS = False)
         elif k == "CodingFormat":
@@ -785,11 +785,17 @@ def email_messages(dbo):
 def foster_on_shelter(dbo):
     return cboolean(dbo, "FosterOnShelter", DEFAULTS["FosterOnShelter"] == "Yes")
 
+def fosterer_email_overdue_days(dbo):
+    return cint(dbo, "FostererEmailOverdueDays", DEFAULTS["FostererEmailOverdueDays"])
+
 def fosterer_emails(dbo):
     return cboolean(dbo, "FostererEmails", DEFAULTS["FostererEmails"] == "Yes")
 
-def fosterer_email_overdue_days(dbo):
-    return cint(dbo, "FostererEmailOverdueDays", DEFAULTS["FostererEmailOverdueDays"])
+def fosterer_emails_reply_to(dbo):
+    return cstring(dbo, "FostererEmailsReplyTo")
+
+def fosterer_emails_msg(dbo):
+    return cstring(dbo, "FostererEmailsMsg")
 
 def foundanimals_email(dbo):
     return cstring(dbo, "FoundAnimalsEmail")
