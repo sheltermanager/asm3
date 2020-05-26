@@ -118,7 +118,6 @@ $(document).ready(function() {
         return rv;
     };
 
-
     // Validate HTML5 required input fields 
     // (only does anything for iOS and IE9 where the required attribute is not supported)
     var validate_required = function() {
@@ -138,7 +137,7 @@ $(document).ready(function() {
         }
         return rv;
     };
-
+    
     // Parses all of the query string parameters into the params dictionary
     var parse_params = function() {
         var qstr = window.location.search.substring(1);
@@ -152,7 +151,7 @@ $(document).ready(function() {
     };
 
     // Find every visibleif rule and show/hide accordingly
-    var showvisibleif = function() {
+    var show_visibleif = function() {
         $("tr").each(function() {
             var o = $(this);
             if (!o.attr("data-visibleif")) { return; } // no rule, do nothing
@@ -189,6 +188,46 @@ $(document).ready(function() {
                 }
             });
         });
+    };
+
+    // Title case a string, james smith -> James Smith
+    var title_case = function(s) {
+        return s.replace(
+            /\w*/g, function(txt) {
+                return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+            }
+        );
+    };
+
+    var upper_fields = [ "postcode", "zipcode", "areapostcode", "areazipcode", 
+        "dropoffpostcode", "dropoffzipcode", "pickuppostcode", "pickupzipcode",
+        "dispatchpostcode", "dispatchzipcode" ];
+    var lower_fields = [ "emailaddress" ]; 
+    var title_fields = [ "title", "initials", "forenames", "surname", 
+        "firstname", "lastname", "address", "town", "county", "city", "state", "country", 
+        "dispatchaddress", "dispatchtown", "dispatchcounty", "dispatchcity", "dispatchstate", 
+        "pickupaddress", "pickuptown", "pickupcounty", "pickupcity", "pickupstate", "pickupcountry",
+        "dropoffaddress", "dropofftown", "dropoffcounty", "dropoffcity", "dropoffstate", "dropoffcountry" ];
+    var state_fields = [ "state", "dispatchstate", "pickupstate", "dropoffstate" ];
+
+    // Called when a form field is changed. If we are dealing with some of our known
+    // special fields, fix any bad character cases. 
+    var fix_case_on_change = function() {
+        if (typeof asm3_dont_fix_case !== 'undefined') { return; } // do nothing if global is declared
+        var name  = $(this).attr("name"), v = $(this).val();
+        if (name.indexOf("_") != -1) { name = name.substring(0, name.indexOf("_")); }
+        if (upper_fields.indexOf(name) != -1) {
+            $(this).val( v.toUpperCase() );
+        }
+        if (lower_fields.indexOf(name) != -1) {
+            $(this).val( v.toLowerCase() );
+        }
+        if (title_fields.indexOf(name) != -1) {
+            $(this).val( title_case(v) );
+        }
+        if (state_fields.indexOf(name) != -1) {
+            if (v.length <= 3) { $(this).val( v.toUpperCase() ); } // US or Aus state code
+        }
     };
 
     // Load all date and time picker widgets
@@ -238,9 +277,13 @@ $(document).ready(function() {
         });
     });
 
+    // Watch text input fields for change so we can fix bad case/etc
+    $("body").on("change", "input", fix_case_on_change);
+
     // Watch all fields for change and determine whether we need to hide or display rows
-    $("body").on("change", "input, select", showvisibleif);
-    showvisibleif(); // set initial state
+    $("body").on("change", "input, select", show_visibleif);
+    show_visibleif(); // set initial state
+
 
     // Add additional behaviours to when the online form is submitted to validate 
     // components either not supported by HTML5 form validation, or for browsers
