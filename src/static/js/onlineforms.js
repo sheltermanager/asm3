@@ -92,7 +92,7 @@ $(function() {
             };
 
             var buttons = [
-                 { id: "new", text: _("New online form"), icon: "new", enabled: "always", perm: "eof", 
+                 { id: "new", text: _("New online form"), icon: "new", enabled: "always", perm: "aof", 
                      click: function() { 
                          tableform.dialog_show_add(dialog)
                              .then(function() {
@@ -112,7 +112,7 @@ $(function() {
                             });
                      } 
                  },
-                 { id: "clone", text: _("Clone"), icon: "copy", enabled: "multi", perm: "eof",
+                 { id: "clone", text: _("Clone"), icon: "copy", enabled: "multi", perm: "aof",
                      click: function() { 
                          tableform.buttons_default_state(buttons);
                          var ids = tableform.table_ids(table);
@@ -122,7 +122,7 @@ $(function() {
                              });
                      } 
                  },
-                 { id: "delete", text: _("Delete"), icon: "delete", enabled: "multi", perm: "eof", 
+                 { id: "delete", text: _("Delete"), icon: "delete", enabled: "multi", perm: "dof", 
                      click: function() { 
                          tableform.delete_dialog()
                              .then(function() {
@@ -143,7 +143,7 @@ $(function() {
                     }
                  },
                  { id: "import", text: _("Import"), icon: "database", enabled: "always", 
-                    tooltip: _("Import from file"), perm: "eof", 
+                    tooltip: _("Import from file"), perm: "aof", 
                     click: function() {
                         tableform.show_okcancel_dialog("#dialog-import", _("Import"), { notblank: ["filechooser"] })
                              .then(function() {

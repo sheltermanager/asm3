@@ -1,6 +1,7 @@
 44
 ================
 
+26/05/20 Separate online form permissions for adding and deleting forms
 26/05/20 Fix bad casing on known online form fields #835
 26/05/20 Add separate permission for viewing online forms
 26/05/20 Choose a sane default email when emailing from an animal
