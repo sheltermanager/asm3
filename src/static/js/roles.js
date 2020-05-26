@@ -84,6 +84,7 @@ $(function() {
                 cr("vrd", _("View Document Repository")),
                 cr("drd", _("Delete Document from Repository")),
                 cl(_("Online Forms")),
+                cr("vof", _("View Online Forms")),
                 cr("eof", _("Edit Online Forms")),
                 cr("vif", _("View Incoming Forms")),
                 cr("dif", _("Delete Incoming Forms")),

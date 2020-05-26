@@ -105,6 +105,7 @@ CHANGE_LOG                      = "cle"
 DELETE_LOG                      = "dle"
 VIEW_LOG                        = "vle"
 
+VIEW_ONLINE_FORMS               = "vof"
 EDIT_ONLINE_FORMS               = "eof"
 VIEW_INCOMING_FORMS             = "vif"
 DELETE_INCOMING_FORMS           = "dif"

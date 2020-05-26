@@ -561,7 +561,7 @@ def menu_structure(l, publisherlist, reports, mailmerges):
             ( "", "", "tagdocumentrepo", "--cat", "asm-icon-document", _("Document Repository", l) ),
             ( asm3.users.VIEW_REPO_DOCUMENT, "", "tagdocumentrepo", "document_repository", "asm-icon-blank", _("Document Repository", l) ),
             ( "", "", "tagonlineform", "--cat", "asm-icon-forms", _("Online Forms", l) ),
-            ( asm3.users.EDIT_ONLINE_FORMS, "", "tagonlineform", "onlineforms", "asm-icon-blank", _("Edit Online Forms", l) ),
+            ( asm3.users.VIEW_ONLINE_FORMS, "", "tagonlineform", "onlineforms", "asm-icon-blank", _("Edit Online Forms", l) ),
             ( asm3.users.VIEW_INCOMING_FORMS, "alt+shift+m", "tagonlineform", "onlineform_incoming", "asm-icon-blank", _("View Incoming Forms", l) ),
             ( "", "", "tagwaitinglist", "--cat", "asm-icon-waitinglist", _("Waiting List", l) ),
             ( asm3.users.ADD_WAITING_LIST, "", "tagwaitinglist", "waitinglist_new", "asm-icon-blank", _("Add an animal to the waiting list", l) ),

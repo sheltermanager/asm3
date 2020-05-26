@@ -4288,7 +4288,7 @@ class onlineform(JSONEndpoint):
 
 class onlineforms(JSONEndpoint):
     url = "onlineforms"
-    get_permissions = asm3.users.EDIT_ONLINE_FORMS
+    get_permissions = asm3.users.VIEW_ONLINE_FORMS
     post_permissions = asm3.users.EDIT_ONLINE_FORMS
 
     def controller(self, o):
