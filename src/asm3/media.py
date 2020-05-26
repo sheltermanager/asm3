@@ -688,6 +688,7 @@ def auto_rotate_image(dbo, imagedata):
         if rotation_factor == 0 and not flip: 
             asm3.al.debug("image is already correctly rotated/flipped (EXIF==%s)" % exif[EXIF_ORIENTATION], "media.auto_rotate_image", dbo)
             return imagedata
+        asm3.al.debug("orientation=%s --> rotate=%s deg cw, flip=%s" % (exif[EXIF_ORIENTATION], (rotation_factor*90-90), flip), "media.auto_rotate_image", dbo)
         if rotation_factor != 0: im = im.transpose(rotation_factor)
         if flip: im = im.transpose(Image.FLIP_LEFT_RIGHT)
         output = asm3.utils.bytesio()

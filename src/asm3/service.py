@@ -186,8 +186,9 @@ def set_cached_response(cache_key, path, mime, clientage, serverage, content):
     asm3.cachedisk.put(cache_key, path, response, serverage)
     return response
 
-def sign_document_page(dbo, mid):
-    """ Outputs a page that allows signing of document with media id mid"""
+def sign_document_page(dbo, mid, email):
+    """ Outputs a page that allows signing of document with media id mid. 
+        email is the address to send a copy of the signed document to. """
     l = dbo.locale
     if asm3.media.has_signature(dbo, mid):
         return "<!DOCTYPE html><head><title>%s</title></head>" \
@@ -213,10 +214,14 @@ def sign_document_page(dbo, mid):
                 var img = $("#signature canvas").get(0).toDataURL("image/png");
                 var formdata = "account=%(account)s&method=sign_document&formid=%(id)s&sig=" + encodeURIComponent(img);
                 formdata += "&signdate=" + encodeURIComponent(moment().format("YYYY-MM-DD HH:mm:ss"));
+                formdata += "&email=" + encodeURIComponent("%(email)s");
+                formdata += "&sendsigned=" + ($("#sendsigned").is(":checked") ? "on" : "");
                 if ($("#signature").signature("isEmpty")) {
                     alert("Signature is required");
                     return;
                 }
+                $("button").fadeOut();
+                $("#spinner").fadeIn();
                 $.ajax({
                     type: "POST",
                     url: "service",
@@ -255,6 +260,7 @@ def sign_document_page(dbo, mid):
         "title":    _("Signing Pad", l),
         "id":       mid,
         "account":  dbo.database,
+        "email":    email,
         "css":      asm3.html.asm_css_tag("asm-icon.css"),
         "thankyou": _("Thank you, the document is now signed.", l),
         "scripts":  asm3.html.script_tag(JQUERY_JS) + asm3.html.script_tag(JQUERY_UI_JS) +
@@ -275,10 +281,15 @@ def sign_document_page(dbo, mid):
     h.append('<p>')
     h.append('<button id="sig-clear" type="button">' + _("Clear", l) + '</button>')
     h.append('<button id="sig-sign" type="button">' + _("Sign", l) + '</button>')
+    h.append('<img id="spinner" src="static/images/wait/rolling_black.svg" style="border: 0; display: none" />')
     h.append('</p>')
     h.append('<p>')
     h.append(_("Please click the Sign button when you are finished.", l))
     h.append('</p>')
+    h.append('<p>')
+    h.append('<input type="checkbox" id="sendsigned" checked="checked" /> <label for="sendsigned">')
+    h.append(_("Email me a signed copy of the document at {0}", l).format(email))
+    h.append('</label></p>')
     h.append('<p>')
     h.append(_("Once signed, this document cannot be edited or tampered with.", l))
     h.append('</p>')
@@ -616,10 +627,18 @@ def handler(post, path, remoteip, referer, querystring):
         if formid == 0:
             raise asm3.utils.ASMError("method sign_document requires a valid formid")
         if post["sig"] == "":
-            return set_cached_response(cache_key, account, "text/html", 2, 2, sign_document_page(dbo, formid))
+            return set_cached_response(cache_key, account, "text/html", 2, 2, sign_document_page(dbo, formid, post["email"]))
         else:
             asm3.media.sign_document(dbo, "service", formid, post["sig"], post["signdate"])
             asm3.media.create_log(dbo, "service", formid, "ES02", _("Document signed", l))
+            if post.boolean("sendsigned"):
+                m = asm3.media.get_media_by_id(dbo, formid)
+                if m is None: raise asm3.utils.ASMError("cannot find %s" % formid)
+                content = asm3.utils.bytes2str(asm3.dbfs.get_string(dbo, m.MEDIANAME))
+                contentpdf = asm3.utils.html_to_pdf(dbo, content)
+                attachments = [( "%s.pdf" % m.ID, "application/pdf", contentpdf )]
+                fromaddr = asm3.configuration.email(dbo)
+                asm3.utils.send_email(dbo, fromaddr, post["email"], "", "", _("Signed Document", l), m.MEDIANOTES, "plain", attachments)
             return ("text/plain", 0, 0, "OK")
 
     else:

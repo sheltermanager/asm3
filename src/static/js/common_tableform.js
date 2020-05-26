@@ -189,6 +189,7 @@ const tableform = {
      *   truncatelink: 0, // chars to truncate the edit link to in the leftmost column (0 or falsey value to do nothing)
      *   showfilter: false, // whether to allow searching of columns
      *   edit: function(row) { callback for when a row is edited with the row data }
+     *   button_click: function() { callback when a button inside the table is clicked, use $(this) }
      *   change: function(rows) { callback when the selected rows changes with the selected rows }
      *   complete: function(row) { return true if the row should be drawn as complete },
      *   overdue: function(row) { return true if the row should be drawn as overdue },
@@ -280,8 +281,22 @@ const tableform = {
         if ($("#tableform").prop("data-style-td")) {
             $("#tableform td").addClass("ui-widget-content");
         }
+        this.table_bind_widgets(table);
         $("#tableform").trigger("update");
         this.table_apply_sort(table);
+    },
+
+    /**
+     * Loads and binds any widgets that are inside the table content
+     * (typically buttons).
+     */
+    table_bind_widgets: function(table) {
+        $("#tableform button").each(function() {
+            $(this).button({ 
+                icons: { primary: "ui-icon-" + $(this).attr("data-icon") }, 
+                text: $(this).attr("data-text") == "true" 
+            });
+        });
     },
 
     /**
@@ -332,20 +347,22 @@ const tableform = {
      */
     table_bind: function(table, buttons) {
         if (table.edit) {
-            $("#tableform").on("click", "a", function() {
-                var anchor = $(this);
-                var iseditlink = false;
+            $("#tableform").on("click", ".link-edit", function() {
+                let a = $(this);
                 $.each(table.rows, function(i, v) {
-                    if (v[table.idcolumn] == anchor.attr("data-id")) {
-                        iseditlink = true;
+                    if (v[table.idcolumn] == a.attr("data-id")) {
                         table.edit(v);
+                        return false;
                     }
                 });
-                // Edit links should cancel navigation
-                if (iseditlink) {
-                    return false;
-                }
+                return false;
             });
+        }
+
+        // Watch for buttons inside the table being clicked and send them to
+        // the delegate handler.
+        if (table.button_click) {
+            $("#tableform").on("click", "button", table.button_click);
         }
 
         // Watch for number of selected checkboxes changing and update 
@@ -363,6 +380,9 @@ const tableform = {
             tableform.table_update_buttons(table, buttons);
             return false;
         });
+
+        // Bind any widgets inside the table
+        this.table_bind_widgets(table);
 
         // Apply tablesorter widget
         var options = {};
@@ -525,22 +545,10 @@ const tableform = {
         var d =[];
         d.push("<div id=\"dialog-tableform\" style=\"display: none\">");
         if (dialog.helper_text) {
-            d.push("<div id=\"dialog-tableform-help\" class=\"ui-widget\">");
-            d.push("<div class=\"ui-state-highlight ui-corner-all\"><p>");
-            d.push("<span class=\"ui-icon ui-icon-info\"></span>");
-            d.push("<span id=\"dialog-tableform-help-text\">" + dialog.helper_text + "</span>");
-            d.push("</p></div></div>");
+            d.push(html.info('<span id="dialog-tableform-help-text">' + dialog.helper_text + '</span>', "dialog-tableform-help"));
         }
-        d.push("<div id=\"dialog-tableform-error\" style=\"display: none\" class=\"ui-widget\">");
-        d.push("<div class=\"ui-state-error ui-corner-all\"><p>");
-        d.push("<span class=\"ui-icon ui-icon-alert\"></span>");
-        d.push("<strong><span id=\"dialog-tableform-error-text\"></span></strong>");
-        d.push("</p></div></div>");
-        d.push("<div id=\"dialog-tableform-info\" style=\"display: none\" class=\"ui-widget\">");
-        d.push("<div class=\"ui-state-highlight ui-corner-all\"><p>");
-        d.push("<span class=\"ui-icon ui-icon-info\"></span>");
-        d.push("<span id=\"dialog-tableform-info-text\"></span>");
-        d.push("</p></div></div>");
+        d.push(html.textbar('<strong><span id="dialog-tableform-error-text"></span></strong>', { "id": "dialog-tableform-error", "display": "none", "state": "error", "icon": "alert" }));
+        d.push(html.textbar('<span id="dialog-tableform-info-text"></span></strong>', { "id": "dialog-tableform-info", "display": "none" }));
         d.push("<div id=\"dialog-tableform-fields\" style=\"margin-top: 5px\"></span>");
         if (dialog.html_form_action) {
             d.push("<form id=\"form-tableform\" method=\"post\" action=\"" + dialog.html_form_action + "\"");

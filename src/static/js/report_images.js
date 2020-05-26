@@ -26,13 +26,23 @@ $(function() {
                 edit: function(row) {
                     common.route("image?db=" + asm.useraccount + "&mode=dbfs&id=/reports/" + row.NAME);
                 },
+                button_click: function() {
+                    common.copy_to_clipboard($(this).attr("data"));
+                    header.show_info(_("Successfully copied to the clipboard."));
+                    return false;
+                },
                 columns: [
                     { field: "NAME", display: _("Image file"), initialsort: true },
                     { field: "NAME", display: _("URL"), 
                         formatter: function(row) {
-                            let relurl = "image?db=" + asm.useraccount + "&mode=dbfs&id=/reports/" + row.NAME;
-                            return relurl + ' <button type="button" class="clipcopy" data="' + relurl + '">' + 
-                                _("Copy to the clipboard") + '</button>';
+                            let relurl = "image?db=" + asm.useraccount + "&mode=dbfs&id=/reports/" + row.NAME,
+                                absurl = asm.serviceurl + "?";
+                            if (asm.useraccountalias) { absurl += "account=" + asm.useraccountalias + "&"; }
+                            absurl += "method=extra_image&title=" + row.NAME;
+                            return relurl + ' <button type="button" data-icon="link" data="' + relurl + '">' + 
+                                _("Copy relative URL to the clipboard (for use with documents and reports)") + '</button>' +
+                                ' <button type="button" data-icon="extlink" data="' + absurl + '">' + 
+                                _("Copy absolute service URL to the clipboard (for external use in web pages and emails)") + '</button>';
                         }
                     }
                 ]
@@ -140,13 +150,6 @@ $(function() {
             tableform.dialog_bind(this.dialog);
             tableform.buttons_bind(this.buttons);
             tableform.table_bind(this.table, this.buttons);
-
-            $(".clipcopy").button({ icons: { primary: "ui-icon-clipboard" }, text: false })
-            .click(function() {
-                common.copy_to_clipboard($(this).attr("data"));
-                header.show_info(_("Successfully copied to the clipboard."));
-                return false;
-            });
         },
 
         destroy: function() {

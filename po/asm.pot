@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ASM3\n"
 "Report-Msgid-Bugs-To: robin@sheltermanager.com\n"
-"POT-Creation-Date: 2020-05-21 15:21+0000\n"
+"POT-Creation-Date: 2020-05-26 15:30+0000\n"
 "Last-Translator: Robin Rawson-Tetley <robin@sheltermanager.com>\n"
 "Language-Team: en <robin@sheltermanager.com>\n"
 "Language: en\n"
@@ -395,6 +395,10 @@ msgid "Add Movement"
 msgstr ""
 
 #: roles.js
+msgid "Add Online Forms"
+msgstr ""
+
+#: roles.js
 msgid "Add Payments"
 msgstr ""
 
@@ -500,6 +504,10 @@ msgstr ""
 
 #: html.py configuration.py header.js
 msgid "Add an animal to the waiting list"
+msgstr ""
+
+#: options.js
+msgid "Add an extra message to the fosterer email"
 msgstr ""
 
 #: citations.js
@@ -2276,6 +2284,10 @@ msgstr ""
 msgid "Change Movement"
 msgstr ""
 
+#: roles.js
+msgid "Change Online Forms"
+msgstr ""
+
 #: users.js change_password.js header.js
 msgid "Change Password"
 msgstr ""
@@ -2732,10 +2744,20 @@ msgstr ""
 msgid "Coordinator"
 msgstr ""
 
+#: report_images.js
+msgid ""
+"Copy absolute service URL to the clipboard (for external use in web pages "
+"and emails)"
+msgstr ""
+
 #: animal.js
 msgid ""
 "Copy description to the notes field of the web preferred media for this "
 "animal"
+msgstr ""
+
+#: onlineforms.js
+msgid "Copy form URL to the clipboard"
 msgstr ""
 
 #: media.js
@@ -2746,8 +2768,8 @@ msgstr ""
 msgid "Copy of {0}"
 msgstr ""
 
-#: report_images.js onlineforms.js
-msgid "Copy to the clipboard"
+#: report_images.js
+msgid "Copy relative URL to the clipboard (for use with documents and reports)"
 msgstr ""
 
 #: dbupdate.py
@@ -3476,6 +3498,10 @@ msgid "Delete Movement"
 msgstr ""
 
 #: roles.js
+msgid "Delete Online Forms"
+msgstr ""
+
+#: roles.js
 msgid "Delete Payments"
 msgstr ""
 
@@ -4022,7 +4048,7 @@ msgstr ""
 msgid "Edit My Diary Notes"
 msgstr ""
 
-#: html.py roles.js
+#: html.py
 msgid "Edit Online Forms"
 msgstr ""
 
@@ -4265,6 +4291,10 @@ msgstr ""
 msgid ""
 "Email incoming form submissions to this comma separated list of email "
 "addresses"
+msgstr ""
+
+#: service.py
+msgid "Email me a signed copy of the document at {0}"
 msgstr ""
 
 #: document_repository.js media.js
@@ -5824,6 +5854,10 @@ msgstr ""
 
 #: dbupdate.py
 msgid "Ibizan Hound"
+msgstr ""
+
+#: options.js
+msgid "If blank, the address from the Email tab will be used"
 msgstr ""
 
 #: users.js
@@ -9489,6 +9523,10 @@ msgstr ""
 msgid "Renew license"
 msgstr ""
 
+#: options.js
+msgid "Replies to the fosterer email should go to"
+msgstr ""
+
 #: reports.py reports.js
 msgid "Report"
 msgstr ""
@@ -10240,6 +10278,10 @@ msgid "Share"
 msgstr ""
 
 #: animal.js
+msgid "Shared email"
+msgstr ""
+
+#: animal.js
 msgid "Shared photo"
 msgstr ""
 
@@ -10566,6 +10608,10 @@ msgstr ""
 
 #: media.js
 msgid "Signed"
+msgstr ""
+
+#: service.py
+msgid "Signed Document"
 msgstr ""
 
 #: service.py mobile.py
@@ -12936,6 +12982,10 @@ msgstr ""
 msgid "View Document Repository"
 msgstr ""
 
+#: onlineforms.js
+msgid "View Form"
+msgstr ""
+
 #: roles.js
 msgid "View Found Animal"
 msgstr ""
@@ -12982,6 +13032,10 @@ msgstr ""
 
 #: roles.js
 msgid "View Movement"
+msgstr ""
+
+#: roles.js
+msgid "View Online Forms"
 msgstr ""
 
 #: roles.js
@@ -13255,6 +13309,10 @@ msgstr ""
 
 #: dbupdate.py
 msgid "Weekly"
+msgstr ""
+
+#: options.js
+msgid "Weekly Fosterer Email"
 msgstr ""
 
 #: html.py dbupdate.py animal_new.js animal.js

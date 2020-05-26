@@ -407,8 +407,9 @@ $(function() {
                 return deferred.promise();
             }
 
-            // Is this an image? If so, try to scale it down before sending
-            if (file.type.match('image.*')) {
+            // Is this an image and scaling option is on? 
+            // If so, try to scale it down before sending
+            if (file.type.match('image.*') && !config.bool("DontUseHTML5Scaling")) {
 
                 // Figure out the size we're scaling to
                 var media_scaling = config.str("IncomingMediaScaling");

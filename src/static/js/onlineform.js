@@ -88,7 +88,7 @@ $(function() {
             };
 
             var buttons = [
-                 { id: "new", text: _("New form field"), icon: "new", enabled: "always", 
+                 { id: "new", text: _("New form field"), icon: "new", enabled: "always", perm: "eof", 
                      click: function() { 
                          tableform.dialog_show_add(dialog, { onload: onlineform.check_controls })
                              .then(function() {
@@ -107,7 +107,7 @@ $(function() {
                              });
                      } 
                  },
-                 { id: "delete", text: _("Delete"), icon: "delete", enabled: "multi", 
+                 { id: "delete", text: _("Delete"), icon: "delete", enabled: "multi", perm: "eof", 
                      click: function() { 
                          tableform.delete_dialog()
                              .then(function() {

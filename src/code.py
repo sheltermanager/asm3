@@ -697,7 +697,8 @@ class media(ASMEndpoint):
             m = asm3.media.get_media_by_id(dbo, mid)
             if m is None: raise web.notfound()
             if m.MEDIAMIMETYPE != "text/html": continue
-            body.append("<p><a href=\"%s?account=%s&method=sign_document&formid=%d\">%s</a></p>" % (SERVICE_URL, dbo.database, mid, m.MEDIANOTES))
+            url = "%s?account=%s&method=sign_document&email=%s&formid=%d" % (SERVICE_URL, dbo.database, asm3.utils.strip_email_address(emailadd).replace("@", "%40"), mid)
+            body.append("<p><a href=\"%s\">%s</a></p>" % (url, m.MEDIANOTES))
             if post.boolean("addtolog"):
                 asm3.log.add_log_email(dbo, o.user, asm3.media.get_log_from_media_type(m.LINKTYPEID), m.LINKID, post.integer("logtype"), 
                     emailadd, _("Document signing request", l), "".join(body))
@@ -4250,8 +4251,8 @@ class onlineform_incoming_print(ASMEndpoint):
 
 class onlineform(JSONEndpoint):
     url = "onlineform"
-    get_permissions = asm3.users.EDIT_ONLINE_FORMS
-    post_permissions = asm3.users.EDIT_ONLINE_FORMS
+    get_permissions = asm3.users.VIEW_ONLINE_FORMS
+    post_permissions = asm3.users.CHANGE_ONLINE_FORMS
 
     def controller(self, o):
         l = o.locale
@@ -4287,8 +4288,7 @@ class onlineform(JSONEndpoint):
 
 class onlineforms(JSONEndpoint):
     url = "onlineforms"
-    get_permissions = asm3.users.EDIT_ONLINE_FORMS
-    post_permissions = asm3.users.EDIT_ONLINE_FORMS
+    get_permissions = asm3.users.VIEW_ONLINE_FORMS
 
     def controller(self, o):
         dbo = o.dbo
@@ -4302,23 +4302,29 @@ class onlineforms(JSONEndpoint):
         }
 
     def post_create(self, o):
+        self.check(asm3.users.ADD_ONLINE_FORMS)
         return asm3.onlineform.insert_onlineform_from_form(o.dbo, o.user, o.post)
 
     def post_update(self, o):
+        self.check(asm3.users.CHANGE_ONLINE_FORMS)
         asm3.onlineform.update_onlineform_from_form(o.dbo, o.user, o.post)
 
     def post_delete(self, o):
+        self.check(asm3.users.DELETE_ONLINE_FORMS)
         for did in o.post.integer_list("ids"):
             asm3.onlineform.delete_onlineform(o.dbo, o.user, did)
 
     def post_clone(self, o):
+        self.check(asm3.users.ADD_ONLINE_FORMS)
         for did in o.post.integer_list("ids"):
             asm3.onlineform.clone_onlineform(o.dbo, o.user, did)
 
     def post_headfoot(self, o):
+        self.check(asm3.users.CHANGE_ONLINE_FORMS)
         asm3.onlineform.set_onlineform_headerfooter(o.dbo, o.post["header"], o.post["footer"])
 
     def post_import(self, o):
+        self.check(asm3.users.ADD_ONLINE_FORMS)
         fd = asm3.utils.bytes2str(o.post.filedata())
         if fd.startswith("{"):
             asm3.onlineform.import_onlineform_json(o.dbo, fd)
@@ -4328,7 +4334,7 @@ class onlineforms(JSONEndpoint):
 
 class onlineform_json(ASMEndpoint):
     url = "onlineform_json"
-    get_permissions = asm3.users.EDIT_ONLINE_FORMS
+    get_permissions = asm3.users.VIEW_ONLINE_FORMS
 
     def content(self, o):
         self.content_type("application/json")

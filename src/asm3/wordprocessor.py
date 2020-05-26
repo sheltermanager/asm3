@@ -1111,7 +1111,7 @@ def clinic_tags(dbo, c):
     tags.update(table_tags(dbo, d, asm3.clinic.get_invoice_items(dbo, c.ID)))
     return tags
 
-def person_tags(dbo, p, includeImg=False):
+def person_tags(dbo, p, includeImg=False, includeDonations=False):
     """
     Generates a list of tags from a person result (the deep type from
     calling asm3.person.get_person)
@@ -1180,6 +1180,37 @@ def person_tags(dbo, p, includeImg=False):
         tags["DOCUMENTIMGLINK300"] = "<img height=\"300\" src=\"" + asm3.html.doc_img_src(dbo, p) + "\" >"
         tags["DOCUMENTIMGLINK400"] = "<img height=\"400\" src=\"" + asm3.html.doc_img_src(dbo, p) + "\" >"
         tags["DOCUMENTIMGLINK500"] = "<img height=\"500\" src=\"" + asm3.html.doc_img_src(dbo, p) + "\" >"
+
+    # Donations
+    if includeDonations:
+        d = {
+            "RECEIPTNUM":               "RECEIPTNUMBER",
+            "DONATIONTYPE":             "DONATIONNAME",
+            "DONATIONPAYMENTTYPE":      "PAYMENTNAME",
+            "DONATIONDATE":             "d:DATE",
+            "DONATIONDATEDUE":          "d:DATEDUE",
+            "DONATIONAMOUNT":           "c:DONATION",
+            "DONATIONCOMMENTS":         "COMMENTS",
+            "DONATIONGIFTAID":          "y:ISGIFTAID",
+            "PAYMENTTYPE":              "DONATIONNAME",
+            "PAYMENTMETHOD":            "PAYMENTNAME",
+            "PAYMENTDATE":              "d:DATE",
+            "PAYMENTDATEDUE":           "d:DATEDUE",
+            "PAYMENTAMOUNT":            "c:NET",
+            "PAYMENTGROSS":             "c:GROSS",
+            "PAYMENTNET":               "c:NET",
+            "PAYMENTFEE":               "c:FEE",
+            "PAYMENTCOMMENTS":          "COMMENTS",
+            "PAYMENTGIFTAID":           "y:ISGIFTAID",
+            "PAYMENTVAT":               "y:ISVAT",
+            "PAYMENTTAX":               "y:ISVAT",
+            "PAYMENTVATRATE":           "f:VATRATE",
+            "PAYMENTTAXRATE":           "f:VATRATE",
+            "PAYMENTVATAMOUNT":         "c:VATAMOUNT",
+            "PAYMENTTAXAMOUNT":         "c:VATAMOUNT"
+        }
+        dons = asm3.financial.get_person_donations(dbo, p["ID"])
+        tags.update(table_tags(dbo, d, dons, "DONATIONNAME", "DATEDUE", "DATE"))
 
     # Additional fields
     tags.update(additional_field_tags(dbo, asm3.additional.get_additional_fields(dbo, p["ID"], "person")))
@@ -1644,7 +1675,7 @@ def generate_person_doc(dbo, templateid, personid, username):
     p = asm3.person.get_person(dbo, personid)
     im = asm3.media.get_image_file_data(dbo, "person", personid)[1]
     if p is None: raise asm3.utils.ASMValidationError("%d is not a valid person ID" % personid)
-    tags = person_tags(dbo, p, includeImg=True)
+    tags = person_tags(dbo, p, includeImg=True, includeDonations=True)
     tags = append_tags(tags, org_tags(dbo, username))
     m = dbo.first_row(asm3.movement.get_person_movements(dbo, personid))
     if m is not None:

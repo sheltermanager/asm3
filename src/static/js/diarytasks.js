@@ -41,8 +41,8 @@ $(function() {
                     { field: "NAME", display: _("Name"), initialsort: true, formatter: function(row) {
                         return "<span style=\"white-space: nowrap\">" + 
                             "<input type=\"checkbox\" data-id=\"" + row.ID + "\" title=\"" + html.title(_("Select")) + "\" />" +
-                            "<a href=\"diarytask?taskid=" + row.ID + "\">" + row.NAME + "</a>" +
-                            "<a href=\"#\" class=\"link-edit\" data-id=\"" + row.ID + "\">" + html.icon("edit", _("Edit diary task")) + "</a>" +
+                            "<a href=\"diarytask?taskid=" + row.ID + "\">" + row.NAME + "</a> " +
+                            "<button class=\"link-edit\" data-icon=\"pencil\" data-id=\"" + row.ID + "\">" + _("Edit diary task") + "</button>" +
                             "</span>";
                     }},
                     { field: "RECORDTYPE", display: _("Type"), formatter: function(row) { return row.RECORDTYPE == 0 ? _("Animal") : _("Person"); }},

@@ -713,6 +713,7 @@ $(function() {
                 else if (p == "foundanimals") { t = html.icon("microchip") + " Microchip registered with FoundAnimals"; }
 
                 else if (p == "shareweb") { t = html.icon("web") + " " + _("Shared weblink"); }
+                else if (p == "shareemail") { t = html.icon("email") + " " + _("Shared email"); }
                 else if (p == "sharepic") { t = html.icon("media") + " " + _("Shared photo"); }
                 else if (p == "facebook") { t = html.icon("facebook") + " Shared on Facebook"; }
                 else if (p == "twitter") { t = html.icon("twitter") + " Shared on Twitter"; }
@@ -1550,10 +1551,22 @@ $(function() {
             });
 
             $("#button-email").button().click(function() {
+                var defaultemail = "", defaultname = "";
+                // Use the latest reservation/person if the animal is on shelter/foster and a reserve is available
+                if (controller.animal && controller.animal.ARCHIVED == 0 && controller.animal.RESERVEDOWNEREMAILADDRESS) {
+                    defaultemail = controller.animal.RESERVEDOWNEREMAILADDRESS;
+                    defaultname = controller.animal.RESERVEDOWNERNAME;
+                }
+                else if (controller.animal && controller.animal.CURRENTOWNEREMAILADDRESS) {
+                    defaultemail = controller.animal.CURRENTOWNEREMAILADDRESS;
+                    defaultname = controller.animal.CURRENTOWNERNAME;
+                }
                 $("#emailform").emailform("show", {
                     title: _("Send email"),
                     post: "animal",
                     formdata: "mode=email&animalid=" + controller.animal.ID,
+                    name: defaultname,
+                    email: defaultemail,
                     animalid: controller.animal.ID, 
                     subject: controller.animal.ANIMALNAME + " - " + controller.animal.CODE,
                     logtypes: controller.logtypes,

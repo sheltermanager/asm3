@@ -16,7 +16,7 @@ $(function() {
                 columns: 1,
                 width: 850,
                 fields: [
-                    { json_field: "NAME", post_field: "name", label: _("Name"), type: "text", validation: "notblank" },
+                    { json_field: "NAME", post_field: "name", label: _("Name"), type: "text", classes: "asm-doubletextbox", validation: "notblank" },
                     { json_field: "REDIRECTURLAFTERPOST", post_field: "redirect", label: _("Redirect to URL after POST"), 
                         type: "text", classes: "asm-doubletextbox", 
                         tooltip: _("After the user presses submit and ASM has accepted the form, redirect the user to this URL"),
@@ -57,21 +57,29 @@ $(function() {
                             tableform.dialog_enable_buttons();
                         });
                 },
+                button_click: function() {
+                    if ($(this).attr("data-url")) {
+                        common.copy_to_clipboard($(this).attr("data-url"));
+                        header.show_info(_("Successfully copied to the clipboard."));
+                        return false;
+                    }
+                },
                 columns: [
                     { field: "NAME", display: _("Name"), initialsort: true, formatter: function(row) {
                         return "<span style=\"white-space: nowrap\">" + 
                             "<input type=\"checkbox\" data-id=\"" + row.ID + "\" title=\"" + html.title(_("Select")) + "\" />" +
-                            "<a href=\"onlineform?formid=" + row.ID + "\">" + row.NAME + "</a>" +
-                            "<a href=\"#\" class=\"link-edit\" data-id=\"" + row.ID + "\">" + html.icon("edit", _("Edit online form")) + "</a>" +
+                            "<a href=\"onlineform?formid=" + row.ID + "\">" + row.NAME + "</a> " +
+                            "<button class=\"link-edit\" data-icon=\"pencil\" data-id=\"" + row.ID + "\">" + _("Edit online form") + "</button>" +
                             "</span>";
                     }},
                     { field: "", display: _("Form URL"), formatter: function(row) {
-                            let u = "?";
+                            let u = asm.serviceurl + "?";
                             if (asm.useraccountalias) { u += "account=" + asm.useraccountalias + "&"; }
                             u += "method=online_form_html&formid=" + row.ID;
-                            return '<a target="_blank" href="' + asm.serviceurl + u + '">' + u + '</a>' +
-                                ' <button class="clipcopy" data="' + asm.serviceurl + u + '">' + 
-                                _("Copy to the clipboard") + '</button>';
+                            return '<span style="white-space: nowrap">' + 
+                                '<a target="_blank" href="' + u + '">' + _("View Form") + '</a>' +
+                                ' <button data-icon="clipboard" data-text="false" data-url="' + u + '">' + 
+                                _("Copy form URL to the clipboard") + '</button></span>';
                         }},
                     { field: "REDIRECTURLAFTERPOST", display: _("Redirect to URL after POST") },
                     { field: "EMAILADDRESS", display: _("Email submissions to"), formatter: function(row) {
@@ -84,7 +92,7 @@ $(function() {
             };
 
             var buttons = [
-                 { id: "new", text: _("New online form"), icon: "new", enabled: "always", 
+                 { id: "new", text: _("New online form"), icon: "new", enabled: "always", perm: "aof", 
                      click: function() { 
                          tableform.dialog_show_add(dialog)
                              .then(function() {
@@ -92,19 +100,19 @@ $(function() {
                                  return tableform.fields_post(dialog.fields, "mode=create", "onlineforms");
                              })
                              .then(function(response) {
-                                 var row = {};
-                                 row.ID = response;
-                                 tableform.fields_update_row(dialog.fields, row);
-                                 controller.rows.push(row);
-                                 tableform.table_update(table);
-                                 tableform.dialog_close();
+                                var row = {};
+                                row.ID = response;
+                                tableform.fields_update_row(dialog.fields, row);
+                                controller.rows.push(row);
+                                tableform.table_update(table);
+                                tableform.dialog_close();
                             })
                             .fail(function() {
                                  tableform.dialog_enable_buttons();
                             });
                      } 
                  },
-                 { id: "clone", text: _("Clone"), icon: "copy", enabled: "multi", 
+                 { id: "clone", text: _("Clone"), icon: "copy", enabled: "multi", perm: "aof",
                      click: function() { 
                          tableform.buttons_default_state(buttons);
                          var ids = tableform.table_ids(table);
@@ -114,7 +122,7 @@ $(function() {
                              });
                      } 
                  },
-                 { id: "delete", text: _("Delete"), icon: "delete", enabled: "multi", 
+                 { id: "delete", text: _("Delete"), icon: "delete", enabled: "multi", perm: "dof", 
                      click: function() { 
                          tableform.delete_dialog()
                              .then(function() {
@@ -128,18 +136,20 @@ $(function() {
                              });
                      } 
                  },
-                 { id: "headfoot", text: _("Edit Header/Footer"), icon: "forms", enabled: "always", tooltip: _("Edit online form HTML header/footer"),
-                     click: function() {
+                 { id: "headfoot", text: _("Edit Header/Footer"), icon: "forms", enabled: "always", 
+                    tooltip: _("Edit online form HTML header/footer"), perm: "eof", 
+                    click: function() {
                         $("#dialog-headfoot").dialog("open");
-                     }
+                    }
                  },
-                 { id: "import", text: _("Import"), icon: "database", enabled: "always", tooltip: _("Import from file"),
-                     click: function() {
-                         tableform.show_okcancel_dialog("#dialog-import", _("Import"), { notblank: ["filechooser"] })
+                 { id: "import", text: _("Import"), icon: "database", enabled: "always", 
+                    tooltip: _("Import from file"), perm: "aof", 
+                    click: function() {
+                        tableform.show_okcancel_dialog("#dialog-import", _("Import"), { notblank: ["filechooser"] })
                              .then(function() {
                                  $("#importform").submit();
-                             });
-                     }
+                            });
+                    }
                  }
             ];
             this.dialog = dialog;
@@ -243,14 +253,6 @@ $(function() {
             tableform.table_bind(this.table, this.buttons);
             this.bind_headfoot();
             this.load_person_flags();
-
-            $(".clipcopy").button({ icons: { primary: "ui-icon-clipboard" }, text: false })
-            .click(function() {
-                common.copy_to_clipboard($(this).attr("data"));
-                header.show_info(_("Successfully copied to the clipboard."));
-                return false;
-            });
-
         },
 
         destroy: function() {
