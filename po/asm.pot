@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ASM3\n"
 "Report-Msgid-Bugs-To: robin@sheltermanager.com\n"
-"POT-Creation-Date: 2020-05-26 09:41+0000\n"
+"POT-Creation-Date: 2020-05-26 15:30+0000\n"
 "Last-Translator: Robin Rawson-Tetley <robin@sheltermanager.com>\n"
 "Language-Team: en <robin@sheltermanager.com>\n"
 "Language: en\n"
@@ -392,6 +392,10 @@ msgstr ""
 
 #: roles.js animal_bulk.js
 msgid "Add Movement"
+msgstr ""
+
+#: roles.js
+msgid "Add Online Forms"
 msgstr ""
 
 #: roles.js
@@ -2280,6 +2284,10 @@ msgstr ""
 msgid "Change Movement"
 msgstr ""
 
+#: roles.js
+msgid "Change Online Forms"
+msgstr ""
+
 #: users.js change_password.js header.js
 msgid "Change Password"
 msgstr ""
@@ -3490,6 +3498,10 @@ msgid "Delete Movement"
 msgstr ""
 
 #: roles.js
+msgid "Delete Online Forms"
+msgstr ""
+
+#: roles.js
 msgid "Delete Payments"
 msgstr ""
 
@@ -4036,7 +4048,7 @@ msgstr ""
 msgid "Edit My Diary Notes"
 msgstr ""
 
-#: html.py roles.js
+#: html.py
 msgid "Edit Online Forms"
 msgstr ""
 
