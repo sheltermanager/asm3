@@ -420,6 +420,8 @@ def get_vaccinations_outstanding(dbo, offset = "m31", locationfilter = "", sitei
     """
     Returns a recordset of animals awaiting vaccinations:
     offset is m to go backwards, or p to go forwards with a number of days.
+    xp and xm go backwards and forwards based on expiry date instead.
+    g will go backwards on given date instead of required.
     locationfilter, siteid: restrictions on visible locations/site
     ID, ANIMALID, SHELTERCODE, ANIMALNAME, LOCATIONNAME, WEBSITEMEDIANAME, DATEREQUIRED, DATEOFVACCINATION, COMMENTS, VACCINATIONTYPE, VACCINATIONID
     """
@@ -429,6 +431,8 @@ def get_vaccinations_outstanding(dbo, offset = "m31", locationfilter = "", sitei
         ec = " AND av.DateRequired >= %s AND av.DateRequired <= %s AND av.DateOfVaccination Is Null" % (dbo.sql_date(dbo.today(offset=offsetdays*-1)), dbo.sql_date(dbo.today()))
     if offset.startswith("p"):
         ec = " AND av.DateRequired >= %s AND av.DateRequired <= %s AND av.DateOfVaccination Is Null" % (dbo.sql_date(dbo.today()), dbo.sql_date(dbo.today(offset=offsetdays)))
+    if offset.startswith("g"):
+        ec = " AND av.DateOfVaccination >= %s AND av.DateOfVaccination <= %s" % (dbo.sql_date(dbo.today(offset=offsetdays*-1)), dbo.sql_date(dbo.today()))
     if offset.startswith("xm"):
         ec = " AND av.DateExpires >= %s AND av.DateExpires <= %s AND av.DateOfVaccination Is Not Null " \
             "AND NOT EXISTS(SELECT av2.ID FROM animalvaccination av2 WHERE av2.ID <> av.ID " \
@@ -500,20 +504,23 @@ def get_tests_outstanding(dbo, offset = "m31", locationfilter = "", siteid = 0, 
     """
     Returns a recordset of animals awaiting tests:
     offset is m to go backwards, or p to go forwards with a number of days.
+    g will go backwards on administered date instead of required.
     ID, ANIMALID, SHELTERCODE, ANIMALNAME, LOCATIONNAME, WEBSITEMEDIANAME, DATEREQUIRED, DATEOFTEST, COMMENTS, TESTNAME, RESULTNAME, TESTTYPEID
     """
     ec = ""
     offsetdays = asm3.utils.atoi(offset)
     if offset.startswith("m"):
-        ec = " AND at.DateRequired >= %s AND at.DateRequired <= %s" % (dbo.sql_date(dbo.today(offset=offsetdays*-1)), dbo.sql_date(dbo.today()))
+        ec = " AND at.DateRequired >= %s AND at.DateRequired <= %s AND at.DateOfTest Is Null" % (dbo.sql_date(dbo.today(offset=offsetdays*-1)), dbo.sql_date(dbo.today()))
     if offset.startswith("p"):
-        ec = " AND at.DateRequired >= %s AND at.DateRequired <= %s" % (dbo.sql_date(dbo.today()), dbo.sql_date(dbo.today(offset=offsetdays)))
+        ec = " AND at.DateRequired >= %s AND at.DateRequired <= %s AND at.DateOfTest Is Null" % (dbo.sql_date(dbo.today()), dbo.sql_date(dbo.today(offset=offsetdays)))
+    if offset.startswith("g"):
+        ec = " AND at.DateOfTest >= %s AND at.DateOfTest <= %s" % (dbo.sql_date(dbo.today(offset=offsetdays*-1)), dbo.sql_date(dbo.today()))
     locationfilter = asm3.animal.get_location_filter_clause(locationfilter=locationfilter, tablequalifier="a", siteid=siteid, visibleanimalids=visibleanimalids, andprefix=True)
     shelterfilter = ""
     if not asm3.configuration.include_off_shelter_medical(dbo):
         shelterfilter = " AND (a.Archived = 0 OR a.ActiveMovementType = 2)"
     return dbo.query(get_test_query(dbo) + \
-        "WHERE at.DateRequired Is Not Null AND at.DateOfTest Is Null " \
+        "WHERE at.DateRequired Is Not Null " \
         "AND a.DeceasedDate Is Null %s %s %s " \
         "ORDER BY at.DateRequired, a.AnimalName" % (shelterfilter, ec, locationfilter))
 
@@ -537,6 +544,7 @@ def get_treatments_outstanding(dbo, offset = "m31", locationfilter = "", siteid 
     """
     Returns a recordset of shelter animals awaiting medical treatments:
     offset is m to go backwards, or p to go forwards with a number of days.
+    g will go backwards on given date instead of required.
     ANIMALID, SHELTERCODE, ANIMALNAME, LOCATIONNAME, WEBSITEMEDIANAME,
     TREATMENTNAME, COST, COMMENTS, NAMEDFREQUENCY, NAMEDNUMBEROFTREATMENTS,
     NAMEDSTATUS, DOSAGE, STARTDATE, TREATMENTSGIVEN, TREATMENTSREMAINING,
@@ -547,16 +555,17 @@ def get_treatments_outstanding(dbo, offset = "m31", locationfilter = "", siteid 
     ec = ""
     offsetdays = asm3.utils.atoi(offset)
     if offset.startswith("m"):
-        ec = " AND amt.DateRequired >= %s AND amt.DateRequired <= %s" % (dbo.sql_date(dbo.today(offset=offsetdays*-1)), dbo.sql_date(dbo.today()))
+        ec = " AND amt.DateRequired >= %s AND amt.DateRequired <= %s AND amt.DateGiven Is Null AND am.Status=0" % (dbo.sql_date(dbo.today(offset=offsetdays*-1)), dbo.sql_date(dbo.today()))
     if offset.startswith("p"):
-        ec = " AND amt.DateRequired >= %s AND amt.DateRequired <= %s" % (dbo.sql_date(dbo.today()), dbo.sql_date(dbo.today(offset=offsetdays)))
+        ec = " AND amt.DateRequired >= %s AND amt.DateRequired <= %s AND amt.DateGiven Is Null AND am.Status=0" % (dbo.sql_date(dbo.today()), dbo.sql_date(dbo.today(offset=offsetdays)))
+    if offset.startswith("g"):
+        ec = " AND amt.DateGiven >= %s AND amt.DateGiven <= %s" % (dbo.sql_date(dbo.today(offset=offsetdays*-1)), dbo.sql_date(dbo.today()))
     locationfilter = asm3.animal.get_location_filter_clause(locationfilter=locationfilter, tablequalifier="a", siteid=siteid, visibleanimalids=visibleanimalids, andprefix=True)
     shelterfilter = ""
     if not asm3.configuration.include_off_shelter_medical(dbo):
         shelterfilter = " AND (a.Archived = 0 OR a.ActiveMovementType = 2)"
     return embellish_regimen(dbo.locale, dbo.query(get_medicaltreatment_query(dbo) + \
-        "WHERE amt.DateRequired Is Not Null AND amt.DateGiven Is Null " \
-        "AND am.Status = 0 " \
+        "WHERE amt.DateRequired Is Not Null " \
         "AND a.DeceasedDate Is Null %s %s %s " \
         "ORDER BY amt.DateRequired, a.AnimalName" % (shelterfilter, ec, locationfilter)))
 

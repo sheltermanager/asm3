@@ -16,6 +16,6 @@ class TestService(unittest.TestCase):
         assert s.find("cache") == -1
 
     def test_sign_document_page(self):
-        assert len(asm3.service.sign_document_page(base.get_dbo(), 0)) > 0
+        assert len(asm3.service.sign_document_page(base.get_dbo(), 0, "test@example.com")) > 0
 
 

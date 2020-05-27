@@ -202,8 +202,11 @@ $(function() {
                      }
                  },
                  { id: "offset", type: "dropdownfilter", 
-                     options: [ "m365|" + _("Due today"), "p7|" + _("Due in next week"), "p31|" + _("Due in next month"), "p365|" + _("Due in next year"), 
-                        "xm365|" + _("Expired"), "xp31|" + _("Expire in next month") ],
+                     options: [ "m365|" + _("Due today"), "p7|" + _("Due in next week"), 
+                        "p31|" + _("Due in next month"), "p365|" + _("Due in next year"), 
+                        "xm365|" + _("Expired"), "xp31|" + _("Expire in next month"),
+                        "g1|" + _("Given today"), "g7|" + _("Given in last week"), 
+                        "g31|" + _("Given in last month") ],
                      click: function(selval) {
                         common.route(controller.name + "?offset=" + selval);
                      },

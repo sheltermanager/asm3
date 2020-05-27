@@ -38,16 +38,24 @@ class TestMedical(unittest.TestCase):
         asm3.medical.get_tests(base.get_dbo(), 1)
 
     def test_get_vaccinations_outstanding(self):
-        asm3.medical.get_vaccinations_outstanding(base.get_dbo())
+        asm3.medical.get_vaccinations_outstanding(base.get_dbo(), offset="m31")
+        asm3.medical.get_vaccinations_outstanding(base.get_dbo(), offset="p31")
+        asm3.medical.get_vaccinations_outstanding(base.get_dbo(), offset="xm31")
+        asm3.medical.get_vaccinations_outstanding(base.get_dbo(), offset="xp31")
+        asm3.medical.get_vaccinations_outstanding(base.get_dbo(), offset="g7")
 
     def test_get_vacc_manufacturers(self):
         asm3.medical.get_vacc_manufacturers(base.get_dbo())
 
     def test_get_tests_outstanding(self):
-        asm3.medical.get_tests_outstanding(base.get_dbo())
+        asm3.medical.get_tests_outstanding(base.get_dbo(), offset="m31")
+        asm3.medical.get_tests_outstanding(base.get_dbo(), offset="p31")
+        asm3.medical.get_tests_outstanding(base.get_dbo(), offset="g7")
 
     def test_get_treatments_outstanding(self):
-        asm3.medical.get_treatments_outstanding(base.get_dbo())
+        asm3.medical.get_treatments_outstanding(base.get_dbo(), offset="m31")
+        asm3.medical.get_treatments_outstanding(base.get_dbo(), offset="p31")
+        asm3.medical.get_treatments_outstanding(base.get_dbo(), offset="g7")
 
     def test_get_combined_due(self):
         asm3.medical.get_combined_due(base.get_dbo(), 0, None, None)
