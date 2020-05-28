@@ -8,6 +8,9 @@
     "test": "test"
   },
   "dependencies": {
+    "@babel/cli": "^7.10.1",
+    "@babel/core": "^7.10.1",
+    "@babel/preset-env": "^7.10.1",
     "jshint": "^2.11.1",
     "jsmin": "^1.0.1"
   },

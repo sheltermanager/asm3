@@ -142,7 +142,7 @@ def table(results):
     s += "</tbody>\n"
     return s
 
-def bare_header(title, theme = "asm", locale = LOCALE, config_db = "asm", config_ts = "0"):
+def bare_header(title, theme = "asm", locale = LOCALE, config_db = "asm", config_ts = "0", compatjs = False):
     """
     A bare header with just the script files needed for the program.
     title: The page title
@@ -152,9 +152,8 @@ def bare_header(title, theme = "asm", locale = LOCALE, config_db = "asm", config
     config_db: The name of the system database (used for requesting config.js)
     config_ts: A unique timestamp for when we last wanted the config (used for requesting config.js)
                This value changes when we update the config so the cache can be invalidated.
+    compatjs:  Serve the compatibility javascript for older browsers (requires ROLLUP_JS)
     """
-    # If these values aren't supplied, frontside cache services like cloudflare will cache the
-    # config.js and cause weird issues
     if config_db == "asm" and config_ts == "0":
         config_ts = python2unix(now())
     def script_i18n(l):
@@ -166,7 +165,9 @@ def bare_header(title, theme = "asm", locale = LOCALE, config_db = "asm", config
     # Use the default if we have no locale
     if locale is None: locale = LOCALE
     # Load the asm scripts
-    if ROLLUP_JS:
+    if compatjs and ROLLUP_JS:
+        asm_scripts = asm_script_tag("compat/rollup_compat.min.js")
+    elif ROLLUP_JS:
         asm_scripts = asm_script_tag("min/rollup.min.js")
     else:
         asm_scripts = asm_script_tags(asm3.utils.PATH) 
@@ -375,13 +376,14 @@ def escape_angle(s):
     s = str(s)
     return s.replace(">", "&gt;").replace("<", "&lt;")
 
-def header(title, session):
+def header(title, session, compatjs):
     """
     The header for html pages.
     title: The page title
     session: The user session
+    compatjs: True if this browser requires compatibility js for older browsers
     """
-    s = bare_header(title, session.theme, session.locale, session.dbo.database, session.config_ts)
+    s = bare_header(title, session.theme, session.locale, session.dbo.database, session.config_ts, compatjs)
     return s
 
 def footer():
