@@ -1,6 +1,7 @@
 44
 ================
 
+28/05/20 Fall back to old thumbnails if object-fit unavailable #839
 28/05/20 Compatibility layer for older Safari and IE11
 27/05/20 Filters to show previously given on all medical books
 26/05/20 Separate online form permissions for adding and deleting forms
