@@ -746,6 +746,7 @@ def json_personfindcolumns(dbo):
     l = dbo.locale
     cols = [ 
         ( "CreatedBy", _("Created By", l) ),
+        ( "CreatedDate", _("Created Date", l) ),
         ( "OwnerTitle", _("Title", l) ),
         ( "OwnerInitials", _("Initials", l) ),
         ( "OwnerForenames", _("First Names", l) ),

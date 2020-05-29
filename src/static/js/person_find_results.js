@@ -121,6 +121,7 @@ $(function() {
         column_label: function(name, add) {
             var labels = {
                 "CreatedBy": _("Created By"),
+                "CreatedDate": _("Created Date"),
                 "OwnerTitle":  _("Title"),
                 "OwnerInitials":  _("Initials"),
                 "OwnerForenames":  _("Forenames"),
@@ -175,7 +176,7 @@ $(function() {
          * add: The additional row results
          */
         format_column: function(row, name, value, add) {
-            var DATE_FIELDS = [ "MembershipExpiryDate", "DateLastHomeChecked" ],
+            var DATE_FIELDS = [ "CreatedDate", "MembershipExpiryDate", "DateLastHomeChecked" ],
             STRING_FIELDS = [ "CreatedBy", "OwnerTitle", "OwnerInitials", "OwnerForenames", "OwnerSurname",
                 "OwnerName", "OwnerAddress", "OwnerTown", "OwnerCounty", "OwnerPostcode",
                 "HomeTelephone", "WorkTelephone", "MobileTelephone", "EmailAddress",
