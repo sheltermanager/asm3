@@ -193,7 +193,7 @@ $(document).ready(function() {
     // Title case a string, james smith -> James Smith
     var title_case = function(s) {
         return s.replace(
-            /\w*/g, function(txt) {
+            /\w\S*/g, function(txt) {
                 return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
             }
         );
