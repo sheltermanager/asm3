@@ -778,11 +778,11 @@ select:disabled, input:disabled, textarea:disabled {
     box-shadow: 3px 3px 5px #888;
 }
 
-.asm-thumbnail-male {
+.objectfit .asm-thumbnail-male, .asm-thumbnail-male {
     background-color: #99c2ff;
 }
 
-.asm-thumbnail-female {
+.objectfit .asm-thumbnail-female, .asm-thumbnail-female {
     background-color: #ffb3ff;
 }
 
