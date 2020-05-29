@@ -118,6 +118,26 @@ $(document).ready(function() {
         return rv;
     };
 
+    var validate_dates = function() {
+        var rv = true;
+        $(".asm-onlineform-date").each(function() {
+            // If this date has a value, make sure it conforms to DATE_FORMAT
+            var v = $(this).val();
+            if (v) {
+                try {
+                    $.datepicker.parseDate(DATE_FORMAT, v);
+                }
+                catch (e) {
+                    alert("Date is not valid.");
+                    $(this).focus();
+                    rv = false;
+                    return false;
+                }
+            }
+        });
+        return rv;
+    };
+
     // Validate HTML5 required input fields 
     // (only does anything for iOS and IE9 where the required attribute is not supported)
     var validate_required = function() {
@@ -291,6 +311,7 @@ $(document).ready(function() {
     $("input[type='submit']").click(function() {
         if (!validate_signatures()) { return false; }
         if (!validate_lookupmulti()) { return false; }
+        if (!validate_dates()) { return false; }
         if (!validate_required()) { return false; }
         if (!validate_images()) { return false; }
     });
