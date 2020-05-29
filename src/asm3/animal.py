@@ -2217,8 +2217,6 @@ def update_animal_from_form(dbo, post, username):
         "NonShelterAnimal":     nonshelter,
         "IsNotAvailableForAdoption": notforadoption,
         "IsNotForRegistration": notforregistration,
-        "IsHold":               post.boolean("hold"),
-        "HoldUntilDate":        post.date("holduntil"),
         "IsQuarantine":         quarantine,
         "IsCourtesy":           courtesy,
         "CrueltyCase":          crueltycase,
@@ -2285,6 +2283,8 @@ def update_animal_from_form(dbo, post, username):
         "ReasonNO":             post["reasonnotfromowner"],
         "ReasonForEntry":       post["reasonforentry"],
         "EntryReasonID":        post.integer("entryreason"),
+        "IsHold":               post.boolean("hold"),
+        "HoldUntilDate":        post.date("holduntil"),
         "IsTransfer":           post.boolean("transferin"),
         "IsPickup":             post.boolean("pickedup"),
         "PickupLocationID":     post.integer("pickuplocation"),
@@ -2315,6 +2315,31 @@ def update_animal_from_form(dbo, post, username):
 
     # Update any diary notes linked to this animal
     update_diary_linkinfo(dbo, aid)
+
+def update_flags(dbo, username, animalid, flags):
+    """
+    Updates the animal flags from a list of flags
+    """
+    def bi(b): 
+        return b and 1 or 0
+
+    courtesy = bi("courtesy" in flags)
+    crueltycase = bi("crueltycase" in flags)
+    notforadoption = bi("notforadoption" in flags)
+    notforregistration = bi("notforregistration" in flags)
+    nonshelter = bi("nonshelter" in flags)
+    quarantine = bi("quarantine" in flags)
+    flagstr = "|".join(flags) + "|"
+
+    dbo.update("animal", animalid, {
+        "NonShelterAnimal":             nonshelter,
+        "IsNotAvailableForAdoption":    notforadoption,
+        "IsNotForRegistration":         notforregistration,
+        "IsQuarantine":                 quarantine,
+        "IsCourtesy":                   courtesy,
+        "CrueltyCase":                  crueltycase,
+        "AdditionalFlags":              flagstr
+    }, username)
 
 def update_animals_from_form(dbo, username, post):
     """
