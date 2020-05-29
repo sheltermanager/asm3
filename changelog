@@ -1,6 +1,7 @@
 44
 ================
 
+29/05/20 Trailing empty flags caused by merge/adopter #838
 29/05/20 Allow Created Date as a person find column #841
 29/05/20 Validate dates in online forms on submit #840
 29/05/20 Allow CSV import for animal flags #842
