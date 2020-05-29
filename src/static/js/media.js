@@ -794,11 +794,6 @@ $(function() {
                 $("#button-exclude").hide();
             }
 
-            // If this browser doesn't support fileinput, disable the attach button
-            if (!Modernizr.fileinput) {
-                $("#button-new").button("option", "disabled", true);
-            }
-
             // If this browser doesn't support canvas, hide the sign on screen link
             if (!Modernizr.canvas) {
                 $("#button-signscreen").hide();
