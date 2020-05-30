@@ -572,6 +572,7 @@ class AbstractPublisher(threading.Thread):
         """
         l = []
         for i in items:
+            if i is None: i = ""
             # Remove start/end quotes if present
             if i.startswith("\""): i = i[1:]
             if i.endswith("\""): i = i[0:-1]

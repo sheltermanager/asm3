@@ -12,14 +12,15 @@ $(function() {
                 '<li><a href="#tab-animalselection">' + _("Animal Selection") + '</a></li>',
                 '<li><a href="#tab-allpublishers">' + _("All Publishers") + '</a></li>',
                 '<li><a href="#tab-htmlftp">' + _("HTML/FTP Publisher") + '</a></li>',
-                '<li class="localeus localeca localemx"><a href="#tab-adoptapet">AdoptAPet Publisher</a></li>',
-                '<li><a href="#tab-helpinglostpets">HelpingLostPets Publisher</a></li>',
-                '<li class="english hasmaddiesfund"><a href="#tab-maddiesfund">Maddie\'s Fund Publisher</a></li>',
-                '<li class="localeus localeca localemx"><a href="#tab-petfinder">PetFinder Publisher</a></li>',
-                '<li class="localegb haspetslocated"><a href="#tab-petslocated">PetsLocated Publisher</a></li>',
-                '<li class="localeau haspetrescue"><a href="#tab-petrescue">PetRescue Publisher</a></li>', 
-                '<li class="localeau hassavourlife"><a href="#tab-savourlife">SavourLife Publisher</a></li>', 
-                '<li class="localeus"><a href="#tab-rescuegroups">RescueGroups Publisher</a></li>',
+                '<li class="localeus localeca localemx"><a href="#tab-adoptapet">AdoptAPet</a></li>',
+                '<li><a href="#tab-helpinglostpets">HelpingLostPets</a></li>',
+                '<li class="english hasmaddiesfund"><a href="#tab-maddiesfund">Maddie\'s Fund</a></li>',
+                '<li class="localeus haspetcademy"><a href="#tab-petcademy">Petcademy</a></li>',
+                '<li class="localeus localeca localemx"><a href="#tab-petfinder">PetFinder</a></li>',
+                '<li class="localegb haspetslocated"><a href="#tab-petslocated">PetsLocated</a></li>',
+                '<li class="localeau haspetrescue"><a href="#tab-petrescue">PetRescue</a></li>', 
+                '<li class="localeau hassavourlife"><a href="#tab-savourlife">SavourLife</a></li>', 
+                '<li class="localeus"><a href="#tab-rescuegroups">RescueGroups</a></li>',
                 '<li class="localegb"><a href="#tab-pettrac">AVID UK Microchips</a></li>',
                 '<li class="localegb"><a href="#tab-anibase">Identibase UK Microchips</a></li>',
                 '<li class="localeus hasakcreunite"><a href="#tab-akcreunite">AKC Reunite Microchips</a></li>',
@@ -781,6 +782,21 @@ $(function() {
             ].join("\n");
         },
 
+        render_petcademy: function() {
+            return [
+                '<div id="tab-petcademy">',
+                html.info('Signup at <a href="https://petcademy.typeform.com/to/PTTM44">https://petcademy.typeform.com/to/PTTM44</a>'),
+                '<p><input id="enabledpc" type="checkbox" class="asm-checkbox enablecheck" /><label for="enabledpc">' + _("Enabled") + '</label></p>',
+                '<table>',
+                '<tr>',
+                '<td><label for="pctoken">Petcademy Token</label></td>',
+                '<td><input id="pctoken" type="text" class="asm-textbox cfg" data="PetcademyToken" /></td>',
+                '</tr>',
+                '</table>',
+                '</div>'
+            ].join("\n");
+        },
+
         render_helpinglostpets: function() {
             return [
                 '<div id="tab-helpinglostpets">',
@@ -939,6 +955,7 @@ $(function() {
                 this.render_foundanimals(),
                 this.render_homeagain(),
                 this.render_maddiesfund(),
+                this.render_petcademy(),
                 this.render_helpinglostpets(),
                 this.render_smarttag(),
                 this.render_vetenvoy(),
@@ -1085,6 +1102,7 @@ $(function() {
             if (!controller.hasfoundanimals) { $(".hasfoundanimals").hide(); }
             if (!controller.hashomeagain) { $(".hashomeagain").hide(); }
             if (!controller.hasmaddiesfund) { $(".hasmaddiesfund").hide(); }
+            if (!controller.haspetcademy) { $(".haspetcademy").hide(); }
             if (!controller.haspetlink) { $(".haspetlink").hide(); }
             if (!controller.haspetrescue) { $(".haspetrescue").hide(); }
             if (!controller.haspetslocated) { $(".haspetslocated").hide(); }
