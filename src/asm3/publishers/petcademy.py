@@ -17,32 +17,11 @@ class PetcademyPublisher(FTPPublisher):
     Handles updating recent adoptions with Petcademy via their API
     """
     def __init__(self, dbo, publishCriteria):
+        publishCriteria.uploadDirectly = True
         FTPPublisher.__init__(self, dbo, publishCriteria,
             PETCADEMY_FTP_HOST, PETCADEMY_FTP_USER, 
             PETCADEMY_FTP_PASSWORD)
         self.initLog("petcademy", "Petcademy Publisher")
-
-    def getAge(self, dob, speciesid):
-        """ Returns an age banding based on date of birth and species """
-        # Kitten (0-8 weeks) = 1, Kitten/Juvenile (9 weeks- 5 months) = 2, Adult Cat (6 months - 8 years) =3,
-        # Senior Cat (9 years) = 4, Puppy (0-8 weeks) = 5, Puppy/Juvenile (9 weeks 11-months) =6, Adult Dog (1
-        # year - 7 years) =7, Senior Dog (8 years) = 8
-        ageinyears = asm3.i18n.date_diff_days(dob, asm3.i18n.now())
-        ageinyears /= 365.0
-        age = 0
-        # Cats
-        if speciesid == 2:
-            if ageinyears < 0.15: age = 1
-            elif ageinyears < 0.5: age = 2
-            elif ageinyears < 8: age = 3
-            else: age = 4
-        # Dogs
-        elif speciesid == 1:
-            if ageinyears < 0.15: age = 5
-            elif ageinyears < 0.9: age = 6
-            elif ageinyears < 8: age = 7
-            else: age = 8
-        return age
 
     def getDate(self, d):
         """ Returns a date in their preferred format of mm/dd/yyyy """
@@ -75,33 +54,28 @@ class PetcademyPublisher(FTPPublisher):
     def getData(self, periodindays):
         """ Returns the animal data for periodindays """
         # Send all fosters and adoptions for the period that haven't been sent since they last had a change.
-        # (we use lastchangeddate instead of sent date because MPA want an update when a number of key
+        # (we use lastchangeddate instead of sent date because Petcademy want an update when a number of key
         #  animal fields change, such as neuter status, microchip info, rabies tag, etc)
         cutoff = asm3.i18n.subtract_days(asm3.i18n.now(self.dbo.timezone), periodindays)
         sql = "%s WHERE a.ActiveMovementType IN (1,2) " \
             "AND a.ActiveMovementDate >= ? AND a.DeceasedDate Is Null AND a.NonShelterAnimal = 0 " \
-            "AND NOT EXISTS(SELECT AnimalID FROM animalpublished WHERE AnimalID = a.ID AND PublishedTo = 'maddiesfund' AND SentDate >= %s) " \
+            "AND NOT EXISTS(SELECT AnimalID FROM animalpublished WHERE AnimalID = a.ID AND PublishedTo = 'petcademy' AND SentDate >= %s) " \
             "ORDER BY a.ID" % (asm3.animal.get_animal_query(self.dbo), self.dbo.sql_greatest(["a.ActiveMovementDate", "a.LastChangedDate"]))
         animals = self.dbo.query(sql, [cutoff], distincton="ID")
 
         # Now find animals who have been sent previously and are now deceased (using sent date against deceased to prevent re-sends) 
         sql = "%s WHERE a.DeceasedDate Is Not Null AND a.DeceasedDate >= ? AND " \
             "EXISTS(SELECT AnimalID FROM animalpublished WHERE AnimalID = a.ID AND " \
-            "PublishedTo = 'maddiesfund' AND SentDate <= a.DeceasedDate)" % asm3.animal.get_animal_query(self.dbo)
+            "PublishedTo = 'petcademy' AND SentDate <= a.DeceasedDate)" % asm3.animal.get_animal_query(self.dbo)
         animals += self.dbo.query(sql, [cutoff], distincton="ID")
 
         # Now find shelter animals who have been sent previously and are back (using sent date against return to prevent re-sends)
         sql = "%s WHERE a.Archived = 0 AND " \
             "EXISTS(SELECT AnimalID FROM animalpublished WHERE AnimalID = a.ID AND " \
-            "PublishedTo = 'maddiesfund' AND SentDate < " \
+            "PublishedTo = 'petcademy' AND SentDate < " \
             "(SELECT MAX(ReturnDate) FROM adoption WHERE AnimalID = a.ID AND MovementType IN (1,2) AND ReturnDate Is Not Null))" % asm3.animal.get_animal_query(self.dbo)
         animals += self.dbo.query(sql, distincton="ID")
 
-        # Now find animals who have been sent previously and have a new/changed vaccination since then
-        sql = "%s WHERE a.Archived = 0 AND " \
-            "EXISTS(SELECT p.AnimalID FROM animalpublished p INNER JOIN animalvaccination av ON av.AnimalID = a.ID WHERE p.AnimalID = a.ID AND " \
-            "p.PublishedTo = 'maddiesfund' AND (p.SentDate < av.CreatedDate OR p.SentDate < av.LastChangedDate))" % asm3.animal.get_animal_query(self.dbo)
-        animals += self.dbo.query(sql, distincton="ID")
         return animals
 
     def run(self):
@@ -128,10 +102,17 @@ class PetcademyPublisher(FTPPublisher):
             self.setLastError("No animals found to publish.")
             return
 
-        csv = [ "FirstName,Lastname,EmailAddress,City,State,Street,Apartment,Zipcode," \
-            "ContactNumber,PetName,PetSpecies,PetSex,Breed,FosterCareDate,FosterEndDate," \
-            "Organization,Color,Photo,DateofBirth" ]
+        if not self.openFTPSocket(): 
+            self.setLastError("Failed opening FTP socket.")
+            if self.logSearch("530 Login") != -1:
+                self.log("Found 530 Login incorrect: disabling Petcademy publisher.")
+                asm3.configuration.publishers_enabled_disable(self.dbo, "pc")
+            self.cleanup()
+            return
 
+        csv = [ "FirstName,Lastname,EmailAddress,Street,City,State,Zipcode,ContactNumber," \
+                "PetID,PetName,PetSpecies,PetSex,Breed,DateofBirth,Color," \
+                "Status,EventDate,EventType,Organization,Photo" ]
         anCount = 0
         for an in animals:
             try:
@@ -155,10 +136,10 @@ class PetcademyPublisher(FTPPublisher):
         # Mark published
         self.markAnimalsPublished(animals, first=True)
 
-        fname = "%s_%s.csv" % ( token, asm3.i18n.format_date("%Y%m%d%H%M%S", asm3.i18n.now()) )
+        fname = "%s_%s.csv" % ( token, asm3.i18n.format_date(asm3.i18n.now(), "%Y%m%d%H%M%S") )
         # Upload the datafile
         self.saveFile(os.path.join(self.publishDir, fname), "\n".join(csv))
-        self.log("Uploading datafile, %s" % fname)
+        self.log("Uploading datafile %s" % fname)
         self.upload(fname)
         self.log("Uploaded %s" % fname)
         self.log("-- FILE DATA -- (csv)")
@@ -167,14 +148,13 @@ class PetcademyPublisher(FTPPublisher):
 
     def processAnimal(self, an):
         """ Builds a CSV row """
-        l = self.dbo.locale
         # FirstName,Lastname,EmailAddress,Street,City,State,Zipcode,ContactNumber,
         # PetID,PetName,PetSpecies,PetSex,Breed,DateofBirth,Color,
         # Status,EventDate,EventType,Organization,Photo
         line = [
             an.CURRENTOWNERFORENAMES,
             an.CURRENTOWNERSURNAME,
-            an.CURRENTOWNEREMAILADDRESS,
+            self.getEmail(an.CURRENTOWNEREMAILADDRESS),
             an.CURRENTOWNERADDRESS,
             an.CURRENTOWNERTOWN,
             an.CURRENTOWNERCOUNTY,
@@ -185,10 +165,10 @@ class PetcademyPublisher(FTPPublisher):
             an.SPECIESNAME,
             an.SEXNAME,
             an.BREEDNAME,
-            asm3.i18n.python2display(l, an.DATEOFBIRTH),
+            self.getDate(an.DATEOFBIRTH),
             an.BASECOLOURNAME,
             self.getPetStatus(an),
-            asm3.i18n.python2display(l, an.ACTIVEMOVEMENTDATE),
+            self.getDate(an.ACTIVEMOVEMENTDATE),
             self.getEventType(an),
             asm3.configuration.organisation(self.dbo),
             "%s?method=animal_image&account=%s&animalid=%s" % (SERVICE_URL, self.dbo.database, an.ID)
