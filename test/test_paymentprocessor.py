@@ -49,7 +49,7 @@ class TestPaymentProcessor(unittest.TestCase):
         post = asm3.utils.PostedData(data, "en")
         self.dueid = asm3.financial.insert_donation_from_form(base.get_dbo(), "test", post)
         data = {
-            "person": "1",
+            "person": str(self.personid),
             "animal": "1",
             "type":   "1",
             "payment": "1",
