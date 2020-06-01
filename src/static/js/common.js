@@ -2258,7 +2258,7 @@ const html = {
      **/
     rotate_canvas_to_exif: function(canvas, ctx, orientation) {
         // This web browser already rotated the image when it was loaded, do nothing
-        if (!Modernizr.exiforientation) { return; }
+        if (Modernizr.exiforientation) { return; }
         var width = canvas.width,
             height = canvas.height;
         if (4 < orientation && orientation < 9) {
