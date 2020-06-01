@@ -388,7 +388,7 @@ $(function() {
 
         /**
          * Uploads a single file using the FileReader API. 
-         * If the file is an image, scales it down first.
+         * If the file is an image, scales it down and rotates it first.
          * returns a promise.
          */
         attach_file: function(file, retainfor, comments) {
@@ -420,10 +420,13 @@ $(function() {
                 if (!max_height) { max_height = 640; }
 
                 // Read the file to an image tag, then scale it
+                var img, img_width, img_height;
                 html.load_img(file)
-                    .then(function(img) {
+                    .then(function(nimg) {
+                        img = nimg;
                         // Calculate the new image dimensions based on our max
-                        var img_width = img.width, img_height = img.height;
+                        img_width = img.width; 
+                        img_height = img.height;
                         if (img_width > img_height) {
                             if (img_width > max_width) {
                                 img_height *= max_width / img_width;
@@ -436,11 +439,15 @@ $(function() {
                                 img_height = max_height;
                             }
                         }
-                        // Scale the image
-                        var finalfile = html.scale_image(img, img_width, img_height);
-
-                        // Post the scaled image
-                        var formdata = "mode=create&scaled=1&" +
+                        // Read the exif orientation so we can correct any rotation
+                        // before scaling
+                        return html.get_exif_orientation(file);
+                    })
+                    .then(function(orientation) {
+                        // Scale and rotate the image
+                        var finalfile = html.scale_image(img, img_width, img_height, orientation);
+                        // Post the transformed image
+                        var formdata = "mode=create&transformed=1&" +
                             "linkid=" + controller.linkid + 
                             "&linktypeid=" + controller.linktypeid + 
                             "&comments=" + encodeURIComponent(comments) + 

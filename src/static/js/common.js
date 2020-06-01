@@ -1,4 +1,4 @@
-/*global $, console, performance, jQuery, ExifRestorer, Modernizr, Mousetrap, Path */
+/*global $, console, performance, jQuery, FileReader, Modernizr, Mousetrap, Path */
 /*global alert, asm, atob, btoa, header, _, escape, unescape, navigator */
 /*global consts: true, common: true, config: true, controller: true, dlgfx: true, format: true, html: true, log: true, validate: true */
 
@@ -2189,7 +2189,8 @@ const html = {
         return bytes.buffer;
     },
 
-    /** Get the EXIF orientation for file 1-8. Returns -2 and -1 for faults.
+    /** Get the EXIF orientation for file 1-8. 
+     *  Also returns -2 (not jpeg) and -1 (no orientation found).
      *  Asynchronous and returns a promise. */
     get_exif_orientation: function(file) {
         var deferred = $.Deferred();
@@ -2250,17 +2251,16 @@ const html = {
         return deferred.promise();
     },
 
-    /** Rotates an image according to the exif orientation supplied.
-     *  For browsers that automatically apply the orientation when loading
-     *  into a canvas (flagged as exiforientation by Modernizr) we do
-     *  nothing.
+    /** Applies a canvas transformation based on the EXIF orientation passed.
+     *  The next drawImage will be rotated correctly. 
+     *  It also resizes the canvas if the orientation changes.
+     *  If the web browser oriented the image before rendering to the canvas, does nothing.
      **/
-    rotate_image_to_exif: function(img, orientation) {
-        var width = img.width,
-            height = img.height,
-            canvas = document.createElement('canvas'),
-            ctx = canvas.getContext("2d");
-        // set proper canvas dimensions before transform & export
+    rotate_canvas_to_exif: function(canvas, ctx, orientation) {
+        // This web browser already rotated the image when it was loaded, do nothing
+        if (!Modernizr.exiforientation) { return; }
+        var width = canvas.width,
+            height = canvas.height;
         if (4 < orientation && orientation < 9) {
             canvas.width = height;
             canvas.height = width;
@@ -2279,40 +2279,34 @@ const html = {
             case 8: ctx.transform(0, -1, 1, 0, 0, width); break;
             default: break;
         }
-        ctx.drawImage(img, 0, 0);
-        return canvas.toDataURL("image/jpeg");
     },
 
     /**
-     * Scales an Image object img to h and w px, returning a data URL.
+     * Scales and rotates Image object img to h and w px, returning a data URL.
      * Depending on the size of the image, chooses an appropriate number
      * of steps to avoid aliasing. Handles rotating the image first
-     * via its Exif orientation.
+     * via its Exif orientation (1-8).
      */
-    scale_image: function(img, w, h) {
+    scale_image: function(img, w, h, orientation) {
         var scaled;
         if (img.height > h * 2 || img.width > w * 2) { 
-            scaled = html.scale_image_2_step(img, w, h); 
+            scaled = html.scale_image_2_step(img, w, h, orientation); 
         }
         else {
-            scaled = html.scale_image_1_step(img, w, h);
+            scaled = html.scale_image_1_step(img, w, h, orientation);
         }
-        // Restore any exif info that was on the original image
-        // so the backend can autorotate.
-        // We do not do this if the browser already took care of auto
-        // rotating when it loaded into the img element.
-        if (!Modernizr.exiforientation) { scaled = ExifRestorer.restore(img.src, scaled); }
         return scaled;
     },
 
     /**
      * Scales DOM element img to h and w, returning a data URL.
      */
-    scale_image_1_step: function(img, w, h) {
+    scale_image_1_step: function(img, w, h, orientation) {
         var canvas = document.createElement("canvas"),
             ctx = canvas.getContext("2d");
         canvas.height = h;
         canvas.width = w;
+        html.rotate_canvas_to_exif(canvas, ctx, orientation);
         ctx.drawImage(img, 0, 0, w, h);
         return canvas.toDataURL("image/jpeg");
     },
@@ -2321,7 +2315,7 @@ const html = {
      * Scales DOM element img to h and w, returning a data URL.
      * Uses a two step process to avoid aliasing.
      */
-    scale_image_2_step: function(img, w, h) {
+    scale_image_2_step: function(img, w, h, orientation) {
         var canvas = document.createElement("canvas"),
             ctx = canvas.getContext("2d"),
             oc = document.createElement("canvas"),
@@ -2333,7 +2327,8 @@ const html = {
         oc.height = img.height * 0.5;
         octx.drawImage(img, 0, 0, oc.width, oc.height);
         // step 2 / final - render the 50% sized canvas to the final canvas at the correct size
-        ctx.drawImage(oc, 0, 0, oc.width, oc.height, 0, 0, canvas.width, canvas.height);
+        html.rotate_canvas_to_exif(canvas, ctx, orientation);
+        ctx.drawImage(oc, 0, 0, oc.width, oc.height, 0, 0, w, h);
         return canvas.toDataURL("image/jpeg");
     },
 

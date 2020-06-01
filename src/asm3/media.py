@@ -282,7 +282,7 @@ def attach_file_from_form(dbo, username, linktype, linkid, post):
     filedata = post["filedata"]
     filename = post["filename"]
     comments = post["comments"]
-    scaled = post.integer("scaled") == 1
+    transformed = post.integer("transformed") == 1
     if filedata != "":
         filetype = post["filetype"]
         if filetype.startswith("image") or filename.lower().endswith(".jpg"): ext = ".jpg"
@@ -334,16 +334,14 @@ def attach_file_from_form(dbo, username, linktype, linkid, post):
         raise asm3.utils.ASMValidationError(msg)
 
     # Is it a picture?
-    if ispicture:
+    if ispicture and not transformed:
         # Autorotate it to match the EXIF orientation
-        # (the front end will strip EXIF data from already rotated files causing this to do nothing)
         filedata = auto_rotate_image(dbo, filedata)
-        # Scale it down to the system set size if it hasn't already been done
-        if not scaled:
-            scalespec = asm3.configuration.incoming_media_scaling(dbo)
-            if scalespec != "None":
-                filedata = scale_image(filedata, scalespec)
-                asm3.al.debug("scaled image to %s (%d bytes)" % (scalespec, len(filedata)), "media.attach_file_from_form", dbo)
+        # Scale it down to the system set size 
+        scalespec = asm3.configuration.incoming_media_scaling(dbo)
+        if scalespec != "None":
+            filedata = scale_image(filedata, scalespec)
+            asm3.al.debug("scaled image to %s (%d bytes)" % (scalespec, len(filedata)), "media.attach_file_from_form", dbo)
 
     # Is it a PDF? If so, compress it if we can and the option is on
     if ispdf and SCALE_PDF_DURING_ATTACH and asm3.configuration.scale_pdfs(dbo):
