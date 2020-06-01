@@ -53,17 +53,26 @@ version:
 	mv -f i18njs.py src/asm3/i18n.py
 	cp changelog src/static/pages/changelog.txt
 
+compat:
+	# Generate older browser compatible versions of the js files
+	@echo "[compat] =============================="
+	mkdir -p src/static/js/compat
+	rm -f src/static/js/compat/*.min.js
+	npx babel -d src/static/js/compat src/static/js/*.js
+	for i in src/static/js/compat/*.js; do echo $$i; cat $$i | scripts/jsmin/jsmin > src/static/js/compat/`basename $$i .js`.min.js; done
+
 minify:
-	# Generate minified and compatible versions of all javascript in min folder
+	# Generate minified versions of all javascript in min folder
 	@echo "[minify] ============================="
 	mkdir -p src/static/js/min
 	# for i in src/static/js/*.js; do echo $$i && npx jsmin $$i > src/static/js/min/`basename $$i .js`.min.js; done
 	for i in src/static/js/*.js; do echo $$i; cat $$i | scripts/jsmin/jsmin > src/static/js/min/`basename $$i .js`.min.js; done
 
-rollup: minify
+rollup: minify compat
 	# Generate a rollup file of all javascript files
 	@echo "[rollup] ============================="
 	scripts/rollup/rollup.py > src/static/js/min/rollup.min.js
+	scripts/rollup/rollup_compat.py > src/static/js/compat/rollup_compat.min.js
 
 schema: scripts/schema/schema.db
 	# Generate a JSON schema of the database for use when editing
@@ -155,4 +164,6 @@ deps:
 	apt-get install python3-sphinx python3-sphinx-rtd-theme texlive-latex-base texlive-latex-extra
 	apt-get install exuberant-ctags nodejs flake8 imagemagick wkhtmltopdf nodejs npm
 	apt-get install python3-webpy # See README for fix
+	npm install
+
 

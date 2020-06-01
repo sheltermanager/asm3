@@ -872,7 +872,7 @@ def update_person_from_form(dbo, post, username, geocode=True):
 
 def update_remove_flag(dbo, username, personid, flag):
     """
-    Removes flag from personid. Does nothing if the person deos not have the flag.
+    Removes flag from personid. Does nothing if the person does not have the flag.
     """
     flags = dbo.query_string("SELECT AdditionalFlags FROM owner WHERE ID = ?", [personid])
     if flags.find("%s|" % flag) != -1:
@@ -995,13 +995,10 @@ def merge_flags(dbo, username, personid, flags):
         fgs = flags.split(",")
     else:
         fgs.append(flags)
-    epf = dbo.query_string("SELECT AdditionalFlags FROM owner WHERE ID = ?", [personid])
-    epfb = epf.split("|")
-    for x in fgs:
-        if x not in epfb and not x == "":
-            epf += "%s|" % x
-    update_flags(dbo, username, personid, epf.split("|"))
-    return epf
+    epf = dbo.query_string("SELECT AdditionalFlags FROM owner WHERE ID = ?", [personid]).split("|")
+    merged = set([x for x in epf+fgs if x != ""]) # Add together our existing+new, remove dups and blanks
+    update_flags(dbo, username, personid, merged)
+    return "|".join(merged) + "|"
 
 def merge_person(dbo, username, personid, mergepersonid):
     """

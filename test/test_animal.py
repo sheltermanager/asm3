@@ -145,6 +145,9 @@ class TestAnimal(unittest.TestCase):
         post = asm3.utils.PostedData(data, "en")
         asm3.animal.update_animal_from_form(base.get_dbo(), post, "test")
 
+    def test_update_flags(self):
+        asm3.animal.update_flags(base.get_dbo(), "test", self.nid, "courtesy")
+
     def test_update_animals_from_form(self):
         data = {
             "animals": str(self.nid),

@@ -1015,6 +1015,9 @@ def pdf_inline(dbo):
 def person_search_columns(dbo):
     return cstring(dbo, "OwnerSearchColumns", DEFAULTS["OwnerSearchColumns"])
 
+def petcademy_token(dbo):
+    return cstring(dbo, "PetcademyToken")
+
 def petfinder_age_bands(dbo):
     return cstring(dbo, "PetFinderAgeBands")
 

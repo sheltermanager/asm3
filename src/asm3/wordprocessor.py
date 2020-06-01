@@ -902,7 +902,7 @@ def donation_tags(dbo, donations):
         }
         tags.update(x)
         if i == "": return # Don't add a total for the compatibility row
-        if p["VATRATE"] > totals["taxrate"]:
+        if p["VATRATE"] is not None and p["VATRATE"] > totals["taxrate"]:
             totals["taxrate"] = p["VATRATE"]
         if p["DATE"] is not None: 
             totals["vat"] += asm3.utils.cint(p["VATAMOUNT"])

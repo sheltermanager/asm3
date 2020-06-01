@@ -106,6 +106,13 @@ class TestPublish(unittest.TestCase):
         assert asm3.publishers.maddiesfund.MaddiesFundPublisher(base.get_dbo(), pc).getData(214) is not None
         assert asm3.publishers.maddiesfund.MaddiesFundPublisher(base.get_dbo(), pc).processAnimal(a) is not None
 
+    # petcademy
+    def test_petcademy(self):
+        pc = asm3.publishers.base.PublishCriteria()
+        a = asm3.publishers.base.get_animal_data(base.get_dbo())[0]
+        assert asm3.publishers.petcademy.PetcademyPublisher(base.get_dbo(), pc).getData(214) is not None
+        assert asm3.publishers.petcademy.PetcademyPublisher(base.get_dbo(), pc).processAnimal(a) is not None
+
     # petfinder
     def test_petfinder(self):
         pc = asm3.publishers.base.PublishCriteria()

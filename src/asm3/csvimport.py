@@ -23,7 +23,7 @@ VALID_FIELDS = [
     "ANIMALBREED2", "ANIMALDOB", "ANIMALLOCATION", "ANIMALUNIT", 
     "ANIMALSPECIES", "ANIMALAGE", 
     "ANIMALCOMMENTS", "ANIMALMARKINGS", "ANIMALNEUTERED", "ANIMALNEUTEREDDATE", "ANIMALMICROCHIP", "ANIMALMICROCHIPDATE", 
-    "ANIMALENTRYDATE", "ANIMALDECEASEDDATE", "ANIMALCODE",
+    "ANIMALENTRYDATE", "ANIMALDECEASEDDATE", "ANIMALCODE", "ANIMALFLAGS",
     "ANIMALREASONFORENTRY", "ANIMALHIDDENDETAILS", "ANIMALNOTFORADOPTION", "ANIMALNONSHELTER", 
     "ANIMALGOODWITHCATS", "ANIMALGOODWITHDOGS", "ANIMALGOODWITHKIDS", 
     "ANIMALHOUSETRAINED", "ANIMALHEALTHPROBLEMS", "ANIMALIMAGE",
@@ -418,6 +418,7 @@ def csvimport(dbo, csvdata, encoding = "utf8", user = "", createmissinglookups =
             a["microchipnumber"] = gks(row, "ANIMALMICROCHIP")
             if a["microchipnumber"] != "": a["microchipped"] = "on"
             a["microchipdate"] = gkd(dbo, row, "ANIMALMICROCHIPDATE")
+            a["flags"] = gks(row, "ANIMALFLAGS")
             # image data if any was supplied
             imagedata = gks(row, "ANIMALIMAGE")
             if imagedata.startswith("http"):
@@ -469,7 +470,7 @@ def csvimport(dbo, csvdata, encoding = "utf8", user = "", createmissinglookups =
                     dup = asm3.animal.get_animal_sheltercode(dbo, a["sheltercode"])
                     if dup is not None:
                         animalid = dup.ID
-                        # The animal is not a duplicate. Update certain key fields if they are present
+                        # The animal is a duplicate. Update certain key fields if they are present
                         if a["healthproblems"] != "":
                             dbo.update("animal", dup.ID, { "HealthProblems": a["healthproblems"] }, user)
                         if a["microchipnumber"] != "":
@@ -483,10 +484,15 @@ def csvimport(dbo, csvdata, encoding = "utf8", user = "", createmissinglookups =
                                 "Neutered": 1, 
                                 "NeuteredDate": asm3.i18n.display2python(dbo.locale, a["neutereddate"]) 
                             }, user)
+                        if a["flags"] != "":
+                            asm3.animal.update_flags(dbo, user, dup.ID, a["flags"])
                 if animalid == 0:
                     animalid, dummy = asm3.animal.insert_animal_from_form(dbo, asm3.utils.PostedData(a, dbo.locale), user)
                     # Identify any ANIMALADDITIONAL additional fields and create them
                     create_additional_fields(dbo, row, errors, rowno, "ANIMALADDITIONAL", "animal", animalid)
+                    # Add any flags that were set
+                    if a["flags"] != "":
+                        asm3.animal.update_flags(dbo, user, animalid, a["flags"])
                 # If we have some image data, add it to the animal
                 if len(imagedata) > 0:
                     imagepost = asm3.utils.PostedData({ "filename": "image.jpg", "filetype": "image/jpeg", "filedata": imagedata }, dbo.locale)

@@ -6,7 +6,7 @@
 import asm3.al
 import asm3.configuration
 
-import asm3.publishers.adoptapet, asm3.publishers.akcreunite, asm3.publishers.anibaseuk, asm3.publishers.foundanimals, asm3.publishers.homeagain, asm3.publishers.helpinglostpets, asm3.publishers.html, asm3.publishers.maddiesfund, asm3.publishers.petfinder, asm3.publishers.petlink, asm3.publishers.petrescue, asm3.publishers.petslocateduk, asm3.publishers.pettracuk, asm3.publishers.rescuegroups, asm3.publishers.savourlife, asm3.publishers.smarttag
+import asm3.publishers.adoptapet, asm3.publishers.akcreunite, asm3.publishers.anibaseuk, asm3.publishers.foundanimals, asm3.publishers.homeagain, asm3.publishers.helpinglostpets, asm3.publishers.html, asm3.publishers.maddiesfund, asm3.publishers.petcademy, asm3.publishers.petfinder, asm3.publishers.petlink, asm3.publishers.petrescue, asm3.publishers.petslocateduk, asm3.publishers.pettracuk, asm3.publishers.rescuegroups, asm3.publishers.savourlife, asm3.publishers.smarttag
 
 from asm3.publishers.base import PublishCriteria
 
@@ -35,6 +35,12 @@ PUBLISHER_LIST["mf"] = {
     "label":    "Publish to Maddie's Pet Assistant",
     "class":    asm3.publishers.maddiesfund.MaddiesFundPublisher,
     "locales":  "en en_CA en_AU",
+    "sub24hour": True
+}
+PUBLISHER_LIST["pc"] = {
+    "label":    "Publish to Petcademy",
+    "class":    asm3.publishers.petcademy.PetcademyPublisher,
+    "locales":  "en",
     "sub24hour": True
 }
 PUBLISHER_LIST["pf"] = {

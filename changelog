@@ -1,6 +1,17 @@
 44
 ================
 
+01/06/20 Apply client side image rotation, remove exifrestorer dep #844
+01/06/20 Do not scale images twice, fix iOS applying orientation #844
+31/05/20 Fix for null values when sorting from search
+30/05/20 Support for Petcademy #832
+29/05/20 Trailing empty flags caused by merge/adopter #838
+29/05/20 Allow Created Date as a person find column #841
+29/05/20 Validate dates in online forms on submit #840
+29/05/20 Allow CSV import for animal flags #842
+28/05/20 Fall back to old thumbnails if object-fit unavailable #839
+28/05/20 Compatibility layer for older Safari and IE11 #800
+27/05/20 Filters to show previously given on all medical books
 26/05/20 Separate online form permissions for adding and deleting forms
 26/05/20 Fix bad casing on known online form fields #835
 26/05/20 Add separate permission for viewing online forms

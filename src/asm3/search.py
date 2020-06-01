@@ -446,10 +446,12 @@ def search(dbo, session, q):
         explain = _("Results for '{0}'.", l).format(q)
 
     # Apply the sort to the results
+    # We return a tuple to the sorted function which forces rows with None in the 
+    # SORTON key to the end (True, None) for None values, (False, value) for items
     if sortdir == "a":
-        sortresults = sorted(results, key=lambda k: k["SORTON"])
+        sortresults = sorted(results, key=lambda k: (k["SORTON"] is None, k["SORTON"]))
     else:
-        sortresults = sorted(results, reverse=True, key=lambda k: k["SORTON"])
+        sortresults = sorted(results, reverse=True, key=lambda k: (k["SORTON"] is not None, k["SORTON"]))
 
     # stop the clock
     timetaken = (time.time() - starttime)

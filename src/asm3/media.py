@@ -282,6 +282,7 @@ def attach_file_from_form(dbo, username, linktype, linkid, post):
     filedata = post["filedata"]
     filename = post["filename"]
     comments = post["comments"]
+    transformed = post.integer("transformed") == 1
     if filedata != "":
         filetype = post["filetype"]
         if filetype.startswith("image") or filename.lower().endswith(".jpg"): ext = ".jpg"
@@ -294,14 +295,13 @@ def attach_file_from_form(dbo, username, linktype, linkid, post):
             # Browser escaping turns base64 pluses back into spaces, so switch back
             filedata = filedata.replace(" ", "+")
         filedata = asm3.utils.base64decode(filedata)
-        asm3.al.debug("received data URI '%s' (%d bytes)" % (filename, len(filedata)), "media.attach_file_from_form", dbo)
+        asm3.al.debug("received data URI '%s' (%d bytes, transformed=%s)" % (filename, len(filedata), transformed), "media.attach_file_from_form", dbo)
         if ext == "":
             msg = "could not determine extension from file.type '%s', abandoning" % filetype
             asm3.al.error(msg, "media.attach_file_from_form", dbo)
             raise asm3.utils.ASMValidationError(msg)
     else:
-        # It's a traditional form post with a filechooser, we should make
-        # it the default web/doc picture after posting if none is available.
+        # It's a traditional form post with a filechooser
         ext = post.filename()
         ext = ext[ext.rfind("."):].lower()
         filedata = post.filedata()
@@ -333,10 +333,10 @@ def attach_file_from_form(dbo, username, linktype, linkid, post):
         raise asm3.utils.ASMValidationError(msg)
 
     # Is it a picture?
-    if ispicture:
+    if ispicture and not transformed:
         # Autorotate it to match the EXIF orientation
         filedata = auto_rotate_image(dbo, filedata)
-        # Scale it down to the system set size
+        # Scale it down to the system set size 
         scalespec = asm3.configuration.incoming_media_scaling(dbo)
         if scalespec != "None":
             filedata = scale_image(filedata, scalespec)
@@ -642,11 +642,11 @@ def scale_image(imagedata, resizespec):
         h = int(hs)
         size = w, w
         if h > w: size = h, h
-        # Load the image data into a StringIO object and scale it
+        # Load the image data and scale it
         file_data = asm3.utils.bytesio(imagedata)
         im = Image.open(file_data)
         im.thumbnail(size, Image.ANTIALIAS)
-        # Save the scaled down image data into another string for return
+        # Save the scaled down image data 
         output = asm3.utils.bytesio()
         im.save(output, "JPEG")
         scaled_data = output.getvalue()

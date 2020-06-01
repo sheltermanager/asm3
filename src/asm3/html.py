@@ -12,7 +12,7 @@ import asm3.utils
 from asm3.i18n import BUILD, _, translate, format_currency, format_date, get_locales, now, python2display, python2unix, real_locale
 from asm3.sitedefs import QR_IMG_SRC
 from asm3.sitedefs import BASE_URL, LOCALE, MINIFY_JS, ROLLUP_JS
-from asm3.sitedefs import ASMSELECT_CSS, ASMSELECT_JS, BASE64_JS, CODEMIRROR_CSS, CODEMIRROR_JS, CODEMIRROR_BASE, EXIFRESTORER_JS, FLOT_JS, FLOT_PIE_JS, FULLCALENDAR_JS, FULLCALENDAR_CSS, JQUERY_JS, JQUERY_UI_JS, JQUERY_UI_CSS, MOMENT_JS, MOUSETRAP_JS, PATH_JS, SIGNATURE_JS, TABLESORTER_CSS, TABLESORTER_JS, TABLESORTER_WIDGETS_JS, TIMEPICKER_CSS, TIMEPICKER_JS, TINYMCE_4_JS, TOUCHPUNCH_JS
+from asm3.sitedefs import ASMSELECT_CSS, ASMSELECT_JS, BASE64_JS, CODEMIRROR_CSS, CODEMIRROR_JS, CODEMIRROR_BASE, FLOT_JS, FLOT_PIE_JS, FULLCALENDAR_JS, FULLCALENDAR_CSS, JQUERY_JS, JQUERY_UI_JS, JQUERY_UI_CSS, MOMENT_JS, MOUSETRAP_JS, PATH_JS, SIGNATURE_JS, TABLESORTER_CSS, TABLESORTER_JS, TABLESORTER_WIDGETS_JS, TIMEPICKER_CSS, TIMEPICKER_JS, TINYMCE_4_JS, TOUCHPUNCH_JS
 
 import os
 
@@ -142,7 +142,7 @@ def table(results):
     s += "</tbody>\n"
     return s
 
-def bare_header(title, theme = "asm", locale = LOCALE, config_db = "asm", config_ts = "0"):
+def bare_header(title, theme = "asm", locale = LOCALE, config_db = "asm", config_ts = "0", compatjs = False):
     """
     A bare header with just the script files needed for the program.
     title: The page title
@@ -152,9 +152,8 @@ def bare_header(title, theme = "asm", locale = LOCALE, config_db = "asm", config
     config_db: The name of the system database (used for requesting config.js)
     config_ts: A unique timestamp for when we last wanted the config (used for requesting config.js)
                This value changes when we update the config so the cache can be invalidated.
+    compatjs:  Serve the compatibility javascript for older browsers (requires ROLLUP_JS)
     """
-    # If these values aren't supplied, frontside cache services like cloudflare will cache the
-    # config.js and cause weird issues
     if config_db == "asm" and config_ts == "0":
         config_ts = python2unix(now())
     def script_i18n(l):
@@ -166,7 +165,9 @@ def bare_header(title, theme = "asm", locale = LOCALE, config_db = "asm", config
     # Use the default if we have no locale
     if locale is None: locale = LOCALE
     # Load the asm scripts
-    if ROLLUP_JS:
+    if compatjs and ROLLUP_JS:
+        asm_scripts = asm_script_tag("compat/rollup_compat.min.js")
+    elif ROLLUP_JS:
         asm_scripts = asm_script_tag("min/rollup.min.js")
     else:
         asm_scripts = asm_script_tags(asm3.utils.PATH) 
@@ -218,7 +219,6 @@ def bare_header(title, theme = "asm", locale = LOCALE, config_db = "asm", config
                 script_tag(CODEMIRROR_BASE + "mode/xml/xml.js") + 
                 script_tag(CODEMIRROR_BASE + "mode/htmlmixed/htmlmixed.js") + 
                 script_tag(CODEMIRROR_BASE + "mode/sql/sql.js") + 
-                script_tag(EXIFRESTORER_JS) +
                 script_tag(FULLCALENDAR_JS) + 
                 script_tag(SIGNATURE_JS) +
                 script_tag(TABLESORTER_JS) + 
@@ -375,13 +375,14 @@ def escape_angle(s):
     s = str(s)
     return s.replace(">", "&gt;").replace("<", "&lt;")
 
-def header(title, session):
+def header(title, session, compatjs):
     """
     The header for html pages.
     title: The page title
     session: The user session
+    compatjs: True if this browser requires compatibility js for older browsers
     """
-    s = bare_header(title, session.theme, session.locale, session.dbo.database, session.config_ts)
+    s = bare_header(title, session.theme, session.locale, session.dbo.database, session.config_ts, compatjs)
     return s
 
 def footer():
@@ -744,6 +745,7 @@ def json_personfindcolumns(dbo):
     l = dbo.locale
     cols = [ 
         ( "CreatedBy", _("Created By", l) ),
+        ( "CreatedDate", _("Created Date", l) ),
         ( "OwnerTitle", _("Title", l) ),
         ( "OwnerInitials", _("Initials", l) ),
         ( "OwnerForenames", _("First Names", l) ),

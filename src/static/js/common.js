@@ -1,4 +1,4 @@
-/*global $, console, performance, jQuery, ExifRestorer, Modernizr, Mousetrap, Path */
+/*global $, console, performance, jQuery, FileReader, Modernizr, Mousetrap, Path */
 /*global alert, asm, atob, btoa, header, _, escape, unescape, navigator */
 /*global consts: true, common: true, config: true, controller: true, dlgfx: true, format: true, html: true, log: true, validate: true */
 
@@ -663,6 +663,40 @@ const common = {
                 deferred.reject(errmessage);
             }
         });
+        return deferred.promise();
+    },
+
+    /** 
+     * Convenience method for reading a data URL from FileReader.
+     * Returns a promise with result.
+     */
+    read_file_as_data_url: function(file) {
+        var reader = new FileReader(),
+            deferred = $.Deferred();
+        reader.onload = function(e) {
+            deferred.resolve(e.target.result);
+        };
+        reader.onerror = function(e) {
+            deferred.reject(reader.error.message);
+        };
+        reader.readAsDataURL(file);
+        return deferred.promise();
+    },
+
+    /** 
+     * Convenience method for reading an array buffer from FileReader.
+     * Returns a promise with result.
+     */
+    read_file_as_array_buffer: function(fslice) {
+        var reader = new FileReader(),
+            deferred = $.Deferred();
+        reader.onload = function(e) {
+            deferred.resolve(e.target.result);
+        };
+        reader.onerror = function(e) {
+            deferred.reject(reader.error.message);
+        };
+        reader.readAsArrayBuffer(fslice);
         return deferred.promise();
     },
 
@@ -2146,32 +2180,133 @@ const html = {
         return h.join("\n");
     },
 
+    data_url_to_array_buffer: function(url) {
+        var bytestring = window.atob(url.split(",")[1]);
+        var bytes = new Uint8Array(bytestring.length);
+        for (var i = 0; i < bytestring.length; i++) {
+            bytes[i] = bytestring.charCodeAt(i);
+        }
+        return bytes.buffer;
+    },
+
+    /** Get the EXIF orientation for file 1-8. 
+     *  Also returns -2 (not jpeg) and -1 (no orientation found).
+     *  Asynchronous and returns a promise. */
+    get_exif_orientation: function(file) {
+        var deferred = $.Deferred();
+        common.read_file_as_array_buffer(file.slice(0, 64 * 1024))
+        .then(function(result) {
+            var view = new DataView(result);
+            if (view.getUint16(0, false) != 0xFFD8) {
+                deferred.resolve(-2);
+                return;
+            }
+            var length = view.byteLength,
+                offset = 2;
+            while (offset < length) {
+                var marker = view.getUint16(offset, false);
+                offset += 2;
+                if (marker == 0xFFE1) {
+                    if (view.getUint32(offset += 2, false) != 0x45786966) {
+                        deferred.resolve(-1);
+                        return;
+                    }
+                    var little = view.getUint16(offset += 6, false) == 0x4949;
+                    offset += view.getUint32(offset + 4, little);
+                    var tags = view.getUint16(offset, little);
+                    offset += 2;
+                    for (var i = 0; i < tags; i++)
+                        if (view.getUint16(offset + (i * 12), little) == 0x0112) {
+                            deferred.resolve(view.getUint16(offset + (i * 12) + 8, little));
+                            return;
+                        }
+                }
+                else if ((marker & 0xFF00) != 0xFF00) break;
+                else offset += view.getUint16(offset, false);
+            }
+            deferred.resolve(-1);
+            return;
+        });
+        return deferred.promise();
+    },
+
     /**
-     * Scales a DOM element img to h and w, returning a data URL.
-     * Depending on the size of the image, chooses an appropriate number
-     * of steps to avoid aliasing.
+     * Loads an img element from a file. 
+     * Returns a promise, the result is the loaded img.
      */
-    scale_image: function(img, w, h) {
+    load_img: function(file) {
+        var reader = new FileReader(),
+            img = document.createElement("img"),
+            deferred = $.Deferred();
+        reader.onload = function(e) {
+            img.src = e.target.result;
+        };
+        reader.onerror = function(e) {
+            deferred.reject(reader.error.message);
+        };
+        img.onload = function() {
+            deferred.resolve(img);
+        };
+        reader.readAsDataURL(file);
+        return deferred.promise();
+    },
+
+    /** Applies a canvas transformation based on the EXIF orientation passed.
+     *  The next drawImage will be rotated correctly. 
+     *  It also resizes the canvas if the orientation changes.
+     *  If the web browser oriented the image before rendering to the canvas, does nothing.
+     **/
+    rotate_canvas_to_exif: function(canvas, ctx, orientation) {
+        // This web browser already rotated the image when it was loaded, do nothing
+        if (Modernizr.exiforientation) { return; }
+        var width = canvas.width,
+            height = canvas.height;
+        if (4 < orientation && orientation < 9) {
+            canvas.width = height;
+            canvas.height = width;
+        } 
+        else {
+            canvas.width = width;
+            canvas.height = height;
+        }
+        switch (orientation) {
+            case 2: ctx.transform(-1, 0, 0, 1, width, 0); break;
+            case 3: ctx.transform(-1, 0, 0, -1, width, height); break;
+            case 4: ctx.transform(1, 0, 0, -1, 0, height); break;
+            case 5: ctx.transform(0, 1, 1, 0, 0, 0); break;
+            case 6: ctx.transform(0, 1, -1, 0, height, 0); break;
+            case 7: ctx.transform(0, -1, -1, 0, height, width); break;
+            case 8: ctx.transform(0, -1, 1, 0, 0, width); break;
+            default: break;
+        }
+    },
+
+    /**
+     * Scales and rotates Image object img to h and w px, returning a data URL.
+     * Depending on the size of the image, chooses an appropriate number
+     * of steps to avoid aliasing. Handles rotating the image first
+     * via its Exif orientation (1-8).
+     */
+    scale_image: function(img, w, h, orientation) {
         var scaled;
         if (img.height > h * 2 || img.width > w * 2) { 
-            scaled = html.scale_image_2_step(img, w, h); 
+            scaled = html.scale_image_2_step(img, w, h, orientation); 
         }
         else {
-            scaled = html.scale_image_1_step(img, w, h);
+            scaled = html.scale_image_1_step(img, w, h, orientation);
         }
-        // Restore any exif info that was on the original image
-        // so we don't lose orientation
-        return ExifRestorer.restore(img.src, scaled);
+        return scaled;
     },
 
     /**
      * Scales DOM element img to h and w, returning a data URL.
      */
-    scale_image_1_step: function(img, w, h) {
+    scale_image_1_step: function(img, w, h, orientation) {
         var canvas = document.createElement("canvas"),
             ctx = canvas.getContext("2d");
         canvas.height = h;
         canvas.width = w;
+        html.rotate_canvas_to_exif(canvas, ctx, orientation);
         ctx.drawImage(img, 0, 0, w, h);
         return canvas.toDataURL("image/jpeg");
     },
@@ -2180,7 +2315,7 @@ const html = {
      * Scales DOM element img to h and w, returning a data URL.
      * Uses a two step process to avoid aliasing.
      */
-    scale_image_2_step: function(img, w, h) {
+    scale_image_2_step: function(img, w, h, orientation) {
         var canvas = document.createElement("canvas"),
             ctx = canvas.getContext("2d"),
             oc = document.createElement("canvas"),
@@ -2192,7 +2327,8 @@ const html = {
         oc.height = img.height * 0.5;
         octx.drawImage(img, 0, 0, oc.width, oc.height);
         // step 2 / final - render the 50% sized canvas to the final canvas at the correct size
-        ctx.drawImage(oc, 0, 0, oc.width, oc.height, 0, 0, canvas.width, canvas.height);
+        html.rotate_canvas_to_exif(canvas, ctx, orientation);
+        ctx.drawImage(oc, 0, 0, oc.width, oc.height, 0, 0, w, h);
         return canvas.toDataURL("image/jpeg");
     },
 
