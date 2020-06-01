@@ -419,73 +419,65 @@ $(function() {
                 if (!max_width) { max_width = 640; }
                 if (!max_height) { max_height = 640; }
 
-                // Read the file to an image tag, then render it to
-                // an HTML5 canvas to scale it
-                var img = document.createElement("img");
-                var filedata = null;
-                var imreader = new FileReader();
-                imreader.onload = function(e) { 
-                    filedata = e.target.result;
-                    img.src = filedata; 
-                };
-                img.onload = function() {
-                    // Calculate the new image dimensions based on our max
-                    var img_width = img.width, img_height = img.height;
-                    if (img_width > img_height) {
-                        if (img_width > max_width) {
-                            img_height *= max_width / img_width;
-                            img_width = max_width;
+                // Read the file to an image tag, then scale it
+                html.load_img(file)
+                    .then(function(img) {
+                        // Calculate the new image dimensions based on our max
+                        var img_width = img.width, img_height = img.height;
+                        if (img_width > img_height) {
+                            if (img_width > max_width) {
+                                img_height *= max_width / img_width;
+                                img_width = max_width;
+                            }
                         }
-                    }
-                    else {
-                        if (img_height > max_height) {
-                            img_width *= max_height / img_height;
-                            img_height = max_height;
+                        else {
+                            if (img_height > max_height) {
+                                img_width *= max_height / img_height;
+                                img_height = max_height;
+                            }
                         }
-                    }
-                    // Scale the image
-                    var finalfile = html.scale_image(img, img_width, img_height);
+                        // Scale the image
+                        var finalfile = html.scale_image(img, img_width, img_height);
 
-                    // Post the scaled image
-                    var formdata = "mode=create&" +
-                        "linkid=" + controller.linkid + 
-                        "&linktypeid=" + controller.linktypeid + 
-                        "&comments=" + encodeURIComponent(comments) + 
-                        "&retainfor=" + encodeURIComponent(retainfor) + 
-                        "&filename=" + encodeURIComponent(file.name) +
-                        "&filetype=" + encodeURIComponent(file.type) + 
-                        "&filedata=" + encodeURIComponent(finalfile);
-                    common.ajax_post("media", formdata)
-                        .then(function(result) { 
-                            deferred.resolve();
-                        })
-                        .fail(function() {
-                            deferred.reject(); 
-                        });
-                };
-                imreader.readAsDataURL(file);
+                        // Post the scaled image
+                        var formdata = "mode=create&scaled=1&" +
+                            "linkid=" + controller.linkid + 
+                            "&linktypeid=" + controller.linktypeid + 
+                            "&comments=" + encodeURIComponent(comments) + 
+                            "&retainfor=" + encodeURIComponent(retainfor) + 
+                            "&filename=" + encodeURIComponent(file.name) +
+                            "&filetype=" + encodeURIComponent(file.type) + 
+                            "&filedata=" + encodeURIComponent(finalfile);
+                        return common.ajax_post("media", formdata);
+                    })
+                    .then(function(result) {
+                        deferred.resolve();
+                    })
+                    .fail(function() {
+                        deferred.reject(); 
+                    });
             } 
-            // It's not an image, just read it and send it to the backend
+            // It's not an image, or we aren't transforming images, 
+            // just read it and send it to the backend
             else {
-                var docreader = new FileReader();
-                docreader.onload = function(e) { 
-                    // Post the PDF/HTML doc via AJAX
-                    var formdata = "mode=create&" +
-                        "linkid=" + controller.linkid + 
-                        "&linktypeid=" + controller.linktypeid + 
-                        "&comments=" + encodeURIComponent(comments) + 
-                        "&filename=" + encodeURIComponent(file.name) +
-                        "&filetype=" + encodeURIComponent(file.type) + 
-                        "&filedata=" + encodeURIComponent(e.target.result);
-                    common.ajax_post("media", formdata)
-                        .then(function(result) { 
-                            deferred.resolve();
-                        })
-                        .fail(function() {
-                            deferred.reject(); 
-                        });
-                };
-                docreader.readAsDataURL(file);
+                common.read_file_as_data_url(file)
+                    .then(function(result) {
+                        // Post the PDF/HTML doc via AJAX
+                        var formdata = "mode=create&" +
+                            "linkid=" + controller.linkid + 
+                            "&linktypeid=" + controller.linktypeid + 
+                            "&comments=" + encodeURIComponent(comments) + 
+                            "&filename=" + encodeURIComponent(file.name) +
+                            "&filetype=" + encodeURIComponent(file.type) + 
+                            "&filedata=" + encodeURIComponent(result);
+                        return common.ajax_post("media", formdata);
+                    })
+                    .then(function(result) { 
+                        deferred.resolve();
+                    })
+                    .fail(function(result) {
+                        deferred.reject();
+                    });
             }
             return deferred.promise();
         },

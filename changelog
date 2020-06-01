@@ -1,6 +1,7 @@
 44
 ================
 
+01/06/20 Do not scale images twice, fix iOS applying orientation #844
 31/05/20 Fix for null values when sorting from search
 30/05/20 Support for Petcademy #832
 29/05/20 Trailing empty flags caused by merge/adopter #838
