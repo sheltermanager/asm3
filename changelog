@@ -1,6 +1,7 @@
 44
 ================
 
+02/06/20 Validate times in online forms on submit #840
 01/06/20 Apply client side image rotation, remove exifrestorer dep #844
 01/06/20 Do not scale images twice, fix iOS applying orientation #844
 31/05/20 Fix for null values when sorting from search

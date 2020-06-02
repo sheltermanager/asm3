@@ -3,8 +3,9 @@
 // This file is included with all online forms and used to load
 // widgets and implement validation behaviour, etc.
 
-// NOTE: This file should try for compatibility with as many browsers
-//       as possible.
+// NOTE: This file stands alone and should try for compatibility 
+//       with as many browsers as possible. 
+//       Avoid use of let/const, async/await, destructuring, etc.
 $(document).ready(function() {
 
     "use strict";
@@ -129,6 +130,23 @@ $(document).ready(function() {
                 }
                 catch (e) {
                     alert("Date is not valid.");
+                    $(this).focus();
+                    rv = false;
+                    return false;
+                }
+            }
+        });
+        return rv;
+    };
+
+    var validate_times = function() {
+        var rv = true;
+        $(".asm-onlineform-time").each(function() {
+            // Times should be HH:MM
+            var v = $(this).val();
+            if (v) {
+                if (!v.match(/^\d\d\:\d\d$/)) {
+                    alert("Time is not valid.");
                     $(this).focus();
                     rv = false;
                     return false;
@@ -312,6 +330,7 @@ $(document).ready(function() {
         if (!validate_signatures()) { return false; }
         if (!validate_lookupmulti()) { return false; }
         if (!validate_dates()) { return false; }
+        if (!validate_times()) { return false; }
         if (!validate_required()) { return false; }
         if (!validate_images()) { return false; }
     });
