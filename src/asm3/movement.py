@@ -35,6 +35,8 @@ def get_movement_query(dbo):
         "r.OwnerName AS RetailerName, " \
         "ma.MediaName AS WebsiteMediaName, ma.Date AS WebsiteMediaDate, " \
         "a.Sex, s.SpeciesName, rr.ReasonName AS ReturnedReasonName, " \
+        "CASE WHEN m.MovementType = 0 AND m.MovementDate Is Null THEN " \
+        "m.ReservationDate ELSE m.MovementDate END AS ActiveDate, " \
         "CASE WHEN m.MovementType = 2 AND m.IsPermanentFoster = 1 THEN " \
         "(SELECT MovementType FROM lksmovementtype WHERE ID=12) " \
         "WHEN m.MovementType = 1 AND m.IsTrial = 1 THEN " \
@@ -200,13 +202,13 @@ def get_animal_movements(dbo, aid):
     """
     Gets the list of movements for a particular animal
     """
-    return dbo.query(get_movement_query(dbo) + " WHERE m.AnimalID = ? ORDER BY m.MovementDate DESC", [aid])
+    return dbo.query(get_movement_query(dbo) + " WHERE m.AnimalID = ? ORDER BY ActiveDate DESC", [aid])
 
 def get_person_movements(dbo, pid):
     """
     Gets the list of movements for a particular person
     """
-    return dbo.query(get_movement_query(dbo) + " WHERE m.OwnerID = ? ORDER BY m.MovementDate DESC", [pid])
+    return dbo.query(get_movement_query(dbo) + " WHERE m.OwnerID = ? ORDER BY ActiveDate DESC", [pid])
 
 def validate_movement_form_data(dbo, post):
     """
