@@ -7,7 +7,7 @@ $(function() {
     var animal_bulk = {
 
         render: function() {
-            var choosetypes = [];
+            let choosetypes = [];
             $.each(controller.movementtypes, function(i, v) {
                 if (v.ID == 8 && !config.bool("DisableRetailer")) {
                     choosetypes.push(v);
@@ -270,38 +270,36 @@ $(function() {
             // Litter autocomplete
             $("#litterid").autocomplete({source: html.decode(controller.autolitters)});
 
-            $("#button-update").button().click(function() {
+            $("#button-update").button().click(async function() {
                 if (!validate.notblank([ "animals" ])) { return; }
                 $("#button-update").button("disable");
                 header.show_loading(_("Updating..."));
-                var formdata = "mode=update&" + $("input, select, textarea").toPOST();
-                common.ajax_post("animal_bulk", formdata)
-                    .then(function(data) {
-                        header.hide_loading();
-                        header.show_info(_("{0} animals successfully updated.").replace("{0}", data));
-                    })
-                    .always(function() {
-                        $("#button-update").button("enable");
-                    });
+                let formdata = "mode=update&" + $("input, select, textarea").toPOST();
+                try {
+                    let response = await common.ajax_post("animal_bulk", formdata);
+                    header.hide_loading();
+                    header.show_info(_("{0} animals successfully updated.").replace("{0}", response));
+                }
+                finally {
+                    $("#button-update").button("enable");
+                }
             });
 
-            $("#button-delete").button().click(function() {
+            $("#button-delete").button().click(async function() {
                 if (!validate.notblank([ "animals" ])) { return; }
-                tableform.delete_dialog(null, _("This will permanently remove the selected animals, are you sure?"))
-                    .then(function() {
-                        $("#button-delete").button("disable");
-                        header.show_loading(_("Deleting..."));
-                        var formdata = "mode=delete&" + $("input, select, textarea").toPOST();
-                        common.ajax_post("animal_bulk", formdata)
-                            .then(function(data) {
-                                header.hide_loading();
-                                header.show_info(_("{0} animals successfully deleted.").replace("{0}", data));
-                                $("#animals").animalchoosermulti("clear");
-                            })
-                            .always(function() {
-                                $("#button-delete").button("enable");
-                            });
-                    });
+                try {
+                    await tableform.delete_dialog(null, _("This will permanently remove the selected animals, are you sure?"));
+                    $("#button-delete").button("disable");
+                    header.show_loading(_("Deleting..."));
+                    let formdata = "mode=delete&" + $("input, select, textarea").toPOST();
+                    let response = await common.ajax_post("animal_bulk", formdata);
+                    header.hide_loading();
+                    header.show_info(_("{0} animals successfully deleted.").replace("{0}", response));
+                    $("#animals").animalchoosermulti("clear");
+                }
+                finally {
+                    $("#button-delete").button("enable");
+                }
             });
 
             if (!common.has_permission("ca")) { $("#button-update").hide(); }
