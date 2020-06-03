@@ -1754,6 +1754,7 @@ def generate_movement_doc(dbo, templateid, movementid, username):
     movementid: The movement to generate for
     """
     m = asm3.movement.get_movement(dbo, movementid)
+    tags = {}
     if m is None:
         raise asm3.utils.ASMValidationError("%d is not a valid movement ID" % movementid)
     if m.ANIMALID is not None and m.ANIMALID != 0:
