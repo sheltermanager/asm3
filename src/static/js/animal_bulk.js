@@ -4,7 +4,7 @@ $(function() {
     
     "use strict";
 
-    var animal_bulk = {
+    const animal_bulk = {
 
         render: function() {
             let choosetypes = [];

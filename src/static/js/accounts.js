@@ -4,7 +4,7 @@ $(function() {
 
     "use strict";
 
-    var accounts = {
+    const accounts = {
 
         model: function() {
 
@@ -12,7 +12,7 @@ $(function() {
             controller.costtypes.unshift({ ID: 0, COSTTYPENAME: "" });
             controller.donationtypes.unshift({ ID: 0, DONATIONNAME: "" });
 
-            let dialog = {
+            const dialog = {
                 add_title: _("Add account"),
                 edit_title: _("Edit account"),
                 edit_perm: 'cac',
@@ -41,7 +41,7 @@ $(function() {
                 ]
             };
 
-            let table = {
+            const table = {
                 rows: controller.rows,
                 idcolumn: "ID",
                 hideif: function(row) {
@@ -106,7 +106,7 @@ $(function() {
                 ]
             };
 
-            let buttons = [
+            const buttons = [
                 { id: "new", text: _("New Account"), icon: "new", enabled: "always", perm: "aac",
                     click: async function() { 
                         $("#accounttype").select("value", "0");

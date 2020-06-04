@@ -4,7 +4,7 @@ $(function() {
 
     "use strict";
 
-    var accounts_trx = {
+    const accounts_trx = {
 
         render: function() {
             return [
@@ -118,7 +118,7 @@ $(function() {
         },
 
         render_tablebody: function() {
-            var h = [],
+            let h = [],
                 tdc = "even",
                 futuredrawn = false,
                 reconciled = "",
@@ -169,9 +169,9 @@ $(function() {
         },
 
         bind: function() {
-            var validate_account = function(selector) {
+            const validate_account = function(selector) {
                 // Returns true if the value of $(selector) is a valid account code
-                var v = $(selector).val(),
+                let v = $(selector).val(),
                     codes = html.decode(controller.codes).split("|"),
                     validcode;
                 $.each(codes, function(i, c) {
@@ -273,7 +273,7 @@ $(function() {
 
             $(".trx-edit-link").click(function() {
                 if (accounts_trx.readonly) { return false; }
-                let row = common.get_row(controller.rows, $(this).attr("data-id"));
+                const row = common.get_row(controller.rows, $(this).attr("data-id"));
                 validate.reset("dialog-edit");
                 $("#trxid").val(row.ID);
                 $("#trxdate").val(format.date(row.TRXDATE));

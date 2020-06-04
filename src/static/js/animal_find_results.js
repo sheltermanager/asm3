@@ -4,7 +4,7 @@ $(function() {
 
     "use strict";
 
-    var animal_find_results = {
+    const animal_find_results = {
 
         render: function() {
             return [
@@ -31,8 +31,8 @@ $(function() {
          * Renders the table.head tag with columns in the right order
          */
         render_tablehead: function() {
-            var labels = animal_find_results.column_labels();
-            var s = [];
+            const labels = animal_find_results.column_labels();
+            let s = [];
             s.push("<thead>");
             s.push("<tr>");
             $.each(labels, function(i, label) {
@@ -48,13 +48,12 @@ $(function() {
          * highlighting styling applied, etc.
          */
         render_tablebody: function() {
-            var h = [];
+            let h = [];
             $.each(controller.rows, function(ir, row) {
                 h.push("<tr>");
                 $.each(animal_find_results.column_names(), function(ic, name) {
-
                     // Generate the animal selector
-                    var link = "<span style=\"white-space: nowrap\">";
+                    let link = "<span style=\"white-space: nowrap\">";
                     link += html.animal_emblems(row);
                     link += " <a id=\"action-" + row.ID + "\" href=\"animal?id=" + row.ID + "\">";
                     // Show the whole row in red if the animal is deceased
@@ -64,11 +63,11 @@ $(function() {
                     else {
                         h.push("<td>");
                     }
-                    var value = "";
+                    let value = "";
                     if (row.hasOwnProperty(name.toUpperCase())) {
                         value = row[name.toUpperCase()];
                     }
-                    var formatted = animal_find_results.format_column(row, name, value, controller.additional);
+                    let formatted = animal_find_results.format_column(row, name, value, controller.additional);
                     if (name == "AnimalName") { 
                         formatted = link + formatted + "</a></span>";
                     }
@@ -94,7 +93,7 @@ $(function() {
          * Returns a list of our configured viewable column names
          */
         column_names: function() {
-            var cols = [];
+            let cols = [];
             $.each(config.str("SearchColumns").split(","), function(i, v) {
                 cols.push(common.trim(v));
             });
@@ -105,8 +104,8 @@ $(function() {
          * Returns a list of our configured viewable column labels
          */
         column_labels: function() {
-            var names = animal_find_results.column_names();
-            var labels = [];
+            const names = animal_find_results.column_names();
+            let labels = [];
             $.each(names, function(i, name) {
                 labels.push(animal_find_results.column_label(name, controller.additional));
             });
@@ -125,7 +124,7 @@ $(function() {
          * add: Additional fields to scan for labels
          */
         column_label: function(name, add) {
-            var labels = {
+            const labels = {
                 "Adoptable": _("Adoptable"),
                 "AnimalTypeID": _("Type"),
                 "AnimalName": _("Name"),
@@ -193,7 +192,7 @@ $(function() {
                 return labels[name];
             }
             if (add) {
-                var addrow = common.get_row(add, name, "FIELDNAME");
+                let addrow = common.get_row(add, name, "FIELDNAME");
                 if (addrow) { return addrow.FIELDLABEL; }
             }
             return name;
@@ -207,7 +206,7 @@ $(function() {
          * add: The additional row results
          */
         format_column: function(row, name, value, add) {
-            var DATE_FIELDS = [ "DateOfBirth", "DeceasedDate", "IdentichipDate", "TattooDate", 
+            const DATE_FIELDS = [ "DateOfBirth", "DeceasedDate", "IdentichipDate", "TattooDate", 
                 "NeuteredDate", "CombiTestDate", "HeartwormTestDate", "DateBroughtIn", "HoldUntilDate" ],
             STRING_FIELDS = [ "AnimalName", "BreedName", "CreatedBy", "Markings", "AcceptanceNumber", 
                 "AgeGroup", "IdentichipNumber", "TattooNumber", "HiddenAnimalDetails", 
@@ -217,10 +216,10 @@ $(function() {
                 "IsHouseTrained" ],
             YES_NO_FIELDS = [ "Neutered", "CombiTested", "HeartwormTested", "Declawed", 
                 "HasActiveReserve", "HasSpecialNeeds", "IsHold", "IsNotAvailableForAdoption", "IsPickup", "IsQuarantine" ],
-            POS_NEG_UNKNOWN_FIELDS = [ "CombiTestResult", "FLVResult", "HeartwormTestResult" ],
-            rv = "";
+            POS_NEG_UNKNOWN_FIELDS = [ "CombiTestResult", "FLVResult", "HeartwormTestResult" ];
+            let rv = "";
             if (name == "Adoptable") {
-                var isa = html.is_animal_adoptable(row);
+                let isa = html.is_animal_adoptable(row);
                 rv = '<span class="' + (isa[0] ? "asm-search-adoptable" : "asm-search-notforadoption") + '">' +
                     isa[1] + '</span>';
             }
@@ -256,7 +255,7 @@ $(function() {
             else if ( name == "Size") { rv = row.SIZENAME; }
             else if ( name == "Weight") { 
                 if (config.bool("ShowWeightInLbs")) {
-                    var kg = format.to_float(row.WEIGHT),
+                    let kg = format.to_float(row.WEIGHT),
                         lb = format.to_int(row.WEIGHT),
                         oz = (kg - lb) * 16.0;
                     rv = lb + " lb, " + oz + " oz";

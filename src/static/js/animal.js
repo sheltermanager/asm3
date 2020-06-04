@@ -4,7 +4,7 @@ $(function() {
 
     "use strict";
 
-    var animal = {
+    const animal = {
 
         render_death: function() {
             return [
@@ -560,7 +560,7 @@ $(function() {
                 return;
             }
 
-            var h = [
+            let h = [
                 '<h3><a href="#">' + _("Incidents") + '</a></h3>',
                 '<div>',
                 '<table class="asm-table">',
@@ -691,8 +691,8 @@ $(function() {
                 return;
             }
 
-            var pname = function(p) {
-                var t = p;
+            const pname = function(p) {
+                let t = p;
                 if (p == "first") { t = _("Adoptable and published for the first time"); }
                 else if (p == "html") { t = html.icon("web") + " " + _("Published to Website"); }
                 else if (p == "petfinder") { t = "Published to petfinder.com"; }
@@ -729,7 +729,7 @@ $(function() {
             ];
 
             $.each(controller.publishhistory, function(i, v) {
-                var err = "";
+                let err = "";
                 if (v.EXTRA) { 
                     err = " : <span style='color: red'>" + v.EXTRA + "</span>"; 
                 }
@@ -747,7 +747,7 @@ $(function() {
          * Render the animal details screen
          */
         render: function() {
-            var h = [
+            let h = [
                 '<div id="button-document-body" class="asm-menu-body">',
                 '<ul class="asm-menu-list">',
                 edit_header.template_list(controller.templates, "ANIMAL", controller.animal.ID),
@@ -866,29 +866,26 @@ $(function() {
         },
 
         // Update the units available for the selected location
-        update_units: function() {
-            common.ajax_post("animal_new", "mode=units&locationid=" + $("#location").val())
-                .then(function(data) {
-                    var src = [];
-                    $.each(html.decode(data).split("&&"), function(i, v) {
-                        var u = v.split("|");
-                        var unit = u[0], desc = u[1];
-                        if (!unit) { return false; }
-                        if (!desc) { desc = _("(available)"); }
-                        src.push({ label: unit + ' : ' + desc, value: unit });
-                    });
-                    // Reload the source of available units
-                    $("#unit").autocomplete({ 
-                        source: src,
-                        // Dirty the form when an item is chosen from the dropdown
-                        select: function(event, ui) {
-                            validate.dirty(true);
-                        }
-                    // Display the autocomplete on focus
-                    }).bind('focus', function() { 
-                        $(this).autocomplete("search", ":"); 
-                    });
-                });
+        update_units: async function() {
+            const response = await common.ajax_post("animal_new", "mode=units&locationid=" + $("#location").val());
+            let src = [];
+            $.each(html.decode(response).split("&&"), function(i, v) {
+                let [unit, desc] = v.split("|");
+                if (!unit) { return false; }
+                if (!desc) { desc = _("(available)"); }
+                src.push({ label: unit + ' : ' + desc, value: unit });
+            });
+            // Reload the source of available units
+            $("#unit").autocomplete({ 
+                source: src,
+                // Dirty the form when an item is chosen from the dropdown
+                select: function(event, ui) {
+                    validate.dirty(true);
+                }
+            // Display the autocomplete on focus
+            }).bind('focus', function() { 
+                $(this).autocomplete("search", ":"); 
+            });
         },
 
         /** 
@@ -900,8 +897,8 @@ $(function() {
 
             // Hide additional accordion section if there aren't
             // any additional fields declared
-            var ac = $("#asm-additional-accordion");
-            var an = ac.next();
+            let ac = $("#asm-additional-accordion");
+            let an = ac.next();
             if (an.find(".additional").length == 0) {
                 ac.hide(); an.hide();
             }
@@ -978,7 +975,7 @@ $(function() {
             // If the user ticked hold, there's no hold until date and
             // we have an auto remove days period, default the date
             if ($("#hold").is(":checked") && $("#holduntil").val() == "" && config.integer("AutoRemoveHoldDays") > 0) {
-                var holddate = format.date_js(controller.animal.DATEBROUGHTIN).getTime();
+                let holddate = format.date_js(controller.animal.DATEBROUGHTIN).getTime();
                 holddate += config.integer("AutoRemoveHoldDays") * 86400000;
                 holddate = format.date( new Date(holddate) );
                 $("#holduntil").val(holddate);
@@ -1084,14 +1081,14 @@ $(function() {
             }
 
             // Converting between whole number for weight and pounds and ounces
-            var lboz_to_fraction = function() {
-                var lb = format.to_int($("#weightlb").val());
+            const lboz_to_fraction = function() {
+                let lb = format.to_int($("#weightlb").val());
                 lb += format.to_int($("#weightoz").val()) / 16.0;
                 $("#weight").val(String(lb));
             };
 
-            var fraction_to_lboz = function() {
-                var kg = format.to_float($("#weight").val()),
+            const fraction_to_lboz = function() {
+                let kg = format.to_float($("#weight").val()),
                     lb = format.to_int($("#weight").val()),
                     oz = (kg - lb) * 16.0;
                 $("#weightlb").val(lb);
@@ -1225,21 +1222,19 @@ $(function() {
         },
 
         /** Generates a new animal code */
-        generate_code: function() {
+        generate_code: async function() {
             validate.dirty(false);
-            var formdata = "mode=gencode&datebroughtin=" + $("#datebroughtin").val() + 
+            let formdata = "mode=gencode&datebroughtin=" + $("#datebroughtin").val() + 
                 "&animaltypeid=" + $("#animaltype").val() +
                 "&entryreasonid=" + $("#entryreason").val() +
                 "&speciesid=" + $("#species").val();
-            common.ajax_post("animal", formdata)
-                .then(function(result) { 
-                    var codes = result.split("||");
-                    $("#sheltercode").val(html.decode(codes[0]));
-                    $("#shortcode").val(html.decode(codes[1]));
-                    $("#uniquecode").val(codes[2]);
-                    $("#yearcode").val(codes[3]);
-                    validate.dirty(true);
-                });
+            let response = await common.ajax_post("animal", formdata);
+            let codes = response.split("||");
+            $("#sheltercode").val(html.decode(codes[0]));
+            $("#shortcode").val(html.decode(codes[1]));
+            $("#uniquecode").val(codes[2]);
+            $("#yearcode").val(codes[3]);
+            validate.dirty(true);
         },
 
         /**
@@ -1248,13 +1243,13 @@ $(function() {
         set_sharinglinks: function() {
 
             // Share data
-            var share_url = asm.serviceurl + "?method=animal_view&animalid=" + controller.animal.ID;
-            var share_image = asm.serviceurl + "?method=animal_image&animalid=" + controller.animal.ID;
+            let share_url = asm.serviceurl + "?method=animal_view&animalid=" + controller.animal.ID;
+            let share_image = asm.serviceurl + "?method=animal_image&animalid=" + controller.animal.ID;
             if (asm.smcom) { share_url += "&account=" + asm.useraccount; share_image += "&account=" + asm.useraccount; }
-            var share_title = controller.animal.ANIMALNAME;
-            var share_description = controller.animal.WEBSITEMEDIANOTES;
+            let share_title = controller.animal.ANIMALNAME;
+            let share_description = controller.animal.WEBSITEMEDIANOTES;
             
-            var enc_share_url = "", enc_share_description = "", enc_share_image = "", enc_share_title = "";
+            let enc_share_url = "", enc_share_description = "", enc_share_image = "", enc_share_title = "";
 
             try {
                 enc_share_url = encodeURIComponent(share_url);
@@ -1278,7 +1273,7 @@ $(function() {
 
             // When a share button is clicked, mark it as such for the publishing history
             $("#button-share-body").on("click", "li", function() {
-                var service = $(this).attr("id").replace("button-", "");
+                let service = $(this).attr("id").replace("button-", "");
                 common.ajax_post("animal", "mode=shared&id=" + controller.animal.ID + "&service=" + service);
             });
 
@@ -1381,7 +1376,7 @@ $(function() {
                 if (config.bool("ManualCodes")) { 
                     return;
                 }
-                var dbin = $("#datebroughtin").datepicker("getDate"), today = new Date();
+                let dbin = $("#datebroughtin").datepicker("getDate"), today = new Date();
                 if (config.str("CodingFormat").indexOf("M") != -1 ||
                     config.str("ShortCodingFormat").indexOf("M") != -1) {
                     // If the month is not this month, regenerate the code
@@ -1402,38 +1397,31 @@ $(function() {
             $("#litterid").autocomplete({source: html.decode(controller.activelitters)});
 
             // Diary task create ajax call
-            var create_task = function(taskid) {
-                var formdata = "mode=exec&id=" + controller.animal.ID + "&tasktype=ANIMAL&taskid=" + taskid + "&seldate=" + $("#seldate").val();
-                common.ajax_post("diarytask", formdata)
-                    .then(function(result) {
-                        // Attempt to save any changes before viewing the diary tab
-                        if (validate.unsaved) {
-                            validate.save(function() {
-                                common.route("animal_diary?id=" + controller.animal.ID);
-                            });
-                        }
-                        else {
-                            common.route("animal_diary?id=" + controller.animal.ID);
-                        }
+            const create_task = async function(taskid) {
+                let formdata = "mode=exec&id=" + controller.animal.ID + "&tasktype=ANIMAL&taskid=" + taskid + "&seldate=" + $("#seldate").val();
+                await common.ajax_post("diarytask", formdata);
+                // Attempt to save any changes before viewing the diary tab
+                if (validate.unsaved) {
+                    validate.save(function() {
+                        common.route("animal_diary?id=" + controller.animal.ID);
                     });
+                }
+                else {
+                    common.route("animal_diary?id=" + controller.animal.ID);
+                }
             };
 
             // Attach handlers for diary tasks
             $(".diarytask").each(function() {
-                var a = $(this);
-                var task = a.attr("data").split(" ");
-                var taskmode = task[0];
-                var taskid = task[1];
-                var taskneeddate = task[2];
-                $(this).click(function() {
+                let a = $(this);
+                const [taskmode, taskid, taskneeddate] = a.attr("data").split(" ");
+                $(this).click(async function() {
                     $("#seldate").val("");
                     // If the task needs a date, prompt for it
                     if (taskneeddate == "1") {
                         $("#diarytaskid").val(taskid);
-                        tableform.show_okcancel_dialog("#dialog-dt-date", _("Select"), { notblank: [ "seldate" ]})
-                            .then(function() {
-                                create_task($("#diarytaskid").val());
-                            });
+                        await tableform.show_okcancel_dialog("#dialog-dt-date", _("Select"), { notblank: [ "seldate" ]});
+                        create_task($("#diarytaskid").val());
                     }
                     else {
                         // No need for anything else, go create the task
@@ -1483,18 +1471,20 @@ $(function() {
             $("#crossbreed").click(animal.enable_widgets).keyup(animal.enable_widgets);
             $("#species").click(animal.enable_widgets).keyup(animal.enable_widgets);
 
-            validate.save = function(callback) {
+            validate.save = async function(callback) {
                 if (!animal.validation()) { header.hide_loading(); return; }
                 validate.dirty(false);
-                var formdata = "mode=save" +
+                let formdata = "mode=save" +
                     "&id=" + controller.animal.ID + 
                     "&recordversion=" + controller.animal.RECORDVERSION + 
                     "&" + $("input, select, textarea").not(".chooser").toPOST();
-                common.ajax_post("animal", formdata)
-                    .then(callback)
-                    .fail(function() {
-                        validate.dirty(true); 
-                    });
+                try {
+                    let response = await common.ajax_post("animal", formdata);
+                    callback(response);
+                }
+                catch(err) {
+                    validate.dirty(true); 
+                }
             };
 
             // Toolbar buttons
@@ -1505,27 +1495,23 @@ $(function() {
                 });
             });
 
-            $("#button-clone").button().click(function() {
+            $("#button-clone").button().click(async function() {
                 $("#button-clone").button("disable");
-                var formdata = "mode=clone&animalid=" + $("#animalid").val();
+                let formdata = "mode=clone&animalid=" + $("#animalid").val();
                 header.show_loading(_("Cloning..."));
-                common.ajax_post("animal", formdata)
-                    .then(function(result) { 
-                        header.hide_loading();
-                        common.route("animal?id=" + result + "&cloned=true"); 
-                    });
+                let response = await common.ajax_post("animal", formdata);
+                header.hide_loading();
+                common.route("animal?id=" + response + "&cloned=true"); 
             });
 
             $("#button-merge").button().click(function() {
-                var mb = {}; 
-                mb[_("Merge")] = function() { 
+                let mb = {}; 
+                mb[_("Merge")] = async function() { 
                     $("#dialog-merge").dialog("close");
-                    var formdata = "mode=merge&animalid=" + $("#animalid").val() + "&mergeanimalid=" + $("#mergeanimal").val();
-                    common.ajax_post("animal", formdata)
-                        .then(function() { 
-                            validate.dirty(false);
-                            common.route_reload(); 
-                        });
+                    let formdata = "mode=merge&animalid=" + $("#animalid").val() + "&mergeanimalid=" + $("#mergeanimal").val();
+                    await common.ajax_post("animal", formdata);
+                    validate.dirty(false);
+                    common.route_reload(); 
                 };
                 mb[_("Cancel")] = function() { $(this).dialog("close"); };
                 $("#dialog-merge").dialog({
@@ -1539,19 +1525,15 @@ $(function() {
                 });
             });
 
-            $("#button-delete").button().click(function() {
-                tableform.delete_dialog(null, _("This will permanently remove this animal, are you sure?"))
-                    .then(function() {
-                        var formdata = "mode=delete&animalid=" + $("#animalid").val();
-                        return common.ajax_post("animal", formdata);
-                    })
-                    .then(function() { 
-                        common.route("main");
-                    });
+            $("#button-delete").button().click(async function() {
+                await tableform.delete_dialog(null, _("This will permanently remove this animal, are you sure?"));
+                let formdata = "mode=delete&animalid=" + $("#animalid").val();
+                await common.ajax_post("animal", formdata);
+                common.route("main");
             });
 
             $("#button-email").button().click(function() {
-                var defaultemail = "", defaultname = "";
+                let defaultemail = "", defaultname = "";
                 // Use the latest reservation/person if the animal is on shelter/foster and a reserve is available
                 if (controller.animal && controller.animal.ARCHIVED == 0 && controller.animal.RESERVEDOWNEREMAILADDRESS) {
                     defaultemail = controller.animal.RESERVEDOWNEREMAILADDRESS;
@@ -1589,40 +1571,31 @@ $(function() {
 
             $("#button-randomname")
                 .button({ icons: { primary: "ui-icon-tag" }, text: false })
-                .click(function() {
+                .click(async function() {
                     validate.dirty(false);
-                    var formdata = "mode=randomname&sex=" + $("#sex").val();
-                    common.ajax_post("animal", formdata)
-                        .then(function(result) { 
-                            $("#animalname").val(result);
-                            validate.dirty(true);
-                        });
+                    let formdata = "mode=randomname&sex=" + $("#sex").val();
+                    let response = await common.ajax_post("animal", formdata);
+                    $("#animalname").val(response);
+                    validate.dirty(true);
                 });
 
             $("#button-commentstomedia")
                 .hide()
                 .button({ icons: { primary: "ui-icon-arrow-1-ne" }, text: false })
-                .click(function() {
+                .click(async function() {
                     $("#button-commentstomedia").button("disable");
-                    var formdata = "mode=webnotes&id=" + $("#animalid").val() + "&" + $("#comments").toPOST();
-                    common.ajax_post("animal", formdata)
-                        .then(function(result) { 
-                            $("#button-commentstomedia").button("enable");
-                            header.show_info(_("Comments copied to web preferred media."));
-                        });
+                    let formdata = "mode=webnotes&id=" + $("#animalid").val() + "&" + $("#comments").toPOST();
+                    await common.ajax_post("animal", formdata);
+                    $("#button-commentstomedia").button("enable");
+                   header.show_info(_("Comments copied to web preferred media."));
                 });
 
             $(".forgetlink").button({ icons: { primary: "ui-icon-trash" }, text: false })
-                .click(function() {
-                    var t = $(this), service = $(this).attr("data-service");
-                    common.ajax_post("animal", "mode=forgetpublish&id=" + controller.animal.ID + "&service=" + service)
-                        .then(function() {
-                            t.closest("p").fadeOut();
-                        });
+                .click(async function() {
+                    let t = $(this), service = $(this).attr("data-service");
+                    await common.ajax_post("animal", "mode=forgetpublish&id=" + controller.animal.ID + "&service=" + service);
+                    t.closest("p").fadeOut();
                 });
-
-
-
         },
 
         sync: function() {
@@ -1691,4 +1664,3 @@ $(function() {
     common.module_register(animal);
 
 });
-

@@ -4,10 +4,10 @@ $(function() {
 
     "use strict";
 
-    var additional = {
+    const additional = {
 
         model: function() {
-            let dialog = {
+            const dialog = {
                 add_title: _("Add additional field"),
                 edit_title: _("Edit additional field"),
                 helper_text: _("Additional fields need a name, label and type.") + '<br />' + _("Field names should not contain spaces."),
@@ -31,7 +31,7 @@ $(function() {
                 ]
             };
 
-            let table = {
+            const table = {
                 rows: controller.rows,
                 idcolumn: "ID",
                 edit: async function(row) {
@@ -58,7 +58,7 @@ $(function() {
                 ]
             };
 
-            let buttons = [
+            const buttons = [
                 { id: "new", text: _("New Field"), icon: "new", enabled: "always", 
                     click: async function() { 
                         await tableform.dialog_show_add(dialog, { onload: additional.check_type });

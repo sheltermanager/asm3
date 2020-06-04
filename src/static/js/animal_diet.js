@@ -4,10 +4,10 @@ $(function() {
     
     "use strict";
 
-    var animal_diet = {
+    const animal_diet = {
 
         model: function() {
-            var dialog = {
+            const dialog = {
                 add_title: _("Add diet"),
                 edit_title: _("Edit diet"),
                 edit_perm: 'dcad',
@@ -22,25 +22,21 @@ $(function() {
                 ]
             };
 
-            var table = {
+            const table = {
                 rows: controller.rows,
                 idcolumn: "ID",
-                edit: function(row) {
-                    tableform.dialog_show_edit(dialog, row)
-                        .then(function() {
-                            tableform.fields_update_row(dialog.fields, row);
-                            row.DIETNAME = common.get_field(controller.diettypes, row.DIETID, "DIETNAME");
-                            row.DIETDESCRIPTION = common.get_field(controller.diettypes, row.DIETID, "DIETDESCRIPTION");
-                            return tableform.fields_post(dialog.fields, "mode=update&dietid=" + row.ID, "animal_diet");
-                        })
-                        .then(function() {
-                            tableform.table_update(table);
-                            tableform.dialog_close();
-                        });
+                edit: async function(row) {
+                    await tableform.dialog_show_edit(dialog, row);
+                    tableform.fields_update_row(dialog.fields, row);
+                    row.DIETNAME = common.get_field(controller.diettypes, row.DIETID, "DIETNAME");
+                    row.DIETDESCRIPTION = common.get_field(controller.diettypes, row.DIETID, "DIETDESCRIPTION");
+                    await tableform.fields_post(dialog.fields, "mode=update&dietid=" + row.ID, "animal_diet");
+                    tableform.table_update(table);
+                    tableform.dialog_close();
                 },
                 complete: function(row) {
                     // Do we have a diet newer than this one? If so, mark it complete
-                    var iscomplete = false;
+                    let iscomplete = false;
                     $.each(controller.rows, function(i, v) {
                         if (format.date_js(v.DATESTARTED) > format.date_js(row.DATESTARTED)) {
                             iscomplete = true;
@@ -56,39 +52,31 @@ $(function() {
                 ]
             };
 
-            var buttons = [
-                 { id: "new", text: _("New Diet"), icon: "new", enabled: "always", perm: "daad",
-                     click: function() { 
-                         tableform.dialog_show_add(dialog)
-                             .then(function() {
-                                 return tableform.fields_post(dialog.fields, "mode=create&animalid="  + controller.animal.ID, "animal_diet");
-                             })
-                             .then(function(response) {
-                                 var row = {};
-                                 row.ID = response;
-                                 tableform.fields_update_row(dialog.fields, row);
-                                 row.DIETNAME = common.get_field(controller.diettypes, row.DIETID, "DIETNAME");
-                                 row.DIETDESCRIPTION = common.get_field(controller.diettypes, row.DIETID, "DIETDESCRIPTION");
-                                 controller.rows.push(row);
-                                 tableform.table_update(table);
-                                 tableform.dialog_close();
-                             });
-                     } 
-                 },
-                 { id: "delete", text: _("Delete"), icon: "delete", enabled: "multi", perm: "ddad",
-                     click: function() { 
-                         tableform.delete_dialog()
-                             .then(function() {
-                                 tableform.buttons_default_state(buttons);
-                                 var ids = tableform.table_ids(table);
-                                 return common.ajax_post("animal_diet", "mode=delete&ids=" + ids);
-                             })
-                             .then(function() {
-                                 tableform.table_remove_selected_from_json(table, controller.rows);
-                                 tableform.table_update(table);
-                             });
-                     } 
-                 }
+            const buttons = [
+                { id: "new", text: _("New Diet"), icon: "new", enabled: "always", perm: "daad",
+                    click: async function() { 
+                        await tableform.dialog_show_add(dialog);
+                        let response = await tableform.fields_post(dialog.fields, "mode=create&animalid="  + controller.animal.ID, "animal_diet");
+                        let row = {};
+                        row.ID = response;
+                        tableform.fields_update_row(dialog.fields, row);
+                        row.DIETNAME = common.get_field(controller.diettypes, row.DIETID, "DIETNAME");
+                        row.DIETDESCRIPTION = common.get_field(controller.diettypes, row.DIETID, "DIETDESCRIPTION");
+                        controller.rows.push(row);
+                        tableform.table_update(table);
+                        tableform.dialog_close();
+                    } 
+                },
+                { id: "delete", text: _("Delete"), icon: "delete", enabled: "multi", perm: "ddad",
+                    click: async function() { 
+                        await tableform.delete_dialog();
+                        tableform.buttons_default_state(buttons);
+                        let ids = tableform.table_ids(table);
+                        await common.ajax_post("animal_diet", "mode=delete&ids=" + ids);
+                        tableform.table_remove_selected_from_json(table, controller.rows);
+                        tableform.table_update(table);
+                    } 
+                }
             ];
             this.dialog = dialog;
             this.buttons = buttons;
@@ -97,7 +85,7 @@ $(function() {
 
         render: function() {
             this.model();
-            var s = "";
+            let s = "";
             s += tableform.dialog_render(this.dialog);
             s += edit_header.animal_edit_header(controller.animal, "diet", controller.tabcounts);
             s += tableform.buttons_render(this.buttons);
