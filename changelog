@@ -1,6 +1,7 @@
 44
 ================
 
+04/06/20 "needsfoster" additional field for Petrescue/SavourLife
 03/06/20 Add "ActiveDate" alias to movements to combine dates for sorts
 03/06/20 Support for async/await for older browsers #800
 02/06/20 Validate times in online forms on submit #840

@@ -266,6 +266,10 @@ class SavourLifePublisher(AbstractPublisher):
         if "ENQUIRYNUMBER" in an and an.ENQUIRYNUMBER != "":
             enquirynumber = an.ENQUIRYNUMBER
 
+        needs_foster = False
+        if "NEEDSFOSTER" in an and an.NEEDSFOSTER != "" and an.NEEDSFOSTER != "0":
+            needs_foster = True
+
         # Check whether we've been vaccinated, wormed and hw treated
         vaccinated = asm3.medical.get_vaccinated(self.dbo, an.ID)
         sixmonths = self.dbo.today(offset=-182)
@@ -327,7 +331,7 @@ class SavourLifePublisher(AbstractPublisher):
             "SpecialNeeds":             "",
             "MedicalIssues":            self.replaceSmartHTMLEntities(an.HEALTHPROBLEMS),
             "InterstateAdoptionAvailable": interstate, 
-            "FosterCareRequired":       False,
+            "FosterCareRequired":       needs_foster,
             "BondedPair":               an.BONDEDANIMALID is not None and an.BONDEDANIMALID > 0,
             "SizeWhenAdult":            size,
             "IsSaved":                  an.ACTIVEMOVEMENTTYPE == 1,

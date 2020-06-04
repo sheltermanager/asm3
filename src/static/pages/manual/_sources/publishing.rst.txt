@@ -354,6 +354,8 @@ animal records.
   of the group. Setting this to true makes breederid mandatory for all listings
   in South Australia after July 2018.
 
+* needsfoster (Yes/No): Indicates that foster care is required for the animal.
+
 * sourcenumber (Text): Required for all cat and dog listings in Victoria
 
 * rehomingorganisationid (Text): For cats and dogs in NSW, this field OR a
@@ -416,6 +418,8 @@ records.
   number that can be given to the shelter. This enquiry number is used to link
   adopters with the adopted animal and qualify them for free food from
   SavourLife.
+
+* needsfoster (Yes/No): Indicates that foster care is required for the animal.
 
 .. note:: SavourLife integration relies on you naming your breeds and species with the same values that they do. If a breed does not match one of the SavourLife breeds, ASM will send it as "Mixed Breed" instead. 
 
