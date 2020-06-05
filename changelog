@@ -1,6 +1,7 @@
 44
 ================
 
+05/06/20 move_adopt: not for adoption should only be a warning
 04/06/20 Fix email address when requesting newly created due payments
 04/06/20 Fix bad substitution of & in HTML template URLs 
 04/06/20 "needsfoster" additional field for Petrescue/SavourLife

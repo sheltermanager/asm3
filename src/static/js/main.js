@@ -715,7 +715,7 @@ $(function() {
                 $("#dialog-addmessage").disable_dialog_buttons();
                 let formdata = "mode=addmessage&" + $("#dialog-addmessage .asm-textbox, #dialog-addmessage textarea, #dialog-addmessage select, #dialog-addmessage .asm-checkbox").toPOST();
                 try {
-                    await common.ajax_post("main", formdata)
+                    await common.ajax_post("main", formdata);
                     let h = "<tr>\n";
                     h += "<td>\n";
                     h += "<span style=\"white-space: nowrap; padding-right: 5px;\">" + asm.user + "</span>\n";
