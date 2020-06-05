@@ -206,6 +206,13 @@ class Database(object):
         """ Fix and encode/decode any string values before storing them in the database.
             string column names with an asterisk will not do XSS escaping.
         """
+        def transform(s):
+            """ Transforms values going into the database """
+            if s is None: return ""
+            s = s.replace("`", "&bt;") # Encode backticks as they're going to become apostrophes
+            s = s.replace("'", "`") # Compatibility with ASM2, turn apostrophes into backticks
+            return s
+
         for k, v in values.copy().items(): # Work from a copy to prevent iterator problems
             if asm3.utils.is_str(v) or asm3.utils.is_unicode(v):
                 if not DB_DECODE_HTML_ENTITIES:         # Store HTML entities as is
@@ -220,7 +227,8 @@ class Database(object):
                 else:
                     # Otherwise, do XSS escaping
                     v = self.escape_xss(v)
-                v = self.escape_apos(v)
+                # Any transformations before storing in the database
+                v = transform(v)
                 values[k] = u"%s" % v
         return values
 
@@ -231,17 +239,24 @@ class Database(object):
         If v is already a str, removes any non-ascii chars
         If it is any other type, returns v untouched
         """
+        def transform(s):
+            """ Transforms values coming out of the database """
+            if s is None: return ""
+            s = s.replace("`", "'") # Backticks become apostrophes again
+            s = s.replace("&bt;", "`") # Encoded backticks become proper backticks
+            return s
+
         try:
             if v is None: 
                 return v
             elif sys.version_info[0] > 2 and asm3.utils.is_str(v): # PYTHON3 - make sure a unicode str is returned
-                v = self.unescape(v)
+                v = transform(v)
                 return v.encode("ascii", "xmlcharrefreplace").decode("ascii")
             elif asm3.utils.is_unicode(v):
-                v = self.unescape(v)
+                v = transform(v)
                 return v.encode("ascii", "xmlcharrefreplace")
             elif asm3.utils.is_str(v):
-                v = self.unescape(v)
+                v = transform(v)
                 return v.decode("ascii", "ignore").encode("ascii", "ignore")
             else:
                 return v
@@ -258,11 +273,6 @@ class Database(object):
         # This is historic - ASM2 switched backticks for apostrophes so we do for compatibility
         s = s.replace("'", "`")
         return s
-
-    def escape_apos(self, s):
-        """ Turn apostrophes into backticks before storing """
-        if s is None: return ""
-        return s.replace("'", "`")
 
     def escape_xss(self, s):
         """ XSS escapes a string """
@@ -944,12 +954,6 @@ class Database(object):
             override if your DB driver wants another char.
         """
         return sql.replace("?", "%s")
-
-    def unescape(self, s):
-        """ unescapes query values """
-        if s is None: return ""
-        s = s.replace("`", "'")
-        return s
 
     def update_asm2_primarykey(self, table, nextid):
         """
