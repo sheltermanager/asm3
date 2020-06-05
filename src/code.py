@@ -2550,8 +2550,9 @@ class document_gen(ASMEndpoint):
 
     def post_emailtemplate(self, o):
         self.content_type("text/html")
-        # If a personid or animalid have been supplied, substitute the document tokens first
-        if o.post.integer("personid") != 0:
+        if o.post["donationids"] != "":
+            return asm3.wordprocessor.generate_donation_doc(o.dbo, o.post.integer("dtid"), o.post.integer_list("donationids"), o.user)
+        elif o.post.integer("personid") != 0:
             return asm3.wordprocessor.generate_person_doc(o.dbo, o.post.integer("dtid"), o.post.integer("personid"), o.user)
         elif o.post.integer("animalid") != 0:
             return asm3.wordprocessor.generate_animal_doc(o.dbo, o.post.integer("dtid"), o.post.integer("animalid"), o.user)

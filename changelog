@@ -1,6 +1,8 @@
 44
 ================
 
+05/06/20 Fix bug in email dialog that kept spawning events
+05/06/20 Request payment email now correctly references all linked data
 05/06/20 move_adopt: not for adoption should only be a warning
 04/06/20 Fix email address when requesting newly created due payments
 04/06/20 Fix bad substitution of & in HTML template URLs 
