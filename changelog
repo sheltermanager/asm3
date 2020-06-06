@@ -1,6 +1,7 @@
 44
 ================
 
+06/06/20 Online form checkboxgroup fields #527
 06/06/20 Allow flags to exclude animals from some services #849
 05/06/20 Encode backticks when storing #848
 05/06/20 Fix bug in email dialog that kept spawning events

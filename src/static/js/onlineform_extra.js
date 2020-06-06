@@ -119,6 +119,27 @@ $(document).ready(function() {
         return rv;
     };
 
+    // Verifies that mandatory checkbox groups have something in them
+    // as well as loading the values into the hidden field
+    var validate_checkboxgroup = function() {
+        var rv = true;
+        $(".asm-onlineform-checkgroup").each(function() {
+            var fieldname = $(this).attr("data-name"),
+                v = [];
+            $(this).find("input[type='checkbox']:checked").each(function() {
+                v.push($(this).attr("data"));
+            });
+            $("input[name='" + fieldname + "']").val(v.join(","));
+            if (v.length == 0 && $(this).attr("data-required")) {
+                alert("You must choose at least one option");
+                $(this).find("input[type='checkbox']").focus();
+                rv = false;
+                return false;
+            }
+        });
+        return rv;
+    };
+
     var validate_dates = function() {
         var rv = true;
         $(".asm-onlineform-date").each(function() {
@@ -329,6 +350,7 @@ $(document).ready(function() {
     $("input[type='submit']").click(function() {
         if (!validate_signatures()) { return false; }
         if (!validate_lookupmulti()) { return false; }
+        if (!validate_checkboxgroup()) { return false; }
         if (!validate_dates()) { return false; }
         if (!validate_times()) { return false; }
         if (!validate_required()) { return false; }

@@ -14,6 +14,7 @@ $(function() {
         { "ID": 3, "NAME": _("Lookup") },
         { "ID": 14, "NAME": _("Lookup (Multiple Select)") },
         { "ID": 12, "NAME": _("Radio Buttons") },
+        { "ID": 18, "NAME": _("Checkbox Group") },
         { "ID": 4, "NAME": _("Shelter Animal") },
         { "ID": 5, "NAME": _("Adoptable Animal") },
         { "ID": 6, "NAME": _("Color") },
@@ -131,7 +132,7 @@ $(function() {
           */
         check_controls: function() {
             var ft = $("#fieldtype").select("value");
-            if (ft == 3 || ft == 12 || ft == 14) {
+            if (ft == 3 || ft == 12 || ft == 14 || ft == 18) {
                 $("#lookups").closest("tr").fadeIn();
             }
             else {
