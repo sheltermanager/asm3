@@ -104,6 +104,8 @@ and age, or arranged numerically with a fixed number of animals per page. In
 addition, a recently adopted page can be generated along with an rss.xml for
 feed readers.
 
+.. warning:: Static HTML publishing is deprecated for sheltermanager.com and will not be available in the future.
+
 * Generate javascript database: The site search facilities require a Javascript
   database, indexing the available animal records. If you wish to include
   search facilities, make sure this box is ticked. 
@@ -533,3 +535,19 @@ SmartTag also supply ISO microchips. ASM will also register SmartTag microchips
 (15 digits starting with 90007400) in a similar manner to ASM's other chip
 registration publishers.
 
+Exclude animals from specific publishers
+----------------------------------------
+
+It is possible to exclude an animal from a specific publisher. To do this,
+create a new animal flag called "Exclude from PUBLISHER", where PUBLISHER is
+the name of the service you wish to exclude. Eg: "Exclude from PetFinder".
+
+Assigning this animal flag to your animal will then prevent it being sent by
+that publisher. You can create flags for all the 3rd party publishers you use
+and assign them in combination where necessary.
+
+The flag names are not case sensitive. The names should not include any domains,
+eg: petfinder, adoptapet, rescuegroups, maddiesfund, petrescue, savourlife
+
+This is useful in situations where you get inundanted with applications for
+very popular animals and only want to put them on your own website.
