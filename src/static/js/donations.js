@@ -91,6 +91,7 @@ $(function() {
                         tableform.dialog_close();
                     }
                     catch(err) {
+                        log.error(err, err);
                         tableform.dialog_enable_buttons();
                     }
                 },

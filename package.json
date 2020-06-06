@@ -18,6 +18,8 @@
   },
   "devDependencies": {},
   "scripts": {
+    "babel": "babel -d src/static/js/compat src/static/js/*.js",
+    "jshint": "jshint --config scripts/jshint.conf src/static/js/*.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {

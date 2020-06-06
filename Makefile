@@ -58,7 +58,7 @@ compat:
 	@echo "[compat] =============================="
 	mkdir -p src/static/js/compat
 	rm -f src/static/js/compat/*.min.js
-	npx babel -d src/static/js/compat src/static/js/*.js
+	npm run babel
 	for i in src/static/js/compat/*.js; do echo $$i; cat $$i | scripts/jsmin/jsmin > src/static/js/compat/`basename $$i .js`.min.js; done
 
 minify:
@@ -89,7 +89,8 @@ compile: compilejs compilepy compilejsmin
 
 compilejs:
 	@echo "[compile javascript] ================="
-	for i in src/static/js/*.js; do echo $$i; npx jshint --config scripts/jshint.conf $$i; done
+	#for i in src/static/js/*.js; do echo $$i; npx jshint --config scripts/jshint.conf $$i; done
+	npm run jshint
 
 compilejsmin:
 	@echo "[compile jsmin] ======================"

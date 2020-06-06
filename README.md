@@ -8,7 +8,7 @@ Dependencies
 ------------
 
 If you are using a Debian-based system (eg: Ubuntu), then the following will
-install all the software you need to build and run ASM. If you are using the
+install all the software you need to run ASM. If you are using the
 sheltermanager3 deb package it already has dependencies set for these and will
 install them for you.
 
@@ -25,12 +25,19 @@ Extra, non-mandatory packages:
 * apt-get install python3-boto3 (needed for Amazon S3 media storage)
 * pip/pip3 install stripe (for requesting payments via Stripe)
 
-Packages necessary for building static checkers, installers and manuals:
+Packages necessary for building, static checkers, installers and manuals:
 
-* apt-get install exuberant-ctags nodejs npm pychecker python3-sphinx python3-sphinx-rtd-theme texlive-latex-base texlive-latex-extra latexmk
+* apt-get install exuberant-ctags nodejs npm pychecker python3-sphinx
+  python3-sphinx-rtd-theme texlive-latex-base texlive-latex-extra latexmk
+
+Node and npm are used for transpiling javascript code for older browsers and
+linting javascript files. To install all build time javascript dependences,
+run this command in the source folder:
+
+* npm install
 
 If you're using Debian and want to do development, you can use "make deps"
-to install the needed dependencies.
+as a convenient way to install the needed dependencies.
 
 Debian python3-webpy
 --------------------

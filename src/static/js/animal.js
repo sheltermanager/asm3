@@ -1483,6 +1483,7 @@ $(function() {
                     callback(response);
                 }
                 catch(err) {
+                    log.error(err, err);
                     validate.dirty(true); 
                 }
             };

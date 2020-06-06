@@ -387,13 +387,14 @@ $(function() {
                     $("#movementid").val(response);
                     header.hide_loading();
                     let u = "move_gendoc?" +
-                        "linktype=MOVEMENT&id=" + data +
+                        "linktype=MOVEMENT&id=" + response +
                         "&message=" + encodeURIComponent(common.base64_encode(_("Adoption successfully created.") + " " + 
                             $(".animalchooser-display").html() + " " + html.icon("right") + " " +
                             $(".personchooser-display .justlink").html() ));
                     common.route(u);
                 }
                 catch(err) {
+                    log.error(err, err);
                     $("#adopt").button("enable");
                 }
             });
