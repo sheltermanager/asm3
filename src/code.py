@@ -311,22 +311,6 @@ class ASMEndpoint(object):
         """ Returns a 404 """
         raise web.notfound()
 
-    def old_browser(self):
-        """ Returns True if this browser requires compatibility js """
-        u = self.user_agent()
-        OLD_BROWSERS = [
-            r"Trident.*rv\:11",                      # IE11
-            r"(Macintosh|iPad|iPhone);.*Version/5",  # Safari 5
-            r"(Macintosh|iPad|iPhone);.*Version/6",  # Safari 6
-            r"(Macintosh|iPad|iPhone);.*Version/7",  # Safari 7
-            r"(Macintosh|iPad|iPhone);.*Version/8",  # Safari 8
-            r"(Macintosh|iPad|iPhone);.*Version/9",  # Safari 9
-            r"(Macintosh|iPad|iPhone);.*Version/10", # Safari 10
-        ]
-        for b in OLD_BROWSERS:
-            if asm3.utils.regex_one(b, u) != "": return True
-        return False
-
     def post_all(self, o):
         """ Virtual function: override to handle postback """
         return ""
@@ -412,7 +396,7 @@ class JSONEndpoint(ASMEndpoint):
                 "common.route_listen(); " \
                 "common.module_start(\"%(js_module)s\"); " \
                 "});\n</script>\n</body>\n</html>" % { "js_module": self.js_module }
-            return "%s\n<script type=\"text/javascript\">\ncontroller = %s;\n</script>\n%s" % (asm3.html.header("", session, self.old_browser()), asm3.utils.json(c), footer)
+            return "%s\n<script type=\"text/javascript\">\ncontroller = %s;\n</script>\n%s" % (asm3.html.header("", session), asm3.utils.json(c), footer)
         else:
             self.content_type("application/json")
             return asm3.utils.json(c)
@@ -454,7 +438,7 @@ class database(ASMEndpoint):
         if dbo.has_structure():
             raise asm3.utils.ASMPermissionError("Database already created")
 
-        s = asm3.html.bare_header("Create your database", compatjs = self.old_browser())
+        s = asm3.html.bare_header("Create your database")
         s += """
             <h2>Create your new ASM database</h2>
             <form id="cdbf" method="post" action="database">
@@ -1023,7 +1007,7 @@ class login(ASMEndpoint):
             l = LOCALE
 
         title = _("Animal Shelter Manager Login", l)
-        s = asm3.html.bare_header(title, locale = l, compatjs = self.old_browser())
+        s = asm3.html.bare_header(title, locale = l)
         c = { "smcom": asm3.smcom.active(),
              "multipledatabases": MULTIPLE_DATABASES,
              "locale": l,

@@ -655,9 +655,6 @@ $(function() {
 
             '<div id="asm-content" class="ui-helper-reset ui-widget-content ui-corner-all" style="padding: 10px;">',
             html.error(_("A new version of ASM is available.") + ' <button id="button-reload">' + _("Reload Application") + '</button>', "newversion"),
-            html.error("You are using Internet Explorer 11 as your web browser. Microsoft no longer " +
-                    "recommend the use of this browser, it does not support features needed for modern " + 
-                    "web applications and we cannot guarantee that everything will work as expected.", "ie11warning"),
             this.render_animal_links(),
             '<div class="asm-main-columns">',
             '<div id="asm-main-diary" class="asm-main-column">',
@@ -921,9 +918,6 @@ $(function() {
             // If there's been a new deployment of ASM since we last
             // downloaded it to the browser, prompt the user to reload the page.
             $("#newversion").toggle( asm.build != controller.build );
-
-            // Show a warning if we're using ie11
-            $("#ie11warning").toggle(common.browser_is.ie11);
 
             // What's the highest news story available in the DOM/newsfeed?
             $("#newswrapper p").each(function() {

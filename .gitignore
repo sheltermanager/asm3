@@ -7,8 +7,8 @@ tags
 .vscode
 doc/manual/_build
 install/deb/sheltermanager3
+src/static/js/bundle
 src/static/js/compat
-src/static/js/min
 src/static/pages/changelog.txt
 scripts/ansible/archives
 scripts/ansible/roles
