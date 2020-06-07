@@ -5334,7 +5334,7 @@ class sql(JSONEndpoint):
                     return asm3.html.table(dbo.query(q))
                 else:
                     rowsaffected += dbo.execute(q)
-                    asm3.configuration.db_view_seq_version(dbo, "0")
+            asm3.configuration.db_view_seq_version(dbo, "0")
             return _("{0} rows affected.", l).format(rowsaffected)
         except Exception as err:
             asm3.al.error("%s" % str(err), "code.sql", dbo)
@@ -5351,11 +5351,11 @@ class sql(JSONEndpoint):
                     output.append(str(dbo.query(q)))
                 else:
                     rowsaffected = dbo.execute(q)
-                    asm3.configuration.db_view_seq_version(dbo, "0")
                     output.append(_("{0} rows affected.", l).format(rowsaffected))
             except Exception as err:
                 asm3.al.error("%s" % str(err), "code.sql", dbo)
                 output.append("ERROR: %s" % str(err))
+        asm3.configuration.db_view_seq_version(dbo, "0")
         return "\n\n".join(output)
 
 class sql_dump(ASMEndpoint):
