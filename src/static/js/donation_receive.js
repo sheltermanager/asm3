@@ -4,7 +4,7 @@ $(function() {
 
     "use strict";
 
-    var donation_receive = {
+    const donation_receive = {
 
         render: function() {
             return [
@@ -59,7 +59,7 @@ $(function() {
         },
 
         bind: function() {
-            var validation = function() {
+            const validation = function() {
                 // Remove any previous errors
                 header.hide_error();
                 validate.reset();
@@ -100,31 +100,30 @@ $(function() {
                 });
             */
 
-            $("#receive").button().click(function() {
+            $("#receive").button().click(async function() {
                 if (!validation()) { return; }
                 $("#receive").button("disable");
                 header.show_loading(_("Creating..."));
-
-                var formdata = "mode=create&" + $("input, select").toPOST();
-                common.ajax_post("donation_receive", formdata)
-                    .then(function(result) { 
-                        header.hide_loading();
-                        if (!result) {
-                            header.show_error(_("Failed to create payment.")); 
-                        }
-                        else {
-                            var msg = _("Payment of {0} successfully received ({1}).")
-                                    .replace("{0}", $("#totalamount").html())
-                                    .replace("{1}", $("#received").val());
-                            var u = "move_gendoc?" +
-                                "linktype=DONATION&id=" + result +
-                                "&message=" + encodeURIComponent(common.base64_encode(msg));
-                            common.route(u);
-                        }
-                    })
-                    .always(function() {
-                        $("#receive").button("enable");
-                    });
+                try {
+                    let formdata = "mode=create&" + $("input, select").toPOST();
+                    let result = await common.ajax_post("donation_receive", formdata);
+                    header.hide_loading();
+                    if (!result) {
+                        header.show_error(_("Failed to create payment.")); 
+                    }
+                    else {
+                        let msg = _("Payment of {0} successfully received ({1}).")
+                                .replace("{0}", $("#totalamount").html())
+                                .replace("{1}", $("#received").val());
+                        let u = "move_gendoc?" +
+                            "linktype=DONATION&id=" + result +
+                            "&message=" + encodeURIComponent(common.base64_encode(msg));
+                        common.route(u);
+                    }
+                }
+                finally {
+                    $("#receive").button("enable");
+                }
             });
 
             // Remove any retired lookups from the lists
@@ -132,21 +131,18 @@ $(function() {
         
         },
 
-        update_movements: function(personid) {
-            var formdata = "mode=personmovements&personid=" + personid;
-            common.ajax_post("donation", "mode=personmovements&personid=" + personid)
-                .then(function(result) {
-                    var h = "<option value=\"0\"></option>";
-                    $.each(jQuery.parseJSON(result), function(i,v) {
-                        h += "<option value=\"" + v.ID + "\">";
-                        h += v.ADOPTIONNUMBER + " - " + v.MOVEMENTNAME + ": " + v.ANIMALNAME;
-                        h += "</option>";
-                    });
-                    $("#movement").html(h);
-                    $("#movement").closest("tr").fadeIn();
-                });
+        update_movements: async function(personid) {
+            let formdata = "mode=personmovements&personid=" + personid;
+            let result = await common.ajax_post("donation", "mode=personmovements&personid=" + personid);
+            let h = "<option value=\"0\"></option>";
+            $.each(jQuery.parseJSON(result), function(i,v) {
+                h += "<option value=\"" + v.ID + "\">";
+                h += v.ADOPTIONNUMBER + " - " + v.MOVEMENTNAME + ": " + v.ANIMALNAME;
+                h += "</option>";
+            });
+            $("#movement").html(h);
+            $("#movement").closest("tr").fadeIn();
         },
-
 
         destroy: function() {
             common.widget_destroy("#animal");
