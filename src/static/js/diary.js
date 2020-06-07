@@ -4,10 +4,10 @@ $(function() {
 
     "use strict";
 
-    var diary = {
+    const diary = {
 
         model: function() {
-            var dialog = {
+            const dialog = {
                 add_title: _("Add diary"),
                 edit_title: _("Edit diary"),
                 helper_text: _("Diary notes need a date and subject.") + "<br />" + 
@@ -27,23 +27,24 @@ $(function() {
                 ]
             };
 
-            var table = {
+            const table = {
                 rows: controller.rows,
                 idcolumn: "ID",
                 edit: function(row) {
                     tableform.fields_populate_from_json(dialog.fields, row);
                     tableform.dialog_show_edit(dialog, row, {
-                        onchange: function() {
-                            tableform.fields_update_row(dialog.fields, row);
-                            tableform.fields_post(dialog.fields, "mode=update&diaryid=" + row.ID, "diary")
-                                .then(function(response) {
-                                    tableform.table_update(table);
-                                    tableform.dialog_close();
-                                })
-                                .fail(function(response) {
-                                    tableform.dialog_error(response);
-                                    tableform.dialog_enable_buttons();
-                                });
+                        onchange: async function() {
+                            try {
+                                tableform.fields_update_row(dialog.fields, row);
+                                await tableform.fields_post(dialog.fields, "mode=update&diaryid=" + row.ID, "diary");
+                                tableform.table_update(table);
+                                tableform.dialog_close();
+                            }
+                            catch(err) {
+                                log.error(err, err);
+                                tableform.dialog_error(response);
+                                tableform.dialog_enable_buttons();
+                            }
                         },
                         onload: function(row) {
                             // If this is my/all diary notes, and the user does not
@@ -83,7 +84,7 @@ $(function() {
                     { field: "DATECOMPLETED", display: _("Completed"), formatter: tableform.format_date },
                     { field: "LINKINFO", display: _("Link"), 
                         formatter: function(row) {
-                            var link = "#";
+                            let link = "#";
                             if (row.LINKTYPE == 1) { link = "animal?id=" + row.LINKID; }
                             if (row.LINKTYPE == 2) { link = "person?id=" + row.LINKID; }
                             if (row.LINKTYPE == 3) { link = "lostanimal?id=" + row.LINKID; }
@@ -103,51 +104,45 @@ $(function() {
                 ]
             };
 
-            var buttons = [
-                 { id: "new", text: _("New Diary"), icon: "new", enabled: "always", perm: "adn", click: function() { 
-                     diary.new_note();
-                 }},
-                 { id: "delete", text: _("Delete"), icon: "delete", enabled: "multi", perm: "ddn", 
-                     click: function() { 
-                         tableform.delete_dialog()
-                             .then(function() {
-                                 tableform.buttons_default_state(buttons);
-                                 var ids = tableform.table_ids(table);
-                                 return common.ajax_post("diary", "mode=delete&ids=" + ids);
-                             })
-                             .then(function() {
-                                 tableform.table_remove_selected_from_json(table, controller.rows);
-                                 tableform.table_update(table);
-                             });
-                     } 
-                 },
-                 { id: "complete", text: _("Complete"), icon: "complete", enabled: "multi", 
-                     click: function() { 
-                         var ids = tableform.table_ids(table);
-                         common.ajax_post("diary", "mode=complete&ids=" + ids)
-                             .then(function() {
-                                 $.each(controller.rows, function(i, v) {
-                                    if (tableform.table_id_selected(v.ID)) {
-                                        v.DATECOMPLETED = format.date_iso(new Date());
-                                    }
-                                 });
-                                 tableform.table_update(table);
-                             });
-                     } 
-                 },
-                 { id: "filter", type: "dropdownfilter", 
-                     options: [ "uncompleted|" + _("Incomplete notes upto today"),
+            const buttons = [
+                { id: "new", text: _("New Diary"), icon: "new", enabled: "always", perm: "adn", click: function() { 
+                    diary.new_note();
+                }},
+                { id: "delete", text: _("Delete"), icon: "delete", enabled: "multi", perm: "ddn", 
+                    click: async function() { 
+                        await tableform.delete_dialog();
+                        tableform.buttons_default_state(buttons);
+                        let ids = tableform.table_ids(table);
+                        await common.ajax_post("diary", "mode=delete&ids=" + ids);
+                        tableform.table_remove_selected_from_json(table, controller.rows);
+                        tableform.table_update(table);
+                    } 
+                },
+                { id: "complete", text: _("Complete"), icon: "complete", enabled: "multi", 
+                    click: async function() { 
+                        let ids = tableform.table_ids(table);
+                        await common.ajax_post("diary", "mode=complete&ids=" + ids);
+                        $.each(controller.rows, function(i, v) {
+                        if (tableform.table_id_selected(v.ID)) {
+                            v.DATECOMPLETED = format.date_iso(new Date());
+                        }
+                        });
+                        tableform.table_update(table);
+                    } 
+                },
+                { id: "filter", type: "dropdownfilter", 
+                    options: [ "uncompleted|" + _("Incomplete notes upto today"),
                         "completed|" + _("Completed notes upto today"),
                         "all|" + _("All notes upto today"),
                         "future|" + _("Future notes")
                         ],
-                     hideif: function() {
+                    hideif: function() {
                         return common.current_url().indexOf("diary_edit") == -1;
-                     },
-                     click: function(selval) {
+                    },
+                    click: function(selval) {
                         common.route(controller.name + "?filter=" + selval);
-                     }
-                 }
+                    }
+                }
             ];
             this.dialog = dialog;
             this.buttons = buttons;
@@ -159,7 +154,7 @@ $(function() {
         },
 
         render: function() {
-            var h = [];
+            let h = [];
             this.model();
             h.push(tableform.dialog_render(this.dialog));
             if (controller.name == "animal_diary") {
@@ -202,7 +197,7 @@ $(function() {
         sync: function() {
             // If a filter is given in the querystring, update the select
             if (common.current_url().indexOf("filter=") != -1) {
-                var filterurl = common.current_url().substring(common.current_url().indexOf("filter=")+7);
+                let filterurl = common.current_url().substring(common.current_url().indexOf("filter=")+7);
                 $("#filter").select("value", filterurl);
             }
 
@@ -213,17 +208,15 @@ $(function() {
 
         new_note: function() {
             tableform.dialog_show_add(diary.dialog, {
-                onadd: function() {
-                    tableform.fields_post(diary.dialog.fields, "mode=create&linktypeid=" + controller.linktypeid + "&linkid=" + controller.linkid, "diary")
-                        .then(function(response) {
-                            var row = {};
-                            row.ID = response;
-                            tableform.fields_update_row(diary.dialog.fields, row);
-                            diary.set_extra_fields(row);
-                            controller.rows.push(row);
-                            tableform.table_update(diary.table);
-                            tableform.dialog_close();
-                        });
+                onadd: async function() {
+                    let response = await tableform.fields_post(diary.dialog.fields, "mode=create&linktypeid=" + controller.linktypeid + "&linkid=" + controller.linkid, "diary");
+                    let row = {};
+                    row.ID = response;
+                    tableform.fields_update_row(diary.dialog.fields, row);
+                    diary.set_extra_fields(row);
+                    controller.rows.push(row);
+                    tableform.table_update(diary.table);
+                    tableform.dialog_close();
                 },
                 onload: function() {
 
@@ -253,7 +246,7 @@ $(function() {
         name: "diary",
         animation: function() { return controller.name.indexOf("diary_edit") == 0 ? "book" : "formtab"; },
         title:  function() { 
-            var t = "";
+            let t = "";
             if (controller.name == "animal_diary") {
                 t = common.substitute(_("{0} - {1} ({2} {3} aged {4})"), { 
                     0: controller.animal.ANIMALNAME, 1: controller.animal.CODE, 2: controller.animal.SEXNAME,

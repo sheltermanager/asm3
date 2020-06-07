@@ -4,10 +4,10 @@ $(function() {
 
     "use strict";
 
-    var document_repository = {
+    const document_repository = {
 
         model: function() {
-            var dialog = {
+            const dialog = {
                 add_title: _("Upload Document"),
                 close_on_ok: true,
                 html_form_action: "document_repository",
@@ -21,7 +21,7 @@ $(function() {
                 ]
             };
 
-            var table = {
+            const table = {
                 rows: controller.rows,
                 idcolumn: "ID",
                 edit: function(row) {
@@ -34,27 +34,21 @@ $(function() {
                 ]
             };
 
-            var buttons = [
+            const buttons = [
                 { id: "new", text: _("New"), icon: "new", enabled: "always", perm: "ard", 
-                    click: function() { 
-                        tableform.dialog_show_add(dialog)
-                            .then(function() {
-                               $("#form-tableform").submit();
-                            });
+                    click: async function() { 
+                        await tableform.dialog_show_add(dialog);
+                        $("#form-tableform").submit();
                      } 
                 },
                 { id: "delete", text: _("Delete"), icon: "delete", enabled: "multi", perm: "drd", 
-                    click: function() { 
-                        tableform.delete_dialog()
-                            .then(function() {
-                               tableform.buttons_default_state(buttons);
-                                var ids = tableform.table_ids(table);
-                                return common.ajax_post("document_repository", "mode=delete&ids=" + ids);
-                            })
-                            .then(function() {
-                                tableform.table_remove_selected_from_json(table, controller.rows);
-                                tableform.table_update(table);
-                            });
+                    click: async function() { 
+                        await tableform.delete_dialog();
+                        tableform.buttons_default_state(buttons);
+                        let ids = tableform.table_ids(table);
+                        await common.ajax_post("document_repository", "mode=delete&ids=" + ids);
+                        tableform.table_remove_selected_from_json(table, controller.rows);
+                        tableform.table_update(table);
                     } 
                 },
                 { id: "email", text: _("Email"), icon: "email", enabled: "multi", perm: "emo",
@@ -78,7 +72,7 @@ $(function() {
         },
 
         attach_files: function(files) {
-            var i = 0, promises = [];
+            let i = 0, promises = [];
             if (!Modernizr.filereader || !Modernizr.todataurljpeg) { return; }
             header.show_loading(_("Uploading..."));
             for (i = 0; i < files.length; i += 1) {
@@ -96,13 +90,13 @@ $(function() {
          */
         attach_file: function(file, comments) {
 
-            var deferred = $.Deferred(),
+            let deferred = $.Deferred(),
                 docreader = new FileReader();
 
             docreader.onload = function(e) {
                 // TODO: File size check?
                 // Post the file data via AJAX
-                var formdata = "mode=create&filename=" + encodeURIComponent(file.name) +
+                let formdata = "mode=create&filename=" + encodeURIComponent(file.name) +
                     "&filetype=" + encodeURIComponent(file.type) + 
                     "&filedata=" + encodeURIComponent(e.target.result);
                 common.ajax_post("document_repository", formdata)
@@ -118,7 +112,7 @@ $(function() {
         },
 
         render: function() {
-            var s = "";
+            let s = "";
             this.model();
             s += tableform.dialog_render(this.dialog);
             s += '<div id="emailform" />';

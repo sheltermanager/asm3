@@ -4,7 +4,7 @@ $(function() {
 
     "use strict";
 
-    var csvimport = {
+    const csvimport = {
 
         render: function() {
             return [
@@ -62,7 +62,7 @@ $(function() {
                 $("#import").button("disable");
                 $("#csvform").submit();
             });
-            var cme = function() {
+            const cme = function() {
                 if ($("#createmissinglookups").prop("checked")) {
                     $("#createmissinglookupsexplain").fadeIn();
                 }
@@ -70,7 +70,7 @@ $(function() {
                     $("#createmissinglookupsexplain").fadeOut();
                 }
             };
-            var cte = function() {
+            const cte = function() {
                 if ($("#cleartables").prop("checked")) {
                     $("#cleartablesexplain").fadeIn();
                 }
@@ -78,7 +78,7 @@ $(function() {
                     $("#cleartablesexplain").fadeOut();
                 }
             };
-            var cde = function() {
+            const cde = function() {
                 if ($("#checkduplicates").prop("checked")) {
                     $("#checkduplicatesexplain").fadeIn();
                 }

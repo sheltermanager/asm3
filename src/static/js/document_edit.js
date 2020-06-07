@@ -1,20 +1,24 @@
 /*global $, baseurl, buildno, jswindowprint, onlysavewhendirty, pdfenabled, visualaids, readonly, tinymce, tinyMCE */
 
+// NOTE: This file stands alone and should try for compatibility 
+//       with as many browsers as possible. 
+//       Avoid use of let/const, async/await, destructuring, etc.
+
 $(function() {
 
     "use strict";
    
-    let rw_toolbar = "save pdf print | undo redo | fontselect fontsizeselect | bold italic underline forecolor backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent pagebreak | link image";
+    var rw_toolbar = "save pdf print | undo redo | fontselect fontsizeselect | bold italic underline forecolor backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent pagebreak | link image";
     
     // Add the text direction options for RTL languages
-    let locale = $("#locale").val();
+    var locale = $("#locale").val();
     if (locale == "ar" || locale == "he") { rw_toolbar += " | ltr rtl"; }
 
-    let ro_toolbar = "pdf print";
+    var ro_toolbar = "pdf print";
 
     // Set the containing div and textarea to the vertical 
     // height of the viewport and 80% width
-    let h = $(window).height(),
+    var h = $(window).height(),
         w = Math.floor(($(window).width() / 100.0) * 80.0);
     // max-width is 775px
     if (w > 775) { w = 775; }
@@ -137,7 +141,7 @@ $(function() {
             // version of the document.
             // The user can also override this with a config option 
             // !jswindowprint (use iframe/window.print)
-            let ismobile = navigator.userAgent.match(/Android|iPhone|iPad|Kindle/i);
+            var ismobile = navigator.userAgent.match(/Android|iPhone|iPad|Kindle/i);
             
             if (ismobile || !jswindowprint) {
                 setTimeout(function() {

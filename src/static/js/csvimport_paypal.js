@@ -4,7 +4,7 @@ $(function() {
 
     "use strict";
 
-    var csvimport_paypal = {
+    const csvimport_paypal = {
 
         render: function() {
             return [
