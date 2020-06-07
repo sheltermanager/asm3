@@ -4,7 +4,7 @@ $(function() {
 
     "use strict";
 
-    var change_password = {
+    const change_password = {
 
         render: function() {
             return [
@@ -51,7 +51,7 @@ $(function() {
         },
 
         bind: function() {
-            var validation = function() {
+            const validation = function() {
                 // Remove any previous errors
                 header.hide_error();
                 validate.reset();
@@ -71,23 +71,22 @@ $(function() {
                 return true;
             };
 
-            var change_password = function(mode) {
+            const change_password = async function(mode) {
                 if (!validation()) { return; }
 
                 $("#change").button("disable");
                 header.show_loading();
-
-                var formdata = $("input").toPOST();
-                common.ajax_post("change_password", formdata)
-                    .then(function(result) { 
-                        header.show_info(_("Password successfully changed."));
-                        $("#change").button("enable");
-                        $("#oldpassword, #newpassword, #confirmpassword").val("");
-                    })
-                    .always(function() {
-                        header.hide_loading();
-                        $("#change").button("enable");
-                    });
+                try {
+                    let formdata = $("input").toPOST();
+                    await common.ajax_post("change_password", formdata);
+                    header.show_info(_("Password successfully changed."));
+                    $("#change").button("enable");
+                    $("#oldpassword, #newpassword, #confirmpassword").val("");
+                }
+                finally {
+                    header.hide_loading();
+                    $("#change").button("enable");
+                }
             };
 
             // Buttons

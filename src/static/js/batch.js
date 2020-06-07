@@ -4,7 +4,7 @@ $(function() {
 
     "use strict";
 
-    var batch = {
+    const batch = {
 
         render: function() {
             return [
@@ -35,20 +35,18 @@ $(function() {
             ].join("\n");
         },
 
-        runmode: function(btn, formdata) {
-            common.ajax_post("batch", formdata)
-                .then(function() {
-                    common.route("task");
-                });
+        runmode: async function(btn, formdata) {
+            await common.ajax_post("batch", formdata);
+            common.route("task");
         },
 
         bind: function() {
             $("#button-go").button().click(function() {
-                var task = $("#task").val(), taskdate = $("#taskdate").val();
+                let task = $("#task").val(), taskdate = $("#taskdate").val();
                 batch.runmode( task, "mode=" + task + "&taskdate=" + taskdate );
             });
             $("#task").change(function() {
-                var task = $("#task").val();
+                let task = $("#task").val();
                 $("#taskdate").toggle(task == "genfigyear" || task == "genfigmonth");
             });
         },
