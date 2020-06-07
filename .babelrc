@@ -1,7 +1,18 @@
 {
   "presets": [
     [
-      "@babel/preset-env"
+      "@babel/preset-env",
+      {
+        "targets": {
+          "chrome": "49",
+          "edge": "15",
+          "firefox": "44",
+          "ie": "11",
+          "ios": "6",
+          "opera": "42",
+          "safari": "6"
+        }
+      }
     ]
   ]
 }
