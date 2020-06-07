@@ -1,13 +1,7 @@
 {
   "presets": [
     [
-      "@babel/preset-env",
-      {
-        "targets": {
-          "ie":  "10",
-          "ios": "5"
-        }
-      }
+      "@babel/preset-env"
     ]
   ]
 }
