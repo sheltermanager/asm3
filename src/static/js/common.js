@@ -1724,7 +1724,7 @@ const html = {
                 s.push('<span class="custom" title="' + html.title(cflag) + '">' + cemblem + '</span>');
             }
             if (cflag && cemblem && ccond == "not" && !html.is_animal_flag(a.ADDITIONALFLAGS, cflag)) {
-                s.push('<span class="custom" title="' + html.title(cflag) + '">' + cemblem + '</span>');
+                s.push('<span class="custom" title="' + html.title(_("Not {0}").replace("{0}", cflag)) + '">' + cemblem + '</span>');
             }
         });
         s.push("</span>");

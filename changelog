@@ -1,6 +1,7 @@
 44
 ================
 
+08/06/20 Indicate not flag in emblem tooltip
 07/06/20 Remove redundant minify_js from build, simplify rollup #850
 06/06/20 Online form checkboxgroup fields #527
 06/06/20 Allow flags to exclude animals from some services #849
