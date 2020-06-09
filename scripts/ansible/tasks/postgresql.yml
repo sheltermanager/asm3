@@ -8,7 +8,7 @@
     state: "present"
   vars:
     packages:
-      - "python-psycopg2"
+      - "python3-psycopg2"
 
 - name: "Create postgres user"
   become: "yes"

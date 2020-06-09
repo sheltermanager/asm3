@@ -18,18 +18,15 @@
         state: "present"
       vars:
         packages:
-          - "libapache2-mod-wsgi"
+          - "libapache2-mod-wsgi-py3"
           - "make"
-          - "python"
-          - "python-pil"
-          - "python-webpy"
+          - "python3-pil"
+          - "python3-webpy"
           - "imagemagick"
           - "wkhtmltopdf"
-          - "python-requests"
-          - "python-ndg-httpsclient"
-          - "python-pyasn1"
+          - "python3-requests"
           - "memcached"
-          - "python-memcache"
+          - "python3-memcache"
           - "postfix"
           - "curl"
 
