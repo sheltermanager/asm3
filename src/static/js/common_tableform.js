@@ -696,7 +696,7 @@ const tableform = {
 
         b[_("Cancel")] = function() { 
             $(this).dialog("close"); 
-            deferred.reject();
+            deferred.reject("dialog cancelled");
         };
 
         var dw = dialog.width || "auto";
@@ -833,7 +833,7 @@ const tableform = {
 
         b[_("Cancel")] = function() { 
             $(this).dialog("close");
-            deferred.reject();
+            deferred.reject("dialog cancelled");
         };
 
         var dw = dialog.width || "auto";
@@ -1563,7 +1563,7 @@ const tableform = {
         };
         b[_("Cancel")] = function() { 
             $(this).dialog("close"); 
-            deferred.reject();
+            deferred.reject("dialog cancelled");
         };
         var mess = _("This will permanently remove the selected records, are you sure?"); 
         if (text && text != "") {
@@ -1619,7 +1619,7 @@ const tableform = {
 
         b[_("Cancel")] = function() { 
             $(this).dialog("close"); 
-            deferred.reject();
+            deferred.reject("dialog cancelled");
         };
 
         if (!o) { o = {}; }

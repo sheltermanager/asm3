@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   id="svg2"
+   viewBox="0 0 259.9 219.69"
+   version="1.1"
+   sodipodi:docname="icon_text.svg"
+   inkscape:version="0.92.4 (5da689c313, 2019-01-14)">
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="1820"
+     inkscape:window-height="1366"
+     id="namedview9"
+     showgrid="false"
+     inkscape:zoom="1.074241"
+     inkscape:cx="426.93634"
+     inkscape:cy="109.845"
+     inkscape:window-x="0"
+     inkscape:window-y="37"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="svg2" />
+  <defs
+     id="defs4" />
+  <metadata
+     id="metadata7">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     id="layer1"
+     transform="translate(-203.78779,-372.02681)"
+     inkscape:export-filename="/home/robin/logo_90_dpi.png"
+     inkscape:export-xdpi="89.934158"
+     inkscape:export-ydpi="89.934158">
+    <g
+       id="g3769"
+       stroke-opacity="0.94117647"
+       transform="translate(-29.285714,40.714286)"
+       stroke="#00800f">
+      <path
+         id="path3263"
+         stroke-linejoin="miter"
+         d="m267.18,550.45,191.69,0,0-156.58,33.546,0-128.9-62.002-129.89,61.386,33.546,0.30781,0,156.89z"
+         fill-rule="evenodd"
+         stroke-linecap="butt"
+         stroke-width="1.11079168px"
+         fill="#FFF" />
+      <path
+         id="path2460"
+         d="m315.95,511.96c-7.5552-5.8596-7.5374-13.249,0.0646-26.776,10.928-19.445,31.338-35.915,44.508-35.915,10.324,0,18.214,4.1327,29.466,15.434,19.349,19.434,25.953,40.47,15.073,48.008-6.4228,4.4496-17.446,4.8687-29.397,1.1178-7.1883-2.2562-10.554-2.2627-20.858-0.0407-19.378,4.1789-31.868,3.5911-38.856-1.8287zm87.619-39.429c-9.1265-9.0624-7.8695-23.536,3.0611-35.249,14.761-15.818,33.593-9.5646,33.593,11.154,0,21.408-23.682,36.976-36.654,24.095zm-100.66-7.1527c-13.07-7.18-20.18-23.28-15.71-35.55,7.635-20.957,38.232-7.1692,40.573,18.284,0.87859,9.5527,0.35423,11.338-4.6579,15.857-6.7009,6.0419-11.209,6.3551-20.213,1.4043zm76.94-30.33c-10.202-5.3865-13.617-16.122-9.6489-30.33,6.5712-23.53,31.347-30.707,39.473-11.434,8.6297,20.466-12.944,50.677-29.825,41.764zm-44.551-2.7368c-8.143-5.1427-13.633-17.238-13.633-30.035,0-18.387,9.3671-27.03,22.982-21.204,16.274,6.963,23.371,38.46,11.149,49.48-6.1963,5.587-13.452,6.2095-20.499,1.7589z"
+         stroke-width="1.1757251"
+         fill="#009d00" />
+    </g>
+  </g>
+  <text
+     xml:space="preserve"
+     style="font-style:normal;font-weight:normal;font-size:10.66666698px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none"
+     x="249.47849"
+     y="139.63347"
+     id="text821"
+     inkscape:export-filename="/home/robin/logo_90_dpi.png"
+     inkscape:export-xdpi="89.934158"
+     inkscape:export-ydpi="89.934158"><tspan
+       sodipodi:role="line"
+       id="tspan819"
+       x="249.47849"
+       y="139.63347"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:53.33333333px;font-family:'Latin Modern Sans';-inkscape-font-specification:'Latin Modern Sans'">sheltermanager.com</tspan></text>
+</svg>

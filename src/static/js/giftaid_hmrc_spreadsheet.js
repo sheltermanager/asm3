@@ -4,7 +4,7 @@ $(function() {
 
     "use strict";
 
-    var giftaid_hmrc_spreadsheet = {
+    const giftaid_hmrc_spreadsheet = {
 
         render: function() {
             return [

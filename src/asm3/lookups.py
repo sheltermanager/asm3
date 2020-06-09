@@ -247,6 +247,7 @@ PETFINDER_BREEDS = (
     "Black Mouth Cur",
     "Bloodhound",
     "Bluetick Coonhound",
+    "Blue Lacy",
     "Border Collie",
     "Border Terrier",
     "Borzoi",

@@ -4,10 +4,10 @@ $(function() {
 
     "use strict";
 
-    var clinic_invoice = {
+    const clinic_invoice = {
 
         model: function() {
-            var dialog = {
+            const dialog = {
                 add_title: _("Add Invoice Item"),
                 edit_title: _("Edit Invoice Item"),
                 edit_perm: 'ccl',
@@ -19,23 +19,21 @@ $(function() {
                 ]
             };
 
-            var table = {
+            const table = {
                 rows: controller.rows,
                 idcolumn: "ID",
-                edit: function(row) {
-                    tableform.fields_populate_from_json(dialog.fields, row);
-                    tableform.dialog_show_edit(dialog, row)
-                            .then(function() {
-                                tableform.fields_update_row(dialog.fields, row);
-                                return tableform.fields_post(dialog.fields, "mode=update&appointmentid=" + controller.appointmentid + "&itemid=" + row.ID, "clinic_invoice");
-                            })
-                            .then(function(response) {
-                                tableform.table_update(table);
-                                tableform.dialog_close();
-                            })
-                            .always(function() {
-                                tableform.dialog_enable_buttons();
-                            });
+                edit: async function(row) {
+                    try {
+                        tableform.fields_populate_from_json(dialog.fields, row);
+                        await tableform.dialog_show_edit(dialog, row);
+                        tableform.fields_update_row(dialog.fields, row);
+                        await tableform.fields_post(dialog.fields, "mode=update&appointmentid=" + controller.appointmentid + "&itemid=" + row.ID, "clinic_invoice");
+                        tableform.table_update(table);
+                        tableform.dialog_close();
+                    }
+                    finally {
+                        tableform.dialog_enable_buttons();
+                    }
                 },
                 columns: [
                     { field: "DESCRIPTION", display: _("Description") },
@@ -43,37 +41,33 @@ $(function() {
                 ]
             };
 
-            var buttons = [
-                { id: "new", text: _("New Item"), icon: "new", enabled: "always", perm: "acl", click: function() { 
-                    tableform.dialog_show_add(dialog)
-                        .then(function() {
-                            return tableform.fields_post(dialog.fields, "mode=create&appointmentid=" + controller.appointmentid, "clinic_invoice");
-                        })
-                        .then(function(response) {
+            const buttons = [
+                { id: "new", text: _("New Item"), icon: "new", enabled: "always", perm: "acl", 
+                    click: async function() { 
+                        try {
+                            await tableform.dialog_show_add(dialog);
+                            let response = await tableform.fields_post(dialog.fields, "mode=create&appointmentid=" + controller.appointmentid, "clinic_invoice");
                             var row = {};
                             row.ID = response;
                             tableform.fields_update_row(dialog.fields, row);
                             controller.rows.push(row);
                             tableform.table_update(table);
                             tableform.dialog_close();
-                        })
-                        .always(function() {
+                        }
+                        finally {
                             tableform.dialog_enable_buttons();   
-                        });
-                }},
+                        }
+                    }
+                },
                 { id: "delete", text: _("Delete"), icon: "delete", enabled: "multi", perm: "dcl",
-                     click: function() { 
-                         tableform.delete_dialog()
-                             .then(function() {
-                                 tableform.buttons_default_state(buttons);
-                                 var ids = tableform.table_ids(table);
-                                 return common.ajax_post("clinic_invoice", "mode=delete&ids=" + ids);
-                             })
-                             .then(function() {
-                                 tableform.table_remove_selected_from_json(table, controller.rows);
-                                 tableform.table_update(table);
-                             });
-                     } 
+                    click: async function() { 
+                        await tableform.delete_dialog();
+                        tableform.buttons_default_state(buttons);
+                        var ids = tableform.table_ids(table);
+                        await common.ajax_post("clinic_invoice", "mode=delete&ids=" + ids);
+                        tableform.table_remove_selected_from_json(table, controller.rows);
+                        tableform.table_update(table);
+                    } 
                 }
             ];
             this.dialog = dialog;
@@ -82,7 +76,7 @@ $(function() {
         },
 
         render: function() {
-            var h = [];
+            let h = [];
             this.model();
             h.push(tableform.dialog_render(this.dialog));
             h.push(html.content_header(this.title()));

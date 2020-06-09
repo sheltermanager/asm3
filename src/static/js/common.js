@@ -233,6 +233,7 @@ const common = {
     },
 
     browser_is: {
+        android: navigator.userAgent.match(/Android/i) != null,
         ios:     navigator.userAgent.match(/iPod|iPad/i) != null,
         chrome:  navigator.userAgent.match(/Chrome/i) != null,
         safari:  navigator.userAgent.match(/Safari/i) != null,
@@ -1724,7 +1725,7 @@ const html = {
                 s.push('<span class="custom" title="' + html.title(cflag) + '">' + cemblem + '</span>');
             }
             if (cflag && cemblem && ccond == "not" && !html.is_animal_flag(a.ADDITIONALFLAGS, cflag)) {
-                s.push('<span class="custom" title="' + html.title(cflag) + '">' + cemblem + '</span>');
+                s.push('<span class="custom" title="' + html.title(_("Not {0}").replace("{0}", cflag)) + '">' + cemblem + '</span>');
             }
         });
         s.push("</span>");

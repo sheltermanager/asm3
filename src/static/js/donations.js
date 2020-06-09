@@ -4,7 +4,7 @@ $(function() {
 
     "use strict";
 
-    var donations = {
+    const donations = {
 
         // Used to let person_loaded know whether we are creating or not
         create_semaphore: false,
@@ -15,7 +15,7 @@ $(function() {
 
         model: function() {
 
-            var dialog = {
+            const dialog = {
                 add_title: _("Add payment"),
                 edit_title: _("Edit payment"),
                 edit_perm: 'ocod',
@@ -59,10 +59,10 @@ $(function() {
                 ]
             };
 
-            var table = {
+            const table = {
                 rows: controller.rows,
                 idcolumn: "ID",
-                edit: function(row) {
+                edit: async function(row) {
                     tableform.fields_populate_from_json(dialog.fields, row);
                     donations.dialog_row = row;
                     donations.create_semaphore = false;
@@ -80,21 +80,20 @@ $(function() {
                         $("#vatrate").closest("tr").hide();
                         $("#vatamount").closest("tr").hide();
                     }
-                    tableform.dialog_show_edit(dialog, row)
-                        .then(function() {
-                            if (!donations.validation()) { tableform.dialog_enable_buttons(); return; }
-                            tableform.fields_update_row(dialog.fields, row);
-                            donations.set_extra_fields(row);
-                            return tableform.fields_post(dialog.fields, "mode=update&donationid=" + row.ID, "donation");
-                        })
-                        .then(function(response) {
-                            donations.calculate_total();
-                            tableform.table_update(table);
-                            tableform.dialog_close();
-                        })
-                        .fail(function() {
-                            tableform.dialog_enable_buttons();
-                        });
+                    try {
+                        await tableform.dialog_show_edit(dialog, row);
+                        if (!donations.validation()) { tableform.dialog_enable_buttons(); return; }
+                        tableform.fields_update_row(dialog.fields, row);
+                        donations.set_extra_fields(row);
+                        await tableform.fields_post(dialog.fields, "mode=update&donationid=" + row.ID, "donation");
+                        donations.calculate_total();
+                        tableform.table_update(table);
+                        tableform.dialog_close();
+                    }
+                    catch(err) {
+                        log.error(err, err);
+                        tableform.dialog_enable_buttons();
+                    }
                 },
                 complete: function(row) {
                 },
@@ -126,7 +125,7 @@ $(function() {
                     { field: "ANIMAL", display: _("Animal"), 
                         formatter: function(row) {
                             if (!row.ANIMALID || row.ANIMALID == 0) { return ""; }
-                            var s = "";
+                            let s = "";
                             if (controller.name.indexOf("animal_") == -1) { s = html.animal_emblems(row) + " "; }
                             return s + '<a href="animal?id=' + row.ANIMALID + '">' + row.ANIMALNAME + ' - ' + row.SHELTERCODE + '</a>';
                         },
@@ -138,29 +137,29 @@ $(function() {
                 ]
             };
 
-            var buttons = [
+            const buttons = [
                 { id: "new", text: _("New Payment"), icon: "new", enabled: "always", perm: "oaod",
                      click: function() { 
                         tableform.dialog_show_add(dialog, {
                             onvalidate: function() {
                                 return donations.validation();
                             },
-                            onadd: function() {
-                                tableform.fields_post(dialog.fields, "mode=create", "donation")
-                                    .then(function(response) {
-                                        var row = {};
-                                        row.ID = response.split("|")[0];
-                                        tableform.fields_update_row(dialog.fields, row);
-                                        donations.set_extra_fields(row);
-                                        row.RECEIPTNUMBER = response.split("|")[1];
-                                        controller.rows.push(row);
-                                        tableform.table_update(table);
-                                        donations.calculate_total();
-                                        tableform.dialog_close();
-                                    })
-                                    .fail(function() {
-                                        tableform.dialog_enable_buttons();   
-                                    });
+                            onadd: async function() {
+                                try {
+                                    let response = await tableform.fields_post(dialog.fields, "mode=create", "donation");
+                                    let row = {};
+                                    row.ID = response.split("|")[0];
+                                    tableform.fields_update_row(dialog.fields, row);
+                                    donations.set_extra_fields(row);
+                                    row.RECEIPTNUMBER = response.split("|")[1];
+                                    controller.rows.push(row);
+                                    tableform.table_update(table);
+                                    donations.calculate_total();
+                                    tableform.dialog_close();
+                                }
+                                catch(err) {
+                                    tableform.dialog_enable_buttons();   
+                                }
                             },
                             onload: function() {
                                 donations.create_semaphore = true;
@@ -184,44 +183,38 @@ $(function() {
                                 $("#vatamount").closest("tr").hide();
                             }
                         });
-                     } 
-                 },
-                 { id: "delete", text: _("Delete"), icon: "delete", enabled: "multi", perm: "odod", 
-                     click: function() { 
-                         tableform.delete_dialog()
-                             .then(function() {
-                                 tableform.buttons_default_state(buttons);
-                                 var ids = tableform.table_ids(table);
-                                 return common.ajax_post("donation", "mode=delete&ids=" + ids);
-                             })
-                             .then(function() {
-                                 tableform.table_remove_selected_from_json(table, controller.rows);
-                                 tableform.table_update(table);
-                                 donations.calculate_total();
-                             });
-                     } 
-                 },
-                 { id: "receive", text: _("Receive"), icon: "complete", enabled: "multi", tooltip: _("Mark selected payments received"), perm: "ocod",
-                     click: function() {
-                         var ids = tableform.table_ids(table);
-                         common.ajax_post("donation", "mode=receive&ids=" + ids)
-                             .then(function() {
-                                 $.each(controller.rows, function(i, v) {
-                                    if (tableform.table_id_selected(v.ID)) {
-                                        v.DATE = format.date_iso(new Date());
-                                    }
-                                 });
-                                 tableform.table_update(table);
-                                 donations.calculate_total();
-                             });
-                     }
-                 },
-                 { id: "document", text: _("Receipt/Invoice"), icon: "document", enabled: "multi", perm: "gaf", 
-                     tooltip: _("Generate document from this payment"), type: "buttonmenu" },
-                 { id: "processor", text: _("Request Payment"), icon: "web", enabled: "one", perm: "emo", 
-                     tooltip: _("Send an email request for payment via a payment processor"), type: "buttonmenu" },
-                 { id: "offset", type: "dropdownfilter", 
-                     options: [ 
+                    } 
+                },
+                { id: "delete", text: _("Delete"), icon: "delete", enabled: "multi", perm: "odod", 
+                    click: async function() { 
+                        await tableform.delete_dialog();
+                        tableform.buttons_default_state(buttons);
+                        let ids = tableform.table_ids(table);
+                        await common.ajax_post("donation", "mode=delete&ids=" + ids);
+                        tableform.table_remove_selected_from_json(table, controller.rows);
+                        tableform.table_update(table);
+                        donations.calculate_total();
+                    } 
+                },
+                { id: "receive", text: _("Receive"), icon: "complete", enabled: "multi", tooltip: _("Mark selected payments received"), perm: "ocod",
+                    click: async function() {
+                        let ids = tableform.table_ids(table);
+                        await common.ajax_post("donation", "mode=receive&ids=" + ids);
+                        $.each(controller.rows, function(i, v) {
+                        if (tableform.table_id_selected(v.ID)) {
+                            v.DATE = format.date_iso(new Date());
+                        }
+                        });
+                        tableform.table_update(table);
+                        donations.calculate_total();
+                    }
+                },
+                { id: "document", text: _("Receipt/Invoice"), icon: "document", enabled: "multi", perm: "gaf", 
+                    tooltip: _("Generate document from this payment"), type: "buttonmenu" },
+                { id: "processor", text: _("Request Payment"), icon: "web", enabled: "one", perm: "emo", 
+                    tooltip: _("Send an email request for payment via a payment processor"), type: "buttonmenu" },
+                { id: "offset", type: "dropdownfilter", 
+                    options: [ 
                         "m0|" + _("Received today"),
                         "m1|" + _("Received in last day"),
                         "m7|" + _("Received in last week"), 
@@ -231,17 +224,16 @@ $(function() {
                         "p7|" + _("Due in next week"), 
                         "p31|" + _("Due in next month"), 
                         "p365|" + _("Due in next year") ],
-                     click: function(selval) {
+                    click: function(selval) {
                         common.route(controller.name + "?offset=" + selval);
-                     },
-                     hideif: function(row) {
-                         // Don't show for animal or person records
-                         if (controller.animal || controller.person) {
-                             return true;
-                         }
-                     }
-                 }
-
+                    },
+                    hideif: function(row) {
+                        // Don't show for animal or person records
+                        if (controller.animal || controller.person) {
+                            return true;
+                        }
+                    }
+                }
             ];
             this.buttons = buttons;
             this.dialog = dialog;
@@ -258,7 +250,7 @@ $(function() {
         },
 
         type_change: function() {
-            var dc = common.get_field(controller.donationtypes, $("#type").select("value"), "DEFAULTCOST"),
+            let dc = common.get_field(controller.donationtypes, $("#type").select("value"), "DEFAULTCOST"),
                 dv = common.get_field(controller.donationtypes, $("#type").select("value"), "ISVAT");
             $("#unitprice, #amount").currency("value", dc);
             $("#vat").prop("checked", dv == 1);
@@ -268,21 +260,19 @@ $(function() {
             }
         },
 
-        update_movements: function(personid) {
-            common.ajax_post("donation", "mode=personmovements&personid=" + personid)
-                .then(function(result) {
-                    var h = "<option value=\"0\"></option>";
-                    $.each(jQuery.parseJSON(result), function(i,v) {
-                        h += "<option value=\"" + v.ID + "\">";
-                        h += v.ADOPTIONNUMBER + " - " + v.MOVEMENTNAME + ": " + v.ANIMALNAME;
-                        h += "</option>";
-                    });
-                    $("#movement").html(h);
-                    if (donations.dialog_row && donations.dialog_row.MOVEMENTID) {
-                        $("#movement").select("value", donations.dialog_row.MOVEMENTID);
-                    }
-                    $("#movement").closest("tr").fadeIn();
-                });
+        update_movements: async function(personid) {
+            let response = await common.ajax_post("donation", "mode=personmovements&personid=" + personid);
+            let h = "<option value=\"0\"></option>";
+            $.each(jQuery.parseJSON(response), function(i,v) {
+                h += "<option value=\"" + v.ID + "\">";
+                h += v.ADOPTIONNUMBER + " - " + v.MOVEMENTNAME + ": " + v.ANIMALNAME;
+                h += "</option>";
+            });
+            $("#movement").html(h);
+            if (donations.dialog_row && donations.dialog_row.MOVEMENTID) {
+                $("#movement").select("value", donations.dialog_row.MOVEMENTID);
+            }
+            $("#movement").closest("tr").fadeIn();
         },
 
         set_extra_fields: function(row) {
@@ -302,6 +292,7 @@ $(function() {
                 row.OWNERCODE = controller.person.OWNERCODE;
                 row.OWNERNAME = controller.person.OWNERNAME;
                 row.OWNERADDRESS = controller.person.OWNERADDRESS;
+                row.EMAILADDRESS = controller.person.EMAILADDRESS;
                 row.HOMETELEPHONE = controller.person.HOMETELEPHONE;
                 row.WORKTELEPHONE = controller.person.WORKTELEPHONE;
                 row.MOBILETELEPHONE = controller.person.MOBILETELEPHONE;
@@ -310,6 +301,7 @@ $(function() {
                 row.OWNERCODE = donations.lastperson.OWNERCODE;
                 row.OWNERNAME = donations.lastperson.OWNERNAME;
                 row.OWNERADDRESS = donations.lastperson.OWNERADDRESS;
+                row.EMAILADDRESS = donations.lastperson.EMAILADDRESS;
                 row.HOMETELEPHONE = donations.lastperson.HOMETELEPHONE;
                 row.WORKTELEPHONE = donations.lastperson.WORKTELEPHONE;
                 row.MOBILETELEPHONE = donations.lastperson.MOBILETELEPHONE;
@@ -320,7 +312,7 @@ $(function() {
         },
 
         calculate_total: function() {
-            var tot = 0, due = 0, vat = 0, net = 0, fee = 0;
+            let tot = 0, due = 0, vat = 0, net = 0, fee = 0;
             $.each(controller.rows, function(i, v) {
                 if (v.DATE) { tot += v.DONATION; net += v.DONATION; }
                 else { due += v.DONATION; }
@@ -341,7 +333,7 @@ $(function() {
         },
 
         render: function() {
-            var s = "";
+            let s = "";
             this.model();
             s += tableform.dialog_render(this.dialog);
             s += '<div id="button-document-body" class="asm-menu-body">' +
@@ -458,8 +450,8 @@ $(function() {
             $("#emailform").emailform();
 
             // Payment processor handling
-            var payment_processor_email_dialog = function(processor_name) {
-                var row = tableform.table_selected_row(donations.table);
+            const payment_processor_email_dialog = function(processor_name) {
+                let row = tableform.table_selected_row(donations.table);
                 $("#button-processor").asmmenu("hide_all");
                 header.hide_error();
                 if (!row) { return; }
@@ -471,7 +463,7 @@ $(function() {
                         row.OWNERID + "&payref=" + row.OWNERCODE + "-" + row.RECEIPTNUMBER,
                     name: row.OWNERNAME,
                     email: row.EMAILADDRESS,
-                    personid: row.OWNERID,
+                    donationids: tableform.table_ids(donations.table),
                     subject: row.COMMENTS || row.DONATIONNAME,
                     templates: controller.templates,
                     logtypes: controller.logtypes,
@@ -496,8 +488,8 @@ $(function() {
             $(".templatelink").click(function() {
                 // Update the href as it is clicked so default browser behaviour
                 // continues on to open the link in a new window
-                var template_name = $(this).attr("data");
-                var ids = tableform.table_ids(donations.table);
+                let template_name = $(this).attr("data");
+                let ids = tableform.table_ids(donations.table);
                 $(this).prop("href", "document_gen?linktype=DONATION&id=" + ids + "&dtid=" + template_name);
             });
         },
@@ -528,7 +520,7 @@ $(function() {
         animation: function() { return controller.name == "donation" ? "book" : "formtab"; },
 
         title:  function() { 
-            var t = "";
+            let t = "";
             if (controller.name == "animal_donations") {
                 t = common.substitute(_("{0} - {1} ({2} {3} aged {4})"), { 
                     0: controller.animal.ANIMALNAME, 1: controller.animal.CODE, 2: controller.animal.SEXNAME,

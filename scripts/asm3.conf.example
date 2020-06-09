@@ -90,14 +90,8 @@ cache_service_responses = false
 email_errors = false
 admin_email = you@youraddress.com
 
-# If minify_js is set to true, minified versions of the javascript
-# files will be generated at build/deploy time and the handler
-# in html.py will reference them instead
-minify_js = false
-
-# If rollup_js is set to true, all javascript files will be rolled
-# up into a single file before sending to the client (combine
-# with MINIFY_JS for smallest payload in a single request)
+# If rollup_js is set to true, a single, rolled up and minified 
+# javascript file will be sent to the client
 rollup_js = false
 
 # Only allow hotlinks to the animal_image and extra_image

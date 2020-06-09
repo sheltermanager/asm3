@@ -4,10 +4,10 @@ $(function() {
 
     "use strict";
 
-    var additional = {
+    const additional = {
 
         model: function() {
-            var dialog = {
+            const dialog = {
                 add_title: _("Add additional field"),
                 edit_title: _("Edit additional field"),
                 helper_text: _("Additional fields need a name, label and type.") + '<br />' + _("Field names should not contain spaces."),
@@ -31,21 +31,17 @@ $(function() {
                 ]
             };
 
-            var table = {
+            const table = {
                 rows: controller.rows,
                 idcolumn: "ID",
-                edit: function(row) {
-                    tableform.dialog_show_edit(dialog, row, { onload: additional.check_type })
-                        .then(function() {
-                            tableform.fields_update_row(dialog.fields, row);
-                            row.FIELDTYPENAME = common.get_field(controller.fieldtypes, row.FIELDTYPE, "FIELDTYPE");
-                            row.LINKTYPENAME = common.get_field(controller.linktypes, row.LINKTYPE, "LINKTYPE");
-                            return tableform.fields_post(dialog.fields, "mode=update&id=" + row.ID, "additional");
-                        })
-                        .then(function(response) {
-                            tableform.table_update(table);
-                            tableform.dialog_close();
-                        });
+                edit: async function(row) {
+                    await tableform.dialog_show_edit(dialog, row, { onload: additional.check_type });
+                    tableform.fields_update_row(dialog.fields, row);
+                    row.FIELDTYPENAME = common.get_field(controller.fieldtypes, row.FIELDTYPE, "FIELDTYPE");
+                    row.LINKTYPENAME = common.get_field(controller.linktypes, row.LINKTYPE, "LINKTYPE");
+                    await tableform.fields_post(dialog.fields, "mode=update&id=" + row.ID, "additional");
+                    tableform.table_update(table);
+                    tableform.dialog_close();
                 },
                 columns: [
                     { field: "FIELDNAME", display: _("Name"), initialsort: true },
@@ -62,39 +58,31 @@ $(function() {
                 ]
             };
 
-            var buttons = [
-                 { id: "new", text: _("New Field"), icon: "new", enabled: "always", 
-                     click: function() { 
-                         tableform.dialog_show_add(dialog, { onload: additional.check_type })
-                             .then(function() {
-                                 return tableform.fields_post(dialog.fields, "mode=create", "additional");
-                             })
-                             .then(function(response) {
-                                 var row = {};
-                                 row.ID = response;
-                                 tableform.fields_update_row(dialog.fields, row);
-                                 row.FIELDTYPENAME = common.get_field(controller.fieldtypes, row.FIELDTYPE, "FIELDTYPE");
-                                 row.LINKTYPENAME = common.get_field(controller.linktypes, row.LINKTYPE, "LINKTYPE");
-                                 controller.rows.push(row);
-                                 tableform.table_update(table);
-                                tableform.dialog_close();  
-                            });
-                     } 
-                 },
-                 { id: "delete", text: _("Delete"), icon: "delete", enabled: "multi", 
-                     click: function() { 
-                         tableform.delete_dialog(null, _("This will permanently remove this additional field and ALL DATA CURRENTLY HELD AGAINST IT. This action is irreversible, are you sure you want to do this?"))
-                             .then(function() {
-                                tableform.buttons_default_state(buttons);
-                                var ids = tableform.table_ids(table);
-                                return common.ajax_post("additional", "mode=delete&ids=" + ids);
-                             })
-                             .then(function() {
-                                 tableform.table_remove_selected_from_json(table, controller.rows);
-                                 tableform.table_update(table);
-                             });
-                     } 
-                 }
+            const buttons = [
+                { id: "new", text: _("New Field"), icon: "new", enabled: "always", 
+                    click: async function() { 
+                        await tableform.dialog_show_add(dialog, { onload: additional.check_type });
+                        let response = await tableform.fields_post(dialog.fields, "mode=create", "additional");
+                        let row = {};
+                        row.ID = response;
+                        tableform.fields_update_row(dialog.fields, row);
+                        row.FIELDTYPENAME = common.get_field(controller.fieldtypes, row.FIELDTYPE, "FIELDTYPE");
+                        row.LINKTYPENAME = common.get_field(controller.linktypes, row.LINKTYPE, "LINKTYPE");
+                        controller.rows.push(row);
+                        tableform.table_update(table);
+                        tableform.dialog_close();  
+                    } 
+                },
+                { id: "delete", text: _("Delete"), icon: "delete", enabled: "multi", 
+                    click: async function() { 
+                        await tableform.delete_dialog(null, _("This will permanently remove this additional field and ALL DATA CURRENTLY HELD AGAINST IT. This action is irreversible, are you sure you want to do this?"));
+                        tableform.buttons_default_state(buttons);
+                        let ids = tableform.table_ids(table);
+                        await common.ajax_post("additional", "mode=delete&ids=" + ids);
+                        tableform.table_remove_selected_from_json(table, controller.rows);
+                        tableform.table_update(table);
+                    } 
+                }
             ];
             this.dialog = dialog;
             this.table = table;
@@ -103,7 +91,7 @@ $(function() {
 
         render: function() {
             this.model();
-            var s = "";
+            let s = "";
             s += tableform.dialog_render(this.dialog);
             s += html.content_header(_("Additional Fields"));
             s += tableform.buttons_render(this.buttons);
@@ -117,7 +105,7 @@ $(function() {
          * and searchable fields.
           */
         check_type: function() {
-            var ft = $("#type").select("value");
+            let ft = $("#type").select("value");
             // Show lookups if field type is yes/no, lookup or multi-lookup
             if (ft == 0 || ft == 6 || ft == 7) {
                 $("#lookupvalues").closest("tr").fadeIn();

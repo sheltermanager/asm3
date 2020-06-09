@@ -4,7 +4,7 @@ $(function() {
 
     "use strict";
 
-    var csvexport = {
+    const csvexport = {
 
         render: function() {
             return [

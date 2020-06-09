@@ -3,8 +3,9 @@
 // This file is included with all online forms and used to load
 // widgets and implement validation behaviour, etc.
 
-// NOTE: This file should try for compatibility with as many browsers
-//       as possible.
+// NOTE: This file stands alone and should try for compatibility 
+//       with as many browsers as possible. 
+//       Avoid use of let/const, async/await, destructuring, etc.
 $(document).ready(function() {
 
     "use strict";
@@ -118,6 +119,27 @@ $(document).ready(function() {
         return rv;
     };
 
+    // Verifies that mandatory checkbox groups have something in them
+    // as well as loading the values into the hidden field
+    var validate_checkboxgroup = function() {
+        var rv = true;
+        $(".asm-onlineform-checkgroup").each(function() {
+            var fieldname = $(this).attr("data-name"),
+                v = [];
+            $(this).find("input[type='checkbox']:checked").each(function() {
+                v.push($(this).attr("data"));
+            });
+            $("input[name='" + fieldname + "']").val(v.join(","));
+            if (v.length == 0 && $(this).attr("data-required")) {
+                alert("You must choose at least one option");
+                $(this).find("input[type='checkbox']").focus();
+                rv = false;
+                return false;
+            }
+        });
+        return rv;
+    };
+
     var validate_dates = function() {
         var rv = true;
         $(".asm-onlineform-date").each(function() {
@@ -129,6 +151,23 @@ $(document).ready(function() {
                 }
                 catch (e) {
                     alert("Date is not valid.");
+                    $(this).focus();
+                    rv = false;
+                    return false;
+                }
+            }
+        });
+        return rv;
+    };
+
+    var validate_times = function() {
+        var rv = true;
+        $(".asm-onlineform-time").each(function() {
+            // Times should be HH:MM
+            var v = $(this).val();
+            if (v) {
+                if (!v.match(/^\d\d\:\d\d$/)) {
+                    alert("Time is not valid.");
                     $(this).focus();
                     rv = false;
                     return false;
@@ -311,7 +350,9 @@ $(document).ready(function() {
     $("input[type='submit']").click(function() {
         if (!validate_signatures()) { return false; }
         if (!validate_lookupmulti()) { return false; }
+        if (!validate_checkboxgroup()) { return false; }
         if (!validate_dates()) { return false; }
+        if (!validate_times()) { return false; }
         if (!validate_required()) { return false; }
         if (!validate_images()) { return false; }
     });

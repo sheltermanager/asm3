@@ -181,14 +181,8 @@ CACHE_SERVICE_RESPONSES = get_boolean("cache_service_responses", False)
 EMAIL_ERRORS = get_boolean("email_errors", False)
 ADMIN_EMAIL = get_string("admin_email", "you@youraddress.com")
 
-# If MINIFY_JS is set to True, minified versions of the javascript
-# files will be generated at build/deploy time and the handler
-# in html.py will reference them instead
-MINIFY_JS = get_boolean("minify_js", False)
-
-# If ROLLUP_JS is set to True, all javascript files will be rolled
-# up into a single file before sending to the client (combine
-# with MINIFY_JS for smallest payload in a single request)
+# If ROLLUP_JS is set to True, a single, rolled up and minified
+# javascript file will be sent to the client
 ROLLUP_JS = get_boolean("rollup_js", False)
 
 # Only allow hotlinks to the animal_image and extra_image

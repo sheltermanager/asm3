@@ -311,22 +311,6 @@ class ASMEndpoint(object):
         """ Returns a 404 """
         raise web.notfound()
 
-    def old_browser(self):
-        """ Returns True if this browser requires compatibility js """
-        u = self.user_agent()
-        OLD_BROWSERS = [
-            r"Trident.*rv\:11",                      # IE11
-            r"(Macintosh|iPad|iPhone);.*Version/5",  # Safari 5
-            r"(Macintosh|iPad|iPhone);.*Version/6",  # Safari 6
-            r"(Macintosh|iPad|iPhone);.*Version/7",  # Safari 7
-            r"(Macintosh|iPad|iPhone);.*Version/8",  # Safari 8
-            r"(Macintosh|iPad|iPhone);.*Version/9",  # Safari 9
-            r"(Macintosh|iPad|iPhone);.*Version/10", # Safari 10
-        ]
-        for b in OLD_BROWSERS:
-            if asm3.utils.regex_one(b, u) != "": return True
-        return False
-
     def post_all(self, o):
         """ Virtual function: override to handle postback """
         return ""
@@ -346,7 +330,7 @@ class ASMEndpoint(object):
         return web.ctx.env.get("HTTP_REFERER", "")
 
     def reload_config(self):
-        """ Reloads items in the session based on database values, invalids config.js so client reloads it """
+        """ Reloads items in the session based on database values, invalidates config.js so client reloads it """
         asm3.users.update_session(session)
 
     def remote_ip(self):
@@ -412,7 +396,7 @@ class JSONEndpoint(ASMEndpoint):
                 "common.route_listen(); " \
                 "common.module_start(\"%(js_module)s\"); " \
                 "});\n</script>\n</body>\n</html>" % { "js_module": self.js_module }
-            return "%s\n<script type=\"text/javascript\">\ncontroller = %s;\n</script>\n%s" % (asm3.html.header("", session, self.old_browser()), asm3.utils.json(c), footer)
+            return "%s\n<script type=\"text/javascript\">\ncontroller = %s;\n</script>\n%s" % (asm3.html.header("", session), asm3.utils.json(c), footer)
         else:
             self.content_type("application/json")
             return asm3.utils.json(c)
@@ -454,7 +438,7 @@ class database(ASMEndpoint):
         if dbo.has_structure():
             raise asm3.utils.ASMPermissionError("Database already created")
 
-        s = asm3.html.bare_header("Create your database", compatjs = self.old_browser())
+        s = asm3.html.bare_header("Create your database")
         s += """
             <h2>Create your new ASM database</h2>
             <form id="cdbf" method="post" action="database">
@@ -882,6 +866,11 @@ class main(JSONEndpoint):
         # If there's something wrong with the database, logout
         if not dbo.has_structure():
             self.redirect("logout")
+        # If a b (build) parameter was passed to indicate the client wants to
+        # get the latest js files, invalidate the config so that the
+        # frontend doesn't keep receiving the same build number via configjs 
+        # and get into an endless loop of reloads
+        if o.post["b"] != "": self.reload_config()
         # Database update checks
         dbmessage = ""
         if asm3.dbupdate.check_for_updates(dbo):
@@ -1023,7 +1012,7 @@ class login(ASMEndpoint):
             l = LOCALE
 
         title = _("Animal Shelter Manager Login", l)
-        s = asm3.html.bare_header(title, locale = l, compatjs = self.old_browser())
+        s = asm3.html.bare_header(title, locale = l)
         c = { "smcom": asm3.smcom.active(),
              "multipledatabases": MULTIPLE_DATABASES,
              "locale": l,
@@ -2550,8 +2539,9 @@ class document_gen(ASMEndpoint):
 
     def post_emailtemplate(self, o):
         self.content_type("text/html")
-        # If a personid or animalid have been supplied, substitute the document tokens first
-        if o.post.integer("personid") != 0:
+        if o.post["donationids"] != "":
+            return asm3.wordprocessor.generate_donation_doc(o.dbo, o.post.integer("dtid"), o.post.integer_list("donationids"), o.user)
+        elif o.post.integer("personid") != 0:
             return asm3.wordprocessor.generate_person_doc(o.dbo, o.post.integer("dtid"), o.post.integer("personid"), o.user)
         elif o.post.integer("animalid") != 0:
             return asm3.wordprocessor.generate_animal_doc(o.dbo, o.post.integer("dtid"), o.post.integer("animalid"), o.user)
@@ -5349,7 +5339,7 @@ class sql(JSONEndpoint):
                     return asm3.html.table(dbo.query(q))
                 else:
                     rowsaffected += dbo.execute(q)
-                    asm3.configuration.db_view_seq_version(dbo, "0")
+            asm3.configuration.db_view_seq_version(dbo, "0")
             return _("{0} rows affected.", l).format(rowsaffected)
         except Exception as err:
             asm3.al.error("%s" % str(err), "code.sql", dbo)
@@ -5366,11 +5356,11 @@ class sql(JSONEndpoint):
                     output.append(str(dbo.query(q)))
                 else:
                     rowsaffected = dbo.execute(q)
-                    asm3.configuration.db_view_seq_version(dbo, "0")
                     output.append(_("{0} rows affected.", l).format(rowsaffected))
             except Exception as err:
                 asm3.al.error("%s" % str(err), "code.sql", dbo)
                 output.append("ERROR: %s" % str(err))
+        asm3.configuration.db_view_seq_version(dbo, "0")
         return "\n\n".join(output)
 
 class sql_dump(ASMEndpoint):

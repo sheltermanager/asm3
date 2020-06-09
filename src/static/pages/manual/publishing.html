@@ -128,6 +128,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#homeagain">HomeAgain</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#petlink">PetLink</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#smarttag">SmartTag</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#exclude-animals-from-specific-publishers">Exclude animals from specific publishers</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="mailmerge.html">Mail Merge Sources</a></li>
@@ -292,6 +293,10 @@ upload them to an FTP server. The pages themselves can be split down by species
 and age, or arranged numerically with a fixed number of animals per page. In
 addition, a recently adopted page can be generated along with an rss.xml for
 feed readers.</p>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">Static HTML publishing is deprecated for sheltermanager.com and will not be available in the future.</p>
+</div>
 <ul class="simple">
 <li>Generate javascript database: The site search facilities require a Javascript
 database, indexing the available animal records. If you wish to include
@@ -497,6 +502,7 @@ cannot be left by itself.</li>
 <li>bredincareofgroup (Yes/No): Indicates the animal was bred whilst in the care
 of the group. Setting this to true makes breederid mandatory for all listings
 in South Australia after July 2018.</li>
+<li>needsfoster (Yes/No): Indicates that foster care is required for the animal.</li>
 <li>sourcenumber (Text): Required for all cat and dog listings in Victoria</li>
 <li>rehomingorganisationid (Text): For cats and dogs in NSW, this field OR a
 microchip number OR breederid must be supplied.</li>
@@ -557,6 +563,7 @@ records.</p>
 number that can be given to the shelter. This enquiry number is used to link
 adopters with the adopted animal and qualify them for free food from
 SavourLife.</li>
+<li>needsfoster (Yes/No): Indicates that foster care is required for the animal.</li>
 </ul>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
@@ -655,6 +662,19 @@ again to the new owner.</p>
 <p>SmartTag also supply ISO microchips. ASM will also register SmartTag microchips
 (15 digits starting with 90007400) in a similar manner to ASM’s other chip
 registration publishers.</p>
+</div>
+<div class="section" id="exclude-animals-from-specific-publishers">
+<h2>Exclude animals from specific publishers<a class="headerlink" href="#exclude-animals-from-specific-publishers" title="Permalink to this headline">¶</a></h2>
+<p>It is possible to exclude an animal from a specific publisher. To do this,
+create a new animal flag called “Exclude from PUBLISHER”, where PUBLISHER is
+the name of the service you wish to exclude. Eg: “Exclude from PetFinder”.</p>
+<p>Assigning this animal flag to your animal will then prevent it being sent by
+that publisher. You can create flags for all the 3rd party publishers you use
+and assign them in combination where necessary.</p>
+<p>The flag names are not case sensitive. The names should not include any domains,
+eg: petfinder, adoptapet, rescuegroups, maddiesfund, petrescue, savourlife</p>
+<p>This is useful in situations where you get inundanted with applications for
+very popular animals and only want to put them on your own website.</p>
 </div>
 </div>
 

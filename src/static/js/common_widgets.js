@@ -540,7 +540,7 @@ $.widget("asm.emailform", {
     },
 
     _create: function() {
-        var dialog = this.element;
+        let dialog = this.element, self = this;
         this.options.dialog = dialog;
         this.element.append([
             '<div id="dialog-email" style="display: none" title="' + html.title(_("Email person"))  + '">',
@@ -585,6 +585,50 @@ $.widget("asm.emailform", {
             '</div>'
         ].join("\n"));
         $("#emailbody").richtextarea();
+        var b = {}; 
+        b[_("Send")] = {
+            text: _("Send"),
+            "class": "asm-dialog-actionbutton",
+            click: function() { 
+                if (!validate.email($("#emailfrom").val())) { return; }
+                if (!validate.email($("#emailto").val())) { return; }
+                if ($("#emailcc").val() != "" && !validate.email($("#emailcc").val())) { return; }
+                if ($("#emailbcc").val() != "" && !validate.email($("#emailbcc").val())) { return; }
+                let o = self.options.o;
+                if (o.formdata) { o.formdata += "&"; }
+                o.formdata += $("#dialog-email input, #dialog-email select, #dialog-email .asm-richtextarea").toPOST();
+                header.show_loading(_("Sending..."));
+                common.ajax_post(o.post, o.formdata, function() {
+                    var recipients = $("#emailto").val();
+                    if ($("#emailcc").val() != "") { recipients += ", " + $("#emailcc").val(); }
+                    header.show_info(_("Message successfully sent to {0}").replace("{0}", recipients));
+                    $("#dialog-email").dialog("close");
+                });
+            }
+        };
+        b[_("Cancel")] = function() { $(this).dialog("close"); };
+        $("#dialog-email").dialog({
+                autoOpen: false,
+                resizable: false,
+                modal: true,
+                dialogClass: "dialogshadow",
+                width: 640,
+                show: dlgfx.add_show,
+                hide: dlgfx.add_hide,
+                buttons: b
+        });
+        $("#emailtemplate").change(function() {
+            let o = self.options.o;
+            let formdata = "mode=emailtemplate&dtid=" + $("#emailtemplate").val();
+            if (o.donationids) { formdata += "&donationids=" + o.donationids; }
+            if (o.personid) { formdata += "&personid=" + o.personid; }
+            if (o.animalid) { formdata += "&animalid=" + o.animalid; }
+            header.show_loading(_("Loading..."));
+            common.ajax_post("document_gen", formdata, function(result) {
+                $("#emailbody").html(result); 
+            });
+        });
+
     },
 
     destroy: function() {
@@ -608,37 +652,9 @@ $.widget("asm.emailform", {
      *    Eg: show({ post: "person", formdata: "mode=email&personid=52", name: "Bob Smith", email: "bob@smith.com" })
      */
     show: function(o) {
-        var b = {}; 
-        b[_("Send")] = {
-            text: _("Send"),
-            "class": "asm-dialog-actionbutton",
-            click: function() { 
-                if (!validate.email($("#emailfrom").val())) { return; }
-                if (!validate.email($("#emailto").val())) { return; }
-                if ($("#emailcc").val() != "" && !validate.email($("#emailcc").val())) { return; }
-                if ($("#emailbcc").val() != "" && !validate.email($("#emailbcc").val())) { return; }
-                if (o.formdata) { o.formdata += "&"; }
-                o.formdata += $("#dialog-email input, #dialog-email select, #dialog-email .asm-richtextarea").toPOST();
-                header.show_loading(_("Sending..."));
-                common.ajax_post(o.post, o.formdata, function() {
-                    var recipients = $("#emailto").val();
-                    if ($("#emailcc").val() != "") { recipients += ", " + $("#emailcc").val(); }
-                    header.show_info(_("Message successfully sent to {0}").replace("{0}", recipients));
-                    $("#dialog-email").dialog("close");
-                });
-            }
-        };
-        b[_("Cancel")] = function() { $(this).dialog("close"); };
-        $("#dialog-email").dialog({
-                title: o.title || _("Email person"),
-                resizable: false,
-                modal: true,
-                dialogClass: "dialogshadow",
-                width: 640,
-                show: dlgfx.add_show,
-                hide: dlgfx.add_hide,
-                buttons: b
-        });
+        this.options.o = o;
+        $("#dialog-email").dialog("option", "title", o.title || _("Email person"));
+        $("#dialog-email").dialog("open");
         if (o.logtypes) {
             $("#emaillogtype").append( html.list_to_options(o.logtypes, "ID", "LOGTYPENAME") );
             $("#emaillogtype").select("value", config.integer("AFDefaultLogType"));
@@ -648,23 +664,14 @@ $.widget("asm.emailform", {
         }
         if (o.templates) {
             $("#emailtemplate").html( edit_header.template_list_options(o.templates) );
-            $("#emailtemplate").change(function() {
-                var formdata = "mode=emailtemplate&dtid=" + $("#emailtemplate").val();
-                if (o.personid) { formdata += "&personid=" + o.personid; }
-                if (o.animalid) { formdata += "&animalid=" + o.animalid; }
-                header.show_loading(_("Loading..."));
-                common.ajax_post("document_gen", formdata, function(result) {
-                    $("#emailbody").html(result); 
-                });
-            });
         }
         else {
             $("#emailtemplate").closest("tr").hide();
         }
-        var mailaddresses = [];
-        var conf_org = html.decode(config.str("Organisation").replace(",", ""));
-        var conf_email = config.str("EmailAddress");
-        var org_email = conf_org + " <" + conf_email + ">";
+        let mailaddresses = [];
+        let conf_org = html.decode(config.str("Organisation").replace(",", ""));
+        let conf_email = config.str("EmailAddress");
+        let org_email = conf_org + " <" + conf_email + ">";
         mailaddresses.push(conf_email);
         mailaddresses.push(org_email);
         $("#emailfrom").val(conf_email);
@@ -674,8 +681,15 @@ $.widget("asm.emailform", {
         }
         $("#emailfrom").autocomplete({source: mailaddresses});
         $("#emailfrom").autocomplete("widget").css("z-index", 1000);
-        if (o.email) { $("#emailto").val(common.replace_all(html.decode(o.name), ",", "") + " <" + o.email + ">"); }
-        var msg = config.str("EmailSignature");
+        if (o.email && o.email.indexOf(",") != -1) { 
+            // If there's more than one email address, only output the comma separated emails
+            $("#emailto").val(o.email); 
+        }
+        else if (o.email) { 
+            // Otherwise, use RFC821
+            $("#emailto").val(common.replace_all(html.decode(o.name), ",", "") + " <" + o.email + ">"); 
+        }
+        let msg = config.str("EmailSignature");
         if (o.message) { msg = "<p>" + o.message + "</p>" + msg; }
         else { msg = "<p>&nbsp;</p>" + msg; }
         if (msg) {

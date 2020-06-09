@@ -25,6 +25,9 @@ ANIMALNONSHELTER
     Y/N to indicate whether this animal is a owned by a member of the public and not a shelter animal
 ANIMALNOTFORADOPTION
     Y/N to indicate whether this animal is not available for adoption (Y is not available).
+ANIMALFLAGS
+    A comma separated list of animal flags, including builtins courtesy,
+    crueltycase, notforadoption, notforregistration, nonshelter, quarantine
 ANIMALSEX
     The animal's gender. ASM looks for the initial letter “M” in the string to indicate male, "F" for Female or "U" for Unknown.
 ANIMALTYPE

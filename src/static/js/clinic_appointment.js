@@ -4,7 +4,7 @@ $(function() {
 
     "use strict";
 
-    var SCHEDULED = 0,
+    const SCHEDULED = 0,
         INVOICE_ONLY = 1,
         NOT_ARRIVED = 2,
         WAITING = 3,
@@ -14,7 +14,7 @@ $(function() {
 
         TIMEFORMAT = "%H:%M";
 
-    var clinic_appointment = {
+    const clinic_appointment = {
 
         lastperson: null,
         animals: null,
@@ -22,7 +22,7 @@ $(function() {
         is_book: false,
 
         model: function() {
-            var dialog = {
+            const dialog = {
                 add_title: _("Add Appointment"),
                 edit_title: _("Edit Appointment"),
                 edit_perm: 'ccl',
@@ -52,27 +52,25 @@ $(function() {
                 ]
             };
 
-            var table = {
+            const table = {
                 rows: controller.rows,
                 idcolumn: "ID",
-                edit: function(row) {
+                edit: async function(row) {
                     tableform.fields_populate_from_json(dialog.fields, row);
                     clinic_appointment.dialog_row = row;
                     clinic_appointment.show_person_animals(false);
-                    tableform.dialog_show_edit(dialog, row)
-                            .then(function() {
-                                if (!clinic_appointment.validation()) { tableform.dialog_enable_buttons(); return; }
-                                tableform.fields_update_row(dialog.fields, row);
-                                clinic_appointment.set_extra_fields(row);
-                                return tableform.fields_post(dialog.fields, "mode=update&appointmentid=" + row.ID, "clinic_appointment");
-                            })
-                            .then(function(response) {
-                                tableform.table_update(table);
-                                tableform.dialog_close();
-                            })
-                            .always(function() {
-                                tableform.dialog_enable_buttons();
-                            });
+                    try {
+                        await tableform.dialog_show_edit(dialog, row);
+                        if (!clinic_appointment.validation()) { tableform.dialog_enable_buttons(); return; }
+                        tableform.fields_update_row(dialog.fields, row);
+                        clinic_appointment.set_extra_fields(row);
+                        await tableform.fields_post(dialog.fields, "mode=update&appointmentid=" + row.ID, "clinic_appointment");
+                        tableform.table_update(table);
+                        tableform.dialog_close();
+                    }
+                    finally {
+                        tableform.dialog_enable_buttons();
+                    }
                 },
                 button_click: function() {
                     if ($(this).attr("data-uri")) {
@@ -90,7 +88,7 @@ $(function() {
                 },
                 columns: [
                     { field: "CLINICSTATUSNAME", display: _("Status"), formatter: function(row) {
-                        var invlink = "<button data-icon=\"cart\" " + 
+                        let invlink = "<button data-icon=\"cart\" " + 
                             "data-uri=\"clinic_invoice?appointmentid=" + row.ID + "\">" + 
                             _("Edit invoice") + '</button>';
                         return '<span style="white-space: nowrap">' +
@@ -113,7 +111,7 @@ $(function() {
                     { field: "ANIMAL", display: _("Animal"), 
                         formatter: function(row) {
                             if (!row.ANIMALID || row.ANIMALID == 0) { return ""; }
-                            var s = "";
+                            let s = "";
                             if (controller.name.indexOf("animal_") == -1) { s = html.animal_emblems(row) + " "; }
                             return s + '<a href="animal?id=' + row.ANIMALID + '">' + row.ANIMALNAME + ' - ' + row.SHELTERCODE + '</a>';
                         },
@@ -123,13 +121,13 @@ $(function() {
                     },
                     { field: "DATETIME", display: _("Appointment"), initialsort: true, initialsortdirection: "asc", 
                         formatter: function(row) {
-                            var d = format.date(row.DATETIME), t = format.time(row.DATETIME, TIMEFORMAT);
+                            let d = format.date(row.DATETIME), t = format.time(row.DATETIME, TIMEFORMAT);
                             if (clinic_appointment.is_book) { return t; }
                             return d + " " + t;
                         }},
                     { field: "ARRIVEDDATETIME", display: _("Arrived"), formatter: function(row) {
                         if (!row.ARRIVEDDATETIME) { return ""; }
-                        var cutoff = format.date_js(row.WITHVETDATETIME) || new Date(),
+                        let cutoff = format.date_js(row.WITHVETDATETIME) || new Date(),
                             diffmins = Math.round((cutoff - format.date_js(row.ARRIVEDDATETIME)) / 60000),
                             d = format.date(row.ARRIVEDDATETIME), t = format.time(row.ARRIVEDDATETIME, TIMEFORMAT),
                             dv = clinic_appointment.is_book ? t : d + " " + t;
@@ -138,13 +136,13 @@ $(function() {
                     }},
                     { field: "WITHVETDATETIME", display: _("With Vet"), 
                         formatter: function(row) {
-                            var d = format.date(row.WITHVETDATETIME), t = format.time(row.WITHVETDATETIME, TIMEFORMAT);
+                            let d = format.date(row.WITHVETDATETIME), t = format.time(row.WITHVETDATETIME, TIMEFORMAT);
                             if (clinic_appointment.is_book) { return t; }
                             return d + " " + t;
                         }},
                     { field: "COMPLETEDDATETIME", display: _("Complete"), 
                         formatter: function(row) {
-                            var d = format.date(row.COMPLETEDDATETIME), t = format.time(row.COMPLETEDDATETIME, TIMEFORMAT);
+                            let d = format.date(row.COMPLETEDDATETIME), t = format.time(row.COMPLETEDDATETIME, TIMEFORMAT);
                             if (clinic_appointment.is_book) { return t; }
                             return d + " " + t;
                         }},
@@ -157,9 +155,9 @@ $(function() {
 
             };
 
-            var buttons = [
-                { id: "new", text: _("New Appointment"), icon: "new", enabled: "always", perm: "acl", click: function() { 
-                    tableform.dialog_show_add(dialog, {
+            const buttons = [
+                { id: "new", text: _("New Appointment"), icon: "new", enabled: "always", perm: "acl", click: async function() { 
+                    await tableform.dialog_show_add(dialog, {
                         onvalidate: function() {
                             return clinic_appointment.validation();
                         },
@@ -183,86 +181,77 @@ $(function() {
                                 $("#animal").animalchooser("loadbyid", controller.animal.ID);
                                 clinic_appointment.show_person_animals(false);
                             }
-                        }})
-                        .then(function() {
-                            return tableform.fields_post(dialog.fields, "mode=create", "clinic_appointment");
-                        })
-                        .then(function(response) {
-                            var row = {};
-                            row.ID = response;
-                            tableform.fields_update_row(dialog.fields, row);
-                            clinic_appointment.set_extra_fields(row);
-                            controller.rows.push(row);
-                            tableform.table_update(table);
-                            tableform.dialog_close();
-                        })
-                        .always(function() {
-                            tableform.dialog_enable_buttons();   
-                        });
+                        }
+                    });
+                    try {
+                        let response = await tableform.fields_post(dialog.fields, "mode=create", "clinic_appointment");
+                        var row = {};
+                        row.ID = response;
+                        tableform.fields_update_row(dialog.fields, row);
+                        clinic_appointment.set_extra_fields(row);
+                        controller.rows.push(row);
+                        tableform.table_update(table);
+                        tableform.dialog_close();
+                    }
+                    finally {
+                        tableform.dialog_enable_buttons();   
+                    }
                 }},
                 { id: "delete", text: _("Delete"), icon: "delete", enabled: "multi", perm: "dcl",
-                     click: function() { 
-                         tableform.delete_dialog()
-                             .then(function() {
-                                 tableform.buttons_default_state(buttons);
-                                 var ids = tableform.table_ids(table);
-                                 return common.ajax_post("clinic_appointment", "mode=delete&ids=" + ids);
-                             })
-                             .then(function() {
-                                 tableform.table_remove_selected_from_json(table, controller.rows);
-                                 tableform.table_update(table);
-                             });
-                     } 
+                    click: async function() { 
+                        await tableform.delete_dialog();
+                        tableform.buttons_default_state(buttons);
+                        var ids = tableform.table_ids(table);
+                        await common.ajax_post("clinic_appointment", "mode=delete&ids=" + ids);
+                        tableform.table_remove_selected_from_json(table, controller.rows);
+                        tableform.table_update(table);
+                    } 
                 },
                 { id: "refresh", text: _("Refresh"), icon: "refresh", enabled: "always", 
-                     click: function() { 
-                         common.route_reload();
-                     } 
+                    click: function() { 
+                        common.route_reload();
+                    } 
                 },
-
                 { id: "towaiting", text: _("Waiting"), icon: "diary", enabled: "multi", perm: "ccl",
-                    click: function() {
+                    click: async function() {
                         tableform.buttons_default_state(buttons);
-                        var ids = tableform.table_ids(table),
+                        let ids = tableform.table_ids(table),
                             pdata = "mode=towaiting&ids=" + ids + "&date=" + format.date(new Date()) + "&time=" + format.time(new Date());
-                        common.ajax_post("clinic_appointment", pdata).then(function() {
-                            $.each(tableform.table_selected_rows(table), function(i, v) {
-                                v.ARRIVEDDATETIME = format.date_now_iso();
-                                v.STATUS = WAITING;
-                                v.CLINICSTATUSNAME = common.get_field(controller.clinicstatuses, v.STATUS, "STATUS");
-                            });
-                            tableform.table_update(table);
+                        await common.ajax_post("clinic_appointment", pdata);
+                        $.each(tableform.table_selected_rows(table), function(i, v) {
+                            v.ARRIVEDDATETIME = format.date_now_iso();
+                            v.STATUS = WAITING;
+                            v.CLINICSTATUSNAME = common.get_field(controller.clinicstatuses, v.STATUS, "STATUS");
                         });
+                        tableform.table_update(table);
                     }
                 },
                 { id: "towithvet", text: _("With Vet"), icon: "health", enabled: "multi", perm: "ccl",
-                    click: function() {
+                    click: async function() {
                         tableform.buttons_default_state(buttons);
-                        var ids = tableform.table_ids(table),
+                        let ids = tableform.table_ids(table),
                             pdata = "mode=towithvet&ids=" + ids + "&date=" + format.date(new Date()) + "&time=" + format.time(new Date());
-                        common.ajax_post("clinic_appointment", pdata).then(function() {
-                            $.each(tableform.table_selected_rows(table), function(i, v) {
-                                v.WITHVETDATETIME = format.date_now_iso();
-                                v.STATUS = WITH_VET;
-                                v.CLINICSTATUSNAME = common.get_field(controller.clinicstatuses, v.STATUS, "STATUS");
-                            });
-                            tableform.table_update(table);
+                        await common.ajax_post("clinic_appointment", pdata);
+                        $.each(tableform.table_selected_rows(table), function(i, v) {
+                            v.WITHVETDATETIME = format.date_now_iso();
+                            v.STATUS = WITH_VET;
+                            v.CLINICSTATUSNAME = common.get_field(controller.clinicstatuses, v.STATUS, "STATUS");
                         });
+                        tableform.table_update(table);
                     }
                 },
                 { id: "tocomplete", text: _("Complete"), icon: "complete", enabled: "multi", perm: "ccl",
-                    click: function() {
+                    click: async function() {
                         tableform.buttons_default_state(buttons);
-                        var ids = tableform.table_ids(table),
+                        let ids = tableform.table_ids(table),
                             pdata = "mode=tocomplete&ids=" + ids + "&date=" + format.date(new Date()) + "&time=" + format.time(new Date());
-                        common.ajax_post("clinic_appointment", pdata).then(function() {
-                            $.each(tableform.table_selected_rows(table), function(i, v) {
-                                v.COMPLETEDDATETIME = format.date_now_iso();
-                                v.STATUS = COMPLETE;
-                                v.CLINICSTATUSNAME = common.get_field(controller.clinicstatuses, v.STATUS, "STATUS");
-                            });
-                            tableform.table_update(table);
+                        await common.ajax_post("clinic_appointment", pdata);
+                        $.each(tableform.table_selected_rows(table), function(i, v) {
+                            v.COMPLETEDDATETIME = format.date_now_iso();
+                            v.STATUS = COMPLETE;
+                            v.CLINICSTATUSNAME = common.get_field(controller.clinicstatuses, v.STATUS, "STATUS");
                         });
+                        tableform.table_update(table);
                     }
                 },
                 { id: "document", text: _("Document"), icon: "document", enabled: "one", perm: "gaf", 
@@ -329,23 +318,20 @@ $(function() {
             }
         },
 
-        update_person_animals: function(personid) {
-            common.ajax_post("clinic_appointment", "mode=personanimals&personid=" + personid)
-                .then(function(result) {
-                    var h = "<option value=\"0\"></option>";
-                    clinic_appointment.personanimals = jQuery.parseJSON(result);
-                    $.each(clinic_appointment.personanimals, function(i,v) {
-                        h += "<option value=\"" + v.ID + "\">";
-                        h += v.ANIMALNAME + " - " + v.SHELTERCODE + " (" + v.SEXNAME + " " + v.BREEDNAME + " " + v.SPECIESNAME + ")";
-                        h += "</option>";
-                    });
-                    $("#personanimal").html(h);
-                    if (clinic_appointment.dialog_row && clinic_appointment.dialog_row.ANIMALID) {
-                        $("#personanimal").select("value", clinic_appointment.dialog_row.ANIMALID);
-                    }
-                    $("#movement").closest("tr").fadeIn();
-                });
-
+        update_person_animals: async function(personid) {
+            let response = await common.ajax_post("clinic_appointment", "mode=personanimals&personid=" + personid);
+            let h = "<option value=\"0\"></option>";
+            clinic_appointment.personanimals = jQuery.parseJSON(response);
+            $.each(clinic_appointment.personanimals, function(i,v) {
+                h += "<option value=\"" + v.ID + "\">";
+                h += v.ANIMALNAME + " - " + v.SHELTERCODE + " (" + v.SEXNAME + " " + v.BREEDNAME + " " + v.SPECIESNAME + ")";
+                h += "</option>";
+            });
+            $("#personanimal").html(h);
+            if (clinic_appointment.dialog_row && clinic_appointment.dialog_row.ANIMALID) {
+                $("#personanimal").select("value", clinic_appointment.dialog_row.ANIMALID);
+            }
+            $("#movement").closest("tr").fadeIn();
         },
 
         render_paymentdialog: function() {
@@ -379,20 +365,20 @@ $(function() {
 
         bind_paymentdialog: function() {
 
-            var paymentbuttons = { };
-            paymentbuttons[_("Create")] = function() {
+            let paymentbuttons = { };
+            paymentbuttons[_("Create")] = async function() {
                 validate.reset();
                 if (!$("#due").val() && !$("#received").val()) { validate.notblank([ "received" ]); return; }
-                $("#dialog-payment").disable_dialog_buttons();
-                var ids = tableform.table_ids(clinic_appointment.table);
-                common.ajax_post("clinic_appointment", $("#dialog-payment .asm-field").toPOST() + "&mode=payment&ids=" + ids)
-                    .then(function() {
-                        header.show_info(_("{0} payment records created.").replace("{0}", ids.split(",").length-1));
-                    })
-                    .always(function() {
-                        $("#dialog-payment").dialog("close");
-                        $("#dialog-payment").enable_dialog_buttons();
-                    });
+                try {
+                    $("#dialog-payment").disable_dialog_buttons();
+                    let ids = tableform.table_ids(clinic_appointment.table);
+                    await common.ajax_post("clinic_appointment", $("#dialog-payment .asm-field").toPOST() + "&mode=payment&ids=" + ids);
+                    header.show_info(_("{0} payment records created.").replace("{0}", ids.split(",").length-1));
+                }
+                finally {
+                    $("#dialog-payment").dialog("close");
+                    $("#dialog-payment").enable_dialog_buttons();
+                }
             };
             paymentbuttons[_("Cancel")] = function() {
                 $("#dialog-payment").dialog("close");
@@ -413,7 +399,7 @@ $(function() {
         render: function() {
             this.is_book = controller.name.indexOf("clinic") == 0;
             this.model();
-            var h = [
+            let h = [
                 tableform.dialog_render(this.dialog),
                 clinic_appointment.render_paymentdialog(),
                 '<div id="button-document-body" class="asm-menu-body">',
@@ -462,8 +448,8 @@ $(function() {
             $(".templatelink").click(function() {
                 // Update the href as it is clicked so default browser behaviour
                 // continues on to open the link in a new window
-                var template_name = $(this).attr("data");
-                var id = tableform.table_selected_id(clinic_appointment.table);
+                let template_name = $(this).attr("data");
+                let id = tableform.table_selected_id(clinic_appointment.table);
                 $(this).prop("href", "document_gen?linktype=CLINIC&id=" + id + "&dtid=" + template_name);
             });
 
@@ -495,7 +481,7 @@ $(function() {
         name: "clinic_appointment",
         animation: function() { return controller.name.indexOf("clinic_") == 0 ? "book" : "formtab"; },
         title:  function() { 
-            var t = "";
+            let t = "";
             if (controller.name == "animal_clinic") {
                 t = common.substitute(_("{0} - {1} ({2} {3} aged {4})"), { 
                     0: controller.animal.ANIMALNAME, 1: controller.animal.CODE, 2: controller.animal.SEXNAME,

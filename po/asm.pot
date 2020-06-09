@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ASM3\n"
 "Report-Msgid-Bugs-To: robin@sheltermanager.com\n"
-"POT-Creation-Date: 2020-05-26 15:30+0000\n"
+"POT-Creation-Date: 2020-06-08 08:58+0000\n"
 "Last-Translator: Robin Rawson-Tetley <robin@sheltermanager.com>\n"
 "Language-Team: en <robin@sheltermanager.com>\n"
 "Language: en\n"
@@ -2404,6 +2404,10 @@ msgstr ""
 msgid "Checkbox"
 msgstr ""
 
+#: onlineform.js
+msgid "Checkbox Group"
+msgstr ""
+
 #: person_find_results.js
 msgid "Checked By"
 msgstr ""
@@ -2935,6 +2939,10 @@ msgstr ""
 #: html.py animal_find_results.js waitinglist_results.js animal_find.js
 #: person_find.js person_find_results.js
 msgid "Created By"
+msgstr ""
+
+#: html.py person_find_results.js
+msgid "Created Date"
 msgstr ""
 
 #: person_find.js
@@ -5432,6 +5440,18 @@ msgstr ""
 
 #: wordprocessor.py medical.js vaccination.js
 msgid "Given"
+msgstr ""
+
+#: medical.js vaccination.js test.js
+msgid "Given in last month"
+msgstr ""
+
+#: medical.js vaccination.js test.js
+msgid "Given in last week"
+msgstr ""
+
+#: medical.js vaccination.js test.js
+msgid "Given today"
 msgstr ""
 
 #: dbupdate.py
@@ -7973,6 +7993,10 @@ msgstr ""
 
 #: accounts_trx.js
 msgid "Not reconciled"
+msgstr ""
+
+#: common.js
+msgid "Not {0}"
 msgstr ""
 
 #: mobile.py diary.js diarytask.js log_new.js log.js

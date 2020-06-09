@@ -4,10 +4,10 @@ $(function() {
 
     "use strict";
 
-    var calendarview = {
+    const calendarview = {
 
         update_events_from_checkboxes: function() {
-            var ev = "";
+            let ev = "";
             $("#toggles input:checked").each(function() {
                 ev += $(this).attr("data");
             });
@@ -83,9 +83,9 @@ $(function() {
                 eventLimit: true,
                 events: [],
                 eventRender: function(event, element) {
-                    var title = element.find(".fc-title");
-                    var listtitle = element.find(".fc-list-item-title a");
-                    var time = element.find(".fc-time");
+                    let title = element.find(".fc-title"),
+                        listtitle = element.find(".fc-list-item-title a"),
+                        time = element.find(".fc-time");
                     // Need to decode html entities in the title
                     title.html(event.title);
                     listtitle.html(event.title);
@@ -117,7 +117,7 @@ $(function() {
         sync: function() {
 
             // If there's an ev parameter, sync our checkboxes
-            var ev = common.querystring_param("ev");
+            let ev = common.querystring_param("ev");
             if (!ev) { ev = "dvmtcrolp"; }
             $("#toggles input").each(function() {
                 if (ev.indexOf( $(this).attr("data") ) != -1) {

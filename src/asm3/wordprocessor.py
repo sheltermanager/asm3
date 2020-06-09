@@ -1545,13 +1545,15 @@ def substitute_tags(searchin, tags, use_xml_escaping = True, opener = "&lt;&lt;"
                 newval = tags[matchtag]
                 if newval is not None:
                     newval = str(newval)
-                    # Escape xml entities unless the replacement tag is an image
-                    # or it contains HTML entities or <br> tags or <table> tags
+                    # Escape xml entities unless the replacement tag is an
+                    # image, URL or contains HTML entities
                     if use_xml_escaping and \
-                       not newval.lower().startswith("<img") and \
-                       not newval.lower().find("&#") != -1 and \
-                       not newval.lower().find("<br") != -1 and \
-                       not newval.lower().find("<table") != -1:
+                        not newval.lower().startswith("<img") and \
+                        not newval.lower().find("&#") != -1 and \
+                        not newval.lower().find("/>") != -1 and \
+                        not newval.lower().startswith("<table") and \
+                        not newval.lower().startswith("http") and \
+                        not newval.lower().startswith("image?"):
                         newval = newval.replace("&", "&amp;")
                         newval = newval.replace("<", "&lt;")
                         newval = newval.replace(">", "&gt;")
@@ -1754,6 +1756,7 @@ def generate_movement_doc(dbo, templateid, movementid, username):
     movementid: The movement to generate for
     """
     m = asm3.movement.get_movement(dbo, movementid)
+    tags = {}
     if m is None:
         raise asm3.utils.ASMValidationError("%d is not a valid movement ID" % movementid)
     if m.ANIMALID is not None and m.ANIMALID != 0:

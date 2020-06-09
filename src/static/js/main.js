@@ -655,11 +655,6 @@ $(function() {
 
             '<div id="asm-content" class="ui-helper-reset ui-widget-content ui-corner-all" style="padding: 10px;">',
             html.error(_("A new version of ASM is available.") + ' <button id="button-reload">' + _("Reload Application") + '</button>', "newversion"),
-            html.error("You are using Internet Explorer 11 as your web browser. Microsoft no longer " +
-                    "recommend the use of this browser, it does not support features needed for modern " + 
-                    "web applications and we cannot guarantee that everything will work as expected.<br/>" +
-                    "ASM will stop supporting this browser from July 2020. We recommend you " + 
-                    "switch to Microsoft Edge, Firefox or Chrome before then.", "ie11warning"),
             this.render_animal_links(),
             '<div class="asm-main-columns">',
             '<div id="asm-main-diary" class="asm-main-column">',
@@ -708,42 +703,42 @@ $(function() {
             if (!common.has_permission("vdn")) { $("#asm-main-diary").hide(); }
 
             $("#button-reload").button().click(function() {
-                window.location.reload(true);
+                common.route("main?b=" + controller.build, true);
             });
 
             let message_buttons = {}; 
-            message_buttons[_("Create this message")] = function() { 
+            message_buttons[_("Create this message")] = async function() { 
                 if (!validate.notblank(["expires", "message"])) { return; }
                 $("#dialog-addmessage").disable_dialog_buttons();
                 let formdata = "mode=addmessage&" + $("#dialog-addmessage .asm-textbox, #dialog-addmessage textarea, #dialog-addmessage select, #dialog-addmessage .asm-checkbox").toPOST();
-                common.ajax_post("main", formdata)
-                    .then(function() { 
-                        let h = "<tr>\n";
-                        h += "<td>\n";
-                        h += "<span style=\"white-space: nowrap; padding-right: 5px;\">" + asm.user + "</span>\n";
-                        h += "</td><td>";
-                        h += "<span style=\"white-space: nowrap; padding-right: 5px;\">";
-                        if ($("#priority").val() == 1) {
-                            h += '<span class="ui-icon ui-icon-alert"></span>\n';
-                        }
-                        else {
-                            h += '<span class="ui-icon ui-icon-info"></span>\n';
-                        }
-                        h += $("#expires").val();
-                        h += "</span></td>";
-                        if ($("#priority").val() == 1) {
-                            h += '<td><span class="mtext" style="font-weight: bold !important">' + $("#message").val() + '</span></td>\n';
-                        }
-                        else {
-                            h += '<td><span class="mtext">' + $("#message").val() + '</span></td>\n';
-                        }
-                        h += "</tr>";
-                        $("#asm-messageboard > tbody:first").prepend(h);
-                    })
-                    .always(function() {
-                        $("#dialog-addmessage").enable_dialog_buttons();
-                        $("#dialog-addmessage").dialog("close");
-                    });
+                try {
+                    await common.ajax_post("main", formdata);
+                    let h = "<tr>\n";
+                    h += "<td>\n";
+                    h += "<span style=\"white-space: nowrap; padding-right: 5px;\">" + asm.user + "</span>\n";
+                    h += "</td><td>";
+                    h += "<span style=\"white-space: nowrap; padding-right: 5px;\">";
+                    if ($("#priority").val() == 1) {
+                        h += '<span class="ui-icon ui-icon-alert"></span>\n';
+                    }
+                    else {
+                        h += '<span class="ui-icon ui-icon-info"></span>\n';
+                    }
+                    h += $("#expires").val();
+                    h += "</span></td>";
+                    if ($("#priority").val() == 1) {
+                        h += '<td><span class="mtext" style="font-weight: bold !important">' + $("#message").val() + '</span></td>\n';
+                    }
+                    else {
+                        h += '<td><span class="mtext">' + $("#message").val() + '</span></td>\n';
+                    }
+                    h += "</tr>";
+                    $("#asm-messageboard > tbody:first").prepend(h);
+                }
+                finally {
+                    $("#dialog-addmessage").enable_dialog_buttons();
+                    $("#dialog-addmessage").dialog("close");
+                }
             };
             message_buttons[_("Cancel")] = function() { $(this).dialog("close"); };
 
@@ -833,12 +828,10 @@ $(function() {
 
             $(".messagedelete")
                 .button({ icons: { primary: "ui-icon-trash" }, text: false })
-                .click(function() {
+                .click(async function() {
                     let t = $(this), formdata = "mode=delmessage&id=" + String(t.attr("data"));
-                    common.ajax_post("main", formdata)
-                        .then(function() { 
-                            t.closest("tr").fadeOut(); 
-                        });
+                    await common.ajax_post("main", formdata);
+                    t.closest("tr").fadeOut(); 
                 });
 
             $(".messagetoggle").each(function() {
@@ -925,9 +918,6 @@ $(function() {
             // If there's been a new deployment of ASM since we last
             // downloaded it to the browser, prompt the user to reload the page.
             $("#newversion").toggle( asm.build != controller.build );
-
-            // Show a warning if we're using ie11
-            $("#ie11warning").toggle(common.browser_is.ie11);
 
             // What's the highest news story available in the DOM/newsfeed?
             $("#newswrapper p").each(function() {

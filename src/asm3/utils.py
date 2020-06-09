@@ -990,7 +990,6 @@ def fix_relative_document_uris(dbo, s):
     p.feed(s)
     for l in p.links:
         if l.startswith("image?"):
-            l = l.replace("&", "&amp;") # HTMLParser decodes &amp; in urls and breaks s.replace
             mode = qsp(l, "mode")
             u = ""
             if mode == "nopic":
@@ -1003,7 +1002,7 @@ def fix_relative_document_uris(dbo, s):
                 u = url("dbfs_image", "title=%s" % qsp(l, "id"))
             elif mode == "media":
                 u = url("media_image", "mediaid=%s" % qsp(l, "id"))
-            s = s.replace(l, u)
+            s = s.replace(l.replace("&", "&amp;"), u) # HTMLParser will fix &amp; back to &, breaking this replace
             asm3.al.debug("translate '%s' to '%s'" % (l, u), "utils.fix_relative_document_uris", dbo)
         elif not l.startswith("http") and not l.startswith("data:") and not l.startswith("//"):
             s = s.replace(l, "") # cannot use this type of url

@@ -104,6 +104,7 @@ def get_animal_query(dbo):
         "co.WorkTelephone AS CurrentOwnerWorkTelephone, " \
         "co.MobileTelephone AS CurrentOwnerMobileTelephone, " \
         "co.EmailAddress AS CurrentOwnerEmailAddress, " \
+        "co.ExcludeFromBulkEmail AS CurrentOwnerExcludeEmail, " \
         "cj.JurisdictionName AS CurrentOwnerJurisdiction, " \
         "bo.OwnerName AS BroughtInByOwnerName, " \
         "bo.OwnerAddress AS BroughtInByOwnerAddress, " \
@@ -597,7 +598,7 @@ def get_animals_hold(dbo):
     """
     Returns all shelter animals who have the hold flag set
     """
-    return dbo.query(get_animal_query(dbo) + " WHERE a.IsHold = 1 AND a.Archived = 0")
+    return dbo.query(get_animal_query(dbo) + " WHERE a.IsHold = 1 AND a.Archived = 0 ORDER BY DateBroughtIn")
 
 def get_animals_hold_today(dbo):
     """

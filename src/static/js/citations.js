@@ -5,10 +5,10 @@ $(function() {
 
     "use strict";
 
-    var citations = {
+    const citations = {
         
         model: function() {
-            var dialog = {
+            const dialog = {
                 add_title: _("Add citation"),
                 edit_title: _("Edit citation"),
                 edit_perm: 'cacc',
@@ -26,21 +26,17 @@ $(function() {
                 ]
             };
 
-            var table = {
+            const table = {
                 rows: controller.rows,
                 idcolumn: "ID",
-                edit: function(row) {
-                    tableform.dialog_show_edit(dialog, row)
-                        .then(function() {
-                            tableform.fields_update_row(dialog.fields, row);
-                            row.CITATIONNAME = common.get_field(controller.citationtypes, row.CITATIONTYPEID, "CITATIONNAME");
-                            row.OWNERNAME = $("#person").personchooser("get_selected").OWNERNAME;
-                            return tableform.fields_post(dialog.fields, "mode=update&citationid=" + row.ID, "citations");
-                        })
-                        .then(function() {
-                            tableform.table_update(table);
-                            tableform.dialog_close();
-                        });
+                edit: async function(row) {
+                    await tableform.dialog_show_edit(dialog, row);
+                    tableform.fields_update_row(dialog.fields, row);
+                    row.CITATIONNAME = common.get_field(controller.citationtypes, row.CITATIONTYPEID, "CITATIONNAME");
+                    row.OWNERNAME = $("#person").personchooser("get_selected").OWNERNAME;
+                    await tableform.fields_post(dialog.fields, "mode=update&citationid=" + row.ID, "citations");
+                    tableform.table_update(table);
+                    tableform.dialog_close();
                 },
                 complete: function(row) {
                     if (row.FINEPAIDDATE) { return true; }
@@ -81,47 +77,39 @@ $(function() {
             };
 
             var buttons = [
-                 { id: "new", text: _("New Citation"), icon: "new", enabled: "always", perm: "aacc", 
-                     click: function() { 
-                         $("#person").personchooser("clear");
-                         if (controller.person) {
-                             $("#person").personchooser("loadbyid", controller.person.ID);
-                         }
-                         if (controller.incident && controller.incident.OWNERID) {
-                             $("#person").personchooser("loadbyid", controller.incident.OWNERID);
-                         }
-                         tableform.dialog_show_add(dialog, { onload: citations.type_change })
-                             .then(function() {
-                                 var incid = "";
-                                 if (controller.incident) { incid = controller.incident.ACID; }
-                                 tableform.fields_post(dialog.fields, "mode=create&incident=" + incid, "citations");
-                             })
-                             .then(function(response) {
-                                 var row = {};
-                                 row.ID = response;
-                                 tableform.fields_update_row(dialog.fields, row);
-                                 row.CITATIONNAME = common.get_field(controller.citationtypes, row.CITATIONTYPEID, "CITATIONNAME");
-                                 row.OWNERNAME = $("#person").personchooser("get_selected").OWNERNAME;
-                                 controller.rows.push(row);
-                                 tableform.table_update(table);
-                                 tableform.dialog_close();
-                             });
-                     } 
-                 },
-                 { id: "delete", text: _("Delete"), icon: "delete", enabled: "multi", perm: "dacc", 
-                     click: function() { 
-                         tableform.delete_dialog()
-                             .then(function() {
-                                 tableform.buttons_default_state(buttons);
-                                 var ids = tableform.table_ids(table);
-                                 return common.ajax_post("citations", "mode=delete&ids=" + ids);
-                             })
-                             .then(function() {
-                                 tableform.table_remove_selected_from_json(table, controller.rows);
-                                 tableform.table_update(table);
-                             });
-                     } 
-                 }
+                { id: "new", text: _("New Citation"), icon: "new", enabled: "always", perm: "aacc", 
+                    click: async function() { 
+                        $("#person").personchooser("clear");
+                        if (controller.person) {
+                            $("#person").personchooser("loadbyid", controller.person.ID);
+                        }
+                        if (controller.incident && controller.incident.OWNERID) {
+                            $("#person").personchooser("loadbyid", controller.incident.OWNERID);
+                        }
+                        await tableform.dialog_show_add(dialog, { onload: citations.type_change });
+                        var incid = "";
+                        if (controller.incident) { incid = controller.incident.ACID; }
+                        let response = await tableform.fields_post(dialog.fields, "mode=create&incident=" + incid, "citations");
+                        var row = {};
+                        row.ID = response;
+                        tableform.fields_update_row(dialog.fields, row);
+                        row.CITATIONNAME = common.get_field(controller.citationtypes, row.CITATIONTYPEID, "CITATIONNAME");
+                        row.OWNERNAME = $("#person").personchooser("get_selected").OWNERNAME;
+                        controller.rows.push(row);
+                        tableform.table_update(table);
+                        tableform.dialog_close();
+                    } 
+                },
+                { id: "delete", text: _("Delete"), icon: "delete", enabled: "multi", perm: "dacc", 
+                    click: async function() { 
+                        await tableform.delete_dialog();
+                        tableform.buttons_default_state(buttons);
+                        var ids = tableform.table_ids(table);
+                        await common.ajax_post("citations", "mode=delete&ids=" + ids);
+                        tableform.table_remove_selected_from_json(table, controller.rows);
+                        tableform.table_update(table);
+                    } 
+                }
             ];
             this.dialog = dialog;
             this.buttons = buttons;
@@ -129,7 +117,7 @@ $(function() {
         },
 
         render: function() {
-            var s = "";
+            let s = "";
             this.model();
             s += tableform.dialog_render(this.dialog);
             if (controller.name.indexOf("incident_") == 0) {
@@ -156,7 +144,7 @@ $(function() {
         },
 
         type_change: function() {
-            var dc = common.get_field(controller.citationtypes, $("#type").select("value"), "DEFAULTCOST");
+            let dc = common.get_field(controller.citationtypes, $("#type").select("value"), "DEFAULTCOST");
             $("#fineamount").currency("value", dc);
         },
 
@@ -168,7 +156,7 @@ $(function() {
         name: "citations",
         animation: function() { return controller.name == "citations" ? "book" : "formtab"; },
         title:  function() { 
-            var t = "";
+            let t = "";
             if (controller.name == "person_citations") { t = controller.person.OWNERNAME; }
             else if (controller.name == "incident_citations") { t = common.substitute(_("Incident {0}, {1}: {2}"), {
                 0: controller.incident.ACID, 1: controller.incident.INCIDENTNAME, 2: format.date(controller.incident.INCIDENTDATETIME)});
@@ -182,7 +170,6 @@ $(function() {
             "person_citations": function() { common.module_loadandstart("citations", "person_citations?id=" + this.qs.id); },
             "citations": function() { common.module_loadandstart("citations", "citations?" + this.rawqs); }
         }
-
 
     };
 

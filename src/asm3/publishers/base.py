@@ -24,19 +24,20 @@ def quietcallback(x):
     """ ftplib callback that does nothing instead of dumping to stdout """
     pass
 
-def get_animal_data(dbo, pc=None, animalid=0, include_additional_fields=False, recalc_age_groups=True, strip_personal_data=False, limit=0):
+def get_animal_data(dbo, pc=None, animalid=0, include_additional_fields=False, recalc_age_groups=True, strip_personal_data=False, publisher_key="", limit=0):
     """
     Returns a resultset containing the animal info for the criteria given.
     pc: The publish criteria (if None, default is used)
     animalid: If non-zero only returns the animal given (if it is adoptable)
     include_additional_fields: Load additional fields for each result
     strip_personal_data: Remove any personal data such as surrenderer, brought in by, etc.
+    publisher_key: The publisher calling this function
     limit: Only return limit rows.
     """
     if pc is None:
         pc = PublishCriteria(asm3.configuration.publisher_presets(dbo))
     
-    sql = get_animal_data_query(dbo, pc, animalid)
+    sql = get_animal_data_query(dbo, pc, animalid, publisher_key=publisher_key)
     rows = dbo.query(sql, distincton="ID")
     asm3.al.debug("get_animal_data_query returned %d rows" % len(rows), "publishers.base.get_animal_data", dbo)
 
@@ -132,9 +133,12 @@ def get_animal_data(dbo, pc=None, animalid=0, include_additional_fields=False, r
 
     return rows
 
-def get_animal_data_query(dbo, pc, animalid=0):
+def get_animal_data_query(dbo, pc, animalid=0, publisher_key=""):
     """
     Generate the adoptable animal query.
+    publisher_key is used to generate an exclusion to remove animals who have 
+        a flag called "Exclude from publisher_key" - this prevents animals
+        eg: being sent to PetFinder (Exclude from petfinder)
     """
     sql = asm3.animal.get_animal_query(dbo)
     # Always include non-dead courtesy listings
@@ -155,6 +159,8 @@ def get_animal_data_query(dbo, pc, animalid=0):
         sql += " AND (a.IsQuarantine = 0 OR a.IsQuarantine Is Null)"
     if not pc.includeTrial:
         sql += " AND a.HasTrialAdoption = 0"
+    if publisher_key != "":
+        sql += " AND LOWER(a.AdditionalFlags) NOT LIKE LOWER('%%Exclude from %s|%%')" % publisher_key
     # Make sure animal is old enough
     sql += " AND a.DateOfBirth <= " + dbo.sql_value(dbo.today(offset = pc.excludeUnderWeeks * -7))
     # Filter out dead and unadoptable animals
@@ -939,7 +945,7 @@ class AbstractPublisher(threading.Thread):
         self.dbo.execute_many("INSERT INTO animalpublished (AnimalID, PublishedTo, SentDate, Extra) VALUES (?,?,?,?)", batch)
 
     def getMatchingAnimals(self, includeAdditionalFields=False):
-        a = get_animal_data(self.dbo, self.pc, include_additional_fields=includeAdditionalFields)
+        a = get_animal_data(self.dbo, self.pc, include_additional_fields=includeAdditionalFields, publisher_key=self.publisherKey)
         self.log("Got %d matching animals for publishing." % len(a))
         return a
 

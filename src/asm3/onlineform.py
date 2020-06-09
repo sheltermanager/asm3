@@ -38,6 +38,7 @@ FIELDTYPE_LOOKUP_MULTI = 14
 FIELDTYPE_GDPR_CONTACT_OPTIN = 15
 FIELDTYPE_TIME = 16
 FIELDTYPE_IMAGE = 17
+FIELDTYPE_CHECKBOXGROUP = 18
 
 # Types as used in JSON representations
 FIELDTYPE_MAP = {
@@ -58,7 +59,8 @@ FIELDTYPE_MAP = {
     "LOOKUP_MULTI": 14,
     "GDPR_CONTACT_OPTIN": 15,
     "TIME": 16,
-    "IMAGE": 17
+    "IMAGE": 17,
+    "CHECKBOXGROUP": 18
 }
 
 FIELDTYPE_MAP_REVERSE = {v: k for k, v in FIELDTYPE_MAP.items()}
@@ -189,6 +191,13 @@ def get_onlineform_html(dbo, formid, completedocument = True):
                 rid = "%s_%s" % (fid, i)
                 h.append('<input type="radio" class="asm-onlineform-radio" id="%s" name="%s" value="%s" %s /> <label for="%s">%s</label><br />' % (rid, cname, lv, required, rid, lv))
             h.append('</div>')
+        elif f.FIELDTYPE == FIELDTYPE_CHECKBOXGROUP:
+            h.append('<input type="hidden" name="%s" value="" />' % cname)
+            h.append('<div class="asm-onlineform-checkgroup" data-name="%s" data-required="%s" style="display: inline-block">' % (cname, asm3.utils.iif(required != "", "required", "")))
+            for i, lv in enumerate(asm3.utils.nulltostr(f.LOOKUPS).split("|")):
+                rid = "%s_%s" % (fid, i)
+                h.append('<input type="checkbox" id="%s" data="%s" /> <label for="%s">%s</label><br />' % (rid, lv, rid, lv))
+            h.append('</div>')
         elif f.FIELDTYPE == FIELDTYPE_SHELTERANIMAL:
             h.append('<select class="asm-onlineform-shelteranimal" id="%s" name="%s" title="%s" %s>' % ( fid, cname, asm3.utils.nulltostr(f.TOOLTIP), required))
             h.append('<option></option>')
@@ -274,7 +283,7 @@ def get_onlineform_json(dbo, formid):
     for f in formfields:
         ff.append({ "name": f.FIELDNAME, "label": f.LABEL, "type": FIELDTYPE_MAP_REVERSE[f.FIELDTYPE],
             "mandatory": asm3.utils.iif(f.MANDATORY == 1, True, False), "index": f.DISPLAYINDEX,
-            "lookups": f.LOOKUPS, "tooltip": f.TOOLTIP})
+            "visibleif": f.VISIBLEIF, "lookups": f.LOOKUPS, "tooltip": f.TOOLTIP})
     fd["fields"] = ff
     return asm3.utils.json(fd, True)
 
@@ -297,6 +306,7 @@ def import_onlineform_json(dbo, j):
             "label": f["label"],
             "displayindex": f["index"],
             "mandatory": asm3.utils.iif(f["mandatory"], "1", "0"),
+            "visibleif": f["visibleif"],
             "lookups": f["lookups"],
             "tooltip": f["tooltip"]
         }
@@ -564,6 +574,7 @@ def clone_onlineform(dbo, username, formid):
             "Label":            ff.LABEL,
             "DisplayIndex":     ff.DISPLAYINDEX,
             "Mandatory":        ff.MANDATORY,
+            "VisibleIf":        ff.VISIBLEIF,
             "Lookups":          ff.LOOKUPS,
             "*Tooltip":          ff.TOOLTIP
         })

@@ -12,10 +12,16 @@
     "@babel/core": "^7.10.1",
     "@babel/preset-env": "^7.10.1",
     "jshint": "^2.11.1",
-    "jsmin": "^1.0.1"
+    "jsmin": "^1.0.1",
+    "promise-polyfill": "^8.1.3",
+    "regenerator-runtime": "^0.13.5"
   },
   "devDependencies": {},
   "scripts": {
+    "babel": "babel -d src/static/js/compat src/static/js/*.js",
+    "jshint": "jshint --config scripts/jshint.conf src/static/js/*.js",
+    "minify": "jsmin -o src/static/js/bundle/rollup.min.js src/static/js/bundle/rollup.js",
+    "minify_compat": "jsmin -o src/static/js/bundle/rollup_compat.min.js src/static/js/bundle/rollup_compat.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
