@@ -77,8 +77,7 @@ def get_held_animals(dbo, style="", speciesid=0, animaltypeid=0):
     speciesid: 0 for all species, or a specific one
     animaltypeid: 0 for all animal types or a specific one
     """
-    animals = dbo.query(asm3.animal.get_animal_query(dbo) + \
-        " WHERE a.IsHold = 1 AND a.Archived = 0 ORDER BY a.DateBroughtIn DESC")
+    animals = asm3.animal.get_animals_hold(dbo)
     return animals_to_page(dbo, animals, style=style, speciesid=speciesid, animaltypeid=animaltypeid)
 
 def animals_to_page(dbo, animals, style="", speciesid=0, animaltypeid=0, locationid=0):
