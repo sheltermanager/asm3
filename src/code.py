@@ -330,7 +330,7 @@ class ASMEndpoint(object):
         return web.ctx.env.get("HTTP_REFERER", "")
 
     def reload_config(self):
-        """ Reloads items in the session based on database values, invalids config.js so client reloads it """
+        """ Reloads items in the session based on database values, invalidates config.js so client reloads it """
         asm3.users.update_session(session)
 
     def remote_ip(self):
@@ -866,6 +866,11 @@ class main(JSONEndpoint):
         # If there's something wrong with the database, logout
         if not dbo.has_structure():
             self.redirect("logout")
+        # If a b (build) parameter was passed to indicate the client wants to
+        # get the latest js files, invalidate the config so that the
+        # frontend doesn't keep receiving the same build number via configjs 
+        # and get into an endless loop of reloads
+        if o.post["b"] != "": self.reload_config()
         # Database update checks
         dbmessage = ""
         if asm3.dbupdate.check_for_updates(dbo):

@@ -703,7 +703,7 @@ $(function() {
             if (!common.has_permission("vdn")) { $("#asm-main-diary").hide(); }
 
             $("#button-reload").button().click(function() {
-                window.location.reload(true);
+                common.route("main?b=" + controller.build, true);
             });
 
             let message_buttons = {}; 
