@@ -518,6 +518,15 @@ UNION SELECT
 FROM owner
 WHERE ownerforenames = '' and ownertype = 1
 
+--Checks to see if there is a firstname on an Organization Record. 
+UNION SELECT 
+  owner.ownername AS name,
+  owner.ownercode AS code,
+  date(owner.LastChangedDate) AS issuedate,
+  'First Name should be blank.  Change to Individual, clear First Name field, change back to Organization, and then re-Save.' AS issue
+FROM owner
+WHERE ownerforenames <> '' AND ownertype = 2
+
 --Checks for ownercodes that start with XX, which means last name field is missing.
 UNION SELECT 
   owner.ownername AS name,
