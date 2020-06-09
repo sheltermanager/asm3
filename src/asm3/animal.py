@@ -104,6 +104,7 @@ def get_animal_query(dbo):
         "co.WorkTelephone AS CurrentOwnerWorkTelephone, " \
         "co.MobileTelephone AS CurrentOwnerMobileTelephone, " \
         "co.EmailAddress AS CurrentOwnerEmailAddress, " \
+        "co.ExcludeFromBulkEmail AS CurrentOwnerExcludeEmail, " \
         "cj.JurisdictionName AS CurrentOwnerJurisdiction, " \
         "bo.OwnerName AS BroughtInByOwnerName, " \
         "bo.OwnerAddress AS BroughtInByOwnerAddress, " \

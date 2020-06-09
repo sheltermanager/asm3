@@ -15,7 +15,7 @@ $(function() {
                 '<li class="localeus localeca localemx"><a href="#tab-adoptapet">AdoptAPet</a></li>',
                 '<li><a href="#tab-helpinglostpets">HelpingLostPets</a></li>',
                 '<li class="english hasmaddiesfund"><a href="#tab-maddiesfund">Maddie\'s Fund</a></li>',
-                '<li class="localeus haspetcademy"><a href="#tab-petcademy">Petcademy</a></li>',
+                '<li class="english haspetcademy"><a href="#tab-petcademy">Petcademy</a></li>',
                 '<li class="localeus localeca localemx"><a href="#tab-petfinder">PetFinder</a></li>',
                 '<li class="localegb haspetslocated"><a href="#tab-petslocated">PetsLocated</a></li>',
                 '<li class="localeau haspetrescue"><a href="#tab-petrescue">PetRescue</a></li>', 
