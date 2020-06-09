@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ASM3\n"
 "Report-Msgid-Bugs-To: robin@sheltermanager.com\n"
-"POT-Creation-Date: 2020-05-26 15:30+0000\n"
-"PO-Revision-Date: 2020-05-26 22:55+0200\n"
+"POT-Creation-Date: 2020-06-08 08:58+0000\n"
+"PO-Revision-Date: 2020-06-10 00:31+0200\n"
 "Last-Translator: Julian POIDEVIN <poidevin.julian@gmail.com>\n"
 "Language-Team: \n"
 "Language: fr\n"
@@ -2461,6 +2461,10 @@ msgstr "N° de vérification"
 msgid "Checkbox"
 msgstr "Case à cocher"
 
+#: onlineform.js
+msgid "Checkbox Group"
+msgstr "Groupe de case à cocher"
+
 #: person_find_results.js
 msgid "Checked By"
 msgstr "Vérifié par"
@@ -3007,6 +3011,10 @@ msgstr "Créer ce contact"
 #: person_find.js person_find_results.js
 msgid "Created By"
 msgstr "Créé par"
+
+#: html.py person_find_results.js
+msgid "Created Date"
+msgstr "Date de création"
 
 #: person_find.js
 msgid "Created Since"
@@ -5541,6 +5549,18 @@ msgstr "Faire une vaccination"
 #: wordprocessor.py medical.js vaccination.js
 msgid "Given"
 msgstr "Donné"
+
+#: medical.js vaccination.js test.js
+msgid "Given in last month"
+msgstr "Donné le mois dernier"
+
+#: medical.js vaccination.js test.js
+msgid "Given in last week"
+msgstr "Donné la semaine dernière"
+
+#: medical.js vaccination.js test.js
+msgid "Given today"
+msgstr "Donné aujourd'hui"
 
 #: dbupdate.py
 msgid "Glen of Imaal Terrier"
@@ -8148,6 +8168,10 @@ msgstr "Pas dans l'emplacement de l'éditeur choisi"
 #: accounts_trx.js
 msgid "Not reconciled"
 msgstr "Pas réconcilié"
+
+#: common.js
+msgid "Not {0}"
+msgstr "Pas {0}"
 
 #: mobile.py diary.js diarytask.js log_new.js log.js
 msgid "Note"
