@@ -1,6 +1,7 @@
 44
 ================
 
+09/06/20 Include ShowIf when copying, exporting and importing online forms
 09/06/20 json/xml_held_animals service calls
 08/06/20 Indicate not flag in emblem tooltip
 07/06/20 Remove redundant minify_js from build, simplify rollup #850

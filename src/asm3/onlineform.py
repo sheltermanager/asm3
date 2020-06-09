@@ -283,7 +283,7 @@ def get_onlineform_json(dbo, formid):
     for f in formfields:
         ff.append({ "name": f.FIELDNAME, "label": f.LABEL, "type": FIELDTYPE_MAP_REVERSE[f.FIELDTYPE],
             "mandatory": asm3.utils.iif(f.MANDATORY == 1, True, False), "index": f.DISPLAYINDEX,
-            "lookups": f.LOOKUPS, "tooltip": f.TOOLTIP})
+            "visibleif": f.VISIBLEIF, "lookups": f.LOOKUPS, "tooltip": f.TOOLTIP})
     fd["fields"] = ff
     return asm3.utils.json(fd, True)
 
@@ -306,6 +306,7 @@ def import_onlineform_json(dbo, j):
             "label": f["label"],
             "displayindex": f["index"],
             "mandatory": asm3.utils.iif(f["mandatory"], "1", "0"),
+            "visibleif": f["visibleif"],
             "lookups": f["lookups"],
             "tooltip": f["tooltip"]
         }
@@ -573,6 +574,7 @@ def clone_onlineform(dbo, username, formid):
             "Label":            ff.LABEL,
             "DisplayIndex":     ff.DISPLAYINDEX,
             "Mandatory":        ff.MANDATORY,
+            "VisibleIf":        ff.VISIBLEIF,
             "Lookups":          ff.LOOKUPS,
             "*Tooltip":          ff.TOOLTIP
         })
