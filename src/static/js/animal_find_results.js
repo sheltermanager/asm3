@@ -1,16 +1,17 @@
-/*jslint browser: true, forin: true, eqeq: true, white: true, sloppy: true, vars: true, nomen: true */
-/*global $, _, asm, additional, common, config, controller, dlgfx, format, header, html, validate */
+/*global $, _, asm, additional, common, config, controller, edit_header, dlgfx, format, header, html, validate */
 
 $(function() {
 
-    var animal_find_results = {
+    "use strict";
+
+    const animal_find_results = {
 
         render: function() {
             return [
                 html.content_header(_("Results")),
                 '<div id="asm-results">',
                 '<div class="ui-state-highlight ui-corner-all" style="margin-top: 5px; padding: 0 .7em">',
-                '<p><span class="ui-icon ui-icon-search" style="float: left; margin-right: .3em;"></span>',
+                '<p><span class="ui-icon ui-icon-search"></span>',
                 _("Search returned {0} results.").replace("{0}", controller.rows.length),
                 controller.wasonshelter ? "<br />" + _("You didn't specify any search criteria, so an on-shelter search was assumed.") : "",
                 '</p>',
@@ -30,8 +31,8 @@ $(function() {
          * Renders the table.head tag with columns in the right order
          */
         render_tablehead: function() {
-            var labels = animal_find_results.column_labels();
-            var s = [];
+            const labels = animal_find_results.column_labels();
+            let s = [];
             s.push("<thead>");
             s.push("<tr>");
             $.each(labels, function(i, label) {
@@ -47,13 +48,12 @@ $(function() {
          * highlighting styling applied, etc.
          */
         render_tablebody: function() {
-            var h = [];
+            let h = [];
             $.each(controller.rows, function(ir, row) {
                 h.push("<tr>");
                 $.each(animal_find_results.column_names(), function(ic, name) {
-
                     // Generate the animal selector
-                    var link = "<span style=\"white-space: nowrap\">";
+                    let link = "<span style=\"white-space: nowrap\">";
                     link += html.animal_emblems(row);
                     link += " <a id=\"action-" + row.ID + "\" href=\"animal?id=" + row.ID + "\">";
                     // Show the whole row in red if the animal is deceased
@@ -63,11 +63,11 @@ $(function() {
                     else {
                         h.push("<td>");
                     }
-                    var value = "";
+                    let value = "";
                     if (row.hasOwnProperty(name.toUpperCase())) {
                         value = row[name.toUpperCase()];
                     }
-                    var formatted = animal_find_results.format_column(row, name, value, controller.additional);
+                    let formatted = animal_find_results.format_column(row, name, value, controller.additional);
                     if (name == "AnimalName") { 
                         formatted = link + formatted + "</a></span>";
                     }
@@ -93,9 +93,9 @@ $(function() {
          * Returns a list of our configured viewable column names
          */
         column_names: function() {
-            var cols = [];
+            let cols = [];
             $.each(config.str("SearchColumns").split(","), function(i, v) {
-                cols.push($.trim(v));
+                cols.push(common.trim(v));
             });
             return cols;
         },
@@ -104,8 +104,8 @@ $(function() {
          * Returns a list of our configured viewable column labels
          */
         column_labels: function() {
-            var names = animal_find_results.column_names();
-            var labels = [];
+            const names = animal_find_results.column_names();
+            let labels = [];
             $.each(names, function(i, name) {
                 labels.push(animal_find_results.column_label(name, controller.additional));
             });
@@ -124,7 +124,8 @@ $(function() {
          * add: Additional fields to scan for labels
          */
         column_label: function(name, add) {
-            var labels = {
+            const labels = {
+                "Adoptable": _("Adoptable"),
                 "AnimalTypeID": _("Type"),
                 "AnimalName": _("Name"),
                 "BaseColourID": _("Color"),
@@ -175,9 +176,11 @@ $(function() {
                 "PickupLocationID": _("Pickup Location"), 
                 "IsQuarantine":  _("Quarantine"),
                 "HasSpecialNeeds":  _("Special Needs"),
+                "AdditionalFlags": _("Flags"),
                 "ShelterLocation":  _("Location"),
                 "ShelterLocationUnit":  _("Unit"),
                 "Fosterer": _("Fosterer"),
+                "OwnerID": _("Owner"),
                 "Size":  _("Size"),
                 "RabiesTag":  _("RabiesTag"),
                 "TimeOnShelter":  _("On Shelter"),
@@ -189,7 +192,7 @@ $(function() {
                 return labels[name];
             }
             if (add) {
-                var addrow = common.get_row(add, name, "FIELDNAME");
+                let addrow = common.get_row(add, name, "FIELDNAME");
                 if (addrow) { return addrow.FIELDLABEL; }
             }
             return name;
@@ -203,19 +206,25 @@ $(function() {
          * add: The additional row results
          */
         format_column: function(row, name, value, add) {
-            var DATE_FIELDS = [ "DateOfBirth", "DeceasedDate", "IdentichipDate", "TattooDate", 
+            const DATE_FIELDS = [ "DateOfBirth", "DeceasedDate", "IdentichipDate", "TattooDate", 
                 "NeuteredDate", "CombiTestDate", "HeartwormTestDate", "DateBroughtIn", "HoldUntilDate" ],
             STRING_FIELDS = [ "AnimalName", "BreedName", "CreatedBy", "Markings", "AcceptanceNumber", 
                 "AgeGroup", "IdentichipNumber", "TattooNumber", "HiddenAnimalDetails", 
                 "AnimalComments", "ReasonForEntry", "HealthProblems", "PTSReason", "PickupAddress", 
-                "RabiesTag", "TimeOnShelter", "DaysOnShelter", "AnimalAge", "ShelterLocationUnit" ],
+                "RabiesTag", "DaysOnShelter", "ShelterLocationUnit" ],
             YES_NO_UNKNOWN_FIELDS = [ "IsGoodWithCats", "IsGoodWithDogs", "IsGoodWithChildren",
-                "IsHouseTrained", "IsNotAvailableForAdoption", "IsHold", "IsPickup", "IsQuarantine" ],
+                "IsHouseTrained" ],
             YES_NO_FIELDS = [ "Neutered", "CombiTested", "HeartwormTested", "Declawed", 
-                "HasActiveReserve", "HasSpecialNeeds" ],
-            POS_NEG_UNKNOWN_FIELDS = [ "CombiTestResult", "FLVResult", "HeartwormTestResult" ],
-            rv = "";
-            if (name == "AnimalTypeID") { rv = row.ANIMALTYPENAME; }
+                "HasActiveReserve", "HasSpecialNeeds", "IsHold", "IsNotAvailableForAdoption", "IsPickup", "IsQuarantine" ],
+            POS_NEG_UNKNOWN_FIELDS = [ "CombiTestResult", "FLVResult", "HeartwormTestResult" ];
+            let rv = "";
+            if (name == "Adoptable") {
+                let isa = html.is_animal_adoptable(row);
+                rv = '<span class="' + (isa[0] ? "asm-search-adoptable" : "asm-search-notforadoption") + '">' +
+                    isa[1] + '</span>';
+            }
+            else if (name == "OwnerID") { rv = html.person_link(row.OWNERID, row.OWNERNAME); }
+            else if (name == "AnimalTypeID") { rv = row.ANIMALTYPENAME; }
             else if ( name == "BaseColourID") { rv = row.BASECOLOURNAME; }
             else if ( name == "SpeciesID") { rv = row.SPECIESNAME; }
             else if ( name == "CoatType") { rv = row.COATTYPENAME; }
@@ -223,6 +232,12 @@ $(function() {
             else if ( name == "EntryReasonID") { rv = row.ENTRYREASONNAME; }
             else if ( name == "PickupLocationID") { rv = row.PICKUPLOCATIONNAME; }
             else if ( name == "PTSReasonID") { rv = row.DECEASEDDATE ? row.PTSREASONNAME : ""; }
+            else if ( name == "AnimalAge") {
+                rv  = '<span data-sort="' + row.DATEOFBIRTH + '"></span>' + row.ANIMALAGE;
+            }
+            else if ( name == "TimeOnShelter") {
+                rv  = '<span data-sort="' + row.DAYSONSHELTER + '"></span>' + row.TIMEONSHELTER;
+            }
             else if ( name == "ShelterLocation") { 
                 rv = row.DISPLAYLOCATIONNAME; 
                 if (row.SHELTERLOCATIONUNIT && !row.ACTIVEMOVEMENTID) {
@@ -234,10 +249,13 @@ $(function() {
                     rv = html.person_link(row.CURRENTOWNERID, row.CURRENTOWNERNAME);
                 }
             }
+            else if ( name == "AdditionalFlags") {
+                rv = edit_header.animal_flags(row);
+            }
             else if ( name == "Size") { rv = row.SIZENAME; }
             else if ( name == "Weight") { 
                 if (config.bool("ShowWeightInLbs")) {
-                    var kg = format.to_float(row.WEIGHT),
+                    let kg = format.to_float(row.WEIGHT),
                         lb = format.to_int(row.WEIGHT),
                         oz = (kg - lb) * 16.0;
                     rv = lb + " lb, " + oz + " oz";

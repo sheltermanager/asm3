@@ -181,7 +181,7 @@ def delete_waitinglist(dbo, username, wid):
 
 def send_email_from_form(dbo, username, post):
     """
-    Sends an email to a lost/found person from a posted form. Attaches it as
+    Sends an email to a waiting list person from a posted form. Attaches it as
     a log entry if specified.
     """
     emailfrom = post["from"]
@@ -195,7 +195,7 @@ def send_email_from_form(dbo, username, post):
     body = post["body"]
     rv = asm3.utils.send_email(dbo, emailfrom, emailto, emailcc, emailbcc, subject, body, ishtml == 1 and "html" or "plain")
     if addtolog == 1:
-        asm3.log.add_log(dbo, username, asm3.log.WAITINGLIST, post.integer("wlid"), logtype, body)
+        asm3.log.add_log_email(dbo, username, asm3.log.WAITINGLIST, post.integer("wlid"), logtype, emailto, subject, body)
     return rv
 
 def update_waitinglist_remove(dbo, username, wid):
@@ -414,6 +414,7 @@ def create_animal(dbo, username, wlid):
             "LinkID":               nextid,
             "LinkTypeID":           asm3.media.ANIMAL,
             "Date":                 me.date,
+            "CreatedDate":          me.createddate,
             "RetainUntil":          me.retainuntil
         }, generateID=False)
 

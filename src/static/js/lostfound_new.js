@@ -1,7 +1,8 @@
-/*jslint browser: true, forin: true, eqeq: true, white: true, sloppy: true, vars: true, nomen: true */
 /*global $, jQuery, _, additional, asm, common, config, controller, dlgfx, format, header, html, validate */
 
 $(function() {
+
+    "use strict";
 
     var lostfound_new = {
 
@@ -95,6 +96,11 @@ $(function() {
                 '<td><input id="areapostcode" data="areapostcode" type="text" class="asm-textbox" /></td>',
                 '</tr>',
                 '<tr>',
+                '<td><label for="microchip">' + _("Microchip") + '</label></td>',
+                '<td><input id="microchip" data="microchip" type="text" class="asm-textbox" /></td>',
+                '</tr>',
+                '<tr>',
+                '<tr>',
                 '<td>',
                 '<label for="comments">' + _("Comments") + '</label></td>',
                 '<td><textarea id="comments" data="comments" rows="5" class="asm-textarea"></textarea></td>',
@@ -131,7 +137,7 @@ $(function() {
                     $(this).remove();
                 }
             });
-            if($('#breed option').size() == 0) {
+            if($('#breed option').length == 0) {
                 $('#breed').append("<option value='1'>"+$('#species option:selected').text()+"</option>");
             }
         },
@@ -151,21 +157,21 @@ $(function() {
                 }
 
                 // date lost
-                if (lostfound_new.mode == "lost" && $.trim($("#datelost").val()) == "") {
+                if (lostfound_new.mode == "lost" && common.trim($("#datelost").val()) == "") {
                     header.show_error(_("Date lost cannot be blank."));
                     validate.highlight("datelost");
                     return false;
                 }
 
                 // date found
-                if (lostfound_new.mode == "found" && $.trim($("#datefound").val()) == "") {
+                if (lostfound_new.mode == "found" && common.trim($("#datefound").val()) == "") {
                     header.show_error(_("Date found cannot be blank."));
                     validate.highlight("datefound");
                     return false;
                 }
 
                 // date reported
-                if ($.trim($("#datereported").val()) == "") {
+                if (common.trim($("#datereported").val()) == "") {
                     header.show_error(_("Date reported cannot be blank."));
                     validate.highlight("datereported");
                     return false;

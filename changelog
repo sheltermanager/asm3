@@ -1,6 +1,358 @@
+44
+================
+
+09/06/20 Fix reload application bug in a cross-browser compliant way
+09/06/20 Email dialog won't use name portion for multiple email addresses
+09/06/20 Include ShowIf when copying, exporting and importing online forms
+09/06/20 json/xml_held_animals service calls
+08/06/20 Indicate not flag in emblem tooltip
+07/06/20 Remove redundant minify_js from build, simplify rollup #850
+06/06/20 Online form checkboxgroup fields #527
+06/06/20 Allow flags to exclude animals from some services #849
+05/06/20 Encode backticks when storing #848
+05/06/20 Fix bug in email dialog that kept spawning events
+05/06/20 Request payment email now correctly references all linked data
+05/06/20 move_adopt: not for adoption should only be a warning
+04/06/20 Fix email address when requesting newly created due payments
+04/06/20 Fix bad substitution of & in HTML template URLs 
+04/06/20 "needsfoster" additional field for Petrescue/SavourLife
+03/06/20 Add "ActiveDate" alias to movements to combine dates for sorts
+03/06/20 Support for async/await for older browsers #800
+02/06/20 Validate times in online forms on submit #840
+01/06/20 Apply client side image rotation, remove exifrestorer dep #844
+01/06/20 Do not scale images twice, fix iOS applying orientation #844
+31/05/20 Fix for null values when sorting from search
+30/05/20 Support for Petcademy #832
+29/05/20 Trailing empty flags caused by merge/adopter #838
+29/05/20 Allow Created Date as a person find column #841
+29/05/20 Validate dates in online forms on submit #840
+29/05/20 Allow CSV import for animal flags #842
+28/05/20 Fall back to old thumbnails if object-fit unavailable #839
+28/05/20 Compatibility layer for older Safari and IE11 #800
+27/05/20 Filters to show previously given on all medical books
+26/05/20 Separate online form permissions for adding and deleting forms
+26/05/20 Fix bad casing on known online form fields #835
+26/05/20 Add separate permission for viewing online forms
+26/05/20 Choose a sane default email when emailing from an animal
+25/05/20 Include payments when generating person documents
+25/05/20 Allow customising of reply-to/msg on fosterer weekly email #537
+25/05/20 Option to have PDF copy of signed document sent to signer #517
+25/05/20 Updated Hebrew translation (Saggi Neumann)
+23/05/20 animalthumb translation broken when generating PDF
+22/05/20 Use inline buttons for editing in tables for consistent style
+22/05/20 Add copy service URL button for extra images 
+22/05/20 Media disable scaling option did nothing for DnD
+22/05/20 dbms.get_id_cache for safer id generation on non-postgres
+21/05/20 Buttons to copy extra images and form URLs to clipboard #834
+21/05/20 Prompt user to reload when new software is deployed #833
+21/05/20 Fix bad icon alignment, fix no longer needed in JQuery UI
+21/05/20 Handle flipped EXIF orientations (selfies, etc)
+21/05/20 Support for Chinese characters in mailing labels via unifont
+21/05/20 Make CTRL+A select all transactions in accounts screen
+21/05/20 Minimum lengths when looking for similar cell/email
+21/05/20 Allow < and > operators for Show If #294
+20/05/20 PetFinder require the CSV headings to process blank file
+19/05/20 Fix for broken mail merge params after refactoring
+19/05/20 Support RTL when editing documents in Hebrew/Arabic #831
+19/05/20 Add cache-busting protection for common method calls #830
+19/05/20 Protect csv_report and html_report from abuse #830
+19/05/20 Implement flood protection earlier in the chain #830
+18/05/20 Fix for payment widget assuming tax rates are whole %
+18/05/20 Show spinner when creating records from incoming forms #829
+18/05/20 Perform S3 delete/put in background to improve responsiveness #829
+18/05/20 Log and do not retry when Stripe notifies us of non-ASM payments
+18/05/20 Add en_BM locale for Bermuda
+18/05/20 Remove build time from home page, add about dialog #824
+18/05/20 Show warning message for IE11 users that support is ending #800
+18/05/20 Refactoring: remove IIFE for common, use const and use strict
+17/05/20 Switch to jshint for static js checking, remove < IE11 support #800
+17/05/20 Fix csv_parse to handle accidentally included UTF8 BOM #826
+17/05/20 Add separate view staff rota and merge animal permissions #682
+16/05/20 Only potentially create a blank reserve for the first reserveanimalname
+16/05/20 Show warning icon when create person updates a banned person #586
+16/05/20 Show an icon when online form create animal/person exists #586
+16/05/20 Strip base64 data uris from online form emails #823
+15/05/20 Merge person should update new current owner field
+15/05/20 Make sure to/subject included when logging every email #820
+15/05/20 Better HTML to text support for emails #820
+15/05/20 Refactor timeline to work with SQLite so all queries unit tested
+15/05/20 Remove news and cached reports from config and put in disk cache #821
+14/05/20 Fix null error when auto-emailing diary notes
+14/05/20 Fix ShowIf to work with radio buttons
+14/05/20 Attach license documents to both animal and person
+14/05/20 Fix looking for to use updated good with children values
+14/05/20 Remove taxes/fees from stats
+14/05/20 Add PaymentFee wordkeys, PaymentAmount becomes net for compatibility
+14/05/20 Do not include received payments in payrefs at the checkout
+14/05/20 Support for separate tax income transactions, fix gross payments
+14/05/20 Show "Email To" column when editing reports
+14/05/20 Show full totals on payments, fix move_adopt sales tax on fees
+13/05/20 Rename stripe to stripeh to avoid collisions on Python2
+13/05/20 Option to calculate sales tax exclusively
+11/05/20 Include owner<>currentowner when showing person links and icon #180
+11/05/20 Do not show original owner/non shelter on person links #180
+11/05/20 Reparent audit records during merge #792
+10/05/20 Add visible option for when to highlight over due reserves
+10/05/20 Make "exclude under weeks" publishing option an editable number
+09/05/20 Hide HTML5 required attribute from invisible fields so form submits #294
+09/05/20 When no animals available, send blank files to FTP adoption sites #751
+09/05/20 Fix malformed HTML in media/signing menu
+09/05/20 View littermates from litters should include deceased
+08/05/20 Payment amounts should be gross #614
+08/05/20 Add owner field for animals independent of movements #180
+08/05/20 Stack emails vertically in edit online forms to help layout
+07/05/20 Online Form: Skip Logic/Show If functionality #294
+07/05/20 Fix introduced bug in person docs with no animal on reserve
+06/05/20 Make animals optional for reservations #785
+06/05/20 Fix bug in nb locale when issuing update queries
+06/05/20 Fix sorting of notes containing dates in media table view
+05/05/20 Fix writing of insert SQL to handle apostrophes correctly
+05/05/20 PetLink will not accept more than 1 email address, strip/split if found
+05/05/20 If minimap editing is on, allow right click to move pin #815
+05/05/20 pdf renderer directive to switch to pisa over external cmd
+04/05/20 Filter out empty CSV rows during imports to prevent harmless errors
+04/05/20 AdoptAPet: Missing mapping for Havana->Havana Brown
+04/05/20 Show ID on additional field editing screen
+03/05/20 Don't strip protocol-less absolute URLs from documents when translating
+03/05/20 Hide asilomar fields for non-dogs and cats #813
+03/05/20 Auto translate relative image links in the html_report service call
+02/05/20 Allow homechecked by/date fields to be on all the time #812
+02/05/20 Fix for embedded images in emails #738
+02/05/20 Python2 fix for importing CSV files
+01/05/20 Add "datelost" and "datefound" online form fields for lost/found
+01/05/20 Add support for "microchip" online form field to lost/found
+01/05/20 Better rewriting of img links in docs, add media_file service call
+01/05/20 Hide auto remove text if option is off #810
+01/05/20 Add created since to person search
+01/05/20 Add bounds checking to config numbers, tidy up
+01/05/20 Configuration for removing incoming forms after complaints! #810
+30/04/20 Strip dead img src before feeding to wkhtmltopdf #811
+30/04/20 Show an emblem on NOT flag #805
+30/04/20 Add selection of unicode glyphs to emblems #805
+30/04/20 Fix find person columns not sorting in options #769
+30/04/20 Add "Adoptable" find animal result column #711
+30/04/20 Ability to view old litter records #807
+30/04/20 Email button on animal records #809
+30/04/20 Email documents from document repository #687
+30/04/20 Leaving the incoming forms screen deletes processed forms #810
+30/04/20 make format_date and format_time consistent with each other #808
+30/04/20 Omit seconds for word processor clinic output (Julian Poidevin) #808
+29/04/20 Fix display after reloading media table on edit
+29/04/20 Option to share picture from share menu
+29/04/20 Fix introduced bug in saving currency fields
+28/04/20 Display option to turn off pink/blue borders
+28/04/20 Mask Stripe secret key for security #799
+28/04/20 Fixes for PayPal CSV import encoding (cp1252)
+28/04/20 Refactor/rewrite of CSV parsing for py2/3 compatibility
+28/04/20 Add media screen icon mode after universal user hatred of table #652
+27/04/20 Online forms: Fix mandatory sig/image bugs caused by required move
+27/04/20 Signed/unsigned document requests search/alerts #507
+27/04/20 Fix all thumbnails to a consistent size with object-fit css
+27/04/20 Use position: fixed with pageX/pageY for positioning callouts
+27/04/20 Substitute animal tokens in email templates #759
+26/04/20 Send media emails as multiple attachments to one message #405
+26/04/20 Keep separate media created date #796
+26/04/20 Retain media UI #343
+26/04/20 Rewrite media UI to use a table #652
+25/04/20 Stop online form signatures breaking layout in phone/portrait
+25/04/20 Validate payrefs before generating checkout pages #463
+24/04/20 Payment processor integration: Stripe support #463
+23/04/20 csv import: allow import of unknown, fix match age
+23/04/20 Strip whitespace from incoming form fields
+22/04/20 Disk cache should only mkdir path folders in put operations
+22/04/20 New default online form header with responsive design for mobile
+22/04/20 Add location (no virtual) shelter view mode #791
+22/04/20 Update online form image cap to 384Kb, clear invalid images
+22/04/20 Update fr_CA translation (Stephanie Cordeau)
+21/04/20 Payment processor integration: PayPal support #463
+20/04/20 Remove old redudant table/col code from sql handler
+20/04/20 Set online form explicit font sizes (fixes Chrome mobile) #787
+20/04/20 Py3 fix for signing documents
+19/04/20 Add released/TNR stats to home page #679
+19/04/20 Add nullable change fields to animallitter to match ASM2 imports #496
+19/04/20 Cell data-sort attribute, fix timeonshelter/age sorts in results #780
+19/04/20 Online forms: put required indicator with label to prevent wrap issues
+19/04/20 Remove unreadable mandatory column from form editor, use label indicator
+19/04/20 Do not set reply-to header on form notifications if email submitter off #781
+19/04/20 Increase quality of online form images to 640px
+19/04/20 Add fortnightly payment frequency
+19/04/20 Gracefully handle exif orientation missing in auto-rotate
+18/04/20 Do not deactive found.org if login fails
+17/04/20 Consider reserveanimalname when using online form Attach->Animal
+17/04/20 identibase/anibaseuk incorrectly using US date format
+16/04/20 Refactor decode_html to use HTMLParser and remove cruft
+16/04/20 Fix unicode email header handling #771
+16/04/20 Py3 fix for signing page service call
+16/04/20 Restrict online form field labels to match field length
+15/04/20 Require at least 6 digits for searching phone numbers
+14/04/20 Add ReservationDate wordkey for active reserve on animals #777
+13/04/20 Assign IDs and link labels correctly on online forms
+13/04/20 Deduplicate owners on cell/mobile phone number #436
+13/04/20 Strip non-numbers from phone number fields and query in search #776
+13/04/20 Add log creation to bulk change animals #773
+12/04/20 Use fixed short translatable field names in online form preview
+12/04/20 Use DBFSID when accessing media for speed/accuracy
+11/04/20 Audit user agent on login/logout #772
+11/04/20 Don't update user activity on some endpoints for performance
+10/04/20 Use field names for online form preview to save space
+10/04/20 Remove foster only restriction on coordinator/fosterer shelterview
+10/04/20 Add Hong Kong locale
+09/04/20 Refactor to generate all possible js statically #770
+08/04/20 Use flock/mutex around disk cache to prevent multiprocess bugs
+08/04/20 Online form create animal not setting size or default location
+07/04/20 Add missing OrganisationEmail wordkey
+06/04/20 Selecting OwnerAddress twice in get_donation_query breaks view
+
 43
 ================
 
+06/04/20 animaltest dbupdate creates every time instead of checking
+06/04/20 Check types from disk cache in case of collisions
+05/04/20 When publisher checks mappings, only consider current shelter animals
+05/04/20 Remove whitespace from FTP passwords
+04/04/20 Log and fail gracefully for badly encoded unicode parameters in input
+04/04/20 Prevent drag and drop firing for same location #765
+03/04/20 Fix broken date sort caused by #700
+01/04/20 Hide timeline entries involving people if user does not have permission
+01/04/20 Hide location emblem if user does not have view person permission
+31/03/20 Trigger batch can regenerate person additionalflag column #762
+31/03/20 Only force code change if year/month are not now #761
+30/03/20 Password reset mechanism from login page #758
+29/03/20 Also use disk rather than RAM for common query cache
+29/03/20 Use disk rather than RAM for config cache
+29/03/20 Substitute person tokens in new email templates #759
+28/03/20 Do not create negative accounting transactions #756
+28/03/20 Assume M/D/Y when importing dates in en_CA locale
+28/03/20 Complete French translation (Julian Poidevin) #753
+27/03/20 Built-in adopter person flag #726
+27/03/20 Allow dotted/hyphenated date formats for locales #700
+27/03/20 Do not count trial adoptions on annual figures
+26/03/20 Shelter view "good with" section, add counts to flag mode
+26/03/20 Email templates in dialogs and mail merges #502
+26/03/20 Add "Location and Breed" shelter view mode
+25/03/20 Fix for JQuery3 breaking Codemirror fullscreen
+25/03/20 Python3 fix for signing pad
+25/03/20 Python3 fix for importing online forms from HTML
+25/03/20 Online form create person should update address of existing #222
+23/03/20 Add incident completion time field #438
+23/03/20 Display option to show ID numbers with lookup data
+23/03/20 Manually add UTF-8 BOM to CSV files to stop Excel mangling them
+23/03/20 Add styling for fullcalendar widget to asm theme
+23/03/20 Rearrange CSS load order so JQUI theme can style other widgets
+22/03/20 Include additional fields when exporting animal/person/incident csv #621
+22/03/20 Remove species/litter fields from animal medical tabs
+22/03/20 Import/Export animal tests and override key duplicate values #541
+21/03/20 Show original owner address when matching lost to shelter animals #45
+21/03/20 Optional animalviewnotadoptable template for unavailable animals #501
+21/03/20 Fix action asm theme button styles since JQUI update
+21/03/20 Add vaccination expiry/reschedule period #466
+21/03/20 Add microchip to lost/found #392
+17/03/20 AnimalTests wordkey: do not show result for ungiven tests
+17/03/20 Show mandatory when browsing online form fields #626
+17/03/20 Hide homechecker slider for non-homecheckers #379
+17/03/20 Embedded add person including inactive jurisdictions #675
+17/03/20 Make flags column available to find person/animal #735
+17/03/20 Make person looking for summary column available to find person #645 
+16/03/20 Undo button on medical regimens to ungive treatments #370
+16/03/20 Person advanced search/phone contains not searching home phone #748
+15/03/20 Refactor visibility of type slider fields #181
+15/03/20 Reservation book sort desc, config for overdue display #725
+15/03/20 OwnerLookingFor person wordkey #693
+15/03/20 LitterMates animal wordkey #380
+15/03/20 Options to send diary emails on add/change/complete #704
+14/03/20 Hidden config switch for PetFinderHideUnaltered #743
+14/03/20 Add voucher wordkeys and document functionality #35
+14/03/20 Add voucher book and new fields Presented/Code/Animal #34
+14/03/20 Fix splash to center/no-repeat for incorrect sized images
+13/03/20 User roles screen broken by JQUI upgrade
+12/03/20 Show cancelled reservations on the timeline #433
+12/03/20 Fix JQuery Mobile by adding JQuery 2.2.4 #739
+12/03/20 Show alert for clinic appointments due today #635
+12/03/20 Configurable publisher frequency for adoption websites #686
+12/03/20 Use Credit/Debit instead of Deposit/Withdrawal labels #393
+12/03/20 Fix staff rota display after JQUI update
+11/03/20 Add missing lkstransportstatus #742
+11/03/20 Extra categories for good with children #454
+07/03/20 Upgrade to JQuery 3.4.1 and JQueryUI 1.12.1 #739
+05/03/20 Show description on stock level screen
+02/03/20 Fix bug that caused 2 slashes in a value to break table sorting
+01/03/20 Use standard flag code for online forms (fix missing exclude bulk)
+29/02/20 Chrome shuffle bug: detect Back and force reload #716
+29/02/20 Allow configurable thumbnail size under publishing options
+28/02/20 PetLink only allow 2-letter ISO codes in country field
+22/02/20 Add year dropdown to online form datepicker
+19/02/20 Bug in SavourLife that prevented adopted animals being removed
+18/02/20 PetLink, SmartTag, HomeAgain, AKC: Send person country #733
+12/02/20 Copy diary notes from template animals #731
+12/02/20 Form thank you page should scroll to top in case form is in iframe
+11/02/20 Add MovementPayments wordkey
+10/02/20 Decode addresses before loading into transport fields #729
+10/02/20 Org tags missing from clinic documents #730
+05/02/20 Write an initial location change for new animals #673
+04/02/20 Merge additional fields on existing when processing online forms #712
+04/02/20 Set animal location to user's site if default is invisible #723
+30/01/20 Add full CSV escaping/quoting to all publishers
+28/01/20 Better date of birth handling creating animals from forms
+27/01/20 Unicode bug in tableform multiselect (affected form flags)
+27/01/20 Allow a species to be chosen for online form adoptables #613
+26/01/20 Advanced search cannot find flags with extended chars #715
+17/01/20 Fix limit bug in adoptable_js add SHUFFLE sort #717
+16/01/20 Fix OR bug that incorrectly showed completed diary notes for user
+14/01/20 Add PaymentPersonAddress/City/State/Zipcode wordkeys
+10/01/20 Enable Maddies publisher for all English speakers
+10/01/20 Bug displaying animals in transactions with no shortcode
+09/01/20 Workaround for Google Chrome 70 back bug from photo #716
+08/01/20 Tokens for DocumentImgQRLink50/100/150/200 for size
+07/01/20 Allow online forms to create new animal records #563
+02/01/20 Consistent post_data return types between Python 2 and 3
+31/12/19 found.org: Fail if we could not chdir to FTP folder
+30/12/19 Fix bug displaying rota week dropdown in first week of year
+28/12/19 PetLink: cancel and remove successes if username/pass is wrong #713
+28/12/19 Set person country field when creating from online form #714
+24/12/19 Bug in display of flags in find animal results
+21/12/19 Retry AKC for 54103 and 54107 errors
+17/12/19 Complete French translation (Roxanne ENGINDENIZ & Julian POIDEVIN) #699
+17/12/19 Added support for French microchip ID #707
+17/12/19 AppointmentFor wordkey shows real name #705
+16/12/19 Movement date cannot be before intake date #651
+16/12/19 Show pickup/dropoff on person links #706
+12/12/19 Lint fixes to onlineform and bad required pattern
+12/12/19 Logging should not convert the msg string
+10/12/19 Show fosters in a separate category in multi chooser #691
+03/12/19 Fix bug with use of # in dict config items #702
+02/12/19 Debugging/tweaks of new AKC integration
+02/12/19 found.org stop sending items overn 3 years old #697
+29/11/19 Limit display of medical items for performance #701
+28/11/19 Consistent limit of now+30 for datebroughtin
+28/11/19 First version of standalone AKC Reunite publisher
+26/11/19 Fix name2codepoint python3 reference
+25/11/19 Add animal: Reload unit list on reset
+24/11/19 Clinic: add shelter filter, fix bug in calendar links
+23/11/19 Include manufacturer in <<AnimalVaccinations>>
+22/11/19 Allow shelter animals to be booked into clinic #625
+20/11/19 Hidden config for overdue days on fosterer emails
+18/11/19 Do not include custom emblems when sorting tables #663
+16/11/19 First draft of direct HomeAgain registration service
+12/11/19 Remove arbitrary 100 link limit on home page
+12/11/19 Send 9910010 chips to AKC
+09/11/19 Export animals as CSV should be async due to CDN #692
+06/11/19 Write audit records for changes to lookups #666
+04/11/19 Wordkeys for medical and log history #689
+04/11/19 Complete diary notes on death of animal #259
+04/11/19 Find animal rename Comments contain to Description contains #688
+01/11/19 PICKUPLOCATION and PICKUPADDRESS wordkeys only display for pickup
+01/11/19 Default sort for lost/found is date desc
+29/10/19 Fix online form race condition in collation id generator #690
+25/10/19 Fix bad formatting of <<LicenseFee>> wordkey
+24/10/19 Show date deceased in left shelter for on-shelter death #658
+21/10/19 Calculate balances based on reconciled filter #685
+21/10/19 Use (any sex) instead of (any gender) as default filter text
+20/10/19 Add entry category to bulk change animals #669
+20/10/19 Retain audit records for 6 months instead of 3 #681
+09/10/19 Logging sent emails should be the default #665
+09/10/19 CSV exports not escaping double quotes #676
+09/10/19 PetFinder: Option to send photo URLs instead of images via FTP
+08/10/19 PetRescue: support for states animals are adoptable in
 30/09/19 Convert smartquotes to ASCII before sending to PetFinder
 28/09/19 Up the report items to 120 before switching to accordion
 28/09/19 Updated Spanish translation (Marga Gomis)

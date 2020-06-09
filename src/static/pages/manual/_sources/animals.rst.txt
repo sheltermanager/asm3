@@ -403,15 +403,19 @@ For example:
 * Required date of that vaccination when added to the new animal will 
   be today + 10 days
 
-When copying from a template animal, ASM will copy the following items:
+When copying from a template animal, ASM will copy the following items to your
+new animal record:
 
-* The animal's adoption fee amount
+* The animal's adoption fee amount and description/bio field
+* The Hold, Is Not Available For Adoption and Do Not Register Microchip flags
+* Any additional flags the shelter has added to the system
 * Any additional fields the shelter has added to the system
 * Vaccinations
 * Tests
 * Medical regimens
 * Diets
 * Costs
+* Diary notes
 
 In addition, you can further define a template animal for baby animals (puppies
 and kittens). If the animal's age is under the system defined "baby split" of 6

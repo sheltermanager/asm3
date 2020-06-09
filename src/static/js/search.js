@@ -1,7 +1,8 @@
-/*jslint browser: true, forin: true, eqeq: true, white: true, sloppy: true, vars: true, nomen: true */
 /*global $, jQuery, _, asm, common, config, controller, dlgfx, edit_header, format, header, html, validate */
 
 $(function() {
+
+    "use strict";
 
     var search = {
 
@@ -10,13 +11,13 @@ $(function() {
          */
         description: function(r) {
             var banner = [];
-            if ($.trim(r.HIDDENANIMALDETAILS) != "") {
+            if (common.trim(r.HIDDENANIMALDETAILS) != "") {
                 banner.push(r.HIDDENANIMALDETAILS);
             }
-            if ($.trim(r.MARKINGS) != "") {
+            if (common.trim(r.MARKINGS) != "") {
                 banner.push(r.MARKINGS);
             }
-            if ($.trim(r.ANIMALCOMMENTS) != "") {
+            if (common.trim(r.ANIMALCOMMENTS) != "") {
                 banner.push(r.ANIMALCOMMENTS);
             }
             return banner.join(". ");
@@ -27,7 +28,7 @@ $(function() {
             h.push('<div id="asm-content" class="ui-helper-reset ui-widget-content ui-corner-all" style="padding: 10px;">');
             if (controller.explain != "") {
                 h.push('<div class="ui-state-highlight ui-corner-all" style="margin-top: 20px; padding: 0 .7em">' +
-                    '<p><span class="ui-icon ui-icon-search" style="float: left; margin-right: .3em;"></span>' +
+                    '<p><span class="ui-icon ui-icon-search"></span>' +
                     controller.explain + "</p></div>");
             }
             if (controller.results.length == 0) {
@@ -73,7 +74,11 @@ $(function() {
                         }
                         h.push('</span>');
                     }
-                    else if (r.CURRENTOWNERID != null) {
+                    else if (r.OWNERID && r.OWNERID != r.CURRENTOWNERID) {
+                        h.push(_("Owner"));
+                        h.push(html.icon("right") + ' ' + html.person_link(r.OWNERID, r.OWNERNAME));
+                    }
+                    else if (r.CURRENTOWNERID) {
                         h.push(r.DISPLAYLOCATIONNAME);
                         h.push(html.icon("right") + ' ' + html.person_link(r.CURRENTOWNERID, r.CURRENTOWNERNAME));
                     }

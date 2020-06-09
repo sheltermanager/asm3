@@ -57,19 +57,13 @@ class SavourLifePublisher(AbstractPublisher):
                     return k
         return ""
 
-    def utf8_to_ascii(self, s):
-        """
-        SL return their responses as UTF8.
-        """
-        return asm3.utils.encode_html(asm3.utils.cunicode(s))
-
     def good_with(self, x):
         """
         Translates our good with fields Unknown/No/Yes to SOL's NULL/False/True
         """
-        if x == 0: return None
+        if x == 0: return True
         elif x == 1: return False
-        else: return True
+        else: return None
 
     def run(self):
         
@@ -154,9 +148,9 @@ class SavourLifePublisher(AbstractPublisher):
                 r = asm3.utils.post_json(url, jsondata)
 
                 if r["status"] != 200:
-                    self.logError("HTTP %d, headers: %s, response: %s" % (r["status"], r["headers"], self.utf8_to_ascii(r["response"])))
+                    self.logError("HTTP %d, headers: %s, response: %s" % (r["status"], r["headers"], r["response"]))
                 else:
-                    self.log("HTTP %d, headers: %s, response: %s" % (r["status"], r["headers"], self.utf8_to_ascii(r["response"])))
+                    self.log("HTTP %d, headers: %s, response: %s" % (r["status"], r["headers"], r["response"]))
                     self.logSuccess("Processed: %s: %s (%d of %d)" % ( an["SHELTERCODE"], an["ANIMALNAME"], anCount, len(animals)))
                     processed.append(an)
 
@@ -182,7 +176,7 @@ class SavourLifePublisher(AbstractPublisher):
             # Get the animal records for the ones we need to mark saved
             if len(animalids_to_cancel) > 0:
 
-                animals = self.dbo.query("SELECT ID, ShelterCode, AnimalName, ActiveMovementDate, ActiveMovementType, DeceasedDate, " \
+                animals = self.dbo.query("SELECT ID, ShelterCode, AnimalName, ActiveMovementDate, ActiveMovementType, DeceasedDate, ExtraIDs, " \
                     "(SELECT Extra FROM animalpublished WHERE AnimalID=a.ID AND PublishedTo='savourlife') AS LastStatus " \
                     "FROM animal a WHERE ID IN (%s)" % ",".join(animalids_to_cancel))
 
@@ -228,9 +222,9 @@ class SavourLifePublisher(AbstractPublisher):
                         r = asm3.utils.post_json(url, jsondata)
 
                         if r["status"] != 200:
-                            self.logError("HTTP %d, headers: %s, response: %s" % (r["status"], r["headers"], self.utf8_to_ascii(r["response"])))
+                            self.logError("HTTP %d, headers: %s, response: %s" % (r["status"], r["headers"], r["response"]))
                         else:
-                            self.log("HTTP %d, headers: %s, response: %s" % (r["status"], r["headers"], self.utf8_to_ascii(r["response"])))
+                            self.log("HTTP %d, headers: %s, response: %s" % (r["status"], r["headers"], r["response"]))
                             self.logSuccess("Processed: %s: %s (%d of %d)" % ( an["SHELTERCODE"], an["ANIMALNAME"], anCount, len(animals)))
 
                             # Update animalpublished for this animal with the status we just sent in the Extra field
@@ -271,6 +265,10 @@ class SavourLifePublisher(AbstractPublisher):
         enquirynumber = None
         if "ENQUIRYNUMBER" in an and an.ENQUIRYNUMBER != "":
             enquirynumber = an.ENQUIRYNUMBER
+
+        needs_foster = False
+        if "NEEDSFOSTER" in an and an.NEEDSFOSTER != "" and an.NEEDSFOSTER != "0":
+            needs_foster = True
 
         # Check whether we've been vaccinated, wormed and hw treated
         vaccinated = asm3.medical.get_vaccinated(self.dbo, an.ID)
@@ -333,7 +331,7 @@ class SavourLifePublisher(AbstractPublisher):
             "SpecialNeeds":             "",
             "MedicalIssues":            self.replaceSmartHTMLEntities(an.HEALTHPROBLEMS),
             "InterstateAdoptionAvailable": interstate, 
-            "FosterCareRequired":       False,
+            "FosterCareRequired":       needs_foster,
             "BondedPair":               an.BONDEDANIMALID is not None and an.BONDEDANIMALID > 0,
             "SizeWhenAdult":            size,
             "IsSaved":                  an.ACTIVEMOVEMENTTYPE == 1,

@@ -1,0 +1,51 @@
+People added or updated between two dates
+###
+Auditing
+###
+Any
+###
+People records added to the system or updated between two dates
+###
+en
+###
+$VAR from DATE People added or changed between$
+$VAR to DATE and$
+
+SELECT 
+CreatedDate, OwnerName, OwnerAddress, OwnerTown, OwnerCounty, OwnerPostcode,
+HomeTelephone, WorkTelephone, MobileTelephone, EmailAddress,
+AdditionalFlags
+FROM owner
+WHERE (CreatedDate >= '$@from$' AND CreatedDate <= '$@to$') OR 
+(LastChangedDate >= '$@from$' AND LastChangedDate <= '$@to$')
+ORDER BY CreatedDate DESC, LastChangedDate DESC
+###
+$$HEADER
+<table border="1">
+<tr>
+<th>Added</th>
+<th>Name</th>
+<th>Address</th>
+<th>Tel</th>
+<th>Email</th>
+<th>Flags</th>
+</tr>
+HEADER$$
+
+$$BODY
+<tr>
+<td>$CREATEDDATE</td>
+<td>$OWNERNAME</td>
+<td>$OWNERADDRESS<br/>
+$OWNERTOWN $OWNERCOUNTY $OWNERPOSTCODE</td>
+<td>H: $HOMETELEPHONE, W: $WORKTELEPHONE, C: $MOBILETELEPHONE</td>
+<td>$EMAILADDRESS</td>
+<td>$ADDITIONALFLAGS</td>
+</tr>
+BODY$$
+
+$$FOOTER
+</table>
+<p>{COUNT.OWNERNAME} person records added/updated.</p>
+FOOTER$$
+

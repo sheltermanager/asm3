@@ -1,13 +1,13 @@
-/*jslint browser: true, forin: true, eqeq: true, white: true, sloppy: true, vars: true, nomen: true */
 /*global $, _, asm, common, config, controller, dlgfx, edit_header, format, header, html, tableform, validate */
 
 $(function() {
 
+    "use strict";
 
-    var animal_costs = {
+    const animal_costs = {
 
         model: function() {
-            var dialog = {
+            const dialog = {
                 add_title: _("Add cost"),
                 edit_title: _("Edit cost"),
                 edit_perm: 'ccad',
@@ -24,21 +24,17 @@ $(function() {
                 ]
             };
 
-            var table = {
+            const table = {
                 rows: controller.rows,
                 idcolumn: "ID",
-                edit: function(row) {
-                    tableform.dialog_show_edit(dialog, row)
-                        .then(function() {
-                            tableform.fields_update_row(dialog.fields, row);
-                            row.COSTTYPENAME = common.get_field(controller.costtypes, row.COSTTYPEID, "COSTTYPENAME");
-                            return tableform.fields_post(dialog.fields, "mode=update&costid=" + row.ID, "animal_costs");
-                        })
-                        .then(function() {
-                            tableform.table_update(table);
-                            animal_costs.calculate_costtotals();
-                            tableform.dialog_close();
-                        });
+                edit: async function(row) {
+                    await tableform.dialog_show_edit(dialog, row);
+                    tableform.fields_update_row(dialog.fields, row);
+                    row.COSTTYPENAME = common.get_field(controller.costtypes, row.COSTTYPEID, "COSTTYPENAME");
+                    await tableform.fields_post(dialog.fields, "mode=update&costid=" + row.ID, "animal_costs");
+                    tableform.table_update(table);
+                    animal_costs.calculate_costtotals();
+                    tableform.dialog_close();
                 },
                 columns: [
                     { field: "COSTTYPENAME", display: _("Type") },
@@ -51,49 +47,41 @@ $(function() {
                 ]
             };
 
-            var buttons = [
-                 { id: "new", text: _("New Cost"), icon: "new", enabled: "always", perm: "caad",
-                     click: function() { 
-                         tableform.dialog_show_add(dialog, { onload: animal_costs.costtype_change })
-                             .then(function() {
-                                 return tableform.fields_post(dialog.fields, "mode=create&animalid="  + controller.animal.ID, "animal_costs");
-                             })
-                             .then(function(response) {
-                                 var row = {};
-                                 row.ID = response;
-                                 tableform.fields_update_row(dialog.fields, row);
-                                 row.COSTTYPENAME = common.get_field(controller.costtypes, row.COSTTYPEID, "COSTTYPENAME");
-                                 controller.rows.push(row);
-                                 tableform.table_update(table);
-                                 animal_costs.calculate_costtotals();
-                                 tableform.dialog_close();
-                             });
-                     } 
-                 },
-                 { id: "delete", text: _("Delete"), icon: "delete", enabled: "multi", perm: "cdad",
-                     click: function() { 
-                         tableform.delete_dialog()
-                             .then(function() {
-                                 tableform.buttons_default_state(buttons);
-                                 var ids = tableform.table_ids(table);
-                                 return common.ajax_post("animal_costs", "mode=delete&ids=" + ids);
-                             })
-                             .then(function() {
-                                 tableform.table_remove_selected_from_json(table, controller.rows);
-                                 tableform.table_update(table);
-                                 animal_costs.calculate_costtotals();
-                             });
-                     } 
-                 },
-                 { type: "raw", markup: [
-                     '<span id="onshelterboard" style="float: right">',
-                     _("Daily Boarding Cost"),
-                     ' <input id="dailyboardingcost" type="textbox" class="asm-textbox asm-currencybox" />',
-                     '<button id="button-savecost">' + _("Update the daily boarding cost for this animal") + '</button>',
-                     '<span id="costonshelter"></span>',
-                     '</span>'
-                     ].join("\n")
-                 }
+            const buttons = [
+                { id: "new", text: _("New Cost"), icon: "new", enabled: "always", perm: "caad",
+                    click: async function() { 
+                        await tableform.dialog_show_add(dialog, { onload: animal_costs.costtype_change });
+                        let response = await tableform.fields_post(dialog.fields, "mode=create&animalid="  + controller.animal.ID, "animal_costs");
+                        let row = {};
+                        row.ID = response;
+                        tableform.fields_update_row(dialog.fields, row);
+                        row.COSTTYPENAME = common.get_field(controller.costtypes, row.COSTTYPEID, "COSTTYPENAME");
+                        controller.rows.push(row);
+                        tableform.table_update(table);
+                        animal_costs.calculate_costtotals();
+                        tableform.dialog_close();
+                    } 
+                },
+                { id: "delete", text: _("Delete"), icon: "delete", enabled: "multi", perm: "cdad",
+                    click: async function() { 
+                        await tableform.delete_dialog();
+                        tableform.buttons_default_state(buttons);
+                        let ids = tableform.table_ids(table);
+                        await common.ajax_post("animal_costs", "mode=delete&ids=" + ids);
+                        tableform.table_remove_selected_from_json(table, controller.rows);
+                        tableform.table_update(table);
+                        animal_costs.calculate_costtotals();
+                    } 
+                },
+                { type: "raw", markup: [
+                    '<span id="onshelterboard" style="float: right">',
+                    _("Daily Boarding Cost"),
+                    ' <input id="dailyboardingcost" type="textbox" class="asm-textbox asm-currencybox" />',
+                    '<button id="button-savecost">' + _("Update the daily boarding cost for this animal") + '</button>',
+                    '<span id="costonshelter"></span>',
+                    '</span>'
+                    ].join("\n")
+                }
             ];
 
             this.dialog = dialog;
@@ -103,7 +91,7 @@ $(function() {
 
         render: function() {
             this.model();
-            var s = "";
+            let s = "";
             s += tableform.dialog_render(this.dialog);
             s += edit_header.animal_edit_header(controller.animal, "costs", controller.tabcounts);
             s += tableform.buttons_render(this.buttons);
@@ -111,7 +99,7 @@ $(function() {
             s += [
                 '<div id="asm-cost-footer">',
                 '<div class="ui-state-highlight ui-corner-all" style="margin-top: 20px; padding: 0 .7em">',
-                '<p><span class="ui-icon ui-icon-info" style="float: left; margin-right: .3em;"></span>',
+                '<p><span class="ui-icon ui-icon-info"></span>',
                 '<span id="costtotals"></span>',
                 '</div>',
                 '</div>'
@@ -147,7 +135,7 @@ $(function() {
         },
 
         costtype_change: function() {
-            var dc = common.get_field(controller.costtypes, $("#type").select("value"), "DEFAULTCOST");
+            let dc = common.get_field(controller.costtypes, $("#type").select("value"), "DEFAULTCOST");
             if (!dc) { dc = 0; }
             $("#cost").currency("value", dc);
         },
@@ -159,25 +147,25 @@ $(function() {
         },
 
         calculate_costtotals: function() {
-            var s = _("Vaccinations: {0}, Tests: {1}, Medical Treatments: {2}, Transport: {3}, Costs: {4}, Total Costs: {5} Total Payments: {6}, Balance: {7}");
-            var bc = $("#dailyboardingcost").currency("value");
-            var dons = format.to_int(controller.animal.DAYSONSHELTER);
-            var tb = bc * dons;
-            var tv = format.to_int(controller.costtotals.TV);
-            var tt = format.to_int(controller.costtotals.TT);
-            var tm = format.to_int(controller.costtotals.TM);
-            var tr = format.to_int(controller.costtotals.TR);
-            var tc = 0;
-            var td = format.to_int(controller.costtotals.TD);
+            let s = _("Vaccinations: {0}, Tests: {1}, Medical Treatments: {2}, Transport: {3}, Costs: {4}, Total Costs: {5} Total Payments: {6}, Balance: {7}");
+            let bc = $("#dailyboardingcost").currency("value");
+            let dons = format.to_int(controller.animal.DAYSONSHELTER);
+            let tb = bc * dons;
+            let tv = format.to_int(controller.costtotals.TV);
+            let tt = format.to_int(controller.costtotals.TT);
+            let tm = format.to_int(controller.costtotals.TM);
+            let tr = format.to_int(controller.costtotals.TR);
+            let tc = 0;
+            let td = format.to_int(controller.costtotals.TD);
             // Calculate tc from our current cost rows
             $.each(controller.rows, function(i, v) {
                 tc += format.to_int(v.COSTAMOUNT);
             });
             // Total without boarding costs
-            var totc = tv + tt + tm + tr + tc;
+            let totc = tv + tt + tm + tr + tc;
             // Only add current boarding cost if the animal is on the shelter
             if (controller.animal.ARCHIVED == 0) { totc += tb; }
-            var bal = td - totc;
+            let bal = td - totc;
             $("#costtotals").html(common.substitute(s,
                 { 
                     "0": format.currency(tv), 
@@ -192,11 +180,11 @@ $(function() {
         },
 
         recalc_daysonshelter: function() {
-            var days = controller.animal.DAYSONSHELTER;
-            var cost = format.currency_to_float($("#dailyboardingcost").val());
-            var costrounded = format.float_to_dp(cost, asm.currencydp);
-            var tot = (days * costrounded) * 100;
-            var s = _("On shelter for {0} days. Total cost: {1}");
+            let days = controller.animal.DAYSONSHELTER;
+            let cost = format.currency_to_float($("#dailyboardingcost").val());
+            let costrounded = format.float_to_dp(cost, asm.currencydp);
+            let tot = (days * costrounded) * 100;
+            let s = _("On shelter for {0} days. Total cost: {1}");
             s = s.replace("{0}", "<b>" + days + "</b>");
             s = s.replace("{1}", "<b>" + format.currency(tot) + "</b>");
             $("#costonshelter").html(s);
@@ -205,7 +193,7 @@ $(function() {
 
         save_boarding_cost: function() {
             $("#button-savecost").button("disable");
-            var formdata = "mode=dailyboardingcost&animalid=" + $("#animalid").val() + 
+            let formdata = "mode=dailyboardingcost&animalid=" + $("#animalid").val() + 
                 "&dailyboardingcost=" + $("#dailyboardingcost").currency("value");
             header.show_loading(_("Saving..."));
             common.ajax_post("animal_costs", formdata)

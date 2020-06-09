@@ -1,7 +1,8 @@
-/*jslint browser: true, forin: true, eqeq: true, white: true, sloppy: true, vars: true, nomen: true */
 /*global $, jQuery, _, asm, common, config, controller, dlgfx, format, header, html, validate */
 
 $(function() {
+
+    "use strict";
 
     var licence_renewal = {
 
@@ -96,7 +97,7 @@ $(function() {
                     return false;
                 }
                 // date
-                if ($.trim($("#issuedate").val()) == "" || $.trim($("#expirydate").val()) == "") {
+                if (common.trim($("#issuedate").val()) == "" || common.trim($("#expirydate").val()) == "") {
                     header.show_error(_("License requires issued and expiry dates"));
                     validate.highlight("issuedate");
                     return false;

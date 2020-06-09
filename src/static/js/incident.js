@@ -1,7 +1,8 @@
-/*jslint browser: true, forin: true, eqeq: true, white: true, sloppy: true, vars: true, nomen: true */
 /*global $, jQuery, _, asm, additional, common, config, controller, dlgfx, edit_header, format, header, html, mapping, tableform, validate */
 
 $(function() {
+
+    "use strict";
 
     var incident = {
 
@@ -53,8 +54,9 @@ $(function() {
                 '<td><textarea id="callnotes" data-json="CALLNOTES" data-post="callnotes" class="asm-textarea" rows="3"></textarea></td>',
                 '</tr>',
                 '<tr>',
-                '<td><label for="completeddate">' + _("Completion Date") + '</label></td>',
-                '<td><input id="completeddate" data-json="COMPLETEDDATE" data-post="completeddate" class="asm-textbox asm-datebox" />',
+                '<td><label for="completeddate">' + _("Completion Date/Time") + '</label></td>',
+                '<td><input id="completeddate" data-json="COMPLETEDDATE" data-post="completeddate" class="asm-halftextbox asm-datebox" />',
+                '<input id="completedtime" data-json="COMPLETEDDATE" data-post="completedtime" class="asm-halftextbox asm-timebox" /></td>',
                 '</tr>',
                 '<tr>',
                 '<td><label for="completedtype">' + _("Completion Type") + '</label></td>',
@@ -133,7 +135,9 @@ $(function() {
                 '</td>',
                 '</tr>',
                 '<tr id="dispatchlatlongrow">',
-                '<td><label for="dispatchlatlong">' + _("Latitude/Longitude") + '</label></td>',
+                '<td><label for="dispatchlatlong">' + _("Latitude/Longitude"),
+                '<span class="asm-callout">' + _("Right-click on the map to change the marker location") + '</span>',
+                '</label></td>',
                 '<td><input type="text" class="asm-latlong" id="dispatchlatlong" data-json="DISPATCHLATLONG" data-post="dispatchlatlong" /></td>',
                 '</tr>',
                 '<tr>',
@@ -413,7 +417,7 @@ $(function() {
             validate.reset();
 
             // incident date
-            if ($.trim($("#incidentdate").val()) == "") {
+            if (common.trim($("#incidentdate").val()) == "") {
                 header.show_error(_("Incident date cannot be blank"));
                 $("#asm-details-accordion").accordion("option", "active", 0);
                 validate.highlight("incidentdate");
@@ -421,7 +425,7 @@ $(function() {
             }
 
             // times
-            if (!validate.validtime([ "incidenttime", "calltime", "dispatchtime", "respondedtime", 
+            if (!validate.validtime([ "incidenttime", "calltime", "completedtime", "dispatchtime", "respondedtime", 
                 "followuptime", "followuptime2", "followuptime3" ])) { 
                 return false; 
             }

@@ -1,6 +1,6 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
 
-import asm, datetime, dbfread, os
+import asm, datetime, os
 
 """
 Import script for Shelterpro databases in DBF format
@@ -12,18 +12,18 @@ encoding so it's just a binary string that can be ignored.
 
 Requires address.dbf, addrlink.dbf, animal.dbf, incident.dbf, license.dbf, note.dbf, person.dbf, shelter.dbf, vacc.dbf
 
-Will also look in PATH/images/ANIMALKEY.[jpg|JPG] for animal photos if available.
+Will also look in PATH/images/IMAGEKEY.[jpg|JPG] for animal photos if available.
 
-29th December, 2016 - 1st August 2018
+29th December, 2016 - 2nd April 2020
 """
 
-PATH = "/home/robin/tmp/asm3_import_data/shelterpro_za1799"
+PATH = "/home/robin/tmp/asm3_import_data/shelterpro_bc2243"
 
 START_ID = 100
 
 INCIDENT_IMPORT = False
 LICENCE_IMPORT = False
-PICTURE_IMPORT = False
+PICTURE_IMPORT = True
 VACCINATION_IMPORT = True
 NOTE_IMPORT = True
 SHELTER_IMPORT = True 
@@ -41,7 +41,7 @@ class ExtraFieldParser(dbfread.FieldParser):
             return data
 
 def open_dbf(name):
-    return dbfread.DBF("%s/%s.DBF" % (PATH, name.upper()), encoding="latin1", parserclass=ExtraFieldParser)
+    return asm.read_dbf(name)
 
 def gettype(animaldes):
     spmap = {
@@ -49,7 +49,7 @@ def gettype(animaldes):
         "CAT": 11
     }
     species = animaldes.split(" ")[0]
-    if spmap.has_key(species):
+    if species in spmap:
         return spmap[species]
     else:
         return 2
@@ -116,15 +116,15 @@ if PICTURE_IMPORT: asm.setid("media", START_ID)
 if PICTURE_IMPORT: asm.setid("dbfs", START_ID)
 
 # Remove existing
-print "\\set ON_ERROR_STOP\nBEGIN;"
-print "DELETE FROM adoption WHERE ID >= %d AND CreatedBy = 'conversion';" % START_ID
-print "DELETE FROM animal WHERE ID >= %d AND CreatedBy = 'conversion';" % START_ID
-print "DELETE FROM owner WHERE ID >= %d AND CreatedBy = 'conversion';" % START_ID
-if INCIDENT_IMPORT: print "DELETE FROM animalcontrol WHERE ID >= %d AND CreatedBy = 'conversion';" % START_ID
-if VACCINATION_IMPORT: print "DELETE FROM animalvaccination WHERE ID >= %d AND CreatedBy = 'conversion';" % START_ID
-if LICENCE_IMPORT: print "DELETE FROM ownerlicence WHERE ID >= %d AND CreatedBy = 'conversion';" % START_ID
-if PICTURE_IMPORT: print "DELETE FROM media WHERE ID >= %d;" % START_ID
-if PICTURE_IMPORT: print "DELETE FROM dbfs WHERE ID >= %d;" % START_ID
+print("\\set ON_ERROR_STOP\nBEGIN;")
+print("DELETE FROM adoption WHERE ID >= %d AND CreatedBy = 'conversion';" % START_ID)
+print("DELETE FROM animal WHERE ID >= %d AND CreatedBy = 'conversion';" % START_ID)
+print("DELETE FROM owner WHERE ID >= %d AND CreatedBy = 'conversion';" % START_ID)
+if INCIDENT_IMPORT: print("DELETE FROM animalcontrol WHERE ID >= %d AND CreatedBy = 'conversion';" % START_ID)
+if VACCINATION_IMPORT: print("DELETE FROM animalvaccination WHERE ID >= %d AND CreatedBy = 'conversion';" % START_ID)
+if LICENCE_IMPORT: print("DELETE FROM ownerlicence WHERE ID >= %d AND CreatedBy = 'conversion';" % START_ID)
+if PICTURE_IMPORT: print("DELETE FROM media WHERE ID >= %d;" % START_ID)
+if PICTURE_IMPORT: print("DELETE FROM dbfs WHERE ID >= %d;" % START_ID)
 
 # Create a transfer owner
 to = asm.Owner()
@@ -149,6 +149,7 @@ if SHELTER_IMPORT: cshelter = open_dbf("shelter")
 if VACCINATION_IMPORT: cvacc = open_dbf("vacc")
 if INCIDENT_IMPORT: cincident = open_dbf("incident")
 if NOTE_IMPORT: cnote = open_dbf("note")
+if PICTURE_IMPORT: cimage = open_dbf("image")
 
 # Addresses if we have a separate file
 if SEPARATE_ADDRESS_TABLE:
@@ -177,9 +178,9 @@ for row in cperson:
     o.OwnerName = o.OwnerTitle + " " + o.OwnerForeNames + " " + o.OwnerSurname
     # Find the address if it's in a separate table
     if SEPARATE_ADDRESS_TABLE:
-        if addrlink.has_key(personkey):
+        if personkey in addrlink:
             addrkey = addrlink[personkey]
-            if addresses.has_key(addrkey):
+            if addrkey in addresses:
                 add = addresses[addrkey]
                 o.OwnerAddress = add["address"]
                 o.OwnerTown = add["city"]
@@ -212,7 +213,7 @@ for row in canimal:
     ppa[row["ANIMALKEY"]] = a
     a.AnimalTypeID = gettype(row["ANIMLDES"])
     a.SpeciesID = asm.species_id_for_name(row["ANIMLDES"].split(" ")[0])
-    a.AnimalName = asm.strip(row["PETNAME"])
+    a.AnimalName = asm.strip(row["PETNAME"]).title()
     if a.AnimalName.strip() == "":
         a.AnimalName = "(unknown)"
     age = row["AGE"].split(" ")[0]
@@ -234,6 +235,7 @@ for row in canimal:
     a.Size = getsize(asm.strip(row["WEIGHT"]))
     a.BaseColourID = asm.colour_id_for_names(asm.strip(row["FURCOLR1"]), asm.strip(row["FURCOLR2"]))
     a.IdentichipNumber = asm.strip(row["MICROCHIP"])
+    if a.IdentichipNumber <> "": a.Identichipped = 1
     comments = "Original breed: " + asm.strip(row["BREED1"]) + "/" + asm.strip(row["CROSSBREED"]) + ", age: " + age
     comments += ",Color: " + asm.strip(row["FURCOLR1"]) + "/" + asm.strip(row["FURCOLR2"])
     comments += ", Coat: " + asm.strip(row["COAT"])
@@ -250,31 +252,18 @@ for row in canimal:
     a.NonShelterAnimal = 1
     a.Archived = 1
     # If the row has an original owner
-    if ppo.has_key(row["PERSOWNR"]):
+    if row["PERSOWNR"] in ppo:
         o = ppo[row["PERSOWNR"]]
         a.OriginalOwnerID = o.ID
     # Shelterpro records Deceased as Status == 2 as far as we can tell
     if row["STATUS"] == 2:
         a.DeceasedDate = a.DateBroughtIn
         a.PTSReasonID = 2 # Died
-    # Does this animal have an image? If so, add media/dbfs entries for it
-    if PICTURE_IMPORT:
-        imdata = None
-        if os.path.exists(PATH + "/images/%s.jpg" % row["ANIMALKEY"]):
-            f = open(PATH + "/images/%s.jpg" % row["ANIMALKEY"], "rb")
-            imdata = f.read()
-            f.close()
-        elif os.path.exists(PATH + "/images/%s.JPG" % row["ANIMALKEY"]):
-            f = open(PATH + "/images/%s.JPG" % row["ANIMALKEY"], "rb")
-            imdata = f.read()
-            f.close()
-        if imdata is not None:
-            asm.animal_image(a.ID, imdata)
 
 # Vaccinations
 if VACCINATION_IMPORT:
     for row in cvacc:
-        if not ppa.has_key(row["ANIMALKEY"]): continue
+        if not row["ANIMALKEY"] in ppa: continue
         a = ppa[row["ANIMALKEY"]]
         # Each row contains a vaccination
         av = asm.AnimalVaccination()
@@ -295,12 +284,11 @@ if VACCINATION_IMPORT:
         av.Comments = "Name: %s, Issue: %s" % (row["VACCDRUGNA"], row["VACCISSUED"])
 
 
-
 # Run through the shelter file and create any movements/euthanisation info
 if SHELTER_IMPORT:
     for row in cshelter:
         a = None
-        if ppa.has_key(row["ANIMALKEY"]):
+        if row["ANIMALKEY"] in ppa:
             a = ppa[row["ANIMALKEY"]]
             arivdate = row["ARIVDATE"]
             a.ShortCode = asm.strip(row["ANIMALKEY"])
@@ -317,8 +305,11 @@ if SHELTER_IMPORT:
             continue
 
         o = None
-        if ppo.has_key(row["OWNERATDIS"]):
+        if row["OWNERATDIS"] in ppo:
             o = ppo[row["OWNERATDIS"]]
+
+        dispmeth = asm.strip(row["DISPMETH"])
+        dispdate = row["DISPDATE"]
 
         # Apply other fields
         if row["ARIVREAS"] == "QUARANTINE":
@@ -330,13 +321,13 @@ if SHELTER_IMPORT:
             a.EntryReasonID = 7
 
         # Adoptions
-        if row["DISPMETH"] == "ADOPTED":
+        if dispmeth == "ADOPTED":
             if a is None or o is None: continue
             m = asm.Movement()
             m.AnimalID = a.ID
             m.OwnerID = o.ID
             m.MovementType = 1
-            m.MovementDate = row["DISPDATE"]
+            m.MovementDate = dispdate
             a.Archived = 1
             a.ActiveMovementID = m.ID
             a.ActiveMovementDate = m.MovementDate
@@ -344,13 +335,13 @@ if SHELTER_IMPORT:
             movements.append(m)
 
         # Reclaims
-        elif row["DISPMETH"] == "RETURN TO OWNER":
+        elif dispmeth == "RETURN TO OWNER":
             if a is None or o is None: continue
             m = asm.Movement()
             m.AnimalID = a.ID
             m.OwnerID = o.ID
             m.MovementType = 5
-            m.MovementDate = row["DISPDATE"]
+            m.MovementDate = dispdate
             a.Archived = 1
             a.ActiveMovementID = m.ID
             a.ActiveMovementDate = m.MovementDate
@@ -358,14 +349,14 @@ if SHELTER_IMPORT:
             movements.append(m)
 
         # Released or Other
-        elif row["DISPMETH"].startswith("RELEASED") or row["DISPMETH"] == "OTHER":
+        elif dispmeth == "RELEASED" or dispmeth == "OTHER":
             if a is None or o is None: continue
             m = asm.Movement()
             m.AnimalID = a.ID
             m.OwnerID = 0
             m.MovementType = 7
-            m.MovementDate = row["DISPDATE"]
-            m.Comments = row["DISPMETH"]
+            m.MovementDate = dispdate
+            m.Comments = dispmeth
             a.Archived = 1
             a.ActiveMovementDate = m.MovementDate
             a.ActiveMovementID = m.ID
@@ -373,25 +364,25 @@ if SHELTER_IMPORT:
             movements.append(m)
 
         # Holding
-        elif row["DISPMETH"] == "" and row["ANIMSTAT"] == "HOLDING":
+        elif dispmeth == "" and row["ANIMSTAT"] == "HOLDING":
             a.IsHold = 1
             a.Archived = 0
 
         # Deceased
-        elif row["DISPMETH"] == "DECEASED":
-            a.DeceasedDate = row["DISPDATE"]
+        elif dispmeth == "DECEASED":
+            a.DeceasedDate = dispdate
             a.PTSReasonID = 2 # Died
             a.Archived = 1
 
         # Euthanized
-        elif row["DISPMETH"] == "EUTHANIZED":
-            a.DeceasedDate = row["DISPDATE"]
+        elif dispmeth == "EUTHANIZED":
+            a.DeceasedDate = dispdate
             a.PutToSleep = 1
             a.PTSReasonID = 4 # Sick/Injured
             a.Archived = 1
 
         # If the outcome is blank, it's on the shelter
-        elif row["DISPMETH"].strip() == "":
+        elif dispmeth == "":
             a.Archived = 0
 
         # It's the name of an organisation that received the animal
@@ -401,8 +392,8 @@ if SHELTER_IMPORT:
             m.AnimalID = a.ID
             m.OwnerID = to.ID
             m.MovementType = 3
-            m.MovementDate = row["DISPDATE"]
-            m.Comments = row["DISPMETH"]
+            m.MovementDate = dispdate
+            m.Comments = dispmeth
             a.Archived = 1
             a.ActiveMovementID = m.ID
             a.ActiveMovementType = 3
@@ -411,10 +402,10 @@ if SHELTER_IMPORT:
 if LICENCE_IMPORT:
     for row in clicense:
         a = None
-        if ppa.has_key(row["ANIMALKEY"]):
+        if row["ANIMALKEY"] in ppa:
             a = ppa[row["ANIMALKEY"]]
         o = None
-        if ppo.has_key(row["LICENSEOWN"]):
+        if row["LICENSEOWN"] in ppo:
             o = ppo[row["LICENSEOWN"]]
         if a is not None and o is not None:
             if row["LICENSEEFF"] is None:
@@ -431,6 +422,20 @@ if LICENCE_IMPORT:
             if a.Neutered == 1:
                 ol.LicenceTypeID = 1 # Altered dog
 
+if PICTURE_IMPORT:
+    for row in cimage:
+        a = None
+        if not row["ANIMALKEY"] in ppa:
+            continue
+        a = ppa[row["ANIMALKEY"]]
+        imdata = None
+        if os.path.exists(PATH + "/images/%s.jpg" % row["IMAGEKEY"]):
+            f = open(PATH + "/images/%s.jpg" % row["IMAGEKEY"], "rb")
+            imdata = f.read()
+            f.close()
+        if imdata is not None:
+            asm.animal_image(a.ID, imdata)
+
 # Incidents
 if INCIDENT_IMPORT:
     for row in cincident:
@@ -444,9 +449,9 @@ if INCIDENT_IMPORT:
         ac.DispatchDateTime = calldate
         ac.CompletedDate = row["DATETIMEOU"]
         if ac.CompletedDate is None: ac.CompletedDate = calldate
-        if ppo.has_key(row["CITIZENMAK"]):
+        if row["CITIZENMAK"] in ppo:
             ac.CallerID = ppo[row["CITIZENMAK"]].ID
-        if ppo.has_key(row["OWNERATORI"]):
+        if row["OWNERATORI"] in ppo:
             ac.OwnerID = ppo[row["OWNERATORI"]].ID
         ac.IncidentCompletedID = 2
         if row["FINALOUTCO"] == "ANIMAL PICKED UP":
@@ -503,39 +508,28 @@ if NOTE_IMPORT:
 
 # Run back through the animals, if we have any that are still
 # on shelter after 2 years, add an adoption to an unknown owner
-for a in animals:
-    if a.Archived == 0 and a.DateBroughtIn < asm.subtract_days(asm.now(), 365*2):
-        m = asm.Movement()
-        m.AnimalID = a.ID
-        m.OwnerID = uo.ID
-        m.MovementType = 1
-        m.MovementDate = a.DateBroughtIn
-        a.Archived = 1
-        a.ActiveMovementID = m.ID
-        a.ActiveMovementDate = a.DateBroughtIn
-        a.ActiveMovementType = 1
-        movements.append(m)
+#asm.adopt_older_than(animals, movements, uo.ID, 365*2)
 
 # Now that everything else is done, output stored records
 for a in animals:
-    print a
+    print(a)
 for av in animalvaccinations:
-    print av
+    print(av)
 for o in owners:
-    print o
+    print(o)
 for l in logs:
-    print l
+    print(l)
 for m in movements:
-    print m
+    print(m)
 for ol in ownerlicences:
-    print ol
+    print(ol)
 for ac in animalcontrol:
-    print ac
+    print(ac)
 for aca in animalcontrolanimals:
-    print aca
+    print(aca)
 
 asm.stderr_summary(animals=animals, animalvaccinations=animalvaccinations, logs=logs, owners=owners, movements=movements, ownerlicences=ownerlicences, animalcontrol=animalcontrol)
 
-print "DELETE FROM configuration WHERE ItemName LIKE 'DBView%';"
-print "COMMIT;"
+print("DELETE FROM configuration WHERE ItemName LIKE 'DBView%';")
+print("COMMIT;")
 

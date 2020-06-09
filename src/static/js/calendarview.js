@@ -1,12 +1,13 @@
-/*jslint browser: true, forin: true, eqeq: true, white: true, sloppy: true, vars: true, nomen: true */
 /*global $, jQuery, _, asm, common, config, controller, dlgfx, format, header, html, validate */
 
 $(function() {
 
-    var calendarview = {
+    "use strict";
+
+    const calendarview = {
 
         update_events_from_checkboxes: function() {
-            var ev = "";
+            let ev = "";
             $("#toggles input:checked").each(function() {
                 ev += $(this).attr("data");
             });
@@ -82,9 +83,9 @@ $(function() {
                 eventLimit: true,
                 events: [],
                 eventRender: function(event, element) {
-                    var title = element.find(".fc-title");
-                    var listtitle = element.find(".fc-list-item-title a");
-                    var time = element.find(".fc-time");
+                    let title = element.find(".fc-title"),
+                        listtitle = element.find(".fc-list-item-title a"),
+                        time = element.find(".fc-time");
                     // Need to decode html entities in the title
                     title.html(event.title);
                     listtitle.html(event.title);
@@ -116,7 +117,7 @@ $(function() {
         sync: function() {
 
             // If there's an ev parameter, sync our checkboxes
-            var ev = common.querystring_param("ev");
+            let ev = common.querystring_param("ev");
             if (!ev) { ev = "dvmtcrolp"; }
             $("#toggles input").each(function() {
                 if (ev.indexOf( $(this).attr("data") ) != -1) {

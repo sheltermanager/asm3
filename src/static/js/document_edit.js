@@ -1,9 +1,19 @@
-/*jslint browser: true, forin: true, eqeq: true, white: true, sloppy: true, vars: true */
 /*global $, baseurl, buildno, jswindowprint, onlysavewhendirty, pdfenabled, visualaids, readonly, tinymce, tinyMCE */
 
+// NOTE: This file stands alone and should try for compatibility 
+//       with as many browsers as possible. 
+//       Avoid use of let/const, async/await, destructuring, etc.
+
 $(function() {
+
+    "use strict";
    
     var rw_toolbar = "save pdf print | undo redo | fontselect fontsizeselect | bold italic underline forecolor backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent pagebreak | link image";
+    
+    // Add the text direction options for RTL languages
+    var locale = $("#locale").val();
+    if (locale == "ar" || locale == "he") { rw_toolbar += " | ltr rtl"; }
+
     var ro_toolbar = "pdf print";
 
     // Set the containing div and textarea to the vertical 
@@ -12,21 +22,15 @@ $(function() {
         w = Math.floor(($(window).width() / 100.0) * 80.0);
     // max-width is 775px
     if (w > 775) { w = 775; }
-    $("div").css({
-        height: h - 160,
-        width: w
-    });
-    $("#wp").css({
-        height: h - 160,
-        width: w
-    });
+    $("div").css({ height: h - 160, width: w });
+    $("#wp").css({ height: h - 160, width: w });
 
     tinymce.init({
         selector: "#wp",
         theme: "modern",
         content_css: "css?v=asm-tinymce.css&k=" + buildno,
         plugins: [
-            "advlist autolink lists link image charmap print preview",
+            "advlist autolink directionality lists link image charmap print preview",
             "hr anchor pagebreak searchreplace wordcount visualblocks visualchars code fullscreen",
             "insertdatetime media nonbreaking save table contextmenu directionality",
             "emoticons template paste textcolor save"
@@ -137,10 +141,7 @@ $(function() {
             // version of the document.
             // The user can also override this with a config option 
             // !jswindowprint (use iframe/window.print)
-            var ismobile = (navigator.userAgent.indexOf("ndroid") != -1 ||
-                navigator.userAgent.indexOf("iPhone") != -1 ||
-                navigator.userAgent.indexOf("iPad") != -1 ||
-                navigator.userAgent.indexOf("Kindle") != -1);
+            var ismobile = navigator.userAgent.match(/Android|iPhone|iPad|Kindle/i);
             
             if (ismobile || !jswindowprint) {
                 setTimeout(function() {

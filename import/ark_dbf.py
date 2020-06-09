@@ -1,20 +1,22 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 
 import asm
-from dbfread import DBF
 
 """
-Import script for ARK DBF databases, covers people, animals, payments, licences and complaints
+Import script for ARK DBF databases, covers people, animals, payments, events, licences and complaints
 
 21st March, 2015
+Last changed: 23rd Dec, 2019
 """
 
-PATH = "/home/robin/tmp/asm3_import_data/ark_mc0834"
+PATH = "/home/robin/tmp/asm3_import_data/ark_im2058"
+START_ID = 1000
 
 owners = []
 ownerdonations = []
 ownerlicences = []
 movements = []
+logs = []
 animals = []
 animalcontrol = []
 ppa = {}
@@ -23,32 +25,41 @@ ppo = {}
 arkspecies = {
     "C": 1, # Dog
     "F": 2, # Cat
-    "E": 24 # Horse
+    "E": 24,# Horse
+    "R": 7  # Rabbit
 }
 
-asm.setid("animal", 100)
-asm.setid("owner", 100)
-asm.setid("ownerdonation", 100)
-asm.setid("ownerlicence", 100)
-asm.setid("adoption", 100)
-asm.setid("animalcontrol", 100)
+asm.setid("animal", START_ID)
+asm.setid("owner", START_ID)
+asm.setid("ownerdonation", START_ID)
+asm.setid("ownerlicence", START_ID)
+asm.setid("adoption", START_ID)
+asm.setid("animalcontrol", START_ID)
+asm.setid("log", START_ID)
 
-print "\\set ON_ERROR_STOP\nBEGIN;"
-print "DELETE FROM animal WHERE ID >= 100;"
-print "DELETE FROM animalcontrol WHERE ID >= 100;"
-print "DELETE FROM owner WHERE ID >= 100;"
-print "DELETE FROM ownerdonation WHERE ID >= 100;"
-print "DELETE FROM ownerlicence WHERE ID >= 100;"
-print "DELETE FROM adoption WHERE ID >= 100;"
+print("\\set ON_ERROR_STOP\nBEGIN;")
+print("DELETE FROM animal WHERE ID >= %s;" % START_ID)
+print("DELETE FROM animalcontrol WHERE ID >= %s;" % START_ID)
+print("DELETE FROM owner WHERE ID >= %s;" % START_ID)
+print("DELETE FROM ownerdonation WHERE ID >= %s;" % START_ID)
+print("DELETE FROM ownerlicence WHERE ID >= %s;" % START_ID)
+print("DELETE FROM adoption WHERE ID >= %s;" % START_ID)
+print("DELETE FROM log WHERE ID >= %s;" % START_ID)
 
-for p in DBF("%s/NAMES.DBF" % PATH):
+# Create an unknown owner
+uo = asm.Owner()
+owners.append(uo)
+uo.OwnerSurname = "Unknown Owner"
+uo.OwnerName = uo.OwnerSurname
+
+for p in asm.read_dbf("%s/NAMES.DBF" % PATH):
     o = asm.Owner()
     owners.append(o)
     ppo[p["ID"]] = o
-    o.OwnerForeNames = p["F_NAME"]
-    o.OwnerSurname = p["L_NAME"]
-    o.OwnerAddress = "%s %s\n%s" % (p["ADR_ST_NUM"], p["ADR_ST_NAM"], p["ADR_LINE2"])
-    o.OwnerTown = p["CITY"]
+    o.OwnerForeNames = p["F_NAME"].title()
+    o.OwnerSurname = p["L_NAME"].title()
+    o.OwnerAddress = "%s %s\n%s" % (p["ADR_ST_NUM"].title(), p["ADR_ST_NAM"].title(), p["ADR_LINE2"].title())
+    o.OwnerTown = p["CITY"].title()
     o.OwnerCounty = p["STATE"]
     o.OwnerPostcode = p["ZIP"]
     o.HomeTelephone = p["H_PHONE"]
@@ -57,13 +68,14 @@ for p in DBF("%s/NAMES.DBF" % PATH):
     comments += "\n%s" % asm.nulltostr(p["NAMES_TXT"])
     o.Comments = comments
 
-for d in DBF("%s/ANIMALS.DBF" % PATH):
+for d in asm.read_dbf("%s/ANIMALS.DBF" % PATH):
     a = asm.Animal()
     animals.append(a)
     ppa[d["ID_NUM"]] = a
     a.AnimalName = d["NAME"]
     if a.AnimalName.strip() == "":
         a.AnimalName = "(unknown)"
+    a.AnimalName = a.AnimalName.title()
     if d["SPECIES"] == "C":
         # Canine
         a.SpeciesID = 1
@@ -80,11 +92,20 @@ for d in DBF("%s/ANIMALS.DBF" % PATH):
             a.AnimalTypeID = 12
         else:
             a.AnimalTypeID = 11
+    elif d["SPECIES"] == "R":
+        # Rabbit
+        a.SpeciesID = 7
+        a.AnimalTypeID = 13
+        if d["SURR_CODE"] == "STR":
+            a.EntryReasonID = 11
+    else:
+        # SPECIES == "O" for other, BREED contains species instead
+        a.SpeciesID = asm.species_id_for_name(d["BREED"])
+        a.AnimalTypeID = 13 # Miscellaneous
+        a.EntryReasonID = 11
     if d["SURR_ID"] != "":
-        if ppo.has_key(d["SURR_ID"]):
+        if d["SURR_ID"] in ppo:
             a.OriginalOwnerID = ppo[d["SURR_ID"]].ID
-    a.generateCode()
-    a.ShortCode = d["ID_NUM"]
     a.Sex = asm.getsex_mf(d["SEX"])
     a.ShelterLocationUnit = d["LOCATION"]
     a.BreedID = asm.breed_id_for_name(d["BREED"])
@@ -94,23 +115,32 @@ for d in DBF("%s/ANIMALS.DBF" % PATH):
         a.CrossBreed = 1
         a.Breed2ID = 442
         a.BreedName = asm.breed_name_for_id(a.BreedID) + " / " + asm.breed_name_for_id(a.Breed2ID)
-    a.DateBroughtIn = d["DATE_SURR"]
+    a.DateBroughtIn = asm.todatetime(d["DATE_SURR"])
     if a.DateBroughtIn is None: a.DateBroughtIn = asm.now()
+    a.generateCode()
+    a.ShortCode = d["ID_NUM"]
     a.NeuteredDate = d["NEUTER_DAT"]
     if a.NeuteredDate is not None:
         a.Neutered = 1
     a.EstimatedDOB = 1
     dob = a.DateBroughtIn
-    if d["AGE"] != "":
+    if "DOB" in d and d["DOB"] is not None:
+        dob = d["DOB"]
+    elif type(d["AGE"]) == int:
+        dob = asm.subtract_days(dob, d["AGE"] * 365)
+    elif type(d["AGE"]) == str and d["AGE"] != "":
         if d["AGE"].find("YR") != -1:
             dob = asm.subtract_days(dob, asm.atoi(d["AGE"]) * 365)
         elif d["AGE"].find("M") != -1:
             dob = asm.subtract_days(dob, asm.atoi(d["AGE"]) * 30)
     a.DateOfBirth = dob
-    if d["EUTH_USD"] > 0:
+    if d["EUTH_USD"] is not None and d["EUTH_USD"] > 0:
         a.PutToSleep = 1
         a.Archived = 1
         a.DeceasedDate = d["DATE_DISPO"]
+    if d["CHIP_NUM"] != "":
+        a.Identichipped = 1
+        a.IdentichipNumber = d["CHIP_NUM"]
     comments = "Original breed: %s\nColor: %s" % (d["BREED"].strip(), d["COLOR"].strip())
     if asm.nulltostr(d["PU_LOC"]).strip() != "":
         comments += "\nPicked up from: %s" % d["PU_LOC"]
@@ -119,14 +149,14 @@ for d in DBF("%s/ANIMALS.DBF" % PATH):
     a.HealthProblems = d["HEALTH"]
     a.LastChangedDate = a.DateBroughtIn
     if d["ADPT_ID"] != "":
-        if ppo.has_key(d["ADPT_ID"]):
+        if d["ADPT_ID"] in ppo:
             o = ppo[d["ADPT_ID"]]
             m = asm.Movement()
             movements.append(m)
             m.AnimalID = a.ID
             m.OwnerID = o.ID
             m.MovementType = 1
-            m.MovementDate = d["DATE_DISPO"]
+            m.MovementDate = asm.todatetime(d["DATE_DISPO"])
             if d["RECLAIMED"] == "X": 
                 m.MovementType = 5
             m.LastChangedDate = m.MovementDate
@@ -134,73 +164,93 @@ for d in DBF("%s/ANIMALS.DBF" % PATH):
             a.ActiveMovementType = m.MovementType
             a.ActiveMovementDate = m.MovementDate
 
-for p in DBF("%s/PAYMENTS.DBF" % PATH):
+for p in asm.read_dbf("%s/PAYMENTS.DBF" % PATH):
     od = asm.OwnerDonation()
     ownerdonations.append(od)
-    if ppo.has_key(p["PMNT_ID"]):
+    if p["PMNT_ID"] in ppo:
         o = ppo[p["PMNT_ID"]]
         od.OwnerID = o.ID
-        od.Donation = int(p["AMOUNT"] * 100)
+        od.Donation = asm.get_currency(p["AMOUNT"])
         od.Date = p["PMNT_DATE"]
         od.DonationTypeID = 4 # Surrender
         if p["PMNT_CODE"] == "ADP":
             od.DonationTypeID = 2
 
-for l in DBF("%s/LICENSE.DBF" % PATH):
+for l in asm.read_dbf("%s/LICENSE.DBF" % PATH):
     ol = asm.OwnerLicence()
     ownerlicences.append(ol)
-    if ppo.has_key(l["OWNER_ID"]):
+    if l["OWNER_ID"] in ppo:
         o = ppo[l["OWNER_ID"]]
         ol.OwnerID = o.ID
         ol.LicenceTypeID = 1
         ol.LicenceNumber = l["LIC_NUM"]
-        ol.LicenceFee = int(l["FEE"] * 100)
+        if "FEE" in l: ol.LicenceFee = asm.get_currency(l["FEE"])
         ol.IssueDate = l["LIC_DATE"]
         if ol.IssueDate is None: ol.IssueDate = asm.parse_date("2015-01-01", "%Y-%m-%d")
         ol.ExpiryDate = l["LIC_EXDATE"]
         if ol.ExpiryDate is None: ol.ExpiryDate = asm.parse_date("2015-01-01", "%Y-%m-%d")
 
-for c in DBF("%s/CMPLAINT.DBF" % PATH, encoding="cp1252"):
+for c in asm.read_dbf("%s/CMPLAINT.DBF" % PATH):
     ac = asm.AnimalControl()
     animalcontrol.append(ac)
-    if c["FROM_ID"] != "" and ppo.has_key(c["FROM_ID"]):
+    if c["FROM_ID"] != "" and c["FROM_ID"] in ppo:
         ac.CallerID = ppo[c["FROM_ID"]].ID
-    if c["ABOUT_ID"] != "" and ppo.has_key(c["ABOUT_ID"]):
+    if c["ABOUT_ID"] != "" and c["ABOUT_ID"] in ppo:
         ac.OwnerID = ppo[c["ABOUT_ID"]].ID
-    ac.CallDateTime = c["C_DATE"]
+    ac.CallDateTime = c["DATE"]
     if ac.CallDateTime is None:
         ac.CallDateTime = asm.parse_date("2015-01-01", "%Y-%m-%d")
     ac.IncidentDateTime = ac.CallDateTime
     ac.DispatchDateTime = ac.CallDateTime
     ac.CompletedDate = ac.CallDateTime
-    ac.DispatchAddress = c["C_LOCATION"]
-    if arkspecies.has_key(c["C_SPECIES"]):
-        ac.SpeciesID = arkspecies[c["C_SPECIES"]]
-    ac.Sex = asm.getsex_mf(c["C_SEX"])
+    ac.DispatchAddress = c["LOCATION"]
+    if c["SPECIES"] in arkspecies:
+        ac.SpeciesID = arkspecies[c["SPECIES"]]
+    ac.Sex = asm.getsex_mf(c["SEX"])
     comments = ""
     comments = "Problem: %s" % c["PROBLEM"]
     if c["FOLLOW_UP"] != "": comments += "\nFollowup: %s" % c["FOLLOW_UP"]
     if c["OFFICER_ID"] != "": comments += "\nOfficer: %s" % c["OFFICER_ID"]
     if c["CITATION"] != "": comments += "\nCitation: %s" % c["CITATION"]
     if c["CMPL_TEXT"] != "": comments += "\nCompleted: %s" % c["CMPL_TEXT"]
-    if type(comments) == unicode: comments = comments.encode("ascii", "xmlcharrefreplace")
     ac.CallNotes = comments
 
+for c in asm.read_dbf("%s/AN_EVNTS.DBF" % PATH):
+    if c["ID_NUM"] not in ppa: continue
+    a = ppa[c["ID_NUM"]]
+    l = asm.Log()
+    logs.append(l)
+    l.LogTypeID = 3
+    l.LinkID = a.ID
+    l.LinkType = 0
+    l.Date = c["DATE_DONE"]
+    if l.Date is None: l.Date = asm.now()
+    l.Comments = "%s %s" % (c["TYPE"], c["DESCRIP"])
+    l.CreatedBy = c["LAST_USER"]
+    l.CreatedDate = c["LAST_TIME"]
+    l.LastChangedBy = c["LAST_USER"]
+    l.LastChangedDate = c["LAST_TIME"]
+
+# Adopt out any animals still on shelter to an unknown owner
+asm.adopt_older_than(animals, movements, uo.ID, 0)
+
 for a in animals:
-    print a
+    print(a)
 for o in owners:
-    print o
+    print(o)
 for m in movements:
-    print m
+    print(m)
 for od in ownerdonations:
-    print od
+    print(od)
 for ol in ownerlicences:
-    print ol
+    print(ol)
 for ac in animalcontrol:
-    print ac
+    print(ac)
+for l in logs:
+    print(l)
 
-asm.stderr_summary(animals=animals, owners=owners, movements=movements, ownerlicences=ownerlicences, ownerdonations=ownerdonations, animalcontrol=animalcontrol)
+asm.stderr_summary(animals=animals, logs=logs, owners=owners, movements=movements, ownerlicences=ownerlicences, ownerdonations=ownerdonations, animalcontrol=animalcontrol)
 
-print "DELETE FROM configuration WHERE ItemName LIKE 'DBView%';"
-print "COMMIT;"
+print("DELETE FROM configuration WHERE ItemName LIKE 'DBView%';")
+print("COMMIT;")
 

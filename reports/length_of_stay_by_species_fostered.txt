@@ -2,9 +2,9 @@ Length of Stay by Species (Fostered Only)
 ###
 Statistics
 ###
-2721/PostgreSQL
+33018/PostgreSQL
 ###
-Shows time on shelter by species for animals entering the shelter between two dates who were in a foster home.
+Shows time on shelter by species for animals entering the shelter between two dates who were in a foster home (ignores permanent).
 ###
 en
 ###
@@ -18,7 +18,7 @@ INNER JOIN species s ON s.ID = a.SpeciesID
 INNER JOIN entryreason e ON e.ID = a.EntryReasonID
 WHERE a.DateBroughtIn >= '$ASK DATE Animals entering the shelter between$' AND a.DateBroughtIn <= '$ASK DATE and$'
 AND NonShelterAnimal = 0
-AND EXISTS(SELECT m.ID FROM adoption m WHERE m.MovementType = 2 AND m.AnimalID = a.ID)
+AND EXISTS(SELECT m.ID FROM adoption m WHERE m.MovementType = 2 AND IsPermanentFoster = 0 AND m.AnimalID = a.ID)
 ORDER BY s.SpeciesName, a.DateBroughtIn
 ###
 $$HEADER

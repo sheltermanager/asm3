@@ -1,4 +1,3 @@
-#!/usr/bin/python env
 
 import unittest
 import base
@@ -13,15 +12,15 @@ class TestLookups(unittest.TestCase):
         asm3.lookups.delete_message(base.get_dbo(), mid)
 
     def test_insert_update_lookup(self):
-        nid = asm3.lookups.insert_lookup(base.get_dbo(), "breed", "Test")
-        asm3.lookups.update_lookup(base.get_dbo(), nid, "breed", "Test")
-        asm3.lookups.delete_lookup(base.get_dbo(), "breed", nid)
-        nid = asm3.lookups.insert_lookup(base.get_dbo(), "species", "Test")
-        asm3.lookups.update_lookup(base.get_dbo(), nid, "species", "Test")
-        asm3.lookups.delete_lookup(base.get_dbo(), "species", nid)
-        nid = asm3.lookups.insert_lookup(base.get_dbo(), "vaccinationtype", "Test")
-        asm3.lookups.update_lookup(base.get_dbo(), nid, "vaccinationtype", "Test")
-        asm3.lookups.delete_lookup(base.get_dbo(), "vaccinationtype", nid)
+        nid = asm3.lookups.insert_lookup(base.get_dbo(), "test", "breed", "Test")
+        asm3.lookups.update_lookup(base.get_dbo(), "test", nid, "breed", "Test")
+        asm3.lookups.delete_lookup(base.get_dbo(), "test", "breed", nid)
+        nid = asm3.lookups.insert_lookup(base.get_dbo(), "test", "species", "Test")
+        asm3.lookups.update_lookup(base.get_dbo(), "test", nid, "species", "Test")
+        asm3.lookups.delete_lookup(base.get_dbo(), "test", "species", nid)
+        nid = asm3.lookups.insert_lookup(base.get_dbo(), "test", "vaccinationtype", "Test")
+        asm3.lookups.update_lookup(base.get_dbo(), "test", nid, "vaccinationtype", "Test")
+        asm3.lookups.delete_lookup(base.get_dbo(), "test", "vaccinationtype", nid)
              
     def test_get(self):
         assert len(asm3.lookups.get_account_types(base.get_dbo())) > 0
@@ -54,6 +53,8 @@ class TestLookups(unittest.TestCase):
         assert len(asm3.lookups.get_urgencies(base.get_dbo())) > 0
         assert len(asm3.lookups.get_test_types(base.get_dbo())) > 0
         assert len(asm3.lookups.get_test_results(base.get_dbo())) > 0
+        assert len(asm3.lookups.get_transport_statuses(base.get_dbo())) > 0
+        assert len(asm3.lookups.get_transport_types(base.get_dbo())) > 0
         assert len(asm3.lookups.get_vaccination_types(base.get_dbo())) > 0
         assert len(asm3.lookups.get_voucher_types(base.get_dbo())) > 0
         assert len(asm3.lookups.get_yesno(base.get_dbo())) > 0

@@ -39,7 +39,8 @@ def read_config_file():
         with codecs.open(fname, 'r', encoding='utf8') as f:
             lines = f.readlines()
         for l in lines:
-            if l.find("#") != -1: l = l[0:l.find("#")]
+            if l.find("#") != -1 and l.find("{") == -1: 
+                l = l[0:l.find("#")]
             if l.find("=") != -1:
                 k, v = l.split("=", 1)
                 cfg[k.strip()] = v.strip()
@@ -180,14 +181,8 @@ CACHE_SERVICE_RESPONSES = get_boolean("cache_service_responses", False)
 EMAIL_ERRORS = get_boolean("email_errors", False)
 ADMIN_EMAIL = get_string("admin_email", "you@youraddress.com")
 
-# If MINIFY_JS is set to True, minified versions of the javascript
-# files will be generated at build/deploy time and the handler
-# in html.py will reference them instead
-MINIFY_JS = get_boolean("minify_js", False)
-
-# If ROLLUP_JS is set to True, all javascript files will be rolled
-# up into a single file before sending to the client (combine
-# with MINIFY_JS for smallest payload in a single request)
+# If ROLLUP_JS is set to True, a single, rolled up and minified
+# javascript file will be sent to the client
 ROLLUP_JS = get_boolean("rollup_js", False)
 
 # Only allow hotlinks to the animal_image and extra_image
@@ -237,6 +232,9 @@ MULTIPLE_DATABASES_MAP = get_dict("multiple_databases_map")
 
 # FTP hosts and URLs for third party publishing services
 ADOPTAPET_FTP_HOST = get_string("adoptapet_ftp_host", "autoupload.adoptapet.com")
+AKC_REUNITE_BASE_URL = get_string("akc_reunite_base_url", "")
+AKC_REUNITE_USER = get_string("akc_reunite_user", "")
+AKC_REUNITE_PASSWORD = get_string("akc_reunite_password", "")
 ANIBASE_BASE_URL = get_string("anibase_base_url", "")
 ANIBASE_API_USER = get_string("anibase_api_user", "")
 ANIBASE_API_KEY = get_string("anibase_api_key", "")
@@ -244,9 +242,14 @@ FOUNDANIMALS_FTP_HOST = get_string("foundanimals_ftp_host", "")
 FOUNDANIMALS_FTP_USER = get_string("foundanimals_ftp_user", "")
 FOUNDANIMALS_FTP_PASSWORD = get_string("foundanimals_ftp_password", "")
 HELPINGLOSTPETS_FTP_HOST = get_string("helpinglostpets_ftp_host", "www.helpinglostpets.com")
+HOMEAGAIN_BASE_URL = get_string("homeagain_base_url", "")
 MADDIES_FUND_TOKEN_URL = get_string("maddies_fund_token_url", "")
 MADDIES_FUND_UPLOAD_URL = get_string("maddies_fund_upload_url", "")
+PETCADEMY_FTP_HOST = get_string("petcademy_ftp_host", "")
+PETCADEMY_FTP_USER = get_string("petcademy_ftp_user", "")
+PETCADEMY_FTP_PASSWORD = get_string("petcademy_ftp_password", "")
 PETFINDER_FTP_HOST = get_string("petfinder_ftp_host", "members.petfinder.com")
+PETFINDER_SEND_PHOTOS_BY_FTP = get_boolean("petfinder_send_photos_by_ftp", True)
 PETRESCUE_URL = get_string("petrescue_url", "")
 RESCUEGROUPS_FTP_HOST = get_string("rescuegroups_ftp_host", "ftp.rescuegroups.org")
 SAVOURLIFE_API_KEY = get_string("savourlife_api_key", "")
@@ -261,10 +264,13 @@ PETSLOCATED_FTP_USER = get_string("petslocated_ftp_user", "")
 PETSLOCATED_FTP_PASSWORD = get_string("petslocated_ftp_password", "")
 VETENVOY_US_VENDOR_USERID = get_string("vetenvoy_us_vendor_userid", "")
 VETENVOY_US_VENDOR_PASSWORD = get_string("vetenvoy_us_vendor_password", "")
-VETENVOY_US_BASE_URL = get_string("vetenvoy_us_base_url", "https://www.vetenvoy.info/")
+VETENVOY_US_BASE_URL = get_string("vetenvoy_us_base_url", "")
 VETENVOY_US_SYSTEM_ID = get_string("vetenvoy_us_system_id", "20")
 VETENVOY_US_HOMEAGAIN_RECIPIENTID = get_string("vetenvoy_us_homeagain_recipientid", "")
 VETENVOY_US_AKC_REUNITE_RECIPIENTID = get_string("vetenvoy_us_akc_reunite_recipientid", "")
+
+# Config for payment processing services
+PAYPAL_VALIDATE_IPN_URL = get_string("paypal_validate_ipn_url", "")
 
 # Override the html publishDir with a fixed value and forbid
 # editing in the UI.
@@ -284,17 +290,10 @@ MULTIPLE_DATABASES_PUBLISH_URL = get_string("multiple_databases_publish_url", ""
 MULTIPLE_DATABASES_PUBLISH_FTP = get_dict("multiple_databases_publish_ftp", None)
 
 # Options available under the share button
-SHARE_BUTTON = get_string("share_button", "shareweb,shareemail")
+SHARE_BUTTON = get_string("share_button", "shareweb,sharepic,shareemail")
 
 # Type of electronic signing device available
 ELECTRONIC_SIGNATURES = get_string("electronic_signatures", "")
-
-# If you want a forgotten password link on the login page,
-# the URL it should link to
-FORGOTTEN_PASSWORD = get_string("forgotten_password", "")
-
-# The text to show on the link
-FORGOTTEN_PASSWORD_LABEL = get_string("forgotten_password_label", "")
 
 # If you have an emergency notice you'd like displaying on the
 # login and home screens, set a filename here for the content
@@ -331,16 +330,16 @@ BASE64_JS = get_string("base64_js", 'static/lib/base64/0.3.0/base64.min.js')
 CODEMIRROR_JS = get_string("codemirror_js", 'static/lib/codemirror/5.11/lib/codemirror.js')
 CODEMIRROR_CSS = get_string("codemirror_css", 'static/lib/codemirror/5.11/lib/codemirror.css')
 CODEMIRROR_BASE = get_string("codemirror_base", 'static/lib/codemirror/5.11/')
-EXIFRESTORER_JS = get_string("exifrestorer_js", 'static/lib/exifrestorer/1.0.0/exifrestorer.js')
 FLOT_JS = get_string("flot_js", 'static/lib/flot/0.8.3/jquery.flot.min.js')
 FLOT_PIE_JS = get_string("flot_pie_js", 'static/lib/flot/0.8.3/jquery.flot.pie.min.js')
 FULLCALENDAR_CSS = get_string("fullcalendar_css", 'static/lib/fullcalendar/3.2.0/fullcalendar.min.css')
 FULLCALENDAR_JS = get_string("fullcalendar_js", 'static/lib/fullcalendar/3.2.0/fullcalendar.min.js')
-JQUERY_UI_CSS = get_string("jquery_ui_css", 'static/lib/jqueryui/jquery-ui-themes-1.11.2/themes/%(theme)s/jquery-ui.css')
-JQUERY_UI_JS = get_string("jquery_ui_js", 'static/lib/jqueryui/jquery-ui-1.11.2/jquery-ui.min.js')
-JQUERY_JS = get_string("jquery_js", 'static/lib/jquery/2.1.4/jquery.min.js')
+JQUERY_UI_CSS = get_string("jquery_ui_css", 'static/lib/jqueryui/jquery-ui-themes-1.12.1/themes/%(theme)s/jquery-ui.css')
+JQUERY_UI_JS = get_string("jquery_ui_js", 'static/lib/jqueryui/jquery-ui-1.12.1/jquery-ui.min.js')
+JQUERY_JS = get_string("jquery_js", 'static/lib/jquery/3.4.1/jquery.min.js')
 JQUERY_MOBILE_CSS = get_string("jquery_mobile_css", 'static/lib/jquerymobile/1.4.5/jquery.mobile.min.css')
 JQUERY_MOBILE_JS = get_string("jquery_mobile_js", 'static/lib/jquerymobile/1.4.5/jquery.mobile.min.js')
+JQUERY_MOBILE_JQUERY_JS = get_string("jquery_mobile_jquery_js", 'static/lib/jquery/2.2.4/jquery.min.js')
 LEAFLET_CSS = get_string("leaflet_css", 'static/lib/leaflet/1.3.1/leaflet.css')
 LEAFLET_JS = get_string("leaflet_js", 'static/lib/leaflet/1.3.1/leaflet.js')
 MOMENT_JS = get_string("moment_js", 'static/lib/moment/2.17.1/moment.min.js')

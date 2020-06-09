@@ -1,4 +1,3 @@
-#!/usr/bin/python env
 
 import unittest
 import base
@@ -31,7 +30,7 @@ class TestPerson(unittest.TestCase):
         asm3.person.get_person(base.get_dbo(), self.nid)
 
     def test_get_person_similar(self):
-        assert len(asm3.person.get_person_similar(base.get_dbo(), "", "Testing", "Test", "123 street")) > 0
+        assert len(asm3.person.get_person_similar(base.get_dbo(), "", "", "Testing", "Test", "123 street")) > 0
 
     def test_get_person_name(self):
         assert "" != asm3.person.get_person_name(base.get_dbo(), self.nid)
@@ -60,11 +59,23 @@ class TestPerson(unittest.TestCase):
     def test_get_overdue_donations(self):
         asm3.person.get_overdue_donations(base.get_dbo())
 
+    def test_get_signed_requests(self):
+        asm3.person.get_signed_requests(base.get_dbo())
+
+    def test_get_unsigned_requests(self):
+        asm3.person.get_unsigned_requests(base.get_dbo())
+
     def test_get_links(self):
         asm3.person.get_links(base.get_dbo(), self.nid)
 
     def test_get_investigation(self):
         asm3.person.get_investigation(base.get_dbo(), self.nid)
+
+    def test_get_person_find_simple(self):
+        assert len(asm3.person.get_person_find_simple(base.get_dbo(), "", "test")) > 0
+
+    def test_get_person_find_advanced(self):
+        assert len(asm3.person.get_person_find_advanced(base.get_dbo(), {}, "test")) >  0
 
     def test_get_rota(self):
         asm3.person.get_rota(base.get_dbo(), base.today(), base.today())
@@ -72,8 +83,42 @@ class TestPerson(unittest.TestCase):
     def test_get_person_rota(self):
         asm3.person.get_person_rota(base.get_dbo(), self.nid)
 
+    def test_calculate_owner_code(self):
+        assert "TE000005" == asm3.person.calculate_owner_code(5, "test")
+        assert "XX000100" == asm3.person.calculate_owner_code(100, "&#239;Z")
+
+    def test_calculate_owner_name(self):
+        assert "Mr R Robert Robertson" == asm3.person.calculate_owner_name(base.get_dbo(), 1, "Mr", "R", "Robert", "Robertson",
+            "{ownertitle} {ownerinitials} {ownerforenames} {ownersurname}")
+
     def test_update_owner_names(self):
         asm3.person.update_owner_names(base.get_dbo())
+
+    def test_update_adopter_flag(self):
+        asm3.person.update_adopter_flag(base.get_dbo(), "test", self.nid)
+
+    def test_merge_person_details(self):
+        asm3.person.merge_person_details(base.get_dbo(), "test", self.nid, {})
+
+    def test_merge_gdpr_flags(self):
+        s = asm3.person.merge_gdpr_flags(base.get_dbo(), "test", self.nid, "email")
+        assert s.find("email") != -1
+
+    def test_merge_flags(self):
+        s = asm3.person.merge_flags(base.get_dbo(), "test", self.nid, "fosterer")
+        assert s.find("fosterer") != -1
+
+    def test_merge_person(self):
+        data = {
+            "title": "Mr",
+            "forenames": "Merge",
+            "surname": "Merging",
+            "ownertype": "1",
+            "address": "456 test street"
+        }
+        post = asm3.utils.PostedData(data, "en")
+        mid = asm3.person.insert_person_from_form(base.get_dbo(), post, "test", geocode=False)
+        asm3.person.merge_person(base.get_dbo(), "test", self.nid, mid)
 
     def test_get_person_embedded(self):
         assert asm3.person.get_person_embedded(base.get_dbo(), self.nid) is not None
@@ -116,6 +161,9 @@ class TestPerson(unittest.TestCase):
 
     def test_update_pass_homecheck(self):
         asm3.person.update_pass_homecheck(base.get_dbo(), "test", self.nid, "")
+
+    def test_update_missing_builtin_flags(self):
+        asm3.person.update_missing_builtin_flags(base.get_dbo())
 
     def test_update_missing_geocodes(self):
         asm3.person.update_missing_geocodes(base.get_dbo())

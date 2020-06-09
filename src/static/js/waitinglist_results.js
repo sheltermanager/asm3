@@ -1,7 +1,8 @@
-/*jslint browser: true, forin: true, eqeq: true, white: true, sloppy: true, vars: true, nomen: true */
 /*global $, jQuery, _, asm, additional, common, config, controller, dlgfx, edit_header, format, header, html, tableform, validate */
 
 $(function() {
+
+    "use strict";
 
     var waitinglist_results = {
 
@@ -158,7 +159,7 @@ $(function() {
             });
 
             $("#table-waitinglist").on("change", "input", function() {
-                if ($("#table-waitinglist input:checked").size() > 0) {
+                if ($("#table-waitinglist input:checked").length > 0) {
                     $("#button-delete").button("option", "disabled", false); 
                     $("#button-complete").button("option", "disabled", false); 
                     $(".bhighlight").button("option", "disabled", false); 
@@ -233,7 +234,7 @@ $(function() {
         column_names: function() {
             var cols = [];
             $.each(config.str("WaitingListViewColumns").split(","), function(i, v) {
-                cols.push($.trim(v));
+                cols.push(common.trim(v));
             });
             return cols;
         },

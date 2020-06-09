@@ -4,6 +4,7 @@ import asm3.al
 import asm3.animal
 import asm3.asynctask
 import asm3.audit
+import asm3.cachedisk
 import asm3.configuration
 import asm3.dbfs
 import asm3.diary
@@ -42,7 +43,8 @@ def get_person_query(dbo):
         "web.Date AS WebsiteMediaDate, " \
         "web.MediaNotes AS WebsiteMediaNotes, " \
         "doc.MediaName AS DocMediaName, " \
-        "doc.Date AS DocMediaDate " \
+        "doc.Date AS DocMediaDate, " \
+        "(SELECT MatchSummary FROM ownerlookingfor olf WHERE olf.OwnerID = o.ID GROUP BY MatchSummary) AS LookingForSummary " \
         "FROM owner o " \
         "LEFT OUTER JOIN owner ho ON ho.ID = o.HomeCheckedBy " \
         "LEFT OUTER JOIN media web ON web.LinkID = o.ID AND web.LinkTypeID = %d AND web.WebsitePhoto = 1 " \
@@ -83,9 +85,9 @@ def embellish_adoption_warnings(dbo, p):
         p.INCIDENT = warn.INCIDENT
     return p
 
-def get_person_similar(dbo, email = "", surname = "", forenames = "", address = ""):
+def get_person_similar(dbo, email = "", mobile = "", surname = "", forenames = "", address = ""):
     """
-    Returns people with similar email, names and addresses to those supplied.
+    Returns people with similar email, mobile, names and addresses to those supplied.
     """
     # Consider the first word rather than first address line - typically house
     # number/name and unlikely to be the same for different people
@@ -98,11 +100,14 @@ def get_person_similar(dbo, email = "", surname = "", forenames = "", address = 
     surname = surname.replace("'", "`").lower().strip()
     email = email.replace("'", "`").lower().strip()
     eq = []
-    if email != "" and email.find("@") != -1 and email.find(".") != -1:
+    mq = []
+    if email != "" and email.find("@") != -1 and email.find(".") != -1 and len(email) > 6:
         eq = dbo.query(get_person_query(dbo) + " WHERE LOWER(o.EmailAddress) LIKE ?", [email])
+    if mobile != "" and len(mobile) > 6:
+        mq = dbo.query(get_person_query(dbo) + " WHERE %s LIKE ?" % dbo.sql_atoi("o.MobileTelephone") , [str(asm3.utils.atoi(mobile))])
     per = dbo.query(get_person_query(dbo) + " WHERE LOWER(o.OwnerSurname) LIKE ? AND " \
         "LOWER(o.OwnerForeNames) LIKE ? AND LOWER(o.OwnerAddress) LIKE ?", (surname, forenames + "%", address + "%"))
-    return eq + per
+    return eq + mq + per
 
 def get_person_name(dbo, personid):
     """
@@ -198,6 +203,7 @@ def get_satellite_counts(dbo, personid):
         "(SELECT COUNT(*) FROM ownertraploan ot WHERE ot.OwnerID = o.ID) AS traploan, " \
         "(SELECT COUNT(*) FROM ownervoucher ov WHERE ov.OwnerID = o.ID) AS vouchers, " \
         "((SELECT COUNT(*) FROM animal WHERE AdoptionCoordinatorID = o.ID OR BroughtInByOwnerID = o.ID OR OriginalOwnerID = o.ID OR CurrentVetID = o.ID OR OwnersVetID = o.ID OR NeuteredByVetID = o.ID) + " \
+        "(SELECT COUNT(*) FROM animal INNER JOIN adoption ON adoption.ID = animal.ActiveMovementID WHERE animal.OwnerID = o.ID AND animal.OwnerID <> adoption.OwnerID) + " \
         "(SELECT COUNT(*) FROM adoption WHERE ReturnedByOwnerID = o.ID) + " \
         "(SELECT COUNT(*) FROM animalwaitinglist WHERE OwnerID = o.ID) + " \
         "(SELECT COUNT(*) FROM animalfound WHERE OwnerID = o.ID) + " \
@@ -224,11 +230,28 @@ def get_overdue_donations(dbo):
     return dbo.query(get_person_query(dbo) + " INNER JOIN ownerdonation od ON od.OwnerID = o.ID " \
         "WHERE od.Date Is Null AND od.DateDue Is Not Null AND od.DateDue <= ?", [dbo.today()])
 
+def get_signed_requests(dbo, cutoff=7):
+    """
+    Returns owners that have a fulfilled a signing request in the last cutoff days
+    """
+    cutoffdate = dbo.today(cutoff * -1)
+    return dbo.query(get_person_query(dbo) + "INNER JOIN log l ON o.ID = l.LinkID AND l.LinkType=1 " \
+        "AND l.Date >= ? AND l.Comments LIKE 'ES02%%'", [cutoffdate], distincton="ID")
+
+def get_unsigned_requests(dbo, cutoff=31):
+    """
+    Returns owners that have more signing requests in the last cutoff days than signed
+    """
+    cutoffdate = dbo.today(cutoff * -1)
+    return dbo.query(get_person_query(dbo) + "INNER JOIN log l ON o.ID = l.LinkID AND l.LinkType=1 AND l.Date >= ? AND l.Comments LIKE 'ES01%%' " \
+        "WHERE (SELECT COUNT(*) FROM log WHERE LinkID=o.ID AND LinkType=1 AND Date >= ? AND Comments LIKE 'ES01%%') " \
+        " > (SELECT COUNT(*) FROM log WHERE LinkID=o.ID AND LinkType=1 AND Date >= ? AND Comments LIKE 'ES02%%') ", 
+        [cutoffdate, cutoffdate, cutoffdate], distincton="ID")
+
 def get_links(dbo, pid):
     """
     Gets a list of all records that link to this person
     """
-    l = dbo.locale
     linkdisplay = dbo.sql_concat(("a.ShelterCode", "' - '", "a.AnimalName"))
     animalextra = dbo.sql_concat(("a.BreedName", "' '", "s.SpeciesName", "' ('", 
         "CASE WHEN a.Archived = 0 AND a.ActiveMovementType = 2 THEN mt.MovementType " \
@@ -236,9 +259,22 @@ def get_links(dbo, pid):
         "WHEN a.Archived = 1 AND a.DeceasedDate Is Not Null AND a.ActiveMovementID = 0 THEN dr.ReasonName " \
         "WHEN a.Archived = 1 AND a.DeceasedDate Is Null AND a.ActiveMovementID <> 0 THEN mt.MovementType " \
         "ELSE il.LocationName END", "')'"))
-    # Original Owner
-    sql = "SELECT 'OO' AS TYPE, " \
-        "%s AS TYPEDISPLAY, a.DateBroughtIn AS DDATE, a.ID AS LINKID, " \
+    # Current Owner (shown for non-shelter matches or where owner <> current movement person)
+    sql = "SELECT 'CO' AS TYPE, " \
+        "'' AS TYPEDISPLAY, a.LastChangedDate AS DDATE, a.ID AS LINKID, " \
+        "%s AS LINKDISPLAY, " \
+        "%s AS FIELD2, " \
+        "CASE WHEN a.DeceasedDate Is Not Null THEN 'D' ELSE '' END AS DMOD " \
+        "FROM animal a " \
+        "LEFT OUTER JOIN adoption ad ON ad.ID = a.ActiveMovementID " \
+        "LEFT OUTER JOIN lksmovementtype mt ON mt.ID = a.ActiveMovementType " \
+        "INNER JOIN species s ON s.ID = a.SpeciesID " \
+        "LEFT OUTER JOIN internallocation il ON il.ID = a.ShelterLocation " \
+        "LEFT OUTER JOIN deathreason dr ON dr.ID = a.PTSReasonID " \
+        "WHERE a.OwnerID = %d AND (a.NonShelterAnimal=1 OR a.OwnerID <> ad.OwnerID) " % (linkdisplay, animalextra, int(pid))
+    # Original Owner (shelter animals only)
+    sql += "UNION SELECT 'OO' AS TYPE, " \
+        "'' AS TYPEDISPLAY, a.DateBroughtIn AS DDATE, a.ID AS LINKID, " \
         "%s AS LINKDISPLAY, " \
         "%s AS FIELD2, " \
         "CASE WHEN a.DeceasedDate Is Not Null THEN 'D' ELSE '' END AS DMOD " \
@@ -247,10 +283,10 @@ def get_links(dbo, pid):
         "INNER JOIN species s ON s.ID = a.SpeciesID " \
         "LEFT OUTER JOIN internallocation il ON il.ID = a.ShelterLocation " \
         "LEFT OUTER JOIN deathreason dr ON dr.ID = a.PTSReasonID " \
-        "WHERE OriginalOwnerID = %d " % (dbo.sql_value(_("Original Owner", l)), linkdisplay, animalextra, int(pid))
+        "WHERE NonShelterAnimal = 0 AND OriginalOwnerID = %d " % (linkdisplay, animalextra, int(pid))
     # Brought In By
     sql += "UNION SELECT 'BI' AS TYPE, " \
-        "%s AS TYPEDISPLAY, a.DateBroughtIn AS DDATE, a.ID AS LINKID, " \
+        "'' AS TYPEDISPLAY, a.DateBroughtIn AS DDATE, a.ID AS LINKID, " \
         "%s AS LINKDISPLAY, " \
         "%s AS FIELD2, " \
         "CASE WHEN a.DeceasedDate Is Not Null THEN 'D' ELSE '' END AS DMOD " \
@@ -259,10 +295,10 @@ def get_links(dbo, pid):
         "INNER JOIN species s ON s.ID = a.SpeciesID " \
         "LEFT OUTER JOIN internallocation il ON il.ID = a.ShelterLocation " \
         "LEFT OUTER JOIN deathreason dr ON dr.ID = a.PTSReasonID " \
-        "WHERE BroughtInByOwnerID = %d " % (dbo.sql_value(_("Brought In By", l)), linkdisplay, animalextra, int(pid))
+        "WHERE BroughtInByOwnerID = %d " % (linkdisplay, animalextra, int(pid))
     # Returned By
     sql += "UNION SELECT 'RO' AS TYPE, " \
-        "%s AS TYPEDISPLAY, m.ReturnDate AS DDATE, a.ID AS LINKID, " \
+        "'' AS TYPEDISPLAY, m.ReturnDate AS DDATE, a.ID AS LINKID, " \
         "%s AS LINKDISPLAY, " \
         "%s AS FIELD2, " \
         "CASE WHEN a.DeceasedDate Is Not Null THEN 'D' ELSE '' END AS DMOD " \
@@ -272,10 +308,10 @@ def get_links(dbo, pid):
         "INNER JOIN species s ON s.ID = a.SpeciesID " \
         "LEFT OUTER JOIN internallocation il ON il.ID = a.ShelterLocation " \
         "LEFT OUTER JOIN deathreason dr ON dr.ID = a.PTSReasonID " \
-        "WHERE m.ReturnedByOwnerID = %d " % (dbo.sql_value(_("Returned By", l)), linkdisplay, animalextra, int(pid))
+        "WHERE m.ReturnedByOwnerID = %d " % (linkdisplay, animalextra, int(pid))
     # Adoption Coordinator
     sql += "UNION SELECT 'AO' AS TYPE, " \
-        "%s AS TYPEDISPLAY, a.DateBroughtIn AS DDATE, a.ID AS LINKID, " \
+        "'' AS TYPEDISPLAY, a.DateBroughtIn AS DDATE, a.ID AS LINKID, " \
         "%s AS LINKDISPLAY, " \
         "%s AS FIELD2, " \
         "CASE WHEN a.DeceasedDate Is Not Null THEN 'D' ELSE '' END AS DMOD " \
@@ -284,10 +320,10 @@ def get_links(dbo, pid):
         "INNER JOIN species s ON s.ID = a.SpeciesID " \
         "LEFT OUTER JOIN internallocation il ON il.ID = a.ShelterLocation " \
         "LEFT OUTER JOIN deathreason dr ON dr.ID = a.PTSReasonID " \
-        "WHERE AdoptionCoordinatorID = %d " % (dbo.sql_value(_("Adoption Coordinator", l)), linkdisplay, animalextra, int(pid))
+        "WHERE AdoptionCoordinatorID = %d " % (linkdisplay, animalextra, int(pid))
     # Owner Vet
     sql += "UNION SELECT 'OV' AS TYPE, " \
-        "%s AS TYPEDISPLAY, a.DateBroughtIn AS DDATE, a.ID AS LINKID, " \
+        "'' AS TYPEDISPLAY, a.DateBroughtIn AS DDATE, a.ID AS LINKID, " \
         "%s AS LINKDISPLAY, " \
         "%s AS FIELD2, " \
         "CASE WHEN a.DeceasedDate Is Not Null THEN 'D' ELSE '' END AS DMOD " \
@@ -296,10 +332,10 @@ def get_links(dbo, pid):
         "INNER JOIN species s ON s.ID = a.SpeciesID " \
         "LEFT OUTER JOIN internallocation il ON il.ID = a.ShelterLocation " \
         "LEFT OUTER JOIN deathreason dr ON dr.ID = a.PTSReasonID " \
-        "WHERE OwnersVetID = %d " % (dbo.sql_value(_("Owner Vet", l)), linkdisplay, animalextra, int(pid))
+        "WHERE OwnersVetID = %d " % (linkdisplay, animalextra, int(pid))
     # Current Vet
     sql += "UNION SELECT 'CV' AS TYPE, " \
-        "%s AS TYPEDISPLAY, a.DateBroughtIn AS DDATE, a.ID AS LINKID, " \
+        "'' AS TYPEDISPLAY, a.DateBroughtIn AS DDATE, a.ID AS LINKID, " \
         "%s AS LINKDISPLAY, " \
         "%s AS FIELD2, " \
         "CASE WHEN a.DeceasedDate Is Not Null THEN 'D' ELSE '' END AS DMOD " \
@@ -308,10 +344,10 @@ def get_links(dbo, pid):
         "INNER JOIN species s ON s.ID = a.SpeciesID " \
         "LEFT OUTER JOIN internallocation il ON il.ID = a.ShelterLocation " \
         "LEFT OUTER JOIN deathreason dr ON dr.ID = a.PTSReasonID " \
-        "WHERE CurrentVetID = %d " % (dbo.sql_value(_("Current Vet", l)), linkdisplay, animalextra, int(pid))
+        "WHERE CurrentVetID = %d " % (linkdisplay, animalextra, int(pid))
     # Altering Vet
     sql += "UNION SELECT 'AV' AS TYPE, " \
-        "%s AS TYPEDISPLAY, a.DateBroughtIn AS DDATE, a.ID AS LINKID, " \
+        "'' AS TYPEDISPLAY, a.DateBroughtIn AS DDATE, a.ID AS LINKID, " \
         "%s AS LINKDISPLAY, " \
         "%s AS FIELD2, " \
         "CASE WHEN a.DeceasedDate Is Not Null THEN 'D' ELSE '' END AS DMOD " \
@@ -320,51 +356,67 @@ def get_links(dbo, pid):
         "INNER JOIN species s ON s.ID = a.SpeciesID " \
         "LEFT OUTER JOIN internallocation il ON il.ID = a.ShelterLocation " \
         "LEFT OUTER JOIN deathreason dr ON dr.ID = a.PTSReasonID " \
-        "WHERE NeuteredByVetID = %d " % (dbo.sql_value(_("Altering Vet", l)), linkdisplay, animalextra, int(pid))
+        "WHERE NeuteredByVetID = %d " % (linkdisplay, animalextra, int(pid))
     # Waiting List
     sql += "UNION SELECT 'WL' AS TYPE, " \
-        "%s AS TYPEDISPLAY, a.DatePutOnList AS DDATE, a.ID AS LINKID, " \
+        "'' AS TYPEDISPLAY, a.DatePutOnList AS DDATE, a.ID AS LINKID, " \
         "s.SpeciesName AS LINKDISPLAY, " \
         "a.AnimalDescription AS FIELD2, '' AS DMOD FROM animalwaitinglist a " \
-        "INNER JOIN species s ON s.ID = a.SpeciesID WHERE a.OwnerID = %d " % (dbo.sql_value(_("Waiting List Contact", l)), int(pid))
+        "INNER JOIN species s ON s.ID = a.SpeciesID WHERE a.OwnerID = %d " % (int(pid))
     # Lost Animal
     sql += "UNION SELECT 'LA' AS TYPE, " \
-        "%s AS TYPEDISPLAY, a.DateLost AS DDATE, a.ID AS LINKID, " \
+        "'' AS TYPEDISPLAY, a.DateLost AS DDATE, a.ID AS LINKID, " \
         "s.SpeciesName AS LINKDISPLAY, " \
         "a.DistFeat AS FIELD2, '' AS DMOD FROM animallost a " \
-        "INNER JOIN species s ON s.ID = a.AnimalTypeID WHERE a.OwnerID = %d " % (dbo.sql_value(_("Lost Animal Contact", l)), int(pid))
+        "INNER JOIN species s ON s.ID = a.AnimalTypeID WHERE a.OwnerID = %d " % (int(pid))
     # Found Animal
     sql += "UNION SELECT 'FA' AS TYPE, " \
-        "%s AS TYPEDISPLAY, a.DateFound AS DDATE, a.ID AS LINKID, " \
+        "'' AS TYPEDISPLAY, a.DateFound AS DDATE, a.ID AS LINKID, " \
         "s.SpeciesName AS LINKDISPLAY, " \
         "a.DistFeat AS FIELD2, '' AS DMOD FROM animalfound a " \
-        "INNER JOIN species s ON s.ID = a.AnimalTypeID WHERE a.OwnerID = %d " % (dbo.sql_value(_("Found Animal Contact", l)), int(pid))
+        "INNER JOIN species s ON s.ID = a.AnimalTypeID WHERE a.OwnerID = %d " % (int(pid))
     # Incident Suspect
-    sql += "UNION SELECT 'AC' AS TYPE, " \
-        "%s AS TYPEDISPLAY, a.IncidentDateTime AS DDATE, a.ID AS LINKID, " \
+    sql += "UNION SELECT 'ACS' AS TYPE, " \
+        "'' AS TYPEDISPLAY, a.IncidentDateTime AS DDATE, a.ID AS LINKID, " \
         "ti.IncidentName AS LINKDISPLAY, " \
         "a.CallNotes AS FIELD2, '' AS DMOD FROM animalcontrol a " \
         "INNER JOIN incidenttype ti ON ti.ID = a.IncidentTypeID WHERE a.OwnerID = %d OR a.Owner2ID = %d OR a.Owner3ID = %d " % \
-            (dbo.sql_value(_("Animal Control Incident", l)), int(pid), int(pid), int(pid))
+            (int(pid), int(pid), int(pid))
     # Incident Caller
-    sql += "UNION SELECT 'AC' AS TYPE, " \
-        "%s AS TYPEDISPLAY, a.IncidentDateTime AS DDATE, a.ID AS LINKID, " \
+    sql += "UNION SELECT 'ACC' AS TYPE, " \
+        "'' AS TYPEDISPLAY, a.IncidentDateTime AS DDATE, a.ID AS LINKID, " \
         "ti.IncidentName AS LINKDISPLAY, " \
         "a.CallNotes AS FIELD2, '' AS DMOD FROM animalcontrol a " \
-        "INNER JOIN incidenttype ti ON ti.ID = a.IncidentTypeID WHERE a.CallerID = %d " % (dbo.sql_value(_("Animal Control Caller", l)), int(pid))
+        "INNER JOIN incidenttype ti ON ti.ID = a.IncidentTypeID WHERE a.CallerID = %d " % \
+        (int(pid))
     # Incident Victim
-    sql += "UNION SELECT 'AC' AS TYPE, " \
-        "%s AS TYPEDISPLAY, a.IncidentDateTime AS DDATE, a.ID AS LINKID, " \
+    sql += "UNION SELECT 'ACV' AS TYPE, " \
+        "'' AS TYPEDISPLAY, a.IncidentDateTime AS DDATE, a.ID AS LINKID, " \
         "ti.IncidentName AS LINKDISPLAY, " \
         "a.CallNotes AS FIELD2, '' AS DMOD FROM animalcontrol a " \
-        "INNER JOIN incidenttype ti ON ti.ID = a.IncidentTypeID WHERE a.VictimID = %d " % (dbo.sql_value(_("Animal Control Victim", l)), int(pid))
+        "INNER JOIN incidenttype ti ON ti.ID = a.IncidentTypeID WHERE a.VictimID = %d " % \
+        (int(pid))
     # Transport Driver
-    sql += "UNION SELECT 'AT' AS TYPE, " \
-        "%s AS TYPEDISPLAY, t.PickupDateTime AS DDATE, t.AnimalID AS LINKID, " \
+    sql += "UNION SELECT 'ATD' AS TYPE, " \
+        "'' AS TYPEDISPLAY, t.PickupDateTime AS DDATE, t.AnimalID AS LINKID, " \
         "%s LINKDISPLAY, " \
         "t.DropOffAddress AS FIELD2, '' AS DMOD FROM animaltransport t " \
         "INNER JOIN animal a ON a.ID = t.AnimalID " \
-        "WHERE t.DriverOwnerID = %d " % (dbo.sql_value(_("Driver", l)), linkdisplay, int(pid))
+        "WHERE t.DriverOwnerID = %d " % (linkdisplay, int(pid))
+    # Transport Pickup
+    sql += "UNION SELECT 'ATP' AS TYPE, " \
+        "'' AS TYPEDISPLAY, t.PickupDateTime AS DDATE, t.AnimalID AS LINKID, " \
+        "%s LINKDISPLAY, " \
+        "t.PickupAddress AS FIELD2, '' AS DMOD FROM animaltransport t " \
+        "INNER JOIN animal a ON a.ID = t.AnimalID " \
+        "WHERE t.PickupOwnerID = %d " % (linkdisplay, int(pid))
+    # Transport Dropoff
+    sql += "UNION SELECT 'ATR' AS TYPE, " \
+        "'' AS TYPEDISPLAY, t.DropoffDateTime AS DDATE, t.AnimalID AS LINKID, " \
+        "%s LINKDISPLAY, " \
+        "t.DropoffAddress AS FIELD2, '' AS DMOD FROM animaltransport t " \
+        "INNER JOIN animal a ON a.ID = t.AnimalID " \
+        "WHERE t.DropoffOwnerID = %d " % (linkdisplay, int(pid))
     # Additional field (link from animal)
     sql += "UNION SELECT 'AFA' AS TYPE, " \
         "aff.FieldLabel AS TYPEDISPLAY, a.LastChangedDate AS DDATE, a.ID AS LINKID, " \
@@ -462,6 +514,7 @@ def get_person_find_advanced(dbo, criteria, username, includeStaff = False, incl
     criteria: A dictionary of criteria
        code - string partial pattern
        createdby - string partial pattern
+       createdsince - date
        name - string partial pattern
        address - string partial pattern
        town - string partial pattern
@@ -476,25 +529,27 @@ def get_person_find_advanced(dbo, criteria, username, includeStaff = False, incl
        filter - built in or additional flags, ANDed
        gdpr - one or more gdpr contact values ANDed
     """
-
-    ss = asm3.utils.AdvancedSearchBuilder(dbo, asm3.utils.PostedData(criteria, dbo.locale))
+    post = asm3.utils.PostedData(criteria, dbo.locale)
+    ss = asm3.utils.AdvancedSearchBuilder(dbo, post)
     ss.add_words("name", "o.OwnerName")
     ss.add_str("code", "o.OwnerCode")
     ss.add_str("createdby", "o.CreatedBy")
+    ss.add_date_since("createdsince", "o.CreatedDate")
     ss.add_str("address", "o.OwnerAddress")
     ss.add_str("town", "o.OwnerTown")
     ss.add_str("county", "o.OwnerCounty")
     ss.add_str("postcode", "o.OwnerPostcode")
-    ss.add_str_triplet("phone", "o.HomeTelephone", "o.WorkTelephone", "o.MobileTelephone")
+    ss.add_phone_triplet("phone", "o.HomeTelephone", "o.WorkTelephone", "o.MobileTelephone")
     ss.add_id("jurisdiction", "o.JurisdictionID")
     ss.add_str("email", "o.EmailAddress")
     ss.add_words("homecheck", "o.HomeCheckAreas")
     ss.add_words("comments", "o.Comments")
     ss.add_words("medianotes", "web.MediaNotes")
 
-    if "filter" in criteria:
-        for flag in criteria["filter"].split(","):
+    if "filter" in post and post["filter"].strip() != "":
+        for flag in post["filter"].split(","):
             if flag == "aco": ss.ands.append("o.IsACO=1")
+            elif flag == "adopter": ss.ands.append("o.IsAdopter=1")
             elif flag == "banned": ss.ands.append("o.IsBanned=1")
             elif flag == "coordinator": ss.ands.append("o.IsAdoptionCoordinator=1")
             elif flag == "deceased": ss.ands.append("o.IsDeceased=1")
@@ -516,8 +571,8 @@ def get_person_find_advanced(dbo, criteria, username, includeStaff = False, incl
                 ss.ands.append("LOWER(o.AdditionalFlags) LIKE ?")
                 ss.values.append("%%%s|%%" % flag.lower())
 
-    if "gdpr" in criteria:
-        for g in criteria["gdpr"].split(","):
+    if "gdpr" in post and post["gdpr"].strip() != "":
+        for g in post["gdpr"].split(","):
             ss.ands.append("o.GDPRContactOptIn LIKE ?")
             ss.values.append("%%%s%%" % g)
 
@@ -691,6 +746,7 @@ def insert_person_from_form(dbo, post, username, geocode=True):
         # Flags are updated afterwards, but cannot be null
         "IDCheck":                  0,
         "ExcludeFromBulkEmail":     0,
+        "IsAdopter":                0,
         "IsAdoptionCoordinator":    0,
         "IsBanned":                 0,
         "IsVolunteer":              0,
@@ -814,6 +870,14 @@ def update_person_from_form(dbo, post, username, geocode=True):
     # Check/update the geocode for the person's address
     if geocode: update_geocode(dbo, pid, post["latlong"], post["address"], post["town"], post["county"], post["postcode"], post["country"])
 
+def update_remove_flag(dbo, username, personid, flag):
+    """
+    Removes flag from personid. Does nothing if the person does not have the flag.
+    """
+    flags = dbo.query_string("SELECT AdditionalFlags FROM owner WHERE ID = ?", [personid])
+    if flags.find("%s|" % flag) != -1:
+        update_flags(dbo, username, personid, flags.replace("%s|" % flag, "").split("|"))
+
 def update_flags(dbo, username, personid, flags):
     """
     Updates the flags on a person record from a list of flags
@@ -823,6 +887,7 @@ def update_flags(dbo, username, personid, flags):
 
     homechecked = bi("homechecked" in flags)
     banned = bi("banned" in flags)
+    adopter = bi("adopter" in flags)
     coordinator = bi("coordinator" in flags)
     volunteer = bi("volunteer" in flags)
     member = bi("member" in flags)
@@ -843,6 +908,7 @@ def update_flags(dbo, username, personid, flags):
     dbo.update("owner", personid, {
         "IDCheck":                  homechecked,
         "ExcludeFromBulkEmail":     excludefrombulkemail,
+        "IsAdopter":                adopter,
         "IsAdoptionCoordinator":    coordinator,
         "IsBanned":                 banned,
         "IsVolunteer":              volunteer,
@@ -860,6 +926,18 @@ def update_flags(dbo, username, personid, flags):
         "IsGiftAid":                giftaid,
         "AdditionalFlags":          flagstr
     }, username)
+
+def update_adopter_flag(dbo, username, personid):
+    """
+    Sets or removes the adopter flag on personid if it has any open adoption movements
+    """
+    if personid is None or personid == 0: return
+    oa = dbo.query_int("SELECT COUNT(*) FROM adoption WHERE MovementType=1 AND " \
+        "MovementDate Is Not Null AND ReturnDate Is Null AND OwnerID=?", [personid])
+    if oa > 0:
+        merge_flags(dbo, username, personid, "adopter")
+    else:
+        update_remove_flag(dbo, username, personid, "adopter")
 
 def merge_person_details(dbo, username, personid, d, force=False):
     """
@@ -917,13 +995,10 @@ def merge_flags(dbo, username, personid, flags):
         fgs = flags.split(",")
     else:
         fgs.append(flags)
-    epf = dbo.query_string("SELECT AdditionalFlags FROM owner WHERE ID = ?", [personid])
-    epfb = epf.split("|")
-    for x in fgs:
-        if x not in epfb and not x == "":
-            epf += "%s|" % x
-    update_flags(dbo, username, personid, epf.split("|"))
-    return epf
+    epf = dbo.query_string("SELECT AdditionalFlags FROM owner WHERE ID = ?", [personid]).split("|")
+    merged = set([x for x in epf+fgs if x != ""]) # Add together our existing+new, remove dups and blanks
+    update_flags(dbo, username, personid, merged)
+    return "|".join(merged) + "|"
 
 def merge_person(dbo, username, personid, mergepersonid):
     """
@@ -939,11 +1014,19 @@ def merge_person(dbo, username, personid, mergepersonid):
     if personid == 0 or mergepersonid == 0:
         raise asm3.utils.ASMValidationError("Internal error: Cannot merge ID 0")
 
-    def reparent(table, field, linktypefield = "", linktype = -1):
-        if linktype >= 0:
-            dbo.execute("UPDATE %s SET %s = %d WHERE %s = %d AND %s = %d" % (table, field, personid, field, mergepersonid, linktypefield, linktype))
-        else:
-            dbo.execute("UPDATE %s SET %s = %d WHERE %s = %d" % (table, field, personid, field, mergepersonid))
+    def reparent(table, field, linktypefield = "", linktype = -1, lastchanged = True):
+        try:
+            if linktype >= 0:
+                dbo.update(table, "%s=%s AND %s=%s" % (field, mergepersonid, linktypefield, linktype), 
+                    { field: personid }, username, 
+                    setLastChanged=lastchanged, setRecordVersion=lastchanged)
+            else:
+                dbo.update(table, "%s=%s" % (field, mergepersonid), 
+                    { field: personid }, username, setLastChanged=lastchanged, setRecordVersion=lastchanged)
+        except Exception as err:
+            asm3.al.error("error reparenting: %s -> %s, table=%s, field=%s, linktypefield=%s, linktype=%s, error=%s" % \
+                (mergepersonid, personid, table, field, linktypefield, linktype, err), "person.merge_person", dbo)
+
 
     # Merge any contact info
     mp = get_person(dbo, mergepersonid)
@@ -969,6 +1052,7 @@ def merge_person(dbo, username, personid, mergepersonid):
     reparent("adoption", "RetailerID")
     reparent("adoption", "ReturnedByOwnerID")
     reparent("animal", "OriginalOwnerID")
+    reparent("animal", "OwnerID")
     reparent("animal", "BroughtInByOwnerID")
     reparent("animal", "AdoptionCoordinatorID")
     reparent("animal", "OwnersVetID")
@@ -993,12 +1077,19 @@ def merge_person(dbo, username, personid, mergepersonid):
     reparent("ownerdonation", "OwnerID")
     reparent("ownerinvestigation", "OwnerID")
     reparent("ownerlicence", "OwnerID")
+    reparent("ownerlookingfor", "OwnerID", lastchanged=False)
     reparent("ownertraploan", "OwnerID")
     reparent("ownervoucher", "OwnerID")
     reparent("users", "OwnerID")
-    reparent("media", "LinkID", "LinkTypeID", asm3.media.PERSON)
+    reparent("media", "LinkID", "LinkTypeID", asm3.media.PERSON, lastchanged=False)
     reparent("diary", "LinkID", "LinkType", asm3.diary.PERSON)
     reparent("log", "LinkID", "LinkType", asm3.log.PERSON)
+
+    # Reparent the audit records for the reparented records in the audit log
+    # by switching ParentLinks to the new ID.
+    dbo.execute("UPDATE audittrail SET ParentLinks = %s WHERE ParentLinks LIKE '%%owner=%s %%'" % \
+        ( dbo.sql_replace("ParentLinks", "owner=%s " % mergepersonid, "owner=%s " % personid), mergepersonid))
+
     dbo.delete("owner", mergepersonid, username)
     asm3.audit.move(dbo, username, "owner", personid, "", "Merged owner %d -> %d" % (mergepersonid, personid))
 
@@ -1206,8 +1297,54 @@ def send_email_from_form(dbo, username, post):
     body = post["body"]
     rv = asm3.utils.send_email(dbo, emailfrom, emailto, emailcc, emailbcc, subject, body, "html")
     if addtolog == 1:
-        asm3.log.add_log(dbo, username, asm3.log.PERSON, post.integer("personid"), logtype, asm3.utils.html_email_to_plain(body))
+        asm3.log.add_log_email(dbo, username, asm3.log.PERSON, post.integer("personid"), logtype, emailto, subject, body)
     return rv
+
+def lookingfor_summary(dbo, personid, p = None):
+    """
+    Generates the summary text for the type of animal a person is looking for. 
+    personid: The person to generate for OR 
+    p:        A person record with key fields for MATCH*NAME present to save looking up the record
+    """
+    l = dbo.locale
+    if p is None:
+        p = dbo.first_row(dbo.query("SELECT owner.*, " \
+            "(SELECT Size FROM lksize WHERE ID = owner.MatchSize) AS MatchSizeName, " \
+            "(SELECT BaseColour FROM basecolour WHERE ID = owner.MatchColour) AS MatchColourName, " \
+            "(SELECT Sex FROM lksex WHERE ID = owner.MatchSex) AS MatchSexName, " \
+            "(SELECT BreedName FROM breed WHERE ID = owner.MatchBreed) AS MatchBreedName, " \
+            "(SELECT AnimalType FROM animaltype WHERE ID = owner.MatchAnimalType) AS MatchAnimalTypeName, " \
+            "(SELECT SpeciesName FROM species WHERE ID = owner.MatchSpecies) AS MatchSpeciesName " \
+            "FROM owner WHERE owner.ID = ?", [personid]))
+    c = []
+    if p.MATCHANIMALTYPE != -1: 
+        c.append(p.MATCHANIMALTYPENAME)
+    if p.MATCHSPECIES != -1: 
+        c.append(p.MATCHSPECIESNAME)
+    if p.MATCHBREED != -1: 
+        c.append(p.MATCHBREEDNAME)
+    if p.MATCHSEX != -1: 
+        c.append(p.MATCHSEXNAME)
+    if p.MATCHSIZE != -1: 
+        c.append(p.MATCHSIZENAME)
+    if p.MATCHCOLOUR != -1: 
+        c.append(p.MATCHCOLOURNAME)
+    if p.MATCHGOODWITHCHILDREN == 0: 
+        c.append(_("Good with kids", l))
+    if p.MATCHGOODWITHCATS == 0: 
+        c.append(_("Good with cats", l))
+    if p.MATCHGOODWITHDOGS == 0: 
+        c.append(_("Good with dogs", l))
+    if p.MATCHHOUSETRAINED == 0: 
+        c.append(_("Housetrained", l))
+    if p.MATCHAGEFROM >= 0 and p.MATCHAGETO > 0: 
+        c.append(_("Age", l) + (" %0.2f - %0.2f" % (p.MATCHAGEFROM, p.MATCHAGETO)))
+    if p.MATCHCOMMENTSCONTAIN is not None and p.MATCHCOMMENTSCONTAIN != "":
+        c.append(_("Comments Contain", l) + ": " + p.MATCHCOMMENTSCONTAIN)
+    summary = ""
+    if len(c) > 0:
+        summary = ", ".join(x for x in c if x is not None)
+    return summary
 
 def lookingfor_report(dbo, username = "system", personid = 0, limit = 0):
     """
@@ -1264,55 +1401,42 @@ def lookingfor_report(dbo, username = "system", personid = 0, limit = 0):
         asm3.asynctask.increment_progress_value(dbo)
         ands = [ "a.Archived=0", "a.IsNotAvailableForAdoption=0", "a.HasActiveReserve=0", "a.CrueltyCase=0", "a.DeceasedDate Is Null" ]
         v = [] # query values
-        c = [] # readable criteria
         if p.MATCHANIMALTYPE != -1: 
             ands.append("a.AnimalTypeID=?")
             v.append(p.MATCHANIMALTYPE)
-            c.append(p.MATCHANIMALTYPENAME)
         if p.MATCHSPECIES != -1: 
             ands.append("a.SpeciesID=?")
             v.append(p.MATCHSPECIES)
-            c.append(p.MATCHSPECIESNAME)
         if p.MATCHBREED != -1: 
             ands.append("(a.BreedID=? OR a.Breed2ID=?)")
             v.append(p.MATCHBREED)
             v.append(p.MATCHBREED)
-            c.append(p.MATCHBREEDNAME)
         if p.MATCHSEX != -1: 
             ands.append("a.Sex=?")
             v.append(p.MATCHSEX)
-            c.append(p.MATCHSEXNAME)
         if p.MATCHSIZE != -1: 
             ands.append("a.Size=?")
             v.append(p.MATCHSIZE)
-            c.append(p.MATCHSIZENAME)
         if p.MATCHCOLOUR != -1: 
             ands.append("a.BaseColourID=?")
             v.append(p.MATCHCOLOUR)
-            c.append(p.MATCHCOLOURNAME)
         if p.MATCHGOODWITHCHILDREN == 0: 
             ands.append("a.IsGoodWithChildren=0")
-            c.append(_("Good with kids", l))
         if p.MATCHGOODWITHCATS == 0: 
             ands.append("a.IsGoodWithCats=0")
-            c.append(_("Good with cats", l))
         if p.MATCHGOODWITHDOGS == 0: 
             ands.append("a.IsGoodWithDogs=0")
-            c.append(_("Good with dogs", l))
         if p.MATCHHOUSETRAINED == 0: 
             ands.append("a.IsHouseTrained=0")
-            c.append(_("Housetrained", l))
         if p.MATCHAGEFROM >= 0 and p.MATCHAGETO > 0: 
             ands.append("a.DateOfBirth BETWEEN ? AND ?")
             v.append(subtract_years(now(dbo.timezone), p.MATCHAGETO))
             v.append(subtract_years(now(dbo.timezone), p.MATCHAGEFROM))
-            c.append(_("Age", l) + (" %0.2f - %0.2f" % (p.MATCHAGEFROM, p.MATCHAGETO)))
         if p.MATCHCOMMENTSCONTAIN is not None and p.MATCHCOMMENTSCONTAIN != "":
             for w in str(p.MATCHCOMMENTSCONTAIN).split(" "):
                 ands.append("(a.AnimalComments LIKE ? OR a.HiddenAnimalDetails LIKE ?)")
                 v.append("%%%s%%" % w)
                 v.append("%%%s%%" % w)
-            c.append(_("Comments Contain", l) + ": " + p.MATCHCOMMENTSCONTAIN)
 
         animals = dbo.query(asm3.animal.get_animal_query(dbo) + " WHERE " + " AND ".join(ands) + " ORDER BY a.LastChangedDate DESC", v)
 
@@ -1322,10 +1446,8 @@ def lookingfor_report(dbo, username = "system", personid = 0, limit = 0):
             h.append( "<p style='font-size: 8pt'>%s</p>" % p.COMMENTS)
 
         # Summary of owner criteria
-        summary = ""
-        if len(c) > 0:
-            summary = ", ".join(x for x in c if x is not None)
-            h.append( "<p style='font-size: 8pt'>(%s: %s)</p>" % (_("Looking for", l), summary) )
+        summary = lookingfor_summary(dbo, p.ID, p)
+        h.append( "<p style='font-size: 8pt'>(%s: %s)</p>" % (_("Looking for", l), summary) )
 
         # Match info
         outputheader = False
@@ -1383,6 +1505,55 @@ def lookingfor_last_match_count(dbo):
     """
     return dbo.query_int("SELECT COUNT(*) FROM ownerlookingfor")
 
+def update_missing_builtin_flags(dbo):
+    """
+    Goes through all people records and verifies that if they have one of
+    the IsX flag columns set that the builtin value is present in the
+    AdditionalFlags column.
+    This is needed because many of the IsX values pre-date the AdditionalFlags
+    column, but there are many reports that use it solely as the method of
+    determining flags.
+    """
+    builtins = (
+        ("ExcludeFromBulkEmail", "excludefrombulkemail"),
+        ("IDCheck", "homechecked"),
+        ("IsBanned", "banned"),
+        ("IsVolunteer", "volunteer"),
+        ("IsHomeChecker", "homechecker"),
+        ("IsMember", "member"),
+        ("IsAdopter", "adopter"),
+        ("IsAdoptionCoordinator", "coordinator"),
+        ("IsDonor", "donor"),
+        ("IsDriver", "driver"),
+        ("IsShelter", "shelter"),
+        ("IsACO", "aco"),
+        ("IsStaff", "staff"),
+        ("IsFosterer", "fosterer"),
+        ("IsRetailer", "retailer"),
+        ("IsVet", "vet"),
+        ("IsGiftAid", "giftaid")
+    )
+    people = dbo.query("SELECT ID, AdditionalFlags, ExcludeFromBulkEmail, IDCheck, IsBanned, IsVolunteer, " \
+        "IsHomeChecker, IsMember, IsAdopter, IsAdoptionCoordinator, IsDonor, IsDriver, " \
+        "IsShelter, IsACO, IsStaff, IsFosterer, IsRetailer, IsVet, IsGiftAid FROM owner ORDER BY ID")
+    batch = []
+    asm3.asynctask.set_progress_max(dbo, len(people))
+    for p in people:
+        asm3.asynctask.increment_progress_value(dbo)
+        c = False
+        for column, flag in builtins:
+            if p.ADDITIONALFLAGS is None: 
+                p.ADDITIONALFLAGS = ""
+            if p[column.upper()] == 1 and p.ADDITIONALFLAGS.find(flag) == -1:
+                c = True
+                p.ADDITIONALFLAGS += "%s|" % flag
+        if c:
+            batch.append([ p.ADDITIONALFLAGS, p.ID ])
+    if len(batch) > 0:
+        dbo.execute_many("UPDATE owner SET AdditionalFlags=? WHERE ID=?", batch)
+    asm3.al.debug("updated %d person flags" % len(batch), "person.update_missing_builtin_flags", dbo)
+    return "OK %d" % len(batch)
+
 def update_missing_geocodes(dbo):
     """
     Goes through all people records without geocodes and completes
@@ -1405,12 +1576,14 @@ def update_missing_geocodes(dbo):
 
 def update_lookingfor_report(dbo):
     """
-    Updates the latest version of the looking for report 
+    Updates the latest version of the looking for report in the cache
     """
     asm3.al.debug("updating lookingfor report", "person.update_lookingfor_report", dbo)
-    asm3.configuration.lookingfor_report(dbo, lookingfor_report(dbo, limit = 1000))
-    asm3.configuration.lookingfor_last_match_count(dbo, lookingfor_last_match_count(dbo))
-    return "OK %d" % lookingfor_last_match_count(dbo)
+    s = lookingfor_report(dbo, limit=1000)
+    count = lookingfor_last_match_count(dbo)
+    asm3.cachedisk.put("lookingfor_report", dbo.database, s, 86400)
+    asm3.cachedisk.put("lookingfor_lastmatchcount", dbo.database, count, 86400)
+    return "OK %d" % count
 
 def update_anonymise_personal_data(dbo, overrideretainyears = None):
     """

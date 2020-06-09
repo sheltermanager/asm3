@@ -11,6 +11,7 @@ en
 $VAR loc LOCATION$
 SELECT
 a.ShelterCode,
+a.IdentichipNumber,
 a.AnimalName,
 a.BreedName,
 (SELECT Size FROM lksize WHERE ID = a.Size) AS aSize,
@@ -41,6 +42,7 @@ $$HEAD
 <tr>
 <th>Code</th>
 <th>Name</th>
+<th>Microchip</th>
 <th>Breed</th>
 <th>Size</th>
 <th>Sex/Fixed</th>
@@ -61,6 +63,7 @@ $$BODY
 <tr>
 <td>$SHELTERCODE</td>
 <td>$ANIMALNAME</td>
+<td>$IDENTICHIPNUMBER</td>
 <td>$BREEDNAME</td>
 <td>$ASIZE</td>
 <td>$ASEX / $ANEUTERED</td>

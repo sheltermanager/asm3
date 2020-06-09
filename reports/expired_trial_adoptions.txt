@@ -15,7 +15,7 @@ INNER JOIN owner o ON o.ID = ad.OwnerID
 INNER JOIN species s ON a.SpeciesID = s.ID
 INNER JOIN animaltype atp ON atp.ID = a.AnimalTypeID
 INNER JOIN lksex sx ON sx.ID = a.Sex
-WHERE ad.TrialEndDate <= '$CURRENT_DATE$' AND ad.IsTrial = 1 AND ad.MovementType = 1
+WHERE ad.TrialEndDate <= '$CURRENT_DATE$' AND ad.IsTrial = 1 AND ad.MovementType = 1 AND ad.MovementDate Is Not Null 
 ORDER BY ad.TrialEndDate
 ###
 $$HEADER

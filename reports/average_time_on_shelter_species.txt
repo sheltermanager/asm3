@@ -2,7 +2,7 @@ Average Time On Shelter By Date and Species
 ###
 Statistics
 ###
-2721/PostgreSQL
+33018/PostgreSQL
 ###
 Average time spent on shelter for all animals by species and date.
 ###
@@ -14,7 +14,7 @@ CAST(AVG(DaysOnShelter) AS INTEGER) AS avtimeonshelter
 FROM animal
 INNER JOIN species ON species.ID = animal.SpeciesID
 WHERE DaysOnShelter > 0 
-AND NonShelterAnimal = 0
+AND NonShelterAnimal = 0 AND HasPermanentFoster = 0
 AND DateBroughtIn > '$ASK DATE Enter the from date$' AND DateBroughtIn < '$ASK DATE Enter the to date$'
 GROUP BY SpeciesName
 ORDER BY CAST(AVG(DaysOnShelter) AS INTEGER) DESC
@@ -42,7 +42,7 @@ Average Time On Shelter By Date and Species
 ###
 Statistics
 ###
-2721/MySQL
+33018/MySQL
 ###
 Average time spent on shelter for all animals by species and date.
 ###
@@ -54,7 +54,7 @@ AVG(DaysOnShelter) AS avtimeonshelter
 FROM animal
 INNER JOIN species ON species.ID = animal.SpeciesID
 WHERE DaysOnShelter > 0 
-AND NonShelterAnimal = 0
+AND NonShelterAnimal = 0 AND HasPermanentFoster = 0
 AND DateBroughtIn > '$ASK DATE Enter the from date$' AND DateBroughtIn < '$ASK DATE Enter the to date$'
 GROUP BY SpeciesName
 ORDER BY AVG(DaysOnShelter) DESC

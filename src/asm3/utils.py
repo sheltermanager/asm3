@@ -4,11 +4,10 @@ import asm3.configuration
 import asm3.i18n
 import asm3.users
 
-from asm3.sitedefs import SMTP_SERVER, FROM_ADDRESS, HTML_TO_PDF, URL_NEWS
+from asm3.sitedefs import BASE_URL, MULTIPLE_DATABASES, SMTP_SERVER, FROM_ADDRESS, HTML_TO_PDF, URL_NEWS
 
 import base64
 import codecs
-import csv as extcsv
 import datetime
 import decimal
 import hashlib
@@ -20,35 +19,36 @@ import smtplib
 import subprocess
 import sys
 import tempfile
+import time
+import uuid
 import web
 import zipfile
 
 if sys.version_info[0] > 2: # PYTHON3
-    from html.entities import entitydefs as htmlentitydefs
     import _thread as thread
     import urllib.request as urllib2
+    import urllib.parse
     from io import BytesIO, StringIO
+    from html.parser import HTMLParser
     from email.mime.base import MIMEBase
     from email.mime.text import MIMEText
     from email.mime.multipart import MIMEMultipart
     from email.header import Header
     from email.utils import make_msgid, formatdate
-    from email.charset import Charset
     import email.encoders as Encoders
-    unichr = chr # decode_html needs this
-    extcsv.field_size_limit(512 * 1024) # Python 3 has a limit of 128k for csv fields, make it 512k
 else:
-    import htmlentitydefs
     import thread
     import urllib2
+    import urllib
     from cStringIO import StringIO
     from io import BytesIO
+    from HTMLParser import HTMLParser
     from email.mime.base import MIMEBase
     from email.mime.text import MIMEText
     from email.mime.multipart import MIMEMultipart
     from email.header import Header
     from email.utils import make_msgid, formatdate
-    from email import Charset, Encoders
+    from email import Encoders
 
 
 # Global reference to the Python websession. This is used to allow
@@ -218,7 +218,8 @@ class AdvancedSearchBuilder(object):
     def add_str_pair(self, cfield, field, field2): 
         """ Adds a clause for a posted value to one of two string fields """
         if self.post[cfield] != "":
-            x = "%%%s%%" % self.post[cfield].lower()
+            x = self.post[cfield].lower().replace("'", "`")
+            x = "%%%s%%" % x
             self.ands.append("(LOWER(%s) LIKE ? OR LOWER(%s) LIKE ?)" % (field, field2))
             self.values.append(x)
             self.values.append(x)
@@ -226,7 +227,8 @@ class AdvancedSearchBuilder(object):
     def add_str_triplet(self, cfield, field, field2, field3): 
         """ Adds a clause for a posted value to one of three string fields """
         if self.post[cfield] != "":
-            x = "%%%s%%" % self.post[cfield].lower()
+            x = self.post[cfield].lower().replace("'", "`")
+            x = "%%%s%%" % x
             self.ands.append("(LOWER(%s) LIKE ? OR LOWER(%s) LIKE ? OR LOWER(%s) LIKE ?)" % (field, field2, field3))
             self.values.append(x)
             self.values.append(x)
@@ -239,6 +241,24 @@ class AdvancedSearchBuilder(object):
             self.ands.append("%s >= ? AND %s <= ?" % (field, field))
             self.values.append(self.post.date(cfieldfrom))
             self.values.append(self.post.datetime(cfieldto, "dayend"))
+
+    def add_date_since(self, cfield, field):
+        """ Adds a claused for a date range between a cfield and now """
+        if self.post[cfield] != "":
+            self.ands.append("%s >= ? AND %s <= ?" % (field, field))
+            self.values.append(self.post.date(cfield))
+            self.values.append(self.dbo.now())
+
+    def add_phone_triplet(self, cfield, field, field2, field3): 
+        """ Adds a clause for a posted value to one of three telephone fields """
+        if self.post[cfield] != "":
+            x = atoi(self.post[cfield])
+            if x < 999: return # 4 digits required or likely to be far too many results
+            x = "%%%s%%" % atoi(self.post[cfield])
+            self.ands.append("(%s LIKE ? OR %s LIKE ? OR %s LIKE ?)" % (self.dbo.sql_atoi(field), self.dbo.sql_atoi(field2), self.dbo.sql_atoi(field3)))
+            self.values.append(x)
+            self.values.append(x)
+            self.values.append(x)
 
     def add_filter(self, f, condition):
         """ Adds a complete clause if posted filter value is present """
@@ -293,10 +313,26 @@ class SimpleSearchBuilder(object):
         self.ors.append("%s = ?" % field)
         self.values.append(value)
 
+    def add_field_phone(self, field):
+        """ Adds a phone number field to search 
+            Simple search needs at least 6 digits for searching phone numbers to
+            avoid phone numbers being returned when the intention was an owner code or 
+            address (US postal addresses frequently have 4-5 digit house numbers).
+            We do nothing if the search term does not start with a number.
+        """
+        if len(self.q) == 0 or not is_numeric(self.q[0]): return
+        x = atoi(self.q)
+        if x < 99999: return # minimum 6 digits for searching phone numbers
+        self.ors.append("%s LIKE ?" % self.dbo.sql_atoi(field))
+        self.values.append("%%%s%%" % x)
+
     def add_fields(self, fieldlist):
         """ Add clauses for many fields in one list """
         for f in fieldlist:
-            self.add_field(f)
+            if f.find("Telephone") != -1:
+                self.add_field_phone(f)
+            else:
+                self.add_field(f)
 
     def add_large_text_fields(self, fieldlist):
         """ Add clauses for many large text fields (only search in smaller databases) in one list """
@@ -318,6 +354,81 @@ class SimpleSearchBuilder(object):
     def add_clause(self, clause):
         self.ors.append(clause)
         self.values.append(self.qlike)
+
+class FormHTMLParser(HTMLParser):
+    """ Class for parsing HTML forms and extracting the input/select/textarea tags """
+    tag = ""
+    title = ""
+    controls = None
+
+    def handle_starttag(self, tag, attrs):
+        self.tag = tag
+        if self.controls is None: self.controls = []
+        if tag == "select" or tag == "input" or tag == "textarea":
+            ad = { "tag": tag }
+            for k, v in attrs:
+                ad[k] = v
+            self.controls.append(ad)
+
+    def handle_data(self, data):
+        if self.tag == "title":
+            self.title = data
+
+class ImgSrcHTMLParser(HTMLParser):
+    """
+    Class for parsing HTML files and extracting the img src attributes.
+    Used by the remove_dead_img_src function to verify image links in a
+    document and blank dead ones before feeding to wkhtmltopdf.
+    """
+    links = []
+
+    def handle_starttag(self, tag, attrs):
+        if tag == "img":
+            for k, v in attrs:
+                if k == "src":
+                    self.links.append(v)
+
+class PlainTextWriterHTMLParser(HTMLParser):
+    """ Class for parsing HTML and generating a plain text document """
+    tag = ""
+    olmode = False
+    olcount = 1
+    ulmode = False
+    tdmode = False
+    s = []
+
+    def __init__(self):
+        HTMLParser.__init__(self)
+        self.s = []
+
+    def handle_starttag(self, tag, attrs):
+        self.tag = tag
+        if tag == "ol": self.olmode = True
+        if tag == "ul": self.ulmode = True
+        if tag == "td": self.tdmode = True
+
+    def handle_endtag(self, tag):
+        if tag == "ol": 
+            self.olmode = False
+            self.olcount = 1
+        elif tag == "ul": 
+            self.ulmode = False
+        elif tag == "td": 
+            self.tdmode = False
+            self.s.append(" | ")
+        if tag in ( "li", "tr", "p", "div", "br" ) and not self.tdmode: 
+            self.s.append("\n")
+        else:
+            if len(self.s) == 0 or self.s[-1] != " ": self.s.append(" ")
+
+    def handle_data(self, data):
+        if self.tag == "li" and self.ulmode:
+            self.s.append(" * %s" % data)
+        elif self.tag == "li" and self.olmode:
+            self.s.append(" %s. %s" % (self.olcount, data))
+            self.olcount += 1
+        else:
+            self.s.append(data.strip())
 
 def is_bytes(f):
     """ Returns true if the f is a bytes string """
@@ -360,7 +471,10 @@ def is_unicode(s):
 
 def cunicode(s, encoding = "utf-8"):
     """
-    Converts a value to a unicode string
+    Converts an encoded value to a unicode string
+    returns unicode/Python 2 or str/Python 3
+    If we ever abandon support for Python 2, this method can be removed and
+    all calls to it replaced with bytes2str instead.
     """
     if sys.version_info[0] > 2: # PYTHON3 - str should already be unicode, but convert bytes strings if we've got one
         if is_bytes(s): return s.decode(encoding)
@@ -371,26 +485,26 @@ def cunicode(s, encoding = "utf-8"):
 def str2bytes(s, encoding = "utf-8"):
     """
     Converts a unicode str to a utf-8 bytes string
+    Does nothing on python 2, since bytes == str
     """
     if sys.version_info[0] > 2: # PYTHON3
-        if isinstance(s, str): return s.encode("utf-8")
+        if isinstance(s, str): return s.encode(encoding)
     return s # Already byte string for python 2
 
 def bytes2str(s, encoding = "utf-8"):
     """
-    Converts a utf-8 bytes string to a unicode str
+    Converts a utf-8 bytes string to a unicode str.
+    Does nothing on python 2, since bytes == str
     """
     if sys.version_info[0] > 2: # PYTHON3
-        if isinstance(s, bytes): return s.decode("utf-8")
-    return s # Already byte string for python 2
+        if isinstance(s, bytes): return s.decode(encoding)
+    return s # Already str for python 2
 
 def atoi(s):
     """
     Converts only the numeric portion of a string to an integer
     """
-    x = re.findall('\d+', s)
-    if x is None or len(x) == 0: return 0
-    return cint(x[0])
+    return cint(re.sub(r'[^0-9]', "", s))
 
 def cint(s):
     """
@@ -539,6 +653,10 @@ def spaceright(s, spaces):
     nr = spaces - len(s)
     return s + sp[0:nr]
 
+def unixtime():
+    """ Returns Unix time (seconds since epoch 01/01/1970) """
+    return time.time()
+
 def padleft(num, digits):
     """
     leftpads a number to digits
@@ -604,57 +722,24 @@ def strip_non_ascii(s):
 
 def decode_html(s):
     """
-    Decodes HTML entities and returns a unicode string.
+    Decodes HTML entities in ascii string s and returns a unicode string.
     """
-    def to_char(p):
-        return unichr(p) # noqa: F821
-    # It's empty, return an empty string
-    if s is None: return ""
-    # It's not a string, we can't deal with this
-    if not is_str(s): return s
-    matches = re.findall("&#\d+;", s)
-    if len(matches) > 0:
-        hits = set(matches)
-        for hit in hits:
-            name = hit[2:-1]
-            try:
-                entnum = int(name)
-                s = s.replace(hit, to_char(entnum))
-            except ValueError:
-                pass
-    matches = re.findall("&#[xX][0-9a-fA-F]+;", s)
-    if len(matches) > 0:
-        hits = set(matches)
-        for hit in hits:
-            hexv = hit[3:-1]
-            try:
-                entnum = int(hexv, 16)
-                s = s.replace(hit, to_char(entnum))
-            except ValueError:
-                pass
-    matches = re.findall("&\w+;", s)
-    hits = set(matches)
-    amp = "&amp;"
-    if amp in hits:
-        hits.remove(amp)
-    for hit in hits:
-        name = hit[1:-1]
-        if name in htmlentitydefs.name2codepoint:
-            s = s.replace(hit, to_char(htmlentitydefs.name2codepoint[name]))
-    s = s.replace(amp, "&")
-    return s
+    parser = HTMLParser()
+    return parser.unescape(s)
 
 def encode_html(s):
     """
-    Encodes Unicode strings as HTML entities in an ASCII string
+    Accepts python2 unicode strings or python3 unicode str or utf-8 bytes
+    returns ascii str with HTML entities
     """
     if s is None: return ""
     if sys.version_info[0] > 2: # PYTHON3 - replace the entities but keep the string as unicode for lang features
+        if is_bytes(s): s = bytes2str(s) # If someone has fed us a byte string, turn it into a str
         return s.encode("ascii", "xmlcharrefreplace").decode("ascii")
+    # PYTHON2
     if is_str(s):
         return cunicode(s).encode("ascii", "xmlcharrefreplace")
-    else:
-        return s.encode("ascii", "xmlcharrefreplace")
+    return s.encode("ascii", "xmlcharrefreplace")
 
 def html_to_uri(s):
     """
@@ -695,6 +780,10 @@ def base64decode_str(s):
     if sys.version_info[0] > 2: # PYTHON3
         return rv.decode("utf-8")
     return rv # Python 2 bytes/str interchangeable
+
+def uuid_str():
+    """ Returns a type 4 UUID as a string """
+    return str(uuid.uuid4())
 
 def pbkdf2_hash_hex(plaintext, salt="", algorithm="sha1", iterations=1000):
     """ Returns a hex pbkdf2 hash of the plaintext given. 
@@ -781,89 +870,75 @@ def escape_tinymce(content):
     c = c.replace(">", "&gt;")
     return c
 
-class UnicodeCSVReader(object):
+def csv_parse(s):
     """
-    A CSV reader that reads UTF-8 and converts any unicode values to
-    XML entities.
+    Reads CSV data from a unicode string "s" 
+    Assumes data has been decoded appropriately to unicode/str by the caller.
+    Assumes the first row is the column/header names
+    return value is a list of dictionaries.
+    We've basically implemented DictCSVReader ourselves because subclassing 
+    csvreader in a way that works for Python 2 and 3 is a nightmare and more code than
+    just doing it yourself.
     """
-    encoding = "utf-8-sig"
-    def __init__(self, f, dialect=extcsv.excel, encoding="utf-8-sig", **kwds):
-        self.encoding = encoding
-        self.reader = extcsv.reader(f, dialect=dialect, **kwds)
-
-    def next(self):
-        """ 
-        next() -> unicode
-        This function reads and returns the next line as a Unicode string.
-        """
-        row = self.reader.next()
-        return [ self.process(s) for s in row ]
-
-    def __next__(self):
-        """ 
-        PYTHON3
-        __next__() -> unicode
-        This function reads and returns the next line as a Unicode string.
-        """
-        row = self.reader.__next__()
-        return [ self.process(s) for s in row ]
-
-    def process(self, s):
-        """ Process an element """
-        x = cunicode(s, self.encoding) # decode to unicode with selected encoding
-        x = x.encode("ascii", "xmlcharrefreplace") # encode back to ascii, using XML entities
-        if sys.version_info[0] > 2: x = x.decode("ascii") # PYTHON3 - back to unicode str
-        if x.startswith("\""): x = x[1:] # strip any unwanted quotes from the beginning
-        if x.endswith("\""): x = x[0:len(x)-1] # ... and end
-        return x
-
-    def __iter__(self):
-        return self
-
-class UnicodeCSVDictReader(object):
-    """
-    A CSV reader that uses UnicodeCSVReader to handle UTF-8 and returns
-    each row as a dictionary instead.
-    """
-    def __init__(self, f):
-        self.reader = UnicodeCSVReader(f)
-        self.cols = self.reader.next()
-
-    def next(self):
-        row = self.reader.next()
+    s = s.replace("\r\n", "\n")
+    s = s.replace("\r", "\n")
+    if s[0:3] == "\xef\xbb\xbf": s = s[3:] # strip any BOM if included
+    rows = [] # parsed rows
+    pos = [0, 0, False] # line start position, item start position and EOF 
+    def readline():
+        # Finds the next line ending and returns the line as a list of items
+        items = []
+        inquoted = False
+        rpos = pos[0] # read position marker, start at the line
+        while True:
+            if s[rpos:rpos+1] == "\"": inquoted = not inquoted
+            if not inquoted and (s[rpos:rpos+1] == "," or s[rpos:rpos+1] == "\n" or rpos == len(s)): 
+                # Hit delimiter, line break or end of file - parse the item
+                item = s[pos[1]:rpos]
+                pos[1] = rpos+1 # advance next item start position
+                if item.startswith("\""): item = item[1:]
+                if item.endswith("\""): item = item[0:len(item)-1]
+                # Turn the item into an ascii/xmlcharrefreplace string
+                item = item.encode("ascii", "xmlcharrefreplace")
+                if sys.version_info[0] > 2: item = item.decode("ascii") # PYTHON3 turn it back into str
+                items.append(item)
+            if not inquoted and (s[rpos:rpos+1] == "\n" or rpos == len(s)):
+                # Hit line break or end of file, move to the next line and return our set
+                pos[0] = rpos+1
+                if rpos == len(s): pos[2] = True # EOF
+                return items
+            rpos += 1
+    # Read the columns from the first row
+    cols = readline()
+    if len(cols) == 0: return rows # Empty file
+    # Iterate the rest of the data and construct dictionaries of the column/rows
+    while True:
+        items = readline()
         d = {}
-        for (c, r) in zip(self.cols, row):
-            d[c] = r
-        return d
-
-    def __next__(self):
-        """ PYTHON3 """
-        row = self.reader.next()
-        d = {}
-        for (c, r) in zip(self.cols, row):
-            d[c] = r
-        return d
-
-    def __iter__(self):
-        return self
+        for i, c in enumerate(cols):
+            if i < len(items): d[c] = items[i]
+        if len(d) > 1: # Don't append empty rows (can also be empty string in first col)
+            rows.append(d)
+        if pos[2]: break # EOF
+    return rows
 
 def csv(l, rows, cols = None, includeheader = True):
     """
     Creates a CSV file from a set of resultset rows. If cols has been 
     supplied as a list of strings, fields will be output in that
     order.
-    The file is constructed as a list of unicode strings and returned as a utf-8 encoded string.
+    The file is constructed as a list of unicode strings and returned as a utf-8 encoded byte string.
     """
     if rows is None or len(rows) == 0: return ""
     lines = []
     def writerow(row):
         line = []
-        for i, r in enumerate(row):
+        for r in row:
             line.append(u"\"%s\"" % r)
         lines.append(u",".join(line))
     if cols is None:
         cols = []
-        for k, v in rows[0].items():
+        for k in rows[0].keys():
             cols.append(k)
         cols = sorted(cols)
     if includeheader: 
@@ -872,7 +947,7 @@ def csv(l, rows, cols = None, includeheader = True):
         rd = []
         for c in cols:
             if is_currency(c):
-                rd.append(decode_html(asm3.i18n.format_currency_no_symbol(l, r[c])))
+                rd.append(asm3.i18n.format_currency_no_symbol(l, r[c]))
             elif is_date(r[c]):
                 timeportion = "00:00:00"
                 dateportion = ""
@@ -883,41 +958,55 @@ def csv(l, rows, cols = None, includeheader = True):
                     pass # Don't stop the show for bad dates/times
                 if timeportion != "00:00:00": # include time if non-midnight
                     dateportion = "%s %s" % (dateportion, timeportion)
-                rd.append(decode_html(dateportion))
+                rd.append(dateportion)
+            elif is_str(r[c]):
+                rd.append(decode_html(r[c].replace("\"", "''"))) # Escape any double quotes in strings
             else:
-                rd.append(decode_html(r[c]))
+                rd.append(r[c])
         writerow(rd)
-    return u"\n".join(lines).encode("utf-8")
+    # Manually include a UTF-8 BOM to prevent Excel mangling files
+    return (u"\ufeff" + u"\n".join(lines)).encode("utf-8")
 
-def fix_relative_document_uris(s, baseurl, account = "" ):
+def fix_relative_document_uris(dbo, s):
     """
-    Switches the relative uris used in document templates for absolute
+    Switches the relative uris used in s (str) for absolute
     ones to the service so that documents will work outside of 
     the ASM UI.
     """
-    patterns = (
-        # animal images
-        ( "image?mode=animal&amp;id=", "animal_image", "animalid" ),
-        ( "image?db={account}&ampmode=animal&amp;id=", "animal_image", "animalid" ),
-        ( "image?db={account}&mode=animal&id=", "animal_image", "animalid" ),
-        ( "image?db={account}&amp;mode=nopic", "extra_image", "title=nopic.jpg&xx" ),
+    def qsp(q, k):
+        """ returns the value of key k from querystring q """
+        kp = q.find(k + "=")
+        ke = q.find("&", kp)
+        if ke == -1: ke = len(q)
+        if kp != -1 and ke != -1: return q[q.find("=",kp)+1:ke]
+        return ""
 
-        # animal thumbnail images
-        ( "image?mode=animalthumb&amp;id=", "animal_thumbnail", "animalid" ),
-        ( "image?db={account}&amp;mode=animalthumb&amp;id=", "animal_thumbnail", "animalid" ),
-        ( "image?db={account}&mode=animalthumb&id=", "animal_thumbnail", "animalid" ),
+    def url(method, params):
+        account = ""
+        if MULTIPLE_DATABASES: account = "account=%s&" % dbo.database
+        return "%s/service?method=%s&%s%s" % (BASE_URL, method, account, params)
 
-        # report/extra images
-        ( "image?mode=dbfs&amp;id=/reports/", "extra_image", "title" ),
-        ( "image?db={account}&amp;mode=dbfs&amp;id=/reports/", "extra_image", "title" ),
-
-        # any image in the dbfs by path
-        ( "image?mode=dbfs&amp;id=", "dbfs_image", "title" ),
-        ( "image?db={account}&amp;mode=dbfs&amp;id=", "dbfs_image", "title" )
-    )
-    for f, m, p in patterns:
-        f = f.replace("{account}", account)
-        s = s.replace(f, baseurl + "/service?method=" + m + "&account=" + account + "&" + p + "=")
+    p = ImgSrcHTMLParser()
+    p.feed(s)
+    for l in p.links:
+        if l.startswith("image?"):
+            mode = qsp(l, "mode")
+            u = ""
+            if mode == "nopic":
+                u = url("extra_image", "title=nopic.jpg")
+            elif mode == "animal":
+                u = url("animal_image", "animalid=%s" % qsp(l, "animalid"))
+            elif mode == "animalthumb":
+                u = url("animal_thumbnail", "animalid=%s" % qsp(l, "animalid"))
+            elif mode == "dbfs":
+                u = url("dbfs_image", "title=%s" % qsp(l, "id"))
+            elif mode == "media":
+                u = url("media_image", "mediaid=%s" % qsp(l, "id"))
+            s = s.replace(l.replace("&", "&amp;"), u) # HTMLParser will fix &amp; back to &, breaking this replace
+            asm3.al.debug("translate '%s' to '%s'" % (l, u), "utils.fix_relative_document_uris", dbo)
+        elif not l.startswith("http") and not l.startswith("data:") and not l.startswith("//"):
+            s = s.replace(l, "") # cannot use this type of url
+            asm3.al.debug("strip invalid url '%s'" % l, "utils.fix_relative_document_uris", dbo)
     return s
 
 def generator2str(fn, *args):
@@ -1026,9 +1115,9 @@ def post_data(url, data, contenttype = "", httpmethod = "", headers = {}):
             req = urllib2.Request(url, data, headers)
             if httpmethod != "": req.get_method = lambda: httpmethod
             resp = urllib2.urlopen(req)
-            return { "requestheaders": headers, "requestbody": data, "headers": resp.info().headers, "response": resp.read(), "status": resp.getcode() }
+            return { "requestheaders": headers, "requestbody": data, "headers": resp.info().headers, "response": encode_html(cunicode(resp.read())), "status": resp.getcode() }
         except urllib2.HTTPError as e:
-            return { "requestheaders": headers, "requestbody": data, "headers": e.info().headers, "response": e.read(), "status": e.getcode() }
+            return { "requestheaders": headers, "requestbody": data, "headers": e.info().headers, "response": encode_html(cunicode(e.read())), "status": e.getcode() }
 
 def post_form(url, fields, headers = {}, cookies = {}):
     """
@@ -1078,6 +1167,17 @@ def post_xml(url, xml, headers = {}):
     Posts an XML document to a URL. xml can be str or bytes.
     """
     return post_data(url, xml, contenttype="text/xml", headers=headers)
+
+def urlencode(d):
+    """
+    URL encodes a dictionary of key/pair values.
+    """
+    # PYTHON3
+    if sys.version_info[0] > 2: 
+        return urllib.parse.urlencode(d)
+    else:
+        #PYTHON2
+        return urllib.urlencode(d)
 
 def zip_extract(zipfilename, filename):
     """
@@ -1142,9 +1242,27 @@ def pdf_count_pages(filedata):
         pages += filedata.count(p)
     return pages
 
-def html_to_pdf(htmldata, baseurl = "", account = ""):
+def html_to_text(htmldata):
+    """
+    Converts HTML content to plain text, returning the text as a str
+    """
+    p = PlainTextWriterHTMLParser()
+    p.feed(htmldata)
+    return "".join(p.s)
+
+def html_to_pdf(dbo, htmldata):
     """
     Converts HTML content to PDF and returns the PDF file data as bytes.
+    """
+    if HTML_TO_PDF == "pisa" or htmldata.find("pdf renderer pisa") != -1:
+        return html_to_pdf_pisa(dbo, htmldata)
+    else:
+        return html_to_pdf_cmd(dbo, htmldata)
+
+def html_to_pdf_cmd(dbo, htmldata):
+    """
+    Converts HTML content to PDF and returns the PDF file data as bytes.
+    Uses the command line tool specified in HTML_TO_PDF (which is typically wkhtmltopdf)
     """
     # Allow orientation and papersize to be set
     # with directives in the document source - eg: <!-- pdf orientation landscape, pdf papersize letter -->
@@ -1184,11 +1302,12 @@ def html_to_pdf(htmldata, baseurl = "", account = ""):
     htmldata = htmldata.replace("font-size: large", "font-size: 18pt")
     htmldata = htmldata.replace("font-size: x-large", "font-size: 24pt")
     htmldata = htmldata.replace("font-size: xx-large", "font-size: 36pt")
-    htmldata = fix_relative_document_uris(htmldata, baseurl, account)
     # Remove any img tags with signature:placeholder/user as the src
-    htmldata = re.sub('<img.*?signature\:.*?\/>', '', htmldata)
+    htmldata = re.sub(r'<img.*?signature\:.*?\/>', '', htmldata)
     # Fix up any google QR codes where a protocol-less URI has been used
     htmldata = htmldata.replace("\"//chart.googleapis.com", "\"http://chart.googleapis.com")
+    # Switch relative document uris to absolute service based calls
+    htmldata = fix_relative_document_uris(dbo, htmldata)
     # Use temp files
     inputfile = tempfile.NamedTemporaryFile(suffix=".html", delete=False)
     outputfile = tempfile.NamedTemporaryFile(suffix=".pdf", delete=False)
@@ -1200,12 +1319,63 @@ def html_to_pdf(htmldata, baseurl = "", account = ""):
     code, output = cmd(cmdline)
     if code > 0:
         asm3.al.error("code %s returned from '%s': %s" % (code, cmdline, output), "utils.html_to_pdf")
-        return "ERROR"
+        return output
     with open(outputfile.name, "rb") as f:
         pdfdata = f.read()
     os.unlink(inputfile.name)
     os.unlink(outputfile.name)
     return pdfdata
+
+def html_to_pdf_pisa(dbo, htmldata):
+    """
+    Converts HTML content to PDF and returns the PDF file data as bytes.
+    NOTE: wkhtmltopdf is far superior, but this is a pure Python solution and it does work.
+    """
+    # Allow orientation and papersize to be set
+    # with directives in the document source - eg: <!-- pdf orientation landscape, pdf papersize letter -->
+    orientation = "portrait"
+    # Sort out page size arguments
+    papersize = "A4"
+    if htmldata.find("pdf orientation landscape") != -1: orientation = "landscape"
+    if htmldata.find("pdf orientation portrait") != -1: orientation = "portrait"
+    if htmldata.find("pdf papersize a5") != -1: papersize = "A5"
+    if htmldata.find("pdf papersize a4") != -1: papersize = "A4"
+    if htmldata.find("pdf papersize a3") != -1: papersize = "A3"
+    if htmldata.find("pdf papersize letter") != -1: papersize = "letter"
+    # Zoom - eg: <!-- pdf zoom 0.5 end -->
+    # Not supported in any meaningful way by pisa (not smart scaling)
+    # zm = regex_one("pdf zoom (.+?) end", htmldata)
+    # Margins, top/bottom/left/right eg: <!-- pdf margins 2cm 2cm 2cm 2cm end -->
+    margins = "2cm"
+    mg = regex_one("pdf margins (.+?) end", htmldata)
+    if mg != "":
+        margins = mg
+    header = "<!DOCTYPE html>\n<html>\n<head>"
+    header += '<style>'
+    header += '@page {size: %s %s; margin: %s}' % ( papersize, orientation, margins )
+    header += '</style>' 
+    header += "</head><body>"
+    footer = "</body></html>"
+    htmldata = htmldata.replace("font-size: xx-small", "font-size: 6pt")
+    htmldata = htmldata.replace("font-size: x-small", "font-size: 8pt")
+    htmldata = htmldata.replace("font-size: small", "font-size: 10pt")
+    htmldata = htmldata.replace("font-size: medium", "font-size: 14pt")
+    htmldata = htmldata.replace("font-size: large", "font-size: 18pt")
+    htmldata = htmldata.replace("font-size: x-large", "font-size: 24pt")
+    htmldata = htmldata.replace("font-size: xx-large", "font-size: 36pt")
+    # Remove any img tags with signature:placeholder/user as the src
+    htmldata = re.sub(r'<img.*?signature\:.*?\/>', '', htmldata)
+    # Fix up any google QR codes where a protocol-less URI has been used
+    htmldata = htmldata.replace("\"//chart.googleapis.com", "\"http://chart.googleapis.com")
+    # Switch relative document uris to absolute service based calls
+    htmldata = fix_relative_document_uris(dbo, htmldata)
+    # Do the conversion
+    from xhtml2pdf import pisa
+    out = bytesio()
+    pdf = pisa.pisaDocument(stringio(header + htmldata + footer), dest=out)
+    if pdf.err:
+        raise IOError(pdf.err)
+    return out.getvalue()
 
 def generate_label_pdf(dbo, locale, records, papersize, units, hpitch, vpitch, width, height, lmargin, tmargin, cols, rows):
     """
@@ -1225,6 +1395,16 @@ def generate_label_pdf(dbo, locale, records, papersize, units, hpitch, vpitch, w
     psize = A4
     if papersize == "letter":
         psize = letter
+
+    fontname = "Courier"
+
+    # Most fonts don't include Chinese characters. If this is a locale that needs
+    # them, use the GNU unifont (contains one glyph for every character)
+    if locale in ( "en_CN", "en_TW", "en_TW2" ):
+        from reportlab.pdfbase import pdfmetrics
+        from reportlab.pdfbase.ttfonts import TTFont
+        pdfmetrics.registerFont(TTFont('Unifont','unifont.ttf'))
+        fontname = "Unifont"
 
     fout = bytesio()
     doc = SimpleDocTemplate(fout, pagesize=psize, leftMargin = lmargin * unit, topMargin = tmargin * unit, rightMargin = 0, bottomMargin = 0)
@@ -1252,7 +1432,7 @@ def generate_label_pdf(dbo, locale, records, papersize, units, hpitch, vpitch, w
             "ru", "sk", "sl", "sv", "tr" ):
             # European style, postcode precedes city/state on last line
             template = "%(name)s\n%(address)s\n%(postcode)s %(town)s %(county)s"
-        ad = template % { "name": str(rd["OWNERNAME"]).strip(), "address": rd["OWNERADDRESS"], "town": rd["OWNERTOWN"],
+        ad = template % { "name": rd["OWNERNAME"], "address": rd["OWNERADDRESS"], "town": rd["OWNERTOWN"],
             "county": rd["OWNERCOUNTY"], "postcode": rd["OWNERPOSTCODE"] }
         #al.debug("Adding to data col=%d, row=%d, val=%s" % (cold, rowd, ad))
         datad[rowd][cold] = decode_html(ad)
@@ -1261,11 +1441,17 @@ def generate_label_pdf(dbo, locale, records, papersize, units, hpitch, vpitch, w
         #al.debug("Adding data to table: " + str(datad))
         t = Table(datad, cols * [ hpitch * unit ], rows * [ vpitch * unit ])
         t.hAlign = "LEFT"
-        t.setStyle(TableStyle([("VALIGN", (0,0), (-1,-1), "TOP")]))
-        # If we have more than 8 labels vertically, use a smaller font
+        t.setStyle(TableStyle([
+            ("VALIGN", (0,0), (-1,-1), "TOP"),
+            ("FONTNAME", (0,0), (-1,-1), fontname)
+            ]))
+        # If we have more than 8 labels vertically, use a smaller font size
         if rows > 8:
-            t.setStyle(TableStyle([("VALIGN", (0,0), (-1,-1), "TOP"),
-                                   ("FONTSIZE", (0,0), (-1,-1), 8)]))
+            t.setStyle(TableStyle([
+                ("VALIGN", (0,0), (-1,-1), "TOP"),
+                ("FONTSIZE", (0,0), (-1,-1), 8),
+                ("FONTNAME", (0,0), (-1,-1), fontname)
+                ]))
         elements.append(t)
 
     data = newData()
@@ -1292,17 +1478,14 @@ def generate_label_pdf(dbo, locale, records, papersize, units, hpitch, vpitch, w
     doc.build(elements)
     return fout.getvalue()
 
-def html_email_to_plain(s):
-    """
-    Turns an HTML email into plain text by converting
-    paragraph closers, br tags and rows into line breaks, then
-    removing the tags.
-    """
-    s = s.replace("</p>", "\n</p>")
-    s = s.replace("<br", "\n<br")
-    s = s.replace("</tr>", "\n</tr>")
-    s = strip_html_tags(s)
-    return s
+def parse_email_address(s):
+    """ Returns a tuple of realname and address from an email """
+    if s.find("<") == -1: return ("", s.strip())
+    return ( s[0:s.find("<")].strip(), s[s.find("<")+1:].replace(">", "").strip() )
+
+def strip_email_address(s):
+    # Just returns the address portion of an email
+    return parse_email_address(s)[1]
 
 def send_email(dbo, replyadd, toadd, ccadd = "", bccadd = "", subject = "", body = "", contenttype = "plain", attachments = [], exceptions = True):
     """
@@ -1315,52 +1498,42 @@ def send_email(dbo, replyadd, toadd, ccadd = "", bccadd = "", subject = "", body
     contenttype is either "plain" or "html"
     attachments: A list of tuples in the form (filename, mimetype, data)
     exceptions: If True, throws exceptions due to sending problems
+
     returns True on success
 
     For HTML emails, a plaintext part is converted and added. If the HTML
     does not have html/body tags, they are also added.
     """
-    def parse_email(s):
-        # Returns a tuple of description and address
-        s = s.strip()
-        fp = s.find("<")
-        ep = s.find(">")
-        description = s
-        address = s
-        if fp != -1 and ep != -1:
-            description = s[0:fp].strip()
-            address = s[fp+1:ep].strip()
-        return (description, address)
-
-    def strip_email(s):
-        # Just returns the address portion of an email
-        description, address = parse_email(s)
-        return address
 
     def add_header(msg, header, value):
         """
         Adds a header to the message, expands any HTML entities
-        and re-encodes as utf-8 before adding to the message if necessary.
-        If the message doesn't contain HTML entities, then it is just
-        added normally as 7-bit ascii
+        and relies on Python's email.header.Header class to
+        handle encoding to UTF-8 and outputting as quoted printable
+        where necessary.
         """
-        value = value.replace("\n", "") # line breaks are not allowed in headers
-        if value.find("&#") != -1:
-            # Is this an address field? If so, parse the addresses and 
-            # encode the descriptions
-            if header in ("To", "From", "Cc", "Bcc", "Bounces-To", "Reply-To"):
-                addresses = value.split(",")
-                newval = ""
-                for a in addresses:
-                    description, address = parse_email(a)
-                    if newval != "": newval += ", "
-                    newval += "\"%s\" <%s>" % (Header(decode_html(description).encode("utf-8"), "utf-8"), address)
-                msg[header] = newval
-            else:
-                h = Header(decode_html(value).encode("utf-8"), "utf-8")
-                msg[header] = h
+        if header in ("From", "To", "Cc", "Bcc", "Bounces-To", "Reply-To"):
+            # We cannot support UTF-8/QP encoded addresses because
+            # it blows up sSMTP and other mail servers.
+            # Instead, only include ascii chars and throw the rest away.
+            # We don't use xmlcharref as elsewhere because the HTML entities
+            # aren't really human readable and the semi-colons will cause some
+            # mail servers to see the address as mulitple addresses.
+            msg[header] = Header(decode_html(value).encode("ascii", "replace"))
+        elif header in ("DISABLED"):
+            # INFO: This code supports using QP-encoded UTF-8 for the realname
+            # portion of email addresses in the headers listed above.
+            # This condition will never be hit and this code is not active 
+            # because too many email providers and servers do not support this.
+            h = Header()
+            for a in value.split(","):
+                if len(str(h)) > 0: h.append(",", "ascii")
+                realname, address = parse_email_address(a)
+                h.append(decode_html(realname)) # auto uses utf-8 for non-ascii
+                h.append(address, "ascii")
+            msg[header] = h
         else:
-            msg[header] = value
+            msg[header] = Header(decode_html(value))
 
     # If the email is plain text, but contains HTML escape characters, 
     # switch it to being an html message instead and make sure line 
@@ -1368,18 +1541,22 @@ def send_email(dbo, replyadd, toadd, ccadd = "", bccadd = "", subject = "", body
     if body.find("&#") != -1 and contenttype == "plain":
         contenttype = "html"
         body = body.replace("\n", "<br />")
-        Charset.add_charset("utf-8", Charset.QP, Charset.QP, "utf-8")
 
     # If the message is HTML, but does not contain an HTML tag, assume it's
     # a document fragment and wrap it (this lowers spamassassin scores)
     if body.find("<html") == -1 and contenttype == "html":
         body = "<!DOCTYPE html>\n<html>\n<body>\n%s</body></html>" % body
 
+    # Fix any relative image links in the html message
+    if contenttype == "html":
+        body = fix_relative_document_uris(dbo, body)
+
     # Build the from address from our sitedef
     fromadd = FROM_ADDRESS
     fromadd = fromadd.replace("{organisation}", asm3.configuration.organisation(dbo))
     fromadd = fromadd.replace("{alias}", dbo.alias)
     fromadd = fromadd.replace("{database}", dbo.database)
+    fromadd = fromadd.replace(",", "") # commas blow up address parsing
 
     # Check for any problems in the reply address, such as unclosed address
     if replyadd.find("<") != -1 and replyadd.find(">") == -1:
@@ -1387,23 +1564,22 @@ def send_email(dbo, replyadd, toadd, ccadd = "", bccadd = "", subject = "", body
 
     # Construct the mime message
     msg = MIMEMultipart("mixed")
+    add_header(msg, "From", fromadd)
+    add_header(msg, "To", toadd)
+    if ccadd != "": add_header(msg, "Cc", ccadd)
+    add_header(msg, "Reply-To", replyadd)
+    add_header(msg, "Bounces-To", replyadd)
     add_header(msg, "Message-ID", make_msgid())
     add_header(msg, "Date", formatdate())
     add_header(msg, "X-Mailer", "Animal Shelter Manager %s" % asm3.i18n.VERSION)
-    subject = truncate(subject, 69) # limit subject to 78 chars - "Subject: "
     add_header(msg, "Subject", subject)
-    add_header(msg, "From", fromadd)
-    add_header(msg, "Reply-To", replyadd)
-    add_header(msg, "Bounces-To", replyadd)
-    add_header(msg, "To", toadd)
-    if ccadd != "": add_header(msg, "Cc", ccadd)
 
     # Create an alternative part with plain text and html messages
     msgbody = MIMEMultipart("alternative")
 
-    # Attach the plaintext portion (html_email_to_plain on an already plaintext
-    # email does nothing).
-    msgbody.attach(MIMEText(html_email_to_plain(body), "plain"))
+    # Attach the plaintext portion
+    plaintext = iif(contenttype == "html", html_to_text(body), body)
+    msgbody.attach(MIMEText(plaintext, "plain"))
 
     # Attach the HTML portion if this is an HTML message
     if contenttype == "html":
@@ -1426,15 +1602,15 @@ def send_email(dbo, replyadd, toadd, ccadd = "", bccadd = "", subject = "", body
     # Construct the list of to addresses. We strip email addresses so
     # only the you@domain.com portion remains for us to pass to the
     # SMTP server. 
-    tolist = [strip_email(x) for x in toadd.split(",")]
-    if ccadd != "":  tolist += [strip_email(x) for x in ccadd.split(",")]
-    if bccadd != "": tolist += [strip_email(x) for x in bccadd.split(",")]
+    tolist = [strip_email_address(x) for x in toadd.split(",")]
+    if ccadd != "":  tolist += [strip_email_address(x) for x in ccadd.split(",")]
+    if bccadd != "": tolist += [strip_email_address(x) for x in bccadd.split(",")]
 
-    replyadd = strip_email(replyadd)
+    replyadd = strip_email_address(replyadd)
 
     asm3.al.debug("from: %s, reply-to: %s, to: %s, subject: %s, body: %s" % \
         (fromadd, replyadd, str(tolist), subject, body), "utils.send_email", dbo)
-    
+
     # Load the server config over default vars
     sendmail = True
     host = ""
@@ -1462,9 +1638,11 @@ def send_email(dbo, replyadd, toadd, ccadd = "", bccadd = "", subject = "", body
             p = subprocess.Popen(["/usr/sbin/sendmail", "-t", "-oi"], stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             stdoutdata, stderrdata = p.communicate(str2bytes(msg.as_string()))
             if p.returncode != 0: raise Exception("%s %s" % (stdoutdata, stderrdata))
+            return True
         except Exception as err:
             asm3.al.error("sendmail: %s" % str(err), "utils.send_email", dbo)
             if exceptions: raise ASMError(str(err))
+            return False
     else:
         try:
             smtp = smtplib.SMTP(host, port)
@@ -1473,9 +1651,11 @@ def send_email(dbo, replyadd, toadd, ccadd = "", bccadd = "", subject = "", body
             if password.strip() != "":
                 smtp.login(username, password)
             smtp.sendmail(fromadd, tolist, msg.as_string())
+            return True
         except Exception as err:
             asm3.al.error("smtp: %s" % str(err), "utils.send_email", dbo)
             if exceptions: raise ASMError(str(err))
+            return False
 
 def send_bulk_email(dbo, fromadd, subject, body, rows, contenttype):
     """

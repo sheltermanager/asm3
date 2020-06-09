@@ -13514,7 +13514,7 @@ msgstr "{0} treff."
 
 #: code.py
 msgid "{0} rows affected."
-msgstr "[0} rader påvirket."
+msgstr "{0} rader påvirket."
 
 #: common_animalchoosermulti.js
 msgid "{0} selected"

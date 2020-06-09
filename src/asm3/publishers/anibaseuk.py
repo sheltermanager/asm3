@@ -27,7 +27,7 @@ class AnibaseUKPublisher(AbstractPublisher):
             4:  "Rodent",
             5:  "Rodent",
             7:  "Rabbit",
-            9:  "Polecat",
+            9:  "Ferret",
             11: "Reptilian",
             12: "Tortoise",
             13: "Reptilian",
@@ -154,7 +154,7 @@ class AnibaseUKPublisher(AbstractPublisher):
             return s.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
 
         implantdate = ""
-        if an["IDENTICHIPDATE"] is not None: implantdate = asm3.i18n.format_date("%m/%d/%Y", an["IDENTICHIPDATE"])
+        if an["IDENTICHIPDATE"] is not None: implantdate = asm3.i18n.format_date(an["IDENTICHIPDATE"], "%d/%m/%Y")
 
         # Construct the XML document
         return '<?xml version="1.0" encoding="UTF-8"?>\n' \
@@ -188,7 +188,7 @@ class AnibaseUKPublisher(AbstractPublisher):
             '  <Name>' + xe(an["ANIMALNAME"]) + '</Name>' \
             '  <Species>' + self.get_vetxml_species(an["SPECIESID"]) + '</Species>' \
             '  <Breed><FreeText>' + xe(an["BREEDNAME"]) + '</FreeText><Code/></Breed>' \
-            '  <DateOfBirth>' + asm3.i18n.format_date("%m/%d/%Y", an["DATEOFBIRTH"]) + '</DateOfBirth>' \
+            '  <DateOfBirth>' + asm3.i18n.format_date(an["DATEOFBIRTH"], "%d/%m/%Y")  + '</DateOfBirth>' \
             '  <Gender>' + an["SEXNAME"][0:1] + '</Gender>' \
             '  <Colour>' + xe(an["BASECOLOURNAME"]) + '</Colour>' \
             '  <Markings>' + xe(an["MARKINGS"]) + '</Markings>' \

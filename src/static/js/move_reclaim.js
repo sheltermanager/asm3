@@ -1,7 +1,8 @@
-/*jslint browser: true, forin: true, eqeq: true, white: true, sloppy: true, vars: true, nomen: true */
 /*global $, jQuery, _, asm, common, config, controller, dlgfx, format, header, html, validate */
 
 $(function() {
+
+    "use strict";
 
     var move_reclaim = {
 
@@ -12,34 +13,34 @@ $(function() {
                 html.content_header(_("Reclaim an animal"), true),
                 '<div id="fosterinfo" class="ui-state-highlight ui-corner-all" style="margin-top: 5px; padding: 0 .7em; width: 60%; margin-left: auto; margin-right: auto">',
                 '<p class="centered">',
-                '<span class="ui-icon ui-icon-info" style="float: left; margin-right: .3em;"></span>',
+                '<span class="ui-icon ui-icon-info"></span>',
                 _("This animal is currently fostered, it will be automatically returned first."),
                 '</p>',
                 '</div>',
                 '<div id="retailerinfo" class="ui-state-highlight ui-corner-all" style="margin-top: 5px; padding: 0 .7em; width: 60%; margin-left: auto; margin-right: auto">',
                 '<p class="centered">',
-                '<span class="ui-icon ui-icon-info" style="float: left; margin-right: .3em;"></span>',
+                '<span class="ui-icon ui-icon-info"></span>',
                 _("This animal is currently at a retailer, it will be automatically returned first."),
                 '</p>',
                 '</div>',
                 '<div id="reserveinfo" class="ui-state-highlight ui-corner-all" style="margin-top: 5px; padding: 0 .7em; width: 60%; margin-left: auto; margin-right: auto">',
                 '<p class="centered">',
-                '<span class="ui-icon ui-icon-info" style="float: left; margin-right: .3em;"></span>',
+                '<span class="ui-icon ui-icon-info"></span>',
                 _("This animal has active reservations, they will be cancelled."),
                 '</p>',
                 '</div>',
                 '<div id="notonshelter" class="ui-state-error ui-corner-all" style="margin-top: 5px; padding: 0 .7em; width: 60%; margin-left: auto; margin-right: auto">',
-                '<p class="centered"><span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em;"></span>',
+                '<p class="centered"><span class="ui-icon ui-icon-alert"></span>',
                 '<span class="centered">' + _("This animal is not on the shelter.") + '</span>',
                 '</p>',
                 '</div>',
                 '<div id="crueltycase" class="ui-state-error ui-corner-all" style="margin-top: 5px; padding: 0 .7em; width: 60%; margin-left: auto; margin-right: auto">',
-                '<p class="centered"><span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em;"></span>',
+                '<p class="centered"><span class="ui-icon ui-icon-alert"></span>',
                 '<span class="centered">' + _("This animal is part of a cruelty case and should not leave the shelter.") + '</span>',
                 '</p>',
                 '</div>',
                 '<div id="quarantine" class="ui-state-error ui-corner-all" style="margin-top: 5px; padding: 0 .7em; width: 60%; margin-left: auto; margin-right: auto">',
-                '<p class="centered"><span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em;"></span>',
+                '<p class="centered"><span class="ui-icon ui-icon-alert"></span>',
                 '<span class="centered">' + _("This animal is currently quarantined and should not leave the shelter.") + '</span>',
                 '</p>',
                 '</div>',
@@ -77,7 +78,7 @@ $(function() {
                 '<div id="payment"></div>',
                 html.content_header(_("Boarding Cost"), true),
                 '<div id="costdisplay" class="ui-state-highlight ui-corner-all" style="margin-top: 5px; padding: 0 .7em; width: 60%; margin-left: auto; margin-right: auto">',
-                '<p class="centered"><span class="ui-icon ui-icon-info" style="float: left; margin-right: .3em;"></span>',
+                '<p class="centered"><span class="ui-icon ui-icon-info"></span>',
                 '<span id="costdata" class="centered"></span>',
                 '</p>',
                 '</div>',
@@ -121,7 +122,7 @@ $(function() {
                     return false;
                 }
                 // date
-                if ($.trim($("#movementdate").val()) == "") {
+                if (common.trim($("#movementdate").val()) == "") {
                     header.show_error(_("This type of movement requires a date."));
                     validate.highlight("movementdate");
                     return false;

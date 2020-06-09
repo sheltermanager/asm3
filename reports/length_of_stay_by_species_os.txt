@@ -2,7 +2,7 @@ Length of Stay by Species (Shelter Only)
 ###
 Statistics
 ###
-2721/PostgreSQL
+33018/PostgreSQL
 ###
 Shows time on shelter by species for current shelter animals
 ###
@@ -15,7 +15,7 @@ a.DateBroughtIn, a.TimeOnShelter, a.DaysOnShelter, a.AnimalAge
 FROM animal a
 INNER JOIN species s ON s.ID = a.SpeciesID
 INNER JOIN entryreason e ON e.ID = a.EntryReasonID
-WHERE a.Archived = 0 AND NonShelterAnimal = 0 
+WHERE a.Archived = 0 AND NonShelterAnimal = 0 AND NOT EXISTS(SELECT ID FROM adoption WHERE IsPermanentFoster=1 AND AnimalID=a.ID)
 ORDER BY s.SpeciesName, a.DateBroughtIn
 ###
 $$HEADER

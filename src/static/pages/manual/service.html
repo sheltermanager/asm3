@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Service API &mdash; ASM 43u documentation</title>
+  <title>Service API &mdash; ASM 44u documentation</title>
   
 
   
@@ -60,7 +60,7 @@
             
             
               <div class="version">
-                43u
+                44u
               </div>
             
           
@@ -102,6 +102,7 @@
 <li class="toctree-l1"><a class="reference internal" href="reports.html">Reports</a></li>
 <li class="toctree-l1"><a class="reference internal" href="litters.html">Litters</a></li>
 <li class="toctree-l1"><a class="reference internal" href="onlineform.html">Online Forms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="paymentprocessors.html">Payment Processors</a></li>
 <li class="toctree-l1"><a class="reference internal" href="rota.html">Rota</a></li>
 <li class="toctree-l1"><a class="reference internal" href="mobile.html">Mobile Interface</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Service API</a><ul>
@@ -130,6 +131,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#json-adoptable-animal-and-xml-adoptable-animal">json_adoptable_animal and xml_adoptable_animal</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#json-adoptable-animals-and-xml-adoptable-animals">json_adoptable_animals and xml_adoptable_animals</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#json-lost-animals-xml-lost-animals-json-found-animals-xml-found-animals">json_lost_animals, xml_lost_animals, json_found_animals, xml_found_animals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#json-held-animals-and-xml-held-animals">json_held_animals and xml_held_animals</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#json-recent-adoptions-and-xml-recent-adoptions">json_recent_adoptions and xml_recent_adoptions</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#json-recent-changes-and-xml-recent-changes">json_recent_changes and xml_recent_changes</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#json-shelter-animals-and-xml-shelter-animals">json_shelter_animals and xml_shelter_animals</a></li>
@@ -265,14 +267,17 @@ to programatically grab all the images for a particular animal.</p>
 <div class="section" id="animal-view">
 <h2>animal_view<a class="headerlink" href="#animal-view" title="Permalink to this headline">¶</a></h2>
 <p class="rubric">Cache time: 2 minutes</p>
-<p>Returns a webpage with information for one animal, constructed from the
-animal_view HTML publishing template (editable at <span class="menuselection">Publishing -&gt;
+<p>Returns a webpage with information for one adoptable animal, constructed from the
+animalview HTML publishing template (editable at <span class="menuselection">Publishing -&gt;
 Edit HTML publishing templates</span>). Pass the id of the animal:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>http://localhost:5000/service?method=animal_view&amp;animalid=520
 </pre></div>
 </div>
 <p>When you use <span class="menuselection">Share ‣ Link to this animal</span> on an animal’s record,
 it is this service call that the system redirects you to.</p>
+<p>If the animal is no longer adoptable, an error page will be displayed. If you prefer, you
+can create an HTML publishing template called “animalviewnotadoptable” that will display
+instead for animals that can no longer be adopted.</p>
 </div>
 <div class="section" id="animal-view-adoptable-js">
 <h2>animal_view_adoptable_js<a class="headerlink" href="#animal-view-adoptable-js" title="Permalink to this headline">¶</a></h2>
@@ -361,11 +366,11 @@ species) to all as well as the CLOSE link text:</p>
 filter based on other elements in the page. The callback receives the complete
 animal record and must return true if the record is to be included in the list
 of thumbnails.</p>
-<p>For example, to only output animals with an animal type of dog, you could use
+<p>For example, to only output animals with a species of dog, you could use
 this callback:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">script</span><span class="o">&gt;</span>
 <span class="n">function</span> <span class="n">asm3_adoptable_filter</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">arr</span><span class="p">)</span> <span class="p">{</span>
-    <span class="k">return</span> <span class="n">a</span><span class="o">.</span><span class="n">ANIMALTYPENAME</span> <span class="o">==</span> <span class="s2">&quot;D (Dog)&quot;</span><span class="p">;</span>
+    <span class="k">return</span> <span class="n">a</span><span class="o">.</span><span class="n">SPECIESNAME</span> <span class="o">==</span> <span class="s2">&quot;Dog&quot;</span><span class="p">;</span>
 <span class="p">}</span>
 <span class="o">&lt;/</span><span class="n">script</span><span class="o">&gt;</span>
 <span class="o">&lt;</span><span class="n">div</span> <span class="nb">id</span><span class="o">=</span><span class="s2">&quot;asm3-adoptables&quot;</span> <span class="o">/&gt;</span>
@@ -396,6 +401,15 @@ minus symbol - will sort in descending order. You can also use precede the sort 
 an at symbol &#64; to do a numeric sort rather than a string/alphanumeric sort:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">script</span><span class="o">&gt;</span>
 <span class="n">asm3_adoptable_sort</span> <span class="o">=</span> <span class="s2">&quot;-@DAYSONSHELTER&quot;</span><span class="p">;</span>
+<span class="o">&lt;/</span><span class="n">script</span><span class="o">&gt;</span>
+<span class="o">&lt;</span><span class="n">div</span> <span class="nb">id</span><span class="o">=</span><span class="s2">&quot;asm3-adoptables&quot;</span> <span class="o">/&gt;</span>
+<span class="o">&lt;</span><span class="n">script</span> <span class="n">src</span><span class="o">=</span><span class="s2">&quot;http://localhost:5000/service?method=animal_view_adoptable_js&quot;</span><span class="o">&gt;&lt;/</span><span class="n">script</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+<p>A special sort keyword of SHUFFLE can also be used, if instead of sorting you’d like the
+adoptable animals to be output in a random order:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">script</span><span class="o">&gt;</span>
+<span class="n">asm3_adoptable_sort</span> <span class="o">=</span> <span class="s2">&quot;SHUFFLE&quot;</span><span class="p">;</span>
 <span class="o">&lt;/</span><span class="n">script</span><span class="o">&gt;</span>
 <span class="o">&lt;</span><span class="n">div</span> <span class="nb">id</span><span class="o">=</span><span class="s2">&quot;asm3-adoptables&quot;</span> <span class="o">/&gt;</span>
 <span class="o">&lt;</span><span class="n">script</span> <span class="n">src</span><span class="o">=</span><span class="s2">&quot;http://localhost:5000/service?method=animal_view_adoptable_js&quot;</span><span class="o">&gt;&lt;/</span><span class="n">script</span><span class="o">&gt;</span>
@@ -482,7 +496,7 @@ iframes.</p>
 <p class="rubric">Cache time: 2 minutes</p>
 <p>Returns a complete HTML document that references animal_view_adoptable_js to
 show a list of adoptable animals. It looks for an HTML template called
-“animalviewadoptable” and falls back to a basic internal template if it does
+“animalviewadoptables” and falls back to a basic internal template if it does
 not exist.</p>
 <blockquote>
 <div><a class="reference external" href="http://localhost:5000/service?method=&amp;animal_view_adoptable_html">http://localhost:5000/service?method=&amp;animal_view_adoptable_html</a></div></blockquote>
@@ -570,11 +584,11 @@ it off will cause animalview to be used). It is also possible to pass
 speciesid=X or animaltypeid=X parameters to only output animals of that species
 and type. In the default dataset, speciesid=1 is Dogs and speciesid=2 is cats.</p>
 <p>A “flag” parameter must be passed to specify the flag you want the returned
-animals to have. If no flag is set, an error is returned. An “allanimals=1”
+animals to have. If no flag is set, an error is returned. An “all=1”
 parameter can optionally be passed if you’d like all animals to be included,
 not just shelter animals.</p>
 <blockquote>
-<div><a class="reference external" href="http://localhost:5000/service?method=html_flagged_animals&amp;template=littlebox&amp;speciesid=1&amp;allanimals=1&amp;flag=Needs+Foster">http://localhost:5000/service?method=html_flagged_animals&amp;template=littlebox&amp;speciesid=1&amp;allanimals=1&amp;flag=Needs+Foster</a>
+<div><a class="reference external" href="http://localhost:5000/service?method=html_flagged_animals&amp;template=littlebox&amp;speciesid=1&amp;all=1&amp;flag=Needs+Foster">http://localhost:5000/service?method=html_flagged_animals&amp;template=littlebox&amp;speciesid=1&amp;all=1&amp;flag=Needs+Foster</a>
 <a class="reference external" href="http://localhost:5000/service?method=html_flagged_animals&amp;flag=At+Risk">http://localhost:5000/service?method=html_flagged_animals&amp;flag=At+Risk</a></div></blockquote>
 </div>
 <div class="section" id="html-held-animals">
@@ -586,8 +600,8 @@ it off will cause animalview to be used). It is also possible to pass
 speciesid=X or animaltypeid=X parameters to only output animals of that species
 and type. In the default dataset, speciesid=1 is Dogs and speciesid=2 is cats.</p>
 <blockquote>
-<div><a class="reference external" href="http://localhost:5000/service?method=html_deceased_animals&amp;template=littlebox&amp;speciesid=1">http://localhost:5000/service?method=html_deceased_animals&amp;template=littlebox&amp;speciesid=1</a>
-<a class="reference external" href="http://localhost:5000/service?method=html_deceased_animals">http://localhost:5000/service?method=html_deceased_animals</a></div></blockquote>
+<div><a class="reference external" href="http://localhost:5000/service?method=html_held_animals&amp;template=littlebox&amp;speciesid=1">http://localhost:5000/service?method=html_held_animals&amp;template=littlebox&amp;speciesid=1</a>
+<a class="reference external" href="http://localhost:5000/service?method=html_held_animals">http://localhost:5000/service?method=html_held_animals</a></div></blockquote>
 </div>
 <div class="section" id="html-report">
 <h2>html_report<a class="headerlink" href="#html-report" title="Permalink to this headline">¶</a></h2>
@@ -631,6 +645,15 @@ determines whether the format returned is JSON or XML:</p>
 days that are still active.  The method determines whether the format returned
 is JSON or XML:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>http://localhost:5000/service?method=xml_found_animals&amp;username=user&amp;password=letmein
+</pre></div>
+</div>
+</div>
+<div class="section" id="json-held-animals-and-xml-held-animals">
+<h2>json_held_animals and xml_held_animals<a class="headerlink" href="#json-held-animals-and-xml-held-animals" title="Permalink to this headline">¶</a></h2>
+<p class="rubric">Cache time: 1 hour</p>
+<p>Returns a dataset containing all animals currently held. The method
+determines whether the format returned is JSON or XML:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>http://localhost:5000/service?method=xml_adoptable_animals&amp;username=user&amp;password=letmein
 </pre></div>
 </div>
 </div>
@@ -698,7 +721,7 @@ you wish them to be included, pass an extra sensitive=1 parameter:</p>
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2019, Sheltermanager, Ltd
+        &copy; Copyright 2020, Sheltermanager, Ltd
 
     </p>
   </div>

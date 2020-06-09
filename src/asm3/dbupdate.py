@@ -36,7 +36,8 @@ VERSIONS = (
     34002, 34003, 34004, 34005, 34006, 34007, 34008, 34009, 34010, 34011, 34012,
     34013, 34014, 34015, 34016, 34017, 34018, 34019, 34020, 34021, 34022, 34100,
     34101, 34102, 34103, 34104, 34105, 34106, 34107, 34108, 34109, 34110, 34111,
-    34112, 34200, 34201, 34202, 34203, 34204, 34300
+    34112, 34200, 34201, 34202, 34203, 34204, 34300, 34301, 34302, 34303, 34304,
+    34305, 34306, 34400, 34401, 34402, 34403, 34404, 34405, 34406
 )
 
 LATEST_VERSION = VERSIONS[-1]
@@ -54,7 +55,8 @@ TABLES = ( "accounts", "accountsrole", "accountstrx", "additional", "additionalf
     "entryreason", "incidentcompleted", "incidenttype", "internallocation", "jurisdiction", "licencetype", "lkanimalflags", "lkcoattype", 
     "lkownerflags", "lksaccounttype", "lksclinicstatus", "lksdiarylink", "lksdonationfreq", "lksex", 
     "lksfieldlink", "lksfieldtype", "lksize", "lksloglink", "lksmedialink", "lksmediatype", "lksmovementtype", "lksposneg", "lksrotatype", 
-    "lksyesno", "lksynun", "lkurgency", "lkworktype", "log", "logtype", "media", "medicalprofile", "messages", "onlineform", 
+    "lksyesno", "lksynun", "lksynunk", "lkstransportstatus", "lkurgency", "lkworktype", 
+    "log", "logtype", "media", "medicalprofile", "messages", "onlineform", 
     "onlineformfield", "onlineformincoming", "owner", "ownercitation", "ownerdonation", "ownerinvestigation", 
     "ownerlicence", "ownerlookingfor", "ownerrota", "ownertraploan", "ownervoucher", "pickuplocation", "publishlog", 
     "reservationstatus", "role", "site", "species", "stocklevel", "stocklocation", "stockusage", "stockusagetype", 
@@ -89,13 +91,13 @@ def sql_structure(dbo):
     """
     Returns the SQL necessary to create the database for the type specified
     """
-    def table(name, fields, includechange = True):
+    def table(name, fields, includechange = True, changenullable = False):
         if includechange:
             cf = (fint("RecordVersion", True),
-                fstr("CreatedBy"),
-                fdate("CreatedDate"),
-                fstr("LastChangedBy"),
-                fdate("LastChangedDate"))
+                fstr("CreatedBy", changenullable),
+                fdate("CreatedDate", changenullable),
+                fstr("LastChangedBy", changenullable),
+                fdate("LastChangedDate", changenullable))
             return "%s;\n" % dbo.ddl_add_table(name, ",".join(fields + cf))
         return "%s;\n" % dbo.ddl_add_table(name, ",".join(fields))
     def index(name, table, fieldlist, unique = False, partial = False):
@@ -275,6 +277,7 @@ def sql_structure(dbo):
         flongstr("AnimalComments"),
         fint("OwnersVetID"),
         fint("CurrentVetID"),
+        fint("OwnerID", True),
         fint("OriginalOwnerID"),
         fint("BroughtInByOwnerID"),
         fint("AdoptionCoordinatorID", True),
@@ -352,6 +355,7 @@ def sql_structure(dbo):
     sql += index("animal_CoatType", "animal", "CoatType")
     sql += index("animal_CreatedBy", "animal", "CreatedBy")
     sql += index("animal_CreatedDate", "animal", "CreatedDate")
+    sql += index("animal_OwnerID", "animal", "OwnerID")
     sql += index("animal_CurrentVetID", "animal", "CurrentVetID")
     sql += index("animal_DateBroughtIn", "animal", "DateBroughtIn")
     sql += index("animal_DeceasedDate", "animal", "DeceasedDate")
@@ -528,6 +532,7 @@ def sql_structure(dbo):
         flongstr("DistFeat", False),
         fstr("AreaFound"),
         fstr("AreaPostcode"),
+        fstr("MicrochipNumber", True),
         fint("OwnerID"),
         fdate("ReturnToOwnerDate", True),
         flongstr("Comments") ))
@@ -535,6 +540,7 @@ def sql_structure(dbo):
     sql += index("animalfound_AnimalTypeID", "animalfound", "AnimalTypeID")
     sql += index("animalfound_AreaFound", "animalfound", "AreaFound")
     sql += index("animalfound_AreaPostcode", "animalfound", "AreaPostcode")
+    sql += index("animalfound_MicrochipNumber", "animalfound", "MicrochipNumber")
 
     sql += table("animallitter", (
         fid(),
@@ -545,8 +551,7 @@ def sql_structure(dbo):
         fint("CachedAnimalsLeft"),
         fdate("InvalidDate", True),
         fint("NumberInLitter"),
-        flongstr("Comments"),
-        fint("RecordVersion", True)), False)
+        flongstr("Comments")), True, True)
 
     sql += table("animallost", (
         fid(),
@@ -561,12 +566,14 @@ def sql_structure(dbo):
         flongstr("DistFeat", False),
         fstr("AreaLost"),
         fstr("AreaPostcode"),
+        fstr("MicrochipNumber", True),
         fint("OwnerID"),
         flongstr("Comments") ))
     sql += index("animallost_DateFound", "animallost", "DateFound")
     sql += index("animallost_AnimalTypeID", "animallost", "AnimalTypeID")
     sql += index("animallost_AreaLost", "animallost", "AreaLost")
     sql += index("animallost_AreaPostcode", "animallost", "AreaPostcode")
+    sql += index("animallost_MicrochipNumber", "animallost", "MicrochipNumber")
 
     sql += table("animallostfoundmatch", (
         fint("AnimalLostID"),
@@ -580,6 +587,7 @@ def sql_structure(dbo):
         fint("LostSex", True),
         fint("LostSpeciesID", True),
         fint("LostBreedID", True),
+        fstr("LostMicrochipNumber", True),
         flongstr("LostFeatures", True),
         fint("LostBaseColourID", True),
         fdate("LostDate", True),
@@ -591,6 +599,7 @@ def sql_structure(dbo):
         fint("FoundSex", True),
         fint("FoundSpeciesID", True),
         fint("FoundBreedID", True),
+        fstr("FoundMicrochipNumber", True),
         flongstr("FoundFeatures", True),
         fint("FoundBaseColourID", True),
         fdate("FoundDate", True),
@@ -1015,6 +1024,9 @@ def sql_structure(dbo):
     sql += table("lksrotatype", (
         fid(), fstr("RotaType") ), False)
 
+    sql += table("lkstransportstatus", (
+        fid(), fstr("Name") ), False)
+
     sql += table("lkurgency", ( 
         fid(), fstr("Urgency") ), False)
 
@@ -1022,6 +1034,9 @@ def sql_structure(dbo):
         fid(), fstr("Name") ), False)
 
     sql += table("lksynun", (
+        fid(), fstr("Name") ), False)
+
+    sql += table("lksynunk", (
         fid(), fstr("Name") ), False)
 
     sql += table("lksposneg", (
@@ -1072,6 +1087,7 @@ def sql_structure(dbo):
         fint("LinkTypeID"),
         fint("RecordVersion", True),
         fdate("Date"),
+        fdate("CreatedDate", True),
         fdate("RetainUntil", True) ), False)
     sql += index("media_DBFSID", "media", "DBFSID")
     sql += index("media_MediaMimeType", "media", "MediaMimeType")
@@ -1080,6 +1096,7 @@ def sql_structure(dbo):
     sql += index("media_WebsitePhoto", "media", "WebsitePhoto")
     sql += index("media_WebsiteVideo", "media", "WebsiteVideo")
     sql += index("media_DocPhoto", "media", "DocPhoto")
+    sql += index("media_CreatedDate", "media", "CreatedDate")
     sql += index("media_Date", "media", "Date")
     sql += index("media_RetainUntil", "media", "RetainUntil")
 
@@ -1128,6 +1145,8 @@ def sql_structure(dbo):
         fint("Mandatory", True),
         fstr("Label"),
         flongstr("Lookups", True),
+        fint("SpeciesID", True),
+        fstr("VisibleIf", True),
         flongstr("Tooltip", True)), False)
     sql += index("onlineformfield_OnlineFormID", "onlineformfield", "OnlineFormID")
 
@@ -1176,6 +1195,7 @@ def sql_structure(dbo):
         fint("IsMember", True),
         fdate("MembershipExpiryDate", True),
         fstr("MembershipNumber", True),
+        fint("IsAdopter", True),
         fint("IsAdoptionCoordinator", True),
         fint("IsDonor", True),
         fint("IsDriver", True),
@@ -1231,6 +1251,7 @@ def sql_structure(dbo):
     sql += index("owner_SiteID", "owner", "SiteID")
     sql += index("owner_IDCheck", "owner", "IDCheck")
     sql += index("owner_IsACO", "owner", "IsACO")
+    sql += index("owner_IsAdopter", "owner", "IsAdopter")
     sql += index("owner_IsAdoptionCoordinator", "owner", "IsAdoptionCoordinator")
     sql += index("owner_IsFosterer", "owner", "IsFosterer")
     sql += index("owner_IsRetailer", "owner", "IsRetailer")
@@ -1261,7 +1282,9 @@ def sql_structure(dbo):
         fint("MovementID", True),
         fint("DonationTypeID"),
         fint("DonationPaymentID", True),
+        fstr("ReceiptNumber", True),
         fstr("ChequeNumber", True),
+        flongstr("PaymentProcessorData", True),
         fdate("Date", True),
         fdate("DateDue", True),
         fint("Donation"),
@@ -1274,7 +1297,6 @@ def sql_structure(dbo):
         fint("VATAmount", True),
         fint("Frequency"),
         fint("NextCreated", True),
-        fstr("ReceiptNumber", True),
         flongstr("Comments") ))
     sql += index("ownerdonation_OwnerID", "ownerdonation", "OwnerID")
     sql += index("ownerdonation_ReceiptNumber", "ownerdonation", "ReceiptNumber")
@@ -1349,13 +1371,19 @@ def sql_structure(dbo):
         fid(),
         fint("OwnerID"),
         fint("VoucherID"),
+        fint("AnimalID", True),
+        fstr("VoucherCode", True),
         fdate("DateIssued"),
         fdate("DateExpired"),
+        fdate("DatePresented", True),
         fint("Value"),
         flongstr("Comments", True) ))
+    sql += index("ownervoucher_AnimalID", "ownervoucher", "AnimalID")
     sql += index("ownervoucher_OwnerID", "ownervoucher", "OwnerID")
     sql += index("ownervoucher_VoucherID", "ownervoucher", "VoucherID")
+    sql += index("ownervoucher_VoucherCode", "ownervoucher", "VoucherCode")
     sql += index("ownervoucher_DateExpired", "ownervoucher", "DateExpired")
+    sql += index("ownervoucher_DatePresented", "ownervoucher", "DatePresented")
 
     sql += table("pickuplocation", (
         fid(),
@@ -1523,6 +1551,7 @@ def sql_structure(dbo):
         fid(),
         fstr("VaccinationType"),
         fstr("VaccinationDescription", True),
+        fint("RescheduleDays", True),
         fint("DefaultCost", True),
         fint("IsRetired", True) ), False)
     return sql
@@ -1560,13 +1589,13 @@ def sql_default_data(dbo, skip_config = False):
     if not skip_config:
         sql += user(1, "user", "Default system user", "letmein", True)
         sql += user(2, "guest", "Default guest user", "guest", False)
-        sql += role(1, _("Other Organisation", l), "vac *va *vavet *vav *mvam *dvad *cvad *vamv *vo *volk *vle *vvov *vdn *vla *vfa *vwl *vcr *vll *")
-        sql += role(2, _("Staff", l), "aa *ca *va *vavet *cloa *gaf *aam *cam *dam *vam *mand *aav *vav *cav *dav *bcav *maam *mcam *mdam *mvam *bcam *daad *dcad *ddad *dvad *caad *cdad *cvad *aamv *camv *vamv *ao *co *vo *emo *mo *volk *ale *cle *dle *vle *vaov *vcov *vvov *oaod *ocod *odod *ovod *vdn *edt *adn *eadn *emdn *ecdn *bcn *ddn *pdn *pvd *ala *cla *vla *afa *cfa *vfa *mlaf *vwl *awl *cwl *bcwl *all *cll *vll *dll *excr *vcr *vvo *")
+        sql += role(1, _("Other Organisation", l), "vac *va *vavet *vav *mvam *dvad *cvad *vamv *vo *volk *vle *vvov *vdn *vla *vfa *vwl *vcr *vll *vof *")
+        sql += role(2, _("Staff", l), "aa *ca *va *ma *vavet *cloa *gaf *aam *cam *dam *vam *mand *aav *vav *cav *dav *bcav *maam *mcam *mdam *mvam *bcam *daad *dcad *ddad *dvad *caad *cdad *cvad *aamv *camv *vamv *ao *co *vo *emo *mo *volk *ale *cle *dle *vle *vaov *vcov *vvov *oaod *ocod *odod *ovod *vdn *edt *adn *eadn *emdn *ecdn *bcn *ddn *pdn *pvd *ala *cla *vla *afa *cfa *vfa *mlaf *vwl *awl *cwl *bcwl *all *cll *vll *dll *excr *vcr *vvo *vof *")
         sql += role(3, _("Accountant", l), "aac *vac *cac *ctrx *dac *vaov *vcov *vdov *vvov *oaod *ocod *odod *ovod *")
         sql += role(4, _("Vet", l), "va *vavet *aav *vav *cav *dav *bcav *maam *mcam *mdam *mvam *bcam *daad *dcad *ddad *dvad *")
-        sql += role(5, _("Publisher", l), "uipb *")
+        sql += role(5, _("Publisher", l), "uipb *aof *vof *eof *")
         sql += role(6, _("System Admin", l), "asm *cso *cpo *maf *mdt *ml *usi *rdbu *rdbd *asu *esu *ccr *vcr *hcr *dcr *tbp *excr *")
-        sql += role(7, _("Marketer", l), "uipb *mmeo *emo *mmea *")
+        sql += role(7, _("Marketer", l), "uipb *mmeo *emo *mmea *eof *vof *")
         sql += role(8, _("Investigator", l), "aoi *coi *doi *voi *")
         sql += role(9, _("Animal Control Officer", l), "aaci *caci *vaci *aacc *cacc *dacc *vacc *emo *")
         sql += "INSERT INTO userrole VALUES (2, 1)|=\n"
@@ -1597,8 +1626,10 @@ def sql_default_data(dbo, skip_config = False):
     sql += account(16, _("Expenses::Gas", l), _("Gas Bills", l), 4, 0, 0)
     sql += account(17, _("Expenses::Postage", l), _("Postage costs", l), 4, 0, 0)
     sql += account(18, _("Expenses::Stationary", l), _("Stationary costs", l), 4, 0, 0)
-    sql += account(19, _("Expenses::Food", l), _("Animal food costs"), 4, 0, 0)
-    sql += account(20, _("Expenses::Board", l), _("Animal board costs"), 4, 0, 1)
+    sql += account(19, _("Expenses::Food", l), _("Animal food costs", l), 4, 0, 0)
+    sql += account(20, _("Expenses::Board", l), _("Animal board costs", l), 4, 0, 1)
+    sql += account(21, _("Expenses::TransactionFee", l), _("Transaction fees", l), 4, 0, 0)
+    sql += account(22, _("Income::SalesTax", l), _("Sales Tax", l), 5, 0, 0)
     sql += lookup2("animaltype", "AnimalType", 2, _("D (Dog)", l))
     sql += lookup2("animaltype", "AnimalType", 10, _("A (Stray Dog)", l))
     sql += lookup2("animaltype", "AnimalType", 11, _("U (Unwanted Cat)", l))
@@ -2087,6 +2118,7 @@ def sql_default_data(dbo, skip_config = False):
     sql += lookup2("donationpayment", "PaymentName", 3, _("Credit Card", l))
     sql += lookup2("donationpayment", "PaymentName", 4, _("Debit Card", l))
     sql += lookup2("donationpayment", "PaymentName", 5, _("PayPal", l))
+    sql += lookup2("donationpayment", "PaymentName", 6, _("Stripe", l))
     sql += lookup2money("donationtype", "DonationName", 1, _("Donation", l))
     sql += lookup2money("donationtype", "DonationName", 2, _("Adoption Fee", l))
     sql += lookup2money("donationtype", "DonationName", 3, _("Waiting List Donation", l))
@@ -2191,10 +2223,11 @@ def sql_default_data(dbo, skip_config = False):
     sql += lookup1("lksdiarylink", "LinkType", 7, _("Incident", l))
     sql += lookup1("lksdonationfreq", "Frequency", 0, _("One-Off", l))
     sql += lookup1("lksdonationfreq", "Frequency", 1, _("Weekly", l))
-    sql += lookup1("lksdonationfreq", "Frequency", 2, _("Monthly", l))
-    sql += lookup1("lksdonationfreq", "Frequency", 3, _("Quarterly", l))
-    sql += lookup1("lksdonationfreq", "Frequency", 4, _("Half-Yearly", l))
-    sql += lookup1("lksdonationfreq", "Frequency", 5, _("Annually", l))
+    sql += lookup1("lksdonationfreq", "Frequency", 2, _("Fortnightly", l))
+    sql += lookup1("lksdonationfreq", "Frequency", 3, _("Monthly", l))
+    sql += lookup1("lksdonationfreq", "Frequency", 4, _("Quarterly", l))
+    sql += lookup1("lksdonationfreq", "Frequency", 5, _("Half-Yearly", l))
+    sql += lookup1("lksdonationfreq", "Frequency", 6, _("Annually", l))
     sql += lookup1("lksfieldlink", "LinkType", 0, _("Animal - Additional", l))
     sql += lookup1("lksfieldlink", "LinkType", 2, _("Animal - Details", l))
     sql += lookup1("lksfieldlink", "LinkType", 3, _("Animal - Notes", l))
@@ -2238,6 +2271,11 @@ def sql_default_data(dbo, skip_config = False):
     sql += lookup1("lksynun", "Name", 0, _("Yes", l))
     sql += lookup1("lksynun", "Name", 1, _("No", l))
     sql += lookup1("lksynun", "Name", 2, _("Unknown", l))
+    sql += lookup1("lksynunk", "Name", 0, _("Yes", l))
+    sql += lookup1("lksynunk", "Name", 1, _("No", l))
+    sql += lookup1("lksynunk", "Name", 2, _("Unknown", l))
+    sql += lookup1("lksynunk", "Name", 5, _("Over 5", l))
+    sql += lookup1("lksynunk", "Name", 12, _("Over 12", l))
     sql += lookup1("lksposneg", "Name", 0, _("Unknown", l))
     sql += lookup1("lksposneg", "Name", 1, _("Negative", l))
     sql += lookup1("lksposneg", "Name", 2, _("Positive", l))
@@ -2252,6 +2290,12 @@ def sql_default_data(dbo, skip_config = False):
     sql += lookup1("lksrotatype", "RotaType", 17, _("Sick leave", l))
     sql += lookup1("lksrotatype", "RotaType", 18, _("Training", l))
     sql += lookup1("lksrotatype", "RotaType", 19, _("Unavailable", l))
+    sql += lookup1("lkstransportstatus", "Name", 1, _("New", l))
+    sql += lookup1("lkstransportstatus", "Name", 2, _("Confirmed", l))
+    sql += lookup1("lkstransportstatus", "Name", 3, _("Hold", l))
+    sql += lookup1("lkstransportstatus", "Name", 4, _("Scheduled", l))
+    sql += lookup1("lkstransportstatus", "Name", 10, _("Cancelled", l))
+    sql += lookup1("lkstransportstatus", "Name", 11, _("Completed", l))
     sql += lookup1("lkurgency", "Urgency", 1, _("Urgent", l))
     sql += lookup1("lkurgency", "Urgency", 2, _("High", l))
     sql += lookup1("lkurgency", "Urgency", 3, _("Medium", l))
@@ -2620,19 +2664,25 @@ def dump_merge(dbo, deleteViewSeq = True):
     def fix_and_dump(table, fields):
         rows = dbo.query("SELECT * FROM %s" % table)
         for r in rows:
+            # Add ID_OFFSET to all ID fields in the rows
             for f in fields:
                 f = f.upper()
+                # Don't add anything to these two, but prefix them so merging is obvious
                 if f == "ADOPTIONNUMBER" or f == "SHELTERCODE":
                     r[f] = "MG" + r[f]
                 elif r[f] is not None:
                     r[f] += ID_OFFSET
+            # Make any lookup values we copy over inactive
+            if "ISRETIRED" in r: 
+                r.ISRETIRED = 1 
             s.append(dbo.row_to_insert_sql(table, r, escapeCR = ""))
 
     fix_and_dump("additional", [ "AdditionalFieldID", "LinkID" ])
     fix_and_dump("additionalfield", [ "ID" ])
     fix_and_dump("adoption", [ "ID", "AnimalID", "AdoptionNumber", "OwnerID", "RetailerID", "OriginalRetailerMovementID" ])
     fix_and_dump("animal", [ "ID", "AnimalTypeID", "ShelterLocation", "ShelterCode", "BondedAnimalID", "BondedAnimal2ID", "OwnersVetID", "CurrentVetID", "OriginalOwnerID", "BroughtInByOwnerID", "ActiveMovementID" ])
-    fix_and_dump("animalcontrol", [ "ID", "CallerID", "VictimID", "OwnerID", "Owner2ID", "Owner3ID", "AnimalID" ])
+    fix_and_dump("animalcontrol", [ "ID", "CallerID", "VictimID", "OwnerID", "Owner2ID", "Owner3ID" ])
+    fix_and_dump("animalcontrolanimal", [ "AnimalID", "AnimalControlID" ])
     fix_and_dump("animalcost", [ "ID", "AnimalID", "CostTypeID" ])
     fix_and_dump("costtype", [ "ID", ])
     fix_and_dump("animaldiet", [ "ID", "AnimalID" ])
@@ -3425,7 +3475,8 @@ def update_3307(dbo):
     dbo.execute_dbupdate(sql)
 
 def update_3308(dbo):
-    # Create intial data for testtype and testresult tables
+    # Create initial data for testtype and testresult tables
+    if dbo.query_int("SELECT COUNT(*) FROM testtype") > 0: return
     l = dbo.locale
     dbo.execute_dbupdate("INSERT INTO testresult (ID, ResultName) VALUES (1, '" + _("Unknown", l) + "')")
     dbo.execute_dbupdate("INSERT INTO testresult (ID, ResultName) VALUES (2, '" + _("Negative", l) + "')")
@@ -3435,6 +3486,7 @@ def update_3308(dbo):
     dbo.execute_dbupdate("INSERT INTO testtype (ID, TestName, DefaultCost) VALUES (3, '" + _("Heartworm", l) + "', 0)")
 
 def update_3309(dbo):
+    if dbo.query_int("SELECT COUNT(*) FROM animaltest") > 0: return
     fiv = dbo.query("SELECT ID, CombiTestDate, CombiTestResult FROM animal WHERE CombiTested = 1 AND CombiTestDate Is Not Null")
     asm3.al.debug("found %d fiv results to convert" % len(fiv), "update_3309", dbo)
     for f in fiv:
@@ -4335,12 +4387,7 @@ def update_33711(dbo):
     add_column(dbo, "ownerdonation", "ReceiptNumber", dbo.type_shorttext)
     add_index(dbo, "ownerdonation_ReceiptNumber", "ownerdonation", "ReceiptNumber")
     # Use ID to prepopulate existing records
-    if dbo.dbtype == "POSTGRESQL":
-        dbo.execute_dbupdate("UPDATE ownerdonation SET ReceiptNumber = LPAD(ID::text, 8, '0')")
-    elif dbo.dbtype == "MYSQL":
-        dbo.execute_dbupdate("UPDATE ownerdonation SET ReceiptNumber = LPAD(ID, 8, '0')")
-    else:
-        dbo.execute_dbupdate("UPDATE ownerdonation SET ReceiptNumber = ID")
+    dbo.execute_dbupdate("UPDATE ownerdonation SET ReceiptNumber = %s" % dbo.sql_zero_pad_left("ID", 8))
 
 def update_33712(dbo):
     # Add ownerdonation Sales Tax/VAT fields
@@ -5078,3 +5125,119 @@ def update_34300(dbo):
     add_index(dbo, "animal_ExtraIDs", "animal", "ExtraIDs")
     dbo.execute_dbupdate("UPDATE animal SET ExtraIDs = ''")
 
+def update_34301(dbo):
+    # Add onlineformfield.SpeciesID
+    add_column(dbo, "onlineformfield", "SpeciesID", dbo.type_integer)
+    dbo.execute_dbupdate("UPDATE onlineformfield SET SpeciesID = -1")
+
+def update_34302(dbo):
+    # Add lksynunk
+    l = dbo.locale
+    sql = "CREATE TABLE lksynunk ( ID INTEGER NOT NULL PRIMARY KEY, " \
+        "Name %(short)s NOT NULL)" % { "short": dbo.type_shorttext }
+    dbo.execute_dbupdate(sql)
+    dbo.execute_dbupdate("INSERT INTO lksynunk VALUES (0, ?)", [ _("Yes", l) ])
+    dbo.execute_dbupdate("INSERT INTO lksynunk VALUES (1, ?)", [ _("No", l) ])
+    dbo.execute_dbupdate("INSERT INTO lksynunk VALUES (2, ?)", [ _("Unknown", l) ])
+    dbo.execute_dbupdate("INSERT INTO lksynunk VALUES (5, ?)", [ _("Over 5", l) ])
+    dbo.execute_dbupdate("INSERT INTO lksynunk VALUES (12, ?)", [ _("Over 12", l) ])
+
+def update_34303(dbo):
+    # Add lkstransportstatus
+    l = dbo.locale
+    sql = "CREATE TABLE lkstransportstatus ( ID INTEGER NOT NULL PRIMARY KEY, " \
+        "Name %(short)s NOT NULL)" % { "short": dbo.type_shorttext }
+    dbo.execute_dbupdate(sql)
+    dbo.execute_dbupdate("INSERT INTO lkstransportstatus VALUES (1, ?)", [ _("New", l) ])
+    dbo.execute_dbupdate("INSERT INTO lkstransportstatus VALUES (2, ?)", [ _("Confirmed", l) ])
+    dbo.execute_dbupdate("INSERT INTO lkstransportstatus VALUES (3, ?)", [ _("Hold", l) ])
+    dbo.execute_dbupdate("INSERT INTO lkstransportstatus VALUES (4, ?)", [ _("Scheduled", l) ])
+    dbo.execute_dbupdate("INSERT INTO lkstransportstatus VALUES (10, ?)", [ _("Cancelled", l) ])
+    dbo.execute_dbupdate("INSERT INTO lkstransportstatus VALUES (11, ?)", [ _("Completed", l) ])
+
+def update_34304(dbo):
+    # Add new ownervoucher columns
+    add_column(dbo, "ownervoucher", "AnimalID", dbo.type_integer)
+    add_column(dbo, "ownervoucher", "DatePresented", dbo.type_datetime)
+    add_column(dbo, "ownervoucher", "VoucherCode", dbo.type_shorttext)
+    add_index(dbo, "ownervoucher_AnimalID", "ownervoucher", "AnimalID")
+    add_index(dbo, "ownervoucher_DatePresented", "ownervoucher", "DatePresented")
+    add_index(dbo, "ownervoucher_VoucherCode", "ownervoucher", "VoucherCode")
+    # Set the default vouchercode to ID padded to 6 digits
+    dbo.execute_dbupdate("UPDATE ownervoucher SET VoucherCode = %s" % dbo.sql_zero_pad_left("ID", 6))
+
+def update_34305(dbo):
+    # Add vaccinationtype.RescheduleDays
+    add_column(dbo, "vaccinationtype", "RescheduleDays", dbo.type_integer)
+    dbo.execute_dbupdate("UPDATE vaccinationtype SET RescheduleDays = 0 WHERE RescheduleDays Is Null")
+    # Add animallost.MicrochipNumber and animalfound.MicrochipNumber
+    add_column(dbo, "animallost", "MicrochipNumber", dbo.type_shorttext)
+    add_column(dbo, "animalfound", "MicrochipNumber", dbo.type_shorttext)
+    add_index(dbo, "animallost_MicrochipNumber", "animallost", "MicrochipNumber")
+    add_index(dbo, "animalfound_MicrochipNumber", "animalfound", "MicrochipNumber")
+    # Add animallostfoundmatch.LostMicrochipNumber/FoundMicrochipNumber
+    add_column(dbo, "animallostfoundmatch", "LostMicrochipNumber", dbo.type_shorttext)
+    add_column(dbo, "animallostfoundmatch", "FoundMicrochipNumber", dbo.type_shorttext)
+
+def update_34306(dbo):
+    # Add owner.IsAdopter flag
+    add_column(dbo, "owner", "IsAdopter", dbo.type_integer)
+    add_index(dbo, "owner_IsAdopter", "owner", "IsAdopter")
+    dbo.execute_dbupdate("UPDATE owner SET IsAdopter = (SELECT COUNT(*) FROM adoption WHERE OwnerID = owner.ID AND MovementType=1 AND MovementDate Is Not Null AND ReturnDate Is Null)")
+    dbo.execute_dbupdate("UPDATE owner SET IsAdopter = 1 WHERE IsAdopter > 0")
+
+def update_34400(dbo):
+    # Add new lksdonationfreq for fortnightly with ID 2
+    # This requires renumbering the existing frequencies up one as there was no spare slot
+    if dbo.query_int("SELECT MAX(ID) FROM lksdonationfreq") == 6: return # We already did this
+    l = dbo.locale
+    dbo.execute_dbupdate("UPDATE lksdonationfreq SET ID=6 WHERE ID=5")
+    dbo.execute_dbupdate("UPDATE lksdonationfreq SET ID=5 WHERE ID=4")
+    dbo.execute_dbupdate("UPDATE lksdonationfreq SET ID=4 WHERE ID=3")
+    dbo.execute_dbupdate("UPDATE lksdonationfreq SET ID=3 WHERE ID=2")
+    dbo.execute_dbupdate("UPDATE ownerdonation SET Frequency=Frequency+1 WHERE Frequency IN (2,3,4,5)")
+    dbo.execute_dbupdate("INSERT INTO lksdonationfreq (ID, Frequency) VALUES (2, ?)", [ _("Fortnightly", l) ])
+
+def update_34401(dbo):
+    # Add ownerdonation.PaymentProcessorData
+    add_column(dbo, "ownerdonation", "PaymentProcessorData", dbo.type_longtext)
+
+def update_34402(dbo):
+    # Add media.CreatedDate
+    add_column(dbo, "media", "CreatedDate", dbo.type_datetime)
+    add_index(dbo, "media_CreatedDate", "media", "CreatedDate")
+    dbo.execute_dbupdate("UPDATE media SET CreatedDate=Date")
+
+def update_34403(dbo):
+    # Add onlineformfield.VisibleIf
+    add_column(dbo, "onlineformfield", "VisibleIf", dbo.type_shorttext)
+    dbo.execute_dbupdate("UPDATE onlineformfield SET VisibleIf=''")
+
+def update_34404(dbo):
+    # Add animal.OwnerID
+    add_column(dbo, "animal", "OwnerID", dbo.type_integer)
+    add_index(dbo, "animal_OwnerID", "animal", "OwnerID")
+    # Set currentownerid for non-shelter animals
+    dbo.execute_dbupdate("UPDATE animal SET OwnerID = OriginalOwnerID WHERE NonShelterAnimal=1")
+    # Set currentownerid for animals with an active exit movement
+    dbo.execute_dbupdate("UPDATE animal SET OwnerID = " \
+        "(SELECT OwnerID FROM adoption WHERE ID = animal.ActiveMovementID) " \
+        "WHERE Archived = 1 AND ActiveMovementType IN (1, 3, 5)")
+    # Remove nulls
+    dbo.execute_dbupdate("UPDATE animal SET OwnerID = 0 WHERE OwnerID Is Null")
+
+def update_34405(dbo):
+    # Correct payment amounts to gross where sales tax exists.
+    # This query only updates the amount if the tax value matches
+    # an exclusive of tax calculation.
+    # Eg: amount = 100, vat = 6, rate = 6 - will update amount to 106 because 100 * 0.06 == 6.0
+    #     amount = 106, vat = 6, rate = 6 - will not update as 106 * 0.06 == 6.35
+    dbo.execute_dbupdate("UPDATE ownerdonation SET donation = donation + vatamount, " \
+        "LastChangedBy = %s " \
+        "WHERE isvat = 1 and vatamount > 0 and vatrate > 0 and vatamount = ((donation / 100.0) * vatrate)" % 
+        dbo.sql_concat(["LastChangedBy", "'+dbupdate34405'"]))
+
+def update_34406(dbo):
+    # Remove bloated items from the config table that now live in the disk cache
+    dbo.execute_dbupdate("DELETE FROM configuration WHERE ItemName IN " \
+        "('ASMNews', 'LookingForReport', 'LookingForLastMatchCount', 'LostFoundReport', LostFoundLastMatchCount')")

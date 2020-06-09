@@ -1,9 +1,10 @@
-/*jslint browser: true, forin: true, eqeq: true, white: true, sloppy: true, vars: true, nomen: true */
 /*global $, jQuery, _, asm, common, config, controller, dlgfx, format, header, html, tableform, validate */
 
 $(function() {
 
-    var csvimport = {
+    "use strict";
+
+    const csvimport = {
 
         render: function() {
             return [
@@ -61,7 +62,7 @@ $(function() {
                 $("#import").button("disable");
                 $("#csvform").submit();
             });
-            var cme = function() {
+            const cme = function() {
                 if ($("#createmissinglookups").prop("checked")) {
                     $("#createmissinglookupsexplain").fadeIn();
                 }
@@ -69,7 +70,7 @@ $(function() {
                     $("#createmissinglookupsexplain").fadeOut();
                 }
             };
-            var cte = function() {
+            const cte = function() {
                 if ($("#cleartables").prop("checked")) {
                     $("#cleartablesexplain").fadeIn();
                 }
@@ -77,7 +78,7 @@ $(function() {
                     $("#cleartablesexplain").fadeOut();
                 }
             };
-            var cde = function() {
+            const cde = function() {
                 if ($("#checkduplicates").prop("checked")) {
                     $("#checkduplicatesexplain").fadeIn();
                 }

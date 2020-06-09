@@ -1,12 +1,13 @@
-/*jslint browser: true, forin: true, eqeq: true, white: true, sloppy: true, vars: true, nomen: true */
 /*global $, jQuery, _, asm, common, config, controller, dlgfx, format, header, html, tableform, validate */
 
 $(function() {
+    
+    "use strict";
 
-    var animal_bulk = {
+    const animal_bulk = {
 
         render: function() {
-            var choosetypes = [];
+            let choosetypes = [];
             $.each(controller.movementtypes, function(i, v) {
                 if (v.ID == 8 && !config.bool("DisableRetailer")) {
                     choosetypes.push(v);
@@ -17,7 +18,12 @@ $(function() {
             });
             return [
                 html.content_header(_("Bulk change animals")),
-                '<table class="asm-table-layout" style="padding-bottom: 5px;">',
+                '<table width="100%" class="asm-table-layout" style="padding-bottom: 5px;">',
+                '<tr>',
+                '<td>',
+                
+                // left table
+                '<table width="60%" class="asm-table-layout">',
                 '<tr>',
                 '<td>',
                 '<label for="animals">' + _("Animals") + '</label>',
@@ -48,7 +54,24 @@ $(function() {
                 html.list_to_options(controller.internallocations, "ID", "LOCATIONNAME"),
                 '</select></td>',
                 '</tr>',
+                '<tr id="entryreasonrow">',
+                '<td><label for="entryreason">' + _("Entry Category") + '</label></td>',
+                '<td>',
+                '<select id="entryreason" data-post="entryreason" class="asm-selectbox" title="' + html.title(_("The entry reason for this animal")) + '">',
+                '<option value="-1">' + _("(no change)") + '</option>',
+                html.list_to_options(controller.entryreasons, "ID", "REASONNAME"),
+                '</select></td>',
+                '</tr>',
 
+                '<tr id="holdrow">',
+                '<td>',
+                '<label for="holduntil">' + _("Hold until") + '</label>',
+                '</td>',
+                '<td>',
+                '<input id="holduntil" data-post="holduntil" class="asm-textbox asm-datebox" />',
+                '</td>',
+                '</tr>',
+                
                 '<tr id="feerow">',
                 '<td><label for="fee">' + _("Adoption Fee") + '</label></td>',
                 '<td><input id="fee" data-post="fee" class="asm-currencybox asm-textbox" /></td>',
@@ -57,6 +80,16 @@ $(function() {
                 '<tr id="boardingcostrow">',
                 '<td><label for="boardingcost">' + _("Daily Boarding Cost") + '</label></td>',
                 '<td><input id="boardingcost" data-post="boardingcost" class="asm-currencybox asm-textbox" /></td>',
+                '</tr>',
+
+                '<tr id="animalflagsrow">',
+                '<td><label for="addflag">' + _("Add Flag") + '</label></td>',
+                '<td>',
+                '<select id="addflag" data-post="addflag" class="asm-selectbox">',
+                '<option value=""></option>',
+                html.list_to_options(controller.flags, "FLAG", "FLAG"),
+                '</select>',
+                '</td>',
                 '</tr>',
 
                 '<tr>',
@@ -108,7 +141,7 @@ $(function() {
                 '<td>',
                 '<select class="asm-selectbox" id="goodwithkids" data-post="goodwithkids">',
                 '<option value="-1">' + _("(no change)") + '</option>',
-                html.list_to_options(controller.ynun, "ID", "NAME"),
+                html.list_to_options(controller.ynunk, "ID", "NAME"),
                 '</select>',
                 '</td>',
                 '</tr>',
@@ -123,6 +156,14 @@ $(function() {
                 '</select>',
                 '</td>',
                 '</tr>',
+                '</table>',
+
+                // end left table
+                '</td>',
+                '<td>',
+
+                // right table
+                '<table>',
 
                 '<tr id="neuteredrow">',
                 '<td>',
@@ -134,20 +175,11 @@ $(function() {
                 '</tr>',
 
                 '<tr id="neuteringvetrow">',
-                '<td>',
+                '<td class="bottomborder">',
                 '<label for="neuteringvet">' + _("By") + '</label>',
                 '</td>',
-                '<td>',
+                '<td class="bottomborder">',
                 '<input id="neuteringvet" data-post="neuteringvet" data-mode="brief" data-filter="vet" type="hidden" class="asm-personchooser" />',
-                '</td>',
-                '</tr>',
-
-                '<tr id="holdrow">',
-                '<td>',
-                '<label for="holduntil">' + _("Hold until") + '</label>',
-                '</td>',
-                '<td>',
-                '<input id="holduntil" data-post="holduntil" class="asm-textbox asm-datebox" />',
                 '</td>',
                 '</tr>',
 
@@ -170,21 +202,11 @@ $(function() {
                 '</tr>',
 
                 '<tr id="ownersvetrow">',
-                '<td>',
+                '<td class="bottomborder">',
                 '<label for="ownersvet">' + _("Owners Vet") + '</label>',
                 '</td>',
-                '<td>',
+                '<td class="bottomborder">',
                 '<input id="ownersvet" data-post="ownersvet" type="hidden" data-filter="vet" class="asm-personchooser"  />',
-                '</td>',
-                '</tr>',
-
-                '<tr id="animalflagsrow">',
-                '<td><label for="addflag">' + _("Add Flag") + '</label></td>',
-                '<td>',
-                '<select id="addflag" data-post="addflag" class="asm-selectbox">',
-                '<option value=""></option>',
-                html.list_to_options(controller.flags, "FLAG", "FLAG"),
-                '</select>',
                 '</td>',
                 '</tr>',
 
@@ -201,16 +223,40 @@ $(function() {
                 '</tr>',
 
                 '<tr id="movetorow">',
-                '<td>',
+                '<td class="bottomborder">',
                 '<label for="moveto">' + _("to") + '</label>',
                 '</td>',
-                '<td>',
+                '<td class="bottomborder">',
                 '<input id="moveto" data-post="moveto" type="hidden" data-filter="all" class="asm-personchooser" />',
                 '</td>',
                 '</tr>',
 
+                '<tr id="logrow">',
+                '<td><label for="logtype">' + _("Add Log") + '</label></td>',
+                '<td>',
+                '<select id="logtype" data-post="logtype" class="asm-halfselectbox">',
+                '<option value="-1"></option>',
+                html.list_to_options(controller.logtypes, "ID", "LOGTYPENAME"),
+                '</select> ',
+                _("on"),
+                ' <input id="logdate" data-post="logdate" type="text" class="asm-datebox asm-halftextbox" />',
+                '</td>',
+                '</tr>',
 
+                '<tr id="lognotesrow">',
+                '<td colspan="2">',
+                '<textarea id="lognotes" data-post="lognotes" rows=3 class="asm-textarea"></textarea>',
+                '</td>',
+                '</tr>',
+
+                // end right table
                 '</table>',
+
+                // end outer table
+                '</td>',
+                '</tr>',
+                '</table>',
+
                 '<div class="centered">',
                 '<button id="button-update">' + html.icon("animal") + ' ' + _("Update") + '</button> ',
                 '<button id="button-delete">' + html.icon("delete") + ' ' + _("Delete") + '</button>',
@@ -224,38 +270,36 @@ $(function() {
             // Litter autocomplete
             $("#litterid").autocomplete({source: html.decode(controller.autolitters)});
 
-            $("#button-update").button().click(function() {
+            $("#button-update").button().click(async function() {
                 if (!validate.notblank([ "animals" ])) { return; }
                 $("#button-update").button("disable");
                 header.show_loading(_("Updating..."));
-                var formdata = "mode=update&" + $("input, select, textarea").toPOST();
-                common.ajax_post("animal_bulk", formdata)
-                    .then(function(data) {
-                        header.hide_loading();
-                        header.show_info(_("{0} animals successfully updated.").replace("{0}", data));
-                    })
-                    .always(function() {
-                        $("#button-update").button("enable");
-                    });
+                let formdata = "mode=update&" + $("input, select, textarea").toPOST();
+                try {
+                    let response = await common.ajax_post("animal_bulk", formdata);
+                    header.hide_loading();
+                    header.show_info(_("{0} animals successfully updated.").replace("{0}", response));
+                }
+                finally {
+                    $("#button-update").button("enable");
+                }
             });
 
-            $("#button-delete").button().click(function() {
+            $("#button-delete").button().click(async function() {
                 if (!validate.notblank([ "animals" ])) { return; }
-                tableform.delete_dialog(null, _("This will permanently remove the selected animals, are you sure?"))
-                    .then(function() {
-                        $("#button-delete").button("disable");
-                        header.show_loading(_("Deleting..."));
-                        var formdata = "mode=delete&" + $("input, select, textarea").toPOST();
-                        common.ajax_post("animal_bulk", formdata)
-                            .then(function(data) {
-                                header.hide_loading();
-                                header.show_info(_("{0} animals successfully deleted.").replace("{0}", data));
-                                $("#animals").animalchoosermulti("clear");
-                            })
-                            .always(function() {
-                                $("#button-delete").button("enable");
-                            });
-                    });
+                try {
+                    await tableform.delete_dialog(null, _("This will permanently remove the selected animals, are you sure?"));
+                    $("#button-delete").button("disable");
+                    header.show_loading(_("Deleting..."));
+                    let formdata = "mode=delete&" + $("input, select, textarea").toPOST();
+                    let response = await common.ajax_post("animal_bulk", formdata);
+                    header.hide_loading();
+                    header.show_info(_("{0} animals successfully deleted.").replace("{0}", response));
+                    $("#animals").animalchoosermulti("clear");
+                }
+                finally {
+                    $("#button-delete").button("enable");
+                }
             });
 
             if (!common.has_permission("ca")) { $("#button-update").hide(); }

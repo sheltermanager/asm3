@@ -56,6 +56,12 @@ The All Publishers tab allows you to set options common to all internet publishe
   Animals who are marked as held awaiting reclaim will *not* be registered until
   after the hold is removed.
 
+* Update adoption websites every: Some adoption websites will accept updates
+  more frequently than the 24 hour default. Setting this option to a value
+  smaller than 24 will update those services at the chosen interval. Services
+  affected by this value are PetFinder, AdoptAPet, PetRescue, SavourLife and
+  Maddie's Pet Assistant
+
 * Reupload animal images every time: Ticking this box will tell the publisher
   to reupload images for all the animals published. Normally, ASM will not
   upload an image it has previously uploaded to save bandwidth. ASM will detect
@@ -71,6 +77,10 @@ The All Publishers tab allows you to set options common to all internet publishe
 
 * Order published animals by: Sorts the list of animals before they are
   published.
+
+* Thumbnail size: Controls the size of thumbnails the system generates for adoptable 
+  animal publishers (in particular the ones used by the javascript include 
+  method of website integration). The size is for the thumbnail's longest side.
 
 * Animal descriptions: This determines the source of the main description for
   animals when being published. For the HTML/FTP publisher, this is the source
@@ -94,6 +104,8 @@ and age, or arranged numerically with a fixed number of animals per page. In
 addition, a recently adopted page can be generated along with an rss.xml for
 feed readers.
 
+.. warning:: Static HTML publishing is deprecated for sheltermanager.com and will not be available in the future.
+
 * Generate javascript database: The site search facilities require a Javascript
   database, indexing the available animal records. If you wish to include
   search facilities, make sure this box is ticked. 
@@ -104,7 +116,7 @@ feed readers.
   in a template to get the thumbnail image for the current animal. 
 
 * Thumbnail size: The desired length in pixels of the longest side of the
-  thumbnail.
+  generated thumbnail.
 
 * Output a separate page for each animal type: Output extra pages of the form
   ANIMALTYPE.EXTENSION, eg: Miscellaneous.html. This means you can reference
@@ -155,13 +167,9 @@ feed readers.
   per page, however the more animals you put on a page, the longer the page
   will take to load.
 
-* Scale published images to: Modern digital cameras can take very high quality
-  images - so much so that they could take a very long time for users to
-  download (particularly for people with modems). Also, if your shelter's
-  connection to the internet is over a modem, it could take a long time for the
-  site to upload. This box allows you to reduce the size of your images to
-  scaled JPEGs with the resolutions specified. ASM scales down pictures when
-  you attach them under the media tab, so unless you want to make them smaller
+* Scale published images to: This box allows you to reduce the size of your
+  animal images to a particular resolution.  ASM scales down pictures when you
+  attach them under the media tab, so unless you want to make them smaller
   still, it's best to leave this at No Scaling.  
   
 * Publish to folder: Choose the folder where output is to be generated. 
@@ -271,13 +279,6 @@ ASM can send data to Maddie's Fund/MPA - an application to provide information
 and interactive help to fosterers, adopters and other caregivers. Basic data on
 the animal and contact information for the adopter/fosterer is sent.
 
-meetapet.com
-------------
-
-ASM can send adoptable animal information to www.meetapet.com, an adoption
-website. After signing up with them, you will need to get a secret and shelter
-key from them in order to send them data.
-
 petfinder.com
 -------------
 
@@ -294,9 +295,6 @@ filtering animals are the same (see previous section for reference).
 
 If you have some that are not mapped, the publisher will fail with an error
 message.
-
-The “Upload all available images” option will upload all animal photos to
-PetFinder instead of just the preferred.
 
 PetFinder has some quirks in that they indicate an unknown crossbreed by having
 a blank secondary breed with the crossbreed flag set. Since ASM doesn't allow
@@ -321,8 +319,23 @@ Publish to PetRescue.com.au in place of the normal internet publisher. The
 options for filtering animals are the same (see previous section for
 reference).
 
-Options are available to override the desex flag to send all your animals and mark
-whether you will fly animals between states for adoption.
+Options are available to override the desex flag to send all your animals and to 
+indicate which states you will adopt animals to. These are necessary as some
+states have different rules on whether a microchip number or other identifier 
+is needed. The state the animal is currently located in (from the fosterer
+record if available or shelter details) is implicitly added to this set.
+
+ASM will determined if your animals are vaccinated, wormed or heartworm treated
+and indicate this to PetRescue via the following rules:
+
+* If the animal has at least 1 previously given vaccination on file and there
+  are no vaccinations outstanding, the vaccination flag is set.
+
+* If the animal has a medical treatment containing the word "worm" and not
+  the word "heart" in the last 6 months, the wormed flag is set.
+
+* If the animal has a medical treatment containing the words "heart" and
+  "worm" in the last 6 months, the heartworm treated flag is set.
 
 PetRescue have a number of extra fields that you can set by creating additional
 animal fields with certain names in your database. The system responds to the
@@ -342,6 +355,8 @@ animal records.
 * bredincareofgroup (Yes/No): Indicates the animal was bred whilst in the care
   of the group. Setting this to true makes breederid mandatory for all listings
   in South Australia after July 2018.
+
+* needsfoster (Yes/No): Indicates that foster care is required for the animal.
 
 * sourcenumber (Text): Required for all cat and dog listings in Victoria
 
@@ -384,6 +399,18 @@ password given to you by SavourLife. The options for filtering animals are the
 same as for other publishers, although ASM will only send dogs (Species 1) as
 SavourLife will not accept listings for other species of animals.
 
+ASM will determined if your dogs are vaccinated, wormed or heartworm treated
+and indicate this to SavourLife via the following rules:
+
+* If the animal has at least 1 previously given vaccination on file and there
+  are no vaccinations outstanding, the vaccination flag is set.
+
+* If the animal has a medical treatment containing the word "worm" and not
+  the word "heart" in the last 6 months, the wormed flag is set.
+
+* If the animal has a medical treatment containing the words "heart" and
+  "worm" in the last 6 months, the heartworm treated flag is set.
+
 SavourLife have extra fields that you can set by creating additional 
 fields with certain names in your database. The system responds to the field
 names, you can label them anything you want, they must be linked to animal
@@ -393,6 +420,8 @@ records.
   number that can be given to the shelter. This enquiry number is used to link
   adopters with the adopted animal and qualify them for free food from
   SavourLife.
+
+* needsfoster (Yes/No): Indicates that foster care is required for the animal.
 
 .. note:: SavourLife integration relies on you naming your breeds and species with the same values that they do. If a breed does not match one of the SavourLife breeds, ASM will send it as "Mixed Breed" instead. 
 
@@ -448,6 +477,13 @@ sends their information and new owner info to Anibase to update their records.
 ASM tracks the date Anibase was last updated, so if the animal is returned and
 adopted again, another update will be done automatically.
 
+AKC Reunite
+----------
+
+ASM can register microchips with AKC Reunite, part of the American Kennel Club,
+who supply microchips to US organisations and pet owners. AKC microchips are 
+either 15-digits, starting with 956 or 10-digits, starting with 0006 or 0007.
+
 FoundAnimals
 -------
 
@@ -461,6 +497,12 @@ to configure in ASM.
 ASM will attempt to register all microchips with foundanimals.org and as with
 the other chip registration publishers, will track when it last updated a
 chip with them in case of subsequent adoption or reclaim.
+
+HomeAgain
+----------
+
+ASM can register microchips with HomeAgain, a company that supplies microchips
+to US shelters and pet owners. HomeAgain microchips are 15-digits, starting with 985.
 
 PetLink
 -------
@@ -493,16 +535,19 @@ SmartTag also supply ISO microchips. ASM will also register SmartTag microchips
 (15 digits starting with 90007400) in a similar manner to ASM's other chip
 registration publishers.
 
-VetEnvoy US (HomeAgain and AKC Reunite)
----------------------------------------
+Exclude animals from specific publishers
+----------------------------------------
 
-ASM can also use the VetEnvoy service in the US to register microchips with
-HomeAgain and AKC Reunite.
+It is possible to exclude an animal from a specific publisher. To do this,
+create a new animal flag called "Exclude from PUBLISHER", where PUBLISHER is
+the name of the service you wish to exclude. Eg: "Exclude from PetFinder".
 
-ASM will find all HomeAgain microchips (15 digits starting with 985) and AKC
-Reunite microchips (15 digits starting with 956) that have been adopted and
-will register the animal and new owner information. As with the other microchip
-providers, ASM will register the chip again if the animal is returned and
-adopted to a new owner.
+Assigning this animal flag to your animal will then prevent it being sent by
+that publisher. You can create flags for all the 3rd party publishers you use
+and assign them in combination where necessary.
 
+The flag names are not case sensitive. The names should not include any domains,
+eg: petfinder, adoptapet, rescuegroups, maddiesfund, petrescue, savourlife
 
+This is useful in situations where you get inundanted with applications for
+very popular animals and only want to put them on your own website.

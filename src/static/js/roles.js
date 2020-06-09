@@ -1,7 +1,8 @@
-/*jslint browser: true, forin: true, eqeq: true, white: true, sloppy: true, vars: true, nomen: true */
 /*global $, jQuery, _, asm, common, config, controller, dlgfx, format, header, html, tableform, validate */
 
 $(function() {
+
+    "use strict";
 
     var roles = {
 
@@ -11,7 +12,7 @@ $(function() {
             var h = [
                 '<div id="dialog-add" style="display: none" title="' + html.title(_("Add role")) + '">',
                 '<div class="ui-state-highlight ui-corner-all" style="margin-top: 20px; padding: 0 .7em">',
-                '<p><span class="ui-icon ui-icon-info" style="float: left; margin-right: .3em;"></span>',
+                '<p><span class="ui-icon ui-icon-info"></span>',
                 _("Roles need a name."),
                 '</p>',
                 '</div>',
@@ -34,6 +35,7 @@ $(function() {
                 cr("va", _("View Animals")),
                 cr("da", _("Delete Animals")),
                 cr("cloa", _("Clone Animals")),
+                cr("ma", _("Merge Animals")),
                 cr("gaf", _("Generate Documents")),
                 cl(_("Litters")),
                 cr("all", _("Add Litter")),
@@ -82,7 +84,10 @@ $(function() {
                 cr("vrd", _("View Document Repository")),
                 cr("drd", _("Delete Document from Repository")),
                 cl(_("Online Forms")),
-                cr("eof", _("Edit Online Forms")),
+                cr("aof", _("Add Online Forms")),
+                cr("vof", _("View Online Forms")),
+                cr("eof", _("Change Online Forms")),
+                cr("dof", _("Delete Online Forms")),
                 cr("vif", _("View Incoming Forms")),
                 cr("dif", _("Delete Incoming Forms")),
                 '</p>',
@@ -181,6 +186,7 @@ $(function() {
                 cl(_("Rota")),
                 cr("aoro", _("Add Rota")),
                 cr("voro", _("View Rota")),
+                cr("vsro", _("View Staff Rota")),
                 cr("coro", _("Change Rota")),
                 cr("doro", _("Delete Rota")),
                 cl(_("Stock Control")),
@@ -260,13 +266,13 @@ $(function() {
             $("#table-roles").table();
 
             $("#table-roles input").change(function() {
-                if ($("#table-roles input:checked").size() > 0) {
+                if ($("#table-roles input:checked").length > 0) {
                     $("#button-delete").button("option", "disabled", false); 
                 }
                 else {
                     $("#button-delete").button("option", "disabled", true); 
                 }
-                if ($("#table-roles input:checked").size() == 1) {
+                if ($("#table-roles input:checked").length == 1) {
                     $("#button-clone").button("option", "disabled", false);
                 }
                 else {
@@ -334,7 +340,7 @@ $(function() {
             $("#button-new").button().click(function() {
                validate.reset("dialog-add");
                $("#dialog-add .asm-textbox").val("");
-               $("#dialog-add input:checkbox").attr("checked", false);
+               $("#dialog-add input:checkbox").prop("checked", false);
                $("#dialog-add").dialog("option", "buttons", addbuttons);
                $("#dialog-add").dialog("option", "title", _("Add role"));
                $("#dialog-add").dialog("open"); 
@@ -350,9 +356,9 @@ $(function() {
                 var rolename = $(rrow + ".role-name").val();
                 var perms = $(rrow + ".role-map").val().replace(/\*/g, "").split(" ");
                 $("#rolename").val(_("Copy of {0}").replace("{0}", rolename));
-                $(".token").attr("checked", false);
+                $(".token").prop("checked", false);
                 $.each(perms, function(i, v) {
-                    $("#" + v).prop("checked", true);
+                    if (v) { $("#" + v).prop("checked", true); }
                 });
                 validate.reset("dialog-add");
                 $("#dialog-add").dialog("option", "buttons", addbuttons);
@@ -386,9 +392,9 @@ $(function() {
                 $("#roleid").val($(this).attr("data"));
                 $("#rolename").val($(rrow + ".role-name").val());
                 var perms = $(rrow + ".role-map").val().replace(/\*/g, "").split(" ");
-                $(".token").attr("checked", false);
+                $(".token").prop("checked", false);
                 $.each(perms, function(i, v) {
-                    $("#" + v).prop("checked", true);
+                    if (v) { $("#" + v).prop("checked", true); }
                 });
                 $("#dialog-add").dialog("option", "buttons", editbuttons);
                 $("#dialog-add").dialog("option", "title", _("Edit role"));

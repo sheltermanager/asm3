@@ -3,7 +3,17 @@
 Appendix: CSV file import fields
 ================================
 
-ASM will recognise columns with the following names when importing CSV files. Where you wish to supply multiple rows for the same animal (such as for vaccinations or regimens), make sure you have a populated ANIMALCODE column, similarly for multiple rows to people (such as movements, licenses, etc) make sure you have populated person data.
+ASM will recognise columns with the following names when importing CSV files.
+Where you wish to supply multiple rows for the same animal (such as for
+vaccinations or regimens), make sure you have a populated ANIMALCODE column,
+similarly for multiple rows to people (such as movements, licenses, etc) make
+sure you have populated person data.
+
+When processing animal records that already exist, there are certain key fields
+that will be overwritten on the existing animal from the CSV data. These fields
+are ANIMALNEUTERED[DATE], ANIMALMICROCHIP[DATE] and ANIMALHEALTHPROBLEMS. This
+allows you to use a spreadsheet of data on chipping/neutering days and import
+that data to your existing animals afterwards.
 
 ANIMALCODE
     A code for the animal. If supplied, it will set the sheltercode and short sheltercode fields. If not supplied, the system will generate a code for the animal to the appropriate scheme. If you have manual codes turned on and no animal code is supplied, an error message will be displayed and the import abandoned.
@@ -15,8 +25,11 @@ ANIMALNONSHELTER
     Y/N to indicate whether this animal is a owned by a member of the public and not a shelter animal
 ANIMALNOTFORADOPTION
     Y/N to indicate whether this animal is not available for adoption (Y is not available).
+ANIMALFLAGS
+    A comma separated list of animal flags, including builtins courtesy,
+    crueltycase, notforadoption, notforregistration, nonshelter, quarantine
 ANIMALSEX
-    The animal's gender. ASM looks for the initial letter “M” in the string to indicate male.
+    The animal's gender. ASM looks for the initial letter “M” in the string to indicate male, "F" for Female or "U" for Unknown.
 ANIMALTYPE
     The animal's type. This should correspond to one of ASM's animal types from your database.
 ANIMALCOLOR
@@ -193,7 +206,7 @@ PERSONMATCHADDED
 PERSONMATCHEXPIRES
     The date the system should stop looking for matches
 PERSONMATCHSEX
-    The gender of the animal the person is looking for
+    The gender. ASM looks for the initial letter “M” in the string to indicate male, "F" for Female, "U" for Unknown or "A" for any
 PERSONMATCHSIZE
     The size of the animal the person is looking for
 PERSONMATCHCOLOR
@@ -212,6 +225,16 @@ PERSONMATCHCOMMENTSCONTAIN
     The animal this person is looking for will have this value in its comments
 PERSONADDITIONAL<fieldname>
     If you have person additional fields defined, you can put the uppercased version of their name as a suffix to this. Eg, for an additional field called DateOfBirth PERSONADDITIONALDATEOFBIRTH
+TESTTYPE
+   The type of test on this line
+TESTRESULT
+   The test result
+TESTDUEDATE
+   The due date for the test
+TESTPERFORMEDDATE
+   The date the test was performed
+TESTCOMMENTS
+   Any comments for the test
 VACCINATIONTYPE
     The type of vaccination on this line 
 VACCINATIONDUEDATE

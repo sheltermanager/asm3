@@ -4,14 +4,10 @@ import asm3.i18n
 import asm3.medical
 
 from .base import FTPPublisher
-from asm3.sitedefs import PETFINDER_FTP_HOST
+from asm3.sitedefs import PETFINDER_FTP_HOST, PETFINDER_SEND_PHOTOS_BY_FTP
 
 import os
 import sys
-
-# PetFinder currently can't support photo URLs with querystring parameters
-# When this value is True, we send the images by FTP. Once they can support photo URLs, set this to false.
-SEND_IMAGES_BY_FTP = True
 
 class PetFinderPublisher(FTPPublisher):
     """
@@ -31,7 +27,7 @@ class PetFinderPublisher(FTPPublisher):
 
     def pfDate(self, d):
         """ Returns a CSV entry for a date in YYYY-MM-DD """
-        return "\"%s\"" % asm3.i18n.format_date("%Y-%m-%d", d)
+        return "\"%s\"" % asm3.i18n.format_date(d, "%Y-%m-%d")
 
     def pfYesNo(self, condition):
         """
@@ -73,11 +69,13 @@ class PetFinderPublisher(FTPPublisher):
             self.setLastError("No PetFinder.com shelter id has been set.")
             self.cleanup()
             return
+
+        # NOTE: We still publish even if there are no animals. This prevents situations
+        # where the last animal can't be removed from PetFinder because the shelter
+        # has no animals to send.
         animals = self.getMatchingAnimals()
         if len(animals) == 0:
-            self.setLastError("No animals found to publish.")
-            self.cleanup()
-            return
+            self.logError("No animals found to publish, sending empty file.")
 
         if not self.openFTPSocket(): 
             self.setLastError("Failed opening FTP socket.")
@@ -101,7 +99,23 @@ class PetFinderPublisher(FTPPublisher):
             agebands = "182,730,3285"
         agebands = [ int(i) for i in agebands.split(",") ]
 
-        csv = []
+        # It's part of PetFinder's TOS that they will not list animals that
+        # are either unaltered, or the shelter will not pre-pay the cost
+        # of sterilisation after adoption.
+        # At least one of our customers cannot offer this, using a deposit
+        # scheme instead which is not covered. They still want to display 
+        # unaltered animals on their own website, so the single "Include unaltered" 
+        # publishing option is not enough for them. We need an extra
+        # config switch to prevent sending unaltered animals to PetFinder
+        # in these cases.
+        hide_unaltered = asm3.configuration.petfinder_hide_unaltered(self.dbo)
+
+        csv = [ "ID,Internal,AnimalName,PrimaryBreed,SecondaryBreed,Sex,Size,Age,Desc,Type,Status," \
+            "Shots,Altered,NoDogs,NoCats,NoKids,Housetrained,Declawed,specialNeeds,Mix," \
+            "photo1,photo2,photo3,photo4,photo5,photo6,arrival_date,birth_date," \
+            "primaryColor,secondaryColor,tertiaryColor,coat_length," \
+            "adoption_fee,display_adoption_fee,adoption_fee_waived," \
+            "special_needs_notes,no_other,no_other_note,tags" ]
 
         anCount = 0
         for an in animals:
@@ -117,8 +131,12 @@ class PetFinderPublisher(FTPPublisher):
                     self.cleanup()
                     return
 
-                if SEND_IMAGES_BY_FTP:
+                if PETFINDER_SEND_PHOTOS_BY_FTP:
                     self.uploadImages(an, False, 3)
+
+                if hide_unaltered and an.NEUTERED == 0:
+                    self.log("%s is unaltered and petfinder_hide_unaltered == true" % an["ANIMALNAME"])
+                    continue
 
                 csv.append( self.processAnimal(an, agebands) )
 
@@ -150,7 +168,7 @@ class PetFinderPublisher(FTPPublisher):
         # Internal
         line.append("\"%s\"" % an.SHELTERCODE)
         # AnimalName
-        line.append("\"%s\"" % an.ANIMALNAME.replace("\"", "\"\""))
+        line.append("\"%s\"" % an.ANIMALNAME)
         # PrimaryBreed
         line.append("\"%s\"" % an.PETFINDERBREED)
         # SecondaryBreed
@@ -204,7 +222,7 @@ class PetFinderPublisher(FTPPublisher):
         # Mix
         line.append(self.pfYesNo(an.CROSSBREED == 1))
         # photo1-6
-        if SEND_IMAGES_BY_FTP:
+        if PETFINDER_SEND_PHOTOS_BY_FTP:
             # Send blanks for the 6 images if we already sent them by FTP
             line.append("\"\"")
             line.append("\"\"")
@@ -249,5 +267,5 @@ class PetFinderPublisher(FTPPublisher):
         line.append("\"\"")
         # Tags
         line.append("\"\"")
-        return ",".join(line)
+        return self.csvLine(line)
 

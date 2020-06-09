@@ -8,7 +8,7 @@ an argument to function_task, and having the function code call
 async.set_progress_value(>100) or async.increment_progress_value()
 """
 
-import asm3.cachemem
+import asm3.cachedisk
 
 import threading
 
@@ -16,11 +16,11 @@ lc = {}
 
 def get(dbo, k):
     """ Retrieve a task value for this database """
-    return asm3.cachemem.get("%s.%s" % (dbo.database, k))
+    return asm3.cachedisk.get(k, dbo.database)
 
 def put(dbo, k, v):
     """ Store a task value for this database """
-    asm3.cachemem.put("%s.%s" % (dbo.database, k), v, 3600)
+    asm3.cachedisk.put(k, dbo.database, v, 3600)
 
 def is_task_running(dbo):
     """ Returns True if a task is running """

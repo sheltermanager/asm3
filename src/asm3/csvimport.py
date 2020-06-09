@@ -3,6 +3,7 @@ import asm3.additional
 import asm3.al
 import asm3.animal
 import asm3.asynctask
+import asm3.cachedisk
 import asm3.configuration
 import asm3.dbupdate
 import asm3.financial
@@ -22,12 +23,13 @@ VALID_FIELDS = [
     "ANIMALBREED2", "ANIMALDOB", "ANIMALLOCATION", "ANIMALUNIT", 
     "ANIMALSPECIES", "ANIMALAGE", 
     "ANIMALCOMMENTS", "ANIMALMARKINGS", "ANIMALNEUTERED", "ANIMALNEUTEREDDATE", "ANIMALMICROCHIP", "ANIMALMICROCHIPDATE", 
-    "ANIMALENTRYDATE", "ANIMALDECEASEDDATE", "ANIMALCODE",
+    "ANIMALENTRYDATE", "ANIMALDECEASEDDATE", "ANIMALCODE", "ANIMALFLAGS",
     "ANIMALREASONFORENTRY", "ANIMALHIDDENDETAILS", "ANIMALNOTFORADOPTION", "ANIMALNONSHELTER", 
     "ANIMALGOODWITHCATS", "ANIMALGOODWITHDOGS", "ANIMALGOODWITHKIDS", 
     "ANIMALHOUSETRAINED", "ANIMALHEALTHPROBLEMS", "ANIMALIMAGE",
     "VACCINATIONTYPE", "VACCINATIONDUEDATE", "VACCINATIONGIVENDATE", "VACCINATIONEXPIRESDATE", 
     "VACCINATIONMANUFACTURER", "VACCINATIONBATCHNUMBER", "VACCINATIONCOMMENTS", 
+    "TESTTYPE", "TESTDUEDATE", "TESTPERFORMEDDATE", "TESTRESULT", "TESTCOMMENTS",
     "MEDICALNAME", "MEDICALDOSAGE", "MEDICALGIVENDATE", "MEDICALCOMMENTS",
     "ORIGINALOWNERTITLE", "ORIGINALOWNERINITIALS", "ORIGINALOWNERFIRSTNAME",
     "ORIGINALOWNERLASTNAME", "ORIGINALOWNERADDRESS", "ORIGINALOWNERCITY",
@@ -78,10 +80,10 @@ def gkd(dbo, m, f, usetoday = False):
     # If there's a space, then I guess we have time info - throw it away
     if lv.find(" ") > 0:
         lv = lv[0:lv.find(" ")]
-    # Now split it by either / or -
+    # Now split it by either / or - or .
     b = lv.split("/")
-    if lv.find("-") != -1:
-        b = lv.split("-")
+    if lv.find("-") != -1: b = lv.split("-")
+    if lv.find(".") != -1: b = lv.split(".")
     # We should have three date bits now
     if len(b) != 3:
         # We don't have a valid date, if use today is on return that
@@ -95,8 +97,8 @@ def gkd(dbo, m, f, usetoday = False):
             if asm3.utils.cint(b[0]) > 1900:
                 # it's Y/M/D
                 d = datetime.datetime(asm3.utils.cint(b[0]), asm3.utils.cint(b[1]), asm3.utils.cint(b[2]))
-            elif dbo.locale == "en":
-                # Assume it's M/D/Y for US
+            elif dbo.locale == "en" or dbo.locale == "en_CA":
+                # Assume it's M/D/Y for US and Canada
                 d = datetime.datetime(asm3.utils.cint(b[2]), asm3.utils.cint(b[0]), asm3.utils.cint(b[1]))
             else:
                 # Assume it's D/M/Y
@@ -179,6 +181,18 @@ def gkl(dbo, m, f, table, namefield, create):
         return str(nextid)
     return str(matchid)
 
+def gksx(m, f):
+    """ 
+    Reads a value for Sex from field f in map m
+    """
+    if f not in m: return ""
+    x = m[f].lower()
+    if x.startswith("f"): return "0"
+    elif x.startswith("m"): return "1"
+    elif x.startswith("u"): return "2"
+    elif x.startswith("a"): return "-1"
+    else: return ""
+
 def create_additional_fields(dbo, row, errors, rowno, csvkey = "ANIMALADDITIONAL", linktype = "animal", linkid = 0):
     # Identify any additional fields that may have been specified with
     # ANIMALADDITIONAL<fieldname>
@@ -215,35 +229,20 @@ def row_error(errors, rowtype, rowno, row, e, dbo, exinfo):
 
 def csvimport(dbo, csvdata, encoding = "utf8", user = "", createmissinglookups = False, cleartables = False, checkduplicates = False):
     """
-    Imports the csvdata (bytes string)
+    Imports csvdata (bytes string, encoded with encoding)
     createmissinglookups: If a lookup value is given that's not in our data, add it
     cleartables: Clear down the animal, owner and adoption tables before import
     """
-
-    csvdata = asm3.utils.bytes2str(csvdata)
-
-    # Convert line endings to standard unix lf to prevent
-    # the Python CSV importer barfing.
-    csvdata = csvdata.replace("\r\n", "\n")
-    csvdata = csvdata.replace("\r", "\n")
 
     if user == "":
         user = "import"
     else:
         user = "import/%s" % user
 
-    reader = None
-    if encoding == "utf8":
-        reader = asm3.utils.UnicodeCSVReader(asm3.utils.stringio(csvdata))
-    else:
-        reader = asm3.utils.UnicodeCSVReader(asm3.utils.stringio(csvdata), encoding=encoding)
+    rows = asm3.utils.csv_parse( asm3.utils.cunicode(csvdata, encoding=encoding) )
 
     # Make sure we have a valid header
-    cols = None
-    for row in reader:
-        cols = row
-        break
-    if cols is None:
+    if len(rows) == 0:
         asm3.asynctask.set_last_error(dbo, "Your CSV file is empty")
         return
 
@@ -251,6 +250,7 @@ def csvimport(dbo, csvdata, encoding = "utf8", user = "", createmissinglookups =
     hasanimal = False
     hasanimalname = False
     hasmed = False
+    hastest = False
     hasvacc = False
     hasperson = False
     haspersonlastname = False
@@ -263,12 +263,14 @@ def csvimport(dbo, csvdata, encoding = "utf8", user = "", createmissinglookups =
     hasdonationamount = False
     hasoriginalowner = False
     hasoriginalownerlastname = False
+    cols = rows[0].keys()
     for col in cols:
         if col in VALID_FIELDS: onevalid = True
         if col.startswith("ANIMAL"): hasanimal = True
         if col == "ANIMALNAME": hasanimalname = True
         if col.startswith("ORIGINALOWNER"): hasoriginalowner = True
         if col.startswith("VACCINATION"): hasvacc = True
+        if col.startswith("TEST"): hastest = True
         if col.startswith("MEDICAL"): hasmed = True
         if col.startswith("LICENSE"): haslicence = True
         if col == "LICENSENUMBER": haslicencenumber = True
@@ -326,6 +328,11 @@ def csvimport(dbo, csvdata, encoding = "utf8", user = "", createmissinglookups =
         asm3.asynctask.set_last_error(dbo, "Your CSV file has vaccination fields, but no animal to apply them to")
         return
 
+    # If we have any test fields, we need an animal
+    if hastest and not hasanimal:
+        asm3.asynctask.set_last_error(dbo, "Your CSV file has test fields, but no animal to apply them to")
+        return
+
     # If we have licence fields, we need a number
     if haslicence and not haslicencenumber:
         asm3.asynctask.set_last_error(dbo, "Your CSV file has license fields, but no LICENSENUMBER column")
@@ -335,18 +342,7 @@ def csvimport(dbo, csvdata, encoding = "utf8", user = "", createmissinglookups =
     if haslicence and not (haspersonlastname or haspersonname):
         asm3.asynctask.set_last_error(dbo, "Your CSV file has license fields, but no person to apply the license to")
 
-    # Read the whole CSV file into a list of maps. Note, the
-    # reader has a cursor at the second row already because
-    # we read the header in the first row above
-    data = []
-    for row in reader:
-        currow = {}
-        for i, col in enumerate(row):
-            if i >= len(cols): continue # skip if we run out of cols
-            currow[cols[i]] = col
-        data.append(currow)
-
-    asm3.al.debug("reading CSV data, found %d rows" % len(data), "csvimport.csvimport", dbo)
+    asm3.al.debug("reading CSV data, found %d rows" % len(rows), "csvimport.csvimport", dbo)
 
     # If we're clearing down tables first, do it now
     if cleartables:
@@ -357,10 +353,10 @@ def csvimport(dbo, csvdata, encoding = "utf8", user = "", createmissinglookups =
     # and start importing.
     errors = []
     rowno = 1
-    asm3.asynctask.set_progress_max(dbo, len(data))
-    for row in data:
+    asm3.asynctask.set_progress_max(dbo, len(rows))
+    for row in rows:
 
-        asm3.al.debug("import csv: row %d of %d" % (rowno, len(data)), "csvimport.csvimport", dbo)
+        asm3.al.debug("import csv: row %d of %d" % (rowno, len(rows)), "csvimport.csvimport", dbo)
         asm3.asynctask.increment_progress_value(dbo)
 
         # Should we stop?
@@ -376,7 +372,7 @@ def csvimport(dbo, csvdata, encoding = "utf8", user = "", createmissinglookups =
             if gks(row, "ANIMALSEX") == "": 
                 a["sex"] = "2" # Default unknown if not set
             else:
-                a["sex"] = gks(row, "ANIMALSEX").lower().startswith("m") and "1" or "0"
+                a["sex"] = gksx(row, "ANIMALSEX")
             a["basecolour"] = gkl(dbo, row, "ANIMALCOLOR", "basecolour", "BaseColour", createmissinglookups)
             if a["basecolour"] == "0":
                 a["basecolour"] = str(asm3.configuration.default_colour(dbo))
@@ -422,6 +418,7 @@ def csvimport(dbo, csvdata, encoding = "utf8", user = "", createmissinglookups =
             a["microchipnumber"] = gks(row, "ANIMALMICROCHIP")
             if a["microchipnumber"] != "": a["microchipped"] = "on"
             a["microchipdate"] = gkd(dbo, row, "ANIMALMICROCHIPDATE")
+            a["flags"] = gks(row, "ANIMALFLAGS")
             # image data if any was supplied
             imagedata = gks(row, "ANIMALIMAGE")
             if imagedata.startswith("http"):
@@ -458,7 +455,7 @@ def csvimport(dbo, csvdata, encoding = "utf8", user = "", createmissinglookups =
                 p["emailaddress"] = gks(row, "ORIGINALOWNEREMAIL")
                 try:
                     if checkduplicates:
-                        dups = asm3.person.get_person_similar(dbo, p["emailaddress"], p["surname"], p["forenames"], p["address"])
+                        dups = asm3.person.get_person_similar(dbo, p["emailaddress"], p["mobiletelephone"], p["surname"], p["forenames"], p["address"])
                         if len(dups) > 0:
                             a["originalowner"] = str(dups[0]["ID"])
                     if "originalowner" not in a:
@@ -472,11 +469,30 @@ def csvimport(dbo, csvdata, encoding = "utf8", user = "", createmissinglookups =
                 if checkduplicates:
                     dup = asm3.animal.get_animal_sheltercode(dbo, a["sheltercode"])
                     if dup is not None:
-                        animalid = dup["ID"]
+                        animalid = dup.ID
+                        # The animal is a duplicate. Update certain key fields if they are present
+                        if a["healthproblems"] != "":
+                            dbo.update("animal", dup.ID, { "HealthProblems": a["healthproblems"] }, user)
+                        if a["microchipnumber"] != "":
+                            dbo.update("animal", dup.ID, { 
+                                "Identichipped": 1,
+                                "IdentichipNumber": a["microchipnumber"],
+                                "IdentichipDate": asm3.i18n.display2python(dbo.locale, a["microchipdate"])
+                            }, user)
+                        if a["neutered"] == "on":
+                            dbo.update("animal", dup.ID, { 
+                                "Neutered": 1, 
+                                "NeuteredDate": asm3.i18n.display2python(dbo.locale, a["neutereddate"]) 
+                            }, user)
+                        if a["flags"] != "":
+                            asm3.animal.update_flags(dbo, user, dup.ID, a["flags"])
                 if animalid == 0:
-                    animalid, newcode = asm3.animal.insert_animal_from_form(dbo, asm3.utils.PostedData(a, dbo.locale), user)
+                    animalid, dummy = asm3.animal.insert_animal_from_form(dbo, asm3.utils.PostedData(a, dbo.locale), user)
                     # Identify any ANIMALADDITIONAL additional fields and create them
                     create_additional_fields(dbo, row, errors, rowno, "ANIMALADDITIONAL", "animal", animalid)
+                    # Add any flags that were set
+                    if a["flags"] != "":
+                        asm3.animal.update_flags(dbo, user, animalid, a["flags"])
                 # If we have some image data, add it to the animal
                 if len(imagedata) > 0:
                     imagepost = asm3.utils.PostedData({ "filename": "image.jpg", "filetype": "image/jpeg", "filedata": imagedata }, dbo.locale)
@@ -526,11 +542,11 @@ def csvimport(dbo, csvdata, encoding = "utf8", user = "", createmissinglookups =
             if p["matchactive"] == "1":
                 if "PERSONMATCHADDED" in cols: p["matchadded"] = gkd(dbo, row, "PERSONMATCHADDED")
                 if "PERSONMATCHEXPIRES" in cols: p["matchexpires"] = gkd(dbo, row, "PERSONMATCHEXPIRES")
-                if "PERSONMATCHSEX" in cols: p["matchsex"] = gks(row, "PERSONMATCHSEX").lower().startswith("m") and "1" or "0"
+                if "PERSONMATCHSEX" in cols: p["matchsex"] = gksx(row, "PERSONMATCHSEX")
                 if "PERSONMATCHSIZE" in cols: p["matchsize"] = gkl(dbo, row, "PERSONMATCHSIZE", "lksize", "Size", False)
                 if "PERSONMATCHCOLOR" in cols: p["matchcolour"] = gkl(dbo, row, "PERSONMATCHCOLOR", "basecolour", "BaseColour", createmissinglookups)
-                if "PERSONMATCHAGEFROM" in cols: p["matchagefrom"] = gks(row, "PERSONMATCHAGEFROM")
-                if "PERSONMATCHAGETO" in cols: p["matchageto"] = gks(row, "PERSONMATCHAGETO")
+                if "PERSONMATCHAGEFROM" in cols: p["agedfrom"] = gks(row, "PERSONMATCHAGEFROM")
+                if "PERSONMATCHAGETO" in cols: p["agedto"] = gks(row, "PERSONMATCHAGETO")
                 if "PERSONMATCHTYPE" in cols: p["matchanimaltype"] = gkl(dbo, row, "PERSONMATCHTYPE", "animaltype", "AnimalType", createmissinglookups)
                 if "PERSONMATCHSPECIES" in cols: p["matchspecies"] = gkl(dbo, row, "PERSONMATCHSPECIES", "species", "SpeciesName", createmissinglookups)
                 if "PERSONMATCHBREED1" in cols: p["matchbreed"] = gkbr(dbo, row, "PERSONMATCHBREED1", p["matchspecies"], createmissinglookups)
@@ -542,7 +558,7 @@ def csvimport(dbo, csvdata, encoding = "utf8", user = "", createmissinglookups =
                 if "PERSONMATCHCOMMENTSCONTAIN" in cols: p["matchcommentscontain"] = gks(row, "PERSONMATCHCOMMENTSCONTAIN")
             try:
                 if checkduplicates:
-                    dups = asm3.person.get_person_similar(dbo, p["emailaddress"], p["surname"], p["forenames"], p["address"])
+                    dups = asm3.person.get_person_similar(dbo, p["emailaddress"], p["mobiletelephone"], p["surname"], p["forenames"], p["address"])
                     if len(dups) > 0:
                         personid = dups[0].ID
                         # Merge flags and any extra details
@@ -620,6 +636,20 @@ def csvimport(dbo, csvdata, encoding = "utf8", user = "", createmissinglookups =
             except Exception as e:
                 row_error(errors, "vaccination", rowno, row, e, dbo, sys.exc_info())
 
+        # Test?
+        if hastest and animalid != 0 and gks(row, "TESTDUEDATE") != "":
+            v = {}
+            v["animal"] = str(animalid)
+            v["type"] = gkl(dbo, row, "TESTTYPE", "testtype", "TestName", createmissinglookups)
+            v["result"] = gkl(dbo, row, "TESTRESULT", "testresult", "ResultName", createmissinglookups)
+            v["required"] = gkd(dbo, row, "TESTDUEDATE", True)
+            v["given"] = gkd(dbo, row, "TESTPERFORMEDDATE")
+            v["comments"] = gks(row, "TESTCOMMENTS")
+            try:
+                asm3.medical.insert_test_from_form(dbo, user, asm3.utils.PostedData(v, dbo.locale))
+            except Exception as e:
+                row_error(errors, "test", rowno, row, e, dbo, sys.exc_info())
+
         # Medical?
         if hasmed and animalid != 0 and gks(row, "MEDICALGIVENDATE") != "" and gks(row, "MEDICALNAME") != "":
             m = {}
@@ -654,7 +684,7 @@ def csvimport(dbo, csvdata, encoding = "utf8", user = "", createmissinglookups =
 
         rowno += 1
 
-    h = [ "<p>%d success, %d errors</p><table>" % (len(data) - len(errors), len(errors)) ]
+    h = [ "<p>%d success, %d errors</p><table>" % (len(rows) - len(errors), len(errors)) ]
     for rowno, row, err in errors:
         h.append("<tr><td>%s</td><td>%s</td><td>%s</td></tr>" % (rowno, row, err))
     h.append("</table>")
@@ -679,13 +709,23 @@ def csvimport_paypal(dbo, csvdata, donationtypeid, donationpaymentid, flags, use
     else:
         user = "import/%s" % user
 
-    reader = asm3.utils.UnicodeCSVDictReader(asm3.utils.stringio(csvdata))
-    data = list(reader)
+    rows = asm3.utils.csv_parse( asm3.utils.cunicode(csvdata, encoding="cp1252") )
+
     errors = []
     rowno = 1
-    asm3.asynctask.set_progress_max(dbo, len(data))
+    asm3.asynctask.set_progress_max(dbo, len(rows))
 
-    for r in data:
+    if len(rows) == 0:
+        asm3.asynctask.set_last_error(dbo, "CSV file is empty")
+        return
+
+    REQUIRED_FIELDS = [ "Date", "Currency", "Gross", "Fee", "Net", "From Email Address", "Status", "Type" ]
+    for rf in REQUIRED_FIELDS:
+        if rf not in rows[0]:
+            asm3.asynctask.set_last_error(dbo, "This CSV file does not look like a PayPal CSV (missing %s)" % rf)
+            return
+
+    for r in rows:
 
         # Skip blank rows
         if len(r) == 0: continue
@@ -693,13 +733,7 @@ def csvimport_paypal(dbo, csvdata, donationtypeid, donationpaymentid, flags, use
         # Should we stop?
         if asm3.asynctask.get_cancel(dbo): break
 
-        REQUIRED_FIELDS = [ "Date", "Currency", "Gross", "Fee", "Net", "From Email Address", "Status", "Type" ]
-        for rf in REQUIRED_FIELDS:
-            if rf not in r:
-                asm3.asynctask.set_last_error(dbo, "This CSV file does not look like a PayPal CSV (missing %s)" % rf)
-                return
-
-        asm3.al.debug("import paypal csv: row %d of %d" % (rowno, len(data)), "csvimport.csvimport_paypal", dbo)
+        asm3.al.debug("import paypal csv: row %d of %d" % (rowno, len(rows)), "csvimport.csvimport_paypal", dbo)
         asm3.asynctask.increment_progress_value(dbo)
 
         if r["Status"] != "Completed":
@@ -735,7 +769,7 @@ def csvimport_paypal(dbo, csvdata, donationtypeid, donationpaymentid, flags, use
         p["emailaddress"] = v(r, "From Email Address")
         p["flags"] = flags
         try:
-            dups = asm3.person.get_person_similar(dbo, p["emailaddress"], p["surname"], p["forenames"], p["address"])
+            dups = asm3.person.get_person_similar(dbo, p["emailaddress"], p["hometelephone"], p["surname"], p["forenames"], p["address"])
             if len(dups) > 0:
                 personid = dups[0]["ID"]
                 # Merge flags and any extra details
@@ -747,21 +781,25 @@ def csvimport_paypal(dbo, csvdata, donationtypeid, donationpaymentid, flags, use
             row_error(errors, "person", rowno, r, e, dbo, sys.exc_info())
 
         # Donation info
-        net = asm3.utils.cint(asm3.utils.cfloat(v(r, "Net")) * 100)
-        fee = asm3.utils.cint(asm3.utils.cfloat(v(r, "Fee")) * 100)
+        gross = asm3.utils.cint(asm3.utils.cfloat(v(r, "Gross")) * 100) 
+        net = asm3.utils.cint(asm3.utils.cfloat(v(r, "Net")) * 100) 
+        fee = abs(asm3.utils.cint(asm3.utils.cfloat(v(r, "Fee")) * 100)) # Fee is a negative amount
+        if net > gross: gross = net # I've seen PayPal files where net/gross are the wrong way around
         if personid != 0 and net > 0:
+            pdate = asm3.i18n.display2python(dbo.locale, v(r, "Date")) # parse the date (we do this to fix 2 digit years, which I've also seen)
+            if pdate is None: pdate = dbo.today() # use today if parsing failed
             d = {}
             d["person"] = str(personid)
             d["animal"] = "0"
             d["movement"] = "0"
-            d["amount"] = str(net)
+            d["amount"] = str(gross)
             d["fee"] = str(fee)
             d["chequenumber"] = str(v(r, "Transaction ID"))
-            comments = "PayPal ID: %s \nItem: %s %s \nCurrency: %s \nGross: %s \nFee: %s \nSubject: %s \nNote: %s" % \
+            comments = "PayPal ID: %s \nItem: %s %s \nCurrency: %s \nGross: %s \nFee: %s \nNet: %s \nSubject: %s \nNote: %s" % \
                 ( v(r, "Transaction ID"), v(r, "Item ID", "Item Number"), v(r, "Item Title"), v(r, "Currency"), 
-                v(r, "Gross"), v(r, "Fee"), v(r, "Subject"), v(r, "Note") )
+                v(r, "Gross"), v(r, "Fee"), v(r, "Net"), v(r, "Subject"), v(r, "Note") )
             d["comments"] = comments
-            d["received"] = v(r, "Date")
+            d["received"] = asm3.i18n.python2display(dbo.locale, pdate)
             d["type"] = str(donationtypeid)
             d["payment"] = str(donationpaymentid)
             try:
@@ -771,7 +809,7 @@ def csvimport_paypal(dbo, csvdata, donationtypeid, donationpaymentid, flags, use
 
         rowno += 1
 
-    h = [ "<p>%d success, %d errors</p><table>" % (len(data) - len(errors), len(errors)) ]
+    h = [ "<p>%d success, %d errors</p><table>" % (len(rows) - len(errors), len(errors)) ]
     for rowno, row, err in errors:
         h.append("<tr><td>%s</td><td>%s</td><td>%s</td></tr>" % (rowno, row, err))
     h.append("</table>")
@@ -786,6 +824,7 @@ def csvexport_animals(dbo, dataset, animalids = "", includephoto = False):
     """
     l = dbo.locale
     q = ""
+    out = asm3.utils.stringio()
     
     if dataset == "all": q = "SELECT ID FROM animal ORDER BY ID"
     elif dataset == "shelter": q = "SELECT ID FROM animal WHERE Archived=0 ORDER BY ID"
@@ -804,6 +843,7 @@ def csvexport_animals(dbo, dataset, animalids = "", includephoto = False):
         "ORIGINALOWNERHOMEPHONE", "ORIGINALOWNERWORKPHONE", "ORIGINALOWNERCELLPHONE", "ORIGINALOWNEREMAIL", "MOVEMENTTYPE",
         "MOVEMENTDATE", "PERSONTITLE", "PERSONINITIALS", "PERSONFIRSTNAME", "PERSONLASTNAME", "PERSONADDRESS", "PERSONCITY",
         "PERSONSTATE", "PERSONZIPCODE", "PERSONFOSTERER", "PERSONHOMEPHONE", "PERSONWORKPHONE", "PERSONCELLPHONE", "PERSONEMAIL",
+        "TESTTYPE", "TESTRESULT", "TESTDUEDATE", "TESTPERFORMEDDATE", "TESTCOMMENTS",
         "VACCINATIONTYPE", "VACCINATIONDUEDATE", "VACCINATIONGIVENDATE", "VACCINATIONEXPIRESDATE", "VACCINATIONMANUFACTURER",
         "VACCINATIONBATCHNUMBER", "VACCINATIONCOMMENTS", "MEDICALNAME", "MEDICALDOSAGE", "MEDICALGIVENDATE", "MEDICALCOMMENTS" ]
     
@@ -817,20 +857,26 @@ def csvexport_animals(dbo, dataset, animalids = "", includephoto = False):
         return ",".join(r) + "\n"
 
     firstrow = True
+    asm3.asynctask.set_progress_max(dbo, len(ids))
     for aid in ids:
+
+        # Should we stop?
+        if asm3.asynctask.get_cancel(dbo): break
 
         if firstrow:
             firstrow = False
-            yield ",".join(keys) + "\n"
+            out.write(",".join(keys) + "\n")
 
         row = {}
         a = asm3.animal.get_animal(dbo, aid.ID)
         if a is None: continue
 
+        asm3.asynctask.increment_progress_value(dbo)
+
         row["ANIMALCODE"] = a["SHELTERCODE"]
         row["ANIMALNAME"] = a["ANIMALNAME"]
         if a["WEBSITEIMAGECOUNT"] > 0 and includephoto:
-            mdate, mdata = asm3.media.get_image_file_data(dbo, "animal", a["ID"])
+            dummy, mdata = asm3.media.get_image_file_data(dbo, "animal", a["ID"])
             row["ANIMALIMAGE"] = "data:image/jpg;base64,%s" % asm3.utils.base64encode(mdata)
         row["ANIMALSEX"] = a["SEXNAME"]
         row["ANIMALTYPE"] = a["ANIMALTYPENAME"]
@@ -885,7 +931,7 @@ def csvexport_animals(dbo, dataset, animalids = "", includephoto = False):
         row["PERSONWORKPHONE"] = a["CURRENTOWNERWORKTELEPHONE"]
         row["PERSONCELLPHONE"] = a["CURRENTOWNERMOBILETELEPHONE"]
         row["PERSONEMAIL"] = a["CURRENTOWNEREMAILADDRESS"]
-        yield tocsv(row)
+        out.write(tocsv(row))
 
         for v in asm3.medical.get_vaccinations(dbo, a["ID"]):
             row = {}
@@ -898,7 +944,18 @@ def csvexport_animals(dbo, dataset, animalids = "", includephoto = False):
             row["VACCINATIONCOMMENTS"] = v["COMMENTS"]
             row["ANIMALCODE"] = a["SHELTERCODE"]
             row["ANIMALNAME"] = a["ANIMALNAME"]
-            yield tocsv(row)
+            out.write(tocsv(row))
+
+        for t in asm3.medical.get_tests(dbo, a["ID"]):
+            row = {}
+            row["TESTTYPE"] = t["TESTNAME"]
+            row["TESTRESULT"] = t["RESULTNAME"]
+            row["TESTDUEDATE"] = asm3.i18n.python2display(l, t["DATEREQUIRED"])
+            row["TESTPERFORMEDDATE"] = asm3.i18n.python2display(l, t["DATEOFTEST"])
+            row["TESTCOMMENTS"] = t["COMMENTS"]
+            row["ANIMALCODE"] = a["SHELTERCODE"]
+            row["ANIMALNAME"] = a["ANIMALNAME"]
+            out.write(tocsv(row))
 
         for m in asm3.medical.get_regimens(dbo, a["ID"]):
             row = {}
@@ -908,8 +965,15 @@ def csvexport_animals(dbo, dataset, animalids = "", includephoto = False):
             row["MEDICALCOMMENTS"] = m["COMMENTS"]
             row["ANIMALCODE"] = a["SHELTERCODE"]
             row["ANIMALNAME"] = a["ANIMALNAME"]
-            yield tocsv(row)
+            out.write(tocsv(row))
 
         del a
         del row
+
+    # Generate a disk cache key and store the data in the cache so it can be retrieved for the next hour
+    key = asm3.utils.uuid_str()
+    asm3.cachedisk.put(key, dbo.database, out.getvalue(), 3600)
+    h = '<p>%s <a target="_blank" href="csvexport_animals?get=%s"><b>%s</b></p>' % ( \
+        asm3.i18n._("Export complete ({0} entries).", l).format(len(ids)), key, asm3.i18n._("Download File", l) )
+    return h
 

@@ -1,4 +1,3 @@
-#!/usr/bin/python env
 
 import unittest
 import base
@@ -43,6 +42,9 @@ class TestDiary(unittest.TestCase):
     def test_complete_diary_note(self):
         asm3.diary.complete_diary_note(base.get_dbo(), "user", self.nid)
 
+    def test_complete_diary_notes_for_animal(self):
+        asm3.diary.complete_diary_notes_for_animal(base.get_dbo(), "user", 1)
+
     def test_rediarise_diary_note(self):
         asm3.diary.rediarise_diary_note(base.get_dbo(), "user", self.nid, base.today())
 
@@ -69,6 +71,7 @@ class TestDiary(unittest.TestCase):
 
     def test_update_diary_from_form(self):
         data = {
+            "diaryid":     str(self.nid),
             "diarydate":   base.today_display(),
             "diarytime":   "09:00",
             "diaryfor":    "user",

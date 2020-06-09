@@ -11,7 +11,8 @@ en
 SELECT 
 s.Name, s.Description, sl.LocationName, s.UnitName,
 s.BatchNumber, s.Expiry, su.UsageDate, su.Quantity, 
-su.Comments, u.UsageTypeName
+su.Comments, u.UsageTypeName, 
+s.UnitPrice, s.UnitPrice * su.Quantity AS MoneyUsageCost
 FROM stocklevel s
 INNER JOIN stocklocation sl ON s.StockLocationID = sl.ID
 INNER JOIN stockusage su ON su.StockLevelID = s.ID
@@ -36,10 +37,11 @@ $$HEAD
 <th>Expiry</th>
 <th>Quantity</th>
 <th>Units</th>
+<th>Value</th>
 <th>Comments</th>
 $$FOOT
 </table>
-<h3>Total $LOCATIONNAME: {COUNT.QUANTITY}</h3>
+<h3>Total $LOCATIONNAME: {COUNT.QUANTITY} (Value {SUM.MoneyUsageCost})</h3>
 GROUP$$
 
 $$BODY
@@ -51,7 +53,8 @@ $$BODY
 <td>$BATCHNUMBER</td>
 <td>$EXPIRY</td>
 <td>$QUANTITY</td>
-<td>$UNITNAME</td>
+<td>$UNITNAME ($UNITPRICE)</td>
+<td>$MONEYUSAGECOST</td>
 <td>$COMMENTS</td>
 </tr>
 BODY$$

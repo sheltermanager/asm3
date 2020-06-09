@@ -1,7 +1,8 @@
-/*jslint browser: true, forin: true, eqeq: true, white: true, sloppy: true, vars: true, nomen: true */
 /*global $, jQuery, _, asm, common, config, controller, dlgfx, edit_header, format, header, html, tableform, validate */
 
 $(function() {
+
+    "use strict";
 
     var test = {
 
@@ -94,10 +95,16 @@ $(function() {
                     },
                     { field: "ACCEPTANCENUMBER", display: _("Litter"),
                         hideif: function(row) {
+                            if (controller.animal) { return true; }
                             return config.bool("DontShowLitterID");
                         }
                     },
-                    { field: "SPECIESNAME", display: _("Species") },
+                    { field: "SPECIESNAME", display: _("Species"),
+                        hideif: function(row) {
+                            // Don't show for animal records
+                            if (controller.animal) { return true; }
+                        }
+                    },
                     { field: "LOCATIONNAME", display: _("Location"),
                         formatter: function(row) {
                             var s = row.LOCATIONNAME;
@@ -181,7 +188,10 @@ $(function() {
                      }
                  },
                  { id: "offset", type: "dropdownfilter", 
-                     options: [ "m365|" + _("Due today"), "p7|" + _("Due in next week"), "p31|" + _("Due in next month"), "p365|" + _("Due in next year") ],
+                     options: [ "m365|" + _("Due today"), "p7|" + _("Due in next week"), 
+                        "p31|" + _("Due in next month"), "p365|" + _("Due in next year"), 
+                        "g1|" + _("Given today"), "g7|" + _("Given in last week"),
+                        "g31|" + _("Given in last month") ],
                      click: function(selval) {
                         common.route(controller.name + "?offset=" + selval);
                      },

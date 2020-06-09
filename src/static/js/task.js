@@ -1,7 +1,8 @@
-/*jslint browser: true, forin: true, eqeq: true, white: true, sloppy: true, vars: true, nomen: true */
 /*global $, jQuery, _, asm, common, config, controller, dlgfx, format, header, html, validate */
 
 $(function() {
+
+    "use strict";
 
     var task = {
 
@@ -11,32 +12,32 @@ $(function() {
                 'class="ui-helper-reset ui-widget-content ui-corner-all centered"',
                 'style="width: 60%; margin-left: auto; margin-right: auto; padding: 20px">',
                 '<div id="alreadyrunning" class="ui-state-error ui-corner-all" style="margin-top: 20px; padding: 0 .7em; display: none">',
-                '<p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em;"></span>',
+                '<p><span class="ui-icon ui-icon-alert"></span>',
                 _("A task is already running."),
                 '</p>',
                 '</div>',
 
                 '<div id="progress" style="margin-top: 10px"></div>',
                 '<div id="stopped" class="ui-state-highlight ui-corner-all" style="margin-top: 20px; padding: 0 .7em; display: none">',
-                '<p><span class="ui-icon ui-icon-info" style="float: left; margin-right: .3em;"></span>',
+                '<p><span class="ui-icon ui-icon-info"></span>',
                 _("No tasks are running."),
                 '</p>',
                 '</div>',
 
                 '<div id="lasterror" class="ui-state-error ui-corner-all" style="margin-top: 20px; padding: 0 .7em; display: none">',
-                '<p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em;"></span>',
+                '<p><span class="ui-icon ui-icon-alert"></span>',
                 '<span id="lasterrortext"></span>',
                 '</p>',
                 '</div>',
 
                 '<div id="complete" class="ui-state-highlight ui-corner-all" style="margin-top: 20px; padding: 0 .7em; display: none">',
-                '<p><span class="ui-icon ui-icon-info" style="float: left; margin-right: .3em;"></span>',
+                '<p><span class="ui-icon ui-icon-info"></span>',
                 _("Task complete."),
                 '</p>',
                 '</div>',
 
                 '<div id="running" class="ui-state-highlight ui-corner-all" style="margin-top: 20px; padding: 0 .7em; display: none">',
-                '<p><span class="ui-icon ui-icon-info" style="float: left; margin-right: .3em;"></span>',
+                '<p><span class="ui-icon ui-icon-info"></span>',
                 '<span id="runningtext"></span>',
                 '</p>',
                 '</div>',

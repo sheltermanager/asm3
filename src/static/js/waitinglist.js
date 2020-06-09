@@ -1,7 +1,8 @@
-/*jslint browser: true, forin: true, eqeq: true, white: true, sloppy: true, vars: true, nomen: true */
 /*global $, jQuery, _, asm, additional, common, config, controller, dlgfx, edit_header, format, header, html, tableform, validate */
 
 $(function() {
+
+    "use strict";
 
     var waitinglist = {
 
@@ -167,7 +168,7 @@ $(function() {
             validate.reset();
 
             // owner
-            if ($.trim($("#owner").val()) == "0") {
+            if (common.trim($("#owner").val()) == "0") {
                 header.show_error(_("Waiting list entries must have a contact"));
                 $("#asm-details-accordion").accordion("option", "active", 0);
                 validate.highlight("owner");
@@ -175,7 +176,7 @@ $(function() {
             }
 
             // date put on list
-            if ($.trim($("#dateputon").val()) == "") {
+            if (common.trim($("#dateputon").val()) == "") {
                 header.show_error(_("Date put on cannot be blank"));
                 $("#asm-details-accordion").accordion("option", "active", 3);
                 validate.highlight("dateputon");
@@ -183,7 +184,7 @@ $(function() {
             }
 
             // description
-            if ($.trim($("#description").val()) == "") {
+            if (common.trim($("#description").val()) == "") {
                 header.show_error(_("Description cannot be blank"));
                 $("#asm-details-accordion").accordion("option", "active", 0);
                 validate.highlight("description");
@@ -247,7 +248,9 @@ $(function() {
                     formdata: "mode=email&wlid=" + $("#waitinglistid").val(),
                     name: waitinglist.current_person.OWNERFORENAMES + " " + waitinglist.current_person.OWNERSURNAME,
                     email: waitinglist.current_person.EMAILADDRESS,
-                    logtypes: controller.logtypes
+                    logtypes: controller.logtypes,
+                    personid: controller.animal.OWNERID,
+                    templates: controller.templates
                 });
             });
 

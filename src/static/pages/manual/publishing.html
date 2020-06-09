@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Publishing &mdash; ASM 43u documentation</title>
+  <title>Publishing &mdash; ASM 44u documentation</title>
   
 
   
@@ -60,7 +60,7 @@
             
             
               <div class="version">
-                43u
+                44u
               </div>
             
           
@@ -102,6 +102,7 @@
 <li class="toctree-l1"><a class="reference internal" href="reports.html">Reports</a></li>
 <li class="toctree-l1"><a class="reference internal" href="litters.html">Litters</a></li>
 <li class="toctree-l1"><a class="reference internal" href="onlineform.html">Online Forms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="paymentprocessors.html">Payment Processors</a></li>
 <li class="toctree-l1"><a class="reference internal" href="rota.html">Rota</a></li>
 <li class="toctree-l1"><a class="reference internal" href="mobile.html">Mobile Interface</a></li>
 <li class="toctree-l1"><a class="reference internal" href="service.html">Service API</a></li>
@@ -115,7 +116,6 @@
 <li class="toctree-l2"><a class="reference internal" href="#adoptapet-com">adoptapet.com</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#helpinglostpets-com">helpinglostpets.com</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#maddiesfund-org-maddie-s-pet-assistant">maddiesfund.org / Maddie’s Pet Assistant</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#meetapet-com">meetapet.com</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#petfinder-com">petfinder.com</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#petrescue-com-au">petrescue.com.au</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#rescuegroups-org">rescuegroups.org</a></li>
@@ -123,10 +123,12 @@
 <li class="toctree-l2"><a class="reference internal" href="#petslocated-com">petslocated.com</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#avid-pettrac-uk">AVID/PETtrac UK</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#identichip-anibase-uk">idENTICHIP/Anibase UK</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#akc-reunite">AKC Reunite</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#foundanimals">FoundAnimals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#homeagain">HomeAgain</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#petlink">PetLink</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#smarttag">SmartTag</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#vetenvoy-us-homeagain-and-akc-reunite">VetEnvoy US (HomeAgain and AKC Reunite)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#exclude-animals-from-specific-publishers">Exclude animals from specific publishers</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="mailmerge.html">Mail Merge Sources</a></li>
@@ -252,6 +254,11 @@ contact info for animals currently in the care of the shelter. This includes
 animals brought to the shelter as well as those returned from a previous movement.
 Animals who are marked as held awaiting reclaim will <em>not</em> be registered until
 after the hold is removed.</li>
+<li>Update adoption websites every: Some adoption websites will accept updates
+more frequently than the 24 hour default. Setting this option to a value
+smaller than 24 will update those services at the chosen interval. Services
+affected by this value are PetFinder, AdoptAPet, PetRescue, SavourLife and
+Maddie’s Pet Assistant</li>
 <li>Reupload animal images every time: Ticking this box will tell the publisher
 to reupload images for all the animals published. Normally, ASM will not
 upload an image it has previously uploaded to save bandwidth. ASM will detect
@@ -265,6 +272,9 @@ named sheltercode-X.jpg (X increments for each image). The first image will
 be the image flagged as web preferred.</li>
 <li>Order published animals by: Sorts the list of animals before they are
 published.</li>
+<li>Thumbnail size: Controls the size of thumbnails the system generates for adoptable
+animal publishers (in particular the ones used by the javascript include
+method of website integration). The size is for the thumbnail’s longest side.</li>
 <li>Animal descriptions: This determines the source of the main description for
 animals when being published. For the HTML/FTP publisher, this is the source
 of the $$WebMediaNotes$$ token. Set to “Use animal comments” to use the
@@ -283,6 +293,10 @@ upload them to an FTP server. The pages themselves can be split down by species
 and age, or arranged numerically with a fixed number of animals per page. In
 addition, a recently adopted page can be generated along with an rss.xml for
 feed readers.</p>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">Static HTML publishing is deprecated for sheltermanager.com and will not be available in the future.</p>
+</div>
 <ul class="simple">
 <li>Generate javascript database: The site search facilities require a Javascript
 database, indexing the available animal records. If you wish to include
@@ -292,7 +306,7 @@ animal images. Thumbnail images have the same name as the animal image, but
 are prefixed with tn and an underscore. You can use tn_$$WebMediaFilename$$
 in a template to get the thumbnail image for the current animal.</li>
 <li>Thumbnail size: The desired length in pixels of the longest side of the
-thumbnail.</li>
+generated thumbnail.</li>
 <li>Output a separate page for each animal type: Output extra pages of the form
 ANIMALTYPE.EXTENSION, eg: Miscellaneous.html. This means you can reference
 the page of miscellaneous animals only from your website. If you have used
@@ -330,13 +344,9 @@ templates, outlined in the next section.</li>
 before moving on to the next page. By default, the system shows 10 animals
 per page, however the more animals you put on a page, the longer the page
 will take to load.</li>
-<li>Scale published images to: Modern digital cameras can take very high quality
-images - so much so that they could take a very long time for users to
-download (particularly for people with modems). Also, if your shelter’s
-connection to the internet is over a modem, it could take a long time for the
-site to upload. This box allows you to reduce the size of your images to
-scaled JPEGs with the resolutions specified. ASM scales down pictures when
-you attach them under the media tab, so unless you want to make them smaller
+<li>Scale published images to: This box allows you to reduce the size of your
+animal images to a particular resolution.  ASM scales down pictures when you
+attach them under the media tab, so unless you want to make them smaller
 still, it’s best to leave this at No Scaling.</li>
 <li>Publish to folder: Choose the folder where output is to be generated.</li>
 </ul>
@@ -424,12 +434,6 @@ username and password and to enter the postal/zipcode of your shelter.</p>
 and interactive help to fosterers, adopters and other caregivers. Basic data on
 the animal and contact information for the adopter/fosterer is sent.</p>
 </div>
-<div class="section" id="meetapet-com">
-<h2>meetapet.com<a class="headerlink" href="#meetapet-com" title="Permalink to this headline">¶</a></h2>
-<p>ASM can send adoptable animal information to www.meetapet.com, an adoption
-website. After signing up with them, you will need to get a secret and shelter
-key from them in order to send them data.</p>
-</div>
 <div class="section" id="petfinder-com">
 <h2>petfinder.com<a class="headerlink" href="#petfinder-com" title="Permalink to this headline">¶</a></h2>
 <p>In addition to creating standalone websites with animals up for adoption, ASM
@@ -446,8 +450,6 @@ filtering animals are the same (see previous section for reference).</p>
 </div>
 <p>If you have some that are not mapped, the publisher will fail with an error
 message.</p>
-<p>The “Upload all available images” option will upload all animal photos to
-PetFinder instead of just the preferred.</p>
 <p>PetFinder has some quirks in that they indicate an unknown crossbreed by having
 a blank secondary breed with the crossbreed flag set. Since ASM doesn’t allow
 you to set an empty second breed field, there’s a workaround - If you make the
@@ -470,8 +472,21 @@ to you by PetRescue.com.au. All you need to do then is choose
 Publish to PetRescue.com.au in place of the normal internet publisher. The
 options for filtering animals are the same (see previous section for
 reference).</p>
-<p>Options are available to override the desex flag to send all your animals and mark
-whether you will fly animals between states for adoption.</p>
+<p>Options are available to override the desex flag to send all your animals and to
+indicate which states you will adopt animals to. These are necessary as some
+states have different rules on whether a microchip number or other identifier
+is needed. The state the animal is currently located in (from the fosterer
+record if available or shelter details) is implicitly added to this set.</p>
+<p>ASM will determined if your animals are vaccinated, wormed or heartworm treated
+and indicate this to PetRescue via the following rules:</p>
+<ul class="simple">
+<li>If the animal has at least 1 previously given vaccination on file and there
+are no vaccinations outstanding, the vaccination flag is set.</li>
+<li>If the animal has a medical treatment containing the word “worm” and not
+the word “heart” in the last 6 months, the wormed flag is set.</li>
+<li>If the animal has a medical treatment containing the words “heart” and
+“worm” in the last 6 months, the heartworm treated flag is set.</li>
+</ul>
 <p>PetRescue have a number of extra fields that you can set by creating additional
 animal fields with certain names in your database. The system responds to the
 field names, you can label them anything you want, they must be linked to
@@ -487,6 +502,7 @@ cannot be left by itself.</li>
 <li>bredincareofgroup (Yes/No): Indicates the animal was bred whilst in the care
 of the group. Setting this to true makes breederid mandatory for all listings
 in South Australia after July 2018.</li>
+<li>needsfoster (Yes/No): Indicates that foster care is required for the animal.</li>
 <li>sourcenumber (Text): Required for all cat and dog listings in Victoria</li>
 <li>rehomingorganisationid (Text): For cats and dogs in NSW, this field OR a
 microchip number OR breederid must be supplied.</li>
@@ -528,6 +544,16 @@ first and view the SavourLife panel. Here, you should enter the username and
 password given to you by SavourLife. The options for filtering animals are the
 same as for other publishers, although ASM will only send dogs (Species 1) as
 SavourLife will not accept listings for other species of animals.</p>
+<p>ASM will determined if your dogs are vaccinated, wormed or heartworm treated
+and indicate this to SavourLife via the following rules:</p>
+<ul class="simple">
+<li>If the animal has at least 1 previously given vaccination on file and there
+are no vaccinations outstanding, the vaccination flag is set.</li>
+<li>If the animal has a medical treatment containing the word “worm” and not
+the word “heart” in the last 6 months, the wormed flag is set.</li>
+<li>If the animal has a medical treatment containing the words “heart” and
+“worm” in the last 6 months, the heartworm treated flag is set.</li>
+</ul>
 <p>SavourLife have extra fields that you can set by creating additional
 fields with certain names in your database. The system responds to the field
 names, you can label them anything you want, they must be linked to animal
@@ -537,6 +563,7 @@ records.</p>
 number that can be given to the shelter. This enquiry number is used to link
 adopters with the adopted animal and qualify them for free food from
 SavourLife.</li>
+<li>needsfoster (Yes/No): Indicates that foster care is required for the animal.</li>
 </ul>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
@@ -588,6 +615,12 @@ sends their information and new owner info to Anibase to update their records.
 ASM tracks the date Anibase was last updated, so if the animal is returned and
 adopted again, another update will be done automatically.</p>
 </div>
+<div class="section" id="akc-reunite">
+<h2>AKC Reunite<a class="headerlink" href="#akc-reunite" title="Permalink to this headline">¶</a></h2>
+<p>ASM can register microchips with AKC Reunite, part of the American Kennel Club,
+who supply microchips to US organisations and pet owners. AKC microchips are
+either 15-digits, starting with 956 or 10-digits, starting with 0006 or 0007.</p>
+</div>
 <div class="section" id="foundanimals">
 <h2>FoundAnimals<a class="headerlink" href="#foundanimals" title="Permalink to this headline">¶</a></h2>
 <p>ASM can register microchips with microchipregistry.foundanimals.org, a
@@ -598,6 +631,11 @@ to configure in ASM.</p>
 <p>ASM will attempt to register all microchips with foundanimals.org and as with
 the other chip registration publishers, will track when it last updated a
 chip with them in case of subsequent adoption or reclaim.</p>
+</div>
+<div class="section" id="homeagain">
+<h2>HomeAgain<a class="headerlink" href="#homeagain" title="Permalink to this headline">¶</a></h2>
+<p>ASM can register microchips with HomeAgain, a company that supplies microchips
+to US shelters and pet owners. HomeAgain microchips are 15-digits, starting with 985.</p>
 </div>
 <div class="section" id="petlink">
 <h2>PetLink<a class="headerlink" href="#petlink" title="Permalink to this headline">¶</a></h2>
@@ -625,15 +663,18 @@ again to the new owner.</p>
 (15 digits starting with 90007400) in a similar manner to ASM’s other chip
 registration publishers.</p>
 </div>
-<div class="section" id="vetenvoy-us-homeagain-and-akc-reunite">
-<h2>VetEnvoy US (HomeAgain and AKC Reunite)<a class="headerlink" href="#vetenvoy-us-homeagain-and-akc-reunite" title="Permalink to this headline">¶</a></h2>
-<p>ASM can also use the VetEnvoy service in the US to register microchips with
-HomeAgain and AKC Reunite.</p>
-<p>ASM will find all HomeAgain microchips (15 digits starting with 985) and AKC
-Reunite microchips (15 digits starting with 956) that have been adopted and
-will register the animal and new owner information. As with the other microchip
-providers, ASM will register the chip again if the animal is returned and
-adopted to a new owner.</p>
+<div class="section" id="exclude-animals-from-specific-publishers">
+<h2>Exclude animals from specific publishers<a class="headerlink" href="#exclude-animals-from-specific-publishers" title="Permalink to this headline">¶</a></h2>
+<p>It is possible to exclude an animal from a specific publisher. To do this,
+create a new animal flag called “Exclude from PUBLISHER”, where PUBLISHER is
+the name of the service you wish to exclude. Eg: “Exclude from PetFinder”.</p>
+<p>Assigning this animal flag to your animal will then prevent it being sent by
+that publisher. You can create flags for all the 3rd party publishers you use
+and assign them in combination where necessary.</p>
+<p>The flag names are not case sensitive. The names should not include any domains,
+eg: petfinder, adoptapet, rescuegroups, maddiesfund, petrescue, savourlife</p>
+<p>This is useful in situations where you get inundanted with applications for
+very popular animals and only want to put them on your own website.</p>
 </div>
 </div>
 
@@ -657,7 +698,7 @@ adopted to a new owner.</p>
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2019, Sheltermanager, Ltd
+        &copy; Copyright 2020, Sheltermanager, Ltd
 
     </p>
   </div>

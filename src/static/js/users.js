@@ -1,7 +1,8 @@
-/*jslint browser: true, forin: true, eqeq: true, white: true, sloppy: true, vars: true, nomen: true */
 /*global $, jQuery, _, asm, common, config, controller, dlgfx, format, header, html, tableform, validate */
 
 $(function() {
+
+    "use strict";
 
     var users = {
 
@@ -209,7 +210,7 @@ $(function() {
                 validate.reset("dialog-reset");
                 if (!validate.notblank([ "newpassword" ])) { return; }
                 if (!validate.notblank([ "confirmpassword" ])) { return; }
-                if ($.trim($("#newpassword").val()) != $.trim($("#confirmpassword").val())) {
+                if (common.trim($("#newpassword").val()) != common.trim($("#confirmpassword").val())) {
                     header.show_error(_("New password and confirmation password don't match."));
                     return;
                 }

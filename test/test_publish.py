@@ -1,4 +1,3 @@
-#!/usr/bin/python env
 
 import unittest
 import base
@@ -66,6 +65,13 @@ class TestPublish(unittest.TestCase):
         a = asm3.publishers.base.get_animal_data(base.get_dbo())[0]
         assert asm3.publishers.adoptapet.AdoptAPetPublisher(base.get_dbo(), pc).processAnimal(a) is not None
 
+    # akcreunite
+    def test_akcreunite(self):
+        pc = asm3.publishers.base.PublishCriteria()
+        a = asm3.publishers.base.get_animal_data(base.get_dbo())[0]
+        assert asm3.publishers.akcreunite.AKCReunitePublisher(base.get_dbo(), pc).processAnimal(a) is not None
+        asm3.publishers.akcreunite.AKCReunitePublisher(base.get_dbo(), pc).validate(a)
+
     # anibase
     def test_anibase(self):
         pc = asm3.publishers.base.PublishCriteria()
@@ -86,12 +92,26 @@ class TestPublish(unittest.TestCase):
         a = asm3.publishers.base.get_animal_data(base.get_dbo())[0]
         assert asm3.publishers.helpinglostpets.HelpingLostPetsPublisher(base.get_dbo(), pc).processAnimal(a) is not None
 
+    # homeagain
+    def test_homeagain(self):
+        pc = asm3.publishers.base.PublishCriteria()
+        a = asm3.publishers.base.get_animal_data(base.get_dbo())[0]
+        assert asm3.publishers.homeagain.HomeAgainPublisher(base.get_dbo(), pc).processAnimal(a) is not None
+        asm3.publishers.homeagain.HomeAgainPublisher(base.get_dbo(), pc).validate(a)
+
     # maddiesfund
     def test_maddiesfund(self):
         pc = asm3.publishers.base.PublishCriteria()
         a = asm3.publishers.base.get_animal_data(base.get_dbo())[0]
         assert asm3.publishers.maddiesfund.MaddiesFundPublisher(base.get_dbo(), pc).getData(214) is not None
         assert asm3.publishers.maddiesfund.MaddiesFundPublisher(base.get_dbo(), pc).processAnimal(a) is not None
+
+    # petcademy
+    def test_petcademy(self):
+        pc = asm3.publishers.base.PublishCriteria()
+        a = asm3.publishers.base.get_animal_data(base.get_dbo())[0]
+        assert asm3.publishers.petcademy.PetcademyPublisher(base.get_dbo(), pc).getData(214) is not None
+        assert asm3.publishers.petcademy.PetcademyPublisher(base.get_dbo(), pc).processAnimal(a) is not None
 
     # petfinder
     def test_petfinder(self):
@@ -181,11 +201,11 @@ class TestPublish(unittest.TestCase):
         a = asm3.publishers.base.get_animal_data(base.get_dbo())[0]
         assert asm3.publishers.smarttag.SmartTagPublisher(base.get_dbo(), pc).processAnimal(a) is not None
 
-    # vetenvoy
-    def test_vetenvoy(self):
-        pc = asm3.publishers.base.PublishCriteria()
-        a = asm3.publishers.base.get_animal_data(base.get_dbo())[0]
-        assert asm3.publishers.vetenvoy.VetEnvoyUSMicrochipPublisher(base.get_dbo(), pc, "ve", "ve", "ve", [ "9" ]).processAnimal(a) is not None
-        asm3.publishers.vetenvoy.VetEnvoyUSMicrochipPublisher(base.get_dbo(), pc, "ve", "ve", "ve", [ "9" ]).validate(a)
+    # vetenvoy - redundant and not imported by publish.py any more
+    #def test_vetenvoy(self):
+    #    pc = asm3.publishers.base.PublishCriteria()
+    #    a = asm3.publishers.base.get_animal_data(base.get_dbo())[0]
+    #    assert asm3.publishers.vetenvoy.VetEnvoyUSMicrochipPublisher(base.get_dbo(), pc, "ve", "ve", "ve", [ "9" ]).processAnimal(a) is not None
+    #    asm3.publishers.vetenvoy.VetEnvoyUSMicrochipPublisher(base.get_dbo(), pc, "ve", "ve", "ve", [ "9" ]).validate(a)
 
 

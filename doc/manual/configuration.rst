@@ -307,8 +307,8 @@ cached versions of complex reports and figures.
 
 Ordinarily, users should have no need to trigger these batch processes
 manually, however after importing CSV data or making bulk data changes with
-queries, animal locations and historic figures data can get out of sync and
-needs to be recalculated/regenerated.
+queries, animal locations, person flags and historic figures data can get out
+of sync and need to be recalculated/regenerated.
 
 Some of these processes can take many minutes to run and may block use of the
 database for other users. They should be used sparingly.

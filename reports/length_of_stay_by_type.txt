@@ -2,7 +2,7 @@ Length of Stay by Type
 ###
 Statistics
 ###
-2721/PostgreSQL
+33018/PostgreSQL
 ###
 Shows time on shelter by type for animals entering the shelter between two dates
 ###
@@ -18,7 +18,7 @@ INNER JOIN species s ON s.ID = a.SpeciesID
 INNER JOIN animaltype t ON t.ID = a.AnimalTypeID
 INNER JOIN entryreason e ON e.ID = a.EntryReasonID
 WHERE a.DateBroughtIn >= '$ASK DATE Animals entering the shelter between$' AND a.DateBroughtIn <= '$ASK DATE and$'
-AND NonShelterAnimal = 0 
+AND NonShelterAnimal = 0 AND NOT EXISTS(SELECT ID FROM adoption WHERE IsPermanentFoster=1 AND AnimalID=a.ID)
 ORDER BY t.AnimalType, a.DateBroughtIn
 ###
 $$HEADER

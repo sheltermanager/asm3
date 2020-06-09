@@ -1,9 +1,10 @@
-/*jslint browser: true, forin: true, eqeq: true, white: true, sloppy: true, vars: true, nomen: true */
 /*global $, jQuery, _, asm, common, config, controller, dlgfx, format, header, html, tableform, validate */
 
 $(function() {
 
-    var csvexport = {
+    "use strict";
+
+    const csvexport = {
 
         render: function() {
             return [

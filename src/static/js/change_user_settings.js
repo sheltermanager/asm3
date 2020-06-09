@@ -1,10 +1,12 @@
-/*jslint browser: true, forin: true, eqeq: true, white: true, sloppy: true, vars: true, nomen: true */
 /*global $, jQuery, _, asm, common, config, controller, dlgfx, format, header, html, log, validate */
 
 $(function() {
 
-    var BACKGROUND_COLOURS = {
+    "use strict";
+
+    const BACKGROUND_COLOURS = {
         "asm":              "#ffffff",
+        "base":             "#ffffff",
         "black-tie":        "#333333",
         "blitzer":          "#cc0000",
         "cupertino":        "#deedf7",
@@ -31,13 +33,13 @@ $(function() {
         "vader":            "#888888"
     };
 
-    var change_user_settings = {
+    const change_user_settings = {
 
         /** Where we have a list of pairs, first is value, second is label */
         two_pair_options: function(o, isflag) {
-            var s = [];
+            let s = [];
             $.each(o, function(i, v) {
-                var ds = "";
+                let ds = "";
                 if (isflag) {
                     ds = 'data-style="background-image: url(static/images/flags/' + v[0] + '.png)"';
                 }
@@ -113,7 +115,6 @@ $(function() {
         bind: function() {
 
             try {
-                // Can fail on IE8/9
                 $("#signature").signature({ guideline: true });
                 $("#button-change")
                     .button({ icons: { primary: "ui-icon-pencil" }, text: false })
@@ -127,35 +128,35 @@ $(function() {
                 log.error("failed creating signature canvas");   
             }
 
-            $("#save").button().click(function() {
+            $("#save").button().click(async function() {
                 $(".asm-content button").button("disable");
                 header.show_loading();
-                var formdata = $("input, select").toPOST();
+                let formdata = $("input, select").toPOST();
                 try {
-                    // Can fail if signature wasn't bound
                     if (!$("#signature").signature("isEmpty")) {
                         formdata += "&signature=" + encodeURIComponent($("#signature canvas").get(0).toDataURL("image/png"));
                     }
                 } catch (excanvas) {
-                    log.error("failed reading signature canvas");   
+                    log.error("failed reading signature canvas", excanvas);
                 }
-                common.ajax_post("change_user_settings", formdata)
-                    .then(function(result) { 
-                        common.route("main", true);
-                    })
-                    .fail(function() {
-                        $(".asm-content button").button("enable");
-                    });
+                try {
+                    await common.ajax_post("change_user_settings", formdata);
+                    common.route("main", true);
+                }
+                catch(err) {
+                    log.error(err, err);
+                    $(".asm-content button").button("enable");
+                }
             });
 
             // When the visual theme is changed, switch the CSS file so the
             // theme updates immediately.
             $("#systemtheme").change(function() {
-                var theme = $("#systemtheme").val();
+                let theme = $("#systemtheme").val();
                 if (theme == "") {
                     theme = asm.theme;
                 }
-                var href = asm.jqueryuicss.replace("%(theme)s", theme);
+                let href = asm.jqueryuicss.replace("%(theme)s", theme);
                 $("#jqt").attr("href", href);
                 $("body").css("background-color", BACKGROUND_COLOURS[theme]);
             });
@@ -163,7 +164,7 @@ $(function() {
         },
 
         sync: function() {
-            var u = controller.user[0];
+            let u = controller.user[0];
             $("#realname").val(html.decode(u.REALNAME));
             $("#email").val(u.EMAILADDRESS);
             $("#olocale").select("value", u.LOCALEOVERRIDE);

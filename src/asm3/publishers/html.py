@@ -77,8 +77,7 @@ def get_held_animals(dbo, style="", speciesid=0, animaltypeid=0):
     speciesid: 0 for all species, or a specific one
     animaltypeid: 0 for all animal types or a specific one
     """
-    animals = dbo.query(asm3.animal.get_animal_query(dbo) + \
-        " WHERE a.IsHold = 1 AND a.Archived = 0 ORDER BY a.DateBroughtIn DESC")
+    animals = asm3.animal.get_animals_hold(dbo)
     return animals_to_page(dbo, animals, style=style, speciesid=speciesid, animaltypeid=animaltypeid)
 
 def animals_to_page(dbo, animals, style="", speciesid=0, animaltypeid=0, locationid=0):
@@ -132,14 +131,17 @@ def animals_to_page(dbo, animals, style="", speciesid=0, animaltypeid=0, locatio
     
 def get_animal_view(dbo, animalid):
     """ Constructs the animal view page to the asm3.template. """
-    a = dbo.first_row(get_animal_data(dbo, animalid=animalid, include_additional_fields=True, strip_personal_data=True))
-    # If the animal is not adoptable, bail out
-    if a is None: raise asm3.utils.ASMPermissionError("animal is not adoptable (None)")
-    if not is_animal_adoptable(dbo, a): raise asm3.utils.ASMPermissionError("animal is not adoptable (False)")
-    # If the option is on, use animal comments as the notes
-    if asm3.configuration.publisher_use_comments(dbo):
-        a.WEBSITEMEDIANOTES = a.ANIMALCOMMENTS
-    head, body, foot = get_animal_view_template(dbo)
+    a = dbo.first_row(get_animal_data(dbo, animalid=animalid, include_additional_fields=True, strip_personal_data=False))
+    # The animal is adoptable, use the normal animalview template
+    if a is not None and is_animal_adoptable(dbo, a):
+        head, body, foot = get_animal_view_template(dbo)
+    else:
+        # The animal is not adoptable. 
+        # If there is no animalviewnotadoptable template, produce an error
+        head, body, foot = asm3.template.get_html_template(dbo, "animalviewnotadoptable")
+        if head == "": raise asm3.utils.ASMPermissionError("animal is not adoptable")
+        # Otherwise, load the animal record so we can generate the animalviewnotadoptable page
+        a = asm3.animal.get_animal(dbo, animalid)
     if head == "":
         head = "<!DOCTYPE html>\n<html>\n<head>\n<title>$$SHELTERCODE$$ - $$ANIMALNAME$$</title></head>\n<body>"
         body = "<h2>$$SHELTERCODE$$ - $$ANIMALNAME$$</h2><p><img src='$$WEBMEDIAFILENAME$$'/></p><p>$$WEBMEDIANOTES$$</p>"
@@ -168,7 +170,7 @@ def get_animal_view_adoptable_html(dbo):
     """ Returns an HTML wrapper around get_animal_view_adoptable_js - uses
         a template called animalviewadoptable if it exists. 
     """
-    head, body, foot = asm3.template.get_html_template(dbo, "animalviewadoptable")
+    head, body, foot = asm3.template.get_html_template(dbo, "animalviewadoptables")
     if head == "":
         head = "<!DOCTYPE html>\n<html>\n<head>\n<title>Adoptable Animals</title>\n" \
             "<style>\n" \
@@ -281,7 +283,7 @@ class HTMLPublisher(FTPPublisher):
         output = searchin
         nav = self.navbar.replace("<a href=\"%d.%s\">%d</a>" % (page, self.pc.extension, page), str(page))
         dateportion = asm3.i18n.python2display(self.locale, asm3.i18n.now(self.dbo.timezone))
-        timeportion = asm3.i18n.format_date("%H:%M:%S", asm3.i18n.now(self.dbo.timezone))
+        timeportion = asm3.i18n.format_time(asm3.i18n.now(self.dbo.timezone))
         if page != -1:
             output = output.replace("$$NAV$$", nav)
         else:

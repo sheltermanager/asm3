@@ -38,6 +38,7 @@ $$HEAD
 </tr>
 $$FOOT
 </table>
+<p><b>Total $LOGTYPENAME: {COUNT.LOGTYPENAME}</b></p>
 GROUP$$
 
 $$BODY

@@ -1,4 +1,3 @@
-#!/usr/bin/python env
 
 import unittest
 import base
@@ -76,7 +75,6 @@ class TestAnimal(unittest.TestCase):
         assert True == asm3.animal.get_has_animals(base.get_dbo())
         assert True == asm3.animal.get_has_animal_on_shelter(base.get_dbo())
         asm3.animal.get_animals_owned_by(base.get_dbo(), 1)
-        asm3.animal.get_preferred_web_media_name(base.get_dbo(), self.nid)
 
     def test_get_animals_namecode(self):
         assert len(asm3.animal.get_animals_namecode(base.get_dbo())) > 0
@@ -147,6 +145,9 @@ class TestAnimal(unittest.TestCase):
         post = asm3.utils.PostedData(data, "en")
         asm3.animal.update_animal_from_form(base.get_dbo(), post, "test")
 
+    def test_update_flags(self):
+        asm3.animal.update_flags(base.get_dbo(), "test", self.nid, "courtesy")
+
     def test_update_animals_from_form(self):
         data = {
             "animals": str(self.nid),
@@ -174,6 +175,14 @@ class TestAnimal(unittest.TestCase):
         nid = asm3.animal.clone_animal(base.get_dbo(), "test", self.nid)
         assert nid != 0
         asm3.animal.delete_animal(base.get_dbo(), "test", nid)
+
+    def test_clone_from_template(self):
+        asm3.animal.clone_from_template(base.get_dbo(), "test", self.nid, base.today(), 1, 1)
+
+    def test_merge_animal(self):
+        cid = asm3.animal.clone_animal(base.get_dbo(), "test", self.nid)
+        assert cid != 0
+        asm3.animal.merge_animal(base.get_dbo(), "test", self.nid, cid)
 
     def test_update_daily_boarding_cost(self):
         asm3.animal.update_daily_boarding_cost(base.get_dbo(), "test", self.nid, 1500)

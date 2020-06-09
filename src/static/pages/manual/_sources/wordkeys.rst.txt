@@ -24,6 +24,8 @@ OrganisationPostcode / OrganizationZipcode
     The shelter's zip or postal code
 OrganisationTelephone / OrganizationTelephone
     The shelter's telephone number
+OrganisationEmail / OrganizationEmail
+   The shelter's email address
 Date
     Today's date
 Username
@@ -572,7 +574,7 @@ Payment Keys
 
 If you are creating a document from the animal or person records, then the same
 rules apply as for vaccinations and medical records when accessing payments.
-payments. The Recent keyword looks for payments that have been received and Due 
+The Recent keyword looks for payments that have been received and Due 
 for non-received payments.
 
 However, if you create an invoice/receipt document from the payment tab of a
@@ -594,8 +596,12 @@ PaymentDate
     The date the payment was received 
 PaymentDateDue
     If this is a recurring payment, the date it is due 
-PaymentAmount 
-    The total amount of the payment
+PaymentGross
+    The total gross amount of the payment, including any fees and taxes
+PaymentFee
+    Any transaction fees incurred on the payment
+PaymentAmount / PaymentNet
+    The net amount of the payment, excludes any fees and taxes
 PaymentQuantity
     (if quantities are enabled) The number of items the payment covers
 PaymentUnitPrice
@@ -622,16 +628,24 @@ PaymentAnimalShortCode
     The short shelter code of the animal the payment is linked to
 PaymentPersonName
     The name of the person the payment is linked to
+PaymentPersonAddress
+   The address of the person the payment is linked to
+PaymentPersonCity / PaymentPersonTown
+   The city of the person the payment is linked to
+PaymentPersonState / PaymentPersonCounty
+   The state of the person the payment is linked to
+PaymentPersonZipcode / PaymentPersonPostcode
+   The zipcode of the person the payment is linked to
 PaymentTotalDue
-    The total of all selected payments that have a due date and no received date
-PaymentTotalReceived
-    The total of all selected payments that have a received date
-PaymenTotalTaxRate / PaymentTotalVATRate
+    The gross total of all selected payments that have a due date and no received date
+PaymentTotalNet / PaymentTotalReceived
+    The net total of all selected payments that have a received date
+PaymentTotalTaxRate / PaymentTotalVATRate
     The highest rate of tax applied by any of the selected payments
 PaymentTotalTax / PaymentTotalVAT
     The total of all sales tax/VAT/GST on the selected payments
-PaymentTotal
-    PaymentTotalReceived + PaymentTotalTax
+PaymentTotal / PaymentTotalGross
+    The gross total of all received payments
 
 Transport Keys
 --------------
@@ -891,6 +905,8 @@ OwnerCounty
     (OwnerState for US users) 
 OwnerPostcode 
     (OwnerZipcode for US users) 
+OwnerLookingFor
+    A summary of the "Looking for" slider on the person's record
 Jurisdiction
     The person's jurisdiction
 WorkTelephone 
@@ -986,6 +1002,29 @@ LicenceExpires
     The date the licence expires
 LicenceComments
     Any comments from the licence record
+
+Voucher Keys
+------------
+
+Voucher keys are only available for documents generated for a single voucher
+under the voucher tab or the voucher book. Keys for the person the voucher
+has been issued to are also present and if the licence is linked to an animal,
+animal keys are also present.
+
+VoucherTypeName
+   The type of voucher
+VoucherCode
+   The voucher's unique code
+VoucherValue
+   The amount the voucher can be redeemed for if appropriate
+VoucherIssued
+   The date the voucher was issued
+VoucherExpires
+   The date the voucher expires
+VoucherRedeemed
+   The date the voucher was redeemed/used
+VoucherComments
+   Any comments about the voucher
 
 Incident Keys
 -------------
@@ -1286,5 +1325,30 @@ InvoiceVatRate / InvoiceTaxRate
 InvoiceTotal
     The total of invoice amount and VAT/Tax
 
+Table Keys
+----------
 
+These are special keys that insert a table into your document that contains the
+complete data from a tab. 
+
+These keys do not allow the flexibility of formatting that the other keys
+offer, but they do offer a simple way of putting bulk data into a document without 
+having to create a table containing many "just in case" placeholder keys. 
+
+They will also dynamically expand the document according to how many records
+there are.  Records are output in ascending order of date.
+
+AnimalVaccinations
+   Inserts a table containing all the animal's vaccinations into the document
+AnimalTests
+   Inserts a table containing all of the animal's recorded tests into the document
+AnimalMedicals
+   Inserts a table containing all of the animal's medical treatments
+AnimalLogs
+   Inserts a table containing all of the animal's log entries
+LitterMates
+   Inserts a table containing a list of the animal's littermates
+MovementPayments
+   Inserts a table containing all of the payments for the active movement for
+   the person, animal or movement the document is being generated for.
 

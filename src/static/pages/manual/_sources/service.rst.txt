@@ -69,14 +69,18 @@ animal_view
 
 .. rubric:: Cache time: 2 minutes
 
-Returns a webpage with information for one animal, constructed from the
-animal_view HTML publishing template (editable at :menuselection:`Publishing ->
+Returns a webpage with information for one adoptable animal, constructed from the
+animalview HTML publishing template (editable at :menuselection:`Publishing ->
 Edit HTML publishing templates`). Pass the id of the animal::
 
     http://localhost:5000/service?method=animal_view&animalid=520
 
 When you use :menuselection:`Share --> Link to this animal` on an animal's record, 
 it is this service call that the system redirects you to.
+
+If the animal is no longer adoptable, an error page will be displayed. If you prefer, you
+can create an HTML publishing template called "animalviewnotadoptable" that will display
+instead for animals that can no longer be adopted.
 
 animal_view_adoptable_js
 ------------------------
@@ -173,12 +177,12 @@ filter based on other elements in the page. The callback receives the complete
 animal record and must return true if the record is to be included in the list
 of thumbnails.
 
-For example, to only output animals with an animal type of dog, you could use
+For example, to only output animals with a species of dog, you could use
 this callback::
 
     <script>
     function asm3_adoptable_filter(a, index, arr) {
-        return a.ANIMALTYPENAME == "D (Dog)";
+        return a.SPECIESNAME == "Dog";
     }
     </script>
     <div id="asm3-adoptables" />
@@ -210,6 +214,15 @@ an at symbol @ to do a numeric sort rather than a string/alphanumeric sort::
 
     <script>
     asm3_adoptable_sort = "-@DAYSONSHELTER";
+    </script>
+    <div id="asm3-adoptables" />
+    <script src="http://localhost:5000/service?method=animal_view_adoptable_js"></script>
+
+A special sort keyword of SHUFFLE can also be used, if instead of sorting you'd like the
+adoptable animals to be output in a random order::
+   
+    <script>
+    asm3_adoptable_sort = "SHUFFLE";
     </script>
     <div id="asm3-adoptables" />
     <script src="http://localhost:5000/service?method=animal_view_adoptable_js"></script>
@@ -299,7 +312,7 @@ animal_view_adoptable_html
 
 Returns a complete HTML document that references animal_view_adoptable_js to
 show a list of adoptable animals. It looks for an HTML template called
-"animalviewadoptable" and falls back to a basic internal template if it does
+"animalviewadoptables" and falls back to a basic internal template if it does
 not exist.
 
     http://localhost:5000/service?method=&animal_view_adoptable_html
@@ -406,11 +419,11 @@ speciesid=X or animaltypeid=X parameters to only output animals of that species
 and type. In the default dataset, speciesid=1 is Dogs and speciesid=2 is cats.
 
 A "flag" parameter must be passed to specify the flag you want the returned
-animals to have. If no flag is set, an error is returned. An "allanimals=1"
+animals to have. If no flag is set, an error is returned. An "all=1"
 parameter can optionally be passed if you'd like all animals to be included,
 not just shelter animals.
 
-    http://localhost:5000/service?method=html_flagged_animals&template=littlebox&speciesid=1&allanimals=1&flag=Needs+Foster
+    http://localhost:5000/service?method=html_flagged_animals&template=littlebox&speciesid=1&all=1&flag=Needs+Foster
     http://localhost:5000/service?method=html_flagged_animals&flag=At+Risk
 
 
@@ -426,8 +439,8 @@ it off will cause animalview to be used). It is also possible to pass
 speciesid=X or animaltypeid=X parameters to only output animals of that species
 and type. In the default dataset, speciesid=1 is Dogs and speciesid=2 is cats.
 
-    http://localhost:5000/service?method=html_deceased_animals&template=littlebox&speciesid=1
-    http://localhost:5000/service?method=html_deceased_animals
+    http://localhost:5000/service?method=html_held_animals&template=littlebox&speciesid=1
+    http://localhost:5000/service?method=html_held_animals
 
 
 html_report
@@ -476,6 +489,16 @@ days that are still active.  The method determines whether the format returned
 is JSON or XML::
 
     http://localhost:5000/service?method=xml_found_animals&username=user&password=letmein
+
+json_held_animals and xml_held_animals
+--------------------------------------
+
+.. rubric:: Cache time: 1 hour 
+
+Returns a dataset containing all animals currently held. The method
+determines whether the format returned is JSON or XML::
+
+    http://localhost:5000/service?method=xml_adoptable_animals&username=user&password=letmein
 
 json_recent_adoptions and xml_recent_adoptions
 ----------------------------------------------

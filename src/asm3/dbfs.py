@@ -6,7 +6,7 @@ import asm3.utils
 from asm3.sitedefs import DBFS_STORE, DBFS_FILESTORAGE_FOLDER, DBFS_S3_BUCKET
 
 import mimetypes
-import os, sys
+import os, sys, threading, time
 import web
 
 class DBFSStorage(object):
@@ -131,15 +131,8 @@ class FileStorage(DBFSStorage):
 class S3Storage(DBFSStorage):
     """ Storage class for putting media in Amazon S3 """
     dbo = None
-    s3client = None
     
     def __init__(self, dbo):
-        import boto3
-        # Create a new session each time as the default one is not thread safe
-        # This does has a significant performance impact. There's a boto issue to make sessions thread safe in future.
-        # To use the default session, self.s3client = boto3.client("s3")
-        session = boto3.Session() 
-        self.s3client = session.client("s3")
         self.dbo = dbo
 
     def _cache_key(self, url):
@@ -152,21 +145,36 @@ class S3Storage(DBFSStorage):
         if name.endswith(".jpg") or name.endswith(".jpeg"): return (86400 * 7) # Cache images for a week
         return (86400 * 2) # Cache everything else for two days
 
+    def _s3client(self):
+        """ Gets an s3 client.
+            Creates a new boto3 session each time as the default one is not thread safe
+            This does has a significant performance impact. There's a boto issue to make sessions thread safe in future.
+            To use the default session, self.s3client = boto3.client("s3")
+            We avoid some of the performance problems by using our disk cache and
+            forcing operations onto a background thread.
+        """
+        import boto3
+        session = boto3.Session() 
+        return session.client("s3")
+
     def get(self, dbfsid, url):
         """ Returns the file data for url, reads through the disk cache """
         cachekey = self._cache_key(url)
         cachettl = self._cache_ttl(url)
-        cachedata = asm3.cachedisk.touch(cachekey, ttlremaining=86400, newttl=cachettl) # Use touch to refresh items expiring in less than 24 hours
+        cachedata = asm3.cachedisk.touch(cachekey, self.dbo.database, ttlremaining=86400, newttl=cachettl) # Use touch to refresh items expiring in less than 24 hours
         if cachedata is not None:
             return cachedata
         object_key = "%s/%s" % (self.dbo.database, url.replace("s3:", ""))
         try:
-            response = self.s3client.get_object(Bucket=DBFS_S3_BUCKET, Key=object_key)
-            body = response["Body"].read()
             asm3.al.debug("GET: %s" % object_key, "S3Storage.get", self.dbo)
-            asm3.cachedisk.put(cachekey, body, cachettl)
+            x = time.time()
+            response = self._s3client().get_object(Bucket=DBFS_S3_BUCKET, Key=object_key)
+            asm3.al.debug("get_object in %0.2fs" % (time.time() - x), "dbfs.S3Storage.get", self.dbo)
+            body = response["Body"].read()
+            asm3.cachedisk.put(cachekey, self.dbo.database, body, cachettl)
             return body
         except Exception as err:
+            asm3.al.error(str(err), "dbfs.S3Storage.get", self.dbo)
             raise DBFSError("Failed retrieving from S3: %s" % err)
 
     def put(self, dbfsid, filename, filedata):
@@ -175,23 +183,43 @@ class S3Storage(DBFSStorage):
         object_key = "%s/%s%s" % (self.dbo.database, dbfsid, extension)
         url = "s3:%s%s" % (dbfsid, extension)
         try:
-            self.s3client.put_object(Bucket=DBFS_S3_BUCKET, Key=object_key, Body=filedata)
             asm3.al.debug("PUT: %s" % object_key, "S3Storage.put", self.dbo)
-            asm3.cachedisk.put(self._cache_key(url), filedata, self._cache_ttl(filename))
+            asm3.cachedisk.put(self._cache_key(url), self.dbo.database, filedata, self._cache_ttl(filename))
             self.dbo.execute("UPDATE dbfs SET URL = ?, Content = '' WHERE ID = ?", (url, dbfsid))
+            threading.Thread(target=self._s3_put_object, args=[DBFS_S3_BUCKET, object_key, filedata]).start()
             return url
         except Exception as err:
+            asm3.al.error(str(err), "dbfs.S3Storage.put", self.dbo)
             raise DBFSError("Failed storing in S3: %s" % err)
 
     def delete(self, url):
         """ Deletes the file data """
         object_key = "%s/%s" % (self.dbo.database, url.replace("s3:", ""))
         try:
-            self.s3client.delete_object(Bucket=DBFS_S3_BUCKET, Key=object_key)
             asm3.al.debug("DELETE: %s" % object_key, "S3Storage.delete", self.dbo)
-            asm3.cachedisk.delete(self._cache_key(url))
+            asm3.cachedisk.delete(self._cache_key(url), self.dbo.database)
+            threading.Thread(target=self._s3_delete_object, args=[DBFS_S3_BUCKET, object_key]).start()
         except Exception as err:
+            asm3.al.error(str(err), "dbfs.S3Storage.delete", self.dbo)
             raise DBFSError("Failed deleting from S3: %s" % err)
+
+    def _s3_delete_object(self, bucket, key):
+        """ Deletes an object in S3. This should be called on a new thread """
+        try:
+            x = time.time()
+            self._s3client().delete_object(Bucket=bucket, Key=key)
+            asm3.al.debug("delete_object in %0.2fs" % (time.time() - x), "dbfs.S3Storage._s3_delete_object", self.dbo)
+        except Exception as err:
+            asm3.al.error(str(err), "dbfs.S3Storage._s3_delete_object", self.dbo)
+
+    def _s3_put_object(self, bucket, key, body):
+        """ Puts an object in S3. This should be called on a new thread """
+        try:
+            x = time.time()
+            self._s3client().put_object(Bucket=bucket, Key=key, Body=body)
+            asm3.al.debug("put_object in %0.2fs" % (time.time() - x), "dbfs.S3Storage._s3_put_object", self.dbo)
+        except Exception as err:
+            asm3.al.error(str(err), "dbfs.S3Storage._s3_put_object", self.dbo)
 
     def url_prefix(self):
         return "s3:"
@@ -447,7 +475,7 @@ def get_document_repository(dbo):
     rows = dbo.query("SELECT ID, Name, Path FROM dbfs WHERE " \
         "Path Like '/document_repository%' AND Name Like '%.%' ORDER BY Path, Name")
     for r in rows:
-        mimetype, encoding = mimetypes.guess_type("file://" + r.name, strict=False)
+        mimetype, dummy = mimetypes.guess_type("file://" + r.name, strict=False)
         r["MIMETYPE"] = mimetype
     return rows
 

@@ -112,10 +112,22 @@ class PetLinkPublisher(AbstractPublisher):
         self.log("Uploading data file (%d csv lines) to %s..." % (len(csv), UPLOAD_URL))
         try:
             r = asm3.utils.post_data(UPLOAD_URL, "\n".join(csv), headers=headers)
-            response = r["response"].decode("utf-8").encode("ascii", "xmlcharrefreplace")
+            response = r["response"]
 
             self.log("req hdr: %s, \nreq data: %s" % (r["requestheaders"], r["requestbody"]))
             self.log("resp hdr: %s, \nresp body: %s" % (r["headers"], response))
+
+            # If we got back an empty response body, that means the username
+            # and password were wrong. We save a new log that just contains the
+            # error instead so that the user does not see success messages.
+            if len(response) == 0:
+                self.initLog("petlink", "PetLink Publisher")
+                self.logError("Received empty response body, username and password must be incorrect.")
+                self.successes = 0
+                self.alerts = 1
+                self.saveLog()
+                self.setLastError("Incorrect username and password.")
+                return
 
             jresp = asm3.utils.json_parse(response)
             
@@ -216,6 +228,10 @@ class PetLinkPublisher(AbstractPublisher):
         if email == "":
             email = "%s@petlink.tmp" % phone
 
+        # If the email contains more than one address, throw the extra away
+        if email.find(",") != -1 and email.count("@") > 1:
+            email = email[0:email.find(",")].strip()
+
         line = []
         # Software
         line.append("\"ASM\"")
@@ -236,7 +252,7 @@ class PetLinkPublisher(AbstractPublisher):
         # ZipCode
         line.append("\"%s\"" % ( an["CURRENTOWNERPOSTCODE"] ))
         # Country
-        line.append("\"USA\"")
+        line.append("\"%s\"" % ( self.getLocaleForCountry(an["CURRENTOWNERCOUNTRY"] )))
         # Phone1
         line.append("\"%s\"" % ( an["CURRENTOWNERHOMETELEPHONE"] ))
         # Phone2
@@ -248,7 +264,7 @@ class PetLinkPublisher(AbstractPublisher):
         # Chip Password (stripped phone number)
         line.append("\"%s\"" % phone)
         # Date_of_Implant (yy-mm-dd)
-        line.append("\"%s\"" % asm3.i18n.format_date("%y-%m-%d", an["IDENTICHIPDATE"]))
+        line.append("\"%s\"" % asm3.i18n.format_date(an["IDENTICHIPDATE"], "%y-%m-%d"))
         # PetName
         line.append("\"%s\"" % an["ANIMALNAME"])
         # Species
@@ -261,7 +277,7 @@ class PetLinkPublisher(AbstractPublisher):
         line.append("\"%s\"" % self.plYesNo(an["NEUTERED"]))
         # ColorMarkings (our BaseColour field)
         line.append("\"%s\"" % an["BASECOLOURNAME"])
-        return ",".join(line)
+        return self.csvLine(line)
 
     def validate(self, an):
         """ Validate an animal record is ok to send """

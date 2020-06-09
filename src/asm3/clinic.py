@@ -112,7 +112,7 @@ def insert_appointment_from_form(dbo, username, post):
         raise asm3.utils.ASMValidationError(asm3.i18n._("Appointment date must be a valid date", l))
 
     return dbo.insert("clinicappointment", {
-        "AnimalID":             post.integer("animal"),
+        "AnimalID":             post.integer("personanimal") or post.integer("animal"),
         "OwnerID":              post.integer("person"),
         "ApptFor":              post["for"],
         "DateTime":             post.datetime("apptdate", "appttime"),
@@ -137,7 +137,7 @@ def update_appointment_from_form(dbo, username, post):
         raise asm3.utils.ASMValidationError(asm3.i18n._("Appointment date must be a valid date", l))
 
     dbo.update("clinicappointment", post.integer("appointmentid"), {
-        "AnimalID":             post.integer("animal"),
+        "AnimalID":             post.integer("personanimal") or post.integer("animal"),
         "OwnerID":              post.integer("person"),
         "ApptFor":              post["for"],
         "DateTime":             post.datetime("apptdate", "appttime"),

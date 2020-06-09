@@ -1,12 +1,13 @@
-/*jslint browser: true, forin: true, eqeq: true, white: true, sloppy: true, vars: true, nomen: true */
 /*global $, jQuery, _, asm, common, config, controller, dlgfx, format, header, html, tableform, validate */
 
 $(function() {
 
-    var document_templates = {
+    "use strict";
+
+    const document_templates = {
 
         model: function() {
-            var dialog = {
+            const dialog = {
                 add_title: _("New template"),
                 helper_text: _("Template names can include a path portion with /, eg: Vets/Rabies Certificate"),
                 close_on_ok: true,
@@ -17,7 +18,7 @@ $(function() {
                 ]
             };
 
-            var table = {
+            const table = {
                 rows: controller.rows,
                 idcolumn: "ID",
                 edit: function(row) {
@@ -29,64 +30,51 @@ $(function() {
                 ]
             };
 
-            var buttons = [
-                 { id: "new", text: _("New"), icon: "document", tooltip: _("Create a new template"), enabled: "always", 
-                     click: function() { 
-                         tableform.dialog_show_add(dialog)
-                             .then(function() {
-                                 return tableform.fields_post(dialog.fields, "mode=create", "document_templates");
-                             })
-                             .then(function(response) {
-                                 common.route("document_template_edit?dtid=" + response);
-                             });
-                     } 
-                 },
-                 { id: "newodt", text: _("Upload ODT"), icon: "media-add", tooltip: _("Upload a new OpenOffice template"), enabled: "always", 
-                     hideif: function() { 
-                         return !config.bool("AllowODTDocumentTemplates");
-                     },
-                     click: function() { 
-                         $("#dialog-newodt").dialog("open");
-                     } 
-                 },
-                 { id: "clone", text: _("Clone"), icon: "copy", tooltip: _("Create a new template by copying the selected template"), enabled: "one", 
-                     click: function() { 
-                         var ids = tableform.table_ids(table);
-                         tableform.dialog_show_add(dialog)
-                             .then(function() {
-                                 return tableform.fields_post(dialog.fields, "mode=clone&ids=" + ids , "document_templates");
-                             })
-                             .then(function(response) {
-                                 common.route("document_template_edit?dtid=" + response);
-                             });
-                     } 
-                 },
-                 { id: "delete", text: _("Delete"), icon: "delete", enabled: "multi", 
-                     click: function() { 
-                         tableform.delete_dialog()
-                             .then(function() {
-                                 tableform.buttons_default_state(buttons);
-                                 var ids = tableform.table_ids(table);
-                                 return common.ajax_post("document_templates", "mode=delete&ids=" + ids);
-                             })
-                             .then(function() {
-                                 tableform.table_remove_selected_from_json(table, controller.rows);
-                                 tableform.table_update(table);
-                             });
-                     } 
-                 },
-                 { id: "rename", text: _("Rename"), icon: "link", enabled: "one", 
-                     click: function() { 
-                         $("#newname").val(tableform.table_selected_row(table).NAME);
-                         $("#dialog-rename").dialog("open");
-                     } 
-                 },
-                 { id: "images", text: _("Extra Images"), icon: "image", enabled: "always", tooltip: _("Add extra images for use in reports and documents"),
-                     click: function() {
-                        common.route("report_images");
-                     }
-                 }
-
+            const buttons = [
+                { id: "new", text: _("New"), icon: "document", tooltip: _("Create a new template"), enabled: "always", 
+                    click: async function() { 
+                        await tableform.dialog_show_add(dialog);
+                        let response = await tableform.fields_post(dialog.fields, "mode=create", "document_templates");
+                        common.route("document_template_edit?dtid=" + response);
+                    } 
+                },
+                { id: "newodt", text: _("Upload ODT"), icon: "media-add", tooltip: _("Upload a new OpenOffice template"), enabled: "always", 
+                    hideif: function() { 
+                        return !config.bool("AllowODTDocumentTemplates");
+                    },
+                    click: function() { 
+                        $("#dialog-newodt").dialog("open");
+                    } 
+                },
+                { id: "clone", text: _("Clone"), icon: "copy", tooltip: _("Create a new template by copying the selected template"), enabled: "one", 
+                    click: async function() { 
+                        let ids = tableform.table_ids(table);
+                        await tableform.dialog_show_add(dialog);
+                        let response = await tableform.fields_post(dialog.fields, "mode=clone&ids=" + ids , "document_templates");
+                        common.route("document_template_edit?dtid=" + response);
+                    } 
+                },
+                { id: "delete", text: _("Delete"), icon: "delete", enabled: "multi", 
+                    click: async function() { 
+                        await tableform.delete_dialog();
+                        tableform.buttons_default_state(buttons);
+                        let ids = tableform.table_ids(table);
+                        await common.ajax_post("document_templates", "mode=delete&ids=" + ids);
+                        tableform.table_remove_selected_from_json(table, controller.rows);
+                        tableform.table_update(table);
+                    } 
+                },
+                { id: "rename", text: _("Rename"), icon: "link", enabled: "one", 
+                    click: function() { 
+                        $("#newname").val(tableform.table_selected_row(table).NAME);
+                        $("#dialog-rename").dialog("open");
+                    } 
+                },
+                { id: "images", text: _("Extra Images"), icon: "image", enabled: "always", tooltip: _("Add extra images for use in reports and documents"),
+                    click: function() {
+                       common.route("report_images");
+                    }
+                }
             ];
             this.dialog = dialog;
             this.table = table;
@@ -107,20 +95,18 @@ $(function() {
         },
 
         bind_rename_dialog: function() {
-            var renamebuttons = { };
-            renamebuttons[_("Rename")] = function() {
+            let renamebuttons = { };
+            renamebuttons[_("Rename")] = async function() {
                 validate.reset();
                 if (!validate.notblank([ "newname" ])) { return; }
                 $("#dialog-rename").disable_dialog_buttons();
-                var dtid = tableform.table_ids(document_templates.table).split(",")[0];
-                var newname = encodeURIComponent($("#newname").val());
-                common.ajax_post("document_templates", "mode=rename&newname=" + newname + "&dtid=" + dtid)
-                    .then(function() {
-                        $("#dialog-rename").enable_dialog_buttons();
-                        $("#dialog-rename").dialog("close");
-                        tableform.table_selected_row(document_templates.table).NAME = newname;
-                        tableform.table_update(document_templates.table);
-                    });
+                let dtid = tableform.table_ids(document_templates.table).split(",")[0];
+                let newname = encodeURIComponent($("#newname").val());
+                await common.ajax_post("document_templates", "mode=rename&newname=" + newname + "&dtid=" + dtid);
+                $("#dialog-rename").enable_dialog_buttons();
+                $("#dialog-rename").dialog("close");
+                tableform.table_selected_row(document_templates.table).NAME = newname;
+                tableform.table_update(document_templates.table);
             };
             renamebuttons[_("Cancel")] = function() {
                 $("#dialog-rename").dialog("close");
@@ -157,7 +143,7 @@ $(function() {
         },
 
         bind_newodt_dialog: function() {
-            var odtbuttons = { };
+            let odtbuttons = { };
             odtbuttons[_("Upload")] = function() {
                 validate.reset();
                 if (!validate.notblank([ "filechooser" ])) { return; }
@@ -179,7 +165,7 @@ $(function() {
         },
 
         render: function() {
-            var s = "";
+            let s = "";
             this.model();
             s += this.render_rename_dialog();
             s += this.render_newodt_dialog();

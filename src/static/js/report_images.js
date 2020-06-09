@@ -1,7 +1,8 @@
-/*jslint browser: true, forin: true, eqeq: true, white: true, sloppy: true, vars: true, nomen: true */
 /*global $, jQuery, _, asm, common, config, controller, dlgfx, format, header, html, tableform, validate */
 
 $(function() {
+
+    "use strict";
 
     var report_images = {
 
@@ -25,11 +26,23 @@ $(function() {
                 edit: function(row) {
                     common.route("image?db=" + asm.useraccount + "&mode=dbfs&id=/reports/" + row.NAME);
                 },
+                button_click: function() {
+                    common.copy_to_clipboard($(this).attr("data"));
+                    header.show_info(_("Successfully copied to the clipboard."));
+                    return false;
+                },
                 columns: [
                     { field: "NAME", display: _("Image file"), initialsort: true },
                     { field: "NAME", display: _("URL"), 
                         formatter: function(row) {
-                            return "image?db=" + asm.useraccount + "&mode=dbfs&id=/reports/" + row.NAME;
+                            let relurl = "image?db=" + asm.useraccount + "&mode=dbfs&id=/reports/" + row.NAME,
+                                absurl = asm.serviceurl + "?";
+                            if (asm.useraccountalias) { absurl += "account=" + asm.useraccountalias + "&"; }
+                            absurl += "method=extra_image&title=" + row.NAME;
+                            return relurl + ' <button type="button" data-icon="link" data="' + relurl + '">' + 
+                                _("Copy relative URL to the clipboard (for use with documents and reports)") + '</button>' +
+                                ' <button type="button" data-icon="extlink" data="' + absurl + '">' + 
+                                _("Copy absolute service URL to the clipboard (for external use in web pages and emails)") + '</button>';
                         }
                     }
                 ]

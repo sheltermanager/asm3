@@ -1,6 +1,6 @@
 
 import asm3.al
-import asm3.cachemem
+import asm3.cachedisk
 import asm3.db
 from asm3.sitedefs import MULTIPLE_DATABASES, MULTIPLE_DATABASES_TYPE
 
@@ -10,7 +10,7 @@ import os, sys
 import web
 
 # Regex to remove invalid chars from an entered database
-INVALID_REMOVE = re.compile('[\/\.\*\?\ ]')
+INVALID_REMOVE = re.compile(r'[\/\.\*\?\ ]')
 
 try:
     sys.path.append("/root/asmdb")
@@ -35,11 +35,11 @@ def get_account(alias):
     if len(alias) > 20: return None     
     TTL = 86400 * 2
     cachekey = "smcom_dbinfo_%s" % alias
-    a = asm3.cachemem.get(cachekey)
+    a = asm3.cachedisk.get(cachekey, "smcom")
     if a is None:
         a = smcom_client.get_account(alias)
         if a is not None and "user" in a:
-            asm3.cachemem.put(cachekey, a, TTL)
+            asm3.cachedisk.put(cachekey, "smcom", a, TTL)
     return a
 
 def get_database_info(alias):

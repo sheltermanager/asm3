@@ -52,7 +52,7 @@ class PETtracUKPublisher(AbstractPublisher):
             "hereby agree that it may be disclosed to any person or persons who may be involved in securing the welfare of the " \
             "pet above. PETtrac reserves the right to amend any microchip record in the event that we are subsequently " \
             "provided with additional information.</p>\n"
-        return asm3.utils.html_to_pdf(h)
+        return asm3.utils.html_to_pdf(self.dbo, h)
 
     def run(self):
         
@@ -132,7 +132,7 @@ class PETtracUKPublisher(AbstractPublisher):
                     if avidrereg:
                         self.log("microchip already registered response, re-registering")
 
-                        pdfname = "%s-%s-%s.pdf" % (asm3.i18n.format_date("%Y%m%d", asm3.i18n.now(self.dbo.timezone)), orgserial, an["IDENTICHIPNUMBER"])
+                        pdfname = "%s-%s-%s.pdf" % (asm3.i18n.format_date(asm3.i18n.now(self.dbo.timezone), "%Y%m%d"), orgserial, an["IDENTICHIPNUMBER"])
                         fields["filenameupload"] = pdfname
                         pdf = self.reregistrationPDF(fields, user[0]["SIGNATURE"], user[0]["REALNAME"], orgname, orgaddress, orgtown, orgcounty, orgpostcode)
                         self.log("generated re-registration PDF %s (%d bytes)" % (pdfname, len(pdf)))
@@ -191,7 +191,7 @@ class PETtracUKPublisher(AbstractPublisher):
             "orgpassword": orgpassword,
             "version": "1.1",
             "microchip": an["IDENTICHIPNUMBER"],
-            "implantdate": asm3.i18n.format_date("%Y%m%d", an["IDENTICHIPDATE"]),
+            "implantdate": asm3.i18n.format_date(an["IDENTICHIPDATE"], "%Y%m%d"),
             "prefix": an["CURRENTOWNERTITLE"],
             "surname": an["CURRENTOWNERSURNAME"],
             "firstname": an["CURRENTOWNERFORENAMES"],
@@ -206,7 +206,7 @@ class PETtracUKPublisher(AbstractPublisher):
             "email": an["CURRENTOWNEREMAILADDRESS"],
             "petname": an["ANIMALNAME"],
             "petgender": an["SEXNAME"][0:1],
-            "petdob": asm3.i18n.format_date("%Y%m%d", an["DATEOFBIRTH"]),
+            "petdob": asm3.i18n.format_date(an["DATEOFBIRTH"], "%Y%m%d"),
             "petspecies": species,
             "petbreed": breed,
             "petneutered": an["NEUTERED"] == 1 and "true" or "false",

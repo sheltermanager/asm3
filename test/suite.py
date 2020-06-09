@@ -1,4 +1,4 @@
-#!/usr/bin/python env
+#!/usr/bin/env python3
 
 import unittest
 import base
@@ -80,6 +80,10 @@ fullsuite.append(suitemove)
 import test_onlineform
 suiteonlineform = unittest.makeSuite(test_onlineform.TestOnlineForm, 'test')
 fullsuite.append(suiteonlineform)
+
+import test_paymentprocessor
+suitepaymentprocessor = unittest.makeSuite(test_paymentprocessor.TestPaymentProcessor, 'test')
+fullsuite.append(suitepaymentprocessor)
 
 import test_person
 suiteperson = unittest.makeSuite(test_person.TestPerson, 'test')

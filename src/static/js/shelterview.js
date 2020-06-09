@@ -1,7 +1,8 @@
-/*jslint browser: true, forin: true, eqeq: true, white: true, sloppy: true, vars: true, nomen: true */
 /*global $, jQuery, _, asm, common, config, controller, dlgfx, edit_header, format, header, html, validate */
 
 $(function() {
+
+    "use strict";
 
     var shelterview = {
 
@@ -17,7 +18,11 @@ $(function() {
             else {
                 h.push('class="asm-shelterview-animal" ');
             }
-            h.push('data="' + a.ID + '">');
+            h.push('data-animal="' + a.ID + '" ');
+            h.push('data-location="' + a.SHELTERLOCATION + '" ');
+            h.push('data-unit="' + a.SHELTERLOCATIONUNIT + '" ');
+            h.push('data-person="' + a.CURRENTOWNERID + '" ');
+            h.push('>');
             h.push(html.animal_link_thumb(a, {showunit: showunit}));
             h.push('</div>');
             return h.join("\n");
@@ -30,26 +35,72 @@ $(function() {
          * multiple times in this one if it has multiple flags.
          */
         render_flags: function() {
-            var h = [];
+            var h = [], ht = [], c = 0;
             $.each(controller.flags, function(i, f) {
-                // Output the flag
-                h.push('<p class="asm-menu-category">' + f.FLAG + '</p>');
-                // Output every animal who has this flag
+                ht = [];
+                c = 0;
+                // Build output for every animal who has this flag
                 $.each(controller.animals, function(ia, a) {
                     if (!a.ADDITIONALFLAGS) { return; }
                     var aflags = a.ADDITIONALFLAGS.split("|");
                     $.each(aflags, function(x, af) {
                         if (af == f.FLAG) {
-                            h.push(shelterview.render_animal(a, false, !a.ACTIVEMOVEMENTTYPE && a.ARCHIVED == 0));
+                            c += 1;
+                            ht.push(shelterview.render_animal(a, false, !a.ACTIVEMOVEMENTTYPE && a.ARCHIVED == 0));
                         }
                     });
                 });
+                // Output the flag if some animals had it
+                if (c > 0) {
+                    h.push('<p class="asm-menu-category">' + f.FLAG + ' (' + c + ')</p>');
+                    h.push(ht.join("\n"));
+                }
             });
             // Output all animals who don't have any flags
-            h.push('<p class="asm-menu-category">' + _("(none)") + '</p>');
+            ht = [];
+            c = 0; 
             $.each(controller.animals, function(ia, a) {
                 if (!a.ADDITIONALFLAGS || a.ADDITIONALFLAGS == '|') {
-                    h.push(shelterview.render_animal(a, false, !a.ACTIVEMOVEMENTTYPE && a.ARCHIVED == 0));
+                    c += 1;
+                    ht.push(shelterview.render_animal(a, false, !a.ACTIVEMOVEMENTTYPE && a.ARCHIVED == 0));
+                }
+            });
+            if (c > 0) {
+                h.push('<p class="asm-menu-category">' + _("(none)") + ' (' + c + ')</p>');
+                h.push(ht.join("\n"));
+            }
+            // Load the whole thing into the DOM
+            $("#viewcontainer").html(h.join("\n"));
+        },
+
+        /** 
+         * Renders a specialised shelterview that shows good with
+         * and housetrained, along with all animals that have a positive value.
+         * It's a special view because the same animal can appear
+         * multiple times in this one if it has multiple matches.
+         */
+        render_goodwith: function() {
+            var h = [];
+            var gw = [
+                [ "ISGOODWITHCATS", 0, _("Good with cats") ],
+                [ "ISGOODWITHDOGS", 0, _("Good with dogs") ],
+                [ "ISGOODWITHCHILDREN", 0, _("Good with children") ],
+                [ "ISGOODWITHCHILDREN", 5, _("Good with children over 5") ],
+                [ "ISGOODWITHCHILDREN", 12, _("Good with children over 12") ],
+                [ "ISHOUSETRAINED", 0, _("Housetrained") ]
+            ];
+            $.each(gw, function(i, v) {
+                var ht = [], c = 0;
+                $.each(controller.animals, function(ia, a) {
+                    if (a[v[0]] == v[1]) {
+                        c += 1;
+                        ht.push(shelterview.render_animal(a, false, !a.ACTIVEMOVEMENTTYPE && a.ARCHIVED == 0));
+                    }
+                });
+                // Output the category and matching animals if there were any
+                if (c > 0) {
+                    h.push('<p class="asm-menu-category">' + v[2] + ' (' + c + ')</p>');
+                    h.push(ht.join("\n"));
                 }
             });
             // Load the whole thing into the DOM
@@ -148,7 +199,10 @@ $(function() {
                     drop: function(event, ui) {
                         var locationid = $(this).attr("data-location");
                         var unit = $(this).attr("data-unit");
-                        var animalid = $(ui.draggable).attr("data");
+                        var animalid = $(ui.draggable).attr("data-animal");
+                        var curlocationid = $(ui.draggable).attr("data-location");
+                        var curunit = $(ui.draggable).attr("data-unit");
+                        if (locationid == curlocationid && unit == curunit) { shelterview.reload(); return; } // Same location and unit, do nothing
                         var droptarget = $(this);
                         header.show_loading(_("Moving..."));
                         common.ajax_post("shelterview", "mode=moveunit&locationid=" + locationid + "&unit=" + encodeURIComponent(unit) + "&animalid=" + animalid)
@@ -210,7 +264,9 @@ $(function() {
                     },
                     drop: function(event, ui) {
                         var personid = $(this).attr("data-person");
-                        var animalid = $(ui.draggable).attr("data");
+                        var animalid = $(ui.draggable).attr("data-animal");
+                        var curpersonid = $(ui.draggable).attr("data-person");
+                        if (curpersonid == personid) { shelterview.reload(); return; } // Same person, do nothing
                         var droptarget = $(this);
                         header.show_loading(_("Moving..."));
                         common.ajax_post("shelterview", "mode=movefoster&personid=" + personid + "&animalid=" + animalid)
@@ -260,6 +316,10 @@ $(function() {
                     lastgrp2 = "";
                     // Produce an appropriate link based on the group field
                     grplink = "#";
+                    if (groupfield == "SHELTERLOCATIONNAME") {
+                        grplink = "animal_find_results?logicallocation=onshelter&shelterlocation=" + a.SHELTERLOCATION;
+                        locationsused.push(a.SHELTERLOCATION);
+                    }
                     if (groupfield == "DISPLAYLOCATIONNAME") {
                         grplink = "animal_find_results?logicallocation=onshelter&shelterlocation=" + a.SHELTERLOCATION;
                         locationsused.push(a.SHELTERLOCATION);
@@ -335,7 +395,7 @@ $(function() {
             }
             // If we're sorting on location, find any locations that were unused
             // and output a section for them - unless they're retired
-            if (groupfield == "DISPLAYLOCATIONNAME" && config.bool("ShelterViewShowEmpty")) {
+            if (config.bool("ShelterViewShowEmpty") && (groupfield == "DISPLAYLOCATIONNAME" || groupfield == "SHELTERLOCATIONNAME")) {
                 $.each(controller.locations, function(i, v) {
                     if ($.inArray(v.ID, locationsused) == -1 && !v.ISRETIRED) {
                         var loclink = "animal_find_results?logicallocation=onshelter&shelterlocation=" + v.ID;
@@ -362,7 +422,9 @@ $(function() {
                     drop: function(event, ui) {
                         var locationid = $(this).attr("data-location");
                         var locationname = common.get_field(controller.locations, locationid, "LOCATIONNAME");
-                        var animalid = $(ui.draggable).attr("data");
+                        var animalid = $(ui.draggable).attr("data-animal");
+                        var curlocationid = $(ui.draggable).attr("data-location");
+                        if (locationid == curlocationid) { shelterview.reload(); return; } // Same location, do nothing
                         var droptarget = $(this);
                         header.show_loading(_("Moving..."));
                         common.ajax_post("shelterview", "mode=movelocation&locationid=" + locationid + "&animalid=" + animalid)
@@ -372,6 +434,7 @@ $(function() {
                                 $.each(controller.animals, function(i, a) {
                                     if (a.ID == animalid) {
                                         a.SHELTERLOCATION = locationid;
+                                        a.SHELTERLOCATIONNAME = locationname;
                                         a.DISPLAYLOCATIONNAME = locationname;
                                         return false;
                                     }
@@ -416,7 +479,7 @@ $(function() {
                 this.render_view("ADOPTIONCOORDINATORNAME", "", "ADOPTIONCOORDINATORNAME,ANIMALNAME", false, false);
             }
             else if (viewmode == "coordinatorfosterer") {
-                this.render_view("ADOPTIONCOORDINATORNAME", "CURRENTOWNERNAME", "ADOPTIONCOORDINATORNAME,CURRENTOWNERNAME,ANIMALNAME", false, false, function(a) { return a.ACTIVEMOVEMENTTYPE == 2; });
+                this.render_view("ADOPTIONCOORDINATORNAME", "CURRENTOWNERNAME", "ADOPTIONCOORDINATORNAME,CURRENTOWNERNAME,ANIMALNAME", false, false);
             }
             else if (viewmode == "entrycategory") {
                 this.render_view("ENTRYREASONNAME", "", "ENTRYREASONNAME,ANIMALNAME", false, false);
@@ -430,8 +493,17 @@ $(function() {
             else if (viewmode == "fostereractive") {
                 this.render_foster_available(true);
             }
+            else if (viewmode == "goodwith") {
+                this.render_goodwith();
+            }
             else if (viewmode == "location") {
                 this.render_view("DISPLAYLOCATIONNAME", "", "DISPLAYLOCATIONNAME,ANIMALNAME", true, false);
+            }
+            else if (viewmode == "locationnv") {
+                this.render_view("SHELTERLOCATIONNAME", "", "SHELTERLOCATIONNAME,ANIMALNAME", true, false);
+            }
+            else if (viewmode == "locationbreed") {
+                this.render_view("DISPLAYLOCATIONNAME", "BREEDNAME", "DISPLAYLOCATIONNAME,BREEDNAME,ANIMALNAME", true, false);
             }
             else if (viewmode == "locationspecies") {
                 this.render_view("DISPLAYLOCATIONNAME", "SPECIESNAME", "DISPLAYLOCATIONNAME,SPECIESNAME,ANIMALNAME", true, false);
@@ -518,10 +590,13 @@ $(function() {
             h.push('<option value="flags">' + _("Flags") + '</option>');
             h.push('<option value="fosterer">' + _("Fosterer") + '</option>');
             h.push('<option value="fostereractive">' + _("Fosterer (Active Only)") + '</option>');
+            h.push('<option value="goodwith">' + _("Good With") + '</option>');
             h.push('<option value="location">' + _("Location") + '</option>');
+            h.push('<option value="locationbreed">' + _("Location and Breed") + '</option>');
             h.push('<option value="locationspecies">' + _("Location and Species") + '</option>');
             h.push('<option value="locationtype">' + _("Location and Type") + '</option>');
             h.push('<option value="locationunit">' + _("Location and Unit") + '</option>');
+            h.push('<option value="locationnv">' + _("Location (No Virtual)") + '</option>');
             h.push('<option value="name">' + _("Name") + '</option>');
             h.push('<option value="pickuplocation">' + _("Pickup Location") + '</option>');
             h.push('<option value="retailer">' + _("Retailer") + '</option>');

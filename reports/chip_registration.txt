@@ -1,6 +1,6 @@
 Microchip Registration
 ###
-Auditing
+Microchip
 ###
 2730/Any
 ###
@@ -24,7 +24,7 @@ WHERE m.MovementDate >= '$ASK DATE Enter the earliest adoption date$'
 AND m.MovementDate <= '$ASK DATE Enter the latest adoption date$'
 AND m.MovementType = 1 
 AND a.DeceasedDate Is Null
-ORDER BY s.SpeciesName
+ORDER BY s.SpeciesName, m.MovementDate
 ###
 $$HEADER
 HEADER$$

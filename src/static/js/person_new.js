@@ -1,7 +1,8 @@
-/*jslint browser: true, forin: true, eqeq: true, white: true, sloppy: true, vars: true, nomen: true */
 /*global $, jQuery, _, additional, asm, common, config, controller, dlgfx, edit_header, format, header, html, validate */
 
 $(function() {
+
+    "use strict";
 
     var person_new = {
 
@@ -181,7 +182,7 @@ $(function() {
                     $("#asm-content button").button("enable"); 
                     return; 
                 }
-                var formdata = "mode=similar&" + $("#emailaddress, #surname, #forenames, #address").toPOST();
+                var formdata = "mode=similar&" + $("#emailaddress, #mobiletelephone, #surname, #forenames, #address").toPOST();
                 common.ajax_post("person_embed", formdata)
                     .then(function(result) { 
                         var people = jQuery.parseJSON(result);

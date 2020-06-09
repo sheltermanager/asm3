@@ -1,15 +1,16 @@
-/*jslint browser: true, forin: true, eqeq: true, white: true, sloppy: true, vars: true, nomen: true */
 /*global $, _, asm, common, config, controller, dlgfx, format, header, html, tableform, validate */
 
 $(function() {
 
-    var accounts_trx = {
+    "use strict";
+
+    const accounts_trx = {
 
         render: function() {
             return [
                 '<div id="dialog-edit" style="display: none" title="' + html.title(_("Edit transaction")) + '">',
                 '<div class="ui-state-highlight ui-corner-all" style="margin-top: 20px; padding: 0 .7em">',
-                '<p><span class="ui-icon ui-icon-info" style="float: left; margin-right: .3em;"></span>',
+                '<p><span class="ui-icon ui-icon-info"></span>',
                 _("Transactions need a date and description."),
                 '</p>',
                 '</div>',
@@ -43,7 +44,7 @@ $(function() {
                 '<tr id="paymentrow">',
                 '<td><label for="person">' + _("Payment From") + '</label></td>',
                 '<td>',
-                '<a id="personlink" class="asm-embed-name" href="#"></a> <img src="static/images/icons/right.gif" />',
+                '<a id="personlink" class="asm-embed-name" href="#"></a> ' + html.icon("right"),
                 '<a id="animallink" class="asm-embed-name" href="#"></a>',
                 '</td>',
                 '</tr>',
@@ -54,11 +55,11 @@ $(function() {
                 '</td>',
                 '</tr>',
                 '<tr>',
-                '<td><label for="deposit">' + _("Deposit") + '</label></td>',
+                '<td><label for="deposit">' + _("Credit") + '</label></td>',
                 '<td><input id="deposit" data="deposit" class="asm-textbox asm-currencybox" /></td>',
                 '</tr>',
                 '<tr>',
-                '<td><label for="withdrawal">' + _("Withdrawal") + '</label></td>',
+                '<td><label for="withdrawal">' + _("Debit") + '</label></td>',
                 '<td><input id="withdrawal" data="withdrawal" class="asm-textbox asm-currencybox" /></td>',
                 '</tr>',
                 '</table>',
@@ -91,8 +92,8 @@ $(function() {
                 '<th class="left">' + _("R") + '</th>',
                 '<th class="left">' + _("Description") + '</th>',
                 '<th class="left">' + _("Account") + '</th>',
-                '<th class="right">' + _("Deposit") + '</th>',
-                '<th class="right">' + _("Withdrawal") + '</th>',
+                '<th class="right">' + _("Credit") + '</th>',
+                '<th class="right">' + _("Debit") + '</th>',
                 '<th class="right">' + _("Balance") + '</th>',
                 '</tr>',
                 '</thead>',
@@ -117,7 +118,7 @@ $(function() {
         },
 
         render_tablebody: function() {
-            var h = [],
+            let h = [],
                 tdc = "even",
                 futuredrawn = false,
                 reconciled = "",
@@ -138,7 +139,7 @@ $(function() {
                 if (t.PERSONNAME) {
                     desc += html.person_link(t.PERSONID, t.PERSONNAME);
                 }
-                if (t.DONATIONANIMALCODE) {
+                if (t.DONATIONANIMALID) {
                     desc += " " + html.icon("right") + " " + 
                         '<a href="animal?id=' + t.DONATIONANIMALID + '">' +
                         t.DONATIONANIMALCODE + " - " + 
@@ -168,9 +169,9 @@ $(function() {
         },
 
         bind: function() {
-            var validate_account = function(selector) {
+            const validate_account = function(selector) {
                 // Returns true if the value of $(selector) is a valid account code
-                var v = $(selector).val(),
+                let v = $(selector).val(),
                     codes = html.decode(controller.codes).split("|"),
                     validcode;
                 $.each(codes, function(i, c) {
@@ -188,7 +189,7 @@ $(function() {
             };
 
             $("#table-trx input:checkbox").change(function() {
-                if ($("#table-trx input:checked").size() > 0) {
+                if ($("#table-trx input:checked").length > 0) {
                     $("#button-delete").button("option", "disabled", false); 
                     $("#button-reconcile").button("option", "disabled", false); 
                 }
@@ -204,19 +205,21 @@ $(function() {
                 }
             });
 
-            var editbuttons = { };
-            editbuttons[_("Save")] = function() {
+            let editbuttons = { };
+            editbuttons[_("Save")] = async function() {
                 validate.reset();
                 if (!validate_account("#otheraccount")) { return; }
                 if (!validate.notblank([ "trxdate", "otheraccount", "description", "deposit", "withdrawal" ])) { return; }
-                var formdata = "mode=update&trxid=" + $("#trxid").val() + "&accountid=" + controller.accountid + "&" +
+                let formdata = "mode=update&trxid=" + $("#trxid").val() + "&accountid=" + controller.accountid + "&" +
                     $("#dialog-edit input, #dialog-edit select").toPOST();
                 $("#dialog-edit").disable_dialog_buttons();
-                common.ajax_post("accounts_trx", formdata)
-                    .then(accounts_trx.reload)
-                    .always(function() {
-                        $("#dialog-edit").dialog("close");
-                    });
+                try {
+                    await common.ajax_post("accounts_trx", formdata);
+                    accounts_trx.reload();
+                }
+                finally {
+                    $("#dialog-edit").dialog("close");
+                }
             };
             editbuttons[_("Cancel")] = function() {
                 $("#dialog-edit").dialog("close");
@@ -232,37 +235,45 @@ $(function() {
                 buttons: editbuttons
             });
 
-            $("#button-reconcile").button({disabled: true}).click(function() {
+            $("#button-reconcile").button({disabled: true}).click(async function() {
                 $("#button-reconcile").button("disable");
-                var formdata = "mode=reconcile&ids=" + $("#table-trx input").tableCheckedData();
-                common.ajax_post("accounts_trx", formdata).then(accounts_trx.reload);
+                let formdata = "mode=reconcile&ids=" + $("#table-trx input").tableCheckedData();
+                await common.ajax_post("accounts_trx", formdata);
+                accounts_trx.reload();
             });
 
             $("#button-refresh").button().click(function() {
                 common.route("accounts_trx?" + $("#fromdate, #todate, #recfilter, #accountid").toPOST());
             });
 
-            $("#button-add").button().click(function() {
+            $("#button-add").button().click(async function() {
                 if (!validate_account("#newacc")) { return; }
                 if (!validate.notblank([ "newtrxdate", "newdesc", "newacc" ])) { return; }
                 $("#button-add").button("disable");
-                var formdata = "mode=create&accountid=" + controller.accountid + "&" +
+                let formdata = "mode=create&accountid=" + controller.accountid + "&" +
                     $("#table-trx input, #table-trx select").toPOST();
-                common.ajax_post("accounts_trx", formdata).then(accounts_trx.reload);
+                await common.ajax_post("accounts_trx", formdata);
+                accounts_trx.reload();
             });
 
-            $("#button-delete").button({disabled: true}).click(function() {
-                tableform.delete_dialog()
-                    .then(function() {
-                         var formdata = "mode=delete&ids=" + $("#table-trx input").tableCheckedData();
-                         return common.ajax_post("accounts_trx", formdata);
-                    })
-                    .then(accounts_trx.reload);
+            $("#button-delete").button({disabled: true}).click(async function() {
+                await tableform.delete_dialog();
+                let formdata = "mode=delete&ids=" + $("#table-trx input").tableCheckedData();
+                await common.ajax_post("accounts_trx", formdata);
+                accounts_trx.reload();
+            });
+
+            // Allow CTRL+A to select all transactions
+            Mousetrap.bind("ctrl+a", function() {
+                $("#table-trx input[type='checkbox']").prop("checked", true);
+                $("#button-delete").button("option", "disabled", false); 
+                $("#button-reconcile").button("option", "disabled", false); 
+                return false;
             });
 
             $(".trx-edit-link").click(function() {
                 if (accounts_trx.readonly) { return false; }
-                var row = common.get_row(controller.rows, $(this).attr("data-id"));
+                const row = common.get_row(controller.rows, $(this).attr("data-id"));
                 validate.reset("dialog-edit");
                 $("#trxid").val(row.ID);
                 $("#trxdate").val(format.date(row.TRXDATE));

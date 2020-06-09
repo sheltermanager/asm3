@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Appendix: Frequently Asked Questions &mdash; ASM 43u documentation</title>
+  <title>Appendix: Frequently Asked Questions &mdash; ASM 44u documentation</title>
   
 
   
@@ -60,7 +60,7 @@
             
             
               <div class="version">
-                43u
+                44u
               </div>
             
           
@@ -102,6 +102,7 @@
 <li class="toctree-l1"><a class="reference internal" href="reports.html">Reports</a></li>
 <li class="toctree-l1"><a class="reference internal" href="litters.html">Litters</a></li>
 <li class="toctree-l1"><a class="reference internal" href="onlineform.html">Online Forms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="paymentprocessors.html">Payment Processors</a></li>
 <li class="toctree-l1"><a class="reference internal" href="rota.html">Rota</a></li>
 <li class="toctree-l1"><a class="reference internal" href="mobile.html">Mobile Interface</a></li>
 <li class="toctree-l1"><a class="reference internal" href="service.html">Service API</a></li>
@@ -118,6 +119,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#why-are-my-non-shelter-and-adopted-animals-appearing-on-the-vaccination-book">Why are my non-shelter and adopted animals appearing on the vaccination book?</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#why-are-my-non-shelter-and-adopted-animals-being-shown-on-my-website">Why are my non-shelter and adopted animals being shown on my website?</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#why-can-t-i-edit-the-date-brought-in-field">Why can’t I edit the date brought in field?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#when-i-create-a-payment-i-get-no-source-account-found-for-donation-type-can-t-create-trx">When I create a payment I get “No source account found for donation type, can’t create trx”?</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#why-can-t-i-view-my-person-record">Why can’t I view my person record?</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#how-do-i-integrate-my-adoptable-animals-with-my-website">How do I integrate my adoptable animals with my website?</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#i-uploaded-the-wrong-picture-for-an-animal-but-it-s-stuck">I uploaded the wrong picture for an animal, but it’s “stuck”?</a></li>
@@ -264,6 +266,18 @@ any fields that make up part of the shelter code. For example, if your coding
 format contains T for the type, the type field will be locked for editing when
 this option is on. If your coding format has any of YYYY, MM or DD for a
 portion of the date brought in, that field will be locked too.</p>
+</div>
+<div class="section" id="when-i-create-a-payment-i-get-no-source-account-found-for-donation-type-can-t-create-trx">
+<h2>When I create a payment I get “No source account found for donation type, can’t create trx”?<a class="headerlink" href="#when-i-create-a-payment-i-get-no-source-account-found-for-donation-type-can-t-create-trx" title="Permalink to this headline">¶</a></h2>
+<p>You’ve turned on the option to have payments create matching accounting transactions
+under <span class="menuselection">Settings ‣ Options ‣ Accounts</span></p>
+<p>The error is occurring because your payment type is not linked to an income
+account under <span class="menuselection">Financial ‣ Accounts</span>. To fix this, either
+disable the option to create matching accounting transactions if you are not
+using the accounts. Or, you can create a new income account in the accounts
+screen and link it to your payment type with the dropdown.</p>
+<p>The message itself is only a warning to tell you an accounting transaction could not be
+created, it is not stopping your payment from being created.</p>
 </div>
 <div class="section" id="why-can-t-i-view-my-person-record">
 <h2>Why can’t I view my person record?<a class="headerlink" href="#why-can-t-i-view-my-person-record" title="Permalink to this headline">¶</a></h2>
@@ -440,7 +454,7 @@ generate the figures for.</p>
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2019, Sheltermanager, Ltd
+        &copy; Copyright 2020, Sheltermanager, Ltd
 
     </p>
   </div>

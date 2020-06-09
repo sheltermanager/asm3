@@ -44,6 +44,9 @@ for some of your form fields, by using the format fieldname=value.
 
 .. warning:: sheltermanager.com uses a short term 2 minute cache on forms, so if you make changes to a form you've recently viewed, you may have to wait 2 minutes for any changes you make to appear.
 
+Editing Form Fields
+-------------------
+
 Clicking on the form's name will allow you to edit the individual fields of
 information the report will take.
 
@@ -90,6 +93,42 @@ when creating a person record. It will only work for new person records created
 from the form submission and not if the form updates an existing person record
 to prevent overwriting data.
 
+Show If syntax
+^^^^^^^^^^^^^^
+
+It is possible to have the system only display some of your form fields based
+on a condition being met. There are many situations where you may want to do
+this to remove unnecessary fields based on previous answers (for example, remove
+questions about the landlord if the person is not renting, or questions about
+dogs if they are surrendering a cat, etc).
+
+Edit the form field that you want to show or hide based on a condition, and
+enter the condition in the "Show If" box.
+
+The syntax for show if is::
+
+   fieldname=X
+
+to only show if the form field with fieldname currently has the value X.
+
+You can also use ! instead of = to only show if the field does NOT have
+the value and < or > to use lesser than or greater than comparisons
+with a fixed value. Eg::
+
+   fieldname!notthis
+   fieldname>0
+   fieldname<20
+
+If fieldname is a checkbox, you can test for the special keyword "on" to
+indicate you want the box checked (or "off" for unchecked)::
+
+   mycheck=on
+
+.. note:: Only check boxes, radio buttons, text and lookup fields can be used with Show If
+
+Incoming Forms
+--------------
+
 .. image:: images/onlineform_incoming.png
 
 Selecting a form allows you to intelligently create or attach records from the
@@ -103,6 +142,14 @@ data, or explicitly attach the form to existing records.
 
 * Attach Animal (via animalname): Attaches the form to a single animal
   record based on the animalname field in the form itself.
+
+* Create Animal: Searches for an animal record matching the code field on the 
+  form if present. If a match is found, the form is attached to that animal,
+  otherwise a new animal record is created. While you can use the Species
+  and Breed field types with the breed1/breed2/color fields, you can also
+  use your own lookup lists containing subsets of these items for users
+  to choose from. When creating animals, the animalname and one of dateofbirth
+  or age are mandatory.
 
 * Create Person: Searches for a person record matching either the email address
   if present, or the firstname, lastname and address fields on the form. If a
@@ -137,8 +184,9 @@ lost/found animal or waiting list). The screen will put a link in the Link
 column to give you a clickable link to the newly created record as well so you
 can view it. 
 
-You can safely delete incoming forms once they have been attached to a record.
-The system will also remove incoming forms older than 2 weeks by default.
+Incoming forms that have been attached to a record will be automatically
+deleted when you leave the screen. The system will also remove incoming forms
+older than 4 weeks by default. Both of these options are configurable.
 
 Importing
 ---------

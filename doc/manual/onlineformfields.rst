@@ -38,6 +38,8 @@ description
     The description for the lost, found or waiting list animal
 reason
     The reason the person is putting their animal on the waiting list
+type
+   The animal type for the animal. ASM will try and guess based on the text which one is meant. Use a lookup field to limit the choices to known items.
 species
     The species of the animal. ASM will try and guess based on the text which one is meant. Use a lookup field to limit the choices to known items (or use the Species field type)
 breed
@@ -46,12 +48,18 @@ agegroup
     The age group of the animal. Again, ASM will try and guess one if it's internal values.
 color / colour
     The colour of the animal. ASM will try and guess a match (or use the Color field type to limit to them)
+datelost
+   The date the animal was lost (lost animals only)
+datefound
+   The date the animal was found (found animals only)
 arealost
     The area the animal was lost in (lost animals only)
 areafound
     The area the animal was found in (found animals only)
 areapostcode / areazipcode
     The postcode/zipcode area the animal was lost or found in
+microchip
+   The animal's microchip number
 animalname
     The name of an existing shelter animal to attach this form to if specified (use the adoptable/shelter animal field types to get a valid animal name from your form)
 reserveanimalname[x]

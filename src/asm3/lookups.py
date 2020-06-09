@@ -17,6 +17,7 @@ import re
 #   pubspec - has a PetFinderSpecies column (species)
 #   pubbreed - has a PetFinderBreed column (breed)
 #   pubcol - has an AdoptAPetColour column (basecolour)
+#   sched - has a RescheduleDays column (vaccinationtype)
 #   cost - has a DefaultCost column (citationtype, costtype, donationtype, licencetype)
 #   units - has Units column (internallocation)
 #   site - has SiteID column (internallocation)
@@ -49,19 +50,21 @@ LOOKUP_TABLES = {
     "lksize":           (_("Sizes"), "Size", _("Size"), "", "", ("animal.Size",)),
     "lksyesno":         (_("Yes/No"), "Name", _("Yes/No"), "", "", ("animal.Neutered",)),
     "lksynun":          (_("Yes/No/Unknown"), "Name", _("Yes/No/Unknown"), "", "", ("animal.IsHouseTrained",)),
+    "lksynunk":         (_("Good with kids"), "Name", _("Good with kids"), "", "", ("animal.IsGoodWithChildren",)),
     "lksposneg":        (_("Positive/Negative"), "Name", _("Positive/Negative"), "", "", ("animal.CombiTestResult",)),
     "pickuplocation":   (_("Pickup Locations"), "LocationName", _("Location"), "LocationDescription", "add del ret", ("animal.PickupLocationID",)),
     "reservationstatus": (_("Reservation Statuses"), "StatusName", _("Status"), "StatusDescription", "add del ret", ("adoption.ReservationStatusID",)),
     "site":             (_("Sites"), "SiteName", _("Site"), "", "add del", ("users.SiteID","internallocation.SiteID")),
-    "species":          (_("Species"), "SpeciesName", _("Species"), "SpeciesDescription", "add del ret pubspec", ("animal.SpeciesID", "animallost.AnimalTypeID", "animalfound.AnimalTypeID")),
+    "species":          (_("Species"), "SpeciesName", _("Species"), "SpeciesDescription", "add del ret pubspec", ("animal.SpeciesID", "onlineformfield.SpeciesID", "animallost.AnimalTypeID", "animalfound.AnimalTypeID")),
     "stocklocation":    (_("Stock Locations"), "LocationName", _("Location"), "LocationDescription", "add del ret", ("stocklevel.StockLocationID",)),
     "stockusagetype":   (_("Stock Usage Type"), "UsageTypeName", _("Usage Type"), "UsageTypeDescription", "add del ret", ("stockusage.StockUsageTypeID",)),
     "lkurgency":        (_("Urgencies"), "Urgency", _("Urgency"), "", "", ("animalwaitinglist.Urgency",)),
     "testtype":         (_("Test Types"), "TestName", _("Type"), "TestDescription", "add del ret cost", ("animaltest.TestTypeID",)),
     "testresult":       (_("Test Results"), "ResultName", _("Result"), "ResultDescription", "add del ret", ("animaltest.TestResultID",)),
+    "lkstransportstatus": (_("Transport Statuses"), "Name", _("Status"), "", "", ("animaltransport.Status",)),
     "transporttype":    (_("Transport Types"), "TransportTypeName", _("Type"), "TransportTypeDescription", "add del ret", ("animaltransport.TransportTypeID",)),
     "traptype":         (_("Trap Types"), "TrapTypeName", _("Type"), "TrapTypeDescription", "add del ret cost", ("ownertraploan.TrapTypeID",)),
-    "vaccinationtype":  (_("Vaccination Types"), "VaccinationType", _("Type"), "VaccinationDescription", "add del ret cost", ("animalvaccination.VaccinationID",)),
+    "vaccinationtype":  (_("Vaccination Types"), "VaccinationType", _("Type"), "VaccinationDescription", "add del ret cost sched", ("animalvaccination.VaccinationID",)),
     "voucher":          (_("Voucher Types"), "VoucherName", _("Type"), "VoucherDescription", "add del ret cost", ("ownervoucher.VoucherID",)),
     "lkworktype":       (_("Work Types"), "WorkType", _("Type"), "", "add del", ("ownerrota.WorkTypeID",))
 }
@@ -88,6 +91,7 @@ MICROCHIP_MANUFACTURERS = [
     { "length": 10, "regex": r"^0C0", "name": "M4S ID", "locales": "" },
     { "length": 10, "regex": r"^1\d+A", "name": "AVID Europe", "locales": "" }, 
     { "length": 10, "regex": r"^4", "name": "HomeAgain", "locales": "" }, 
+    { "length": 15, "regex": r"^250", "name": "I-CAD", "locales": ""},
     { "length": 15, "regex": r"^360981", "name": "Novartis", "locales": "" },
     { "length": 15, "regex": r"^578098", "name": "Kruuse Norge", "locales": "nb" },
     { "length": 15, "regex": r"^578077", "name": "AVID Friendchip Norway", "locales": "nb" },
@@ -154,8 +158,35 @@ MICROCHIP_MANUFACTURERS = [
     { "length": 15, "regex": r"^999", "name": "Transponder Test", "locales": ""}
 ]
 
+CURRENCIES = [
+    { "CODE": "USD", "DISPLAY": "USD - United States Dollar"},
+    { "CODE": "AUD", "DISPLAY": "AUD - Australian Dollar"},
+    { "CODE": "BRL", "DISPLAY": "BRL - Brazilian Real"},
+    { "CODE": "CAD", "DISPLAY": "CAD - Canadian Dollar"},
+    { "CODE": "CHF", "DISPLAY": "CHF - Swiss Franc"},
+    { "CODE": "CZK", "DISPLAY": "CZK - Czech Koruna"},
+    { "CODE": "DKK", "DISPLAY": "DKK - Danish Krone"},
+    { "CODE": "EUR", "DISPLAY": "EUR - Euro"},
+    { "CODE": "GBP", "DISPLAY": "GBP - Pound Sterling"},
+    { "CODE": "HKD", "DISPLAY": "HKD - Hong Kong Dollar"},
+    { "CODE": "HUF", "DISPLAY": "HUF - Hungarian Forint"},
+    { "CODE": "INR", "DISPLAY": "INR - Indian Rupee"},
+    { "CODE": "ILS", "DISPLAY": "ILS - Israeli New Sheqel"},
+    { "CODE": "JPY", "DISPLAY": "JPY - Japanese Yen"},
+    { "CODE": "MYR", "DISPLAY": "MYR - Malaysian Ringgit"},
+    { "CODE": "MXN", "DISPLAY": "MXN - Mexican Peso"},
+    { "CODE": "NOK", "DISPLAY": "NOK - Norwegian Krone"},
+    { "CODE": "NZD", "DISPLAY": "NZD - New Zealand Dollar"},
+    { "CODE": "PLN", "DISPLAY": "PLN - Polish Zloty"},
+    { "CODE": "RUB", "DISPLAY": "RUB - Russian Ruble"},
+    { "CODE": "SEK", "DISPLAY": "SEK - Swedish Krona"},
+    { "CODE": "TWD", "DISPLAY": "TWD - Taiwan New Dollar"},
+    { "CODE": "THB", "DISPLAY": "THB - Thai Baht"},
+]
+
 VISUAL_THEMES = [
     ( "asm", "ASM" ),
+    ( "base", "Base" ),
     ( "black-tie", "Black Tie" ),
     ( "blitzer", "Blitzer" ),
     ( "cupertino", "Cupertino") ,
@@ -216,6 +247,7 @@ PETFINDER_BREEDS = (
     "Black Mouth Cur",
     "Bloodhound",
     "Bluetick Coonhound",
+    "Blue Lacy",
     "Border Collie",
     "Border Terrier",
     "Borzoi",
@@ -975,7 +1007,7 @@ def get_lookup(dbo, tablename, namefield):
         return dbo.query("SELECT b.*, s.SpeciesName FROM breed b LEFT OUTER JOIN species s ON s.ID = b.SpeciesID ORDER BY b.BreedName")
     return dbo.query("SELECT * FROM %s ORDER BY %s" % ( tablename, namefield ))
 
-def insert_lookup(dbo, lookup, name, desc="", speciesid=0, pfbreed="", pfspecies="", apcolour="", units="", site=1, defaultcost=0, vat=0, retired=0):
+def insert_lookup(dbo, username, lookup, name, desc="", speciesid=0, pfbreed="", pfspecies="", apcolour="", units="", site=1, rescheduledays=0, defaultcost=0, vat=0, retired=0):
     t = LOOKUP_TABLES[lookup]
     nid = 0
     if lookup == "basecolour":
@@ -984,7 +1016,7 @@ def insert_lookup(dbo, lookup, name, desc="", speciesid=0, pfbreed="", pfspecies
             "BaseColourDescription":    desc,
             "AdoptAPetColour":          apcolour,
             "IsRetired":                retired
-        })
+        }, username, setCreated=False)
     elif lookup == "breed":
         return dbo.insert("breed", {
             "BreedName":        name,
@@ -992,7 +1024,7 @@ def insert_lookup(dbo, lookup, name, desc="", speciesid=0, pfbreed="", pfspecies
             "PetFinderBreed":   pfbreed,
             "SpeciesID":        speciesid,
             "IsRetired":        retired
-        })
+        }, username, setCreated=False)
     elif lookup == "internallocation":
         return dbo.insert("internallocation", {
             "LocationName":         name,
@@ -1000,21 +1032,21 @@ def insert_lookup(dbo, lookup, name, desc="", speciesid=0, pfbreed="", pfspecies
             "Units":                units,
             "SiteID":               site,
             "IsRetired":            retired
-        })
+        }, username, setCreated=False)
     elif lookup == "species":
         return dbo.insert("species", {
             "SpeciesName":          name,
             "SpeciesDescription":   desc,
             "PetFinderSpecies":     pfspecies,
             "IsRetired":            retired
-        })
+        }, username, setCreated=False)
     elif lookup == "costtype":
         nid = dbo.insert(lookup, {
             t[LOOKUP_NAMEFIELD]:    name,
             t[LOOKUP_DESCFIELD]:    desc,
             "DefaultCost":          defaultcost,
             "IsRetired":            retired
-        })
+        }, username, setCreated=False)
         # Create matching cost type account
         if asm3.configuration.create_cost_trx(dbo): asm3.financial.insert_account_from_costtype(dbo, nid, name, desc)
         return nid
@@ -1025,37 +1057,45 @@ def insert_lookup(dbo, lookup, name, desc="", speciesid=0, pfbreed="", pfspecies
             "DefaultCost":          defaultcost,
             "IsVAT":                vat,
             "IsRetired":            retired
-        })
+        }, username, setCreated=False)
         # Create a matching account if we have a donation type
         if asm3.configuration.create_donation_trx(dbo): asm3.financial.insert_account_from_donationtype(dbo, nid, name, desc)
         return nid
-    elif lookup == "testtype" or lookup == "voucher" or lookup == "vaccinationtype" \
-        or lookup == "traptype" or lookup == "licencetype" or lookup == "citationtype":
+    elif lookup == "testtype" or lookup == "voucher" or lookup == "traptype" or lookup == "licencetype" or lookup == "citationtype":
         nid = dbo.insert(lookup, {
             t[LOOKUP_NAMEFIELD]:    name,
             t[LOOKUP_DESCFIELD]:    desc,
             "DefaultCost":          defaultcost,
             "IsRetired":            retired
-        })
+        }, username, setCreated=False)
+        return nid
+    elif lookup == "vaccinationtype":
+        nid = dbo.insert(lookup, {
+            t[LOOKUP_NAMEFIELD]:    name,
+            t[LOOKUP_DESCFIELD]:    desc,
+            "DefaultCost":          defaultcost,
+            "RescheduleDays":       rescheduledays,
+            "IsRetired":            retired
+        }, username, setCreated=False)
         return nid
     elif lookup == "lkownerflags" or lookup == "lkanimalflags":
         return dbo.insert(lookup, {
             t[LOOKUP_NAMEFIELD]:    name.replace(",", " ").replace("|", " ") # sanitise bad values for flags
-        })
+        }, username, setCreated=False)
     elif t[LOOKUP_DESCFIELD] == "":
         # No description
         if t[LOOKUP_MODIFIERS].find("ret") != -1:
-            return dbo.insert(lookup, { t[LOOKUP_NAMEFIELD]: name, "IsRetired": retired })    
+            return dbo.insert(lookup, { t[LOOKUP_NAMEFIELD]: name, "IsRetired": retired }, username, setCreated=False)    
         else:
-            return dbo.insert(lookup, { t[LOOKUP_NAMEFIELD]: name })    
+            return dbo.insert(lookup, { t[LOOKUP_NAMEFIELD]: name }, username, setCreated=False)    
     else:
         # Name/Description
         if t[LOOKUP_MODIFIERS].find("ret") != -1:
-            return dbo.insert(lookup, { t[LOOKUP_NAMEFIELD]: name, t[LOOKUP_DESCFIELD]: desc, "IsRetired": retired })    
+            return dbo.insert(lookup, { t[LOOKUP_NAMEFIELD]: name, t[LOOKUP_DESCFIELD]: desc, "IsRetired": retired }, username, setCreated=False)
         else:
-            return dbo.insert(lookup, { t[LOOKUP_NAMEFIELD]: name, t[LOOKUP_DESCFIELD]: desc })    
+            return dbo.insert(lookup, { t[LOOKUP_NAMEFIELD]: name, t[LOOKUP_DESCFIELD]: desc }, username, setCreated=False)
 
-def update_lookup(dbo, iid, lookup, name, desc="", speciesid=0, pfbreed="", pfspecies="", apcolour="", units="", site=1, defaultcost=0, vat=0, retired=0):
+def update_lookup(dbo, username, iid, lookup, name, desc="", speciesid=0, pfbreed="", pfspecies="", apcolour="", units="", site=1, rescheduledays=0, defaultcost=0, vat=0, retired=0):
     t = LOOKUP_TABLES[lookup]
     if lookup == "basecolour":
         dbo.update("basecolour", iid, { 
@@ -1063,7 +1103,7 @@ def update_lookup(dbo, iid, lookup, name, desc="", speciesid=0, pfbreed="", pfsp
             "BaseColourDescription":    desc,
             "AdoptAPetColour":          apcolour,
             "IsRetired":                retired
-        })
+        }, username, setLastChanged=False)
     elif lookup == "breed":
         dbo.update("breed", iid, {
             "BreedName":            name,
@@ -1071,7 +1111,7 @@ def update_lookup(dbo, iid, lookup, name, desc="", speciesid=0, pfbreed="", pfsp
             "PetFinderBreed":       pfbreed,
             "SpeciesID":            speciesid,
             "IsRetired":            retired
-        })
+        }, username, setLastChanged=False)
     elif lookup == "internallocation":
         dbo.update("internallocation", iid, {
             "LocationName":         name,
@@ -1079,14 +1119,14 @@ def update_lookup(dbo, iid, lookup, name, desc="", speciesid=0, pfbreed="", pfsp
             "Units":                units,
             "SiteID":               site,
             "IsRetired":            retired
-        })
+        }, username, setLastChanged=False)
     elif lookup == "species":
         dbo.update("species", iid, {
             "SpeciesName":          name,
             "SpeciesDescription":   desc,
             "PetFinderSpecies":     pfspecies,
             "IsRetired":            retired
-        })
+        }, username, setLastChanged=False)
     elif lookup == "donationtype":
         dbo.update(lookup, iid, {
             t[LOOKUP_NAMEFIELD]:    name,
@@ -1094,19 +1134,27 @@ def update_lookup(dbo, iid, lookup, name, desc="", speciesid=0, pfbreed="", pfsp
             "DefaultCost":          defaultcost,
             "IsVAT":                vat,
             "IsRetired":            retired
-        })
-    elif lookup == "costtype" or lookup == "testtype" or lookup == "voucher" or lookup == "vaccinationtype" \
+        }, username, setLastChanged=False)
+    elif lookup == "costtype" or lookup == "testtype" or lookup == "voucher" \
         or lookup == "traptype" or lookup == "licencetype" or lookup == "citationtype":
         dbo.update(lookup, iid, {
             t[LOOKUP_NAMEFIELD]:    name,
             t[LOOKUP_DESCFIELD]:    desc,
             "DefaultCost":          defaultcost,
             "IsRetired":            retired
-        })
+        }, username, setLastChanged=False)
+    elif lookup == "vaccinationtype":
+        dbo.update(lookup, iid, {
+            t[LOOKUP_NAMEFIELD]:    name,
+            t[LOOKUP_DESCFIELD]:    desc,
+            "RescheduleDays":       rescheduledays,
+            "DefaultCost":          defaultcost,
+            "IsRetired":            retired
+        }, username, setLastChanged=False)
     elif lookup == "lkownerflags" or lookup == "lkanimalflags":
         oldflag = dbo.query_string("SELECT Flag FROM %s WHERE ID = ?" % lookup, [iid])
         newflag = name.replace(",", " ").replace("|", " ")
-        dbo.update(lookup, iid, { t[LOOKUP_NAMEFIELD]: newflag })
+        dbo.update(lookup, iid, { t[LOOKUP_NAMEFIELD]: newflag }, username, setLastChanged=False)
         # Update the text in flags fields where appropriate
         if lookup == "lkownerflags":
             dbo.execute("UPDATE owner SET AdditionalFlags = %s WHERE AdditionalFlags LIKE ?" % dbo.sql_replace("AdditionalFlags"), (oldflag, newflag, "%%%s%%" % oldflag))
@@ -1115,28 +1163,28 @@ def update_lookup(dbo, iid, lookup, name, desc="", speciesid=0, pfbreed="", pfsp
     elif t[LOOKUP_DESCFIELD] == "":
         # No description
         if t[LOOKUP_MODIFIERS].find("ret") != -1:
-            dbo.update(lookup, iid, { t[LOOKUP_NAMEFIELD]: name, "IsRetired": retired })
+            dbo.update(lookup, iid, { t[LOOKUP_NAMEFIELD]: name, "IsRetired": retired }, username, setLastChanged=False)
         else:
-            dbo.update(lookup, iid, { t[LOOKUP_NAMEFIELD]: name })
+            dbo.update(lookup, iid, { t[LOOKUP_NAMEFIELD]: name }, username, setLastChanged=False)
     else:
         # Name/Description
         if t[LOOKUP_MODIFIERS].find("ret") != -1:
-            dbo.update(lookup, iid, { t[LOOKUP_NAMEFIELD]: name, t[LOOKUP_DESCFIELD]: desc, "IsRetired": retired })
+            dbo.update(lookup, iid, { t[LOOKUP_NAMEFIELD]: name, t[LOOKUP_DESCFIELD]: desc, "IsRetired": retired }, username, setLastChanged=False)
         else:
-            dbo.update(lookup, iid, { t[LOOKUP_NAMEFIELD]: name, t[LOOKUP_DESCFIELD]: desc })
+            dbo.update(lookup, iid, { t[LOOKUP_NAMEFIELD]: name, t[LOOKUP_DESCFIELD]: desc }, username, setLastChanged=False)
 
-def update_lookup_retired(dbo, lookup, iid, retired):
+def update_lookup_retired(dbo, username, lookup, iid, retired):
     """ Updates lookup item with ID=iid, setting IsRetired=retired """
-    dbo.update(lookup, iid, { "IsRetired": retired })
+    dbo.update(lookup, iid, { "IsRetired": retired }, username, setLastChanged=False)
 
-def delete_lookup(dbo, lookup, iid):
+def delete_lookup(dbo, username, lookup, iid):
     l = dbo.locale
     t = LOOKUP_TABLES[lookup]
     for fv in t[LOOKUP_FOREIGNKEYS]:
         table, field = fv.split(".")
         if 0 < dbo.query_int("SELECT COUNT(*) FROM %s WHERE %s = %s" % (table, field, iid)):
             raise asm3.utils.ASMValidationError(_("This item is referred to in the database ({0}) and cannot be deleted until it is no longer in use.", l).format(fv))
-    dbo.delete(lookup, iid)
+    dbo.delete(lookup, iid, username)
 
 def get_microchip_manufacturer(l, chipno):
     """
@@ -1236,6 +1284,9 @@ def get_test_types(dbo):
 def get_test_results(dbo):
     return dbo.query("SELECT * FROM testresult ORDER BY ResultName")
 
+def get_transport_statuses(dbo):
+    return dbo.query("SELECT * FROM lkstransportstatus ORDER BY ID")
+
 def get_transport_types(dbo):
     return dbo.query("SELECT * FROM transporttype ORDER BY TransportTypeName")
 
@@ -1252,6 +1303,8 @@ def get_yesno(dbo):
     return dbo.query("SELECT * FROM lksyesno ORDER BY Name")
 
 def get_ynun(dbo):
-    return dbo.query("SELECT * FROM lksynun ORDER BY Name")
+    return dbo.query("SELECT * FROM lksynun ORDER BY ID")
 
+def get_ynunk(dbo):
+    return dbo.query("SELECT * FROM lksynunk ORDER BY ID")
 

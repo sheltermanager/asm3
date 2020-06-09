@@ -1,7 +1,10 @@
-/*jslint browser: true, forin: true, eqeq: true, white: true, plusplus: true, sloppy: true, vars: true, nomen: true */
 /*global alert */
 /*global asm3_adoptable_filters, asm3_adoptable_iframe, asm3_adoptable_iframe_height, asm3_adoptable_iframe_bgcolor, asm3_adoptable_iframe_fixed */
 /*global asm3_adoptable_translations, asm3_adoptable_extra, asm3_adoptable_filter, asm3_adoptable_limit, asm3_adoptable_sort */
+
+// NOTE: This file stands alone and should try for compatibility 
+//       with as many browsers as possible. 
+//       Avoid use of let/const, async/await, destructuring, etc.
 
 (function() {
 
@@ -93,6 +96,10 @@
         };
     };
 
+    var sort_shuffle = function (a, b) {  
+        return 0.5 - Math.random();
+    };
+
     var construct_options = function(defaultlabel, valuefield, labelfield) {
         var h = [], seenvalues = {};
         h.push('<option value="">' + translate(defaultlabel) + '</option>');
@@ -151,6 +158,7 @@
 
         var hostdiv = document.getElementById("asm3-adoptable-list"), 
             h = [],
+            c = 0,
             selspecies = document.getElementById("asm3-select-species").value,
             selbreed = document.getElementById("asm3-select-breed").value,
             selagegroup = document.getElementById("asm3-select-agegroup").value,
@@ -173,9 +181,10 @@
             if (typeof asm3_adoptable_extra !== 'undefined') {
                 extra = asm3_adoptable_extra(item);
             }
-            
-            if (limit > 0 && index >= limit) { return; }
 
+            c = c + 1;
+            if (limit > 0 && c > limit) { return; }
+            
             h.push(substitute(thumbnail_template, {
                 account: account,
                 baseurl: baseurl,
@@ -221,10 +230,15 @@
             breedoptions: construct_options("(any breed)", "BREEDNAME", "BREEDNAME"),
             ageoptions: construct_options("(any age)", "AGEGROUP", "AGEGROUP"),
             sizeoptions: construct_options("(any size)", "SIZE", "SIZENAME"),
-            sexoptions: construct_options("(any gender)", "SEX", "SEXNAME")
+            sexoptions: construct_options("(any sex)", "SEX", "SEXNAME")
         });
 
-        adoptables.sort(sort_single(sort_order));
+        if (sort_order == "SHUFFLE") {
+            adoptables.sort(sort_shuffle);
+        }
+        else {
+            adoptables.sort(sort_single(sort_order));
+        }
         render_adoptables();
 
         document.getElementById("asm3-select-species").addEventListener("change", render_adoptables);

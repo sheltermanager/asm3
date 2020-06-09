@@ -1,7 +1,8 @@
-/*jslint browser: true, forin: true, eqeq: true, white: true, sloppy: true, vars: true, nomen: true */
 /*global $, jQuery, _, asm, common, config, controller, dlgfx, edit_header, format, header, html, tableform, validate */
 
 $(function() {
+
+    "use strict";
 
     var stocklevel = {
 
@@ -19,23 +20,23 @@ $(function() {
                     { json_field: "NAME", post_field: "name", label: _("Name"), type: "text", validation: "notblank" },
                     { json_field: "DESCRIPTION", post_field: "description", label: _("Description"), type: "textarea" },
                     { json_field: "", post_field: "quantity", label: _("Quantity"), type: "intnumber", validation: "notblank", defaultval: "1", readonly: true, 
-                        tooltip: _("The number of stock records to create") },
+                        callout: _("The number of stock records to create") },
                     { json_field: "STOCKLOCATIONID", post_field: "location", label: _("Location"), type: "select", 
                         options: { displayfield: "LOCATIONNAME", valuefield: "ID", rows: controller.stocklocations }},
                     { json_field: "UNITNAME", post_field: "unitname", label: _("Units"), type: "text", validation: "notblank",
-                        tooltip: _("The type of unit in the container, eg: tablet, vial, etc.") },
+                        callout: _("The type of unit in the container, eg: tablet, vial, etc.") },
                     { json_field: "TOTAL", post_field: "total", label: _("Total"), type: "number", 
-                        tooltip: _("Total number of units in the container") },
+                        callout: _("Total number of units in the container") },
                     { json_field: "BALANCE", post_field: "balance", label: _("Balance"), type: "number", validation: "notblank",
-                        tooltip: _("The remaining units in the container") },
+                        callout: _("The remaining units in the container") },
                     { json_field: "BATCHNUMBER", post_field: "batchnumber", label: _("Batch"), type: "text", 
-                        tooltip: _("If this stock record is for a drug, the batch number from the container") },
+                        callout: _("If this stock record is for a drug, the batch number from the container") },
                     { json_field: "EXPIRY", post_field: "expiry", label: _("Expiry"), type: "date",
-                        tooltip: _("If this stock record is for a perishable good, the expiry date on the container") },
+                        callout: _("If this stock record is for a perishable good, the expiry date on the container") },
                     { json_field: "COST", post_field: "cost", label: _("Cost"), type: "currency",
-                        tooltip: _("The wholesale/trade price the container was bought for") },
+                        callout: _("The wholesale/trade price the container was bought for") },
                     { json_field: "UNITPRICE", post_field: "unitprice", label: _("Unit Price"), type: "currency",
-                        tooltip: _("The retail/resale price per unit") },
+                        callout: _("The retail/resale price per unit") },
                     { type: "raw", label: "", markup: html.info(_("Usage explains why this stock record was created or adjusted. Usage records will only be created if the balance changes.")) },
                     { json_field: "", post_field: "usagetype", label: _("Usage Type"), type: "select",
                         options: { displayfield: "USAGETYPENAME", valuefield: "ID", rows: controller.stockusagetypes }},
@@ -82,18 +83,14 @@ $(function() {
                     { field: "NAME", display: _("Name"), initialsort: controller.sortexp != 1 },
                     { field: "STOCKLOCATIONNAME", display: _("Location") },
                     { field: "UNITNAME", display: _("Unit") },
-                    { field: "TOTAL", display: _("Total") },
-                    { field: "BALANCE", display: _("Balance") },
+                    { field: "BALANCE", display: _("Balance"), formatter: function(row) {
+                        return row.BALANCE + " / " + row.TOTAL;
+                    }},
                     { field: "COST", display: _("Cost"), formatter: tableform.format_currency },
                     { field: "UNITPRICE", display: _("Unit Price"), formatter: tableform.format_currency },
-                    { field: "VALUE", display: _("Value"), formatter: function(row) {
-                            if (row.UNITPRICE && row.BALANCE) {
-                                return format.currency(row.UNITPRICE * row.BALANCE);
-                            }
-                            return "";
-                        }},
                     { field: "BATCHNUMBER", display: _("Batch") },
-                    { field: "EXPIRY", display: _("Expiry"), formatter: tableform.format_date, initialsort: controller.sortexp == 1 }
+                    { field: "EXPIRY", display: _("Expiry"), formatter: tableform.format_date, initialsort: controller.sortexp == 1 },
+                    { field: "DESCRIPTION", display: _("Description") }
                 ]
             };
 

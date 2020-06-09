@@ -1,7 +1,8 @@
-/*jslint browser: true, forin: true, eqeq: true, white: true, sloppy: true, vars: true, nomen: true */
 /*global $, jQuery, _, additional, asm, common, config, controller, dlgfx, edit_header, format, header, html, mapping, tableform, validate */
 
 $(function() {
+
+    "use strict";
 
     var person = {
 
@@ -18,7 +19,7 @@ $(function() {
                 '</div>',
                 '<div id="dialog-merge" style="display: none" title="' + html.title(_("Select person to merge")) + '">',
                 '<div class="ui-state-highlight ui-corner-all" style="margin-top: 20px; padding: 0 .7em">',
-                '<p><span class="ui-icon ui-icon-info" style="float: left; margin-right: .3em;"></span>',
+                '<p><span class="ui-icon ui-icon-info"></span>',
                 _("Select a person to merge into this record. The selected person will be removed, and their movements, diary notes, log entries, etc. will be reattached to this record."),
                 '</p>',
                 '</div>',
@@ -101,15 +102,15 @@ $(function() {
                 '</td>',
                 '</tr>',
                 '<tr>',
-                '<td><label for="mobiletelephone">' + _("Cell Phone") + '</label></td>',
-                '<td>',
-                '<input type="text" id="mobiletelephone" data-json="MOBILETELEPHONE" data-post="mobiletelephone" class="asm-textbox" />',
-                '</td>',
-                '</tr>',
-                '<tr>',
                 '<td><label for="worktelephone">' + _("Work Phone") + '</label></td>',
                 '<td>',
                 '<input type="text" id="worktelephone" data-json="WORKTELEPHONE" data-post="worktelephone" class="asm-textbox" />',
+                '</td>',
+                '</tr>',
+                '<tr>',
+                '<td><label for="mobiletelephone">' + _("Cell Phone") + '</label></td>',
+                '<td>',
+                '<input type="text" id="mobiletelephone" data-json="MOBILETELEPHONE" data-post="mobiletelephone" class="asm-textbox" />',
                 '</td>',
                 '</tr>',
                 '<tr>',
@@ -167,7 +168,9 @@ $(function() {
                 '<td><input class="asm-textbox newform" id="country" data-json="OWNERCOUNTRY" data-post="country" type="textbox" /></td>',
                 '</tr>',
                 '<tr id="latlongrow">',
-                '<td><label for="latlong">' + _("Latitude/Longitude") + '</label></td>',
+                '<td><label for="latlong">' + _("Latitude/Longitude"),
+                '<span class="asm-callout">' + _("Right-click on the map to change the marker location") + '</span>',
+                '</label></td>',
                 '<td><input type="text" class="asm-latlong" id="latlong" data-json="LATLONG" data-post="latlong" /></td>',
                 '</tr>',
                 '<!-- end right table -->',
@@ -245,7 +248,7 @@ $(function() {
 
         render_homechecker: function() {
             return [
-                '<h3><a href="#">' + _("Homechecker") + '</a></h3>',
+                '<h3 id="accordion-homechecker"><a href="#">' + _("Homechecker") + '</a></h3>',
                 '<div>',
                 '<!-- outer table -->',
                 '<table width="100%">',
@@ -395,7 +398,7 @@ $(function() {
                 '<td><label for="matchgoodwithchildren">' + _("Good with children") + '</label></td>',
                 '<td><select id="matchgoodwithchildren" data-json="MATCHGOODWITHCHILDREN" data-post="matchgoodwithchildren" class="lfs asm-halftextbox selectbox">',
                 '<option value="-1">' + _("(any)") + '</option>',
-                html.list_to_options(controller.ynun, "ID", "NAME"),
+                html.list_to_options(controller.ynunk, "ID", "NAME"),
                 '</select></td>',
                 '</tr>',
                 '<tr>',
@@ -492,6 +495,65 @@ $(function() {
                 $(".tag-individual").fadeIn();
             }
 
+            // if the member flag is selected and membership number is blank,
+            // default the membership number from the person id.
+            if ($("#flags option[value='member']").is(":selected")) {
+                if (common.trim($("#membershipnumber").val()) == "") {
+                    $("#membershipnumber").val( 
+                        format.padleft($("#personid").val(), 10));
+                }
+            }
+
+            if ($("#flags option[value='member']").is(":selected")) {
+                $("label[for='membershipnumber']").html(_("Membership Number"));
+                $("#membershipnumber").prop("title", _("If this person is a member, their membership number"));
+                $("#membershipnumber").closest("tr").fadeIn();
+                $("#membershipexpires").closest("tr").fadeIn();
+            }
+
+            // If the vet flag is selected, change the membership number label
+            // and hide the expiry field so we can use membership for licence
+            if ($("#flags option[value='vet']").is(":selected")) {
+                $("label[for='membershipnumber']").html(_("License Number"));
+                $("#membershipnumber").prop("title", _("The veterinary license number."));
+                $("#membershipnumber").closest("tr").fadeIn();
+                $("#membershipexpires").closest("tr").fadeOut();
+            }
+
+            // If neither member or vet flag is set, hide the membership number field
+            if (!$("#flags option[value='vet']").is(":selected") && !$("#flags option[value='member']").is(":selected")) {
+                $("#membershipnumber").closest("tr").fadeOut();
+                $("#membershipexpires").closest("tr").fadeOut();
+            }
+
+            // If the fosterer flag is set, show/hide the fosterer capacity field
+            if ($("#flags option[value='fosterer']").is(":selected")) {
+                $("#fostercapacity").closest("tr").fadeIn();
+            }
+            else {
+                $("#fostercapacity").closest("tr").fadeOut();
+            }
+
+            // If the homechecked flag is set, or the option is not on to
+            // hide them, show/hide the homechecked by/date fields
+            if ($("#flags option[value='homechecked']").is(":selected") || !config.bool("HideHomeCheckedNoFlag")) {
+                $("#homecheckedby").closest("tr").fadeIn();
+                $("#homechecked").closest("tr").fadeIn();
+            }
+            else {
+                $("#homecheckedby").closest("tr").fadeOut();
+                $("#homechecked").closest("tr").fadeOut();
+            }
+
+            // Hide the homechecker section if this person isn't a homechecker
+            if ($("#flags option[value='homechecker']").is(":selected")) {
+                $("#accordion-homechecker").show();
+            }
+            else {
+                $("#accordion-homechecker").hide();
+                $("#accordion-homechecker").next().hide();
+            }
+
             // Hide additional accordion section if there aren't
             // any additional fields declared
             var ac = $("#asm-additional-accordion");
@@ -527,7 +589,7 @@ $(function() {
             validate.reset();
 
             // name
-            if ($.trim($("#surname").val()) == "") {
+            if (common.trim($("#surname").val()) == "") {
                 header.show_error(_("Name cannot be blank"));
                 $("#asm-details-accordion").accordion("option", "active", 0);
                 validate.highlight("surname");
@@ -535,7 +597,7 @@ $(function() {
             }
 
             // email
-            if ($.trim($("#email").val()) != "") {
+            if (common.trim($("#email").val()) != "") {
                 if (!validate.email($("#email").val())) {
                     return false;
                 }
@@ -656,69 +718,10 @@ $(function() {
                 });
             });
 
-            var set_membership_flag = function() {
-                // Called when the membership number field is changed - if it has something
-                // in it, then set the member flag (only for non-vets)
-                if ($("#membershipnumber").val() != "" && !$("#flags option[value='vet']").is(":selected")) {
-                    $("#flags option[value='member']").prop("selected", "selected");
-                    $("#flags").change();
-                }
-            };
-
-            var set_homechecked_flag = function() {
-                if (config.bool("DontDefaultHomechecked")) { return; }
-                $("#flags option[value='homechecked']").prop("selected", "selected");
-                $("#flags").change();
-            };
-
-            var set_fosterer_flag = function() {
-                if (format.to_int($("#fostercapacity").val())) {
-                    $("#flags option[value='fosterer']").prop("selected", "selected");
-                    $("#flags").change();
-                }
-            };
-
-            $("#homecheckedby").personchooser().bind("personchooserchange", function(event, rec) {
-                set_homechecked_flag();
-            });
-
             // Controls that update the screen when changed
             $("#ownertype").change(person.enable_widgets);
             $("#matchactive").change(person.enable_widgets);
-            $("#homechecked").keyup(set_homechecked_flag);
-            $("#homechecked").change(set_homechecked_flag);
-            $("#membershipnumber").keyup(set_membership_flag).change(set_membership_flag);
-            $("#membershipexpires").change(set_membership_flag);
-            $("#fostercapacity").keyup(set_fosterer_flag).change(set_fosterer_flag);
-
-            $("#flags").change(function() {
-                // if the member flag is selected and membership number is blank,
-                // default the membership number from the person id.
-                if ($("#flags option[value='member']").is(":selected")) {
-                    if ($.trim($("#membershipnumber").val()) == "") {
-                        $("#membershipnumber").val( 
-                            format.padleft($("#personid").val(), 10));
-                    }
-                }
-
-                // If the vet flag is selected, change the membership number label
-                // and hide the expiry field so we can use membership for licence
-                if ($("#flags option[value='vet']").is(":selected")) {
-                    $("label[for='membershipnumber']").html(_("License Number"));
-                    $("#membershipnumber").attr("title", _("The veterinary license number."));
-                    $("#membershipexpires").closest("tr").fadeOut();
-                    $("#homecheckedby").closest("tr").fadeOut();
-                    $("#homechecked").closest("tr").fadeOut();
-                }
-                else {
-                    $("label[for='membershipnumber']").html(_("Membership Number"));
-                    $("#membershipnumber").attr("title", _("If this person is a member, their membership number"));
-                    $("#membershipexpires").closest("tr").fadeIn();
-                    $("#homecheckedby").closest("tr").fadeIn();
-                    $("#homechecked").closest("tr").fadeIn();
-                }
-
-            });
+            $("#flags").change(person.enable_widgets);
 
             validate.save = function(callback) {
                 if (!person.validation()) { header.hide_loading(); return; }
@@ -795,7 +798,9 @@ $(function() {
                     formdata: "mode=email&personid=" + $("#personid").val(),
                     name: $("#forenames").val() + " " + $("#surname").val(),
                     email: $("#email").val(),
-                    logtypes: controller.logtypes
+                    logtypes: controller.logtypes,
+                    personid: controller.person.ID,
+                    templates: controller.templates
                 });
             });
 

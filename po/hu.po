@@ -651,7 +651,7 @@ msgstr "Hozzáadva"
 
 #: main.js header_edit_header.js common_tableform.js
 msgid "Added by {0} on {1}"
-msgstr "Hozzáadva (0) által (1)-kor"
+msgstr "Hozzáadva {0} által {1}-kor"
 
 #: person.js waitinglist.js animal.js incident.js lostfound.js
 msgid "Additional"
@@ -1424,7 +1424,7 @@ msgstr "A találkozó dátuma érvényes dátum kell legyen"
 
 #: clinic_invoice.js clinic.py
 msgid "Appointment {0}. {1} on {2} for {3}"
-msgstr "Találkozó (0), (1) (2)-án (3)-nak"
+msgstr "Találkozó {0}, {1} {2}-án {3}-nak"
 
 #: clinic_appointment.js
 msgid "Appointments need a date and time."
@@ -3063,7 +3063,7 @@ msgstr "Dátum"
 
 #: financial.py
 msgid "Date '{0}' is not valid."
-msgstr "Dátum '(0)' érvénytelen"
+msgstr "Dátum '{0}' érvénytelen"
 
 #: animal.js animal_new.js mobile.py html.py
 msgid "Date Brought In"
@@ -3399,7 +3399,7 @@ msgstr "A kódok és rövidített kódok alapértelmezett formátumai TYYYYNNN �
 #: transport.js onlineform_incoming.js common_tableform.js vaccination.js
 #: medicalprofile.js common.js
 msgid "Delete"
-msgstr "Törlés"
+msgstr "Töröl"
 
 #: roles.js
 msgid "Delete Accounts"
@@ -5060,7 +5060,7 @@ msgstr "Ideiglenesen befogadott állat"
 
 #: movement.py
 msgid "Fostered to {0} since {1}"
-msgstr "Ideiglenesen befogadva (0) által (0) óta "
+msgstr "Ideiglenesen befogadva {0} által {1} óta "
 
 #: person_find_results.js options.js animal_find_results.js
 #: header_edit_header.js onlineforms.js animal_new.js shelterview.js common.js
@@ -5639,7 +5639,7 @@ msgstr "Visszatartás:"
 
 #: common.js animal.py
 msgid "Hold until {0}"
-msgstr "Előjegyzés (0)-ig"
+msgstr "Előjegyzés {0}-ig"
 
 #: dbupdate.py
 msgid "Holland Lop"
@@ -6636,7 +6636,7 @@ msgstr "Az almokhoz legalább egy dátum és szám megadása szükséges."
 
 #: animal.py
 msgid "Live Releases {0}"
-msgstr "Élő kiadások (0)"
+msgstr "Élő kiadások {0}"
 
 #: dbupdate.py
 msgid "Liver"
@@ -7945,11 +7945,11 @@ msgstr "Menhelyen"
 #: code.py
 msgid "On shelter for {0} days, daily cost {1}, cost record total <b>{2}</b>"
 msgstr ""
-"{0} napja a menhelyen, napi költség (1), teljes költség feljegyzés <b>{2}</b>"
+"{0} napja a menhelyen, napi költség {1}, teljes költség feljegyzés <b>{2}</b>"
 
 #: animal_costs.js
 msgid "On shelter for {0} days. Total cost: {1}"
-msgstr "{0} napja a menhelyen. Teljes költség (1)"
+msgstr "{0} napja a menhelyen. Teljes költség {1}"
 
 #: options.js
 msgid "Once assigned, codes cannot be changed"
@@ -13763,267 +13763,267 @@ msgstr "{2}: elveszett a(z) {1} -ban: {0}"
 
 #: main.js
 msgid "{plural0} animal as dead on arrival"
-msgstr "{0} állat meghalt érkezéskor"
+msgstr "{plural0} állat meghalt érkezéskor"
 
 #: main.js
 msgid "{plural0} animal control call due for followup today"
-msgstr "{0} állat kontroll hívás esedékes a mai napra"
+msgstr "{plural0} állat kontroll hívás esedékes a mai napra"
 
 #: main.js
 msgid "{plural0} animal died"
-msgstr "{0} állat meghalt"
+msgstr "{plural0} állat meghalt"
 
 #: main.js
 msgid "{plural0} animal entered the shelter"
-msgstr "{0} állat került a menhelyre"
+msgstr "{plural0} állat került a menhelyre"
 
 #: main.js
 msgid "{plural0} animal has a hold ending today"
-msgstr "{0} állat van foglalva a mai napig "
+msgstr "{plural0} állat van foglalva a mai napig "
 
 #: main.js
 msgid "{plural0} animal has been on the shelter longer than {0} months"
-msgstr "Valamennyi állat, amely több mint {0} hónapja van a menhelyen."
+msgstr "{plural0} Valamennyi állat, amely több mint {0} hónapja van a menhelyen."
 
 #: main.js
 msgid "{plural0} animal is not available for adoption"
-msgstr "{0} állat nem örökbefogadható"
+msgstr "{plural0} állat nem örökbefogadható"
 
 #: main.js
 msgid "{plural0} animal was adopted"
-msgstr "{0} állatot fogadtak örökbe"
+msgstr "{plural0} állatot fogadtak örökbe"
 
 #: main.js
 msgid "{plural0} animal was euthanized"
-msgstr "{0} állat elaltatva."
+msgstr "{plural0} állat elaltatva."
 
 #: main.js
 msgid "{plural0} animal was reclaimed by its owner"
-msgstr "{0} állat visszakövetelve a tulajdonos által"
+msgstr "{plural0} állat visszakövetelve a tulajdonos által"
 
 #: main.js
 msgid "{plural0} animal was transferred to another shelter"
-msgstr "{0} átszállítva másik menhelyre "
+msgstr "{plural0} átszállítva másik menhelyre "
 
 #: i18n.py
 msgid "{plural0} day."
-msgstr "{0} nap."
+msgstr "{plural0} nap."
 
 #: main.js
 msgid "{plural0} incomplete animal control call"
-msgstr "{0} elvégzetlen állat kontroll hívás"
+msgstr "{plural0} elvégzetlen állat kontroll hívás"
 
 #: main.js
 msgid "{plural0} item of stock expires in the next month"
-msgstr "{0} raktáron lévő termék a következő hónapban jár le"
+msgstr "{plural0} raktáron lévő termék a következő hónapban jár le"
 
 #: main.js
 msgid "{plural0} item of stock has expired"
-msgstr "{0} raktáron lévő lejárt termék"
+msgstr "{plural0} raktáron lévő lejárt termék"
 
 #: main.js
 msgid "{plural0} medical treatment needs to be administered today"
-msgstr "{0} gyógykezelést a mai napon kell elvégezni"
+msgstr "{plural0} gyógykezelést a mai napon kell elvégezni"
 
 #: i18n.py
 msgid "{plural0} month."
-msgstr "{0} hónap."
+msgstr "{plural0} hónap."
 
 #: main.js
 msgid "{plural0} new online form submission"
-msgstr "{0} új online űrlap benyújtása"
+msgstr "{plural0} új online űrlap benyújtása"
 
 #: main.js
 msgid "{plural0} person has an overdue payment"
-msgstr "{0} személy késedelmes fizetéssel rendelkezik"
+msgstr "{plural0} személy késedelmes fizetéssel rendelkezik"
 
 #: main.js
 msgid "{plural0} person with an active reservation has not been homechecked"
-msgstr "{0} aktív foglalással rendelkező személy nem volt még lelátogatva"
+msgstr "{plural0} aktív foglalással rendelkező személy nem volt még lelátogatva"
 
 #: main.js
 msgid "{plural0} potential match for a lost animal"
-msgstr "{0} potenciális egyezés elveszett állat esetén"
+msgstr "{plural0} potenciális egyezés elveszett állat esetén"
 
 #: main.js
 msgid "{plural0} recent publisher run had errors"
-msgstr "{0} kiadói újabb futtatás hibákat tartalmazott"
+msgstr "{plural0} kiadói újabb futtatás hibákat tartalmazott"
 
 #: main.js
 msgid "{plural0} reservation has been active over a week without adoption"
 msgstr ""
-"{0} gazdijelölt megjelölés egy héten át aktív volt, de örökbefogadás nem "
+"{plural0} gazdijelölt megjelölés egy héten át aktív volt, de örökbefogadás nem "
 "történt"
 
 #: search.js
 msgid "{plural0} result found in {1} seconds. Order: {2}"
-msgstr "{0} eredmény létrehozása {1} másodperc alatt. Rendelés: {2}"
+msgstr "{plural0} eredmény létrehozása {1} másodperc alatt. Rendelés: {2}"
 
 #: main.js
 msgid "{plural0} shelter animal has not been microchipped"
-msgstr "{0} menhelyi állat nem lett chipezve"
+msgstr "{plural0} menhelyi állat nem lett chipezve"
 
 #: main.js
 msgid "{plural0} shelter animal has people looking for them"
-msgstr "{0} menhelyi állatok, amelyekre van érdeklődő"
+msgstr "{plural0} menhelyi állatok, amelyekre van érdeklődő"
 
 #: main.js
 msgid "{plural0} test needs to be performed today"
-msgstr "{0} tesztet kell a mai napon elvégezni"
+msgstr "{plural0} tesztet kell a mai napon elvégezni"
 
 #: main.js
 msgid "{plural0} transport does not have a driver assigned"
-msgstr "{0} a transzporthoz nincs sofőr hozzárendelve"
+msgstr "{plural0} a transzporthoz nincs sofőr hozzárendelve"
 
 #: main.js
 msgid "{plural0} trap is overdue for return"
-msgstr "{0} csapdát nem hoztak vissza a megjelölt időben"
+msgstr "{plural0} csapdát nem hoztak vissza a megjelölt időben"
 
 #: main.js
 msgid "{plural0} trial adoption has ended"
-msgstr "{0} próbaidő lejárt "
+msgstr "{plural0} próbaidő lejárt "
 
 #: main.js
 msgid "{plural0} unaltered animal has been adopted in the last month"
-msgstr "{0} az elmúlt hónapban örökbefogadott állatok"
+msgstr "{plural0} az elmúlt hónapban örökbefogadott állatok"
 
 #: main.js
 msgid "{plural0} undispatched animal control call"
-msgstr "{0} el nem végzett állati kontroll hívás"
+msgstr "{plural0} el nem végzett állati kontroll hívás"
 
 #: main.js
 msgid "{plural0} unpaid fine"
-msgstr "{0} kifizetetlen bírság"
+msgstr "{plural0} kifizetetlen bírság"
 
 #: main.js
 msgid "{plural0} urgent entry on the waiting list"
-msgstr "{0} sürgős bejegyzés a várólistán"
+msgstr "{plural0} sürgős bejegyzés a várólistán"
 
 #: main.js
 msgid "{plural0} vaccination has expired"
-msgstr "{0} lejárt oltás"
+msgstr "{plural0} lejárt oltás"
 
 #: main.js
 msgid "{plural0} vaccination needs to be administered today"
-msgstr "{0} ma esedékes oltások"
+msgstr "{plural0} ma esedékes oltások"
 
 #: i18n.py
 msgid "{plural0} week."
-msgstr "{0} hét."
+msgstr "{plural0} hét."
 
 #: i18n.py
 msgid "{plural0} year."
-msgstr "{0} év."
+msgstr "{plural0} év."
 
 #: main.js
 msgid "{plural1} animal control calls due for followup today"
-msgstr "{1} mai nap esedékes állat kontroll hívások"
+msgstr "{plural1} mai nap esedékes állat kontroll hívások"
 
 #: main.js
 msgid "{plural1} animals are not available for adoption"
-msgstr "{1} nem örökbefogadható állat"
+msgstr "{plural1} nem örökbefogadható állat"
 
 #: main.js
 msgid "{plural1} animals died"
-msgstr "{1} meghalt állatok"
+msgstr "{plural1} meghalt állatok"
 
 #: main.js
 msgid "{plural1} animals entered the shelter"
-msgstr "{1} menhelyre került állat"
+msgstr "{plural1} menhelyre került állat"
 
 #: main.js
 msgid "{plural1} animals have been on the shelter longer than {0} months"
-msgstr "Valamennyi állat, amely több mint {0} hónapja van a menhelyen."
+msgstr "{plural1} Valamennyi állat, amely több mint {0} hónapja van a menhelyen."
 
 #: main.js
 msgid "{plural1} animals have holds ending today"
-msgstr "{1} gazdijelöltnek fenntartott kutya előjegyzése lejár"
+msgstr "{plural1} gazdijelöltnek fenntartott kutya előjegyzése lejár"
 
 #: main.js
 msgid "{plural1} animals were adopted"
-msgstr "{1} örökbefogadott állat"
+msgstr "{plural1} örökbefogadott állat"
 
 #: main.js
 msgid "{plural1} animals were dead on arrival"
-msgstr "{1} beérkezéskor meghalt kutyák "
+msgstr "{plural1} beérkezéskor meghalt kutyák "
 
 #: main.js
 msgid "{plural1} animals were euthanized"
-msgstr "{1} elaltatott állat"
+msgstr "{plural1} elaltatott állat"
 
 #: main.js
 msgid "{plural1} animals were reclaimed by their owners"
-msgstr "{1} eredeti gazda által visszakövetelet állat"
+msgstr "{plural1} eredeti gazda által visszakövetelet állat"
 
 #: main.js
 msgid "{plural1} animals were transferred to other shelters"
-msgstr "{1} állat átszállítása másik menhelyre"
+msgstr "{plural1} állat átszállítása másik menhelyre"
 
 #: i18n.py
 msgid "{plural1} days."
-msgstr "{1} napok."
+msgstr "{plural1} napok."
 
 #: main.js
 msgid "{plural1} incomplete animal control calls"
-msgstr "{1} befejeztlen állat kontroll hívás"
+msgstr "{plural1} befejeztlen állat kontroll hívás"
 
 #: main.js
 msgid "{plural1} items of stock expire in the next month"
-msgstr "{1} raktáron lévő termék a jövő hónapban lejár"
+msgstr "{plural1} raktáron lévő termék a jövő hónapban lejár"
 
 #: main.js
 msgid "{plural1} items of stock have expired"
-msgstr "{1} lejárt raktáron lévő termék"
+msgstr "{plural1} lejárt raktáron lévő termék"
 
 #: main.js
 msgid "{plural1} medical treatments need to be administered today"
-msgstr "{1} mai napon esedékes gyógykezelések"
+msgstr "{plural1} mai napon esedékes gyógykezelések"
 
 #: i18n.py
 msgid "{plural1} months."
-msgstr "{1} hónap."
+msgstr "{plural1} hónap."
 
 #: main.js
 msgid "{plural1} new online form submissions"
-msgstr "{1} új online nyomtatvány benyújtása"
+msgstr "{plural1} új online nyomtatvány benyújtása"
 
 #: main.js
 msgid "{plural1} people have overdue payments"
-msgstr "{1} személynek van kifizetetlen tartozása"
+msgstr "{plural1} személynek van kifizetetlen tartozása"
 
 #: main.js
 msgid "{plural1} people with active reservations have not been homechecked"
-msgstr "{1} gazdijelölt még nem lett lelátogatva"
+msgstr "{plural1} gazdijelölt még nem lett lelátogatva"
 
 #: main.js
 msgid "{plural1} potential matches for lost animals"
-msgstr "{1} potenciális egyezések elveszett állatokra"
+msgstr "{plural1} potenciális egyezések elveszett állatokra"
 
 #: main.js
 msgid "{plural1} recent publisher runs had errors"
-msgstr "{1} legutóbbi közzétételi futtatások hibásak voltak"
+msgstr "{plural1} legutóbbi közzétételi futtatások hibásak voltak"
 
 #: main.js
 msgid "{plural1} reservations have been active over a week without adoption"
 msgstr ""
-"{1} gazdijelölt megjelölés egy héten át aktív volt, de örökbefogadás nem "
+"{plural1} gazdijelölt megjelölés egy héten át aktív volt, de örökbefogadás nem "
 "történt"
 
 #: search.js
 msgid "{plural1} results found in {1} seconds. Order: {2}"
-msgstr "{1} keresési találat {1} másodperc alatt. Utasítás: {2}"
+msgstr "{plural1} keresési találat {1} másodperc alatt. Utasítás: {2}"
 
 #: main.js
 msgid "{plural1} shelter animals have not been microchipped"
-msgstr "{1} mikrochippel nem rendelkező állat"
+msgstr "{plural1} mikrochippel nem rendelkező állat"
 
 #: main.js
 msgid "{plural1} shelter animals have people looking for them"
-msgstr "{1} menhelyi állatok, amelyekre van érdeklődő"
+msgstr "{plural1} menhelyi állatok, amelyekre van érdeklődő"
 
 #: main.js
 msgid "{plural1} tests need to be performed today"
-msgstr "{1} mai napon elvégzendő teszt"
+msgstr "{plural1} mai napon elvégzendő teszt"
 
 #: main.js
 msgid "{plural1} transports do not have a driver assigned"
@@ -14031,181 +14031,181 @@ msgstr "{plural1} nincs sofőr hozzárendelve a szállításokhoz "
 
 #: main.js
 msgid "{plural1} traps are overdue for return"
-msgstr "{1} csapdát nem hoztak vissza a megjelölt időben"
+msgstr "{plural1} csapdát nem hoztak vissza a megjelölt időben"
 
 #: main.js
 msgid "{plural1} trial adoptions have ended"
-msgstr "{1} próbaidő lejárt "
+msgstr "{plural1} próbaidő lejárt "
 
 #: main.js
 msgid "{plural1} unaltered animals have been adopted in the last month"
-msgstr "{1} az elmúlt hónapban örökbefogadott állat"
+msgstr "{plural1} az elmúlt hónapban örökbefogadott állat"
 
 #: main.js
 msgid "{plural1} undispatched animal control calls"
-msgstr "{1} el nem végzett állat kontroll hívások"
+msgstr "{plural1} el nem végzett állat kontroll hívások"
 
 #: main.js
 msgid "{plural1} unpaid fines"
-msgstr "{1} kifizetetlen büntetések"
+msgstr "{plural1} kifizetetlen büntetések"
 
 #: main.js
 msgid "{plural1} urgent entries on the waiting list"
-msgstr "{1} sürgős feljegyzések a várólistán"
+msgstr "{plural1} sürgős feljegyzések a várólistán"
 
 #: main.js
 msgid "{plural1} vaccinations have expired"
-msgstr "{1} oltás lejárt"
+msgstr "{plural1} oltás lejárt"
 
 #: main.js
 msgid "{plural1} vaccinations need to be administered today"
-msgstr "{1} mai napon esedékes oltás "
+msgstr "{plural1} mai napon esedékes oltás "
 
 #: i18n.py
 msgid "{plural1} weeks."
-msgstr "{1} hetek"
+msgstr "{plural1} hetek"
 
 #: i18n.py
 msgid "{plural1} years."
-msgstr "{1} évek."
+msgstr "{plural1} évek."
 
 #: main.js
 msgid "{plural2} animal control calls due for followup today"
-msgstr "{1} mai nap esedékes állat kontroll hívások"
+msgstr "{plural2} mai nap esedékes állat kontroll hívások"
 
 #: main.js
 msgid "{plural2} animals are not available for adoption"
-msgstr "{2} nem örökbefogadható állat"
+msgstr "{plural2} nem örökbefogadható állat"
 
 #: main.js
 msgid "{plural2} animals died"
-msgstr "{2} meghalt állat"
+msgstr "{plural2} meghalt állat"
 
 #: main.js
 msgid "{plural2} animals entered the shelter"
-msgstr "{2} menhelyre került állat"
+msgstr "{plural2} menhelyre került állat"
 
 #: main.js
 msgid "{plural2} animals have been on the shelter longer than {0} months"
-msgstr "Valamennyi állat, amely több mint {0} hónapja van a menhelyen"
+msgstr "{plural2} Valamennyi állat, amely több mint {0} hónapja van a menhelyen"
 
 #: main.js
 msgid "{plural2} animals have holds ending today"
-msgstr "{2} gazdijelöltnek fenntartott kutya előjegyzése lejár"
+msgstr "{plural2} gazdijelöltnek fenntartott kutya előjegyzése lejár"
 
 #: main.js
 msgid "{plural2} animals were adopted"
-msgstr "{2} örökbefogadott állat"
+msgstr "{plural2} örökbefogadott állat"
 
 #: main.js
 msgid "{plural2} animals were dead on arrival"
-msgstr "{2} bekerüléskor halott állat"
+msgstr "{plural2} bekerüléskor halott állat"
 
 #: main.js
 msgid "{plural2} animals were euthanized"
-msgstr "{2} elaltatott állat"
+msgstr "{plural2} elaltatott állat"
 
 #: main.js
 msgid "{plural2} animals were reclaimed by their owners"
-msgstr "{2} eredeti gazda álltal visszakövetelt állat "
+msgstr "{plural2} eredeti gazda álltal visszakövetelt állat "
 
 #: main.js
 msgid "{plural2} animals were transferred to other shelters"
-msgstr "{2} más menhelyre átszállított állat"
+msgstr "{plural2} más menhelyre átszállított állat"
 
 #: i18n.py
 msgid "{plural2} days."
-msgstr "{2} napok."
+msgstr "{plural2} napok."
 
 #: main.js
 msgid "{plural2} incomplete animal control calls"
-msgstr "{2} befejezetlen állat kontroll hívás"
+msgstr "{plural2} befejezetlen állat kontroll hívás"
 
 #: main.js
 msgid "{plural2} items of stock expire in the next month"
-msgstr "{2} raktáron lévő termék a követekző hónapban lejár"
+msgstr "{plural2} raktáron lévő termék a követekző hónapban lejár"
 
 #: main.js
 msgid "{plural2} items of stock have expired"
-msgstr "{2} raktáron lévő termék szavatossága lejárt"
+msgstr "{plural2} raktáron lévő termék szavatossága lejárt"
 
 #: main.js
 msgid "{plural2} medical treatments need to be administered today"
-msgstr "{2} mai napon esedékes gyógykezelések"
+msgstr "{plural2} mai napon esedékes gyógykezelések"
 
 #: i18n.py
 msgid "{plural2} months."
-msgstr "{2} hónapok."
+msgstr "{plural2} hónapok."
 
 #: main.js
 msgid "{plural2} new online form submissions"
-msgstr "{2} új online nyomtatvány benyújtása"
+msgstr "{plural2} új online nyomtatvány benyújtása"
 
 #: main.js
 msgid "{plural2} people have overdue payments"
-msgstr "{2} személynek van kifizetetlen tartozása "
+msgstr "{plural2} személynek van kifizetetlen tartozása "
 
 #: main.js
 msgid "{plural2} people with active reservations have not been homechecked"
-msgstr "{2} gazdijelölt még nem lett lelátogatva"
+msgstr "{plural2} gazdijelölt még nem lett lelátogatva"
 
 #: main.js
 msgid "{plural2} potential matches for lost animals"
-msgstr "{2} potenciális egyezések elveszett állatokra"
+msgstr "{plural2} potenciális egyezések elveszett állatokra"
 
 #: main.js
 msgid "{plural2} recent publisher runs had errors"
-msgstr "{2} legutóbbi közzétételi futtatások hibásak voltak"
+msgstr "{plural2} legutóbbi közzétételi futtatások hibásak voltak"
 
 #: main.js
 msgid "{plural2} reservations have been active over a week without adoption"
 msgstr ""
-"{2} gazdijelölt megjelölés egy héten át aktív volt, de örökbefogadás nem "
+"{plural2} gazdijelölt megjelölés egy héten át aktív volt, de örökbefogadás nem "
 "történt"
 
 #: search.js
 msgid "{plural2} results found in {1} seconds. Order: {2}"
-msgstr " {2 keresési találat {1} másodperc alatt. Utasítás: {2}"
+msgstr " {plural2} keresési találat {1} másodperc alatt. Utasítás: {2}"
 
 #: main.js
 msgid "{plural2} shelter animals have not been microchipped"
-msgstr "{2} mikrochippel nem rendelkező állat"
+msgstr "{plural2} mikrochippel nem rendelkező állat"
 
 #: main.js
 msgid "{plural2} shelter animals have people looking for them"
-msgstr "{2} menhelyi állatok, amelyekre van érdeklődő"
+msgstr "{plural2} menhelyi állatok, amelyekre van érdeklődő"
 
 #: main.js
 msgid "{plural2} tests need to be performed today"
-msgstr "{2} mai napon elvégzendő teszt"
+msgstr "{plural2} mai napon elvégzendő teszt"
 
 #: main.js
 msgid "{plural2} transports do not have a driver assigned"
-msgstr "{2} transzporthoz nincs hozzárendelve sofőr"
+msgstr "{plural2} transzporthoz nincs hozzárendelve sofőr"
 
 #: main.js
 msgid "{plural2} traps are overdue for return"
-msgstr "{2} csapdát nem hoztak vissza a megjelölt időben"
+msgstr "{plural2} csapdát nem hoztak vissza a megjelölt időben"
 
 #: main.js
 msgid "{plural2} trial adoptions have ended"
-msgstr "{2} próbaidő vége"
+msgstr "{plural2} próbaidő vége"
 
 #: main.js
 msgid "{plural2} unaltered animals have been adopted in the last month"
-msgstr "{2} az elmúlt hónapban örökbefogadott állat"
+msgstr "{plural2} az elmúlt hónapban örökbefogadott állat"
 
 #: main.js
 msgid "{plural2} undispatched animal control calls"
-msgstr "{2} el nem végzett állat kontroll hívások"
+msgstr "{plural2} el nem végzett állat kontroll hívások"
 
 #: main.js
 msgid "{plural2} unpaid fines"
-msgstr "{2} kifizetetlen büntetések"
+msgstr "{plural2} kifizetetlen büntetések"
 
 #: main.js
 msgid "{plural2} urgent entries on the waiting list"
-msgstr "{} sürgős feljegyzések a várólistán"
+msgstr "{plural2} sürgős feljegyzések a várólistán"
 
 #: main.js
 msgid "{plural2} vaccinations have expired"

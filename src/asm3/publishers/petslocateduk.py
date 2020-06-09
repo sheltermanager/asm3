@@ -437,7 +437,7 @@ class PetsLocatedUKPublisher(FTPPublisher):
         line.append("\"\"")
         # rawageyears
         line.append("\"%s\"" % self.plcAgeYears(agegroup=an["AGEGROUP"]))
-        return ",".join(line)
+        return self.csvLine(line)
 
     def processFoundAnimal(self, an, customerid=""):
         """ Process a found animal record and return a CSV line """
@@ -496,7 +496,7 @@ class PetsLocatedUKPublisher(FTPPublisher):
         line.append("\"\"")
         # rawageyears
         line.append("\"%s\"" % self.plcAgeYears(agegroup=an["AGEGROUP"]))
-        return ",".join(line)
+        return self.csvLine(line)
 
     def processAnimal(self, an, customerid=""):
         """ Process an animal record and return a CSV line """
@@ -555,5 +555,5 @@ class PetsLocatedUKPublisher(FTPPublisher):
         line.append("\"%s\"" % an["COATTYPENAME"])
         # rawageyears
         line.append("\"%s\"" % self.plcAgeYears(dob=an["DATEOFBIRTH"]))
-        return ",".join(line)
+        return self.csvLine(line)
 

@@ -47,7 +47,7 @@ $$BODY
 <tr>
 <td><a href="$URL">$DISPLAY</a></td>
 <td>$DATE</td>
-<td><a target="_blank" href="media?id=$MEDIAID">$MEDIANOTES</a></td>
+<td><a target="_blank" href="media?id=$MEDIAID">$MEDIANOTES &#8594;</a></td>
 </tr>
 BODY$$
 

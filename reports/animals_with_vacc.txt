@@ -4,7 +4,7 @@ Medical
 ###
 3215/Any
 ###
-Shelter animals who have a recent vaccination of a particular type
+Shelter animals who have received a vaccination of a particular type since they last entered the shelter.
 ###
 en
 ###

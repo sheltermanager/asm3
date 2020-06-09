@@ -18,7 +18,7 @@ import asm3.users
 import asm3.utils
 from asm3.i18n import _, python2display, now, add_days, add_months, add_years, format_currency, format_time
 from asm3.sitedefs import MULTIPLE_DATABASES
-from asm3.sitedefs import ELECTRONIC_SIGNATURES, JQUERY_JS, JQUERY_MOBILE_CSS, JQUERY_MOBILE_JS, JQUERY_UI_JS, SIGNATURE_JS, MOMENT_JS, TOUCHPUNCH_JS
+from asm3.sitedefs import ELECTRONIC_SIGNATURES, JQUERY_JS, JQUERY_MOBILE_CSS, JQUERY_MOBILE_JS, JQUERY_MOBILE_JQUERY_JS, JQUERY_UI_JS, SIGNATURE_JS, MOMENT_JS, TOUCHPUNCH_JS
 
 def header(l):
     return """<!DOCTYPE html>
@@ -42,7 +42,7 @@ def header(l):
     """ % {
         "title":    _("Animal Shelter Manager", l),
         "css":      asm3.html.asm_css_tag("asm-icon.css"),
-        "scripts":  asm3.html.script_tag(JQUERY_JS) + \
+        "scripts":  asm3.html.script_tag(JQUERY_MOBILE_JQUERY_JS) + \
             asm3.html.css_tag(JQUERY_MOBILE_CSS) + \
             asm3.html.script_tag(JQUERY_MOBILE_JS) + \
             asm3.html.asm_script_tag("mobile.js")
@@ -365,8 +365,8 @@ def page_sign(dbo, session, username):
         for mid in ids.strip().split(","):
             if mid.strip() != "": 
                 docnotes.append(asm3.media.get_notes_for_id(dbo, int(mid)))
-                mdate, medianame, mimetype, contents = asm3.media.get_media_file_data(dbo, int(mid))
-                d.append(contents)
+                dummy, dummy, dummy, contents = asm3.media.get_media_file_data(dbo, int(mid))
+                d.append(asm3.utils.bytes2str(contents))
                 d.append("<hr />")
         h.append("<p><b>%s: %s</b></p>" % (_("Signing", l), ", ".join(docnotes)))
         h.append('<p><a id="reviewlink" href="#">%s</a></p>' % _("View Document", l))
@@ -793,7 +793,7 @@ def handler(session, post):
 
     elif mode == "aa":
         pc(asm3.users.ADD_ANIMAL)
-        nid, ncode = asm3.animal.insert_animal_from_form(dbo, post, user)
+        nid, dummy = asm3.animal.insert_animal_from_form(dbo, post, user)
         return "GO mobile_post?posttype=va&id=%d" % nid
 
     elif mode == "aincs":
@@ -1043,7 +1043,7 @@ def handler_viewanimal(session, l, dbo, a, af, diet, vacc, test, med, logs, home
     h.append(table_end())
     h.append(table())
     h.append(tr( _("Type", l), a["ANIMALTYPENAME"]))
-    h.append(tr( _("Location", l), a["DISPLAYLOCATIONNAME"]))
+    h.append(tr( _("Location", l), a["DISPLAYLOCATION"]))
     h.append(tr( _("Color", l), a["BASECOLOURNAME"]))
     h.append(tr( _("Coat Type", l), a["COATTYPENAME"]))
     h.append(tr( _("Size", l), a["SIZENAME"]))
@@ -1178,7 +1178,7 @@ def handler_viewincident(session, l, dbo, a, amls, cit, dia, logs, homelink, pos
     h.append(tr( _("Type", l), a["INCIDENTNAME"]))
     h.append(tr( _("Incident Date/Time", l), dt(a["INCIDENTDATETIME"])))
     h.append(tr( _("Notes", l), a["CALLNOTES"]))
-    h.append(tr( _("Completion Date", l), python2display(l, a["COMPLETEDDATE"])))
+    h.append(tr( _("Completion Date/Time", l), dt(a["COMPLETEDDATE"])))
     comptp = a["COMPLETEDNAME"]
     if a["COMPLETEDDATE"] is None:
         comptp = jqm_select("comptype", 
@@ -1387,11 +1387,11 @@ def handler_stocklocation(l, homelink, locationname, sl, su):
     h.append("</body></html>")
     return "\n".join(h)
 
-def login(post, session, remoteip, path):
+def login(post, session, remoteip, useragent, path):
     """
     Handles the login post
     """
-    url = asm3.users.web_login(post, session, remoteip, path)
+    url = asm3.users.web_login(post, session, remoteip, useragent, path)
     if url == "FAIL" or url == "DISABLED":
         return "mobile_login"
     else:

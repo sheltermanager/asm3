@@ -1,7 +1,8 @@
-/*jslint browser: true, forin: true, eqeq: true, white: true, sloppy: true, vars: true, nomen: true */
 /*global $, jQuery, _, additional, asm, common, config, controller, dlgfx, format, header, html, validate */
 
 $(function() {
+
+    "use strict";
 
     var waitinglist_new = {
 
@@ -94,21 +95,21 @@ $(function() {
                 validate.reset();
 
                 // owner
-                if ($.trim($("#owner").val()) == "") {
+                if (common.trim($("#owner").val()) == "") {
                     header.show_error(_("Waiting list entries must have a contact"));
                     validate.highlight("owner");
                     return false;
                 }
 
                 // date put on list
-                if ($.trim($("#dateputon").val()) == "") {
+                if (common.trim($("#dateputon").val()) == "") {
                     header.show_error(_("Date put on cannot be blank"));
                     validate.highlight("dateputon");
                     return false;
                 }
 
                 // description
-                if ($.trim($("#description").val()) == "") {
+                if (common.trim($("#description").val()) == "") {
                     header.show_error(_("Description cannot be blank"));
                     validate.highlight("description");
                     return false;

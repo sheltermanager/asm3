@@ -5,6 +5,7 @@ import asm3.configuration
 import asm3.financial
 import asm3.medical
 import asm3.i18n
+import asm3.person
 import asm3.utils
 
 NO_MOVEMENT = 0
@@ -25,7 +26,8 @@ def get_movement_query(dbo):
     return "SELECT m.*, o.OwnerTitle, o.OwnerInitials, o.OwnerSurname, o.OwnerForenames, o.OwnerName, " \
         "o.OwnerAddress, o.OwnerTown, o.OwnerCounty, o.OwnerPostcode, o.HomeTelephone, o.WorkTelephone, o.MobileTelephone, " \
         "rs.StatusName AS ReservationStatusName, " \
-        "a.ShelterCode, a.ShortCode, a.AnimalAge, a.AgeGroup, a.AnimalName, a.BreedName, a.Neutered, a.DeceasedDate, a.HasActiveReserve, " \
+        "a.ShelterCode, a.ShortCode, a.AnimalAge, a.DateOfBirth, a.AgeGroup, " \
+        "a.AnimalName, a.BreedName, a.Neutered, a.DeceasedDate, a.HasActiveReserve, " \
         "a.HasTrialAdoption, a.IsHold, a.IsQuarantine, a.HoldUntilDate, a.CrueltyCase, a.NonShelterAnimal, " \
         "a.ActiveMovementType, a.Archived, a.IsNotAvailableForAdoption, " \
         "a.CombiTestResult, a.FLVResult, a.HeartwormTestResult, " \
@@ -33,6 +35,8 @@ def get_movement_query(dbo):
         "r.OwnerName AS RetailerName, " \
         "ma.MediaName AS WebsiteMediaName, ma.Date AS WebsiteMediaDate, " \
         "a.Sex, s.SpeciesName, rr.ReasonName AS ReturnedReasonName, " \
+        "CASE WHEN m.MovementType = 0 AND m.MovementDate Is Null THEN " \
+        "m.ReservationDate ELSE m.MovementDate END AS ActiveDate, " \
         "CASE WHEN m.MovementType = 2 AND m.IsPermanentFoster = 1 THEN " \
         "(SELECT MovementType FROM lksmovementtype WHERE ID=12) " \
         "WHEN m.MovementType = 1 AND m.IsTrial = 1 THEN " \
@@ -55,15 +59,15 @@ def get_movement_query(dbo):
         "FROM adoption m " \
         "LEFT OUTER JOIN reservationstatus rs ON rs.ID = m.ReservationStatusID " \
         "LEFT OUTER JOIN lksmovementtype l ON l.ID = m.MovementType " \
-        "INNER JOIN animal a ON m.AnimalID = a.ID " \
+        "LEFT OUTER JOIN animal a ON m.AnimalID = a.ID " \
         "LEFT OUTER JOIN adoption ad ON a.ActiveMovementID = ad.ID " \
         "LEFT OUTER JOIN owner co ON co.ID = ad.OwnerID " \
         "LEFT OUTER JOIN owner ac ON ac.ID = a.AdoptionCoordinatorID " \
         "LEFT OUTER JOIN internallocation il ON il.ID = a.ShelterLocation " \
         "LEFT OUTER JOIN media ma ON ma.LinkID = a.ID AND ma.LinkTypeID = 0 AND ma.WebsitePhoto = 1 " \
         "LEFT OUTER JOIN entryreason rr ON m.ReturnedReasonID = rr.ID " \
-        "INNER JOIN species s ON a.SpeciesID = s.ID " \
-        "INNER JOIN lksex sx ON sx.ID = a.Sex " \
+        "LEFT OUTER JOIN species s ON a.SpeciesID = s.ID " \
+        "LEFT OUTER JOIN lksex sx ON sx.ID = a.Sex " \
         "LEFT OUTER JOIN owner o ON m.OwnerID = o.ID " \
         "LEFT OUTER JOIN owner r ON m.RetailerID = r.ID "
 
@@ -82,9 +86,11 @@ def get_transport_query(dbo):
         "t.PickupAddress, t.PickupTown, t.PickupCounty, t.PickupPostcode, t.PickupCountry, " \
         "t.DropoffAddress, t.DropoffTown, t.DropoffCounty, t.DropoffPostcode, t.DropoffCountry, " \
         "ma.MediaName AS WebsiteMediaName, ma.Date AS WebsiteMediaDate, " \
-        "a.AnimalName, a.ShelterCode, a.ShortCode, s.SpeciesName, a.BreedName, x.Sex " \
+        "a.AnimalName, a.ShelterCode, a.ShortCode, s.SpeciesName, a.BreedName, x.Sex, " \
+        "st.Name AS StatusName " \
         "FROM animaltransport t " \
         "INNER JOIN transporttype tt ON tt.ID = t.TransportTypeID " \
+        "LEFT OUTER JOIN lkstransportstatus st ON st.ID = t.Status " \
         "LEFT OUTER JOIN animal a ON t.AnimalID = a.ID " \
         "LEFT OUTER JOIN species s ON s.ID = a.SpeciesID " \
         "LEFT OUTER JOIN lksex x ON x.ID = a.Sex " \
@@ -196,13 +202,13 @@ def get_animal_movements(dbo, aid):
     """
     Gets the list of movements for a particular animal
     """
-    return dbo.query(get_movement_query(dbo) + " WHERE m.AnimalID = ? ORDER BY m.MovementDate DESC", [aid])
+    return dbo.query(get_movement_query(dbo) + " WHERE m.AnimalID = ? ORDER BY ActiveDate DESC", [aid])
 
 def get_person_movements(dbo, pid):
     """
     Gets the list of movements for a particular person
     """
-    return dbo.query(get_movement_query(dbo) + " WHERE m.OwnerID = ? ORDER BY m.MovementDate DESC", [pid])
+    return dbo.query(get_movement_query(dbo) + " WHERE m.OwnerID = ? ORDER BY ActiveDate DESC", [pid])
 
 def validate_movement_form_data(dbo, post):
     """
@@ -235,10 +241,11 @@ def validate_movement_form_data(dbo, post):
     if reservationdate is None and reservationcancelled is not None:
         post.data["reservationdate"] = ""
         asm3.al.debug("movement has no reserve or cancelled date", "movement.validate_movement_form_data", dbo)
-    # Animals are always required
+    # Animals are always required, except for reservations with the right option
     if animalid == 0:
-        asm3.al.debug("movement has no animal", "movement.validate_movement_form_data", dbo)
-        raise asm3.utils.ASMValidationError(asm3.i18n._("Movements require an animal", l))
+        if movementtype > 0 or not asm3.configuration.movement_person_only_reserves(dbo):
+            asm3.al.debug("movement has no animal", "movement.validate_movement_form_data", dbo)
+            raise asm3.utils.ASMValidationError(asm3.i18n._("Movements require an animal", l))
     # Owners are required unless type is escaped, stolen or released
     if personid == 0 and movementtype != ESCAPED and movementtype != STOLEN and movementtype != RELEASED:
         asm3.al.debug("movement has no person and is not ESCAPED|STOLEN|RELEASED|TRANSPORT", "movement.validate_movement_form_data", dbo)
@@ -276,6 +283,10 @@ def validate_movement_form_data(dbo, post):
         if 0 == dbo.query_int("SELECT COUNT(*) FROM adoption WHERE AnimalID = ? AND MovementType = ?", ( animalid, RETAILER )):
             asm3.al.debug("movement has a retailerid set but has never been to a retailer.", "movement.validate_movement_form_data", dbo)
             raise asm3.utils.ASMValidationError(asm3.i18n._("This movement cannot be from a retailer when the animal has no prior retailer movements.", l))
+    # Movement date cannot be before brought in date
+    if movementdate is not None and movementdate < dbo.query_date("SELECT DateBroughtIn FROM animal WHERE ID = ?", [animalid]).replace(hour=0, minute=0, second=0, microsecond=0):
+        asm3.al.debug("movement date is before date brought in", "movement.validate_movement_form_data", dbo)
+        raise asm3.utils.ASMValidationError(asm3.i18n._("Movement date cannot be before brought in date.", l))
     # You can't have a return without a movement
     if movementdate is None and returndate is not None:
         asm3.al.debug("movement is returned without a movement date.", "movement.validate_movement_form_data", dbo)
@@ -393,10 +404,11 @@ def insert_movement_from_form(dbo, username, post):
         "Comments":                     post["comments"]
     }, username, generateID=False)
 
-    asm3.animal.update_animal_status(dbo, animalid)
-    asm3.animal.update_variable_animal_data(dbo, animalid)
-    update_movement_donation(dbo, movementid)
-
+    if post.integer("animal") > 0:
+        asm3.animal.update_animal_status(dbo, animalid)
+        asm3.animal.update_variable_animal_data(dbo, animalid)
+        update_movement_donation(dbo, movementid)
+        asm3.person.update_adopter_flag(dbo, username, post.integer("person"))
     return movementid
 
 def update_movement_from_form(dbo, username, post):
@@ -429,23 +441,27 @@ def update_movement_from_form(dbo, username, post):
         "Comments":                     post["comments"]
     }, username)
 
-    asm3.animal.update_animal_status(dbo, post.integer("animal"))
-    asm3.animal.update_variable_animal_data(dbo, post.integer("animal"))
-    update_movement_donation(dbo, movementid)
+    if post.integer("animal") > 0:
+        asm3.animal.update_animal_status(dbo, post.integer("animal"))
+        asm3.animal.update_variable_animal_data(dbo, post.integer("animal"))
+        update_movement_donation(dbo, movementid)
+        asm3.person.update_adopter_flag(dbo, username, post.integer("person"))
 
 def delete_movement(dbo, username, mid):
     """
     Deletes a movement record
     """
-    animalid = dbo.query_int("SELECT AnimalID FROM adoption WHERE ID = ?", [mid])
-    if animalid == 0:
+    m = dbo.first_row(dbo.query("SELECT * FROM adoption WHERE ID = ?", [mid]))
+    if m is None:
         raise asm3.utils.ASMError("Trying to delete a movement that does not exist")
     dbo.execute("UPDATE ownerdonation SET MovementID = 0 WHERE MovementID = ?", [mid])
     dbo.delete("adoption", mid, username)
-    asm3.animal.update_animal_status(dbo, animalid)
-    asm3.animal.update_variable_animal_data(dbo, animalid)
+    if m.ANIMALID > 0:
+        asm3.animal.update_animal_status(dbo, m.ANIMALID)
+        asm3.animal.update_variable_animal_data(dbo, m.ANIMALID)
+        asm3.person.update_adopter_flag(dbo, username, m.OWNERID)
 
-def return_movement(dbo, movementid, animalid = 0, returndate = None):
+def return_movement(dbo, movementid, username, animalid = 0, returndate = None):
     """
     Returns a movement with the date given. If animalid is not supplied, it
     will be looked up from the movement given. If returndate is not supplied,
@@ -453,8 +469,10 @@ def return_movement(dbo, movementid, animalid = 0, returndate = None):
     """
     if returndate is None: returndate = dbo.today()
     if animalid == 0: animalid = dbo.query_int("SELECT AnimalID FROM adoption WHERE ID = ?", [movementid])
+    personid = dbo.query_int("SELECT OwnerID FROM adoption WHERE ID = ?", [movementid])
     dbo.update("adoption", movementid, { "ReturnDate": returndate })
     asm3.animal.update_animal_status(dbo, animalid)
+    asm3.person.update_adopter_flag(dbo, username, personid)
 
 def insert_adoption_from_form(dbo, username, post, creating = [], create_payments = True):
     """
@@ -508,13 +526,13 @@ def insert_adoption_from_form(dbo, username, post, creating = [], create_payment
     fm = get_animal_movements(dbo, post.integer("animal"))
     for m in fm:
         if m.MOVEMENTTYPE == FOSTER and m.RETURNDATE is None:
-            return_movement(dbo, m["ID"], post.integer("animal"), post.date("movementdate"))
+            return_movement(dbo, m["ID"], username, post.integer("animal"), post.date("movementdate"))
     # Is this animal current at a retailer? If so, return it from the
     # retailer and set the originalretailermovement and retailerid fields
     # on our new adoption movement so it can be linked back
     for m in fm:
         if m.MOVEMENTTYPE == RETAILER and m.RETURNDATE is None:
-            return_movement(dbo, m.ID, post.integer("animal"), post.date("movementdate"))
+            return_movement(dbo, m.ID, username, post.integer("animal"), post.date("movementdate"))
             move_dict["originalretailermovement"] = str(m.ID)
             move_dict["retailer"] = str(m["OWNERID"])
     # Did we say we'd like to flag the owner as homechecked?
@@ -580,7 +598,7 @@ def insert_foster_from_form(dbo, username, post):
             if m.OWNERID == post.integer("person"):
                 raise asm3.utils.ASMValidationError(asm3.i18n._("Already fostered to this person.", l))
             else:
-                return_movement(dbo, m.ID, post.integer("animal"), post.date("fosterdate"))
+                return_movement(dbo, m.ID, username, post.integer("animal"), post.date("fosterdate"))
     # Create the foster movement
     move_dict = {
         "person"                : post["person"],
@@ -624,13 +642,13 @@ def insert_reclaim_from_form(dbo, username, post):
     fm = get_animal_movements(dbo, post.integer("animal"))
     for m in fm:
         if m.MOVEMENTTYPE == FOSTER and m.RETURNDATE is None:
-            return_movement(dbo, m.ID, post.integer("animal"), post.date("movementdate"))
+            return_movement(dbo, m.ID, username, post.integer("animal"), post.date("movementdate"))
     # Is this animal current at a retailer? If so, return it from the
     # retailer and set the originalretailermovement and retailerid fields
     # on our new adoption movement so it can be linked back
     for m in fm:
         if m.MOVEMENTTYPE == RETAILER and m.RETURNDATE is None:
-            return_movement(dbo, m["ID"], post.integer("animal"), post.date("movementdate"))
+            return_movement(dbo, m["ID"], username, post.integer("animal"), post.date("movementdate"))
             move_dict["originalretailermovement"] = str(m.ID)
             move_dict["retailer"] = str(m.OWNERID)
     # If the animal was flagged as not available for adoption, then it
@@ -674,7 +692,7 @@ def insert_transfer_from_form(dbo, username, post):
     fm = get_animal_movements(dbo, post.integer("animal"))
     for m in fm:
         if m.MOVEMENTTYPE == FOSTER and m.RETURNDATE is None:
-            return_movement(dbo, m["ID"], post.integer("animal"), post.date("transferdate"))
+            return_movement(dbo, m["ID"], username, post.integer("animal"), post.date("transferdate"))
     # Create the transfer movement
     move_dict = {
         "person"                : post["person"],
@@ -704,8 +722,8 @@ def insert_reserve_for_animal_name(dbo, username, personid, reservationdate, ani
         aid = dbo.query_int("SELECT ID FROM animal WHERE LOWER(AnimalName) LIKE ? ORDER BY ID DESC", [animalname.lower()])
     if 1 == dbo.query_int("SELECT IsBanned FROM owner WHERE ID=?", [personid]):
         raise asm3.utils.ASMValidationError("owner %s is banned from adopting animals - not creating reserve")
-    if aid == 0: 
-        raise asm3.utils.ASMValidationError("could not find an animal for '%s' - not creating reserve" % animalname)
+    if aid == 0 and not asm3.configuration.movement_person_only_reserves(dbo): 
+        raise asm3.utils.ASMValidationError("could not find an animal for '%s', will not create person only reserve" % animalname)
     move_dict = {
         "person"                : str(personid),
         "animal"                : str(aid),
@@ -759,7 +777,7 @@ def insert_retailer_from_form(dbo, username, post):
     fm = get_animal_movements(dbo, post.integer("animal"))
     for m in fm:
         if m.MOVEMENTTYPE == FOSTER and m.RETURNDATE is None:
-            return_movement(dbo, m.ID, post.integer("animal"), post.date("retailerdate"))
+            return_movement(dbo, m.ID, username, post.integer("animal"), post.date("retailerdate"))
     # Create the retailer movement
     move_dict = {
         "person"                : post["person"],
@@ -897,7 +915,6 @@ def send_fosterer_emails(dbo):
     Intended to be sent as part of the overnight batch on the first day of the week.
     """
     l = dbo.locale
-    UNDERLINE = "--------------------------------------"
 
     # If this option is not turned on, bail out
     if not asm3.configuration.fosterer_emails(dbo): 
@@ -909,13 +926,31 @@ def send_fosterer_emails(dbo):
         asm3.al.debug("now.weekday != 0: no need to send fosterer emails", "movement.send_fosterer_emails", dbo)
         return
 
+    # Custom message and reply to if set
+    msg = asm3.configuration.fosterer_emails_msg(dbo)
+    replyto = asm3.configuration.fosterer_emails_reply_to(dbo)
+    if replyto == "": replyto = asm3.configuration.email(dbo)
+
+    # Number of days to go back when looking for overdue medical items (negative integer, default -30)
+    overduedays = asm3.configuration.fosterer_email_overdue_days(dbo)
+    asm3.al.debug("go back %s days when considering overdue medical items" % overduedays, "movement.send_fosterer_emails", dbo)
+
     activefosterers = dbo.query("SELECT ID, OwnerName, EmailAddress FROM owner " \
         "WHERE EmailAddress <> '' AND EXISTS(SELECT OwnerID FROM adoption WHERE OwnerID = owner.ID AND MovementType = 2 AND MovementDate <= ? " \
         "AND (ReturnDate Is Null OR ReturnDate > ?)) ORDER BY OwnerName", ( dbo.today(), dbo.today() ))
     asm3.al.debug("%d active fosterers found" % len(activefosterers), "movement.send_fosterer_emails", dbo)
 
+    def p(l, s):
+        l.append("<p>%s</p>" % s)
+    def pb(l, s):
+        l.append("<p><b>%s</b></p>" % s)
+
     for f in activefosterers:
-        lines = []
+        lines = [ ]
+        if msg != "":
+            lines.append(msg)
+            lines.append("<hr/>")
+
         animals = dbo.query("SELECT a.AnimalName, a.ShelterCode, x.Sex, a.SpeciesID, s.SpeciesName, a.BreedName, " \
             "a.AnimalAge, a.DateOfBirth, a.Neutered, a.Identichipped, a.IdentichipNumber, " \
             "m.AnimalID, m.MovementDate " \
@@ -928,41 +963,35 @@ def send_fosterer_emails(dbo):
         asm3.al.debug("%d animals found for fosterer '%s'" % (len(animals), f.OWNERNAME), "movement.send_fosterer_emails", dbo)
 
         for a in animals:
-            lines.append( "%s - %s" % (a.ANIMALNAME, a.SHELTERCODE) )
-            lines.append( asm3.i18n._("{0} {1} {2} aged {3}", l).format(a.SEX, a.BREEDNAME, a.SPECIESNAME, a.ANIMALAGE) )
-            lines.append( asm3.i18n._("Fostered to {0} since {1}", l).format( f.OWNERNAME, asm3.i18n.python2display(l, a.MOVEMENTDATE) ))
-            lines.append("")
+            pb(lines, "%s - %s" % (a.ANIMALNAME, a.SHELTERCODE) )
+            p(lines, asm3.i18n._("{0} {1} {2} aged {3}", l).format(a.SEX, a.BREEDNAME, a.SPECIESNAME, a.ANIMALAGE))
+            lines.append("<br/>")
+            p(lines, asm3.i18n._("Fostered to {0} since {1}", l).format( f.OWNERNAME, asm3.i18n.python2display(l, a.MOVEMENTDATE) ))
             
             if a.DATEOFBIRTH < dbo.today(offset=-182) and a.NEUTERED == 0 and a.SPECIESID in (1, 2):
-                lines.append(asm3.i18n._("WARNING: This animal is over 6 months old and has not been neutered/spayed", l))
+                pb(lines, asm3.i18n._("WARNING: This animal is over 6 months old and has not been neutered/spayed", l))
 
             if a.IDENTICHIPPED == 0 or (a.IDENTICHIPPED == 1 and a.IDENTICHIPNUMBER == "") and a.SPECIESID in (1, 2):
-                lines.append(asm3.i18n._("WARNING: This animal has not been microchipped", l))
+                pb(lines, asm3.i18n._("WARNING: This animal has not been microchipped", l))
 
-            lines.append("")
-
-            overdue = asm3.medical.get_combined_due(dbo, a.ANIMALID, dbo.today(offset=-30), dbo.today(offset=-1))
+            overdue = asm3.medical.get_combined_due(dbo, a.ANIMALID, dbo.today(offset=overduedays), dbo.today(offset=-1))
             if len(overdue) > 0:
-                lines.append(asm3.i18n._("Overdue medical items", l))
-                lines.append(UNDERLINE)
+                pb(lines, asm3.i18n._("Overdue medical items", l))
                 for m in overdue:
-                    lines.append( "{0}: {1} {2} {3}/{4} {5}".format( asm3.i18n.python2display(l, m.DATEREQUIRED), \
+                    p(lines, "{0}: {1} {2} {3}/{4} {5}".format( asm3.i18n.python2display(l, m.DATEREQUIRED), \
                         m.TREATMENTNAME, m.DOSAGE, m.TREATMENTNUMBER, m.TOTALTREATMENTS, m.COMMENTS ))
-                lines.append("")
+                lines.append("<hr/>")
 
             nextdue = asm3.medical.get_combined_due(dbo, a.ANIMALID, dbo.today(), dbo.today(offset=7))
             if len(nextdue) > 0:
-                lines.append(asm3.i18n._("Upcoming medical items", l))
-                lines.append(UNDERLINE)
+                pb(lines, asm3.i18n._("Upcoming medical items", l))
                 for m in nextdue:
-                    lines.append( "{0}: {1} {2} {3}/{4} {5}".format( asm3.i18n.python2display(l, m.DATEREQUIRED), \
+                    p(lines, "{0}: {1} {2} {3}/{4} {5}".format( asm3.i18n.python2display(l, m.DATEREQUIRED), \
                         m.TREATMENTNAME, m.DOSAGE, m.TREATMENTNUMBER, m.TOTALTREATMENTS, m.COMMENTS ))
-                lines.append("")
-
-            lines.append(UNDERLINE)
+                lines.append("<hr/>")
 
         # Email is complete, send to the fosterer (assuming there were some animals to send)
         if len(animals) > 0:
-            asm3.utils.send_email(dbo, asm3.configuration.email(dbo), f.EMAILADDRESS, subject = asm3.i18n._("Fosterer Medical Report", l), body = "\n".join(lines), exceptions=False)
+            asm3.utils.send_email(dbo, replyto, f.EMAILADDRESS, subject = asm3.i18n._("Fosterer Medical Report", l), body="\n".join(lines), contenttype="html", exceptions=False)
 
 

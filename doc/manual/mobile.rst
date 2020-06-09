@@ -2,7 +2,7 @@ Mobile Interface
 ================
 
 In addition to the web interface, ASM has a special interface for mobile
-devices, such as your iPhone, Blackberry, WebOS or Android handset.
+devices, such as your iPhone or Android handset.
 
 .. image:: images/mobile_menu.png
 .. image:: images/mobile_reports.png

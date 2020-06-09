@@ -1,12 +1,13 @@
-/*jslint browser: true, forin: true, eqeq: true, white: true, sloppy: true, vars: true, nomen: true */
 /*global $, jQuery, FileReader, Modernizr, _, asm, common, config, controller, dlgfx, format, header, html, tableform, validate */
 
 $(function() {
 
-    var document_repository = {
+    "use strict";
+
+    const document_repository = {
 
         model: function() {
-            var dialog = {
+            const dialog = {
                 add_title: _("Upload Document"),
                 close_on_ok: true,
                 html_form_action: "document_repository",
@@ -20,7 +21,7 @@ $(function() {
                 ]
             };
 
-            var table = {
+            const table = {
                 rows: controller.rows,
                 idcolumn: "ID",
                 edit: function(row) {
@@ -33,30 +34,36 @@ $(function() {
                 ]
             };
 
-            var buttons = [
-                 { id: "new", text: _("New"), icon: "new", enabled: "always", perm: "ard", 
-                     click: function() { 
-                         tableform.dialog_show_add(dialog)
-                             .then(function() {
-                                $("#form-tableform").submit();
-                             });
+            const buttons = [
+                { id: "new", text: _("New"), icon: "new", enabled: "always", perm: "ard", 
+                    click: async function() { 
+                        await tableform.dialog_show_add(dialog);
+                        $("#form-tableform").submit();
                      } 
-                 },
-                 { id: "delete", text: _("Delete"), icon: "delete", enabled: "multi", perm: "drd", 
-                     click: function() { 
-                         tableform.delete_dialog()
-                             .then(function() {
-                                tableform.buttons_default_state(buttons);
-                                 var ids = tableform.table_ids(table);
-                                 return common.ajax_post("document_repository", "mode=delete&ids=" + ids);
-                             })
-                             .then(function() {
-                                 tableform.table_remove_selected_from_json(table, controller.rows);
-                                 tableform.table_update(table);
-                             });
-                     } 
-                 },
-                { type: "raw", markup: '<div style="min-height: 40px" class="asm-mediadroptarget"><p>' + _("Drop files here...") + '</p></div>',
+                },
+                { id: "delete", text: _("Delete"), icon: "delete", enabled: "multi", perm: "drd", 
+                    click: async function() { 
+                        await tableform.delete_dialog();
+                        tableform.buttons_default_state(buttons);
+                        let ids = tableform.table_ids(table);
+                        await common.ajax_post("document_repository", "mode=delete&ids=" + ids);
+                        tableform.table_remove_selected_from_json(table, controller.rows);
+                        tableform.table_update(table);
+                    } 
+                },
+                { id: "email", text: _("Email"), icon: "email", enabled: "multi", perm: "emo",
+                    click: function() {
+                        $("#emailform").emailform("show", {
+                            title: _("Email media"),
+                            post: "document_repository",
+                            formdata: "mode=email" +
+                                "&ids=" + tableform.table_ids(table),
+                            subject: tableform.table_selected_row(table).NAME,
+                            templates: controller.templates
+                        });
+                    }
+                },
+                { type: "raw", markup: '<div class="asm-mediadroptarget"><p>' + _("Drop files here...") + '</p></div>',
                     hideif: function() { return !Modernizr.filereader || !Modernizr.todataurljpeg || asm.mobileapp; }}
             ];
             this.dialog = dialog;
@@ -65,7 +72,7 @@ $(function() {
         },
 
         attach_files: function(files) {
-            var i = 0, promises = [];
+            let i = 0, promises = [];
             if (!Modernizr.filereader || !Modernizr.todataurljpeg) { return; }
             header.show_loading(_("Uploading..."));
             for (i = 0; i < files.length; i += 1) {
@@ -83,13 +90,13 @@ $(function() {
          */
         attach_file: function(file, comments) {
 
-            var deferred = $.Deferred(),
+            let deferred = $.Deferred(),
                 docreader = new FileReader();
 
             docreader.onload = function(e) {
                 // TODO: File size check?
                 // Post the file data via AJAX
-                var formdata = "mode=create&filename=" + encodeURIComponent(file.name) +
+                let formdata = "mode=create&filename=" + encodeURIComponent(file.name) +
                     "&filetype=" + encodeURIComponent(file.type) + 
                     "&filedata=" + encodeURIComponent(e.target.result);
                 common.ajax_post("document_repository", formdata)
@@ -105,9 +112,10 @@ $(function() {
         },
 
         render: function() {
-            var s = "";
+            let s = "";
             this.model();
             s += tableform.dialog_render(this.dialog);
+            s += '<div id="emailform" />';
             s += html.content_header(_("Document Repository"));
             s += html.info(_("This screen allows you to add extra documents to your database, for staff training, reference materials, etc."));
             s += tableform.buttons_render(this.buttons);
@@ -120,6 +128,7 @@ $(function() {
             tableform.dialog_bind(this.dialog);
             tableform.buttons_bind(this.buttons);
             tableform.table_bind(this.table, this.buttons);
+            $("#emailform").emailform();
             // Assign name attribute to the path as we're using straight form POST for uploading
             $("#path").attr("name", "path");
             // Handle drag and drop
@@ -142,6 +151,7 @@ $(function() {
 
         destroy: function() {
             tableform.dialog_destroy();
+            common.widget_destroy("#emailform");
         },
 
         name: "document_repository",

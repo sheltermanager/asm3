@@ -2,7 +2,7 @@ Shelter View by Location
 ###
 Inventories
 ###
-Any
+34302/Any
 ###
 A printable version of shelter view, broken down by location and species.
 ###
@@ -17,10 +17,15 @@ a.BreedName,
 (SELECT Name FROM lksyesno WHERE ID = a.Neutered) AS aNeutered,
 a.AnimalAge,
 a.TimeOnShelter,
-CASE WHEN a.ActiveMovementType = 2 THEN 'Foster' ELSE l.LocationName END AS LocationName,
+CASE 
+WHEN a.ActiveMovementType = 2 AND a.HasPermanentFoster = 0 THEN 'Foster' 
+WHEN a.ActiveMovementType = 2 AND a.HasPermanentFoster = 1 THEN 'Permanent Foster' 
+WHEN a.ActiveMovementType = 1 AND a.HasTrialAdoption = 1 THEN 'Trial Adoption' 
+WHEN a.ActiveMovementType = 8 THEN 'Retailer' 
+ELSE l.LocationName END AS LocationName,
 (SELECT Name FROM lksynun WHERE ID = a.IsGoodWithCats) AS aGoodWithCats,
 (SELECT Name FROM lksynun WHERE ID = a.IsGoodWithDogs) AS aGoodWithDogs,
-(SELECT Name FROM lksynun WHERE ID = a.IsGoodWithChildren) AS aGoodWithKids,
+(SELECT Name FROM lksynunk WHERE ID = a.IsGoodWithChildren) AS aGoodWithKids,
 (SELECT Name FROM lksynun WHERE ID = a.IsHouseTrained) AS aHouseTrained,
 a.ID AS animalid,
 a.AnimalComments,

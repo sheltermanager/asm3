@@ -1,4 +1,3 @@
-#!/usr/bin/python env
 
 import os, sys, datetime, time
 

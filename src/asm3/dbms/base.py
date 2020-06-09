@@ -2,6 +2,7 @@
 import asm3.al
 import asm3.audit
 import asm3.cachemem
+import asm3.cachedisk
 import asm3.i18n
 import asm3.utils
 
@@ -84,7 +85,7 @@ class QueryBuilder(object):
         if v == "":
             self.swhere += k + " "
         else:
-            self.swhere += "%s %s ? " % (k, operator, v)
+            self.swhere += "%s %s ? " % (k, operator)
             self.values.append(v)
     
     def like(self, k, v, cond = "and"):
@@ -132,7 +133,7 @@ class Database(object):
 
     def connect(self):
         """ Virtual: Connect to the database and return the connection """
-        pass
+        raise NotImplementedError()
 
     def cursor_open(self):
         """ Returns a tuple containing an open connection and cursor.
@@ -205,6 +206,13 @@ class Database(object):
         """ Fix and encode/decode any string values before storing them in the database.
             string column names with an asterisk will not do XSS escaping.
         """
+        def transform(s):
+            """ Transforms values going into the database """
+            if s is None: return ""
+            s = s.replace("`", "&bt;") # Encode backticks as they're going to become apostrophes
+            s = s.replace("'", "`") # Compatibility with ASM2, turn apostrophes into backticks
+            return s
+
         for k, v in values.copy().items(): # Work from a copy to prevent iterator problems
             if asm3.utils.is_str(v) or asm3.utils.is_unicode(v):
                 if not DB_DECODE_HTML_ENTITIES:         # Store HTML entities as is
@@ -219,7 +227,8 @@ class Database(object):
                 else:
                     # Otherwise, do XSS escaping
                     v = self.escape_xss(v)
-                v = self.escape_apos(v)
+                # Any transformations before storing in the database
+                v = transform(v)
                 values[k] = u"%s" % v
         return values
 
@@ -230,17 +239,24 @@ class Database(object):
         If v is already a str, removes any non-ascii chars
         If it is any other type, returns v untouched
         """
+        def transform(s):
+            """ Transforms values coming out of the database """
+            if s is None: return ""
+            s = s.replace("`", "'") # Backticks become apostrophes again
+            s = s.replace("&bt;", "`") # Encoded backticks become proper backticks
+            return s
+
         try:
             if v is None: 
                 return v
             elif sys.version_info[0] > 2 and asm3.utils.is_str(v): # PYTHON3 - make sure a unicode str is returned
-                v = self.unescape(v)
+                v = transform(v)
                 return v.encode("ascii", "xmlcharrefreplace").decode("ascii")
             elif asm3.utils.is_unicode(v):
-                v = self.unescape(v)
+                v = transform(v)
                 return v.encode("ascii", "xmlcharrefreplace")
             elif asm3.utils.is_str(v):
-                v = self.unescape(v)
+                v = transform(v)
                 return v.decode("ascii", "ignore").encode("ascii", "ignore")
             else:
                 return v
@@ -257,11 +273,6 @@ class Database(object):
         # This is historic - ASM2 switched backticks for apostrophes so we do for compatibility
         s = s.replace("'", "`")
         return s
-
-    def escape_apos(self, s):
-        """ Turn apostrophes into backticks before storing """
-        if s is None: return ""
-        return s.replace("'", "`")
 
     def escape_xss(self, s):
         """ XSS escapes a string """
@@ -355,10 +366,19 @@ class Database(object):
 
     def get_id(self, table):
         """ Returns the next ID for a table """
-        nextid = self.get_id_max(table)
+        nextid = self.get_id_cache(table)
         self.update_asm2_primarykey(table, nextid)
-        asm3.al.debug("get_id: %s -> %d (max)" % (table, nextid), "Database.get_id", self)
+        asm3.al.debug("get_id: %s -> %d (cache_pk)" % (table, nextid), "Database.get_id", self)
         return nextid
+
+    def get_id_cache(self, table):
+        """ Returns the next ID for a table using an in-memory cache. """
+        cache_key = "%s_pk_%s" % (self.database, table)
+        id = asm3.cachemem.increment(cache_key)
+        if id is None:
+            id = self.get_id_max(table)
+            asm3.cachemem.put(cache_key, id, 86400)
+        return id
 
     def get_id_max(self, table):
         """ Returns the next ID for a table using MAX(ID) """
@@ -586,12 +606,12 @@ class Database(object):
         without doing any caching and is equivalent to Database.query()
         """
         if not CACHE_COMMON_QUERIES: return self.query(sql, params=params, limit=limit)
-        cache_key = asm3.utils.md5_hash_hex("%s:%s:%s" % (self.database, sql, params))
-        results = asm3.cachemem.get(cache_key)
+        cache_key = "%s:%s:%s" % (self.database, sql, params)
+        results = asm3.cachedisk.get(cache_key, self.database, expectedtype=list)
         if results is not None:
             return results
         results = self.query(sql, params=params, limit=limit, distincton=distincton)
-        asm3.cachemem.put(cache_key, results, age)
+        asm3.cachedisk.put(cache_key, self.database, results, age)
         return results
 
     def query_columns(self, sql, params=None):
@@ -849,6 +869,10 @@ class Database(object):
             x += 1
         return queries
 
+    def sql_atoi(self, fieldexpr):
+        """ Removes all but the numbers from fieldexpr """
+        return self.sql_regexp_replace(fieldexpr, r"[^0123456789]", "")
+
     def sql_cast(self, expr, newtype):
         """ Writes a database independent cast for expr to newtype """
         return "CAST(%s AS %s)" % (expr, newtype)
@@ -890,10 +914,16 @@ class Database(object):
         """ Writes a limit clause to X items """
         return "LIMIT %s" % x
 
+    def sql_regexp_replace(self, fieldexpr, pattern="?", replacestr="?"):
+        """ Writes a regexp replace expression that replaces characters matching pattern with replacestr """
+        if pattern != "?": pattern = "'%s'" % pattern
+        if replacestr != "?": replacestr = "'%s'" % self.escape(replacestr)
+        return "REGEXP_REPLACE(%s, %s, %s)" % (fieldexpr, pattern, replacestr)
+
     def sql_replace(self, fieldexpr, findstr="?", replacestr="?"):
         """ Writes a replace expression that finds findstr in fieldexpr, replacing with replacestr """
         if findstr != "?": findstr = "'%s'" % self.escape(findstr)
-        if replacestr != "?": findstr = "'%s'" % self.escape(replacestr)
+        if replacestr != "?": replacestr = "'%s'" % self.escape(replacestr)
         return "REPLACE(%s, %s, %s)" % (fieldexpr, findstr, replacestr)
 
     def sql_substring(self, fieldexpr, pos, chars):
@@ -909,7 +939,7 @@ class Database(object):
         if v is None:
             return "null"
         elif asm3.utils.is_unicode(v) or asm3.utils.is_str(v):
-            return "'%s'" % v.replace("'", "`")
+            return "'%s'" % v.replace("'", "''")
         elif type(v) == datetime.datetime:
             return self.sql_date(v)
         else:
@@ -924,12 +954,6 @@ class Database(object):
             override if your DB driver wants another char.
         """
         return sql.replace("?", "%s")
-
-    def unescape(self, s):
-        """ unescapes query values """
-        if s is None: return ""
-        s = s.replace("`", "'")
-        return s
 
     def update_asm2_primarykey(self, table, nextid):
         """

@@ -1,14 +1,15 @@
-/*jslint browser: true, forin: true, eqeq: true, plusplus: true, white: true, sloppy: true, vars: true, nomen: true, continue: true */
 /*global $, jQuery, alert */
 
 // This file is loaded/run for all mobile interface actions/pages
 
 $(document).ready(function() {
 
+    "use strict";
+
     // mobile login:
     // if all the boxes were filled in (because they were passed by parameters
     // when the backend constructed the page), submit it automatically
-    if ($("#loginform").size() > 0 && $("#username").val() && $("#password").val()) {
+    if ($("#loginform").length > 0 && $("#username").val() && $("#password").val()) {
         $("#loginform").submit();
     }
 

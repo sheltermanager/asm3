@@ -1,7 +1,8 @@
-/*jslint browser: true, forin: true, eqeq: true, white: true, sloppy: true, vars: true, nomen: true */
-/*global $, jQuery, _, asm, additional, common, config, controller, dlgfx, format, header, html, validate */
+/*global $, jQuery, _, asm, additional, common, config, controller, dlgfx, edit_header, format, header, html, validate */
 
 $(function() {
+
+    "use strict";
 
     var person_find_results = {
 
@@ -10,7 +11,7 @@ $(function() {
                 html.content_header(_("Results")),
                 '<div id="asm-results">',
                 '<div class="ui-state-highlight ui-corner-all" style="margin-top: 5px; padding: 0 .7em">',
-                '<p><span class="ui-icon ui-icon-search" style="float: left; margin-right: .3em;"></span>',
+                '<p><span class="ui-icon ui-icon-search"></span>',
                 _("Search returned {0} results.").replace("{0}", controller.rows.length),
                 '</p>',
                 '</div>',
@@ -60,7 +61,7 @@ $(function() {
                     }
                     var formatted = person_find_results.format_column(row, name, value, controller.additional);
                     if (name == "OwnerName") { 
-                        if ($.trim(value) == "") { 
+                        if (common.trim(value) == "") { 
                             formatted += _("(blank)"); 
                         }
                         formatted = link + formatted + "</a></span>";
@@ -89,7 +90,7 @@ $(function() {
         column_names: function() {
             var cols = [];
             $.each(config.str("OwnerSearchColumns").split(","), function(i, v) {
-                cols.push($.trim(v));
+                cols.push(common.trim(v));
             });
             return cols;
         },
@@ -120,6 +121,7 @@ $(function() {
         column_label: function(name, add) {
             var labels = {
                 "CreatedBy": _("Created By"),
+                "CreatedDate": _("Created Date"),
                 "OwnerTitle":  _("Title"),
                 "OwnerInitials":  _("Initials"),
                 "OwnerForenames":  _("Forenames"),
@@ -150,6 +152,8 @@ $(function() {
                 "IsRetailer":  _("Retailer"),
                 "IsVet":  _("Vet"),
                 "IsGiftAid":  _("GiftAid"),
+                "AdditionalFlags": _("Flags"),
+                "LookingForSummary": _("Looking For"),
                 "HomeCheckAreas":  _("Areas"),
                 "DateLastHomeChecked":  _("Homechecked"),
                 "HomeCheckedBy":  _("Checked By")
@@ -172,11 +176,11 @@ $(function() {
          * add: The additional row results
          */
         format_column: function(row, name, value, add) {
-            var DATE_FIELDS = [ "MembershipExpiryDate", "DateLastHomeChecked" ],
+            var DATE_FIELDS = [ "CreatedDate", "MembershipExpiryDate", "DateLastHomeChecked" ],
             STRING_FIELDS = [ "CreatedBy", "OwnerTitle", "OwnerInitials", "OwnerForenames", "OwnerSurname",
                 "OwnerName", "OwnerAddress", "OwnerTown", "OwnerCounty", "OwnerPostcode",
                 "HomeTelephone", "WorkTelephone", "MobileTelephone", "EmailAddress",
-                "Comments", "MembershipNumber", "HomeCheckAreas" ],
+                "Comments", "MembershipNumber", "HomeCheckAreas", "LookingForSummary" ],
             YES_NO_FIELDS = [ "IDCheck", "IsBanned", "IsVolunteer", "IsHomeChecker", 
                 "IsMember", "IsDonor", "IsShelter", "IsACO", "IsStaff", "IsFosterer",
                 "IsRetailer", "IsVet", "IsGiftAid" ],
@@ -196,6 +200,9 @@ $(function() {
             else if ($.inArray(name, YES_NO_FIELDS) > -1) {
                 if (value == 0) { rv = _("No"); }
                 if (value == 1) { rv = _("Yes"); }
+            }
+            else if ( name == "AdditionalFlags") {
+                rv = edit_header.person_flags(row);
             }
             else if ( name == "Image" ) {
                 rv = "<img class=\"asm-thumbnail thumbnailshadow\" src=\"" + html.thumbnail_src(row, "animalthumb") + "\" />";

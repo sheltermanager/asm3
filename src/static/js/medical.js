@@ -1,7 +1,8 @@
-/*jslint browser: true, forin: true, eqeq: true, white: true, sloppy: true, vars: true, nomen: true */
 /*global $, jQuery, _, asm, common, config, controller, dlgfx, edit_header, format, header, html, tableform, validate */
 
 $(function() {
+
+    "use strict";
 
     var medical = {
 
@@ -125,7 +126,12 @@ $(function() {
                             return config.bool("DontShowLitterID");
                         }
                     },
-                    { field: "SPECIESNAME", display: _("Species") },
+                    { field: "SPECIESNAME", display: _("Species"),
+                        hideif: function(row) {
+                            // Don't show for animal records
+                            if (controller.animal) { return true; }
+                        }
+                    },
                     { field: "LOCATIONNAME", display: _("Location"),
                         formatter: function(row) {
                             var s = row.LOCATIONNAME;
@@ -177,89 +183,113 @@ $(function() {
                      click: function() { medical.new_medical(); }},
                 { id: "bulk", text: _("Bulk Regimen"), icon: "new", enabled: "always",
                     hideif: function() { return controller.animal; }, click: function() { medical.new_bulk_medical(); }},
-                 { id: "delete-regimens", text: _("Delete Regimen"), icon: "delete", enabled: "multi", 
-                     mouseover: function() {
-                        medical.highlight_selected_regimens(true);
-                     },
-                     mouseleave: function() {
-                        medical.highlight_selected_regimens(false);
-                     },
-                     click: function() { 
-                         tableform.delete_dialog()
-                             .then(function() {
-                                 tableform.buttons_default_state(buttons);
-                                 var ids = medical.selected_regimen_ids();
-                                 return common.ajax_post("medical", "mode=delete_regimen&ids=" + ids);
-                             })
-                             .then(function() {
-                                 medical.remove_selected_regimens();
-                                 tableform.table_update(table);
-                             });
-                     } 
-                 },
-                 { id: "delete-treatments", text: _("Delete Treatments"), icon: "delete", enabled: "multi", perm: "mdam", 
-                     mouseover: function() {
-                        medical.highlight_selected_treatments(true);
-                     },
-                     mouseleave: function() {
-                        medical.highlight_selected_treatments(false);
-                     },
-                     click: function() { 
-                         tableform.delete_dialog()
-                             .then(function() {
-                                 tableform.buttons_default_state(buttons);
-                                 var ids = medical.selected_treatment_ids();
-                                 return common.ajax_post("medical", "mode=delete_treatment&ids=" + ids);
-                             })
-                             .then(function() {
-                                 medical.remove_selected_treatments();
-                                 tableform.table_update(table);
-                             });
-                     } 
-                 },
-                 { id: "given", text: _("Give"), icon: "complete", enabled: "multi", perm: "mcam", 
-                     tooltip: _("Mark treatments given"),
-                     click: function() {
-                        var comments = "";
-                        $.each(controller.rows, function(i, v) {
-                            if (tableform.table_id_selected(v.COMPOSITEID)) {
-                                comments += "[" + v.SHELTERCODE + " - " + v.ANIMALNAME + "] ";
-                            }
-                        });
-                        $("#usagecomments").val(comments);
-                        $("#newdate").datepicker("setDate", new Date());
-                        $("#usagetype").select("firstvalue");
-                        $("#usagedate").datepicker("setDate", new Date());
-                        $("#usagedate").closest("tr").hide();
-                        $("#quantity").val("0");
-                        $("#givenby").select("value", asm.user);
-                        // Default animal's current vet if set and this is an animal medical tab
-                        if (controller.animal && controller.animal.CURRENTVETID) { 
-                            $("#givenvet").personchooser("loadbyid", controller.animal.CURRENTVETID); 
-                        }
-                        $("#dialog-given").dialog("open");
-                     }
-                 },
-                 { id: "required", text: _("Change Date Required"), icon: "calendar", enabled: "multi", perm: "mcam", 
-                     tooltip: _("Change date required on selected treatments"),
-                     click: function() {
-                        $("#newdater").datepicker("setDate", new Date());
-                        $("#dialog-required").dialog("open");
-                     }
-                 },
+                { id: "delete-regimens", text: _("Delete Regimen"), icon: "delete", enabled: "multi", 
+                    mouseover: function() {
+                       medical.highlight_selected_regimens(true);
+                    },
+                    mouseleave: function() {
+                       medical.highlight_selected_regimens(false);
+                    },
+                    click: function() { 
+                        tableform.delete_dialog()
+                            .then(function() {
+                                tableform.buttons_default_state(buttons);
+                                var ids = medical.selected_regimen_ids();
+                                return common.ajax_post("medical", "mode=delete_regimen&ids=" + ids);
+                            })
+                            .then(function() {
+                                medical.remove_selected_regimens();
+                                tableform.table_update(table);
+                            });
+                    } 
+                },
+                { id: "delete-treatments", text: _("Delete Treatments"), icon: "delete", enabled: "multi", perm: "mdam", 
+                    mouseover: function() {
+                       medical.highlight_selected_treatments(true);
+                    },
+                    mouseleave: function() {
+                       medical.highlight_selected_treatments(false);
+                    },
+                    click: function() { 
+                        tableform.delete_dialog()
+                            .then(function() {
+                                tableform.buttons_default_state(buttons);
+                                var ids = medical.selected_treatment_ids();
+                                return common.ajax_post("medical", "mode=delete_treatment&ids=" + ids);
+                            })
+                            .then(function() {
+                                medical.remove_selected_treatments();
+                                tableform.table_update(table);
+                            });
+                    } 
+                },
+                { id: "given", text: _("Give"), icon: "complete", enabled: "multi", perm: "mcam", 
+                    tooltip: _("Mark treatments given"),
+                    click: function() {
+                       var comments = "";
+                       $.each(controller.rows, function(i, v) {
+                           if (tableform.table_id_selected(v.COMPOSITEID)) {
+                               comments += "[" + v.SHELTERCODE + " - " + v.ANIMALNAME + "] ";
+                           }
+                       });
+                       $("#usagecomments").val(comments);
+                       $("#newdate").datepicker("setDate", new Date());
+                       $("#usagetype").select("firstvalue");
+                       $("#usagedate").datepicker("setDate", new Date());
+                       $("#usagedate").closest("tr").hide();
+                       $("#quantity").val("0");
+                       $("#givenby").select("value", asm.user);
+                       // Default animal's current vet if set and this is an animal medical tab
+                       if (controller.animal && controller.animal.CURRENTVETID) { 
+                           $("#givenvet").personchooser("loadbyid", controller.animal.CURRENTVETID); 
+                       }
+                       $("#dialog-given").dialog("open");
+                    }
+                },
+                { id: "undo", text: _("Undo"), icon: "cross", enabled: "multi", perm: "mcam",
+                    tooltip: _("Undo given treatments"),
+                    click: function() {
+                        common.ajax_post("medical", "mode=undo&ids=" + medical.selected_treatment_ids())
+                            .then(function() {
+                                $.each(controller.rows, function(i, v) {
+                                    if (tableform.table_id_selected(v.COMPOSITEID)) {
+                                        v.DATEGIVEN = null;
+                                        v.GIVENBY = "";
+                                        v.TREATMENTCOMMENTS = "";
+                                    }
+                                });
+                                tableform.table_update(medical.table);
+                            })
+                            .always(function() {
+                                if (controller.name == "animal_medical") {
+                                    common.route_reload();
+                                }
+                            });
+                    }
+                },
+                { id: "required", text: _("Change Date Required"), icon: "calendar", enabled: "multi", perm: "mcam", 
+                    tooltip: _("Change date required on selected treatments"),
+                    click: function() {
+                       $("#newdater").datepicker("setDate", new Date());
+                       $("#dialog-required").dialog("open");
+                    }
+                },
 
-                 { id: "offset", type: "dropdownfilter", 
-                     options: [ "m365|" + _("Due today"), "p7|" + _("Due in next week"), "p31|" + _("Due in next month"), "p365|" + _("Due in next year") ],
-                     click: function(selval) {
-                        common.route(controller.name + "?offset=" + selval);
-                     },
-                     hideif: function(row) {
-                         // Don't show for animal records
-                         if (controller.animal) {
-                             return true;
-                         }
-                     }
-                 }
+                { id: "offset", type: "dropdownfilter", 
+                    options: [ "m365|" + _("Due today"), "p7|" + _("Due in next week"), 
+                        "p31|" + _("Due in next month"), "p365|" + _("Due in next year"),  
+                        "g1|" + _("Given today"), "g7|" + _("Given in last week"),
+                        "g31|" + _("Given in last month") ],
+                    click: function(selval) {
+                       common.route(controller.name + "?offset=" + selval);
+                    },
+                    hideif: function(row) {
+                        // Don't show for animal records
+                        if (controller.animal) {
+                            return true;
+                        }
+                    }
+                }
             ];
             this.dialog = dialog;
             this.buttons = buttons;
@@ -278,12 +308,14 @@ $(function() {
             else {
                 s += html.content_header(_("Medical Book"));
             }
+            if (controller.overlimit > 0) {
+                s += html.info(_("{0} records displayed, use the 'Medical History' report to see all records for this animal.").replace("{0}", controller.overlimit));
+            }
             s += tableform.buttons_render(this.buttons);
             s += tableform.table_render(this.table);
             s += html.content_footer();
             return s;
         },
-
 
         /** Removes selected treatments from the local json */
         remove_selected_treatments: function() {

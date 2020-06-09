@@ -53,7 +53,17 @@ ASM contains a full double entry accounting package. The options here are:
 * When receiving payments, allow recording of sales tax with a default rate of %:
   ASM can calculate and store sales tax/VAT/GST amounts on payments you receive
   for taxable goods. Enabling this option will add a tickbox to all payment
-  screens allowing you to calculate the taxable value.
+  screens allowing you to calculate the taxable value (assumes your amount is
+  gross and inclusive of tax/VAT/GST).
+
+* When calculating sales tax, assume the payment amount is net and add it:
+  Not everyone charges for items that are inclusive of tax and don't have the 
+  full amount to hand. With this option on, when the system calculates the sales
+  tax/VAT/GST on your payment amount, it will calculate it as if the amount was
+  exclusive of tax and then add it to the amount so that it becomes a gross
+  amount, inclusive of tax. Eg: $50 at 20% will produce $10 tax and the amount
+  will become $60 with this option on. With it off, tax will be calculated
+  as $8.33 for $50.
 
 * When receiving multiple payments, allow the due and received dates to be set:
   If this option is on, due and received date columns will be shown when taking
@@ -77,6 +87,17 @@ ASM contains a full double entry accounting package. The options here are:
   payment transaction, it will use the payment type to find the income
   account to use. The destination account here denotes where the money will be
   moved to. If you do not set one, ASM will use the first bank account on file. 
+
+* Income account for sales tax: If you are creating matching transactions from
+  payment records and there is a tax/VAT/GST value present, the system will
+  write a transaction to deposit the tax into the target bank account from the
+  income account you nominate here, giving you an easy way to track your
+  tax burden while keeping your bank balances correct.
+
+* Expense account for transaction fees: If you are creating matching
+  transactions from payment records and there is a fee present, the system will
+  write a transaction to deduct the fee from the target bank account and send
+  it to the expense account you nominate here.
 
 * Donations of type … are sent to ...: In addition to the default payment
   destination account, you can specify optional mappings, so that when ASM
@@ -292,9 +313,10 @@ policies instigated as part of data protection compliance.
   data retention policies and the GDPR by removing identifiable personal data.
 
   To be anonymized, a record needs to be older than the retention period, and
-  all payments, movements or log entries attached to the person must be older
-  than the retention period.  The person record cannot have any flag that
-  indicates an ongoing relationship with the shelter. These flags are: 
+  all payments, clinic appointments, movements or log entries attached to the
+  person must be older than the retention period.  The person record cannot
+  have any flag that indicates an ongoing relationship with the shelter. These
+  flags are: 
 
    aco, adoptioncoordinator, retailer, homechecker, member, shelter, foster, staff, vet, volunteer
 
@@ -360,14 +382,30 @@ records.
   weight so you can track the history of an animal's wieght with reports and
   graphs.
 
-Diary 
------
+Diary and Messages
+------------------
 
-The diary tab allows you to set whether you would like to see the complete
-diary on the home page, or just the diary notes for the current user. You can
-also set whether you would like diary notes emailed to each user every day –
-for this to work, you must have configured the system's email in the email
-section of the screen and your users must have an email address set.
+* Show the full diary (instead of just my notes) on the home page: If this option
+  is on, all users will see the full list of outstanding diary notes on their home page.
+
+* Email users their outstanding diary notes once per day: This option will cause
+  the system to send users an email containing their outstanding diary notes. 
+  The system will send it as part of the overnight batch, which depending on
+  your recommended locale/cron times will be between midnight and 4am.
+  For this option to work, you must have configured the system email in
+  the Email tab of this screen and your users must have email addresses set.
+
+* Email users immediately when a diary note assigned to them is created or
+  updated: This option will cause an email be sent to any users a diary note is
+  assigned to as soon as you create or make a change to it. 
+
+* Email diary note creators when a diary note is marked complete: This option
+  will have an email sent to the person who created a diary note the moment
+  that it is marked complete by a user.
+
+* When a message is created, email it to each matching user: In addition to
+  showing messages on the home page for a user, send it via email. The message
+  is sent immediately as soon as the message is created.
 
 Display
 -------
@@ -385,12 +423,16 @@ Display
   the rows of the movement and medical books (foster book, reservation book,
   vaccination book, etc.)
 
+* Show pink and blue borders around animal thumbnails to indicate sex: Makes
+  the border around thumbnails pink for girls and blue for boy animals.
+
 * Show a minimap of the address on person screens: Show an embedded map next to the
   person's address on the details screen. Also shows a minimap on the dispatch
   slider of incidents.
 
 * Allow editing of latitude/longitude with minimaps: Allow the latitude/longitude
-  geocodes to be hand edited in a field near the minimap and address.
+  geocodes to be hand edited in fields near the minimap and address. Right clicking
+  on the minimap will add a new pin and update the fields.
 
 * Show weights as lb and oz: Enter and show weights with separate pounds and
   ounces. eg: 5 lbs and 6 oz
@@ -403,6 +445,10 @@ Display
 * Show complete comments in table views: When viewing comments or log notes in
   tables, show the complete text instead of truncating it to 80 characters and
   fitting the text onto one line.
+
+* Show ID numbers when editing lookup data: When browsing lookup data under
+  :menuselection:`Settings --> Lookup Data`, show the internal system ID numbers.
+  This is handy for looking up IDs when writing reports.
 
 * Keep table headers visible when scrolling: If selected, when scrolling down
   long tables their headers will float at the top of the screen to remind you
@@ -588,16 +634,53 @@ Medical
 Movements
 ---------
 
-The movement tab allows a number of days to be set to automatically cancel
-reservations. If an animal is reserved for this period of time and it does not
-result in an adoption (or any kind of movement), ASM will automatically cancel
-the reservation for you after this time.
+* Cancel unadopted reservations after: If an animal is reserved for this period
+  of time and it does not result in an adoption (or any kind of movement), ASM
+  will automatically cancel the reservation for you after this time.
+
+* Highlight unadopted reservations on screen after: If an animal
+  is reserved for this period of time, the system will highlight the reservation
+  on screen (typically in red italics).
+
+* Remove holds after: This value is used to set a default in the "Hold until date"
+  field of new animals. When the date is reached, the hold flag is automatically
+  removed.
 
 * Treat foster animals as part of the shelter inventory: Setting this option
   will make ASM treat fostered animals as if they are on the shelter (with
   appropriate visual output to show they are fostered). 
 
 .. note:: You should use :menuselection:`Settings --> Trigger Batch Processes` and recalculate animal locations after changing this option.
+
+* Treat animals at retailers as part of the shelter inventory: Setting this 
+  option will make ASM treat animals at a retailer as if they are on the
+  shelter (with indications that they are at a retailer).
+
+* Our shelter does trial adoptions, allow us to mark these on movement screens:
+  When creating an adoption from :menuselection:`Move --> Adopt an animal`, or
+  in any of the movement tabs/screens, show a “trial” tickbox and trial end
+  date. This allows for trial adoptions (some shelters call this “Foster to
+  Adopt”), which can then be reported on by installing the “Active Trial
+  Adoptions” and “Expired Trial Adoptions” reports.
+
+* Treat Trial Adoptions as shelter inventory: As with the Foster as inventory
+  option, trial adoptions are still shown in the Shelter View and on shelter
+  searches/reports.
+
+* Our shelter does soft releases, allow us to mark these on movement screens:
+  When creating a released to wild movement, this allows for a soft release
+  to be made. A soft release is one where the animal is monitored for some
+  time after release.
+
+* Treat Soft Releases as shelter inventory: Animals on soft release will be 
+  kept in the shelter's inventory.
+
+* Allow reservations to be created that are not linked to an animal: This
+  option lets you create a reservation without specifying the animal. It also
+  applies to using :menuselection:`Create --> Person` on the incoming forms
+  screen with a reserveanimalname field in the form to allow the person's
+  application to still be tracked through the reservation book even if the
+  person is not interested in a specific animal yet.
 
 * Automatically cancel any outstanding reservations on an animal when it is
   adopted: Self explanatory.
@@ -619,25 +702,6 @@ the reservation for you after this time.
 * Allow overriding of the movement number on the Move menu screens: If turned
   on, the movement number field will be visible on all Move menu screens for
   the user to override.
-
-* Our shelter does trial adoptions, allow us to mark these on movement screens:
-  When creating an adoption from :menuselection:`Move --> Adopt an animal`, or
-  in any of the movement tabs/screens, show a “trial” tickbox and trial end
-  date. This allows for trial adoptions (some shelters call this “Foster to
-  Adopt”), which can then be reported on by installing the “Active Trial
-  Adoptions” and “Expired Trial Adoptions” reports.
-
-* Treat Trial Adoptions as shelter inventory: As with the Foster as inventory
-  option, trial adoptions are still shown in the Shelter View and on shelter
-  searches/reports.
-
-* Our shelter does soft releases, allow us to mark these on movement screens:
-  When creating a released to wild movement, this allows for a soft release
-  to be made. A soft release is one where the animal is monitored for some
-  time after release.
-
-* Treat Soft Releases as shelter inventory: Animals on soft release will be 
-  kept in the shelter's inventory.
 
 * Warn when adopting an unaltered animal: If the animal has not been 
   neutered/spayed, show a warning when trying to adopt it. 
@@ -665,6 +729,60 @@ the reservation for you after this time.
   to an owner who looks like an owner who brought an animal in. This is a loose
   check based on name and address. 
 
+Online Forms
+------------
+
+* Remove incoming forms after: Automatically remove forms from the incoming queue
+  after this many days.
+
+* Remove processed forms when I leave the incoming forms screen: When navigating
+  away from the incoming forms screen, any forms that have been processed (have
+  a link shown in the rightmost column) will be deleted automatically.
+
+.. _paymentprocessors:
+
+Payment Processors
+------------------
+
+ASM can be configured to request due payments from your customers via payment
+processors.
+
+* Request payments in: A currency code to request payments in. This should match
+  the currency that you are using in your database as ASM does not perform
+  any kind of currency exchange calculations.
+
+* Redirect to this URL after successful payment: When a customer succesfully
+  completes a payment, this is the page they will be redirected to. If you do not 
+  set a page, the payment processor will show their own payment successful page.
+
+PayPal
+^^^^^^
+
+* PayPal Business Email: The address for your PayPal account where payments will 
+  be sent to.
+
+It should not be necessary, but some users have reported problems receiving
+IPN notifications from PayPal. As a "just in case" measure, click on the Settings/Gear
+icon at the top right of your PayPal account, choose "Account Settings", then 
+"Notifications" and the "Update" link next to "Instant Payment Notifications".
+You can now choose a URL and to enable IPN messages. Use the URL shown on screen, 
+typically https://HOST/pp_paypal
+
+Stripe
+^^^^^^
+
+* Stripe Key: Your stripe key. This is usually prefixed with pk
+
+* Stripe Secret Key: Your stripe secret key, usually prefixed with sk
+
+In order for ASM to receive notification that payments have been received, a
+Webhook needs to be created in the Stripe dashboard to receive
+"checkout.session.completed" events under :menuselection:`Developers -->
+Webhooks`
+
+The Payment Processors option tab in ASM will display the URL you need to
+configure for your webhook below the key fields, typically https://HOST/pp_stripe
+
 Quicklinks
 ----------
 
@@ -674,6 +792,9 @@ quickly get to some of ASM's screens without having to open the menus.
 
 Remove
 ------
+
+System
+^^^^^^
 
 * Remove clinic functionality from screens and menus: If your shelter does
   not run a clinic, this option will disable the system's clinic appointment
@@ -714,6 +835,9 @@ Remove
 * Remove the trap loan functionality from menus: Setting this option removes
   the trap loan link from the menu and the trap loan tab on the person screen.
 
+People
+^^^^^^
+
 * Remove the city/state fields from person details: Setting this option will
   prevent ASM from presenting the user with additional fields to store the city
   and state information. These are handy for group owner searches, but not all
@@ -724,9 +848,22 @@ Remove
   hide the country field from person addresses. This option is on by default 
   since most shelters only deal with one country.
 
+* Remove the homechecked/by fields from person type according to the homechecked 
+  flag: This option is on by default and will hide the homechecked by and date
+  fields from the person type slider if they don't have the homechecked flag.
+  This option exists because some users prefer to assign the person doing the
+  homecheck before the flag to confirm the person is homechecked.
+
 * Remove the insurance number field from the movement screens: Setting this
   option hides the insurance number field and button from :menuselection:`Move
   --> Adopt an animal` and all movement tabs/books.
+
+Animals
+^^^^^^^
+
+* Remove the asilomar fields from the entry/deceased section: (US locales only)
+  This option hides the asimilor intake and death category fields from the
+  Entry and Deceased sliders.
 
 * Remove the coat type field from the animal screen: If ticked, ASM won't
   display the coat type dropdown on the animal editing screen. For some

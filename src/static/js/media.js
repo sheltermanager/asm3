@@ -6,8 +6,175 @@ $(function() {
 
     var media = {
 
+        icon_mode_active: true,
+
+        retain_for_years: [
+            "0|" + _("Indefinitely"),
+            "1|" + _("1 year"),
+            "2|" + _("{0} years").replace("{0}", 2),
+            "3|" + _("{0} years").replace("{0}", 3),
+            "4|" + _("{0} years").replace("{0}", 4),
+            "5|" + _("{0} years").replace("{0}", 5),
+            "6|" + _("{0} years").replace("{0}", 6),
+            "7|" + _("{0} years").replace("{0}", 7),
+            "8|" + _("{0} years").replace("{0}", 8),
+            "9|" + _("{0} years").replace("{0}", 9)
+        ],
+
+        model: function() {
+
+            var dialog = {
+                edit_title: _("Edit media"),
+                edit_perm: 'cam',
+                close_on_ok: true,
+                columns: 1,
+                width: 550,
+                fields: [
+                    { json_field: "MEDIANOTES", post_field: "medianotes", label: _("Notes"), type: "textarea" },
+                    { json_field: "RETAINUNTIL", post_field: "retainuntil", label: _("Retain Until"), type: "date",
+                        callout: _("Automatically remove this media item on this date") }
+                ]
+            };
+
+            var table = {
+                rows: controller.media,
+                idcolumn: "ID",
+                truncatelink: 50, // Only use first 50 chars of MEDIANOTES for edit link
+                edit: function(row) {
+                    tableform.fields_populate_from_json(dialog.fields, row);
+                    tableform.dialog_show_edit(dialog, row)
+                        .then(function() {
+                            tableform.fields_update_row(dialog.fields, row);
+                            return tableform.fields_post(dialog.fields, "mode=update&mediaid=" + row.ID, "media");
+                        })
+                        .then(function() {
+                            tableform.table_update(table);
+                            tableform.dialog_enable_buttons();
+                            if (media.icon_mode_active) { media.mode_icon(); } else { media.mode_table(); }
+                        })
+                        .fail(function() {
+                            tableform.dialog_enable_buttons();
+                        });
+                },
+                change: function(rows) {
+                    var all_of_type = function(mime) {
+                        // Returns true if all rows are of type mime
+                        var rv = true;
+                        $.each(rows, function(i, v) {
+                            if (v.MEDIAMIMETYPE != mime) { rv = false; }
+                        });
+                        return rv;
+                    };
+                    $("#button-web").button("option", "disabled", true); 
+                    $("#button-video").button("option", "disabled", true); 
+                    $("#button-doc").button("option", "disabled", true); 
+                    $("#button-rotateanti").button("option", "disabled", true); 
+                    $("#button-rotateclock").button("option", "disabled", true); 
+                    $("#button-include").button("option", "disabled", true); 
+                    $("#button-exclude").button("option", "disabled", true); 
+                    $("#button-emailpdf").button("option", "disabled", true); 
+                    $("#button-sign").addClass("ui-state-disabled").addClass("ui-button-disabled");
+                    // Only allow the image preferred buttons to be pressed if the
+                    // selection size is one and the selection is an image
+                    if (rows.length == 1 && rows[0].MEDIAMIMETYPE == "image/jpeg") { 
+                        $("#button-web").button("option", "disabled", false); 
+                        $("#button-doc").button("option", "disabled", false); 
+                    }
+                    // Only allow the video preferred button to be pressed if the
+                    // selection size is one and the selection is a video link
+                    if (rows.length == 1 && rows[0].MEDIATYPE == 2) {
+                        $("#button-video").button("option", "disabled", false);
+                    }
+                    // Only allow the rotate and include buttons to be pressed if the
+                    // selection only contains images
+                    if (rows.length > 0 && all_of_type("image/jpeg")) {
+                        $("#button-rotateanti").button("option", "disabled", false); 
+                        $("#button-rotateclock").button("option", "disabled", false); 
+                        $("#button-include").button("option", "disabled", false); 
+                        $("#button-exclude").button("option", "disabled", false); 
+                    }
+                    // Only allow the email pdf button to be pressed if the
+                    // selection only contains documents
+                    if (rows.length > 0 && all_of_type("text/html")) {
+                        $("#button-emailpdf").button("option", "disabled", false); 
+                    }
+                    // Only allow the sign buttons to be pressed if the
+                    // selection only contains unsigned documents
+                    if (rows.length > 0 && all_of_type("text/html") && !rows[0].SIGNATUREHASH) {
+                        $("#button-sign").removeClass("ui-state-disabled").removeClass("ui-button-disabled");
+                    }
+                },
+                columns: [
+                    { field: "MEDIANOTES", classes: "mode-table", display: _("Notes"), 
+                        sorttext: function(m) { 
+                            return m.MEDIANOTES; 
+                        }
+                    },
+                    { field: "PREVIEW", classes: "mode-table", display: "", formatter: function(m) {
+                        var h = [];
+                        h.push(media.render_preview_thumbnail(m));
+                        h.push(media.render_mods(m, true));
+                        return h.join("");
+                    }},
+                    { field: "SIZE", classes: "mode-table", display: _("Size"), 
+                        formatter: function(m) {
+                            if (m.MEDIATYPE != 0) { return ""; } // do not show a size for non-files
+                            if (m.MEDIASIZE < 1024*1024) { return Math.floor(m.MEDIASIZE / 1024) + "K"; }
+                            return Math.floor(m.MEDIASIZE / 1024 / 1024.0) + "M";
+                        }, 
+                        sorttext: function(m) { 
+                            return m.MEDIASIZE; 
+                        }
+                    },
+                    { field: "CREATEDDATE", classes: "mode-table", display: _("Added"), formatter: tableform.format_date },
+                    { field: "DATE", classes: "mode-table", display: _("Updated"), formatter: tableform.format_date, initialsort: true, initialsortdirection: "desc" },
+                    { field: "MEDIAMIMETYPE", classes: "mode-table", display: _("Type") },
+                    { field: "PREVIEWICON", classes: "mode-icon", display: "", formatter: function(m) {
+                        var h = [];
+                        h.push("<div class=\"centered\">");
+                        h.push(media.render_preview_thumbnail(m, true));
+                        h.push("<br/>");
+                        if (m.MEDIAMIMETYPE != "image/jpeg") { h.push("<span>" + html.truncate(m.MEDIANOTES, 30) + "</span><br/>" ); }
+                        h.push("<span style=\"white-space: nowrap\">");
+                        h.push("<input type=\"checkbox\" data-id=\"" + m.ID + "\" title=\"" + html.title(_("Select")) + "\" />");
+                        h.push("<a href=\"#\" class=\"link-edit\" data-id=\"" + m.ID + "\">" + format.date(m.DATE) + "</a>");
+                        h.push("</span><br/>");
+                        h.push(media.render_mods(m));
+                        return h.join("");
+                    }}
+                ]
+            };
+
+            var buttons = [
+                { id: "new", text: _("Attach File"), icon: "media-add", enabled: "always", perm: "aam", tooltip: _("Attach a file") },
+                { id: "newlink", text: _("Attach Link"), icon: "link", enabled: "always", perm: "aam", tooltip: _("Attach a link to a web resource") },
+                { id: "newdoc", text: _("New Document"), icon: "document", enabled: "always", perm: "aam", tooltip: _("Create a new document") },
+                { id: "delete", text: _("Delete"), icon: "media-delete", enabled: "multi", perm: "dam" },
+                { id: "email", text: _("Email"), icon: "email", enabled: "multi", perm: "emo", tooltip: _("Email a copy of the selected media files") },
+                { id: "emailpdf", text: _("Email PDF"), icon: "pdf", enabled: "multi", perm: "emo", tooltip: _("Email a copy of the selected HTML documents as PDFs") },
+                { id: "sign", text: _("Sign"), type: "buttonmenu", icon: "signature" },
+                { id: "rotateanti", icon: "rotate-anti", enabled: "multi", perm: "cam", tooltip: _("Rotate image 90 degrees anticlockwise") },
+                { id: "rotateclock", icon: "rotate-clock", enabled: "multi", perm:" cam", tooltip: _("Rotate image 90 degrees clockwise") },
+                { id: "include", icon: "tick", enabled: "multi", perm: "cam", tooltip: _("Include this image when publishing") }, 
+                { id: "exclude", icon: "cross", enabled: "multi", perm: "cam", tooltip: _("Exclude this image when publishing") },
+                { id: "web", icon: "web", enabled: "one", perm: "cam", tooltip: _("Make this the default image when viewing this record and publishing to the web") },
+                { id: "doc", icon: "document", enabled: "one", perm: "cam", tooltip: _("Make this the default image when creating documents") },
+                { id: "video", icon: "video", enabled: "one", perm: "cam", tooltip: _("Make this the default video link when publishing to the web") },
+                { type: "raw", markup: '<div class="asm-mediadroptarget mode-table"><p>' + _("Drop files here...") + '</p></div>',
+                    hideif: function() { return !Modernizr.filereader || !Modernizr.todataurljpeg || asm.mobileapp; }},
+                { id: "viewmode", text: "", icon: "batch", enabled: "always", tooltip: _("Toggle table/icon view") }
+            ];
+
+            this.dialog = dialog;
+            this.table = table;
+            this.buttons = buttons;
+        },
+
         render: function() {
+            this.model();
             var h = [
+                tableform.dialog_render(this.dialog),
+
                 '<div id="dialog-add" style="display: none" title="' + html.title(_("Attach File")) + '">',
                 '<div id="tipattach" class="ui-state-highlight ui-corner-all" style="margin-top: 20px; padding: 0 .7em">',
                 '<p><span class="ui-icon ui-icon-info" style="float: left; margin-right: .3em;"></span>',
@@ -24,13 +191,17 @@ $(function() {
                 '<td><label for="filechooser">' + _("File") + '</label></td>',
                 '<td><input id="filechooser" name="filechooser" type="file" /></td>',
                 '</tr>',
+                '<tr>',
+                '<td><label for="retainfor">' + _("Retain for") + '</label></td>',
+                '<td><select id="retainfor" name="retainfor" class="asm-selectbox">',
+                html.list_to_options(media.retain_for_years),
+                '</select></td>',
+                '</tr>',
                 '<tr id="commentsrow">',
                 '<td><label for="comments">' + _("Notes") + '</label>',
                 controller.name.indexOf("animal") == 0 ? '<button type="button" id="button-comments">' + _('Copy from animal comments') + '</button>' : "",
                 '</td>',
-                '<td><textarea id="addcomments" name="comments" rows="10" autofocus="autofocus" title=',
-                '"' + html.title(_("If this is the web preferred image, web publishers will use these notes as the animal description")) + '"',
-                ' class="asm-textarea"></textarea>',
+                '<td><textarea id="addcomments" name="comments" rows="10" autofocus="autofocus" class="asm-textarea"></textarea>',
                 '</td>',
                 '</tr>',
                 '</table>',
@@ -57,7 +228,7 @@ $(function() {
                 '</tr>',
                 '<tr>',
                 '<td><label for="linktarget">' + _("URL") + '</label></td>',
-                '<td><input id="linktarget" data="linktarget" class="asm-textbox" /></td>',
+                '<td><input id="linktarget" data="linktarget" class="asm-textbox asm-doubletextbox" /></td>',
                 '</tr>',
                 '<tr id="commentsrow">',
                 '<td><label for="linkcomments">' + _("Notes") + '</label>',
@@ -68,26 +239,16 @@ $(function() {
                 '</table>',
                 '</div>',
 
-                '<div id="dialog-edit" style="display: none" title="' + _("Edit media notes") + '">',
-                '<form id="editform" method="post" action="media">',
-                '<input type="hidden" name="linkid" value="' + controller.linkid + '" />',
-                '<input type="hidden" name="linktypeid" value="' + controller.linktypeid + '" />',
-                '<input type="hidden" name="mode" value="update" />',
-                '<input type="hidden" id="mediaid" name="mediaid" value="" />',
-                '<textarea id="editcomments" name="comments" rows="10" class="asm-textarea"></textarea>',
-                '</form>',
-                '</div>',
-
                 '<div id="emailform" />',
 
                 '<div id="button-sign-body" class="asm-menu-body">',
                 '<ul class="asm-menu-list">',
                     '<li id="button-signscreen" class="asm-menu-item"><a '
-                        + '" href="#">' + html.icon("signature") + ' ' + _("Sign on screen") + '</a></li>',
+                        + ' href="#">' + html.icon("signature") + ' ' + _("Sign on screen") + '</a></li>',
                     '<li id="button-signpad" class="sharebutton asm-menu-item"><a '
-                        + '" href="#">' + html.icon("mobile") + ' ' + _("Mobile signing pad") + '</a></li>',
+                        + ' href="#">' + html.icon("mobile") + ' ' + _("Mobile signing pad") + '</a></li>',
                     '<li id="button-signemail" class="sharebutton asm-menu-item"><a '
-                        + '" href="#">' + html.icon("email") + ' ' + _("Request signature by email") + '</a></li>',
+                        + ' href="#">' + html.icon("email") + ' ' + _("Request signature by email") + '</a></li>',
                 '</ul>',
                 '</div>',
 
@@ -122,120 +283,90 @@ $(function() {
                 h.push(edit_header.incident_edit_header(controller.incident, "media", controller.tabcounts));
             }
 
-            h.push(tableform.buttons_render([
-                { id: "new", text: _("Attach File"), icon: "media-add", perm: "aam", tooltip: _("Attach a file") },
-                { id: "newlink", text: _("Attach Link"), icon: "link", perm: "aam", tooltip: _("Attach a link to a web resource") },
-                { id: "newdoc", text: _("New Document"), icon: "document", perm: "aam", tooltip: _("Create a new document") },
-                { id: "delete", text: _("Delete"), icon: "media-delete", perm: "dam" },
-                { id: "email", text: _("Email"), icon: "email", perm: "emo", tooltip: _("Email a copy of the selected media files") },
-                { id: "emailpdf", text: _("Email PDF"), icon: "pdf", perm: "emo", tooltip: _("Email a copy of the selected HTML documents as PDFs") },
-                { id: "sign", text: _("Sign"), type: "buttonmenu", icon: "signature" },
-                { id: "rotateanti", icon: "rotate-anti", perm: "cam", tooltip: _("Rotate image 90 degrees anticlockwis") },
-                { id: "rotateclock", icon: "rotate-clock", perm:" cam", tooltip: _("Rotate image 90 degrees clockwise") },
-                { id: "web", icon: "web", perm: "cam", tooltip: _("Make this the default image when viewing this record and publishing to the web") },
-                { id: "doc", icon: "document", perm: "cam", tooltip: _("Make this the default image when creating documents") },
-                { id: "video", icon: "video", perm: "cam", tooltip: _("Make this the default video link when publishing to the web") }
-            ]));
-
-            h.push(media.render_items());
+            h.push(tableform.buttons_render(this.buttons)); 
+            h.push(tableform.table_render(this.table));
             h.push(html.content_footer());
             return h.join("\n");
         },
 
-        render_items: function() {
-
-            var h = [];
-            h.push('<div class="asm-mediaicons">');
-
-            // Show our drag and drop target for uploading files if the right APIs are available
-            // and we're not in mobile app mode
-            if (Modernizr.canvas && Modernizr.filereader && Modernizr.todataurljpeg && !asm.mobileapp) {
-                h.push('<div class="asm-mediadroptarget"><p>' + _("Drop files here...") + '</p></div>');
-            }
-
-            $.each(controller.media, function(i, m) {
-                h.push('<div class="asm-mediaicon" id="mrow-' + m.ID + '" data="' + m.ID + '" >');
-                h.push('<input type="hidden" class="media-name" value="' + html.title(m.MEDIANAME) + '" />');
-                h.push('<input type="hidden" class="media-type" value="' + html.title(m.MEDIATYPE) + '" />');
-                var fullnotes = html.decode(m.MEDIANOTES),
-                    shortnotes = html.truncate(html.decode(m.MEDIANOTES), 70);
-                if (m.MEDIATYPE == 1 || m.MEDIATYPE == 2) {
-                    h.push('<a target="_blank" href="' + m.MEDIANAME + '">');
-                    var linkimage = "static/images/ui/file-video.png";
-                    if (m.MEDIATYPE == 1) {
-                        linkimage = "static/images/ui/document-media.png";
-                    }
-                    else if (m.MEDIATYPE == 2) {
-                        if (m.MEDIANAME.indexOf("youtube.com") != -1 || m.MEDIANAME.indexOf("youtu.be") != -1) {
-                            linkimage = media.youtube_thumbnail(m.MEDIANAME);
-                            if (!linkimage) {
-                                linkimage = "static/images/ui/file-video.png";
-                            }
+        render_preview_thumbnail: function(m, notestooltip) {
+            var h = [ '<div class="asm-media-thumb">' ];
+            var tt = "";
+            if (notestooltip) { tt = 'title="' + html.title(html.truncate(html.decode(m.MEDIANOTES), 70)) + '"'; }
+            if (m.MEDIATYPE == 1 || m.MEDIATYPE == 2) {
+                h.push('<a href="' + m.MEDIANAME + '">');
+                var linkimage = "static/images/ui/file-video.png";
+                if (m.MEDIATYPE == 1) {
+                    linkimage = "static/images/ui/document-media.png";
+                }
+                else if (m.MEDIATYPE == 2) {
+                    if (m.MEDIANAME.indexOf("youtube.com") != -1 || m.MEDIANAME.indexOf("youtu.be") != -1) {
+                        linkimage = media.youtube_thumbnail(m.MEDIANAME);
+                        if (!linkimage) {
+                            linkimage = "static/images/ui/file-video.png";
                         }
                     }
-                    h.push('<img class="asm-thumbnail thumbnailshadow" src="' + linkimage + '" height="70px" ');
-                    h.push('title="' + html.title(fullnotes) + '" /></a>');
-                    h.push('<br />');
-                    h.push('<a class="viewlink" title="' + _('View media') + '" href="' + m.MEDIANAME + '">' + shortnotes + '</a>');
                 }
-                else if (media.is_jpeg(m.MEDIANAME)) {
-                    h.push('<a href="image?mode=media&id=' + m.ID + '&date=' + encodeURIComponent(m.DATE) + '">');
-                    h.push('<img class="asm-thumbnail thumbnailshadow" src="image?mode=media&id=' + m.ID + '&date=' + encodeURIComponent(m.DATE) + '" title="' + html.title(fullnotes) + '" /></a>');
-                }
-                else if (media.is_extension(m.MEDIANAME, "html")) {
-                    h.push('<a href="document_media_edit?id=' + m.ID + '&redirecturl=' + controller.name + '?id=' + m.LINKID + '"> ');
-                    h.push('<img class="asm-thumbnail thumbnailshadow" src="static/images/ui/document-media.png" height="70px" ');
-                    h.push('title="' + html.title(fullnotes) + '" /></a>');
-                    h.push('<br />');
-                    h.push('<a class="viewlink" title="' + _('Edit document') + '" href="document_media_edit?id=' + m.ID + '&redirecturl=' + controller.name + '?id=' + m.LINKID + '">' + shortnotes + '</a>');
-                }
-                else if (media.is_extension(m.MEDIANAME, "pdf")) {
-                    h.push('<a href="media?id=' + m.ID + '">');
-                    h.push('<img class="asm-thumbnail thumbnailshadow" src="static/images/ui/pdf-media.png" height="70px" ');
-                    h.push('title="' + html.title(fullnotes) + '" /></a>');
-                    h.push('<br />');
-                    h.push('<a class="viewlink" title="' + _('View PDF') + '" href="media?id=' + m.ID + '">' + shortnotes + '</a>');
-                }
-                else {
-                    h.push('<a href="media?id=' + m.ID + '">');
-                    h.push('<img class="asm-thumbnail thumbnailshadow" src="static/images/ui/file-media.png" height="70px" ');
-                    h.push('title="' + html.title(fullnotes) + '" /></a>');
-                    h.push('<br />');
-                    h.push('<a class="viewlink" title="' + _('View media') + '" href="media?id=' + m.ID + '">' + shortnotes + '</a>');
-                }
-                h.push('<br />');
-                h.push('<span style="white-space: nowrap">');
-                h.push('<input id="select-' + m.ID + '" class="media-selector" type="checkbox" data="' + m.ID + '" />');
-                h.push('<a href="#" class="media-edit-link" data="' + m.ID + '" title="' + html.title(_("Edit notes")) + '">');
-                h.push(html.icon("edit"));
-                h.push(format.date(m.DATE));
-                h.push('</a>');
-                if (m.MEDIATYPE > 0) {
-                    h.push(html.icon("link", _("Link to an external web resource")));
-                }
-                if (m.SIGNATUREHASH) {
-                    h.push(html.icon("signature", _("Signed")));
-                }
-                if (m.WEBSITEPHOTO == 1 && controller.showpreferred) {
-                    h.push(html.icon("web", _("Default image for this record and the web")));
-                }
-                if (m.WEBSITEVIDEO == 1 && controller.showpreferred) {
-                    h.push(html.icon("video", _("Default video for publishing")));
-                }
-                if (m.DOCPHOTO == 1 && controller.showpreferred) {
-                    h.push(html.icon("document", _("Default image for documents")));
-                }
-                if (media.is_jpeg(m.MEDIANAME) && m.WEBSITEPHOTO == 0 && !m.EXCLUDEFROMPUBLISH && controller.name == "animal_media") {
-                    h.push('<img class="incexc" data="' + m.ID + '" src="static/images/ui/tick.gif" title="' + _('Include this image when publishing') + '" />');
-                }
-                if (media.is_jpeg(m.MEDIANAME) && m.WEBSITEPHOTO == 0 && m.EXCLUDEFROMPUBLISH && controller.name == "animal_media") {
-                    h.push('<img class="incexc" data="' + m.ID + '" src="static/images/ui/cross.gif" title="' + _('Exclude this image when publishing') + '" />');
-                }
-                h.push('</span>');
-                h.push('</div>');
-            });
+                h.push('<img class="asm-thumbnail thumbnailshadow" ' + tt + ' src="' + linkimage + '" /></a>');
+            }
+            else if (m.MEDIAMIMETYPE == "image/jpeg") {
+                h.push('<a href="image?db=' + asm.user + '&mode=media&id=' + m.ID + '&date=' + encodeURIComponent(m.DATE) + '">');
+                h.push('<img class="asm-thumbnail thumbnailshadow" ' + tt + ' src="image?db=' + asm.user + '&mode=media&id=' + m.ID + '&date=' + encodeURIComponent(m.DATE) + '" /></a>');
+            }
+            else if (m.MEDIAMIMETYPE == "text/html") {
+                h.push('<a href="document_media_edit?id=' + m.ID + '&redirecturl=' + controller.name + '?id=' + m.LINKID + '"> ');
+                h.push('<img class="asm-thumbnail thumbnailshadow" ' + tt + ' src="static/images/ui/document-media.png" /></a>');
+            }
+            else if (m.MEDIAMIMETYPE == "application/pdf") {
+                h.push('<a href="media?id=' + m.ID + '">');
+                h.push('<img class="asm-thumbnail thumbnailshadow" ' + tt + ' src="static/images/ui/pdf-media.png" /></a>');
+            }
+            else {
+                h.push('<a href="media?id=' + m.ID + '">');
+                h.push('<img class="asm-thumbnail thumbnailshadow" ' + tt + ' src="static/images/ui/file-media.png" /></a>');
+            }
             h.push('</div>');
-            return h.join("\n");
+            return h.join("");
+        },
+
+        render_mods: function(m, withlabels) {
+            var h = [], mod_out = function(icon, text) {
+                if (!withlabels) { h.push(html.icon(icon, text)); }
+                else { h.push('<span>' + html.icon(icon, text) + " " + text + "</span><br/>"); }
+            };
+            h.push('<div class="asm-media-mods">');
+            if (m.MEDIATYPE > 0) {
+                mod_out("link", _("Link to an external web resource"));
+            }
+            if (m.SIGNATUREHASH) {
+                mod_out("signature", _("Signed"));
+            }
+            if (m.WEBSITEPHOTO == 1 && controller.showpreferred) {
+                mod_out("web", _("Default image for this record and the web"));
+            }
+            if (m.WEBSITEVIDEO == 1 && controller.showpreferred) {
+                mod_out("video", _("Default video for publishing"));
+            }
+            if (m.DOCPHOTO == 1 && controller.showpreferred) {
+                mod_out("document", _("Default image for documents"));
+            }
+            if (m.MEDIAMIMETYPE == "image/jpeg" && !m.EXCLUDEFROMPUBLISH && controller.name == "animal_media") {
+                mod_out("tick", _('Include this image when publishing'));
+            }
+            if (m.MEDIAMIMETYPE == "image/jpeg" && m.EXCLUDEFROMPUBLISH && controller.name == "animal_media") {
+                mod_out("cross", _('Exclude this image when publishing'));
+            }
+            if (m.RETAINUNTIL) {
+                var ru = _("Retain until {0}").replace("{0}", format.date(m.RETAINUNTIL));
+                mod_out("media-delete", ru);
+            }
+            if (config.bool("AutoRemoveDocumentMedia") && config.integer("AutoRemoveDMYears")) {
+                var dd = common.add_days(format.date_js(m.DATE), config.integer("AutoRemoveDMYears") * 365);
+                var ar = _("Auto remove on {0}").replace("{0}", format.date(dd));
+                mod_out("media-delete", ar);
+            }
+            h.push('</div>');
+            return h.join("");
         },
 
         /**
@@ -257,15 +388,16 @@ $(function() {
 
         /**
          * Uploads a single file using the FileReader API. 
-         * If the file is an image, scales it down first.
+         * If the file is an image, scales it down and rotates it first.
          * returns a promise.
          */
-        attach_file: function(file, comments) {
+        attach_file: function(file, retainfor, comments) {
 
             var deferred = $.Deferred();
 
-            // If no comments were supplied, make them an empty string instead
+            // If no values were supplied, make them an empty string instead
             if (!comments) { comments = ""; }
+            if (!retainfor) { retainfor = ""; }
 
             // We're only allowed to upload files of a certain type
             if ( !media.is_jpeg(file.name) && !media.is_extension(file.name, "png") && 
@@ -275,8 +407,9 @@ $(function() {
                 return deferred.promise();
             }
 
-            // Is this an image? If so, try to scale it down before sending
-            if (file.type.match('image.*')) {
+            // Is this an image and scaling option is on? 
+            // If so, try to scale it down before sending
+            if (file.type.match('image.*') && !config.bool("DontUseHTML5Scaling")) {
 
                 // Figure out the size we're scaling to
                 var media_scaling = config.str("IncomingMediaScaling");
@@ -286,72 +419,72 @@ $(function() {
                 if (!max_width) { max_width = 640; }
                 if (!max_height) { max_height = 640; }
 
-                // Read the file to an image tag, then render it to
-                // an HTML5 canvas to scale it
-                var img = document.createElement("img");
-                var filedata = null;
-                var imreader = new FileReader();
-                imreader.onload = function(e) { 
-                    filedata = e.target.result;
-                    img.src = filedata; 
-                };
-                img.onload = function() {
-                    // Calculate the new image dimensions based on our max
-                    var img_width = img.width, img_height = img.height;
-                    if (img_width > img_height) {
-                        if (img_width > max_width) {
-                            img_height *= max_width / img_width;
-                            img_width = max_width;
+                // Read the file to an image tag, then scale it
+                var img, img_width, img_height;
+                html.load_img(file)
+                    .then(function(nimg) {
+                        img = nimg;
+                        // Calculate the new image dimensions based on our max
+                        img_width = img.width; 
+                        img_height = img.height;
+                        if (img_width > img_height) {
+                            if (img_width > max_width) {
+                                img_height *= max_width / img_width;
+                                img_width = max_width;
+                            }
                         }
-                    }
-                    else {
-                        if (img_height > max_height) {
-                            img_width *= max_height / img_height;
-                            img_height = max_height;
+                        else {
+                            if (img_height > max_height) {
+                                img_width *= max_height / img_height;
+                                img_height = max_height;
+                            }
                         }
-                    }
-                    // Scale the image
-                    var finalfile = html.scale_image(img, img_width, img_height);
-
-                    // Post the scaled image
-                    var formdata = "mode=create&" +
-                        "linkid=" + controller.linkid + 
-                        "&linktypeid=" + controller.linktypeid + 
-                        "&comments=" + encodeURIComponent(comments) + 
-                        "&filename=" + encodeURIComponent(file.name) +
-                        "&filetype=" + encodeURIComponent(file.type) + 
-                        "&filedata=" + encodeURIComponent(finalfile);
-                    common.ajax_post("media", formdata)
-                        .then(function(result) { 
-                            deferred.resolve();
-                        })
-                        .fail(function() {
-                            deferred.reject(); 
-                        });
-                };
-                imreader.readAsDataURL(file);
+                        // Read the exif orientation so we can correct any rotation
+                        // before scaling
+                        return html.get_exif_orientation(file);
+                    })
+                    .then(function(orientation) {
+                        // Scale and rotate the image
+                        var finalfile = html.scale_image(img, img_width, img_height, orientation);
+                        // Post the transformed image
+                        var formdata = "mode=create&transformed=1&" +
+                            "linkid=" + controller.linkid + 
+                            "&linktypeid=" + controller.linktypeid + 
+                            "&comments=" + encodeURIComponent(comments) + 
+                            "&retainfor=" + encodeURIComponent(retainfor) + 
+                            "&filename=" + encodeURIComponent(file.name) +
+                            "&filetype=" + encodeURIComponent(file.type) + 
+                            "&filedata=" + encodeURIComponent(finalfile);
+                        return common.ajax_post("media", formdata);
+                    })
+                    .then(function(result) {
+                        deferred.resolve();
+                    })
+                    .fail(function() {
+                        deferred.reject(); 
+                    });
             } 
-            // It's not an image, just read it and send it to the backend
+            // It's not an image, or we aren't transforming images, 
+            // just read it and send it to the backend
             else {
-                var docreader = new FileReader();
-                docreader.onload = function(e) { 
-                    // Post the PDF/HTML doc via AJAX
-                    var formdata = "mode=create&" +
-                        "linkid=" + controller.linkid + 
-                        "&linktypeid=" + controller.linktypeid + 
-                        "&comments=" + encodeURIComponent(comments) + 
-                        "&filename=" + encodeURIComponent(file.name) +
-                        "&filetype=" + encodeURIComponent(file.type) + 
-                        "&filedata=" + encodeURIComponent(e.target.result);
-                    common.ajax_post("media", formdata)
-                        .then(function(result) { 
-                            deferred.resolve();
-                        })
-                        .fail(function() {
-                            deferred.reject(); 
-                        });
-                };
-                docreader.readAsDataURL(file);
+                common.read_file_as_data_url(file)
+                    .then(function(result) {
+                        // Post the PDF/HTML doc via AJAX
+                        var formdata = "mode=create&" +
+                            "linkid=" + controller.linkid + 
+                            "&linktypeid=" + controller.linktypeid + 
+                            "&comments=" + encodeURIComponent(comments) + 
+                            "&filename=" + encodeURIComponent(file.name) +
+                            "&filetype=" + encodeURIComponent(file.type) + 
+                            "&filedata=" + encodeURIComponent(result);
+                        return common.ajax_post("media", formdata);
+                    })
+                    .then(function(result) { 
+                        deferred.resolve();
+                    })
+                    .fail(function(result) {
+                        deferred.reject();
+                    });
             }
             return deferred.promise();
         },
@@ -370,7 +503,7 @@ $(function() {
             var newweb, newdoc, hasweb, hasdoc, webcount = 0, doccount = 0;
             if (!controller.showpreferred) { return false; }
             $.each(controller.media, function(i, v) {
-                if (media.is_jpeg(v.MEDIANAME) && !v.EXCLUDEFROMPUBLISH) {
+                if (media.is_jpeg(v.MEDIANAME) && v.EXCLUDEFROMPUBLISH == 0) {
                     if (!newweb) { newweb = v.ID; }
                     if (!newdoc) { newdoc = v.ID; }
                     if (v.WEBSITEPHOTO) { hasweb = true; webcount += 1; }
@@ -444,7 +577,7 @@ $(function() {
 
             // Attach the file with the HTML5 APIs
             header.show_loading(_("Uploading..."));
-            media.attach_file(selectedfile, $("#addcomments").val())
+            media.attach_file(selectedfile, $("#retainfor").val(), $("#addcomments").val())
                 .then(function() {
                     header.hide_loading();
                     common.route_reload(); 
@@ -489,112 +622,23 @@ $(function() {
                 });
         },
 
-        bind: function() {
+        /** Binds the event handlers to a file drop target.
+         *  We do it this way because the one in the table can be dynamically
+         *  removed when the table is updated in icon mode.
+         *  I implemented this as a delegate against #asm-content the first time, but 
+         *  originalEvent.dataTransfer.files is null when the event bubbles up.
+         */
+        bind_droptarget: function(selector) {
 
-            $(".asm-tabbar").asmtabs();
-            $("#tipattach").show();
-            $("#emailform").emailform();
-            $("#emailsubject").closest("tr").hide(); // Subject is completed by the backend
-
-            if (Modernizr.canvas) {
-                $("#signature").signature({ guideline: true });
-            }
-
-            $(".asm-mediaicons").on("change", "input[type='checkbox']", function() {
-
-                // If the selected element is ticked, apply a highlight style
-                // to the media item
-                if ($(this).is(":checked")) {
-                    $(this).closest(".asm-mediaicon").addClass("ui-state-highlight");
-                }
-                else {
-                    $(this).closest(".asm-mediaicon").removeClass("ui-state-highlight");
-                }
-
-                if ($(".asm-mediaicons input:checked").size() > 0) {
-                    $("#button-delete").button("option", "disabled", false); 
-                }
-                else {
-                    $("#button-delete").button("option", "disabled", true); 
-                }
-                $("#button-web").button("option", "disabled", true); 
-                $("#button-video").button("option", "disabled", true); 
-                $("#button-doc").button("option", "disabled", true); 
-                $("#button-rotateanti").button("option", "disabled", true); 
-                $("#button-rotateclock").button("option", "disabled", true); 
-                $("#button-email").button("option", "disabled", true); 
-                $("#button-emailpdf").button("option", "disabled", true); 
-                $("#button-sign").addClass("ui-state-disabled").addClass("ui-button-disabled");
-
-                // Only allow the image preferred buttons to be pressed if the
-                // selection size is one and the selection is an image
-                if ($(".asm-mediaicons input:checked").size() == 1) {
-                    $(".asm-mediaicons input:checked").each(function() {
-                        var mname = $(this).parent().parent().find(".media-name").val();
-                        if (media.is_jpeg(mname)) { 
-                            $("#button-web").button("option", "disabled", false); 
-                            $("#button-doc").button("option", "disabled", false); 
-                        }
-                    });
-                }
-
-                // Only allow the video preferred button to be pressed if the
-                // selection size is one and the selection is a video link
-                if ($(".asm-mediaicons input:checked").size() == 1) {
-                    $(".asm-mediaicons input:checked").each(function() {
-                        var mtype = $(this).parent().parent().find(".media-type").val();
-                        if (mtype == 2) {
-                            $("#button-video").button("option", "disabled", false);
-                        }
-                    });
-                }
-
-                // Only allow the rotate buttons to be pressed if the
-                // selection only contains images
-                $(".asm-mediaicons input:checked").each(function() {
-                    var mname = $(this).parent().parent().find(".media-name").val();
-                    if (media.is_jpeg(mname)) {
-                        $("#button-rotateanti").button("option", "disabled", false); 
-                        $("#button-rotateclock").button("option", "disabled", false); 
-                    }
-                });
-
-                // Only allow the email button to be pressed if we have a selection 
-                if ($(".asm-mediaicons input:checked").size() > 0) {
-                    $("#button-email").button("option", "disabled", false); 
-                }
-
-                // Only allow the email pdf button to be pressed if the
-                // selection only contains documents
-                $(".asm-mediaicons input:checked").each(function() {
-                    var mname = $(this).parent().parent().find(".media-name").val();
-                    if (media.is_extension(mname, "html")) {
-                        $("#button-emailpdf").button("option", "disabled", false); 
-                    }
-                });
-
-                // Only allow the sign buttons to be pressed if the
-                // selection only contains unsigned documents
-                $(".asm-mediaicons input:checked").each(function() {
-                    var mname = $(this).parent().parent().find(".media-name").val();
-                    var issigned = $(this).parent().find(".asm-icon-signature").length > 0;
-                    if (media.is_extension(mname, "html") && !issigned ) {
-                        $("#button-sign").removeClass("ui-state-disabled").removeClass("ui-button-disabled");
-                    }
-                });
-
-
-            });
-
-            $(".asm-mediadroptarget").on("dragover", function() {
+            $(selector).on("dragover", function() {
                 $(".asm-mediadroptarget").addClass("asm-mediadroptarget-hover");
                 return false;
             });
-            $(".asm-mediadroptarget").on("dragleave", function() {
+            $(selector).on("dragleave", function() {
                 $(".asm-mediadroptarget").removeClass("asm-mediadroptarget-hover");
                 return false;
             });
-            $(".asm-mediadroptarget").on("drop", function(e) {
+            $(selector).on("drop", function(e) {
                 e.stopPropagation();
                 e.preventDefault();
                 $(".asm-mediadroptarget").removeClass("asm-mediadroptarget-hover");
@@ -602,9 +646,28 @@ $(function() {
                 return false;
             });
 
+        },
+
+        bind: function() {
+
+            tableform.buttons_bind(this.buttons);
+            tableform.table_bind(this.table, this.buttons);
+
+            $(".asm-tabbar").asmtabs();
+            $("#emailform").emailform();
+
+            if (Modernizr.canvas) {
+                $("#signature").signature({ guideline: true });
+            }
+
+            this.bind_droptarget(".asm-mediadroptarget");
 
             var addbuttons = { };
-            addbuttons[_("Attach")] = media.post_file;
+            addbuttons[_("Attach")] = {
+                text: _("Attach"),
+                "class": "asm-dialog-actionbutton",
+                click: media.post_file
+            };
             addbuttons[_("Cancel")] = function() {
                 $("#dialog-add").dialog("close");
             };
@@ -620,21 +683,25 @@ $(function() {
             });
 
             var addlinkbuttons = { };
-            addlinkbuttons[_("Attach")] = function() {
-                if (!validate.notblank([ "linktarget" ])) { return; }
-                $("#dialog-addlink").disable_dialog_buttons();
-                var formdata = "mode=createlink&linkid=" + controller.linkid + 
-                    "&linktypeid=" + controller.linktypeid + 
-                    "&controller=" + controller.name + "&" +
-                    $("#linktype, #linktarget, #linkcomments").toPOST();
-                common.ajax_post("media", formdata)
-                    .then(function() {
-                        $("#dialog-addlink").dialog("close").enable_dialog_buttons();
-                        common.route_reload();
-                    })
-                    .fail(function() {
-                        $("#dialog-addlink").dialog("close").enable_dialog_buttons(); 
-                    });
+            addlinkbuttons[_("Attach")] = {
+                text: _("Attach"),
+                "class": "asm-dialog-actionbutton",
+                click: function() {
+                    if (!validate.notblank([ "linktarget" ])) { return; }
+                    $("#dialog-addlink").disable_dialog_buttons();
+                    var formdata = "mode=createlink&linkid=" + controller.linkid + 
+                        "&linktypeid=" + controller.linktypeid + 
+                        "&controller=" + controller.name + "&" +
+                        $("#linktype, #linktarget, #linkcomments").toPOST();
+                    common.ajax_post("media", formdata)
+                        .then(function() {
+                            $("#dialog-addlink").dialog("close").enable_dialog_buttons();
+                            common.route_reload();
+                        })
+                        .fail(function() {
+                            $("#dialog-addlink").dialog("close").enable_dialog_buttons(); 
+                        });
+                }
             };
             addlinkbuttons[_("Cancel")] = function() {
                 $("#dialog-addlink").dialog("close");
@@ -650,41 +717,12 @@ $(function() {
                 buttons: addlinkbuttons
             });
 
-            var editbuttons = { };
-            editbuttons[_("Save")] = function() {
-                var mediaid = $("#mediaid").val();
-                var formdata = "mode=update&mediaid=" + mediaid;
-                formdata += "&comments=" + encodeURIComponent($("#editcomments").val());
-                $("#dialog-edit").disable_dialog_buttons();
-                common.ajax_post("media", formdata)
-                    .then(function(result) { 
-                        $("#mrow-" + mediaid + " .asm-thumbnail").attr("title", html.title($("#editcomments").val()));
-                        $("#mrow-" + mediaid + " .viewlink").text(html.truncate($("#editcomments").val(), 70));
-                    })
-                    .always(function() {
-                        $("#dialog-edit").dialog("close").enable_dialog_buttons();
-                    });
-            };
-            editbuttons[_("Cancel")] = function() {
-                $("#dialog-edit").dialog("close");
-            };
-
-            $("#dialog-edit").dialog({
-                autoOpen: false,
-                width: 550,
-                modal: true,
-                dialogClass: "dialogshadow",
-                show: dlgfx.edit_show,
-                hide: dlgfx.edit_hide,
-                buttons: editbuttons
-            });
-
             var signbuttons = {};
             signbuttons[_("Sign")] = function() {
                 if ($("#signature").signature("isEmpty")) { return; }
                 $("#dialog-sign").disable_dialog_buttons();
                 var img = $("#signature canvas").get(0).toDataURL("image/png");
-                var formdata = "mode=sign&ids=" + $(".asm-mediaicons input").tableCheckedData();
+                var formdata = "mode=sign&ids=" + tableform.table_ids(media.table);
                 formdata += "&signdate=" + encodeURIComponent(format.date(new Date()) + " " + format.time(new Date()));
                 formdata += "&sig=" + encodeURIComponent(img);
                 media.ajax(formdata);
@@ -707,6 +745,15 @@ $(function() {
                 buttons: signbuttons
             });
 
+            $("#button-viewmode").button().click(function() {
+                if (media.icon_mode_active) {
+                    media.mode_table();
+                }
+                else {
+                    media.mode_icon();
+                }
+            });
+
             $("#button-new").button().click(function() {
                 media.new_media();
             });
@@ -727,7 +774,7 @@ $(function() {
 
             $("#button-delete").button({disabled: true}).click(function() {
                 tableform.delete_dialog(function() {
-                    var formdata = "mode=delete&ids=" + $(".asm-mediaicons input").tableCheckedData();
+                    var formdata = "mode=delete&ids=" + tableform.table_ids(media.table);
                     $("#dialog-delete").disable_dialog_buttons();
                     media.ajax(formdata);
                 });
@@ -740,9 +787,10 @@ $(function() {
                 $("#button-video").hide();
             }
 
-            // If this browser doesn't support fileinput, disable the attach button
-            if (!Modernizr.fileinput) {
-                $("#button-new").button("option", "disabled", true);
+            // Only show include/exclude for animals
+            if (controller.name != "animal_media") {
+                $("#button-include").hide();
+                $("#button-exclude").hide();
             }
 
             // If this browser doesn't support canvas, hide the sign on screen link
@@ -750,15 +798,45 @@ $(function() {
                 $("#button-signscreen").hide();
             }
 
-            $("#button-web").button({disabled: true}).click(function() {
+            $("#button-web").button().click(function() {
                 $("#button-web").button("disable");
-                var formdata = "mode=web&ids=" + $(".asm-mediaicons input").tableCheckedData();
+                var formdata = "mode=web&ids=" + tableform.table_ids(media.table);
                 media.ajax(formdata);
             });
 
-            $("#button-video").button({disabled: true}).click(function() {
+            $("#button-video").button().click(function() {
                 $("#button-video").button("disable");
-                var formdata = "mode=video&ids=" + $(".asm-mediaicons input").tableCheckedData();
+                var formdata = "mode=video&ids=" + tableform.table_ids(media.table);
+                media.ajax(formdata);
+            });
+
+            $("#button-rotateanti").button().click(function() {
+                $("#button-rotateanti").button("disable");
+                var formdata = "mode=rotateanti&ids=" + tableform.table_ids(media.table);
+                media.ajax(formdata);
+            });
+
+            $("#button-rotateclock").button().click(function() {
+                $("#button-rotateclock").button("disable");
+                var formdata = "mode=rotateclock&ids=" + tableform.table_ids(media.table);
+                media.ajax(formdata);
+            });
+
+            $("#button-doc").button().click(function() {
+                $("#button-doc").button("disable");
+                var formdata = "mode=doc&ids=" + tableform.table_ids(media.table);
+                media.ajax(formdata);
+            });
+
+            $("#button-include").button().click(function() {
+                $("#button-include").button("disable");
+                var formdata = "mode=include&ids=" + tableform.table_ids(media.table);
+                media.ajax(formdata);
+            });
+
+            $("#button-exclude").button().click(function() {
+                $("#button-exclude").button("disable");
+                var formdata = "mode=exclude&ids=" + tableform.table_ids(media.table);
                 media.ajax(formdata);
             });
 
@@ -778,26 +856,34 @@ $(function() {
                 defaultname = controller.animal.CURRENTOWNERNAME;
             }
 
-            $("#button-email").button({disabled: true}).click(function() {
+            $("#button-email").button().click(function() {
                 $("#emailform").emailform("show", {
                     title: _("Email media"),
                     post: "media",
                     formdata: "mode=email" +
-                        "&ids=" + $(".asm-mediaicons input").tableCheckedData(),
+                        "&ids=" + tableform.table_ids(media.table),
                     name: defaultname,
                     email: defaultemail,
+                    subject: tableform.table_selected_row(media.table).MEDIANOTES,
+                    animalid: (controller.animal && controller.animal.ID),
+                    personid: (controller.person && controller.person.ID),
+                    templates: controller.templates,
                     logtypes: controller.logtypes
                 });
             });
 
-            $("#button-emailpdf").button({disabled: true}).click(function() {
+            $("#button-emailpdf").button().click(function() {
                 $("#emailform").emailform("show", {
                     title: _("Email PDF"),
                     post: "media",
                     formdata: "mode=emailpdf" +
-                        "&ids=" + $(".asm-mediaicons input").tableCheckedData(),
+                        "&ids=" + tableform.table_ids(media.table),
                     name: defaultname,
                     email: defaultemail,
+                    subject: tableform.table_selected_row(media.table).MEDIANOTES,
+                    animalid: (controller.animal && controller.animal.ID),
+                    personid: (controller.person && controller.person.ID),
+                    templates: controller.templates,
                     logtypes: controller.logtypes
                 });
             });
@@ -810,9 +896,13 @@ $(function() {
                     title: _("Email document for electronic signature"),
                     post: "media",
                     formdata: "mode=emailsign" +
-                        "&ids=" + $(".asm-mediaicons input").tableCheckedData(),
+                        "&ids=" + tableform.table_ids(media.table),
                     name: defaultname,
                     email: defaultemail,
+                    subject: _("Document signing request"),
+                    animalid: (controller.animal && controller.animal.ID),
+                    personid: (controller.person && controller.person.ID),
+                    templates: controller.templates,
                     logtypes: controller.logtypes,
                     message: _("Please use the links below to electronically sign these documents.")
                 });
@@ -826,7 +916,7 @@ $(function() {
 
             $("#button-signpad").click(function() {
                 $("#button-sign").asmmenu("hide_all");
-                var formdata = "mode=signpad&ids=" + $(".asm-mediaicons input").tableCheckedData();
+                var formdata = "mode=signpad&ids=" + tableform.table_ids(media.table);
                 common.ajax_post("media", formdata)
                     .then(function(result) {
                         header.show_info(_("Sent to mobile signing pad."));
@@ -838,57 +928,6 @@ $(function() {
                 $("#button-sign").hide();
             }
 
-            $("#button-rotateanti").button({disabled: true}).click(function() {
-                $("#button-rotateanti").button("disable");
-                var formdata = "mode=rotateanti&ids=" + $(".asm-mediaicons input").tableCheckedData();
-                media.ajax(formdata);
-            });
-
-            $("#button-rotateclock").button({disabled: true}).click(function() {
-                $("#button-rotateclock").button("disable");
-                var formdata = "mode=rotateclock&ids=" + $(".asm-mediaicons input").tableCheckedData();
-                media.ajax(formdata);
-            });
-
-
-            $("#button-doc").button({disabled: true}).click(function() {
-                $("#button-doc").button("disable");
-                var formdata = "mode=doc&ids=" + $(".asm-mediaicons input").tableCheckedData();
-                media.ajax(formdata);
-            });
-
-            $(".incexc").css("cursor", "pointer").click(function() {
-                var img = $(this), formdata = "";
-                if (img.attr("src").indexOf("tick") != -1) {
-                    // Exclude
-                    formdata = "mode=exclude&mediaid=" + img.attr("data") + "&exclude=1";
-                    common.ajax_post("media", formdata)
-                        .then(function(result) { 
-                            img.attr("src", "static/images/ui/cross.gif");
-                            img.attr("title", _("Exclude this image when publishing"));
-                        });
-                }
-                else {
-                    // Include
-                    formdata = "mode=exclude&mediaid=" + img.attr("data") + "&exclude=0";
-                    common.ajax_post("media", formdata)
-                        .then(function(result) { 
-                            img.attr("src", "static/images/ui/tick.gif");
-                            img.attr("title", _("Include this image when publishing"));
-                        });
-                }
-            });
-
-            $(".media-edit-link")
-            .click(function() {
-                var mid = $(this).attr("data");
-                var mrow = "#mrow-" + mid + " ";
-                var comments = $(mrow + " .asm-thumbnail").attr("title");
-                $("#editcomments").val(comments);
-                $("#mediaid").val(mid);
-                $("#dialog-edit").dialog("open");
-                return false; // prevents # href
-            });
         },
 
         new_link: function() {
@@ -902,18 +941,69 @@ $(function() {
            $("#dialog-add").dialog("open"); 
         },
 
+        mode_icon: function() {
+            // Switches to icon mode by changing the table
+            // layout and only showing the icon column
+            $(".mode-table").hide();
+            $(".mode-icon").show();
+            $("#tableform thead").hide();
+            $("#tableform").css({ "text-align": "center" });
+            $("#tableform tr").css({ "display": "inline-block", "vertical-align": "bottom" });
+            $(".asm-media-thumb img").css({
+                "min-width": "85px",
+                "min-height": "85px",
+                "width": "85px",
+                "height": "85px",
+                "object-fit": "contain"
+            });
+            // Add the drop icon if it is not present in the table
+            if ($("#tableform .asm-mediadroptarget").length == 0) {
+                $("#tableform tbody").prepend('<div class="asm-mediadroptarget mode-icon" style="height: 150px"><p>' + _("Drop files here...") + '</p></div>');
+                media.bind_droptarget("#tableform .asm-mediadroptarget");
+            }
+            media.icon_mode_active = true;
+        },
+
+        mode_table: function() {
+            // Switches to table mode.
+            $(".mode-icon").hide();
+            $(".mode-table").show();
+            $("#tableform thead").show();
+            $("#tableform").css({ "text-align": "left" });
+            $("#tableform tr").css({ "display": "table-row", "vertical-align": "middle" });
+            // Resize the thumbnails based on the number of media records
+            // to fit more rows on screen
+            var thumbnail_size = 85;
+            if (controller.media.length >= 0) { thumbnail_size = 85; }
+            if (controller.media.length > 10) { thumbnail_size = 70; }
+            if (controller.media.length > 20) { thumbnail_size = 55; }
+            if (controller.media.length > 30) { thumbnail_size = 30; }
+            thumbnail_size += "px";
+            $(".asm-media-thumb img").css({
+                "min-width": thumbnail_size,
+                "min-height": thumbnail_size,
+                "width": thumbnail_size,
+                "height": thumbnail_size,
+                "object-fit": "contain"
+            });
+            media.icon_mode_active = false;
+        },
+
         sync: function() {
 
             if (controller.newmedia) { media.new_media(); }
+
+            // Start in icon mode
+            this.mode_icon();
 
             // Check if we have pictures but no preferred set and choose one if we don't
             media.check_preferred_images();
         },
 
         destroy: function() {
+            tableform.dialog_destroy();
             common.widget_destroy("#dialog-add");
             common.widget_destroy("#dialog-addlink");
-            common.widget_destroy("#dialog-edit");
             common.widget_destroy("#dialog-sign");
             common.widget_destroy("#emailform");
         },

@@ -14,14 +14,27 @@ ANIMALCONTROL = 6
 ASCENDING = 0
 DESCENDING = 1
 
-def add_log(dbo, username, linktype, linkid, logtypeid, logtext):
+def add_log(dbo, username, linktype, linkid, logtypeid, logtext, logdatetime = None):
+    """
+    Adds a log entry. If logdatetime is blank, the date/time now is used.
+    """
+    if logdatetime is None: logdatetime = dbo.now()
     return dbo.insert("log", {
         "LogTypeID":        logtypeid,
         "LinkID":           linkid,
         "LinkType":         linktype,
-        "Date":             dbo.now(),
+        "Date":             logdatetime,
         "Comments":         logtext
     }, username)
+
+def add_log_email(dbo, username, linktype, linkid, logtypeid, to, subject, body):
+    """
+    Adds a log entry for recording a sent email.
+    body is converted to plain text if necessary before storing in the log.
+    """
+    if body.find("<p") != -1: body = asm3.utils.html_to_text(body)
+    add_log(dbo, username, linktype, linkid, logtypeid,
+        "[%s] %s ::\n%s" % ( to, subject, body ))
 
 def get_logs(dbo, linktypeid, linkid, logtype = 0, sort = DESCENDING):
     """

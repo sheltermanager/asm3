@@ -1,7 +1,8 @@
-/*jslint browser: true, forin: true, eqeq: true, white: true, sloppy: true, vars: true, nomen: true */
 /*global $, jQuery, _, asm, common, config, controller, dlgfx, format, header, html, validate */
 
 $(function() {
+
+    "use strict";
 
     var log_new = {
 
@@ -68,7 +69,7 @@ $(function() {
                     }
                 }
                 // date
-                if ($.trim($("#logdate").val()) == "") {
+                if (common.trim($("#logdate").val()) == "") {
                     header.show_error(_("Log requires a date."));
                     validate.highlight("logdate");
                     return false;

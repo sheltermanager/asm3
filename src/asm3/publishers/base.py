@@ -24,19 +24,20 @@ def quietcallback(x):
     """ ftplib callback that does nothing instead of dumping to stdout """
     pass
 
-def get_animal_data(dbo, pc=None, animalid=0, include_additional_fields=False, recalc_age_groups=True, strip_personal_data=False, limit=0):
+def get_animal_data(dbo, pc=None, animalid=0, include_additional_fields=False, recalc_age_groups=True, strip_personal_data=False, publisher_key="", limit=0):
     """
     Returns a resultset containing the animal info for the criteria given.
     pc: The publish criteria (if None, default is used)
     animalid: If non-zero only returns the animal given (if it is adoptable)
     include_additional_fields: Load additional fields for each result
     strip_personal_data: Remove any personal data such as surrenderer, brought in by, etc.
+    publisher_key: The publisher calling this function
     limit: Only return limit rows.
     """
     if pc is None:
         pc = PublishCriteria(asm3.configuration.publisher_presets(dbo))
     
-    sql = get_animal_data_query(dbo, pc, animalid)
+    sql = get_animal_data_query(dbo, pc, animalid, publisher_key=publisher_key)
     rows = dbo.query(sql, distincton="ID")
     asm3.al.debug("get_animal_data_query returned %d rows" % len(rows), "publishers.base.get_animal_data", dbo)
 
@@ -132,9 +133,12 @@ def get_animal_data(dbo, pc=None, animalid=0, include_additional_fields=False, r
 
     return rows
 
-def get_animal_data_query(dbo, pc, animalid=0):
+def get_animal_data_query(dbo, pc, animalid=0, publisher_key=""):
     """
     Generate the adoptable animal query.
+    publisher_key is used to generate an exclusion to remove animals who have 
+        a flag called "Exclude from publisher_key" - this prevents animals
+        eg: being sent to PetFinder (Exclude from petfinder)
     """
     sql = asm3.animal.get_animal_query(dbo)
     # Always include non-dead courtesy listings
@@ -155,6 +159,8 @@ def get_animal_data_query(dbo, pc, animalid=0):
         sql += " AND (a.IsQuarantine = 0 OR a.IsQuarantine Is Null)"
     if not pc.includeTrial:
         sql += " AND a.HasTrialAdoption = 0"
+    if publisher_key != "":
+        sql += " AND LOWER(a.AdditionalFlags) NOT LIKE LOWER('%%Exclude from %s|%%')" % publisher_key
     # Make sure animal is old enough
     sql += " AND a.DateOfBirth <= " + dbo.sql_value(dbo.today(offset = pc.excludeUnderWeeks * -7))
     # Filter out dead and unadoptable animals
@@ -165,7 +171,7 @@ def get_animal_data_query(dbo, pc, animalid=0):
     sql += " AND NOT EXISTS(SELECT ID FROM adoption WHERE MovementType = 1 AND AnimalID = a.ID AND MovementDate > %s)" % dbo.sql_value(dbo.today())
     # Build a set of OR clauses based on any movements/locations
     moveor = []
-    if len(pc.internalLocations) > 0 and pc.internalLocations[0].strip() != "null":
+    if len(pc.internalLocations) > 0 and pc.internalLocations[0].strip() != "null" and "".join(pc.internalLocations) != "":
         moveor.append("(a.Archived = 0 AND a.ActiveMovementID = 0 AND a.ShelterLocation IN (%s))" % ",".join(pc.internalLocations))
     else:
         moveor.append("(a.Archived = 0 AND a.ActiveMovementID = 0)")
@@ -199,6 +205,7 @@ def get_microchip_data(dbo, patterns, publishername, allowintake = True, organis
     orgtown = asm3.configuration.organisation_town(dbo)
     orgcounty = asm3.configuration.organisation_county(dbo)
     orgpostcode = asm3.configuration.organisation_postcode(dbo)
+    orgcountry = asm3.configuration.organisation_country(dbo)
     orgtelephone = asm3.configuration.organisation_telephone(dbo)
     email = asm3.configuration.email(dbo)
     if organisation_email != "": email = organisation_email
@@ -231,6 +238,7 @@ def get_microchip_data(dbo, patterns, publishername, allowintake = True, organis
             r.CURRENTOWNERTOWN = r.ORIGINALOWNERTOWN
             r.CURRENTOWNERCOUNTY = r.ORIGINALOWNERCOUNTY
             r.CURRENTOWNERPOSTCODE = r.ORIGINALOWNERPOSTCODE
+            r.CURRENTOWNERCOUNTRY = r.ORIGINALOWNERCOUNTRY
             r.CURRENTOWNERCITY = r.ORIGINALOWNERTOWN
             r.CURRENTOWNERSTATE = r.ORIGINALOWNERCOUNTY
             r.CURRENTOWNERZIPCODE = r.ORIGINALOWNERPOSTCODE
@@ -251,6 +259,7 @@ def get_microchip_data(dbo, patterns, publishername, allowintake = True, organis
             r.CURRENTOWNERTOWN = orgtown
             r.CURRENTOWNERCOUNTY = orgcounty
             r.CURRENTOWNERPOSTCODE = orgpostcode
+            r.CURRENTOWNERCOUNTRY = orgcountry
             r.CURRENTOWNERCITY = orgtown
             r.CURRENTOWNERSTATE = orgcounty
             r.CURRENTOWNERZIPCODE = orgpostcode
@@ -286,7 +295,7 @@ def get_microchip_data_query(dbo, patterns, publishername, movementtypes = "1", 
     """
     pclauses = []
     for p in patterns:
-        if p.startswith("9") or p.startswith("0") or p.startswith("1") or p.startswith("4"):
+        if len(p) > 0 and p[0] in [ "0", "1", "2", "3", "4", "5", "6", "7", "8", "9"]:
             pclauses.append("(a.IdentichipNumber IS NOT NULL AND a.IdentichipNumber LIKE '%s%%')" % p)
             pclauses.append("(a.Identichip2Number IS NOT NULL AND a.Identichip2Number LIKE '%s%%')" % p)
         else:
@@ -539,24 +548,45 @@ class AbstractPublisher(threading.Thread):
 
     def checkMappedSpecies(self):
         """
-        Returns True if all species have been mapped for publishers
+        Returns True if all shelter animal species have been mapped for publishers.
         """
         return 0 == self.dbo.query_int("SELECT COUNT(*) FROM species " \
-            "WHERE PetFinderSpecies Is Null OR PetFinderSpecies = ''")
+            "WHERE ID IN (SELECT SpeciesID FROM animal WHERE Archived=0) " \
+            "AND (PetFinderSpecies Is Null OR PetFinderSpecies = '')")
 
     def checkMappedBreeds(self):
         """
-        Returns True if all breeds have been mapped for publishers
+        Returns True if all shelter animal breeds have been mapped for publishers
         """
         return 0 == self.dbo.query_int("SELECT COUNT(*) FROM breed " + \
-            "WHERE PetFinderBreed Is Null OR PetFinderBreed = ''")
+            "WHERE ID IN (SELECT BreedID FROM animal WHERE Archived=0 UNION SELECT Breed2ID FROM animal WHERE Archived=0) " \
+            "AND (PetFinderBreed Is Null OR PetFinderBreed = '')")
 
     def checkMappedColours(self):
         """
-        Returns True if all colours have been mapped for publishers
+        Returns True if all shelter animal colours have been mapped for publishers
         """
         return 0 == self.dbo.query_int("SELECT COUNT(*) FROM basecolour " \
-            "WHERE AdoptAPetColour Is Null OR AdoptAPetColour = ''")
+            "WHERE ID IN (SELECT BaseColourID FROM animal WHERE Archived=0) AND " \
+            "(AdoptAPetColour Is Null OR AdoptAPetColour = '')")
+
+    def csvLine(self, items):
+        """
+        Takes a list of CSV line items and returns them as a comma 
+        separated string, appropriately quoted and escaped.
+        If any items are quoted, the quoting is removed before doing any escaping.
+        """
+        l = []
+        for i in items:
+            if i is None: i = ""
+            # Remove start/end quotes if present
+            if i.startswith("\""): i = i[1:]
+            if i.endswith("\""): i = i[0:-1]
+            # Escape any quotes in the value
+            i = i.replace("\"", "\"\"")
+            # Add quoting
+            l.append("\"%s\"" % i)
+        return ",".join(l)
 
     def getPhotoUrls(self, animalid):
         """
@@ -755,6 +785,7 @@ class AbstractPublisher(threading.Thread):
         Replaces well known "smart" HTML entities with ASCII characters (mainly aimed at smartquotes)
         """
         ENTITIES = {
+            "180":  "'", # spacing acute
             "8211": "-", # endash
             "8212": "--", # emdash
             "8216": "'", # left single quote
@@ -766,11 +797,37 @@ class AbstractPublisher(threading.Thread):
             "8226": "*", # bullet
             "8230": "...", # ellipsis
             "8242": "'", # prime (stopwatch)
-            "8243": "\"", # double prime
+            "8243": "\"", # double prime,
+            "10003": "/", # check
+            "10004": "/", # heavy check
+            "10005": "x", # multiplication x
+            "10006": "x", # heavy multiplication x
+            "10007": "x", # ballot x
+            "10008": "x"  # heavy ballot x
         }
         for k, v in ENTITIES.items():
             s = s.replace("&#" + k + ";", v)
         return s
+
+    def getLocaleForCountry(self, c):
+        """
+        Some third party sites only accept a locale in their country field rather than
+        a name. This is most common in the US where some shelters have dealings with
+        people over the border in Mexico and Canada.
+        """
+        c2l = {
+            "United States of America": "US",
+            "United States":            "US",
+            "USA":                      "US",
+            "Mexico":                   "MX",
+            "Canada":                   "CA"
+        }
+        if c is None or c == "": return "US" # Assume US as this is only really used by US publishers
+        if len(c) == 2: return c # Already a country code
+        for k in c2l.keys():
+            if c.lower() == k.lower():
+                return c2l[k]
+        return "US" # Fall back to US if no match
 
     def getDescription(self, an, crToBr = False, crToHE = False, crToLF = True, replaceSmart = False):
         """
@@ -888,7 +945,7 @@ class AbstractPublisher(threading.Thread):
         self.dbo.execute_many("INSERT INTO animalpublished (AnimalID, PublishedTo, SentDate, Extra) VALUES (?,?,?,?)", batch)
 
     def getMatchingAnimals(self, includeAdditionalFields=False):
-        a = get_animal_data(self.dbo, self.pc, include_additional_fields=includeAdditionalFields)
+        a = get_animal_data(self.dbo, self.pc, include_additional_fields=includeAdditionalFields, publisher_key=self.publisherKey)
         self.log("Got %d matching animals for publishing." % len(a))
         return a
 
@@ -1023,11 +1080,14 @@ class FTPPublisher(AbstractPublisher):
     def unxssPass(self, s):
         """
         Passwords stored in the config table are subject to XSS escaping, so
-        any >, < or & in the password will have been escaped - turn them back again
+        any >, < or & in the password will have been escaped - turn them back again.
+        Also, many people copy and paste FTP passwords for PetFinder and AdoptAPet
+        and include extra spaces on the end, so strip it.
         """
         s = s.replace("&lt;", "<")
         s = s.replace("&gt;", ">")
         s = s.replace("&amp;", "&")
+        s = s.strip()
         return s
 
     def openFTPSocket(self):
@@ -1125,7 +1185,8 @@ class FTPPublisher(AbstractPublisher):
             self.log("mkdir %s: already exists (%s)" % (newdir, err))
 
     def chdir(self, newdir, fromroot = ""):
-        if not self.pc.uploadDirectly: return
+        """ Changes FTP folder. Returns True on success, False for failure """
+        if not self.pc.uploadDirectly: return True
         self.log("FTP chdir to %s" % newdir)
         try:
             self.socket.cwd(newdir)
@@ -1133,8 +1194,10 @@ class FTPPublisher(AbstractPublisher):
                 self.currentDir = newdir
             else:
                 self.currentDir = fromroot
+            return True
         except Exception as err:
             self.logError("chdir %s: %s" % (newdir, err), sys.exc_info())
+            return False
 
     def delete(self, filename):
         try:

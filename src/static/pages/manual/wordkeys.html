@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Appendix: Wordkeys &mdash; ASM 43u documentation</title>
+  <title>Appendix: Wordkeys &mdash; ASM 44u documentation</title>
   
 
   
@@ -59,7 +59,7 @@
             
             
               <div class="version">
-                43u
+                44u
               </div>
             
           
@@ -101,6 +101,7 @@
 <li class="toctree-l1"><a class="reference internal" href="reports.html">Reports</a></li>
 <li class="toctree-l1"><a class="reference internal" href="litters.html">Litters</a></li>
 <li class="toctree-l1"><a class="reference internal" href="onlineform.html">Online Forms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="paymentprocessors.html">Payment Processors</a></li>
 <li class="toctree-l1"><a class="reference internal" href="rota.html">Rota</a></li>
 <li class="toctree-l1"><a class="reference internal" href="mobile.html">Mobile Interface</a></li>
 <li class="toctree-l1"><a class="reference internal" href="service.html">Service API</a></li>
@@ -130,12 +131,14 @@
 <li class="toctree-l2"><a class="reference internal" href="#citation-keys">Citation Keys</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#traploan-keys">Traploan Keys</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#licence-keys">Licence Keys</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#voucher-keys">Voucher Keys</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#incident-keys">Incident Keys</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#incident-animal-keys">Incident Animal Keys</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#lost-animal-keys">Lost Animal Keys</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#found-animal-keys">Found Animal Keys</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#waiting-list-keys">Waiting List Keys</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#clinic-keys">Clinic Keys</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#table-keys">Table Keys</a></li>
 </ul>
 </li>
 </ul>
@@ -223,6 +226,8 @@ templates, wrapped in double angle-brackets. Eg: &lt;&lt;AnimalName&gt;&gt;</p>
 <dd>The shelter’s zip or postal code</dd>
 <dt>OrganisationTelephone / OrganizationTelephone</dt>
 <dd>The shelter’s telephone number</dd>
+<dt>OrganisationEmail / OrganizationEmail</dt>
+<dd>The shelter’s email address</dd>
 <dt>Date</dt>
 <dd>Today’s date</dd>
 <dt>Username</dt>
@@ -767,7 +772,7 @@ a status of complete, while the Due keyword looks for active medical regimens.</
 <h2>Payment Keys<a class="headerlink" href="#payment-keys" title="Permalink to this headline">¶</a></h2>
 <p>If you are creating a document from the animal or person records, then the same
 rules apply as for vaccinations and medical records when accessing payments.
-payments. The Recent keyword looks for payments that have been received and Due
+The Recent keyword looks for payments that have been received and Due
 for non-received payments.</p>
 <p>However, if you create an invoice/receipt document from the payment tab of a
 person or animal record (or the payment book), you can select multiple payments
@@ -787,8 +792,12 @@ to the end of the keys listed below (eg: PaymentType1, PaymentComments2)</p>
 <dd>The date the payment was received</dd>
 <dt>PaymentDateDue</dt>
 <dd>If this is a recurring payment, the date it is due</dd>
-<dt>PaymentAmount</dt>
-<dd>The total amount of the payment</dd>
+<dt>PaymentGross</dt>
+<dd>The total gross amount of the payment, including any fees and taxes</dd>
+<dt>PaymentFee</dt>
+<dd>Any transaction fees incurred on the payment</dd>
+<dt>PaymentAmount / PaymentNet</dt>
+<dd>The net amount of the payment, excludes any fees and taxes</dd>
 <dt>PaymentQuantity</dt>
 <dd>(if quantities are enabled) The number of items the payment covers</dd>
 <dt>PaymentUnitPrice</dt>
@@ -815,16 +824,24 @@ invoice/receipt document:</p>
 <dd>The short shelter code of the animal the payment is linked to</dd>
 <dt>PaymentPersonName</dt>
 <dd>The name of the person the payment is linked to</dd>
+<dt>PaymentPersonAddress</dt>
+<dd>The address of the person the payment is linked to</dd>
+<dt>PaymentPersonCity / PaymentPersonTown</dt>
+<dd>The city of the person the payment is linked to</dd>
+<dt>PaymentPersonState / PaymentPersonCounty</dt>
+<dd>The state of the person the payment is linked to</dd>
+<dt>PaymentPersonZipcode / PaymentPersonPostcode</dt>
+<dd>The zipcode of the person the payment is linked to</dd>
 <dt>PaymentTotalDue</dt>
-<dd>The total of all selected payments that have a due date and no received date</dd>
-<dt>PaymentTotalReceived</dt>
-<dd>The total of all selected payments that have a received date</dd>
-<dt>PaymenTotalTaxRate / PaymentTotalVATRate</dt>
+<dd>The gross total of all selected payments that have a due date and no received date</dd>
+<dt>PaymentTotalNet / PaymentTotalReceived</dt>
+<dd>The net total of all selected payments that have a received date</dd>
+<dt>PaymentTotalTaxRate / PaymentTotalVATRate</dt>
 <dd>The highest rate of tax applied by any of the selected payments</dd>
 <dt>PaymentTotalTax / PaymentTotalVAT</dt>
 <dd>The total of all sales tax/VAT/GST on the selected payments</dd>
-<dt>PaymentTotal</dt>
-<dd>PaymentTotalReceived + PaymentTotalTax</dd>
+<dt>PaymentTotal / PaymentTotalGross</dt>
+<dd>The gross total of all received payments</dd>
 </dl>
 </div>
 <div class="section" id="transport-keys">
@@ -1081,6 +1098,8 @@ Log keys are available for people, but prefixed with PersonLog instead of just L
 <dd>(OwnerState for US users)</dd>
 <dt>OwnerPostcode</dt>
 <dd>(OwnerZipcode for US users)</dd>
+<dt>OwnerLookingFor</dt>
+<dd>A summary of the “Looking for” slider on the person’s record</dd>
 <dt>Jurisdiction</dt>
 <dd>The person’s jurisdiction</dd>
 <dt>WorkTelephone</dt>
@@ -1175,6 +1194,29 @@ keys are also present.</p>
 <dd>The date the licence expires</dd>
 <dt>LicenceComments</dt>
 <dd>Any comments from the licence record</dd>
+</dl>
+</div>
+<div class="section" id="voucher-keys">
+<h2>Voucher Keys<a class="headerlink" href="#voucher-keys" title="Permalink to this headline">¶</a></h2>
+<p>Voucher keys are only available for documents generated for a single voucher
+under the voucher tab or the voucher book. Keys for the person the voucher
+has been issued to are also present and if the licence is linked to an animal,
+animal keys are also present.</p>
+<dl class="docutils">
+<dt>VoucherTypeName</dt>
+<dd>The type of voucher</dd>
+<dt>VoucherCode</dt>
+<dd>The voucher’s unique code</dd>
+<dt>VoucherValue</dt>
+<dd>The amount the voucher can be redeemed for if appropriate</dd>
+<dt>VoucherIssued</dt>
+<dd>The date the voucher was issued</dd>
+<dt>VoucherExpires</dt>
+<dd>The date the voucher expires</dd>
+<dt>VoucherRedeemed</dt>
+<dd>The date the voucher was redeemed/used</dd>
+<dt>VoucherComments</dt>
+<dd>Any comments about the voucher</dd>
 </dl>
 </div>
 <div class="section" id="incident-keys">
@@ -1476,6 +1518,31 @@ appointments.</p>
 <dd>The total of invoice amount and VAT/Tax</dd>
 </dl>
 </div>
+<div class="section" id="table-keys">
+<h2>Table Keys<a class="headerlink" href="#table-keys" title="Permalink to this headline">¶</a></h2>
+<p>These are special keys that insert a table into your document that contains the
+complete data from a tab.</p>
+<p>These keys do not allow the flexibility of formatting that the other keys
+offer, but they do offer a simple way of putting bulk data into a document without
+having to create a table containing many “just in case” placeholder keys.</p>
+<p>They will also dynamically expand the document according to how many records
+there are.  Records are output in ascending order of date.</p>
+<dl class="docutils">
+<dt>AnimalVaccinations</dt>
+<dd>Inserts a table containing all the animal’s vaccinations into the document</dd>
+<dt>AnimalTests</dt>
+<dd>Inserts a table containing all of the animal’s recorded tests into the document</dd>
+<dt>AnimalMedicals</dt>
+<dd>Inserts a table containing all of the animal’s medical treatments</dd>
+<dt>AnimalLogs</dt>
+<dd>Inserts a table containing all of the animal’s log entries</dd>
+<dt>LitterMates</dt>
+<dd>Inserts a table containing a list of the animal’s littermates</dd>
+<dt>MovementPayments</dt>
+<dd>Inserts a table containing all of the payments for the active movement for
+the person, animal or movement the document is being generated for.</dd>
+</dl>
+</div>
 </div>
 
 
@@ -1496,7 +1563,7 @@ appointments.</p>
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2019, Sheltermanager, Ltd
+        &copy; Copyright 2020, Sheltermanager, Ltd
 
     </p>
   </div>

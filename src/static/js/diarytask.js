@@ -1,12 +1,13 @@
-/*jslint browser: true, forin: true, eqeq: true, white: true, sloppy: true, vars: true, nomen: true */
 /*global $, jQuery, _, asm, common, config, controller, dlgfx, format, header, html, tableform, validate */
 
 $(function() {
 
-    var diarytask = {
+    "use strict";
+
+    const diarytask = {
 
         model: function() {
-            var dialog = {
+            const dialog = {
                 add_title: _("Add diary task"),
                 edit_title: _("Edit diary task"),
                 edit_perm: 'edt',
@@ -26,19 +27,15 @@ $(function() {
                 ]
             };
 
-            var table = {
+            const table = {
                 rows: controller.rows,
                 idcolumn: "ID",
-                edit: function(row) {
-                    tableform.dialog_show_edit(dialog, row)
-                        .then(function() {
-                            tableform.fields_update_row(dialog.fields, row);
-                            return tableform.fields_post(dialog.fields, "mode=update&diarytaskdetailid=" + row.ID, "diarytask");
-                        })
-                        .then(function() {
-                            tableform.table_update(table);
-                            tableform.dialog_close();
-                        });
+                edit: async function(row) {
+                    await tableform.dialog_show_edit(dialog, row);
+                    tableform.fields_update_row(dialog.fields, row);
+                    await tableform.fields_post(dialog.fields, "mode=update&diarytaskdetailid=" + row.ID, "diarytask");
+                    tableform.table_update(table);
+                    tableform.dialog_close();
                 },
                 columns: [
                     { field: "WHOFOR", display: _("For") },
@@ -49,37 +46,29 @@ $(function() {
                 ]
             };
 
-            var buttons = [
-                 { id: "new", text: _("New task detail"), icon: "new", enabled: "always", 
-                     click: function() { 
-                         tableform.dialog_show_add(dialog)
-                             .then(function() {
-                                return tableform.fields_post(dialog.fields, "mode=create&taskid=" + controller.taskid, "diarytask");
-                             })
-                             .then(function(response) {
-                                 var row = {};
-                                 row.ID = response;
-                                 tableform.fields_update_row(dialog.fields, row);
-                                 controller.rows.push(row);
-                                 tableform.table_update(table);
-                                 tableform.dialog_close();
-                             });
-                     } 
-                 },
-                 { id: "delete", text: _("Delete"), icon: "delete", enabled: "multi", 
-                     click: function() { 
-                         tableform.delete_dialog()
-                             .then(function() {
-                                 tableform.buttons_default_state(buttons);
-                                 var ids = tableform.table_ids(table);
-                                 return common.ajax_post("diarytask", "mode=delete&ids=" + ids);
-                             })
-                             .then(function() {
-                                 tableform.table_remove_selected_from_json(table, controller.rows);
-                                 tableform.table_update(table);
-                             });
-                     } 
-                 }
+            const buttons = [
+                { id: "new", text: _("New task detail"), icon: "new", enabled: "always", 
+                    click: async function() { 
+                        await tableform.dialog_show_add(dialog);
+                        let response = await tableform.fields_post(dialog.fields, "mode=create&taskid=" + controller.taskid, "diarytask");
+                        let row = {};
+                        row.ID = response;
+                        tableform.fields_update_row(dialog.fields, row);
+                        controller.rows.push(row);
+                        tableform.table_update(table);
+                        tableform.dialog_close();
+                    } 
+                },
+                { id: "delete", text: _("Delete"), icon: "delete", enabled: "multi", 
+                    click: async function() { 
+                        await tableform.delete_dialog();
+                        tableform.buttons_default_state(buttons);
+                        let ids = tableform.table_ids(table);
+                        await common.ajax_post("diarytask", "mode=delete&ids=" + ids);
+                        tableform.table_remove_selected_from_json(table, controller.rows);
+                        tableform.table_update(table);
+                    } 
+                }
             ];
             this.dialog = dialog;
             this.buttons = buttons;
@@ -87,7 +76,7 @@ $(function() {
         },
 
         render: function() {
-            var s = "";
+            let s = "";
             this.model();
             s += tableform.dialog_render(this.dialog);
             s += html.content_header(_("Diary Task: {0}").replace("{0}", controller.taskname));

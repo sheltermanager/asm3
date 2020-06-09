@@ -25,6 +25,7 @@ AND NOT EXISTS(SELECT ID FROM animalmedicaltreatment WHERE AdministeringVetID = 
 AND NOT EXISTS(SELECT ID FROM animaltest WHERE AdministeringVetID = o.ID)
 AND NOT EXISTS(SELECT ID FROM animalvaccination WHERE AdministeringVetID = o.ID)
 AND NOT EXISTS(SELECT ID FROM clinicappointment WHERE OwnerID = o.ID)
+AND NOT EXISTS(SELECT ID FROM log WHERE LinkID = o.ID AND LinkType = 1)
 AND NOT EXISTS(SELECT ID FROM ownercitation WHERE OwnerID = o.ID)
 AND NOT EXISTS(SELECT ID FROM ownerdonation WHERE OwnerID = o.ID)
 AND NOT EXISTS(SELECT ID FROM ownerinvestigation WHERE OwnerID = o.ID)

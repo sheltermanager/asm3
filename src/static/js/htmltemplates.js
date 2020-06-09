@@ -1,12 +1,13 @@
-/*jslint browser: true, forin: true, eqeq: true, white: true, sloppy: true, vars: true, nomen: true */
 /*global $, jQuery, _, asm, common, config, controller, dlgfx, format, header, html, tableform, validate */
 
 $(function() {
 
-    var htmltemplates = {
+    "use strict";
+
+    const htmltemplates = {
 
         model: function() {
-            var dialog = {
+            const dialog = {
                 add_title: _("Add template"),
                 edit_title: _("Edit template"),
                 close_on_ok: false,
@@ -20,82 +21,62 @@ $(function() {
                 ]
             };
 
-            var table = {
+            const table = {
                 rows: controller.rows,
                 idcolumn: "NAME",
-                edit: function(row) {
-                    tableform.dialog_show_edit(dialog, row)
-                        .then(function() {
-                            tableform.fields_update_row(dialog.fields, row);
-                            tableform.fields_post(dialog.fields, "mode=update&name=" + row.NAME, "htmltemplates");
-                        })
-                        .then(function(response) {
-                            tableform.dialog_close();
-                            tableform.table_update(table);
-                        });
+                edit: async function(row) {
+                    await tableform.dialog_show_edit(dialog, row);
+                    tableform.fields_update_row(dialog.fields, row);
+                    await tableform.fields_post(dialog.fields, "mode=update&name=" + row.NAME, "htmltemplates");
+                    tableform.dialog_close();
+                    tableform.table_update(table);
                 },
                 columns: [
                     { field: "NAME", display: _("Name"), initialsort: true }
                 ]
             };
 
-            var buttons = [
-                 { id: "new", text: _("New Template"), icon: "new", enabled: "always", 
-                     click: function() { 
-                         tableform.dialog_show_add(dialog)
-                             .then(function() {
-                                 return tableform.fields_post(dialog.fields, "mode=create", "htmltemplates");
-                             })
-                             .then(function(response) {
-                                 var row = {};
-                                 tableform.fields_update_row(dialog.fields, row);
-                                 controller.rows.push(row);
-                                 tableform.table_update(table);
-                             })
-                             .always(function() {
-                                 tableform.dialog_close();
-                             });
-                     } 
-                 },
-                 { id: "clone", text: _("Clone"), icon: "copy", enabled: "one", 
-                     click: function() { 
-                         tableform.dialog_show_add(dialog, {
-                             onadd: function() {
-                                 tableform.fields_post(dialog.fields, "mode=create", "htmltemplates")
-                                    .then(function(response) {
-                                        var row = {};
-                                        tableform.fields_update_row(dialog.fields, row);
-                                        controller.rows.push(row);
-                                        tableform.table_update(table);
-                                    })
-                                    .always(function() {
-                                        tableform.dialog_close();
-                                    });
-                                },
-                             onload: function() {
-                                 var row = tableform.table_selected_row(table);
-                                 tableform.fields_populate_from_json(dialog.fields, row);
-                                 $("#templatename").val($("#templatename").val() + "_copy");
-                             }
-                         });
-                     } 
-                 },
-
-                 { id: "delete", text: _("Delete"), icon: "delete", enabled: "multi", 
-                     click: function() { 
-                         tableform.delete_dialog()
-                             .then(function() {
-                                 tableform.buttons_default_state(buttons);
-                                 var names = tableform.table_ids(table);
-                                 return common.ajax_post("htmltemplates", "mode=delete&names=" + names);
-                             })
-                             .then(function() {
-                                 tableform.table_remove_selected_from_json(table, controller.rows);
-                                 tableform.table_update(table);
-                             });
-                     } 
-                 },
-
+            const buttons = [
+                { id: "new", text: _("New Template"), icon: "new", enabled: "always", 
+                    click: async function() { 
+                        await tableform.dialog_show_add(dialog);
+                        let response = await tableform.fields_post(dialog.fields, "mode=create", "htmltemplates");
+                        let row = {};
+                        tableform.fields_update_row(dialog.fields, row);
+                        controller.rows.push(row);
+                        tableform.table_update(table);
+                        tableform.dialog_close();
+                    } 
+                },
+                { id: "clone", text: _("Clone"), icon: "copy", enabled: "one", 
+                    click: function() { 
+                        tableform.dialog_show_add(dialog, {
+                            onadd: async function() {
+                                await tableform.fields_post(dialog.fields, "mode=create", "htmltemplates");
+                                let row = {};
+                                tableform.fields_update_row(dialog.fields, row);
+                                controller.rows.push(row);
+                                tableform.table_update(table);
+                                tableform.dialog_close();
+                            },
+                            onload: function() {
+                                let row = tableform.table_selected_row(table);
+                                tableform.fields_populate_from_json(dialog.fields, row);
+                                $("#templatename").val($("#templatename").val() + "_copy");
+                            }
+                        });
+                    } 
+                },
+                { id: "delete", text: _("Delete"), icon: "delete", enabled: "multi", 
+                    click: async function() { 
+                        await tableform.delete_dialog();
+                        tableform.buttons_default_state(buttons);
+                        let names = tableform.table_ids(table);
+                        await common.ajax_post("htmltemplates", "mode=delete&names=" + names);
+                        tableform.table_remove_selected_from_json(table, controller.rows);
+                        tableform.table_update(table);
+                    } 
+                },
                 { id: "preview", text: _("Preview"), icon: "web", enabled: "one",
                     click: function() {
                         $("#dialog-preview").dialog("open");
@@ -108,7 +89,7 @@ $(function() {
         },
 
         render: function() {
-            var s = "";
+            let s = "";
             this.model();
             s += tableform.dialog_render(this.dialog);
             s += this.render_previewdialog();
@@ -151,12 +132,12 @@ $(function() {
 
         bind_previewdialog: function() {
 
-            var previewbuttons = { }, table = htmltemplates.table;
+            let previewbuttons = { }, table = htmltemplates.table;
             previewbuttons[_("Preview")] = function() {
                 validate.reset("dialog-preview");
                 if (!validate.notblank([ "animals" ])) { return; }
                 $("#dialog-preview").disable_dialog_buttons();
-                var ids = tableform.table_ids(table);
+                let ids = tableform.table_ids(table);
                 common.route("htmltemplates_preview?template=" + ids + "&animals=" + $("#animals").val(), true);
             };
             previewbuttons[_("Cancel")] = function() {

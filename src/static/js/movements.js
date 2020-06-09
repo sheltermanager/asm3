@@ -1,7 +1,8 @@
-/*jslint browser: true, forin: true, eqeq: true, white: true, sloppy: true, vars: true, nomen: true */
 /*global $, jQuery, _, asm, common, config, controller, dlgfx, format, edit_header, header, html, tableform, validate */
 
 $(function() {
+
+    "use strict";
 
     var movements = {
 
@@ -59,29 +60,36 @@ $(function() {
                 rows: controller.rows,
                 idcolumn: "ID",
                 edit: function(row) {
-                    tableform.fields_populate_from_json(dialog.fields, row);
-                    movements.type_change(); 
-                    movements.returndate_change();
-                    tableform.dialog_show_edit(dialog, row)
-                        .then(function() {
-                            if (!movements.validation()) { tableform.dialog_enable_buttons(); return; }
+                    tableform.dialog_show_edit(dialog, row, {
+                        onvalidate: function() {
+                            return movements.validation();
+                        },
+                        onchange: function() {
                             tableform.fields_update_row(dialog.fields, row);
                             movements.set_extra_fields(row);
-                            return tableform.fields_post(dialog.fields, "mode=update&movementid=" + row.ID, "movement");
-                        })
-                        .then(function(response) {
-                            tableform.table_update(table);
-                            tableform.dialog_close();
-                        })
-                        .fail(function() {
-                            tableform.dialog_enable_buttons();
-                        });
+                            tableform.fields_post(dialog.fields, "mode=update&movementid=" + row.ID, "movement")
+                                .then(function(response) {
+                                    tableform.table_update(table);
+                                    tableform.dialog_close();
+                                })
+                                .fail(function() {
+                                    tableform.dialog_enable_buttons();
+                                });
+                        },
+                        onload: function() {
+                            tableform.fields_populate_from_json(dialog.fields, row);
+                            movements.type_change(); 
+                            movements.returndate_change();
+                        }
+                    });
                 },
                 overdue: function(row) {
-                    // If this is the reservation book, overdue is determined by reservation being older than a week
+                    // If this is the reservation book, overdue is determined by reservation being 
+                    // older than a pre-set period (default 1 week)
                     if (controller.name == "move_book_reservation" && row.RESERVATIONDATE) {
-                        var od = format.date_js(row.RESERVATIONDATE);
-                        od.setDate(od.getDate() + 7);
+                        var od = format.date_js(row.RESERVATIONDATE), odd = config.integer("ReservesOverdueDays");
+                        if (!odd) { odd = 7; }
+                        od.setDate(od.getDate() + odd);
                         return od < common.today_no_time();
                     }
                     return false;
@@ -108,7 +116,7 @@ $(function() {
                     { field: "MOVEMENTNAME", display: _("Type") }, 
                     { field: "MOVEMENTDATE", display: _("Date"), 
                         initialsort: controller.name != "move_book_trial_adoption", 
-                        initialsortdirection: controller.name == "move_book_reservation" ? "asc" : "desc", 
+                        initialsortdirection: "desc", 
                         formatter: function(row, v) { 
                             // If we're only a reservation, use the reserve date instead
                             if (row.MOVEMENTTYPE == 0) {
@@ -183,6 +191,7 @@ $(function() {
                     },
                     { field: "IMAGE", display: "", 
                         formatter: function(row) {
+                            if (!row.ANIMALNAME) { return ""; }
                             return html.animal_link_thumb_bare(row);
                         },
                         hideif: function(row) {
@@ -194,6 +203,7 @@ $(function() {
                     },
                     { field: "ANIMAL", display: _("Animal"), 
                         formatter: function(row) {
+                            if (!row.ANIMALNAME) { return ""; }
                             return html.animal_link(row);
                         },
                         hideif: function(row) {
@@ -225,11 +235,14 @@ $(function() {
                             return config.bool("DisableRetailer") || controller.name == "move_book_foster" || controller.name == "move_book_reservation";
                         }
                     },
-                    { field: "ANIMALAGE", display: _("Age"), 
+                    { field: "ANIMALAGE", display: _("Age"),
                         hideif: function(row) { 
                             // Only show age in the adopted/unneutered and foster books
                             return controller.name != "move_book_unneutered" && controller.name != "move_book_foster" ; 
-                        } 
+                        },
+                        sorttext: function(row) {
+                            return row.DATEOFBIRTH;
+                        }
                     },
                     { field: "ADOPTIONNUMBER", display: _("Movement Number"),
                         hideif: function(row) {
@@ -343,8 +356,10 @@ $(function() {
                         movements.type_change(); 
                         movements.returndate_change();
                         tableform.dialog_show_edit(dialog, row, {
+                            onvalidate: function() {
+                                return movements.validation();
+                            },
                             onchange: function() {
-                                if (!movements.validation()) { tableform.dialog_enable_buttons(); return; }
                                 tableform.fields_update_row(dialog.fields, row);
                                 movements.set_extra_fields(row);
                                 tableform.fields_post(dialog.fields, "mode=update&movementid=" + row.ID, "movement", function(response) {
@@ -376,18 +391,20 @@ $(function() {
                         movements.type_change(); 
                         movements.returndate_change();
                         tableform.dialog_show_edit(dialog, row, { 
+                            onvalidate: function() {
+                                return movements.validation();
+                            },
                             onchange: function() {
-                                if (!movements.validation()) { tableform.dialog_enable_buttons(); return; }
                                 tableform.fields_update_row(dialog.fields, row);
                                 movements.set_extra_fields(row);
-                                tableform.fields_post(dialog.fields, "mode=update&movementid=" + row.ID, "movement", function(response) {
-                                    tableform.table_update(table);
-                                    tableform.dialog_close();
-                                },
-                                function(response) {
-                                    tableform.dialog_error(response);
-                                    tableform.dialog_enable_buttons();
-                                });
+                                tableform.fields_post(dialog.fields, "mode=update&movementid=" + row.ID, "movement")
+                                    .then(function(response) {
+                                        tableform.table_update(table);
+                                        tableform.dialog_close();
+                                    })
+                                    .fail(function() {
+                                        tableform.dialog_enable_buttons();
+                                    });
                             },
                             onload: function() {
                                 $("#returndate").val(format.date(new Date()));
@@ -596,10 +613,11 @@ $(function() {
 
         validation: function() {
 
-            validate.reset();
+            validate.reset("dialog-tableform");
+            var mt = $("#type").val();
 
             // Movement needs a reservation date or movement type > 0
-            if ($("#type").val() == 0 && $("#reservationdate").val() == "") {
+            if (mt == 0 && $("#reservationdate").val() == "") {
                 validate.notblank([ "reservationdate" ]);
                 tableform.dialog_error(_("A movement must have a reservation date or type."));
                 return false;
@@ -615,7 +633,6 @@ $(function() {
             // Movement types 4 (escaped), 6 (stolen), 7 (released to wild)
             // don't need a person, but all other movements do
             if ($("#person").val() == "") {
-                var mt = $("#type").val();
                 if (mt != 4 && mt != 6 && mt != 7) {
                     tableform.dialog_error(_("This type of movement requires a person."));
                     validate.highlight("person");
@@ -624,10 +641,13 @@ $(function() {
             }
 
             // All movements require an animal
-            if ($("#animal").val() == "") {
-                tableform.dialog_error(_("Movements require an animal"));
-                validate.highlight("animal");
-                return false;
+            if ($("#animal").val() == "0") {
+                // Except reservations if the option is on
+                if (mt != 0 || !config.bool("MovementPersonOnlyReserves")) {
+                    tableform.dialog_error(_("Movements require an animal"));
+                    validate.highlight("animal");
+                    return false;
+                }
             }
 
             return true;
@@ -639,8 +659,13 @@ $(function() {
          * extra lookup fields.
          */
         set_extra_fields: function(row) {
-            row.ANIMALNAME = movements.lastanimal.ANIMALNAME;
-            row.SHELTERCODE = movements.lastanimal.SHELTERCODE;
+            if (movements.lastanimal) {
+                row.ANIMALNAME = movements.lastanimal.ANIMALNAME;
+                row.SHELTERCODE = movements.lastanimal.SHELTERCODE;
+                row.AGEGROUP = movements.lastanimal.AGEGROUP;
+                row.SEX = movements.lastanimal.SEXNAME;
+                row.SPECIESNAME = movements.lastanimal.SPECIESNAME;
+            }
             if (movements.lastperson) {
                 row.OWNERNAME = movements.lastperson.OWNERNAME;
                 row.OWNERADDRESS = movements.lastperson.OWNERADDRESS;
@@ -659,9 +684,6 @@ $(function() {
             else {
                 row.RETAILERNAME = "";
             }
-            row.AGEGROUP = movements.lastanimal.AGEGROUP;
-            row.SEX = movements.lastanimal.SEXNAME;
-            row.SPECIESNAME = movements.lastanimal.SPECIESNAME;
             row.MOVEMENTNAME = common.get_field(controller.movementtypes, row.MOVEMENTTYPE, "MOVEMENTTYPE");
             row.RESERVATIONSTATUSNAME = common.get_field(controller.reservationstatuses, row.RESERVATIONSTATUSID, "STATUSNAME");
             if (row.RESERVATIONDATE != null && row.RESERVATIONCANCELLEDDATE == null && !row.MOVEMENTDATE) { row.MOVEMENTNAME = common.get_field(controller.movementtypes, 9, "MOVEMENTTYPE"); }

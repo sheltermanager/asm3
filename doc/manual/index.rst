@@ -23,6 +23,7 @@ Contents:
    reports
    litters
    onlineform
+   paymentprocessors
    rota
    mobile
    service

@@ -234,4 +234,31 @@ def save_values_for_link(dbo, post, linkid, linktype = "animal", setdefaults=Fal
             val = python2display(dbo.locale, post.date(key))
         insert_additional(dbo, f.LINKTYPE, linkid, f.ID, val)
 
+def merge_values_for_link(dbo, post, linkid, linktype = "animal"):
+    """
+    Saves incoming additional field values. Only updates the 
+    additional fields that are present in the post object and leaves the rest alone. 
+    It will only update a field if it has a value. This function is aimed
+    at areas that merge into existing records, such as online forms and CSV imports.
+    linkid: The link to the parent record
+    linktype: The class of parent record
+    Keys of either a.MANDATORY.ID can be used (ASM internal forms)
+        or keys of the form additionalFIELDNAME (ASM online forms)
+    """
+    for f in get_field_definitions(dbo, linktype):
 
+        key = "a.%s.%s" % (f.mandatory, f.id)
+        key2 = "additional%s" % f.fieldname
+
+        if key2 in post: key = key2
+        if key in post:
+            val = post[key]
+            if val == "": continue
+            if f.fieldtype == YESNO:
+                val = str(post.boolean(key))
+            elif f.fieldtype == MONEY:
+                val = str(post.integer(key))
+            elif f.fieldtype == DATE:
+                val = python2display(dbo.locale, post.date(key))
+            dbo.delete("additional", "LinkID=%s AND AdditionalFieldID=%s" % (linkid, f.ID))
+            insert_additional(dbo, f.LINKTYPE, linkid, f.ID, val)

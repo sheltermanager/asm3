@@ -1,7 +1,8 @@
-/*jslint browser: true, forin: true, eqeq: true, white: true, sloppy: true, vars: true, nomen: true */
 /*global $, jQuery, _, asm, common, config, controller, dlgfx, format, header, html, validate */
 
 $(function() {
+
+    "use strict";
 
     var publish_options = {
 
@@ -11,20 +12,23 @@ $(function() {
                 '<li><a href="#tab-animalselection">' + _("Animal Selection") + '</a></li>',
                 '<li><a href="#tab-allpublishers">' + _("All Publishers") + '</a></li>',
                 '<li><a href="#tab-htmlftp">' + _("HTML/FTP Publisher") + '</a></li>',
-                '<li class="localeus localeca localemx"><a href="#tab-adoptapet">AdoptAPet Publisher</a></li>',
-                '<li><a href="#tab-helpinglostpets">HelpingLostPets Publisher</a></li>',
-                '<li class="localeus localeca localeau hasmaddiesfund"><a href="#tab-maddiesfund">Maddie\'s Fund Publisher</a></li>',
-                '<li class="localeus localeca localemx"><a href="#tab-petfinder">PetFinder Publisher</a></li>',
-                '<li class="localegb haspetslocated"><a href="#tab-petslocated">PetsLocated Publisher</a></li>',
-                '<li class="localeau haspetrescue"><a href="#tab-petrescue">PetRescue Publisher</a></li>', 
-                '<li class="localeau hassavourlife"><a href="#tab-savourlife">SavourLife Publisher</a></li>', 
-                '<li class="localeus"><a href="#tab-rescuegroups">RescueGroups Publisher</a></li>',
+                '<li class="localeus localeca localemx"><a href="#tab-adoptapet">AdoptAPet</a></li>',
+                '<li><a href="#tab-helpinglostpets">HelpingLostPets</a></li>',
+                '<li class="english hasmaddiesfund"><a href="#tab-maddiesfund">Maddie\'s Fund</a></li>',
+                '<li class="english haspetcademy"><a href="#tab-petcademy">Petcademy</a></li>',
+                '<li class="localeus localeca localemx"><a href="#tab-petfinder">PetFinder</a></li>',
+                '<li class="localegb haspetslocated"><a href="#tab-petslocated">PetsLocated</a></li>',
+                '<li class="localeau haspetrescue"><a href="#tab-petrescue">PetRescue</a></li>', 
+                '<li class="localeau hassavourlife"><a href="#tab-savourlife">SavourLife</a></li>', 
+                '<li class="localeus"><a href="#tab-rescuegroups">RescueGroups</a></li>',
                 '<li class="localegb"><a href="#tab-pettrac">AVID UK Microchips</a></li>',
                 '<li class="localegb"><a href="#tab-anibase">Identibase UK Microchips</a></li>',
+                '<li class="localeus hasakcreunite"><a href="#tab-akcreunite">AKC Reunite Microchips</a></li>',
                 '<li class="localeus hasfoundanimals"><a href="#tab-foundanimals">FoundAnimals Microchips</a></li>',
+                '<li class="localeus hashomeagain"><a href="#tab-homeagain">HomeAgain Microchips</a></li>',
                 '<li class="localeus localeca localemx haspetlink"><a href="#tab-petlink">PetLink Microchips</a></li>',
                 '<li class="localeus hassmarttag"><a href="#tab-smarttag">SmartTag Tags/Microchips</a></li>',
-                '<li class="localeus hasvevendor"><a href="#tab-vetenvoy">VetEnvoy Microchips</a></li>',
+                '<li class="localeus hasvetenvoy"><a href="#tab-vetenvoy">VetEnvoy Microchips</a></li>',
                 '</ul>'
             ].join("\n");
         },
@@ -112,17 +116,8 @@ $(function() {
                 '</tr>',
                 '<tr>',
                 '<td><label for="excludeunder">' + _("Exclude animals who are aged under") + '</label></td>',
-                '<td><select id="excludeunder" class="asm-selectbox preset" data="excludeunder">',
-                '<option value="1">' + _("1 week") + '</option>',
-                '<option value="2">' + _("2 weeks") + '</option>',
-                '<option value="4">' + _("4 weeks") + '</option>',
-                '<option value="6">' + _("6 weeks") + '</option>',
-                '<option value="8">' + _("8 weeks") + '</option>',
-                '<option value="12">' + _("3 months") + '</option>',
-                '<option value="26">' + _("6 months") + '</option>',
-                '<option value="38">' + _("9 months") + '</option>',
-                '<option value="52">' + _("1 year") + '</option>',
-                '</select></td>',
+                '<td><input id="excludeunder" class="asm-numberbox asm-textbox asm-halftextbox preset" data="excludeunder" data-max="52" data-min="1" />',
+                _("weeks") + '</td>',
                 '</tr>',
                 '<tr>',
                 '<td><label for="locations">' + _("Include animals in the following locations") + '</label></td>',
@@ -134,7 +129,7 @@ $(function() {
                 '<td></td>',
                 '<td>',
                 '<div class="ui-state-highlight ui-corner-all" style="padding: 0 .7em;">',
-                '<p><span class="ui-icon ui-icon-info" style="float: left; margin-right: .3em;"></span>',
+                '<p><span class="ui-icon ui-icon-info"></span>',
                 _("If you don't select any locations, publishers will include animals in all locations."),
                 '</p>',
                 '</div>',
@@ -161,6 +156,18 @@ $(function() {
                 '</select></td>',
                 '</tr>',
                 '<tr>',
+                '<td><label for="updatefreq">' + _("Update adoption websites every") + '</label></td>',
+                '<td><select id="updatefreq" class="asm-selectbox cfg" data="PublisherSub24Frequency">',
+                '<option value="2">' + _("{0} hours").replace("{0}", "2") + '</option>',
+                '<option value="4">' + _("{0} hours").replace("{0}", "4") + '</option>',
+                '<option value="6">' + _("{0} hours").replace("{0}", "6") + '</option>',
+                '<option value="8">' + _("{0} hours").replace("{0}", "8") + '</option>',
+                '<option value="12">' + _("{0} hours").replace("{0}", "12") + '</option>',
+                '<option value="0">' + _("{0} hours").replace("{0}", "24") + '</option>',
+                '</select>',
+                '</td>',
+                '</tr>',
+                '<tr>',
                 '<td><label for="forcereupload">' + _("Reupload animal images every time") + '</label></td>',
                 '<td><select id="forcereupload" class="asm-selectbox pbool preset" data="forcereupload">',
                 '<option value="0">' + _("No") + '</option>',
@@ -183,6 +190,15 @@ $(function() {
                 '<option value="2">' + _("Animal Name") + '</option>',
                 '</select></td>',
                 '</tr>',
+                '<tr>',
+                '<td><label for="thumbnailsize">' + _("Thumbnail size") + '</label></td>',
+                '<td><select id="thumbnailsize" class="asm-selectbox cfg" data="ThumbnailSize">',
+                '<option value="100x100">100px</option>',
+                '<option value="150x150">150px</option>',
+                '<option value="200x200">200px</option>',
+                '<option value="250x250">250px</option>',
+                '<option value="300x300">300px</option>',
+                '</select>',
                 '<tr>',
                 '<td><label for="usecomments">' + _("Animal descriptions") + '</label></td>',
                 '<td><select id="usecomments" class="asm-selectbox cfg" data="PublisherUseComments">',
@@ -550,13 +566,22 @@ $(function() {
                 '<option>No</option><option>Yes</option></select></td>',
                 '</tr>',
                 '<tr>',
-                '<td><label for="printerstate">Mark as interstate</label>',
+                '<td><label for="pradoptablein">Adoptable in states</label>',
                 '<span id="callout-printerstate" class="asm-callout">',
-                'Set to yes if you will fly adoptable animals to other states',
+                'Choose the states your animals will be adoptable in. The state the animal is currently located in ',
+                'will be implicitly included.',
                 '</span>',
                 '</td>',
-                '<td><select id="printerstate" class="asm-selectbox cfg" data="PetRescueInterstate">',
-                '<option>No</option><option>Yes</option></select></td>',
+                '<td><select id="pradoptablein" multiple="multiple" class="asm-bsmselect cfg" data="PetRescueAdoptableIn">',
+                '<option value="ACT">Australian Capital Territory</option>',
+                '<option value="NSW">New South Wales</option>',
+                '<option value="NT">Northern Territory</option>',
+                '<option value="QLD">Queensland</option>',
+                '<option value="SA">South Australia</option>',
+                '<option value="TAS">Tasmania</option>',
+                '<option value="VIC">Victoria</option>',
+                '<option value="WA">Western Australia</option>',
+                '</select></td>',
                 '</tr>',
                 '<tr>',
                 '<td><label for="premail">Contact email</label>',
@@ -674,6 +699,25 @@ $(function() {
             ].join("\n");
         },
 
+        render_akcreunite: function() {
+            return [
+                '<div id="tab-akcreunite">',
+                html.info('Learn about AKC Reunite microchips and auto-uploading pet enrollment information at ' +
+                    '<a target="_blank" href="https://www.akcreunite.org/shelters">https://www.akcreunite.org/shelters</a>.<br/>' +
+                    'Request auto-uploads of pet microchip information to AKC Reunite at ' +
+                    '<a target="_blank" href="https://www.akcreunite.org/auto-upload/">https://www.akcreunite.org/auto-upload</a>.'),
+                '<p><input id="enabledak" type="checkbox" class="asm-checkbox enablecheck" /><label for="enabledak">' + _("Enabled") + '</label></p>',
+                '<p><button id="button-akenroll">Generate an Enrollment Source Id for AKC Reunite</button></p>',
+                '<table>',
+                '<tr>',
+                '<td><label for="akenrollmentid">AKC Reunite Enrollment Source ID</label></td>',
+                '<td><input id="akenrollmentid" type="text" class="asm-doubletextbox cfg" disabled="disabled" data="AKCEnrollmentSourceID" /></td>',
+                '</tr>',
+                '</table>',
+                '</div>'
+            ].join("\n");
+        },
+
         render_foundanimals: function() {
             return [
                 '<div id="tab-foundanimals">',
@@ -700,6 +744,25 @@ $(function() {
             ].join("\n");
         },
 
+        render_homeagain: function() {
+            return [
+                '<div id="tab-homeagain">',
+                html.info('Signup at <a href="http://homeagain.4act.com">http://homeagain.4act.com</a> or contact HomeAgain Customer Service on <a href="tel:1-800-341-5785">(800) 341-5785</a> for more information.'),
+                '<p><input id="enabledha" type="checkbox" class="asm-checkbox enablecheck" /><label for="enabledha">' + _("Enabled") + '</label></p>',
+                '<table>',
+                '<tr>',
+                '<td><label for="hauserid">HomeAgain User ID</label></td>',
+                '<td><input id="hauserid" type="text" class="asm-doubletextbox cfg" disabled="disabled" data="HomeAgainUserId" /></td>',
+                '</tr>',
+                '<tr>',
+                '<td><label for="hauserpassword">HomeAgain User Password</label></td>',
+                '<td><input id="hauserpassword" type="text" class="asm-doubletextbox cfg" disabled="disabled" data="HomeAgainUserPassword" /></td>',
+                '</tr>',
+                '</table>',
+                '</div>'
+            ].join("\n");
+        },
+
         render_maddiesfund: function() {
             return [
                 '<div id="tab-maddiesfund">',
@@ -713,6 +776,21 @@ $(function() {
                 '<tr>',
                 '<td><label for="mfpassword">MPA API Password</label></td>',
                 '<td><input id="mfpassword" type="text" class="asm-textbox cfg" data="MaddiesFundPassword" /></td>',
+                '</tr>',
+                '</table>',
+                '</div>'
+            ].join("\n");
+        },
+
+        render_petcademy: function() {
+            return [
+                '<div id="tab-petcademy">',
+                html.info('Signup at <a href="https://petcademy.typeform.com/to/PTTM44">https://petcademy.typeform.com/to/PTTM44</a>'),
+                '<p><input id="enabledpc" type="checkbox" class="asm-checkbox enablecheck" /><label for="enabledpc">' + _("Enabled") + '</label></p>',
+                '<table>',
+                '<tr>',
+                '<td><label for="pctoken">Petcademy Token</label></td>',
+                '<td><input id="pctoken" type="text" class="asm-textbox cfg" data="PetcademyToken" /></td>',
                 '</tr>',
                 '</table>',
                 '</div>'
@@ -873,8 +951,11 @@ $(function() {
                 this.render_petslocated(),
                 this.render_rescuegroups(),
                 this.render_adoptapet(),
+                this.render_akcreunite(),
                 this.render_foundanimals(),
+                this.render_homeagain(),
                 this.render_maddiesfund(),
+                this.render_petcademy(),
                 this.render_helpinglostpets(),
                 this.render_smarttag(),
                 this.render_vetenvoy(),
@@ -950,7 +1031,7 @@ $(function() {
                         pr += " " + $(this).attr("data") + "=" + $(this).val();
                     }
                 });
-                return encodeURIComponent($.trim(pr));
+                return encodeURIComponent(common.trim(pr));
             };
 
             var cfg_enabled = function() {
@@ -1008,6 +1089,8 @@ $(function() {
             $(".localeca").hide();
             $(".localegb").hide();
             $(".localemx").hide();
+            $(".english").hide();
+            if (asm.locale.indexOf("en") == 0) { $(".english").show(); }
             if (asm.locale == "en") { $(".localeus").show(); }
             if (asm.locale == "en_AU") { $(".localeau").show(); }
             if (asm.locale == "en_GB") { $(".localegb").show(); }
@@ -1015,13 +1098,16 @@ $(function() {
             if (asm.locale == "en_MX" || asm.locale == "es_MX") { $(".localemx").show(); }
 
             // Disable services that require sitedef setup
+            if (!controller.hasakcreunite) { $(".hasakcreunite").hide(); }
             if (!controller.hasfoundanimals) { $(".hasfoundanimals").hide(); }
+            if (!controller.hashomeagain) { $(".hashomeagain").hide(); }
             if (!controller.hasmaddiesfund) { $(".hasmaddiesfund").hide(); }
+            if (!controller.haspetcademy) { $(".haspetcademy").hide(); }
             if (!controller.haspetlink) { $(".haspetlink").hide(); }
             if (!controller.haspetrescue) { $(".haspetrescue").hide(); }
             if (!controller.haspetslocated) { $(".haspetslocated").hide(); }
             if (!controller.hassavourlife) { $(".hassavourlife").hide(); }
-            if (!controller.hasvevendor) { $(".hasvevendor").hide(); }
+            if (!controller.hasvetenvoy) { $(".hasvetenvoy").hide(); }
             if (!controller.hassmarttag) { $(".hassmarttag").hide(); }
 
             // Components
@@ -1110,9 +1196,8 @@ $(function() {
                 $("#dialog-vetenvoy").dialog("open");
             });
 
-            // Only show the VetEnvoy signup button if we have
-            // a System Vendor user/password and no userid set
-            if (controller.hasvesys && !config.str("VetEnvoyUserId")) {
+            // Only show the VetEnvoy signup button if we no userid set
+            if (!config.str("VetEnvoyUserId")) {
                 $("#button-vesignup").show();
                 // Set default signup values from what we know of the shelter already
                 $("#vepraticename").val(config.str("Organisation"));
@@ -1123,6 +1208,20 @@ $(function() {
             }
             else {
                 $("#button-vesignup").hide();
+            }
+
+            // Pushing the AKC generate enrollment id button generates an id
+            $("#button-akenroll").button().click(function() {
+                $("#akenrollmentid").val( common.generate_uuid() );
+                $("#button-akenroll").hide();
+            });
+
+            // Only show the AKC enrollment id button if none is set
+            if (!config.str("AKCEnrollmentSourceID") || common.trim(config.str("AKCEnrollmentSourceID")) == "") {
+                $("#button-akenroll").show();
+            }
+            else {
+                $("#button-akenroll").hide();
             }
 
             validate.bind_dirty();

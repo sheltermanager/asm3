@@ -1,7 +1,8 @@
-/*jslint browser: true, forin: true, eqeq: true, white: true, sloppy: true, vars: true, nomen: true */
 /*global $, jQuery, _, asm, common, config, controller, dlgfx, edit_header, format, header, html, tableform, validate */
 
 $(function() {
+
+    "use strict";
 
     var staff_rota = {
 
@@ -66,13 +67,15 @@ $(function() {
                 title = "",
                 i, 
                 d = format.date_js(controller.startdate),
-                year = d.getFullYear(),
-                thisweekno = format.date_weeknumber(d),
                 weekno = 1,
                 selattr = "",
-                w = format.first_iso_monday_of_year(d),
-                weekoptions = [];
-
+                weekoptions = [],
+                // We add 6 days when calling these two functions so that if
+                // d is in the last week of the year, we show the dropdown list
+                // for the next year instead of the one we are leaving.
+                w = format.first_iso_monday_of_year(common.add_days(d, 6)),
+                thisweekno = format.date_weeknumber(common.add_days(d, 6));
+            
             // Generate a list of options for every week of the year
             while (weekno <= 52) {
                 selattr = "";
@@ -112,7 +115,7 @@ $(function() {
                 }
                 // If there are some flags set in the filter box, make sure this person has them before
                 // rendering their row
-                if ($("#flags").val()) {
+                if ($("#flags").val().length > 0) {
                     if (!p.ADDITIONALFLAGS) { return; }
                     if (!common.array_overlap($("#flags").val(), p.ADDITIONALFLAGS.split("|"))) { return ; }
                 }
@@ -301,7 +304,7 @@ $(function() {
                 $("#flags option[value='" + v + "']").remove();
             });
             $("#flags").change();
-            // Mark set any that were passed during page load
+            // Mark set any flags that were passed from the backend as params to the page
             if (controller.flagsel) {
                 $.each(controller.flagsel.split("|"), function(i, v) {
                     $("#flags option[value='" + v + "']").prop("selected", true); 

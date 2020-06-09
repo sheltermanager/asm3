@@ -17,6 +17,25 @@ ORDER BY o.OwnerSurname
 ###
 MAIL
 &&&
+All People (exclude banned)
+###
+Membership
+###
+33310/Any
+###
+Person info for all people, excluding banned adopters.
+###
+en
+###
+SELECT DISTINCT o.OwnerName,o.OwnerAddress, o.OwnerTown, o.OwnerCounty, o.OwnerPostcode, 
+o.HomeTelephone, o.WorkTelephone, o.MobileTelephone, o.EmailAddress, o.OwnerTitle, o.OwnerForenames,
+o.OwnerSurname, o.MembershipExpiryDate
+FROM owner o
+WHERE o.ExcludeFromBulkEmail = 0 AND o.IsDeceased = 0 AND o.OwnerType = 1 AND o.IsBanned = 0
+ORDER BY o.OwnerSurname
+###
+MAIL
+&&&
 All Organizations
 ###
 Membership

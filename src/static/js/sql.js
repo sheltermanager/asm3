@@ -1,7 +1,8 @@
-/*jslint browser: true, forin: true, eqeq: true, white: true, sloppy: true, vars: true, nomen: true */
 /*global $, jQuery, _, asm, common, config, controller, dlgfx, format, header, html, tableform, validate */
 
 $(function() {
+
+    "use strict";
 
     var sql = {
 
@@ -31,6 +32,7 @@ $(function() {
                         // ASM2_COMPATIBILITY
                         "animalcsv|" + _("CSV of animal/adopter data"), 
                         "medicalcsv|" + _("CSV of animal/medical data"), 
+                        "mediacsv|" + _("CSV of media data"), 
                         "personcsv|" + _("CSV of person data"),
                         "incidentcsv|" + _("CSV of incident data"),
                         "licencecsv|" + _("CSV of license data"),
@@ -41,7 +43,7 @@ $(function() {
                     ]}
                 ], true),
                 '</div>',
-                '<textarea id="sql" class="asm-sqleditor" data-height="150px" data="sql" rows="10"></textarea>',
+                '<textarea id="sql" class="asm-sqleditor" data-width="100%" data-height="150px" data="sql" rows="10"></textarea>',
                 '<hr />',
                 '<table id="sql-results"></table>',
                 html.content_footer()

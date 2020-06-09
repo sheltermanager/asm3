@@ -1,7 +1,8 @@
-/*jslint browser: true, forin: true, eqeq: true, white: true, sloppy: true, vars: true, nomen: true */
 /*global $, jQuery, _, asm, common, config, controller, dlgfx, format, header, html, tableform, validate */
 
 $(function() {
+
+    "use strict";
 
     var emailhours = [
         { display: _("With overnight batch"), value: -1 },
@@ -130,6 +131,9 @@ $(function() {
                     { field: "VIEWROLES", display: _("Roles"), formatter: function(row) {
                         return common.nulltostr(row.VIEWROLES).replace(/[|]+/g, ", ");
                     }},
+                    { field: "DAILYEMAIL", display: _("Email To"), formatter: function(row) {
+                        return common.replace_all(row.DAILYEMAIL, ",", "\n");
+                    }},
                     { field: "TITLE", display: _("Report Title"), initialsort: true },
                     { field: "DESCRIPTION", display: _("Description") }
                 ]
@@ -230,7 +234,7 @@ $(function() {
                 '<div id="dialog-headfoot" style="display: none" title="' + html.title(_("Edit Header/Footer")) + '">',
                 '<div class="ui-state-highlight ui-corner-all">',
                     '<p>',
-                        '<span class="ui-icon ui-icon-info" style="float: left; margin-right: .3em;"></span>',
+                        '<span class="ui-icon ui-icon-info"></span>',
                         _("These are the HTML headers and footers used when generating reports."),
                     '</p>',
                 '</div>',

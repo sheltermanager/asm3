@@ -2,7 +2,7 @@ Average Time On Shelter By Age Group
 ###
 Movement Charts
 ###
-3000/MySQL
+33018/MySQL
 ###
 Average time spent on shelter for all animals by year and age group.
 ###
@@ -13,7 +13,7 @@ AgeGroup,
 YEAR(DateBroughtIn) AS biyear,
 AVG(DaysOnShelter) AS TimeOnShelter
 FROM animal
-WHERE DaysOnShelter > 0 AND NonShelterAnimal = 0
+WHERE DaysOnShelter > 0 AND NonShelterAnimal = 0 AND HasPermanentFoster = 0
 GROUP BY AgeGroup, YEAR(DateBroughtIn)
 ###
 GRAPH LINES
@@ -22,7 +22,7 @@ Average Time On Shelter By Age Group
 ###
 Movement Charts
 ###
-3000/PostgreSQL
+33018/PostgreSQL
 ###
 Average time spent on shelter for all animals by year and age group.
 ###
@@ -33,7 +33,7 @@ AgeGroup,
 CAST(EXTRACT(YEAR FROM DateBroughtIn) AS INTEGER) AS biyear,
 CAST(AVG(DaysOnShelter) AS INTEGER) AS avtimeonshelter
 FROM animal
-WHERE DaysOnShelter > 0 AND NonShelterAnimal = 0
+WHERE DaysOnShelter > 0 AND NonShelterAnimal = 0 AND HasPermanentFoster = 0
 GROUP BY AgeGroup, EXTRACT(YEAR FROM DateBroughtIn)
 ORDER BY AgeGroup, EXTRACT(YEAR FROM DateBroughtIn)
 ###

@@ -9,14 +9,16 @@ import asm3.person
 import asm3.users
 import asm3.utils
 
-from asm3.i18n import BUILD, _, translate, format_currency, format_date, get_locales, now, python2display, python2unix
-from asm3.sitedefs import BASE_URL, LOCALE, MINIFY_JS, ROLLUP_JS
-from asm3.sitedefs import ASMSELECT_CSS, ASMSELECT_JS, BASE64_JS, CODEMIRROR_CSS, CODEMIRROR_JS, CODEMIRROR_BASE, EXIFRESTORER_JS, FLOT_JS, FLOT_PIE_JS, FULLCALENDAR_JS, FULLCALENDAR_CSS, JQUERY_JS, JQUERY_UI_JS, JQUERY_UI_CSS, MOMENT_JS, MOUSETRAP_JS, PATH_JS, SIGNATURE_JS, TABLESORTER_CSS, TABLESORTER_JS, TABLESORTER_WIDGETS_JS, TIMEPICKER_CSS, TIMEPICKER_JS, TINYMCE_4_JS, TOUCHPUNCH_JS
+from asm3.i18n import BUILD, _, translate, format_currency, format_date, get_locales, now, python2display, python2unix, real_locale
+from asm3.sitedefs import QR_IMG_SRC
+from asm3.sitedefs import BASE_URL, LOCALE, ROLLUP_JS
+from asm3.sitedefs import ASMSELECT_CSS, ASMSELECT_JS, BASE64_JS, CODEMIRROR_CSS, CODEMIRROR_JS, CODEMIRROR_BASE, FLOT_JS, FLOT_PIE_JS, FULLCALENDAR_JS, FULLCALENDAR_CSS, JQUERY_JS, JQUERY_UI_JS, JQUERY_UI_CSS, MOMENT_JS, MOUSETRAP_JS, PATH_JS, SIGNATURE_JS, TABLESORTER_CSS, TABLESORTER_JS, TABLESORTER_WIDGETS_JS, TIMEPICKER_CSS, TIMEPICKER_JS, TINYMCE_4_JS, TOUCHPUNCH_JS
 
 import os
 
 BACKGROUND_COLOURS = {
     "asm":              "#ffffff",
+    "base":             "#ffffff",
     "black-tie":        "#333333",
     "blitzer":          "#cc0000",
     "cupertino":        "#deedf7",
@@ -43,22 +45,18 @@ BACKGROUND_COLOURS = {
     "vader":            "#888888"
 }
 
-def js_minified_name(filename):
-    """
-    Returns a minified name to the js filename given if 
-    minifying is turned on and it's not a minified or third
-    party file being requested.
-    """
-    if MINIFY_JS and filename.find("/") == -1 and filename.find(".min") == -1: 
-        filename = "min/" + filename.replace(".js", ".min.js")
-    return filename
-
 def css_tag(uri, idattr=""):
     """
     Returns a css link tag to a resource.
     """
     if idattr != "": idattr = "id=\"%s\"" % idattr
     return "<link rel=\"stylesheet\" type=\"text/css\" href=\"%s\" %s />\n" % (uri, idattr)
+
+def asm_css_tag(filename):
+    """
+    Returns a path to one of our stylesheets
+    """
+    return "<link rel=\"stylesheet\" type=\"text/css\" href=\"static/css/%s?b=%s\" />\n" % (filename, BUILD)
 
 def script_tag(uri, idattr=""):
     """
@@ -69,9 +67,9 @@ def script_tag(uri, idattr=""):
 
 def asm_script_tag(filename):
     """
-    Returns a path to our caching script loader for a javascript file
+    Returns a path to one of our javascript files
     """
-    return "<script type=\"text/javascript\" src=\"x.js?v=%s&k=%s\"></script>\n" % (js_minified_name(filename), BUILD)
+    return "<script type=\"text/javascript\" src=\"static/js/%s?b=%s\"></script>\n" % (filename, BUILD)
 
 def asm_script_tags(path):
     """
@@ -91,33 +89,6 @@ def asm_script_tags(path):
     for i in jsfiles:
         buf.append(asm_script_tag(i))
     return "".join(buf)
-
-def asm_rollup_scripts(path):
-    """
-    Returns the content of all ASM javascript files, rolled up into a single file in the
-    correct load order.
-    """
-    jsfiles = [ "common.js", "common_map.js", "common_widgets.js", "common_animalchooser.js",
-        "common_animalchoosermulti.js", "common_personchooser.js", "common_tableform.js", "header.js",
-        "header_additional.js", "header_edit_header.js" ]
-    exclude = [ "animal_view_adoptable.js", "document_edit.js", "mobile.js", "mobile_sign.js", 
-        "onlineform_extra.js" ]
-    # Read our available js files and append them to this list, not including ones
-    # we've explicitly added above (since they are in correct load order)
-    for i in os.listdir(path + "static/js"):
-        if i not in jsfiles and i not in exclude and not i.startswith(".") and i.endswith(".js"):
-            jsfiles.append(i)
-    # Read them all into a buffer and send it back
-    buf = []
-    for i in jsfiles:
-        buf.append( asm3.utils.read_text_file("%sstatic/js/%s" % (path, js_minified_name(i))) )
-    return "\n".join(buf)
-
-def asm_css_tag(filename):
-    """
-    Returns a path to our caching css loader for a stylesheet
-    """
-    return "<link rel=\"stylesheet\" type=\"text/css\" href=\"x.css?v=%s&k=%s\" />\n" % (filename, BUILD)
 
 def xml(results):
     """
@@ -172,21 +143,19 @@ def bare_header(title, theme = "asm", locale = LOCALE, config_db = "asm", config
     config_ts: A unique timestamp for when we last wanted the config (used for requesting config.js)
                This value changes when we update the config so the cache can be invalidated.
     """
-    # If these values aren't supplied, frontside cache services like cloudflare will cache the
-    # config.js and cause weird issues
     if config_db == "asm" and config_ts == "0":
         config_ts = python2unix(now())
     def script_i18n(l):
-        return "<script type=\"text/javascript\" src=\"i18n.js?l=%s&k=%s\"></script>\n" % (l, BUILD)
+        return "<script type=\"text/javascript\" src=\"static/js/locales/locale_%s.js?b=%s\"></script>\n" % (real_locale(l), BUILD)
     def script_config():
         return "<script type=\"text/javascript\" src=\"config.js?db=%s&ts=%s\"></script>\n" % (config_db, config_ts)
     def script_schema():
-        return "<script type=\"text/javascript\" src=\"schema.js?k=%s\"></script>\n" % (BUILD)
+        return asm_script_tag("bundle/schema.js") # statically generated
     # Use the default if we have no locale
     if locale is None: locale = LOCALE
     # Load the asm scripts
     if ROLLUP_JS:
-        asm_scripts = script_tag("rollup.js?b=%s" % BUILD)
+        asm_scripts = asm_script_tag("bundle/rollup_compat.min.js")
     else:
         asm_scripts = asm_script_tags(asm3.utils.PATH) 
     # Set the body colour from the theme
@@ -211,7 +180,6 @@ def bare_header(title, theme = "asm", locale = LOCALE, config_db = "asm", config
         '</noscript>\n' % {
             "title": title, 
             "scripts": 
-                css_tag(JQUERY_UI_CSS % { "theme": theme}, "jqt") +
                 css_tag(ASMSELECT_CSS) + 
                 css_tag(CODEMIRROR_CSS) + 
                 css_tag(CODEMIRROR_BASE + "addon/display/fullscreen.css") + 
@@ -219,6 +187,7 @@ def bare_header(title, theme = "asm", locale = LOCALE, config_db = "asm", config
                 css_tag(FULLCALENDAR_CSS) +
                 css_tag(TABLESORTER_CSS) + 
                 css_tag(TIMEPICKER_CSS) + 
+                css_tag(JQUERY_UI_CSS % { "theme": theme}, "jqt") +
                 asm_css_tag("asm-icon.css") +
                 asm_css_tag("asm.css") + 
                 script_tag("static/lib/modernizr/modernizr.min.js") + 
@@ -237,7 +206,6 @@ def bare_header(title, theme = "asm", locale = LOCALE, config_db = "asm", config
                 script_tag(CODEMIRROR_BASE + "mode/xml/xml.js") + 
                 script_tag(CODEMIRROR_BASE + "mode/htmlmixed/htmlmixed.js") + 
                 script_tag(CODEMIRROR_BASE + "mode/sql/sql.js") + 
-                script_tag(EXIFRESTORER_JS) +
                 script_tag(FULLCALENDAR_JS) + 
                 script_tag(SIGNATURE_JS) +
                 script_tag(TABLESORTER_JS) + 
@@ -246,8 +214,8 @@ def bare_header(title, theme = "asm", locale = LOCALE, config_db = "asm", config
                 script_tag(TINYMCE_4_JS) +
                 script_tag(PATH_JS) + 
                 script_config() + 
-                script_schema() + 
                 script_i18n(locale) + 
+                script_schema() + 
                 asm_scripts,
             "bgcol": bgcol }
 
@@ -399,6 +367,7 @@ def header(title, session):
     The header for html pages.
     title: The page title
     session: The user session
+    compatjs: True if this browser requires compatibility js for older browsers
     """
     s = bare_header(title, session.theme, session.locale, session.dbo.database, session.config_ts)
     return s
@@ -561,7 +530,7 @@ def menu_structure(l, publisherlist, reports, mailmerges):
             ( asm3.users.ADD_PERSON, "", "", "person_new", "asm-icon-person-add", _("Add a new person", l) ),
             ( asm3.users.ADD_LOG, "", "", "log_new?mode=person", "asm-icon-log", _("Add a log entry", l) ),
             ( asm3.users.VIEW_PERSON, "", "", "person_lookingfor", "asm-icon-animal-find", _("Person looking for report", l) ),
-            ( asm3.users.VIEW_ROTA, "", "tagrota", "staff_rota", "asm-icon-rota", _("Staff rota", l) ),
+            ( asm3.users.VIEW_STAFF_ROTA, "", "tagrota", "staff_rota", "asm-icon-rota", _("Staff rota", l) ),
             ( "", "", "", "--break", "", "" ),
             ( "", "", "taganimalcontrolheader", "--cat", "asm-icon-call", _("Animal Control", l) ),
             ( asm3.users.ADD_INCIDENT, "alt+shift+i", "taganimalcontrol", "incident_new", "asm-icon-blank", _("Report a new incident", l) ),
@@ -580,7 +549,7 @@ def menu_structure(l, publisherlist, reports, mailmerges):
             ( "", "", "tagdocumentrepo", "--cat", "asm-icon-document", _("Document Repository", l) ),
             ( asm3.users.VIEW_REPO_DOCUMENT, "", "tagdocumentrepo", "document_repository", "asm-icon-blank", _("Document Repository", l) ),
             ( "", "", "tagonlineform", "--cat", "asm-icon-forms", _("Online Forms", l) ),
-            ( asm3.users.EDIT_ONLINE_FORMS, "", "tagonlineform", "onlineforms", "asm-icon-blank", _("Edit Online Forms", l) ),
+            ( asm3.users.VIEW_ONLINE_FORMS, "", "tagonlineform", "onlineforms", "asm-icon-blank", _("Edit Online Forms", l) ),
             ( asm3.users.VIEW_INCOMING_FORMS, "alt+shift+m", "tagonlineform", "onlineform_incoming", "asm-icon-blank", _("View Incoming Forms", l) ),
             ( "", "", "tagwaitinglist", "--cat", "asm-icon-waitinglist", _("Waiting List", l) ),
             ( asm3.users.ADD_WAITING_LIST, "", "tagwaitinglist", "waitinglist_new", "asm-icon-blank", _("Add an animal to the waiting list", l) ),
@@ -630,6 +599,7 @@ def menu_structure(l, publisherlist, reports, mailmerges):
         ("", "financial", _("Financial", l), (
             ( asm3.users.VIEW_ACCOUNT, "alt+shift+x", "tagaccounts", "accounts", "asm-icon-accounts", _("Accounts", l) ),
             ( asm3.users.VIEW_STOCKLEVEL, "", "tagstock", "stocklevel", "asm-icon-stock", _("Stock", l) ),
+            ( asm3.users.VIEW_VOUCHER, "", "", "voucher", "asm-icon-blank", _("Voucher book", l) ),
             ( asm3.users.VIEW_DONATION, "", "", "--cat", "", "Payments" ),
             ( asm3.users.VIEW_DONATION, "alt+shift+d", "", "donation", "asm-icon-donation", _("Payment book", l) ),
             ( asm3.users.VIEW_DONATION, "", "", "calendarview?ev=p", "asm-icon-calendar", _("Payment calendar", l) ),
@@ -724,15 +694,18 @@ def json_animalfindcolumns(dbo):
         ( "PickupLocationID", _("Pickup Location", l) ),
         ( "IsQuarantine", _("Quarantine", l) ),
         ( "HasSpecialNeeds", _("Special Needs", l) ),
+        ( "AdditionalFlags", _("Flags", l) ),
         ( "ShelterLocation", _("Location", l) ),
         ( "ShelterLocationUnit", _("Unit", l) ),
         ( "Fosterer", _("Fosterer", l) ),
+        ( "OwnerID", _("Owner", l) ),
         ( "Size", _("Size", l) ),
         ( "Weight", _("Weight", l) ), 
         ( "RabiesTag", _("RabiesTag", l) ),
         ( "TimeOnShelter", _("Time On Shelter", l) ),
         ( "DaysOnShelter", _("Days On Shelter", l) ),
         ( "HasActiveReserve", _("Reserved", l) ), 
+        ( "Adoptable", _("Adoptable", l) ),
         ( "Image", _("Image", l) )
         ]
     fd = asm3.additional.get_field_definitions(dbo, "animal")
@@ -759,6 +732,7 @@ def json_personfindcolumns(dbo):
     l = dbo.locale
     cols = [ 
         ( "CreatedBy", _("Created By", l) ),
+        ( "CreatedDate", _("Created Date", l) ),
         ( "OwnerTitle", _("Title", l) ),
         ( "OwnerInitials", _("Initials", l) ),
         ( "OwnerForenames", _("First Names", l) ),
@@ -789,6 +763,8 @@ def json_personfindcolumns(dbo):
         ( "IsRetailer", _("Retailer", l) ),
         ( "IsVet", _("Vet", l) ),
         ( "IsGiftAid", _("GiftAid", l) ),
+        ( "AdditionalFlags", _("Flags", l) ),
+        ( "LookingForSummary", _("Looking For", l) ),
         ( "HomeCheckAreas", _("Homecheck Areas", l) ),
         ( "DateLastHomeChecked", _("Homecheck Date", l) ),
         ( "HomeCheckedBy", _("Homechecked By", l) )
@@ -796,7 +772,7 @@ def json_personfindcolumns(dbo):
     fd = asm3.additional.get_field_definitions(dbo, "person")
     for f in fd:
         cols.append( (f["FIELDNAME"], f["FIELDLABEL"]) )
-    findcolumns_sort(cols)
+    cols = findcolumns_sort(cols)
     findcolumns_selectedtofront(cols, asm3.configuration.person_search_columns(dbo))
     return cols
 
@@ -862,6 +838,13 @@ def findcolumns_selectedtofront(cols, vals):
                 cols.insert(0, cols.pop(i))
                 break
     return vals
+
+def qr_animal_img_src(animalid, size = "150x150"):
+    """
+    Returns an img src attribute for a QR code to an animal.
+    size is a sizespec eg: 150x150
+    """
+    return QR_IMG_SRC % { "url": BASE_URL + "/animal?id=%s" % animalid, "size": size }
 
 def thumbnail_img_src(dbo, row, mode):
     """
@@ -1216,6 +1199,7 @@ def options_person_flags(dbo):
     l = dbo.locale
     pf = asm3.lookups.get_person_flags(dbo)
     s += option(_("ACO", l), "aco")
+    s += option(_("Adopter", l), "adopter")
     s += option(_("Banned", l), "banned")
     s += option(_("Adoption Coordinator", l), "coordinator")
     s += option(_("Deceased", l), "deceased")

@@ -364,7 +364,7 @@ def update_animalcontrol_completenow(dbo, acid, username, completetype):
     """
     dbo.update("animalcontrol", acid, {
         "IncidentCompletedID":  completetype,
-        "CompletedDate":         dbo.today(),
+        "CompletedDate":         dbo.now(),
     }, username)
 
 def update_animalcontrol_dispatchnow(dbo, acid, username):
@@ -423,7 +423,7 @@ def update_animalcontrol_from_form(dbo, post, username, geocode=True):
         "FollowupComplete2":    post.boolean("followupcomplete2"),
         "FollowupDateTime3":    post.datetime("followupdate3", "followuptime3"),
         "FollowupComplete3":    post.boolean("followupcomplete3"),
-        "CompletedDate":        post.date("completeddate"),
+        "CompletedDate":        post.datetime("completeddate", "completedtime"),
         "IncidentCompletedID":  post.integer("completedtype"),
         "SiteID":               post.integer("site"),
         "OwnerID":              post.integer("owner"),
@@ -517,7 +517,7 @@ def insert_animalcontrol_from_form(dbo, post, username, geocode=True):
         "FollowupComplete2":    post.boolean("followupcomplete2"),
         "FollowupDateTime3":    post.datetime("followupdate3", "followuptime3"),
         "FollowupComplete3":    post.boolean("followupcomplete3"),
-        "CompletedDate":        post.date("completeddate"),
+        "CompletedDate":        post.datetime("completeddate", "completedtime"),
         "IncidentCompletedID":  post.integer("completedtype"),
         "SiteID":               post.integer("site"),
         "OwnerID":              post.integer("owner"),

@@ -1,15 +1,21 @@
-/*jslint browser: true, forin: true, eqeq: true, plusplus: true, white: true, sloppy: true, vars: true, nomen: true, continue: true */
 /*global $, jQuery, alert, FileReader, DATE_FORMAT, IS_FORM */
 
 // This file is included with all online forms and used to load
 // widgets and implement validation behaviour, etc.
 
+// NOTE: This file stands alone and should try for compatibility 
+//       with as many browsers as possible. 
+//       Avoid use of let/const, async/await, destructuring, etc.
 $(document).ready(function() {
 
-    var is_safari = navigator.userAgent.indexOf("Safari") > -1 && navigator.userAgent.indexOf("Chrome") == -1;
-    var is_ios = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-    // NB: None of this js will load for IE8 and older due to JQuery 2 being required
-    var is_ie9 = navigator.appName.indexOf("Internet Explorer") !=-1 && navigator.appVersion.indexOf("MSIE 9")== -1;
+    "use strict";
+
+    var browser_is = {
+        chrome: navigator.userAgent.match(/Chrome/i) != null,
+        safari: navigator.userAgent.match(/Safari/i) != null,
+        ios:    navigator.userAgent.match(/iPad|iPhone|iPod/i) != null,
+        ie9:    navigator.userAgent.match(/MSIE 9/i) != null
+    };
 
     // Loads and scales an image into an image form field for upload
     var process_image = function(field) {
@@ -19,7 +25,7 @@ $(document).ready(function() {
         // Is this an image? If not, stop now
         if (!file.type.match('image.*')) { alert("File is not an image"); field.val(""); return; }
 
-        var max_width = 300, max_height = 300;
+        var max_width = 640, max_height = 640;
 
         // Read the file to an image tag, then render it to
         // an HTML5 canvas to scale it
@@ -52,7 +58,7 @@ $(document).ready(function() {
             canvas.width = img_width;
             ctx.drawImage(img, 0, 0, img_width, img_height);
             var datauri = canvas.toDataURL("image/jpeg");
-            if (datauri.length > 75000) { alert("Scaled image is too large"); return; }
+            if (datauri.length > 384000) { alert("Scaled image is too large"); field.val(""); return; }
             $("input[name='" + field.attr("data-name") + "']").val( datauri );
         };
         imreader.readAsDataURL(file);
@@ -67,7 +73,7 @@ $(document).ready(function() {
                 var img = $(this).find("canvas").get(0).toDataURL("image/png");
                 var fieldname = $(this).attr("data-name");
                 $("input[name='" + fieldname + "']").val(img);
-                if ($(this).signature("isEmpty") && $(this).parent().find(".asm-onlineform-required").length > 0) {
+                if ($(this).signature("isEmpty") && $(this).attr("data-required")) {
                     alert("Signature is required.");
                     rv = false;
                     return false;
@@ -85,7 +91,7 @@ $(document).ready(function() {
         $(".asm-onlineform-image").each(function() {
             var fieldname = $(this).attr("data-name"),
                 v = $(this).val();
-            if (!v && $(this).parent().find(".asm-onlineform-required").length > 0) {
+            if (!v && $(this).attr("data-required")) {
                 alert("You must attach an image");
                 $(this).focus();
                 rv = false;
@@ -113,15 +119,72 @@ $(document).ready(function() {
         return rv;
     };
 
+    // Verifies that mandatory checkbox groups have something in them
+    // as well as loading the values into the hidden field
+    var validate_checkboxgroup = function() {
+        var rv = true;
+        $(".asm-onlineform-checkgroup").each(function() {
+            var fieldname = $(this).attr("data-name"),
+                v = [];
+            $(this).find("input[type='checkbox']:checked").each(function() {
+                v.push($(this).attr("data"));
+            });
+            $("input[name='" + fieldname + "']").val(v.join(","));
+            if (v.length == 0 && $(this).attr("data-required")) {
+                alert("You must choose at least one option");
+                $(this).find("input[type='checkbox']").focus();
+                rv = false;
+                return false;
+            }
+        });
+        return rv;
+    };
+
+    var validate_dates = function() {
+        var rv = true;
+        $(".asm-onlineform-date").each(function() {
+            // If this date has a value, make sure it conforms to DATE_FORMAT
+            var v = $(this).val();
+            if (v) {
+                try {
+                    $.datepicker.parseDate(DATE_FORMAT, v);
+                }
+                catch (e) {
+                    alert("Date is not valid.");
+                    $(this).focus();
+                    rv = false;
+                    return false;
+                }
+            }
+        });
+        return rv;
+    };
+
+    var validate_times = function() {
+        var rv = true;
+        $(".asm-onlineform-time").each(function() {
+            // Times should be HH:MM
+            var v = $(this).val();
+            if (v) {
+                if (!v.match(/^\d\d\:\d\d$/)) {
+                    alert("Time is not valid.");
+                    $(this).focus();
+                    rv = false;
+                    return false;
+                }
+            }
+        });
+        return rv;
+    };
 
     // Validate HTML5 required input fields 
     // (only does anything for iOS and IE9 where the required attribute is not supported)
     var validate_required = function() {
         var rv = true;
-        if (is_ios || is_safari || is_ie9) {
+        if (browser_is.ios || browser_is.ie9) {
             $(".asm-onlineform-date, .asm-onlineform-text, .asm-onlineform-lookup, .asm-onlineform-notes").each(function() {
                 if ($(this).attr("required")) {
-                    var v = $.trim(String($(this).val())); // Throw away whitespace before checking
+                    var v = String($(this).val()).trim(); // Throw away whitespace before checking
                     if (!v) {
                         alert("This field cannot be blank");
                         rv = false;
@@ -133,7 +196,7 @@ $(document).ready(function() {
         }
         return rv;
     };
-
+    
     // Parses all of the query string parameters into the params dictionary
     var parse_params = function() {
         var qstr = window.location.search.substring(1);
@@ -146,12 +209,96 @@ $(document).ready(function() {
         return query;
     };
 
+    // Find every visibleif rule and show/hide accordingly
+    var show_visibleif = function() {
+        $("tr").each(function() {
+            var o = $(this);
+            if (!o.attr("data-visibleif")) { return; } // no rule, do nothing
+            // Split rule in to field, cond (=!), value
+            var m = o.attr("data-visibleif").match(new RegExp("(.*)([=!<>])(.*)"));
+            var field = m[1], cond = m[2], value = m[3];
+            // Find the field and apply the condition
+            $("input, select").each(function() {
+                if ($(this).attr("name") && $(this).attr("name").indexOf(field + "_") == 0) {
+                    var v = $(this).val();
+                    // Checkboxes always return on for val(), if it's a checkbox, set on/off from checked
+                    if ($(this).attr("type") && $(this).attr("type") == "checkbox") { v = $(this).is(":checked") ? "on" : "off"; }
+                    // Radio buttons need reading differently to find the selected value
+                    if ($(this).attr("type") && $(this).attr("type") == "radio") { v = $("[name='" + $(this).attr("name") + "']:checked").val(); }
+                    var toshow = false;
+                    if (cond == "=") { toshow = v == value; }
+                    else if (cond == "!") { toshow = v != value; }
+                    else if (cond == ">") { toshow = v > value; }
+                    else if (cond == "<") { toshow = v < value; }
+                    o.toggle(toshow);
+                    if (!toshow) {
+                        // If we just hid a field that had the required attribute, 
+                        // remove it, otherwise the form won't submit
+                        o.find("input, select, textarea").prop("required", false);
+                    }
+                    else {
+                        // Restore the required attribute to the now visible field 
+                        // if the field had it previously.
+                        if (o.find(".asm-onlineform-required").length > 0) {
+                            o.find("input, select, textarea").prop("required", true);
+                        }
+                    }
+                    return false; // stop iterating fields, we found it
+                }
+            });
+        });
+    };
+
+    // Title case a string, james smith -> James Smith
+    var title_case = function(s) {
+        return s.replace(
+            /\w\S*/g, function(txt) {
+                return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+            }
+        );
+    };
+
+    var upper_fields = [ "postcode", "zipcode", "areapostcode", "areazipcode", 
+        "dropoffpostcode", "dropoffzipcode", "pickuppostcode", "pickupzipcode",
+        "dispatchpostcode", "dispatchzipcode" ];
+    var lower_fields = [ "emailaddress" ]; 
+    var title_fields = [ "title", "initials", "forenames", "surname", 
+        "firstname", "lastname", "address", "town", "county", "city", "state", "country", 
+        "dispatchaddress", "dispatchtown", "dispatchcounty", "dispatchcity", "dispatchstate", 
+        "pickupaddress", "pickuptown", "pickupcounty", "pickupcity", "pickupstate", "pickupcountry",
+        "dropoffaddress", "dropofftown", "dropoffcounty", "dropoffcity", "dropoffstate", "dropoffcountry" ];
+    var state_fields = [ "state", "dispatchstate", "pickupstate", "dropoffstate" ];
+
+    // Called when a form field is changed. If we are dealing with some of our known
+    // special fields, fix any bad character cases. 
+    var fix_case_on_change = function() {
+        if (typeof asm3_dont_fix_case !== 'undefined') { return; } // do nothing if global is declared
+        var name  = $(this).attr("name"), v = $(this).val();
+        if (name.indexOf("_") != -1) { name = name.substring(0, name.indexOf("_")); }
+        if (upper_fields.indexOf(name) != -1) {
+            $(this).val( v.toUpperCase() );
+        }
+        if (lower_fields.indexOf(name) != -1) {
+            $(this).val( v.toLowerCase() );
+        }
+        if (title_fields.indexOf(name) != -1) {
+            $(this).val( title_case(v) );
+        }
+        if (state_fields.indexOf(name) != -1) {
+            if (v.length <= 3) { $(this).val( v.toUpperCase() ); } // US or Aus state code
+        }
+    };
+
     // Load all date and time picker widgets
-    $(".asm-onlineform-date").datepicker({ dateFormat: DATE_FORMAT });
+    $(".asm-onlineform-date").datepicker({ dateFormat: DATE_FORMAT, changeMonth: true, changeYear: true, yearRange: "-90:+3" });
     $(".asm-onlineform-time").timepicker();
 
     // Load all signature widgets and implement the clear button functionality
     try {
+        $(".asm-onlineform-signature").each(function() {
+            $(this).width( Math.min($(window).width()-20, 500 )); // max 500, min viewport width
+            $(this).height(200);
+        });
         $(".asm-onlineform-signature").signature({ guideline: true });
         $(".asm-onlineform-signature-clear").click(function() {
             var signame = $(this).attr("data-clear");
@@ -189,12 +336,23 @@ $(document).ready(function() {
         });
     });
 
+    // Watch text input fields for change so we can fix bad case/etc
+    $("body").on("change", "input", fix_case_on_change);
+
+    // Watch all fields for change and determine whether we need to hide or display rows
+    $("body").on("change", "input, select", show_visibleif);
+    show_visibleif(); // set initial state
+
+
     // Add additional behaviours to when the online form is submitted to validate 
     // components either not supported by HTML5 form validation, or for browsers
     // that do not support it.
     $("input[type='submit']").click(function() {
         if (!validate_signatures()) { return false; }
         if (!validate_lookupmulti()) { return false; }
+        if (!validate_checkboxgroup()) { return false; }
+        if (!validate_dates()) { return false; }
+        if (!validate_times()) { return false; }
         if (!validate_required()) { return false; }
         if (!validate_images()) { return false; }
     });

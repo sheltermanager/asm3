@@ -1,4 +1,3 @@
-/*jslint browser: true, forin: true, eqeq: true, plusplus: true, white: true, sloppy: true, vars: true, nomen: true, continue: true */
 /*global $, jQuery, alert, moment */
 /*global ids */
 
@@ -6,6 +5,8 @@
 // global variable "ids" is set by the python generating the page
 
 $(document).ready(function() {
+
+    "use strict";
 
     $("#signature").signature({ guideline: true });
 

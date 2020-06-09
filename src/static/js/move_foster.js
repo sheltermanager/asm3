@@ -1,7 +1,8 @@
-/*jslint browser: true, forin: true, eqeq: true, white: true, sloppy: true, vars: true, nomen: true */
 /*global $, jQuery, _, asm, common, config, controller, dlgfx, format, header, html, validate */
 
 $(function() {
+
+    "use strict";
 
     var move_foster = {
 
@@ -11,7 +12,7 @@ $(function() {
                 '<input id="movementid" type="hidden" />',
                 html.content_header(_("Foster an animal"), true),
                 '<div id="notonshelter" class="ui-state-error ui-corner-all" style="margin-top: 5px; padding: 0 .7em; width: 60%; margin-left: auto; margin-right: auto">',
-                '<p class="centered"><span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em;"></span>',
+                '<p class="centered"><span class="ui-icon ui-icon-alert"></span>',
                 '<span class="centered">' + _("This animal is not on the shelter.") + '</span>',
                 '</p>',
                 '</div>',
@@ -83,7 +84,7 @@ $(function() {
                     return false;
                 }
                 // date
-                if ($.trim($("#fosterdate").val()) == "") {
+                if (common.trim($("#fosterdate").val()) == "") {
                     header.show_error(_("This type of movement requires a date."));
                     validate.highlight("fosterdate");
                     return false;

@@ -1,9 +1,11 @@
-/*jslint browser: true, forin: true, eqeq: true, white: true, sloppy: true, vars: true, nomen: true */
 /*global $, _, asm, common, config, controller, dlgfx, format, header, html, validate */
 
 $(function() {
 
-    var animal_find = {
+    "use strict";
+
+    const animal_find = {
+
         render: function() {
             return [
                 html.content_header(_("Find Animal")),
@@ -222,7 +224,7 @@ $(function() {
                 '</tr>',
                 '<tr>',
                 '<td>',
-                '<label for="comments">' + _("Comments Contain") + '</label>',
+                '<label for="comments">' + _("Description Contains") + '</label>',
                 '</td>',
                 '<td>',
                 '<input id="comments" data="comments" class="asm-textbox" />',
@@ -337,7 +339,7 @@ $(function() {
 
         bind: function() {
             // Switch to simple search criteria
-            var simpleMode = function() {
+            const simpleMode = function() {
                 $("#mode").val("SIMPLE");
                 $("#asm-search-selector-advanced").removeClass("asm-link-disabled");
                 $("#asm-search-selector-simple").addClass("asm-link-disabled");
@@ -349,7 +351,7 @@ $(function() {
             };
 
             // Switch to advanced search criteria
-            var advancedMode = function() {
+            const advancedMode = function() {
                 $("#mode").val("ADVANCED");
                 $("input[data='q']").val("");
                 $("#asm-search-selector-simple").removeClass("asm-link-disabled");
@@ -408,7 +410,7 @@ $(function() {
 
             // Only show the breeds for the selected species
             // The (all) option is displayed by default
-            var changebreedselect1 = function() {
+            const changebreedselect1 = function() {
                 $('optgroup', $('#breedid')).remove();
                 $('#breedp optgroup').clone().appendTo($('#breedid'));
 

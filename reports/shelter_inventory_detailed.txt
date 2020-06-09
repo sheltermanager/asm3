@@ -28,7 +28,7 @@ LEFT OUTER JOIN lksex sx ON sx.ID = a.Sex
 LEFT OUTER JOIN internallocation i ON i.ID = a.ShelterLocation
 WHERE a.Archived = 0
 ORDER BY
-CASE WHEN a.ActiveMovementType = 2 THEN 'Foster' ELSE i.LocationName END, s.SpeciesName, DateBroughtIn
+CASE WHEN a.ActiveMovementType = 2 THEN 'Foster' WHEN a.ActiveMovementType = 8 THEN 'Retailer' ELSE i.LocationName END, s.SpeciesName, DateBroughtIn
 ###
 $$HEADER
 HEADER$$
@@ -46,8 +46,8 @@ $$HEAD
 <table border=1><tr>
 <td><b>Code</b></td>
 <td><b>Name</b></td>
-<td><b>Type</b></td>
 <td><b>Microchip</b></td>
+<td><b>Type</b></td>
 <td><b>Age</b></td>
 <td><b>Breed</b></td>
 <td><b>Sex</b></td>
@@ -63,8 +63,8 @@ $$BODY
 <tr>
 <td>$sheltercode</td>
 <td>$animalname</td>
-<td>$animaltype</td>
 <td>$identichipnumber</td>
+<td>$animaltype</td>
 <td>$animalage</td>
 <td>$breedname</td>
 <td>$sex</td>

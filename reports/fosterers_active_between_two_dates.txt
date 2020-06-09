@@ -13,7 +13,7 @@ $VAR to DATE Enter to date$
 
 SELECT
 OwnerName,
-OwnerAddress, OwnerTown, OwnerCounty, OwnerPostcode, HomeTelephone, MobileTelephone,
+OwnerAddress, OwnerTown, OwnerCounty, OwnerPostcode, EmailAddress, HomeTelephone, MobileTelephone,
 Comments,
 AdditionalFlags,
 (SELECT COUNT(*) FROM adoption WHERE OwnerID = owner.ID AND (ReturnDate Is Null OR ReturnDate > '$CURRENT_DATE$')) AS ActiveFosters,
@@ -39,6 +39,7 @@ $$BODY
 <td>$OWNERNAME</td>
 <td>$OWNERADDRESS<br/>
 $OWNERTOWN $OWNERCOUNTY $OWNERPOSTCODE<br/>
+E: $EMAILADDRESS<br/>
 H: $HOMETELEPHONE<br/>
 M: $MOBILETELEPHONE</td>
 <td>$ADDITIONALFLAGS</td>

@@ -1,7 +1,8 @@
-/*jslint browser: true, forin: true, eqeq: true, white: true, sloppy: true, vars: true, nomen: true */
 /*global $, jQuery, _, asm, common, config, controller, dlgfx, format, header, html, validate */
 
 $(function() {
+
+    "use strict";
 
     var move_gendoc = {
 
@@ -9,7 +10,7 @@ $(function() {
             return [
                 html.content_header(_("Generate documentation")),
                 '<div class="ui-state-highlight ui-corner-all" style="margin-top: 5px; padding: 0 .7em;">',
-                '<p class="centered"><span class="ui-icon ui-icon-info" style="float: left; margin-right: .3em;"></span>',
+                '<p class="centered"><span class="ui-icon ui-icon-info"></span>',
                 common.base64_decode(controller.message),
                 '</p>',
                 '</div>',

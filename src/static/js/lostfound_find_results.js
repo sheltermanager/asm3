@@ -1,7 +1,8 @@
-/*jslint browser: true, forin: true, eqeq: true, white: true, sloppy: true, vars: true, nomen: true */
 /*global $, jQuery, _, asm, common, config, controller, dlgfx, edit_header, format, header, html, validate */
 
 $(function() {
+
+    "use strict";
 
     var lostfound_find_results = {
         
@@ -14,7 +15,7 @@ $(function() {
                 html.content_header(_("Results")),
                 '<div id="asm-results">',
                 '<div class="ui-state-highlight ui-corner-all" style="margin-top: 5px; padding: 0 .7em">',
-                '<p><span class="ui-icon ui-icon-search" style="float: left; margin-right: .3em;"></span>',
+                '<p><span class="ui-icon ui-icon-search"></span>',
                 (this.mode == "lost" ? _("Find lost animal returned {0} results.") : 
                     _("Find found animal returned {0} results.")).replace("{0}", controller.rows.length),
                 '</p>',
@@ -24,6 +25,7 @@ $(function() {
                 '<tr>',
                 '<th>' + _("Number") + '</th>',
                 '<th>' + _("Contact") + '</th>',
+                '<th>' + _("Microchip") + '</th>',
                 '<th>' + _("Area") + '</th>',
                 '<th>' + _("Zipcode") + '</th>',
                 '<th>' + _("Date") + '</th>',
@@ -54,6 +56,7 @@ $(function() {
                     h.push('<td><a href="foundanimal?id=' + r.ID + '">' + format.padleft(r.ID, 6) + '</a></td>');
                 }
                 h.push('<td>' + html.person_link(r.OWNERID, r.OWNERNAME) + '</td>');
+                h.push('<td>' + common.nulltostr(r.MICROCHIPNUMBER) + '</td>');
                 if (lostfound_find_results.mode == "lost") {
                     h.push('<td>' + r.AREALOST + '</td>');
                 }
@@ -80,6 +83,7 @@ $(function() {
 
         bind: function() {
             $("#searchresults").table();
+            $("#searchresults").trigger("sorton", [[[4, 0]]]); // Sort on date descending (col 4, 0=desc)
         },
 
         name: "lostfound_find_results",

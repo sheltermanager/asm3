@@ -18,8 +18,7 @@ import asm3.template
 import asm3.users
 import asm3.utils
 import asm3.waitinglist
-from asm3.i18n import _, format_currency_no_symbol, format_time, now, python2display, yes_no
-from asm3.sitedefs import BASE_URL, QR_IMG_SRC
+from asm3.i18n import _, format_currency, format_currency_no_symbol, format_time, now, python2display, yes_no
 
 import zipfile
 
@@ -42,6 +41,7 @@ def org_tags(dbo, username):
     orgcounty = asm3.configuration.organisation_county(dbo)
     orgpostcode = asm3.configuration.organisation_postcode(dbo)
     orgtel = asm3.configuration.organisation_telephone(dbo)
+    orgemail = asm3.configuration.email(dbo)
     tags = {
         "ORGANISATION"          : orgname,
         "ORGANISATIONADDRESS"   : orgaddress,
@@ -49,12 +49,14 @@ def org_tags(dbo, username):
         "ORGANISATIONCOUNTY"    : orgcounty,
         "ORGANISATIONPOSTCODE"  : orgpostcode,
         "ORGANISATIONTELEPHONE" : orgtel,
+        "ORGANISATIONEMAIL"     : orgemail,
         "ORGANIZATION"          : orgname,
         "ORGANIZATIONADDRESS"   : orgaddress,
         "ORGANIZATIONCITY"      : orgtown,
         "ORGANIZATIONSTATE"     : orgcounty,
         "ORGANIZATIONZIPCODE"   : orgpostcode,
         "ORGANIZATIONTELEPHONE" : orgtel,
+        "ORGANIZATIONEMAIL"     : orgemail,
         "DATE"                  : python2display(dbo.locale, now(dbo.timezone)),
         "USERNAME"              : username,
         "USERREALNAME"          : realname,
@@ -129,17 +131,16 @@ def animal_tags_publisher(dbo, a, includeAdditional=True):
     database calls for each asm3.animal.
     """
     return animal_tags(dbo, a, includeAdditional=includeAdditional, includeCosts=False, includeDiet=True, \
-        includeDonations=False, includeFutureOwner=False, includeIsVaccinated=True, includeLogs=False, includeMedical=False, includeTransport=False)
+        includeDonations=False, includeFutureOwner=False, includeIsVaccinated=True, includeLitterMates=False, \
+        includeLogs=False, includeMedical=False, includeTransport=False)
 
 def animal_tags(dbo, a, includeAdditional=True, includeCosts=True, includeDiet=True, includeDonations=True, \
-        includeFutureOwner=True, includeIsVaccinated=True, includeLogs=True, includeMedical=True, includeTransport=True):
+        includeFutureOwner=True, includeIsVaccinated=True, includeLitterMates=True, includeLogs=True, \
+        includeMedical=True, includeTransport=True):
     """
-    Generates a list of tags from an animal result (the deep type from
-    calling asm3.animal.get_animal)
-    includeAdoptionStatus in particular is expensive. If you don't need some of the tags, you can not include them.
+    Generates a list of tags from an animal result (the deep type from calling asm3.animal.get_animal)
     """
     l = dbo.locale
-    qr = QR_IMG_SRC % { "url": BASE_URL + "/animal?id=%d" % a["ID"], "size": "150x150" }
     animalage = a["ANIMALAGE"]
     if animalage and animalage.endswith("."): 
         animalage = animalage[0:len(animalage)-1]
@@ -171,7 +172,7 @@ def animal_tags(dbo, a, includeAdditional=True, includeCosts=True, includeDiet=T
         "ANIMALCREATEDBY"       : a["CREATEDBY"],
         "ANIMALCREATEDDATE"     : python2display(l, a["CREATEDDATE"]),
         "DATEBROUGHTIN"         : python2display(l, a["DATEBROUGHTIN"]),
-        "TIMEBROUGHTIN"         : format_time(a["DATEBROUGHTIN"]),
+        "TIMEBROUGHTIN"         : format_time(a["DATEBROUGHTIN"], "%H:%M"),
         "DATEOFBIRTH"           : python2display(l, a["DATEOFBIRTH"]),
         "AGEGROUP"              : a["AGEGROUP"],
         "DISPLAYDOB"            : displaydob,
@@ -225,8 +226,8 @@ def animal_tags(dbo, a, includeAdditional=True, includeCosts=True, includeDiet=T
         "DISPLAYCATSIFBADWITH" : asm3.utils.iif(a["ISGOODWITHCATS"] == 1, _("Cats", l), ""),
         "DISPLAYDOGSIFBADWITH" : asm3.utils.iif(a["ISGOODWITHDOGS"] == 1, _("Dogs", l), ""),
         "DISPLAYCHILDRENIFBADWITH" : asm3.utils.iif(a["ISGOODWITHCHILDREN"] == 1, _("Children", l), ""),
-        "PICKUPLOCATIONNAME"    : asm3.utils.nulltostr(a["PICKUPLOCATIONNAME"]),
-        "PICKUPADDRESS"         : asm3.utils.nulltostr(a["PICKUPADDRESS"]),
+        "PICKUPLOCATIONNAME"    : asm3.utils.iif(a["ISPICKUP"] == 1, asm3.utils.nulltostr(a["PICKUPLOCATIONNAME"]), ""),
+        "PICKUPADDRESS"         : asm3.utils.iif(a["ISPICKUP"] == 1, asm3.utils.nulltostr(a["PICKUPADDRESS"]), ""),
         "NAMEOFPERSONBROUGHTANIMALIN" : a["BROUGHTINBYOWNERNAME"],
         "ADDRESSOFPERSONBROUGHTANIMALIN" : a["BROUGHTINBYOWNERADDRESS"],
         "TOWNOFPERSONBROUGHTANIMALIN" : a["BROUGHTINBYOWNERTOWN"],
@@ -391,7 +392,11 @@ def animal_tags(dbo, a, includeAdditional=True, includeCosts=True, includeDiet=T
         "DOCUMENTIMGLINK500"    : "<img height=\"500\" src=\"" + asm3.html.doc_img_src(dbo, a) + "\" >",
         "DOCUMENTIMGTHUMBSRC"   : asm3.html.thumbnail_img_src(dbo, a, "animalthumb"),
         "DOCUMENTIMGTHUMBLINK"  : "<img src=\"" + asm3.html.thumbnail_img_src(dbo, a, "animalthumb") + "\" />",
-        "DOCUMENTQRLINK"        : "<img src=\"%s\" />" % qr,
+        "DOCUMENTQRLINK"        : "<img src=\"%s\" />" % asm3.html.qr_animal_img_src(a.ID),
+        "DOCUMENTQRLINK200"     : "<img src=\"%s\" />" % asm3.html.qr_animal_img_src(a.ID, "200x200"),
+        "DOCUMENTQRLINK150"     : "<img src=\"%s\" />" % asm3.html.qr_animal_img_src(a.ID, "150x150"),
+        "DOCUMENTQRLINK100"     : "<img src=\"%s\" />" % asm3.html.qr_animal_img_src(a.ID, "100x100"),
+        "DOCUMENTQRLINK50"      : "<img src=\"%s\" />" % asm3.html.qr_animal_img_src(a.ID, "50x50"),
         "ADOPTIONSTATUS"        : asm3.publishers.base.get_adoption_status(dbo, a),
         "ANIMALISADOPTABLE"     : asm3.utils.iif(asm3.publishers.base.is_animal_adoptable(dbo, a), _("Yes", l), _("No", l)),
         "ANIMALONSHELTER"       : yes_no(l, a["ARCHIVED"] == 0),
@@ -399,6 +404,7 @@ def animal_tags(dbo, a, includeAdditional=True, includeCosts=True, includeDiet=T
         "ANIMALPERMANENTFOSTER" : yes_no(l, a["HASPERMANENTFOSTER"] == 1),
         "ANIMALATRETAILER"      : yes_no(l, a["ACTIVEMOVEMENTTYPE"] == asm3.movement.RETAILER),
         "ANIMALISRESERVED"      : yes_no(l, a["HASACTIVERESERVE"] == 1),
+        "RESERVATIONDATE"       : python2display(l, a["RESERVATIONDATE"]),
         "ADOPTIONID"            : a["ACTIVEMOVEMENTADOPTIONNUMBER"],
         "OUTCOMEDATE"           : asm3.utils.iif(a["DECEASEDDATE"] is None, python2display(l, a["ACTIVEMOVEMENTDATE"]), python2display(l, a["DECEASEDDATE"])),
         "OUTCOMETYPE"           : asm3.utils.iif(a["ARCHIVED"] == 1, a["DISPLAYLOCATIONNAME"], "")
@@ -490,7 +496,15 @@ def animal_tags(dbo, a, includeAdditional=True, includeCosts=True, includeDiet=T
             "VACCINATIONADMINISTERINGVETZIPCODE":   "ADMINISTERINGVETPOSTCODE",
             "VACCINATIONADMINISTERINGVETEMAIL":     "ADMINISTERINGVETEMAIL"
         }
-        tags.update(table_tags(dbo, d, asm3.medical.get_vaccinations(dbo, a["ID"], not iic), "VACCINATIONTYPE", "DATEREQUIRED", "DATEOFVACCINATION"))
+        vaccinations = asm3.medical.get_vaccinations(dbo, a["ID"], not iic)
+        tags.update(table_tags(dbo, d, vaccinations, "VACCINATIONTYPE", "DATEREQUIRED", "DATEOFVACCINATION"))
+        tags["ANIMALVACCINATIONS"] = html_table(l, vaccinations, (
+            ( "VACCINATIONTYPE", _("Type", l) ),
+            ( "DATEREQUIRED", _("Due", l)),
+            ( "DATEOFVACCINATION", _("Given", l)),
+            ( "MANUFACTURER", _("Manufacturer", l)),
+            ( "COMMENTS", _("Comments", l)) 
+        ))
 
         # Tests
         d = {
@@ -512,9 +526,18 @@ def animal_tags(dbo, a, includeAdditional=True, includeCosts=True, includeDiet=T
             "TESTADMINISTERINGVETPOSTCODE":  "ADMINISTERINGVETPOSTCODE",
             "TESTADMINISTERINGVETZIPCODE":   "ADMINISTERINGVETPOSTCODE",
             "TESTADMINISTERINGVETEMAIL":     "ADMINISTERINGVETEMAIL"
-
         }
-        tags.update(table_tags(dbo, d, asm3.medical.get_tests(dbo, a["ID"], not iic), "TESTNAME", "DATEREQUIRED", "DATEOFTEST"))
+        tests = asm3.medical.get_tests(dbo, a["ID"], not iic)
+        for t in tests:
+            if t.DATEOFTEST is None: t.RESULTNAME = "" # Do not show a result for ungiven tests
+        tags.update(table_tags(dbo, d, tests, "TESTNAME", "DATEREQUIRED", "DATEOFTEST"))
+        tags["ANIMALTESTS"] = html_table(l, tests, (
+            ( "TESTNAME", _("Type", l) ),
+            ( "DATEREQUIRED", _("Required", l)),
+            ( "DATEOFTEST", _("Performed", l)),
+            ( "RESULTNAME", _("Result", l)),
+            ( "COMMENTS", _("Comments", l)) 
+        ))
 
         # Medical
         d = {
@@ -532,7 +555,15 @@ def animal_tags(dbo, a, includeAdditional=True, includeCosts=True, includeDiet=T
             "MEDICALLASTTREATMENTCOMMENTS": "LASTTREATMENTCOMMENTS",
             "MEDICALCOST":              "c:COST"
         }
-        tags.update(table_tags(dbo, d, asm3.medical.get_regimens(dbo, a["ID"], not iic), "TREATMENTNAME", "NEXTTREATMENTDUE", "LASTTREATMENTGIVEN"))
+        medicals = asm3.medical.get_regimens(dbo, a["ID"], not iic)
+        tags.update(table_tags(dbo, d, medicals, "TREATMENTNAME", "NEXTTREATMENTDUE", "LASTTREATMENTGIVEN"))
+        tags["ANIMALMEDICALS"] = html_table(l, medicals, (
+            ( "TREATMENTNAME", _("Treatment", l) ),
+            ( "DOSAGE", _("Dosage", l) ),
+            ( "LASTTREATMENTGIVEN", _("Given", l)),
+            ( "NEXTTREATMENTDUE", _("Due", l)),
+            ( "COMMENTS", _("Comments", l)) 
+        ))
 
     # Diet
     if includeDiet:
@@ -559,7 +590,10 @@ def animal_tags(dbo, a, includeAdditional=True, includeCosts=True, includeDiet=T
             "PAYMENTMETHOD":            "PAYMENTNAME",
             "PAYMENTDATE":              "d:DATE",
             "PAYMENTDATEDUE":           "d:DATEDUE",
-            "PAYMENTAMOUNT":            "c:DONATION",
+            "PAYMENTAMOUNT":            "c:NET",
+            "PAYMENTGROSS":             "c:GROSS",
+            "PAYMENTNET":               "c:NET",
+            "PAYMENTFEE":               "c:FEE",
             "PAYMENTCOMMENTS":          "COMMENTS",
             "PAYMENTGIFTAID":           "y:ISGIFTAID",
             "PAYMENTVAT":               "y:ISVAT",
@@ -569,7 +603,8 @@ def animal_tags(dbo, a, includeAdditional=True, includeCosts=True, includeDiet=T
             "PAYMENTVATAMOUNT":         "c:VATAMOUNT",
             "PAYMENTTAXAMOUNT":         "c:VATAMOUNT"
         }
-        tags.update(table_tags(dbo, d, asm3.financial.get_animal_donations(dbo, a["ID"]), "DONATIONNAME", "DATEDUE", "DATE"))
+        dons = asm3.financial.get_animal_donations(dbo, a["ID"])
+        tags.update(table_tags(dbo, d, dons, "DONATIONNAME", "DATEDUE", "DATE"))
 
     # Transport
     if includeTransport:
@@ -645,6 +680,14 @@ def animal_tags(dbo, a, includeAdditional=True, includeCosts=True, includeDiet=T
         }
         tags = append_tags(tags, costtags)
 
+    if includeLitterMates:
+        # Littermates
+        lm = dbo.query("SELECT AnimalName, ShelterCode FROM animal WHERE AcceptanceNumber = ? AND ID <> ?", [ a["ACCEPTANCENUMBER"], a["ID"] ])
+        tags["LITTERMATES"] = html_table(l, lm, (
+            ( "SHELTERCODE", _("Code", l)),
+            ( "ANIMALNAME", _("Name", l))
+        ))
+
     if includeLogs:
         # Logs
         d = {
@@ -654,7 +697,14 @@ def animal_tags(dbo, a, includeAdditional=True, includeCosts=True, includeDiet=T
             "LOGCOMMENTS":              "COMMENTS",
             "LOGCREATEDBY":             "CREATEDBY"
         }
-        tags.update(table_tags(dbo, d, asm3.log.get_logs(dbo, asm3.log.ANIMAL, a["ID"], 0, asm3.log.ASCENDING), "LOGTYPENAME", "DATE", "DATE"))
+        logs = asm3.log.get_logs(dbo, asm3.log.ANIMAL, a["ID"], 0, asm3.log.ASCENDING)
+        tags.update(table_tags(dbo, d, logs, "LOGTYPENAME", "DATE", "DATE"))
+        tags["ANIMALLOGS"] = html_table(l, logs, (
+            ( "DATE", _("Date", l)),
+            ( "LOGTYPENAME", _("Type", l)),
+            ( "CREATEDBY", _("By", l)),
+            ( "COMMENTS", _("Comments", l))
+        ))
 
     return tags
 
@@ -667,14 +717,14 @@ def animalcontrol_tags(dbo, ac):
     tags = {
         "INCIDENTNUMBER":       asm3.utils.padleft(ac["ACID"], 6),
         "INCIDENTDATE":         python2display(l, ac["INCIDENTDATETIME"]),
-        "INCIDENTTIME":         format_time(ac["INCIDENTDATETIME"]),
+        "INCIDENTTIME":         format_time(ac["INCIDENTDATETIME"], "%H:%M"),
         "INCIDENTTYPENAME":     asm3.utils.nulltostr(ac["INCIDENTNAME"]),
         "CALLDATE":             python2display(l, ac["CALLDATETIME"]),
-        "CALLTIME":             format_time(ac["CALLDATETIME"]),
+        "CALLTIME":             format_time(ac["CALLDATETIME"], "%H:%M"),
         "CALLNOTES":            ac["CALLNOTES"],
         "CALLTAKER":            ac["CALLTAKER"],
         "DISPATCHDATE":         python2display(l, ac["DISPATCHDATETIME"]),
-        "DISPATCHTIME":         format_time(ac["DISPATCHDATETIME"]),
+        "DISPATCHTIME":         format_time(ac["DISPATCHDATETIME"], "%H:%M"),
         "DISPATCHADDRESS":      ac["DISPATCHADDRESS"],
         "DISPATCHTOWN":         ac["DISPATCHTOWN"],
         "DISPATCHCITY":         ac["DISPATCHTOWN"],
@@ -685,13 +735,13 @@ def animalcontrol_tags(dbo, ac):
         "DISPATCHEDACO":        ac["DISPATCHEDACO"],
         "PICKUPLOCATIONNAME":   asm3.utils.nulltostr(ac["LOCATIONNAME"]),
         "RESPONDEDDATE":        python2display(l, ac["RESPONDEDDATETIME"]),
-        "RESPONDEDTIME":        format_time(ac["RESPONDEDDATETIME"]),
+        "RESPONDEDTIME":        format_time(ac["RESPONDEDDATETIME"], "%H:%M"),
         "FOLLOWUPDATE":         python2display(l, ac["FOLLOWUPDATETIME"]),
-        "FOLLOWUPTIME":         format_time(ac["FOLLOWUPDATETIME"]),
+        "FOLLOWUPTIME":         format_time(ac["FOLLOWUPDATETIME"], "%H:%M"),
         "FOLLOWUPDATE2":         python2display(l, ac["FOLLOWUPDATETIME2"]),
-        "FOLLOWUPTIME2":         format_time(ac["FOLLOWUPDATETIME2"]),
+        "FOLLOWUPTIME2":         format_time(ac["FOLLOWUPDATETIME2"], "%H:%M"),
         "FOLLOWUPDATE3":         python2display(l, ac["FOLLOWUPDATETIME3"]),
-        "FOLLOWUPTIME3":         format_time(ac["FOLLOWUPDATETIME3"]),
+        "FOLLOWUPTIME3":         format_time(ac["FOLLOWUPDATETIME3"], "%H:%M"),
         "COMPLETEDDATE":        python2display(l, ac["COMPLETEDDATE"]),
         "COMPLETEDTYPENAME":    asm3.utils.nulltostr(ac["COMPLETEDNAME"]),
         "ANIMALDESCRIPTION":    ac["ANIMALDESCRIPTION"],
@@ -789,7 +839,7 @@ def donation_tags(dbo, donations):
     """
     l = dbo.locale
     tags = {}
-    totals = { "due": 0, "received": 0, "vat": 0, "total": 0, "taxrate": 0.0 }
+    totals = { "due": 0, "gross": 0, "net": 0, "vat": 0, "taxrate": 0.0 }
     def add_to_tags(i, p): 
         x = { 
             "DONATIONID"+i          : str(p["ID"]),
@@ -819,7 +869,10 @@ def donation_tags(dbo, donations):
             "PAYMENTDATEDUE"+i      : python2display(l, p["DATEDUE"]),
             "PAYMENTQUANTITY"+i    : str(p["QUANTITY"]),
             "PAYMENTUNITPRICE"+i   : format_currency_no_symbol(l, p["UNITPRICE"]),
-            "PAYMENTAMOUNT"+i       : format_currency_no_symbol(l, p["DONATION"]),
+            "PAYMENTGROSS"+i        : format_currency_no_symbol(l, p["GROSS"]),
+            "PAYMENTNET"+i          : format_currency_no_symbol(l, p["NET"]),
+            "PAYMENTAMOUNT"+i       : format_currency_no_symbol(l, p["NET"]), 
+            "PAYMENTFEE"+i          : format_currency_no_symbol(l, p["FEE"]),
             "PAYMENTCOMMENTS"+i     : p["COMMENTS"],
             "PAYMENTCOMMENTSFW"+i   : fw(p["COMMENTS"]),
             "PAYMENTGIFTAID"+i      : p["ISGIFTAIDNAME"],
@@ -839,15 +892,22 @@ def donation_tags(dbo, donations):
             "PAYMENTANIMALSHELTERCODE"+i : p["SHELTERCODE"],
             "PAYMENTANIMALSHORTCODE"+i : p["SHORTCODE"],
             "PAYMENTPERSONNAME"+i   : p["OWNERNAME"],
+            "PAYMENTPERSONADDRESS"+i : p["OWNERADDRESS"],
+            "PAYMENTPERSONTOWN"+i   : p["OWNERTOWN"],
+            "PAYMENTPERSONCITY"+i   : p["OWNERTOWN"],
+            "PAYMENTPERSONCOUNTY"+i  : p["OWNERCOUNTY"],
+            "PAYMENTPERSONSTATE"+i  : p["OWNERCOUNTY"],
+            "PAYMENTPERSONPOSTCODE"+i : p["OWNERPOSTCODE"],
+            "PAYMENTPERSONZIPCODE"+i : p["OWNERPOSTCODE"]
         }
         tags.update(x)
         if i == "": return # Don't add a total for the compatibility row
-        if p["VATRATE"] > totals["taxrate"]:
+        if p["VATRATE"] is not None and p["VATRATE"] > totals["taxrate"]:
             totals["taxrate"] = p["VATRATE"]
         if p["DATE"] is not None: 
-            totals["received"] += asm3.utils.cint(p["DONATION"])
             totals["vat"] += asm3.utils.cint(p["VATAMOUNT"])
-            totals["total"] += asm3.utils.cint(p["VATAMOUNT"]) + asm3.utils.cint(p["DONATION"])
+            totals["net"] += asm3.utils.cint(p["NET"])
+            totals["gross"] += asm3.utils.cint(p["GROSS"])
         if p["DATE"] is None: 
             totals["due"] += asm3.utils.cint(p["DONATION"])
     # Add a copy of the donation tags without an index for compatibility
@@ -856,12 +916,14 @@ def donation_tags(dbo, donations):
     for i, d in enumerate(donations):
         add_to_tags(str(i+1), d)
     tags["PAYMENTTOTALDUE"] = format_currency_no_symbol(l, totals["due"])
-    tags["PAYMENTTOTALRECEIVED"] = format_currency_no_symbol(l, totals["received"])
+    tags["PAYMENTTOTALNET"] = format_currency_no_symbol(l, totals["net"])
+    tags["PAYMENTTOTALRECEIVED"] = format_currency_no_symbol(l, totals["net"])
     tags["PAYMENTTOTALVATRATE"] = "%0.2f" % totals["taxrate"]
     tags["PAYMENTTOTALTAXRATE"] = "%0.2f" % totals["taxrate"]
     tags["PAYMENTTOTALVAT"] = format_currency_no_symbol(l, totals["vat"])
     tags["PAYMENTTOTALTAX"] = format_currency_no_symbol(l, totals["vat"])
-    tags["PAYMENTTOTAL"] = format_currency_no_symbol(l, totals["total"])
+    tags["PAYMENTTOTALGROSS"] = format_currency_no_symbol(l, totals["gross"])
+    tags["PAYMENTTOTAL"] = format_currency_no_symbol(l, totals["gross"])
     return tags
 
 def foundanimal_tags(dbo, a):
@@ -961,7 +1023,7 @@ def licence_tags(dbo, li):
         "LICENCECOMMENTS":      li["COMMENTS"],
         "LICENSETYPENAME":      li["LICENCETYPENAME"],
         "LICENSENUMBER":        li["LICENCENUMBER"],
-        "LICENSEFEE":           li["LICENCEFEE"],
+        "LICENSEFEE":           format_currency_no_symbol(l, li["LICENCEFEE"]),
         "LICENSEISSUED":        python2display(l, li["ISSUEDATE"]),
         "LICENSEEXPIRES":       python2display(l, li["EXPIRYDATE"]),
         "LICENSECOMMENTS":      li["COMMENTS"]
@@ -1004,6 +1066,14 @@ def movement_tags(dbo, m):
         "TRANSFERDATE":                 asm3.utils.iif(m["MOVEMENTTYPE"] == asm3.movement.TRANSFER, python2display(l, m["MOVEMENTDATE"]), ""),
         "TRIALENDDATE":                 asm3.utils.iif(m["MOVEMENTTYPE"] == asm3.movement.ADOPTION, python2display(l, m["TRIALENDDATE"]), "")
     }
+    dons = asm3.financial.get_movement_donations(dbo, m["ID"])
+    tags["MOVEMENTPAYMENTS"] = html_table(l, dons, (
+        ( "DATE", _("Date", l) ),
+        ( "RECEIPTNUMBER", _("Receipt", l) ),
+        ( "DONATIONNAME", _("Type", l) ),
+        ( "PAYMENTNAME", _("Method", l) ),
+        ( "DONATION", _("Amount", l) )
+    ))
     return tags    
 
 def clinic_tags(dbo, c):
@@ -1013,16 +1083,16 @@ def clinic_tags(dbo, c):
     l = dbo.locale
     tags = {
         "ID":                   asm3.utils.padleft(c.ID, 6),
-        "APPOINTMENTFOR"        : c.APPTFOR,
+        "APPOINTMENTFOR"        : asm3.users.get_real_name(dbo, c.APPTFOR),
         "APPOINTMENTDATE"       : python2display(l, c.DATETIME),
-        "APPOINTMENTTIME"       : format_time(c.DATETIME),
+        "APPOINTMENTTIME"       : format_time(c.DATETIME, "%H:%M"),
         "STATUS"                : c.CLINICSTATUSNAME,
         "ARRIVEDDATE"           : python2display(l, c.ARRIVEDDATETIME),
-        "ARRIVEDTIME"           : format_time(c.ARRIVEDDATETIME),
+        "ARRIVEDTIME"           : format_time(c.ARRIVEDDATETIME, "%H:%M"),
         "WITHVETDATE"           : python2display(l, c.WITHVETDATETIME),
-        "WITHVETTIME"           : format_time(c.WITHVETDATETIME),
+        "WITHVETTIME"           : format_time(c.WITHVETDATETIME, "%H:%M"),
         "COMPLETEDDATE"         : python2display(l, c.COMPLETEDDATETIME),
-        "COMPLETEDTIME"         : format_time(c.COMPLETEDDATETIME),
+        "COMPLETEDTIME"         : format_time(c.COMPLETEDDATETIME, "%H:%M"),
         "REASONFORAPPOINTMENT"  : c.REASONFORAPPOINTMENT,
         "APPOINTMENTCOMMENTS"   : c.COMMENTS,
         "INVOICEAMOUNT"         : format_currency_no_symbol(l, c.AMOUNT),
@@ -1041,7 +1111,7 @@ def clinic_tags(dbo, c):
     tags.update(table_tags(dbo, d, asm3.clinic.get_invoice_items(dbo, c.ID)))
     return tags
 
-def person_tags(dbo, p, includeImg=False):
+def person_tags(dbo, p, includeImg=False, includeDonations=False):
     """
     Generates a list of tags from a person result (the deep type from
     calling asm3.person.get_person)
@@ -1100,6 +1170,7 @@ def person_tags(dbo, p, includeImg=False):
         "HOMECHECKEDBYCELLTELEPHONE": p["HOMECHECKEDBYMOBILETELEPHONE"],
         "MEMBERSHIPNUMBER"      : p["MEMBERSHIPNUMBER"],
         "MEMBERSHIPEXPIRYDATE"  : python2display(l, p["MEMBERSHIPEXPIRYDATE"]),
+        "OWNERLOOKINGFOR"       : asm3.person.lookingfor_summary(dbo, p["ID"])
     }
 
     if includeImg:
@@ -1109,6 +1180,37 @@ def person_tags(dbo, p, includeImg=False):
         tags["DOCUMENTIMGLINK300"] = "<img height=\"300\" src=\"" + asm3.html.doc_img_src(dbo, p) + "\" >"
         tags["DOCUMENTIMGLINK400"] = "<img height=\"400\" src=\"" + asm3.html.doc_img_src(dbo, p) + "\" >"
         tags["DOCUMENTIMGLINK500"] = "<img height=\"500\" src=\"" + asm3.html.doc_img_src(dbo, p) + "\" >"
+
+    # Donations
+    if includeDonations:
+        d = {
+            "RECEIPTNUM":               "RECEIPTNUMBER",
+            "DONATIONTYPE":             "DONATIONNAME",
+            "DONATIONPAYMENTTYPE":      "PAYMENTNAME",
+            "DONATIONDATE":             "d:DATE",
+            "DONATIONDATEDUE":          "d:DATEDUE",
+            "DONATIONAMOUNT":           "c:DONATION",
+            "DONATIONCOMMENTS":         "COMMENTS",
+            "DONATIONGIFTAID":          "y:ISGIFTAID",
+            "PAYMENTTYPE":              "DONATIONNAME",
+            "PAYMENTMETHOD":            "PAYMENTNAME",
+            "PAYMENTDATE":              "d:DATE",
+            "PAYMENTDATEDUE":           "d:DATEDUE",
+            "PAYMENTAMOUNT":            "c:NET",
+            "PAYMENTGROSS":             "c:GROSS",
+            "PAYMENTNET":               "c:NET",
+            "PAYMENTFEE":               "c:FEE",
+            "PAYMENTCOMMENTS":          "COMMENTS",
+            "PAYMENTGIFTAID":           "y:ISGIFTAID",
+            "PAYMENTVAT":               "y:ISVAT",
+            "PAYMENTTAX":               "y:ISVAT",
+            "PAYMENTVATRATE":           "f:VATRATE",
+            "PAYMENTTAXRATE":           "f:VATRATE",
+            "PAYMENTVATAMOUNT":         "c:VATAMOUNT",
+            "PAYMENTTAXAMOUNT":         "c:VATAMOUNT"
+        }
+        dons = asm3.financial.get_person_donations(dbo, p["ID"])
+        tags.update(table_tags(dbo, d, dons, "DONATIONNAME", "DATEDUE", "DATE"))
 
     # Additional fields
     tags.update(additional_field_tags(dbo, asm3.additional.get_additional_fields(dbo, p["ID"], "person")))
@@ -1214,6 +1316,25 @@ def transport_tags(dbo, transports):
         add_to_tags(str(i+1), t)
     return tags
 
+def voucher_tags(dbo, v):
+    """
+    Generates a list of tags from a voucher result 
+    (from anything using asm3.financial.get_voucher_query)
+    """
+    l = dbo.locale
+    tags = {
+        "VOUCHERANIMALNAME":    v["ANIMALNAME"],
+        "VOUCHERSHELTERCODE":   v["SHELTERCODE"],
+        "VOUCHERTYPENAME":      v["VOUCHERNAME"],
+        "VOUCHERCODE":          v["VOUCHERCODE"],
+        "VOUCHERVALUE":         format_currency_no_symbol(l, v["VALUE"]),
+        "VOUCHERISSUED":        python2display(l, v["DATEISSUED"]),
+        "VOUCHEREXPIRES":       python2display(l, v["DATEEXPIRED"]),
+        "VOUCHERREDEEMED":      python2display(l, v["DATEPRESENTED"]),
+        "VOUCHERCOMMENTS":      v["COMMENTS"]
+    }
+    return tags
+
 def waitinglist_tags(dbo, a):
     """
     Generates a list of tags from a waiting list result (asm3.waitinglist.get_waitinglist_by_id)
@@ -1263,6 +1384,37 @@ def append_tags(tags1, tags2):
     tags.update(tags2)
     return tags
 
+def html_table(l, rows, cols):
+    """
+    Generates an HTML table for TinyMCE from rows, choosing the cols.
+    cols is a list of tuples containing the field name from rows and a localised column name for output.
+    Eg: ( ( "ID", "Text for ID field" ) )
+    """
+    h = []
+    h.append("<table border=\"1\">")
+    h.append("<thead><tr>")
+    for colfield, coltext in cols:
+        h.append("<th>%s</th>" % coltext)
+    h.append("</tr></thead>")
+    h.append("<tbody>")
+    for r in rows:
+        h.append("<tr>")
+        for colfield, coltext in cols:
+            if asm3.utils.is_date(r[colfield]):
+                h.append("<td>%s</td>" % python2display(l, r[colfield]))
+            elif asm3.utils.is_currency(colfield):
+                h.append("<td>%s</td>" % format_currency(l, r[colfield]))
+            elif r[colfield] is None:
+                h.append("<td></td>")
+            elif asm3.utils.is_str(r[colfield]) or asm3.utils.is_unicode(r[colfield]):
+                h.append("<td>%s</td>" % r[colfield].replace("\n", "<br/>"))
+            else:
+                h.append("<td>%s</td>" % r[colfield])
+        h.append("</tr>")
+    h.append("</tbody>")
+    h.append("</table>")
+    return "".join(h)
+
 def table_get_value(l, row, k):
     """
     Returns row[k], looking for a type prefix in k -
@@ -1271,7 +1423,7 @@ def table_get_value(l, row, k):
     if k.find("d:") != -1: 
         s = python2display(l, row[k.replace("d:", "")])
     elif k.find("t:") != -1: 
-        s = format_time(row[k.replace("t:", "")])
+        s = format_time(row[k.replace("t:", "")], "%H:%M")
     elif k.find("c:") != -1:
         s = format_currency_no_symbol(l, row[k.replace("c:", "")])
     elif k.find("y:") != -1:
@@ -1393,12 +1545,15 @@ def substitute_tags(searchin, tags, use_xml_escaping = True, opener = "&lt;&lt;"
                 newval = tags[matchtag]
                 if newval is not None:
                     newval = str(newval)
-                    # Escape xml entities unless the replacement tag is an image
-                    # or it contains HTML entities or <br tags
+                    # Escape xml entities unless the replacement tag is an
+                    # image, URL or contains HTML entities
                     if use_xml_escaping and \
-                       not newval.lower().startswith("<img") and \
-                       not newval.lower().find("&#") != -1 and \
-                       not newval.lower().find("<br/>") != -1:
+                        not newval.lower().startswith("<img") and \
+                        not newval.lower().find("&#") != -1 and \
+                        not newval.lower().find("/>") != -1 and \
+                        not newval.lower().startswith("<table") and \
+                        not newval.lower().startswith("http") and \
+                        not newval.lower().startswith("image?"):
                         newval = newval.replace("&", "&amp;")
                         newval = newval.replace("<", "&lt;")
                         newval = newval.replace(">", "&gt;")
@@ -1505,6 +1660,7 @@ def generate_clinic_doc(dbo, templateid, appointmentid, username):
     c = asm3.clinic.get_appointment(dbo, appointmentid)
     if c is None: raise asm3.utils.ASMValidationError("%d is not a valid clinic appointment ID" % appointmentid)
     tags = clinic_tags(dbo, c)
+    tags = append_tags(tags, org_tags(dbo, username))
     a = asm3.animal.get_animal(dbo, c.ANIMALID)
     if a is not None:
         tags = append_tags(tags, animal_tags(dbo, a, includeAdditional=True, includeCosts=False, includeDiet=False, includeDonations=False, \
@@ -1521,12 +1677,13 @@ def generate_person_doc(dbo, templateid, personid, username):
     p = asm3.person.get_person(dbo, personid)
     im = asm3.media.get_image_file_data(dbo, "person", personid)[1]
     if p is None: raise asm3.utils.ASMValidationError("%d is not a valid person ID" % personid)
-    tags = person_tags(dbo, p, includeImg=True)
+    tags = person_tags(dbo, p, includeImg=True, includeDonations=True)
     tags = append_tags(tags, org_tags(dbo, username))
-    m = asm3.movement.get_person_movements(dbo, personid)
-    if len(m) > 0: 
-        tags = append_tags(tags, movement_tags(dbo, m[0]))
-        tags = append_tags(tags, animal_tags(dbo, asm3.animal.get_animal(dbo, m[0]["ANIMALID"])))
+    m = dbo.first_row(asm3.movement.get_person_movements(dbo, personid))
+    if m is not None:
+        tags = append_tags(tags, movement_tags(dbo, m))
+        if m.ANIMALID is not None and m.ANIMALID != 0:
+            tags = append_tags(tags, animal_tags(dbo, asm3.animal.get_animal(dbo, m.ANIMALID)))
     return substitute_template(dbo, templateid, tags, im)
 
 def generate_donation_doc(dbo, templateid, donationids, username):
@@ -1539,11 +1696,11 @@ def generate_donation_doc(dbo, templateid, donationids, username):
     if len(dons) == 0: 
         raise asm3.utils.ASMValidationError("%s does not contain any valid donation IDs" % donationids)
     d = dons[0]
-    tags = person_tags(dbo, asm3.person.get_person(dbo, d["OWNERID"]))
-    if d["ANIMALID"] is not None and d["ANIMALID"] != 0:
+    tags = person_tags(dbo, asm3.person.get_person(dbo, d.OWNERID))
+    if d.ANIMALID is not None and d.ANIMALID != 0:
         tags = append_tags(tags, animal_tags(dbo, asm3.animal.get_animal(dbo, d["ANIMALID"]), includeDonations=False))
-    if d["MOVEMENTID"] is not None and d["MOVEMENTID"] != 0:
-        tags = append_tags(tags, movement_tags(dbo, asm3.movement.get_movement(dbo, d["MOVEMENTID"])))
+    if d.MOVEMENTID is not None and d.MOVEMENTID != 0:
+        tags = append_tags(tags, movement_tags(dbo, asm3.movement.get_movement(dbo, d.MOVEMENTID)))
     tags = append_tags(tags, donation_tags(dbo, dons))
     tags = append_tags(tags, org_tags(dbo, username))
     return substitute_template(dbo, templateid, tags)
@@ -1557,7 +1714,7 @@ def generate_foundanimal_doc(dbo, templateid, faid, username):
     a = asm3.lostfound.get_foundanimal(dbo, faid)
     if a is None:
         raise asm3.utils.ASMValidationError("%d is not a valid found animal ID" % faid)
-    tags = person_tags(dbo, asm3.person.get_person(dbo, a["OWNERID"]))
+    tags = person_tags(dbo, asm3.person.get_person(dbo, a.OWNERID))
     tags = append_tags(tags, foundanimal_tags(dbo, a))
     tags = append_tags(tags, org_tags(dbo, username))
     return substitute_template(dbo, templateid, tags)
@@ -1571,7 +1728,7 @@ def generate_lostanimal_doc(dbo, templateid, laid, username):
     a = asm3.lostfound.get_lostanimal(dbo, laid)
     if a is None:
         raise asm3.utils.ASMValidationError("%d is not a valid lost animal ID" % laid)
-    tags = person_tags(dbo, asm3.person.get_person(dbo, a["OWNERID"]))
+    tags = person_tags(dbo, asm3.person.get_person(dbo, a.OWNERID))
     tags = append_tags(tags, lostanimal_tags(dbo, a))
     tags = append_tags(tags, org_tags(dbo, username))
     return substitute_template(dbo, templateid, tags)
@@ -1585,9 +1742,9 @@ def generate_licence_doc(dbo, templateid, licenceid, username):
     l = asm3.financial.get_licence(dbo, licenceid)
     if l is None:
         raise asm3.utils.ASMValidationError("%d is not a valid licence ID" % licenceid)
-    tags = person_tags(dbo, asm3.person.get_person(dbo, l["OWNERID"]))
-    if l["ANIMALID"] is not None and l["ANIMALID"] != 0:
-        tags = append_tags(tags, animal_tags(dbo, asm3.animal.get_animal(dbo, l["ANIMALID"])))
+    tags = person_tags(dbo, asm3.person.get_person(dbo, l.OWNERID))
+    if l.ANIMALID is not None and l.ANIMALID != 0:
+        tags = append_tags(tags, animal_tags(dbo, asm3.animal.get_animal(dbo, l.ANIMALID)))
     tags = append_tags(tags, licence_tags(dbo, l))
     tags = append_tags(tags, org_tags(dbo, username))
     return substitute_template(dbo, templateid, tags)
@@ -1599,11 +1756,13 @@ def generate_movement_doc(dbo, templateid, movementid, username):
     movementid: The movement to generate for
     """
     m = asm3.movement.get_movement(dbo, movementid)
+    tags = {}
     if m is None:
         raise asm3.utils.ASMValidationError("%d is not a valid movement ID" % movementid)
-    tags = animal_tags(dbo, asm3.animal.get_animal(dbo, m["ANIMALID"]), includeDonations=False)
-    if m["OWNERID"] is not None and m["OWNERID"] != 0:
-        tags = append_tags(tags, person_tags(dbo, asm3.person.get_person(dbo, m["OWNERID"])))
+    if m.ANIMALID is not None and m.ANIMALID != 0:
+        tags = animal_tags(dbo, asm3.animal.get_animal(dbo, m.ANIMALID), includeDonations=False)
+    if m.OWNERID is not None and m.OWNERID != 0:
+        tags = append_tags(tags, person_tags(dbo, asm3.person.get_person(dbo, m.OWNERID)))
     tags = append_tags(tags, movement_tags(dbo, m))
     tags = append_tags(tags, donation_tags(dbo, asm3.financial.get_movement_donations(dbo, movementid)))
     tags = append_tags(tags, org_tags(dbo, username))
@@ -1622,6 +1781,22 @@ def generate_transport_doc(dbo, templateid, transportids, username):
     tags = append_tags(tags, org_tags(dbo, username))
     return substitute_template(dbo, templateid, tags)
 
+def generate_voucher_doc(dbo, templateid, voucherid, username):
+    """
+    Generates a voucher document from a template
+    templateid: The ID of the template
+    voucherid: The ID of the voucher to generate for
+    """
+    v = asm3.financial.get_voucher(dbo, voucherid)
+    if v is None:
+        raise asm3.utils.ASMValidationError("%d is not a valid voucher ID" % voucherid)
+    tags = person_tags(dbo, asm3.person.get_person(dbo, v.OWNERID))
+    if v.ANIMALID is not None and v.ANIMALID != 0:
+        tags = append_tags(tags, animal_tags(dbo, asm3.animal.get_animal(dbo, v.ANIMALID)))
+    tags = append_tags(tags, voucher_tags(dbo, v))
+    tags = append_tags(tags, org_tags(dbo, username))
+    return substitute_template(dbo, templateid, tags)
+
 def generate_waitinglist_doc(dbo, templateid, wlid, username):
     """
     Generates a waiting list document from a template
@@ -1631,7 +1806,7 @@ def generate_waitinglist_doc(dbo, templateid, wlid, username):
     a = asm3.waitinglist.get_waitinglist_by_id(dbo, wlid)
     if a is None:
         raise asm3.utils.ASMValidationError("%d is not a valid waiting list ID" % wlid)
-    tags = person_tags(dbo, asm3.person.get_person(dbo, a["OWNERID"]))
+    tags = person_tags(dbo, asm3.person.get_person(dbo, a.OWNERID))
     tags = append_tags(tags, waitinglist_tags(dbo, a))
     tags = append_tags(tags, org_tags(dbo, username))
     return substitute_template(dbo, templateid, tags)

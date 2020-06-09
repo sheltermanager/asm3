@@ -1,7 +1,8 @@
-/*jslint browser: true, forin: true, eqeq: true, white: true, sloppy: true, vars: true, nomen: true */
 /*global $, jQuery, _, asm, common, config, controller, dlgfx, edit_header, format, header, html, tableform, validate */
 
 $(function() {
+
+    "use strict";
 
     var statusmap = {
         1: _("New"),
@@ -11,14 +12,6 @@ $(function() {
         10: _("Cancelled"),
         11: _("Completed")
     };
-    var statuses = [
-        { ID: 1, NAME: _("New") },
-        { ID: 2, NAME: _("Confirmed") },
-        { ID: 3, NAME: _("Hold") },
-        { ID: 4, NAME: _("Scheduled") },
-        { ID: 10, NAME: _("Cancelled") },
-        { ID: 11, NAME: _("Completed") }
-    ];
     var statusmenu = [
         "1|" + _("New"),
         "2|" + _("Confirmed"),
@@ -46,7 +39,7 @@ $(function() {
                     { json_field: "DRIVEROWNERID", post_field: "driver", label: _("Driver"), type: "person", personfilter: "driver" },
                     { json_field: "TRANSPORTREFERENCE", post_field: "reference", label: _("Reference"), type: "text" },
                     { json_field: "TRANSPORTTYPEID", post_field: "type", label: _("Type"), type: "select", options: { rows: controller.transporttypes, displayfield: "TRANSPORTTYPENAME", valuefield: "ID" }},
-                    { json_field: "STATUS", post_field: "status", label: _("Status"), type: "select", options: { rows: statuses, displayfield: "NAME", valuefield: "ID" }},
+                    { json_field: "STATUS", post_field: "status", label: _("Status"), type: "select", options: { rows: controller.statuses, displayfield: "NAME", valuefield: "ID" }},
                     { json_field: "MILES", post_field: "miles", label: transport.miles_label(), type: "number", defaultval: 0 },
                     { json_field: "COST", post_field: "cost", label: _("Cost"), type: "currency", hideif: function() { return !config.bool("ShowCostAmount"); } },
                     { json_field: "COSTPAIDDATE", post_field: "costpaid", label: _("Paid"), type: "date", hideif: function() { return !config.bool("ShowCostPaid"); } },
@@ -370,18 +363,18 @@ $(function() {
             
             // When we pickup and dropoff people, autofill the addresses
             $("#pickup").personchooser().bind("personchooserchange", function(event, rec) { 
-                $("#pickupaddress").val(rec.OWNERADDRESS.replace("\n", ", "));
-                $("#pickuptown").val(rec.OWNERTOWN);
-                $("#pickupcounty").val(rec.OWNERCOUNTY);
-                $("#pickuppostcode").val(rec.OWNERPOSTCODE);
-                $("#pickupcountry").val(rec.OWNERCOUNTRY);
+                $("#pickupaddress").val(html.decode(rec.OWNERADDRESS.replace("\n", ", ")));
+                $("#pickuptown").val(html.decode(rec.OWNERTOWN));
+                $("#pickupcounty").val(html.decode(rec.OWNERCOUNTY));
+                $("#pickuppostcode").val(html.decode(rec.OWNERPOSTCODE));
+                $("#pickupcountry").val(html.decode(rec.OWNERCOUNTRY));
             });
             $("#dropoff").personchooser().bind("personchooserchange", function(event, rec) { 
-                $("#dropoffaddress").val(rec.OWNERADDRESS.replace("\n", ", "));
-                $("#dropofftown").val(rec.OWNERTOWN);
-                $("#dropoffcounty").val(rec.OWNERCOUNTY);
-                $("#dropoffpostcode").val(rec.OWNERPOSTCODE);
-                $("#dropoffcountry").val(rec.OWNERCOUNTRY);
+                $("#dropoffaddress").val(html.decode(rec.OWNERADDRESS.replace("\n", ", ")));
+                $("#dropofftown").val(html.decode(rec.OWNERTOWN));
+                $("#dropoffcounty").val(html.decode(rec.OWNERCOUNTY));
+                $("#dropoffpostcode").val(html.decode(rec.OWNERPOSTCODE));
+                $("#dropoffcountry").val(html.decode(rec.OWNERCOUNTRY));
             });
 
             // Add click handlers to templates

@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Appendix: Online Form import fields &mdash; ASM 43u documentation</title>
+  <title>Appendix: Online Form import fields &mdash; ASM 44u documentation</title>
   
 
   
@@ -60,7 +60,7 @@
             
             
               <div class="version">
-                43u
+                44u
               </div>
             
           
@@ -102,6 +102,7 @@
 <li class="toctree-l1"><a class="reference internal" href="reports.html">Reports</a></li>
 <li class="toctree-l1"><a class="reference internal" href="litters.html">Litters</a></li>
 <li class="toctree-l1"><a class="reference internal" href="onlineform.html">Online Forms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="paymentprocessors.html">Payment Processors</a></li>
 <li class="toctree-l1"><a class="reference internal" href="rota.html">Rota</a></li>
 <li class="toctree-l1"><a class="reference internal" href="mobile.html">Mobile Interface</a></li>
 <li class="toctree-l1"><a class="reference internal" href="service.html">Service API</a></li>
@@ -217,6 +218,8 @@ animal records.</p>
 <dd>The description for the lost, found or waiting list animal</dd>
 <dt>reason</dt>
 <dd>The reason the person is putting their animal on the waiting list</dd>
+<dt>type</dt>
+<dd>The animal type for the animal. ASM will try and guess based on the text which one is meant. Use a lookup field to limit the choices to known items.</dd>
 <dt>species</dt>
 <dd>The species of the animal. ASM will try and guess based on the text which one is meant. Use a lookup field to limit the choices to known items (or use the Species field type)</dd>
 <dt>breed</dt>
@@ -225,12 +228,18 @@ animal records.</p>
 <dd>The age group of the animal. Again, ASM will try and guess one if it’s internal values.</dd>
 <dt>color / colour</dt>
 <dd>The colour of the animal. ASM will try and guess a match (or use the Color field type to limit to them)</dd>
+<dt>datelost</dt>
+<dd>The date the animal was lost (lost animals only)</dd>
+<dt>datefound</dt>
+<dd>The date the animal was found (found animals only)</dd>
 <dt>arealost</dt>
 <dd>The area the animal was lost in (lost animals only)</dd>
 <dt>areafound</dt>
 <dd>The area the animal was found in (found animals only)</dd>
 <dt>areapostcode / areazipcode</dt>
 <dd>The postcode/zipcode area the animal was lost or found in</dd>
+<dt>microchip</dt>
+<dd>The animal’s microchip number</dd>
 <dt>animalname</dt>
 <dd>The name of an existing shelter animal to attach this form to if specified (use the adoptable/shelter animal field types to get a valid animal name from your form)</dd>
 <dt>reserveanimalname[x]</dt>
@@ -262,7 +271,7 @@ animal records.</p>
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2019, Sheltermanager, Ltd
+        &copy; Copyright 2020, Sheltermanager, Ltd
 
     </p>
   </div>

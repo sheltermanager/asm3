@@ -58,9 +58,6 @@ def daily(dbo):
             ttask(dbupdate.install_db_sequences, dbo)
             ttask(dbupdate.install_db_stored_procedures, dbo)
 
-        # Get the latest news from sheltermanager.com
-        configuration.asm_news(dbo, utils.get_asm_news(dbo))
-
         # Update on shelter and foster animal location fields
         ttask(animal.update_on_shelter_animal_statuses, dbo)
         ttask(animal.update_foster_animal_statuses, dbo)
@@ -142,12 +139,35 @@ def reports_email(dbo):
 def publish_3pty(dbo):
     try:
         publishers = configuration.publishers_enabled(dbo)
+        freq = configuration.publisher_sub24_frequency(dbo)
         for p in publishers.split(" "):
-            if p != "html": # We do html/ftp publishing separate from others
-                publish.start_publisher(dbo, p, user="system", newthread=False)
+            # Services that we do more frequently than 24 hours are handled by 3pty_sub24
+            if publish.PUBLISHER_LIST[p]["sub24hour"] and freq != 0: continue
+            # We do html/ftp publishing separate from other publishers
+            if p == "html": continue
+            publish.start_publisher(dbo, p, user="system", newthread=False)
     except:
         em = str(sys.exc_info()[0])
         al.error("FAIL: uncaught error running third party publishers: %s" % em, "cron.publish_3pty", dbo, sys.exc_info())
+
+def publish_3pty_sub24(dbo):
+    try:
+        publishers = configuration.publishers_enabled(dbo)
+        freq = configuration.publisher_sub24_frequency(dbo)
+        hournow = dbo.now().hour
+        al.debug("chosen freq %s, current hour %s" % (freq, hournow), "cron.publish_3pty_sub24", dbo)
+        if freq == 0: return # 24 hour mode is covered by regular publish_3pty with the batch
+        elif freq == 2 and hournow not in [0,2,4,6,8,10,12,14,16,18,20,22]: return
+        elif freq == 4 and hournow not in [1,5,9,13,17,21]: return
+        elif freq == 6 and hournow not in [3,9,13,19]: return
+        elif freq == 8 and hournow not in [1,9,17]: return
+        elif freq == 12 and hournow not in [0,12]: return
+        for p in publishers.split(" "):
+            if publish.PUBLISHER_LIST[p]["sub24hour"]:
+                publish.start_publisher(dbo, p, user="system", newthread=False)
+    except:
+        em = str(sys.exc_info()[0])
+        al.error("FAIL: uncaught error running sub24 third party publishers: %s" % em, "cron.publish_3pty_sub24", dbo, sys.exc_info())
 
 def publish_html(dbo):
     try :
@@ -338,7 +358,7 @@ def maint_deduplicate_people(dbo):
 
 def maint_disk_cache(dbo):
     try:
-        cachedisk.remove_expired()
+        cachedisk.remove_expired(dbo.database)
     except:
         em = str(sys.exc_info()[0])
         al.error("FAIL: uncaught error running remove_expired: %s" % em, "cron.maint_disk_cache", dbo, sys.exc_info())
@@ -396,6 +416,8 @@ def run(dbo, mode):
         reports_email(dbo)
     elif mode == "publish_3pty":
         publish_3pty(dbo)
+    elif mode == "publish_3pty_sub24":
+        publish_3pty_sub24(dbo)
     elif mode == "publish_html":
         publish_html(dbo)
     elif mode == "maint_recode_all":

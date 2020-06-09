@@ -4,6 +4,10 @@ import asm3.configuration
 import asm3.i18n
 import asm3.utils
 
+# NO LONGER USED AS WE HAVE DIRECT INTEGRATION WITH AKC REUNITE AND HOMEAGAIN
+# THIS CODE LEFT HERE IN CASE WE USE THEM FOR OTHER SERVICES IN FUTURE.
+# ============================================================================
+
 from .base import AbstractPublisher, get_microchip_data
 from asm3.sitedefs import VETENVOY_US_VENDOR_USERID, VETENVOY_US_VENDOR_PASSWORD, VETENVOY_US_HOMEAGAIN_RECIPIENTID, VETENVOY_US_AKC_REUNITE_RECIPIENTID, VETENVOY_US_BASE_URL, VETENVOY_US_SYSTEM_ID
 
@@ -181,6 +185,8 @@ class VetEnvoyUSMicrochipPublisher(AbstractPublisher):
         def xe(s): 
             if s is None: return ""
             return s.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
+        reccountry = an["CURRENTOWNERCOUNTRY"]
+        if reccountry is None or reccountry == "": reccountry = "USA"
         return '<?xml version="1.0" encoding="UTF-8"?>\n' \
             '<MicrochipRegistration ' \
             'version="1.32" ' \
@@ -201,7 +207,7 @@ class VetEnvoyUSMicrochipPublisher(AbstractPublisher):
             '  <LineOther>'+ xe(an["CURRENTOWNERTOWN"]) + '</LineOther>' \
             '  <PostalCode>' + xe(an["CURRENTOWNERPOSTCODE"]) + '</PostalCode>' \
             '  <County_State>'+ xe(an["CURRENTOWNERCOUNTY"]) + '</County_State>' \
-            '  <Country>USA</Country>' \
+            '  <Country>' + reccountry + '</Country>' \
             ' </Address>' \
             ' <DaytimePhone><Number>' + xe(an["CURRENTOWNERWORKTELEPHONE"]) + '</Number><Note/></DaytimePhone>' \
             ' <EveningPhone><Number>' + xe(an["CURRENTOWNERHOMETELEPHONE"]) + '</Number><Note/></EveningPhone>' \
@@ -215,7 +221,7 @@ class VetEnvoyUSMicrochipPublisher(AbstractPublisher):
             '  <Name>' + xe(an["ANIMALNAME"]) + '</Name>' \
             '  <Species>' + self.get_vetenvoy_species(an["SPECIESID"]) + '</Species>' \
             '  <Breed><FreeText>' + xe(an["BREEDNAME"]) + '</FreeText><Code/></Breed>' \
-            '  <DateOfBirth>' + asm3.i18n.format_date("%m/%d/%Y", an["DATEOFBIRTH"]) + '</DateOfBirth>' \
+            '  <DateOfBirth>' + asm3.i18n.format_date(an["DATEOFBIRTH"], "%m/%d/%Y") + '</DateOfBirth>' \
             '  <Gender>' + an["SEXNAME"][0:1] + '</Gender>' \
             '  <Colour>' + xe(an["BASECOLOURNAME"]) + '</Colour>' \
             '  <Markings>' + xe(an["MARKINGS"]) + '</Markings>' \
@@ -224,7 +230,7 @@ class VetEnvoyUSMicrochipPublisher(AbstractPublisher):
             '</PetDetails>' \
             '<MicrochipDetails>' \
             '  <MicrochipNumber>' + xe(an["IDENTICHIPNUMBER"]) + '</MicrochipNumber>' \
-            '  <ImplantDate>' + asm3.i18n.format_date("%m/%d/%Y", an["IDENTICHIPDATE"]) + '</ImplantDate>' \
+            '  <ImplantDate>' + asm3.i18n.format_date(an["IDENTICHIPDATE"], "%m/%d/%Y") + '</ImplantDate>' \
             '  <ImplanterName>' + xe(an["CREATEDBY"]) + '</ImplanterName>' \
             '</MicrochipDetails>' \
             '<ThirdPartyDisclosure>true</ThirdPartyDisclosure>' \
@@ -330,26 +336,26 @@ class AllVetEnvoyPublisher(AbstractPublisher):
     akcreunite = None
 
     def __init__(self, dbo, publishCriteria):
-        self.homeagain = HomeAgainPublisher(dbo, publishCriteria)
-        self.akcreunite = AKCReunitePublisher(dbo, publishCriteria)
+        self.homeagain = VEHomeAgainPublisher(dbo, publishCriteria)
+        self.akcreunite = VEAKCReunitePublisher(dbo, publishCriteria)
 
     def run(self):
         self.homeagain.run()
         self.akcreunite.run()
 
-class HomeAgainPublisher(VetEnvoyUSMicrochipPublisher):
+class VEHomeAgainPublisher(VetEnvoyUSMicrochipPublisher):
     def __init__(self, dbo, publishCriteria):
         AbstractPublisher.__init__(self, dbo, publishCriteria)
         if not asm3.configuration.vetenvoy_homeagain_enabled(dbo): return
         VetEnvoyUSMicrochipPublisher.__init__(self, dbo, publishCriteria, "HomeAgain Publisher", "homeagain", VETENVOY_US_HOMEAGAIN_RECIPIENTID, 
             ['985',])
 
-class AKCReunitePublisher(VetEnvoyUSMicrochipPublisher):
+class VEAKCReunitePublisher(VetEnvoyUSMicrochipPublisher):
     def __init__(self, dbo, publishCriteria):
         AbstractPublisher.__init__(self, dbo, publishCriteria)
         if not asm3.configuration.vetenvoy_akcreunite_enabled(dbo): return
         VetEnvoyUSMicrochipPublisher.__init__(self, dbo, publishCriteria, "AKC Reunite Publisher", "akcreunite", VETENVOY_US_AKC_REUNITE_RECIPIENTID, 
-            ['0006', '0007', '956'])
+            ['0006', '0007', '956', '9910010'])
 
 
 
