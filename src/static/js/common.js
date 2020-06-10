@@ -912,6 +912,7 @@ const common = {
             $("html").css("direction", "rtl");
             // Menu text in dropdowns
             $(".asm-menu-body").css("text-align", "right");
+            $(".asm-topline").css("text-align", "right");
             // Screens that show tables of data
             $(".asm-table td").css("text-align", "right");
             // Hotkeys in menus
