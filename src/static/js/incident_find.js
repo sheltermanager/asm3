@@ -4,7 +4,7 @@ $(function() {
 
     "use strict";
 
-    var incident_find = {
+    const incident_find = {
 
         render: function() {
             return [

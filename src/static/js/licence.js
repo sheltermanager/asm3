@@ -4,10 +4,10 @@ $(function() {
 
     "use strict";
 
-    var licence = {
+    const licence = {
 
         model: function() {
-            var dialog = {
+            const dialog = {
                 add_title: _("Add license"),
                 edit_title: _("Edit license"),
                 edit_perm: 'capl',
@@ -26,33 +26,31 @@ $(function() {
                 ]
             };
 
-            var table = {
+            const table = {
                 rows: controller.rows,
                 idcolumn: "ID",
-                edit: function(row) {
-                    tableform.dialog_show_edit(dialog, row)
-                        .then(function() {
-                            tableform.fields_update_row(dialog.fields, row);
-                            row.LICENCETYPENAME = common.get_field(controller.licencetypes, row.LICENCETYPEID, "LICENCETYPENAME");
-                            row.OWNERNAME = $("#person").personchooser("get_selected").OWNERNAME;
-                            if (row.ANIMALID && row.ANIMALID != "0") {
-                                row.ANIMALNAME = $("#animal").animalchooser("get_selected").ANIMALNAME;
-                                row.SHELTERCODE = $("#animal").animalchooser("get_selected").SHELTERCODE;
-                            }
-                            else {
-                                row.ANIMALID = 0;
-                                row.ANIMALNAME = "";
-                                row.SHELTERCODE = "";
-                            }
-                            return tableform.fields_post(dialog.fields, "mode=update&licenceid=" + row.ID, "licence");
-                        })
-                        .then(function(response) {
-                            tableform.table_update(table);
-                            tableform.dialog_close();
-                        })
-                        .always(function() { 
-                            tableform.dialog_enable_buttons();
-                        });
+                edit: async function(row) {
+                    await tableform.dialog_show_edit(dialog, row);
+                    tableform.fields_update_row(dialog.fields, row);
+                    row.LICENCETYPENAME = common.get_field(controller.licencetypes, row.LICENCETYPEID, "LICENCETYPENAME");
+                    row.OWNERNAME = $("#person").personchooser("get_selected").OWNERNAME;
+                    if (row.ANIMALID && row.ANIMALID != "0") {
+                        row.ANIMALNAME = $("#animal").animalchooser("get_selected").ANIMALNAME;
+                        row.SHELTERCODE = $("#animal").animalchooser("get_selected").SHELTERCODE;
+                    }
+                    else {
+                        row.ANIMALID = 0;
+                        row.ANIMALNAME = "";
+                        row.SHELTERCODE = "";
+                    }
+                    try {
+                        await tableform.fields_post(dialog.fields, "mode=update&licenceid=" + row.ID, "licence");
+                        tableform.table_update(table);
+                        tableform.dialog_close();
+                    }
+                    finally {
+                        tableform.dialog_enable_buttons();
+                    }
                 },
                 complete: function(row) {
                 },
@@ -87,7 +85,7 @@ $(function() {
                     { field: "ANIMAL", display: _("Animal"), 
                         formatter: function(row) {
                             if (!row.ANIMALID) { return ""; }
-                            var s = "";
+                            let s = "";
                             if (controller.name != "animal_licence") { s = html.animal_emblems(row) + " "; }
                             return s + '<a href="animal?id=' + row.ANIMALID + '">' + row.ANIMALNAME + ' - ' + row.SHELTERCODE + '</a>';
                         },
@@ -103,115 +101,110 @@ $(function() {
                 ]
             };
 
-            var buttons = [
-                 { id: "new", text: _("New License"), icon: "licence", enabled: "always", perm: "aapl",
-                     click: function() { 
-                         $("#person").personchooser("clear");
-                         $("#animal").animalchooser("clear");
-                         if (controller.person) {
-                             $("#person").personchooser("loadbyid", controller.person.ID);
-                         }
-                         if (controller.animal) {
-                            $("#animal").animalchooser("loadbyid", controller.animal.ID);
-                         }
-                         tableform.dialog_show_add(dialog, {
-                             onadd: function() {
-                                 tableform.fields_post(dialog.fields, "mode=create", "licence")
-                                     .then(function(response) {
-                                         var row = {};
-                                         row.ID = response;
-                                         tableform.fields_update_row(dialog.fields, row);
-                                         row.LICENCETYPENAME = common.get_field(controller.licencetypes, row.LICENCETYPEID, "LICENCETYPENAME");
-                                         row.OWNERNAME = $("#person").personchooser("get_selected").OWNERNAME;
-                                         if (row.ANIMALID && row.ANIMALID != "0") {
-                                             row.ANIMALNAME = $("#animal").animalchooser("get_selected").ANIMALNAME;
-                                             row.SHELTERCODE = $("#animal").animalchooser("get_selected").SHELTERCODE;
-                                         }
-                                         else {
-                                             row.ANIMALID = 0;
-                                             row.ANIMALNAME = "";
-                                             row.SHELTERCODE = "";
-                                         }
-                                         controller.rows.push(row);
-                                         tableform.table_update(table);
-                                         tableform.dialog_close();
-                                     })
-                                     .always(function() {
-                                         tableform.dialog_enable_buttons();
-                                     });
+            const buttons = [
+                { id: "new", text: _("New License"), icon: "licence", enabled: "always", perm: "aapl",
+                    click: function() { 
+                        $("#person").personchooser("clear");
+                        $("#animal").animalchooser("clear");
+                        if (controller.person) {
+                            $("#person").personchooser("loadbyid", controller.person.ID);
+                        }
+                        if (controller.animal) {
+                           $("#animal").animalchooser("loadbyid", controller.animal.ID);
+                        }
+                        tableform.dialog_show_add(dialog, {
+                            onadd: async function() {
+                                try {
+                                    let response = await tableform.fields_post(dialog.fields, "mode=create", "licence");
+                                    let row = {};
+                                    row.ID = response;
+                                    tableform.fields_update_row(dialog.fields, row);
+                                    row.LICENCETYPENAME = common.get_field(controller.licencetypes, row.LICENCETYPEID, "LICENCETYPENAME");
+                                    row.OWNERNAME = $("#person").personchooser("get_selected").OWNERNAME;
+                                    if (row.ANIMALID && row.ANIMALID != "0") {
+                                        row.ANIMALNAME = $("#animal").animalchooser("get_selected").ANIMALNAME;
+                                        row.SHELTERCODE = $("#animal").animalchooser("get_selected").SHELTERCODE;
+                                    }
+                                    else {
+                                        row.ANIMALID = 0;
+                                        row.ANIMALNAME = "";
+                                        row.SHELTERCODE = "";
+                                    }
+                                    controller.rows.push(row);
+                                    tableform.table_update(table);
+                                    tableform.dialog_close();
+                                }
+                                finally {
+                                    tableform.dialog_enable_buttons();
+                                }
                              },
                              onload: licence.type_change
                          });
                      }
                  },
                  { id: "renew", text: _("Renew License"), icon: "licence", enabled: "one", perm: "aapl",
-                     click: function() { 
-                         tableform.dialog_show_add(dialog, {
-                             onadd: function() {
-                                 tableform.fields_post(dialog.fields, "mode=create", "licence")
-                                     .then(function(response) {
-                                         var row = {};
-                                         row.ID = response;
-                                         tableform.fields_update_row(dialog.fields, row);
-                                         row.LICENCETYPENAME = common.get_field(controller.licencetypes, row.LICENCETYPEID, "LICENCETYPENAME");
-                                         row.OWNERNAME = $("#person").personchooser("get_selected").OWNERNAME;
-                                         if (row.ANIMALID && row.ANIMALID != "0") {
-                                             row.ANIMALNAME = $("#animal").animalchooser("get_selected").ANIMALNAME;
-                                             row.SHELTERCODE = $("#animal").animalchooser("get_selected").SHELTERCODE;
-                                         }
-                                         else {
-                                             row.ANIMALID = 0;
-                                             row.ANIMALNAME = "";
-                                             row.SHELTERCODE = "";
-                                         }
-                                         controller.rows.push(row);
-                                         tableform.table_update(table);
-                                         tableform.dialog_close();
-                                     })
-                                     .always(function() {
-                                         tableform.dialog_enable_buttons();
-                                     });
-                             },
-                             onload: function() {
-                                 var row = tableform.table_selected_row(table);
-                                 tableform.fields_populate_from_json(dialog.fields, row);
-                                 licence.type_change();
-                             }
-                         });
-                     }
-                 },
-
-                 { id: "delete", text: _("Delete"), icon: "delete", enabled: "multi", perm: "dapl",
-                     click: function() { 
-                         tableform.delete_dialog()
-                             .then(function() {
-                                 tableform.buttons_default_state(buttons);
-                                 var ids = tableform.table_ids(table);
-                                 return common.ajax_post("licence", "mode=delete&ids=" + ids);
-                             })
-                             .then(function() {
-                                 tableform.table_remove_selected_from_json(table, controller.rows);
-                                 tableform.table_update(table);
-                             });
-                     }
-                 },
-                 { id: "document", text: _("Document"), icon: "document", enabled: "one", perm: "gaf", 
-                     tooltip: _("Generate document from this license"), type: "buttonmenu" },
-                 { id: "offset", type: "dropdownfilter", 
-                     options: [ "i7|" + _("Issued in the last week"), 
+                    click: function() { 
+                        tableform.dialog_show_add(dialog, {
+                            onadd: async function() {
+                                try {
+                                    let response = await tableform.fields_post(dialog.fields, "mode=create", "licence");
+                                    let row = {};
+                                    row.ID = response;
+                                    tableform.fields_update_row(dialog.fields, row);
+                                    row.LICENCETYPENAME = common.get_field(controller.licencetypes, row.LICENCETYPEID, "LICENCETYPENAME");
+                                    row.OWNERNAME = $("#person").personchooser("get_selected").OWNERNAME;
+                                    if (row.ANIMALID && row.ANIMALID != "0") {
+                                        row.ANIMALNAME = $("#animal").animalchooser("get_selected").ANIMALNAME;
+                                        row.SHELTERCODE = $("#animal").animalchooser("get_selected").SHELTERCODE;
+                                    }
+                                    else {
+                                        row.ANIMALID = 0;
+                                        row.ANIMALNAME = "";
+                                        row.SHELTERCODE = "";
+                                    }
+                                    controller.rows.push(row);
+                                    tableform.table_update(table);
+                                    tableform.dialog_close();
+                                }
+                                finally {
+                                    tableform.dialog_enable_buttons();
+                                }
+                            },
+                            onload: function() {
+                                let row = tableform.table_selected_row(table);
+                                tableform.fields_populate_from_json(dialog.fields, row);
+                                licence.type_change();
+                            }
+                        });
+                    }
+                },
+                { id: "delete", text: _("Delete"), icon: "delete", enabled: "multi", perm: "dapl",
+                    click: async function() { 
+                        await tableform.delete_dialog();
+                        tableform.buttons_default_state(buttons);
+                        let ids = tableform.table_ids(table);
+                        await common.ajax_post("licence", "mode=delete&ids=" + ids);
+                        tableform.table_remove_selected_from_json(table, controller.rows);
+                        tableform.table_update(table);
+                    }
+                },
+                { id: "document", text: _("Document"), icon: "document", enabled: "one", perm: "gaf", 
+                    tooltip: _("Generate document from this license"), type: "buttonmenu" },
+                { id: "offset", type: "dropdownfilter", 
+                    options: [ "i7|" + _("Issued in the last week"), 
                         "i31|" + _("Issued in the last month"), 
                         "e7|" + _("Expired in the last week"),
                         "e31|" + _("Expired in the last month") ],
-                     click: function(selval) {
+                    click: function(selval) {
                         common.route(controller.name + "?offset=" + selval);
-                     },
-                     hideif: function(row) {
+                    },
+                    hideif: function(row) {
                          // Don't show for animal or person records
-                         if (controller.animal || controller.person) {
-                             return true;
-                         }
-                     }
-                 }
+                        if (controller.animal || controller.person) {
+                            return true;
+                        }
+                    }
+                }
             ];
             this.dialog = dialog;
             this.table = table;
@@ -219,7 +212,7 @@ $(function() {
         },
 
         render: function() {
-            var s = "";
+            let s = "";
             this.model();
             s += tableform.dialog_render(this.dialog);
             s += '<div id="button-document-body" class="asm-menu-body">' +
@@ -249,7 +242,7 @@ $(function() {
             $(".templatelink").click(function() {
                 // Update the href as it is clicked so default browser behaviour
                 // continues on to open the link in a new window
-                var template_name = $(this).attr("data");
+                let template_name = $(this).attr("data");
                 $(this).prop("href", "document_gen?linktype=LICENCE&id=" + tableform.table_selected_row(licence.table).ID + "&dtid=" + template_name);
             });
 
@@ -261,13 +254,13 @@ $(function() {
         sync: function() {
             // If an offset is given in the querystring, update the select
             if (common.current_url().indexOf("offset=") != -1) {
-                var offurl = common.current_url().substring(common.current_url().indexOf("=")+1);
+                let offurl = common.current_url().substring(common.current_url().indexOf("=")+1);
                 $("#offset").select("value", offurl);
             }
         },
 
         type_change: function() {
-            var dc = common.get_field(controller.licencetypes, $("#type").select("value"), "DEFAULTCOST");
+            let dc = common.get_field(controller.licencetypes, $("#type").select("value"), "DEFAULTCOST");
             $("#fee").currency("value", dc);
         },
 
@@ -280,7 +273,7 @@ $(function() {
         name: "licence",
         animation: function() { return controller.name == "licence" ? "book" : "formtab"; },
         title:  function() { 
-            var t = "";
+            let t = "";
             if (controller.name == "animal_licence") {
                 t = common.substitute(_("{0} - {1} ({2} {3} aged {4})"), { 
                     0: controller.animal.ANIMALNAME, 1: controller.animal.CODE, 2: controller.animal.SEXNAME,

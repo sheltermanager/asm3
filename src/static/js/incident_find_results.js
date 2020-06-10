@@ -4,7 +4,7 @@ $(function() {
 
     "use strict";
 
-    var incident_find_results = {
+    const incident_find_results = {
 
         render: function() {
             return [
@@ -45,7 +45,7 @@ $(function() {
         },
 
         render_results: function() {
-            var h = [];
+            let h = [];
             $.each(controller.rows, function(i, r) {
                 h.push('<tr>');
                 h.push('<td><a href="incident?id=' + r.ID + '">' + r.INCIDENTNAME + '</a></td>');

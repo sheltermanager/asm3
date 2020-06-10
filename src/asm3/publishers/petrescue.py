@@ -282,7 +282,6 @@ class PetRescuePublisher(AbstractPublisher):
             "location_suburb":          location_suburb, # shelter/fosterer suburb
             "microchip_number":         microchip_number, 
             "desexed":                  an.NEUTERED == 1 or all_desexed, # true | false, validates to always true according to docs
-            "contact_method":           "email", # email | phone
             "size":                     asm3.utils.iif(isdog, size, ""), # dogs only - small | medium | high
             "senior":                   isdog and ageinyears > (7 * 365), # dogs only, true | false
             "vaccinated":               vaccinated, # cats, dogs, rabbits, true | false
@@ -301,6 +300,7 @@ class PetRescuePublisher(AbstractPublisher):
             "contact_name":             contact_name, # name of contact details owner
             "contact_number":           contact_number, # number to enquire about adoption
             "contact_email":            contact_email, # email to enquire about adoption
+            "contact_method":           "email", # email | phone
             "foster_needed":            needs_foster, # true | false
             "adoptable_in_abbrs":       adoptable_in_list, # array of states for adoption in: ACT NSW NT QLD SA TAS VIC WA 
             "medical_notes":            "", # DISABLED an.HEALTHPROBLEMS, # 4,000 characters medical notes
