@@ -5240,4 +5240,4 @@ def update_34405(dbo):
 def update_34406(dbo):
     # Remove bloated items from the config table that now live in the disk cache
     dbo.execute_dbupdate("DELETE FROM configuration WHERE ItemName IN " \
-        "('ASMNews', 'LookingForReport', 'LookingForLastMatchCount', 'LostFoundReport', LostFoundLastMatchCount')")
+        "('ASMNews', 'LookingForReport', 'LookingForLastMatchCount', 'LostFoundReport', 'LostFoundLastMatchCount')")
