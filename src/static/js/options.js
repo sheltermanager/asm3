@@ -465,6 +465,7 @@ $(function() {
                     8595,  // Down arrow
                     8984,  // Place of interest
                     8987,  // Hourglass
+                    8962,  // House
                     9113,  // Print
                     9114,  // Clear screen
                     9728,  // Sun
@@ -495,6 +496,8 @@ $(function() {
                     10004, // Cross
                     10052, // Snowflake
                     10084, // Heavy heart
+                    127960, // House - buildings
+                    127968, // House - building
                     128008, // Cat
                     128021, // Dog
                     128049, // Cat Face
