@@ -1006,6 +1006,12 @@ def petrescue_all_desexed(dbo):
 def petrescue_email(dbo):
     return cstring(dbo, "PetRescueEmail")
 
+def petrescue_phone_number(dbo):
+    return cstring(dbo, "PetRescuePhoneNumber")
+
+def petrescue_phone_type(dbo):
+    return cstring(dbo, "PetRescuePhoneType")
+
 def petrescue_token(dbo):
     return cstring(dbo, "PetRescueToken")
 

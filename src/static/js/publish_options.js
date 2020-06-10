@@ -4,7 +4,7 @@ $(function() {
 
     "use strict";
 
-    var publish_options = {
+    const publish_options = {
 
         render_tabs: function() {
             return [
@@ -586,11 +586,22 @@ $(function() {
                 '<tr>',
                 '<td><label for="premail">Contact email</label>',
                 '<span id="callout-premail" class="asm-callout">',
-                'This is the contact email for PetRescue listings. If you do not set it, the option from Settings -&gt; Options -&gt; Email is used.',
+                'This is the contact email for PetRescue listings. If you do not set it, the option from Settings &#8594; Options &#8594; Email is used.',
                 '</span>',
                 '</td>',
                 '<td><input id="premail" type="text" class="asm-textbox cfg" data="PetRescueEmail" /></td>',
                 '</tr>',
+                '<tr>',
+                '<td><label for="prphone">Contact phone</label>',
+                '<span id="callout-prphone" class="asm-callout">',
+                'This controls the phone number included as a secondary contact with your listings',
+                '</span></td>',
+                '<td><select id="prphone" class="asm-selectbox cfg" data="PetRescuePhoneType">',
+                '<option value="org">Use organisation number</option>',
+                '<option value="spec">Specify a number &#8594;</option>',
+                '<option value="none">Do not send a number</option>',
+                '</select> ',
+                '<input type="text" class="asm-textbox cfg" title="The phone number to use" data="PetRescuePhoneNumber" />',
                 '</table>',
                 '</div>'
             ].join("\n");

@@ -67,7 +67,10 @@ class PetRescuePublisher(AbstractPublisher):
         contact_name = asm3.configuration.organisation(self.dbo)
         contact_email = asm3.configuration.petrescue_email(self.dbo)
         if contact_email == "": contact_email = asm3.configuration.email(self.dbo)
-        contact_number = asm3.configuration.organisation_telephone(self.dbo)
+        phone_type = asm3.configuration.petrescue_phone_type(self.dbo)
+        contact_number = asm3.configuration.petrescue_phone_number(self.dbo)
+        if phone_type == "" or phone_type == "org": contact_number = asm3.configuration.organisation_telephone(self.dbo)
+        elif phone_type == "none": contact_number = ""
 
         if token == "":
             self.setLastError("No PetRescue auth token has been set.")
