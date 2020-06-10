@@ -458,7 +458,15 @@ $(function() {
 
         render_animalemblems: function() {
             var emblemvalues = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ@$%^&*!?#",
-                emblemglyphs = [ 
+                emblemglyphs = [
+                    8592,  // Left arrow
+                    8593,  // Up arrow
+                    8594,  // Right arrow
+                    8595,  // Down arrow
+                    8984,  // Place of interest
+                    8987,  // Hourglass
+                    9113,  // Print
+                    9114,  // Clear screen
                     9728,  // Sun
                     9729,  // Cloud
                     9731,  // Snowman
@@ -474,16 +482,24 @@ $(function() {
                     9794,  // Male
                     9850,  // Recycling
                     9855,  // Disabled
-                    9873,  // Flag
+                    9872,  // White flag
+                    9873,  // Black flag
                     9875,  // Anchor
+                    9877,  // Medical
                     9888,  // Warning
+                    9983,  // Striped flag
                     9986,  // Scissors
                     9990,  // Telephone location
                     9999,  // Pencil
                     10003, // Tick
                     10004, // Cross
                     10052, // Snowflake
-                    10084  // Heavy heart
+                    10084, // Heavy heart
+                    128008, // Cat
+                    128021, // Dog
+                    128049, // Cat Face
+                    128054, // Dog Face,
+                    128571 // Cat with heart eyes
                 ],
                 emblemoptions = [], i = 0,
                 condoptions = '<option></option><option value="has">' + _("if animal has") + 
