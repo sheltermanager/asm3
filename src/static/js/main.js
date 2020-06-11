@@ -4,7 +4,7 @@ $(function() {
 
     "use strict";
 
-    let main = {
+    const main = {
 
         render_active_users: function() {
             let s = "", loggedin = _("Active users: {0}"), userlist = [];
@@ -846,7 +846,7 @@ $(function() {
                 let mt = $("#mt" + data + " .mtext");
                 let ldv = $("#long" + data).val();
                 let sdv = $("#short" + data).val();
-                var ar = $(this);
+                let ar = $(this);
                 if (ldv.length != sdv.length) {
                     if (ar.text() == moretext) {
                         mt.fadeOut(function() {
@@ -913,8 +913,9 @@ $(function() {
             // If there's been a new deployment of ASM since we last
             // downloaded it to the browser, reload the page using the
             // new build number to invalidate the cache (passing a b
-            // parameter also triggers the backend to invalidate config)
-            if (asm.build != controller.build && !controller.b) {
+            // parameter also triggers the backend to invalidate config
+            // and sets noreload to prevent any potential reload loops)
+            if (asm.build != controller.build && !controller.noreload) {
                 common.route("main?b=" + controller.build, true);
             }
 
