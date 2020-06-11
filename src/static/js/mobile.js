@@ -1,6 +1,7 @@
 /*global $, jQuery, alert */
 
 // This file is loaded/run for all mobile interface actions/pages
+// stands alone, do not use ES6+ language features.
 
 $(document).ready(function() {
 

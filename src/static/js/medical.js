@@ -4,12 +4,12 @@ $(function() {
 
     "use strict";
 
-    var medical = {
+    const medical = {
 
         lastanimal: null,
 
         model: function() {
-            var dialog = {
+            const dialog = {
                 add_title: _("Add medical regimen"),
                 edit_title: _("Edit medical regimen"),
                 edit_perm: 'mcam',
@@ -63,10 +63,10 @@ $(function() {
                 ]
             };
 
-            var table = {
+            const table = {
                 rows: controller.rows,
                 idcolumn: "COMPOSITEID",
-                edit: function(row) {
+                edit: async function(row) {
                     if (controller.animal) {
                         $("#animal").closest("tr").hide();
                     }
@@ -77,19 +77,12 @@ $(function() {
                     $("#profileid").closest("tr").hide();
                     $("#treatmentrulecalc").hide();
                     tableform.fields_populate_from_json(dialog.fields, row);
-                    tableform.dialog_show_edit(dialog, row)
-                        .then(function() {
-                            tableform.fields_update_row(dialog.fields, row);
-                            medical.set_extra_fields(row);
-                            return tableform.fields_post(dialog.fields, "mode=update&regimenid=" + row.REGIMENID, "medical");
-                        })
-                        .then(function(response) {
-                            tableform.table_update(table);
-                            tableform.dialog_close();
-                        })
-                        .fail(function() {
-                            tableform.dialog_enable_buttons();
-                        });
+                    await tableform.dialog_show_edit(dialog, row);
+                    tableform.fields_update_row(dialog.fields, row);
+                    medical.set_extra_fields(row);
+                    await tableform.fields_post(dialog.fields, "mode=update&regimenid=" + row.REGIMENID, "medical");
+                    tableform.table_update(table);
+                    tableform.dialog_close();
                 },
                 complete: function(row) {
                     if (row.DATEGIVEN || row.STATUS == 2) { return true; }
@@ -134,7 +127,7 @@ $(function() {
                     },
                     { field: "LOCATIONNAME", display: _("Location"),
                         formatter: function(row) {
-                            var s = row.LOCATIONNAME;
+                            let s = row.LOCATIONNAME;
                             if (row.LOCATIONUNIT) {
                                 s += ' <span class="asm-search-locationunit">' + row.LOCATIONUNIT + '</span>';
                             }
@@ -178,7 +171,7 @@ $(function() {
                 ]
             };
 
-            var buttons = [
+            const buttons = [
                 { id: "new", text: _("New Regimen"), icon: "new", enabled: "always", perm: "maam",
                      click: function() { medical.new_medical(); }},
                 { id: "bulk", text: _("Bulk Regimen"), icon: "new", enabled: "always",
@@ -190,17 +183,13 @@ $(function() {
                     mouseleave: function() {
                        medical.highlight_selected_regimens(false);
                     },
-                    click: function() { 
-                        tableform.delete_dialog()
-                            .then(function() {
-                                tableform.buttons_default_state(buttons);
-                                var ids = medical.selected_regimen_ids();
-                                return common.ajax_post("medical", "mode=delete_regimen&ids=" + ids);
-                            })
-                            .then(function() {
-                                medical.remove_selected_regimens();
-                                tableform.table_update(table);
-                            });
+                    click: async function() { 
+                        await tableform.delete_dialog();
+                        tableform.buttons_default_state(buttons);
+                        let ids = medical.selected_regimen_ids();
+                        await common.ajax_post("medical", "mode=delete_regimen&ids=" + ids);
+                        medical.remove_selected_regimens();
+                        tableform.table_update(table);
                     } 
                 },
                 { id: "delete-treatments", text: _("Delete Treatments"), icon: "delete", enabled: "multi", perm: "mdam", 
@@ -210,61 +199,53 @@ $(function() {
                     mouseleave: function() {
                        medical.highlight_selected_treatments(false);
                     },
-                    click: function() { 
-                        tableform.delete_dialog()
-                            .then(function() {
-                                tableform.buttons_default_state(buttons);
-                                var ids = medical.selected_treatment_ids();
-                                return common.ajax_post("medical", "mode=delete_treatment&ids=" + ids);
-                            })
-                            .then(function() {
-                                medical.remove_selected_treatments();
-                                tableform.table_update(table);
-                            });
+                    click: async function() { 
+                        await tableform.delete_dialog();
+                        tableform.buttons_default_state(buttons);
+                        let ids = medical.selected_treatment_ids();
+                        await common.ajax_post("medical", "mode=delete_treatment&ids=" + ids);
+                        medical.remove_selected_treatments();
+                        tableform.table_update(table);
                     } 
                 },
                 { id: "given", text: _("Give"), icon: "complete", enabled: "multi", perm: "mcam", 
                     tooltip: _("Mark treatments given"),
                     click: function() {
-                       var comments = "";
-                       $.each(controller.rows, function(i, v) {
-                           if (tableform.table_id_selected(v.COMPOSITEID)) {
-                               comments += "[" + v.SHELTERCODE + " - " + v.ANIMALNAME + "] ";
-                           }
-                       });
-                       $("#usagecomments").val(comments);
-                       $("#newdate").datepicker("setDate", new Date());
-                       $("#usagetype").select("firstvalue");
-                       $("#usagedate").datepicker("setDate", new Date());
-                       $("#usagedate").closest("tr").hide();
-                       $("#quantity").val("0");
-                       $("#givenby").select("value", asm.user);
-                       // Default animal's current vet if set and this is an animal medical tab
-                       if (controller.animal && controller.animal.CURRENTVETID) { 
-                           $("#givenvet").personchooser("loadbyid", controller.animal.CURRENTVETID); 
-                       }
+                        let comments = "";
+                        $.each(controller.rows, function(i, v) {
+                            if (tableform.table_id_selected(v.COMPOSITEID)) {
+                                comments += "[" + v.SHELTERCODE + " - " + v.ANIMALNAME + "] ";
+                            }
+                        });
+                        $("#usagecomments").val(comments);
+                        $("#newdate").datepicker("setDate", new Date());
+                        $("#usagetype").select("firstvalue");
+                        $("#usagedate").datepicker("setDate", new Date());
+                        $("#usagedate").closest("tr").hide();
+                        $("#quantity").val("0");
+                        $("#givenby").select("value", asm.user);
+                        // Default animal's current vet if set and this is an animal medical tab
+                        if (controller.animal && controller.animal.CURRENTVETID) { 
+                            $("#givenvet").personchooser("loadbyid", controller.animal.CURRENTVETID); 
+                        }
                        $("#dialog-given").dialog("open");
                     }
                 },
                 { id: "undo", text: _("Undo"), icon: "cross", enabled: "multi", perm: "mcam",
                     tooltip: _("Undo given treatments"),
-                    click: function() {
-                        common.ajax_post("medical", "mode=undo&ids=" + medical.selected_treatment_ids())
-                            .then(function() {
-                                $.each(controller.rows, function(i, v) {
-                                    if (tableform.table_id_selected(v.COMPOSITEID)) {
-                                        v.DATEGIVEN = null;
-                                        v.GIVENBY = "";
-                                        v.TREATMENTCOMMENTS = "";
-                                    }
-                                });
-                                tableform.table_update(medical.table);
-                            })
-                            .always(function() {
-                                if (controller.name == "animal_medical") {
-                                    common.route_reload();
-                                }
-                            });
+                    click: async function() {
+                        await common.ajax_post("medical", "mode=undo&ids=" + medical.selected_treatment_ids());
+                        $.each(controller.rows, function(i, v) {
+                            if (tableform.table_id_selected(v.COMPOSITEID)) {
+                                v.DATEGIVEN = null;
+                                v.GIVENBY = "";
+                                v.TREATMENTCOMMENTS = "";
+                            }
+                        });
+                        tableform.table_update(medical.table);
+                        if (controller.name == "animal_medical") {
+                            common.route_reload();
+                        }
                     }
                 },
                 { id: "required", text: _("Change Date Required"), icon: "calendar", enabled: "multi", perm: "mcam", 
@@ -297,7 +278,7 @@ $(function() {
         },
 
         render: function() {
-            var s = "";
+            let s = "";
             this.model();
             s += tableform.dialog_render(this.dialog);
             s += medical.render_givendialog();
@@ -319,127 +300,128 @@ $(function() {
 
         /** Removes selected treatments from the local json */
         remove_selected_treatments: function() {
-             var seltreat = this.selected_treatment_ids().split(",");
-             var i = 0, v;
-             for (i = controller.rows.length - 1; i >= 0; i = i-1) {
-                 v = controller.rows[i];
-                 if ($.inArray(String(v.TREATMENTID), seltreat) != -1) {
-                     controller.rows.splice(i, 1);
-                 }
-             }
+            let seltreat = this.selected_treatment_ids().split(",");
+            let i = 0, v;
+            for (i = controller.rows.length - 1; i >= 0; i = i-1) {
+                v = controller.rows[i];
+                if ($.inArray(String(v.TREATMENTID), seltreat) != -1) {
+                    controller.rows.splice(i, 1);
+                }
+            }
         },
 
         /** Removes treatments in the selected regimens from the local json */
         remove_selected_regimens: function() {
-             var selreg = this.selected_regimen_ids().split(",");
-             var i = 0, v;
-             for (i = controller.rows.length - 1; i >= 0; i = i-1) {
-                 v = controller.rows[i];
-                 if ($.inArray(String(v.REGIMENID), selreg) != -1) {
-                     controller.rows.splice(i, 1);
-                 }
-             }
+            let selreg = this.selected_regimen_ids().split(",");
+            let i = 0, v;
+            for (i = controller.rows.length - 1; i >= 0; i = i-1) {
+                v = controller.rows[i];
+                if ($.inArray(String(v.REGIMENID), selreg) != -1) {
+                    controller.rows.splice(i, 1);
+                }
+            }
         },
 
         /** Returns a comma separated list of selected regimen ids */
         selected_regimen_ids: function() {
-             var selreg = [];
-             $.each(controller.rows, function(i, v) {
+            let selreg = [];
+            $.each(controller.rows, function(i, v) {
                 if (tableform.table_id_selected(v.COMPOSITEID)) {
                     selreg.push(v.REGIMENID);
                 }
-             });
-             return selreg.join(",");
+            });
+            return selreg.join(",");
         },
 
         /** Returns a comma separated list of selected treatment ids */
         selected_treatment_ids: function() {
-             var seltreat = [];
-             $.each(controller.rows, function(i, v) {
+            let seltreat = [];
+            $.each(controller.rows, function(i, v) {
                 if (tableform.table_id_selected(v.COMPOSITEID)) {
                     seltreat.push(v.TREATMENTID);
                 }
-             });
-             return seltreat.join(",");
+            });
+            return seltreat.join(",");
         },
 
         /** Puts a red border around the rows of all treatments in the selected regimens, 
          * unless enable is false, when it will be removed */
         highlight_selected_regimens: function(enable) {
-             var selreg = this.selected_regimen_ids().split(",");
-             var bval = "1px solid red";
-             if (!enable) { bval = ""; }
-             $.each(controller.rows, function(i, v) {
-                 if ($.inArray(String(v.REGIMENID), selreg) != -1) {
-                     $("[data-id='" + v.COMPOSITEID + "']").closest("tr").find("td").css({ border: bval });
-                 }
-             });
+            let selreg = this.selected_regimen_ids().split(",");
+            let bval = "1px solid red";
+            if (!enable) { bval = ""; }
+            $.each(controller.rows, function(i, v) {
+                if ($.inArray(String(v.REGIMENID), selreg) != -1) {
+                    $("[data-id='" + v.COMPOSITEID + "']").closest("tr").find("td").css({ border: bval });
+                }
+            });
         },
 
         /** Puts a red border around the rows of all selected treatments,
          * unless enable is false, when it will be removed */
         highlight_selected_treatments: function(enable) {
-             var seltreat = this.selected_treatment_ids().split(",");
-             var bval = "1px solid red";
-             if (!enable) { bval = ""; }
-             $.each(controller.rows, function(i, v) {
-                 if ($.inArray(String(v.TREATMENTID), seltreat) != -1) {
-                     $("[data-id='" + v.COMPOSITEID + "']").closest("tr").find("td").css({ border: bval });
-                 }
-             });
+            let seltreat = this.selected_treatment_ids().split(",");
+            let bval = "1px solid red";
+            if (!enable) { bval = ""; }
+            $.each(controller.rows, function(i, v) {
+                if ($.inArray(String(v.TREATMENTID), seltreat) != -1) {
+                    $("[data-id='" + v.COMPOSITEID + "']").closest("tr").find("td").css({ border: bval });
+                }
+            });
         },
 
         new_medical: function() { 
-            var dialog = medical.dialog;
+            const dialog = medical.dialog;
             tableform.dialog_show_add(dialog, {
                 onvalidate: function() {
                     return validate.notzero([ "animal" ]);
                 },
-                onadd: function() {
-                    tableform.fields_post(dialog.fields, "mode=create", "medical")
-                        .then(function(response) {
-                            tableform.dialog_close();
-                            if (config.bool("ReloadMedical")) {
-                                common.route_reload();
-                            }
-                            else {
-                                // If we aren't reloading automatically, show a placeholder row that
-                                // cannot be interacted with so the user knows their record was
-                                // created and they need to reload the screen.
-                                var a = controller.animal;
-                                if (!a) { a = $("#animal").animalchooser("get_selected"); }
-                                var nr = {
-                                    TREATMENTID: 0,
-                                    COMPOSITEID: "",
-                                    ANIMALID: a.ID,
-                                    ANIMALNAME: a.ANIMALNAME,
-                                    SHORTCODE: a.SHORTCODE,
-                                    SHELTERCODE: a.SHELTERCODE,
-                                    ACCEPTANCENUMBER: a.ACCEPTANCENUMBER,
-                                    SPECIESNAME: a.SPECIESNAME,
-                                    LOCATIONNAME: a.LOCATIONNAME,
-                                    WEBSITEMEDIANAME: a.WEBSITEMEDIANAME,
-                                    WEBSITEMEDIADATE: a.WEBSITEMEDIADATE,
-                                    TREATMENTNAME: $("#treatmentname").val(),
-                                    DOSAGE: $("#dosage").val(),
-                                    COMMENTS: $("#comments").val(),
-                                    TREATMENTCOMMENTS: "",
-                                    STARTDATE: format.date_iso($("#startdate").val()),
-                                    NAMEDSTATUS: '<a href="javascript:location.reload(true)">' + _("Reload page ...") + '</a>',
-                                    NAMEDFREQUENCY: "",
-                                    NAMEDNUMBEROFTREATMENTS: "",
-                                    TREATMENTNUMBER: "",
-                                    TOTALTREATMENTS: "",
-                                    TREATMENTSREMAINING: "",
-                                    TREATMENTSGIVEN: ""
-                                };
-                                controller.rows.unshift(nr);
-                                tableform.table_update(medical.table);
-                            }
-                        })
-                        .fail(function() {
-                            tableform.dialog_enable_buttons();   
-                        });
+                onadd: async function() {
+                    try {
+                        await tableform.fields_post(dialog.fields, "mode=create", "medical");
+                        tableform.dialog_close();
+                        if (config.bool("ReloadMedical")) {
+                            common.route_reload();
+                        }
+                        else {
+                            // If we aren't reloading automatically, show a placeholder row that
+                            // cannot be interacted with so the user knows their record was
+                            // created and they need to reload the screen.
+                            let a = controller.animal;
+                            if (!a) { a = $("#animal").animalchooser("get_selected"); }
+                            let nr = {
+                                TREATMENTID: 0,
+                                COMPOSITEID: "",
+                                ANIMALID: a.ID,
+                                ANIMALNAME: a.ANIMALNAME,
+                                SHORTCODE: a.SHORTCODE,
+                                SHELTERCODE: a.SHELTERCODE,
+                                ACCEPTANCENUMBER: a.ACCEPTANCENUMBER,
+                                SPECIESNAME: a.SPECIESNAME,
+                                LOCATIONNAME: a.LOCATIONNAME,
+                                WEBSITEMEDIANAME: a.WEBSITEMEDIANAME,
+                                WEBSITEMEDIADATE: a.WEBSITEMEDIADATE,
+                                TREATMENTNAME: $("#treatmentname").val(),
+                                DOSAGE: $("#dosage").val(),
+                                COMMENTS: $("#comments").val(),
+                                TREATMENTCOMMENTS: "",
+                                STARTDATE: format.date_iso($("#startdate").val()),
+                                NAMEDSTATUS: '<a href="javascript:location.reload(true)">' + _("Reload page ...") + '</a>',
+                                NAMEDFREQUENCY: "",
+                                NAMEDNUMBEROFTREATMENTS: "",
+                                TREATMENTNUMBER: "",
+                                TOTALTREATMENTS: "",
+                                TREATMENTSREMAINING: "",
+                                TREATMENTSGIVEN: ""
+                            };
+                            controller.rows.unshift(nr);
+                            tableform.table_update(medical.table);
+                        }
+                    }
+                    catch(err) {
+                        log.error(err, err);
+                        tableform.dialog_enable_buttons();   
+                    }
                 },
                 onload: function() {
                     if (controller.animal) {
@@ -465,15 +447,16 @@ $(function() {
                 onvalidate: function() {
                     return validate.notblank([ "animals" ]);
                 },
-                onadd: function() {
-                    tableform.fields_post(medical.dialog.fields, "mode=createbulk", "medical")
-                        .then(function(response) {
-                            tableform.dialog_close();
-                            common.route_reload();
-                        })
-                        .fail(function() {
-                            tableform.dialog_enable_buttons();   
-                        });
+                onadd: async function() {
+                    try {
+                        await tableform.fields_post(medical.dialog.fields, "mode=createbulk", "medical");
+                        tableform.dialog_close();
+                        common.route_reload();
+                    }
+                    catch(err) {
+                        log.error(err, err);
+                        tableform.dialog_enable_buttons();   
+                    }
                 },
                 onload: function() {
                     $("#animal").closest("tr").hide();
@@ -548,32 +531,32 @@ $(function() {
 
         bind_givendialog: function() {
 
-            var givenbuttons = { };
-            givenbuttons[_("Save")] = function() {
+            let givenbuttons = { };
+            givenbuttons[_("Save")] = async function() {
                 validate.reset();
                 if (!validate.notblank([ "newdate" ])) { return; }
                 $("#usagedate").val($("#newdate").val()); // copy given to usage
                 $("#dialog-given").disable_dialog_buttons();
-                var ids = medical.selected_treatment_ids();
-                var newdate = encodeURIComponent($("#newdate").val());
-                common.ajax_post("medical", $("#dialog-given .asm-field").toPOST() + "&mode=given&ids=" + ids)
-                    .then(function() {
-                        $.each(controller.rows, function(i, v) {
-                            if (tableform.table_id_selected(v.COMPOSITEID)) {
-                                v.DATEGIVEN = format.date_iso($("#newdate").val());
-                                if (!v.GIVENBY) { v.GIVENBY = asm.user; }
-                                v.TREATMENTCOMMENTS = $("#treatmentcomments").val();
-                            }
-                        });
-                        tableform.table_update(medical.table);
-                    })
-                    .always(function() {
-                        $("#dialog-given").dialog("close");
-                        $("#dialog-given").enable_dialog_buttons();
-                        if (controller.name == "animal_medical") {
-                            common.route_reload();
+                let ids = medical.selected_treatment_ids();
+                let newdate = encodeURIComponent($("#newdate").val());
+                try {
+                    await common.ajax_post("medical", $("#dialog-given .asm-field").toPOST() + "&mode=given&ids=" + ids);
+                    $.each(controller.rows, function(i, v) {
+                        if (tableform.table_id_selected(v.COMPOSITEID)) {
+                            v.DATEGIVEN = format.date_iso($("#newdate").val());
+                            if (!v.GIVENBY) { v.GIVENBY = asm.user; }
+                            v.TREATMENTCOMMENTS = $("#treatmentcomments").val();
                         }
                     });
+                    tableform.table_update(medical.table);
+                }
+                finally {
+                    $("#dialog-given").dialog("close");
+                    $("#dialog-given").enable_dialog_buttons();
+                    if (controller.name == "animal_medical") {
+                        common.route_reload();
+                    }
+                }
             };
             givenbuttons[_("Cancel")] = function() {
                 $("#dialog-given").dialog("close");
@@ -606,26 +589,26 @@ $(function() {
 
         bind_requireddialog: function() {
 
-            var requiredbuttons = { };
-            requiredbuttons[_("Save")] = function() {
+            let requiredbuttons = { };
+            requiredbuttons[_("Save")] = async function() {
                 validate.reset();
                 if (!validate.notblank([ "newdater" ])) { return; }
                 $("#dialog-required").disable_dialog_buttons();
-                var ids = medical.selected_treatment_ids();
-                var newdate = encodeURIComponent($("#newdater").val());
-                common.ajax_post("medical", "mode=required&newdate=" + newdate + "&ids=" + ids)
-                    .then(function() {
-                        $.each(controller.rows, function(i, v) {
-                            if (tableform.table_id_selected(v.COMPOSITEID)) {
-                                v.DATEREQUIRED = format.date_iso($("#newdater").val());
-                            }
-                        });
-                        tableform.table_update(medical.table);
-                    })
-                    .always(function() {
-                        $("#dialog-required").dialog("close");
-                        $("#dialog-required").enable_dialog_buttons();
+                let ids = medical.selected_treatment_ids();
+                let newdate = encodeURIComponent($("#newdater").val());
+                try {
+                    await common.ajax_post("medical", "mode=required&newdate=" + newdate + "&ids=" + ids);
+                    $.each(controller.rows, function(i, v) {
+                        if (tableform.table_id_selected(v.COMPOSITEID)) {
+                            v.DATEREQUIRED = format.date_iso($("#newdater").val());
+                        }
                     });
+                    tableform.table_update(medical.table);
+                }
+                finally {
+                    $("#dialog-required").dialog("close");
+                    $("#dialog-required").enable_dialog_buttons();
+                }
             };
             requiredbuttons[_("Cancel")] = function() {
                 $("#dialog-required").dialog("close");
@@ -714,26 +697,24 @@ $(function() {
                 $("#profilerow").hide();
             }
 
-            $("#profileid").change(function() {
+            $("#profileid").change(async function() {
                 if ($("#profileid").val() == "0") { return; }
-                var formdata = "mode=get_profile&profileid=" + $("#profileid").val();
-                common.ajax_post("medical", formdata)
-                    .then(function(result) {
-                        var p = jQuery.parseJSON(result)[0];
-                        $("#treatmentname").val( html.decode(p.TREATMENTNAME));
-                        $("#dosage").val( html.decode(p.DOSAGE) );
-                        $("#cost").currency("value", p.COST );
-                        $("#comments").val( html.decode(p.COMMENTS) );
-                        $("#totalnumberoftreatments").val( p.TOTALNUMBEROFTREATMENTS );
-                        $("#singlemulti").val( p.TOTALNUMBEROFTREATMENTS == 1 ? "0" : "1" );
-                        medical.change_singlemulti();
-                        $("#timingrule").val( p.TIMINGRULE );
-                        $("#timingrulenofrequencies").val( p.TIMINGRULENOFREQUENCIES );
-                        $("#timingrulefrequency").val( p.TIMINGRULEFREQUENCY );
-                        $("#treatmentrule").val( p.TREATMENTRULE );
-                        $("#totalnumberoftreatments").val( p.TOTALNUMBEROFTREATMENTS );
-                        medical.change_values();
-                    });
+                let formdata = "mode=get_profile&profileid=" + $("#profileid").val();
+                let result = await common.ajax_post("medical", formdata);
+                let p = jQuery.parseJSON(result)[0];
+                $("#treatmentname").val( html.decode(p.TREATMENTNAME));
+                $("#dosage").val( html.decode(p.DOSAGE) );
+                $("#cost").currency("value", p.COST );
+                $("#comments").val( html.decode(p.COMMENTS) );
+                $("#totalnumberoftreatments").val( p.TOTALNUMBEROFTREATMENTS );
+                $("#singlemulti").val( p.TOTALNUMBEROFTREATMENTS == 1 ? "0" : "1" );
+                medical.change_singlemulti();
+                $("#timingrule").val( p.TIMINGRULE );
+                $("#timingrulenofrequencies").val( p.TIMINGRULENOFREQUENCIES );
+                $("#timingrulefrequency").val( p.TIMINGRULEFREQUENCY );
+                $("#treatmentrule").val( p.TREATMENTRULE );
+                $("#totalnumberoftreatments").val( p.TOTALNUMBEROFTREATMENTS );
+                medical.change_values();
             });
 
             $("#timingrule").change(medical.change_values);
@@ -792,7 +773,7 @@ $(function() {
         name: "medical",
         animation: function() { return controller.name == "medical" ? "book" : "formtab"; },
         title:  function() { 
-            var t = "";
+            let t = "";
             if (controller.name == "animal_medical") {
                 t = common.substitute(_("{0} - {1} ({2} {3} aged {4})"), { 
                     0: controller.animal.ANIMALNAME, 1: controller.animal.CODE, 2: controller.animal.SEXNAME,
