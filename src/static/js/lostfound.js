@@ -4,13 +4,13 @@ $(function() {
 
     "use strict";
 
-    var lostfound = {
+    const lostfound = {
 
         current_person: null,
         mode: "lost",
 
         render: function() {
-            var mode = controller.name.indexOf("lost") != -1 ? "lost" : "found";
+            let mode = controller.name.indexOf("lost") != -1 ? "lost" : "found";
             this.mode = mode;
             return [
                 '<div id="emailform" />',
@@ -171,8 +171,8 @@ $(function() {
 
             // Hide additional accordion section if there aren't
             // any additional fields declared
-            var ac = $("#asm-additional-accordion");
-            var an = ac.next();
+            let ac = $("#asm-additional-accordion");
+            let an = ac.next();
             if (an.find(".additional").length == 0) {
                 ac.hide(); an.hide();
             }
@@ -285,7 +285,7 @@ $(function() {
             });
 
             $("#button-match").button().click(function() {
-                var qs = ( lostfound.mode == "lost" ? "lostanimalid=" : "foundanimalid=" ) + $("#lfid").val();
+                let qs = ( lostfound.mode == "lost" ? "lostanimalid=" : "foundanimalid=" ) + $("#lfid").val();
                 common.route("lostfound_match?" + qs);
             });
 
@@ -301,34 +301,26 @@ $(function() {
                 });
             });
 
-            $("#button-toanimal").button().click(function() {
+            $("#button-toanimal").button().click(async function() {
                 $("#button-toanimal").button("disable");
-                var formdata = "mode=toanimal&id=" + $("#lfid").val();
-                common.ajax_post(controller.name, formdata)
-                    .then(function(result) { 
-                        common.route("animal?id=" + result); 
-                    });
+                let formdata = "mode=toanimal&id=" + $("#lfid").val();
+                let result = await common.ajax_post(controller.name, formdata);
+                common.route("animal?id=" + result); 
             });
 
-            $("#button-towaitinglist").button().click(function() {
+            $("#button-towaitinglist").button().click(async function() {
                 $("#button-towaitinglist").button("disable");
-                var formdata = "mode=towaitinglist&id=" + $("#lfid").val();
-                common.ajax_post(controller.name, formdata)
-                    .then(function(result) { 
-                        common.route("waitinglist?id=" + result); 
-                    });
+                let formdata = "mode=towaitinglist&id=" + $("#lfid").val();
+                let result = await common.ajax_post(controller.name, formdata);
+                common.route("waitinglist?id=" + result); 
             });
 
-            $("#button-delete").button().click(function() {
-                tableform.delete_dialog(null, _("This will permanently remove this record, are you sure?"))
-                    .then(function() {
-                        var formdata = "mode=delete&id=" + $("#lfid").val();
-                        return common.ajax_post(controller.name, formdata);
-                    })
-                    .then(function() { 
-                        $("#dialog-delete").dialog("close"); 
-                        common.route("main"); 
-                    });
+            $("#button-delete").button().click(async function() {
+                await tableform.delete_dialog(null, _("This will permanently remove this record, are you sure?"));
+                let formdata = "mode=delete&id=" + $("#lfid").val();
+                await common.ajax_post(controller.name, formdata);
+                $("#dialog-delete").dialog("close"); 
+                common.route("main"); 
             });
 
             $('#species').change(function() {

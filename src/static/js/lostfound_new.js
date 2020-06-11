@@ -4,23 +4,22 @@ $(function() {
 
     "use strict";
 
-    var lostfound_new = {
+    const lostfound_new = {
 
         render: function() {
-            var mode = controller.name.indexOf("lost") != -1 ? "lost" : "found";
-            this.mode = mode;
+            this.mode = controller.name.indexOf("lost") != -1 ? "lost" : "found";
             return [
-                mode == "lost" ? html.content_header(_("Add lost animal")) : html.content_header(_("Add found animal")),
+                this.mode == "lost" ? html.content_header(_("Add lost animal")) : html.content_header(_("Add found animal")),
                 '<table class="asm-table-layout">',
                 '<tr>',
                 '<td width="40%">',
                 '<table width="100%">',
                 '<tr>',
                 '<td>',
-                mode == "lost" ? '<label for="datelost">' + _("Date Lost") + '</label></td>' : "",
-                mode == "lost" ? '<td><input type="text" id="datelost" data="datelost" class="asm-textbox asm-datebox" title="' + html.title(_("The date this animal was lost")) + '"  />' : "",
-                mode == "found" ? '<label for="datefound">' + _("Date Found") + '</label></td>' : "",
-                mode == "found" ? '<td><input type="text" id="datefound" data="datefound" class="asm-textbox asm-datebox" title="' + html.title(_("The date this animal was found")) + '"  />' : "",
+                this.mode == "lost" ? '<label for="datelost">' + _("Date Lost") + '</label></td>' : "",
+                this.mode == "lost" ? '<td><input type="text" id="datelost" data="datelost" class="asm-textbox asm-datebox" title="' + html.title(_("The date this animal was lost")) + '"  />' : "",
+                this.mode == "found" ? '<label for="datefound">' + _("Date Found") + '</label></td>' : "",
+                this.mode == "found" ? '<td><input type="text" id="datefound" data="datefound" class="asm-textbox asm-datebox" title="' + html.title(_("The date this animal was found")) + '"  />' : "",
                 '</td>',
                 '</tr>',
                 '<tr>',
@@ -85,10 +84,10 @@ $(function() {
                 '<table width="100%">',
                 '<tr>',
                 '<td>',
-                mode == "lost" ? '<label for="arealost">' + _("Area Lost") + '</label></td>' : "",
-                mode == "lost" ? '<td><textarea id="arealost" data="arealost" rows="4" class="asm-textarea" title="' + html.title(_("Area where the animal was lost")) + '"></textarea></td>' : "",
-                mode == "found" ? '<label for="areafound">' + _("Area Found") + '</label></td>' : "",
-                mode == "found" ? '<td><textarea id="areafound" data="areafound" rows="4" class="asm-textarea" title="' + html.title(_("Area where the animal was found")) + '"></textarea></td>' : "",
+                this.mode == "lost" ? '<label for="arealost">' + _("Area Lost") + '</label></td>' : "",
+                this.mode == "lost" ? '<td><textarea id="arealost" data="arealost" rows="4" class="asm-textarea" title="' + html.title(_("Area where the animal was lost")) + '"></textarea></td>' : "",
+                this.mode == "found" ? '<label for="areafound">' + _("Area Found") + '</label></td>' : "",
+                this.mode == "found" ? '<td><textarea id="areafound" data="areafound" rows="4" class="asm-textarea" title="' + html.title(_("Area where the animal was found")) + '"></textarea></td>' : "",
                 '</td>',
                 '</tr>',
                 '<tr>',
@@ -144,7 +143,7 @@ $(function() {
 
         bind: function() {
 
-            var validation = function() {
+            const validation = function() {
                 // Remove any previous errors
                 header.hide_error();
                 validate.reset();
@@ -184,45 +183,44 @@ $(function() {
 
             };
 
-            var addLFAnimal = function(addmode) {
+            const add_lf_animal = async function(addmode) {
                 if (!validation()) { return; }
 
                 $(".asm-content button").button("disable");
                 header.show_loading(_("Creating..."));
-
-                var formdata = $("input, textarea, select").not(".chooser").toPOST();
-                common.ajax_post(controller.name, formdata)
-                    .then(function(createdID) { 
-                        if (addmode == "add") {
-                            if (lostfound_new.mode == "lost") {
-                                header.show_info(_("Lost animal entry {0} successfully created.").replace("{0}", format.padleft(createdID, 6)));
-                            }
-                            else {
-                                header.show_info(_("FoundLost animal entry {0} successfully created.").replace("{0}", format.padleft(createdID, 6)));
-                            }
+                try {
+                    let formdata = $("input, textarea, select").not(".chooser").toPOST();
+                    let createdID = await common.ajax_post(controller.name, formdata);
+                    if (addmode == "add") {
+                        if (lostfound_new.mode == "lost") {
+                            header.show_info(_("Lost animal entry {0} successfully created.").replace("{0}", format.padleft(createdID, 6)));
                         }
                         else {
-                            if (lostfound_new.mode == "lost") {
-                                if (createdID != "0") { common.route("lostanimal?id=" + createdID); }
-                            }
-                            else {
-                                if (createdID != "0") { common.route("foundanimal?id=" + createdID); }
-                            }
+                            header.show_info(_("FoundLost animal entry {0} successfully created.").replace("{0}", format.padleft(createdID, 6)));
                         }
-                    })
-                    .always(function() {
-                        $(".asm-content button").button("enable");
-                        header.hide_loading();
-                    });
+                    }
+                    else {
+                        if (lostfound_new.mode == "lost") {
+                            if (createdID != "0") { common.route("lostanimal?id=" + createdID); }
+                        }
+                        else {
+                            if (createdID != "0") { common.route("foundanimal?id=" + createdID); }
+                        }
+                    }
+                }
+                finally {
+                    $(".asm-content button").button("enable");
+                    header.hide_loading();
+                }
             };
 
             // Buttons
             $("#add").button().click(function() {
-                addLFAnimal("add");
+                add_lf_animal("add");
             });
 
             $("#addedit").button().click(function() {
-                addLFAnimal("addedit");
+                add_lf_animal("addedit");
             });
 
             $("#reset").button().click(function() {
