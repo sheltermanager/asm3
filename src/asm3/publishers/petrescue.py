@@ -300,10 +300,10 @@ class PetRescuePublisher(AbstractPublisher):
             "adoption_process":         "", # 4,000 chars how to adopt
             "contact_details_source":   "self", # self | user | group
             "contact_preferred_method": "email", # email | phone
+            "display_contact_preferred_method_only": contact_number == "",
             "contact_name":             contact_name, # name of contact details owner
             "contact_number":           contact_number, # number to enquire about adoption
             "contact_email":            contact_email, # email to enquire about adoption
-            "contact_method":           "email", # email | phone
             "foster_needed":            needs_foster, # true | false
             "adoptable_in_abbrs":       adoptable_in_list, # array of states for adoption in: ACT NSW NT QLD SA TAS VIC WA 
             "medical_notes":            "", # DISABLED an.HEALTHPROBLEMS, # 4,000 characters medical notes
