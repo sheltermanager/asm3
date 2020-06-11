@@ -4,7 +4,7 @@ $(function() {
 
     "use strict";
 
-    var move_deceased = {
+    const move_deceased = {
 
         render: function() {
             return [
@@ -61,7 +61,7 @@ $(function() {
         },
 
         bind: function() {
-            var validation = function() {
+            const validation = function() {
                 header.hide_error();
                 validate.reset();
                 return validate.notblank([ "animal", "deceaseddate" ]);
@@ -88,26 +88,25 @@ $(function() {
             // Remove any retired lookups from the lists
             $(".asm-selectbox").select("removeRetiredOptions");
 
-            $("#deceased").button().click(function() {
+            $("#deceased").button().click(async function() {
                 if (!validation()) { return; }
                 $("#deceased").button("disable");
                 header.show_loading(_("Updating..."));
-
-                var formdata = "mode=create&" + $("input, select, textarea").toPOST();
-                common.ajax_post("move_deceased", formdata)
-                    .then(function(data) {
-                        header.show_info(_("Animal '{0}' successfully marked deceased.").replace("{0}", $(".animalchooser-display .asm-embed-name").html()));
-                        $("#deceaseddate").datepicker("setDate", new Date());
-                        $("#animal").animalchooser("clear");
-                        $("#ptsreason").val("");
-                        $("#puttosleep").attr("checked", false);
-                        $("#deadonarrival").attr("checked", false);
-                        $("#diedoffshelter").attr("checked", false);
-                    })
-                    .always(function() {
-                        header.hide_loading();
-                        $("#deceased").button("enable");
-                    });
+                try {
+                    let formdata = "mode=create&" + $("input, select, textarea").toPOST();
+                    await common.ajax_post("move_deceased", formdata);
+                    header.show_info(_("Animal '{0}' successfully marked deceased.").replace("{0}", $(".animalchooser-display .asm-embed-name").html()));
+                    $("#deceaseddate").datepicker("setDate", new Date());
+                    $("#animal").animalchooser("clear");
+                    $("#ptsreason").val("");
+                    $("#puttosleep").attr("checked", false);
+                    $("#deadonarrival").attr("checked", false);
+                    $("#diedoffshelter").attr("checked", false);
+                }
+                finally {
+                    header.hide_loading();
+                    $("#deceased").button("enable");
+                }
             });
         },
 
