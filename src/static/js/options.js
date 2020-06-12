@@ -5,7 +5,7 @@ $(function() {
 
     "use strict";
 
-    var BACKGROUND_COLOURS = {
+    const BACKGROUND_COLOURS = {
         "asm":              "#ffffff",
         "base":             "#ffffff",
         "black-tie":        "#333333",
@@ -34,13 +34,13 @@ $(function() {
         "vader":            "#888888"
     };
 
-    var options = {
+    const options = {
 
         /** Where we have a list of pairs, first is value, second is label */
         two_pair_options: function(o, isflag) {
-            var s = [];
+            let s = [];
             $.each(o, function(i, v) {
-                var ds = "";
+                let ds = "";
                 if (isflag) {
                     ds = 'data-style="background-image: url(static/images/flags/' + v[0] + '.png)"';
                 }
@@ -457,7 +457,7 @@ $(function() {
         },
 
         render_animalemblems: function() {
-            var emblemvalues = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ@$%^&*!?#",
+            const emblemvalues = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ@$%^&*!?#",
                 emblemglyphs = [
                     8592,  // Left arrow
                     8593,  // Up arrow
@@ -504,12 +504,12 @@ $(function() {
                     128054, // Dog Face,
                     128571 // Cat with heart eyes
                 ],
-                emblemoptions = [], i = 0,
+                emblemoptions = [],
                 condoptions = '<option></option><option value="has">' + _("if animal has") + 
                     '</option><option value="not">' + _("if animal does not have") + '</option>';
             $.each(emblemglyphs, function(i, v) { emblemoptions.push('<option value="&#' + v + ';">&#' + v + ';</option>'); });
-            for (i = 0; i < emblemvalues.length; i=i+1) { emblemoptions.push('<option>' + emblemvalues[i] + '</option>'); }
-            var boxes = function(id) {
+            for (let i = 0; i < emblemvalues.length; i=i+1) { emblemoptions.push('<option>' + emblemvalues[i] + '</option>'); }
+            const boxes = function(id) {
                 return '<br/>' + 
                 '<select data="EmblemsCustomValue' + id + '" class="asm-selectbox asm-halfselectbox decode"><option></option>' + emblemoptions.join("") + '</select> ' + 
                 ' <select data="EmblemsCustomCond' + id + '" class="asm-selectbox">' + condoptions + '</select>' + 
@@ -1386,11 +1386,11 @@ $(function() {
         },
 
         bind: function() {
-            var get_donation_mappings = function() {
-                var mappings = "";
+            const get_donation_mappings = function() {
+                let mappings = "";
                 $(".donmap").each(function() {
-                    var t = $(this);
-                    var idx = t.attr("id").substring(5, 6);
+                    let t = $(this);
+                    let idx = t.attr("id").substring(5, 6);
                     if (t.val() != "" && t.val() != "0" && t.val() != "-1") {
                         if (mappings != "") { mappings += ","; }
                         mappings += t.val() + "=" + $("#mapac" + idx).val();
@@ -1400,17 +1400,15 @@ $(function() {
             };
 
             // Toolbar buttons
-            $("#button-save").button().click(function() {
+            $("#button-save").button().click(async function() {
                 $("#button-save").button("disable");
                 validate.dirty(false);
-                var formdata = "mode=save&" + $("input, select, textarea, .asm-richtextarea").toPOST(true);
+                let formdata = "mode=save&" + $("input, select, textarea, .asm-richtextarea").toPOST(true);
                 formdata += "&DonationAccountMappings=" + get_donation_mappings();
                 header.show_loading(_("Saving..."));
-                common.ajax_post("options", formdata)
-                    .then(function() { 
-                        // Needs to do full reload to get updated config.js
-                        common.route_reload(true); 
-                    });
+                await common.ajax_post("options", formdata);
+                // Needs to do full reload to get updated config.js
+                common.route_reload(true); 
             });
 
             // Components
@@ -1421,7 +1419,7 @@ $(function() {
             // Load default values from the config settings
             $("input, select, textarea, .asm-richtextarea").each(function() {
                 if ($(this).attr("data")) {
-                    var d = $(this).attr("data");
+                    let d = $(this).attr("data");
                     if ($(this).is(".asm-currencybox")) {
                         $(this).val( html.decode(config.currency(d)));
                     }
@@ -1453,8 +1451,8 @@ $(function() {
                         $(this).select("value", config.str(d));
                     }
                     else if ($(this).is(".asm-bsmselect")) {
-                        var ms = config.str(d).split(",");
-                        var bsm = $(this);
+                        let ms = config.str(d).split(",");
+                        let bsm = $(this);
                         $.each(ms, function(i, v) {
                             bsm.find("option[value='" + common.trim(v + "']")).attr("selected", "selected");
                         });
@@ -1472,20 +1470,20 @@ $(function() {
             // When the visual theme is changed, switch the CSS file so the
             // theme updates immediately.
             $("#systemtheme").change(function() {
-                var theme = $("#systemtheme").val();
-                var href = asm.jqueryuicss.replace("%(theme)s", theme);
+                let theme = $("#systemtheme").val();
+                let href = asm.jqueryuicss.replace("%(theme)s", theme);
                 $("#jqt").attr("href", href);
                 $("body").css("background-color", BACKGROUND_COLOURS[theme]);
             });
 
             // Set donation type maps from DonationAccountMappings field
-            var donmaps = config.str("DonationAccountMappings");
+            let donmaps = config.str("DonationAccountMappings");
             if (donmaps != "") {
-                var maps = donmaps.split(",");
+                let maps = donmaps.split(",");
                 $.each(maps, function(i, v) {
-                    var dt = v.split("=")[0];
-                    var ac = v.split("=")[1];
-                    var idx = i + 1;
+                    let dt = v.split("=")[0];
+                    let ac = v.split("=")[1];
+                    let idx = i + 1;
                     $("#mapdt" + idx).select("value", dt);
                     $("#mapac" + idx).select("value", ac);
                 });

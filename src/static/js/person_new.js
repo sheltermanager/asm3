@@ -4,7 +4,7 @@ $(function() {
 
     "use strict";
 
-    var person_new = {
+    const person_new = {
 
         render: function() {
             return [
@@ -122,7 +122,7 @@ $(function() {
         },
 
         bind: function() {
-            var validation = function() {
+            const validation = function() {
                 // Remove any previous errors
                 header.hide_error();
                 validate.reset();
@@ -132,34 +132,32 @@ $(function() {
                 return true;
             };
 
-            var addPerson = function() {
+            const add_person = async function() {
                 if (!validation()) { 
                     $("#asm-content button").button("enable"); 
                     return; 
                 }
                 header.show_loading(_("Creating..."));
-                var formdata = $("input, textarea, select").not(".chooser").toPOST();
-                common.ajax_post("person_new", formdata)
-                    .then(function(personid) {
-                        if (personid && person_new.create_and_edit) { 
-                            common.route("person?id=" + personid); 
-                        }
-                        else {
-                            header.show_info(_("Person successfully created"));
-                        }
-                        $("#asm-content button").button("enable");
-                    })
-                    .always(function() {
-                        $("#asm-content button").button("enable");
-                    });
-
+                try {
+                    let formdata = $("input, textarea, select").not(".chooser").toPOST();
+                    let personid = await common.ajax_post("person_new", formdata);
+                    if (personid && person_new.create_and_edit) { 
+                        common.route("person?id=" + personid); 
+                    }
+                    else {
+                        header.show_info(_("Person successfully created"));
+                    }
+                }
+                finally {
+                    $("#asm-content button").button("enable");
+                }
             };
 
-            var similar_dialog = function() {
-                var b = {}; 
+            const similar_dialog = function() {
+                let b = {}; 
                 b[_("Create")] = function() {
                     $("#dialog-similar").disable_dialog_buttons();
-                    addPerson();
+                    add_person();
                     $("#asm-content button").button("enable");
                 };
                 b[_("Cancel")] = function() { 
@@ -177,29 +175,27 @@ $(function() {
                 });
             };
 
-            var check_for_similar = function() {
+            const check_for_similar = async function() {
                 if (!validation()) { 
                     $("#asm-content button").button("enable"); 
                     return; 
                 }
-                var formdata = "mode=similar&" + $("#emailaddress, #mobiletelephone, #surname, #forenames, #address").toPOST();
-                common.ajax_post("person_embed", formdata)
-                    .then(function(result) { 
-                        var people = jQuery.parseJSON(result);
-                        var rec = people[0];
-                        if (rec === undefined) {
-                            addPerson();
-                        }
-                        else {
-                            var disp = "<span class=\"justlink\"><a class=\"asm-embed-name\" href=\"person?id=" + rec.ID + "\">" + rec.OWNERNAME + "</a></span>";
-                            disp += "<br/>" + rec.OWNERADDRESS + "<br/>" + rec.OWNERTOWN + "<br/>" + rec.OWNERCOUNTY + "<br/>" + rec.OWNERPOSTCODE + "<br/>" + rec.HOMETELEPHONE + "<br/>" + rec.WORKTELEPHONE + "<br/>" + rec.MOBILETELEPHONE + "<br/>" + rec.EMAILADDRESS;
-                            $(".similar-person").html(disp);
-                            similar_dialog();
-                        }
-                    });
+                let formdata = "mode=similar&" + $("#emailaddress, #mobiletelephone, #surname, #forenames, #address").toPOST();
+                let result = await common.ajax_post("person_embed", formdata);
+                let people = jQuery.parseJSON(result);
+                let rec = people[0];
+                if (rec === undefined) {
+                    add_person();
+                }
+                else {
+                    let disp = "<span class=\"justlink\"><a class=\"asm-embed-name\" href=\"person?id=" + rec.ID + "\">" + rec.OWNERNAME + "</a></span>";
+                    disp += "<br/>" + rec.OWNERADDRESS + "<br/>" + rec.OWNERTOWN + "<br/>" + rec.OWNERCOUNTY + "<br/>" + rec.OWNERPOSTCODE + "<br/>" + rec.HOMETELEPHONE + "<br/>" + rec.WORKTELEPHONE + "<br/>" + rec.MOBILETELEPHONE + "<br/>" + rec.EMAILADDRESS;
+                    $(".similar-person").html(disp);
+                    similar_dialog();
+                }
             };
 
-            var check_org = function() {
+            const check_org = function() {
                 // If it's an organisation, only show the org fields,
                 // otherwise show individual
                 if ($("#ownertype").val() == 2) {
@@ -241,8 +237,8 @@ $(function() {
             $("#county").autocomplete({ source: controller.counties.split("|") });
             $("#town").blur(function() {
                 if ($("#county").val() == "") {
-                    var tc = html.decode(controller.towncounties);
-                    var idx = tc.indexOf($("#town").val() + "^");
+                    let tc = html.decode(controller.towncounties);
+                    let idx = tc.indexOf($("#town").val() + "^");
                     if (idx != -1) {
                         $("#county").val(tc.substring(tc.indexOf("^^", idx) + 2, tc.indexOf("|", idx)));
                     }

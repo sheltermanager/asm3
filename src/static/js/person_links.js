@@ -4,10 +4,10 @@ $(function() {
 
     "use strict";
 
-    var person_links = {
+    const person_links = {
 
         render: function() {
-            var s = [
+            let s = [
                 edit_header.person_edit_header(controller.person, "links", controller.tabcounts),
                 '<table id="table-links">',
                 '<thead>',
@@ -20,7 +20,7 @@ $(function() {
                 '</thead>',
                 '<tbody>'
             ];
-            var typemap = {
+            const typemap = {
                 "CO": [ _("Current Owner"), "animal?id=" ],
                 "OO": [ _("Original Owner"), "animal?id=" ],
                 "BI": [ _("Brought In By"), "animal?id=" ],
@@ -43,11 +43,11 @@ $(function() {
                 "AFI": [ "", "incident?id=" ]
             };
             $.each(controller.links, function(i, li) {
-                var tdclass = "";
+                let tdclass = "";
                 if (li.DMOD.indexOf("D") != -1) {
                     tdclass = "style=\"color: red\"";
                 }
-                var info = typemap[li.TYPE], label = info[0], url = info[1];
+                let info = typemap[li.TYPE], label = info[0], url = info[1];
                 if (label == "") { label = li.TYPEDISPLAY; }
                 s.push('<tr>');
                 s.push('<td ' + tdclass + '>' + label + '</td>');

@@ -4,7 +4,7 @@ $(function() {
 
     "use strict";
 
-    var move_reclaim = {
+    const move_reclaim = {
 
         render: function() {
             return [
@@ -111,7 +111,7 @@ $(function() {
         },
 
         bind: function() {
-            var validation = function() {
+            const validation = function() {
                 // Remove any previous errors
                 header.hide_error();
                 validate.reset();
@@ -137,9 +137,8 @@ $(function() {
             };
 
             // Callback when animal is changed
-            var current_animal = null;
             $("#animal").animalchooser().bind("animalchooserchange", function(event, rec) {
-                current_animal = rec;
+                
                 // Hide things before we start
                 $("#costdisplay").closest(".ui-widget").fadeOut();
                 $("#fosterinfo").fadeOut();
@@ -184,12 +183,12 @@ $(function() {
 
                 // Grab cost information if option is on
                 if (config.bool("CreateBoardingCostOnAdoption")) {
-                    var formdata = "mode=cost&id=" + rec.ID;
+                    let formdata = "mode=cost&id=" + rec.ID;
                     common.ajax_post("move_reclaim", formdata)
                         .then(function(data) {
-                            var bits = data.split("||");
-                            $("#costdata").html(bits[1]);
-                            $("#costamount").val(bits[0]);
+                            let [costamount, costdata] = data.split("||");
+                            $("#costamount").val(costamount);
+                            $("#costdata").html(costdata);
                             $("#costtype").val(config.str("BoardingCostType"));
                             $("#costdisplay").closest(".ui-widget").fadeIn();
                         });
@@ -198,9 +197,7 @@ $(function() {
             });
 
             // Callback when person is changed
-            var current_person = null;
             $("#person").personchooser().bind("personchooserchange", function(event, rec) {
-                current_person = rec;
 
                 // Default giftaid if the person is registered
                 $("#payment").payments("option", "giftaid", rec.ISGIFTAID == 1);
@@ -230,29 +227,25 @@ $(function() {
             // Remove any retired lookups from the lists
             $(".asm-selectbox").select("removeRetiredOptions");
 
-            $("#reclaim").button().click(function() {
+            $("#reclaim").button().click(async function() {
                 if (!validation()) { return; }
                 $("#reclaim").button("disable");
                 header.show_loading(_("Creating..."));
-
-                var formdata = "mode=create&" + $("input, select, textarea").toPOST();
-                common.ajax_post("move_reclaim", formdata)
-                    .then(function(data) {
-
-                        $("#movementid").val(data);
-
-                        var u = "move_gendoc?" +
-                            "linktype=MOVEMENT&id=" + data + 
-                            "&message=" + encodeURIComponent(common.base64_encode(_("Reclaim successfully created.") + " " + 
-                                $(".animalchooser-display").html() + " " + html.icon("right") + " " +
-                                $(".personchooser-display .justlink").html() ));
-                        common.route(u);
-
-                    })
-                    .always(function() {
-                        header.hide_loading();
-                        $("#reclaim").button("enable");
-                    });
+                try {
+                    let formdata = "mode=create&" + $("input, select, textarea").toPOST();
+                    let data = await common.ajax_post("move_reclaim", formdata);
+                    $("#movementid").val(data);
+                    let u = "move_gendoc?" +
+                        "linktype=MOVEMENT&id=" + data + 
+                        "&message=" + encodeURIComponent(common.base64_encode(_("Reclaim successfully created.") + " " + 
+                            $(".animalchooser-display").html() + " " + html.icon("right") + " " +
+                            $(".personchooser-display .justlink").html() ));
+                    common.route(u);
+                }
+                finally {
+                    header.hide_loading();
+                    $("#reclaim").button("enable");
+                }
             });
         },
 
