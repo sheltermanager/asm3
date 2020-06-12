@@ -520,7 +520,8 @@ def insert_adoption_from_form(dbo, username, post, creating = [], create_payment
         "insurance"             : post["insurance"],
         "returncategory"        : asm3.configuration.default_return_reason(dbo),
         "trial"                 : post["trial"],
-        "trialenddate"          : post["trialenddate"]
+        "trialenddate"          : post["trialenddate"],
+        "comments"              : post["comments"]
     }
     # Is this animal currently on foster? If so, return the foster
     fm = get_animal_movements(dbo, post.integer("animal"))
@@ -609,7 +610,8 @@ def insert_foster_from_form(dbo, username, post):
         "returndate"            : post["returndate"],
         "type"                  : str(FOSTER),
         "donation"              : post["amount"],
-        "returncategory"        : asm3.configuration.default_return_reason(dbo)
+        "returncategory"        : asm3.configuration.default_return_reason(dbo),
+        "comments"              : post["comments"]
     }
     movementid = insert_movement_from_form(dbo, username, asm3.utils.PostedData(move_dict, l))
     return movementid
@@ -636,7 +638,8 @@ def insert_reclaim_from_form(dbo, username, post):
         "movementdate"          : post["movementdate"],
         "type"                  : str(RECLAIMED),
         "donation"              : post["amount"],
-        "returncategory"        : asm3.configuration.default_return_reason(dbo)
+        "returncategory"        : asm3.configuration.default_return_reason(dbo),
+        "comments"              : post["comments"]
     }
     # Is this animal currently on foster? If so, return the foster
     fm = get_animal_movements(dbo, post.integer("animal"))
@@ -701,7 +704,8 @@ def insert_transfer_from_form(dbo, username, post):
         "movementdate"          : post["transferdate"],
         "type"                  : str(TRANSFER),
         "donation"              : post["amount"],
-        "returncategory"        : asm3.configuration.default_return_reason(dbo)
+        "returncategory"        : asm3.configuration.default_return_reason(dbo),
+        "comments"              : post["comments"]
     }
     movementid = insert_movement_from_form(dbo, username, asm3.utils.PostedData(move_dict, l))
     return movementid
@@ -756,7 +760,8 @@ def insert_reserve_from_form(dbo, username, post):
         "movementdate"          : "",
         "type"                  : str(NO_MOVEMENT),
         "donation"              : post["amount"],
-        "returncategory"        : asm3.configuration.default_return_reason(dbo)
+        "returncategory"        : asm3.configuration.default_return_reason(dbo),
+        "comments"              : post["comments"]
     }
     movementid = insert_movement_from_form(dbo, username, asm3.utils.PostedData(move_dict, l))
     # Create any payments
@@ -786,7 +791,8 @@ def insert_retailer_from_form(dbo, username, post):
         "adoptionno"            : post["movementnumber"],
         "type"                  : str(RETAILER),
         "donation"              : post["amount"],
-        "returncategory"        : asm3.configuration.default_return_reason(dbo)
+        "returncategory"        : asm3.configuration.default_return_reason(dbo),
+        "comments"              : post["comments"]
     }
     movementid = insert_movement_from_form(dbo, username, asm3.utils.PostedData(move_dict, l))
     return movementid

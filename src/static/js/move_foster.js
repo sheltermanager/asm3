@@ -57,6 +57,12 @@ $(function() {
                 '<input id="returndate" data="returndate" class="asm-textbox asm-datebox" title="' + html.title(_("The date the foster animal will be returned if known")) + '" />',
                 '</td>',
                 '</tr>',
+                '<tr id="commentsrow">',
+                '<td><label for="comments">' + _("Comments") + '</label></td>',
+                '<td>',
+                '<textarea class="asm-textarea" id="comments" data="comments" rows="3"></textarea>',
+                '</td>',
+                '</tr>',
                 '</table>',
                 html.content_footer(),
                 html.box(5),
@@ -128,7 +134,7 @@ $(function() {
                 $("#foster").button("disable");
                 header.show_loading(_("Creating..."));
                 try {
-                    let formdata = "mode=create&" + $("input, select").toPOST();
+                    let formdata = "mode=create&" + $("input, select, textarea").toPOST();
                     let data = await common.ajax_post("move_foster", formdata);
                     $("#movementid").val(data);
                     let u = "move_gendoc?" +

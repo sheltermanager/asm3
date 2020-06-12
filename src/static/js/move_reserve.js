@@ -69,6 +69,12 @@ $(function() {
                 '</select>',
                 '</td>',
                 '</tr>',
+                '<tr id="commentsrow">',
+                '<td><label for="comments">' + _("Comments") + '</label></td>',
+                '<td>',
+                '<textarea class="asm-textarea" id="comments" data="comments" rows="3"></textarea>',
+                '</td>',
+                '</tr>',
                 '</table>',
                 html.content_footer(),
                 '<div id="payment"></div>',
@@ -211,7 +217,7 @@ $(function() {
                 $("#reserve").button("disable");
                 header.show_loading(_("Creating..."));
 
-                var formdata = "mode=create&" + $("input, select").toPOST();
+                var formdata = "mode=create&" + $("input, select, textarea").toPOST();
                 common.ajax_post("move_reserve", formdata)
                     .then(function(data) {
 

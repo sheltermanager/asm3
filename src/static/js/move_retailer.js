@@ -45,6 +45,12 @@ $(function() {
                 '<input id="retailerdate" data="retailerdate" class="asm-textbox asm-datebox" title="' + html.title(_("The date the retailer movement is effective from")) + '" />',
                 '</td>',
                 '</tr>',
+                '<tr id="commentsrow">',
+                '<td><label for="comments">' + _("Comments") + '</label></td>',
+                '<td>',
+                '<textarea class="asm-textarea" id="comments" data="comments" rows="3"></textarea>',
+                '</td>',
+                '</tr>',
                 '</table>',
                 html.content_footer(),
                 html.box(5),
@@ -116,7 +122,7 @@ $(function() {
                 $("#retailer").button("disable");
                 header.show_loading(_("Creating..."));
 
-                var formdata = "mode=create&" + $("input, select").toPOST();
+                var formdata = "mode=create&" + $("input, select, textarea").toPOST();
                 common.ajax_post("move_retailer", formdata)
                     .then(function(data) {
 

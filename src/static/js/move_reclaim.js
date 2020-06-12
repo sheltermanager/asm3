@@ -73,6 +73,12 @@ $(function() {
                 '<input id="movementdate" data="movementdate" class="asm-textbox asm-datebox" title="' + _("The date the animal was reclaimed") + '" />',
                 '</td>',
                 '</tr>',
+                '<tr id="commentsrow">',
+                '<td><label for="comments">' + _("Comments") + '</label></td>',
+                '<td>',
+                '<textarea class="asm-textarea" id="comments" data="comments" rows="3"></textarea>',
+                '</td>',
+                '</tr>',
                 '</table>',
                 html.content_footer(),
                 '<div id="payment"></div>',
@@ -229,7 +235,7 @@ $(function() {
                 $("#reclaim").button("disable");
                 header.show_loading(_("Creating..."));
 
-                var formdata = "mode=create&" + $("input, select").toPOST();
+                var formdata = "mode=create&" + $("input, select, textarea").toPOST();
                 common.ajax_post("move_reclaim", formdata)
                     .then(function(data) {
 

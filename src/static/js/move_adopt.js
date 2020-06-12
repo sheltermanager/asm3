@@ -94,6 +94,12 @@ $(function() {
                 '<button id="button-insurance">' + _("Issue a new insurance number for this animal/adoption") + '</button>',
                 '</td>',
                 '</tr>',
+                '<tr id="commentsrow">',
+                '<td><label for="comments">' + _("Comments") + '</label></td>',
+                '<td>',
+                '<textarea class="asm-textarea" id="comments" data="comments" rows="3"></textarea>',
+                '</td>',
+                '</tr>',
                 '</table>',
                 html.content_footer(),
                 '<div id="payment"></div>',
@@ -382,7 +388,7 @@ $(function() {
                 $("#adopt").button("disable");
                 header.show_loading(_("Creating..."));
                 try {
-                    let formdata = "mode=create&" + $("input, select").toPOST();
+                    let formdata = "mode=create&" + $("input, select, textarea").toPOST();
                     let response = await common.ajax_post("move_adopt", formdata);
                     $("#movementid").val(response);
                     header.hide_loading();
