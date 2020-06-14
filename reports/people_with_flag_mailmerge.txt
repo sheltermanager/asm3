@@ -1,4 +1,4 @@
-People with Flag
+People with Flag (mail)
 ###
 Membership
 ###
@@ -18,7 +18,7 @@ ORDER BY o.OwnerSurname
 ###
 MAIL
 &&&
-People without Flag
+People without Flag (mail)
 ###
 Membership
 ###
@@ -38,7 +38,7 @@ ORDER BY o.OwnerSurname
 ###
 MAIL
 &&&
-People with 2 Flags (AND)
+People with 2 Flags (AND) (mail)
 ###
 Membership
 ###
@@ -61,7 +61,7 @@ ORDER BY o.OwnerSurname
 ###
 MAIL
 &&&
-People with 3 Flags (AND)
+People with 3 Flags (AND) (mail)
 ###
 Membership
 ###
@@ -86,7 +86,7 @@ ORDER BY o.OwnerSurname
 ###
 MAIL
 &&&
-People with 2 Flags (OR)
+People with 2 Flags (OR) (mail)
 ###
 Membership
 ###
@@ -109,7 +109,7 @@ ORDER BY o.OwnerSurname
 ###
 MAIL
 &&&
-People with 3 Flags (OR)
+People with 3 Flags (OR) (mail)
 ###
 Membership
 ###
@@ -134,7 +134,7 @@ ORDER BY o.OwnerSurname
 ###
 MAIL
 &&&
-People with 2 Flags (AND NOT)
+People with 2 Flags (AND NOT) (mail)
 ###
 Membership
 ###
