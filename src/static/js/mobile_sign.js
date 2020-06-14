@@ -1,7 +1,7 @@
 /*global $, jQuery, alert, moment */
 /*global ids */
 
-// This file is used by the mobile signing pad (mobile.py)
+// This file is used by the mobile signing pad (mobile.py) and stands alone.
 // global variable "ids" is set by the python generating the page
 
 $(document).ready(function() {

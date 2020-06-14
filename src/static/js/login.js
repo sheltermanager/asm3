@@ -4,7 +4,7 @@
 
 const login = {
     render: function() {
-        var h = [
+        let h = [
             '<div id="asm-login-window" class="dialogshadow" style="display: none">',
             '<div id="asm-login-splash" />',
             '<table width="auto" style="margin-left: auto; margin-right: auto; text-align: right; padding: 10px">',
@@ -157,10 +157,10 @@ const login = {
         $("#loginbutton").button("disable");
         $("#loginspinner").fadeIn();
 
-        var username = $("input#username").val();
-        var password = $("input#password").val();
-        var database = $("input#database").val();
-        var formdata = { "database": database, 
+        let username = $("input#username").val();
+        let password = $("input#password").val();
+        let database = $("input#database").val();
+        let formdata = { "database": database, 
                             "username" : username, 
                             "password" : password,
                             "nologconnection" : controller.nologconnection };
@@ -224,7 +224,7 @@ const login = {
 
     bind: function() {
 
-        var self = this;
+        let self = this;
 
         // Position the login box to the center of the browser
         $("#asm-login-window").css({

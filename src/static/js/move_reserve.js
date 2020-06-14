@@ -4,7 +4,7 @@ $(function() {
 
     "use strict";
 
-    var move_reserve = {
+    const move_reserve = {
 
         render: function() {
             return [
@@ -69,6 +69,12 @@ $(function() {
                 '</select>',
                 '</td>',
                 '</tr>',
+                '<tr id="commentsrow">',
+                '<td><label for="comments">' + _("Comments") + '</label></td>',
+                '<td>',
+                '<textarea class="asm-textarea" id="comments" data="comments" rows="3"></textarea>',
+                '</td>',
+                '</tr>',
                 '</table>',
                 html.content_footer(),
                 '<div id="payment"></div>',
@@ -80,7 +86,7 @@ $(function() {
         },
 
         bind: function() {
-            var validation = function() {
+            const validation = function() {
                 // Remove any previous errors
                 header.hide_error();
                 validate.reset();
@@ -206,29 +212,25 @@ $(function() {
                 $("#amount1").val("0");
             }
 
-            $("#reserve").button().click(function() {
+            $("#reserve").button().click(async function() {
                 if (!validation()) { return; }
                 $("#reserve").button("disable");
                 header.show_loading(_("Creating..."));
-
-                var formdata = "mode=create&" + $("input, select").toPOST();
-                common.ajax_post("move_reserve", formdata)
-                    .then(function(data) {
-
-                        $("#movementid").val(data);
-
-                        var u = "move_gendoc?" +
-                            "linktype=MOVEMENT&id=" + data + 
-                            "&message=" + encodeURIComponent(common.base64_encode(_("Reservation successfully created.") + " " + 
-                                $(".animalchooser-display").html() + " " + html.icon("right") + " " +
-                                $(".personchooser-display .justlink").html() ));
-                        common.route(u);
-
-                    })
-                    .always(function() {
-                        header.hide_loading();
-                        $("#reserve").button("enable");
-                    });
+                try {
+                    let formdata = "mode=create&" + $("input, select, textarea").toPOST();
+                    let data = await common.ajax_post("move_reserve", formdata);
+                    $("#movementid").val(data);
+                    let u = "move_gendoc?" +
+                        "linktype=MOVEMENT&id=" + data + 
+                        "&message=" + encodeURIComponent(common.base64_encode(_("Reservation successfully created.") + " " + 
+                            $(".animalchooser-display").html() + " " + html.icon("right") + " " +
+                            $(".personchooser-display .justlink").html() ));
+                    common.route(u);
+                }
+                finally { 
+                    header.hide_loading();
+                    $("#reserve").button("enable");
+                }
             });
         },
 

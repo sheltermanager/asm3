@@ -4,7 +4,7 @@ $(function() {
 
     "use strict";
 
-    var person_find = {
+    const person_find = {
 
         render: function() {
             return [
@@ -165,7 +165,7 @@ $(function() {
 
         bind: function() {
             // Switch to simple search criteria
-            var simpleMode = function() {
+            const simple_mode = function() {
                 $("#mode").val("SIMPLE");
                 $("#asm-search-selector-advanced").removeClass("asm-link-disabled");
                 $("#asm-search-selector-simple").addClass("asm-link-disabled");
@@ -177,7 +177,7 @@ $(function() {
             };
 
             // Switch to advanced search criteria
-            var advancedMode = function() {
+            const advanced_mode = function() {
                 $("#mode").val("ADVANCED");
                 $("input[data='q']").val("");
                 $("#asm-search-selector-simple").removeClass("asm-link-disabled");
@@ -191,11 +191,11 @@ $(function() {
 
             // Handle switching between modes via the links
             $("#asm-search-selector-simple").click(function() {
-                simpleMode();
+                simple_mode();
             });
 
             $("#asm-search-selector-advanced").click(function() {
-                advancedMode();
+                advanced_mode();
             });
 
             // Load the person flag options
@@ -222,10 +222,10 @@ $(function() {
             $("#asm-criteria-simple").hide();
             $("#asm-criteria-advanced").hide();
             if (config.bool("AdvancedFindOwner")) {
-                advancedMode();
+                advanced_mode();
             }
             else {
-                simpleMode();
+                simple_mode();
             }
         },
 

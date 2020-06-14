@@ -18,7 +18,7 @@
   },
   "devDependencies": {},
   "scripts": {
-    "babel": "babel -d src/static/js/compat src/static/js/*.js",
+    "babel": "babel --minified -d src/static/js/compat src/static/js/*.js",
     "jshint": "jshint --config scripts/jshint.conf src/static/js/*.js",
     "minify": "jsmin -o src/static/js/bundle/rollup.min.js src/static/js/bundle/rollup.js",
     "minify_compat": "jsmin -o src/static/js/bundle/rollup_compat.min.js src/static/js/bundle/rollup_compat.js",

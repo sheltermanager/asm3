@@ -4,7 +4,7 @@ $(function() {
 
     "use strict";
 
-    var incident_map = {
+    const incident_map = {
 
         render: function() {
             return [
@@ -15,7 +15,7 @@ $(function() {
         },
 
         show_mini_map: function() {
-            setTimeout(function() {
+            setTimeout(() => {
                 $.each(controller.rows, function(i, v) {
                     v.latlong = v.DISPATCHLATLONG;
                     v.popuptext = "<b>" + v.DISPATCHADDRESS + "</b><br /><a target='_blank' href='incident?id=" + v.ACID + "'>" + 

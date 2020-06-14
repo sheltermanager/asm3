@@ -4,7 +4,7 @@ $(function() {
 
     "use strict";
 
-    let main = {
+    const main = {
 
         render_active_users: function() {
             let s = "", loggedin = _("Active users: {0}"), userlist = [];
@@ -654,7 +654,6 @@ $(function() {
             '</div>',
 
             '<div id="asm-content" class="ui-helper-reset ui-widget-content ui-corner-all" style="padding: 10px;">',
-            html.error(_("A new version of ASM is available.") + ' <button id="button-reload">' + _("Reload Application") + '</button>', "newversion"),
             this.render_animal_links(),
             '<div class="asm-main-columns">',
             '<div id="asm-main-diary" class="asm-main-column">',
@@ -701,10 +700,6 @@ $(function() {
             }
 
             if (!common.has_permission("vdn")) { $("#asm-main-diary").hide(); }
-
-            $("#button-reload").button().click(function() {
-                common.route("main?b=" + controller.build, true);
-            });
 
             let message_buttons = {}; 
             message_buttons[_("Create this message")] = async function() { 
@@ -851,7 +846,7 @@ $(function() {
                 let mt = $("#mt" + data + " .mtext");
                 let ldv = $("#long" + data).val();
                 let sdv = $("#short" + data).val();
-                var ar = $(this);
+                let ar = $(this);
                 if (ldv.length != sdv.length) {
                     if (ar.text() == moretext) {
                         mt.fadeOut(function() {
@@ -916,8 +911,13 @@ $(function() {
             }
 
             // If there's been a new deployment of ASM since we last
-            // downloaded it to the browser, prompt the user to reload the page.
-            $("#newversion").toggle( asm.build != controller.build );
+            // downloaded it to the browser, reload the page using the
+            // new build number to invalidate the cache (passing a b
+            // parameter also triggers the backend to invalidate config
+            // and sets noreload to prevent any potential reload loops)
+            if (asm.build != controller.build && !controller.noreload) {
+                common.route("main?b=" + controller.build, true);
+            }
 
             // What's the highest news story available in the DOM/newsfeed?
             $("#newswrapper p").each(function() {

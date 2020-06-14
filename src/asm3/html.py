@@ -67,8 +67,13 @@ def script_tag(uri, idattr=""):
 
 def asm_script_tag(filename):
     """
-    Returns a path to one of our javascript files
+    Returns a path to one of our javascript files.
+    If we're in rollup mode and one of our standalone files is requested,
+    get it from the compat folder instead so it's still cross-browser compliant and minified.
     """
+    standalone = [ "animal_view_adoptable.js", "document_edit.js", "mobile.js", "mobile_sign.js", 
+        "onlineform_extra.js" ]
+    if ROLLUP_JS and filename in standalone and filename.find("/") == -1: filename = "compat/%s" % filename
     return "<script type=\"text/javascript\" src=\"static/js/%s?b=%s\"></script>\n" % (filename, BUILD)
 
 def asm_script_tags(path):

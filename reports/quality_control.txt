@@ -25,7 +25,7 @@ SELECT * FROM
  --AND NOT (a.AdditionalFlags LIKE 'Ignore Issues|%' OR a.AdditionalFlags  LIKE '%|Ignore Issues|%')
 
 --An Adoption Movement was entered for a person record flagged as 'Other Shelter'.
-- -Probably should be a Transfer Movement.
+--Probably should be a Transfer Movement.
 SELECT
   animal.animalname AS name,
   animal.sheltercode AS code,

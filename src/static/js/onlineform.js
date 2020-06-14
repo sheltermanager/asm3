@@ -4,7 +4,7 @@ $(function() {
 
     "use strict";
 
-    var fieldtypes = [
+    const fieldtypes = [
         { "ID": 0, "NAME": _("Yes/No") },
         { "ID": 11, "NAME": _("Checkbox") },
         { "ID": 1, "NAME": _("Text") },
@@ -26,15 +26,14 @@ $(function() {
         { "ID": 15, "NAME": _("GDPR Contact Opt-In") }
     ];
 
-
-    var onlineform = {
+    const onlineform = {
 
         model: function() {
             
-            var species = controller.species;
+            let species = controller.species;
             species.unshift( { "ID": -1, "SPECIESNAME": _("(all)") });
 
-            var dialog = {
+            const dialog = {
                 add_title: _("Add form field"),
                 edit_title: _("Edit form field"),
                 edit_perm: 'eof',
@@ -58,22 +57,21 @@ $(function() {
                 ]
             };
 
-            var table = {
+            const table = {
                 rows: controller.rows,
                 idcolumn: "ID",
-                edit: function(row) {
-                    tableform.dialog_show_edit(dialog, row, { onload: onlineform.check_controls })
-                        .then(function() {
-                            tableform.fields_update_row(dialog.fields, row);
-                            return tableform.fields_post(dialog.fields, "mode=update&formfieldid=" + row.ID, "onlineform");
-                        })
-                        .then(function(response) {
-                            tableform.table_update(table);
-                            tableform.dialog_close();
-                        })
-                        .fail(function() {
-                            tableform.dialog_enable_buttons();
-                        });
+                edit: async function(row) {
+                    try {
+                        await tableform.dialog_show_edit(dialog, row, { onload: onlineform.check_controls });
+                        tableform.fields_update_row(dialog.fields, row);
+                        await tableform.fields_post(dialog.fields, "mode=update&formfieldid=" + row.ID, "onlineform");
+                        tableform.table_update(table);
+                        tableform.dialog_close();
+                    }
+                    catch(err) {
+                        log.error(err, err);
+                        tableform.dialog_enable_buttons();
+                    }
                 },
                 columns: [
                     { field: "FIELDNAME", display: _("Name") },
@@ -88,40 +86,35 @@ $(function() {
                 ]
             };
 
-            var buttons = [
-                 { id: "new", text: _("New form field"), icon: "new", enabled: "always", perm: "eof", 
-                     click: function() { 
-                         tableform.dialog_show_add(dialog, { onload: onlineform.check_controls })
-                             .then(function() {
-                                return tableform.fields_post(dialog.fields, "mode=create&formid=" + controller.formid, "onlineform");
-                             })
-                             .then(function(response) {
-                                 var row = {};
-                                 row.ID = response;
-                                 tableform.fields_update_row(dialog.fields, row);
-                                 controller.rows.push(row);
-                                 tableform.table_update(table);
-                                 tableform.dialog_close();
-                             })
-                             .fail(function() {
-                                 tableform.dialog_enable_buttons();
-                             });
-                     } 
-                 },
-                 { id: "delete", text: _("Delete"), icon: "delete", enabled: "multi", perm: "eof", 
-                     click: function() { 
-                         tableform.delete_dialog()
-                             .then(function() {
-                                 tableform.buttons_default_state(buttons);
-                                 var ids = tableform.table_ids(table);
-                                 return common.ajax_post("onlineform", "mode=delete&ids=" + ids);
-                             })
-                             .then(function() {
-                                 tableform.table_remove_selected_from_json(table, controller.rows);
-                                 tableform.table_update(table);
-                             });
-                     } 
-                 }
+            const buttons = [
+                { id: "new", text: _("New form field"), icon: "new", enabled: "always", perm: "eof", 
+                    click: async function() { 
+                        try {
+                            await tableform.dialog_show_add(dialog, { onload: onlineform.check_controls });
+                            let response = await tableform.fields_post(dialog.fields, "mode=create&formid=" + controller.formid, "onlineform");
+                            let row = {};
+                            row.ID = response;
+                            tableform.fields_update_row(dialog.fields, row);
+                            controller.rows.push(row);
+                            tableform.table_update(table);
+                            tableform.dialog_close();
+                        }
+                        catch(err) {
+                            log.error(err, err);
+                            tableform.dialog_enable_buttons();
+                        }
+                    } 
+                },
+                { id: "delete", text: _("Delete"), icon: "delete", enabled: "multi", perm: "eof", 
+                    click: async function() { 
+                        await tableform.delete_dialog();
+                        tableform.buttons_default_state(buttons);
+                        let ids = tableform.table_ids(table);
+                        await common.ajax_post("onlineform", "mode=delete&ids=" + ids);
+                        tableform.table_remove_selected_from_json(table, controller.rows);
+                        tableform.table_update(table);
+                    } 
+                }
             ];
             this.dialog = dialog;
             this.table = table;
@@ -131,7 +124,7 @@ $(function() {
         /** Check which dialog controls should be shown
           */
         check_controls: function() {
-            var ft = $("#fieldtype").select("value");
+            let ft = $("#fieldtype").select("value");
             if (ft == 3 || ft == 12 || ft == 14 || ft == 18) {
                 $("#lookups").closest("tr").fadeIn();
             }
@@ -156,7 +149,7 @@ $(function() {
         },
 
         render: function() {
-            var s = "";
+            let s = "";
             this.model();
             s += tableform.dialog_render(this.dialog);
             s += html.content_header(_("Online Form: {0}").replace("{0}", controller.formname));

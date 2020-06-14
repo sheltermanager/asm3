@@ -4,7 +4,7 @@ $(function() {
 
     "use strict";
 
-    var movements = {
+    const movements = {
 
         lastanimal: null,
         lastperson: null,
@@ -12,7 +12,7 @@ $(function() {
 
         model: function() {
             // Filter list of chooseable types
-            var choosetypes = [];
+            let choosetypes = [];
             $.each(controller.movementtypes, function(i, v) {
                 if (v.ID == 0) {
                     v.MOVEMENTTYPE = _("Reservation");
@@ -26,7 +26,7 @@ $(function() {
                 }
             });
 
-            var dialog = {
+            const dialog = {
                 add_title: _("Add movement"),
                 edit_title: _("Edit movement"),
                 edit_perm: 'camv',
@@ -56,7 +56,7 @@ $(function() {
                 ]
             };
 
-            var table = {
+            const table = {
                 rows: controller.rows,
                 idcolumn: "ID",
                 edit: function(row) {
@@ -87,7 +87,7 @@ $(function() {
                     // If this is the reservation book, overdue is determined by reservation being 
                     // older than a pre-set period (default 1 week)
                     if (controller.name == "move_book_reservation" && row.RESERVATIONDATE) {
-                        var od = format.date_js(row.RESERVATIONDATE), odd = config.integer("ReservesOverdueDays");
+                        let od = format.date_js(row.RESERVATIONDATE), odd = config.integer("ReservesOverdueDays");
                         if (!odd) { odd = 7; }
                         od.setDate(od.getDate() + odd);
                         return od < common.today_no_time();
@@ -154,7 +154,7 @@ $(function() {
                     },
                     { field: "RETURNDATE", display: _("Returned"), 
                         formatter: function(row) {
-                            var rv = format.date(row.RETURNDATE);
+                            let rv = format.date(row.RETURNDATE);
                             if (row.RETURNDATE && (row.MOVEMENTTYPE == 1 || row.MOVEMENTTYPE == 5)) {
                                 rv += " <br/>" + row.RETURNEDREASONNAME;
                             }
@@ -256,7 +256,7 @@ $(function() {
                 ]
             };
 
-            var buttons = [
+            const buttons = [
                 { id: "new", text: _("New Movement"), icon: "new", enabled: "always", perm: "aamv", 
                      click: function() { 
                         tableform.dialog_show_add(dialog, {
@@ -266,7 +266,7 @@ $(function() {
                             onadd: function() {
                                 tableform.fields_post(dialog.fields, "mode=create", "movement")
                                     .then(function(response) {
-                                        var row = {};
+                                        let row = {};
                                         row.ID = response;
                                         tableform.fields_update_row(dialog.fields, row);
                                         movements.set_extra_fields(row);
@@ -327,31 +327,27 @@ $(function() {
                             }
                         });
                      } 
-                 },
-                 { id: "delete", text: _("Delete"), icon: "delete", enabled: "multi", perm: "damv", 
-                     click: function() { 
-                         tableform.delete_dialog()
-                             .then(function() {
-                                 tableform.buttons_default_state(buttons);
-                                 var ids = tableform.table_ids(table);
-                                 return common.ajax_post("movement", "mode=delete&ids=" + ids);
-                             })
-                             .then(function() {
-                                 tableform.table_remove_selected_from_json(table, controller.rows);
-                                 tableform.table_update(table);
-                             });
-                     } 
-                 },
-                 { id: "document", text: _("Document"), icon: "document", enabled: "one", perm: "gaf", 
-                     tooltip: _("Generate a document from this movement"), type: "buttonmenu" 
-                 },
-                 { id: "toadoption", text: _("To Adoption"), icon: "person", enabled: "one", perm: "camv",
-                     tooltip: _("Convert this reservation to an adoption"),
-                     hideif: function() {
+                },
+                { id: "delete", text: _("Delete"), icon: "delete", enabled: "multi", perm: "damv", 
+                    click: async function() { 
+                        await tableform.delete_dialog();
+                        tableform.buttons_default_state(buttons);
+                        let ids = tableform.table_ids(table);
+                        await common.ajax_post("movement", "mode=delete&ids=" + ids);
+                        tableform.table_remove_selected_from_json(table, controller.rows);
+                        tableform.table_update(table);
+                    } 
+                },
+                { id: "document", text: _("Document"), icon: "document", enabled: "one", perm: "gaf", 
+                    tooltip: _("Generate a document from this movement"), type: "buttonmenu" 
+                },
+                { id: "toadoption", text: _("To Adoption"), icon: "person", enabled: "one", perm: "camv",
+                    tooltip: _("Convert this reservation to an adoption"),
+                    hideif: function() {
                         return controller.name.indexOf("reserv") == -1;
-                     },
-                     click: function() { 
-                        var row = tableform.table_selected_row(table);
+                    },
+                    click: function() { 
+                        let row = tableform.table_selected_row(table);
                         tableform.fields_populate_from_json(dialog.fields, row);
                         movements.type_change(); 
                         movements.returndate_change();
@@ -378,15 +374,15 @@ $(function() {
                                 movements.returndate_change();
                             }
                         });
-                     }
-                 },
-                 { id: "return", text: _("Return"), icon: "complete", enabled: "one", perm: "camv",
-                     tooltip: _("Return this movement and bring the animal back to the shelter"),
-                     hideif: function() {
-                         return controller.name.indexOf("move_book_recent") == -1 && controller.name.indexOf("move_book_foster") == -1;
-                     },
-                     click: function() {
-                        var row = tableform.table_selected_row(table);
+                    }
+                },
+                { id: "return", text: _("Return"), icon: "complete", enabled: "one", perm: "camv",
+                    tooltip: _("Return this movement and bring the animal back to the shelter"),
+                    hideif: function() {
+                        return controller.name.indexOf("move_book_recent") == -1 && controller.name.indexOf("move_book_foster") == -1;
+                    },
+                    click: function() {
+                        let row = tableform.table_selected_row(table);
                         tableform.fields_populate_from_json(dialog.fields, row);
                         movements.type_change(); 
                         movements.returndate_change();
@@ -411,8 +407,8 @@ $(function() {
                                 movements.returndate_change();
                             }
                         });
-                     }
-                 }
+                    }
+                }
             ];
             this.dialog = dialog;
             this.buttons = buttons;
@@ -420,7 +416,7 @@ $(function() {
         },
 
         render: function() {
-            var s = "";
+            let s = "";
             this.model();
             s += tableform.dialog_render(this.dialog);
             s += '<div id="button-document-body" class="asm-menu-body">' +
@@ -494,14 +490,14 @@ $(function() {
             $(".templatelink").click(function() {
                 // Update the href as it is clicked so default browser behaviour
                 // continues on to open the link in a new window
-                var template_name = $(this).attr("data");
+                let template_name = $(this).attr("data");
                 $(this).prop("href", "document_gen?linktype=MOVEMENT&id=" + tableform.table_selected_row(movements.table).ID + "&dtid=" + template_name);
             });
 
         },
 
         warnings: function() {
-            var p = movements.lastperson, a = movements.lastanimal, warn = [];
+            let p = movements.lastperson, a = movements.lastanimal, warn = [];
             tableform.dialog_error("");
 
             // None of these warnings are valid if this isn't a reservation, adoption or a reclaim
@@ -542,7 +538,7 @@ $(function() {
 
                 // Check for bonded animals and warn
                 if (a.BONDEDANIMALID != "0" || a.BONDEDANIMAL2ID != "0") {
-                    var bw = "";
+                    let bw = "";
                     if (a.BONDEDANIMAL1NAME != "" && a.BONDEDANIMAL1NAME != null) {
                         bw += a.BONDEDANIMAL1CODE + " - " + a.BONDEDANIMAL1NAME;
                     }
@@ -614,7 +610,7 @@ $(function() {
         validation: function() {
 
             validate.reset("dialog-tableform");
-            var mt = $("#type").val();
+            let mt = $("#type").val();
 
             // Movement needs a reservation date or movement type > 0
             if (mt == 0 && $("#reservationdate").val() == "") {
@@ -704,7 +700,7 @@ $(function() {
 
         /** Fires whenever the movement type box is changed */
         type_change: function() {
-            var mt = $("#type").val();
+            let mt = $("#type").val();
             // Show trial fields if option is set and the movement is an adoption
             if (config.bool("TrialAdoptions") && mt == 1) {
                 $("#trial").closest("tr").find("label").html(_("Trial"));
@@ -803,7 +799,7 @@ $(function() {
         name: "movements",
         animation: function() { return controller.name.indexOf("move_book") == 0 ? "book" : "formtab"; },
         title:  function() { 
-            var t = "";
+            let t = "";
             if (controller.name == "animal_movements") {
                 t = common.substitute(_("{0} - {1} ({2} {3} aged {4})"), { 
                     0: controller.animal.ANIMALNAME, 1: controller.animal.CODE, 2: controller.animal.SEXNAME,

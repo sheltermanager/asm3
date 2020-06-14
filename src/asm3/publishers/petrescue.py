@@ -67,7 +67,10 @@ class PetRescuePublisher(AbstractPublisher):
         contact_name = asm3.configuration.organisation(self.dbo)
         contact_email = asm3.configuration.petrescue_email(self.dbo)
         if contact_email == "": contact_email = asm3.configuration.email(self.dbo)
-        contact_number = asm3.configuration.organisation_telephone(self.dbo)
+        phone_type = asm3.configuration.petrescue_phone_type(self.dbo)
+        contact_number = asm3.configuration.petrescue_phone_number(self.dbo)
+        if phone_type == "" or phone_type == "org": contact_number = asm3.configuration.organisation_telephone(self.dbo)
+        elif phone_type == "none": contact_number = ""
 
         if token == "":
             self.setLastError("No PetRescue auth token has been set.")
@@ -282,7 +285,6 @@ class PetRescuePublisher(AbstractPublisher):
             "location_suburb":          location_suburb, # shelter/fosterer suburb
             "microchip_number":         microchip_number, 
             "desexed":                  an.NEUTERED == 1 or all_desexed, # true | false, validates to always true according to docs
-            "contact_method":           "email", # email | phone
             "size":                     asm3.utils.iif(isdog, size, ""), # dogs only - small | medium | high
             "senior":                   isdog and ageinyears > (7 * 365), # dogs only, true | false
             "vaccinated":               vaccinated, # cats, dogs, rabbits, true | false
@@ -298,6 +300,7 @@ class PetRescuePublisher(AbstractPublisher):
             "adoption_process":         "", # 4,000 chars how to adopt
             "contact_details_source":   "self", # self | user | group
             "contact_preferred_method": "email", # email | phone
+            "display_contact_preferred_method_only": contact_number == "",
             "contact_name":             contact_name, # name of contact details owner
             "contact_number":           contact_number, # number to enquire about adoption
             "contact_email":            contact_email, # email to enquire about adoption

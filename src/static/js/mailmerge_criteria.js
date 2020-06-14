@@ -4,7 +4,7 @@ $(function() {
 
     "use strict";
 
-    var mailmerge_criteria = {
+    const mailmerge_criteria = {
 
         render: function() {
 

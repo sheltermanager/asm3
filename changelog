@@ -1,6 +1,11 @@
 44
 ================
 
+14/06/20 IncidentLogs table wordkey
+12/06/20 Accept comments move_* screens #860
+11/06/20 Auto reload application without the button
+11/06/20 PetRescue: display_contact_preferred_method_only support
+10/06/20 PetRescue: Option to control contact phone numbers
 09/06/20 Fix reload application bug in a cross-browser compliant way
 09/06/20 Email dialog won't use name portion for multiple email addresses
 09/06/20 Include ShowIf when copying, exporting and importing online forms

@@ -8,7 +8,7 @@
     state: "present"
   vars:
     packages:
-      - "python-mysqldb"
+      - "python3-mysqldb"
 
 - name: "Create mysql database"
   mysql_db:

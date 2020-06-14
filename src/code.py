@@ -949,6 +949,7 @@ class main(JSONEndpoint):
         return {
             "showwelcome": showwelcome,
             "build": BUILD,
+            "noreload": o.post["b"] != "", 
             "news": news,
             "dbmessage": dbmessage,
             "version": get_version(),

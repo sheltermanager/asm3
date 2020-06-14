@@ -3,7 +3,7 @@
 /*global asm3_adoptable_translations, asm3_adoptable_extra, asm3_adoptable_filter, asm3_adoptable_limit, asm3_adoptable_sort */
 
 // NOTE: This file stands alone and should try for compatibility 
-//       with as many browsers as possible. 
+//       with as many browsers as possible. It also does not use jQuery.
 //       Avoid use of let/const, async/await, destructuring, etc.
 
 (function() {

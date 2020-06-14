@@ -78,7 +78,7 @@ FORM_FIELDS = [
     "description", "reason", "size", "species", "breed", "agegroup", "color", "colour", 
     "datelost", "datefound", "arealost", "areafound", "areapostcode", "areazipcode", "microchip",
     "animalname", "reserveanimalname",
-    "code", "microchip", "age", "dateofbirth", "entryreason", "markings", "comments", "hiddencomments", "type", "species", "breed1", "breed2", "color", "sex", 
+    "code", "microchip", "age", "dateofbirth", "entryreason", "markings", "comments", "hiddencomments", "type", "breed1", "breed2", "color", "sex", 
     "callnotes", "dispatchaddress", "dispatchcity", "dispatchstate", "dispatchzipcode", "transporttype", 
     "pickupaddress", "pickuptown", "pickupcity", "pickupcounty", "pickupstate", "pickuppostcode", "pickupzipcode", "pickupcountry", "pickupdate", "pickuptime",
     "dropoffaddress", "dropofftown", "dropoffcity", "dropoffcounty", "dropoffstate", "dropoffpostcode", "dropoffzipcode", "dropoffcountry", "dropoffdate", "dropofftime"

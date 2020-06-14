@@ -4,22 +4,22 @@ $(function() {
 
     "use strict";
 
-    var onlineform_incoming = {
+    const onlineform_incoming = {
 
         model: function() {
-            var table = {
+            const table = {
                 rows: controller.rows,
                 idcolumn: "COLLATIONID",
-                edit: function(row) {
+                edit: async function(row) {
                     header.show_loading(_("Loading..."));
-                    common.ajax_post("onlineform_incoming", "mode=view&collationid=" + row.COLLATIONID)
-                        .then(function(result) {
-                            $("#dialog-viewer-content").html(result); 
-                            $("#dialog-viewer").dialog("open");
-                        })
-                        .always(function() {
-                            header.hide_loading();
-                        });
+                    try {
+                        let result = await common.ajax_post("onlineform_incoming", "mode=view&collationid=" + row.COLLATIONID);
+                        $("#dialog-viewer-content").html(result); 
+                        $("#dialog-viewer").dialog("open");
+                    }
+                    finally {
+                        header.hide_loading();
+                    }
                 },
                 complete: function(row) {
                     if (row.LINK) { return true; }
@@ -33,20 +33,16 @@ $(function() {
                 ]
             };
 
-            var buttons = [
+            const buttons = [
                 { id: "delete", text: _("Delete"), icon: "delete", enabled: "multi", 
-                     click: function() { 
-                         tableform.delete_dialog()
-                             .then(function() {
-                                 tableform.buttons_default_state(buttons);
-                                 var ids = tableform.table_ids(table);
-                                 return common.ajax_post("onlineform_incoming", "mode=delete&ids=" + ids);
-                             })
-                             .then(function() {
-                                 tableform.table_remove_selected_from_json(table, controller.rows);
-                                 tableform.table_update(table);
-                             });
-                     } 
+                    click: async function() { 
+                        await tableform.delete_dialog();
+                        tableform.buttons_default_state(buttons);
+                        let ids = tableform.table_ids(table);
+                        await common.ajax_post("onlineform_incoming", "mode=delete&ids=" + ids);
+                        tableform.table_remove_selected_from_json(table, controller.rows);
+                        tableform.table_update(table);
+                    } 
                 },
                 { id: "print", text: _("Print"), icon: "print", enabled: "multi", tooltip: _("Print selected forms"), 
                     click: function() {
@@ -62,7 +58,7 @@ $(function() {
         },
 
         render_buttonmenus: function() {
-            var h = [
+            let h = [
                 '<div id="button-attach-body" class="asm-menu-body">',
                 '<ul class="asm-menu-list">',
                     '<li id="button-attachperson" class="asm-menu-item"><a '
@@ -139,7 +135,7 @@ $(function() {
         },
 
         bind_viewer: function() {
-            var viewbuttons = {};
+            let viewbuttons = {};
             viewbuttons[_("Close")] = function() { $(this).dialog("close"); };
             $("#dialog-viewer").dialog({
                 autoOpen: false,
@@ -199,21 +195,21 @@ $(function() {
         },
 
         bind_attach_person: function() {
-            var ab = {}, table = onlineform_incoming.table; 
-            ab[_("Attach")] = function() { 
+            let ab = {}, table = onlineform_incoming.table; 
+            ab[_("Attach")] = async function() { 
                 if (!validate.notblank(["attachperson"])) { return; }
-                var formdata = "mode=attachperson&personid=" + $("#attachperson").val() + "&collationid=" + tableform.table_selected_row(table).COLLATIONID;
-                common.ajax_post("onlineform_incoming", formdata)
-                    .then(function() { 
-                        var personname = $("#attachperson").closest("td").find(".asm-embed-name").html();
-                        header.show_info(_("Successfully attached to {0}").replace("{0}", personname));
-                        tableform.table_selected_row(table).LINK = 
-                            '<a target="_blank" href="person_media?id=' + $("#attachperson").val() + '">' + personname + '</a>';
-                        tableform.table_update(table);
-                    })
-                    .always(function() {
-                        $("#dialog-attach-person").dialog("close");
-                    });
+                try {
+                    let formdata = "mode=attachperson&personid=" + $("#attachperson").val() + "&collationid=" + tableform.table_selected_row(table).COLLATIONID;
+                    await common.ajax_post("onlineform_incoming", formdata);
+                    let personname = $("#attachperson").closest("td").find(".asm-embed-name").html();
+                    header.show_info(_("Successfully attached to {0}").replace("{0}", personname));
+                    tableform.table_selected_row(table).LINK = 
+                        '<a target="_blank" href="person_media?id=' + $("#attachperson").val() + '">' + personname + '</a>';
+                    tableform.table_update(table);
+                }
+                finally {
+                    $("#dialog-attach-person").dialog("close");
+                }
             };
             ab[_("Cancel")] = function() { $(this).dialog("close"); };
             $("#dialog-attach-person").dialog({
@@ -229,21 +225,21 @@ $(function() {
         },
 
         bind_attach_animal: function() {
-            var ab = {}, table = onlineform_incoming.table; 
-            ab[_("Attach")] = function() { 
+            let ab = {}, table = onlineform_incoming.table; 
+            ab[_("Attach")] = async function() { 
                 if (!validate.notblank(["attachanimal"])) { return; }
-                var formdata = "mode=attachanimal&animalid=" + $("#attachanimal").val() + "&collationid=" + tableform.table_selected_row(table).COLLATIONID;
-                common.ajax_post("onlineform_incoming", formdata)
-                    .then(function() { 
-                        var animalname = $("#attachanimal").closest("td").find(".asm-embed-name").html();
-                        header.show_info(_("Successfully attached to {0}").replace("{0}", animalname));
-                        tableform.table_selected_row(table).LINK = 
-                            '<a target="_blank" href="animal_media?id=' + $("#attachanimal").val() + '">' + animalname + '</a>';
-                        tableform.table_update(table);
-                    })
-                    .always(function() {
-                        $("#dialog-attach-animal").dialog("close");
-                    });
+                try {
+                    let formdata = "mode=attachanimal&animalid=" + $("#attachanimal").val() + "&collationid=" + tableform.table_selected_row(table).COLLATIONID;
+                    await common.ajax_post("onlineform_incoming", formdata);
+                    let animalname = $("#attachanimal").closest("td").find(".asm-embed-name").html();
+                    header.show_info(_("Successfully attached to {0}").replace("{0}", animalname));
+                    tableform.table_selected_row(table).LINK = 
+                        '<a target="_blank" href="animal_media?id=' + $("#attachanimal").val() + '">' + animalname + '</a>';
+                    tableform.table_update(table);
+                }
+                finally {
+                    $("#dialog-attach-animal").dialog("close");
+                }
             };
             ab[_("Cancel")] = function() { $(this).dialog("close"); };
             $("#dialog-attach-animal").dialog({
@@ -263,33 +259,33 @@ $(function() {
          * mode: The type of record to create - person, lostanimal, foundanimal, waitinglist
          * url:  The url to link to the target created record
          */
-        create_record: function(mode, target) {
-             header.hide_error();
-             header.show_loading(_("Creating..."));
-             var table = onlineform_incoming.table, ids = tableform.table_ids(table);
-             common.ajax_post("onlineform_incoming", "mode=" + mode + "&ids=" + ids)
-                .then(function(result) {
-                    var selrows = tableform.table_selected_rows(table);
-                    $.each(selrows, function(i, v) {
-                        $.each(result.split("^$"), function(ir, vr) {
-                            var vb = vr.split("|");
-                            var collationid=vb[0], linkid=vb[1], display=vb[2], status=vb[3];
-                            if (collationid == v.COLLATIONID) {
-                                v.LINK = '<a target="_blank" href="' + target + '?id=' + linkid + '">' + display + '</a>';
-                                if (status && status == 1) {
-                                    v.LINK += " " + html.icon("copy", _("Updated existing record"));
-                                }
-                                if (status && status == 2) {
-                                    v.LINK += " " + html.icon("warning", _("This person has been banned from adopting animals."));
-                                }
+        create_record: async function(mode, target) {
+            header.hide_error();
+            header.show_loading(_("Creating..."));
+            let table = onlineform_incoming.table, ids = tableform.table_ids(table);
+            try {
+                let result = await common.ajax_post("onlineform_incoming", "mode=" + mode + "&ids=" + ids);
+                let selrows = tableform.table_selected_rows(table);
+                $.each(selrows, function(i, v) {
+                    $.each(result.split("^$"), function(ir, vr) {
+                        let vb = vr.split("|");
+                        let collationid=vb[0], linkid=vb[1], display=vb[2], status=vb[3];
+                        if (collationid == v.COLLATIONID) {
+                            v.LINK = '<a target="_blank" href="' + target + '?id=' + linkid + '">' + display + '</a>';
+                            if (status && status == 1) {
+                                v.LINK += " " + html.icon("copy", _("Updated existing record"));
                             }
-                        });
+                            if (status && status == 2) {
+                                v.LINK += " " + html.icon("warning", _("This person has been banned from adopting animals."));
+                            }
+                        }
                     });
-                    tableform.table_update(table);
-                })
-                .always(function() {
-                    header.hide_loading();
                 });
+                tableform.table_update(table);
+            }
+            finally {
+                header.hide_loading();
+            }
         },
 
         /**
@@ -298,7 +294,7 @@ $(function() {
          */
         remove_processed: function() {
             if (config.bool("DontRemoveProcessedForms")) { return; }
-            var ids=[];
+            let ids=[];
             $.each(controller.rows, function(i, v) {
                 if (v.LINK) { ids.push(v.COLLATIONID); }
             });
@@ -306,7 +302,7 @@ $(function() {
         },
 
         render: function() {
-            var s = "";
+            let s = "";
             this.model();
             s += this.render_viewer();
             s += this.render_attach_person();

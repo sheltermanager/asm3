@@ -4,7 +4,7 @@ $(function() {
 
     "use strict";
 
-    var move_gendoc = {
+    const move_gendoc = {
 
         render: function() {
             return [
