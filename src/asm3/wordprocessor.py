@@ -828,7 +828,14 @@ def animalcontrol_tags(dbo, ac):
         "INCIDENTLOGCOMMENTS":        "COMMENTS",
         "INCIDENTLOGCREATEDBY":       "CREATEDBY"
     }
-    tags.update(table_tags(dbo, d, asm3.log.get_logs(dbo, asm3.log.ANIMALCONTROL, ac["ID"], 0, asm3.log.ASCENDING), "LOGTYPENAME", "DATE", "DATE"))
+    logs = asm3.log.get_logs(dbo, asm3.log.ANIMALCONTROL, ac["ID"], 0, asm3.log.ASCENDING)
+    tags.update(table_tags(dbo, d, logs, "LOGTYPENAME", "DATE", "DATE"))
+    tags["INCIDENTLOGS"] = html_table(l, logs, (
+        ( "DATE", _("Date", l)),
+        ( "LOGTYPENAME", _("Type", l)),
+        ( "CREATEDBY", _("By", l)),
+        ( "COMMENTS", _("Comments", l))
+    ))
 
     return tags
 
