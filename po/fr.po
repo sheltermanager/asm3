@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ASM3\n"
 "Report-Msgid-Bugs-To: robin@sheltermanager.com\n"
-"POT-Creation-Date: 2020-06-08 08:58+0000\n"
-"PO-Revision-Date: 2020-06-10 00:31+0200\n"
+"POT-Creation-Date: 2020-06-15 18:36+0000\n"
+"PO-Revision-Date: 2020-06-15 21:04+0200\n"
 "Last-Translator: Julian POIDEVIN <poidevin.julian@gmail.com>\n"
 "Language-Team: \n"
 "Language: fr\n"
@@ -141,10 +141,6 @@ msgstr ""
 #: movements.js
 msgid "A movement must have a reservation date or type."
 msgstr "Un mouvement doit avoir une date ou un type de réservation."
-
-#: main.js
-msgid "A new version of ASM is available."
-msgstr "Une nouvelle version de ASM est disponible."
 
 #: movement.py
 msgid "A person is required for this movement type."
@@ -2695,12 +2691,13 @@ msgstr ""
 "1,2,3,4,Isolation, Stylo 5"
 
 #: html.py mobile.py person.py wordprocessor.py transport.js vouchers.js
-#: waitinglist_new.js medicalprofile.js litters.js waitinglist_results.js
-#: person.js medical.js vaccination.js diary.js citations.js common_widgets.js
-#: stocklevel.js traploan.js donations.js waitinglist.js rota.js accounts.js
-#: staff_rota.js lostfound.js test.js animal_diet.js clinic_appointment.js
-#: header_edit_header.js log.js movements.js licence.js lostfound_new.js
-#: person_find_results.js
+#: waitinglist_new.js medicalprofile.js litters.js move_reclaim.js
+#: waitinglist_results.js person.js medical.js move_retailer.js vaccination.js
+#: diary.js citations.js common_widgets.js stocklevel.js traploan.js
+#: donations.js waitinglist.js rota.js accounts.js staff_rota.js lostfound.js
+#: test.js animal_diet.js clinic_appointment.js move_reserve.js
+#: move_transfer.js header_edit_header.js log.js movements.js move_adopt.js
+#: licence.js lostfound_new.js move_foster.js person_find_results.js
 msgid "Comments"
 msgstr "Commentaires"
 
@@ -7104,7 +7101,7 @@ msgstr "Lori"
 
 #: search.js header_edit_header.js
 msgid "Lost"
-msgstr "Perdu(e)"
+msgstr "Notification \"perte d'autorisation\""
 
 #: dbupdate.py search.js onlineform_incoming.js
 msgid "Lost Animal"
@@ -7168,12 +7165,12 @@ msgstr "Perdus/Trouvés"
 
 #: main.js
 msgid ""
-"Lots of reports installed? Clean up the Reports menu with Settings-Options- "
-"Display-Show report menu items in collapsed categories."
+"Lots of reports installed? Clean up the Reports menu with Settings, Options, "
+"Display, Show report menu items in collapsed categories."
 msgstr ""
 "Vous avez beaucoup de rapports installés ? Nettoyez le menu \"Rapports\" en "
-"naviguant vers Paramètres -> Options -> Affichage -> Affichez les éléments "
-"de menu du rapport dans des catégories réduites."
+"naviguant vers Paramètres, Options, Affichage, Affichez les éléments de menu "
+"du rapport dans des catégories réduites."
 
 #: dbupdate.py
 msgid "Lovebird"
@@ -8410,7 +8407,7 @@ msgstr "Association"
 
 #: common_personchooser.js person.js person_new.js
 msgid "Organization name"
-msgstr "Nom de l'organisation"
+msgstr "Nom de l'association"
 
 #: dbupdate.py
 msgid "Oriental Long Hair"
@@ -9554,10 +9551,6 @@ msgstr "Remis en liberté {0}"
 #: mobile.py
 msgid "Reload"
 msgstr "Recharger"
-
-#: main.js
-msgid "Reload Application"
-msgstr "Recharger l'application"
 
 #: medical.js
 msgid "Reload page ..."
@@ -14150,11 +14143,11 @@ msgstr ""
 
 #: main.js
 msgid ""
-"You can set a default amount for different payment types in the Settings- "
+"You can set a default amount for different payment types in the Settings, "
 "Lookup Data screen. Very handy when creating adoptions."
 msgstr ""
 "Vous pouvez définir un montant par défaut pour différents types de paiement "
-"dans la fenêtre Paramètres - Données de recherche. Très pratique pour créer "
+"dans la fenêtre Paramètres, Données de recherche. Très pratique pour créer "
 "des adoptions."
 
 #: main.js
@@ -14164,14 +14157,14 @@ msgstr ""
 
 #: main.js
 msgid ""
-"You can upload images called logo.jpg and splash.jpg to the Settings- "
-"Reports-Extra Images screen to override the login splash screen and logo in "
+"You can upload images called logo.jpg and splash.jpg to the Settings, "
+"Reports, Extra Images screen to override the login splash screen and logo in "
 "the upper left corner of the application."
 msgstr ""
 "Vous pouvez télécharger des images appelées logo.jpg et splash.jpg sur "
-"l'écran Paramètres - Rapports - Images supplémentaires pour remplacer "
-"l'écran de démarrage et le logo de connexion dans le coin supérieur gauche "
-"de l'application."
+"l'écran Paramètres, Rapports, Images supplémentaires pour remplacer l'écran "
+"de démarrage et le logo de connexion dans le coin supérieur gauche de "
+"l'application."
 
 #: onlineform_incoming.js
 msgid ""
@@ -14629,10 +14622,6 @@ msgid "{browser} version {version}, running on {os}."
 msgstr "{browser} version {version}, exécutée sur {os}."
 
 #: main.js
-msgid "{plural0} animal as dead on arrival"
-msgstr "{plural0} animal mort à son arrivée"
-
-#: main.js
 msgid "{plural0} animal control call due for followup today"
 msgstr "{plural0} appel de contrôle des animaux à suivre aujourd'hui"
 
@@ -14663,6 +14652,10 @@ msgstr "{plural0} animal a été CSR (Capturés Stérilisés Relâchés)"
 #: main.js
 msgid "{plural0} animal was adopted"
 msgstr "{plural0} animal a été adopté"
+
+#: main.js
+msgid "{plural0} animal was dead on arrival"
+msgstr "{plural0} animal mort à son arrivée"
 
 #: main.js
 msgid "{plural0} animal was euthanized"
@@ -15353,6 +15346,12 @@ msgstr "{plural3} semaines."
 #: i18n.py
 msgid "{plural3} years."
 msgstr "{plural3} années."
+
+#~ msgid "A new version of ASM is available."
+#~ msgstr "Une nouvelle version de ASM est disponible."
+
+#~ msgid "Reload Application"
+#~ msgstr "Recharger l'application"
 
 #~ msgid "6 weeks"
 #~ msgstr "6 semaines"
