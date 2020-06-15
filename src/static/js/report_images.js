@@ -4,10 +4,10 @@ $(function() {
 
     "use strict";
 
-    var report_images = {
+    const report_images = {
 
         model: function() {
-            var dialog = {
+            const dialog = {
                 add_title: _("Extra images"),
                 close_on_ok: true,
                 html_form_action: "report_images",
@@ -20,7 +20,7 @@ $(function() {
                 ]
             };
 
-            var table = {
+            const table = {
                 rows: controller.rows,
                 idcolumn: "NAME",
                 edit: function(row) {
@@ -48,41 +48,35 @@ $(function() {
                 ]
             };
 
-            var buttons = [
-                 { id: "new", text: _("New"), icon: "new", enabled: "always", 
-                     click: function() { 
-                         tableform.dialog_show_add(dialog)
-                             .then(function() {
-                                 var fn = $("#filechooser").val().toLowerCase();
-                                 validate.reset();
-                                 if (fn.indexOf(".jpg") == -1 && fn.indexOf(".png") == -1 && fn.indexOf(".gif") == -1) {
-                                     header.show_error(_("The selected file is not an image."));
-                                     validate.highlight("filechooser");
-                                     return;
-                                 }
-                                 $("#form-tableform").submit();
-                            });
-                     } 
-                 },
-                 { id: "delete", text: _("Delete"), icon: "delete", enabled: "multi", 
-                     click: function() { 
-                         tableform.delete_dialog()
-                             .then(function() {
-                                 tableform.buttons_default_state(buttons);
-                                 var ids = tableform.table_ids(table);
-                                 return common.ajax_post("report_images", "mode=delete&ids=" + ids);
-                             })
-                             .then(function() {
-                                 common.route_reload();
-                             });
-                     } 
-                 },
-                 { id: "rename", text: _("Rename"), icon: "link", enabled: "one", 
-                     click: function() { 
-                         $("#newname").val(tableform.table_ids(table).split(",")[0]);
-                         $("#dialog-rename").dialog("open");
-                     } 
-                 }
+            const buttons = [
+                { id: "new", text: _("New"), icon: "new", enabled: "always", 
+                    click: async function() { 
+                        await tableform.dialog_show_add(dialog);
+                        let fn = $("#filechooser").val().toLowerCase();
+                        validate.reset();
+                        if (fn.indexOf(".jpg") == -1 && fn.indexOf(".png") == -1 && fn.indexOf(".gif") == -1) {
+                            header.show_error(_("The selected file is not an image."));
+                            validate.highlight("filechooser");
+                            return;
+                        }
+                        $("#form-tableform").submit();
+                    } 
+                },
+                { id: "delete", text: _("Delete"), icon: "delete", enabled: "multi", 
+                    click: async function() { 
+                        await tableform.delete_dialog();
+                        tableform.buttons_default_state(buttons);
+                        let ids = tableform.table_ids(table);
+                        await common.ajax_post("report_images", "mode=delete&ids=" + ids);
+                        common.route_reload();
+                    } 
+                },
+                { id: "rename", text: _("Rename"), icon: "link", enabled: "one", 
+                    click: function() { 
+                        $("#newname").val(tableform.table_ids(table).split(",")[0]);
+                        $("#dialog-rename").dialog("open");
+                    } 
+                }
 
             ];
             this.dialog = dialog;
@@ -104,17 +98,15 @@ $(function() {
         },
 
         bind_rename_dialog: function() {
-            var renamebuttons = { }, table = report_images.table;
-            renamebuttons[_("Rename")] = function() {
+            let renamebuttons = { }, table = report_images.table;
+            renamebuttons[_("Rename")] = async function() {
                 validate.reset("dialog-rename");
                 if (!validate.notblank([ "newname" ])) { return; }
                 $("#dialog-rename").disable_dialog_buttons();
-                var oldname = tableform.table_ids(table).split(",")[0];
-                var newname = encodeURIComponent($("#newname").val());
-                common.ajax_post("report_images", "mode=rename&newname=" + newname + "&oldname=" + oldname)
-                    .then(function() {
-                        common.route_reload();
-                    });
+                let oldname = tableform.table_ids(table).split(",")[0];
+                let newname = encodeURIComponent($("#newname").val());
+                await common.ajax_post("report_images", "mode=rename&newname=" + newname + "&oldname=" + oldname);
+                common.route_reload();
             };
             renamebuttons[_("Cancel")] = function() {
                 $("#dialog-rename").dialog("close");
@@ -132,7 +124,7 @@ $(function() {
 
 
         render: function() {
-            var s = "";
+            let s = "";
             this.model();
             s += this.render_rename_dialog();
             s += tableform.dialog_render(this.dialog);

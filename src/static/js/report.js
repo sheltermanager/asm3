@@ -4,7 +4,7 @@ $(function() {
 
     "use strict";
 
-    var report = {
+    const report = {
 
         bind: function() {
         },

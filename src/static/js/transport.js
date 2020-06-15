@@ -4,7 +4,7 @@ $(function() {
 
     "use strict";
 
-    var statusmap = {
+    const statusmap = {
         1: _("New"),
         2: _("Confirmed"),
         3: _("Hold"),
@@ -12,7 +12,7 @@ $(function() {
         10: _("Cancelled"),
         11: _("Completed")
     };
-    var statusmenu = [
+    const statusmenu = [
         "1|" + _("New"),
         "2|" + _("Confirmed"),
         "3|" + _("Hold"),
@@ -21,12 +21,12 @@ $(function() {
         "11|" + _("Completed")
     ];
 
-    var COMPLETED_STATUSES = 10;
+    const COMPLETED_STATUSES = 10;
 
-    var transport = {
+    const transport = {
 
         model: function() {
-            var dialog = {
+            const dialog = {
                 add_title: _("Add transport"),
                 edit_title: _("Edit transport"),
                 edit_perm: 'ctr',
@@ -66,7 +66,7 @@ $(function() {
                 ]
             };
 
-            var table = {
+            const table = {
                 rows: controller.rows,
                 idcolumn: "ID",
                 edit: function(row) {
@@ -168,121 +168,112 @@ $(function() {
                 ]
             };
 
-            var buttons = [
-                 { id: "new", text: _("New Transport"), icon: "transport", enabled: "always", perm: "atr",
-                     click: function() { 
-                         $("#driver").personchooser("clear");
-                         $("#pickup").personchooser("clear");
-                         $("#dropoff").personchooser("clear");
-                         $("#animal").animalchooser("clear");
-                         if (controller.animal) {
+            const buttons = [
+                { id: "new", text: _("New Transport"), icon: "transport", enabled: "always", perm: "atr",
+                    click: async function() { 
+                        $("#driver").personchooser("clear");
+                        $("#pickup").personchooser("clear");
+                        $("#dropoff").personchooser("clear");
+                        $("#animal").animalchooser("clear");
+                        if (controller.animal) {
                             $("#animal").animalchooser("loadbyid", controller.animal.ID);
-                         }
-                         $("#animal").closest("tr").show();
-                         $("#animals").closest("tr").hide();
-                         tableform.dialog_show_add(dialog)
-                             .then(function() {
-                                 return tableform.fields_post(dialog.fields, "mode=create", "transport");
-                             })
-                             .then(function(response) {
-                                 var row = {};
-                                 row.ID = response;
-                                 tableform.fields_update_row(dialog.fields, row);
-                                 transport.set_extra_fields(row);
-                                 controller.rows.push(row);
-                                 tableform.table_update(table);
-                                 tableform.dialog_close();
-                             })
-                             .fail(function() {
-                                 tableform.dialog_enable_buttons();
-                             });
-                     } 
-                 },
-                 { id: "bulk", text: _("Bulk Transport"), icon: "transport", enabled: "always", perm: "atr", 
-                     hideif: function() { return controller.animal; }, 
-                     click: function() { 
+                        }
+                        $("#animal").closest("tr").show();
+                        $("#animals").closest("tr").hide();
+                        await tableform.dialog_show_add(dialog);
+                        try {
+                            let response = await tableform.fields_post(dialog.fields, "mode=create", "transport");
+                            let row = {};
+                            row.ID = response;
+                            tableform.fields_update_row(dialog.fields, row);
+                            transport.set_extra_fields(row);
+                            controller.rows.push(row);
+                            tableform.table_update(table);
+                            tableform.dialog_close();
+                        }
+                        catch(err) {
+                            log.error(err, err);
+                            tableform.dialog_enable_buttons();
+                        }
+                    } 
+                },
+                { id: "bulk", text: _("Bulk Transport"), icon: "transport", enabled: "always", perm: "atr", 
+                    hideif: function() { return controller.animal; }, 
+                    click: async function() { 
                         $("#animal").closest("tr").hide();
                         $("#animals").closest("tr").show();
                         $("#animals").animalchoosermulti("clear");
                         $("#dialog-tableform .asm-textbox, #dialog-tableform .asm-textarea").val("");
-                        tableform.dialog_show_add(dialog)
-                            .then(function() {
-                                return tableform.fields_post(dialog.fields, "mode=createbulk", "transport");
-                            })
-                            .then(function(response) {
-                                common.route_reload();
-                            })
-                            .fail(function() {
-                                tableform.dialog_enable_buttons();   
-                            });
+                        await tableform.dialog_show_add(dialog);
+                        try {
+                            await tableform.fields_post(dialog.fields, "mode=createbulk", "transport");
+                            common.route_reload();
+                        }
+                        catch(err) {
+                            log.error(err, err);
+                            tableform.dialog_enable_buttons();   
+                        }
                     }
-                 },
-                 { id: "clone", text: _("Clone"), icon: "copy", enabled: "one", perm: "atr",
-                     hideif: function() { return controller.animal; }, 
-                     click: function() { 
+                },
+                { id: "clone", text: _("Clone"), icon: "copy", enabled: "one", perm: "atr",
+                    hideif: function() { return controller.animal; }, 
+                    click: async function() { 
                         $("#animal").closest("tr").hide();
                         $("#animals").closest("tr").show();
                         $("#animals").animalchoosermulti("clear");
                         $("#dialog-tableform .asm-textbox, #dialog-tableform .asm-textarea").val("");
-                        tableform.dialog_show_add(dialog, {
+                        await tableform.dialog_show_add(dialog, {
                                 onload: function() {
-                                     var row = tableform.table_selected_row(table);
+                                     let row = tableform.table_selected_row(table);
                                      tableform.fields_populate_from_json(dialog.fields, row);
                                 }
-                            })
-                            .then(function() {
-                                return tableform.fields_post(dialog.fields, "mode=createbulk", "transport");
-                            })
-                            .then(function(response) {
-                                common.route_reload();
-                            })
-                            .fail(function() {
-                                tableform.dialog_enable_buttons();   
                             });
+                        try {
+                            await tableform.fields_post(dialog.fields, "mode=createbulk", "transport");
+                            common.route_reload();
+                        }
+                        catch(err) {
+                            log.error(err, err);
+                            tableform.dialog_enable_buttons();   
+                        }
                     }
-                 },
-                 { id: "delete", text: _("Delete"), icon: "delete", enabled: "multi", perm: "dtr",
-                     click: function() { 
-                         tableform.delete_dialog()
-                             .then(function() {
-                                 tableform.buttons_default_state(buttons);
-                                 var ids = tableform.table_ids(table);
-                                 return common.ajax_post("transport", "mode=delete&ids=" + ids);
-                             })
-                             .then(function() {
-                                 tableform.table_remove_selected_from_json(table, controller.rows);
-                                 tableform.table_update(table);
-                             });
-                     } 
-                 },
-                 { id: "setstatus", text: _("Status"), icon: "complete", type: "buttonmenu", options: statusmenu, enabled: "multi", perm: "ctr", 
-                    click: function(newstatus) {
-                        var ids = tableform.table_ids(table);
-                        common.ajax_post("transport", "mode=setstatus&ids=" + ids + "&newstatus=" + newstatus)
-                            .then(function() {
-                                $.each(tableform.table_selected_rows(table), function(i, v) {
-                                    v.STATUS = newstatus;
-                                });
-                                tableform.table_update(table);
-                            });
+                },
+                { id: "delete", text: _("Delete"), icon: "delete", enabled: "multi", perm: "dtr",
+                    click: async function() { 
+                        await tableform.delete_dialog();
+                        tableform.buttons_default_state(buttons);
+                        let ids = tableform.table_ids(table);
+                        await common.ajax_post("transport", "mode=delete&ids=" + ids);
+                        tableform.table_remove_selected_from_json(table, controller.rows);
+                        tableform.table_update(table);
+                    } 
+                },
+                { id: "setstatus", text: _("Status"), icon: "complete", type: "buttonmenu", options: statusmenu, enabled: "multi", perm: "ctr", 
+                    click: async function(newstatus) {
+                        let ids = tableform.table_ids(table);
+                        await common.ajax_post("transport", "mode=setstatus&ids=" + ids + "&newstatus=" + newstatus);
+                        $.each(tableform.table_selected_rows(table), function(i, v) {
+                            v.STATUS = newstatus;
+                        });
+                        tableform.table_update(table);
                     }
-                 },
-                 { id: "document", text: _("Document"), icon: "document", enabled: "multi", perm: "gaf", 
-                     tooltip: _("Generate document from this transport"), type: "buttonmenu" },
-                 { id: "offset", type: "dropdownfilter", 
-                     options: [ "item|" + _("Due today"), "item2|" + _("Due in next week") ],
-                     click: function(selval) {
+                },
+                { id: "document", text: _("Document"), icon: "document", enabled: "multi", perm: "gaf", 
+                    tooltip: _("Generate document from this transport"), type: "buttonmenu" },
+                { id: "offset", type: "dropdownfilter", 
+                    options: [ "item|" + _("Due today"), "item2|" + _("Due in next week") ],
+                    click: function(selval) {
                         common.route(controller.name + "?offset=" + selval);
-                     },
-                     hideif: function(row) {
-                         // TODO: Don't show at all for now, not sure what this will be
-                         return true;
-                         // Don't show for animal records
-                         //if (controller.animal) {
-                         //    return true;
-                         //}
-                     }
-                 }
+                    },
+                    hideif: function(row) {
+                        // TODO: Don't show at all for now, not sure what this will be
+                        return true;
+                        // Don't show for animal records
+                        //if (controller.animal) {
+                        //    return true;
+                        //}
+                    }
+                }
 
             ];
             this.dialog = dialog;
@@ -336,7 +327,7 @@ $(function() {
         },
 
         render: function() {
-            var s = "";
+            let s = "";
             this.model();
             s += tableform.dialog_render(this.dialog);
             s += '<div id="button-document-body" class="asm-menu-body">' +
@@ -381,8 +372,8 @@ $(function() {
             $(".templatelink").click(function() {
                 // Update the href as it is clicked so default browser behaviour
                 // continues on to open the link in a new window
-                var template_name = $(this).attr("data");
-                var ids = tableform.table_ids(transport.table);
+                let template_name = $(this).attr("data");
+                let ids = tableform.table_ids(transport.table);
                 $(this).prop("href", "document_gen?linktype=TRANSPORT&id=" + ids + "&dtid=" + template_name);
             });
 
@@ -407,7 +398,7 @@ $(function() {
         name: "transport",
         animation: function() { return controller.name == "transport" ? "book" : "formtab"; },
         title:  function() { 
-            var t = "";
+            let t = "";
             if (controller.name == "animal_transport") {
                 t = common.substitute(_("{0} - {1} ({2} {3} aged {4})"), { 
                     0: controller.animal.ANIMALNAME, 1: controller.animal.CODE, 2: controller.animal.SEXNAME,

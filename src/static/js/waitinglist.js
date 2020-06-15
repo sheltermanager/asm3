@@ -4,7 +4,7 @@ $(function() {
 
     "use strict";
 
-    var waitinglist = {
+    const waitinglist = {
 
         current_person: null,
 
@@ -149,8 +149,8 @@ $(function() {
         enable_widgets: function() {
             // Hide additional accordion section if there aren't
             // any additional fields declared
-            var ac = $("#asm-additional-accordion");
-            var an = ac.next();
+            let ac = $("#asm-additional-accordion");
+            let an = ac.next();
             if (an.find(".additional").length == 0) {
                 ac.hide(); an.hide();
             }
@@ -212,7 +212,7 @@ $(function() {
             validate.save = function(callback) {
                 if (!waitinglist.validation()) { header.hide_loading(); return; }
                 validate.dirty(false);
-                var formdata = "mode=save" +
+                let formdata = "mode=save" +
                     "&id=" + $("#waitinglistid").val() + 
                     "&recordversion=" + controller.animal.RECORDVERSION + 
                     "&" + $("input, select, textarea").toPOST();
@@ -254,24 +254,18 @@ $(function() {
                 });
             });
 
-            $("#button-toanimal").button().click(function() {
+            $("#button-toanimal").button().click(async function() {
                 $("#button-toanimal").button("disable");
-                var formdata = "mode=toanimal&id=" + $("#waitinglistid").val();
-                common.ajax_post("waitinglist", formdata)
-                    .then(function(result) { 
-                        common.route("animal?id=" + result); 
-                    });
+                let formdata = "mode=toanimal&id=" + $("#waitinglistid").val();
+                let result = await common.ajax_post("waitinglist", formdata);
+                common.route("animal?id=" + result); 
             });
 
-            $("#button-delete").button().click(function() {
-                tableform.delete_dialog(null, _("This will permanently remove this waiting list entry, are you sure?"))
-                    .then(function() {
-                        var formdata = "mode=delete&id=" + $("#waitinglistid").val();
-                        return common.ajax_post("waitinglist", formdata);
-                    })
-                    .then(function() { 
-                        common.route("main");
-                    });
+            $("#button-delete").button().click(async function() {
+                await tableform.delete_dialog(null, _("This will permanently remove this waiting list entry, are you sure?"));
+                let formdata = "mode=delete&id=" + $("#waitinglistid").val();
+                await common.ajax_post("waitinglist", formdata);
+                common.route("main");
             });
 
             additional.relocate_fields();

@@ -4,7 +4,7 @@ $(function() {
 
     "use strict";
 
-    var report_export = {
+    const report_export = {
 
         model: function() {
             var table = {
@@ -34,7 +34,7 @@ $(function() {
         },
 
         render: function() {
-            var s = "";
+            let s = "";
             this.model();
             if (controller.rows) {
                 s += html.content_header(_("Export Reports as CSV"));
