@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ASM3\n"
 "Report-Msgid-Bugs-To: robin@sheltermanager.com\n"
-"POT-Creation-Date: 2020-06-15 09:41+0000\n"
+"POT-Creation-Date: 2020-06-15 18:36+0000\n"
 "Last-Translator: Robin Rawson-Tetley <robin@sheltermanager.com>\n"
 "Language-Team: en <robin@sheltermanager.com>\n"
 "Language: en\n"
@@ -14082,10 +14082,6 @@ msgid "{browser} version {version}, running on {os}."
 msgstr ""
 
 #: main.js
-msgid "{plural0} animal as dead on arrival"
-msgstr ""
-
-#: main.js
 msgid "{plural0} animal control call due for followup today"
 msgstr ""
 
@@ -14115,6 +14111,10 @@ msgstr ""
 
 #: main.js
 msgid "{plural0} animal was adopted"
+msgstr ""
+
+#: main.js
+msgid "{plural0} animal was dead on arrival"
 msgstr ""
 
 #: main.js

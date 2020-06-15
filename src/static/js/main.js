@@ -528,7 +528,7 @@ $(function() {
             }
             if (stats.DOA > 0 && common.has_permission("va") && config.bool("ShowDeceasedHomePage")) {
                 s += html.icon("death") + ' ' + common.ntranslate(stats.DOA, [
-                    _("{plural0} animal as dead on arrival"),
+                    _("{plural0} animal was dead on arrival"),
                     _("{plural1} animals were dead on arrival"),
                     _("{plural2} animals were dead on arrival"),
                     _("{plural3} animals were dead on arrival")
