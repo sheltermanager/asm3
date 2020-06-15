@@ -41,12 +41,12 @@ $(function() {
                 _("When you use Move > Adopt an animal, ASM will automatically return any open foster or retailer movement before creating the adoption."),
                 _("When you use Move > Foster an animal, ASM will automatically return any open foster movement before moving the animal to its new home."),
                 _("When entering dates, hold down CTRL and use the cursor keys to move around the calendar. Press t to go to today."),
-                _("You can upload images called logo.jpg and splash.jpg to the Settings-Reports-Extra Images screen to override the login splash screen and logo in the upper left corner of the application."),
+                _("You can upload images called logo.jpg and splash.jpg to the Settings, Reports, Extra Images screen to override the login splash screen and logo in the upper left corner of the application."),
                 _("ASM can track detailed monthly and annual figures for your shelter. Install the Monthly Figures and Annual Figures reports from Settings-Reports-Browse sheltermanager.com"),
                 _("ASM comes with a dictionary of 4,000 animal names. Just click the generate random name button when adding an animal."),
-                _("You can set a default amount for different payment types in the Settings-Lookup Data screen. Very handy when creating adoptions."),
+                _("You can set a default amount for different payment types in the Settings, Lookup Data screen. Very handy when creating adoptions."),
                 _("You can drag and drop animals in shelter view to change their locations."),
-                _("Lots of reports installed? Clean up the Reports menu with Settings-Options-Display-Show report menu items in collapsed categories."),
+                _("Lots of reports installed? Clean up the Reports menu with Settings, Options, Display, Show report menu items in collapsed categories."),
                 _("Press F11 in HTML or SQL code editing boxes to edit in fullscreen mode")
             ];
             return tips[Math.floor(Math.random() * tips.length)];
