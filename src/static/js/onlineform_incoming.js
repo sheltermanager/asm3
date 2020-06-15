@@ -268,8 +268,7 @@ $(function() {
                 let selrows = tableform.table_selected_rows(table);
                 $.each(selrows, function(i, v) {
                     $.each(result.split("^$"), function(ir, vr) {
-                        let vb = vr.split("|");
-                        let collationid=vb[0], linkid=vb[1], display=vb[2], status=vb[3];
+                        let [collationid, linkid, display, status] = vr.split("|");
                         if (collationid == v.COLLATIONID) {
                             v.LINK = '<a target="_blank" href="' + target + '?id=' + linkid + '">' + display + '</a>';
                             if (status && status == 1) {
