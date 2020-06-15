@@ -995,9 +995,9 @@ def fix_relative_document_uris(dbo, s):
             if mode == "nopic":
                 u = url("extra_image", "title=nopic.jpg")
             elif mode == "animal":
-                u = url("animal_image", "animalid=%s" % qsp(l, "animalid"))
+                u = url("animal_image", "animalid=%s" % qsp(l, "id"))
             elif mode == "animalthumb":
-                u = url("animal_thumbnail", "animalid=%s" % qsp(l, "animalid"))
+                u = url("animal_thumbnail", "animalid=%s" % qsp(l, "id"))
             elif mode == "dbfs":
                 u = url("dbfs_image", "title=%s" % qsp(l, "id"))
             elif mode == "media":
