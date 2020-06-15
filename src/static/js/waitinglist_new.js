@@ -4,7 +4,7 @@ $(function() {
 
     "use strict";
 
-    var waitinglist_new = {
+    const waitinglist_new = {
 
         render: function() {
             return [
@@ -89,7 +89,7 @@ $(function() {
         },
 
         bind: function() {
-            var validation = function() {
+            const validation = function() {
                 // Remove any previous errors
                 header.hide_error();
                 validate.reset();
@@ -122,34 +122,34 @@ $(function() {
 
             };
 
-            var addWaitingList = function(mode) {
+            const add_waiting_list = async function(mode) {
                 if (!validation()) { return; }
 
                 $(".asm-content button").button("disable");
                 header.show_loading(_("Creating..."));
 
-                var formdata = $("input, textarea, select").not(".chooser").toPOST();
-                common.ajax_post("waitinglist_new", formdata)
-                    .then(function(createdID) {
-                        if (mode == "add") {
-                            header.show_info(_("Waiting list entry successfully added."));
-                        }
-                        else {
-                            if (createdID != "0") { common.route("waitinglist?id=" + createdID); }
-                        }
-                    })
-                    .always(function() {
-                        $(".asm-content button").button("enable");
-                    });
+                let formdata = $("input, textarea, select").not(".chooser").toPOST();
+                try {
+                    let createdID = await common.ajax_post("waitinglist_new", formdata);
+                    if (mode == "add") {
+                        header.show_info(_("Waiting list entry successfully added."));
+                    }
+                    else {
+                        if (createdID != "0") { common.route("waitinglist?id=" + createdID); }
+                    }
+                }
+                finally {
+                    $(".asm-content button").button("enable");
+                }
             };
 
             // Buttons
             $("#add").button().click(function() {
-                addWaitingList("add");
+                add_waiting_list("add");
             });
 
             $("#addedit").button().click(function() {
-                addWaitingList("addedit");
+                add_waiting_list("addedit");
             });
 
             $("#reset").button().click(function() {

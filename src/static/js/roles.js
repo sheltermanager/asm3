@@ -4,12 +4,12 @@ $(function() {
 
     "use strict";
 
-    var roles = {
+    const roles = {
 
         render: function() {
-            var cl = function(s) { return "<p class='asm-header'>" + s + "</p>"; };
-            var cr = function(token, s) { return "<input id='" + token + "' type='checkbox' class='token' /> <label for='" + token + "'>" + s + "</label><br />"; };
-            var h = [
+            const cl = function(s) { return "<p class='asm-header'>" + s + "</p>"; };
+            const cr = function(token, s) { return "<input id='" + token + "' type='checkbox' class='token' /> <label for='" + token + "'>" + s + "</label><br />"; };
+            let h = [
                 '<div id="dialog-add" style="display: none" title="' + html.title(_("Add role")) + '">',
                 '<div class="ui-state-highlight ui-corner-all" style="margin-top: 20px; padding: 0 .7em">',
                 '<p><span class="ui-icon ui-icon-info"></span>',
@@ -280,47 +280,47 @@ $(function() {
                 }
             });
 
-            var addbuttons = { };
-            addbuttons[_("Create")] = function() {
+            let addbuttons = { };
+            addbuttons[_("Create")] = async function() {
                 validate.reset("dialog-add");
                 if (!validate.notblank([ "rolename" ])) { return; }
-                var securitymap = "";
+                let securitymap = "";
                 $(".token").each(function() {
                     if ($(this).is(":checked")) { securitymap += $(this).attr("id") + " *"; }
                 });
-                var formdata = "mode=create&securitymap=" + securitymap + "&" + $("#dialog-add input").toPOST();
+                let formdata = "mode=create&securitymap=" + securitymap + "&" + $("#dialog-add input").toPOST();
                 $("#dialog-add").disable_dialog_buttons();
-                common.ajax_post("roles", formdata)
-                    .then(function() { 
-                        common.route_reload(); 
-                    })
-                    .always(function() {
-                        $("#dialog-add").dialog("close"); 
-                    });
+                try {
+                    await common.ajax_post("roles", formdata);
+                    common.route_reload(); 
+                }
+                finally {
+                    $("#dialog-add").dialog("close"); 
+                }
             };
             addbuttons[_("Cancel")] = function() {
                 $("#dialog-add").dialog("close");
             };
 
-            var editbuttons = { };
-            editbuttons[_("Save")] = function() {
+            let editbuttons = { };
+            editbuttons[_("Save")] = async function() {
                 validate.reset("dialog-add");
                 if (!validate.notblank([ "rolename" ])) { return; }
-                var securitymap = "";
+                let securitymap = "";
                 $(".token").each(function() {
                     if ($(this).is(":checked")) { securitymap += $(this).attr("id") + " *"; }
                 });
-                var formdata = "mode=update&roleid=" + $("#roleid").val() + "&" + 
+                let formdata = "mode=update&roleid=" + $("#roleid").val() + "&" + 
                     "securitymap=" + securitymap + "&" +
                     $("#dialog-add input").toPOST();
                 $("#dialog-add").disable_dialog_buttons();
-                common.ajax_post("roles", formdata)
-                    .then(function() { 
-                        common.route_reload(); 
-                    })
-                    .always(function() { 
-                        $("#dialog-add").dialog("close"); 
-                    });
+                try {
+                    await common.ajax_post("roles", formdata);
+                    common.route_reload(); 
+                }
+                finally {
+                    $("#dialog-add").dialog("close"); 
+                }
             };
             editbuttons[_("Cancel")] = function() {
                 $("#dialog-add").dialog("close");
@@ -347,14 +347,14 @@ $(function() {
             });
 
             $("#button-clone").button({disabled: true}).click(function() {
-                var rid = "";
+                let rid = "";
                 $("#table-roles :checked").each(function() {
                     rid = $(this).attr("data");
                 });
                 $("#dialog-add .asm-textbox").val("");
-                var rrow = "#rolerow-" + rid + " ";
-                var rolename = $(rrow + ".role-name").val();
-                var perms = $(rrow + ".role-map").val().replace(/\*/g, "").split(" ");
+                let rrow = "#rolerow-" + rid + " ";
+                let rolename = $(rrow + ".role-name").val();
+                let perms = $(rrow + ".role-map").val().replace(/\*/g, "").split(" ");
                 $("#rolename").val(_("Copy of {0}").replace("{0}", rolename));
                 $(".token").prop("checked", false);
                 $.each(perms, function(i, v) {
@@ -366,32 +366,28 @@ $(function() {
                 $("#dialog-add").dialog("open"); 
             });
 
-            $("#button-delete").button({disabled: true}).click(function() {
-                tableform.delete_dialog(null, _("This will permanently remove the selected roles, are you sure?"))
-                    .then(function() {
-                        var formdata = "mode=delete&ids=";
-                        $("#table-roles input").each(function() {
-                            if ($(this).attr("type") == "checkbox") {
-                                if ($(this).is(":checked")) {
-                                    formdata += $(this).attr("data") + ",";
-                                }
-                            }
-                        });
-                        return common.ajax_post("roles", formdata);
-                    })
-                    .then(function() { 
-                        common.route_reload(); 
-                    });
+            $("#button-delete").button({disabled: true}).click(async function() {
+                await tableform.delete_dialog(null, _("This will permanently remove the selected roles, are you sure?"));
+                let formdata = "mode=delete&ids=";
+                $("#table-roles input").each(function() {
+                    if ($(this).attr("type") == "checkbox") {
+                        if ($(this).is(":checked")) {
+                            formdata += $(this).attr("data") + ",";
+                        }
+                    }
+                });
+                await common.ajax_post("roles", formdata);
+                common.route_reload(); 
             });
 
             $(".role-edit-link")
             .click(function() {
-                var rid = $(this).attr("data");
-                var rrow = "#rolerow-" + rid + " ";
+                let rid = $(this).attr("data");
+                let rrow = "#rolerow-" + rid + " ";
                 validate.reset("dialog-add");
                 $("#roleid").val($(this).attr("data"));
                 $("#rolename").val($(rrow + ".role-name").val());
-                var perms = $(rrow + ".role-map").val().replace(/\*/g, "").split(" ");
+                let perms = $(rrow + ".role-map").val().replace(/\*/g, "").split(" ");
                 $(".token").prop("checked", false);
                 $.each(perms, function(i, v) {
                     if (v) { $("#" + v).prop("checked", true); }

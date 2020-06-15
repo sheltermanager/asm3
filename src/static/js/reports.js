@@ -4,7 +4,7 @@ $(function() {
 
     "use strict";
 
-    var emailhours = [
+    const emailhours = [
         { display: _("With overnight batch"), value: -1 },
         { display: "00:00", value: 0 },
         { display: "01:00", value: 1 },
@@ -32,7 +32,7 @@ $(function() {
         { display: "23:00", value: 23 }
     ];
 
-    var emailfreq = [
+    const emailfreq = [
         { ID: 0, DISPLAY: _("Every day") },
         { ID: 1, DISPLAY: _("Monday") },
         { ID: 2, DISPLAY: _("Tuesday") },
@@ -47,10 +47,10 @@ $(function() {
         { ID: 11, DISPLAY: _("End of year") }
     ];
 
-    var reports = {
+    const reports = {
 
         model: function() {
-            var dialog = {
+            const dialog = {
                 add_title: _("Add report"),
                 edit_title: _("Edit report"),
                 edit_perm: 'hcr',
@@ -88,7 +88,7 @@ $(function() {
                 ]
             };
 
-            var table = {
+            const table = {
                 rows: controller.rows,
                 idcolumn: "ID",
                 edit: function(row) {
@@ -104,7 +104,7 @@ $(function() {
                             });
                         },
                         onload: function(row) {
-                            var type = "REPORT";
+                            let type = "REPORT";
                             if (row.HTMLBODY.indexOf("GRAPH") == 0 || row.HTMLBODY.indexOf("MAIL") == 0 || row.HTMLBODY.indexOf("MAP") == 0) { type = row.HTMLBODY; }
                             $("#type").select("value", type);
                             reports.change_type();
@@ -113,7 +113,7 @@ $(function() {
                 },
                 columns: [
                     { field: "CATEGORY", display: _("Type"), formatter: function(row) {
-                        var t = "<span style=\"white-space: nowrap\">" +
+                        let t = "<span style=\"white-space: nowrap\">" +
                             "<input type=\"checkbox\" data-id=\"" + row.ID + "\" title=\"" + html.title(_("Select")) + "\" />" +
                             "<a href=\"#\" class=\"link-edit\" data-id=\"" + row.ID + "\">{val}</a></span>";
                         if (row.HTMLBODY.indexOf("GRAPH") == 0) {
@@ -139,94 +139,83 @@ $(function() {
                 ]
             };
 
-            var buttons = [
-                 { id: "new", text: _("New Report"), icon: "new", enabled: "always", 
-                     click: function() { 
+            const buttons = [
+                { id: "new", text: _("New Report"), icon: "new", enabled: "always", 
+                    click: function() { 
                         tableform.dialog_error("");
-                         tableform.dialog_show_add(dialog, {
-                             onadd: function() {
-                                 if (!reports.validation()) { tableform.dialog_enable_buttons(); return; }
-                                 tableform.fields_post(dialog.fields, "mode=create", "reports")
-                                     .then(function(response) {
-                                         var row = {};
-                                         row.ID = response;
-                                         tableform.fields_update_row(dialog.fields, row);
-                                         reports.set_extra_fields(row);
-                                         controller.rows.push(row);
-                                         tableform.table_update(table);
-                                         tableform.dialog_close();
-                                     });
-                             },
+                        tableform.dialog_show_add(dialog, {
+                            onadd: async function() {
+                                if (!reports.validation()) { tableform.dialog_enable_buttons(); return; }
+                                let response = await tableform.fields_post(dialog.fields, "mode=create", "reports");
+                                let row = {};
+                                row.ID = response;
+                                tableform.fields_update_row(dialog.fields, row);
+                                reports.set_extra_fields(row);
+                                controller.rows.push(row);
+                                tableform.table_update(table);
+                                tableform.dialog_close();
+                            },
                             onload: function() {
                                 $("#type").select("value", "REPORT");
                                 reports.change_type();
                             }
-                         });
-                     } 
-                 },
-                 { id: "clone", text: _("Clone"), icon: "copy", enabled: "one", 
-                     click: function() { 
-                         tableform.dialog_error("");
-                         tableform.dialog_show_add(dialog, {
-                             onadd: function() {
-                                 if (!reports.validation()) { tableform.dialog_enable_buttons(); return; }
-                                 tableform.fields_post(dialog.fields, "mode=create", "reports")
-                                     .then(function(response) {
-                                         var row = {};
-                                         row.ID = response;
-                                         tableform.fields_update_row(dialog.fields, row);
-                                         controller.rows.push(row);
-                                         tableform.table_update(table);
-                                         tableform.dialog_close();
-                                     });
-                             },
-                             onload: function() {
-                                 var row = tableform.table_selected_row(table);
-                                 tableform.fields_populate_from_json(dialog.fields, row);
-                                 $("#title").val(_("Copy of {0}").replace("{0}", $("#title").val()));
-                                 var type = "REPORT";
-                                 if (row.HTMLBODY.indexOf("GRAPH") == 0 || row.HTMLBODY.indexOf("MAIL") == 0 || row.HTMLBODY.indexOf("MAP") == 0) { type = row.HTMLBODY; }
-                                 $("#type").select("value", type);
-                             }
-                         });
-                     } 
-                 },
-                 { id: "delete", text: _("Delete"), icon: "delete", enabled: "multi", 
-                     click: function() { 
-                         tableform.delete_dialog()
-                             .then(function() {
-                                 tableform.buttons_default_state(buttons);
-                                 var ids = tableform.table_ids(table);
-                                 return common.ajax_post("reports", "mode=delete&ids=" + ids);
-                             })
-                             .then(function() {
-                                 tableform.table_remove_selected_from_json(table, controller.rows);
-                                 tableform.table_update(table);
-                             });
-                     } 
-                 },
-                 { id: "browse", text: _("Browse sheltermanager.com"), icon: "logo", enabled: "always", tooltip: _("Get more reports from sheltermanager.com"),
-                     click: function() {
+                        });
+                    } 
+                },
+                { id: "clone", text: _("Clone"), icon: "copy", enabled: "one", 
+                    click: function() { 
+                        tableform.dialog_error("");
+                        tableform.dialog_show_add(dialog, {
+                            onadd: async function() {
+                                if (!reports.validation()) { tableform.dialog_enable_buttons(); return; }
+                                let response = await tableform.fields_post(dialog.fields, "mode=create", "reports");
+                                let row = {};
+                                row.ID = response;
+                                tableform.fields_update_row(dialog.fields, row);
+                                controller.rows.push(row);
+                                tableform.table_update(table);
+                                tableform.dialog_close();
+                            },
+                            onload: function() {
+                                let row = tableform.table_selected_row(table);
+                                tableform.fields_populate_from_json(dialog.fields, row);
+                                $("#title").val(_("Copy of {0}").replace("{0}", $("#title").val()));
+                                let type = "REPORT";
+                                if (row.HTMLBODY.indexOf("GRAPH") == 0 || row.HTMLBODY.indexOf("MAIL") == 0 || row.HTMLBODY.indexOf("MAP") == 0) { type = row.HTMLBODY; }
+                                $("#type").select("value", type);
+                            }
+                        });
+                    } 
+                },
+                { id: "delete", text: _("Delete"), icon: "delete", enabled: "multi", 
+                    click: async function() { 
+                        await tableform.delete_dialog();
+                        tableform.buttons_default_state(buttons);
+                        let ids = tableform.table_ids(table);
+                        await common.ajax_post("reports", "mode=delete&ids=" + ids);
+                        tableform.table_remove_selected_from_json(table, controller.rows);
+                        tableform.table_update(table);
+                    } 
+                },
+                { id: "browse", text: _("Browse sheltermanager.com"), icon: "logo", enabled: "always", tooltip: _("Get more reports from sheltermanager.com"),
+                    click: function() {
                         reports.browse_smcom();
-                     }
-                 },
-
-                 { id: "headfoot", text: _("Edit Header/Footer"), icon: "report", enabled: "always", tooltip: _("Edit report template HTML header/footer"),
-                     click: function() {
+                    }
+                },
+                { id: "headfoot", text: _("Edit Header/Footer"), icon: "report", enabled: "always", tooltip: _("Edit report template HTML header/footer"),
+                    click: function() {
                         $("#dialog-headfoot").dialog("open");
-                     }
-                 },
-
-                 { id: "images", text: _("Extra Images"), icon: "image", enabled: "always", tooltip: _("Add extra images for use in reports and documents"),
-                     click: function() {
+                    }
+                },
+                { id: "images", text: _("Extra Images"), icon: "image", enabled: "always", tooltip: _("Add extra images for use in reports and documents"),
+                    click: function() {
                         common.route("report_images");
-                     }
-                 }
+                    }
+                }
             ];
             this.dialog = dialog;
             this.table = table;
             this.buttons = buttons;
-
         },
 
         render_headfoot: function() {
@@ -281,7 +270,7 @@ $(function() {
         },
 
         render: function() {
-            var s = "";
+            let s = "";
             this.model();
             s += this.render_headfoot();
             s += this.render_browse_smcom();
@@ -314,16 +303,16 @@ $(function() {
         },
 
         bind_headfoot: function() {
-            var headfootbuttons = {};
-            headfootbuttons[_("Save")] = function() {
-                var formdata = "mode=headfoot&" + $(".headfoot").toPOST();
-                common.ajax_post("reports", formdata)
-                    .then(function() { 
-                        header.show_info(_("Updated."));
-                    })
-                    .always(function() {
-                        $("#dialog-headfoot").dialog("close");
-                    });
+            let headfootbuttons = {};
+            headfootbuttons[_("Save")] = async function() {
+                let formdata = "mode=headfoot&" + $(".headfoot").toPOST();
+                try {
+                    await common.ajax_post("reports", formdata);                    
+                    header.show_info(_("Updated."));
+                }
+                finally {
+                    $("#dialog-headfoot").dialog("close");
+                }
             };
             headfootbuttons[_("Cancel")] = function() { $(this).dialog("close"); };
             $("#dialog-headfoot").dialog({
@@ -366,7 +355,7 @@ $(function() {
                 .button({ icons: { primary: "ui-icon-check" }})
                 .click(function() {
                     $("#table-smcom .smcom-title").each(function() {
-                        var td = $(this);
+                        let td = $(this);
                         $.each(controller.recommended, function(i, v) {
                             if (td.text() == v) {
                                 td.parent().find("input").attr("checked", true);
@@ -378,9 +367,9 @@ $(function() {
                 });
             $("#button-install")
                 .button({ icons: { primary: "ui-icon-disk" }})
-                .click(function() {
+                .click(async function() {
                 header.show_loading();
-                var formdata = "mode=smcominstall&ids=";
+                let formdata = "mode=smcominstall&ids=";
                 $("#table-smcom input").each(function() {
                     if ($(this).attr("type") == "checkbox") {
                         if ($(this).is(":checked")) {
@@ -388,13 +377,13 @@ $(function() {
                         }
                     }
                 });
-                common.ajax_post("reports", formdata)
-                    .then(function() { 
-                        common.route_reload(true);
-                    })
-                    .always(function() {
-                        header.hide_loading(); 
-                    });
+                try {
+                    await common.ajax_post("reports", formdata);
+                    common.route_reload(true);
+                }
+                finally {
+                    header.hide_loading(); 
+                }
             });
         },
 
@@ -403,7 +392,7 @@ $(function() {
             $("#button-checksql")
                 .button({ icons: { primary: "ui-icon-check" }, text: false })
                 .click(function() {
-                var formdata = "mode=sql&sql=" + encodeURIComponent($("#sql").sqleditor("value"));
+                let formdata = "mode=sql&sql=" + encodeURIComponent($("#sql").sqleditor("value"));
                 $("#asm-report-error").fadeOut();
                 header.show_loading();
                 common.ajax_post("reports", formdata)
@@ -421,7 +410,7 @@ $(function() {
             $("#button-genhtml")
                 .button({ icons: { primary: "ui-icon-wrench" }, text: false })
                 .click(function() {
-                var formdata = "mode=genhtml&sql=" + encodeURIComponent($("#sql").sqleditor("value"));
+                let formdata = "mode=genhtml&sql=" + encodeURIComponent($("#sql").sqleditor("value"));
                 $("#asm-report-error").fadeOut();
                 header.show_loading();
                 common.ajax_post("reports", formdata)
@@ -438,7 +427,7 @@ $(function() {
         },
 
         change_type: function() {
-            var type = $("#type").val();
+            let type = $("#type").val();
             if (type != "REPORT") {
                 $("#html").closest("tr").hide();
                 $("#dailyemail").closest("tr").hide();
@@ -461,44 +450,44 @@ $(function() {
             }
         },
 
-        browse_smcom: function() {
+        browse_smcom: async function() {
             header.show_loading();
-            var formdata = "mode=smcomlist";
-            common.ajax_post("reports", formdata)
-                .then(function(result) {
-                    var h = [];
-                    $.each(jQuery.parseJSON(result), function(i, r) {
-                        h.push('<tr><td><span style="white-space: nowrap">');
-                        h.push('<input type="checkbox" class="asm-checkbox" data="' + r.ID + '" id="r' + r.ID + 
-                            '" title="' + _("Select") + '" /> <label for="r' + r.ID + '">' + r.TYPE + '</label></span>');
-                        h.push('<td class="smcom-title">' + r.TITLE + '</td>');
-                        h.push('<td class="smcom-category">' + r.CATEGORY + '</td>');
-                        h.push('<td class="smcom-locale">' + r.LOCALE + '</td>');
-                        h.push('<td class="smcom-description">' + r.DESCRIPTION + '</td>');
-                        h.push('</tr>');
-                    });
-                    $("#table-smcom > tbody").html(h.join("\n"));
-                    $("#table-smcom").trigger("update");
-                    $("#button-install").button("disable");
-                    $("#table-smcom input").click(function() {
-                        if ($("#table-smcom input:checked").length > 0) {
-                            $("#button-install").button("enable");
-                        }
-                        else {
-                            $("#button-install").button("disable");
-                        }
-                    });
-                    $("#dialog-browse").dialog("open");
-                })
-                .always(function() {
-                    header.hide_loading();
+            try {
+                let formdata = "mode=smcomlist";
+                let result = await common.ajax_post("reports", formdata);
+                let h = [];
+                $.each(jQuery.parseJSON(result), function(i, r) {
+                    h.push('<tr><td><span style="white-space: nowrap">');
+                    h.push('<input type="checkbox" class="asm-checkbox" data="' + r.ID + '" id="r' + r.ID + 
+                        '" title="' + _("Select") + '" /> <label for="r' + r.ID + '">' + r.TYPE + '</label></span>');
+                    h.push('<td class="smcom-title">' + r.TITLE + '</td>');
+                    h.push('<td class="smcom-category">' + r.CATEGORY + '</td>');
+                    h.push('<td class="smcom-locale">' + r.LOCALE + '</td>');
+                    h.push('<td class="smcom-description">' + r.DESCRIPTION + '</td>');
+                    h.push('</tr>');
                 });
+                $("#table-smcom > tbody").html(h.join("\n"));
+                $("#table-smcom").trigger("update");
+                $("#button-install").button("disable");
+                $("#table-smcom input").click(function() {
+                    if ($("#table-smcom input:checked").length > 0) {
+                        $("#button-install").button("enable");
+                    }
+                    else {
+                        $("#button-install").button("disable");
+                    }
+                });
+                $("#dialog-browse").dialog("open");
+            }
+            finally {
+                header.hide_loading();
+            }
         },
 
         set_extra_fields: function(row) {
             // Build list of VIEWROLES from VIEWROLEIDS
-            var roles = [];
-            var roleids = row.VIEWROLEIDS;
+            let roles = [];
+            let roleids = row.VIEWROLEIDS;
             if ($.isArray(roleids)) { roleids = roleids.join(","); }
             $.each(roleids.split(/[|,]+/), function(i, v) {
                 roles.push(common.get_field(controller.roles, v, "ROLENAME"));
@@ -509,7 +498,7 @@ $(function() {
         validation: function() {
             $("#sql").sqleditor("change");
             $("#html").htmleditor("change");
-            var rv = validate.notblank([ "category", "title", "sql" ]);
+            let rv = validate.notblank([ "category", "title", "sql" ]);
             if (!rv) { return false; }
             if ($("#type").val() == "REPORT" && $("#html").val() == "") { 
                 validate.notblank([ "html" ]); return false; 

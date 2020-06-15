@@ -9,7 +9,7 @@ Person info for all people with the selected person flag.
 en
 ###
 $VAR flag PERSONFLAG$
-SELECT OwnerName, OwnerCode,
+SELECT ID, OwnerName, OwnerCode,
 OwnerAddress, OwnerTown, OwnerCounty, OwnerPostcode, AdditionalFlags,
 HomeTelephone, WorkTelephone, MobileTelephone, EmailAddress
 FROM owner o
@@ -30,7 +30,7 @@ HEADER$$
 
 $$BODY
 <tr>
-<td>$OWNERNAME</td>
+<td><a target="_blank" href="person?id=$ID">$OWNERNAME</a></td>
 <td>$OWNERCODE</td>
 <td>$OWNERADDRESS<br/>
 $OWNERTOWN<br/>
@@ -56,7 +56,7 @@ Person info for all people without the selected person flag.
 en
 ###
 $VAR flag PERSONFLAG$
-SELECT OwnerName, OwnerCode,
+SELECT ID, OwnerName, OwnerCode,
 OwnerAddress, OwnerTown, OwnerCounty, OwnerPostcode, AdditionalFlags,
 HomeTelephone, WorkTelephone, MobileTelephone, EmailAddress
 FROM owner o
@@ -77,7 +77,7 @@ HEADER$$
 
 $$BODY
 <tr>
-<td>$OWNERNAME</td>
+<td><a target="_blank" href="person?id=$ID">$OWNERNAME</a></td>
 <td>$OWNERCODE</td>
 <td>$OWNERADDRESS<br/>
 $OWNERTOWN<br/>
@@ -104,7 +104,7 @@ en
 ###
 $VAR flag1 PERSONFLAG$
 $VAR flag2 PERSONFLAG$
-SELECT OwnerName, OwnerCode,
+SELECT ID, OwnerName, OwnerCode,
 OwnerAddress, OwnerTown, OwnerCounty, OwnerPostcode, AdditionalFlags,
 HomeTelephone, WorkTelephone, MobileTelephone, EmailAddress
 FROM owner o
@@ -127,7 +127,7 @@ HEADER$$
 
 $$BODY
 <tr>
-<td>$OWNERNAME</td>
+<td><a target="_blank" href="person?id=$ID">$OWNERNAME</a></td>
 <td>$OWNERCODE</td>
 <td>$OWNERADDRESS<br/>
 $OWNERTOWN<br/>
@@ -155,7 +155,7 @@ en
 $VAR flag1 PERSONFLAG$
 $VAR flag2 PERSONFLAG$
 $VAR flag3 PERSONFLAG$
-SELECT OwnerName, OwnerCode,
+SELECT ID, OwnerName, OwnerCode,
 OwnerAddress, OwnerTown, OwnerCounty, OwnerPostcode, AdditionalFlags,
 HomeTelephone, WorkTelephone, MobileTelephone, EmailAddress
 FROM owner o
@@ -179,7 +179,7 @@ HEADER$$
 
 $$BODY
 <tr>
-<td>$OWNERNAME</td>
+<td><a target="_blank" href="person?id=$ID">$OWNERNAME</a></td>
 <td>$OWNERCODE</td>
 <td>$OWNERADDRESS<br/>
 $OWNERTOWN<br/>
@@ -206,7 +206,7 @@ en
 ###
 $VAR flag1 PERSONFLAG$
 $VAR flag2 PERSONFLAG$
-SELECT OwnerName, OwnerCode,
+SELECT ID, OwnerName, OwnerCode,
 OwnerAddress, OwnerTown, OwnerCounty, OwnerPostcode, AdditionalFlags,
 HomeTelephone, WorkTelephone, MobileTelephone, EmailAddress
 FROM owner o
@@ -229,7 +229,7 @@ HEADER$$
 
 $$BODY
 <tr>
-<td>$OWNERNAME</td>
+<td><a target="_blank" href="person?id=$ID">$OWNERNAME</a></td>
 <td>$OWNERCODE</td>
 <td>$OWNERADDRESS<br/>
 $OWNERTOWN<br/>
@@ -257,7 +257,7 @@ en
 $VAR flag1 PERSONFLAG$
 $VAR flag2 PERSONFLAG$
 $VAR flag3 PERSONFLAG$
-SELECT OwnerName, OwnerCode,
+SELECT ID, OwnerName, OwnerCode,
 OwnerAddress, OwnerTown, OwnerCounty, OwnerPostcode, AdditionalFlags,
 HomeTelephone, WorkTelephone, MobileTelephone, EmailAddress
 FROM owner o
@@ -281,7 +281,7 @@ HEADER$$
 
 $$BODY
 <tr>
-<td>$OWNERNAME</td>
+<td><a target="_blank" href="person?id=$ID">$OWNERNAME</a></td>
 <td>$OWNERCODE</td>
 <td>$OWNERADDRESS<br/>
 $OWNERTOWN<br/>
@@ -308,7 +308,7 @@ en
 ###
 $VAR flag1 PERSONFLAG$
 $VAR flag2 PERSONFLAG$
-SELECT OwnerName, OwnerCode,
+SELECT ID, OwnerName, OwnerCode,
 OwnerAddress, OwnerTown, OwnerCounty, OwnerPostcode, AdditionalFlags,
 HomeTelephone, WorkTelephone, MobileTelephone, EmailAddress
 FROM owner o
@@ -331,7 +331,7 @@ HEADER$$
 
 $$BODY
 <tr>
-<td>$OWNERNAME</td>
+<td><a target="_blank" href="person?id=$ID">$OWNERNAME</a></td>
 <td>$OWNERCODE</td>
 <td>$OWNERADDRESS<br/>
 $OWNERTOWN<br/>

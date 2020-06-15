@@ -4,7 +4,7 @@ $(function() {
 
     "use strict";
 
-    var report_criteria = {
+    const report_criteria = {
 
         render: function() {
 

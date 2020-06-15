@@ -4,10 +4,10 @@ $(function() {
 
     "use strict";
 
-    var vouchers = {
+    const vouchers = {
 
         model: function() {
-            var dialog = {
+            const dialog = {
                 add_title: _("Add voucher"),
                 edit_title: _("Edit voucher"),
                 edit_perm: 'vcov',
@@ -29,23 +29,22 @@ $(function() {
                 ]
             };
 
-            var table = {
+            const table = {
                 rows: controller.rows,
                 idcolumn: "ID",
-                edit: function(row) {
-                    tableform.dialog_show_edit(dialog, row)
-                        .then(function() {
-                            tableform.fields_update_row(dialog.fields, row);
-                            vouchers.set_extra_fields(row);
-                            return tableform.fields_post(dialog.fields, "mode=update&voucherid=" + row.ID, "voucher");
-                        })
-                        .then(function(response) {
-                            tableform.table_update(table);
-                            tableform.dialog_close();
-                        })
-                        .fail(function() {
-                            tableform.dialog_enable_buttons();
-                        });
+                edit: async function(row) {
+                    await tableform.dialog_show_edit(dialog, row);
+                    tableform.fields_update_row(dialog.fields, row);
+                    vouchers.set_extra_fields(row);
+                    try {
+                        await tableform.fields_post(dialog.fields, "mode=update&voucherid=" + row.ID, "voucher");
+                        tableform.table_update(table);
+                        tableform.dialog_close();
+                    }
+                    catch(err) {
+                        log.error(err, err); 
+                        tableform.dialog_enable_buttons();
+                    }
                 },
                 complete: function(row) {
                     if (row.DATEEXPIRED != null && format.date_js(row.DATEEXPIRED) <= new Date()) { return true; }
@@ -72,7 +71,7 @@ $(function() {
                     { field: "ANIMAL", display: _("Animal"), 
                         formatter: function(row) {
                             if (!row.ANIMALID || row.ANIMALID == 0) { return ""; }
-                            var s = "";
+                            let s = "";
                             if (controller.name.indexOf("animal_") == -1) { s = html.animal_emblems(row) + " "; }
                             return s + '<a href="animal?id=' + row.ANIMALID + '">' + row.ANIMALNAME + ' - ' + row.SHELTERCODE + '</a>';
                         },
@@ -84,24 +83,25 @@ $(function() {
                 ]
             };
 
-            var buttons = [
-                 { id: "new", text: _("New Voucher"), icon: "new", enabled: "always", perm: "vaov", 
+            const buttons = [
+                { id: "new", text: _("New Voucher"), icon: "new", enabled: "always", perm: "vaov", 
                     click: function() { 
                         tableform.dialog_show_add(dialog, { 
-                            onadd: function() {
-                                tableform.fields_post(dialog.fields, "mode=create", "voucher")
-                                    .then(function(response) {
-                                        var row = {};
-                                        row.ID = response;
-                                        tableform.fields_update_row(dialog.fields, row);
-                                        vouchers.set_extra_fields(row);
-                                        controller.rows.push(row);
-                                        tableform.table_update(table);
-                                        tableform.dialog_close();
-                                    })
-                                    .fail(function() {
-                                        tableform.dialog_enable_buttons();   
-                                    });
+                            onadd: async function() {
+                                try {
+                                    let response = await tableform.fields_post(dialog.fields, "mode=create", "voucher");
+                                    let row = {};
+                                    row.ID = response;
+                                    tableform.fields_update_row(dialog.fields, row);
+                                    vouchers.set_extra_fields(row);
+                                    controller.rows.push(row);
+                                    tableform.table_update(table);
+                                    tableform.dialog_close();
+                                }
+                                catch(err) {
+                                    log.error(err, err);
+                                    tableform.dialog_enable_buttons();   
+                                }
                             },
                             onload: function() {
                                 $("#animal").animalchooser("clear");
@@ -116,24 +116,20 @@ $(function() {
                             }
                         }); 
                     }
-                 },
-                 { id: "delete", text: _("Delete"), icon: "delete", enabled: "multi", perm: "vdov", 
-                     click: function() { 
-                         tableform.delete_dialog()
-                             .then(function() {
-                                 tableform.buttons_default_state(buttons);
-                                 var ids = tableform.table_ids(table);
-                                 return common.ajax_post("voucher", "mode=delete&ids=" + ids);
-                             })
-                             .then(function() {
-                                 tableform.table_remove_selected_from_json(table, controller.rows);
-                                 tableform.table_update(table);
-                             });
-                     } 
-                 },
-                 { id: "document", text: _("Document"), icon: "document", enabled: "one", perm: "gaf", 
-                     tooltip: _("Generate document from this voucher"), type: "buttonmenu" },
-                 { id: "offset", type: "dropdownfilter", 
+                },
+                { id: "delete", text: _("Delete"), icon: "delete", enabled: "multi", perm: "vdov", 
+                    click: async function() { 
+                        await tableform.delete_dialog();
+                        tableform.buttons_default_state(buttons);
+                        let ids = tableform.table_ids(table);
+                        await common.ajax_post("voucher", "mode=delete&ids=" + ids);
+                        tableform.table_remove_selected_from_json(table, controller.rows);
+                        tableform.table_update(table);
+                    } 
+                },
+                { id: "document", text: _("Document"), icon: "document", enabled: "one", perm: "gaf", 
+                    tooltip: _("Generate document from this voucher"), type: "buttonmenu" },
+                { id: "offset", type: "dropdownfilter", 
                     options: [
                         "i31|" + _("Issued in last month"),
                         "p31|" + _("Presented in last month"),
@@ -186,7 +182,7 @@ $(function() {
         },
 
         render: function() {
-            var s = "";
+            let s = "";
             this.model();
             s += tableform.dialog_render(this.dialog);
             s += '<div id="button-document-body" class="asm-menu-body">' +
@@ -252,7 +248,7 @@ $(function() {
             $(".templatelink").click(function() {
                 // Update the href as it is clicked so default browser behaviour
                 // continues on to open the link in a new window
-                var template_name = $(this).attr("data");
+                let template_name = $(this).attr("data");
                 $(this).prop("href", "document_gen?linktype=VOUCHER&id=" + tableform.table_selected_row(vouchers.table).ID + "&dtid=" + template_name);
             });
 
@@ -274,14 +270,14 @@ $(function() {
         },
 
         vouchertype_change: function() {
-            var dc = common.get_field(controller.vouchertypes, $("#type").select("value"), "DEFAULTCOST");
+            let dc = common.get_field(controller.vouchertypes, $("#type").select("value"), "DEFAULTCOST");
             $("#amount").currency("value", dc);
         },
 
         name: "vouchers",
         animation: function() { return controller.name == "voucher" ? "book" : "formtab"; },
         title:  function() { 
-            var t = "";
+            let t = "";
             if (controller.name == "animal_vouchers") {
                 t = common.substitute(_("{0} - {1} ({2} {3} aged {4})"), { 
                     0: controller.animal.ANIMALNAME, 1: controller.animal.CODE, 2: controller.animal.SEXNAME,

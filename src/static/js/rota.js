@@ -4,10 +4,10 @@ $(function() {
 
     "use strict";
 
-    var rota = {
+    const rota = {
 
         model: function() {
-            var dialog = {
+            const dialog = {
                 add_title: _("Add rota item"),
                 edit_title: _("Edit rota item"),
                 edit_perm: 'coro',
@@ -27,25 +27,18 @@ $(function() {
                 ]
             };
 
-            var table = {
+            const table = {
                 rows: controller.rows,
                 idcolumn: "ID",
-                edit: function(row) {
-                    tableform.dialog_show_edit(dialog, row, { onload: function() { rota.type_change(); }} )
-                        .then(function() {
-                            tableform.fields_update_row(dialog.fields, row);
-                            row.OWNERNAME = $("#person").personchooser("get_selected").OWNERNAME;
-                            row.ROTATYPENAME = common.get_field(controller.rotatypes, row.ROTATYPEID, "ROTATYPE");
-                            row.WORKTYPENAME = common.get_field(controller.worktypes, row.WORKTYPEID, "WORKTYPE");
-                            return tableform.fields_post(dialog.fields, "mode=update&rotaid=" + row.ID, controller.name);
-                        })
-                        .then(function(response) {
-                            tableform.table_update(table);
-                            tableform.dialog_close();
-                        })
-                        .fail(function() {
-                            tableform.dialog_enable_buttons();
-                        });
+                edit: async function(row) {
+                    await tableform.dialog_show_edit(dialog, row, { onload: function() { rota.type_change(); }} );
+                    tableform.fields_update_row(dialog.fields, row);
+                    row.OWNERNAME = $("#person").personchooser("get_selected").OWNERNAME;
+                    row.ROTATYPENAME = common.get_field(controller.rotatypes, row.ROTATYPEID, "ROTATYPE");
+                    row.WORKTYPENAME = common.get_field(controller.worktypes, row.WORKTYPEID, "WORKTYPE");
+                    await tableform.fields_post(dialog.fields, "mode=update&rotaid=" + row.ID, controller.name);
+                    tableform.table_update(table);
+                    tableform.dialog_close();
                 },
                 columns: [
                     { field: "ROTATYPENAME", display: _("Type") },
@@ -72,45 +65,34 @@ $(function() {
                 ]
             };
 
-            var buttons = [
-                 { id: "new", text: _("New"), icon: "new", enabled: "always", perm: "aoro",
-                     click: function() { 
-                         $("#person").personchooser("clear");
-                         if (controller.person) {
-                             $("#person").personchooser("loadbyid", controller.person.ID);
-                         }
-                         tableform.dialog_show_add(dialog, { onload: function() { rota.type_change(); }} )
-                             .then(function() {
-                                return tableform.fields_post(dialog.fields, "mode=create", controller.name);
-                             })
-                             .then(function(response) {
-                                 var row = {};
-                                 row.ID = response;
-                                 tableform.fields_update_row(dialog.fields, row);
-                                 row.OWNERNAME = $("#person").personchooser("get_selected").OWNERNAME;
-                                 row.ROTATYPENAME = common.get_field(controller.rotatypes, row.ROTATYPEID, "ROTATYPE");
-                                 row.WORKTYPENAME = common.get_field(controller.worktypes, row.WORKTYPEID, "WORKTYPE");
-                                 controller.rows.push(row);
-                                 tableform.table_update(table);
-                                 tableform.dialog_close();
-                             })
-                             .fail(function() {
-                                 tableform.dialog_enable_buttons();
-                             });
-                     } 
-                 },
-                 { id: "delete", text: _("Delete"), icon: "delete", enabled: "multi", perm: "doro",
-                     click: function() { 
-                         tableform.delete_dialog()
-                             .then(function() {
-                                 tableform.buttons_default_state(buttons);
-                                 var ids = tableform.table_ids(table);
-                                 return common.ajax_post(controller.name, "mode=delete&ids=" + ids);
-                             })
-                             .then(function() {
-                                 tableform.table_remove_selected_from_json(table, controller.rows);
-                                 tableform.table_update(table);
-                             });
+            const buttons = [
+                { id: "new", text: _("New"), icon: "new", enabled: "always", perm: "aoro",
+                    click: async function() { 
+                        $("#person").personchooser("clear");
+                        if (controller.person) {
+                            $("#person").personchooser("loadbyid", controller.person.ID);
+                        }
+                        await tableform.dialog_show_add(dialog, { onload: function() { rota.type_change(); }} );
+                        let response = await tableform.fields_post(dialog.fields, "mode=create", controller.name);
+                        let row = {};
+                        row.ID = response;
+                        tableform.fields_update_row(dialog.fields, row);
+                        row.OWNERNAME = $("#person").personchooser("get_selected").OWNERNAME;
+                        row.ROTATYPENAME = common.get_field(controller.rotatypes, row.ROTATYPEID, "ROTATYPE");
+                        row.WORKTYPENAME = common.get_field(controller.worktypes, row.WORKTYPEID, "WORKTYPE");
+                        controller.rows.push(row);
+                        tableform.table_update(table);
+                        tableform.dialog_close();
+                    } 
+                },
+                { id: "delete", text: _("Delete"), icon: "delete", enabled: "multi", perm: "doro",
+                    click: async function() { 
+                        await tableform.delete_dialog();
+                        tableform.buttons_default_state(buttons);
+                        let ids = tableform.table_ids(table);
+                        await common.ajax_post(controller.name, "mode=delete&ids=" + ids);
+                        tableform.table_remove_selected_from_json(table, controller.rows);
+                        tableform.table_update(table);
                      } 
                  }
             ];
@@ -125,7 +107,7 @@ $(function() {
         },
 
         render: function() {
-            var s = "";
+            let s = "";
             this.model();
             s += tableform.dialog_render(this.dialog);
             if (controller.name.indexOf("person_rota") == 0) {
