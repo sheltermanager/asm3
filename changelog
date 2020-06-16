@@ -1,6 +1,7 @@
 44
 ================
 
+16/06/20 Additional fields protected by wrong MODIFY_LOOKUPS permission
 16/06/20 Add animal Jurisdiction field and hide/show/default config #650
 15/06/20 translate relative img looking for wrong param animal/animalthumb
 14/06/20 IncidentLogs table wordkey

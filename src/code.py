@@ -1219,7 +1219,7 @@ class accounts_trx(JSONEndpoint):
 
 class additional(JSONEndpoint):
     url = "additional"
-    get_permissions = asm3.users.MODIFY_LOOKUPS
+    get_permissions = asm3.users.MODIFY_ADDITIONAL_FIELDS
 
     def controller(self, o):
         dbo = o.dbo
@@ -1232,15 +1232,15 @@ class additional(JSONEndpoint):
         }
 
     def post_create(self, o):
-        self.check(asm3.users.MODIFY_LOOKUPS)
+        self.check(asm3.users.MODIFY_ADDITIONAL_FIELDS)
         return asm3.additional.insert_field_from_form(o.dbo, o.user, o.post)
 
     def post_update(self, o):
-        self.check(asm3.users.MODIFY_LOOKUPS)
+        self.check(asm3.users.MODIFY_ADDITIONAL_FIELDS)
         asm3.additional.update_field_from_form(o.dbo, o.user, o.post)
 
     def post_delete(self, o):
-        self.check(asm3.users.MODIFY_LOOKUPS)
+        self.check(asm3.users.MODIFY_ADDITIONAL_FIELDS)
         for fid in o.post.integer_list("ids"):
             asm3.additional.delete_field(o.dbo, o.user, fid)
 
