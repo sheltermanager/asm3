@@ -253,6 +253,12 @@ $(function() {
                 html.list_to_options(controller.entryreasons, "ID", "REASONNAME"),
                 '</select></td>',
                 '</tr>',
+                '<tr id="jurisdictionrow">',
+                '<td><label for="jurisdiction">' + _("Jurisdiction") + '</label></td>',
+                '<td><select id="jurisdiction" data="jurisdiction" class="asm-selectbox">',
+                html.list_to_options(controller.jurisdictions, "ID", "JURISDICTIONNAME"),
+                '</select></td>',
+                '</tr>',
                 '<tr id="feerow">',
                 '<td><label for="fee">' + _("Adoption Fee") + '</label></td>',
                 '<td><input id="fee" data-json="FEE" data-post="fee" class="asm-currencybox asm-textbox" value="0" /></td>',
@@ -383,6 +389,10 @@ $(function() {
                 if (config.bool("AddAnimalsShowLocationUnit")) { $("#locationunitrow").fadeIn(); }
             }
 
+            // Fields that apply to both shelter and non-shelter animals based on config
+            $("#jurisdictionrow").hide();
+            if (config.bool("AddAnimalsShowJurisdiction")) { $("#jurisdictionrow").show(); }
+
             // If transfer in is available and ticked, changed the broughtinby label
             if (config.bool("AddAnimalsShowTransferIn") && $("#transferin").is(":checked")) { 
                 $("label[for='broughtinby']").html(_("Transferred From")); 
@@ -466,6 +476,7 @@ $(function() {
             $("#basecolour").select("value", config.str("AFDefaultColour"));
             $("#entryreason").select("value", config.str("AFDefaultEntryReason"));
             $("#internallocation").select("value", config.str("AFDefaultLocation"));
+            $("#jurisdiction").select("value", config.str("DefaultJurisdiction"));
             $("#size").select("value", config.str("AFDefaultSize"));
             $("#sex").select("value", "2"); // Unknown
 

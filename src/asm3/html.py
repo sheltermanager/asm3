@@ -697,6 +697,7 @@ def json_animalfindcolumns(dbo):
         ( "IsPickup", _("Picked Up", l) ),
         ( "PickupAddress", _("Pickup Address", l) ),
         ( "PickupLocationID", _("Pickup Location", l) ),
+        ( "JurisdictionID", _("Jurisdiction", l) ),
         ( "IsQuarantine", _("Quarantine", l) ),
         ( "HasSpecialNeeds", _("Special Needs", l) ),
         ( "AdditionalFlags", _("Flags", l) ),

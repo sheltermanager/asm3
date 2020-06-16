@@ -202,6 +202,7 @@ $(function() {
             $("#calltime").val(format.time(new Date()));
             $("#calltaker").select("value", asm.user);
             $("#incidenttype").select("value", config.str("DefaultIncidentType"));
+            $("#jurisdiction").select("value", config.str("DefaultJurisdiction"));
 
             // Remove any retired lookups from the lists
             $(".asm-selectbox").select("removeRetiredOptions");

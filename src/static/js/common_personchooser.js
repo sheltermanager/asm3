@@ -311,6 +311,8 @@ $.widget("asm.personchooser", {
                 }
                 // Default the country
                 dialogadd.find(".personchooser-country").val(config.str("OrganisationCountry"));
+                // Default the jurisdiction
+                dialogadd.find(".personchooser-jurisdiction").select("value", config.str("DefaultJurisdiction"));
                 // If we have a filter, set the appropriate person flags to match
                 if (self.options.filter) {
                     dialogadd.find(".personchooser-flags option[value='" + self.options.filter + "']").prop("selected", true);
@@ -405,6 +407,7 @@ $.widget("asm.personchooser", {
                     html.list_to_options(self.options.sites, "ID", "SITENAME"));
                 // Add jurisdictions
                 dialogadd.find(".personchooser-jurisdiction").html(html.list_to_options(self.options.jurisdictions, "ID", "JURISDICTIONNAME"));
+                dialogadd.find(".personchooser-jurisdiction").select("value", config.str("DefaultJurisdiction"));
                 dialogadd.find(".personchooser-jurisdiction").select("removeRetiredOptions", "all");
                 // Add new additional fields
                 dialogadd.find("table").append(additional.additional_new_fields(d.additional, false, "additional chooser"));

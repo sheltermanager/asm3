@@ -270,6 +270,7 @@ $(function() {
         reset: function() {
             $(".newform").val("").change();
             $("#country").val( config.str("OrganisationCountry") );
+            $("#jurisdiction").select("value", config.str("DefaultJurisdiction"));
             $(".asm-checkbox").prop("checked", false).change();
             $(".asm-personchooser").personchooser("clear");
             $("#flags option").prop("selected", false);

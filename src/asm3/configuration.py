@@ -158,6 +158,7 @@ DEFAULTS = {
     "DefaultDailyBoardingCost": "2000",
     "DefaultDateBroughtIn": "Yes",
     "DefaultIncidentType": "1",
+    "DefaultJurisdiction": "1",
     "DefaultMediaNotesFromFile": "Yes",
     "DefaultShiftStart": "09:00",
     "DefaultShiftEnd": "17:00",

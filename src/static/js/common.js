@@ -527,8 +527,9 @@ const common = {
      */
     module_start: function(modulename) {
 
-        var errhandler = function(name, e) {
-            var msg = "module_start [" + modulename + "]: " + name + ": " + e;
+        const errhandler = function(name, e) {
+            let msg = "accessing " + common.current_url() +
+                ", module_start [" + modulename + "]: " + name + ": " + e;
             log.error(msg, e);
             common.ajax_post("jserror", 
                 "user=" + encodeURIComponent(asm.user) +

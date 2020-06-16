@@ -174,6 +174,7 @@ $(function() {
                 "IsPickup": _("Picked Up"),
                 "PickupAddress": _("Pickup Address"),
                 "PickupLocationID": _("Pickup Location"), 
+                "JurisdictionID": _("Jurisdiction"),
                 "IsQuarantine":  _("Quarantine"),
                 "HasSpecialNeeds":  _("Special Needs"),
                 "AdditionalFlags": _("Flags"),
@@ -231,6 +232,7 @@ $(function() {
             else if ( name == "Sex") { rv = row.SEXNAME; }
             else if ( name == "EntryReasonID") { rv = row.ENTRYREASONNAME; }
             else if ( name == "PickupLocationID") { rv = row.PICKUPLOCATIONNAME; }
+            else if ( name == "JurisdictionID") { rv = row.JURISDICTIONNAME; }
             else if ( name == "PTSReasonID") { rv = row.DECEASEDDATE ? row.PTSREASONNAME : ""; }
             else if ( name == "AnimalAge") {
                 rv  = '<span data-sort="' + row.DATEOFBIRTH + '"></span>' + row.ANIMALAGE;

@@ -296,6 +296,12 @@ $(function() {
                 '<option value="3">Unhealthy and Untreatable</option>',
                 '</select></td>',
                 '</tr>',
+                '<tr id="jurisdictionrow">',
+                '<td><label for="jurisdiction">' + _("Jurisdiction") + '</label></td>',
+                '<td><select id="jurisdiction" data-json="JURISDICTIONID" data-post="jurisdiction" class="asm-selectbox">',
+                html.list_to_options(controller.jurisdictions, "ID", "JURISDICTIONNAME"),
+                '</select></td>',
+                '</tr>',
                 '<tr id="transferinrow">',
                 '<td></td>',
                 '<td>',
@@ -1119,6 +1125,7 @@ $(function() {
             if (config.bool("DontShowAdoptionFee")) { $("#feerow").hide(); }
             if (config.bool("DontShowAdoptionCoordinator")) { $("#coordinatorrow").hide(); }
             if (config.bool("DontShowCoatType")) { $("#coattyperow").hide(); }
+            if (config.bool("DontShowJurisdiction")) { $("#jurisdictionrow").hide(); }
             if (config.bool("DontShowSize")) { $("#sizerow").hide(); }
             if (config.bool("DontShowWeight")) { $("#kilosrow, #poundsrow").hide(); }
             if (config.bool("DontShowMicrochip")) { $("#microchiprow, #microchiprow2").hide(); }

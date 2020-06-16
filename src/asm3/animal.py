@@ -141,6 +141,7 @@ def get_animal_query(dbo):
         "il.SiteID AS SiteID, " \
         "se.SiteName AS SiteName, " \
         "pl.LocationName AS PickupLocationName, " \
+        "j.JurisdictionName, " \
         "ac.ID AS AnimalControlIncidentID, " \
         "itn.IncidentName AS AnimalControlIncidentName, " \
         "ac.IncidentDateTime AS AnimalControlIncidentDate, " \
@@ -227,6 +228,7 @@ def get_animal_query(dbo):
         "LEFT OUTER JOIN internallocation il ON il.ID = a.ShelterLocation " \
         "LEFT OUTER JOIN site se ON se.ID = il.SiteID " \
         "LEFT OUTER JOIN pickuplocation pl ON pl.ID = a.PickupLocationID " \
+        "LEFT OUTER JOIN jurisdiction j ON j.ID = a.JurisdictionID " \
         "LEFT OUTER JOIN media web ON web.ID = (SELECT MAX(ID) FROM media sweb WHERE sweb.LinkID = a.ID AND sweb.LinkTypeID = 0 AND sweb.WebsitePhoto = 1) " \
         "LEFT OUTER JOIN media vid ON vid.ID = (SELECT MAX(ID) FROM media svid WHERE svid.LinkID = a.ID AND svid.LinkTypeID = 0 AND svid.WebsiteVideo = 1) " \
         "LEFT OUTER JOIN media doc ON doc.ID = (SELECT MAX(ID) FROM media sdoc WHERE sdoc.LinkID = a.ID AND sdoc.LinkTypeID = 0 AND sdoc.DocPhoto = 1) " \
@@ -2043,6 +2045,7 @@ def insert_animal_from_form(dbo, post, username):
         "IsPickup":         post.boolean("pickedup"),
         "PickupLocationID": post.integer("pickuplocation"),
         "PickupAddress":    post["pickupaddress"],
+        "JurisdictionID":   post.integer("jurisdiction"),
         "IsHold":           post.boolean("hold"),
         "HoldUntilDate":    post.date("holduntil"),
         "IsCourtesy":       0,
@@ -2290,6 +2293,7 @@ def update_animal_from_form(dbo, post, username):
         "IsPickup":             post.boolean("pickedup"),
         "PickupLocationID":     post.integer("pickuplocation"),
         "PickupAddress":        post["pickupaddress"],
+        "JurisdictionID":       post.integer("jurisdiction"),
         "DateBroughtIn":        post.datetime("datebroughtin", "timebroughtin"),
         "AsilomarIntakeCategory": post.integer("asilomarintakecategory"),
         "AsilomarIsTransferExternal": post.boolean("asilomartransferexternal"),
@@ -2600,6 +2604,7 @@ def clone_animal(dbo, username, animalid):
         "IsTransfer":       a.istransfer,
         "IsPickup":         a.ispickup,
         "PickupLocationID": a.pickuplocationid,
+        "JurisdictionID":   a.jurisdictionid,
         "IsGoodWithCats":   a.isgoodwithcats,
         "IsGoodWithDogs":   a.isgoodwithdogs,
         "IsGoodWithChildren": a.isgoodwithchildren,

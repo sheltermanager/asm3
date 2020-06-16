@@ -37,7 +37,7 @@ VERSIONS = (
     34013, 34014, 34015, 34016, 34017, 34018, 34019, 34020, 34021, 34022, 34100,
     34101, 34102, 34103, 34104, 34105, 34106, 34107, 34108, 34109, 34110, 34111,
     34112, 34200, 34201, 34202, 34203, 34204, 34300, 34301, 34302, 34303, 34304,
-    34305, 34306, 34400, 34401, 34402, 34403, 34404, 34405, 34406
+    34305, 34306, 34400, 34401, 34402, 34403, 34404, 34405, 34406, 34407
 )
 
 LATEST_VERSION = VERSIONS[-1]
@@ -291,6 +291,7 @@ def sql_structure(dbo):
         fint("IsPickup", True),
         fint("PickupLocationID", True),
         fstr("PickupAddress", True),
+        fint("JurisdictionID", True),
         flongstr("HealthProblems"),
         fint("PutToSleep"),
         flongstr("PTSReason"),
@@ -363,6 +364,7 @@ def sql_structure(dbo):
     sql += index("animal_EntryReasonID", "animal", "EntryReasonID")
     sql += index("animal_IdentichipNumber", "animal", "IdentichipNumber")
     sql += index("animal_Identichip2Number", "animal", "Identichip2Number")
+    sql += index("animal_JurisdictionID", "animal", "JurisdictionID")
     sql += index("animal_LastChangedDate", "animal", "LastChangedDate")
     sql += index("animal_MostRecentEntryDate", "animal", "MostRecentEntryDate")
     sql += index("animal_Neutered", "animal", "Neutered")
@@ -5241,3 +5243,15 @@ def update_34406(dbo):
     # Remove bloated items from the config table that now live in the disk cache
     dbo.execute_dbupdate("DELETE FROM configuration WHERE ItemName IN " \
         "('ASMNews', 'LookingForReport', 'LookingForLastMatchCount', 'LostFoundReport', 'LostFoundLastMatchCount')")
+
+def update_34407(dbo):
+    # Add animal.JurisdictionID
+    add_column(dbo, "animal", "JurisdictionID", dbo.type_integer)
+    add_index(dbo, "animal_JurisdictionID", "animal", "JurisdictionID")
+    # Set it on existing animals based on original owner, then brought in by jurisdiction
+    dbo.execute_dbupdate("UPDATE animal SET JurisdictionID = " \
+        "(SELECT JurisdictionID FROM owner WHERE ID = animal.OriginalOwnerID) WHERE JurisdictionID Is Null")
+    dbo.execute_dbupdate("UPDATE animal SET JurisdictionID = " \
+        "(SELECT JurisdictionID FROM owner WHERE ID = animal.BroughtInByOwnerID) WHERE JurisdictionID Is Null")
+    dbo.execute_dbupdate("UPDATE animal SET JurisdictionID = 0 WHERE JurisdictionID Is Null")
+
