@@ -2197,11 +2197,11 @@ class clinic_waitingroom(JSONEndpoint):
 
 class csvexport(JSONEndpoint):
     url = "csvexport"
-    get_permissions = asm3.users.USE_SQL_INTERFACE
+    get_permissions = asm3.users.EXPORT_REPORT
 
 class csvexport_animals(ASMEndpoint):
     url = "csvexport_animals"
-    get_permissions = asm3.users.USE_SQL_INTERFACE
+    get_permissions = asm3.users.EXPORT_REPORT
 
     def content(self, o):
         # If we're retrieving an already saved export, serve it.
