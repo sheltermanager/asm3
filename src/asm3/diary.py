@@ -51,6 +51,7 @@ def email_uncompleted_upto_today(dbo):
                     s += "%s " % asm3.i18n.python2display(l, n.diarydatetime)
                     s += n.subject
                     if n.linkinfo is not None and n.linkinfo != "": s += " / %s" % n.linkinfo
+                    s += " (%s)" % n.createdby
                     s += "\n%s\n\n%s" % (n.note, n.comments)
                     totalforuser += 1
             if totalforuser > 0:
