@@ -707,6 +707,13 @@ def bytesio(contents = ""):
     if contents != "": return BytesIO(contents)
     return BytesIO()
 
+def strip_duplicate_spaces(s):
+    """
+    Removes duplicate spaces from a string and strips, eg: ' Bad   Flag' becomes 'Bad Flag'
+    """
+    if s is None: return ""
+    return " ".join(re.split("\s+", s)).strip()
+
 def strip_html_tags(s):
     """
     Removes all html tags from a string, leaving just the
