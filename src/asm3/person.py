@@ -1442,6 +1442,8 @@ def lookingfor_report(dbo, username = "system", personid = 0, limit = 0):
 
         # Output owner info
         h.append("<h2>%s (%s) %s %s</h2>" % (p.OWNERNAME, p.OWNERADDRESS, p.HOMETELEPHONE, p.MOBILETELEPHONE))
+        if p.MATCHADDED is not None or p.MATCHEXPIRES is not None:
+            h.append( "<p style='font-size: 8pt'>%s - %s</p>" % (python2display(l, p.MATCHADDED), python2display(l, p.MATCHEXPIRES)) )
         if p.COMMENTS != "" and p.COMMENTS is not None: 
             h.append( "<p style='font-size: 8pt'>%s</p>" % p.COMMENTS)
 

@@ -1,6 +1,7 @@
 44
 ================
 
+19/06/20 Show match added/expires on looking for report #845
 19/06/20 Suppress multiple spaces in flag names #866
 16/06/20 Additional fields protected by wrong MODIFY_LOOKUPS permission
 16/06/20 Add animal Jurisdiction field and hide/show/default config #650
