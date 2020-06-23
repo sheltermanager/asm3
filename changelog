@@ -1,6 +1,7 @@
 44
 ================
 
+23/06/20 Use movement mod date to prevent intake blocking adopter reg #868
 20/06/20 create_document_media passing str instead of bytes #867
 19/06/20 Include diary note creator in email
 19/06/20 Show match added/expires on looking for report #845

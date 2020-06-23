@@ -317,11 +317,14 @@ def get_microchip_data_query(dbo, patterns, publishername, movementtypes = "1", 
         "AND (" \
         "(a.ActiveMovementID > 0 AND a.ActiveMovementType > 0 AND a.ActiveMovementType IN (%(movementtypes)s) %(trialclause)s " \
         "AND NOT EXISTS(SELECT SentDate FROM animalpublished WHERE PublishedTo = '%(publishername)s' " \
-        "AND AnimalID = a.ID AND SentDate >= a.ActiveMovementDate)) " \
+        "AND AnimalID = a.ID AND SentDate >= %(movementdate)s )) " \
         "%(nonshelterclause)s " \
         "%(intakeclause)s " \
         ")" % { 
             "patterns": " OR ".join(pclauses),
+            # Using max of movementdate/movement.lastchanged prevents registration on intake 
+            # on the same day preventing adopter registration
+            "movementdate": dbo.sql_greatest([ "a.ActiveMovementDate", "am.LastChangedDate" ]), 
             "movementtypes": movementtypes, 
             "intakeclause": intakeclause,
             "nonshelterclause": nonshelterclause,
