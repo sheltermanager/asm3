@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: ASM3\n"
 "Report-Msgid-Bugs-To: robin@sheltermanager.com\n"
 "POT-Creation-Date: 2020-06-15 18:36+0000\n"
-"PO-Revision-Date: 2020-06-15 21:04+0200\n"
+"PO-Revision-Date: 2020-06-23 23:24+0200\n"
 "Last-Translator: Julian POIDEVIN <poidevin.julian@gmail.com>\n"
 "Language-Team: \n"
 "Language: fr\n"
@@ -6429,7 +6429,7 @@ msgstr "Index"
 
 #: common_personchooser.js person.js person_new.js
 msgid "Individual/Couple"
-msgstr "Célibataire / Couple"
+msgstr "Particulier"
 
 #: html.py
 msgid "Induct a new animal"
@@ -7169,7 +7169,7 @@ msgid ""
 "Display, Show report menu items in collapsed categories."
 msgstr ""
 "Vous avez beaucoup de rapports installés ? Nettoyez le menu \"Rapports\" en "
-"naviguant vers Paramètres, Options, Affichage, Affichez les éléments de menu "
+"naviguant vers Paramètres, Options, Affichage, Afficher les éléments de menu "
 "du rapport dans des catégories réduites."
 
 #: dbupdate.py
@@ -8403,11 +8403,11 @@ msgstr "Nom du refuge"
 
 #: common_personchooser.js person.js options.js person_new.js
 msgid "Organization"
-msgstr "Association"
+msgstr "Société ou Organisme"
 
 #: common_personchooser.js person.js person_new.js
 msgid "Organization name"
-msgstr "Nom de l'association"
+msgstr "Nom de la société ou organisme"
 
 #: dbupdate.py
 msgid "Oriental Long Hair"
