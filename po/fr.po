@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: ASM3\n"
 "Report-Msgid-Bugs-To: robin@sheltermanager.com\n"
 "POT-Creation-Date: 2020-06-15 18:36+0000\n"
-"PO-Revision-Date: 2020-06-23 23:24+0200\n"
+"PO-Revision-Date: 2020-06-28 02:54+0200\n"
 "Last-Translator: Julian POIDEVIN <poidevin.julian@gmail.com>\n"
 "Language-Team: \n"
 "Language: fr\n"
@@ -2013,7 +2013,7 @@ msgstr "Perruche ondulée"
 
 #: roles.js
 msgid "Bulk Complete Diary"
-msgstr "Journal complet en vrac"
+msgstr "Completer plusieurs journaux"
 
 #: roles.js
 msgid "Bulk Complete Medical Records"
@@ -2021,27 +2021,27 @@ msgstr "Dossier médical complet en vrac"
 
 #: roles.js
 msgid "Bulk Complete Vaccinations"
-msgstr "Carnet de vaccination complet en vrac"
+msgstr "Completer des vaccinations pour plusieurs animaux"
 
 #: roles.js
 msgid "Bulk Complete Waiting List"
-msgstr "Liste d'attente complète en vrac"
+msgstr "Completer des listes d'attentes pour plusieurs animaux"
 
 #: medical.js
 msgid "Bulk Regimen"
-msgstr "Régime brut"
+msgstr "Régime pour plusieurs animaux"
 
 #: test.js
 msgid "Bulk Test"
-msgstr "Test brut"
+msgstr "Test pour plusieurs animaux"
 
 #: transport.js
 msgid "Bulk Transport"
-msgstr "Transport en vrac"
+msgstr "Transport pour plusieurs animaux"
 
 #: vaccination.js
 msgid "Bulk Vaccination"
-msgstr "Vaccination brutes"
+msgstr "Vaccination pour plusieurs animaux"
 
 #: html.py animal_bulk.js
 msgid "Bulk change animals"
@@ -9986,7 +9986,7 @@ msgstr "Retriever"
 
 #: movements.js
 msgid "Return"
-msgstr "Rendu"
+msgstr "Retour"
 
 #: movements.js
 msgid "Return Category"
@@ -14308,7 +14308,7 @@ msgstr "plus"
 
 #: transport.js person.js animal_bulk.js
 msgid "on"
-msgstr "sur"
+msgstr "le"
 
 #: person.js
 msgid "or"
