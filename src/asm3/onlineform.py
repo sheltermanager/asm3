@@ -925,6 +925,7 @@ def create_animal(dbo, username, collationid):
     for f in fields:
         if f.FIELDNAME == "animalname": d["animalname"] = f.VALUE
         if f.FIELDNAME == "code": 
+            d["code"] = f.VALUE
             d["sheltercode"] = f.VALUE
             d["shortcode"] = f.VALUE
         if f.FIELDNAME == "dateofbirth": d["dateofbirth"] = f.VALUE
@@ -951,6 +952,12 @@ def create_animal(dbo, username, collationid):
     # Have we got enough info to create the animal record? We need a name at a minimum
     if "animalname" not in d:
         raise asm3.utils.ASMValidationError(asm3.i18n._("There is not enough information in the form to create an animal record (need animalname).", l))
+    # If a code has not been supplied and manual codes are turned on, 
+    # generate one from the date and time to prevent record creation failing.
+    if "code" not in d and asm3.configuration.manual_codes(dbo):
+        gencode = "OF%s" % asm3.i18n.format_date(asm3.i18n.now(), "%y%m%d%H%M%S")
+        d["sheltercode"] = gencode
+        d["shortcode"] = gencode
     # Are date of birth and age blank? Assume an age of 1.0 if they are
     if d["dateofbirth"] == "" and d["estimatedage"] == "": d["estimatedage"] = "1.0"
     status = 0 # default: created new record
@@ -964,7 +971,7 @@ def create_animal(dbo, username, collationid):
             # Merge additional fields
             asm3.additional.merge_values_for_link(dbo, asm3.utils.PostedData(d, dbo.locale), animalid, "animal")
             # TODO: what would we merge realistically?
-            # asm3.person.merge_animal_details(dbo, username, animalid, d)
+            # asm3.animal.merge_animal_details(dbo, username, animalid, d)
     # Create the animal record if we didn't find one
     if animalid == 0:
         # Set some default values that the form couldn't set
