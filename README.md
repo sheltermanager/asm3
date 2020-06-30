@@ -65,7 +65,7 @@ You do not need this fix if you are deploying your application to run with
 Apache as recommended, this only applies to running a standalone server via
 code.py from the command line.
 
-In a development environment, you can start a test instance in port 5000 with:
+In a development environment, you can start a test instance on port 5000 with:
 
 ```
 make test
