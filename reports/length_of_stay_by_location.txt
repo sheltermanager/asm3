@@ -13,7 +13,7 @@ a.AnimalName, a.ShelterCode,
 s.SpeciesName, e.ReasonName, a.BreedName,
 a.DateBroughtIn, a.TimeOnShelter, a.DaysOnShelter, a.AnimalAge, 
 il.LocationName,
-CASE WHEN a.ActiveMovementType = 2 THEN Null ELSE a.ActiveMovementDate END AS DateExit
+CASE WHEN a.DeceasedDate Is Not Null THEN a.DeceasedDate WHEN a.ActiveMovementType = 2 THEN Null ELSE a.ActiveMovementDate END AS DateExit
 FROM animal a
 INNER JOIN species s ON s.ID = a.SpeciesID
 INNER JOIN entryreason e ON e.ID = a.EntryReasonID
