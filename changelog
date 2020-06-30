@@ -1,6 +1,7 @@
 44
 ================
 
+30/06/20 Never register chips if microchipped box is unticked
 29/06/20 online forms should generate sheltercode if manual codes are on #869
 29/06/20 Stop online form showif/multiselect becoming required
 23/06/20 Use movement mod date to prevent intake blocking adopter reg #868
