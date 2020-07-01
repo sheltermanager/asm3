@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: ASM3\n"
 "Report-Msgid-Bugs-To: robin@sheltermanager.com\n"
 "POT-Creation-Date: 2020-06-15 18:36+0000\n"
-"PO-Revision-Date: 2020-06-28 02:54+0200\n"
+"PO-Revision-Date: 2020-07-01 21:07+0200\n"
 "Last-Translator: Julian POIDEVIN <poidevin.julian@gmail.com>\n"
 "Language-Team: \n"
 "Language: fr\n"
@@ -767,7 +767,7 @@ msgstr "Coordinateur d'adoption"
 
 #: options.js shelterview.js
 msgid "Adoption Coordinator and Fosterer"
-msgstr "Coordinateur et famille d'adoption"
+msgstr "Coordinateur et famille d'accueil"
 
 #: dbupdate.py
 msgid "Adoption Event"
