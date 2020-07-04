@@ -306,7 +306,7 @@ def import_onlineform_json(dbo, j):
             "label": f["label"],
             "displayindex": f["index"],
             "mandatory": asm3.utils.iif(f["mandatory"], "1", "0"),
-            "visibleif": f["visibleif"],
+            "visibleif": "visibleif" in f and f["visibleif"] or "",
             "lookups": f["lookups"],
             "tooltip": f["tooltip"]
         }
