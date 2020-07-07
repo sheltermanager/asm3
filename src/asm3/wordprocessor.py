@@ -680,7 +680,7 @@ def animal_tags(dbo, a, includeAdditional=True, includeCosts=True, includeDiet=T
         }
         tags = append_tags(tags, costtags)
 
-    if includeLitterMates:
+    if includeLitterMates and a["ACCEPTANCENUMBER"] is not None and len(a["ACCEPTANCENUMBER"]) > 2:
         # Littermates
         lm = dbo.query("SELECT AnimalName, ShelterCode FROM animal WHERE AcceptanceNumber = ? AND ID <> ?", [ a["ACCEPTANCENUMBER"], a["ID"] ])
         tags["LITTERMATES"] = html_table(l, lm, (
