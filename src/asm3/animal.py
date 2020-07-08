@@ -478,6 +478,7 @@ def get_animal_find_advanced(dbo, criteria, limit = 0, locationfilter = "", site
            heartwormplus
            includedeceased
            includenonshelter
+           unaltered
         flag - one or more of (plus custom):
             courtesy
             crueltycase
@@ -519,6 +520,7 @@ def get_animal_find_advanced(dbo, criteria, limit = 0, locationfilter = "", site
     ss.add_filter("fivplus", "a.CombiTested = 1 AND a.CombiTestResult = 2")
     ss.add_filter("flvplus", "a.CombiTested = 1 AND a.FLVResult = 2")
     ss.add_filter("heartwormplus", "a.HeartwormTested = 1 AND a.HeartwormTestResult = 2")
+    ss.add_filter("unaltered", "a.Neutered = 0")
     ss.add_words("comments", "a.AnimalComments")
     ss.add_words("hiddencomments", "a.HiddenAnimalDetails")
     ss.add_words("features", "a.Markings")
