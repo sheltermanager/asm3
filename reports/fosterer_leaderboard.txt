@@ -1,0 +1,39 @@
+Fosterer Leaderboard
+###
+Statistics
+###
+Any
+###
+Show foster counts for all fosterers with most fosters at the top.
+###
+en
+###
+SELECT owner.ID, OwnerName, OwnerAddress, OwnerTown, OwnerCounty, OwnerPostcode, EmailAddress,
+HomeTelephone, WorkTelephone, MobileTelephone,
+(SELECT COUNT(*) FROM adoption WHERE OwnerID = owner.ID AND MovementType=2) AS TotalFosters
+FROM owner
+WHERE IsFosterer=1
+ORDER BY TotalFosters DESC, OwnerName
+###
+$$HEADER
+<table border="1">
+<tr>
+<th>Fosterer</th>
+<th>Animals Fostered</th>
+</tr>
+HEADER$$
+
+$$BODY
+<tr>
+  <td><a target="_blank" href="person?id=$ID">$OWNERNAME</a><br/>
+$OWNERADDRESS<br/>
+$OWNERTOWN, $OWNERCOUNTY $OWNERPOSTCODE<br/>
+    <i>E: <a href="mailto:$EMAILADDRESS">$EMAILADDRESS</a>, 
+      H: $HOMETELEPHONE, W: $WORKTELEPHONE, C: $MOBILETELEPHONE</i></td>
+<td>$TOTALFOSTERS</td>
+</tr>
+BODY$$
+
+$$FOOTER
+</table>
+FOOTER$$
