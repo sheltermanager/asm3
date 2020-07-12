@@ -12,7 +12,7 @@ SELECT owner.ID, OwnerName, OwnerAddress, OwnerTown, OwnerCounty, OwnerPostcode,
 HomeTelephone, WorkTelephone, MobileTelephone,
 (SELECT COUNT(*) FROM adoption WHERE OwnerID = owner.ID AND MovementType=2) AS TotalFosters
 FROM owner
-WHERE IsFosterer=1
+WHERE 0 < (SELECT COUNT(*) FROM adoption WHERE OwnerID = owner.ID AND MovementType=2)
 ORDER BY TotalFosters DESC, OwnerName
 ###
 $$HEADER
