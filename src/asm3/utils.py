@@ -887,9 +887,9 @@ def csv_parse(s):
     csvreader in a way that works for Python 2 and 3 is a nightmare and more code than
     just doing it yourself.
     """
+    if s[0:3] == "\xef\xbb\xbf": s = s[3:] # strip any utf-8 BOM if included (should not be necessary with utf-8-sig)
     s = s.replace("\r\n", "\n")
     s = s.replace("\r", "\n")
-    if s[0:3] == "\xef\xbb\xbf": s = s[3:] # strip any BOM if included
     rows = [] # parsed rows
     pos = [0, 0, False] # line start position, item start position and EOF 
     def readline():

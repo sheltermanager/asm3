@@ -39,7 +39,7 @@ $(function() {
                 '<p>',
                 _("Text Encoding"),
                 '<select id="encoding" name="encoding">',
-                '<option value="utf8" selected="selected">UTF-8</option>',
+                '<option value="utf-8-sig" selected="selected">UTF-8</option>',
                 '<option value="utf16">UTF-16</option>',
                 '<option value="cp1252">cp1252 (Excel USA/Western Europe)</option>',
                 '</select>',
