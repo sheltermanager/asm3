@@ -690,7 +690,7 @@ def csvimport(dbo, csvdata, encoding = "utf8", user = "", createmissinglookups =
     h.append("</table>")
     return "".join(h)
 
-def csvimport_paypal(dbo, csvdata, donationtypeid, donationpaymentid, flags, user = ""):
+def csvimport_paypal(dbo, csvdata, donationtypeid, donationpaymentid, flags, user = "", encoding="utf8"):
     """
     Imports a PayPal CSV file of transactions.
     """
@@ -709,7 +709,7 @@ def csvimport_paypal(dbo, csvdata, donationtypeid, donationpaymentid, flags, use
     else:
         user = "import/%s" % user
 
-    rows = asm3.utils.csv_parse( asm3.utils.cunicode(csvdata, encoding="cp1252") )
+    rows = asm3.utils.csv_parse( asm3.utils.cunicode(csvdata, encoding=encoding) )
 
     errors = []
     rowno = 1
