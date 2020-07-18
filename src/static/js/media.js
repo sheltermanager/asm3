@@ -147,7 +147,7 @@ $(function() {
                 { id: "emailpdf", text: _("Email PDF"), icon: "pdf", enabled: "multi", perm: "emo", tooltip: _("Email a copy of the selected HTML documents as PDFs") },
                 { id: "sign", text: _("Sign"), type: "buttonmenu", icon: "signature" },
                 { id: "rotateanti", icon: "rotate-anti", enabled: "multi", perm: "cam", tooltip: _("Rotate image 90 degrees anticlockwise") },
-                { id: "rotateclock", icon: "rotate-clock", enabled: "multi", perm:" cam", tooltip: _("Rotate image 90 degrees clockwise") },
+                { id: "rotateclock", icon: "rotate-clock", enabled: "multi", perm: "cam", tooltip: _("Rotate image 90 degrees clockwise") },
                 { id: "include", icon: "tick", enabled: "multi", perm: "cam", tooltip: _("Include this image when publishing") }, 
                 { id: "exclude", icon: "cross", enabled: "multi", perm: "cam", tooltip: _("Exclude this image when publishing") },
                 { id: "web", icon: "web", enabled: "one", perm: "cam", tooltip: _("Make this the default image when viewing this record and publishing to the web") },
