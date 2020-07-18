@@ -227,7 +227,7 @@ def row_error(errors, rowtype, rowno, row, e, dbo, exinfo):
     asm3.al.error("row %d %s: (%s): %s" % (rowno, rowtype, str(row), errmsg), "csvimport.row_error", dbo, exinfo)
     errors.append( (rowno, str(row), errmsg) )
 
-def csvimport(dbo, csvdata, encoding = "utf8", user = "", createmissinglookups = False, cleartables = False, checkduplicates = False):
+def csvimport(dbo, csvdata, encoding = "utf-8-sig", user = "", createmissinglookups = False, cleartables = False, checkduplicates = False):
     """
     Imports csvdata (bytes string, encoded with encoding)
     createmissinglookups: If a lookup value is given that's not in our data, add it
@@ -690,7 +690,7 @@ def csvimport(dbo, csvdata, encoding = "utf8", user = "", createmissinglookups =
     h.append("</table>")
     return "".join(h)
 
-def csvimport_paypal(dbo, csvdata, donationtypeid, donationpaymentid, flags, user = ""):
+def csvimport_paypal(dbo, csvdata, donationtypeid, donationpaymentid, flags, user = "", encoding="utf-8-sig"):
     """
     Imports a PayPal CSV file of transactions.
     """
@@ -709,7 +709,8 @@ def csvimport_paypal(dbo, csvdata, donationtypeid, donationpaymentid, flags, use
     else:
         user = "import/%s" % user
 
-    rows = asm3.utils.csv_parse( asm3.utils.cunicode(csvdata, encoding="cp1252") )
+    rows = asm3.utils.csv_parse( asm3.utils.cunicode(csvdata, encoding=encoding) )
+    print(rows[0])
 
     errors = []
     rowno = 1

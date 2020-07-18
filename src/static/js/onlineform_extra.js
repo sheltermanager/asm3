@@ -235,8 +235,10 @@ $(document).ready(function() {
                     }
                     else {
                         // Restore the required attribute to the now visible field 
-                        // if the field had it previously.
-                        if (o.find(".asm-onlineform-required").length > 0) {
+                        // if the field had it previously. Deliberately avoid it on multiselects
+                        // so the select dropdown does not become required.
+                        if (o.find(".asm-onlineform-required").length > 0 && 
+                            o.find(".asm-onlineform-lookupmulti").length == 0) {
                             o.find("input, select, textarea").prop("required", true);
                         }
                     }
@@ -248,11 +250,11 @@ $(document).ready(function() {
 
     // Title case a string, james smith -> James Smith
     const title_case = function(s) {
-        return s.replace(
-            /\w\S*/g, function(txt) {
-                return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
-            }
-        );
+        let o = [];
+        for (let w of s.toLowerCase().split(" ")) {
+            o.push(w.charAt(0).toUpperCase()+ w.slice(1));
+        }
+        return o.join(" ");
     };
 
     const upper_fields = [ "postcode", "zipcode", "areapostcode", "areazipcode", 

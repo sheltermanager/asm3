@@ -1,6 +1,14 @@
 44
 ================
 
+18/07/20 Fix for title case in online forms with scandinavian characters
+13/07/20 Allow UTF-8 to be chosen for encoding of PayPal files
+11/07/20 Update lookingfor limit to 5000
+08/07/20 Advanced find animal filter for unaltered #873
+07/07/20 LitterMates wordkey outputting too many records if LitterID blank
+30/06/20 Never register chips if microchipped box is unticked
+29/06/20 online forms should generate sheltercode if manual codes are on #869
+29/06/20 Stop online form showif/multiselect becoming required
 23/06/20 Use movement mod date to prevent intake blocking adopter reg #868
 20/06/20 create_document_media passing str instead of bytes #867
 19/06/20 Include diary note creator in email

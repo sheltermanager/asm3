@@ -306,7 +306,7 @@ def import_onlineform_json(dbo, j):
             "label": f["label"],
             "displayindex": f["index"],
             "mandatory": asm3.utils.iif(f["mandatory"], "1", "0"),
-            "visibleif": f["visibleif"],
+            "visibleif": "visibleif" in f and f["visibleif"] or "",
             "lookups": f["lookups"],
             "tooltip": f["tooltip"]
         }
@@ -372,6 +372,7 @@ def get_onlineform_header(dbo):
         "    h2 { font-size: 200%; }\n" \
         "    .asm-onlineform-table td { display: block; width: 100%; margin-bottom: 20px; }\n" \
         "    label, input, select, textarea { width: 97%; padding: 5px; }\n" \
+        "    label { word-wrap: anywhere; }\n" \
         "    input[type='submit'] { background-color: #2CBBBB; border: 1px solid #27A0A0; color: #fff; padding: 20px; }\n" \
         "}\n" \
         "/* full size computers and tablets */\n" \
@@ -924,6 +925,7 @@ def create_animal(dbo, username, collationid):
     for f in fields:
         if f.FIELDNAME == "animalname": d["animalname"] = f.VALUE
         if f.FIELDNAME == "code": 
+            d["code"] = f.VALUE
             d["sheltercode"] = f.VALUE
             d["shortcode"] = f.VALUE
         if f.FIELDNAME == "dateofbirth": d["dateofbirth"] = f.VALUE
@@ -950,6 +952,12 @@ def create_animal(dbo, username, collationid):
     # Have we got enough info to create the animal record? We need a name at a minimum
     if "animalname" not in d:
         raise asm3.utils.ASMValidationError(asm3.i18n._("There is not enough information in the form to create an animal record (need animalname).", l))
+    # If a code has not been supplied and manual codes are turned on, 
+    # generate one from the date and time to prevent record creation failing.
+    if "code" not in d and asm3.configuration.manual_codes(dbo):
+        gencode = "OF%s" % asm3.i18n.format_date(asm3.i18n.now(), "%y%m%d%H%M%S")
+        d["sheltercode"] = gencode
+        d["shortcode"] = gencode
     # Are date of birth and age blank? Assume an age of 1.0 if they are
     if d["dateofbirth"] == "" and d["estimatedage"] == "": d["estimatedage"] = "1.0"
     status = 0 # default: created new record
@@ -963,7 +971,7 @@ def create_animal(dbo, username, collationid):
             # Merge additional fields
             asm3.additional.merge_values_for_link(dbo, asm3.utils.PostedData(d, dbo.locale), animalid, "animal")
             # TODO: what would we merge realistically?
-            # asm3.person.merge_animal_details(dbo, username, animalid, d)
+            # asm3.animal.merge_animal_details(dbo, username, animalid, d)
     # Create the animal record if we didn't find one
     if animalid == 0:
         # Set some default values that the form couldn't set

@@ -1581,7 +1581,7 @@ def update_lookingfor_report(dbo):
     Updates the latest version of the looking for report in the cache
     """
     asm3.al.debug("updating lookingfor report", "person.update_lookingfor_report", dbo)
-    s = lookingfor_report(dbo, limit=1000)
+    s = lookingfor_report(dbo, limit=5000)
     count = lookingfor_last_match_count(dbo)
     asm3.cachedisk.put("lookingfor_report", dbo.database, s, 86400)
     asm3.cachedisk.put("lookingfor_lastmatchcount", dbo.database, count, 86400)

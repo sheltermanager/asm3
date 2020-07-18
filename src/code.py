@@ -2248,7 +2248,7 @@ class csvimport_paypal(JSONEndpoint):
     def post_all(self, o):
         l = o.locale
         asm3.asynctask.function_task(o.dbo, _("Import a PayPal CSV file", l), asm3.csvimport.csvimport_paypal, o.dbo, \
-            o.post.filedata(), o.post.integer("type"), o.post.integer("payment"), o.post["flags"], o.user)
+            o.post.filedata(), o.post.integer("type"), o.post.integer("payment"), o.post["flags"], o.user, o.post["encoding"])
         self.redirect("task")
 
 class diary(ASMEndpoint):
