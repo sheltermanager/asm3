@@ -250,11 +250,11 @@ $(document).ready(function() {
 
     // Title case a string, james smith -> James Smith
     const title_case = function(s) {
-        return s.replace(
-            /\w\S*/g, function(txt) {
-                return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
-            }
-        );
+        let o = [];
+        for (let w of s.toLowerCase().split(" ")) {
+            o.push(w.charAt(0).toUpperCase()+ w.slice(1));
+        }
+        return o.join(" ");
     };
 
     const upper_fields = [ "postcode", "zipcode", "areapostcode", "areazipcode", 

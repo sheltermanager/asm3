@@ -1,6 +1,7 @@
 44
 ================
 
+18/07/20 Fix for title case in online forms with scandinavian characters
 13/07/20 Allow UTF-8 to be chosen for encoding of PayPal files
 11/07/20 Update lookingfor limit to 5000
 08/07/20 Advanced find animal filter for unaltered #873
