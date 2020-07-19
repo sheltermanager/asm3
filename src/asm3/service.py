@@ -91,7 +91,7 @@ FLOOD_PROTECT_METHODS = {
     "csv_report": [ 5, 60, 60 ],
     "html_report": [ 5, 60, 60 ],
     "online_form_post": [ 1, 15, 15 ],
-    "upload_animal_image": [ 2, 30, 30 ]
+    "upload_animal_image": [ 5, 30, 30 ]
 }
 
 def flood_protect(method, remoteip):
