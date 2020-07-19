@@ -6,7 +6,7 @@ import asm3.configuration
 import asm3.dbfs
 import asm3.log
 import asm3.utils
-from asm3.sitedefs import SCALE_PDF_DURING_ATTACH, SCALE_PDF_CMD
+from asm3.sitedefs import SCALE_PDF_DURING_ATTACH, SCALE_PDF_CMD, WATERMARK_FILE, WATERMARK_X_OFFSET, WATERMARK_Y_OFFSET, WATERMARK_FONT_FILE, WATERMARK_FONT_SHADOWCOLOR, WATERMARK_FONT_FILLCOLOR, WATERMARK_FONT_STROKE, WATERMARK_FONT_OFFSET
 
 import datetime
 import os
@@ -933,32 +933,32 @@ def watermark_with_transparency(imagedata, animalName):
         inputd = asm3.utils.bytesio(imagedata)
         base_image = Image.open(inputd)
 
-        watermark = Image.open("/var/www/vhosts/asm.maarcadopt.org/watermark.png")
+        watermark = Image.open(WATERMARK_FILE)
         width, height = base_image.size
         wm_width, wm_height = watermark.size
-        x_offset = 10
-        y_offset = 10
+        x_offset = WATERMARK_X_OFFSET
+        y_offset = WATERMARK_Y_OFFSET
         x_position = width - (wm_width + x_offset)
         y_position = height - (wm_height + y_offset)
         position = (x_position,y_position)
-        shadowcolor = "black"
-        fillcolor = "white"
-        stroke = 3
+        shadowcolor = WATERMARK_FONT_SHADOWCOLOR
+        fillcolor = WATERMARK_FONT_FILLCOLOR
+        stroke = WATERMARK_FONT_STROKE
         transparent = Image.new('RGB', (width, height), (0,0,0,0))
         transparent.paste(base_image, (0,0))
         transparent.paste(watermark, position, mask=watermark)
         draw = ImageDraw.Draw(transparent)
 
-        font_offset = 20
+        font_offset = WATERMARK_FONT_OFFSET
 
         for fontsize in range(20, 180, 5):
-            font = ImageFont.truetype("/usr/share/fonts/truetype/freehand 575 bt.ttf", fontsize)
+            font = ImageFont.truetype(WATERMARK_FONT_FILE, fontsize)
             font_dimensions = draw.textsize(animalName,font=font)
             if font_dimensions[0]+font_offset > (width-wm_width-font_offset):
                 fontsize = fontsize - 10
                 break
 
-        font = ImageFont.truetype("/usr/share/fonts/truetype/freehand 575 bt.ttf", fontsize)
+        font = ImageFont.truetype(WATERMARK_FONT_FILE, fontsize)
         font_position = height - (font_dimensions[1] + y_offset)
 
         draw.text((font_offset-stroke,font_position-stroke), animalName, font=font, fill=shadowcolor)
