@@ -63,6 +63,7 @@ $(function() {
                     $("#button-doc").button("option", "disabled", true); 
                     $("#button-rotateanti").button("option", "disabled", true); 
                     $("#button-rotateclock").button("option", "disabled", true); 
+                    $("#button-watermark").button("option", "disabled", true); 
                     $("#button-include").button("option", "disabled", true); 
                     $("#button-exclude").button("option", "disabled", true); 
                     $("#button-emailpdf").button("option", "disabled", true); 
@@ -83,6 +84,7 @@ $(function() {
                     if (rows.length > 0 && all_of_type("image/jpeg")) {
                         $("#button-rotateanti").button("option", "disabled", false); 
                         $("#button-rotateclock").button("option", "disabled", false); 
+                        $("#button-watermark").button("option", "disabled", false); 
                         $("#button-include").button("option", "disabled", false); 
                         $("#button-exclude").button("option", "disabled", false); 
                     }
@@ -147,7 +149,8 @@ $(function() {
                 { id: "emailpdf", text: _("Email PDF"), icon: "pdf", enabled: "multi", perm: "emo", tooltip: _("Email a copy of the selected HTML documents as PDFs") },
                 { id: "sign", text: _("Sign"), type: "buttonmenu", icon: "signature" },
                 { id: "rotateanti", icon: "rotate-anti", enabled: "multi", perm: "cam", tooltip: _("Rotate image 90 degrees anticlockwise") },
-                { id: "rotateclock", icon: "rotate-clock", enabled: "multi", perm: "cam", tooltip: _("Rotate image 90 degrees clockwise") },
+                { id: "rotateclock", icon: "rotate-clock", enabled: "multi", perm:"cam", tooltip: _("Rotate image 90 degrees clockwise") },
+                { id: "watermark", icon: "watermark", enabled: "multi", perm:"cam", tooltip: _("Watermark image with name and logo") },
                 { id: "include", icon: "tick", enabled: "multi", perm: "cam", tooltip: _("Include this image when publishing") }, 
                 { id: "exclude", icon: "cross", enabled: "multi", perm: "cam", tooltip: _("Exclude this image when publishing") },
                 { id: "web", icon: "web", enabled: "one", perm: "cam", tooltip: _("Make this the default image when viewing this record and publishing to the web") },
@@ -810,6 +813,12 @@ $(function() {
             $("#button-rotateclock").button().click(function() {
                 $("#button-rotateclock").button("disable");
                 let formdata = "mode=rotateclock&ids=" + tableform.table_ids(media.table);
+                media.ajax(formdata);
+            });
+
+            $("#button-watermark").button().click(function() {
+                $("#button-watermark").button("disable");
+                let formdata = "mode=watermark&ids=" + tableform.table_ids(media.table);
                 media.ajax(formdata);
             });
 

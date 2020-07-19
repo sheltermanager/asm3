@@ -736,6 +736,11 @@ class media(ASMEndpoint):
         for mid in o.post.integer_list("ids"):
             asm3.media.rotate_media(o.dbo, o.user, mid, False)
 
+    def post_watermark(self, o):
+        self.check(asm3.users.CHANGE_MEDIA)
+        for mid in o.post.integer_list("ids"):
+            asm3.media.watermark_media(o.dbo, o.user, mid)
+
     def post_web(self, o):
         self.check(asm3.users.CHANGE_MEDIA)
         mid = o.post.integer_list("ids")[0]
