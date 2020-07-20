@@ -39,6 +39,7 @@ FIELDTYPE_GDPR_CONTACT_OPTIN = 15
 FIELDTYPE_TIME = 16
 FIELDTYPE_IMAGE = 17
 FIELDTYPE_CHECKBOXGROUP = 18
+FIELDTYPE_EMAIL = 19
 
 # Types as used in JSON representations
 FIELDTYPE_MAP = {
@@ -168,6 +169,8 @@ def get_onlineform_html(dbo, formid, completedocument = True):
                 (fid, cname, required, fid, f.LABEL))
         elif f.FIELDTYPE == FIELDTYPE_TEXT:
             h.append('<input class="asm-onlineform-text" type="text" id="%s" name="%s" title="%s" %s />' % ( fid, cname, asm3.utils.nulltostr(f.TOOLTIP), requiredtext))
+        elif f.FIELDTYPE == FIELDTYPE_EMAIL:
+            h.append('<input class="asm-onlineform-email" type="email" id="%s" name="%s" title="%s" %s />' % ( fid, cname, asm3.utils.nulltostr(f.TOOLTIP), requiredtext))
         elif f.FIELDTYPE == FIELDTYPE_DATE:
             h.append('<input class="asm-onlineform-date" type="text" id="%s" name="%s" title="%s" %s />' % ( fid, cname, asm3.utils.nulltostr(f.TOOLTIP), requiredtext))
         elif f.FIELDTYPE == FIELDTYPE_TIME:
