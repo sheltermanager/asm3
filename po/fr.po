@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: ASM3\n"
 "Report-Msgid-Bugs-To: robin@sheltermanager.com\n"
 "POT-Creation-Date: 2020-06-15 18:36+0000\n"
-"PO-Revision-Date: 2020-06-23 23:24+0200\n"
+"PO-Revision-Date: 2020-07-18 17:31+0200\n"
 "Last-Translator: Julian POIDEVIN <poidevin.julian@gmail.com>\n"
 "Language-Team: \n"
 "Language: fr\n"
@@ -767,7 +767,7 @@ msgstr "Coordinateur d'adoption"
 
 #: options.js shelterview.js
 msgid "Adoption Coordinator and Fosterer"
-msgstr "Coordinateur et famille d'adoption"
+msgstr "Coordinateur et famille d'accueil"
 
 #: dbupdate.py
 msgid "Adoption Event"
@@ -2013,7 +2013,7 @@ msgstr "Perruche ondulée"
 
 #: roles.js
 msgid "Bulk Complete Diary"
-msgstr "Journal complet en vrac"
+msgstr "Completer plusieurs journaux"
 
 #: roles.js
 msgid "Bulk Complete Medical Records"
@@ -2021,27 +2021,27 @@ msgstr "Dossier médical complet en vrac"
 
 #: roles.js
 msgid "Bulk Complete Vaccinations"
-msgstr "Carnet de vaccination complet en vrac"
+msgstr "Completer des vaccinations pour plusieurs animaux"
 
 #: roles.js
 msgid "Bulk Complete Waiting List"
-msgstr "Liste d'attente complète en vrac"
+msgstr "Completer des listes d'attentes pour plusieurs animaux"
 
 #: medical.js
 msgid "Bulk Regimen"
-msgstr "Régime brut"
+msgstr "Régime pour plusieurs animaux"
 
 #: test.js
 msgid "Bulk Test"
-msgstr "Test brut"
+msgstr "Test pour plusieurs animaux"
 
 #: transport.js
 msgid "Bulk Transport"
-msgstr "Transport en vrac"
+msgstr "Transport pour plusieurs animaux"
 
 #: vaccination.js
 msgid "Bulk Vaccination"
-msgstr "Vaccination brutes"
+msgstr "Vaccination pour plusieurs animaux"
 
 #: html.py animal_bulk.js
 msgid "Bulk change animals"
@@ -8510,7 +8510,7 @@ msgstr "En retard"
 
 #: movement.py
 msgid "Overdue medical items"
-msgstr "Article médicaux périmés"
+msgstr "Éléments médicaux expirés"
 
 #: dbupdate.py
 msgid "Overtime"
@@ -9986,7 +9986,7 @@ msgstr "Retriever"
 
 #: movements.js
 msgid "Return"
-msgstr "Rendu"
+msgstr "Retour"
 
 #: movements.js
 msgid "Return Category"
@@ -14308,7 +14308,7 @@ msgstr "plus"
 
 #: transport.js person.js animal_bulk.js
 msgid "on"
-msgstr "sur"
+msgstr "le"
 
 #: person.js
 msgid "or"
@@ -14834,7 +14834,7 @@ msgstr "{plural1} animaux ont été adoptés"
 
 #: main.js
 msgid "{plural1} animals were dead on arrival"
-msgstr "{plural1} les animaux étaient morts à leur arrivée"
+msgstr "{plural1} animaux sont morts à leur arrivée"
 
 #: main.js
 msgid "{plural1} animals were euthanized"
@@ -14930,7 +14930,7 @@ msgstr "{plural1} animaux de refuge n'ont pas de puces éléctroniques"
 
 #: main.js
 msgid "{plural1} shelter animals have people looking for them"
-msgstr "{plural1} les animaux de refuge ont des gens qui les recherchent"
+msgstr "{plural1} animaux de refuge correspondent à une recherche"
 
 #: main.js
 msgid "{plural1} tests need to be performed today"
@@ -14938,11 +14938,11 @@ msgstr "{plural1} tests doivent être effectués aujourd'hui"
 
 #: main.js
 msgid "{plural1} transports do not have a driver assigned"
-msgstr "{plural1} les transports n'ont pas de conducteur assigné"
+msgstr "{plural1} transports n'ont pas de conducteur assigné"
 
 #: main.js
 msgid "{plural1} traps are overdue for return"
-msgstr "{plural1} les pièges sont en retard pour le retour"
+msgstr "{plural1} pièges doivent être retournés"
 
 #: main.js
 msgid "{plural1} trial adoptions have ended"
@@ -15016,7 +15016,7 @@ msgstr "{plural2} animaux ont été adoptés"
 
 #: main.js
 msgid "{plural2} animals were dead on arrival"
-msgstr "{plural2} les animaux étaient morts à l'arrivée"
+msgstr "{plural2} animaux sont morts à leur arrivée"
 
 #: main.js
 msgid "{plural2} animals were euthanized"
@@ -15108,11 +15108,11 @@ msgstr "{plural2} résultats trouvés en {1} seconde. Ordre : {2}"
 
 #: main.js
 msgid "{plural2} shelter animals have not been microchipped"
-msgstr "{plural2} les animaux de refuge n'ont pas été micropuces"
+msgstr "{plural2} animaux de refuge n'ont pas été identifiés"
 
 #: main.js
 msgid "{plural2} shelter animals have people looking for them"
-msgstr "{plural2} les animaux de refuge ont des gens qui les recherchent"
+msgstr "{plural2} animaux de refuge ont des gens qui les recherchent"
 
 #: main.js
 msgid "{plural2} tests need to be performed today"
@@ -15120,11 +15120,11 @@ msgstr "{plural2} tests doivent être effectués aujourd'hui"
 
 #: main.js
 msgid "{plural2} transports do not have a driver assigned"
-msgstr "{plural2} les transports n'ont pas de conducteur assigné"
+msgstr "{plural2} transports n'ont pas de conducteur assigné"
 
 #: main.js
 msgid "{plural2} traps are overdue for return"
-msgstr "{plural2} les pièges sont en retard pour le retour"
+msgstr "{plural2} pièges doivent être retournés"
 
 #: main.js
 msgid "{plural2} trial adoptions have ended"
@@ -15182,11 +15182,11 @@ msgstr "{plural3} animaux entrés au refuge"
 
 #: main.js
 msgid "{plural3} animals have been on the shelter longer than {0} months"
-msgstr "{plural3}  animaux présents au refuge depuis plus de {0} mois"
+msgstr "{plural3} animaux présents au refuge depuis plus de {0} mois"
 
 #: main.js
 msgid "{plural3} animals have holds ending today"
-msgstr "{plural3} les animaux ont des détentions se terminant aujourd'hui"
+msgstr "{plural3} animaux ont des détentions se terminant aujourd'hui"
 
 #: main.js
 msgid "{plural3} animals were TNR"
@@ -15198,7 +15198,7 @@ msgstr "{plural3} animaux ont été adoptés"
 
 #: main.js
 msgid "{plural3} animals were dead on arrival"
-msgstr "{plural3} les animaux étaient morts à leur arrivée"
+msgstr "{plural3} animaux sont morts à leur arrivée"
 
 #: main.js
 msgid "{plural3} animals were euthanized"
@@ -15268,8 +15268,8 @@ msgstr "{plural3} personnes ayant des paiements de retard"
 #: main.js
 msgid "{plural3} people with active reservations have not been homechecked"
 msgstr ""
-"{plural3} les personnes ayant des réservations actives n'ont pas été "
-"contrôlées à la maison"
+"{plural3} personnes ayant des réservations actives n'ont pas eu de "
+"vérification de domicile"
 
 #: main.js
 msgid "{plural3} potential matches for lost animals"
@@ -15282,8 +15282,7 @@ msgstr "{plural3} des éditions récentes d'éditeurs comportaient des erreurs"
 #: main.js
 msgid "{plural3} reservations have been active over a week without adoption"
 msgstr ""
-"{plural3} les réservations sont actives depuis plus d'une semaine sans "
-"adoption"
+"{plural3} réservations sont actives depuis plus d'une semaine sans adoption"
 
 #: search.js
 msgid "{plural3} results found in {1} seconds. Order: {2}"
@@ -15291,12 +15290,11 @@ msgstr "{plural3} résultats trouvés en {1} seconde. Ordre : {2}"
 
 #: main.js
 msgid "{plural3} shelter animals have not been microchipped"
-msgstr "{plural3} les animaux de refuge n'ont pas de puce éléctronique"
+msgstr "{plural3} animaux de refuge n'ont pas de puce électronique"
 
 #: main.js
 msgid "{plural3} shelter animals have people looking for them"
-msgstr ""
-"{plural3} les animaux de refuge qui ont des personnes qui les recherchent"
+msgstr "{plural3} animaux de refuge qui ont des personnes qui les recherchent"
 
 #: main.js
 msgid "{plural3} tests need to be performed today"
@@ -15304,11 +15302,11 @@ msgstr "{plural3} tests doivent être effectués aujourd'hui"
 
 #: main.js
 msgid "{plural3} transports do not have a driver assigned"
-msgstr "{plural3} les transports n'ont pas de conducteur assigné"
+msgstr "{plural3} transports n'ont pas de conducteur assigné"
 
 #: main.js
 msgid "{plural3} traps are overdue for return"
-msgstr "{plural3} les pièges sont en retard pour le retour"
+msgstr "{plural3} pièges doivent être retournés"
 
 #: main.js
 msgid "{plural3} trial adoptions have ended"
