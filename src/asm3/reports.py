@@ -495,6 +495,32 @@ def install_recommended_smcom_reports(dbo, user):
     for r in reports:
         if r["TITLE"] in RECOMMENDED_REPORTS: install_smcom_report(dbo, user, r)
 
+def install_smcom_report_file(dbo, user, filename):
+    """
+    Installs all the reports in an smcom report .txt file.
+    If that report is already installed, it will be deleted and reinstalled instead.
+    Deliberately does no database or version checks.
+    This is a development tool and it can be called via cron.py
+    """
+    l = dbo.locale
+    s = asm3.utils.read_text_file(filename)
+    reps = s.split("&&&")
+    for rp in reps:
+        b = rp.split("###")
+        d = { "TITLE" : b[0].strip(), "CATEGORY" : b[1].strip(), "DATABASE" : b[2].strip(), \
+            "DESCRIPTION" : b[3].strip(), "LOCALE" : b[4].strip(), "SQL" : b[5].strip(), \
+            "HTML" : b[6].strip(), "TYPE": asm3.i18n._("Report", l) }
+        if d["HTML"].startswith("GRAPH"): d["TYPE"] = asm3.i18n._("Chart", l)
+        if d["HTML"].startswith("MAIL"): d["TYPE"] = asm3.i18n._("Mail Merge", l)
+        if d["HTML"].startswith("MAP"): d["TYPE"] = asm3.i18n._("Map", l)
+        if len(b) == 8: 
+            d["SUBREPORTS"] = b[7].strip()
+        else:
+            d["SUBREPORTS"] = ""
+        xid = get_id(dbo, d["TITLE"])
+        if xid > 0: dbo.delete("customreport", xid, user)
+        install_smcom_report(dbo, user, d)
+
 def get_reports_menu(dbo, roleids = "", superuser = False):
     """
     Reads the list of reports and returns them as a list for inserting into

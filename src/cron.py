@@ -177,6 +177,15 @@ def publish_html(dbo):
         em = str(sys.exc_info()[0])
         al.error("FAIL: uncaught error running html publisher: %s" % em, "cron.publish_html", dbo, sys.exc_info())
 
+def maint_import_report(dbo):
+    try:
+        extreports.install_smcom_report_file(dbo, "system", os.environ["ASM3_REPORT"])
+        print("OK")
+    except:
+        em = str(sys.exc_info()[0])
+        print(em) # This one is designed to be run from the command line rather than cron
+        al.error("FAIL: uncaught error running import report: %s" % em, "cron.maint_import_report", dbo, sys.exc_info())
+
 def maint_recode_all(dbo):
     try:
         animal.maintenance_reassign_all_codes(dbo)
@@ -420,6 +429,8 @@ def run(dbo, mode):
         publish_3pty_sub24(dbo)
     elif mode == "publish_html":
         publish_html(dbo)
+    elif mode == "maint_import_report":
+        maint_import_report(dbo)
     elif mode == "maint_recode_all":
         maint_recode_all(dbo)
     elif mode == "maint_recode_shelter":
@@ -549,6 +560,7 @@ def print_usage():
     print("       maint_db_update - run any outstanding database updates")
     print("       maint_deduplicate_people - automatically merge duplicate people records")
     print("       maint_disk_cache - remove expired entries from the disk cache")
+    print("       maint_import_report - import report txt set file in ASM3_REPORT env")
     print("       maint_recode_all - regenerate all animal codes")
     print("       maint_recode_shelter - regenerate animals codes for all shelter animals")
     print("       maint_scale_animal_images - re-scales all the animal images in the database")
