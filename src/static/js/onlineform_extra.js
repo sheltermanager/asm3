@@ -174,6 +174,23 @@ $(document).ready(function() {
         return rv;
     };
 
+    const validate_email = function() {
+        let rv = true;
+        $(".asm-onlineform-email").each(function() {
+            // Email should at least be x@y.z 
+            let v = $(this).val();
+            if (v) {
+                if (!v.match(/\S+@\S+\.\S+/)) {
+                    alert("Email address is not valid.");
+                    $(this).focus();
+                    rv = false;
+                    return false;
+                }
+            }
+        });
+        return rv;
+    };
+
     // Validate HTML5 required input fields 
     // (only does anything for iOS and IE9 where the required attribute is not supported)
     const validate_required = function() {
@@ -352,6 +369,7 @@ $(document).ready(function() {
         if (!validate_checkboxgroup()) { return false; }
         if (!validate_dates()) { return false; }
         if (!validate_times()) { return false; }
+        if (!validate_email()) { return false; }
         if (!validate_required()) { return false; }
         if (!validate_images()) { return false; }
     });

@@ -39,6 +39,7 @@ FIELDTYPE_GDPR_CONTACT_OPTIN = 15
 FIELDTYPE_TIME = 16
 FIELDTYPE_IMAGE = 17
 FIELDTYPE_CHECKBOXGROUP = 18
+FIELDTYPE_EMAIL = 19
 
 # Types as used in JSON representations
 FIELDTYPE_MAP = {
@@ -168,6 +169,8 @@ def get_onlineform_html(dbo, formid, completedocument = True):
                 (fid, cname, required, fid, f.LABEL))
         elif f.FIELDTYPE == FIELDTYPE_TEXT:
             h.append('<input class="asm-onlineform-text" type="text" id="%s" name="%s" title="%s" %s />' % ( fid, cname, asm3.utils.nulltostr(f.TOOLTIP), requiredtext))
+        elif f.FIELDTYPE == FIELDTYPE_EMAIL:
+            h.append('<input class="asm-onlineform-email" type="email" id="%s" name="%s" title="%s" %s />' % ( fid, cname, asm3.utils.nulltostr(f.TOOLTIP), requiredtext))
         elif f.FIELDTYPE == FIELDTYPE_DATE:
             h.append('<input class="asm-onlineform-date" type="text" id="%s" name="%s" title="%s" %s />' % ( fid, cname, asm3.utils.nulltostr(f.TOOLTIP), requiredtext))
         elif f.FIELDTYPE == FIELDTYPE_TIME:
@@ -403,6 +406,10 @@ def get_onlineformfields(dbo, formid):
     """ Return all fields for a form """
     return dbo.query("SELECT * FROM onlineformfield WHERE OnlineFormID = ? ORDER BY DisplayIndex", [formid])
 
+def get_onlineformincoming_formname(dbo, collationid):
+    """ Given a collationid, return the form's name """
+    return dbo.query_string("SELECT FormName FROM onlineformincoming WHERE CollationID=?", [collationid])
+
 def get_onlineformincoming_formheader(dbo, collationid):
     """
     Given a collation id for an incoming form, try and find the
@@ -475,10 +482,13 @@ def get_onlineformincoming_html_print(dbo, ids, include_raw=True, include_images
     include_raw: Include fields that are raw markup
     include_images: Include base64 encoded images
     """
+    title = get_onlineformincoming_formname(dbo, ids[0])
     header = get_onlineform_header(dbo)
+    header = header.replace("$$TITLE$$", title)
     headercontent = header[header.find("<body>")+6:]
     header = header[0:header.find("<body>")+6]
     footer = get_onlineform_footer(dbo)
+    footer = footer.replace("$$TITLE$$", title)
     footercontent = footer[0:footer.find("</body>")]
     h = []
     h.append(header)
