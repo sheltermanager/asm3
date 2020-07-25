@@ -17,8 +17,8 @@ INNER JOIN animaltype t ON t.ID = a.AnimalTypeID
 INNER JOIN species p ON p.ID = a.SpeciesID
 INNER JOIN internallocation i ON i.ID = a.ShelterLocation
 INNER JOIN lksex s ON s.ID = a.Sex
-INNER JOIN adoption ad ON a.ActiveMovementID = ad.ID
-INNER JOIN owner o ON o.ID = ad.OwnerID
+LEFT OUTER JOIN adoption ad ON a.ActiveMovementID = ad.ID
+LEFT OUTER JOIN owner o ON o.ID = ad.OwnerID
 WHERE a.Neutered = 0 AND a.Archived = 0 
 ORDER BY t.AnimalType, a.AnimalName
 ###
