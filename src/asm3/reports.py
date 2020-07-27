@@ -57,7 +57,7 @@ RECOMMENDED_REPORTS = [
     "Intakes by Date with Outcomes", "Long Term Animals", "Medical Diary", 
     "Monthly Adoptions By Species", 
     "Monthly Figures (by species)", "Monthly Figures (by type)", "Most Common Name",
-    "Non-Microchipped Animals", "Non-Neutered/Spayed Animals Aged Over 6 Months",
+    "Non-Microchipped Animals", "Non-Neutered/Spayed Animals Aged Over 6 Months", "Non-Returned Adoptions",
     "Payment Breakdown By Date", "Print Animal Record", "Print Animal Record (for adopters)", "Quality Control", 
     "Reserves without Homechecks", "Returned Animals", "shelteranimalscount.org matrix", 
     "Shelter Inventory", "Shelter Inventory with Pictures by Location", "Shelter Inventory at Date", 
