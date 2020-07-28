@@ -1,6 +1,7 @@
 44
 ================
 
+27/07/20 Diary limits should not apply to edit screens, only home page
 20/07/20 Online form: Email address field type #616
 20/07/20 Substitute $$TITLE$$ token when attaching online forms #882
 18/07/20 Fix for title case in online forms with scandinavian characters

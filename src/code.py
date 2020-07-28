@@ -923,9 +923,9 @@ class main(JSONEndpoint):
         # Diary Notes
         dm = None
         if asm3.configuration.all_diary_home_page(dbo): 
-            dm = asm3.diary.get_uncompleted_upto_today(dbo, "", False)
+            dm = asm3.diary.get_uncompleted_upto_today(dbo, "", includecreatedby=False, offset=-365)
         else:
-            dm = asm3.diary.get_uncompleted_upto_today(dbo, o.user, False)
+            dm = asm3.diary.get_uncompleted_upto_today(dbo, o.user, includecreatedby=False, offset=-365)
         # Use a 2 minute cache, with a longer cache time of 15 minutes for big databases
         # on the following complex calls for stats, alerts and the timeline
         age = 120
