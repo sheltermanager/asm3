@@ -1,6 +1,7 @@
 44
 ================
 
+31/07/20 Include diary time on emails #885
 31/07/20 Do not validate deceased date against intake for non-shelter
 31/07/20 Use current user's site when finding similar people #664
 27/07/20 Diary limits should not apply to edit screens, only home page
