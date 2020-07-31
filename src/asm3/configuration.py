@@ -185,6 +185,7 @@ DEFAULTS = {
     "EmailDiaryNotes": "Yes", 
     "EmailDiaryOnChange": "No",
     "EmailDiaryOnComplete": "No",
+    "EmailEmptyReports": "Yes",
     "EmailMessages": "Yes", 
     "EmblemAlwaysLocation": "No",
     "EmblemBonded": "Yes",
@@ -779,6 +780,9 @@ def email_diary_on_change(dbo):
 
 def email_diary_on_complete(dbo):
     return cboolean(dbo, "EmailDiaryOnComplete", DEFAULTS["EmailDiaryOnComplete"] == "Yes")
+
+def email_empty_reports(dbo):
+    return cboolean(dbo, "EmailEmptyReports", DEFAULTS["EmailEmptyReports"] == "Yes")
 
 def email_messages(dbo):
     return cboolean(dbo, "EmailMessages", DEFAULTS["EmailMessages"] == "Yes")

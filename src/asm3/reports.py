@@ -605,9 +605,10 @@ def email_daily_reports(dbo, now = None):
         if freq == 11 and day != 31 and month != 12: continue # Freq is end of year and its not 31st Dec
         # If we get here, we're good to send
         body = execute(dbo, r.ID, "dailyemail")
-        # Only send if there's data on the report
-        if body.find(asm3.i18n._("No data to show on the report.", l)) == -1:
-            asm3.utils.send_email(dbo, asm3.configuration.email(dbo), emails, "", "", r.TITLE, body, "html", exceptions=False)
+        # If we aren't sending empty reports and there's no data, bail
+        if body.find(asm3.i18n._("No data to show on the report.", l)) == -1 and not asm3.configuration.email_empty_reports(dbo):
+            return
+        asm3.utils.send_email(dbo, asm3.configuration.email(dbo), emails, "", "", r.TITLE, body, "html", exceptions=False)
 
 def execute_title(dbo, title, username = "system", params = None):
     """

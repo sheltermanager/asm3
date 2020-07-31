@@ -1,6 +1,7 @@
 44
 ================
 
+31/07/20 Email empty reports by default and hidden config switch #890
 31/07/20 Weight should be exported/imported #891
 31/07/20 Include diary time on emails #885
 31/07/20 Do not validate deceased date against intake for non-shelter
