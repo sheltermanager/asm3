@@ -391,6 +391,7 @@ def csvimport(dbo, csvdata, encoding = "utf-8-sig", user = "", createmissinglook
             a["size"] = gkl(dbo, row, "ANIMALSIZE", "lksize", "Size", False)
             if gks(row, "ANIMALSIZE") == "": 
                 a["size"] = str(asm3.configuration.default_size(dbo))
+            a["weight"] = gks(row, "ANIMALWEIGHT")
             a["internallocation"] = gkl(dbo, row, "ANIMALLOCATION", "internallocation", "LocationName", createmissinglookups)
             if a["internallocation"] == "0":
                 a["internallocation"] = str(asm3.configuration.default_location(dbo))
@@ -834,7 +835,7 @@ def csvexport_animals(dbo, dataset, animalids = "", includephoto = False):
     
     ids = dbo.query(q)
 
-    keys = [ "ANIMALCODE", "ANIMALNAME", "ANIMALIMAGE", "ANIMALSEX", "ANIMALTYPE", "ANIMALCOLOR", "ANIMALBREED1",
+    keys = [ "ANIMALCODE", "ANIMALNAME", "ANIMALIMAGE", "ANIMALSEX", "ANIMALTYPE", "ANIMALWEIGHT", "ANIMALCOLOR", "ANIMALBREED1",
         "ANIMALBREED2", "ANIMALDOB", "ANIMALLOCATION", "ANIMALUNIT", "ANIMALSPECIES", "ANIMALCOMMENTS",
         "ANIMALHIDDENDETAILS", "ANIMALHEALTHPROBLEMS", "ANIMALMARKINGS", "ANIMALREASONFORENTRY", "ANIMALNEUTERED",
         "ANIMALNEUTEREDDATE", "ANIMALMICROCHIP", "ANIMALMICROCHIPDATE", "ANIMALENTRYDATE", "ANIMALDECEASEDDATE",
@@ -885,6 +886,8 @@ def csvexport_animals(dbo, dataset, animalids = "", includephoto = False):
         row["ANIMALBREED1"] = a["BREEDNAME1"]
         row["ANIMALBREED2"] = a["BREEDNAME2"]
         row["ANIMALDOB"] = asm3.i18n.python2display(l, a["DATEOFBIRTH"])
+        row["ANIMALSIZE"] = a["SIZENAME"]
+        row["ANIMALWEIGHT"] = a["WEIGHT"]
         row["ANIMALLOCATION"] = a["SHELTERLOCATIONNAME"]
         row["ANIMALUNIT"] = a["SHELTERLOCATIONUNIT"]
         row["ANIMALSPECIES"] = a["SPECIESNAME"]

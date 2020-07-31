@@ -1346,6 +1346,8 @@ AnimalMedicals
    Inserts a table containing all of the animal's medical treatments
 AnimalLogs
    Inserts a table containing all of the animal's log entries
+IncidentLogs
+   Inserts a table containing all of the incident's log entries
 LitterMates
    Inserts a table containing a list of the animal's littermates
 MovementPayments
