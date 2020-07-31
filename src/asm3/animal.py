@@ -2153,7 +2153,7 @@ def update_animal_from_form(dbo, post, username):
     if post["microchipnumber"].strip() != "" and not asm3.configuration.allow_duplicate_microchip(dbo):
         if dbo.query_int("SELECT COUNT(ID) FROM animal WHERE IdentichipNumber Like ? AND ID <> ?", (post["microchipnumber"], aid)) > 0:
             raise asm3.utils.ASMValidationError(_("Microchip number {0} has already been allocated to another animal.", l).format(post["microchipnumber"]))
-    if post["deceaseddate"] != "":
+    if post["deceaseddate"] != "" and "nonshelter" not in post["flags"].split(","):
         deceaseddate = post.date("deceaseddate")
         datebroughtin = post.date("datebroughtin")
         if deceaseddate is not None and datebroughtin is not None and deceaseddate < datebroughtin:
