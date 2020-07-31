@@ -14,6 +14,7 @@ import asm3.movement
 import asm3.person
 import asm3.publishers.base
 import asm3.template
+import asm3.users
 import asm3.utils
 import asm3.waitinglist
 from asm3.sitedefs import BASE_URL, ASMSELECT_CSS, ASMSELECT_JS, JQUERY_JS, JQUERY_UI_JS, JQUERY_UI_CSS, SIGNATURE_JS, TIMEPICKER_CSS, TIMEPICKER_JS, TOUCHPUNCH_JS
@@ -1036,6 +1037,9 @@ def create_person(dbo, username, collationid):
     if "surname" not in d:
         raise asm3.utils.ASMValidationError(asm3.i18n._("There is not enough information in the form to create a person record (need a surname).", l))
     status = 0 # created
+    # Use the current user's site for our new person record if they have one assigned
+    siteid = asm3.users.get_site(dbo, username)
+    if siteid != 0: d["site"] = str(siteid)
     # Does this person already exist?
     personid = 0
     if "surname" in d and "forenames" in d and "address" in d:
@@ -1043,7 +1047,7 @@ def create_person(dbo, username, collationid):
         dmobile = ""
         if "emailaddress" in d: demail = d["emailaddress"]
         if "mobiletelephone" in d: dmobile = d["mobiletelephone"]
-        similar = asm3.person.get_person_similar(dbo, demail, dmobile, d["surname"], d["forenames"], d["address"])
+        similar = asm3.person.get_person_similar(dbo, demail, dmobile, d["surname"], d["forenames"], d["address"], siteid)
         if len(similar) > 0:
             personid = similar[0].ID
             status = 1 # updated existing record
