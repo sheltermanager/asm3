@@ -1,6 +1,7 @@
 44
 ================
 
+01/08/20 Update owner when active movement person is edited
 31/07/20 Include vouchers when generating person documents #876
 31/07/20 Add back deleted users that are dispatched ACO #889
 31/07/20 Email empty reports by default and hidden config switch #890
