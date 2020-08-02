@@ -1086,7 +1086,7 @@ def merge_person(dbo, username, personid, mergepersonid):
     reparent("users", "OwnerID")
     reparent("media", "LinkID", "LinkTypeID", asm3.media.PERSON, lastchanged=False)
     reparent("diary", "LinkID", "LinkType", asm3.diary.PERSON)
-    reparent("log", "LinkID", "LinkType", asm3.log.PERSON)
+    reparent("log", "LinkID", "LinkType", asm3.log.PERSON, lastchanged=False)
 
     # Reparent the audit records for the reparented records in the audit log
     # by switching ParentLinks to the new ID.

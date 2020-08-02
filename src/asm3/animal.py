@@ -3050,7 +3050,7 @@ def merge_animal(dbo, username, animalid, mergeanimalid):
     reparent("ownerlicence", "AnimalID")
     reparent("media", "LinkID", "LinkTypeID", asm3.media.ANIMAL, lastchanged=False)
     reparent("diary", "LinkID", "LinkType", asm3.diary.ANIMAL)
-    reparent("log", "LinkID", "LinkType", asm3.log.ANIMAL)
+    reparent("log", "LinkID", "LinkType", asm3.log.ANIMAL, lastchanged=False)
 
     # Reparent the audit records for the reparented records in the audit log
     # by switching ParentLinks to the new ID.
