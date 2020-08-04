@@ -1233,7 +1233,7 @@ def person_tags(dbo, p, includeImg=False, includeDonations=False, includeVoucher
             "VOUCHERCOMMENTS":      "COMMENTS"
         }
         vouc = asm3.financial.get_person_vouchers(dbo, p["ID"])
-        tags.update(table_tags(dbo, d, vouc, "VOUCHERTYPENAME", "VOUCHERISSUED", "VOUCHERREDEEMED"))
+        tags.update(table_tags(dbo, d, vouc, "VOUCHERNAME", "VOUCHERISSUED", "VOUCHERREDEEMED"))
 
     # Additional fields
     tags.update(additional_field_tags(dbo, asm3.additional.get_additional_fields(dbo, p["ID"], "person")))
