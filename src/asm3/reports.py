@@ -1137,6 +1137,19 @@ class Report:
         s = self.sql
         # Throw away any SQL comments
         s = strip_sql_comments(s)
+        # Subtitute CONST tokens (do this first so CONST can expand to other tokens)
+        for name, value in asm3.utils.regex_multi(r"\$CONST (.+?)\=(.+?)\$", s):
+            s = s.replace("$%s$" % name, value) # replace all tokens with the constant value
+            s = s.replace("$CONST %s=%s$" % (name, value), "") # remove the constant declaration
+        # Substitute CURRENT_DATE-X tokens
+        for day in asm3.utils.regex_multi(r"\$CURRENT_DATE\-(.+?)\$", s):
+            d = self.dbo.today(offset=asm3.utils.cint(day)*-1)
+            s = s.replace("$CURRENT_DATE-%s$" % day, self.dbo.sql_date(d, includeTime=False, wrapParens=False))
+        # Substitute CURRENT_DATE+X tokens
+        for day in asm3.utils.regex_multi(r"\$CURRENT_DATE\+(.+?)\$", s):
+            d = self.dbo.today(offset=asm3.utils.cint(day))
+            s = s.replace("$CURRENT_DATE+%s$" % day, self.dbo.sql_date(d, includeTime=False, wrapParens=False))
+        # straight tokens
         s = s.replace("$CURRENT_DATE$", self.dbo.sql_date(self.dbo.now(), includeTime=False, wrapParens=False))
         s = s.replace("$USER$", self.user)
         s = s.replace("$DATABASENAME$", self.dbo.database)
@@ -1155,10 +1168,6 @@ class Report:
         if s.find("$SITE$") != -1:
             sf = self.dbo.query_int("SELECT SiteID FROM users WHERE UserName = ?", [self.user])
             s = s.replace("$SITE$", str(sf))
-        # Subtitute CONST tokens
-        for name, value in asm3.utils.regex_multi(r"\$CONST (.+?)\=(.+?)\$", s):
-            s = s.replace("$%s$" % name, value) # replace all tokens with the constant value
-            s = s.replace("$CONST %s=%s$" % (name, value), "") # remove the constant declaration
         self.sql = s
         # If we don't have any parameters, no point trying to deal with these
         if params is None: return
