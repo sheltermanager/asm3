@@ -289,6 +289,8 @@ IDs if the user does not have a location filter.</li>
 <li>$CURRENT_DATE$ - Substitutes today’s date in an appropriate string SQL format
 for the current database. This saves you having to use NOW() or
 CURRENT_DATE() or various other SQL functions specific to one database.</li>
+<li>$CURRENT_DATE-X$ - The same as CURRENT_DATE, but subtracts X days.</li>
+<li>$CURRENT_DATE+X$ - The same as CURRENT_DATE, but adds X days.</li>
 <li>$PARENTKEY$ - Substitutes the field value named in the report calling this
 subreport. For example, a report could pass an Animal ID as the parent key to
 a subreport for filtering data correctly. When you use this key in your
