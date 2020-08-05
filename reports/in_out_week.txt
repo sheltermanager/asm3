@@ -2,7 +2,7 @@ In/Out Last 7 Days
 ###
 Movements
 ###
-3200/PostgreSQL
+3200/Any
 ###
 All animals entering and leaving the shelter over the last 7 days (including today).
 ###
