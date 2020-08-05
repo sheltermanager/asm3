@@ -572,7 +572,6 @@ def email_daily_reports(dbo, now = None):
     now: The time right now in local time. If now is None, then we run anything
          with a dailyemailhour of -1, which is "batch".
     """
-    l = dbo.locale
     rs = get_available_reports(dbo, False)
     hour = -1
     weekday = -1
@@ -606,7 +605,7 @@ def email_daily_reports(dbo, now = None):
         # If we get here, we're good to send
         body = execute(dbo, r.ID, "dailyemail")
         # If we aren't sending empty reports and there's no data, bail
-        if body.find(asm3.i18n._("No data to show on the report.", l)) == -1 and not asm3.configuration.email_empty_reports(dbo):
+        if body.find("NODATA") != -1 and not asm3.configuration.email_empty_reports(dbo):
             return
         asm3.utils.send_email(dbo, asm3.configuration.email(dbo), emails, "", "", r.TITLE, body, "html", exceptions=False)
 
@@ -1400,6 +1399,7 @@ class Report:
 
         # Check for no data
         if len(rs) == 0:
+            self._Append("<!-- NODATA -->")
             self._p(asm3.i18n._("No data.", l))
             self._Append("</body></html>")
             return self.output
@@ -1520,6 +1520,7 @@ class Report:
 
         # Check for no data
         if len(rs) == 0:
+            self._Append("<!-- NODATA -->")
             self._p(asm3.i18n._("No data.", l))
             self._Append("</body></html>")
             return self.output
@@ -1686,6 +1687,7 @@ class Report:
         # If there are no records, show a message to say so
         # but only if it's not a subreport
         if rs is None or len(rs) == 0:
+            self._Append("<!-- NODATA -->")
             if not self.isSubReport:
                 if nodata == "":
                     self._p(asm3.i18n._("No data to show on the report.", l))
