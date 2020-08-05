@@ -75,6 +75,7 @@ $(function() {
                 '<li><a href="#tab-processors">' + _("Payment Processors") + '</a></li>',
                 '<li><a href="#tab-quicklinks">' + _("Quicklinks") + '</a></li>',
                 '<li><a href="#tab-unwanted">' + _("Remove") + '</a></li>',
+                '<li><a href="#tab-reports">' + _("Reports") + '</a></li>',
                 '<li><a href="#tab-search">' + _("Search") + '</a></li>',
                 '<li><a href="#tab-shelterview">' + _("Shelter view") + '</a></li>',
                 '<li><a href="#tab-waitinglist">' + _("Waiting List") + '</a></li>',
@@ -1235,6 +1236,16 @@ $(function() {
             ].join("\n");
         },
 
+        render_reports: function() {
+            return [
+                '<div id="tab-reports">',
+                '<p>',
+                '<input data="EmailEmptyReports" id="emptyreports" class="asm-checkbox" type="checkbox" /> <label for="emptyreports">' + _("Email scheduled reports with no data") + '</label><br />',
+                '</p>',
+                '</div>'
+            ].join("\n");
+        },
+
         render_waitinglist: function() {
             return [
                 '<div id="tab-waitinglist">',
@@ -1303,6 +1314,7 @@ $(function() {
                 this.render_search(),
                 this.render_shelterview(),
                 this.render_unwanted(),
+                this.render_reports(),
                 this.render_waitinglist(),
                 '</div>',
                 html.content_footer()

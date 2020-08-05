@@ -1,6 +1,7 @@
 44
 ================
 
+05/08/20 Options->Reports for emailing empty reports
 04/08/20 $CURRENT_DATE+/-DAY$ report tokens
 02/08/20 Merging animals and people should not update log.LastChangedBy
 01/08/20 Update owner when active movement person is edited
