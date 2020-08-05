@@ -460,10 +460,6 @@ Display
 * Open reports in a new browser tab: Open all reports in their own browser
   tabs.
 
-* Show report menu items in collapsed categories: If you have a lot of reports
-  installed, this option allows you to just show the categories in the reports
-  menu. Clicking a category expands it.
-
 * Auto log users out after this many minutes of activity: If a user leaves
   their browser open and idle for this many minutes, the system will
   automatically log them out.
@@ -935,10 +931,14 @@ Reports
   automatically emailed at a time of day, empty reports with "No data to show"
   will be emailed if this box is ticked. 
 
+* Show report menu items in collapsed categories: If you have a lot of reports
+  installed, this option allows you to just show the categories in the reports
+  menu. Clicking a category expands it.
+
 Shelter View
 ------------
 
-The shelter view allows the default grouping to be set.
+The shelter view tab allows the default grouping to be set.
 
 * Allow drag and drop to move animals between locations: If set, you can drag animal
   thumbnails between locations in shelter view to move them.
