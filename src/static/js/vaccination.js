@@ -4,13 +4,13 @@ $(function() {
 
     "use strict";
 
-    var vaccination = {
+    const vaccination = {
 
         lastanimal: null, 
         lastvet: null, 
 
         model: function() {
-            var dialog = {
+            const dialog = {
                 add_title: _("Add vaccination"),
                 edit_title: _("Edit vaccination"),
                 edit_perm: 'cav',
@@ -41,10 +41,10 @@ $(function() {
                 ]
             };
 
-            var table = {
+            const table = {
                 rows: controller.rows,
                 idcolumn: "ID",
-                edit: function(row) {
+                edit: async function(row) {
                     if (controller.animal) {
                         $("#animal").closest("tr").hide();
                     }
@@ -56,19 +56,18 @@ $(function() {
                     vaccination.enable_default_cost = false;
                     tableform.fields_populate_from_json(dialog.fields, row);
                     vaccination.enable_default_cost = true;
-                    tableform.dialog_show_edit(dialog, row)
-                        .then(function() {
-                            tableform.fields_update_row(dialog.fields, row);
-                            vaccination.set_extra_fields(row);
-                            return tableform.fields_post(dialog.fields, "mode=update&vaccid=" + row.ID, "vaccination");
-                        })
-                        .then(function(response) {
-                            tableform.table_update(table);
-                            tableform.dialog_close();
-                        })
-                        .fail(function() {
-                            tableform.dialog_enable_buttons();
-                        });
+                    await tableform.dialog_show_edit(dialog, row);
+                    tableform.fields_update_row(dialog.fields, row);
+                    vaccination.set_extra_fields(row);
+                    try {
+                        await tableform.fields_post(dialog.fields, "mode=update&vaccid=" + row.ID, "vaccination");
+                        tableform.table_update(table);
+                        tableform.dialog_close();
+                    }
+                    catch(err) {
+                        log.error(err, err);
+                        tableform.dialog_enable_buttons();
+                    }
                 },
                 complete: function(row) {
                     if (row.DATEOFVACCINATION) { return true; }
@@ -115,7 +114,7 @@ $(function() {
                     },
                     { field: "LOCATIONNAME", display: _("Location"),
                         formatter: function(row) {
-                            var s = row.LOCATIONNAME;
+                            let s = row.LOCATIONNAME;
                             if (row.LOCATIONUNIT) {
                                 s += ' <span class="asm-search-locationunit">' + row.LOCATIONUNIT + '</span>';
                             }
@@ -150,28 +149,24 @@ $(function() {
                 ]
             };
 
-            var buttons = [
+            const buttons = [
                 { id: "new", text: _("New Vaccination"), icon: "new", enabled: "always", perm: "aav", 
                     click: function() { vaccination.new_vacc(); }},
                 { id: "bulk", text: _("Bulk Vaccination"), icon: "new", enabled: "always", perm: "cav", 
                     hideif: function() { return controller.animal; }, click: function() { vaccination.new_bulk_vacc(); }},
                 { id: "delete", text: _("Delete"), icon: "delete", enabled: "multi", perm: "dav", 
-                     click: function() { 
-                         tableform.delete_dialog()
-                             .then(function() {
-                                 tableform.buttons_default_state(buttons);
-                                 var ids = tableform.table_ids(table);
-                                 return common.ajax_post("vaccination", "mode=delete&ids=" + ids);
-                             })
-                             .then(function() {
-                                 tableform.table_remove_selected_from_json(table, controller.rows);
-                                 tableform.table_update(table);
-                             });
-                     } 
-                 },
-                 { id: "given", text: _("Give"), icon: "complete", enabled: "multi", perm: "cav",
+                    click: async function() { 
+                        await tableform.delete_dialog();
+                        tableform.buttons_default_state(buttons);
+                        let ids = tableform.table_ids(table);
+                        await common.ajax_post("vaccination", "mode=delete&ids=" + ids);
+                        tableform.table_remove_selected_from_json(table, controller.rows);
+                        tableform.table_update(table);
+                    } 
+                },
+                { id: "given", text: _("Give"), icon: "complete", enabled: "multi", perm: "cav",
                      click: function() {
-                        var comments = "", vacctype = 0;
+                        let comments = "", vacctype = 0;
                         $.each(controller.rows, function(i, v) {
                             if (tableform.table_id_selected(v.ID)) {
                                 comments += "[" + v.SHELTERCODE + " - " + v.ANIMALNAME + "] ";
@@ -180,7 +175,7 @@ $(function() {
                         });
                         $("#usagecomments").val(comments);
                         $("#givennewdate").datepicker("setDate", new Date());
-                        var rd = vaccination.calc_reschedule_date(new Date());
+                        let rd = vaccination.calc_reschedule_date(new Date());
                         if (rd) { $("#rescheduledate").datepicker("setDate", rd); }
                         $("#givenexpires, #givenbatch, #givenmanufacturer").val("");
                         vaccination.set_given_batch(vacctype);
@@ -224,7 +219,7 @@ $(function() {
         },
 
         render: function() {
-            var s = "";
+            let s = "";
             this.model();
             s += tableform.dialog_render(this.dialog);
             s += vaccination.render_givendialog();
@@ -256,26 +251,26 @@ $(function() {
 
         bind_requireddialog: function() {
 
-            var requiredbuttons = { }, table = vaccination.table;
-            requiredbuttons[_("Save")] = function() {
+            let requiredbuttons = { }, table = vaccination.table;
+            requiredbuttons[_("Save")] = async function() {
                 validate.reset("dialog-required");
                 if (!validate.notblank([ "newdate" ])) { return; }
                 $("#dialog-required").disable_dialog_buttons();
-                var ids = tableform.table_ids(table);
-                var newdate = encodeURIComponent($("#newdate").val());
-                common.ajax_post("vaccination", "mode=required&newdate=" + newdate + "&ids=" + ids)
-                    .then(function() {
-                        $.each(controller.rows, function(i, v) {
-                            if (tableform.table_id_selected(v.ID)) {
-                                v.DATEREQUIRED = format.date_iso($("#newdate").val());
-                            }
-                        });
-                        tableform.table_update(table);
-                    })
-                    .always(function() {
-                        $("#dialog-required").dialog("close");
-                        $("#dialog-required").enable_dialog_buttons();
+                let ids = tableform.table_ids(table);
+                let newdate = encodeURIComponent($("#newdate").val());
+                try {
+                    await common.ajax_post("vaccination", "mode=required&newdate=" + newdate + "&ids=" + ids);
+                    $.each(controller.rows, function(i, v) {
+                        if (tableform.table_id_selected(v.ID)) {
+                            v.DATEREQUIRED = format.date_iso($("#newdate").val());
+                        }
                     });
+                    tableform.table_update(table);
+                }
+                finally {
+                    $("#dialog-required").dialog("close");
+                    $("#dialog-required").enable_dialog_buttons();
+                }
             };
             requiredbuttons[_("Cancel")] = function() {
                 $("#dialog-required").dialog("close");
@@ -294,25 +289,26 @@ $(function() {
         },
 
         new_vacc: function() { 
-            var table = vaccination.table, dialog = vaccination.dialog;
+            let table = vaccination.table, dialog = vaccination.dialog;
             tableform.dialog_show_add(dialog, {
                 onvalidate: function() {
                     return validate.notzero([ "animal" ]);
                 },
-                onadd: function() {
-                    tableform.fields_post(dialog.fields, "mode=create", "vaccination")
-                        .then(function(response) {
-                            var row = {};
-                            row.ID = response;
-                            tableform.fields_update_row(dialog.fields, row);
-                            vaccination.set_extra_fields(row);
-                            controller.rows.push(row);
-                            tableform.table_update(table);
-                            tableform.dialog_close();
-                        })
-                        .fail(function() {
-                            tableform.dialog_enable_buttons();
-                        });
+                onadd: async function() {
+                    try {
+                        let response = await tableform.fields_post(dialog.fields, "mode=create", "vaccination");
+                        let row = {};
+                        row.ID = response;
+                        tableform.fields_update_row(dialog.fields, row);
+                        vaccination.set_extra_fields(row);
+                        controller.rows.push(row);
+                        tableform.table_update(table);
+                        tableform.dialog_close();
+                    }
+                    catch(err) {
+                        log.error(err, err);
+                        tableform.dialog_enable_buttons();
+                    }
                 },
                 onload: function() {
                     if (controller.animal) {
@@ -336,20 +332,21 @@ $(function() {
         },
 
         new_bulk_vacc: function() {
-            var dialog = vaccination.dialog;
+            let dialog = vaccination.dialog;
             tableform.dialog_show_add(dialog, {
                 onvalidate: function() {
                     return validate.notblank([ "animals" ]);
                 },
-                onadd: function() {
-                    tableform.fields_post(dialog.fields, "mode=createbulk", "vaccination")
-                        .then(function(response) {
-                            tableform.dialog_close();
-                            common.route_reload();
-                        })
-                        .fail(function() {
-                            tableform.dialog_enable_buttons();   
-                        });
+                onadd: async function() {
+                    try {
+                        await tableform.fields_post(dialog.fields, "mode=createbulk", "vaccination");
+                        tableform.dialog_close();
+                        common.route_reload();
+                    }
+                    catch(err) {
+                        log.error(err, err);
+                        tableform.dialog_enable_buttons();   
+                    }
                 },
                 onload: function() {
                     $("#animal").closest("tr").hide();
@@ -450,29 +447,29 @@ $(function() {
         },
 
         bind_givendialog: function() {
-            var givenbuttons = { }, table = vaccination.table;
-            givenbuttons[_("Save")] = function() {
+            let givenbuttons = { }, table = vaccination.table;
+            givenbuttons[_("Save")] = async function() {
                 validate.reset("dialog-given");
                 if (!validate.notblank([ "givennewdate" ])) { return; }
                 $("#usagedate").val($("#givennewdate").val()); // copy given to usage
                 $("#dialog-given").disable_dialog_buttons();
-                var ids = tableform.table_ids(table);
-                common.ajax_post("vaccination", $("#dialog-given .asm-field").toPOST() + "&mode=given&ids=" + ids)
-                    .then(function() {
-                        $.each(controller.rows, function(i, v) {
-                            if (tableform.table_id_selected(v.ID)) {
-                                v.DATEOFVACCINATION = format.date_iso($("#givennewdate").val());
-                            }
-                        });
-                        tableform.table_update(table);
-                    })
-                    .always(function() {
-                        $("#dialog-given").dialog("close");
-                        $("#dialog-given").enable_dialog_buttons();
-                        if (controller.name == "animal_vaccination") {
-                            common.route_reload();
+                let ids = tableform.table_ids(table);
+                try {
+                    await common.ajax_post("vaccination", $("#dialog-given .asm-field").toPOST() + "&mode=given&ids=" + ids);
+                    $.each(controller.rows, function(i, v) {
+                        if (tableform.table_id_selected(v.ID)) {
+                            v.DATEOFVACCINATION = format.date_iso($("#givennewdate").val());
                         }
                     });
+                    tableform.table_update(table);
+                }
+                finally {
+                    $("#dialog-given").dialog("close");
+                    $("#dialog-given").enable_dialog_buttons();
+                    if (controller.name == "animal_vaccination") {
+                        common.route_reload();
+                    }
+                }
             };
             givenbuttons[_("Cancel")] = function() {
                 $("#dialog-given").dialog("close");
@@ -548,7 +545,7 @@ $(function() {
         /** Sets the default cost based on the selected vaccination type */
         set_default_cost: function() {
             if (!vaccination.enable_default_cost) { return; }
-            var cost = common.get_field(controller.vaccinationtypes, $("#type").val(), "DEFAULTCOST");
+            let cost = common.get_field(controller.vaccinationtypes, $("#type").val(), "DEFAULTCOST");
             if (cost) { 
                 $("#cost").currency("value", cost); 
             }
@@ -563,8 +560,8 @@ $(function() {
          */
         set_expiry_date: function() {
             if (!$("#given").val()) { return; }
-            var gd = format.date_js(format.date_iso($("#given").val()));
-            var ed = vaccination.calc_reschedule_date(gd);
+            let gd = format.date_js(format.date_iso($("#given").val()));
+            let ed = vaccination.calc_reschedule_date(gd);
             if (!ed) { $("#expires").val(""); return; }
             $("#expires").datepicker("setDate", ed);
         },
@@ -574,7 +571,7 @@ $(function() {
          * returns a js date or null if there's a problem.
          */
         calc_reschedule_date: function(date) {
-            var reschedule = format.to_int(common.get_field(controller.vaccinationtypes, $("#type").val(), "RESCHEDULEDAYS"));
+            let reschedule = format.to_int(common.get_field(controller.vaccinationtypes, $("#type").val(), "RESCHEDULEDAYS"));
             if (!reschedule) { return null; }
             return common.add_days(date, reschedule);
         },
@@ -587,7 +584,7 @@ $(function() {
             if (!config.bool("AutoDefaultVaccBatch")) { return; }
             // If the vacc hasn't been given, don't do anything
             if (!$("#given").val()) { return; }
-            var seltype = $("#type").val();
+            let seltype = $("#type").val();
             $.each(controller.batches, function(i, v) {
                 if (seltype == v.ID) {
                     $("#batchnumber, #manufacturer").val("");
@@ -653,7 +650,7 @@ $(function() {
         name: "vaccination",
         animation: function() { return controller.name == "vaccination" ? "book" : "formtab"; },
         title:  function() { 
-            var t = "";
+            let t = "";
             if (controller.name == "animal_vaccination") {
                 t = common.substitute(_("{0} - {1} ({2} {3} aged {4})"), { 
                     0: controller.animal.ANIMALNAME, 1: controller.animal.CODE, 2: controller.animal.SEXNAME,

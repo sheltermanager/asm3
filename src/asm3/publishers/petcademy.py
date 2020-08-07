@@ -111,7 +111,7 @@ class PetcademyPublisher(FTPPublisher):
             return
 
         csv = [ "FirstName,Lastname,EmailAddress,Street,City,State,Zipcode,ContactNumber," \
-                "PetID,PetName,PetSpecies,PetSex,Breed,DateofBirth,Color," \
+                "EmailOptOut,PetID,PetName,PetSpecies,PetSex,Breed,DateofBirth,Color," \
                 "Status,EventDate,EventType,Organization,Photo" ]
         anCount = 0
         for an in animals:
@@ -149,7 +149,7 @@ class PetcademyPublisher(FTPPublisher):
     def processAnimal(self, an):
         """ Builds a CSV row """
         # FirstName,Lastname,EmailAddress,Street,City,State,Zipcode,ContactNumber,
-        # PetID,PetName,PetSpecies,PetSex,Breed,DateofBirth,Color,
+        # EmailOptOut,PetID,PetName,PetSpecies,PetSex,Breed,DateofBirth,Color,
         # Status,EventDate,EventType,Organization,Photo
         line = [
             an.CURRENTOWNERFORENAMES,
@@ -160,6 +160,7 @@ class PetcademyPublisher(FTPPublisher):
             an.CURRENTOWNERCOUNTY,
             an.CURRENTOWNERPOSTCODE,
             an.CURRENTOWNERMOBILETELEPHONE,
+            str(an.CURRENTOWNEREXCLUDEEMAIL),
             an.SHELTERCODE,
             an.ANIMALNAME,
             an.SPECIESNAME,

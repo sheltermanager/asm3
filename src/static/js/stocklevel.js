@@ -4,10 +4,10 @@ $(function() {
 
     "use strict";
 
-    var stocklevel = {
+    const stocklevel = {
 
         model: function() {
-            var dialog = {
+            const dialog = {
                 add_title: _("Add stock"),
                 edit_title: _("Edit stock"),
                 edit_perm: 'csl',
@@ -45,7 +45,7 @@ $(function() {
                 ]
             };
 
-            var table = {
+            const table = {
                 rows: controller.rows,
                 idcolumn: "ID",
                 edit: function(row) {
@@ -94,31 +94,27 @@ $(function() {
                 ]
             };
 
-            var buttons = [
+            const buttons = [
                 { id: "new", text: _("New Stock"), icon: "new", enabled: "always", perm: "asl", 
                     click: function() { stocklevel.new_level(); }},
                 { id: "clone", text: _("Clone"), icon: "copy", enabled: "one", perm: "asl",
                     click: function() { stocklevel.clone_level(); }},
                 { id: "delete", text: _("Delete"), icon: "delete", enabled: "multi", perm: "dsl", 
-                     click: function() { 
-                         tableform.delete_dialog()
-                             .then(function() {
-                                 tableform.buttons_default_state(buttons);
-                                 var ids = tableform.table_ids(table);
-                                 return common.ajax_post("stocklevel", "mode=delete&ids=" + ids);
-                             })
-                            .then(function() {
-                                 tableform.table_remove_selected_from_json(table, controller.rows);
-                                 tableform.table_update(table);
-                             });
-                     } 
-                 },
-                 { id: "viewlocation", type: "dropdownfilter", 
-                     options: '<option value="0">' + _("(all)") + '</option>' + html.list_to_options(controller.stocklocations, "ID", "LOCATIONNAME"),
-                     click: function(selval) {
+                    click: async function() { 
+                        await tableform.delete_dialog();
+                        tableform.buttons_default_state(buttons);
+                        let ids = tableform.table_ids(table);
+                        await common.ajax_post("stocklevel", "mode=delete&ids=" + ids);
+                        tableform.table_remove_selected_from_json(table, controller.rows);
+                        tableform.table_update(table);
+                    } 
+                },
+                { id: "viewlocation", type: "dropdownfilter", 
+                    options: '<option value="0">' + _("(all)") + '</option>' + html.list_to_options(controller.stocklocations, "ID", "LOCATIONNAME"),
+                    click: function(selval) {
                         common.route("stocklevel?viewlocation=" + selval);
-                     }
-                 }
+                    }
+                }
             ];
             this.dialog = dialog;
             this.buttons = buttons;
@@ -126,7 +122,7 @@ $(function() {
         },
 
         render: function() {
-            var s = "";
+            let s = "";
             this.model();
             s += tableform.dialog_render(this.dialog);
             s += html.content_header(_("Stock"));
@@ -137,7 +133,7 @@ $(function() {
         },
 
         new_level: function() { 
-            var dialog = stocklevel.dialog, table = stocklevel.table;
+            let dialog = stocklevel.dialog, table = stocklevel.table;
             $("#dialog-tableform .asm-textbox, #dialog-tableform .asm-textarea").val("");
             tableform.dialog_show_add(dialog, {
                 onadd: function() {
@@ -149,7 +145,7 @@ $(function() {
                                 common.route_reload();
                             }
                             else {
-                                var row = {};
+                                let row = {};
                                 row.ID = response;
                                 tableform.fields_update_row(dialog.fields, row);
                                 stocklevel.set_extra_fields(row);
@@ -170,7 +166,7 @@ $(function() {
         },
 
         clone_level: function() { 
-            var dialog = stocklevel.dialog, table = stocklevel.table;
+            let dialog = stocklevel.dialog, table = stocklevel.table;
             $("#dialog-tableform .asm-textbox, #dialog-tableform .asm-textarea").val("");
             tableform.dialog_show_add(dialog, {
                 onadd: function() {
@@ -182,7 +178,7 @@ $(function() {
                                 common.route_reload();
                             }
                             else {
-                                var row = {};
+                                let row = {};
                                 row.ID = response;
                                 tableform.fields_update_row(dialog.fields, row);
                                 stocklevel.set_extra_fields(row);
@@ -196,7 +192,7 @@ $(function() {
                         });
                 },
                 onload: function() {
-                    var row = tableform.table_selected_row(table);
+                    let row = tableform.table_selected_row(table);
                     tableform.fields_populate_from_json(dialog.fields, row);
                     $("#name").val(_("Copy of {0}").replace("{0}", $("#name").val()));
                     stocklevel.show_usage_fields();
@@ -243,7 +239,7 @@ $(function() {
                     common.ajax_post("stocklevel", "mode=lastname&name=" + $("#name").val())
                         .then(function(data) {
                             if (data != "||") {
-                                var d = data.split("|");
+                                let d = data.split("|");
                                 $("#description").val(d[0]);
                                 $("#unitname").val(d[1]);
                                 $("#total").val(d[2]);

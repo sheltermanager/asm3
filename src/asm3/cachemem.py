@@ -55,10 +55,10 @@ def _dict_put(key, value, ttl):
 
 def _dict_increment(key):
     global dict_client
-    v = _dict_get(key)
-    if v is None: return None
-    dict_client[key][1] += 1
-    return v
+    if key not in dict_client: return None
+    v = dict_client[key]
+    v[1] += 1
+    return v[1]
 
 def _dict_delete(key):
     global dict_client

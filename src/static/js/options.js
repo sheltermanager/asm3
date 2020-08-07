@@ -5,7 +5,7 @@ $(function() {
 
     "use strict";
 
-    var BACKGROUND_COLOURS = {
+    const BACKGROUND_COLOURS = {
         "asm":              "#ffffff",
         "base":             "#ffffff",
         "black-tie":        "#333333",
@@ -34,13 +34,13 @@ $(function() {
         "vader":            "#888888"
     };
 
-    var options = {
+    const options = {
 
         /** Where we have a list of pairs, first is value, second is label */
         two_pair_options: function(o, isflag) {
-            var s = [];
+            let s = [];
             $.each(o, function(i, v) {
-                var ds = "";
+                let ds = "";
                 if (isflag) {
                     ds = 'data-style="background-image: url(static/images/flags/' + v[0] + '.png)"';
                 }
@@ -75,6 +75,7 @@ $(function() {
                 '<li><a href="#tab-processors">' + _("Payment Processors") + '</a></li>',
                 '<li><a href="#tab-quicklinks">' + _("Quicklinks") + '</a></li>',
                 '<li><a href="#tab-unwanted">' + _("Remove") + '</a></li>',
+                '<li><a href="#tab-reports">' + _("Reports") + '</a></li>',
                 '<li><a href="#tab-search">' + _("Search") + '</a></li>',
                 '<li><a href="#tab-shelterview">' + _("Shelter view") + '</a></li>',
                 '<li><a href="#tab-waitinglist">' + _("Waiting List") + '</a></li>',
@@ -347,6 +348,7 @@ $(function() {
                 '<input data="AddAnimalsShowMicrochip" id="aashowmicrochip" class="asm-checkbox" type="checkbox" /> <label for="aashowmicrochip">' + _("Show the microchip fields") + '</label><br />',
                 '<input data="AddAnimalsShowTattoo" id="aashowtattoo" class="asm-checkbox" type="checkbox" /> <label for="aashowtattoo">' + _("Show the tattoo fields") + '</label><br />',
                 '<input data="AddAnimalsShowEntryCategory" id="aashowentrycategory" class="asm-checkbox" type="checkbox" /> <label for="aashowentrycategory">' + _("Show the entry category field") + '</label><br />',
+                '<input data="AddAnimalsShowJurisdiction" id="aashowjurisdiction" class="asm-checkbox" type="checkbox" /> <label for="aashowjurisdiction">' + _("Show the jurisdiction field") + '</label><br />',
                 '<input data="AddAnimalsShowDateBroughtIn" id="aashowdatebroughtin" class="asm-checkbox" type="checkbox" /> <label for="aashowdatebroughtin">' + _("Show the date brought in field") + '</label><br />',
                 '<input data="AddAnimalsShowTimeBroughtIn" id="aashowtimebroughtin" class="asm-checkbox" type="checkbox" /> <label for="aashowtimebroughtin">' + _("Show the time brought in field") + '</label><br />',
                 '<input data="AddAnimalsShowOriginalOwner" id="aashoworiginalowner" class="asm-checkbox" type="checkbox" /> <label for="aashoworiginalowner">' + _("Show the original owner field") + '</label><br />',
@@ -457,8 +459,17 @@ $(function() {
         },
 
         render_animalemblems: function() {
-            var emblemvalues = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ@$%^&*!?#",
-                emblemglyphs = [ 
+            const emblemvalues = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ@$%^&*!?#",
+                emblemglyphs = [
+                    8592,  // Left arrow
+                    8593,  // Up arrow
+                    8594,  // Right arrow
+                    8595,  // Down arrow
+                    8984,  // Place of interest
+                    8987,  // Hourglass
+                    8962,  // House
+                    9113,  // Print
+                    9114,  // Clear screen
                     9728,  // Sun
                     9729,  // Cloud
                     9731,  // Snowman
@@ -474,23 +485,33 @@ $(function() {
                     9794,  // Male
                     9850,  // Recycling
                     9855,  // Disabled
-                    9873,  // Flag
+                    9872,  // White flag
+                    9873,  // Black flag
                     9875,  // Anchor
+                    9877,  // Medical
                     9888,  // Warning
+                    9983,  // Striped flag
                     9986,  // Scissors
                     9990,  // Telephone location
                     9999,  // Pencil
                     10003, // Tick
                     10004, // Cross
                     10052, // Snowflake
-                    10084  // Heavy heart
+                    10084, // Heavy heart
+                    127960, // House - buildings
+                    127968, // House - building
+                    128008, // Cat
+                    128021, // Dog
+                    128049, // Cat Face
+                    128054, // Dog Face,
+                    128571 // Cat with heart eyes
                 ],
-                emblemoptions = [], i = 0,
+                emblemoptions = [],
                 condoptions = '<option></option><option value="has">' + _("if animal has") + 
                     '</option><option value="not">' + _("if animal does not have") + '</option>';
             $.each(emblemglyphs, function(i, v) { emblemoptions.push('<option value="&#' + v + ';">&#' + v + ';</option>'); });
-            for (i = 0; i < emblemvalues.length; i=i+1) { emblemoptions.push('<option>' + emblemvalues[i] + '</option>'); }
-            var boxes = function(id) {
+            for (let i = 0; i < emblemvalues.length; i=i+1) { emblemoptions.push('<option>' + emblemvalues[i] + '</option>'); }
+            const boxes = function(id) {
                 return '<br/>' + 
                 '<select data="EmblemsCustomValue' + id + '" class="asm-selectbox asm-halfselectbox decode"><option></option>' + emblemoptions.join("") + '</select> ' + 
                 ' <select data="EmblemsCustomCond' + id + '" class="asm-selectbox">' + condoptions + '</select>' + 
@@ -593,122 +614,44 @@ $(function() {
 
 
         render_defaults: function() {
+            const ddrop = function(name, label, cfg, opts) {
+                return '<td><label for="' + name + '">' + label + '</label></td>' +
+                    '<td><select data="' + cfg + '" id="' + name + '" class="asm-selectbox">' + 
+                    opts + '</select></td>';
+            };
+            const items = [
+                ddrop("defaultbreed", _("Default Breed"), "AFDefaultBreed", html.list_to_options(controller.breeds, "ID", "BREEDNAME")),
+                ddrop("defaultcoattype", _("Default Coat Type"), "AFDefaultCoatType", html.list_to_options(controller.coattypes, "ID", "COATTYPE")),
+                ddrop("defaultcolour", _("Default Color"), "AFDefaultColour", html.list_to_options(controller.colours, "ID", "BASECOLOUR")),
+                ddrop("defaultdeath", _("Default Death Reason"), "AFDefaultDeathReason", html.list_to_options(controller.deathreasons, "ID", "REASONNAME")),
+                ddrop("defaultdiary", _("Default Diary Person"), "AFDefaultDiaryPerson", '<option value=""></option>' + html.list_to_options(controller.usersandroles, "USERNAME", "USERNAME")),
+                ddrop("defaultentry", _("Default Entry Reason"), "AFDefaultEntryReason", html.list_to_options(controller.entryreasons, "ID", "REASONNAME")),
+                ddrop("defaultincident", _("Default Incident Type"), "DefaultIncidentType", html.list_to_options(controller.incidenttypes, "ID", "INCIDENTNAME")),
+                ddrop("defaultjurisdiction", _("Default Jurisdiction"), "DefaultJurisdiction", html.list_to_options(controller.jurisdictions, "ID", "JURISDICTIONNAME")),
+                ddrop("defaultlocation", _("Default Location"), "AFDefaultLocation", html.list_to_options(controller.locations, "ID", "LOCATIONNAME")),
+                ddrop("defaultlog", _("Default Log Filter"), "AFDefaultLogFilter", '<option value="-1">' + _("(all)") + '</option>' + html.list_to_options(controller.logtypes, "ID", "LOGTYPENAME")),
+                ddrop("defaultlogtype", _("Default Log Type"), "AFDefaultLogType", html.list_to_options(controller.logtypes, "ID", "LOGTYPENAME")),
+                ddrop("defaultpaymentmethod", _("Default Payment Method"), "AFDefaultPaymentMethod", html.list_to_options(controller.paymenttypes, "ID", "PAYMENTNAME")),
+                ddrop("defaultdonation", _("Default Payment Type"), "AFDefaultDonationType", html.list_to_options(controller.donationtypes, "ID", "DONATIONNAME")),
+                ddrop("defaultreservation", _("Default Reservation Status"), "AFDefaultReservationStatus", html.list_to_options(controller.reservationstatuses, "ID", "STATUSNAME")),
+                ddrop("defaultreturn", _("Default Return Reason"), "AFDefaultReturnReason", html.list_to_options(controller.entryreasons, "ID", "REASONNAME")),
+                ddrop("defaultsize", _("Default Size"), "AFDefaultSize", html.list_to_options(controller.sizes, "ID", "SIZE")),
+                ddrop("defaultspecies", _("Default Species"), "AFDefaultSpecies", html.list_to_options(controller.species, "ID", "SPECIESNAME")),
+                ddrop("defaulttest", _("Default Test Type"), "AFDefaultTestType", html.list_to_options(controller.testtypes, "ID", "TESTNAME")),
+                ddrop("defaulttype", _("Default Type"), "AFDefaultType", html.list_to_options(controller.types, "ID", "ANIMALTYPE")),
+                ddrop("defaultvaccination", _("Default Vaccination Type"), "AFDefaultVaccinationType", html.list_to_options(controller.vaccinationtypes, "ID", "VACCINATIONTYPE"))
+            ];
+            let h = [ "<tr>" ];
+            $.each(items, function(i, v) {
+                h.push(v);
+                if (i % 2 != 0) { h.push("</tr><tr>"); } // Only break after odd items so we get 2 to a row
+            });
+            h.push("</tr>");
             return [
                 '<div id="tab-defaults">',
                 html.info(_("These are the default values for these fields when creating new records.")),
                 '<table>',
-                '<tr>',
-                '<td><label for="defaultspecies">' + _("Default Species") + '</label></td>',
-                '<td><select data="AFDefaultSpecies" id="defaultspecies" class="asm-selectbox">',
-                html.list_to_options(controller.species, "ID", "SPECIESNAME"),
-                '</select></td>',
-                '<td><label for="defaulttype">' + _("Default Type") + '</label></td>',
-                '<td><select data="AFDefaultType" id="defaulttype" class="asm-selectbox">',
-                html.list_to_options(controller.types, "ID", "ANIMALTYPE"),
-                '</select>',
-                '</td>',
-                '</tr>',
-                '<tr>',
-                '<td><label for="defaultlocation">' + _("Default Location") + '</label></td>',
-                '<td><select data="AFDefaultLocation" id="defaultlocation" class="asm-selectbox">',
-                html.list_to_options(controller.locations, "ID", "LOCATIONNAME"),
-                '</select></td>',
-                '<td><label for="defaultentry">' + _("Default Entry Reason") + '</label></td>',
-                '<td><select data="AFDefaultEntryReason" id="defaultentry" class="asm-selectbox">',
-                html.list_to_options(controller.entryreasons, "ID", "REASONNAME"),
-                '</select>',
-                '</td>',
-                '</tr>',
-                '<tr>',
-                '<td><label for="defaultcolour">' + _("Default Color") + '</label></td>',
-                '<td><select data="AFDefaultColour" id="defaultcolour" class="asm-selectbox">',
-                html.list_to_options(controller.colours, "ID", "BASECOLOUR"),
-                '</select></td>',
-                '<td><label for="defaultdeath">' + _("Default Death Reason") + '</label></td>',
-                '<td><select data="AFDefaultDeathReason" id="defaultdeath" class="asm-selectbox">',
-                html.list_to_options(controller.deathreasons, "ID", "REASONNAME"),
-                '</select>',
-                '</td>',
-                '</tr>',
-                '<tr>',
-                '<td><label for="defaultreturn">' + _("Default Return Reason") + '</label></td>',
-                '<td><select data="AFDefaultReturnReason" id="defaultreturn" class="asm-selectbox">',
-                html.list_to_options(controller.entryreasons, "ID", "REASONNAME"),
-                '</select></td>',
-                '<td><label for="defaultsize">' + _("Default Size") + '</label></td>',
-                '<td><select data="AFDefaultSize" id="defaultsize" class="asm-selectbox">',
-                html.list_to_options(controller.sizes, "ID", "SIZE"),
-                '</select>',
-                '</td>',
-                '</tr>',
-                '<tr>',
-                '<td><label for="defaultlog">' + _("Default Log Filter") + '</label></td>',
-                '<td><select data="AFDefaultLogFilter" id="defaultlog" class="asm-selectbox">',
-                '<option value="-1">' + _("(all)") + '</option>',
-                html.list_to_options(controller.logtypes, "ID", "LOGTYPENAME"),
-                '</select></td>',
-                '<td><label for="defaultcoattype">' + _("Default Coat Type") + '</label></td>',
-                '<td><select data="AFDefaultCoatType" id="defaultcoattype" class="asm-selectbox">',
-                html.list_to_options(controller.coattypes, "ID", "COATTYPE"),
-                '</select>',
-                '</td>',
-                '</tr>',
-                '<tr>',
-                '<td><label for="defaultlogtype">' + _("Default Log Type") + '</label></td>',
-                '<td><select data="AFDefaultLogType" id="defaultlogtype" class="asm-selectbox">',
-                html.list_to_options(controller.logtypes, "ID", "LOGTYPENAME"),
-                '</select></td>',
-                '<td><label for="defaultdiary">' + _("Default Diary Person") + '</label></td>',
-                '<td><select data="AFDefaultDiaryPerson" id="defaultdiary" class="asm-selectbox">',
-                '<option value=""></option>',
-                html.list_to_options(controller.usersandroles, "USERNAME", "USERNAME"),
-                '</select>',
-                '</td>',
-                '</tr>',
-                '<tr>',
-                '<td><label for="defaultdonation">' + _("Default Payment Type") + '</label></td>',
-                '<td><select data="AFDefaultDonationType" id="defaultdonation" class="asm-selectbox">',
-                html.list_to_options(controller.donationtypes, "ID", "DONATIONNAME"),
-                '</select></td>',
-                '<td><label for="defaultvaccination">' + _("Default Vaccination Type") + '</label></td>',
-                '<td><select data="AFDefaultVaccinationType" id="defaultvaccination" class="asm-selectbox">',
-                html.list_to_options(controller.vaccinationtypes, "ID", "VACCINATIONTYPE"),
-                '</select>',
-                '</td>',
-                '</tr>',
-                '<tr>',
-                '<td><label for="defaultbreed">' + _("Default Breed") + '</label></td>',
-                '<td><select data="AFDefaultBreed" id="defaultbreed" class="asm-selectbox">',
-                html.list_to_options(controller.breeds, "ID", "BREEDNAME"),
-                '</select>',
-                '</td>',
-                '<td><label for="defaulttest">' + _("Default Test Type") + '</label></td>',
-                '<td><select data="AFDefaultTestType" id="defaulttest" class="asm-selectbox">',
-                html.list_to_options(controller.testtypes, "ID", "TESTNAME"),
-                '</select>',
-                '</td>',
-                '</tr>',
-                '<tr>',
-                '<td><label for="DefaultIncident">' + _("Default Incident Type") + '</label></td>',
-                '<td>',
-                '<select id="DefaultIncident" data="DefaultIncidentType" class="asm-selectbox">',
-                html.list_to_options(controller.incidenttypes, "ID", "INCIDENTNAME"),
-                '</select>',
-                '</td>',
-                '<td><label for="DefaultReservationStatus">' + _("Default Reservation Status") + '</label></td>',
-                '<td><select data="AFDefaultReservationStatus" id="DefaultReservationStatus" class="asm-selectbox">',
-                html.list_to_options(controller.reservationstatuses, "ID", "STATUSNAME"),
-                '</select>',
-                '</td>',
-                '</tr>',
-                '<tr>',
-                '<td><label for="DefaultPaymentMethod">' + _("Default Payment Method") + '</label></td>',
-                '<td>',
-                '<select id="DefaultPaymentMethod" data="AFDefaultPaymentMethod" class="asm-selectbox">',
-                html.list_to_options(controller.paymenttypes, "ID", "PAYMENTNAME"),
-                '</select>',
-                '</td>',
-                '</tr>',
+                h.join(""),
                 '<tr>',
                 '<td><label for="DefaultBroughtInBy">' + _("Default Brought In By") + '</label></td>',
                 '<td>',
@@ -784,7 +727,6 @@ $(function() {
                 '<input data="StickyTableHeaders" id="floatingheaders" class="asm-checkbox" type="checkbox" /> <label for="floatingheaders">' + _("Keep table headers visible when scrolling") + '</label><br />',
                 '<input data="RecordNewBrowserTab" id="recordnewbrowsertab" class="asm-checkbox" type="checkbox" /> <label for="recordnewbrowsertab">' + _("Open records in a new browser tab") + '</label><br />',
                 '<input data="ReportNewBrowserTab" id="reportnewbrowsertab" class="asm-checkbox" type="checkbox" /> <label for="reportnewbrowsertab">' + _("Open reports in a new browser tab") + '</label><br />',
-                '<input data="ReportMenuAccordion" id="reportmenuaccordion" class="asm-checkbox" type="checkbox" /> <label for="reportmenuaccordion">' + _("Show report menu items in collapsed categories") + '</label><br />',
                 '<input data="LocationFiltersEnabled" id="locationfilters" class="asm-checkbox" type="checkbox" /> <label for="locationfilters">' + _("Enable location filters") + '</label><br />',
                 '<input data="MultiSiteEnabled" id="multisite" class="asm-checkbox" type="checkbox" /> <label for="multisite">' + _("Enable multiple sites") + '</label><br />',
                 '<input data="InactivityTimer" id="inactivitytimer" class="asm-checkbox" type="checkbox" /> <label for="inactivitytimer">' + _("Auto log users out after this many minutes of inactivity") + '</label>',
@@ -1284,10 +1226,22 @@ $(function() {
                 '<input data="DontShowLitterID" id="litterid" class="asm-checkbox" type="checkbox" /> <label for="litterid">' + _("Remove the Litter ID field from animal details") + '</label><br />',
                 '<input data="DontShowLocationUnit" id="subunit" class="asm-checkbox" type="checkbox" /> <label for="subunit">' + _("Remove the location unit field from animal details") + '</label><br />',
                 '<input data="DontShowBonded" id="bonded" class="asm-checkbox" type="checkbox" /> <label for="bonded">' + _("Remove the bonded with fields from animal entry details") + '</label><br />',
+                '<input data="DontShowJurisdiction" id="jurisdiction" class="asm-checkbox" type="checkbox" /> <label for="jurisdiction">' + _("Remove the jurisdiction field from animal entry details") + '</label><br />',
                 '<input data="DontShowPickup" id="pickup" class="asm-checkbox" type="checkbox" /> <label for="pickup">' + _("Remove the picked up fields from animal entry details") + '</label>',
                 '</p>',
 
                 '</td></tr></table>',
+                '</div>'
+            ].join("\n");
+        },
+
+        render_reports: function() {
+            return [
+                '<div id="tab-reports">',
+                '<p>',
+                '<input data="EmailEmptyReports" id="emptyreports" class="asm-checkbox" type="checkbox" /> <label for="emptyreports">' + _("Email scheduled reports with no data") + '</label><br />',
+                '<input data="ReportMenuAccordion" id="reportmenuaccordion" class="asm-checkbox" type="checkbox" /> <label for="reportmenuaccordion">' + _("Show report menu items in collapsed categories") + '</label><br />',
+                '</p>',
                 '</div>'
             ].join("\n");
         },
@@ -1360,6 +1314,7 @@ $(function() {
                 this.render_search(),
                 this.render_shelterview(),
                 this.render_unwanted(),
+                this.render_reports(),
                 this.render_waitinglist(),
                 '</div>',
                 html.content_footer()
@@ -1367,11 +1322,11 @@ $(function() {
         },
 
         bind: function() {
-            var get_donation_mappings = function() {
-                var mappings = "";
+            const get_donation_mappings = function() {
+                let mappings = "";
                 $(".donmap").each(function() {
-                    var t = $(this);
-                    var idx = t.attr("id").substring(5, 6);
+                    let t = $(this);
+                    let idx = t.attr("id").substring(5, 6);
                     if (t.val() != "" && t.val() != "0" && t.val() != "-1") {
                         if (mappings != "") { mappings += ","; }
                         mappings += t.val() + "=" + $("#mapac" + idx).val();
@@ -1381,17 +1336,15 @@ $(function() {
             };
 
             // Toolbar buttons
-            $("#button-save").button().click(function() {
+            $("#button-save").button().click(async function() {
                 $("#button-save").button("disable");
                 validate.dirty(false);
-                var formdata = "mode=save&" + $("input, select, textarea, .asm-richtextarea").toPOST(true);
+                let formdata = "mode=save&" + $("input, select, textarea, .asm-richtextarea").toPOST(true);
                 formdata += "&DonationAccountMappings=" + get_donation_mappings();
                 header.show_loading(_("Saving..."));
-                common.ajax_post("options", formdata)
-                    .then(function() { 
-                        // Needs to do full reload to get updated config.js
-                        common.route_reload(true); 
-                    });
+                await common.ajax_post("options", formdata);
+                // Needs to do full reload to get updated config.js
+                common.route_reload(true); 
             });
 
             // Components
@@ -1402,7 +1355,7 @@ $(function() {
             // Load default values from the config settings
             $("input, select, textarea, .asm-richtextarea").each(function() {
                 if ($(this).attr("data")) {
-                    var d = $(this).attr("data");
+                    let d = $(this).attr("data");
                     if ($(this).is(".asm-currencybox")) {
                         $(this).val( html.decode(config.currency(d)));
                     }
@@ -1434,8 +1387,8 @@ $(function() {
                         $(this).select("value", config.str(d));
                     }
                     else if ($(this).is(".asm-bsmselect")) {
-                        var ms = config.str(d).split(",");
-                        var bsm = $(this);
+                        let ms = config.str(d).split(",");
+                        let bsm = $(this);
                         $.each(ms, function(i, v) {
                             bsm.find("option[value='" + common.trim(v + "']")).attr("selected", "selected");
                         });
@@ -1453,20 +1406,20 @@ $(function() {
             // When the visual theme is changed, switch the CSS file so the
             // theme updates immediately.
             $("#systemtheme").change(function() {
-                var theme = $("#systemtheme").val();
-                var href = asm.jqueryuicss.replace("%(theme)s", theme);
+                let theme = $("#systemtheme").val();
+                let href = asm.jqueryuicss.replace("%(theme)s", theme);
                 $("#jqt").attr("href", href);
                 $("body").css("background-color", BACKGROUND_COLOURS[theme]);
             });
 
             // Set donation type maps from DonationAccountMappings field
-            var donmaps = config.str("DonationAccountMappings");
+            let donmaps = config.str("DonationAccountMappings");
             if (donmaps != "") {
-                var maps = donmaps.split(",");
+                let maps = donmaps.split(",");
                 $.each(maps, function(i, v) {
-                    var dt = v.split("=")[0];
-                    var ac = v.split("=")[1];
-                    var idx = i + 1;
+                    let dt = v.split("=")[0];
+                    let ac = v.split("=")[1];
+                    let idx = i + 1;
                     $("#mapdt" + idx).select("value", dt);
                     $("#mapac" + idx).select("value", ac);
                 });

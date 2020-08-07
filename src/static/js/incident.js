@@ -4,7 +4,7 @@ $(function() {
 
     "use strict";
 
-    var incident = {
+    const incident = {
 
         render_details: function() {
             return [
@@ -290,21 +290,19 @@ $(function() {
         },
 
         load_animallinks: function() {
-            var h = [];
+            let h = [];
             $.each(controller.animallinks, function(i, v) {
                 h.push('<span class="linkedanimal"><button data="' + v.ID + '">' + _("Remove") + '</button> ' 
                     + html.animal_link(v, { emblemsright: true, showlocation: false }) + '</span><br />');
             });
             $("#animallist").empty().html(h.join("\n"));
             $("#animallist button").button({ icons: { primary: "ui-icon-trash" }, text: false })
-                .click(function() {
-                    var node = $(this),
+                .click(async function() {
+                    let node = $(this),
                         animalid = node.attr("data");
                     node.button("disable");
-                    common.ajax_post("incident", "mode=linkanimaldelete&id=" + controller.incident.ID + "&animalid=" + animalid)
-                        .then(function() {
-                            node.closest(".linkedanimal").fadeOut().then().remove();
-                        });
+                    await common.ajax_post("incident", "mode=linkanimaldelete&id=" + controller.incident.ID + "&animalid=" + animalid);
+                    node.closest(".linkedanimal").fadeOut().then().remove();
                 });
         },
 
@@ -352,8 +350,8 @@ $(function() {
         enable_widgets: function() {
             // Hide additional accordion section if there aren't
             // any additional fields declared
-            var ac = $("#asm-additional-accordion");
-            var an = ac.next();
+            let ac = $("#asm-additional-accordion");
+            let an = ac.next();
             if (an.find(".additional").length == 0) {
                 ac.hide(); an.hide();
             }
@@ -391,11 +389,11 @@ $(function() {
         },
 
         get_map_url: function() {
-            var add = $("#dispatchaddress").val().replace("\n", ",");
-            var town = $("#dispatchtown").val();
-            var county = $("#dispatchcounty").val();
-            var postcode = $("#dispatchpostcode").val();
-            var map = add;
+            let add = $("#dispatchaddress").val().replace("\n", ",");
+            let town = $("#dispatchtown").val();
+            let county = $("#dispatchcounty").val();
+            let postcode = $("#dispatchpostcode").val();
+            let map = add;
             if (town != "") { map += "," + town; }
             if (county != "") { map += "," + county; }
             if (postcode != "") { map += "," + postcode; }
@@ -404,7 +402,7 @@ $(function() {
         },
 
         show_mini_map: function() {
-            setTimeout(function() {
+            setTimeout(() => {
                 mapping.draw_map("embeddedmap", 15, controller.incident.DISPATCHLATLONG, [{ 
                     latlong: controller.incident.DISPATCHLATLONG, popuptext: controller.incident.DISPATCHADDRESS, popupactive: true }]);
             }, 50);
@@ -459,7 +457,7 @@ $(function() {
             validate.save = function(callback) {
                 if (!incident.validation()) { header.hide_loading(); return; }
                 validate.dirty(false);
-                var formdata = "mode=save" +
+                let formdata = "mode=save" +
                     "&id=" + $("#incidentid").val() + 
                     "&recordversion=" + controller.incident.RECORDVERSION + 
                     "&" + $("input, select, textarea").not(".chooser").toPOST();
@@ -478,25 +476,23 @@ $(function() {
                 });
             });
 
-            $("#button-toanimal").button().click(function() {
+            $("#button-toanimal").button().click(async function() {
                 $("#button-toanimal").button("disable");
-                var formdata = "mode=toanimal&id=" + $("#incidentid").val();
-                common.ajax_post("incident", formdata)
-                    .then(function(result) { 
-                        common.route("animal?id=" + result); 
-                    });
+                let formdata = "mode=toanimal&id=" + $("#incidentid").val();
+                let result = await common.ajax_post("incident", formdata);
+                common.route("animal?id=" + result); 
             });
 
             $("#button-email").button().click(function() {
-                var emailname = "", emailaddress = "";
+                let emailname = "", emailaddress = "";
                 $.each(controller.users, function(i, v) {
                     if (v.USERNAME == $("#dispatchedaco").select("value")) {
                         emailname = v.REALNAME;
                         emailaddress = v.EMAILADDRESS;
                     }
                 });
-                var i = controller.incident;
-                var msg = [ 
+                let i = controller.incident;
+                let msg = [ 
                     _("Type") + ": " + i.INCIDENTNAME,
                     _("Date/Time") + ": " + format.date(i.INCIDENTDATETIME) + " " + format.time(i.INCIDENTDATETIME),
                     _("Address") + ": " + i.DISPATCHADDRESS + ' ' + i.DISPATCHTOWN + ' ' + i.DISPATCHCOUNTY + ' ' + i.DISPATCHPOSTCODE,
@@ -505,7 +501,7 @@ $(function() {
                     _("Victim") + ": " + common.nulltostr(i.VICTIMNAME),
                     _("Suspect") + ": " + common.nulltostr(i.OWNERNAME1)
                 ].join("\n");
-                var subject = html.decode(_("Dispatch {0}: {1}")
+                let subject = html.decode(_("Dispatch {0}: {1}")
                         .replace("{0}", format.padleft(controller.incident.ACID, 6))
                         .replace("{1}", $("#dispatchaddress").val()) );
                 $("#emailform").emailform("show", {
@@ -519,16 +515,12 @@ $(function() {
                 });
             });
 
-            $("#button-delete").button().click(function() {
-                tableform.delete_dialog(null, _("This will permanently remove this incident, are you sure?"))
-                    .then(function() {
-                        var formdata = "mode=delete&id=" + $("#incidentid").val();
-                        return common.ajax_post("incident", formdata);
-                    })
-                    .then(function() { 
-                        $("#dialog-delete").dialog("close"); 
-                        common.route("main");
-                    });
+            $("#button-delete").button().click(async function() {
+                await tableform.delete_dialog(null, _("This will permanently remove this incident, are you sure?"));
+                let formdata = "mode=delete&id=" + $("#incidentid").val();
+                await common.ajax_post("incident", formdata);
+                $("#dialog-delete").dialog("close"); 
+                common.route("main");
             });
 
             $("#button-dispatch").button().click(function() {
@@ -555,26 +547,21 @@ $(function() {
             });
 
             $("#button-map").button().click(function() {
-                var mapq = incident.get_map_url();
-                var maplinkref = String(asm.maplink).replace("{0}", mapq);
+                let mapq = incident.get_map_url();
+                let maplinkref = String(asm.maplink).replace("{0}", mapq);
                 window.open(maplinkref, "_blank");
             });
 
             $("#button-linkanimal")
                 .button({ icons: { primary: "ui-icon-link" }, text: false })
-                .click(function() {
+                .click(async function() {
                     $("#linkanimal").animalchooser("clear");
-                    tableform.show_okcancel_dialog("#dialog-linkanimal", _("Link"), { notzero: [ "linkanimal" ] })
-                        .then(function() {
-                            var a = $("#linkanimal").animalchooser("get_selected");
-                            return common.ajax_post("incident", "mode=linkanimaladd&id=" + controller.incident.ID + "&animalid=" + a.ID);
-                        })
-                        .then(function() {
-                            var a = $("#linkanimal").animalchooser("get_selected");
-                            controller.animallinks.push(a);
-                            incident.load_animallinks();
-                        });
-            });
+                    await tableform.show_okcancel_dialog("#dialog-linkanimal", _("Link"), { notzero: [ "linkanimal" ] });
+                    let a = $("#linkanimal").animalchooser("get_selected");
+                    await common.ajax_post("incident", "mode=linkanimaladd&id=" + controller.incident.ID + "&animalid=" + a.ID);
+                    controller.animallinks.push(a);
+                    incident.load_animallinks();
+                });
 
             additional.relocate_fields();
 
@@ -584,6 +571,18 @@ $(function() {
 
             // Load the data into the controls for the screen
             $("#asm-content input, #asm-content select, #asm-content textarea").fromJSON(controller.incident);
+
+            // If the dispatch ACO is not in the list (can happen if the
+            // user account is later deleted), add it back so that it doesn't
+            // disappear.
+            let acoinlist = false;
+            $.each(controller.users, function(i, v) {
+                if (v.USERNAME == controller.incident.DISPATCHEDACO) { acoinlist = true; return false; }
+            });
+            if (!acoinlist) {
+                $("#dispatchedaco").append("<option>" + controller.incident.DISPATCHEDACO + "</option>");
+                $("#dispatchedaco").select("value", controller.incident.DISPATCHEDACO);
+            }
 
             // Update the lat/long
             $(".asm-latlong").latlong("load");

@@ -1079,8 +1079,10 @@ def insert_lookup(dbo, username, lookup, name, desc="", speciesid=0, pfbreed="",
         }, username, setCreated=False)
         return nid
     elif lookup == "lkownerflags" or lookup == "lkanimalflags":
+        name = name.replace(",", " ").replace("|", " ").replace("'", " ") # Remove bad chars
+        name = asm3.utils.strip_duplicate_spaces(name) # Strip dup spaces Bad   Flag->Bad Flag
         return dbo.insert(lookup, {
-            t[LOOKUP_NAMEFIELD]:    name.replace(",", " ").replace("|", " ") # sanitise bad values for flags
+            t[LOOKUP_NAMEFIELD]:    name
         }, username, setCreated=False)
     elif t[LOOKUP_DESCFIELD] == "":
         # No description
@@ -1153,7 +1155,8 @@ def update_lookup(dbo, username, iid, lookup, name, desc="", speciesid=0, pfbree
         }, username, setLastChanged=False)
     elif lookup == "lkownerflags" or lookup == "lkanimalflags":
         oldflag = dbo.query_string("SELECT Flag FROM %s WHERE ID = ?" % lookup, [iid])
-        newflag = name.replace(",", " ").replace("|", " ")
+        newflag = name.replace(",", " ").replace("|", " ").replace("'", " ") # Remove bad chars
+        newflag = asm3.utils.strip_duplicate_spaces(newflag) # Strip dup spaces Bad   Flag->Bad Flag
         dbo.update(lookup, iid, { t[LOOKUP_NAMEFIELD]: newflag }, username, setLastChanged=False)
         # Update the text in flags fields where appropriate
         if lookup == "lkownerflags":

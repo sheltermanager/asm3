@@ -4,7 +4,7 @@ $(function() {
 
     "use strict";
 
-    var lostfound_find = {
+    const lostfound_find = {
 
         render: function() {
             return [
@@ -187,7 +187,7 @@ $(function() {
 
             // Only show the breeds for the selected species
             // The (all) option is displayed by default
-            var change_breed_select = function() {
+            const change_breed_select = function() {
                 $('optgroup', $('#breed')).remove();
                 $('#breedp optgroup').clone().appendTo($('#breed'));
                 $('#breed').append("<option value=''>(all)</option>");

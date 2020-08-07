@@ -4,10 +4,10 @@ $(function() {
 
     "use strict";
 
-    var log = {
+    const log = {
 
         model: function() {
-            var dialog = {
+            const dialog = {
                 add_title: _("Add log"),
                 edit_title: _("Edit log"),
                 edit_perm: 'cle',
@@ -24,24 +24,22 @@ $(function() {
                 ]
             };
 
-            var table = {
+            const table = {
                 rows: controller.rows,
                 idcolumn: "ID",
-                edit: function(row) {
+                edit: async function(row) {
                     tableform.fields_populate_from_json(dialog.fields, row);
-                    tableform.dialog_show_edit(dialog, row)
-                            .then(function() {
-                                tableform.fields_update_row(dialog.fields, row);
-                                log.set_extra_fields(row);
-                                return tableform.fields_post(dialog.fields, "mode=update&logid=" + row.ID, "log");
-                            })
-                            .then(function(response) {
-                                tableform.table_update(table);
-                                tableform.dialog_close();
-                            })
-                            .always(function() {
-                                tableform.dialog_enable_buttons();
-                            });
+                    await tableform.dialog_show_edit(dialog, row);
+                    tableform.fields_update_row(dialog.fields, row);
+                    log.set_extra_fields(row);
+                    try {
+                        await tableform.fields_post(dialog.fields, "mode=update&logid=" + row.ID, "log");
+                        tableform.table_update(table);
+                        tableform.dialog_close();
+                    }
+                    finally {
+                        tableform.dialog_enable_buttons();
+                    }
                 },
                 columns: [
                     { field: "LOGTYPENAME", display: _("Type") },
@@ -52,49 +50,44 @@ $(function() {
                 ]
             };
 
-            var buttons = [
-                { id: "new", text: _("New Log"), icon: "new", enabled: "always", perm: "ale", click: function() { 
-                    tableform.dialog_show_add(dialog, {
-                        onload: function() {
-                            $("#type").select("value", config.integer("AFDefaultLogType"));    
-                        }})
-                        .then(function() {
-                            return tableform.fields_post(dialog.fields, "mode=create&linktypeid=" + controller.linktypeid + 
-                                "&linkid=" + controller.linkid, "log");
-                        })
-                        .then(function(response) {
-                            var row = {};
+            const buttons = [
+                { id: "new", text: _("New Log"), icon: "new", enabled: "always", perm: "ale", 
+                    click: async function() { 
+                        await tableform.dialog_show_add(dialog, {
+                            onload: function() {
+                                $("#type").select("value", config.integer("AFDefaultLogType"));    
+                            }});
+                        try {
+                            let formdata = "mode=create&linktypeid=" + controller.linktypeid + "&linkid=" + controller.linkid;
+                            let response = await tableform.fields_post(dialog.fields, formdata , "log");
+                            let row = {};
                             row.ID = response;
                             tableform.fields_update_row(dialog.fields, row);
                             log.set_extra_fields(row);
                             controller.rows.push(row);
                             tableform.table_update(table);
                             tableform.dialog_close();
-                        })
-                        .always(function() {
+                        }
+                        finally {
                             tableform.dialog_enable_buttons();   
-                        });
-                 }},
-                 { id: "delete", text: _("Delete"), icon: "delete", enabled: "multi", perm: "dle",
-                     click: function() { 
-                         tableform.delete_dialog()
-                             .then(function() {
-                                 tableform.buttons_default_state(buttons);
-                                 var ids = tableform.table_ids(table);
-                                 return common.ajax_post("log", "mode=delete&ids=" + ids);
-                             })
-                             .then(function() {
-                                 tableform.table_remove_selected_from_json(table, controller.rows);
-                                 tableform.table_update(table);
-                             });
-                     } 
-                 },
-                 { id: "filter", type: "dropdownfilter", 
-                     options: '<option value="-1">' + _("(all)") + '</option>' + html.list_to_options(controller.logtypes, "ID", "LOGTYPENAME"),
-                     click: function(selval) {
+                        }
+                }},
+                { id: "delete", text: _("Delete"), icon: "delete", enabled: "multi", perm: "dle",
+                    click: async function() { 
+                        await tableform.delete_dialog();
+                        tableform.buttons_default_state(buttons);
+                        let ids = tableform.table_ids(table);
+                        await common.ajax_post("log", "mode=delete&ids=" + ids);
+                        tableform.table_remove_selected_from_json(table, controller.rows);
+                        tableform.table_update(table);
+                    } 
+                },
+                { id: "filter", type: "dropdownfilter", 
+                    options: '<option value="-1">' + _("(all)") + '</option>' + html.list_to_options(controller.logtypes, "ID", "LOGTYPENAME"),
+                    click: function(selval) {
                         common.route(controller.name + "?id=" + controller.linkid + "&filter=" + selval);
-                     }
-                 }
+                    }
+                }
             ];
             this.dialog = dialog;
             this.buttons = buttons;
@@ -107,7 +100,7 @@ $(function() {
         },
 
         render: function() {
-            var h = [];
+            let h = [];
             this.model();
             h.push(tableform.dialog_render(this.dialog));
             if (controller.name == "animal_log") {
@@ -155,7 +148,7 @@ $(function() {
         name: "log",
         animation: "formtab",
         title:  function() { 
-            var t = "";
+            let t = "";
             if (controller.name == "animal_log") {
                 t = common.substitute(_("{0} - {1} ({2} {3} aged {4})"), { 
                     0: controller.animal.ANIMALNAME, 1: controller.animal.CODE, 2: controller.animal.SEXNAME,

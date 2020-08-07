@@ -104,6 +104,7 @@ def get_animal_query(dbo):
         "co.WorkTelephone AS CurrentOwnerWorkTelephone, " \
         "co.MobileTelephone AS CurrentOwnerMobileTelephone, " \
         "co.EmailAddress AS CurrentOwnerEmailAddress, " \
+        "co.ExcludeFromBulkEmail AS CurrentOwnerExcludeEmail, " \
         "cj.JurisdictionName AS CurrentOwnerJurisdiction, " \
         "bo.OwnerName AS BroughtInByOwnerName, " \
         "bo.OwnerAddress AS BroughtInByOwnerAddress, " \
@@ -140,6 +141,7 @@ def get_animal_query(dbo):
         "il.SiteID AS SiteID, " \
         "se.SiteName AS SiteName, " \
         "pl.LocationName AS PickupLocationName, " \
+        "j.JurisdictionName, " \
         "ac.ID AS AnimalControlIncidentID, " \
         "itn.IncidentName AS AnimalControlIncidentName, " \
         "ac.IncidentDateTime AS AnimalControlIncidentDate, " \
@@ -226,6 +228,7 @@ def get_animal_query(dbo):
         "LEFT OUTER JOIN internallocation il ON il.ID = a.ShelterLocation " \
         "LEFT OUTER JOIN site se ON se.ID = il.SiteID " \
         "LEFT OUTER JOIN pickuplocation pl ON pl.ID = a.PickupLocationID " \
+        "LEFT OUTER JOIN jurisdiction j ON j.ID = a.JurisdictionID " \
         "LEFT OUTER JOIN media web ON web.ID = (SELECT MAX(ID) FROM media sweb WHERE sweb.LinkID = a.ID AND sweb.LinkTypeID = 0 AND sweb.WebsitePhoto = 1) " \
         "LEFT OUTER JOIN media vid ON vid.ID = (SELECT MAX(ID) FROM media svid WHERE svid.LinkID = a.ID AND svid.LinkTypeID = 0 AND svid.WebsiteVideo = 1) " \
         "LEFT OUTER JOIN media doc ON doc.ID = (SELECT MAX(ID) FROM media sdoc WHERE sdoc.LinkID = a.ID AND sdoc.LinkTypeID = 0 AND sdoc.DocPhoto = 1) " \
@@ -475,6 +478,7 @@ def get_animal_find_advanced(dbo, criteria, limit = 0, locationfilter = "", site
            heartwormplus
            includedeceased
            includenonshelter
+           unaltered
         flag - one or more of (plus custom):
             courtesy
             crueltycase
@@ -516,6 +520,7 @@ def get_animal_find_advanced(dbo, criteria, limit = 0, locationfilter = "", site
     ss.add_filter("fivplus", "a.CombiTested = 1 AND a.CombiTestResult = 2")
     ss.add_filter("flvplus", "a.CombiTested = 1 AND a.FLVResult = 2")
     ss.add_filter("heartwormplus", "a.HeartwormTested = 1 AND a.HeartwormTestResult = 2")
+    ss.add_filter("unaltered", "a.Neutered = 0")
     ss.add_words("comments", "a.AnimalComments")
     ss.add_words("hiddencomments", "a.HiddenAnimalDetails")
     ss.add_words("features", "a.Markings")
@@ -597,7 +602,7 @@ def get_animals_hold(dbo):
     """
     Returns all shelter animals who have the hold flag set
     """
-    return dbo.query(get_animal_query(dbo) + " WHERE a.IsHold = 1 AND a.Archived = 0")
+    return dbo.query(get_animal_query(dbo) + " WHERE a.IsHold = 1 AND a.Archived = 0 ORDER BY DateBroughtIn")
 
 def get_animals_hold_today(dbo):
     """
@@ -2042,6 +2047,7 @@ def insert_animal_from_form(dbo, post, username):
         "IsPickup":         post.boolean("pickedup"),
         "PickupLocationID": post.integer("pickuplocation"),
         "PickupAddress":    post["pickupaddress"],
+        "JurisdictionID":   post.integer("jurisdiction"),
         "IsHold":           post.boolean("hold"),
         "HoldUntilDate":    post.date("holduntil"),
         "IsCourtesy":       0,
@@ -2147,7 +2153,7 @@ def update_animal_from_form(dbo, post, username):
     if post["microchipnumber"].strip() != "" and not asm3.configuration.allow_duplicate_microchip(dbo):
         if dbo.query_int("SELECT COUNT(ID) FROM animal WHERE IdentichipNumber Like ? AND ID <> ?", (post["microchipnumber"], aid)) > 0:
             raise asm3.utils.ASMValidationError(_("Microchip number {0} has already been allocated to another animal.", l).format(post["microchipnumber"]))
-    if post["deceaseddate"] != "":
+    if post["deceaseddate"] != "" and "nonshelter" not in post["flags"].split(","):
         deceaseddate = post.date("deceaseddate")
         datebroughtin = post.date("datebroughtin")
         if deceaseddate is not None and datebroughtin is not None and deceaseddate < datebroughtin:
@@ -2289,6 +2295,7 @@ def update_animal_from_form(dbo, post, username):
         "IsPickup":             post.boolean("pickedup"),
         "PickupLocationID":     post.integer("pickuplocation"),
         "PickupAddress":        post["pickupaddress"],
+        "JurisdictionID":       post.integer("jurisdiction"),
         "DateBroughtIn":        post.datetime("datebroughtin", "timebroughtin"),
         "AsilomarIntakeCategory": post.integer("asilomarintakecategory"),
         "AsilomarIsTransferExternal": post.boolean("asilomartransferexternal"),
@@ -2599,6 +2606,7 @@ def clone_animal(dbo, username, animalid):
         "IsTransfer":       a.istransfer,
         "IsPickup":         a.ispickup,
         "PickupLocationID": a.pickuplocationid,
+        "JurisdictionID":   a.jurisdictionid,
         "IsGoodWithCats":   a.isgoodwithcats,
         "IsGoodWithDogs":   a.isgoodwithdogs,
         "IsGoodWithChildren": a.isgoodwithchildren,
@@ -3042,7 +3050,7 @@ def merge_animal(dbo, username, animalid, mergeanimalid):
     reparent("ownerlicence", "AnimalID")
     reparent("media", "LinkID", "LinkTypeID", asm3.media.ANIMAL, lastchanged=False)
     reparent("diary", "LinkID", "LinkType", asm3.diary.ANIMAL)
-    reparent("log", "LinkID", "LinkType", asm3.log.ANIMAL)
+    reparent("log", "LinkID", "LinkType", asm3.log.ANIMAL, lastchanged=False)
 
     # Reparent the audit records for the reparented records in the audit log
     # by switching ParentLinks to the new ID.

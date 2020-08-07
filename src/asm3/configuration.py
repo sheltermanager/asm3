@@ -158,6 +158,7 @@ DEFAULTS = {
     "DefaultDailyBoardingCost": "2000",
     "DefaultDateBroughtIn": "Yes",
     "DefaultIncidentType": "1",
+    "DefaultJurisdiction": "1",
     "DefaultMediaNotesFromFile": "Yes",
     "DefaultShiftStart": "09:00",
     "DefaultShiftEnd": "17:00",
@@ -184,6 +185,7 @@ DEFAULTS = {
     "EmailDiaryNotes": "Yes", 
     "EmailDiaryOnChange": "No",
     "EmailDiaryOnComplete": "No",
+    "EmailEmptyReports": "Yes",
     "EmailMessages": "Yes", 
     "EmblemAlwaysLocation": "No",
     "EmblemBonded": "Yes",
@@ -779,6 +781,9 @@ def email_diary_on_change(dbo):
 def email_diary_on_complete(dbo):
     return cboolean(dbo, "EmailDiaryOnComplete", DEFAULTS["EmailDiaryOnComplete"] == "Yes")
 
+def email_empty_reports(dbo):
+    return cboolean(dbo, "EmailEmptyReports", DEFAULTS["EmailEmptyReports"] == "Yes")
+
 def email_messages(dbo):
     return cboolean(dbo, "EmailMessages", DEFAULTS["EmailMessages"] == "Yes")
 
@@ -1005,6 +1010,12 @@ def petrescue_all_desexed(dbo):
 
 def petrescue_email(dbo):
     return cstring(dbo, "PetRescueEmail")
+
+def petrescue_phone_number(dbo):
+    return cstring(dbo, "PetRescuePhoneNumber")
+
+def petrescue_phone_type(dbo):
+    return cstring(dbo, "PetRescuePhoneType")
 
 def petrescue_token(dbo):
     return cstring(dbo, "PetRescueToken")

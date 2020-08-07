@@ -486,11 +486,12 @@ def create_document_media(dbo, username, linktype, linkid, template, content):
     linktype: ANIMAL, PERSON, etc
     linkid: ID for the link
     template: The name of the template used to create the document
-    content: The document contents
+    content: The document contents (bytes str, will be converted if str given)
     """
     mediaid = dbo.get_id("media")
     path = get_dbfs_path(linkid, linktype)
     name = str(mediaid) + ".html"
+    content = asm3.utils.str2bytes(content)
     dbfsid = asm3.dbfs.put_string(dbo, name, path, content)
     dbo.insert("media", {
         "ID":                   mediaid,

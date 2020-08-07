@@ -35,6 +35,7 @@ AUTH_METHODS = [
     "xml_adoptable_animal", "json_adoptable_animal",
     "xml_adoptable_animals", "json_adoptable_animals", "jsonp_adoptable_animals",
     "xml_found_animals", "json_found_animals", "jsonp_found_animals",
+    "xml_held_animals", "json_held_animals", "jsonp_held_animals",
     "xml_lost_animals", "json_lost_animals", "jsonp_lost_animals",
     "xml_recent_adoptions", "json_recent_adoptions", "jsonp_recent_adoptions",
     "xml_shelter_animals", "json_shelter_animals", "jsonp_shelter_animals",
@@ -63,6 +64,8 @@ CACHE_PROTECT_METHODS = {
     "xml_adoptable_animals": [ "sensitive" ],
     "json_found_animals": [],
     "xml_found_animals": [],
+    "json_held_animals": [],
+    "xml_held_animals": [],
     "json_lost_animals": [],
     "xml_lost_animals": [],
     "json_recent_adoptions": [], 
@@ -88,7 +91,7 @@ FLOOD_PROTECT_METHODS = {
     "csv_report": [ 5, 60, 60 ],
     "html_report": [ 5, 60, 60 ],
     "online_form_post": [ 1, 15, 15 ],
-    "upload_animal_image": [ 2, 30, 30 ]
+    "upload_animal_image": [ 5, 30, 30 ]
 }
 
 def flood_protect(method, remoteip):
@@ -517,6 +520,21 @@ def handler(post, path, remoteip, referer, querystring):
         asm3.users.check_permission_map(l, user["SUPERUSER"], securitymap, asm3.users.VIEW_FOUND_ANIMAL)
         rs = asm3.lostfound.get_foundanimal_last_days(dbo)
         return set_cached_response(cache_key, account, "application/json", 3600, 3600, asm3.html.xml(rs))
+
+    elif method == "json_held_animals":
+        asm3.users.check_permission_map(l, user["SUPERUSER"], securitymap, asm3.users.VIEW_ANIMAL)
+        rs = asm3.animal.get_animals_hold(dbo)
+        return set_cached_response(cache_key, account, "application/json", 3600, 3600, asm3.utils.json(rs))
+
+    elif method == "xml_held_animals":
+        asm3.users.check_permission_map(l, user["SUPERUSER"], securitymap, asm3.users.VIEW_ANIMAL)
+        rs = asm3.animal.get_animals_hold(dbo)
+        return set_cached_response(cache_key, account, "application/json", 3600, 3600, asm3.html.xml(rs))
+
+    elif method == "jsonp_held_animals":
+        asm3.users.check_permission_map(l, user["SUPERUSER"], securitymap, asm3.users.VIEW_ANIMAL)
+        rs = asm3.animal.get_animals_hold(dbo)
+        return ("application/javascript", 0, 0, "%s(%s);" % (post["callback"], asm3.utils.json(rs)))
 
     elif method == "json_lost_animals":
         asm3.users.check_permission_map(l, user["SUPERUSER"], securitymap, asm3.users.VIEW_LOST_ANIMAL)

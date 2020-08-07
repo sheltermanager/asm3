@@ -4,7 +4,7 @@ $(function() {
 
     "use strict";
 
-    var sql = {
+    const sql = {
 
         editor: null, 
 
@@ -68,7 +68,7 @@ $(function() {
 
         bind_scriptdialog: function() {
 
-            var b = { };
+            let b = { };
             b[_("Execute Script")] = function() {
                 if (!validate.notblank([ "sqlfile" ])) { return; }
                 $("#sqlfileform").submit();
@@ -92,7 +92,7 @@ $(function() {
             
             this.bind_scriptdialog();
 
-            var dbuttons = {};
+            let dbuttons = {};
             dbuttons[_("Yes")] = function() {
                 $(this).dialog("close");
                 common.route("sql_dump?ajax=false&mode=" + sql.dumpchoice);
@@ -101,7 +101,7 @@ $(function() {
                 $(this).dialog("close");
             };
 
-            var confirm_dump = function(action) {
+            const confirm_dump = function(action) {
                 sql.dumpchoice = action;
                 $("#dialog-dump").dialog({ 
                     autoOpen: true,
@@ -120,32 +120,32 @@ $(function() {
                 return false;
             });
 
-            $("#button-exec").button().click(function() {
-                var formdata = "mode=exec&" + $("#sql").toPOST();
+            $("#button-exec").button().click(async function() {
+                let formdata = "mode=exec&" + $("#sql").toPOST();
                 $("#button-exec").button("disable");
                 header.show_loading(_("Executing..."));
-                common.ajax_post("sql", formdata)
-                    .then(function(result) { 
-                        if (result.indexOf("<thead") == 0) {
-                            $("#sql-results").html(result);
-                            $("#sql-results").table();
-                            $("#sql-results").fadeIn();
-                            var norecs = String($("#sql-results tr").length - 2);
-                            header.show_info(_("{0} results.").replace("{0}", norecs));
+                try {
+                    let result = await common.ajax_post("sql", formdata);
+                    if (result.indexOf("<thead") == 0) {
+                        $("#sql-results").html(result);
+                        $("#sql-results").table();
+                        $("#sql-results").fadeIn();
+                        let norecs = String($("#sql-results tr").length - 2);
+                        header.show_info(_("{0} results.").replace("{0}", norecs));
+                    }
+                    else {
+                        $("#sql-results").fadeOut();
+                        if (result != "") {
+                            header.show_info(result);
                         }
                         else {
-                            $("#sql-results").fadeOut();
-                            if (result != "") {
-                                header.show_info(result);
-                            }
-                            else {
-                                header.show_info(_("No results."));
-                            }
+                            header.show_info(_("No results."));
                         }
-                    })
-                    .always(function() {
-                        $("#button-exec").button("enable");
-                    });
+                    }
+                }
+                finally {
+                    $("#button-exec").button("enable");
+                }
             });
 
             $("#button-script").button().click(function() {

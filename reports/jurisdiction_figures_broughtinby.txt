@@ -4,7 +4,7 @@ Figures
 ###
 34016/Any
 ###
-Induction, movement and euthanasia states broken down by brought in by owner city.
+Induction, movement and euthanasia states broken down by brought in by jurisdiction.
 ###
 en
 ###

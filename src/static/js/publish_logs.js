@@ -4,10 +4,10 @@ $(function() {
 
     "use strict";
 
-    var publish_logs = {
+    const publish_logs = {
 
         model: function() {
-            var table = {
+            const table = {
                 rows: controller.rows,
                 idcolumn: "ID",
                 edit: function(row) {
@@ -24,7 +24,7 @@ $(function() {
         },
 
         render: function() {
-            var s = "";
+            let s = "";
             this.model();
             s += html.content_header(_("Publishing Logs"));
             s += tableform.table_render(this.table);

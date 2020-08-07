@@ -4,13 +4,13 @@ $(function() {
 
     "use strict";
 
-    var test = {
+    const test = {
 
         lastanimal: null,
         lastvet: null,
 
         model: function() {
-            var dialog = {
+            const dialog = {
                 add_title: _("Add test"),
                 edit_title: _("Edit test"),
                 edit_perm: 'cat',
@@ -35,10 +35,10 @@ $(function() {
                 ]
             };
 
-            var table = {
+            const table = {
                 rows: controller.rows,
                 idcolumn: "ID",
-                edit: function(row) {
+                edit: async function(row) {
                     if (controller.animal) {
                         $("#animal").closest("tr").hide();
                     }
@@ -50,19 +50,18 @@ $(function() {
                     test.enable_default_cost = false;
                     tableform.fields_populate_from_json(dialog.fields, row);
                     test.enable_default_cost = true;
-                    tableform.dialog_show_edit(dialog, row)
-                        .then(function() {
-                            tableform.fields_update_row(dialog.fields, row);
-                            test.set_extra_fields(row);
-                            return tableform.fields_post(dialog.fields, "mode=update&testid=" + row.ID, "test");
-                        })
-                        .then(function(response) {
-                            tableform.table_update(table);
-                            tableform.dialog_close();
-                        })
-                        .fail(function(response) {
-                            tableform.dialog_enable_buttons();
-                        });
+                    await tableform.dialog_show_edit(dialog, row);
+                    tableform.fields_update_row(dialog.fields, row);
+                    test.set_extra_fields(row);
+                    try {
+                        await tableform.fields_post(dialog.fields, "mode=update&testid=" + row.ID, "test");
+                        tableform.table_update(table);
+                        tableform.dialog_close();
+                    }
+                    catch(err) {
+                        log.error(err, err); 
+                        tableform.dialog_enable_buttons();
+                    }
                 },
                 complete: function(row) {
                     if (row.DATEOFTEST) { return true; }
@@ -107,7 +106,7 @@ $(function() {
                     },
                     { field: "LOCATIONNAME", display: _("Location"),
                         formatter: function(row) {
-                            var s = row.LOCATIONNAME;
+                            let s = row.LOCATIONNAME;
                             if (row.LOCATIONUNIT) {
                                 s += ' <span class="asm-search-locationunit">' + row.LOCATIONUNIT + '</span>';
                             }
@@ -146,28 +145,24 @@ $(function() {
                 ]
             };
 
-            var buttons = [
+            const buttons = [
                 { id: "new", text: _("New Test"), icon: "new", enabled: "always", perm: "aat", 
-                     click: function() { test.new_test(); }},
+                    click: function() { test.new_test(); }},
                 { id: "bulk", text: _("Bulk Test"), icon: "new", enabled: "always", perm: "cat", 
                     hideif: function() { return controller.animal; }, click: function() { test.new_bulk_test(); }},
-                 { id: "delete", text: _("Delete"), icon: "delete", enabled: "multi", perm: "dat", 
-                     click: function() { 
-                         tableform.delete_dialog()
-                             .then(function() {
-                                 tableform.buttons_default_state(buttons);
-                                 var ids = tableform.table_ids(table);
-                                 return common.ajax_post("test", "mode=delete&ids=" + ids);
-                             })
-                             .then(function() {
-                                 tableform.table_remove_selected_from_json(table, controller.rows);
-                                 tableform.table_update(table);
-                             });
-                     } 
-                 },
-                 { id: "perform", text: _("Perform"), icon: "complete", enabled: "multi", perm: "cat",
-                     click: function() {
-                        var comments = "";
+                { id: "delete", text: _("Delete"), icon: "delete", enabled: "multi", perm: "dat", 
+                    click: async function() { 
+                        await tableform.delete_dialog();
+                        tableform.buttons_default_state(buttons);
+                        let ids = tableform.table_ids(table);
+                        await common.ajax_post("test", "mode=delete&ids=" + ids);
+                        tableform.table_remove_selected_from_json(table, controller.rows);
+                        tableform.table_update(table);
+                    } 
+                },
+                { id: "perform", text: _("Perform"), icon: "complete", enabled: "multi", perm: "cat",
+                    click: function() {
+                        let comments = "";
                         $.each(controller.rows, function(i, v) {
                             if (tableform.table_id_selected(v.ID)) {
                                 comments += "[" + v.SHELTERCODE + " - " + v.ANIMALNAME + "] ";
@@ -185,23 +180,23 @@ $(function() {
                             $("#givenvet").personchooser("loadbyid", controller.animal.CURRENTVETID); 
                         }
                         $("#dialog-given").dialog("open");
-                     }
-                 },
-                 { id: "offset", type: "dropdownfilter", 
-                     options: [ "m365|" + _("Due today"), "p7|" + _("Due in next week"), 
+                    }
+                },
+                { id: "offset", type: "dropdownfilter", 
+                    options: [ "m365|" + _("Due today"), "p7|" + _("Due in next week"), 
                         "p31|" + _("Due in next month"), "p365|" + _("Due in next year"), 
                         "g1|" + _("Given today"), "g7|" + _("Given in last week"),
                         "g31|" + _("Given in last month") ],
-                     click: function(selval) {
+                    click: function(selval) {
                         common.route(controller.name + "?offset=" + selval);
-                     },
-                     hideif: function(row) {
-                         // Don't show for animal records
-                         if (controller.animal) {
-                             return true;
-                         }
-                     }
-                 }
+                    },
+                    hideif: function(row) {
+                        // Don't show for animal records
+                        if (controller.animal) {
+                            return true;
+                        }
+                    }
+                }
             ];
             this.dialog = dialog;
             this.table = table;
@@ -209,7 +204,7 @@ $(function() {
         },
 
         render: function() {
-            var s = "";
+            let s = "";
             this.model();
             s += tableform.dialog_render(this.dialog);
             s += test.render_givendialog();
@@ -226,25 +221,26 @@ $(function() {
         },
 
         new_test: function() { 
-            var dialog = test.dialog, table = test.table;
+            let dialog = test.dialog, table = test.table;
             tableform.dialog_show_add(dialog, {
                 onvalidate: function() {
                     return validate.notzero([ "animal" ]);
                 },
-                onadd: function() {
-                    tableform.fields_post(dialog.fields, "mode=create", "test")
-                        .then(function(response) {
-                            var row = {};
-                            row.ID = response;
-                            tableform.fields_update_row(dialog.fields, row);
-                            test.set_extra_fields(row);
-                            controller.rows.push(row);
-                            tableform.table_update(table);
-                            tableform.dialog_close();
-                        })
-                        .fail(function() {
-                            tableform.dialog_enable_buttons();   
-                        });
+                onadd: async function() {
+                    try {
+                        let response = await tableform.fields_post(dialog.fields, "mode=create", "test");
+                        let row = {};
+                        row.ID = response;
+                        tableform.fields_update_row(dialog.fields, row);
+                        test.set_extra_fields(row);
+                        controller.rows.push(row);
+                        tableform.table_update(table);
+                        tableform.dialog_close();
+                    }
+                    catch(err) {
+                        log.error(err, err);
+                        tableform.dialog_enable_buttons();   
+                    }
                 },
                 onload: function() {
                     if (controller.animal) {
@@ -266,20 +262,21 @@ $(function() {
         },
 
         new_bulk_test: function() { 
-            var dialog = test.dialog, table = test.table;
+            let dialog = test.dialog, table = test.table;
             tableform.dialog_show_add(dialog, {
                 onvalidate: function() {
                     return validate.notblank([ "animals" ]);
                 },
-                onadd: function() {
-                    tableform.fields_post(dialog.fields, "mode=createbulk", "test")
-                        .then(function(response) {
-                            tableform.dialog_close();
-                            common.route_reload();
-                        })
-                        .fail(function() {
-                            tableform.dialog_enable_buttons();   
-                        });
+                onadd: async function() {
+                    try {
+                        await tableform.fields_post(dialog.fields, "mode=createbulk", "test");
+                        tableform.dialog_close();
+                        common.route_reload();
+                    }
+                    catch(err) {
+                        log.error(err, err);
+                        tableform.dialog_enable_buttons();   
+                    }
                 },
                 onload: function() {
                     $("#animal").closest("tr").hide();
@@ -346,29 +343,29 @@ $(function() {
         },
 
         bind_givendialog: function() {
-            var givenbuttons = { };
-            var dialog = test.dialog, table = test.table;
-            givenbuttons[_("Save")] = function() {
+            let givenbuttons = { };
+            let dialog = test.dialog, table = test.table;
+            givenbuttons[_("Save")] = async function() {
                 validate.reset("dialog-given");
                 if (!validate.notblank([ "newdate" ])) { return; }
                 $("#usagedate").val($("#newdate").val()); // copy given to usage
                 $("#dialog-given").disable_dialog_buttons();
-                var ids = tableform.table_ids(table);
-                common.ajax_post("test", $("#dialog-given .asm-field").toPOST() + "&mode=perform&ids=" + ids)
-                    .then(function() {
-                        $.each(controller.rows, function(i, t) {
-                            if (tableform.table_id_selected(t.ID)) {
-                                t.DATEOFTEST = format.date_iso($("#newdate").val());
-                                t.TESTRESULTID = $("#testresult").val();
-                                t.RESULTNAME = common.get_field(controller.testresults, t.TESTRESULTID, "RESULTNAME");
-                            }
-                        });
-                        tableform.table_update(table);
-                    })
-                    .always(function() {
-                        $("#dialog-given").dialog("close");
-                        $("#dialog-given").enable_dialog_buttons();
+                let ids = tableform.table_ids(table);
+                try {
+                    await common.ajax_post("test", $("#dialog-given .asm-field").toPOST() + "&mode=perform&ids=" + ids);
+                    $.each(controller.rows, function(i, t) {
+                        if (tableform.table_id_selected(t.ID)) {
+                            t.DATEOFTEST = format.date_iso($("#newdate").val());
+                            t.TESTRESULTID = $("#testresult").val();
+                            t.RESULTNAME = common.get_field(controller.testresults, t.TESTRESULTID, "RESULTNAME");
+                        }
                     });
+                    tableform.table_update(table);
+                }
+                finally {
+                    $("#dialog-given").dialog("close");
+                    $("#dialog-given").enable_dialog_buttons();
+                }
             };
             givenbuttons[_("Cancel")] = function() {
                 $("#dialog-given").dialog("close");
@@ -429,7 +426,7 @@ $(function() {
         /** Sets the default cost based on the selected test type */
         set_default_cost: function() {
             if (!test.enable_default_cost) { return; }
-            var seltype = $("#type").val();
+            let seltype = $("#type").val();
             $.each(controller.testtypes, function(i, v) {
                 if (seltype == v.ID) {
                     if (v.DEFAULTCOST) {
@@ -481,7 +478,7 @@ $(function() {
         name: "test",
         animation: function() { return controller.name == "test" ? "book" : "formtab"; },
         title:  function() { 
-            var t = "";
+            let t = "";
             if (controller.name == "animal_test") {
                 t = common.substitute(_("{0} - {1} ({2} {3} aged {4})"), { 
                     0: controller.animal.ANIMALNAME, 1: controller.animal.CODE, 2: controller.animal.SEXNAME,

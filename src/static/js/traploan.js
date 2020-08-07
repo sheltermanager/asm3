@@ -4,10 +4,10 @@ $(function() {
 
     "use strict";
 
-    var traploan = {
+    const traploan = {
 
         model: function() {
-            var dialog = {
+            const dialog = {
                 add_title: _("Add trap loan"),
                 edit_title: _("Edit trap loan"),
                 edit_perm: 'catl',
@@ -27,21 +27,17 @@ $(function() {
                 ]
             };
 
-            var table = {
+            const table = {
                 rows: controller.rows,
                 idcolumn: "ID",
-                edit: function(row) {
-                    tableform.dialog_show_edit(dialog, row)
-                        .then(function() {
-                            tableform.fields_update_row(dialog.fields, row);
-                            row.TRAPTYPENAME = common.get_field(controller.traptypes, row.TRAPTYPEID, "TRAPTYPENAME");
-                            row.OWNERNAME = $("#person").personchooser("get_selected").OWNERNAME;
-                            return tableform.fields_post(dialog.fields, "mode=update&traploanid=" + row.ID, "traploan");
-                        })
-                        .then(function(response) {
-                            tableform.table_update(table);
-                            tableform.dialog_close();
-                        });
+                edit: async function(row) {
+                    await tableform.dialog_show_edit(dialog, row);
+                    tableform.fields_update_row(dialog.fields, row);
+                    row.TRAPTYPENAME = common.get_field(controller.traptypes, row.TRAPTYPEID, "TRAPTYPENAME");
+                    row.OWNERNAME = $("#person").personchooser("get_selected").OWNERNAME;
+                    await tableform.fields_post(dialog.fields, "mode=update&traploanid=" + row.ID, "traploan");
+                    tableform.table_update(table);
+                    tableform.dialog_close();
                 },
                 complete: function(row) {
                     if (row.RETURNDATE) { return true; }
@@ -71,43 +67,35 @@ $(function() {
                 ]
             };
 
-            var buttons = [
-                 { id: "new", text: _("New Trap Loan"), icon: "new", enabled: "always", perm: "aatl",
-                     click: function() { 
-                         $("#person").personchooser("clear");
-                         if (controller.person) {
-                             $("#person").personchooser("loadbyid", controller.person.ID);
-                         }
-                         tableform.dialog_show_add(dialog, { onload: traploan.type_change })
-                             .then(function() {
-                                 return tableform.fields_post(dialog.fields, "mode=create", "traploan");
-                             })
-                             .then(function(response) {
-                                 var row = {};
-                                 row.ID = response;
-                                 tableform.fields_update_row(dialog.fields, row);
-                                 row.TRAPTYPENAME = common.get_field(controller.traptypes, row.TRAPTYPEID, "TRAPTYPENAME");
-                                 row.OWNERNAME = $("#person").personchooser("get_selected").OWNERNAME;
-                                 controller.rows.push(row);
-                                 tableform.table_update(table);
-                                 tableform.dialog_close();
-                             });
-                     } 
-                 },
-                 { id: "delete", text: _("Delete"), icon: "delete", enabled: "multi", perm: "datl",
-                     click: function() { 
-                         tableform.delete_dialog()
-                             .then(function() {
-                                 tableform.buttons_default_state(buttons);
-                                 var ids = tableform.table_ids(table);
-                                 return common.ajax_post("traploan", "mode=delete&ids=" + ids);
-                             }) 
-                             .then(function() {
-                                 tableform.table_remove_selected_from_json(table, controller.rows);
-                                 tableform.table_update(table);
-                             });
-                     } 
-                 }
+            const buttons = [
+                { id: "new", text: _("New Trap Loan"), icon: "new", enabled: "always", perm: "aatl",
+                    click: async function() { 
+                        $("#person").personchooser("clear");
+                        if (controller.person) {
+                            $("#person").personchooser("loadbyid", controller.person.ID);
+                        }
+                        await tableform.dialog_show_add(dialog, { onload: traploan.type_change });
+                        let response = await tableform.fields_post(dialog.fields, "mode=create", "traploan");
+                        let row = {};
+                        row.ID = response;
+                        tableform.fields_update_row(dialog.fields, row);
+                        row.TRAPTYPENAME = common.get_field(controller.traptypes, row.TRAPTYPEID, "TRAPTYPENAME");
+                        row.OWNERNAME = $("#person").personchooser("get_selected").OWNERNAME;
+                        controller.rows.push(row);
+                        tableform.table_update(table);
+                        tableform.dialog_close();
+                    } 
+                },
+                { id: "delete", text: _("Delete"), icon: "delete", enabled: "multi", perm: "datl",
+                    click: async function() { 
+                        await tableform.delete_dialog();
+                        tableform.buttons_default_state(buttons);
+                        let ids = tableform.table_ids(table);
+                        await common.ajax_post("traploan", "mode=delete&ids=" + ids);
+                        tableform.table_remove_selected_from_json(table, controller.rows);
+                        tableform.table_update(table);
+                    } 
+                }
             ];
             this.dialog = dialog;
             this.buttons = buttons;
@@ -115,7 +103,7 @@ $(function() {
         },
 
         render: function() {
-            var s = "";
+            let s = "";
             this.model();
             s += tableform.dialog_render(this.dialog);
             if (controller.name.indexOf("person_") == 0) {
@@ -139,7 +127,7 @@ $(function() {
         },
 
         type_change: function() {
-            var dc = common.get_field(controller.traptypes, $("#type").select("value"), "DEFAULTCOST");
+            let dc = common.get_field(controller.traptypes, $("#type").select("value"), "DEFAULTCOST");
             $("#depositamount").currency("value", dc);
         },
 

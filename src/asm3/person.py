@@ -85,12 +85,15 @@ def embellish_adoption_warnings(dbo, p):
         p.INCIDENT = warn.INCIDENT
     return p
 
-def get_person_similar(dbo, email = "", mobile = "", surname = "", forenames = "", address = ""):
+def get_person_similar(dbo, email = "", mobile = "", surname = "", forenames = "", address = "", siteid = 0):
     """
     Returns people with similar email, mobile, names and addresses to those supplied.
+    If siteid is non-zero, only people with that site will be checked
     """
     # Consider the first word rather than first address line - typically house
     # number/name and unlikely to be the same for different people
+    siteclause = ""
+    if siteid != 0: siteclause = "o.SiteID=%s AND " % siteid
     if address.find(" ") != -1: address = address[0:address.find(" ")]
     if address.find("\n") != -1: address = address[0:address.find("\n")]
     if address.find(",") != -1: address = address[0:address.find(",")]
@@ -102,11 +105,11 @@ def get_person_similar(dbo, email = "", mobile = "", surname = "", forenames = "
     eq = []
     mq = []
     if email != "" and email.find("@") != -1 and email.find(".") != -1 and len(email) > 6:
-        eq = dbo.query(get_person_query(dbo) + " WHERE LOWER(o.EmailAddress) LIKE ?", [email])
+        eq = dbo.query(get_person_query(dbo) + " WHERE %s LOWER(o.EmailAddress) LIKE ?" % siteclause, [email])
     if mobile != "" and len(mobile) > 6:
-        mq = dbo.query(get_person_query(dbo) + " WHERE %s LIKE ?" % dbo.sql_atoi("o.MobileTelephone") , [str(asm3.utils.atoi(mobile))])
-    per = dbo.query(get_person_query(dbo) + " WHERE LOWER(o.OwnerSurname) LIKE ? AND " \
-        "LOWER(o.OwnerForeNames) LIKE ? AND LOWER(o.OwnerAddress) LIKE ?", (surname, forenames + "%", address + "%"))
+        mq = dbo.query(get_person_query(dbo) + " WHERE %s %s LIKE ?" % (siteclause, dbo.sql_atoi("o.MobileTelephone")) , [str(asm3.utils.atoi(mobile))])
+    per = dbo.query(get_person_query(dbo) + " WHERE %s LOWER(o.OwnerSurname) LIKE ? AND " \
+        "LOWER(o.OwnerForeNames) LIKE ? AND LOWER(o.OwnerAddress) LIKE ?" % siteclause, (surname, forenames + "%", address + "%"))
     return eq + mq + per
 
 def get_person_name(dbo, personid):
@@ -1083,7 +1086,7 @@ def merge_person(dbo, username, personid, mergepersonid):
     reparent("users", "OwnerID")
     reparent("media", "LinkID", "LinkTypeID", asm3.media.PERSON, lastchanged=False)
     reparent("diary", "LinkID", "LinkType", asm3.diary.PERSON)
-    reparent("log", "LinkID", "LinkType", asm3.log.PERSON)
+    reparent("log", "LinkID", "LinkType", asm3.log.PERSON, lastchanged=False)
 
     # Reparent the audit records for the reparented records in the audit log
     # by switching ParentLinks to the new ID.
@@ -1442,6 +1445,8 @@ def lookingfor_report(dbo, username = "system", personid = 0, limit = 0):
 
         # Output owner info
         h.append("<h2>%s (%s) %s %s</h2>" % (p.OWNERNAME, p.OWNERADDRESS, p.HOMETELEPHONE, p.MOBILETELEPHONE))
+        if p.MATCHADDED is not None or p.MATCHEXPIRES is not None:
+            h.append( "<p style='font-size: 8pt'>%s - %s</p>" % (python2display(l, p.MATCHADDED), python2display(l, p.MATCHEXPIRES)) )
         if p.COMMENTS != "" and p.COMMENTS is not None: 
             h.append( "<p style='font-size: 8pt'>%s</p>" % p.COMMENTS)
 
@@ -1579,7 +1584,7 @@ def update_lookingfor_report(dbo):
     Updates the latest version of the looking for report in the cache
     """
     asm3.al.debug("updating lookingfor report", "person.update_lookingfor_report", dbo)
-    s = lookingfor_report(dbo, limit=1000)
+    s = lookingfor_report(dbo, limit=5000)
     count = lookingfor_last_match_count(dbo)
     asm3.cachedisk.put("lookingfor_report", dbo.database, s, 86400)
     asm3.cachedisk.put("lookingfor_lastmatchcount", dbo.database, count, 86400)

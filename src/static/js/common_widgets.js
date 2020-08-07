@@ -681,7 +681,14 @@ $.widget("asm.emailform", {
         }
         $("#emailfrom").autocomplete({source: mailaddresses});
         $("#emailfrom").autocomplete("widget").css("z-index", 1000);
-        if (o.email) { $("#emailto").val(common.replace_all(html.decode(o.name), ",", "") + " <" + o.email + ">"); }
+        if (o.email && o.email.indexOf(",") != -1) { 
+            // If there's more than one email address, only output the comma separated emails
+            $("#emailto").val(o.email); 
+        }
+        else if (o.email) { 
+            // Otherwise, use RFC821
+            $("#emailto").val(common.replace_all(html.decode(o.name), ",", "") + " <" + o.email + ">"); 
+        }
         let msg = config.str("EmailSignature");
         if (o.message) { msg = "<p>" + o.message + "</p>" + msg; }
         else { msg = "<p>&nbsp;</p>" + msg; }

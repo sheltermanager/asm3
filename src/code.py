@@ -330,7 +330,7 @@ class ASMEndpoint(object):
         return web.ctx.env.get("HTTP_REFERER", "")
 
     def reload_config(self):
-        """ Reloads items in the session based on database values, invalids config.js so client reloads it """
+        """ Reloads items in the session based on database values, invalidates config.js so client reloads it """
         asm3.users.update_session(session)
 
     def remote_ip(self):
@@ -866,6 +866,11 @@ class main(JSONEndpoint):
         # If there's something wrong with the database, logout
         if not dbo.has_structure():
             self.redirect("logout")
+        # If a b (build) parameter was passed to indicate the client wants to
+        # get the latest js files, invalidate the config so that the
+        # frontend doesn't keep receiving the same build number via configjs 
+        # and get into an endless loop of reloads
+        if o.post["b"] != "": self.reload_config()
         # Database update checks
         dbmessage = ""
         if asm3.dbupdate.check_for_updates(dbo):
@@ -918,9 +923,9 @@ class main(JSONEndpoint):
         # Diary Notes
         dm = None
         if asm3.configuration.all_diary_home_page(dbo): 
-            dm = asm3.diary.get_uncompleted_upto_today(dbo, "", False)
+            dm = asm3.diary.get_uncompleted_upto_today(dbo, "", includecreatedby=False, offset=-365)
         else:
-            dm = asm3.diary.get_uncompleted_upto_today(dbo, o.user, False)
+            dm = asm3.diary.get_uncompleted_upto_today(dbo, o.user, includecreatedby=False, offset=-365)
         # Use a 2 minute cache, with a longer cache time of 15 minutes for big databases
         # on the following complex calls for stats, alerts and the timeline
         age = 120
@@ -944,6 +949,7 @@ class main(JSONEndpoint):
         return {
             "showwelcome": showwelcome,
             "build": BUILD,
+            "noreload": o.post["b"] != "", 
             "news": news,
             "dbmessage": dbmessage,
             "version": get_version(),
@@ -1213,7 +1219,7 @@ class accounts_trx(JSONEndpoint):
 
 class additional(JSONEndpoint):
     url = "additional"
-    get_permissions = asm3.users.MODIFY_LOOKUPS
+    get_permissions = asm3.users.MODIFY_ADDITIONAL_FIELDS
 
     def controller(self, o):
         dbo = o.dbo
@@ -1226,15 +1232,15 @@ class additional(JSONEndpoint):
         }
 
     def post_create(self, o):
-        self.check(asm3.users.MODIFY_LOOKUPS)
+        self.check(asm3.users.MODIFY_ADDITIONAL_FIELDS)
         return asm3.additional.insert_field_from_form(o.dbo, o.user, o.post)
 
     def post_update(self, o):
-        self.check(asm3.users.MODIFY_LOOKUPS)
+        self.check(asm3.users.MODIFY_ADDITIONAL_FIELDS)
         asm3.additional.update_field_from_form(o.dbo, o.user, o.post)
 
     def post_delete(self, o):
-        self.check(asm3.users.MODIFY_LOOKUPS)
+        self.check(asm3.users.MODIFY_ADDITIONAL_FIELDS)
         for fid in o.post.integer_list("ids"):
             asm3.additional.delete_field(o.dbo, o.user, fid)
 
@@ -1270,6 +1276,7 @@ class animal(JSONEndpoint):
             "flags": asm3.lookups.get_animal_flags(dbo),
             "incidents": asm3.animalcontrol.get_animalcontrol_for_animal(dbo, o.post.integer("id")),
             "internallocations": asm3.lookups.get_internal_locations(dbo, o.locationfilter, o.siteid),
+            "jurisdictions": asm3.lookups.get_jurisdictions(dbo),
             "logtypes": asm3.lookups.get_log_types(dbo),
             "pickuplocations": asm3.lookups.get_pickup_locations(dbo),
             "publishhistory": asm3.animal.get_publish_history(dbo, a["ID"]),
@@ -1711,6 +1718,7 @@ class animal_new(JSONEndpoint):
             "flags": asm3.lookups.get_animal_flags(dbo),
             "sexes": asm3.lookups.get_sexes(dbo),
             "entryreasons": asm3.lookups.get_entryreasons(dbo),
+            "jurisdictions": asm3.lookups.get_jurisdictions(dbo),
             "internallocations": asm3.lookups.get_internal_locations(dbo, o.locationfilter, o.siteid),
             "sizes": asm3.lookups.get_sizes(dbo)
         }
@@ -2189,11 +2197,11 @@ class clinic_waitingroom(JSONEndpoint):
 
 class csvexport(JSONEndpoint):
     url = "csvexport"
-    get_permissions = asm3.users.USE_SQL_INTERFACE
+    get_permissions = asm3.users.EXPORT_REPORT
 
 class csvexport_animals(ASMEndpoint):
     url = "csvexport_animals"
-    get_permissions = asm3.users.USE_SQL_INTERFACE
+    get_permissions = asm3.users.EXPORT_REPORT
 
     def content(self, o):
         # If we're retrieving an already saved export, serve it.
@@ -2240,7 +2248,7 @@ class csvimport_paypal(JSONEndpoint):
     def post_all(self, o):
         l = o.locale
         asm3.asynctask.function_task(o.dbo, _("Import a PayPal CSV file", l), asm3.csvimport.csvimport_paypal, o.dbo, \
-            o.post.filedata(), o.post.integer("type"), o.post.integer("payment"), o.post["flags"], o.user)
+            o.post.filedata(), o.post.integer("type"), o.post.integer("payment"), o.post["flags"], o.user, o.post["encoding"])
         self.redirect("task")
 
 class diary(ASMEndpoint):
@@ -4376,6 +4384,7 @@ class options(JSONEndpoint):
             "entryreasons": asm3.lookups.get_entryreasons(dbo),
             "incidenttypes": asm3.lookups.get_incident_types(dbo),
             "haspaypal": PAYPAL_VALIDATE_IPN_URL != "",
+            "jurisdictions": asm3.lookups.get_jurisdictions(dbo),
             "locales": get_locales(),
             "locations": asm3.lookups.get_internal_locations(dbo),
             "logtypes": asm3.lookups.get_log_types(dbo),
@@ -4686,7 +4695,7 @@ class person_embed(ASMEndpoint):
         address = post["address"]
         email = post["emailaddress"]
         mobile = post["mobiletelephone"]
-        p = asm3.person.get_person_similar(dbo, email, mobile, surname, forenames, address)
+        p = asm3.person.get_person_similar(dbo, email, mobile, surname, forenames, address, o.siteid)
         if len(p) == 0:
             asm3.al.debug("No similar people found for %s, %s, %s, %s, %s" % (email, mobile, surname, forenames, address), "code.person_embed", dbo)
         else:

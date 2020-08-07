@@ -25,7 +25,7 @@ SELECT * FROM
  --AND NOT (a.AdditionalFlags LIKE 'Ignore Issues|%' OR a.AdditionalFlags  LIKE '%|Ignore Issues|%')
 
 --An Adoption Movement was entered for a person record flagged as 'Other Shelter'.
-- -Probably should be a Transfer Movement.
+--Probably should be a Transfer Movement.
 SELECT
   animal.animalname AS name,
   animal.sheltercode AS code,
@@ -517,6 +517,15 @@ UNION SELECT
   'First Name is Blank.  Possible Organization.' AS issue
 FROM owner
 WHERE ownerforenames = '' and ownertype = 1
+
+--Checks to see if there is a firstname on an Organization Record. 
+UNION SELECT 
+  owner.ownername AS name,
+  owner.ownercode AS code,
+  date(owner.LastChangedDate) AS issuedate,
+  'First Name should be blank.  Change to Individual, clear First Name field, change back to Organization, and then re-Save.' AS issue
+FROM owner
+WHERE ownerforenames <> '' AND ownertype = 2
 
 --Checks for ownercodes that start with XX, which means last name field is missing.
 UNION SELECT 

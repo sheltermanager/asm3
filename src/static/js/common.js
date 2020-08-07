@@ -233,6 +233,7 @@ const common = {
     },
 
     browser_is: {
+        android: navigator.userAgent.match(/Android/i) != null,
         ios:     navigator.userAgent.match(/iPod|iPad/i) != null,
         chrome:  navigator.userAgent.match(/Chrome/i) != null,
         safari:  navigator.userAgent.match(/Safari/i) != null,
@@ -526,8 +527,9 @@ const common = {
      */
     module_start: function(modulename) {
 
-        var errhandler = function(name, e) {
-            var msg = "module_start [" + modulename + "]: " + name + ": " + e;
+        const errhandler = function(name, e) {
+            let msg = "accessing " + common.current_url() +
+                ", module_start [" + modulename + "]: " + name + ": " + e;
             log.error(msg, e);
             common.ajax_post("jserror", 
                 "user=" + encodeURIComponent(asm.user) +

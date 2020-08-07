@@ -227,7 +227,7 @@ def row_error(errors, rowtype, rowno, row, e, dbo, exinfo):
     asm3.al.error("row %d %s: (%s): %s" % (rowno, rowtype, str(row), errmsg), "csvimport.row_error", dbo, exinfo)
     errors.append( (rowno, str(row), errmsg) )
 
-def csvimport(dbo, csvdata, encoding = "utf8", user = "", createmissinglookups = False, cleartables = False, checkduplicates = False):
+def csvimport(dbo, csvdata, encoding = "utf-8-sig", user = "", createmissinglookups = False, cleartables = False, checkduplicates = False):
     """
     Imports csvdata (bytes string, encoded with encoding)
     createmissinglookups: If a lookup value is given that's not in our data, add it
@@ -391,6 +391,7 @@ def csvimport(dbo, csvdata, encoding = "utf8", user = "", createmissinglookups =
             a["size"] = gkl(dbo, row, "ANIMALSIZE", "lksize", "Size", False)
             if gks(row, "ANIMALSIZE") == "": 
                 a["size"] = str(asm3.configuration.default_size(dbo))
+            a["weight"] = gks(row, "ANIMALWEIGHT")
             a["internallocation"] = gkl(dbo, row, "ANIMALLOCATION", "internallocation", "LocationName", createmissinglookups)
             if a["internallocation"] == "0":
                 a["internallocation"] = str(asm3.configuration.default_location(dbo))
@@ -690,7 +691,7 @@ def csvimport(dbo, csvdata, encoding = "utf8", user = "", createmissinglookups =
     h.append("</table>")
     return "".join(h)
 
-def csvimport_paypal(dbo, csvdata, donationtypeid, donationpaymentid, flags, user = ""):
+def csvimport_paypal(dbo, csvdata, donationtypeid, donationpaymentid, flags, user = "", encoding="utf-8-sig"):
     """
     Imports a PayPal CSV file of transactions.
     """
@@ -709,7 +710,8 @@ def csvimport_paypal(dbo, csvdata, donationtypeid, donationpaymentid, flags, use
     else:
         user = "import/%s" % user
 
-    rows = asm3.utils.csv_parse( asm3.utils.cunicode(csvdata, encoding="cp1252") )
+    rows = asm3.utils.csv_parse( asm3.utils.cunicode(csvdata, encoding=encoding) )
+    print(rows[0])
 
     errors = []
     rowno = 1
@@ -833,7 +835,7 @@ def csvexport_animals(dbo, dataset, animalids = "", includephoto = False):
     
     ids = dbo.query(q)
 
-    keys = [ "ANIMALCODE", "ANIMALNAME", "ANIMALIMAGE", "ANIMALSEX", "ANIMALTYPE", "ANIMALCOLOR", "ANIMALBREED1",
+    keys = [ "ANIMALCODE", "ANIMALNAME", "ANIMALIMAGE", "ANIMALSEX", "ANIMALTYPE", "ANIMALWEIGHT", "ANIMALCOLOR", "ANIMALBREED1",
         "ANIMALBREED2", "ANIMALDOB", "ANIMALLOCATION", "ANIMALUNIT", "ANIMALSPECIES", "ANIMALCOMMENTS",
         "ANIMALHIDDENDETAILS", "ANIMALHEALTHPROBLEMS", "ANIMALMARKINGS", "ANIMALREASONFORENTRY", "ANIMALNEUTERED",
         "ANIMALNEUTEREDDATE", "ANIMALMICROCHIP", "ANIMALMICROCHIPDATE", "ANIMALENTRYDATE", "ANIMALDECEASEDDATE",
@@ -884,6 +886,8 @@ def csvexport_animals(dbo, dataset, animalids = "", includephoto = False):
         row["ANIMALBREED1"] = a["BREEDNAME1"]
         row["ANIMALBREED2"] = a["BREEDNAME2"]
         row["ANIMALDOB"] = asm3.i18n.python2display(l, a["DATEOFBIRTH"])
+        row["ANIMALSIZE"] = a["SIZENAME"]
+        row["ANIMALWEIGHT"] = a["WEIGHT"]
         row["ANIMALLOCATION"] = a["SHELTERLOCATIONNAME"]
         row["ANIMALUNIT"] = a["SHELTERLOCATIONUNIT"]
         row["ANIMALSPECIES"] = a["SPECIESNAME"]

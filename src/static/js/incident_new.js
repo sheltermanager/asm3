@@ -4,7 +4,7 @@ $(function() {
 
     "use strict";
 
-    var incident_new = {
+    const incident_new = {
 
         render: function() {
             return [
@@ -124,7 +124,7 @@ $(function() {
         },
 
         bind: function() {
-            var validation = function() {
+            const validation = function() {
                 // Remove any previous errors
                 header.hide_error();
                 validate.reset();
@@ -134,35 +134,35 @@ $(function() {
                 if (!additional.validate_mandatory()) { return false; }
                 return true;
             };
-            var addIncident = function(mode) {
+            const add_incident = async function(mode) {
                 if (!validation()) { 
                     $("#asm-content button").button("enable"); 
                     return; 
                 }
-                header.show_loading(_("Creating..."));
-                var formdata = $("input, textarea, select").not(".chooser").toPOST();
-                common.ajax_post("incident_new", formdata)
-                    .then(function(incidentid) { 
-                        if (mode == "addedit") {
-                            common.route("incident?id=" + incidentid);
-                        }
-                        else if (mode == "add") {
-                            header.show_info(_("Incident {0} successfully created.").replace("{0}", incidentid));
-                        }
-                    })
-                    .always( function() {
-                        $("#asm-content button").button("enable");
-                    });
+                try {
+                    header.show_loading(_("Creating..."));
+                    let formdata = $("input, textarea, select").not(".chooser").toPOST();
+                    let incidentid = await common.ajax_post("incident_new", formdata);
+                    if (mode == "addedit") {
+                        common.route("incident?id=" + incidentid);
+                    }
+                    else if (mode == "add") {
+                        header.show_info(_("Incident {0} successfully created.").replace("{0}", incidentid));
+                    }
+                }
+                finally {
+                    $("#asm-content button").button("enable");
+                }
             };
 
             $("#add").button().click(function() {
                 $("#asm-content button").button("disable");
-                addIncident("add");
+                add_incident("add");
             });
 
             $("#addedit").button().click(function() {
                 $("#asm-content button").button("disable");
-                addIncident("addedit");
+                add_incident("addedit");
             });
 
             $("#reset").button().click(function() {
@@ -202,6 +202,7 @@ $(function() {
             $("#calltime").val(format.time(new Date()));
             $("#calltaker").select("value", asm.user);
             $("#incidenttype").select("value", config.str("DefaultIncidentType"));
+            $("#jurisdiction").select("value", config.str("DefaultJurisdiction"));
 
             // Remove any retired lookups from the lists
             $(".asm-selectbox").select("removeRetiredOptions");

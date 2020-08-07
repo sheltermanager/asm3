@@ -34,13 +34,13 @@ PUBLISHER_LIST["hlp"] = {
 PUBLISHER_LIST["mf"] = {
     "label":    "Publish to Maddie's Pet Assistant",
     "class":    asm3.publishers.maddiesfund.MaddiesFundPublisher,
-    "locales":  "en en_CA en_AU",
+    "locales":  "en en_GB en_CA en_AU",
     "sub24hour": True
 }
 PUBLISHER_LIST["pc"] = {
     "label":    "Publish to Petcademy",
     "class":    asm3.publishers.petcademy.PetcademyPublisher,
-    "locales":  "en",
+    "locales":  "en en_GB en_CA en_AU",
     "sub24hour": True
 }
 PUBLISHER_LIST["pf"] = {

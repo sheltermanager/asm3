@@ -4,7 +4,7 @@ $(function() {
 
     "use strict";
 
-    var licence_renewal = {
+    const licence_renewal = {
 
         lastperson: null,
 
@@ -73,14 +73,14 @@ $(function() {
         },
 
         type_change: function() {
-            var dc = common.get_field(controller.licencetypes, $("#type").select("value"), "DEFAULTCOST");
+            let dc = common.get_field(controller.licencetypes, $("#type").select("value"), "DEFAULTCOST");
             $("#amount1").currency("value", dc);
             $("#fee").currency("value", dc);
             $("#payment").payments("update_totals");
         },
 
         bind: function() {
-            var validation = function() {
+            const validation = function() {
                 // Remove any previous errors
                 header.hide_error();
                 validate.reset();
@@ -119,32 +119,31 @@ $(function() {
             // When type changes, update the fee
             $("#type").change(licence_renewal.type_change);
 
-            $("#renew").button().click(function() {
+            $("#renew").button().click(async function() {
                 if (!validation()) { return; }
                 $("#renew").button("disable");
-                header.show_loading(_("Creating..."));
-
-                var formdata = $("input, select").toPOST();
-                common.ajax_post("licence_renewal", formdata)
-                    .then(function(result) { 
-                        header.hide_loading();
-                        if (!result) {
-                            header.show_error(_("Failed to renew license.")); 
-                        }
-                        else {
-                            var msg = _("Licence for {0} successfully renewed {1} - {2}")
-                                    .replace("{0}", licence_renewal.lastperson.OWNERNAME)
-                                    .replace("{1}", $("#issuedate").val())
-                                    .replace("{2}", $("#expirydate").val());
-                            var u = "move_gendoc?" +
-                                "linktype=LICENCE&id=" + result +
-                                "&message=" + encodeURIComponent(common.base64_encode(msg));
-                            common.route(u);
-                        }
-                    })
-                    .always(function() {
-                        $("#renew").button("enable");
-                    });
+                try {
+                    header.show_loading(_("Creating..."));
+                    let formdata = $("input, select").toPOST();
+                    let result = await common.ajax_post("licence_renewal", formdata);
+                    header.hide_loading();
+                    if (!result) {
+                        header.show_error(_("Failed to renew license.")); 
+                    }
+                    else {
+                        let msg = _("Licence for {0} successfully renewed {1} - {2}")
+                                .replace("{0}", licence_renewal.lastperson.OWNERNAME)
+                                .replace("{1}", $("#issuedate").val())
+                                .replace("{2}", $("#expirydate").val());
+                        let u = "move_gendoc?" +
+                            "linktype=LICENCE&id=" + result +
+                            "&message=" + encodeURIComponent(common.base64_encode(msg));
+                        common.route(u);
+                    }
+                }
+                finally {
+                    $("#renew").button("enable");
+                }
             });
         },
 

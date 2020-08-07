@@ -115,6 +115,9 @@ scale_pdf_cmd = convert -density 120 -quality 60 %(input)s -compress Jpeg %(outp
 # html_to_pdf = wkhtmltopdf --orientation %(orientation)s %(papersize)s %(input)s %(output)s
 html_to_pdf = pisa
 
+# Electronic signature activation (uncomment to enable)
+# electronic_signatures = touch
+
 # Target for viewing an address on a map, {0} is the address
 map_link = https://www.openstreetmap.org/search?query={0}
 

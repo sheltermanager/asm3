@@ -4,7 +4,7 @@ $(function() {
 
     "use strict";
 
-    var move_retailer = {
+    const move_retailer = {
 
         render: function() {
             return [
@@ -45,6 +45,12 @@ $(function() {
                 '<input id="retailerdate" data="retailerdate" class="asm-textbox asm-datebox" title="' + html.title(_("The date the retailer movement is effective from")) + '" />',
                 '</td>',
                 '</tr>',
+                '<tr id="commentsrow">',
+                '<td><label for="comments">' + _("Comments") + '</label></td>',
+                '<td>',
+                '<textarea class="asm-textarea" id="comments" data="comments" rows="3"></textarea>',
+                '</td>',
+                '</tr>',
                 '</table>',
                 html.content_footer(),
                 html.box(5),
@@ -55,7 +61,7 @@ $(function() {
         },
 
         bind: function() {
-            var validation = function() {
+            const validation = function() {
                 // Remove any previous errors
                 header.hide_error();
                 validate.reset();
@@ -111,29 +117,25 @@ $(function() {
             // Remove any retired lookups from the lists
             $(".asm-selectbox").select("removeRetiredOptions");
 
-            $("#retailer").button().click(function() {
+            $("#retailer").button().click(async function() {
                 if (!validation()) { return; }
                 $("#retailer").button("disable");
                 header.show_loading(_("Creating..."));
-
-                var formdata = "mode=create&" + $("input, select").toPOST();
-                common.ajax_post("move_retailer", formdata)
-                    .then(function(data) {
-
-                        $("#movementid").val(data);
-
-                        var u = "move_gendoc?" +
-                            "linktype=MOVEMENT&id=" + data +
-                            "&message=" + encodeURIComponent(common.base64_encode(_("Retailer movement successfully created.") + " " + 
-                                $(".animalchooser-display").html() + " " + html.icon("right") + " " +
-                                $(".personchooser-display .justlink").html() ));
-                        common.route(u);
-
-                    })
-                    .always(function() {
-                        header.hide_loading();
-                        $("#retailer").button("enable");
-                    });
+                try { 
+                    let formdata = "mode=create&" + $("input, select, textarea").toPOST();
+                    let data = await common.ajax_post("move_retailer", formdata);
+                    $("#movementid").val(data);
+                    let u = "move_gendoc?" +
+                        "linktype=MOVEMENT&id=" + data +
+                        "&message=" + encodeURIComponent(common.base64_encode(_("Retailer movement successfully created.") + " " + 
+                            $(".animalchooser-display").html() + " " + html.icon("right") + " " +
+                            $(".personchooser-display .justlink").html() ));
+                    common.route(u);
+                }
+                finally {
+                    header.hide_loading();
+                    $("#retailer").button("enable");
+                }
             });
 
         },

@@ -707,6 +707,13 @@ def bytesio(contents = ""):
     if contents != "": return BytesIO(contents)
     return BytesIO()
 
+def strip_duplicate_spaces(s):
+    """
+    Removes duplicate spaces from a string and strips, eg: ' Bad   Flag' becomes 'Bad Flag'
+    """
+    if s is None: return ""
+    return " ".join(re.split("\s+", s)).strip()
+
 def strip_html_tags(s):
     """
     Removes all html tags from a string, leaving just the
@@ -880,9 +887,9 @@ def csv_parse(s):
     csvreader in a way that works for Python 2 and 3 is a nightmare and more code than
     just doing it yourself.
     """
+    if s[0:3] == "\xef\xbb\xbf": s = s[3:] # strip any utf-8 BOM if included (should not be necessary with utf-8-sig)
     s = s.replace("\r\n", "\n")
     s = s.replace("\r", "\n")
-    if s[0:3] == "\xef\xbb\xbf": s = s[3:] # strip any BOM if included
     rows = [] # parsed rows
     pos = [0, 0, False] # line start position, item start position and EOF 
     def readline():
@@ -995,9 +1002,9 @@ def fix_relative_document_uris(dbo, s):
             if mode == "nopic":
                 u = url("extra_image", "title=nopic.jpg")
             elif mode == "animal":
-                u = url("animal_image", "animalid=%s" % qsp(l, "animalid"))
+                u = url("animal_image", "animalid=%s" % qsp(l, "id"))
             elif mode == "animalthumb":
-                u = url("animal_thumbnail", "animalid=%s" % qsp(l, "animalid"))
+                u = url("animal_thumbnail", "animalid=%s" % qsp(l, "id"))
             elif mode == "dbfs":
                 u = url("dbfs_image", "title=%s" % qsp(l, "id"))
             elif mode == "media":

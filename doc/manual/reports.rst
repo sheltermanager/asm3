@@ -118,6 +118,10 @@ information, or information requested from the user at report generation time.
   for the current database. This saves you having to use NOW() or
   CURRENT_DATE() or various other SQL functions specific to one database.
 
+* $CURRENT_DATE-X$ - The same as CURRENT_DATE, but subtracts X days.
+
+* $CURRENT_DATE+X$ - The same as CURRENT_DATE, but adds X days.
+
 * $PARENTKEY$ - Substitutes the field value named in the report calling this
   subreport. For example, a report could pass an Animal ID as the parent key to
   a subreport for filtering data correctly. When you use this key in your

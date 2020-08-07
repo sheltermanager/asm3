@@ -4,7 +4,7 @@ $(function() {
 
     "use strict";
 
-    var task = {
+    const task = {
 
         render: function() {
             return [
@@ -56,13 +56,11 @@ $(function() {
 
             $("#progress").progressbar();
 
-            $("#button-stop").button().click(function() {
+            $("#button-stop").button().click(async function() {
                 $("#button-stop").button("disable");
-                common.ajax_post("task", "mode=stop")
-                    .then(function() { 
-                        $("#button-stop").button("enable");
-                        task.forcestop = true;
-                    });
+                await common.ajax_post("task", "mode=stop");
+                $("#button-stop").button("enable");
+                task.forcestop = true;
             });
 
         },
@@ -79,88 +77,80 @@ $(function() {
             setTimeout(task.poll, 1000);
         },
 
-        poll: function() {
-            common.ajax_post("task", "mode=poll").then(function(result) { 
-                var bits = result.split("|");
-                var taskname = bits[0];
-                var progress = bits[1];
-                var lasterror = bits[2];
-                var returnvalue = bits[3];
+        poll: async function() {
+            let result = await common.ajax_post("task", "mode=poll");
+            let [taskname, progress, lasterror, returnvalue] = result.split("|");
+            let newtext = _("{0} is running ({1}&#37; complete).").replace("{0}", taskname).replace("{1}", progress);
+            $("#progress").progressbar("option", "value", parseInt(progress, 10));
+            $("#runningtext").html(newtext);
 
-                var newtext = _("{0} is running ({1}&#37; complete).").replace("{0}", taskname).replace("{1}", progress);
-                $("#progress").progressbar("option", "value", parseInt(progress, 10));
-                $("#runningtext").html(newtext);
+            // Show the last error if there was one and stop
+            if (lasterror) {
+                $("#lasterrortext").html(lasterror);
+                $("#lasterror").fadeIn();
+                $("#complete").fadeIn();
+                $("#running").hide();
+                $("#progress").hide();
+                $("#stop").hide();
+                return;
+            }
 
-                // Show the last error if there was one and stop
-                if (lasterror) {
-                    $("#lasterrortext").html(lasterror);
-                    $("#lasterror").fadeIn();
-                    $("#complete").fadeIn();
+            // Show the return value if there is one and stop
+            if (returnvalue) {
+                $("#returned").html(returnvalue);
+                $("#returned").fadeIn();
+                $("#complete").fadeIn();
+                $("#running").hide();
+                $("#progress").hide();
+                $("#stop").hide();
+                return;
+            }
+
+            // Task complete - stop
+            if (progress == "100") {
+                $("#complete").fadeIn();
+                $("#running").hide();
+                $("#progress").hide();
+                $("#stop").hide();
+                return;
+            }
+
+            // No task running
+            if (taskname == "NONE") {
+
+                // Did the user force a stop?
+                if (task.forcestop) {
+                    $("#stopped").fadeIn();
                     $("#running").hide();
                     $("#progress").hide();
                     $("#stop").hide();
-                    return;
                 }
-
-                // Show the return value if there is one and stop
-                if (returnvalue) {
-                    $("#returned").html(returnvalue);
-                    $("#returned").fadeIn();
-                    $("#complete").fadeIn();
-                    $("#running").hide();
-                    $("#progress").hide();
-                    $("#stop").hide();
-                    return;
-                }
-
-                // Task complete - stop
-                if (progress == "100") {
-                    $("#complete").fadeIn();
-                    $("#running").hide();
-                    $("#progress").hide();
-                    $("#stop").hide();
-                    return;
-                }
-
-                // No task running
-                if (taskname == "NONE") {
-
-                    // Did the user force a stop?
-                    if (task.forcestop) {
-                        $("#stopped").fadeIn();
-                        $("#running").hide();
-                        $("#progress").hide();
-                        $("#stop").hide();
-                    }
-                    
-                    // Ok, nothing was running
-                    else {
-                        $("#stopped").fadeIn();
-                        $("#running").hide();
-                        $("#progress").hide();
-                        $("#stop").hide();
-                    }
-
-                }
-
-                // Task is running
+                
+                // Ok, nothing was running
                 else {
-                    $("#running").fadeIn();
-                    $("#progress").fadeIn();
-                    $("#stop").fadeIn();
-                    $("#complete").hide();
-                    $("#stopped").hide();
+                    $("#stopped").fadeIn();
+                    $("#running").hide();
+                    $("#progress").hide();
+                    $("#stop").hide();
                 }
 
-                // Only schedule another poll if polling is enabled
-                // (note that task complete/error conditions
-                //  above drop out without telling us to poll any more).
-                if (task.polling) {
-                    setTimeout(task.poll, task.poll_interval);
-                }
+            }
 
-            });
+            // Task is running
+            else {
+                $("#running").fadeIn();
+                $("#progress").fadeIn();
+                $("#stop").fadeIn();
+                $("#complete").hide();
+                $("#stopped").hide();
+            }
 
+            // Only schedule another poll if polling is enabled
+            // (note that task complete/error conditions
+            //  above drop out without telling us to poll any more).
+            if (task.polling) {
+                setTimeout(task.poll, task.poll_interval);
+            }
         },
 
         destroy: function() {

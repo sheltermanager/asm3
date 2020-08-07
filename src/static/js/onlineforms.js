@@ -4,10 +4,10 @@ $(function() {
 
     "use strict";
 
-    var onlineforms = {
+    const onlineforms = {
 
         model: function() {
-            var dialog = {
+            const dialog = {
                 add_title: _("Add online form"),
                 edit_title: _("Edit online form"),
                 edit_perm: 'eof',
@@ -39,23 +39,22 @@ $(function() {
                 ]
             };
 
-            var table = {
+            const table = {
                 rows: controller.rows,
                 idcolumn: "ID",
-                edit: function(row) {
-                    tableform.dialog_show_edit(dialog, row)
-                        .then(function() {
-                            onlineforms.check_redirect_url();
-                            tableform.fields_update_row(dialog.fields, row);
-                            return tableform.fields_post(dialog.fields, "mode=update&formid=" + row.ID, "onlineforms");
-                        })
-                        .then(function(response) {
-                            tableform.table_update(table);
-                            tableform.dialog_close();
-                        })
-                        .fail(function() {
-                            tableform.dialog_enable_buttons();
-                        });
+                edit: async function(row) {
+                    try {
+                        await tableform.dialog_show_edit(dialog, row);
+                        onlineforms.check_redirect_url();
+                        tableform.fields_update_row(dialog.fields, row);
+                        await tableform.fields_post(dialog.fields, "mode=update&formid=" + row.ID, "onlineforms");
+                        tableform.table_update(table);
+                        tableform.dialog_close();
+                    }
+                    catch(err) {
+                        log.error(err, err);
+                        tableform.dialog_enable_buttons();
+                    }
                 },
                 button_click: function() {
                     if ($(this).attr("data-url")) {
@@ -91,66 +90,57 @@ $(function() {
                 ]
             };
 
-            var buttons = [
-                 { id: "new", text: _("New online form"), icon: "new", enabled: "always", perm: "aof", 
-                     click: function() { 
-                         tableform.dialog_show_add(dialog)
-                             .then(function() {
-                                 onlineforms.check_redirect_url();
-                                 return tableform.fields_post(dialog.fields, "mode=create", "onlineforms");
-                             })
-                             .then(function(response) {
-                                var row = {};
-                                row.ID = response;
-                                tableform.fields_update_row(dialog.fields, row);
-                                controller.rows.push(row);
-                                tableform.table_update(table);
-                                tableform.dialog_close();
-                            })
-                            .fail(function() {
-                                 tableform.dialog_enable_buttons();
-                            });
-                     } 
-                 },
-                 { id: "clone", text: _("Clone"), icon: "copy", enabled: "multi", perm: "aof",
-                     click: function() { 
-                         tableform.buttons_default_state(buttons);
-                         var ids = tableform.table_ids(table);
-                         common.ajax_post("onlineforms", "mode=clone&ids=" + ids)
-                             .then(function() {
-                                 common.route_reload();
-                             });
-                     } 
-                 },
-                 { id: "delete", text: _("Delete"), icon: "delete", enabled: "multi", perm: "dof", 
-                     click: function() { 
-                         tableform.delete_dialog()
-                             .then(function() {
-                                 tableform.buttons_default_state(buttons);
-                                 var ids = tableform.table_ids(table);
-                                 return common.ajax_post("onlineforms", "mode=delete&ids=" + ids);
-                             })
-                             .then(function() {
-                                 tableform.table_remove_selected_from_json(table, controller.rows);
-                                 tableform.table_update(table);
-                             });
-                     } 
-                 },
-                 { id: "headfoot", text: _("Edit Header/Footer"), icon: "forms", enabled: "always", 
+            const buttons = [
+                { id: "new", text: _("New online form"), icon: "new", enabled: "always", perm: "aof", 
+                    click: async function() { 
+                        try {
+                            await tableform.dialog_show_add(dialog);
+                            onlineforms.check_redirect_url();
+                            let response = await tableform.fields_post(dialog.fields, "mode=create", "onlineforms");
+                            let row = {};
+                            row.ID = response;
+                            tableform.fields_update_row(dialog.fields, row);
+                            controller.rows.push(row);
+                            tableform.table_update(table);
+                            tableform.dialog_close();
+                        }
+                        catch(err) {
+                            log.error(err, err);
+                            tableform.dialog_enable_buttons();
+                        }
+                    } 
+                },
+                { id: "clone", text: _("Clone"), icon: "copy", enabled: "multi", perm: "aof",
+                    click: async function() { 
+                        tableform.buttons_default_state(buttons);
+                        let ids = tableform.table_ids(table);
+                        await common.ajax_post("onlineforms", "mode=clone&ids=" + ids);
+                        common.route_reload();
+                    } 
+                },
+                { id: "delete", text: _("Delete"), icon: "delete", enabled: "multi", perm: "dof", 
+                    click: async function() { 
+                        await tableform.delete_dialog();
+                        tableform.buttons_default_state(buttons);
+                        let ids = tableform.table_ids(table);
+                        await common.ajax_post("onlineforms", "mode=delete&ids=" + ids);
+                        tableform.table_remove_selected_from_json(table, controller.rows);
+                        tableform.table_update(table);
+                    } 
+                },
+                { id: "headfoot", text: _("Edit Header/Footer"), icon: "forms", enabled: "always", 
                     tooltip: _("Edit online form HTML header/footer"), perm: "eof", 
                     click: function() {
                         $("#dialog-headfoot").dialog("open");
                     }
-                 },
-                 { id: "import", text: _("Import"), icon: "database", enabled: "always", 
+                },
+                { id: "import", text: _("Import"), icon: "database", enabled: "always", 
                     tooltip: _("Import from file"), perm: "aof", 
-                    click: function() {
-                        tableform.show_okcancel_dialog("#dialog-import", _("Import"), { notblank: ["filechooser"] })
-                             .then(function() {
-                                 $("#importform").submit();
-                            });
+                    click: async function() {
+                        await tableform.show_okcancel_dialog("#dialog-import", _("Import"), { notblank: ["filechooser"] });
+                        $("#importform").submit();
                     }
-                 }
+                }
             ];
             this.dialog = dialog;
             this.table = table;
@@ -200,16 +190,16 @@ $(function() {
         },
 
         bind_headfoot: function() {
-            var headfootbuttons = {};
-            headfootbuttons[_("Save")] = function() {
-                var formdata = "mode=headfoot&" + $(".headfoot").toPOST();
-                common.ajax_post("onlineforms", formdata)
-                    .then(function() { 
-                        header.show_info(_("Updated."));
-                    })
-                    .always(function() {
-                        $("#dialog-headfoot").dialog("close");
-                    });
+            let headfootbuttons = {};
+            headfootbuttons[_("Save")] = async function() {
+                try {
+                    let formdata = "mode=headfoot&" + $(".headfoot").toPOST();
+                    await common.ajax_post("onlineforms", formdata);
+                    header.show_info(_("Updated."));
+                }
+                finally {
+                    $("#dialog-headfoot").dialog("close");
+                }
             };
             headfootbuttons[_("Cancel")] = function() { $(this).dialog("close"); };
             $("#dialog-headfoot").dialog({
@@ -229,12 +219,12 @@ $(function() {
         },
 
         check_redirect_url: function() {
-            var u = $("#redirect").val();
+            let u = $("#redirect").val();
             if (u && u.indexOf("http") != 0) { $("#redirect").val( "https://" + u ); }
         },
 
         render: function() {
-            var s = "";
+            let s = "";
             this.model();
             s += this.render_headfoot();
             s += this.render_import();

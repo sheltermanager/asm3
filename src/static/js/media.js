@@ -4,7 +4,7 @@
 
 $(function() {
 
-    var media = {
+    const media = {
 
         icon_mode_active: true,
 
@@ -23,7 +23,7 @@ $(function() {
 
         model: function() {
 
-            var dialog = {
+            const dialog = {
                 edit_title: _("Edit media"),
                 edit_perm: 'cam',
                 close_on_ok: true,
@@ -36,30 +36,23 @@ $(function() {
                 ]
             };
 
-            var table = {
+            const table = {
                 rows: controller.media,
                 idcolumn: "ID",
                 truncatelink: 50, // Only use first 50 chars of MEDIANOTES for edit link
-                edit: function(row) {
+                edit: async function(row) {
                     tableform.fields_populate_from_json(dialog.fields, row);
-                    tableform.dialog_show_edit(dialog, row)
-                        .then(function() {
-                            tableform.fields_update_row(dialog.fields, row);
-                            return tableform.fields_post(dialog.fields, "mode=update&mediaid=" + row.ID, "media");
-                        })
-                        .then(function() {
-                            tableform.table_update(table);
-                            tableform.dialog_enable_buttons();
-                            if (media.icon_mode_active) { media.mode_icon(); } else { media.mode_table(); }
-                        })
-                        .fail(function() {
-                            tableform.dialog_enable_buttons();
-                        });
+                    await tableform.dialog_show_edit(dialog, row);
+                    tableform.fields_update_row(dialog.fields, row);
+                    await tableform.fields_post(dialog.fields, "mode=update&mediaid=" + row.ID, "media");
+                    tableform.table_update(table);
+                    tableform.dialog_enable_buttons();
+                    if (media.icon_mode_active) { media.mode_icon(); } else { media.mode_table(); }
                 },
                 change: function(rows) {
-                    var all_of_type = function(mime) {
+                    const all_of_type = function(mime) {
                         // Returns true if all rows are of type mime
-                        var rv = true;
+                        let rv = true;
                         $.each(rows, function(i, v) {
                             if (v.MEDIAMIMETYPE != mime) { rv = false; }
                         });
@@ -111,7 +104,7 @@ $(function() {
                         }
                     },
                     { field: "PREVIEW", classes: "mode-table", display: "", formatter: function(m) {
-                        var h = [];
+                        let h = [];
                         h.push(media.render_preview_thumbnail(m));
                         h.push(media.render_mods(m, true));
                         return h.join("");
@@ -130,7 +123,7 @@ $(function() {
                     { field: "DATE", classes: "mode-table", display: _("Updated"), formatter: tableform.format_date, initialsort: true, initialsortdirection: "desc" },
                     { field: "MEDIAMIMETYPE", classes: "mode-table", display: _("Type") },
                     { field: "PREVIEWICON", classes: "mode-icon", display: "", formatter: function(m) {
-                        var h = [];
+                        let h = [];
                         h.push("<div class=\"centered\">");
                         h.push(media.render_preview_thumbnail(m, true));
                         h.push("<br/>");
@@ -145,7 +138,7 @@ $(function() {
                 ]
             };
 
-            var buttons = [
+            const buttons = [
                 { id: "new", text: _("Attach File"), icon: "media-add", enabled: "always", perm: "aam", tooltip: _("Attach a file") },
                 { id: "newlink", text: _("Attach Link"), icon: "link", enabled: "always", perm: "aam", tooltip: _("Attach a link to a web resource") },
                 { id: "newdoc", text: _("New Document"), icon: "document", enabled: "always", perm: "aam", tooltip: _("Create a new document") },
@@ -154,7 +147,7 @@ $(function() {
                 { id: "emailpdf", text: _("Email PDF"), icon: "pdf", enabled: "multi", perm: "emo", tooltip: _("Email a copy of the selected HTML documents as PDFs") },
                 { id: "sign", text: _("Sign"), type: "buttonmenu", icon: "signature" },
                 { id: "rotateanti", icon: "rotate-anti", enabled: "multi", perm: "cam", tooltip: _("Rotate image 90 degrees anticlockwise") },
-                { id: "rotateclock", icon: "rotate-clock", enabled: "multi", perm:" cam", tooltip: _("Rotate image 90 degrees clockwise") },
+                { id: "rotateclock", icon: "rotate-clock", enabled: "multi", perm: "cam", tooltip: _("Rotate image 90 degrees clockwise") },
                 { id: "include", icon: "tick", enabled: "multi", perm: "cam", tooltip: _("Include this image when publishing") }, 
                 { id: "exclude", icon: "cross", enabled: "multi", perm: "cam", tooltip: _("Exclude this image when publishing") },
                 { id: "web", icon: "web", enabled: "one", perm: "cam", tooltip: _("Make this the default image when viewing this record and publishing to the web") },
@@ -172,7 +165,7 @@ $(function() {
 
         render: function() {
             this.model();
-            var h = [
+            let h = [
                 tableform.dialog_render(this.dialog),
 
                 '<div id="dialog-add" style="display: none" title="' + html.title(_("Attach File")) + '">',
@@ -290,12 +283,12 @@ $(function() {
         },
 
         render_preview_thumbnail: function(m, notestooltip) {
-            var h = [ '<div class="asm-media-thumb">' ];
-            var tt = "";
+            let h = [ '<div class="asm-media-thumb">' ];
+            let tt = "";
             if (notestooltip) { tt = 'title="' + html.title(html.truncate(html.decode(m.MEDIANOTES), 70)) + '"'; }
             if (m.MEDIATYPE == 1 || m.MEDIATYPE == 2) {
                 h.push('<a href="' + m.MEDIANAME + '">');
-                var linkimage = "static/images/ui/file-video.png";
+                let linkimage = "static/images/ui/file-video.png";
                 if (m.MEDIATYPE == 1) {
                     linkimage = "static/images/ui/document-media.png";
                 }
@@ -330,7 +323,7 @@ $(function() {
         },
 
         render_mods: function(m, withlabels) {
-            var h = [], mod_out = function(icon, text) {
+            let h = [], mod_out = function(icon, text) {
                 if (!withlabels) { h.push(html.icon(icon, text)); }
                 else { h.push('<span>' + html.icon(icon, text) + " " + text + "</span><br/>"); }
             };
@@ -357,12 +350,12 @@ $(function() {
                 mod_out("cross", _('Exclude this image when publishing'));
             }
             if (m.RETAINUNTIL) {
-                var ru = _("Retain until {0}").replace("{0}", format.date(m.RETAINUNTIL));
+                let ru = _("Retain until {0}").replace("{0}", format.date(m.RETAINUNTIL));
                 mod_out("media-delete", ru);
             }
             if (config.bool("AutoRemoveDocumentMedia") && config.integer("AutoRemoveDMYears")) {
-                var dd = common.add_days(format.date_js(m.DATE), config.integer("AutoRemoveDMYears") * 365);
-                var ar = _("Auto remove on {0}").replace("{0}", format.date(dd));
+                let dd = common.add_days(format.date_js(m.DATE), config.integer("AutoRemoveDMYears") * 365);
+                let ar = _("Auto remove on {0}").replace("{0}", format.date(dd));
                 mod_out("media-delete", ar);
             }
             h.push('</div>');
@@ -374,7 +367,7 @@ $(function() {
          * HTML5 File APIs are available
          */
         attach_files: function(files) {
-            var i = 0, promises = [];
+            let i = 0, promises = [];
             if (!Modernizr.filereader || !Modernizr.canvas || !Modernizr.todataurljpeg) { return; }
             header.show_loading(_("Uploading..."));
             for (i = 0; i < files.length; i += 1) {
@@ -393,7 +386,7 @@ $(function() {
          */
         attach_file: function(file, retainfor, comments) {
 
-            var deferred = $.Deferred();
+            let deferred = $.Deferred();
 
             // If no values were supplied, make them an empty string instead
             if (!comments) { comments = ""; }
@@ -412,15 +405,15 @@ $(function() {
             if (file.type.match('image.*') && !config.bool("DontUseHTML5Scaling")) {
 
                 // Figure out the size we're scaling to
-                var media_scaling = config.str("IncomingMediaScaling");
+                let media_scaling = config.str("IncomingMediaScaling");
                 if (!media_scaling || media_scaling == "None") { media_scaling = "640x640"; }
-                var max_width = format.to_int(media_scaling.split("x")[0]);
-                var max_height = format.to_int(media_scaling.split("x")[1]);
+                let max_width = format.to_int(media_scaling.split("x")[0]);
+                let max_height = format.to_int(media_scaling.split("x")[1]);
                 if (!max_width) { max_width = 640; }
                 if (!max_height) { max_height = 640; }
 
                 // Read the file to an image tag, then scale it
-                var img, img_width, img_height;
+                let img, img_width, img_height;
                 html.load_img(file)
                     .then(function(nimg) {
                         img = nimg;
@@ -445,9 +438,9 @@ $(function() {
                     })
                     .then(function(orientation) {
                         // Scale and rotate the image
-                        var finalfile = html.scale_image(img, img_width, img_height, orientation);
+                        let finalfile = html.scale_image(img, img_width, img_height, orientation);
                         // Post the transformed image
-                        var formdata = "mode=create&transformed=1&" +
+                        let formdata = "mode=create&transformed=1&" +
                             "linkid=" + controller.linkid + 
                             "&linktypeid=" + controller.linktypeid + 
                             "&comments=" + encodeURIComponent(comments) + 
@@ -470,7 +463,7 @@ $(function() {
                 common.read_file_as_data_url(file)
                     .then(function(result) {
                         // Post the PDF/HTML doc via AJAX
-                        var formdata = "mode=create&" +
+                        let formdata = "mode=create&" +
                             "linkid=" + controller.linkid + 
                             "&linktypeid=" + controller.linktypeid + 
                             "&comments=" + encodeURIComponent(comments) + 
@@ -500,7 +493,7 @@ $(function() {
          * Reloads if a change is made or forcereload is true.
          */
         check_preferred_images: function(forcereload) {
-            var newweb, newdoc, hasweb, hasdoc, webcount = 0, doccount = 0;
+            let newweb, newdoc, hasweb, hasdoc, webcount = 0, doccount = 0;
             if (!controller.showpreferred) { return false; }
             $.each(controller.media, function(i, v) {
                 if (media.is_jpeg(v.MEDIANAME) && v.EXCLUDEFROMPUBLISH == 0) {
@@ -543,7 +536,7 @@ $(function() {
             if (!validate.notblank([ "filechooser" ])) { return; }
 
             // If the file isn't a jpeg or a PDF, fail validation
-            var fname = $("#filechooser").val();
+            let fname = $("#filechooser").val();
             if ( !media.is_jpeg(fname) && !media.is_extension(fname, "png") && 
                  !media.is_extension(fname, "pdf") && !media.is_extension(fname, "html") ) {
                 header.show_error(_("Only PDF, HTML and JPG image files can be attached."));
@@ -553,7 +546,7 @@ $(function() {
             $("#dialog-add").disable_dialog_buttons();
 
             // Grab the selected file
-            var selectedfile = $("#filechooser")[0].files[0];
+            let selectedfile = $("#filechooser")[0].files[0];
 
             // If an image isn't selected, do the normal post
             if (!selectedfile.type.match('image.*')) {
@@ -597,7 +590,7 @@ $(function() {
          * s: A youtube URL www.youtube.com/watch?v=ID
          */
         youtube_thumbnail: function(s) {
-            var yid = "";
+            let yid = "";
             if (s.indexOf("youtube") != -1 && s.indexOf("=") != -1) {
                 yid = s.substring(s.indexOf("=") +1);
             }
@@ -615,11 +608,9 @@ $(function() {
          * On success, it reloads the page, on error it shows it in the
          * header.
          */
-        ajax: function(formdata) {
-            common.ajax_post("media", formdata)
-                .then(function() { 
-                    common.route_reload();
-                });
+        ajax: async function(formdata) {
+            await common.ajax_post("media", formdata);
+            common.route_reload();
         },
 
         /** Binds the event handlers to a file drop target.
@@ -662,7 +653,7 @@ $(function() {
 
             this.bind_droptarget(".asm-mediadroptarget");
 
-            var addbuttons = { };
+            let addbuttons = { };
             addbuttons[_("Attach")] = {
                 text: _("Attach"),
                 "class": "asm-dialog-actionbutton",
@@ -682,14 +673,14 @@ $(function() {
                 buttons: addbuttons
             });
 
-            var addlinkbuttons = { };
+            let addlinkbuttons = { };
             addlinkbuttons[_("Attach")] = {
                 text: _("Attach"),
                 "class": "asm-dialog-actionbutton",
                 click: function() {
                     if (!validate.notblank([ "linktarget" ])) { return; }
                     $("#dialog-addlink").disable_dialog_buttons();
-                    var formdata = "mode=createlink&linkid=" + controller.linkid + 
+                    let formdata = "mode=createlink&linkid=" + controller.linkid + 
                         "&linktypeid=" + controller.linktypeid + 
                         "&controller=" + controller.name + "&" +
                         $("#linktype, #linktarget, #linkcomments").toPOST();
@@ -717,7 +708,7 @@ $(function() {
                 buttons: addlinkbuttons
             });
 
-            var signbuttons = {};
+            let signbuttons = {};
             signbuttons[_("Sign")] = function() {
                 if ($("#signature").signature("isEmpty")) { return; }
                 $("#dialog-sign").disable_dialog_buttons();
@@ -774,8 +765,8 @@ $(function() {
 
             $("#button-delete").button({disabled: true}).click(function() {
                 tableform.delete_dialog(function() {
-                    var formdata = "mode=delete&ids=" + tableform.table_ids(media.table);
                     $("#dialog-delete").disable_dialog_buttons();
+                    let formdata = "mode=delete&ids=" + tableform.table_ids(media.table);
                     media.ajax(formdata);
                 });
             });
@@ -800,47 +791,47 @@ $(function() {
 
             $("#button-web").button().click(function() {
                 $("#button-web").button("disable");
-                var formdata = "mode=web&ids=" + tableform.table_ids(media.table);
+                let formdata = "mode=web&ids=" + tableform.table_ids(media.table);
                 media.ajax(formdata);
             });
 
             $("#button-video").button().click(function() {
                 $("#button-video").button("disable");
-                var formdata = "mode=video&ids=" + tableform.table_ids(media.table);
+                let formdata = "mode=video&ids=" + tableform.table_ids(media.table);
                 media.ajax(formdata);
             });
 
             $("#button-rotateanti").button().click(function() {
                 $("#button-rotateanti").button("disable");
-                var formdata = "mode=rotateanti&ids=" + tableform.table_ids(media.table);
+                let formdata = "mode=rotateanti&ids=" + tableform.table_ids(media.table);
                 media.ajax(formdata);
             });
 
             $("#button-rotateclock").button().click(function() {
                 $("#button-rotateclock").button("disable");
-                var formdata = "mode=rotateclock&ids=" + tableform.table_ids(media.table);
+                let formdata = "mode=rotateclock&ids=" + tableform.table_ids(media.table);
                 media.ajax(formdata);
             });
 
             $("#button-doc").button().click(function() {
                 $("#button-doc").button("disable");
-                var formdata = "mode=doc&ids=" + tableform.table_ids(media.table);
+                let formdata = "mode=doc&ids=" + tableform.table_ids(media.table);
                 media.ajax(formdata);
             });
 
             $("#button-include").button().click(function() {
                 $("#button-include").button("disable");
-                var formdata = "mode=include&ids=" + tableform.table_ids(media.table);
+                let formdata = "mode=include&ids=" + tableform.table_ids(media.table);
                 media.ajax(formdata);
             });
 
             $("#button-exclude").button().click(function() {
                 $("#button-exclude").button("disable");
-                var formdata = "mode=exclude&ids=" + tableform.table_ids(media.table);
+                let formdata = "mode=exclude&ids=" + tableform.table_ids(media.table);
                 media.ajax(formdata);
             });
 
-            var defaultemail = "", defaultname = "";
+            let defaultemail = "", defaultname = "";
             // If we have a person, default the email address
             if (controller.person && controller.person.EMAILADDRESS) {
                 defaultemail = controller.person.EMAILADDRESS;
@@ -916,7 +907,7 @@ $(function() {
 
             $("#button-signpad").click(function() {
                 $("#button-sign").asmmenu("hide_all");
-                var formdata = "mode=signpad&ids=" + tableform.table_ids(media.table);
+                let formdata = "mode=signpad&ids=" + tableform.table_ids(media.table);
                 common.ajax_post("media", formdata)
                     .then(function(result) {
                         header.show_info(_("Sent to mobile signing pad."));
@@ -973,7 +964,7 @@ $(function() {
             $("#tableform tr").css({ "display": "table-row", "vertical-align": "middle" });
             // Resize the thumbnails based on the number of media records
             // to fit more rows on screen
-            var thumbnail_size = 85;
+            let thumbnail_size = 85;
             if (controller.media.length >= 0) { thumbnail_size = 85; }
             if (controller.media.length > 10) { thumbnail_size = 70; }
             if (controller.media.length > 20) { thumbnail_size = 55; }
@@ -1011,7 +1002,7 @@ $(function() {
         name: "media",
         animation: "formtab",
         title:  function() { 
-            var t = "";
+            let t = "";
             if (controller.name == "animal_media") {
                 t = common.substitute(_("{0} - {1} ({2} {3} aged {4})"), { 
                     0: controller.animal.ANIMALNAME, 1: controller.animal.CODE, 2: controller.animal.SEXNAME,

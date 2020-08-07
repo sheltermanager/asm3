@@ -4,7 +4,7 @@ $(function() {
 
     "use strict";
 
-    var presets = {
+    const presets = {
         "Avery 5160" :  [ "letter", "inch", "2.75", "1.0", "0.19", "0.5", "3", "10" ],
         "Avery 5360" :  [ "letter", "inch", "2.83", "1.5", "0", "0.25", "3", "7" ],
         "Avery 5363" :  [ "letter", "inch", "2.83", "1.375", "0", "0", "3", "8" ],
@@ -18,12 +18,12 @@ $(function() {
         "OL950" :       [ "letter", "inch", "2.75", "0.875", "0.1875", "0.6875", "3", "11" ]
     };
 
-    var mailmerge = {
+    const mailmerge = {
 
         previewloaded: false,
 
         render: function() {
-            var hf = [
+            let hf = [
                 '<input type="hidden" name="mode" value="{mode}" />',
                 '<input type="hidden" name="mergeparams" data="mergeparams" />',
                 '<input type="hidden" name="mergereport" data="mergereport" />',
@@ -155,7 +155,7 @@ $(function() {
         },
 
         render_fields: function() {
-            var h = [];
+            let h = [];
             $.each(controller.fields, function(i, v) {
                 h.push("&lt;&lt;" + v + "&gt;&gt; <br />");
             });
@@ -164,8 +164,8 @@ $(function() {
 
         bind: function() {
 
-            var preset_change = function() {
-                var bits = presets[$("#labeltype").val()];
+            const preset_change = function() {
+                let bits = presets[$("#labeltype").val()];
                 if (bits === undefined) { return; }
                 $("#papersize").select("value", bits[0]);
                 $("#units").select("value", bits[1]);
@@ -177,7 +177,7 @@ $(function() {
                 $("#rows").val(bits[7]);
             };
 
-            var types = "";
+            let types = "";
             $.each(presets, function(key, value) {
                 types += "<option>" + key + "</option>";
             });
@@ -191,14 +191,12 @@ $(function() {
             });
 
             $("#button-csv, #button-pdflabels").button();
-            $("#button-email").button().click(function() {
+            $("#button-email").button().click(async function() {
                 $("#button-email").button("disable");
-                var formdata = "mode=email&" + $("#sendemail input, #sendemail .asm-richtextarea").toPOST();
-                common.ajax_post("mailmerge", formdata)
-                    .then(function() { 
-                        header.show_info(_("Messages successfully sent"));
-                        $("#asm-mailmerge-accordion").hide();
-                    });
+                let formdata = "mode=email&" + $("#sendemail input, #sendemail .asm-richtextarea").toPOST();
+                await common.ajax_post("mailmerge", formdata);
+                header.show_info(_("Messages successfully sent"));
+                $("#asm-mailmerge-accordion").hide();
             });
 
             $("#mailmerge-letters .templatelink").each(function() {
@@ -219,7 +217,7 @@ $(function() {
                 $("#emailfrom").val(html.decode(config.str("Organisation")) + " <" + config.str("EmailAddress") + ">");
                 $("#emailtemplate").html( edit_header.template_list_options(controller.templates) );
                 $("#emailtemplate").change(function() {
-                    var formdata = "mode=emailtemplate&dtid=" + $("#emailtemplate").val();
+                    let formdata = "mode=emailtemplate&dtid=" + $("#emailtemplate").val();
                     header.show_loading(_("Loading..."));
                     common.ajax_post("document_gen", formdata, function(result) {
                         $("#emailbody").html(result); 
@@ -232,7 +230,7 @@ $(function() {
         sync: function() {
 
             // Default the email signature for bulk emails
-            var sig = config.str("EmailSignature");
+            let sig = config.str("EmailSignature");
             if (sig) {
                 $("#emailbody").richtextarea("value", "<p>&nbsp;</p>" + sig);
             }
@@ -242,7 +240,7 @@ $(function() {
                 if (ui.newHeader.attr("id") == "lmatching" && !mailmerge.previewloaded) {
                     mailmerge.previewloaded = true;
                     header.show_loading();
-                    var formdata = "mode=preview&" + $("#matching input").toPOST();
+                    let formdata = "mode=preview&" + $("#matching input").toPOST();
                     common.ajax_post("mailmerge", formdata).then(function(data) {
                         // Create a table of matching rows
                         var h = [], d = jQuery.parseJSON(data);

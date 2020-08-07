@@ -4,13 +4,12 @@ $(function() {
 
     "use strict";
 
-    var lostfound_find_results = {
+    const lostfound_find_results = {
         
         mode: "lost", 
 
         render: function() {
-            var mode = controller.name.indexOf("lost") != -1 ? "lost" : "found";
-            this.mode = mode;
+            this.mode = controller.name.indexOf("lost") != -1 ? "lost" : "found";
             return [
                 html.content_header(_("Results")),
                 '<div id="asm-results">',
@@ -46,7 +45,7 @@ $(function() {
         },
 
         render_results: function() {
-            var h = [];
+            let h = [];
             $.each(controller.rows, function(i, r) {
                 h.push('<tr>');
                 if (lostfound_find_results.mode == "lost") {

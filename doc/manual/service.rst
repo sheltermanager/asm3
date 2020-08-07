@@ -490,6 +490,16 @@ is JSON or XML::
 
     http://localhost:5000/service?method=xml_found_animals&username=user&password=letmein
 
+json_held_animals and xml_held_animals
+--------------------------------------
+
+.. rubric:: Cache time: 1 hour 
+
+Returns a dataset containing all animals currently held. The method
+determines whether the format returned is JSON or XML::
+
+    http://localhost:5000/service?method=xml_adoptable_animals&username=user&password=letmein
+
 json_recent_adoptions and xml_recent_adoptions
 ----------------------------------------------
 

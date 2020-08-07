@@ -4,7 +4,7 @@ $(function() {
 
     "use strict";
 
-    var publish_options = {
+    const publish_options = {
 
         render_tabs: function() {
             return [
@@ -15,7 +15,7 @@ $(function() {
                 '<li class="localeus localeca localemx"><a href="#tab-adoptapet">AdoptAPet</a></li>',
                 '<li><a href="#tab-helpinglostpets">HelpingLostPets</a></li>',
                 '<li class="english hasmaddiesfund"><a href="#tab-maddiesfund">Maddie\'s Fund</a></li>',
-                '<li class="localeus haspetcademy"><a href="#tab-petcademy">Petcademy</a></li>',
+                '<li class="english haspetcademy"><a href="#tab-petcademy">Petcademy</a></li>',
                 '<li class="localeus localeca localemx"><a href="#tab-petfinder">PetFinder</a></li>',
                 '<li class="localegb haspetslocated"><a href="#tab-petslocated">PetsLocated</a></li>',
                 '<li class="localeau haspetrescue"><a href="#tab-petrescue">PetRescue</a></li>', 
@@ -586,11 +586,22 @@ $(function() {
                 '<tr>',
                 '<td><label for="premail">Contact email</label>',
                 '<span id="callout-premail" class="asm-callout">',
-                'This is the contact email for PetRescue listings. If you do not set it, the option from Settings -&gt; Options -&gt; Email is used.',
+                'This is the contact email for PetRescue listings. If you do not set it, the option from Settings &#8594; Options &#8594; Email is used.',
                 '</span>',
                 '</td>',
                 '<td><input id="premail" type="text" class="asm-textbox cfg" data="PetRescueEmail" /></td>',
                 '</tr>',
+                '<tr>',
+                '<td><label for="prphone">Contact phone</label>',
+                '<span id="callout-prphone" class="asm-callout">',
+                'This controls the phone number included as a secondary contact with your listings',
+                '</span></td>',
+                '<td><select id="prphone" class="asm-selectbox cfg" data="PetRescuePhoneType">',
+                '<option value="org">Use organisation number</option>',
+                '<option value="spec">Specify a number &#8594;</option>',
+                '<option value="none">Do not send a number</option>',
+                '</select> ',
+                '<input type="text" class="asm-textbox cfg" title="The phone number to use" data="PetRescuePhoneNumber" />',
                 '</table>',
                 '</div>'
             ].join("\n");
@@ -965,26 +976,24 @@ $(function() {
         },
 
         bind_vetenvoy_signup_dialog: function() {
-            var b = { };
-            b[_("Signup")] = function() {
+            let b = { };
+            b[_("Signup")] = async function() {
                 validate.reset("dialog-vetenvoy");
                 if (!validate.notblank([ "vefirstname", "velastname", "vephone", "veemail", "vepracticename", "vezipcode", "veaddress" ])) { return; }
                 $("#dialog-vetenvoy").disable_dialog_buttons();
-                var formdata = $("#dialog-vetenvoy .asm-textbox, #dialog-vetenvoy .asm-selectbox").toPOST();
-                common.ajax_post("publish_options", "mode=vesignup&" + formdata)
-                    .then(function(result) {
-                        $("#dialog-vetenvoy").dialog("close");
-                        $("#dialog-vetenvoy").enable_dialog_buttons();
-                        // Result should be userid,password
-                        $("#veuserid").val(result.split(",")[0]);
-                        $("#veuserpassword").val(result.split(",")[1]);
-                        $("#enabledve").prop("checked", true);
-                        $("#enabledve").closest("div").find(".asm-doubletextbox").removeAttr("disabled");
-                        // Hide the signup button
-                        $("#button-vesignup").hide();
-                        // Prompt to save
-                        validate.dirty(true);
-                    });
+                let formdata = $("#dialog-vetenvoy .asm-textbox, #dialog-vetenvoy .asm-selectbox").toPOST();
+                let result = await common.ajax_post("publish_options", "mode=vesignup&" + formdata);
+                $("#dialog-vetenvoy").dialog("close");
+                $("#dialog-vetenvoy").enable_dialog_buttons();
+                // Result should be userid,password
+                $("#veuserid").val(result.split(",")[0]);
+                $("#veuserpassword").val(result.split(",")[1]);
+                $("#enabledve").prop("checked", true);
+                $("#enabledve").closest("div").find(".asm-doubletextbox").removeAttr("disabled");
+                // Hide the signup button
+                $("#button-vesignup").hide();
+                // Prompt to save
+                validate.dirty(true);
             };
             b[_("Cancel")] = function() {
                 $("#dialog-vetenvoy").dialog("close");
@@ -1002,9 +1011,9 @@ $(function() {
 
 
         bind: function() {
-            var change_checkbox = function() {
+            const change_checkbox = function() {
                 $(".enablecheck").each(function() {
-                    var enabled = $(this).is(":checked");
+                    let enabled = $(this).is(":checked");
                     if (enabled) {
                         $(this).closest("div").find("select").select("enable");
                         $(this).closest("div").find(".asm-textbox, .asm-doubletextbox").removeAttr("disabled");
@@ -1018,11 +1027,11 @@ $(function() {
                 });
             };
 
-            var cfg_presets = function() {
+            const cfg_presets = function() {
                 // Read the controls tagged with preset and build an 
                 // old style publisher command line string for storing as a
                 // configuration option.
-                var pr = "";
+                let pr = "";
                 $(".preset").each(function() {
                     if ($(this).is(".pbool")) {
                         if ($(this).val() == "1") { pr += " " + $(this).attr("data"); }
@@ -1034,12 +1043,12 @@ $(function() {
                 return encodeURIComponent(common.trim(pr));
             };
 
-            var cfg_enabled = function() {
+            const cfg_enabled = function() {
                 // Read the enable checkboxes and build a list of enabled publishers 
                 // for storing as a configuration option.
-                var ep = [];
+                let ep = [];
                 $(".enablecheck").each(function() {
-                    var c = $(this), k = c.attr("id").replace("enabled", "");
+                    let c = $(this), k = c.attr("id").replace("enabled", "");
                     // VetEnvoy has two publishers - enable them both if VetEnvoy is on
                     if (c.is(":checked") && k == "ve") { ep.push("veha"); ep.push("vear"); }
                     else if (c.is(":checked")) { ep.push(k); }
@@ -1054,7 +1063,7 @@ $(function() {
             if (controller.publishurl != "") {
                 $("#publishdirrow").hide();
                 $("#publishdiroverride").show();
-                var url = controller.publishurl;
+                let url = controller.publishurl;
                 url = url.replace("{alias}", asm.useraccountalias);
                 url = url.replace("{database}", asm.useraccount);
                 url = url.replace("{username}", asm.user);
@@ -1067,18 +1076,16 @@ $(function() {
             }
 
             // Toolbar buttons
-            $("#button-save").button().click(function() {
+            $("#button-save").button().click(async function() {
                 $("#button-save").button("disable");
                 validate.dirty(false);
-                var formdata = "mode=save&" + $(".cfg").toPOST();
+                let formdata = "mode=save&" + $(".cfg").toPOST();
                 formdata += "&PublisherPresets=" + cfg_presets();
                 formdata += "&PublishersEnabled=" + cfg_enabled();
                 header.show_loading(_("Saving..."));
-                common.ajax_post("publish_options", formdata)
-                    .then(function() { 
-                        // Needs to do a full reload to get config.js to update
-                        common.route_reload(true); 
-                    });
+                await common.ajax_post("publish_options", formdata);
+                // Needs to do a full reload to get config.js to update
+                common.route_reload(true); 
             });
 
             $("#button-save").button("disable");
@@ -1116,7 +1123,7 @@ $(function() {
             // Load default values from the config settings
             $(".cfg").each(function() {
                 if ($(this).attr("data")) {
-                    var d = $(this).attr("data");
+                    let d = $(this).attr("data");
                     if ($(this).is("input:text")) {
                         $(this).val( html.decode(config.str(d)));
                     }
@@ -1124,7 +1131,7 @@ $(function() {
                         $(this).attr("checked", config.bool(d));
                     }
                     else if ($(this).hasClass("asm-bsmselect")) {
-                        var n = $(this);
+                        let n = $(this);
                         n.children().prop("selected", false);
                         $.each(config.str(d).split(/[|,]+/), function(mi, mv) {
                             n.find("[value='" + mv + "']").prop("selected", true);
@@ -1141,7 +1148,7 @@ $(function() {
             });
 
             // Set presets from command line configuration
-            var cl = config.str("PublisherPresets");
+            let cl = config.str("PublisherPresets");
             $.each(cl.split(" "), function(i, o) {
                 // Deal with boolean flags in command line
                 $.each( [ "includecase", "includereserved", "includefosters", 
@@ -1160,13 +1167,13 @@ $(function() {
                     "childadultsplit", "outputadopteddays" ],
                 function(vi, vo) {
                     if (o.indexOf(vo) == 0) {
-                        var v = o.split("=")[1];
-                        var node = $("[data='" + vo + "']");
+                        let v = o.split("=")[1];
+                        let node = $("[data='" + vo + "']");
                         if (node.hasClass("asm-selectbox")) {
                             node.select("value", v);
                         }
                         else if (node.hasClass("asm-bsmselect")) {
-                            var ls = v.split(",");
+                            let ls = v.split(",");
                             $.each(ls, function(li, lv) {
                                 node.find("[value='" + lv + "']").prop("selected", "selected");
                             });
@@ -1180,7 +1187,7 @@ $(function() {
             });
 
             // Set enabled checkboxes from enabled publisher list
-            var pe = config.str("PublishersEnabled");
+            let pe = config.str("PublishersEnabled");
             $.each(pe.split(" "), function(i, v) {
                 $("#enabled" + v).attr("checked", true);
             });

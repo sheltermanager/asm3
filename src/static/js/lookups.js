@@ -4,9 +4,9 @@ $(function() {
 
     "use strict";
 
-    var tablelist = [];
+    let tablelist = [];
 
-    var lookups = {
+    const lookups = {
 
         // locales where the publisher column/fields appear
         publisher_locales: [ "en", "en_CA", "en_GB", "en_MX", "es_MX" ],
@@ -35,7 +35,7 @@ $(function() {
                 tablelist.push(v.join("|"));
             });
 
-            var dialog = {
+            const dialog = {
                 add_title: _("Add {0}").replace("{0}", html.decode(controller.tablelabel)),
                 edit_title: _("Edit {0}").replace("{0}", html.decode(controller.tablelabel)),
                 close_on_ok: false,
@@ -80,11 +80,11 @@ $(function() {
                 ]
             };
 
-            var table = {
+            const table = {
                 rows: controller.rows,
                 idcolumn: "ID",
-                edit: function(row) {
-                    tableform.dialog_show_edit(dialog, row, {
+                edit: async function(row) {
+                    await tableform.dialog_show_edit(dialog, row, {
                         onload: function() {
                             // If we don't talk to any third party services in this locale, might as well hide
                             // the publisher fields to avoid confusion
@@ -94,19 +94,14 @@ $(function() {
                                 $("#pfapcolour").closest("tr").hide();
                             }
                         }
-                        })
-                        .then(function() {
-                            tableform.fields_update_row(dialog.fields, row);
-                            if (row.SPECIESID) {
-                                row.SPECIESNAME = common.get_field(controller.species, row.SPECIESID, "SPECIESNAME");
-                            }
-                            return tableform.fields_post(dialog.fields, 
-                                    "mode=update&lookup=" + controller.tablename + "&namefield=" + controller.namefield + "&id=" + row.ID, "lookups");
-                        })
-                        .then(function(response) {
-                            tableform.table_update(table);
-                            tableform.dialog_close();
                         });
+                    tableform.fields_update_row(dialog.fields, row);
+                    if (row.SPECIESID) {
+                        row.SPECIESNAME = common.get_field(controller.species, row.SPECIESID, "SPECIESNAME");
+                    }
+                    await tableform.fields_post(dialog.fields, "mode=update&lookup=" + controller.tablename + "&namefield=" + controller.namefield + "&id=" + row.ID, "lookups");
+                    tableform.table_update(table);
+                    tableform.dialog_close();
                 },
                 complete: function(row) {
                     if (row.ISRETIRED && row.ISRETIRED == 1) { return true; }
@@ -143,7 +138,7 @@ $(function() {
                     { field: "RESCHEDULEDAYS", display: _("Reschedule for"), 
                         hideif: function(row) { return !controller.hasrescheduledays; },
                         formatter: function(row) { 
-                            var rv = String(row.RESCHEDULEDAYS);
+                            let rv = String(row.RESCHEDULEDAYS);
                             $.each(lookups.reschedule_options, function(i, v) {
                                 if (row.RESCHEDULEDAYS == v.ID) { rv = v.NAME; }
                             });
@@ -155,10 +150,10 @@ $(function() {
                 ]
             };
 
-            var buttons = [
-                 { id: "new", text: _("New"), icon: "new", enabled: "always", hideif: function() { return !controller.canadd; },
-                     click: function() { 
-                        tableform.dialog_show_add(dialog, {
+            const buttons = [
+                { id: "new", text: _("New"), icon: "new", enabled: "always", hideif: function() { return !controller.canadd; },
+                    click: async function() { 
+                        await tableform.dialog_show_add(dialog, {
                             onload: function() {
                                 // If we don't talk to any third party services in this locale, might as well hide
                                 // the publisher fields to avoid confusion
@@ -168,65 +163,53 @@ $(function() {
                                     $("#pfapcolour").closest("tr").hide();
                                 }
                             }
-                            })
-                            .then(function() {
-                                return tableform.fields_post(dialog.fields, 
-                                     "mode=create&lookup=" + controller.tablename + "&namefield=" + controller.namefield, "lookups");
-                            })
-                            .then(function(response) {
-                                 var row = {};
-                                 row.ID = response;
-                                 tableform.fields_update_row(dialog.fields, row);
-                                 if (row.SPECIESID) {
-                                     row.SPECIESNAME = common.get_field(controller.species, row.SPECIESID, "SPECIESNAME");
-                                 }
-                                 controller.rows.push(row);
-                                 tableform.table_update(table);
-                                 tableform.dialog_close();
                             });
-                     } 
-                 },
-                 { id: "delete", text: _("Delete"), icon: "delete", enabled: "multi", hideif: function() { return !controller.candelete; },
-                     click: function() { 
-                         tableform.delete_dialog()
-                             .then(function() {
-                                 tableform.buttons_default_state(buttons);
-                                 var ids = tableform.table_ids(table);
-                                 return common.ajax_post("lookups", "mode=delete&lookup=" + controller.tablename + "&ids=" + ids);
-                             })
-                             .then(function() {
-                                 tableform.table_remove_selected_from_json(table, controller.rows);
-                                 tableform.table_update(table);
-                             });
-                     } 
-                 },
-                 { id: "active", text: _("Active"), icon: "tick", enabled: "multi", hideif: function() { return !controller.canretire; },
-                     click: function() {
-                         var ids = tableform.table_ids(table);
-                         common.ajax_post("lookups", "mode=active&lookup=" + controller.tablename + "&ids=" + ids)
-                             .then(function() {
-                                 $.each(tableform.table_selected_rows(table), function(i, v) {
-                                     v.ISRETIRED = 0;
-                                 });
-                                 tableform.table_update(table);
-                             });
-                     }
-                 },
-                 { id: "inactive", text: _("Inactive"), icon: "cross", enabled: "multi", hideif: function() { return !controller.canretire; },
-                     click: function() {
-                         var ids = tableform.table_ids(table);
-                         common.ajax_post("lookups", "mode=inactive&lookup=" + controller.tablename + "&ids=" + ids)
-                             .then(function() {
-                                 $.each(tableform.table_selected_rows(table), function(i, v) {
-                                     v.ISRETIRED = 1;
-                                 });
-                                 tableform.table_update(table);
-                             });
-                     }
-                 },
-                 { id: "lookup", type: "dropdownfilter", options: tablelist, click: function(newval) {
+                        let response = await tableform.fields_post(dialog.fields, 
+                            "mode=create&lookup=" + controller.tablename + "&namefield=" + controller.namefield, "lookups");
+                        let row = {};
+                        row.ID = response;
+                        tableform.fields_update_row(dialog.fields, row);
+                        if (row.SPECIESID) {
+                            row.SPECIESNAME = common.get_field(controller.species, row.SPECIESID, "SPECIESNAME");
+                        }
+                        controller.rows.push(row);
+                        tableform.table_update(table);
+                        tableform.dialog_close();
+                    } 
+                },
+                { id: "delete", text: _("Delete"), icon: "delete", enabled: "multi", hideif: function() { return !controller.candelete; },
+                    click: async function() { 
+                        await tableform.delete_dialog();
+                        tableform.buttons_default_state(buttons);
+                        let ids = tableform.table_ids(table);
+                        await common.ajax_post("lookups", "mode=delete&lookup=" + controller.tablename + "&ids=" + ids);
+                        tableform.table_remove_selected_from_json(table, controller.rows);
+                        tableform.table_update(table);
+                    } 
+                },
+                { id: "active", text: _("Active"), icon: "tick", enabled: "multi", hideif: function() { return !controller.canretire; },
+                    click: async function() {
+                        let ids = tableform.table_ids(table);
+                        await common.ajax_post("lookups", "mode=active&lookup=" + controller.tablename + "&ids=" + ids);
+                        $.each(tableform.table_selected_rows(table), function(i, v) {
+                            v.ISRETIRED = 0;
+                        });
+                        tableform.table_update(table);
+                    }
+                },
+                { id: "inactive", text: _("Inactive"), icon: "cross", enabled: "multi", hideif: function() { return !controller.canretire; },
+                    click: async function() {
+                        let ids = tableform.table_ids(table);
+                        await common.ajax_post("lookups", "mode=inactive&lookup=" + controller.tablename + "&ids=" + ids);
+                        $.each(tableform.table_selected_rows(table), function(i, v) {
+                            v.ISRETIRED = 1;
+                        });
+                        tableform.table_update(table);
+                    }
+                },
+                { id: "lookup", type: "dropdownfilter", options: tablelist, click: function(newval) {
                     common.route("lookups?tablename=" + newval);
-                 }}
+                }}
             ];
             this.dialog = dialog;
             this.buttons = buttons;
@@ -234,7 +217,7 @@ $(function() {
         },
 
         render: function() {
-            var s = "";
+            let s = "";
             this.model();
             s += tableform.dialog_render(this.dialog);
             s += html.content_header(_("Edit Lookups"));

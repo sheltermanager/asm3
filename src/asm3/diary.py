@@ -48,9 +48,10 @@ def email_uncompleted_upto_today(dbo):
                 if (n.diaryforname == "*") \
                 or (n.diaryforname == u.username) \
                 or (u.roles.find(n.diaryforname) != -1):
-                    s += "%s " % asm3.i18n.python2display(l, n.diarydatetime)
+                    s += "%s %s " % (asm3.i18n.python2display(l, n.diarydatetime), asm3.i18n.format_time(n.diarydatetime))
                     s += n.subject
                     if n.linkinfo is not None and n.linkinfo != "": s += " / %s" % n.linkinfo
+                    s += " (%s)" % n.createdby
                     s += "\n%s\n\n%s" % (n.note, n.comments)
                     totalforuser += 1
             if totalforuser > 0:
@@ -67,7 +68,7 @@ def email_note_on_change(dbo, n, username):
     l = dbo.locale
     allusers = asm3.users.get_users(dbo)
     s = asm3.i18n._("Diary change triggered by {0} on {1}", l).format(username, asm3.i18n.python2display(l, dbo.now()))
-    s += "\n\n%s " % asm3.i18n.python2display(l, n.diarydatetime)
+    s += "\n\n%s %s " % (asm3.i18n.python2display(l, n.diarydatetime), asm3.i18n.format_time(n.diarydatetime))
     s += n.subject
     if n.linkinfo is not None and n.linkinfo != "": s += " / %s" % n.linkinfo
     s += "\n%s\n\n%s" % (n.note, n.comments)
@@ -90,7 +91,7 @@ def email_note_on_complete(dbo, n, username):
     l = dbo.locale
     allusers = asm3.users.get_users(dbo)
     s = asm3.i18n._("Diary completion triggered by {0} on {1}", l).format(username, asm3.i18n.python2display(l, dbo.now()))
-    s += "\n\n%s " % asm3.i18n.python2display(l, n.diarydatetime)
+    s += "\n\n%s %s " % (asm3.i18n.python2display(l, n.diarydatetime), asm3.i18n.format_time(n.diarydatetime))
     s += n.subject
     if n.linkinfo is not None and n.linkinfo != "": s += " / %s" % n.linkinfo
     s += "\n%s\n\n%s" % (n.note, n.comments)
@@ -126,25 +127,24 @@ def get_between_two_dates(dbo, user, start, end):
     start: Start date
     end: End date
     """
-    sixmonths = dbo.today(offset = -182)
-    if start < sixmonths: start = sixmonths
     return dbo.query("SELECT d.*, cast(DiaryDateTime AS time) AS DiaryTime " \
         "FROM diary d WHERE %s " \
         "AND DateCompleted Is Null AND DiaryDateTime >= ? AND DiaryDateTime <= ? " \
         "ORDER BY DiaryDateTime DESC" % user_role_where_clause(dbo, user), (start, end))
 
-def get_uncompleted_upto_today(dbo, user = "", includecreatedby = True):
+def get_uncompleted_upto_today(dbo, user = "", includecreatedby = True, offset=-99999):
     """
     Gets a list of uncompleted diary notes upto and including
     today for the user supplied (or all users if no user passed)
     LINKID, LINKTYPE, DIARYDATETIME, DIARYFORNAME, SUBJECT, NOTE, LINKINFO
+    offset: A negative day value to go back (eg: -182 = stop at 6 months)
     """
-    sixmonths = dbo.today(offset = -182)
+    cutoff = dbo.today(offset = offset)
     alltoday = dbo.today(settime = "23:59:59")
     return dbo.query("SELECT d.*, cast(DiaryDateTime AS time) AS DiaryTime " \
         "FROM diary d WHERE %s " \
         "AND d.DateCompleted Is Null AND d.DiaryDateTime <= ? AND d.DiaryDateTime >= ? " \
-        "ORDER BY d.DiaryDateTime DESC" % user_role_where_clause(dbo, user, includecreatedby), ( alltoday, sixmonths ))
+        "ORDER BY d.DiaryDateTime DESC" % user_role_where_clause(dbo, user, includecreatedby), ( alltoday, cutoff ))
 
 def get_completed_upto_today(dbo, user = ""):
     """
@@ -152,11 +152,11 @@ def get_completed_upto_today(dbo, user = ""):
     today for the user supplied (or all users if no user passed)
     LINKID, LINKTYPE, DIARYDATETIME, DIARYFORNAME, SUBJECT, NOTE, LINKINFO
     """
-    sixmonths = dbo.today(offset = -182)
+    cutoff = dbo.today(offset = -99999)
     return dbo.query("SELECT d.*, cast(DiaryDateTime AS time) AS DiaryTime " \
         "FROM diary d WHERE %s " \
         "AND d.DateCompleted Is Not Null AND d.DiaryDateTime <= ? AND d.DiaryDateTime >= ? " \
-        "ORDER BY d.DiaryDateTime DESC" % user_role_where_clause(dbo, user), ( dbo.now(), sixmonths ))
+        "ORDER BY d.DiaryDateTime DESC" % user_role_where_clause(dbo, user), ( dbo.now(), cutoff ))
 
 def get_all_upto_today(dbo, user = ""):
     """f
@@ -164,11 +164,11 @@ def get_all_upto_today(dbo, user = ""):
     today for the user supplied (or all users if no user passed)
     LINKID, LINKTYPE, DIARYDATETIME, DIARYFORNAME, SUBJECT, NOTE, LINKINFO
     """
-    sixmonths = dbo.today(offset = -182)
+    cutoff = dbo.today(offset = -99999)
     return dbo.query("SELECT d.*, cast(DiaryDateTime AS time) AS DiaryTime " \
         "FROM diary d WHERE %s " \
         "AND d.DiaryDateTime <= ? AND d.DiaryDateTime >= ? " \
-        "ORDER BY d.DiaryDateTime DESC" % user_role_where_clause(dbo, user), ( dbo.now(), sixmonths ))
+        "ORDER BY d.DiaryDateTime DESC" % user_role_where_clause(dbo, user), ( dbo.now(), cutoff ))
 
 def get_future(dbo, user = ""):
     """

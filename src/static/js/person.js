@@ -4,7 +4,7 @@ $(function() {
 
     "use strict";
 
-    var person = {
+    const person = {
 
         render_dialogs: function() {
             return [
@@ -556,8 +556,8 @@ $(function() {
 
             // Hide additional accordion section if there aren't
             // any additional fields declared
-            var ac = $("#asm-additional-accordion");
-            var an = ac.next();
+            let ac = $("#asm-additional-accordion");
+            let an = ac.next();
             if (an.find(".additional").length == 0) {
                 ac.hide(); an.hide();
             }
@@ -612,11 +612,11 @@ $(function() {
         },
 
         get_map_url: function() {
-            var add = $("#address").val().replace("\n", ",");
-            var town = $("#town").val();
-            var county = $("#county").val();
-            var postcode = $("#postcode").val();
-            var map = add;
+            let add = $("#address").val().replace("\n", ",");
+            let town = $("#town").val();
+            let county = $("#county").val();
+            let postcode = $("#postcode").val();
+            let map = add;
             if (town != "") { map += "," + town; }
             if (county != "") { map += "," + county; }
             if (postcode != "") { map += "," + postcode; }
@@ -649,8 +649,8 @@ $(function() {
             $("#county").autocomplete({ source: controller.counties.split("|") });
             $("#town").blur(function() {
                 if ($("#county").val() == "") {
-                    var tc = html.decode(controller.towncounties);
-                    var idx = tc.indexOf($("#town").val() + "^");
+                    let tc = html.decode(controller.towncounties);
+                    let idx = tc.indexOf($("#town").val() + "^");
                     if (idx != -1) {
                         $("#county").val(tc.substring(tc.indexOf("^^", idx) + 2, tc.indexOf("|", idx)));
                     }
@@ -660,23 +660,21 @@ $(function() {
             additional.relocate_fields();
 
             // Diary task create ajax call
-            var create_task = function(taskid) {
-                var formdata = "mode=exec&id=" + $("#personid").val() + "&tasktype=PERSON&taskid=" + taskid + "&seldate=" + $("#seldate").val();
-                common.ajax_post("diarytask", formdata)
-                    .then(function() { 
-                        if (validate.unsaved) {
-                            validate.save(function() {
-                                common.route("person_diary?id=" + controller.person.ID);
-                            });
-                        }
-                        else {
-                            common.route("person_diary?id=" + controller.person.ID);
-                        }
+            const create_task = async function(taskid) {
+                let formdata = "mode=exec&id=" + $("#personid").val() + "&tasktype=PERSON&taskid=" + taskid + "&seldate=" + $("#seldate").val();
+                await common.ajax_post("diarytask", formdata);
+                if (validate.unsaved) {
+                    validate.save(function() {
+                        common.route("person_diary?id=" + controller.person.ID);
                     });
+                }
+                else {
+                    common.route("person_diary?id=" + controller.person.ID);
+                }
             };
 
             // Diary task select date dialog
-            var addbuttons = { };
+            let addbuttons = { };
             addbuttons[_("Select")] = function() {
                 validate.reset();
                 if (validate.notblank([ "seldate" ])) {
@@ -698,11 +696,11 @@ $(function() {
 
             // Attach handlers for diary tasks
             $(".diarytask").each(function() {
-                var a = $(this);
-                var task = a.attr("data").split(" ");
-                var taskmode = task[0];
-                var taskid = task[1];
-                var taskneeddate = task[2];
+                let a = $(this);
+                let task = a.attr("data").split(" ");
+                let taskmode = task[0];
+                let taskid = task[1];
+                let taskneeddate = task[2];
                 $(this).click(function() {
                     $("#seldate").val("");
                     // If the task needs a date, prompt for it
@@ -726,7 +724,7 @@ $(function() {
             validate.save = function(callback) {
                 if (!person.validation()) { header.hide_loading(); return; }
                 validate.dirty(false);
-                var formdata = "mode=save" +
+                let formdata = "mode=save" +
                     "&id=" + $("#personid").val() + 
                     "&recordversion=" + controller.person.RECORDVERSION + 
                     "&" + $("input, select, textarea").not(".chooser").toPOST();
@@ -751,28 +749,22 @@ $(function() {
                 validate.dirty(true);
             });
 
-            $("#button-delete").button().click(function() {
-                tableform.delete_dialog(null, _("This will permanently remove this person, are you sure?"))
-                    .then(function() {
-                        var formdata = "mode=delete&personid=" + $("#personid").val();
-                        return common.ajax_post("person", formdata);
-                    })
-                    .then(function() { 
-                        validate.dirty(false);
-                        common.route("main"); 
-                    });
+            $("#button-delete").button().click(async function() {
+                await tableform.delete_dialog(null, _("This will permanently remove this person, are you sure?"));
+                let formdata = "mode=delete&personid=" + $("#personid").val();
+                await common.ajax_post("person", formdata);
+                validate.dirty(false);
+                common.route("main"); 
             });
 
             $("#button-merge").button().click(function() {
-                var mb = {}; 
-                mb[_("Merge")] = function() { 
+                let mb = {}; 
+                mb[_("Merge")] = async function() { 
                     $("#dialog-merge").dialog("close");
-                    var formdata = "mode=merge&personid=" + $("#personid").val() + "&mergepersonid=" + $("#mergeperson").val();
-                    common.ajax_post("person", formdata)
-                        .then(function() { 
-                            validate.dirty(false);
-                            common.route_reload(); 
-                        });
+                    let formdata = "mode=merge&personid=" + $("#personid").val() + "&mergepersonid=" + $("#mergeperson").val();
+                    await common.ajax_post("person", formdata);
+                    validate.dirty(false);
+                    common.route_reload(); 
                 };
                 mb[_("Cancel")] = function() { $(this).dialog("close"); };
                 $("#dialog-merge").dialog({
@@ -821,7 +813,7 @@ $(function() {
             html.person_flag_options(controller.person, controller.flags, $("#flags"));
 
             // Load homecheck history
-            var h = [];
+            let h = [];
             $.each(controller.homecheckhistory, function(i, v) {
                 h.push("<tr>");
                 h.push('<td class="centered">' + format.date(v.DATELASTHOMECHECKED) + '</td>');
@@ -836,8 +828,8 @@ $(function() {
 
             // Map button
             $("#button-map").button().click(function() {
-                var mapq = person.get_map_url();
-                var maplinkref = String(asm.maplink).replace("{0}", mapq);
+                let mapq = person.get_map_url();
+                let maplinkref = String(asm.maplink).replace("{0}", mapq);
                 window.open(maplinkref, "_blank");
             });
 
