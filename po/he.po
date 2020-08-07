@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: sheltermanager\n"
 "Report-Msgid-Bugs-To: robin@sheltermanager.com\n"
 "POT-Creation-Date: 2020-06-08 08:58+0000\n"
-"PO-Revision-Date: 2020-06-09 10:54+0300\n"
+"PO-Revision-Date: 2020-08-03 17:35+0300\n"
 "Last-Translator: Saggi <s@elephx.com>\n"
 "Language-Team: Hebrew <http://3.127.98.227/projects/asm/asm3/he/>\n"
 "Language: he\n"
@@ -2550,7 +2550,7 @@ msgstr "סטטוס קליניקה"
 #: document_templates.js transport.js onlineforms.js reports.js stocklevel.js
 #: roles.js staff_rota.js animal.js htmltemplates.js
 msgid "Clone"
-msgstr "מחק"
+msgstr "שכפל"
 
 #: roles.js
 msgid "Clone Animals"
@@ -4761,7 +4761,7 @@ msgstr "פולידקטיל אמריקאי"
 
 #: dbupdate.py
 msgid "F (Feral Cat)"
-msgstr "‫F (חתול רחוב)"
+msgstr "‫F (חתול רחוב לא מורגל לבני אדם)"
 
 #: dbupdate.py
 msgid "FECV/FeCoV"
@@ -4870,7 +4870,7 @@ msgstr "נקבה"
 
 #: dbupdate.py
 msgid "Feral"
-msgstr "חתול בר"
+msgstr "חתול רחוב"
 
 #: dbupdate.py
 msgid "Ferret"
@@ -6220,7 +6220,7 @@ msgstr "הכנסה"
 
 #: options.js
 msgid "Income account for sales tax"
-msgstr "חשבון הכנסות למס מכירה"
+msgstr "חשבון הכנסות למע״מ"
 
 #: dbupdate.py
 msgid "Income from an on-site shop"
@@ -7870,7 +7870,7 @@ msgstr "הסיסמאות אינן תואמות."
 
 #: diarytask.js
 msgid "New task detail"
-msgstr "פרטי תבנית משימה חדשים"
+msgstr "הוסף פרטי תבנית משימה חדשים"
 
 #: document_templates.js
 msgid "New template"
@@ -10022,7 +10022,7 @@ msgstr "סאן ברנרד"
 #: dbupdate.py financial.py common_widgets.js donations.js
 #: clinic_appointment.js lookups.js
 msgid "Sales Tax"
-msgstr "מס מכירות"
+msgstr "מע״מ"
 
 #: dbupdate.py
 msgid "Saluki"
@@ -12781,7 +12781,7 @@ msgstr "סביבה לא מתאימה"
 
 #: code.py configuration.py options.js header.js
 msgid "Up for adoption"
-msgstr "מוצעים לאימוץ"
+msgstr "מפורסמים לאימוץ"
 
 #: movement.py
 msgid "Upcoming medical items"
@@ -13529,8 +13529,7 @@ msgstr "כאשר יוצרים הודעה, שלח אימייל לכל משתמש 
 
 #: options.js
 msgid "When calculating sales tax, assume the payment amount is net and add it"
-msgstr ""
-"בחישוב מס מכירה, הנח כי הסכום לתשלום הוא לפני מס, והוסף לו את שיעור המס"
+msgstr "בחישוב מע״מ, הנח כי הסכום לתשלום הוא לפני מס, והוסף לו את שיעור המס"
 
 #: options.js
 msgid ""
