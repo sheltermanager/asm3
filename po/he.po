@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: sheltermanager\n"
 "Report-Msgid-Bugs-To: robin@sheltermanager.com\n"
-"POT-Creation-Date: 2020-06-08 08:58+0000\n"
-"PO-Revision-Date: 2020-08-03 17:35+0300\n"
+"POT-Creation-Date: 2020-06-15 18:36+0000\n"
+"PO-Revision-Date: 2020-08-07 19:53+0300\n"
 "Last-Translator: Saggi <s@elephx.com>\n"
 "Language-Team: Hebrew <http://3.127.98.227/projects/asm/asm3/he/>\n"
 "Language: he\n"
@@ -138,10 +138,6 @@ msgstr "רשימת אזורים בהם האדם יבצע בדק בית - לדו�
 #: movements.js
 msgid "A movement must have a reservation date or type."
 msgstr "יש למלא סוג או תאריך שריון."
-
-#: main.js
-msgid "A new version of ASM is available."
-msgstr "גרסה חדשה של ASM זמינה."
 
 #: movement.py
 msgid "A person is required for this movement type."
@@ -2654,12 +2650,13 @@ msgid ""
 msgstr "רשימה מופרדת בפסיקים של יחידות למיקום זה, למשל: 1,2,3,4,בידוד,כלוב 5"
 
 #: html.py mobile.py person.py wordprocessor.py transport.js vouchers.js
-#: waitinglist_new.js medicalprofile.js litters.js waitinglist_results.js
-#: person.js medical.js vaccination.js diary.js citations.js common_widgets.js
-#: stocklevel.js traploan.js donations.js waitinglist.js rota.js accounts.js
-#: staff_rota.js lostfound.js test.js animal_diet.js clinic_appointment.js
-#: header_edit_header.js log.js movements.js licence.js lostfound_new.js
-#: person_find_results.js
+#: waitinglist_new.js medicalprofile.js litters.js move_reclaim.js
+#: waitinglist_results.js person.js medical.js move_retailer.js vaccination.js
+#: diary.js citations.js common_widgets.js stocklevel.js traploan.js
+#: donations.js waitinglist.js rota.js accounts.js staff_rota.js lostfound.js
+#: test.js animal_diet.js clinic_appointment.js move_reserve.js
+#: move_transfer.js header_edit_header.js log.js movements.js move_adopt.js
+#: licence.js lostfound_new.js move_foster.js person_find_results.js
 msgid "Comments"
 msgstr "הערות"
 
@@ -7047,8 +7044,8 @@ msgstr "אבידות/מציאות"
 
 #: main.js
 msgid ""
-"Lots of reports installed? Clean up the Reports menu with Settings-Options- "
-"Display-Show report menu items in collapsed categories."
+"Lots of reports installed? Clean up the Reports menu with Settings, Options, "
+"Display, Show report menu items in collapsed categories."
 msgstr ""
 "יותר מדי דוחות מותקנים? סדר את תפריט הדוחות באמצעות הגדרות-אפשרויות-תצוגה- "
 "הצג פריטי תפריט דוחות תחת קטגוריות."
@@ -9386,10 +9383,6 @@ msgstr "שוחרר לחופשי {0}"
 #: mobile.py
 msgid "Reload"
 msgstr "טען מחדש"
-
-#: main.js
-msgid "Reload Application"
-msgstr "טען מחדש את האפליקציה"
 
 #: medical.js
 msgid "Reload page ..."
@@ -13775,7 +13768,7 @@ msgstr ""
 
 #: main.js
 msgid ""
-"You can set a default amount for different payment types in the Settings- "
+"You can set a default amount for different payment types in the Settings, "
 "Lookup Data screen. Very handy when creating adoptions."
 msgstr ""
 "באפשרותך לקבוע סכום ברירת מחדל עבור סוגי תשלומים שונים במסך הגדרות - נתוני "
@@ -13787,8 +13780,8 @@ msgstr "ניתן לשנות את סדר הנתונים בטבלאות על יד�
 
 #: main.js
 msgid ""
-"You can upload images called logo.jpg and splash.jpg to the Settings- "
-"Reports-Extra Images screen to override the login splash screen and logo in "
+"You can upload images called logo.jpg and splash.jpg to the Settings, "
+"Reports, Extra Images screen to override the login splash screen and logo in "
 "the upper left corner of the application."
 msgstr ""
 "ניתן להעלות תמונות בשמות logo.jpg ו- splash.jpg במסך הגדרות-דוחות-תמונות "
@@ -14239,10 +14232,6 @@ msgid "{browser} version {version}, running on {os}."
 msgstr "‫{browser} גרסה {version}, על מערכת הפעלה {os}."
 
 #: main.js
-msgid "{plural0} animal as dead on arrival"
-msgstr "חיה {plural0} הגיעה מתה למקלט"
-
-#: main.js
 msgid "{plural0} animal control call due for followup today"
 msgstr "שיחת פיקוח על בע״ח {plural0} להמשך מעקב היום"
 
@@ -14273,6 +14262,10 @@ msgstr "חיה {plural0} נתפסה, עוקרה/סורסה והושבה"
 #: main.js
 msgid "{plural0} animal was adopted"
 msgstr "חיה {plural0} אומצה"
+
+#: main.js
+msgid "{plural0} animal was dead on arrival"
+msgstr "חיה {plural0} הגיעה מתה למקלט"
 
 #: main.js
 msgid "{plural0} animal was euthanized"
@@ -14928,3 +14921,9 @@ msgstr "{plural3} שבועות."
 #: i18n.py
 msgid "{plural3} years."
 msgstr "{plural3} שנים."
+
+#~ msgid "A new version of ASM is available."
+#~ msgstr "גרסה חדשה של ASM זמינה."
+
+#~ msgid "Reload Application"
+#~ msgstr "טען מחדש את האפליקציה"
