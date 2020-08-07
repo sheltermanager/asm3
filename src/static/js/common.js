@@ -911,9 +911,20 @@ const common = {
         $.datepicker.setDefaults(asmregion);
         // If we're using an RTL language, switch to RTL layout
         if (asm.locale == "ar" || asm.locale == "he") {
+
             $("html").css("direction", "rtl");
+            var file = 'static/css/asm-rtl.css';
+            var link = document.createElement( "link" );
+            link.href = file
+            link.type = "text/css";
+            link.rel = "stylesheet";
+            link.media = "screen,print";
+
+            document.getElementsByTagName( "head" )[0].appendChild( link );
+            
             // Menu text in dropdowns
             $(".asm-menu-body").css("text-align", "right");
+            $(".asm-topline").css("text-align", "right");
             // Screens that show tables of data
             $(".asm-table td").css("text-align", "right");
             // Hotkeys in menus
@@ -922,6 +933,7 @@ const common = {
             $(".asm-tabbar").css("direction", "rtl");
             $(".ui-tabs-nav li.ui-state-default").css("float", "right");
             $(".ui-tabs-nav li a").css("float", "right");
+            
         }
         // Create any form controls based on classes used
         $(".asm-callout").callout();
