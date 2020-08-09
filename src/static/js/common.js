@@ -913,8 +913,8 @@ const common = {
         if (asm.locale == "ar" || asm.locale == "he") {
 
             $("html").css("direction", "rtl");
-            var file = 'static/css/asm-rtl.css';
-            var link = document.createElement( "link" );
+            let file = 'static/css/asm-rtl.css';
+            let link = document.createElement( "link" );
             link.href = file
             link.type = "text/css";
             link.rel = "stylesheet";
