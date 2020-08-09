@@ -928,6 +928,13 @@ Animals
   particular location or by an ACO (useful for shelters who do not have staff
   picking up animals).
 
+Reports
+-------
+
+* Email scheduled reports with no data: If you have set reports to be
+  automatically emailed at a time of day, empty reports with "No data to show"
+  will be emailed if this box is ticked. 
+
 Shelter View
 ------------
 

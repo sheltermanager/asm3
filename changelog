@@ -1,6 +1,18 @@
 44
 ================
 
+05/08/20 Options->Reports for emailing empty reports
+04/08/20 $CURRENT_DATE+/-DAY$ report tokens
+02/08/20 Merging animals and people should not update log.LastChangedBy
+01/08/20 Update owner when active movement person is edited
+31/07/20 Include vouchers when generating person documents #876
+31/07/20 Add back deleted users that are dispatched ACO #889
+31/07/20 Email empty reports by default and hidden config switch #890
+31/07/20 Weight should be exported/imported #891
+31/07/20 Include diary time on emails #885
+31/07/20 Do not validate deceased date against intake for non-shelter
+31/07/20 Use current user's site when finding similar people #664
+27/07/20 Diary limits should not apply to edit screens, only home page
 20/07/20 Online form: Email address field type #616
 20/07/20 Substitute $$TITLE$$ token when attaching online forms #882
 18/07/20 Fix for title case in online forms with scandinavian characters

@@ -1118,7 +1118,7 @@ def clinic_tags(dbo, c):
     tags.update(table_tags(dbo, d, asm3.clinic.get_invoice_items(dbo, c.ID)))
     return tags
 
-def person_tags(dbo, p, includeImg=False, includeDonations=False):
+def person_tags(dbo, p, includeImg=False, includeDonations=False, includeVouchers=False):
     """
     Generates a list of tags from a person result (the deep type from
     calling asm3.person.get_person)
@@ -1218,6 +1218,22 @@ def person_tags(dbo, p, includeImg=False, includeDonations=False):
         }
         dons = asm3.financial.get_person_donations(dbo, p["ID"])
         tags.update(table_tags(dbo, d, dons, "DONATIONNAME", "DATEDUE", "DATE"))
+
+    # Vouchers
+    if includeVouchers:
+        d = {
+            "VOUCHERANIMALNAME":    "ANIMALNAME",
+            "VOUCHERSHELTERCODE":   "SHELTERCODE",
+            "VOUCHERTYPENAME":      "VOUCHERNAME",
+            "VOUCHERCODE":          "VOUCHERCODE",
+            "VOUCHERVALUE":         "c:VALUE",
+            "VOUCHERISSUED":        "d:DATEISSUED",
+            "VOUCHEREXPIRES":       "d:DATEEXPIRED",
+            "VOUCHERREDEEMED":      "d:DATEPRESENTED",
+            "VOUCHERCOMMENTS":      "COMMENTS"
+        }
+        vouc = asm3.financial.get_person_vouchers(dbo, p["ID"])
+        tags.update(table_tags(dbo, d, vouc, "VOUCHERNAME", "DATEISSUED", "DATEPRESENTED"))
 
     # Additional fields
     tags.update(additional_field_tags(dbo, asm3.additional.get_additional_fields(dbo, p["ID"], "person")))
@@ -1684,7 +1700,7 @@ def generate_person_doc(dbo, templateid, personid, username):
     p = asm3.person.get_person(dbo, personid)
     im = asm3.media.get_image_file_data(dbo, "person", personid)[1]
     if p is None: raise asm3.utils.ASMValidationError("%d is not a valid person ID" % personid)
-    tags = person_tags(dbo, p, includeImg=True, includeDonations=True)
+    tags = person_tags(dbo, p, includeImg=True, includeDonations=True, includeVouchers=True)
     tags = append_tags(tags, org_tags(dbo, username))
     m = dbo.first_row(asm3.movement.get_person_movements(dbo, personid))
     if m is not None:

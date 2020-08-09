@@ -57,7 +57,7 @@ RECOMMENDED_REPORTS = [
     "Intakes by Date with Outcomes", "Long Term Animals", "Medical Diary", 
     "Monthly Adoptions By Species", 
     "Monthly Figures (by species)", "Monthly Figures (by type)", "Most Common Name",
-    "Non-Microchipped Animals", "Non-Neutered/Spayed Animals Aged Over 6 Months",
+    "Non-Microchipped Animals", "Non-Neutered/Spayed Animals Aged Over 6 Months", "Non-Returned Adoptions",
     "Payment Breakdown By Date", "Print Animal Record", "Print Animal Record (for adopters)", "Quality Control", 
     "Reserves without Homechecks", "Returned Animals", "shelteranimalscount.org matrix", 
     "Shelter Inventory", "Shelter Inventory with Pictures by Location", "Shelter Inventory at Date", 
@@ -572,7 +572,6 @@ def email_daily_reports(dbo, now = None):
     now: The time right now in local time. If now is None, then we run anything
          with a dailyemailhour of -1, which is "batch".
     """
-    l = dbo.locale
     rs = get_available_reports(dbo, False)
     hour = -1
     weekday = -1
@@ -605,9 +604,10 @@ def email_daily_reports(dbo, now = None):
         if freq == 11 and day != 31 and month != 12: continue # Freq is end of year and its not 31st Dec
         # If we get here, we're good to send
         body = execute(dbo, r.ID, "dailyemail")
-        # Only send if there's data on the report
-        if body.find(asm3.i18n._("No data to show on the report.", l)) == -1:
-            asm3.utils.send_email(dbo, asm3.configuration.email(dbo), emails, "", "", r.TITLE, body, "html", exceptions=False)
+        # If we aren't sending empty reports and there's no data, bail
+        if body.find("NODATA") != -1 and not asm3.configuration.email_empty_reports(dbo): 
+            continue
+        asm3.utils.send_email(dbo, asm3.configuration.email(dbo), emails, "", "", r.TITLE, body, "html", exceptions=False)
 
 def execute_title(dbo, title, username = "system", params = None):
     """
@@ -1136,6 +1136,19 @@ class Report:
         s = self.sql
         # Throw away any SQL comments
         s = strip_sql_comments(s)
+        # Subtitute CONST tokens (do this first so CONST can expand to other tokens)
+        for name, value in asm3.utils.regex_multi(r"\$CONST (.+?)\=(.+?)\$", s):
+            s = s.replace("$%s$" % name, value) # replace all tokens with the constant value
+            s = s.replace("$CONST %s=%s$" % (name, value), "") # remove the constant declaration
+        # Substitute CURRENT_DATE-X tokens
+        for day in asm3.utils.regex_multi(r"\$CURRENT_DATE\-(.+?)\$", s):
+            d = self.dbo.today(offset=asm3.utils.cint(day)*-1)
+            s = s.replace("$CURRENT_DATE-%s$" % day, self.dbo.sql_date(d, includeTime=False, wrapParens=False))
+        # Substitute CURRENT_DATE+X tokens
+        for day in asm3.utils.regex_multi(r"\$CURRENT_DATE\+(.+?)\$", s):
+            d = self.dbo.today(offset=asm3.utils.cint(day))
+            s = s.replace("$CURRENT_DATE+%s$" % day, self.dbo.sql_date(d, includeTime=False, wrapParens=False))
+        # straight tokens
         s = s.replace("$CURRENT_DATE$", self.dbo.sql_date(self.dbo.now(), includeTime=False, wrapParens=False))
         s = s.replace("$USER$", self.user)
         s = s.replace("$DATABASENAME$", self.dbo.database)
@@ -1154,10 +1167,6 @@ class Report:
         if s.find("$SITE$") != -1:
             sf = self.dbo.query_int("SELECT SiteID FROM users WHERE UserName = ?", [self.user])
             s = s.replace("$SITE$", str(sf))
-        # Subtitute CONST tokens
-        for name, value in asm3.utils.regex_multi(r"\$CONST (.+?)\=(.+?)\$", s):
-            s = s.replace("$%s$" % name, value) # replace all tokens with the constant value
-            s = s.replace("$CONST %s=%s$" % (name, value), "") # remove the constant declaration
         self.sql = s
         # If we don't have any parameters, no point trying to deal with these
         if params is None: return
@@ -1390,6 +1399,7 @@ class Report:
 
         # Check for no data
         if len(rs) == 0:
+            self._Append("<!-- NODATA -->")
             self._p(asm3.i18n._("No data.", l))
             self._Append("</body></html>")
             return self.output
@@ -1510,6 +1520,7 @@ class Report:
 
         # Check for no data
         if len(rs) == 0:
+            self._Append("<!-- NODATA -->")
             self._p(asm3.i18n._("No data.", l))
             self._Append("</body></html>")
             return self.output
@@ -1676,6 +1687,7 @@ class Report:
         # If there are no records, show a message to say so
         # but only if it's not a subreport
         if rs is None or len(rs) == 0:
+            self._Append("<!-- NODATA -->")
             if not self.isSubReport:
                 if nodata == "":
                     self._p(asm3.i18n._("No data to show on the report.", l))

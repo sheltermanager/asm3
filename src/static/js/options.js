@@ -75,6 +75,7 @@ $(function() {
                 '<li><a href="#tab-processors">' + _("Payment Processors") + '</a></li>',
                 '<li><a href="#tab-quicklinks">' + _("Quicklinks") + '</a></li>',
                 '<li><a href="#tab-unwanted">' + _("Remove") + '</a></li>',
+                '<li><a href="#tab-reports">' + _("Reports") + '</a></li>',
                 '<li><a href="#tab-search">' + _("Search") + '</a></li>',
                 '<li><a href="#tab-shelterview">' + _("Shelter view") + '</a></li>',
                 '<li><a href="#tab-waitinglist">' + _("Waiting List") + '</a></li>',
@@ -726,7 +727,6 @@ $(function() {
                 '<input data="StickyTableHeaders" id="floatingheaders" class="asm-checkbox" type="checkbox" /> <label for="floatingheaders">' + _("Keep table headers visible when scrolling") + '</label><br />',
                 '<input data="RecordNewBrowserTab" id="recordnewbrowsertab" class="asm-checkbox" type="checkbox" /> <label for="recordnewbrowsertab">' + _("Open records in a new browser tab") + '</label><br />',
                 '<input data="ReportNewBrowserTab" id="reportnewbrowsertab" class="asm-checkbox" type="checkbox" /> <label for="reportnewbrowsertab">' + _("Open reports in a new browser tab") + '</label><br />',
-                '<input data="ReportMenuAccordion" id="reportmenuaccordion" class="asm-checkbox" type="checkbox" /> <label for="reportmenuaccordion">' + _("Show report menu items in collapsed categories") + '</label><br />',
                 '<input data="LocationFiltersEnabled" id="locationfilters" class="asm-checkbox" type="checkbox" /> <label for="locationfilters">' + _("Enable location filters") + '</label><br />',
                 '<input data="MultiSiteEnabled" id="multisite" class="asm-checkbox" type="checkbox" /> <label for="multisite">' + _("Enable multiple sites") + '</label><br />',
                 '<input data="InactivityTimer" id="inactivitytimer" class="asm-checkbox" type="checkbox" /> <label for="inactivitytimer">' + _("Auto log users out after this many minutes of inactivity") + '</label>',
@@ -1235,6 +1235,17 @@ $(function() {
             ].join("\n");
         },
 
+        render_reports: function() {
+            return [
+                '<div id="tab-reports">',
+                '<p>',
+                '<input data="EmailEmptyReports" id="emptyreports" class="asm-checkbox" type="checkbox" /> <label for="emptyreports">' + _("Email scheduled reports with no data") + '</label><br />',
+                '<input data="ReportMenuAccordion" id="reportmenuaccordion" class="asm-checkbox" type="checkbox" /> <label for="reportmenuaccordion">' + _("Show report menu items in collapsed categories") + '</label><br />',
+                '</p>',
+                '</div>'
+            ].join("\n");
+        },
+
         render_waitinglist: function() {
             return [
                 '<div id="tab-waitinglist">',
@@ -1303,6 +1314,7 @@ $(function() {
                 this.render_search(),
                 this.render_shelterview(),
                 this.render_unwanted(),
+                this.render_reports(),
                 this.render_waitinglist(),
                 '</div>',
                 html.content_footer()

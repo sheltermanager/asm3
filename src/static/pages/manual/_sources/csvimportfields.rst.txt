@@ -40,6 +40,10 @@ ANIMALBREED2
     The animal's secondary breed. If different from ANIMALBREED1, ASM will mark the animal as a crossbreed.
 ANIMALDOB
     The animal's date of birth. This field, or ANIMALAGE must be supplied or the record will not be imported.
+ANIMALSIZE
+    The animal's size. This should correspond to a size in your database.
+ANIMALWEIGHT
+    The animal's weight as a floating point number of pounds or kilos (eg: 2.5 = 2 lb and 8 oz)
 ANIMALAGE
     The animal's current age in years. ASM will calculate a date of birth from this during import if ANIMALDOB is not supplied or blank.
 ANIMALLOCATION

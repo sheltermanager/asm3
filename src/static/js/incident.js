@@ -572,6 +572,18 @@ $(function() {
             // Load the data into the controls for the screen
             $("#asm-content input, #asm-content select, #asm-content textarea").fromJSON(controller.incident);
 
+            // If the dispatch ACO is not in the list (can happen if the
+            // user account is later deleted), add it back so that it doesn't
+            // disappear.
+            let acoinlist = false;
+            $.each(controller.users, function(i, v) {
+                if (v.USERNAME == controller.incident.DISPATCHEDACO) { acoinlist = true; return false; }
+            });
+            if (!acoinlist) {
+                $("#dispatchedaco").append("<option>" + controller.incident.DISPATCHEDACO + "</option>");
+                $("#dispatchedaco").select("value", controller.incident.DISPATCHEDACO);
+            }
+
             // Update the lat/long
             $(".asm-latlong").latlong("load");
 
