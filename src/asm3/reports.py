@@ -605,8 +605,8 @@ def email_daily_reports(dbo, now = None):
         # If we get here, we're good to send
         body = execute(dbo, r.ID, "dailyemail")
         # If we aren't sending empty reports and there's no data, bail
-        if body.find("NODATA") != -1 and not asm3.configuration.email_empty_reports(dbo):
-            return
+        if body.find("NODATA") != -1 and not asm3.configuration.email_empty_reports(dbo): 
+            continue
         asm3.utils.send_email(dbo, asm3.configuration.email(dbo), emails, "", "", r.TITLE, body, "html", exceptions=False)
 
 def execute_title(dbo, title, username = "system", params = None):
