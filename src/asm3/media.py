@@ -933,9 +933,9 @@ def watermark_with_transparency(dbo, imagedata, animalName):
         inputd = asm3.utils.bytesio(imagedata)
         base_image = Image.open(inputd)
 
-        if asm3.dbfs.file_exists(dbo, "/reports/watermark.png"):
-            watermark = Image.open(asm3.utils.bytesio(asm3.dbfs.get_string_filepath("/reports/watermark.png")))
-        else:
+        if asm3.dbfs.file_exists(dbo, "watermark.png"):
+            watermark = Image.open(asm3.utils.bytesio(asm3.dbfs.get_string_filepath(dbo, "/reports/watermark.png")))
+        else
             watermark = Image.open(WATERMARK_FILE)
        
         width, height = base_image.size
