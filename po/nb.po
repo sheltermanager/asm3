@@ -9076,11 +9076,11 @@ msgstr ""
 
 #: movements.js animal_find.js dbupdate.py animal.py
 msgid "Released To Wild"
-msgstr "Satt ut i det fri eller omsorgsmodell"
+msgstr "Satt ut i det fri"
 
 #: animal.py
 msgid "Released To Wild {0}"
-msgstr "Satt ut i det fri eller omsorgsmodell {0}"
+msgstr "Satt ut i det fri {0}"
 
 #: mobile.py
 msgid "Reload"
