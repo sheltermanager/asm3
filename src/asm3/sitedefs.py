@@ -354,4 +354,12 @@ TIMEPICKER_JS = get_string("timepicker_js", 'static/lib/timepicker/0.3.3/jquery.
 TINYMCE_4_JS = get_string("tinymce_4_js", 'static/lib/tinymce/4.7.13-asm1/tinymce/js/tinymce/tinymce.min.js')
 TOUCHPUNCH_JS = get_string("touchpunch_js", 'static/lib/touchpunch/0.2.3/jquery.ui.touch-punch.min.js')
 
-
+# Watermark Settings
+WATERMARK_FILE = get_string("watermark_file", "")
+WATERMARK_X_OFFSET = get_string("watermark_x_offset", 10)
+WATERMARK_Y_OFFSET = get_string("watermark_y_offset", 10)
+WATERMARK_FONT_FILE = get_string("watermark_font_file", "")
+WATERMARK_FONT_SHADOWCOLOR = get_string("watermark_font_shadowcolor", "black")
+WATERMARK_FONT_FILLCOLOR = get_string("watermark_font_fillcolor", "white")
+WATERMARK_FONT_STROKE = get_string("watermark_font_stroke", 3)
+WATERMARK_FONT_OFFSET = get_string("watermark_font_offset", 20)
