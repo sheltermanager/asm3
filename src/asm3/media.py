@@ -6,7 +6,7 @@ import asm3.configuration
 import asm3.dbfs
 import asm3.log
 import asm3.utils
-from asm3.sitedefs import SCALE_PDF_DURING_ATTACH, SCALE_PDF_CMD, WATERMARK_FILE, WATERMARK_X_OFFSET, WATERMARK_Y_OFFSET, WATERMARK_FONT_FILE, WATERMARK_FONT_SHADOWCOLOR, WATERMARK_FONT_FILLCOLOR, WATERMARK_FONT_STROKE, WATERMARK_FONT_OFFSET
+from asm3.sitedefs import SCALE_PDF_DURING_ATTACH, SCALE_PDF_CMD, WATERMARK_X_OFFSET, WATERMARK_Y_OFFSET, WATERMARK_FONT_FILE, WATERMARK_FONT_SHADOWCOLOR, WATERMARK_FONT_FILLCOLOR, WATERMARK_FONT_STROKE, WATERMARK_FONT_OFFSET
 
 import datetime
 import os
@@ -629,22 +629,28 @@ def rotate_media(dbo, username, mid, clockwise = True):
     update_file_content(dbo, username, mid, imagedata)
     asm3.audit.edit(dbo, username, "media", mid, "", "media id %d rotated, clockwise=%s" % (mid, str(clockwise)))
 
+def watermark_available(dbo):
+    """
+    Returns true if we can handle watermarking
+    """
+    return asm3.dbfs.file_exists(dbo, "watermark.png") and os.path.exists(WATERMARK_FONT_FILE)
+
 def watermark_media(dbo, username, mid):
     """
-    Watermarks an image with animalName and logo
+    Watermarks an image with animalname and logo
     """
     mr = dbo.first_row(dbo.query("SELECT * FROM media WHERE ID=?", [mid]))
     if not mr: raise asm3.utils.ASMError("Record does not exist")
     # If it's not a jpg image, we can stop right now
     if mr.MEDIAMIMETYPE != "image/jpeg": raise asm3.utils.ASMError("Image is not a JPEG file, cannot watermark")
-    animal = dbo.query("SELECT animal.AnimalName FROM media INNER JOIN animal ON (media.LinkID = animal.ID) WHERE media.ID = ?", [mid])
-    animalName = animal[0]["ANIMALNAME"]
+    a = dbo.first_row(dbo.query("SELECT animal.AnimalName FROM media INNER JOIN animal ON (media.LinkID = animal.ID) WHERE media.ID = ?", [mid]))
+    if a is None: raise asm3.utils.ASMError("Media is not linked to an animal")
     # Load and watermark the image
     imagedata = asm3.dbfs.get_string_id(dbo, mr.DBFSID)
-    imagedata = watermark_with_transparency(dbo, imagedata, animalName)
+    imagedata = watermark_with_transparency(dbo, imagedata, a.ANIMALNAME)
     # Update it
     update_file_content(dbo, username, mid, imagedata)
-    asm3.audit.edit(dbo, username, "media", mid, "", "media id %d watermaked" % (mid))    
+    asm3.audit.edit(dbo, username, "media", mid, "", "media id %d watermarked" % (mid))    
 
 def scale_image(imagedata, resizespec):
     """
@@ -925,18 +931,18 @@ def scale_all_pdf(dbo):
     asm3.al.debug("scaled %d of %d pdfs" % (total, len(mp)), "media.scale_all_pdf", dbo)
 
 
-def watermark_with_transparency(dbo, imagedata, animalName):
+def watermark_with_transparency(dbo, imagedata, animalname):
     """
-    Watermark the image with animalName and logo. 
+    Watermark the image with animalname and logo. 
     """
     try:
+
+        if not watermark_available(dbo): 
+            raise asm3.utils.ASMError("Watermarking is not available (no watermark.png or missing font)")
+
         inputd = asm3.utils.bytesio(imagedata)
         base_image = Image.open(inputd)
-
-        if asm3.dbfs.file_exists(dbo, "watermark.png"):
-            watermark = Image.open(asm3.utils.bytesio(asm3.dbfs.get_string_filepath(dbo, "/reports/watermark.png")))
-        else:
-            watermark = Image.open(WATERMARK_FILE)
+        watermark = Image.open(asm3.utils.bytesio(asm3.dbfs.get_string_filepath(dbo, "/reports/watermark.png")))
        
         width, height = base_image.size
         wm_width, wm_height = watermark.size
@@ -957,7 +963,7 @@ def watermark_with_transparency(dbo, imagedata, animalName):
 
         for fontsize in range(20, 180, 5):
             font = ImageFont.truetype(WATERMARK_FONT_FILE, fontsize)
-            font_dimensions = draw.textsize(animalName,font=font)
+            font_dimensions = draw.textsize(animalname,font=font)
             if font_dimensions[0]+font_offset > (width-wm_width-font_offset):
                 fontsize = fontsize - 10
                 break
@@ -965,17 +971,17 @@ def watermark_with_transparency(dbo, imagedata, animalName):
         font = ImageFont.truetype(WATERMARK_FONT_FILE, fontsize)
         font_position = height - (font_dimensions[1] + y_offset)
 
-        draw.text((font_offset-stroke,font_position-stroke), animalName, font=font, fill=shadowcolor)
-        draw.text((font_offset+stroke,font_position-stroke), animalName, font=font, fill=shadowcolor)
-        draw.text((font_offset-stroke,font_position+stroke), animalName, font=font, fill=shadowcolor)
-        draw.text((font_offset+stroke,font_position+stroke), animalName, font=font, fill=shadowcolor)
+        draw.text((font_offset-stroke,font_position-stroke), animalname, font=font, fill=shadowcolor)
+        draw.text((font_offset+stroke,font_position-stroke), animalname, font=font, fill=shadowcolor)
+        draw.text((font_offset-stroke,font_position+stroke), animalname, font=font, fill=shadowcolor)
+        draw.text((font_offset+stroke,font_position+stroke), animalname, font=font, fill=shadowcolor)
 
-        draw.text((font_offset,font_position+stroke), animalName, font=font, fill=shadowcolor)
-        draw.text((font_offset,font_position-stroke), animalName, font=font, fill=shadowcolor)
-        draw.text((font_offset-stroke,font_position), animalName, font=font, fill=shadowcolor)
-        draw.text((font_offset+stroke,font_position), animalName, font=font, fill=shadowcolor)
+        draw.text((font_offset,font_position+stroke), animalname, font=font, fill=shadowcolor)
+        draw.text((font_offset,font_position-stroke), animalname, font=font, fill=shadowcolor)
+        draw.text((font_offset-stroke,font_position), animalname, font=font, fill=shadowcolor)
+        draw.text((font_offset+stroke,font_position), animalname, font=font, fill=shadowcolor)
 
-        draw.text((font_offset,font_position), animalName, font=font, fill=fillcolor)
+        draw.text((font_offset,font_position), animalname, font=font, fill=fillcolor)
         draw = ImageDraw.Draw(transparent)
 
         output = asm3.utils.bytesio()
@@ -983,7 +989,6 @@ def watermark_with_transparency(dbo, imagedata, animalName):
         watermarked = output.getvalue()
         output.close()
         return watermarked
-
 
     except Exception as err:
         asm3.al.error("failed watermarking image: %s" % str(err), "media.watermark_with_transparency")

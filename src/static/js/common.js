@@ -915,7 +915,7 @@ const common = {
             $("html").css("direction", "rtl");
             let file = 'static/css/asm-rtl.css';
             let link = document.createElement( "link" );
-            link.href = file
+            link.href = file;
             link.type = "text/css";
             link.rel = "stylesheet";
             link.media = "screen,print";

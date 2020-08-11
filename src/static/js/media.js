@@ -781,6 +781,11 @@ $(function() {
                 $("#button-video").hide();
             }
 
+            // If watermarking isn't available, hide it
+            if (!controller.canwatermark) {
+                $("#button-watermark").hide();
+            }
+
             // Only show include/exclude for animals
             if (controller.name != "animal_media") {
                 $("#button-include").hide();
