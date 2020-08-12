@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ASM3\n"
 "Report-Msgid-Bugs-To: robin@sheltermanager.com\n"
-"POT-Creation-Date: 2020-06-15 18:36+0000\n"
+"POT-Creation-Date: 2020-08-11 19:44+0000\n"
 "Last-Translator: Robin Rawson-Tetley <robin@sheltermanager.com>\n"
 "Language-Team: en <robin@sheltermanager.com>\n"
 "Language: en\n"
@@ -3306,6 +3306,10 @@ msgid "Default Incident Type"
 msgstr ""
 
 #: options.js
+msgid "Default Jurisdiction"
+msgstr ""
+
+#: options.js
 msgid "Default Location"
 msgstr ""
 
@@ -4246,8 +4250,8 @@ msgid "Electricity Bills"
 msgstr ""
 
 #: html.py mobile.py onlineform.py users.js incident.js waitinglist_results.js
-#: person.js waitinglist.js document_repository.js lostfound.js animal.js
-#: options.js person_find.js media.js header_edit_header.js
+#: person.js onlineform.js waitinglist.js document_repository.js lostfound.js
+#: animal.js options.js person_find.js media.js header_edit_header.js
 #: person_find_results.js
 msgid "Email"
 msgstr ""
@@ -4312,6 +4316,10 @@ msgstr ""
 
 #: donations.js
 msgid "Email request for payment"
+msgstr ""
+
+#: options.js
+msgid "Email scheduled reports with no data"
 msgstr ""
 
 #: options.js
@@ -6483,9 +6491,10 @@ msgstr ""
 msgid "June"
 msgstr ""
 
-#: html.py lookups.py common_personchooser.js incident.js person.js
-#: incident_find_results.js incident_find.js person_find.js incident_new.js
-#: person_new.js person_find_results.js
+#: html.py lookups.py animal_new.js common_personchooser.js incident.js
+#: animal_find_results.js person.js incident_find_results.js incident_find.js
+#: animal.js person_find.js incident_new.js person_new.js
+#: person_find_results.js
 msgid "Jurisdiction"
 msgstr ""
 
@@ -9473,6 +9482,10 @@ msgid "Remove the insurance number field from the movement screens"
 msgstr ""
 
 #: options.js
+msgid "Remove the jurisdiction field from animal entry details"
+msgstr ""
+
+#: options.js
 msgid "Remove the location unit field from animal details"
 msgstr ""
 
@@ -9556,7 +9569,7 @@ msgstr ""
 msgid "Report a new incident"
 msgstr ""
 
-#: html.py mobile.py reports.js roles.js
+#: html.py mobile.py reports.js roles.js options.js
 msgid "Reports"
 msgstr ""
 
@@ -10524,6 +10537,10 @@ msgid "Show the internal location field"
 msgstr ""
 
 #: options.js
+msgid "Show the jurisdiction field"
+msgstr ""
+
+#: options.js
 msgid "Show the litter ID field"
 msgstr ""
 
@@ -11304,7 +11321,7 @@ msgstr ""
 msgid "Text"
 msgstr ""
 
-#: csvimport.js
+#: csvimport.js csvimport_paypal.js
 msgid "Text Encoding"
 msgstr ""
 
@@ -12585,7 +12602,7 @@ msgstr ""
 msgid "Unable to Cope"
 msgstr ""
 
-#: common.js options.js shelterview.js
+#: animal_find.js common.js options.js shelterview.js
 msgid "Unaltered"
 msgstr ""
 
@@ -13302,6 +13319,10 @@ msgstr ""
 
 #: dbupdate.py
 msgid "Water Bills"
+msgstr ""
+
+#: media.js
+msgid "Watermark image with name and logo"
 msgstr ""
 
 #: common.js
