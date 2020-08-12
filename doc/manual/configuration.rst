@@ -136,6 +136,14 @@ some of its standard pictures:
   instead of the default ASM splash screens. Your splash image should be
   400x200 pixels.
 
+* watermark.png – this should be a version of your logo with a transparent
+  background. If you supply a watermark image, then the watermark toolbar
+  button will appear on animal media tabs. This button will add the watermark
+  image to the bottom right of the chosen picture and the animal's name in the
+  lower left. Note that the original image will be changed, so you should
+  upload images multiple times if you want to retain a copy without the
+  watermark.
+
 System user accounts
 --------------------
 
