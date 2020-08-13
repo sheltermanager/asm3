@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ASM3\n"
 "Report-Msgid-Bugs-To: robin@sheltermanager.com\n"
-"POT-Creation-Date: 2020-08-11 19:44+0000\n"
+"POT-Creation-Date: 2020-08-13 09:21+0000\n"
 "Last-Translator: Robin Rawson-Tetley <robin@sheltermanager.com>\n"
 "Language-Team: en <robin@sheltermanager.com>\n"
 "Language: en\n"
@@ -3805,6 +3805,10 @@ msgstr ""
 
 #: common.js animal_bulk.js
 msgid "Do Not Register Microchip"
+msgstr ""
+
+#: onlineforms.js
+msgid "Do not send email"
 msgstr ""
 
 #: options.js
@@ -10186,6 +10190,14 @@ msgstr ""
 
 #: onlineforms.js
 msgid "Send confirmation email to form submitter"
+msgstr ""
+
+#: onlineforms.js
+msgid "Send confirmation message only"
+msgstr ""
+
+#: onlineforms.js
+msgid "Send confirmation with a copy of the form"
 msgstr ""
 
 #: animal.js

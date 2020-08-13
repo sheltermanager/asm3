@@ -1056,7 +1056,10 @@ const tableform = {
             }
             else if (v.type == "date") {
                 if (!v.justwidget) { d += "<tr><td><label for=\"" + v.post_field + "\">" + v.label + "</label>" + callout + "</td><td>"; }
-                d += "<input id=\"" + v.post_field + "\" type=\"text\" class=\"asm-textbox asm-datebox\" ";
+                d += "<input id=\"" + v.post_field + "\" type=\"text\" class=\"asm-textbox asm-datebox";
+                if (v.classes) { d += " " + v.classes; }
+                if (v.halfsize) { d += " asm-halftextbox"; }
+                d += "\" ";
                 d += "data-json=\"" + v.json_field + "\" data-post=\"" + v.post_field + "\" ";
                 d += "autocomplete=\"new-password\" ";
                 if (v.readonly) { d += " data-noedit=\"true\" "; }
@@ -1068,6 +1071,7 @@ const tableform = {
             else if (v.type == "time") {
                 if (!v.justwidget) { d += "<tr><td><label for=\"" + v.post_field + "\">" + v.label + "</label>" + callout + "</td><td>"; }
                 d += "<input id=\"" + v.post_field + "\" type=\"text\" class=\"asm-textbox asm-timebox ";
+                if (v.classes) { d += " " + v.classes; }
                 if (v.halfsize) { d += " asm-halftextbox"; }
                 d += "\" ";
                 d += "data-json=\"" + v.json_field + "\" data-post=\"" + v.post_field + "\" ";
@@ -1102,6 +1106,7 @@ const tableform = {
             else if (v.type == "currency") {
                 if (!v.justwidget) { d += "<tr><td><label for=\"" + v.post_field + "\">" + v.label + "</label>" + callout + "</td><td>"; }
                 d += "<input id=\"" + v.post_field + "\" type=\"text\" class=\"asm-textbox asm-currencybox";
+                if (v.classes) { d += " " + v.classes; }
                 if (v.halfsize) { d += " asm-halftextbox"; }
                 d += "\" ";
                 d += "data-json=\"" + v.json_field + "\" data-post=\"" + v.post_field + "\" ";
@@ -1115,6 +1120,7 @@ const tableform = {
             else if (v.type == "intnumber") {
                 if (!v.justwidget) { d += "<tr><td><label for=\"" + v.post_field + "\">" + v.label + "</label>" + callout + "</td><td>"; }
                 d += "<input id=\"" + v.post_field + "\" type=\"text\" class=\"asm-textbox asm-intbox ";
+                if (v.classes) { d += " " + v.classes; }
                 if (v.halfsize) { d += " asm-halftextbox"; }
                 d += "\" ";
                 d += "data-json=\"" + v.json_field + "\" data-post=\"" + v.post_field + "\" ";
@@ -1128,6 +1134,7 @@ const tableform = {
             else if (v.type == "number") {
                 if (!v.justwidget) { d += "<tr><td><label for=\"" + v.post_field + "\">" + v.label + "</label>" + callout + "</td><td>"; }
                 d += "<input id=\"" + v.post_field + "\" type=\"text\" class=\"asm-textbox asm-numberbox ";
+                if (v.classes) { d += " " + v.classes; }
                 if (v.halfsize) { d += " asm-halftextbox"; }
                 d += "\" ";
                 d += "data-json=\"" + v.json_field + "\" data-post=\"" + v.post_field + "\" ";
@@ -1141,6 +1148,7 @@ const tableform = {
             else if (v.type == "select") {
                 if (!v.justwidget) { d += "<tr><td><label for=\"" + v.post_field + "\">" + v.label + "</label>" + callout + "</td><td>"; }
                 d += "<select id=\"" + v.post_field + "\" class=\"asm-selectbox";
+                if (v.classes) { d += " " + v.classes; }
                 if (v.halfsize) { d += " asm-halftextbox"; }
                 d += "\" ";
                 d += "data-json=\"" + v.json_field + "\" data-post=\"" + v.post_field + "\" ";
@@ -1166,6 +1174,7 @@ const tableform = {
             else if (v.type == "selectmulti") {
                 if (!v.justwidget) { d += "<tr><td><label for=\"" + v.post_field + "\">" + v.label + "</label>" + callout + "</td><td>"; }
                 d += "<select id=\"" + v.post_field + "\" multiple=\"multiple\" class=\"asm-bsmselect";
+                if (v.classes) { d += " " + v.classes; }
                 if (v.halfsize) { d += " asm-halftextbox"; }
                 d += "\" ";
                 d += "data-json=\"" + v.json_field + "\" data-post=\"" + v.post_field + "\" ";

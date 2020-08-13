@@ -1,6 +1,7 @@
 44
 ================
 
+13/08/20 Option to include submission in form confirmation email #872
 11/08/20 Image watermarking (Thanks Connor9220) #881
 05/08/20 Options->Reports for emailing empty reports
 04/08/20 $CURRENT_DATE+/-DAY$ report tokens

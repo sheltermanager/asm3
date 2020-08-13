@@ -528,7 +528,7 @@ def insert_onlineform_from_form(dbo, username, post):
         "RedirectUrlAfterPOST": post["redirect"],
         "SetOwnerFlags":        post["flags"],
         "EmailAddress":         post["email"],
-        "EmailSubmitter":       post.boolean("emailsubmitter"),
+        "EmailSubmitter":       post.integer("emailsubmitter"),
         "*EmailMessage":        post["emailmessage"],
         "*Header":              post["header"],
         "*Footer":              post["footer"],
@@ -544,7 +544,7 @@ def update_onlineform_from_form(dbo, username, post):
         "RedirectUrlAfterPOST": post["redirect"],
         "SetOwnerFlags":        post["flags"],
         "EmailAddress":         post["email"],
-        "EmailSubmitter":       post.boolean("emailsubmitter"),
+        "EmailSubmitter":       post.integer("emailsubmitter"),
         "*EmailMessage":        post["emailmessage"],
         "*Header":              post["header"],
         "*Footer":              post["footer"],
@@ -753,7 +753,7 @@ def insert_onlineformincoming_from_form(dbo, post, remoteip):
     })
 
     # Do we have a valid emailaddress for the submitter and EmailSubmitter is set? 
-    # If so, send them a copy of their submission
+    # If so, send them a confirmation
     emailsubmitter = dbo.query_int("SELECT o.EmailSubmitter FROM onlineform o " \
         "INNER JOIN onlineformincoming oi ON oi.FormName = o.Name " \
         "WHERE oi.CollationID = ?", [collationid])
@@ -761,14 +761,18 @@ def insert_onlineformincoming_from_form(dbo, post, remoteip):
     # The submitted form for including in emails (images are attached so not included)
     formdata = get_onlineformincoming_html_print(dbo, [collationid,], include_images=False)
 
-    if submitteremail != "" and submitteremail.find("@") != -1 and emailsubmitter == 1:
-        # Get the confirmation message. Prepend it to a copy of the submission
+    if submitteremail != "" and submitteremail.find("@") != -1 and emailsubmitter != 0:
+        # Get the confirmation message
         body = dbo.query_string("SELECT o.EmailMessage FROM onlineform o " \
             "INNER JOIN onlineformincoming oi ON oi.FormName = o.Name " \
             "WHERE oi.CollationID = ?", [collationid])
-        body += "\n" + formdata
+        attachments = []
+        # Submission option 1 = include a copy of the form submission
+        if emailsubmitter == 1: 
+            body += "\n" + formdata
+            attachments = images
         asm3.utils.send_email(dbo, asm3.configuration.email(dbo), submitteremail, "", "", asm3.i18n._("Submission received: {0}", l).format(formname), 
-            body, "html", images, exceptions=False)
+            body, "html", attachments, exceptions=False)
 
     # Did the original form specify some email addresses to send 
     # incoming submissions to?
@@ -780,11 +784,11 @@ def insert_onlineformincoming_from_form(dbo, post, remoteip):
         # use the submitter email as reply-to so staff and can reply to their
         # copy of the message and email the applicant/submitter.
         # It's important that this is ONLY done if the option is on to send the submitter
-        # a copy because it avoids situations where people use forms for internal process
+        # confirmation because it avoids situations where people use forms for internal process
         # and want to use an applicant's details but don't want them to see it or accidentally
         # reply to them about it (prime example, forms related to performing homechecks)
         replyto = ""
-        if emailsubmitter == 1: replyto = submitteremail 
+        if emailsubmitter != 0: replyto = submitteremail 
         if replyto == "": replyto = asm3.configuration.email(dbo)
         asm3.utils.send_email(dbo, replyto, email, "", "", "%s - %s" % (formname, ", ".join(preview)), 
             formdata, "html", images, exceptions=False)
