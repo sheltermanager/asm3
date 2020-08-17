@@ -1,6 +1,7 @@
 44
 ================
 
+17/08/20 Online form person deduplication should not require address
 17/08/20 Include diary for in email notifications
 17/08/20 Reduce cache time of json/xml_adoptable_animals to 10 minutes
 15/08/20 Fix adoptapet mappings for Budgie and Chinchilla

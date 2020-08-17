@@ -1046,12 +1046,14 @@ def create_person(dbo, username, collationid):
     if siteid != 0: d["site"] = str(siteid)
     # Does this person already exist?
     personid = 0
-    if "surname" in d and "forenames" in d and "address" in d:
+    if "surname" in d and "forenames" in d:
         demail = ""
         dmobile = ""
+        daddress = ""
         if "emailaddress" in d: demail = d["emailaddress"]
         if "mobiletelephone" in d: dmobile = d["mobiletelephone"]
-        similar = asm3.person.get_person_similar(dbo, demail, dmobile, d["surname"], d["forenames"], d["address"], siteid)
+        if "address" in d: daddress = d["address"]
+        similar = asm3.person.get_person_similar(dbo, demail, dmobile, d["surname"], d["forenames"], daddress, siteid)
         if len(similar) > 0:
             personid = similar[0].ID
             status = 1 # updated existing record
