@@ -472,7 +472,7 @@ JSON or XML::
 json_adoptable_animals and xml_adoptable_animals
 ------------------------------------------------
 
-.. rubric:: Cache time: 1 hour 
+.. rubric:: Cache time: 10 minutes 
 
 Returns a dataset containing all animals available for adoption. The method
 determines whether the format returned is JSON or XML::

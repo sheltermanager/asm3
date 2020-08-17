@@ -483,7 +483,7 @@ def handler(post, path, remoteip, referer, querystring):
         asm3.users.check_permission_map(l, user["SUPERUSER"], securitymap, asm3.users.VIEW_ANIMAL)
         rs = asm3.publishers.base.get_animal_data(dbo, None, include_additional_fields = True)
         if strip_personal: rs = strip_personal_data(rs)
-        return set_cached_response(cache_key, account, "application/json", 3600, 3600, asm3.utils.json(rs))
+        return set_cached_response(cache_key, account, "application/json", 600, 600, asm3.utils.json(rs))
 
     elif method == "jsonp_adoptable_animals":
         asm3.users.check_permission_map(l, user["SUPERUSER"], securitymap, asm3.users.VIEW_ANIMAL)
@@ -498,13 +498,13 @@ def handler(post, path, remoteip, referer, querystring):
         else:
             asm3.users.check_permission_map(l, user["SUPERUSER"], securitymap, asm3.users.VIEW_ANIMAL)
             rs = asm3.publishers.base.get_animal_data(dbo, None, asm3.utils.cint(animalid), include_additional_fields = True)
-            return set_cached_response(cache_key, account, "application/xml", 3600, 3600, asm3.html.xml(rs))
+            return set_cached_response(cache_key, account, "application/xml", 600, 600, asm3.html.xml(rs))
 
     elif method == "xml_adoptable_animals":
         asm3.users.check_permission_map(l, user["SUPERUSER"], securitymap, asm3.users.VIEW_ANIMAL)
         rs = asm3.publishers.base.get_animal_data(dbo, None, include_additional_fields = True)
         if strip_personal: rs = strip_personal_data(rs)
-        return set_cached_response(cache_key, account, "application/xml", 3600, 3600, asm3.html.xml(rs))
+        return set_cached_response(cache_key, account, "application/xml", 600, 600, asm3.html.xml(rs))
 
     elif method == "json_found_animals":
         asm3.users.check_permission_map(l, user["SUPERUSER"], securitymap, asm3.users.VIEW_FOUND_ANIMAL)
