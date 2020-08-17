@@ -1,6 +1,7 @@
 44
 ================
 
+17/08/20 Include diary for in email notifications
 17/08/20 Reduce cache time of json/xml_adoptable_animals to 10 minutes
 15/08/20 Fix adoptapet mappings for Budgie and Chinchilla
 13/08/20 Option to include submission in form confirmation email #872
