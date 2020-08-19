@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ASM3\n"
 "Report-Msgid-Bugs-To: robin@sheltermanager.com\n"
-"POT-Creation-Date: 2020-06-15 18:36+0000\n"
-"PO-Revision-Date: 2020-07-18 17:31+0200\n"
+"POT-Creation-Date: 2020-08-13 09:21+0000\n"
+"PO-Revision-Date: 2020-08-19 21:12+0200\n"
 "Last-Translator: Julian POIDEVIN <poidevin.julian@gmail.com>\n"
 "Language-Team: \n"
 "Language: fr\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
-"X-Generator: Poedit 2.3.1\n"
+"X-Generator: Poedit 2.4\n"
 "X-Launchpad-Export-Date: 2015-03-02 05:16+0000\n"
 "X-POOTLE-MTIME: 1445029694.000000\n"
 
@@ -3384,6 +3384,10 @@ msgid "Default Incident Type"
 msgstr "Type d'incident par défaut"
 
 #: options.js
+msgid "Default Jurisdiction"
+msgstr "Juridiction par défaut"
+
+#: options.js
 msgid "Default Location"
 msgstr "Lieu par défaut"
 
@@ -3883,6 +3887,10 @@ msgstr "Ne pas publier"
 msgid "Do Not Register Microchip"
 msgstr "Ne pas enregistrer la puce électronique"
 
+#: onlineforms.js
+msgid "Do not send email"
+msgstr "Ne pas envoyer d'e-mail"
+
 #: options.js
 msgid "Do not show"
 msgstr "Ne pas afficher"
@@ -4328,8 +4336,8 @@ msgid "Electricity Bills"
 msgstr "Factures d'électricité"
 
 #: html.py mobile.py onlineform.py users.js incident.js waitinglist_results.js
-#: person.js waitinglist.js document_repository.js lostfound.js animal.js
-#: options.js person_find.js media.js header_edit_header.js
+#: person.js onlineform.js waitinglist.js document_repository.js lostfound.js
+#: animal.js options.js person_find.js media.js header_edit_header.js
 #: person_find_results.js
 msgid "Email"
 msgstr "E-mail"
@@ -4400,6 +4408,10 @@ msgstr "Email de la personne"
 #: donations.js
 msgid "Email request for payment"
 msgstr "Envoyer une demande de paiement par e-mail"
+
+#: options.js
+msgid "Email scheduled reports with no data"
+msgstr "Rapports sans données avec envoi planifié par e-mail"
 
 #: options.js
 msgid "Email signature"
@@ -6641,9 +6653,10 @@ msgstr "Juin"
 msgid "June"
 msgstr "Juin"
 
-#: html.py lookups.py common_personchooser.js incident.js person.js
-#: incident_find_results.js incident_find.js person_find.js incident_new.js
-#: person_new.js person_find_results.js
+#: html.py lookups.py animal_new.js common_personchooser.js incident.js
+#: animal_find_results.js person.js incident_find_results.js incident_find.js
+#: animal.js person_find.js incident_new.js person_new.js
+#: person_find_results.js
 msgid "Jurisdiction"
 msgstr "Juridiction"
 
@@ -9710,6 +9723,10 @@ msgid "Remove the insurance number field from the movement screens"
 msgstr "Supprimer le champ \"Assurance\" des écrans \"Mouvements\""
 
 #: options.js
+msgid "Remove the jurisdiction field from animal entry details"
+msgstr "Supprimer le champ de juridiction des détails d'entrée de l'animal"
+
+#: options.js
 msgid "Remove the location unit field from animal details"
 msgstr "Supprimer le champ \"Unité de localisation\" des détails de l'animal"
 
@@ -9801,7 +9818,7 @@ msgstr "Titre du rapport"
 msgid "Report a new incident"
 msgstr "Reporter un nouvel incident"
 
-#: html.py mobile.py reports.js roles.js
+#: html.py mobile.py reports.js roles.js options.js
 msgid "Reports"
 msgstr "Rapports"
 
@@ -10436,6 +10453,14 @@ msgstr ""
 msgid "Send confirmation email to form submitter"
 msgstr "Envoyer un e-mail de confirmation pour envoyer le formulaire"
 
+#: onlineforms.js
+msgid "Send confirmation message only"
+msgstr "Envoyer un message de confirmation uniquement"
+
+#: onlineforms.js
+msgid "Send confirmation with a copy of the form"
+msgstr "Envoyer une confirmation avec une copie du formulaire"
+
 #: animal.js
 msgid "Send email"
 msgstr "Envoyer un e-mail"
@@ -10799,6 +10824,10 @@ msgstr "Afficher les champs de détention"
 #: options.js
 msgid "Show the internal location field"
 msgstr "Afficher le champ d'emplacement interne"
+
+#: options.js
+msgid "Show the jurisdiction field"
+msgstr "Afficher le champ de juridiction"
 
 #: options.js
 msgid "Show the litter ID field"
@@ -11599,7 +11628,7 @@ msgstr "Les tests nécessitent un animal et au moins une date requise."
 msgid "Text"
 msgstr "Texte"
 
-#: csvimport.js
+#: csvimport.js csvimport_paypal.js
 msgid "Text Encoding"
 msgstr "Encodage du texte"
 
@@ -13011,7 +13040,7 @@ msgstr "Ne peux pas se permettre"
 msgid "Unable to Cope"
 msgstr "Incapable de faire face"
 
-#: common.js options.js shelterview.js
+#: animal_find.js common.js options.js shelterview.js
 msgid "Unaltered"
 msgstr "Non stérilisé/castré"
 
@@ -13759,6 +13788,10 @@ msgstr "Gaspillé"
 #: dbupdate.py
 msgid "Water Bills"
 msgstr "Factures d'eau"
+
+#: media.js
+msgid "Watermark image with name and logo"
+msgstr "Image avec nom et logo en filigrane"
 
 #: common.js
 msgid "We"
