@@ -1,6 +1,7 @@
 44
 ================
 
+23/08/20 Consistent handling of breed1 and colour fields for online forms
 17/08/20 Online form person deduplication should not require address
 17/08/20 Include diary for in email notifications
 17/08/20 Reduce cache time of json/xml_adoptable_animals to 10 minutes
