@@ -931,7 +931,7 @@ def create_animal(dbo, username, collationid):
     The return value is a tuple of collationid, animalid, sheltercode - animalname, status
     status is 0 for created, 1 for updated existing
     "animalname", "code", "microchip", "age", "dateofbirth", "entryreason", "markings", 
-    "comments", "hiddencomments", "type", "species", "breed1", "breed", "color", "sex"
+    "comments", "hiddencomments", "type", "species", "breed1", "breed2", "color", "sex"
     """
     l = dbo.locale
     fields = get_onlineformincoming_detail(dbo, collationid)
@@ -957,6 +957,7 @@ def create_animal(dbo, username, collationid):
         if f.FIELDNAME == "breed1": d["breed1"] = str(guess_breed(dbo, f.VALUE))
         if f.FIELDNAME == "breed2": d["breed2"] = str(guess_breed(dbo, f.VALUE))
         if f.FIELDNAME == "color": d["basecolour"] = str(guess_colour(dbo, f.VALUE))
+        if f.FIELDNAME == "colour": d["basecolour"] = str(guess_colour(dbo, f.VALUE))
         if f.FIELDNAME == "sex": d["sex"] = str(guess_sex(dbo, f.VALUE))
         if f.FIELDNAME == "size": d["size"] = str(guess_size(dbo, f.VALUE))
         if f.FIELDNAME.startswith("additional"): d[f.FIELDNAME] = f.VALUE
@@ -1131,6 +1132,7 @@ def create_lostanimal(dbo, username, collationid):
         if f.FIELDNAME == "species": d["species"] = guess_species(dbo, f.VALUE)
         if f.FIELDNAME == "sex": d["sex"] = guess_sex(dbo, f.VALUE)
         if f.FIELDNAME == "breed": d["breed"] = guess_breed(dbo, f.VALUE)
+        if f.FIELDNAME == "breed1": d["breed"] = guess_breed(dbo, f.VALUE)
         if f.FIELDNAME == "agegroup": d["agegroup"] = guess_agegroup(dbo, f.VALUE)
         if f.FIELDNAME == "color": d["colour"] = guess_colour(dbo, f.VALUE)
         if f.FIELDNAME == "colour": d["colour"] = guess_colour(dbo, f.VALUE)
@@ -1171,6 +1173,7 @@ def create_foundanimal(dbo, username, collationid):
         if f.FIELDNAME == "species": d["species"] = guess_species(dbo, f.VALUE)
         if f.FIELDNAME == "sex": d["sex"] = guess_sex(dbo, f.VALUE)
         if f.FIELDNAME == "breed": d["breed"] = guess_breed(dbo, f.VALUE)
+        if f.FIELDNAME == "breed1": d["breed"] = guess_breed(dbo, f.VALUE)
         if f.FIELDNAME == "agegroup": d["agegroup"] = guess_agegroup(dbo, f.VALUE)
         if f.FIELDNAME == "color": d["colour"] = guess_colour(dbo, f.VALUE)
         if f.FIELDNAME == "colour": d["colour"] = guess_colour(dbo, f.VALUE)
