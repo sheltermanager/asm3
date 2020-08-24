@@ -14,6 +14,8 @@ $(document).ready(function() {
         ie9:    navigator.userAgent.match(/MSIE 9/i) != null
     };
 
+    const html5_required = !browser_is.ios && !browser_is.ie9;
+
     // Loads and scales an image into an image form field for upload
     const process_image = function(field) {
 
@@ -192,10 +194,10 @@ $(document).ready(function() {
     };
 
     // Validate HTML5 required input fields 
-    // (only does anything for iOS and IE9 where the required attribute is not supported)
+    // (only does anything for browsers that don't support html5 required)
     const validate_required = function() {
         let rv = true;
-        if (browser_is.ios || browser_is.ie9) {
+        if (!html5_required) {
             $(".asm-onlineform-date, .asm-onlineform-text, .asm-onlineform-lookup, .asm-onlineform-notes").each(function() {
                 if ($(this).attr("required")) {
                     let v = String($(this).val()).trim(); // Throw away whitespace before checking
@@ -359,19 +361,27 @@ $(document).ready(function() {
     $("body").on("change", "input, select", show_visibleif);
     show_visibleif(); // set initial state
 
-
     // Add additional behaviours to when the online form is submitted to validate 
     // components either not supported by HTML5 form validation, or for browsers
     // that do not support it.
     $("input[type='submit']").click(function() {
-        if (!validate_signatures()) { return false; }
-        if (!validate_lookupmulti()) { return false; }
-        if (!validate_checkboxgroup()) { return false; }
-        if (!validate_dates()) { return false; }
-        if (!validate_times()) { return false; }
-        if (!validate_email()) { return false; }
-        if (!validate_required()) { return false; }
-        if (!validate_images()) { return false; }
+        var rv = true;
+        try {
+            $(this).prop("disabled", true); // Stop double submit by disabling the button
+            if (!validate_signatures()) { rv = false; return false; }
+            if (!validate_lookupmulti()) { rv = false; return false; }
+            if (!validate_checkboxgroup()) { rv = false; return false; }
+            if (!validate_dates()) { rv = false; return false; }
+            if (!validate_times()) { rv = false; return false; }
+            if (!validate_email()) { rv = false; return false; }
+            if (!validate_required()) { rv = false; return false; }
+            if (!validate_images()) { rv = false; return false; }
+        }
+        finally {
+            // Re-enable the button if any validation fails
+            if (!rv) { $(this).prop("disabled", false); }
+            if (html5_required && !$(this).closest("form")[0].checkValidity()) { $(this).prop("disabled", false); }
+        }
     });
 
 });
