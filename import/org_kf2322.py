@@ -10,9 +10,9 @@ Import script for kf2322 csv files (virtually the same as sb1875 with a few mino
 
 START_ID = 1000
 
-ANIMAL_FILENAME = "/home/robin/tmp/asm3_import_data/sb1875_csv/ASM_Animal_Master.csv"
-LOG_FILENAME = "/home/robin/tmp/asm3_import_data/sb1875_csv/ASM_Animal_Log.csv"
-PERSON_FILENAME = "/home/robin/tmp/asm3_import_data/sb1875_csv/ASM_People.csv"
+ANIMAL_FILENAME = "/home/robin/tmp/asm3_import_data/kf2322_csv/ASM_Animal_Master.csv"
+LOG_FILENAME = "/home/robin/tmp/asm3_import_data/kf2322_csv/ASM_Animal_Log.csv"
+PERSON_FILENAME = "/home/robin/tmp/asm3_import_data/kf2322_csv/ASM_People.csv"
 
 def getdate(d):
     if d == "02/01/1900": return None # Weird quirk of their files
@@ -107,8 +107,8 @@ for d in asm.csv_to_list(ANIMAL_FILENAME, remove_non_ascii=True):
         a.Breed2ID = asm.breed_from_db(d["Cross_Breed"], 1)
         a.CrossBreed = 1
         a.BreedName = "%s / %s" % (d["Breed"], d["Cross_Breed"])
-    #a.BaseColourID = asm.colour_id_for_names(d["Base_Colour"], d["Secondary_Colour"])
-    a.BaseColourID = asm.colour_from_db(d["Base_"])
+    a.BaseColourID = asm.colour_id_for_names(d["Base_Colour"], d["Secondary_Colour"])
+    #a.BaseColourID = asm.colour_from_db(d["Base_"])
     a.AnimalComments = d["Notes"]
     a.Sex = asm.getsex_mf(d["Sex"])
     a.Size = asm.size_id_for_name(d["Size"])
@@ -118,7 +118,7 @@ for d in asm.csv_to_list(ANIMAL_FILENAME, remove_non_ascii=True):
     a.IsNotAvailableForAdoption = 1
     a.IdentichipNumber = d["Microchip_no"]
     a.Identichip2Number = d["Alternate_Chip_No"]
-    asm.additional_field("MChipType", 5, a.ID, d["Microchip_Type"]) # MChipType additional field
+    #asm.additional_field("MChipType", 5, a.ID, d["Microchip_Type"]) # MChipType additional field
     if a.IdentichipNumber != "": a.Identichipped = 1
     if a.IdentichipNumber == "0": 
         a.Identichipped = 0
@@ -144,8 +144,8 @@ for d in asm.csv_to_list(ANIMAL_FILENAME, remove_non_ascii=True):
     a.EntryReasonID = 17 # Surrender
     #if d["InShelterSearchFlag"] == "N":
     #    a.Archived = 1
-    if d["Location"] != "": a.ShelterLocation = asm.location_from_db(d["Location"])
-    if d["Unit"] != "": a.ShelterLocationUnit = d["Unit"]
+    if d["Animal_Location"] != "": a.ShelterLocation = asm.location_from_db(d["Location"])
+    if d["Animal_Unit"] != "": a.ShelterLocationUnit = d["Unit"]
 
 
 # Animal log, recording medical history and linking adoptions/surrenderers/etc
