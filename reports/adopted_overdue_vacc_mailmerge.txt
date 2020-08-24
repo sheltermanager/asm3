@@ -11,7 +11,7 @@ en
 SELECT DISTINCT owner.ID, owner.OwnerName, owner.OwnerAddress, owner.OwnerPostcode,
 animal.AnimalName, animalvaccination.DateRequired, vaccinationtype.VaccinationType, 
 owner.EmailAddress, owner.OwnerTown, owner.OwnerCounty, 
-owner.OwnerTitle, owner.OwnerInitials, owner.OwnerForenames, owner.OwnerSurname,
+owner.OwnerTitle, owner.OwnerInitials, owner.OwnerForenames, owner.OwnerSurname
 FROM animal
 INNER JOIN adoption ON adoption.ID = animal.ActiveMovementID  
 INNER JOIN owner ON adoption.OwnerID = owner.ID
