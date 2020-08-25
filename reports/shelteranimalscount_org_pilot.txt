@@ -11,6 +11,7 @@ en
 $VAR from DATE Month starting on$
 $VAR to DATE ending on$
 
+-- Base intake
 SELECT
 a.ShelterCode AS "Animal ID",
 a.AnimalName AS "Animal Name",
@@ -25,16 +26,21 @@ CASE WHEN a.Neutered = 0 THEN 'E' ELSE 'S' END AS "Reproductive Status",
 CASE WHEN a.NeuteredDate Is Not Null THEN 'Altered in care' ELSE 'Altered at intake' END AS "Status changed while in care?",
 CASE WHEN a.Declawed = 0 THEN 'No' ELSE 'Yes' END AS Declawed,
 a.BreedName AS Breed,
-to_char(a.MostRecentEntryDate, 'MM/DD/YYYY') AS "Intake Date",
+to_char(a.DateBroughtIn, 'MM/DD/YYYY') AS "Intake Date",
 (SELECT ReasonName FROM entryreason WHERE ID=a.EntryReasonID) AS "Intake Type",
 '' AS "Intake subtype",
 CASE WHEN a.IsTransfer=1 THEN (SELECT OwnerName FROM owner WHERE ID=a.BroughtInByOwnerID) ELSE '' END AS "Transfer source",
 (SELECT BaseColour FROM basecolour WHERE ID=a.BaseColourID) AS "Coat Color/Pattern",
 CASE WHEN a.IsNotAvailableForAdoption=0 AND a.Archived=0 AND a.ActiveMovementType=0 THEN 'Available' 
 ELSE 'Not available' END AS "Adoptability Status",
-CASE WHEN a.ActiveMovementType NOT IN (0,2,8) THEN to_char(a.ActiveMovementDate, 'MM/DD/YYYY') 
+CASE 
+WHEN a.DeceasedDate Is Null AND a.ActiveMovementType NOT IN (0,2,8) THEN to_char(a.ActiveMovementDate, 'MM/DD/YYYY') 
+WHEN a.DeceasedDate Is Not Null THEN to_char(a.DeceasedDate, 'MM/DD/YYYY') 
 ELSE '' END AS "Outcome Date",
-CASE WHEN a.ActiveMovementType NOT IN (0,2,8) THEN (SELECT MovementType FROM lksmovementtype WHERE ID=a.ActiveMovementType) 
+CASE 
+WHEN a.DeceasedDate Is Null AND a.ActiveMovementType NOT IN (0,2,8) THEN (SELECT MovementType FROM lksmovementtype WHERE ID=a.ActiveMovementType) 
+WHEN a.DeceasedDate Is Not Null AND a.PutToSleep=1 AND a.DiedOffShelter=0 THEN 'Euthanized' 
+WHEN a.DeceasedDate Is Not Null AND a.PutToSleep=0 AND a.DiedOffShelter=0 THEN 'Died in care'
 ELSE '' END AS "Outcome Type",
 '' AS "Outcome subtype",
 CASE WHEN a.PutToSleep=1 THEN (SELECT ReasonName FROM deathreason WHERE ID=a.PTSReasonID) 
@@ -50,10 +56,59 @@ ELSE '' END AS "Euthanasia reason (if applicable)",
 a.DaysOnShelter AS "Length of Stay"
 
 FROM animal a
-WHERE (a.MostRecentEntryDate >= '$@from$' AND a.MostRecentEntryDate <= '$@to$')
-OR (a.MostRecentEntryDate < '$@from$' AND a.ActiveMovementDate > '$@from$' AND a.ActiveMovementDate <= '$@to$') 
-OR (a.MostRecentEntryDate < '$@from$' AND a.Archived=0)
-ORDER BY a.MostRecentEntryDate
+WHERE (a.DateBroughtIn >= '$@from$' AND a.DateBroughtIn <= '$@to$')
+OR (a.DateBroughtIn < '$@from$' AND a.ActiveMovementDate > '$@from$' AND a.ActiveMovementDate <= '$@to$') 
+OR (a.DateBroughtIn < '$@from$' AND a.Archived=0)
+
+-- Second section for handling movement returns
+UNION SELECT
+a.ShelterCode AS "Animal ID",
+a.AnimalName AS "Animal Name",
+(SELECT SpeciesName FROM species WHERE ID=a.SpeciesID) AS Species,
+a.Weight AS "Weight (pounds)",
+'' AS "Weight category",
+extract(days FROM current_date - a.DateOfBirth)::integer / 365 AS "Age - Years",
+(extract(days FROM current_date - a.DateOfBirth)::integer % 365) / 31 AS "Age - Months",
+a.AgeGroup AS "Age category",
+CASE WHEN a.Sex = 0 THEN 'F' WHEN a.Sex = 1 THEN 'M' ELSE 'U' END AS Sex,
+CASE WHEN a.Neutered = 0 THEN 'E' ELSE 'S' END AS "Reproductive Status",
+CASE WHEN a.NeuteredDate Is Not Null THEN 'Altered in care' ELSE 'Altered at intake' END AS "Status changed while in care?",
+CASE WHEN a.Declawed = 0 THEN 'No' ELSE 'Yes' END AS Declawed,
+a.BreedName AS Breed,
+to_char(m.ReturnDate, 'MM/DD/YYYY') AS "Intake Date",
+(SELECT ReasonName FROM entryreason WHERE ID=m.ReturnedReasonID) AS "Intake Type",
+'' AS "Intake subtype",
+CASE WHEN a.IsTransfer=1 THEN (SELECT OwnerName FROM owner WHERE ID=a.BroughtInByOwnerID) ELSE '' END AS "Transfer source",
+(SELECT BaseColour FROM basecolour WHERE ID=a.BaseColourID) AS "Coat Color/Pattern",
+CASE WHEN a.IsNotAvailableForAdoption=0 AND a.Archived=0 AND a.ActiveMovementType=0 THEN 'Available' 
+ELSE 'Not available' END AS "Adoptability Status",
+CASE 
+WHEN a.DeceasedDate Is Null AND a.ActiveMovementType NOT IN (0,2,8) THEN to_char(a.ActiveMovementDate, 'MM/DD/YYYY') 
+WHEN a.DeceasedDate Is Not Null THEN to_char(a.DeceasedDate, 'MM/DD/YYYY') 
+ELSE '' END AS "Outcome Date",
+CASE 
+WHEN a.DeceasedDate Is Null AND a.ActiveMovementType NOT IN (0,2,8) THEN (SELECT MovementType FROM lksmovementtype WHERE ID=a.ActiveMovementType) 
+WHEN a.DeceasedDate Is Not Null AND a.PutToSleep=1 AND a.DiedOffShelter=0 THEN 'Euthanized' 
+WHEN a.DeceasedDate Is Not Null AND a.PutToSleep=0 AND a.DiedOffShelter=0 THEN 'Died in care'
+ELSE '' END AS "Outcome Type",
+'' AS "Outcome subtype",
+CASE WHEN a.PutToSleep=1 THEN (SELECT ReasonName FROM deathreason WHERE ID=a.PTSReasonID) 
+ELSE '' END AS "Euthanasia reason (if applicable)",
+(SELECT string_agg(VaccinationType, ', ') FROM animalvaccination 
+    INNER JOIN vaccinationtype ON vaccinationtype.ID = animalvaccination.VaccinationID 
+    WHERE animalvaccination.AnimalID=a.ID AND DateOfVaccination Is Not Null) AS "Medical Care in Shelter - vaccinations",
+'' AS "Medical Care in Shelter - conditions",
+(SELECT string_agg(TreatmentName, ', ') FROM animalmedical WHERE AnimalID=a.ID) AS "Medical Care in Shelter - treatments",
+'' AS "Behavioral Evaluation in Shelter",
+'' AS "Behavioral Care in Shelter - assessment (not evaluation)",
+'' AS "Behavioral Care in Shelter - plan",
+a.DaysOnShelter AS "Length of Stay"
+
+FROM adoption m
+INNER JOIN animal a ON a.ID = m.AnimalID
+WHERE m.ReturnDate >= '$@from$' AND m.ReturnDate <= '$@to$' AND m.MovementType IN (1,3,5)
+
+ORDER BY "Intake Date"
 ###
 $$HEADER
 HEADER$$
