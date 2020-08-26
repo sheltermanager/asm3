@@ -17,7 +17,7 @@ FROM owner o
 INNER JOIN ownervoucher ov ON ov.OwnerID = o.ID
 INNER JOIN voucher v ON ov.VoucherID = v.ID
 WHERE ov.DateExpired BETWEEN '$ASK DATE Enter the from date$' AND '$ASK DATE Enter the to date$'
-ORDER BY ov.DateExpired
+ORDER BY v.VoucherName, ov.DateExpired
 ###
 $$HEADER
 HEADER$$
