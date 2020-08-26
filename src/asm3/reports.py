@@ -1090,9 +1090,9 @@ class Report:
         l = self.dbo.locale
         s = s.replace("$$TITLE$$", self.title)
         s = s.replace("$$CATEGORY$$", self.category)
-        s = s.replace("$$DATE$$", asm3.i18n.python2display(l, asm3.i18n.now(self.dbo.timezone)))
-        s = s.replace("$$TIME$$", asm3.i18n.format_time_now(self.dbo.timezone))
-        s = s.replace("$$DATETIME$$", asm3.i18n.python2display(l, asm3.i18n.now(self.dbo.timezone)) + " " + asm3.i18n.format_time_now(self.dbo.timezone))
+        s = s.replace("$$DATE$$", asm3.i18n.python2display(l, self.dbo.now()))
+        s = s.replace("$$TIME$$", asm3.i18n.format_time(self.dbo.now()))
+        s = s.replace("$$DATETIME$$", asm3.i18n.python2display(l, self.dbo.now()) + " " + asm3.i18n.format_time(self.dbo.now()))
         s = s.replace("$$VERSION$$", asm3.i18n.get_version())
         s = s.replace("$$USER$$", self.user)
         s = s.replace("$$REGISTEREDTO$$", asm3.configuration.organisation(self.dbo))

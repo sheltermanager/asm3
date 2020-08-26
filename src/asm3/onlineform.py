@@ -647,7 +647,7 @@ def insert_onlineformincoming_from_form(dbo, post, remoteip):
     IGNORE_FIELDS = [ JSKEY_NAME, "formname", "flags", "redirect", "account", "filechooser", "method" ]
     l = dbo.locale
     formname = post["formname"]
-    posteddate = asm3.i18n.now(dbo.timezone)
+    posteddate = dbo.now()
     flags = post["flags"]
     submitteremail = ""
     emailsubmissionto = ""
@@ -971,7 +971,7 @@ def create_animal(dbo, username, collationid):
     # If a code has not been supplied and manual codes are turned on, 
     # generate one from the date and time to prevent record creation failing.
     if "code" not in d and asm3.configuration.manual_codes(dbo):
-        gencode = "OF%s" % asm3.i18n.format_date(asm3.i18n.now(), "%y%m%d%H%M%S")
+        gencode = "OF%s" % asm3.i18n.format_date(dbo.now(), "%y%m%d%H%M%S")
         d["sheltercode"] = gencode
         d["shortcode"] = gencode
     # Are date of birth and age blank? Assume an age of 1.0 if they are
@@ -1097,8 +1097,8 @@ def create_animalcontrol(dbo, username, collationid):
     l = dbo.locale
     fields = get_onlineformincoming_detail(dbo, collationid)
     d = {}
-    d["incidentdate"] = asm3.i18n.python2display(l, asm3.i18n.now(dbo.timezone))
-    d["incidenttime"] = asm3.i18n.format_time_now(dbo.timezone)
+    d["incidentdate"] = asm3.i18n.python2display(l, dbo.now())
+    d["incidenttime"] = asm3.i18n.format_time(dbo.now())
     d["calldate"] = d["incidentdate"]
     d["calltime"] = d["incidenttime"]
     d["incidenttype"] = 1
@@ -1127,7 +1127,7 @@ def create_lostanimal(dbo, username, collationid):
     l = dbo.locale
     fields = get_onlineformincoming_detail(dbo, collationid)
     d = {}
-    d["datereported"] = asm3.i18n.python2display(l, asm3.i18n.now(dbo.timezone))
+    d["datereported"] = asm3.i18n.python2display(l, dbo.now())
     for f in fields:
         if f.FIELDNAME == "species": d["species"] = guess_species(dbo, f.VALUE)
         if f.FIELDNAME == "sex": d["sex"] = guess_sex(dbo, f.VALUE)
@@ -1143,7 +1143,7 @@ def create_lostanimal(dbo, username, collationid):
         if f.FIELDNAME == "areazipcode": d["areapostcode"] = f.VALUE
         if f.FIELDNAME == "microchip": d["microchip"] = f.VALUE
     if "datelost" not in d or asm3.i18n.display2python(l, d["datelost"]) is None:
-        d["datelost"] = asm3.i18n.python2display(l, asm3.i18n.now(dbo.timezone))
+        d["datelost"] = asm3.i18n.python2display(l, dbo.now())
     if "species" not in d: d["species"] = guess_species(dbo, "")
     if "sex" not in d: d["sex"] = guess_sex(dbo, "")
     if "breed" not in d: d["breed"] = guess_breed(dbo, "")
@@ -1168,7 +1168,7 @@ def create_foundanimal(dbo, username, collationid):
     l = dbo.locale
     fields = get_onlineformincoming_detail(dbo, collationid)
     d = {}
-    d["datereported"] = asm3.i18n.python2display(l, asm3.i18n.now(dbo.timezone))
+    d["datereported"] = asm3.i18n.python2display(l, dbo.now())
     for f in fields:
         if f.FIELDNAME == "species": d["species"] = guess_species(dbo, f.VALUE)
         if f.FIELDNAME == "sex": d["sex"] = guess_sex(dbo, f.VALUE)
@@ -1184,7 +1184,7 @@ def create_foundanimal(dbo, username, collationid):
         if f.FIELDNAME == "areazipcode": d["areapostcode"] = f.VALUE
         if f.FIELDNAME == "microchip": d["microchip"] = f.VALUE
     if "datefound" not in d or asm3.i18n.display2python(l, d["datefound"]) is None:
-        d["datefound"] = asm3.i18n.python2display(l, asm3.i18n.now(dbo.timezone))
+        d["datefound"] = asm3.i18n.python2display(l, dbo.now())
     if "species" not in d: d["species"] = guess_species(dbo, "")
     if "sex" not in d: d["sex"] = guess_sex(dbo, "")
     if "breed" not in d: d["breed"] = guess_breed(dbo, "")
@@ -1260,7 +1260,7 @@ def create_waitinglist(dbo, username, collationid):
     l = dbo.locale
     fields = get_onlineformincoming_detail(dbo, collationid)
     d = {}
-    d["dateputon"] = asm3.i18n.python2display(l, asm3.i18n.now(dbo.timezone))
+    d["dateputon"] = asm3.i18n.python2display(l, dbo.now())
     d["urgency"] = str(asm3.configuration.waiting_list_default_urgency(dbo))
     for f in fields:
         if f.FIELDNAME == "size": d["size"] = guess_size(dbo, f.VALUE)

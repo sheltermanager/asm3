@@ -234,7 +234,7 @@ def validate_movement_form_data(dbo, post):
         asm3.al.debug("blank date and type", "movement.validate_movement_form_data", dbo)
     # If we've got a type, but no date, default today
     if movementtype > 0 and movementdate is None:
-        movementdate = asm3.i18n.now()
+        movementdate = dbo.today()
         post.data["movementdate"] = asm3.i18n.python2display(l, movementdate)
         asm3.al.debug("type set and no date, defaulting today", "movement.validate_movement_form_data", dbo)
     # If we've got a reserve cancellation without a reserve, remove it

@@ -88,7 +88,7 @@ def gkd(dbo, m, f, usetoday = False):
     if len(b) != 3:
         # We don't have a valid date, if use today is on return that
         if usetoday:
-            return asm3.i18n.python2display(dbo.locale, asm3.i18n.now(dbo.timezone))
+            return asm3.i18n.python2display(dbo.locale, dbo.now())
         else:
             return ""
     else:
@@ -107,7 +107,7 @@ def gkd(dbo, m, f, usetoday = False):
         except:
             # We've got an invalid date - return today
             if usetoday:
-                return asm3.i18n.python2display(dbo.locale, asm3.i18n.now(dbo.timezone))
+                return asm3.i18n.python2display(dbo.locale, dbo.now())
             else:
                 return ""
 
