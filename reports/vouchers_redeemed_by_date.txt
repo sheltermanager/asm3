@@ -1,0 +1,61 @@
+Vouchers Redeemed by Date
+###
+Financial
+###
+34304/Any
+###
+Vouchers redeemed between two dates.
+###
+en
+###
+SELECT o.OwnerName, v.VoucherName, 
+o.OwnerAddress, o.OwnerTown, o.OwnerCounty, o.OwnerPostcode, o.HomeTelephone, o.MobileTelephone,
+ov.ID AS VoucherNumber, ov.VoucherCode, 
+ov.DateIssued, ov.DatePresented, ov.DateExpired, ov.Value AS Amount,
+ov.Comments
+FROM owner o
+INNER JOIN ownervoucher ov ON ov.OwnerID = o.ID
+INNER JOIN voucher v ON ov.VoucherID = v.ID
+WHERE ov.DatePresented BETWEEN '$ASK DATE Enter the from date$' AND '$ASK DATE Enter the to date$'
+ORDER BY ov.DatePresented
+###
+$$HEADER
+HEADER$$
+
+$$GROUP_VoucherName
+$$HEAD
+<h2>$VoucherName</h2>
+<table border=1><tr>
+<td><b>Number</b></td>
+<td><b>Code</b></td>
+<td><b>Owner</b></td>
+<td><b>Issued</b></td>
+<td><b>Expires</b></td>
+<td><b>Redeemed</b></td>
+<td><b>Value</b></td>
+<td><b>Comments</b></td>
+</tr>
+$$FOOT
+</table>
+<p><b>{COUNT.VoucherName}</b> vouchers, value <b>{SUM.Amount.2}</b></p>
+GROUP$$
+
+$$BODY<tr>
+<td>$VOUCHERNUMBER</td>
+<td>$VOUCHERCODE</td>
+<td><b>$OWNERNAME</b><br/>
+$OWNERADDRESS<br/>
+$OWNERTOWN<br/>
+$OWNERCOUNTY<br/>
+$OWNERPOSTCODE<br/>
+$HOMETELEPHONE $MOBILETELEPHONE</td>
+<td>$DATEISSUED</td>
+<td>$DATEEXPIRED</td>
+<td>$DATEPRESENTED</td>
+<td>$AMOUNT</td>
+<td>$COMMENTS</td>
+</tr>
+BODY$$
+
+$$FOOTER
+FOOTER$$
