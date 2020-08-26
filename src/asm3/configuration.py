@@ -318,6 +318,7 @@ DEFAULTS = {
     "TemplatesForNonShelter": "No",
     "ThumbnailSize": "150x150",
     "Timezone": "-5",
+    "TimezoneDST": "Yes",
     "TrialAdoptions": "No",
     "TrialOnShelter": "No",
     "UniqueLicenceNumbers": "Yes",
@@ -1247,6 +1248,9 @@ def thumbnail_size(dbo):
 
 def timezone(dbo):
     return cfloat(dbo, "Timezone", TIMEZONE)
+
+def timezone_dst(dbo):
+    return cboolean(dbo, "TimezoneDST", DEFAULTS["TimezoneDST"])
 
 def trial_adoptions(dbo):
     return cboolean(dbo, "TrialAdoptions", DEFAULTS["TrialAdoptions"] == "Yes")

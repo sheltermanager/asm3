@@ -116,6 +116,7 @@ class Database(object):
     alias = "" 
     locale = "en"
     timezone = 0
+    timezone_dst = False
     installpath = ""
     locked = False
 
@@ -502,7 +503,9 @@ class Database(object):
             offset:  Add this many days to now (negative values supported)
             settime: A time in HH:MM:SS format to set
         """
-        d = asm3.i18n.now(self.timezone)
+        tz = self.timezone
+        if self.timezone_dst: tz += asm3.i18n.dst_adjust(self.locale, self.timezone)
+        d = asm3.i18n.now(tz)
         if not timenow:
             d = d.replace(hour = 0, minute = 0, second = 0, microsecond = 0)
         if offset > 0:

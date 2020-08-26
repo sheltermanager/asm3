@@ -164,6 +164,8 @@ $(function() {
                 '<option value="13.75">+13:45</option>',
                 '<option value="14">+14:00</option>',
                 '</select>',
+                '<input data="TimezoneDST" id="timezonedst" class="asm-checkbox" type="checkbox" />',
+                '<label for="timezonedst">' + _("auto adjust for daylight savings") + '</label>',
                 '</td>',
                 '</tr>',
                 '<tr>',

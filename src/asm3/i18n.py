@@ -6,8 +6,8 @@ import time
 # flake8: noqa - we have a lot of locales and this is convenient
 from asm3.locales import *
 
-VERSION = "44u [Mon 24 Aug 18:15:09 BST 2020]"
-BUILD = "08241815"
+VERSION = "44u [Wed 26 Aug 15:58:46 BST 2020]"
+BUILD = "08261558"
 
 DMY = ( "%d/%m/%Y", "%d/%m/%y" )
 HDMY = ( "%d-%m-%Y", "%d-%m-%y" )
@@ -22,6 +22,9 @@ POUND = "&pound;"
 YEN = "&yen;"
 CURRENCY_PREFIX = "p"
 CURRENCY_SUFFIX = "s"
+DST_US = "6-203-111"
+DST_UK = "6-L03-L10"
+DST_AU = "6-110-104"
 
 def PLURAL_ENGLISH(n):
     """ gettext plural function for English/Latin languages """
@@ -61,82 +64,83 @@ LM_CURRENCY_POSITION = 5
 LM_CURRENCY_DECIMAL_PLACES = 6
 LM_CURRENCY_DECIMAL_MARK = 7
 LM_CURRENCY_DIGIT_GROUPING = 8
+LM_DST = 9
 locale_maps = {
-    "en":       ( "English", "United States", MDY, DOLLAR, PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ".", "," ),
-    "en_GB":    ( "English", "Great Britain", DMY, POUND, PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ".", "," ),
-    "en_AU":    ( "English", "Australia", DMY, DOLLAR, PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ".", "," ),
-    "en_AE":    ( "English", "United Arab Emirates", DMY, "&#x62f;&#x2e;&#x625;", PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ".", ","),
-    "en_AW":    ( "English", "Aruba", DMY, "Awg.", PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ".", "," ),
-    "en_BE":    ( "English", "Belgium", DMY, EURO, PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ",", " " ),
-    "en_BM":    ( "English", "Bermuda", DMY, DOLLAR, PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ".", "," ),
-    "en_BG":    ( "English", "Bulgaria", HYMD, "&#x043b;&#x0432;", PLURAL_ENGLISH, CURRENCY_SUFFIX, 2, ",", " "),
-    "en_BH":    ( "English", "Bahrain", MDY, "BD", PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ".", "," ),
-    "en_BQ":    ( "English", "Bonaire", DMY, DOLLAR, PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ".", "," ),
-    "en_CA":    ( "English", "Canada", MDY, DOLLAR, PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ".", "," ),
-    "en_CH":    ( "English", "Switzerland", DDMY, "CHF", PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ".", "," ),
-    "en_CN":    ( "English", "China", HYMD, YEN, PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ".", "," ),
-    "en_CR":    ( "English", "Costa Rica", DMY, "&#8353;", PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ".", "," ),
-    "en_CY":    ( "English", "Cyprus", DMY, EURO, PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ".", "," ),
-    "en_ES":    ( "English", "Spain", DMY, EURO, PLURAL_ENGLISH, CURRENCY_SUFFIX, 2, ",", " " ),
-    "en_HK":    ( "English", "Hong Kong", HDMY, DOLLAR, PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ".", "," ),
-    "en_KH":    ( "English", "Cambodia", DMY, DOLLAR, PLURAL_ENGLISH, CURRENCY_SUFFIX, 2, ".", "," ),
-    "en_KW":    ( "English", "Kuwait", DMY, "KD", PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ".", "," ),
-    "en_KY":    ( "English", "Cayman Islands", DMY, DOLLAR, PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ".", "," ),
-    "en_IE":    ( "English", "Ireland", DMY, EURO, PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ".", "," ),
-    "en_IN":    ( "English", "India", DMY, "&#8360;", PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ".", ","),
-    "en_IL":    ( "English", "Israel", DMY, "&#x20aa;", PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ".", "," ),
-    "en_JP":    ( "English", "Japan", YMD, "&yen;", PLURAL_ENGLISH, CURRENCY_SUFFIX, 0, ".", "," ),
-    "en_LB":    ( "English", "Lebanon", MDY, "L&pound;", PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ".", "," ),
-    "en_LU":    ( "English", "Luxembourg", DDMY, EURO, PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ".", "," ),
-    "en_MY":    ( "English", "Malaysia", DMY, "RM", PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ".", "," ),
-    "en_MX":    ( "English", "Mexico", DMY, DOLLAR, PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ".", "," ),
-    "en_NA":    ( "English", "Namibia", YMD, DOLLAR, PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ",", " "),
-    "en_PH":    ( "English", "Philippines", MDY, "&#x20b1;", PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ".", ","),
-    "en_QA":    ( "English", "Qatar", DMY, "QR", PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ".", ","),
-    "en_NZ":    ( "English", "New Zealand", DMY, DOLLAR, PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ".", "," ),
-    "en_TH":    ( "English", "Thailand", DMY, "&#x0e3f;", PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ".", "," ),
-    "en_TW":    ( "English", "Taiwan", YMD, DOLLAR, PLURAL_ENGLISH, CURRENCY_PREFIX, 0, ".", "," ),
-    "en_TW2":   ( "English", "Taiwan $0.00", YMD, DOLLAR, PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ".", "," ),
-    "en_VN":    ( "English", "Vietnam", DMY, "&#8363;", PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ".", "," ),
-    "en_ZA":    ( "English", "South Africa", YMD, "R", PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ",", " "),
-    "bg":       ( "Bulgarian", "Bulgaria", HYMD, "&#x043b;&#x0432;", PLURAL_ENGLISH, CURRENCY_SUFFIX, 2, ",", " "),
-    "bs":       ( "Bosnian", "Bosnia", HYMD, "KM", PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ".", ","),
-    "cs":       ( "Czech", "Czech Republic", DYMD, "&#x004b;&#x010d;", PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ",", " " ),
-    "de":       ( "German", "Germany", DDMY, EURO, PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ",", " " ),
-    "de_AT":    ( "German", "Austria", DDMY, EURO, PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ".", "," ),
-    "de_CH":    ( "German", "Switzerland", DDMY, "CHF", PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ".", "," ),
-    "de_LU":    ( "German", "Luxembourg", DDMY, EURO, PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ".", "," ),
-    "el":       ( "Greek", "Greece", DMY, EURO, PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ",", " " ),
-    "es":       ( "Spanish", "Spain", DMY, EURO, PLURAL_ENGLISH, CURRENCY_SUFFIX, 2, ",", " " ),
-    "es_CO":    ( "Spanish", "Columbia", DMY, DOLLAR, PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ",", " " ),
-    "es_CR":    ( "Spanish", "Costa Rica", DMY, "&#8353;", PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ",", " " ),
-    "es_EC":    ( "Spanish", "Ecuador", DMY, DOLLAR, PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ",", " " ),
-    "es_MX":    ( "Spanish", "Mexico", DMY, DOLLAR, PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ".", "," ),
-    "et":       ( "Estonian", "Estonia", DMY, "kr", PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ",", " " ),
-    "fi":       ( "Finnish", "Finland", DDMY, EURO, PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ",", " "),
-    "fr":       ( "French", "France", DMY, EURO, PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ",", " " ),
-    "fr_BE":    ( "French", "Belgium", DMY, EURO, PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ",", " " ),
-    "fr_LU":    ( "French", "Luxembourg", DDMY, EURO, PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ".", "," ),
-    "fr_CA":    ( "French", "Canada", DMY, DOLLAR, PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ",", " " ),
-    "fr_CH":    ( "French", "Switzerland", DDMY, "CHF", PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ".", "," ),
-    "he":       ( "Hebrew", "Israel", DMY, "&#x20aa;", PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ".", "," ),
-    "hu":       ( "Hungarian", "Hungary", DYMD, "Ft",  PLURAL_HUNGARIAN, CURRENCY_PREFIX, 2, ",", " "), 
-    "it":       ( "Italian", "Italy", DMY, EURO, PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ",", " " ),
-    "it_CH":    ( "Italian", "Switzerland", DDMY, "CHF", PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ".", "," ),
-    "lt":       ( "Lithuanian", "Lithuania", DYMD, EURO, PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ",", " " ),
-    "nb":       ( "Norwegian Bokmal", "Norway", DDMY, "kr", PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ",", " " ),
-    "nl":       ( "Dutch", "Holland", HDMY, EURO, PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ",", " " ),
-    "nl_AW":    ( "Dutch", "Aruba", DMY, "Awg.", PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ".", "," ),
-    "nl_BE":    ( "Dutch", "Belgium", DMY, EURO, PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ",", " " ),
-    "nl_BQ":    ( "Dutch", "Bonaire", DMY, DOLLAR, PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ".", "," ),
-    "pl":       ( "Polish", "Poland", DDMY, "&#x007a;&#x0142;", PLURAL_POLISH, CURRENCY_PREFIX, 2, ",", " " ),
-    "pt":       ( "Portugese", "Portugal", HDMY, EURO, PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ",", " " ),
-    "ru":       ( "Russian", "Russia", DDMY, "&#1056;&#1059;&#1041;.", PLURAL_SLAVIC, CURRENCY_PREFIX, 2, ",", " " ),
-    "sk":       ( "Slovakian", "Slovakia", DDMY, EURO, PLURAL_SLAVIC, CURRENCY_PREFIX, 2, ",", " " ),
-    "sl":       ( "Slovenian", "Slovenia", DDMY, EURO, PLURAL_SLAVIC, CURRENCY_PREFIX, 2, ",", " " ),
-    "sv":       ( "Swedish", "Sweden", HYMD, "kr", PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ",", " " ),
-    "th":       ( "Thai", "Thailand", DMY, "&#x0e3f;", PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ".", "," ),
-    "tr":       ( "Turkish", "Turkey", DDMY, "TL", PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ",", " " )
+    "en":       ( "English", "United States", MDY, DOLLAR, PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ".", ",", DST_US ),
+    "en_GB":    ( "English", "Great Britain", DMY, POUND, PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ".", ",", DST_UK ),
+    "en_AU":    ( "English", "Australia", DMY, DOLLAR, PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ".", ",", DST_AU ),
+    "en_AE":    ( "English", "United Arab Emirates", DMY, "&#x62f;&#x2e;&#x625;", PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ".", ",", ""),
+    "en_AW":    ( "English", "Aruba", DMY, "Awg.", PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ".", ",", "" ),
+    "en_BE":    ( "English", "Belgium", DMY, EURO, PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ",", " ", DST_UK ),
+    "en_BM":    ( "English", "Bermuda", DMY, DOLLAR, PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ".", ",", "6-203-111" ),
+    "en_BG":    ( "English", "Bulgaria", HYMD, "&#x043b;&#x0432;", PLURAL_ENGLISH, CURRENCY_SUFFIX, 2, ",", " ", DST_UK),
+    "en_BH":    ( "English", "Bahrain", MDY, "BD", PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ".", ",", "", "" ),
+    "en_BQ":    ( "English", "Bonaire", DMY, DOLLAR, PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ".", ",", "" ),
+    "en_CA":    ( "English", "Canada", MDY, DOLLAR, PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ".", ",", DST_US ),
+    "en_CH":    ( "English", "Switzerland", DDMY, "CHF", PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ".", ",", DST_UK ),
+    "en_CN":    ( "English", "China", HYMD, YEN, PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ".", ",", "" ),
+    "en_CR":    ( "English", "Costa Rica", DMY, "&#8353;", PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ".", ",", "" ),
+    "en_CY":    ( "English", "Cyprus", DMY, EURO, PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ".", ",", DST_UK ),
+    "en_ES":    ( "English", "Spain", DMY, EURO, PLURAL_ENGLISH, CURRENCY_SUFFIX, 2, ",", " ", DST_UK ),
+    "en_HK":    ( "English", "Hong Kong", HDMY, DOLLAR, PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ".", ",", "" ),
+    "en_KH":    ( "English", "Cambodia", DMY, DOLLAR, PLURAL_ENGLISH, CURRENCY_SUFFIX, 2, ".", ",", "" ),
+    "en_KW":    ( "English", "Kuwait", DMY, "KD", PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ".", ",", "" ),
+    "en_KY":    ( "English", "Cayman Islands", DMY, DOLLAR, PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ".", ",", "" ),
+    "en_IE":    ( "English", "Ireland", DMY, EURO, PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ".", ",", DST_UK ),
+    "en_IN":    ( "English", "India", DMY, "&#8360;", PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ".", ",", ""),
+    "en_IL":    ( "English", "Israel", DMY, "&#x20aa;", PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ".", ",", DST_UK ),
+    "en_JP":    ( "English", "Japan", YMD, "&yen;", PLURAL_ENGLISH, CURRENCY_SUFFIX, 0, ".", ",", "" ),
+    "en_LB":    ( "English", "Lebanon", MDY, "L&pound;", PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ".", ",", DST_UK ),
+    "en_LU":    ( "English", "Luxembourg", DDMY, EURO, PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ".", ",", DST_UK ),
+    "en_MY":    ( "English", "Malaysia", DMY, "RM", PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ".", ",", "" ),
+    "en_MX":    ( "English", "Mexico", DMY, DOLLAR, PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ".", ",", "6-104-L10" ),
+    "en_NA":    ( "English", "Namibia", YMD, DOLLAR, PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ",", " ", ""),
+    "en_PH":    ( "English", "Philippines", MDY, "&#x20b1;", PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ".", ",", ""),
+    "en_QA":    ( "English", "Qatar", DMY, "QR", PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ".", ",", ""),
+    "en_NZ":    ( "English", "New Zealand", DMY, DOLLAR, PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ".", ",", "6-L09-104" ),
+    "en_TH":    ( "English", "Thailand", DMY, "&#x0e3f;", PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ".", ",", "" ),
+    "en_TW":    ( "English", "Taiwan", YMD, DOLLAR, PLURAL_ENGLISH, CURRENCY_PREFIX, 0, ".", ",", ""),
+    "en_TW2":   ( "English", "Taiwan $0.00", YMD, DOLLAR, PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ".", ",", "" ),
+    "en_VN":    ( "English", "Vietnam", DMY, "&#8363;", PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ".", ",", "" ),
+    "en_ZA":    ( "English", "South Africa", YMD, "R", PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ",", " ", ""),
+    "bg":       ( "Bulgarian", "Bulgaria", HYMD, "&#x043b;&#x0432;", PLURAL_ENGLISH, CURRENCY_SUFFIX, 2, ",", " ", DST_UK),
+    "bs":       ( "Bosnian", "Bosnia", HYMD, "KM", PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ".", ",", DST_UK),
+    "cs":       ( "Czech", "Czech Republic", DYMD, "&#x004b;&#x010d;", PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ",", " ", DST_UK ),
+    "de":       ( "German", "Germany", DDMY, EURO, PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ",", " ", DST_UK ),
+    "de_AT":    ( "German", "Austria", DDMY, EURO, PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ".", ",", DST_UK ),
+    "de_CH":    ( "German", "Switzerland", DDMY, "CHF", PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ".", ",", DST_UK ),
+    "de_LU":    ( "German", "Luxembourg", DDMY, EURO, PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ".", ",", DST_UK ),
+    "el":       ( "Greek", "Greece", DMY, EURO, PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ",", " ", DST_UK ),
+    "es":       ( "Spanish", "Spain", DMY, EURO, PLURAL_ENGLISH, CURRENCY_SUFFIX, 2, ",", " ", DST_UK ),
+    "es_CO":    ( "Spanish", "Columbia", DMY, DOLLAR, PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ",", " ", "" ),
+    "es_CR":    ( "Spanish", "Costa Rica", DMY, "&#8353;", PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ",", " ", "" ),
+    "es_EC":    ( "Spanish", "Ecuador", DMY, DOLLAR, PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ",", " ", "" ),
+    "es_MX":    ( "Spanish", "Mexico", DMY, DOLLAR, PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ".", ",", "6-104-L10" ),
+    "et":       ( "Estonian", "Estonia", DMY, "kr", PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ",", " ", DST_UK ),
+    "fi":       ( "Finnish", "Finland", DDMY, EURO, PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ",", " ", DST_UK),
+    "fr":       ( "French", "France", DMY, EURO, PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ",", " ", DST_UK ),
+    "fr_BE":    ( "French", "Belgium", DMY, EURO, PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ",", " ", DST_UK ),
+    "fr_LU":    ( "French", "Luxembourg", DDMY, EURO, PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ".", ",", DST_UK ),
+    "fr_CA":    ( "French", "Canada", DMY, DOLLAR, PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ",", " ", DST_US ),
+    "fr_CH":    ( "French", "Switzerland", DDMY, "CHF", PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ".", ",", DST_UK ),
+    "he":       ( "Hebrew", "Israel", DMY, "&#x20aa;", PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ".", ",", DST_UK ),
+    "hu":       ( "Hungarian", "Hungary", DYMD, "Ft",  PLURAL_HUNGARIAN, CURRENCY_PREFIX, 2, ",", " ", DST_UK), 
+    "it":       ( "Italian", "Italy", DMY, EURO, PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ",", " ", DST_UK ),
+    "it_CH":    ( "Italian", "Switzerland", DDMY, "CHF", PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ".", ",", DST_UK ),
+    "lt":       ( "Lithuanian", "Lithuania", DYMD, EURO, PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ",", " ", DST_UK ),
+    "nb":       ( "Norwegian Bokmal", "Norway", DDMY, "kr", PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ",", " ", DST_UK ),
+    "nl":       ( "Dutch", "Holland", HDMY, EURO, PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ",", " ", DST_UK ),
+    "nl_AW":    ( "Dutch", "Aruba", DMY, "Awg.", PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ".", ",", "" ),
+    "nl_BE":    ( "Dutch", "Belgium", DMY, EURO, PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ",", " ", DST_UK ),
+    "nl_BQ":    ( "Dutch", "Bonaire", DMY, DOLLAR, PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ".", ",", "" ),
+    "pl":       ( "Polish", "Poland", DDMY, "&#x007a;&#x0142;", PLURAL_POLISH, CURRENCY_PREFIX, 2, ",", " ", DST_UK ),
+    "pt":       ( "Portugese", "Portugal", HDMY, EURO, PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ",", " ", DST_UK ),
+    "ru":       ( "Russian", "Russia", DDMY, "&#1056;&#1059;&#1041;.", PLURAL_SLAVIC, CURRENCY_PREFIX, 2, ",", " ", "" ),
+    "sk":       ( "Slovakian", "Slovakia", DDMY, EURO, PLURAL_SLAVIC, CURRENCY_PREFIX, 2, ",", " ", DST_UK ),
+    "sl":       ( "Slovenian", "Slovenia", DDMY, EURO, PLURAL_SLAVIC, CURRENCY_PREFIX, 2, ",", " ", DST_UK ),
+    "sv":       ( "Swedish", "Sweden", HYMD, "kr", PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ",", " ", DST_UK ),
+    "th":       ( "Thai", "Thailand", DMY, "&#x0e3f;", PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ".", ",", "" ),
+    "tr":       ( "Turkish", "Turkey", DDMY, "TL", PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ",", " ", "" )
 }
 
 def _(english, locale = "en"):
@@ -305,6 +309,12 @@ def get_currency_digit_grouping(locale):
     Returns the character used to separate thousands
     """
     return get_locale_map(locale, LM_CURRENCY_DIGIT_GROUPING)
+
+def get_dst(locale):
+    """
+    Returns the daylight savings time info for locale
+    """
+    return get_locale_map(locale, LM_DST)
 
 def get_plural_function(locale):
     """
@@ -682,6 +692,65 @@ def format_diff(l, days):
         months = int((days % 365) / 30.5)
         return ntranslate(years, [ _("{plural0} year.", l), _("{plural1} years.", l), _("{plural2} years.", l), _("{plural3} years.")], l).replace(".", "") + \
             " " + ntranslate(months, [ _("{plural0} month.", l), _("{plural1} months.", l), _("{plural2} months.", l), _("{plural3} months.")], l)
+
+def parse_dst(c):
+    """
+    Parses dst code c and returns values for day of week,
+    start offset in month, start month, end offset in month, end month
+    """
+    dow, start, end = c.split("-")
+    return (int(dow), start[0], int(start[1:]), end[0], int(end[1:]))
+
+def dst_find_day(dow, x, month, yearoffset=0):
+    """ 
+    Finds the xth dow in month this year.
+    dow: int day of the week (0 = mon, 6 = sun)
+    x: which day to find, 1-5 or L for the last dow in the month
+    month: int the month we're looking in
+    yearoffset: add to the current year
+    """
+    d = today()
+    if yearoffset > 0: d = add_years(d, yearoffset)
+    d = d.replace(month=month, day=1)
+    if x == "L":
+        # Looking for the last dow in month
+        d = last_of_month(d)
+        while d.day > 20:
+            if d.weekday() == dow: break
+            d = subtract_days(d, 1)
+    else:
+        # Looking for X dow in month
+        found = 0
+        while d.month == month:
+            if d.weekday() == dow: found += 1
+            if found == int(x): break
+            d = add_days(d, 1)
+    return d
+
+def dst_start_date(l):
+    """ Calculates the dst start date/time for locale """
+    dow, so, sm, dummy, dummy = parse_dst(get_dst(l))
+    return dst_find_day( dow, so, sm)
+
+def dst_end_date(l):
+    """ Calculates the dst end date/time for locale """
+    dow, dummy, sm, eo, em = parse_dst(get_dst(l))
+    return dst_find_day(dow, eo, em, sm > em and 1 or 0) # set 1 year offset if start month is later than end month
+
+def dst_adjust(l, offset = 0.0):
+    """
+    Returns 1 if locale l is currently in daylight savings time.
+    offset: Included so that the time now without dst can be calculated first to
+            decide whether or not we're in dst (otherwise we could be wrong for a day)
+    You can add this call to a timezone offset to get the correct adjustment.
+    """
+    c = get_dst(l)
+    if c == "": return 0 # No dst information for this locale, no adjustment
+    d = now(offset)
+    dsts = dst_start_date(l)
+    dste = dst_end_date(l)
+    if d >= dsts and d <= dste: return 1 # we're in dst
+    return 0
 
 def now(offset = 0.0):
     """

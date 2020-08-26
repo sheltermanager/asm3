@@ -699,6 +699,7 @@ def web_login(post, session, remoteip, useragent, path):
         try:
             dbo.locked = asm3.configuration.smdb_locked(dbo)
             dbo.timezone = asm3.configuration.timezone(dbo)
+            dbo.timezone_dst = asm3.configuration.timezone_dst(dbo)
             dbo.installpath = path
             session.locale = asm3.configuration.locale(dbo)
             dbo.locale = session.locale
