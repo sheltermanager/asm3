@@ -53,7 +53,7 @@ INNER JOIN internallocation il ON il.ID = a.ShelterLocation
 
 ) dummy
 WHERE AID IN ($ASK ANIMALS$)
-ORDER BY DateGiven
+ORDER BY AnimalName, DateGiven
 ###
 $$HEADER
 HEADER$$
