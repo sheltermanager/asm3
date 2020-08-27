@@ -291,7 +291,8 @@ $(document).ready(function() {
     // special fields, fix any bad character cases. 
     const fix_case_on_change = function() {
         if (typeof asm3_dont_fix_case !== 'undefined') { return; } // do nothing if global is declared
-        var name  = $(this).attr("name"), v = $(this).val();
+        var name = $(this).attr("name"), v = $(this).val();
+        if (!name || !v) { return; }
         if (name.indexOf("_") != -1) { name = name.substring(0, name.indexOf("_")); }
         if (upper_fields.indexOf(name) != -1) {
             $(this).val( v.toUpperCase() );
@@ -364,24 +365,20 @@ $(document).ready(function() {
     // Add additional behaviours to when the online form is submitted to validate 
     // components either not supported by HTML5 form validation, or for browsers
     // that do not support it.
-    $("input[type='submit']").click(function() {
-        var rv = true;
-        try {
-            $(this).prop("disabled", true); // Stop double submit by disabling the button
-            if (!validate_signatures()) { rv = false; return false; }
-            if (!validate_lookupmulti()) { rv = false; return false; }
-            if (!validate_checkboxgroup()) { rv = false; return false; }
-            if (!validate_dates()) { rv = false; return false; }
-            if (!validate_times()) { rv = false; return false; }
-            if (!validate_email()) { rv = false; return false; }
-            if (!validate_required()) { rv = false; return false; }
-            if (!validate_images()) { rv = false; return false; }
-        }
-        finally {
-            // Re-enable the button if any validation fails
-            if (!rv) { $(this).prop("disabled", false); }
-            if (html5_required && !$(this).closest("form")[0].checkValidity()) { $(this).prop("disabled", false); }
-        }
+    $("input[type='submit']").click(function(e) {
+        const enable = function() { $(this).prop("disabled", false); };
+        $(this).prop("disabled", true); // Stop double submit by disabling the button
+        if (!validate_signatures()) { enable(); return false; }
+        if (!validate_lookupmulti()) { enable(); return false; }
+        if (!validate_checkboxgroup()) { enable(); return false; }
+        if (!validate_dates()) { enable(); return false; }
+        if (!validate_times()) { enable(); return false; }
+        if (!validate_email()) { enable(); return false; }
+        if (!validate_required()) { enable(); return false; }
+        if (!validate_images()) { enable(); return false; }
+        if (html5_required && !$("form")[0].checkValidity()) { enable(); return false; }
+        e.preventDefault();
+        $("form").submit();
     });
 
 });
