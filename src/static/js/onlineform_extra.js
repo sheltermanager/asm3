@@ -366,7 +366,8 @@ $(document).ready(function() {
     // components either not supported by HTML5 form validation, or for browsers
     // that do not support it.
     $("input[type='submit']").click(function(e) {
-        const enable = function() { $(this).prop("disabled", false); };
+        const self = this;
+        const enable = function() { $(self).prop("disabled", false); };
         $(this).prop("disabled", true); // Stop double submit by disabling the button
         if (!validate_signatures()) { enable(); return false; }
         if (!validate_lookupmulti()) { enable(); return false; }
