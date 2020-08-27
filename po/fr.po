@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ASM3\n"
 "Report-Msgid-Bugs-To: robin@sheltermanager.com\n"
-"POT-Creation-Date: 2020-08-13 09:21+0000\n"
-"PO-Revision-Date: 2020-08-19 21:12+0200\n"
+"POT-Creation-Date: 2020-08-27 09:22+0000\n"
+"PO-Revision-Date: 2020-08-27 19:25+0200\n"
 "Last-Translator: Julian POIDEVIN <poidevin.julian@gmail.com>\n"
 "Language-Team: \n"
 "Language: fr\n"
@@ -10450,16 +10450,16 @@ msgstr ""
 "Envoyer une demande de paiement par e-mail via une plateforme de paiement"
 
 #: onlineforms.js
+msgid "Send and include a copy of the form submission"
+msgstr "Envoyer et inclure une copie de la soumission du formulaire"
+
+#: onlineforms.js
 msgid "Send confirmation email to form submitter"
 msgstr "Envoyer un e-mail de confirmation pour envoyer le formulaire"
 
 #: onlineforms.js
 msgid "Send confirmation message only"
 msgstr "Envoyer un message de confirmation uniquement"
-
-#: onlineforms.js
-msgid "Send confirmation with a copy of the form"
-msgstr "Envoyer une confirmation avec une copie du formulaire"
 
 #: animal.js
 msgid "Send email"
@@ -11697,12 +11697,8 @@ msgid "The coat type of this animal"
 msgstr "Le type de robe de cet animal"
 
 #: onlineforms.js
-msgid ""
-"The confirmation email message to send to the form submitter. Leave blank to "
-"send a copy of the completed form."
-msgstr ""
-"L'e-mail de confirmation à envoyer à l'expéditeur du formulaire. Laisser "
-"blanc pour envoyer une copie du formulaire rempli."
+msgid "The confirmation email message to send to the form submitter."
+msgstr "L'e-mail de confirmation à envoyer à l'expéditeur du formulaire."
 
 #: sql.js
 msgid ""
@@ -14274,6 +14270,10 @@ msgstr "sont envoyés à"
 msgid "at"
 msgstr "à"
 
+#: options.js
+msgid "auto adjust for daylight savings"
+msgstr "ajustement automatique pour l'heure d'été"
+
 #: mailmerge.js
 msgid "cm"
 msgstr "cm"
@@ -15377,6 +15377,13 @@ msgstr "{plural3} semaines."
 #: i18n.py
 msgid "{plural3} years."
 msgstr "{plural3} années."
+
+#~ msgid ""
+#~ "The confirmation email message to send to the form submitter. Leave blank "
+#~ "to send a copy of the completed form."
+#~ msgstr ""
+#~ "L'e-mail de confirmation à envoyer à l'expéditeur du formulaire. Laisser "
+#~ "blanc pour envoyer une copie du formulaire rempli."
 
 #~ msgid "A new version of ASM is available."
 #~ msgstr "Une nouvelle version de ASM est disponible."
