@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ASM3\n"
 "Report-Msgid-Bugs-To: robin@sheltermanager.com\n"
-"POT-Creation-Date: 2020-08-13 09:21+0000\n"
+"POT-Creation-Date: 2020-08-27 09:22+0000\n"
 "Last-Translator: Robin Rawson-Tetley <robin@sheltermanager.com>\n"
 "Language-Team: en <robin@sheltermanager.com>\n"
 "Language: en\n"
@@ -10189,15 +10189,15 @@ msgid "Send an email request for payment via a payment processor"
 msgstr ""
 
 #: onlineforms.js
+msgid "Send and include a copy of the form submission"
+msgstr ""
+
+#: onlineforms.js
 msgid "Send confirmation email to form submitter"
 msgstr ""
 
 #: onlineforms.js
 msgid "Send confirmation message only"
-msgstr ""
-
-#: onlineforms.js
-msgid "Send confirmation with a copy of the form"
 msgstr ""
 
 #: animal.js
@@ -11398,9 +11398,7 @@ msgid "The coat type of this animal"
 msgstr ""
 
 #: onlineforms.js
-msgid ""
-"The confirmation email message to send to the form submitter. Leave blank to "
-"send a copy of the completed form."
+msgid "The confirmation email message to send to the form submitter."
 msgstr ""
 
 #: sql.js
@@ -13744,6 +13742,10 @@ msgstr ""
 
 #: transport.js reports.js rota.js staff_rota.js
 msgid "at"
+msgstr ""
+
+#: options.js
+msgid "auto adjust for daylight savings"
 msgstr ""
 
 #: mailmerge.js

@@ -86,11 +86,14 @@ def additional_yesno(l, af):
 def weight_display(dbo, wv):
     """ formats the weight value wv for display (either kg or lb/oz) """
     kg = asm3.utils.cfloat(wv)
+    lbf = asm3.utils.cfloat(wv)
     lb = asm3.utils.cint(wv)
     oz = asm3.utils.cint((kg - lb) * 16.0)
     l = dbo.locale
     if asm3.configuration.show_weight_in_lbs(dbo):
         return "%s %s %s %s" % ( lb, _("lb", l), oz, _("oz", l) )
+    elif asm3.configuration.show_weight_in_lbs_fraction(dbo):
+        return "%s %s" % (lbf, _("lb", l))
     else:
         return "%s %s" % (kg, _("kg", l))
 

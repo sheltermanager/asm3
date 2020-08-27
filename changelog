@@ -1,6 +1,7 @@
 44
 ================
 
+27/08/20 Fix fractional weight display on documents
 26/08/20 Incorporate DST into locales and option to auto adjust #899
 24/08/20 Prevent double-submit of online forms #897
 23/08/20 Consistent handling of breed1 and colour fields for online forms

@@ -1197,7 +1197,6 @@ def show_weight_in_lbs(dbo):
 def show_weight_in_lbs_fraction(dbo):
     return cboolean(dbo, "ShowWeightInLbsFraction", DEFAULTS["ShowWeightInLbsFraction"] == "Yes")
 
-
 def show_weight_units_in_log(dbo):
     return cboolean(dbo, "ShowWeightUnitsInLog", DEFAULTS["ShowWeightUnitsInLog"] == "Yes")
 
