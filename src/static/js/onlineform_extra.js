@@ -377,9 +377,13 @@ $(document).ready(function() {
         if (!validate_email()) { enable(); return false; }
         if (!validate_required()) { enable(); return false; }
         if (!validate_images()) { enable(); return false; }
-        if (html5_required && !$("form")[0].checkValidity()) { enable(); return false; }
-        e.preventDefault();
-        $("form").submit();
+        if (html5_required && !$("form")[0].checkValidity()) { 
+            enable(); // the default behaviour highlights the required fields so we need it to happen
+        }
+        else {
+            e.preventDefault();
+            $("form").submit();
+        }
     });
 
 });
