@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ASM3\n"
 "Report-Msgid-Bugs-To: robin@sheltermanager.com\n"
-"POT-Creation-Date: 2020-08-27 09:22+0000\n"
-"PO-Revision-Date: 2020-08-27 19:25+0200\n"
+"POT-Creation-Date: 2020-08-31 14:45+0000\n"
+"PO-Revision-Date: 2020-08-31 18:06+0200\n"
 "Last-Translator: Julian POIDEVIN <poidevin.julian@gmail.com>\n"
 "Language-Team: \n"
 "Language: fr\n"
@@ -2661,7 +2661,7 @@ msgstr "Colley"
 
 #: html.py mobile.py person.py lookups.py animal_find_results.js person.js
 #: animal_find.js onlineform.js lostfound.js lostfound_find.js animal.js
-#: lostfound_find_results.js lostfound_new.js
+#: options.js shelterview.js lostfound_find_results.js lostfound_new.js
 msgid "Color"
 msgstr "Couleur"
 
@@ -11129,8 +11129,16 @@ msgid "Species Z-A"
 msgstr "Espèces Z-A"
 
 #: options.js shelterview.js
+msgid "Species and Breed"
+msgstr "Espèce et race"
+
+#: options.js shelterview.js
 msgid "Species and Code"
 msgstr "Espèces et code"
+
+#: options.js shelterview.js
+msgid "Species and Color"
+msgstr "Espèces et couleur"
 
 #: lookups.js
 msgid ""
