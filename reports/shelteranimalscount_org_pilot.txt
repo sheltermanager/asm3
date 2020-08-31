@@ -57,8 +57,9 @@ a.DaysOnShelter AS "Length of Stay"
 
 FROM animal a
 WHERE (a.DateBroughtIn >= '$@from$' AND a.DateBroughtIn <= '$@to$')
-OR (a.DateBroughtIn < '$@from$' AND a.ActiveMovementDate > '$@from$' AND a.ActiveMovementDate <= '$@to$') 
-OR (a.DateBroughtIn < '$@from$' AND a.Archived=0)
+    OR (a.DateBroughtIn < '$@from$' AND a.ActiveMovementDate > '$@from$' AND a.ActiveMovementDate <= '$@to$') 
+    OR (a.DateBroughtIn < '$@from$' AND a.DeceasedDate > '$@from$' AND a.DeceasedDate <= '$@to$') 
+    OR (a.DateBroughtIn < '$@from$' AND a.Archived=0)
 
 -- Second section for handling movement returns
 UNION SELECT
@@ -106,7 +107,12 @@ a.DaysOnShelter AS "Length of Stay"
 
 FROM adoption m
 INNER JOIN animal a ON a.ID = m.AnimalID
-WHERE m.ReturnDate >= '$@from$' AND m.ReturnDate <= '$@to$' AND m.MovementType IN (1,3,5)
+WHERE m.MovementType IN (1,3,5) AND (
+    (m.ReturnDate >= '$@from$' AND m.ReturnDate <= '$@to$')
+    OR (m.ReturnDate < '$@from$' AND a.ActiveMovementDate > '$@from$' AND a.ActiveMovementDate <= '$@to$') 
+    OR (m.ReturnDate < '$@from$' AND a.DeceasedDate > '$@from$' AND a.DeceasedDate <= '$@to$') 
+    OR (m.ReturnDate < '$@from$' AND a.Archived=0)
+)
 
 ORDER BY "Intake Date"
 ###
