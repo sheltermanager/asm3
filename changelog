@@ -1,6 +1,7 @@
 44
 ================
 
+31/08/20 Extra shelter view filters for color, species/breed+color
 27/08/20 Fix fractional weight display on documents
 26/08/20 Incorporate DST into locales and option to auto adjust #899
 24/08/20 Prevent double-submit of online forms #897
