@@ -385,7 +385,14 @@ def stderr_summary(animals=[], animalmedicals=[], animalvaccinations=[], animalt
         offshelter = 0
         dead = 0
         euth = 0
+        dupcodes = 0
+        codes = set()
+        dups = []
         for a in animals:
+            if a.ShelterCode in codes: 
+                dupcodes += 1
+                dups.append(a.ShelterCode)
+            codes.add(a.ShelterCode)
             if a.Archived == 0:
                 onshelter += 1
             elif a.Archived == 1 and a.DeceasedDate is None:
@@ -395,6 +402,8 @@ def stderr_summary(animals=[], animalmedicals=[], animalvaccinations=[], animalt
             elif a.DeceasedDate is not None and a.PutToSleep == 1:
                 euth += 1
         stderr("%d animals (%d on-shelter, %d off-shelter, %d dead, %d euthanised)" % (len(animals), onshelter, offshelter, dead, euth))
+        if dupcodes > 0:
+            stderr("WARNING: %d duplicate shelter codes (%s .. %s)" % (dupcodes, dups[0], dups[-1]))
     o(animalmedicals, "medicals")
     o(animalvaccinations, "vaccinations")
     o(animaltests, "tests")
