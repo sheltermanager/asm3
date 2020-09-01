@@ -342,6 +342,7 @@ class HTMLPublisher(FTPPublisher):
         if self.isPublisherExecuting(): return
         self.updatePublisherProgress(0)
         self.setStartPublishing()
+        self.log("Outputting generated pages to %s" % self.publishDir)
         self.executePages()
         if self.pc.htmlByChildAdult or self.pc.htmlBySpecies:
             self.executeAgeSpecies(self.user, self.pc.htmlByChildAdult, self.pc.htmlBySpecies)
