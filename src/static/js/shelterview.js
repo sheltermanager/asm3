@@ -166,7 +166,7 @@ $(function() {
                         let validunit = false;
                         $.each(l.UNITS.split(","), function(iu, u) {
                             u = common.trim(u);
-                            if (a.ACTIVEMOVEMENTID == 0 && a.SHELTERLOCATIONUNIT == u) {
+                            if (u && a.ACTIVEMOVEMENTID == 0 && a.SHELTERLOCATIONUNIT == u) {
                                 validunit = true;
                                 return false;
                             }

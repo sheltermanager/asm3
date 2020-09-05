@@ -1,6 +1,7 @@
 44
 ================
 
+05/09/20 Fix for subtle bug with trailing commas on units
 04/09/20 Complete Portuguese translation (Nuno Leal)
 31/08/20 Extra shelter view filters for color, species/breed+color
 27/08/20 Fix fractional weight display on documents
