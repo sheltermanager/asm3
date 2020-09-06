@@ -1,6 +1,7 @@
 44
 ================
 
+06/09/20 Stop csvimport/merge duplicates creating blank lookups #900
 05/09/20 Fix for subtle bug with trailing commas on units
 04/09/20 Complete Portuguese translation (Nuno Leal)
 31/08/20 Extra shelter view filters for color, species/breed+color

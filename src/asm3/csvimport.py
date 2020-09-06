@@ -154,7 +154,7 @@ def gkbr(dbo, m, f, speciesid, create):
     if f not in m: return "0"
     lv = m[f]
     matchid = dbo.query_int("SELECT ID FROM breed WHERE LOWER(BreedName) = ?", [ lv.strip().lower().replace("'", "`")] )
-    if matchid == 0 and create:
+    if matchid == 0 and create and lv.strip() != "":
         nextid = dbo.get_id("breed")
         sql = "INSERT INTO breed (ID, SpeciesID, BreedName) VALUES (?,?,?)"
         dbo.execute(sql, (nextid, speciesid, lv.replace("'", "`")))
@@ -165,16 +165,13 @@ def gkl(dbo, m, f, table, namefield, create):
     """ reads lookup field f from map m, returning a str(int) that
         corresponds to a lookup match for namefield in table.
         if create is True, adds a row to the table if it doesn't
-        find a match and then returns str(newid)
-        if the value is an empty string, (blank) is used instead.
-        returns "0" if key not present, or if no match was found and create is off """
+        find a match then returns str(newid)
+        returns "0" if key not present, or if no match was found and create is off,
+        or the value was an empty string """
     if f not in m: return "0"
     lv = m[f]
     matchid = dbo.query_int("SELECT ID FROM %s WHERE LOWER(%s) = ?" % (table, namefield), [ lv.strip().lower().replace("'", "`") ])
-    if matchid == 0 and create:
-        if lv.strip() == "":
-            l = dbo.locale
-            lv = asm3.i18n._("(blank)", l)
+    if matchid == 0 and create and lv.strip() != "":
         nextid = dbo.insert(table, {
             namefield:  lv
         }, setRecordVersion=False, setCreated=False, writeAudit=False)
