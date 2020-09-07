@@ -385,6 +385,7 @@ def handler(post, path, remoteip, referer, querystring):
     l = asm3.configuration.locale(dbo)
     dbo.locale = l
     dbo.timezone = asm3.configuration.timezone(dbo)
+    dbo.timezone_dst = asm3.configuration.timezone_dst(dbo)
     asm3.al.info("call @%s --> %s [%s]" % (username, method, querystring), "service.handler", dbo)
 
     if method =="animal_image":
