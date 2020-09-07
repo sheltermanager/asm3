@@ -587,7 +587,7 @@ const common = {
         }
         common.module_running = o;
         if (o.autofocus && !asm.mobileapp) {
-            setTimeout(function() { $(o.autofocus).focus(); }, 750);
+            $(o.autofocus).focus();
         }
     },
 
@@ -2569,14 +2569,16 @@ const validate = {
      */
     bind_dirty: function() {
         // Watch for control changes and call dirty()
-        var dirtykey = function(event) { if (event.keyCode != 9) { validate.dirty(true); } };
+        // dirtykey looks for any key code over 45 (a non-control key) with exclusions for 8 (backspace) and 13 (enter)
+        var dirtykey = function(event) { let k = event.keyCode; if (k > 45 || k == 8 && k == 13) { validate.dirty(true); } };
         var dirtychange = function(event) { validate.dirty(true); };
         validate.active = true;
         $("#asm-content .asm-checkbox").change(dirtychange);
         $("#asm-content .asm-datebox").change(dirtychange);
         $("#asm-content .asm-selectbox, #asm-content .asm-doubleselectbox, #asm-content .asm-halfselectbox, #asm-content .selectbox, #asm-content .asm-bsmselect").change(dirtychange);
         $("#asm-content .asm-textbox, #asm-content .asm-doubletextbox, #asm-content .asm-halftextbox, #asm-content .asm-textarea, #asm-content .asm-richtextarea, #asm-content .asm-textareafixed, #asm-content .asm-textareafixeddouble").change(dirtychange);
-        $("#asm-content .asm-textbox, #asm-content .asm-doubletextbox, #asm-content .asm-halftextbox, #asm-content .asm-textarea, #asm-content .asm-richtextarea, #asm-content .asm-textareafixed, #asm-content .asm-textareafixeddouble").keyup(dirtykey).bind("paste", dirtychange).bind("cut", dirtychange);
+        $("#asm-content .asm-textbox, #asm-content .asm-doubletextbox, #asm-content .asm-halftextbox, #asm-content .asm-textarea, #asm-content .asm-richtextarea, #asm-content .asm-textareafixed, #asm-content .asm-textareafixeddouble").bind("paste", dirtychange).bind("cut", dirtychange);
+        $("#asm-content .asm-textbox, #asm-content .asm-doubletextbox, #asm-content .asm-halftextbox, #asm-content .asm-textarea, #asm-content .asm-richtextarea, #asm-content .asm-textareafixed, #asm-content .asm-textareafixeddouble").keyup(dirtykey);
         // Bind CTRL+S/META+S on Mac to clicking the save button
         Mousetrap.bind(["ctrl+s", "meta+s"], function(e) { $("#button-save").click(); return false; });
         // Watch for links being clicked and the page being navigated away from
