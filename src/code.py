@@ -3265,17 +3265,6 @@ class incident_new(JSONEndpoint):
         incidentid = asm3.animalcontrol.insert_animalcontrol_from_form(o.dbo, o.post, o.user)
         return str(incidentid)
 
-class latency(JSONEndpoint):
-    url = "latency"
-
-    def controller(self, o):
-        return {}
-
-    def post_all(self, o):
-        self.content_type("text/plain")
-        self.cache_control(0)
-        return "pong"
-
 class licence(JSONEndpoint):
     url = "licence"
     get_permissions = asm3.users.VIEW_LICENCE
@@ -3756,6 +3745,25 @@ class mailmerge(JSONEndpoint):
         rows, cols = asm3.reports.execute_query(dbo, post.integer("mergereport"), o.user, mergeparams)
         asm3.al.debug("returning preview rows for %d [%s]" % (post.integer("mergereport"), post["mergetitle"]), "code.mailmerge", dbo)
         return asm3.utils.json(rows)
+
+class maint_latency(JSONEndpoint):
+    url = "maint_latency"
+
+    def controller(self, o):
+        return {}
+
+    def post_all(self, o):
+        self.content_type("text/plain")
+        self.cache_control(0)
+        return "pong"
+
+class maint_time(ASMEndpoint):
+    url = "maint_time"
+
+    def content(self, o):
+        self.content_type("text/plain")
+        self.cache_control(0)
+        return "Time now is %s. TZ=%s DST=%s" % ( o.dbo.now(), o.dbo.timezone, o.dbo.timezone_dst == 1 and "ON" or "OFF")
 
 class medical(JSONEndpoint):
     url = "medical"
