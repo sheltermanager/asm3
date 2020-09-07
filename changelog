@@ -1,6 +1,7 @@
 44
 ================
 
+07/09/20 Merge additional fields during csv import #894
 07/09/20 Prompt to clone animal #907
 07/09/20 Prevent additional fields overriding base values #904
 07/09/20 Stop control keys dirtying form, fix autofocus delay #906

@@ -191,12 +191,16 @@ def gksx(m, f):
     else: return ""
 
 def create_additional_fields(dbo, row, errors, rowno, csvkey = "ANIMALADDITIONAL", linktype = "animal", linkid = 0):
-    # Identify any additional fields that may have been specified with
-    # ANIMALADDITIONAL<fieldname>
+    """ Identifies and create any additional fields that may have been specified in
+        the csv file with csvkey<fieldname> 
+        This is used during merge duplicates too as it only sets additional fields if a value
+        has been supplied in the file.
+    """
     for a in asm3.additional.get_field_definitions(dbo, linktype):
         v = gks(row, csvkey + str(a.fieldname).upper())
         if v != "":
             try:
+                dbo.delete("additional", "LinkID=%s AND AdditionalFieldID=%s" % (linkid, a.ID))
                 dbo.insert("additional", {
                     "LinkType":             a.linktype,
                     "LinkID":               linkid,
@@ -459,8 +463,8 @@ def csvimport(dbo, csvdata, encoding = "utf-8-sig", user = "", createmissinglook
                     if "originalowner" not in a:
                         ooid = asm3.person.insert_person_from_form(dbo, asm3.utils.PostedData(p, dbo.locale), user, geocode=False)
                         a["originalowner"] = str(ooid)
-                        # Identify an ORIGINALOWNERADDITIONAL additional fields and create them
-                        create_additional_fields(dbo, row, errors, rowno, "ORIGINALOWNERADDITIONAL", "person", ooid)
+                    # Identify an ORIGINALOWNERADDITIONAL additional fields and create/merge them
+                    create_additional_fields(dbo, row, errors, rowno, "ORIGINALOWNERADDITIONAL", "person", ooid)
                 except Exception as e:
                     row_error(errors, "originalowner", rowno, row, e, dbo, sys.exc_info())
             try:
@@ -486,11 +490,11 @@ def csvimport(dbo, csvdata, encoding = "utf-8-sig", user = "", createmissinglook
                             asm3.animal.update_flags(dbo, user, dup.ID, a["flags"])
                 if animalid == 0:
                     animalid, dummy = asm3.animal.insert_animal_from_form(dbo, asm3.utils.PostedData(a, dbo.locale), user)
-                    # Identify any ANIMALADDITIONAL additional fields and create them
-                    create_additional_fields(dbo, row, errors, rowno, "ANIMALADDITIONAL", "animal", animalid)
                     # Add any flags that were set
                     if a["flags"] != "":
                         asm3.animal.update_flags(dbo, user, animalid, a["flags"])
+                # Identify any ANIMALADDITIONAL additional fields and create/merge them
+                create_additional_fields(dbo, row, errors, rowno, "ANIMALADDITIONAL", "animal", animalid)
                 # If we have some image data, add it to the animal
                 if len(imagedata) > 0:
                     imagepost = asm3.utils.PostedData({ "filename": "image.jpg", "filetype": "image/jpeg", "filedata": imagedata }, dbo.locale)
@@ -569,8 +573,8 @@ def csvimport(dbo, csvdata, encoding = "utf-8-sig", user = "", createmissinglook
                         asm3.person.merge_person_details(dbo, user, personid, p, force=dups[0].EMAILADDRESS == p["emailaddress"])
                 if personid == 0:
                     personid = asm3.person.insert_person_from_form(dbo, asm3.utils.PostedData(p, dbo.locale), user, geocode=False)
-                    # Identify any PERSONADDITIONAL additional fields and create them
-                    create_additional_fields(dbo, row, errors, rowno, "PERSONADDITIONAL", "person", personid)
+                # Identify any PERSONADDITIONAL additional fields and create/merge them
+                create_additional_fields(dbo, row, errors, rowno, "PERSONADDITIONAL", "person", personid)
             except Exception as e:
                 row_error(errors, "person", rowno, row, e, dbo, sys.exc_info())
 
