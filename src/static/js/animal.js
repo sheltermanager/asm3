@@ -764,6 +764,9 @@ $(function() {
                 edit_header.diary_task_list(controller.diarytasks, "ANIMAL"),
                 '</ul>',
                 '</div>',
+                '<div id="dialog-clone-confirm" style="display: none" title="' + _("Clone") + '">',
+                '<p><span class="ui-icon ui-icon-alert"></span> Clone this animal?</p>',
+                '</div>',
                 '<div id="dialog-dt-date" style="display: none" title="' + _("Select date for diary task") + '">',
                 '<input type="hidden" id="diarytaskid" />',
                 '<table width="100%">',
@@ -1504,7 +1507,7 @@ $(function() {
             });
 
             $("#button-clone").button().click(async function() {
-                $("#button-clone").button("disable");
+                await tableform.show_okcancel_dialog("#dialog-clone-confirm", _("Clone"));
                 let formdata = "mode=clone&animalid=" + $("#animalid").val();
                 header.show_loading(_("Cloning..."));
                 let response = await common.ajax_post("animal", formdata);

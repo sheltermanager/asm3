@@ -9,7 +9,7 @@ $(function() {
         render: function() {
             return [
                 '<div id="dialog-similar" style="display: none" title="' + html.title(_("Similar Person")) + '">',
-                '<p><span class="ui-icon ui-icon-alert" style="float: left; margin: 0 7px 20px 0;"></span>',
+                '<p><span class="ui-icon ui-icon-alert"></span>',
                 _("This person is very similar to another person on file, carry on creating this record?"),
                 '<br /><br />',
                 '<span class="similar-person"></span>',

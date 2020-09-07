@@ -1580,7 +1580,7 @@ const tableform = {
         }
         if ($("#dialog-delete").length == 0) {
             $("body").append('<div id="dialog-delete" style="display: none" title="' +
-                _("Delete") + '"><p><span class="ui-icon ui-icon-alert" style="float: left; margin: 0 7px 20px 0;"></span>' +
+                _("Delete") + '"><p><span class="ui-icon ui-icon-alert"></span>' +
                 '<span id="dialog-delete-text"></span></p></div>');
         }
         $("#dialog-delete-text").html(mess);

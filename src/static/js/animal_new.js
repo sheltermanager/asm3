@@ -12,7 +12,7 @@ $(function() {
         render: function() {
             return [
                 '<div id="dialog-similar" style="display: none" title="' + _("Similar Animal") + '">',
-                '<p><span class="ui-icon ui-icon-alert" style="float: left; margin: 0 7px 20px 0;"></span>',
+                '<p><span class="ui-icon ui-icon-alert"></span>',
                 _("This animal has the same name as another animal recently added to the system.") + '<br /><br />',
                 '<span class="similar-animal"></span>',
                 '</p>',

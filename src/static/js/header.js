@@ -445,7 +445,7 @@ header = {
                 '<textarea id="textarea-zoom-area" style="width: 98%; height: 98%;"></textarea>',
             '</div>',
             '<div id="dialog-unsaved" style="display: none" title="' + _("Unsaved Changes") + '">',
-                '<p><span class="ui-icon ui-icon-alert" style="float: left; margin: 0 7px 20px 0;"></span>',
+                '<p><span class="ui-icon ui-icon-alert"></span>',
                 _("You have unsaved changes, are you sure you want to leave this page?"),
                 '</p>',
             '</div>',
