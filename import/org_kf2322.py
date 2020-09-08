@@ -85,7 +85,8 @@ for d in asm.csv_to_list(ANIMAL_FILENAME, remove_non_ascii=True):
     a = asm.Animal()
     animals.append(a)
     ppa[d["Animal_Identifier"]] = a
-    a.AnimalTypeID = asm.type_from_db(d["Pound_Reason"])
+    #a.AnimalTypeID = asm.type_from_db(d["Pound_Reason"])
+    a.AnimalTypeID = 2 # Everything is D (Dog)
     a.SpeciesID = asm.species_id_for_name(d["Species"])
     a.AnimalName = d["Name"]
     if a.AnimalName.strip() == "":
@@ -184,6 +185,9 @@ for d in asm.csv_to_list(LOG_FILENAME, remove_non_ascii=True):
 
     elif d["Action"] == "Veterinary":
         animalmedicals.append( asm.animal_regimen_single(a.ID, ed, d["Log_Description"], "N/A", d["Log_Notes"]) )
+        if d["Log_Description"].startswith("Euthanised"):
+            a.DeceasedDate = ed
+            a.PutToSleep = 1
 
     elif d["Action"] == "Vaccination":
         vacctypes = {
@@ -203,7 +207,7 @@ for d in asm.csv_to_list(LOG_FILENAME, remove_non_ascii=True):
         av.Comments = "Type: %s\n%s" % (d["Log_Description"], d["Log_Notes"])
         av.CreatedBy = d["User_Id"]
 
-    elif d["Action"] == "Foster Care" and d["Log_Description"] == "Foster Care":
+    elif d["Action"] == "Foster Care" and (d["Log_Description"] == "Foster Care" or d["Log_Description"] == "Permanent Foster Care"):
         o.IsFosterer = 1
         m = asm.Movement()
         m.AnimalID = a.ID
@@ -211,6 +215,7 @@ for d in asm.csv_to_list(LOG_FILENAME, remove_non_ascii=True):
         m.MovementType = 2
         m.MovementDate = ed
         m.Comments = d["Log_Notes"]
+        m.IsPermanent = asm.iif(d["Log_Description"] == "Permanent Foster Care", 1, 0)
         a.Archived = 1
         a.ActiveMovementID = m.ID
         a.ActiveMovementDate = m.MovementDate
