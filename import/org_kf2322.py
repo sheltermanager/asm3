@@ -3,6 +3,7 @@
 import asm
 
 """
+NBAR (New Beginnings Animal Rescue)
 Import script for kf2322 csv files (virtually the same as sb1875 with a few minor changes)
 
 24 Aug, 2020
@@ -40,14 +41,14 @@ asm.setid("owner", START_ID)
 asm.setid("adoption", START_ID)
 
 print("\\set ON_ERROR_STOP\nBEGIN;")
-print("DELETE FROM animal WHERE ID >= %s;" % START_ID)
-print("DELETE FROM animalmedical WHERE ID >= %s;" % START_ID)
-print("DELETE FROM animalmedicaltreatment WHERE ID >= %s;" % START_ID)
-print("DELETE FROM animaltest WHERE ID >= %s;" % START_ID)
-print("DELETE FROM animalvaccination WHERE ID >= %s;" % START_ID)
-print("DELETE FROM log WHERE ID >= %s;" % START_ID)
-print("DELETE FROM owner WHERE ID >= %s;" % START_ID)
-print("DELETE FROM adoption WHERE ID >= %s;" % START_ID)
+print("DELETE FROM animal WHERE ID >= %s AND LastChangedBy = 'conversion';" % START_ID)
+print("DELETE FROM animalmedical WHERE ID >= %s AND LastChangedBy = 'conversion';" % START_ID)
+print("DELETE FROM animalmedicaltreatment WHERE ID >= %s AND LastChangedBy = 'conversion';" % START_ID)
+print("DELETE FROM animaltest WHERE ID >= %s AND LastChangedBy = 'conversion';" % START_ID)
+print("DELETE FROM animalvaccination WHERE ID >= %s AND LastChangedBy = 'conversion';" % START_ID)
+print("DELETE FROM log WHERE ID >= %s AND LastChangedBy = 'conversion';" % START_ID)
+print("DELETE FROM owner WHERE ID >= %s AND LastChangedBy = 'conversion';" % START_ID)
+print("DELETE FROM adoption WHERE ID >= %s AND LastChangedBy = 'conversion';" % START_ID)
 
 # print("DELETE FROM media;") 
 
@@ -108,8 +109,8 @@ for d in asm.csv_to_list(ANIMAL_FILENAME, remove_non_ascii=True):
         a.Breed2ID = asm.breed_from_db(d["Cross_Breed"], 1)
         a.CrossBreed = 1
         a.BreedName = "%s / %s" % (d["Breed"], d["Cross_Breed"])
-    a.BaseColourID = asm.colour_id_for_names(d["Base_Colour"], d["Secondary_Colour"])
-    #a.BaseColourID = asm.colour_from_db(d["Base_"])
+    #a.BaseColourID = asm.colour_id_for_names(d["Base_Colour"], d["Secondary_Colour"])
+    a.BaseColourID = asm.colour_from_db(d["Base_Colour"])
     a.AnimalComments = d["Notes"]
     a.Sex = asm.getsex_mf(d["Sex"])
     a.Size = asm.size_id_for_name(d["Size"])
