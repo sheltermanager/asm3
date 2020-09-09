@@ -86,9 +86,8 @@ for d in asm.csv_to_list(ANIMAL_FILENAME, remove_non_ascii=True):
     a = asm.Animal()
     animals.append(a)
     ppa[d["Animal_Identifier"]] = a
-    #a.AnimalTypeID = asm.type_from_db(d["Pound_Reason"])
-    a.AnimalTypeID = 2 # Everything is D (Dog)
     a.SpeciesID = asm.species_id_for_name(d["Species"])
+    a.AnimalTypeID = asm.type_id_for_species_id(a.SpeciesID)
     a.AnimalName = d["Name"]
     if a.AnimalName.strip() == "":
         a.AnimalName = "(unknown)"

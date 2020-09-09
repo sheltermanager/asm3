@@ -1173,6 +1173,12 @@ def type_id_for_name(name):
             return int(tid)
     return 2
 
+def type_id_for_species_id(sid):
+    if sid is None: return 2
+    if sid == 1: return 2
+    elif sid == 2: return 11
+    else: return 13
+
 def type_name_for_id(id):
     for tid, tname in types:
         if int(tid) == id:
