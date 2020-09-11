@@ -2572,7 +2572,7 @@ const validate = {
         // These are control keys that should not trigger form dirtying (tab, cursor keys, ctrl/shift/alt, windows key, scroll up, etc)
         // See http://www.javascriptkeycode.com/
         const ctrl_keys = [ 9, 16, 17, 18, 19, 20, 27, 33, 34, 35, 36, 37, 38, 39, 
-            40, 45, 91, 92, 93, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 144, 145 ]
+            40, 45, 91, 92, 93, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 144, 145 ];
         const dirtykey = function(event) { if (ctrl_keys.indexOf(event.keyCode) == -1) { validate.dirty(true); } };
         const dirtychange = function(event) { validate.dirty(true); };
         validate.active = true;

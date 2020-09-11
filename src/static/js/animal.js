@@ -391,7 +391,7 @@ $(function() {
                 '<label for="reasonforentry">' + _("Reason for Entry") + '</label>',
                 '</td>',
                 '<td>',
-                '<textarea class="asm-textarea" title="' + _("Reason for entry") + '" id="reasonforentry" data-json="REASONFORENTRY" data-post="reasonforentry" rows="2"></textarea>',
+                '<textarea class="asm-textarea" title="' + _("Reason for Entry") + '" id="reasonforentry" data-json="REASONFORENTRY" data-post="reasonforentry" rows="2"></textarea>',
                 '</td>',
                 '</tr>',
                 '</table>',

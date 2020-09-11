@@ -461,8 +461,10 @@ def get_animal_find_advanced(dbo, criteria, limit = 0, locationfilter = "", site
        tattoo - string partial pattern
        insuranceno - string partial pattern
        rabiestag - string partial pattern
+       pickuplocation - -1 for all pickup locations or ID
        pickupaddress - string partial pattern
        hiddencomments - partial word/string pattern
+       reasonforentry - partial word/string pattern
        originalowner - string partial pattern
        medianotes - partial word/string pattern
        filter - one or more of:
@@ -507,6 +509,7 @@ def get_animal_find_advanced(dbo, criteria, limit = 0, locationfilter = "", site
     ss.add_id("size", "a.Size")
     ss.add_id("colour", "a.BaseColourID")
     ss.add_id("entryreason", "a.EntryReasonID")
+    ss.add_id("pickuplocation", "a.PickupLocationID")
     ss.add_str("sheltercode", "a.ShelterCode")
     ss.add_str("litterid", "a.AcceptanceNumber")
     ss.add_date("inbetweenfrom", "inbetweento", "a.MostRecentEntryDate")
@@ -525,6 +528,7 @@ def get_animal_find_advanced(dbo, criteria, limit = 0, locationfilter = "", site
     ss.add_words("comments", "a.AnimalComments")
     ss.add_words("hiddencomments", "a.HiddenAnimalDetails")
     ss.add_words("features", "a.Markings")
+    ss.add_words("reasonforentry", "a.ReasonForEntry")
     ss.add_str("originalowner", "oo.OwnerName")
     if post.integer("agegroup") != -1:
         ss.add_str("agegroup", "a.AgeGroup")

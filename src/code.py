@@ -1557,6 +1557,7 @@ class animal_find(JSONEndpoint):
             "sexes": asm3.lookups.get_sexes(dbo),
             "entryreasons": asm3.lookups.get_entryreasons(dbo),
             "internallocations": asm3.lookups.get_internal_locations(dbo, o.locationfilter, o.siteid),
+            "pickuplocations": asm3.lookups.get_pickup_locations(dbo),
             "sizes": asm3.lookups.get_sizes(dbo),
             "colours": asm3.lookups.get_basecolours(dbo),
             "users": asm3.users.get_users(dbo)
