@@ -1643,6 +1643,7 @@ $(function() {
             validate.unbind_dirty();
             common.widget_destroy("#dialog-dt-date");
             common.widget_destroy("#dialog-merge");
+            common.widget_destroy("#dialog-clone-confirm");
             common.widget_destroy("#mergeanimal", "animalchooser");
             common.widget_destroy("#bonded1", "animalchooser");
             common.widget_destroy("#bonded2", "animalchooser");
