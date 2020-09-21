@@ -24,14 +24,12 @@ form data will automatically have those flags. In addition to that, the
 "checkbox" field type allows you to enter some additional person flags to set
 if that checkbox is checked during submission.
 
-If you set the "Send confirmation email to form submitter" checkbox for an
-online form, the system will look for a field called "emailaddress" during
-submission. If that field exists and is populated with an email address, a
-confirmation email will be sent to that address. If the confirmation message
-field is set, that will form the body of the email. HTML can be used, but
-it must be a complete HTML document that contains an <html> tag. If the
-confirmation message field is left blank, a copy of the form submission 
-itself will be sent.
+If you set one of the "Send confirmation email to form submitter" options, 
+the system will look for a field called "emailaddress" during submission. 
+If that field exists and is populated with an email address, a
+confirmation email will be sent to that address. The confirmation message
+field will form the first part of the body of the email. HTML can be used, but
+it must be a complete HTML document that contains an <html> tag. 
 
 .. image:: images/onlineform_edit.png
 
@@ -182,11 +180,35 @@ When you create a new record or attach the form, the whole form will be
 included in the media tab of any created records (animal, incident, person AND
 lost/found animal or waiting list). The screen will put a link in the Link
 column to give you a clickable link to the newly created record as well so you
-can view it. 
+can view it. The system will also show a little warning icon at the side of this
+link if that record already existed and was updated instead of newly created.
 
 Incoming forms that have been attached to a record will be automatically
 deleted when you leave the screen. The system will also remove incoming forms
-older than 4 weeks by default. Both of these options are configurable.
+older than 4 weeks by default. Both of these options are configurable
+under the Online Forms tab of :menuselection:`Settings --> Options`
+
+Application Forms
+-----------------
+
+ASM calls an application a "reservation". If your form has a field named
+"reserveanimalname" of type "Adoptable Animal", then using "Create Person" on
+an incoming form submission will create a reservation for the new person to
+that animal.
+
+The reservation will link the new person and the animal record. That link can be
+viewed under the movement tab of the person or animal, and you can view all
+current applications under :menuselection:`Move --> Reservation Book`.
+
+Reservations can have a status (eg: New, Pending home visit, Denied, etc). 
+
+You can configure your own statuses under :menuselection:`Settings --> Lookup
+Data --> Reservation Statuses`
+
+Since the system default is to make animals who have a reservation not
+available for adoption, you may want to change this by setting
+:menuselection:`Publishing --> Set Publishing Options --> Animal Selection -->
+Include Reserved` to YES.
 
 Importing
 ---------
