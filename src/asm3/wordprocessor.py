@@ -729,7 +729,7 @@ def animal_tags(dbo, a, includeAdditional=True, includeCosts=True, includeDiet=T
         ))
         # Generate an ANIMALLOGSTYPE for each type represented in the logs
         for logst in separate_results(logs, "LOGTYPENAME"):
-            tags["ANIMALLOGS%s" % logst[0]["LOGTYPENAME"].upper()] = html_table(l, logst, (
+            tags["ANIMALLOGS%s" % logst[0]["LOGTYPENAME"].replace(" ", "").upper()] = html_table(l, logst, (
                 ( "DATE", _("Date", l)),
                 ( "LOGTYPENAME", _("Type", l)),
                 ( "CREATEDBY", _("By", l)),
