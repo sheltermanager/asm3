@@ -640,7 +640,9 @@ def update_test_today(dbo, username, testid, resultid):
     """
     Marks a test record as performed today. 
     """
+    animalid = dbo.query_int("SELECT AnimalID FROM animaltest WHERE ID = ?", [testid])
     dbo.update("animaltest", testid, {
+        "AnimalID":     animalid,
         "DateOfTest":   dbo.today(),
         "TestResultID": resultid
     }, username)
@@ -651,9 +653,11 @@ def update_vaccination_today(dbo, username, vaccid):
     """
     Marks a vaccination record as given today. 
     """
+    animalid = dbo.query_int("SELECT AnimalID FROM animalvaccination WHERE ID = ?", [vaccid])
     dbo.update("animalvaccination", vaccid, {
-        "DateOfVaccination": dbo.today(),
-        "GivenBy": username
+        "AnimalID":             animalid,
+        "DateOfVaccination":    dbo.today(),
+        "GivenBy":              username
     }, username)
 
 def calculate_given_remaining(dbo, amid):
@@ -671,7 +675,9 @@ def complete_vaccination(dbo, username, vaccinationid, newdate, givenby = "", ve
     """
     Marks a vaccination given/completed on newdate
     """
+    animalid = dbo.query_int("SELECT AnimalID FROM animalvaccination WHERE ID = ?", [vaccinationid])
     dbo.update("animalvaccination", vaccinationid, {
+        "AnimalID":             animalid,
         "DateOfVaccination":    newdate,
         "DateExpires":          dateexpires,
         "GivenBy":              asm3.utils.iif(givenby == "", username, givenby),
@@ -684,7 +690,9 @@ def complete_test(dbo, username, testid, newdate, testresult, vetid = 0):
     """
     Marks a test performed on newdate with testresult
     """
+    animalid = dbo.query_int("SELECT AnimalID FROM animaltest WHERE ID = ?", [testid])
     dbo.update("animaltest", testid, {
+        "AnimalID":             animalid,
         "DateOfTest":           newdate,
         "TestResultID":         testresult,
         "AdministeringVetID":   vetid
@@ -1176,7 +1184,9 @@ def update_treatment_today(dbo, username, amtid):
     Marks a treatment record as given today. 
     """
     amid = dbo.query_int("SELECT AnimalMedicalID FROM animalmedicaltreatment WHERE ID = ?", [amtid])
+    animalid = dbo.query_int("SELECT AnimalID FROM animalmedicaltreatment WHERE ID=?", [amtid])
     dbo.update("animalmedicaltreatment", amtid, {
+        "AnimalID":     animalid,
         "DateGiven":    dbo.today(),
         "GivenBy":      username
     }, username)
@@ -1193,7 +1203,9 @@ def update_treatment_given(dbo, username, amtid, newdate, by = "", vetid = 0, co
     Marks a treatment record as given on newdate, assuming that newdate is valid.
     """
     amid = dbo.query_int("SELECT AnimalMedicalID FROM animalmedicaltreatment WHERE ID = ?", [amtid])
+    animalid = dbo.query_int("SELECT AnimalID FROM animalmedicaltreatment WHERE ID=?", [amtid])
     dbo.update("animalmedicaltreatment", amtid, {
+        "AnimalID":             animalid,
         "AdministeringVetID":   vetid,
         "DateGiven":            newdate,
         "GivenBy":              by,
@@ -1212,7 +1224,9 @@ def update_treatment_required(dbo, username, amtid, newdate):
     Marks a treatment record as required on newdate, assuming
     that newdate is valid.
     """
+    animalid = dbo.query_int("SELECT AnimalID FROM animalmedicaltreatment WHERE ID=?", [amtid])
     dbo.update("animalmedicaltreatment", amtid, {
+        "AnimalID":         animalid,
         "DateRequired":     newdate
     }, username)
 
@@ -1221,7 +1235,9 @@ def update_vaccination_required(dbo, username, vaccid, newdate):
     Gives a vaccination record a required date of newdate, assuming
     that newdate is valid.
     """
+    animalid = dbo.query_int("SELECT AnimalID FROM animalvaccination WHERE ID=?", [vaccid])
     dbo.update("animalvaccination", vaccid, {
+        "AnimalID":         animalid,
         "DateRequired":     newdate
     }, username)
 

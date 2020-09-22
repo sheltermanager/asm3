@@ -723,7 +723,7 @@ def receive_donation(dbo, username, did, chequenumber = "", amount = 0, vat = 0,
     if id is None or did == "": return
     row = dbo.first_row(dbo.query("SELECT * FROM ownerdonation WHERE ID = ?", [did]))
     
-    d = { "Date": dbo.today() }
+    d = { "Date": dbo.today(), "AnimalID": row.ANIMALID, "OwnerID": row.OWNERID }
     if fee > 0: d["Fee"] = fee
     if amount > 0: d["Donation"] = amount
     if vat > 0: d["VAT"] = amount
