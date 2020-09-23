@@ -142,6 +142,8 @@ def gkynu(m, f):
     if m[f].upper().startswith("A") or m[f] == "-1": return "-1" # (any) for match good with
     if m[f].upper().startswith("Y") or m[f] == "0": return "0"
     if m[f].upper().startswith("N") or m[f] == "1": return "1"
+    if m[f].find("5") != -1: return "5" # Good with kids over 5
+    if m[f].find("12") !=-1: return "12" # Good with kids over 12
     return "2"
 
 def gkbr(dbo, m, f, speciesid, create):
