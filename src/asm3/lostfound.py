@@ -461,15 +461,28 @@ def match(dbo, lostanimalid = 0, foundanimalid = 0, animalid = 0, limit = 0):
         if includeshelter:
             for a in shelteranimals:
                 matchpoints = 0
+                foundarea = ""
+                foundpostcode = ""
                 if la["MICROCHIPNUMBER"] != "" and la["MICROCHIPNUMBER"] == a["IDENTICHIPNUMBER"]: matchpoints += matchmicrochip
                 if la["ANIMALTYPEID"] == a["SPECIESID"]: matchpoints += matchspecies
                 if la["BREEDID"] == a["BREEDID"] or la["BREEDID"] == a["BREED2ID"]: matchpoints += matchbreed
                 if la["BASECOLOURID"] == a["BASECOLOURID"]: matchpoints += matchcolour
                 if la["AGEGROUP"] == a["AGEGROUP"]: matchpoints += matchage
                 if la["SEX"] == a["SEX"]: matchpoints += matchsex
-                matchpoints += words(la["AREALOST"], a["ORIGINALOWNERADDRESS"], matcharealost)
                 matchpoints += words(la["DISTFEAT"], a["MARKINGS"], matchfeatures)
-                if asm3.utils.nulltostr(a["ORIGINALOWNERPOSTCODE"]).find(la["AREAPOSTCODE"]) != -1: matchpoints += matchpostcode
+                if a["ISPICKUP"] == 1:
+                    matchpoints += words(la["AREALOST"], a["PICKUPADDRESS"], matcharealost)
+                    foundarea = a["PICKUPADDRESS"]
+                elif a["BROUGHTINBYOWNERADDRESS"] is not None:
+                    matchpoints += words(la["AREALOST"], a["BROUGHTINBYOWNERADDRESS"], matcharealost)
+                    if asm3.utils.nulltostr(a["BROUGHTINBYOWNERPOSTCODE"]).find(la["AREAPOSTCODE"]) != -1: matchpoints += matchpostcode
+                    foundarea = a["BROUGHTINBYOWNERADDRESS"]
+                    foundpostcode = a["BROUGHTINBYOWNERPOSTCODE"]
+                elif a["ORIGINALOWNERADDRESS"] is not None:
+                    matchpoints += words(la["AREALOST"], a["ORIGINALOWNERADDRESS"], matcharealost)
+                    if asm3.utils.nulltostr(a["ORIGINALOWNERPOSTCODE"]).find(la["AREAPOSTCODE"]) != -1: matchpoints += matchpostcode
+                    foundarea = a["ORIGINALOWNERADDRESS"]
+                    foundpostcode = a["ORIGINALOWNERPOSTCODE"]
                 if date_diff_days(la["DATELOST"], a["DATEBROUGHTIN"]) <= 14: matchpoints += matchdatewithin2weeks
                 if matchpoints > matchmax: matchpoints = matchmax
                 if matchpoints >= matchpointfloor:
@@ -496,8 +509,8 @@ def match(dbo, lostanimalid = 0, foundanimalid = 0, animalid = 0, limit = 0):
                     m.fcontactname = _("Shelter animal {0} '{1}'", l).format(a["CODE"], a["ANIMALNAME"])
                     m.fmicrochip = a["IDENTICHIPNUMBER"]
                     m.fcontactnumber = a["SPECIESNAME"]
-                    m.fareafound = "%s, %s" % (a["ORIGINALOWNERADDRESS"], a["ORIGINALOWNERTOWN"])
-                    m.fareapostcode = a["ORIGINALOWNERPOSTCODE"]
+                    m.fareafound = foundarea
+                    m.fareapostcode = foundpostcode
                     m.fagegroup = a["AGEGROUP"]
                     m.fsexid = a["SEX"]
                     m.fsexname = a["SEXNAME"]
