@@ -666,7 +666,8 @@ AND (o.hometelephone LIKE '%@%'
 OR o.mobiletelephone LIKE '%@%' 
 OR o.mobiletelephone LIKE '%@%')
 
---Alerts when the license expiration date compared to the issue date is less than 335 days.
+--Alerts when the license expiration date compared to the issue date is less than 335 days
+--or expiration date is less than issue date.
 UNION SELECT 
   owner.ownername AS name,
   owner.ownercode AS code,
@@ -675,6 +676,7 @@ UNION SELECT
 FROM ownerlicence ol
   INNER JOIN owner ON owner.ID = ol.OwnerID
 WHERE extract(days from ol.ExpiryDate - ol.ISSUEDATE) < 335
+OR ol.ExpiryDate < ol.ISSUEDATE
 
 --This looks at the comments field of citation to see if the different ordinance numbers have
 --been entered.  This allows for reporting of individual ordinance violations if needed.
