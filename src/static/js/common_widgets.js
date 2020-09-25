@@ -668,19 +668,30 @@ $.widget("asm.emailform", {
         else {
             $("#emailtemplate").closest("tr").hide();
         }
-        let mailaddresses = [];
+        let fromaddresses = [], toaddresses = [];
         let conf_org = html.decode(config.str("Organisation").replace(",", ""));
         let conf_email = config.str("EmailAddress");
         let org_email = conf_org + " <" + conf_email + ">";
-        mailaddresses.push(conf_email);
-        mailaddresses.push(org_email);
         $("#emailfrom").val(conf_email);
+        fromaddresses.push(conf_email);
+        fromaddresses.push(org_email);
         if (asm.useremail) {
-            mailaddresses.push(asm.useremail);
-            mailaddresses.push(html.decode(asm.userreal) + " <" + asm.useremail + ">");
+            fromaddresses.push(asm.useremail);
+            fromaddresses.push(html.decode(asm.userreal) + " <" + asm.useremail + ">");
         }
-        $("#emailfrom").autocomplete({source: mailaddresses});
+        fromaddresses.push(config.str("EmailFromAddresses").split(","));
+        toaddresses = config.str("EmailToAddresses").split(",");
+        $("#emailfrom").autocomplete({source: fromaddresses});
         $("#emailfrom").autocomplete("widget").css("z-index", 1000);
+        $("#emailto").autocomplete({source: toaddresses});
+        $("#emailto").autocomplete("widget").css("z-index", 1000);
+        $("#emailcc").autocomplete({source: toaddresses});
+        $("#emailcc").autocomplete("widget").css("z-index", 1000);
+        $("#emailbcc").autocomplete({source: toaddresses});
+        $("#emailbcc").autocomplete("widget").css("z-index", 1000);
+        $("#emailfrom, #emailto, #emailcc, #emailbcc").bind("focus", function() {
+            $(this).autocomplete("search", "@");
+        });
         if (o.email && o.email.indexOf(",") != -1) { 
             // If there's more than one email address, only output the comma separated emails
             $("#emailto").val(o.email); 
