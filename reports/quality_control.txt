@@ -170,9 +170,11 @@ UNION SELECT
   date(animal.LastChangedDate) AS issuedate,
   'Marked <i>Transfer In</i>, but no person in <i>Transferred From</i> field in Entry section.' AS issue 
 FROM animal
-WHERE animal.nonshelteranimal = 0
+INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
+WHERE animal.datebroughtin > '2000-01-01'
+  AND animal.nonshelteranimal = 0
   AND animal.broughtinbyownerid = 0
-  AND animal.istransfer = 1
+  AND (animal.istransfer = 1 OR entryreason.ReasonName LIKE '%Transf%')
   AND NOT (animal.AdditionalFlags LIKE 'Ignore Issues|%' OR animal.AdditionalFlags  LIKE '%|Ignore Issues|%')
 
 --Alerts when adopted and marked microchip, but no microchip number entered.
