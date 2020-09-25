@@ -883,6 +883,8 @@ OwnerID
     The ID of the person record
 IDCheck
     “Yes” if the owner has been homechecked 
+HomeCheckedDate
+    The date this person was homechecked
 HomeCheckedByName
     The name of the person who homechecked this person
 HomeCheckedByEmail

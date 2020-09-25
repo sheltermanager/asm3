@@ -1200,6 +1200,7 @@ def person_tags(dbo, p, includeImg=False, includeDonations=False, includeVoucher
         "OWNERLASTCHANGEDBYNAME" : p["LASTCHANGEDBY"],
         "OWNERLASTCHANGEDDATE"  : python2display(l, p["LASTCHANGEDDATE"]),
         "IDCHECK"               : asm3.utils.iif(p["IDCHECK"] == 1, _("Yes", l), _("No", l)),
+        "HOMECHECKEDDATE"       : python2display(l, p["DATELASTHOMECHECKED"]),
         "HOMECHECKEDBYNAME"     : p["HOMECHECKEDBYNAME"],
         "HOMECHECKEDBYEMAIL"    : p["HOMECHECKEDBYEMAIL"],
         "HOMECHECKEDBYHOMETELEPHONE": p["HOMECHECKEDBYHOMETELEPHONE"],
