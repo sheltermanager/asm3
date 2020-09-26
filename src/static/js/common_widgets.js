@@ -11,9 +11,9 @@ const MASK_VALUE = "****************";
 // at the data attribute of all items matching the
 // selector
 $.fn.toJSON = function() {
-    var params = {};
+    let params = {};
     this.each(function() {
-        var t = $(this);
+        let t = $(this);
         if (t.attr("type") == "checkbox" && t.attr("data")) {
             if (t.is(":checked")) {
                 params[t.attr("data")] = "checked";
@@ -30,8 +30,8 @@ $.fn.toJSON = function() {
 // data-json attribute 
 $.fn.fromJSON = function(row) {
     this.each(function() {
-        var n = $(this);
-        var f = $(this).attr("data-json");
+        let n = $(this);
+        let f = $(this).attr("data-json");
         if (f === undefined || f == null || f == "") { return; }
         if (n.hasClass("asm-animalchooser")) {
             n.animalchooser().animalchooser("loadbyid", row[f]);
@@ -72,10 +72,10 @@ $.fn.fromJSON = function(row) {
 // matching the selector. 
 // includeblanks: true if you want fields with empty values sent instead of omitted.
 $.fn.toPOST = function(includeblanks) {
-    var post = [];
+    let post = [];
     this.each(function() {
-        var t = $(this);
-        var pname = t.attr("data-post");
+        let t = $(this);
+        let pname = t.attr("data-post");
         if (!pname) { pname = t.attr("data"); }
         if (!pname) { return; }
         if (t.attr("type") == "checkbox") {
@@ -107,7 +107,7 @@ $.fn.toPOST = function(includeblanks) {
 // Generates a comma separated list of the data attributes of
 // every single checked checkbox in the selector
 $.fn.tableCheckedData = function() {
-    var ids = "";
+    let ids = "";
     this.each(function() {
         if ($(this).attr("type") == "checkbox") {
             if ($(this).is(":checked")) {
@@ -120,7 +120,7 @@ $.fn.tableCheckedData = function() {
 
 // Styles an HTML table with jquery stuff and adds sorting
 $.fn.table = function(options) {
-    var defaults = {
+    let defaults = {
         css:        'asm-table',
         filter:     false,
         style_td:   true,
@@ -130,7 +130,7 @@ $.fn.table = function(options) {
     };
     options = $.extend(defaults, options);
     return this.each(function () {
-        var input = $(this);
+        let input = $(this);
         input.addClass(options.css);
         if (options.row_hover) {
             input.on("mouseover", "tr", function() {
@@ -156,7 +156,7 @@ $.fn.table = function(options) {
             input.find("td").addClass("ui-widget-content");
         }
         input.addClass("tablesorter");
-        var tablewidgets = [];
+        let tablewidgets = [];
         if (options.filter) { tablewidgets.push("filter"); }
         if (options.sticky_header && config.bool("StickyTableHeaders")) { tablewidgets.push("stickyHeaders"); }
         input.tablesorter({
@@ -169,10 +169,10 @@ $.fn.table = function(options) {
             textExtraction: function(node, table, cellIndex) {
                 // this function controls how text is extracted from cells for
                 // sorting purposes.
-                var s = common.trim($(node).text()), h = $(node).html();
+                let s = common.trim($(node).text()), h = $(node).html();
                 // If there's a data-sort attribute somewhere in the cell, use that
                 if (h.indexOf("data-sort") != -1) {
-                    var fq = h.indexOf("data-sort");
+                    let fq = h.indexOf("data-sort");
                     fq = h.indexOf("\"", fq);
                     s = h.substring(fq+1, h.indexOf("\"", fq+1));
                     // Looks like an ISO date/time - strip the punctuation
@@ -218,7 +218,7 @@ $.fn.asmtabs = function() {
 // Textbox that should only contain numbers.
 // data-min and data-max attributes can be used to contain the lower/upper bound
 $.fn.number = function() {
-    var allowed = [ '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '.', '-' ];
+    const allowed = /[0-9\.\-]/;
     this.each(function() {
         if ($(this).attr("data-min")) {
             $(this).blur(function(e) {
@@ -235,13 +235,13 @@ $.fn.number = function() {
             });
         }
         $(this).keypress(function(e) {
-            var k = e.charCode || e.keyCode;
-            var ch = String.fromCharCode(k);
+            let k = e.charCode || e.keyCode;
+            let ch = String.fromCharCode(k);
             // Backspace, tab, ctrl, delete, arrow keys ok
             if (k == 8 || k == 9 || k == 17 || k == 46 || (k >= 35 && k <= 40)) {
                 return true;
             }
-            if ($.inArray(ch, allowed) == -1) {
+            if (!allowed.test(ch)) {
                 e.preventDefault();
             }
         });
@@ -250,20 +250,16 @@ $.fn.number = function() {
 
 // Textbox that should only contain numbers and letters (no spaces or punctuation)
 $.fn.alphanumber = function() {
+    const allowed = new RegExp("[0-9A-Za-z\\.]");
     this.each(function() {
-        $(this).keydown(function(e) {
-            if (!(e.keyCode == 8 // backspace
-                || e.keyCode == 9 // tab
-                || e.keyCode == 17 // ctrl
-                || e.keyCode == 46 // delete
-                || e.keyCode == 190 // point
-                || e.keyCode == 110 // point
-                || (e.keyCode >= 65 && e.keyCode <= 90) // capitals
-                || (e.keyCode >= 97 && e.keyCode <= 122) // lower case
-                || (e.keyCode >= 35 && e.keyCode <= 40) // arrow keys/home
-                || (!e.shiftKey && e.keyCode >= 48 && e.keyCode <= 57) // numbers on keyboard
-                || (e.keyCode >= 96 && e.keyCode <= 105) // numbers on keypad
-            )) {
+        $(this).keypress(function(e) {
+            let k = e.charCode || e.keyCode;
+            let ch = String.fromCharCode(k);
+            // Backspace, tab, ctrl, delete, arrow keys ok
+            if (k == 8 || k == 9 || k == 17 || k == 46 || (k >= 35 && k <= 40)) {
+                return true;
+            }
+            if (!allowed.test(ch)) {
                 e.preventDefault();
             }
         });
@@ -272,18 +268,18 @@ $.fn.alphanumber = function() {
 
 // Textbox that should only contain integer numbers
 $.fn.intnumber = function() {
-    var allowed = [ '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '-' ];
+    const allowed = new RegExp("[0-9\\-]");
     this.each(function() {
         $(this).keypress(function(e) {
-            var k = e.charCode || e.keyCode;
-            var ch = String.fromCharCode(k);
+            let k = e.charCode || e.keyCode;
+            let ch = String.fromCharCode(k);
             // Backspace, tab, ctrl, arrow keys ok
             // (note: little delete key is code 46, shared with decimal point
             //  so we do not allow it here)
             if (k == 8 || k == 9 || k == 17 || (k >= 35 && k <= 40)) {
                 return true;
             }
-            if ($.inArray(ch, allowed) == -1) {
+            if (!allowed.test(ch)) {
                 e.preventDefault();
             }
         });
@@ -292,16 +288,16 @@ $.fn.intnumber = function() {
 
 // Textbox that should only contain CIDR IP subnets or IPv6 HEX/colon
 $.fn.ipnumber = function() {
-    var allowed = [ '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '.', '/', ' ', 'a', 'b', 'c', 'd', 'e', 'f', ':' ];
+    const allowed = new RegExp("[0-9\\.\\/\\:abcdef ]");
     this.each(function() {
         $(this).keypress(function(e) {
-            var k = e.charCode || e.keyCode;
-            var ch = String.fromCharCode(k);
+            let k = e.charCode || e.keyCode;
+            let ch = String.fromCharCode(k);
             // Backspace, tab, ctrl, delete, arrow keys ok
             if (k == 8 || k == 9 || k == 17 || k == 46 || (k >= 35 && k <= 40)) {
                 return true;
             }
-            if ($.inArray(ch, allowed) == -1) {
+            if (!allowed.test(ch)) {
                 e.preventDefault();
             }
         });
@@ -310,8 +306,8 @@ $.fn.ipnumber = function() {
 
 $.fn.date = function() {
     this.each(function() {
-        var dayfilter = $(this).attr("data-onlydays");
-        var nopast = $(this).attr("data-nopast");
+        let dayfilter = $(this).attr("data-onlydays");
+        let nopast = $(this).attr("data-nopast");
         if (dayfilter) {
             $(this).datepicker({ 
                 changeMonth: true, 
@@ -319,8 +315,8 @@ $.fn.date = function() {
                 firstDay: config.integer("FirstDayOfWeek"),
                 yearRange: "-30:+10",
                 beforeShowDay: function(a) {
-                    var day = a.getDay();
-                    var rv = false;
+                    let day = a.getDay();
+                    let rv = false;
                     $.each(dayfilter.split(","), function(i, v) {
                         if (v == String(day)) {
                             rv = true;
@@ -341,8 +337,8 @@ $.fn.date = function() {
             });
         }
         $(this).keydown(function(e) {
-            var d = $(this);
-            var adjust = function(v) {
+            let d = $(this);
+            let adjust = function(v) {
                 if (v == "t") {
                     d.datepicker("setDate", new Date());
                 }
@@ -385,9 +381,9 @@ $.fn.date = function() {
 
 // Textbox that should only contain a time (numbers and colon)
 $.fn.time = function() {
-    var allowed = [ '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', ':' ];
+    const allowed = [ '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', ':' ];
     this.each(function() {
-        var t = $(this);
+        let t = $(this);
         $(this).timepicker({
             hourText: _("Hours"),
             minuteText: _("Minutes"),
@@ -400,8 +396,8 @@ $.fn.time = function() {
             showDeselectButton: false
         });
         $(this).keypress(function(e) {
-            var k = e.charCode || e.keyCode;
-            var ch = String.fromCharCode(k);
+            let k = e.charCode || e.keyCode;
+            let ch = String.fromCharCode(k);
             // Fill in the time now if t or n are pressed
             if (ch == 'n' || ch == 't') {
                 t.val(format.time(new Date()));
@@ -421,7 +417,7 @@ $.fn.time = function() {
 
 // Select box
 $.fn.select = function(method, newval) {
-    var rv = "", tv;
+    let rv = "", tv;
     if (!method || method == "create") {
         $(this).each(function() {
             if ( $(this).hasClass("asm-iconselectmenu") ) {
@@ -517,7 +513,7 @@ $.fn.select = function(method, newval) {
  */
 $.widget( "asm.iconselectmenu", $.ui.selectmenu, {
     _renderItem: function( ul, item ) {
-        var li = $( "<li>" ),
+        let li = $( "<li>" ),
         wrapper = $( "<div>", { text: item.label } );
         if ( item.disabled ) {
             li.addClass( "ui-state-disabled" );
@@ -585,7 +581,7 @@ $.widget("asm.emailform", {
             '</div>'
         ].join("\n"));
         $("#emailbody").richtextarea();
-        var b = {}; 
+        let b = {}; 
         b[_("Send")] = {
             text: _("Send"),
             "class": "asm-dialog-actionbutton",
@@ -599,7 +595,7 @@ $.widget("asm.emailform", {
                 o.formdata += $("#dialog-email input, #dialog-email select, #dialog-email .asm-richtextarea").toPOST();
                 header.show_loading(_("Sending..."));
                 common.ajax_post(o.post, o.formdata, function() {
-                    var recipients = $("#emailto").val();
+                    let recipients = $("#emailto").val();
                     if ($("#emailcc").val() != "") { recipients += ", " + $("#emailcc").val(); }
                     header.show_info(_("Message successfully sent to {0}").replace("{0}", recipients));
                     $("#dialog-email").dialog("close");
@@ -721,7 +717,7 @@ $.widget("asm.latlong", {
         hash: null
     },
     _create: function() {
-        var self = this;
+        let self = this;
         this.element.hide();
         this.element.after([
             '<input type="text" class="latlong-lat asm-halftextbox" />',
@@ -736,14 +732,14 @@ $.widget("asm.latlong", {
     },
     load: function() {
         // Reads the base element value and splits it into the boxes
-        var bits = this.element.val().split(",");
+        let bits = this.element.val().split(",");
         if (bits.length > 0) { this.options.lat.val(bits[0]); }
         if (bits.length > 1) { this.options.lng.val(bits[1]); }
         if (bits.length > 2) { this.options.hash.val(bits[2]); }
     },
     save: function() {
         // Store the entered values back in the base element value
-        var v = this.options.lat.val() + "," +
+        let v = this.options.lat.val() + "," +
             this.options.lng.val() + "," +
             this.options.hash.val();
         this.element.val(v);
@@ -762,7 +758,7 @@ $.widget("asm.payments", {
         giftaid: false
     },
     _create: function() {
-        var self = this;
+        let self = this;
         // If the user does not have permission to add payments, do nothing
         if (!common.has_permission("oaod")) { return; }
         this.element.append([
@@ -819,7 +815,7 @@ $.widget("asm.payments", {
     },
 
     add_payment: function() {
-        var h = [
+        let h = [
             '<tr>',
             '<td>',
             '<select id="donationtype{i}" data="donationtype{i}" class="asm-selectbox">',
@@ -872,7 +868,7 @@ $.widget("asm.payments", {
         ];
         // Construct and add our new payment fields to the DOM
         this.options.count += 1;
-        var i = this.options.count, self = this;
+        let i = this.options.count, self = this;
         this.element.find("#paymentlines").append(common.substitute(h.join("\n"), {
             i: this.options.count
         }));
@@ -881,8 +877,8 @@ $.widget("asm.payments", {
         $("#payment" + i).select("removeRetiredOptions", "all");
         // Change the default amount when the payment type changes
         $("#donationtype" + i).change(function() {
-            var dc = common.get_field(self.options.controller.donationtypes, $("#donationtype" + i).select("value"), "DEFAULTCOST");
-            var dv = common.get_field(self.options.controller.donationtypes, $("#donationtype" + i).select("value"), "ISVAT");
+            let dc = common.get_field(self.options.controller.donationtypes, $("#donationtype" + i).select("value"), "DEFAULTCOST");
+            let dv = common.get_field(self.options.controller.donationtypes, $("#donationtype" + i).select("value"), "ISVAT");
             $("#quantity" + i).val("1");
             $("#unitprice" + i).currency("value", dc);
             $("#amount" + i).currency("value", dc);
@@ -892,7 +888,7 @@ $.widget("asm.payments", {
         });
         // Recalculate when quantity or unit price changes
         $("#quantity" + i + ", #unitprice" + i).change(function() {
-            var q = $("#quantity" + i).val(), u = $("#unitprice" + i).currency("value");
+            let q = $("#quantity" + i).val(), u = $("#unitprice" + i).currency("value");
             $("#amount" + i).currency("value", q * u);
             self.update_totals();
         });
@@ -961,7 +957,7 @@ $.widget("asm.payments", {
     },
 
     update_totals: function() {
-        var totalamt = 0, totalvat = 0, totalall = 0;
+        let totalamt = 0, totalvat = 0, totalall = 0;
         $(".amount").each(function() {
             totalamt += $(this).currency("value");
         });
@@ -992,13 +988,13 @@ $.widget("asm.callout", {
     },
 
     _create: function() {
-        var self = this;
-        var button = this.element;
+        let self = this;
+        let button = this.element;
         this.options.button = this.element;
-        var popupid = this.element.attr("id") + "-popup";
+        let popupid = this.element.attr("id") + "-popup";
 
         // Read the elements inner content then remove it
-        var content = button.html();
+        let content = button.html();
         button.html("");
 
         // Style the button by adding an actual button with icon
@@ -1006,7 +1002,7 @@ $.widget("asm.callout", {
 
         // Create the callout
         $("#asm-content").append('<div id="' + popupid + '">' + html.info(content) + '</div>');
-        var popup = $("#" + popupid);
+        let popup = $("#" + popupid);
         this.options.popup = popup;
         popup.css("display", "none");
 
@@ -1050,17 +1046,17 @@ $.widget("asm.asmmenu", {
     },
 
     _create: function() {
-        var self = this;
-        var button = this.element;
+        let self = this;
+        let button = this.element;
         this.options.button = button;
         
         // Add display arrow span
-        var n = "<span style=\"display: inline-block; width: 16px; height: 16px; vertical-align: middle\" class=\"ui-button-text ui-icon ui-icon-triangle-1-e\"></span>";
+        let n = "<span style=\"display: inline-block; width: 16px; height: 16px; vertical-align: middle\" class=\"ui-button-text ui-icon ui-icon-triangle-1-e\"></span>";
         this.element.append(n);
         
         // If the menu is empty, disable it
-        var id = this.element.attr("id");
-        var body = $("#" + id + "-body");
+        let id = this.element.attr("id");
+        let body = $("#" + id + "-body");
         this.options.menu = body;
         if (body.find(".asm-menu-item").length == 0) {
             button.addClass("ui-state-disabled").addClass("ui-button-disabled");
@@ -1098,7 +1094,7 @@ $.widget("asm.asmmenu", {
         if (!$("body").attr("data-menu-hide")) {
             $("body").attr("data-menu-hide", "true");
             $("body").click(function(e) {
-                var t = $(e.target);
+                let t = $(e.target);
                 if (t.hasClass("asm-menu-icon") || t.parent().hasClass("asm-menu-icon")) { return true; }
                 if (t.hasClass("asm-menu-button") || t.parent().hasClass("asm-menu-button")) { return true; }
                 if (t.closest(".asm-menu-accordion").length > 0) { return true; }
@@ -1120,10 +1116,10 @@ $.widget("asm.asmmenu", {
 
     toggle_menu: function(id) {
         // Get the menu body element, style it and position it below the button
-        var button = "#" + id;
-        var body = "#" + id + "-body";
-        var topval = $(button).offset().top + $(button).height() + 14;
-        var leftval = $(button).offset().left;
+        let button = "#" + id;
+        let body = "#" + id + "-body";
+        let topval = $(button).offset().top + $(button).height() + 14;
+        let leftval = $(button).offset().left;
 
         // If the menu button is disabled, don't do anything
         if ($(button).hasClass("ui-state-disabled")) { return; }
@@ -1147,7 +1143,7 @@ $.widget("asm.asmmenu", {
         }
 
         // If the menu was displayed previously, don't try and display it again
-        var wasactive = $(body).css("display") != "none";
+        let wasactive = $(body).css("display") != "none";
         
         // Slide up all existing menus
         this.hide_all();
@@ -1167,7 +1163,7 @@ $.widget("asm.textbox", {
     },
 
     _create: function() {
-        var self = this;
+        let self = this;
         this.element.on("keypress", function(e) {
             if (self.options.disabled) {
                 e.preventDefault();
@@ -1212,7 +1208,7 @@ $.widget("asm.richtextarea", {
     },
 
     _create: function() {
-        var self = this;
+        let self = this;
         // Override height, width and margin-top if they were set as attributes of the div
         if (self.element.attr("data-width")) {
             self.element.css("width", self.element.attr("data-width"));
@@ -1282,7 +1278,7 @@ $.widget("asm.textarea", {
 
     _create: function() {
         
-        var buttonstyle = "margin-left: -56px; margin-top: -24px; height: 16px",
+        let buttonstyle = "margin-left: -56px; margin-top: -24px; height: 16px",
             fixmarginstyle = "margin-left: 32px; margin-top: 24px;",
             t = $(this.element[0]),
             self = this;
@@ -1291,7 +1287,7 @@ $.widget("asm.textarea", {
         if (!t.attr("id")) { return; }
 
         t.attr("data-zoom", "true");
-        var zbid = t.attr("id") + "-zb";
+        let zbid = t.attr("id") + "-zb";
 
         t.wrap("<span style='white-space: nowrap'></span>");
         t.after("<button id='" + zbid + "' style='" + buttonstyle + "'></button>" + "<span style='" + fixmarginstyle + "'></span>");
@@ -1305,7 +1301,7 @@ $.widget("asm.textarea", {
     },
 
     zoom: function() {
-        var t = $(this.element[0]);
+        let t = $(this.element[0]);
 
         if (t.is(":disabled")) { return; }
         if (t.attr("maxlength") !== undefined) { $("#textarea-zoom-area").attr("maxlength", t.attr("maxlength")); }
@@ -1314,7 +1310,7 @@ $.widget("asm.textarea", {
         $("#textarea-zoom-area").val( t.val() );
         $("#textarea-zoom-area").css({ "font-family": t.css("font-family") });
 
-        var title = "";
+        let title = "";
         if (t.attr("title")) { title = String(t.attr("title")); }
         $("#dialog-textarea-zoom").dialog("option", "title", title);
         $("#dialog-textarea-zoom").dialog("open");
@@ -1329,7 +1325,7 @@ $.widget("asm.htmleditor", {
     },
 
     _create: function() {
-        var self = this;
+        let self = this;
         setTimeout(function() {
             self.options.editor = CodeMirror.fromTextArea(self.element[0], {
                 lineNumbers: true,
@@ -1381,7 +1377,7 @@ $.widget("asm.htmleditor", {
         // To work around this, we record the position, height and width of the dialog before
         // going into fullscreen, make the dialog fill the screen and then restore it 
         // when leaving fullscreen as a workaround.
-        var dlg = this.element.closest("div.ui-dialog");
+        let dlg = this.element.closest("div.ui-dialog");
         if (dlg) {
             if (fs) {
                 this.dlgheight = dlg.height(); this.dlgwidth = dlg.width(); this.dlgtop = dlg.position().top; this.dlgleft = dlg.position().left;
@@ -1418,7 +1414,7 @@ $.widget("asm.sqleditor", {
     },
 
     _create: function() {
-        var self = this;
+        let self = this;
         setTimeout(function() {
             self.options.editor = CodeMirror.fromTextArea(self.element[0], {
                 lineNumbers: true,
@@ -1472,7 +1468,7 @@ $.widget("asm.sqleditor", {
         // To work around this, we record the position, height and width of the dialog before
         // going into fullscreen, make the dialog fill the screen and then restore it 
         // when leaving fullscreen as a workaround.
-        var dlg = this.element.closest("div.ui-dialog");
+        let dlg = this.element.closest("div.ui-dialog");
         if (dlg.length > 0) {
             if (fs) {
                 this.dlgheight = dlg.height(); this.dlgwidth = dlg.width(); this.dlgtop = dlg.position().top; this.dlgleft = dlg.position().left;
@@ -1505,18 +1501,18 @@ $.widget("asm.sqleditor", {
 
 // Styles a textbox that should only contain currency
 $.fn.currency = function(cmd, newval) {
-    var reset = function(b) {
+    const reset = function(b) {
         // Show a currency symbol and default amount of 0
         if ($(b).val() == "") {
             $(b).val(format.currency(0));
         }
     };
     if (cmd === undefined) {
-        var allowed = [ '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', asm.currencyradix, '-' ];
+        const allowed = [ '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', asm.currencyradix, '-' ];
         this.each(function() {
             $(this).keypress(function(e) {
-                var k = e.charCode || e.keyCode;
-                var ch = String.fromCharCode(k);
+                let k = e.charCode || e.keyCode;
+                let ch = String.fromCharCode(k);
                 // Backspace, tab, ctrl, delete, arrow keys ok
                 if (k == 8 || k == 9 || k == 17 || k == 46 || (k >= 35 && k <= 40)) {
                     return true;
@@ -1536,7 +1532,7 @@ $.fn.currency = function(cmd, newval) {
     else if (cmd == "value") {
         if (newval === undefined) {
             // Get the value
-            var v = this.val(), f;
+            let v = this.val(), f;
             if (!v) {
                 return 0;
             }
