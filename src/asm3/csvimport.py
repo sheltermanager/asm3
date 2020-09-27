@@ -20,7 +20,7 @@ import sys
 
 VALID_FIELDS = [
     "ANIMALNAME", "ANIMALSEX", "ANIMALTYPE", "ANIMALCOLOR", "ANIMALBREED1", 
-    "ANIMALBREED2", "ANIMALDOB", "ANIMALLOCATION", "ANIMALUNIT", 
+    "ANIMALBREED2", "ANIMALDOB", "ANIMALLOCATION", "ANIMALUNIT", "ANIMALJURISDICTION", 
     "ANIMALSPECIES", "ANIMALAGE", 
     "ANIMALCOMMENTS", "ANIMALMARKINGS", "ANIMALNEUTERED", "ANIMALNEUTEREDDATE", "ANIMALMICROCHIP", "ANIMALMICROCHIPDATE", 
     "ANIMALENTRYDATE", "ANIMALDECEASEDDATE", "ANIMALCODE", "ANIMALFLAGS",
@@ -398,6 +398,9 @@ def csvimport(dbo, csvdata, encoding = "utf-8-sig", user = "", createmissinglook
             a["internallocation"] = gkl(dbo, row, "ANIMALLOCATION", "internallocation", "LocationName", createmissinglookups)
             if a["internallocation"] == "0":
                 a["internallocation"] = str(asm3.configuration.default_location(dbo))
+            a["jurisdiction"] = gkl(dbo, row, "ANIMALJURISDICTION", "jurisdiction", "JurisdictionName", createmissinglookups)
+            if a["jurisdiction"] == "0":
+                a["jurisdiction"] = str(asm3.configuration.default_jurisdiction(dbo))
             a["unit"] = gks(row, "ANIMALUNIT")
             a["comments"] = gks(row, "ANIMALCOMMENTS")
             a["markings"] = gks(row, "ANIMALMARKINGS")
@@ -453,6 +456,8 @@ def csvimport(dbo, csvdata, encoding = "utf-8-sig", user = "", createmissinglook
                 p["county"] = gks(row, "ORIGINALOWNERSTATE")
                 p["postcode"] = gks(row, "ORIGINALOWNERZIPCODE")
                 p["jurisdiction"] = gkl(dbo, row, "ORIGINALOWNERJURISDICTION", "jurisdiction", "JurisdictionName", createmissinglookups)
+                if p["jurisdiction"] == "0":
+                    p["jurisdiction"] = str(asm3.configuration.default_jurisdiction(dbo))
                 p["hometelephone"] = gks(row, "ORIGINALOWNERHOMEPHONE")
                 p["worktelephone"] = gks(row, "ORIGINALOWNERWORKPHONE")
                 p["mobiletelephone"] = gks(row, "ORIGINALOWNERCELLPHONE")
@@ -529,6 +534,8 @@ def csvimport(dbo, csvdata, encoding = "utf-8-sig", user = "", createmissinglook
             p["county"] = gks(row, "PERSONSTATE")
             p["postcode"] = gks(row, "PERSONZIPCODE")
             p["jurisdiction"] = gkl(dbo, row, "PERSONJURISDICTION", "jurisdiction", "JurisdictionName", createmissinglookups)
+            if p["jurisdiction"] == "0":
+                p["jurisdiction"] = str(asm3.configuration.default_jurisdiction(dbo))
             p["hometelephone"] = gks(row, "PERSONHOMEPHONE")
             p["worktelephone"] = gks(row, "PERSONWORKPHONE")
             p["mobiletelephone"] = gks(row, "PERSONCELLPHONE")

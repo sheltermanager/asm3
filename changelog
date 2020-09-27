@@ -1,6 +1,7 @@
 44
 ================
 
+27/09/20 Add ANIMALJURISDICTION csv import field
 26/09/20 Close prediction attack flaw in document signing by email #917
 26/09/20 Consistent keyboard handling for alphanumber widget #914
 25/09/20 Email address books #179

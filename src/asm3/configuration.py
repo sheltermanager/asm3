@@ -710,6 +710,9 @@ def default_entry_reason(dbo):
 def default_incident(dbo):
     return cint(dbo, "DefaultIncidentType", 1)
 
+def default_jurisdiction(dbo):
+    return cint(dbo, "DefaultJurisdiction", 1)
+
 def default_location(dbo):
     return cint(dbo, "AFDefaultLocation", 1)
 
