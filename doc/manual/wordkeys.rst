@@ -1279,7 +1279,7 @@ CanAffordDonation
     Yes/No - whether the person can afford to make a donation
 Urgency
     An urgency rating for this waiting list item
-WaitingListComments
+Comments
     Any comments on this waiting list entry
 DocumentImgLink
     A photo of the animal if one exists. 200/300/400/500 can also be suffixed
