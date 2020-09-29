@@ -599,8 +599,12 @@ def csvimport(dbo, csvdata, encoding = "utf-8-sig", user = "", createmissinglook
             movetype = gks(row, "MOVEMENTTYPE")
             if movetype == "": movetype = "1" # Default to adoption if not supplied
             m["type"] = str(movetype)
-            m["movementdate"] = gkd(dbo, row, "MOVEMENTDATE", True)
-            m["returndate"] = gkd(dbo, row, "MOVEMENTRETURNDATE")
+            if movetype == "0":
+                m["reservationdate"] = gkd(dbo, row, "MOVEMENTDATE", True)
+                m["reservationcancelled"] = gkd(dbo, row, "MOVEMENTRETURNDATE")
+            else:
+                m["movementdate"] = gkd(dbo, row, "MOVEMENTDATE", True)
+                m["returndate"] = gkd(dbo, row, "MOVEMENTRETURNDATE")
             m["comments"] = gks(row, "MOVEMENTCOMMENTS")
             m["returncategory"] = str(asm3.configuration.default_entry_reason(dbo))
             try:

@@ -1,6 +1,7 @@
 44
 ================
 
+29/09/20 Support MOVEMENTTYPE==0 to create reservations in import
 29/09/20 ANIMALENTRYCATEGORY import field, export new fields
 28/09/20 Diary note completion messages linked to wrong config item
 27/09/20 Add ANIMALJURISDICTION csv import field
