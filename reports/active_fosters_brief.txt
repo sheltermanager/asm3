@@ -10,7 +10,7 @@ en
 ###
 SELECT
 OwnerName AS FosteredTo,
-OwnerAddress, HomeTelephone, MobileTelephone, EmailAddress,
+OwnerAddress, OwnerTown, OwnerCounty, OwnerPostcode, HomeTelephone, MobileTelephone, EmailAddress,
 ShelterCode, AnimalName,
 (SELECT Sex FROM lksex WHERE ID = animal.Sex) AS Sex,
 (SELECT BaseColour FROM basecolour WHERE ID = animal.BaseColourID) AS Colour,
@@ -38,7 +38,7 @@ HEADER$$
 $$BODY
 <tr>
 <td>$FOSTEREDTO</td>
-<td>$OWNERADDRESS<br/>
+<td>$OWNERADDRESS, $OWNERTOWN $OWNERCOUNTY $OWNERPOSTCODE<br/>
 E: $EMAILADDRESS<br/>
 H: $HOMETELEPHONE<br/>
 M: $MOBILETELEPHONE</td>
