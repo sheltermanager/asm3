@@ -228,20 +228,22 @@ No. You can safely delete user accounts and it will not delete any data.
 Can I undo a CSV import?
 ------------------------
 
-Yes. All CSV imports are tagged with the user "import". You can run the
-following script at :menuselection:`Settings --> SQL Interface` to remove
-everything imported after the 1st January, 2017::
+Yes. All CSV imports are tagged with the user "import/USER" where USER is 
+the user account that ran the import. 
 
-    DELETE FROM animal WHERE CreatedBy = 'import' AND CreatedDate > '2017-01-01';
-    DELETE FROM animalvaccination WHERE CreatedBy = 'import' AND CreatedDate > '2017-01-01';
-    DELETE FROM animalmedical WHERE CreatedBy = 'import' AND CreatedDate > '2017-01-01';
-    DELETE FROM animalmedicaltreatment WHERE CreatedBy = 'import' AND CreatedDate > '2017-01-01';
-    DELETE FROM animaltest WHERE CreatedBy = 'import' AND CreatedDate > '2017-01-01';
-    DELETE FROM owner WHERE CreatedBy = 'import' AND CreatedDate > '2017-01-01';
-    DELETE FROM animalcontrol WHERE CreatedBy = 'import' AND CreatedDate > '2017-01-01';
-    DELETE FROM adoption WHERE CreatedBy = 'import' AND CreatedDate > '2017-01-01';
-    DELETE FROM ownerdonation WHERE CreatedBy = 'import' AND CreatedDate > '2017-01-01';
-    DELETE FROM ownerlicence WHERE CreatedBy = 'import' AND CreatedDate > '2017-01-01';
+You can run the following script at :menuselection:`Settings --> SQL Interface`
+to remove everything imported by anyone after the 1st January, 2017::
+
+    DELETE FROM animal WHERE CreatedBy LIKE 'import%' AND CreatedDate > '2017-01-01';
+    DELETE FROM animalvaccination WHERE CreatedBy LIKE 'import%' AND CreatedDate > '2017-01-01';
+    DELETE FROM animalmedical WHERE CreatedBy = 'import%' AND CreatedDate > '2017-01-01';
+    DELETE FROM animalmedicaltreatment WHERE CreatedBy LIKE 'import%' AND CreatedDate > '2017-01-01';
+    DELETE FROM animaltest WHERE CreatedBy LIKE 'import%' AND CreatedDate > '2017-01-01';
+    DELETE FROM owner WHERE CreatedBy LIKE 'import%' AND CreatedDate > '2017-01-01';
+    DELETE FROM animalcontrol WHERE CreatedBy LIKE 'import%' AND CreatedDate > '2017-01-01';
+    DELETE FROM adoption WHERE CreatedBy LIKE 'import%' AND CreatedDate > '2017-01-01';
+    DELETE FROM ownerdonation WHERE CreatedBy LIKE 'import%' AND CreatedDate > '2017-01-01';
+    DELETE FROM ownerlicence WHERE CreatedBy LIKE 'import%' AND CreatedDate > '2017-01-01';
 
 How do I export my data to shelteranimalscount.org?
 ---------------------------------------------------
