@@ -23,7 +23,7 @@ VALID_FIELDS = [
     "ANIMALBREED2", "ANIMALDOB", "ANIMALLOCATION", "ANIMALUNIT", "ANIMALJURISDICTION", 
     "ANIMALSPECIES", "ANIMALAGE", 
     "ANIMALCOMMENTS", "ANIMALMARKINGS", "ANIMALNEUTERED", "ANIMALNEUTEREDDATE", "ANIMALMICROCHIP", "ANIMALMICROCHIPDATE", 
-    "ANIMALENTRYDATE", "ANIMALDECEASEDDATE", "ANIMALCODE", "ANIMALFLAGS",
+    "ANIMALENTRYDATE", "ANIMALENTRYCATEGORY", "ANIMALDECEASEDDATE", "ANIMALCODE", "ANIMALFLAGS",
     "ANIMALREASONFORENTRY", "ANIMALHIDDENDETAILS", "ANIMALNOTFORADOPTION", "ANIMALNONSHELTER", 
     "ANIMALGOODWITHCATS", "ANIMALGOODWITHDOGS", "ANIMALGOODWITHKIDS", 
     "ANIMALHOUSETRAINED", "ANIMALHEALTHPROBLEMS", "ANIMALIMAGE",
@@ -401,6 +401,9 @@ def csvimport(dbo, csvdata, encoding = "utf-8-sig", user = "", createmissinglook
             a["jurisdiction"] = gkl(dbo, row, "ANIMALJURISDICTION", "jurisdiction", "JurisdictionName", createmissinglookups)
             if a["jurisdiction"] == "0":
                 a["jurisdiction"] = str(asm3.configuration.default_jurisdiction(dbo))
+            a["entryreason"] = gkl(dbo, row, "ANIMALENTRYCATEGORY", "entryreason", "ReasonName", createmissinglookups)
+            if a["entryreason"] == "0":
+                a["entryreason"] = str(asm3.configuration.default_entry_reason(dbo))
             a["unit"] = gks(row, "ANIMALUNIT")
             a["comments"] = gks(row, "ANIMALCOMMENTS")
             a["markings"] = gks(row, "ANIMALMARKINGS")
@@ -849,6 +852,7 @@ def csvexport_animals(dbo, dataset, animalids = "", includephoto = False):
         "ANIMALBREED2", "ANIMALDOB", "ANIMALLOCATION", "ANIMALUNIT", "ANIMALSPECIES", "ANIMALCOMMENTS",
         "ANIMALHIDDENDETAILS", "ANIMALHEALTHPROBLEMS", "ANIMALMARKINGS", "ANIMALREASONFORENTRY", "ANIMALNEUTERED",
         "ANIMALNEUTEREDDATE", "ANIMALMICROCHIP", "ANIMALMICROCHIPDATE", "ANIMALENTRYDATE", "ANIMALDECEASEDDATE",
+        "ANIMALJURISDICTION", "ANIMALENTRYCATEGORY",
         "ANIMALNOTFORADOPTION", "ANIMALNONSHELTER", "ANIMALGOODWITHCATS", "ANIMALGOODWITHDOGS", "ANIMALGOODWITHKIDS",
         "ANIMALHOUSETRAINED", "ORIGINALOWNERTITLE", "ORIGINALOWNERINITIALS", "ORIGINALOWNERFIRSTNAME",
         "ORIGINALOWNERLASTNAME", "ORIGINALOWNERADDRESS", "ORIGINALOWNERCITY", "ORIGINALOWNERSTATE", "ORIGINALOWNERZIPCODE",
@@ -906,6 +910,8 @@ def csvexport_animals(dbo, dataset, animalids = "", includephoto = False):
         row["ANIMALHEALTHPROBLEMS"] = a["HEALTHPROBLEMS"]
         row["ANIMALMARKINGS"] = a["MARKINGS"]
         row["ANIMALREASONFORENTRY"] = a["REASONFORENTRY"]
+        row["ANIMALENTRYCATEGORY"] = a["ENTRYREASONNAME"]
+        row["ANIMALJURISDICTION"] = a["JURISDICTIONNAME"]
         row["ANIMALNEUTERED"] = a["NEUTERED"]
         row["ANIMALNEUTEREDDATE"] = asm3.i18n.python2display(l, a["NEUTEREDDATE"])
         row["ANIMALMICROCHIP"] = a["IDENTICHIPNUMBER"]
