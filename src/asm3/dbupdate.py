@@ -2808,12 +2808,12 @@ def reset_db(dbo):
     """
     Resets a database by removing all data from non-lookup tables.
     """
-    deltables = [ "accountstrx", "additional", "adoption", "animal", "animalcontrol", "animalcost",
-        "animaldiet", "animalfigures", "animalfiguresannual", 
+    deltables = [ "accountstrx", "additional", "adoption", "animal", "animalcontrol", "animalcontrolanimal",
+        "animalcost", "animaldiet", "animalfigures", "animalfiguresannual", 
         "animalfound", "animallitter", "animallost", "animalmedical", "animalmedicaltreatment", "animalname",
         "animaltest", "animaltransport", "animalvaccination", "animalwaitinglist", "diary", "log",
         "media", "messages", "owner", "ownercitation", "ownerdonation", "ownerinvestigation", "ownerlicence", 
-        "ownertraploan", "ownervoucher", "stocklevel", "stockusage" ]
+        "ownerrota", "ownertraploan", "ownervoucher", "stocklevel", "stockusage" ]
     for t in deltables:
         dbo.execute_dbupdate("DELETE FROM %s" % t)
     asm3.dbfs.delete_orphaned_media(dbo) # this deletes dbfs items referenced by the media we just deleted
