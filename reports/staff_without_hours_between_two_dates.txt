@@ -14,7 +14,9 @@ $VAR to DATE Enter to date$
 SELECT o.OwnerName
 FROM owner o
 WHERE o.IsStaff = 1 
-AND NOT EXISTS(SELECT ID FROM ownerrota WHERE StartDateTime >= '$@from$' AND EndDateTime <= '$@to$ 23:59:59' AND RotaTypeID < 10)
+AND NOT EXISTS(SELECT ID FROM ownerrota WHERE OwnerID=o.ID 
+    AND StartDateTime >= '$@from$' AND EndDateTime <= '$@to$ 23:59:59' 
+    AND RotaTypeID < 10)
 ORDER BY o.OwnerName
 ###
 $$HEADER
@@ -24,7 +26,7 @@ HEADER$$
 
 $$BODY
 <tr>
-<td>$OWNERNAME</td>
+  <td><a target="_blank" href="person_rota?id=$ID">$OWNERNAME</a></td>
 </tr>
 BODY$$
 
