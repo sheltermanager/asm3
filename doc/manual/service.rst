@@ -443,7 +443,6 @@ Much more advanced and sophisticated styling can be done from these classes and
 selectors. For example, to float a reserved banner over the top right corner of
 animals with reservations, try this::
 
-   <style>
    .asm3-adoptable-reserved {
        position: relative;
        color: #fff;
@@ -470,7 +469,6 @@ animals with reservations, try this::
        opacity: 0.9;
        transform: rotate(45deg);
    }
-   </style>
 
 Translations
 ^^^^^^^^^^^^
