@@ -1,21 +1,17 @@
-Audit Trail: Login/Logout by Date
+Audit Trail: Sent Emails by Date
 ###
 Auditing
 ###
 34200/Any
 ###
-All login/logout events between two dates, grouped by user.
+All sent email actions between two dates, grouped by user.
 ###
 en
 ###
-SELECT AuditDate, UserName, TableName, Description,
-CASE 
-WHEN Action = 4 THEN 'LOGIN'
-WHEN Action = 5 THEN 'LOGOUT'
-END AS Action
+SELECT AuditDate, UserName, TableName, Description
 FROM audittrail
 WHERE
-Action IN (4, 5) AND
+Action = 8 AND
 AuditDate >= '$ASK DATE Enter the from date$' AND AuditDate <= '$ASK DATE Enter the to date$ 23:59:59'
 ORDER BY UserName, AuditDate
 ###
@@ -28,7 +24,6 @@ $$HEAD
 <table>
 <tr>
 <td><b>Date</b></td>
-<td><b>Action</b></td>
 <td></td>
 </tr>
 $$FOOT
@@ -38,7 +33,6 @@ GROUP$$
 $$BODY
 <tr>
 <td>$AUDITDATE</td>
-<td>$ACTION</td>
 <td>$DESCRIPTION</td>
 </tr>
 BODY$$

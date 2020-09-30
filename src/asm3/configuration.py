@@ -107,6 +107,9 @@ DEFAULTS = {
     "AnnualFiguresSplitAdoptions": "Yes",
     "AnonymisePersonalData": "No",
     "AnonymiseAfterYears": "0",
+    "AuditOnViewRecord": "Yes",
+    "AuditOnViewReport": "Yes",
+    "AuditOnSendEmail": "Yes",
     "AutoCancelReservesDays": "14",
     "AutoDefaultShelterCode": "Yes",
     "AutoDefaultVaccBatch": "Yes",
@@ -566,6 +569,15 @@ def anonymise_personal_data(dbo):
 
 def anonymise_after_years(dbo):
     return cint(dbo, "AnonymiseAfterYears", DEFAULTS["AnonymiseAfterYears"])
+
+def audit_on_view_record(dbo):
+    return cboolean(dbo, "AuditOnViewRecord", DEFAULTS["AuditOnViewRecord"])
+
+def audit_on_view_report(dbo):
+    return cboolean(dbo, "AuditOnViewReport", DEFAULTS["AuditOnViewReport"])
+
+def audit_on_send_email(dbo):
+    return cboolean(dbo, "AuditOnSendEmail", DEFAULTS["AuditOnSendEmail"])
 
 def auto_cancel_reserves_days(dbo):
     return cint(dbo, "AutoCancelReservesDays", int(DEFAULTS["AutoCancelReservesDays"]))

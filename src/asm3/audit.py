@@ -7,6 +7,9 @@ DELETE = 2
 MOVE = 3
 LOGIN = 4
 LOGOUT = 5
+VIEW_RECORD = 6
+VIEW_REPORT = 7
+EMAIL = 8
 
 # How many days to retain records in the audittrail table before removing them
 RETAIN_AUDIT_RECORDS = -182
@@ -155,6 +158,15 @@ def login(dbo, username, remoteip = "", useragent = ""):
 
 def logout(dbo, username, remoteip = "", useragent = ""):
     action(dbo, LOGOUT, username, "users", 0, "", "logout from %s [%s]" % (remoteip, useragent))
+
+def view_record(dbo, username, tablename, linkid, description):
+    action(dbo, VIEW_RECORD, username, tablename, linkid, "", description)
+
+def view_report(dbo, username, reportname, criteria):
+    action(dbo, VIEW_REPORT, username, "customreport", 0, "", "%s - %s" % (reportname, criteria))
+
+def email(dbo, username, fromadd, toadd, ccadd, bccadd, subject, body):
+    action(dbo, EMAIL, username, "email", 0, "", "from: %s, to: %s, cc: %s, bcc: %s, subject: %s - %s" % (fromadd, toadd, ccadd, bccadd, subject, body))
 
 def action(dbo, action, username, tablename, linkid, parentlinks, description):
     """

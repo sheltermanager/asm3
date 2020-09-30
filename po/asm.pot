@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ASM3\n"
 "Report-Msgid-Bugs-To: robin@sheltermanager.com\n"
-"POT-Creation-Date: 2020-08-31 14:45+0000\n"
+"POT-Creation-Date: 2020-09-30 13:34+0000\n"
 "Last-Translator: Robin Rawson-Tetley <robin@sheltermanager.com>\n"
 "Language-Team: en <robin@sheltermanager.com>\n"
 "Language: en\n"
@@ -39,7 +39,7 @@ msgstr ""
 msgid "(available)"
 msgstr ""
 
-#: csvimport.py common_tableform.js person_find_results.js
+#: common_tableform.js person_find_results.js
 msgid "(blank)"
 msgstr ""
 
@@ -2624,6 +2624,18 @@ msgstr ""
 msgid "Columns displayed"
 msgstr ""
 
+#: options.js
+msgid ""
+"Comma separated list of extra addresses that the From email field of send "
+"email dialogs will prompt with"
+msgstr ""
+
+#: options.js
+msgid ""
+"Comma separated list of extra addresses that the To and CC email fields of "
+"send email dialogs will prompt with"
+msgstr ""
+
 #: lookups.js
 msgid "Comma separated list of units for this location, eg: 1,2,3,4,Isolation,Pen 5"
 msgstr ""
@@ -4254,9 +4266,9 @@ msgid "Electricity Bills"
 msgstr ""
 
 #: html.py mobile.py onlineform.py users.js incident.js waitinglist_results.js
-#: person.js onlineform.js waitinglist.js document_repository.js lostfound.js
-#: animal.js options.js person_find.js media.js header_edit_header.js
-#: person_find_results.js
+#: person.js common.js onlineform.js waitinglist.js document_repository.js
+#: lostfound.js animal.js options.js person_find.js media.js
+#: header_edit_header.js person_find_results.js
 msgid "Email"
 msgstr ""
 
@@ -4465,11 +4477,7 @@ msgid "Entered (oldest first)"
 msgstr ""
 
 #: animal_find.js
-msgid "Entered From"
-msgstr ""
-
-#: animal_find.js
-msgid "Entered To"
+msgid "Entered Between"
 msgstr ""
 
 #: header_edit_header.js
@@ -5272,6 +5280,10 @@ msgstr ""
 
 #: animal.py
 msgid "From Other"
+msgstr ""
+
+#: options.js
+msgid "From address book"
 msgstr ""
 
 #: movement.py
@@ -8686,8 +8698,8 @@ msgstr ""
 msgid "Pickup Address"
 msgstr ""
 
-#: html.py incident.js animal_find_results.js incident_find.js animal.js
-#: options.js shelterview.js incident_new.js
+#: html.py incident.js animal_find_results.js animal_find.js incident_find.js
+#: animal.js options.js shelterview.js incident_new.js
 msgid "Pickup Location"
 msgstr ""
 
@@ -9138,16 +9150,16 @@ msgstr ""
 msgid "Reason For Appointment"
 msgstr ""
 
+#: animal_find.js
+msgid "Reason For Entry"
+msgstr ""
+
 #: html.py animal_find_results.js
 msgid "Reason Not From Owner"
 msgstr ""
 
 #: animal.js
 msgid "Reason for Entry"
-msgstr ""
-
-#: animal.js
-msgid "Reason for entry"
 msgstr ""
 
 #: animal.js
@@ -9561,7 +9573,7 @@ msgstr ""
 msgid "Replies to the fosterer email should go to"
 msgstr ""
 
-#: reports.py reports.js
+#: reports.py reports.js common.js
 msgid "Report"
 msgstr ""
 
@@ -11940,6 +11952,10 @@ msgstr ""
 msgid "This date of birth is an estimate"
 msgstr ""
 
+#: options.js
+msgid "This email address is the default From address when sending emails"
+msgstr ""
+
 #: accounts.js
 msgid "This expense account is the source for costs of this type"
 msgstr ""
@@ -12096,6 +12112,10 @@ msgstr ""
 msgid ""
 "This screen allows you to add extra images to your database, for use in "
 "reports and documents."
+msgstr ""
+
+#: options.js
+msgid "This text will be added to the bottom of all send email dialogs"
 msgstr ""
 
 #: move_reclaim.js move_retailer.js move_reserve.js move_transfer.js
@@ -12276,6 +12296,10 @@ msgstr ""
 msgid ""
 "To add people to the rota, create new person records with the staff or "
 "volunteer flag."
+msgstr ""
+
+#: options.js
+msgid "To address book"
 msgstr ""
 
 #: header.js
@@ -12990,7 +13014,7 @@ msgstr ""
 msgid "Vietnamese Pot Bellied"
 msgstr ""
 
-#: onlineform_incoming.js
+#: onlineform_incoming.js common.js
 msgid "View"
 msgstr ""
 

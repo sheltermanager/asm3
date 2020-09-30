@@ -1,18 +1,28 @@
-Audit Trail: All Changes by Specific user
+Audit Trail: All Actions by Specific user
 ###
 Auditing
 ###
-2721/Any
+34200/Any
 ###
-All record creations, changes and deletions by a given user between two dates.
+All audited actions for a given user between two dates.
 ###
 en
 ###
-SELECT AuditDate, UserName, TableName, Description
+SELECT AuditDate, UserName, TableName, Description,
+CASE WHEN Action = 0 THEN 'ADD'
+WHEN Action = 1 THEN 'EDIT'
+WHEN Action = 2 THEN 'DELETE'
+WHEN Action = 3 THEN 'MOVE'
+WHEN Action = 4 THEN 'LOGIN'
+WHEN Action = 5 THEN 'LOGOUT'
+WHEN Action = 6 THEN 'VIEW RECORD'
+WHEN Action = 7 THEN 'VIEW REPORT'
+WHEN Action = 8 THEN 'SEND EMAIL'
+END AS Action
 FROM audittrail
 WHERE
 UserName LIKE '$ASK STRING Enter a username$' 
-AND AuditDate >= '$ASK DATE Enter the from date$' AND AuditDate <= '$ASK DATE Enter the to date$ 23:59:59'
+AND AuditDate >= '$ASK DATE Actions between$' AND AuditDate <= '$and$ 23:59:59'
 ORDER BY UserName, AuditDate
 ###
 $$HEADER
@@ -24,6 +34,7 @@ $$HEAD
 <table>
 <tr>
 <td><b>Date</b></td>
+<td><b>Action</b></td>
 <td><b>Table</b></td>
 <td></td>
 </tr>
@@ -34,6 +45,7 @@ GROUP$$
 $$BODY
 <tr>
 <td>$AUDITDATE</td>
+<td>$ACTION</td>
 <td>$TABLENAME</td>
 <td>$DESCRIPTION</td>
 </tr>

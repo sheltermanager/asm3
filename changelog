@@ -1,6 +1,8 @@
 44
 ================
 
+30/09/20 Support for writing record and report views to audit log #703
+30/09/20 Support for writing sent emails to the audit log #639
 29/09/20 Support MOVEMENTTYPE==0 to create reservations in import
 29/09/20 ANIMALENTRYCATEGORY import field, export new fields
 28/09/20 Diary note completion messages linked to wrong config item

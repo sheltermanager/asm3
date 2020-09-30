@@ -671,6 +671,8 @@ class media(ASMEndpoint):
             attachments.append(( m.MEDIANAME, m.MEDIAMIMETYPE, content ))
             notes.append(m.MEDIANOTES)
         asm3.utils.send_email(dbo, post["from"], emailadd, post["cc"], post["bcc"], post["subject"], post["body"], "html", attachments)
+        if asm3.configuration.audit_on_send_email(dbo): 
+            asm3.audit.email(dbo, o.user, post["from"], emailadd, post["cc"], post["bcc"], post["subject"], post["body"])
         if post.boolean("addtolog"):
             asm3.log.add_log_email(dbo, o.user, asm3.media.get_log_from_media_type(m["LINKTYPEID"]), m["LINKID"], post.integer("logtype"), 
                 emailadd, ", ".join(notes), post["body"])
@@ -692,6 +694,8 @@ class media(ASMEndpoint):
             attachments.append(( "%s.pdf" % m.ID, "application/pdf", contentpdf ))
             notes.append(m.MEDIANOTES)
         asm3.utils.send_email(dbo, post["from"], emailadd, post["cc"], post["bcc"], post["subject"], post["body"], "html", attachments)
+        if asm3.configuration.audit_on_send_email(dbo): 
+            asm3.audit.email(dbo, o.user, post["from"], emailadd, post["cc"], post["bcc"], post["subject"], post["body"])
         if post.boolean("addtolog"):
             asm3.log.add_log_email(dbo, o.user, asm3.media.get_log_from_media_type(m.LINKTYPEID), m.LINKID, post.integer("logtype"), 
                 emailadd, ", ".join(notes), post["body"])
@@ -717,6 +721,8 @@ class media(ASMEndpoint):
                     emailadd, _("Document signing request", l), "".join(body))
             asm3.media.create_log(dbo, o.user, mid, "ES01", _("Document signing request", l))
             asm3.utils.send_email(dbo, post["from"], emailadd, post["cc"], post["bcc"], post["subject"], "\n".join(body), "html")
+            if asm3.configuration.audit_on_send_email(dbo): 
+                asm3.audit.email(dbo, o.user, post["from"], emailadd, post["cc"], post["bcc"], post["subject"], "\n".join(body))
         return emailadd
 
     def post_sign(self, o):
@@ -1265,7 +1271,9 @@ class animal(JSONEndpoint):
         # If a location filter is set, prevent the user opening this animal if it's
         # not in their location.
         self.check_animal(a)
-        asm3.al.debug("opened animal %s %s" % (a["CODE"], a["ANIMALNAME"]), "code.animal", dbo)
+        recname = "%s %s" % (a.CODE, a.ANIMALNAME)
+        if asm3.configuration.audit_on_view_record(dbo): asm3.audit.view_record(dbo, o.user, "animal", a["ID"], recname)
+        asm3.al.debug("opened animal %s" % recname, "code.animal", dbo)
         return {
             "animal": a,
             "activelitters": asm3.animal.get_active_litters_brief(dbo),
@@ -2702,6 +2710,8 @@ class document_repository(JSONEndpoint):
             content = asm3.dbfs.get_string_id(dbo, dbfsid)
             attachments.append(( name, asm3.media.mime_type(name), content ))
         asm3.utils.send_email(dbo, post["from"], post["to"], post["cc"], post["bcc"], post["subject"], post["body"], "html", attachments)
+        if asm3.configuration.audit_on_send_email(dbo): 
+            asm3.audit.email(dbo, o.user, post["from"], post["to"], post["cc"], post["bcc"], post["subject"], post["body"])
         return post["to"]
 
 class document_repository_file(ASMEndpoint):
@@ -2806,6 +2816,8 @@ class donation(JSONEndpoint):
             asm3.log.add_log_email(dbo, o.user, asm3.log.PERSON, post.integer("person"), post.integer("logtype"), 
                 emailadd, post["subject"], "".join(body))
         asm3.utils.send_email(dbo, post["from"], emailadd, post["cc"], post["bcc"], post["subject"], "\n".join(body), "html")
+        if asm3.configuration.audit_on_send_email(dbo): 
+            asm3.audit.email(dbo, o.user, post["from"], emailadd, post["cc"], post["bcc"], post["subject"], post["body"])
         return emailadd
 
     def post_nextreceipt(self, o):
@@ -2847,7 +2859,9 @@ class foundanimal(JSONEndpoint):
         dbo = o.dbo
         a = asm3.lostfound.get_foundanimal(dbo, o.post.integer("id"))
         if a is None: self.notfound()
-        asm3.al.debug("open found animal %s %s %s" % (a["AGEGROUP"], a["SPECIESNAME"], a["OWNERNAME"]), "code.foundanimal", dbo)
+        recname = "%s %s %s" % (a.AGEGROUP, a.SPECIESNAME, a.OWNERNAME)
+        if asm3.configuration.audit_on_view_record(dbo): asm3.audit.view_record(dbo, o.user, "animalfound", a["ID"], recname)
+        asm3.al.debug("open found animal %s" % recname, "code.foundanimal", dbo)
         return {
             "animal": a,
             "name": "foundanimal",
@@ -3071,7 +3085,9 @@ class incident(JSONEndpoint):
         if (a.DISPATCHLATLONG is None or a.DISPATCHLATLONG == "") and a.DISPATCHADDRESS != "":
             a.DISPATCHLATLONG = asm3.animalcontrol.update_dispatch_geocode(dbo, a.ID, \
                 a.DISPATCHLATLONG, a.DISPATCHADDRESS, a.DISPATCHTOWN, a.DISPATCHCOUNTY, a.DISPATCHPOSTCODE)
-        asm3.al.debug("open incident %s %s %s" % (a["ACID"], a["INCIDENTNAME"], python2display(o.locale, a["INCIDENTDATETIME"])), "code.incident", dbo)
+        recname = "%s %s %s" % (a.ACID, a.INCIDENTNAME, python2display(o.locale, a.INCIDENTDATETIME))
+        if asm3.configuration.audit_on_view_record(dbo): asm3.audit.view_record(dbo, o.user, "animalcontrol", a["ID"], recname)
+        asm3.al.debug("open incident %s" % recname, "code.incident", dbo)
         return {
             "agegroups": asm3.configuration.age_groups(dbo),
             "additional": asm3.additional.get_additional_fields(dbo, a["ACID"], "incident"),
@@ -3458,7 +3474,9 @@ class lostanimal(JSONEndpoint):
         dbo = o.dbo
         a = asm3.lostfound.get_lostanimal(dbo, o.post.integer("id"))
         if a is None: self.notfound()
-        asm3.al.debug("open lost animal %s %s %s" % (a["AGEGROUP"], a["SPECIESNAME"], a["OWNERNAME"]), "code.foundanimal", dbo)
+        recname = "%s %s %s" % (a.AGEGROUP, a.SPECIESNAME, a.OWNERNAME)
+        if asm3.configuration.audit_on_view_record(dbo): asm3.audit.view_record(dbo, o.user, "animallost", a["ID"], recname)
+        asm3.al.debug("open lost animal %s" % recname, "code.foundanimal", dbo)
         return {
             "animal": a,
             "name": "lostanimal",
@@ -3688,6 +3706,9 @@ class mailmerge(JSONEndpoint):
         fromadd = post["from"]
         subject = post["subject"]
         body = post["body"]
+        if asm3.configuration.audit_on_send_email(dbo):
+            addresses = [r["EMAILADDRESS"] for r in rows]
+            asm3.audit.email(dbo, o.user, fromadd, addresses, "", "", subject, body)
         asm3.utils.send_bulk_email(dbo, fromadd, subject, body, rows, "html")
 
     def post_document(self, o):
@@ -4515,6 +4536,7 @@ class person(JSONEndpoint):
         upid = asm3.users.get_personid(dbo, o.user)
         if upid != 0 and upid == p.id:
             raise asm3.utils.ASMPermissionError("cannot view user staff record")
+        if asm3.configuration.audit_on_view_record(dbo): asm3.audit.view_record(dbo, o.user, "owner", p.ID, p.OWNERNAME)
         asm3.al.debug("opened person '%s'" % p.OWNERNAME, "code.person", dbo)
         return {
             "additional": asm3.additional.get_additional_fields(dbo, p.id, "person"),
@@ -5109,8 +5131,11 @@ class report(ASMEndpoint):
         self.cache_control(0)
         # If this report takes criteria and none were supplied, go to the criteria screen instead to get them
         if crit != "" and post["hascriteria"] == "": self.redirect("report_criteria?id=%d&target=report" % post.integer("id"))
-        asm3.al.debug("got criteria (%s), executing report %d" % (str(post.data), crid), "code.report", dbo)
+        title = asm3.reports.get_title(dbo, crid)
+        asm3.al.debug("got criteria (%s), executing report %d %s" % (str(post.data), crid, title), "code.report", dbo)
         p = asm3.reports.get_criteria_params(dbo, crid, post)
+        if asm3.configuration.audit_on_view_report(dbo):
+            asm3.audit.view_report(dbo, o.user, title, str(post.data))
         return asm3.reports.execute(dbo, crid, o.user, p)
 
 class report_criteria(JSONEndpoint):
@@ -5836,7 +5861,9 @@ class waitinglist(JSONEndpoint):
         dbo = o.dbo
         a = asm3.waitinglist.get_waitinglist_by_id(dbo, o.post.integer("id"))
         if a is None: self.notfound()
-        asm3.al.debug("opened waiting list %s %s" % (a["OWNERNAME"], a["SPECIESNAME"]), "code.waitinglist", dbo)
+        recname = "%s %s" % (a.OWNERNAME, a.SPECIESNAME)
+        if asm3.configuration.audit_on_view_record(dbo): asm3.audit.view_record(dbo, o.user, "animalwaitinglist", a["ID"], recname)
+        asm3.al.debug("opened waiting list %s" % recname, "code.waitinglist", dbo)
         return {
             "animal": a,
             "additional": asm3.additional.get_additional_fields(dbo, a["ID"], "waitinglist"),

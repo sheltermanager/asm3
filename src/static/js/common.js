@@ -1869,7 +1869,10 @@ const html = {
             2: _("Delete"),
             3: _("Move"),
             4: _("Login"),
-            5: _("Logout")
+            5: _("Logout"),
+            6: _("View"),
+            7: _("Report"),
+            8: _("Email")
         };
         $.each(controller.audit, function(i, v) {
             h.push('<tr>');
