@@ -420,6 +420,7 @@ following classes:
 * asm3-adoptable-link : The a tag enclosing the thumbnail and animal name
 * asm3-adoptable-thumbnail : The thumbnail img tag
 * asm3-adoptable-name : The animal's name
+* asm3-adoptable-reserved : The div surrounding the image if the animal is reserved
 * asm3-adoptable-tagline : The brief animal information
 
 and the following elements by their id attribute:
@@ -437,6 +438,39 @@ bold, add this to your CSS::
 To increase the size of the close link, add this::
 
     #asm3-adoptable-iframe-close { font-size: 200%; }
+
+Much more advanced and sophisticated styling can be done from these classes and
+selectors. For example, to float a reserved banner over the top right corner of
+animals with reservations, try this::
+
+   <style>
+   .asm3-adoptable-reserved {
+       position: relative;
+       color: #fff;
+       display: inline-block;
+       padding: 5px;
+       overflow: hidden;
+       font-family: Arial, sans-serif;
+       font-size: 8pt;
+       font-weight: bold;
+   }
+   .asm3-adoptable-reserved span:before {
+       content: "\00a0\00a0\00a0\00a0\00a0RESERVED";
+   }
+   .asm3-adoptable-reserved span {
+       position: absolute; 
+       display: inline-block;
+       right: -25px;
+       box-shadow: 0px 0px 10px rgba(0,0,0,0.2), inset 0px 5px 30px rgba(255,255,255,0.2);
+       text-align: center;
+       top: 6px;
+       background: #ff0000;
+       width: 100px;
+       padding: 3px 10px;
+       opacity: 0.9;
+       transform: rotate(45deg);
+   }
+   </style>
 
 Translations
 ^^^^^^^^^^^^

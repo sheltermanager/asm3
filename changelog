@@ -1,6 +1,7 @@
 44
 ================
 
+30/09/20 asm3-adoptable-reserved class and manual example
 30/09/20 Support for writing record and report views to audit log #703
 30/09/20 Support for writing sent emails to the audit log #639
 29/09/20 Support MOVEMENTTYPE==0 to create reservations in import

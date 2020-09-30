@@ -614,6 +614,7 @@ following classes:</p>
 <li>asm3-adoptable-link : The a tag enclosing the thumbnail and animal name</li>
 <li>asm3-adoptable-thumbnail : The thumbnail img tag</li>
 <li>asm3-adoptable-name : The animal’s name</li>
+<li>asm3-adoptable-reserved : The div surrounding the image if the animal is reserved</li>
 <li>asm3-adoptable-tagline : The brief animal information</li>
 </ul>
 <p>and the following elements by their id attribute:</p>
@@ -630,6 +631,39 @@ bold, add this to your CSS:</p>
 </div>
 <p>To increase the size of the close link, add this:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1">#asm3-adoptable-iframe-close { font-size: 200%; }</span>
+</pre></div>
+</div>
+<p>Much more advanced and sophisticated styling can be done from these classes and
+selectors. For example, to float a reserved banner over the top right corner of
+animals with reservations, try this:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">style</span><span class="o">&gt;</span>
+<span class="o">.</span><span class="n">asm3</span><span class="o">-</span><span class="n">adoptable</span><span class="o">-</span><span class="n">reserved</span> <span class="p">{</span>
+    <span class="n">position</span><span class="p">:</span> <span class="n">relative</span><span class="p">;</span>
+    <span class="n">color</span><span class="p">:</span> <span class="c1">#fff;</span>
+    <span class="n">display</span><span class="p">:</span> <span class="n">inline</span><span class="o">-</span><span class="n">block</span><span class="p">;</span>
+    <span class="n">padding</span><span class="p">:</span> <span class="mi">5</span><span class="n">px</span><span class="p">;</span>
+    <span class="n">overflow</span><span class="p">:</span> <span class="n">hidden</span><span class="p">;</span>
+    <span class="n">font</span><span class="o">-</span><span class="n">family</span><span class="p">:</span> <span class="n">Arial</span><span class="p">,</span> <span class="n">sans</span><span class="o">-</span><span class="n">serif</span><span class="p">;</span>
+    <span class="n">font</span><span class="o">-</span><span class="n">size</span><span class="p">:</span> <span class="mi">8</span><span class="n">pt</span><span class="p">;</span>
+    <span class="n">font</span><span class="o">-</span><span class="n">weight</span><span class="p">:</span> <span class="n">bold</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="o">.</span><span class="n">asm3</span><span class="o">-</span><span class="n">adoptable</span><span class="o">-</span><span class="n">reserved</span> <span class="n">span</span><span class="p">:</span><span class="n">before</span> <span class="p">{</span>
+    <span class="n">content</span><span class="p">:</span> <span class="s2">&quot;</span><span class="se">\00</span><span class="s2">a0</span><span class="se">\00</span><span class="s2">a0</span><span class="se">\00</span><span class="s2">a0</span><span class="se">\00</span><span class="s2">a0</span><span class="se">\00</span><span class="s2">a0RESERVED&quot;</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="o">.</span><span class="n">asm3</span><span class="o">-</span><span class="n">adoptable</span><span class="o">-</span><span class="n">reserved</span> <span class="n">span</span> <span class="p">{</span>
+    <span class="n">position</span><span class="p">:</span> <span class="n">absolute</span><span class="p">;</span>
+    <span class="n">display</span><span class="p">:</span> <span class="n">inline</span><span class="o">-</span><span class="n">block</span><span class="p">;</span>
+    <span class="n">right</span><span class="p">:</span> <span class="o">-</span><span class="mi">25</span><span class="n">px</span><span class="p">;</span>
+    <span class="n">box</span><span class="o">-</span><span class="n">shadow</span><span class="p">:</span> <span class="mi">0</span><span class="n">px</span> <span class="mi">0</span><span class="n">px</span> <span class="mi">10</span><span class="n">px</span> <span class="n">rgba</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mf">0.2</span><span class="p">),</span> <span class="n">inset</span> <span class="mi">0</span><span class="n">px</span> <span class="mi">5</span><span class="n">px</span> <span class="mi">30</span><span class="n">px</span> <span class="n">rgba</span><span class="p">(</span><span class="mi">255</span><span class="p">,</span><span class="mi">255</span><span class="p">,</span><span class="mi">255</span><span class="p">,</span><span class="mf">0.2</span><span class="p">);</span>
+    <span class="n">text</span><span class="o">-</span><span class="n">align</span><span class="p">:</span> <span class="n">center</span><span class="p">;</span>
+    <span class="n">top</span><span class="p">:</span> <span class="mi">6</span><span class="n">px</span><span class="p">;</span>
+    <span class="n">background</span><span class="p">:</span> <span class="c1">#ff0000;</span>
+    <span class="n">width</span><span class="p">:</span> <span class="mi">100</span><span class="n">px</span><span class="p">;</span>
+    <span class="n">padding</span><span class="p">:</span> <span class="mi">3</span><span class="n">px</span> <span class="mi">10</span><span class="n">px</span><span class="p">;</span>
+    <span class="n">opacity</span><span class="p">:</span> <span class="mf">0.9</span><span class="p">;</span>
+    <span class="n">transform</span><span class="p">:</span> <span class="n">rotate</span><span class="p">(</span><span class="mi">45</span><span class="n">deg</span><span class="p">);</span>
+<span class="p">}</span>
+<span class="o">&lt;/</span><span class="n">style</span><span class="o">&gt;</span>
 </pre></div>
 </div>
 </div>
