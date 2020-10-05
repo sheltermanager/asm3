@@ -41,6 +41,14 @@ const common = {
         return overlap;
     },
 
+    /**
+     * Returns true if v is present in array arr.
+     * NB: Types must match, int 1 !== str "1"
+     */
+    array_in: function(v, arr) {
+        return $.inArray(v, arr) != -1;
+    },
+
     base64_encode: function(i) {
         return btoa(encodeURIComponent(i));
     },
@@ -1521,7 +1529,9 @@ const html = {
         if (a.NONSHELTERANIMAL == 1) { return [ false, _("Non-Shelter") ]; }
         if (a.DECEASEDDATE) { return [ false, _("Deceased") ]; }
         if (a.CRUELTYCASE == 1 && p.indexOf("includecase") == -1) { return [ false, _("Cruelty Case") ]; }
-        if (a.NEUTERED == 0 && p.indexOf("includenonneutered") == -1) { return [ false, _("Unaltered") ]; }
+        if (a.NEUTERED == 0 && p.indexOf("includenonneutered") == -1 && 
+            common.array_in(String(a.SPECIESID), config.str("AlertSpeciesNeuter").split(","))
+            ) { return [ false, _("Unaltered") ]; }
         if (a.HASACTIVERESERVE == 1 && a.RESERVEDOWNERID && p.indexOf("includereserved") == -1) {
             return [ false, _("Reserved") + " " + html.icon("right") + " " + 
                     html.person_link(a.RESERVEDOWNERID, a.RESERVEDOWNERNAME) ];
@@ -2359,7 +2369,7 @@ const html = {
         if (!n) { $(selbrand).fadeOut(); return; }
         $.each(asm.microchipmanufacturers, function(i, v) {
             if (n.length == v.length && new RegExp(v.regex).test(n)) {
-                if (v.locales == "" || $.inArray(asm.locale, v.locales.split(" ")) != -1) {
+                if (v.locales == "" || common.array_in(asm.locale, v.locales.split(" "))) {
                     m = "<span style='font-weight: bold'>" + v.name + "</span>";
                     return false;
                 }
