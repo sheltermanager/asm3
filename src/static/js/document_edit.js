@@ -18,13 +18,12 @@ $(function() {
         w = Math.floor(($(window).width() / 100.0) * 80.0);
     // max-width is 775px
     if (w > 775) { w = 775; }
-    $("div").css({ height: h - 160, width: w });
-    $("#wp").css({ height: h - 160, width: w });
+    $("div").css({ height: h - 20, width: w });
+    $("#wp").css({ height: h - 20, width: w });
 
     tinymce.init({
         selector: "#wp",
-        theme: "modern",
-        content_css: "css?v=asm-tinymce.css&k=" + buildno,
+        content_css: "static/css/asm-tinymce.css?k=" + buildno,
         plugins: [
             "advlist autolink directionality lists link image charmap print preview",
             "hr anchor pagebreak searchreplace wordcount visualblocks visualchars code fullscreen",
@@ -81,10 +80,10 @@ $(function() {
 
             // Add a PDF button
             if (pdfenabled) {
-                ed.addButton("pdf", {
-                    title: "PDF",
-                    image: "static/images/icons/pdf.png",
-                    onclick: function() {
+                ed.ui.registry.addButton("pdf", {
+                    tooltip: "View this document as a PDF",
+                    icon: "document-properties",
+                    onAction: function() {
                         $("input[name='mode']").val("pdf");
                         $("form").submit();
                     }

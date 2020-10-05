@@ -648,6 +648,8 @@ select:disabled, input:disabled, textarea:disabled {
     color: #000;
     overflow: scroll;
 }
+/** in richtextarea, the tinymce toolbar is used, stop dialogs floating over it */
+.tox-tinymce-inline { z-index: 101; }
 
 .asm-htmleditor, .asm-sqleditor {
     display: none;

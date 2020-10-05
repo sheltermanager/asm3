@@ -20,7 +20,7 @@
         display: block;
         width: 100%;
         height: 12px;
-        background-image: url(static/images/ui/tinymce-pagebreak.png);
+        background-image: url(../images/ui/tinymce-pagebreak.png);
         background-position: center;
         border: 0;
         margin-top: 15px;

@@ -12,7 +12,7 @@ import asm3.utils
 from asm3.i18n import BUILD, _, translate, format_currency, format_date, get_locales, now, python2display, python2unix, real_locale
 from asm3.sitedefs import QR_IMG_SRC
 from asm3.sitedefs import BASE_URL, LOCALE, ROLLUP_JS
-from asm3.sitedefs import ASMSELECT_CSS, ASMSELECT_JS, BASE64_JS, CODEMIRROR_CSS, CODEMIRROR_JS, CODEMIRROR_BASE, FLOT_JS, FLOT_PIE_JS, FULLCALENDAR_JS, FULLCALENDAR_CSS, JQUERY_JS, JQUERY_UI_JS, JQUERY_UI_CSS, MOMENT_JS, MOUSETRAP_JS, PATH_JS, SIGNATURE_JS, TABLESORTER_CSS, TABLESORTER_JS, TABLESORTER_WIDGETS_JS, TIMEPICKER_CSS, TIMEPICKER_JS, TINYMCE_4_JS, TOUCHPUNCH_JS
+from asm3.sitedefs import ASMSELECT_CSS, ASMSELECT_JS, BASE64_JS, CODEMIRROR_CSS, CODEMIRROR_JS, CODEMIRROR_BASE, FLOT_JS, FLOT_PIE_JS, FULLCALENDAR_JS, FULLCALENDAR_CSS, JQUERY_JS, JQUERY_UI_JS, JQUERY_UI_CSS, MOMENT_JS, MOUSETRAP_JS, PATH_JS, SIGNATURE_JS, TABLESORTER_CSS, TABLESORTER_JS, TABLESORTER_WIDGETS_JS, TIMEPICKER_CSS, TIMEPICKER_JS, TINYMCE_5_JS, TOUCHPUNCH_JS
 
 import os
 
@@ -216,7 +216,7 @@ def bare_header(title, theme = "asm", locale = LOCALE, config_db = "asm", config
                 script_tag(TABLESORTER_JS) + 
                 script_tag(TABLESORTER_WIDGETS_JS) + 
                 script_tag(TIMEPICKER_JS) +
-                script_tag(TINYMCE_4_JS) +
+                script_tag(TINYMCE_5_JS) +
                 script_tag(PATH_JS) + 
                 script_config() + 
                 script_i18n(locale) + 
@@ -242,6 +242,7 @@ def tinymce_header(title, js, jswindowprint = True, pdfenabled = True, visualaid
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
         <link rel="shortcut icon" href="static/images/logo/icon-16.png" />
         %(jquery)s
+        %(css)s
         <script type="text/javascript">
         var baseurl = '%(baseurl)s';
         var buildno = '%(buildno)s';
@@ -257,7 +258,8 @@ def tinymce_header(title, js, jswindowprint = True, pdfenabled = True, visualaid
         <body>
     """ % { "title": title,
            "jquery": script_tag(JQUERY_JS), 
-           "tinymce": script_tag(TINYMCE_4_JS),
+           "tinymce": script_tag(TINYMCE_5_JS),
+           "css": asm_css_tag("asm-tinymce.css"),
            "script": asm_script_tag(js),
            "baseurl": BASE_URL,
            "buildno": BUILD,

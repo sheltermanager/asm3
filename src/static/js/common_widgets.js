@@ -1227,7 +1227,6 @@ $.widget("asm.richtextarea", {
                 "insertdatetime media nonbreaking table contextmenu directionality",
                 "emoticons template paste textcolor"
                 ],
-            theme: "modern",
             inline: true,
             menubar: false,
             statusbar: false, 
@@ -1251,6 +1250,9 @@ $.widget("asm.richtextarea", {
 
             setup: function(ed) {
                 self.editor = ed;
+                ed.on("init", function(ed) {
+                    $(".tox-tinymce-inline").css({ "z-index": 101 }); // Prevent floating under dialogs
+                });
             }
 
         });

@@ -1,6 +1,7 @@
 44
 ================
 
+05/10/20 Upgrade to TinyMCE 5.3.1
 05/10/20 Start date missing from AnimalMedicals wordkey
 05/10/20 Non-neutered adoptable status should use alert config item
 01/10/20 SavourLife now support deleting listings via API
