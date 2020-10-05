@@ -80,9 +80,10 @@ $(function() {
 
             // Add a PDF button
             if (pdfenabled) {
+                ed.ui.registry.addIcon("pdf", '<img src="static/images/ui/tinymce-pdf.png" />')
                 ed.ui.registry.addButton("pdf", {
                     tooltip: "View this document as a PDF",
-                    icon: "document-properties",
+                    icon: "pdf",
                     onAction: function() {
                         $("input[name='mode']").val("pdf");
                         $("form").submit();
