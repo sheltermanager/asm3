@@ -1329,8 +1329,8 @@ $(function() {
 
             $("#emailform").emailform();
 
-            // If the option isn't set to allow alphanumeric/space
-            // characters in microchip and ntattoo numbers, use
+            // If the option isn't set to allow non-alphanumeric
+            // characters in microchip and tattoo numbers, use
             // the alphanumberbox widget.
             if (!config.bool("AllowNonANMicrochip")) {
                 $("#microchipnumber").alphanumber();

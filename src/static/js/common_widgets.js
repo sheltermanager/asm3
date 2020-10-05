@@ -248,9 +248,9 @@ $.fn.number = function() {
     });
 };
 
-// Textbox that should only contain numbers and letters (no spaces or punctuation)
+// Textbox that should only contain numbers and letters (numbers, latin alphabet, no spaces, limited punctuation)
 $.fn.alphanumber = function() {
-    const allowed = new RegExp("[0-9A-Za-z\\.]");
+    const allowed = new RegExp("[0-9A-Za-z\\.\\*\\-]");
     this.each(function() {
         $(this).keypress(function(e) {
             let k = e.charCode || e.keyCode;
