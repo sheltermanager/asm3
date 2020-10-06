@@ -818,6 +818,9 @@ def fosterer_emails_reply_to(dbo):
 def fosterer_emails_msg(dbo):
     return cstring(dbo, "FostererEmailsMsg")
 
+def foundanimals_cutoff_days(dbo):
+    return cint(dbo, "FoundAnimalsCutoffDays")
+
 def foundanimals_email(dbo):
     return cstring(dbo, "FoundAnimalsEmail")
 
@@ -1071,6 +1074,9 @@ def helpinglostpets_password(dbo):
 
 def helpinglostpets_postal(dbo):
     return cstring(dbo, "HelpingLostPetsPostal")
+
+def petlink_cutoff_days(dbo):
+    return cint(dbo, "PetLinkCutoffDays")
 
 def petlink_email(dbo):
     return cstring(dbo, "PetLinkEmail")

@@ -1,6 +1,7 @@
 44
 ================
 
+06/10/20 Overridable default cut off of 3 years for PetLink chips
 06/10/20 Allow OSM tile location to be overridden
 05/10/20 Add locale for Mauritius, correct currency symbol for India
 05/10/20 Extra common punctuation in alphanumber for tattoo/chip
