@@ -1,4 +1,16 @@
 
+/** These two directives match what we had on TinyMCE 4 **/
+body { 
+    font-family: sans-serif; 
+    font-size: 11px; 
+}
+
+td, th { 
+    font-family: sans-serif; 
+    font-size: 11px; 
+}
+
+
 @media print {
     .mce-pagebreak {
         display: block;

@@ -1,6 +1,7 @@
 44
 ================
 
+06/10/20 Fix TinyMCE default fontsize to match old version
 06/10/20 Allow template paths to be specified in rename
 06/10/20 Overridable default cut off of 3 years for PetLink chips
 06/10/20 Allow OSM tile location to be overridden
