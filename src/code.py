@@ -544,6 +544,9 @@ class configjs(ASMEndpoint):
         maplink = MAP_LINK
         maplinko = asm3.configuration.map_link_override(dbo)
         if maplinko != "": maplinko = maplink
+        osmmaptiles = OSM_MAP_TILES
+        osmmaptileso = asm3.configuration.osm_map_tiles_override(dbo)
+        if osmmaptileso != "": osmmaptiles = osmmaptileso
         c = { "baseurl": BASE_URL,
             "serviceurl": SERVICE_URL,
             "build": BUILD,
@@ -581,7 +584,7 @@ class configjs(ASMEndpoint):
             "maplink": maplink,
             "mapprovider": mapprovider,
             "mapproviderkey": mapproviderkey,
-            "osmmaptiles": OSM_MAP_TILES,
+            "osmmaptiles": osmmaptiles,
             "hascustomlogo": asm3.dbfs.file_exists(dbo, "logo.jpg"),
             "mobileapp": o.session.mobileapp,
             "config": asm3.configuration.get_map(dbo),

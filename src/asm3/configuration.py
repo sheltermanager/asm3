@@ -1009,6 +1009,9 @@ def organisation_country(dbo):
 def organisation_telephone(dbo):
     return cstring(dbo, "OrganisationTelephone", DEFAULTS["OrganisationTelephone"])
 
+def osm_map_tiles_override(dbo):
+    return cstring(dbo, "OSMMapTilesOverride")
+
 def owner_name_format(dbo):
     return cstring(dbo, "OwnerNameFormat", DEFAULTS["OwnerNameFormat"])
 
