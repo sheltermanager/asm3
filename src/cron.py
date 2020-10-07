@@ -243,7 +243,7 @@ def maint_db_fix_preferred_photos(dbo):
 def maint_db_dump(dbo):
     try:
         for x in dbupdate.dump(dbo):
-            print(utils.cunicode(x).encode("utf-8"))
+            print(x)
     except:
         em = str(sys.exc_info()[0])
         al.error("FAIL: uncaught error running maint_db_dump: %s" % em, "cron.maint_db_dump", dbo, sys.exc_info())
@@ -251,7 +251,7 @@ def maint_db_dump(dbo):
 def maint_db_dump_hsqldb(dbo):
     try:
         for x in dbupdate.dump_hsqldb(dbo):
-            print(utils.cunicode(x).encode("utf-8"))
+            print(x)
     except:
         em = str(sys.exc_info()[0])
         al.error("FAIL: uncaught error running maint_db_dump_hsqldb: %s" % em, "cron.maint_db_dump_hsqldb", dbo, sys.exc_info())
@@ -259,14 +259,22 @@ def maint_db_dump_hsqldb(dbo):
 def maint_db_dump_dbfs_base64(dbo):
     try:
         for x in dbupdate.dump_dbfs_base64(dbo):
-            print(utils.cunicode(x).encode("utf-8"))
+            print(x)
     except:
         em = str(sys.exc_info()[0])
         al.error("FAIL: uncaught error running maint_db_dump_dbfs_base64: %s" % em, "cron.maint_db_dump_dbfs_base64", dbo, sys.exc_info())
 
+def maint_db_dump_lookups(dbo):
+    try:
+        for x in dbupdate.dump_lookups(dbo):
+            print(x)
+    except:
+        em = str(sys.exc_info()[0])
+        al.error("FAIL: uncaught error running maint_db_dump_lookups: %s" % em, "cron.maint_db_dump_lookups", dbo, sys.exc_info())
+
 def maint_db_dump_merge(dbo):
     try:
-        print(utils.cunicode(dbupdate.dump_merge(dbo)).encode("utf-8"))
+        print(dbupdate.dump_merge(dbo))
     except:
         em = str(sys.exc_info()[0])
         al.error("FAIL: uncaught error running maint_db_dump_merge: %s" % em, "cron.maint_db_dump_merge", dbo, sys.exc_info())
@@ -274,10 +282,10 @@ def maint_db_dump_merge(dbo):
 def maint_db_dump_smcom(dbo):
     try:
         for x in dbupdate.dump_smcom(dbo):
-            print(utils.cunicode(x).encode("utf-8"))
+            print(x)
     except:
         em = str(sys.exc_info()[0])
-        al.error("FAIL: uncaught error running maint_db_dump: %s" % em, "cron.maint_db_dump_smcom", dbo, sys.exc_info())
+        al.error("FAIL: uncaught error running maint_db_dump_smcom: %s" % em, "cron.maint_db_dump_smcom", dbo, sys.exc_info())
 
 def maint_db_dump_animalcsv(dbo):
     try:
@@ -457,6 +465,8 @@ def run(dbo, mode):
         maint_db_dump(dbo)
     elif mode == "maint_db_dump_dbfs_base64":
         maint_db_dump_dbfs_base64(dbo)
+    elif mode == "maint_db_dump_lookups":
+        maint_db_dump_lookups(dbo)
     elif mode == "maint_db_dump_merge":
         maint_db_dump_merge(dbo)
     elif mode == "maint_db_dump_smcom":
@@ -550,6 +560,7 @@ def print_usage():
     print("       maint_db_dump_animalcsv - produce a CSV of animal/adoption/owner data")
     print("       maint_db_dump_personcsv - produce a CSV of person data")
     print("       maint_db_dump_hsqldb - produce a complete HSQLDB file for ASM2")
+    print("       maint_db_dump_lookups - produce an SQL dump of lookup tables only")
     print("       maint_db_dump_smcom - produce an SQL dump for import into sheltermanager.com")
     print("       maint_db_install - install structure/data into a new empty database")
     print("       maint_db_reinstall - wipe the db and reinstall all default data and templates")

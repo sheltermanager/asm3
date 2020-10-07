@@ -82,6 +82,30 @@ TABLES_NO_ID_COLUMN = ( "accountsrole", "additional", "audittrail", "animalcontr
     "animalcontrolrole", "animallostfoundmatch", "animalpublished", "configuration", "customreportrole", 
     "deletion", "onlineformincoming", "ownerlookingfor", "userrole" )
 
+# Tables that contain data rather than lookups - used by reset_db
+# to determine which tables to delete data from
+TABLES_DATA = ( "accountsrole", "accountstrx", "additional", "adoption", 
+    "animal", "animalcontrol", "animalcontrolanimal","animalcontrolrole", 
+    "animallostfoundmatch", "animalpublished", 
+    "animalcost", "animaldiet", "animalfigures", "animalfiguresannual", 
+    "animalfound", "animallitter", "animallost", "animalmedical", "animalmedicaltreatment", "animalname",
+    "animaltest", "animaltransport", "animalvaccination", "animalwaitinglist", "audittrail", 
+    "clinicappointment", "clinicinvoiceitem", "deletion", "diary", "log", "ownerlookingfor", "publishlog",
+    "media", "messages", "owner", "ownercitation", "ownerdonation", "ownerinvestigation", "ownerlicence", 
+    "ownerrota", "ownertraploan", "ownervoucher", "stocklevel", "stockusage" )
+
+# Tables that contain lookup data. used by dump with includeLookups
+TABLES_LOOKUP = ( "accounts", "additionalfield", "animaltype", "basecolour", "breed", "citationtype", 
+    "costtype", "deathreason", "diarytaskdetail", "diarytaskhead", "diet", "donationpayment", 
+    "donationtype", "entryreason", "incidentcompleted", "incidenttype", "internallocation", "jurisdiction", 
+    "licencetype", "lkanimalflags", "lkcoattype", "lkownerflags", "lksaccounttype", "lksclinicstatus", 
+    "lksdiarylink", "lksdonationfreq", "lksex", "lksfieldlink", "lksfieldtype", "lksize", "lksloglink", 
+    "lksmedialink", "lksmediatype", "lksmovementtype", "lksposneg", "lksrotatype", "lksyesno", "lksynun", 
+    "lksynunk", "lkstransportstatus", "lkurgency", "lkworktype", "logtype", "medicalprofile", 
+    "onlineform", "onlineformfield", "pickuplocation", "reservationstatus", "site", "species", 
+    "templatedocument", "templatehtml", "testtype", "testresult", "transporttype", "traptype", 
+    "vaccinationtype", "voucher" )
+
 VIEWS = ( "v_adoption", "v_animal", "v_animalcontrol", "v_animalfound", "v_animallost", 
     "v_animalmedicaltreatment", "v_animaltest", "v_animalvaccination", "v_animalwaitinglist", 
     "v_owner", "v_ownercitation", "v_ownerdonation", "v_ownerlicence", "v_ownertraploan", 
@@ -2566,13 +2590,16 @@ def install(dbo):
     install_default_onlineforms(dbo)
 
 def dump(dbo, includeConfig = True, includeDBFS = True, includeCustomReport = True, \
-        includeNonASM2 = True, includeUsers = True, includeLKS = True, deleteDBV = False, deleteFirst = True, deleteViewSeq = False, \
+        includeData = True, includeNonASM2 = True, includeUsers = True, includeLKS = True, \
+        includeLookups = True, deleteDBV = False, deleteFirst = True, deleteViewSeq = False, \
         escapeCR = "", uppernames = False, wrapTransaction = True):
     """
     Dumps all of the data in the database as DELETE/INSERT statements.
     includeConfig - include the config table
     includeDBFS - include the dbfs table
     includeCustomReport - include the custom report table
+    includeData - include data tables (animal, owner, etc)
+    includeLookups - include lookup tables
     includeLKS - include static lks tables
     includeUsers - include user and role tables
     deleteDBV - issue DELETE DBV from config after dump to force update/checks
@@ -2589,8 +2616,10 @@ def dump(dbo, includeConfig = True, includeDBFS = True, includeCustomReport = Tr
         if not includeDBFS and t == "dbfs": continue
         if not includeCustomReport and t == "customreport": continue
         if not includeConfig and t == "configuration": continue
+        if not includeData and t in TABLES_DATA: continue
         if not includeUsers and (t == "users" or t == "userrole" or t == "role" or t == "accountsrole" or t == "customreportrole"): continue
         if not includeLKS and t.startswith("lks"): continue
+        if not includeLookups and t in TABLES_LOOKUP: continue
         # ASM2_COMPATIBILITY
         if not includeNonASM2 and t not in TABLES_ASM2 : continue
         outtable = t
@@ -2647,6 +2676,14 @@ def dump_hsqldb(dbo, includeDBFS = True):
         "(1, 'user', 'Default', 'd107d09f5bbe40cade3de5c71e9e9b7', 1, 0, '', 0);\n"
     yield "DELETE FROM configuration WHERE ItemName LIKE 'DatabaseVersion' OR ItemName LIKE 'SMDBLocked';\n"
     yield "INSERT INTO configuration (ItemName, ItemValue) VALUES ('DatabaseVersion', '2870');\n"
+
+def dump_lookups(dbo):
+    """
+    Dumps only the lookup tables. Useful for smcom where we get people requesting a 
+    new account with lookups from another account
+    """
+    for x in dump(dbo, includeDBFS = False, includeConfig = False, includeData = False, includeUsers = False, deleteDBV = True, deleteViewSeq = True, wrapTransaction = True):
+        yield x
 
 def dump_smcom(dbo):
     """
@@ -2808,13 +2845,7 @@ def reset_db(dbo):
     """
     Resets a database by removing all data from non-lookup tables.
     """
-    deltables = [ "accountstrx", "additional", "adoption", "animal", "animalcontrol", "animalcontrolanimal",
-        "animalcost", "animaldiet", "animalfigures", "animalfiguresannual", 
-        "animalfound", "animallitter", "animallost", "animalmedical", "animalmedicaltreatment", "animalname",
-        "animaltest", "animaltransport", "animalvaccination", "animalwaitinglist", "diary", "log",
-        "media", "messages", "owner", "ownercitation", "ownerdonation", "ownerinvestigation", "ownerlicence", 
-        "ownerrota", "ownertraploan", "ownervoucher", "stocklevel", "stockusage" ]
-    for t in deltables:
+    for t in TABLES_DATA:
         dbo.execute_dbupdate("DELETE FROM %s" % t)
     asm3.dbfs.delete_orphaned_media(dbo) # this deletes dbfs items referenced by the media we just deleted
     install_db_sequences(dbo)
