@@ -1001,7 +1001,7 @@ $.widget("asm.callout", {
         button.append(html.icon("callout"));
 
         // Create the callout
-        $("#asm-content").append('<div id="' + popupid + '">' + html.info(content) + '</div>');
+        $("#asm-content").append('<div id="' + popupid + '" class="asm-callout-popup">' + html.info(content) + '</div>');
         let popup = $("#" + popupid);
         this.options.popup = popup;
         popup.css("display", "none");

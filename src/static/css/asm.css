@@ -544,7 +544,7 @@ select:disabled, input:disabled, textarea:disabled {
     display: inline-block;
     white-space: nowrap;
 	border-radius: 3px;
-    box-shadow: 0 1px 3px #DDD;
+    box-shadow: 0 1px 3px #ddd;
     border: 1px solid #555;
     padding: 5px;
     margin: 1px;
@@ -563,7 +563,7 @@ select:disabled, input:disabled, textarea:disabled {
     display: inline-block;
     white-space: nowrap;
 	border-radius: 3px;
-    box-shadow: 0 1px 3px #DDD;
+    box-shadow: 0 1px 3px #ddd;
     border: 1px solid #555;
     padding: 5px;
     margin: 1px;
@@ -635,6 +635,10 @@ select:disabled, input:disabled, textarea:disabled {
 .asm-additional-fields-container {
 }
 
+.asm-callout-popup {
+    box-shadow: 3px 3px 5px #888;
+}
+
 .asm-textarea {
     width: 98%;
     border: 1px solid #555;
@@ -656,7 +660,7 @@ select:disabled, input:disabled, textarea:disabled {
 }
 
 .controlshadow {
-    box-shadow: 0 1px 2px #DDD;
+    box-shadow: 0 1px 2px #ddd;
 }
 
 .borderradius .controlborder {
