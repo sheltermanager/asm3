@@ -5381,16 +5381,29 @@ class sql(JSONEndpoint):
         self.content_type("text/plain")
         return self.exec_sql_from_file(o.dbo, o.user, sql)
 
+    def check_update_query(self, q):
+        """ Prevent any kind of update to certain tables to prevent
+            more savvy malicious users tampering via SQL Interface.
+            q is already stripped and converted to lower case by the exec_sql caller.
+            If one of our tamper proofed tables is touched, an Exception is raised
+            and the query not run.
+        """
+        for t in ( "audittrail", "deletion" ):
+            if q.find(t) != -1:
+                raise Exception("Forbidden: %s" % q)
+
     def exec_sql(self, dbo, user, sql):
         l = dbo.locale
         rowsaffected = 0
         try:
             for q in dbo.split_queries(sql):
                 if q == "": continue
+                ql = q.lower()
                 asm3.al.info("%s query: %s" % (user, q), "code.sql", dbo)
-                if q.lower().startswith("select") or q.lower().startswith("show"):
+                if ql.startswith("select") or ql.startswith("show"):
                     return asm3.html.table(dbo.query(q))
                 else:
+                    self.check_update_query(ql)
                     rowsaffected += dbo.execute(q)
             asm3.configuration.db_view_seq_version(dbo, "0")
             return _("{0} rows affected.", l).format(rowsaffected)
@@ -5404,10 +5417,12 @@ class sql(JSONEndpoint):
         for q in dbo.split_queries(sql):
             try:
                 if q == "": continue
+                ql = q.lower()
                 asm3.al.info("%s query: %s" % (user, q), "code.sql", dbo)
-                if q.lower().startswith("select") or q.lower().startswith("show"):
+                if ql.startswith("select") or ql.startswith("show"):
                     output.append(str(dbo.query(q)))
                 else:
+                    self.check_update_query(ql)
                     rowsaffected = dbo.execute(q)
                     output.append(_("{0} rows affected.", l).format(rowsaffected))
             except Exception as err:
