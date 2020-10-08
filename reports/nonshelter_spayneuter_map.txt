@@ -8,7 +8,7 @@ Non-shelter animals spayed/neutered between two dates with owner pinned on the m
 ###
 en
 ###
-$VAR from DATE Brought in between$
+$VAR from DATE Spay/neutered between$
 $VAR to DATE and$
 
 SELECT o.LatLong, 
@@ -36,7 +36,7 @@ Non-shelter animals spayed/neutered between two dates with owner pinned on the m
 ###
 en
 ###
-$VAR from DATE Brought in between$
+$VAR from DATE Spay/neutered between$
 $VAR to DATE and$
 
 SELECT o.LatLong, 
@@ -65,7 +65,7 @@ Non-shelter animals spayed/neutered between two dates with owner pinned on the m
 ###
 en
 ###
-$VAR from DATE Brought in between$
+$VAR from DATE Spay/neutered between$
 $VAR to DATE and$
 
 SELECT o.LatLong, 
