@@ -4,6 +4,8 @@ $(function() {
 
     "use strict";
    
+    let is_mobile = navigator.userAgent.match(/Android|iPhone|iPad|Kindle/i);
+ 
     let rw_toolbar = "save pdf print | undo redo | fontselect fontsizeselect | bold italic underline forecolor backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent pagebreak | link image";
     
     // Add the text direction options for RTL languages
@@ -138,9 +140,7 @@ $(function() {
             // version of the document.
             // The user can also override this with a config option 
             // !jswindowprint (use iframe/window.print)
-            let ismobile = navigator.userAgent.match(/Android|iPhone|iPad|Kindle/i);
-            
-            if (ismobile || !jswindowprint) {
+            if (is_mobile || !jswindowprint) {
                 setTimeout(function() {
                     ed.addCommand("mcePrint", function() {
                         $("input[name='mode']").val("print");

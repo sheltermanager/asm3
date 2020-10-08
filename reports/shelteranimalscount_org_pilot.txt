@@ -59,7 +59,7 @@ FROM animal a
 WHERE (a.DateBroughtIn >= '$@from$' AND a.DateBroughtIn <= '$@to$')
     OR (a.DateBroughtIn < '$@from$' AND a.ActiveMovementDate > '$@from$' AND a.ActiveMovementDate <= '$@to$') 
     OR (a.DateBroughtIn < '$@from$' AND a.DeceasedDate > '$@from$' AND a.DeceasedDate <= '$@to$') 
-    OR (a.DateBroughtIn < '$@from$' AND a.Archived=0)
+    OR (a.DateBroughtIn < '$@from$' AND (a.Archived=0 OR a.ActiveMovementDate > '$@to$' OR a.DeceasedDate > '$@to$'))
 
 -- Second section for handling movement returns
 UNION SELECT
@@ -111,16 +111,16 @@ WHERE m.MovementType IN (1,3,5) AND (
     (m.ReturnDate >= '$@from$' AND m.ReturnDate <= '$@to$')
     OR (m.ReturnDate < '$@from$' AND a.ActiveMovementDate > '$@from$' AND a.ActiveMovementDate <= '$@to$') 
     OR (m.ReturnDate < '$@from$' AND a.DeceasedDate > '$@from$' AND a.DeceasedDate <= '$@to$') 
-    OR (m.ReturnDate < '$@from$' AND a.Archived=0)
+    OR (m.ReturnDate < '$@from$' AND (a.Archived=0 OR a.ActiveMovementDate > '$@to$' OR a.DeceasedDate > '$@to$'))
 )
 
 ORDER BY "Intake Date"
 ###
 $$HEADER
+<p>This report should be run from <a href="report_export">Settings-&gt;Export Reports as CSV</a> with one calendar month selected to produce a file for uploading to shelteranimalscount.org</p>
 HEADER$$
 
 $$BODY
-<p>This report should be run from <a href="report_export">Settings-&gt;Export Reports as CSV</a> with one calendar month selected to produce a file for uploading to shelteranimalscount.org</p>
 BODY$$
 
 $$FOOTER
