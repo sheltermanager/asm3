@@ -23,6 +23,7 @@ $(function() {
 
     tinymce.init({
         selector: "#wp",
+        branding: false,
         content_css: "static/css/asm-tinymce.css?k=" + buildno,
         plugins: [
             "advlist autolink directionality lists link image charmap print preview",

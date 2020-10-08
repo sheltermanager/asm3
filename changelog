@@ -1,6 +1,7 @@
 44
 ================
 
+08/10/20 Hide TinyMCE outline/drag handles during printing
 07/10/20 maint_db_dump_lookups cron target
 06/10/20 Fix TinyMCE default fontsize to match old version
 06/10/20 Allow template paths to be specified in rename

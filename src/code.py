@@ -55,7 +55,7 @@ import asm3.wordprocessor
 
 from asm3.i18n import _, BUILD, translate, get_version, get_display_date_format, \
     get_currency_prefix, get_currency_symbol, get_currency_dp, get_currency_radix, \
-    get_currency_digit_grouping, get_locales, parse_date, python2display, \
+    get_currency_digit_grouping, get_dst, get_locales, parse_date, python2display, \
     add_minutes, add_days, subtract_days, subtract_months, first_of_month, last_of_month, \
     monday_of_week, sunday_of_week, first_of_year, last_of_year, now, format_currency
 
@@ -3789,7 +3789,8 @@ class maint_time(ASMEndpoint):
     def content(self, o):
         self.content_type("text/plain")
         self.cache_control(0)
-        return "Time now is %s. TZ=%s DST=%s" % ( o.dbo.now(), o.dbo.timezone, o.dbo.timezone_dst == 1 and "ON" or "OFF")
+        return "Time now is %s. TZ=%s DST=%s (%s)" % \
+            ( o.dbo.now(), o.dbo.timezone, o.dbo.timezone_dst == 1 and "ON" or "OFF", get_dst(o.locale) )
 
 class medical(JSONEndpoint):
     url = "medical"
