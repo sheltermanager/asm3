@@ -1,6 +1,7 @@
 44
 ================
 
+09/10/20 Merge person comments when importing from CSV
 09/10/20 Option to hide record views in audit trail (on by default)
 08/10/20 Hide TinyMCE outline/drag handles during printing
 07/10/20 maint_db_dump_lookups cron target

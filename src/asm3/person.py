@@ -970,6 +970,7 @@ def merge_person_details(dbo, username, personid, d, force=False):
     merge("worktelephone", "WORKTELEPHONE")
     merge("mobiletelephone", "MOBILETELEPHONE")
     merge("emailaddress", "EMAILADDRESS")
+    merge("comments", "COMMENTS")
 
 def merge_gdpr_flags(dbo, username, personid, flags):
     """
