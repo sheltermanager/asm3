@@ -725,6 +725,7 @@ $(function() {
                 '<input data="ShowWeightInLbs" id="showlbs" class="asm-checkbox" type="checkbox" /> <label for="showlbs">' + _("Show weights as lb and oz") + '</label><br />',
                 '<input data="ShowWeightInLbsFraction" id="showlbsf" class="asm-checkbox" type="checkbox" /> <label for="showlbsf">' + _("Show weights as decimal lb") + '</label><br />',
                 '<input data="ShowFullCommentsInTables" id="showfullcommentstables" class="asm-checkbox" type="checkbox" /> <label for="showfullcommentstables">' + _("Show complete comments in table views") + '</label><br />',
+                '<input data="ShowViewsInAuditTrail" id="showviewsaudittrail" class="asm-checkbox" type="checkbox" /> <label for="showviewsaudittrail">' + _("Show record views in the audit trail") + '</label><br />',
                 '<input data="ShowLookupDataID" id="showlookupdataid" class="asm-checkbox" type="checkbox" /> <label for="showlookupdataid">' + _("Show ID numbers when editing lookup data") + '</label><br />',
                 '<input data="StickyTableHeaders" id="floatingheaders" class="asm-checkbox" type="checkbox" /> <label for="floatingheaders">' + _("Keep table headers visible when scrolling") + '</label><br />',
                 '<input data="RecordNewBrowserTab" id="recordnewbrowsertab" class="asm-checkbox" type="checkbox" /> <label for="recordnewbrowsertab">' + _("Open records in a new browser tab") + '</label><br />',

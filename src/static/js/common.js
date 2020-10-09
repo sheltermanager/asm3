@@ -1885,6 +1885,7 @@ const html = {
             8: _("Email")
         };
         $.each(controller.audit, function(i, v) {
+            if (!config.bool("ShowViewsInAuditTrail") && v.ACTION == 6) { return; }
             h.push('<tr>');
             h.push('<td>' + format.date(v.AUDITDATE) + ' ' + format.time(v.AUDITDATE) + '</td>');
             h.push('<td>' + v.USERNAME + '</td>');

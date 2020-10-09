@@ -446,6 +446,9 @@ Display
   tables, show the complete text instead of truncating it to 80 characters and
   fitting the text onto one line.
 
+* Show record views in the audit trail: When viewing the audit trail slider of
+  a record, include audit records that show when users viewed this record.
+
 * Show ID numbers when editing lookup data: When browsing lookup data under
   :menuselection:`Settings --> Lookup Data`, show the internal system ID numbers.
   This is handy for looking up IDs when writing reports.
