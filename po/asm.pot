@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ASM3\n"
 "Report-Msgid-Bugs-To: robin@sheltermanager.com\n"
-"POT-Creation-Date: 2020-09-30 13:34+0000\n"
+"POT-Creation-Date: 2020-10-09 09:12+0000\n"
 "Last-Translator: Robin Rawson-Tetley <robin@sheltermanager.com>\n"
 "Language-Team: en <robin@sheltermanager.com>\n"
 "Language: en\n"
@@ -10513,6 +10513,10 @@ msgid "Show quick links on the home page"
 msgstr ""
 
 #: options.js
+msgid "Show record views in the audit trail"
+msgstr ""
+
+#: options.js
 msgid "Show report menu items in collapsed categories"
 msgstr ""
 
@@ -10934,7 +10938,7 @@ msgstr ""
 msgid "Standardbred"
 msgstr ""
 
-#: medical.js animal_diet.js
+#: wordprocessor.py medical.js animal_diet.js
 msgid "Start Date"
 msgstr ""
 

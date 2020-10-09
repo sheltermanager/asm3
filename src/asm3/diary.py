@@ -390,7 +390,7 @@ def update_diary_from_form(dbo, username, post):
         "DateCompleted":    post.date("completed")
     }, username)
 
-    if post.date("completed") is not None:
+    if post.date("completed") is None:
         email_note_on_change(dbo, get_diary(dbo, diaryid), username)
     else:
         email_note_on_complete(dbo, get_diary(dbo, diaryid), username)
