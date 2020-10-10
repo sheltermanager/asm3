@@ -16,7 +16,8 @@ ov.Comments
 FROM owner o
 INNER JOIN ownervoucher ov ON ov.OwnerID = o.ID
 INNER JOIN voucher v ON ov.VoucherID = v.ID
-WHERE ov.DatePresented BETWEEN '$ASK DATE Enter the from date$' AND '$ASK DATE Enter the to date$'
+WHERE ov.DatePresented >= '$ASK DATE Redeemed between$'
+AND ov.DatePresented <= '$ASK DATE and$'
 ORDER BY v.VoucherName, ov.DatePresented
 ###
 $$HEADER
