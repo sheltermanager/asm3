@@ -244,7 +244,7 @@ WHERE animal.archived=0
 UNION SELECT 
   animal.animalname AS name,
   animal.sheltercode AS code,
-  date(animal.LastChangedDate) AS issuedate,
+  date(animal.DateBroughtIn) AS issuedate,
   'No Owner in <i>Original Owner</i> field in Entry section on Non-Shelter animal.' AS issue 
 FROM animal
 WHERE  animal.deceaseddate IS NULL
@@ -633,7 +633,7 @@ UNION SELECT
   o.ownername AS name,
   o.ownercode AS code,
   current_date -1 AS issuedate,
-  'Duplicate Phone Number - (' || ow.ownercode || ').   <font color = "Red">Alerts Only Once.</font>' AS issue
+  '<font color = "Red">Duplicate Phone Number - (' || ow.ownercode || ').   Alerts Only Once.</font>' AS issue
 FROM owner o, owner ow
 WHERE date_trunc('day', o.LASTCHANGEDDATE)  = current_date -1
   AND o.id <> ow.id
@@ -648,7 +648,7 @@ UNION SELECT
   o.ownername AS name,
   o.ownercode AS code,
    current_date -1 AS issuedate,
- 'Duplicate Email address (' || o.emailaddress || '). Please search on Email.  <font color = "Red">Alerts Only Once.</font>' AS issue
+ '<font color = "Red">Duplicate Email address (' || o.emailaddress || '). Please search on Email.  Alerts Only Once.</font>' AS issue
 FROM owner o
 WHERE date_trunc('day', o.LASTCHANGEDDATE) = current_date -1
 AND o.emailaddress <> '' 
@@ -659,7 +659,7 @@ UNION SELECT
   o.ownername AS name,
   o.ownercode AS code,
   date(o.LastChangedDate) as issuedate,
- 'Possible Email Address in Wrong Field.  <font color = "Red">Alerts Only Once.</font>' AS issue
+ '<font color = "Red">Possible Email Address in Wrong Field.  Alerts Only Once.</font>' AS issue
 FROM owner o
 WHERE date_trunc('day', o.LASTCHANGEDDATE) = current_date -1
 AND (o.hometelephone LIKE '%@%' 
@@ -705,7 +705,7 @@ UNION SELECT DISTINCT
 o.ownername AS name,
   o.ownercode AS code,
  current_date -1 AS issuedate, 
- 'Online Form Attached to Prior Person Record. Compare the data in the First and Last Name fields with the data on the NEW online form.  When ASM finds an email match, it ONLY updates the address and phone info. <font color = "Red">Alerts Only Once.</font>' AS issue
+ '<font color = "Red">Online Form Attached to Prior Person Record. Compare the data in the First and Last Name fields with the data on the NEW online form.  When ASM finds an email match, it ONLY updates the address and phone info. Alerts Only Once.</font>' AS issue
 FROM owner o
 INNER JOIN media m ON m.linkid = o.ID
 WHERE  m.medianotes IN ('Cat Adoption Application', 'Dog Adoption Application','Getting Help - Cat', 'Getting Help - Dog','SNIP Application','Foster Application','Volunteer Application')
@@ -719,7 +719,7 @@ UNION SELECT DISTINCT
   o.ownername AS name,
   o.ownercode AS code,
   date(o.LastChangedDate) as issuedate,
-  'Person Record added but NOT LINKED to any records and has no Flags.  <font color = "Red">Alerts Only Once.</font>' AS issue
+  '<font color = "Red">Person Record added but NOT LINKED to any records and has no Flags.  Alerts Only Once.</font>' AS issue
 FROM owner o
 WHERE date_trunc('day', o.createddate) = current_date - 1
 AND o.additionalflags = '|'
@@ -750,7 +750,7 @@ UNION SELECT
   o.ownername AS name,
   o.ownercode AS code,
   date(o.LastChangedDate) AS issuedate,
-  'Possible Duplicate Person Record - (' || ow.ownercode || ').  Partial address and last or first name match. <font color = "Red">Alerts Only Once.</font>' AS issue
+  '<font color = "Red">Possible Duplicate Person Record - (' || ow.ownercode || ').  Partial address and last or first name match. Alerts Only Once.</font>' AS issue
 FROM owner o, owner ow
 WHERE date_trunc('day', o.LASTCHANGEDDATE) = current_date -1
   AND LOWER(REGEXP_REPLACE(ow.owneraddress, '[^0-9A-Za-z]', '','g')) LIKE SUBSTR(LOWER(REGEXP_REPLACE(o.owneraddress, '[^0-9A-Za-z]', '','g')),1,8) || '%'
