@@ -5398,6 +5398,7 @@ class sql(JSONEndpoint):
         try:
             for q in dbo.split_queries(sql):
                 if q == "": continue
+                q = self.substitute_report_tokens(dbo, user, q)
                 ql = q.lower()
                 asm3.al.info("%s query: %s" % (user, q), "code.sql", dbo)
                 if ql.startswith("select") or ql.startswith("show"):
@@ -5417,6 +5418,7 @@ class sql(JSONEndpoint):
         for q in dbo.split_queries(sql):
             try:
                 if q == "": continue
+                q = self.substitute_report_tokens(dbo, user, q)
                 ql = q.lower()
                 asm3.al.info("%s query: %s" % (user, q), "code.sql", dbo)
                 if ql.startswith("select") or ql.startswith("show"):
@@ -5430,6 +5432,22 @@ class sql(JSONEndpoint):
                 output.append("ERROR: %s" % str(err))
         asm3.configuration.db_view_seq_version(dbo, "0")
         return "\n\n".join(output)
+
+    def substitute_report_tokens(self, dbo, user, q):
+        """ Substitutes any of our report tokens that might be in query q """
+        # Substitute CURRENT_DATE-X tokens
+        for day in asm3.utils.regex_multi(r"\$CURRENT_DATE\-(.+?)\$", q):
+            d = dbo.today(offset=asm3.utils.cint(day)*-1)
+            q = q.replace("$CURRENT_DATE-%s$" % day, dbo.sql_date(d, includeTime=False, wrapParens=False))
+        # Substitute CURRENT_DATE+X tokens
+        for day in asm3.utils.regex_multi(r"\$CURRENT_DATE\+(.+?)\$", q):
+            d = dbo.today(offset=asm3.utils.cint(day))
+            q = q.replace("$CURRENT_DATE+%s$" % day, dbo.sql_date(d, includeTime=False, wrapParens=False))
+        # straight tokens
+        q = q.replace("$CURRENT_DATE$", dbo.sql_date(dbo.now(), includeTime=False, wrapParens=False))
+        q = q.replace("$USER$", user)
+        q = q.replace("$DATABASENAME$", dbo.database)
+        return q
 
 class sql_dump(ASMEndpoint):
     url = "sql_dump"

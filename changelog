@@ -1,6 +1,7 @@
 44
 ================
 
+12/10/20 Support report SQL tokens in SQL Interface #901
 09/10/20 Merge person comments when importing from CSV
 09/10/20 Option to hide record views in audit trail (on by default)
 08/10/20 Hide TinyMCE outline/drag handles during printing
