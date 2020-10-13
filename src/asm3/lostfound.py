@@ -833,7 +833,7 @@ def delete_lostanimal(dbo, username, aid):
     dbo.delete("log", "LinkID=%d AND LinkType=%d" % (aid, asm3.log.LOSTANIMAL), username)
     dbo.execute("DELETE FROM additional WHERE LinkID = %d AND LinkType IN (%s)" % (aid, asm3.additional.LOSTANIMAL_IN))
     dbo.delete("animallost", aid, username)
-    asm3.dbfs.delete_path(dbo, "/lostanimal/%d" % aid)
+    # asm3.dbfs.delete_path(dbo, "/lostanimal/%d" % aid)  # Use maint_db_delete_orphaned_media to remove dbfs later if needed
 
 def delete_foundanimal(dbo, username, aid):
     """
@@ -844,5 +844,5 @@ def delete_foundanimal(dbo, username, aid):
     dbo.delete("log", "LinkID=%d AND LinkType=%d" % (aid, asm3.log.FOUNDANIMAL), username)
     dbo.execute("DELETE FROM additional WHERE LinkID = %d AND LinkType IN (%s)" % (aid, asm3.additional.FOUNDANIMAL_IN))
     dbo.delete("animalfound", aid, username)
-    asm3.dbfs.delete_path(dbo, "/foundanimal/%d" % aid)
+    # asm3.dbfs.delete_path(dbo, "/foundanimal/%d" % aid)  # Use maint_db_delete_orphaned_media to remove dbfs later if needed
 

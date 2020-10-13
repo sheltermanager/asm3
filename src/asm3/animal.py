@@ -2998,7 +2998,7 @@ def delete_animal(dbo, username, animalid, ignore_movements=False):
     for t in [ "adoption", "animalmedical", "animalmedicaltreatment", "animaltest", "animaltransport", "animalvaccination", "clinicappointment" ]:
         dbo.delete(t, "AnimalID=%d" % animalid, username)
     dbo.delete("animal", animalid, username)
-    asm3.dbfs.delete_path(dbo, "/animal/%d" % animalid)
+    # asm3.dbfs.delete_path(dbo, "/animal/%d" % animalid) # Use maint_db_delete_orphaned_media to remove dbfs later if needed
 
 def delete_animals_from_form(dbo, username, post):
     """

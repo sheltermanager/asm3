@@ -177,7 +177,7 @@ def delete_waitinglist(dbo, username, wid):
     dbo.delete("log", "LinkID=%d AND LinkType=%d" % (wid, asm3.log.WAITINGLIST), username)
     dbo.execute("DELETE FROM additional WHERE LinkID = %d AND LinkType IN (%s)" % (wid, asm3.additional.WAITINGLIST_IN))
     dbo.delete("animalwaitinglist", wid, username)
-    asm3.dbfs.delete_path(dbo, "/waitinglist/%d" % wid)
+    # asm3.dbfs.delete_path(dbo, "/waitinglist/%d" % wid)  # Use maint_db_delete_orphaned_media to remove dbfs later if needed
 
 def send_email_from_form(dbo, username, post):
     """
