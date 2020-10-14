@@ -1,6 +1,7 @@
 44
 ================
 
+14/10/20 Fix SavourLife bug where fail condition marked adopted
 13/10/20 Leave DBFS intact on delete for later deletion if needed
 12/10/20 Support report SQL tokens in SQL Interface #901
 09/10/20 Merge person comments when importing from CSV

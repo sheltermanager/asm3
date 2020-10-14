@@ -186,11 +186,9 @@ class SavourLifePublisher(AbstractPublisher):
                 # Cancel the inactive listings - we can either mark a dog as adopted, or we can delete the listing.
                 for an in animals:
                     try:
-
+                        status = "removed"
                         if an.ACTIVEMOVEMENTDATE is not None and an.ACTIVEMOVEMENTTYPE == 1: 
                             status = "adopted"
-                        elif an.DECEASEDDATE is not None or (an.ACTIVEMOVEMENTDATE is not None and an.ACTIVEMOVEMENTTYPE != 2): 
-                            status = "removed"
 
                         # We have the last status update in the LastStatus field 
                         # (which is animalpublished.Extra for this animal)
