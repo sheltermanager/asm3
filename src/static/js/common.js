@@ -1,5 +1,5 @@
 /*global $, console, performance, jQuery, FileReader, Modernizr, Mousetrap, Path */
-/*global alert, asm, atob, btoa, header, _, escape, unescape, navigator */
+/*global alert, asm, schema, atob, btoa, header, _, escape, unescape, navigator */
 /*global consts: true, common: true, config: true, controller: true, dlgfx: true, format: true, html: true, log: true, validate: true */
 
 "use strict";
@@ -742,6 +742,16 @@ const common = {
             }
         });
         return rv;
+    },
+
+    /*Returns a sorted array of column names that are in tablename
+      uses the global schema object. */
+    get_table_columns(tablename) {
+        let a = [];
+        $.each(schema[tablename], function(k, v) {
+            a.push(k);
+        });
+        return a.sort();
     },
 
     /**
@@ -2172,7 +2182,7 @@ const html = {
         $.each(l, function(i, v) {
             if (!valueprop) {
                 if (v.indexOf("|") == -1) {
-                    h += "<option>" + v + "</option>";
+                    h += "<option value=\"" + html.title(v) + "\">" + v + "</option>";
                 }
                 else {
                     h += "<option value=\"" + v.split("|")[0] + "\">" + v.split("|")[1] + "</option>";

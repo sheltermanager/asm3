@@ -5228,6 +5228,11 @@ class reports(JSONEndpoint):
             "header": header,
             "footer": footer,
             "roles": asm3.users.get_roles(dbo),
+            "animalflags": asm3.lookups.get_animal_flags(dbo),
+            "entryreasons": asm3.lookups.get_entryreasons(dbo),
+            "locations": asm3.lookups.get_internal_locations(dbo),
+            "personflags": asm3.lookups.get_person_flags(dbo),
+            "species": asm3.lookups.get_species(dbo),
             "rows": reports
         }
 

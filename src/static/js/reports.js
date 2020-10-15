@@ -49,6 +49,41 @@ $(function() {
 
     const reports = {
 
+        qb_animal_criteria: [
+                [ _("Adoptable"), "adoptable", "Archived=0 AND IsNotAvailableForAdoption=0" ],
+                [ _("Ask the user for a flag"), "askflag", "AdditionalFlags LIKE '%$ASK ANIMALFLAG$%'" ],
+                [ _("Ask the user for a location"), "asklocation", "ShelterLocation LIKE '%$ASK LOCATION$%'" ],
+                [ _("Ask the user for a species"), "askspecies", "SpeciesID LIKE '%$ASK SPECIES$%'" ],
+                [ _("Deceased"), "deceased", "DeceasedDate Is Not Null" ],
+                [ _("Died between two dates"), "diedtwodates", 
+                    "DeceasedDate>='$ASK DATE {0}$' AND DeceasedDate<='$ASK DATE {1}$'"
+                    .replace("{0}", _("Died between"))
+                    .replace("{1}", _("and")) ],
+                [ _("Died in care"), "diedincare", "DeceasedDate Is Not Null AND PutToSleep=0" ],
+                [ _("Died today"), "diedtoday", "DeceasedDate = '$CURRENT_DATE$'" ],
+                [ _("Entered the shelter today"), "entertoday", "Archived=0 AND MostRecentEntryDate>='$CURRENT_DATE$'" ],
+                [ _("Entered the shelter between two dates"), "entertwodates", 
+                    "MostRecentEntryDate>='$ASK DATE {0}$' AND MostRecentEntryDate<='$ASK DATE {1}$'"
+                    .replace("{0}", _("Entered the shelter between"))
+                    .replace("{1}", _("and")) ],
+                [ _("Euthanized"), "euthanised", "DeceasedDate Is Not Null AND PutToSleep=1" ],
+                [ _("Left the shelter today"), "lefttoday", "Archived=1 AND ActiveMovementDate = '$CURRENT_DATE$'" ],
+                [ _("Not adoptable"), "notadoptable", "IsNotAvailableForAdoption=1" ],
+                [ _("Not altered"), "notaltered", "Neutered=0" ],
+                [ _("Not microchipped"), "notmicrochip", "IdentichipNumber=0" ],
+                [ _("No tattoo"), "nottattoo", "Tattoo=0" ],
+                [ _("On the shelter"), "onshelter", "Archived=0" ],
+                [ _("On foster"), "onfoster", "ActiveMovementType=2" ]
+        ],
+
+        qb_person_criteria: [
+                [ _("Adopter"), "adopter", "IsAdopter=1" ],
+                [ _("Fosterer"), "fosterer", "IsFosterer=1" ],
+                [ _("Staff"), "staff", "IsStaff=1" ],
+                [ _("Volunteer"), "volunteer", "IsVolunteer=1" ],
+                [ _("Ask the user for a flag"), "askflag", "AdditionalFlags LIKE '%$ASK PERSONFLAG$%'" ]
+        ],
+
         model: function() {
             const dialog = {
                 add_title: _("Add report"),
@@ -81,7 +116,8 @@ $(function() {
                     { json_field: "VIEWROLEIDS", post_field: "viewroles", label: _("View Roles"), type: "selectmulti", 
                         options: { rows: controller.roles, valuefield: "ID", displayfield: "ROLENAME" }},
                     { type: "raw", label: "", markup: '<button id="button-checksql">' + _("Syntax check this SQL") + '</button>' +
-                        '<button id="button-genhtml">' + _("Generate HTML from this SQL") + '</button>' },
+                        '<button id="button-genhtml">' + _("Generate HTML from this SQL") + '</button>' +
+                        '<button id="button-qb">' + _("Use the visual query builder") + '</button>' },
                     { json_field: "SQLCOMMAND", post_field: "sql", label: _("SQL"), type: "sqleditor", height: "150px", width: "680px",
                         callout: _("SQL editor: Press F11 to go full screen and press CTRL+SPACE to autocomplete table and column names") },
                     { json_field: "HTMLBODY", post_field: "html", label: _("HTML"), type: "htmleditor", height: "150px", width: "680px" }
@@ -108,6 +144,7 @@ $(function() {
                             if (row.HTMLBODY.indexOf("GRAPH") == 0 || row.HTMLBODY.indexOf("MAIL") == 0 || row.HTMLBODY.indexOf("MAP") == 0) { type = row.HTMLBODY; }
                             $("#type").select("value", type);
                             reports.change_type();
+                            $("#button-qb").toggle( row.SQLCOMMAND.indexOf("-- qbtype") == 0 );
                         }
                     });
                 },
@@ -158,6 +195,7 @@ $(function() {
                             onload: function() {
                                 $("#type").select("value", "REPORT");
                                 reports.change_type();
+                                $("#button-qb").show();
                             }
                         });
                     } 
@@ -183,6 +221,7 @@ $(function() {
                                 let type = "REPORT";
                                 if (row.HTMLBODY.indexOf("GRAPH") == 0 || row.HTMLBODY.indexOf("MAIL") == 0 || row.HTMLBODY.indexOf("MAP") == 0) { type = row.HTMLBODY; }
                                 $("#type").select("value", type);
+                                $("#button-qb").toggle( row.SQLCOMMAND.indexOf("-- qbtype") == 0 );
                             }
                         });
                     } 
@@ -221,12 +260,7 @@ $(function() {
         render_headfoot: function() {
             return [
                 '<div id="dialog-headfoot" style="display: none" title="' + html.title(_("Edit Header/Footer")) + '">',
-                '<div class="ui-state-highlight ui-corner-all">',
-                    '<p>',
-                        '<span class="ui-icon ui-icon-info"></span>',
-                        _("These are the HTML headers and footers used when generating reports."),
-                    '</p>',
-                '</div>',
+                html.info(_("These are the HTML headers and footers used when generating reports.")),
                 '<table width="100%">',
                 '<tr>',
                 '<td valign="top">',
@@ -238,6 +272,50 @@ $(function() {
                 '<textarea id="rfoot" data="footer" class="asm-htmleditor headfoot" data-height="250px" data-width="750px">',
                 controller.footer,
                 '</textarea>',
+                '</td>',
+                '</tr>',
+                '</table>',
+                '</div>'
+            ].join("\n");
+        },
+
+        render_query_builder: function() {
+            return [
+                '<div id="dialog-qb" style="display: none" title="' + html.title(_("Query Builder")) + '">',
+                '<table width="100%">',
+                '<tr>',
+                '<td class="bottomborder">',
+                '<label for="qbtype">' + _("Type") + '</label>',
+                '</td>',
+                '<td class="bottomborder">',
+                '<select id="qbtype" data="qbtype" class="qb asm-selectbox">',
+                '<option value="animal">' + _("Animal") + '</option>',
+                '<option value="owner">' + _("Person") + '</option>',
+                '</select>',
+                '</td>',
+                '</tr><tr>',
+                '<td class="bottomborder">',
+                '<label for="qbfields">' + _("Fields") + '</label>',
+                '</td>',
+                '<td class="bottomborder">',
+                '<select id="qbfields" data="qbfields" multiple="multiple" class="qb asm-bsmselect">',
+                '</select>',
+                '</td>',
+                '</tr><tr>',
+                '<td class="bottomborder">',
+                '<label for="qbcriteria">' + _("Criteria") + '</label>',
+                '</td>',
+                '<td class="bottomborder">',
+                '<select id="qbcriteria" data="qbcriteria" multiple="multiple" class="qb asm-bsmselect">',
+                '</select>',
+                '</td>',
+                '</tr><tr>',
+                '<td>',
+                '<label for="qbsort">' + _("Sort") + '</label>',
+                '</td>',
+                '<td>',
+                '<select id="qbsort" data="qbsort" multiple="multiple" class="qb asm-bsmselect">',
+                '</select>',
                 '</td>',
                 '</tr>',
                 '</table>',
@@ -273,6 +351,7 @@ $(function() {
             let s = "";
             this.model();
             s += this.render_headfoot();
+            s += this.render_query_builder();
             s += this.render_browse_smcom();
             s += tableform.dialog_render(this.dialog);
             s += html.content_header(_("Reports"));
@@ -287,6 +366,7 @@ $(function() {
             tableform.buttons_bind(this.buttons);
             tableform.table_bind(this.table, this.buttons);
             reports.bind_headfoot();
+            reports.bind_query_builder();
             reports.bind_browse_smcom();
             reports.bind_dialogbuttons();
             $("#category").autocomplete({ source: html.decode(controller.categories).split("|") });
@@ -329,6 +409,55 @@ $(function() {
                     $("#rhead, #rfoot").htmleditor("refresh");
                 }
             });
+        },
+
+        bind_query_builder: function() {
+            let qbbuttons = {};
+            qbbuttons[_("Change")] = function() {
+                // Construct the query from the selected values
+                let q = "-- " + $(".qb").toPOST() + "&v=1\n\n";
+                q += "SELECT \n" + $("#qbfields").val().join(", ");
+                q += "\nFROM v_" + $("#qbtype").val();
+                let critout = [];
+                $.each($("#qbcriteria").val(), function(i, v) {
+                    $.each(reports.qb_animal_criteria, function(ii, vv) {
+                        let [ display, value, sql ] = vv;
+                        if (v == value) { critout.push(sql); return false; }
+                    });
+                });
+                if (critout.length > 0) { q += "\nWHERE " + critout.join(" AND "); }
+                q += "\nORDER BY " + $("#qbsort").val().join(", ");
+                $("#sql").sqleditor("value", q);
+                $(this).dialog("close");
+            };
+            qbbuttons[_("Cancel")] = function() { $(this).dialog("close"); };
+            $("#dialog-qb").dialog({
+                autoOpen: false,
+                resizable: true,
+                height: 600,
+                width: 900,
+                modal: true,
+                dialogClass: "dialogshadow",
+                buttons: qbbuttons,
+                show: dlgfx.add_show,
+                hide: dlgfx.add_hide
+            });
+            $("#qbtype").change( reports.qb_change_type );
+            // Add lookup tables to the criteria lists
+            $.each(controller.entryreasons, function(i, v) {
+                reports.qb_animal_criteria.push(
+                    [_("Entry category is {0}").replace("{0}", v.REASONNAME), "entryreason" + v.ID, "EntryReasonID=" + v.ID]);
+            });
+            $.each(controller.locations, function(i, v) {
+                reports.qb_animal_criteria.push(
+                    [_("Location is {0}").replace("{0}", v.LOCATIONNAME), "location" + v.ID, "ShelterLocation=" + v.ID]);
+            });
+            $.each(controller.species, function(i, v) {
+                reports.qb_animal_criteria.push(
+                    [_("Species is {0}").replace("{0}", v.SPECIESNAME), "species" + v.ID, "SpeciesID=" + v.ID]);
+            });
+
+
         },
 
         bind_browse_smcom: function() {
@@ -408,7 +537,7 @@ $(function() {
             });
 
             $("#button-genhtml")
-                .button({ icons: { primary: "ui-icon-wrench" }, text: false })
+                .button({ icons: { primary: "ui-icon-document" }, text: false })
                 .click(function() {
                 let formdata = "mode=genhtml&sql=" + encodeURIComponent($("#sql").sqleditor("value"));
                 $("#asm-report-error").fadeOut();
@@ -424,6 +553,69 @@ $(function() {
                         header.hide_loading(); 
                     });
             });
+
+            $("#button-qb")
+                .button({ icons: {primary: "ui-icon-help" }, text: false })
+                .click(function() {
+                    const set_values = function(s, v) {
+                        if (!v || !s) { return; }
+                        let n = $(s);
+                        // We count the selected items in reverse and prepend them
+                        // to the beginning of the list each time, this way we
+                        // retain the order chosen by the user.
+                        $.each(v.split("%2C").reverse(), function(mi, mv) {
+                            let opt = n.find("[value='" + mv + "']");
+                            opt.prop("selected", true);
+                            n.prepend(opt);
+                        });
+                        n.change();
+                    };
+                    // Load existing values by searching for a comment at the beginning of the query
+                    let enc = $("#sql").sqleditor("value");
+                    if (enc.indexOf("-- ") == 0) {
+                        $("#qbtype").val( common.url_param(enc, "qbtype") ); 
+                        reports.qb_change_type();
+                        set_values("#qbfields", common.url_param(enc, "qbfields"));
+                        set_values("#qbcriteria", common.url_param(enc, "qbcriteria"));
+                        set_values("#qbsort", common.url_param(enc, "qbsort"));
+                    }
+                    else {
+                        $("#qbtype").val("animal");
+                        reports.qb_change_type();
+                    }
+                    $("#dialog-qb").dialog("open");
+                });
+
+        },
+
+        qb_change_type: function() {
+            let type = $("#qbtype").val();
+            if (type == "animal") {
+                $("#qbfields").html(html.list_to_options(common.get_table_columns("v_animal")));
+                $("#qbsort").html(html.list_to_options(common.get_table_columns("v_animal")));
+                $("#qbfields").change();
+                $("#qbsort").change();
+                let crit = [];
+                $.each(reports.qb_animal_criteria, function(i, v) {
+                    let [ display, value, sql ] = v;
+                    crit.push( value + "|" + display );
+                });
+                $("#qbcriteria").html(html.list_to_options(crit));
+                $("#qbcriteria").change();
+            }
+            else if (type == "owner") {
+                $("#qbfields").html(html.list_to_options(common.get_table_columns("v_owner")));
+                $("#qbsort").html(html.list_to_options(common.get_table_columns("v_owner")));
+                $("#qbfields").change();
+                $("#qbsort").change();
+                let crit = [];
+                $.each(reports.qb_person_criteria, function(i, v) {
+                    let [ display, value, sql ] = v;
+                    crit.push( value + "|" + display );
+                });
+                $("#qbcriteria").html(html.list_to_options(crit));
+                $("#qbcriteria").change();
+            }
         },
 
         change_type: function() {

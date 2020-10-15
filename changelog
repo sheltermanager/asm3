@@ -1,6 +1,8 @@
 44
 ================
 
+15/10/20 Visual query builder #602
+15/10/20 Correct schema handling of views for SQL editing
 14/10/20 Fix SavourLife bug where fail condition marked adopted
 13/10/20 Leave DBFS intact on delete for later deletion if needed
 12/10/20 Support report SQL tokens in SQL Interface #901
