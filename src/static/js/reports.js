@@ -49,11 +49,18 @@ $(function() {
 
     const reports = {
 
+        qb_active_criteria: null, 
         qb_animal_criteria: [
                 [ _("Adoptable"), "adoptable", "Archived=0 AND IsNotAvailableForAdoption=0" ],
+                [ _("Adopted"), "adopted", "ActiveMovementDate Is Not Null AND ActiveMovementType=1" ],
+                [ _("Aged under 6 months"), "under6months", "DateOfBirth >= '$CURRENT_DATE-182$'" ],
+                [ _("Aged over 6 months"), "over6months", "DateOfBirth < '$CURRENT_DATE-182$'" ],
+                [ _("Altered"), "altered", "Neutered=1" ],
                 [ _("Ask the user for a flag"), "askflag", "AdditionalFlags LIKE '%$ASK ANIMALFLAG$%'" ],
-                [ _("Ask the user for a location"), "asklocation", "ShelterLocation LIKE '%$ASK LOCATION$%'" ],
-                [ _("Ask the user for a species"), "askspecies", "SpeciesID LIKE '%$ASK SPECIES$%'" ],
+                [ _("Ask the user for a location"), "asklocation", "ShelterLocation=$ASK LOCATION$" ],
+                [ _("Ask the user for a species"), "askspecies", "SpeciesID=$ASK SPECIES$" ],
+                [ _("Ask the user for a type"), "asktype", "AnimalTypeID=$ASK ANIMALTYPE$" ],
+                [ _("Cruelty Case"), "cruelty", "CrueltyCase=1" ],
                 [ _("Deceased"), "deceased", "DeceasedDate Is Not Null" ],
                 [ _("Died between two dates"), "diedtwodates", 
                     "DeceasedDate>='$ASK DATE {0}$' AND DeceasedDate<='$ASK DATE {1}$'"
@@ -66,22 +73,97 @@ $(function() {
                     "MostRecentEntryDate>='$ASK DATE {0}$' AND MostRecentEntryDate<='$ASK DATE {1}$'"
                     .replace("{0}", _("Entered the shelter between"))
                     .replace("{1}", _("and")) ],
+                [ _("Escaped"), "escaped", "ActiveMovementDate Is Not Null AND ActiveMovementType=4" ],
                 [ _("Euthanized"), "euthanised", "DeceasedDate Is Not Null AND PutToSleep=1" ],
+                [ _("FIV+"), "fivplus", "CombiTested=1 AND CombiTestResult=2" ],
+                [ _("FLV+"), "flvplus", "CombiTested=1 AND FLVResult=2" ],
+                [ _("Heartworm+"), "heartwormplus", "HeartwormTested=1 AND HeartwormTestResult=2" ],
+                [ _("Held"), "held", "IsHold=1" ],
                 [ _("Left the shelter today"), "lefttoday", "Archived=1 AND ActiveMovementDate = '$CURRENT_DATE$'" ],
+                [ _("Left the shelter between two dates"), "lefttwodates", 
+                    "ActiveMovementType NOT IN (2,8) AND ActiveMovementDate Is Not Null AND " +
+                    "ActiveMovementDate>='$ASK DATE {0}$' AND ActiveMovementDate<='$ASK DATE {1}$'"
+                    .replace("{0}", _("Left the shelter between"))
+                    .replace("{1}", _("and")) ],
+                [ _("Non-shelter"), "nonshelter", "NonShelterAnimal=1" ],
                 [ _("Not adoptable"), "notadoptable", "IsNotAvailableForAdoption=1" ],
                 [ _("Not altered"), "notaltered", "Neutered=0" ],
                 [ _("Not microchipped"), "notmicrochip", "IdentichipNumber=0" ],
                 [ _("No tattoo"), "nottattoo", "Tattoo=0" ],
-                [ _("On the shelter"), "onshelter", "Archived=0" ],
-                [ _("On foster"), "onfoster", "ActiveMovementType=2" ]
+                [ _("Reclaimed"), "reclaimed", "ActiveMovementDate Is Not Null AND ActiveMovementType=5" ],
+                [ _("Reserved"), "reserved", "HasActiveReserve=1" ],
+                [ _("On shelter"), "onshelter", "Archived=0" ],
+                [ _("On foster"), "onfoster", "ActiveMovementType=2 AND HasPermanentFoster=0" ],
+                [ _("On permanent foster"), "onpfoster", "ActiveMovementType=2 AND HasPermanentFoster=1" ],
+                [ _("On trial adoption"), "trialadoption", "ActiveMovementType=1 AND HasTrialAdoption=1" ],
+                [ _("Pickup"), "pickup", "IsPickup=1" ],
+                [ _("Quarantine"), "quarantine", "IsQuarantine=1" ],
+                [ _("Released to Wild"), "released", "ActiveMovementDate Is Not Null AND ActiveMovementType=7" ],
+                [ _("Sex is male"), "male", "Sex=1" ],
+                [ _("Sex is female"), "female", "Sex=0" ],
+                [ _("Shelter animal"), "shelter", "NonShelterAnimal=0" ],
+                [ _("Site matches current user"), "site", "SiteID=$SITE$" ],
+                [ _("Stolen"), "stolen", "ActiveMovementDate Is Not Null AND ActiveMovementType=6" ],
+                [ _("TNR"), "tnr", "ActiveMovementDate Is Not Null AND ActiveMovementType=7" ],
+                [ _("Transfer In"), "transferin", "IsTransfer=1" ],
+                [ _("Transferred Out"), "transferout", "ActiveMovementDate Is Not Null AND ActiveMovementType=3" ]
+        ],
+
+        qb_incident_criteria: [
+            [ _("Active"), "active", "CompletedDate Is Null" ],
+            [ _("Ask the user for a city"), "askcity", "DispatchTown LIKE '%$ASK STRING {0}$%'"
+                .replace("{0}", _("Enter a city")) ],
+            [ _("Call between two dates"), "calltwo", 
+                "CallDateTime>='$ASK DATE {0}$' AND CallDateTime<='$ASK DATE {1}$'"
+                .replace("{0}", _("Call between"))
+                .replace("{1}", _("and")) ],
+            [ _("Completed"), "completed", "CompletedDate Is Not Null" ],
+            [ _("Completed between two dates"), "completedtwo", 
+                "CompletedDate Is Not Null AND CompletedDate>='$ASK DATE {0}$' AND CompletedDate<='$ASK DATE {1}$'"
+                .replace("{0}", _("Completed between"))
+                .replace("{1}", _("and")) ],
+            [ _("Incident between two dates"), "incidenttwo", 
+                "IncidentDateTime>='$ASK DATE {0}$' AND IncidentDateTime<='$ASK DATE {1}$'"
+                .replace("{0}", _("Incident between"))
+                .replace("{1}", _("and")) ],
+            [ _("Followup between two dates"), "followuptwo", 
+                "FollowupDateTime>='$ASK DATE {0}$' AND FollowupDateTime<='$ASK DATE {1}$'"
+                .replace("{0}", _("Followup between"))
+                .replace("{1}", _("and")) ],
+            [ _("Site matches current user"), "site", "SiteID=$SITE$" ]
         ],
 
         qb_person_criteria: [
+                [ _("ACO"), "aco", "IsACO=1" ],
+                [ _("Active license held"), "haslicense", "EXISTS(SELECT ID FROM ownerlicence WHERE OwnerID=v_owner.ID " +
+                    "AND IssueDate<='$CURRENT_DATE$' AND (ExpiryDate Is Null OR ExpiryDate>'$CURRENT_DATE$'))" ],
                 [ _("Adopter"), "adopter", "IsAdopter=1" ],
+                [ _("Adoption Coordinator"), "coordinator", "IsAdoptionCoordinator=1" ],
+                [ _("Ask the user for a flag"), "askflag", "AdditionalFlags LIKE '%$ASK PERSONFLAG$%'" ],
+                [ _("Ask the user for a city"), "askcity", "OwnerTown LIKE '%$ASK STRING {0}$%'"
+                    .replace("{0}", _("Enter a city")) ],
+                [ _("Banned"), "banned", "IsBanned=1" ],
+                [ _("Created since"), "createdsince", "CreatedDate>='$ASK DATE {0}$'".replace("{0}", _("Created since")) ],
+                [ _("Deceased"), "deceased", "IsDeceased=1" ],
+                [ _("Donor"), "donor", "IsDonor=1" ],
+                [ _("Driver"), "driver", "IsDriver=1" ],
                 [ _("Fosterer"), "fosterer", "IsFosterer=1" ],
+                [ _("GiftAid"), "giftaid", "IsGiftAid=1" ],
+                [ _("Homechecked"), "homechecked", "IDCheck=1" ],
+                [ _("Homechecked between two dates"), "homechecktwo", 
+                    "DateLastHomeChecked>='$ASK DATE {0}$' AND DateLastHomeChecked<='$ASK DATE{1}$'"
+                    .replace("{0}", _("Homechecked between"))
+                    .replace("{1}", _("and")) ],
+                [ _("Homechecked by"), "homecheckedby", "IDCheck=1 AND HomeCheckedBy=$ASK PERSON$" ],
+                [ _("Member"), "member", "IsMember=1" ],
+                [ _("No active license held"), "nolicense", "NOT EXISTS(SELECT ID FROM ownerlicence WHERE OwnerID=v_owner.ID " +
+                    "AND IssueDate<='$CURRENT_DATE$' AND (ExpiryDate Is Null OR ExpiryDate>'$CURRENT_DATE$'))" ],
+                [ _("Retailer"), "retailer", "IsRetailer=1" ],
+                [ _("Site matches current user"), "site", "SiteID=$SITE$" ],
                 [ _("Staff"), "staff", "IsStaff=1" ],
-                [ _("Volunteer"), "volunteer", "IsVolunteer=1" ],
-                [ _("Ask the user for a flag"), "askflag", "AdditionalFlags LIKE '%$ASK PERSONFLAG$%'" ]
+                [ _("User's site"), "site", "SiteID=$SITE$" ],
+                [ _("Vet"), "vet", "IsVet=1" ],
+                [ _("Volunteer"), "volunteer", "IsVolunteer=1" ]
         ],
 
         model: function() {
@@ -117,7 +199,7 @@ $(function() {
                         options: { rows: controller.roles, valuefield: "ID", displayfield: "ROLENAME" }},
                     { type: "raw", label: "", markup: '<button id="button-checksql">' + _("Syntax check this SQL") + '</button>' +
                         '<button id="button-genhtml">' + _("Generate HTML from this SQL") + '</button>' +
-                        '<button id="button-qb">' + _("Use the visual query builder") + '</button>' },
+                        '<button id="button-qb">' + _("Use the query builder") + '</button>' },
                     { json_field: "SQLCOMMAND", post_field: "sql", label: _("SQL"), type: "sqleditor", height: "150px", width: "680px",
                         callout: _("SQL editor: Press F11 to go full screen and press CTRL+SPACE to autocomplete table and column names") },
                     { json_field: "HTMLBODY", post_field: "html", label: _("HTML"), type: "htmleditor", height: "150px", width: "680px" }
@@ -290,6 +372,7 @@ $(function() {
                 '<td class="bottomborder">',
                 '<select id="qbtype" data="qbtype" class="qb asm-selectbox">',
                 '<option value="animal">' + _("Animal") + '</option>',
+                '<option value="incident">' + _("Incident") + '</option>',
                 '<option value="owner">' + _("Person") + '</option>',
                 '</select>',
                 '</td>',
@@ -304,6 +387,9 @@ $(function() {
                 '</tr><tr>',
                 '<td class="bottomborder">',
                 '<label for="qbcriteria">' + _("Criteria") + '</label>',
+                '<span id="callout-criteria" class="asm-callout">',
+                _("Records must match all of the selected criteria in order to appear on the report"),
+                '</span>',
                 '</td>',
                 '<td class="bottomborder">',
                 '<select id="qbcriteria" data="qbcriteria" multiple="multiple" class="qb asm-bsmselect">',
@@ -413,20 +499,20 @@ $(function() {
 
         bind_query_builder: function() {
             let qbbuttons = {};
-            qbbuttons[_("Change")] = function() {
+            qbbuttons[_("Update")] = function() {
                 // Construct the query from the selected values
                 let q = "-- " + $(".qb").toPOST() + "&v=1\n\n";
-                q += "SELECT \n" + $("#qbfields").val().join(", ");
-                q += "\nFROM v_" + $("#qbtype").val();
+                q += "SELECT \n " + $("#qbfields").val().join(",\n ");
+                q += "\nFROM \n v_" + $("#qbtype").val();
                 let critout = [];
                 $.each($("#qbcriteria").val(), function(i, v) {
-                    $.each(reports.qb_animal_criteria, function(ii, vv) {
+                    $.each(reports.qb_active_criteria, function(ii, vv) {
                         let [ display, value, sql ] = vv;
                         if (v == value) { critout.push(sql); return false; }
                     });
                 });
-                if (critout.length > 0) { q += "\nWHERE " + critout.join(" AND "); }
-                q += "\nORDER BY " + $("#qbsort").val().join(", ");
+                if (critout.length > 0) { q += "\nWHERE \n " + critout.join("\n AND "); }
+                if ($("#qbsort").val().length > 0) { q += "\nORDER BY \n " + $("#qbsort").val().join(",\n "); }
                 $("#sql").sqleditor("value", q);
                 $(this).dialog("close");
             };
@@ -448,6 +534,30 @@ $(function() {
                 reports.qb_animal_criteria.push(
                     [_("Entry category is {0}").replace("{0}", v.REASONNAME), "entryreason" + v.ID, "EntryReasonID=" + v.ID]);
             });
+            $.each(controller.animalflags, function(i, v) {
+                reports.qb_animal_criteria.push(
+                    [_("Flag {0}").replace("{0}", v.FLAG), "flag" + v.ID, "AdditionalFlags LIKE '%" + v.FLAG + "%'" ]);
+            });
+            $.each(controller.personflags, function(i, v) {
+                reports.qb_person_criteria.push(
+                    [_("Flag {0}").replace("{0}", v.FLAG), "flag" + v.ID, "AdditionalFlags LIKE '%" + v.FLAG + "%'" ]);
+            });
+            $.each(controller.jurisdictions, function(i, v) {
+                reports.qb_animal_criteria.push(
+                    [_("Jurisdiction is {0}").replace("{0}", v.JURISDICTIONNAME), "jurisdiction" + v.ID, "JurisdictionID=" + v.ID]);
+                reports.qb_incident_criteria.push(
+                    [_("Jurisdiction is {0}").replace("{0}", v.JURISDICTIONNAME), "jurisdiction" + v.ID, "JurisdictionID=" + v.ID]);
+                reports.qb_person_criteria.push(
+                    [_("Jurisdiction is {0}").replace("{0}", v.JURISDICTIONNAME), "jurisdiction" + v.ID, "JurisdictionID=" + v.ID]);
+            });
+            $.each(controller.incidenttypes, function(i, v) {
+                reports.qb_incident_criteria.push(
+                    [_("Type is {0}").replace("{0}", v.INCIDENTNAME), "incident" + v.ID, "IncidentTypeID=" + v.ID]);
+            });
+            $.each(controller.completedtypes, function(i, v) {
+                reports.qb_incident_criteria.push(
+                    [_("Completed type {0}").replace("{0}", v.COMPLETEDNAME), "completed" + v.ID, "IncidentCompletedID=" + v.ID]);
+            });
             $.each(controller.locations, function(i, v) {
                 reports.qb_animal_criteria.push(
                     [_("Location is {0}").replace("{0}", v.LOCATIONNAME), "location" + v.ID, "ShelterLocation=" + v.ID]);
@@ -456,7 +566,10 @@ $(function() {
                 reports.qb_animal_criteria.push(
                     [_("Species is {0}").replace("{0}", v.SPECIESNAME), "species" + v.ID, "SpeciesID=" + v.ID]);
             });
-
+            $.each(controller.animaltypes, function(i, v) {
+                reports.qb_animal_criteria.push(
+                    [_("Type is {0}").replace("{0}", v.ANIMALTYPE), "animaltype" + v.ID, "AnimalTypeID=" + v.ID]);
+            });
 
         },
 
@@ -537,7 +650,7 @@ $(function() {
             });
 
             $("#button-genhtml")
-                .button({ icons: { primary: "ui-icon-document" }, text: false })
+                .button({ icons: { primary: "ui-icon-wrench" }, text: false })
                 .click(function() {
                 let formdata = "mode=genhtml&sql=" + encodeURIComponent($("#sql").sqleditor("value"));
                 $("#asm-report-error").fadeOut();
@@ -555,7 +668,7 @@ $(function() {
             });
 
             $("#button-qb")
-                .button({ icons: {primary: "ui-icon-help" }, text: false })
+                .button({ icons: {primary: "ui-icon-lightbulb" }, text: false })
                 .click(function() {
                     const set_values = function(s, v) {
                         if (!v || !s) { return; }
@@ -590,31 +703,40 @@ $(function() {
 
         qb_change_type: function() {
             let type = $("#qbtype").val();
+            const build_criteria = function(l) {
+                let crit = [];
+                $.each(l, function(i, v) {
+                    let [ display, value, sql ] = v;
+                    crit.push( value + "|" + display + (sql.indexOf("$ASK") != -1 ? " *" : "") );
+                });
+                return crit;
+            };
             if (type == "animal") {
                 $("#qbfields").html(html.list_to_options(common.get_table_columns("v_animal")));
                 $("#qbsort").html(html.list_to_options(common.get_table_columns("v_animal")));
+                $("#qbcriteria").html(html.list_to_options(build_criteria(reports.qb_animal_criteria)));
                 $("#qbfields").change();
                 $("#qbsort").change();
-                let crit = [];
-                $.each(reports.qb_animal_criteria, function(i, v) {
-                    let [ display, value, sql ] = v;
-                    crit.push( value + "|" + display );
-                });
-                $("#qbcriteria").html(html.list_to_options(crit));
                 $("#qbcriteria").change();
+                reports.qb_active_criteria = reports.qb_animal_criteria;
+            }
+            else if (type == "incident") {
+                $("#qbfields").html(html.list_to_options(common.get_table_columns("v_animalcontrol")));
+                $("#qbsort").html(html.list_to_options(common.get_table_columns("v_animalcontrol")));
+                $("#qbcriteria").html(html.list_to_options(build_criteria(reports.qb_incident_criteria)));
+                $("#qbfields").change();
+                $("#qbsort").change();
+                $("#qbcriteria").change();
+                reports.qb_active_criteria = reports.qb_incident_criteria;
             }
             else if (type == "owner") {
                 $("#qbfields").html(html.list_to_options(common.get_table_columns("v_owner")));
                 $("#qbsort").html(html.list_to_options(common.get_table_columns("v_owner")));
+                $("#qbcriteria").html(html.list_to_options(build_criteria(reports.qb_person_criteria)));
                 $("#qbfields").change();
                 $("#qbsort").change();
-                let crit = [];
-                $.each(reports.qb_person_criteria, function(i, v) {
-                    let [ display, value, sql ] = v;
-                    crit.push( value + "|" + display );
-                });
-                $("#qbcriteria").html(html.list_to_options(crit));
                 $("#qbcriteria").change();
+                reports.qb_active_criteria = reports.qb_person_criteria;
             }
         },
 
