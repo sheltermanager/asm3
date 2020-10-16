@@ -755,7 +755,7 @@ FROM owner o, owner ow
 WHERE date_trunc('day', o.LASTCHANGEDDATE) = current_date -1
   AND LOWER(REGEXP_REPLACE(ow.owneraddress, '[^0-9A-Za-z]', '','g')) LIKE SUBSTR(LOWER(REGEXP_REPLACE(o.owneraddress, '[^0-9A-Za-z]', '','g')),1,8) || '%'
 AND o.owneraddress <> ''
-AND (LOWER(o.ownersurname) = LOWER(ow.ownersurname) OR LOWER(o.ownerforenames) = LOWER(ow.ownerforenames))
+AND (LOWER(o.ownersurname) = LOWER(ow.ownersurname) OR (LOWER(o.ownerforenames) = LOWER(ow.ownerforenames) AND ow.ownerforenames <> ''))
 AND o.id <> ow.id
 
 ) dummy
