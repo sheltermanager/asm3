@@ -152,7 +152,7 @@ $(function() {
                 [ _("GiftAid"), "giftaid", "IsGiftAid=1" ],
                 [ _("Homechecked"), "homechecked", "IDCheck=1" ],
                 [ _("Homechecked between two dates"), "homechecktwo", 
-                    "DateLastHomeChecked>='$ASK DATE {0}$' AND DateLastHomeChecked<='$ASK DATE{1}$'"
+                    "DateLastHomeChecked>='$ASK DATE {0}$' AND DateLastHomeChecked<='$ASK DATE {1}$'"
                     .replace("{0}", _("Homechecked between"))
                     .replace("{1}", _("and")) ],
                 [ _("Homechecked by"), "homecheckedby", "IDCheck=1 AND HomeCheckedBy=$ASK PERSON$" ],
