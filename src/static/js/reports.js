@@ -82,6 +82,10 @@ $(function() {
                     "ActiveMovementDate>='$ASK DATE {0}$' AND ActiveMovementDate<='$ASK DATE {1}$'"
                     .replace("{0}", _("Left the shelter between"))
                     .replace("{1}", _("and")) ],
+                [ _("Licensed"), "activelicense", "EXISTS(SELECT ID FROM ownerlicense WHERE AnimalID=v_animal.ID " +
+                    "AND IssueDate<='$CURRENT_DATE$' AND (ExpiryDate Is Null OR ExpiryDate>'$CURRENT_DATE$'))" ],
+                [ _("No license"), "nolicense", "NOT EXISTS(SELECT ID FROM ownerlicense WHERE AnimalID=v_animal.ID " +
+                    "AND IssueDate<='$CURRENT_DATE$' AND (ExpiryDate Is Null OR ExpiryDate>'$CURRENT_DATE$'))" ],
                 [ _("Non-shelter"), "nonshelter", "NonShelterAnimal=1" ],
                 [ _("Not adoptable"), "notadoptable", "IsNotAvailableForAdoption=1" ],
                 [ _("Not altered"), "notaltered", "Neutered=0" ],
