@@ -372,7 +372,7 @@ $(function() {
                 '<td class="bottomborder">',
                 '<select id="qbtype" data="qbtype" class="qb asm-selectbox">',
                 '<option value="animal">' + _("Animal") + '</option>',
-                '<option value="incident">' + _("Incident") + '</option>',
+                '<option value="animalcontrol">' + _("Incident") + '</option>',
                 '<option value="owner">' + _("Person") + '</option>',
                 '</select>',
                 '</td>',
@@ -720,7 +720,7 @@ $(function() {
                 $("#qbcriteria").change();
                 reports.qb_active_criteria = reports.qb_animal_criteria;
             }
-            else if (type == "incident") {
+            else if (type == "animalcontrol") {
                 $("#qbfields").html(html.list_to_options(common.get_table_columns("v_animalcontrol")));
                 $("#qbsort").html(html.list_to_options(common.get_table_columns("v_animalcontrol")));
                 $("#qbcriteria").html(html.list_to_options(build_criteria(reports.qb_incident_criteria)));
