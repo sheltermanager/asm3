@@ -47,10 +47,7 @@ $(function() {
         { ID: 11, DISPLAY: _("End of year") }
     ];
 
-    const reports = {
-
-        qb_active_criteria: null, 
-        qb_animal_criteria: [
+    const QB_ANIMAL_CRITERIA = [
                 [ _("Adoptable"), "adoptable", "Archived=0 AND IsNotAvailableForAdoption=0" ],
                 [ _("Adopted"), "adopted", "ActiveMovementDate Is Not Null AND ActiveMovementType=1" ],
                 [ _("Aged under 6 months"), "under6months", "DateOfBirth >= '$CURRENT_DATE-182$'" ],
@@ -107,9 +104,9 @@ $(function() {
                 [ _("TNR"), "tnr", "ActiveMovementDate Is Not Null AND ActiveMovementType=7" ],
                 [ _("Transfer In"), "transferin", "IsTransfer=1" ],
                 [ _("Transferred Out"), "transferout", "ActiveMovementDate Is Not Null AND ActiveMovementType=3" ]
-        ],
+        ];
 
-        qb_incident_criteria: [
+        const QB_INCIDENT_CRITERIA = [
             [ _("Active"), "active", "CompletedDate Is Null" ],
             [ _("Ask the user for a city"), "askcity", "DispatchTown LIKE '%$ASK STRING {0}$%'"
                 .replace("{0}", _("Enter a city")) ],
@@ -131,9 +128,9 @@ $(function() {
                 .replace("{0}", _("Followup between"))
                 .replace("{1}", _("and")) ],
             [ _("Site matches current user"), "site", "SiteID=$SITE$" ]
-        ],
+        ];
 
-        qb_person_criteria: [
+        const QB_PERSON_CRITERIA = [
                 [ _("ACO"), "aco", "IsACO=1" ],
                 [ _("Active license held"), "haslicense", "EXISTS(SELECT ID FROM ownerlicence WHERE OwnerID=v_owner.ID " +
                     "AND IssueDate<='$CURRENT_DATE$' AND (ExpiryDate Is Null OR ExpiryDate>'$CURRENT_DATE$'))" ],
@@ -161,10 +158,16 @@ $(function() {
                 [ _("Retailer"), "retailer", "IsRetailer=1" ],
                 [ _("Site matches current user"), "site", "SiteID=$SITE$" ],
                 [ _("Staff"), "staff", "IsStaff=1" ],
-                [ _("User's site"), "site", "SiteID=$SITE$" ],
                 [ _("Vet"), "vet", "IsVet=1" ],
                 [ _("Volunteer"), "volunteer", "IsVolunteer=1" ]
-        ],
+        ];
+
+    const reports = {
+
+        qb_active_criteria: null, 
+        qb_animal_criteria: null,
+        qb_incident_criteria: null,
+        qb_person_criteria: null,
 
         model: function() {
             const dialog = {
@@ -542,7 +545,10 @@ $(function() {
                 hide: dlgfx.add_hide
             });
             $("#qbtype").change( reports.qb_change_type );
-            // Add lookup tables to the criteria lists
+            // Build the criteria lists
+            reports.qb_animal_criteria = Array.from(QB_ANIMAL_CRITERIA);
+            reports.qb_incident_criteria = Array.from(QB_INCIDENT_CRITERIA);
+            reports.qb_person_criteria = Array.from(QB_PERSON_CRITERIA);
             $.each(controller.entryreasons, function(i, v) {
                 reports.qb_animal_criteria.push(
                     [_("Entry category is {0}").replace("{0}", v.REASONNAME), "entryreason" + v.ID, "EntryReasonID=" + v.ID]);
@@ -856,6 +862,7 @@ $(function() {
         destroy: function() {
             common.widget_destroy("#dialog-headfoot");
             common.widget_destroy("#dialog-browse");
+            common.widget_destroy("#dialog-qb");
             tableform.dialog_destroy();
         },
 
