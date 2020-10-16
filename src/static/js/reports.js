@@ -498,11 +498,24 @@ $(function() {
         },
 
         bind_query_builder: function() {
+            const expand_additional = function(l) {
+                // Expands additional fields af_ID in a list into subqueries
+                // aliased as af_ID
+                let o = [];
+                $.each(l, function(i, v) {
+                    if (v.indexOf("af_") == 0) {
+                        o.push("(SELECT Value FROM additional WHERE LinkID=v_" + $("#qbtype").val() + 
+                            ".ID AND AdditionalFieldID=" + v.substring(3) + ") AS " + v);
+                    }
+                    else { o.push(v); }
+                });
+                return o;
+            };
             let qbbuttons = {};
             qbbuttons[_("Update")] = function() {
                 // Construct the query from the selected values
                 let q = "-- " + $(".qb").toPOST() + "&v=1\n\n";
-                q += "SELECT \n " + $("#qbfields").val().join(",\n ");
+                q += "SELECT \n " + expand_additional($("#qbfields").val()).join(",\n ");
                 q += "\nFROM \n v_" + $("#qbtype").val();
                 let critout = [];
                 $.each($("#qbcriteria").val(), function(i, v) {
@@ -704,6 +717,7 @@ $(function() {
         qb_change_type: function() {
             let type = $("#qbtype").val();
             const build_criteria = function(l) {
+                // Outputs criteria into the dropdown. l is the list of criteria reports.qb_x_criteria
                 let crit = [];
                 $.each(l, function(i, v) {
                     let [ display, value, sql ] = v;
@@ -711,9 +725,21 @@ $(function() {
                 });
                 return crit;
             };
+            const get_additional = function(t) {
+                // Returns a list of additional field names for the type ready for the dropdowns
+                let f = [];
+                $.each(controller.additionalfields, function(i, v) {
+                    if ( (t == "animal" && common.array_in(v.LINKTYPE, [0,2,3,4,5,6])) ||
+                        (t == "owner" && common.array_in(v.LINKTYPE, [1,7,8])) ||
+                        (t == "animalcontrol" && common.array_in(v.LINKTYPE, [16,17,18,19,20])) ) { 
+                        f.push("af_" + v.ID + "|" + v.FIELDNAME); 
+                    }
+                });
+                return f;
+            };
             if (type == "animal") {
-                $("#qbfields").html(html.list_to_options(common.get_table_columns("v_animal")));
-                $("#qbsort").html(html.list_to_options(common.get_table_columns("v_animal")));
+                $("#qbfields").html(html.list_to_options(common.get_table_columns("v_animal").concat(get_additional(type))));
+                $("#qbsort").html(html.list_to_options(common.get_table_columns("v_animal").concat(get_additional(type))));
                 $("#qbcriteria").html(html.list_to_options(build_criteria(reports.qb_animal_criteria)));
                 $("#qbfields").change();
                 $("#qbsort").change();
@@ -721,8 +747,8 @@ $(function() {
                 reports.qb_active_criteria = reports.qb_animal_criteria;
             }
             else if (type == "animalcontrol") {
-                $("#qbfields").html(html.list_to_options(common.get_table_columns("v_animalcontrol")));
-                $("#qbsort").html(html.list_to_options(common.get_table_columns("v_animalcontrol")));
+                $("#qbfields").html(html.list_to_options(common.get_table_columns("v_animalcontrol").concat(get_additional(type))));
+                $("#qbsort").html(html.list_to_options(common.get_table_columns("v_animalcontrol").concat(get_additional(type))));
                 $("#qbcriteria").html(html.list_to_options(build_criteria(reports.qb_incident_criteria)));
                 $("#qbfields").change();
                 $("#qbsort").change();
@@ -730,8 +756,8 @@ $(function() {
                 reports.qb_active_criteria = reports.qb_incident_criteria;
             }
             else if (type == "owner") {
-                $("#qbfields").html(html.list_to_options(common.get_table_columns("v_owner")));
-                $("#qbsort").html(html.list_to_options(common.get_table_columns("v_owner")));
+                $("#qbfields").html(html.list_to_options(common.get_table_columns("v_owner").concat(get_additional(type))));
+                $("#qbsort").html(html.list_to_options(common.get_table_columns("v_owner").concat(get_additional(type))));
                 $("#qbcriteria").html(html.list_to_options(build_criteria(reports.qb_person_criteria)));
                 $("#qbfields").change();
                 $("#qbsort").change();
