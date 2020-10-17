@@ -351,7 +351,7 @@ TABLESORTER_JS = get_string("tablesorter_js", 'static/lib/tablesorter/2.7.12/jqu
 TABLESORTER_WIDGETS_JS = get_string("tablesorter_widgets_js", 'static/lib/tablesorter/2.7.12/jquery.tablesorter.widgets.min.js')
 TIMEPICKER_CSS = get_string("timepicker_css", 'static/lib/timepicker/0.3.3/jquery.ui.timepicker.css')
 TIMEPICKER_JS = get_string("timepicker_js", 'static/lib/timepicker/0.3.3/jquery.ui.timepicker.js')
-TINYMCE_5_JS = get_string("tinymce_4_js", 'static/lib/tinymce/5.3.1/tinymce/js/tinymce/tinymce.min.js')
+TINYMCE_5_JS = get_string("tinymce_4_js", 'static/lib/tinymce/5.5.1/tinymce/js/tinymce/tinymce.min.js')
 TOUCHPUNCH_JS = get_string("touchpunch_js", 'static/lib/touchpunch/0.2.3/jquery.ui.touch-punch.min.js')
 
 # Watermark Settings for adding an animal's name and shelter logo to an image
