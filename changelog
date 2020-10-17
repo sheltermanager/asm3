@@ -1,6 +1,7 @@
 44
 ================
 
+17/10/20 Fix TinyMCE mobile display and table borders
 16/10/20 Support additional fields in query builder #602
 16/10/20 Support people and incidents in query builder #602
 15/10/20 Visual query builder #602

@@ -6,6 +6,11 @@
     font-size: 11px; 
 }
 
+/** TinyMCE 5+ sets border-collapse, which hides any explicitly styled borders in table cells */
+table {
+    border-collapse: separate;
+}
+
 @media print {
     /** Make our visual page break invisible but still force a break during printing */
     .mce-pagebreak {
@@ -21,9 +26,6 @@
     .mce-content-body table, .mce-content-body img { outline: 0 !important; }
     /** Resize handles can be printed if an img or table is selected during print */
     .mce-resizehandle { display: none; }
-    /** Tables use the border attribute when users edit, the border CSS property
-     *  is used by the editor to add a dotted outline, which this will remove when printing */
-    .mce-item-table, .mce-item-table td { border: 0 !important; }
 }
 
 @media screen {

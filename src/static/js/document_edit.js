@@ -14,14 +14,13 @@ $(function() {
 
     let ro_toolbar = "pdf print";
 
-    // Set the containing div and textarea to the vertical 
-    // height of the viewport and 80% width
+    // Set the containing div and textarea to the vertical height of the viewport
     let h = $(window).height(),
-        w = Math.floor(($(window).width() / 100.0) * 80.0);
+        w = $(window).width();
     // max-width is 775px
     if (w > 775) { w = 775; }
-    $("div").css({ height: h - 20, width: w });
-    $("#wp").css({ height: h - 20, width: w });
+    $("div").css({ height: h - 15, width: w });
+    $("#wp").css({ height: h - 15, width: w });
 
     tinymce.init({
         selector: "#wp",
