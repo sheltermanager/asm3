@@ -499,7 +499,18 @@ WHERE animal.deceaseddate IS NULL
   AND animal.activemovementtype = 1
   AND adoption.ISTRIAL = 1
   AND adoption.trialenddate < current_date
+  
+--Alerts when first character of Vaccination Manufacturer is a numeric.
+UNION SELECT 
+animal.animalname as name,
+animal.sheltercode as code,
+  animalvaccination.DateOfVaccination AS issuedate,
+'Vaccination Manufacturer Starts With Numeric' AS ISSUE 
+FROM animal
+INNER JOIN animalvaccination ON animalvaccination.animalid = animal.id
+where substring(animalvaccination.Manufacturer,1,1) in ('0','1','2','3','4','5','6','7','8','9')
 
+-----------------------------OWNER SECTION---------------------------------------------------------
 --This alerts when banned people also do not have the Exclude from bulk mailings flag.
 --You want to make sure that you do not email or mail users that have been banned.
 UNION SELECT
