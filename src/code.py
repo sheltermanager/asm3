@@ -5238,6 +5238,7 @@ class reports(JSONEndpoint):
             "locations": asm3.lookups.get_internal_locations(dbo),
             "personflags": asm3.lookups.get_person_flags(dbo),
             "species": asm3.lookups.get_species(dbo),
+            "vaccinationtypes": asm3.lookups.get_vaccination_types(dbo),
             "rows": reports
         }
 

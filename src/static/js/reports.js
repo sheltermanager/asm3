@@ -58,6 +58,10 @@ $(function() {
                 [ _("Ask the user for a species"), "askspecies", "SpeciesID=$ASK SPECIES$" ],
                 [ _("Ask the user for a type"), "asktype", "AnimalTypeID=$ASK ANIMALTYPE$" ],
                 [ _("Cruelty Case"), "cruelty", "CrueltyCase=1" ],
+                [ _("Date brought in between two dates"), "dbintwodates", 
+                    "DateBroughtIn>='$ASK DATE {0}$' AND DateBroughtIn<='$ASK DATE {1}$'"
+                    .replace("{0}", _("Entered the shelter between"))
+                    .replace("{1}", _("and")) ],
                 [ _("Deceased"), "deceased", "DeceasedDate Is Not Null" ],
                 [ _("Died between two dates"), "diedtwodates", 
                     "DeceasedDate>='$ASK DATE {0}$' AND DeceasedDate<='$ASK DATE {1}$'"
@@ -593,7 +597,18 @@ $(function() {
                 reports.qb_animal_criteria.push(
                     [_("Type is {0}").replace("{0}", v.ANIMALTYPE), "animaltype" + v.ID, "AnimalTypeID=" + v.ID]);
             });
-
+            $.each(controller.vaccinationtypes, function(i, v) {
+                reports.qb_animal_criteria.push(
+                    [_("Vaccination given {0}").replace("{0}", v.VACCINATIONTYPE), "vacc" + v.ID, 
+                        "EXISTS(SELECT ID FROM animalvaccination WHERE DateOfVaccination Is Not Null AND " +
+                        "AnimalID=v_animal.ID AND VaccinationID=" + v.ID + ")"]);
+            });
+            $.each(controller.vaccinationtypes, function(i, v) {
+                reports.qb_animal_criteria.push(
+                    [_("Vaccination not given {0}").replace("{0}", v.VACCINATIONTYPE), "notvacc" + v.ID, 
+                        "NOT EXISTS(SELECT ID FROM animalvaccination WHERE DateOfVaccination Is Not Null AND " +
+                        "AnimalID=v_animal.ID AND VaccinationID=" + v.ID + ")"]);
+            });
         },
 
         bind_browse_smcom: function() {
