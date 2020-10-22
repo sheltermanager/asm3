@@ -22,7 +22,7 @@ END AS Action
 FROM audittrail
 WHERE
 UserName LIKE '$ASK STRING Enter a username$' 
-AND AuditDate >= '$ASK DATE Actions between$' AND AuditDate <= '$and$ 23:59:59'
+AND AuditDate >= '$ASK DATE Actions between$' AND AuditDate <= '$ASK DATE and$ 23:59:59'
 ORDER BY UserName, AuditDate
 ###
 $$HEADER
