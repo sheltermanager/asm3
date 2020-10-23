@@ -596,10 +596,6 @@ def delete_media(dbo, username, mid):
     """
     mr = dbo.first_row(dbo.query("SELECT * FROM media WHERE ID=?", [mid]))
     if not mr: return
-    try:
-        asm3.dbfs.delete_id(dbo, mr.DBFSID)
-    except Exception as err:
-        asm3.al.error(str(err), "media.delete_media", dbo)
     dbo.delete("media", mid, username)
     # Was it the web or doc preferred? If so, make the first image for the link
     # the web or doc preferred instead
@@ -748,11 +744,13 @@ def rotate_image(imagedata, clockwise = True):
 def remove_expired_media(dbo, username = "system"):
     """
     Removes all media where retainuntil < today
-    and document media older than today - remove document media years
+    and document media older than today - remove document media years.
+    No longer physically deletes dbfs rows - that should be done manually
+    via delete_orphaned_media
     """
     rows = dbo.query("SELECT ID, DBFSID FROM media WHERE RetainUntil Is Not Null AND RetainUntil < ?", [ dbo.today() ])
-    for r in rows:
-        asm3.dbfs.delete_id(dbo, r.dbfsid) 
+    #for r in rows:
+    #    asm3.dbfs.delete_id(dbo, r.dbfsid)
     dbo.execute("DELETE FROM media WHERE RetainUntil Is Not Null AND RetainUntil < ?", [ dbo.today() ])
     asm3.al.debug("removed %d expired media items (retain until)" % len(rows), "media.remove_expired_media", dbo)
     if asm3.configuration.auto_remove_document_media(dbo):
@@ -760,8 +758,8 @@ def remove_expired_media(dbo, username = "system"):
         if years > 0:
             cutoff = dbo.today(years * -365)
             rows = dbo.query("SELECT ID, DBFSID FROM media WHERE MediaType = ? AND MediaMimeType <> 'image/jpeg' AND Date < ?", ( MEDIATYPE_FILE, cutoff ))
-            for r in rows:
-                asm3.dbfs.delete_id(dbo, r.dbfsid) 
+            #for r in rows:
+            #    asm3.dbfs.delete_id(dbo, r.dbfsid) 
             dbo.execute("DELETE FROM media WHERE MediaType = ? AND MediaMimeType <> 'image/jpeg' AND Date < ?", ( MEDIATYPE_FILE, cutoff ))
             asm3.al.debug("removed %d expired document media items (remove after years)" % len(rows), "media.remove_expired_media", dbo)
 
