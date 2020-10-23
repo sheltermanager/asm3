@@ -2847,7 +2847,6 @@ def reset_db(dbo):
     """
     for t in TABLES_DATA:
         dbo.execute_dbupdate("DELETE FROM %s" % t)
-    asm3.dbfs.delete_orphaned_media(dbo) # this deletes dbfs items referenced by the media we just deleted
     install_db_sequences(dbo)
 
 def perform_updates(dbo):

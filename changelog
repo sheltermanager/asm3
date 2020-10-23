@@ -1,6 +1,7 @@
 44
 ================
 
+23/10/20 Stop reset_db from removing media
 22/10/20 QB criteria: date brought in, vacc given/not given #602
 17/10/20 Upgrade to TinyMCE 5.5.1
 17/10/20 Fix TinyMCE mobile display and table borders
