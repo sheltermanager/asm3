@@ -68,6 +68,7 @@ def get_medicaltreatment_query(dbo):
         "'' ELSE a.ShelterLocationUnit END AS LocationUnit, " \
         "il.LocationName AS ShelterLocationName, a.ShelterLocationUnit, " \
         "%(compositeid)s AS CompositeID, " \
+        "%(givenremaining)s AS NamedGivenRemaining, " \
         "CASE " \
         "WHEN am.TimingRule = 0 THEN 'One Off' " \
         "WHEN am.TimingRuleFrequency = 0 THEN %(daily)s " \
@@ -93,6 +94,7 @@ def get_medicaltreatment_query(dbo):
         "LEFT OUTER JOIN internallocation il ON il.ID = a.ShelterLocation " % \
             { 
                 "compositeid": dbo.sql_concat(["am.ID", "'_'", "amt.ID"]),
+                "givenremaining": dbo.sql_concat(["am.TreatmentsGiven", "' / '", "am.TreatmentsRemaining"]),
                 "daily": dbo.sql_concat(["am.TimingRule", "' treatments every '", "am.TimingRuleNoFrequencies", "' days'"]),
                 "weekly": dbo.sql_concat(["am.TimingRule", "' treatments every '", "am.TimingRuleNoFrequencies", "' weeks'"]),
                 "monthly": dbo.sql_concat(["am.TimingRule", "' treatments every '", "am.TimingRuleNoFrequencies", "' months'"]),
@@ -349,7 +351,7 @@ def embellish_regimen(l, rows):
     """
     Adds the following fields to a resultset containing
     regimen rows:
-    NAMEDFREQUENCY, NAMEDNUMBEROFTREATMENTS, NAMEDSTATUS, COMPOSITEID
+    NAMEDFREQUENCY, NAMEDNUMBEROFTREATMENTS, NAMEDSTATUS, NAMEDGIVENREMAINING, COMPOSITEID
     """
     for r in rows:
         st = 0
@@ -391,6 +393,14 @@ def embellish_regimen(l, rows):
             r.NAMEDNUMBEROFTREATMENTS = _("Unspecified", l)
         else:
             r.NAMEDNUMBEROFTREATMENTS = str(_("{0} {1} ({2} treatments)", l)).format(tnt, tp, tr * tnt)
+        # NAMEDGIVENREMAINING - shows how many treatments 
+        # have been given and how many are remaining. This is also called
+        # by get_profiles, which does not have treatmentsgiven or treatmentsremaining
+        if "TREATMENTSREMAINING" in r:
+            if r.TREATMENTSREMAINING > 0:
+                r.NAMEDGIVENREMAINING = _("({0} given, {1} remaining)", l).format(r.TREATMENTSGIVEN, r.TREATMENTSREMAINING)
+            else:
+                r.NAMEDGIVENREMAINING = _("({0} given)", l).format(r.TREATMENTSGIVEN)
         # NAMEDSTATUS
         if st == ACTIVE:
             r.NAMEDSTATUS = _("Active", l)

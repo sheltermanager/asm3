@@ -583,7 +583,9 @@ def animal_tags(dbo, a, includeAdditional=True, includeCosts=True, includeDiet=T
             ( "STARTDATE", _("Start Date", l) ),
             ( "TREATMENTNAME", _("Treatment", l) ),
             ( "DOSAGE", _("Dosage", l) ),
-            ( "LASTTREATMENTGIVEN", _("Given", l)),
+            ( "NAMEDSTATUS", _("Status", l) ),
+            ( "NAMEDGIVENREMAINING", _("Given", l) ),
+            ( "LASTTREATMENTGIVEN", _("Date", l)),
             ( "NEXTTREATMENTDUE", _("Due", l)),
             ( "COMMENTS", _("Comments", l)) 
         ))
