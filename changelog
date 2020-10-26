@@ -1,6 +1,7 @@
 44
 ================
 
+26/10/20 Fix deduct stocklevel from writing positive usage records
 25/10/20 Include status data with <<AnimalMedicals>>
 23/10/20 Prevent media.delete/expired from removing media
 23/10/20 Stop reset_db from removing media
