@@ -589,6 +589,10 @@ $(function() {
                 reports.qb_animal_criteria.push(
                     [_("Location is {0}").replace("{0}", v.LOCATIONNAME), "location" + v.ID, "ShelterLocation=" + v.ID]);
             });
+            $.each(controller.sizes, function(i, v) {
+                reports.qb_animal_criteria.push(
+                    [_("Size is {0}").replace("{0}", v.SIZE), "size" + v.ID, "Size=" + v.ID]);
+            });
             $.each(controller.species, function(i, v) {
                 reports.qb_animal_criteria.push(
                     [_("Species is {0}").replace("{0}", v.SPECIESNAME), "species" + v.ID, "SpeciesID=" + v.ID]);
