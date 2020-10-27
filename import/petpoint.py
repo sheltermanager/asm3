@@ -12,22 +12,44 @@ are MedicalVaccineExpress and MedicalTestsExpress
 Can optionally import color info from location history:
 AnimalLocationHistory
 
-3rd March - 8th September, 2017
+Can optionally import cases:
+CaseCaseDetailExtended
+
+Use this script to convert xls(x) files from PetPoint to CSV and merge
+them into single CSV files for import:
+
+#!/bin/sh
+find . -name '*xls*' -exec ssconvert -S "{}" "{}.csv" \;
+cat *AnimalIntakeWithResultsExtended*csv.0 > animals.csv
+cat *AnimalMemoHistory*csv.1 > memo.csv
+cat *AnimalLocationHistory*csv.1 > locations.csv
+cat *CaseCaseDetailExtended*csv.0 > cases.csv
+cat *MedicalVaccineExpress*csv.1 > vacc.csv
+cat *MedicalTestsExpress*csv.1 > tests.csv
+cat *PersonByAssociationExtended*csv.0 > people.csv
+
+If the vaccine and tests are in the two row format, there will be some header
+junk that needs to be removed so that the first line has Animal # in it. The second
+header will also need to be removed or odd/even will be thrown out.
+
+3rd March - 27th October, 2020
 """
 
 # The shelter's petfinder ID for grabbing animal images for adoptable animals
 PETFINDER_ID = ""
 START_ID = 200
+ACCOUNT = "rk2343"
 
-INTAKE_FILENAME = "/home/robin/tmp/asm3_import_data/petpoint_sm2047/animals.csv"
-MEMO_FILENAME = "/home/robin/tmp/asm3_import_data/petpoint_sm2047/memo.csv"
-LOCATION_FILENAME = "/home/robin/tmp/asm3_import_data/petpoint_sm2047/locations.csv"
-PERSON_FILENAME = "/home/robin/tmp/asm3_import_data/petpoint_sm2047/people.csv"
-VACC_FILENAME = "/home/robin/tmp/asm3_import_data/petpoint_sm2047/vacc.csv"
-TEST_FILENAME = "/home/robin/tmp/asm3_import_data/petpoint_sm2047/tests.csv"
+INTAKE_FILENAME = "/home/robin/tmp/asm3_import_data/petpoint_%s/animals.csv" % ACCOUNT
+CASES_FILENAME = "/home/robin/tmp/asm3_import_data/petpoint_%s/cases.csv" % ACCOUNT
+MEMO_FILENAME = "/home/robin/tmp/asm3_import_data/petpoint_%s/memo.csv" % ACCOUNT
+LOCATION_FILENAME = "/home/robin/tmp/asm3_import_data/petpoint_%s/locations.csv" % ACCOUNT
+PERSON_FILENAME = "/home/robin/tmp/asm3_import_data/petpoint_%s/people.csv" % ACCOUNT
+VACC_FILENAME = "/home/robin/tmp/asm3_import_data/petpoint_%s/vacc.csv" % ACCOUNT
+TEST_FILENAME = "/home/robin/tmp/asm3_import_data/petpoint_%s/tests.csv" % ACCOUNT
 
 # Whether or not the vaccine and test files are in two row stacked format
-MEDICAL_TWO_ROW_FORMAT = False
+MEDICAL_TWO_ROW_FORMAT = True
 
 def findowner(ownername = ""):
     """ Looks for an owner with the given name in the collection
@@ -36,6 +58,11 @@ def findowner(ownername = ""):
         if o.OwnerName == ownername.strip():
             return o
     return None
+
+def getdatetime(d, noblanks=False):
+    rv = asm.parse_date(d, "%Y/%m/%d %H:%M:%S")
+    if noblanks and rv is None: rv = asm.now()
+    return rv
 
 def getdate(d, noblanks=False):
     rv = asm.getdate_guess(d)
@@ -47,6 +74,7 @@ def getdate(d, noblanks=False):
 owners = []
 movements = []
 animals = []
+animalcontrol = []
 animaltests = []
 animalvaccinations = []
 logs = []
@@ -54,6 +82,7 @@ ppa = {}
 ppo = {}
 
 asm.setid("animal", START_ID)
+asm.setid("animalcontrol", START_ID)
 asm.setid("animaltest", START_ID)
 asm.setid("animalvaccination", START_ID)
 asm.setid("log", START_ID)
@@ -63,6 +92,7 @@ asm.setid("adoption", START_ID)
 print "\\set ON_ERROR_STOP\nBEGIN;"
 print "DELETE FROM internallocation;"
 print "DELETE FROM animal WHERE ID >= %s AND CreatedBy = 'conversion';" % START_ID
+print "DELETE FROM animalcontrol WHERE ID >= %s AND CreatedBy = 'conversion';" % START_ID
 print "DELETE FROM animaltest WHERE ID >= %s AND CreatedBy = 'conversion';" % START_ID
 print "DELETE FROM animalvaccination WHERE ID >= %s AND CreatedBy = 'conversion';" % START_ID
 print "DELETE FROM log WHERE ID >= %s AND CreatedBy = 'conversion';" % START_ID
@@ -86,6 +116,8 @@ if PETFINDER_ID != "":
 # Deal with people first (if set)
 if PERSON_FILENAME != "":
     for d in asm.csv_to_list(PERSON_FILENAME):
+        # Ignore repeated headers
+        if d["Person ID"] == "Person ID": continue
         # Each row contains a person
         o = asm.Owner()
         owners.append(o)
@@ -93,7 +125,7 @@ if PERSON_FILENAME != "":
         o.OwnerForeNames = d["Name First"]
         o.OwnerSurname = d["Name Last"]
         o.OwnerName = o.OwnerForeNames + " " + o.OwnerSurname
-        o.OwnerAddress = "%s %s %s %s" % (d["Street Number"], d["Street Name"], d["Street Type"], d["Street Direction"])
+        o.OwnerAddress = d["Street Address"]
         o.OwnerTown = d["City"]
         o.OwnerCounty = d["Province"]
         o.OwnerPostcode = d["Postal Code"]
@@ -111,14 +143,14 @@ if PERSON_FILENAME != "":
 # Sort the data on intake date ascending
 for d in sorted(asm.csv_to_list(INTAKE_FILENAME), key=lambda k: getdate(k["Intake Date"], True)):
     # If it's a repeat of the header row, skip
-    if d["Animal ID"] == "Animal ID": continue
+    if d["Animal #"] == "Animal #": continue
     # Each row contains an animal, intake and outcome
-    if ppa.has_key(d["Animal ID"]):
-        a = ppa[d["Animal ID"]]
+    if ppa.has_key(d["Animal #"]):
+        a = ppa[d["Animal #"]]
     else:
         a = asm.Animal()
         animals.append(a)
-        ppa[d["Animal ID"]] = a
+        ppa[d["Animal #"]] = a
         if d["Species"] == "Cat":
             a.AnimalTypeID = 11 # Unwanted Cat
             if d["Intake Type"] == "Stray":
@@ -144,7 +176,7 @@ for d in sorted(asm.csv_to_list(INTAKE_FILENAME), key=lambda k: getdate(k["Intak
             a.IsTransfer = 1
         a.generateCode()
         a.ShortCode = d["ARN"]
-        if a.ShortCode.strip() == "": a.ShortCode = d["Animal ID"]
+        if a.ShortCode.strip() == "": a.ShortCode = d["Animal #"]
         if "Distinguishing Markings" in d: a.Markings = d["Distinguishing Markings"]
         a.IsNotAvailableForAdoption = 0
         a.ShelterLocation = asm.location_id_for_name(d["Location"])
@@ -169,7 +201,7 @@ for d in sorted(asm.csv_to_list(INTAKE_FILENAME), key=lambda k: getdate(k["Intak
         if "Secondary Breed" in d: comments += d["Secondary Breed"]
         comments += ", age: " + d["Age Group"]
         if "Intake Condition" in d: comments += ", intake condition: " + d["Intake Condition"]
-        comments += ", ID: " + d["Animal ID"] + ", ARN: " + d["ARN"]
+        comments += ", ID: " + d["Animal #"] + ", ARN: " + d["ARN"]
         asm.breed_ids(a, d["Primary Breed"], d["Secondary Breed"])
         a.HiddenAnimalDetails = comments
 
@@ -185,7 +217,7 @@ for d in sorted(asm.csv_to_list(INTAKE_FILENAME), key=lambda k: getdate(k["Intak
                     o.OwnerSurname = bits[len(bits)-1]
                 else:
                     o.OwnerSurname = o.OwnerName
-                o.OwnerAddress = d["Street Number"] + " " + d["Street Name"] + " " + d["Street Type"] + " " + d["Street Direction"]
+                o.OwnerAddress = d["Street Address"]
                 if o.OwnerAddress == "": o.OwnerAddress = d["Agency Address"]
                 o.OwnerTown = d["City"]
                 o.OwnerCounty = d["Province"]
@@ -218,7 +250,7 @@ for d in sorted(asm.csv_to_list(INTAKE_FILENAME), key=lambda k: getdate(k["Intak
                 o.OwnerSurname = bits[len(bits)-1]
             else:
                 o.OwnerSurname = o.OwnerName
-            o.OwnerAddress = d["Out Street Number"] + " " + d["Out Street Name"] + " " + d["Out Street Type"] + " " + d["Out Street Direction"]
+            o.OwnerAddress = d["Out Street Address"]
             o.OwnerTown = d["Out City"]
             o.OwnerCounty = d["Out Province"]
             o.OwnerPostcode = d["Out Postal Code"]
@@ -237,7 +269,7 @@ for d in sorted(asm.csv_to_list(INTAKE_FILENAME), key=lambda k: getdate(k["Intak
                 o.OwnerSurname = bits[len(bits)-1]
             else:
                 o.OwnerSurname = o.OwnerName
-            o.OwnerAddress = d["Agency Street Number"] + " " + d["Agency Street Name"] + " " + d["Agency Street Type"] + " " + d["Agency Street Direction"]
+            o.OwnerAddress = d["Agency Street Address"]
             o.OwnerTown = d["Agency City"]
             o.OwnerCounty = d["Agency Province"]
             o.OwnerPostcode = d["Agency Postal Code"]
@@ -328,7 +360,8 @@ for d in sorted(asm.csv_to_list(INTAKE_FILENAME), key=lambda k: getdate(k["Intak
 if MEMO_FILENAME != "":
     idfield = "AnimalID"
     for d in asm.csv_to_list(MEMO_FILENAME):
-        if d["textbox20"] == "textbox20": continue
+        if "textbox20" not in d: continue # Can't do anything without our field
+        if d["textbox20"] == "textbox20": continue # Ignore repeated headers
         if not d.has_key(idfield): idfield = "Name"
         if ppa.has_key(d[idfield]):
             a = ppa[d[idfield]]
@@ -342,12 +375,51 @@ if MEMO_FILENAME != "":
                 l.Date = asm.now()
             l.Comments = d["Textbox131"]
 
+if CASES_FILENAME != "":
+    ctmap = {
+        "Neglect/ Cruelty": 7,
+        "Bite": 5,
+        "Nuisance": 8,
+        "Stray": 3,
+        "wildlife": 3,
+        "Assist Police/Fire": 3,
+        "Feral Cat": 3, 
+        "Injured": 10,
+        "TNR": 10
+    }
+    for d in asm.csv_to_list(CASES_FILENAME):
+        if d["Case ID"] == "Case ID": continue # Ignore repeated headers
+        # Each row contains an animal control incident/case
+        ac = asm.AnimalControl()
+        animalcontrol.append(ac)
+        c = d["Case ID"]
+        ac.CallDateTime = getdatetime(d["Case Date/Time"]) or getdate(d["Case Date/Time"], True)
+        ac.IncidentDateTime = ac.CallDateTime
+        ac.IncidentTypeID = 1
+        if d["Case Type"] in ctmap: ac.IncidentTypeID = ctmap[d["Case Type"]]
+        ac.DispatchDateTime = ac.CallDateTime
+        ac.CompletedDate = getdatetime(d["Result Date/Time"])
+        if ac.CompletedDate is None:
+            ac.CompletedDate = ac.CallDateTime
+        ac.AnimalDescription = "%s %s" % (d["Number Of Animals"], d["Animal Description"])
+        ac.DispatchedACO = d["Case Officer"]
+        ac.DispatchAddress = d["Street Name"]
+        ac.DispatchTown = d["City"]
+        ac.DispatchCounty = d["State"]
+        ac.DispatchPostcode = d["Zip Code"]
+        ac.JurisdictionID = asm.jurisdiction_id_for_name(d["Jurisdiction"])
+        c += "\nCaller info: %s" % d["Person Reporting Info"]
+        c += "\nAdditional: %s" % d["Additional Information"]
+        c += "\n%s" % d["Comments"]
+        ac.CallNotes = c
+
 # Extract color info from location history
 if LOCATION_FILENAME != "":
     idfield = "textbox15"
     colfield = "textbox59"
     for d in asm.csv_to_list(LOCATION_FILENAME):
-        if d[idfield] == idfield: continue
+        if idfield not in d: continue # Can't do anything without field present
+        if d[idfield] == idfield: continue # Ignore repeated headers
         if ppa.has_key(d[idfield]):
             name1, name2 = d[colfield].split("/", 1)
             a = ppa[d[idfield]]
@@ -476,6 +548,10 @@ asm.adopt_older_than(animals, movements, uo.ID, 365)
 # Now that everything else is done, output stored records
 for k,v in asm.locations.iteritems():
     print v
+if len(asm.jurisdictions.keys()) > 0:
+    print "DELETE FROM jurisdiction;"
+    for k,v in asm.jurisdictions.iteritems():
+        print v
 for a in animals:
     print a
 for at in animaltests:
@@ -488,8 +564,10 @@ for m in movements:
     print m
 for l in logs:
     print l
+for ac in animalcontrol:
+    print ac
 
-asm.stderr_summary(animals=animals, animaltests=animaltests, animalvaccinations=animalvaccinations, logs=logs, owners=owners, movements=movements)
+asm.stderr_summary(animals=animals, animalcontrol=animalcontrol, animaltests=animaltests, animalvaccinations=animalvaccinations, logs=logs, owners=owners, movements=movements)
 
 print "DELETE FROM configuration WHERE ItemName LIKE 'DBView%';"
 print "COMMIT;"
