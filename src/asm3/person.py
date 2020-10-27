@@ -1091,6 +1091,9 @@ def merge_person(dbo, username, personid, mergepersonid):
     reparent("diary", "LinkID", "LinkType", asm3.diary.PERSON)
     reparent("log", "LinkID", "LinkType", asm3.log.PERSON, lastchanged=False)
 
+    # Assign the adopter flag if we brought in new open adoption movements
+    update_adopter_flag(dbo, username, personid)
+
     # Reparent the audit records for the reparented records in the audit log
     # by switching ParentLinks to the new ID.
     dbo.execute("UPDATE audittrail SET ParentLinks = %s WHERE ParentLinks LIKE '%%owner=%s %%'" % \

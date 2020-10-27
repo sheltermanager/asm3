@@ -1,6 +1,7 @@
 44
 ================
 
+27/10/20 Check the adopter flag after a person merge
 26/10/20 Fix deduct stocklevel from writing positive usage records
 25/10/20 Include status data with <<AnimalMedicals>>
 23/10/20 Prevent media.delete/expired from removing media
