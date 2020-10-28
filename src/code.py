@@ -3794,6 +3794,7 @@ class maint_time(ASMEndpoint):
 
 class maint_undelete(JSONEndpoint):
     url = "maint_undelete"
+    get_permissions = asm3.users.USE_SQL_INTERFACE
 
     def controller(self, o):
         d = asm3.audit.get_deletions(o.dbo)
@@ -3801,6 +3802,7 @@ class maint_undelete(JSONEndpoint):
         return { "rows": d }
 
     def post_undelete(self, o):
+        self.check(asm3.users.USE_SQL_INTERFACE)
         asm3.audit.undelete(o.dbo, o.post.integer("id"), o.post["table"])
 
 class medical(JSONEndpoint):

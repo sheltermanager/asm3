@@ -16,7 +16,7 @@ $(function() {
                 columns: [
                     { field: "ID", display: _("ID") },
                     { field: "TABLENAME", display: _("Table") },
-                    { field: "DATE", display: _("Date"), initialsort: true, initialsortdirection: "desc", formatter: tableform.format_date },
+                    { field: "DATE", display: _("Date"), initialsort: true, initialsortdirection: "desc", formatter: tableform.format_datetime },
                     { field: "DELETEDBY", display: _("By") }
                 ]
             };
