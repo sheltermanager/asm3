@@ -4,7 +4,7 @@ $(function() {
 
     "use strict";
 
-    const latency = {
+    const maint_latency = {
 
         formdata: "junk=123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890",
 
@@ -21,14 +21,14 @@ $(function() {
 
             $("#button-test").button().click(function() {
                 $("#button-test").button("disable");
-                common.ajax_post("latency", latency.formdata)
+                common.ajax_post("maint_latency", maint_latency.formdata)
                     .then(function(r, ms) {
                         $("#testoutput").append("Test 1: " + ms + "ms<br/>");
-                        return common.ajax_post("latency", latency.formdata);
+                        return common.ajax_post("maint_latency", maint_latency.formdata);
                     })
                     .then(function(r, ms) {
                         $("#testoutput").append("Test 2: " + ms + "ms<br/>");
-                        return common.ajax_post("latency", latency.formdata);
+                        return common.ajax_post("maint_latency", maint_latency.formdata);
                     })
                     .then(function(r, ms) {
                         $("#testoutput").append("Test 3: " + ms + "ms<br/>");
@@ -40,15 +40,15 @@ $(function() {
         sync: function() {
         },
 
-        name: "latency",
+        name: "maint_latency",
         animation: "options",
         title: function() { return _("Latency"); },
         routes: {
-            "latency": function() { common.module_start("latency"); }
+            "maint_latency": function() { common.module_start("maint_latency"); }
         }
 
     };
 
-    common.module_register(latency);
+    common.module_register(maint_latency);
 
 });

@@ -3792,6 +3792,17 @@ class maint_time(ASMEndpoint):
         return "Time now is %s. TZ=%s DST=%s (%s)" % \
             ( o.dbo.now(), o.dbo.timezone, o.dbo.timezone_dst == 1 and "ON" or "OFF", get_dst(o.locale) )
 
+class maint_undelete(JSONEndpoint):
+    url = "maint_undelete"
+
+    def controller(self, o):
+        d = asm3.audit.get_deletions(o.dbo)
+        asm3.al.debug("got %d deleted top level records" % len(d), "code.undelete", o.dbo)
+        return { "rows": d }
+
+    def post_undelete(self, o):
+        asm3.audit.undelete(o.dbo, o.post.integer("id"), o.post["table"])
+
 class medical(JSONEndpoint):
     url = "medical"
     get_permissions = asm3.users.VIEW_MEDICAL

@@ -130,6 +130,11 @@ def delete_rows(dbo, username, tablename, condition):
         # otherwise, stuff all the deleted rows into one delete action
         action(dbo, DELETE, username, tablename, 0, "", str(rows))
 
+def get_deletions(dbo):
+    """ Returns all available records for undeleting """
+    return dbo.query("SELECT ID, TableName, DeletedBy, Date, IDList FROM deletion WHERE TableName IN " \
+        "('animal', 'owner', 'animalcontrol', 'waitinglist', 'animallost', 'animalfound')")
+
 def insert_deletions(dbo, username, tablename, condition):
     rows = dbo.query("SELECT * FROM %s WHERE %s" % (tablename, condition))
     if len(rows) > 0 and "ID" in rows[0]:
@@ -149,6 +154,18 @@ def insert_deletion(dbo, username, tablename, linkid, parentlinks, restoresql):
         "IDList":       parentlinks,
         "RestoreSQL":   restoresql
     }, generateID=False, writeAudit=False)
+
+def undelete(dbo, did, tablename):
+    """ Undeletes a top level record with deletion ID did from tablename """
+    d = dbo.first_row(dbo.query("SELECT * FROM deletion WHERE ID=? AND TableName=?", [did, tablename]))
+    if d is None: raise KeyError("Deletion ID %s.%s does not exist" % (tablename, did))
+    # Undelete any associated rows first
+    for x in dbo.query("SELECT * FROM deletion WHERE IDList LIKE ?", [ "%%%s=%s%%" % (d.TABLENAME, d.ID) ]):
+        asm3.al.debug("undelete ID %s from %s: %s" % (x.ID, x.TABLENAME, x.RESTORESQL), "audit.undelete", dbo)
+        dbo.execute(x.RESTORESQL)
+    # Now the main record
+    asm3.al.debug("undelete ID %s from %s: %s" % (d.ID, d.TABLENAME, d.RESTORESQL), "audit.undelete", dbo)
+    dbo.execute(d.RESTORESQL)
 
 def move(dbo, username, tablename, linkid, parentlinks, description):
     action(dbo, MOVE, username, tablename, linkid, parentlinks, description)
