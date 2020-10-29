@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ASM3\n"
 "Report-Msgid-Bugs-To: robin@sheltermanager.com\n"
-"POT-Creation-Date: 2020-10-16 15:14+0000\n"
+"POT-Creation-Date: 2020-10-29 09:13+0000\n"
 "Last-Translator: Robin Rawson-Tetley <robin@sheltermanager.com>\n"
 "Language-Team: en <robin@sheltermanager.com>\n"
 "Language: en\n"
@@ -75,7 +75,11 @@ msgstr ""
 msgid "(use system)"
 msgstr ""
 
-#: medical.js
+#: medical.py
+msgid "({0} given)"
+msgstr ""
+
+#: medical.py medical.js
 msgid "({0} given, {1} remaining)"
 msgstr ""
 
@@ -2049,7 +2053,7 @@ msgid "Burmilla"
 msgstr ""
 
 #: wordprocessor.py medical.js vaccination.js diary.js person_investigation.js
-#: animal_bulk.js log.js
+#: animal_bulk.js maint_undelete.js log.js
 msgid "By"
 msgstr ""
 
@@ -3152,8 +3156,8 @@ msgstr ""
 #: animal_find_results.js person.js animal_costs.js move_retailer.js
 #: person_links.js diary.js citations.js traploan.js common.js
 #: person_investigation.js onlineform.js accounts_trx.js log_new.js animal.js
-#: move_reserve.js move_transfer.js lostfound_find_results.js log.js
-#: movements.js move_adopt.js publish_logs.js move_foster.js
+#: maint_undelete.js move_reserve.js move_transfer.js lostfound_find_results.js
+#: log.js movements.js move_adopt.js publish_logs.js move_foster.js
 msgid "Date"
 msgstr ""
 
@@ -3191,6 +3195,10 @@ msgstr ""
 
 #: person_investigation.js
 msgid "Date and notes are mandatory."
+msgstr ""
+
+#: reports.js
+msgid "Date brought in between two dates"
 msgstr ""
 
 #: animal.py animal.js
@@ -6001,7 +6009,7 @@ msgstr ""
 msgid "I've finished, Don't show me this popup again."
 msgstr ""
 
-#: additional.js lookups.js
+#: maint_undelete.js additional.js lookups.js
 msgid "ID"
 msgstr ""
 
@@ -6760,11 +6768,11 @@ msgstr ""
 msgid "Last, First"
 msgstr ""
 
-#: latency.js
+#: maint_latency.js
 msgid "Latency"
 msgstr ""
 
-#: latency.js
+#: maint_latency.js
 msgid "Latency Tester"
 msgstr ""
 
@@ -8193,6 +8201,10 @@ msgstr ""
 
 #: reports.js
 msgid "Not microchipped"
+msgstr ""
+
+#: reports.js
+msgid "Not non-shelter"
 msgstr ""
 
 #: accounts_trx.js
@@ -9923,6 +9935,10 @@ msgstr ""
 msgid "Responded Date/Time"
 msgstr ""
 
+#: maint_undelete.js
+msgid "Restore"
+msgstr ""
+
 #: mobile.py lookups.py wordprocessor.py test.js
 msgid "Result"
 msgstr ""
@@ -10967,6 +10983,10 @@ msgstr ""
 msgid "Size"
 msgstr ""
 
+#: reports.js
+msgid "Size is {0}"
+msgstr ""
+
 #: lookups.py
 msgid "Sizes"
 msgstr ""
@@ -11238,7 +11258,7 @@ msgid ""
 "leaving the shelter on the home page."
 msgstr ""
 
-#: lookups.py transport.js person.js medical.js options.js
+#: lookups.py wordprocessor.py transport.js person.js medical.js options.js
 #: clinic_appointment.js move_reserve.js shelterview.js movements.js
 msgid "Status"
 msgstr ""
@@ -11459,7 +11479,7 @@ msgstr ""
 msgid "Tabby and White"
 msgstr ""
 
-#: common.js
+#: common.js maint_undelete.js
 msgid "Table"
 msgstr ""
 
@@ -12908,6 +12928,10 @@ msgstr ""
 msgid "Unavailable"
 msgstr ""
 
+#: maint_undelete.js
+msgid "Undelete"
+msgstr ""
+
 #: common.js
 msgid "Under {0} weeks old"
 msgstr ""
@@ -13199,8 +13223,16 @@ msgstr ""
 msgid "Vaccination book"
 msgstr ""
 
+#: reports.js
+msgid "Vaccination given {0}"
+msgstr ""
+
 #: mobile.py
 msgid "Vaccination marked as given for {0} - {1}"
+msgstr ""
+
+#: reports.js
+msgid "Vaccination not given {0}"
 msgstr ""
 
 #: html.py roles.js

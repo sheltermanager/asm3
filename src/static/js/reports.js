@@ -94,6 +94,7 @@ $(function() {
                 [ _("Not adoptable"), "notadoptable", "IsNotAvailableForAdoption=1" ],
                 [ _("Not altered"), "notaltered", "Neutered=0" ],
                 [ _("Not microchipped"), "notmicrochip", "IdentichipNumber=0" ],
+                [ _("Not non-shelter"), "notnonshelter", "NonShelterAnimal=0" ],
                 [ _("No tattoo"), "nottattoo", "Tattoo=0" ],
                 [ _("Reclaimed"), "reclaimed", "ActiveMovementDate Is Not Null AND ActiveMovementType=5" ],
                 [ _("Reserved"), "reserved", "HasActiveReserve=1" ],
