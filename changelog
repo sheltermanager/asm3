@@ -1,6 +1,7 @@
 44
 ================
 
+30/10/20 Image resizing should be a sitedef, not configuration
 27/10/20 QB criteria: Add "Size is"
 27/10/20 Check the adopter flag after a person merge
 26/10/20 Fix deduct stocklevel from writing positive usage records

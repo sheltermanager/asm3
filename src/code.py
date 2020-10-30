@@ -65,8 +65,9 @@ from asm3.sitedefs import BASE_URL, DEPLOYMENT_TYPE, ELECTRONIC_SIGNATURES, EMER
     MULTIPLE_DATABASES_PUBLISH_FTP, ADMIN_EMAIL, EMAIL_ERRORS, MADDIES_FUND_TOKEN_URL, \
     MANUAL_HTML_URL, MANUAL_PDF_URL, MANUAL_FAQ_URL, MANUAL_VIDEO_URL, MAP_LINK, MAP_PROVIDER, \
     MAP_PROVIDER_KEY, OSM_MAP_TILES, FOUNDANIMALS_FTP_USER, PETCADEMY_FTP_HOST, \
-    PETLINK_BASE_URL, PETRESCUE_URL, PETSLOCATED_FTP_USER, QR_IMG_SRC, SAVOURLIFE_URL, \
-    SERVICE_URL, SESSION_SECURE_COOKIE, SESSION_DEBUG, SHARE_BUTTON, SMARTTAG_FTP_USER, \
+    PETLINK_BASE_URL, PETRESCUE_URL, PETSLOCATED_FTP_USER, QR_IMG_SRC, \
+    RESIZE_IMAGES_DURING_ATTACH, RESIZE_IMAGES_SPEC, \
+    SAVOURLIFE_URL,SERVICE_URL, SESSION_SECURE_COOKIE, SESSION_DEBUG, SHARE_BUTTON, SMARTTAG_FTP_USER, \
     SMCOM_LOGIN_URL, SMCOM_PAYMENT_LINK, PAYPAL_VALIDATE_IPN_URL
 
 CACHE_ONE_HOUR = 3600
@@ -1668,6 +1669,7 @@ class animal_media(JSONEndpoint):
             "logtypes": asm3.lookups.get_log_types(dbo),
             "newmedia": o.post.integer("newmedia") == 1,
             "name": self.url,
+            "resizeimagespec": asm3.utils.iif(RESIZE_IMAGES_DURING_ATTACH, RESIZE_IMAGES_SPEC, ""),
             "templates": asm3.template.get_document_templates(dbo),
             "sigtype": ELECTRONIC_SIGNATURES
         }
@@ -2996,6 +2998,7 @@ class foundanimal_media(JSONEndpoint):
             "linktypeid": asm3.media.FOUNDANIMAL,
             "logtypes": asm3.lookups.get_log_types(dbo),
             "name": self.url,
+            "resizeimagespec": asm3.utils.iif(RESIZE_IMAGES_DURING_ATTACH, RESIZE_IMAGES_SPEC, ""),
             "templates": asm3.template.get_document_templates(dbo),
             "sigtype": ELECTRONIC_SIGNATURES
         }
@@ -3260,6 +3263,7 @@ class incident_media(JSONEndpoint):
             "linktypeid": asm3.media.ANIMALCONTROL,
             "logtypes": asm3.lookups.get_log_types(dbo),
             "name": self.url,
+            "resizeimagespec": asm3.utils.iif(RESIZE_IMAGES_DURING_ATTACH, RESIZE_IMAGES_SPEC, ""),
             "templates": asm3.template.get_document_templates(dbo),
             "sigtype": ELECTRONIC_SIGNATURES
         }
@@ -3603,6 +3607,7 @@ class lostanimal_media(JSONEndpoint):
             "linktypeid": asm3.media.LOSTANIMAL,
             "logtypes": asm3.lookups.get_log_types(dbo),
             "name": self.url, 
+            "resizeimagespec": asm3.utils.iif(RESIZE_IMAGES_DURING_ATTACH, RESIZE_IMAGES_SPEC, ""),
             "templates": asm3.template.get_document_templates(dbo),
             "sigtype": ELECTRONIC_SIGNATURES
         }
@@ -4929,6 +4934,7 @@ class person_media(JSONEndpoint):
             "linktypeid": asm3.media.PERSON,
             "logtypes": asm3.lookups.get_log_types(dbo),
             "name": self.url,
+            "resizeimagespec": asm3.utils.iif(RESIZE_IMAGES_DURING_ATTACH, RESIZE_IMAGES_SPEC, ""),
             "templates": asm3.template.get_document_templates(dbo),
             "sigtype": ELECTRONIC_SIGNATURES
         }
@@ -6020,6 +6026,7 @@ class waitinglist_media(JSONEndpoint):
             "linktypeid": asm3.media.WAITINGLIST,
             "logtypes": asm3.lookups.get_log_types(dbo),
             "name": self.url,
+            "resizeimagespec": asm3.utils.iif(RESIZE_IMAGES_DURING_ATTACH, RESIZE_IMAGES_SPEC, ""),
             "templates": asm3.template.get_document_templates(dbo),
             "sigtype": ELECTRONIC_SIGNATURES
         }

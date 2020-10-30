@@ -221,7 +221,6 @@ DEFAULTS = {
     "HoldChangeLog": "Yes",
     "HoldChangeLogType": "3",
     "IncidentPermissions": "No",
-    "IncomingMediaScaling": "640x640",
     "InactivityTimer": "No",
     "InactivityTimeout": "20", 
     "IncludeIncompleteMedicalDoc": "Yes",
@@ -880,9 +879,6 @@ def include_incomplete_medical_doc(dbo):
 
 def include_off_shelter_medical(dbo):
     return cboolean(dbo, "IncludeOffShelterMedical", DEFAULTS["IncludeOffShelterMedical"] == "Yes")
-
-def incoming_media_scaling(dbo):
-    return cstring(dbo, "IncomingMediaScaling", DEFAULTS["IncomingMediaScaling"])
 
 def js_window_print(dbo):
     return cboolean(dbo, "JSWindowPrint", DEFAULTS["JSWindowPrint"] == "Yes")

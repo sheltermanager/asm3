@@ -403,17 +403,16 @@ $(function() {
                 return deferred.promise();
             }
 
-            // Is this an image and scaling option is on? 
+            // Is this an image, the scaling option is on and we have a resize spec?
             // If so, try to scale it down before sending
-            if (file.type.match('image.*') && !config.bool("DontUseHTML5Scaling")) {
+            if (file.type.match('image.*') && !config.bool("DontUseHTML5Scaling") && controller.resizeimagespec) {
 
                 // Figure out the size we're scaling to
-                let media_scaling = config.str("IncomingMediaScaling");
-                if (!media_scaling || media_scaling == "None") { media_scaling = "640x640"; }
+                let media_scaling = controller.resizeimagespec;
                 let max_width = format.to_int(media_scaling.split("x")[0]);
                 let max_height = format.to_int(media_scaling.split("x")[1]);
-                if (!max_width) { max_width = 640; }
-                if (!max_height) { max_height = 640; }
+                if (!max_width) { max_width = 1024; } // This stops images being mangled if spec is bad
+                if (!max_height) { max_height = 1024; }
 
                 // Read the file to an image tag, then scale it
                 let img, img_width, img_height;

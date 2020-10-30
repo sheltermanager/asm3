@@ -198,6 +198,10 @@ LARGE_FILES_CHUNKED = get_boolean("large_files_chunked", True)
 # QR code provider. "url" and "size" tokens will be substituted
 QR_IMG_SRC = get_string("qr_img_src", "//chart.googleapis.com/chart?cht=qr&chl=%(url)s&chs=%(size)s")
 
+# Whether to resize incoming images
+RESIZE_IMAGES_DURING_ATTACH = get_boolean("resize_images_during_attach", True)
+RESIZE_IMAGES_SPEC = get_string("resize_images_spec", "1024x1024")
+
 # Shell command to use to compress PDFs
 SCALE_PDF_DURING_ATTACH = get_boolean("scale_pdf_during_attach", False)
 SCALE_PDF_CMD = get_string("scale_pdf_cmd", "convert -density 120 -quality 60 %(input)s -compress Jpeg %(output)s")

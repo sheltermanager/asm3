@@ -6,7 +6,7 @@ import asm3.configuration
 import asm3.dbfs
 import asm3.log
 import asm3.utils
-from asm3.sitedefs import SCALE_PDF_DURING_ATTACH, SCALE_PDF_CMD, WATERMARK_X_OFFSET, WATERMARK_Y_OFFSET, WATERMARK_FONT_FILE, WATERMARK_FONT_SHADOWCOLOR, WATERMARK_FONT_FILLCOLOR, WATERMARK_FONT_STROKE, WATERMARK_FONT_OFFSET
+from asm3.sitedefs import RESIZE_IMAGES_DURING_ATTACH, RESIZE_IMAGES_SPEC, SCALE_PDF_DURING_ATTACH, SCALE_PDF_CMD, WATERMARK_X_OFFSET, WATERMARK_Y_OFFSET, WATERMARK_FONT_FILE, WATERMARK_FONT_SHADOWCOLOR, WATERMARK_FONT_FILLCOLOR, WATERMARK_FONT_STROKE, WATERMARK_FONT_OFFSET
 
 import datetime
 import os
@@ -25,7 +25,7 @@ MEDIATYPE_FILE = 0
 MEDIATYPE_DOCUMENT_LINK = 1
 MEDIATYPE_VIDEO_LINK = 2
 
-DEFAULT_RESIZE_SPEC = "640x640" # If no valid resize spec is configured, the default to use
+DEFAULT_RESIZE_SPEC = "1024x1024" # If no valid resize spec is configured, the default to use
 MAX_PDF_PAGES = 50 # Do not scale PDFs with more than this many pages
 
 def mime_type(filename):
@@ -337,12 +337,11 @@ def attach_file_from_form(dbo, username, linktype, linkid, post):
         # Autorotate it to match the EXIF orientation
         filedata = auto_rotate_image(dbo, filedata)
         # Scale it down to the system set size 
-        scalespec = asm3.configuration.incoming_media_scaling(dbo)
-        if scalespec != "None":
-            filedata = scale_image(filedata, scalespec)
-            asm3.al.debug("scaled image to %s (%d bytes)" % (scalespec, len(filedata)), "media.attach_file_from_form", dbo)
+        if RESIZE_IMAGES_DURING_ATTACH:
+            filedata = scale_image(filedata, RESIZE_IMAGES_SPEC)
+            asm3.al.debug("scaled image to %s (%d bytes)" % (RESIZE_IMAGES_SPEC, len(filedata)), "media.attach_file_from_form", dbo)
 
-    # Is it a PDF? If so, compress it if we can and the option is on
+    # Is it a PDF? If so, compress it if we can and the option is on 
     if ispdf and SCALE_PDF_DURING_ATTACH and asm3.configuration.scale_pdfs(dbo):
         orig_len = len(filedata)
         filedata = scale_pdf(filedata)
@@ -877,7 +876,7 @@ def scale_all_animal_images(dbo):
         outputfile.close()
         asm3.al.debug("scaling %s (%d of %d)" % (m.MEDIANAME, i, len(mp)), "media.scale_all_animal_images", dbo)
         try:
-            scale_image_file(inputfile.name, outputfile.name, asm3.configuration.incoming_media_scaling(dbo))
+            scale_image_file(inputfile.name, outputfile.name, RESIZE_IMAGES_SPEC)
         except Exception as err:
             asm3.al.error("failed scaling image, doing nothing: %s" % err, "media.scale_all_animal_images", dbo)
             continue
