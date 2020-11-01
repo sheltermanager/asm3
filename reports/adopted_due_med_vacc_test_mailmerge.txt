@@ -14,8 +14,8 @@ $VAR to DATE and$
 SELECT owner.ID, owner.OwnerName, owner.OwnerAddress, owner.OwnerPostcode,
 animal.AnimalName, 
 owner.EmailAddress, owner.OwnerTown, owner.OwnerCounty, 
-owner.OwnerTitle, owner.OwnerInitials, owner.OwnerForenames, owner.OwnerSurname
-animalvaccination.DateRequired, vaccinationtype.VaccinationType AS MedicalType, 
+owner.OwnerTitle, owner.OwnerInitials, owner.OwnerForenames, owner.OwnerSurname,
+animalvaccination.DateRequired, vaccinationtype.VaccinationType AS MedicalType
 FROM animal
 INNER JOIN adoption ON adoption.ID = animal.ActiveMovementID  
 INNER JOIN owner ON adoption.OwnerID = owner.ID
@@ -31,8 +31,8 @@ AND owner.ExcludeFromBulkEmail = 0
 UNION SELECT owner.ID, owner.OwnerName, owner.OwnerAddress, owner.OwnerPostcode,
 animal.AnimalName, 
 owner.EmailAddress, owner.OwnerTown, owner.OwnerCounty, 
-owner.OwnerTitle, owner.OwnerInitials, owner.OwnerForenames, owner.OwnerSurname
-animaltest.DateRequired, testtype.TestTypeName AS MedicalType, 
+owner.OwnerTitle, owner.OwnerInitials, owner.OwnerForenames, owner.OwnerSurname,
+animaltest.DateRequired, testtype.TestName AS MedicalType
 FROM animal
 INNER JOIN adoption ON adoption.ID = animal.ActiveMovementID  
 INNER JOIN owner ON adoption.OwnerID = owner.ID
@@ -48,8 +48,8 @@ AND owner.ExcludeFromBulkEmail = 0
 UNION SELECT owner.ID, owner.OwnerName, owner.OwnerAddress, owner.OwnerPostcode,
 animal.AnimalName, 
 owner.EmailAddress, owner.OwnerTown, owner.OwnerCounty, 
-owner.OwnerTitle, owner.OwnerInitials, owner.OwnerForenames, owner.OwnerSurname
-animalmedicaltreatment.DateRequired, animalmedical.TreatmentName AS MedicalType, 
+owner.OwnerTitle, owner.OwnerInitials, owner.OwnerForenames, owner.OwnerSurname,
+animalmedicaltreatment.DateRequired, animalmedical.TreatmentName AS MedicalType
 FROM animal
 INNER JOIN adoption ON adoption.ID = animal.ActiveMovementID  
 INNER JOIN owner ON adoption.OwnerID = owner.ID
