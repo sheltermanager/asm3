@@ -225,6 +225,12 @@ $(document).ready(function() {
         return query;
     };
 
+    // Remove all hidden elements from the DOM. Useful to prevent visibleif 
+    // hidden conditional fields from being posted to the backend
+    const remove_hidden = function() {
+        $(".asm-onlineform-table input:hidden, .asm-onlineform-table select:hidden").remove();
+    };
+
     // Find every visibleif rule and show/hide accordingly
     const show_visibleif = function() {
         $("tr").each(function() {
@@ -382,6 +388,7 @@ $(document).ready(function() {
         }
         else {
             e.preventDefault();
+            remove_hidden(); // strip conditional fields that are not visible so they do not post
             $("form").submit();
         }
     });
