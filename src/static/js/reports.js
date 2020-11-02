@@ -614,6 +614,18 @@ $(function() {
                         "NOT EXISTS(SELECT ID FROM animalvaccination WHERE DateOfVaccination Is Not Null AND " +
                         "AnimalID=v_animal.ID AND VaccinationID=" + v.ID + ")"]);
             });
+            $.each(controller.vaccinationtypes, function(i, v) {
+                reports.qb_animal_criteria.push(
+                    [_("Vaccination due {0}").replace("{0}", v.VACCINATIONTYPE), "vaccdue" + v.ID, 
+                        "EXISTS(SELECT ID FROM animalvaccination WHERE DateOfVaccination Is Null AND " +
+                        "DateRequired>='$ASK DATE {0}$' AND DateRequired<='$ASK DATE {1}$'" + 
+                        "AND AnimalID=v_animal.ID AND VaccinationID=" + v.ID + ")"
+                        .replace("{0}", _("Vaccination due between"))
+                        .replace("{1}", _("and"))
+                    ]);
+            });
+
+
         },
 
         bind_browse_smcom: function() {
