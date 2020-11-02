@@ -1,6 +1,7 @@
 44
 ================
 
+02/11/20 Fix bug when calculating vacc reschedule dates
 02/11/20 Add vaccination due to query builder
 30/10/20 Undeletes for document repository and extra images
 30/10/20 Add Kenyan locale
