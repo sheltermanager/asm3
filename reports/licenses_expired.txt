@@ -49,4 +49,56 @@ BODY$$
 $$FOOTER
 </table>
 FOOTER$$
+&&&
+Expired licenses in the last year by animal
+###
+Animal Control
+###
+33307/PostgreSQL
+###
+Animals on file where their latest license has expired in the last year
+###
+en
+###
+SELECT
+ol.LicenceNumber,
+lt.LicenceTypeName,
+o.OwnerName, a.AnimalName,
+ol.IssueDate, ol.ExpiryDate, ol.Comments
+FROM animal a
+INNER JOIN ownerlicence ol ON ol.AnimalID = a.ID AND ol.ID = (SELECT ID FROM ownerlicence WHERE AnimalID = a.ID ORDER BY ExpiryDate DESC LIMIT 1)
+INNER JOIN licencetype lt ON lt.ID = ol.LicenceTypeID
+INNER JOIN owner o ON o.ID = ol.OwnerID
+WHERE ol.ExpiryDate <= CURRENT_DATE AND ol.ExpiryDate > CURRENT_DATE - INTERVAL '365 days'
+AND a.DeceasedDate Is Null 
+ORDER BY a.AnimalName, ol.ExpiryDate
+###
+$$HEADER
+<table border="1">
+<tr>
+<th>Number</th>
+<th>Type</th>
+<th>Person</th>
+<th>Animal</th>
+<th>Issued</th>
+<th>Expires</th>
+<th>Comments</th>
+</tr>
+HEADER$$
+
+$$BODY
+<tr>
+<td>$LICENCENUMBER</td>
+<td>$LICENCETYPENAME</td>
+<td>$OWNERNAME</td>
+<td>$ANIMALNAME</td>
+<td>$ISSUEDATE</td>
+<td>$EXPIRYDATE</td>
+<td>$COMMENTS</td>
+</tr>
+BODY$$
+
+$$FOOTER
+</table>
+FOOTER$$
 
