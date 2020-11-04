@@ -249,8 +249,12 @@ def get_regimens(dbo, animalid, onlycomplete = False, sort = ASCENDING_REQUIRED)
         "(SELECT amt.DateGiven FROM animalmedicaltreatment amt WHERE amt.AnimalMedicalID = am.ID AND amt.DateGiven Is Not Null " \
         "ORDER BY amt.DateGiven DESC %s) AS LastTreatmentGiven, " \
         "(SELECT amt.Comments FROM animalmedicaltreatment amt WHERE amt.AnimalMedicalID = am.ID AND amt.DateGiven Is Not Null " \
-        "ORDER BY amt.DateGiven DESC %s) AS LastTreatmentComments " \
-        "FROM animalmedical am WHERE am.AnimalID = %d %s " % (dbo.sql_limit(1), dbo.sql_limit(1), dbo.sql_limit(1), animalid, sc)
+        "ORDER BY amt.DateGiven DESC %s) AS LastTreatmentComments, " \
+        "(SELECT adv.OwnerName FROM animalmedicaltreatment amt INNER JOIN owner adv ON adv.ID=amt.AdministeringVetID " \
+        "WHERE amt.AnimalMedicalID = am.ID AND amt.DateGiven Is Not Null " \
+        "ORDER BY amt.DateGiven DESC %s) AS LastTreatmentVetName " \
+        "FROM animalmedical am WHERE am.AnimalID = %d %s " % \
+            (dbo.sql_limit(1), dbo.sql_limit(1), dbo.sql_limit(1), dbo.sql_limit(1), animalid, sc)
     if sort == ASCENDING_REQUIRED:
         sql += " ORDER BY am.StartDate"
     elif sort == DESCENDING_REQUIRED:

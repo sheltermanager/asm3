@@ -524,6 +524,7 @@ def animal_tags(dbo, a, includeAdditional=True, includeCosts=True, includeDiet=T
             ( "VACCINATIONTYPE", _("Type", l) ),
             ( "DATEREQUIRED", _("Due", l)),
             ( "DATEOFVACCINATION", _("Given", l)),
+            ( "ADMINISTERINGVETNAME", _("Vet", l)),
             ( "MANUFACTURER", _("Manufacturer", l)),
             ( "COMMENTS", _("Comments", l)) 
         ))
@@ -557,6 +558,7 @@ def animal_tags(dbo, a, includeAdditional=True, includeCosts=True, includeDiet=T
             ( "TESTNAME", _("Type", l) ),
             ( "DATEREQUIRED", _("Required", l)),
             ( "DATEOFTEST", _("Performed", l)),
+            ( "ADMINISTERINGVETNAME", _("Vet", l)),
             ( "RESULTNAME", _("Result", l)),
             ( "COMMENTS", _("Comments", l)) 
         ))
@@ -585,6 +587,7 @@ def animal_tags(dbo, a, includeAdditional=True, includeCosts=True, includeDiet=T
             ( "DOSAGE", _("Dosage", l) ),
             ( "NAMEDSTATUS", _("Status", l) ),
             ( "NAMEDGIVENREMAINING", _("Given", l) ),
+            ( "LASTTREATMENTVETNAME", _("Vet", l) ),
             ( "LASTTREATMENTGIVEN", _("Date", l)),
             ( "NEXTTREATMENTDUE", _("Due", l)),
             ( "COMMENTS", _("Comments", l)) 
