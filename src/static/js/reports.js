@@ -109,7 +109,6 @@ $(function() {
                 [ _("Released to Wild"), "released", "ActiveMovementDate Is Not Null AND ActiveMovementType=7" ],
                 [ _("Sex is male"), "male", "Sex=1" ],
                 [ _("Sex is female"), "female", "Sex=0" ],
-                [ _("Shelter animal"), "shelter", "NonShelterAnimal=0" ],
                 [ _("Site matches current user"), "site", "SiteID=$SITE$" ],
                 [ _("Stolen"), "stolen", "ActiveMovementDate Is Not Null AND ActiveMovementType=6" ],
                 [ _("TNR"), "tnr", "ActiveMovementDate Is Not Null AND ActiveMovementType=7" ],
