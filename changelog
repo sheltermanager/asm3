@@ -1,6 +1,7 @@
 44
 ================
 
+06/11/20 Add ActiveDiet fields to query builder
 04/11/20 Include administering vet in medical table keys #779
 02/11/20 Omit hidden conditional fields from form posts #931
 02/11/20 Fix bug when calculating vacc reschedule dates

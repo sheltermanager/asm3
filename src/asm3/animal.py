@@ -145,6 +145,10 @@ def get_animal_query(dbo):
         "ac.ID AS AnimalControlIncidentID, " \
         "itn.IncidentName AS AnimalControlIncidentName, " \
         "ac.IncidentDateTime AS AnimalControlIncidentDate, " \
+        "diet.DietName AS ActiveDietName, " \
+        "diet.DietDescription AS ActiveDietDescription, " \
+        "adi.DateStarted AS ActiveDietStartDate, " \
+        "adi.Comments AS ActiveDietComments, " \
         "mt.MovementType AS ActiveMovementTypeName, " \
         "am.AdoptionNumber AS ActiveMovementAdoptionNumber, " \
         "am.ReturnDate AS ActiveMovementReturnDate, " \
@@ -250,6 +254,8 @@ def get_animal_query(dbo):
         "LEFT OUTER JOIN users au ON au.UserName = am.CreatedBy " \
         "LEFT OUTER JOIN owner co ON co.ID = am.OwnerID " \
         "LEFT OUTER JOIN jurisdiction cj ON cj.ID = co.JurisdictionID " \
+        "LEFT OUTER JOIN animaldiet adi ON adi.ID = (SELECT MAX(ID) FROM animaldiet sadi WHERE sadi.AnimalID = a.ID) " \
+        "LEFT OUTER JOIN diet ON diet.ID = adi.DietID " \
         "LEFT OUTER JOIN animalcontrolanimal aca ON a.ID=aca.AnimalID and aca.AnimalControlID = (SELECT MAX(saca.AnimalControlID) FROM animalcontrolanimal saca WHERE saca.AnimalID = a.ID) " \
         "LEFT OUTER JOIN animalcontrol ac ON ac.ID = aca.AnimalControlID " \
         "LEFT OUTER JOIN incidenttype itn ON itn.ID = ac.IncidentTypeID " \
