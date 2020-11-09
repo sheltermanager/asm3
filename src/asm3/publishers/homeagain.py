@@ -176,9 +176,9 @@ class HomeAgainPublisher(AbstractPublisher):
             ' <Surname>' + xe(an["CURRENTOWNERSURNAME"]) + '</Surname>' \
             ' <Address>' \
             '  <Line1>'+ xe(an["CURRENTOWNERADDRESS"]) + '</Line1>' \
-            '  <LineOther>'+ xe(an["CURRENTOWNERTOWN"]) + '</LineOther>' \
-            '  <PostalCode>' + xe(an["CURRENTOWNERPOSTCODE"]) + '</PostalCode>' \
+            '  <TownCity>'+ xe(an["CURRENTOWNERTOWN"]) + '</TownCity>' \
             '  <County_State>'+ xe(an["CURRENTOWNERCOUNTY"]) + '</County_State>' \
+            '  <PostalCode>' + xe(an["CURRENTOWNERPOSTCODE"]) + '</PostalCode>' \
             '  <Country>' + reccountry + '</Country>' \
             ' </Address>' \
             ' <DaytimePhone><Number>' + xe(an["CURRENTOWNERWORKTELEPHONE"]) + '</Number><Note/></DaytimePhone>' \
