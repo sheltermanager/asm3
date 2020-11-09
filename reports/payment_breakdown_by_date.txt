@@ -619,12 +619,14 @@ $VAR to DATE Enter to date$
 
 SELECT owner.OwnerName, 
 SUM(ownerdonation.Donation) AS amt, owner.OwnerAddress, owner.OwnerTown, 
-owner.OwnerCounty, owner.OwnerPostcode 
+owner.OwnerCounty, owner.OwnerPostcode, owner.HomeTelephone, owner.WorkTelephone, 
+owner.MobileTelephone, owner.EmailAddress
 FROM ownerdonation
 INNER JOIN owner ON ownerdonation.OwnerID = owner.ID 
 WHERE ownerdonation.Date >= '$@from$' AND ownerdonation.Date <= '$@to$' 
 GROUP BY owner.OwnerName, owner.OwnerAddress, owner.OwnerTown,
-owner.OwnerCounty, owner.OwnerPostcode
+owner.OwnerCounty, owner.OwnerPostcode, owner.HomeTelephone, owner.WorkTelephone, 
+owner.MobileTelephone, owner.EmailAddress
 ORDER BY owner.OwnerName
 ###
 $$HEADER
@@ -639,8 +641,8 @@ $$BODY
 <td><b>$ownername</b><br />
 $owneraddress<br />
 $ownertown<br />
-$ownercounty<br />
-$ownerpostcode</td>
+$ownercounty $ownerpostcode<br />
+H: $hometelephone, C: $mobiletelephone, E: $emailaddress</td>
 <td>$amt</td>
 </tr>
 BODY$$
