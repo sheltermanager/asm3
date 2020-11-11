@@ -482,20 +482,23 @@ def csvimport(dbo, csvdata, encoding = "utf-8-sig", user = "", createmissinglook
                     dup = asm3.animal.get_animal_sheltercode(dbo, a["sheltercode"])
                     if dup is not None:
                         animalid = dup.ID
-                        # The animal is a duplicate. Update certain key fields if they are present
+                        # The animal is a duplicate. Update certain key changeable fields if they are present
+                        uq = {}
                         if a["healthproblems"] != "":
-                            dbo.update("animal", dup.ID, { "HealthProblems": a["healthproblems"] }, user)
+                            uq["HealthProblems"] = a["healthproblems"]
                         if a["microchipnumber"] != "":
-                            dbo.update("animal", dup.ID, { 
-                                "Identichipped": 1,
-                                "IdentichipNumber": a["microchipnumber"],
-                                "IdentichipDate": asm3.i18n.display2python(dbo.locale, a["microchipdate"])
-                            }, user)
+                            uq["Identichipped"] = 1
+                            uq["IdentichipNumber"] = a["microchipnumber"]
+                            uq["IdentichipDate"] = asm3.i18n.display2python(dbo.locale, a["microchipdate"])
                         if a["neutered"] == "on":
-                            dbo.update("animal", dup.ID, { 
-                                "Neutered": 1, 
-                                "NeuteredDate": asm3.i18n.display2python(dbo.locale, a["neutereddate"]) 
-                            }, user)
+                            uq["Neutered"] = 1
+                            uq["NeuteredDate"] = asm3.i18n.display2python(dbo.locale, a["neutereddate"])
+                        if a["dateofbirth"] != "":
+                            uq["DateOfBirth"] = asm3.i18n.display2python(dbo.locale, a["dateofbirth"])
+                        if a["weight"] != "":
+                            uq["Weight"] = asm3.utils.cfloat(a["weight"])
+                        dbo.update("animal", dup.ID, uq, user)
+                        # Update flags if present
                         if a["flags"] != "":
                             asm3.animal.update_flags(dbo, user, dup.ID, a["flags"])
                 if animalid == 0:
