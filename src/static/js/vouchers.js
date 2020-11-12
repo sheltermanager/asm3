@@ -132,8 +132,9 @@ $(function() {
                 { id: "offset", type: "dropdownfilter", 
                     options: [
                         "i31|" + _("Issued in last month"),
-                        "p31|" + _("Presented in last month"),
-                        "e31|" + _("Expiring in next month") 
+                        "e31|" + _("Expiring in next month"),
+                        "p31|" + _("Redeemed in last month"),
+                        "a0|" + _("Unredeemed")
                     ],
                     click: function(selval) {
                         common.route(controller.name + "?offset=" + selval);

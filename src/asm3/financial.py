@@ -568,8 +568,11 @@ def get_vouchers(dbo, offset = "i31"):
     offset is i to go backwards on issue date
     or e to go forwards on expiry date
     or p to go backwards on presented date
+    or a for unpresented
     """
     offsetdays = asm3.utils.cint(offset[1:])
+    if offset.startswith("a"):
+        return dbo.query(get_voucher_query(dbo) + " WHERE ov.DatePresented Is Null ORDER BY ov.DatePresented DESC")
     if offset.startswith("i"):
         return dbo.query(get_voucher_query(dbo) + " WHERE ov.DateIssued >= ? AND ov.DateIssued <= ? ORDER BY ov.DateIssued DESC", 
             (dbo.today(offsetdays*-1), dbo.today()))
