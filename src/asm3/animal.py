@@ -172,7 +172,9 @@ def get_animal_query(dbo):
             "(SELECT MovementType FROM lksmovementtype WHERE ID=11) " \
             "WHEN a.Archived = 0 AND a.ActiveMovementType = 2 AND a.HasPermanentFoster = 1 THEN " \
             "(SELECT MovementType FROM lksmovementtype WHERE ID=12) " \
-            "WHEN a.Archived = 0 AND a.ActiveMovementType IN (2, 8, 13) THEN " \
+            "WHEN a.Archived = 1 AND a.ActiveMovementType = 7 AND a.SpeciesID = 2 THEN " \
+            "(SELECT MovementType FROM lksmovementtype WHERE ID=13) " \
+            "WHEN a.Archived = 0 AND a.ActiveMovementType IN (2, 8) THEN " \
             "(SELECT MovementType FROM lksmovementtype WHERE ID=a.ActiveMovementType) " \
             "WHEN a.Archived = 1 AND a.DeceasedDate Is Not Null THEN " \
             "(SELECT ReasonName FROM deathreason WHERE ID = a.PTSReasonID) " \

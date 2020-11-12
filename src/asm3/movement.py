@@ -37,7 +37,10 @@ def get_movement_query(dbo):
         "a.Sex, s.SpeciesName, rr.ReasonName AS ReturnedReasonName, " \
         "CASE WHEN m.MovementType = 0 AND m.MovementDate Is Null THEN " \
         "m.ReservationDate ELSE m.MovementDate END AS ActiveDate, " \
-        "CASE WHEN m.MovementType = 2 AND m.IsPermanentFoster = 1 THEN " \
+        "CASE " \
+        "WHEN m.MovementType = 7 AND a.SpeciesID = 2 THEN " \
+        "(SELECT MovementType FROM lksmovementtype WHERE ID=13) " \
+        "WHEN m.MovementType = 2 AND m.IsPermanentFoster = 1 THEN " \
         "(SELECT MovementType FROM lksmovementtype WHERE ID=12) " \
         "WHEN m.MovementType = 1 AND m.IsTrial = 1 THEN " \
         "(SELECT MovementType FROM lksmovementtype WHERE ID=11) " \
@@ -46,7 +49,10 @@ def get_movement_query(dbo):
         "WHEN m.MovementDate Is Null AND m.ReservationDate Is Not Null THEN " \
         "(SELECT MovementType FROM lksmovementtype WHERE ID=9) " \
         "ELSE l.MovementType END AS MovementName, " \
-        "CASE WHEN m.MovementType = 2 AND m.IsPermanentFoster = 1 THEN " \
+        "CASE " \
+        "WHEN m.MovementType = 7 AND a.SpeciesID = 2 THEN " \
+        "(SELECT MovementType FROM lksmovementtype WHERE ID=13) " \
+        "WHEN m.MovementType = 2 AND m.IsPermanentFoster = 1 THEN " \
         "(SELECT MovementType FROM lksmovementtype WHERE ID=12) " \
         "WHEN m.MovementType = 1 AND m.IsTrial = 1 THEN " \
         "(SELECT MovementType FROM lksmovementtype WHERE ID=11) " \

@@ -37,7 +37,7 @@ VERSIONS = (
     34013, 34014, 34015, 34016, 34017, 34018, 34019, 34020, 34021, 34022, 34100,
     34101, 34102, 34103, 34104, 34105, 34106, 34107, 34108, 34109, 34110, 34111,
     34112, 34200, 34201, 34202, 34203, 34204, 34300, 34301, 34302, 34303, 34304,
-    34305, 34306, 34400, 34401, 34402, 34403, 34404, 34405, 34406, 34407
+    34305, 34306, 34400, 34401, 34402, 34403, 34404, 34405, 34406, 34407, 34408
 )
 
 LATEST_VERSION = VERSIONS[-1]
@@ -2230,6 +2230,7 @@ def sql_default_data(dbo, skip_config = False):
     sql += lookup1("lksmovementtype", "MovementType", 10, _("Cancelled Reservation", l))
     sql += lookup1("lksmovementtype", "MovementType", 11, _("Trial Adoption", l))
     sql += lookup1("lksmovementtype", "MovementType", 12, _("Permanent Foster", l))
+    sql += lookup1("lksmovementtype", "MovementType", 13, _("TNR", l))
     sql += lookup1("lksmedialink", "LinkType", 0, _("Animal", l))
     sql += lookup1("lksmedialink", "LinkType", 1, _("Lost Animal", l))
     sql += lookup1("lksmedialink", "LinkType", 2, _("Found Animal", l))
@@ -5284,4 +5285,9 @@ def update_34407(dbo):
     dbo.execute_dbupdate("UPDATE animal SET JurisdictionID = " \
         "(SELECT JurisdictionID FROM owner WHERE ID = animal.BroughtInByOwnerID) WHERE JurisdictionID Is Null")
     dbo.execute_dbupdate("UPDATE animal SET JurisdictionID = 0 WHERE JurisdictionID Is Null")
+
+def update_34408(dbo):
+    # Add TNR movement type
+    l = dbo.locale
+    dbo.execute_dbupdate("INSERT INTO lksmovementtype (ID, MovementType) VALUES (13, ?)", [ _("TNR", l) ])
 

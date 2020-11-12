@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ASM3\n"
 "Report-Msgid-Bugs-To: robin@sheltermanager.com\n"
-"POT-Creation-Date: 2020-11-12 14:09+0000\n"
+"POT-Creation-Date: 2020-11-12 14:33+0000\n"
 "Last-Translator: Robin Rawson-Tetley <robin@sheltermanager.com>\n"
 "Language-Team: en <robin@sheltermanager.com>\n"
 "Language: en\n"
@@ -11463,7 +11463,7 @@ msgstr ""
 msgid "T = first letter of animal type"
 msgstr ""
 
-#: reports.js movements.js
+#: dbupdate.py reports.js movements.js
 msgid "TNR"
 msgstr ""
 

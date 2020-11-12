@@ -1559,7 +1559,7 @@ const html = {
         if (a.ACTIVEMOVEMENTTYPE == 8 && p.indexOf("includeretailer") == -1) { return [ false, _("Retailer") ]; }
         if (a.ACTIVEMOVEMENTTYPE == 1 && a.HASTRIALADOPTION == 1 && p.indexOf("includetrial") == -1) { return [ false, _("Trial Adoption") ]; }
         if (a.ACTIVEMOVEMENTTYPE == 1 && a.HASTRIALADOPTION == 0) { return [ false, _("Adopted") ]; }
-        if (a.ACTIVEMOVEMENTTYPE >= 3 && a.ACTIVEMOVEMENTTYPE <= 7) { return [ false, a.DISPLAYLOCATION ]; }
+        if (a.ACTIVEMOVEMENTTYPE >= 3 && a.ACTIVEMOVEMENTTYPE <= 7) { return [ false, a.DISPLAYLOCATIONNAME ]; }
         if (!a.WEBSITEMEDIANAME && p.indexOf("includewithoutimage") == -1) { return [ false, _("No picture") ]; }
         if (p.indexOf("includewithoutdescription") == -1 && config.bool("PublisherUseComments") && !a.ANIMALCOMMENTS) { return [ false, _("No description") ]; }
         if (p.indexOf("includewithoutdescription") == -1 && !config.bool("PublisherUseComments") && !a.WEBSITEMEDIANOTES) { return [ false, _("No description") ]; }
