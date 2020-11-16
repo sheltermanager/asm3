@@ -777,6 +777,8 @@ def embellish_timeline(l, rows):
           "NEUTERED": ( _("{0} {1}: altered", l), "health" ),
           "RESERVED": ( _("{0} {1}: reserved by {2}", l), "reservation" ),
           "CANCRESERVE": ( _("{0} {1}: cancelled reservation to {2}", l), "reservation"),
+          "TRIALSTART": ( _("{0} {1}: trial adoption to {2}", l), "movement"),
+          "TRIALEND": (_("{0} {1}: end of trial adoption to {2}", l), "movement"),
           "ADOPTED": ( _("{0} {1}: adopted by {2}", l), "movement" ),
           "FOSTERED": ( _("{0} {1}: fostered to {2}", l), "movement" ),
           "TRANSFER": ( _("{0} {1}: transferred to {2}", l), "movement" ),
@@ -844,7 +846,19 @@ def get_timeline(dbo, limit = 500, age = 120):
             "ShelterCode AS Text1, AnimalName AS Text2, owner.OwnerName AS Text3, adoption.LastChangedBy FROM animal " \
             "INNER JOIN adoption ON adoption.AnimalID = animal.ID " \
             "INNER JOIN owner ON adoption.OwnerID = owner.ID " \
-            "WHERE NonShelterAnimal = 0 AND MovementDate Is Not Null AND MovementType = 1 " \
+            "WHERE NonShelterAnimal = 0 AND MovementDate Is Not Null AND MovementType = 1 AND IsTrial = 0" \
+            "ORDER BY MovementDate DESC, animal.ID",
+        "SELECT 'animal_movements' AS LinkTarget, 'TRIALSTART' AS Category, MovementDate AS EventDate, animal.ID, " \
+            "ShelterCode AS Text1, AnimalName AS Text2, owner.OwnerName AS Text3, adoption.LastChangedBy FROM animal " \
+            "INNER JOIN adoption ON adoption.AnimalID = animal.ID " \
+            "INNER JOIN owner ON adoption.OwnerID = owner.ID " \
+            "WHERE NonShelterAnimal = 0 AND MovementDate Is Not Null AND MovementType = 1 AND IsTrial = 1" \
+            "ORDER BY MovementDate DESC, animal.ID",
+        "SELECT 'animal_movements' AS LinkTarget, 'TRIALEND' AS Category, TrialEndDate AS EventDate, animal.ID, " \
+            "ShelterCode AS Text1, AnimalName AS Text2, owner.OwnerName AS Text3, adoption.LastChangedBy FROM animal " \
+            "INNER JOIN adoption ON adoption.AnimalID = animal.ID " \
+            "INNER JOIN owner ON adoption.OwnerID = owner.ID " \
+            "WHERE NonShelterAnimal = 0 AND TrialEndDate Is Not Null AND MovementType = 1 AND IsTrial = 1" \
             "ORDER BY MovementDate DESC, animal.ID",
         "SELECT 'animal_movements' AS LinkTarget, 'FOSTERED' AS Category, MovementDate AS EventDate, animal.ID, " \
             "ShelterCode AS Text1, AnimalName AS Text2, owner.OwnerName AS Text3, adoption.LastChangedBy FROM animal " \
@@ -979,6 +993,8 @@ def get_timeline(dbo, limit = 500, age = 120):
             if i > 0 and i < len(queries): sql += " UNION ALL "
             sql += q
         sql += " ORDER BY EventDate DESC, ID " + dbo.sql_limit(limit)
+        rows = dbo.query_cache(sql, age=age)
+        return embellish_timeline(dbo.locale, [x for x in rows if x.EVENTDATE <= dbo.today(settime="23:59:59")])
     else:
         # Use nested subqueries with their own order by and limits for dbs that can support it
         # (performs better as the server is only having to collate smaller result sets)
@@ -990,9 +1006,7 @@ def get_timeline(dbo, limit = 500, age = 120):
         sql += ") dummy WHERE EventDate <= ? ORDER BY EventDate DESC, ID " + dbo.sql_limit(limit)
         # We use end of today rather than now() for 2 reasons - 
         # 1. so it picks up all items for today and 2. now() would invalidate query_cache
-        endoftoday = dbo.today(settime="23:59:59")
-        params = [endoftoday]
-    return embellish_timeline(dbo.locale, dbo.query_cache(sql, params, age=age))
+        return embellish_timeline(dbo.locale, dbo.query_cache(sql, [dbo.today(settime="23:59:59")], age=age))
 
 def calc_time_on_shelter(dbo, animalid, a = None):
     """
