@@ -38,7 +38,7 @@ header will also need to be removed or odd/even will be thrown out.
 # The shelter's petfinder ID for grabbing animal images for adoptable animals
 PETFINDER_ID = ""
 START_ID = 200
-ACCOUNT = "rk2343"
+ACCOUNT = "jc2337"
 
 INTAKE_FILENAME = "/home/robin/tmp/asm3_import_data/petpoint_%s/animals.csv" % ACCOUNT
 CASES_FILENAME = "/home/robin/tmp/asm3_import_data/petpoint_%s/cases.csv" % ACCOUNT
@@ -114,7 +114,7 @@ if PETFINDER_ID != "":
     pf = asm.petfinder_get_adoptable(PETFINDER_ID)
 
 # Deal with people first (if set)
-if PERSON_FILENAME != "":
+if PERSON_FILENAME != "" and asm.file_exists(PERSON_FILENAME):
     for d in asm.csv_to_list(PERSON_FILENAME):
         # Ignore repeated headers
         if d["Person ID"] == "Person ID": continue
@@ -357,7 +357,7 @@ for d in sorted(asm.csv_to_list(INTAKE_FILENAME), key=lambda k: getdate(k["Intak
         asm.petfinder_image(pf, a.ID, a.AnimalName)
 
 # Turn memos into history logs
-if MEMO_FILENAME != "":
+if MEMO_FILENAME != "" and asm.file_exists(MEMO_FILENAME):
     idfield = "AnimalID"
     for d in asm.csv_to_list(MEMO_FILENAME):
         if "textbox20" not in d: continue # Can't do anything without our field
@@ -375,7 +375,7 @@ if MEMO_FILENAME != "":
                 l.Date = asm.now()
             l.Comments = d["Textbox131"]
 
-if CASES_FILENAME != "":
+if CASES_FILENAME != "" and asm.file_exists(CASES_FILENAME):
     ctmap = {
         "Neglect/ Cruelty": 7,
         "Bite": 5,
@@ -414,7 +414,7 @@ if CASES_FILENAME != "":
         ac.CallNotes = c
 
 # Extract color info from location history
-if LOCATION_FILENAME != "":
+if LOCATION_FILENAME != "" and asm.file_exists(LOCATION_FILENAME):
     idfield = "textbox15"
     colfield = "textbox59"
     for d in asm.csv_to_list(LOCATION_FILENAME):
@@ -459,7 +459,7 @@ def process_vacc(animalno, vaccdate = None, vaccexpires = None, vaccname = ""):
     av.DateExpires = vaccexpires
     av.Comments = "Type: %s" % vaccname
 
-if VACC_FILENAME != "":
+if VACC_FILENAME != "" and asm.file_exists(VACC_FILENAME):
     vacc = asm.csv_to_list(VACC_FILENAME)
     if MEDICAL_TWO_ROW_FORMAT:
         odd = True
@@ -519,7 +519,7 @@ def process_test(animalno, testdate = None, testname = "", result = ""):
         at.TestTypeID = 1
         at.Comments = "Test for %s" % testname
 
-if TEST_FILENAME != "":
+if TEST_FILENAME != "" and asm.file_exists(TEST_FILENAME):
     test = asm.csv_to_list(TEST_FILENAME)
     if MEDICAL_TWO_ROW_FORMAT:
         odd = True

@@ -267,6 +267,9 @@ def nulltostr(s):
     else:
         return s
 
+def file_exists(f):
+    return os.path.exists(f)
+
 def fw(s):
     """ returns the first word """
     if s is None: return s
