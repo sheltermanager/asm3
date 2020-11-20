@@ -97,10 +97,10 @@ class SavourLifePublisher(AbstractPublisher):
         animals = [ x for x in preanimals if x.SPECIESID == 1 ] # We only want dogs
         processed = []
 
+        # Log that there were no animals, we still need to check
+        # previously sent listings
         if len(animals) == 0:
-            self.setLastError("No animals found to publish.")
-            self.cleanup()
-            return
+            self.log("No animals found to publish.")
 
         # Authenticate first to get our token
         url = SAVOURLIFE_URL + "getToken"

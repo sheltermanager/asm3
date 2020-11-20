@@ -983,7 +983,6 @@ def get_timeline(dbo, limit = 500, age = 120):
             "INNER JOIN lkurgency ON lkurgency.ID = animalwaitinglist.Urgency " \
             "ORDER BY DatePutOnList DESC, animalwaitinglist.ID"
     ]
-    params = []
     if dbo.dbtype == "SQLITE":
         # SQLITE can't support UNION with subqueries so construct a regular UNION
         # query and order/limit at the end (much less efficient with larger datasets)
