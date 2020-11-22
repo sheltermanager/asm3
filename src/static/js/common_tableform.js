@@ -646,7 +646,10 @@ const tableform = {
         // This is necessary in case opening a previous record removed a retired lookup element.
         $.each(dialog.fields, function(i, v) {
             if (v.options && v.options.rows) {
-                $("#" + v.post_field).html( html.list_to_options(v.options.rows, v.options.valuefield, v.options.displayfield) );
+                let opts = "";
+                if (v.options.prepend) { opts = v.options.prepend; }
+                opts += html.list_to_options(v.options.rows, v.options.valuefield, v.options.displayfield);
+                $("#" + v.post_field).html(opts);
             }
         });
         
@@ -767,7 +770,10 @@ const tableform = {
         // This is necessary in case opening a previous record removed a retired lookup element.
         $.each(dialog.fields, function(i, v) {
             if (v.options && v.options.rows) {
-                $("#" + v.post_field).html( html.list_to_options(v.options.rows, v.options.valuefield, v.options.displayfield) );
+                let opts = "";
+                if (v.options.prepend) { opts = v.options.prepend; }
+                opts += html.list_to_options(v.options.rows, v.options.valuefield, v.options.displayfield);
+                $("#" + v.post_field).html(opts);
             }
         });
 
@@ -922,8 +928,9 @@ const tableform = {
      *        callout: _("Text"), mixed markup allowed
      *        hideif: function() { return true; // should hide },
      *        markup: "<input type='text' value='raw' />",
-     *        options: { displayfield: "DISPLAY", valuefield: "VALUE", rows: [ {rows} ] }, (only valid for select type)
-     *        options: "<option>test</option>" also valid
+     *        options: [ "Item 1", "Item 2" ] // options only used by select and selectmulti
+     *        options: "<option>test</option>"
+     *        options: { displayfield: "DISPLAY", valuefield: "VALUE", rows: [ {rows} ], prepend: "<option>extra</option>" }, 
      *        animalfilter: "all",   (only valid for animal and animalmulti types)
      *        personfilter: "all",   (only valid for person type)
      *        personmode: "full",    (only valid for person type)
@@ -1165,7 +1172,7 @@ const tableform = {
                     d += v.options;
                 }
                 else if (v.options && v.options.rows) {
-                    // Assume we have rows, valuefield and displayfield properties
+                    if (v.options.prepend) { d += v.options.prepend; }
                     d += html.list_to_options(v.options.rows, v.options.valuefield, v.options.displayfield);
                 }
                 d += "</select>";
@@ -1183,9 +1190,8 @@ const tableform = {
                 if (v.tooltip) { d += "title=\"" + html.title(v.tooltip) + "\""; }
                 d += ">";
                 if (v.options && v.options.rows) {
-                    $.each(v.options.rows, function(io, vo) {
-                        d += "<option value=\"" + vo[v.options.valuefield] + "\">" + vo[v.options.displayfield] + "</option>";
-                    });
+                    if (v.options.prepend) { d += v.options.prepend; }
+                    d += html.list_to_options(v.options.rows, v.options.valuefield, v.options.displayfield);
                 }
                 else if (v.options) {
                     d += v.options;

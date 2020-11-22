@@ -1,6 +1,7 @@
 44
 ================
 
+22/11/20 Allow a blank in vaccination edit dialog/given by #930
 20/11/20 PR and SOL: Stop no adoptables preventing cancellation #935
 16/11/20 Include trial adoptions in timeline #764
 12/11/20 Fix display of TNR and other special movements #933

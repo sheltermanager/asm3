@@ -29,7 +29,7 @@ $(function() {
                     { json_field: "DATEOFVACCINATION", post_field: "given", label: _("Given"), type: "date", 
                         callout: _("The date the vaccination was administered") },
                     { json_field: "GIVENBY", post_field: "by", label: _("By"), type: "select",
-                        options: { displayfield: "USERNAME", valuefield: "USERNAME", rows: controller.users }},
+                        options: { displayfield: "USERNAME", valuefield: "USERNAME", rows: controller.users, prepend: '<option value=""></option>' }},
                     { json_field: "ADMINISTERINGVETID", post_field: "administeringvet", label: _("Administering Vet"), type: "person", personfilter: "vet" },
                     { json_field: "DATEEXPIRES", post_field: "expires", label: _("Expires"), type: "date",
                         callout: _('Optional, the date the vaccination "wears off" and needs to be administered again') },
