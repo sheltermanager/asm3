@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ASM3\n"
 "Report-Msgid-Bugs-To: robin@sheltermanager.com\n"
-"POT-Creation-Date: 2020-11-12 14:33+0000\n"
+"POT-Creation-Date: 2020-11-23 10:09+0000\n"
 "Last-Translator: Robin Rawson-Tetley <robin@sheltermanager.com>\n"
 "Language-Team: en <robin@sheltermanager.com>\n"
 "Language: en\n"
@@ -11815,7 +11815,7 @@ msgstr ""
 msgid "The default username is 'user' with the password 'letmein'"
 msgstr ""
 
-#: animal_new.js animal_bulk.js animal.js
+#: animal_bulk.js animal.js
 msgid "The entry reason for this animal"
 msgstr ""
 
@@ -12172,7 +12172,7 @@ msgstr ""
 msgid "This animal is part of a cruelty case and should not leave the shelter."
 msgstr ""
 
-#: animal_new.js animal.js
+#: animal.js
 msgid "This animal should be held in case it is reclaimed"
 msgstr ""
 
@@ -14334,6 +14334,10 @@ msgid "{0} {1}: died ({2})"
 msgstr ""
 
 #: animal.py
+msgid "{0} {1}: end of trial adoption to {2}"
+msgstr ""
+
+#: animal.py
 msgid "{0} {1}: entered the shelter"
 msgstr ""
 
@@ -14407,6 +14411,10 @@ msgstr ""
 
 #: animal.py
 msgid "{0} {1}: transferred to {2}"
+msgstr ""
+
+#: animal.py
+msgid "{0} {1}: trial adoption to {2}"
 msgstr ""
 
 #: staff_rota.js
