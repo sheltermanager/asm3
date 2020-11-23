@@ -28,6 +28,11 @@ OrganisationEmail / OrganizationEmail
    The shelter's email address
 Date
     Today's date
+Signature
+    A signature:placeholder image for inserting a signature later (default
+    150px wide)
+Signature100 /Signature150 / Signature200 / Signature300
+    Controls the max width of the signature while retaining aspect ratio
 Username
     The current user generating the document
 UserRealname
@@ -35,7 +40,10 @@ UserRealname
 UserEmailAddress
     The email address of the user generating the document
 UserSignature
-    An image tag containing the electronic signature of the user generating the document
+    An image tag containing the electronic signature of the user generating the
+    document (default 150px wide)
+UserSignature100 / UserSignature150 / UserSignature200 / UserSignature300
+    Controls the max width of the signature while retaining aspect ratio
 UserSignatureSrc
     Just the src attribute value so the signature can be applied to your own
     image tag (eg: to override size)

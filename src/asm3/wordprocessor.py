@@ -58,10 +58,19 @@ def org_tags(dbo, username):
         "ORGANIZATIONTELEPHONE" : orgtel,
         "ORGANIZATIONEMAIL"     : orgemail,
         "DATE"                  : python2display(dbo.locale, now(dbo.timezone)),
+        "SIGNATURE"             : '<img src="signature:placeholder" width="150px" />',
+        "SIGNATURE100"          : '<img src="signature:placeholder" width="100px" />',
+        "SIGNATURE150"          : '<img src="signature:placeholder" width="150px" />',
+        "SIGNATURE200"          : '<img src="signature:placeholder" width="200px" />',
+        "SIGNATURE300"          : '<img src="signature:placeholder" width="300px" />',
         "USERNAME"              : username,
         "USERREALNAME"          : realname,
         "USEREMAILADDRESS"      : email,
-        "USERSIGNATURE"         : "<img src=\"" + sig + "\" >",
+        "USERSIGNATURE"         : '<img src="%s" width="150px" />' % sig,
+        "USERSIGNATURE100"      : '<img src="%s" width="100px" />' % sig,
+        "USERSIGNATURE150"      : '<img src="%s" width="150px" />' % sig,
+        "USERSIGNATURE200"      : '<img src="%s" width="200px" />' % sig,
+        "USERSIGNATURE300"      : '<img src="%s" width="300px" />' % sig,
         "USERSIGNATURESRC"      : sig
     }
     return tags
