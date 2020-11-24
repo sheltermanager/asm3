@@ -241,6 +241,7 @@ def page(dbo, session, username):
         items.append(jqm_listitem_link("#reports", _("Generate Report", l), "report"))
     if pb(asm3.users.CHANGE_MEDIA) and ELECTRONIC_SIGNATURES == "touch":
         items.append(jqm_listitem_link("mobile_sign", _("Signing Pad", l), "signature", -1, "", "false"))
+    items.append(jqm_listitem_link("main", _("Desktop/Tablet UI", l), "logo", -1, "", "false"))
     if pb(asm3.users.ADD_ANIMAL) or pb(asm3.users.VIEW_ANIMAL) or pb(asm3.users.CHANGE_VACCINATION) \
        or pb(asm3.users.CHANGE_TEST) or pb(asm3.users.CHANGE_MEDICAL) or pb(asm3.users.ADD_LOG):
         items.append(jqm_list_divider(_("Animal", l)))
