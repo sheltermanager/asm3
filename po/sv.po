@@ -5342,7 +5342,7 @@ msgstr ""
 
 #: main.js
 msgid ""
-"Go the lookup data screen and add/remove breeds, species and animal types "
+"Go to the lookup data screen and add/remove breeds, species and animal types "
 "according to the animals your shelter deals with."
 msgstr ""
 "Gå till sökskärmen och lägga till / ta bort raser, arter och djur typer "
@@ -5350,14 +5350,14 @@ msgstr ""
 
 #: main.js
 msgid ""
-"Go the options screen and set your shelter's contact details and other "
+"Go to the options screen and set your shelter's contact details and other "
 "settings."
 msgstr ""
 "Gå till alternativskärmen och ange ditt djurhems kontaktuppgifter och andra "
 "inställningar."
 
 #: main.js
-msgid "Go the system users screen and add user accounts for your staff."
+msgid "Go to the system users screen and add user accounts for your staff."
 msgstr ""
 "Gå till systemanvändar skärmen och lägg till användarkonton för din personal."
 

@@ -1681,9 +1681,10 @@ def generate_animal_doc(dbo, templateid, animalid, username):
     a = asm3.animal.get_animal(dbo, animalid)
     im = asm3.media.get_image_file_data(dbo, "animal", animalid)[1]
     if a is None: raise asm3.utils.ASMValidationError("%d is not a valid animal ID" % animalid)
-    # Only include donations if there isn't an active movement as we'll take care
-    # of them below if there is
-    tags = animal_tags(dbo, a, includeDonations=(not a["ACTIVEMOVEMENTID"] or a["ACTIVEMOVEMENTID"] == 0))
+    # We include donations here, so that we have RecentType, DueType, Last1, etc
+    # But the call below to get_movement_donations will add the totals and allow
+    # receipt/invoice type documents to work if there's an active movement
+    tags = animal_tags(dbo, a, includeDonations=True)
     # Use the person info from the latest open movement for the animal
     # This will pick up future dated adoptions instead of fosterers (which are still currentowner)
     # as get_animal_movements returns them in descending order of movement date
@@ -1829,7 +1830,7 @@ def generate_movement_doc(dbo, templateid, movementid, username):
     if m is None:
         raise asm3.utils.ASMValidationError("%d is not a valid movement ID" % movementid)
     if m.ANIMALID is not None and m.ANIMALID != 0:
-        tags = animal_tags(dbo, asm3.animal.get_animal(dbo, m.ANIMALID), includeDonations=False)
+        tags = animal_tags(dbo, asm3.animal.get_animal(dbo, m.ANIMALID))
     if m.OWNERID is not None and m.OWNERID != 0:
         tags = append_tags(tags, person_tags(dbo, asm3.person.get_person(dbo, m.OWNERID)))
     tags = append_tags(tags, movement_tags(dbo, m))

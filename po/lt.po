@@ -5468,7 +5468,7 @@ msgstr ""
 
 #: main.js
 msgid ""
-"Go the lookup data screen and add/remove breeds, species and animal types "
+"Go to the lookup data screen and add/remove breeds, species and animal types "
 "according to the animals your shelter deals with."
 msgstr ""
 "Įsijunkite sąrašų langą ir pridėkite/pašalinkite veisles, rūšis bei gyvūnų "
@@ -5476,14 +5476,14 @@ msgstr ""
 
 #: main.js
 msgid ""
-"Go the options screen and set your shelter's contact details and other "
+"Go to the options screen and set your shelter's contact details and other "
 "settings."
 msgstr ""
 "Parinktyse galite nustatyti savo prieglaudos kontaktinius duomenis bei kitas "
 "parinktis."
 
 #: main.js
-msgid "Go the system users screen and add user accounts for your staff."
+msgid "Go to the system users screen and add user accounts for your staff."
 msgstr ""
 "Įsijunkite sistemos naudotojų langą ir pridėkite naudotojų paskyras savo "
 "personalui."
