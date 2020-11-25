@@ -88,6 +88,7 @@ def get_animal_query(dbo):
         "oo.WorkTelephone AS OriginalOwnerWorkTelephone, " \
         "oo.MobileTelephone AS OriginalOwnerMobileTelephone, " \
         "oo.EmailAddress AS OriginalOwnerEmailAddress, " \
+        "oo.LatLong AS OriginalOwnerLatLong, " \
         "oj.JurisdictionName AS OriginalOwnerJurisdiction, " \
         "co.ID AS CurrentOwnerID, " \
         "co.OwnerName AS CurrentOwnerName, " \
@@ -105,6 +106,7 @@ def get_animal_query(dbo):
         "co.MobileTelephone AS CurrentOwnerMobileTelephone, " \
         "co.EmailAddress AS CurrentOwnerEmailAddress, " \
         "co.ExcludeFromBulkEmail AS CurrentOwnerExcludeEmail, " \
+        "co.LatLong AS CurrentOwnerLatLong, " \
         "cj.JurisdictionName AS CurrentOwnerJurisdiction, " \
         "bo.OwnerName AS BroughtInByOwnerName, " \
         "bo.OwnerAddress AS BroughtInByOwnerAddress, " \
@@ -115,6 +117,7 @@ def get_animal_query(dbo):
         "bo.WorkTelephone AS BroughtInByWorkTelephone, " \
         "bo.MobileTelephone AS BroughtInByMobileTelephone, " \
         "bo.EmailAddress AS BroughtInByEmailAddress, " \
+        "bo.LatLong AS BroughtInByLatLong, " \
         "bj.JurisdictionName AS BroughtInByJurisdiction, " \
         "ro.ID AS ReservedOwnerID, " \
         "ro.OwnerName AS ReservedOwnerName, " \
@@ -126,6 +129,7 @@ def get_animal_query(dbo):
         "ro.WorkTelephone AS ReservedOwnerWorkTelephone, " \
         "ro.MobileTelephone AS ReservedOwnerMobileTelephone, " \
         "ro.EmailAddress AS ReservedOwnerEmailAddress, " \
+        "ro.LatLong AS ReservedOwnerLatLong, " \
         "rj.JurisdictionName AS ReservedOwnerJurisdiction, " \
         "ar.ReservationDate AS ReservationDate, " \
         "ars.StatusName AS ReservationStatusName, " \
