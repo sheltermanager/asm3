@@ -301,11 +301,10 @@ def send_email_from_form(dbo, username, post):
     emailcc = post["cc"]
     emailbcc = post["bcc"]
     subject = post["subject"]
-    ishtml = post.boolean("html")
     addtolog = post.boolean("addtolog")
     logtype = post.integer("logtype")
     body = post["body"]
-    rv = asm3.utils.send_email(dbo, emailfrom, emailto, emailcc, emailbcc, subject, body, ishtml == 1 and "html" or "plain")
+    rv = asm3.utils.send_email(dbo, emailfrom, emailto, emailcc, emailbcc, subject, body, "html")
     if asm3.configuration.audit_on_send_email(dbo): 
         asm3.audit.email(dbo, username, emailfrom, emailto, emailcc, emailbcc, subject, body)
     if addtolog == 1:
