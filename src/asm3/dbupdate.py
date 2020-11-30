@@ -1527,6 +1527,7 @@ def sql_structure(dbo):
         fstr("TestName"),
         fstr("TestDescription", True),
         fint("DefaultCost", True),
+        fint("RescheduleDays", True),
         fint("IsRetired", True) ), False)
 
     sql += table("testresult", (

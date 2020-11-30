@@ -712,6 +712,24 @@ def complete_test(dbo, username, testid, newdate, testresult, vetid = 0):
     }, username)
     update_animal_tests(dbo, testid)
 
+def reschedule_test(dbo, username, testid, newdate, comments):
+    """
+    Reschedules a test for a new date, copying data from the existing one.
+    Comments are appended on the existing test.
+    """
+    av = dbo.first_row(dbo.query("SELECT * FROM animaltest WHERE ID = ?", [testid]))
+    if av.COMMENTS != "": comments = "%s\n%s" % (av.COMMENTS, comments)
+    dbo.update("animaltest", testid, { "Comments": comments }, username)
+    dbo.insert("animaltest", {
+        "AnimalID":             av.ANIMALID,
+        "TestTypeID":           av.TESTTYPEID,
+        "TestResultID":         0,
+        "DateOfTest":           None,
+        "DateRequired":         newdate,
+        "Comments":             "",
+        "Cost":                 av.COST
+    }, username)
+
 def reschedule_vaccination(dbo, username, vaccinationid, newdate, comments):
     """
     Reschedules a vaccination for a new date by copying it.

@@ -5929,10 +5929,14 @@ class test(JSONEndpoint):
     def post_perform(self, o):
         self.check(asm3.users.CHANGE_TEST)
         newdate = o.post.date("newdate")
+        retestdate = o.post.date("retest")
+        reschedulecomments = o.post["usagecomments"]
         vet = o.post.integer("givenvet")
         testresult = o.post.integer("testresult")
         for vid in o.post.integer_list("ids"):
             asm3.medical.complete_test(o.dbo, o.user, vid, newdate, testresult, vet)
+            if retestdate is not None:
+                asm3.medical.reschedule_test(o.dbo, o.user, vid, retestdate, reschedulecomments)
         if o.post.integer("item") != -1:
             asm3.stock.deduct_stocklevel_from_form(o.dbo, o.user, o.post)
 
