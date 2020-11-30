@@ -549,6 +549,26 @@ UNION SELECT
 FROM owner
 WHERE ownercode LIKE 'XX%'
 
+--Checks for spaces in first character of name field.  Extra spaces causes missed matches.
+UNION SELECT 
+  owner.ownername AS name,
+  owner.ownercode AS code,
+  date(owner.LastChangedDate) AS issuedate,
+  'Space in first character of name field.' AS issue
+FROM owner
+WHERE (ownerforenames LIKE ' %' OR ownersurname LIKE ' %')
+AND NOT (owner.AdditionalFlags LIKE 'Ignore Issues|%' OR owner.AdditionalFlags  LIKE '%|Ignore Issues|%') 
+
+--Checks for extra spaces in address field.  Extra spaces causes missed matches.
+UNION SELECT 
+  owner.ownername AS name,
+  owner.ownercode AS code,
+  date(owner.LastChangedDate) AS issuedate,
+  'Extra spaces in address field.' AS issue
+FROM owner
+WHERE owneraddress like '%  %'
+AND NOT (owner.AdditionalFlags LIKE 'Ignore Issues|%' OR owner.AdditionalFlags  LIKE '%|Ignore Issues|%')
+
 --Checks for cities entered in ALL upper or lower case.  And common misspellings of city 
 --names.
 UNION SELECT 
