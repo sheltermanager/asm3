@@ -361,7 +361,7 @@ def is_animal_adoptable(dbo, a):
     if a.HASFUTUREADOPTION == 1: return False
     if a.HASPERMANENTFOSTER == 1: return False
     if a.CRUELTYCASE == 1 and not p.includeCaseAnimals: return False
-    if a.NEUTERED == 0 and not p.includeNonNeutered and str(a.SPECIESID) not in asm3.configuration.alert_species_neuter(dbo).split(","): return False
+    if a.NEUTERED == 0 and not p.includeNonNeutered and str(a.SPECIESID) in asm3.configuration.alert_species_neuter(dbo).split(","): return False
     if a.HASACTIVERESERVE == 1 and not p.includeReservedAnimals: return False
     if a.ISHOLD == 1 and not p.includeHold: return False
     if a.ISQUARANTINE == 1 and not p.includeQuarantine: return False
