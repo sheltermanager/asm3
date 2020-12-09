@@ -168,7 +168,7 @@ $(function() {
                                 comments += "[" + v.SHELTERCODE + " - " + v.ANIMALNAME + "] ";
                             }
                         });
-                        $("#usagecomments").val(comments);
+                        $("#usagecomments").html(comments);
                         $("#newdate").datepicker("setDate", new Date());
                         $("#testresult").select("firstvalue");
                         $("#usagetype").select("firstvalue");

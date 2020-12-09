@@ -171,7 +171,7 @@ $(function() {
                             comments += "[" + v.SHELTERCODE + " - " + v.ANIMALNAME + "] ";
                             vacctype = v.VACCINATIONID;
                         });
-                        $("#usagecomments").val(comments);
+                        $("#usagecomments").html(comments);
                         $("#givennewdate").datepicker("setDate", new Date());
                         let rd = vaccination.calc_reschedule_date(new Date(), vacctype);
                         if (rd) { $("#rescheduledate").datepicker("setDate", rd); }
