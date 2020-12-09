@@ -249,8 +249,9 @@ UNION SELECT
 FROM animal
 WHERE  animal.deceaseddate IS NULL
   AND animal.NONSHELTERANIMAL = 1 
-  AND animal.ORIGINALOWNERID = 0 
-  AND datebroughtin > '2019-01-01'
+  AND animal.ORIGINALOWNERID = 0
+  AND NOT animal.animalname LIKE 'Template%'
+  AND datebroughtin > '2010-01-01'
   AND NOT (animal.AdditionalFlags LIKE 'Ignore Issues|%' OR animal.AdditionalFlags  LIKE '%|Ignore Issues|%')
 
 --Reports animals adopted but not altered.
