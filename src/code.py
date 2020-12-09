@@ -3777,6 +3777,31 @@ class mailmerge(JSONEndpoint):
         asm3.al.debug("returning preview rows for %d [%s]" % (post.integer("mergereport"), post["mergetitle"]), "code.mailmerge", dbo)
         return asm3.utils.json(rows)
 
+class maint_db_stats(ASMEndpoint):
+    url = "maint_db_stats"
+
+    def content(self, o):
+        self.content_type("text/plain")
+        self.cache_control(0)
+        s = o.dbo.stats()
+        return "first record added on %s\n" \
+            "%s shelter animals\n" \
+            "%s animals\n" \
+            "%s people\n" \
+            "%s movements\n" \
+            "%s media (%s MB)\n" \
+            "%s jpg (%s MB)\n" \
+            "%s pdf (%s MB)\n" % (
+                s.firstrecord,
+                s.shelteranimals,
+                s.totalanimals,
+                s.totalpeople,
+                s.totalmovements,
+                s.totalmedia, s.mediasize,
+                s.totaljpg, s.jpgsize,
+                s.totalpdf, s.pdfsize
+            )
+
 class maint_latency(JSONEndpoint):
     url = "maint_latency"
 

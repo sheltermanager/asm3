@@ -952,6 +952,20 @@ class Database(object):
         """ Writes a function that zero pads an expression with zeroes to digits """
         return fieldexpr
 
+    def stats(self):
+        return self.first_row(self.query("select " \
+            "(select count(*) from animal where archived=0) as shelteranimals, " \
+            "(select count(*) from animal) as totalanimals, " \
+            "(select min(createddate) from animal) as firstrecord, " \
+            "(select count(*) from owner) as totalpeople, " \
+            "(select count(*) from adoption) as totalmovements, " \
+            "(select count(*) from media) as totalmedia, " \
+            "(select sum(mediasize) / 1024.0 / 1024.0 from media) as mediasize, " \
+            "(select count(*) from media where mediamimetype='image/jpeg') as totaljpg, " \
+            "(select sum(mediasize) / 1024.0 / 1024.0 from media where mediamimetype='image/jpeg') as jpgsize, " \
+            "(select count(*) from media where mediamimetype='application/pdf') as totalpdf, " \
+            "(select sum(mediasize) / 1024.0 / 1024.0 from media where mediamimetype='application/pdf') as pdfsize "))
+
     def switch_param_placeholder(self, sql):
         """ Swaps the ? token in the sql for the usual Python DBAPI placeholder of %s 
             override if your DB driver wants another char.

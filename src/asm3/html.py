@@ -1214,6 +1214,7 @@ def options_person_flags(dbo):
     s += option(_("Deceased", l), "deceased")
     s += option(_("Donor", l), "donor")
     s += option(_("Driver", l), "driver")
+    s += option(_("Exclude from bulk email", l), "excludefrombulkemail")
     s += option(_("Fosterer", l), "fosterer")
     s += option(_("Homechecked", l), "homechecked")
     s += option(_("Homechecker", l), "homechecker")

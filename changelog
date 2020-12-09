@@ -1,6 +1,7 @@
 44
 ================
 
+09/11/20 Include exclude from bulk email in report criteria
 09/11/20 Fix stock comments not being decoded in other languages
 28/11/20 Fix waiting list/lost/found emails being sent as plain text
 24/11/20 Include a link to Desktop/Tablet UI from smartphone #937
