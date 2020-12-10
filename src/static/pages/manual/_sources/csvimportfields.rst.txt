@@ -255,6 +255,8 @@ VACCINATIONMANUFACTURER
     The manufacturer of the vaccine
 VACCINATIONBATCHNUMBER
     The serial/batch number of the vaccine
+VACCINATIONRABIESTAG
+    The rabies tag accompanying the vaccine
 VACCINATIONCOMMENTS
     Comments on the vaccine
 

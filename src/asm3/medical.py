@@ -947,10 +947,13 @@ def insert_vaccination_from_form(dbo, username, post):
         "DateExpires":          post.date("expires"),
         "BatchNumber":          post["batchnumber"],
         "Manufacturer":         post["manufacturer"],
+        "RabiesTag":            post["rabiestag"],
         "Cost":                 post.integer("cost"),
         "CostPaidDate":         post.date("costpaid"),
         "Comments":             post["comments"]
     }, username)
+
+    update_rabies_tag(dbo, username, post.integer("animal"))
 
 def update_vaccination_from_form(dbo, username, post):
     """
@@ -971,10 +974,22 @@ def update_vaccination_from_form(dbo, username, post):
         "DateExpires":          post.date("expires"),
         "BatchNumber":          post["batchnumber"],
         "Manufacturer":         post["manufacturer"],
+        "RabiesTag":            post["rabiestag"],
         "Cost":                 post.integer("cost"),
         "CostPaidDate":         post.date("costpaid"),
         "Comments":             post["comments"]
     }, username)
+
+    update_rabies_tag(dbo, username, post.integer("animal"))
+
+def update_rabies_tag(dbo, username, animalid):
+    """
+    Updates the rabies tag field on an animal record to the
+    latest from its vaccinations
+    """
+    rabiestag = dbo.query_string("SELECT RabiesTag FROM animalvaccination " \
+        "WHERE AnimalID=? AND DateOfVaccination Is Not Null ORDER BY DateOfVaccination DESC", [animalid])
+    if rabiestag != "": dbo.update("animal", animalid, { "RabiesTag": rabiestag }, username)
 
 def update_vaccination_batch_stock(dbo, username, vid, slid):
     """

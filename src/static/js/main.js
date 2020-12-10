@@ -59,9 +59,9 @@ $(function() {
             alerts = controller.alerts[0];
             let totalalerts = alerts.DUEVACC + alerts.EXPVACC + alerts.DUETEST + alerts.DUEMED + 
                 alerts.DUECLINIC + alerts.URGENTWL +  alerts.LONGRSV + alerts.DUEDON + alerts.ENDTRIAL + 
-                alerts.NOTNEU + alerts.PUBLISH + alerts.LOOKFOR + alerts.LOSTFOUND + alerts.INFORM + 
-                alerts.ACUNFINE + alerts.ACUNDISP + alerts.ACUNCOMP + alerts.ACFOLL + alerts.TLOVER + 
-                alerts.STEXP + alerts.STEXPSOON + alerts.TRNODRV;
+                alerts.NOTNEU + alerts.NOTRAB + alerts.PUBLISH + alerts.LOOKFOR + alerts.LOSTFOUND + 
+                alerts.INFORM + alerts.ACUNFINE + alerts.ACUNDISP + alerts.ACUNCOMP + alerts.ACFOLL + 
+                alerts.TLOVER + alerts.STEXP + alerts.STEXPSOON + alerts.TRNODRV;
             if (config.bool("EmblemNotForAdoption")) {
                 totalalerts += alerts.NOTADOPT;
             }
@@ -153,12 +153,21 @@ $(function() {
                         ]) + '</a><br />';
                 }
                 if (alerts.NOTNEU > 0 && common.has_permission("va") && config.bool("EmblemUnneutered") ) {
-                    s += '<a href="move_book_unneutered">' + html.icon("health") + ' ' + 
+                    s += '<a href="move_book_unneutered">' + html.icon("unneutered") + ' ' + 
                         common.ntranslate(alerts.NOTNEU, [
                             _("{plural0} unaltered animal has been adopted in the last month"),
                             _("{plural1} unaltered animals have been adopted in the last month"),
                             _("{plural2} unaltered animals have been adopted in the last month"),
                             _("{plural3} unaltered animals have been adopted in the last month")
+                        ]) + '</a><br />';
+                }
+                if (alerts.NOTRAB > 0 && common.has_permission("va") && config.bool("EmblemRabies") ) {
+                    s += '<a href="search?q=norabies">' + html.icon("rabies") + ' ' + 
+                        common.ntranslate(alerts.NOTRAB, [
+                            _("{plural0} animal has not had a rabies vaccination"),
+                            _("{plural1} animals have not had a rabies vaccination"),
+                            _("{plural2} animals have not had a rabies vaccination"),
+                            _("{plural3} animals have not had a rabies vaccination")
                         ]) + '</a><br />';
                 }
                 if (alerts.NOTCHIP > 0 && common.has_permission("va") && config.bool("EmblemNotMicrochipped") ) {

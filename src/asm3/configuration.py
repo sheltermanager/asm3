@@ -143,6 +143,7 @@ DEFAULTS = {
     "AFNonShelterType": "40",
     "AlertSpeciesMicrochip": "1,2",
     "AlertSpeciesNeuter": "1,2",
+    "AlertSpeciesRabies": "1,2",
     "AvidReRegistration": "No", 
     "AvidRegisterOverseas": "No",
     "AvidOverseasOriginCountry": "",
@@ -201,6 +202,7 @@ DEFAULTS = {
     "EmblemNotMicrochipped": "Yes",
     "EmblemPositiveTest": "Yes",
     "EmblemQuarantine": "Yes",
+    "EmblemRabies": "Yes",
     "EmblemReserved": "Yes",
     "EmblemSpecialNeeds": "Yes",
     "EmblemTrialAdoption": "Yes",
@@ -527,6 +529,11 @@ def alert_species_microchip(dbo):
 
 def alert_species_neuter(dbo):
     s = cstring(dbo, "AlertSpeciesNeuter", DEFAULTS["AlertSpeciesNeuter"])
+    if s == "": return "0" # Always return something due to IN clauses of queries
+    return s
+
+def alert_species_rabies(dbo):
+    s = cstring(dbo, "AlertSpeciesRabies", DEFAULTS["AlertSpeciesRabies"])
     if s == "": return "0" # Always return something due to IN clauses of queries
     return s
 

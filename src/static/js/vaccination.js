@@ -35,6 +35,7 @@ $(function() {
                         callout: _('Optional, the date the vaccination "wears off" and needs to be administered again') },
                     { json_field: "BATCHNUMBER", post_field: "batchnumber", label: _("Batch Number"), type: "text" },
                     { json_field: "MANUFACTURER", post_field: "manufacturer", label: _("Manufacturer"), type: "text" },
+                    { json_field: "RABIESTAG", post_field: "rabiestag", label: _("Rabies Tag"), type: "text" },
                     { json_field: "COST", post_field: "cost", label: _("Cost"), type: "currency", hideif: function() { return !config.bool("ShowCostAmount"); } },
                     { json_field: "COSTPAIDDATE", post_field: "costpaid", label: _("Paid"), type: "date", hideif: function() { return !config.bool("ShowCostPaid"); } },
                     { json_field: "COMMENTS", post_field: "comments", label: _("Comments"), type: "textarea" }

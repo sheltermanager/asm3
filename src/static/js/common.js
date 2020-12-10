@@ -1727,6 +1727,10 @@ const html = {
             if (a.FLVRESULT == 2) { p.push(_("FLV+")); }
             s.push(html.icon("positivetest", p.join(" ")));
         }
+        if (config.bool("EmblemRabies") && !a.RABIESTAG && 
+            config.str("AlertSpeciesRabies").split(",").indexOf(String(a.SPECIESID)) != -1) {
+            s.push(html.icon("rabies", _("Rabies not given")));
+        }
         if (config.bool("EmblemSpecialNeeds") && a.HASSPECIALNEEDS == 1) {
             s.push(html.icon("health", _("Special Needs")));
         }
