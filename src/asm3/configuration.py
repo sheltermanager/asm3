@@ -202,7 +202,7 @@ DEFAULTS = {
     "EmblemNotMicrochipped": "Yes",
     "EmblemPositiveTest": "Yes",
     "EmblemQuarantine": "Yes",
-    "EmblemRabies": "Yes",
+    "EmblemRabies": "No",
     "EmblemReserved": "Yes",
     "EmblemSpecialNeeds": "Yes",
     "EmblemTrialAdoption": "Yes",
