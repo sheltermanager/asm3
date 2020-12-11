@@ -512,6 +512,7 @@ def animal_tags(dbo, a, includeAdditional=True, includeCosts=True, includeDiet=T
             "VACCINATIONEXPIRES":       "d:DATEEXPIRES",
             "VACCINATIONBATCH":         "BATCHNUMBER",
             "VACCINATIONMANUFACTURER":  "MANUFACTURER",
+            "VACCINATIONRABIESTAG":     "RABIESTAG",
             "VACCINATIONCOST":          "c:COST",
             "VACCINATIONCOMMENTS":      "COMMENTS",
             "VACCINATIONDESCRIPTION":   "VACCINATIONDESCRIPTION",
@@ -534,6 +535,7 @@ def animal_tags(dbo, a, includeAdditional=True, includeCosts=True, includeDiet=T
             ( "DATEREQUIRED", _("Due", l)),
             ( "DATEOFVACCINATION", _("Given", l)),
             ( "ADMINISTERINGVETNAME", _("Vet", l)),
+            ( "RABIESTAG", _("Rabies Tag", l) ),
             ( "MANUFACTURER", _("Manufacturer", l)),
             ( "COMMENTS", _("Comments", l)) 
         ))

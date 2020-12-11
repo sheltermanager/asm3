@@ -459,6 +459,8 @@ VaccinationBatch
     The batch number from the vaccination adminstered
 VaccinationManufacturer
     The manufacturer of the vaccine
+VaccinationRabiesTag
+    The rabies tag number accompanying this vaccine
 VaccinationCost
     The cost of this vaccine
 VaccinationComments
