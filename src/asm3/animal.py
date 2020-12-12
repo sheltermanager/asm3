@@ -723,7 +723,7 @@ def get_alerts(dbo, locationfilter = "", siteid = 0, visibleanimalids = "", age 
             "WHERE Neutered = 0 AND ActiveMovementType = 1 AND " \
             "ActiveMovementDate > %(onemonth)s %(locfilter)s AND SpeciesID IN ( %(alertneuter)s ) ) AS notneu," \
         "(SELECT COUNT(*) FROM animal LEFT OUTER JOIN internallocation il ON il.ID = animal.ShelterLocation " \
-            "WHERE RabiesTag = '' AND SpeciesID IN ( %(alertrabies)s ) ) AS notrab," \
+            "WHERE Archived = 0 AND RabiesTag = '' AND SpeciesID IN ( %(alertrabies)s ) ) AS notrab," \
         "(SELECT COUNT(*) FROM animal LEFT OUTER JOIN internallocation il ON il.ID = animal.ShelterLocation " \
             "WHERE Identichipped = 0 AND Archived = 0 %(locfilter)s AND SpeciesID IN ( %(alertchip)s ) ) AS notchip, " \
         "(SELECT COUNT(*) FROM animal LEFT OUTER JOIN internallocation il ON il.ID = animal.ShelterLocation " \
