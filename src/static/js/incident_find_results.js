@@ -67,7 +67,7 @@ $(function() {
                 h.push('<td>' + format.date(r.FOLLOWUPDATETIME) + '</td>');
                 h.push('<td>' + format.date(r.COMPLETEDDATE) + '</td>');
                 h.push('<td>' + common.nulltostr(r.COMPLETEDNAME) + '</td>');
-                h.push('<td>' + common.truncate(r.CALLNOTES) + '</td>');
+                h.push('<td>' + html.truncate(r.CALLNOTES) + '</td>');
                 h.push('</tr>');
             });
             return h.join("\n");
