@@ -390,6 +390,7 @@ def get_animals_brief(animals):
             "OWNERID": a["OWNERID"],
             "OWNERNAME": a["OWNERNAME"],
             "PICKUPLOCATIONNAME": a["PICKUPLOCATIONNAME"],
+            "RABIESTAG": a["RABIESTAG"],
             "SEX" : a["SEX"],
             "SEXNAME" : a["SEXNAME"],
             "SHELTERCODE" : a["SHELTERCODE"],
