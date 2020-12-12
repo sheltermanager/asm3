@@ -427,6 +427,8 @@ def get_animal_find_simple(dbo, query, classfilter = "all", limit = 0, locationf
         "WHERE ad.LinkID=a.ID AND ad.LinkType IN (%s) AND LOWER(ad.Value) LIKE ?)" % asm3.additional.ANIMAL_IN)
     ss.add_large_text_fields([ "a.Markings", "a.HiddenAnimalDetails", "a.AnimalComments", "a.ReasonNO", 
         "a.HealthProblems", "a.PTSReason" ])
+    if asm3.utils.is_numeric(query) and len(query) > 4:
+        ss.add_clause("EXISTS(SELECT ID FROM animalvaccination av WHERE av.AnimalID = a.ID AND av.RabiesTag LIKE ?)")
     if classfilter == "shelter":
         classfilter = "a.Archived = 0 AND "
     elif classfilter == "female":

@@ -937,7 +937,7 @@ def insert_vaccination_from_form(dbo, username, post):
     if post.date("required") is None:
         raise asm3.utils.ASMValidationError(_("Required date must be a valid date", l))
 
-    return dbo.insert("animalvaccination", {
+    vaccid = dbo.insert("animalvaccination", {
         "AnimalID":             post.integer("animal"),
         "VaccinationID":        post.integer("type"),
         "AdministeringVetID":   post.integer("administeringvet"),
@@ -954,6 +954,7 @@ def insert_vaccination_from_form(dbo, username, post):
     }, username)
 
     update_rabies_tag(dbo, username, post.integer("animal"))
+    return vaccid
 
 def update_vaccination_from_form(dbo, username, post):
     """
