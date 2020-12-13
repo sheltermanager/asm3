@@ -22,6 +22,8 @@ $(function() {
             { "ID": 182, "NAME": _("{0} weeks").replace("{0}", "26") },
             { "ID": 365, "NAME": _("1 year") },
             { "ID": 730, "NAME": _("{0} years").replace("{0}", "2") },
+            { "ID": 1095, "NAME": _("{0} years").replace("{0}", "3") },
+            { "ID": 1460, "NAME": _("{0} years").replace("{0}", "4") },
             { "ID": 1825, "NAME": _("{0} years").replace("{0}", "5") }
         ],
 

@@ -1501,6 +1501,8 @@ def table_get_value(l, row, k):
         s = asm3.utils.iif(row[k.replace("y:", "")] == 1, _("Yes", l), _("No", l))
     elif k.find("f:") != -1:
         s = "%0.2f" % asm3.utils.cfloat(row[k.replace("f:", "")])
+    elif row[k] is None:
+        return ""
     else:
         s = str(row[k])
     return s
