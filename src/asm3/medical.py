@@ -989,7 +989,8 @@ def update_rabies_tag(dbo, username, animalid):
     latest from its vaccinations
     """
     rabiestag = dbo.query_string("SELECT RabiesTag FROM animalvaccination " \
-        "WHERE AnimalID=? AND DateOfVaccination Is Not Null ORDER BY DateOfVaccination DESC", [animalid])
+        "WHERE AnimalID=? AND DateOfVaccination Is Not Null AND RabiesTag Is Not Null " \
+        "AND RabiesTag <> '' ORDER BY DateOfVaccination DESC", [animalid])
     dbo.update("animal", animalid, { "RabiesTag": rabiestag }, username)
 
 def update_vaccination_batch_stock(dbo, username, vid, slid):
