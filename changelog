@@ -1,6 +1,7 @@
 44
 ================
 
+14/12/20 Allow rabies tag to be cleared, update on delete #323
 13/12/20 Update bg translation and correct date format
 13/12/20 Suppress nulls when outputting subtable values in documents
 13/12/20 Hide old rabies tag for new installs

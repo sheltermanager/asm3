@@ -990,7 +990,7 @@ def update_rabies_tag(dbo, username, animalid):
     """
     rabiestag = dbo.query_string("SELECT RabiesTag FROM animalvaccination " \
         "WHERE AnimalID=? AND DateOfVaccination Is Not Null ORDER BY DateOfVaccination DESC", [animalid])
-    if rabiestag != "": dbo.update("animal", animalid, { "RabiesTag": rabiestag }, username)
+    dbo.update("animal", animalid, { "RabiesTag": rabiestag }, username)
 
 def update_vaccination_batch_stock(dbo, username, vid, slid):
     """
@@ -1125,7 +1125,9 @@ def delete_vaccination(dbo, username, vaccinationid):
     """
     Deletes a vaccination record
     """
+    animalid = dbo.query_int("SELECT AnimalID FROM animalvaccination WHERE ID = ?", [vaccinationid])
     dbo.delete("animalvaccination", vaccinationid, username)
+    update_rabies_tag(dbo, username, animalid)
 
 def insert_profile_from_form(dbo, username, post):
     """
