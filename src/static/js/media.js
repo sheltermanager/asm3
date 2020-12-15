@@ -58,6 +58,13 @@ $(function() {
                         });
                         return rv;
                     };
+                    const no_links = function() {
+                        let rv = true;
+                        $.each(rows, function(i, v) {
+                            if (v.MEDIATYPE != 0) { rv = false; }
+                        });
+                        return rv;
+                    };
                     $("#button-web").button("option", "disabled", true); 
                     $("#button-video").button("option", "disabled", true); 
                     $("#button-doc").button("option", "disabled", true); 
@@ -66,6 +73,7 @@ $(function() {
                     $("#button-watermark").button("option", "disabled", true); 
                     $("#button-include").button("option", "disabled", true); 
                     $("#button-exclude").button("option", "disabled", true); 
+                    $("#button-email").button("option", "disabled", true); 
                     $("#button-emailpdf").button("option", "disabled", true); 
                     $("#button-sign").addClass("ui-state-disabled").addClass("ui-button-disabled");
                     // Only allow the image preferred buttons to be pressed if the
@@ -87,6 +95,11 @@ $(function() {
                         $("#button-watermark").button("option", "disabled", false); 
                         $("#button-include").button("option", "disabled", false); 
                         $("#button-exclude").button("option", "disabled", false); 
+                    }
+                    // Only allow the email button to be pressed if the selection
+                    // does not contain any links
+                    if (rows.length > 0 && no_links()) {
+                        $("#button-email").button("option", "disabled", "false");
                     }
                     // Only allow the email pdf button to be pressed if the
                     // selection only contains documents

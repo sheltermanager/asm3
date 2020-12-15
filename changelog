@@ -1,6 +1,8 @@
 44
 ================
 
+15/12/20 Fix serious performance bug when selecting media #892
+15/12/20 Do not allow media links to be emailed #892
 14/12/20 Allow rabies tag to be cleared, update on delete #323
 13/12/20 Update bg translation and correct date format
 13/12/20 Suppress nulls when outputting subtable values in documents

@@ -332,10 +332,10 @@ const tableform = {
                     bn.addClass("ui-state-disabled").addClass("ui-button-disabled");
                 }
             }
-            if (table.change) {
-                table.change(tableform.table_selected_rows(table));
-            }
         });
+        if (table.change) {
+            table.change(tableform.table_selected_rows(table));
+        }
     },
 
     /**
