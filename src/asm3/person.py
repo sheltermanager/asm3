@@ -1516,7 +1516,7 @@ def lookingfor_last_match_count(dbo):
     """
     return dbo.query_int("SELECT COUNT(*) FROM ownerlookingfor")
 
-def update_missing_builtin_flags(dbo):
+def update_check_flags(dbo):
     """
     Goes through all people records and verifies that if they have one of
     the IsX flag columns set that the builtin value is present in the
@@ -1524,42 +1524,47 @@ def update_missing_builtin_flags(dbo):
     This is needed because many of the IsX values pre-date the AdditionalFlags
     column, but there are many reports that use it solely as the method of
     determining flags.
+    This will also re-order the additional flags into alphabetical order
+    and remove any flags that no longer exist in lkownerflags.
     """
-    builtins = (
-        ("ExcludeFromBulkEmail", "excludefrombulkemail"),
-        ("IDCheck", "homechecked"),
-        ("IsBanned", "banned"),
-        ("IsVolunteer", "volunteer"),
-        ("IsHomeChecker", "homechecker"),
-        ("IsMember", "member"),
-        ("IsAdopter", "adopter"),
-        ("IsAdoptionCoordinator", "coordinator"),
-        ("IsDonor", "donor"),
-        ("IsDriver", "driver"),
-        ("IsShelter", "shelter"),
-        ("IsACO", "aco"),
-        ("IsStaff", "staff"),
-        ("IsFosterer", "fosterer"),
-        ("IsRetailer", "retailer"),
-        ("IsVet", "vet"),
-        ("IsGiftAid", "giftaid")
-    )
+    builtins = {
+        "excludefrombulkemail": "ExcludeFromBulkEmail",
+        "homechecked": "IDCheck",
+        "banned": "IsBanned",
+        "volunteer": "IsVolunteer",
+        "homechecker": "IsHomeChecker",
+        "member": "IsMember",
+        "adopter": "IsAdopter",
+        "coordinator": "IsAdoptionCoordinator",
+        "donor": "IsDonor",
+        "driver": "IsDriver",
+        "shelter": "IsShelter",
+        "aco": "IsACO",
+        "staff": "IsStaff",
+        "fosterer": "IsFosterer",
+        "retailer": "IsRetailer",
+        "vet": "IsVet",
+        "giftaid": "IsGiftAid"
+    }
     people = dbo.query("SELECT ID, AdditionalFlags, ExcludeFromBulkEmail, IDCheck, IsBanned, IsVolunteer, " \
         "IsHomeChecker, IsMember, IsAdopter, IsAdoptionCoordinator, IsDonor, IsDriver, " \
         "IsShelter, IsACO, IsStaff, IsFosterer, IsRetailer, IsVet, IsGiftAid FROM owner ORDER BY ID")
+    lookupflags = [x["FLAG"] for x in dbo.query("SELECT Flag from lkownerflags ORDER BY Flag")]
     batch = []
     asm3.asynctask.set_progress_max(dbo, len(people))
     for p in people:
         asm3.asynctask.increment_progress_value(dbo)
-        c = False
-        for column, flag in builtins:
-            if p.ADDITIONALFLAGS is None: 
-                p.ADDITIONALFLAGS = ""
-            if p[column.upper()] == 1 and p.ADDITIONALFLAGS.find(flag) == -1:
-                c = True
-                p.ADDITIONALFLAGS += "%s|" % flag
-        if c:
-            batch.append([ p.ADDITIONALFLAGS, p.ID ])
+        pflags = asm3.utils.nulltostr(p.ADDITIONALFLAGS).split("|")
+        # Add any missing builtins
+        for flag, column in builtins.items():
+            if p[column.upper()] == 1 and flag not in pflags:
+                pflags.append(flag)
+        # Throw away flags that are not built ins or in our lookup set
+        pflags = [x for x in pflags if x != "" and (x in lookupflags or x in builtins)]
+        # Sort and reconstruct
+        newval = "|".join(sorted(pflags)) + "|"
+        if newval != p.ADDITIONALFLAGS:
+            batch.append([ newval, p.ID ])
     if len(batch) > 0:
         dbo.execute_many("UPDATE owner SET AdditionalFlags=? WHERE ID=?", batch)
     asm3.al.debug("updated %d person flags" % len(batch), "person.update_missing_builtin_flags", dbo)

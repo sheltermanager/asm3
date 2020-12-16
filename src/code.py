@@ -1870,7 +1870,7 @@ class batch(JSONEndpoint):
 
     def post_genownerflags(self, o):
         l = o.locale
-        asm3.asynctask.function_task(o.dbo, _("Regenerate person flags column", l), asm3.person.update_missing_builtin_flags, o.dbo)
+        asm3.asynctask.function_task(o.dbo, _("Regenerate person flags column", l), asm3.person.update_check_flags, o.dbo)
 
     def post_genlostfound(self, o):
         l = o.locale

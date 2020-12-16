@@ -1,6 +1,7 @@
 44
 ================
 
+16/12/20 Make "regenerate person flags" actually check and regenerate
 15/12/20 Fix serious performance bug when selecting media #892
 15/12/20 Do not allow media links to be emailed #892
 14/12/20 Allow rabies tag to be cleared, update on delete #323
