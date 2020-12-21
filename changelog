@@ -1,6 +1,7 @@
 44
 ================
 
+21/12/20 Fix #892 - bad disabled parameter to button
 17/12/20 Temporarily roll back #892 due to unexpected side effects
 17/12/20 Use case insensitive sort when regenerating person flags
 16/12/20 Make "regenerate person flags" actually check and regenerate

@@ -73,7 +73,7 @@ $(function() {
                     $("#button-watermark").button("option", "disabled", true); 
                     $("#button-include").button("option", "disabled", true); 
                     $("#button-exclude").button("option", "disabled", true); 
-                    //$("#button-email").button("option", "disabled", true); 
+                    $("#button-email").button("option", "disabled", true); 
                     $("#button-emailpdf").button("option", "disabled", true); 
                     $("#button-sign").addClass("ui-state-disabled").addClass("ui-button-disabled");
                     // Only allow the image preferred buttons to be pressed if the
@@ -98,11 +98,9 @@ $(function() {
                     }
                     // Only allow the email button to be pressed if the selection
                     // does not contain any links
-                    /*
                     if (rows.length > 0 && no_links()) {
-                        $("#button-email").button("option", "disabled", "false");
+                        $("#button-email").button("option", "disabled", false);
                     }
-                    */
                     // Only allow the email pdf button to be pressed if the
                     // selection only contains documents
                     if (rows.length > 0 && all_of_type("text/html")) {
