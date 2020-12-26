@@ -671,7 +671,7 @@ ownerdonation.Date,
 Donation AS amt, ownerdonation.Fee, 
 Donation - COALESCE(VatAmount, 0) - COALESCE(ownerdonation.Fee, 0) AS MoneyNet,
 ownerdonation.VatAmount, owner.OwnerAddress, owner.OwnerTown, 
-owner.OwnerCounty, owner.OwnerPostcode, donationtype.DonationName,
+owner.OwnerCounty, owner.OwnerPostcode, owner.EmailAddress, donationtype.DonationName,
 lksex.Sex, species.SpeciesName, animal.AnimalName, animal.AnimalAge,
 animal.ShelterCode, donationpayment.PaymentName, ownerdonation.ReceiptNumber
 FROM ownerdonation
@@ -713,8 +713,8 @@ $$BODY
 <td><b>$ownername</b><br />
 $owneraddress<br />
 $ownertown<br />
-$ownercounty<br />
-$ownerpostcode</td>
+$ownercounty $ownerpostcode<br/>
+<i>$emailaddress</i></td>
 <td><b>$animalname</b> ($sheltercode)<br />
 $sex $speciesname aged $animalage
 </td>
