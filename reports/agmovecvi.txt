@@ -1,0 +1,43 @@
+AgMove CVI Export (AgView)
+###
+Figures
+###
+PostgreSQL
+###
+Produce a CSV of transport records for the AgMove CVI platform
+###
+en
+###
+SELECT 
+    'Microchip' AS "Official ID Type",
+    a.IdentichipNumber AS "Official ID",
+    a.AnimalName AS Name,
+    a.BreedName AS Breed,
+    tt.TransportTypeName AS MovementPurpose,
+    (EXTRACT(DAYS FROM CURRENT_DATE - a.DateOfBirth)::integer / 365.0)::integer AS Age,
+    'Years' AS AgeUnits,
+    (SELECT Sex FROM lksex WHERE ID = a.Sex) AS Sex, 
+    (SELECT MAX(DateOfVaccination) FROM animalvaccination av 
+        INNER JOIN vaccinationtype vt ON vt.ID = av.VaccinationID
+        WHERE av.AnimalID = a.ID AND vt.VaccinationType LIKE '%abies%') AS "Rabies Vaccination Date"
+FROM 
+    animaltransport at
+INNER JOIN 
+    animal a ON at.AnimalID = a.ID
+INNER JOIN
+    transporttype tt ON tt.ID = at.TransportTypeID
+WHERE
+    at.PickupDateTime >= '$ASK DATE Transported between$' AND
+    at.PickupDateTime <= '$ASK DATE and $'
+ORDER BY
+    at.PickupDateTime
+###
+$$HEADER
+HEADER$$
+
+$$BODY
+<p>This report should be run from <a href="report_export">Settings-&gt;Export Reports as CSV</a></p>
+BODY$$
+
+$$FOOTER
+FOOTER$$
