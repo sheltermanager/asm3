@@ -734,6 +734,7 @@ $(function() {
                 '<input data="ReportNewBrowserTab" id="reportnewbrowsertab" class="asm-checkbox" type="checkbox" /> <label for="reportnewbrowsertab">' + _("Open reports in a new browser tab") + '</label><br />',
                 '<input data="LocationFiltersEnabled" id="locationfilters" class="asm-checkbox" type="checkbox" /> <label for="locationfilters">' + _("Enable location filters") + '</label><br />',
                 '<input data="MultiSiteEnabled" id="multisite" class="asm-checkbox" type="checkbox" /> <label for="multisite">' + _("Enable multiple sites") + '</label><br />',
+                '<input data="FormatPhoneNumbers" id="formatphonenumbers" class="asm-checkbox" type="checkbox" /> <label for="formatphonenumbers">' + _("Format telephone numbers according to my locale") + '</label><br />',
                 '<input data="InactivityTimer" id="inactivitytimer" class="asm-checkbox" type="checkbox" /> <label for="inactivitytimer">' + _("Auto log users out after this many minutes of inactivity") + '</label>',
                 '<input data="InactivityTimeout" id="inactivitytimeout" data-min="0" data-max="1440" class="asm-textbox asm-numberbox" /><br />',
                 '<label for="ownernameformat" style="margin-left: 24px">' + _("When displaying person names, use the format") + '</label> ',

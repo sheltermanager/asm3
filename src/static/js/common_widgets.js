@@ -304,6 +304,38 @@ $.fn.ipnumber = function() {
     });
 };
 
+const PHONE_RULES = [
+    { locale: "en", prefix: "", length: 10, elements: 3, extract: /^(\d{3})(\d{3})(\d{4})$/, display: "({1}) {2}-{3}" },
+    { locale: "en_AU", prefix: "04", length: 10, elements: 3, extract: /^(\d{4})(\d{3})(\d{3})$/, display: "{1} {2} {3}" },
+    { locale: "en_AU", prefix: "", length: 10, elements: 3, extract: /^(\d{2})(\d{4})(\d{4})$/, display: "{1} {2} {3}" },
+    { locale: "en_CA", prefix: "", length: 10, elements: 3, extract: /^(\d{3})(\d{3})(\d{4})$/, display: "({1}) {2}-{3}" },
+    { locale: "fr_CA", prefix: "", length: 10, elements: 3, extract: /^(\d{3})(\d{3})(\d{4})$/, display: "({1}) {2}-{3}" },
+    { locale: "en_GB", prefix: "011", length: 11, elements: 2, extract: /^(\d{4})(\d{7})$/, display: "{1} {2}" },
+    { locale: "en_GB", prefix: "", length: 11, elements: 2, extract: /^(\d{5})(\d{6})$/, display: "{1} {2}" }
+];
+
+// Textbox that can format phone numbers to the locale rules above
+$.fn.phone = function() {
+    this.each(function() {
+        if (!config.bool("FormatPhoneNumbers")) { return; } 
+        $(this).blur(function(e) {
+            let t = $(this);
+            let num = String(t.val()).replace(/\D/g, ''); // Throw away all but the numbers
+            $.each(PHONE_RULES, function(i, rules) {
+                if (rules.locale != asm.locale) { return; }
+                if (rules.prefix && num.indexOf(rules.prefix) != 0) { return; }
+                if (num.length != rules.length) { return; }
+                let s = rules.display, m = num.match(rules.extract);
+                for (let i=1; i <= rules.elements; i++) {
+                    s = s.replace("{" + i + "}", m[i]);
+                }
+                t.val(s);
+                return false;
+            });
+        });
+    });
+};
+
 $.fn.date = function() {
     this.each(function() {
         let dayfilter = $(this).attr("data-onlydays");

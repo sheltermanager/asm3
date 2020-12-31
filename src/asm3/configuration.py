@@ -208,6 +208,7 @@ DEFAULTS = {
     "EmblemUnneutered": "Yes",
     "FancyTooltips": "No",
     "FirstDayOfWeek": "1",
+    "FormatPhoneNumbers": "Yes",
     "FosterOnShelter": "Yes",
     "FostererEmails": "No", 
     "FostererEmailOverdueDays": "-30",

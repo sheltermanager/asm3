@@ -963,6 +963,7 @@ const common = {
         $(".asm-latlong").latlong();
         $(".asm-timebox").time();
         $(".asm-currencybox").currency();
+        $(".asm-phone").phone();
         $(".asm-selectbox, .asm-doubleselectbox, .asm-halfselectbox, .selectbox").select();
         $(".asm-animalchooser").animalchooser();
         $(".asm-animalchoosermulti").animalchoosermulti();
