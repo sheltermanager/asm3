@@ -398,6 +398,7 @@ def get_animals_brief(animals):
             "SHELTERLOCATIONNAME": a["SHELTERLOCATIONNAME"],
             "SHELTERLOCATIONUNIT": a["SHELTERLOCATIONUNIT"],
             "SHORTCODE": a["SHORTCODE"],
+            "SITENAME": a["SITENAME"],
             "SPECIESID": a["SPECIESID"],
             "SPECIESNAME": a["SPECIESNAME"],
             "WEBSITEMEDIANAME": a["WEBSITEMEDIANAME"],

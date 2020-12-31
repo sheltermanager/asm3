@@ -532,6 +532,9 @@ $(function() {
             else if (viewmode == "sexspecies") {
                 this.render_view("SEXNAME", "SPECIESNAME", "SEXNAME,SPECIESNAME,ANIMALNAME", false, false);
             }
+            else if (viewmode == "site") {
+                this.render_view("SITENAME", "DISPLAYLOCATIONNAME", "SITENAME,DISPLAYLOCATIONNAME,ANIMALNAME", false, false);
+            }
             else if (viewmode == "species") {
                 this.render_view("SPECIESNAME", "", "SPECIESNAME,ANIMALNAME", false, false);
             }
@@ -612,6 +615,7 @@ $(function() {
             h.push('<option value="retailer">' + _("Retailer") + '</option>');
             h.push('<option value="sex">' + _("Sex") + '</option>');
             h.push('<option value="sexspecies">' + _("Sex and Species") + '</option>');
+            if (config.bool("MultiSiteEnabled")) { h.push('<option value="site">' + _("Site") + '</option>'); }
             h.push('<option value="species">' + _("Species") + '</option>');
             h.push('<option value="speciesbreed">' + _("Species and Breed") + '</option>');
             h.push('<option value="speciescode">' + _("Species and Code") + '</option>');

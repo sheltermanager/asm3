@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ASM3\n"
 "Report-Msgid-Bugs-To: robin@sheltermanager.com\n"
-"POT-Creation-Date: 2020-11-23 10:29+0000\n"
+"POT-Creation-Date: 2020-12-31 09:21+0000\n"
 "Last-Translator: Robin Rawson-Tetley <robin@sheltermanager.com>\n"
 "Language-Team: en <robin@sheltermanager.com>\n"
 "Language: en\n"
@@ -963,6 +963,10 @@ msgstr ""
 
 #: search.py
 msgid "All animals who have not been microchipped"
+msgstr ""
+
+#: search.py
+msgid "All animals who have not received a rabies vaccination"
 msgstr ""
 
 #: search.py
@@ -3711,6 +3715,10 @@ msgstr ""
 msgid "Deselect"
 msgstr ""
 
+#: mobile.py
+msgid "Desktop/Tablet UI"
+msgstr ""
+
 #: incident.js common.js waitinglist.js lostfound.js animal.js
 #: header_edit_header.js
 msgid "Details"
@@ -4691,7 +4699,7 @@ msgstr ""
 msgid "Exclude animals who are aged under"
 msgstr ""
 
-#: mobile.py common.js header_edit_header.js
+#: html.py mobile.py common.js header_edit_header.js
 msgid "Exclude from bulk email"
 msgstr ""
 
@@ -7112,7 +7120,7 @@ msgstr ""
 msgid "Lookup Values"
 msgstr ""
 
-#: html.py
+#: html.py main.js
 msgid "Lookup data"
 msgstr ""
 
@@ -8439,7 +8447,7 @@ msgid ""
 "again"
 msgstr ""
 
-#: html.py options.js
+#: html.py main.js options.js
 msgid "Options"
 msgstr ""
 
@@ -9315,8 +9323,12 @@ msgstr ""
 msgid "Rabies"
 msgstr ""
 
-#: mobile.py animal_find.js animal.js
+#: mobile.py wordprocessor.py vaccination.js animal_find.js animal.js
 msgid "Rabies Tag"
+msgstr ""
+
+#: common.js options.js
+msgid "Rabies not given"
 msgstr ""
 
 #: html.py animal_find_results.js
@@ -9817,7 +9829,7 @@ msgstr ""
 msgid "Report a new incident"
 msgstr ""
 
-#: html.py mobile.py reports.js roles.js options.js
+#: html.py mobile.py reports.js roles.js main.js options.js
 msgid "Reports"
 msgstr ""
 
@@ -10524,24 +10536,8 @@ msgid ""
 "in these locations on shelterview, find animal and search."
 msgstr ""
 
-#: html.py
+#: html.py main.js
 msgid "Settings"
-msgstr ""
-
-#: main.js
-msgid "Settings, Lookup data"
-msgstr ""
-
-#: main.js
-msgid "Settings, Options"
-msgstr ""
-
-#: main.js
-msgid "Settings, Reports"
-msgstr ""
-
-#: main.js
-msgid "Settings, System user accounts"
 msgstr ""
 
 #: html.py mobile.py person.py lookups.py animal_new.js incident.js
@@ -10718,6 +10714,10 @@ msgstr ""
 
 #: options.js
 msgid "Show an alert when these species of animals are not microchipped"
+msgstr ""
+
+#: options.js
+msgid "Show an alert when these species of animals do not have a rabies vaccination"
 msgstr ""
 
 #: options.js
@@ -10969,7 +10969,7 @@ msgid "Single Treatment"
 msgstr ""
 
 #: html.py lookups.py common_personchooser.js users.js incident.js person.js
-#: lookups.js incident_new.js person_new.js
+#: options.js lookups.js shelterview.js incident_new.js person_new.js
 msgid "Site"
 msgstr ""
 
@@ -11455,7 +11455,7 @@ msgstr ""
 msgid "System Options"
 msgstr ""
 
-#: html.py
+#: html.py main.js
 msgid "System user accounts"
 msgstr ""
 
@@ -14474,6 +14474,10 @@ msgid "{plural0} animal has been on the shelter longer than {0} months"
 msgstr ""
 
 #: main.js
+msgid "{plural0} animal has not had a rabies vaccination"
+msgstr ""
+
+#: main.js
 msgid "{plural0} animal is not available for adoption"
 msgstr ""
 
@@ -14650,6 +14654,10 @@ msgid "{plural1} animals have holds ending today"
 msgstr ""
 
 #: main.js
+msgid "{plural1} animals have not had a rabies vaccination"
+msgstr ""
+
+#: main.js
 msgid "{plural1} animals were TNR"
 msgstr ""
 
@@ -14822,6 +14830,10 @@ msgid "{plural2} animals have holds ending today"
 msgstr ""
 
 #: main.js
+msgid "{plural2} animals have not had a rabies vaccination"
+msgstr ""
+
+#: main.js
 msgid "{plural2} animals were TNR"
 msgstr ""
 
@@ -14991,6 +15003,10 @@ msgstr ""
 
 #: main.js
 msgid "{plural3} animals have holds ending today"
+msgstr ""
+
+#: main.js
+msgid "{plural3} animals have not had a rabies vaccination"
 msgstr ""
 
 #: main.js
