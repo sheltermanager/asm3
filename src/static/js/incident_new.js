@@ -173,6 +173,14 @@ $(function() {
                 incident_new.reset();
             });
 
+            $("#dispatchtown").autocomplete({ source: controller.towns });
+            $("#dispatchtown").blur(function() {
+                if ($("#dispatchcounty").val() == "") {
+                    $("#dispatchcounty").val(controller.towncounties[$("#dispatchtown").val()]);
+                }
+            });
+            if (!config.bool("USStateCodes")) { $("#dispatchcounty").autocomplete({ source: controller.counties }); }
+
             if (!config.bool("MultiSiteEnabled")) {
                 $("#siterow").hide();
             }

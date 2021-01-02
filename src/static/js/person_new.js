@@ -238,17 +238,13 @@ $(function() {
                 $("#site").select("value", asm.siteid);
             }
 
-            $("#town").autocomplete({ source: controller.towns.split("|") });
+            $("#town").autocomplete({ source: controller.towns });
             $("#town").blur(function() {
                 if ($("#county").val() == "") {
-                    let tc = html.decode(controller.towncounties);
-                    let idx = tc.indexOf($("#town").val() + "^");
-                    if (idx != -1) {
-                        $("#county").val(tc.substring(tc.indexOf("^^", idx) + 2, tc.indexOf("|", idx)));
-                    }
+                    $("#county").val(controller.towncounties[$("#town").val()]);
                 }
             });
-            if (!config.bool("USStateCodes")) { $("#county").autocomplete({ source: controller.counties.split("|") }); }
+            if (!config.bool("USStateCodes")) { $("#county").autocomplete({ source: controller.counties }); }
 
             $("#add").button().click(function() {
                 person_new.create_and_edit = false;

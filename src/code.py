@@ -3281,6 +3281,9 @@ class incident_new(JSONEndpoint):
             "jurisdictions": asm3.lookups.get_jurisdictions(dbo),
             "additional": asm3.additional.get_additional_fields(dbo, 0, "incident"),
             "pickuplocations": asm3.lookups.get_pickup_locations(dbo),
+            "towns": asm3.person.get_towns(dbo),
+            "counties": asm3.person.get_counties(dbo),
+            "towncounties": asm3.person.get_town_to_county(dbo),
             "roles": asm3.users.get_roles(dbo),
             "sites": asm3.lookups.get_sites(dbo),
             "users": asm3.users.get_users(dbo)
@@ -4602,9 +4605,9 @@ class person(JSONEndpoint):
             "sexes": asm3.lookups.get_sexes(dbo),
             "sites": asm3.lookups.get_sites(dbo),
             "sizes": asm3.lookups.get_sizes(dbo),
-            "towns": "|".join(asm3.person.get_towns(dbo)),
-            "counties": "|".join(asm3.person.get_counties(dbo)),
-            "towncounties": "|".join(asm3.person.get_town_to_county(dbo)),
+            "towns": asm3.person.get_towns(dbo),
+            "counties": asm3.person.get_counties(dbo),
+            "towncounties": asm3.person.get_town_to_county(dbo),
             "tabcounts": asm3.person.get_satellite_counts(dbo, p.id)[0],
             "templates": asm3.template.get_document_templates(dbo),
             "person": p
@@ -4729,9 +4732,9 @@ class person_embed(ASMEndpoint):
         return asm3.utils.json({
             "additional": asm3.additional.get_additional_fields(dbo, 0, "person"),
             "jurisdictions": asm3.lookups.get_jurisdictions(dbo),
-            "towns": "|".join(asm3.person.get_towns(dbo)),
-            "counties": "|".join(asm3.person.get_counties(dbo)),
-            "towncounties": "|".join(asm3.person.get_town_to_county(dbo)),
+            "towns": asm3.person.get_towns(dbo),
+            "counties": asm3.person.get_counties(dbo),
+            "towncounties": asm3.person.get_town_to_county(dbo),
             "flags": asm3.lookups.get_person_flags(dbo),
             "sites": asm3.lookups.get_sites(dbo)
         })
@@ -4995,9 +4998,9 @@ class person_new(JSONEndpoint):
         dbo = o.dbo
         asm3.al.debug("add person", "code.person_new", dbo)
         return {
-            "towns": "|".join(asm3.person.get_towns(dbo)),
-            "counties": "|".join(asm3.person.get_counties(dbo)),
-            "towncounties": "|".join(asm3.person.get_town_to_county(dbo)),
+            "towns": asm3.person.get_towns(dbo),
+            "counties": asm3.person.get_counties(dbo),
+            "towncounties": asm3.person.get_town_to_county(dbo),
             "additional": asm3.additional.get_additional_fields(dbo, 0, "person"),
             "jurisdictions": asm3.lookups.get_jurisdictions(dbo),
             "flags": asm3.lookups.get_person_flags(dbo),

@@ -173,9 +173,9 @@ def get_town_to_county(dbo):
     """
     rows = dbo.query("SELECT DISTINCT OwnerTown, OwnerCounty FROM owner ORDER BY OwnerCounty")
     if rows is None: return []
-    tc = []
+    tc = {}
     for r in rows:
-        tc.append("%s^^%s" % (r.OWNERTOWN, r.OWNERCOUNTY))
+        tc[r.OWNERTOWN] = r.OWNERCOUNTY
     return tc
 
 def get_counties(dbo):
