@@ -162,8 +162,8 @@ class TestPerson(unittest.TestCase):
     def test_update_pass_homecheck(self):
         asm3.person.update_pass_homecheck(base.get_dbo(), "test", self.nid, "")
 
-    def test_update_missing_builtin_flags(self):
-        asm3.person.update_missing_builtin_flags(base.get_dbo())
+    def test_update_check_flags(self):
+        asm3.person.update_check_flags(base.get_dbo())
 
     def test_update_missing_geocodes(self):
         asm3.person.update_missing_geocodes(base.get_dbo())

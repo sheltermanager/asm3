@@ -482,6 +482,10 @@ Display
   sites.  This allows you to handle multiple sites with one ASM database. A
   number of site-specific reports are available in the repository.
 
+* Format telephone numbers according to my locale: When leaving fields containing
+  phone numbers, if the numeric portion is the correct length, format them
+  according to your locale. Eg: US numbers become (XXX) XXX-XXXX
+
 * When displaying person names in lists, use the format: In movement books,
   donation books, the waiting list, etc. when showing person names, ASM can use
   different formats if you want surname first for sorting, etc.

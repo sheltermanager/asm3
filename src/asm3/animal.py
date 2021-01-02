@@ -4525,11 +4525,13 @@ def update_animal_figures_annual(dbo, year = 0):
     allspecies = asm3.lookups.get_species(dbo)
     group = _("Intakes {0}", l).format(year)
     for sp in allspecies:
+        exclude_tnr = ""
+        if sp["ID"] == 2: exclude_tnr = "AND NOT EXISTS(SELECT ID FROM adoption WHERE AnimalID=a.ID AND MovementType=7)"
         species_line("SELECT a.DateBroughtIn AS TheDate, a.DateOfBirth AS DOB, " \
             "COUNT(a.ID) AS Total FROM animal a WHERE " \
             "a.SpeciesID = %d AND a.DateBroughtIn >= %s AND a.DateBroughtIn <= %s " \
-            "AND a.IsTransfer = 0 AND a.NonShelterAnimal = 0 " \
-            "GROUP BY a.DateBroughtIn, a.DateOfBirth" % (int(sp["ID"]), firstofyear, lastofyear),
+            "AND a.IsTransfer = 0 AND a.NonShelterAnimal = 0 %s " \
+            "GROUP BY a.DateBroughtIn, a.DateOfBirth" % (int(sp["ID"]), firstofyear, lastofyear, exclude_tnr),
             sp["ID"], sp["SPECIESNAME"], "SP_BROUGHTIN", group, 10, showbabies, babymonths)
 
     group = _("Born on Shelter {0}", l).format(year)
