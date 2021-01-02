@@ -2415,7 +2415,7 @@ const html = {
             ["North Carolina","NC"], ["North Dakota","ND"], ["Ohio","OH"], ["Oklahoma","OK"], ["Oregon","OR"], ["Pennsylvania","PA"],
             ["Rhode Island","RI"], ["South Carolina","SC"], ["South Dakota","SD"], ["Tennessee","TN"], ["Texas","TX"], ["Utah","UT"],
             ["Vermont","VT"], ["Virginia","VA"], ["Washington","WA"], ["West Virginia","WV"], ["Wisconsin","WI"],["Wyoming","WY"]
-        ], opts = [ '<option value=""><option>' ];
+        ], opts = [ '<option value=""></option>' ];
         $.each(US_STATES, function(i, v) {
             let sel = common.iif(selected == v[1], 'selected="selected"', '');
             opts.push('<option value="' + v[1] + '" ' + sel + '>' + v[1] + " - " + v[0] + '</option>');
