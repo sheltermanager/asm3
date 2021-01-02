@@ -154,7 +154,11 @@ $(function() {
                 '<tr class="towncounty">',
                 '<td><label for="county">' + _("State") + '</label></td>',
                 '<td>',
-                '<input type="text" id="county" data-json="OWNERCOUNTY" data-post="county" maxlength="100" class="asm-textbox" />',
+                common.iif(config.bool("USStateCodes"),
+                    '<select id="county" data-json="OWNERCOUNTY" data-post="county" class="asm-selectbox">' +
+                    html.states_us_options() + '</select>',
+                    '<input type="text" id="county" data-json="OWNERCOUNTY" data-post="county" maxlength="100" ' + 
+                    'class="asm-textbox" />'),
                 '</td>',
                 '</tr>',
                 '<tr>',
@@ -645,8 +649,10 @@ $(function() {
             // Email dialog for sending emails
             $("#emailform").emailform();
 
+            if (!config.bool("USStateCodes")) {
+                $("#county").autocomplete({ source: controller.counties.split("|") });
+            }
             $("#town").autocomplete({ source: controller.towns.split("|") });
-            $("#county").autocomplete({ source: controller.counties.split("|") });
             $("#town").blur(function() {
                 if ($("#county").val() == "") {
                     let tc = html.decode(controller.towncounties);

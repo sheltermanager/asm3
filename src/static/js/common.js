@@ -26,6 +26,10 @@ const common = {
         });
     },
 
+    iif: function(cond, yes, no) {
+        if (cond) { return yes; } else { return no; }
+    },
+
     /**
      * Returns true if any element of array1 is present in array2
      */
@@ -2402,8 +2406,8 @@ const html = {
     },
 
     /** Returns a list of all US states as a set of option tags */
-    states_us_options: function() {
-        var US_STATES = [ ["Alabama","AL"], ["Alaska","AK"], ["Arizona","AZ"], ["Arkansas","AR"], ["California","CA"], ["Colorado","CO"],
+    states_us_options: function(selected) {
+        let US_STATES = [ ["Alabama","AL"], ["Alaska","AK"], ["Arizona","AZ"], ["Arkansas","AR"], ["California","CA"], ["Colorado","CO"],
             ["Connecticut","CT"], ["Delaware","DE"], ["Florida","FL"], ["Georgia","GA"], ["Hawaii","HI"], ["Idaho","ID"], ["Illinois","IL"],
             ["Indiana","IN"], ["Iowa","IA"], ["Kansas","KS"], ["Kentucky","KY"], ["Louisiana","LA"], ["Maine","ME"], ["Maryland","MD"],
             ["Massachusetts","MA"], ["Michigan","MI"], ["Minnesota","MN"], ["Mississippi","MS"], ["Missouri","MO"], ["Montana","MT"],
@@ -2411,9 +2415,10 @@ const html = {
             ["North Carolina","NC"], ["North Dakota","ND"], ["Ohio","OH"], ["Oklahoma","OK"], ["Oregon","OR"], ["Pennsylvania","PA"],
             ["Rhode Island","RI"], ["South Carolina","SC"], ["South Dakota","SD"], ["Tennessee","TN"], ["Texas","TX"], ["Utah","UT"],
             ["Vermont","VT"], ["Virginia","VA"], ["Washington","WA"], ["West Virginia","WV"], ["Wisconsin","WI"],["Wyoming","WY"]
-        ], opts = [];
+        ], opts = [ '<option value=""><option>' ];
         $.each(US_STATES, function(i, v) {
-            opts.push('<option value="' + v[1] + '">' + v[1] + " - " + v[0] + '</option>');
+            let sel = common.iif(selected == v[1], 'selected="selected"', '');
+            opts.push('<option value="' + v[1] + '" ' + sel + '>' + v[1] + " - " + v[0] + '</option>');
         });
         return opts.join("\n");
     },

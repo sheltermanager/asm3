@@ -138,7 +138,12 @@ $.widget("asm.personchooser", {
             '</tr>',
             '<tr>',
             '<td><label>' + _("State") + '</label></td>',
-            '<td><input class="asm-textbox chooser personchooser-county" maxlength="100" data="county" type="textbox" /></td>',
+            '<td>',
+            common.iif(config.bool("USStateCodes"),
+                '<select id="county" data="county" class="asm-selectbox chooser personchooser-county">' +
+                html.states_us_options(config.str("OrganisationCounty")) + '</select>',
+                '<input type="text" id="county" data="county" maxlength="100" class="asm-textbox chooser personchooser-county" />'),
+            '</td>',
             '</tr>',
             '<tr>',
             '<td><label>' + _("Zipcode") + '</label></td>',
@@ -369,7 +374,9 @@ $.widget("asm.personchooser", {
                 html.person_flag_options(null, self.options.personflags, dialogadd.find(".personchooser-flags"));
                 // Setup autocomplete widgets with the towns/counties
                 dialogadd.find(".personchooser-town").autocomplete({ source: html.decode(self.options.towns).split("|") });
-                dialogadd.find(".personchooser-county").autocomplete({ source: html.decode(self.options.counties).split("|") });
+                if (!config.bool("USStateCodes")) {
+                    dialogadd.find(".personchooser-county").autocomplete({ source: html.decode(self.options.counties).split("|") });
+                }
                 // When the user changes a town, suggest a county if it's blank
                 dialogadd.find(".personchooser-town").blur(function() {
                     if (dialogadd.find(".personchooser-county").val() == "") {

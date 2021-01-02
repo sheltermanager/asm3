@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ASM3\n"
 "Report-Msgid-Bugs-To: robin@sheltermanager.com\n"
-"POT-Creation-Date: 2020-12-31 10:30+0000\n"
+"POT-Creation-Date: 2021-01-02 11:14+0000\n"
 "Last-Translator: Robin Rawson-Tetley <robin@sheltermanager.com>\n"
 "Language-Team: en <robin@sheltermanager.com>\n"
 "Language: en\n"
@@ -13782,6 +13782,10 @@ msgstr ""
 
 #: options.js
 msgid "When displaying person names, use the format"
+msgstr ""
+
+#: options.js
+msgid "When entering addresses, restrict states to valid US 2 letter state codes"
 msgstr ""
 
 #: main.js

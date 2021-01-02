@@ -328,6 +328,7 @@ DEFAULTS = {
     "UniqueLicenceNumbers": "Yes",
     "UseAutoInsurance": "No",
     "UseShortShelterCodes": "Yes", 
+    "USStateCodes": "No",
     "VATEnabled": "Yes",
     "VATExclusive": "No",
     "VATRate": "20",

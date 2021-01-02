@@ -430,6 +430,11 @@ Display
   person's address on the details screen. Also shows a minimap on the dispatch
   slider of incidents.
 
+* When entering addresses, restrict states to valid US 2 letter state codes:
+  When this option is on, the state field will switch to a dropdown that only
+  allows valid US states to be selected. The default state for screens will be
+  auto selected from the state chosen on the shelter details options tab.
+
 * Allow editing of latitude/longitude with minimaps: Allow the latitude/longitude
   geocodes to be hand edited in fields near the minimap and address. Right clicking
   on the minimap will add a new pin and update the fields.
