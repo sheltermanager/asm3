@@ -21,6 +21,7 @@ $(function() {
     const mailmerge = {
 
         previewloaded: false,
+        recipientsloaded: false,
 
         render: function() {
             let hf = [
@@ -54,7 +55,7 @@ $(function() {
                 '</form>',
                 '</div>',
 
-                '<h3 id="printlabel"><a href="#">' + _("Produce a PDF of printable labels") + '</a></h3>',
+                '<h3 id="printlabeltab"><a href="#">' + _("Produce a PDF of printable labels") + '</a></h3>',
                 '<div>',
                 '<form action="mailmerge" method="post">',
                 hf.replace("{mode}", "labels"),
@@ -99,7 +100,7 @@ $(function() {
                 '</form>',
                 '</div>',
 
-                '<h3><a href="#">' + _("Send emails") + '</a></h3>',
+                '<h3 id="sendemailtab"><a href="#">' + _("Send emails") + '</a></h3>',
                 '<div id="sendemail">',
                 hf.replace("{mode}", "email"),
                 '<table width="100%">',
@@ -145,9 +146,16 @@ $(function() {
                 '</form>',
                 '</div>',
 
-                '<h3 id="lmatching"><a href="#">' + _("View matching records") + '</a></h3>',
+                '<h3 id="matchingtab"><a href="#">' + _("View matching records") + '</a></h3>',
                 '<div id="matching">',
                 hf.replace("{mode}", "preview"),
+                '</div>',
+
+                '<h3 id="recipientstab"><a href="#">' + _("View email recipient list") + '</a></h3>',
+                '<div id="recipients">',
+                hf.replace("{mode}", "recipients"),
+                '<button id="button-copyrecipients">' + _("Copy recipient list to the clipboard") + '</button>',
+                '<div id="recipientslist" style="margin-top: 5px"></div>',
                 '</div>',
                 
                 html.content_footer()
@@ -199,6 +207,11 @@ $(function() {
                 $("#asm-mailmerge-accordion").hide();
             });
 
+            $("#button-copyrecipients").button({icons: { primary: "ui-icon-clipboard" }, text: true}).click(function() {
+                common.copy_to_clipboard($("#recipientslist").text());
+                header.show_info(_("Successfully copied to the clipboard."));
+            });
+
             $("#mailmerge-letters .templatelink").each(function() {
                 // When a template is clicked, copy the template ID
                 // into a hidden field and submit it
@@ -237,7 +250,7 @@ $(function() {
 
             // When the preview slider is chosen, load the preview data
             $("#asm-mailmerge-accordion").on("accordionactivate", function(event, ui) {
-                if (ui.newHeader.attr("id") == "lmatching" && !mailmerge.previewloaded) {
+                if (ui.newHeader.attr("id") == "matchingtab" && !mailmerge.previewloaded) {
                     mailmerge.previewloaded = true;
                     header.show_loading();
                     let formdata = "mode=preview&" + $("#matching input").toPOST();
@@ -261,11 +274,25 @@ $(function() {
                         $("#matching table").table();
                     });
                 }
+                if (ui.newHeader.attr("id") == "recipientstab" && !mailmerge.recipientsloaded) {
+                    mailmerge.recipientsloaded = true;
+                    header.show_loading();
+                    let formdata = "mode=recipients&" + $("#recipients input").toPOST();
+                    common.ajax_post("mailmerge", formdata).then(function(data) {
+                        $("#recipientslist").html(data);
+                    });
+                }
             });
 
-            // If the data don't have person columns, hide the label generating stuff
-            if (!controller.hasperson) {
-                $("#printlabel").hide().next().hide();
+            // If the data doesn't have address columns, hide the label generating stuff
+            if (!controller.hasaddress) {
+                $("#printlabeltab").hide().next().hide();
+            }
+
+            // If the data doesn't have an email, hide the email sending stuff
+            if (!controller.hasemail) {
+                $("#sendemailtab").hide().next().hide();
+                $("#recipientstab").hide().next().hide();
             }
 
             // If there are more than MailMergeMaxEmails results, hide the 

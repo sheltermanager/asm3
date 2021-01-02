@@ -3704,7 +3704,8 @@ class mailmerge(JSONEndpoint):
             "mergereport": crid,
             "mergetitle": title.replace(" ", "_").replace("\"", "").replace("'", "").lower(),
             "numrows": len(rows),
-            "hasperson": "OWNERNAME" in fields and "OWNERADDRESS" in fields and "OWNERTOWN" in fields and "OWNERCOUNTY" in fields and "OWNERPOSTCODE" in fields,
+            "hasemail": "EMAILADDRESS" in fields,
+            "hasaddress": "OWNERNAME" in fields and "OWNERADDRESS" in fields and "OWNERTOWN" in fields and "OWNERCOUNTY" in fields and "OWNERPOSTCODE" in fields,
             "templates": asm3.template.get_document_templates(dbo)
         }
    
@@ -3779,6 +3780,15 @@ class mailmerge(JSONEndpoint):
         rows, cols = asm3.reports.execute_query(dbo, post.integer("mergereport"), o.user, mergeparams)
         asm3.al.debug("returning preview rows for %d [%s]" % (post.integer("mergereport"), post["mergetitle"]), "code.mailmerge", dbo)
         return asm3.utils.json(rows)
+
+    def post_recipients(self, o):
+        dbo = o.dbo
+        post = o.post
+        mergeparams = ""
+        if post["mergeparams"] != "": mergeparams = asm3.utils.json_parse(post["mergeparams"])
+        rows, cols = asm3.reports.execute_query(dbo, post.integer("mergereport"), o.user, mergeparams)
+        emails = [ x.EMAILADDRESS for x in rows if x and x != "" ]
+        return ", ".join(emails)
 
 class maint_db_stats(ASMEndpoint):
     url = "maint_db_stats"
