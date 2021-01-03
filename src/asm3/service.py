@@ -60,6 +60,7 @@ CACHE_PROTECT_METHODS = {
     "html_flagged_animals": [ "template", "speciesid", "animaltypeid", "flag", "all" ],
     "html_held_animals": [ "template", "speciesid", "animaltypeid" ],
     "json_adoptable_animals": [ "sensitive" ],
+    "json_adoptable_animals_xp": [],
     "xml_adoptable_animal": [ "animalid" ],
     "xml_adoptable_animals": [ "sensitive" ],
     "json_found_animals": [],
@@ -480,6 +481,10 @@ def handler(post, path, remoteip, referer, querystring):
         return set_cached_response(cache_key, account, "text/html", 10800, 1800, \
             asm3.publishers.html.get_held_animals(dbo, style=post["template"], \
                 speciesid=post.integer("speciesid"), animaltypeid=post.integer("animaltypeid")))
+
+    elif method == "json_adoptable_animals_xp":
+        rs = strip_personal_data(asm3.publishers.base.get_animal_data(dbo, None, include_additional_fields = True))
+        return set_cached_response(cache_key, account, "application/json", 600, 600, asm3.utils.json(rs))
 
     elif method == "json_adoptable_animals":
         asm3.users.check_permission_map(l, user["SUPERUSER"], securitymap, asm3.users.VIEW_ANIMAL)
