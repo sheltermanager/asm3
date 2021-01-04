@@ -668,9 +668,6 @@ def insert_reclaim_from_form(dbo, username, post):
             return_movement(dbo, m["ID"], username, post.integer("animal"), post.date("movementdate"))
             move_dict["originalretailermovement"] = str(m.ID)
             move_dict["retailer"] = str(m.OWNERID)
-    # If the animal was flagged as not available for adoption, then it
-    # shouldn't be since we've just reclaimed it.
-    dbo.update("animal", post.integer("animal"), { "IsNotAvailableForAdoption": 0 })
     # Is the animal reserved? Should clear it if so
     cancel_reserves = asm3.configuration.cancel_reserves_on_adoption(dbo)
     for m in fm:
