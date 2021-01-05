@@ -6,8 +6,8 @@
 
 const common = {
 
-    /** Speed of all JQuery animations (is there a JQuery default? */
-    fx_speed: 100, 
+    /** Speed of all JQuery animations */
+    fx_speed: 90, 
 
     replace_all: function(str, find, replace) {
         if (!str) { return ""; }
@@ -864,6 +864,8 @@ const common = {
      * creates widgets based on them
      */
     bind_widgets: function() {
+        // Set the default fx speed for all jQuery transitions
+        $.fx.speeds._default = common.fx_speed;
         // Disable effects if the option is set
         if (config.has() && config.bool("DisableEffects")) {
             jQuery.fx.off = true;

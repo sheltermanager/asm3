@@ -1,6 +1,7 @@
 44
 ================
 
+05/01/21 Consistent transition speeds (and a little faster)
 04/01/21 Do not clear the not for adoption flag during reclaim
 02/01/21 Mail merge option to get the email recipient list #732
 02/01/21 Refactor messy old address auto completion #562
