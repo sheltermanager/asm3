@@ -602,8 +602,10 @@ header = {
             }
             // Use form dirty handling to make sure we're safe to leave this screen
             // validate.a_click_handler will handle routing to the URL
-            if (validate.active && !validate.a_click_handler(e, "search?q=" + encodeURIComponent(term))) { return; }
-            if (!validate.active) { common.route("search?q=" + encodeURIComponent(term)); }
+            if (validate.active && (!validate.a_click_handler(e, "search?q=" + encodeURIComponent(term)))) { 
+                return;
+            }
+            common.route("search?q=" + encodeURIComponent(term));
         };
 
         // Search autocompletes to keywords and previous searches
