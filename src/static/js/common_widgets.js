@@ -707,7 +707,7 @@ $.widget("asm.emailform", {
             fromaddresses.push(asm.useremail);
             fromaddresses.push(html.decode(asm.userreal) + " <" + asm.useremail + ">");
         }
-        fromaddresses.push(config.str("EmailFromAddresses").split(","));
+        fromaddresses.concat(config.str("EmailFromAddresses").split(","));
         toaddresses = config.str("EmailToAddresses").split(",");
         $("#emailfrom").autocomplete({source: fromaddresses});
         $("#emailfrom").autocomplete("widget").css("z-index", 1000);
