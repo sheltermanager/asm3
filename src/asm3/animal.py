@@ -793,7 +793,7 @@ def embellish_timeline(l, rows):
     """
     td = { "ENTERED": ( _("{0} {1}: entered the shelter", l), "animal" ),
           "MICROCHIP": ( _("{0} {1}: microchipped", l), "microchip" ),
-          "NEUTERED": ( _("{0} {1}: altered", l), "health" ),
+          "NEUTERED": ( _("{0} {1}: altered", l), "unneutered" ),
           "RESERVED": ( _("{0} {1}: reserved by {2}", l), "reservation" ),
           "CANCRESERVE": ( _("{0} {1}: cancelled reservation to {2}", l), "reservation"),
           "TRIALSTART": ( _("{0} {1}: trial adoption to {2}", l), "movement"),
