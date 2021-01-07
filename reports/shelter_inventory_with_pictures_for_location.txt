@@ -1,4 +1,4 @@
-Shelter Inventory with Pictures by Location
+Shelter Inventory with Pictures for Location
 ###
 Inventories
 ###

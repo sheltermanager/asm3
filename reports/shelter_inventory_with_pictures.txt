@@ -19,6 +19,7 @@ a.BreedName,
 a.AnimalAge,
 a.TimeOnShelter,
 CASE WHEN a.ActiveMovementType = 2 THEN 'Foster' WHEN a.ActiveMovementType = 8 THEN 'Retailer' WHEN a.ActiveMovementType = 1 THEN 'Trial Adoption' ELSE l.LocationName END AS LocationName,
+OwnerName, OwnerAddress, OwnerTown, OwnerCounty, OwnerPostcode, EmailAddress, MobileTelephone,  
 (SELECT Name FROM lksynun WHERE ID = a.IsGoodWithCats) AS aGoodWithCats,
 (SELECT Name FROM lksynun WHERE ID = a.IsGoodWithDogs) AS aGoodWithDogs,
 (SELECT Name FROM lksynun WHERE ID = a.IsGoodWithChildren) AS aGoodWithKids,
@@ -27,6 +28,8 @@ a.ID AS animalid,
 a.AnimalComments,
 s.SpeciesName
 FROM animal a
+LEFT OUTER JOIN adoption m ON m.ID = a.ActiveMovementID
+LEFT OUTER JOIN owner o ON o.ID = m.OwnerID
 LEFT OUTER JOIN internallocation l ON l.ID = a.ShelterLocation
 LEFT OUTER JOIN species s ON s.ID = a.SpeciesID
 WHERE Archived = 0
@@ -77,7 +80,8 @@ $$BODY
 <td>$ASEX / $ANEUTERED</td>
 <td>$ANIMALAGE</td>
 <td>$TIMEONSHELTER</td>
-<td>$LOCATIONNAME</td>
+<td>$LOCATIONNAME <b>$OWNERNAME</b><br/>
+$OWNERADDRESS<br/>$OWNERTOWN<br/> $OWNERCOUNTY $OWNERPOSTCODE<br/>$EMAILADDRESS $MOBILETELEPHONE</td>
 <td>Cats: $AGOODWITHCATS<br/>
 Dogs: $AGOODWITHDOGS<br/>
 Kids: $AGOODWITHKIDS</td>
