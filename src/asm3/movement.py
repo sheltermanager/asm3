@@ -979,6 +979,7 @@ def send_fosterer_emails(dbo):
             "AND (ReturnDate Is Null OR ReturnDate > ?) ORDER BY MovementDate", ( f.ID, dbo.today(), dbo.today() ))
         asm3.al.debug("%d animals found for fosterer '%s'" % (len(animals), f.OWNERNAME), "movement.send_fosterer_emails", dbo)
 
+        hasmedicaldue = False
         for a in animals:
             pb(lines, "%s - %s" % (a.ANIMALNAME, a.SHELTERCODE) )
             p(lines, asm3.i18n._("{0} {1} {2} aged {3}", l).format(a.SEX, a.BREEDNAME, a.SPECIESNAME, a.ANIMALAGE))
@@ -993,6 +994,7 @@ def send_fosterer_emails(dbo):
 
             overdue = asm3.medical.get_combined_due(dbo, a.ANIMALID, dbo.today(offset=overduedays), dbo.today(offset=-1))
             if len(overdue) > 0:
+                hasmedicaldue = True
                 pb(lines, asm3.i18n._("Overdue medical items", l))
                 for m in overdue:
                     p(lines, "{0}: {1} {2} {3}/{4} {5}".format( asm3.i18n.python2display(l, m.DATEREQUIRED), \
@@ -1001,6 +1003,7 @@ def send_fosterer_emails(dbo):
 
             nextdue = asm3.medical.get_combined_due(dbo, a.ANIMALID, dbo.today(), dbo.today(offset=7))
             if len(nextdue) > 0:
+                hasmedicaldue = True
                 pb(lines, asm3.i18n._("Upcoming medical items", l))
                 for m in nextdue:
                     p(lines, "{0}: {1} {2} {3}/{4} {5}".format( asm3.i18n.python2display(l, m.DATEREQUIRED), \
@@ -1009,6 +1012,9 @@ def send_fosterer_emails(dbo):
 
         # Email is complete, send to the fosterer (assuming there were some animals to send)
         if len(animals) > 0:
+            # If the option to send emails if there were no medical items is off and there
+            # weren't any medical items, skip to the next fosterer
+            if asm3.configuration.fosterer_email_skip_no_medical(dbo) and not hasmedicaldue: continue
             asm3.utils.send_email(dbo, replyto, f.EMAILADDRESS, subject = asm3.i18n._("Fosterer Medical Report", l), body="\n".join(lines), contenttype="html", exceptions=False)
 
 

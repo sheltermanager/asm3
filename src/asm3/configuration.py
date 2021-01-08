@@ -212,6 +212,7 @@ DEFAULTS = {
     "FosterOnShelter": "Yes",
     "FostererEmails": "No", 
     "FostererEmailOverdueDays": "-30",
+    "FostererEmailSkipNoMedical": "No",
     "ShowGDPRContactOptIn": "No",
     "GDPRContactChangeLog": "No",
     "GDPRContactChangeLogType": "6",
@@ -815,6 +816,9 @@ def foster_on_shelter(dbo):
 
 def fosterer_email_overdue_days(dbo):
     return cint(dbo, "FostererEmailOverdueDays", DEFAULTS["FostererEmailOverdueDays"])
+
+def fosterer_email_skip_no_medical(dbo):
+    return cboolean(dbo, "FostererEmailSkipNoMedical", DEFAULTS["FostererEmailSkipNoMedical"] == "Yes")
 
 def fosterer_emails(dbo):
     return cboolean(dbo, "FostererEmails", DEFAULTS["FostererEmails"] == "Yes")

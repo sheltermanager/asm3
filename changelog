@@ -1,6 +1,7 @@
 44
 ================
 
+08/01/21 Option to skip fosterer emails if no medical items due
 07/01/21 Fix for custom from addresses not loading
 05/01/21 Searching does not trigger dirty form handling #492
 05/01/21 Consistent transition speeds (and a little faster)
