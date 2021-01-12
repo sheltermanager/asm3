@@ -1493,7 +1493,7 @@ AND NonShelterAnimal = 0) AS "Returned To Field Feline Up To 5 Months",
 (SELECT COUNT(*) FROM animal
 INNER JOIN adoption ON animal.ID = adoption.AnimalID 
 INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
-WHERE MovementType IN (4, 6) OR (MovementType = 7 AND ReasonName LIKE '%TNR%') 
+WHERE (MovementType IN (4, 6) OR (MovementType = 7 AND ReasonName LIKE '%TNR%')) 
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID = 1
 AND DateOfBirth < MovementDate - INTERVAL '5 months' 
@@ -1502,7 +1502,7 @@ AND NonShelterAnimal = 0) AS "Other Live Outcome Canine Adult",
 (SELECT COUNT(*) FROM animal
 INNER JOIN adoption ON animal.ID = adoption.AnimalID 
 INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
-WHERE MovementType IN (4, 6) OR (MovementType = 7 AND ReasonName LIKE '%TNR%') 
+WHERE (MovementType IN (4, 6) OR (MovementType = 7 AND ReasonName LIKE '%TNR%'))
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID = 1
 AND DateOfBirth >= MovementDate - INTERVAL '5 months' 
@@ -1513,7 +1513,7 @@ AND NonShelterAnimal = 0) AS "Other Live Outcome Canine Up To 5 Months",
 (SELECT COUNT(*) FROM animal
 INNER JOIN adoption ON animal.ID = adoption.AnimalID 
 INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
-WHERE MovementType IN (4, 6) OR (MovementType = 7 AND ReasonName LIKE '%TNR%') 
+WHERE (MovementType IN (4, 6) OR (MovementType = 7 AND ReasonName LIKE '%TNR%'))
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID = 2
 AND DateOfBirth < MovementDate - INTERVAL '5 months' 
@@ -1522,7 +1522,7 @@ AND NonShelterAnimal = 0) AS "Other Live Outcome Feline Adult",
 (SELECT COUNT(*) FROM animal
 INNER JOIN adoption ON animal.ID = adoption.AnimalID 
 INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
-WHERE MovementType IN (4, 6) OR (MovementType = 7 AND ReasonName LIKE '%TNR%') 
+WHERE (MovementType IN (4, 6) OR (MovementType = 7 AND ReasonName LIKE '%TNR%'))
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID = 2
 AND DateOfBirth >= MovementDate - INTERVAL '5 months' 
