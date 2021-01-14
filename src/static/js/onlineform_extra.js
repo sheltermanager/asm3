@@ -239,7 +239,10 @@ $(document).ready(function() {
             if (!o.attr("data-visibleif")) { return; } // no rule, do nothing
             // Split rule in to field, cond (=!), value
             let m = o.attr("data-visibleif").match(new RegExp("(.*)([=!<>])(.*)"));
-            let field = m[1], cond = m[2], value = m[3];
+            let field = "", cond = "=", value = "";
+            if (m.length >= 2) { field = m[1]; }
+            if (m.length >= 3) { cond = m[2]; }
+            if (m.length >= 4) { value = m[3]; }
             // Find the field and apply the condition
             $("input, select").each(function() {
                 if ($(this).attr("name") && $(this).attr("name").indexOf(field + "_") == 0) {

@@ -1,6 +1,7 @@
 44
 ================
 
+14/01/21 Cope with malformed showif rules
 08/01/21 Option to skip fosterer emails if no medical items due
 07/01/21 Fix for custom from addresses not loading
 05/01/21 Searching does not trigger dirty form handling #492
