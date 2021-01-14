@@ -284,9 +284,22 @@ fieldname&gt;0
 fieldname&lt;20
 </pre></div>
 </div>
+<p>If a value is not supplied, the system will compare against an empty
+string, so you can test that a field is or isn’t empty:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>fieldname=
+fieldname!
+</pre></div>
+</div>
 <p>If fieldname is a checkbox, you can test for the special keyword “on” to
 indicate you want the box checked (or “off” for unchecked):</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">mycheck</span><span class="o">=</span><span class="n">on</span>
+</pre></div>
+</div>
+<p>If you want to reference a checkbox that is part of a checkbox group, you
+can reference it by the name of the group and item number, starting with 0
+for the first item:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">checkboxgroup0</span><span class="o">=</span><span class="n">on</span>
+<span class="n">checkboxgroup1</span><span class="o">=</span><span class="n">off</span>
 </pre></div>
 </div>
 <div class="admonition note">

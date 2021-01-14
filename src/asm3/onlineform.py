@@ -200,7 +200,8 @@ def get_onlineform_html(dbo, formid, completedocument = True):
             h.append('<div class="asm-onlineform-checkgroup" data-name="%s" data-required="%s" style="display: inline-block">' % (cname, asm3.utils.iif(required != "", "required", "")))
             for i, lv in enumerate(asm3.utils.nulltostr(f.LOOKUPS).split("|")):
                 rid = "%s_%s" % (fid, i)
-                h.append('<input type="checkbox" id="%s" data="%s" /> <label for="%s">%s</label><br />' % (rid, lv, rid, lv))
+                rname = "%s%s_" % (f.FIELDNAME, i)
+                h.append('<input type="checkbox" id="%s" data="%s" name="%s"/> <label for="%s">%s</label><br />' % (rid, lv, rname, rid, lv))
             h.append('</div>')
         elif f.FIELDTYPE == FIELDTYPE_SHELTERANIMAL:
             h.append('<select class="asm-onlineform-shelteranimal" id="%s" name="%s" title="%s" %s>' % ( fid, cname, asm3.utils.nulltostr(f.TOOLTIP), required))

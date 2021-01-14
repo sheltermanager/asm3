@@ -117,10 +117,23 @@ with a fixed value. Eg::
    fieldname>0
    fieldname<20
 
+If a value is not supplied, the system will compare against an empty
+string, so you can test that a field is or isn't empty::
+
+   fieldname=
+   fieldname!
+
 If fieldname is a checkbox, you can test for the special keyword "on" to
 indicate you want the box checked (or "off" for unchecked)::
 
    mycheck=on
+
+If you want to reference a checkbox that is part of a checkbox group, you
+can reference it by the name of the group and item number, starting with 0
+for the first item::
+
+   checkboxgroup0=on
+   checkboxgroup1=off
 
 .. note:: Only check boxes, radio buttons, text and lookup fields can be used with Show If
 
