@@ -19,7 +19,8 @@ DateOfBirth, AnimalAge
 FROM animal
 INNER JOIN adoption ON adoption.AnimalID = animal.ID
 INNER JOIN owner ON owner.ID = adoption.OwnerID
-WHERE MovementType = 2 AND DeceasedDate Is Null AND ReturnDate Is Null ORDER BY FosteredTo
+WHERE MovementType = 2 AND DeceasedDate Is Null AND ReturnDate Is Null 
+ORDER BY FosteredTo
 ###
 $$HEADER
 <table border="1">
@@ -53,4 +54,68 @@ BODY$$
 
 $$FOOTER
 </table>
+FOOTER$$
+&&&
+Active Fosters (Brief, by State)
+###
+Movements
+###
+Any
+###
+Active fosters, showing one foster per line and grouped by state.
+###
+en
+###
+SELECT
+OwnerName AS FosteredTo,
+OwnerAddress, OwnerTown, OwnerCounty, OwnerPostcode, HomeTelephone, MobileTelephone, EmailAddress,
+ShelterCode, AnimalName,
+(SELECT Sex FROM lksex WHERE ID = animal.Sex) AS Sex,
+(SELECT BaseColour FROM basecolour WHERE ID = animal.BaseColourID) AS Colour,
+BreedName,
+DateOfBirth, AnimalAge
+FROM animal
+INNER JOIN adoption ON adoption.AnimalID = animal.ID
+INNER JOIN owner ON owner.ID = adoption.OwnerID
+WHERE MovementType = 2 AND DeceasedDate Is Null AND ReturnDate Is Null 
+ORDER BY OwnerCounty, FosteredTo
+###
+$$HEADER
+HEADER$$
+
+$$GROUP_OwnerCounty
+$$HEAD
+<h2>$OwnerCounty</h2>
+<table border="1">
+<tr>
+<th>Fosterer</th>
+<th>Contact</th>
+<th>Code</th>
+<th>Name</th>
+<th>Sex</th>
+<th>Colour</th>
+<th>Breed</th>
+<th>Date Of Birth</th>
+</tr>
+$$FOOT
+<h2>Total $OwnerCounty: {COUNT.FosteredTo}</h2>
+GROUP$$
+
+$$BODY
+<tr>
+<td>$FOSTEREDTO</td>
+<td>$OWNERADDRESS, $OWNERTOWN $OWNERCOUNTY $OWNERPOSTCODE<br/>
+E: $EMAILADDRESS<br/>
+H: $HOMETELEPHONE<br/>
+M: $MOBILETELEPHONE</td>
+<td>$SHELTERCODE</td>
+<td>$ANIMALNAME</td>
+<td>$SEX</td>
+<td>$COLOUR</td>
+<td>$BREEDNAME</td>
+<td>$DATEOFBIRTH ($ANIMALAGE)</td>
+</tr>
+BODY$$
+
+$$FOOTER
 FOOTER$$
