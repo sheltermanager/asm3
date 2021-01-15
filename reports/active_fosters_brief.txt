@@ -98,6 +98,7 @@ $$HEAD
 <th>Date Of Birth</th>
 </tr>
 $$FOOT
+</table>
 <h2>Total $OwnerCounty: {COUNT.FosteredTo}</h2>
 GROUP$$
 
