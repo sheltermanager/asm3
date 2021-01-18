@@ -62,6 +62,6 @@ AND animalmedicaltreatment.DateRequired >= '$@from$'
 AND animalmedicaltreatment.DateRequired <= '$@to$'
 AND owner.ExcludeFromBulkEmail = 0
 
-ORDER BY owner.OwnerSurname
+ORDER BY OwnerSurname
 ###
 MAIL
