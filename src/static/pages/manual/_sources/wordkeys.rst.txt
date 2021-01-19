@@ -375,6 +375,10 @@ DisplayDogsIfBadWith
     Outputs "Dogs" if this animal is bad with dogs
 DisplayChildrenIfBadWith
     Outputs "Children" if this animal is bad with children
+DisplayXIfCat / DisplayXIfDog / DisplayXIfRabbit / DisplayXIfMale / DisplayXIfFemale
+    Outputs an X if this animal is a cat, dog, rabbit, male or female (used for form boxes)
+DisplayXIfPedigree / DisplayXIfCrossbreed
+    Outputs an X if this animal is a pure or crossbreed
 EntryCategory
     The entry category of the animal 
 ReasonForEntry
