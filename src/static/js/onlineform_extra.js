@@ -235,45 +235,49 @@ $(document).ready(function() {
     // Find every visibleif rule and show/hide accordingly
     const show_visibleif = function() {
         $("tr").each(function() {
-            let o = $(this);
+            let o = $(this), toshow = true;
             if (!o.attr("data-visibleif")) { return; } // no rule, do nothing
-            // Split rule in to field, cond (=!), value
-            let m = o.attr("data-visibleif").match(new RegExp("(.*)([=!<>])(.*)"));
-            let field = "", cond = "=", value = "";
-            if (m.length >= 2) { field = m[1]; }
-            if (m.length >= 3) { cond = m[2]; }
-            if (m.length >= 4) { value = m[3]; }
-            // Find the field and apply the condition
-            $("input, select").each(function() {
-                if ($(this).attr("name") && $(this).attr("name").indexOf(field + "_") == 0) {
-                    let v = $(this).val();
-                    // Checkboxes always return on for val(), if it's a checkbox, set on/off from checked
-                    if ($(this).attr("type") && $(this).attr("type") == "checkbox") { v = $(this).is(":checked") ? "on" : "off"; }
-                    // Radio buttons need reading differently to find the selected value
-                    if ($(this).attr("type") && $(this).attr("type") == "radio") { v = $("[name='" + $(this).attr("name") + "']:checked").val(); }
-                    let toshow = false;
-                    if (cond == "=") { toshow = v == value; }
-                    else if (cond == "!") { toshow = v != value; }
-                    else if (cond == ">") { toshow = v > value; }
-                    else if (cond == "<") { toshow = v < value; }
-                    o.toggle(toshow);
-                    if (!toshow) {
-                        // If we just hid a field that had the required attribute, 
-                        // remove it, otherwise the form won't submit
-                        o.find("input, select, textarea").prop("required", false);
+            // & can be used to separate conditions. Test each one.
+            $.each(o.attr("data-visibleif").split("&"), function(ci, cv) {
+                // Separate condition into field, operator (=!<>), value
+                let m = cv.trim().match(new RegExp("(.*)([=!<>])(.*)"));
+                let field = "", cond = "=", value = "";
+                if (m.length >= 2) { field = m[1]; }
+                if (m.length >= 3) { cond = m[2]; }
+                if (m.length >= 4) { value = m[3]; }
+                // Find the field and apply the condition
+                $("input, select").each(function() {
+                    if ($(this).attr("name") && $(this).attr("name").indexOf(field + "_") == 0) {
+                        let v = $(this).val();
+                        // Checkboxes always return on for val(), if it's a checkbox, set on/off from checked
+                        if ($(this).attr("type") && $(this).attr("type") == "checkbox") { v = $(this).is(":checked") ? "on" : "off"; }
+                        // Radio buttons need reading differently to find the selected value
+                        if ($(this).attr("type") && $(this).attr("type") == "radio") { v = $("[name='" + $(this).attr("name") + "']:checked").val(); }
+                        if (cond == "=" && v != value) { toshow = false; }
+                        else if (cond == "!" && v == value) { toshow = false; }
+                        else if (cond == ">" && v < value) { toshow = false; }
+                        else if (cond == "<" && v > value) { toshow = false; }
+                        return false; // stop iterating fields, we found it
                     }
-                    else {
-                        // Restore the required attribute to the now visible field 
-                        // if the field had it previously. Deliberately avoid it on multiselects
-                        // so the select dropdown does not become required.
-                        if (o.find(".asm-onlineform-required").length > 0 && 
-                            o.find(".asm-onlineform-lookupmulti").length == 0) {
-                            o.find("input, select, textarea").prop("required", true);
-                        }
-                    }
-                    return false; // stop iterating fields, we found it
-                }
+                });
             });
+            // Show or hide the field based on our final condition
+            o.toggle(toshow);
+            if (!toshow) {
+                // If we just hid a field that had the required attribute, 
+                // remove it, otherwise the form won't submit
+                o.find("input, select, textarea").prop("required", false);
+            }
+            else {
+                // Restore the required attribute to the now visible field 
+                // if the field had it previously. Deliberately avoid it on multiselects
+                // so the select dropdown does not become required.
+                if (o.find(".asm-onlineform-required").length > 0 && 
+                    o.find(".asm-onlineform-lookupmulti").length == 0) {
+                    o.find("input, select, textarea").prop("required", true);
+                }
+            }
+
         });
     };
 

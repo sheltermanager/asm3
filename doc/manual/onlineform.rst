@@ -135,6 +135,12 @@ for the first item::
    checkboxgroup0=on
    checkboxgroup1=off
 
+Multiple conditions can be specified. They will be ANDed together, so all
+conditions have to be true in order for the field to be displayed. Separate
+conditions with an ampersand & ::
+
+   mycheck=on & fieldname=X
+
 .. note:: Only check boxes, radio buttons, text and lookup fields can be used with Show If
 
 Incoming Forms

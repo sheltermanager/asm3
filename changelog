@@ -1,6 +1,8 @@
 44
 ================
 
+19/01/21 Online forms: support multiple ANDed showIf rules
+19/01/21 Online forms: Yes/No defaults to blank so user must choose
 19/01/21 Fix mail merge recipient list to cope with NULL
 14/01/21 Showif can reference checkbox groups as nameI (0 based)
 14/01/21 Cope with malformed showif rules
