@@ -3787,7 +3787,7 @@ class mailmerge(JSONEndpoint):
         mergeparams = ""
         if post["mergeparams"] != "": mergeparams = asm3.utils.json_parse(post["mergeparams"])
         rows, cols = asm3.reports.execute_query(dbo, post.integer("mergereport"), o.user, mergeparams)
-        emails = [ x.EMAILADDRESS for x in rows if x and x != "" ]
+        emails = [ x.EMAILADDRESS for x in rows if x and x.EMAILADDRESS is not None and x.EMAILADDRESS != "" ]
         return ", ".join(emails)
 
 class maint_db_stats(ASMEndpoint):

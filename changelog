@@ -1,6 +1,7 @@
 44
 ================
 
+19/01/21 Fix mail merge recipient list to cope with NULL
 14/01/21 Showif can reference checkbox groups as nameI (0 based)
 14/01/21 Cope with malformed showif rules
 08/01/21 Option to skip fosterer emails if no medical items due
