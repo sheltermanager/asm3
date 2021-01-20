@@ -255,8 +255,8 @@ $(document).ready(function() {
                         if ($(this).attr("type") && $(this).attr("type") == "radio") { v = $("[name='" + $(this).attr("name") + "']:checked").val(); }
                         if (cond == "=" && v != value) { toshow = false; }
                         else if (cond == "!" && v == value) { toshow = false; }
-                        else if (cond == ">" && v < value) { toshow = false; }
-                        else if (cond == "<" && v > value) { toshow = false; }
+                        else if (cond == ">" && v <= value) { toshow = false; }
+                        else if (cond == "<" && v >= value) { toshow = false; }
                         return false; // stop iterating fields, we found it
                     }
                 });
