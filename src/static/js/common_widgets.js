@@ -1226,10 +1226,10 @@ $.widget("asm.textbox", {
 });
 
 /** This is necessary for the richtextarea below - it allows the tinymce dialogs
- *  to work inside a JQuery UI dialog */
+ *  to work inside a JQuery UI modal dialog */
 $.widget("ui.dialog", $.ui.dialog, {
     _allowInteraction: function(event) {
-        return !!$(event.target).closest(".mce-container").length || this._super( event );
+        return !!$(event.target).closest(".tox").length || this._super( event );
     }
 });
 
