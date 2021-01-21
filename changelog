@@ -1,6 +1,7 @@
 44
 ================
 
+21/01/21 Move owner req euth to Death, enable for non-shelter
 19/01/21 Never overwrite RabiesTag with a blank
 19/01/21 Add DisplayXIf* fields for PetPlan/form overlays
 19/01/21 Online forms: support multiple ANDed showIf rules

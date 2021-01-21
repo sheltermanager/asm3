@@ -34,6 +34,8 @@ $(function() {
                 '<input class="asm-checkbox" type="checkbox" id="puttosleep" data-json="PUTTOSLEEP" data-post="puttosleep" title="' + html.title(_("This animal was euthanized")) + '" />',
                 '<label for="deadonarrival">' + _("Dead on arrival") + '</label>',
                 '<input class="asm-checkbox" type="checkbox" id="deadonarrival" data-json="ISDOA" data-post="deadonarrival" title="' + html.title(_("This animal was dead on arrival to the shelter")) + '" />',
+                '<label for="asilomarownerrequested" class="asilomar ownereuth">' + "Owner requested euthanasia" + '</label>',
+                '<input class="asm-checkbox asilomar ownereuth" type="checkbox" id="asilomarownerrequested" data-json="ASILOMAROWNERREQUESTEDEUTHANASIA" data-post="asilomarownerrequested" title="' + html.title("The owner requested euthanasia") + '" />',
                 '</td>',
                 '</tr>',
                 '</table>',
@@ -357,12 +359,6 @@ $(function() {
                 '<label for="asilomartransferexternal">' + "Outside community/coalition" + '</label>',
                 '</td>',
                 '</tr>',
-                '<tr class="asilomar">',
-                '<td></td>',
-                '<td>',
-                '<input class="asm-checkbox" type="checkbox" id="asilomarownerrequested" data-json="ASILOMAROWNERREQUESTEDEUTHANASIA" data-post="asilomarownerrequested" title="' + html.title("The owner requested euthanasia") + '" />',
-                '<label for="asilomarownerrequested">' + "Owner requested euthanasia" + '</label>',
-                '</td></tr>',
                 '<tr id="bondedwith1row">',
                 '<td>',
                 '<label for="bonded1">' + _("Bonded With") + '</label>',
@@ -1038,6 +1034,13 @@ $(function() {
                 $("#reasonforentryrow").hide();
                 $("#reasonnotfromownerrow").hide();
                 $(".asilomar").hide();
+            }
+
+            // Still show the owner requested euth field for non-shelter animals
+            if (asm.locale == "en" && !config.bool("DisableAsilomar") &&
+                ($("#species").select("value") == 1 || $("#species").select("value") == 2) &&
+                $("#flags option[value='nonshelter']").is(":selected")) {
+                $(".ownereuth").show();
             }
 
             // If the animal has an exit movement, show the owner field
