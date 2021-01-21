@@ -116,6 +116,12 @@ LICENSEEXPIRESDATE
     The date the license expires
 LICENSECOMMENTS
     Any comments on the license
+LOGDATE
+   The date of any log entry (only animal logs can be imported)
+LOGTYPE
+   The type of log entry
+LOGCOMMENTS
+   The log entry itself
 MEDICALNAME
     The name of the medical regimen for this line
 MEDICALDOSAGE

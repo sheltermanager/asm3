@@ -37,6 +37,7 @@ VALID_FIELDS = [
     "ORIGINALOWNERWORKPHONE", "ORIGINALOWNERCELLPHONE", "ORIGINALOWNEREMAIL",
     "DONATIONDATE", "DONATIONAMOUNT", "DONATIONFEE", "DONATIONCHECKNUMBER", "DONATIONCOMMENTS", "DONATIONTYPE", "DONATIONPAYMENT", "DONATIONGIFTAID",
     "LICENSETYPE", "LICENSENUMBER", "LICENSEFEE", "LICENSEISSUEDATE", "LICENSEEXPIRESDATE", "LICENSECOMMENTS",
+    "LOGDATE", "LOGTYPE", "LOGCOMMENTS",
     "PERSONTITLE", "PERSONINITIALS", "PERSONFIRSTNAME", "PERSONLASTNAME", "PERSONNAME",
     "PERSONADDRESS", "PERSONCITY", "PERSONSTATE",
     "PERSONZIPCODE", "PERSONJURISDICTION", "PERSONFOSTERER", "PERSONDONOR",
@@ -260,6 +261,8 @@ def csvimport(dbo, csvdata, encoding = "utf-8-sig", user = "", createmissinglook
     haspersonname = False
     haslicence = False
     haslicencenumber = False
+    haslog = False
+    haslogcomments = False
     hasmovement = False
     hasmovementdate = False
     hasdonation = False
@@ -277,6 +280,8 @@ def csvimport(dbo, csvdata, encoding = "utf-8-sig", user = "", createmissinglook
         if col.startswith("MEDICAL"): hasmed = True
         if col.startswith("LICENSE"): haslicence = True
         if col == "LICENSENUMBER": haslicencenumber = True
+        if col.startswith("LOG"): haslog = True
+        if col == "LOGCOMMENTS": haslogcomments = True
         if col == "ORIGINALOWNERLASTNAME": hasoriginalownerlastname = True
         if col.startswith("PERSON"): hasperson = True
         if col == "PERSONLASTNAME": haspersonlastname = True
@@ -335,6 +340,14 @@ def csvimport(dbo, csvdata, encoding = "utf-8-sig", user = "", createmissinglook
     if hastest and not hasanimal:
         asm3.asynctask.set_last_error(dbo, "Your CSV file has test fields, but no animal to apply them to")
         return
+
+    # If we have any log fields, we need an animal
+    if haslog and not hasanimal:
+        asm3.asynctask.set_last_error(dbo, "Your CSV file has log fields, but no animal to apply them to")
+
+    # If we have any log fields, we need the entry
+    if haslog and not haslogcomments:
+        asm3.asynctask.set_last_error(dbo, "Your CSV file has log fields, but no LOGCOMMENTS column")
 
     # If we have licence fields, we need a number
     if haslicence and not haslicencenumber:
@@ -466,15 +479,17 @@ def csvimport(dbo, csvdata, encoding = "utf-8-sig", user = "", createmissinglook
                 p["mobiletelephone"] = gks(row, "ORIGINALOWNERCELLPHONE")
                 p["emailaddress"] = gks(row, "ORIGINALOWNEREMAIL")
                 try:
+                    ooid = 0
                     if checkduplicates:
                         dups = asm3.person.get_person_similar(dbo, p["emailaddress"], p["mobiletelephone"], p["surname"], p["forenames"], p["address"])
                         if len(dups) > 0:
-                            a["originalowner"] = str(dups[0]["ID"])
+                            ooid = dups[0]["ID"]
+                            a["originalowner"] = str(ooid)
                     if "originalowner" not in a:
                         ooid = asm3.person.insert_person_from_form(dbo, asm3.utils.PostedData(p, dbo.locale), user, geocode=False)
                         a["originalowner"] = str(ooid)
-                    # Identify an ORIGINALOWNERADDITIONAL additional fields and create/merge them
-                    create_additional_fields(dbo, row, errors, rowno, "ORIGINALOWNERADDITIONAL", "person", ooid)
+                    # Identify any ORIGINALOWNERADDITIONAL additional fields and create/merge them
+                    if ooid > 0: create_additional_fields(dbo, row, errors, rowno, "ORIGINALOWNERADDITIONAL", "person", ooid)
                 except Exception as e:
                     row_error(errors, "originalowner", rowno, row, e, dbo, sys.exc_info())
             try:
@@ -687,6 +702,17 @@ def csvimport(dbo, csvdata, encoding = "utf-8-sig", user = "", createmissinglook
             except Exception as e:
                 row_error(errors, "medical", rowno, row, e, dbo, sys.exc_info())
 
+        # Logs
+        if haslog and animalid != 0 and gks(row, "LOGCOMMENTS") != "":
+            l = {}
+            l["type"] = gkl(dbo, row, "LOGTYPE", "logtype", "LogTypeName", createmissinglookups)
+            l["logdate"] = gkd(dbo, row, "LOGDATE", True)
+            l["entry"] = gks(row, "LOGCOMMENTS")
+            try:
+                asm3.log.insert_log_from_form(dbo, user, asm3.log.ANIMAL, animalid, asm3.utils.PostedData(l, dbo.locale))
+            except Exception as e:
+                row_error(errors, "log", rowno, row, e, dbo, sys.exc_info())
+
         # License?
         if haslicence and personid != 0 and gks(row, "LICENSENUMBER") != "":
             l = {}
@@ -863,6 +889,7 @@ def csvexport_animals(dbo, dataset, animalids = "", includephoto = False):
         "ANIMALJURISDICTION", "ANIMALENTRYCATEGORY",
         "ANIMALNOTFORADOPTION", "ANIMALNONSHELTER", "ANIMALGOODWITHCATS", "ANIMALGOODWITHDOGS", "ANIMALGOODWITHKIDS",
         "ANIMALHOUSETRAINED", "ORIGINALOWNERTITLE", "ORIGINALOWNERINITIALS", "ORIGINALOWNERFIRSTNAME",
+        "LOGDATE", "LOGTYPE", "LOGCOMMENTS", 
         "ORIGINALOWNERLASTNAME", "ORIGINALOWNERADDRESS", "ORIGINALOWNERCITY", "ORIGINALOWNERSTATE", "ORIGINALOWNERZIPCODE",
         "ORIGINALOWNERHOMEPHONE", "ORIGINALOWNERWORKPHONE", "ORIGINALOWNERCELLPHONE", "ORIGINALOWNEREMAIL", "MOVEMENTTYPE",
         "MOVEMENTDATE", "PERSONTITLE", "PERSONINITIALS", "PERSONFIRSTNAME", "PERSONLASTNAME", "PERSONADDRESS", "PERSONCITY",
@@ -993,6 +1020,15 @@ def csvexport_animals(dbo, dataset, animalids = "", includephoto = False):
             row["MEDICALDOSAGE"] = m["DOSAGE"]
             row["MEDICALGIVENDATE"] = asm3.i18n.python2display(l, m["STARTDATE"])
             row["MEDICALCOMMENTS"] = m["COMMENTS"]
+            row["ANIMALCODE"] = a["SHELTERCODE"]
+            row["ANIMALNAME"] = a["ANIMALNAME"]
+            out.write(tocsv(row))
+
+        for g in asm3.log.get_logs(dbo, asm3.log.ANIMAL, a["ID"]):
+            row = {}
+            row["LOGDATE"] = asm3.i18n.python2display(l, g["DATE"])
+            row["LOGTYPE"] = g["LOGTYPENAME"]
+            row["LOGCOMMENTS"] = g["COMMENTS"]
             row["ANIMALCODE"] = a["SHELTERCODE"]
             row["ANIMALNAME"] = a["ANIMALNAME"]
             out.write(tocsv(row))
