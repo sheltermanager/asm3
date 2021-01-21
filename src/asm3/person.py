@@ -1562,7 +1562,7 @@ def update_check_flags(dbo):
         # Throw away flags that are not built ins or in our lookup set
         pflags = [x for x in pflags if x != "" and (x in lookupflags or x in builtins)]
         # Sort and reconstruct
-        newval = "|".join(sorted(pflags, key = lambda x: x.casefold())) + "|"
+        newval = "|".join(sorted(pflags, key = lambda x: x.lower())) + "|"
         if newval != p.ADDITIONALFLAGS:
             batch.append([ newval, p.ID ])
     if len(batch) > 0:
