@@ -491,7 +491,7 @@ PETFINDER_BREEDS = (
     "Egyptian Mau",
     "Exotic Shorthair",
     "Extra-Toes Cat (Hemingway Polydactyl)",
-    "Havana",
+    "Havana Brown",
     "Himalayan",
     "Japanese Bobtail",
     "Javanese",
