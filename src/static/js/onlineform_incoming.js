@@ -11,6 +11,11 @@ $(function() {
                 rows: controller.rows,
                 idcolumn: "COLLATIONID",
                 edit: async function(row) {
+                    if (asm.mobileapp) {
+                        // Open in a new page on the mobile app rather than a dialog
+                        common.route("onlineform_incoming_print?ids=" + row.COLLATIONID, true);
+                        return;
+                    }
                     header.show_loading(_("Loading..."));
                     try {
                         let result = await common.ajax_post("onlineform_incoming", "mode=view&collationid=" + row.COLLATIONID);
