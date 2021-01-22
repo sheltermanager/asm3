@@ -1,6 +1,7 @@
 44
 ================
 
+22/01/21 Show a returning column on foster/retailer book
 21/01/21 Support importing of animal logs #524
 21/01/21 Fix focus bugs in TinyMCE 5 #938
 21/01/21 Move owner req euth to Death, enable for non-shelter

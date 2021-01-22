@@ -130,6 +130,12 @@ $(function() {
                             return format.date(row.MOVEMENTDATE);
                         }
                     },
+                    { field: "RETURNDATE", display: _("Returning"), formatter: tableform.format_date, 
+                        hideif: function(row) {
+                            // This is for future returns, so only show on retailer/foster book
+                            return controller.name != "move_book_foster" && controller.name != "move_book_retailer";
+                        }
+                    },
                     { field: "RESERVATIONSTATUSNAME", display: _("Status"),
                         hideif: function(row) {
                             // Don't show this column if we aren't in the reservation book or animal/person
