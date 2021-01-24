@@ -659,11 +659,11 @@ def page_login(l, post):
         %s
         <div data-role="fieldcontain">
             <label for="username">%s</label>
-            <input type="text" id="username" name="username" value='%s' />
+            <input type="text" id="username" name="username" value='%s' autocomplete="username" />
         </div>
         <div data-role="fieldcontain">
             <label for="password">%s</label>
-            <input type="password" id="password" name="password" value='%s' />
+            <input type="password" id="password" name="password" value='%s' autocomplete="current-password" />
         </div>
         <button type="submit">%s</button>
         </form>
