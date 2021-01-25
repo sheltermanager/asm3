@@ -1,6 +1,7 @@
 44
 ================
 
+25/01/21 csvimport: person should not be mandatory for 4,6,7
 24/01/21 autocomplete attributes for username/passwords
 24/01/21 document_repository service method to allow links to docs
 24/01/21 Try to prevent browser autofill on email addresses

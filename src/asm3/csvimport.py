@@ -610,7 +610,7 @@ def csvimport(dbo, csvdata, encoding = "utf-8-sig", user = "", createmissinglook
 
         # Movement to tie animal/person together?
         movementid = 0
-        if hasmovement and personid != 0 and animalid != 0 and gks(row, "MOVEMENTDATE") != "":
+        if hasmovement and animalid != 0 and gks(row, "MOVEMENTDATE") != "":
             m = {}
             m["person"] = str(personid)
             m["animal"] = str(animalid)
