@@ -1,0 +1,12 @@
+.ui-tabs { direction: rtl; }
+.ui-tabs .ui-tabs-nav li.ui-tabs-selected,
+.ui-tabs .ui-tabs-nav li.ui-state-default {float: right; }
+.ui-tabs .ui-tabs-nav li a .asm-hotkey { float: right; }
+
+.asm-topline .asm-menu-body .asm-table td { text-align: right}
+
+.asm-tabbar { direction: rtl}
+
+.ui-icon-triangle-1-e { background-position: -96px -16px; }
+
+.ui-icon-triangle-1-w { background-position: -32px -16px; }
