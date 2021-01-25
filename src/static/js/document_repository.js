@@ -38,10 +38,12 @@ $(function() {
                             let absurl = asm.serviceurl + "?";
                             if (asm.useraccountalias) { absurl += "account=" + asm.useraccountalias + "&"; }
                             absurl += "method=document_repository&mediaid=" + row.ID;
-                            return '<a href="document_repository_file?dbfsid=' + row.ID + '">' + row.NAME + '</a> ' +
+                            return "<span style=\"white-space: nowrap\">" +
+                                "<input type=\"checkbox\" data-id=\"" + row.ID + "\" />" +
+                                '<a href="#" class="link-edit" data-id="' + row.ID + '">' + row.NAME + '</a> ' +
                                 '<button type="button" data-icon="extlink" data="' + absurl + '">' + 
                                 _("Copy absolute service URL to the clipboard (for external use in web pages and emails)") + 
-                                '</button>';
+                                '</button></span>';
                         }
                     },
                     { field: "PATH", display: _("Path"), initialsort: true },
