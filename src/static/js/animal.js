@@ -34,6 +34,8 @@ $(function() {
                 '<input class="asm-checkbox" type="checkbox" id="puttosleep" data-json="PUTTOSLEEP" data-post="puttosleep" title="' + html.title(_("This animal was euthanized")) + '" />',
                 '<label for="deadonarrival">' + _("Dead on arrival") + '</label>',
                 '<input class="asm-checkbox" type="checkbox" id="deadonarrival" data-json="ISDOA" data-post="deadonarrival" title="' + html.title(_("This animal was dead on arrival to the shelter")) + '" />',
+                '<label for="asilomarownerrequested" class="asilomar ownereuth">' + "Owner requested euthanasia" + '</label>',
+                '<input class="asm-checkbox asilomar ownereuth" type="checkbox" id="asilomarownerrequested" data-json="ASILOMAROWNERREQUESTEDEUTHANASIA" data-post="asilomarownerrequested" title="' + html.title("The owner requested euthanasia") + '" />',
                 '</td>',
                 '</tr>',
                 '</table>',
@@ -357,12 +359,6 @@ $(function() {
                 '<label for="asilomartransferexternal">' + "Outside community/coalition" + '</label>',
                 '</td>',
                 '</tr>',
-                '<tr class="asilomar">',
-                '<td></td>',
-                '<td>',
-                '<input class="asm-checkbox" type="checkbox" id="asilomarownerrequested" data-json="ASILOMAROWNERREQUESTEDEUTHANASIA" data-post="asilomarownerrequested" title="' + html.title("The owner requested euthanasia") + '" />',
-                '<label for="asilomarownerrequested">' + "Owner requested euthanasia" + '</label>',
-                '</td></tr>',
                 '<tr id="bondedwith1row">',
                 '<td>',
                 '<label for="bonded1">' + _("Bonded With") + '</label>',
@@ -391,7 +387,7 @@ $(function() {
                 '<label for="reasonforentry">' + _("Reason for Entry") + '</label>',
                 '</td>',
                 '<td>',
-                '<textarea class="asm-textarea" title="' + _("Reason for entry") + '" id="reasonforentry" data-json="REASONFORENTRY" data-post="reasonforentry" rows="2"></textarea>',
+                '<textarea class="asm-textarea" title="' + _("Reason for Entry") + '" id="reasonforentry" data-json="REASONFORENTRY" data-post="reasonforentry" rows="2"></textarea>',
                 '</td>',
                 '</tr>',
                 '</table>',
@@ -764,6 +760,9 @@ $(function() {
                 edit_header.diary_task_list(controller.diarytasks, "ANIMAL"),
                 '</ul>',
                 '</div>',
+                '<div id="dialog-clone-confirm" style="display: none" title="' + _("Clone") + '">',
+                '<p><span class="ui-icon ui-icon-alert"></span> Clone this animal?</p>',
+                '</div>',
                 '<div id="dialog-dt-date" style="display: none" title="' + _("Select date for diary task") + '">',
                 '<input type="hidden" id="diarytaskid" />',
                 '<table width="100%">',
@@ -1035,6 +1034,13 @@ $(function() {
                 $("#reasonforentryrow").hide();
                 $("#reasonnotfromownerrow").hide();
                 $(".asilomar").hide();
+            }
+
+            // Still show the owner requested euth field for non-shelter animals
+            if (asm.locale == "en" && !config.bool("DisableAsilomar") &&
+                ($("#species").select("value") == 1 || $("#species").select("value") == 2) &&
+                $("#flags option[value='nonshelter']").is(":selected")) {
+                $(".ownereuth").show();
             }
 
             // If the animal has an exit movement, show the owner field
@@ -1326,8 +1332,8 @@ $(function() {
 
             $("#emailform").emailform();
 
-            // If the option isn't set to allow alphanumeric/space
-            // characters in microchip and ntattoo numbers, use
+            // If the option isn't set to allow non-alphanumeric
+            // characters in microchip and tattoo numbers, use
             // the alphanumberbox widget.
             if (!config.bool("AllowNonANMicrochip")) {
                 $("#microchipnumber").alphanumber();
@@ -1504,7 +1510,7 @@ $(function() {
             });
 
             $("#button-clone").button().click(async function() {
-                $("#button-clone").button("disable");
+                await tableform.show_okcancel_dialog("#dialog-clone-confirm", _("Clone"));
                 let formdata = "mode=clone&animalid=" + $("#animalid").val();
                 header.show_loading(_("Cloning..."));
                 let response = await common.ajax_post("animal", formdata);
@@ -1640,6 +1646,7 @@ $(function() {
             validate.unbind_dirty();
             common.widget_destroy("#dialog-dt-date");
             common.widget_destroy("#dialog-merge");
+            common.widget_destroy("#dialog-clone-confirm");
             common.widget_destroy("#mergeanimal", "animalchooser");
             common.widget_destroy("#bonded1", "animalchooser");
             common.widget_destroy("#bonded2", "animalchooser");

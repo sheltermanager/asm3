@@ -1,6 +1,136 @@
 44
 ================
 
+25/01/21 csvimport: person should not be mandatory for 4,6,7
+24/01/21 autocomplete attributes for username/passwords
+24/01/21 document_repository service method to allow links to docs
+24/01/21 Try to prevent browser autofill on email addresses
+22/01/21 Preview incoming forms in a new page on mobile #932
+22/01/21 Indicate adoptable status in mobile interface #27
+22/01/21 Show a returning column on foster/retailer book
+21/01/21 Support importing of animal logs #524
+21/01/21 Fix focus bugs in TinyMCE 5 #938
+21/01/21 Move owner req euth to Death, enable for non-shelter
+19/01/21 Never overwrite RabiesTag with a blank
+19/01/21 Add DisplayXIf* fields for PetPlan/form overlays
+19/01/21 Online forms: support multiple ANDed showIf rules
+19/01/21 Online forms: Yes/No defaults to blank so user must choose
+19/01/21 Fix mail merge recipient list to cope with NULL
+14/01/21 Showif can reference checkbox groups as nameI (0 based)
+14/01/21 Cope with malformed showif rules
+08/01/21 Option to skip fosterer emails if no medical items due
+07/01/21 Fix for custom from addresses not loading
+05/01/21 Searching does not trigger dirty form handling #492
+05/01/21 Consistent transition speeds (and a little faster)
+04/01/21 Do not clear the not for adoption flag during reclaim
+02/01/21 Mail merge option to get the email recipient list #732
+02/01/21 Refactor messy old address auto completion #562
+02/01/21 Option to restrict state entry to US 2 letter codes #562
+02/01/21 Exclude TNRs from annual figures species intake
+31/12/20 Phone number formatting for US/UK/AU #499
+31/12/20 Shelter view site mode #948
+21/12/20 Fix #892 - bad disabled parameter to button
+17/12/20 Temporarily roll back #892 due to unexpected side effects
+17/12/20 Use case insensitive sort when regenerating person flags
+16/12/20 Make "regenerate person flags" actually check and regenerate
+15/12/20 Fix serious performance bug when selecting media #892
+15/12/20 Do not allow media links to be emailed #892
+14/12/20 Allow rabies tag to be cleared, update on delete #323
+13/12/20 Update bg translation and correct date format
+13/12/20 Suppress nulls when outputting subtable values in documents
+13/12/20 Hide old rabies tag for new installs
+12/12/20 Simple search includes historic rabies tag numbers
+10/12/20 New icon for not neutered/spayed for clarity #749
+10/12/20 Add an emblem and alert for no rabies vaccination #431
+10/12/20 Move rabies tag to vaccination screens #323
+09/12/20 Include exclude from bulk email in report criteria
+09/12/20 Fix stock comments not being decoded in other languages
+28/11/20 Fix waiting list/lost/found emails being sent as plain text
+24/11/20 Include a link to Desktop/Tablet UI from smartphone #937
+23/11/20 Add <<Signature>> wordkey since TinyMCE5 hides invalid images
+22/11/20 Allow a blank in vaccination edit dialog/given by #930
+20/11/20 PR and SOL: Stop no adoptables preventing cancellation #935
+16/11/20 Include trial adoptions in timeline #764
+12/11/20 Fix display of TNR and other special movements #933
+12/11/20 Unredeemed voucher book view #934
+12/11/20 strip csv values before imports
+11/11/20 csvimport support to update weight and dob on existing
+09/11/20 HomeAgain require city in a new TownCity tag
+06/11/20 Add ActiveDiet fields to query builder
+04/11/20 Include administering vet in medical table keys #779
+02/11/20 Omit hidden conditional fields from form posts #931
+02/11/20 Fix bug when calculating vacc reschedule dates
+02/11/20 Add vaccination due to query builder
+30/10/20 Undeletes for document repository and extra images
+30/10/20 Add Kenyan locale
+30/10/20 Image resizing should be a sitedef, not configuration
+27/10/20 QB criteria: Add "Size is"
+27/10/20 Check the adopter flag after a person merge
+26/10/20 Fix deduct stocklevel from writing positive usage records
+25/10/20 Include status data with <<AnimalMedicals>>
+23/10/20 Prevent media.delete/expired from removing media
+23/10/20 Stop reset_db from removing media
+22/10/20 QB criteria: date brought in, vacc given/not given #602
+17/10/20 Upgrade to TinyMCE 5.5.1
+17/10/20 Fix TinyMCE mobile display and table borders
+16/10/20 Support additional fields in query builder #602
+16/10/20 Support people and incidents in query builder #602
+15/10/20 Visual query builder #602
+15/10/20 Correct schema handling of views for SQL editing
+14/10/20 Fix SavourLife bug where fail condition marked adopted
+13/10/20 Leave DBFS intact on delete for later deletion if needed
+12/10/20 Support report SQL tokens in SQL Interface #901
+09/10/20 Merge person comments when importing from CSV
+09/10/20 Option to hide record views in audit trail (on by default)
+08/10/20 Hide TinyMCE outline/drag handles during printing
+07/10/20 maint_db_dump_lookups cron target
+06/10/20 Fix TinyMCE default fontsize to match old version
+06/10/20 Allow template paths to be specified in rename
+06/10/20 Overridable default cut off of 3 years for PetLink chips
+06/10/20 Allow OSM tile location to be overridden
+05/10/20 Add locale for Mauritius, correct currency symbol for India
+05/10/20 Extra common punctuation in alphanumber for tattoo/chip
+05/10/20 Upgrade to TinyMCE 5.3.1
+05/10/20 Start date missing from AnimalMedicals wordkey
+05/10/20 Non-neutered adoptable status should use alert config item
+01/10/20 SavourLife now support deleting listings via API
+30/09/20 asm3-adoptable-reserved class and manual example
+30/09/20 Support for writing record and report views to audit log #703
+30/09/20 Support for writing sent emails to the audit log #639
+29/09/20 Support MOVEMENTTYPE==0 to create reservations in import
+29/09/20 ANIMALENTRYCATEGORY import field, export new fields
+28/09/20 Diary note completion messages linked to wrong config item
+27/09/20 Add ANIMALJURISDICTION csv import field
+26/09/20 Close prediction attack flaw in document signing by email #917
+26/09/20 Consistent keyboard handling for alphanumber widget #914
+25/09/20 Email address books #179
+25/09/20 Add HomeCheckedDate person wordkey
+24/09/20 Use pickup address and brought in by when lost->shelter matching
+23/09/20 Support good with kids over 5/12 when csv importing
+22/09/20 Completion actions not appearing under audit slider #909
+22/09/20 AnimalLogsTYPE wordkey/token #912
+22/09/20 Remove signature placeholders on document sign preview #910
+11/09/20 Advanced find for pickup location/reason for entry #683
+11/09/20 Missing view person permission breaks staff rota
+07/09/20 Apply DST to service calls #899
+07/09/20 Merge additional fields during csv import #894
+07/09/20 Prompt to clone animal #907
+07/09/20 Prevent additional fields overriding base values #904
+07/09/20 Stop control keys dirtying form, fix autofocus delay #906
+06/09/20 Stop csvimport/merge duplicates creating blank lookups #900
+05/09/20 Fix for subtle bug with trailing commas on units
+04/09/20 Complete Portuguese translation (Nuno Leal)
+31/08/20 Extra shelter view filters for color, species/breed+color
+27/08/20 Fix fractional weight display on documents
+26/08/20 Incorporate DST into locales and option to auto adjust #899
+24/08/20 Prevent double-submit of online forms #897
+23/08/20 Consistent handling of breed1 and colour fields for online forms
+17/08/20 Online form person deduplication should not require address
+17/08/20 Include diary for in email notifications
+17/08/20 Reduce cache time of json/xml_adoptable_animals to 10 minutes
+15/08/20 Fix adoptapet mappings for Budgie and Chinchilla
+13/08/20 Option to include submission in form confirmation email #872
+11/08/20 Image watermarking (Thanks Connor9220) #881
 05/08/20 Options->Reports for emailing empty reports
 04/08/20 $CURRENT_DATE+/-DAY$ report tokens
 02/08/20 Merging animals and people should not update log.LastChangedBy

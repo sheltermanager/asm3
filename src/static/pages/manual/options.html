@@ -573,6 +573,10 @@ the border around thumbnails pink for girls and blue for boy animals.</li>
 <li>Show a minimap of the address on person screens: Show an embedded map next to the
 person’s address on the details screen. Also shows a minimap on the dispatch
 slider of incidents.</li>
+<li>When entering addresses, restrict states to valid US 2 letter state codes:
+When this option is on, the state field will switch to a dropdown that only
+allows valid US states to be selected. The default state for screens will be
+auto selected from the state chosen on the shelter details options tab.</li>
 <li>Allow editing of latitude/longitude with minimaps: Allow the latitude/longitude
 geocodes to be hand edited in fields near the minimap and address. Right clicking
 on the minimap will add a new pin and update the fields.</li>
@@ -585,6 +589,8 @@ in kg, eg: 20.1 kg</li>
 <li>Show complete comments in table views: When viewing comments or log notes in
 tables, show the complete text instead of truncating it to 80 characters and
 fitting the text onto one line.</li>
+<li>Show record views in the audit trail: When viewing the audit trail slider of
+a record, include audit records that show when users viewed this record.</li>
 <li>Show ID numbers when editing lookup data: When browsing lookup data under
 <span class="menuselection">Settings ‣ Lookup Data</span>, show the internal system ID numbers.
 This is handy for looking up IDs when writing reports.</li>
@@ -595,9 +601,6 @@ of the column headings.</li>
 tabs.</li>
 <li>Open reports in a new browser tab: Open all reports in their own browser
 tabs.</li>
-<li>Show report menu items in collapsed categories: If you have a lot of reports
-installed, this option allows you to just show the categories in the reports
-menu. Clicking a category expands it.</li>
 <li>Auto log users out after this many minutes of activity: If a user leaves
 their browser open and idle for this many minutes, the system will
 automatically log them out.</li>
@@ -614,6 +617,9 @@ at their site. Leaving a person, location or incident with no site allows
 anyone to see it. Leaving a user account without a site allows it to see all
 sites.  This allows you to handle multiple sites with one ASM database. A
 number of site-specific reports are available in the repository.</li>
+<li>Format telephone numbers according to my locale: When leaving fields containing
+phone numbers, if the numeric portion is the correct length, format them
+according to your locale. Eg: US numbers become (XXX) XXX-XXXX</li>
 <li>When displaying person names in lists, use the format: In movement books,
 donation books, the waiting list, etc. when showing person names, ASM can use
 different formats if you want surname first for sorting, etc.</li>
@@ -1002,11 +1008,14 @@ picking up animals).</li>
 <li>Email scheduled reports with no data: If you have set reports to be
 automatically emailed at a time of day, empty reports with “No data to show”
 will be emailed if this box is ticked.</li>
+<li>Show report menu items in collapsed categories: If you have a lot of reports
+installed, this option allows you to just show the categories in the reports
+menu. Clicking a category expands it.</li>
 </ul>
 </div>
 <div class="section" id="shelter-view">
 <h2>Shelter View<a class="headerlink" href="#shelter-view" title="Permalink to this headline">¶</a></h2>
-<p>The shelter view allows the default grouping to be set.</p>
+<p>The shelter view tab allows the default grouping to be set.</p>
 <ul class="simple">
 <li>Allow drag and drop to move animals between locations: If set, you can drag animal
 thumbnails between locations in shelter view to move them.</li>

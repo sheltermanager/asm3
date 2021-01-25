@@ -60,7 +60,7 @@ AND at.DateRequired >= '$@from$' AND at.DateRequired <= '$@to$'
 AND a.Archived = 0 AND a.DeceasedDate Is Null
 
 ) dummy
-ORDER BY DateRequired
+ORDER BY DateRequired, DisplayLocation
 
 ###
 $$HEADER

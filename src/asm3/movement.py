@@ -37,7 +37,10 @@ def get_movement_query(dbo):
         "a.Sex, s.SpeciesName, rr.ReasonName AS ReturnedReasonName, " \
         "CASE WHEN m.MovementType = 0 AND m.MovementDate Is Null THEN " \
         "m.ReservationDate ELSE m.MovementDate END AS ActiveDate, " \
-        "CASE WHEN m.MovementType = 2 AND m.IsPermanentFoster = 1 THEN " \
+        "CASE " \
+        "WHEN m.MovementType = 7 AND a.SpeciesID = 2 THEN " \
+        "(SELECT MovementType FROM lksmovementtype WHERE ID=13) " \
+        "WHEN m.MovementType = 2 AND m.IsPermanentFoster = 1 THEN " \
         "(SELECT MovementType FROM lksmovementtype WHERE ID=12) " \
         "WHEN m.MovementType = 1 AND m.IsTrial = 1 THEN " \
         "(SELECT MovementType FROM lksmovementtype WHERE ID=11) " \
@@ -46,7 +49,10 @@ def get_movement_query(dbo):
         "WHEN m.MovementDate Is Null AND m.ReservationDate Is Not Null THEN " \
         "(SELECT MovementType FROM lksmovementtype WHERE ID=9) " \
         "ELSE l.MovementType END AS MovementName, " \
-        "CASE WHEN m.MovementType = 2 AND m.IsPermanentFoster = 1 THEN " \
+        "CASE " \
+        "WHEN m.MovementType = 7 AND a.SpeciesID = 2 THEN " \
+        "(SELECT MovementType FROM lksmovementtype WHERE ID=13) " \
+        "WHEN m.MovementType = 2 AND m.IsPermanentFoster = 1 THEN " \
         "(SELECT MovementType FROM lksmovementtype WHERE ID=12) " \
         "WHEN m.MovementType = 1 AND m.IsTrial = 1 THEN " \
         "(SELECT MovementType FROM lksmovementtype WHERE ID=11) " \
@@ -234,7 +240,7 @@ def validate_movement_form_data(dbo, post):
         asm3.al.debug("blank date and type", "movement.validate_movement_form_data", dbo)
     # If we've got a type, but no date, default today
     if movementtype > 0 and movementdate is None:
-        movementdate = asm3.i18n.now()
+        movementdate = dbo.today()
         post.data["movementdate"] = asm3.i18n.python2display(l, movementdate)
         asm3.al.debug("type set and no date, defaulting today", "movement.validate_movement_form_data", dbo)
     # If we've got a reserve cancellation without a reserve, remove it
@@ -662,9 +668,6 @@ def insert_reclaim_from_form(dbo, username, post):
             return_movement(dbo, m["ID"], username, post.integer("animal"), post.date("movementdate"))
             move_dict["originalretailermovement"] = str(m.ID)
             move_dict["retailer"] = str(m.OWNERID)
-    # If the animal was flagged as not available for adoption, then it
-    # shouldn't be since we've just reclaimed it.
-    dbo.update("animal", post.integer("animal"), { "IsNotAvailableForAdoption": 0 })
     # Is the animal reserved? Should clear it if so
     cancel_reserves = asm3.configuration.cancel_reserves_on_adoption(dbo)
     for m in fm:
@@ -976,6 +979,7 @@ def send_fosterer_emails(dbo):
             "AND (ReturnDate Is Null OR ReturnDate > ?) ORDER BY MovementDate", ( f.ID, dbo.today(), dbo.today() ))
         asm3.al.debug("%d animals found for fosterer '%s'" % (len(animals), f.OWNERNAME), "movement.send_fosterer_emails", dbo)
 
+        hasmedicaldue = False
         for a in animals:
             pb(lines, "%s - %s" % (a.ANIMALNAME, a.SHELTERCODE) )
             p(lines, asm3.i18n._("{0} {1} {2} aged {3}", l).format(a.SEX, a.BREEDNAME, a.SPECIESNAME, a.ANIMALAGE))
@@ -990,6 +994,7 @@ def send_fosterer_emails(dbo):
 
             overdue = asm3.medical.get_combined_due(dbo, a.ANIMALID, dbo.today(offset=overduedays), dbo.today(offset=-1))
             if len(overdue) > 0:
+                hasmedicaldue = True
                 pb(lines, asm3.i18n._("Overdue medical items", l))
                 for m in overdue:
                     p(lines, "{0}: {1} {2} {3}/{4} {5}".format( asm3.i18n.python2display(l, m.DATEREQUIRED), \
@@ -998,6 +1003,7 @@ def send_fosterer_emails(dbo):
 
             nextdue = asm3.medical.get_combined_due(dbo, a.ANIMALID, dbo.today(), dbo.today(offset=7))
             if len(nextdue) > 0:
+                hasmedicaldue = True
                 pb(lines, asm3.i18n._("Upcoming medical items", l))
                 for m in nextdue:
                     p(lines, "{0}: {1} {2} {3}/{4} {5}".format( asm3.i18n.python2display(l, m.DATEREQUIRED), \
@@ -1006,6 +1012,9 @@ def send_fosterer_emails(dbo):
 
         # Email is complete, send to the fosterer (assuming there were some animals to send)
         if len(animals) > 0:
+            # If the option to send emails if there were no medical items is off and there
+            # weren't any medical items, skip to the next fosterer
+            if asm3.configuration.fosterer_email_skip_no_medical(dbo) and not hasmedicaldue: continue
             asm3.utils.send_email(dbo, replyto, f.EMAILADDRESS, subject = asm3.i18n._("Fosterer Medical Report", l), body="\n".join(lines), contenttype="html", exceptions=False)
 
 

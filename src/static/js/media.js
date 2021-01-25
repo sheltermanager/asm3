@@ -58,13 +58,22 @@ $(function() {
                         });
                         return rv;
                     };
+                    const no_links = function() {
+                        let rv = true;
+                        $.each(rows, function(i, v) {
+                            if (v.MEDIATYPE != 0) { rv = false; }
+                        });
+                        return rv;
+                    };
                     $("#button-web").button("option", "disabled", true); 
                     $("#button-video").button("option", "disabled", true); 
                     $("#button-doc").button("option", "disabled", true); 
                     $("#button-rotateanti").button("option", "disabled", true); 
                     $("#button-rotateclock").button("option", "disabled", true); 
+                    $("#button-watermark").button("option", "disabled", true); 
                     $("#button-include").button("option", "disabled", true); 
                     $("#button-exclude").button("option", "disabled", true); 
+                    $("#button-email").button("option", "disabled", true); 
                     $("#button-emailpdf").button("option", "disabled", true); 
                     $("#button-sign").addClass("ui-state-disabled").addClass("ui-button-disabled");
                     // Only allow the image preferred buttons to be pressed if the
@@ -83,8 +92,14 @@ $(function() {
                     if (rows.length > 0 && all_of_type("image/jpeg")) {
                         $("#button-rotateanti").button("option", "disabled", false); 
                         $("#button-rotateclock").button("option", "disabled", false); 
+                        $("#button-watermark").button("option", "disabled", false); 
                         $("#button-include").button("option", "disabled", false); 
                         $("#button-exclude").button("option", "disabled", false); 
+                    }
+                    // Only allow the email button to be pressed if the selection
+                    // does not contain any links
+                    if (rows.length > 0 && no_links()) {
+                        $("#button-email").button("option", "disabled", false);
                     }
                     // Only allow the email pdf button to be pressed if the
                     // selection only contains documents
@@ -148,6 +163,7 @@ $(function() {
                 { id: "sign", text: _("Sign"), type: "buttonmenu", icon: "signature" },
                 { id: "rotateanti", icon: "rotate-anti", enabled: "multi", perm: "cam", tooltip: _("Rotate image 90 degrees anticlockwise") },
                 { id: "rotateclock", icon: "rotate-clock", enabled: "multi", perm: "cam", tooltip: _("Rotate image 90 degrees clockwise") },
+                { id: "watermark", icon: "watermark", enabled: "multi", perm: "cam", tooltip: _("Watermark image with name and logo") },
                 { id: "include", icon: "tick", enabled: "multi", perm: "cam", tooltip: _("Include this image when publishing") }, 
                 { id: "exclude", icon: "cross", enabled: "multi", perm: "cam", tooltip: _("Exclude this image when publishing") },
                 { id: "web", icon: "web", enabled: "one", perm: "cam", tooltip: _("Make this the default image when viewing this record and publishing to the web") },
@@ -400,17 +416,16 @@ $(function() {
                 return deferred.promise();
             }
 
-            // Is this an image and scaling option is on? 
+            // Is this an image, the scaling option is on and we have a resize spec?
             // If so, try to scale it down before sending
-            if (file.type.match('image.*') && !config.bool("DontUseHTML5Scaling")) {
+            if (file.type.match('image.*') && !config.bool("DontUseHTML5Scaling") && controller.resizeimagespec) {
 
                 // Figure out the size we're scaling to
-                let media_scaling = config.str("IncomingMediaScaling");
-                if (!media_scaling || media_scaling == "None") { media_scaling = "640x640"; }
+                let media_scaling = controller.resizeimagespec;
                 let max_width = format.to_int(media_scaling.split("x")[0]);
                 let max_height = format.to_int(media_scaling.split("x")[1]);
-                if (!max_width) { max_width = 640; }
-                if (!max_height) { max_height = 640; }
+                if (!max_width) { max_width = 1024; } // This stops images being mangled if spec is bad
+                if (!max_height) { max_height = 1024; }
 
                 // Read the file to an image tag, then scale it
                 let img, img_width, img_height;
@@ -778,6 +793,11 @@ $(function() {
                 $("#button-video").hide();
             }
 
+            // If watermarking isn't available, hide it
+            if (!controller.canwatermark) {
+                $("#button-watermark").hide();
+            }
+
             // Only show include/exclude for animals
             if (controller.name != "animal_media") {
                 $("#button-include").hide();
@@ -810,6 +830,12 @@ $(function() {
             $("#button-rotateclock").button().click(function() {
                 $("#button-rotateclock").button("disable");
                 let formdata = "mode=rotateclock&ids=" + tableform.table_ids(media.table);
+                media.ajax(formdata);
+            });
+
+            $("#button-watermark").button().click(function() {
+                $("#button-watermark").button("disable");
+                let formdata = "mode=watermark&ids=" + tableform.table_ids(media.table);
                 media.ajax(formdata);
             });
 

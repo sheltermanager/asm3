@@ -2,7 +2,7 @@ Vouchers Expiring by Date
 ###
 Financial
 ###
-2732/Any
+34304/Any
 ###
 Vouchers expiring between two dates.
 ###
@@ -10,14 +10,15 @@ en
 ###
 SELECT o.OwnerName, v.VoucherName, 
 o.OwnerAddress, o.OwnerTown, o.OwnerCounty, o.OwnerPostcode, o.HomeTelephone, o.MobileTelephone,
-ov.ID AS VoucherNumber,
+ov.ID AS VoucherNumber, ov.VoucherCode, 
 ov.DateIssued, ov.DateExpired, ov.Value AS Amount,
 ov.Comments
 FROM owner o
 INNER JOIN ownervoucher ov ON ov.OwnerID = o.ID
 INNER JOIN voucher v ON ov.VoucherID = v.ID
-WHERE ov.DateExpired BETWEEN '$ASK DATE Enter the from date$' AND '$ASK DATE Enter the to date$'
-ORDER BY ov.DateExpired
+WHERE ov.DateExpired >= '$ASK DATE Vouchers expiring between$' 
+AND ov.DateExpired <= '$ASK DATE and$'
+ORDER BY v.VoucherName, ov.DateExpired
 ###
 $$HEADER
 HEADER$$
@@ -27,6 +28,7 @@ $$HEAD
 <h2>$VoucherName</h2>
 <table border=1><tr>
 <td><b>Number</b></td>
+<td><b>Code</b></td>
 <td><b>Owner</b></td>
 <td><b>Issued</b></td>
 <td><b>Expires</b></td>
@@ -40,6 +42,7 @@ GROUP$$
 
 $$BODY<tr>
 <td>$VOUCHERNUMBER</td>
+<td>$VOUCHERCODE</td>
 <td><b>$OWNERNAME</b><br/>
 $OWNERADDRESS<br/>
 $OWNERTOWN<br/>

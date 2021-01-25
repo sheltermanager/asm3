@@ -27,8 +27,25 @@ $(function() {
                 edit: function(row) {
                     common.route("document_repository_file?ajax=false&dbfsid=" + row.ID);
                 },
+                button_click: function() {
+                    common.copy_to_clipboard($(this).attr("data"));
+                    header.show_info(_("Successfully copied to the clipboard."));
+                    return false;
+                },
                 columns: [
-                    { field: "NAME", display: _("Document file") },
+                    { field: "NAME", display: _("Document file"),
+                        formatter: function(row) {
+                            let absurl = asm.serviceurl + "?";
+                            if (asm.useraccountalias) { absurl += "account=" + asm.useraccountalias + "&"; }
+                            absurl += "method=document_repository&mediaid=" + row.ID;
+                            return "<span style=\"white-space: nowrap\">" +
+                                "<input type=\"checkbox\" data-id=\"" + row.ID + "\" />" +
+                                '<a href="#" class="link-edit" data-id="' + row.ID + '">' + row.NAME + '</a> ' +
+                                '<button type="button" data-icon="extlink" data="' + absurl + '">' + 
+                                _("Copy absolute service URL to the clipboard (for external use in web pages and emails)") + 
+                                '</button></span>';
+                        }
+                    },
                     { field: "PATH", display: _("Path"), initialsort: true },
                     { field: "MIMETYPE", display: _("Type") }
                 ]

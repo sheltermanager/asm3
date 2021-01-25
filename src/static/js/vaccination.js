@@ -29,12 +29,13 @@ $(function() {
                     { json_field: "DATEOFVACCINATION", post_field: "given", label: _("Given"), type: "date", 
                         callout: _("The date the vaccination was administered") },
                     { json_field: "GIVENBY", post_field: "by", label: _("By"), type: "select",
-                        options: { displayfield: "USERNAME", valuefield: "USERNAME", rows: controller.users }},
+                        options: { displayfield: "USERNAME", valuefield: "USERNAME", rows: controller.users, prepend: '<option value=""></option>' }},
                     { json_field: "ADMINISTERINGVETID", post_field: "administeringvet", label: _("Administering Vet"), type: "person", personfilter: "vet" },
                     { json_field: "DATEEXPIRES", post_field: "expires", label: _("Expires"), type: "date",
                         callout: _('Optional, the date the vaccination "wears off" and needs to be administered again') },
                     { json_field: "BATCHNUMBER", post_field: "batchnumber", label: _("Batch Number"), type: "text" },
                     { json_field: "MANUFACTURER", post_field: "manufacturer", label: _("Manufacturer"), type: "text" },
+                    { json_field: "RABIESTAG", post_field: "rabiestag", label: _("Rabies Tag"), type: "text" },
                     { json_field: "COST", post_field: "cost", label: _("Cost"), type: "currency", hideif: function() { return !config.bool("ShowCostAmount"); } },
                     { json_field: "COSTPAIDDATE", post_field: "costpaid", label: _("Paid"), type: "date", hideif: function() { return !config.bool("ShowCostPaid"); } },
                     { json_field: "COMMENTS", post_field: "comments", label: _("Comments"), type: "textarea" }
@@ -167,15 +168,13 @@ $(function() {
                 { id: "given", text: _("Give"), icon: "complete", enabled: "multi", perm: "cav",
                      click: function() {
                         let comments = "", vacctype = 0;
-                        $.each(controller.rows, function(i, v) {
-                            if (tableform.table_id_selected(v.ID)) {
-                                comments += "[" + v.SHELTERCODE + " - " + v.ANIMALNAME + "] ";
-                                vacctype = v.VACCINATIONID;
-                            }
+                        $.each(tableform.table_selected_rows(table), function(i, v) {
+                            comments += "[" + v.SHELTERCODE + " - " + v.ANIMALNAME + "] ";
+                            vacctype = v.VACCINATIONID;
                         });
-                        $("#usagecomments").val(comments);
+                        $("#usagecomments").html(comments);
                         $("#givennewdate").datepicker("setDate", new Date());
-                        let rd = vaccination.calc_reschedule_date(new Date());
+                        let rd = vaccination.calc_reschedule_date(new Date(), vacctype);
                         if (rd) { $("#rescheduledate").datepicker("setDate", rd); }
                         $("#givenexpires, #givenbatch, #givenmanufacturer").val("");
                         vaccination.set_given_batch(vacctype);
@@ -561,7 +560,7 @@ $(function() {
         set_expiry_date: function() {
             if (!$("#given").val()) { return; }
             let gd = format.date_js(format.date_iso($("#given").val()));
-            let ed = vaccination.calc_reschedule_date(gd);
+            let ed = vaccination.calc_reschedule_date(gd, $("#type").val());
             if (!ed) { $("#expires").val(""); return; }
             $("#expires").datepicker("setDate", ed);
         },
@@ -570,8 +569,8 @@ $(function() {
          * it as a js date.
          * returns a js date or null if there's a problem.
          */
-        calc_reschedule_date: function(date) {
-            let reschedule = format.to_int(common.get_field(controller.vaccinationtypes, $("#type").val(), "RESCHEDULEDAYS"));
+        calc_reschedule_date: function(date, vacctype) {
+            let reschedule = format.to_int(common.get_field(controller.vaccinationtypes, vacctype, "RESCHEDULEDAYS"));
             if (!reschedule) { return null; }
             return common.add_days(date, reschedule);
         },

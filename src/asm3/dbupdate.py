@@ -37,7 +37,8 @@ VERSIONS = (
     34013, 34014, 34015, 34016, 34017, 34018, 34019, 34020, 34021, 34022, 34100,
     34101, 34102, 34103, 34104, 34105, 34106, 34107, 34108, 34109, 34110, 34111,
     34112, 34200, 34201, 34202, 34203, 34204, 34300, 34301, 34302, 34303, 34304,
-    34305, 34306, 34400, 34401, 34402, 34403, 34404, 34405, 34406, 34407
+    34305, 34306, 34400, 34401, 34402, 34403, 34404, 34405, 34406, 34407, 34408,
+    34409
 )
 
 LATEST_VERSION = VERSIONS[-1]
@@ -81,6 +82,30 @@ TABLES_ASM2 = ( "accounts", "accountstrx", "additional", "additionalfield",
 TABLES_NO_ID_COLUMN = ( "accountsrole", "additional", "audittrail", "animalcontrolanimal", 
     "animalcontrolrole", "animallostfoundmatch", "animalpublished", "configuration", "customreportrole", 
     "deletion", "onlineformincoming", "ownerlookingfor", "userrole" )
+
+# Tables that contain data rather than lookups - used by reset_db
+# to determine which tables to delete data from
+TABLES_DATA = ( "accountsrole", "accountstrx", "additional", "adoption", 
+    "animal", "animalcontrol", "animalcontrolanimal","animalcontrolrole", 
+    "animallostfoundmatch", "animalpublished", 
+    "animalcost", "animaldiet", "animalfigures", "animalfiguresannual", 
+    "animalfound", "animallitter", "animallost", "animalmedical", "animalmedicaltreatment", "animalname",
+    "animaltest", "animaltransport", "animalvaccination", "animalwaitinglist", "audittrail", 
+    "clinicappointment", "clinicinvoiceitem", "deletion", "diary", "log", "ownerlookingfor", "publishlog",
+    "media", "messages", "owner", "ownercitation", "ownerdonation", "ownerinvestigation", "ownerlicence", 
+    "ownerrota", "ownertraploan", "ownervoucher", "stocklevel", "stockusage" )
+
+# Tables that contain lookup data. used by dump with includeLookups
+TABLES_LOOKUP = ( "accounts", "additionalfield", "animaltype", "basecolour", "breed", "citationtype", 
+    "costtype", "deathreason", "diarytaskdetail", "diarytaskhead", "diet", "donationpayment", 
+    "donationtype", "entryreason", "incidentcompleted", "incidenttype", "internallocation", "jurisdiction", 
+    "licencetype", "lkanimalflags", "lkcoattype", "lkownerflags", "lksaccounttype", "lksclinicstatus", 
+    "lksdiarylink", "lksdonationfreq", "lksex", "lksfieldlink", "lksfieldtype", "lksize", "lksloglink", 
+    "lksmedialink", "lksmediatype", "lksmovementtype", "lksposneg", "lksrotatype", "lksyesno", "lksynun", 
+    "lksynunk", "lkstransportstatus", "lkurgency", "lkworktype", "logtype", "medicalprofile", 
+    "onlineform", "onlineformfield", "pickuplocation", "reservationstatus", "site", "species", 
+    "templatedocument", "templatehtml", "testtype", "testresult", "transporttype", "traptype", 
+    "vaccinationtype", "voucher" )
 
 VIEWS = ( "v_adoption", "v_animal", "v_animalcontrol", "v_animalfound", "v_animallost", 
     "v_animalmedicaltreatment", "v_animaltest", "v_animalvaccination", "v_animalwaitinglist", 
@@ -732,6 +757,7 @@ def sql_structure(dbo):
         fdate("DateExpires", True),
         fstr("BatchNumber", True),
         fstr("Manufacturer", True),
+        fstr("RabiesTag", True),
         fint("Cost"),
         fdate("CostPaidDate", True),
         flongstr("Comments") ))
@@ -742,6 +768,7 @@ def sql_structure(dbo):
     sql += index("animalvaccination_GivenBy", "animalvaccination", "GivenBy")
     sql += index("animalvaccination_CostPaidDate", "animalvaccination", "CostPaidDate")
     sql += index("animalvaccination_Manufacturer", "animalvaccination", "Manufacturer")
+    sql += index("animalvaccination_RabiesTag", "animalvaccination", "RabiesTag")
 
     sql += table("animalwaitinglist", (
         fid(),
@@ -1943,7 +1970,7 @@ def sql_default_data(dbo, skip_config = False):
     sql += breed(271, _("Egyptian Mau", l), "Egyptian Mau", 2)
     sql += breed(272, _("Exotic Shorthair", l), "Exotic Shorthair", 2)
     sql += breed(273, _("Extra-Toes Cat (Hemingway Polydactyl)", l), "Extra-Toes Cat (Hemingway Polydactyl)", 2)
-    sql += breed(274, _("Havana", l), "Havana", 2)
+    sql += breed(274, _("Havana", l), "Havana Brown", 2)
     sql += breed(275, _("Himalayan", l), "Himalayan", 2)
     sql += breed(276, _("Japanese Bobtail", l), "Japanese Bobtail", 2)
     sql += breed(277, _("Javanese", l), "Javanese", 2)
@@ -2206,6 +2233,7 @@ def sql_default_data(dbo, skip_config = False):
     sql += lookup1("lksmovementtype", "MovementType", 10, _("Cancelled Reservation", l))
     sql += lookup1("lksmovementtype", "MovementType", 11, _("Trial Adoption", l))
     sql += lookup1("lksmovementtype", "MovementType", 12, _("Permanent Foster", l))
+    sql += lookup1("lksmovementtype", "MovementType", 13, _("TNR", l))
     sql += lookup1("lksmedialink", "LinkType", 0, _("Animal", l))
     sql += lookup1("lksmedialink", "LinkType", 1, _("Lost Animal", l))
     sql += lookup1("lksmedialink", "LinkType", 2, _("Found Animal", l))
@@ -2566,13 +2594,16 @@ def install(dbo):
     install_default_onlineforms(dbo)
 
 def dump(dbo, includeConfig = True, includeDBFS = True, includeCustomReport = True, \
-        includeNonASM2 = True, includeUsers = True, includeLKS = True, deleteDBV = False, deleteFirst = True, deleteViewSeq = False, \
+        includeData = True, includeNonASM2 = True, includeUsers = True, includeLKS = True, \
+        includeLookups = True, deleteDBV = False, deleteFirst = True, deleteViewSeq = False, \
         escapeCR = "", uppernames = False, wrapTransaction = True):
     """
     Dumps all of the data in the database as DELETE/INSERT statements.
     includeConfig - include the config table
     includeDBFS - include the dbfs table
     includeCustomReport - include the custom report table
+    includeData - include data tables (animal, owner, etc)
+    includeLookups - include lookup tables
     includeLKS - include static lks tables
     includeUsers - include user and role tables
     deleteDBV - issue DELETE DBV from config after dump to force update/checks
@@ -2589,8 +2620,10 @@ def dump(dbo, includeConfig = True, includeDBFS = True, includeCustomReport = Tr
         if not includeDBFS and t == "dbfs": continue
         if not includeCustomReport and t == "customreport": continue
         if not includeConfig and t == "configuration": continue
+        if not includeData and t in TABLES_DATA: continue
         if not includeUsers and (t == "users" or t == "userrole" or t == "role" or t == "accountsrole" or t == "customreportrole"): continue
         if not includeLKS and t.startswith("lks"): continue
+        if not includeLookups and t in TABLES_LOOKUP: continue
         # ASM2_COMPATIBILITY
         if not includeNonASM2 and t not in TABLES_ASM2 : continue
         outtable = t
@@ -2647,6 +2680,14 @@ def dump_hsqldb(dbo, includeDBFS = True):
         "(1, 'user', 'Default', 'd107d09f5bbe40cade3de5c71e9e9b7', 1, 0, '', 0);\n"
     yield "DELETE FROM configuration WHERE ItemName LIKE 'DatabaseVersion' OR ItemName LIKE 'SMDBLocked';\n"
     yield "INSERT INTO configuration (ItemName, ItemValue) VALUES ('DatabaseVersion', '2870');\n"
+
+def dump_lookups(dbo):
+    """
+    Dumps only the lookup tables. Useful for smcom where we get people requesting a 
+    new account with lookups from another account
+    """
+    for x in dump(dbo, includeDBFS = False, includeConfig = False, includeData = False, includeUsers = False, deleteDBV = True, deleteViewSeq = True, wrapTransaction = True):
+        yield x
 
 def dump_smcom(dbo):
     """
@@ -2808,15 +2849,8 @@ def reset_db(dbo):
     """
     Resets a database by removing all data from non-lookup tables.
     """
-    deltables = [ "accountstrx", "additional", "adoption", "animal", "animalcontrol", "animalcost",
-        "animaldiet", "animalfigures", "animalfiguresannual", 
-        "animalfound", "animallitter", "animallost", "animalmedical", "animalmedicaltreatment", "animalname",
-        "animaltest", "animaltransport", "animalvaccination", "animalwaitinglist", "diary", "log",
-        "media", "messages", "owner", "ownercitation", "ownerdonation", "ownerinvestigation", "ownerlicence", 
-        "ownertraploan", "ownervoucher", "stocklevel", "stockusage" ]
-    for t in deltables:
+    for t in TABLES_DATA:
         dbo.execute_dbupdate("DELETE FROM %s" % t)
-    asm3.dbfs.delete_orphaned_media(dbo) # this deletes dbfs items referenced by the media we just deleted
     install_db_sequences(dbo)
 
 def perform_updates(dbo):
@@ -5254,4 +5288,15 @@ def update_34407(dbo):
     dbo.execute_dbupdate("UPDATE animal SET JurisdictionID = " \
         "(SELECT JurisdictionID FROM owner WHERE ID = animal.BroughtInByOwnerID) WHERE JurisdictionID Is Null")
     dbo.execute_dbupdate("UPDATE animal SET JurisdictionID = 0 WHERE JurisdictionID Is Null")
+
+def update_34408(dbo):
+    # Add TNR movement type
+    l = dbo.locale
+    dbo.execute_dbupdate("INSERT INTO lksmovementtype (ID, MovementType) VALUES (13, ?)", [ _("TNR", l) ])
+
+def update_34409(dbo):
+    # Add animalvaccination.RabiesTag
+    add_column(dbo, "animalvaccination", "RabiesTag", dbo.type_shorttext)
+    add_index(dbo, "animalvaccination_RabiesTag", "animalvaccination", "RabiesTag")
+    dbo.execute_update("UPDATE animalvaccination SET RabiesTag='' WHERE RabiesTag Is Null")
 

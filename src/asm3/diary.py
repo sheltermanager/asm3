@@ -48,7 +48,7 @@ def email_uncompleted_upto_today(dbo):
                 if (n.diaryforname == "*") \
                 or (n.diaryforname == u.username) \
                 or (u.roles.find(n.diaryforname) != -1):
-                    s += "%s %s " % (asm3.i18n.python2display(l, n.diarydatetime), asm3.i18n.format_time(n.diarydatetime))
+                    s += "%s %s - %s - " % (asm3.i18n.python2display(l, n.diarydatetime), asm3.i18n.format_time(n.diarydatetime), n.diaryforname)
                     s += n.subject
                     if n.linkinfo is not None and n.linkinfo != "": s += " / %s" % n.linkinfo
                     s += " (%s)" % n.createdby
@@ -68,7 +68,7 @@ def email_note_on_change(dbo, n, username):
     l = dbo.locale
     allusers = asm3.users.get_users(dbo)
     s = asm3.i18n._("Diary change triggered by {0} on {1}", l).format(username, asm3.i18n.python2display(l, dbo.now()))
-    s += "\n\n%s %s " % (asm3.i18n.python2display(l, n.diarydatetime), asm3.i18n.format_time(n.diarydatetime))
+    s += "\n\n%s %s - %s - " % (asm3.i18n.python2display(l, n.diarydatetime), asm3.i18n.format_time(n.diarydatetime), n.diaryforname)
     s += n.subject
     if n.linkinfo is not None and n.linkinfo != "": s += " / %s" % n.linkinfo
     s += "\n%s\n\n%s" % (n.note, n.comments)
@@ -87,11 +87,11 @@ def email_note_on_complete(dbo, n, username):
     Emails the creator of a diary note n with the note's content 
     username the user triggering the send by completing a diary
     """
-    if not asm3.configuration.email_diary_on_change(dbo): return
+    if not asm3.configuration.email_diary_on_complete(dbo): return
     l = dbo.locale
     allusers = asm3.users.get_users(dbo)
     s = asm3.i18n._("Diary completion triggered by {0} on {1}", l).format(username, asm3.i18n.python2display(l, dbo.now()))
-    s += "\n\n%s %s " % (asm3.i18n.python2display(l, n.diarydatetime), asm3.i18n.format_time(n.diarydatetime))
+    s += "\n\n%s %s - %s - " % (asm3.i18n.python2display(l, n.diarydatetime), asm3.i18n.format_time(n.diarydatetime), n.diaryforname)
     s += n.subject
     if n.linkinfo is not None and n.linkinfo != "": s += " / %s" % n.linkinfo
     s += "\n%s\n\n%s" % (n.note, n.comments)
@@ -390,7 +390,7 @@ def update_diary_from_form(dbo, username, post):
         "DateCompleted":    post.date("completed")
     }, username)
 
-    if post.date("completed") is not None:
+    if post.date("completed") is None:
         email_note_on_change(dbo, get_diary(dbo, diaryid), username)
     else:
         email_note_on_complete(dbo, get_diary(dbo, diaryid), username)

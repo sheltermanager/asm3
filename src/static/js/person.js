@@ -98,19 +98,19 @@ $(function() {
                 '<tr>',
                 '<td><label for="hometelephone">' + _("Home Phone") + '</label></td>',
                 '<td>',
-                '<input type="text" id="hometelephone" data-json="HOMETELEPHONE" data-post="hometelephone" class="asm-textbox" />',
+                '<input type="text" id="hometelephone" data-json="HOMETELEPHONE" data-post="hometelephone" class="asm-textbox asm-phone" />',
                 '</td>',
                 '</tr>',
                 '<tr>',
                 '<td><label for="worktelephone">' + _("Work Phone") + '</label></td>',
                 '<td>',
-                '<input type="text" id="worktelephone" data-json="WORKTELEPHONE" data-post="worktelephone" class="asm-textbox" />',
+                '<input type="text" id="worktelephone" data-json="WORKTELEPHONE" data-post="worktelephone" class="asm-textbox asm-phone" />',
                 '</td>',
                 '</tr>',
                 '<tr>',
                 '<td><label for="mobiletelephone">' + _("Cell Phone") + '</label></td>',
                 '<td>',
-                '<input type="text" id="mobiletelephone" data-json="MOBILETELEPHONE" data-post="mobiletelephone" class="asm-textbox" />',
+                '<input type="text" id="mobiletelephone" data-json="MOBILETELEPHONE" data-post="mobiletelephone" class="asm-textbox asm-phone" />',
                 '</td>',
                 '</tr>',
                 '<tr>',
@@ -154,7 +154,11 @@ $(function() {
                 '<tr class="towncounty">',
                 '<td><label for="county">' + _("State") + '</label></td>',
                 '<td>',
-                '<input type="text" id="county" data-json="OWNERCOUNTY" data-post="county" maxlength="100" class="asm-textbox" />',
+                common.iif(config.bool("USStateCodes"),
+                    '<select id="county" data-json="OWNERCOUNTY" data-post="county" class="asm-selectbox">' +
+                    html.states_us_options() + '</select>',
+                    '<input type="text" id="county" data-json="OWNERCOUNTY" data-post="county" maxlength="100" ' + 
+                    'class="asm-textbox" />'),
                 '</td>',
                 '</tr>',
                 '<tr>',
@@ -645,15 +649,13 @@ $(function() {
             // Email dialog for sending emails
             $("#emailform").emailform();
 
-            $("#town").autocomplete({ source: controller.towns.split("|") });
-            $("#county").autocomplete({ source: controller.counties.split("|") });
+            if (!config.bool("USStateCodes")) {
+                $("#county").autocomplete({ source: controller.counties });
+            }
+            $("#town").autocomplete({ source: controller.towns });
             $("#town").blur(function() {
                 if ($("#county").val() == "") {
-                    let tc = html.decode(controller.towncounties);
-                    let idx = tc.indexOf($("#town").val() + "^");
-                    if (idx != -1) {
-                        $("#county").val(tc.substring(tc.indexOf("^^", idx) + 2, tc.indexOf("|", idx)));
-                    }
+                    $("#county").val(controller.towncounties[$("#town").val()]);
                 }
             });
 

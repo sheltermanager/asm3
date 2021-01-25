@@ -12,7 +12,7 @@ $(function() {
                 '<table class="asm-table-layout">',
                 '<tr>',
                 '<td><label for="incidenttype">' + _("Type") + '</label></td>',
-                '<td><select id="incidenttype" data-json="INCIDENTTYPEID" data-post="incidenttype" class="asm-selectbox">',
+                '<td><select id="incidenttype" data-post="incidenttype" class="asm-selectbox">',
                 html.list_to_options(controller.incidenttypes, "ID", "INCIDENTNAME"),
                 '</td>',
                 '</tr>',
@@ -20,28 +20,28 @@ $(function() {
                 '<td><label for="viewroles">' + _("View Roles") + '</label>',
                 '<span id="callout-viewroles" class="asm-callout">' + _("Only allow users with one of these roles to view this incident") + '</span>',
                 '</td>',
-                '<td><select id="viewroles" data-json="VIEWROLESIDS" data-post="viewroles" class="asm-bsmselect" multiple="multiple">',
+                '<td><select id="viewroles" data-post="viewroles" class="asm-bsmselect" multiple="multiple">',
                 html.list_to_options(controller.roles, "ID", "ROLENAME"),
                 '</td>',
                 '</tr>',
                 '<tr>',
                 '<td><label for="incidentdate">' + _("Incident Date/Time") + '</label></td>',
-                '<td><input id="incidentdate" data-json="INCIDENTDATETIME" data-post="incidentdate" class="asm-halftextbox asm-datebox" />',
-                '<input id="incidenttime" data-json="INCIDENTDATETIME" data-post="incidenttime" class="asm-halftextbox asm-timebox" /></td>',
+                '<td><input id="incidentdate" data-post="incidentdate" class="asm-halftextbox asm-datebox" />',
+                '<input id="incidenttime" data-post="incidenttime" class="asm-halftextbox asm-timebox" /></td>',
                 '</tr>',
                 '<tr>',
                 '<td><label for="callnotes">' + _("Notes") + '</label></td>',
-                '<td><textarea id="callnotes" data-json="CALLNOTES" data-post="callnotes" class="asm-textarea" rows="3"></textarea></td>',
+                '<td><textarea id="callnotes" data-post="callnotes" class="asm-textarea" rows="3"></textarea></td>',
                 '</tr>',
                 '<tr>',
                 '<tr>',
                 '<td><label for="calldate">' + _("Call Date/Time") + '</label></td>',
-                '<td><input id="calldate" data-json="CALLDATETIME" data-post="calldate" class="asm-halftextbox asm-datebox" />',
-                '<input id="calltime" data-json="CALLDATETIME" data-post="calltime" class="asm-halftextbox asm-timebox" /></td>',
+                '<td><input id="calldate" data-post="calldate" class="asm-halftextbox asm-datebox" />',
+                '<input id="calltime" data-post="calltime" class="asm-halftextbox asm-timebox" /></td>',
                 '</tr>',
                 '<tr>',
                 '<td><label for="calltaker">' + _("Taken By") + '</label></td>',
-                '<td><select id="calltaker" data-json="CALLTAKER" data-post="calltaker" class="asm-selectbox">',
+                '<td><select id="calltaker" data-post="calltaker" class="asm-selectbox">',
                 '<option> </option>',
                 html.list_to_options(controller.users, "USERNAME", "USERNAME"),
                 '</td>',
@@ -49,47 +49,51 @@ $(function() {
                 '<tr>',
                 '<td>' + _("Caller") + '</td>',
                 '<td>',
-                '<input id="caller" data-json="CALLERID" data-post="caller" type="hidden" class="asm-personchooser" />',
+                '<input id="caller" data-post="caller" type="hidden" class="asm-personchooser" />',
                 '</td>',
                 '</tr>',
                 '<tr>',
                 '<td>' + _("Victim") + '</td>',
                 '<td>',
-                '<input id="victim" data-json="VICTIMID" data-post="victim" type="hidden" class="asm-personchooser" />',
+                '<input id="victim" data-post="victim" type="hidden" class="asm-personchooser" />',
                 '</td>',
                 '</tr>',
                 '<tr>',
                 '<td>' + _("Suspect") + '</td>',
-                '<input id="owner" data-json="OWNERID" data-post="owner" type="hidden" class="asm-personchooser" />',
+                '<input id="owner" data-post="owner" type="hidden" class="asm-personchooser" />',
                 '</td>',
                 '</tr>',
                 '<tr>',
                 '<td><label for="dispatchaddress">' + _("Dispatch Address") + '</label></td>',
                 '<td>',
-                '<textarea id="dispatchaddress" title="' + html.title(_("Address")) + '" data-json="DISPATCHADDRESS" data-post="dispatchaddress" rows="5" class="asm-textareafixed"></textarea>',
+                '<textarea id="dispatchaddress" title="' + html.title(_("Address")) + '" data-post="dispatchaddress" rows="5" class="asm-textareafixed"></textarea>',
                 '</td>',
                 '</tr>',
                 '<tr class="towncounty">',
                 '<td><label for="dispatchtown">' + _("City") + '</label></td>',
                 '<td>',
-                '<input type="text" id="dispatchtown" data-json="DISPATCHTOWN" data-post="dispatchtown" maxlength="100" class="asm-textbox" />',
+                '<input type="text" id="dispatchtown" data-post="dispatchtown" maxlength="100" class="asm-textbox" />',
                 '</td>',
                 '</tr>',
                 '<tr class="towncounty">',
                 '<td><label for="dispatchcounty">' + _("State") + '</label></td>',
                 '<td>',
-                '<input type="text" id="dispatchcounty" data-json="DISPATCHCOUNTY" data-post="dispatchcounty" maxlength="100" class="asm-textbox" />',
+                common.iif(config.bool("USStateCodes"),
+                    '<select id="dispatchcounty" data-post="dispatchcounty" class="asm-selectbox">' +
+                    html.states_us_options(config.str("OrganisationCounty")) + '</select>',
+                    '<input type="text" id="dispatchcounty" data-post="dispatchcounty" maxlength="100" ' + 
+                    'class="asm-textbox" />'),
                 '</td>',
                 '</tr>',
                 '<tr>',
                 '<td><label for="dispatchpostcode">' + _("Zipcode") + '</label></td>',
                 '<td>',
-                '<input type="text" id="dispatchpostcode" data-json="DISPATCHPOSTCODE" data-post="dispatchpostcode" class="asm-textbox" />',
+                '<input type="text" id="dispatchpostcode" data-post="dispatchpostcode" class="asm-textbox" />',
                 '</td>',
                 '</tr>',
                 '<tr>',
                 '<td><label for="pickuplocation">' + _("Pickup Location") + '</label></td>',
-                '<td><select id="pickuplocation" data-json="PICKUPLOCATIONID" data-post="pickuplocation" class="asm-selectbox">',
+                '<td><select id="pickuplocation" data-post="pickuplocation" class="asm-selectbox">',
                 '<option value="0"></option>',
                 html.list_to_options(controller.pickuplocations, "ID", "LOCATIONNAME"),
                 '</select></td>',
@@ -169,6 +173,14 @@ $(function() {
                 incident_new.reset();
             });
 
+            $("#dispatchtown").autocomplete({ source: controller.towns });
+            $("#dispatchtown").blur(function() {
+                if ($("#dispatchcounty").val() == "") {
+                    $("#dispatchcounty").val(controller.towncounties[$("#dispatchtown").val()]);
+                }
+            });
+            if (!config.bool("USStateCodes")) { $("#dispatchcounty").autocomplete({ source: controller.counties }); }
+
             if (!config.bool("MultiSiteEnabled")) {
                 $("#siterow").hide();
             }
@@ -194,6 +206,7 @@ $(function() {
 
         reset: function() {
             $("#dispatchaddress, #dispatchtown, #dispatchcounty, #dispatchpostcode").val("").change();
+            if (config.bool("USStateCodes")) { $("#dispatchcounty").select("value", config.str("OrganisationCounty")); }
             $(".asm-checkbox").prop("checked", false).change();
             $(".asm-personchooser").personchooser("clear");
             $("#incidentdate").val(format.date(new Date()));

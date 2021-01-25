@@ -21,7 +21,7 @@ $(function() {
                 else if (v.ID == 8 && !config.bool("DisableRetailer")) {
                     choosetypes.push(v);
                 }
-                else if (v.ID !=8 && v.ID != 9 && v.ID != 10 && v.ID != 11 && v.ID != 12) {
+                else if (v.ID < 8 || v.ID > 13) {
                     choosetypes.push(v);
                 }
             });
@@ -128,6 +128,12 @@ $(function() {
                                 return format.date(row.RESERVATIONDATE);
                             }
                             return format.date(row.MOVEMENTDATE);
+                        }
+                    },
+                    { field: "RETURNDATE", display: _("Returning"), formatter: tableform.format_date, 
+                        hideif: function(row) {
+                            // This is for future returns, so only show on retailer/foster book
+                            return controller.name != "move_book_foster" && controller.name != "move_book_retailer";
                         }
                     },
                     { field: "RESERVATIONSTATUSNAME", display: _("Status"),
@@ -684,6 +690,9 @@ $(function() {
             row.RESERVATIONSTATUSNAME = common.get_field(controller.reservationstatuses, row.RESERVATIONSTATUSID, "STATUSNAME");
             if (row.RESERVATIONDATE != null && row.RESERVATIONCANCELLEDDATE == null && !row.MOVEMENTDATE) { row.MOVEMENTNAME = common.get_field(controller.movementtypes, 9, "MOVEMENTTYPE"); }
             if (row.RESERVATIONDATE != null && row.RESERVATIONCANCELLEDDATE != null && !row.MOVEMENTDATE) { row.MOVEMENTNAME = common.get_field(controller.movementtypes, 10, "MOVEMENTTYPE"); }
+            if (row.MOVEMENTTYPE == 1 && row.ISTRIAL == 1) { row.MOVEMENTNAME = common.get_field(controller.movementtypes, 11, "MOVEMENTTYPE"); }
+            if (row.MOVEMENTTYPE == 2 && row.ISPERMANENTFOSTER == 1) { row.MOVEMENTNAME = common.get_field(controller.movementtypes, 12, "MOVEMENTTYPE"); }
+            if (row.MOVEMENTTYPE == 7 && movements.lastanimal && movements.lastanimal.SPECIESID == 2) { row.MOVEMENTNAME = common.get_field(controller.movementtypes, 13, "MOVEMENTTYPE"); }
         },
 
         /** When the animal changes, set the name of the "Release to Wild" movement 

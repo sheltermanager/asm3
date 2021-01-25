@@ -116,6 +116,7 @@ class Database(object):
     alias = "" 
     locale = "en"
     timezone = 0
+    timezone_dst = False
     installpath = ""
     locked = False
 
@@ -502,7 +503,9 @@ class Database(object):
             offset:  Add this many days to now (negative values supported)
             settime: A time in HH:MM:SS format to set
         """
-        d = asm3.i18n.now(self.timezone)
+        tz = self.timezone
+        if self.timezone_dst: tz += asm3.i18n.dst_adjust(self.locale, self.timezone)
+        d = asm3.i18n.now(tz)
         if not timenow:
             d = d.replace(hour = 0, minute = 0, second = 0, microsecond = 0)
         if offset > 0:
@@ -948,6 +951,20 @@ class Database(object):
     def sql_zero_pad_left(self, fieldexpr, digits):
         """ Writes a function that zero pads an expression with zeroes to digits """
         return fieldexpr
+
+    def stats(self):
+        return self.first_row(self.query("select " \
+            "(select count(*) from animal where archived=0) as shelteranimals, " \
+            "(select count(*) from animal) as totalanimals, " \
+            "(select min(createddate) from animal) as firstrecord, " \
+            "(select count(*) from owner) as totalpeople, " \
+            "(select count(*) from adoption) as totalmovements, " \
+            "(select count(*) from media) as totalmedia, " \
+            "(select sum(mediasize) / 1024.0 / 1024.0 from media) as mediasize, " \
+            "(select count(*) from media where mediamimetype='image/jpeg') as totaljpg, " \
+            "(select sum(mediasize) / 1024.0 / 1024.0 from media where mediamimetype='image/jpeg') as jpgsize, " \
+            "(select count(*) from media where mediamimetype='application/pdf') as totalpdf, " \
+            "(select sum(mediasize) / 1024.0 / 1024.0 from media where mediamimetype='application/pdf') as pdfsize "))
 
     def switch_param_placeholder(self, sql):
         """ Swaps the ? token in the sql for the usual Python DBAPI placeholder of %s 

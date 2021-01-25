@@ -59,9 +59,9 @@ $(function() {
             alerts = controller.alerts[0];
             let totalalerts = alerts.DUEVACC + alerts.EXPVACC + alerts.DUETEST + alerts.DUEMED + 
                 alerts.DUECLINIC + alerts.URGENTWL +  alerts.LONGRSV + alerts.DUEDON + alerts.ENDTRIAL + 
-                alerts.NOTNEU + alerts.PUBLISH + alerts.LOOKFOR + alerts.LOSTFOUND + alerts.INFORM + 
-                alerts.ACUNFINE + alerts.ACUNDISP + alerts.ACUNCOMP + alerts.ACFOLL + alerts.TLOVER + 
-                alerts.STEXP + alerts.STEXPSOON + alerts.TRNODRV;
+                alerts.NOTNEU + alerts.NOTRAB + alerts.PUBLISH + alerts.LOOKFOR + alerts.LOSTFOUND + 
+                alerts.INFORM + alerts.ACUNFINE + alerts.ACUNDISP + alerts.ACUNCOMP + alerts.ACFOLL + 
+                alerts.TLOVER + alerts.STEXP + alerts.STEXPSOON + alerts.TRNODRV;
             if (config.bool("EmblemNotForAdoption")) {
                 totalalerts += alerts.NOTADOPT;
             }
@@ -153,12 +153,21 @@ $(function() {
                         ]) + '</a><br />';
                 }
                 if (alerts.NOTNEU > 0 && common.has_permission("va") && config.bool("EmblemUnneutered") ) {
-                    s += '<a href="move_book_unneutered">' + html.icon("health") + ' ' + 
+                    s += '<a href="move_book_unneutered">' + html.icon("unneutered") + ' ' + 
                         common.ntranslate(alerts.NOTNEU, [
                             _("{plural0} unaltered animal has been adopted in the last month"),
                             _("{plural1} unaltered animals have been adopted in the last month"),
                             _("{plural2} unaltered animals have been adopted in the last month"),
                             _("{plural3} unaltered animals have been adopted in the last month")
+                        ]) + '</a><br />';
+                }
+                if (alerts.NOTRAB > 0 && common.has_permission("va") && config.bool("EmblemRabies") ) {
+                    s += '<a href="search?q=norabies">' + html.icon("rabies") + ' ' + 
+                        common.ntranslate(alerts.NOTRAB, [
+                            _("{plural0} animal has not had a rabies vaccination"),
+                            _("{plural1} animals have not had a rabies vaccination"),
+                            _("{plural2} animals have not had a rabies vaccination"),
+                            _("{plural3} animals have not had a rabies vaccination")
                         ]) + '</a><br />';
                 }
                 if (alerts.NOTCHIP > 0 && common.has_permission("va") && config.bool("EmblemNotMicrochipped") ) {
@@ -573,25 +582,29 @@ $(function() {
             '</div>',
             '<div class="ui-state-highlight ui-corner-all" style="margin-top: 5px; padding: 5px;">',
             '<p><span class="ui-icon ui-icon-gear"></span>',
-            '<a href="options" target="_blank"><b>' + _("Settings, Options") + '</b></a>',
-            _("Go the options screen and set your shelter's contact details and other settings."),
+            '<a href="options" target="_blank"><b>',
+            _("Settings") + html.icon("right") + _("Options") + '</b></a>',
+            _("Go to the options screen and set your shelter's contact details and other settings."),
             '</p>',
             '</div>',
             '<div class="ui-state-highlight ui-corner-all" style="margin-top: 5px; padding: 5px;">',
             '<p><span class="ui-icon ui-icon-note"></span>',
-            '<a href="lookups" target="_blank"><b>' + _("Settings, Lookup data") + '</b></a>',
-            _("Go the lookup data screen and add/remove breeds, species and animal types according to the animals your shelter deals with."),
+            '<a href="lookups" target="_blank"><b>',
+            _("Settings") + html.icon("right") + _("Lookup data") + '</b></a>',
+            _("Go to the lookup data screen and add/remove breeds, species and animal types according to the animals your shelter deals with."),
             '</p>',
             '</div>',
             '<div class="ui-state-highlight ui-corner-all" style="margin-top: 5px; padding: 5px;">',
             '<p><span class="ui-icon ui-icon-person"></span>',
-            '<a href="systemusers" target="_blank"><b>' + _("Settings, System user accounts") + '</b></a>',
-            _("Go the system users screen and add user accounts for your staff."),
+            '<a href="systemusers" target="_blank"><b>',
+            _("Settings") + html.icon("right") + _("System user accounts") + '</b></a>',
+            _("Go to the system users screen and add user accounts for your staff."),
             '</p>',
             '</div>',
             '<div class="ui-state-highlight ui-corner-all" style="margin-top: 5px; padding: 5px;">',
             '<p><span class="ui-icon ui-icon-print"></span>',
-            '<a href="reports?browse=true" target="_blank"><b>' + _("Settings, Reports") + '</b></a>',
+            '<a href="reports?browse=true" target="_blank"><b>',
+            _("Settings") + html.icon("right") + _("Reports") + '</b></a>',
             _("Browse sheltermanager.com and install some reports, charts and mail merges into your new system."),
             '</p>',
             '</div>',

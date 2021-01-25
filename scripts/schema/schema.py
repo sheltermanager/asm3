@@ -22,11 +22,9 @@ for table in db.query("SELECT name FROM sqlite_master WHERE type='table' ORDER B
 
 for v in VIEWS:
     cols = {}
-    for col in db.query("pragma table_info(%s)" % v):
+    for col in db.query("pragma table_info(v_%s)" % v):
         cname = col.name
         cols[cname] = ""
-        if cname.endswith("ID") and cname != "ID":
-            cols[cname.replace("ID", "Name")] = ""
     tables["v_%s" % v] = cols
 
 print("schema=%s;" % json.dumps(tables))

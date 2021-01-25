@@ -104,12 +104,14 @@ def get_person_similar(dbo, email = "", mobile = "", surname = "", forenames = "
     email = email.replace("'", "`").lower().strip()
     eq = []
     mq = []
+    per = []
     if email != "" and email.find("@") != -1 and email.find(".") != -1 and len(email) > 6:
         eq = dbo.query(get_person_query(dbo) + " WHERE %s LOWER(o.EmailAddress) LIKE ?" % siteclause, [email])
     if mobile != "" and len(mobile) > 6:
         mq = dbo.query(get_person_query(dbo) + " WHERE %s %s LIKE ?" % (siteclause, dbo.sql_atoi("o.MobileTelephone")) , [str(asm3.utils.atoi(mobile))])
-    per = dbo.query(get_person_query(dbo) + " WHERE %s LOWER(o.OwnerSurname) LIKE ? AND " \
-        "LOWER(o.OwnerForeNames) LIKE ? AND LOWER(o.OwnerAddress) LIKE ?" % siteclause, (surname, forenames + "%", address + "%"))
+    if address != "":
+        per = dbo.query(get_person_query(dbo) + " WHERE %s LOWER(o.OwnerSurname) LIKE ? AND " \
+         "LOWER(o.OwnerForeNames) LIKE ? AND LOWER(o.OwnerAddress) LIKE ?" % siteclause, (surname, forenames + "%", address + "%"))
     return eq + mq + per
 
 def get_person_name(dbo, personid):
@@ -171,9 +173,9 @@ def get_town_to_county(dbo):
     """
     rows = dbo.query("SELECT DISTINCT OwnerTown, OwnerCounty FROM owner ORDER BY OwnerCounty")
     if rows is None: return []
-    tc = []
+    tc = {}
     for r in rows:
-        tc.append("%s^^%s" % (r.OWNERTOWN, r.OWNERCOUNTY))
+        tc[r.OWNERTOWN] = r.OWNERCOUNTY
     return tc
 
 def get_counties(dbo):
@@ -968,6 +970,7 @@ def merge_person_details(dbo, username, personid, d, force=False):
     merge("worktelephone", "WORKTELEPHONE")
     merge("mobiletelephone", "MOBILETELEPHONE")
     merge("emailaddress", "EMAILADDRESS")
+    merge("comments", "COMMENTS")
 
 def merge_gdpr_flags(dbo, username, personid, flags):
     """
@@ -1087,6 +1090,9 @@ def merge_person(dbo, username, personid, mergepersonid):
     reparent("media", "LinkID", "LinkTypeID", asm3.media.PERSON, lastchanged=False)
     reparent("diary", "LinkID", "LinkType", asm3.diary.PERSON)
     reparent("log", "LinkID", "LinkType", asm3.log.PERSON, lastchanged=False)
+
+    # Assign the adopter flag if we brought in new open adoption movements
+    update_adopter_flag(dbo, username, personid)
 
     # Reparent the audit records for the reparented records in the audit log
     # by switching ParentLinks to the new ID.
@@ -1216,7 +1222,7 @@ def delete_person(dbo, username, personid):
     for t in [ "adoption", "clinicappointment", "ownercitation", "ownerdonation", "ownerlicence", "ownertraploan", "ownervoucher" ]:
         dbo.delete(t, "OwnerID=%d" % personid, username)
     dbo.delete("owner", personid, username)
-    asm3.dbfs.delete_path(dbo, "/owner/%d" % personid)
+    # asm3.dbfs.delete_path(dbo, "/owner/%d" % personid) # Use maint_db_delete_orphaned_media to remove dbfs later if needed
 
 def insert_rota_from_form(dbo, username, post):
     """
@@ -1510,7 +1516,7 @@ def lookingfor_last_match_count(dbo):
     """
     return dbo.query_int("SELECT COUNT(*) FROM ownerlookingfor")
 
-def update_missing_builtin_flags(dbo):
+def update_check_flags(dbo):
     """
     Goes through all people records and verifies that if they have one of
     the IsX flag columns set that the builtin value is present in the
@@ -1518,42 +1524,47 @@ def update_missing_builtin_flags(dbo):
     This is needed because many of the IsX values pre-date the AdditionalFlags
     column, but there are many reports that use it solely as the method of
     determining flags.
+    This will also re-order the additional flags into alphabetical order
+    and remove any flags that no longer exist in lkownerflags.
     """
-    builtins = (
-        ("ExcludeFromBulkEmail", "excludefrombulkemail"),
-        ("IDCheck", "homechecked"),
-        ("IsBanned", "banned"),
-        ("IsVolunteer", "volunteer"),
-        ("IsHomeChecker", "homechecker"),
-        ("IsMember", "member"),
-        ("IsAdopter", "adopter"),
-        ("IsAdoptionCoordinator", "coordinator"),
-        ("IsDonor", "donor"),
-        ("IsDriver", "driver"),
-        ("IsShelter", "shelter"),
-        ("IsACO", "aco"),
-        ("IsStaff", "staff"),
-        ("IsFosterer", "fosterer"),
-        ("IsRetailer", "retailer"),
-        ("IsVet", "vet"),
-        ("IsGiftAid", "giftaid")
-    )
+    builtins = {
+        "excludefrombulkemail": "ExcludeFromBulkEmail",
+        "homechecked": "IDCheck",
+        "banned": "IsBanned",
+        "volunteer": "IsVolunteer",
+        "homechecker": "IsHomeChecker",
+        "member": "IsMember",
+        "adopter": "IsAdopter",
+        "coordinator": "IsAdoptionCoordinator",
+        "donor": "IsDonor",
+        "driver": "IsDriver",
+        "shelter": "IsShelter",
+        "aco": "IsACO",
+        "staff": "IsStaff",
+        "fosterer": "IsFosterer",
+        "retailer": "IsRetailer",
+        "vet": "IsVet",
+        "giftaid": "IsGiftAid"
+    }
     people = dbo.query("SELECT ID, AdditionalFlags, ExcludeFromBulkEmail, IDCheck, IsBanned, IsVolunteer, " \
         "IsHomeChecker, IsMember, IsAdopter, IsAdoptionCoordinator, IsDonor, IsDriver, " \
         "IsShelter, IsACO, IsStaff, IsFosterer, IsRetailer, IsVet, IsGiftAid FROM owner ORDER BY ID")
+    lookupflags = [x["FLAG"] for x in dbo.query("SELECT Flag from lkownerflags ORDER BY Flag")]
     batch = []
     asm3.asynctask.set_progress_max(dbo, len(people))
     for p in people:
         asm3.asynctask.increment_progress_value(dbo)
-        c = False
-        for column, flag in builtins:
-            if p.ADDITIONALFLAGS is None: 
-                p.ADDITIONALFLAGS = ""
-            if p[column.upper()] == 1 and p.ADDITIONALFLAGS.find(flag) == -1:
-                c = True
-                p.ADDITIONALFLAGS += "%s|" % flag
-        if c:
-            batch.append([ p.ADDITIONALFLAGS, p.ID ])
+        pflags = asm3.utils.nulltostr(p.ADDITIONALFLAGS).split("|")
+        # Add any missing builtins
+        for flag, column in builtins.items():
+            if p[column.upper()] == 1 and flag not in pflags:
+                pflags.append(flag)
+        # Throw away flags that are not built ins or in our lookup set
+        pflags = [x for x in pflags if x != "" and (x in lookupflags or x in builtins)]
+        # Sort and reconstruct
+        newval = "|".join(sorted(pflags, key = lambda x: x.lower())) + "|"
+        if newval != p.ADDITIONALFLAGS:
+            batch.append([ newval, p.ID ])
     if len(batch) > 0:
         dbo.execute_many("UPDATE owner SET AdditionalFlags=? WHERE ID=?", batch)
     asm3.al.debug("updated %d person flags" % len(batch), "person.update_missing_builtin_flags", dbo)

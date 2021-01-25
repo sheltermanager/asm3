@@ -34,7 +34,301 @@ The service requires the following parameters:
 * animalid / title: An animal ID or title depending on the service method
   called.
 
-The following method values are supported:
+Animal Datasets
+---------------
+
+Many of the json and xml service calls return a dataset of animals, a sample animal
+JSON result looks like this::
+
+   [
+       {
+           "ACCEPTANCENUMBER": "",
+           "ACTIVEMOVEMENTADOPTIONNUMBER": null,
+           "ACTIVEMOVEMENTCOMMENTS": null,
+           "ACTIVEMOVEMENTCREATEDBY": null,
+           "ACTIVEMOVEMENTCREATEDBYNAME": null,
+           "ACTIVEMOVEMENTCREATEDDATE": null,
+           "ACTIVEMOVEMENTDATE": null,
+           "ACTIVEMOVEMENTDONATION": null,
+           "ACTIVEMOVEMENTID": 0,
+           "ACTIVEMOVEMENTINSURANCENUMBER": null,
+           "ACTIVEMOVEMENTLASTCHANGEDBY": null,
+           "ACTIVEMOVEMENTLASTCHANGEDDATE": null,
+           "ACTIVEMOVEMENTREASONFORRETURN": null,
+           "ACTIVEMOVEMENTRESERVATIONDATE": null,
+           "ACTIVEMOVEMENTRETURN": null,
+           "ACTIVEMOVEMENTRETURNDATE": null,
+           "ACTIVEMOVEMENTTRIALENDDATE": null,
+           "ACTIVEMOVEMENTTYPE": null,
+           "ACTIVEMOVEMENTTYPENAME": null,
+           "ADDITIONALFLAGS": "|",
+           "ADOPTAPETCOLOUR": "Black",
+           "ADOPTIONCOORDINATOREMAILADDRESS": null,
+           "ADOPTIONCOORDINATORHOMETELEPHONE": null,
+           "ADOPTIONCOORDINATORID": 0,
+           "ADOPTIONCOORDINATORMOBILETELEPHONE": null,
+           "ADOPTIONCOORDINATORNAME": null,
+           "ADOPTIONCOORDINATORWORKTELEPHONE": null,
+           "AGEGROUP": "Senior",
+           "AGEGROUPACTIVEMOVEMENT": "Senior",
+           "ANIMALAGE": "12 years 7 months.",
+           "ANIMALCOMMENTS": "Cat that needs a longer bio than 20 chars.",
+           "ANIMALCONTROLINCIDENTDATE": null,
+           "ANIMALCONTROLINCIDENTID": null,
+           "ANIMALCONTROLINCIDENTNAME": null,
+           "ANIMALNAME": "Sarah",
+           "ANIMALTYPEID": 2,
+           "ANIMALTYPENAME": "U (Unwanted Cat)",
+           "ARCHIVED": 0,
+           "ASILOMARINTAKECATEGORY": 0,
+           "ASILOMARISTRANSFEREXTERNAL": 0,
+           "ASILOMAROWNERREQUESTEDEUTHANASIA": 0,
+           "BASECOLOURID": 1,
+           "BASECOLOURNAME": "Black",
+           "BONDEDANIMAL1ARCHIVED": null,
+           "BONDEDANIMAL1CODE": null,
+           "BONDEDANIMAL1NAME": null,
+           "BONDEDANIMAL2ARCHIVED": null,
+           "BONDEDANIMAL2CODE": null,
+           "BONDEDANIMAL2ID": 0,
+           "BONDEDANIMAL2NAME": null,
+           "BONDEDANIMALID": 0,
+           "BREED2ID": 231,
+           "BREEDID": 231,
+           "BREEDNAME": "British Shorthair",
+           "BREEDNAME1": "British Shorthair",
+           "BREEDNAME2": "British Shorthair",
+           "BROUGHTINBYEMAILADDRESS": "",
+           "BROUGHTINBYHOMETELEPHONE": "",
+           "BROUGHTINBYJURISDICTION": "",
+           "BROUGHTINBYMOBILETELEPHONE": "",
+           "BROUGHTINBYOWNERADDRESS": "",
+           "BROUGHTINBYOWNERCOUNTY": "",
+           "BROUGHTINBYOWNERID": "",
+           "BROUGHTINBYOWNERNAME": "",
+           "BROUGHTINBYOWNERPOSTCODE": "",
+           "BROUGHTINBYOWNERTOWN": "",
+           "BROUGHTINBYWORKTELEPHONE": "",
+           "COATTYPE": 4,
+           "COATTYPENAME": "Corded",
+           "CODE": "1D",
+           "COMBITESTDATE": null,
+           "COMBITESTED": 0,
+           "COMBITESTEDNAME": "No",
+           "COMBITESTRESULT": 0,
+           "COMBITESTRESULTNAME": "Unknown",
+           "CREATEDBY": "robin",
+           "CREATEDDATE": "2010-01-18T10:20:50",
+           "CROSSBREED": 0,
+           "CROSSBREEDNAME": "No",
+           "CRUELTYCASE": 0,
+           "CRUELTYCASENAME": "No",
+           "CURRENTOWNERADDRESS": "",
+           "CURRENTOWNERCOUNTRY": "",
+           "CURRENTOWNERCOUNTY": "",
+           "CURRENTOWNEREMAILADDRESS": "",
+           "CURRENTOWNEREXCLUDEEMAIL": "",
+           "CURRENTOWNERFORENAMES": "",
+           "CURRENTOWNERHOMETELEPHONE": "",
+           "CURRENTOWNERID": "",
+           "CURRENTOWNERINITIALS": "",
+           "CURRENTOWNERJURISDICTION": "",
+           "CURRENTOWNERMOBILETELEPHONE": "",
+           "CURRENTOWNERNAME": "",
+           "CURRENTOWNERPOSTCODE": "",
+           "CURRENTOWNERSURNAME": "",
+           "CURRENTOWNERTITLE": "",
+           "CURRENTOWNERTOWN": "",
+           "CURRENTOWNERWORKTELEPHONE": "",
+           "CURRENTVETADDRESS": null,
+           "CURRENTVETCOUNTY": null,
+           "CURRENTVETEMAILADDRESS": null,
+           "CURRENTVETID": 0,
+           "CURRENTVETLICENCENUMBER": null,
+           "CURRENTVETNAME": null,
+           "CURRENTVETPOSTCODE": null,
+           "CURRENTVETTOWN": null,
+           "CURRENTVETWORKTELEPHONE": null,
+           "DAILYBOARDINGCOST": 0,
+           "DATEBROUGHTIN": "2010-01-18T00:00:00",
+           "DATEOFBIRTH": "2008-01-18T00:00:00",
+           "DAYSONSHELTER": 3886,
+           "DECEASEDDATE": null,
+           "DECLAWED": 0,
+           "DECLAWEDNAME": "No",
+           "DIEDOFFSHELTER": 0,
+           "DIEDOFFSHELTERNAME": "No",
+           "DISPLAYLOCATION": "Dog Block::3",
+           "DISPLAYLOCATIONNAME": "Dog Block",
+           "DOCMEDIADATE": "2015-05-11T00:00:00",
+           "DOCMEDIANAME": "198.jpg",
+           "ENTRYREASONID": 7,
+           "ENTRYREASONNAME": "Stray",
+           "ESTIMATEDDOB": 0,
+           "ESTIMATEDDOBNAME": "No",
+           "EXTRAIDS": "",
+           "FEE": 0,
+           "FLVRESULT": 0,
+           "FLVRESULTNAME": "Unknown",
+           "HASACTIVERESERVE": 0,
+           "HASACTIVERESERVENAME": "No",
+           "HASFUTUREADOPTION": 0,
+           "HASPERMANENTFOSTER": 0,
+           "HASSPECIALNEEDS": 0,
+           "HASSPECIALNEEDSNAME": "No",
+           "HASTRIALADOPTION": 0,
+           "HASTRIALADOPTIONNAME": "No",
+           "HEALTHPROBLEMS": "",
+           "HEARTWORMTESTDATE": null,
+           "HEARTWORMTESTED": 0,
+           "HEARTWORMTESTEDNAME": "No",
+           "HEARTWORMTESTRESULT": 0,
+           "HEARTWORMTESTRESULTNAME": "Unknown",
+           "HIDDENANIMALDETAILS": "",
+           "HOLDUNTILDATE": null,
+           "ID": 174,
+           "IDENTICHIP2DATE": null,
+           "IDENTICHIP2NUMBER": "",
+           "IDENTICHIPDATE": null,
+           "IDENTICHIPNUMBER": "",
+           "IDENTICHIPPED": 0,
+           "IDENTICHIPPEDNAME": "No",
+           "ISCOURTESY": 0,
+           "ISDOA": 0,
+           "ISDOANAME": "No",
+           "ISGOODWITHCATS": 0,
+           "ISGOODWITHCATSNAME": "Yes",
+           "ISGOODWITHCHILDREN": 2,
+           "ISGOODWITHCHILDRENNAME": "Unknown",
+           "ISGOODWITHDOGS": 2,
+           "ISGOODWITHDOGSNAME": "Unknown",
+           "ISHOLD": 0,
+           "ISHOUSETRAINED": 2,
+           "ISHOUSETRAINEDNAME": "Unknown",
+           "ISNOTAVAILABLEFORADOPTION": 0,
+           "ISNOTAVAILABLEFORADOPTIONNAME": "No",
+           "ISNOTFORREGISTRATION": 0,
+           "ISNOTFORREGISTRATIONNAME": "No",
+           "ISPICKUP": 0,
+           "ISPICKUPNAME": "No",
+           "ISQUARANTINE": 0,
+           "ISTRANSFER": 0,
+           "ISTRANSFERNAME": "No",
+           "JURISDICTIONID": 0,
+           "JURISDICTIONNAME": null,
+           "LASTCHANGEDBY": "robin",
+           "LASTCHANGEDDATE": "2018-08-27T10:25:07.534155",
+           "LOOKUPDEFAULT": "Item 3",
+           "MARKINGS": "",
+           "MOSTRECENTENTRYDATE": "2010-01-18T00:00:00",
+           "NEUTERED": 1,
+           "NEUTEREDBYVETID": 0,
+           "NEUTEREDDATE": "2009-01-18T00:00:00",
+           "NEUTEREDNAME": "Yes",
+           "NEUTERINGVETADDRESS": null,
+           "NEUTERINGVETCOUNTY": null,
+           "NEUTERINGVETEMAILADDRESS": null,
+           "NEUTERINGVETLICENCENUMBER": null,
+           "NEUTERINGVETNAME": null,
+           "NEUTERINGVETPOSTCODE": null,
+           "NEUTERINGVETTOWN": null,
+           "NEUTERINGVETWORKTELEPHONE": null,
+           "NONSHELTERANIMAL": 0,
+           "NONSHELTERANIMALNAME": "No",
+           "ORIGINALOWNERADDRESS": "",
+           "ORIGINALOWNERCOUNTRY": "",
+           "ORIGINALOWNERCOUNTY": "",
+           "ORIGINALOWNEREMAILADDRESS": "",
+           "ORIGINALOWNERFORENAMES": "",
+           "ORIGINALOWNERHOMETELEPHONE": "",
+           "ORIGINALOWNERID": "",
+           "ORIGINALOWNERINITIALS": "",
+           "ORIGINALOWNERJURISDICTION": "",
+           "ORIGINALOWNERMOBILETELEPHONE": "",
+           "ORIGINALOWNERNAME": "",
+           "ORIGINALOWNERPOSTCODE": "",
+           "ORIGINALOWNERSURNAME": "",
+           "ORIGINALOWNERTITLE": "",
+           "ORIGINALOWNERTOWN": "",
+           "ORIGINALOWNERWORKTELEPHONE": "",
+           "OWNERID": 0,
+           "OWNERNAME": null,
+           "OWNERSVETADDRESS": null,
+           "OWNERSVETCOUNTY": null,
+           "OWNERSVETEMAILADDRESS": null,
+           "OWNERSVETID": 0,
+           "OWNERSVETLICENCENUMBER": null,
+           "OWNERSVETNAME": null,
+           "OWNERSVETPOSTCODE": null,
+           "OWNERSVETTOWN": null,
+           "OWNERSVETWORKTELEPHONE": null,
+           "PETFINDERBREED": "British Shorthair",
+           "PETFINDERBREED2": "British Shorthair",
+           "PETFINDERSPECIES": "Cat",
+           "PICKUPADDRESS": "",
+           "PICKUPLOCATIONID": 0,
+           "PICKUPLOCATIONNAME": null,
+           "PTSREASON": "",
+           "PTSREASONID": 8,
+           "PTSREASONNAME": "Biting",
+           "PUTTOSLEEP": 0,
+           "PUTTOSLEEPNAME": "No",
+           "RABIESTAG": "",
+           "REASONFORENTRY": "",
+           "REASONNO": "",
+           "RECENTLYCHANGEDIMAGES": 0,
+           "RECORDVERSION": 102507,
+           "RESERVATIONDATE": null,
+           "RESERVATIONSTATUSNAME": null,
+           "RESERVEDOWNERADDRESS": "",
+           "RESERVEDOWNERCOUNTY": "",
+           "RESERVEDOWNEREMAILADDRESS": "",
+           "RESERVEDOWNERHOMETELEPHONE": "",
+           "RESERVEDOWNERID": "",
+           "RESERVEDOWNERJURISDICTION": "",
+           "RESERVEDOWNERMOBILETELEPHONE": "",
+           "RESERVEDOWNERNAME": "",
+           "RESERVEDOWNERPOSTCODE": "",
+           "RESERVEDOWNERTOWN": "",
+           "RESERVEDOWNERWORKTELEPHONE": "",
+           "SEX": 0,
+           "SEXNAME": "Female",
+           "SHELTERCODE": "D2010001",
+           "SHELTERLOCATION": 1,
+           "SHELTERLOCATIONDESCRIPTION": "",
+           "SHELTERLOCATIONNAME": "Dog Block",
+           "SHELTERLOCATIONUNIT": "3",
+           "SHORTCODE": "1D",
+           "SITEID": 1,
+           "SITENAME": "main",
+           "SIZE": 1,
+           "SIZENAME": "Large",
+           "SMARTTAG": 0,
+           "SMARTTAGDATE": null,
+           "SMARTTAGNUMBER": "",
+           "SMARTTAGSENTDATE": null,
+           "SMARTTAGTYPE": 0,
+           "SPECIESID": 2,
+           "SPECIESNAME": "Cat",
+           "TATTOO": 0,
+           "TATTOODATE": null,
+           "TATTOONAME": "No",
+           "TATTOONUMBER": "",
+           "TIMEONSHELTER": "10 years 7 months.",
+           "TOTALDAYSONSHELTER": 3162,
+           "TOTALTIMEONSHELTER": "8 years 7 months.",
+           "UNIQUECODEID": 0,
+           "WEBSITEIMAGECOUNT": 2,
+           "WEBSITEMEDIADATE": "2013-05-12T09:13:21",
+           "WEBSITEMEDIAID": 118,
+           "WEBSITEMEDIANAME": "118.jpg",
+           "WEBSITEMEDIANOTES": "Cat that needs a longer bio than 20 chars.",
+           "WEBSITEVIDEONOTES": "",
+           "WEBSITEVIDEOURL": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+           "WEIGHT": 10.0,
+           "YEARCODEID": 1
+       }
+   ]
 
 animal_image
 ------------
@@ -126,6 +420,7 @@ following classes:
 * asm3-adoptable-link : The a tag enclosing the thumbnail and animal name
 * asm3-adoptable-thumbnail : The thumbnail img tag
 * asm3-adoptable-name : The animal's name
+* asm3-adoptable-reserved : The div surrounding the image if the animal is reserved
 * asm3-adoptable-tagline : The brief animal information
 
 and the following elements by their id attribute:
@@ -143,6 +438,37 @@ bold, add this to your CSS::
 To increase the size of the close link, add this::
 
     #asm3-adoptable-iframe-close { font-size: 200%; }
+
+Much more advanced and sophisticated styling can be done from these classes and
+selectors. For example, to float a reserved banner over the top right corner of
+animals with reservations, try this::
+
+   .asm3-adoptable-reserved {
+       position: relative;
+       color: #fff;
+       display: inline-block;
+       padding: 5px;
+       overflow: hidden;
+       font-family: Arial, sans-serif;
+       font-size: 8pt;
+       font-weight: bold;
+   }
+   .asm3-adoptable-reserved span:before {
+       content: "\00a0\00a0\00a0\00a0\00a0RESERVED";
+   }
+   .asm3-adoptable-reserved span {
+       position: absolute; 
+       display: inline-block;
+       right: -25px;
+       box-shadow: 0px 0px 10px rgba(0,0,0,0.2), inset 0px 5px 30px rgba(255,255,255,0.2);
+       text-align: center;
+       top: 6px;
+       background: #ff0000;
+       width: 100px;
+       padding: 3px 10px;
+       opacity: 0.9;
+       transform: rotate(45deg);
+   }
 
 Translations
 ^^^^^^^^^^^^
@@ -472,7 +798,7 @@ JSON or XML::
 json_adoptable_animals and xml_adoptable_animals
 ------------------------------------------------
 
-.. rubric:: Cache time: 1 hour 
+.. rubric:: Cache time: 10 minutes 
 
 Returns a dataset containing all animals available for adoption. The method
 determines whether the format returned is JSON or XML::

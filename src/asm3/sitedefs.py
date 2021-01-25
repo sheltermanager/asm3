@@ -198,6 +198,10 @@ LARGE_FILES_CHUNKED = get_boolean("large_files_chunked", True)
 # QR code provider. "url" and "size" tokens will be substituted
 QR_IMG_SRC = get_string("qr_img_src", "//chart.googleapis.com/chart?cht=qr&chl=%(url)s&chs=%(size)s")
 
+# Whether to resize incoming images
+RESIZE_IMAGES_DURING_ATTACH = get_boolean("resize_images_during_attach", True)
+RESIZE_IMAGES_SPEC = get_string("resize_images_spec", "1024x1024")
+
 # Shell command to use to compress PDFs
 SCALE_PDF_DURING_ATTACH = get_boolean("scale_pdf_during_attach", False)
 SCALE_PDF_CMD = get_string("scale_pdf_cmd", "convert -density 120 -quality 60 %(input)s -compress Jpeg %(output)s")
@@ -351,7 +355,14 @@ TABLESORTER_JS = get_string("tablesorter_js", 'static/lib/tablesorter/2.7.12/jqu
 TABLESORTER_WIDGETS_JS = get_string("tablesorter_widgets_js", 'static/lib/tablesorter/2.7.12/jquery.tablesorter.widgets.min.js')
 TIMEPICKER_CSS = get_string("timepicker_css", 'static/lib/timepicker/0.3.3/jquery.ui.timepicker.css')
 TIMEPICKER_JS = get_string("timepicker_js", 'static/lib/timepicker/0.3.3/jquery.ui.timepicker.js')
-TINYMCE_4_JS = get_string("tinymce_4_js", 'static/lib/tinymce/4.7.13-asm1/tinymce/js/tinymce/tinymce.min.js')
+TINYMCE_5_JS = get_string("tinymce_4_js", 'static/lib/tinymce/5.5.1/tinymce/js/tinymce/tinymce.min.js')
 TOUCHPUNCH_JS = get_string("touchpunch_js", 'static/lib/touchpunch/0.2.3/jquery.ui.touch-punch.min.js')
 
-
+# Watermark Settings for adding an animal's name and shelter logo to an image
+WATERMARK_X_OFFSET = get_string("watermark_x_offset", 10)
+WATERMARK_Y_OFFSET = get_string("watermark_y_offset", 10)
+WATERMARK_FONT_FILE = get_string("watermark_font_file", "/usr/share/fonts/truetype/liberation/LiberationSans-BoldItalic.ttf")
+WATERMARK_FONT_SHADOWCOLOR = get_string("watermark_font_shadowcolor", "black")
+WATERMARK_FONT_FILLCOLOR = get_string("watermark_font_fillcolor", "white")
+WATERMARK_FONT_STROKE = get_string("watermark_font_stroke", 3)
+WATERMARK_FONT_OFFSET = get_string("watermark_font_offset", 20)

@@ -908,7 +908,7 @@ def csv_parse(s):
                 # Turn the item into an ascii/xmlcharrefreplace string
                 item = item.encode("ascii", "xmlcharrefreplace")
                 if sys.version_info[0] > 2: item = item.decode("ascii") # PYTHON3 turn it back into str
-                items.append(item)
+                items.append(item.strip()) # strip whitespace before storing the item
             if not inquoted and (s[rpos:rpos+1] == "\n" or rpos == len(s)):
                 # Hit line break or end of file, move to the next line and return our set
                 pos[0] = rpos+1

@@ -12,7 +12,7 @@ $(function() {
         render: function() {
             return [
                 '<div id="dialog-similar" style="display: none" title="' + _("Similar Animal") + '">',
-                '<p><span class="ui-icon ui-icon-alert" style="float: left; margin: 0 7px 20px 0;"></span>',
+                '<p><span class="ui-icon ui-icon-alert"></span>',
                 _("This animal has the same name as another animal recently added to the system.") + '<br /><br />',
                 '<span class="similar-animal"></span>',
                 '</p>',
@@ -21,27 +21,33 @@ $(function() {
                 '<table class="asm-table-layout">',
                 '<tr id="nonshelterrow">',
                 '<td></td>',
-                '<td><input type="checkbox" class="asm-checkbox" title=',
-                '"' + html.title(_("This animal should not be shown in figures and is not in the custody of the shelter")) + '"',
-                ' data="nonshelter" id="nonshelter" /><label for="nonshelter">' + _("Non-Shelter") + '</label></td>',
+                '<td><input type="checkbox" class="asm-checkbox" data="nonshelter" id="nonshelter" />',
+                '<label for="nonshelter">' + _("Non-Shelter") + '</label>',
+                '<span id="callout-nonshelter" class="asm-callout">',
+                _("This animal should not be shown in figures and is not in the custody of the shelter"),
+                '</span>',
+                '</td>',
                 '</tr>',
                 '<tr id="transferinrow">',
                 '<td></td>',
                 '<td>',
-                '<input class="asm-checkbox" type="checkbox" id="transferin" data-json="ISTRANSFER" data-post="transferin" title=',
-                '"' + html.title(_("This animal was transferred from another shelter")) + '" />',
+                '<input class="asm-checkbox" type="checkbox" id="transferin" data-json="ISTRANSFER" data-post="transferin" />',
                 '<label for="transferin">' + _("Transfer In") + '</label>',
+                '<span id="callout-transfer" class="asm-callout">',
+                _("This animal was transferred from another shelter"),
+                '</span>',
                 '</td>',
                 '</tr>',
                 '<tr id="holdrow">',
                 '<td></td>',
                 '<td>',
                 '<span style="white-space: nowrap">',
-                '<input class="asm-checkbox" type="checkbox" id="hold" data-post="hold" title=',
-                '"' + html.title(_("This animal should be held in case it is reclaimed")) + '" />',
+                '<input class="asm-checkbox" type="checkbox" id="hold" data-post="hold" />',
                 '<label for="hold">' + _("Hold until") + '</label>',
-                '<input class="asm-halftextbox asm-datebox" id="holduntil" data-post="holduntil" title=',
-                '"' + html.title(_("Hold the animal until this date or blank to hold indefinitely")) + '" />',
+                '<input class="asm-halftextbox asm-datebox" id="holduntil" data-post="holduntil" />',
+                '<span id="callout-holduntil" class="asm-callout">',
+                _("Hold the animal until this date or blank to hold indefinitely"),
+                '</span>',
                 '</span>',
                 '</td>',
                 '</tr>',
@@ -154,9 +160,13 @@ $(function() {
                 '</td>',
                 '</tr>',
                 '<tr id="locationunitrow">',
-                '<td><label for="unit">' + _("Unit") + '</label></td>',
+                '<td><label for="unit">' + _("Unit") + '</label>',
+                '<span id="callout-unit" class="asm-callout">',
+                _("Unit within the location, eg: pen or cage number"),
+                '</span>',
+                '</td>',
                 '<td>',
-                '<select id="unit" data="unit" class="asm-selectbox" title="' + html.title(_("Unit within the location, eg: pen or cage number")) + '">',
+                '<select id="unit" data="unit" class="asm-selectbox">',
                 '</select>',
                 '</td>',
                 '</tr>',
@@ -248,8 +258,7 @@ $(function() {
                 '</tr>',
                 '<tr id="entryreasonrow">',
                 '<td><label for="entryreason">' + _("Entry Category") + '</label></td>',
-                '<td><select id="entryreason" data="entryreason" class="asm-selectbox" title=',
-                '"' + html.title(_("The entry reason for this animal")) + '">',
+                '<td><select id="entryreason" data="entryreason" class="asm-selectbox">',
                 html.list_to_options(controller.entryreasons, "ID", "REASONNAME"),
                 '</select></td>',
                 '</tr>',
@@ -297,6 +306,7 @@ $(function() {
                 '</tr>',
                 additional.additional_new_fields(controller.additional),
                 '</table>',
+                '<p></p>',
                 '<div class="centered">',
                 '<button id="addedit">' + html.icon("animal-add") + ' ' + _("Create and edit") + '</button>',
                 '<button id="add">' + html.icon("animal-add") + ' ' + _("Create") + '</button>',
@@ -361,6 +371,12 @@ $(function() {
                 holddate += config.integer("AutoRemoveHoldDays") * 86400000;
                 holddate = format.date( new Date(holddate) );
                 $("#holduntil").val(holddate);
+            }
+
+            // If the user entered a hold until date and hold is not 
+            // ticked, tick it
+            if ($("#holduntil").val() != "" && !($("#hold").is(":checked"))) {
+                $("#hold").prop("checked", true);
             }
 
             // Setting non-shelter should assign the non-shelter animal type
@@ -667,6 +683,7 @@ $(function() {
             $("#nonshelter").change(animal_new.enable_widgets);
             $("#transferin").change(animal_new.enable_widgets);
             $("#hold").change(animal_new.enable_widgets);
+            $("#holduntil").change(animal_new.enable_widgets);
             animal_new.enable_widgets();
 
             // Default species has been set, update the available breeds

@@ -6,6 +6,12 @@ $(function() {
 
     const onlineforms = {
 
+        email_submitter_options: [
+            { ID: 0, NAME: _("Do not send email") },
+            { ID: 1, NAME: _("Send and include a copy of the form submission") },
+            { ID: 2, NAME: _("Send confirmation message only") }
+        ],
+
         model: function() {
             const dialog = {
                 add_title: _("Add online form"),
@@ -26,13 +32,14 @@ $(function() {
                         validation: "validemail", 
                         tooltip: _("Email incoming form submissions to this comma separated list of email addresses"), 
                         callout: _("Email incoming form submissions to this comma separated list of email addresses") }, 
-                    { json_field: "EMAILSUBMITTER", post_field: "emailsubmitter", label: _("Send confirmation email to form submitter"), type: "check",
-                        tooltip: _("If this form has a populated emailaddress field during submission, send a confirmation email to it"),
-                        callout: _("If this form has a populated emailaddress field during submission, send a confirmation email to it") },
+                    { json_field: "EMAILSUBMITTER", post_field: "emailsubmitter", label: _("Send confirmation email to form submitter"), 
+                        type: "select", classes: "asm-doubleselectbox",
+                        callout: _("If this form has a populated emailaddress field during submission, send a confirmation email to it"),
+                        options: { displayfield: "NAME", valuefield: "ID", rows: onlineforms.email_submitter_options } },
                     { json_field: "EMAILMESSAGE", post_field: "emailmessage", label: _("Confirmation message"), type: "richtextarea", 
                         margintop: "0px", height: "100px", width: "600px",
-                        tooltip: _("The confirmation email message to send to the form submitter. Leave blank to send a copy of the completed form."),
-                        callout: _("The confirmation email message to send to the form submitter. Leave blank to send a copy of the completed form.") }, 
+                        tooltip: _("The confirmation email message to send to the form submitter."),
+                        callout: _("The confirmation email message to send to the form submitter.") }, 
                     { json_field: "DESCRIPTION", post_field: "description", label: _("Description"), type: "htmleditor", height: "100px", width: "600px" },
                     { json_field: "HEADER", post_field: "header", label: _("Header"), type: "htmleditor", height: "100px", width: "600px" },
                     { json_field: "FOOTER", post_field: "footer", label: _("Footer"), type: "htmleditor", height: "100px", width: "600px" }

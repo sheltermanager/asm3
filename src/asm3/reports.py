@@ -605,8 +605,8 @@ def email_daily_reports(dbo, now = None):
         # If we get here, we're good to send
         body = execute(dbo, r.ID, "dailyemail")
         # If we aren't sending empty reports and there's no data, bail
-        if body.find("NODATA") != -1 and not asm3.configuration.email_empty_reports(dbo):
-            return
+        if body.find("NODATA") != -1 and not asm3.configuration.email_empty_reports(dbo): 
+            continue
         asm3.utils.send_email(dbo, asm3.configuration.email(dbo), emails, "", "", r.TITLE, body, "html", exceptions=False)
 
 def execute_title(dbo, title, username = "system", params = None):
@@ -1090,9 +1090,9 @@ class Report:
         l = self.dbo.locale
         s = s.replace("$$TITLE$$", self.title)
         s = s.replace("$$CATEGORY$$", self.category)
-        s = s.replace("$$DATE$$", asm3.i18n.python2display(l, asm3.i18n.now(self.dbo.timezone)))
-        s = s.replace("$$TIME$$", asm3.i18n.format_time_now(self.dbo.timezone))
-        s = s.replace("$$DATETIME$$", asm3.i18n.python2display(l, asm3.i18n.now(self.dbo.timezone)) + " " + asm3.i18n.format_time_now(self.dbo.timezone))
+        s = s.replace("$$DATE$$", asm3.i18n.python2display(l, self.dbo.now()))
+        s = s.replace("$$TIME$$", asm3.i18n.format_time(self.dbo.now()))
+        s = s.replace("$$DATETIME$$", asm3.i18n.python2display(l, self.dbo.now()) + " " + asm3.i18n.format_time(self.dbo.now()))
         s = s.replace("$$VERSION$$", asm3.i18n.get_version())
         s = s.replace("$$USER$$", self.user)
         s = s.replace("$$REGISTEREDTO$$", asm3.configuration.organisation(self.dbo))

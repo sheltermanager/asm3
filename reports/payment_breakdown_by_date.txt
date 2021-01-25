@@ -619,12 +619,14 @@ $VAR to DATE Enter to date$
 
 SELECT owner.OwnerName, 
 SUM(ownerdonation.Donation) AS amt, owner.OwnerAddress, owner.OwnerTown, 
-owner.OwnerCounty, owner.OwnerPostcode 
+owner.OwnerCounty, owner.OwnerPostcode, owner.HomeTelephone, owner.WorkTelephone, 
+owner.MobileTelephone, owner.EmailAddress
 FROM ownerdonation
 INNER JOIN owner ON ownerdonation.OwnerID = owner.ID 
 WHERE ownerdonation.Date >= '$@from$' AND ownerdonation.Date <= '$@to$' 
 GROUP BY owner.OwnerName, owner.OwnerAddress, owner.OwnerTown,
-owner.OwnerCounty, owner.OwnerPostcode
+owner.OwnerCounty, owner.OwnerPostcode, owner.HomeTelephone, owner.WorkTelephone, 
+owner.MobileTelephone, owner.EmailAddress
 ORDER BY owner.OwnerName
 ###
 $$HEADER
@@ -639,8 +641,8 @@ $$BODY
 <td><b>$ownername</b><br />
 $owneraddress<br />
 $ownertown<br />
-$ownercounty<br />
-$ownerpostcode</td>
+$ownercounty $ownerpostcode<br />
+H: $hometelephone, C: $mobiletelephone, E: $emailaddress</td>
 <td>$amt</td>
 </tr>
 BODY$$
@@ -669,7 +671,7 @@ ownerdonation.Date,
 Donation AS amt, ownerdonation.Fee, 
 Donation - COALESCE(VatAmount, 0) - COALESCE(ownerdonation.Fee, 0) AS MoneyNet,
 ownerdonation.VatAmount, owner.OwnerAddress, owner.OwnerTown, 
-owner.OwnerCounty, owner.OwnerPostcode, donationtype.DonationName,
+owner.OwnerCounty, owner.OwnerPostcode, owner.EmailAddress, donationtype.DonationName,
 lksex.Sex, species.SpeciesName, animal.AnimalName, animal.AnimalAge,
 animal.ShelterCode, donationpayment.PaymentName, ownerdonation.ReceiptNumber
 FROM ownerdonation
@@ -711,8 +713,8 @@ $$BODY
 <td><b>$ownername</b><br />
 $owneraddress<br />
 $ownertown<br />
-$ownercounty<br />
-$ownerpostcode</td>
+$ownercounty $ownerpostcode<br/>
+<i>$emailaddress</i></td>
 <td><b>$animalname</b> ($sheltercode)<br />
 $sex $speciesname aged $animalage
 </td>

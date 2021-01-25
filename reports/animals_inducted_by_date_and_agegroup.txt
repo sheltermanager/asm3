@@ -24,7 +24,7 @@ INNER JOIN species ON species.ID = animal.SpeciesID
 INNER JOIN internallocation ON internallocation.ID = animal.ShelterLocation
 LEFT OUTER JOIN owner oo ON animal.OriginalOwnerID = oo.ID
 LEFT OUTER JOIN owner bb ON animal.BroughtInByOwnerID = bb.ID
-WHERE DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' AND NonShelterAnimal = 0
+WHERE DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$ 23:59:59' AND NonShelterAnimal = 0
 ORDER BY SpeciesName, AgeGroup, DateBroughtIn
 ###
 $$HEADER
@@ -108,7 +108,7 @@ INNER JOIN species ON species.ID = animal.SpeciesID
 INNER JOIN internallocation ON internallocation.ID = animal.ShelterLocation
 LEFT OUTER JOIN owner oo ON animal.OriginalOwnerID = oo.ID
 LEFT OUTER JOIN owner bb ON animal.BroughtInByOwnerID = bb.ID
-WHERE DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' AND NonShelterAnimal = 0
+WHERE DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$ 23:59:59' AND NonShelterAnimal = 0
 ORDER BY SpeciesName, AgeGroup, DateBroughtIn
 ###
 $$HEADER

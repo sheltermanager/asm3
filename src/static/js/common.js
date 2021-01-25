@@ -1,13 +1,13 @@
 /*global $, console, performance, jQuery, FileReader, Modernizr, Mousetrap, Path */
-/*global alert, asm, atob, btoa, header, _, escape, unescape, navigator */
+/*global alert, asm, schema, atob, btoa, header, _, escape, unescape, navigator */
 /*global consts: true, common: true, config: true, controller: true, dlgfx: true, format: true, html: true, log: true, validate: true */
 
 "use strict";
 
 const common = {
 
-    /** Speed of all JQuery animations (is there a JQuery default? */
-    fx_speed: 100, 
+    /** Speed of all JQuery animations */
+    fx_speed: 90, 
 
     replace_all: function(str, find, replace) {
         if (!str) { return ""; }
@@ -26,6 +26,10 @@ const common = {
         });
     },
 
+    iif: function(cond, yes, no) {
+        if (cond) { return yes; } else { return no; }
+    },
+
     /**
      * Returns true if any element of array1 is present in array2
      */
@@ -39,6 +43,14 @@ const common = {
             });
         });
         return overlap;
+    },
+
+    /**
+     * Returns true if v is present in array arr.
+     * NB: Types must match, int 1 !== str "1"
+     */
+    array_in: function(v, arr) {
+        return $.inArray(v, arr) != -1;
     },
 
     base64_encode: function(i) {
@@ -587,7 +599,7 @@ const common = {
         }
         common.module_running = o;
         if (o.autofocus && !asm.mobileapp) {
-            setTimeout(function() { $(o.autofocus).focus(); }, 750);
+            $(o.autofocus).focus();
         }
     },
 
@@ -736,6 +748,16 @@ const common = {
         return rv;
     },
 
+    /*Returns a sorted array of column names that are in tablename
+      uses the global schema object. */
+    get_table_columns(tablename) {
+        let a = [];
+        $.each(schema[tablename], function(k, v) {
+            a.push(k);
+        });
+        return a.sort();
+    },
+
     /**
      * Deletes the row with the id given
      * rows: The object to search in
@@ -842,6 +864,8 @@ const common = {
      * creates widgets based on them
      */
     bind_widgets: function() {
+        // Set the default fx speed for all jQuery transitions
+        $.fx.speeds._default = common.fx_speed;
         // Disable effects if the option is set
         if (config.has() && config.bool("DisableEffects")) {
             jQuery.fx.off = true;
@@ -913,9 +937,9 @@ const common = {
         if (asm.locale == "ar" || asm.locale == "he") {
 
             $("html").css("direction", "rtl");
-            var file = 'static/css/asm-rtl.css';
-            var link = document.createElement( "link" );
-            link.href = file
+            let file = 'static/css/asm-rtl.css';
+            let link = document.createElement( "link" );
+            link.href = file;
             link.type = "text/css";
             link.rel = "stylesheet";
             link.media = "screen,print";
@@ -945,6 +969,7 @@ const common = {
         $(".asm-latlong").latlong();
         $(".asm-timebox").time();
         $(".asm-currencybox").currency();
+        $(".asm-phone").phone();
         $(".asm-selectbox, .asm-doubleselectbox, .asm-halfselectbox, .selectbox").select();
         $(".asm-animalchooser").animalchooser();
         $(".asm-animalchoosermulti").animalchoosermulti();
@@ -1521,7 +1546,9 @@ const html = {
         if (a.NONSHELTERANIMAL == 1) { return [ false, _("Non-Shelter") ]; }
         if (a.DECEASEDDATE) { return [ false, _("Deceased") ]; }
         if (a.CRUELTYCASE == 1 && p.indexOf("includecase") == -1) { return [ false, _("Cruelty Case") ]; }
-        if (a.NEUTERED == 0 && p.indexOf("includenonneutered") == -1) { return [ false, _("Unaltered") ]; }
+        if (a.NEUTERED == 0 && p.indexOf("includenonneutered") == -1 && 
+            common.array_in(String(a.SPECIESID), config.str("AlertSpeciesNeuter").split(","))
+            ) { return [ false, _("Unaltered") ]; }
         if (a.HASACTIVERESERVE == 1 && a.RESERVEDOWNERID && p.indexOf("includereserved") == -1) {
             return [ false, _("Reserved") + " " + html.icon("right") + " " + 
                     html.person_link(a.RESERVEDOWNERID, a.RESERVEDOWNERNAME) ];
@@ -1539,7 +1566,7 @@ const html = {
         if (a.ACTIVEMOVEMENTTYPE == 8 && p.indexOf("includeretailer") == -1) { return [ false, _("Retailer") ]; }
         if (a.ACTIVEMOVEMENTTYPE == 1 && a.HASTRIALADOPTION == 1 && p.indexOf("includetrial") == -1) { return [ false, _("Trial Adoption") ]; }
         if (a.ACTIVEMOVEMENTTYPE == 1 && a.HASTRIALADOPTION == 0) { return [ false, _("Adopted") ]; }
-        if (a.ACTIVEMOVEMENTTYPE >= 3 && a.ACTIVEMOVEMENTTYPE <= 7) { return [ false, a.DISPLAYLOCATION ]; }
+        if (a.ACTIVEMOVEMENTTYPE >= 3 && a.ACTIVEMOVEMENTTYPE <= 7) { return [ false, a.DISPLAYLOCATIONNAME ]; }
         if (!a.WEBSITEMEDIANAME && p.indexOf("includewithoutimage") == -1) { return [ false, _("No picture") ]; }
         if (p.indexOf("includewithoutdescription") == -1 && config.bool("PublisherUseComments") && !a.ANIMALCOMMENTS) { return [ false, _("No description") ]; }
         if (p.indexOf("includewithoutdescription") == -1 && !config.bool("PublisherUseComments") && !a.WEBSITEMEDIANOTES) { return [ false, _("No description") ]; }
@@ -1707,6 +1734,10 @@ const html = {
             if (a.FLVRESULT == 2) { p.push(_("FLV+")); }
             s.push(html.icon("positivetest", p.join(" ")));
         }
+        if (config.bool("EmblemRabies") && !a.RABIESTAG && 
+            config.str("AlertSpeciesRabies").split(",").indexOf(String(a.SPECIESID)) != -1) {
+            s.push(html.icon("rabies", _("Rabies not given")));
+        }
         if (config.bool("EmblemSpecialNeeds") && a.HASSPECIALNEEDS == 1) {
             s.push(html.icon("health", _("Special Needs")));
         }
@@ -1869,9 +1900,13 @@ const html = {
             2: _("Delete"),
             3: _("Move"),
             4: _("Login"),
-            5: _("Logout")
+            5: _("Logout"),
+            6: _("View"),
+            7: _("Report"),
+            8: _("Email")
         };
         $.each(controller.audit, function(i, v) {
+            if (!config.bool("ShowViewsInAuditTrail") && v.ACTION == 6) { return; }
             h.push('<tr>');
             h.push('<td>' + format.date(v.AUDITDATE) + ' ' + format.time(v.AUDITDATE) + '</td>');
             h.push('<td>' + v.USERNAME + '</td>');
@@ -2158,7 +2193,7 @@ const html = {
         $.each(l, function(i, v) {
             if (!valueprop) {
                 if (v.indexOf("|") == -1) {
-                    h += "<option>" + v + "</option>";
+                    h += "<option value=\"" + html.title(v) + "\">" + v + "</option>";
                 }
                 else {
                     h += "<option value=\"" + v.split("|")[0] + "\">" + v.split("|")[1] + "</option>";
@@ -2356,7 +2391,7 @@ const html = {
         if (!n) { $(selbrand).fadeOut(); return; }
         $.each(asm.microchipmanufacturers, function(i, v) {
             if (n.length == v.length && new RegExp(v.regex).test(n)) {
-                if (v.locales == "" || $.inArray(asm.locale, v.locales.split(" ")) != -1) {
+                if (v.locales == "" || common.array_in(asm.locale, v.locales.split(" "))) {
                     m = "<span style='font-weight: bold'>" + v.name + "</span>";
                     return false;
                 }
@@ -2373,8 +2408,8 @@ const html = {
     },
 
     /** Returns a list of all US states as a set of option tags */
-    states_us_options: function() {
-        var US_STATES = [ ["Alabama","AL"], ["Alaska","AK"], ["Arizona","AZ"], ["Arkansas","AR"], ["California","CA"], ["Colorado","CO"],
+    states_us_options: function(selected) {
+        let US_STATES = [ ["Alabama","AL"], ["Alaska","AK"], ["Arizona","AZ"], ["Arkansas","AR"], ["California","CA"], ["Colorado","CO"],
             ["Connecticut","CT"], ["Delaware","DE"], ["Florida","FL"], ["Georgia","GA"], ["Hawaii","HI"], ["Idaho","ID"], ["Illinois","IL"],
             ["Indiana","IN"], ["Iowa","IA"], ["Kansas","KS"], ["Kentucky","KY"], ["Louisiana","LA"], ["Maine","ME"], ["Maryland","MD"],
             ["Massachusetts","MA"], ["Michigan","MI"], ["Minnesota","MN"], ["Mississippi","MS"], ["Missouri","MO"], ["Montana","MT"],
@@ -2382,9 +2417,10 @@ const html = {
             ["North Carolina","NC"], ["North Dakota","ND"], ["Ohio","OH"], ["Oklahoma","OK"], ["Oregon","OR"], ["Pennsylvania","PA"],
             ["Rhode Island","RI"], ["South Carolina","SC"], ["South Dakota","SD"], ["Tennessee","TN"], ["Texas","TX"], ["Utah","UT"],
             ["Vermont","VT"], ["Virginia","VA"], ["Washington","WA"], ["West Virginia","WV"], ["Wisconsin","WI"],["Wyoming","WY"]
-        ], opts = [];
+        ], opts = [ '<option value=""></option>' ];
         $.each(US_STATES, function(i, v) {
-            opts.push('<option value="' + v[1] + '">' + v[1] + " - " + v[0] + '</option>');
+            let sel = common.iif(selected == v[1], 'selected="selected"', '');
+            opts.push('<option value="' + v[1] + '" ' + sel + '>' + v[1] + " - " + v[0] + '</option>');
         });
         return opts.join("\n");
     },
@@ -2569,14 +2605,19 @@ const validate = {
      */
     bind_dirty: function() {
         // Watch for control changes and call dirty()
-        var dirtykey = function(event) { if (event.keyCode != 9) { validate.dirty(true); } };
-        var dirtychange = function(event) { validate.dirty(true); };
+        // These are control keys that should not trigger form dirtying (tab, cursor keys, ctrl/shift/alt, windows key, scroll up, etc)
+        // See http://www.javascriptkeycode.com/
+        const ctrl_keys = [ 9, 16, 17, 18, 19, 20, 27, 33, 34, 35, 36, 37, 38, 39, 
+            40, 45, 91, 92, 93, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 144, 145 ];
+        const dirtykey = function(event) { if (ctrl_keys.indexOf(event.keyCode) == -1) { validate.dirty(true); } };
+        const dirtychange = function(event) { validate.dirty(true); };
         validate.active = true;
         $("#asm-content .asm-checkbox").change(dirtychange);
         $("#asm-content .asm-datebox").change(dirtychange);
         $("#asm-content .asm-selectbox, #asm-content .asm-doubleselectbox, #asm-content .asm-halfselectbox, #asm-content .selectbox, #asm-content .asm-bsmselect").change(dirtychange);
         $("#asm-content .asm-textbox, #asm-content .asm-doubletextbox, #asm-content .asm-halftextbox, #asm-content .asm-textarea, #asm-content .asm-richtextarea, #asm-content .asm-textareafixed, #asm-content .asm-textareafixeddouble").change(dirtychange);
-        $("#asm-content .asm-textbox, #asm-content .asm-doubletextbox, #asm-content .asm-halftextbox, #asm-content .asm-textarea, #asm-content .asm-richtextarea, #asm-content .asm-textareafixed, #asm-content .asm-textareafixeddouble").keyup(dirtykey).bind("paste", dirtychange).bind("cut", dirtychange);
+        $("#asm-content .asm-textbox, #asm-content .asm-doubletextbox, #asm-content .asm-halftextbox, #asm-content .asm-textarea, #asm-content .asm-richtextarea, #asm-content .asm-textareafixed, #asm-content .asm-textareafixeddouble").bind("paste", dirtychange).bind("cut", dirtychange);
+        $("#asm-content .asm-textbox, #asm-content .asm-doubletextbox, #asm-content .asm-halftextbox, #asm-content .asm-textarea, #asm-content .asm-richtextarea, #asm-content .asm-textareafixed, #asm-content .asm-textareafixeddouble").keyup(dirtykey);
         // Bind CTRL+S/META+S on Mac to clicking the save button
         Mousetrap.bind(["ctrl+s", "meta+s"], function(e) { $("#button-save").click(); return false; });
         // Watch for links being clicked and the page being navigated away from

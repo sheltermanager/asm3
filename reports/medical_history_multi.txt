@@ -1,0 +1,123 @@
+Medical History (multi)
+###
+Medical
+###
+3309/Any
+###
+Medical regimens, vaccinations, tests, neuter/spay and microchip implants for multiple shelter animals
+###
+en
+###
+$VAR aid ANIMALS$
+
+SELECT * FROM
+(
+
+SELECT
+'Regimen' AS mtype, a.ShelterCode, a.AnimalName, a.ID AS AID,
+t.AnimalType, sp.SpeciesName, a.DisplayLocation,
+am.TreatmentsGiven, am.TotalNumberOfTreatments, am.Dosage, 
+am.TreatmentName, am.StartDate, am.Comments
+FROM animal a
+INNER JOIN animaltype t ON t.ID = a.AnimalTypeID
+INNER JOIN species sp ON sp.ID = a.SpeciesID
+INNER JOIN internallocation il ON il.ID = a.ShelterLocation
+INNER JOIN animalmedical am ON a.ID = am.AnimalID
+WHERE a.ID IN ($@aid$) AND am.StartDate <= '$CURRENT_DATE$'
+
+UNION SELECT
+'Vaccination' AS mtype, a.ShelterCode, a.AnimalName, a.ID AS AID, 
+t.AnimalType, sp.SpeciesName, a.DisplayLocation,
+'1' AS TreatmentsGiven, '1' AS TotalNumberOfTreatments, '' AS Dosage,
+v.VaccinationType AS TreatmentName, av.DateOfVaccination AS StartDate, av.Comments
+FROM animal a
+INNER JOIN animaltype t ON t.ID = a.AnimalTypeID
+INNER JOIN animalvaccination av ON a.ID = av.AnimalID
+INNER JOIN species sp ON sp.ID = a.SpeciesID
+INNER JOIN vaccinationtype v ON av.VaccinationID = v.ID
+INNER JOIN internallocation il ON il.ID = a.ShelterLocation
+WHERE a.ID IN ($@aid$) AND av.DateOfVaccination Is Not Null
+
+UNION SELECT
+'Test' AS mtype, a.ShelterCode, a.AnimalName, a.ID AS AID, 
+t.AnimalType, sp.SpeciesName, a.DisplayLocation,
+'1' AS TreatmentsGiven, '1' AS TotalNumberOfTreatments, 
+tr.ResultName AS Dosage,
+tt.TestName AS TreatmentName, at.DateOfTest AS StartDate, at.Comments
+FROM animal a
+INNER JOIN animaltype t ON t.ID = a.AnimalTypeID
+INNER JOIN animaltest at ON a.ID = at.AnimalID
+INNER JOIN species sp ON sp.ID = a.SpeciesID
+INNER JOIN testtype tt ON at.TestTypeID = tt.ID
+INNER JOIN testresult tr ON at.TestResultID = tr.ID
+INNER JOIN internallocation il ON il.ID = a.ShelterLocation
+WHERE a.ID IN ($@aid$) AND at.DateOfTest Is Not Null
+
+UNION SELECT
+'Microchip' AS mtype, a.ShelterCode, a.AnimalName, a.ID AS AID,
+t.AnimalType, sp.SpeciesName, a.DisplayLocation,
+'1' AS TreatmentsGiven, '1' AS TotalNumberOfTreatments, '' AS Dosage,
+'Microchip Implanted' AS TreatmentName, a.IdentichipDate AS StartDate, a.IdentichipNumber AS Comments
+FROM animal a
+INNER JOIN animaltype t ON t.ID = a.AnimalTypeID
+INNER JOIN species sp ON sp.ID = a.SpeciesID
+INNER JOIN internallocation il ON il.ID = a.ShelterLocation
+WHERE a.ID IN ($@aid$) AND a.IdentichipDate Is Not Null
+
+UNION SELECT
+'Microchip' AS mtype, a.ShelterCode, a.AnimalName, a.ID AS AID,
+t.AnimalType, sp.SpeciesName, a.DisplayLocation,
+'1' AS TreatmentsGiven, '1' AS TotalNumberOfTreatments, '' AS Dosage,
+'Microchip Implanted' AS TreatmentName, a.Identichip2Date AS StartDate, a.Identichip2Number AS Comments
+FROM animal a
+INNER JOIN animaltype t ON t.ID = a.AnimalTypeID
+INNER JOIN species sp ON sp.ID = a.SpeciesID
+INNER JOIN internallocation il ON il.ID = a.ShelterLocation
+WHERE a.ID IN ($@aid$) AND a.Identichip2Date Is Not Null
+
+UNION SELECT
+'Neuter/Spay' AS mtype, a.ShelterCode, a.AnimalName, a.ID AS AID,
+t.AnimalType, sp.SpeciesName, a.DisplayLocation,
+'1' AS TreatmentsGiven, '1' AS TotalNumberOfTreatments, '' AS Dosage,
+'Neutered/Spayed' AS TreatmentName, a.NeuteredDate AS StartDate, '' AS Comments
+FROM animal a
+INNER JOIN animaltype t ON t.ID = a.AnimalTypeID
+INNER JOIN species sp ON sp.ID = a.SpeciesID
+INNER JOIN internallocation il ON il.ID = a.ShelterLocation
+WHERE a.ID IN ($@aid$) AND a.NeuteredDate Is Not Null
+
+) dummy
+ORDER BY AnimalName, StartDate DESC
+
+###
+$$HEADER
+HEADER$$
+
+$$GROUP_AnimalName 
+$$HEAD
+<h2>$AnimalName - $ShelterCode ($AnimalType / $SpeciesName - $DisplayLocation)</h2>
+<table border=1><tr>
+<td><b>Started</b></td>
+<td><b>Therapy</b></td>
+<td><b>Dosage</b></td>
+<td><b>G / R</b></td>
+<td><b>Comments</b></td>
+</tr>
+$$FOOT
+</table>
+<!-- <div style="page-break-after: always"></div> -->
+GROUP$$
+
+$$BODY
+<tr>
+<td>$STARTDATE</td>
+<td><b>$MTYPE: $TREATMENTNAME</b></td>
+<td>$DOSAGE</td>
+<td>$TREATMENTSGIVEN / $TOTALNUMBEROFTREATMENTS</td>
+<td>$COMMENTS</td>
+</tr>
+BODY$$
+
+$$FOOTER
+FOOTER$$
+

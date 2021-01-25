@@ -170,9 +170,11 @@ UNION SELECT
   date(animal.LastChangedDate) AS issuedate,
   'Marked <i>Transfer In</i>, but no person in <i>Transferred From</i> field in Entry section.' AS issue 
 FROM animal
-WHERE animal.nonshelteranimal = 0
+INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
+WHERE animal.datebroughtin > '2000-01-01'
+  AND animal.nonshelteranimal = 0
   AND animal.broughtinbyownerid = 0
-  AND animal.istransfer = 1
+  AND (animal.istransfer = 1 OR entryreason.ReasonName LIKE '%Transf%')
   AND NOT (animal.AdditionalFlags LIKE 'Ignore Issues|%' OR animal.AdditionalFlags  LIKE '%|Ignore Issues|%')
 
 --Alerts when adopted and marked microchip, but no microchip number entered.
@@ -242,13 +244,14 @@ WHERE animal.archived=0
 UNION SELECT 
   animal.animalname AS name,
   animal.sheltercode AS code,
-  date(animal.LastChangedDate) AS issuedate,
+  date(animal.DateBroughtIn) AS issuedate,
   'No Owner in <i>Original Owner</i> field in Entry section on Non-Shelter animal.' AS issue 
 FROM animal
 WHERE  animal.deceaseddate IS NULL
   AND animal.NONSHELTERANIMAL = 1 
-  AND animal.ORIGINALOWNERID = 0 
-  AND datebroughtin > '2019-01-01'
+  AND animal.ORIGINALOWNERID = 0
+  AND NOT animal.animalname LIKE 'Template%'
+  AND datebroughtin > '2010-01-01'
   AND NOT (animal.AdditionalFlags LIKE 'Ignore Issues|%' OR animal.AdditionalFlags  LIKE '%|Ignore Issues|%')
 
 --Reports animals adopted but not altered.
@@ -497,7 +500,18 @@ WHERE animal.deceaseddate IS NULL
   AND animal.activemovementtype = 1
   AND adoption.ISTRIAL = 1
   AND adoption.trialenddate < current_date
+  
+--Alerts when first character of Vaccination Manufacturer is a numeric.
+UNION SELECT 
+animal.animalname as name,
+animal.sheltercode as code,
+  animalvaccination.DateOfVaccination AS issuedate,
+'Vaccination Manufacturer Starts With Numeric' AS ISSUE 
+FROM animal
+INNER JOIN animalvaccination ON animalvaccination.animalid = animal.id
+where substring(animalvaccination.Manufacturer,1,1) in ('0','1','2','3','4','5','6','7','8','9')
 
+-----------------------------OWNER SECTION---------------------------------------------------------
 --This alerts when banned people also do not have the Exclude from bulk mailings flag.
 --You want to make sure that you do not email or mail users that have been banned.
 UNION SELECT
@@ -535,6 +549,26 @@ UNION SELECT
   'Invalid Last Name or Organization Name.' AS issue
 FROM owner
 WHERE ownercode LIKE 'XX%'
+
+--Checks for spaces in first character of name field.  Extra spaces causes missed matches.
+UNION SELECT 
+  owner.ownername AS name,
+  owner.ownercode AS code,
+  date(owner.LastChangedDate) AS issuedate,
+  'Space in first character of name field.' AS issue
+FROM owner
+WHERE (ownerforenames LIKE ' %' OR ownersurname LIKE ' %')
+AND NOT (owner.AdditionalFlags LIKE 'Ignore Issues|%' OR owner.AdditionalFlags  LIKE '%|Ignore Issues|%') 
+
+--Checks for extra spaces in address field.  Extra spaces causes missed matches.
+UNION SELECT 
+  owner.ownername AS name,
+  owner.ownercode AS code,
+  date(owner.LastChangedDate) AS issuedate,
+  'Extra spaces in address field.' AS issue
+FROM owner
+WHERE owneraddress like '%  %'
+AND NOT (owner.AdditionalFlags LIKE 'Ignore Issues|%' OR owner.AdditionalFlags  LIKE '%|Ignore Issues|%')
 
 --Checks for cities entered in ALL upper or lower case.  And common misspellings of city 
 --names.
@@ -631,7 +665,7 @@ UNION SELECT
   o.ownername AS name,
   o.ownercode AS code,
   current_date -1 AS issuedate,
-  'Duplicate Phone Number - (' || ow.ownercode || ').   <font color = "Red">Alerts Only Once.</font>' AS issue
+  '<font color = "Red">Duplicate Phone Number - (' || ow.ownercode || ').   Alerts Only Once.</font>' AS issue
 FROM owner o, owner ow
 WHERE date_trunc('day', o.LASTCHANGEDDATE)  = current_date -1
   AND o.id <> ow.id
@@ -646,7 +680,7 @@ UNION SELECT
   o.ownername AS name,
   o.ownercode AS code,
    current_date -1 AS issuedate,
- 'Duplicate Email address (' || o.emailaddress || '). Please search on Email.  <font color = "Red">Alerts Only Once.</font>' AS issue
+ '<font color = "Red">Duplicate Email address (' || o.emailaddress || '). Please search on Email.  Alerts Only Once.</font>' AS issue
 FROM owner o
 WHERE date_trunc('day', o.LASTCHANGEDDATE) = current_date -1
 AND o.emailaddress <> '' 
@@ -657,14 +691,15 @@ UNION SELECT
   o.ownername AS name,
   o.ownercode AS code,
   date(o.LastChangedDate) as issuedate,
- 'Possible Email Address in Wrong Field.  <font color = "Red">Alerts Only Once.</font>' AS issue
+ '<font color = "Red">Possible Email Address in Wrong Field.  Alerts Only Once.</font>' AS issue
 FROM owner o
 WHERE date_trunc('day', o.LASTCHANGEDDATE) = current_date -1
 AND (o.hometelephone LIKE '%@%' 
 OR o.mobiletelephone LIKE '%@%' 
 OR o.mobiletelephone LIKE '%@%')
 
---Alerts when the license expiration date compared to the issue date is less than 335 days.
+--Alerts when the license expiration date compared to the issue date is less than 335 days
+--or expiration date is less than issue date.
 UNION SELECT 
   owner.ownername AS name,
   owner.ownercode AS code,
@@ -673,6 +708,7 @@ UNION SELECT
 FROM ownerlicence ol
   INNER JOIN owner ON owner.ID = ol.OwnerID
 WHERE extract(days from ol.ExpiryDate - ol.ISSUEDATE) < 335
+OR ol.ExpiryDate < ol.ISSUEDATE
 
 --This looks at the comments field of citation to see if the different ordinance numbers have
 --been entered.  This allows for reporting of individual ordinance violations if needed.
@@ -701,7 +737,7 @@ UNION SELECT DISTINCT
 o.ownername AS name,
   o.ownercode AS code,
  current_date -1 AS issuedate, 
- 'Online Form Attached to Prior Person Record. Compare the data in the First and Last Name fields with the data on the NEW online form.  When ASM finds an email match, it ONLY updates the address and phone info. <font color = "Red">Alerts Only Once.</font>' AS issue
+ '<font color = "Red">Online Form Attached to Prior Person Record. Compare the data in the First and Last Name fields with the data on the NEW online form.  When ASM finds an email match, it ONLY updates the address and phone info. Alerts Only Once.</font>' AS issue
 FROM owner o
 INNER JOIN media m ON m.linkid = o.ID
 WHERE  m.medianotes IN ('Cat Adoption Application', 'Dog Adoption Application','Getting Help - Cat', 'Getting Help - Dog','SNIP Application','Foster Application','Volunteer Application')
@@ -715,7 +751,7 @@ UNION SELECT DISTINCT
   o.ownername AS name,
   o.ownercode AS code,
   date(o.LastChangedDate) as issuedate,
-  'Person Record added but NOT LINKED to any records and has no Flags.  <font color = "Red">Alerts Only Once.</font>' AS issue
+  '<font color = "Red">Person Record added but NOT LINKED to any records and has no Flags.  Alerts Only Once.</font>' AS issue
 FROM owner o
 WHERE date_trunc('day', o.createddate) = current_date - 1
 AND o.additionalflags = '|'
@@ -746,12 +782,12 @@ UNION SELECT
   o.ownername AS name,
   o.ownercode AS code,
   date(o.LastChangedDate) AS issuedate,
-  'Possible Duplicate Person Record - (' || ow.ownercode || ').  Partial address and last or first name match. <font color = "Red">Alerts Only Once.</font>' AS issue
+  '<font color = "Red">Possible Duplicate Person Record - (' || ow.ownercode || ').  Partial address and last or first name match. Alerts Only Once.</font>' AS issue
 FROM owner o, owner ow
 WHERE date_trunc('day', o.LASTCHANGEDDATE) = current_date -1
   AND LOWER(REGEXP_REPLACE(ow.owneraddress, '[^0-9A-Za-z]', '','g')) LIKE SUBSTR(LOWER(REGEXP_REPLACE(o.owneraddress, '[^0-9A-Za-z]', '','g')),1,8) || '%'
 AND o.owneraddress <> ''
-AND (LOWER(o.ownersurname) = LOWER(ow.ownersurname) OR LOWER(o.ownerforenames) = LOWER(ow.ownerforenames))
+AND (LOWER(o.ownersurname) = LOWER(ow.ownersurname) OR (LOWER(o.ownerforenames) = LOWER(ow.ownerforenames) AND ow.ownerforenames <> ''))
 AND o.id <> ow.id
 
 ) dummy

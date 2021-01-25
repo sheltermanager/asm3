@@ -5488,7 +5488,7 @@ msgstr "הרץ"
 
 #: main.js
 msgid ""
-"Go the lookup data screen and add/remove breeds, species and animal types "
+"Go to the lookup data screen and add/remove breeds, species and animal types "
 "according to the animals your shelter deals with."
 msgstr ""
 "עבור למסך טבלאות החיפוש והוסף/הסר גזעים, זנים וסוגי חיות לפי סוגי החיות שבהם "
@@ -5496,13 +5496,13 @@ msgstr ""
 
 #: main.js
 msgid ""
-"Go the options screen and set your shelter's contact details and other "
+"Go to the options screen and set your shelter's contact details and other "
 "settings."
 msgstr ""
 "עבור למסך ההגדרות על מנת לקבוע את פרטי יצירת הקשר עם המקלט שלך והגדרות אחרות."
 
 #: main.js
-msgid "Go the system users screen and add user accounts for your staff."
+msgid "Go to the system users screen and add user accounts for your staff."
 msgstr "עבור למסך משתמשי המערכת כדי להוסיף חשבונות משתמש לאנשי הצוות שלך."
 
 #: dbupdate.py

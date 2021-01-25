@@ -67,6 +67,9 @@ nextyearcode = 1
 # Dictionary of tables and next ID
 ids = {}
 
+# Dictionary of jurisdictions
+jurisdictions = {}
+
 # Dictionary of locations
 locations = {}
 
@@ -264,6 +267,9 @@ def nulltostr(s):
     else:
         return s
 
+def file_exists(f):
+    return os.path.exists(f)
+
 def fw(s):
     """ returns the first word """
     if s is None: return s
@@ -385,7 +391,14 @@ def stderr_summary(animals=[], animalmedicals=[], animalvaccinations=[], animalt
         offshelter = 0
         dead = 0
         euth = 0
+        dupcodes = 0
+        codes = set()
+        dups = []
         for a in animals:
+            if a.ShelterCode in codes: 
+                dupcodes += 1
+                dups.append(a.ShelterCode)
+            codes.add(a.ShelterCode)
             if a.Archived == 0:
                 onshelter += 1
             elif a.Archived == 1 and a.DeceasedDate is None:
@@ -395,6 +408,8 @@ def stderr_summary(animals=[], animalmedicals=[], animalvaccinations=[], animalt
             elif a.DeceasedDate is not None and a.PutToSleep == 1:
                 euth += 1
         stderr("%d animals (%d on-shelter, %d off-shelter, %d dead, %d euthanised)" % (len(animals), onshelter, offshelter, dead, euth))
+        if dupcodes > 0:
+            stderr("WARNING: %d duplicate shelter codes (%s .. %s)" % (dupcodes, dups[0], dups[-1]))
     o(animalmedicals, "medicals")
     o(animalvaccinations, "vaccinations")
     o(animaltests, "tests")
@@ -1044,6 +1059,15 @@ def incidenttype_from_db(name, default = 1):
     """ Looks up the type in the db when the conversion is run, assign to IncidentTypeID """
     return "COALESCE((SELECT ID FROM incidenttype WHERE lower(IncidentName) LIKE lower(%s) LIMIT 1), %d)" % (ds(name.strip()), default)
 
+def jurisdiction_id_for_name(name, createIfNotExist = True):
+    global jurisdictions
+    if name.strip() == "": return 1
+    if name in jurisdictions:
+        return jurisdictions[name].ID
+    else:
+        jurisdictions[name] = Jurisdiction(Name=name)
+        return jurisdictions[name].ID
+
 def jurisdiction_from_db(name, default = 1):
     """ Looks up the jurisdiction in the db when the conversion is run, assign to JurisdictionID """
     return "COALESCE((SELECT ID FROM jurisdiction WHERE lower(JurisdictionName) LIKE lower('%s') LIMIT 1), %d)" % (name.strip(), default)
@@ -1163,6 +1187,12 @@ def type_id_for_name(name):
         if tname.upper().find(name.upper()) != -1:
             return int(tid)
     return 2
+
+def type_id_for_species_id(sid):
+    if sid is None: return 2
+    if sid == 1: return 2
+    elif sid == 2: return 11
+    else: return 13
 
 def type_name_for_id(id):
     for tid, tname in types:
@@ -1709,6 +1739,23 @@ class EntryReason:
             )
         return makesql("entryreason", s)
 
+class Jurisdiction:
+    ID = 0
+    Name = ""
+    Description = None
+    def __init__(self, ID = 0, Name = "", Description = ""):
+        self.ID = ID
+        if ID == 0: self.ID = getid("jurisdiction")
+        self.Name = Name
+        self.Description = Description
+    def __str__(self):
+        s = (
+            ( "ID", di(self.ID) ),
+            ( "JurisdictionName", ds(self.Name) ),
+            ( "JurisdictionDescription", ds(self.Description) )
+            )
+        return makesql("jurisdiction", s)
+
 class Location:
     ID = 0
     Name = ""
@@ -1819,6 +1866,7 @@ class AnimalControl:
     DispatchLatLong = ""
     DispatchedACO = ""
     DispatchDateTime = None
+    JurisdictionID = 0
     PickupLocationID = 0
     RespondedDateTime = None
     FollowupDateTime = None
@@ -1861,6 +1909,7 @@ class AnimalControl:
             ( "DispatchPostcode", ds(self.DispatchPostcode) ),
             ( "DispatchLatLong", ds(self.DispatchLatLong) ),
             ( "DispatchedACO", ds(self.DispatchedACO) ),
+            ( "JurisdictionID", di(self.JurisdictionID) ),
             ( "PickupLocationID", di(self.PickupLocationID) ),
             ( "DispatchDateTime", ddt(self.DispatchDateTime) ),
             ( "RespondedDateTime", ddt(self.RespondedDateTime) ),
@@ -2029,6 +2078,7 @@ class Animal:
     IsDOA = 0
     IsTransfer = 0
     IsPickup = 0
+    JurisdictionID = 0
     PickupLocationID = 0
     PickupAddress = ""
     IsGoodWithCats = 2
@@ -2167,6 +2217,7 @@ class Animal:
             ( "IsDOA", di(self.IsDOA) ),
             ( "IsTransfer", di(self.IsTransfer) ),
             ( "IsPickup", di(self.IsPickup) ),
+            ( "JurisdictionID", di(self.JurisdictionID) ),
             ( "PickupLocationID", di(self.PickupLocationID) ),
             ( "PickupAddress", ds(self.PickupAddress) ),
             ( "IsGoodWithCats", di(self.IsGoodWithCats) ),

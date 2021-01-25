@@ -83,10 +83,10 @@ class PetRescuePublisher(AbstractPublisher):
         animals = self.getMatchingAnimals(includeAdditionalFields=True)
         processed = []
 
+        # Log that there were no animals, we still need to check
+        # previously sent listings
         if len(animals) == 0:
-            self.setLastError("No animals found to publish.")
-            self.cleanup()
-            return
+            self.log("No animals found to publish.")
 
         headers = { "Authorization": "Token token=%s" % token, "Accept": "*/*" }
 

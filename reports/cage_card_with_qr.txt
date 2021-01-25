@@ -1,6 +1,6 @@
 Cage Card with QR
 ###
-Auditing
+Inventories
 ###
 3009/Any omitcriteria omitheaderfooter
 ###

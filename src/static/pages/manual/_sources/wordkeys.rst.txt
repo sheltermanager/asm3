@@ -28,6 +28,11 @@ OrganisationEmail / OrganizationEmail
    The shelter's email address
 Date
     Today's date
+Signature
+    A signature:placeholder image for inserting a signature later (default
+    150px wide)
+Signature100 /Signature150 / Signature200 / Signature300
+    Controls the max width of the signature while retaining aspect ratio
 Username
     The current user generating the document
 UserRealname
@@ -35,7 +40,10 @@ UserRealname
 UserEmailAddress
     The email address of the user generating the document
 UserSignature
-    An image tag containing the electronic signature of the user generating the document
+    An image tag containing the electronic signature of the user generating the
+    document (default 150px wide)
+UserSignature100 / UserSignature150 / UserSignature200 / UserSignature300
+    Controls the max width of the signature while retaining aspect ratio
 UserSignatureSrc
     Just the src attribute value so the signature can be applied to your own
     image tag (eg: to override size)
@@ -367,6 +375,10 @@ DisplayDogsIfBadWith
     Outputs "Dogs" if this animal is bad with dogs
 DisplayChildrenIfBadWith
     Outputs "Children" if this animal is bad with children
+DisplayXIfCat / DisplayXIfDog / DisplayXIfRabbit / DisplayXIfMale / DisplayXIfFemale
+    Outputs an X if this animal is a cat, dog, rabbit, male or female (used for form boxes)
+DisplayXIfPedigree / DisplayXIfCrossbreed
+    Outputs an X if this animal is a pure or crossbreed
 EntryCategory
     The entry category of the animal 
 ReasonForEntry
@@ -451,6 +463,8 @@ VaccinationBatch
     The batch number from the vaccination adminstered
 VaccinationManufacturer
     The manufacturer of the vaccine
+VaccinationRabiesTag
+    The rabies tag number accompanying this vaccine
 VaccinationCost
     The cost of this vaccine
 VaccinationComments
@@ -883,6 +897,8 @@ OwnerID
     The ID of the person record
 IDCheck
     “Yes” if the owner has been homechecked 
+HomeCheckedDate
+    The date this person was homechecked
 HomeCheckedByName
     The name of the person who homechecked this person
 HomeCheckedByEmail
@@ -1277,7 +1293,7 @@ CanAffordDonation
     Yes/No - whether the person can afford to make a donation
 Urgency
     An urgency rating for this waiting list item
-WaitingListComments
+Comments
     Any comments on this waiting list entry
 DocumentImgLink
     A photo of the animal if one exists. 200/300/400/500 can also be suffixed
@@ -1346,6 +1362,8 @@ AnimalMedicals
    Inserts a table containing all of the animal's medical treatments
 AnimalLogs
    Inserts a table containing all of the animal's log entries
+AnimalLogsTYPE
+   Inserts a table containing all of the animal's log entries of TYPE
 IncidentLogs
    Inserts a table containing all of the incident's log entries
 LitterMates

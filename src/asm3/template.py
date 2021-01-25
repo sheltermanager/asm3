@@ -103,11 +103,18 @@ def delete_document_template(dbo, username, dtid):
 def rename_document_template(dbo, username, dtid, newname):
     """
     Renames a document template.
+    If there is a path component (starts with forward slash)
+    then the path is extracted and updated first.
     """
-    if not newname.endswith(".html") and not newname.endswith(".odt"): newname += ".html"
-    dbo.update("templatedocument", dtid, {
-        "Name":     newname
-    })
+    path = ""
+    name = newname
+    if name.startswith("/"):
+        path = name[0:newname.rfind("/")+1]
+        name = name[newname.rfind("/")+1:]
+    if not name.endswith(".html") and not name.endswith(".odt"): name += ".html"
+    d = { "Name": name }
+    if path != "": d["Path"] = path
+    dbo.update("templatedocument", dtid, d)
     asm3.audit.edit(dbo, username, "templatedocument", dtid, "", "rename %d to %s" % (dtid, newname))
 
 def update_document_template_content(dbo, dtid, content):

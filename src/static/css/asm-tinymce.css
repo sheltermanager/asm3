@@ -1,18 +1,31 @@
 
+/** The default font size controls line-height, this has to be 11px to match previous versions
+ *  of TinyMCE or everyone's documents get taller. */
+.mce-content-body { 
+    font-family: sans-serif; 
+    font-size: 11px; 
+}
+
+/** TinyMCE 5+ sets border-collapse, which hides any explicitly styled borders in table cells */
+table {
+    border-collapse: separate;
+}
+
 @media print {
+    /** Make our visual page break invisible but still force a break during printing */
     .mce-pagebreak {
         display: block;
         width: 100%;
         height: 0px;
         background-image: none;
-        border: 0 !important;
+        border: 0;
         margin: 0;
         page-break-before: always; clear: both;
     }
-
-    .mce-item-table, .mce-item-table td {
-        border: 0 !important;
-    }
+    /** TinyMCE adds an outline to selected tables and img - these can be printed by accident */
+    .mce-content-body table, .mce-content-body img { outline: 0 !important; }
+    /** Resize handles can be printed if an img or table is selected during print */
+    .mce-resizehandle { display: none; }
 }
 
 @media screen {
@@ -20,7 +33,7 @@
         display: block;
         width: 100%;
         height: 12px;
-        background-image: url(static/images/ui/tinymce-pagebreak.png);
+        background-image: url(../images/ui/tinymce-pagebreak.png);
         background-position: center;
         border: 0;
         margin-top: 15px;

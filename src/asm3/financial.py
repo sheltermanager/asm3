@@ -568,8 +568,11 @@ def get_vouchers(dbo, offset = "i31"):
     offset is i to go backwards on issue date
     or e to go forwards on expiry date
     or p to go backwards on presented date
+    or a for unpresented
     """
     offsetdays = asm3.utils.cint(offset[1:])
+    if offset.startswith("a"):
+        return dbo.query(get_voucher_query(dbo) + " WHERE ov.DatePresented Is Null ORDER BY ov.DatePresented DESC")
     if offset.startswith("i"):
         return dbo.query(get_voucher_query(dbo) + " WHERE ov.DateIssued >= ? AND ov.DateIssued <= ? ORDER BY ov.DateIssued DESC", 
             (dbo.today(offsetdays*-1), dbo.today()))
@@ -723,7 +726,7 @@ def receive_donation(dbo, username, did, chequenumber = "", amount = 0, vat = 0,
     if id is None or did == "": return
     row = dbo.first_row(dbo.query("SELECT * FROM ownerdonation WHERE ID = ?", [did]))
     
-    d = { "Date": dbo.today() }
+    d = { "Date": dbo.today(), "AnimalID": row.ANIMALID, "OwnerID": row.OWNERID }
     if fee > 0: d["Fee"] = fee
     if amount > 0: d["Donation"] = amount
     if vat > 0: d["VAT"] = amount

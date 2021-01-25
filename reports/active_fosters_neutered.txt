@@ -10,7 +10,7 @@ en
 ###
 SELECT
 OwnerName AS FosteredTo,
-OwnerAddress, HomeTelephone, MobileTelephone,
+OwnerAddress, OwnerTown, OwnerCounty, OwnerPostcode, HomeTelephone, MobileTelephone,
 ShelterCode, AnimalName,
 (SELECT Sex FROM lksex WHERE ID = animal.Sex) AS Sex,
 (SELECT BaseColour FROM basecolour WHERE ID = animal.BaseColourID) AS Colour,
@@ -46,7 +46,7 @@ HEADER$$
 $$GROUP_FosteredTo
 $$HEAD
 <h2>$FOSTEREDTO</h2>
-<p><i>$OWNERADDRESS</i>, Phone: $HOMETELEPHONE, Cell: $MOBILETELEPHONE</p>
+<p><i>$OWNERADDRESS, $OWNERTOWN $OWNERCOUNTY $OWNERPOSTCODE</i>, Phone: $HOMETELEPHONE, Cell: $MOBILETELEPHONE</p>
 <hr />
 $$FOOT
 <p>Total animals on foster with $FOSTEREDTO: {COUNT.ShelterCode}</p>

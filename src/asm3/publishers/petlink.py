@@ -10,6 +10,10 @@ import sys
 
 UPLOAD_URL = PETLINK_BASE_URL + "api/restapi/signup/mass-import?filename=import.csv&mediumId=sheltermanager"
 
+VALIDATE_YES = 0
+VALIDATE_NO = 1
+VALIDATE_FAIL = 2
+
 class PetLinkPublisher(AbstractPublisher):
     """
     Handles publishing of updated microchip info to PetLink.net
@@ -63,6 +67,9 @@ class PetLinkPublisher(AbstractPublisher):
             self.setLastError("No animals found to publish.")
             return
 
+        cutoffdays = asm3.configuration.petlink_cutoff_days(self.dbo)
+        if cutoffdays == 0: cutoffdays = -1095 # default cutoff is 3 years, note that it's a negative number
+
         anCount = 0
         csv = []
         processed_animals = []
@@ -85,14 +92,16 @@ class PetLinkPublisher(AbstractPublisher):
                     self.resetPublisherProgress()
                     return
 
-                if not self.validate(an): continue
-                csv.append( self.processAnimal(an) )
-
-                # Remember we included this one
-                processed_animals.append(an)
-
-                # Mark success in the log
-                self.logSuccess("Processed: %s: %s (%d of %d)" % ( an["SHELTERCODE"], an["ANIMALNAME"], anCount, len(animals)))
+                v = self.validate(an, cutoffdays)
+                if v == VALIDATE_NO: 
+                    continue
+                elif v == VALIDATE_YES:
+                    csv.append( self.processAnimal(an) )
+                    processed_animals.append(an)
+                    self.logSuccess("Processed: %s: %s (%d of %d)" % ( \
+                        an["SHELTERCODE"], an["ANIMALNAME"], anCount, len(animals)))
+                elif v == VALIDATE_FAIL:
+                    failed_animals.append(an)
 
             except Exception as err:
                 self.logError("Failed processing animal: %s, %s" % (str(an["SHELTERCODE"]), err), sys.exc_info())
@@ -279,27 +288,30 @@ class PetLinkPublisher(AbstractPublisher):
         line.append("\"%s\"" % an["BASECOLOURNAME"])
         return self.csvLine(line)
 
-    def validate(self, an):
-        """ Validate an animal record is ok to send """
+    def validate(self, an, cutoffdays):
+        """ Validate an animal record is ok to send.
+            an: The record
+            cutoffdays: Negative number of days to check against service date
+        """
 
         # If the microchip number isn't 15 digits, skip it
         if len(an["IDENTICHIPNUMBER"].strip()) != 15:
             self.logError("Chip number failed validation (%s not 15 digits), skipping." % an["IDENTICHIPNUMBER"])
-            return False
+            return VALIDATE_NO
 
         # Validate certain items aren't blank so we aren't trying to register
         # things that PetLink will bounce back anyway
         if asm3.utils.nulltostr(an["CURRENTOWNERTOWN"]).strip() == "":
             self.logError("City for the new owner is blank, cannot process")
-            return False 
+            return VALIDATE_NO 
 
         if asm3.utils.nulltostr(an["CURRENTOWNERCOUNTY"]).strip() == "":
             self.logError("State for the new owner is blank, cannot process")
-            return False 
+            return VALIDATE_NO 
 
         if asm3.utils.nulltostr(an["CURRENTOWNERPOSTCODE"]).strip() == "":
             self.logError("Zipcode for the new owner is blank, cannot process")
-            return False
+            return VALIDATE_NO
 
         # If there's no email or phone, PetLink won't accept it
         email = asm3.utils.nulltostr(an["CURRENTOWNEREMAILADDRESS"]).strip()
@@ -308,14 +320,25 @@ class PetLinkPublisher(AbstractPublisher):
         mobilephone = asm3.utils.nulltostr(an["CURRENTOWNERMOBILETELEPHONE"]).strip()
         if email == "" and homephone == "" and workphone == "" and mobilephone == "":
             self.logError("No email address or phone number for owner, skipping.")
-            return False
+            return VALIDATE_NO
        
         # If there's no phone, we can't set the chip password so skip it
         if homephone == "" and workphone == "" and mobilephone == "":
             self.logError("No phone number for owner, skipping.")
-            return False
+            return VALIDATE_NO
 
-        return True
+        # If the action triggering this registration is older than our cutoff, 
+        # not only fail validation, but return a value of FAIL so that this record
+        # is marked with the error and we won't try again until something changes
+        # (prevents old records continually being checked)
+        servicedate = an["ACTIVEMOVEMENTDATE"] or an["MOSTRECENTENTRYDATE"]
+        if an["NONSHELTERANIMAL"] == 1: servicedate = an["IDENTICHIPDATE"]
+        if servicedate < self.dbo.today(offset=cutoffdays):
+            an["FAILMESSAGE"] = "Service date is older than %s days, marking failed" % cutoffdays
+            self.logError(an["FAILMESSAGE"])
+            return VALIDATE_FAIL
+
+        return VALIDATE_YES
 
 
 

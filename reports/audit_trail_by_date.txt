@@ -1,10 +1,10 @@
-Audit Trail: All Changes by Date
+Audit Trail: All Actions by Date
 ###
 Auditing
 ###
-33902/Any
+34200/Any
 ###
-All record creations, changes and deletions between two dates, grouped by user.
+All audited actions between two dates, grouped by user.
 ###
 en
 ###
@@ -15,6 +15,9 @@ WHEN Action = 2 THEN 'DELETE'
 WHEN Action = 3 THEN 'MOVE'
 WHEN Action = 4 THEN 'LOGIN'
 WHEN Action = 5 THEN 'LOGOUT'
+WHEN Action = 6 THEN 'VIEW RECORD'
+WHEN Action = 7 THEN 'VIEW REPORT'
+WHEN Action = 8 THEN 'SEND EMAIL'
 END AS Action
 FROM audittrail
 WHERE
@@ -45,49 +48,6 @@ $$BODY
 <td>$ACTION</td>
 <td>$TABLENAME</td>
 <td>$LINKID</td>
-<td>$DESCRIPTION</td>
-</tr>
-BODY$$
-
-$$FOOTER
-FOOTER$$
-&&&
-Audit Trail: All Changes by Date
-###
-Auditing
-###
-2721/Any
-###
-All record creations, changes and deletions between two dates, grouped by user.
-###
-en
-###
-SELECT AuditDate, UserName, TableName, Description
-FROM audittrail
-WHERE
-AuditDate >= '$ASK DATE Enter the from date$' AND AuditDate <= '$ASK DATE Enter the to date$ 23:59:59'
-ORDER BY UserName, AuditDate
-###
-$$HEADER
-HEADER$$
-
-$$GROUP_UserName
-$$HEAD
-<h2>$UserName</h2>
-<table>
-<tr>
-<td><b>Date</b></td>
-<td><b>Table</b></td>
-<td></td>
-</tr>
-$$FOOT
-</table>
-GROUP$$
-
-$$BODY
-<tr>
-<td>$AUDITDATE</td>
-<td>$TABLENAME</td>
 <td>$DESCRIPTION</td>
 </tr>
 BODY$$

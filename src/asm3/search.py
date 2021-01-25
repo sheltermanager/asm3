@@ -43,7 +43,7 @@ def search(dbo, session, q):
     onshelter/os, notforadoption, hold, holdtoday, quarantine, deceased, 
     forpublish, people, vets, retailers, staff, fosterers, volunteers, 
     shelters, aco, banned, homechecked, homecheckers, members, donors, drivers,
-    reservenohomecheck, notmicrochipped, unsigned, signed
+    reservenohomecheck, norabies, notmicrochipped, unsigned, signed
 
     returns a tuple of:
     results, timetaken, explain, sortname
@@ -260,6 +260,11 @@ def search(dbo, session, q):
         explain = _("All animals who have not been microchipped", l)
         if viewanimal:
             ar(asm3.animal.get_animals_not_microchipped(dbo), "ANIMAL", animalsort)
+
+    elif q == "norabies":
+        explain = _("All animals who have not received a rabies vaccination", l)
+        if viewanimal:
+            ar(asm3.animal.get_animals_no_rabies(dbo), "ANIMAL", animalsort)
 
     elif q == "hold":
         explain = _("All animals who are currently held in case of reclaim.", l)

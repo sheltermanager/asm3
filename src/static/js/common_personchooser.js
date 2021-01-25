@@ -72,7 +72,7 @@ $.widget("asm.personchooser", {
             '</tr>',
             '</table>',
             '<div class="personchooser-similar" style="display: none" title="' + html.title(_("Similar Person")) + '">',
-                '<p><span class="ui-icon ui-icon-alert" style="float: left; margin: 0 7px 20px 0;"></span>',
+                '<p><span class="ui-icon ui-icon-alert"></span>',
                 _("This person is very similar to another person on file, carry on creating this record?"),
                 '<br /><br />',
                 '<span class="similar-person"></span>',
@@ -138,7 +138,12 @@ $.widget("asm.personchooser", {
             '</tr>',
             '<tr>',
             '<td><label>' + _("State") + '</label></td>',
-            '<td><input class="asm-textbox chooser personchooser-county" maxlength="100" data="county" type="textbox" /></td>',
+            '<td>',
+            common.iif(config.bool("USStateCodes"),
+                '<select id="county" data="county" class="asm-selectbox chooser personchooser-county">' +
+                html.states_us_options(config.str("OrganisationCounty")) + '</select>',
+                '<input type="text" id="county" data="county" maxlength="100" class="asm-textbox chooser personchooser-county" />'),
+            '</td>',
             '</tr>',
             '<tr>',
             '<td><label>' + _("Zipcode") + '</label></td>',
@@ -150,15 +155,15 @@ $.widget("asm.personchooser", {
             '</tr>',
             '<tr>',
             '<td><label>' + _("Home Phone") + '</label></td>',
-            '<td><input class="asm-textbox chooser" data="hometelephone" type="textbox" /></td>',
+            '<td><input class="asm-textbox asm-phone chooser" data="hometelephone" type="textbox" /></td>',
             '</tr>',
             '<tr>',
             '<td><label>' + _("Work Phone") + '</label></td>',
-            '<td><input class="asm-textbox chooser" data="worktelephone" type="textbox" /></td>',
+            '<td><input class="asm-textbox asm-phone chooser" data="worktelephone" type="textbox" /></td>',
             '</tr>',
             '<tr>',
             '<td><label>' + _("Cell Phone") + '</label></td>',
-            '<td><input class="asm-textbox chooser" data="mobiletelephone" type="textbox" /></td>',
+            '<td><input class="asm-textbox asm-phone chooser" data="mobiletelephone" type="textbox" /></td>',
             '</tr>',
             '<tr>',
             '<td><label>' + _("Email Address") + '</label></td>',
@@ -368,16 +373,14 @@ $.widget("asm.personchooser", {
                 // Add person flag options to the screen
                 html.person_flag_options(null, self.options.personflags, dialogadd.find(".personchooser-flags"));
                 // Setup autocomplete widgets with the towns/counties
-                dialogadd.find(".personchooser-town").autocomplete({ source: html.decode(self.options.towns).split("|") });
-                dialogadd.find(".personchooser-county").autocomplete({ source: html.decode(self.options.counties).split("|") });
+                dialogadd.find(".personchooser-town").autocomplete({ source: self.options.towns });
+                if (!config.bool("USStateCodes")) {
+                    dialogadd.find(".personchooser-county").autocomplete({ source: self.options.counties });
+                }
                 // When the user changes a town, suggest a county if it's blank
                 dialogadd.find(".personchooser-town").blur(function() {
                     if (dialogadd.find(".personchooser-county").val() == "") {
-                        var tc = html.decode(self.options.towncounties);
-                        var idx = tc.indexOf(dialogadd.find(".personchooser-town").val() + "^");
-                        if (idx != -1) {
-                            dialogadd.find(".personchooser-county").val(tc.substring(tc.indexOf("^^", idx) + 2, tc.indexOf("|", idx)));
-                        }
+                        dialogadd.find(".personchooser-county").val(self.options.towncounties[dialogadd.find(".personchooser-town").val()]);
                     }
                 });
                 // Setup person flag select widget

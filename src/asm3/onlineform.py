@@ -163,7 +163,8 @@ def get_onlineform_html(dbo, formid, completedocument = True):
             h.append('</td>')
             h.append('<td class="asm-onlineform-td">')
         if f.FIELDTYPE == FIELDTYPE_YESNO:
-            h.append('<select class="asm-onlineform-yesno" id="%s" name="%s" title="%s"><option>%s</option><option>%s</option></select>' % \
+            h.append('<select class="asm-onlineform-yesno" id="%s" name="%s" title="%s">' \
+                '<option value=""></option><option>%s</option><option>%s</option></select>' % \
                 ( fid, cname, asm3.utils.nulltostr(f.TOOLTIP), asm3.i18n._("No", l), asm3.i18n._("Yes", l)))
         elif f.FIELDTYPE == FIELDTYPE_CHECKBOX:
             h.append('<input class="asm-onlineform-check" type="checkbox" id="%s" name="%s" %s /> <label for="%s">%s</label>' % \
@@ -200,7 +201,8 @@ def get_onlineform_html(dbo, formid, completedocument = True):
             h.append('<div class="asm-onlineform-checkgroup" data-name="%s" data-required="%s" style="display: inline-block">' % (cname, asm3.utils.iif(required != "", "required", "")))
             for i, lv in enumerate(asm3.utils.nulltostr(f.LOOKUPS).split("|")):
                 rid = "%s_%s" % (fid, i)
-                h.append('<input type="checkbox" id="%s" data="%s" /> <label for="%s">%s</label><br />' % (rid, lv, rid, lv))
+                rname = "%s%s_" % (f.FIELDNAME, i)
+                h.append('<input type="checkbox" id="%s" data="%s" name="%s"/> <label for="%s">%s</label><br />' % (rid, lv, rname, rid, lv))
             h.append('</div>')
         elif f.FIELDTYPE == FIELDTYPE_SHELTERANIMAL:
             h.append('<select class="asm-onlineform-shelteranimal" id="%s" name="%s" title="%s" %s>' % ( fid, cname, asm3.utils.nulltostr(f.TOOLTIP), required))
@@ -528,7 +530,7 @@ def insert_onlineform_from_form(dbo, username, post):
         "RedirectUrlAfterPOST": post["redirect"],
         "SetOwnerFlags":        post["flags"],
         "EmailAddress":         post["email"],
-        "EmailSubmitter":       post.boolean("emailsubmitter"),
+        "EmailSubmitter":       post.integer("emailsubmitter"),
         "*EmailMessage":        post["emailmessage"],
         "*Header":              post["header"],
         "*Footer":              post["footer"],
@@ -544,7 +546,7 @@ def update_onlineform_from_form(dbo, username, post):
         "RedirectUrlAfterPOST": post["redirect"],
         "SetOwnerFlags":        post["flags"],
         "EmailAddress":         post["email"],
-        "EmailSubmitter":       post.boolean("emailsubmitter"),
+        "EmailSubmitter":       post.integer("emailsubmitter"),
         "*EmailMessage":        post["emailmessage"],
         "*Header":              post["header"],
         "*Footer":              post["footer"],
@@ -647,7 +649,7 @@ def insert_onlineformincoming_from_form(dbo, post, remoteip):
     IGNORE_FIELDS = [ JSKEY_NAME, "formname", "flags", "redirect", "account", "filechooser", "method" ]
     l = dbo.locale
     formname = post["formname"]
-    posteddate = asm3.i18n.now(dbo.timezone)
+    posteddate = dbo.now()
     flags = post["flags"]
     submitteremail = ""
     emailsubmissionto = ""
@@ -753,7 +755,7 @@ def insert_onlineformincoming_from_form(dbo, post, remoteip):
     })
 
     # Do we have a valid emailaddress for the submitter and EmailSubmitter is set? 
-    # If so, send them a copy of their submission
+    # If so, send them a confirmation
     emailsubmitter = dbo.query_int("SELECT o.EmailSubmitter FROM onlineform o " \
         "INNER JOIN onlineformincoming oi ON oi.FormName = o.Name " \
         "WHERE oi.CollationID = ?", [collationid])
@@ -761,14 +763,18 @@ def insert_onlineformincoming_from_form(dbo, post, remoteip):
     # The submitted form for including in emails (images are attached so not included)
     formdata = get_onlineformincoming_html_print(dbo, [collationid,], include_images=False)
 
-    if submitteremail != "" and submitteremail.find("@") != -1 and emailsubmitter == 1:
-        # Get the confirmation message. Prepend it to a copy of the submission
+    if submitteremail != "" and submitteremail.find("@") != -1 and emailsubmitter != 0:
+        # Get the confirmation message
         body = dbo.query_string("SELECT o.EmailMessage FROM onlineform o " \
             "INNER JOIN onlineformincoming oi ON oi.FormName = o.Name " \
             "WHERE oi.CollationID = ?", [collationid])
-        body += "\n" + formdata
+        attachments = []
+        # Submission option 1 = include a copy of the form submission
+        if emailsubmitter == 1: 
+            body += "\n" + formdata
+            attachments = images
         asm3.utils.send_email(dbo, asm3.configuration.email(dbo), submitteremail, "", "", asm3.i18n._("Submission received: {0}", l).format(formname), 
-            body, "html", images, exceptions=False)
+            body, "html", attachments, exceptions=False)
 
     # Did the original form specify some email addresses to send 
     # incoming submissions to?
@@ -780,11 +786,11 @@ def insert_onlineformincoming_from_form(dbo, post, remoteip):
         # use the submitter email as reply-to so staff and can reply to their
         # copy of the message and email the applicant/submitter.
         # It's important that this is ONLY done if the option is on to send the submitter
-        # a copy because it avoids situations where people use forms for internal process
+        # confirmation because it avoids situations where people use forms for internal process
         # and want to use an applicant's details but don't want them to see it or accidentally
         # reply to them about it (prime example, forms related to performing homechecks)
         replyto = ""
-        if emailsubmitter == 1: replyto = submitteremail 
+        if emailsubmitter != 0: replyto = submitteremail 
         if replyto == "": replyto = asm3.configuration.email(dbo)
         asm3.utils.send_email(dbo, replyto, email, "", "", "%s - %s" % (formname, ", ".join(preview)), 
             formdata, "html", images, exceptions=False)
@@ -927,7 +933,7 @@ def create_animal(dbo, username, collationid):
     The return value is a tuple of collationid, animalid, sheltercode - animalname, status
     status is 0 for created, 1 for updated existing
     "animalname", "code", "microchip", "age", "dateofbirth", "entryreason", "markings", 
-    "comments", "hiddencomments", "type", "species", "breed1", "breed", "color", "sex"
+    "comments", "hiddencomments", "type", "species", "breed1", "breed2", "color", "sex"
     """
     l = dbo.locale
     fields = get_onlineformincoming_detail(dbo, collationid)
@@ -953,6 +959,7 @@ def create_animal(dbo, username, collationid):
         if f.FIELDNAME == "breed1": d["breed1"] = str(guess_breed(dbo, f.VALUE))
         if f.FIELDNAME == "breed2": d["breed2"] = str(guess_breed(dbo, f.VALUE))
         if f.FIELDNAME == "color": d["basecolour"] = str(guess_colour(dbo, f.VALUE))
+        if f.FIELDNAME == "colour": d["basecolour"] = str(guess_colour(dbo, f.VALUE))
         if f.FIELDNAME == "sex": d["sex"] = str(guess_sex(dbo, f.VALUE))
         if f.FIELDNAME == "size": d["size"] = str(guess_size(dbo, f.VALUE))
         if f.FIELDNAME.startswith("additional"): d[f.FIELDNAME] = f.VALUE
@@ -966,7 +973,7 @@ def create_animal(dbo, username, collationid):
     # If a code has not been supplied and manual codes are turned on, 
     # generate one from the date and time to prevent record creation failing.
     if "code" not in d and asm3.configuration.manual_codes(dbo):
-        gencode = "OF%s" % asm3.i18n.format_date(asm3.i18n.now(), "%y%m%d%H%M%S")
+        gencode = "OF%s" % asm3.i18n.format_date(dbo.now(), "%y%m%d%H%M%S")
         d["sheltercode"] = gencode
         d["shortcode"] = gencode
     # Are date of birth and age blank? Assume an age of 1.0 if they are
@@ -1042,12 +1049,14 @@ def create_person(dbo, username, collationid):
     if siteid != 0: d["site"] = str(siteid)
     # Does this person already exist?
     personid = 0
-    if "surname" in d and "forenames" in d and "address" in d:
+    if "surname" in d and "forenames" in d:
         demail = ""
         dmobile = ""
+        daddress = ""
         if "emailaddress" in d: demail = d["emailaddress"]
         if "mobiletelephone" in d: dmobile = d["mobiletelephone"]
-        similar = asm3.person.get_person_similar(dbo, demail, dmobile, d["surname"], d["forenames"], d["address"], siteid)
+        if "address" in d: daddress = d["address"]
+        similar = asm3.person.get_person_similar(dbo, demail, dmobile, d["surname"], d["forenames"], daddress, siteid)
         if len(similar) > 0:
             personid = similar[0].ID
             status = 1 # updated existing record
@@ -1090,8 +1099,8 @@ def create_animalcontrol(dbo, username, collationid):
     l = dbo.locale
     fields = get_onlineformincoming_detail(dbo, collationid)
     d = {}
-    d["incidentdate"] = asm3.i18n.python2display(l, asm3.i18n.now(dbo.timezone))
-    d["incidenttime"] = asm3.i18n.format_time_now(dbo.timezone)
+    d["incidentdate"] = asm3.i18n.python2display(l, dbo.now())
+    d["incidenttime"] = asm3.i18n.format_time(dbo.now())
     d["calldate"] = d["incidentdate"]
     d["calltime"] = d["incidenttime"]
     d["incidenttype"] = 1
@@ -1120,11 +1129,12 @@ def create_lostanimal(dbo, username, collationid):
     l = dbo.locale
     fields = get_onlineformincoming_detail(dbo, collationid)
     d = {}
-    d["datereported"] = asm3.i18n.python2display(l, asm3.i18n.now(dbo.timezone))
+    d["datereported"] = asm3.i18n.python2display(l, dbo.now())
     for f in fields:
         if f.FIELDNAME == "species": d["species"] = guess_species(dbo, f.VALUE)
         if f.FIELDNAME == "sex": d["sex"] = guess_sex(dbo, f.VALUE)
         if f.FIELDNAME == "breed": d["breed"] = guess_breed(dbo, f.VALUE)
+        if f.FIELDNAME == "breed1": d["breed"] = guess_breed(dbo, f.VALUE)
         if f.FIELDNAME == "agegroup": d["agegroup"] = guess_agegroup(dbo, f.VALUE)
         if f.FIELDNAME == "color": d["colour"] = guess_colour(dbo, f.VALUE)
         if f.FIELDNAME == "colour": d["colour"] = guess_colour(dbo, f.VALUE)
@@ -1135,7 +1145,7 @@ def create_lostanimal(dbo, username, collationid):
         if f.FIELDNAME == "areazipcode": d["areapostcode"] = f.VALUE
         if f.FIELDNAME == "microchip": d["microchip"] = f.VALUE
     if "datelost" not in d or asm3.i18n.display2python(l, d["datelost"]) is None:
-        d["datelost"] = asm3.i18n.python2display(l, asm3.i18n.now(dbo.timezone))
+        d["datelost"] = asm3.i18n.python2display(l, dbo.now())
     if "species" not in d: d["species"] = guess_species(dbo, "")
     if "sex" not in d: d["sex"] = guess_sex(dbo, "")
     if "breed" not in d: d["breed"] = guess_breed(dbo, "")
@@ -1160,11 +1170,12 @@ def create_foundanimal(dbo, username, collationid):
     l = dbo.locale
     fields = get_onlineformincoming_detail(dbo, collationid)
     d = {}
-    d["datereported"] = asm3.i18n.python2display(l, asm3.i18n.now(dbo.timezone))
+    d["datereported"] = asm3.i18n.python2display(l, dbo.now())
     for f in fields:
         if f.FIELDNAME == "species": d["species"] = guess_species(dbo, f.VALUE)
         if f.FIELDNAME == "sex": d["sex"] = guess_sex(dbo, f.VALUE)
         if f.FIELDNAME == "breed": d["breed"] = guess_breed(dbo, f.VALUE)
+        if f.FIELDNAME == "breed1": d["breed"] = guess_breed(dbo, f.VALUE)
         if f.FIELDNAME == "agegroup": d["agegroup"] = guess_agegroup(dbo, f.VALUE)
         if f.FIELDNAME == "color": d["colour"] = guess_colour(dbo, f.VALUE)
         if f.FIELDNAME == "colour": d["colour"] = guess_colour(dbo, f.VALUE)
@@ -1175,7 +1186,7 @@ def create_foundanimal(dbo, username, collationid):
         if f.FIELDNAME == "areazipcode": d["areapostcode"] = f.VALUE
         if f.FIELDNAME == "microchip": d["microchip"] = f.VALUE
     if "datefound" not in d or asm3.i18n.display2python(l, d["datefound"]) is None:
-        d["datefound"] = asm3.i18n.python2display(l, asm3.i18n.now(dbo.timezone))
+        d["datefound"] = asm3.i18n.python2display(l, dbo.now())
     if "species" not in d: d["species"] = guess_species(dbo, "")
     if "sex" not in d: d["sex"] = guess_sex(dbo, "")
     if "breed" not in d: d["breed"] = guess_breed(dbo, "")
@@ -1251,7 +1262,7 @@ def create_waitinglist(dbo, username, collationid):
     l = dbo.locale
     fields = get_onlineformincoming_detail(dbo, collationid)
     d = {}
-    d["dateputon"] = asm3.i18n.python2display(l, asm3.i18n.now(dbo.timezone))
+    d["dateputon"] = asm3.i18n.python2display(l, dbo.now())
     d["urgency"] = str(asm3.configuration.waiting_list_default_urgency(dbo))
     for f in fields:
         if f.FIELDNAME == "size": d["size"] = guess_size(dbo, f.VALUE)

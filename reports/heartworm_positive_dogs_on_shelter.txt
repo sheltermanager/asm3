@@ -1,0 +1,78 @@
+Heartworm Positive On Shelter Dogs
+###
+Inventories
+###
+Any
+###
+Detailed current shelter inventory of heartworm positive dogs
+###
+en
+###
+SELECT a.ShelterCode, 
+a.AnimalName, 
+a.MostRecentEntryDate,
+a.IdentichipNumber,
+a.AnimalAge,
+a.BreedName,
+a.TimeOnShelter,
+sx.Sex,
+t.AnimalType,
+s.SpeciesName,
+i.LocationName,
+a.HeartwormTestDate
+FROM animal a
+INNER JOIN animaltype t ON t.ID = a.AnimalTypeID
+INNER JOIN species s ON s.ID = a.SpeciesID
+INNER JOIN lksex sx ON sx.ID = a.Sex
+INNER JOIN internallocation i ON i.ID = a.ShelterLocation
+WHERE a.Archived = 0
+AND a.HeartwormTested = 1 AND a.HeartwormTestResult = 2 AND a.SpeciesID = 1
+ORDER BY i.LocationName, s.SpeciesName, a.AnimalName
+###
+$$HEADER
+HEADER$$
+
+$$GROUP_LocationName
+$$HEAD
+<h2>$LocationName</h2>
+$$FOOT
+<p><b>Total $LocationName: {COUNT.LocationName}</b></p>
+GROUP$$
+
+$$GROUP_SpeciesName
+$$HEAD
+<h3>$SpeciesName</h3>
+<table border=1><tr>
+<td><b>Code</b></td>
+<td><b>Name</b></td>
+<td><b>Type</b></td>
+<td><b>Microchip</b></td>
+<td><b>Age</b></td>
+<td><b>Breed</b></td>
+<td><b>Sex</b></td>
+<td><b>Date Entered Shelter</b></td>
+<td><b>Time On Shelter</b></td>
+<td><b>Date Heartworm Tested</b></td>
+</tr>
+$$FOOT
+</table>
+<p>Total $SpeciesName: {COUNT.SpeciesName}</p>
+GROUP$$
+
+$$BODY
+<tr>
+<td>$sheltercode</td>
+<td>$animalname</td>
+<td>$animaltype</td>
+<td>$identichipnumber</td>
+<td>$animalage</td>
+<td>$breedname</td>
+<td>$sex</td>
+<td>$mostrecententrydate</td>
+<td>$timeonshelter</td>
+<td>$heartwormtestdate</td>
+</tr>
+BODY$$
+
+$$FOOTER
+FOOTER$$

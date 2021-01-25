@@ -168,7 +168,7 @@ def deduct_stocklevel_from_form(dbo, username, post):
     curq = dbo.query_float("SELECT Balance FROM stocklevel WHERE ID = ?", [item])
     newq = curq - quantity
     dbo.update("stocklevel", item, { "Balance": newq })
-    insert_stockusage(dbo, username, item, quantity, usagedate, usagetype, comments)
+    insert_stockusage(dbo, username, item, quantity * -1, usagedate, usagetype, comments)
 
 def stock_take_from_mobile_form(dbo, username, post):
     """

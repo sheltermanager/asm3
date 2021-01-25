@@ -1,0 +1,41 @@
+Audit Trail: Sent Emails by Date
+###
+Auditing
+###
+34200/Any
+###
+All sent email actions between two dates, grouped by user.
+###
+en
+###
+SELECT AuditDate, UserName, TableName, Description
+FROM audittrail
+WHERE
+Action = 8 AND
+AuditDate >= '$ASK DATE Enter the from date$' AND AuditDate <= '$ASK DATE Enter the to date$ 23:59:59'
+ORDER BY UserName, AuditDate
+###
+$$HEADER
+HEADER$$
+
+$$GROUP_UserName
+$$HEAD
+<h2>$UserName</h2>
+<table>
+<tr>
+<td><b>Date</b></td>
+<td></td>
+</tr>
+$$FOOT
+</table>
+GROUP$$
+
+$$BODY
+<tr>
+<td>$AUDITDATE</td>
+<td>$DESCRIPTION</td>
+</tr>
+BODY$$
+
+$$FOOTER
+FOOTER$$

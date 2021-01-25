@@ -5339,7 +5339,7 @@ msgstr ""
 
 #: main.js
 msgid ""
-"Go the lookup data screen and add/remove breeds, species and animal types "
+"Go to the lookup data screen and add/remove breeds, species and animal types "
 "according to the animals your shelter deals with."
 msgstr ""
 "Gå til søk data og legg til/fjern raser, arter og dyretyper i henhold til "
@@ -5347,14 +5347,14 @@ msgstr ""
 
 #: main.js
 msgid ""
-"Go the options screen and set your shelter's contact details and other "
+"Go to the options screen and set your shelter's contact details and other "
 "settings."
 msgstr ""
 "Gå til alternativer og angi hjelpesenterets kontaktinformasjon og andre "
 "innstillinger."
 
 #: main.js
-msgid "Go the system users screen and add user accounts for your staff."
+msgid "Go to the system users screen and add user accounts for your staff."
 msgstr "Gå til systembrukere og legg til brukerkontoer."
 
 #: dbupdate.py
@@ -9076,11 +9076,11 @@ msgstr ""
 
 #: movements.js animal_find.js dbupdate.py animal.py
 msgid "Released To Wild"
-msgstr "Satt ut i det fri eller omsorgsmodell"
+msgstr "Satt ut i det fri"
 
 #: animal.py
 msgid "Released To Wild {0}"
-msgstr "Satt ut i det fri eller omsorgsmodell {0}"
+msgstr "Satt ut i det fri {0}"
 
 #: mobile.py
 msgid "Reload"

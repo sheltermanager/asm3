@@ -20,14 +20,14 @@ import sys
 
 VALID_FIELDS = [
     "ANIMALNAME", "ANIMALSEX", "ANIMALTYPE", "ANIMALCOLOR", "ANIMALBREED1", 
-    "ANIMALBREED2", "ANIMALDOB", "ANIMALLOCATION", "ANIMALUNIT", 
+    "ANIMALBREED2", "ANIMALDOB", "ANIMALLOCATION", "ANIMALUNIT", "ANIMALJURISDICTION", 
     "ANIMALSPECIES", "ANIMALAGE", 
     "ANIMALCOMMENTS", "ANIMALMARKINGS", "ANIMALNEUTERED", "ANIMALNEUTEREDDATE", "ANIMALMICROCHIP", "ANIMALMICROCHIPDATE", 
-    "ANIMALENTRYDATE", "ANIMALDECEASEDDATE", "ANIMALCODE", "ANIMALFLAGS",
+    "ANIMALENTRYDATE", "ANIMALENTRYCATEGORY", "ANIMALDECEASEDDATE", "ANIMALCODE", "ANIMALFLAGS",
     "ANIMALREASONFORENTRY", "ANIMALHIDDENDETAILS", "ANIMALNOTFORADOPTION", "ANIMALNONSHELTER", 
     "ANIMALGOODWITHCATS", "ANIMALGOODWITHDOGS", "ANIMALGOODWITHKIDS", 
     "ANIMALHOUSETRAINED", "ANIMALHEALTHPROBLEMS", "ANIMALIMAGE",
-    "VACCINATIONTYPE", "VACCINATIONDUEDATE", "VACCINATIONGIVENDATE", "VACCINATIONEXPIRESDATE", 
+    "VACCINATIONTYPE", "VACCINATIONDUEDATE", "VACCINATIONGIVENDATE", "VACCINATIONEXPIRESDATE", "VACCINATIONRABIESTAG",
     "VACCINATIONMANUFACTURER", "VACCINATIONBATCHNUMBER", "VACCINATIONCOMMENTS", 
     "TESTTYPE", "TESTDUEDATE", "TESTPERFORMEDDATE", "TESTRESULT", "TESTCOMMENTS",
     "MEDICALNAME", "MEDICALDOSAGE", "MEDICALGIVENDATE", "MEDICALCOMMENTS",
@@ -37,6 +37,7 @@ VALID_FIELDS = [
     "ORIGINALOWNERWORKPHONE", "ORIGINALOWNERCELLPHONE", "ORIGINALOWNEREMAIL",
     "DONATIONDATE", "DONATIONAMOUNT", "DONATIONFEE", "DONATIONCHECKNUMBER", "DONATIONCOMMENTS", "DONATIONTYPE", "DONATIONPAYMENT", "DONATIONGIFTAID",
     "LICENSETYPE", "LICENSENUMBER", "LICENSEFEE", "LICENSEISSUEDATE", "LICENSEEXPIRESDATE", "LICENSECOMMENTS",
+    "LOGDATE", "LOGTYPE", "LOGCOMMENTS",
     "PERSONTITLE", "PERSONINITIALS", "PERSONFIRSTNAME", "PERSONLASTNAME", "PERSONNAME",
     "PERSONADDRESS", "PERSONCITY", "PERSONSTATE",
     "PERSONZIPCODE", "PERSONJURISDICTION", "PERSONFOSTERER", "PERSONDONOR",
@@ -88,7 +89,7 @@ def gkd(dbo, m, f, usetoday = False):
     if len(b) != 3:
         # We don't have a valid date, if use today is on return that
         if usetoday:
-            return asm3.i18n.python2display(dbo.locale, asm3.i18n.now(dbo.timezone))
+            return asm3.i18n.python2display(dbo.locale, dbo.now())
         else:
             return ""
     else:
@@ -107,7 +108,7 @@ def gkd(dbo, m, f, usetoday = False):
         except:
             # We've got an invalid date - return today
             if usetoday:
-                return asm3.i18n.python2display(dbo.locale, asm3.i18n.now(dbo.timezone))
+                return asm3.i18n.python2display(dbo.locale, dbo.now())
             else:
                 return ""
 
@@ -142,6 +143,8 @@ def gkynu(m, f):
     if m[f].upper().startswith("A") or m[f] == "-1": return "-1" # (any) for match good with
     if m[f].upper().startswith("Y") or m[f] == "0": return "0"
     if m[f].upper().startswith("N") or m[f] == "1": return "1"
+    if m[f].find("5") != -1: return "5" # Good with kids over 5
+    if m[f].find("12") !=-1: return "12" # Good with kids over 12
     return "2"
 
 def gkbr(dbo, m, f, speciesid, create):
@@ -154,7 +157,7 @@ def gkbr(dbo, m, f, speciesid, create):
     if f not in m: return "0"
     lv = m[f]
     matchid = dbo.query_int("SELECT ID FROM breed WHERE LOWER(BreedName) = ?", [ lv.strip().lower().replace("'", "`")] )
-    if matchid == 0 and create:
+    if matchid == 0 and create and lv.strip() != "":
         nextid = dbo.get_id("breed")
         sql = "INSERT INTO breed (ID, SpeciesID, BreedName) VALUES (?,?,?)"
         dbo.execute(sql, (nextid, speciesid, lv.replace("'", "`")))
@@ -165,16 +168,13 @@ def gkl(dbo, m, f, table, namefield, create):
     """ reads lookup field f from map m, returning a str(int) that
         corresponds to a lookup match for namefield in table.
         if create is True, adds a row to the table if it doesn't
-        find a match and then returns str(newid)
-        if the value is an empty string, (blank) is used instead.
-        returns "0" if key not present, or if no match was found and create is off """
+        find a match then returns str(newid)
+        returns "0" if key not present, or if no match was found and create is off,
+        or the value was an empty string """
     if f not in m: return "0"
     lv = m[f]
     matchid = dbo.query_int("SELECT ID FROM %s WHERE LOWER(%s) = ?" % (table, namefield), [ lv.strip().lower().replace("'", "`") ])
-    if matchid == 0 and create:
-        if lv.strip() == "":
-            l = dbo.locale
-            lv = asm3.i18n._("(blank)", l)
+    if matchid == 0 and create and lv.strip() != "":
         nextid = dbo.insert(table, {
             namefield:  lv
         }, setRecordVersion=False, setCreated=False, writeAudit=False)
@@ -194,12 +194,16 @@ def gksx(m, f):
     else: return ""
 
 def create_additional_fields(dbo, row, errors, rowno, csvkey = "ANIMALADDITIONAL", linktype = "animal", linkid = 0):
-    # Identify any additional fields that may have been specified with
-    # ANIMALADDITIONAL<fieldname>
+    """ Identifies and create any additional fields that may have been specified in
+        the csv file with csvkey<fieldname> 
+        This is used during merge duplicates too as it only sets additional fields if a value
+        has been supplied in the file.
+    """
     for a in asm3.additional.get_field_definitions(dbo, linktype):
         v = gks(row, csvkey + str(a.fieldname).upper())
         if v != "":
             try:
+                dbo.delete("additional", "LinkID=%s AND AdditionalFieldID=%s" % (linkid, a.ID))
                 dbo.insert("additional", {
                     "LinkType":             a.linktype,
                     "LinkID":               linkid,
@@ -257,6 +261,8 @@ def csvimport(dbo, csvdata, encoding = "utf-8-sig", user = "", createmissinglook
     haspersonname = False
     haslicence = False
     haslicencenumber = False
+    haslog = False
+    haslogcomments = False
     hasmovement = False
     hasmovementdate = False
     hasdonation = False
@@ -274,6 +280,8 @@ def csvimport(dbo, csvdata, encoding = "utf-8-sig", user = "", createmissinglook
         if col.startswith("MEDICAL"): hasmed = True
         if col.startswith("LICENSE"): haslicence = True
         if col == "LICENSENUMBER": haslicencenumber = True
+        if col.startswith("LOG"): haslog = True
+        if col == "LOGCOMMENTS": haslogcomments = True
         if col == "ORIGINALOWNERLASTNAME": hasoriginalownerlastname = True
         if col.startswith("PERSON"): hasperson = True
         if col == "PERSONLASTNAME": haspersonlastname = True
@@ -332,6 +340,14 @@ def csvimport(dbo, csvdata, encoding = "utf-8-sig", user = "", createmissinglook
     if hastest and not hasanimal:
         asm3.asynctask.set_last_error(dbo, "Your CSV file has test fields, but no animal to apply them to")
         return
+
+    # If we have any log fields, we need an animal
+    if haslog and not hasanimal:
+        asm3.asynctask.set_last_error(dbo, "Your CSV file has log fields, but no animal to apply them to")
+
+    # If we have any log fields, we need the entry
+    if haslog and not haslogcomments:
+        asm3.asynctask.set_last_error(dbo, "Your CSV file has log fields, but no LOGCOMMENTS column")
 
     # If we have licence fields, we need a number
     if haslicence and not haslicencenumber:
@@ -395,6 +411,12 @@ def csvimport(dbo, csvdata, encoding = "utf-8-sig", user = "", createmissinglook
             a["internallocation"] = gkl(dbo, row, "ANIMALLOCATION", "internallocation", "LocationName", createmissinglookups)
             if a["internallocation"] == "0":
                 a["internallocation"] = str(asm3.configuration.default_location(dbo))
+            a["jurisdiction"] = gkl(dbo, row, "ANIMALJURISDICTION", "jurisdiction", "JurisdictionName", createmissinglookups)
+            if a["jurisdiction"] == "0":
+                a["jurisdiction"] = str(asm3.configuration.default_jurisdiction(dbo))
+            a["entryreason"] = gkl(dbo, row, "ANIMALENTRYCATEGORY", "entryreason", "ReasonName", createmissinglookups)
+            if a["entryreason"] == "0":
+                a["entryreason"] = str(asm3.configuration.default_entry_reason(dbo))
             a["unit"] = gks(row, "ANIMALUNIT")
             a["comments"] = gks(row, "ANIMALCOMMENTS")
             a["markings"] = gks(row, "ANIMALMARKINGS")
@@ -450,20 +472,24 @@ def csvimport(dbo, csvdata, encoding = "utf-8-sig", user = "", createmissinglook
                 p["county"] = gks(row, "ORIGINALOWNERSTATE")
                 p["postcode"] = gks(row, "ORIGINALOWNERZIPCODE")
                 p["jurisdiction"] = gkl(dbo, row, "ORIGINALOWNERJURISDICTION", "jurisdiction", "JurisdictionName", createmissinglookups)
+                if p["jurisdiction"] == "0":
+                    p["jurisdiction"] = str(asm3.configuration.default_jurisdiction(dbo))
                 p["hometelephone"] = gks(row, "ORIGINALOWNERHOMEPHONE")
                 p["worktelephone"] = gks(row, "ORIGINALOWNERWORKPHONE")
                 p["mobiletelephone"] = gks(row, "ORIGINALOWNERCELLPHONE")
                 p["emailaddress"] = gks(row, "ORIGINALOWNEREMAIL")
                 try:
+                    ooid = 0
                     if checkduplicates:
                         dups = asm3.person.get_person_similar(dbo, p["emailaddress"], p["mobiletelephone"], p["surname"], p["forenames"], p["address"])
                         if len(dups) > 0:
-                            a["originalowner"] = str(dups[0]["ID"])
+                            ooid = dups[0]["ID"]
+                            a["originalowner"] = str(ooid)
                     if "originalowner" not in a:
                         ooid = asm3.person.insert_person_from_form(dbo, asm3.utils.PostedData(p, dbo.locale), user, geocode=False)
                         a["originalowner"] = str(ooid)
-                        # Identify an ORIGINALOWNERADDITIONAL additional fields and create them
-                        create_additional_fields(dbo, row, errors, rowno, "ORIGINALOWNERADDITIONAL", "person", ooid)
+                    # Identify any ORIGINALOWNERADDITIONAL additional fields and create/merge them
+                    if ooid > 0: create_additional_fields(dbo, row, errors, rowno, "ORIGINALOWNERADDITIONAL", "person", ooid)
                 except Exception as e:
                     row_error(errors, "originalowner", rowno, row, e, dbo, sys.exc_info())
             try:
@@ -471,29 +497,32 @@ def csvimport(dbo, csvdata, encoding = "utf-8-sig", user = "", createmissinglook
                     dup = asm3.animal.get_animal_sheltercode(dbo, a["sheltercode"])
                     if dup is not None:
                         animalid = dup.ID
-                        # The animal is a duplicate. Update certain key fields if they are present
+                        # The animal is a duplicate. Update certain key changeable fields if they are present
+                        uq = {}
                         if a["healthproblems"] != "":
-                            dbo.update("animal", dup.ID, { "HealthProblems": a["healthproblems"] }, user)
+                            uq["HealthProblems"] = a["healthproblems"]
                         if a["microchipnumber"] != "":
-                            dbo.update("animal", dup.ID, { 
-                                "Identichipped": 1,
-                                "IdentichipNumber": a["microchipnumber"],
-                                "IdentichipDate": asm3.i18n.display2python(dbo.locale, a["microchipdate"])
-                            }, user)
+                            uq["Identichipped"] = 1
+                            uq["IdentichipNumber"] = a["microchipnumber"]
+                            uq["IdentichipDate"] = asm3.i18n.display2python(dbo.locale, a["microchipdate"])
                         if a["neutered"] == "on":
-                            dbo.update("animal", dup.ID, { 
-                                "Neutered": 1, 
-                                "NeuteredDate": asm3.i18n.display2python(dbo.locale, a["neutereddate"]) 
-                            }, user)
+                            uq["Neutered"] = 1
+                            uq["NeuteredDate"] = asm3.i18n.display2python(dbo.locale, a["neutereddate"])
+                        if a["dateofbirth"] != "":
+                            uq["DateOfBirth"] = asm3.i18n.display2python(dbo.locale, a["dateofbirth"])
+                        if a["weight"] != "":
+                            uq["Weight"] = asm3.utils.cfloat(a["weight"])
+                        dbo.update("animal", dup.ID, uq, user)
+                        # Update flags if present
                         if a["flags"] != "":
                             asm3.animal.update_flags(dbo, user, dup.ID, a["flags"])
                 if animalid == 0:
                     animalid, dummy = asm3.animal.insert_animal_from_form(dbo, asm3.utils.PostedData(a, dbo.locale), user)
-                    # Identify any ANIMALADDITIONAL additional fields and create them
-                    create_additional_fields(dbo, row, errors, rowno, "ANIMALADDITIONAL", "animal", animalid)
                     # Add any flags that were set
                     if a["flags"] != "":
                         asm3.animal.update_flags(dbo, user, animalid, a["flags"])
+                # Identify any ANIMALADDITIONAL additional fields and create/merge them
+                create_additional_fields(dbo, row, errors, rowno, "ANIMALADDITIONAL", "animal", animalid)
                 # If we have some image data, add it to the animal
                 if len(imagedata) > 0:
                     imagepost = asm3.utils.PostedData({ "filename": "image.jpg", "filetype": "image/jpeg", "filedata": imagedata }, dbo.locale)
@@ -526,6 +555,8 @@ def csvimport(dbo, csvdata, encoding = "utf-8-sig", user = "", createmissinglook
             p["county"] = gks(row, "PERSONSTATE")
             p["postcode"] = gks(row, "PERSONZIPCODE")
             p["jurisdiction"] = gkl(dbo, row, "PERSONJURISDICTION", "jurisdiction", "JurisdictionName", createmissinglookups)
+            if p["jurisdiction"] == "0":
+                p["jurisdiction"] = str(asm3.configuration.default_jurisdiction(dbo))
             p["hometelephone"] = gks(row, "PERSONHOMEPHONE")
             p["worktelephone"] = gks(row, "PERSONWORKPHONE")
             p["mobiletelephone"] = gks(row, "PERSONCELLPHONE")
@@ -572,22 +603,26 @@ def csvimport(dbo, csvdata, encoding = "utf-8-sig", user = "", createmissinglook
                         asm3.person.merge_person_details(dbo, user, personid, p, force=dups[0].EMAILADDRESS == p["emailaddress"])
                 if personid == 0:
                     personid = asm3.person.insert_person_from_form(dbo, asm3.utils.PostedData(p, dbo.locale), user, geocode=False)
-                    # Identify any PERSONADDITIONAL additional fields and create them
-                    create_additional_fields(dbo, row, errors, rowno, "PERSONADDITIONAL", "person", personid)
+                # Identify any PERSONADDITIONAL additional fields and create/merge them
+                create_additional_fields(dbo, row, errors, rowno, "PERSONADDITIONAL", "person", personid)
             except Exception as e:
                 row_error(errors, "person", rowno, row, e, dbo, sys.exc_info())
 
         # Movement to tie animal/person together?
         movementid = 0
-        if hasmovement and personid != 0 and animalid != 0 and gks(row, "MOVEMENTDATE") != "":
+        if hasmovement and animalid != 0 and gks(row, "MOVEMENTDATE") != "":
             m = {}
             m["person"] = str(personid)
             m["animal"] = str(animalid)
             movetype = gks(row, "MOVEMENTTYPE")
             if movetype == "": movetype = "1" # Default to adoption if not supplied
             m["type"] = str(movetype)
-            m["movementdate"] = gkd(dbo, row, "MOVEMENTDATE", True)
-            m["returndate"] = gkd(dbo, row, "MOVEMENTRETURNDATE")
+            if movetype == "0":
+                m["reservationdate"] = gkd(dbo, row, "MOVEMENTDATE", True)
+                m["reservationcancelled"] = gkd(dbo, row, "MOVEMENTRETURNDATE")
+            else:
+                m["movementdate"] = gkd(dbo, row, "MOVEMENTDATE", True)
+                m["returndate"] = gkd(dbo, row, "MOVEMENTRETURNDATE")
             m["comments"] = gks(row, "MOVEMENTCOMMENTS")
             m["returncategory"] = str(asm3.configuration.default_entry_reason(dbo))
             try:
@@ -631,6 +666,7 @@ def csvimport(dbo, csvdata, encoding = "utf-8-sig", user = "", createmissinglook
             v["expires"] = gkd(dbo, row, "VACCINATIONEXPIRESDATE")
             v["batchnumber"] = gks(row, "VACCINATIONBATCHNUMBER")
             v["manufacturer"] = gks(row, "VACCINATIONMANUFACTURER")
+            v["rabiestag"] = gks(row, "VACCINATIONRABIESTAG")
             v["comments"] = gks(row, "VACCINATIONCOMMENTS")
             try:
                 asm3.medical.insert_vaccination_from_form(dbo, user, asm3.utils.PostedData(v, dbo.locale))
@@ -665,6 +701,17 @@ def csvimport(dbo, csvdata, encoding = "utf-8-sig", user = "", createmissinglook
                 asm3.medical.insert_regimen_from_form(dbo, user, asm3.utils.PostedData(m, dbo.locale))
             except Exception as e:
                 row_error(errors, "medical", rowno, row, e, dbo, sys.exc_info())
+
+        # Logs
+        if haslog and animalid != 0 and gks(row, "LOGCOMMENTS") != "":
+            l = {}
+            l["type"] = gkl(dbo, row, "LOGTYPE", "logtype", "LogTypeName", createmissinglookups)
+            l["logdate"] = gkd(dbo, row, "LOGDATE", True)
+            l["entry"] = gks(row, "LOGCOMMENTS")
+            try:
+                asm3.log.insert_log_from_form(dbo, user, asm3.log.ANIMAL, animalid, asm3.utils.PostedData(l, dbo.locale))
+            except Exception as e:
+                row_error(errors, "log", rowno, row, e, dbo, sys.exc_info())
 
         # License?
         if haslicence and personid != 0 and gks(row, "LICENSENUMBER") != "":
@@ -839,15 +886,18 @@ def csvexport_animals(dbo, dataset, animalids = "", includephoto = False):
         "ANIMALBREED2", "ANIMALDOB", "ANIMALLOCATION", "ANIMALUNIT", "ANIMALSPECIES", "ANIMALCOMMENTS",
         "ANIMALHIDDENDETAILS", "ANIMALHEALTHPROBLEMS", "ANIMALMARKINGS", "ANIMALREASONFORENTRY", "ANIMALNEUTERED",
         "ANIMALNEUTEREDDATE", "ANIMALMICROCHIP", "ANIMALMICROCHIPDATE", "ANIMALENTRYDATE", "ANIMALDECEASEDDATE",
+        "ANIMALJURISDICTION", "ANIMALENTRYCATEGORY",
         "ANIMALNOTFORADOPTION", "ANIMALNONSHELTER", "ANIMALGOODWITHCATS", "ANIMALGOODWITHDOGS", "ANIMALGOODWITHKIDS",
         "ANIMALHOUSETRAINED", "ORIGINALOWNERTITLE", "ORIGINALOWNERINITIALS", "ORIGINALOWNERFIRSTNAME",
+        "LOGDATE", "LOGTYPE", "LOGCOMMENTS", 
         "ORIGINALOWNERLASTNAME", "ORIGINALOWNERADDRESS", "ORIGINALOWNERCITY", "ORIGINALOWNERSTATE", "ORIGINALOWNERZIPCODE",
         "ORIGINALOWNERHOMEPHONE", "ORIGINALOWNERWORKPHONE", "ORIGINALOWNERCELLPHONE", "ORIGINALOWNEREMAIL", "MOVEMENTTYPE",
         "MOVEMENTDATE", "PERSONTITLE", "PERSONINITIALS", "PERSONFIRSTNAME", "PERSONLASTNAME", "PERSONADDRESS", "PERSONCITY",
         "PERSONSTATE", "PERSONZIPCODE", "PERSONFOSTERER", "PERSONHOMEPHONE", "PERSONWORKPHONE", "PERSONCELLPHONE", "PERSONEMAIL",
         "TESTTYPE", "TESTRESULT", "TESTDUEDATE", "TESTPERFORMEDDATE", "TESTCOMMENTS",
-        "VACCINATIONTYPE", "VACCINATIONDUEDATE", "VACCINATIONGIVENDATE", "VACCINATIONEXPIRESDATE", "VACCINATIONMANUFACTURER",
-        "VACCINATIONBATCHNUMBER", "VACCINATIONCOMMENTS", "MEDICALNAME", "MEDICALDOSAGE", "MEDICALGIVENDATE", "MEDICALCOMMENTS" ]
+        "VACCINATIONTYPE", "VACCINATIONDUEDATE", "VACCINATIONGIVENDATE", "VACCINATIONEXPIRESDATE", "VACCINATIONRABIESTAG",
+        "VACCINATIONMANUFACTURER", "VACCINATIONBATCHNUMBER", "VACCINATIONCOMMENTS", 
+        "MEDICALNAME", "MEDICALDOSAGE", "MEDICALGIVENDATE", "MEDICALCOMMENTS" ]
     
     def tocsv(row):
         r = []
@@ -896,6 +946,8 @@ def csvexport_animals(dbo, dataset, animalids = "", includephoto = False):
         row["ANIMALHEALTHPROBLEMS"] = a["HEALTHPROBLEMS"]
         row["ANIMALMARKINGS"] = a["MARKINGS"]
         row["ANIMALREASONFORENTRY"] = a["REASONFORENTRY"]
+        row["ANIMALENTRYCATEGORY"] = a["ENTRYREASONNAME"]
+        row["ANIMALJURISDICTION"] = a["JURISDICTIONNAME"]
         row["ANIMALNEUTERED"] = a["NEUTERED"]
         row["ANIMALNEUTEREDDATE"] = asm3.i18n.python2display(l, a["NEUTEREDDATE"])
         row["ANIMALMICROCHIP"] = a["IDENTICHIPNUMBER"]
@@ -945,6 +997,7 @@ def csvexport_animals(dbo, dataset, animalids = "", includephoto = False):
             row["VACCINATIONEXPIRESDATE"] = asm3.i18n.python2display(l, v["DATEEXPIRES"])
             row["VACCINATIONMANUFACTURER"] = v["MANUFACTURER"]
             row["VACCINATIONBATCHNUMBER"] = v["BATCHNUMBER"]
+            row["VACCINATIONRABIESTAG"] = v["RABIESTAG"]
             row["VACCINATIONCOMMENTS"] = v["COMMENTS"]
             row["ANIMALCODE"] = a["SHELTERCODE"]
             row["ANIMALNAME"] = a["ANIMALNAME"]
@@ -967,6 +1020,15 @@ def csvexport_animals(dbo, dataset, animalids = "", includephoto = False):
             row["MEDICALDOSAGE"] = m["DOSAGE"]
             row["MEDICALGIVENDATE"] = asm3.i18n.python2display(l, m["STARTDATE"])
             row["MEDICALCOMMENTS"] = m["COMMENTS"]
+            row["ANIMALCODE"] = a["SHELTERCODE"]
+            row["ANIMALNAME"] = a["ANIMALNAME"]
+            out.write(tocsv(row))
+
+        for g in asm3.log.get_logs(dbo, asm3.log.ANIMAL, a["ID"]):
+            row = {}
+            row["LOGDATE"] = asm3.i18n.python2display(l, g["DATE"])
+            row["LOGTYPE"] = g["LOGTYPENAME"]
+            row["LOGCOMMENTS"] = g["COMMENTS"]
             row["ANIMALCODE"] = a["SHELTERCODE"]
             row["ANIMALNAME"] = a["ANIMALNAME"]
             out.write(tocsv(row))

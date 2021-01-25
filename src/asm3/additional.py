@@ -130,11 +130,16 @@ def append_to_results(dbo, rows, linktype = "animal"):
     for r in rows:
         add = get_additional_fields(dbo, r.id, linktype)
         for af in add:
-            if af.fieldname.find("&") != -1:
+            tn = af.fieldname.upper()
+            if tn.find("&") != -1:
                 # We've got unicode chars for the tag name - not allowed
                 r["ADD" + str(af.id)] = af.value
+            elif tn in r:
+                # This key already exists - do not allow a collision. 
+                # This happened where a user named a field ID and it broke animal_view_adoptable_js
+                r["ADD%s" % tn] = af.value
             else:
-                r[af.fieldname.upper()] = af.value
+                r[tn] = af.value
     return rows
 
 def insert_field_from_form(dbo, username, post):

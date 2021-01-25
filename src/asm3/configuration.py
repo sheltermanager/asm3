@@ -107,6 +107,9 @@ DEFAULTS = {
     "AnnualFiguresSplitAdoptions": "Yes",
     "AnonymisePersonalData": "No",
     "AnonymiseAfterYears": "0",
+    "AuditOnViewRecord": "Yes",
+    "AuditOnViewReport": "Yes",
+    "AuditOnSendEmail": "Yes",
     "AutoCancelReservesDays": "14",
     "AutoDefaultShelterCode": "Yes",
     "AutoDefaultVaccBatch": "Yes",
@@ -140,6 +143,7 @@ DEFAULTS = {
     "AFNonShelterType": "40",
     "AlertSpeciesMicrochip": "1,2",
     "AlertSpeciesNeuter": "1,2",
+    "AlertSpeciesRabies": "1,2",
     "AvidReRegistration": "No", 
     "AvidRegisterOverseas": "No",
     "AvidOverseasOriginCountry": "",
@@ -180,8 +184,7 @@ DEFAULTS = {
     "DonationTrxOverride": "No",
     "DonationVATAccount": "22",
     "DonationOnMoveReserve": "Yes",
-    "DontShowCombi": "Yes",
-    "DontShowHeartworm": "Yes",
+    "DontShowRabies": "Yes",
     "EmailDiaryNotes": "Yes", 
     "EmailDiaryOnChange": "No",
     "EmailDiaryOnComplete": "No",
@@ -198,15 +201,18 @@ DEFAULTS = {
     "EmblemNotMicrochipped": "Yes",
     "EmblemPositiveTest": "Yes",
     "EmblemQuarantine": "Yes",
+    "EmblemRabies": "No",
     "EmblemReserved": "Yes",
     "EmblemSpecialNeeds": "Yes",
     "EmblemTrialAdoption": "Yes",
     "EmblemUnneutered": "Yes",
     "FancyTooltips": "No",
     "FirstDayOfWeek": "1",
+    "FormatPhoneNumbers": "Yes",
     "FosterOnShelter": "Yes",
     "FostererEmails": "No", 
     "FostererEmailOverdueDays": "-30",
+    "FostererEmailSkipNoMedical": "No",
     "ShowGDPRContactOptIn": "No",
     "GDPRContactChangeLog": "No",
     "GDPRContactChangeLogType": "6",
@@ -218,7 +224,6 @@ DEFAULTS = {
     "HoldChangeLog": "Yes",
     "HoldChangeLogType": "3",
     "IncidentPermissions": "No",
-    "IncomingMediaScaling": "640x640",
     "InactivityTimer": "No",
     "InactivityTimeout": "20", 
     "IncludeIncompleteMedicalDoc": "Yes",
@@ -318,11 +323,13 @@ DEFAULTS = {
     "TemplatesForNonShelter": "No",
     "ThumbnailSize": "150x150",
     "Timezone": "-5",
+    "TimezoneDST": "Yes",
     "TrialAdoptions": "No",
     "TrialOnShelter": "No",
     "UniqueLicenceNumbers": "Yes",
     "UseAutoInsurance": "No",
     "UseShortShelterCodes": "Yes", 
+    "USStateCodes": "No",
     "VATEnabled": "Yes",
     "VATExclusive": "No",
     "VATRate": "20",
@@ -527,6 +534,11 @@ def alert_species_neuter(dbo):
     if s == "": return "0" # Always return something due to IN clauses of queries
     return s
 
+def alert_species_rabies(dbo):
+    s = cstring(dbo, "AlertSpeciesRabies", DEFAULTS["AlertSpeciesRabies"])
+    if s == "": return "0" # Always return something due to IN clauses of queries
+    return s
+
 def all_diary_home_page(dbo):
     return cboolean(dbo, "AllDiaryHomePage")
 
@@ -565,6 +577,15 @@ def anonymise_personal_data(dbo):
 
 def anonymise_after_years(dbo):
     return cint(dbo, "AnonymiseAfterYears", DEFAULTS["AnonymiseAfterYears"])
+
+def audit_on_view_record(dbo):
+    return cboolean(dbo, "AuditOnViewRecord", DEFAULTS["AuditOnViewRecord"])
+
+def audit_on_view_report(dbo):
+    return cboolean(dbo, "AuditOnViewReport", DEFAULTS["AuditOnViewReport"])
+
+def audit_on_send_email(dbo):
+    return cboolean(dbo, "AuditOnSendEmail", DEFAULTS["AuditOnSendEmail"])
 
 def auto_cancel_reserves_days(dbo):
     return cint(dbo, "AutoCancelReservesDays", int(DEFAULTS["AutoCancelReservesDays"]))
@@ -709,6 +730,9 @@ def default_entry_reason(dbo):
 def default_incident(dbo):
     return cint(dbo, "DefaultIncidentType", 1)
 
+def default_jurisdiction(dbo):
+    return cint(dbo, "DefaultJurisdiction", 1)
+
 def default_location(dbo):
     return cint(dbo, "AFDefaultLocation", 1)
 
@@ -793,6 +817,9 @@ def foster_on_shelter(dbo):
 def fosterer_email_overdue_days(dbo):
     return cint(dbo, "FostererEmailOverdueDays", DEFAULTS["FostererEmailOverdueDays"])
 
+def fosterer_email_skip_no_medical(dbo):
+    return cboolean(dbo, "FostererEmailSkipNoMedical", DEFAULTS["FostererEmailSkipNoMedical"] == "Yes")
+
 def fosterer_emails(dbo):
     return cboolean(dbo, "FostererEmails", DEFAULTS["FostererEmails"] == "Yes")
 
@@ -801,6 +828,9 @@ def fosterer_emails_reply_to(dbo):
 
 def fosterer_emails_msg(dbo):
     return cstring(dbo, "FostererEmailsMsg")
+
+def foundanimals_cutoff_days(dbo):
+    return cint(dbo, "FoundAnimalsCutoffDays")
 
 def foundanimals_email(dbo):
     return cstring(dbo, "FoundAnimalsEmail")
@@ -861,9 +891,6 @@ def include_incomplete_medical_doc(dbo):
 
 def include_off_shelter_medical(dbo):
     return cboolean(dbo, "IncludeOffShelterMedical", DEFAULTS["IncludeOffShelterMedical"] == "Yes")
-
-def incoming_media_scaling(dbo):
-    return cstring(dbo, "IncomingMediaScaling", DEFAULTS["IncomingMediaScaling"])
 
 def js_window_print(dbo):
     return cboolean(dbo, "JSWindowPrint", DEFAULTS["JSWindowPrint"] == "Yes")
@@ -993,6 +1020,9 @@ def organisation_country(dbo):
 def organisation_telephone(dbo):
     return cstring(dbo, "OrganisationTelephone", DEFAULTS["OrganisationTelephone"])
 
+def osm_map_tiles_override(dbo):
+    return cstring(dbo, "OSMMapTilesOverride")
+
 def owner_name_format(dbo):
     return cstring(dbo, "OwnerNameFormat", DEFAULTS["OwnerNameFormat"])
 
@@ -1052,6 +1082,9 @@ def helpinglostpets_password(dbo):
 
 def helpinglostpets_postal(dbo):
     return cstring(dbo, "HelpingLostPetsPostal")
+
+def petlink_cutoff_days(dbo):
+    return cint(dbo, "PetLinkCutoffDays")
 
 def petlink_email(dbo):
     return cstring(dbo, "PetLinkEmail")
@@ -1196,7 +1229,6 @@ def show_weight_in_lbs(dbo):
 def show_weight_in_lbs_fraction(dbo):
     return cboolean(dbo, "ShowWeightInLbsFraction", DEFAULTS["ShowWeightInLbsFraction"] == "Yes")
 
-
 def show_weight_units_in_log(dbo):
     return cboolean(dbo, "ShowWeightUnitsInLog", DEFAULTS["ShowWeightUnitsInLog"] == "Yes")
 
@@ -1247,6 +1279,9 @@ def thumbnail_size(dbo):
 
 def timezone(dbo):
     return cfloat(dbo, "Timezone", TIMEZONE)
+
+def timezone_dst(dbo):
+    return cboolean(dbo, "TimezoneDST", DEFAULTS["TimezoneDST"])
 
 def trial_adoptions(dbo):
     return cboolean(dbo, "TrialAdoptions", DEFAULTS["TrialAdoptions"] == "Yes")

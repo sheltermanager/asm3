@@ -497,7 +497,7 @@ def update_user_activity(dbo, user, timenow = True):
                 # if the last seen value was more than an hour ago, 
                 # don't bother adding that user
                 p = asm3.i18n.parse_date("%Y-%m-%d %H:%M:%S", d)
-                if asm3.i18n.subtract_hours(asm3.i18n.now(dbo.timezone), 1) > p:
+                if asm3.i18n.subtract_hours(dbo.now(), 1) > p:
                     continue
                 # Don't add the current user
                 if u == user:
@@ -507,7 +507,7 @@ def update_user_activity(dbo, user, timenow = True):
             continue
     # Add this user with the new time 
     if timenow: 
-        nc.append("%s=%s" % (user, asm3.i18n.format_date(asm3.i18n.now(dbo.timezone), "%Y-%m-%d %H:%M:%S")))
+        nc.append("%s=%s" % (user, asm3.i18n.format_date(dbo.now(), "%Y-%m-%d %H:%M:%S")))
     asm3.cachemem.put("activity_%s" % dbo.database, ",".join(nc), 3600 * 8)
 
 def get_personid(dbo, user):
@@ -699,6 +699,7 @@ def web_login(post, session, remoteip, useragent, path):
         try:
             dbo.locked = asm3.configuration.smdb_locked(dbo)
             dbo.timezone = asm3.configuration.timezone(dbo)
+            dbo.timezone_dst = asm3.configuration.timezone_dst(dbo)
             dbo.installpath = path
             session.locale = asm3.configuration.locale(dbo)
             dbo.locale = session.locale

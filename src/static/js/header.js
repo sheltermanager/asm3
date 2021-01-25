@@ -445,7 +445,7 @@ header = {
                 '<textarea id="textarea-zoom-area" style="width: 98%; height: 98%;"></textarea>',
             '</div>',
             '<div id="dialog-unsaved" style="display: none" title="' + _("Unsaved Changes") + '">',
-                '<p><span class="ui-icon ui-icon-alert" style="float: left; margin: 0 7px 20px 0;"></span>',
+                '<p><span class="ui-icon ui-icon-alert"></span>',
                 _("You have unsaved changes, are you sure you want to leave this page?"),
                 '</p>',
             '</div>',
@@ -582,23 +582,28 @@ header = {
 
     bind_search: function() {
 
-        var keywords = [ "activelost", "activefound", "donors", "deceased", "hold", "holdtoday", 
+        const keywords = [ "activelost", "activefound", "donors", "deceased", "hold", "holdtoday", 
             "notforadoption", "onshelter", "quarantine", "forpublish", "reservenohomecheck", "notmicrochipped",
             "aco", "banned", "donors", "drivers", "homechecked", "homecheckers", 
             "fosterers", "homecheckers", "members", "people", "retailers", "shelters", "staff", 
             "vets", "volunteers" ] ;
 
-        var previous = common.local_get("asmsearch").split("|");
-        var searches = keywords.concat(previous);
+        let previous = common.local_get("asmsearch").split("|");
+        let searches = keywords.concat(previous);
 
-        var dosearch = function() {
-            var term = $("#topline-q").val();
-            // If the term is blank, do nothing
+        const dosearch = function(e) {
+            // If the search is blank, do nothing
+            let term = $("#topline-q").val();
             if (!term) { return; }
             // If we haven't seen this search term before, add it to our set
             if ($.inArray(term, previous) == -1) {
                 previous.push(term);
                 common.local_set("asmsearch", previous.join("|"));
+            }
+            // Use form dirty handling to make sure we're safe to leave this screen
+            // validate.a_click_handler will handle routing to the URL
+            if (validate.active && (!validate.a_click_handler(e, "search?q=" + encodeURIComponent(term)))) { 
+                return;
             }
             common.route("search?q=" + encodeURIComponent(term));
         };
@@ -609,7 +614,7 @@ header = {
         // Pressing enter starts the search
         $("#topline-q").keypress(function(e) {
             if (e.which == 13) {
-                dosearch();
+                dosearch(e);
                 return false;
             }
         });

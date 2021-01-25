@@ -399,29 +399,35 @@ def get_files(dbo, name, path, saveto):
         return True
     return False
 
+def _delete(dbo, where):
+    """
+    Deletes rows from the DBFS matching where. 
+    This the only place where "real" deletion from the table is done.
+    """
+    # rows = db.query("SELECT ID, URL FROM dbfs WHERE %s" % where)
+    dbo.delete("dbfs", where, "dbfs") # Audit the delete and remove from the dbfs table
+    # No longer used, for File and S3 storage, this would "really delete" the files.
+    # We do not do this because storage is cheap and people invariably delete
+    # things by accident. This means that a quick restore of the deleted dbfs
+    # item from the deletion table and things are back.
+    #for r in rows:
+    #    o = DBFSStorage(dbo, r.url)
+    #    o.delete(r.url)
+
 def delete_path(dbo, path):
     """
     Deletes all items matching the path given
     """
-    rows = dbo.query("SELECT ID, URL FROM dbfs WHERE Path LIKE ?", [path])
-    dbo.execute("DELETE FROM dbfs WHERE Path LIKE ?", [path])
-    for r in rows:
-        o = DBFSStorage(dbo, r.url)
-        o.delete(r.url)
+    _delete(dbo, "Path LIKE %s" % dbo.sql_value(path))
 
 def delete(dbo, name, path = ""):
     """
     Deletes all items matching the name and path given
     """
     if path != "":
-        rows = dbo.query("SELECT ID, URL FROM dbfs WHERE Name=? AND Path=?", (name, path))
-        dbo.execute("DELETE FROM dbfs WHERE Name=? AND Path=?", (name, path))
+        _delete(dbo, "Name=%s AND Path=%s" % (dbo.sql_value(name), dbo.sql_value(path)))
     else:
-        rows = dbo.query("SELECT ID, URL FROM dbfs WHERE Name=?", [name])
-        dbo.execute("DELETE FROM dbfs WHERE Name=?", [name])
-    for r in rows:
-        o = DBFSStorage(dbo, r.url)
-        o.delete(r.url)
+        _delete(dbo, "Name=%s" % (dbo.sql_value(name)))
 
 def delete_filepath(dbo, filepath):
     """
@@ -435,10 +441,7 @@ def delete_id(dbo, dbfsid):
     """
     Deletes the dbfs entry for the id
     """
-    url = dbo.query_string("SELECT URL FROM dbfs WHERE ID=?", [dbfsid])
-    dbo.execute("DELETE FROM dbfs WHERE ID = ?", [dbfsid])
-    o = DBFSStorage(dbo, url)
-    o.delete(url)
+    _delete(dbo, "ID=%d" % dbfsid)
 
 def list_contents(dbo, path):
     """

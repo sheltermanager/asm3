@@ -68,6 +68,7 @@ def get_medicaltreatment_query(dbo):
         "'' ELSE a.ShelterLocationUnit END AS LocationUnit, " \
         "il.LocationName AS ShelterLocationName, a.ShelterLocationUnit, " \
         "%(compositeid)s AS CompositeID, " \
+        "%(givenremaining)s AS NamedGivenRemaining, " \
         "CASE " \
         "WHEN am.TimingRule = 0 THEN 'One Off' " \
         "WHEN am.TimingRuleFrequency = 0 THEN %(daily)s " \
@@ -93,6 +94,7 @@ def get_medicaltreatment_query(dbo):
         "LEFT OUTER JOIN internallocation il ON il.ID = a.ShelterLocation " % \
             { 
                 "compositeid": dbo.sql_concat(["am.ID", "'_'", "amt.ID"]),
+                "givenremaining": dbo.sql_concat(["am.TreatmentsGiven", "' / '", "am.TreatmentsRemaining"]),
                 "daily": dbo.sql_concat(["am.TimingRule", "' treatments every '", "am.TimingRuleNoFrequencies", "' days'"]),
                 "weekly": dbo.sql_concat(["am.TimingRule", "' treatments every '", "am.TimingRuleNoFrequencies", "' weeks'"]),
                 "monthly": dbo.sql_concat(["am.TimingRule", "' treatments every '", "am.TimingRuleNoFrequencies", "' months'"]),
@@ -247,8 +249,12 @@ def get_regimens(dbo, animalid, onlycomplete = False, sort = ASCENDING_REQUIRED)
         "(SELECT amt.DateGiven FROM animalmedicaltreatment amt WHERE amt.AnimalMedicalID = am.ID AND amt.DateGiven Is Not Null " \
         "ORDER BY amt.DateGiven DESC %s) AS LastTreatmentGiven, " \
         "(SELECT amt.Comments FROM animalmedicaltreatment amt WHERE amt.AnimalMedicalID = am.ID AND amt.DateGiven Is Not Null " \
-        "ORDER BY amt.DateGiven DESC %s) AS LastTreatmentComments " \
-        "FROM animalmedical am WHERE am.AnimalID = %d %s " % (dbo.sql_limit(1), dbo.sql_limit(1), dbo.sql_limit(1), animalid, sc)
+        "ORDER BY amt.DateGiven DESC %s) AS LastTreatmentComments, " \
+        "(SELECT adv.OwnerName FROM animalmedicaltreatment amt INNER JOIN owner adv ON adv.ID=amt.AdministeringVetID " \
+        "WHERE amt.AnimalMedicalID = am.ID AND amt.DateGiven Is Not Null " \
+        "ORDER BY amt.DateGiven DESC %s) AS LastTreatmentVetName " \
+        "FROM animalmedical am WHERE am.AnimalID = %d %s " % \
+            (dbo.sql_limit(1), dbo.sql_limit(1), dbo.sql_limit(1), dbo.sql_limit(1), animalid, sc)
     if sort == ASCENDING_REQUIRED:
         sql += " ORDER BY am.StartDate"
     elif sort == DESCENDING_REQUIRED:
@@ -349,7 +355,7 @@ def embellish_regimen(l, rows):
     """
     Adds the following fields to a resultset containing
     regimen rows:
-    NAMEDFREQUENCY, NAMEDNUMBEROFTREATMENTS, NAMEDSTATUS, COMPOSITEID
+    NAMEDFREQUENCY, NAMEDNUMBEROFTREATMENTS, NAMEDSTATUS, NAMEDGIVENREMAINING, COMPOSITEID
     """
     for r in rows:
         st = 0
@@ -391,6 +397,14 @@ def embellish_regimen(l, rows):
             r.NAMEDNUMBEROFTREATMENTS = _("Unspecified", l)
         else:
             r.NAMEDNUMBEROFTREATMENTS = str(_("{0} {1} ({2} treatments)", l)).format(tnt, tp, tr * tnt)
+        # NAMEDGIVENREMAINING - shows how many treatments 
+        # have been given and how many are remaining. This is also called
+        # by get_profiles, which does not have treatmentsgiven or treatmentsremaining
+        if "TREATMENTSREMAINING" in r:
+            if r.TREATMENTSREMAINING > 0:
+                r.NAMEDGIVENREMAINING = _("({0} given, {1} remaining)", l).format(r.TREATMENTSGIVEN, r.TREATMENTSREMAINING)
+            else:
+                r.NAMEDGIVENREMAINING = _("({0} given)", l).format(r.TREATMENTSGIVEN)
         # NAMEDSTATUS
         if st == ACTIVE:
             r.NAMEDSTATUS = _("Active", l)
@@ -640,7 +654,9 @@ def update_test_today(dbo, username, testid, resultid):
     """
     Marks a test record as performed today. 
     """
+    animalid = dbo.query_int("SELECT AnimalID FROM animaltest WHERE ID = ?", [testid])
     dbo.update("animaltest", testid, {
+        "AnimalID":     animalid,
         "DateOfTest":   dbo.today(),
         "TestResultID": resultid
     }, username)
@@ -651,9 +667,11 @@ def update_vaccination_today(dbo, username, vaccid):
     """
     Marks a vaccination record as given today. 
     """
+    animalid = dbo.query_int("SELECT AnimalID FROM animalvaccination WHERE ID = ?", [vaccid])
     dbo.update("animalvaccination", vaccid, {
-        "DateOfVaccination": dbo.today(),
-        "GivenBy": username
+        "AnimalID":             animalid,
+        "DateOfVaccination":    dbo.today(),
+        "GivenBy":              username
     }, username)
 
 def calculate_given_remaining(dbo, amid):
@@ -671,7 +689,9 @@ def complete_vaccination(dbo, username, vaccinationid, newdate, givenby = "", ve
     """
     Marks a vaccination given/completed on newdate
     """
+    animalid = dbo.query_int("SELECT AnimalID FROM animalvaccination WHERE ID = ?", [vaccinationid])
     dbo.update("animalvaccination", vaccinationid, {
+        "AnimalID":             animalid,
         "DateOfVaccination":    newdate,
         "DateExpires":          dateexpires,
         "GivenBy":              asm3.utils.iif(givenby == "", username, givenby),
@@ -684,7 +704,9 @@ def complete_test(dbo, username, testid, newdate, testresult, vetid = 0):
     """
     Marks a test performed on newdate with testresult
     """
+    animalid = dbo.query_int("SELECT AnimalID FROM animaltest WHERE ID = ?", [testid])
     dbo.update("animaltest", testid, {
+        "AnimalID":             animalid,
         "DateOfTest":           newdate,
         "TestResultID":         testresult,
         "AdministeringVetID":   vetid
@@ -915,7 +937,7 @@ def insert_vaccination_from_form(dbo, username, post):
     if post.date("required") is None:
         raise asm3.utils.ASMValidationError(_("Required date must be a valid date", l))
 
-    return dbo.insert("animalvaccination", {
+    vaccid = dbo.insert("animalvaccination", {
         "AnimalID":             post.integer("animal"),
         "VaccinationID":        post.integer("type"),
         "AdministeringVetID":   post.integer("administeringvet"),
@@ -925,10 +947,14 @@ def insert_vaccination_from_form(dbo, username, post):
         "DateExpires":          post.date("expires"),
         "BatchNumber":          post["batchnumber"],
         "Manufacturer":         post["manufacturer"],
+        "RabiesTag":            post["rabiestag"],
         "Cost":                 post.integer("cost"),
         "CostPaidDate":         post.date("costpaid"),
         "Comments":             post["comments"]
     }, username)
+
+    update_rabies_tag(dbo, username, post.integer("animal"))
+    return vaccid
 
 def update_vaccination_from_form(dbo, username, post):
     """
@@ -949,10 +975,23 @@ def update_vaccination_from_form(dbo, username, post):
         "DateExpires":          post.date("expires"),
         "BatchNumber":          post["batchnumber"],
         "Manufacturer":         post["manufacturer"],
+        "RabiesTag":            post["rabiestag"],
         "Cost":                 post.integer("cost"),
         "CostPaidDate":         post.date("costpaid"),
         "Comments":             post["comments"]
     }, username)
+
+    update_rabies_tag(dbo, username, post.integer("animal"))
+
+def update_rabies_tag(dbo, username, animalid):
+    """
+    Updates the rabies tag field on an animal record to the
+    latest from its vaccinations
+    """
+    rabiestag = dbo.query_string("SELECT RabiesTag FROM animalvaccination " \
+        "WHERE AnimalID=? AND DateOfVaccination Is Not Null AND RabiesTag Is Not Null " \
+        "AND RabiesTag <> '' ORDER BY DateOfVaccination DESC", [animalid])
+    if rabiestag != "": dbo.update("animal", animalid, { "RabiesTag": rabiestag }, username)
 
 def update_vaccination_batch_stock(dbo, username, vid, slid):
     """
@@ -1087,7 +1126,9 @@ def delete_vaccination(dbo, username, vaccinationid):
     """
     Deletes a vaccination record
     """
+    animalid = dbo.query_int("SELECT AnimalID FROM animalvaccination WHERE ID = ?", [vaccinationid])
     dbo.delete("animalvaccination", vaccinationid, username)
+    update_rabies_tag(dbo, username, animalid)
 
 def insert_profile_from_form(dbo, username, post):
     """
@@ -1176,7 +1217,9 @@ def update_treatment_today(dbo, username, amtid):
     Marks a treatment record as given today. 
     """
     amid = dbo.query_int("SELECT AnimalMedicalID FROM animalmedicaltreatment WHERE ID = ?", [amtid])
+    animalid = dbo.query_int("SELECT AnimalID FROM animalmedicaltreatment WHERE ID=?", [amtid])
     dbo.update("animalmedicaltreatment", amtid, {
+        "AnimalID":     animalid,
         "DateGiven":    dbo.today(),
         "GivenBy":      username
     }, username)
@@ -1193,7 +1236,9 @@ def update_treatment_given(dbo, username, amtid, newdate, by = "", vetid = 0, co
     Marks a treatment record as given on newdate, assuming that newdate is valid.
     """
     amid = dbo.query_int("SELECT AnimalMedicalID FROM animalmedicaltreatment WHERE ID = ?", [amtid])
+    animalid = dbo.query_int("SELECT AnimalID FROM animalmedicaltreatment WHERE ID=?", [amtid])
     dbo.update("animalmedicaltreatment", amtid, {
+        "AnimalID":             animalid,
         "AdministeringVetID":   vetid,
         "DateGiven":            newdate,
         "GivenBy":              by,
@@ -1212,7 +1257,9 @@ def update_treatment_required(dbo, username, amtid, newdate):
     Marks a treatment record as required on newdate, assuming
     that newdate is valid.
     """
+    animalid = dbo.query_int("SELECT AnimalID FROM animalmedicaltreatment WHERE ID=?", [amtid])
     dbo.update("animalmedicaltreatment", amtid, {
+        "AnimalID":         animalid,
         "DateRequired":     newdate
     }, username)
 
@@ -1221,7 +1268,9 @@ def update_vaccination_required(dbo, username, vaccid, newdate):
     Gives a vaccination record a required date of newdate, assuming
     that newdate is valid.
     """
+    animalid = dbo.query_int("SELECT AnimalID FROM animalvaccination WHERE ID=?", [vaccid])
     dbo.update("animalvaccination", vaccid, {
+        "AnimalID":         animalid,
         "DateRequired":     newdate
     }, username)
 

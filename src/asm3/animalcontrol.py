@@ -546,7 +546,7 @@ def delete_animalcontrol(dbo, username, acid):
     dbo.delete("log", "LinkID=%d AND LinkType=%d" % (acid, asm3.log.ANIMALCONTROL), username)
     dbo.execute("DELETE FROM additional WHERE LinkID = %d AND LinkType IN (%s)" % (acid, asm3.additional.INCIDENT_IN))
     dbo.delete("animalcontrol", acid, username)
-    asm3.dbfs.delete_path(dbo, "/animalcontrol/%d" % acid)
+    # asm3.dbfs.delete_path(dbo, "/animalcontrol/%d" % acid) # Use maint_db_delete_orphaned_media to remove dbfs later if needed
 
 def insert_animalcontrol(dbo, username):
     """

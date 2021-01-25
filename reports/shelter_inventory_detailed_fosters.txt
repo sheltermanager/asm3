@@ -19,6 +19,7 @@ t.AnimalType,
 s.SpeciesName,
 o.OwnerAddress, o.OwnerTown, o.OwnerCounty, o.OwnerPostcode, o.EmailAddress, o.HomeTelephone, o.MobileTelephone,
 CASE
+WHEN a.ActiveMovementType = 1 THEN 'Trial Adoption - ' || o.OwnerName
 WHEN a.ActiveMovementType = 2 THEN 'Foster - ' || o.OwnerName
 WHEN a.ActiveMovementType = 8 THEN 'Retailer - ' || o.OwnerName 
 ELSE i.LocationName END AS DisplayLocationName

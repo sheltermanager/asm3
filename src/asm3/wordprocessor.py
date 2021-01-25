@@ -58,10 +58,19 @@ def org_tags(dbo, username):
         "ORGANIZATIONTELEPHONE" : orgtel,
         "ORGANIZATIONEMAIL"     : orgemail,
         "DATE"                  : python2display(dbo.locale, now(dbo.timezone)),
+        "SIGNATURE"             : '<img src="signature:placeholder" width="150px" />',
+        "SIGNATURE100"          : '<img src="signature:placeholder" width="100px" />',
+        "SIGNATURE150"          : '<img src="signature:placeholder" width="150px" />',
+        "SIGNATURE200"          : '<img src="signature:placeholder" width="200px" />',
+        "SIGNATURE300"          : '<img src="signature:placeholder" width="300px" />',
         "USERNAME"              : username,
         "USERREALNAME"          : realname,
         "USEREMAILADDRESS"      : email,
-        "USERSIGNATURE"         : "<img src=\"" + sig + "\" >",
+        "USERSIGNATURE"         : '<img src="%s" width="150px" />' % sig,
+        "USERSIGNATURE100"      : '<img src="%s" width="100px" />' % sig,
+        "USERSIGNATURE150"      : '<img src="%s" width="150px" />' % sig,
+        "USERSIGNATURE200"      : '<img src="%s" width="200px" />' % sig,
+        "USERSIGNATURE300"      : '<img src="%s" width="300px" />' % sig,
         "USERSIGNATURESRC"      : sig
     }
     return tags
@@ -86,11 +95,14 @@ def additional_yesno(l, af):
 def weight_display(dbo, wv):
     """ formats the weight value wv for display (either kg or lb/oz) """
     kg = asm3.utils.cfloat(wv)
+    lbf = asm3.utils.cfloat(wv)
     lb = asm3.utils.cint(wv)
     oz = asm3.utils.cint((kg - lb) * 16.0)
     l = dbo.locale
     if asm3.configuration.show_weight_in_lbs(dbo):
         return "%s %s %s %s" % ( lb, _("lb", l), oz, _("oz", l) )
+    elif asm3.configuration.show_weight_in_lbs_fraction(dbo):
+        return "%s %s" % (lbf, _("lb", l))
     else:
         return "%s %s" % (kg, _("kg", l))
 
@@ -105,6 +117,25 @@ def fw(s):
     if s is None: return ""
     if s.find(" ") == -1: return s
     return s.split(" ")[0]
+
+def separate_results(rows, f):
+    """ Given a list of result rows, looks at field f and produces
+        a list containing a new list of result rows for each
+        unique value of f. 
+    """
+    types = {}
+    result = []
+    for x in rows:
+        if x[f] not in types:
+            types[x[f]] = ""
+    for k in types.keys():
+        orows = []
+        for x in rows:
+            if x[f] == k:
+                orows.append(x)
+        result.append(orows)
+    print(result)
+    return result
 
 def additional_field_tags(dbo, fields, prefix = ""):
     """ Process additional fields and returns them as tags """
@@ -226,6 +257,13 @@ def animal_tags(dbo, a, includeAdditional=True, includeCosts=True, includeDiet=T
         "DISPLAYCATSIFBADWITH" : asm3.utils.iif(a["ISGOODWITHCATS"] == 1, _("Cats", l), ""),
         "DISPLAYDOGSIFBADWITH" : asm3.utils.iif(a["ISGOODWITHDOGS"] == 1, _("Dogs", l), ""),
         "DISPLAYCHILDRENIFBADWITH" : asm3.utils.iif(a["ISGOODWITHCHILDREN"] == 1, _("Children", l), ""),
+        "DISPLAYXIFCAT"         : asm3.utils.iif(a["SPECIESID"] == 2, "X", ""),
+        "DISPLAYXIFDOG"         : asm3.utils.iif(a["SPECIESID"] == 1, "X", ""),
+        "DISPLAYXIFRABBIT"      : asm3.utils.iif(a["SPECIESID"] == 7, "X", ""),
+        "DISPLAYXIFMALE"        : asm3.utils.iif(a["SEX"] == 1, "X", ""),
+        "DISPLAYXIFFEMALE"      : asm3.utils.iif(a["SEX"] == 0, "X", ""),
+        "DISPLAYXIFPEDIGREE"    : asm3.utils.iif(a["CROSSBREED"] == 0, "X", ""),
+        "DISPLAYXIFCROSSBREED"  : asm3.utils.iif(a["CROSSBREED"] == 1, "X", ""),
         "PICKUPLOCATIONNAME"    : asm3.utils.iif(a["ISPICKUP"] == 1, asm3.utils.nulltostr(a["PICKUPLOCATIONNAME"]), ""),
         "PICKUPADDRESS"         : asm3.utils.iif(a["ISPICKUP"] == 1, asm3.utils.nulltostr(a["PICKUPADDRESS"]), ""),
         "NAMEOFPERSONBROUGHTANIMALIN" : a["BROUGHTINBYOWNERNAME"],
@@ -481,6 +519,7 @@ def animal_tags(dbo, a, includeAdditional=True, includeCosts=True, includeDiet=T
             "VACCINATIONEXPIRES":       "d:DATEEXPIRES",
             "VACCINATIONBATCH":         "BATCHNUMBER",
             "VACCINATIONMANUFACTURER":  "MANUFACTURER",
+            "VACCINATIONRABIESTAG":     "RABIESTAG",
             "VACCINATIONCOST":          "c:COST",
             "VACCINATIONCOMMENTS":      "COMMENTS",
             "VACCINATIONDESCRIPTION":   "VACCINATIONDESCRIPTION",
@@ -502,6 +541,8 @@ def animal_tags(dbo, a, includeAdditional=True, includeCosts=True, includeDiet=T
             ( "VACCINATIONTYPE", _("Type", l) ),
             ( "DATEREQUIRED", _("Due", l)),
             ( "DATEOFVACCINATION", _("Given", l)),
+            ( "ADMINISTERINGVETNAME", _("Vet", l)),
+            ( "RABIESTAG", _("Rabies Tag", l) ),
             ( "MANUFACTURER", _("Manufacturer", l)),
             ( "COMMENTS", _("Comments", l)) 
         ))
@@ -535,6 +576,7 @@ def animal_tags(dbo, a, includeAdditional=True, includeCosts=True, includeDiet=T
             ( "TESTNAME", _("Type", l) ),
             ( "DATEREQUIRED", _("Required", l)),
             ( "DATEOFTEST", _("Performed", l)),
+            ( "ADMINISTERINGVETNAME", _("Vet", l)),
             ( "RESULTNAME", _("Result", l)),
             ( "COMMENTS", _("Comments", l)) 
         ))
@@ -558,9 +600,13 @@ def animal_tags(dbo, a, includeAdditional=True, includeCosts=True, includeDiet=T
         medicals = asm3.medical.get_regimens(dbo, a["ID"], not iic)
         tags.update(table_tags(dbo, d, medicals, "TREATMENTNAME", "NEXTTREATMENTDUE", "LASTTREATMENTGIVEN"))
         tags["ANIMALMEDICALS"] = html_table(l, medicals, (
+            ( "STARTDATE", _("Start Date", l) ),
             ( "TREATMENTNAME", _("Treatment", l) ),
             ( "DOSAGE", _("Dosage", l) ),
-            ( "LASTTREATMENTGIVEN", _("Given", l)),
+            ( "NAMEDSTATUS", _("Status", l) ),
+            ( "NAMEDGIVENREMAINING", _("Given", l) ),
+            ( "LASTTREATMENTVETNAME", _("Vet", l) ),
+            ( "LASTTREATMENTGIVEN", _("Date", l)),
             ( "NEXTTREATMENTDUE", _("Due", l)),
             ( "COMMENTS", _("Comments", l)) 
         ))
@@ -705,6 +751,14 @@ def animal_tags(dbo, a, includeAdditional=True, includeCosts=True, includeDiet=T
             ( "CREATEDBY", _("By", l)),
             ( "COMMENTS", _("Comments", l))
         ))
+        # Generate an ANIMALLOGSTYPE for each type represented in the logs
+        for logst in separate_results(logs, "LOGTYPENAME"):
+            tags["ANIMALLOGS%s" % logst[0]["LOGTYPENAME"].replace(" ", "").upper()] = html_table(l, logst, (
+                ( "DATE", _("Date", l)),
+                ( "LOGTYPENAME", _("Type", l)),
+                ( "CREATEDBY", _("By", l)),
+                ( "COMMENTS", _("Comments", l))
+            ))
 
     return tags
 
@@ -1170,6 +1224,7 @@ def person_tags(dbo, p, includeImg=False, includeDonations=False, includeVoucher
         "OWNERLASTCHANGEDBYNAME" : p["LASTCHANGEDBY"],
         "OWNERLASTCHANGEDDATE"  : python2display(l, p["LASTCHANGEDDATE"]),
         "IDCHECK"               : asm3.utils.iif(p["IDCHECK"] == 1, _("Yes", l), _("No", l)),
+        "HOMECHECKEDDATE"       : python2display(l, p["DATELASTHOMECHECKED"]),
         "HOMECHECKEDBYNAME"     : p["HOMECHECKEDBYNAME"],
         "HOMECHECKEDBYEMAIL"    : p["HOMECHECKEDBYEMAIL"],
         "HOMECHECKEDBYHOMETELEPHONE": p["HOMECHECKEDBYHOMETELEPHONE"],
@@ -1453,6 +1508,8 @@ def table_get_value(l, row, k):
         s = asm3.utils.iif(row[k.replace("y:", "")] == 1, _("Yes", l), _("No", l))
     elif k.find("f:") != -1:
         s = "%0.2f" % asm3.utils.cfloat(row[k.replace("f:", "")])
+    elif row[k] is None:
+        return ""
     else:
         s = str(row[k])
     return s
@@ -1635,9 +1692,10 @@ def generate_animal_doc(dbo, templateid, animalid, username):
     a = asm3.animal.get_animal(dbo, animalid)
     im = asm3.media.get_image_file_data(dbo, "animal", animalid)[1]
     if a is None: raise asm3.utils.ASMValidationError("%d is not a valid animal ID" % animalid)
-    # Only include donations if there isn't an active movement as we'll take care
-    # of them below if there is
-    tags = animal_tags(dbo, a, includeDonations=(not a["ACTIVEMOVEMENTID"] or a["ACTIVEMOVEMENTID"] == 0))
+    # We include donations here, so that we have RecentType, DueType, Last1, etc
+    # But the call below to get_movement_donations will add the totals and allow
+    # receipt/invoice type documents to work if there's an active movement
+    tags = animal_tags(dbo, a, includeDonations=True)
     # Use the person info from the latest open movement for the animal
     # This will pick up future dated adoptions instead of fosterers (which are still currentowner)
     # as get_animal_movements returns them in descending order of movement date
@@ -1783,7 +1841,7 @@ def generate_movement_doc(dbo, templateid, movementid, username):
     if m is None:
         raise asm3.utils.ASMValidationError("%d is not a valid movement ID" % movementid)
     if m.ANIMALID is not None and m.ANIMALID != 0:
-        tags = animal_tags(dbo, asm3.animal.get_animal(dbo, m.ANIMALID), includeDonations=False)
+        tags = animal_tags(dbo, asm3.animal.get_animal(dbo, m.ANIMALID))
     if m.OWNERID is not None and m.OWNERID != 0:
         tags = append_tags(tags, person_tags(dbo, asm3.person.get_person(dbo, m.OWNERID)))
     tags = append_tags(tags, movement_tags(dbo, m))

@@ -125,7 +125,11 @@ $(function() {
                 '<tr class="towncounty">',
                 '<td><label for="dispatchcounty">' + _("State") + '</label></td>',
                 '<td>',
-                '<input type="text" id="dispatchcounty" data-json="DISPATCHCOUNTY" data-post="dispatchcounty" maxlength="100" class="asm-textbox" />',
+                common.iif(config.bool("USStateCodes"),
+                    '<select id="dispatchcounty" data-json="DISPATCHCOUNTY" data-post="dispatchcounty" class="asm-selectbox">' +
+                    html.states_us_options() + '</select>',
+                    '<input type="text" id="dispatchcounty" data-json="DISPATCHCOUNTY" data-post="dispatchcounty" maxlength="100" ' + 
+                    'class="asm-textbox" />'),
                 '</td>',
                 '</tr>',
                 '<tr>',

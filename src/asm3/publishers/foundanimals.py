@@ -32,6 +32,9 @@ class FoundAnimalsPublisher(FTPPublisher):
 
         org = asm3.configuration.organisation(self.dbo)
         folder = asm3.configuration.foundanimals_folder(self.dbo)
+        cutoffdays = asm3.configuration.foundanimals_cutoff_days(self.dbo)
+        if cutoffdays == 0: cutoffdays = -1095 # default cutoff is 3 years, note that it's a negative number
+
         if folder == "":
             self.setLastError("No FoundAnimals folder has been set.")
             self.cleanup()
@@ -88,7 +91,7 @@ class FoundAnimalsPublisher(FTPPublisher):
                     self.cleanup()
                     return
 
-                v = self.validate(an)
+                v = self.validate(an, cutoffdays)
                 if v == VALIDATE_NO: 
                     continue
                 elif v == VALIDATE_YES:
@@ -180,8 +183,11 @@ class FoundAnimalsPublisher(FTPPublisher):
         line.append("\"%s\"" % email)
         return self.csvLine(line)
 
-    def validate(self, an):
-        """ Validate an animal record is ok to send """
+    def validate(self, an, cutoffdays):
+        """ Validate an animal record is ok to send.
+            an: The record
+            cutoffdays: Negative number of days to check against service date
+        """
         # Validate certain items aren't blank so we aren't registering bogus data
         if asm3.utils.nulltostr(an["CURRENTOWNERADDRESS"]).strip() == "":
             self.logError("Address for the new owner is blank, cannot process")
@@ -196,10 +202,14 @@ class FoundAnimalsPublisher(FTPPublisher):
             self.logError("Microchip length is not 9, 10 or 15, cannot process")
             return VALIDATE_NO
 
+        # If the action triggering this registration is older than our cutoff, 
+        # not only fail validation, but return a value of FAIL so that this record
+        # is marked with the error and we won't try again until something changes
+        # (prevents old records continually being checked)
         servicedate = an["ACTIVEMOVEMENTDATE"] or an["MOSTRECENTENTRYDATE"]
         if an["NONSHELTERANIMAL"] == 1: servicedate = an["IDENTICHIPDATE"]
-        if servicedate < self.dbo.today(offset=-365*3):
-            an["FAILMESSAGE"] = "Service date is older than 3 years, marking failed"
+        if servicedate < self.dbo.today(offset=cutoffdays):
+            an["FAILMESSAGE"] = "Service date is older than %s days, marking failed" % cutoffdays
             self.logError(an["FAILMESSAGE"])
             return VALIDATE_FAIL
 

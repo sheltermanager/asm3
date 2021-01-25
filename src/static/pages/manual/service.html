@@ -106,6 +106,7 @@
 <li class="toctree-l1"><a class="reference internal" href="rota.html">Rota</a></li>
 <li class="toctree-l1"><a class="reference internal" href="mobile.html">Mobile Interface</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Service API</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#animal-datasets">Animal Datasets</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#animal-image">animal_image</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#animal-thumbnail">animal_thumbnail</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#animal-view">animal_view</a></li>
@@ -239,7 +240,302 @@ your data or view anything you don’t want them to.</li>
 <li>animalid / title: An animal ID or title depending on the service method
 called.</li>
 </ul>
-<p>The following method values are supported:</p>
+<div class="section" id="animal-datasets">
+<h2>Animal Datasets<a class="headerlink" href="#animal-datasets" title="Permalink to this headline">¶</a></h2>
+<p>Many of the json and xml service calls return a dataset of animals, a sample animal
+JSON result looks like this:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;ACCEPTANCENUMBER&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;ACTIVEMOVEMENTADOPTIONNUMBER&quot;</span><span class="p">:</span> <span class="n">null</span><span class="p">,</span>
+        <span class="s2">&quot;ACTIVEMOVEMENTCOMMENTS&quot;</span><span class="p">:</span> <span class="n">null</span><span class="p">,</span>
+        <span class="s2">&quot;ACTIVEMOVEMENTCREATEDBY&quot;</span><span class="p">:</span> <span class="n">null</span><span class="p">,</span>
+        <span class="s2">&quot;ACTIVEMOVEMENTCREATEDBYNAME&quot;</span><span class="p">:</span> <span class="n">null</span><span class="p">,</span>
+        <span class="s2">&quot;ACTIVEMOVEMENTCREATEDDATE&quot;</span><span class="p">:</span> <span class="n">null</span><span class="p">,</span>
+        <span class="s2">&quot;ACTIVEMOVEMENTDATE&quot;</span><span class="p">:</span> <span class="n">null</span><span class="p">,</span>
+        <span class="s2">&quot;ACTIVEMOVEMENTDONATION&quot;</span><span class="p">:</span> <span class="n">null</span><span class="p">,</span>
+        <span class="s2">&quot;ACTIVEMOVEMENTID&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="s2">&quot;ACTIVEMOVEMENTINSURANCENUMBER&quot;</span><span class="p">:</span> <span class="n">null</span><span class="p">,</span>
+        <span class="s2">&quot;ACTIVEMOVEMENTLASTCHANGEDBY&quot;</span><span class="p">:</span> <span class="n">null</span><span class="p">,</span>
+        <span class="s2">&quot;ACTIVEMOVEMENTLASTCHANGEDDATE&quot;</span><span class="p">:</span> <span class="n">null</span><span class="p">,</span>
+        <span class="s2">&quot;ACTIVEMOVEMENTREASONFORRETURN&quot;</span><span class="p">:</span> <span class="n">null</span><span class="p">,</span>
+        <span class="s2">&quot;ACTIVEMOVEMENTRESERVATIONDATE&quot;</span><span class="p">:</span> <span class="n">null</span><span class="p">,</span>
+        <span class="s2">&quot;ACTIVEMOVEMENTRETURN&quot;</span><span class="p">:</span> <span class="n">null</span><span class="p">,</span>
+        <span class="s2">&quot;ACTIVEMOVEMENTRETURNDATE&quot;</span><span class="p">:</span> <span class="n">null</span><span class="p">,</span>
+        <span class="s2">&quot;ACTIVEMOVEMENTTRIALENDDATE&quot;</span><span class="p">:</span> <span class="n">null</span><span class="p">,</span>
+        <span class="s2">&quot;ACTIVEMOVEMENTTYPE&quot;</span><span class="p">:</span> <span class="n">null</span><span class="p">,</span>
+        <span class="s2">&quot;ACTIVEMOVEMENTTYPENAME&quot;</span><span class="p">:</span> <span class="n">null</span><span class="p">,</span>
+        <span class="s2">&quot;ADDITIONALFLAGS&quot;</span><span class="p">:</span> <span class="s2">&quot;|&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;ADOPTAPETCOLOUR&quot;</span><span class="p">:</span> <span class="s2">&quot;Black&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;ADOPTIONCOORDINATOREMAILADDRESS&quot;</span><span class="p">:</span> <span class="n">null</span><span class="p">,</span>
+        <span class="s2">&quot;ADOPTIONCOORDINATORHOMETELEPHONE&quot;</span><span class="p">:</span> <span class="n">null</span><span class="p">,</span>
+        <span class="s2">&quot;ADOPTIONCOORDINATORID&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="s2">&quot;ADOPTIONCOORDINATORMOBILETELEPHONE&quot;</span><span class="p">:</span> <span class="n">null</span><span class="p">,</span>
+        <span class="s2">&quot;ADOPTIONCOORDINATORNAME&quot;</span><span class="p">:</span> <span class="n">null</span><span class="p">,</span>
+        <span class="s2">&quot;ADOPTIONCOORDINATORWORKTELEPHONE&quot;</span><span class="p">:</span> <span class="n">null</span><span class="p">,</span>
+        <span class="s2">&quot;AGEGROUP&quot;</span><span class="p">:</span> <span class="s2">&quot;Senior&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;AGEGROUPACTIVEMOVEMENT&quot;</span><span class="p">:</span> <span class="s2">&quot;Senior&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;ANIMALAGE&quot;</span><span class="p">:</span> <span class="s2">&quot;12 years 7 months.&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;ANIMALCOMMENTS&quot;</span><span class="p">:</span> <span class="s2">&quot;Cat that needs a longer bio than 20 chars.&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;ANIMALCONTROLINCIDENTDATE&quot;</span><span class="p">:</span> <span class="n">null</span><span class="p">,</span>
+        <span class="s2">&quot;ANIMALCONTROLINCIDENTID&quot;</span><span class="p">:</span> <span class="n">null</span><span class="p">,</span>
+        <span class="s2">&quot;ANIMALCONTROLINCIDENTNAME&quot;</span><span class="p">:</span> <span class="n">null</span><span class="p">,</span>
+        <span class="s2">&quot;ANIMALNAME&quot;</span><span class="p">:</span> <span class="s2">&quot;Sarah&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;ANIMALTYPEID&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+        <span class="s2">&quot;ANIMALTYPENAME&quot;</span><span class="p">:</span> <span class="s2">&quot;U (Unwanted Cat)&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;ARCHIVED&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="s2">&quot;ASILOMARINTAKECATEGORY&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="s2">&quot;ASILOMARISTRANSFEREXTERNAL&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="s2">&quot;ASILOMAROWNERREQUESTEDEUTHANASIA&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="s2">&quot;BASECOLOURID&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="s2">&quot;BASECOLOURNAME&quot;</span><span class="p">:</span> <span class="s2">&quot;Black&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;BONDEDANIMAL1ARCHIVED&quot;</span><span class="p">:</span> <span class="n">null</span><span class="p">,</span>
+        <span class="s2">&quot;BONDEDANIMAL1CODE&quot;</span><span class="p">:</span> <span class="n">null</span><span class="p">,</span>
+        <span class="s2">&quot;BONDEDANIMAL1NAME&quot;</span><span class="p">:</span> <span class="n">null</span><span class="p">,</span>
+        <span class="s2">&quot;BONDEDANIMAL2ARCHIVED&quot;</span><span class="p">:</span> <span class="n">null</span><span class="p">,</span>
+        <span class="s2">&quot;BONDEDANIMAL2CODE&quot;</span><span class="p">:</span> <span class="n">null</span><span class="p">,</span>
+        <span class="s2">&quot;BONDEDANIMAL2ID&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="s2">&quot;BONDEDANIMAL2NAME&quot;</span><span class="p">:</span> <span class="n">null</span><span class="p">,</span>
+        <span class="s2">&quot;BONDEDANIMALID&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="s2">&quot;BREED2ID&quot;</span><span class="p">:</span> <span class="mi">231</span><span class="p">,</span>
+        <span class="s2">&quot;BREEDID&quot;</span><span class="p">:</span> <span class="mi">231</span><span class="p">,</span>
+        <span class="s2">&quot;BREEDNAME&quot;</span><span class="p">:</span> <span class="s2">&quot;British Shorthair&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;BREEDNAME1&quot;</span><span class="p">:</span> <span class="s2">&quot;British Shorthair&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;BREEDNAME2&quot;</span><span class="p">:</span> <span class="s2">&quot;British Shorthair&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;BROUGHTINBYEMAILADDRESS&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;BROUGHTINBYHOMETELEPHONE&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;BROUGHTINBYJURISDICTION&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;BROUGHTINBYMOBILETELEPHONE&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;BROUGHTINBYOWNERADDRESS&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;BROUGHTINBYOWNERCOUNTY&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;BROUGHTINBYOWNERID&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;BROUGHTINBYOWNERNAME&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;BROUGHTINBYOWNERPOSTCODE&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;BROUGHTINBYOWNERTOWN&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;BROUGHTINBYWORKTELEPHONE&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;COATTYPE&quot;</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span>
+        <span class="s2">&quot;COATTYPENAME&quot;</span><span class="p">:</span> <span class="s2">&quot;Corded&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;CODE&quot;</span><span class="p">:</span> <span class="s2">&quot;1D&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;COMBITESTDATE&quot;</span><span class="p">:</span> <span class="n">null</span><span class="p">,</span>
+        <span class="s2">&quot;COMBITESTED&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="s2">&quot;COMBITESTEDNAME&quot;</span><span class="p">:</span> <span class="s2">&quot;No&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;COMBITESTRESULT&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="s2">&quot;COMBITESTRESULTNAME&quot;</span><span class="p">:</span> <span class="s2">&quot;Unknown&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;CREATEDBY&quot;</span><span class="p">:</span> <span class="s2">&quot;robin&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;CREATEDDATE&quot;</span><span class="p">:</span> <span class="s2">&quot;2010-01-18T10:20:50&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;CROSSBREED&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="s2">&quot;CROSSBREEDNAME&quot;</span><span class="p">:</span> <span class="s2">&quot;No&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;CRUELTYCASE&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="s2">&quot;CRUELTYCASENAME&quot;</span><span class="p">:</span> <span class="s2">&quot;No&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;CURRENTOWNERADDRESS&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;CURRENTOWNERCOUNTRY&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;CURRENTOWNERCOUNTY&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;CURRENTOWNEREMAILADDRESS&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;CURRENTOWNEREXCLUDEEMAIL&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;CURRENTOWNERFORENAMES&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;CURRENTOWNERHOMETELEPHONE&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;CURRENTOWNERID&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;CURRENTOWNERINITIALS&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;CURRENTOWNERJURISDICTION&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;CURRENTOWNERMOBILETELEPHONE&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;CURRENTOWNERNAME&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;CURRENTOWNERPOSTCODE&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;CURRENTOWNERSURNAME&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;CURRENTOWNERTITLE&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;CURRENTOWNERTOWN&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;CURRENTOWNERWORKTELEPHONE&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;CURRENTVETADDRESS&quot;</span><span class="p">:</span> <span class="n">null</span><span class="p">,</span>
+        <span class="s2">&quot;CURRENTVETCOUNTY&quot;</span><span class="p">:</span> <span class="n">null</span><span class="p">,</span>
+        <span class="s2">&quot;CURRENTVETEMAILADDRESS&quot;</span><span class="p">:</span> <span class="n">null</span><span class="p">,</span>
+        <span class="s2">&quot;CURRENTVETID&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="s2">&quot;CURRENTVETLICENCENUMBER&quot;</span><span class="p">:</span> <span class="n">null</span><span class="p">,</span>
+        <span class="s2">&quot;CURRENTVETNAME&quot;</span><span class="p">:</span> <span class="n">null</span><span class="p">,</span>
+        <span class="s2">&quot;CURRENTVETPOSTCODE&quot;</span><span class="p">:</span> <span class="n">null</span><span class="p">,</span>
+        <span class="s2">&quot;CURRENTVETTOWN&quot;</span><span class="p">:</span> <span class="n">null</span><span class="p">,</span>
+        <span class="s2">&quot;CURRENTVETWORKTELEPHONE&quot;</span><span class="p">:</span> <span class="n">null</span><span class="p">,</span>
+        <span class="s2">&quot;DAILYBOARDINGCOST&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="s2">&quot;DATEBROUGHTIN&quot;</span><span class="p">:</span> <span class="s2">&quot;2010-01-18T00:00:00&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;DATEOFBIRTH&quot;</span><span class="p">:</span> <span class="s2">&quot;2008-01-18T00:00:00&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;DAYSONSHELTER&quot;</span><span class="p">:</span> <span class="mi">3886</span><span class="p">,</span>
+        <span class="s2">&quot;DECEASEDDATE&quot;</span><span class="p">:</span> <span class="n">null</span><span class="p">,</span>
+        <span class="s2">&quot;DECLAWED&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="s2">&quot;DECLAWEDNAME&quot;</span><span class="p">:</span> <span class="s2">&quot;No&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;DIEDOFFSHELTER&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="s2">&quot;DIEDOFFSHELTERNAME&quot;</span><span class="p">:</span> <span class="s2">&quot;No&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;DISPLAYLOCATION&quot;</span><span class="p">:</span> <span class="s2">&quot;Dog Block::3&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;DISPLAYLOCATIONNAME&quot;</span><span class="p">:</span> <span class="s2">&quot;Dog Block&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;DOCMEDIADATE&quot;</span><span class="p">:</span> <span class="s2">&quot;2015-05-11T00:00:00&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;DOCMEDIANAME&quot;</span><span class="p">:</span> <span class="s2">&quot;198.jpg&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;ENTRYREASONID&quot;</span><span class="p">:</span> <span class="mi">7</span><span class="p">,</span>
+        <span class="s2">&quot;ENTRYREASONNAME&quot;</span><span class="p">:</span> <span class="s2">&quot;Stray&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;ESTIMATEDDOB&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="s2">&quot;ESTIMATEDDOBNAME&quot;</span><span class="p">:</span> <span class="s2">&quot;No&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;EXTRAIDS&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;FEE&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="s2">&quot;FLVRESULT&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="s2">&quot;FLVRESULTNAME&quot;</span><span class="p">:</span> <span class="s2">&quot;Unknown&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;HASACTIVERESERVE&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="s2">&quot;HASACTIVERESERVENAME&quot;</span><span class="p">:</span> <span class="s2">&quot;No&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;HASFUTUREADOPTION&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="s2">&quot;HASPERMANENTFOSTER&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="s2">&quot;HASSPECIALNEEDS&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="s2">&quot;HASSPECIALNEEDSNAME&quot;</span><span class="p">:</span> <span class="s2">&quot;No&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;HASTRIALADOPTION&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="s2">&quot;HASTRIALADOPTIONNAME&quot;</span><span class="p">:</span> <span class="s2">&quot;No&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;HEALTHPROBLEMS&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;HEARTWORMTESTDATE&quot;</span><span class="p">:</span> <span class="n">null</span><span class="p">,</span>
+        <span class="s2">&quot;HEARTWORMTESTED&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="s2">&quot;HEARTWORMTESTEDNAME&quot;</span><span class="p">:</span> <span class="s2">&quot;No&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;HEARTWORMTESTRESULT&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="s2">&quot;HEARTWORMTESTRESULTNAME&quot;</span><span class="p">:</span> <span class="s2">&quot;Unknown&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;HIDDENANIMALDETAILS&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;HOLDUNTILDATE&quot;</span><span class="p">:</span> <span class="n">null</span><span class="p">,</span>
+        <span class="s2">&quot;ID&quot;</span><span class="p">:</span> <span class="mi">174</span><span class="p">,</span>
+        <span class="s2">&quot;IDENTICHIP2DATE&quot;</span><span class="p">:</span> <span class="n">null</span><span class="p">,</span>
+        <span class="s2">&quot;IDENTICHIP2NUMBER&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;IDENTICHIPDATE&quot;</span><span class="p">:</span> <span class="n">null</span><span class="p">,</span>
+        <span class="s2">&quot;IDENTICHIPNUMBER&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;IDENTICHIPPED&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="s2">&quot;IDENTICHIPPEDNAME&quot;</span><span class="p">:</span> <span class="s2">&quot;No&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;ISCOURTESY&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="s2">&quot;ISDOA&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="s2">&quot;ISDOANAME&quot;</span><span class="p">:</span> <span class="s2">&quot;No&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;ISGOODWITHCATS&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="s2">&quot;ISGOODWITHCATSNAME&quot;</span><span class="p">:</span> <span class="s2">&quot;Yes&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;ISGOODWITHCHILDREN&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+        <span class="s2">&quot;ISGOODWITHCHILDRENNAME&quot;</span><span class="p">:</span> <span class="s2">&quot;Unknown&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;ISGOODWITHDOGS&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+        <span class="s2">&quot;ISGOODWITHDOGSNAME&quot;</span><span class="p">:</span> <span class="s2">&quot;Unknown&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;ISHOLD&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="s2">&quot;ISHOUSETRAINED&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+        <span class="s2">&quot;ISHOUSETRAINEDNAME&quot;</span><span class="p">:</span> <span class="s2">&quot;Unknown&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;ISNOTAVAILABLEFORADOPTION&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="s2">&quot;ISNOTAVAILABLEFORADOPTIONNAME&quot;</span><span class="p">:</span> <span class="s2">&quot;No&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;ISNOTFORREGISTRATION&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="s2">&quot;ISNOTFORREGISTRATIONNAME&quot;</span><span class="p">:</span> <span class="s2">&quot;No&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;ISPICKUP&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="s2">&quot;ISPICKUPNAME&quot;</span><span class="p">:</span> <span class="s2">&quot;No&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;ISQUARANTINE&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="s2">&quot;ISTRANSFER&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="s2">&quot;ISTRANSFERNAME&quot;</span><span class="p">:</span> <span class="s2">&quot;No&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;JURISDICTIONID&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="s2">&quot;JURISDICTIONNAME&quot;</span><span class="p">:</span> <span class="n">null</span><span class="p">,</span>
+        <span class="s2">&quot;LASTCHANGEDBY&quot;</span><span class="p">:</span> <span class="s2">&quot;robin&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;LASTCHANGEDDATE&quot;</span><span class="p">:</span> <span class="s2">&quot;2018-08-27T10:25:07.534155&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;LOOKUPDEFAULT&quot;</span><span class="p">:</span> <span class="s2">&quot;Item 3&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;MARKINGS&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;MOSTRECENTENTRYDATE&quot;</span><span class="p">:</span> <span class="s2">&quot;2010-01-18T00:00:00&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;NEUTERED&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="s2">&quot;NEUTEREDBYVETID&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="s2">&quot;NEUTEREDDATE&quot;</span><span class="p">:</span> <span class="s2">&quot;2009-01-18T00:00:00&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;NEUTEREDNAME&quot;</span><span class="p">:</span> <span class="s2">&quot;Yes&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;NEUTERINGVETADDRESS&quot;</span><span class="p">:</span> <span class="n">null</span><span class="p">,</span>
+        <span class="s2">&quot;NEUTERINGVETCOUNTY&quot;</span><span class="p">:</span> <span class="n">null</span><span class="p">,</span>
+        <span class="s2">&quot;NEUTERINGVETEMAILADDRESS&quot;</span><span class="p">:</span> <span class="n">null</span><span class="p">,</span>
+        <span class="s2">&quot;NEUTERINGVETLICENCENUMBER&quot;</span><span class="p">:</span> <span class="n">null</span><span class="p">,</span>
+        <span class="s2">&quot;NEUTERINGVETNAME&quot;</span><span class="p">:</span> <span class="n">null</span><span class="p">,</span>
+        <span class="s2">&quot;NEUTERINGVETPOSTCODE&quot;</span><span class="p">:</span> <span class="n">null</span><span class="p">,</span>
+        <span class="s2">&quot;NEUTERINGVETTOWN&quot;</span><span class="p">:</span> <span class="n">null</span><span class="p">,</span>
+        <span class="s2">&quot;NEUTERINGVETWORKTELEPHONE&quot;</span><span class="p">:</span> <span class="n">null</span><span class="p">,</span>
+        <span class="s2">&quot;NONSHELTERANIMAL&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="s2">&quot;NONSHELTERANIMALNAME&quot;</span><span class="p">:</span> <span class="s2">&quot;No&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;ORIGINALOWNERADDRESS&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;ORIGINALOWNERCOUNTRY&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;ORIGINALOWNERCOUNTY&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;ORIGINALOWNEREMAILADDRESS&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;ORIGINALOWNERFORENAMES&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;ORIGINALOWNERHOMETELEPHONE&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;ORIGINALOWNERID&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;ORIGINALOWNERINITIALS&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;ORIGINALOWNERJURISDICTION&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;ORIGINALOWNERMOBILETELEPHONE&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;ORIGINALOWNERNAME&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;ORIGINALOWNERPOSTCODE&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;ORIGINALOWNERSURNAME&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;ORIGINALOWNERTITLE&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;ORIGINALOWNERTOWN&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;ORIGINALOWNERWORKTELEPHONE&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;OWNERID&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="s2">&quot;OWNERNAME&quot;</span><span class="p">:</span> <span class="n">null</span><span class="p">,</span>
+        <span class="s2">&quot;OWNERSVETADDRESS&quot;</span><span class="p">:</span> <span class="n">null</span><span class="p">,</span>
+        <span class="s2">&quot;OWNERSVETCOUNTY&quot;</span><span class="p">:</span> <span class="n">null</span><span class="p">,</span>
+        <span class="s2">&quot;OWNERSVETEMAILADDRESS&quot;</span><span class="p">:</span> <span class="n">null</span><span class="p">,</span>
+        <span class="s2">&quot;OWNERSVETID&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="s2">&quot;OWNERSVETLICENCENUMBER&quot;</span><span class="p">:</span> <span class="n">null</span><span class="p">,</span>
+        <span class="s2">&quot;OWNERSVETNAME&quot;</span><span class="p">:</span> <span class="n">null</span><span class="p">,</span>
+        <span class="s2">&quot;OWNERSVETPOSTCODE&quot;</span><span class="p">:</span> <span class="n">null</span><span class="p">,</span>
+        <span class="s2">&quot;OWNERSVETTOWN&quot;</span><span class="p">:</span> <span class="n">null</span><span class="p">,</span>
+        <span class="s2">&quot;OWNERSVETWORKTELEPHONE&quot;</span><span class="p">:</span> <span class="n">null</span><span class="p">,</span>
+        <span class="s2">&quot;PETFINDERBREED&quot;</span><span class="p">:</span> <span class="s2">&quot;British Shorthair&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;PETFINDERBREED2&quot;</span><span class="p">:</span> <span class="s2">&quot;British Shorthair&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;PETFINDERSPECIES&quot;</span><span class="p">:</span> <span class="s2">&quot;Cat&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;PICKUPADDRESS&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;PICKUPLOCATIONID&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="s2">&quot;PICKUPLOCATIONNAME&quot;</span><span class="p">:</span> <span class="n">null</span><span class="p">,</span>
+        <span class="s2">&quot;PTSREASON&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;PTSREASONID&quot;</span><span class="p">:</span> <span class="mi">8</span><span class="p">,</span>
+        <span class="s2">&quot;PTSREASONNAME&quot;</span><span class="p">:</span> <span class="s2">&quot;Biting&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;PUTTOSLEEP&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="s2">&quot;PUTTOSLEEPNAME&quot;</span><span class="p">:</span> <span class="s2">&quot;No&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;RABIESTAG&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;REASONFORENTRY&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;REASONNO&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;RECENTLYCHANGEDIMAGES&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="s2">&quot;RECORDVERSION&quot;</span><span class="p">:</span> <span class="mi">102507</span><span class="p">,</span>
+        <span class="s2">&quot;RESERVATIONDATE&quot;</span><span class="p">:</span> <span class="n">null</span><span class="p">,</span>
+        <span class="s2">&quot;RESERVATIONSTATUSNAME&quot;</span><span class="p">:</span> <span class="n">null</span><span class="p">,</span>
+        <span class="s2">&quot;RESERVEDOWNERADDRESS&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;RESERVEDOWNERCOUNTY&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;RESERVEDOWNEREMAILADDRESS&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;RESERVEDOWNERHOMETELEPHONE&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;RESERVEDOWNERID&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;RESERVEDOWNERJURISDICTION&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;RESERVEDOWNERMOBILETELEPHONE&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;RESERVEDOWNERNAME&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;RESERVEDOWNERPOSTCODE&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;RESERVEDOWNERTOWN&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;RESERVEDOWNERWORKTELEPHONE&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;SEX&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="s2">&quot;SEXNAME&quot;</span><span class="p">:</span> <span class="s2">&quot;Female&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;SHELTERCODE&quot;</span><span class="p">:</span> <span class="s2">&quot;D2010001&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;SHELTERLOCATION&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="s2">&quot;SHELTERLOCATIONDESCRIPTION&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;SHELTERLOCATIONNAME&quot;</span><span class="p">:</span> <span class="s2">&quot;Dog Block&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;SHELTERLOCATIONUNIT&quot;</span><span class="p">:</span> <span class="s2">&quot;3&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;SHORTCODE&quot;</span><span class="p">:</span> <span class="s2">&quot;1D&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;SITEID&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="s2">&quot;SITENAME&quot;</span><span class="p">:</span> <span class="s2">&quot;main&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;SIZE&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="s2">&quot;SIZENAME&quot;</span><span class="p">:</span> <span class="s2">&quot;Large&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;SMARTTAG&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="s2">&quot;SMARTTAGDATE&quot;</span><span class="p">:</span> <span class="n">null</span><span class="p">,</span>
+        <span class="s2">&quot;SMARTTAGNUMBER&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;SMARTTAGSENTDATE&quot;</span><span class="p">:</span> <span class="n">null</span><span class="p">,</span>
+        <span class="s2">&quot;SMARTTAGTYPE&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="s2">&quot;SPECIESID&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+        <span class="s2">&quot;SPECIESNAME&quot;</span><span class="p">:</span> <span class="s2">&quot;Cat&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;TATTOO&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="s2">&quot;TATTOODATE&quot;</span><span class="p">:</span> <span class="n">null</span><span class="p">,</span>
+        <span class="s2">&quot;TATTOONAME&quot;</span><span class="p">:</span> <span class="s2">&quot;No&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;TATTOONUMBER&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;TIMEONSHELTER&quot;</span><span class="p">:</span> <span class="s2">&quot;10 years 7 months.&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;TOTALDAYSONSHELTER&quot;</span><span class="p">:</span> <span class="mi">3162</span><span class="p">,</span>
+        <span class="s2">&quot;TOTALTIMEONSHELTER&quot;</span><span class="p">:</span> <span class="s2">&quot;8 years 7 months.&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;UNIQUECODEID&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="s2">&quot;WEBSITEIMAGECOUNT&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+        <span class="s2">&quot;WEBSITEMEDIADATE&quot;</span><span class="p">:</span> <span class="s2">&quot;2013-05-12T09:13:21&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;WEBSITEMEDIAID&quot;</span><span class="p">:</span> <span class="mi">118</span><span class="p">,</span>
+        <span class="s2">&quot;WEBSITEMEDIANAME&quot;</span><span class="p">:</span> <span class="s2">&quot;118.jpg&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;WEBSITEMEDIANOTES&quot;</span><span class="p">:</span> <span class="s2">&quot;Cat that needs a longer bio than 20 chars.&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;WEBSITEVIDEONOTES&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;WEBSITEVIDEOURL&quot;</span><span class="p">:</span> <span class="s2">&quot;https://www.youtube.com/watch?v=dQw4w9WgXcQ&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;WEIGHT&quot;</span><span class="p">:</span> <span class="mf">10.0</span><span class="p">,</span>
+        <span class="s2">&quot;YEARCODEID&quot;</span><span class="p">:</span> <span class="mi">1</span>
+    <span class="p">}</span>
+<span class="p">]</span>
+</pre></div>
+</div>
+</div>
 <div class="section" id="animal-image">
 <h2>animal_image<a class="headerlink" href="#animal-image" title="Permalink to this headline">¶</a></h2>
 <p class="rubric">Cache time: 1 hour</p>
@@ -318,6 +614,7 @@ following classes:</p>
 <li>asm3-adoptable-link : The a tag enclosing the thumbnail and animal name</li>
 <li>asm3-adoptable-thumbnail : The thumbnail img tag</li>
 <li>asm3-adoptable-name : The animal’s name</li>
+<li>asm3-adoptable-reserved : The div surrounding the image if the animal is reserved</li>
 <li>asm3-adoptable-tagline : The brief animal information</li>
 </ul>
 <p>and the following elements by their id attribute:</p>
@@ -334,6 +631,37 @@ bold, add this to your CSS:</p>
 </div>
 <p>To increase the size of the close link, add this:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1">#asm3-adoptable-iframe-close { font-size: 200%; }</span>
+</pre></div>
+</div>
+<p>Much more advanced and sophisticated styling can be done from these classes and
+selectors. For example, to float a reserved banner over the top right corner of
+animals with reservations, try this:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">.</span><span class="n">asm3</span><span class="o">-</span><span class="n">adoptable</span><span class="o">-</span><span class="n">reserved</span> <span class="p">{</span>
+    <span class="n">position</span><span class="p">:</span> <span class="n">relative</span><span class="p">;</span>
+    <span class="n">color</span><span class="p">:</span> <span class="c1">#fff;</span>
+    <span class="n">display</span><span class="p">:</span> <span class="n">inline</span><span class="o">-</span><span class="n">block</span><span class="p">;</span>
+    <span class="n">padding</span><span class="p">:</span> <span class="mi">5</span><span class="n">px</span><span class="p">;</span>
+    <span class="n">overflow</span><span class="p">:</span> <span class="n">hidden</span><span class="p">;</span>
+    <span class="n">font</span><span class="o">-</span><span class="n">family</span><span class="p">:</span> <span class="n">Arial</span><span class="p">,</span> <span class="n">sans</span><span class="o">-</span><span class="n">serif</span><span class="p">;</span>
+    <span class="n">font</span><span class="o">-</span><span class="n">size</span><span class="p">:</span> <span class="mi">8</span><span class="n">pt</span><span class="p">;</span>
+    <span class="n">font</span><span class="o">-</span><span class="n">weight</span><span class="p">:</span> <span class="n">bold</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="o">.</span><span class="n">asm3</span><span class="o">-</span><span class="n">adoptable</span><span class="o">-</span><span class="n">reserved</span> <span class="n">span</span><span class="p">:</span><span class="n">before</span> <span class="p">{</span>
+    <span class="n">content</span><span class="p">:</span> <span class="s2">&quot;</span><span class="se">\00</span><span class="s2">a0</span><span class="se">\00</span><span class="s2">a0</span><span class="se">\00</span><span class="s2">a0</span><span class="se">\00</span><span class="s2">a0</span><span class="se">\00</span><span class="s2">a0RESERVED&quot;</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="o">.</span><span class="n">asm3</span><span class="o">-</span><span class="n">adoptable</span><span class="o">-</span><span class="n">reserved</span> <span class="n">span</span> <span class="p">{</span>
+    <span class="n">position</span><span class="p">:</span> <span class="n">absolute</span><span class="p">;</span>
+    <span class="n">display</span><span class="p">:</span> <span class="n">inline</span><span class="o">-</span><span class="n">block</span><span class="p">;</span>
+    <span class="n">right</span><span class="p">:</span> <span class="o">-</span><span class="mi">25</span><span class="n">px</span><span class="p">;</span>
+    <span class="n">box</span><span class="o">-</span><span class="n">shadow</span><span class="p">:</span> <span class="mi">0</span><span class="n">px</span> <span class="mi">0</span><span class="n">px</span> <span class="mi">10</span><span class="n">px</span> <span class="n">rgba</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mf">0.2</span><span class="p">),</span> <span class="n">inset</span> <span class="mi">0</span><span class="n">px</span> <span class="mi">5</span><span class="n">px</span> <span class="mi">30</span><span class="n">px</span> <span class="n">rgba</span><span class="p">(</span><span class="mi">255</span><span class="p">,</span><span class="mi">255</span><span class="p">,</span><span class="mi">255</span><span class="p">,</span><span class="mf">0.2</span><span class="p">);</span>
+    <span class="n">text</span><span class="o">-</span><span class="n">align</span><span class="p">:</span> <span class="n">center</span><span class="p">;</span>
+    <span class="n">top</span><span class="p">:</span> <span class="mi">6</span><span class="n">px</span><span class="p">;</span>
+    <span class="n">background</span><span class="p">:</span> <span class="c1">#ff0000;</span>
+    <span class="n">width</span><span class="p">:</span> <span class="mi">100</span><span class="n">px</span><span class="p">;</span>
+    <span class="n">padding</span><span class="p">:</span> <span class="mi">3</span><span class="n">px</span> <span class="mi">10</span><span class="n">px</span><span class="p">;</span>
+    <span class="n">opacity</span><span class="p">:</span> <span class="mf">0.9</span><span class="p">;</span>
+    <span class="n">transform</span><span class="p">:</span> <span class="n">rotate</span><span class="p">(</span><span class="mi">45</span><span class="n">deg</span><span class="p">);</span>
+<span class="p">}</span>
 </pre></div>
 </div>
 </div>
@@ -631,7 +959,7 @@ JSON or XML:</p>
 </div>
 <div class="section" id="json-adoptable-animals-and-xml-adoptable-animals">
 <h2>json_adoptable_animals and xml_adoptable_animals<a class="headerlink" href="#json-adoptable-animals-and-xml-adoptable-animals" title="Permalink to this headline">¶</a></h2>
-<p class="rubric">Cache time: 1 hour</p>
+<p class="rubric">Cache time: 10 minutes</p>
 <p>Returns a dataset containing all animals available for adoption. The method
 determines whether the format returned is JSON or XML:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>http://localhost:5000/service?method=xml_adoptable_animals&amp;username=user&amp;password=letmein

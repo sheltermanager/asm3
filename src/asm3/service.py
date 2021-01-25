@@ -51,6 +51,7 @@ CACHE_PROTECT_METHODS = {
     "animal_view_adoptable_html": [],
     "checkout": [ "processor", "payref" ],
     "dbfs_image": [ "title" ],
+    "document_repository": [ "mediaid" ],
     "extra_image": [ "title" ],
     "media_image": [ "mediaid" ],
     "json_adoptable_animal": [ "animalid" ],
@@ -60,6 +61,7 @@ CACHE_PROTECT_METHODS = {
     "html_flagged_animals": [ "template", "speciesid", "animaltypeid", "flag", "all" ],
     "html_held_animals": [ "template", "speciesid", "animaltypeid" ],
     "json_adoptable_animals": [ "sensitive" ],
+    "json_adoptable_animals_xp": [],
     "xml_adoptable_animal": [ "animalid" ],
     "xml_adoptable_animals": [ "sensitive" ],
     "json_found_animals": [],
@@ -273,7 +275,8 @@ def sign_document_page(dbo, mid, email):
     docnotes = []
     docnotes.append(asm3.media.get_notes_for_id(dbo, int(mid)))
     dummy, dummy, dummy, contents = asm3.media.get_media_file_data(dbo, int(mid))
-    d.append(asm3.utils.bytes2str(contents))
+    content = asm3.utils.fix_relative_document_uris(dbo, asm3.utils.bytes2str(contents))
+    d.append(content)
     d.append("<hr />")
     h.append("<p><b>%s: %s</b></p>" % (_("Signing", l), ", ".join(docnotes)))
     h.append('<p><a id="reviewlink" href="#">%s</a></p>' % _("View Document", l))
@@ -385,6 +388,7 @@ def handler(post, path, remoteip, referer, querystring):
     l = asm3.configuration.locale(dbo)
     dbo.locale = l
     dbo.timezone = asm3.configuration.timezone(dbo)
+    dbo.timezone_dst = asm3.configuration.timezone_dst(dbo)
     asm3.al.info("call @%s --> %s [%s]" % (username, method, querystring), "service.handler", dbo)
 
     if method =="animal_image":
@@ -433,6 +437,9 @@ def handler(post, path, remoteip, referer, querystring):
         return set_cached_response(cache_key, account, "image/jpeg", 86400, 86400, asm3.utils.iif(title.startswith("/"),
             asm3.dbfs.get_string_filepath(dbo, title), asm3.dbfs.get_string(dbo, title)))
 
+    elif method =="document_repository":
+        return set_cached_response(cache_key, account, asm3.media.mime_type(asm3.dbfs.get_name_for_id(dbo, mediaid)), 86400, 86400, asm3.dbfs.get_string_id(dbo, mediaid))
+
     elif method =="extra_image":
         hotlink_protect("extra_image", referer)
         return set_cached_response(cache_key, account, "image/jpeg", 86400, 86400, asm3.dbfs.get_string(dbo, title, "/reports"))
@@ -479,11 +486,15 @@ def handler(post, path, remoteip, referer, querystring):
             asm3.publishers.html.get_held_animals(dbo, style=post["template"], \
                 speciesid=post.integer("speciesid"), animaltypeid=post.integer("animaltypeid")))
 
+    elif method == "json_adoptable_animals_xp":
+        rs = strip_personal_data(asm3.publishers.base.get_animal_data(dbo, None, include_additional_fields = True))
+        return set_cached_response(cache_key, account, "application/json", 600, 600, asm3.utils.json(rs))
+
     elif method == "json_adoptable_animals":
         asm3.users.check_permission_map(l, user["SUPERUSER"], securitymap, asm3.users.VIEW_ANIMAL)
         rs = asm3.publishers.base.get_animal_data(dbo, None, include_additional_fields = True)
         if strip_personal: rs = strip_personal_data(rs)
-        return set_cached_response(cache_key, account, "application/json", 3600, 3600, asm3.utils.json(rs))
+        return set_cached_response(cache_key, account, "application/json", 600, 600, asm3.utils.json(rs))
 
     elif method == "jsonp_adoptable_animals":
         asm3.users.check_permission_map(l, user["SUPERUSER"], securitymap, asm3.users.VIEW_ANIMAL)
@@ -498,13 +509,13 @@ def handler(post, path, remoteip, referer, querystring):
         else:
             asm3.users.check_permission_map(l, user["SUPERUSER"], securitymap, asm3.users.VIEW_ANIMAL)
             rs = asm3.publishers.base.get_animal_data(dbo, None, asm3.utils.cint(animalid), include_additional_fields = True)
-            return set_cached_response(cache_key, account, "application/xml", 3600, 3600, asm3.html.xml(rs))
+            return set_cached_response(cache_key, account, "application/xml", 600, 600, asm3.html.xml(rs))
 
     elif method == "xml_adoptable_animals":
         asm3.users.check_permission_map(l, user["SUPERUSER"], securitymap, asm3.users.VIEW_ANIMAL)
         rs = asm3.publishers.base.get_animal_data(dbo, None, include_additional_fields = True)
         if strip_personal: rs = strip_personal_data(rs)
-        return set_cached_response(cache_key, account, "application/xml", 3600, 3600, asm3.html.xml(rs))
+        return set_cached_response(cache_key, account, "application/xml", 600, 600, asm3.html.xml(rs))
 
     elif method == "json_found_animals":
         asm3.users.check_permission_map(l, user["SUPERUSER"], securitymap, asm3.users.VIEW_FOUND_ANIMAL)
@@ -645,6 +656,10 @@ def handler(post, path, remoteip, referer, querystring):
         if formid == 0:
             raise asm3.utils.ASMError("method sign_document requires a valid formid")
         if post["sig"] == "":
+            m = asm3.media.get_media_by_id(dbo, formid)
+            if m is None: raise asm3.utils.ASMError("invalid link")
+            token = asm3.utils.md5_hash_hex("%s%s" % (m.ID, m.LINKID))
+            if token != post["token"]: raise asm3.utils.ASMError("invalid token")
             return set_cached_response(cache_key, account, "text/html", 2, 2, sign_document_page(dbo, formid, post["email"]))
         else:
             asm3.media.sign_document(dbo, "service", formid, post["sig"], post["signdate"])

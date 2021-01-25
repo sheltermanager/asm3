@@ -430,6 +430,11 @@ Display
   person's address on the details screen. Also shows a minimap on the dispatch
   slider of incidents.
 
+* When entering addresses, restrict states to valid US 2 letter state codes:
+  When this option is on, the state field will switch to a dropdown that only
+  allows valid US states to be selected. The default state for screens will be
+  auto selected from the state chosen on the shelter details options tab.
+
 * Allow editing of latitude/longitude with minimaps: Allow the latitude/longitude
   geocodes to be hand edited in fields near the minimap and address. Right clicking
   on the minimap will add a new pin and update the fields.
@@ -445,6 +450,9 @@ Display
 * Show complete comments in table views: When viewing comments or log notes in
   tables, show the complete text instead of truncating it to 80 characters and
   fitting the text onto one line.
+
+* Show record views in the audit trail: When viewing the audit trail slider of
+  a record, include audit records that show when users viewed this record.
 
 * Show ID numbers when editing lookup data: When browsing lookup data under
   :menuselection:`Settings --> Lookup Data`, show the internal system ID numbers.
@@ -478,6 +486,10 @@ Display
   anyone to see it. Leaving a user account without a site allows it to see all
   sites.  This allows you to handle multiple sites with one ASM database. A
   number of site-specific reports are available in the repository.
+
+* Format telephone numbers according to my locale: When leaving fields containing
+  phone numbers, if the numeric portion is the correct length, format them
+  according to your locale. Eg: US numbers become (XXX) XXX-XXXX
 
 * When displaying person names in lists, use the format: In movement books,
   donation books, the waiting list, etc. when showing person names, ASM can use

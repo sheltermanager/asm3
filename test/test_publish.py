@@ -84,7 +84,7 @@ class TestPublish(unittest.TestCase):
         pc = asm3.publishers.base.PublishCriteria()
         a = asm3.publishers.base.get_animal_data(base.get_dbo())[0]
         assert asm3.publishers.foundanimals.FoundAnimalsPublisher(base.get_dbo(), pc).processAnimal(a) is not None
-        asm3.publishers.foundanimals.FoundAnimalsPublisher(base.get_dbo(), pc).validate(a)
+        asm3.publishers.foundanimals.FoundAnimalsPublisher(base.get_dbo(), pc).validate(a, -1000)
 
     # helpinglostpets
     def test_helpinglostpets(self):
@@ -124,7 +124,7 @@ class TestPublish(unittest.TestCase):
         pc = asm3.publishers.base.PublishCriteria()
         a = asm3.publishers.base.get_animal_data(base.get_dbo())[0]
         assert asm3.publishers.petlink.PetLinkPublisher(base.get_dbo(), pc).processAnimal(a) is not None
-        asm3.publishers.petlink.PetLinkPublisher(base.get_dbo(), pc).validate(a)
+        asm3.publishers.petlink.PetLinkPublisher(base.get_dbo(), pc).validate(a, -1000)
 
     # petrescue
     def test_petrescue(self):

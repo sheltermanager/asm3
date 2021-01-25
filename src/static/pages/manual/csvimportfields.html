@@ -229,6 +229,8 @@ crueltycase, notforadoption, notforregistration, nonshelter, quarantine</dd>
 <dd>The animal’s location within your shelter. This should correspond to a location in your database.</dd>
 <dt>ANIMALUNIT</dt>
 <dd>The unit within the animal’s location within the shelter, eg: pen/cage number.</dd>
+<dt>ANIMALJURISDICTION</dt>
+<dd>The jurisidiction to allocate the animal to based on entry circumstances (usually pickup)</dd>
 <dt>ANIMALSPECIES</dt>
 <dd>The animal’s species. This should match a species in your database.</dd>
 <dt>ANIMALHOUSETRAINED</dt>
@@ -257,6 +259,8 @@ crueltycase, notforadoption, notforregistration, nonshelter, quarantine</dd>
 <dd>The date the microchip was implanted</dd>
 <dt>ANIMALENTRYDATE</dt>
 <dd>The date the animal entered the shelter (date brought in). Today’s date will be used if this column is not present or the value is blank.</dd>
+<dt>ANIMALENTRYCATEGORY</dt>
+<dd>The animal’s entry category, which should correspond to an entry category in your database.</dd>
 <dt>ANIMALREASONFORENTRY</dt>
 <dd>Free text, notes on the reason the animal entered the shelter.</dd>
 <dt>ANIMALDECEASEDDATE</dt>
@@ -291,6 +295,12 @@ crueltycase, notforadoption, notforregistration, nonshelter, quarantine</dd>
 <dd>The date the license expires</dd>
 <dt>LICENSECOMMENTS</dt>
 <dd>Any comments on the license</dd>
+<dt>LOGDATE</dt>
+<dd>The date of any log entry (only animal logs can be imported)</dd>
+<dt>LOGTYPE</dt>
+<dd>The type of log entry</dd>
+<dt>LOGCOMMENTS</dt>
+<dd>The log entry itself</dd>
 <dt>MEDICALNAME</dt>
 <dd>The name of the medical regimen for this line</dd>
 <dt>MEDICALDOSAGE</dt>
@@ -300,7 +310,7 @@ crueltycase, notforadoption, notforregistration, nonshelter, quarantine</dd>
 <dt>MEDICALCOMMENTS</dt>
 <dd>Any comments on the medical regimen</dd>
 <dt>MOVEMENTTYPE</dt>
-<dd>The type of movement for this line (1 = Adoption, 2 = Foster, 3 = Transfer, 4 = Escaped, 5 = Reclaimed, 6 = Stolen, 7 = Released to Wild, 8 = Moved to Retailer. If MOVEMENTTYPE is not specified, but a MOVEMENTDATE has been given, ASM will default the type to adoption.</dd>
+<dd>The type of movement for this line (0 = Reservation, 1 = Adoption, 2 = Foster, 3 = Transfer, 4 = Escaped, 5 = Reclaimed, 6 = Stolen, 7 = Released to Wild, 8 = Moved to Retailer. If MOVEMENTTYPE is not specified, but a MOVEMENTDATE has been given, ASM will default the type to adoption. If MOVEMENTTYPE is 0, then MOVEMENTDATE and MOVEMENTRETURNDATE will be used to set the reservation date and reservation cancelled date fields.</dd>
 <dt>MOVEMENTDATE</dt>
 <dd>The date of the movement</dd>
 <dt>MOVEMENTRETURNDATE</dt>
@@ -430,6 +440,8 @@ Additional flags that you have added to the system should exactly match their fl
 <dd>The manufacturer of the vaccine</dd>
 <dt>VACCINATIONBATCHNUMBER</dt>
 <dd>The serial/batch number of the vaccine</dd>
+<dt>VACCINATIONRABIESTAG</dt>
+<dd>The rabies tag accompanying the vaccine</dd>
 <dt>VACCINATIONCOMMENTS</dt>
 <dd>Comments on the vaccine</dd>
 </dl>

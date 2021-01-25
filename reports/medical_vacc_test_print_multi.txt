@@ -1,0 +1,95 @@
+Print Medical, Vaccination and Test History (multi)
+###
+Medical
+###
+34004/PostgreSQL
+###
+The combined medical, vaccination and test history for multiple shelter animals
+###
+en
+###
+SELECT * FROM
+(
+
+SELECT
+'Medical' AS mtype, a.ShelterCode, a.AnimalName, a.ID AS AID, a.Weight, 
+t.AnimalType, s.SpeciesName, il.LocationName, 
+am.TreatmentName, '' AS ResultName, am.Dosage, amt.TreatmentNumber, 
+amt.TotalTreatments, amt.DateRequired, amt.DateGiven, am.Comments, o.ownername, o.membershipnumber
+FROM animal a
+INNER JOIN animaltype t ON t.ID = a.AnimalTypeID
+INNER JOIN species s ON s.ID = a.SpeciesID
+INNER JOIN internallocation il ON il.ID = a.ShelterLocation
+INNER JOIN animalmedical am ON a.ID = am.AnimalID
+INNER JOIN animalmedicaltreatment amt ON amt.AnimalMedicalID = am.ID
+LEFT JOIN owner o ON o.id=amt.AdministeringvetID
+
+UNION SELECT
+'Vaccination' AS mtype, a.ShelterCode, a.AnimalName, a.ID AS AID, a.Weight, 
+t.AnimalType, sp.SpeciesName, il.LocationName, 
+v.VaccinationType AS TreatmentName, '' AS ResultName, '1' AS Dosage, '1' AS TreatmentNumber,
+'1' AS TotalTreatments, av.DateRequired, av.DateOfVaccination AS DateGiven, av.Comments, o.ownername, o.membershipnumber
+FROM animal a
+INNER JOIN animaltype t ON t.ID = a.AnimalTypeID
+INNER JOIN animalvaccination av ON a.ID = av.AnimalID
+INNER JOIN species sp ON sp.ID = a.SpeciesID
+INNER JOIN vaccinationtype v ON av.VaccinationID = v.ID
+LEFT JOIN owner o ON o.id=av.administeringvetid
+INNER JOIN internallocation il ON il.ID = a.ShelterLocation
+
+UNION SELECT
+'Test' AS mtype, a.ShelterCode, a.AnimalName, a.ID AS AID, a.Weight, 
+t.AnimalType, sp.SpeciesName, il.LocationName, 
+tt.TestName AS TreatmentName, tr.ResultName, '1' AS Dosage, '1' AS TreatmentNumber,
+'1' AS TotalTreatments, at.DateRequired, at.DateOfTest AS DateGiven, at.Comments, o.ownername, o.membershipnumber
+FROM animal a
+INNER JOIN animaltype t ON t.ID = a.AnimalTypeID
+INNER JOIN animaltest at ON a.ID = at.AnimalID
+INNER JOIN species sp ON sp.ID = a.SpeciesID
+INNER JOIN testtype tt ON at.TestTypeID = tt.ID
+INNER JOIN testresult tr ON at.TestResultID = tr.ID
+LEFT JOIN owner o ON o.id=at.administeringvetid
+INNER JOIN internallocation il ON il.ID = a.ShelterLocation
+
+) dummy
+WHERE AID IN ($ASK ANIMALS$)
+ORDER BY AnimalName, DateGiven
+###
+$$HEADER
+HEADER$$
+
+$$GROUP_AnimalName
+$$HEAD
+<h2>$ANIMALNAME - $SHELTERCODE ($ANIMALTYPE / $SPECIESNAME). Weight: $WEIGHT</h2>
+<table border=1><tr>
+<td><b>Therapy</b></td>
+<td><b>Dosage</b></td>
+<td><b>Number</b></td>
+<td><b>Required</b></td>
+<td><b>Given</b></td>
+<td><b>Result</b></td>
+<td><b>Vet Name</b></td>
+<td><b>License Number</b></td>
+<td><b>Comments</b></td>
+</tr>
+$$FOOT
+</table>
+<!-- <div style="page-break-after: always"></div> -->
+GROUP$$
+
+$$BODY<tr>
+<td>
+<b>$MTYPE: $TREATMENTNAME</b></td>
+<td>$DOSAGE</td>
+<td>$TREATMENTNUMBER / $TOTALTREATMENTS</td>
+<td>$DATEREQUIRED</td>
+<td>$DATEGIVEN</td>
+<td>$RESULTNAME</td>
+<td>$OWNERNAME</td>
+<td>$MEMBERSHIPNUMBER</td>
+<td>$COMMENTS</td>
+</tr>
+BODY$$
+
+$$FOOTER
+FOOTER$$

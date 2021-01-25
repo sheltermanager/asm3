@@ -243,7 +243,7 @@ CASE WHEN SpeciesID = 1 THEN 1 ELSE 0 END AS Dog,
 CASE WHEN SpeciesID = 2 THEN 1 ELSE 0 END AS Cat,
 CASE WHEN SpeciesID = 1 OR SpeciesID = 2 THEN 1 ELSE 0 END AS Total
 FROM animal
-WHERE NonShelterAnimal = 0 AND DateBroughtIn >= '$PARENTARG1$' AND DateBroughtIn <= '$PARENTARG2$'
+WHERE DateBroughtIn >= '$PARENTARG1$' AND DateBroughtIn <= '$PARENTARG2$'
 AND AsilomarOwnerRequestedEuthanasia = 1
 ORDER BY Category
 +++

@@ -18,7 +18,7 @@ a.TimeOnShelter,
 sx.Sex,
 t.AnimalType,
 s.SpeciesName,
-CASE WHEN a.ActiveMovementType = 2 THEN 'Foster' ELSE i.LocationName END AS LocationName,
+CASE WHEN a.ActiveMovementType = 2 THEN 'Foster' WHEN a.ActiveMovementType = 1 THEN 'Trial Adoption' WHEN a.ActiveMovementType = 8 THEN 'Retailer' ELSE i.LocationName END AS LocationName,
 a.ShelterLocationUnit
 FROM animal a
 LEFT OUTER JOIN animaltype t ON t.ID = a.AnimalTypeID
@@ -26,8 +26,7 @@ LEFT OUTER JOIN species s ON s.ID = a.SpeciesID
 LEFT OUTER JOIN lksex sx ON sx.ID = a.Sex
 LEFT OUTER JOIN internallocation i ON i.ID = a.ShelterLocation
 WHERE a.Archived = 0
-ORDER BY 
-CASE WHEN a.ActiveMovementType = 2 THEN 'Foster' ELSE i.LocationName END, a.ShelterLocationUnit
+ORDER BY LocationName, a.ShelterLocationUnit
 ###
 $$HEADER
 HEADER$$

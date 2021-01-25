@@ -50,6 +50,8 @@ ANIMALLOCATION
     The animal's location within your shelter. This should correspond to a location in your database.
 ANIMALUNIT
     The unit within the animal's location within the shelter, eg: pen/cage number.
+ANIMALJURISDICTION
+    The jurisidiction to allocate the animal to based on entry circumstances (usually pickup)
 ANIMALSPECIES
     The animal's species. This should match a species in your database.
 ANIMALHOUSETRAINED
@@ -78,6 +80,8 @@ ANIMALMICROCHIPDATE
     The date the microchip was implanted
 ANIMALENTRYDATE
     The date the animal entered the shelter (date brought in). Today's date will be used if this column is not present or the value is blank.
+ANIMALENTRYCATEGORY
+    The animal's entry category, which should correspond to an entry category in your database.
 ANIMALREASONFORENTRY
     Free text, notes on the reason the animal entered the shelter.
 ANIMALDECEASEDDATE
@@ -112,6 +116,12 @@ LICENSEEXPIRESDATE
     The date the license expires
 LICENSECOMMENTS
     Any comments on the license
+LOGDATE
+   The date of any log entry (only animal logs can be imported)
+LOGTYPE
+   The type of log entry
+LOGCOMMENTS
+   The log entry itself
 MEDICALNAME
     The name of the medical regimen for this line
 MEDICALDOSAGE
@@ -121,7 +131,7 @@ MEDICALGIVENDATE
 MEDICALCOMMENTS
     Any comments on the medical regimen
 MOVEMENTTYPE
-    The type of movement for this line (1 = Adoption, 2 = Foster, 3 = Transfer, 4 = Escaped, 5 = Reclaimed, 6 = Stolen, 7 = Released to Wild, 8 = Moved to Retailer. If MOVEMENTTYPE is not specified, but a MOVEMENTDATE has been given, ASM will default the type to adoption.
+    The type of movement for this line (0 = Reservation, 1 = Adoption, 2 = Foster, 3 = Transfer, 4 = Escaped, 5 = Reclaimed, 6 = Stolen, 7 = Released to Wild, 8 = Moved to Retailer. If MOVEMENTTYPE is not specified, but a MOVEMENTDATE has been given, ASM will default the type to adoption. If MOVEMENTTYPE is 0, then MOVEMENTDATE and MOVEMENTRETURNDATE will be used to set the reservation date and reservation cancelled date fields.
 MOVEMENTDATE
     The date of the movement
 MOVEMENTRETURNDATE
@@ -251,6 +261,8 @@ VACCINATIONMANUFACTURER
     The manufacturer of the vaccine
 VACCINATIONBATCHNUMBER
     The serial/batch number of the vaccine
+VACCINATIONRABIESTAG
+    The rabies tag accompanying the vaccine
 VACCINATIONCOMMENTS
     Comments on the vaccine
 

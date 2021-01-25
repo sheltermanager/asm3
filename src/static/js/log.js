@@ -56,21 +56,24 @@ $(function() {
                         await tableform.dialog_show_add(dialog, {
                             onload: function() {
                                 $("#type").select("value", config.integer("AFDefaultLogType"));    
-                            }});
-                        try {
-                            let formdata = "mode=create&linktypeid=" + controller.linktypeid + "&linkid=" + controller.linkid;
-                            let response = await tableform.fields_post(dialog.fields, formdata , "log");
-                            let row = {};
-                            row.ID = response;
-                            tableform.fields_update_row(dialog.fields, row);
-                            log.set_extra_fields(row);
-                            controller.rows.push(row);
-                            tableform.table_update(table);
-                            tableform.dialog_close();
-                        }
-                        finally {
-                            tableform.dialog_enable_buttons();   
-                        }
+                            },
+                            onadd: async function() {
+                                try {
+                                    let formdata = "mode=create&linktypeid=" + controller.linktypeid + "&linkid=" + controller.linkid;
+                                    let response = await tableform.fields_post(dialog.fields, formdata , "log");
+                                    let row = {};
+                                    row.ID = response;
+                                    tableform.fields_update_row(dialog.fields, row);
+                                    log.set_extra_fields(row);
+                                    controller.rows.push(row);
+                                    tableform.table_update(table);
+                                    tableform.dialog_close();
+                                }
+                                finally {
+                                    tableform.dialog_enable_buttons();   
+                                }
+                            }
+                        });
                 }},
                 { id: "delete", text: _("Delete"), icon: "delete", enabled: "multi", perm: "dle",
                     click: async function() { 

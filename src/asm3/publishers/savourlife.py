@@ -97,10 +97,10 @@ class SavourLifePublisher(AbstractPublisher):
         animals = [ x for x in preanimals if x.SPECIESID == 1 ] # We only want dogs
         processed = []
 
+        # Log that there were no animals, we still need to check
+        # previously sent listings
         if len(animals) == 0:
-            self.setLastError("No animals found to publish.")
-            self.cleanup()
-            return
+            self.log("No animals found to publish.")
 
         # Authenticate first to get our token
         url = SAVOURLIFE_URL + "getToken"
@@ -173,7 +173,7 @@ class SavourLifePublisher(AbstractPublisher):
             animalids_just_sent = set([ x.ID for x in animals ])
             animalids_to_cancel = set([ str(x.ANIMALID) for x in prevsent if x.ANIMALID not in animalids_just_sent])
 
-            # Get the animal records for the ones we need to mark saved
+            # Get the animal records for the ones we need to mark saved or remove
             if len(animalids_to_cancel) > 0:
 
                 animals = self.dbo.query("SELECT ID, ShelterCode, AnimalName, ActiveMovementDate, ActiveMovementType, DeceasedDate, ExtraIDs, " \
@@ -183,17 +183,17 @@ class SavourLifePublisher(AbstractPublisher):
                 # Append the additional fields so we can get the enquiry number
                 asm3.additional.append_to_results(self.dbo, animals, "animal")
 
-                # Cancel the inactive listings - we can only do this for adoptions, so we're going to 
-                # end up ignoring a lot of listings that will need to be manually removed by
-                # SavourLife - this is what they requested and the way they want it.
+                # Cancel the inactive listings - we can either mark a dog as adopted, or we can delete the listing.
                 for an in animals:
                     try:
+                        status = "removed"
+                        if an.ACTIVEMOVEMENTDATE is not None and an.ACTIVEMOVEMENTTYPE == 1: 
+                            status = "adopted"
 
-                        # The animal is not adopted, don't do anything
-                        if an.ACTIVEMOVEMENTTYPE != 1: continue
-
-                        # If we already sent this update, don't do anything
-                        if an.LASTSTATUS == "adopted": continue
+                        # We have the last status update in the LastStatus field 
+                        # (which is animalpublished.Extra for this animal)
+                        # Don't send the same update again.
+                        if an.LASTSTATUS == status: continue
 
                         # The savourlife dogid field that they returned when we first sent the record
                         dogid = asm3.animal.get_extra_id(self.dbo, an, asm3.animal.IDTYPE_SAVOURLIFE)
@@ -201,24 +201,34 @@ class SavourLifePublisher(AbstractPublisher):
                         # If there isn't a dogid, stop now because we can't do anything
                         if dogid is None: continue
 
-                        # The enquiry number is given by the savourlife website to the potential adopter,
-                        # they pass it on to the shelter (who should add it to the animal record) so
-                        # that it's set when we mark the animal adopted with savourlife. This gets the
-                        # new adopter free food.
-                        enquirynumber = None
-                        if "ENQUIRYNUMBER" in an and an.ENQUIRYNUMBER != "":
-                            enquirynumber = an.ENQUIRYNUMBER
+                        data = {}
+                        url = ""
+                        if status == "adopted":
+                            # The enquiry number is given by the savourlife website to the potential adopter,
+                            # they pass it on to the shelter (who should add it to the animal record) so
+                            # that it's set when we mark the animal adopted with savourlife. This gets the
+                            # new adopter free food.
+                            enquirynumber = None
+                            if "ENQUIRYNUMBER" in an and an.ENQUIRYNUMBER != "":
+                                enquirynumber = an.ENQUIRYNUMBER
+                            data = {
+                                "Username":     username,
+                                "Token":        token,
+                                "DogId":        dogid,
+                                "EnquiryNumber": enquirynumber
+                            }
+                            url = SAVOURLIFE_URL + "setDogAdopted"
+                        else:
+                            # We're deleting the listing
+                            data = {
+                                "Username":     username,
+                                "Token":        token,
+                                "DogId":        dogid
+                            }
+                            url = SAVOURLIFE_URL + "DeleteDog"
 
-                        data = {
-                            "Username":     username,
-                            "Token":        token,
-                            "DogId":        dogid,
-                            "EnquiryNumber": enquirynumber
-                        }
-
-                        url = SAVOURLIFE_URL + "setDogAdopted"
                         jsondata = asm3.utils.json(data)
-                        self.log("Sending POST to %s to mark animal '%s - %s' adopted: %s" % (url, an.SHELTERCODE, an.ANIMALNAME, jsondata))
+                        self.log("Sending POST to %s to mark animal '%s - %s' %s: %s" % (url, an.SHELTERCODE, an.ANIMALNAME, status, jsondata))
                         r = asm3.utils.post_json(url, jsondata)
 
                         if r["status"] != 200:
@@ -229,10 +239,10 @@ class SavourLifePublisher(AbstractPublisher):
 
                             # Update animalpublished for this animal with the status we just sent in the Extra field
                             # so that it can be picked up next time and we won't do this again.
-                            self.markAnimalPublished(an.ID, extra = "adopted")
+                            self.markAnimalPublished(an.ID, extra = status)
 
                     except Exception as err:
-                        self.logError("Failed calling setDogAdopted for %s - %s: %s" % (an.SHELTERCODE, an.ANIMALNAME, err), sys.exc_info())
+                        self.logError("Failed updating listing for %s - %s: %s" % (an.SHELTERCODE, an.ANIMALNAME, err), sys.exc_info())
 
         except Exception as err:
             self.logError("Failed finding potential dogs to mark adopted: %s" % err, sys.exc_info())

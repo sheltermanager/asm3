@@ -177,7 +177,7 @@ def delete_waitinglist(dbo, username, wid):
     dbo.delete("log", "LinkID=%d AND LinkType=%d" % (wid, asm3.log.WAITINGLIST), username)
     dbo.execute("DELETE FROM additional WHERE LinkID = %d AND LinkType IN (%s)" % (wid, asm3.additional.WAITINGLIST_IN))
     dbo.delete("animalwaitinglist", wid, username)
-    asm3.dbfs.delete_path(dbo, "/waitinglist/%d" % wid)
+    # asm3.dbfs.delete_path(dbo, "/waitinglist/%d" % wid)  # Use maint_db_delete_orphaned_media to remove dbfs later if needed
 
 def send_email_from_form(dbo, username, post):
     """
@@ -189,11 +189,12 @@ def send_email_from_form(dbo, username, post):
     emailcc = post["cc"]
     emailbcc = post["bcc"]
     subject = post["subject"]
-    ishtml = post.boolean("html")
     addtolog = post.boolean("addtolog")
     logtype = post.integer("logtype")
     body = post["body"]
-    rv = asm3.utils.send_email(dbo, emailfrom, emailto, emailcc, emailbcc, subject, body, ishtml == 1 and "html" or "plain")
+    rv = asm3.utils.send_email(dbo, emailfrom, emailto, emailcc, emailbcc, subject, body, "html")
+    if asm3.configuration.audit_on_send_email(dbo): 
+        asm3.audit.email(dbo, username, emailfrom, emailto, emailcc, emailbcc, subject, body)
     if addtolog == 1:
         asm3.log.add_log_email(dbo, username, asm3.log.WAITINGLIST, post.integer("wlid"), logtype, emailto, subject, body)
     return rv

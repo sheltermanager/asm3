@@ -11,11 +11,13 @@ import asm3.lookups
 import asm3.media
 import asm3.medical
 import asm3.person
+import asm3.publishers.base
 import asm3.reports
 import asm3.smcom
 import asm3.stock
 import asm3.users
 import asm3.utils
+
 from asm3.i18n import _, python2display, now, add_days, add_months, add_years, format_currency, format_time
 from asm3.sitedefs import MULTIPLE_DATABASES
 from asm3.sitedefs import ELECTRONIC_SIGNATURES, JQUERY_JS, JQUERY_MOBILE_CSS, JQUERY_MOBILE_JS, JQUERY_MOBILE_JQUERY_JS, JQUERY_UI_JS, SIGNATURE_JS, MOMENT_JS, TOUCHPUNCH_JS
@@ -241,6 +243,7 @@ def page(dbo, session, username):
         items.append(jqm_listitem_link("#reports", _("Generate Report", l), "report"))
     if pb(asm3.users.CHANGE_MEDIA) and ELECTRONIC_SIGNATURES == "touch":
         items.append(jqm_listitem_link("mobile_sign", _("Signing Pad", l), "signature", -1, "", "false"))
+    items.append(jqm_listitem_link("main", _("Desktop/Tablet UI", l), "logo", -1, "", "false"))
     if pb(asm3.users.ADD_ANIMAL) or pb(asm3.users.VIEW_ANIMAL) or pb(asm3.users.CHANGE_VACCINATION) \
        or pb(asm3.users.CHANGE_TEST) or pb(asm3.users.CHANGE_MEDICAL) or pb(asm3.users.ADD_LOG):
         items.append(jqm_list_divider(_("Animal", l)))
@@ -656,11 +659,11 @@ def page_login(l, post):
         %s
         <div data-role="fieldcontain">
             <label for="username">%s</label>
-            <input type="text" id="username" name="username" value='%s' />
+            <input type="text" id="username" name="username" value='%s' autocomplete="username" />
         </div>
         <div data-role="fieldcontain">
             <label for="password">%s</label>
-            <input type="password" id="password" name="password" value='%s' />
+            <input type="password" id="password" name="password" value='%s' autocomplete="current-password" />
         </div>
         <button type="submit">%s</button>
         </form>
@@ -775,7 +778,7 @@ def handler(session, post):
         for a in an:
             alin.append(jqm_listitem_link("mobile_post?posttype=va&id=%d" % a["ID"],
                 "%s - %s (%s %s %s) %s" % (a["CODE"], a["ANIMALNAME"], a["SEXNAME"], a["BREEDNAME"], a["SPECIESNAME"], a["IDENTICHIPNUMBER"]),
-                "animal"))
+                asm3.utils.iif(asm3.publishers.base.is_animal_adoptable(dbo, a), "animal", "notforadoption")))
         h.append(jqm_list("\n".join(alin), True))
         h.append(jqm_page_footer())
         h.append("</body></html>")
@@ -1042,6 +1045,7 @@ def handler_viewanimal(session, l, dbo, a, af, diet, vacc, test, med, logs, home
                          a["ID"], _("Send", l), uploadstatus))
     h.append(table_end())
     h.append(table())
+    h.append(tr( _("Status", l), asm3.publishers.base.get_adoption_status(dbo, a)))
     h.append(tr( _("Type", l), a["ANIMALTYPENAME"]))
     h.append(tr( _("Location", l), a["DISPLAYLOCATION"]))
     h.append(tr( _("Color", l), a["BASECOLOURNAME"]))

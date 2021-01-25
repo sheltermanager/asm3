@@ -166,7 +166,7 @@ $(function() {
                         let validunit = false;
                         $.each(l.UNITS.split(","), function(iu, u) {
                             u = common.trim(u);
-                            if (a.ACTIVEMOVEMENTID == 0 && a.SHELTERLOCATIONUNIT == u) {
+                            if (u && a.ACTIVEMOVEMENTID == 0 && a.SHELTERLOCATIONUNIT == u) {
                                 validunit = true;
                                 return false;
                             }
@@ -475,6 +475,9 @@ $(function() {
             else if (viewmode == "agegroup") {
                 this.render_view("AGEGROUP", "", "AGEGROUP,ANIMALNAME", false, false);
             }
+            else if (viewmode == "color") {
+                this.render_view("BASECOLOURNAME", "", "BASECOLOURNAME,ANIMALNAME", false, false);
+            }
             else if (viewmode == "coordinator") {
                 this.render_view("ADOPTIONCOORDINATORNAME", "", "ADOPTIONCOORDINATORNAME,ANIMALNAME", false, false);
             }
@@ -529,11 +532,20 @@ $(function() {
             else if (viewmode == "sexspecies") {
                 this.render_view("SEXNAME", "SPECIESNAME", "SEXNAME,SPECIESNAME,ANIMALNAME", false, false);
             }
+            else if (viewmode == "site") {
+                this.render_view("SITENAME", "DISPLAYLOCATIONNAME", "SITENAME,DISPLAYLOCATIONNAME,ANIMALNAME", false, false);
+            }
             else if (viewmode == "species") {
                 this.render_view("SPECIESNAME", "", "SPECIESNAME,ANIMALNAME", false, false);
             }
+            else if (viewmode == "speciesbreed") {
+                this.render_view("SPECIESNAME", "BREEDNAME", "SPECIESNAME,BREEDNAME,ANIMALNAME", false, false);
+            }
             else if (viewmode == "speciescode") {
                 this.render_view("SPECIESNAME", "", "SPECIESNAME,CODE", false, false);
+            }
+            else if (viewmode == "speciescolor") {
+                this.render_view("SPECIESNAME", "BASECOLOURNAME", "SPECIESNAME,BASECOLOURNAME,ANIMALNAME", false, false);
             }
             else if (viewmode == "status") {
                 this.render_view("ADOPTIONSTATUS", "", "ADOPTIONSTATUS,ANIMALNAME", false, true);
@@ -586,6 +598,7 @@ $(function() {
             h.push('<option value="coordinator">' + _("Adoption Coordinator") + '</option>');
             h.push('<option value="coordinatorfosterer">' + _("Adoption Coordinator and Fosterer") + '</option>');
             h.push('<option value="agegroup">' + _("Age Group") + '</option>');
+            h.push('<option value="color">' + _("Color") + '</option>');
             h.push('<option value="entrycategory">' + _("Entry Category") + '</option>');
             h.push('<option value="flags">' + _("Flags") + '</option>');
             h.push('<option value="fosterer">' + _("Fosterer") + '</option>');
@@ -602,8 +615,11 @@ $(function() {
             h.push('<option value="retailer">' + _("Retailer") + '</option>');
             h.push('<option value="sex">' + _("Sex") + '</option>');
             h.push('<option value="sexspecies">' + _("Sex and Species") + '</option>');
+            if (config.bool("MultiSiteEnabled")) { h.push('<option value="site">' + _("Site") + '</option>'); }
             h.push('<option value="species">' + _("Species") + '</option>');
+            h.push('<option value="speciesbreed">' + _("Species and Breed") + '</option>');
             h.push('<option value="speciescode">' + _("Species and Code") + '</option>');
+            h.push('<option value="speciescolor">' + _("Species and Color") + '</option>');
             h.push('<option value="status">' + _("Status") + '</option>');
             h.push('<option value="statusspecies">' + _("Status and Species") + '</option>');
             h.push('<option value="type">' + _("Type") + '</option>');

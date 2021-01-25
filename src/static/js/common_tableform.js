@@ -332,10 +332,10 @@ const tableform = {
                     bn.addClass("ui-state-disabled").addClass("ui-button-disabled");
                 }
             }
-            if (table.change) {
-                table.change(tableform.table_selected_rows(table));
-            }
         });
+        if (table.change) {
+            table.change(tableform.table_selected_rows(table));
+        }
     },
 
     /**
@@ -646,7 +646,10 @@ const tableform = {
         // This is necessary in case opening a previous record removed a retired lookup element.
         $.each(dialog.fields, function(i, v) {
             if (v.options && v.options.rows) {
-                $("#" + v.post_field).html( html.list_to_options(v.options.rows, v.options.valuefield, v.options.displayfield) );
+                let opts = "";
+                if (v.options.prepend) { opts = v.options.prepend; }
+                opts += html.list_to_options(v.options.rows, v.options.valuefield, v.options.displayfield);
+                $("#" + v.post_field).html(opts);
             }
         });
         
@@ -767,7 +770,10 @@ const tableform = {
         // This is necessary in case opening a previous record removed a retired lookup element.
         $.each(dialog.fields, function(i, v) {
             if (v.options && v.options.rows) {
-                $("#" + v.post_field).html( html.list_to_options(v.options.rows, v.options.valuefield, v.options.displayfield) );
+                let opts = "";
+                if (v.options.prepend) { opts = v.options.prepend; }
+                opts += html.list_to_options(v.options.rows, v.options.valuefield, v.options.displayfield);
+                $("#" + v.post_field).html(opts);
             }
         });
 
@@ -922,8 +928,9 @@ const tableform = {
      *        callout: _("Text"), mixed markup allowed
      *        hideif: function() { return true; // should hide },
      *        markup: "<input type='text' value='raw' />",
-     *        options: { displayfield: "DISPLAY", valuefield: "VALUE", rows: [ {rows} ] }, (only valid for select type)
-     *        options: "<option>test</option>" also valid
+     *        options: [ "Item 1", "Item 2" ] // options only used by select and selectmulti
+     *        options: "<option>test</option>"
+     *        options: { displayfield: "DISPLAY", valuefield: "VALUE", rows: [ {rows} ], prepend: "<option>extra</option>" }, 
      *        animalfilter: "all",   (only valid for animal and animalmulti types)
      *        personfilter: "all",   (only valid for person type)
      *        personmode: "full",    (only valid for person type)
@@ -1056,7 +1063,10 @@ const tableform = {
             }
             else if (v.type == "date") {
                 if (!v.justwidget) { d += "<tr><td><label for=\"" + v.post_field + "\">" + v.label + "</label>" + callout + "</td><td>"; }
-                d += "<input id=\"" + v.post_field + "\" type=\"text\" class=\"asm-textbox asm-datebox\" ";
+                d += "<input id=\"" + v.post_field + "\" type=\"text\" class=\"asm-textbox asm-datebox";
+                if (v.classes) { d += " " + v.classes; }
+                if (v.halfsize) { d += " asm-halftextbox"; }
+                d += "\" ";
                 d += "data-json=\"" + v.json_field + "\" data-post=\"" + v.post_field + "\" ";
                 d += "autocomplete=\"new-password\" ";
                 if (v.readonly) { d += " data-noedit=\"true\" "; }
@@ -1068,6 +1078,7 @@ const tableform = {
             else if (v.type == "time") {
                 if (!v.justwidget) { d += "<tr><td><label for=\"" + v.post_field + "\">" + v.label + "</label>" + callout + "</td><td>"; }
                 d += "<input id=\"" + v.post_field + "\" type=\"text\" class=\"asm-textbox asm-timebox ";
+                if (v.classes) { d += " " + v.classes; }
                 if (v.halfsize) { d += " asm-halftextbox"; }
                 d += "\" ";
                 d += "data-json=\"" + v.json_field + "\" data-post=\"" + v.post_field + "\" ";
@@ -1102,6 +1113,7 @@ const tableform = {
             else if (v.type == "currency") {
                 if (!v.justwidget) { d += "<tr><td><label for=\"" + v.post_field + "\">" + v.label + "</label>" + callout + "</td><td>"; }
                 d += "<input id=\"" + v.post_field + "\" type=\"text\" class=\"asm-textbox asm-currencybox";
+                if (v.classes) { d += " " + v.classes; }
                 if (v.halfsize) { d += " asm-halftextbox"; }
                 d += "\" ";
                 d += "data-json=\"" + v.json_field + "\" data-post=\"" + v.post_field + "\" ";
@@ -1115,6 +1127,7 @@ const tableform = {
             else if (v.type == "intnumber") {
                 if (!v.justwidget) { d += "<tr><td><label for=\"" + v.post_field + "\">" + v.label + "</label>" + callout + "</td><td>"; }
                 d += "<input id=\"" + v.post_field + "\" type=\"text\" class=\"asm-textbox asm-intbox ";
+                if (v.classes) { d += " " + v.classes; }
                 if (v.halfsize) { d += " asm-halftextbox"; }
                 d += "\" ";
                 d += "data-json=\"" + v.json_field + "\" data-post=\"" + v.post_field + "\" ";
@@ -1128,6 +1141,7 @@ const tableform = {
             else if (v.type == "number") {
                 if (!v.justwidget) { d += "<tr><td><label for=\"" + v.post_field + "\">" + v.label + "</label>" + callout + "</td><td>"; }
                 d += "<input id=\"" + v.post_field + "\" type=\"text\" class=\"asm-textbox asm-numberbox ";
+                if (v.classes) { d += " " + v.classes; }
                 if (v.halfsize) { d += " asm-halftextbox"; }
                 d += "\" ";
                 d += "data-json=\"" + v.json_field + "\" data-post=\"" + v.post_field + "\" ";
@@ -1141,6 +1155,7 @@ const tableform = {
             else if (v.type == "select") {
                 if (!v.justwidget) { d += "<tr><td><label for=\"" + v.post_field + "\">" + v.label + "</label>" + callout + "</td><td>"; }
                 d += "<select id=\"" + v.post_field + "\" class=\"asm-selectbox";
+                if (v.classes) { d += " " + v.classes; }
                 if (v.halfsize) { d += " asm-halftextbox"; }
                 d += "\" ";
                 d += "data-json=\"" + v.json_field + "\" data-post=\"" + v.post_field + "\" ";
@@ -1157,7 +1172,7 @@ const tableform = {
                     d += v.options;
                 }
                 else if (v.options && v.options.rows) {
-                    // Assume we have rows, valuefield and displayfield properties
+                    if (v.options.prepend) { d += v.options.prepend; }
                     d += html.list_to_options(v.options.rows, v.options.valuefield, v.options.displayfield);
                 }
                 d += "</select>";
@@ -1166,6 +1181,7 @@ const tableform = {
             else if (v.type == "selectmulti") {
                 if (!v.justwidget) { d += "<tr><td><label for=\"" + v.post_field + "\">" + v.label + "</label>" + callout + "</td><td>"; }
                 d += "<select id=\"" + v.post_field + "\" multiple=\"multiple\" class=\"asm-bsmselect";
+                if (v.classes) { d += " " + v.classes; }
                 if (v.halfsize) { d += " asm-halftextbox"; }
                 d += "\" ";
                 d += "data-json=\"" + v.json_field + "\" data-post=\"" + v.post_field + "\" ";
@@ -1174,9 +1190,8 @@ const tableform = {
                 if (v.tooltip) { d += "title=\"" + html.title(v.tooltip) + "\""; }
                 d += ">";
                 if (v.options && v.options.rows) {
-                    $.each(v.options.rows, function(io, vo) {
-                        d += "<option value=\"" + vo[v.options.valuefield] + "\">" + vo[v.options.displayfield] + "</option>";
-                    });
+                    if (v.options.prepend) { d += v.options.prepend; }
+                    d += html.list_to_options(v.options.rows, v.options.valuefield, v.options.displayfield);
                 }
                 else if (v.options) {
                     d += v.options;
@@ -1571,7 +1586,7 @@ const tableform = {
         }
         if ($("#dialog-delete").length == 0) {
             $("body").append('<div id="dialog-delete" style="display: none" title="' +
-                _("Delete") + '"><p><span class="ui-icon ui-icon-alert" style="float: left; margin: 0 7px 20px 0;"></span>' +
+                _("Delete") + '"><p><span class="ui-icon ui-icon-alert"></span>' +
                 '<span id="dialog-delete-text"></span></p></div>');
         }
         $("#dialog-delete-text").html(mess);

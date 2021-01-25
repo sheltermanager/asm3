@@ -41,13 +41,15 @@ WHERE a.ID = $@aid$ AND av.DateOfVaccination Is Not Null
 UNION SELECT
 'Test' AS mtype, a.ShelterCode, a.AnimalName, a.ID AS AID, 
 t.AnimalType, sp.SpeciesName, a.DisplayLocation,
-'1' AS TreatmentsGiven, '1' AS TotalNumberOfTreatments, '' AS Dosage,
+'1' AS TreatmentsGiven, '1' AS TotalNumberOfTreatments, 
+tr.ResultName AS Dosage,
 tt.TestName AS TreatmentName, at.DateOfTest AS StartDate, at.Comments
 FROM animal a
 INNER JOIN animaltype t ON t.ID = a.AnimalTypeID
 INNER JOIN animaltest at ON a.ID = at.AnimalID
 INNER JOIN species sp ON sp.ID = a.SpeciesID
 INNER JOIN testtype tt ON at.TestTypeID = tt.ID
+INNER JOIN testresult tr ON at.TestResultID = tr.ID
 INNER JOIN internallocation il ON il.ID = a.ShelterLocation
 WHERE a.ID = $@aid$ AND at.DateOfTest Is Not Null
 

@@ -32,11 +32,11 @@ change the View to Export and then hit Export as CSV.
 
 """
 
-PATH = "/home/robin/tmp/asm3_import_data/rg_taradrumm"
+PATH = "/home/robin/tmp/asm3_import_data/rg_hb2428"
 
 DEFAULT_BREED = 261 # default to dsh
 PETFINDER_ID = "" # Shouldn't be needed if Picture 1 is present
-IMPORT_PICTURES = False 
+IMPORT_PICTURES = True 
 DATE_FORMAT = "DMY" # Normally MDY
 
 RG_AWS_PREFIX = "https://s3.amazonaws.com/filestore.rescuegroups.org" # To resolve URLs from the "Picture 1" field of imports
@@ -178,6 +178,7 @@ for d in asm.csv_to_list("%s/Animals.csv" % PATH):
     if "Description" in d: a.AnimalComments = d["Description"]
     if "Description (no html)" in d: a.AnimalComments = d["Description (no html)"]
     summary = ""
+    origin = ""
     if "Summary" in d: summary = d["Summary"]
     if "Origin" in d: origin = d["Origin"]
     a.HiddenAnimalDetails = summary + ", original breed: " + breed1 + " " + breed2 + ", color: " + \

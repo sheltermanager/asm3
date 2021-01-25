@@ -1,0 +1,85 @@
+Shelter Inventory with Pictures for Location
+###
+Inventories
+###
+Any
+###
+Shelter inventory by species for a location with thumbnails for each animal.
+###
+en
+###
+$VAR loc LOCATION$
+SELECT
+a.ShelterCode,
+a.IdentichipNumber,
+a.AnimalName,
+a.BreedName,
+(SELECT Size FROM lksize WHERE ID = a.Size) AS aSize,
+(SELECT Sex FROM lksex WHERE ID = a.Sex) AS aSex,
+(SELECT Name FROM lksyesno WHERE ID = a.Neutered) AS aNeutered,
+a.AnimalAge,
+a.TimeOnShelter,
+(SELECT LocationName FROM internallocation WHERE ID = a.ShelterLocation) AS aLocation,
+(SELECT Name FROM lksynun WHERE ID = a.IsGoodWithCats) AS aGoodWithCats,
+(SELECT Name FROM lksynun WHERE ID = a.IsGoodWithDogs) AS aGoodWithDogs,
+(SELECT Name FROM lksynun WHERE ID = a.IsGoodWithChildren) AS aGoodWithKids,
+(SELECT Name FROM lksynun WHERE ID = a.IsHouseTrained) AS aHouseTrained,
+a.ID AS animalid,
+a.AnimalComments,
+s.SpeciesName
+FROM animal a
+LEFT OUTER JOIN species s ON s.ID = a.SpeciesID
+WHERE Archived = 0 AND ActiveMovementType Is Null AND (ShelterLocation = $@loc$ OR $@loc$ = 0)
+ORDER BY s.SpeciesName, a.AnimalName
+###
+$$HEADER
+HEADER$$
+
+$$GROUP_SpeciesName
+$$HEAD
+<h2>$SpeciesName</h2>
+<table border="1" width="100%">
+<tr>
+<th>Code</th>
+<th>Name</th>
+<th>Microchip</th>
+<th>Breed</th>
+<th>Size</th>
+<th>Sex/Fixed</th>
+<th>Age</th>
+<th>In Shelter</th>
+<th>Current Location</th>
+<th>OK With</th>
+<th>House Trnd</th>
+<th>Picture</th>
+<th>Comments</th>
+</tr>
+$$FOOT
+</table>
+<p>Total $SPECIESNAME: {COUNT.ANIMALID}</p>
+GROUP$$
+
+$$BODY
+<tr>
+<td>$SHELTERCODE</td>
+<td>$ANIMALNAME</td>
+<td>$IDENTICHIPNUMBER</td>
+<td>$BREEDNAME</td>
+<td>$ASIZE</td>
+<td>$ASEX / $ANEUTERED</td>
+<td>$ANIMALAGE</td>
+<td>$TIMEONSHELTER</td>
+<td>$ALOCATION</td>
+<td>Cats: $AGOODWITHCATS<br/>
+Dogs: $AGOODWITHDOGS<br/>
+Kids: $AGOODWITHKIDS</td>
+<td>$AHOUSETRAINED</td>
+<td><a href="{IMAGE.$ANIMALID}"><img border="0" src="{IMAGE.$ANIMALID}" width="75" height="50" /></a></td>
+<td>$ANIMALCOMMENTS</td>
+</tr>
+BODY$$
+
+$$FOOTER
+<p>Total: {COUNT.ANIMALID}</p>
+FOOTER$$
+
