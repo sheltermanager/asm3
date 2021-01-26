@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: sheltermanager\n"
 "Report-Msgid-Bugs-To: robin@sheltermanager.com\n"
 "POT-Creation-Date: 2020-06-15 18:36+0000\n"
-"PO-Revision-Date: 2020-08-07 19:53+0300\n"
+"PO-Revision-Date: 2021-01-25 16:11+0200\n"
 "Last-Translator: Saggi <s@elephx.com>\n"
 "Language-Team: Hebrew <http://3.127.98.227/projects/asm/asm3/he/>\n"
 "Language: he\n"
@@ -15,7 +15,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 2.3.1\n"
+"X-Generator: Poedit 2.4.2\n"
 "X-Launchpad-Export-Date: 2015-03-02 05:16+0000\n"
 "X-POOTLE-MTIME: 1432793740.000000\n"
 "X-Loco-Version: 2.3.4; wp-5.4.1\n"
@@ -431,7 +431,7 @@ msgstr "הוספת בדיקות"
 
 #: roles.js
 msgid "Add Transport"
-msgstr "הוספת הסעות/ימי אימוץ"
+msgstr "הוספת הסעות"
 
 #: roles.js
 msgid "Add Trap Loans"
@@ -567,7 +567,7 @@ msgstr "הוספת שגר (גורים)"
 
 #: log.js
 msgid "Add log"
-msgstr "הוסף משימה"
+msgstr "הוסף הערה"
 
 #: lostfound_new.js
 msgid "Add lost animal"
@@ -635,7 +635,7 @@ msgstr "הוסף להערה"
 
 #: transport.js
 msgid "Add transport"
-msgstr "‫הוסף הסעה/יום אימוץ"
+msgstr "‫הוסף הסעה"
 
 #: traploan.js
 msgid "Add trap loan"
@@ -2003,7 +2003,7 @@ msgstr "בדיקה לאוסף חיות"
 
 #: transport.js
 msgid "Bulk Transport"
-msgstr "הסעה/יום אימוץ לאוסף חיות"
+msgstr "הסעה לאוסף חיות"
 
 #: vaccination.js
 msgid "Bulk Vaccination"
@@ -2132,7 +2132,7 @@ msgstr "לא ניתן לשריין חיה עם תנועה פעילה."
 
 #: dbupdate.py
 msgid "Canaan Dog"
-msgstr "רועה כנעני"
+msgstr "כלב כנעני"
 
 #: dbupdate.py
 msgid "Canadian Hairless"
@@ -2346,7 +2346,7 @@ msgstr "שינוי תנועות"
 
 #: roles.js
 msgid "Change Transport"
-msgstr "שינוי הסעות/ימי אימוץ"
+msgstr "שינוי הסעות"
 
 #: roles.js
 msgid "Change Trap Loans"
@@ -3559,7 +3559,7 @@ msgstr "מחיקת בדיקות"
 
 #: roles.js
 msgid "Delete Transport"
-msgstr "מחיקת הסעות/ימי אימוץ"
+msgstr "מחיקת הסעות"
 
 #: roles.js
 msgid "Delete Trap Loans"
@@ -4238,7 +4238,7 @@ msgstr "ערוך עסקה"
 
 #: transport.js
 msgid "Edit transport"
-msgstr "ערוך הסעה/יום אימוץ"
+msgstr "ערוך הסעה"
 
 #: traploan.js
 msgid "Edit trap loan"
@@ -4538,7 +4538,7 @@ msgstr "תרומה לקליטה"
 
 #: html.py mobile.py animal_find_results.js
 msgid "Entry Reason"
-msgstr "סיבת כניסה"
+msgstr "סיבת קליטה"
 
 #: html.py
 msgid "Entry Reason Category"
@@ -4546,11 +4546,11 @@ msgstr "קטגוריית סיבת קליטה"
 
 #: lookups.py
 msgid "Entry Reasons"
-msgstr "סיבות כניסה"
+msgstr "סיבות קליטה"
 
 #: waitinglist_new.js waitinglist.js
 msgid "Entry reason"
-msgstr "סיבת כניסה"
+msgstr "סיבת קליטה"
 
 #: login.js
 msgid "Error contacting server."
@@ -4678,27 +4678,27 @@ msgstr "הוצאות::מים"
 
 #: vaccination.js
 msgid "Expire in next month"
-msgstr "פג תוקף בחודש הבא"
+msgstr "חיסונים שפג תוקפם בחודש הבא"
 
 #: vaccination.js
 msgid "Expired"
-msgstr "פג תוקף"
+msgstr "תפוגת חיסון"
 
 #: licence.js
 msgid "Expired in the last month"
-msgstr "פג תוקף בחודש שעבר"
+msgstr "חיסונים שפג תוקפם בחודש שעבר"
 
 #: licence.js
 msgid "Expired in the last week"
-msgstr "פג תוקף בשבוע שעבר"
+msgstr "חיסונים שפג תוקפם בשבוע שעבר"
 
 #: mobile.py vouchers.js litters.js person.js vaccination.js main.js licence.js
 msgid "Expires"
-msgstr "פג תוקף"
+msgstr "פג תוקף חיסון"
 
 #: vouchers.js
 msgid "Expiring in next month"
-msgstr "פג תוקף בחודש הבא"
+msgstr "חיסונים שפג תוקפם בחודש הבא"
 
 #: licence_renewal.js stocklevel.js person_find_results.js
 msgid "Expiry"
@@ -5150,7 +5150,7 @@ msgstr "אומנה לחיה"
 
 #: html.py configuration.py header.js
 msgid "Foster book"
-msgstr "רשימת אומנות"
+msgstr "רשימת אומנות פעילות"
 
 #: movement.py
 msgid "Foster movements must have a valid foster date."
@@ -6133,7 +6133,7 @@ msgstr "הוסף שורת כותרת ל-CSV"
 
 #: waitinglist_results.js
 msgid "Include Removed"
-msgstr "כלול את אלה שהוסרו"
+msgstr "‫‫לכלול את אלה שהוסרו"
 
 #: publish_options.js
 msgid "Include animals in the following locations"
@@ -6141,7 +6141,7 @@ msgstr "לכלול חיות במיקומים הבאים"
 
 #: publish_options.js
 msgid "Include animals on trial adoption"
-msgstr "כולל חיות באימוץ ניסיון"
+msgstr "‫לכלול חיות באימוץ ניסיון"
 
 #: publish_options.js
 msgid "Include animals who don't have a description"
@@ -6149,7 +6149,7 @@ msgstr "לכלול חיות ללא תיאור"
 
 #: publish_options.js
 msgid "Include animals who don't have a picture"
-msgstr "כולל חיות ללא תמונה"
+msgstr "לכלול חיות ללא תמונה"
 
 #: publish_options.js
 msgid "Include cruelty case animals"
@@ -6165,11 +6165,11 @@ msgstr "לכלול חיות באומנה"
 
 #: lostfound_find.js
 msgid "Include found"
-msgstr "כולל מציאות"
+msgstr "לכלול מציאות"
 
 #: publish_options.js
 msgid "Include held animals"
-msgstr "כלול חיות בהמתנה"
+msgstr "לכלול חיות בהמתנה"
 
 #: options.js
 msgid "Include incomplete medical records when generating document templates"
@@ -6189,7 +6189,7 @@ msgstr "לכלול תמונה מועדפת"
 
 #: publish_options.js
 msgid "Include quarantined animals"
-msgstr "כלול חיות בהסגר"
+msgstr "לכלול חיות בהסגר"
 
 #: publish_options.js
 msgid "Include reserved animals"
@@ -6201,7 +6201,7 @@ msgstr "לכלול חיות בחנויות"
 
 #: lostfound_find.js
 msgid "Include returned"
-msgstr "כלול חיות שהוחזרו"
+msgstr "לכלול חיות שהוחזרו"
 
 #: media.js
 msgid "Include this image when publishing"
@@ -7819,7 +7819,7 @@ msgstr "בדיקה חדשה"
 
 #: transport.js
 msgid "New Transport"
-msgstr "הסעה/יום אימוץ חדש"
+msgstr "הסעה חדשה"
 
 #: traploan.js
 msgid "New Trap Loan"
@@ -9491,7 +9491,7 @@ msgstr "הסר שדות נקשר אל מפרטי קליטת חיה"
 
 #: options.js
 msgid "Remove the city/state fields from person details"
-msgstr "הסר שדות עיר/מדינה מפרטי האנשים"
+msgstr "הסר שדות עיר/מדינה/מחוז מפרטי האנשים"
 
 #: options.js
 msgid "Remove the coat type field from animal details"
@@ -9499,7 +9499,7 @@ msgstr "הסר סוג הפרווה מפרטי החיות"
 
 #: options.js
 msgid "Remove the country field from person details"
-msgstr "הסר שדה מדינה מפרטי האנשים"
+msgstr "הסר שדה ארץ מפרטי האנשים"
 
 #: options.js
 msgid "Remove the declawed box from animal health details"
@@ -9511,7 +9511,7 @@ msgstr "הסר את פונקציונליות מאגר המסמכים מהתפר�
 
 #: options.js
 msgid "Remove the good with fields from animal notes"
-msgstr "הסר את שדות ״טוב עם״ מהערות על חיות"
+msgstr "הסר את שדות ״ידידותי ל״ מהערות על חיות"
 
 #: options.js
 msgid "Remove the heartworm test fields from animal health details"
@@ -9565,7 +9565,7 @@ msgstr "הסר שדות פרטי הקעקוע מפרטי החיות"
 
 #: options.js
 msgid "Remove the transport functionality from menus and screens"
-msgstr "הסר את פונקציונליות הסעות/ימי אימוץ מהתפריטים והמסכים"
+msgstr "הסר את פונקציונליות הסעות מהתפריטים והמסכים"
 
 #: options.js
 msgid "Remove the trap loan functionality from menus and screens"
@@ -11733,15 +11733,13 @@ msgstr "אין מספיק מידע בטופס כדי לייצר רשומת אד�
 msgid ""
 "There is not enough information in the form to create a transport record "
 "(need animalname)."
-msgstr "אין מספיק מידע בטופס כדי לייצר רשומת הסעה/יום אימוץ (נדרש שם חיה)."
+msgstr "אין מספיק מידע בטופס כדי לייצר רשומת הסעה (נדרש שם חיה)."
 
 #: onlineform.py
 msgid ""
 "There is not enough information in the form to create a transport record "
 "(need pickupdate and dropoffdate)."
-msgstr ""
-"אין מספיק מידע בטופס כדי לייצר רשומת הסעה/יום אימוץ (נדרש תאריך איסוף "
-"ומסירה)."
+msgstr "אין מספיק מידע בטופס כדי לייצר רשומת הסעה (נדרש תאריך איסוף ומסירה)."
 
 #: onlineform.py
 msgid ""
@@ -12096,7 +12094,7 @@ msgstr "אדם זה מקושר לרשיונות ולכן לא ניתן להסי�
 
 #: person.py
 msgid "This person is linked to animal transportation and cannot be removed."
-msgstr "אדם זה מקושר להסעות/ימי אימוץ ולכן לא ניתן להסירו מהמערכת."
+msgstr "אדם זה מקושר להסעות ולכן לא ניתן להסירו מהמערכת."
 
 #: person.py
 msgid "This person is linked to citations and cannot be removed."
@@ -12504,23 +12502,23 @@ msgstr "תאריך העברה אינו חוקי."
 #: dbupdate.py calendarview.js onlineform_incoming.js roles.js
 #: header_edit_header.js
 msgid "Transport"
-msgstr "הסעות/ימי אימוץ"
+msgstr "הסעות"
 
 #: configuration.py transport.js header.js
 msgid "Transport Book"
-msgstr "רשימת הסעות/ימי אימוץ"
+msgstr "רשימת הסעות"
 
 #: lookups.py
 msgid "Transport Statuses"
-msgstr "סטטוס הסעות/ימי אימוץ"
+msgstr "סטטוס הסעות"
 
 #: lookups.py
 msgid "Transport Types"
-msgstr "סוגי הסעות/ימי אימוץ"
+msgstr "סוגי הסעות"
 
 #: html.py
 msgid "Transport book"
-msgstr "רשימת הסעות/ימי אימוץ"
+msgstr "רשימת הסעות"
 
 #: movement.py
 msgid "Transport requires an animal"
@@ -13027,8 +13025,8 @@ msgid ""
 "Vaccinations: {0}, Tests: {1}, Medical Treatments: {2}, Transport: {3}, "
 "Costs: {4}, Total Costs: {5} Total Payments: {6}, Balance: {7}"
 msgstr ""
-"חיסונים: {0}, בדיקות: {1}, טיפולים רפואיים: {2}, הסעות/ימי אימוץ: {3}, "
-"הוצאות: {4}, עלות כוללת: {5} סה״כ תשלומים: {6}, יתרה: {7}"
+"חיסונים: {0}, בדיקות: {1}, טיפולים רפואיים: {2}, הסעות: {3}, הוצאות: {4}, "
+"עלות כוללת: {5} סה״כ תשלומים: {6}, יתרה: {7}"
 
 #: mailmerge.js
 msgid "Valid tokens for the subject and text"
@@ -13221,7 +13219,7 @@ msgstr "הצג וידאו הדרכה"
 
 #: roles.js
 msgid "View Transport"
-msgstr "צפיה בהסעות וימי אימוץ"
+msgstr "צפיה בהסעות"
 
 #: roles.js
 msgid "View Trap Loans"
@@ -13719,7 +13717,7 @@ msgstr "כן/לא"
 
 #: lookups.py
 msgid "Yes/No/Unknown"
-msgstr "כל/לא/בלתי ידוע"
+msgstr "כן/לא/בלתי ידוע"
 
 #: dbupdate.py
 msgid "Yorkshire Terrier Yorkie"
