@@ -12,12 +12,16 @@ $(function() {
                 let since = u.split("=")[1], user = u.split("=")[0];
                 userlist.push("<a class='activeuser' title='" + html.title(since) + "' href='#'>" + user + "</a>");
             });
-            s += '<table width="100%" style="font-size: 0.75em; border-top: 1px solid #aaa"><tr><td align="left">' + common.substitute(loggedin, { "0": userlist.join(", ")}) + '</td>';
-            s += common.substitute('<td align="right"><a id="link-about" href="#">{asm} {version} {user}@{org}</a></td></tr></table>', {
+            s += '<div id="footer">';
+            s += '<div class="asm-footer-users">' + common.substitute(loggedin, { "0": userlist.join(", ")}) + '</div>';
+            s += '<div class="asm-footer-version">';
+            s += common.substitute('<a id="link-about" href="#">{asm} {version} {user}@{org}</a>', {
                 "asm":      _("ASM"),
                 "version":  controller.version.substring(0, controller.version.indexOf(" ")),
                 "user":     asm.user,
                 "org":      config.str("Organisation")});
+            s += "</div>";
+            s += "</div>";
             return s;
         },
 

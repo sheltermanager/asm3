@@ -271,10 +271,19 @@ select:disabled, input:disabled, textarea:disabled {
 }
 
 /** FOOTER ========================= */
-.asm-footer-version {
-    margin-top: 16px;
+#footer {
+    width: 100%;
     font-size: 80%;
     border-top: 1px solid #aaa;
+}
+.asm-footer-users {
+    display: inline-block;
+    width: 50%;
+    text-align: left;
+}
+.asm-footer-version {
+    display: inline-block;
+    width: 50%;
     text-align: right;
 }
 
