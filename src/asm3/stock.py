@@ -15,6 +15,10 @@ def get_stocklevels(dbo, location = 0):
     if location != 0: wc = "AND s.StockLocationID = %d" % location
     return dbo.query("%s WHERE Balance > 0 %s ORDER BY s.StockLocationID, s.Name" % (get_stocklevel_query(dbo), wc))
 
+def get_stocklevels_depleted(dbo):
+    """ Returns a set of depleted stock levels """
+    return dbo.query("%s WHERE Balance <= 0 ORDER BY s.StockLocationID, s.Name" % (get_stocklevel_query(dbo)))
+
 def get_stocklevel(dbo, slid):
     """
     Returns a single stocklevel record

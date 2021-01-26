@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ASM3\n"
 "Report-Msgid-Bugs-To: robin@sheltermanager.com\n"
-"POT-Creation-Date: 2021-01-22 13:11+0000\n"
+"POT-Creation-Date: 2021-01-26 13:26+0000\n"
 "Last-Translator: Robin Rawson-Tetley <robin@sheltermanager.com>\n"
 "Language-Team: en <robin@sheltermanager.com>\n"
 "Language: en\n"
@@ -45,6 +45,10 @@ msgstr ""
 
 #: animal_find.js
 msgid "(both)"
+msgstr ""
+
+#: stocklevel.js
+msgid "(depleted)"
 msgstr ""
 
 #: html.py clinic_calendar.js main.js
@@ -2818,7 +2822,7 @@ msgstr ""
 msgid "Coordinator"
 msgstr ""
 
-#: report_images.js
+#: report_images.js document_repository.js
 msgid ""
 "Copy absolute service URL to the clipboard (for external use in web pages "
 "and emails)"
@@ -11389,7 +11393,7 @@ msgstr ""
 msgid "Successfully attached to {0}"
 msgstr ""
 
-#: report_images.js onlineforms.js mailmerge.js
+#: report_images.js onlineforms.js mailmerge.js document_repository.js
 msgid "Successfully copied to the clipboard."
 msgstr ""
 

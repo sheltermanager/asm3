@@ -5654,7 +5654,10 @@ class stocklevel(JSONEndpoint):
 
     def controller(self, o):
         dbo = o.dbo
-        levels = asm3.stock.get_stocklevels(dbo, o.post.integer("viewlocation"))
+        if o.post.integer("viewlocation") == -1:
+            levels = asm3.stock.get_stocklevels_depleted(dbo)
+        else:
+            levels = asm3.stock.get_stocklevels(dbo, o.post.integer("viewlocation"))
         asm3.al.debug("got %d stock levels" % len(levels), "code.stocklevel", dbo)
         return {
             "stocklocations": asm3.lookups.get_stock_locations(dbo),
