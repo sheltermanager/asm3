@@ -1547,7 +1547,7 @@ $(function() {
             });
 
             $("#button-email").button().click(function() {
-                let defaultemail = "", defaultname = "";
+                let defaultemail = "", defaultname = "", toaddresses = [];
                 // Use the latest reservation/person if the animal is on shelter/foster and a reserve is available
                 if (controller.animal && controller.animal.ARCHIVED == 0 && controller.animal.RESERVEDOWNEREMAILADDRESS) {
                     defaultemail = controller.animal.RESERVEDOWNEREMAILADDRESS;
@@ -1557,12 +1557,29 @@ $(function() {
                     defaultemail = controller.animal.CURRENTOWNEREMAILADDRESS;
                     defaultname = controller.animal.CURRENTOWNERNAME;
                 }
+                // Other useful addresses for the dialog
+                if (controller.animal && controller.animal.RESERVEDOWNEREMAILADDRESS) { 
+                    toaddresses.push(controller.animal.RESERVEDOWNEREMAILADDRESS);
+                }
+                if (controller.animal && controller.animal.CURRENTOWNEREMAILADDRESS) { 
+                    toaddresses.push(controller.animal.CURRENTOWNEREMAILADDRESS);
+                }
+                if (controller.animal && controller.animal.ADOPTIONCOORDINATOREMAILADDRESS) {
+                    toaddresses.push(controller.animal.ADOPTIONCOORDINATOREMAILADDRESS);
+                }
+                if (controller.animal && controller.animal.ORIGINALOWNEREMAILADDRESS) {
+                    toaddresses.push(controller.animal.ORIGINALOWNEREMAILADDRESS);
+                }
+                if (controller.animal && controller.animal.BROUGHTINBYEMAILADDRESS) {
+                    toaddresses.push(controller.animal.BROUGHTINBYEMAILADDRESS);
+                }
                 $("#emailform").emailform("show", {
                     title: _("Send email"),
                     post: "animal",
                     formdata: "mode=email&animalid=" + controller.animal.ID,
                     name: defaultname,
                     email: defaultemail,
+                    toaddresses: toaddresses,
                     animalid: controller.animal.ID, 
                     subject: controller.animal.ANIMALNAME + " - " + controller.animal.CODE,
                     logtypes: controller.logtypes,

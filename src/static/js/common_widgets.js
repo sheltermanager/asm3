@@ -707,8 +707,11 @@ $.widget("asm.emailform", {
             fromaddresses.push(asm.useremail);
             fromaddresses.push(html.decode(asm.userreal) + " <" + asm.useremail + ">");
         }
+        if (o.toaddresses) {
+            toaddresses = toaddresses.concat(o.toaddresses);
+        }
         fromaddresses = fromaddresses.concat(config.str("EmailFromAddresses").split(","));
-        toaddresses = config.str("EmailToAddresses").split(",");
+        toaddresses = toaddresses.concat(config.str("EmailToAddresses").split(","));
         $("#emailfrom").autocomplete({source: fromaddresses});
         $("#emailfrom").autocomplete("widget").css("z-index", 1000);
         $("#emailto").autocomplete({source: toaddresses});

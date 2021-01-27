@@ -857,7 +857,7 @@ $(function() {
                 media.ajax(formdata);
             });
 
-            let defaultemail = "", defaultname = "";
+            let defaultemail = "", defaultname = "", toaddresses = [];
             // If we have a person, default the email address
             if (controller.person && controller.person.EMAILADDRESS) {
                 defaultemail = controller.person.EMAILADDRESS;
@@ -872,6 +872,22 @@ $(function() {
                 defaultemail = controller.animal.CURRENTOWNEREMAILADDRESS;
                 defaultname = controller.animal.CURRENTOWNERNAME;
             }
+            // Other useful email addresses for animals
+            if (controller.animal && controller.animal.RESERVEDOWNEREMAILADDRESS) { 
+                toaddresses.push(controller.animal.RESERVEDOWNEREMAILADDRESS);
+            }
+            if (controller.animal && controller.animal.CURRENTOWNEREMAILADDRESS) { 
+                toaddresses.push(controller.animal.CURRENTOWNEREMAILADDRESS);
+            }
+            if (controller.animal && controller.animal.ADOPTIONCOORDINATOREMAILADDRESS) {
+                toaddresses.push(controller.animal.ADOPTIONCOORDINATOREMAILADDRESS);
+            }
+            if (controller.animal && controller.animal.ORIGINALOWNEREMAILADDRESS) {
+                toaddresses.push(controller.animal.ORIGINALOWNEREMAILADDRESS);
+            }
+            if (controller.animal && controller.animal.BROUGHTINBYEMAILADDRESS) {
+                toaddresses.push(controller.animal.BROUGHTINBYEMAILADDRESS);
+            }
 
             $("#button-email").button().click(function() {
                 $("#emailform").emailform("show", {
@@ -881,6 +897,7 @@ $(function() {
                         "&ids=" + tableform.table_ids(media.table),
                     name: defaultname,
                     email: defaultemail,
+                    toaddresses: toaddresses,
                     subject: tableform.table_selected_row(media.table).MEDIANOTES,
                     animalid: (controller.animal && controller.animal.ID),
                     personid: (controller.person && controller.person.ID),
