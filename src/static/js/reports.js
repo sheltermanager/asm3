@@ -53,6 +53,10 @@ $(function() {
                 [ _("Aged under 6 months"), "under6months", "DateOfBirth >= '$CURRENT_DATE-182$'" ],
                 [ _("Aged over 6 months"), "over6months", "DateOfBirth < '$CURRENT_DATE-182$'" ],
                 [ _("Altered"), "altered", "Neutered=1" ],
+                [ _("Altered between two dates"), "alteredtwodates", 
+                    "NeuteredDate>='$ASK DATE{0}$ AND NeuteredDate<='$ASK DATE {1}$'"
+                    .replace("{0}", _("Altered between"))
+                    .replace("{1}", _("and")) ],
                 [ _("Ask the user for a flag"), "askflag", "AdditionalFlags LIKE '%$ASK ANIMALFLAG$%'" ],
                 [ _("Ask the user for a location"), "asklocation", "ShelterLocation=$ASK LOCATION$" ],
                 [ _("Ask the user for a species"), "askspecies", "SpeciesID=$ASK SPECIES$" ],

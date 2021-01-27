@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ASM3\n"
 "Report-Msgid-Bugs-To: robin@sheltermanager.com\n"
-"POT-Creation-Date: 2021-01-26 13:26+0000\n"
+"POT-Creation-Date: 2021-01-27 09:45+0000\n"
 "Last-Translator: Robin Rawson-Tetley <robin@sheltermanager.com>\n"
 "Language-Team: en <robin@sheltermanager.com>\n"
 "Language: en\n"
@@ -1118,6 +1118,14 @@ msgstr ""
 
 #: dbupdate.py
 msgid "Altered Dog - 3 year"
+msgstr ""
+
+#: reports.js
+msgid "Altered between"
+msgstr ""
+
+#: reports.js
+msgid "Altered between two dates"
 msgstr ""
 
 #: person_links.js
