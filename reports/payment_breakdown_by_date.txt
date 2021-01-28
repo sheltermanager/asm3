@@ -143,7 +143,7 @@ Donation AS amt, ownerdonation.Fee,
 Donation - COALESCE(VatAmount, 0) - COALESCE(ownerdonation.Fee, 0) AS MoneyNet,
 ownerdonation.VatAmount, owner.OwnerAddress, owner.OwnerTown, owner.OwnerCounty, 
 owner.OwnerPostcode, donationpayment.PaymentName, ownerdonation.ReceiptNumber,
-(SELECT Name FROM lksdonationfreq WHERE ID = ownerdonation.Frequency) AS Frequency
+(SELECT Frequency FROM lksdonationfreq WHERE ID = ownerdonation.Frequency) AS Frequency
 FROM ownerdonation 
 INNER JOIN owner ON ownerdonation.OwnerID = owner.ID 
 INNER JOIN donationpayment ON donationpayment.ID = ownerdonation.DonationPaymentID
