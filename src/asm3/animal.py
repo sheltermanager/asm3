@@ -1401,7 +1401,7 @@ def get_shelter_code(dbo, animalid):
     """
     return dbo.query_string("SELECT ShelterCode FROM animal WHERE ID = ?", [animalid])
 
-def get_extra_id(dbo, a, idtype=IDTYPE_SAVOURLIFE):
+def get_extra_id(dbo, a, idtype):
     """
     Retrieves a value from the ExtraIDs field, which is stored
     in the form:  key1=value1|key2=value2 ...
@@ -1434,6 +1434,7 @@ def set_extra_id(dbo, user, a, idtype, idvalue):
             k, v = x.split("=")
             if k != idtype: ids.append( "%s=%s" % (k, v))
     extraids = "|".join(ids)
+    a.EXTRAIDS = extraids
     dbo.update("animal", a.ID, { "ExtraIDs": extraids }, user)
     return extraids
 

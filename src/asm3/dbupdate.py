@@ -38,7 +38,7 @@ VERSIONS = (
     34101, 34102, 34103, 34104, 34105, 34106, 34107, 34108, 34109, 34110, 34111,
     34112, 34200, 34201, 34202, 34203, 34204, 34300, 34301, 34302, 34303, 34304,
     34305, 34306, 34400, 34401, 34402, 34403, 34404, 34405, 34406, 34407, 34408,
-    34409
+    34409, 34410
 )
 
 LATEST_VERSION = VERSIONS[-1]
@@ -1236,6 +1236,7 @@ def sql_structure(dbo):
         fint("IsRetailer", True),
         fint("IsVet", True),
         fint("IsGiftAid", True),
+        fstr("ExtraIDs", True),
         flongstr("AdditionalFlags", True),
         flongstr("HomeCheckAreas", True),
         fdate("DateLastHomeChecked", True),
@@ -1287,6 +1288,7 @@ def sql_structure(dbo):
     sql += index("owner_IsStaff", "owner", "IsStaff")
     sql += index("owner_IsVet", "owner", "IsVet")
     sql += index("owner_IsVolunteer", "owner", "IsVolunteer")
+    sql += index("owner_ExtraIDs", "owner", "ExtraIDs")
 
     sql += table("ownercitation", (
         fid(),
@@ -5299,4 +5301,10 @@ def update_34409(dbo):
     add_column(dbo, "animalvaccination", "RabiesTag", dbo.type_shorttext)
     add_index(dbo, "animalvaccination_RabiesTag", "animalvaccination", "RabiesTag")
     dbo.execute_update("UPDATE animalvaccination SET RabiesTag='' WHERE RabiesTag Is Null")
+
+def update_34410(dbo):
+    # Add owner.ExtraIDs
+    add_column(dbo, "owner", "ExtraIDs", dbo.type_shorttext)
+    add_index(dbo, "owner_ExtraIDs", "owner", "ExtraIDs")
+    dbo.execute_dbupdate("UPDATE owner SET ExtraIDs = ''")
 

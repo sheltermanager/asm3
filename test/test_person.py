@@ -83,6 +83,11 @@ class TestPerson(unittest.TestCase):
     def test_get_person_rota(self):
         asm3.person.get_person_rota(base.get_dbo(), self.nid)
 
+    def test_extra_ids(self):
+        p = asm3.person.get_person(base.get_dbo(), self.nid)
+        asm3.person.set_extra_id(base.get_dbo(), "user", p, asm3.person.IDTYPE_CARDCOM_TOKEN, "xxx")
+        assert "xxx" == asm3.person.get_extra_id(base.get_dbo(), p, asm3.person.IDTYPE_CARDCOM_TOKEN)
+
     def test_calculate_owner_code(self):
         assert "TE000005" == asm3.person.calculate_owner_code(5, "test")
         assert "XX000100" == asm3.person.calculate_owner_code(100, "&#239;Z")
