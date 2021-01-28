@@ -23,9 +23,6 @@ from random import choice
 ASCENDING = 0
 DESCENDING = 1
 
-# ID type keys used in the ExtraIDs column
-IDTYPE_SAVOURLIFE = "savourlife"
-
 def get_animal_query(dbo):
     """
     Returns a select for animal rows with resolved lookups
@@ -1406,7 +1403,7 @@ def get_extra_id(dbo, a, idtype):
     Retrieves a value from the ExtraIDs field, which is stored
     in the form:  key1=value1|key2=value2 ...
     a: An animal result from get_animal_query containing ExtraIDs
-    idtype: A string key, use one of the IDTYPE_ constants above
+    idtype: A string key
     Returns the extra ID (string) or None if there was no match
     """
     if "EXTRAIDS" in a and a.EXTRAIDS is not None:
@@ -1422,7 +1419,7 @@ def set_extra_id(dbo, user, a, idtype, idvalue):
     Stores a value in the ExtraIDs field for an animal, which is stored
     in the form:  key1=value1|key2=value2 ...
     a: An animal result from get_animal_query containing ExtraIDs and ID
-    idtype: A string key, use one of the IDTYPE_ constants above
+    idtype: A string key
     idvalue: The value of the key (will be coerced to string).
     """
     ids = []

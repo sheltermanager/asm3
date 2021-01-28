@@ -10,6 +10,9 @@ from asm3.sitedefs import SAVOURLIFE_URL, SAVOURLIFE_API_KEY
 
 import sys
 
+# ID type keys used in the ExtraIDs column
+IDTYPE_SAVOURLIFE = "savourlife"
+
 class SavourLifePublisher(AbstractPublisher):
     """
     Handles publishing to savourlife.com.au
@@ -137,7 +140,7 @@ class SavourLifePublisher(AbstractPublisher):
 
                 # Do we already have a SavourLife ID for this animal?
                 # This function returns None if no match is found
-                dogid = asm3.animal.get_extra_id(self.dbo, an, asm3.animal.IDTYPE_SAVOURLIFE)
+                dogid = asm3.animal.get_extra_id(self.dbo, an, IDTYPE_SAVOURLIFE)
 
                 data = self.processAnimal(an, dogid, postcode, state, suburb, username, token, interstate)
 
@@ -158,7 +161,7 @@ class SavourLifePublisher(AbstractPublisher):
                     # so future postings will update this dog's listing.
                     if dogid is None:
                         dogid = r["response"]
-                        asm3.animal.set_extra_id(self.dbo, "pub::savourlife", an, asm3.animal.IDTYPE_SAVOURLIFE, dogid)  
+                        asm3.animal.set_extra_id(self.dbo, "pub::savourlife", an, IDTYPE_SAVOURLIFE, dogid)  
 
             except Exception as err:
                 self.logError("Failed processing animal: %s, %s" % (str(an["SHELTERCODE"]), err), sys.exc_info())
@@ -196,7 +199,7 @@ class SavourLifePublisher(AbstractPublisher):
                         if an.LASTSTATUS == status: continue
 
                         # The savourlife dogid field that they returned when we first sent the record
-                        dogid = asm3.animal.get_extra_id(self.dbo, an, asm3.animal.IDTYPE_SAVOURLIFE)
+                        dogid = asm3.animal.get_extra_id(self.dbo, an, IDTYPE_SAVOURLIFE)
 
                         # If there isn't a dogid, stop now because we can't do anything
                         if dogid is None: continue

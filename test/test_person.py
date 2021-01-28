@@ -85,8 +85,8 @@ class TestPerson(unittest.TestCase):
 
     def test_extra_ids(self):
         p = asm3.person.get_person(base.get_dbo(), self.nid)
-        asm3.person.set_extra_id(base.get_dbo(), "user", p, asm3.person.IDTYPE_CARDCOM_TOKEN, "xxx")
-        assert "xxx" == asm3.person.get_extra_id(base.get_dbo(), p, asm3.person.IDTYPE_CARDCOM_TOKEN)
+        asm3.person.set_extra_id(base.get_dbo(), "user", p, "test", "xxx")
+        assert "xxx" == asm3.person.get_extra_id(base.get_dbo(), p, "test")
 
     def test_calculate_owner_code(self):
         assert "TE000005" == asm3.person.calculate_owner_code(5, "test")

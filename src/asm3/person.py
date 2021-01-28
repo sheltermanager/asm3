@@ -22,9 +22,6 @@ import datetime
 ASCENDING = 0
 DESCENDING = 1
 
-# ID type keys used in the ExtraIDs column
-IDTYPE_CARDCOM_TOKEN = "cardcomt"
-
 def get_homechecked(dbo, personid):
     """
     Returns a list of people homechecked by personid
@@ -650,7 +647,7 @@ def get_extra_id(dbo, p, idtype):
     Retrieves a value from the ExtraIDs field, which is stored
     in the form:  key1=value1|key2=value2 ...
     p: A person result from get_person_query containing ExtraIDs
-    idtype: A string key, use one of the IDTYPE_ constants above
+    idtype: A string key
     Returns the extra ID (string) or None if there was no match
     """
     if "EXTRAIDS" in p and p.EXTRAIDS is not None:
@@ -666,7 +663,7 @@ def set_extra_id(dbo, user, p, idtype, idvalue):
     Stores a value in the ExtraIDs field for a person, which is stored
     in the form:  key1=value1|key2=value2 ...
     p: A person result from get_person_query containing ExtraIDs and ID
-    idtype: A string key, use one of the IDTYPE_ constants above
+    idtype: A string key
     idvalue: The value of the key (will be coerced to string).
     """
     ids = []

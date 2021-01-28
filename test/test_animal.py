@@ -186,8 +186,8 @@ class TestAnimal(unittest.TestCase):
 
     def test_extra_ids(self):
         a = asm3.animal.get_animal(base.get_dbo(), self.nid)
-        asm3.animal.set_extra_id(base.get_dbo(), "user", a, asm3.animal.IDTYPE_SAVOURLIFE, "xxx")
-        assert "xxx" == asm3.animal.get_extra_id(base.get_dbo(), a, asm3.animal.IDTYPE_SAVOURLIFE)
+        asm3.animal.set_extra_id(base.get_dbo(), "user", a, "test", "xxx")
+        assert "xxx" == asm3.animal.get_extra_id(base.get_dbo(), a, "test")
 
     def test_update_daily_boarding_cost(self):
         asm3.animal.update_daily_boarding_cost(base.get_dbo(), "test", self.nid, 1500)
