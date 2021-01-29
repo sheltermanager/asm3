@@ -226,10 +226,13 @@ $(document).ready(function() {
     };
 
     // Remove all hidden elements from the DOM. Useful to prevent visibleif 
-    // hidden conditional fields from being posted to the backend
+    // hidden conditional fields from being posted to the backend.
+    // Remove checkbox inputs from checkbox groups to prevent them posting 
+    // individually (they have a name attribute for showif functionality)
     const remove_hidden = function() {
         $(".asm-onlineform-check:hidden, .asm-onlineform-text:hidden, " +
             ".asm-onlineform-notes:hidden, .asm-onlineform-lookup:hidden").remove();
+        $(".asm-onlineform-checkgroup input").remove();
     };
 
     // Find every visibleif rule and show/hide accordingly
