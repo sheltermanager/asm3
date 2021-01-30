@@ -574,61 +574,61 @@ $.widget("asm.emailform", {
             '<div id="dialog-email" style="display: none" title="' + html.title(_("Email person"))  + '">',
             '<table width="100%">',
             '<tr>',
-            '<td><label for="emailfrom">' + _("From") + '</label></td>',
-            '<td><input id="emailfrom" data="from" type="text" class="asm-doubletextbox" autocomplete="new-password" /></td>',
+            '<td><label for="em-from">' + _("From") + '</label></td>',
+            '<td><input id="em-from" data="from" type="text" class="asm-doubletextbox" autocomplete="new-password" /></td>',
             '</tr>',
             '<tr>',
-            '<td><label for="emailto">' + _("To") + '</label></td>',
-            '<td><input id="emailto" data="to" type="text" class="asm-doubletextbox" autocomplete="new-password" /></td>',
+            '<td><label for="em-to">' + _("To") + '</label></td>',
+            '<td><input id="em-to" data="to" type="text" class="asm-doubletextbox" autocomplete="new-password" /></td>',
             '</tr>',
             '<tr>',
-            '<td><label for="emailcc">' + _("CC") + '</label></td>',
-            '<td><input id="emailcc" data="cc" type="text" class="asm-doubletextbox" autocomplete="new-password" /></td>',
+            '<td><label for="em-cc">' + _("CC") + '</label></td>',
+            '<td><input id="em-cc" data="cc" type="text" class="asm-doubletextbox" autocomplete="new-password" /></td>',
             '</tr>',
             '<tr>',
-            '<td><label for="emailbcc">' + _("BCC") + '</label></td>',
-            '<td><input id="emailbcc" data="bcc" type="text" class="asm-doubletextbox" autocomplete="new-password" /></td>',
+            '<td><label for="em-bcc">' + _("BCC") + '</label></td>',
+            '<td><input id="em-bcc" data="bcc" type="text" class="asm-doubletextbox" autocomplete="new-password" /></td>',
             '</tr>',
             '<tr>',
-            '<td><label for="emailsubject">' + _("Subject") + '</label></td>',
-            '<td><input id="emailsubject" data="subject" type="text" class="asm-doubletextbox" /></td>',
+            '<td><label for="em-subject">' + _("Subject") + '</label></td>',
+            '<td><input id="em-subject" data="subject" type="text" class="asm-doubletextbox" /></td>',
             '</tr>',
             '<tr>',
             '<td></td>',
-            '<td><input id="emailaddtolog" data="addtolog" type="checkbox"',
+            '<td><input id="em-addtolog" data="addtolog" type="checkbox"',
             'title="' + html.title(_("Add details of this email to the log after sending")) + '" ',
             'class="asm-checkbox" /><label for="emailaddtolog">' + _("Add to log") + '</label>',
-            '<select id="emaillogtype" data="logtype" class="asm-selectbox">',
+            '<select id="em-logtype" data="logtype" class="asm-selectbox">',
             '</select>',
             '</td>',
             '</tr>',
             '</table>',
-            '<div id="emailbody" data="body" data-margin-top="24px" data-height="300px" class="asm-richtextarea"></div>',
+            '<div id="em-body" data="body" data-margin-top="24px" data-height="300px" class="asm-richtextarea"></div>',
             '<p>',
-            '<label for="emailtemplate">' + _("Template") + '</label>',
-            '<select id="emailtemplate" class="asm-selectbox">',
+            '<label for="em-template">' + _("Template") + '</label>',
+            '<select id="em-template" class="asm-selectbox">',
             '<option value=""></option>',
             '</select>',
             '</p>',
             '</div>'
         ].join("\n"));
-        $("#emailbody").richtextarea();
+        $("#em-body").richtextarea();
         let b = {}; 
         b[_("Send")] = {
             text: _("Send"),
             "class": "asm-dialog-actionbutton",
             click: function() { 
-                if (!validate.email($("#emailfrom").val())) { return; }
-                if (!validate.email($("#emailto").val())) { return; }
-                if ($("#emailcc").val() != "" && !validate.email($("#emailcc").val())) { return; }
-                if ($("#emailbcc").val() != "" && !validate.email($("#emailbcc").val())) { return; }
+                if (!validate.email($("#em-from").val())) { return; }
+                if (!validate.email($("#em-to").val())) { return; }
+                if ($("#em-cc").val() != "" && !validate.email($("#em-cc").val())) { return; }
+                if ($("#em-bcc").val() != "" && !validate.email($("#em-bcc").val())) { return; }
                 let o = self.options.o;
                 if (o.formdata) { o.formdata += "&"; }
                 o.formdata += $("#dialog-email input, #dialog-email select, #dialog-email .asm-richtextarea").toPOST();
                 header.show_loading(_("Sending..."));
                 common.ajax_post(o.post, o.formdata, function() {
-                    let recipients = $("#emailto").val();
-                    if ($("#emailcc").val() != "") { recipients += ", " + $("#emailcc").val(); }
+                    let recipients = $("#em-to").val();
+                    if ($("#em-cc").val() != "") { recipients += ", " + $("#em-cc").val(); }
                     header.show_info(_("Message successfully sent to {0}").replace("{0}", recipients));
                     $("#dialog-email").dialog("close");
                 });
@@ -645,15 +645,15 @@ $.widget("asm.emailform", {
                 hide: dlgfx.add_hide,
                 buttons: b
         });
-        $("#emailtemplate").change(function() {
+        $("#em-template").change(function() {
             let o = self.options.o;
-            let formdata = "mode=emailtemplate&dtid=" + $("#emailtemplate").val();
+            let formdata = "mode=emailtemplate&dtid=" + $("#em-template").val();
             if (o.donationids) { formdata += "&donationids=" + o.donationids; }
             if (o.personid) { formdata += "&personid=" + o.personid; }
             if (o.animalid) { formdata += "&animalid=" + o.animalid; }
             header.show_loading(_("Loading..."));
             common.ajax_post("document_gen", formdata, function(result) {
-                $("#emailbody").html(result); 
+                $("#em-body").html(result); 
             });
         });
 
@@ -661,7 +661,7 @@ $.widget("asm.emailform", {
 
     destroy: function() {
         common.widget_destroy("#dialog-email", "dialog"); 
-        common.widget_destroy("#emailbody", "richtextarea");
+        common.widget_destroy("#em-body", "richtextarea");
     },
     
     /**
@@ -684,23 +684,23 @@ $.widget("asm.emailform", {
         $("#dialog-email").dialog("option", "title", o.title || _("Email person"));
         $("#dialog-email").dialog("open");
         if (o.logtypes) {
-            $("#emaillogtype").append( html.list_to_options(o.logtypes, "ID", "LOGTYPENAME") );
-            $("#emaillogtype").select("value", config.integer("AFDefaultLogType"));
+            $("#em-logtype").append( html.list_to_options(o.logtypes, "ID", "LOGTYPENAME") );
+            $("#em-logtype").select("value", config.integer("AFDefaultLogType"));
         }
         else {
-            $("#emaillogtype").closest("tr").hide();
+            $("#em-logtype").closest("tr").hide();
         }
         if (o.templates) {
-            $("#emailtemplate").html( edit_header.template_list_options(o.templates) );
+            $("#em-template").html( edit_header.template_list_options(o.templates) );
         }
         else {
-            $("#emailtemplate").closest("tr").hide();
+            $("#em-template").closest("tr").hide();
         }
         let fromaddresses = [], toaddresses = [];
         let conf_org = html.decode(config.str("Organisation").replace(",", ""));
         let conf_email = config.str("EmailAddress");
         let org_email = conf_org + " <" + conf_email + ">";
-        $("#emailfrom").val(conf_email);
+        $("#em-from").val(conf_email);
         fromaddresses.push(conf_email);
         fromaddresses.push(org_email);
         if (asm.useremail) {
@@ -712,36 +712,36 @@ $.widget("asm.emailform", {
         }
         fromaddresses = fromaddresses.concat(config.str("EmailFromAddresses").split(","));
         toaddresses = toaddresses.concat(config.str("EmailToAddresses").split(","));
-        $("#emailfrom").autocomplete({source: fromaddresses});
-        $("#emailfrom").autocomplete("widget").css("z-index", 1000);
-        $("#emailto").autocomplete({source: toaddresses});
-        $("#emailto").autocomplete("widget").css("z-index", 1000);
-        $("#emailcc").autocomplete({source: toaddresses});
-        $("#emailcc").autocomplete("widget").css("z-index", 1000);
-        $("#emailbcc").autocomplete({source: toaddresses});
-        $("#emailbcc").autocomplete("widget").css("z-index", 1000);
-        $("#emailfrom, #emailto, #emailcc, #emailbcc").bind("focus", function() {
+        $("#em-from").autocomplete({source: fromaddresses});
+        $("#em-from").autocomplete("widget").css("z-index", 1000);
+        $("#em-to").autocomplete({source: toaddresses});
+        $("#em-to").autocomplete("widget").css("z-index", 1000);
+        $("#em-cc").autocomplete({source: toaddresses});
+        $("#em-cc").autocomplete("widget").css("z-index", 1000);
+        $("#em-bcc").autocomplete({source: toaddresses});
+        $("#em-bcc").autocomplete("widget").css("z-index", 1000);
+        $("#em-from, #em-to, #em-cc, #em-bcc").bind("focus", function() {
             $(this).autocomplete("search", "@");
         });
         if (o.email && o.email.indexOf(",") != -1) { 
             // If there's more than one email address, only output the comma separated emails
-            $("#emailto").val(o.email); 
+            $("#em-to").val(o.email); 
         }
         else if (o.email) { 
             // Otherwise, use RFC821
-            $("#emailto").val(common.replace_all(html.decode(o.name), ",", "") + " <" + o.email + ">"); 
+            $("#em-to").val(common.replace_all(html.decode(o.name), ",", "") + " <" + o.email + ">"); 
         }
         let msg = config.str("EmailSignature");
         if (o.message) { msg = "<p>" + o.message + "</p>" + msg; }
         else { msg = "<p>&nbsp;</p>" + msg; }
         if (msg) {
-            $("#emailbody").richtextarea("value", msg);
+            $("#em-body").richtextarea("value", msg);
         }
         if (o.subject) {
-            $("#emailsubject").val(o.subject); 
+            $("#em-subject").val(o.subject); 
         }
-        $("#emailaddtolog").prop("checked", true);
-        $("#emailsubject").focus();
+        $("#em-addtolog").prop("checked", true);
+        $("#em-subject").focus();
     }
 });
 
