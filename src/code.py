@@ -4461,6 +4461,15 @@ class onlineform_json(ASMEndpoint):
         self.content_type("application/json")
         return asm3.onlineform.get_onlineform_json(o.dbo, o.post.integer("formid"))
 
+class onlineform_view(ASMEndpoint):
+    url = "onlineform_view"
+    get_permissions = asm3.users.VIEW_ONLINE_FORMS
+
+    def content(self, o):
+        self.content_type("text/html")
+        self.cache_control(0)
+        return asm3.onlineform.get_onlineform_html(o.dbo, o.post.integer("formid"))
+
 class options(JSONEndpoint):
     url = "options"
     get_permissions = asm3.users.SYSTEM_OPTIONS
