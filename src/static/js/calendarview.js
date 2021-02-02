@@ -91,7 +91,10 @@ $(function() {
                     listtitle.html(event.title);
                     // We extend the default event object to support tooltips and icons
                     if (event.tooltip) { element.prop("title", html.decode(event.tooltip)); }
-                    if (event.link) { title.wrap('<a style="color: #fff" href="' + event.link + '"></a>'); }
+                    if (event.link) { 
+                        title.wrap('<a style="color: #fff" href="' + event.link + '"></a>');
+                        listtitle.prop("href", event.link);
+                    }
                     if (event.icon) { 
                         if (time.length > 0) {
                             time.prepend(html.icon(event.icon)); 
