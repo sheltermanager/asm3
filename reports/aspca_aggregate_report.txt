@@ -68,7 +68,7 @@ CASE WHEN NOT EXISTS(SELECT MovementDate FROM adoption WHERE MovementDate < '$PA
 CASE WHEN EXISTS(SELECT MovementDate FROM adoption WHERE MovementDate <= '$PARENTARG2$' AND MovementType = 2 AND AnimalID = a.ID) THEN 1 ELSE 0 END AS NumberInFoster,
 CASE WHEN EXISTS(SELECT MovementDate FROM adoption WHERE MovementDate <= '$PARENTARG2$' AND MovementType = 8 AND AnimalID = a.ID) THEN 1 ELSE 0 END AS NumberInSatellite
 FROM animal a
-WHERE DateBroughtIn <= '$PARENTARG2$ 23:59:59' AND (DeceasedDate Is Null OR DeceasedDate > '$PARENTARG2$')
+WHERE DateBroughtIn <= '$PARENTARG2$' AND (DeceasedDate Is Null OR DeceasedDate > '$PARENTARG2$')
 AND NOT EXISTS (SELECT MovementDate FROM adoption WHERE MovementDate <= '$PARENTARG2$' AND ReturnDate > '$PARENTARG2$' AND MovementType NOT IN (2, 8) AND AnimalID = a.ID)
 AND NOT EXISTS (SELECT MovementDate FROM adoption WHERE MovementDate <= '$PARENTARG2$' AND ReturnDate Is Null AND MovementType NOT IN (2, 8) AND AnimalID = a.ID)
 AND NonShelterAnimal = 0
