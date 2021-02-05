@@ -237,7 +237,6 @@ def csvimport(dbo, csvdata, encoding = "utf-8-sig", user = "", createmissinglook
     createmissinglookups: If a lookup value is given that's not in our data, add it
     cleartables: Clear down the animal, owner and adoption tables before import
     """
-    asm3.al.info("checkduplicates: {}".format(checkduplicates))
 
     if user == "":
         user = "import"
@@ -507,7 +506,6 @@ def csvimport(dbo, csvdata, encoding = "utf-8-sig", user = "", createmissinglook
             # If a current vet is specified, create a person record
             # for them and attach it to the animal as original owner
             if gks(row, "CURRENTVETLASTNAME") != "":
-                asm3.al.info("in CURRENTVETLASTNAME flow")
                 p = {}
                 p["title"] = gks(row, "CURRENTVETTITLE")
                 p["initials"] = gks(row, "CURRENTVETINITIALS")
@@ -637,9 +635,7 @@ def csvimport(dbo, csvdata, encoding = "utf-8-sig", user = "", createmissinglook
                 if "PERSONMATCHCOMMENTSCONTAIN" in cols: p["matchcommentscontain"] = gks(row, "PERSONMATCHCOMMENTSCONTAIN")
             try:
                 if checkduplicates:
-                    asm3.al.info("checking duplicates with {},{},{},{},{}".format(p["emailaddress"], p["mobiletelephone"], p["surname"], p["forenames"], p["address"]))
                     dups = asm3.person.get_person_similar(dbo, p["emailaddress"], p["mobiletelephone"], p["surname"], p["forenames"], p["address"])
-                    asm3.al.info("dups length: {}".format(len(dups)))
                     if len(dups) > 0:
                         personid = dups[0].ID
                         # Merge flags and any extra details
@@ -649,7 +645,6 @@ def csvimport(dbo, csvdata, encoding = "utf-8-sig", user = "", createmissinglook
                         # present, assume that they are newer than the ones we had and update them
                         # (we do this by setting force=True parameter to merge_person_details,
                         # otherwise we do a regular merge which only fills in any blanks)
-                        asm3.al.info("calling merge_person_details")
                         asm3.person.merge_person_details(dbo, user, personid, p, force=dups[0].EMAILADDRESS == p["emailaddress"])
                 if personid == 0:
                     personid = asm3.person.insert_person_from_form(dbo, asm3.utils.PostedData(p, dbo.locale), user, geocode=False)
