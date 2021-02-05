@@ -2105,7 +2105,7 @@ def insert_animal_from_form(dbo, post, username):
         "HealthProblems":   post["healthproblems"],
         "HasSpecialNeeds":  0,
         "RabiesTag":        "",
-        "CurrentVetID":     0,
+        "CurrentVetID":     post.integer("currentvet",0),
         "OwnersVetID":      0,
         "DeceasedDate":     post.date("deceaseddate"),
         "PTSReasonID":      asm3.configuration.default_death_reason(dbo),
