@@ -1223,7 +1223,7 @@ def options_person_flags(dbo):
     s += option(_("Other Shelter", l), "shelter")
     s += option(_("Retailer", l), "retailer")
     s += option(_("Staff", l), "staff")
-    if l.locale == "en_GB": s += option(_("UK Giftaid", l), "giftaid")
+    if l == "en_GB": s += option(_("UK Giftaid", l), "giftaid")
     s += option(_("Vet", l), "vet")
     s += option(_("Volunteer", l), "volunteer")
     for p in pf:
