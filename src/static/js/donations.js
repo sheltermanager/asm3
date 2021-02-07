@@ -344,11 +344,15 @@ $(function() {
                 '<ul class="asm-menu-list">';
             if (config.str("PayPalEmail")) {
                 s += '<li id="button-paypal" class="processorbutton asm-menu-item"><a '
-                        + '" target="_blank" href="#">' + html.icon("paypal") + ' ' + _("PayPal") + '</a></li>';
+                        + ' target="_blank" href="#">' + html.icon("paypal") + ' ' + _("PayPal") + '</a></li>';
             }
             if (config.str("StripeKey")) {
                 s += '<li id="button-stripe" class="processorbutton asm-menu-item"><a '
-                        + '" target="_blank" href="#">' + html.icon("stripe") + ' ' + _("Stripe") + '</a></li>';
+                        + ' target="_blank" href="#">' + html.icon("stripe") + ' ' + _("Stripe") + '</a></li>';
+            }
+            if (1==1) /*Cardcom*/{
+                s += '<li id="button-cardcom" class="processorbutton asm-menu-item"><a '
+                        + ' target="_blank" href="#">' + html.icon("cardcom") + ' ' + _("Cardcom") + '</a></li>';
             }
             s += '</ul></div>';
             s += '<div id="emailform" />';
@@ -476,6 +480,11 @@ $(function() {
             });
             $("#button-stripe").click(function() {
                 payment_processor_email_dialog("stripe");
+                return false;
+            });
+
+            $("#button-cardcom").click(function() {
+                payment_processor_email_dialog("cardcom");
                 return false;
             });
             

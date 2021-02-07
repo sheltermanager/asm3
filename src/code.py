@@ -4509,6 +4509,31 @@ class options(JSONEndpoint):
         asm3.configuration.csave(o.dbo, o.user, o.post)
         self.reload_config()
 
+class pp_cardcom(ASMEndpoint):
+    """ 
+    Cardcom Indicator endpoint. 
+    """
+    url = "pp_cardcom"
+    check_logged_in = False
+    use_web_input = False
+
+    def post_all(self, o):
+        asm3.al.debug(o.data, "code.pp_cardcom")
+        dbname = self.data_param("custom")
+        dbo = asm3.db.get_database(dbname)
+        if dbo.database in asm3.db.ERROR_VALUES:
+            asm3.al.error("invalid database '%s'" % dbname, "code.pp_cardcom")
+            return
+        try:
+            p = asm3.paymentprocessor.cardcom.Cardcom(dbo)
+            p.receive(o.data)
+        except asm3.paymentprocessor.base.ProcessorError:
+            # ProcessorError subclasses are thrown when there is a problem with the 
+            # data PayPal have sent, but we do not want them to send it again.
+            # By catching these and returning a 200 empty body, they will not
+            # send it again.
+            return
+
 class pp_paypal(ASMEndpoint):
     """ 
     PayPal IPN endpoint. If we return anything but 200 OK with an
