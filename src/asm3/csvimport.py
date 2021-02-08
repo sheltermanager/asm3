@@ -269,12 +269,17 @@ def csvimport(dbo, csvdata, encoding = "utf-8-sig", user = "", createmissinglook
     hasdonationamount = False
     hasoriginalowner = False
     hasoriginalownerlastname = False
+    hascurrentvet = False
+    hascurrentvetlastname = False
+
     cols = rows[0].keys()
     for col in cols:
         if col in VALID_FIELDS: onevalid = True
         if col.startswith("ANIMAL"): hasanimal = True
         if col == "ANIMALNAME": hasanimalname = True
         if col.startswith("ORIGINALOWNER"): hasoriginalowner = True
+        if col.startswith("CURRENTVET"): hascurrentvet = True
+        if col.startswith("CURRENTVETLASTNAME"): hascurrentvetlastname = True
         if col.startswith("VACCINATION"): hasvacc = True
         if col.startswith("TEST"): hastest = True
         if col.startswith("MEDICAL"): hasmed = True
@@ -305,6 +310,12 @@ def csvimport(dbo, csvdata, encoding = "utf-8-sig", user = "", createmissinglook
     if hasperson and not haspersonlastname and not haspersonname:
         asm3.asynctask.set_last_error(dbo, "Your CSV file has person fields, but no PERSONNAME or PERSONLASTNAME column")
         return
+
+    # If we have any current vet fields, make sure at least CURRENTVETLASTNAME is supplied
+    if hascurrentvet and not hascurrentvetlastname:
+        asm3.asynctask.set_last_error(dbo, "Your CSV file has current vet fields, but no CURRENTVETLASTNAME column")
+        return
+
 
     # If we have any original owner fields, make sure at least ORIGINALOWNERLASTNAME is supplied
     if hasoriginalowner and not hasoriginalownerlastname:
@@ -492,6 +503,40 @@ def csvimport(dbo, csvdata, encoding = "utf-8-sig", user = "", createmissinglook
                     if ooid > 0: create_additional_fields(dbo, row, errors, rowno, "ORIGINALOWNERADDITIONAL", "person", ooid)
                 except Exception as e:
                     row_error(errors, "originalowner", rowno, row, e, dbo, sys.exc_info())
+            # If a current vet is specified, create a person record
+            # for them and attach it to the animal as original owner
+            if gks(row, "CURRENTVETLASTNAME") != "":
+                p = {}
+                p["title"] = gks(row, "CURRENTVETTITLE")
+                p["initials"] = gks(row, "CURRENTVETINITIALS")
+                p["forenames"] = gks(row, "CURRENTVETFIRSTNAME")
+                p["surname"] = gks(row, "CURRENTVETLASTNAME")
+                p["address"] = gks(row, "CURRENTVETADDRESS")
+                p["town"] = gks(row, "CURRENTVETCITY")
+                p["county"] = gks(row, "CURRENTVETSTATE")
+                p["postcode"] = gks(row, "CURRENTVETZIPCODE")
+                p["jurisdiction"] = gkl(dbo, row, "CURRENTVETJURISDICTION", "jurisdiction", "JurisdictionName", createmissinglookups)
+                if p["jurisdiction"] == "0":
+                    p["jurisdiction"] = str(asm3.configuration.default_jurisdiction(dbo))
+                p["hometelephone"] = gks(row, "CURRENTVETHOMEPHONE")
+                p["worktelephone"] = gks(row, "CURRENTVETWORKPHONE")
+                p["mobiletelephone"] = gks(row, "CURRENTVETCELLPHONE")
+                p["emailaddress"] = gks(row, "CURRENTVETEMAIL")
+                p["flags"] = gks(row, "CURRENTVETFLAGS")
+                try:
+                    ooid = 0
+                    if checkduplicates:
+                        dups = asm3.person.get_person_similar(dbo, p["emailaddress"], p["mobiletelephone"], p["surname"], p["forenames"], p["address"])
+                        if len(dups) > 0:
+                            ooid = dups[0]["ID"]
+                            a["currentvet"] = str(ooid)
+                    if "currentvet" not in a:
+                        ooid = asm3.person.insert_person_from_form(dbo, asm3.utils.PostedData(p, dbo.locale), user, geocode=False)
+                        a["currentvet"] = str(ooid)
+                    # Identify any ORIGINALOWNERADDITIONAL additional fields and create/merge them
+                    if ooid > 0: create_additional_fields(dbo, row, errors, rowno, "CURRENTVETADDITIONAL", "person", ooid)
+                except Exception as e:
+                    row_error(errors, "currentvet", rowno, row, e, dbo, sys.exc_info())
             try:
                 if checkduplicates:
                     dup = asm3.animal.get_animal_sheltercode(dbo, a["sheltercode"])
