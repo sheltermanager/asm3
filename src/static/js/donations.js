@@ -484,9 +484,31 @@ $(function() {
             });
 
             $("#button-cardcom").click(function() {
-                payment_processor_email_dialog("cardcom");
+                payment_processor_popup("cardcom");
                 return false;
             });
+
+            // Payment processor handling
+            const payment_processor_popup = async function(processor_name) {
+                let row = tableform.table_selected_row(donations.table);
+                //$("#button-processor").asmmenu("hide_all");
+                header.hide_error();
+                if (!row) { return; }
+                if (row.DATE) { header.show_error(_("This payment has already been received")); return; }
+
+                let formdata = "mode=popuprequest&processor=" + processor_name + "&person=" +
+                        row.OWNERID + "&payref=" + row.OWNERCODE + "-" + row.RECEIPTNUMBER;
+                const response = await common.ajax_post("donation", formdata);
+                // Attempt to save any changes before viewing the diary tab
+                let json = JSON.parse(response)
+                if (json.url) {
+                    let winparams = "height=600,width=600";
+                    window.open(json.url, "cardcom-dialog",winparams)
+                }
+                else {
+                    header.show_error(_(json.error)); return;
+                }
+            };
             
             // if there are no available payment processors, hide the button
             if ($("#button-processor-body li").length == 0) {
