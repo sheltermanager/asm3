@@ -37,8 +37,8 @@ header will also need to be removed or odd/even will be thrown out.
 
 # The shelter's petfinder ID for grabbing animal images for adoptable animals
 PETFINDER_ID = ""
-START_ID = 200
-ACCOUNT = "jc2337"
+START_ID = 100
+ACCOUNT = "tm2451"
 
 INTAKE_FILENAME = "/home/robin/tmp/asm3_import_data/petpoint_%s/animals.csv" % ACCOUNT
 CASES_FILENAME = "/home/robin/tmp/asm3_import_data/petpoint_%s/cases.csv" % ACCOUNT
@@ -144,6 +144,8 @@ if PERSON_FILENAME != "" and asm.file_exists(PERSON_FILENAME):
 for d in sorted(asm.csv_to_list(INTAKE_FILENAME), key=lambda k: getdate(k["Intake Date"], True)):
     # If it's a repeat of the header row, skip
     if d["Animal #"] == "Animal #": continue
+    # If it's a blank row, skip
+    if d["Animal #"] == "": continue
     # Each row contains an animal, intake and outcome
     if ppa.has_key(d["Animal #"]):
         a = ppa[d["Animal #"]]
