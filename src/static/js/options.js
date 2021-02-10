@@ -1139,6 +1139,25 @@ $(function() {
                 '</p>',
                 '</div>',
 
+                '<div id="cardcom-options">',
+                '<hr/>',
+                '<p class="centered"><img height="25px" src="static/images/ui/logo_cardcom_103.png" /></p>',
+                '<table>',
+                '<tr><td><label for="CardcomTerminalNumber">' + _("Cardcom Terminal Number") + '</label></td>',
+                '<td><input data="CardcomTerminalNumber" id="CardcomTerminalNumber" type="text" class="asm-textbox asm-doubletextbox" /></td></tr>',
+                '<tr><td><label for="CardcomUserName">' + _("Cardcom User Name") + '</label></td>',
+                '<td><input data="CardcomUserName" id="CardcomUserName" type="text" class="asm-textbox asm-doubletextbox asm-mask" /></td></tr>',
+
+                '<tr><td><label for="CardcomSuccessURL">' + _("Cardcom Success URL") + '</label></td>',
+                '<td><input data="CardcomSuccessURL" id="CardcomSuccessURL" type="text" class="asm-textbox asm-doubletextbox" /></td></tr>',
+
+                '<tr><td><label for="CardcomErrorURL">' + _("Cardcom Error URL") + '</label></td>',
+                '<td><input data="CardcomErrorURL" id="CardcomErrorURL" type="text" class="asm-textbox asm-doubletextbox" /></td></tr>',
+
+                '</table>',
+                '</div>',
+
+
                 '</div>'
             ].join("\n");
         },

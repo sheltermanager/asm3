@@ -25,6 +25,8 @@ class Cardcom(PaymentProcessor):
         for index, record in enumerate(records, start=1):
             description = record.DONATIONNAME
             price = round(record.DONATION, 2)
+            if record.VATAMOUNT > 0: price += record.VATAMOUNT
+            price = price / 100.0
             yield {f"InvoiceLines{index:d}.Description": html.unescape(description)}
             yield {f"InvoiceLines{index:d}.Quantity": 1}
             yield {f"InvoiceLines{index:d}.Price": price} #TODO: divide by 100 (as decimal) to get numbers cardcom works with
@@ -56,14 +58,14 @@ class Cardcom(PaymentProcessor):
 
         params = {
             "Operation": "2", #charge + create token,
-            "TerminalNumber": "1000", #TODO: add to config
-            "UserName": "barak9611", #TODO: add to config
-            "SumToBill": f"{total_charge_sum}", #TODO: divide by 100 (as decimal) to get numbers cardcom works with
+            "TerminalNumber": asm3.configuration.cardcom_terminalnumber(self.dbo), #"1000", #TODO: add to config
+            "UserName": asm3.configuration.cardcom_username(self.dbo), #"barak9611", #TODO: add to config
+            "SumToBill": f"{total_charge_sum / 100.0}",
             "CoinID": "1", #TODO: not critical - use ASM currency
             "Language": "he", #TODO: not critical - config / use locale?
             "ProductName": "Donation to S.O.S. Pets 1234", #stritem_description,
-            "SuccessRedirectUrl": "https://secure.cardcom.solutions/DealWasSuccessful.aspx",
-            "ErrorRedirectUrl": "https://secure.cardcom.solutions/DealWasUnSuccessful.aspx?customVar=1234",
+            "SuccessRedirectUrl": asm3.configuration.cardcom_successurl(self.dbo), # "https://secure.cardcom.solutions/DealWasSuccessful.aspx",
+            "ErrorRedirectUrl": asm3.configuration.cardcom_errorurl(self.dbo), #"https://secure.cardcom.solutions/DealWasUnSuccessful.aspx?customVar=1234",
             "APILevel": "10",
             "codepage": "65001", #unicode
             "ReturnValue": str(payref),
@@ -71,8 +73,6 @@ class Cardcom(PaymentProcessor):
             "InvoiceHead.SendByEmail": "true", #TODO: not critical - config?
             "InvoiceHead.Language": "he", #TODO: not critical - config / use locale?
             "InvoiceHead.Email": "br.shurik+cardcom@gmail.com",  #TODO: fetch from payment
-            "SuccessRedirectUrl": "https://secure.cardcom.solutions/DealWasSuccessful.aspx",    #TODO: add to config
-            "ErrorRedirectUrl": "https://secure.cardcom.solutions/DealWasUnSuccessful.aspx",    #TODO: add to config
             "IndicatorUrl": f"{BASE_URL}/pp_cardcom", 
         }
 

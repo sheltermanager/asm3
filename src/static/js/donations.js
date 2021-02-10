@@ -491,7 +491,7 @@ $(function() {
             // Payment processor handling
             const payment_processor_popup = async function(processor_name) {
                 let row = tableform.table_selected_row(donations.table);
-                //$("#button-processor").asmmenu("hide_all");
+                $("#button-processor").asmmenu("hide_all");
                 header.hide_error();
                 if (!row) { return; }
                 if (row.DATE) { header.show_error(_("This payment has already been received")); return; }

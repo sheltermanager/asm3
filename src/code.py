@@ -2813,7 +2813,7 @@ class donation(JSONEndpoint):
             return (asm3.utils.json({"error": "Expired payref"}))
         return_url = post["return"] or asm3.configuration.payment_return_url(dbo)
         url = processor.checkoutUrl(post["payref"], return_url, title)
-        return (asm3.utils.json{"url": url}))
+        return (asm3.utils.json({"url": url}))
 
 
     def post_emailrequest(self, o):
@@ -4533,6 +4533,7 @@ class pp_cardcom(ASMEndpoint):
     use_web_input = False
 
     def post_all(self, o):
+        asm3.al.debug("in pp_cardcom_post_all")
         asm3.al.debug(o.data, "code.pp_cardcom")
         dbname = self.data_param("custom")
         dbo = asm3.db.get_database(dbname)
