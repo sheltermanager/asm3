@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ASM3\n"
 "Report-Msgid-Bugs-To: robin@sheltermanager.com\n"
-"POT-Creation-Date: 2021-01-22 13:11+0000\n"
+"POT-Creation-Date: 2021-02-05 10:49+0000\n"
 "Last-Translator: Robin Rawson-Tetley <robin@sheltermanager.com>\n"
 "Language-Team: en <robin@sheltermanager.com>\n"
 "Language: en\n"
@@ -45,6 +45,10 @@ msgstr ""
 
 #: animal_find.js
 msgid "(both)"
+msgstr ""
+
+#: stocklevel.js
+msgid "(depleted)"
 msgstr ""
 
 #: html.py clinic_calendar.js main.js
@@ -1114,6 +1118,14 @@ msgstr ""
 
 #: dbupdate.py
 msgid "Altered Dog - 3 year"
+msgstr ""
+
+#: reports.js
+msgid "Altered between"
+msgstr ""
+
+#: reports.js
+msgid "Altered between two dates"
 msgstr ""
 
 #: person_links.js
@@ -2818,7 +2830,7 @@ msgstr ""
 msgid "Coordinator"
 msgstr ""
 
-#: report_images.js
+#: report_images.js document_repository.js
 msgid ""
 "Copy absolute service URL to the clipboard (for external use in web pages "
 "and emails)"
@@ -3912,7 +3924,7 @@ msgstr ""
 msgid "Do Not Publish"
 msgstr ""
 
-#: common.js animal_bulk.js
+#: html.py common.js animal_bulk.js
 msgid "Do Not Register Microchip"
 msgstr ""
 
@@ -5577,10 +5589,6 @@ msgstr ""
 
 #: html.py reports.js person_find_results.js
 msgid "GiftAid"
-msgstr ""
-
-#: html.py
-msgid "Giftaid"
 msgstr ""
 
 #: dbupdate.py
@@ -7561,6 +7569,10 @@ msgstr ""
 msgid "Microchipped"
 msgstr ""
 
+#: animal.py
+msgid "Microchips Implanted In {0}"
+msgstr ""
+
 #: transport.js
 msgid "Miles"
 msgstr ""
@@ -8047,7 +8059,7 @@ msgstr ""
 
 #: mobile.py onlineform.py i18n.py dbupdate.py wordprocessor.py
 #: publish_options.js users.js animal_find_results.js waitinglist_results.js
-#: sql.js accounts.js lostfound_find.js additional.js lookups.js
+#: reports.js sql.js accounts.js lostfound_find.js additional.js lookups.js
 #: person_find_results.js
 msgid "No"
 msgstr ""
@@ -11389,7 +11401,7 @@ msgstr ""
 msgid "Successfully attached to {0}"
 msgstr ""
 
-#: report_images.js onlineforms.js mailmerge.js
+#: report_images.js onlineforms.js mailmerge.js document_repository.js
 msgid "Successfully copied to the clipboard."
 msgstr ""
 
@@ -12906,7 +12918,7 @@ msgstr ""
 msgid "U (Unwanted Cat)"
 msgstr ""
 
-#: common.js
+#: html.py common.js
 msgid "UK Giftaid"
 msgstr ""
 
@@ -13225,6 +13237,14 @@ msgstr ""
 msgid "Vaccinate Animal"
 msgstr ""
 
+#: animal.py
+msgid "Vaccinated Non-Shelter Animals In {0}"
+msgstr ""
+
+#: animal.py
+msgid "Vaccinated Shelter Animals In {0}"
+msgstr ""
+
 #: mobile.py calendarview.js header_edit_header.js
 msgid "Vaccination"
 msgstr ""
@@ -13514,6 +13534,10 @@ msgstr ""
 
 #: html.py
 msgid "View publishing logs"
+msgstr ""
+
+#: onlineforms.js
+msgid "View the form in development mode without caching"
 msgstr ""
 
 #: change_user_settings.js
@@ -13963,7 +13987,7 @@ msgstr ""
 
 #: mobile.py onlineform.py i18n.py dbupdate.py wordprocessor.py
 #: publish_options.js users.js animal_find_results.js waitinglist_results.js
-#: sql.js accounts.js lostfound_find.js additional.js lookups.js
+#: reports.js sql.js accounts.js lostfound_find.js additional.js lookups.js
 #: person_find_results.js
 msgid "Yes"
 msgstr ""

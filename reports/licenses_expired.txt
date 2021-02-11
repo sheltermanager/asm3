@@ -18,7 +18,7 @@ INNER JOIN licencetype lt ON lt.ID = ol.LicenceTypeID
 INNER JOIN owner o ON o.ID = ol.OwnerID
 LEFT OUTER JOIN animal a ON a.ID = ol.AnimalID 
 WHERE ol.ExpiryDate <= CURRENT_DATE AND ol.ExpiryDate > CURRENT_DATE - INTERVAL '365 days'
-AND NOT EXISTS(SELECT ID FROM ownerlicence WHERE OwnerID=o.ID AND ExpiryDate > '$CURRENT_DATE$') AND a.DeceasedDate Is Null 
+AND NOT EXISTS(SELECT ID FROM ownerlicence WHERE OwnerID=o.ID AND AnimalID=a.ID AND ExpiryDate > '$CURRENT_DATE$') AND a.DeceasedDate Is Null 
 ORDER BY ol.ExpiryDate
 ###
 $$HEADER

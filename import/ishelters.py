@@ -9,10 +9,12 @@ It can be accessed by going to adminShelter and then System->Misc->Downloads
 7th July, 2015 - 18th May, 2016
 """
 
-PATH = "/home/robin/tmp/asm3_import_data/ishelters_lb2049/"
+PATH = "/home/robin/tmp/asm3_import_data/ishelters_ss2385/"
 
 # Files needed
 # adoptions.csv, animals.csv, checkins.csv, donations.csv, allmedical.csv, movements.csv, people.csv, releases.csv
+
+START_ID = 5000
 
 def getentryreason(s):
     er = {
@@ -43,25 +45,27 @@ ppo = {}
 ppa = {}
 movements = []
 
-asm.setid("adoption", 100)
-asm.setid("animal", 100)
-asm.setid("animalmedical", 100)
-asm.setid("animalmedicaltreatment", 100)
-asm.setid("animaltest", 100)
-asm.setid("animalvaccination", 100)
-asm.setid("owner", 100)
-asm.setid("ownerdonation", 100)
+asm.setid("adoption", START_ID)
+asm.setid("animal", START_ID)
+asm.setid("animalmedical", START_ID)
+asm.setid("animalmedicaltreatment", START_ID)
+asm.setid("animaltest", START_ID)
+asm.setid("animalvaccination", START_ID)
+asm.setid("owner", START_ID)
+asm.setid("ownerdonation", START_ID)
+asm.setid("vaccinationtype", 100)
+asm.setid("testtype", 100)
 
-print "DELETE FROM adoption WHERE ID >= 100;"
-print "DELETE FROM animal WHERE ID >= 100;"
-print "DELETE FROM animalmedical WHERE ID >= 100;"
-print "DELETE FROM animalmedicaltreatment WHERE ID >= 100;"
-print "DELETE FROM animaltest WHERE ID >= 100;"
-print "DELETE FROM animalvaccination WHERE ID >= 100;"
-print "DELETE FROM owner WHERE ID >= 100;"
-print "DELETE FROM ownerdonation WHERE ID >= 100;"
-print "DELETE FROM testtype;"
-print "DELETE FROM vaccinationtype;"
+print "DELETE FROM adoption WHERE ID >= %s;" % START_ID
+print "DELETE FROM animal WHERE ID >= %s;" % START_ID
+print "DELETE FROM animalmedical WHERE ID >= %s;" % START_ID
+print "DELETE FROM animalmedicaltreatment WHERE ID >= %s;" % START_ID
+print "DELETE FROM animaltest WHERE ID >= %s;" % START_ID
+print "DELETE FROM animalvaccination WHERE ID >= %s;" % START_ID
+print "DELETE FROM owner WHERE ID >= %s;" % START_ID
+print "DELETE FROM ownerdonation WHERE ID >= %s;" % START_ID
+print "DELETE FROM testtype WHERE ID >= 100;"
+print "DELETE FROM vaccinationtype WHERE ID >= 100;"
 
 to = asm.Owner()
 to.OwnerSurname = "Unknown Transfer Owner"
@@ -108,6 +112,10 @@ for row in asm.csv_to_list(PATH + "people.csv", remove_non_ascii=True):
 # animals.csv
 for row in asm.csv_to_list(PATH + "animals.csv", remove_non_ascii=True):
     if row["name"] is None: continue
+    if row["code"] is None or row["code"] == "": continue
+    if row["primary breed"] is None or row["primary breed"] == "": continue
+    if row["species"] is None or row["species"] == "": continue
+    if row["primary color"] is None or row["primary color"] == "": continue
     a = asm.Animal()
     animals.append(a)
     ppa[row["id"]] = a
@@ -149,7 +157,9 @@ for row in asm.csv_to_list(PATH + "checkins.csv", remove_non_ascii=True):
     a = None
     if ppa.has_key(row["Animal Id"]): a = ppa[row["Animal Id"]]
     if a is None: continue
-    a.DateBroughtIn = asm.getdate_iso(row["Check-In Date"])
+    if row["Type of Check-In"] is None: continue
+    if asm.getdate_iso(row["Check-In Date"]) is not None: 
+        a.DateBroughtIn = asm.getdate_iso(row["Check-In Date"])
     if ppo.has_key(row["Brought In By Id"]): 
         a.BroughtInByOwnerID = ppo[row["Brought In By Id"]].ID
     if ppo.has_key(row["Previous Owner Id"]):
@@ -344,9 +354,9 @@ for od in ownerdonations:
 for m in movements:
     print m
 for k, v in asm.vaccinationtypes.iteritems():
-    print v
+    if v.ID >= 100: print v
 for k, v in asm.testtypes.iteritems():
-    print v
+    if v.ID >= 100: print v
 
 
 asm.stderr_summary(animals=animals, animalmedicals=animalmedicals, animaltests=animaltests, animalvaccinations=animalvaccinations, owners=owners, movements=movements, ownerdonations=ownerdonations)

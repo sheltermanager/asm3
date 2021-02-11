@@ -53,6 +53,10 @@ $(function() {
                 [ _("Aged under 6 months"), "under6months", "DateOfBirth >= '$CURRENT_DATE-182$'" ],
                 [ _("Aged over 6 months"), "over6months", "DateOfBirth < '$CURRENT_DATE-182$'" ],
                 [ _("Altered"), "altered", "Neutered=1" ],
+                [ _("Altered between two dates"), "alteredtwodates", 
+                    "NeuteredDate>='$ASK DATE {0}$' AND NeuteredDate<='$ASK DATE {1}$'"
+                    .replace("{0}", _("Altered between"))
+                    .replace("{1}", _("and")) ],
                 [ _("Ask the user for a flag"), "askflag", "AdditionalFlags LIKE '%$ASK ANIMALFLAG$%'" ],
                 [ _("Ask the user for a location"), "asklocation", "ShelterLocation=$ASK LOCATION$" ],
                 [ _("Ask the user for a species"), "askspecies", "SpeciesID=$ASK SPECIES$" ],
@@ -516,7 +520,13 @@ $(function() {
                 // aliased as af_ID
                 let o = [];
                 $.each(l, function(i, v) {
-                    if (v.indexOf("af_") == 0) {
+                    if (v.indexOf("afc_") == 0) {
+                        // Yes/No additional fields
+                        o.push("CASE WHEN EXISTS(SELECT Value FROM additional WHERE LinkID=v_" + $("#qbtype").val() + 
+                            ".ID AND AdditionalFieldID=" + v.substring(4) + " AND Value='1') THEN '" +
+                            _("Yes") + "' ELSE '" + _("No") + "' END AS " + v);
+                    }
+                    else if (v.indexOf("af_") == 0) {
                         o.push("(SELECT Value FROM additional WHERE LinkID=v_" + $("#qbtype").val() + 
                             ".ID AND AdditionalFieldID=" + v.substring(3) + ") AS " + v);
                     }
@@ -774,8 +784,15 @@ $(function() {
                 $.each(controller.additionalfields, function(i, v) {
                     if ( (t == "animal" && common.array_in(v.LINKTYPE, [0,2,3,4,5,6])) ||
                         (t == "owner" && common.array_in(v.LINKTYPE, [1,7,8])) ||
-                        (t == "animalcontrol" && common.array_in(v.LINKTYPE, [16,17,18,19,20])) ) { 
-                        f.push("af_" + v.ID + "|" + v.FIELDNAME); 
+                        (t == "animalcontrol" && common.array_in(v.LINKTYPE, [16,17,18,19,20])) ) {
+                        // Use different prefixes to indicate the additional field type for
+                        // expansion into different query types later
+                        if (v.FIELDTYPE == 0) {
+                            f.push("afc_" + v.ID + "|" + v.FIELDNAME); // Yes/No (checkbox 1/0)
+                        }
+                        else {
+                            f.push("af_" + v.ID + "|" + v.FIELDNAME); 
+                        }
                     }
                 });
                 return f;

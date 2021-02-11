@@ -933,31 +933,12 @@ const common = {
             isRTL: (asm.locale == "ar" || asm.locale == "he")
         };
         $.datepicker.setDefaults(asmregion);
-        // If we're using an RTL language, switch to RTL layout
+        // If we're using an RTL language, load the RTL stylesheet
         if (asm.locale == "ar" || asm.locale == "he") {
-
-            $("html").css("direction", "rtl");
-            let file = 'static/css/asm-rtl.css';
-            let link = document.createElement( "link" );
-            link.href = file;
-            link.type = "text/css";
-            link.rel = "stylesheet";
-            link.media = "screen,print";
-
-            document.getElementsByTagName( "head" )[0].appendChild( link );
-            
-            // Menu text in dropdowns
-            $(".asm-menu-body").css("text-align", "right");
-            $(".asm-topline").css("text-align", "right");
-            // Screens that show tables of data
-            $(".asm-table td").css("text-align", "right");
-            // Hotkeys in menus
-            $(".asm-hotkey").css("float", "left");
-            // JQuery UI tabs
-            $(".asm-tabbar").css("direction", "rtl");
-            $(".ui-tabs-nav li.ui-state-default").css("float", "right");
-            $(".ui-tabs-nav li a").css("float", "right");
-            
+            if ($("#rtlcss").length == 0) { // Only add the link if it isn't already there
+                $("head").append('<link id="rtlcss" rel="stylesheet" href="static/css/asm-rtl.css?b=' + 
+                    asm.build + '" type="text/css">');
+            }
         }
         // Create any form controls based on classes used
         $(".asm-callout").callout();

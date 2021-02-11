@@ -21,7 +21,7 @@ LEFT OUTER JOIN animal a ON a.ID = ol.AnimalID
 LEFT OUTER JOIN jurisdiction j ON j.ID = o.JurisdictionID
 WHERE ol.ExpiryDate >= '$ASK DATE Expiring between $'
 AND ol.ExpiryDate <= '$ASK DATE and $' AND a.DeceasedDate Is Null 
-AND NOT EXISTS(SELECT ID FROM ownerlicence WHERE OwnerID=o.ID AND ExpiryDate > '$CURRENT_DATE$')
+AND NOT EXISTS(SELECT ID FROM ownerlicence WHERE OwnerID=o.ID AND AnimalID=a.ID AND ExpiryDate > '$CURRENT_DATE$')
 ORDER BY j.JurisdictionName, ol.ExpiryDate
 ###
 $$HEADER

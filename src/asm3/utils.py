@@ -535,6 +535,12 @@ def cmd(c, shell=False):
     except subprocess.CalledProcessError as e:
         return (e.returncode, e.output)
 
+def digits_only(s):
+    """
+    Returns only the digits from a string
+    """
+    return re.sub(r'[^0-9]', "", s)
+
 def file_contains(f, v):
     """
     Returns true if file f contains value v

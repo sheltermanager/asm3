@@ -6651,7 +6651,7 @@ msgstr "Plassering og dyreslag"
 
 #: options.js shelterview.js
 msgid "Location and Unit"
-msgstr "Plassering og Unit"
+msgstr "Plassering og Enhet"
 
 #: common_animalchoosermulti.js
 msgid "Locations"

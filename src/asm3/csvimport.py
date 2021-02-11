@@ -504,7 +504,7 @@ def csvimport(dbo, csvdata, encoding = "utf-8-sig", user = "", createmissinglook
                 except Exception as e:
                     row_error(errors, "originalowner", rowno, row, e, dbo, sys.exc_info())
             # If a current vet is specified, create a person record
-            # for them and attach it to the animal as original owner
+            # for them and attach it to the animal as currentvet
             if gks(row, "CURRENTVETLASTNAME") != "":
                 p = {}
                 p["title"] = gks(row, "CURRENTVETTITLE")
@@ -524,17 +524,17 @@ def csvimport(dbo, csvdata, encoding = "utf-8-sig", user = "", createmissinglook
                 p["emailaddress"] = gks(row, "CURRENTVETEMAIL")
                 p["flags"] = gks(row, "CURRENTVETFLAGS")
                 try:
-                    ooid = 0
+                    cvid = 0
                     if checkduplicates:
                         dups = asm3.person.get_person_similar(dbo, p["emailaddress"], p["mobiletelephone"], p["surname"], p["forenames"], p["address"])
                         if len(dups) > 0:
-                            ooid = dups[0]["ID"]
-                            a["currentvet"] = str(ooid)
+                            cvid = dups[0]["ID"]
+                            a["currentvet"] = str(cvid)
                     if "currentvet" not in a:
-                        ooid = asm3.person.insert_person_from_form(dbo, asm3.utils.PostedData(p, dbo.locale), user, geocode=False)
-                        a["currentvet"] = str(ooid)
-                    # Identify any ORIGINALOWNERADDITIONAL additional fields and create/merge them
-                    if ooid > 0: create_additional_fields(dbo, row, errors, rowno, "CURRENTVETADDITIONAL", "person", ooid)
+                        cvid = asm3.person.insert_person_from_form(dbo, asm3.utils.PostedData(p, dbo.locale), user, geocode=False)
+                        a["currentvet"] = str(cvid)
+                    # Identify any CURRENTVETADDITIONAL additional fields and create/merge them
+                    if cvid > 0: create_additional_fields(dbo, row, errors, rowno, "CURRENTVETADDITIONAL", "person", cvid)
                 except Exception as e:
                     row_error(errors, "currentvet", rowno, row, e, dbo, sys.exc_info())
             try:
@@ -933,11 +933,16 @@ def csvexport_animals(dbo, dataset, animalids = "", includephoto = False):
         "ANIMALNEUTEREDDATE", "ANIMALMICROCHIP", "ANIMALMICROCHIPDATE", "ANIMALENTRYDATE", "ANIMALDECEASEDDATE",
         "ANIMALJURISDICTION", "ANIMALENTRYCATEGORY",
         "ANIMALNOTFORADOPTION", "ANIMALNONSHELTER", "ANIMALGOODWITHCATS", "ANIMALGOODWITHDOGS", "ANIMALGOODWITHKIDS",
-        "ANIMALHOUSETRAINED", "ORIGINALOWNERTITLE", "ORIGINALOWNERINITIALS", "ORIGINALOWNERFIRSTNAME",
+        "ANIMALHOUSETRAINED", 
+        "CURRENTVETTITLE", "CURRENTVETINITIALS", "CURRENTVETFIRSTNAME",
+        "CURRENTVETLASTNAME", "CURRENTVETADDRESS", "CURRENTVETCITY", "CURRENTVETSTATE", "CURRENTVETZIPCODE",
+        "CURRENTVETHOMEPHONE", "CURRENTVETWORKPHONE", "CURRENTVETCELLPHONE", "CURRENTVETEMAIL", 
         "LOGDATE", "LOGTYPE", "LOGCOMMENTS", 
+        "ORIGINALOWNERTITLE", "ORIGINALOWNERINITIALS", "ORIGINALOWNERFIRSTNAME",
         "ORIGINALOWNERLASTNAME", "ORIGINALOWNERADDRESS", "ORIGINALOWNERCITY", "ORIGINALOWNERSTATE", "ORIGINALOWNERZIPCODE",
-        "ORIGINALOWNERHOMEPHONE", "ORIGINALOWNERWORKPHONE", "ORIGINALOWNERCELLPHONE", "ORIGINALOWNEREMAIL", "MOVEMENTTYPE",
-        "MOVEMENTDATE", "PERSONTITLE", "PERSONINITIALS", "PERSONFIRSTNAME", "PERSONLASTNAME", "PERSONADDRESS", "PERSONCITY",
+        "ORIGINALOWNERHOMEPHONE", "ORIGINALOWNERWORKPHONE", "ORIGINALOWNERCELLPHONE", "ORIGINALOWNEREMAIL", 
+        "MOVEMENTTYPE", "MOVEMENTDATE", 
+        "PERSONTITLE", "PERSONINITIALS", "PERSONFIRSTNAME", "PERSONLASTNAME", "PERSONADDRESS", "PERSONCITY",
         "PERSONSTATE", "PERSONZIPCODE", "PERSONFOSTERER", "PERSONHOMEPHONE", "PERSONWORKPHONE", "PERSONCELLPHONE", "PERSONEMAIL",
         "TESTTYPE", "TESTRESULT", "TESTDUEDATE", "TESTPERFORMEDDATE", "TESTCOMMENTS",
         "VACCINATIONTYPE", "VACCINATIONDUEDATE", "VACCINATIONGIVENDATE", "VACCINATIONEXPIRESDATE", "VACCINATIONRABIESTAG",
@@ -1005,6 +1010,18 @@ def csvexport_animals(dbo, dataset, animalids = "", includephoto = False):
         row["ANIMALGOODWITHDOGS"] = a["ISGOODWITHDOGSNAME"]
         row["ANIMALGOODWITHKIDS"] = a["ISGOODWITHCHILDRENNAME"]
         row["ANIMALHOUSETRAINED"] = a["ISHOUSETRAINEDNAME"]
+        row["CURRENTVETTITLE"] = a["CURRENTVETTITLE"]
+        row["CURRENTVETINITIALS"] = a["CURRENTVETINITIALS"]
+        row["CURRENTVETFIRSTNAME"] = a["CURRENTVETFORENAMES"]
+        row["CURRENTVETLASTNAME"] = a["CURRENTVETSURNAME"]
+        row["CURRENTVETADDRESS"] = a["CURRENTVETADDRESS"]
+        row["CURRENTVETCITY"] = a["CURRENTVETTOWN"]
+        row["CURRENTVETSTATE"] = a["CURRENTVETCOUNTY"]
+        row["CURRENTVETZIPCODE"] = a["CURRENTVETPOSTCODE"]
+        row["CURRENTVETHOMEPHONE"] = a["CURRENTVETHOMETELEPHONE"]
+        row["CURRENTVETWORKPHONE"] = a["CURRENTVETWORKTELEPHONE"]
+        row["CURRENTVETCELLPHONE"] = a["CURRENTVETMOBILETELEPHONE"]
+        row["CURRENTVETEMAIL"] = a["CURRENTVETEMAILADDRESS"]
         row["ORIGINALOWNERTITLE"] = a["ORIGINALOWNERTITLE"]
         row["ORIGINALOWNERINITIALS"] = a["ORIGINALOWNERINITIALS"]
         row["ORIGINALOWNERFIRSTNAME"] = a["ORIGINALOWNERFORENAMES"]

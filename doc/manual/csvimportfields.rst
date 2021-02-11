@@ -88,6 +88,34 @@ ANIMALDECEASEDDATE
     If the animal is deceased, the date it died.
 ANIMALADDITIONAL<fieldname>
     If you have animal additional fields defined, you can put the uppercased version of their name as a suffix to this. Eg, for an additional field called Weight, ANIMALADDITIONALWEIGHT
+CURRENTVETTITLE
+    If we have current vet info for the animal, the vet's title.
+CURRENTVETINITIALS
+    Vet's initials.
+CURRENTVETFIRSTNAME
+    The vet's first name(s).
+CURRENTVETLASTNAME
+    The vet's last name. This column being present and having data in it determines whether or not the importer will consider the animal as having current vet info.
+CURRENTVETADDRESS
+    Vet's address.
+CURRENTVETCITY
+    The vet's city/town.
+CURRENTVETSTATE
+    The vet's state/county.
+CURRENTVETZIPCODE
+    The vet's zip or postcode.
+CURRENTVETJURISDICTION
+    The vet's jurisdiction
+CURRENTVETHOMEPHONE
+    The vet's home phone.
+CURRENTVETWORKPHONE
+    The vet's work phone.
+CURRENTVETCELLPHONE
+    The vet's mobile phone.
+CURRENTVETEMAIL
+    The vet's email.
+CURRENTVETADDITIONAL<fieldname> 
+    If you have person additional fields defined, you can put the uppercased version of their name as a suffix to this. Eg, for an additional field called DateOfBirth CURRENTVETADDITIONALDATEOFBIRTH
 DONATIONDATE
     The date the donation amount on this line was received. If movement columns are present, it will be attached to the movement as well as the person. If no person columns are present, having this column in the CSV file will cause an error.
 DONATIONAMOUNT
