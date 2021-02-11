@@ -23,9 +23,6 @@ from random import choice
 ASCENDING = 0
 DESCENDING = 1
 
-# ID type keys used in the ExtraIDs column
-IDTYPE_SAVOURLIFE = "savourlife"
-
 def get_animal_query(dbo):
     """
     Returns a select for animal rows with resolved lookups
@@ -1401,12 +1398,12 @@ def get_shelter_code(dbo, animalid):
     """
     return dbo.query_string("SELECT ShelterCode FROM animal WHERE ID = ?", [animalid])
 
-def get_extra_id(dbo, a, idtype=IDTYPE_SAVOURLIFE):
+def get_extra_id(dbo, a, idtype):
     """
     Retrieves a value from the ExtraIDs field, which is stored
     in the form:  key1=value1|key2=value2 ...
     a: An animal result from get_animal_query containing ExtraIDs
-    idtype: A string key, use one of the IDTYPE_ constants above
+    idtype: A string key
     Returns the extra ID (string) or None if there was no match
     """
     if "EXTRAIDS" in a and a.EXTRAIDS is not None:
@@ -1422,7 +1419,7 @@ def set_extra_id(dbo, user, a, idtype, idvalue):
     Stores a value in the ExtraIDs field for an animal, which is stored
     in the form:  key1=value1|key2=value2 ...
     a: An animal result from get_animal_query containing ExtraIDs and ID
-    idtype: A string key, use one of the IDTYPE_ constants above
+    idtype: A string key
     idvalue: The value of the key (will be coerced to string).
     """
     ids = []
@@ -1434,6 +1431,7 @@ def set_extra_id(dbo, user, a, idtype, idvalue):
             k, v = x.split("=")
             if k != idtype: ids.append( "%s=%s" % (k, v))
     extraids = "|".join(ids)
+    a.EXTRAIDS = extraids
     dbo.update("animal", a.ID, { "ExtraIDs": extraids }, user)
     return extraids
 
@@ -4691,6 +4689,36 @@ def update_animal_figures_annual(dbo, year = 0):
             "GROUP BY a.NeuteredDate, a.DateOfBirth" % (int(sp["ID"]), firstofyear, lastofyear),
             sp["ID"], sp["SPECIESNAME"], "SP_NEUTERSPAYNS", group, 180, showbabies, babymonths)
 
+    group = _("Microchips Implanted In {0}", l).format(year)
+    for sp in allspecies:
+        species_line("SELECT a.IdentichipDate AS TheDate, a.DateOfBirth AS DOB, " \
+            "COUNT(a.ID) AS Total FROM animal a WHERE " \
+            "a.SpeciesID = %d AND a.IdentichipDate >= %s AND a.IdentichipDate <= %s " \
+            "AND a.Identichipped = 1 " \
+            "AND a.NonShelterAnimal = 0 " \
+            "GROUP BY a.IdentichipDate, a.DateOfBirth" % (int(sp["ID"]), firstofyear, lastofyear),
+            sp["ID"], sp["SPECIESNAME"], "SP_MICROCHIPS", group, 190, showbabies, babymonths)
+
+    group = _("Vaccinated Shelter Animals In {0}", l).format(year)
+    for sp in allspecies:
+        species_line("SELECT a.DateBroughtIn AS TheDate, a.DateOfBirth AS DOB, " \
+            "COUNT(a.ID) AS Total FROM animal a WHERE " \
+            "a.SpeciesID = %d AND a.DateBroughtIn >= %s AND a.DateBroughtIn <= %s " \
+            "AND EXISTS(SELECT ID FROM animalvaccination WHERE AnimalID=a.ID AND DateOfVaccination Is Not Null) " \
+            "AND a.NonShelterAnimal = 0 " \
+            "GROUP BY a.DateBroughtIn, a.DateOfBirth" % (int(sp["ID"]), firstofyear, lastofyear),
+            sp["ID"], sp["SPECIESNAME"], "SP_VACCSA", group, 200, showbabies, babymonths)
+
+    group = _("Vaccinated Non-Shelter Animals In {0}", l).format(year)
+    for sp in allspecies:
+        species_line("SELECT a.DateBroughtIn AS TheDate, a.DateOfBirth AS DOB, " \
+            "COUNT(a.ID) AS Total FROM animal a WHERE " \
+            "a.SpeciesID = %d AND a.DateBroughtIn >= %s AND a.DateBroughtIn <= %s " \
+            "AND EXISTS(SELECT ID FROM animalvaccination WHERE AnimalID=a.ID AND DateOfVaccination Is Not Null) " \
+            "AND a.NonShelterAnimal = 1 " \
+            "GROUP BY a.DateBroughtIn, a.DateOfBirth" % (int(sp["ID"]), firstofyear, lastofyear),
+            sp["ID"], sp["SPECIESNAME"], "SP_VACCNS", group, 210, showbabies, babymonths)
+
     asm3.asynctask.set_progress_value(dbo, 1)
 
     # Types =====================================
@@ -4850,6 +4878,54 @@ def update_animal_figures_annual(dbo, year = 0):
             "AND a.NonShelterAnimal = 0 AND ad.MovementType in (%d, %d, %d) " \
             "GROUP BY ad.MovementDate, a.DateOfBirth" % (int(at["ID"]), firstofyear, lastofyear, asm3.movement.ADOPTION, asm3.movement.TRANSFER, asm3.movement.RECLAIMED),
             at["ID"], at["ANIMALTYPE"], "AT_LIVERELEASE", group, 160, at["SHOWSPLIT"], babymonths)
+
+    group = _("Neutered/Spayed Shelter Animals In {0}", l).format(year)
+    for at in alltypes:
+        type_line("SELECT a.NeuteredDate AS TheDate, a.DateOfBirth AS DOB, " \
+            "COUNT(a.ID) AS Total FROM animal a WHERE " \
+            "a.AnimalTypeID = %d AND a.NeuteredDate >= %s AND a.NeuteredDate <= %s " \
+            "AND a.NonShelterAnimal = 0 " \
+            "GROUP BY a.NeuteredDate, a.DateOfBirth" % (int(sp["ID"]), firstofyear, lastofyear),
+            at["ID"], at["ANIMALTYPE"], "AT_NEUTERSPAYSA", group, 170, at["SHOWSPLIT"], babymonths)
+
+    group = _("Neutered/Spayed Non-Shelter Animals In {0}", l).format(year)
+    for at in alltypes:
+        type_line("SELECT a.NeuteredDate AS TheDate, a.DateOfBirth AS DOB, " \
+            "COUNT(a.ID) AS Total FROM animal a WHERE " \
+            "a.AnimalTypeID = %d AND a.NeuteredDate >= %s AND a.NeuteredDate <= %s " \
+            "AND a.NonShelterAnimal = 1 " \
+            "GROUP BY a.NeuteredDate, a.DateOfBirth" % (int(sp["ID"]), firstofyear, lastofyear),
+            at["ID"], at["ANIMALTYPE"], "AT_NEUTERSPAYNS", group, 180, at["SHOWSPLIT"], babymonths)
+
+    group = _("Microchips Implanted In {0}", l).format(year)
+    for at in alltypes:
+        type_line("SELECT a.IdentichipDate AS TheDate, a.DateOfBirth AS DOB, " \
+            "COUNT(a.ID) AS Total FROM animal a WHERE " \
+            "a.AnimalTypeID = %d AND a.IdentichipDate >= %s AND a.IdentichipDate <= %s " \
+            "AND a.Identichipped = 1 " \
+            "AND a.NonShelterAnimal = 0 " \
+            "GROUP BY a.IdentichipDate, a.DateOfBirth" % (int(sp["ID"]), firstofyear, lastofyear),
+            at["ID"], at["ANIMALTYPE"], "AT_MICROCHIPS", group, 190, at["SHOWSPLIT"], babymonths)
+
+    group = _("Vaccinated Shelter Animals In {0}", l).format(year)
+    for at in alltypes:
+        type_line("SELECT a.DateBroughtIn AS TheDate, a.DateOfBirth AS DOB, " \
+            "COUNT(a.ID) AS Total FROM animal a WHERE " \
+            "a.SpeciesID = %d AND a.DateBroughtIn >= %s AND a.DateBroughtIn <= %s " \
+            "AND EXISTS(SELECT ID FROM animalvaccination WHERE AnimalID=a.ID AND DateOfVaccination Is Not Null) " \
+            "AND a.NonShelterAnimal = 0 " \
+            "GROUP BY a.DateBroughtIn, a.DateOfBirth" % (int(sp["ID"]), firstofyear, lastofyear),
+            at["ID"], at["ANIMALTYPE"], "AT_VACCSA", group, 200, at["SHOWSPLIT"], babymonths)
+
+    group = _("Vaccinated Non-Shelter Animals In {0}", l).format(year)
+    for at in alltypes:
+        type_line("SELECT a.DateBroughtIn AS TheDate, a.DateOfBirth AS DOB, " \
+            "COUNT(a.ID) AS Total FROM animal a WHERE " \
+            "a.AnimalTypeID = %d AND a.DateBroughtIn >= %s AND a.DateBroughtIn <= %s " \
+            "AND EXISTS(SELECT ID FROM animalvaccination WHERE AnimalID=a.ID AND DateOfVaccination Is Not Null) " \
+            "AND a.NonShelterAnimal = 1 " \
+            "GROUP BY a.DateBroughtIn, a.DateOfBirth" % (int(sp["ID"]), firstofyear, lastofyear),
+            at["ID"], at["ANIMALTYPE"], "AT_VACCNS", group, 210, at["SHOWSPLIT"], babymonths)
 
     asm3.asynctask.set_progress_value(dbo, 2)
 

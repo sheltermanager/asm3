@@ -21,7 +21,7 @@ INNER JOIN owner o ON o.ID = ol.OwnerID
 LEFT OUTER JOIN animal a ON a.ID = ol.AnimalID 
 WHERE ol.ExpiryDate >= '$ASK DATE Enter the from date$'
 AND ol.ExpiryDate <= '$ASK DATE Enter the to date$' AND a.DeceasedDate Is Null
-AND NOT EXISTS(SELECT ID FROM ownerlicence WHERE ID <> ol.ID AND OwnerID=o.ID AND ExpiryDate > '$CURRENT_DATE$')
+AND NOT EXISTS(SELECT ID FROM ownerlicence WHERE ID <> ol.ID AND OwnerID=o.ID AND AnimalID=a.ID AND ExpiryDate > '$CURRENT_DATE$')
 ORDER BY ol.ExpiryDate
 ###
 $$HEADER

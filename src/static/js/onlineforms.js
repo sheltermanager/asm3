@@ -69,6 +69,9 @@ $(function() {
                         header.show_info(_("Successfully copied to the clipboard."));
                         return false;
                     }
+                    else if ($(this).attr("data-link")) {
+                        common.route($(this).attr("data-link"), true);
+                    }
                 },
                 columns: [
                     { field: "NAME", display: _("Name"), initialsort: true, formatter: function(row) {
@@ -85,7 +88,10 @@ $(function() {
                             return '<span style="white-space: nowrap">' + 
                                 '<a target="_blank" href="' + u + '">' + _("View Form") + '</a>' +
                                 ' <button data-icon="clipboard" data-text="false" data-url="' + u + '">' + 
-                                _("Copy form URL to the clipboard") + '</button></span>';
+                                _("Copy form URL to the clipboard") + '</button>' +
+                                '<button data-icon="wrench" data-text="false" data-link="onlineform_view?formid=' + row.ID +
+                                '">' + _("View the form in development mode without caching") + '</button>' +
+                                '</span>';
                         }},
                     { field: "REDIRECTURLAFTERPOST", display: _("Redirect to URL after POST") },
                     { field: "EMAILADDRESS", display: _("Email submissions to"), formatter: function(row) {

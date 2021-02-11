@@ -20,7 +20,7 @@ LEFT OUTER JOIN species s ON s.ID = a.SpeciesID
 LEFT OUTER JOIN lksex sx ON sx.ID = a.Sex
 WHERE ol.ExpiryDate >= '$ASK DATE Enter the from date$'
 AND ol.ExpiryDate <= '$ASK DATE Enter the to date$' AND a.DeceasedDate Is Null 
-AND NOT EXISTS(SELECT ID FROM ownerlicence WHERE ID <> ol.ID AND OwnerID=o.ID AND ExpiryDate > '$CURRENT_DATE$')
+AND NOT EXISTS(SELECT ID FROM ownerlicence WHERE ID <> ol.ID AND OwnerID=o.ID AND AnimalID=a.ID AND ExpiryDate > '$CURRENT_DATE$')
 ORDER BY ol.ExpiryDate
 ###
 MAIL

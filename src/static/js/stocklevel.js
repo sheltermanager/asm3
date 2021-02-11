@@ -110,7 +110,9 @@ $(function() {
                     } 
                 },
                 { id: "viewlocation", type: "dropdownfilter", 
-                    options: '<option value="0">' + _("(all)") + '</option>' + html.list_to_options(controller.stocklocations, "ID", "LOCATIONNAME"),
+                    options: '<option value="0">' + _("(all)") + '</option>' + 
+                        '<option value="-1">' + _("(depleted)") + '</option>' + 
+                        html.list_to_options(controller.stocklocations, "ID", "LOCATIONNAME"),
                     click: function(selval) {
                         common.route("stocklevel?viewlocation=" + selval);
                     }

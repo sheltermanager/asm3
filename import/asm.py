@@ -79,62 +79,7 @@ pickuplocations = {}
 # Dictionary of custom colours if we're going to supply a new set
 customcolours = {}
 
-# Dictionary of entry reasons
-entryreasons = {
-    "Marriage/Relationship split": 1,
-    "Allergies": 2,
-    "Biting": 3,
-    "Unable to Cope": 4,
-    "Unsuitable Accommodation": 5,
-    "Died": 6,
-    "Stray": 7,
-    "Sick/Injured": 8,
-    "Unable to Afford": 9,
-    "Abuse": 10,
-    "Abandoned": 11,
-    "Boarding": 12,
-    "Born in Shelter": 13,
-    "TNR - Trap/Neuter/Release": 14,
-    "Transfer from Other Shelter": 15,
-    "Transfer from Municipal Shelter": 16,
-    "Surrender": 17,
-    "Too Many Animals": 18
-}
-
-# Dictionary of donation types
-donationtypes = {
-#    "Donation": 1,
-#    "Adoption Fee": 2,
-#    "Waiting List Donation": 3,
-#    "Entry Donation": 4,
-#    "Animal Sponsorship": 5,
-#    "In-Kind Donation": 6
-}
-
-# Dictionary of test types
-testtypes = {
-#    "FIV": 1,
-#    "FLV": 2,
-#    "Heartworm": 3
-}
-
-# Dictionary of vaccination types
-vaccinationtypes = {
-#    "Distemper": 1,
-#    "Hepatitis": 2,
-#    "Leptospirosis": 3,
-#    "Rabies": 4,
-#    "Parainfluenza": 5,
-#    "Bordetella": 6, 
-#    "Parvovirus": 7,
-#    "DHLPP": 8,
-#    "FVRCP": 9,
-#    "Chlamydophila": 10,
-#    "FIV": 11,
-#    "FeLV": 12,
-#    "FIPV": 13,
-#    "FECV/FeCoV": 14
-}
+# See end of file for dictionaries of lookups that require classes
 
 def atoi(s):
     """ Returns an integer based on only the numeric
@@ -2146,6 +2091,8 @@ class Animal:
                 self.DaysOnShelter = date_diff_days(self.DateBroughtIn, self.ActiveMovementDate)
         if self.MostRecentEntryDate is None:
             self.MostRecentEntryDate = self.DateBroughtIn
+        if self.IdentichipNumber is None:
+            self.IdentichipNumber = ""
         s = (
             ( "ID", di(self.ID) ),
             ( "AnimalTypeID", di(self.AnimalTypeID) ),
@@ -2595,3 +2542,63 @@ class OwnerLicence:
             ( "LastChangedDate", dd(self.LastChangedDate) )
             )
         return makesql("ownerlicence", s)
+
+
+# Dictionary of entry reasons
+entryreasons = {
+    "Marriage/Relationship split": EntryReason(1, "Marriage/Relationship split"),
+    "Allergies": EntryReason(2, "Allergies"),
+    "Biting": EntryReason(3, "Biting"),
+    "Unable to Cope": EntryReason(4, "Unable to Cope"),
+    "Unsuitable Accommodation": EntryReason(5, "Unsuitable Accommodation"),
+    "Died": EntryReason(6, "Died"),
+    "Stray": EntryReason(7, "Stray"),
+    "Sick/Injured": EntryReason(8, "Sick/Injured"),
+    "Unable to Afford": EntryReason(9, "Unable to Afford"),
+    "Abuse": EntryReason(10, "Abuse"),
+    "Abandoned": EntryReason(11, "Abandoned"),
+    "Boarding": EntryReason(12, "Boarding"),
+    "Born in Shelter": EntryReason(13, "Born in Shelter"),
+    "TNR - Trap/Neuter/Release": EntryReason(14, "TNR - Trap/Neuter/Release"),
+    "Transfer from Other Shelter": EntryReason(15, "Transfer from Other Shelter"),
+    "Transfer from Municipal Shelter": EntryReason(16, "Transfer from Municipal Shelter"),
+    "Surrender": EntryReason(17, "Surrender"),
+    "Too Many Animals": EntryReason(18, "Too Many Animals")
+}
+
+# Dictionary of donation types
+donationtypes = {
+    "Donation": DonationType(1, "Donation"),
+    "Adoption Fee": DonationType(2, "Adoption Fee"),
+    "Waiting List Donation": DonationType(3, "Waiting List Donation"),
+    "Entry Donation": DonationType(4, "Entry Donation"),
+    "Animal Sponsorship": DonationType(5, "Animal Sponsorship"),
+    "In-Kind Donation": DonationType(6, "In-Kind Donation")
+}
+
+# Dictionary of test types
+testtypes = {
+    "FIV": TestType(1, "FIV"),
+    "FLV": TestType(2, "FLV"),
+    "Heartworm": TestType(3, "Heartworm")
+}
+
+# Dictionary of vaccination types
+vaccinationtypes = {
+    "Distemper": VaccinationType(1, "Distemper"),
+    "Hepatitis": VaccinationType(2, "Hepatitis"),
+    "Leptospirosis": VaccinationType(3, "Leptospirosis"),
+    "Rabies": VaccinationType(4, "Rabies"),
+    "Parainfluenza": VaccinationType(5, "Parainfluenza"),
+    "Bordetella": VaccinationType(6, "Bordetella"), 
+    "Parvovirus": VaccinationType(7, "Parvovirus"),
+    "DHLPP": VaccinationType(8, "DHLPP"),
+    "FVRCP": VaccinationType(9, "FVRCP"),
+    "Chlamydophila": VaccinationType(10, "Chlamydophila"),
+    "FIV": VaccinationType(11, "FIV"),
+    "FeLV": VaccinationType(12, "FeLV"),
+    "FIPV": VaccinationType(13, "FIPV"),
+    "FECV/FeCoV": VaccinationType(14, "FECV/FeCoV")
+}
+
+

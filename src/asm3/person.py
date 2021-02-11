@@ -108,7 +108,7 @@ def get_person_similar(dbo, email = "", mobile = "", surname = "", forenames = "
     if email != "" and email.find("@") != -1 and email.find(".") != -1 and len(email) > 6:
         eq = dbo.query(get_person_query(dbo) + " WHERE %s LOWER(o.EmailAddress) LIKE ?" % siteclause, [email])
     if mobile != "" and len(mobile) > 6:
-        mq = dbo.query(get_person_query(dbo) + " WHERE %s %s LIKE ?" % (siteclause, dbo.sql_atoi("o.MobileTelephone")) , [str(asm3.utils.atoi(mobile))])
+        mq = dbo.query(get_person_query(dbo) + " WHERE %s %s LIKE ?" % (siteclause, dbo.sql_atoi("o.MobileTelephone")) , [asm3.utils.digits_only(mobile)])
     if address != "":
         per = dbo.query(get_person_query(dbo) + " WHERE %s LOWER(o.OwnerSurname) LIKE ? AND " \
          "LOWER(o.OwnerForeNames) LIKE ? AND LOWER(o.OwnerAddress) LIKE ?" % siteclause, (surname, forenames + "%", address + "%"))
@@ -641,6 +641,43 @@ def clone_rota_week(dbo, username, startdate, newdate, flags):
             "worktype":  str(r.WORKTYPEID),
             "comments":  r.COMMENTS
         }, l))
+
+def get_extra_id(dbo, p, idtype):
+    """
+    Retrieves a value from the ExtraIDs field, which is stored
+    in the form:  key1=value1|key2=value2 ...
+    p: A person result from get_person_query containing ExtraIDs
+    idtype: A string key
+    Returns the extra ID (string) or None if there was no match
+    """
+    if "EXTRAIDS" in p and p.EXTRAIDS is not None:
+        for x in p.EXTRAIDS.split("|"):
+            if x.find("=") != -1:
+                k, v = x.split("=")
+                if k == idtype:
+                    return v
+    return None
+
+def set_extra_id(dbo, user, p, idtype, idvalue):
+    """
+    Stores a value in the ExtraIDs field for a person, which is stored
+    in the form:  key1=value1|key2=value2 ...
+    p: A person result from get_person_query containing ExtraIDs and ID
+    idtype: A string key
+    idvalue: The value of the key (will be coerced to string).
+    """
+    ids = []
+    ids.append( "%s=%s" % (idtype, idvalue) ) 
+    extraids = p.EXTRAIDS 
+    if extraids is None: extraids = ""
+    for x in extraids.split("|"):
+        if x.find("=") != -1:
+            k, v = x.split("=")
+            if k != idtype: ids.append( "%s=%s" % (k, v))
+    extraids = "|".join(ids)
+    p.EXTRAIDS = extraids
+    dbo.update("owner", p.ID, { "ExtraIDs": extraids }, user)
+    return extraids
 
 def calculate_owner_code(pid, surname):
     """
