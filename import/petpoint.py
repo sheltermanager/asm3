@@ -6,6 +6,8 @@ import asm
 Import script for PetPoint databases exported as CSV
 (requires AnimalIntakeWithResultsExtended.csv, AnimalMemoHistory.csv and PersonByAssociationExtended.csv)
 
+Can optionally import person comments from PersonMemoHistory.csv
+
 Can optionally import vacc and tests too, the PP reports
 are MedicalVaccineExpress and MedicalTestsExpress
 
@@ -27,12 +29,13 @@ cat *CaseCaseDetailExtended*csv.0 > cases.csv
 cat *MedicalVaccineExpress*csv.1 > vacc.csv
 cat *MedicalTestsExpress*csv.1 > tests.csv
 cat *PersonByAssociationExtended*csv.0 > people.csv
+cat *PersonMemoHistory*csv.1 > personmemo.csv
 
 If the vaccine and tests are in the two row format, there will be some header
 junk that needs to be removed so that the first line has Animal # in it. The second
 header will also need to be removed or odd/even will be thrown out.
 
-3rd March - 27th October, 2020
+3rd March - 11th Feb, 2020
 """
 
 # The shelter's petfinder ID for grabbing animal images for adoptable animals
@@ -43,6 +46,7 @@ ACCOUNT = "tm2451"
 INTAKE_FILENAME = "/home/robin/tmp/asm3_import_data/petpoint_%s/animals.csv" % ACCOUNT
 CASES_FILENAME = "/home/robin/tmp/asm3_import_data/petpoint_%s/cases.csv" % ACCOUNT
 MEMO_FILENAME = "/home/robin/tmp/asm3_import_data/petpoint_%s/memo.csv" % ACCOUNT
+PMEMO_FILENAME = "/home/robin/tmp/asm3_import_data/petpoint_%s/personmemo.csv" % ACCOUNT
 LOCATION_FILENAME = "/home/robin/tmp/asm3_import_data/petpoint_%s/locations.csv" % ACCOUNT
 PERSON_FILENAME = "/home/robin/tmp/asm3_import_data/petpoint_%s/people.csv" % ACCOUNT
 VACC_FILENAME = "/home/robin/tmp/asm3_import_data/petpoint_%s/vacc.csv" % ACCOUNT
@@ -361,11 +365,12 @@ for d in sorted(asm.csv_to_list(INTAKE_FILENAME), key=lambda k: getdate(k["Intak
 # Turn memos into history logs
 if MEMO_FILENAME != "" and asm.file_exists(MEMO_FILENAME):
     idfield = "AnimalID"
+    datefield = "textbox20"
+    memofield = "Textbox131"
     for d in asm.csv_to_list(MEMO_FILENAME):
-        if "textbox20" not in d: continue # Can't do anything without our field
-        if d["textbox20"] == "textbox20": continue # Ignore repeated headers
-        if not d.has_key(idfield): idfield = "Name"
-        if ppa.has_key(d[idfield]):
+        if datefield not in d: continue # Can't do anything without our field
+        if d[datefield] == datefield: continue # Ignore repeated headers
+        if d[idfield] in ppa:
             a = ppa[d[idfield]]
             l = asm.Log()
             logs.append(l)
@@ -376,6 +381,26 @@ if MEMO_FILENAME != "" and asm.file_exists(MEMO_FILENAME):
             if l.Date is None:
                 l.Date = asm.now()
             l.Comments = d["Textbox131"]
+
+# Turn memos into history logs
+if PMEMO_FILENAME != "" and asm.file_exists(PMEMO_FILENAME):
+    idfield = "textbox49"
+    datefield = "textbox58"
+    memofield = "Memo"
+    for d in asm.csv_to_list(PMEMO_FILENAME):
+        if datefield not in d: continue # Can't do anything without our field
+        if d[datefield] == datefield: continue # Ignore repeated headers
+        if d[idfield] in ppo:
+            o = ppo[d[idfield]]
+            l = asm.Log()
+            logs.append(l)
+            l.LogTypeID = 3 # History
+            l.LinkID = o.ID
+            l.LinkType = 1
+            l.Date = asm.getdate_mmddyyyy(d[datefield])
+            if l.Date is None:
+                l.Date = asm.now()
+            l.Comments = d[memofield]
 
 if CASES_FILENAME != "" and asm.file_exists(CASES_FILENAME):
     ctmap = {
