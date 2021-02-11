@@ -37,6 +37,7 @@ import asm3.onlineform
 import asm3.paymentprocessor.base
 import asm3.paymentprocessor.paypal
 import asm3.paymentprocessor.stripeh
+import asm3.paymentprocessor.cardcom
 import asm3.person
 import asm3.publish
 import asm3.publishers.base
@@ -4532,17 +4533,25 @@ class pp_cardcom(ASMEndpoint):
     check_logged_in = False
     use_web_input = False
 
-    def post_all(self, o):
-        asm3.al.debug("in pp_cardcom_post_all")
-        asm3.al.debug(o.data, "code.pp_cardcom")
-        dbname = self.data_param("custom")
+    def content(self, o):
+        from urllib.parse import parse_qsl
+        asm3.al.debug("in pp_cardcom_content")
+        asm3.al.debug(o.post, "code.pp_cardcom")
+        asm3.al.debug(self.query(), "code.pp_cardcom")
+
+        querystring = self.query()
+        if querystring.startswith("?"):
+            querystring = querystring[1:]
+        params = dict(parse_qsl(querystring))
+        client_reference_id = params["ReturnValue"]
+        dbname = client_reference_id[0:client_reference_id.find("-")]
         dbo = asm3.db.get_database(dbname)
         if dbo.database in asm3.db.ERROR_VALUES:
             asm3.al.error("invalid database '%s'" % dbname, "code.pp_cardcom")
             return
         try:
             p = asm3.paymentprocessor.cardcom.Cardcom(dbo)
-            p.receive(o.data)
+            p.receive(params)
         except asm3.paymentprocessor.base.ProcessorError:
             # ProcessorError subclasses are thrown when there is a problem with the 
             # data PayPal have sent, but we do not want them to send it again.

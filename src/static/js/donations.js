@@ -491,7 +491,6 @@ $(function() {
             // Payment processor handling
             const payment_processor_popup = async function(processor_name) {
                 let row = tableform.table_selected_row(donations.table);
-                $("#button-processor").asmmenu("hide_all");
                 header.hide_error();
                 if (!row) { return; }
                 if (row.DATE) { header.show_error(_("This payment has already been received")); return; }
@@ -499,6 +498,8 @@ $(function() {
                 let formdata = "mode=popuprequest&processor=" + processor_name + "&person=" +
                         row.OWNERID + "&payref=" + row.OWNERCODE + "-" + row.RECEIPTNUMBER;
                 const response = await common.ajax_post("donation", formdata);
+                // Close menu
+                $("#button-processor").asmmenu("hide_all");
                 // Attempt to save any changes before viewing the diary tab
                 let json = JSON.parse(response)
                 if (json.url) {

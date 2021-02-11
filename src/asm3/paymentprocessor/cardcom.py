@@ -1,6 +1,7 @@
 from contextlib import suppress
 from urllib.parse import parse_qsl
 import requests
+import asm3.configuration
 from asm3.sitedefs import BASE_URL
 from asm3.al import debug as asm_debug
 from .base import (
@@ -27,9 +28,9 @@ class Cardcom(PaymentProcessor):
             price = round(record.DONATION, 2)
             if record.VATAMOUNT > 0: price += record.VATAMOUNT
             price = price / 100.0
-            yield {f"InvoiceLines{index:d}.Description": html.unescape(description)}
+            yield {f"InvoiceLines{index:d}.Description": html.unescape(description)} # TODO: trim to first 250 chars
             yield {f"InvoiceLines{index:d}.Quantity": 1}
-            yield {f"InvoiceLines{index:d}.Price": price} #TODO: divide by 100 (as decimal) to get numbers cardcom works with
+            yield {f"InvoiceLines{index:d}.Price": price} 
 
     def checkoutPage(self, payref, return_url="", item_description=""):
         try:
@@ -56,20 +57,22 @@ class Cardcom(PaymentProcessor):
             round(r.DONATION, 2) for r in payments
         )
 
+        client_reference_id = "%s-%s" % (self.dbo.database, payref) # prefix database to payref 
+
         params = {
             "Operation": "2", #charge + create token,
-            "TerminalNumber": asm3.configuration.cardcom_terminalnumber(self.dbo), #"1000", #TODO: add to config
-            "UserName": asm3.configuration.cardcom_username(self.dbo), #"barak9611", #TODO: add to config
+            "TerminalNumber": asm3.configuration.cardcom_terminalnumber(self.dbo), #
+            "UserName": asm3.configuration.cardcom_username(self.dbo), #
             "SumToBill": f"{total_charge_sum / 100.0}",
             "CoinID": "1", #TODO: not critical - use ASM currency
             "Language": "he", #TODO: not critical - config / use locale?
-            "ProductName": "Donation to S.O.S. Pets 1234", #stritem_description,
+            "ProductName": "Donation to S.O.S. Pets 1234", # TODO: trim to first 50 chars
             "SuccessRedirectUrl": asm3.configuration.cardcom_successurl(self.dbo), # "https://secure.cardcom.solutions/DealWasSuccessful.aspx",
             "ErrorRedirectUrl": asm3.configuration.cardcom_errorurl(self.dbo), #"https://secure.cardcom.solutions/DealWasUnSuccessful.aspx?customVar=1234",
             "APILevel": "10",
             "codepage": "65001", #unicode
-            "ReturnValue": str(payref),
-            "InvoiceHead.CustName": "Test customer", #TODO: fetch from payment
+            "ReturnValue": client_reference_id,
+            "InvoiceHead.CustName": "Test customer", #TODO: fetch from payment, # TODO: trim to first 50 chars
             "InvoiceHead.SendByEmail": "true", #TODO: not critical - config?
             "InvoiceHead.Language": "he", #TODO: not critical - config / use locale?
             "InvoiceHead.Email": "br.shurik+cardcom@gmail.com",  #TODO: fetch from payment
@@ -96,9 +99,10 @@ class Cardcom(PaymentProcessor):
 
 
     def receive(self, rawdata):
-        response = dict(parse_qsl(rawdata))
+        response = rawdata
         asm_debug(rawdata)
-        asm_debug(indicator_response)
+        return
+"""        
         with suppress(KeyError):
             if (
                 response["Operation"] == 1
@@ -115,3 +119,4 @@ class Cardcom(PaymentProcessor):
             self.markPaymentReceived(
                 payref, response["InternalDealNumber"], 0, 0, 0, rawdata
             )
+"""
