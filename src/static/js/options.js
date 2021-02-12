@@ -1141,7 +1141,7 @@ $(function() {
 
                 '<div id="cardcom-options">',
                 '<hr/>',
-                '<p class="centered"><img height="25px" src="static/images/ui/logo_cardcom_103.png" /></p>',
+                '<p class="centered">' + _("Cardcom Payment Gateway")  + '</p>',
                 '<table>',
                 '<tr><td><label for="CardcomTerminalNumber">' + _("Cardcom Terminal Number") + '</label></td>',
                 '<td><input data="CardcomTerminalNumber" id="CardcomTerminalNumber" type="text" class="asm-textbox asm-doubletextbox" /></td></tr>',

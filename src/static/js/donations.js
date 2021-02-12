@@ -350,7 +350,7 @@ $(function() {
                 s += '<li id="button-stripe" class="processorbutton asm-menu-item"><a '
                         + ' target="_blank" href="#">' + html.icon("stripe") + ' ' + _("Stripe") + '</a></li>';
             }
-            if (1==1) /*Cardcom*/{
+            if (config.str("CardcomUserName")) /*Cardcom*/{
                 s += '<li id="button-cardcom" class="processorbutton asm-menu-item"><a '
                         + ' target="_blank" href="#">' + html.icon("cardcom") + ' ' + _("Cardcom") + '</a></li>';
             }
@@ -504,7 +504,14 @@ $(function() {
                 let json = JSON.parse(response)
                 if (json.url) {
                     let winparams = "height=600,width=600";
-                    window.open(json.url, "cardcom-dialog",winparams)
+                    var win = window.open(json.url, "cardcom-dialog",winparams)
+                    var timer = setInterval(function() { 
+                        if(win.closed) {
+                            clearInterval(timer); //TODO: how to refresh donations from server?
+                            tableform.table_update(donations.table);
+                            donations.calculate_total();
+                        }
+                    }, 1000);
                 }
                 else {
                     header.show_error(_(json.error)); return;
