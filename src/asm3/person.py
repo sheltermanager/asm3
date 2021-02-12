@@ -971,14 +971,16 @@ def update_flags(dbo, username, personid, flags):
 
 def update_adopter_flag(dbo, username, personid):
     """
-    Sets or removes the adopter flag on personid if it has any open adoption movements
+    Sets or removes the adopter flag on personid if it has any open adoption movements.
+    Only makes the change if necessary to avoid audits/lastchange updates.
     """
     if personid is None or personid == 0: return
-    oa = dbo.query_int("SELECT COUNT(*) FROM adoption WHERE MovementType=1 AND " \
+    openadoptions = dbo.query_int("SELECT COUNT(*) FROM adoption WHERE MovementType=1 AND " \
         "MovementDate Is Not Null AND ReturnDate Is Null AND OwnerID=?", [personid])
-    if oa > 0:
+    hasadopter = dbo.query_int("SELECT IsAdopter FROM owner WHERE ID=?", [personid]) == 1
+    if openadoptions > 0 and not hasadopter:
         merge_flags(dbo, username, personid, "adopter")
-    else:
+    elif openadoptions == 0 and hasadopter:
         update_remove_flag(dbo, username, personid, "adopter")
 
 def merge_person_details(dbo, username, personid, d, force=False):
