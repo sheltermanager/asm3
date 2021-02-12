@@ -1013,15 +1013,19 @@ def merge_person_details(dbo, username, personid, d, force=False):
 
 def merge_gdpr_flags(dbo, username, personid, flags):
     """
-    Merges the delimited string flags wtih those on personid.gdprcontactoptin
+    Merges the delimited string flags with those on personid.gdprcontactoptin
     The original person record is updated and the new list of GDPR flags is returned 
     as a pipe delimited string.
     """
     if flags is None or flags == "": return ""
     fgs = flags.split(",")
-    epf = dbo.query_string("SELECT GDPRContactOptIn FROM owner WHERE ID = ?", [personid])
-    fgs += epf.split(",")
-    dbo.update("owner", personid, { "GDPRContactOptIn": ",".join(fgs) })
+    p = dbo.first_row(dbo.query("SELECT ExcludeFromBulkEmail, GDPRContactOptIn FROM owner WHERE ID = ?", [personid]))
+    if p is None: return flags # Can't do anything without a person
+    fgs += asm3.utils.nulltostr(p.GDPRCONTACTOPTIN).split(",") # Merge the existing GDPR flags into one list
+    v = { "GDPRContactOptIn": ",".join(fgs) }
+    # If email is part of the flags, but ExcludeFromBulkEmail has been set, clear it
+    if "email" in fgs and p.EXCLUDEFROMBULKEMAIL == 1: v["ExcludeFromBulkEmail"] = 0
+    dbo.update("owner", personid, v, username)
     return ",".join(fgs)
 
 def merge_flags(dbo, username, personid, flags):
