@@ -4307,57 +4307,64 @@ class onlineform_incoming(JSONEndpoint):
 
     def post_animal(self, o):
         self.check(asm3.users.ADD_MEDIA)
+        user = "form/%s" % o.user
         rv = []
         for pid in o.post.integer_list("ids"):
-            collationid, animalid, animalname, status = asm3.onlineform.create_animal(o.dbo, o.user, pid)
+            collationid, animalid, animalname, status = asm3.onlineform.create_animal(o.dbo, user, pid)
             rv.append("%d|%d|%s|%s" % (collationid, animalid, animalname, status))
         return "^$".join(rv)
 
     def post_person(self, o):
         self.check(asm3.users.ADD_PERSON)
+        user = "form/%s" % o.user
         rv = []
         for pid in o.post.integer_list("ids"):
-            collationid, personid, personname, status = asm3.onlineform.create_person(o.dbo, o.user, pid)
+            collationid, personid, personname, status = asm3.onlineform.create_person(o.dbo, user, pid)
             rv.append("%d|%d|%s|%s" % (collationid, personid, personname, status))
         return "^$".join(rv)
 
     def post_lostanimal(self, o):
         self.check(asm3.users.ADD_LOST_ANIMAL)
+        user = "form/%s" % o.user
         rv = []
         for pid in o.post.integer_list("ids"):
-            collationid, lostanimalid, personname, status = asm3.onlineform.create_lostanimal(o.dbo, o.user, pid)
+            collationid, lostanimalid, personname, status = asm3.onlineform.create_lostanimal(o.dbo, user, pid)
             rv.append("%d|%d|%s|%s" % (collationid, lostanimalid, personname, status))
         return "^$".join(rv)
 
     def post_foundanimal(self, o):
         self.check(asm3.users.ADD_FOUND_ANIMAL)
+        user = "form/%s" % o.user
         rv = []
         for pid in o.post.integer_list("ids"):
-            collationid, foundanimalid, personname, status = asm3.onlineform.create_foundanimal(o.dbo, o.user, pid)
+            collationid, foundanimalid, personname, status = asm3.onlineform.create_foundanimal(o.dbo, user, pid)
             rv.append("%d|%d|%s|%s" % (collationid, foundanimalid, personname, status))
         return "^$".join(rv)
 
     def post_incident(self, o):
         self.check(asm3.users.ADD_INCIDENT)
+        user = "form/%s" % o.user
         rv = []
         for pid in o.post.integer_list("ids"):
-            collationid, incidentid, personname, status = asm3.onlineform.create_animalcontrol(o.dbo, o.user, pid)
+            collationid, incidentid, personname, status = asm3.onlineform.create_animalcontrol(o.dbo, user, pid)
             rv.append("%d|%d|%s|%s" % (collationid, incidentid, personname, status))
         return "^$".join(rv)
 
     def post_transport(self, o):
         self.check(asm3.users.ADD_TRANSPORT)
+        user = "form/%s" % o.user
         rv = []
         for pid in o.post.integer_list("ids"):
-            collationid, animalid, animalname = asm3.onlineform.create_transport(o.dbo, o.user, pid)
+            collationid, animalid, animalname = asm3.onlineform.create_transport(o.dbo, user, pid)
             rv.append("%d|%d|%s|0" % (collationid, animalid, animalname))
         return "^$".join(rv)
 
     def post_waitinglist(self, o):
         self.check(asm3.users.ADD_WAITING_LIST)
+        user = "form/%s" % o.user
         rv = []
         for pid in o.post.integer_list("ids"):
-            collationid, wlid, personname, status = asm3.onlineform.create_waitinglist(o.dbo, o.user, pid)
+            collationid, wlid, personname, status = asm3.onlineform.create_waitinglist(o.dbo, user, pid)
             rv.append("%d|%d|%s|%s" % (collationid, wlid, personname, status))
         return "^$".join(rv)
 
