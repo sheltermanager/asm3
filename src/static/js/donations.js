@@ -507,9 +507,8 @@ $(function() {
                     var win = window.open(json.url, "cardcom-dialog",winparams)
                     var timer = setInterval(function() { 
                         if(win.closed) {
-                            clearInterval(timer); //TODO: how to refresh donations from server?
-                            tableform.table_update(donations.table);
-                            donations.calculate_total();
+                            clearInterval(timer); 
+                            setTimeout(location.reload.bind(location), 800); //TODO: refresh just the table?
                         }
                     }, 1000);
                 }
