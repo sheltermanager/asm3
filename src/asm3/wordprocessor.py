@@ -1511,7 +1511,7 @@ def table_get_value(l, row, k):
     elif k.find("t:") != -1: 
         s = format_time(row[k.replace("t:", "")], "%H:%M")
     elif k.find("dt:") != -1:
-        s = "%s %s" % (python2display(l, row[k.replace("d:", "")]), format_time(row[k.replace("t:", "")], "%H:%M"))
+        s = "%s %s" % (python2display(l, row[k.replace("dt:", "")]), format_time(row[k.replace("dt:", "")], "%H:%M"))
     elif k.find("c:") != -1:
         s = format_currency_no_symbol(l, row[k.replace("c:", "")])
     elif k.find("y:") != -1:
