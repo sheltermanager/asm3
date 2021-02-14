@@ -1506,17 +1506,17 @@ def table_get_value(l, row, k):
     Returns row[k], looking for a type prefix in k -
     c: currency, d: date, t: time, y: yesno, f: float dt: date and time
     """
-    if k.find("d:") != -1: 
+    if k.startswith("d:"): 
         s = python2display(l, row[k.replace("d:", "")])
-    elif k.find("t:") != -1: 
+    elif k.startswith("t:"): 
         s = format_time(row[k.replace("t:", "")], "%H:%M")
-    elif k.find("dt:") != -1:
+    elif k.startswith("dt:"):
         s = "%s %s" % (python2display(l, row[k.replace("dt:", "")]), format_time(row[k.replace("dt:", "")], "%H:%M"))
-    elif k.find("c:") != -1:
+    elif k.startswith("c:"):
         s = format_currency_no_symbol(l, row[k.replace("c:", "")])
-    elif k.find("y:") != -1:
+    elif k.startswith("y:"):
         s = asm3.utils.iif(row[k.replace("y:", "")] == 1, _("Yes", l), _("No", l))
-    elif k.find("f:") != -1:
+    elif k.starstwith("f:"):
         s = "%0.2f" % asm3.utils.cfloat(row[k.replace("f:", "")])
     elif row[k] is None:
         return ""
