@@ -657,7 +657,9 @@ def animal_tags(dbo, a, includeAdditional=True, includeCosts=True, includeDiet=T
         d = {
             "TRANSPORTTYPE":            "TRANSPORTTYPENAME",
             "TRANSPORTDRIVERNAME":      "DRIVEROWNERNAME", 
-            "TRANSPORTPICKUPDATETIME":  "d:PICKUPDATETIME",
+            "TRANSPORTPICKUPDATETIME":  "dt:PICKUPDATETIME",
+            "TRANSPORTPICKUPDATE":      "d:PICKUPDATETIME",
+            "TRANSPORTPICKUPTIME":      "t:PICKUPDATETIME",
             "TRANSPORTPICKUPNAME":      "PICKUPOWNERNAME", 
             "TRANSPORTPICKUPADDRESS":   "PICKUPADDRESS",
             "TRANSPORTPICKUPTOWN":      "PICKUPTOWN",
@@ -673,7 +675,9 @@ def animal_tags(dbo, a, includeAdditional=True, includeCosts=True, includeDiet=T
             "TRANSPORTPICKUPMOBILEPHONE": "PICKUPMOBILETELEPHONE",
             "TRANSPORTPICKUPCELLPHONE": "PICKUPMOBILETELEPHONE",
             "TRANSPORTDROPOFFNAME":     "DROPOFFOWNERNAME", 
-            "TRANSPORTDROPOFFDATETIME": "d:DROPOFFDATETIME",
+            "TRANSPORTDROPOFFDATETIME": "dt:DROPOFFDATETIME",
+            "TRANSPORTDROPOFFDATE":     "d:DROPOFFDATETIME",
+            "TRANSPORTDROPOFFTIME":     "t:DROPOFFDATETIME",
             "TRANSPORTDROPOFFADDRESS":  "DROPOFFADDRESS",
             "TRANSPORTDROPOFFTOWN":     "DROPOFFTOWN",
             "TRANSPORTDROPOFFCITY":     "DROPOFFTOWN",
@@ -1344,6 +1348,8 @@ def transport_tags(dbo, transports):
 
             "TRANSPORTPICKUPNAME"+i:      t["PICKUPOWNERNAME"], 
             "TRANSPORTPICKUPDATETIME"+i:  python2display(l, t["PICKUPDATETIME"]),
+            "TRANSPORTPICKUPDATE"+i:      python2display(l, t["PICKUPDATETIME"]),
+            "TRANSPORTPICKUPTIME"+i:      format_time(t["PICKUPDATETIME"], "%H:%M"),
             "TRANSPORTPICKUPADDRESS"+i:   t["PICKUPADDRESS"],
             "TRANSPORTPICKUPTOWN"+i:      t["PICKUPTOWN"],
             "TRANSPORTPICKUPCITY"+i:      t["PICKUPTOWN"],
@@ -1360,6 +1366,8 @@ def transport_tags(dbo, transports):
 
             "TRANSPORTDROPOFFNAME"+i:     t["DROPOFFOWNERNAME"], 
             "TRANSPORTDROPOFFDATETIME"+i: python2display(l, t["DROPOFFDATETIME"]),
+            "TRANSPORTDROPOFFDATE"+i:     python2display(l, t["DROPOFFDATETIME"]),
+            "TRANSPORTDROPOFFTIME"+i:     format_time(t["DROPOFFDATETIME"], "%H:%M"),
             "TRANSPORTDROPOFFADDRESS"+i:  t["DROPOFFADDRESS"],
             "TRANSPORTDROPOFFTOWN"+i:     t["DROPOFFTOWN"],
             "TRANSPORTDROPOFFCITY"+i:     t["DROPOFFTOWN"],
@@ -1496,12 +1504,14 @@ def html_table(l, rows, cols):
 def table_get_value(l, row, k):
     """
     Returns row[k], looking for a type prefix in k -
-    c: currency, d: date, t: time, y: yesno, f: float
+    c: currency, d: date, t: time, y: yesno, f: float dt: date and time
     """
     if k.find("d:") != -1: 
         s = python2display(l, row[k.replace("d:", "")])
     elif k.find("t:") != -1: 
         s = format_time(row[k.replace("t:", "")], "%H:%M")
+    elif k.find("dt:") != -1:
+        s = "%s %s" % (python2display(l, row[k.replace("d:", "")]), format_time(row[k.replace("t:", "")], "%H:%M"))
     elif k.find("c:") != -1:
         s = format_currency_no_symbol(l, row[k.replace("c:", "")])
     elif k.find("y:") != -1:

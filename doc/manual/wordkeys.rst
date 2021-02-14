@@ -682,7 +682,7 @@ TransportType
    The type of transport
 TransportDriveName
    The transport driver if known
-TransportPickupDateTime
+TransportPickupDateTime / TransportPickupDate / TransportPickupTime
    The date and time of the pickup
 TransportPickupName
    The person the transport is picking up from if known
@@ -706,7 +706,7 @@ TransportPickupCellPhone / TransportPickupMobilePhone
    The mobile phone number of the pickup contact
 TransportDropoffName
    The person the transport is taking the animal to if known
-TransportDropoffDateTime
+TransportDropoffDateTime / TransportDropoffDate / TransportDropoffTime
    The date and time of the dropoff
 TransportDropoffAddress
    The dropoff address
