@@ -1516,7 +1516,7 @@ def table_get_value(l, row, k):
         s = format_currency_no_symbol(l, row[k.replace("c:", "")])
     elif k.startswith("y:"):
         s = asm3.utils.iif(row[k.replace("y:", "")] == 1, _("Yes", l), _("No", l))
-    elif k.starstwith("f:"):
+    elif k.startswith("f:"):
         s = "%0.2f" % asm3.utils.cfloat(row[k.replace("f:", "")])
     elif row[k] is None:
         return ""
