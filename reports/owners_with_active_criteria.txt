@@ -23,7 +23,7 @@ MatchAgeTo,
 (SELECT BreedName FROM breed WHERE ID = MatchBreed2) AS OrBreed, 
 (SELECT Name FROM lksynun WHERE ID = MatchGoodWithCats) AS GoodWithCats, 
 (SELECT Name FROM lksynun WHERE ID = MatchGoodWithDogs) AS GoodWithDogs, 
-(SELECT Name FROM lksynun WHERE ID = MatchGoodWithChildren) AS GoodWithChildren, 
+(SELECT Name FROM lksynunk WHERE ID = MatchGoodWithChildren) AS GoodWithChildren, 
 (SELECT Name FROM lksynun WHERE ID = MatchHouseTrained) AS HouseTrained,
 MatchCommentsContain
 FROM owner
