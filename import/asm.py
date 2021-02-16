@@ -1061,9 +1061,13 @@ def entryreason_id_for_name(name, createIfNotExist = True):
         entryreasons[name] = EntryReason(Name=name)
         return entryreasons[name].ID
 
+def animaltype_from_db(name, default = 2):
+    """ Looks up the animaltype in the db when the conversion is run, assign to AnimalTypeID """
+    return "COALESCE((SELECT ID FROM animaltype WHERE lower(AnimalType) LIKE lower('%s') LIMIT 1), %d)" % (name.strip().replace("'", "`"), default)
+
 def entryreason_from_db(name, default = 2):
     """ Looks up the entryreason in the db when the conversion is run, assign to EntryReasonID """
-    return "COALESCE((SELECT ID FROM entryreason WHERE lower(ReasonName) LIKE lower('%s') LIMIT 1), %d)" % (name.strip(), default)
+    return "COALESCE((SELECT ID FROM entryreason WHERE lower(ReasonName) LIKE lower('%s') LIMIT 1), %d)" % (name.strip().replace("'", "`"), default)
 
 def size_from_db(name, default = 1):
     """ Looks up the size in the db when the conversion is run, assign to animal.Size """
@@ -1436,13 +1440,16 @@ def animal_test(animalid, required, given, typename, resultname, comments = ""):
     av.Comments = comments
     return av
 
-def animal_vaccination(animalid, required, given, typename, comments = ""):
+def animal_vaccination(animalid, required, given, typename, comments = "", batchnumber = "", manufacturer = "", rabiestag = ""):
     """ Returns an animalvaccination object """
     av = AnimalVaccination()
     av.AnimalID = animalid
     av.DateRequired = required
     av.DateOfVaccination = given
     av.VaccinationID = vaccinationtype_id_for_name(typename, True)
+    av.BatchNumber = batchnumber
+    av.Manufacturer = manufacturer
+    av.RabiesTag = rabiestag
     av.Comments = comments
     return av
 
@@ -1926,6 +1933,7 @@ class AnimalVaccination:
     DateExpires = None
     Manufacturer = ""
     BatchNumber = ""
+    RabiesTag = ""
     Comments = ""
     Cost = 0
     RecordVersion = 0
@@ -1947,6 +1955,7 @@ class AnimalVaccination:
             ( "Comments", ds(self.Comments) ),
             ( "Manufacturer", ds(self.Manufacturer) ),
             ( "BatchNumber", ds(self.BatchNumber) ),
+            ( "RabiesTag", ds(self.BatchNumber) ),
             ( "Cost", di(self.Cost) ),
             ( "RecordVersion", di(self.RecordVersion) ),
             ( "CreatedBy", ds(self.CreatedBy) ),
