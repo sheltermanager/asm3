@@ -5,7 +5,7 @@ import asm, os
 """
 Import module to read from ShelterLuv CSV export.
 
-Last updated 16th Feb, 2021
+Last updated 17th Feb, 2021
 
 The following files are needed:
 
@@ -26,6 +26,7 @@ PATH = "/home/robin/tmp/asm3_import_data/sluv_do2392"
 
 DEFAULT_BREED = 261 # default to dsh
 DATE_FORMAT = "MDY" # Normally MDY
+USE_SMDB_ENTRY_TYPE = True # If False, maps to new db defaults, if True looks up animal type and entry reason in target db
 START_ID = 100
 
 animals = []
@@ -120,6 +121,8 @@ for d in asm.csv_to_list("%s/animals.csv" % PATH):
     if "Secondary Breed" in d: secondary = d["Secondary Breed"]
     asm.breed_ids(a, primary, secondary, DEFAULT_BREED)
     a.BaseColourID = asm.colour_id_for_name(d["Primary Color"])
+    if "Current Weight" in d and d["Current Weight"] != "":
+        a.Weight = asm.atof(d["Current Weight"])
     a.HiddenAnimalDetails = "Age: %s, Breed: %s / %s, Color: %s" % (age, primary, secondary, d["Primary Color"])
     if "Attributes" in d and d["Attributes"] != "":
         a.HiddenAnimalDetails += "\nAttributes: " + d["Attributes"]
@@ -150,27 +153,47 @@ for d in asm.csv_to_list("%s/intake.csv" % PATH):
     a = ppa[d["Animal ID"]]
     intaketype = d["Entry Category"] # Seems to change names a lot, has been AnimalIntakeType
     subtype = d["Animal Type"] # Also seems to change, has been AnimalIntakeSub-Type
+    # Intake person
+    linkperson = 0
+    if "Intake From Name" in d and d["Intake From Name"] != "" and d["Intake From Name"] in ppo:
+        linkperson = ppo[d["Intake From Name"]]
+    # Location
+    if "Location" in d and d["Location"] != "":
+        locs = d["Location"] # Locations are a comma separated list, with latest on the right
+        if locs.find(",") != -1: locs = locs[locs.rfind(",")+1:]
+        a.ShelterLocation = asm.location_from_db(locs)
     if intaketype == "Transfer In":
         a.IsTransfer = 1
         a.EntryReasonID = 15
+        a.BroughtInByOwnerID = linkperson
     elif intaketype == "Stray":
         a.EntryReasonID = 7
+        a.BroughtInByOwnerID = linkperson
     elif intaketype == "Surrender":
         a.EntryReasonID = 17 
+        a.OriginalOwner = linkperson
+        a.BroughtInByOwnerID = linkperson
     elif intaketype == "Return":
         a.EntryReasonID = 17 # Surrender
+        a.OriginalOwner = linkperson
+        a.BroughtInByOwnerID = linkperson
     elif intaketype == "Service In":
         a.NonShelterAnimal = 1
         a.Archived = 1
+        a.OriginalOwner = linkperson
+        a.BroughtInByOwnerID = linkperson
     else:
         a.EntryReasonID = 17 # Surrender
+        a.OriginalOwner = linkperson
+        a.BroughtInByOwnerID = linkperson
     a.ReasonForEntry = "%s / %s" % ( intaketype, subtype )
     # Last customer broke both categories and manually entered everything in
     # ASM's lookup data before conversion. 
-    # The lines below are a fix to look up the values in their database where they 
-    # put ShelterLuv's intake sub type as their animal type and intake type as entry category
-    # a.EntryReasonID = asm.entryreason_from_db(intaketype)
-    # a.AnimalTypeID = asm.animaltype_from_db(subtype)
+    # The lines below will look up the entry reason and animal type in the target
+    # db from intake/subtype if the option is on.
+    if USE_SMDB_ENTRY_TYPE:
+        a.EntryReasonID = asm.entryreason_from_db(intaketype)
+        a.AnimalTypeID = asm.animaltype_from_db(subtype)
 
 # This file was sent by one customer, it looks like the events - intake file, but contains
 # animals that only came in for some kind of service (typically feral spay/neuter), we
@@ -181,6 +204,10 @@ if asm.file_exists("%s/nonshelter.csv" % PATH):
         a = ppa[d["Animal ID"]]
         a.NonShelterAnimal = 1
         a.Archived = 1
+    linkperson = 0
+    if "Intake From Name" in d and d["Intake From Name"] != "" and d["Intake From Name"] in ppo:
+        linkperson = ppo[d["Intake From Name"]]
+        a.OriginalOwnerID = linkperson
 
 for d in asm.csv_to_list("%s/people.csv" % PATH):
     if d["Name"] == "Name": continue # skip repeated header rows
@@ -218,9 +245,6 @@ for d in asm.csv_to_list("%s/outcomes.csv" % PATH):
     a = None
     if d["Animal ID"] in ppa: a = ppa[d["Animal ID"]]
     if o is None or a is None: continue
-    # Add some other values that weren't present in the animal file
-    a.IdentichipNumber = d["Microchip Number"]
-    if a.IdentichipNumber != "": a.Identichipped = 1
     if d["Outcome Type"] == "Adoption":
         m = asm.Movement()
         m.AnimalID = a.ID

@@ -89,6 +89,14 @@ def atoi(s):
     except:
         return 0
 
+def atof(s):
+    """ Returns a float based on only the numeric
+        portion of a string like the C lib atoi function """
+    try:
+        return float("".join(re.findall(r'[\d-]',s)))
+    except:
+        return 0
+
 def csv_to_list(fname, strip = False, remove_control = False, remove_non_ascii = False, uppercasekeys = False, unicodehtml = False):
     """
     Reads the csv file fname and returns it as a list of maps 
@@ -1028,7 +1036,7 @@ def location_id_for_name(name, createIfNotExist = True):
 
 def location_from_db(name, default = 2):
     """ Looks up the internallocation in the db when the conversion is run, assign to ShelterLocation """
-    return "COALESCE((SELECT ID FROM internallocation WHERE lower(LocationName) LIKE lower('%s') LIMIT 1), %d)" % (name.strip(), default)
+    return "COALESCE((SELECT ID FROM internallocation WHERE lower(LocationName) LIKE lower('%s') LIMIT 1), %d)" % (name.strip().replace("'", "`"), default)
 
 def pickuplocation_id_for_name(name, createIfNotExist = True):
     global pickuplocations
