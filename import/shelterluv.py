@@ -83,6 +83,35 @@ print("DELETE FROM ownerdonation WHERE ID >= %s;" % START_ID)
 print("DELETE FROM testtype WHERE ID >= %s;" % START_ID)
 print("DELETE FROM vaccinationtype WHERE ID >= %s;" % START_ID)
 
+for d in asm.csv_to_list("%s/people.csv" % PATH):
+    if d["Name"] == "Name": continue # skip repeated header rows
+    if d["Name"] in ppo: continue # skip repeated rows
+    # Each row contains a person
+    o = asm.Owner()
+    owners.append(o)
+    ppo[d["Name"]] = o
+    # ppo[d["Person ID"]] = o # Never seen one in a person file so have to use name
+    o.SplitName(d["Name"])
+    o.OwnerAddress = d["Street"]
+    o.OwnerTown = d["City"]
+    o.OwnerCounty = d["State"]
+    o.OwnerPostcode = d["Zip Code"]
+    o.EmailAddress = d["Primary Email"]
+    o.HomeTelephone = d["Phone"]
+    # Last file I saw had repeated "Comments" columns, so need to be renumbered manually
+    if "Comments" in d and d["Comments"] != "": 
+        o.Comments += d["Comments"]
+    if "Comments1" in d and d["Comments1"] and d["Comments1"] != "": 
+        o.Comments += " " + d["Comments1"]
+    if "Comments2" in d and d["Comments2"] and d["Comments2"] != "": 
+        o.Comments += " " + d["Comments2"]
+    if "Comments3" in d and d["Comments3"] and d["Comments3"] != "": 
+        o.Comments += " " + d["Comments3"]
+    if "Attributes" in d and d["Attributes"] != "": 
+        o.Comments = "Attributes: %s" % d["Attributes"]
+        if d["Attributes"].find("Banned") != -1: o.IsBanned = 1
+        if d["Attributes"].find("Foster") != -1: o.IsFosterer = 1
+
 for d in asm.csv_to_list("%s/animals.csv" % PATH):
     if d["Animal ID"] == "Animal ID": continue # skip repeated header rows
     if d["Animal ID"] in ppa: continue # skip repeated rows
@@ -138,14 +167,14 @@ for d in asm.csv_to_list("%s/animals.csv" % PATH):
     if "Private**" in d and d["Private**"] != "": a.HiddenAnimalDetails += "\n" + d["History"]
     if "Medical" in d and d["Medical"] != "": a.HealthProblems = d["Medical"]
     if "Intake Memo" in d and d["Intake Memo"] != "": a.ReasonForEntry = d["Intake Memo"]
-    a.ShelterLocation = 1
     if d["Altered in Care"].startswith("Altered"):
         a.Neutered = 1
         a.NeuteredDate = a.DateBroughtIn
-    if d["Altered before Arrival"] == "Yes":
+    if "Altered before Arrival" in d and d["Altered before Arrival"] == "Yes":
         a.Neutered = 1
     a.CreatedDate = a.DateBroughtIn
     a.LastChangedDate = a.DateBroughtIn
+    #if "In Custody" in d and d["In Custody"]: a.Archived = asm.iif(d["In Custody"] == "No", 1, 0)
 
 for d in asm.csv_to_list("%s/intake.csv" % PATH):
     if d["Animal ID"] == "Animal ID": continue
@@ -156,7 +185,7 @@ for d in asm.csv_to_list("%s/intake.csv" % PATH):
     # Intake person
     linkperson = 0
     if "Intake From Name" in d and d["Intake From Name"] != "" and d["Intake From Name"] in ppo:
-        linkperson = ppo[d["Intake From Name"]]
+        linkperson = ppo[d["Intake From Name"]].ID
     # Location
     if "Location" in d and d["Location"] != "":
         locs = d["Location"] # Locations are a comma separated list, with latest on the right
@@ -171,20 +200,20 @@ for d in asm.csv_to_list("%s/intake.csv" % PATH):
         a.BroughtInByOwnerID = linkperson
     elif intaketype == "Surrender":
         a.EntryReasonID = 17 
-        a.OriginalOwner = linkperson
+        a.OriginalOwnerID = linkperson
         a.BroughtInByOwnerID = linkperson
     elif intaketype == "Return":
         a.EntryReasonID = 17 # Surrender
-        a.OriginalOwner = linkperson
+        a.OriginalOwnerID = linkperson
         a.BroughtInByOwnerID = linkperson
     elif intaketype == "Service In":
         a.NonShelterAnimal = 1
         a.Archived = 1
-        a.OriginalOwner = linkperson
+        a.OriginalOwnerID = linkperson
         a.BroughtInByOwnerID = linkperson
     else:
         a.EntryReasonID = 17 # Surrender
-        a.OriginalOwner = linkperson
+        a.OriginalOwnerID = linkperson
         a.BroughtInByOwnerID = linkperson
     a.ReasonForEntry = "%s / %s" % ( intaketype, subtype )
     # Last customer broke both categories and manually entered everything in
@@ -201,42 +230,14 @@ for d in asm.csv_to_list("%s/intake.csv" % PATH):
 if asm.file_exists("%s/nonshelter.csv" % PATH):
     for d in asm.csv_to_list("%s/nonshelter.csv" % PATH):
         if d["Animal ID"] == "Animal ID": continue
+        if d["Animal ID"] not in ppa: continue
         a = ppa[d["Animal ID"]]
         a.NonShelterAnimal = 1
         a.Archived = 1
     linkperson = 0
     if "Intake From Name" in d and d["Intake From Name"] != "" and d["Intake From Name"] in ppo:
-        linkperson = ppo[d["Intake From Name"]]
+        linkperson = ppo[d["Intake From Name"]].ID
         a.OriginalOwnerID = linkperson
-
-for d in asm.csv_to_list("%s/people.csv" % PATH):
-    if d["Name"] == "Name": continue # skip repeated header rows
-    if d["Name"] in ppo: continue # skip repeated rows
-    # Each row contains a person
-    o = asm.Owner()
-    owners.append(o)
-    ppo[d["Name"]] = o
-    # ppo[d["Person ID"]] = o # Never seen one in a person file so have to use name
-    o.SplitName(d["Name"])
-    o.OwnerAddress = d["Street"]
-    o.OwnerTown = d["City"]
-    o.OwnerCounty = d["State"]
-    o.OwnerPostcode = d["Zip Code"]
-    o.EmailAddress = d["Primary Email"]
-    o.HomeTelephone = d["Phone"]
-    # Last file I saw had repeated "Comments" columns, so need to be renumbered manually
-    if "Comments" in d and d["Comments"] != "": 
-        o.Comments += d["Comments"]
-    if "Comments1" in d and d["Comments1"] and d["Comments1"] != "": 
-        o.Comments += " " + d["Comments1"]
-    if "Comments2" in d and d["Comments2"] and d["Comments2"] != "": 
-        o.Comments += " " + d["Comments2"]
-    if "Comments3" in d and d["Comments3"] and d["Comments3"] != "": 
-        o.Comments += " " + d["Comments3"]
-    if "Attributes" in d and d["Attributes"] != "": 
-        o.Comments = "Attributes: %s" % d["Attributes"]
-        if d["Attributes"].find("Banned") != -1: o.IsBanned = 1
-        if d["Attributes"].find("Foster") != -1: o.IsFosterer = 1
 
 for d in asm.csv_to_list("%s/outcomes.csv" % PATH):
     if d["Animal ID"] == "Animal ID": continue # skip repeated headers
@@ -259,7 +260,7 @@ for d in asm.csv_to_list("%s/outcomes.csv" % PATH):
         if "Outcome By" in d: a.CreatedBy = "conversion/%s" % d["Outcome By"]
         a.LastChangedDate = m.MovementDate
         movements.append(m)
-    elif d["Outcome Type"] == "Transfer Out":
+    elif d["Outcome Type"] == "Transfer Out" or d["Outcome Type"] == "Transfer":
         m = asm.Movement()
         m.AnimalID = a.ID
         m.OwnerID = o.ID
@@ -270,10 +271,10 @@ for d in asm.csv_to_list("%s/outcomes.csv" % PATH):
         a.ActiveMovementDate = m.MovementDate
         a.ActiveMovementType = 1
         a.CreatedDate = m.MovementDate
-        a.CreatedBy = "conversion/%s" % d["Outcome By"]
+        if "Outcome By" in d: a.CreatedBy = "conversion/%s" % d["Outcome By"]
         a.LastChangedDate = m.MovementDate
         movements.append(m)
-    elif d["Outcome Type"] == "Return To Owner/Guardian":
+    elif d["Outcome Type"] == "Return To Owner/Guardian" or d["Outcome Type"] == "Reclaimed":
         m = asm.Movement()
         m.AnimalID = a.ID
         m.OwnerID = o.ID
@@ -284,7 +285,7 @@ for d in asm.csv_to_list("%s/outcomes.csv" % PATH):
         a.ActiveMovementDate = m.MovementDate
         a.ActiveMovementType = 5
         a.CreatedDate = m.MovementDate
-        a.CreatedBy = "conversion/%s" % d["Outcome By"]
+        if "Outcome By" in d: a.CreatedBy = "conversion/%s" % d["Outcome By"]
         a.LastChangedDate = m.MovementDate
         movements.append(m)
     elif d["Outcome Type"] == "Euthanasia":
@@ -386,4 +387,3 @@ asm.stderr_summary(animals=animals, owners=owners, movements=movements, animalva
 
 print("DELETE FROM configuration WHERE ItemName LIKE 'DBView%';")
 print("COMMIT;")
-
