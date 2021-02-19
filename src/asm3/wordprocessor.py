@@ -780,6 +780,7 @@ def animalcontrol_tags(dbo, ac):
         "CALLDATE":             python2display(l, ac["CALLDATETIME"]),
         "CALLTIME":             format_time(ac["CALLDATETIME"], "%H:%M"),
         "CALLNOTES":            ac["CALLNOTES"],
+        "CALLNOTESBR":          br(ac["CALLNOTES"]),
         "CALLTAKER":            ac["CALLTAKER"],
         "DISPATCHDATE":         python2display(l, ac["DISPATCHDATETIME"]),
         "DISPATCHTIME":         format_time(ac["DISPATCHDATETIME"], "%H:%M"),
