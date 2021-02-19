@@ -56,6 +56,8 @@ def get_animal_query(dbo):
         "ov.EmailAddress AS OwnersVetEmailAddress, " \
         "ov.MembershipNumber AS OwnersVetLicenceNumber, " \
         "cv.OwnerName AS CurrentVetName, " \
+        "cv.OwnerForeNames AS CurrentVetForeNames, " \
+        "cv.OwnerSurname AS CurrentVetSurname, " \
         "cv.OwnerAddress AS CurrentVetAddress, " \
         "cv.OwnerTown AS CurrentVetTown, " \
         "cv.OwnerCounty AS CurrentVetCounty, " \

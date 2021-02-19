@@ -1,6 +1,7 @@
 44
 ================
 
+19/02/21 Squash nulls when exporting as CSV
 14/02/21 Separate transport time wordkeys
 12/02/21 Show records created from online form as form/user #768
 12/02/21 Prevent forms having GDPR out of sync with exclude #737
