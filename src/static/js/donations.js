@@ -508,7 +508,7 @@ $(function() {
                     var timer = setInterval(function() { 
                         if(win.closed) {
                             clearInterval(timer); 
-                            setTimeout(location.reload.bind(location), 800); //TODO: refresh just the table?
+                            setTimeout(common.route_reload(), 800);
                         }
                     }, 1000);
                 }
