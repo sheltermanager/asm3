@@ -104,7 +104,7 @@ $(function() {
                 [ _("Reclaimed"), "reclaimed", "ActiveMovementDate Is Not Null AND ActiveMovementType=5" ],
                 [ _("Reserved"), "reserved", "HasActiveReserve=1" ],
                 [ _("On shelter"), "onshelter", "Archived=0" ],
-                [ _("On shelter (no fosters)"), "onshelter", "Archived=0 AND ActiveMovementType=0" ],
+                [ _("On shelter (no fosters)"), "onshelternf", "Archived=0 AND ActiveMovementType=0" ],
                 [ _("On foster"), "onfoster", "ActiveMovementType=2 AND HasPermanentFoster=0" ],
                 [ _("On permanent foster"), "onpfoster", "ActiveMovementType=2 AND HasPermanentFoster=1" ],
                 [ _("On trial adoption"), "trialadoption", "ActiveMovementType=1 AND HasTrialAdoption=1" ],
