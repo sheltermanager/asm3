@@ -541,6 +541,7 @@ def animal_tags(dbo, a, includeAdditional=True, includeCosts=True, includeDiet=T
             ( "VACCINATIONTYPE", _("Type", l) ),
             ( "DATEREQUIRED", _("Due", l)),
             ( "DATEOFVACCINATION", _("Given", l)),
+            ( "DATEEXPIRES", _("Expires", l)),
             ( "ADMINISTERINGVETNAME", _("Vet", l)),
             ( "RABIESTAG", _("Rabies Tag", l) ),
             ( "MANUFACTURER", _("Manufacturer", l)),
