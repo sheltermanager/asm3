@@ -428,8 +428,12 @@ def get_security_map(dbo, username):
 def get_site(dbo, username):
     """
     Returns a user's site or 0 if it doesn't have one.
+    If this is being called as part of a CSV import, or incoming form, 
+    we remove those prefixes from the username first.
     """
     try:
+        if username.startswith("import/"): username = username[7:]
+        if username.startswith("form/"): username = username[5:]
         return dbo.query_int("SELECT SiteID FROM users WHERE UserName LIKE ?", [username])
     except:
         return 0

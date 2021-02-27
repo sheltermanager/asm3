@@ -1045,7 +1045,7 @@ def create_person(dbo, username, collationid):
         raise asm3.utils.ASMValidationError(asm3.i18n._("There is not enough information in the form to create a person record (need a surname).", l))
     status = 0 # created
     # Use the current user's site for our new person record if they have one assigned
-    siteid = asm3.users.get_site(dbo, username[username.find("/")+1:])
+    siteid = asm3.users.get_site(dbo, username)
     if siteid != 0: d["site"] = str(siteid)
     # Does this person already exist?
     personid = 0
