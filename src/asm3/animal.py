@@ -864,19 +864,19 @@ def get_timeline(dbo, limit = 500, age = 120):
             "ShelterCode AS Text1, AnimalName AS Text2, owner.OwnerName AS Text3, adoption.LastChangedBy FROM animal " \
             "INNER JOIN adoption ON adoption.AnimalID = animal.ID " \
             "INNER JOIN owner ON adoption.OwnerID = owner.ID " \
-            "WHERE NonShelterAnimal = 0 AND MovementDate Is Not Null AND MovementType = 1 AND IsTrial = 0" \
+            "WHERE NonShelterAnimal = 0 AND MovementDate Is Not Null AND MovementType = 1 AND IsTrial = 0 " \
             "ORDER BY MovementDate DESC, animal.ID",
         "SELECT 'animal_movements' AS LinkTarget, 'TRIALSTART' AS Category, MovementDate AS EventDate, animal.ID, " \
             "ShelterCode AS Text1, AnimalName AS Text2, owner.OwnerName AS Text3, adoption.LastChangedBy FROM animal " \
             "INNER JOIN adoption ON adoption.AnimalID = animal.ID " \
             "INNER JOIN owner ON adoption.OwnerID = owner.ID " \
-            "WHERE NonShelterAnimal = 0 AND MovementDate Is Not Null AND MovementType = 1 AND IsTrial = 1" \
+            "WHERE NonShelterAnimal = 0 AND MovementDate Is Not Null AND MovementType = 1 AND IsTrial = 1 " \
             "ORDER BY MovementDate DESC, animal.ID",
         "SELECT 'animal_movements' AS LinkTarget, 'TRIALEND' AS Category, TrialEndDate AS EventDate, animal.ID, " \
             "ShelterCode AS Text1, AnimalName AS Text2, owner.OwnerName AS Text3, adoption.LastChangedBy FROM animal " \
             "INNER JOIN adoption ON adoption.AnimalID = animal.ID " \
             "INNER JOIN owner ON adoption.OwnerID = owner.ID " \
-            "WHERE NonShelterAnimal = 0 AND TrialEndDate Is Not Null AND MovementType = 1 AND IsTrial = 1" \
+            "WHERE NonShelterAnimal = 0 AND TrialEndDate Is Not Null AND MovementType = 1 AND IsTrial = 1 " \
             "ORDER BY MovementDate DESC, animal.ID",
         "SELECT 'animal_movements' AS LinkTarget, 'FOSTERED' AS Category, MovementDate AS EventDate, animal.ID, " \
             "ShelterCode AS Text1, AnimalName AS Text2, owner.OwnerName AS Text3, adoption.LastChangedBy FROM animal " \
