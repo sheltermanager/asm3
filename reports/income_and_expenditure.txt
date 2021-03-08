@@ -14,7 +14,7 @@ $VAR to DATE Enter to date$
 SELECT 
 a.Code,
 ABS(COALESCE((SELECT SUM(Amount) FROM accountstrx
-WHERE accountstrx.DestinationAccountID = a.ID AND accountstrx.TrxDate BETWEEN '$@from$' AND '$@to$'), 0) - COALESCE((SELECT SUM(Amount) FROM accountstrx WHERE accountstrx.SourceAccountID = a.ID AND accountstrx.TrxDate BETWEEN '$@from$' AND '$@to$'), 0)) AS amt,
+WHERE accountstrx.DestinationAccountID = a.ID AND accountstrx.TrxDate >= '$@from$' AND accountstrx.TrxDate <= '$@to$'), 0) - COALESCE((SELECT SUM(Amount) FROM accountstrx WHERE accountstrx.SourceAccountID = a.ID AND accountstrx.TrxDate >= '$@from$' AND accountstrx.TrxDate <= '$@to$'), 0)) AS amt,
 l.AccountType
 FROM accounts a
 INNER JOIN lksaccounttype l ON l.ID = a.AccountType
