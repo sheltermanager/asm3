@@ -354,7 +354,8 @@ DEFAULTS = {
     "WeightChangeLog": "Yes",
     "WeightChangeLogType": "4",
     "CardcomSuccessURL": "https://secure.cardcom.solutions/DealWasSuccessful.aspx",
-    "CardcomErrorURL": "https://secure.cardcom.solutions/DealWasUnSuccessful.aspx"
+    "CardcomErrorURL": "https://secure.cardcom.solutions/DealWasUnSuccessful.aspx",
+    "CardcomDocumentType": "3"
 }
 
 def cstring(dbo, key, default = ""):
@@ -1272,6 +1273,12 @@ def cardcom_terminalnumber(dbo):
 
 def cardcom_username(dbo):
     return cstring(dbo, "CardcomUserName")
+
+def cardcom_documenttype(dbo):
+    return cstring(dbo, "CardcomDocumentType")
+
+def cardcom_usetoken(dbo):
+    return cboolean(dbo,"CardcomUseToken", DEFAULTS["CardcomUseToken"] == "Yes")
 
 def cardcom_successurl(dbo):
     return cstring(dbo, "CardcomSuccessURL")

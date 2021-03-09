@@ -18,7 +18,7 @@ $(function() {
             const dialog = {
                 add_title: _("Add payment"),
                 edit_title: _("Edit payment"),
-                edit_perm: 'ocod',
+                edit_perm: 'ocod',  
                 close_on_ok: false,
                 hide_read_only: true,
                 helper_text: _("Payments need at least one date, an amount and a person."),
@@ -354,8 +354,22 @@ $(function() {
                 s += '<li id="button-cardcom" class="processorbutton asm-menu-item"><a '
                         + ' target="_blank" href="#">' + html.icon("cardcom") + ' ' + _("Cardcom") + '</a></li>';
             }
+
+            if (controller.person) {
+                // Cardcom token payment provider only works in the context of a person who has stored tokens
+                if (controller.person.EXTRAIDS != null) 
+                {
+                    var extra_ids = new URLSearchParams(controller.person.EXTRAIDS.replace(/\|/g, '&'));
+                    if (controller.person && config.str("CardcomUseToken") && extra_ids.get("Cardcom_Token")>"") /*Cardcom Token*/{
+                        s += '<li id="button-cardcom-token" class="processorbutton asm-menu-item"><a '
+                                + ' target="_blank" href="#">' + html.icon("cardcom") + ' ' + _("Cardcom Token Charge") + '</a></li>';
+                    }
+                }
+            }
+
             s += '</ul></div>';
             s += '<div id="emailform" />';
+            s += '<div id="paymentconfirmation" style="display: none" title="' + html.title(_("Are you sure?")) + '"></div>';
             if (controller.name == "animal_donations") {
                 s += edit_header.animal_edit_header(controller.animal, "donations", controller.tabcounts);
             }
@@ -488,6 +502,59 @@ $(function() {
                 return false;
             });
 
+            $("#button-cardcom-token").click(function() {
+                payment_processor_confirmation_dialog("cardcom");
+                return false;
+            });
+
+            const payment_processor_confirmation_dialog= async function(processor_name) {
+                let row = tableform.table_selected_row(donations.table);
+                header.hide_error();
+                if (!row) { return; }
+                if (row.DATE) { header.show_error(_("This payment has already been received")); return; }
+                // compute total sum
+                let receiptnumber = row.RECEIPTNUMBER;
+                let total = 0.0;
+                $.each(controller.rows, function(i, v) {
+                    if (v.RECEIPTNUMBER == receiptnumber) { 
+                        total += v.DONATION;  
+                        if (v.VATAMOUNT > 0) { total += v.VATAMOUNT;  }
+                    }
+                });
+                //total = total / 100.0;
+                // extract token details
+                var extra_ids = new URLSearchParams(controller.person.EXTRAIDS.replace(/\|/g, '&'));
+                var card_last_4 = extra_ids.get("Cardcom_Last4Digits");
+                var card_last_4 = extra_ids.get("Cardcom_Last4Digits");
+                var card_validity = extra_ids.get("Cardcom_CardValidity")
+
+                // Close menu
+                $("#button-processor").asmmenu("hide_all");
+
+                // show confirmation dialog
+                $("#paymentconfirmation").html("<br/>" + _("Credit card") + ": " + "****-****-****-" + card_last_4 
+                    + "<br/>" + _("Expiration") +": " + card_validity 
+                    + "<br/>" + _("Total") + ": " + format.currency(total.toString()) );
+                await tableform.show_okcancel_dialog("#paymentconfirmation", _("Yes"));
+                let formdata = "mode=tokencharge&processor=" + processor_name + "&person=" +
+                        row.OWNERID + "&payref=" + row.OWNERCODE + "-" + row.RECEIPTNUMBER;
+                const response = await common.ajax_post("donation", formdata);
+                // Attempt to save any changes before viewing the diary tab
+                let json = JSON.parse(response)
+                if (json.hasOwnProperty("message")) {
+                    var timer = setInterval(function() { 
+                            clearInterval(timer); 
+                            setTimeout(common.route_reload(), 800);
+                            setTimeout(header.show_info(_(json.message)),850);
+                    }, 1000);
+                    return;
+                }
+                else {
+                    header.show_error(_(json.error)); return;
+                }
+
+            }
+
             // Payment processor handling
             const payment_processor_popup = async function(processor_name) {
                 let row = tableform.table_selected_row(donations.table);
@@ -547,6 +614,7 @@ $(function() {
             common.widget_destroy("#animal");
             common.widget_destroy("#person");
             common.widget_destroy("#emailform");
+            common.widget_destroy("#paymentconfirmation");
             tableform.dialog_destroy();
             this.create_semaphore = false;
             this.lastanimal = null;

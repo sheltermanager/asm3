@@ -17,7 +17,7 @@ import os, sys
 
 
 class Cardcom(PaymentProcessor):
-    """Coardcom provider http://kb.cardcom.co.il/article/AA-00402/0/"""
+    """Cardcom provider http://kb.cardcom.co.il/article/AA-00402/0/"""
 
     def __init__(self, dbo):
         PaymentProcessor.__init__(self, dbo, "cardcom")
@@ -32,6 +32,67 @@ class Cardcom(PaymentProcessor):
             yield {f"InvoiceLines{index:d}.Description": html.unescape(description)[:250]}
             yield {f"InvoiceLines{index:d}.Quantity": 1}
             yield {f"InvoiceLines{index:d}.Price": price} 
+
+    def tokenCharge(self, payref, item_description=""):
+        payments = self.getPayments(payref)
+        total_charge_sum = sum(
+            round(r.DONATION, 2) + (r.VATAMOUNT if r.VATAMOUNT > 0 else 0) for r in payments # add VAT for consistency with other payment providers
+        ) / 100.0
+        client_reference_id = "%s-%s" % (self.dbo.database, payref) # prefix database to payref 
+        OwnerID = payments[0].OWNERID
+        p = asm3.person.get_person(self.dbo, OwnerID)
+
+        if not asm3.utils.is_valid_email_address(p.EMAILADDRESS):
+            raise Exception(_("Invalid email address")) 
+
+        url = "https://secure.cardcom.solutions/interface/ChargeToken.aspx"
+        params = {
+            "Operation": "2", #charge + create token,
+            "TerminalNumber": asm3.configuration.cardcom_terminalnumber(self.dbo), #
+            "UserName": asm3.configuration.cardcom_username(self.dbo), #
+            "codepage": "65001", #unicode
+            "TokenToCharge.DocTypeToCreate": asm3.configuration.cardcom_documenttype(self.dbo), #3=#nonprofit receipt
+            "TokenToCharge.SumToBill": f"{total_charge_sum}",
+            "TokenToCharge.CoinID": "1", #TODO: not critical - use ASM currency
+            "TokenToCharge.UniqAsmachta": client_reference_id,
+            "InvoiceHead.CustName": html.unescape(p.OWNERNAME)[:50] , 
+            "InvoiceHead.CustAddresLine1": html.unescape(p.OWNERADDRESS)[:50], 
+            "InvoiceHead.CustCity": html.unescape(p.OWNERTOWN)[:50],            
+            "InvoiceHead.CustMobilePH": html.unescape(p.MOBILETELEPHONE)[:50],  
+            "InvoiceHead.ExtIsVatFree": "true",#no VAT for nonprofit receipts. #TODO: config?
+            "InvoiceHead.SendByEmail": "true", #TODO: not critical - config?
+            "InvoiceHead.Language": "he", #TODO: not critical - config / use locale?
+            "InvoiceHead.Email": p.EMAILADDRESS,
+            "TokenToCharge.Token": asm3.person.get_extra_id(self.dbo, p, "Cardcom_Token"),
+            "TokenToCharge.CardValidityMonth": asm3.person.get_extra_id(self.dbo, p, "Cardcom_CardValidity").split("/")[0],
+            "TokenToCharge.CardValidityYear": asm3.person.get_extra_id(self.dbo, p, "Cardcom_CardValidity").split("/")[1][-2:],
+            "TokenToCharge.IdentityNumber": asm3.person.get_extra_id(self.dbo, p, "Cardcom_CardOwnerID")
+        }
+
+        for p in self.getInvoiceItems(payments):
+            params.update(p)
+
+        asm_debug(f"params: {params}", "cardcom.tokenCharge", self.dbo)
+        response = requests.post(url, data=params)
+        if not response.ok:
+            raise Exception(f"Response not ok: {response.status_code} {response.text}")
+
+        results = dict(parse_qsl(response.text))
+        asm_debug(f"parsed response: {results}")
+
+        if results["ResponseCode"] != "0":
+            asm3.al.error(f"Bad Cardcom operation response {results['ResponseCode']}: {results['Description']}", "cardcom.tokenCharge", self.dbo)
+            raise ProcessorError(f"Bad Cardcom operation response {results['ResponseCode']}: {results['Description']}")
+
+        trxid = f"{results.get('InvoiceResponse.InvoiceNumber','')}/{results.get('InternalDealNumber','')}"
+        rcvd = asm3.utils.cint(results.get("ExtShvaParams.Sum36", total_charge_sum / 100.0))
+
+        self.markPaymentReceived(payref, trxid, rcvd, 0, 0, response.text)
+
+        InvoiceResponseCode = results.get("InvoiceResponse.ResponseCode")
+        if InvoiceResponseCode != "0":
+            asm3.al.error(f"Invoice not created for {payref}. Response code: {InvoiceResponseCode}", "cardcom.tokenCharge", self.dbo)
+
 
     def checkoutPage(self, payref, return_url="", item_description=""):
         try:
@@ -67,14 +128,13 @@ class Cardcom(PaymentProcessor):
 
         url = "https://secure.cardcom.solutions/Interface/LowProfile.aspx"
         params = {
-            "DocTypeToCreate": "3", #nonprofit receipt #TODO: config?
+            "DocTypeToCreate": asm3.configuration.cardcom_documenttype(self.dbo), #3=#nonprofit receipt
             "Operation": "2", #charge + create token,
             "TerminalNumber": asm3.configuration.cardcom_terminalnumber(self.dbo), #
             "UserName": asm3.configuration.cardcom_username(self.dbo), #
             "SumToBill": f"{total_charge_sum / 100.0}",
             "CoinID": "1", #TODO: not critical - use ASM currency
             "Language": "he", #TODO: not critical - config / use locale?
-            #"ProductName": "Donation to S.O.S. Pets 1234", # TODO: trim to first 50 chars
             "SuccessRedirectUrl": asm3.configuration.cardcom_successurl(self.dbo), # "https://secure.cardcom.solutions/DealWasSuccessful.aspx",
             "ErrorRedirectUrl": asm3.configuration.cardcom_errorurl(self.dbo), #"https://secure.cardcom.solutions/DealWasUnSuccessful.aspx?customVar=1234",
             "APILevel": "10",
@@ -85,7 +145,7 @@ class Cardcom(PaymentProcessor):
             "InvoiceHead.CustAddresLine1": html.unescape(p.OWNERADDRESS)[:50], 
             "InvoiceHead.CustCity": html.unescape(p.OWNERTOWN)[:50],            
             "InvoiceHead.CustMobilePH": html.unescape(p.MOBILETELEPHONE)[:50],  
-            "InvoiceHead.ExtIsVatFree": "true",         #no VAT for nonprofit receipts. #TODO: config?
+            "InvoiceHead.ExtIsVatFree": "true",#no VAT for nonprofit receipts. #TODO: config?
             "InvoiceHead.SendByEmail": "true", #TODO: not critical - config?
             "InvoiceHead.Language": "he", #TODO: not critical - config / use locale?
             "InvoiceHead.Email": p.EMAILADDRESS,
@@ -157,8 +217,6 @@ class Cardcom(PaymentProcessor):
             payments = self.getPayments(payref)
 
             # get owner ID in order to add/update token information
-            asm_debug(type(payments))
-            asm_debug(str(payments))
             OwnerID = payments[0].OWNERID
 
             # Mark our payment as received with the correct amounts
