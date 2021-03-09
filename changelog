@@ -1,6 +1,16 @@
 44
 ================
 
+26/02/21 Include expires on vaccinations wordkey
+25/02/21 Last movement and last fosterer keys for querybuilder #271
+25/02/21 Person last movement #271
+24/02/21 Stop fosterers being placed into the owner field
+19/02/21 Squash nulls when exporting as CSV
+14/02/21 Separate transport time wordkeys
+12/02/21 Show records created from online form as form/user #768
+12/02/21 Prevent forms having GDPR out of sync with exclude #737
+12/02/21 Avoid unnecessary audits updating adopter flag #958
+12/02/21 Form validation on adoptables for old iOS devices
 08/02/21 Support for current vet in CSV import/export
 05/02/21 Include vacc and microchip stats on annual figures
 05/02/21 output for Yes/No additional fields in query builder

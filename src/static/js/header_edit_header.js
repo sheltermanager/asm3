@@ -427,15 +427,21 @@ edit_header = {
      * selected: The name of the selected tab (person, donations, vouchers, media, diary, movements, links, log)
      */
     person_edit_header: function(p, selected, counts) {
-        var check_display_icon = function(key, iconname) {
+        const check_display_icon = function(key, iconname) {
             if (key == "person") { return html.icon("blank"); }
             if (counts[key.toUpperCase()] > 0) {
                 return html.icon(iconname);
             }
             return html.icon("blank");
         };
-        var flags = this.person_flags(p);
-        var s = [
+        let flags = this.person_flags(p);
+        let latestmove = "";
+        if (p.LATESTMOVEANIMALID) { 
+            latestmove = "<tr><td>" + _("Last Movement") + ":</td>";
+            latestmove += "<td><b>" + p.LATESTMOVETYPENAME + " " + html.icon("right") + " ";
+            latestmove += '<a href="animal?id=' + p.LATESTMOVEANIMALID + '">' + p.LATESTMOVEANIMALNAME + '</a></b></td></tr>';
+        }
+        let s = [
             '<div class="asm-banner ui-helper-reset ui-widget-content ui-corner-all">',
             '<input type="hidden" id="personid" value="' + p.ID + '" />',
             '<div class="asm-grid">',
@@ -455,8 +461,9 @@ edit_header = {
             '</div>',
             '<div class="asm-grid-col-3">',
             '<table>',
+            latestmove,
             '<tr>',
-            '<td>' + p.OWNERADDRESS + '<br />',
+            '<td></td><td>' + p.OWNERADDRESS + '<br />',
             p.OWNERTOWN + ' ' + p.OWNERCOUNTY + ' ' + p.OWNERPOSTCODE + '<br />',
             p.HOMETELEPHONE + ' <br />',
             p.WORKTELEPHONE + ' <br />',

@@ -198,7 +198,7 @@ $(document).ready(function() {
     const validate_required = function() {
         let rv = true;
         if (!html5_required) {
-            $(".asm-onlineform-date, .asm-onlineform-text, .asm-onlineform-lookup, .asm-onlineform-notes").each(function() {
+            $(".asm-onlineform-adoptableanimal, .asm-onlineform-date, .asm-onlineform-text, .asm-onlineform-lookup, .asm-onlineform-notes").each(function() {
                 if ($(this).attr("required")) {
                     let v = String($(this).val()).trim(); // Throw away whitespace before checking
                     if (!v) {

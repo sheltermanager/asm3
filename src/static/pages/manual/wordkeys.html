@@ -277,7 +277,7 @@ animal’s record within ASM.</dd>
 <dt>Age</dt>
 <dd>The animal’s age in readable form (eg: “5 years and 6 months”)</dd>
 <dt>Description / AnimalComments</dt>
-<dd>The animal description box</dd>
+<dd>The animal description box. Use DescriptionBR or AnimalCommentsBR to retain line breaks.</dd>
 <dt>HealthProblems</dt>
 <dd>The health problems field</dd>
 <dt>LitterID / AcceptanceNumber</dt>
@@ -876,7 +876,7 @@ to the end of the keys listed below (eg: TransportType1, TransportComments2)</p>
 <dd>The type of transport</dd>
 <dt>TransportDriveName</dt>
 <dd>The transport driver if known</dd>
-<dt>TransportPickupDateTime</dt>
+<dt>TransportPickupDateTime / TransportPickupDate / TransportPickupTime</dt>
 <dd>The date and time of the pickup</dd>
 <dt>TransportPickupName</dt>
 <dd>The person the transport is picking up from if known</dd>
@@ -900,7 +900,7 @@ to the end of the keys listed below (eg: TransportType1, TransportComments2)</p>
 <dd>The mobile phone number of the pickup contact</dd>
 <dt>TransportDropoffName</dt>
 <dd>The person the transport is taking the animal to if known</dd>
-<dt>TransportDropoffDateTime</dt>
+<dt>TransportDropoffDateTime / TransportDropoffDate / TransportDropoffTime</dt>
 <dd>The date and time of the dropoff</dd>
 <dt>TransportDropoffAddress</dt>
 <dd>The dropoff address</dd>
@@ -1270,7 +1270,7 @@ IncidentLog instead of just Log.</p>
 <dt>CallerMobileTelephone / CallerCellTelephone</dt>
 <dd>The caller’s mobile number</dd>
 <dt>CallNotes</dt>
-<dd>Any notes about the call</dd>
+<dd>Any notes about the call. Use CallNotesBR to retain line breaks.</dd>
 <dt>CallTaker</dt>
 <dd>The username of the staff member that took the call</dd>
 <dt>DispatchDate</dt>

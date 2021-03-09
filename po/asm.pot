@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ASM3\n"
 "Report-Msgid-Bugs-To: robin@sheltermanager.com\n"
-"POT-Creation-Date: 2021-02-05 10:49+0000\n"
+"POT-Creation-Date: 2021-03-01 08:53+0000\n"
 "Last-Translator: Robin Rawson-Tetley <robin@sheltermanager.com>\n"
 "Language-Team: en <robin@sheltermanager.com>\n"
 "Language: en\n"
@@ -4821,7 +4821,8 @@ msgstr ""
 msgid "Expired in the last week"
 msgstr ""
 
-#: mobile.py vouchers.js litters.js person.js vaccination.js main.js licence.js
+#: mobile.py wordprocessor.py vouchers.js litters.js person.js vaccination.js
+#: main.js licence.js
 msgid "Expires"
 msgstr ""
 
@@ -4905,8 +4906,16 @@ msgstr ""
 msgid "FIV Result"
 msgstr ""
 
+#: reports.js
+msgid "FIV Tested"
+msgstr ""
+
 #: animal_find.js reports.js common.js
 msgid "FIV+"
+msgstr ""
+
+#: reports.js
+msgid "FIV-"
 msgstr ""
 
 #: html.py
@@ -4927,6 +4936,10 @@ msgstr ""
 
 #: animal_find.js reports.js common.js
 msgid "FLV+"
+msgstr ""
+
+#: reports.js
+msgid "FLV-"
 msgstr ""
 
 #: publish_options.js
@@ -5847,12 +5860,16 @@ msgstr ""
 msgid "Heartworm Test Result"
 msgstr ""
 
-#: html.py mobile.py animal_find_results.js animal.js
+#: html.py mobile.py animal_find_results.js reports.js animal.js
 msgid "Heartworm Tested"
 msgstr ""
 
 #: animal_find.js reports.js common.js
 msgid "Heartworm+"
+msgstr ""
+
+#: reports.js
+msgid "Heartworm-"
 msgstr ""
 
 #: dbupdate.py
@@ -6776,6 +6793,10 @@ msgstr ""
 
 #: options.js
 msgid "Last Month"
+msgstr ""
+
+#: header_edit_header.js
+msgid "Last Movement"
 msgstr ""
 
 #: html.py

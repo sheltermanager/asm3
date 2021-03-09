@@ -716,17 +716,21 @@ def insert_onlineformincoming_from_form(dbo, post, remoteip):
                             images.append( ("%s.jpg" % fieldname, "image/jpeg", asm3.utils.base64decode(v[v.find(",")+1:])) )
 
             # Do the insert
-            dbo.insert("onlineformincoming", {
-                "CollationID":      collationid,
-                "FormName":         formname,
-                "PostedDate":       posteddate,
-                "Flags":            flags,
-                "FieldName":        fieldname,
-                "Label":            label,
-                "DisplayIndex":     displayindex,
-                "Host":             remoteip,
-                asm3.utils.iif(fieldtype == FIELDTYPE_RAWMARKUP, "*Value", "Value"): v # don't XSS escape raw markup by prefixing fieldname with *
-            }, generateID=False, setCreated=False)
+            try:
+                dbo.insert("onlineformincoming", {
+                    "CollationID":      collationid,
+                    "FormName":         formname,
+                    "PostedDate":       posteddate,
+                    "Flags":            flags,
+                    "FieldName":        fieldname,
+                    "Label":            label,
+                    "DisplayIndex":     displayindex,
+                    "Host":             remoteip,
+                    asm3.utils.iif(fieldtype == FIELDTYPE_RAWMARKUP, "*Value", "Value"): v # don't XSS escape raw markup by prefixing fieldname with *
+                }, generateID=False, setCreated=False)
+            except Exception as err:
+                asm3.al.warn("failed creating incoming field, cid=%s, name=%s, value=%s: %s" % (collationid, fieldname, v, err), 
+                    "insert_onlineformincoming_from_form", dbo)
 
     # Sort out the preview of the first few fields
     fieldssofar = 0

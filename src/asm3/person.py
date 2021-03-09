@@ -37,6 +37,9 @@ def get_person_query(dbo):
     return "SELECT o.*, o.ID AS PersonID, " \
         "ho.OwnerName AS HomeCheckedByName, ho.HomeTelephone AS HomeCheckedByHomeTelephone, " \
         "ho.MobileTelephone AS HomeCheckedByMobileTelephone, ho.EmailAddress AS HomeCheckedByEmail, " \
+        "lfa.ID AS LatestFosterID, lfa.AnimalName AS LatestFosterName, lfa.ShelterCode AS LatestFosterShelterCode, " \
+        "lma.ID AS LatestMoveAnimalID, lma.AnimalName AS LatestMoveAnimalName, lma.ShelterCode AS LatestMoveShelterCode, " \
+        "lmat.MovementType AS LatestMoveTypeName, " \
         "j.JurisdictionName, " \
         "web.ID AS WebsiteMediaID, " \
         "web.MediaName AS WebsiteMediaName, " \
@@ -47,9 +50,14 @@ def get_person_query(dbo):
         "(SELECT MatchSummary FROM ownerlookingfor olf WHERE olf.OwnerID = o.ID GROUP BY MatchSummary) AS LookingForSummary " \
         "FROM owner o " \
         "LEFT OUTER JOIN owner ho ON ho.ID = o.HomeCheckedBy " \
-        "LEFT OUTER JOIN media web ON web.LinkID = o.ID AND web.LinkTypeID = %d AND web.WebsitePhoto = 1 " \
-        "LEFT OUTER JOIN media doc ON doc.LinkID = o.ID AND doc.LinkTypeID = %d AND doc.DocPhoto = 1 " \
-        "LEFT OUTER JOIN jurisdiction j ON j.ID = o.JurisdictionID " % (asm3.media.PERSON, asm3.media.PERSON)
+        "LEFT OUTER JOIN adoption lf ON lf.ID = (SELECT MAX(ID) FROM adoption slf WHERE slf.OwnerID = o.ID AND slf.MovementType = 2 AND (slf.ReturnDate Is Null OR slf.ReturnDate > %s )) " \
+        "LEFT OUTER JOIN animal lfa ON lfa.ID = lf.AnimalID " \
+        "LEFT OUTER JOIN adoption lm ON lm.ID = (SELECT MAX(ID) FROM adoption slm WHERE slm.OwnerID = o.ID AND MovementType > 0 AND (slm.ReturnDate Is Null OR slm.ReturnDate > %s )) " \
+        "LEFT OUTER JOIN animal lma ON lma.ID = lm.AnimalID " \
+        "LEFT OUTER JOIN lksmovementtype lmat ON lmat.ID = lm.MovementType " \
+        "LEFT OUTER JOIN media web ON web.LinkID = o.ID AND web.LinkTypeID = 3 AND web.WebsitePhoto = 1 " \
+        "LEFT OUTER JOIN media doc ON doc.LinkID = o.ID AND doc.LinkTypeID = 3 AND doc.DocPhoto = 1 " \
+        "LEFT OUTER JOIN jurisdiction j ON j.ID = o.JurisdictionID " % ( dbo.sql_today(), dbo.sql_today() )
 
 def get_rota_query(dbo):
     """
@@ -971,14 +979,16 @@ def update_flags(dbo, username, personid, flags):
 
 def update_adopter_flag(dbo, username, personid):
     """
-    Sets or removes the adopter flag on personid if it has any open adoption movements
+    Sets or removes the adopter flag on personid if it has any open adoption movements.
+    Only makes the change if necessary to avoid audits/lastchange updates.
     """
     if personid is None or personid == 0: return
-    oa = dbo.query_int("SELECT COUNT(*) FROM adoption WHERE MovementType=1 AND " \
+    openadoptions = dbo.query_int("SELECT COUNT(*) FROM adoption WHERE MovementType=1 AND " \
         "MovementDate Is Not Null AND ReturnDate Is Null AND OwnerID=?", [personid])
-    if oa > 0:
+    hasadopter = dbo.query_int("SELECT IsAdopter FROM owner WHERE ID=?", [personid]) == 1
+    if openadoptions > 0 and not hasadopter:
         merge_flags(dbo, username, personid, "adopter")
-    else:
+    elif openadoptions == 0 and hasadopter:
         update_remove_flag(dbo, username, personid, "adopter")
 
 def merge_person_details(dbo, username, personid, d, force=False):
@@ -1011,15 +1021,19 @@ def merge_person_details(dbo, username, personid, d, force=False):
 
 def merge_gdpr_flags(dbo, username, personid, flags):
     """
-    Merges the delimited string flags wtih those on personid.gdprcontactoptin
+    Merges the delimited string flags with those on personid.gdprcontactoptin
     The original person record is updated and the new list of GDPR flags is returned 
     as a pipe delimited string.
     """
     if flags is None or flags == "": return ""
     fgs = flags.split(",")
-    epf = dbo.query_string("SELECT GDPRContactOptIn FROM owner WHERE ID = ?", [personid])
-    fgs += epf.split(",")
-    dbo.update("owner", personid, { "GDPRContactOptIn": ",".join(fgs) })
+    p = dbo.first_row(dbo.query("SELECT ExcludeFromBulkEmail, GDPRContactOptIn FROM owner WHERE ID = ?", [personid]))
+    if p is None: return flags # Can't do anything without a person
+    fgs += asm3.utils.nulltostr(p.GDPRCONTACTOPTIN).split(",") # Merge the existing GDPR flags into one list
+    v = { "GDPRContactOptIn": ",".join(fgs) }
+    # If email is part of the flags, but ExcludeFromBulkEmail has been set, clear it
+    if "email" in fgs and p.EXCLUDEFROMBULKEMAIL == 1: v["ExcludeFromBulkEmail"] = 0
+    dbo.update("owner", personid, v, username)
     return ",".join(fgs)
 
 def merge_flags(dbo, username, personid, flags):

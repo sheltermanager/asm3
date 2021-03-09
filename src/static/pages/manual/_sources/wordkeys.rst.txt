@@ -75,7 +75,7 @@ ShortShelterCode
 Age
     The animal's age in readable form (eg: “5 years and 6 months”) 
 Description / AnimalComments
-    The animal description box 
+    The animal description box. Use DescriptionBR or AnimalCommentsBR to retain line breaks.
 HealthProblems
     The health problems field 
 LitterID / AcceptanceNumber
@@ -682,7 +682,7 @@ TransportType
    The type of transport
 TransportDriveName
    The transport driver if known
-TransportPickupDateTime
+TransportPickupDateTime / TransportPickupDate / TransportPickupTime
    The date and time of the pickup
 TransportPickupName
    The person the transport is picking up from if known
@@ -706,7 +706,7 @@ TransportPickupCellPhone / TransportPickupMobilePhone
    The mobile phone number of the pickup contact
 TransportDropoffName
    The person the transport is taking the animal to if known
-TransportDropoffDateTime
+TransportDropoffDateTime / TransportDropoffDate / TransportDropoffTime
    The date and time of the dropoff
 TransportDropoffAddress
    The dropoff address
@@ -1078,7 +1078,7 @@ CallerWorkTelephone
 CallerMobileTelephone / CallerCellTelephone
     The caller's mobile number
 CallNotes
-    Any notes about the call
+    Any notes about the call. Use CallNotesBR to retain line breaks.
 CallTaker
     The username of the staff member that took the call
 DispatchDate
