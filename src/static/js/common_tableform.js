@@ -973,7 +973,6 @@ const tableform = {
                 if (v.halfsize) { d += " asm-halftextbox"; }
                 d += "\" ";
                 d += "data-json=\"" + v.json_field + "\" data-post=\"" + v.post_field + "\" ";
-                d += "autocomplete=\"new-password\" ";
                 if (v.readonly) { d += " data-noedit=\"true\" "; }
                 if (v.validation) { d += "data-validation=\"" + v.validation + "\" "; }
                 if (v.tooltip) { d += "title=\"" + html.title(v.tooltip) + "\" "; }
@@ -1068,7 +1067,6 @@ const tableform = {
                 if (v.halfsize) { d += " asm-halftextbox"; }
                 d += "\" ";
                 d += "data-json=\"" + v.json_field + "\" data-post=\"" + v.post_field + "\" ";
-                d += "autocomplete=\"new-password\" ";
                 if (v.readonly) { d += " data-noedit=\"true\" "; }
                 if (v.validation) { d += "data-validation=\"" + v.validation + "\" "; }
                 if (v.tooltip) { d += "title=\"" + html.title(v.tooltip) + "\""; }
@@ -1082,7 +1080,6 @@ const tableform = {
                 if (v.halfsize) { d += " asm-halftextbox"; }
                 d += "\" ";
                 d += "data-json=\"" + v.json_field + "\" data-post=\"" + v.post_field + "\" ";
-                d += "autocomplete=\"new-password\" ";
                 if (v.readonly) { d += " data-noedit=\"true\" "; }
                 if (v.validation) { d += "data-validation=\"" + v.validation + "\" "; }
                 if (v.tooltip) { d += "title=\"" + html.title(v.tooltip) + "\""; }
@@ -1094,7 +1091,6 @@ const tableform = {
                 d += "<span style=\"white-space: nowrap\">";
                 d += "<input id=\"" + v.post_field + "date\" type=\"text\" class=\"asm-textbox asm-datebox asm-halftextbox\" ";
                 d += "data-json=\"" + v.json_field + "\" data-post=\"" + v.post_field + "date\" ";
-                d += "autocomplete=\"new-password\" ";
                 if (v.readonly) { d += " data-noedit=\"true\" "; }
                 if (v.validation) { d += "data-validation=\"" + v.validation + "\" "; }
                 if (v.tooltip) { d += "title=\"" + html.title(v.tooltip) + "\""; }
@@ -1102,7 +1098,6 @@ const tableform = {
                 d += "<input id=\"" + v.post_field + "time\" type=\"text\" class=\"asm-textbox asm-timebox asm-halftextbox";
                 d += "\" ";
                 d += "data-json=\"" + v.json_field + "\" data-post=\"" + v.post_field + "time\" ";
-                d += "autocomplete=\"new-password\" ";
                 if (v.readonly) { d += " data-noedit=\"true\" "; }
                 if (v.validation) { d += "data-validation=\"" + v.validation + "\" "; }
                 if (v.tooltip) { d += "title=\"" + html.title(v.tooltip) + "\""; }
@@ -1117,7 +1112,6 @@ const tableform = {
                 if (v.halfsize) { d += " asm-halftextbox"; }
                 d += "\" ";
                 d += "data-json=\"" + v.json_field + "\" data-post=\"" + v.post_field + "\" ";
-                d += "autocomplete=\"new-password\" ";
                 if (v.readonly) { d += " data-noedit=\"true\" "; }
                 if (v.validation) { d += "data-validation=\"" + v.validation + "\" "; }
                 if (v.tooltip) { d += "title=\"" + html.title(v.tooltip) + "\""; }
@@ -1131,7 +1125,6 @@ const tableform = {
                 if (v.halfsize) { d += " asm-halftextbox"; }
                 d += "\" ";
                 d += "data-json=\"" + v.json_field + "\" data-post=\"" + v.post_field + "\" ";
-                d += "autocomplete=\"new-password\" ";
                 if (v.readonly) { d += " data-noedit=\"true\" "; }
                 if (v.validation) { d += "data-validation=\"" + v.validation + "\" "; }
                 if (v.tooltip) { d += "title=\"" + html.title(v.tooltip) + "\""; }
@@ -1145,7 +1138,6 @@ const tableform = {
                 if (v.halfsize) { d += " asm-halftextbox"; }
                 d += "\" ";
                 d += "data-json=\"" + v.json_field + "\" data-post=\"" + v.post_field + "\" ";
-                d += "autocomplete=\"new-password\" ";
                 if (v.readonly) { d += " data-noedit=\"true\" "; }
                 if (v.validation) { d += "data-validation=\"" + v.validation + "\" "; }
                 if (v.tooltip) { d += "title=\"" + html.title(v.tooltip) + "\""; }
