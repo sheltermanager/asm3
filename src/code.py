@@ -4568,7 +4568,6 @@ class pp_cardcom(ASMEndpoint):
     use_web_input = False
 
     def content(self, o):
-        from urllib.parse import parse_qsl
         asm3.al.debug("in pp_cardcom_content")
         asm3.al.debug(o.post, "code.pp_cardcom")
         asm3.al.debug(self.query(), "code.pp_cardcom")
@@ -4576,7 +4575,7 @@ class pp_cardcom(ASMEndpoint):
         querystring = self.query()
         if querystring.startswith("?"):
             querystring = querystring[1:]
-        params = dict(parse_qsl(querystring))
+        params = asm3.utils.parse_qs(querystring)
         #ReturnValue contains db-payref. Extract db
         client_reference_id = dict(params).get("ReturnValue","")
         dbname = client_reference_id[0:client_reference_id.find("-")]
