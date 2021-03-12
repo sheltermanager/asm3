@@ -1,4 +1,3 @@
-
 import asm3.al
 import asm3.audit
 import asm3.cachedisk
@@ -149,6 +148,9 @@ DEFAULTS = {
     "AvidOverseasOriginCountry": "",
     "BoardingCostType": "1",
     "CancelReservesOnAdoption": "Yes",
+    "CardcomSuccessURL": "https://secure.cardcom.solutions/DealWasSuccessful.aspx",
+    "CardcomErrorURL": "https://secure.cardcom.solutions/DealWasUnSuccessful.aspx",
+    "CardcomDocumentType": "3",
     "CloneAnimalIncludeLogs": "Yes",
     "CollationIDNext": "0",
     "CostSourceAccount": "9",
@@ -353,9 +355,6 @@ DEFAULTS = {
     "WarnSimilarAnimalName": "Yes",
     "WeightChangeLog": "Yes",
     "WeightChangeLogType": "4",
-    "CardcomSuccessURL": "https://secure.cardcom.solutions/DealWasSuccessful.aspx",
-    "CardcomErrorURL": "https://secure.cardcom.solutions/DealWasUnSuccessful.aspx",
-    "CardcomDocumentType": "3"
 }
 
 def cstring(dbo, key, default = ""):

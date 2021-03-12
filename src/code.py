@@ -2802,7 +2802,6 @@ class donation(JSONEndpoint):
         for did in o.post.integer_list("ids"):
             asm3.financial.delete_donation(o.dbo, o.user, did)
 
-
     def post_tokencharge(self, o):
         self.check(asm3.users.CHANGE_DONATION)
         dbo = o.dbo
@@ -2817,8 +2816,7 @@ class donation(JSONEndpoint):
             processor.tokenCharge(post["payref"], title)
             return (asm3.utils.json({"message": _("Successful token charge.")}))
         except Exception as e:
-           return (asm3.utils.json({"error": str(e)}))
-
+            return (asm3.utils.json({"error": str(e)}))
 
     def post_popuprequest(self, o):
         self.check(asm3.users.CHANGE_DONATION)
@@ -2836,25 +2834,6 @@ class donation(JSONEndpoint):
             return (asm3.utils.json({"url": url}))
         except Exception as e:
             return (asm3.utils.json({"error": str(e)}))
-
-
-    def post_popuprequest(self, o):
-        self.check(asm3.users.EMAIL_PERSON)
-        dbo = o.dbo
-        post = o.post
-        title = post["title"]
-        processor = asm3.financial.get_payment_processor(dbo, post["processor"])
-        if not processor.validatePaymentReference(post["payref"]):
-            return (asm3.utils.json({"error": "Invalid payref"}))
-        if processor.isPaymentReceived(post["payref"]):
-            return (asm3.utils.json({"error": "Expired payref"}))
-        return_url = post["return"] or asm3.configuration.payment_return_url(dbo)
-        try:
-            url = processor.checkoutUrl(post["payref"], return_url, title)
-            return (asm3.utils.json({"url": url}))
-        except Exception as e:
-            return (asm3.utils.json({"error": str(e)}))
-
 
     def post_emailrequest(self, o):
         self.check(asm3.users.EMAIL_PERSON)

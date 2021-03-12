@@ -507,7 +507,7 @@ $(function() {
                 return false;
             });
 
-            const payment_processor_confirmation_dialog= async function(processor_name) {
+            const payment_processor_confirmation_dialog = async function(processor_name) {
                 let row = tableform.table_selected_row(donations.table);
                 header.hide_error();
                 if (!row) { return; }
@@ -523,10 +523,9 @@ $(function() {
                 });
                 //total = total / 100.0;
                 // extract token details
-                var extra_ids = new URLSearchParams(controller.person.EXTRAIDS.replace(/\|/g, '&'));
-                var card_last_4 = extra_ids.get("Cardcom_Last4Digits");
-                var card_last_4 = extra_ids.get("Cardcom_Last4Digits");
-                var card_validity = extra_ids.get("Cardcom_CardValidity")
+                let extra_ids = new URLSearchParams(controller.person.EXTRAIDS.replace(/\|/g, '&'));
+                let card_last_4 = extra_ids.get("Cardcom_Last4Digits");
+                let card_validity = extra_ids.get("Cardcom_CardValidity");
 
                 // Close menu
                 $("#button-processor").asmmenu("hide_all");
@@ -540,7 +539,7 @@ $(function() {
                         row.OWNERID + "&payref=" + row.OWNERCODE + "-" + row.RECEIPTNUMBER;
                 const response = await common.ajax_post("donation", formdata);
                 // Attempt to save any changes before viewing the diary tab
-                let json = JSON.parse(response)
+                let json = JSON.parse(response);
                 if (json.hasOwnProperty("message")) {
                     var timer = setInterval(function() { 
                             clearInterval(timer); 
@@ -552,8 +551,7 @@ $(function() {
                 else {
                     header.show_error(_(json.error)); return;
                 }
-
-            }
+            };
 
             // Payment processor handling
             const payment_processor_popup = async function(processor_name) {
@@ -568,11 +566,11 @@ $(function() {
                 // Close menu
                 $("#button-processor").asmmenu("hide_all");
                 // Attempt to save any changes before viewing the diary tab
-                let json = JSON.parse(response)
+                let json = JSON.parse(response);
                 if (json.url) {
                     let winparams = "height=600,width=600";
-                    var win = window.open(json.url, "cardcom-dialog",winparams)
-                    var timer = setInterval(function() { 
+                    let win = window.open(json.url, "cardcom-dialog",winparams);
+                    let timer = setInterval(function() { 
                         if(win.closed) {
                             clearInterval(timer); 
                             setTimeout(common.route_reload(), 800);

@@ -40,6 +40,7 @@ else:
     import thread
     import urllib2
     import urllib
+    import urlparse
     from cStringIO import StringIO
     from io import BytesIO
     from HTMLParser import HTMLParser
@@ -608,6 +609,13 @@ def json(obj, readable = False):
         return extjson.dumps(obj, default=json_handler).replace("</", "<\\/")
     else:
         return extjson.dumps(obj, default=json_handler, indent=4, separators=(',', ': ')).replace("</", "<\\/")
+
+def parse_qs(s):
+    """ Given a querystring, parses it and returns a dict of elements """
+    if sys.version_info[0] > 2: # PYTHON3
+        return dict(urllib.parse.parse_qsl(s))
+    else:
+        return dict(urlparse.parse_qsl(s))
 
 def address_first_line(address):
     """
@@ -1494,8 +1502,7 @@ def generate_label_pdf(dbo, locale, records, papersize, units, hpitch, vpitch, w
 def is_valid_email_address(s):
     """ Returns True if s is a valid email address """
     regex = "^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$"
-    return (re.search(regex, s) != None)
-
+    return (re.search(regex, s) is not None)
 
 def parse_email_address(s):
     """ Returns a tuple of realname and address from an email """
