@@ -1182,6 +1182,8 @@ ShelterCode
     The animal's shelter code
 ShortCode
     The animal's short shelter code
+MicrochipNumber
+    The animal's microchip number
 AgeGroup
     The animal's age group
 AnimalTypeName

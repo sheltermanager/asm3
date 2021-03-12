@@ -858,6 +858,7 @@ def animalcontrol_tags(dbo, ac):
         "ANIMALNAME":           "ANIMALNAME",
         "SHELTERCODE":          "SHELTERCODE",
         "SHORTCODE":            "SHORTCODE",
+        "MICROCHIPNUMBER":      "IDENTICHIPNUMBER",
         "AGEGROUP":             "AGEGROUP",
         "ANIMALTYPENAME":       "ANIMALTYPENAME",
         "SPECIESNAME":          "SPECIESNAME",
