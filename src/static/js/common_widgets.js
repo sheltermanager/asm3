@@ -12,7 +12,8 @@ const disable_autocomplete = function(t) {
     // Only disable it if autocomplete hasn't already been
     // set by the markup (eg: for password fields that are textbox)
     if (!t.attr("autocomplete")) {
-        return t.prop("autocomplete", "disable" + new Date().getTime());
+        t.prop("autocomplete", "off");
+        //t.prop("autocomplete", "disable" + new Date().getTime());
     }
 };
 
