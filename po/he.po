@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: sheltermanager\n"
 "Report-Msgid-Bugs-To: robin@sheltermanager.com\n"
 "POT-Creation-Date: 2020-06-15 18:36+0000\n"
-"PO-Revision-Date: 2021-01-25 16:11+0200\n"
+"PO-Revision-Date: 2021-02-13 12:45+0200\n"
 "Last-Translator: Saggi <s@elephx.com>\n"
 "Language-Team: Hebrew <http://3.127.98.227/projects/asm/asm3/he/>\n"
 "Language: he\n"
@@ -4814,7 +4814,7 @@ msgstr "משתמש FTP"
 
 #: dbupdate.py
 msgid "FVRCP"
-msgstr "חיסון FVRCP"
+msgstr "מרובעת"
 
 #: animal.js
 msgid "Facebook"

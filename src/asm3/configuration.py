@@ -352,7 +352,10 @@ DEFAULTS = {
     "WarnOOPostcode": "Yes",
     "WarnSimilarAnimalName": "Yes",
     "WeightChangeLog": "Yes",
-    "WeightChangeLogType": "4"
+    "WeightChangeLogType": "4",
+    "CardcomSuccessURL": "https://secure.cardcom.solutions/DealWasSuccessful.aspx",
+    "CardcomErrorURL": "https://secure.cardcom.solutions/DealWasUnSuccessful.aspx",
+    "CardcomDocumentType": "3"
 }
 
 def cstring(dbo, key, default = ""):
@@ -1264,6 +1267,24 @@ def stripe_key(dbo):
 
 def stripe_secret_key(dbo):
     return cstring(dbo, "StripeSecretKey")
+
+def cardcom_terminalnumber(dbo):
+    return cstring(dbo, "CardcomTerminalNumber")
+
+def cardcom_username(dbo):
+    return cstring(dbo, "CardcomUserName")
+
+def cardcom_documenttype(dbo):
+    return cstring(dbo, "CardcomDocumentType")
+
+def cardcom_usetoken(dbo):
+    return cboolean(dbo,"CardcomUseToken", DEFAULTS["CardcomUseToken"] == "Yes")
+
+def cardcom_successurl(dbo):
+    return cstring(dbo, "CardcomSuccessURL")
+
+def cardcom_errorurl(dbo):
+    return cstring(dbo, "CardcomErrorURL")
 
 def use_short_shelter_codes(dbo):
     return cboolean(dbo, "UseShortShelterCodes")

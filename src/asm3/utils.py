@@ -1491,6 +1491,12 @@ def generate_label_pdf(dbo, locale, records, papersize, units, hpitch, vpitch, w
     doc.build(elements)
     return fout.getvalue()
 
+def is_valid_email_address(s):
+    """ Returns True if s is a valid email address """
+    regex = "^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$"
+    return (re.search(regex, s) != None)
+
+
 def parse_email_address(s):
     """ Returns a tuple of realname and address from an email """
     if s.find("<") == -1: return ("", s.strip())

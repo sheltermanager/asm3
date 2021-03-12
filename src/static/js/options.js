@@ -1139,6 +1139,30 @@ $(function() {
                 '</p>',
                 '</div>',
 
+                '<div id="cardcom-options">',
+                '<hr/>',
+                '<p class="centered">' + _("Cardcom Payment Gateway")  + '</p>',
+                '<table>',
+                '<tr><td><label for="CardcomTerminalNumber">' + _("Cardcom Terminal Number") + '</label></td>',
+                '<td><input data="CardcomTerminalNumber" id="CardcomTerminalNumber" type="text" class="asm-textbox asm-doubletextbox" /></td></tr>',
+                '<tr><td><label for="CardcomUserName">' + _("Cardcom User Name") + '</label></td>',
+                '<td><input data="CardcomUserName" id="CardcomUserName" type="text" class="asm-textbox asm-doubletextbox asm-mask" /></td></tr>',
+
+                '<tr><td><label for="CardcomDocumentType">' + _("Cardcom Document Type") + '</label></td>',
+                '<td><input data="CardcomDocumentType" id="CardcomDocumentType" type="text" class="asm-textbox asm-doubletextbox asm-mask" /></td></tr>',
+
+
+                '<tr><td><label for="CardcomSuccessURL">' + _("Cardcom Success URL") + '</label></td>',
+                '<td><input data="CardcomSuccessURL" id="CardcomSuccessURL" type="text" class="asm-textbox asm-doubletextbox" /></td></tr>',
+
+                '<tr><td><label for="CardcomErrorURL">' + _("Cardcom Error URL") + '</label></td>',
+                '<td><input data="CardcomErrorURL" id="CardcomErrorURL" type="text" class="asm-textbox asm-doubletextbox" /></td></tr>',
+
+                '<tr><td>&nbsp;</td><td><input data="CardcomUseToken" id="cardcomusetoken" class="asm-checkbox" type="checkbox" /> <label for="cardcomusetoken">' + _("Allow use of tokens") + '</label></td></tr>',
+                '</table>',
+                '</div>',
+
+
                 '</div>'
             ].join("\n");
         },
