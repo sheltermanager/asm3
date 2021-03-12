@@ -309,7 +309,7 @@ class PetRescuePublisher(AbstractPublisher):
             "medical_notes":            "", # DISABLED an.HEALTHPROBLEMS, # 4,000 characters medical notes
             "multiple_animals":         an.BONDEDANIMALID > 0 or an.BONDEDANIMAL2ID > 0, # More than one animal included in listing true | false
             "photo_urls":               self.getPhotoUrls(an.ID), # List of photo URL strings
-            "status":                   "active" # active | removed | on_hold | rehomed | suspended | group_suspended
+            "status":                   "active" # active | removed | on_hold | rehomed 
         }
 
 

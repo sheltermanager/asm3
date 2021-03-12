@@ -7,6 +7,15 @@
 // String shown in asm-mask fields instead of the value
 const MASK_VALUE = "****************";
 
+// Disables autocomplete on the given JQuery node t
+const disable_autocomplete = function(t) {
+    // Only disable it if autocomplete hasn't already been
+    // set by the markup (eg: for password fields that are textbox)
+    if (!t.attr("autocomplete")) {
+        return t.prop("autocomplete", "disable" + new Date().getTime());
+    }
+};
+
 // Generates a javascript object of parameters by looking
 // at the data attribute of all items matching the
 // selector
@@ -234,6 +243,7 @@ $.fn.number = function() {
                 }
             });
         }
+        disable_autocomplete($(this));
         $(this).keypress(function(e) {
             let k = e.charCode || e.keyCode;
             let ch = String.fromCharCode(k);
@@ -252,6 +262,7 @@ $.fn.number = function() {
 $.fn.alphanumber = function() {
     const allowed = new RegExp("[0-9A-Za-z\\.\\*\\-]");
     this.each(function() {
+        disable_autocomplete($(this));
         $(this).keypress(function(e) {
             let k = e.charCode || e.keyCode;
             let ch = String.fromCharCode(k);
@@ -270,6 +281,7 @@ $.fn.alphanumber = function() {
 $.fn.intnumber = function() {
     const allowed = new RegExp("[0-9\\-]");
     this.each(function() {
+        disable_autocomplete($(this));
         $(this).keypress(function(e) {
             let k = e.charCode || e.keyCode;
             let ch = String.fromCharCode(k);
@@ -290,6 +302,7 @@ $.fn.intnumber = function() {
 $.fn.ipnumber = function() {
     const allowed = new RegExp("[0-9\\.\\/\\:abcdef ]");
     this.each(function() {
+        disable_autocomplete($(this));
         $(this).keypress(function(e) {
             let k = e.charCode || e.keyCode;
             let ch = String.fromCharCode(k);
@@ -318,6 +331,7 @@ const PHONE_RULES = [
 $.fn.phone = function() {
     this.each(function() {
         if (!config.bool("FormatPhoneNumbers")) { return; } 
+        disable_autocomplete($(this));
         $(this).blur(function(e) {
             let t = $(this);
             let num = String(t.val()).replace(/\D/g, ''); // Throw away all but the numbers
@@ -338,6 +352,7 @@ $.fn.phone = function() {
 
 $.fn.date = function() {
     this.each(function() {
+        disable_autocomplete($(this));
         let dayfilter = $(this).attr("data-onlydays");
         let nopast = $(this).attr("data-nopast");
         if (dayfilter) {
@@ -427,6 +442,7 @@ $.fn.time = function() {
             deselectButtonText: _("Deselect"),
             showDeselectButton: false
         });
+        disable_autocomplete($(this));
         $(this).keypress(function(e) {
             let k = e.charCode || e.keyCode;
             let ch = String.fromCharCode(k);
@@ -1199,6 +1215,7 @@ $.widget("asm.textbox", {
 
     _create: function() {
         let self = this;
+        disable_autocomplete(this.element);
         this.element.on("keypress", function(e) {
             if (self.options.disabled) {
                 e.preventDefault();
@@ -1547,6 +1564,7 @@ $.fn.currency = function(cmd, newval) {
     if (cmd === undefined) {
         const allowed = [ '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', asm.currencyradix, '-' ];
         this.each(function() {
+            disable_autocomplete($(this));
             $(this).keypress(function(e) {
                 let k = e.charCode || e.keyCode;
                 let ch = String.fromCharCode(k);
