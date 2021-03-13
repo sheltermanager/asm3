@@ -1504,7 +1504,7 @@ $(function() {
             if (asm.locale != "en") {
                 $(".us").hide();
             }
-            if (asm.locale != "he" || asm.locale != "en_IL") {
+            if (asm.locale != "he" && asm.locale != "en_IL") {
                 $(".israel").hide();
             }
 
