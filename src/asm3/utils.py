@@ -559,8 +559,7 @@ def nulltostr(s):
         if s is None: return ""
         return str(s)
     except:
-        em = "[" + str(sys.exc_info()[0]) + "]"
-        return em
+        return ""
 
 def filename_only(filename):
     """ If a filename has a path, return just the name """
@@ -1085,17 +1084,20 @@ def get_asm_news(dbo):
         s = get_url(URL_NEWS)["response"]
         asm3.al.debug("Retrieved ASM news, got %d bytes" % len(s), "utils.get_asm_news", dbo)
         return s
-    except:
-        em = str(sys.exc_info()[0])
-        asm3.al.error("Failed reading ASM news: %s" % em, "utils.get_asm_news", dbo)
+    except Exception as err:
+        asm3.al.error("Failed reading ASM news: %s" % err, "utils.get_asm_news", dbo)
 
-def get_url(url, headers = {}, cookies = {}, timeout = None):
+def get_url(url, headers = {}, cookies = {}, timeout = None, params = None):
     """
     Retrieves a URL as text
+    headers: dict of HTTP headers
+    cookies: dict of cookies
+    timeout: timeout value in seconds as a float
+    params: dict of querystring elements
     """
     # requests timeout is seconds/float, but some may call this with integer ms instead so convert
     if timeout is not None and timeout > 1000: timeout = timeout / 1000.0
-    r = requests.get(url, headers = headers, cookies=cookies, timeout=timeout)
+    r = requests.get(url, headers = headers, cookies=cookies, timeout=timeout, params=params)
     return { "cookies": r.cookies, "headers": r.headers, "response": r.text, "status": r.status_code, "requestheaders": r.request.headers, "requestbody": r.request.body }
 
 def get_image_url(url, headers = {}, cookies = {}, timeout = None):

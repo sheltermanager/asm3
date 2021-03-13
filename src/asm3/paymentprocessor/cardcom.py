@@ -1,8 +1,4 @@
 
-
-import sys
-import requests
-
 import asm3.configuration
 import asm3.utils
 
@@ -68,11 +64,11 @@ class Cardcom(PaymentProcessor):
             params.update(p)
 
         asm_debug("params: %s" % params, "cardcom.tokenCharge", self.dbo)
-        response = requests.post(url, data=params)
-        if not response.ok:
-            raise Exception("Response not ok: %s %s" % (response.status_code, response.text))
+        r = asm3.utils.post_form(url, params)
+        if r["status"] != 200:
+            raise Exception("Response not ok: %s %s" % (r["status"], r["response"]))
 
-        results = asm3.utils.parse_qs(response.text)
+        results = asm3.utils.parse_qs(r["response"])
         asm_debug("parsed response: %s" % results)
 
         if results["ResponseCode"] != "0":
@@ -82,7 +78,7 @@ class Cardcom(PaymentProcessor):
         trxid = "%s/%s" % (results.get('InvoiceResponse.InvoiceNumber',''), results.get('InternalDealNumber',''))
         rcvd = asm3.utils.cint(results.get("ExtShvaParams.Sum36", total_charge_sum / 100.0))
 
-        self.markPaymentReceived(payref, trxid, rcvd, 0, 0, response.text)
+        self.markPaymentReceived(payref, trxid, rcvd, 0, 0, r["response"])
 
         InvoiceResponseCode = results.get("InvoiceResponse.ResponseCode")
         if InvoiceResponseCode != "0":
@@ -99,13 +95,13 @@ class Cardcom(PaymentProcessor):
             </head>
             <body></body>
             </html>""" % url
-        except:
+        except Exception as err:
             return """<DOCTYPE html>
                 <html>
                 <head>
                 </head>
                 <body>%s</body>
-                </html>""" % sys.exc_info()[0]
+                </html>""" % err
 
     def checkoutUrl(self, payref, return_url="", item_description=""):
         asm_debug("%s %s %s" % (payref, return_url, item_description), "cardcom.checkoutUrl", self.dbo)
@@ -151,13 +147,13 @@ class Cardcom(PaymentProcessor):
             params.update(p)        
 
         asm_debug("params: %s" % params, "cardcom.checkoutUrl", self.dbo)
-        response = requests.post(url, data=params)
-        asm_debug("response %s, text: %s" % (response.status_code, response.text), "cardcom.checkoutUrl", self.dbo)
-        if not response.ok:
-            raise Exception("Response not ok: %s %s" % (response.status_code, response.text))
-        cardcom_reply = asm3.utils.parse_qs(response.text)
+        r = asm3.utils.post_form(url, params)
+        asm_debug("response %s, text: %s" % (r["status"], r["response"]), "cardcom.checkoutUrl", self.dbo)
+        if r["status"] != 200:
+            raise Exception("Response not ok: %s %s" % (r["status"], r["response"]))
+        cardcom_reply = asm3.utils.parse_qs(r["response"])
         if "url" not in cardcom_reply:
-            raise Exception("No url in response text: %s" % response.text)
+            raise Exception("No url in response text: %s" % r["response"])
         asm_debug("return cardcom url: %s" % cardcom_reply['url'], "cardcom.checkoutUrl", self.dbo)
         return cardcom_reply['url']
 
@@ -165,18 +161,18 @@ class Cardcom(PaymentProcessor):
         asm_debug(rawdata, "cardcom.receive", self.dbo)
         # make request to retrieve more information on the transaction
         params = asm3.utils.parse_qs(rawdata)
-        url = 'https://secure.cardcom.solutions/Interface/BillGoldGetLowProfileIndicator.aspx'
+        url = "https://secure.cardcom.solutions/Interface/BillGoldGetLowProfileIndicator.aspx"
         params = {
             "codepage": "65001", # unicode
             "terminalnumber": params["terminalnumber"],
-            "username": asm3.configuration.cardcom_username(self.dbo), #
+            "username": asm3.configuration.cardcom_username(self.dbo),
             "lowprofilecode": params["lowprofilecode"]
         }
 
-        response = requests.get(url, params=params)
-        if response.ok:
+        r = asm3.utils.get_url(url, params=params)
+        if r["status"] != 200:
             # parse results
-            raw_results = response.text
+            raw_results = r["response"]
             results = asm3.utils.parse_qs(raw_results)
             #check 
             if results.get("OperationResponse") != "0":
