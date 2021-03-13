@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ASM3\n"
 "Report-Msgid-Bugs-To: robin@sheltermanager.com\n"
-"POT-Creation-Date: 2021-03-01 08:53+0000\n"
+"POT-Creation-Date: 2021-03-13 12:15+0000\n"
 "Last-Translator: Robin Rawson-Tetley <robin@sheltermanager.com>\n"
 "Language-Team: en <robin@sheltermanager.com>\n"
 "Language: en\n"
@@ -1087,6 +1087,10 @@ msgstr ""
 msgid "Allow use of OpenOffice document templates"
 msgstr ""
 
+#: options.js
+msgid "Allow use of tokens"
+msgstr ""
+
 #: search.py options.js
 msgid "Alphabetically A-Z"
 msgstr ""
@@ -1475,6 +1479,10 @@ msgstr ""
 
 #: dbupdate.py
 msgid "Arabian"
+msgstr ""
+
+#: donations.js
+msgid "Are you sure?"
 msgstr ""
 
 #: lostfound_find.js lostfound_find_results.js
@@ -2218,6 +2226,38 @@ msgstr ""
 
 #: dbupdate.py
 msgid "Cane Corso Mastiff"
+msgstr ""
+
+#: donations.js
+msgid "Cardcom"
+msgstr ""
+
+#: options.js
+msgid "Cardcom Document Type"
+msgstr ""
+
+#: options.js
+msgid "Cardcom Error URL"
+msgstr ""
+
+#: options.js
+msgid "Cardcom Payment Gateway"
+msgstr ""
+
+#: options.js
+msgid "Cardcom Success URL"
+msgstr ""
+
+#: options.js
+msgid "Cardcom Terminal Number"
+msgstr ""
+
+#: donations.js
+msgid "Cardcom Token Charge"
+msgstr ""
+
+#: options.js
+msgid "Cardcom User Name"
 msgstr ""
 
 #: dbupdate.py
@@ -3062,6 +3102,10 @@ msgstr ""
 
 #: dbupdate.py
 msgid "Credit Card"
+msgstr ""
+
+#: donations.js
+msgid "Credit card"
 msgstr ""
 
 #: dbupdate.py
@@ -4803,6 +4847,10 @@ msgstr ""
 
 #: dbupdate.py
 msgid "Expenses::Water"
+msgstr ""
+
+#: donations.js
+msgid "Expiration"
 msgstr ""
 
 #: vaccination.js
@@ -11418,6 +11466,10 @@ msgstr ""
 msgid "Success"
 msgstr ""
 
+#: code.py
+msgid "Successful token charge."
+msgstr ""
+
 #: onlineform_incoming.js
 msgid "Successfully attached to {0}"
 msgstr ""
@@ -12665,7 +12717,7 @@ msgstr ""
 msgid "Tosa Inu"
 msgstr ""
 
-#: stocklevel.js
+#: stocklevel.js donations.js
 msgid "Total"
 msgstr ""
 
@@ -13889,6 +13941,12 @@ msgstr ""
 msgid "When receiving payments, allow the deposit account to be overridden"
 msgstr ""
 
+#: options.js
+msgid ""
+"When storing processed forms as media, apply tamper proofing and make them "
+"read only"
+msgstr ""
+
 #: main.js
 msgid ""
 "When you use Move > Adopt an animal, ASM will automatically return any open "
@@ -14008,8 +14066,8 @@ msgstr ""
 
 #: mobile.py onlineform.py i18n.py dbupdate.py wordprocessor.py
 #: publish_options.js users.js animal_find_results.js waitinglist_results.js
-#: reports.js sql.js accounts.js lostfound_find.js additional.js lookups.js
-#: person_find_results.js
+#: reports.js sql.js donations.js accounts.js lostfound_find.js additional.js
+#: lookups.js person_find_results.js
 msgid "Yes"
 msgstr ""
 

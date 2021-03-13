@@ -112,6 +112,7 @@ DEFAULTS = {
     "AutoCancelReservesDays": "14",
     "AutoDefaultShelterCode": "Yes",
     "AutoDefaultVaccBatch": "Yes",
+    "AutoHashProcessedForms": "Yes",
     "AutoInsuranceStart": "0",
     "AutoInsuranceEnd": "0",
     "AutoInsuranceNext": "0",
@@ -594,6 +595,9 @@ def auto_cancel_reserves_days(dbo):
 
 def auto_cancel_hold_days(dbo):
     return cint(dbo, "AutoCancelHoldDays", int(DEFAULTS["AutoCancelHoldDays"]))
+
+def auto_hash_processed_forms(dbo):
+    return cboolean(dbo, "AutoHashProcessedForms", DEFAULTS["AutoHashProcessedForms"] == "Yes")
 
 def auto_insurance_next(dbo, newins = 0):
     if newins == 0:
