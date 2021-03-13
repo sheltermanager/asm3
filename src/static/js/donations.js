@@ -350,19 +350,15 @@ $(function() {
                 s += '<li id="button-stripe" class="processorbutton asm-menu-item"><a '
                         + ' target="_blank" href="#">' + html.icon("stripe") + ' ' + _("Stripe") + '</a></li>';
             }
-            if (config.str("CardcomUserName")) /*Cardcom*/{
+            if (config.str("CardcomUserName")) {
                 s += '<li id="button-cardcom" class="processorbutton asm-menu-item"><a '
                         + ' target="_blank" href="#">' + html.icon("cardcom") + ' ' + _("Cardcom") + '</a></li>';
-            }
-
-            if (controller.person) {
-                // Cardcom token payment provider only works in the context of a person who has stored tokens
-                if (controller.person.EXTRAIDS != null) 
-                {
-                    var extra_ids = new URLSearchParams(controller.person.EXTRAIDS.replace(/\|/g, '&'));
-                    if (controller.person && config.str("CardcomUseToken") && extra_ids.get("Cardcom_Token")>"") /*Cardcom Token*/{
+                if (controller.person && controller.person.EXTRAIDS) {
+                    // Cardcom token payment provider only works in the context of a person who has stored tokens
+                    let extra_ids = new URLSearchParams(controller.person.EXTRAIDS.replace(/\|/g, '&'));
+                    if (config.str("CardcomUseToken") && extra_ids.get("Cardcom_Token")>"") {
                         s += '<li id="button-cardcom-token" class="processorbutton asm-menu-item"><a '
-                                + ' target="_blank" href="#">' + html.icon("cardcom") + ' ' + _("Cardcom Token Charge") + '</a></li>';
+                            + ' target="_blank" href="#">' + html.icon("cardcom") + ' ' + _("Cardcom Token Charge") + '</a></li>';
                     }
                 }
             }
@@ -539,7 +535,7 @@ $(function() {
                         row.OWNERID + "&payref=" + row.OWNERCODE + "-" + row.RECEIPTNUMBER;
                 const response = await common.ajax_post("donation", formdata);
                 // Attempt to save any changes before viewing the diary tab
-                let json = JSON.parse(response);
+                let json = jQuery.parseJSON(response);
                 if (json.hasOwnProperty("message")) {
                     var timer = setInterval(function() { 
                             clearInterval(timer); 
@@ -561,17 +557,17 @@ $(function() {
                 if (row.DATE) { header.show_error(_("This payment has already been received")); return; }
 
                 let formdata = "mode=popuprequest&processor=" + processor_name + "&person=" +
-                        row.OWNERID + "&payref=" + row.OWNERCODE + "-" + row.RECEIPTNUMBER;
+                    row.OWNERID + "&payref=" + row.OWNERCODE + "-" + row.RECEIPTNUMBER;
                 const response = await common.ajax_post("donation", formdata);
                 // Close menu
                 $("#button-processor").asmmenu("hide_all");
                 // Attempt to save any changes before viewing the diary tab
-                let json = JSON.parse(response);
+                let json = jQuery.parseJSON(response);
                 if (json.url) {
                     let winparams = "height=600,width=600";
                     let win = window.open(json.url, "cardcom-dialog",winparams);
                     let timer = setInterval(function() { 
-                        if(win.closed) {
+                        if (win.closed) {
                             clearInterval(timer); 
                             setTimeout(common.route_reload(), 800);
                         }

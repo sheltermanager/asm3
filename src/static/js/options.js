@@ -1139,9 +1139,9 @@ $(function() {
                 '</p>',
                 '</div>',
 
-                '<div id="cardcom-options">',
+                '<div id="cardcom-options" class="israel">',
                 '<hr/>',
-                '<p class="centered">' + _("Cardcom Payment Gateway")  + '</p>',
+                '<p class="centered strong">' + _("Cardcom Payment Gateway")  + '</p>',
                 '<table>',
                 '<tr><td><label for="CardcomTerminalNumber">' + _("Cardcom Terminal Number") + '</label></td>',
                 '<td><input data="CardcomTerminalNumber" id="CardcomTerminalNumber" type="text" class="asm-textbox asm-doubletextbox" /></td></tr>',
@@ -1503,6 +1503,9 @@ $(function() {
             // Hide options not applicable for some locales
             if (asm.locale != "en") {
                 $(".us").hide();
+            }
+            if (asm.locale != "he" || asm.locale != "en_IL") {
+                $(".israel").hide();
             }
 
             // Hide other non-relevant options
