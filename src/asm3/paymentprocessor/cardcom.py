@@ -65,7 +65,7 @@ class Cardcom(PaymentProcessor):
 
         asm_debug("params: %s" % params, "cardcom.tokenCharge", self.dbo)
         r = asm3.utils.post_form(url, params)
-        if r["status"] < 400:
+        if not r["status"] < 400:
             raise Exception("Response not ok: %s %s" % (r["status"], r["response"]))
 
         results = asm3.utils.parse_qs(r["response"])
@@ -149,7 +149,7 @@ class Cardcom(PaymentProcessor):
         asm_debug("params: %s" % params, "cardcom.checkoutUrl", self.dbo)
         r = asm3.utils.post_form(url, params)
         asm_debug("response %s, text: %s" % (r["status"], r["response"]), "cardcom.checkoutUrl", self.dbo)
-        if r["status"] < 400:
+        if not r["status"] < 400:
             raise Exception("Response not ok: %s %s" % (r["status"], r["response"]))
         cardcom_reply = asm3.utils.parse_qs(r["response"])
         if "url" not in cardcom_reply:
