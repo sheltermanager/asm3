@@ -1,0 +1,22 @@
+Appointments between two dates (mail)
+###
+Clinic
+###
+34107/Any
+###
+All clinic appointments scheduled between two dates
+###
+en
+###
+SELECT c.DateTime, o.OwnerName, o.OwnerAddress, o.ownerTown, o.OwnerCounty, o.OwnerPostcode, o.HomeTelephone, o.MobileTelephone, o.EmailAddress, 
+a.AnimalName, a.BreedName, s.SpeciesName, a.AnimalAge, st.Status AS StatusName
+FROM clinicappointment c
+INNER JOIN lksclinicstatus st ON st.ID = c.Status
+LEFT OUTER JOIN animal a ON a.ID = c.AnimalID
+LEFT OUTER JOIN species s ON s.ID = a.SpeciesID
+LEFT OUTER JOIN owner o ON o.ID = c.OwnerID
+WHERE c.DateTime >= '$ASK DATE Appointments between$' AND c.DateTime <= '$ASK DATE and$ 23:59:59'
+ORDER BY c.DateTime
+###
+MAIL
+
