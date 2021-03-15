@@ -1092,6 +1092,7 @@ $(function() {
                 '<div id="tab-onlineforms">',
                 '<p><label for="autoremoveforms">' + _("Remove incoming forms after") + '</label> <input data="AutoRemoveIncomingFormsDays" id="autoremoveforms" type="text" data-min="7" data-max="56" class="asm-halftextbox asm-textbox asm-numberbox" /> ' + _(" days.") + '<br/>',
                 '<input data="rc:DontRemoveProcessedForms" id="removeprocessedforms" class="asm-checkbox" type="checkbox" /> <label for="removeprocessedforms">' + _("Remove processed forms when I leave the incoming forms screens") + '</label><br/>',
+                '<input data="AutoHashProcessedForms" id="hashprocessedforms" class="asm-checkbox" type="checkbox" /> <label for="hashprocessedforms">' + _("When storing processed forms as media, apply tamper proofing and make them read only") + '</label><br/>',
                 '</p>',
                 '</div>'
             ].join("\n");
@@ -1138,6 +1139,30 @@ $(function() {
                     .replace("{0}", "<br/><b>" + asm.baseurl + "/pp_stripe" + "</b>"),
                 '</p>',
                 '</div>',
+
+                '<div id="cardcom-options" class="israel">',
+                '<hr/>',
+                '<p class="centered strong">' + _("Cardcom Payment Gateway")  + '</p>',
+                '<table>',
+                '<tr><td><label for="CardcomTerminalNumber">' + _("Cardcom Terminal Number") + '</label></td>',
+                '<td><input data="CardcomTerminalNumber" id="CardcomTerminalNumber" type="text" class="asm-textbox asm-doubletextbox" /></td></tr>',
+                '<tr><td><label for="CardcomUserName">' + _("Cardcom User Name") + '</label></td>',
+                '<td><input data="CardcomUserName" id="CardcomUserName" type="text" class="asm-textbox asm-doubletextbox asm-mask" /></td></tr>',
+
+                '<tr><td><label for="CardcomDocumentType">' + _("Cardcom Document Type") + '</label></td>',
+                '<td><input data="CardcomDocumentType" id="CardcomDocumentType" type="text" class="asm-textbox asm-doubletextbox asm-mask" /></td></tr>',
+
+
+                '<tr><td><label for="CardcomSuccessURL">' + _("Cardcom Success URL") + '</label></td>',
+                '<td><input data="CardcomSuccessURL" id="CardcomSuccessURL" type="text" class="asm-textbox asm-doubletextbox" /></td></tr>',
+
+                '<tr><td><label for="CardcomErrorURL">' + _("Cardcom Error URL") + '</label></td>',
+                '<td><input data="CardcomErrorURL" id="CardcomErrorURL" type="text" class="asm-textbox asm-doubletextbox" /></td></tr>',
+
+                '<tr><td>&nbsp;</td><td><input data="CardcomUseToken" id="cardcomusetoken" class="asm-checkbox" type="checkbox" /> <label for="cardcomusetoken">' + _("Allow use of tokens") + '</label></td></tr>',
+                '</table>',
+                '</div>',
+
 
                 '</div>'
             ].join("\n");
@@ -1479,6 +1504,9 @@ $(function() {
             // Hide options not applicable for some locales
             if (asm.locale != "en") {
                 $(".us").hide();
+            }
+            if (asm.locale != "he" && asm.locale != "en_IL") {
+                $(".israel").hide();
             }
 
             // Hide other non-relevant options

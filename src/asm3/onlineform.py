@@ -893,9 +893,13 @@ def attach_form(dbo, username, linktype, linkid, collationid):
     Attaches the incoming form to the media tab. Finds any images in the form
     and attaches those as images in the media tab of linktype/linkid.
     """
+    l = dbo.locale
     formname = get_onlineformincoming_name(dbo, collationid)
     formhtml = get_onlineformincoming_html_print(dbo, [collationid,])
-    asm3.media.create_document_media(dbo, username, linktype, linkid, formname, formhtml )
+    mid = asm3.media.create_document_media(dbo, username, linktype, linkid, formname, formhtml )
+    if asm3.configuration.auto_hash_processed_forms(dbo):
+        dtstr = "%s %s" % (asm3.i18n.python2display(l, dbo.now()), asm3.i18n.format_time(dbo.now()))
+        asm3.media.sign_document(dbo, username, mid, "", asm3.i18n._("Processed by {0} on {1}", l).format(username, dtstr))
     fields = get_onlineformincoming_detail(dbo, collationid)
     for f in fields:
         if f.VALUE.startswith("data:image/jpeg"):

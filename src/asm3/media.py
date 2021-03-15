@@ -534,6 +534,7 @@ def sign_document(dbo, username, mid, sigurl, signdate):
     """
     Signs an HTML document.
     sigurl: An HTML5 data: URL containing an image of the signature
+    signdate: A string representing the signing date and time of signing.
     """
     asm3.al.debug("signing document %s for %s" % (mid, username), "media.sign_document", dbo)
     SIG_PLACEHOLDER = "signature:placeholder"
@@ -555,7 +556,7 @@ def sign_document(dbo, username, mid, sigurl, signdate):
         # Create the signature at the foot of the document
         asm3.al.debug("document %s: no placeholder, appending" % mid, "media.sign_document", dbo)
         sig = "<hr />\n"
-        sig += '<p><img src="' + sigurl + '" /></p>\n'
+        if sigurl != "": sig += '<p><img src="' + sigurl + '" /></p>\n'
         sig += "<p>%s</p>\n" % signdate
         content += sig
     # Create a hash of the contents and store it with the media record

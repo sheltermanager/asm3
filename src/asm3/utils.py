@@ -40,6 +40,7 @@ else:
     import thread
     import urllib2
     import urllib
+    import urlparse
     from cStringIO import StringIO
     from io import BytesIO
     from HTMLParser import HTMLParser
@@ -558,8 +559,7 @@ def nulltostr(s):
         if s is None: return ""
         return str(s)
     except:
-        em = "[" + str(sys.exc_info()[0]) + "]"
-        return em
+        return ""
 
 def filename_only(filename):
     """ If a filename has a path, return just the name """
@@ -608,6 +608,13 @@ def json(obj, readable = False):
         return extjson.dumps(obj, default=json_handler).replace("</", "<\\/")
     else:
         return extjson.dumps(obj, default=json_handler, indent=4, separators=(',', ': ')).replace("</", "<\\/")
+
+def parse_qs(s):
+    """ Given a querystring, parses it and returns a dict of elements """
+    if sys.version_info[0] > 2: # PYTHON3
+        return dict(urllib.parse.parse_qsl(s))
+    else:
+        return dict(urlparse.parse_qsl(s))
 
 def address_first_line(address):
     """
@@ -1077,17 +1084,20 @@ def get_asm_news(dbo):
         s = get_url(URL_NEWS)["response"]
         asm3.al.debug("Retrieved ASM news, got %d bytes" % len(s), "utils.get_asm_news", dbo)
         return s
-    except:
-        em = str(sys.exc_info()[0])
-        asm3.al.error("Failed reading ASM news: %s" % em, "utils.get_asm_news", dbo)
+    except Exception as err:
+        asm3.al.error("Failed reading ASM news: %s" % err, "utils.get_asm_news", dbo)
 
-def get_url(url, headers = {}, cookies = {}, timeout = None):
+def get_url(url, headers = {}, cookies = {}, timeout = None, params = None):
     """
     Retrieves a URL as text
+    headers: dict of HTTP headers
+    cookies: dict of cookies
+    timeout: timeout value in seconds as a float
+    params: dict of querystring elements
     """
     # requests timeout is seconds/float, but some may call this with integer ms instead so convert
     if timeout is not None and timeout > 1000: timeout = timeout / 1000.0
-    r = requests.get(url, headers = headers, cookies=cookies, timeout=timeout)
+    r = requests.get(url, headers = headers, cookies=cookies, timeout=timeout, params=params)
     return { "cookies": r.cookies, "headers": r.headers, "response": r.text, "status": r.status_code, "requestheaders": r.request.headers, "requestbody": r.request.body }
 
 def get_image_url(url, headers = {}, cookies = {}, timeout = None):
@@ -1490,6 +1500,11 @@ def generate_label_pdf(dbo, locale, records, papersize, units, hpitch, vpitch, w
     # Build the PDF
     doc.build(elements)
     return fout.getvalue()
+
+def is_valid_email_address(s):
+    """ Returns True if s is a valid email address """
+    regex = "^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$"
+    return (re.search(regex, s) is not None)
 
 def parse_email_address(s):
     """ Returns a tuple of realname and address from an email """

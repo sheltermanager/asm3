@@ -37,6 +37,7 @@ import asm3.onlineform
 import asm3.paymentprocessor.base
 import asm3.paymentprocessor.paypal
 import asm3.paymentprocessor.stripeh
+import asm3.paymentprocessor.cardcom
 import asm3.person
 import asm3.publish
 import asm3.publishers.base
@@ -2801,6 +2802,39 @@ class donation(JSONEndpoint):
         for did in o.post.integer_list("ids"):
             asm3.financial.delete_donation(o.dbo, o.user, did)
 
+    def post_tokencharge(self, o):
+        self.check(asm3.users.CHANGE_DONATION)
+        dbo = o.dbo
+        post = o.post
+        title = post["title"]
+        processor = asm3.financial.get_payment_processor(dbo, post["processor"])
+        if not processor.validatePaymentReference(post["payref"]):
+            return (asm3.utils.json({"error": "Invalid payref"}))
+        if processor.isPaymentReceived(post["payref"]):
+            return (asm3.utils.json({"error": "Expired payref"}))
+        try:
+            processor.tokenCharge(post["payref"], title)
+            return (asm3.utils.json({"message": _("Successful token charge.")}))
+        except Exception as e:
+            return (asm3.utils.json({"error": str(e)}))
+
+    def post_popuprequest(self, o):
+        self.check(asm3.users.CHANGE_DONATION)
+        dbo = o.dbo
+        post = o.post
+        title = post["title"]
+        processor = asm3.financial.get_payment_processor(dbo, post["processor"])
+        if not processor.validatePaymentReference(post["payref"]):
+            return (asm3.utils.json({"error": "Invalid payref"}))
+        if processor.isPaymentReceived(post["payref"]):
+            return (asm3.utils.json({"error": "Expired payref"}))
+        return_url = post["return"] or asm3.configuration.payment_return_url(dbo)
+        try:
+            url = processor.checkoutUrl(post["payref"], return_url, title)
+            return (asm3.utils.json({"url": url}))
+        except Exception as e:
+            return (asm3.utils.json({"error": str(e)}))
+
     def post_emailrequest(self, o):
         self.check(asm3.users.EMAIL_PERSON)
         dbo = o.dbo
@@ -4524,6 +4558,40 @@ class options(JSONEndpoint):
     def post_save(self, o):
         asm3.configuration.csave(o.dbo, o.user, o.post)
         self.reload_config()
+
+class pp_cardcom(ASMEndpoint):
+    """ 
+    Cardcom Indicator endpoint. 
+    """
+    url = "pp_cardcom"
+    check_logged_in = False
+    use_web_input = False
+
+    def content(self, o):
+        asm3.al.debug("in pp_cardcom_content")
+        asm3.al.debug(o.post, "code.pp_cardcom")
+        asm3.al.debug(self.query(), "code.pp_cardcom")
+
+        querystring = self.query()
+        if querystring.startswith("?"):
+            querystring = querystring[1:]
+        params = asm3.utils.parse_qs(querystring)
+        #ReturnValue contains db-payref. Extract db
+        client_reference_id = dict(params).get("ReturnValue","")
+        dbname = client_reference_id[0:client_reference_id.find("-")]
+        dbo = asm3.db.get_database(dbname)
+        if dbo.database in asm3.db.ERROR_VALUES:
+            asm3.al.error("invalid database '%s'" % dbname, "code.pp_cardcom")
+            return
+        try:
+            p = asm3.paymentprocessor.cardcom.Cardcom(dbo)
+            p.receive(querystring)
+        except asm3.paymentprocessor.base.ProcessorError:
+            # ProcessorError subclasses are thrown when there is a problem with the 
+            # data PayPal have sent, but we do not want them to send it again.
+            # By catching these and returning a 200 empty body, they will not
+            # send it again.
+            return
 
 class pp_paypal(ASMEndpoint):
     """ 
