@@ -388,17 +388,29 @@ class JSONEndpoint(ASMEndpoint):
         self.check(self.get_permissions)
         o = self._params()
         c = self.controller(o)
-        self.header("X-Frame-Options", "SAMEORIGIN")
         self.cache_control(0)
         if self.js_module == "":
             self.js_module = self.url
         if not o.post["json"] == "true":
             self.content_type("text/html")
-            footer = "<script>\n$(document).ready(function() { " \
+            nonce = asm3.utils.uuid_str()
+            self.header("X-Frame-Options", "SAMEORIGIN") # Do not allow external websites to embed us in an iframe
+            self.header("X-Content-Type-Options", "nosniff") # Tell browser not to figure out mime types
+            self.header("X-XSS-Protection", "1") # Safari only, try to detect and sanitise XSS attacks 
+            self.header("Strict-Transport-Security", "max-age=%s" % CACHE_ONE_YEAR) 
+            self.header("Content-Security-Policy", "script-src 'self' 'nonce-%s'; img-src 'self' data: *;" % nonce)
+            content = "%(header)s\n" \
+                "<script nonce='%(nonce)s'>\n" \
+                "controller=%(controller)s;\n" \
+                "$(document).ready(function() { " \
                 "common.route_listen(); " \
                 "common.module_start(\"%(js_module)s\"); " \
-                "});\n</script>\n</body>\n</html>" % { "js_module": self.js_module }
-            return "%s\n<script type=\"text/javascript\">\ncontroller = %s;\n</script>\n%s" % (asm3.html.header("", session), asm3.utils.json(c), footer)
+                "});\n</script>\n</body>\n</html>" % { 
+                    "controller": asm3.utils.json(c),
+                    "header": asm3.html.header("", session),
+                    "js_module": self.js_module, 
+                    "nonce": nonce }
+            return content
         else:
             self.content_type("application/json")
             return asm3.utils.json(c)
