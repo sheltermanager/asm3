@@ -1057,11 +1057,16 @@ class login(ASMEndpoint):
              "qrimg": QR_IMG_SRC,
              "target": post["target"]
         }
-        s += "<script type=\"text/javascript\">\ncontroller = %s;\n</script>\n" % asm3.utils.json(c)
-        s += '<script>\n$(document).ready(function() { $("body").append(login.render()); login.bind(); });\n</script>'
+        nonce = asm3.utils.uuid_str()
+        s += '<script nonce="%s">\ncontroller = %s;\n' % (nonce, asm3.utils.json(c))
+        s += '$(document).ready(function() { $("body").append(login.render()); login.bind(); });\n</script>'
         s += asm3.html.footer()
         self.content_type("text/html")
         self.header("X-Frame-Options", "SAMEORIGIN")
+        self.header("X-Content-Type-Options", "nosniff") 
+        self.header("X-XSS-Protection", "1") 
+        self.header("Strict-Transport-Security", "max-age=%s" % CACHE_ONE_YEAR) 
+        self.header("Content-Security-Policy", "script-src 'self' 'nonce-%s'; img-src 'self' data: ;" % nonce)
         return s
 
     def post_all(self, o):

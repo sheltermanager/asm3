@@ -6,7 +6,7 @@ const login = {
     render: function() {
         let h = [
             '<div id="asm-login-window" class="dialogshadow" style="display: none">',
-            '<div id="asm-login-splash" />',
+            '<div id="asm-login-splash"></div>',
             '<table width="auto" style="margin-left: auto; margin-right: auto; text-align: right; padding: 10px">',
             '<tr class="asm-account-row hidden">',
             '<td>',
@@ -234,7 +234,7 @@ const login = {
         });
 
         // Set the splash image. If the database has a custom one set, we'll
-        // use that otherwise one of our set.
+        // use that otherwise our default.
         if (controller.customsplash) {
             if (controller.multipledatabases) {
                 $("#asm-login-splash").css({
@@ -248,7 +248,7 @@ const login = {
             }
         }
         else {
-            $("#asm-login-window").css({
+            $("#asm-login-splash").css({
                 "background-image": "url(static/images/splash/splash_logo.jpg)"
             });
         }
