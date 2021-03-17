@@ -134,7 +134,6 @@ def separate_results(rows, f):
             if x[f] == k:
                 orows.append(x)
         result.append(orows)
-    print(result)
     return result
 
 def additional_field_tags(dbo, fields, prefix = ""):
