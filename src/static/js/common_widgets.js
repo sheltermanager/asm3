@@ -340,9 +340,9 @@ $.fn.phone = function() {
                 if (rules.locale != asm.locale) { return; }
                 if (rules.prefix && num.indexOf(rules.prefix) != 0) { return; }
                 if (num.length != rules.length) { return; }
-                let s = rules.display, m = num.match(rules.extract), i=1;
-                for (i=1; i <= rules.elements; i++) {
-                    s = s.replace("{" + i + "}", m[i]);
+                let s = rules.display, m = num.match(rules.extract), x=1;
+                for (x=1; x <= rules.elements; x++) {
+                    s = s.replace("{" + i + "}", m[x]);
                 }
                 t.val(s);
                 return false;

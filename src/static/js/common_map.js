@@ -56,7 +56,6 @@ const mapping = {
     _get_script: function(url, onload) {
         let s= document.createElement("script");
         s.onload = onload;
-        s.onerror = function() { console.log('onerror', arguments); };
         s.src = url;
         document.head.appendChild(s);
     },

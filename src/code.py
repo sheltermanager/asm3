@@ -1052,6 +1052,7 @@ class login(ASMEndpoint):
              "smaccount": post["smaccount"],
              "husername": post["username"],
              "hpassword": post["password"],
+             "baseurl": BASE_URL,
              "smcomloginurl": SMCOM_LOGIN_URL,
              "nologconnection": post["nologconnection"],
              "qrimg": QR_IMG_SRC,

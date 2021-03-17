@@ -284,6 +284,15 @@ const login = {
             $("input#username").focus();
         }
 
+        // If the current URL doesn't match our base URL, redirect to the base.
+        // Useful when you have multiple DNS aliases to a server, but
+        // switching between them loses the session cookie
+        if (common.current_url().indexOf(controller.baseurl) != 0) {
+            let url = controller.baseurl + "/login";
+            if (controller.smaccount) { url += "?smaccount=" + controller.smaccount; }
+            window.location = url;
+        }
+
         // If we were passed a username, stick it in
         if (controller.husername) {
             $("input#username").val(controller.husername);
