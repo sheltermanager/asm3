@@ -364,7 +364,7 @@ $(function() {
             }
 
             s += '</ul></div>';
-            s += '<div id="emailform" />';
+            s += '<div id="emailform"></div>';
             s += '<div id="paymentconfirmation" style="display: none" title="' + html.title(_("Are you sure?")) + '"></div>';
             if (controller.name == "animal_donations") {
                 s += edit_header.animal_edit_header(controller.animal, "donations", controller.tabcounts);

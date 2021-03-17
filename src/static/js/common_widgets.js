@@ -342,7 +342,7 @@ $.fn.phone = function() {
                 if (num.length != rules.length) { return; }
                 let s = rules.display, m = num.match(rules.extract), x=1;
                 for (x=1; x <= rules.elements; x++) {
-                    s = s.replace("{" + i + "}", m[x]);
+                    s = s.replace("{" + x + "}", m[x]);
                 }
                 t.val(s);
                 return false;

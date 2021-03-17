@@ -772,7 +772,7 @@ $(function() {
                 '</tr>',
                 '</table>',
                 '</div>',
-                '<div id="emailform" />',
+                '<div id="emailform"></div>',
                 '<div id="dialog-merge" style="display: none" title="' + html.title(_("Select animal to merge")) + '">',
                 '<div class="ui-state-highlight ui-corner-all" style="margin-top: 20px; padding: 0 .7em">',
                 '<p><span class="ui-icon ui-icon-info"></span>',

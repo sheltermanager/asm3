@@ -215,7 +215,7 @@ const tableform = {
                 if (v.hideif && v.hideif()) { return; }
                 t.push("<th>" + v.display + "</th>");
             });
-            t.push("</tr><thead><tbody>");
+            t.push("</tr></thead><tbody>");
         }
         $.each(table.rows, function(ir, vr) {
             if (table.hideif && table.hideif(vr)) { return; }
@@ -243,7 +243,7 @@ const tableform = {
                 }
                 t.push("<td class=\"ui-widget-content " + extraclasses + "\">");
                 if (vc.sorttext) {
-                    t.push("<span data-sort=\"" + html.title(html.truncate(vc.sorttext(vr))) + "\" />");
+                    t.push("<span data-sort=\"" + html.title(html.truncate(vc.sorttext(vr))) + "\"></span>");
                 }
                 if (ic == 0 && formatter === undefined) {
                     var linktext = tableform.format_string(vr, vr[vc.field]);

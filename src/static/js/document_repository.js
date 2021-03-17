@@ -132,7 +132,7 @@ $(function() {
             let s = "";
             this.model();
             s += tableform.dialog_render(this.dialog);
-            s += '<div id="emailform" />';
+            s += '<div id="emailform"></div>';
             s += html.content_header(_("Document Repository"));
             s += html.info(_("This screen allows you to add extra documents to your database, for staff training, reference materials, etc."));
             s += tableform.buttons_render(this.buttons);

@@ -148,6 +148,7 @@ $(function() {
                         h.push("<a href=\"#\" class=\"link-edit\" data-id=\"" + m.ID + "\">" + format.date(m.DATE) + "</a>");
                         h.push("</span><br/>");
                         h.push(media.render_mods(m));
+                        h.push("</div>");
                         return h.join("");
                     }}
                 ]
@@ -248,7 +249,7 @@ $(function() {
                 '</table>',
                 '</div>',
 
-                '<div id="emailform" />',
+                '<div id="emailform"></div>',
 
                 '<div id="button-sign-body" class="asm-menu-body">',
                 '<ul class="asm-menu-list">',
@@ -262,7 +263,7 @@ $(function() {
                 '</div>',
 
                 '<div id="dialog-sign" style="display: none" title="' + _("Sign document") + '">',
-                '<div id="signature" style="width: 500px; height: 200px;" />',
+                '<div id="signature" style="width: 500px; height: 200px;"></div>',
                 '</div>',
 
                 '<form id="newdocform" method="post" action="media">',
