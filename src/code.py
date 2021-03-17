@@ -398,7 +398,7 @@ class JSONEndpoint(ASMEndpoint):
             self.header("X-Content-Type-Options", "nosniff") # Tell browser not to figure out mime types
             self.header("X-XSS-Protection", "1") # Safari only, try to detect and sanitise XSS attacks 
             self.header("Strict-Transport-Security", "max-age=%s" % CACHE_ONE_YEAR) 
-            self.header("Content-Security-Policy", "script-src 'self' 'nonce-%s'; img-src 'self' data: *;" % nonce)
+            self.header("Content-Security-Policy-Report-Only", "script-src 'self' 'nonce-%s'; img-src 'self' data: *; report-uri /csperror; " % nonce)
             content = "%(header)s\n" \
                 "<script nonce='%(nonce)s'>\n" \
                 "controller=%(controller)s;\n" \
@@ -609,6 +609,20 @@ class configjs(ASMEndpoint):
             "publishers": asm3.publish.PUBLISHER_LIST
         }
         return "const asm = %s;" % asm3.utils.json(c)
+
+class csperror(ASMEndpoint):
+    """
+    Target for logging content security policy errors from the frontend.
+    Nothing is returned as the UI does not expect a response.
+    Errors are logged and emailed to the admin if EMAIL_ERRORS is set.
+    """
+    url = "csperror"
+    user_activity = False
+
+    def post_all(self, o):
+        asm3.al.error(str(self.data), "code.csperror", o.dbo)
+        if EMAIL_ERRORS:
+            asm3.utils.send_email(o.dbo, ADMIN_EMAIL, ADMIN_EMAIL, "", "", "CSP violation", str(self.data), "plain", exceptions=False)
 
 class jserror(ASMEndpoint):
     """
@@ -1067,7 +1081,7 @@ class login(ASMEndpoint):
         self.header("X-Content-Type-Options", "nosniff") 
         self.header("X-XSS-Protection", "1") 
         self.header("Strict-Transport-Security", "max-age=%s" % CACHE_ONE_YEAR) 
-        self.header("Content-Security-Policy", "script-src 'self' 'nonce-%s'; img-src 'self' data: ;" % nonce)
+        self.header("Content-Security-Policy-Report-Only", "script-src 'self' 'nonce-%s'; img-src 'self' data: ; report-uri /csperror; " % nonce)
         return s
 
     def post_all(self, o):
