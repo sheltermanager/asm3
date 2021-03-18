@@ -539,8 +539,8 @@ $(function() {
                 if (json.hasOwnProperty("message")) {
                     var timer = setInterval(function() { 
                             clearInterval(timer); 
-                            setTimeout(common.route_reload(), 800);
-                            setTimeout(header.show_info(_(json.message)),850);
+                            setTimeout(() => { common.route_reload(); }, 800);
+                            setTimeout(() => { header.show_info(_(json.message)); }, 850);
                     }, 1000);
                     return;
                 }

@@ -393,12 +393,16 @@ class JSONEndpoint(ASMEndpoint):
             self.js_module = self.url
         if not o.post["json"] == "true":
             self.content_type("text/html")
-            nonce = asm3.utils.uuid_str()
             self.header("X-Frame-Options", "SAMEORIGIN") # Do not allow external websites to embed us in an iframe
             self.header("X-Content-Type-Options", "nosniff") # Tell browser not to figure out mime types
             self.header("X-XSS-Protection", "1") # Safari only, try to detect and sanitise XSS attacks 
-            self.header("Strict-Transport-Security", "max-age=%s" % CACHE_ONE_YEAR) 
-            self.header("Content-Security-Policy-Report-Only", "script-src 'self' 'nonce-%s'; img-src 'self' data: *; report-uri /csperror; " % nonce)
+            self.header("Strict-Transport-Security", "max-age=%s" % CACHE_ONE_WEEK) 
+            nonce = asm3.utils.uuid_str()
+            csp = ["script-src 'self' 'report-sample' 'nonce-%s'" % nonce,
+                "img-src 'self' data: *",
+                "report-uri /csperror;" ]
+            self.header("Content-Security-Policy", "; ".join(csp))
+            #self.header("Content-Security-Policy-Report-Only", "; ".join(csp))
             content = "%(header)s\n" \
                 "<script nonce='%(nonce)s'>\n" \
                 "controller=%(controller)s;\n" \
@@ -1081,7 +1085,11 @@ class login(ASMEndpoint):
         self.header("X-Content-Type-Options", "nosniff") 
         self.header("X-XSS-Protection", "1") 
         self.header("Strict-Transport-Security", "max-age=%s" % CACHE_ONE_YEAR) 
-        self.header("Content-Security-Policy-Report-Only", "script-src 'self' 'nonce-%s'; img-src 'self' data: ; report-uri /csperror; " % nonce)
+        csp = ["script-src 'self' 'report-sample' 'nonce-%s'" % nonce,
+            "img-src 'self'",
+            "report-uri /csperror;" ]
+        self.header("Content-Security-Policy", "; ".join(csp))
+        #self.header("Content-Security-Policy-Report-Only", "; ".join(csp))
         return s
 
     def post_all(self, o):
