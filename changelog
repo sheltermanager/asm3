@@ -1,6 +1,7 @@
 44
 ================
 
+18/03/21 Python 3 bug in HTML publish/image scaling
 16/03/21 Add CSP and other security headers
 16/03/21 Update moment.js to 2.29.1 (regex security flaw)
 13/03/21 Hash stored online form submissions #974
