@@ -1,6 +1,7 @@
 44
 ================
 
+18/03/21 Leaking chooser destructors on medical screens
 18/03/21 Lazy load changelog on about screen
 18/03/21 Remove img.onerror inline code in favour of event delegate
 18/03/21 Python 3 bug in HTML publish/image scaling

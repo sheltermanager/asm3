@@ -639,8 +639,8 @@ $(function() {
             common.widget_destroy("#dialog-given");
             common.widget_destroy("#animal");
             common.widget_destroy("#animals");
-            common.widget_destroy("#administeringvet");
-            common.widget_destroy("#givenvet");
+            common.widget_destroy("#administeringvet", "personchooser");
+            common.widget_destroy("#givenvet", "personchooser");
             tableform.dialog_destroy();
             this.lastanimal = null;
             this.lastvet = null;

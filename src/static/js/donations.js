@@ -608,7 +608,7 @@ $(function() {
             common.widget_destroy("#animal");
             common.widget_destroy("#person");
             common.widget_destroy("#emailform");
-            common.widget_destroy("#paymentconfirmation");
+            common.widget_destroy("#paymentconfirmation", "dialog");
             tableform.dialog_destroy();
             this.create_semaphore = false;
             this.lastanimal = null;
