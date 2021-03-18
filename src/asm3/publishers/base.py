@@ -1268,7 +1268,7 @@ class FTPPublisher(AbstractPublisher):
             asm3.dbfs.get_file(self.dbo, medianame, "", imagefile)
             self.log("Retrieved image: %d::%s::%s" % ( a["ID"], medianame, imagename ))
             # If scaling is on, do it
-            if self.pc.scaleImages in ( "2", "3", "4", "5", "6", "7" ) or self.pc.scaleImages.find("x") > -1:
+            if str(self.pc.scaleImages) in ( "2", "3", "4", "5", "6", "7" ) or str(self.pc.scaleImages).find("x") > -1:
                 self.scaleImage(imagefile, self.pc.scaleImages)
             # If thumbnails are on, do it
             if self.pc.thumbnails:
