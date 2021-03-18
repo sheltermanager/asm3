@@ -134,7 +134,7 @@ edit_header = {
                 '<table><tr>',
                 '<td align="center">',
                     '<a target="_blank" href="' + html.img_src(a, "animal") + '">',
-                    '<img onerror="image_error(this)" class="' + html.animal_link_thumb_classes(a) + '" src="' + html.thumbnail_src(a, "animalthumb") + '" />',
+                    '<img class="' + html.animal_link_thumb_classes(a) + '" src="' + html.thumbnail_src(a, "animalthumb") + '" />',
                     '</a>',
                     mediaprompt,
                 '</td>',
@@ -449,7 +449,7 @@ edit_header = {
             '<table><tr>',
             '<td>',
             '<a href="' + html.img_src(p, "person") + '">',
-            '<img onerror="image_error(this)" class="asm-thumbnail thumbnailshadow" src="' + html.thumbnail_src(p, "personthumb") + '" />',
+            '<img class="asm-thumbnail thumbnailshadow" src="' + html.thumbnail_src(p, "personthumb") + '" />',
             '</a>',
             '</td>',
             '<td>',
@@ -755,9 +755,5 @@ edit_header = {
     }
 
 };
-
-function image_error(image) {
-    image.style.display = "none";
-}
 
 });

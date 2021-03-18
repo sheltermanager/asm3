@@ -1647,7 +1647,7 @@ const html = {
     animal_link_thumb_bare: function(a) {
         var animalid = a.ANIMALID || a.ID,
             classes = html.animal_link_thumb_classes(a); 
-        return '<a href="animal?id=' + animalid + '"><img onerror=image_error(this) src=' + html.thumbnail_src(a, "animalthumb") + ' class="' + classes + '" /></a>';
+        return '<a href="animal?id=' + animalid + '"><img src=' + html.thumbnail_src(a, "animalthumb") + ' class="' + classes + '" /></a>';
     },
 
     /**
@@ -2829,6 +2829,11 @@ Mousetrap.stopCallback = function(e, element, combo) {
 Mousetrap.bind([ "ctrl+h", "meta+h" ], function() {
     common.route("main");
     return false;
+});
+
+// Hide broken thumbnail animal images instead of showing the icon
+$(document).on("error", "img.asm-thumbnail", function() {
+    $(this).hide();
 });
 
 // If an inactivity timeout is configured, starts the timer

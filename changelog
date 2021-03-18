@@ -1,6 +1,8 @@
 44
 ================
 
+18/03/21 Lazy load changelog on about screen
+18/03/21 Remove img.onerror inline code in favour of event delegate
 18/03/21 Python 3 bug in HTML publish/image scaling
 16/03/21 Add CSP and other security headers
 16/03/21 Update moment.js to 2.29.1 (regex security flaw)

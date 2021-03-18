@@ -631,7 +631,7 @@ $(function() {
                  "os": "<b>" + navigator.platform + "</b>"
             }),
             '</p>',
-            '<iframe style="width: 650px; height: 400px;" src="static/pages/changelog.txt"></iframe>',
+            '<div id="changelog"></div>',
             '</div>',
 
             '<div id="dialog-addmessage" style="display: none" title="' + _("Add message") + '">',
@@ -806,6 +806,8 @@ $(function() {
             });
 
             $("#link-about").click(function() {
+                $("#changelog").html(
+                    '<iframe style="width: 650px; height: 400px;" src="static/pages/changelog.txt"></iframe>');
                 $("#dialog-about").dialog("open");
                 return false; // squash href #
             });
