@@ -398,9 +398,11 @@ class JSONEndpoint(ASMEndpoint):
             self.header("X-XSS-Protection", "1") # Safari only, try to detect and sanitise XSS attacks 
             self.header("Strict-Transport-Security", "max-age=%s" % CACHE_ONE_WEEK) 
             nonce = asm3.utils.uuid_str()
-            csp = ["script-src 'self' 'report-sample' 'nonce-%s'" % nonce,
-                "img-src 'self' data: *",
-                "report-uri /csperror;" ]
+            csp = [
+                "script-src 'self' 'report-sample' 'nonce-%s'" % nonce,
+                "img-src 'self' data: * ", # * used for map tiles from OSM/Google, youtube thumbnails etc.
+                "report-uri /csperror",
+                ""]
             self.header("Content-Security-Policy", "; ".join(csp))
             #self.header("Content-Security-Policy-Report-Only", "; ".join(csp))
             content = "%(header)s\n" \
@@ -1085,9 +1087,11 @@ class login(ASMEndpoint):
         self.header("X-Content-Type-Options", "nosniff") 
         self.header("X-XSS-Protection", "1") 
         self.header("Strict-Transport-Security", "max-age=%s" % CACHE_ONE_YEAR) 
-        csp = ["script-src 'self' 'report-sample' 'nonce-%s'" % nonce,
-            "img-src 'self'",
-            "report-uri /csperror;" ]
+        csp = [
+            "script-src 'self' 'report-sample' 'nonce-%s'" % nonce,
+            "img-src 'self' data: ",
+            "report-uri /csperror",
+            ""]
         self.header("Content-Security-Policy", "; ".join(csp))
         #self.header("Content-Security-Policy-Report-Only", "; ".join(csp))
         return s
