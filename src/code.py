@@ -1086,7 +1086,7 @@ class login(ASMEndpoint):
         self.header("X-Frame-Options", "SAMEORIGIN")
         self.header("X-Content-Type-Options", "nosniff") 
         self.header("X-XSS-Protection", "1") 
-        self.header("Strict-Transport-Security", "max-age=%s" % CACHE_ONE_YEAR) 
+        self.header("Strict-Transport-Security", "max-age=%s" % CACHE_ONE_WEEK) 
         csp = [
             "script-src 'self' 'report-sample' 'nonce-%s'" % nonce,
             "img-src 'self' data: ",
