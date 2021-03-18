@@ -398,7 +398,7 @@ class JSONEndpoint(ASMEndpoint):
             self.header("X-Content-Type-Options", "nosniff") # Tell browser not to figure out mime types
             self.header("X-XSS-Protection", "1") # Safari only, try to detect and sanitise XSS attacks 
             self.header("Strict-Transport-Security", "max-age=%s" % CACHE_ONE_YEAR) 
-            self.header("Content-Security-Policy-Report-Only", "script-src 'self' 'nonce-%s'; img-src 'self' data: *; report-uri /csperror; " % nonce)
+            #self.header("Content-Security-Policy-Report-Only", "script-src 'self' 'nonce-%s'; img-src 'self' data: *; report-uri /csperror; " % nonce)
             content = "%(header)s\n" \
                 "<script nonce='%(nonce)s'>\n" \
                 "controller=%(controller)s;\n" \
