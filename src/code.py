@@ -60,7 +60,7 @@ from asm3.i18n import _, BUILD, translate, get_version, get_display_date_format,
     add_minutes, add_days, subtract_days, subtract_months, first_of_month, last_of_month, \
     monday_of_week, sunday_of_week, first_of_year, last_of_year, now, format_currency
 
-from asm3.sitedefs import BASE_URL, DEPLOYMENT_TYPE, ELECTRONIC_SIGNATURES, EMERGENCY_NOTICE, \
+from asm3.sitedefs import BASE_URL, CONTENT_SECURITY_POLICY, DEPLOYMENT_TYPE, ELECTRONIC_SIGNATURES, EMERGENCY_NOTICE, \
     AKC_REUNITE_BASE_URL, HOMEAGAIN_BASE_URL, LARGE_FILES_CHUNKED, LOCALE, JQUERY_UI_CSS, \
     LEAFLET_CSS, LEAFLET_JS, MULTIPLE_DATABASES, MULTIPLE_DATABASES_PUBLISH_URL, \
     MULTIPLE_DATABASES_PUBLISH_FTP, ADMIN_EMAIL, EMAIL_ERRORS, MADDIES_FUND_TOKEN_URL, \
@@ -393,18 +393,15 @@ class JSONEndpoint(ASMEndpoint):
             self.js_module = self.url
         if not o.post["json"] == "true":
             self.content_type("text/html")
-            self.header("X-Frame-Options", "SAMEORIGIN") # Do not allow external websites to embed us in an iframe
-            self.header("X-Content-Type-Options", "nosniff") # Tell browser not to figure out mime types
-            self.header("X-XSS-Protection", "1") # Safari only, try to detect and sanitise XSS attacks 
-            self.header("Referrer-Policy", "same-origin") # Do not share referrer info externally
+            self.header("X-Frame-Options", "SAMEORIGIN") 
+            self.header("X-Content-Type-Options", "nosniff") 
+            self.header("X-XSS-Protection", "1; mode=block") 
+            self.header("Referrer-Policy", "same-origin") 
             self.header("Strict-Transport-Security", "max-age=%s" % CACHE_ONE_MONTH) 
             nonce = asm3.utils.uuid_str()
-            csp = [
-                "script-src 'self' 'report-sample' 'nonce-%s'" % nonce,
-                "report-uri /csperror",
-                ""]
-            self.header("Content-Security-Policy", "; ".join(csp))
-            content = "%(header)s\n" \
+            if CONTENT_SECURITY_POLICY != "":
+                self.header("Content-Security-Policy", CONTENT_SECURITY_POLICY % { "nonce": nonce })
+            return "%(header)s\n" \
                 "<script nonce='%(nonce)s'>\n" \
                 "controller=%(controller)s;\n" \
                 "$(document).ready(function() { " \
@@ -415,7 +412,6 @@ class JSONEndpoint(ASMEndpoint):
                     "header": asm3.html.header("", session),
                     "js_module": self.js_module, 
                     "nonce": nonce }
-            return content
         else:
             self.content_type("application/json")
             return asm3.utils.json(c)
@@ -617,7 +613,8 @@ class configjs(ASMEndpoint):
 
 class csperror(ASMEndpoint):
     """
-    Target for logging content security policy errors from the frontend.
+    Target for logging content security policy errors from the frontend
+    via the CSP directive: report-uri /csperror
     Nothing is returned as the UI does not expect a response.
     Errors are logged and emailed to the admin if EMAIL_ERRORS is set.
     """
@@ -1084,14 +1081,10 @@ class login(ASMEndpoint):
         self.content_type("text/html")
         self.header("X-Frame-Options", "SAMEORIGIN")
         self.header("X-Content-Type-Options", "nosniff") 
-        self.header("X-XSS-Protection", "1") 
-        self.header("Strict-Transport-Security", "max-age=%s" % CACHE_ONE_WEEK) 
-        csp = [
-            "script-src 'self' 'report-sample' 'nonce-%s'" % nonce,
-            "img-src 'self' data: ",
-            "report-uri /csperror",
-            ""]
-        self.header("Content-Security-Policy", "; ".join(csp))
+        self.header("X-XSS-Protection", "1; mode=block") 
+        self.header("Strict-Transport-Security", "max-age=%s" % CACHE_ONE_MONTH) 
+        if CONTENT_SECURITY_POLICY != "":
+            self.header("Content-Security-Policy", CONTENT_SECURITY_POLICY % { "nonce": nonce })
         return s
 
     def post_all(self, o):

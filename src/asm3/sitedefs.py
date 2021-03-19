@@ -143,6 +143,11 @@ SESSION_SECURE_COOKIE = get_boolean("session_secure_cookie", False)
 # Output debug info on sessions
 SESSION_DEBUG = get_boolean("session_debug", False)
 
+# The Content-Security-Policy header to send, or blank for no policy
+# Include 'nonce-%(nonce)s' in any policy to prevent the bootstrap 
+# inline script breaking
+CONTENT_SECURITY_POLICY = get_string("content_security_policy", "")
+
 # The host/port that memcached is running on if it is to be used.
 # If memcache is not available, an in memory dictionary will be
 # used instead.
