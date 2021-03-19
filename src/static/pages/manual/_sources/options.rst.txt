@@ -747,6 +747,12 @@ Online Forms
   away from the incoming forms screen, any forms that have been processed (have
   a link shown in the rightmost column) will be deleted automatically.
 
+* When storing processed forms as media, apply tamper proofing and make them read
+  only: If this option is on, form submissions will be hashed and read only 
+  (in the same way as signed documents) and the user who processed the form
+  recorded. This prevents anyone from editing form submissions after they have been
+  stored.
+
 .. _paymentprocessors:
 
 Payment Processors

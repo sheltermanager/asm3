@@ -2832,9 +2832,10 @@ Mousetrap.bind([ "ctrl+h", "meta+h" ], function() {
 });
 
 // Hide broken thumbnail animal images instead of showing the icon
-$(document).on("error", "img.asm-thumbnail", function() {
-    $(this).hide();
-});
+// On reflection, better to show the broken thumbnail than hide it.
+// $(document).on("error", ".asm-thumbnail", function() {
+//    $(this).hide();
+//});
 
 // If an inactivity timeout is configured, starts the timer
 common.start_inactivity_timer();

@@ -400,11 +400,9 @@ class JSONEndpoint(ASMEndpoint):
             nonce = asm3.utils.uuid_str()
             csp = [
                 "script-src 'self' 'report-sample' 'nonce-%s'" % nonce,
-                "img-src 'self' data: * ", # * used for map tiles from OSM/Google, youtube thumbnails etc.
                 "report-uri /csperror",
                 ""]
             self.header("Content-Security-Policy", "; ".join(csp))
-            #self.header("Content-Security-Policy-Report-Only", "; ".join(csp))
             content = "%(header)s\n" \
                 "<script nonce='%(nonce)s'>\n" \
                 "controller=%(controller)s;\n" \
@@ -1093,7 +1091,6 @@ class login(ASMEndpoint):
             "report-uri /csperror",
             ""]
         self.header("Content-Security-Policy", "; ".join(csp))
-        #self.header("Content-Security-Policy-Report-Only", "; ".join(csp))
         return s
 
     def post_all(self, o):
