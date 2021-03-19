@@ -1656,22 +1656,21 @@ def get_location_filter_clause(locationfilter = "", tablequalifier = "", siteid 
 
 def is_animal_in_location_filter(a, locationfilter, siteid = 0, visibleanimalids = ""):
     """
-    Returns True if the animal a is included in the locationfilter
+    Returns True if the animal a is included in the locationfilter or site given
     """
     if locationfilter == "" and siteid == 0: return True
     if siteid != 0:
-        if a.siteid != siteid: 
-            return False
-    if locationfilter != "" and visibleanimalids == "":
+        if a.siteid == 0 or a.siteid == siteid: return True
+    if locationfilter != "":
         locs = locationfilter.split(",")
-        if a.activemovementtype == 1 and "-1" not in locs: return False
-        if a.activemovementtype == 2 and "-2" not in locs: return False
-        if a.activemovementtype == 8 and "-8" not in locs: return False
-        if a.nonshelteranimal == 1 and "-9" not in locs: return False
-        if a.archived == 0 and str(a.shelterlocation) not in locs: return False
+        if a.activemovementtype == 1 and "-1" in locs: return True 
+        if a.activemovementtype == 2 and "-2" in locs: return True
+        if a.activemovementtype == 8 and "-8" in locs: return True
+        if a.nonshelteranimal == 1 and "-9" in locs: return True
+        if a.archived == 0 and str(a.shelterlocation) in locs: return True
     if visibleanimalids != "":
-        if str(a.ID) not in visibleanimalids.split(","): return False
-    return True
+        if str(a.ID) in visibleanimalids.split(","): return True
+    return False
 
 def remove_nonvisible_animals(rows, visibleanimalids, animalidcolumn = "ANIMALID"):
     """
