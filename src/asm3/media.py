@@ -530,11 +530,12 @@ def create_log(dbo, user, mid, logcode = "UK00", message = ""):
     logtypeid = asm3.configuration.generate_document_log_type(dbo)
     asm3.log.add_log(dbo, user, get_log_from_media_type(m.LINKTYPEID), m.LINKID, logtypeid, "%s:%s:%s - %s" % (logcode, m.ID, message, m.MEDIANOTES))
 
-def sign_document(dbo, username, mid, sigurl, signdate):
+def sign_document(dbo, username, mid, sigurl, signdate, signprefix):
     """
     Signs an HTML document.
     sigurl: An HTML5 data: URL containing an image of the signature
     signdate: A string representing the signing date and time of signing.
+    signprefix: A prefix for the hash, useful for identifying types of signing (eg: forms vs user electronic sig)
     """
     asm3.al.debug("signing document %s for %s" % (mid, username), "media.sign_document", dbo)
     SIG_PLACEHOLDER = "signature:placeholder"
@@ -560,7 +561,7 @@ def sign_document(dbo, username, mid, sigurl, signdate):
         sig += "<p>%s</p>\n" % signdate
         content += sig
     # Create a hash of the contents and store it with the media record
-    dbo.update("media", mid, { "SignatureHash": asm3.utils.md5_hash_hex(content) })
+    dbo.update("media", mid, { "SignatureHash": "%s:%s" % (signprefix, asm3.utils.md5_hash_hex(content)) })
     # Update the dbfs contents
     content = asm3.utils.str2bytes(content)
     update_file_content(dbo, username, mid, content)

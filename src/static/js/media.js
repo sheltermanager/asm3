@@ -349,7 +349,12 @@ $(function() {
                 mod_out("link", _("Link to an external web resource"));
             }
             if (m.SIGNATUREHASH) {
-                mod_out("signature", _("Signed"));
+                if (m.SIGNATUREHASH.indexOf("onlineform") == 0) {
+                    mod_out("locked", _("Locked"));
+                }
+                else {
+                    mod_out("signature", _("Signed"));
+                }
             }
             if (m.WEBSITEPHOTO == 1 && controller.showpreferred) {
                 mod_out("web", _("Default image for this record and the web"));

@@ -662,7 +662,7 @@ def handler(post, path, remoteip, referer, querystring):
             if token != post["token"]: raise asm3.utils.ASMError("invalid token")
             return set_cached_response(cache_key, account, "text/html", 2, 2, sign_document_page(dbo, formid, post["email"]))
         else:
-            asm3.media.sign_document(dbo, "service", formid, post["sig"], post["signdate"])
+            asm3.media.sign_document(dbo, "service", formid, post["sig"], post["signdate"], "signemail")
             asm3.media.create_log(dbo, "service", formid, "ES02", _("Document signed", l))
             if post.boolean("sendsigned"):
                 m = asm3.media.get_media_by_id(dbo, formid)

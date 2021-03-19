@@ -1,6 +1,8 @@
 44
 ================
 
+19/03/21 Prevent hash tampering at SQL interface
+19/03/21 Separate icon for locked/signed #985
 19/03/21 Make Content-Security-Policy a sitedef instead
 19/03/21 Fix bug in location filters cancelling each other on animal open
 18/03/21 Leaking chooser destructors on medical screens

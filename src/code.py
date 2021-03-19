@@ -761,7 +761,7 @@ class media(ASMEndpoint):
     def post_sign(self, o):
         self.check(asm3.users.CHANGE_MEDIA)
         for mid in o.post.integer_list("ids"):
-            asm3.media.sign_document(o.dbo, o.user, mid, o.post["sig"], o.post["signdate"])
+            asm3.media.sign_document(o.dbo, o.user, mid, o.post["sig"], o.post["signdate"], "signscreen")
 
     def post_signpad(self, o):
         asm3.configuration.signpad_ids(o.dbo, o.user, o.post["ids"])
@@ -5570,13 +5570,13 @@ class sql(JSONEndpoint):
         return self.exec_sql_from_file(o.dbo, o.user, sql)
 
     def check_update_query(self, q):
-        """ Prevent any kind of update to certain tables to prevent
+        """ Prevent any kind of update to certain tables or columns to prevent
             more savvy malicious users tampering via SQL Interface.
             q is already stripped and converted to lower case by the exec_sql caller.
             If one of our tamper proofed tables is touched, an Exception is raised
             and the query not run.
         """
-        for t in ( "audittrail", "deletion" ):
+        for t in ( "audittrail", "deletion", "signaturehash" ):
             if q.find(t) != -1:
                 raise Exception("Forbidden: %s" % q)
 
