@@ -79,6 +79,7 @@ $(function() {
                 '<li><a href="#tab-search">' + _("Search") + '</a></li>',
                 '<li><a href="#tab-shelterview">' + _("Shelter view") + '</a></li>',
                 '<li><a href="#tab-waitinglist">' + _("Waiting List") + '</a></li>',
+                '<li><a href="#tab-codeinjection">' + _("Code Injection") + '</a></li>',
                 '</ul>'
             ].join("\n");
         },
@@ -1357,6 +1358,26 @@ $(function() {
             ].join("\n");
         },
 
+        render_codeinjection: function() {
+            return [
+                '<div id="tab-codeinjection">',
+                '<table width="100%">',
+                '<tr>',
+                '<td valign="top">',
+                '<label for="jshead">' + _("Header") + '</label><br />',
+                '<textarea id="jshead" class="class="asm-htmleditor headfoot" data="CodeInjectionHeader" data-height="250px" data-width="750px">',
+                '</textarea>',
+                '</td></tr><tr><td valign="top">',
+                '<label for="jsfoot">' + _("Footer") + '</label><br />',
+                '<textarea id="jsfoot" class="class="asm-htmleditor headfoot" data="CodeInjectionFooter" data-height="250px" data-width="750px">',
+                '</textarea>',
+                '</td>',
+                '</tr>',
+                '</table>',
+                '</div>'
+            ].join("\n");
+        },
+
         render: function() {
             return [
                 html.content_header(_("System Options")),
@@ -1392,6 +1413,7 @@ $(function() {
                 this.render_unwanted(),
                 this.render_reports(),
                 this.render_waitinglist(),
+                this.render_codeinjection(),
                 '</div>',
                 html.content_footer()
             ].join("\n");
