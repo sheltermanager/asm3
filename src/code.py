@@ -396,7 +396,8 @@ class JSONEndpoint(ASMEndpoint):
             self.header("X-Frame-Options", "SAMEORIGIN") # Do not allow external websites to embed us in an iframe
             self.header("X-Content-Type-Options", "nosniff") # Tell browser not to figure out mime types
             self.header("X-XSS-Protection", "1") # Safari only, try to detect and sanitise XSS attacks 
-            self.header("Strict-Transport-Security", "max-age=%s" % CACHE_ONE_WEEK) 
+            self.header("Referrer-Policy", "same-origin") # Do not share referrer info externally
+            self.header("Strict-Transport-Security", "max-age=%s" % CACHE_ONE_MONTH) 
             nonce = asm3.utils.uuid_str()
             csp = [
                 "script-src 'self' 'report-sample' 'nonce-%s'" % nonce,
