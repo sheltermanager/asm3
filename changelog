@@ -1,6 +1,7 @@
 44
 ================
 
+20/03/21 Strip potentially harmful tags before PDFising documents
 19/03/21 Prevent hash tampering at SQL interface
 19/03/21 Separate icon for locked/signed #985
 19/03/21 Make Content-Security-Policy a sitedef instead
