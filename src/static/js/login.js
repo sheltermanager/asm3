@@ -34,11 +34,6 @@ const login = {
             '</tr>',
             '</table>',
 
-            '<div class="centered" style="padding-bottom: 10px">',
-                '<input class="asm-checkbox" id="rememberme" name="rememberme" type="checkbox" />',
-                '<label for="rememberme">' + _("Remember me on this computer") + '</label>',
-            '</div>',
-
             '<div class="centered" style="padding: 5px">',
                 '<button id="loginbutton" class="ui-priority-primary asm-dialog-actionbutton">',
                     '<img id="flag" style="vertical-align: middle;" />',
@@ -191,20 +186,6 @@ const login = {
                     window.location = controller.smcomloginurl;
                 }
                 else {
-                    // We have a successful login!
-                    // If remember me is ticked, store the login info on 
-                    // the user's machine.
-                    if ($("#rememberme").prop("checked")) {
-                        common.local_set("asmusername", username);
-                        common.local_set("asmpassword", password);
-                        common.local_set("asmaccount", database);
-                    }
-                    else {
-                        // Remember me wasn't ticked, remove any stored login info
-                        common.local_delete("asmusername");
-                        common.local_delete("asmpassword");
-                        common.local_delete("asmaccount");
-                    }
                     $("#asm-login-window").fadeOut("slow", function() {
                         if (!controller.target) { 
                             controller.target = "main"; 
@@ -309,16 +290,11 @@ const login = {
         // Bind the reset password handerl
         $("#resetpassword").click(self.reset_password);
 
-        // If we weren't passed a username or password, have a look
-        // to see if we remembered one previously
-        if (common.local_get("asmusername")) {
-            $("#rememberme").prop("checked", true);
-            $("input#username").val(common.local_get("asmusername"));
-            $("input#password").val(common.local_get("asmpassword"));
-            $("input#database").val(common.local_get("asmaccount"));
-        }
+        // Make sure there are no stored credentials
+        common.local_delete("asmusername");
+        common.local_delete("asmpassword");
+        common.local_delete("asmaccount");
 
-        // Login when a button is pressed or enter
         // is pressed in any of our fields
         $("#loginbutton").button().click(function() {
             self.login();

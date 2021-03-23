@@ -1,6 +1,7 @@
 44
 ================
 
+23/03/21 Retire "remember me" due to potential security issues #982
 23/03/21 Drop IE11 support
 22/03/21 Choose from address book on bulk emails #968
 22/03/21 Add extra incident animal keys and animal/incident jurisdiction #983
