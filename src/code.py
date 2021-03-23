@@ -1029,9 +1029,9 @@ class login(ASMEndpoint):
         has_animals = True
         custom_splash = False
 
-        # Filter out Internet Explorer below altogether.
+        # Filter out Internet Explorer altogether.
         ua = self.user_agent()
-        if ua.find("MSIE") != -1 or ua.find("rv:11.0") != -1:
+        if ua.find("MSIE") != -1 or ua.find("Trident") != -1:
             self.redirect("static/pages/unsupported_ie.html")
 
         # Figure out how to get the default locale and any overridden splash screen
