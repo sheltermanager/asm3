@@ -399,7 +399,9 @@ class JSONEndpoint(ASMEndpoint):
             self.header("Referrer-Policy", "same-origin") 
             self.header("Strict-Transport-Security", "max-age=%s" % CACHE_ONE_MONTH) 
             nonce = asm3.utils.uuid_str()
-            if CONTENT_SECURITY_POLICY != "":
+            # CSP is not applied to users of the mobile app as we still have users with
+            # older iPads on iOS/Safari 9 that only supports CSP1
+            if CONTENT_SECURITY_POLICY != "" and not o.session.mobileapp:
                 self.header("Content-Security-Policy", CONTENT_SECURITY_POLICY % { "nonce": nonce })
             return "%(header)s\n" \
                 "<script nonce='%(nonce)s'>\n" \
