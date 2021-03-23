@@ -1,6 +1,7 @@
 44
 ================
 
+23/03/21 Update browser build targets for babel (minimum for CSP2)
 23/03/21 Retire "remember me" due to potential security issues #982
 23/03/21 Drop IE11 support
 22/03/21 Choose from address book on bulk emails #968
