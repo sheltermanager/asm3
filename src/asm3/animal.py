@@ -1667,7 +1667,7 @@ def is_animal_in_location_filter(a, locationfilter, siteid = 0, visibleanimalids
         if a.activemovementtype == 2 and "-2" in locs: return True
         if a.activemovementtype == 8 and "-8" in locs: return True
         if a.nonshelteranimal == 1 and "-9" in locs: return True
-        if a.archived == 0 and str(a.shelterlocation) in locs: return True
+        if str(a.shelterlocation) in locs: return True
     if visibleanimalids != "":
         if str(a.ID) in visibleanimalids.split(","): return True
     return False
