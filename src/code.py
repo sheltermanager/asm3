@@ -5570,7 +5570,7 @@ class sql(JSONEndpoint):
         return self.exec_sql_from_file(o.dbo, o.user, sql)
 
     def check_update_query(self, q):
-        """ Prevent any kind of update to certain tables or columns to prevent
+        """ Prevent updates or deletes to certain tables or columns to prevent
             more savvy malicious users tampering via SQL Interface.
             q is already stripped and converted to lower case by the exec_sql caller.
             If one of our tamper proofed tables is touched, an Exception is raised
@@ -5591,6 +5591,8 @@ class sql(JSONEndpoint):
                 asm3.al.info("%s query: %s" % (user, q), "code.sql", dbo)
                 if ql.startswith("select") or ql.startswith("show"):
                     return asm3.html.table(dbo.query(q))
+                elif ql.startswith("insert"):
+                    rowsaffected += dbo.execute(q)
                 else:
                     self.check_update_query(ql)
                     rowsaffected += dbo.execute(q)

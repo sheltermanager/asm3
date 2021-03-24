@@ -1,6 +1,7 @@
 44
 ================
 
+24/03/21 Permit inserts via sql interface to sensitive tables/columns
 24/03/21 Configurable PDF zoom level via CSS
 24/03/21 When deduplicating, validate that mobile phone contains digits
 24/03/21 Allow voucher codes to be searched via global search
