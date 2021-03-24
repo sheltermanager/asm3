@@ -186,6 +186,7 @@ const login = {
                     window.location = controller.smcomloginurl;
                 }
                 else {
+                    common.local_set("asmusername", username);
                     $("#asm-login-window").fadeOut("slow", function() {
                         if (!controller.target) { 
                             controller.target = "main"; 
