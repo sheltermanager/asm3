@@ -563,6 +563,10 @@ def get_voucher(dbo, voucherid):
     """
     return dbo.first_row(dbo.query(get_voucher_query(dbo) + " WHERE ov.ID = ?", [voucherid]))
 
+def get_voucher_find_simple(dbo, vocode, dummy = 0):
+    return dbo.query(get_voucher_query(dbo) + \
+        "WHERE UPPER(ov.VoucherCode) LIKE UPPER(?)", [vocode])
+
 def get_vouchers(dbo, offset = "i31"):
     """
     Returns a list of vouchers 

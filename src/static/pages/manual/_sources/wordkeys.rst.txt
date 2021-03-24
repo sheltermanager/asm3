@@ -207,6 +207,8 @@ PickupAddress
     The pickup address
 PickupLocationName
     The pickup location set on the animal
+AnimalJurisdiction
+    The animal's jurisdiction
 CoordinatorName
     The name of the adoption coordinator
 CoordinatorHomePhone
@@ -923,7 +925,7 @@ OwnerPostcode
     (OwnerZipcode for US users) 
 OwnerLookingFor
     A summary of the "Looking for" slider on the person's record
-Jurisdiction
+OwnerJurisdiction
     The person's jurisdiction
 WorkTelephone 
     The person's work telephone number
@@ -1095,6 +1097,8 @@ DispatchPostcode / DispatchZipcode
     The zipcode an ACO was dispatched to
 PickupLocationName
     The pickup location set on the incident
+IncidentJurisdiction
+    The incident jurisdiction
 RespondedDate
     The date the incident was attended by an ACO
 RespondedTime
@@ -1190,6 +1194,14 @@ AnimalTypeName
     The type of animal
 SpeciesName
     The species of animal
+Sex
+    The sex of the animal
+Size
+    The size of the animal
+BaseColorName / BaseColourName
+    The color of the animal
+CoatType
+    The coat type of the animal
 DateBroughtIn
     The date the animal entered the shelter
 DeceasedDate

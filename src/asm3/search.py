@@ -31,6 +31,7 @@ def search(dbo, session, q):
     la:term     Only search lost animals for term
     li:num      Only search licence numbers for term
     fa:term     Only search found animals for term
+    vo:term     Only search voucher codes for term
     wl:term     Only search waiting list entries for term
 
     sort:az     Sort results alphabetically az
@@ -153,6 +154,7 @@ def search(dbo, session, q):
     lasort = ""
     lisort = ""
     fasort = ""
+    vosort = ""
     sortdir = "a"
     sortname = ""
     # alphanumeric ascending
@@ -164,6 +166,7 @@ def search(dbo, session, q):
         lasort = "OWNERNAME"
         lisort = "OWNERNAME"
         fasort = "OWNERNAME"
+        vosort = "OWNERNAME"
         sortdir = "a"
         sortname = _("Alphabetically A-Z", l)
     # alphanumeric descending
@@ -175,6 +178,7 @@ def search(dbo, session, q):
         lasort = "OWNERNAME"
         lisort = "OWNERNAME"
         fasort = "OWNERNAME"
+        vosort = "OWNERNAME"
         sortdir = "d"
         sortname = _("Alphabetically Z-A", l)
     # last changed ascending
@@ -186,6 +190,7 @@ def search(dbo, session, q):
         lasort = "LASTCHANGEDDATE"
         lisort = "ISSUEDATE"
         fasort = "LASTCHANGEDDATE"
+        vosort = "DATEISSUED"
         sortdir = "a"
         sortname = _("Least recently changed", l)
     # last changed descending
@@ -197,6 +202,7 @@ def search(dbo, session, q):
         lasort = "LASTCHANGEDDATE"
         lisort = "ISSUEDATE"
         fasort = "LASTCHANGEDDATE"
+        vosort = "DATEISSUED"
         sortdir = "d"
         sortname = _("Most recently changed", l)
     # species ascending
@@ -208,6 +214,7 @@ def search(dbo, session, q):
         lasort = "SPECIESNAME"
         lisort = "COMMENTS"
         fasort = "SPECIESNAME"
+        vosort = "COMMENTS"
         sortdir = "a"
         sortname = _("Species A-Z", l)
     elif searchsort == 5:
@@ -218,6 +225,7 @@ def search(dbo, session, q):
         lasort = "SPECIESNAME"
         lisort = "COMMENTS"
         fasort = "SPECIESNAME"
+        vosort = "COMMENTS"
         sortdir = "d"
         sortname = _("Species Z-A", l)
     elif searchsort == 6:
@@ -228,6 +236,7 @@ def search(dbo, session, q):
         lasort = "RELEVANCE"
         lisort = "RELEVANCE"
         fasort = "RELEVANCE"
+        vosort = "RELEVANCE"
         sortdir = "d"
         sortname = _("Most relevant", l)
 
@@ -432,6 +441,12 @@ def search(dbo, session, q):
         if asm3.users.check_permission_bool(session, asm3.users.VIEW_LICENCE):
             ar( asm3.financial.get_licence_find_simple(dbo, q, limit), "LICENCE", lisort )
 
+    elif q.startswith("vo:") or q.startswith("voucher:"):
+        q = q[q.find(":")+1:].strip()
+        explain = _("Voucher codes matching '{0}'.", l).format(q)
+        if asm3.users.check_permission_bool(session, asm3.users.VIEW_VOUCHER):
+            ar( asm3.financial.get_voucher_find_simple(dbo, q, limit), "VOUCHER", vosort )
+
     # No special tokens, search everything and collate
     else:
         if viewanimal:
@@ -448,6 +463,8 @@ def search(dbo, session, q):
             ar( asm3.lostfound.get_foundanimal_find_simple(dbo, q, limit=limit, siteid=siteid), "FOUNDANIMAL", fasort )
         if asm3.users.check_permission_bool(session, asm3.users.VIEW_LICENCE):
             ar( asm3.financial.get_licence_find_simple(dbo, q, limit), "LICENCE", lisort )
+        if asm3.users.check_permission_bool(session, asm3.users.VIEW_VOUCHER):
+            ar( asm3.financial.get_voucher_find_simple(dbo, q, limit), "VOUCHER", vosort)
         explain = _("Results for '{0}'.", l).format(q)
 
     # Apply the sort to the results
