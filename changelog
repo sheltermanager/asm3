@@ -1,6 +1,7 @@
 44
 ================
 
+24/03/21 When deduplicating, validate that mobile phone contains digits
 24/03/21 Allow voucher codes to be searched via global search
 23/03/21 Update browser build targets for babel (minimum for CSP2)
 23/03/21 Retire "remember me" due to potential security issues #982
