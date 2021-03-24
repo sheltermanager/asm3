@@ -1304,10 +1304,11 @@ def html_to_pdf_cmd(dbo, htmldata):
         w, h = ps.split("x")
         papersize = "--page-width %s --page-height %s" % (w, h)
     # Zoom - eg: <!-- pdf zoom 130% end -->
-    zoom = ""
     zm = regex_one("pdf zoom (.+?) end", htmldata)
     if zm != "":
-        zoom = "<style>\nbody { zoom: %s; }\n</style>" % zm
+        zoom = "<style>\nbody { zoom: %s; }\n</style>\n" % zm
+    else:
+        zoom = "<style>\nbody { zoom: %s%%; }\n</style>\n" % asm3.configuration.pdf_zoom(dbo) # use the default from config
     # Margins, top/bottom/left/right eg: <!-- pdf margins 2cm 2cm 2cm 2cm end -->
     margins = "--margin-top 1cm"
     mg = regex_one("pdf margins (.+?) end", htmldata)

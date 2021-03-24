@@ -774,6 +774,10 @@ $(function() {
                 '<select data="GenerateDocumentLogType" id="generatedocumentlogtype" class="asm-selectbox">',
                 html.list_to_options(controller.logtypes, "ID", "LOGTYPENAME"),
                 '</select>',
+                '</p>',
+                '<p>',
+                '<label for="pdfzoom">' + _("Default zoom level when converting documents to PDF") + '</label> ',
+                '<input data="PDFZoom" id="pdfzoom" type="text" class="asm-halftextbox asm-numberbox" />%',
                 '<br />',
                 '</p>',
                 '</div>'

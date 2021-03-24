@@ -277,6 +277,7 @@ DEFAULTS = {
     "PetsLocatedAnimalFlag": "",
     "PicturesInBooks": "Yes",
     "PDFInline": "Yes",
+    "PDFZoom": "100",
     "PublisherUseComments": "Yes",
     "PublisherIgnoreFTPOverride": "No",
     "PublisherPresets": "includefosters excludeunder=12",
@@ -1058,6 +1059,9 @@ def petrescue_token(dbo):
 
 def pdf_inline(dbo):
     return cboolean(dbo, "PDFInline", DEFAULTS["PDFInline"] == "Yes")
+
+def pdf_zoom(dbo):
+    return cint(dbo, "PDFZoom", DEFAULTS["PDFZoom"])
 
 def person_search_columns(dbo):
     return cstring(dbo, "OwnerSearchColumns", DEFAULTS["OwnerSearchColumns"])

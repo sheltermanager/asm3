@@ -536,6 +536,12 @@ documents from templates.
 * When I generate a document, make a note of it in the log: If this option is
   on, a log record is created every time you generate a document.
 
+* Default zoom level when converting documents to PDF: This setting controls how
+  the text is scaled when converting a document to PDF. Older versions of the
+  PDF converter used by SM would to scale to the widest element on the page,
+  however newer versions do not do this. To get back the behaviour that older 
+  versions of SM had with wkhtmltopdf <= 0.12.3, set this value to 130.
+
 Insurance
 ---------
 
