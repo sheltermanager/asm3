@@ -1303,11 +1303,11 @@ def html_to_pdf_cmd(dbo, htmldata):
     if ps != "":
         w, h = ps.split("x")
         papersize = "--page-width %s --page-height %s" % (w, h)
-    # Zoom - eg: <!-- pdf zoom 0.5 end -->
-    zoom = "--enable-smart-shrinking"
+    # Zoom - eg: <!-- pdf zoom 130% end -->
+    zoom = ""
     zm = regex_one("pdf zoom (.+?) end", htmldata)
     if zm != "":
-        zoom = "--disable-smart-shrinking --zoom %s" % zm
+        zoom = "<style>\nbody { zoom: %s; }\n</style>" % zm
     # Margins, top/bottom/left/right eg: <!-- pdf margins 2cm 2cm 2cm 2cm end -->
     margins = "--margin-top 1cm"
     mg = regex_one("pdf margins (.+?) end", htmldata)
@@ -1316,6 +1316,7 @@ def html_to_pdf_cmd(dbo, htmldata):
         margins = "--margin-top %s --margin-bottom %s --margin-left %s --margin-right %s" % (tm, bm, lm, rm)
     header = "<!DOCTYPE HTML>\n<html>\n<head>"
     header += '<meta http-equiv="content-type" content="text/html; charset=utf-8">\n'
+    header += zoom
     header += "</head><body>"
     footer = "</body></html>"
     htmldata = htmldata.replace("font-size: xx-small", "font-size: 6pt")
@@ -1341,7 +1342,7 @@ def html_to_pdf_cmd(dbo, htmldata):
     inputfile.flush()
     inputfile.close()
     outputfile.close()
-    cmdline = HTML_TO_PDF % { "output": outputfile.name, "input": inputfile.name, "orientation": orientation, "papersize": papersize, "zoom": zoom, "margins": margins }
+    cmdline = HTML_TO_PDF % { "output": outputfile.name, "input": inputfile.name, "orientation": orientation, "papersize": papersize, "zoom": "", "margins": margins }
     code, output = cmd(cmdline)
     if code > 0:
         asm3.al.error("code %s returned from '%s': %s" % (code, cmdline, output), "utils.html_to_pdf")
