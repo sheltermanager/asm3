@@ -34,6 +34,11 @@ const login = {
             '</tr>',
             '</table>',
 
+            '<div class="centered" style="padding-bottom: 10px">',
+                '<input class="asm-checkbox" id="rememberme" name="rememberme" type="checkbox" />',
+                '<label for="rememberme">' + _("Remember me on this computer") + '</label>',
+            '</div>',
+
             '<div class="centered" style="padding: 5px">',
                 '<button id="loginbutton" class="ui-priority-primary asm-dialog-actionbutton">',
                     '<img id="flag" style="vertical-align: middle;" />',
@@ -155,9 +160,11 @@ const login = {
         let username = $("input#username").val();
         let password = $("input#password").val();
         let database = $("input#database").val();
+        let remember = $("input#rememberme").prop("checked") ? "on" : "";
         let formdata = { "database": database, 
                             "username" : username, 
                             "password" : password,
+                            "rememberme": remember,
                             "nologconnection" : controller.nologconnection };
         $.ajax({
             type: "POST",
@@ -186,7 +193,6 @@ const login = {
                     window.location = controller.smcomloginurl;
                 }
                 else {
-                    common.local_set("asmusername", username);
                     $("#asm-login-window").fadeOut("slow", function() {
                         if (!controller.target) { 
                             controller.target = "main"; 

@@ -299,6 +299,17 @@ class ASMEndpoint(object):
                 return b.split("=")[1]
         return ""
 
+    def get_cookie(self, s):
+        """ Returns the value of cookie s. Returns None if it does not exist. """
+        try:
+            return web.cookies().get(s)
+        except:
+            return None
+
+    def set_cookie(self, name, value, ttl):
+        """ Sets a cookie value """
+        web.setcookie(name, value, expires=ttl, secure=SESSION_SECURE_COOKIE, httponly=True)
+
     def header(self, key, value):
         """ Set the response header key to value """
         web.header(key, value)
@@ -1057,6 +1068,19 @@ class login(ASMEndpoint):
         else:
             l = LOCALE
 
+        # Do we have a remember me token?
+        rmtoken = self.get_cookie("asm_remember_me")
+        if rmtoken:
+            cred = asm3.cachemem.get(rmtoken)
+            if cred and cred.find("|") != -1:
+                database, username, password = cred.split("|")
+                rpost = asm3.utils.PostedData({ "database": database, "username": username, "password": password }, LOCALE)
+                asm3.al.info("attempting auth with remember me token for %s/%s" % (database, username), "code.login")
+                user = asm3.users.web_login(rpost, session, self.remote_ip(), self.user_agent(), PATH)
+                if user not in ( "FAIL", "DISABLED", "WRONGSERVER" ):
+                    self.redirect("main")
+                    return
+
         title = _("Animal Shelter Manager Login", l)
         s = asm3.html.bare_header(title, locale = l)
         c = { "smcom": asm3.smcom.active(),
@@ -1088,7 +1112,13 @@ class login(ASMEndpoint):
         return s
 
     def post_all(self, o):
-        return asm3.users.web_login(o.post, session, self.remote_ip(), self.user_agent(), PATH)
+        user = asm3.users.web_login(o.post, session, self.remote_ip(), self.user_agent(), PATH)
+        print("LOGGED IN USER: %s" % user)
+        # If there's a pipe in the result, we have a remember me cookie/token to set
+        if user.find("|") != -1:
+            user, token = user.split("|")
+            self.set_cookie("asm_remember_me", token, CACHE_ONE_MONTH)
+        return user
 
     def post_reset(self, o):
         dbo = asm3.db.get_database(o.post["database"])
@@ -1153,6 +1183,7 @@ class logout(ASMEndpoint):
             url = "login?smaccount=" + o.dbo.alias
         asm3.users.update_user_activity(o.dbo, o.user, False)
         asm3.users.logout(o.session, self.remote_ip(), self.user_agent())
+        self.set_cookie("asm_remember_me", "", 0) # user explicitly logged out, remove remember me
         self.redirect(url)
 
 class reset_password(ASMEndpoint):

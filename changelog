@@ -1,6 +1,7 @@
 44
 ================
 
+25/03/21 Use best practice cookie-based "remember me" #982
 24/03/21 Permit inserts via sql interface to sensitive tables/columns
 24/03/21 Configurable PDF zoom level via CSS
 24/03/21 When deduplicating, validate that mobile phone contains digits
