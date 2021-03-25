@@ -1113,7 +1113,6 @@ class login(ASMEndpoint):
 
     def post_all(self, o):
         user = asm3.users.web_login(o.post, session, self.remote_ip(), self.user_agent(), PATH)
-        print("LOGGED IN USER: %s" % user)
         # If there's a pipe in the result, we have a remember me cookie/token to set
         if user.find("|") != -1:
             user, token = user.split("|")
