@@ -3670,7 +3670,6 @@ def update_animal_status(dbo, animalid, a = None, movements = None, animalupdate
 
     # Override the other flags if this animal is dead or non-shelter
     if a.deceaseddate or a.nonshelteranimal == 1:
-        ownerid = a.originalownerid
         onshelter = False
         hastrialadoption = False
         hasreserve = False
@@ -3679,6 +3678,10 @@ def update_animal_status(dbo, animalid, a = None, movements = None, animalupdate
     # On shelter animals cannot have an ownerid
     if onshelter:
         ownerid = 0
+
+    # non-shelter owner should match original owner if not set
+    if a.nonshelteranimal == 1 and a.ownerid == 0:
+        ownerid = a.originalownerid
 
     # Calculate location and qualified display location
     loc = ""
