@@ -85,6 +85,11 @@ $(function() {
                 [ _("FIV Tested"), "fivtest", "CombiTested=1" ],
                 [ _("FLV+"), "flvplus", "CombiTested=1 AND FLVResult=2" ],
                 [ _("FLV-"), "flvneg", "CombiTested=1 AND FLVResult=1" ],
+                [ _("Fostered between two dates"), "fostertwodates", 
+                    "ActiveMovementType = 2 AND ActiveMovementDate Is Not Null AND " +
+                    "ActiveMovementDate>='$ASK DATE {0}$' AND ActiveMovementDate<='$ASK DATE {1}$'"
+                    .replace("{0}", _("Fostered between"))
+                    .replace("{1}", _("and")) ],
                 [ _("Heartworm+"), "heartwormplus", "HeartwormTested=1 AND HeartwormTestResult=2" ],
                 [ _("Heartworm-"), "heartwormneg", "HeartwormTested=1 AND HeartwormTestResult=1" ],
                 [ _("Heartworm Tested"), "heartwormtest", "HeartwormTested=1" ],
