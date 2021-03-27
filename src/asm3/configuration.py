@@ -331,6 +331,7 @@ DEFAULTS = {
     "TrialAdoptions": "No",
     "TrialOnShelter": "No",
     "UniqueLicenceNumbers": "Yes",
+    "UpdateAnimalTestFields": "Yes",
     "UseAutoInsurance": "No",
     "UseShortShelterCodes": "Yes", 
     "USStateCodes": "No",
@@ -1319,6 +1320,9 @@ def trial_on_shelter(dbo):
 
 def unique_licence_numbers(dbo):
     return cboolean(dbo, "UniqueLicenceNumbers", DEFAULTS["UniqueLicenceNumbers"] == "Yes")
+
+def update_animal_test_fields(dbo):
+    return cboolean(dbo, "UpdateAnimalTestFields", DEFAULTS["UpdateAnimalTestFields"] == "Yes")
 
 def vetenvoy_user_id(dbo):
     return cstring(dbo, "VetEnvoyUserId")

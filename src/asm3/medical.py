@@ -660,8 +660,7 @@ def update_test_today(dbo, username, testid, resultid):
         "DateOfTest":   dbo.today(),
         "TestResultID": resultid
     }, username)
-    # ASM2_COMPATIBILITY
-    update_asm2_tests(dbo, testid)
+    update_animal_tests(dbo, testid)
 
 def update_vaccination_today(dbo, username, vaccid):
     """
@@ -711,8 +710,7 @@ def complete_test(dbo, username, testid, newdate, testresult, vetid = 0):
         "TestResultID":         testresult,
         "AdministeringVetID":   vetid
     }, username)
-    # ASM2_COMPATIBILITY
-    update_asm2_tests(dbo, testid)
+    update_animal_tests(dbo, testid)
 
 def reschedule_vaccination(dbo, username, vaccinationid, newdate, comments):
     """
@@ -1028,8 +1026,7 @@ def insert_test_from_form(dbo, username, post):
         "Comments":         post["comments"]
     }, username)
 
-    # ASM2_COMPATIBILITY
-    update_asm2_tests(dbo, ntestid, "insert")
+    update_animal_tests(dbo, ntestid, "insert")
     return ntestid
 
 def update_test_from_form(dbo, username, post):
@@ -1053,15 +1050,14 @@ def update_test_from_form(dbo, username, post):
         "Comments":         post["comments"]
     }, username)
 
-    # ASM2_COMPATIBILITY
-    update_asm2_tests(dbo, testid, "update")
+    update_animal_tests(dbo, testid, "update")
 
-def update_asm2_tests(dbo, testid, action = "insert"):
+def update_animal_tests(dbo, testid, action = "insert"):
     """
-    Used for asm2 compatibility, checks the test with testid and if it's
-    a FIV, FLV or Heartworm test updates the old ASM2 fields for them.
+    Checks the test with testid and if it's a FIV, FLV or Heartworm 
+    test updates the denormalised animal test fields.
     """
-    # ASM2_COMPATIBILITY
+    if not asm3.configuration.update_animal_test_fields(dbo): return # Do nothing if disabled
     t = dbo.first_row(dbo.query("SELECT AnimalID, TestName, DateOfTest, ResultName FROM animaltest " \
         "INNER JOIN testtype ON testtype.ID = animaltest.TestTypeID " \
         "INNER JOIN testresult ON testresult.ID = animaltest.TestResultID " \
@@ -1118,8 +1114,7 @@ def delete_test(dbo, username, testid):
     """
     Deletes a test record
     """
-    # ASM2_COMPATIBILITY
-    update_asm2_tests(dbo, testid, "delete")
+    update_animal_tests(dbo, testid, "delete")
     dbo.delete("animaltest", testid, username)
 
 def delete_vaccination(dbo, username, vaccinationid):
