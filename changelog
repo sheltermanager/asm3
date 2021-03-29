@@ -1,6 +1,7 @@
 44
 ================
 
+29/03/21 Failure to create trx should not stop receiving payments
 25/03/21 Fix bug that set current owner to original on deceased animals
 25/03/21 Use best practice cookie-based "remember me" #982
 24/03/21 Permit inserts via sql interface to sensitive tables/columns
