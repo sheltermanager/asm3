@@ -65,6 +65,16 @@ def clause_for_linktype(linktype):
         inclause = WAITINGLIST_IN
     return inclause
 
+def table_for_linktype(linktype):
+    """ Returns the parent table for an additional link type """
+    if linktype == "incident":
+        return "animalcontrol"
+    elif linktype == "lostanimal":
+        return "animallost"
+    elif linktype == "foundanimal":
+        return "animalfound"
+    return linktype
+
 def get_additional_fields(dbo, linkid, linktype = "animal"):
     """
     Returns a list of additional fields for the link
@@ -243,7 +253,7 @@ def save_values_for_link(dbo, post, username, linkid, linktype = "animal", setde
         audits.append("%s='%s'" % (f.FIELDNAME, val))
         insert_additional(dbo, f.LINKTYPE, linkid, f.ID, val)
 
-    asm3.audit.edit(dbo, username, "additional", 0, "%s=%s " % (linktype, linkid), ", ".join(audits))
+    asm3.audit.edit(dbo, username, "additional", 0, "%s=%s " % (table_for_linktype(linktype), linkid), ", ".join(audits))
 
 def merge_values_for_link(dbo, post, username, linkid, linktype = "animal"):
     """
@@ -276,5 +286,5 @@ def merge_values_for_link(dbo, post, username, linkid, linktype = "animal"):
             insert_additional(dbo, f.LINKTYPE, linkid, f.ID, val)
             audits.append("%s='%s'" % (f.FIELDNAME, val))
 
-    asm3.audit.edit(dbo, username, "additional", 0, "%s=%s " % (linktype, linkid), ", ".join(audits))
+    asm3.audit.edit(dbo, username, "additional", 0, "%s=%s " % (table_for_linktype(linktype), linkid), ", ".join(audits))
 
