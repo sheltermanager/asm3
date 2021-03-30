@@ -978,7 +978,7 @@ def update_matching_donation_transaction(dbo, username, odid, destinationaccount
     asm3.al.debug("Trx created with ID %d" % int(tid), "financial.update_matching_donation_transaction", dbo)
 
     # Is there a vat/tax portion of this payment that we need to create a transaction for?
-    if d.VATAMOUNT > 0 and not isrefund:
+    if d.VATAMOUNT and d.VATAMOUNT > 0 and not isrefund:
         vatac = asm3.configuration.donation_vat_account(dbo)
         if 0 == dbo.query_int("SELECT ID FROM accounts WHERE ID = ?", [vatac]):
             vatac = dbo.query_int("SELECT ID FROM accounts WHERE AccountType=? ORDER BY ID", [INCOME])
@@ -996,7 +996,7 @@ def update_matching_donation_transaction(dbo, username, odid, destinationaccount
         asm3.al.debug("VAT trx created with ID %d" % int(tid), "financial.update_matching_donation_transaction", dbo)
 
     # Is there a fee on this payment that we need to create a transaction for?
-    if d.FEE > 0 and not isrefund:
+    if d.FEE and d.FEE > 0 and not isrefund:
         feeac = asm3.configuration.donation_fee_account(dbo)
         if 0 == dbo.query_int("SELECT ID FROM accounts WHERE ID = ?", [feeac]):
             feeac = dbo.query_int("SELECT ID FROM accounts WHERE AccountType=? ORDER BY ID", [EXPENSE])
