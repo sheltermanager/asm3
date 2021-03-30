@@ -28,7 +28,7 @@ LEFT OUTER JOIN owner p ON p.ID = t.PickupOwnerID
 LEFT OUTER JOIN owner dr ON dr.ID = t.DropoffOwnerID
 INNER JOIN animaltype at ON at.ID = a.AnimalTypeID
 INNER JOIN transporttype tt ON tt.ID = t.TransportTypeID
-WHERE t.Status = 11 AND t.DropoffDateTime >= '$ASK DATE Enter date from$' AND t.DropoffDateTime <= '$ASK DATE Enter date to$' 
+WHERE t.DropoffDateTime >= '$ASK DATE Enter date from$' AND t.DropoffDateTime <= '$ASK DATE Enter date to$' 
 ORDER BY t.DropoffDateTime
 ###
 $$HEADER
