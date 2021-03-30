@@ -1,6 +1,8 @@
 44
 ================
 
+30/03/21 Audit changes to additional fields #988 
+30/03/21 Audit changes made by clone_from_template #988
 29/03/21 Failure to create trx should not stop receiving payments
 25/03/21 Fix bug that set current owner to original on deceased animals
 25/03/21 Use best practice cookie-based "remember me" #982

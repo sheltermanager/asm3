@@ -824,7 +824,7 @@ def insert_person_from_form(dbo, post, username, geocode=True):
     update_flags(dbo, username, pid, post["flags"].split(","))
 
     # Save any asm3.additional.field values given
-    asm3.additional.save_values_for_link(dbo, post, pid, "person", True)
+    asm3.additional.save_values_for_link(dbo, post, username, pid, "person", True)
 
     # If the option is on, record any GDPR contact options in the log
     if asm3.configuration.show_gdpr_contact_optin(dbo) and asm3.configuration.gdpr_contact_change_log(dbo) and post["gdprcontactoptin"] != "":
@@ -915,7 +915,7 @@ def update_person_from_form(dbo, post, username, geocode=True):
     update_flags(dbo, username, pid, post["flags"].split(","))
 
     # Save any asm3.additional.field values given
-    asm3.additional.save_values_for_link(dbo, post, pid, "person")
+    asm3.additional.save_values_for_link(dbo, post, username, pid, "person")
 
     # Check/update the geocode for the person's address
     if geocode: update_geocode(dbo, pid, post["latlong"], post["address"], post["town"], post["county"], post["postcode"], post["country"])

@@ -440,7 +440,7 @@ def update_animalcontrol_from_form(dbo, post, username, geocode=True):
         "AgeGroup":             post["agegroup"]
     }, username)
 
-    asm3.additional.save_values_for_link(dbo, post, acid, "incident")
+    asm3.additional.save_values_for_link(dbo, post, username, acid, "incident")
     update_animalcontrol_roles(dbo, acid, post.integer_list("viewroles"), post.integer_list("editroles"))
 
     # Check/update the geocode for the dispatch address
@@ -534,7 +534,7 @@ def insert_animalcontrol_from_form(dbo, post, username, geocode=True):
         "AgeGroup":             post["agegroup"]
     }, username)
 
-    asm3.additional.save_values_for_link(dbo, post, nid, "incident", True)
+    asm3.additional.save_values_for_link(dbo, post, username, nid, "incident", True)
     update_animalcontrol_roles(dbo, nid, post.integer_list("viewroles"), post.integer_list("editroles"))
 
     # Look up a geocode for the dispatch address

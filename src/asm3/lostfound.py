@@ -663,7 +663,7 @@ def update_lostanimal_from_form(dbo, post, username):
         "OwnerID":          post.integer("owner"),
         "Comments":         post["comments"]
     }, username)
-    asm3.additional.save_values_for_link(dbo, post, lfid, "lostanimal")
+    asm3.additional.save_values_for_link(dbo, post, username, lfid, "lostanimal")
 
 def insert_lostanimal_from_form(dbo, post, username):
     """
@@ -696,7 +696,7 @@ def insert_lostanimal_from_form(dbo, post, username):
     }, username)
 
     # Save any additional field values given
-    asm3.additional.save_values_for_link(dbo, post, nid, "lostanimal", True)
+    asm3.additional.save_values_for_link(dbo, post, username, nid, "lostanimal", True)
 
     return nid
 
@@ -734,7 +734,7 @@ def update_foundanimal_from_form(dbo, post, username):
         "OwnerID":          post.integer("owner"),
         "Comments":         post["comments"]
     }, username)
-    asm3.additional.save_values_for_link(dbo, post, lfid, "foundanimal")
+    asm3.additional.save_values_for_link(dbo, post, username, lfid, "foundanimal")
 
 def insert_foundanimal_from_form(dbo, post, username):
     """
@@ -767,7 +767,7 @@ def insert_foundanimal_from_form(dbo, post, username):
     }, username)
 
     # Save any additional field values given
-    asm3.additional.save_values_for_link(dbo, post, nid, "foundanimal", True)
+    asm3.additional.save_values_for_link(dbo, post, username, nid, "foundanimal", True)
 
     return nid
 

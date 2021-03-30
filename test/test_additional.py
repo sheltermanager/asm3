@@ -72,8 +72,8 @@ class TestAdditional(unittest.TestCase):
         asm3.additional.update_field_from_form(base.get_dbo(), "test", post)
 
     def test_save_values_for_link(self):
-        asm3.additional.save_values_for_link(base.get_dbo(), asm3.utils.PostedData({}, "en"), 0, "animal")
+        asm3.additional.save_values_for_link(base.get_dbo(), asm3.utils.PostedData({}, "en"), "test", 0, "animal")
 
     def test_merge_values_for_link(self):
-        asm3.additional.merge_values_for_link(base.get_dbo(), asm3.utils.PostedData({}, "en"), 0, "animal")
+        asm3.additional.merge_values_for_link(base.get_dbo(), asm3.utils.PostedData({}, "en"), "test", 0, "animal")
 

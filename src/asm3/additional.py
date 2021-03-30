@@ -1,5 +1,6 @@
 
 import asm3.al
+import asm3.audit
 import asm3.utils
 
 from asm3.i18n import _, python2display
@@ -200,7 +201,7 @@ def insert_additional(dbo, linktype, linkid, additionalfieldid, value):
     except Exception as err:
         asm3.al.error("Failed saving additional field: %s" % err, "additional.insert_additional", dbo, sys.exc_info())
 
-def save_values_for_link(dbo, post, linkid, linktype = "animal", setdefaults=False):
+def save_values_for_link(dbo, post, username, linkid, linktype = "animal", setdefaults=False):
     """
     Saves incoming additional field values from a record.
     Clears existing additional field values before saving (this is because forms
@@ -215,6 +216,7 @@ def save_values_for_link(dbo, post, linkid, linktype = "animal", setdefaults=Fal
     l = dbo.locale
 
     dbo.delete("additional", "LinkType IN (%s) AND LinkID=%s" % (clause_for_linktype(linktype), linkid))
+    audits = []
 
     for f in get_field_definitions(dbo, linktype):
 
@@ -224,6 +226,7 @@ def save_values_for_link(dbo, post, linkid, linktype = "animal", setdefaults=Fal
         if key not in post and key2 not in post:
             if setdefaults and f.DEFAULTVALUE and f.DEFAULTVALUE != "": 
                 insert_additional(dbo, f.LINKTYPE, linkid, f.ID, f.DEFAULTVALUE)
+                audits.append("%s='%s'" % (f.FIELDNAME, f.DEFAULTVALUE))
             continue
 
         elif key not in post: key = key2
@@ -237,9 +240,12 @@ def save_values_for_link(dbo, post, linkid, linktype = "animal", setdefaults=Fal
             if len(val.strip()) > 0 and post.date(key) is None:
                 raise asm3.utils.ASMValidationError(_("Additional date field '{0}' contains an invalid date.", l).format(f.fieldname))
             val = python2display(dbo.locale, post.date(key))
+        audits.append("%s='%s'" % (f.FIELDNAME, val))
         insert_additional(dbo, f.LINKTYPE, linkid, f.ID, val)
 
-def merge_values_for_link(dbo, post, linkid, linktype = "animal"):
+    asm3.audit.edit(dbo, username, "additional", 0, "%s=%s " % (linktype, linkid), ", ".join(audits))
+
+def merge_values_for_link(dbo, post, username, linkid, linktype = "animal"):
     """
     Saves incoming additional field values. Only updates the 
     additional fields that are present in the post object and leaves the rest alone. 
@@ -250,6 +256,7 @@ def merge_values_for_link(dbo, post, linkid, linktype = "animal"):
     Keys of either a.MANDATORY.ID can be used (ASM internal forms)
         or keys of the form additionalFIELDNAME (ASM online forms)
     """
+    audits = []
     for f in get_field_definitions(dbo, linktype):
 
         key = "a.%s.%s" % (f.mandatory, f.id)
@@ -267,3 +274,7 @@ def merge_values_for_link(dbo, post, linkid, linktype = "animal"):
                 val = python2display(dbo.locale, post.date(key))
             dbo.delete("additional", "LinkID=%s AND AdditionalFieldID=%s" % (linkid, f.ID))
             insert_additional(dbo, f.LINKTYPE, linkid, f.ID, val)
+            audits.append("%s='%s'" % (f.FIELDNAME, val))
+
+    asm3.audit.edit(dbo, username, "additional", 0, "%s=%s " % (linktype, linkid), ", ".join(audits))
+

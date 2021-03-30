@@ -2123,7 +2123,7 @@ def insert_animal_from_form(dbo, post, username):
     }, username, generateID=False)
 
     # Save any additional field values given
-    asm3.additional.save_values_for_link(dbo, post, nextid, "animal", True)
+    asm3.additional.save_values_for_link(dbo, post, username, nextid, "animal", True)
 
     # Update denormalised fields after the insert
     update_animal_check_bonds(dbo, nextid)
@@ -2357,7 +2357,7 @@ def update_animal_from_form(dbo, post, username):
     }, username)
 
     # Save any additional field values given
-    asm3.additional.save_values_for_link(dbo, post, aid, "animal")
+    asm3.additional.save_values_for_link(dbo, post, username, aid, "animal")
 
     # Update denormalised fields after the change
     update_animal_check_bonds(dbo, aid)
@@ -2678,12 +2678,7 @@ def clone_animal(dbo, username, animalid):
     }, username, writeAudit=False)
     # Additional Fields
     for af in dbo.query("SELECT * FROM additional WHERE LinkID = %d AND LinkType IN (%s)" % (animalid, asm3.additional.ANIMAL_IN)):
-        dbo.insert("additional", {
-            "LinkType":             af.linktype,
-            "LinkID":               nid,
-            "AdditionalFieldID":    af.additionalfieldid,
-            "Value":                af.value
-        }, generateID=False, writeAudit=False, setRecordVersion=False)
+        asm3.additional.insert_additional(dbo, af.linktype, nid, af.additionalfieldid, af.value)
     # Vaccinations
     for v in dbo.query("SELECT * FROM animalvaccination WHERE AnimalID = ?", [animalid]):
         dbo.insert("animalvaccination", {
@@ -2914,7 +2909,7 @@ def clone_from_template(dbo, username, animalid, dob, animaltypeid, speciesid):
     dbo.update("animal", animalid, {
         "Fee":                      copyfrom.fee,
         "AnimalComments":           copyfrom.animalcomments
-    }, username, writeAudit=False)
+    }, username)
     # Helper function to work out the difference between intake and a date and add that
     # difference to today to get a new date
     def adjust_date(d):
@@ -2942,7 +2937,7 @@ def clone_from_template(dbo, username, animalid, dob, animaltypeid, speciesid):
             "Manufacturer":         v.manufacturer,
             "Cost":                 v.cost,
             "Comments":             v.comments
-        }, username, writeAudit=False)
+        }, username)
     # Tests
     for t in dbo.query("SELECT * FROM animaltest WHERE AnimalID = ?", [cloneanimalid]):
         newdate = adjust_date(t.daterequired)
@@ -2955,7 +2950,7 @@ def clone_from_template(dbo, username, animalid, dob, animaltypeid, speciesid):
             "AdministeringVetID":   t.administeringvetid,
             "Cost":                 t.cost,
             "Comments":             t.comments
-        }, username, writeAudit=False)
+        }, username)
     # Medical
     for am in dbo.query("SELECT * FROM animalmedical WHERE AnimalID = ?", [cloneanimalid]):
         newdate = adjust_date(am.startdate)
@@ -2975,7 +2970,7 @@ def clone_from_template(dbo, username, animalid, dob, animaltypeid, speciesid):
             "TreatmentsRemaining":  am.treatmentsremaining,
             "Status":               am.status,
             "Comments":             am.comments
-        }, username, writeAudit=False)
+        }, username)
         for amt in dbo.query("SELECT * FROM animalmedicaltreatment WHERE AnimalMedicalID = ?", [am.id]):
             dbo.insert("animalmedicaltreatment", {
                 "AnimalID":         animalid,
@@ -2987,7 +2982,7 @@ def clone_from_template(dbo, username, animalid, dob, animaltypeid, speciesid):
                 "AdministeringVetID": amt.administeringvetid,
                 "GivenBy":          amt.givenby,
                 "Comments":         amt.comments
-            }, username, writeAudit=False)
+            }, username)
     # Diet
     for d in dbo.query("SELECT * FROM animaldiet WHERE AnimalID = ?", [cloneanimalid]):
         newdate = adjust_date(d.datestarted)
@@ -2996,7 +2991,7 @@ def clone_from_template(dbo, username, animalid, dob, animaltypeid, speciesid):
             "DietID":               d.dietid,
             "DateStarted":          newdate,
             "Comments":             d.comments
-        }, username, writeAudit=False)
+        }, username)
     # Costs
     for c in dbo.query("SELECT * FROM animalcost WHERE AnimalID = ?", [cloneanimalid]):
         newdate = adjust_date(c.costdate)
@@ -3006,7 +3001,7 @@ def clone_from_template(dbo, username, animalid, dob, animaltypeid, speciesid):
             "CostDate":             newdate,
             "CostAmount":           c.costamount,
             "Description":          c.description
-        }, username, writeAudit=False)
+        }, username)
     # Diary
     for di in dbo.query("SELECT * FROM diary WHERE LinkType = 1 AND LinkID = ?", [cloneanimalid]):
         newdate = adjust_date(di.diarydatetime)
@@ -3019,7 +3014,7 @@ def clone_from_template(dbo, username, animalid, dob, animaltypeid, speciesid):
             "Note":                 di.note,
             "DateCompleted":        None,
             "LinkInfo":             asm3.diary.get_link_info(dbo, asm3.diary.ANIMAL, animalid)
-        }, username, writeAudit=False)
+        }, username)
 
 def delete_animal(dbo, username, animalid, ignore_movements=False):
     """
