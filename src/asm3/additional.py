@@ -3,7 +3,7 @@ import asm3.al
 import asm3.audit
 import asm3.utils
 
-from asm3.i18n import _, python2display
+from asm3.i18n import python2display
 
 import sys
 
@@ -223,8 +223,6 @@ def save_values_for_link(dbo, post, username, linkid, linktype = "animal", setde
     Keys of either a.MANDATORY.ID can be used (ASM internal forms)
         or keys of the form additionalFIELDNAME (ASM online forms)
     """
-    l = dbo.locale
-
     dbo.delete("additional", "LinkType IN (%s) AND LinkID=%s" % (clause_for_linktype(linktype), linkid))
     audits = []
 
@@ -247,8 +245,6 @@ def save_values_for_link(dbo, post, username, linkid, linktype = "animal", setde
         elif f.fieldtype == MONEY:
             val = str(post.integer(key))
         elif f.fieldtype == DATE:
-            if len(val.strip()) > 0 and post.date(key) is None:
-                raise asm3.utils.ASMValidationError(_("Additional date field '{0}' contains an invalid date.", l).format(f.fieldname))
             val = python2display(dbo.locale, post.date(key))
         audits.append("%s='%s'" % (f.FIELDNAME, val))
         insert_additional(dbo, f.LINKTYPE, linkid, f.ID, val)

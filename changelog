@@ -1,6 +1,7 @@
 44
 ================
 
+01/04/21 Prevent invalid dates stopping additional fields being written
 30/03/21 Audit changes to additional fields #988 
 30/03/21 Audit changes made by clone_from_template #988
 29/03/21 Failure to create trx should not stop receiving payments
