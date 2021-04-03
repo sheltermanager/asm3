@@ -804,6 +804,8 @@ def insert_onlineformincoming_from_form(dbo, post, remoteip):
         # If a submitter email is set, use that to reply to instead
         replyto = submitteremail 
         if replyto == "": replyto = asm3.configuration.email(dbo)
+        # Remove any line breaks from the list of addresses, this has caused malformed headers before
+        emailsubmissionto = emailsubmissionto.replace("\n", "")
         asm3.utils.send_email(dbo, replyto, emailsubmissionto, "", "", "%s - %s" % (formname, ", ".join(preview)), 
             formdata, "html", images, exceptions=False)
 

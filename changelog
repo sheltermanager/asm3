@@ -1,6 +1,7 @@
 44
 ================
 
+03/04/21 Stop line breaks in online form recipients breaking headers
 01/04/21 Stop diary notifications using inaccurate substring match #989
 01/04/21 Prevent invalid dates stopping additional fields being written
 30/03/21 Audit changes to additional fields #988 
