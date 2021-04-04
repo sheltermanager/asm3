@@ -1,6 +1,7 @@
 44
 ================
 
+04/04/21 Support autocomplete/autofill in online forms #991
 03/04/21 Stop line breaks in online form recipients breaking headers
 01/04/21 Stop diary notifications using inaccurate substring match #989
 01/04/21 Prevent invalid dates stopping additional fields being written

@@ -86,6 +86,19 @@ FORM_FIELDS = [
     "dropoffaddress", "dropofftown", "dropoffcity", "dropoffcounty", "dropoffstate", "dropoffpostcode", "dropoffzipcode", "dropoffcountry", "dropoffdate", "dropofftime"
 ]
 
+AUTOCOMPLETE_MAP = {
+    "title":            "honorific",
+    "firstname":        "given-name",
+    "lastname":         "family-name",
+    "address":          "street-address",
+    "city":             "address-level2",
+    "state":            "address-level3",
+    "country":          "country-name",
+    "zipcode":          "postal-code",
+    "mobiletelephone":  "tel",
+    "emailaddress":     "email"
+}
+
 def get_collationid(dbo):
     """ Returns the next collation ID value for online forms. """
     return asm3.configuration.collation_id_next(dbo)
@@ -148,6 +161,9 @@ def get_onlineform_html(dbo, formid, completedocument = True):
         requiredtext = ""
         requiredspan = '<span class="asm-onlineform-notrequired"></span>'
         requiredspan = ""
+        autocomplete = ""
+        if f.FIELDNAME in AUTOCOMPLETE_MAP:
+            autocomplete = "autocomplete=\"%s\"" % AUTOCOMPLETE_MAP[f.FIELDNAME]
         if f.MANDATORY == 1: 
             required = "required=\"required\""
             requiredtext = "required=\"required\" pattern=\".*\\S+.*\""
@@ -170,9 +186,9 @@ def get_onlineform_html(dbo, formid, completedocument = True):
             h.append('<input class="asm-onlineform-check" type="checkbox" id="%s" name="%s" %s /> <label for="%s">%s</label>' % \
                 (fid, cname, required, fid, f.LABEL))
         elif f.FIELDTYPE == FIELDTYPE_TEXT:
-            h.append('<input class="asm-onlineform-text" type="text" id="%s" name="%s" title="%s" %s />' % ( fid, cname, asm3.utils.nulltostr(f.TOOLTIP), requiredtext))
+            h.append('<input class="asm-onlineform-text" type="text" id="%s" name="%s" title="%s" %s %s />' % ( fid, cname, asm3.utils.nulltostr(f.TOOLTIP), autocomplete, requiredtext))
         elif f.FIELDTYPE == FIELDTYPE_EMAIL:
-            h.append('<input class="asm-onlineform-email" type="email" id="%s" name="%s" title="%s" %s />' % ( fid, cname, asm3.utils.nulltostr(f.TOOLTIP), requiredtext))
+            h.append('<input class="asm-onlineform-email" type="email" id="%s" name="%s" title="%s" %s %s />' % ( fid, cname, asm3.utils.nulltostr(f.TOOLTIP), autocomplete, requiredtext))
         elif f.FIELDTYPE == FIELDTYPE_DATE:
             h.append('<input class="asm-onlineform-date" type="text" id="%s" name="%s" title="%s" %s />' % ( fid, cname, asm3.utils.nulltostr(f.TOOLTIP), requiredtext))
         elif f.FIELDTYPE == FIELDTYPE_TIME:
