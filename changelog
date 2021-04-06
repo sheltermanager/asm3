@@ -1,6 +1,7 @@
 44
 ================
 
+06/04/21 Use created date as default sort for media icon view
 04/04/21 Support autocomplete/autofill in online forms #991
 03/04/21 Stop line breaks in online form recipients breaking headers
 01/04/21 Stop diary notifications using inaccurate substring match #989

@@ -134,8 +134,8 @@ $(function() {
                             return m.MEDIASIZE; 
                         }
                     },
-                    { field: "CREATEDDATE", classes: "mode-table", display: _("Added"), formatter: tableform.format_date },
-                    { field: "DATE", classes: "mode-table", display: _("Updated"), formatter: tableform.format_date, initialsort: true, initialsortdirection: "desc" },
+                    { field: "CREATEDDATE", classes: "mode-table", display: _("Added"), formatter: tableform.format_date, initialsort: true, initialsortdirection: "desc" },
+                    { field: "DATE", classes: "mode-table", display: _("Updated"), formatter: tableform.format_date },
                     { field: "MEDIAMIMETYPE", classes: "mode-table", display: _("Type") },
                     { field: "PREVIEWICON", classes: "mode-icon", display: "", formatter: function(m) {
                         let h = [];
