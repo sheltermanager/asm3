@@ -105,19 +105,19 @@ $(function() {
                 hf.replace("{mode}", "email"),
                 '<table width="100%">',
                 '<tr>',
-                '<td><label for="emailfrom">' + _("From") + '</label></td>',
-                '<td><input id="emailfrom" data="from" type="text" class="asm-doubletextbox" /></td>',
+                '<td><label for="em-from">' + _("From") + '</label></td>',
+                '<td><input id="em-from" data="from" type="text" class="asm-doubletextbox" /></td>',
                 '</tr>',
                 '<tr>',
-                '<td><label for="emailsubject">' + _("Subject") + '</label></td>',
-                '<td><input id="emailsubject" data="subject" type="text" class="asm-doubletextbox" /></td>',
+                '<td><label for="em-subject">' + _("Subject") + '</label></td>',
+                '<td><input id="em-subject" data="subject" type="text" class="asm-doubletextbox" /></td>',
                 '</tr>',
                 '<tr>',
                 '<td colspan="2">',
-                '<div id="emailbody" data="body" data-height="300px" data-margin-top="24px" class="asm-richtextarea"></div>',
+                '<div id="em-body" data="body" data-height="300px" data-margin-top="24px" class="asm-richtextarea"></div>',
                 '<p>',
-                '<label for="emailtemplate">' + _("Template") + '</label>',
-                '<select id="emailtemplate" class="asm-selectbox">',
+                '<label for="em-template">' + _("Template") + '</label>',
+                '<select id="em-template" class="asm-selectbox">',
                 '</select>',
                 '</p>',
                 '</td>',
@@ -227,13 +227,28 @@ $(function() {
                 $("#asm-mailmerge-accordion").hide();
             } 
             else {
-                $("#emailfrom").val(html.decode(config.str("Organisation")) + " <" + config.str("EmailAddress") + ">");
-                $("#emailtemplate").html( edit_header.template_list_options(controller.templates) );
-                $("#emailtemplate").change(function() {
-                    let formdata = "mode=emailtemplate&dtid=" + $("#emailtemplate").val();
+                let fromaddresses = [];
+                let conf_org = html.decode(config.str("Organisation").replace(",", ""));
+                let conf_email = config.str("EmailAddress");
+                let org_email = conf_org + " <" + conf_email + ">";
+                $("#em-from").val(conf_email);
+                fromaddresses.push(conf_email);
+                if (asm.useremail) {
+                    fromaddresses.push(asm.useremail);
+                    fromaddresses.push(html.decode(asm.userreal) + " <" + asm.useremail + ">");
+                }
+                fromaddresses = fromaddresses.concat(config.str("EmailFromAddresses").split(","));
+                $("#em-from").autocomplete({source: fromaddresses});
+                $("#em-from").autocomplete("widget").css("z-index", 1000);
+                $("#em-from").bind("focus", function() {
+                    $(this).autocomplete("search", "@");
+                });
+                $("#em-template").html( edit_header.template_list_options(controller.templates) );
+                $("#em-template").change(function() {
+                    let formdata = "mode=emailtemplate&dtid=" + $("#em-template").val();
                     header.show_loading(_("Loading..."));
                     common.ajax_post("document_gen", formdata, function(result) {
-                        $("#emailbody").html(result); 
+                        $("#em-body").html(result); 
                     });
                 });
 
@@ -245,7 +260,7 @@ $(function() {
             // Default the email signature for bulk emails
             let sig = config.str("EmailSignature");
             if (sig) {
-                $("#emailbody").richtextarea("value", "<p>&nbsp;</p>" + sig);
+                $("#em-body").richtextarea("value", "<p>&nbsp;</p>" + sig);
             }
 
             // When the preview slider is chosen, load the preview data
@@ -309,7 +324,7 @@ $(function() {
         },
 
         destroy: function() {
-            common.widget_destroy("#emailbody", "richtextarea");
+            common.widget_destroy("#em-body", "richtextarea");
         },
 
         name: "mailmerge",

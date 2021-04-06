@@ -918,7 +918,7 @@ def handler(session, post):
         # We're electronically signing a document
         for mid in post.integer_list("ids"):
             try:
-                asm3.media.sign_document(dbo, user, mid, post["sig"], post["signdate"])
+                asm3.media.sign_document(dbo, user, mid, post["sig"], post["signdate"], "signmobile")
             finally:
                 asm3.configuration.signpad_ids(dbo, user, "")
         return "ok"

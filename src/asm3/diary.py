@@ -47,7 +47,7 @@ def email_uncompleted_upto_today(dbo):
                 # Is this note relevant for this user?
                 if (n.diaryforname == "*") \
                 or (n.diaryforname == u.username) \
-                or (u.roles.find(n.diaryforname) != -1):
+                or (n.diaryforname in u.roles.split("|")):
                     s += "%s %s - %s - " % (asm3.i18n.python2display(l, n.diarydatetime), asm3.i18n.format_time(n.diarydatetime), n.diaryforname)
                     s += n.subject
                     if n.linkinfo is not None and n.linkinfo != "": s += " / %s" % n.linkinfo
@@ -77,7 +77,7 @@ def email_note_on_change(dbo, n, username):
             # Is this note relevant for this user?
             if (n.diaryforname == "*") \
             or (n.diaryforname == u.username) \
-            or (u.roles.find(n.diaryforname) != -1):
+            or (n.diaryforname in u.roles.split("|")):
                 # Yes, send it to them
                 asm3.utils.send_email(dbo, asm3.configuration.email(dbo), u.emailaddress, "", "", 
                     asm3.i18n._("Diary update: {0}", l).format(n.subject), s, exceptions=False)

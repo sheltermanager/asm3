@@ -272,6 +272,32 @@ class TestAnimal(unittest.TestCase):
     def test_update_animal_check_bonds(self):
         asm3.animal.update_animal_check_bonds(base.get_dbo(), self.nid)
 
+    def test_is_animal_in_location_filter(self):
+        a = asm3.animal.get_animal(base.get_dbo(), self.nid)
+        a.siteid = 2 # site test
+        assert asm3.animal.is_animal_in_location_filter(a, "", 2, "")
+        assert not asm3.animal.is_animal_in_location_filter(a, "", 3, "")
+        a.activemovementtype = None
+        a.shelterlocation = 3 # shelter locations
+        assert asm3.animal.is_animal_in_location_filter(a, "3", 0, "")
+        assert not asm3.animal.is_animal_in_location_filter(a, "4", 0, "")
+        a.activemovementtype = 1 # trials
+        assert asm3.animal.is_animal_in_location_filter(a, "-1", 0, "")
+        assert not asm3.animal.is_animal_in_location_filter(a, "-2", 0, "")
+        a.activemovementtype = 2 # fosters
+        assert asm3.animal.is_animal_in_location_filter(a, "-2", 0, "")
+        assert not asm3.animal.is_animal_in_location_filter(a, "-1", 0, "")
+        a.activemovementtype = 8 # retailers
+        assert asm3.animal.is_animal_in_location_filter(a, "-8", 0, "")
+        assert not asm3.animal.is_animal_in_location_filter(a, "-2", 0, "")
+        a.activemovementtype = None
+        a.nonshelteranimal = 1 # nonshelters
+        assert asm3.animal.is_animal_in_location_filter(a, "-9", 0, "")
+        assert not asm3.animal.is_animal_in_location_filter(a, "-1", 0, "")
+        # visible animals like "my fosters"
+        assert asm3.animal.is_animal_in_location_filter(a, "-12", 0, str(self.nid))
+        assert not asm3.animal.is_animal_in_location_filter(a, "-12", 0, "")
+
     def test_get_number(self):
         assert asm3.animal.get_number_animals_on_shelter(base.get_dbo(), base.today(), 1) > 0
         asm3.animal.get_number_litters_on_shelter(base.get_dbo(), base.today())

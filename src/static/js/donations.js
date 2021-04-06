@@ -364,7 +364,7 @@ $(function() {
             }
 
             s += '</ul></div>';
-            s += '<div id="emailform" />';
+            s += '<div id="emailform"></div>';
             s += '<div id="paymentconfirmation" style="display: none" title="' + html.title(_("Are you sure?")) + '"></div>';
             if (controller.name == "animal_donations") {
                 s += edit_header.animal_edit_header(controller.animal, "donations", controller.tabcounts);
@@ -539,8 +539,8 @@ $(function() {
                 if (json.hasOwnProperty("message")) {
                     var timer = setInterval(function() { 
                             clearInterval(timer); 
-                            setTimeout(common.route_reload(), 800);
-                            setTimeout(header.show_info(_(json.message)),850);
+                            setTimeout(() => { common.route_reload(); }, 800);
+                            setTimeout(() => { header.show_info(_(json.message)); }, 850);
                     }, 1000);
                     return;
                 }
@@ -608,7 +608,7 @@ $(function() {
             common.widget_destroy("#animal");
             common.widget_destroy("#person");
             common.widget_destroy("#emailform");
-            common.widget_destroy("#paymentconfirmation");
+            common.widget_destroy("#paymentconfirmation", "dialog");
             tableform.dialog_destroy();
             this.create_semaphore = false;
             this.lastanimal = null;

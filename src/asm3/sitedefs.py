@@ -143,6 +143,11 @@ SESSION_SECURE_COOKIE = get_boolean("session_secure_cookie", False)
 # Output debug info on sessions
 SESSION_DEBUG = get_boolean("session_debug", False)
 
+# The Content-Security-Policy header to send, or blank for no policy
+# Include 'nonce-%(nonce)s' in any policy to prevent the bootstrap 
+# inline script breaking
+CONTENT_SECURITY_POLICY = get_string("content_security_policy", "")
+
 # The host/port that memcached is running on if it is to be used.
 # If memcache is not available, an in memory dictionary will be
 # used instead.
@@ -340,13 +345,13 @@ FULLCALENDAR_CSS = get_string("fullcalendar_css", 'static/lib/fullcalendar/3.2.0
 FULLCALENDAR_JS = get_string("fullcalendar_js", 'static/lib/fullcalendar/3.2.0/fullcalendar.min.js')
 JQUERY_UI_CSS = get_string("jquery_ui_css", 'static/lib/jqueryui/jquery-ui-themes-1.12.1/themes/%(theme)s/jquery-ui.css')
 JQUERY_UI_JS = get_string("jquery_ui_js", 'static/lib/jqueryui/jquery-ui-1.12.1/jquery-ui.min.js')
-JQUERY_JS = get_string("jquery_js", 'static/lib/jquery/3.4.1/jquery.min.js')
+JQUERY_JS = get_string("jquery_js", 'static/lib/jquery/3.6.0/jquery.min.js')
 JQUERY_MOBILE_CSS = get_string("jquery_mobile_css", 'static/lib/jquerymobile/1.4.5/jquery.mobile.min.css')
 JQUERY_MOBILE_JS = get_string("jquery_mobile_js", 'static/lib/jquerymobile/1.4.5/jquery.mobile.min.js')
 JQUERY_MOBILE_JQUERY_JS = get_string("jquery_mobile_jquery_js", 'static/lib/jquery/2.2.4/jquery.min.js')
 LEAFLET_CSS = get_string("leaflet_css", 'static/lib/leaflet/1.3.1/leaflet.css')
 LEAFLET_JS = get_string("leaflet_js", 'static/lib/leaflet/1.3.1/leaflet.js')
-MOMENT_JS = get_string("moment_js", 'static/lib/moment/2.17.1/moment.min.js')
+MOMENT_JS = get_string("moment_js", 'static/lib/moment/2.29.1/moment.min.js')
 MOUSETRAP_JS = get_string("mousetrap_js", 'static/lib/mousetrap/1.4.6/mousetrap.min.js')
 PATH_JS = get_string("path_js", 'static/lib/pathjs/0.8.4.smcom/path.min.js')
 SIGNATURE_JS = get_string("signature_js", 'static/lib/signature/1.1.1/jquery.signature.min.js')

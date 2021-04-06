@@ -115,7 +115,7 @@ def get_person_similar(dbo, email = "", mobile = "", surname = "", forenames = "
     per = []
     if email != "" and email.find("@") != -1 and email.find(".") != -1 and len(email) > 6:
         eq = dbo.query(get_person_query(dbo) + " WHERE %s LOWER(o.EmailAddress) LIKE ?" % siteclause, [email])
-    if mobile != "" and len(mobile) > 6:
+    if mobile != "" and asm3.utils.atoi(mobile)> 9999: # at least 5 digits to constitute a valid number
         mq = dbo.query(get_person_query(dbo) + " WHERE %s %s LIKE ?" % (siteclause, dbo.sql_atoi("o.MobileTelephone")) , [asm3.utils.digits_only(mobile)])
     if address != "":
         per = dbo.query(get_person_query(dbo) + " WHERE %s LOWER(o.OwnerSurname) LIKE ? AND " \
@@ -824,7 +824,7 @@ def insert_person_from_form(dbo, post, username, geocode=True):
     update_flags(dbo, username, pid, post["flags"].split(","))
 
     # Save any asm3.additional.field values given
-    asm3.additional.save_values_for_link(dbo, post, pid, "person", True)
+    asm3.additional.save_values_for_link(dbo, post, username, pid, "person", True)
 
     # If the option is on, record any GDPR contact options in the log
     if asm3.configuration.show_gdpr_contact_optin(dbo) and asm3.configuration.gdpr_contact_change_log(dbo) and post["gdprcontactoptin"] != "":
@@ -915,7 +915,7 @@ def update_person_from_form(dbo, post, username, geocode=True):
     update_flags(dbo, username, pid, post["flags"].split(","))
 
     # Save any asm3.additional.field values given
-    asm3.additional.save_values_for_link(dbo, post, pid, "person")
+    asm3.additional.save_values_for_link(dbo, post, username, pid, "person")
 
     # Check/update the geocode for the person's address
     if geocode: update_geocode(dbo, pid, post["latlong"], post["address"], post["town"], post["county"], post["postcode"], post["country"])
@@ -1356,6 +1356,8 @@ def send_email_from_form(dbo, username, post):
     logtype = post.integer("logtype")
     body = post["body"]
     rv = asm3.utils.send_email(dbo, emailfrom, emailto, emailcc, emailbcc, subject, body, "html")
+    if asm3.configuration.audit_on_send_email(dbo): 
+        asm3.audit.email(dbo, username, emailfrom, emailto, emailcc, emailbcc, subject, body)
     if addtolog == 1:
         asm3.log.add_log_email(dbo, username, asm3.log.PERSON, post.integer("personid"), logtype, emailto, subject, body)
     return rv

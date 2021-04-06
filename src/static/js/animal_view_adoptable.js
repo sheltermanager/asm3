@@ -125,7 +125,7 @@
             '<select id="asm3-select-size">{sizeoptions}</select> ',
             '<select id="asm3-select-sex">{sexoptions}</select>',
         '</div>',
-        '<div id="asm3-adoptable-list" class="asm3-adoptable-list" />'
+        '<div id="asm3-adoptable-list" class="asm3-adoptable-list"></div>'
     ].join("");
 
     var overlay_template = [

@@ -70,9 +70,9 @@ Margins are in the order top, bottom, left then right.
 
 The PDF engine will scale the document to fit the page horizontally based on the
 widest element in it. Use the zoom directive to override this behaviour and
-specify a scaling amount::
+specify a scaling amount (this sets a zoom CSS value on the body element)::
 
-    <!-- pdf zoom 0.5 end -->
+    <!-- pdf zoom 130% end -->
 
 Most of these options are to wkhtmltopdf, a PDF renderer based on webkit (the
 engine used by the Chrome and Safari web browsers). An alternative, simpler PDF

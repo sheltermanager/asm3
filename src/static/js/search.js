@@ -128,6 +128,22 @@ $(function() {
                     h.push(html.truncate(r.COMMENTS));
                     h.push('</p>');
                 }
+                if (r.RESULTTYPE == "VOUCHER") {
+                    if (controller.results.length == 1) {
+                        common.route("person_vouchers?id=" + r.OWNERID);
+                    }
+                    h.push('<p class="asm-search-result"><span class="asm-search-name">');
+                    h.push(html.icon("voucher", _("Voucher")));
+                    h.push('<a href="person_vouchers?id=' + r.OWNERID + '">' + r.OWNERNAME  + ' - ' + r.VOUCHERCODE + '</a></span> ');
+                    h.push('<br/>');
+                    h.push(r.OWNERADDRESS);
+                    h.push('<br />');
+                    h.push('<span class="asm-search-personflags">' + r.VOUCHERNAME + ', ' + format.date(r.DATEISSUED) + 
+                        ' - ' + format.date(r.DATEREDEEMED) + '</span>');
+                    h.push('<br/>');
+                    h.push(html.truncate(r.COMMENTS));
+                    h.push('</p>');
+                }
                 else if (r.RESULTTYPE == "WAITINGLIST") {
                     if (controller.results.length == 1) {
                         common.route("waitinglist?id=" + r.ID);

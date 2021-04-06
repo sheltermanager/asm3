@@ -60,7 +60,7 @@ from asm3.i18n import _, BUILD, translate, get_version, get_display_date_format,
     add_minutes, add_days, subtract_days, subtract_months, first_of_month, last_of_month, \
     monday_of_week, sunday_of_week, first_of_year, last_of_year, now, format_currency
 
-from asm3.sitedefs import BASE_URL, DEPLOYMENT_TYPE, ELECTRONIC_SIGNATURES, EMERGENCY_NOTICE, \
+from asm3.sitedefs import BASE_URL, CONTENT_SECURITY_POLICY, DEPLOYMENT_TYPE, ELECTRONIC_SIGNATURES, EMERGENCY_NOTICE, \
     AKC_REUNITE_BASE_URL, HOMEAGAIN_BASE_URL, LARGE_FILES_CHUNKED, LOCALE, JQUERY_UI_CSS, \
     LEAFLET_CSS, LEAFLET_JS, MULTIPLE_DATABASES, MULTIPLE_DATABASES_PUBLISH_URL, \
     MULTIPLE_DATABASES_PUBLISH_FTP, ADMIN_EMAIL, EMAIL_ERRORS, MADDIES_FUND_TOKEN_URL, \
@@ -299,6 +299,17 @@ class ASMEndpoint(object):
                 return b.split("=")[1]
         return ""
 
+    def get_cookie(self, s):
+        """ Returns the value of cookie s. Returns None if it does not exist. """
+        try:
+            return web.cookies().get(s)
+        except:
+            return None
+
+    def set_cookie(self, name, value, ttl):
+        """ Sets a cookie value """
+        web.setcookie(name, value, expires=ttl, secure=SESSION_SECURE_COOKIE, httponly=True)
+
     def header(self, key, value):
         """ Set the response header key to value """
         web.header(key, value)
@@ -388,17 +399,34 @@ class JSONEndpoint(ASMEndpoint):
         self.check(self.get_permissions)
         o = self._params()
         c = self.controller(o)
-        self.header("X-Frame-Options", "SAMEORIGIN")
         self.cache_control(0)
         if self.js_module == "":
             self.js_module = self.url
         if not o.post["json"] == "true":
             self.content_type("text/html")
-            footer = "<script>\n$(document).ready(function() { " \
+            self.header("X-Frame-Options", "SAMEORIGIN") 
+            self.header("X-Content-Type-Options", "nosniff") 
+            self.header("X-XSS-Protection", "1; mode=block") 
+            self.header("Referrer-Policy", "same-origin") 
+            self.header("Strict-Transport-Security", "max-age=%s" % CACHE_ONE_MONTH) 
+            nonce = asm3.utils.uuid_str()
+            # CSP is not applied to users of the mobile app as we still have users with
+            # older iPads on iOS/Safari 9 that only supports CSP1
+            if CONTENT_SECURITY_POLICY != "" and not o.session.mobileapp:
+                self.header("Content-Security-Policy", CONTENT_SECURITY_POLICY % { "nonce": nonce })
+            return "%(header)s\n" \
+                "<script nonce='%(nonce)s'>\n" \
+                "controller=%(controller)s;\n" \
+                "$(document).ready(function() { " \
                 "common.route_listen(); " \
                 "common.module_start(\"%(js_module)s\"); " \
-                "});\n</script>\n</body>\n</html>" % { "js_module": self.js_module }
-            return "%s\n<script type=\"text/javascript\">\ncontroller = %s;\n</script>\n%s" % (asm3.html.header("", session), asm3.utils.json(c), footer)
+                "%(js_injection)s " \
+                "});\n</script>\n</body>\n</html>" % { 
+                    "controller": asm3.utils.json(c),
+                    "header": asm3.html.header("", session),
+                    "js_injection": asm3.configuration.js_injection(o.dbo),
+                    "js_module": self.js_module, 
+                    "nonce": nonce }
         else:
             self.content_type("application/json")
             return asm3.utils.json(c)
@@ -598,6 +626,21 @@ class configjs(ASMEndpoint):
         }
         return "const asm = %s;" % asm3.utils.json(c)
 
+class csperror(ASMEndpoint):
+    """
+    Target for logging content security policy errors from the frontend
+    via the CSP directive: report-uri /csperror
+    Nothing is returned as the UI does not expect a response.
+    Errors are logged and emailed to the admin if EMAIL_ERRORS is set.
+    """
+    url = "csperror"
+    user_activity = False
+
+    def post_all(self, o):
+        asm3.al.error(str(self.data), "code.csperror", o.dbo)
+        if EMAIL_ERRORS:
+            asm3.utils.send_email(o.dbo, ADMIN_EMAIL, ADMIN_EMAIL, "", "", "CSP violation", str(self.data), "plain", exceptions=False)
+
 class jserror(ASMEndpoint):
     """
     Target for logging javascript errors from the frontend.
@@ -733,7 +776,7 @@ class media(ASMEndpoint):
     def post_sign(self, o):
         self.check(asm3.users.CHANGE_MEDIA)
         for mid in o.post.integer_list("ids"):
-            asm3.media.sign_document(o.dbo, o.user, mid, o.post["sig"], o.post["signdate"])
+            asm3.media.sign_document(o.dbo, o.user, mid, o.post["sig"], o.post["signdate"], "signscreen")
 
     def post_signpad(self, o):
         asm3.configuration.signpad_ids(o.dbo, o.user, o.post["ids"])
@@ -1001,11 +1044,9 @@ class login(ASMEndpoint):
         has_animals = True
         custom_splash = False
 
-        # Filter out Internet Explorer 10 and below altogether.
-        # As all IEs but 11 fit the pattern in the UA of MSIE 6-10.
-        # When we want to ditch IE 11, the pattern to search for is "rv:11.0"
+        # Filter out Internet Explorer altogether.
         ua = self.user_agent()
-        if ua.find("MSIE") != -1:
+        if ua.find("MSIE") != -1 or ua.find("Trident") != -1:
             self.redirect("static/pages/unsupported_ie.html")
 
         # Figure out how to get the default locale and any overridden splash screen
@@ -1029,6 +1070,19 @@ class login(ASMEndpoint):
         else:
             l = LOCALE
 
+        # Do we have a remember me token?
+        rmtoken = self.get_cookie("asm_remember_me")
+        if rmtoken:
+            cred = asm3.cachemem.get(rmtoken)
+            if cred and cred.find("|") != -1:
+                database, username, password = cred.split("|")
+                rpost = asm3.utils.PostedData({ "database": database, "username": username, "password": password }, LOCALE)
+                asm3.al.info("attempting auth with remember me token for %s/%s" % (database, username), "code.login")
+                user = asm3.users.web_login(rpost, session, self.remote_ip(), self.user_agent(), PATH)
+                if user not in ( "FAIL", "DISABLED", "WRONGSERVER" ):
+                    self.redirect("main")
+                    return
+
         title = _("Animal Shelter Manager Login", l)
         s = asm3.html.bare_header(title, locale = l)
         c = { "smcom": asm3.smcom.active(),
@@ -1040,20 +1094,32 @@ class login(ASMEndpoint):
              "smaccount": post["smaccount"],
              "husername": post["username"],
              "hpassword": post["password"],
+             "baseurl": BASE_URL,
              "smcomloginurl": SMCOM_LOGIN_URL,
              "nologconnection": post["nologconnection"],
              "qrimg": QR_IMG_SRC,
              "target": post["target"]
         }
-        s += "<script type=\"text/javascript\">\ncontroller = %s;\n</script>\n" % asm3.utils.json(c)
-        s += '<script>\n$(document).ready(function() { $("body").append(login.render()); login.bind(); });\n</script>'
+        nonce = asm3.utils.uuid_str()
+        s += '<script nonce="%s">\ncontroller = %s;\n' % (nonce, asm3.utils.json(c))
+        s += '$(document).ready(function() { $("body").append(login.render()); login.bind(); });\n</script>'
         s += asm3.html.footer()
         self.content_type("text/html")
         self.header("X-Frame-Options", "SAMEORIGIN")
+        self.header("X-Content-Type-Options", "nosniff") 
+        self.header("X-XSS-Protection", "1; mode=block") 
+        self.header("Strict-Transport-Security", "max-age=%s" % CACHE_ONE_MONTH) 
+        if CONTENT_SECURITY_POLICY != "":
+            self.header("Content-Security-Policy", CONTENT_SECURITY_POLICY % { "nonce": nonce })
         return s
 
     def post_all(self, o):
-        return asm3.users.web_login(o.post, session, self.remote_ip(), self.user_agent(), PATH)
+        user = asm3.users.web_login(o.post, session, self.remote_ip(), self.user_agent(), PATH)
+        # If there's a pipe in the result, we have a remember me cookie/token to set
+        if user.find("|") != -1:
+            user, token = user.split("|")
+            self.set_cookie("asm_remember_me", token, CACHE_ONE_MONTH)
+        return user
 
     def post_reset(self, o):
         dbo = asm3.db.get_database(o.post["database"])
@@ -1118,6 +1184,7 @@ class logout(ASMEndpoint):
             url = "login?smaccount=" + o.dbo.alias
         asm3.users.update_user_activity(o.dbo, o.user, False)
         asm3.users.logout(o.session, self.remote_ip(), self.user_agent())
+        self.set_cookie("asm_remember_me", "", 0) # user explicitly logged out, remove remember me
         self.redirect(url)
 
 class reset_password(ASMEndpoint):
@@ -5535,13 +5602,13 @@ class sql(JSONEndpoint):
         return self.exec_sql_from_file(o.dbo, o.user, sql)
 
     def check_update_query(self, q):
-        """ Prevent any kind of update to certain tables to prevent
+        """ Prevent updates or deletes to certain tables or columns to prevent
             more savvy malicious users tampering via SQL Interface.
             q is already stripped and converted to lower case by the exec_sql caller.
             If one of our tamper proofed tables is touched, an Exception is raised
             and the query not run.
         """
-        for t in ( "audittrail", "deletion" ):
+        for t in ( "audittrail", "deletion", "signaturehash" ):
             if q.find(t) != -1:
                 raise Exception("Forbidden: %s" % q)
 
@@ -5556,6 +5623,8 @@ class sql(JSONEndpoint):
                 asm3.al.info("%s query: %s" % (user, q), "code.sql", dbo)
                 if ql.startswith("select") or ql.startswith("show"):
                     return asm3.html.table(dbo.query(q))
+                elif ql.startswith("insert"):
+                    rowsaffected += dbo.execute(q)
                 else:
                     self.check_update_query(ql)
                     rowsaffected += dbo.execute(q)

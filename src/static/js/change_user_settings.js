@@ -100,7 +100,7 @@ $(function() {
                     '<button id="button-change" type="button" style="vertical-align: middle">' + _("Clear and sign again") + '</button>',
                     '</td>',
                     '<td>',
-                    '<div id="signature" style="width: 500px; height: 200px; display: none" />',
+                    '<div id="signature" style="width: 500px; height: 200px; display: none"></div>',
                     '<img id="existingsig" style="display: none; border: 0" />',
                     '</td>',
                 '</tr>',

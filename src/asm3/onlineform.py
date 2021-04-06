@@ -86,6 +86,19 @@ FORM_FIELDS = [
     "dropoffaddress", "dropofftown", "dropoffcity", "dropoffcounty", "dropoffstate", "dropoffpostcode", "dropoffzipcode", "dropoffcountry", "dropoffdate", "dropofftime"
 ]
 
+AUTOCOMPLETE_MAP = {
+    "title":            "honorific",
+    "firstname":        "given-name",
+    "lastname":         "family-name",
+    "address":          "street-address",
+    "city":             "address-level2",
+    "state":            "address-level3",
+    "country":          "country-name",
+    "zipcode":          "postal-code",
+    "mobiletelephone":  "tel",
+    "emailaddress":     "email"
+}
+
 def get_collationid(dbo):
     """ Returns the next collation ID value for online forms. """
     return asm3.configuration.collation_id_next(dbo)
@@ -148,6 +161,9 @@ def get_onlineform_html(dbo, formid, completedocument = True):
         requiredtext = ""
         requiredspan = '<span class="asm-onlineform-notrequired"></span>'
         requiredspan = ""
+        autocomplete = ""
+        if f.FIELDNAME in AUTOCOMPLETE_MAP:
+            autocomplete = "autocomplete=\"%s\"" % AUTOCOMPLETE_MAP[f.FIELDNAME]
         if f.MANDATORY == 1: 
             required = "required=\"required\""
             requiredtext = "required=\"required\" pattern=\".*\\S+.*\""
@@ -170,9 +186,9 @@ def get_onlineform_html(dbo, formid, completedocument = True):
             h.append('<input class="asm-onlineform-check" type="checkbox" id="%s" name="%s" %s /> <label for="%s">%s</label>' % \
                 (fid, cname, required, fid, f.LABEL))
         elif f.FIELDTYPE == FIELDTYPE_TEXT:
-            h.append('<input class="asm-onlineform-text" type="text" id="%s" name="%s" title="%s" %s />' % ( fid, cname, asm3.utils.nulltostr(f.TOOLTIP), requiredtext))
+            h.append('<input class="asm-onlineform-text" type="text" id="%s" name="%s" title="%s" %s %s />' % ( fid, cname, asm3.utils.nulltostr(f.TOOLTIP), autocomplete, requiredtext))
         elif f.FIELDTYPE == FIELDTYPE_EMAIL:
-            h.append('<input class="asm-onlineform-email" type="email" id="%s" name="%s" title="%s" %s />' % ( fid, cname, asm3.utils.nulltostr(f.TOOLTIP), requiredtext))
+            h.append('<input class="asm-onlineform-email" type="email" id="%s" name="%s" title="%s" %s %s />' % ( fid, cname, asm3.utils.nulltostr(f.TOOLTIP), autocomplete, requiredtext))
         elif f.FIELDTYPE == FIELDTYPE_DATE:
             h.append('<input class="asm-onlineform-date" type="text" id="%s" name="%s" title="%s" %s />' % ( fid, cname, asm3.utils.nulltostr(f.TOOLTIP), requiredtext))
         elif f.FIELDTYPE == FIELDTYPE_TIME:
@@ -804,6 +820,8 @@ def insert_onlineformincoming_from_form(dbo, post, remoteip):
         # If a submitter email is set, use that to reply to instead
         replyto = submitteremail 
         if replyto == "": replyto = asm3.configuration.email(dbo)
+        # Remove any line breaks from the list of addresses, this has caused malformed headers before
+        emailsubmissionto = emailsubmissionto.replace("\n", "")
         asm3.utils.send_email(dbo, replyto, emailsubmissionto, "", "", "%s - %s" % (formname, ", ".join(preview)), 
             formdata, "html", images, exceptions=False)
 
@@ -899,7 +917,8 @@ def attach_form(dbo, username, linktype, linkid, collationid):
     mid = asm3.media.create_document_media(dbo, username, linktype, linkid, formname, formhtml )
     if asm3.configuration.auto_hash_processed_forms(dbo):
         dtstr = "%s %s" % (asm3.i18n.python2display(l, dbo.now()), asm3.i18n.format_time(dbo.now()))
-        asm3.media.sign_document(dbo, username, mid, "", asm3.i18n._("Processed by {0} on {1}", l).format(username, dtstr))
+        asm3.media.sign_document(dbo, username, mid, "", \
+            asm3.i18n._("Processed by {0} on {1}", l).format(username, dtstr), "onlineform")
     fields = get_onlineformincoming_detail(dbo, collationid)
     for f in fields:
         if f.VALUE.startswith("data:image/jpeg"):
@@ -995,7 +1014,7 @@ def create_animal(dbo, username, collationid):
             status = 1 # updated existing record
             animalid = similar.ID
             # Merge additional fields
-            asm3.additional.merge_values_for_link(dbo, asm3.utils.PostedData(d, dbo.locale), animalid, "animal")
+            asm3.additional.merge_values_for_link(dbo, asm3.utils.PostedData(d, dbo.locale), username, animalid, "animal")
             # TODO: what would we merge realistically?
             # asm3.animal.merge_animal_details(dbo, username, animalid, d)
     # Create the animal record if we didn't find one
@@ -1072,7 +1091,7 @@ def create_person(dbo, username, collationid):
             # Merge flags and any extra details
             asm3.person.merge_flags(dbo, username, personid, flags)
             # Merge additional fields
-            asm3.additional.merge_values_for_link(dbo, asm3.utils.PostedData(d, dbo.locale), personid, "person")
+            asm3.additional.merge_values_for_link(dbo, asm3.utils.PostedData(d, dbo.locale), username, personid, "person")
             if "gdprcontactoptin" in d: asm3.person.merge_gdpr_flags(dbo, "import", personid, d["gdprcontactoptin"])
             # Merge person details and force form ones to override existing ones if present
             asm3.person.merge_person_details(dbo, username, personid, d, force=True)
@@ -1126,6 +1145,7 @@ def create_animalcontrol(dbo, username, collationid):
     d["caller"] = personid
     # Create the incident 
     incidentid = asm3.animalcontrol.insert_animalcontrol_from_form(dbo, asm3.utils.PostedData(d, dbo.locale), username)
+    asm3.additional.merge_values_for_link(dbo, asm3.utils.PostedData(d, dbo.locale), username, incidentid, "incident")
     attach_form(dbo, username, asm3.media.ANIMALCONTROL, incidentid, collationid)
     return (collationid, incidentid, "%s - %s" % (asm3.utils.padleft(incidentid, 6), personname), status)
 
@@ -1167,6 +1187,7 @@ def create_lostanimal(dbo, username, collationid):
     d["owner"] = personid
     # Create the lost animal
     lostanimalid = asm3.lostfound.insert_lostanimal_from_form(dbo, asm3.utils.PostedData(d, dbo.locale), username)
+    asm3.additional.merge_values_for_link(dbo, asm3.utils.PostedData(d, dbo.locale), username, lostanimalid, "lostanimal")
     attach_form(dbo, username, asm3.media.LOSTANIMAL, lostanimalid, collationid)
     return (collationid, lostanimalid, "%s - %s" % (asm3.utils.padleft(lostanimalid, 6), personname), status)
   
@@ -1208,6 +1229,7 @@ def create_foundanimal(dbo, username, collationid):
     d["owner"] = personid
     # Create the found animal
     foundanimalid = asm3.lostfound.insert_foundanimal_from_form(dbo, asm3.utils.PostedData(d, dbo.locale), username)
+    asm3.additional.merge_values_for_link(dbo, asm3.utils.PostedData(d, dbo.locale), username, foundanimalid, "foundanimal")
     attach_form(dbo, username, asm3.media.FOUNDANIMAL, foundanimalid, collationid)
     return (collationid, foundanimalid, "%s - %s" % (asm3.utils.padleft(foundanimalid, 6), personname), status)
 
@@ -1287,6 +1309,7 @@ def create_waitinglist(dbo, username, collationid):
     d["owner"] = personid
     # Create the waiting list
     wlid = asm3.waitinglist.insert_waitinglist_from_form(dbo, asm3.utils.PostedData(d, dbo.locale), username)
+    asm3.additional.merge_values_for_link(dbo, asm3.utils.PostedData(d, dbo.locale), username, wlid, "waitinglist")
     attach_form(dbo, username, asm3.media.WAITINGLIST, wlid, collationid)
     return (collationid, wlid, "%s - %s" % (asm3.utils.padleft(wlid, 6), personname), status)
 

@@ -632,6 +632,15 @@ $(function() {
                 '<textarea class="asm-textarea" title="' + html.title(_("Description")) + '" id="comments" data-json="ANIMALCOMMENTS" data-post="comments" rows="3"></textarea>',
                 '</td>',
                 '</tr>',
+                '<tr id="popupwarningrow">',
+                '<td>',
+                '<label for="popupwarning">' + _("Warning") + '</label>',
+                '<span id="callout-popupwarning" class="asm-callout">' + _("Show a warning when viewing this animal") + '</span>',
+                '</td>',
+                '<td>',
+                '<textarea class="asm-textarea" title="' + html.title(_("Warning")) + '" id="popupwarning" data-json="POPUPWARNING" data-post="popupwarning" rows="3"></textarea>',
+                '</td>',
+                '</tr>',
                 '</table>',
                 '</td>',
                 '<td>',
@@ -760,10 +769,10 @@ $(function() {
                 edit_header.diary_task_list(controller.diarytasks, "ANIMAL"),
                 '</ul>',
                 '</div>',
-                '<div id="dialog-clone-confirm" style="display: none" title="' + _("Clone") + '">',
+                '<div id="dialog-clone-confirm" style="display: none" title="' + html.title(_("Clone")) + '">',
                 '<p><span class="ui-icon ui-icon-alert"></span> Clone this animal?</p>',
                 '</div>',
-                '<div id="dialog-dt-date" style="display: none" title="' + _("Select date for diary task") + '">',
+                '<div id="dialog-dt-date" style="display: none" title="' + html.title(_("Select date for diary task")) + '">',
                 '<input type="hidden" id="diarytaskid" />',
                 '<table width="100%">',
                 '<tr>',
@@ -772,7 +781,10 @@ $(function() {
                 '</tr>',
                 '</table>',
                 '</div>',
-                '<div id="emailform" />',
+                '<div id="emailform"></div>',
+                '<div id="dialog-popupwarning" title="' + html.title(_("Warning")) + '">',
+                '<p>' + html.error(controller.animal.POPUPWARNING) + '</p>',
+                '</div>',
                 '<div id="dialog-merge" style="display: none" title="' + html.title(_("Select animal to merge")) + '">',
                 '<div class="ui-state-highlight ui-corner-all" style="margin-top: 20px; padding: 0 .7em">',
                 '<p><span class="ui-icon ui-icon-info"></span>',
@@ -1185,6 +1197,12 @@ $(function() {
         show_microchip_supplier: function() {
             html.microchip_manufacturer("#microchipnumber", "#microchipbrand");
             html.microchip_manufacturer("#microchipnumber2", "#microchipbrand2");
+        },
+
+        show_popup_warning: async function() {
+            if (controller.animal.POPUPWARNING) {
+                await tableform.show_okcancel_dialog("#dialog-popupwarning", _("Ok"), { hidecancel: true });
+            }
         },
 
         /** Validates the form fields prior to saving */
@@ -1657,6 +1675,9 @@ $(function() {
             // Dirty handling
             validate.bind_dirty([ "animal_" ]);
 
+            // If a popup warning has been set, display it
+            animal.show_popup_warning();
+
         },
 
         destroy: function() {
@@ -1664,6 +1685,7 @@ $(function() {
             common.widget_destroy("#dialog-dt-date");
             common.widget_destroy("#dialog-merge");
             common.widget_destroy("#dialog-clone-confirm");
+            common.widget_destroy("#dialog-popupwarning");
             common.widget_destroy("#mergeanimal", "animalchooser");
             common.widget_destroy("#bonded1", "animalchooser");
             common.widget_destroy("#bonded2", "animalchooser");

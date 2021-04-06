@@ -1,10 +1,10 @@
-Transports completed between two dates by species
+Transports between two dates by species
 ###
 Transport
 ###
 34004/Any
 ###
-Displays transports completed between two dates grouped by species
+Displays transports between two dates grouped by species
 ###
 en
 ###
@@ -27,7 +27,7 @@ LEFT OUTER JOIN owner d ON d.ID = t.DriverOwnerID
 LEFT OUTER JOIN owner p ON p.ID = t.PickupOwnerID
 LEFT OUTER JOIN owner dr ON dr.ID = t.DropoffOwnerID
 INNER JOIN transporttype tt ON tt.ID = t.TransportTypeID
-WHERE t.Status = 11 AND t.DropoffDateTime >= '$ASK DATE Enter date from$' AND t.DropoffDateTime <= '$ASK DATE Enter date to$' 
+WHERE t.DropoffDateTime >= '$ASK DATE Enter date from$' AND t.DropoffDateTime <= '$ASK DATE Enter date to$' 
 ORDER BY t.DropoffDateTime
 ###
 $$HEADER

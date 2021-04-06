@@ -389,6 +389,7 @@ def get_animals_brief(animals):
             "OWNERID": a["OWNERID"],
             "OWNERNAME": a["OWNERNAME"],
             "PICKUPLOCATIONNAME": a["PICKUPLOCATIONNAME"],
+            "POPUPWARNING": a["POPUPWARNING"],
             "RABIESTAG": a["RABIESTAG"],
             "SEX" : a["SEX"],
             "SEXNAME" : a["SEXNAME"],
@@ -1656,22 +1657,21 @@ def get_location_filter_clause(locationfilter = "", tablequalifier = "", siteid 
 
 def is_animal_in_location_filter(a, locationfilter, siteid = 0, visibleanimalids = ""):
     """
-    Returns True if the animal a is included in the locationfilter
+    Returns True if the animal a is included in the locationfilter or site given
     """
     if locationfilter == "" and siteid == 0: return True
     if siteid != 0:
-        if a.siteid != siteid: 
-            return False
-    if locationfilter != "" and visibleanimalids == "":
+        if a.siteid == 0 or a.siteid == siteid: return True
+    if locationfilter != "":
         locs = locationfilter.split(",")
-        if a.activemovementtype == 1 and "-1" not in locs: return False
-        if a.activemovementtype == 2 and "-2" not in locs: return False
-        if a.activemovementtype == 8 and "-8" not in locs: return False
-        if a.nonshelteranimal == 1 and "-9" not in locs: return False
-        if a.archived == 0 and str(a.shelterlocation) not in locs: return False
+        if a.activemovementtype == 1 and "-1" in locs: return True 
+        if a.activemovementtype == 2 and "-2" in locs: return True
+        if a.activemovementtype == 8 and "-8" in locs: return True
+        if a.nonshelteranimal == 1 and "-9" in locs: return True
+        if str(a.shelterlocation) in locs: return True
     if visibleanimalids != "":
-        if str(a.ID) not in visibleanimalids.split(","): return False
-    return True
+        if str(a.ID) in visibleanimalids.split(","): return True
+    return False
 
 def remove_nonvisible_animals(rows, visibleanimalids, animalidcolumn = "ANIMALID"):
     """
@@ -2076,6 +2076,7 @@ def insert_animal_from_form(dbo, post, username):
         # ASM2_COMPATIBILITY
         "Markings":         post["markings"],
         "HiddenAnimalDetails": post["hiddenanimaldetails"],
+        "PopupWarning":     post["popupwarning"],
         "AnimalComments":   post["comments"],
         "IsGoodWithCats":   goodwithcats,
         "IsGoodWithDogs":   goodwithdogs,
@@ -2124,7 +2125,7 @@ def insert_animal_from_form(dbo, post, username):
     }, username, generateID=False)
 
     # Save any additional field values given
-    asm3.additional.save_values_for_link(dbo, post, nextid, "animal", True)
+    asm3.additional.save_values_for_link(dbo, post, username, nextid, "animal", True)
 
     # Update denormalised fields after the insert
     update_animal_check_bonds(dbo, nextid)
@@ -2320,6 +2321,7 @@ def update_animal_from_form(dbo, post, username):
         # ASM2_COMPATIBILITY
         "Markings":             post["markings"],
         "HiddenAnimalDetails":  post["hiddencomments"],
+        "PopupWarning":         post["popupwarning"],
         "AnimalComments":       post["comments"],
         "IsGoodWithCats":       post.integer("goodwithcats"),
         "IsGoodWithDogs":       post.integer("goodwithdogs"),
@@ -2358,7 +2360,7 @@ def update_animal_from_form(dbo, post, username):
     }, username)
 
     # Save any additional field values given
-    asm3.additional.save_values_for_link(dbo, post, aid, "animal")
+    asm3.additional.save_values_for_link(dbo, post, username, aid, "animal")
 
     # Update denormalised fields after the change
     update_animal_check_bonds(dbo, aid)
@@ -2632,6 +2634,7 @@ def clone_animal(dbo, username, animalid):
         "SmartTagType":     0,
         "Declawed":         a.declawed,
         "HiddenAnimalDetails": a.hiddenanimaldetails,
+        "PopupWarning":     a.popupwarning,
         "AnimalComments":   a.animalcomments,
         "OwnersVetID":      a.ownersvetid,
         "CurrentVetID":     a.currentvetid,
@@ -2679,12 +2682,7 @@ def clone_animal(dbo, username, animalid):
     }, username, writeAudit=False)
     # Additional Fields
     for af in dbo.query("SELECT * FROM additional WHERE LinkID = %d AND LinkType IN (%s)" % (animalid, asm3.additional.ANIMAL_IN)):
-        dbo.insert("additional", {
-            "LinkType":             af.linktype,
-            "LinkID":               nid,
-            "AdditionalFieldID":    af.additionalfieldid,
-            "Value":                af.value
-        }, generateID=False, writeAudit=False, setRecordVersion=False)
+        asm3.additional.insert_additional(dbo, af.linktype, nid, af.additionalfieldid, af.value)
     # Vaccinations
     for v in dbo.query("SELECT * FROM animalvaccination WHERE AnimalID = ?", [animalid]):
         dbo.insert("animalvaccination", {
@@ -2915,7 +2913,7 @@ def clone_from_template(dbo, username, animalid, dob, animaltypeid, speciesid):
     dbo.update("animal", animalid, {
         "Fee":                      copyfrom.fee,
         "AnimalComments":           copyfrom.animalcomments
-    }, username, writeAudit=False)
+    }, username)
     # Helper function to work out the difference between intake and a date and add that
     # difference to today to get a new date
     def adjust_date(d):
@@ -2943,7 +2941,7 @@ def clone_from_template(dbo, username, animalid, dob, animaltypeid, speciesid):
             "Manufacturer":         v.manufacturer,
             "Cost":                 v.cost,
             "Comments":             v.comments
-        }, username, writeAudit=False)
+        }, username)
     # Tests
     for t in dbo.query("SELECT * FROM animaltest WHERE AnimalID = ?", [cloneanimalid]):
         newdate = adjust_date(t.daterequired)
@@ -2956,7 +2954,7 @@ def clone_from_template(dbo, username, animalid, dob, animaltypeid, speciesid):
             "AdministeringVetID":   t.administeringvetid,
             "Cost":                 t.cost,
             "Comments":             t.comments
-        }, username, writeAudit=False)
+        }, username)
     # Medical
     for am in dbo.query("SELECT * FROM animalmedical WHERE AnimalID = ?", [cloneanimalid]):
         newdate = adjust_date(am.startdate)
@@ -2976,7 +2974,7 @@ def clone_from_template(dbo, username, animalid, dob, animaltypeid, speciesid):
             "TreatmentsRemaining":  am.treatmentsremaining,
             "Status":               am.status,
             "Comments":             am.comments
-        }, username, writeAudit=False)
+        }, username)
         for amt in dbo.query("SELECT * FROM animalmedicaltreatment WHERE AnimalMedicalID = ?", [am.id]):
             dbo.insert("animalmedicaltreatment", {
                 "AnimalID":         animalid,
@@ -2988,7 +2986,7 @@ def clone_from_template(dbo, username, animalid, dob, animaltypeid, speciesid):
                 "AdministeringVetID": amt.administeringvetid,
                 "GivenBy":          amt.givenby,
                 "Comments":         amt.comments
-            }, username, writeAudit=False)
+            }, username)
     # Diet
     for d in dbo.query("SELECT * FROM animaldiet WHERE AnimalID = ?", [cloneanimalid]):
         newdate = adjust_date(d.datestarted)
@@ -2997,7 +2995,7 @@ def clone_from_template(dbo, username, animalid, dob, animaltypeid, speciesid):
             "DietID":               d.dietid,
             "DateStarted":          newdate,
             "Comments":             d.comments
-        }, username, writeAudit=False)
+        }, username)
     # Costs
     for c in dbo.query("SELECT * FROM animalcost WHERE AnimalID = ?", [cloneanimalid]):
         newdate = adjust_date(c.costdate)
@@ -3007,7 +3005,7 @@ def clone_from_template(dbo, username, animalid, dob, animaltypeid, speciesid):
             "CostDate":             newdate,
             "CostAmount":           c.costamount,
             "Description":          c.description
-        }, username, writeAudit=False)
+        }, username)
     # Diary
     for di in dbo.query("SELECT * FROM diary WHERE LinkType = 1 AND LinkID = ?", [cloneanimalid]):
         newdate = adjust_date(di.diarydatetime)
@@ -3020,7 +3018,7 @@ def clone_from_template(dbo, username, animalid, dob, animaltypeid, speciesid):
             "Note":                 di.note,
             "DateCompleted":        None,
             "LinkInfo":             asm3.diary.get_link_info(dbo, asm3.diary.ANIMAL, animalid)
-        }, username, writeAudit=False)
+        }, username)
 
 def delete_animal(dbo, username, animalid, ignore_movements=False):
     """
@@ -3671,7 +3669,6 @@ def update_animal_status(dbo, animalid, a = None, movements = None, animalupdate
 
     # Override the other flags if this animal is dead or non-shelter
     if a.deceaseddate or a.nonshelteranimal == 1:
-        ownerid = a.originalownerid
         onshelter = False
         hastrialadoption = False
         hasreserve = False
@@ -3680,6 +3677,10 @@ def update_animal_status(dbo, animalid, a = None, movements = None, animalupdate
     # On shelter animals cannot have an ownerid
     if onshelter:
         ownerid = 0
+
+    # non-shelter owner should match original owner if not set
+    if a.nonshelteranimal == 1 and a.ownerid == 0:
+        ownerid = a.originalownerid
 
     # Calculate location and qualified display location
     loc = ""

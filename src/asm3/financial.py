@@ -563,6 +563,10 @@ def get_voucher(dbo, voucherid):
     """
     return dbo.first_row(dbo.query(get_voucher_query(dbo) + " WHERE ov.ID = ?", [voucherid]))
 
+def get_voucher_find_simple(dbo, vocode, dummy = 0):
+    return dbo.query(get_voucher_query(dbo) + \
+        "WHERE UPPER(ov.VoucherCode) LIKE UPPER(?)", [vocode])
+
 def get_vouchers(dbo, offset = "i31"):
     """
     Returns a list of vouchers 
@@ -830,7 +834,8 @@ def update_matching_cost_transaction(dbo, username, acid, destinationaccount = 0
     target = dbo.query_int("SELECT ID FROM accounts WHERE AccountType = ? AND CostTypeID = ? ORDER BY ID", (EXPENSE, c.COSTTYPEID))
     if target == 0:
         # This shouldn't happen, but we can't go ahead without an account
-        raise asm3.utils.ASMValidationError("No target account found for cost type, can't create trx")
+        asm3.al.error("No target account found for cost type, can't create trx", "financial.update_matching_cost_transaction", dbo)
+        return
 
     # Get the source account if we weren't given one
     source = destinationaccount
@@ -843,8 +848,8 @@ def update_matching_cost_transaction(dbo, username, acid, destinationaccount = 0
             asm3.al.debug("Got blank source, getting first bank account: %s" % source, "financial.update_matching_cost_transaction", dbo)
             if source == 0:
                 # Shouldn't happen, but we have no bank accounts on file
-                asm3.al.error("No source available for trx. Bailing.", "financial.update_matching_cost_transaction", dbo)
-                raise asm3.utils.ASMValidationError("No bank accounts on file, can't set target for cost trx")
+                asm3.al.error("No bank accounts on file, can't set target for cost trx", "financial.update_matching_cost_transaction", dbo)
+                return
         # Has a mapping been created by the user for this donation type
         # to a destination other than the default?
         # TODO: If requested in future possibly, not present right now
@@ -916,7 +921,8 @@ def update_matching_donation_transaction(dbo, username, odid, destinationaccount
     source = dbo.query_int("SELECT ID FROM accounts WHERE AccountType = ? AND DonationTypeID = ? ORDER BY ID", (INCOME, d.DONATIONTYPEID))
     if source == 0:
         # This shouldn't happen, but we can't go ahead without an account
-        raise asm3.utils.ASMValidationError("No source account found for donation type, can't create trx")
+        asm3.al.error("No source account found for donation type, can't create trx", "financial.update_matching_donation_transaction", dbo)
+        return
 
     # Get the target account if we weren't given one
     target = destinationaccount
@@ -930,7 +936,8 @@ def update_matching_donation_transaction(dbo, username, odid, destinationaccount
             if target == 0:
                 # Shouldn't happen, but we have no bank accounts on file
                 asm3.al.error("No target available for trx. Bailing.", "financial.update_matching_donation_transaction", dbo)
-                raise asm3.utils.ASMValidationError("No bank accounts on file, can't set target for donation trx")
+                return
+
         # Has a mapping been created by the user for this donation type
         # to a destination other than the default?
         maps = asm3.configuration.donation_account_mappings(dbo)
@@ -971,7 +978,7 @@ def update_matching_donation_transaction(dbo, username, odid, destinationaccount
     asm3.al.debug("Trx created with ID %d" % int(tid), "financial.update_matching_donation_transaction", dbo)
 
     # Is there a vat/tax portion of this payment that we need to create a transaction for?
-    if d.VATAMOUNT > 0 and not isrefund:
+    if d.VATAMOUNT and d.VATAMOUNT > 0 and not isrefund:
         vatac = asm3.configuration.donation_vat_account(dbo)
         if 0 == dbo.query_int("SELECT ID FROM accounts WHERE ID = ?", [vatac]):
             vatac = dbo.query_int("SELECT ID FROM accounts WHERE AccountType=? ORDER BY ID", [INCOME])
@@ -989,7 +996,7 @@ def update_matching_donation_transaction(dbo, username, odid, destinationaccount
         asm3.al.debug("VAT trx created with ID %d" % int(tid), "financial.update_matching_donation_transaction", dbo)
 
     # Is there a fee on this payment that we need to create a transaction for?
-    if d.FEE > 0 and not isrefund:
+    if d.FEE and d.FEE > 0 and not isrefund:
         feeac = asm3.configuration.donation_fee_account(dbo)
         if 0 == dbo.query_int("SELECT ID FROM accounts WHERE ID = ?", [feeac]):
             feeac = dbo.query_int("SELECT ID FROM accounts WHERE AccountType=? ORDER BY ID", [EXPENSE])

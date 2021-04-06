@@ -134,7 +134,6 @@ def separate_results(rows, f):
             if x[f] == k:
                 orows.append(x)
         result.append(orows)
-    print(result)
     return result
 
 def additional_field_tags(dbo, fields, prefix = ""):
@@ -266,6 +265,7 @@ def animal_tags(dbo, a, includeAdditional=True, includeCosts=True, includeDiet=T
         "DISPLAYXIFCROSSBREED"  : asm3.utils.iif(a["CROSSBREED"] == 1, "X", ""),
         "PICKUPLOCATIONNAME"    : asm3.utils.iif(a["ISPICKUP"] == 1, asm3.utils.nulltostr(a["PICKUPLOCATIONNAME"]), ""),
         "PICKUPADDRESS"         : asm3.utils.iif(a["ISPICKUP"] == 1, asm3.utils.nulltostr(a["PICKUPADDRESS"]), ""),
+        "ANIMALJURISDICTION"    : a["JURISDICTIONNAME"],
         "NAMEOFPERSONBROUGHTANIMALIN" : a["BROUGHTINBYOWNERNAME"],
         "ADDRESSOFPERSONBROUGHTANIMALIN" : a["BROUGHTINBYOWNERADDRESS"],
         "TOWNOFPERSONBROUGHTANIMALIN" : a["BROUGHTINBYOWNERTOWN"],
@@ -794,6 +794,7 @@ def animalcontrol_tags(dbo, ac):
         "DISPATCHZIPCODE":      ac["DISPATCHPOSTCODE"],
         "DISPATCHEDACO":        ac["DISPATCHEDACO"],
         "PICKUPLOCATIONNAME":   asm3.utils.nulltostr(ac["LOCATIONNAME"]),
+        "INCIDENTJURISDICTION": asm3.utils.nulltostr(ac["JURISDICTIONNAME"]),
         "RESPONDEDDATE":        python2display(l, ac["RESPONDEDDATETIME"]),
         "RESPONDEDTIME":        format_time(ac["RESPONDEDDATETIME"], "%H:%M"),
         "FOLLOWUPDATE":         python2display(l, ac["FOLLOWUPDATETIME"]),
@@ -862,6 +863,12 @@ def animalcontrol_tags(dbo, ac):
         "AGEGROUP":             "AGEGROUP",
         "ANIMALTYPENAME":       "ANIMALTYPENAME",
         "SPECIESNAME":          "SPECIESNAME",
+        "SEX":                  "SEXNAME",
+        "SIZE":                 "SIZENAME",
+        "BREEDNAME":            "BREEDNAME",
+        "BASECOLORNAME":        "BASECOLOURNAME",
+        "BASECOLOURNAME":       "BASECOLOURNAME",
+        "COATTYPE":             "COATTYPENAME",
         "DATEBROUGHTIN":        "d:DATEBROUGHTIN",
         "DECEASEDDATE":         "d:DECEASEDDATE"
     }
@@ -1222,6 +1229,7 @@ def person_tags(dbo, p, includeImg=False, includeDonations=False, includeVoucher
         "CELLTELEPHONE"         : p["MOBILETELEPHONE"],
         "EMAILADDRESS"          : p["EMAILADDRESS"],
         "JURISDICTION"          : p["JURISDICTIONNAME"],
+        "OWNERJURISDICTION"     : p["JURISDICTIONNAME"],
         "OWNERCOMMENTS"         : p["COMMENTS"],
         "OWNERFLAGS"            : asm3.utils.nulltostr(p["ADDITIONALFLAGS"]).replace("|", ", "),
         "OWNERCREATEDBY"        : p["CREATEDBY"],

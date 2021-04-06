@@ -340,9 +340,9 @@ $.fn.phone = function() {
                 if (rules.locale != asm.locale) { return; }
                 if (rules.prefix && num.indexOf(rules.prefix) != 0) { return; }
                 if (num.length != rules.length) { return; }
-                let s = rules.display, m = num.match(rules.extract);
-                for (let i=1; i <= rules.elements; i++) {
-                    s = s.replace("{" + i + "}", m[i]);
+                let s = rules.display, m = num.match(rules.extract), x=1;
+                for (x=1; x <= rules.elements; x++) {
+                    s = s.replace("{" + x + "}", m[x]);
                 }
                 t.val(s);
                 return false;
@@ -1247,7 +1247,8 @@ $.widget("asm.textbox", {
 });
 
 /** This is necessary for the richtextarea below - it allows the tinymce dialogs
- *  to work inside a JQuery UI modal dialog */
+ *  to work inside a JQuery UI modal dialog. The class prefix (tox) has
+ *  changed between major TinyMCE releases in the past */
 $.widget("ui.dialog", $.ui.dialog, {
     _allowInteraction: function(event) {
         return !!$(event.target).closest(".tox").length || this._super( event );
@@ -1277,8 +1278,8 @@ $.widget("asm.richtextarea", {
             plugins: [
                 "advlist autolink lists link image charmap code ",
                 "hr anchor searchreplace visualblocks visualchars ",
-                "insertdatetime media nonbreaking table contextmenu directionality",
-                "emoticons template paste textcolor"
+                "insertdatetime media nonbreaking table directionality",
+                "emoticons template paste"
                 ],
             inline: true,
             menubar: false,

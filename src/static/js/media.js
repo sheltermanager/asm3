@@ -134,8 +134,8 @@ $(function() {
                             return m.MEDIASIZE; 
                         }
                     },
-                    { field: "CREATEDDATE", classes: "mode-table", display: _("Added"), formatter: tableform.format_date },
-                    { field: "DATE", classes: "mode-table", display: _("Updated"), formatter: tableform.format_date, initialsort: true, initialsortdirection: "desc" },
+                    { field: "CREATEDDATE", classes: "mode-table", display: _("Added"), formatter: tableform.format_date, initialsort: true, initialsortdirection: "desc" },
+                    { field: "DATE", classes: "mode-table", display: _("Updated"), formatter: tableform.format_date },
                     { field: "MEDIAMIMETYPE", classes: "mode-table", display: _("Type") },
                     { field: "PREVIEWICON", classes: "mode-icon", display: "", formatter: function(m) {
                         let h = [];
@@ -148,6 +148,7 @@ $(function() {
                         h.push("<a href=\"#\" class=\"link-edit\" data-id=\"" + m.ID + "\">" + format.date(m.DATE) + "</a>");
                         h.push("</span><br/>");
                         h.push(media.render_mods(m));
+                        h.push("</div>");
                         return h.join("");
                     }}
                 ]
@@ -248,7 +249,7 @@ $(function() {
                 '</table>',
                 '</div>',
 
-                '<div id="emailform" />',
+                '<div id="emailform"></div>',
 
                 '<div id="button-sign-body" class="asm-menu-body">',
                 '<ul class="asm-menu-list">',
@@ -262,7 +263,7 @@ $(function() {
                 '</div>',
 
                 '<div id="dialog-sign" style="display: none" title="' + _("Sign document") + '">',
-                '<div id="signature" style="width: 500px; height: 200px;" />',
+                '<div id="signature" style="width: 500px; height: 200px;"></div>',
                 '</div>',
 
                 '<form id="newdocform" method="post" action="media">',
@@ -348,7 +349,12 @@ $(function() {
                 mod_out("link", _("Link to an external web resource"));
             }
             if (m.SIGNATUREHASH) {
-                mod_out("signature", _("Signed"));
+                if (m.SIGNATUREHASH.indexOf("onlineform") == 0) {
+                    mod_out("locked", _("Locked"));
+                }
+                else {
+                    mod_out("signature", _("Signed"));
+                }
             }
             if (m.WEBSITEPHOTO == 1 && controller.showpreferred) {
                 mod_out("web", _("Default image for this record and the web"));

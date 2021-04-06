@@ -113,7 +113,7 @@ $(function() {
                 '</tbody>',
                 '</table>',
                 html.content_footer(),
-                '<div id="spacer" style="height: 100px" />'
+                '<div id="spacer" style="height: 100px"></div>'
             ].join("\n");
         },
 

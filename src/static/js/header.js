@@ -456,7 +456,7 @@ header = {
                     '<span id="asm-topline-loading-text">' + _("Loading...") + '</span>',
                 '</p>',
             '</div>',
-            '<div id="asm-body-container" />'
+            '<div id="asm-body-container"></div>'
         ];
         return h.join("");
     },

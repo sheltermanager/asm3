@@ -15,8 +15,8 @@ Complete rewrite for new library and customer, 18th July 2017
 Add ability to get placements from animals file if placements not available 17th Jan 2020
 """
 
-PATH = "/home/robin/tmp/asm3_import_data/trackabeast_db2180"
-USE_PLACEMENTS_FILE = False
+PATH = "/home/robin/tmp/asm3_import_data/trackabeast_ps2478"
+USE_PLACEMENTS_FILE = True
 
 def getspecies(s):
     """ Looks up the species, returns Cat if nothing matches """
@@ -45,7 +45,7 @@ def getsize(s):
     return 2
 
 def getdate(s):
-    return asm.getdate_mmddyy(s)
+    return asm.getdate_mmddyyyy(s)
 
 # --- START OF CONVERSION ---
 print "\\set ON_ERROR_STOP\nBEGIN;"
@@ -108,6 +108,7 @@ for d in asm.csv_to_list("%s/animals.csv" % PATH):
 
     # New animal record if we haven't seen this trackid before
     trackid = d["TrackID"].strip()
+    if trackid == "": continue # No TrackID - blank record
     if not trackid in ppa:
         extradata = ""
         a = asm.Animal()
@@ -197,10 +198,10 @@ if USE_PLACEMENTS_FILE:
         # Find the animal and owner for this placement
         a = None
         o = None
-        if d["AnimalID"] in ppa:
-            a = ppa[d["AnimalID"]]
-        if d["PersonID"] in ppo:
-            o = ppo[d["PersonID"]]
+        if d["TAB animal Id"] in ppa:
+            a = ppa[d["TAB animal Id"]]
+        if d["TAB person Id"] in ppo:
+            o = ppo[d["TAB person Id"]]
 
         # Is it a death movement? If so, just mark the animal deceased
         if d["Placement Status"] == "Deceased" and a is not None:

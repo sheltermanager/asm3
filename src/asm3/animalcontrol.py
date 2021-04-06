@@ -47,15 +47,20 @@ def get_animalcontrol_query(dbo):
 
 def get_animalcontrol_animals_query(dbo):
     return "SELECT a.ID, aca.AnimalID, a.ShelterCode, a.ShortCode, a.IdentichipNumber, a.AgeGroup, a.AnimalName, " \
-        "a.Neutered, a.DateBroughtIn, a.DeceasedDate, a.HasActiveReserve, " \
+        "a.BreedName, a.Neutered, a.DateBroughtIn, a.DeceasedDate, a.HasActiveReserve, " \
         "a.HasTrialAdoption, a.IsHold, a.IsQuarantine, a.HoldUntilDate, a.CrueltyCase, a.NonShelterAnimal, " \
         "a.ActiveMovementType, a.Archived, a.IsNotAvailableForAdoption, " \
         "a.CombiTestResult, a.FLVResult, a.HeartwormTestResult, " \
-        "s.SpeciesName, t.AnimalType AS AnimalTypeName " \
+        "s.SpeciesName, t.AnimalType AS AnimalTypeName, " \
+        "c.BaseColour AS BaseColourName, sx.Sex AS SexName, sz.Size AS SizeName, ct.CoatType As CoatTypeName " \
         "FROM animalcontrolanimal aca " \
         "INNER JOIN animal a ON aca.AnimalID = a.ID " \
         "INNER JOIN species s ON s.ID = a.SpeciesID " \
-        "INNER JOIN animaltype t ON t.ID = a.AnimalTypeID "
+        "INNER JOIN animaltype t ON t.ID = a.AnimalTypeID " \
+        "LEFT OUTER JOIN basecolour c ON c.ID = a.BaseColourID " \
+        "LEFT OUTER JOIN lksex sx ON sx.ID = a.Sex " \
+        "LEFT OUTER JOIN lksize sz ON sz.ID = a.Size " \
+        "LEFT OUTER JOIN lkcoattype ct ON ct.ID = a.CoatType " \
 
 def get_traploan_query(dbo):
     return "SELECT ot.ID, ot.TrapTypeID, ot.LoanDate, tt.TrapTypeName, ot.TrapNumber, " \
@@ -435,7 +440,7 @@ def update_animalcontrol_from_form(dbo, post, username, geocode=True):
         "AgeGroup":             post["agegroup"]
     }, username)
 
-    asm3.additional.save_values_for_link(dbo, post, acid, "incident")
+    asm3.additional.save_values_for_link(dbo, post, username, acid, "incident")
     update_animalcontrol_roles(dbo, acid, post.integer_list("viewroles"), post.integer_list("editroles"))
 
     # Check/update the geocode for the dispatch address
@@ -529,7 +534,7 @@ def insert_animalcontrol_from_form(dbo, post, username, geocode=True):
         "AgeGroup":             post["agegroup"]
     }, username)
 
-    asm3.additional.save_values_for_link(dbo, post, nid, "incident", True)
+    asm3.additional.save_values_for_link(dbo, post, username, nid, "incident", True)
     update_animalcontrol_roles(dbo, nid, post.integer_list("viewroles"), post.integer_list("editroles"))
 
     # Look up a geocode for the dispatch address

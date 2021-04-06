@@ -33,7 +33,7 @@ $(function() {
                 '</tr>',
                 '</table>',
                 '</div>',
-                '<div id="emailform" />'
+                '<div id="emailform"></div>'
             ].join("\n");
         },
 
@@ -182,7 +182,7 @@ $(function() {
                 '<!-- Third column, embedded map placeholder -->',
                 '</td>',
                 '<td width="35%">',
-                '<div id="embeddedmap" style="z-index: 1; width: 100%; height: 300px; color: #000" />',
+                '<div id="embeddedmap" style="z-index: 1; width: 100%; height: 300px; color: #000"></div>',
                 '<!-- end outer table -->',
                 '</td>',
                 '</tr>',

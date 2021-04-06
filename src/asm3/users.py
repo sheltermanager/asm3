@@ -678,6 +678,7 @@ def web_login(post, session, remoteip, useragent, path):
     username = post["username"]
     password = post["password"]
     mobileapp = post["mobile"] == "true"
+    rememberme = post["rememberme"] == "on"
     nologconnection = post["nologconnection"] == "true"
     if len(username) > 100:
         username = username[0:100]
@@ -779,6 +780,17 @@ def web_login(post, session, remoteip, useragent, path):
         except:
             asm3.al.error("failed updating user activity: %s" % str(sys.exc_info()[0]), "users.web_login", dbo, sys.exc_info())
             return "FAIL"
+
+        try:
+            # Did the user request "remember me"? If so, generate a token
+            # for them and remember the user for 2 weeks
+            if rememberme:
+                token = asm3.utils.uuid_str()
+                asm3.cachemem.put(token, "%s|%s|%s" % (database, username, password), 86400*14)
+                return "%s|%s" % (user.USERNAME, token)
+        except:
+            asm3.al.error("failed getting remember me: %s" % str(sys.exc_info()[0]), "users.web_login", dbo, sys.exc_info())
+
     else:
         asm3.al.error("database:%s username:%s password:%s failed authentication from %s [%s]" % (database, username, password, remoteip, useragent), "users.web_login", dbo)
         return "FAIL"

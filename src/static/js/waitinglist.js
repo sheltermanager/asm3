@@ -10,7 +10,7 @@ $(function() {
 
         render: function() {
             return [
-                '<div id="emailform" />',
+                '<div id="emailform"></div>',
                 '<div id="button-document-body" class="asm-menu-body">',
                 '<ul class="asm-menu-list">',
                 edit_header.template_list(controller.templates, "WAITINGLIST", controller.animal.ID),

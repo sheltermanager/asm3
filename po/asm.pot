@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ASM3\n"
 "Report-Msgid-Bugs-To: robin@sheltermanager.com\n"
-"POT-Creation-Date: 2021-03-13 12:15+0000\n"
+"POT-Creation-Date: 2021-04-06 13:53+0000\n"
 "Last-Translator: Robin Rawson-Tetley <robin@sheltermanager.com>\n"
 "Language-Team: en <robin@sheltermanager.com>\n"
 "Language: en\n"
@@ -676,10 +676,6 @@ msgstr ""
 
 #: additional.js
 msgid "Additional Fields"
-msgstr ""
-
-#: additional.py
-msgid "Additional date field '{0}' contains an invalid date."
 msgstr ""
 
 #: html.py
@@ -3555,6 +3551,10 @@ msgid "Default view"
 msgstr ""
 
 #: options.js
+msgid "Default zoom level when converting documents to PDF"
+msgstr ""
+
+#: options.js
 msgid "Defaults"
 msgstr ""
 
@@ -5378,6 +5378,14 @@ msgstr ""
 msgid "Fostered Animals"
 msgstr ""
 
+#: reports.js
+msgid "Fostered between"
+msgstr ""
+
+#: reports.js
+msgid "Fostered between two dates"
+msgstr ""
+
 #: movement.py
 msgid "Fostered to {0} since {1}"
 msgstr ""
@@ -7131,6 +7139,10 @@ msgstr ""
 msgid "Locations"
 msgstr ""
 
+#: media.js
+msgid "Locked"
+msgstr ""
+
 #: mobile.py roles.js header_edit_header.js
 msgid "Log"
 msgstr ""
@@ -8394,6 +8406,10 @@ msgstr ""
 msgid "Office"
 msgstr ""
 
+#: animal.js
+msgid "Ok"
+msgstr ""
+
 #: dbupdate.py
 msgid "Old English Sheepdog"
 msgstr ""
@@ -9256,6 +9272,10 @@ msgstr ""
 
 #: waitinglist_results.js
 msgid "Priority Floor"
+msgstr ""
+
+#: onlineform.py
+msgid "Processed by {0} on {1}"
 msgstr ""
 
 #: mailmerge.js
@@ -10797,6 +10817,10 @@ msgstr ""
 
 #: options.js
 msgid "Show a separate paid date field with costs"
+msgstr ""
+
+#: animal.js
+msgid "Show a warning when viewing this animal"
 msgstr ""
 
 #: options.js
@@ -13626,6 +13650,10 @@ msgstr ""
 msgid "Volunteer"
 msgstr ""
 
+#: search.js
+msgid "Voucher"
+msgstr ""
+
 #: vouchers.js
 msgid "Voucher Book"
 msgstr ""
@@ -13636,6 +13664,10 @@ msgstr ""
 
 #: html.py
 msgid "Voucher book"
+msgstr ""
+
+#: search.py
+msgid "Voucher codes matching '{0}'."
 msgstr ""
 
 #: roles.js header_edit_header.js
@@ -13761,6 +13793,10 @@ msgstr ""
 
 #: options.js
 msgid "Warn when creating multiple reservations on the same animal"
+msgstr ""
+
+#: animal.js
+msgid "Warning"
 msgstr ""
 
 #: options.js

@@ -1,6 +1,41 @@
 44
 ================
 
+06/04/21 Popup warning field for animals #970
+06/04/21 Use created date as default sort for media icon view
+04/04/21 Support autocomplete/autofill in online forms #991
+03/04/21 Stop line breaks in online form recipients breaking headers
+01/04/21 Stop diary notifications using inaccurate substring match #989
+01/04/21 Prevent invalid dates stopping additional fields being written
+30/03/21 Audit changes to additional fields #988 
+30/03/21 Audit changes made by clone_from_template #988
+29/03/21 Failure to create trx should not stop receiving payments
+25/03/21 Fix bug that set current owner to original on deceased animals
+25/03/21 Use best practice cookie-based "remember me" #982
+24/03/21 Permit inserts via sql interface to sensitive tables/columns
+24/03/21 Configurable PDF zoom level via CSS
+24/03/21 When deduplicating, validate that mobile phone contains digits
+24/03/21 Allow voucher codes to be searched via global search
+23/03/21 Update browser build targets for babel (minimum for CSP2)
+23/03/21 Retire "remember me" due to potential security issues #982
+23/03/21 Drop IE11 support
+22/03/21 Choose from address book on bulk emails #968
+22/03/21 Add extra incident animal keys and animal/incident jurisdiction #983
+22/03/21 Online form: support additional fields for other records #986
+22/03/21 Pick up areas where email auditing is missing #639
+21/03/21 Update Hebrew translation (Saggi Neumann)
+21/03/21 Update Spanish translation (Marga Gomis)
+20/03/21 Strip potentially harmful tags before PDFising documents
+19/03/21 Prevent hash tampering at SQL interface
+19/03/21 Separate icon for locked/signed #985
+19/03/21 Make Content-Security-Policy a sitedef instead
+19/03/21 Fix bug in location filters cancelling each other on animal open
+18/03/21 Leaking chooser destructors on medical screens
+18/03/21 Lazy load changelog on about screen
+18/03/21 Remove img.onerror inline code in favour of event delegate
+18/03/21 Python 3 bug in HTML publish/image scaling
+16/03/21 Add CSP and other security headers
+16/03/21 Update moment.js to 2.29.1 (regex security flaw)
 13/03/21 Hash stored online form submissions #974
 12/03/21 CardCom Payment Gateway support (Saggi Neumann) #972
 12/03/21 Microchip token for incident linked animals in doc templates

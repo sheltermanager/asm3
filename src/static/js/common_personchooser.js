@@ -140,9 +140,9 @@ $.widget("asm.personchooser", {
             '<td><label>' + _("State") + '</label></td>',
             '<td>',
             common.iif(config.bool("USStateCodes"),
-                '<select id="county" data="county" class="asm-selectbox chooser personchooser-county">' +
+                '<select data="county" class="asm-selectbox chooser personchooser-county">' +
                 html.states_us_options(config.str("OrganisationCounty")) + '</select>',
-                '<input type="text" id="county" data="county" maxlength="100" class="asm-textbox chooser personchooser-county" />'),
+                '<input type="text" data="county" maxlength="100" class="asm-textbox chooser personchooser-county" />'),
             '</td>',
             '</tr>',
             '<tr>',

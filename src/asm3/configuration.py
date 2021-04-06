@@ -277,6 +277,7 @@ DEFAULTS = {
     "PetsLocatedAnimalFlag": "",
     "PicturesInBooks": "Yes",
     "PDFInline": "Yes",
+    "PDFZoom": "100",
     "PublisherUseComments": "Yes",
     "PublisherIgnoreFTPOverride": "No",
     "PublisherPresets": "includefosters excludeunder=12",
@@ -330,6 +331,7 @@ DEFAULTS = {
     "TrialAdoptions": "No",
     "TrialOnShelter": "No",
     "UniqueLicenceNumbers": "Yes",
+    "UpdateAnimalTestFields": "Yes",
     "UseAutoInsurance": "No",
     "UseShortShelterCodes": "Yes", 
     "USStateCodes": "No",
@@ -904,6 +906,9 @@ def include_incomplete_medical_doc(dbo):
 def include_off_shelter_medical(dbo):
     return cboolean(dbo, "IncludeOffShelterMedical", DEFAULTS["IncludeOffShelterMedical"] == "Yes")
 
+def js_injection(dbo):
+    return cstring(dbo, "JSInjection")
+
 def js_window_print(dbo):
     return cboolean(dbo, "JSWindowPrint", DEFAULTS["JSWindowPrint"] == "Yes")
 
@@ -1064,6 +1069,9 @@ def petrescue_token(dbo):
 
 def pdf_inline(dbo):
     return cboolean(dbo, "PDFInline", DEFAULTS["PDFInline"] == "Yes")
+
+def pdf_zoom(dbo):
+    return cint(dbo, "PDFZoom", DEFAULTS["PDFZoom"])
 
 def person_search_columns(dbo):
     return cstring(dbo, "OwnerSearchColumns", DEFAULTS["OwnerSearchColumns"])
@@ -1321,6 +1329,9 @@ def trial_on_shelter(dbo):
 
 def unique_licence_numbers(dbo):
     return cboolean(dbo, "UniqueLicenceNumbers", DEFAULTS["UniqueLicenceNumbers"] == "Yes")
+
+def update_animal_test_fields(dbo):
+    return cboolean(dbo, "UpdateAnimalTestFields", DEFAULTS["UpdateAnimalTestFields"] == "Yes")
 
 def vetenvoy_user_id(dbo):
     return cstring(dbo, "VetEnvoyUserId")

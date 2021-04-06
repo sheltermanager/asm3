@@ -163,7 +163,7 @@ def publish_3pty_sub24(dbo):
         elif freq == 8 and hournow not in [1,9,17]: return
         elif freq == 12 and hournow not in [0,12]: return
         for p in publishers.split(" "):
-            if publish.PUBLISHER_LIST[p]["sub24hour"]:
+            if p in publish.PUBLISHER_LIST and publish.PUBLISHER_LIST[p]["sub24hour"]:
                 publish.start_publisher(dbo, p, user="system", newthread=False)
     except:
         em = str(sys.exc_info()[0])

@@ -311,7 +311,7 @@ def update_waitinglist_from_form(dbo, post, username):
         "Comments":                 post["comments"]
     }, username)
 
-    asm3.additional.save_values_for_link(dbo, post, wlid, "waitinglist")
+    asm3.additional.save_values_for_link(dbo, post, username, wlid, "waitinglist")
 
 def insert_waitinglist_from_form(dbo, post, username):
     """
@@ -345,7 +345,7 @@ def insert_waitinglist_from_form(dbo, post, username):
     }, username)
 
     # Save any additional field values given
-    asm3.additional.save_values_for_link(dbo, post, nwlid, "waitinglist", True)
+    asm3.additional.save_values_for_link(dbo, post, username, nwlid, "waitinglist", True)
 
     return nwlid
 

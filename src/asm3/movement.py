@@ -1015,6 +1015,11 @@ def send_fosterer_emails(dbo):
             # If the option to send emails if there were no medical items is off and there
             # weren't any medical items, skip to the next fosterer
             if asm3.configuration.fosterer_email_skip_no_medical(dbo) and not hasmedicaldue: continue
-            asm3.utils.send_email(dbo, replyto, f.EMAILADDRESS, subject = asm3.i18n._("Fosterer Medical Report", l), body="\n".join(lines), contenttype="html", exceptions=False)
+            subject = asm3.i18n._("Fosterer Medical Report", l)
+            body = "\n".join(lines)
+            asm3.utils.send_email(dbo, replyto, f.EMAILADDRESS, subject=subject, body=body, contenttype="html", exceptions=False)
+            if asm3.configuration.audit_on_send_email(dbo): 
+                asm3.audit.email(dbo, "system", replyto, f.EMAILADDRESS, "", "", subject, body)
+
 
 

@@ -6,7 +6,7 @@ const login = {
     render: function() {
         let h = [
             '<div id="asm-login-window" class="dialogshadow" style="display: none">',
-            '<div id="asm-login-splash" />',
+            '<div id="asm-login-splash"></div>',
             '<table width="auto" style="margin-left: auto; margin-right: auto; text-align: right; padding: 10px">',
             '<tr class="asm-account-row hidden">',
             '<td>',
@@ -160,9 +160,11 @@ const login = {
         let username = $("input#username").val();
         let password = $("input#password").val();
         let database = $("input#database").val();
+        let remember = $("input#rememberme").prop("checked") ? "on" : "";
         let formdata = { "database": database, 
                             "username" : username, 
                             "password" : password,
+                            "rememberme": remember,
                             "nologconnection" : controller.nologconnection };
         $.ajax({
             type: "POST",
@@ -191,20 +193,6 @@ const login = {
                     window.location = controller.smcomloginurl;
                 }
                 else {
-                    // We have a successful login!
-                    // If remember me is ticked, store the login info on 
-                    // the user's machine.
-                    if ($("#rememberme").prop("checked")) {
-                        common.local_set("asmusername", username);
-                        common.local_set("asmpassword", password);
-                        common.local_set("asmaccount", database);
-                    }
-                    else {
-                        // Remember me wasn't ticked, remove any stored login info
-                        common.local_delete("asmusername");
-                        common.local_delete("asmpassword");
-                        common.local_delete("asmaccount");
-                    }
                     $("#asm-login-window").fadeOut("slow", function() {
                         if (!controller.target) { 
                             controller.target = "main"; 
@@ -234,7 +222,7 @@ const login = {
         });
 
         // Set the splash image. If the database has a custom one set, we'll
-        // use that otherwise one of our set.
+        // use that otherwise our default.
         if (controller.customsplash) {
             if (controller.multipledatabases) {
                 $("#asm-login-splash").css({
@@ -248,7 +236,7 @@ const login = {
             }
         }
         else {
-            $("#asm-login-window").css({
+            $("#asm-login-splash").css({
                 "background-image": "url(static/images/splash/splash_logo.jpg)"
             });
         }
@@ -284,6 +272,15 @@ const login = {
             $("input#username").focus();
         }
 
+        // If the current URL doesn't match our base URL, redirect to the base.
+        // Useful when you have multiple DNS aliases to a server, but
+        // switching between them loses the session cookie
+        if (common.current_url().indexOf(controller.baseurl) != 0) {
+            let url = controller.baseurl + "/login";
+            if (controller.smaccount) { url += "?smaccount=" + controller.smaccount; }
+            window.location = url;
+        }
+
         // If we were passed a username, stick it in
         if (controller.husername) {
             $("input#username").val(controller.husername);
@@ -300,16 +297,11 @@ const login = {
         // Bind the reset password handerl
         $("#resetpassword").click(self.reset_password);
 
-        // If we weren't passed a username or password, have a look
-        // to see if we remembered one previously
-        if (common.local_get("asmusername")) {
-            $("#rememberme").prop("checked", true);
-            $("input#username").val(common.local_get("asmusername"));
-            $("input#password").val(common.local_get("asmpassword"));
-            $("input#database").val(common.local_get("asmaccount"));
-        }
+        // Make sure there are no stored credentials
+        common.local_delete("asmusername");
+        common.local_delete("asmpassword");
+        common.local_delete("asmaccount");
 
-        // Login when a button is pressed or enter
         // is pressed in any of our fields
         $("#loginbutton").button().click(function() {
             self.login();

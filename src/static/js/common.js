@@ -1647,7 +1647,7 @@ const html = {
     animal_link_thumb_bare: function(a) {
         var animalid = a.ANIMALID || a.ID,
             classes = html.animal_link_thumb_classes(a); 
-        return '<a href="animal?id=' + animalid + '"><img onerror=image_error(this) src=' + html.thumbnail_src(a, "animalthumb") + ' class="' + classes + '" /></a>';
+        return '<a href="animal?id=' + animalid + '"><img src=' + html.thumbnail_src(a, "animalthumb") + ' class="' + classes + '" /></a>';
     },
 
     /**
@@ -1743,6 +1743,9 @@ const html = {
         }
         if (config.bool("EmblemQuarantine") && a.ISQUARANTINE == 1 && (a.ARCHIVED == 0 || a.ACTIVEMOVEMENTTYPE == 2) ) {
             s.push(html.icon("quarantine", _("Quarantine")));
+        }
+        if (a.POPUPWARNING) {
+            s.push(html.icon("warning", String(a.POPUPWARNING)));
         }
         $.each([1,2,3,4,5,6,7,8,9,10], function(i, v) {
             var cflag = config.str("EmblemsCustomFlag" + v), ccond = config.str("EmblemsCustomCond" + v), cemblem = config.str("EmblemsCustomValue" + v);
@@ -2830,6 +2833,12 @@ Mousetrap.bind([ "ctrl+h", "meta+h" ], function() {
     common.route("main");
     return false;
 });
+
+// Hide broken thumbnail animal images instead of showing the icon
+// On reflection, better to show the broken thumbnail than hide it.
+// $(document).on("error", ".asm-thumbnail", function() {
+//    $(this).hide();
+//});
 
 // If an inactivity timeout is configured, starts the timer
 common.start_inactivity_timer();
