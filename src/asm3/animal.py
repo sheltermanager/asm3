@@ -389,6 +389,7 @@ def get_animals_brief(animals):
             "OWNERID": a["OWNERID"],
             "OWNERNAME": a["OWNERNAME"],
             "PICKUPLOCATIONNAME": a["PICKUPLOCATIONNAME"],
+            "POPUPWARNING": a["POPUPWARNING"],
             "RABIESTAG": a["RABIESTAG"],
             "SEX" : a["SEX"],
             "SEXNAME" : a["SEXNAME"],
@@ -2075,6 +2076,7 @@ def insert_animal_from_form(dbo, post, username):
         # ASM2_COMPATIBILITY
         "Markings":         post["markings"],
         "HiddenAnimalDetails": post["hiddenanimaldetails"],
+        "PopupWarning":     post["popupwarning"],
         "AnimalComments":   post["comments"],
         "IsGoodWithCats":   goodwithcats,
         "IsGoodWithDogs":   goodwithdogs,
@@ -2319,6 +2321,7 @@ def update_animal_from_form(dbo, post, username):
         # ASM2_COMPATIBILITY
         "Markings":             post["markings"],
         "HiddenAnimalDetails":  post["hiddencomments"],
+        "PopupWarning":         post["popupwarning"],
         "AnimalComments":       post["comments"],
         "IsGoodWithCats":       post.integer("goodwithcats"),
         "IsGoodWithDogs":       post.integer("goodwithdogs"),
@@ -2631,6 +2634,7 @@ def clone_animal(dbo, username, animalid):
         "SmartTagType":     0,
         "Declawed":         a.declawed,
         "HiddenAnimalDetails": a.hiddenanimaldetails,
+        "PopupWarning":     a.popupwarning,
         "AnimalComments":   a.animalcomments,
         "OwnersVetID":      a.ownersvetid,
         "CurrentVetID":     a.currentvetid,

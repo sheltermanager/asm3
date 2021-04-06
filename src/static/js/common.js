@@ -1744,6 +1744,9 @@ const html = {
         if (config.bool("EmblemQuarantine") && a.ISQUARANTINE == 1 && (a.ARCHIVED == 0 || a.ACTIVEMOVEMENTTYPE == 2) ) {
             s.push(html.icon("quarantine", _("Quarantine")));
         }
+        if (a.POPUPWARNING) {
+            s.push(html.icon("warning", String(a.POPUPWARNING)));
+        }
         $.each([1,2,3,4,5,6,7,8,9,10], function(i, v) {
             var cflag = config.str("EmblemsCustomFlag" + v), ccond = config.str("EmblemsCustomCond" + v), cemblem = config.str("EmblemsCustomValue" + v);
             if (cflag && cemblem && (ccond == "has" || !ccond) && html.is_animal_flag(a.ADDITIONALFLAGS, cflag)) {

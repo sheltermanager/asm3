@@ -1613,21 +1613,23 @@ const tableform = {
         b[oktext] = function() {
             // We've been given a list of fields that should not be blank or zero,
             // validate them before doing anything
-            if (o.notblank) {
+            if (o && o.notblank) {
                 if (!validate.notblank(o.notblank)) { return; }
             }
-            if (o.notzero) {
+            if (o && o.notzero) {
                 if (!validate.notzero(o.notzero)) { return; }
             }
             $(selector).dialog("close");
-            if (o.callback) { o.callback(); }
+            if (o && o.callback) { o.callback(); }
             deferred.resolve();
         };
 
-        b[_("Cancel")] = function() { 
-            $(this).dialog("close"); 
-            deferred.reject("dialog cancelled");
-        };
+        if (o && !o.hidecancel) {
+            b[_("Cancel")] = function() { 
+                $(this).dialog("close"); 
+                deferred.reject("dialog cancelled");
+            };
+        }
 
         if (!o) { o = {}; }
         $.extend(o, {
