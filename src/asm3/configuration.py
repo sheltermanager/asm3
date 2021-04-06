@@ -900,6 +900,9 @@ def include_incomplete_medical_doc(dbo):
 def include_off_shelter_medical(dbo):
     return cboolean(dbo, "IncludeOffShelterMedical", DEFAULTS["IncludeOffShelterMedical"] == "Yes")
 
+def js_injection(dbo):
+    return cstring(dbo, "JSInjection")
+
 def js_window_print(dbo):
     return cboolean(dbo, "JSWindowPrint", DEFAULTS["JSWindowPrint"] == "Yes")
 

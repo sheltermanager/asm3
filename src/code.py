@@ -420,9 +420,11 @@ class JSONEndpoint(ASMEndpoint):
                 "$(document).ready(function() { " \
                 "common.route_listen(); " \
                 "common.module_start(\"%(js_module)s\"); " \
+                "%(js_injection)s " \
                 "});\n</script>\n</body>\n</html>" % { 
                     "controller": asm3.utils.json(c),
                     "header": asm3.html.header("", session),
+                    "js_injection": asm3.configuration.js_injection(o.dbo),
                     "js_module": self.js_module, 
                     "nonce": nonce }
         else:
