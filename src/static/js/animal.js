@@ -782,7 +782,7 @@ $(function() {
                 '</table>',
                 '</div>',
                 '<div id="emailform"></div>',
-                '<div id="dialog-popupwarning" title="' + html.title(_("Warning")) + '">',
+                '<div id="dialog-popupwarning" style="display: none" title="' + html.title(_("Warning")) + '">',
                 '<p>' + html.error(controller.animal.POPUPWARNING) + '</p>',
                 '</div>',
                 '<div id="dialog-merge" style="display: none" title="' + html.title(_("Select animal to merge")) + '">',
