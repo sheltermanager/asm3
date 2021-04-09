@@ -123,6 +123,7 @@ $(function() {
             $("#button-exec").button().click(async function() {
                 let formdata = "mode=exec&" + $("#sql").toPOST();
                 $("#button-exec").button("disable");
+                header.hide_error();
                 header.show_loading(_("Executing..."));
                 try {
                     let result = await common.ajax_post("sql", formdata);

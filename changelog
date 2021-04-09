@@ -1,7 +1,8 @@
 45
 ================
 
-09/04/21 Hide driver info on transport for no "View Owner" perm
+09/04/21 Hide previous errors when executing queries at SQL Interface
+09/04/21 Hide driver info on transport for no "View Owner" permission
 
 44
 ================
