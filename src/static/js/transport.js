@@ -119,7 +119,7 @@ $(function() {
                         }
                     },
                     { field: "DRIVER", display: _("Driver"), formatter: function(row) {
-                            if (row.DRIVEROWNERID) {
+                            if (row.DRIVEROWNERID && common.has_permission("vo")) {
                                 return html.person_link(row.DRIVEROWNERID, row.DRIVEROWNERNAME) + '<br />' +
                                     row.DRIVEROWNERADDRESS + "<br/>" + row.DRIVEROWNERTOWN + "<br />" + row.DRIVEROWNERCOUNTY + " " + row.DRIVEROWNERPOSTCODE +
                                     (!config.bool("HideCountry") ? "<br/>" + row.DRIVEROWNERCOUNTRY : "");
@@ -128,13 +128,17 @@ $(function() {
                         }
                     },
                     { field: "PICKUP", display: _("Pickup"), formatter: function(row) {
-                            if (row.PICKUPOWNERID && row.PICKUPOWNERID != "0") {
+                            if (row.PICKUPOWNERID && common.has_permission("vo")) {
                                 return html.person_link(row.PICKUPOWNERID, row.PICKUPOWNERNAME) + '<br />' +
-                                    row.PICKUPADDRESS + "<br/>" + row.PICKUPTOWN + "<br />" + row.PICKUPCOUNTY + " " + row.PICKUPPOSTCODE + 
+                                    row.PICKUPADDRESS + "<br/>" + row.PICKUPTOWN + "<br />" + row.PICKUPCOUNTY + " " + 
+                                    row.PICKUPPOSTCODE + 
                                     (!config.bool("HideCountry") ? "<br/>" + row.PICKUPCOUNTRY : "");
                             }
-                            return row.PICKUPADDRESS + "<br/>" + row.PICKUPTOWN + "<br/>" + row.PICKUPCOUNTY + "<br/>" + row.PICKUPPOSTCODE + 
-                                (!config.bool("HideCountry") ? "<br/>" + row.PICKUPCOUNTRY : "");
+                            else {
+                                return row.PICKUPADDRESS + "<br/>" + row.PICKUPTOWN + "<br/>" + row.PICKUPCOUNTY + 
+                                    "<br/>" + row.PICKUPPOSTCODE + 
+                                    (!config.bool("HideCountry") ? "<br/>" + row.PICKUPCOUNTRY : "");
+                            }
                         }
                     },
                     { field: "PICKUPDATETIME", display: _("at"), initialsort: true, initialsortdirection: "desc",
@@ -143,13 +147,17 @@ $(function() {
                         }
                     },
                     { field: "DROPOFF", display: _("Dropoff"), formatter: function(row) {
-                            if (row.DROPOFFOWNERID && row.DROPOFFOWNERID != "0") {
+                            if (row.DROPOFFOWNERID && common.has_permission("vo")) {
                                 return html.person_link(row.DROPOFFOWNERID, row.DROPOFFOWNERNAME) + '<br />' +
-                                    row.DROPOFFADDRESS + "<br/>" + row.DROPOFFTOWN + "<br/>" + row.DROPOFFCOUNTY + "<br/>" + row.DROPOFFPOSTCODE + 
+                                    row.DROPOFFADDRESS + "<br/>" + row.DROPOFFTOWN + "<br/>" + row.DROPOFFCOUNTY + 
+                                    "<br/>" + row.DROPOFFPOSTCODE + 
                                     (!config.bool("HideCountry") ? "<br/>" + row.DROPOFFCOUNTRY : "");
                             }
-                            return row.DROPOFFADDRESS + "<br/>" + row.DROPOFFTOWN + "<br/>" + row.DROPOFFCOUNTY + "<br/>" + row.DROPOFFPOSTCODE + 
-                                (!config.bool("HideCountry") ? "<br/>" + row.DROPOFFCOUNTRY : "");
+                            else {
+                                return row.DROPOFFADDRESS + "<br/>" + row.DROPOFFTOWN + "<br/>" + row.DROPOFFCOUNTY + 
+                                    "<br/>" + row.DROPOFFPOSTCODE + 
+                                    (!config.bool("HideCountry") ? "<br/>" + row.DROPOFFCOUNTRY : "");
+                            }
                         }
                     },
                     { field: "DROPOFFDATETIME", display: _("at"), 
