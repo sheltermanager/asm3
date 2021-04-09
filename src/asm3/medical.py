@@ -684,7 +684,7 @@ def calculate_given_remaining(dbo, amid):
         "TreatmentsRemaining = ((TotalNumberOfTreatments * TimingRule) - ?) " \
         "WHERE ID = ?", (given, given, amid))
 
-def complete_vaccination(dbo, username, vaccinationid, newdate, givenby = "", vetid = 0, dateexpires = None, batchnumber = "", manufacturer = ""):
+def complete_vaccination(dbo, username, vaccinationid, newdate, givenby = "", vetid = 0, dateexpires = None, batchnumber = "", manufacturer = "", rabiestag = ""):
     """
     Marks a vaccination given/completed on newdate
     """
@@ -696,8 +696,10 @@ def complete_vaccination(dbo, username, vaccinationid, newdate, givenby = "", ve
         "GivenBy":              asm3.utils.iif(givenby == "", username, givenby),
         "AdministeringVetID":   vetid,
         "BatchNumber":          batchnumber,
-        "Manufacturer":         manufacturer
+        "Manufacturer":         manufacturer,
+        "RabiesTag":            rabiestag
     }, username)
+    update_rabies_tag(dbo, username, animalid)
 
 def complete_test(dbo, username, testid, newdate, testresult, vetid = 0):
     """

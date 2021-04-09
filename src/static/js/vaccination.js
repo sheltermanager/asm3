@@ -176,7 +176,7 @@ $(function() {
                         $("#givennewdate").datepicker("setDate", new Date());
                         let rd = vaccination.calc_reschedule_date(new Date(), vacctype);
                         if (rd) { $("#rescheduledate").datepicker("setDate", rd); }
-                        $("#givenexpires, #givenbatch, #givenmanufacturer").val("");
+                        $("#givenexpires, #givenbatch, #givenmanufacturer, #givenrabiestag").val("");
                         vaccination.set_given_batch(vacctype);
                         $("#usagetype").select("firstvalue");
                         $("#usagedate").datepicker("setDate", new Date());
@@ -381,6 +381,10 @@ $(function() {
                 '<tr>',
                 '<td><label for="givenmanufacturer">' + _("Manufacturer") + '</label></td>',
                 '<td><input id="givenmanufacturer" data="givenmanufacturer" type="text" class="asm-textbox asm-field" /></td>',
+                '</tr>',
+                '<tr>',
+                '<td><label for="givenrabiestag">' + _("Rabies Tag") + '</label></td>',
+                '<td><input id="givenrabiestag" data="givenrabiestag" type="text" class="asm-textbox asm-field" /></td>',
                 '</tr>',
                 '<tr>',
                 '<td><label for="givenby">' + _("By") + '</label></td>',
