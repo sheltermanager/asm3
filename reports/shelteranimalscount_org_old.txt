@@ -1,8 +1,8 @@
-shelteranimalscount.org matrix
+shelteranimalscount.org matrix (old pre-2021)
 ###
 Figures
 ###
-33600/PostgreSQL
+33600/DISABLED
 ###
 Information needed to complete the shelteranimalscount.org data matrix
 ###
@@ -1060,11 +1060,11 @@ $$FOOTER
 </p>
 FOOTER$$
 &&&
-shelteranimalscount.org monthly CSV export
+shelteranimalscount.org monthly CSV export (old, pre-2021)
 ###
 Figures
 ###
-33600/PostgreSQL
+33600/DISABLED
 ###
 When run from Export Reports as CSV, produces a file containing one month of data for importing into shelteranimalscount.org
 ###
