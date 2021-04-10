@@ -1,6 +1,7 @@
 45
 ================
 
+10/04/21 Map "reason" to "reasonforentry" for animals from online form
 09/04/21 Allow updating of rabies tag from give vaccination dialog
 09/04/21 Hide previous errors when executing queries at SQL Interface
 09/04/21 Hide driver info on transport for no "View Owner" permission

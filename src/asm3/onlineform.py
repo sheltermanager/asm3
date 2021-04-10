@@ -980,6 +980,7 @@ def create_animal(dbo, username, collationid):
             d["microchipped"] = "1"
             d["microchipnumber"] = f.VALUE
         if f.FIELDNAME == "hiddencomments": d["hiddenanimaldetails"] = f.VALUE
+        if f.FIELDNAME == "reason": d["reasonforentry"] = f.VALUE
         if f.FIELDNAME == "entryreason": d["entryreason"] = str(guess_entryreason(dbo, f.VALUE))
         if f.FIELDNAME == "type": d["animaltype"] = str(guess_animaltype(dbo, f.VALUE))
         if f.FIELDNAME == "species": d["species"] = str(guess_species(dbo, f.VALUE))
