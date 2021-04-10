@@ -953,7 +953,7 @@ def csvexport_animals(dbo, dataset, animalids = "", includephoto = False):
         r = []
         for k in keys:
             if k in row: 
-                r.append("\"%s\"" % row[k])
+                r.append("\"%s\"" % row[k].replace("\"", "\"\""))
             else:
                 r.append("\"\"")
         return ",".join(r) + "\n"
