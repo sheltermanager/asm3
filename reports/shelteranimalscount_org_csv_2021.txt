@@ -121,7 +121,7 @@ AS "Relinquished By Owner Up To 5 Months",
 INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
 WHERE IsTransfer = 1 AND CrueltyCase = 0
 AND (animal.BroughtInByOwnerID = 0 OR (SELECT OwnerCounty FROM owner WHERE ID = animal.BroughtInByOwnerID) = 
-(SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationState'))
+(SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationCounty'))
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID IN ($CANINES$)
 AND DateOfBirth < DateBroughtIn - INTERVAL '5 months'
@@ -131,7 +131,7 @@ AND NonShelterAnimal = 0) AS "Transferred In From Instate Agency Adult",
 INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
 WHERE IsTransfer = 1 AND CrueltyCase = 0
 AND (animal.BroughtInByOwnerID = 0 OR (SELECT OwnerCounty FROM owner WHERE ID = animal.BroughtInByOwnerID) = 
-(SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationState'))
+(SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationCounty'))
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID IN ($CANINES$)
 AND DateOfBirth >= DateBroughtIn - INTERVAL '5 months' 
@@ -143,7 +143,7 @@ AND NonShelterAnimal = 0) AS "Transferred In From Instate Agency Up To 5 Months"
 INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
 WHERE IsTransfer = 1 AND CrueltyCase = 0
 AND (animal.BroughtInByOwnerID <> 0 AND (SELECT OwnerCounty FROM owner WHERE ID = animal.BroughtInByOwnerID) <> 
-(SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationState'))
+(SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationCounty'))
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID IN ($CANINES$)
 AND DateOfBirth < DateBroughtIn - INTERVAL '5 months'
@@ -153,7 +153,7 @@ AND NonShelterAnimal = 0) AS "Transferred In From Out Of State Agency Adult",
 INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
 WHERE IsTransfer = 1 AND CrueltyCase = 0
 AND (animal.BroughtInByOwnerID <> 0 AND (SELECT OwnerCounty FROM owner WHERE ID = animal.BroughtInByOwnerID) <> 
-(SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationState'))
+(SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationCounty'))
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID IN ($CANINES$)
 AND DateOfBirth >= DateBroughtIn - INTERVAL '5 months' 
@@ -262,7 +262,7 @@ AND NonShelterAnimal = 0) AS "Returned To Owner Up To 5 Months",
 INNER JOIN adoption ON animal.ID = adoption.AnimalID 
 INNER JOIN owner ON owner.ID = adoption.OwnerID
 WHERE MovementType = 3
-AND owner.OwnerCounty = (SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationState')
+AND owner.OwnerCounty = (SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationCounty')
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID IN ($CANINES$)
 AND DateOfBirth < MovementDate - INTERVAL '5 months' 
@@ -272,7 +272,7 @@ AND NonShelterAnimal = 0) AS "Transferred Out To Instate Agency Adult",
 INNER JOIN adoption ON animal.ID = adoption.AnimalID 
 INNER JOIN owner ON owner.ID = adoption.OwnerID
 WHERE MovementType = 3
-AND owner.OwnerCounty = (SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationState')
+AND owner.OwnerCounty = (SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationCounty')
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID IN ($CANINES$)
 AND DateOfBirth >= MovementDate - INTERVAL '5 months' 
@@ -284,7 +284,7 @@ AND NonShelterAnimal = 0) AS "Transferred Out To Instate Agency Up To 5 Months",
 INNER JOIN adoption ON animal.ID = adoption.AnimalID 
 INNER JOIN owner ON owner.ID = adoption.OwnerID
 WHERE MovementType = 3
-AND owner.OwnerCounty <> (SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationState')
+AND owner.OwnerCounty <> (SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationCounty')
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID IN ($CANINES$)
 AND DateOfBirth < MovementDate - INTERVAL '5 months' 
@@ -294,7 +294,7 @@ AND NonShelterAnimal = 0) AS "Transferred Out To Out Of State Agency Adult",
 INNER JOIN adoption ON animal.ID = adoption.AnimalID 
 INNER JOIN owner ON owner.ID = adoption.OwnerID
 WHERE MovementType = 3
-AND owner.OwnerCounty <> (SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationState')
+AND owner.OwnerCounty <> (SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationCounty')
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID IN ($CANINES$)
 AND DateOfBirth >= MovementDate - INTERVAL '5 months' 
@@ -493,7 +493,7 @@ AS "Relinquished By Owner Up To 5 Months",
 INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
 WHERE IsTransfer = 1 AND CrueltyCase = 0
 AND (animal.BroughtInByOwnerID = 0 OR (SELECT OwnerCounty FROM owner WHERE ID = animal.BroughtInByOwnerID) = 
-(SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationState'))
+(SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationCounty'))
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID IN ($FELINES$)
 AND DateOfBirth < DateBroughtIn - INTERVAL '5 months'
@@ -503,7 +503,7 @@ AND NonShelterAnimal = 0) AS "Transferred In From Instate Agency Adult",
 INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
 WHERE IsTransfer = 1 AND CrueltyCase = 0
 AND (animal.BroughtInByOwnerID = 0 OR (SELECT OwnerCounty FROM owner WHERE ID = animal.BroughtInByOwnerID) = 
-(SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationState'))
+(SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationCounty'))
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID IN ($FELINES$)
 AND DateOfBirth >= DateBroughtIn - INTERVAL '5 months' 
@@ -515,7 +515,7 @@ AND NonShelterAnimal = 0) AS "Transferred In From Instate Agency Up To 5 Months"
 INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
 WHERE IsTransfer = 1 AND CrueltyCase = 0
 AND (animal.BroughtInByOwnerID <> 0 AND (SELECT OwnerCounty FROM owner WHERE ID = animal.BroughtInByOwnerID) <> 
-(SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationState'))
+(SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationCounty'))
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID IN ($FELINES$)
 AND DateOfBirth < DateBroughtIn - INTERVAL '5 months'
@@ -525,7 +525,7 @@ AND NonShelterAnimal = 0) AS "Transferred In From Out Of State Agency Adult",
 INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
 WHERE IsTransfer = 1 AND CrueltyCase = 0
 AND (animal.BroughtInByOwnerID <> 0 AND (SELECT OwnerCounty FROM owner WHERE ID = animal.BroughtInByOwnerID) <> 
-(SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationState'))
+(SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationCounty'))
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID IN ($FELINES$)
 AND DateOfBirth >= DateBroughtIn - INTERVAL '5 months' 
@@ -634,7 +634,7 @@ AND NonShelterAnimal = 0) AS "Returned To Owner Up To 5 Months",
 INNER JOIN adoption ON animal.ID = adoption.AnimalID 
 INNER JOIN owner ON owner.ID = adoption.OwnerID
 WHERE MovementType = 3
-AND owner.OwnerCounty = (SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationState')
+AND owner.OwnerCounty = (SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationCounty')
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID IN ($FELINES$)
 AND DateOfBirth < MovementDate - INTERVAL '5 months' 
@@ -644,7 +644,7 @@ AND NonShelterAnimal = 0) AS "Transferred Out To Instate Agency Adult",
 INNER JOIN adoption ON animal.ID = adoption.AnimalID 
 INNER JOIN owner ON owner.ID = adoption.OwnerID
 WHERE MovementType = 3
-AND owner.OwnerCounty = (SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationState')
+AND owner.OwnerCounty = (SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationCounty')
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID IN ($FELINES$)
 AND DateOfBirth >= MovementDate - INTERVAL '5 months' 
@@ -656,7 +656,7 @@ AND NonShelterAnimal = 0) AS "Transferred Out To Instate Agency Up To 5 Months",
 INNER JOIN adoption ON animal.ID = adoption.AnimalID 
 INNER JOIN owner ON owner.ID = adoption.OwnerID
 WHERE MovementType = 3
-AND owner.OwnerCounty <> (SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationState')
+AND owner.OwnerCounty <> (SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationCounty')
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID IN ($FELINES$)
 AND DateOfBirth < MovementDate - INTERVAL '5 months' 
@@ -666,7 +666,7 @@ AND NonShelterAnimal = 0) AS "Transferred Out To Out Of State Agency Adult",
 INNER JOIN adoption ON animal.ID = adoption.AnimalID 
 INNER JOIN owner ON owner.ID = adoption.OwnerID
 WHERE MovementType = 3
-AND owner.OwnerCounty <> (SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationState')
+AND owner.OwnerCounty <> (SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationCounty')
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID IN ($FELINES$)
 AND DateOfBirth >= MovementDate - INTERVAL '5 months' 
@@ -865,7 +865,7 @@ AS "Relinquished By Owner Up To 5 Months",
 INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
 WHERE IsTransfer = 1 AND CrueltyCase = 0
 AND (animal.BroughtInByOwnerID = 0 OR (SELECT OwnerCounty FROM owner WHERE ID = animal.BroughtInByOwnerID) = 
-(SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationState'))
+(SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationCounty'))
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID IN ($RABBITS$)
 AND DateOfBirth < DateBroughtIn - INTERVAL '5 months'
@@ -875,7 +875,7 @@ AND NonShelterAnimal = 0) AS "Transferred In From Instate Agency Adult",
 INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
 WHERE IsTransfer = 1 AND CrueltyCase = 0
 AND (animal.BroughtInByOwnerID = 0 OR (SELECT OwnerCounty FROM owner WHERE ID = animal.BroughtInByOwnerID) = 
-(SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationState'))
+(SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationCounty'))
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID IN ($RABBITS$)
 AND DateOfBirth >= DateBroughtIn - INTERVAL '5 months' 
@@ -887,7 +887,7 @@ AND NonShelterAnimal = 0) AS "Transferred In From Instate Agency Up To 5 Months"
 INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
 WHERE IsTransfer = 1 AND CrueltyCase = 0
 AND (animal.BroughtInByOwnerID <> 0 AND (SELECT OwnerCounty FROM owner WHERE ID = animal.BroughtInByOwnerID) <> 
-(SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationState'))
+(SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationCounty'))
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID IN ($RABBITS$)
 AND DateOfBirth < DateBroughtIn - INTERVAL '5 months'
@@ -897,7 +897,7 @@ AND NonShelterAnimal = 0) AS "Transferred In From Out Of State Agency Adult",
 INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
 WHERE IsTransfer = 1 AND CrueltyCase = 0
 AND (animal.BroughtInByOwnerID <> 0 AND (SELECT OwnerCounty FROM owner WHERE ID = animal.BroughtInByOwnerID) <> 
-(SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationState'))
+(SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationCounty'))
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID IN ($RABBITS$)
 AND DateOfBirth >= DateBroughtIn - INTERVAL '5 months' 
@@ -1006,7 +1006,7 @@ AND NonShelterAnimal = 0) AS "Returned To Owner Up To 5 Months",
 INNER JOIN adoption ON animal.ID = adoption.AnimalID 
 INNER JOIN owner ON owner.ID = adoption.OwnerID
 WHERE MovementType = 3
-AND owner.OwnerCounty = (SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationState')
+AND owner.OwnerCounty = (SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationCounty')
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID IN ($RABBITS$)
 AND DateOfBirth < MovementDate - INTERVAL '5 months' 
@@ -1016,7 +1016,7 @@ AND NonShelterAnimal = 0) AS "Transferred Out To Instate Agency Adult",
 INNER JOIN adoption ON animal.ID = adoption.AnimalID 
 INNER JOIN owner ON owner.ID = adoption.OwnerID
 WHERE MovementType = 3
-AND owner.OwnerCounty = (SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationState')
+AND owner.OwnerCounty = (SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationCounty')
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID IN ($RABBITS$)
 AND DateOfBirth >= MovementDate - INTERVAL '5 months' 
@@ -1028,7 +1028,7 @@ AND NonShelterAnimal = 0) AS "Transferred Out To Instate Agency Up To 5 Months",
 INNER JOIN adoption ON animal.ID = adoption.AnimalID 
 INNER JOIN owner ON owner.ID = adoption.OwnerID
 WHERE MovementType = 3
-AND owner.OwnerCounty <> (SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationState')
+AND owner.OwnerCounty <> (SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationCounty')
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID IN ($RABBITS$)
 AND DateOfBirth < MovementDate - INTERVAL '5 months' 
@@ -1038,7 +1038,7 @@ AND NonShelterAnimal = 0) AS "Transferred Out To Out Of State Agency Adult",
 INNER JOIN adoption ON animal.ID = adoption.AnimalID 
 INNER JOIN owner ON owner.ID = adoption.OwnerID
 WHERE MovementType = 3
-AND owner.OwnerCounty <> (SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationState')
+AND owner.OwnerCounty <> (SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationCounty')
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID IN ($RABBITS$)
 AND DateOfBirth >= MovementDate - INTERVAL '5 months' 
@@ -1238,7 +1238,7 @@ AS "Relinquished By Owner Up To 5 Months",
 INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
 WHERE IsTransfer = 1 AND CrueltyCase = 0
 AND (animal.BroughtInByOwnerID = 0 OR (SELECT OwnerCounty FROM owner WHERE ID = animal.BroughtInByOwnerID) = 
-(SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationState'))
+(SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationCounty'))
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID IN ($EQUINES$)
 AND DateOfBirth < DateBroughtIn - INTERVAL '5 months'
@@ -1248,7 +1248,7 @@ AND NonShelterAnimal = 0) AS "Transferred In From Instate Agency Adult",
 INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
 WHERE IsTransfer = 1 AND CrueltyCase = 0
 AND (animal.BroughtInByOwnerID = 0 OR (SELECT OwnerCounty FROM owner WHERE ID = animal.BroughtInByOwnerID) = 
-(SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationState'))
+(SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationCounty'))
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID IN ($EQUINES$)
 AND DateOfBirth >= DateBroughtIn - INTERVAL '5 months' 
@@ -1260,7 +1260,7 @@ AND NonShelterAnimal = 0) AS "Transferred In From Instate Agency Up To 5 Months"
 INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
 WHERE IsTransfer = 1 AND CrueltyCase = 0
 AND (animal.BroughtInByOwnerID <> 0 AND (SELECT OwnerCounty FROM owner WHERE ID = animal.BroughtInByOwnerID) <> 
-(SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationState'))
+(SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationCounty'))
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID IN ($EQUINES$)
 AND DateOfBirth < DateBroughtIn - INTERVAL '5 months'
@@ -1270,7 +1270,7 @@ AND NonShelterAnimal = 0) AS "Transferred In From Out Of State Agency Adult",
 INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
 WHERE IsTransfer = 1 AND CrueltyCase = 0
 AND (animal.BroughtInByOwnerID <> 0 AND (SELECT OwnerCounty FROM owner WHERE ID = animal.BroughtInByOwnerID) <> 
-(SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationState'))
+(SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationCounty'))
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID IN ($EQUINES$)
 AND DateOfBirth >= DateBroughtIn - INTERVAL '5 months' 
@@ -1379,7 +1379,7 @@ AND NonShelterAnimal = 0) AS "Returned To Owner Up To 5 Months",
 INNER JOIN adoption ON animal.ID = adoption.AnimalID 
 INNER JOIN owner ON owner.ID = adoption.OwnerID
 WHERE MovementType = 3
-AND owner.OwnerCounty = (SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationState')
+AND owner.OwnerCounty = (SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationCounty')
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID IN ($EQUINES$)
 AND DateOfBirth < MovementDate - INTERVAL '5 months' 
@@ -1389,7 +1389,7 @@ AND NonShelterAnimal = 0) AS "Transferred Out To Instate Agency Adult",
 INNER JOIN adoption ON animal.ID = adoption.AnimalID 
 INNER JOIN owner ON owner.ID = adoption.OwnerID
 WHERE MovementType = 3
-AND owner.OwnerCounty = (SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationState')
+AND owner.OwnerCounty = (SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationCounty')
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID IN ($EQUINES$)
 AND DateOfBirth >= MovementDate - INTERVAL '5 months' 
@@ -1401,7 +1401,7 @@ AND NonShelterAnimal = 0) AS "Transferred Out To Instate Agency Up To 5 Months",
 INNER JOIN adoption ON animal.ID = adoption.AnimalID 
 INNER JOIN owner ON owner.ID = adoption.OwnerID
 WHERE MovementType = 3
-AND owner.OwnerCounty <> (SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationState')
+AND owner.OwnerCounty <> (SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationCounty')
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID IN ($EQUINES$)
 AND DateOfBirth < MovementDate - INTERVAL '5 months' 
@@ -1411,7 +1411,7 @@ AND NonShelterAnimal = 0) AS "Transferred Out To Out Of State Agency Adult",
 INNER JOIN adoption ON animal.ID = adoption.AnimalID 
 INNER JOIN owner ON owner.ID = adoption.OwnerID
 WHERE MovementType = 3
-AND owner.OwnerCounty <> (SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationState')
+AND owner.OwnerCounty <> (SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationCounty')
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID IN ($EQUINES$)
 AND DateOfBirth >= MovementDate - INTERVAL '5 months' 
@@ -1611,7 +1611,7 @@ AS "Relinquished By Owner Up To 5 Months",
 INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
 WHERE IsTransfer = 1 AND CrueltyCase = 0
 AND (animal.BroughtInByOwnerID = 0 OR (SELECT OwnerCounty FROM owner WHERE ID = animal.BroughtInByOwnerID) = 
-(SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationState'))
+(SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationCounty'))
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID IN ($SMALLMAMMALS$)
 AND DateOfBirth < DateBroughtIn - INTERVAL '5 months'
@@ -1621,7 +1621,7 @@ AND NonShelterAnimal = 0) AS "Transferred In From Instate Agency Adult",
 INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
 WHERE IsTransfer = 1 AND CrueltyCase = 0
 AND (animal.BroughtInByOwnerID = 0 OR (SELECT OwnerCounty FROM owner WHERE ID = animal.BroughtInByOwnerID) = 
-(SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationState'))
+(SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationCounty'))
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID IN ($SMALLMAMMALS$)
 AND DateOfBirth >= DateBroughtIn - INTERVAL '5 months' 
@@ -1633,7 +1633,7 @@ AND NonShelterAnimal = 0) AS "Transferred In From Instate Agency Up To 5 Months"
 INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
 WHERE IsTransfer = 1 AND CrueltyCase = 0
 AND (animal.BroughtInByOwnerID <> 0 AND (SELECT OwnerCounty FROM owner WHERE ID = animal.BroughtInByOwnerID) <> 
-(SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationState'))
+(SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationCounty'))
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID IN ($SMALLMAMMALS$)
 AND DateOfBirth < DateBroughtIn - INTERVAL '5 months'
@@ -1643,7 +1643,7 @@ AND NonShelterAnimal = 0) AS "Transferred In From Out Of State Agency Adult",
 INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
 WHERE IsTransfer = 1 AND CrueltyCase = 0
 AND (animal.BroughtInByOwnerID <> 0 AND (SELECT OwnerCounty FROM owner WHERE ID = animal.BroughtInByOwnerID) <> 
-(SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationState'))
+(SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationCounty'))
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID IN ($SMALLMAMMALS$)
 AND DateOfBirth >= DateBroughtIn - INTERVAL '5 months' 
@@ -1752,7 +1752,7 @@ AND NonShelterAnimal = 0) AS "Returned To Owner Up To 5 Months",
 INNER JOIN adoption ON animal.ID = adoption.AnimalID 
 INNER JOIN owner ON owner.ID = adoption.OwnerID
 WHERE MovementType = 3
-AND owner.OwnerCounty = (SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationState')
+AND owner.OwnerCounty = (SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationCounty')
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID IN ($SMALLMAMMALS$)
 AND DateOfBirth < MovementDate - INTERVAL '5 months' 
@@ -1762,7 +1762,7 @@ AND NonShelterAnimal = 0) AS "Transferred Out To Instate Agency Adult",
 INNER JOIN adoption ON animal.ID = adoption.AnimalID 
 INNER JOIN owner ON owner.ID = adoption.OwnerID
 WHERE MovementType = 3
-AND owner.OwnerCounty = (SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationState')
+AND owner.OwnerCounty = (SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationCounty')
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID IN ($SMALLMAMMALS$)
 AND DateOfBirth >= MovementDate - INTERVAL '5 months' 
@@ -1774,7 +1774,7 @@ AND NonShelterAnimal = 0) AS "Transferred Out To Instate Agency Up To 5 Months",
 INNER JOIN adoption ON animal.ID = adoption.AnimalID 
 INNER JOIN owner ON owner.ID = adoption.OwnerID
 WHERE MovementType = 3
-AND owner.OwnerCounty <> (SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationState')
+AND owner.OwnerCounty <> (SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationCounty')
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID IN ($SMALLMAMMALS$)
 AND DateOfBirth < MovementDate - INTERVAL '5 months' 
@@ -1784,7 +1784,7 @@ AND NonShelterAnimal = 0) AS "Transferred Out To Out Of State Agency Adult",
 INNER JOIN adoption ON animal.ID = adoption.AnimalID 
 INNER JOIN owner ON owner.ID = adoption.OwnerID
 WHERE MovementType = 3
-AND owner.OwnerCounty <> (SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationState')
+AND owner.OwnerCounty <> (SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationCounty')
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID IN ($SMALLMAMMALS$)
 AND DateOfBirth >= MovementDate - INTERVAL '5 months' 
@@ -1983,7 +1983,7 @@ AS "Relinquished By Owner Up To 5 Months",
 INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
 WHERE IsTransfer = 1 AND CrueltyCase = 0
 AND (animal.BroughtInByOwnerID = 0 OR (SELECT OwnerCounty FROM owner WHERE ID = animal.BroughtInByOwnerID) = 
-(SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationState'))
+(SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationCounty'))
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID IN ($FARMANIMALS$)
 AND DateOfBirth < DateBroughtIn - INTERVAL '5 months'
@@ -1993,7 +1993,7 @@ AND NonShelterAnimal = 0) AS "Transferred In From Instate Agency Adult",
 INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
 WHERE IsTransfer = 1 AND CrueltyCase = 0
 AND (animal.BroughtInByOwnerID = 0 OR (SELECT OwnerCounty FROM owner WHERE ID = animal.BroughtInByOwnerID) = 
-(SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationState'))
+(SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationCounty'))
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID IN ($FARMANIMALS$)
 AND DateOfBirth >= DateBroughtIn - INTERVAL '5 months' 
@@ -2005,7 +2005,7 @@ AND NonShelterAnimal = 0) AS "Transferred In From Instate Agency Up To 5 Months"
 INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
 WHERE IsTransfer = 1 AND CrueltyCase = 0
 AND (animal.BroughtInByOwnerID <> 0 AND (SELECT OwnerCounty FROM owner WHERE ID = animal.BroughtInByOwnerID) <> 
-(SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationState'))
+(SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationCounty'))
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID IN ($FARMANIMALS$)
 AND DateOfBirth < DateBroughtIn - INTERVAL '5 months'
@@ -2015,7 +2015,7 @@ AND NonShelterAnimal = 0) AS "Transferred In From Out Of State Agency Adult",
 INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
 WHERE IsTransfer = 1 AND CrueltyCase = 0
 AND (animal.BroughtInByOwnerID <> 0 AND (SELECT OwnerCounty FROM owner WHERE ID = animal.BroughtInByOwnerID) <> 
-(SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationState'))
+(SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationCounty'))
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID IN ($FARMANIMALS$)
 AND DateOfBirth >= DateBroughtIn - INTERVAL '5 months' 
@@ -2124,7 +2124,7 @@ AND NonShelterAnimal = 0) AS "Returned To Owner Up To 5 Months",
 INNER JOIN adoption ON animal.ID = adoption.AnimalID 
 INNER JOIN owner ON owner.ID = adoption.OwnerID
 WHERE MovementType = 3
-AND owner.OwnerCounty = (SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationState')
+AND owner.OwnerCounty = (SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationCounty')
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID IN ($FARMANIMALS$)
 AND DateOfBirth < MovementDate - INTERVAL '5 months' 
@@ -2134,7 +2134,7 @@ AND NonShelterAnimal = 0) AS "Transferred Out To Instate Agency Adult",
 INNER JOIN adoption ON animal.ID = adoption.AnimalID 
 INNER JOIN owner ON owner.ID = adoption.OwnerID
 WHERE MovementType = 3
-AND owner.OwnerCounty = (SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationState')
+AND owner.OwnerCounty = (SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationCounty')
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID IN ($FARMANIMALS$)
 AND DateOfBirth >= MovementDate - INTERVAL '5 months' 
@@ -2146,7 +2146,7 @@ AND NonShelterAnimal = 0) AS "Transferred Out To Instate Agency Up To 5 Months",
 INNER JOIN adoption ON animal.ID = adoption.AnimalID 
 INNER JOIN owner ON owner.ID = adoption.OwnerID
 WHERE MovementType = 3
-AND owner.OwnerCounty <> (SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationState')
+AND owner.OwnerCounty <> (SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationCounty')
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID IN ($FARMANIMALS$)
 AND DateOfBirth < MovementDate - INTERVAL '5 months' 
@@ -2156,7 +2156,7 @@ AND NonShelterAnimal = 0) AS "Transferred Out To Out Of State Agency Adult",
 INNER JOIN adoption ON animal.ID = adoption.AnimalID 
 INNER JOIN owner ON owner.ID = adoption.OwnerID
 WHERE MovementType = 3
-AND owner.OwnerCounty <> (SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationState')
+AND owner.OwnerCounty <> (SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationCounty')
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID IN ($FARMANIMALS$)
 AND DateOfBirth >= MovementDate - INTERVAL '5 months' 
@@ -2355,7 +2355,7 @@ AS "Relinquished By Owner Up To 5 Months",
 INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
 WHERE IsTransfer = 1 AND CrueltyCase = 0
 AND (animal.BroughtInByOwnerID = 0 OR (SELECT OwnerCounty FROM owner WHERE ID = animal.BroughtInByOwnerID) = 
-(SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationState'))
+(SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationCounty'))
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID IN ($BIRDS$)
 AND DateOfBirth < DateBroughtIn - INTERVAL '5 months'
@@ -2365,7 +2365,7 @@ AND NonShelterAnimal = 0) AS "Transferred In From Instate Agency Adult",
 INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
 WHERE IsTransfer = 1 AND CrueltyCase = 0
 AND (animal.BroughtInByOwnerID = 0 OR (SELECT OwnerCounty FROM owner WHERE ID = animal.BroughtInByOwnerID) = 
-(SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationState'))
+(SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationCounty'))
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID IN ($BIRDS$)
 AND DateOfBirth >= DateBroughtIn - INTERVAL '5 months' 
@@ -2377,7 +2377,7 @@ AND NonShelterAnimal = 0) AS "Transferred In From Instate Agency Up To 5 Months"
 INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
 WHERE IsTransfer = 1 AND CrueltyCase = 0
 AND (animal.BroughtInByOwnerID <> 0 AND (SELECT OwnerCounty FROM owner WHERE ID = animal.BroughtInByOwnerID) <> 
-(SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationState'))
+(SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationCounty'))
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID IN ($BIRDS$)
 AND DateOfBirth < DateBroughtIn - INTERVAL '5 months'
@@ -2387,7 +2387,7 @@ AND NonShelterAnimal = 0) AS "Transferred In From Out Of State Agency Adult",
 INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
 WHERE IsTransfer = 1 AND CrueltyCase = 0
 AND (animal.BroughtInByOwnerID <> 0 AND (SELECT OwnerCounty FROM owner WHERE ID = animal.BroughtInByOwnerID) <> 
-(SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationState'))
+(SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationCounty'))
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID IN ($BIRDS$)
 AND DateOfBirth >= DateBroughtIn - INTERVAL '5 months' 
@@ -2496,7 +2496,7 @@ AND NonShelterAnimal = 0) AS "Returned To Owner Up To 5 Months",
 INNER JOIN adoption ON animal.ID = adoption.AnimalID 
 INNER JOIN owner ON owner.ID = adoption.OwnerID
 WHERE MovementType = 3
-AND owner.OwnerCounty = (SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationState')
+AND owner.OwnerCounty = (SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationCounty')
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID IN ($BIRDS$)
 AND DateOfBirth < MovementDate - INTERVAL '5 months' 
@@ -2506,7 +2506,7 @@ AND NonShelterAnimal = 0) AS "Transferred Out To Instate Agency Adult",
 INNER JOIN adoption ON animal.ID = adoption.AnimalID 
 INNER JOIN owner ON owner.ID = adoption.OwnerID
 WHERE MovementType = 3
-AND owner.OwnerCounty = (SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationState')
+AND owner.OwnerCounty = (SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationCounty')
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID IN ($BIRDS$)
 AND DateOfBirth >= MovementDate - INTERVAL '5 months' 
@@ -2518,7 +2518,7 @@ AND NonShelterAnimal = 0) AS "Transferred Out To Instate Agency Up To 5 Months",
 INNER JOIN adoption ON animal.ID = adoption.AnimalID 
 INNER JOIN owner ON owner.ID = adoption.OwnerID
 WHERE MovementType = 3
-AND owner.OwnerCounty <> (SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationState')
+AND owner.OwnerCounty <> (SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationCounty')
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID IN ($BIRDS$)
 AND DateOfBirth < MovementDate - INTERVAL '5 months' 
@@ -2528,7 +2528,7 @@ AND NonShelterAnimal = 0) AS "Transferred Out To Out Of State Agency Adult",
 INNER JOIN adoption ON animal.ID = adoption.AnimalID 
 INNER JOIN owner ON owner.ID = adoption.OwnerID
 WHERE MovementType = 3
-AND owner.OwnerCounty <> (SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationState')
+AND owner.OwnerCounty <> (SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationCounty')
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID IN ($BIRDS$)
 AND DateOfBirth >= MovementDate - INTERVAL '5 months' 
@@ -2728,7 +2728,7 @@ AS "Relinquished By Owner Up To 5 Months",
 INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
 WHERE IsTransfer = 1 AND CrueltyCase = 0
 AND (animal.BroughtInByOwnerID = 0 OR (SELECT OwnerCounty FROM owner WHERE ID = animal.BroughtInByOwnerID) = 
-(SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationState'))
+(SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationCounty'))
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID IN ($REPTILES$)
 AND DateOfBirth < DateBroughtIn - INTERVAL '5 months'
@@ -2738,7 +2738,7 @@ AND NonShelterAnimal = 0) AS "Transferred In From Instate Agency Adult",
 INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
 WHERE IsTransfer = 1 AND CrueltyCase = 0
 AND (animal.BroughtInByOwnerID = 0 OR (SELECT OwnerCounty FROM owner WHERE ID = animal.BroughtInByOwnerID) = 
-(SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationState'))
+(SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationCounty'))
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID IN ($REPTILES$)
 AND DateOfBirth >= DateBroughtIn - INTERVAL '5 months' 
@@ -2750,7 +2750,7 @@ AND NonShelterAnimal = 0) AS "Transferred In From Instate Agency Up To 5 Months"
 INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
 WHERE IsTransfer = 1 AND CrueltyCase = 0
 AND (animal.BroughtInByOwnerID <> 0 AND (SELECT OwnerCounty FROM owner WHERE ID = animal.BroughtInByOwnerID) <> 
-(SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationState'))
+(SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationCounty'))
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID IN ($REPTILES$)
 AND DateOfBirth < DateBroughtIn - INTERVAL '5 months'
@@ -2760,7 +2760,7 @@ AND NonShelterAnimal = 0) AS "Transferred In From Out Of State Agency Adult",
 INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
 WHERE IsTransfer = 1 AND CrueltyCase = 0
 AND (animal.BroughtInByOwnerID <> 0 AND (SELECT OwnerCounty FROM owner WHERE ID = animal.BroughtInByOwnerID) <> 
-(SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationState'))
+(SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationCounty'))
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID IN ($REPTILES$)
 AND DateOfBirth >= DateBroughtIn - INTERVAL '5 months' 
@@ -2869,7 +2869,7 @@ AND NonShelterAnimal = 0) AS "Returned To Owner Up To 5 Months",
 INNER JOIN adoption ON animal.ID = adoption.AnimalID 
 INNER JOIN owner ON owner.ID = adoption.OwnerID
 WHERE MovementType = 3
-AND owner.OwnerCounty = (SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationState')
+AND owner.OwnerCounty = (SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationCounty')
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID IN ($REPTILES$)
 AND DateOfBirth < MovementDate - INTERVAL '5 months' 
@@ -2879,7 +2879,7 @@ AND NonShelterAnimal = 0) AS "Transferred Out To Instate Agency Adult",
 INNER JOIN adoption ON animal.ID = adoption.AnimalID 
 INNER JOIN owner ON owner.ID = adoption.OwnerID
 WHERE MovementType = 3
-AND owner.OwnerCounty = (SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationState')
+AND owner.OwnerCounty = (SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationCounty')
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID IN ($REPTILES$)
 AND DateOfBirth >= MovementDate - INTERVAL '5 months' 
@@ -2891,7 +2891,7 @@ AND NonShelterAnimal = 0) AS "Transferred Out To Instate Agency Up To 5 Months",
 INNER JOIN adoption ON animal.ID = adoption.AnimalID 
 INNER JOIN owner ON owner.ID = adoption.OwnerID
 WHERE MovementType = 3
-AND owner.OwnerCounty <> (SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationState')
+AND owner.OwnerCounty <> (SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationCounty')
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID IN ($REPTILES$)
 AND DateOfBirth < MovementDate - INTERVAL '5 months' 
@@ -2901,7 +2901,7 @@ AND NonShelterAnimal = 0) AS "Transferred Out To Out Of State Agency Adult",
 INNER JOIN adoption ON animal.ID = adoption.AnimalID 
 INNER JOIN owner ON owner.ID = adoption.OwnerID
 WHERE MovementType = 3
-AND owner.OwnerCounty <> (SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationState')
+AND owner.OwnerCounty <> (SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationCounty')
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID IN ($REPTILES$)
 AND DateOfBirth >= MovementDate - INTERVAL '5 months' 

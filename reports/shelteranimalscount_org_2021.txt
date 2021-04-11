@@ -157,7 +157,7 @@ AND NonShelterAnimal = 0) AS JuniorSurrender,
 INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
 WHERE IsTransfer = 1 AND CrueltyCase = 0
 AND (animal.BroughtInByOwnerID = 0 OR (SELECT OwnerCounty FROM owner WHERE ID = animal.BroughtInByOwnerID) = 
-(SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationState'))
+(SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationCounty'))
 AND DateBroughtIn >= '$PARENTARG1$' AND DateBroughtIn <= '$PARENTARG2$' 
 AND SpeciesID IN ($PARENTARG3$)
 AND DateOfBirth < DateBroughtIn - INTERVAL '5 months'
@@ -167,7 +167,7 @@ AND NonShelterAnimal = 0) AS AdultTransferInState,
 INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
 WHERE IsTransfer = 1 AND CrueltyCase = 0
 AND (animal.BroughtInByOwnerID = 0 OR (SELECT OwnerCounty FROM owner WHERE ID = animal.BroughtInByOwnerID) = 
-(SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationState'))
+(SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationCounty'))
 AND DateBroughtIn >= '$PARENTARG1$' AND DateBroughtIn <= '$PARENTARG2$' 
 AND SpeciesID IN ($PARENTARG3$)
 AND DateOfBirth >= DateBroughtIn - INTERVAL '5 months' 
@@ -177,7 +177,7 @@ AND NonShelterAnimal = 0) AS JuniorTransferInState,
 INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
 WHERE IsTransfer = 1 AND CrueltyCase = 0
 AND (animal.BroughtInByOwnerID <> 0 AND (SELECT OwnerCounty FROM owner WHERE ID = animal.BroughtInByOwnerID) <> 
-(SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationState'))
+(SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationCounty'))
 AND DateBroughtIn >= '$PARENTARG1$' AND DateBroughtIn <= '$PARENTARG2$' 
 AND SpeciesID IN ($PARENTARG3$)
 AND DateOfBirth < DateBroughtIn - INTERVAL '5 months'
@@ -187,7 +187,7 @@ AND NonShelterAnimal = 0) AS AdultTransferOutState,
 INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
 WHERE IsTransfer = 1 AND CrueltyCase = 0
 AND (animal.BroughtInByOwnerID <> 0 AND (SELECT OwnerCounty FROM owner WHERE ID = animal.BroughtInByOwnerID) <> 
-(SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationState'))
+(SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationCounty'))
 AND DateBroughtIn >= '$PARENTARG1$' AND DateBroughtIn <= '$PARENTARG2$' 
 AND SpeciesID IN ($PARENTARG3$)
 AND DateOfBirth >= DateBroughtIn - INTERVAL '5 months' 
@@ -313,7 +313,7 @@ AND NonShelterAnimal = 0) AS JuniorReclaim,
 INNER JOIN adoption ON animal.ID = adoption.AnimalID 
 INNER JOIN owner ON owner.ID = adoption.OwnerID
 WHERE MovementType = 3
-AND owner.OwnerCounty = (SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationState')
+AND owner.OwnerCounty = (SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationCounty')
 AND MovementDate >= '$PARENTARG1$' AND MovementDate <= '$PARENTARG2$' 
 AND SpeciesID IN ($PARENTARG3$)
 AND DateOfBirth < MovementDate - INTERVAL '5 months' 
@@ -323,7 +323,7 @@ AND NonShelterAnimal = 0) AS AdultTransferOutInState,
 INNER JOIN adoption ON animal.ID = adoption.AnimalID 
 INNER JOIN owner ON owner.ID = adoption.OwnerID
 WHERE MovementType = 3
-AND owner.OwnerCounty = (SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationState')
+AND owner.OwnerCounty = (SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationCounty')
 AND MovementDate >= '$PARENTARG1$' AND MovementDate <= '$PARENTARG2$' 
 AND SpeciesID IN ($PARENTARG3$)
 AND DateOfBirth >= MovementDate - INTERVAL '5 months' 
@@ -333,7 +333,7 @@ AND NonShelterAnimal = 0) AS JuniorTransferOutInState,
 INNER JOIN adoption ON animal.ID = adoption.AnimalID 
 INNER JOIN owner ON owner.ID = adoption.OwnerID
 WHERE MovementType = 3
-AND owner.OwnerCounty <> (SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationState')
+AND owner.OwnerCounty <> (SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationCounty')
 AND MovementDate >= '$PARENTARG1$' AND MovementDate <= '$PARENTARG2$' 
 AND SpeciesID IN ($PARENTARG3$)
 AND DateOfBirth < MovementDate - INTERVAL '5 months' 
@@ -343,7 +343,7 @@ AND NonShelterAnimal = 0) AS AdultTransferOutOutState,
 INNER JOIN adoption ON animal.ID = adoption.AnimalID 
 INNER JOIN owner ON owner.ID = adoption.OwnerID
 WHERE MovementType = 3
-AND owner.OwnerCounty <> (SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationState')
+AND owner.OwnerCounty <> (SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationCounty')
 AND MovementDate >= '$PARENTARG1$' AND MovementDate <= '$PARENTARG2$' 
 AND SpeciesID IN ($PARENTARG3$)
 AND DateOfBirth >= MovementDate - INTERVAL '5 months' 
