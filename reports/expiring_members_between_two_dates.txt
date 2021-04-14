@@ -1,4 +1,4 @@
-Members Expiring Between Two Dates
+Members expiring between two dates
 ###
 Membership
 ###
@@ -13,7 +13,8 @@ o.HomeTelephone, o.WorkTelephone, o.EmailAddress, o.OwnerTitle, o.OwnerForenames
 o.OwnerSurname, o.MembershipExpiryDate, o.MembershipNumber
 FROM owner o
 WHERE o.IsMember = 1 AND o.MembershipExpiryDate Is Not NULL 
-AND o.MembershipExpiryDate >= '$ASK DATE Members expiring between$' AND o.MembershipExpiryDate <= '$ASK DATE and $'
+AND o.MembershipExpiryDate >= '$ASK DATE Members expiring between$' 
+AND o.MembershipExpiryDate <= '$ASK DATE and $'
 ORDER BY MembershipExpiryDate
 ###
 $$HEADER
