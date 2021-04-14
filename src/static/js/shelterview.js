@@ -554,15 +554,14 @@ $(function() {
                 this.render_view("ADOPTIONSTATUS", "SPECIESNAME", "ADOPTIONSTATUS,SPECIESNAME,ANIMALNAME", false, true);
             }
             else if (viewmode == "type") {
-                this.render_view("ANIMALTYPENAME", "", "ANIMALTYPENAME,ANIMALNAME", false, true);
+                this.render_view("ANIMALTYPENAME", "", "ANIMALTYPENAME,ANIMALNAME", false, false);
             }
             else if (viewmode == "unit") {
-                this.render_view("SHELTERLOCATIONUNIT", "", "SHELTERLOCATIONUNIT,ANIMALNAME", false, true);
+                this.render_view("SHELTERLOCATIONUNIT", "", "SHELTERLOCATIONUNIT,ANIMALNAME", false, false, function(a) { return a.SHELTERLOCATIONUNIT != ""; });
             }
             else if (viewmode == "unitspecies") {
-                this.render_view("SHELTERLOCATIONUNIT", "SPECIESNAME", "SHELTERLOCATIONUNIT,SPECIESNAME,ANIMALNAME", false, true);
+                this.render_view("SHELTERLOCATIONUNIT", "SPECIESNAME", "SHELTERLOCATIONUNIT,SPECIESNAME,ANIMALNAME", false, false, function(a) { return a.SHELTERLOCATIONUNIT != ""; });
             }
-
 
             // Add target attributes to the rendered animal links if we're opening records in a new tab
             common.inject_target();
