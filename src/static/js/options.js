@@ -1248,6 +1248,8 @@ $(function() {
                 '<option value="status">' + _("Status") + '</option>',
                 '<option value="statusspecies">' + _("Status and Species") + '</option>',
                 '<option value="type">' + _("Type") + '</option>',
+                '<option value="unit">' + _("Unit") + '</option>',
+                '<option value="unitspecies">' + _("Unit and Species") + '</option>',
                 '</select>',
                 '</td>',
                 '</tr>',

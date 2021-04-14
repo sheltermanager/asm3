@@ -556,6 +556,14 @@ $(function() {
             else if (viewmode == "type") {
                 this.render_view("ANIMALTYPENAME", "", "ANIMALTYPENAME,ANIMALNAME", false, true);
             }
+            else if (viewmode == "unit") {
+                this.render_view("SHELTERLOCATIONUNIT", "", "SHELTERLOCATIONUNIT,ANIMALNAME", false, true);
+            }
+            else if (viewmode == "unitspecies") {
+                this.render_view("SHELTERLOCATIONUNIT", "SPECIESNAME", "SHELTERLOCATIONUNIT,SPECIESNAME,ANIMALNAME", false, true);
+            }
+
+
             // Add target attributes to the rendered animal links if we're opening records in a new tab
             common.inject_target();
         },
@@ -623,6 +631,8 @@ $(function() {
             h.push('<option value="status">' + _("Status") + '</option>');
             h.push('<option value="statusspecies">' + _("Status and Species") + '</option>');
             h.push('<option value="type">' + _("Type") + '</option>');
+            h.push('<option value="unit">' + _("Unit") + '</option>');
+            h.push('<option value="unitspecies">' + _("Unit and Species") + '</option>');
             h.push('</select>');
             h.push('<p class="asm-menu-category">' + config.str("Organisation") + ' (' + controller.animals.length + ')</p>');
             h.push('<div id="viewcontainer"></div>');
