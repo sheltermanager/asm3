@@ -25,6 +25,8 @@ ANIMALNONSHELTER
     Y/N to indicate whether this animal is a owned by a member of the public and not a shelter animal
 ANIMALNOTFORADOPTION
     Y/N to indicate whether this animal is not available for adoption (Y is not available).
+ANIMALTRANSFER
+    Y/N to indicate whether this animal as transferred in. If set to Y, the ORIGINALOWNER fields will be used in the "Transferred From" field.
 ANIMALFLAGS
     A comma separated list of animal flags, including builtins courtesy,
     crueltycase, notforadoption, notforregistration, nonshelter, quarantine

@@ -24,7 +24,7 @@ VALID_FIELDS = [
     "ANIMALSPECIES", "ANIMALAGE", 
     "ANIMALCOMMENTS", "ANIMALMARKINGS", "ANIMALNEUTERED", "ANIMALNEUTEREDDATE", "ANIMALMICROCHIP", "ANIMALMICROCHIPDATE", 
     "ANIMALENTRYDATE", "ANIMALENTRYCATEGORY", "ANIMALDECEASEDDATE", "ANIMALCODE", "ANIMALFLAGS",
-    "ANIMALREASONFORENTRY", "ANIMALHIDDENDETAILS", "ANIMALNOTFORADOPTION", "ANIMALNONSHELTER", 
+    "ANIMALREASONFORENTRY", "ANIMALHIDDENDETAILS", "ANIMALNOTFORADOPTION", "ANIMALNONSHELTER", "ANIMALTRANSFER",
     "ANIMALGOODWITHCATS", "ANIMALGOODWITHDOGS", "ANIMALGOODWITHKIDS", 
     "ANIMALHOUSETRAINED", "ANIMALHEALTHPROBLEMS", "ANIMALIMAGE",
     "VACCINATIONTYPE", "VACCINATIONDUEDATE", "VACCINATIONGIVENDATE", "VACCINATIONEXPIRESDATE", "VACCINATIONRABIESTAG",
@@ -435,6 +435,7 @@ def csvimport(dbo, csvdata, encoding = "utf-8-sig", user = "", createmissinglook
             a["healthproblems"] = gks(row, "ANIMALHEALTHPROBLEMS")
             a["notforadoption"] = gkbi(row, "ANIMALNOTFORADOPTION")
             a["nonshelter"] = gkbc(row, "ANIMALNONSHELTER")
+            a["transferin"] = gkbc(row, "ANIMALTRANSFER")
             a["housetrained"] = gkynu(row, "ANIMALHOUSETRAINED")
             a["goodwithcats"] = gkynu(row, "ANIMALGOODWITHCATS")
             a["goodwithdogs"] = gkynu(row, "ANIMALGOODWITHDOGS")
@@ -495,12 +496,14 @@ def csvimport(dbo, csvdata, encoding = "utf-8-sig", user = "", createmissinglook
                         dups = asm3.person.get_person_similar(dbo, p["emailaddress"], p["mobiletelephone"], p["surname"], p["forenames"], p["address"])
                         if len(dups) > 0:
                             ooid = dups[0]["ID"]
-                            a["originalowner"] = str(ooid)
-                    if "originalowner" not in a:
+                    if ooid == 0:
                         ooid = asm3.person.insert_person_from_form(dbo, asm3.utils.PostedData(p, dbo.locale), user, geocode=False)
-                        a["originalowner"] = str(ooid)
                     # Identify any ORIGINALOWNERADDITIONAL additional fields and create/merge them
                     if ooid > 0: create_additional_fields(dbo, row, errors, rowno, "ORIGINALOWNERADDITIONAL", "person", ooid)
+                    if "transferin" in a and a["transferin"] == "on":
+                        a["broughtinby"] = str(ooid) # set original owner as transferor for transfers in
+                    else:
+                        a["originalowner"] = str(ooid)
                 except Exception as e:
                     row_error(errors, "originalowner", rowno, row, e, dbo, sys.exc_info())
             # If a current vet is specified, create a person record
