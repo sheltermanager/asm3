@@ -36,12 +36,12 @@ $(function() {
                 '<tr id="litteridrow">',
                 '<td>',
                 '<label for="litterid">' + _("Litter") + '</label></td>',
-                '<td><input type="text" id="litterid" data-post="litterid" class="asm-textbox" title="' + html.title(_("The litter this animal belongs to")) + '" />',
+                '<td><input type="text" id="litterid" data-post="litterid" class="asm-textbox" />',
                 '</td>',
                 '</tr>',
                 '<tr>',
                 '<td><label for="animaltype">' + _("Type") + '</label></td>',
-                '<td><select id="animaltype" data-post="animaltype" class="asm-selectbox" title="' + html.title(_("The shelter category for this animal")) + '">',
+                '<td><select id="animaltype" data-post="animaltype" class="asm-selectbox">',
                 '<option value="-1">' + _("(no change)") + '</option>',
                 html.list_to_options(controller.animaltypes, "ID", "ANIMALTYPE"),
                 '</select></td>',
@@ -49,9 +49,15 @@ $(function() {
                 '<tr id="locationrow">',
                 '<td><label for="location">' + _("Location") + '</label></td>',
                 '<td>',
-                '<select id="location" data-post="location" class="asm-selectbox" title="' + html.title(_("Where this animal is located within the shelter")) + '">',
+                '<select id="location" data-post="location" class="asm-selectbox" >',
                 '<option value="-1">' + _("(no change)") + '</option>',
                 html.list_to_options(controller.internallocations, "ID", "LOCATIONNAME"),
+                '</select></td>',
+                '</tr>',
+                '<tr id="unitrow">',
+                '<td><label for="unit">' + _("Unit") + '</label></td>',
+                '<td>',
+                '<select id="unit" data-post="unit" class="asm-selectbox">',
                 '</select></td>',
                 '</tr>',
                 '<tr id="entryreasonrow">',
@@ -302,12 +308,32 @@ $(function() {
                 }
             });
 
+            $("#location").change(animal_bulk.update_units);
+            animal_bulk.update_units();
+
             if (!common.has_permission("ca")) { $("#button-update").hide(); }
             if (!common.has_permission("da")) { $("#button-delete").hide(); }
 
             // Remove any retired lookups from the lists
             $(".asm-selectbox").select("removeRetiredOptions");
 
+        },
+
+        // Update the units available for the selected location
+        update_units: async function() {
+            let opts = ['<option value="-1">' + _("(no change)") + '</option>'];
+            if ($("#location").val() != -1) {
+                $("#unit").empty();
+                const response = await common.ajax_post("animal_new", "mode=units&locationid=" + $("#location").val());
+                $.each(html.decode(response).split("&&"), function(i, v) {
+                    let [unit, desc] = v.split("|");
+                    if (!unit) { return false; }
+                    if (!desc) { desc = _("(available)"); }
+                    opts.push('<option value="' + html.title(unit) + '">' + unit +
+                        ' : ' + desc + '</option>');
+                });
+            }
+            $("#unit").html(opts.join("\n")).change();
         },
 
         destroy: function() {
