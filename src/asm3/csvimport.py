@@ -556,7 +556,7 @@ def csvimport(dbo, csvdata, encoding = "utf-8-sig", user = "", createmissinglook
                         if a["neutered"] == "on":
                             uq["Neutered"] = 1
                             uq["NeuteredDate"] = asm3.i18n.display2python(dbo.locale, a["neutereddate"])
-                        if a["dateofbirth"] != "":
+                        if gks(row, "ANIMALDOB") != "": # dateofbirth always gets set even if its blank
                             uq["DateOfBirth"] = asm3.i18n.display2python(dbo.locale, a["dateofbirth"])
                         if a["weight"] != "":
                             uq["Weight"] = asm3.utils.cfloat(a["weight"])

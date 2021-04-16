@@ -1,6 +1,7 @@
 45
 ================
 
+16/04/21 Fix for merge dups bug resetting date of birth
 15/04/21 ANIMALTRANSFER CSV import field
 15/04/21 Allow updating units from bulk change animals #994
 14/04/21 Unit/Unit and Species shelter view options
