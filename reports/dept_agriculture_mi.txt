@@ -1,0 +1,178 @@
+Michigan Dept of Agriculture Annual Report
+###
+Figures
+###
+33600/PostgreSQL
+###
+Information needed to complete the Michigan Dept of Agriculture annual report
+###
+en
+###
+$VAR from DATE Enter from date$
+$VAR to DATE Enter to date$
+
+SELECT DISTINCT 
+'$@from$' AS FromDate, 
+'$@to$' AS ToDate,
+species.ID, species.SpeciesName 
+FROM animal
+INNER JOIN species ON species.ID = animal.SpeciesID
+WHERE DateBroughtIn >= '$@from$'
+AND DateBroughtIn <= '$@to$'
+ORDER BY SpeciesName
+
+###
+$$HEADER
+HEADER$$
+
+$$BODY
+{SUBREPORT.SUBREPORT_MIDoAMatrix.FromDate.ToDate.ID.SpeciesName}
+<hr />
+BODY$$
+
+$$FOOTER
+FOOTER$$
+###
+SUBREPORT_MIDoAMatrix
++++
+SELECT 
+
+'$PARENTARG1$' AS FromDate,
+'$PARENTARG2$' AS ToDate,
+'$PARENTARG4$' AS SpeciesName, 
+
+(SELECT COUNT(*) FROM animal
+WHERE IsTransfer = 0 
+AND AsilomarOwnerRequestedEuthanasia = 0
+AND DateBroughtIn >= '$PARENTARG1$' AND DateBroughtIn <= '$PARENTARG2$' 
+AND SpeciesID IN ($PARENTARG3$)
+AND DateOfBirth < DateBroughtIn - INTERVAL '6 months' 
+AND NonShelterAnimal = 0) AS AdultIntake,
+
+(SELECT COUNT(*) FROM animal 
+WHERE IsTransfer = 0
+AND AsilomarOwnerRequestedEuthanasia = 0
+AND DateBroughtIn >= '$PARENTARG1$' AND DateBroughtIn <= '$PARENTARG2$' 
+AND SpeciesID IN ($PARENTARG3$)
+AND DateOfBirth >= DateBroughtIn - INTERVAL '6 months' 
+AND NonShelterAnimal = 0) AS JuniorIntake,
+
+(SELECT COUNT(*) FROM animal 
+WHERE IsTransfer = 0
+AND AsilomarOwnerRequestedEuthanasia = 0
+AND DateBroughtIn >= '$PARENTARG1$' AND DateBroughtIn <= '$PARENTARG2$' 
+AND SpeciesID IN ($PARENTARG3$)
+AND NonShelterAnimal = 0) AS TotalIntake,
+
+
+(SELECT COUNT(*) FROM animal
+INNER JOIN adoption ON animal.ID = adoption.AnimalID 
+WHERE MovementType = 1
+AND MovementDate >= '$PARENTARG1$' AND MovementDate <= '$PARENTARG2$' 
+AND SpeciesID IN ($PARENTARG3$)
+AND NeuteredDate Is Not Null AND NeuteredDate <= MovementDate
+AND NonShelterAnimal = 0) AS AdoptionAltered,
+
+(SELECT COUNT(*) FROM animal
+INNER JOIN adoption ON animal.ID = adoption.AnimalID 
+WHERE MovementType = 1
+AND MovementDate >= '$PARENTARG1$' AND MovementDate <= '$PARENTARG2$' 
+AND SpeciesID IN ($PARENTARG3$)
+AND (NeuteredDate Is Null OR NeuteredDate > MovementDate)
+AND NonShelterAnimal = 0) AS AdoptionNotAltered,
+
+(SELECT COUNT(*) FROM animal
+INNER JOIN adoption ON animal.ID = adoption.AnimalID 
+WHERE MovementType = 1
+AND MovementDate >= '$PARENTARG1$' AND MovementDate <= '$PARENTARG2$' 
+AND SpeciesID IN ($PARENTARG3$)
+AND NonShelterAnimal = 0) AS TotalAdoption,
+
+(SELECT COUNT(*) FROM animal
+INNER JOIN adoption ON animal.ID = adoption.AnimalID 
+WHERE MovementType = 5
+AND MovementDate >= '$PARENTARG1$' AND MovementDate <= '$PARENTARG2$' 
+AND SpeciesID IN ($PARENTARG3$)
+AND NonShelterAnimal = 0) AS TotalReclaim,
+
+0 AS TotalResearch,
+
+(SELECT COUNT(*) FROM animal
+INNER JOIN adoption ON animal.ID = adoption.AnimalID 
+WHERE MovementType = 3
+AND MovementDate >= '$PARENTARG1$' AND MovementDate <= '$PARENTARG2$' 
+AND SpeciesID IN ($PARENTARG3$)
+AND NonShelterAnimal = 0) AS TotalTransfer,
+
+(SELECT COUNT(*) FROM animal 
+WHERE DeceasedDate >= '$PARENTARG1$' AND DeceasedDate <= '$PARENTARG2$'
+AND NonShelterAnimal = 0 AND DiedOffShelter = 0
+AND PutToSleep = 1 AND AsilomarOwnerRequestedEuthanasia = 0
+AND SpeciesID IN ($PARENTARG3$) ) AS ShelterEuthanasia,
+
+(SELECT COUNT(*) FROM animal 
+WHERE DeceasedDate >= '$PARENTARG1$' AND DeceasedDate <= '$PARENTARG2$'
+AND NonShelterAnimal = 0 AND DiedOffShelter = 0
+AND PutToSleep = 1 AND AsilomarOwnerRequestedEuthanasia = 1
+AND SpeciesID IN ($PARENTARG3$) ) AS OwnerEuthanasia,
+
+(SELECT COUNT(*) FROM animal 
+WHERE DeceasedDate >= '$PARENTARG1$' AND DeceasedDate <= '$PARENTARG2$'
+AND NonShelterAnimal = 0 AND DiedOffShelter = 0
+AND PutToSleep = 1 
+AND SpeciesID IN ($PARENTARG3$) ) AS TotalEuthanasia
+
++++
+$$HEADER
+HEADER$$
+
+$$BODY
+<h2>$SpeciesName</h2>
+<table border="1">
+<tr>
+<td>Shelter Intakes: Under 6 months</td><td>$JuniorIntake</td>
+</tr>
+<tr>
+<td>Shelter Intakes: 6 months and older</td><td>$AdultIntake</td>
+</tr>
+<tr>
+<td><b>Shelter Intakes: Total</b></td><td>$TotalIntake</td>
+</tr>
+
+<tr>
+<td>Adoptions: Altered before adoption</td><td>$AdoptionAltered</td>
+</tr>
+<tr>
+<td>Adoptions: Not altered before adoption</td><td>$AdoptionNotAltered</td>
+</tr>
+<tr>
+<td><b>Adoptions: Total</b></td><td>$TotalAdoption</td>
+</tr>
+
+<tr>
+<td><b>Other disposition: Returned to owner</b></td><td>$TotalReclaim</td>
+</tr>
+<tr>
+<td><b>Other disposition: Sold for research</b></td><td>$TotalResearch</td>
+</tr>
+<tr>
+<td><b>Other disposition: Transferred to shelters</b></td><td>$TotalTransfer</td>
+</tr>
+
+<tr>
+<td>Euthanasia: Shelter animals</td><td>$ShelterEuthanasia</td>
+</tr>
+<tr>
+<td>Euthanasia: Owner requested</td><td>$OwnerEuthanasia</td>
+</tr>
+<tr>
+<td><b>Euthanasia: Total</b></td><td>$TotalEuthanasia</td>
+</tr>
+
+</table>
+
+BODY$$
+
+$$FOOTER
+FOOTER$$
+
