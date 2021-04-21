@@ -1,6 +1,7 @@
 45
 ================
 
+21/04/21 Fix to update current owner on return/re-adoption
 16/04/21 Fix for merge dups bug resetting date of birth
 15/04/21 ANIMALTRANSFER CSV import field
 15/04/21 Allow updating units from bulk change animals #994

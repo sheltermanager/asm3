@@ -189,6 +189,9 @@ class TestAnimal(unittest.TestCase):
         asm3.animal.set_extra_id(base.get_dbo(), "user", a, "test", "xxx")
         assert "xxx" == asm3.animal.get_extra_id(base.get_dbo(), a, "test")
 
+    def test_update_current_owner(self):
+        asm3.animal.update_current_owner(base.get_dbo(), "test", self.nid)
+
     def test_update_daily_boarding_cost(self):
         asm3.animal.update_daily_boarding_cost(base.get_dbo(), "test", self.nid, 1500)
 

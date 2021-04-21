@@ -3108,6 +3108,35 @@ def merge_animal(dbo, username, animalid, mergeanimalid):
     dbo.delete("animal", mergeanimalid, username)
     asm3.audit.move(dbo, username, "animal", animalid, "", "Merged animal %d -> %d" % (mergeanimalid, animalid))
 
+def update_current_owner(dbo, username, animalid):
+    """
+    Updates the current owner for an animal from the available movements.
+    """
+    # The current owner for this animal
+    animalownerid = dbo.query_int("SELECT OwnerID FROM animal WHERE ID=?", [animalid])
+
+    # The latest exit movement for this animal (can't rely on denormalised)
+    latestexitmoveid = dbo.query_int("SELECT ID FROM adoption WHERE AnimalID=? " \
+        "AND MovementType IN (1,3,5) AND MovementDate Is Not Null " \
+        "AND MovementDate <= ? AND (ReturnDate Is Null OR ReturnDate > ?) " \
+        "ORDER BY MovementDate DESC", [animalid, dbo.today(), dbo.today()])
+
+    # The person from the latest exit movement on this animal
+    latestexitmoveownerid = dbo.query_int("SELECT OwnerID FROM adoption WHERE ID=?", [latestexitmoveid])
+
+    # The latest movement for this animal linked to the current owner that is not the latest
+    # exit movement (ie. if this is >0 we know the current owner is from an old exit movement)
+    lastownermoveid = dbo.query_int("SELECT ID FROM adoption WHERE AnimalID=? " \
+        "AND MovementType IN (1,3,5) AND OwnerID=? AND ID<>? " \
+        "ORDER BY MovementDate DESC", [animalid, animalownerid, latestexitmoveid])
+
+    # Set the current owner if the animal doesn't already have one 
+    # or the current owner was present on a previous exit movement that is not the latest
+    if animalownerid == 0 or lastownermoveid > 0:
+        # Only set if we actually have a latest exit movement and person
+        if latestexitmoveownerid > 0:
+            dbo.update("animal", animalid, { "OwnerID" : latestexitmoveownerid }, username)
+
 def update_daily_boarding_cost(dbo, username, animalid, cost):
     """
     Updates the daily boarding cost amount for an animal. The
