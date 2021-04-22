@@ -13,11 +13,12 @@ we did with a MySQL ASN database did not have data in any of those tables.
 13th September 2017
 """
 
-db = web.database( dbn = "mysql", db = "zc1502", user = "robin", pw = "robin" )
+db = web.database( dbn = "mysql", db = "sherwood", user = "root", pw = "root" )
 
 START_ID = 100
-HOLDS_AS_ADOPTIONS = True
-FIX_FIELD_LENGTHS = True
+HOLDS_AS_ADOPTIONS = False
+FIX_FIELD_LENGTHS = False
+REPAIR_TABLES = False
 
 if FIX_FIELD_LENGTHS:
     db.query("ALTER TABLE animals " \
@@ -25,12 +26,17 @@ if FIX_FIELD_LENGTHS:
         "MODIFY MicrochipID VARCHAR(255), " \
         "MODIFY RabiesNum VARCHAR(255)")
 
+if REPAIR_TABLES:
+    for t in ( "animals", "people", "intake", "disposit", "license", "medetail" ):
+        db.query("REPAIR TABLE %s" % t)
+
 def gettypeletter(aid):
     tmap = {
         2: "D",
         10: "A",
         11: "U",
-        12: "S"
+        12: "S",
+        40: "N"
     }
     return tmap[aid]
 
@@ -40,6 +46,7 @@ def ynu(s):
     if s == "U": return 2
 
 owners = []
+ownerlicences = []
 movements = []
 animals = []
 animalvaccinations = []
@@ -50,6 +57,7 @@ ppo = {}
 asm.setid("adoption", START_ID)
 asm.setid("animal", START_ID)
 asm.setid("owner", START_ID)
+asm.setid("ownerlicence", START_ID)
 asm.setid("animalvaccination", START_ID)
 
 # Remove existing
@@ -57,6 +65,7 @@ print "\\set ON_ERROR_STOP\nBEGIN;"
 print "DELETE FROM adoption WHERE ID >= %d AND CreatedBy = 'conversion';" % START_ID
 print "DELETE FROM animal WHERE ID >= %d AND CreatedBy = 'conversion';" % START_ID
 print "DELETE FROM owner WHERE ID >= %d AND CreatedBy = 'conversion';" % START_ID
+print "DELETE FROM ownerlicence WHERE ID >= %d AND CreatedBy = 'conversion';" % START_ID
 print "DELETE FROM animalvaccination WHERE ID >= %d AND CreatedBy = 'conversion';" % START_ID
 
 # Create a transfer owner
@@ -82,14 +91,14 @@ for row in db.select("people"):
         o.OwnerSurname = row.OrgName
         o.OwnerType = 2
     o.OwnerForeNames = row.FirstName
-    o.OwnerAddress = row.Addr1 + " " + row.Addr2
+    o.OwnerAddress = "%s %s" % (row.Addr1, row.Addr2)
     o.OwnerTown = row.City
     o.OwnerCounty = row.State
     o.OwnerPostcode = row.Zip
     o.HomeTelephone = row.Phone1
     o.WorkTelephone = row.Phone2
     o.MobileTelephone = row.Phone3
-    o.Comments = row.Comments
+    o.Comments = asm.strip(row.Comments)
     o.IsACO = asm.iif(row.ACOFlag == "Y", 1, 0)
     o.IsShelter = asm.iif(row.RescueFlag == "Y", 1, 0)
     o.IsFosterer = asm.iif(row.FosterFlag == "Y", 1, 0)
@@ -98,9 +107,9 @@ for row in db.select("people"):
 
 # Animals/intake
 for row in db.query("select animals.*, intake.Comments as IntakeComments, intake.CustUid as IntakeCustUid, " \
-    "IntakeDTL1, IntakeDTL2, " \
-    "coalesce((select descr from lookup where value = intake.ReasonCode limit 1), '') AS IntakeReason, " \
-    "coalesce((select descr from lookup where value = animals.Color limit 1), '') AS ColorName " \
+    "IntakeDTL1, IntakeDTL2, intake.ReasonCode " \
+    #"coalesce((select descr from lookup where value = intake.ReasonCode limit 1), '') AS IntakeReason, " \
+    #"coalesce((select descr from lookup where value = animals.Color limit 1), '') AS ColorName " \
     "from animals " \
     "left outer join intake on intake.RefUID = animals.IntakeRefUID " \
     "order by IntakeDTL1").list():
@@ -111,20 +120,22 @@ for row in db.query("select animals.*, intake.Comments as IntakeComments, intake
         a = asm.Animal()
         animals.append(a)
         ppa[str(row.AnimalUid)] = a
+    ecode = row.ReasonCode
+    if ecode is None: ecode = "" 
     a.SpeciesID = asm.species_id_for_name(row.Species)
-    if a.SpeciesID == 1 and row.IntakeReason.startswith("Stray"):
+    if a.SpeciesID == 1 and ecode == "STR":
         a.AnimalTypeID = 10
     elif a.SpeciesID == 1:
         a.AnimalTypeID = 2
-    elif a.SpeciesID == 2 and row.IntakeReason.startswith("Stray"):
+    elif a.SpeciesID == 2 and ecode == "STR":
         a.AnimalTypeID = 12
     else:
         a.AnimalTypeID = 11
-    a.ReasonForEntry = "%s. %s" % (row.IntakeReason, row.IntakeComments)
+    a.ReasonForEntry = "%s. %s" % (ecode, row.IntakeComments)
     a.EntryReasonID = 7 # Stray
-    if row.IntakeReason.startswith("Owner"): a.EntryReasonID = 17 # Owner
+    if ecode.startswith("O"): a.EntryReasonID = 17 # Owner
     asm.breed_ids(a, row.Breed1, row.Breed2)
-    a.BaseColourID = asm.colour_id_for_name(row.ColorName, firstWordOnly=True)
+    a.BaseColourID = asm.colour_id_for_name(row.Color, firstWordOnly=True)
     a.Sex = asm.getsex_mf(row.Sex)
     a.generateCode(gettypeletter(a.AnimalTypeID))
     a.ShortCode = row.AnimalUid
@@ -139,7 +150,7 @@ for row in db.query("select animals.*, intake.Comments as IntakeComments, intake
     a.GoodWithChildren = ynu(row.GoodWithChildren)
     a.HouseTrained = ynu(row.HouseBroken)
     a.AnimalComments = row.Comments
-    a.HiddenAnimalDetails = "Original breed: %s / %s, color: %s" % (row.Breed1, row.Breed2, row.ColorName)
+    a.HiddenAnimalDetails = "Original breed: %s / %s, color: %s" % (row.Breed1, row.Breed2, row.Color)
     a.IdentichipNumber = asm.nulltostr(row.MicrochipID)
     if a.IdentichipNumber != "": a.Identichipped = 1
     a.TattooNumber = asm.nulltostr(row.tattoo)
@@ -170,20 +181,20 @@ for row in db.query("select animals.*, intake.Comments as IntakeComments, intake
     a.CreatedDate = a.DateBroughtIn
 
 # Dispositions/animals
-for row in db.query("select disposit.*, (select descr from lookup where value = disposit.transtype limit 1) as disptype from disposit").list():
+for row in db.query("select * from disposit").list():
     a = None
     if str(row.AnimalUid) in ppa:
         a = ppa[str(row.AnimalUid)]
     if a is None: continue
 
-    if row.disptype == "Euthanize":
+    if row.TransType == "EU": # Euthanasia
         a.DeceasedDate = row.DispositDTL1
         a.PutToSleep = 1
         a.PTSReason = row.Comments
         a.Archived = 1
         a.NonShelterAnimal = 0
 
-    if row.disptype == "DOA":
+    if row.TransType == "DO": # DOA
         a.DeceasedDate = row.DispositDTL1
         a.PutToSleep = 0
         a.IsDOA = 1
@@ -191,7 +202,7 @@ for row in db.query("select disposit.*, (select descr from lookup where value = 
         a.Archived = 1
         a.NonShelterAnimal = 0
 
-    if row.disptype == "Adoption" and str(row.CustUid) in ppo:
+    if row.TransType == "AD" and str(row.CustUid) in ppo: # Adoption
         o = ppo[row.CustUid]
         m = asm.Movement()
         m.AnimalID = a.ID
@@ -202,6 +213,46 @@ for row in db.query("select disposit.*, (select descr from lookup where value = 
         a.ActiveMovementID = m.ID
         a.ActiveMovementDate = m.MovementDate
         a.ActiveMovementType = 1
+        a.NonShelterAnimal = 0
+        movements.append(m)
+
+    if row.TransType == "CR" and str(row.CustUid) in ppo: # Transfer
+        o = ppo[row.CustUid]
+        m = asm.Movement()
+        m.AnimalID = a.ID
+        m.OwnerID = o.ID
+        m.MovementType = 3
+        m.MovementDate = row.DispositDTL1
+        a.Archived = 1
+        a.ActiveMovementID = m.ID
+        a.ActiveMovementDate = m.MovementDate
+        a.ActiveMovementType = 3
+        a.NonShelterAnimal = 0
+        movements.append(m)
+
+    if row.TransType == "BR" and str(row.CustUid) in ppo: # Reclaim
+        o = ppo[row.CustUid]
+        m = asm.Movement()
+        m.AnimalID = a.ID
+        m.OwnerID = o.ID
+        m.MovementType = 5
+        m.MovementDate = row.DispositDTL1
+        a.Archived = 1
+        a.ActiveMovementID = m.ID
+        a.ActiveMovementDate = m.MovementDate
+        a.ActiveMovementType = 5
+        a.NonShelterAnimal = 0
+        movements.append(m)
+
+    if row.TransType == "FO" and str(row.CustUid) in ppo: # Released to wild
+        m = asm.Movement()
+        m.AnimalID = a.ID
+        m.MovementType = 7
+        m.MovementDate = row.DispositDTL1
+        a.Archived = 1
+        a.ActiveMovementID = m.ID
+        a.ActiveMovementDate = m.MovementDate
+        a.ActiveMovementType = 7
         a.NonShelterAnimal = 0
         movements.append(m)
 
@@ -269,6 +320,64 @@ for row in cmed:
         av.Comments = "%s %s" % (row["MED"], row["NOTES"])
 """
 
+# Licences
+for row in db.select("license"):
+    if str(row.OwnerUid) in ppo:
+        o = ppo[str(row.OwnerUid)]
+    else:
+        o = asm.Owner()
+        owners.append(o)
+        ppo[str(row.OwnerUid)] = o
+        o.OwnerForeNames = row.FirstName
+        o.OwnerSurname = row.LastName
+        o.OwnerAddress = row.OwnerAddr1 + " " + row.OwnerAddr2
+        o.OwnerTown = row.OwnerCity
+        o.OwnerCounty = row.OwnerState
+        o.OwnerPostcode = row.OwnerZip
+        o.HomeTelephone = row.OwnerPhone1
+        o.WorkTelephone = row.OwnerPhone2
+        o.EmailAddress = row.OwnerEmail
+    if str(row.AnimalUid) in ppa:
+        a = ppa[str(row.AnimalUid)]
+    else:
+        a = None
+        if row.AnimalName != "" and row.breed1 != "":
+            a = asm.Animal()
+            animals.append(a)
+            ppa[str(row.AnimalUid)] = a
+            a.SpeciesID = asm.species_id_for_name(row.species)
+            a.AnimalTypeID = 40
+            asm.breed_ids(a, row.breed1, row.breed2)
+            a.BaseColourID = asm.colour_id_for_name(row.color, firstWordOnly=True)
+            a.Sex = asm.getsex_mf(row.sex)
+            a.generateCode(gettypeletter(a.AnimalTypeID))
+            a.ShortCode = row.AnimalUid
+            a.AnimalName = row.AnimalName
+            if a.AnimalName.strip() == "":
+                a.AnimalName = "(unknown)"
+            a.HiddenAnimalDetails = "Original breed: %s / %s, color: %s" % (row.breed1, row.breed2, row.color)
+            #a.IdentichipNumber = asm.nulltostr(row.MicrochipID)
+            #if a.IdentichipNumber != "": a.Identichipped = 1
+            a.DateOfBirth = row.DOB
+            a.DateBroughtIn = row.LicIssuedts
+            a.NonShelterAnimal = 1
+            a.Archived = 1
+            a.LastChangedDate = a.DateBroughtIn
+            a.CreatedDate = a.DateBroughtIn
+    if o is not None:
+        l = asm.OwnerLicence()
+        ownerlicences.append(l)
+        if a is not None: l.AnimalID = a.ID
+        l.OwnerID = o.ID
+        l.LicenceType = 1
+        l.LicenceNumber = row.LicenseNum
+        if row.LicCost is not None: l.LicenceFee = int(row.LicCost * 100)
+        l.IssueDate = row.LicIssuedts
+        l.ExpiryDate = row.LicExpirets
+        comments = "Type: %s, group: %s, cert: %s, jurisdiction: %s" % \
+            (row.LicenseType, row.ItemGroup, row.CertNum, row.Jurisdiction)
+        l.Comments = comments
+
 # Run back through the animals, if we have any that are still
 # on shelter after 1 year, add an adoption to an unknown owner
 asm.adopt_older_than(animals, movements, uo.ID, 365)
@@ -282,10 +391,12 @@ for av in animalvaccinations:
     print av
 for o in owners:
     print o
+for l in ownerlicences:
+    print l
 for m in movements:
     print m
 
-asm.stderr_summary(animals=animals, animalvaccinations=animalvaccinations, owners=owners, movements=movements)
+asm.stderr_summary(animals=animals, animalvaccinations=animalvaccinations, owners=owners, ownerlicences=ownerlicences, movements=movements)
 
 print "DELETE FROM configuration WHERE ItemName LIKE 'DBView%';"
 print "COMMIT;"
