@@ -1228,6 +1228,7 @@ $(function() {
                 '<option value="flags">' + _("Flags") + '</option>',
                 '<option value="fosterer">' + _("Fosterer") + '</option>',
                 '<option value="fostereractive">' + _("Fosterer (Active Only)") + '</option>',
+                '<option value="fostererspace">' + _("Fosterer (Space Available)") + '</option>',
                 '<option value="goodwith">' + _("Good with") + '</option>',
                 '<option value="location">' + _("Location") + '</option>',
                 '<option value="locationbreed">' + _("Location and Breed") + '</option>',
