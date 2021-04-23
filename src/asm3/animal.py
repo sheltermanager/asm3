@@ -2469,23 +2469,27 @@ def update_animals_from_form(dbo, username, post):
     if post.integer("movementtype") != -1:
         default_return_reason = asm3.configuration.default_return_reason(dbo)
         for animalid in post.integer_list("animals"):
-            # Is this animal already on foster? If so, return that foster first
-            fm = asm3.movement.get_animal_movements(dbo, animalid)
-            for m in fm:
-                if m.movementtype == asm3.movement.FOSTER and not m.returndate:
-                    asm3.movement.return_movement(dbo, m["ID"], username, animalid, post.date("movementdate"))
             move_dict = {
                 "person"                : post["moveto"],
                 "animal"                : str(animalid),
-                "movementdate"          : post["movementdate"],
                 "adoptionno"            : "",
                 "returndate"            : "",
                 "type"                  : post["movementtype"],
                 "donation"              : "0",
                 "returncategory"        : str(default_return_reason)
             }
+            # If this is a non-reserve, return any existing foster first
+            if post.integer("movementtype") > 0:
+                fm = asm3.movement.get_animal_movements(dbo, animalid)
+                for m in fm:
+                    if m.movementtype == asm3.movement.FOSTER and not m.returndate:
+                        asm3.movement.return_movement(dbo, m["ID"], username, animalid, post.date("movementdate"))
+                move_dict["movementdate"] = post["movementdate"]
+            else:
+                move_dict["reservationstatus"] = asm3.configuration.default_reservation_status(dbo)
+                move_dict["reservationdate"] = post["movementdate"]
             asm3.movement.insert_movement_from_form(dbo, username, asm3.utils.PostedData(move_dict, dbo.locale))
-    if post.integer("logtytpe") != -1:
+    if post.integer("logtype") != -1:
         for animalid in post.integer_list("animals"):
             asm3.log.add_log(dbo, username, asm3.log.ANIMAL, animalid, post.integer("logtype"), post["lognotes"], post.date("logdate") )
     # Record the user as making the last change to this record and create audit records for the changes

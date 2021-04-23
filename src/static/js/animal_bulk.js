@@ -12,7 +12,11 @@ $(function() {
                 if (v.ID == 8 && !config.bool("DisableRetailer")) {
                     choosetypes.push(v);
                 }
-                else if (v.ID != 0 && v.ID !=8 && v.ID != 9 && v.ID != 10 && v.ID != 11 && v.ID != 12) {
+                else if (v.ID == 0) {
+                    v.MOVEMENTTYPE = _("Reservation");
+                    choosetypes.push(v);
+                }
+                else if (v.ID !=8 && v.ID != 9 && v.ID != 10 && v.ID != 11 && v.ID != 12) {
                     choosetypes.push(v);
                 }
             });
