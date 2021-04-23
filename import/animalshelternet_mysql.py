@@ -27,7 +27,7 @@ if FIX_FIELD_LENGTHS:
         "MODIFY RabiesNum VARCHAR(255)")
 
 if REPAIR_TABLES:
-    for t in ( "animals", "people", "intake", "disposit", "license", "medetail" ):
+    for t in ( "ac_animal", "ac_subject", "ac_rpt_bite", "ac_rpt_complaint", "ac_rpt_misc", "animals", "people", "intake", "disposit", "license", "medetail" ):
         db.query("REPAIR TABLE %s" % t)
 
 def gettypeletter(aid):
@@ -50,6 +50,8 @@ ownerlicences = []
 movements = []
 animals = []
 animalvaccinations = []
+animalcontrol = []
+animalcontrolanimals = []
 
 ppa = {}
 ppo = {}
@@ -58,12 +60,15 @@ asm.setid("adoption", START_ID)
 asm.setid("animal", START_ID)
 asm.setid("owner", START_ID)
 asm.setid("ownerlicence", START_ID)
+asm.setid("animalcontrol", START_ID)
 asm.setid("animalvaccination", START_ID)
 
 # Remove existing
 print "\\set ON_ERROR_STOP\nBEGIN;"
 print "DELETE FROM adoption WHERE ID >= %d AND CreatedBy = 'conversion';" % START_ID
 print "DELETE FROM animal WHERE ID >= %d AND CreatedBy = 'conversion';" % START_ID
+print "DELETE FROM animalcontrol WHERE ID >= %d;" % START_ID
+print "DELETE FROM animalcontrolanimal WHERE AnimalID >= %d;" % START_ID
 print "DELETE FROM owner WHERE ID >= %d AND CreatedBy = 'conversion';" % START_ID
 print "DELETE FROM ownerlicence WHERE ID >= %d AND CreatedBy = 'conversion';" % START_ID
 print "DELETE FROM animalvaccination WHERE ID >= %d AND CreatedBy = 'conversion';" % START_ID
@@ -87,9 +92,10 @@ for row in db.select("people"):
     ppo[str(row.CustUid)] = o
     o.OwnerTitle = row.Title
     o.OwnerSurname = row.LastName
-    if o.OwnerSurname == "": 
+    if o.OwnerSurname is None or o.OwnerSurname == "": 
         o.OwnerSurname = row.OrgName
         o.OwnerType = 2
+    if o.OwnerSurname is None: o.OwnerSurname = "Unknown"
     o.OwnerForeNames = row.FirstName
     o.OwnerAddress = "%s %s" % (row.Addr1, row.Addr2)
     o.OwnerTown = row.City
@@ -216,21 +222,7 @@ for row in db.query("select * from disposit").list():
         a.NonShelterAnimal = 0
         movements.append(m)
 
-    if row.TransType == "CR" and str(row.CustUid) in ppo: # Transfer
-        o = ppo[row.CustUid]
-        m = asm.Movement()
-        m.AnimalID = a.ID
-        m.OwnerID = o.ID
-        m.MovementType = 3
-        m.MovementDate = row.DispositDTL1
-        a.Archived = 1
-        a.ActiveMovementID = m.ID
-        a.ActiveMovementDate = m.MovementDate
-        a.ActiveMovementType = 3
-        a.NonShelterAnimal = 0
-        movements.append(m)
-
-    if row.TransType == "BR" and str(row.CustUid) in ppo: # Reclaim
+    if row.TransType in ("BR", "CR") and str(row.CustUid) in ppo: # Reclaim
         o = ppo[row.CustUid]
         m = asm.Movement()
         m.AnimalID = a.ID
@@ -330,6 +322,7 @@ for row in db.select("license"):
         ppo[str(row.OwnerUid)] = o
         o.OwnerForeNames = row.FirstName
         o.OwnerSurname = row.LastName
+        if o.OwnerSurname is None or o.OwnerSurname == "": o.OwnerSurname = "Unknown"
         o.OwnerAddress = row.OwnerAddr1 + " " + row.OwnerAddr2
         o.OwnerTown = row.OwnerCity
         o.OwnerCounty = row.OwnerState
@@ -378,9 +371,147 @@ for row in db.select("license"):
             (row.LicenseType, row.ItemGroup, row.CertNum, row.Jurisdiction)
         l.Comments = comments
 
+def process_animals(reportuid, ac):
+    """ Handle animals linked to an ac record """
+    for row in db.query("select * from ac_animal where reportuid = %s" % reportuid):
+        if row.AnimalUid in ppa:
+            a = ppa[row.AnimalUid]
+            animalcontrolanimals.append("INSERT INTO animalcontrolanimal (AnimalControlID, AnimalID) VALUES (%s, %s);" % (ac.ID, a.ID))
+            a.NonShelterAnimal = 1 # has to be NS for incident
+            a.Archived = 1
+            if a.IdentichipNumber == "" and (row.MicrochipID is not None and row.MicrochipID != ""):
+                a.IdentichipNumber = row.MicrochipID
+                a.Identichipped = 1
+
+def process_subjects(reportuid, ac):
+    """ Handle people linked to an ac record
+        VIC = victim, WIT = witness, OWN / SUS = suspect, ACO """
+    for row in db.query("select * from ac_subject where reportuid = %s" % reportuid):
+        ck = "sub%s" % row.subjectuid
+        if ck in ppo:
+            o = ppo[ck]
+        else:
+            o = asm.Owner()
+            owners.append(o)
+            ppo[ck] = o
+            o.OwnerForeNames = row.subjFirstName
+            o.OwnerSurname = row.subjLastName
+            if o.OwnerSurname is None or o.OwnerSurname == "": o.OwnerSurname = "Unknown"
+            o.OwnerAddress = row.subjaddr1 + " " + row.subjaddr2
+            o.OwnerTown = row.subjcity
+            o.OwnerCounty = row.subjstate
+            o.OwnerPostcode = row.subjzipcode
+            o.HomeTelephone = row.subjphone1
+            o.WorkTelephone = row.subjphone2
+            o.MobileTelephone = row.subjphone3
+            o.Comments = asm.strip("%s %s %s" % (row.physdescr, row.notes, row.statement))
+        st = str(row.subject_type)
+        if st.find("VIC") != -1:
+            ac.VictimID = o.ID
+        if st.find("WIT") != -1 or st.find("ACO") != -1:
+            ac.CallerID = o.ID
+        if st.find("OWN") != -1 or st.find("SUS") != -1:
+            if ac.OwnerID == 0:
+                ac.OwnerID = o.ID
+            elif ac.Owner2ID == 0:
+                ac.Owner2ID = o.ID
+            elif ac.Owner3ID == 0:
+                ac.Owner3ID = o.ID
+
+# Animal control records
+for row in db.select("ac_rpt_bite"):
+    ac = asm.AnimalControl()
+    animalcontrol.append(ac)
+    ac.CallDateTime = row.ts_create
+    ac.CreatedDate = row.ts_create
+    ac.CreatedBy = row.user_create
+    ac.IncidentDateTime = ac.CallDateTime
+    ac.IncidentTypeID = 5 # Bite
+    ac.DispatchDateTime = ac.CallDateTime
+    ac.CompletedDate = row.ts_closed
+    ac.IncidentCompletedID = 0
+    ac.FollowupDateTime = row.ts_followup
+    if ac.CompletedDate is None:
+        ac.CompletedDate = ac.CallDateTime
+    ac.DispatchedACO = row.user_followup
+    ac.DispatchAddress = "%s %s" % (row.Addr1, row.Addr2)
+    ac.DispatchTown = row.City
+    ac.DispatchCounty = row.State
+    ac.DispatchPostcode = row.Zip
+    c = "\n%s %s, " % (asm.strip(row.reportnum), asm.strip(row.reporttype))
+    c += "\nStatus: %s, " % asm.strip(row.status)
+    c += "\nInjury: %s %s, " % (asm.strip(row.injury_desc), asm.strip(row.injury_loc))
+    c += "\n%s %s" % (asm.strip(row.report_desc), asm.strip(row.remarks))
+    ac.CallNotes = c
+    process_animals(row.reportuid, ac)
+    process_subjects(row.reportuid, ac)
+
+for row in db.select("ac_rpt_complaint"):
+    ac = asm.AnimalControl()
+    animalcontrol.append(ac)
+    ac.CallDateTime = row.ts_call_received
+    ac.CreatedDate = row.ts_create
+    ac.CreatedBy = row.user_create
+    ac.IncidentDateTime = ac.CallDateTime
+    ac.IncidentTypeID = 3 
+    ac.DispatchDateTime = ac.CallDateTime
+    ac.CompletedDate = row.ts_closed
+    ac.IncidentCompletedID = 0
+    ac.FollowupDateTime = row.ts_followup
+    if ac.CompletedDate is None:
+        ac.CompletedDate = ac.CallDateTime
+    ac.DispatchedACO = row.user_followup
+    ac.DispatchAddress = "%s %s" % (row.Addr1, row.Addr2)
+    ac.DispatchTown = row.City
+    ac.DispatchCounty = row.State
+    ac.DispatchPostcode = row.Zip
+    c = "\n%s %s, " % (asm.strip(row.reportnum), asm.strip(row.complainttype))
+    c += "\nStatus: %s, " % asm.strip(row.status)
+    c += "\nLocation: %s, " % asm.strip(row.location)
+    c += "\nOccurred: %s, " % asm.strip(row.occured)
+    c += "\nOutcome: %s %s, " % (asm.strip(row.outcome), asm.strip(row.outcome_notes))
+    c += "\n%s %s" % (asm.strip(row.report_desc), asm.strip(row.Notes))
+    ac.CallNotes = c
+    process_animals(row.reportuid, ac)
+    process_subjects(row.reportuid, ac)
+
+for row in db.select("ac_rpt_misc"):
+    ac = asm.AnimalControl()
+    animalcontrol.append(ac)
+    ac.CallDateTime = row.ts_create
+    ac.CreatedDate = row.ts_create
+    ac.CreatedBy = row.user_create
+    ac.IncidentDateTime = row.ts_incident
+    if ac.IncidentDateTime is None: ac.IncidentDateTime = ac.CallDateTime
+    ac.IncidentTypeID = 3 
+    ac.DispatchDateTime = ac.CallDateTime
+    ac.CompletedDate = row.ts_closed
+    ac.IncidentCompletedID = 0
+    ac.FollowupDateTime = row.ts_followup
+    if ac.CompletedDate is None:
+        ac.CompletedDate = ac.CallDateTime
+    ac.DispatchedACO = row.user_followup
+    ac.DispatchAddress = "%s %s" % (row.Addr1, row.Addr2)
+    ac.DispatchTown = row.City
+    ac.DispatchCounty = row.State
+    ac.DispatchPostcode = row.Zip
+    c = "\n%s %s, " % (asm.strip(row.reportnum), asm.strip(row.reporttype))
+    c += "\nStatus: %s, " % asm.strip(row.status)
+    c += "\nLocation: %s, " % asm.strip(row.location)
+    c += "\nViolation code: %s, " % asm.strip(row.violation_code)
+    c += "\nOutcome: %s %s, " % (asm.strip(row.outcome), asm.strip(row.outcome_notes))
+    c += "\n%s %s" % (asm.strip(row.report_desc), asm.strip(row.comments))
+    ac.CallNotes = c
+    process_animals(row.reportuid, ac)
+    process_subjects(row.reportuid, ac)
+
 # Run back through the animals, if we have any that are still
 # on shelter after 1 year, add an adoption to an unknown owner
-asm.adopt_older_than(animals, movements, uo.ID, 365)
+#asm.adopt_older_than(animals, movements, uo.ID, 365)
+
+# This last customer did not want any leftover animals on file -
+# get rid of every remaining animal
+asm.adopt_older_than(animals, movements, uo.ID, 0)
 
 # Now that everything else is done, output stored records
 for k,v in asm.locations.iteritems():
@@ -395,8 +526,13 @@ for l in ownerlicences:
     print l
 for m in movements:
     print m
+for ac in animalcontrol:
+    print ac
+for aca in animalcontrolanimals:
+    print aca
 
-asm.stderr_summary(animals=animals, animalvaccinations=animalvaccinations, owners=owners, ownerlicences=ownerlicences, movements=movements)
+
+asm.stderr_summary(animals=animals, animalvaccinations=animalvaccinations, owners=owners, ownerlicences=ownerlicences, movements=movements, animalcontrol=animalcontrol)
 
 print "DELETE FROM configuration WHERE ItemName LIKE 'DBView%';"
 print "COMMIT;"
