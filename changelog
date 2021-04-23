@@ -1,6 +1,7 @@
 45
 ================
 
+23/04/21 Hide report categories user does not have permissions for
 21/04/21 Fix to update current owner on return/re-adoption
 16/04/21 Fix for merge dups bug resetting date of birth
 15/04/21 ANIMALTRANSFER CSV import field
