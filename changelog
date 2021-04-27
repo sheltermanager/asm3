@@ -1,6 +1,8 @@
 45
 ================
 
+27/04/21 Test reschedule date (Matt Bickel)
+27/04/21 json_mail and json_report service methods (SoulOfSet)
 27/04/21 Fix issue with leading spaces in found.org folder names
 26/04/21 Hide payment section on move_* screens if no add payment perm
 23/04/21 Allow creation of reservations from bulk screen

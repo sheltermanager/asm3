@@ -26,7 +26,6 @@ $(function() {
                         options: { displayfield: "TESTNAME", valuefield: "ID", rows: controller.testtypes }},
                     { json_field: "DATEREQUIRED", post_field: "required", label: _("Required"), type: "date", validation: "notblank" },
                     { json_field: "DATEOFTEST", post_field: "given", label: _("Performed"), type: "date" },
-                    { json_field: "RETESTDATE", post_field: "retest", label: _("Retest"), type: "date"},
                     { json_field: "TESTRESULTID", post_field: "result", label: _("Result"), type: "select", 
                         options: { displayfield: "RESULTNAME", valuefield: "ID", rows: controller.testresults }},
                     { json_field: "ADMINISTERINGVETID", post_field: "administeringvet", label: _("Administering Vet"), type: "person", personfilter: "vet" },
@@ -172,6 +171,7 @@ $(function() {
                         });
                         $("#usagecomments").html(comments);
                         $("#newdate").datepicker("setDate", new Date());
+                        $("#renewon").val("");
                         let rd = test.calc_reschedule_date(new Date(), testtype);
                         if (rd) { $("#renewon").datepicker("setDate", rd); }
                         $("#testresult").select("firstvalue");
