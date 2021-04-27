@@ -17,7 +17,7 @@ import re
 #   pubspec - has a PetFinderSpecies column (species)
 #   pubbreed - has a PetFinderBreed column (breed)
 #   pubcol - has an AdoptAPetColour column (basecolour)
-#   sched - has a RescheduleDays column (vaccinationtype)
+#   sched - has a RescheduleDays column (testtype, vaccinationtype)
 #   cost - has a DefaultCost column (citationtype, costtype, donationtype, licencetype)
 #   units - has Units column (internallocation)
 #   site - has SiteID column (internallocation)
@@ -59,7 +59,7 @@ LOOKUP_TABLES = {
     "stocklocation":    (_("Stock Locations"), "LocationName", _("Location"), "LocationDescription", "add del ret", ("stocklevel.StockLocationID",)),
     "stockusagetype":   (_("Stock Usage Type"), "UsageTypeName", _("Usage Type"), "UsageTypeDescription", "add del ret", ("stockusage.StockUsageTypeID",)),
     "lkurgency":        (_("Urgencies"), "Urgency", _("Urgency"), "", "", ("animalwaitinglist.Urgency",)),
-    "testtype":         (_("Test Types"), "TestName", _("Type"), "TestDescription", "add del ret cost", ("animaltest.TestTypeID",)),
+    "testtype":         (_("Test Types"), "TestName", _("Type"), "TestDescription", "add del ret cost sched", ("animaltest.TestTypeID",)),
     "testresult":       (_("Test Results"), "ResultName", _("Result"), "ResultDescription", "add del ret", ("animaltest.TestResultID",)),
     "lkstransportstatus": (_("Transport Statuses"), "Name", _("Status"), "", "", ("animaltransport.Status",)),
     "transporttype":    (_("Transport Types"), "TransportTypeName", _("Type"), "TransportTypeDescription", "add del ret", ("animaltransport.TransportTypeID",)),
@@ -1061,7 +1061,7 @@ def insert_lookup(dbo, username, lookup, name, desc="", speciesid=0, pfbreed="",
         # Create a matching account if we have a donation type
         if asm3.configuration.create_donation_trx(dbo): asm3.financial.insert_account_from_donationtype(dbo, nid, name, desc)
         return nid
-    elif lookup == "testtype" or lookup == "voucher" or lookup == "traptype" or lookup == "licencetype" or lookup == "citationtype":
+    elif lookup == "voucher" or lookup == "traptype" or lookup == "licencetype" or lookup == "citationtype":
         nid = dbo.insert(lookup, {
             t[LOOKUP_NAMEFIELD]:    name,
             t[LOOKUP_DESCFIELD]:    desc,
@@ -1069,7 +1069,7 @@ def insert_lookup(dbo, username, lookup, name, desc="", speciesid=0, pfbreed="",
             "IsRetired":            retired
         }, username, setCreated=False)
         return nid
-    elif lookup == "vaccinationtype":
+    elif lookup == "testtype" or lookup == "vaccinationtype":
         nid = dbo.insert(lookup, {
             t[LOOKUP_NAMEFIELD]:    name,
             t[LOOKUP_DESCFIELD]:    desc,
@@ -1137,7 +1137,7 @@ def update_lookup(dbo, username, iid, lookup, name, desc="", speciesid=0, pfbree
             "IsVAT":                vat,
             "IsRetired":            retired
         }, username, setLastChanged=False)
-    elif lookup == "costtype" or lookup == "testtype" or lookup == "voucher" \
+    elif lookup == "costtype" or lookup == "voucher" \
         or lookup == "traptype" or lookup == "licencetype" or lookup == "citationtype":
         dbo.update(lookup, iid, {
             t[LOOKUP_NAMEFIELD]:    name,
@@ -1145,7 +1145,7 @@ def update_lookup(dbo, username, iid, lookup, name, desc="", speciesid=0, pfbree
             "DefaultCost":          defaultcost,
             "IsRetired":            retired
         }, username, setLastChanged=False)
-    elif lookup == "vaccinationtype":
+    elif lookup == "testtype" or lookup == "vaccinationtype":
         dbo.update(lookup, iid, {
             t[LOOKUP_NAMEFIELD]:    name,
             t[LOOKUP_DESCFIELD]:    desc,

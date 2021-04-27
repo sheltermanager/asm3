@@ -26,6 +26,7 @@ $(function() {
                         options: { displayfield: "TESTNAME", valuefield: "ID", rows: controller.testtypes }},
                     { json_field: "DATEREQUIRED", post_field: "required", label: _("Required"), type: "date", validation: "notblank" },
                     { json_field: "DATEOFTEST", post_field: "given", label: _("Performed"), type: "date" },
+                    { json_field: "RETESTDATE", post_field: "retest", label: _("Retest"), type: "date"},
                     { json_field: "TESTRESULTID", post_field: "result", label: _("Result"), type: "select", 
                         options: { displayfield: "RESULTNAME", valuefield: "ID", rows: controller.testresults }},
                     { json_field: "ADMINISTERINGVETID", post_field: "administeringvet", label: _("Administering Vet"), type: "person", personfilter: "vet" },
@@ -162,14 +163,17 @@ $(function() {
                 },
                 { id: "perform", text: _("Perform"), icon: "complete", enabled: "multi", perm: "cat",
                     click: function() {
-                        let comments = "";
+                        let comments = "", testtype = 0;
                         $.each(controller.rows, function(i, v) {
                             if (tableform.table_id_selected(v.ID)) {
                                 comments += "[" + v.SHELTERCODE + " - " + v.ANIMALNAME + "] ";
+                                testtype = v.TESTTYPEID;
                             }
                         });
                         $("#usagecomments").html(comments);
                         $("#newdate").datepicker("setDate", new Date());
+                        let rd = test.calc_reschedule_date(new Date(), testtype);
+                        if (rd) { $("#renewon").datepicker("setDate", rd); }
                         $("#testresult").select("firstvalue");
                         $("#usagetype").select("firstvalue");
                         $("#usagedate").datepicker("setDate", new Date());
@@ -297,6 +301,10 @@ $(function() {
                 '<tr>',
                 '<td><label for="newdate">' + _("Performed") + '</label></td>',
                 '<td><input id="newdate" data="newdate" type="textbox" class="asm-textbox asm-datebox asm-field" /></td>',
+                '</tr>',
+                '<tr>',
+                '<td><label for="renewon">' + _("Retest") + '</label></td>',
+                '<td><input id="renewon" data="retest" type="textbox" class="asm-textbox asm-datebox asm-field" /></td>',
                 '</tr>',
                 '<tr>',
                 '<td><label for="testresult">' + _("Result") + '</label></td>',
@@ -463,6 +471,13 @@ $(function() {
             row.RESULTNAME = common.get_field(controller.testresults, row.TESTRESULTID, "RESULTNAME");
             row.ADMINISTERINGVETNAME = "";
             if (row.ADMINISTERINGVETID && test.lastvet) { row.ADMINISTERINGVETNAME = test.lastvet.OWNERNAME; }
+        },
+
+        /** Fetch the appropriate reschedule period for test type and add it to passed date. Return null if rescheduling isn't availble. */
+        calc_reschedule_date: function(date, testtype) {
+            let reschedule = format.to_int(common.get_field(controller.testtypes, testtype, "RESCHEDULEDAYS"));
+            if (!reschedule) { return null; }
+            return common.add_days(date, reschedule);
         },
 
         destroy: function() {
