@@ -149,8 +149,10 @@ $(function() {
                     rec = jQuery.parseJSON(data)[0];
          
                     // Default giftaid if the person is registered
-                    $("#payment").payments("option", "giftaid", rec.ISGIFTAID == 1);
-                    $("#giftaid1").prop("checked", rec.ISGIFTAID == 1);
+                    if (common.has_permission("oaod")) {
+                        $("#payment").payments("option", "giftaid", rec.ISGIFTAID == 1);
+                        $("#giftaid1").prop("checked", rec.ISGIFTAID == 1);
+                    }
 
                     // Owner banned?
                     if (rec.ISBANNED == 1 && config.bool("WarnBannedOwner")) {
@@ -187,7 +189,9 @@ $(function() {
             });
 
             // Payments
-            $("#payment").payments({ controller: controller });
+            if (common.has_permission("oaod")) {
+                $("#payment").payments({ controller: controller });
+            }
 
             $("#ownerwarn").hide();
             $("#notonshelter").hide();

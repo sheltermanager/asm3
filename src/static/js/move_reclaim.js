@@ -200,13 +200,17 @@ $(function() {
             $("#person").personchooser().bind("personchooserchange", function(event, rec) {
 
                 // Default giftaid if the person is registered
-                $("#payment").payments("option", "giftaid", rec.ISGIFTAID == 1);
-                $("#giftaid1").prop("checked", rec.ISGIFTAID == 1);
+                if (common.has_permission("oaod")) {
+                    $("#payment").payments("option", "giftaid", rec.ISGIFTAID == 1);
+                    $("#giftaid1").prop("checked", rec.ISGIFTAID == 1);
+                }
 
             });
 
             // Payments
-            $("#payment").payments({ controller: controller });
+            if (common.has_permission("oaod")) {
+                $("#payment").payments({ controller: controller });
+            }
 
             $("#costdisplay").closest(".ui-widget").hide();
             $("#notonshelter").hide();

@@ -534,10 +534,10 @@ def get_reports_menu(dbo, roleids = "", superuser = False):
     rep = get_available_reports(dbo)
     lastcat = ""
     for r in rep:
-        if r.CATEGORY != lastcat:
-            lastcat = r.CATEGORY
-            rv.append( ["", "", "", "--cat", "", lastcat] )
         if superuser or r.VIEWROLEIDS == "" or asm3.utils.list_overlap(r.VIEWROLEIDS.split("|"), roleids.split("|")):
+            if r.CATEGORY != lastcat:
+                lastcat = r.CATEGORY
+                rv.append( ["", "", "", "--cat", "", lastcat] )
             rv.append( [ asm3.users.VIEW_REPORT, "", "", "report?id=%d" % r.ID, "", r.TITLE ] )
     return rv
 

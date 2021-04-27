@@ -2469,23 +2469,27 @@ def update_animals_from_form(dbo, username, post):
     if post.integer("movementtype") != -1:
         default_return_reason = asm3.configuration.default_return_reason(dbo)
         for animalid in post.integer_list("animals"):
-            # Is this animal already on foster? If so, return that foster first
-            fm = asm3.movement.get_animal_movements(dbo, animalid)
-            for m in fm:
-                if m.movementtype == asm3.movement.FOSTER and not m.returndate:
-                    asm3.movement.return_movement(dbo, m["ID"], username, animalid, post.date("movementdate"))
             move_dict = {
                 "person"                : post["moveto"],
                 "animal"                : str(animalid),
-                "movementdate"          : post["movementdate"],
                 "adoptionno"            : "",
                 "returndate"            : "",
                 "type"                  : post["movementtype"],
                 "donation"              : "0",
                 "returncategory"        : str(default_return_reason)
             }
+            # If this is a non-reserve, return any existing foster first
+            if post.integer("movementtype") > 0:
+                fm = asm3.movement.get_animal_movements(dbo, animalid)
+                for m in fm:
+                    if m.movementtype == asm3.movement.FOSTER and not m.returndate:
+                        asm3.movement.return_movement(dbo, m["ID"], username, animalid, post.date("movementdate"))
+                move_dict["movementdate"] = post["movementdate"]
+            else:
+                move_dict["reservationstatus"] = asm3.configuration.default_reservation_status(dbo)
+                move_dict["reservationdate"] = post["movementdate"]
             asm3.movement.insert_movement_from_form(dbo, username, asm3.utils.PostedData(move_dict, dbo.locale))
-    if post.integer("logtytpe") != -1:
+    if post.integer("logtype") != -1:
         for animalid in post.integer_list("animals"):
             asm3.log.add_log(dbo, username, asm3.log.ANIMAL, animalid, post.integer("logtype"), post["lognotes"], post.date("logdate") )
     # Record the user as making the last change to this record and create audit records for the changes
@@ -3107,6 +3111,35 @@ def merge_animal(dbo, username, animalid, mergeanimalid):
 
     dbo.delete("animal", mergeanimalid, username)
     asm3.audit.move(dbo, username, "animal", animalid, "", "Merged animal %d -> %d" % (mergeanimalid, animalid))
+
+def update_current_owner(dbo, username, animalid):
+    """
+    Updates the current owner for an animal from the available movements.
+    """
+    # The current owner for this animal
+    animalownerid = dbo.query_int("SELECT OwnerID FROM animal WHERE ID=?", [animalid])
+
+    # The latest exit movement for this animal (can't rely on denormalised)
+    latestexitmoveid = dbo.query_int("SELECT ID FROM adoption WHERE AnimalID=? " \
+        "AND MovementType IN (1,3,5) AND MovementDate Is Not Null " \
+        "AND MovementDate <= ? AND (ReturnDate Is Null OR ReturnDate > ?) " \
+        "ORDER BY MovementDate DESC", [animalid, dbo.today(), dbo.today()])
+
+    # The person from the latest exit movement on this animal
+    latestexitmoveownerid = dbo.query_int("SELECT OwnerID FROM adoption WHERE ID=?", [latestexitmoveid])
+
+    # The latest movement for this animal linked to the current owner that is not the latest
+    # exit movement (ie. if this is >0 we know the current owner is from an old exit movement)
+    lastownermoveid = dbo.query_int("SELECT ID FROM adoption WHERE AnimalID=? " \
+        "AND MovementType IN (1,3,5) AND OwnerID=? AND ID<>? " \
+        "ORDER BY MovementDate DESC", [animalid, animalownerid, latestexitmoveid])
+
+    # Set the current owner if the animal doesn't already have one 
+    # or the current owner was present on a previous exit movement that is not the latest
+    if animalownerid == 0 or lastownermoveid > 0:
+        # Only set if we actually have a latest exit movement and person
+        if latestexitmoveownerid > 0:
+            dbo.update("animal", animalid, { "OwnerID" : latestexitmoveownerid }, username)
 
 def update_daily_boarding_cost(dbo, username, animalid, cost):
     """

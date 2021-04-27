@@ -283,8 +283,10 @@ $(function() {
                 }
 
                 // Default giftaid if the person is registered
-                $("#payment").payments("option", "giftaid", p.ISGIFTAID == 1);
-                $("#giftaid1").prop("checked", p.ISGIFTAID == 1);
+                if (common.has_permission("oaod")) {
+                    $("#payment").payments("option", "giftaid", p.ISGIFTAID == 1);
+                    $("#giftaid1").prop("checked", p.ISGIFTAID == 1);
+                }
             
                 // Owner banned?
                 if (p.ISBANNED == 1 && config.bool("WarnBannedOwner")) {
@@ -352,7 +354,9 @@ $(function() {
             }
 
             // Payments
-            $("#payment").payments({ controller: controller });
+            if (common.has_permission("oaod")) {
+                $("#payment").payments({ controller: controller });
+            }
 
             // Insurance related stuff
             $("#button-insurance")

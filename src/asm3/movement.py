@@ -410,7 +410,8 @@ def insert_movement_from_form(dbo, username, post):
         "Comments":                     post["comments"]
     }, username, generateID=False)
 
-    if post.integer("animal") > 0:
+    if animalid > 0:
+        asm3.animal.update_current_owner(dbo, username, animalid)
         asm3.animal.update_animal_status(dbo, animalid)
         asm3.animal.update_variable_animal_data(dbo, animalid)
         update_movement_donation(dbo, movementid)
@@ -423,9 +424,6 @@ def update_movement_from_form(dbo, username, post):
     """
     validate_movement_form_data(dbo, post)
     movementid = post.integer("movementid")
-
-    oldpersonid = dbo.query_int("SELECT OwnerID FROM adoption WHERE ID=?", [movementid])
-    animalownerid = dbo.query_int("SELECT OwnerID FROM animal WHERE ID=?", [post.integer("animal")])
 
     dbo.update("adoption", movementid, {
         "AdoptionNumber":               post["adoptionno"],
@@ -450,12 +448,8 @@ def update_movement_from_form(dbo, username, post):
         "Comments":                     post["comments"]
     }, username)
 
-    # If the movement person has changed, and that person was the current owner
-    # on the animal record, update it
-    if oldpersonid != post.integer("person") and animalownerid == oldpersonid:
-        dbo.update("animal", post.integer("animal"), { "OwnerID" : post.integer("person") }, username)
-
     if post.integer("animal") > 0:
+        asm3.animal.update_current_owner(dbo, username, post.integer("animal"))
         asm3.animal.update_animal_status(dbo, post.integer("animal"))
         asm3.animal.update_variable_animal_data(dbo, post.integer("animal"))
         update_movement_donation(dbo, movementid)
@@ -471,6 +465,7 @@ def delete_movement(dbo, username, mid):
     dbo.execute("UPDATE ownerdonation SET MovementID = 0 WHERE MovementID = ?", [mid])
     dbo.delete("adoption", mid, username)
     if m.ANIMALID > 0:
+        asm3.animal.update_current_owner(dbo, username, m.ANIMALID)
         asm3.animal.update_animal_status(dbo, m.ANIMALID)
         asm3.animal.update_variable_animal_data(dbo, m.ANIMALID)
         asm3.person.update_adopter_flag(dbo, username, m.OWNERID)
