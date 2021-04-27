@@ -654,6 +654,17 @@ you can pass those too just like with html_report::
 
     http://localhost:5000/service?method=csv_report&username=user&password=letmein&title=Detailed+Shelter+Inventory
 
+json_mail and json_report
+-----------------------
+
+.. rubric:: Cache time: 10 minutes
+
+Returns a dataset containing a mail merge or report. Pass the name of the mail
+merge/report in the title attribute and if the merge requires any parameters,
+you can pass those too just like with html_report::
+
+    http://localhost:5000/service?method=json_report&username=user&password=letmein&title=Detailed+Shelter+Inventory
+
 extra_image
 -----------
 
