@@ -655,12 +655,6 @@ def cancel_reserves_on_adoption(dbo):
 def clone_animal_include_logs(dbo):
     return cboolean(dbo, "CloneAnimalIncludeLogs", DEFAULTS["CloneAnimalIncludeLogs"] == "Yes")
 
-def codeinjection_header(dbo):
-    return cstring(dbo, "CodeInjectionHeader", "")
-
-def codeinjection_footer(dbo):
-    return cstring(dbo, "CodeInjectionFooter", "")
-
 def coding_format(dbo):
     return cstring(dbo, "CodingFormat", DEFAULTS["CodingFormat"])
 

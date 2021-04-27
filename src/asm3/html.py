@@ -137,18 +137,6 @@ def table(results):
     s += "</tbody>\n"
     return s
 
-def injected_script_header():
-    return "<script>\n" + \
-                     asm.configuration.codeinjection_header(dbo) + \
-                     "\n</script>\n" if asm.configuration.codeinjection_header(dbo) != "" else ""
-
-
-def injected_script_footer():
-    return "<script>\n" + \
-                     asm.configuration.codeinjection_footer(dbo) + \
-                     "\n</script>\n" if asm.configuration.codeinjection_footer(dbo) != "" else ""
-
-
 def bare_header(title, theme = "asm", locale = LOCALE, config_db = "asm", config_ts = "0"):
     """
     A bare header with just the script files needed for the program.
@@ -233,7 +221,7 @@ def bare_header(title, theme = "asm", locale = LOCALE, config_db = "asm", config
                 script_config() + 
                 script_i18n(locale) + 
                 script_schema() + 
-                asm_scripts + injected_script_header(),
+                asm_scripts,
             "bgcol": bgcol }
 
 def tinymce_header(title, js, jswindowprint = True, pdfenabled = True, visualaids = True, onlysavewhendirty = False, readonly = False):
@@ -350,7 +338,6 @@ def graph_header(title):
             "flot": script_tag(FLOT_JS), 
             "flotpie": script_tag(FLOT_PIE_JS) }
 
-
 def map_header(title):
     return """<!DOCTYPE html>
         <html>
@@ -394,7 +381,7 @@ def header(title, session):
     return s
 
 def footer():
-    return injected_script_footer() + "\n</body>\n</html>"
+    return "\n</body>\n</html>"
 
 def currency(l, v):
     """
