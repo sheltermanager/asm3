@@ -1,0 +1,130 @@
+ASPCA: Transport Manifest
+###
+Transport
+###
+34202/PostgreSQL
+###
+Export to CSV for values you can copy into the ASPCA transport manifest spreadsheet
+###
+en
+###
+$VAR ref STRING Enter the transport reference$
+
+SELECT 
+ShelterCode AS "Source Shelter Animal #",
+AnimalName AS "Animal Name",
+SpeciesName AS Species,
+BreedName as Breed,
+
+EXTRACT(DAY FROM t.PickupDateTime-a.DateOfBirth)::integer / 365 AS "Age (in years)",
+MOD(EXTRACT(DAY FROM t.PickupDateTime-a.DateOfBirth)::integer / 30, 12) AS "Age (in months)",
+MOD(EXTRACT(DAY FROM t.PickupDateTime-a.DateOfBirth)::integer - 
+MOD(EXTRACT(DAY FROM t.PickupDateTime-a.DateOfBirth)::integer, 30), 7) AS "Age (in weeks)",
+
+CASE 
+WHEN a.Sex = 0 AND a.Neutered=0 THEN 'F'
+WHEN a.Sex = 0 AND a.Neutered=1 THEN 'FS'
+WHEN a.Sex = 1 AND a.Neutered=0 THEN 'M'
+WHEN a.Sex = 1 AND a.Neutered=1 THEN 'MN'
+ELSE '' END AS Sex,
+
+a.Weight,
+e.ReasonName AS "Intake Type",
+a.DateBroughtIn AS "Date in",
+c.BaseColour AS "Color(s), Pattern, etc.",
+
+(SELECT vt.VaccinationType FROM animalvaccination av INNER JOIN vaccinationtype vt ON vt.ID = av.VaccinationID
+WHERE av.AnimalID = a.ID AND (vt.VaccinationType LIKE 'Vanguard%' OR vt.VaccinationType LIKE 'Spectra%'
+OR vt.VaccinationType LIKE 'D%PP%' OR vt.VaccinationType LIKE 'FV%') ORDER BY DateOfVaccination DESC 
+LIMIT 1) || ' ' ||
+(SELECT TO_CHAR(av.DateOfVaccination, 'MM/DD/YYYY') FROM animalvaccination av 
+INNER JOIN vaccinationtype vt ON vt.ID = av.VaccinationID
+WHERE av.AnimalID = a.ID AND (vt.VaccinationType LIKE 'Vanguard%' OR vt.VaccinationType LIKE 'Spectra%'
+OR vt.VaccinationType LIKE 'D%PP%' OR vt.VaccinationType LIKE 'FV%') ORDER BY DateOfVaccination DESC 
+LIMIT 1) AS "DA2PPV, FVRCP, etc.",
+
+(SELECT av.DateOfVaccination FROM animalvaccination av INNER JOIN vaccinationtype vt ON vt.ID = av.VaccinationID
+WHERE av.AnimalID = a.ID AND vt.VaccinationType LIKE 'Bordetella%' LIMIT 1) AS "Bordetella Date",
+
+(SELECT av.DateOfVaccination FROM animalvaccination av INNER JOIN vaccinationtype vt ON vt.ID = av.VaccinationID
+WHERE av.AnimalID = a.ID AND vt.VaccinationType LIKE 'Lepto%' LIMIT 1) AS "Lepto Date",
+
+(SELECT av.DateOfVaccination FROM animalvaccination av INNER JOIN vaccinationtype vt ON vt.ID = av.VaccinationID
+WHERE av.AnimalID = a.ID AND vt.VaccinationType LIKE 'Rabies%' LIMIT 1) AS "Rabies Date",
+
+CASE 
+WHEN a.SpeciesID=1 THEN 'Observation' 
+ELSE 'N/A' END AS "Name of behavior assessment",
+
+CASE 
+WHEN a.SpeciesID=1 AND a.HeartwormTested=1 AND a.HeartwormTestResult=1 THEN 'NEG'
+WHEN a.SpeciesID=1 AND a.HeartwormTested=1 AND a.HeartwormTestResult=2 THEN 'POS'
+ELSE 'N/A' END AS "HW Status",
+
+CASE 
+WHEN a.SpeciesID=2 AND a.CombiTested=1 AND a.CombiTestResult=1 THEN 'NEG'
+WHEN a.SpeciesID=2 AND a.CombiTested=1 AND a.CombiTestResult=2 THEN 'POS'
+ELSE 'N/A' END AS "FIV Status",
+
+CASE 
+WHEN a.SpeciesID=2 AND a.CombiTested=1 AND a.FLVResult=1 THEN 'NEG'
+WHEN a.SpeciesID=2 AND a.CombiTested=1 AND a.FLVResult=2 THEN 'POS'
+ELSE 'N/A' END AS "FELV Status",
+
+CASE
+WHEN a.SpeciesID=1 THEN a.HeartwormTestDate
+WHEN a.SpeciesID=2 THEN a.CombiTestDate
+ELSE NULL END AS "Date Tested",
+
+(SELECT TreatmentName FROM animalmedical WHERE AnimalID=a.ID AND
+(TreatmentName LIKE 'Revolution%' OR TreatmentName LIKE 'Interceptor%' OR TreatmentName LIKE '%HW%'
+OR TreatmentName LIKE '%eartworm%') ORDER BY StartDate DESC LIMIT 1) || ' ' ||
+(SELECT TO_CHAR(StartDate, 'MM/DD/YYYY') FROM animalmedical WHERE AnimalID=a.ID AND
+(TreatmentName LIKE 'Revolution%' OR TreatmentName LIKE 'Interceptor%' OR TreatmentName LIKE '%HW%'
+OR TreatmentName LIKE '%eartworm%') ORDER BY StartDate DESC LIMIT 1) AS "HW Preventative",
+
+a.IdentichipNumber AS "Microchip #",
+
+(SELECT TreatmentName FROM animalmedical WHERE AnimalID=a.ID AND
+(TreatmentName LIKE 'Revolution%' OR TreatmentName LIKE 'Nexgard%' OR TreatmentName LIKE '%Flea%'
+OR TreatmentName LIKE '%Tick%') ORDER BY StartDate DESC LIMIT 1) || ' ' ||
+(SELECT TO_CHAR(StartDate, 'MM/DD/YYYY') FROM animalmedical WHERE AnimalID=a.ID AND
+(TreatmentName LIKE 'Revolution%' OR TreatmentName LIKE 'Nexgard%' OR TreatmentName LIKE '%Flea%'
+OR TreatmentName LIKE '%Tick%') ORDER BY StartDate DESC LIMIT 1) AS "Flea/Tick Product",
+
+(SELECT TreatmentName FROM animalmedical WHERE AnimalID=a.ID AND
+(TreatmentName LIKE 'Strongid%' OR TreatmentName LIKE 'Panacur%' OR TreatmentName LIKE '%worm%') 
+ORDER BY StartDate DESC LIMIT 1) || ' ' ||
+(SELECT TO_CHAR(StartDate, 'MM/DD/YYYY') FROM animalmedical WHERE AnimalID=a.ID AND
+(TreatmentName LIKE 'Strongid%' OR TreatmentName LIKE 'Panacur%' OR TreatmentName LIKE '%worm%') 
+ORDER BY StartDate DESC LIMIT 1) AS "Primary dewormer",
+
+(SELECT TreatmentName FROM animalmedical WHERE AnimalID=a.ID AND
+(TreatmentName LIKE 'Marqui%' OR TreatmentName LIKE 'Drontal%') 
+ORDER BY StartDate DESC LIMIT 1) || ' ' ||
+(SELECT TO_CHAR(StartDate, 'MM/DD/YYYY') FROM animalmedical WHERE AnimalID=a.ID AND
+(TreatmentName LIKE 'Marqui%' OR TreatmentName LIKE 'Drontal%') 
+ORDER BY StartDate DESC LIMIT 1) AS "Other internal parasite treatment",
+
+TO_CHAR(CURRENT_DATE, 'MM/DD/YYYY') AS "Health Cert Date",
+
+t.Comments AS Notes
+
+FROM animaltransport t
+INNER JOIN animal a ON a.ID = t.AnimalID
+INNER JOIN basecolour c ON c.ID = a.BaseColourID 
+INNER JOIN entryreason e ON e.ID = a.EntryReasonID 
+INNER JOIN species s ON s.ID = a.SpeciesID 
+WHERE t.TransportReference = '$@ref$'
+ORDER BY a.Weight
+###
+$$HEADER
+HEADER$$
+
+$$BODY
+BODY$$
+
+$$FOOTER
+<p>This report should be run from <a href="report_export">Settings-&gt;Export Reports as CSV</a> to produce a spreadsheet file for copying and pasting from.</p>
+FOOTER$$
+

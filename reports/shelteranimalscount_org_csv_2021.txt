@@ -3013,8 +3013,8 @@ $$HEADER
 HEADER$$
 
 $$BODY
-<p>This report should be run from <a href="report_export">Settings-&gt;Export Reports as CSV</a> with one calendar month selected to produce a file for uploading to shelteranimalscount.org</p>
 BODY$$
 
 $$FOOTER
+<p>This report should be run from <a href="report_export">Settings-&gt;Export Reports as CSV</a> with one calendar month selected to produce a file for uploading to shelteranimalscount.org</p>
 FOOTER$$
