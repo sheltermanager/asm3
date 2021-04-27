@@ -67,6 +67,7 @@ class FoundAnimalsPublisher(FTPPublisher):
         dateportion = asm3.i18n.format_date(asm3.i18n.now(self.dbo.timezone), "%m%d%Y_%H%M%S")
         outputfile = "%s.csv" % dateportion
 
+        folder = folder.strip() # Users frequently put spaces at the beginning when entering the folder name
         self.mkdir(folder)
         if not self.chdir(folder):
             self.setLastError("Failed issuing chdir to '%s'" % folder)
