@@ -18,8 +18,7 @@ BreedName as Breed,
 
 EXTRACT(DAY FROM t.PickupDateTime-a.DateOfBirth)::integer / 365 AS "Age (in years)",
 MOD(EXTRACT(DAY FROM t.PickupDateTime-a.DateOfBirth)::integer / 30, 12) AS "Age (in months)",
-MOD(EXTRACT(DAY FROM t.PickupDateTime-a.DateOfBirth)::integer - 
-MOD(EXTRACT(DAY FROM t.PickupDateTime-a.DateOfBirth)::integer, 30), 7) AS "Age (in weeks)",
+MOD(EXTRACT(DAY FROM t.PickupDateTime-a.DateOfBirth)::integer, 30) / 7 AS "Age (in weeks)",
 
 CASE 
 WHEN a.Sex = 0 AND a.Neutered=0 THEN 'F'
