@@ -31,15 +31,16 @@ from asm3.sitedefs import BASE_URL, MULTIPLE_DATABASES, CACHE_SERVICE_RESPONSES,
 
 # Service methods that require authentication
 AUTH_METHODS = [
-    "csv_mail", "csv_report", "html_report", "rss_timeline", "upload_animal_image",
-    "xml_adoptable_animal", "json_adoptable_animal",
-    "xml_adoptable_animals", "json_adoptable_animals", "jsonp_adoptable_animals",
-    "xml_found_animals", "json_found_animals", "jsonp_found_animals",
-    "xml_held_animals", "json_held_animals", "jsonp_held_animals",
-    "xml_lost_animals", "json_lost_animals", "jsonp_lost_animals",
-    "xml_recent_adoptions", "json_recent_adoptions", "jsonp_recent_adoptions",
-    "xml_shelter_animals", "json_shelter_animals", "jsonp_shelter_animals",
-    "xml_recent_changes", "json_recent_changes", "jsonp_recent_changes"
+    "csv_mail", "csv_report", "json_report", "jsonp_report", "json_mail", "jsonp_mail",
+    "html_report", "rss_timeline", "upload_animal_image", "xml_adoptable_animal", 
+    "json_adoptable_animal", "xml_adoptable_animals", "json_adoptable_animals", 
+    "jsonp_adoptable_animals", "xml_found_animals", "json_found_animals", 
+    "jsonp_found_animals", "xml_held_animals", "json_held_animals", 
+    "jsonp_held_animals", "xml_lost_animals", "json_lost_animals", 
+    "jsonp_lost_animals", "xml_recent_adoptions", "json_recent_adoptions", 
+    "jsonp_recent_adoptions", "xml_shelter_animals", "json_shelter_animals", 
+    "jsonp_shelter_animals", "xml_recent_changes", "json_recent_changes", 
+    "jsonp_recent_changes"
 ]
 
 # These are service methods that are defended against cache busting
@@ -92,6 +93,10 @@ FLOOD_PROTECT_METHODS = {
     "csv_mail": [ 5, 60, 60 ],
     "csv_report": [ 5, 60, 60 ],
     "html_report": [ 5, 60, 60 ],
+    "json_report": [ 5, 60, 60 ],
+    "jsonp_report": [ 5, 60, 60 ],
+    "json_mail": [ 5, 60, 60 ],
+    "jsonp_mail": [ 5, 60, 60 ],
     "online_form_post": [ 1, 15, 15 ],
     "upload_animal_image": [ 5, 30, 30 ]
 }
@@ -592,6 +597,20 @@ def handler(post, path, remoteip, referer, querystring):
         rows, cols = asm3.reports.execute_query(dbo, crid, username, p)
         mcsv = asm3.utils.csv(l, rows, cols, True)
         return set_cached_response(cache_key, account, "text/csv", 600, 600, mcsv)
+
+    elif method == "json_report" or method == "json_mail":
+        asm3.users.check_permission_map(l, user["SUPERUSER"], securitymap, asm3.users.VIEW_REPORT)
+        crid = asm3.reports.get_id(dbo, title)
+        p = asm3.reports.get_criteria_params(dbo, crid, post)
+        rows, cols = asm3.reports.execute_query(dbo, crid, username, p)
+        return set_cached_response(cache_key, account, "application/json", 600, 600, asm3.utils.json(rows))
+
+    elif method == "jsonp_report" or method == "jsonp_mail":
+        asm3.users.check_permission_map(l, user["SUPERUSER"], securitymap, asm3.users.VIEW_REPORT)
+        crid = asm3.reports.get_id(dbo, title)
+        p = asm3.reports.get_criteria_params(dbo, crid, post)
+        rows, cols = asm3.reports.execute_query(dbo, crid, username, p)
+        return ("application/javascript", 0, 0, "%s(%s);" % (post["callback"], asm3.utils.json(rows)))
 
     elif method == "jsonp_recent_changes":
         asm3.users.check_permission_map(l, user["SUPERUSER"], securitymap, asm3.users.VIEW_ANIMAL)
