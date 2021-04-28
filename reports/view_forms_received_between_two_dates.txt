@@ -45,4 +45,5 @@ BODY$$
 
 $$FOOTER
 </table>
+<p>Total: {COUNT.LINKDISPLAY}</p>
 FOOTER$$
