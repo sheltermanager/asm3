@@ -177,10 +177,11 @@ for row in db.query("select animals.*, intake.Comments as IntakeComments, intake
     a.DateOfBirth = row.Birthdate
     a.DateBroughtIn = row.IntakeDTL1
     if a.DateBroughtIn is None:
-        # If there's no intake date/link, assume a non-shelter animal instead
+        # Treat no intake record as a non-shelter animal
         a.DateBroughtIn = row.tsAdded
         a.NonShelterAnimal = 1
         a.Archived = 1
+        if str(row.CurrentOwner) in ppo: a.OriginalOwnerID = ppo[str(row.CurrentOwner)]
     if a.DateOfBirth is None:
         a.DateOfBirth = a.DateBroughtIn or row.tsAdded
     a.LastChangedDate = a.DateBroughtIn
