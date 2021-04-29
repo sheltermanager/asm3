@@ -7,7 +7,7 @@ Import script for AnimalShelterNet databases in MYSQL form.
 
 Does people, animals, intakes and dispositions.
 
-Currently does not do medical, payments or licenses because the last conversion
+Currently does not do medical or payments because the last conversion
 we did with a MySQL ASN database did not have data in any of those tables.
 
 13th September 2017
@@ -67,8 +67,9 @@ asm.setid("animalvaccination", START_ID)
 print "\\set ON_ERROR_STOP\nBEGIN;"
 print "DELETE FROM adoption WHERE ID >= %d AND CreatedBy = 'conversion';" % START_ID
 print "DELETE FROM animal WHERE ID >= %d AND CreatedBy = 'conversion';" % START_ID
-print "DELETE FROM animalcontrol WHERE ID >= %d;" % START_ID
-print "DELETE FROM animalcontrolanimal WHERE AnimalID >= %d;" % START_ID
+print "DELETE FROM animalcontrol WHERE ID >= %d AND LastChangedBy = 'conversion';" % START_ID
+print "DELETE FROM animalcontrolanimal WHERE AnimalID IN " \
+    "(SELECT ID FROM animalcontrol WHERE ID >= %d AND LastChangedBy = 'conversion');" % START_ID
 print "DELETE FROM owner WHERE ID >= %d AND CreatedBy = 'conversion';" % START_ID
 print "DELETE FROM ownerlicence WHERE ID >= %d AND CreatedBy = 'conversion';" % START_ID
 print "DELETE FROM animalvaccination WHERE ID >= %d AND CreatedBy = 'conversion';" % START_ID
