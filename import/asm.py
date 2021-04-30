@@ -2026,6 +2026,7 @@ class Animal:
     AnimalComments = ""
     OwnersVetID = 0
     CurrentVetID = 0
+    OwnerID = 0
     OriginalOwnerID = 0
     BroughtInByOwnerID = 0
     AdoptionCoordinatorID = 0
@@ -2164,6 +2165,7 @@ class Animal:
             ( "AnimalComments", ds(self.AnimalComments) ),
             ( "OwnersVetID", di(self.OwnersVetID) ),
             ( "CurrentVetID", di(self.CurrentVetID) ),
+            ( "OwnerID", di(self.OwnerID) ),
             ( "OriginalOwnerID", di(self.OriginalOwnerID) ),
             ( "BroughtInByOwnerID", di(self.BroughtInByOwnerID) ),
             ( "AdoptionCoordinatorID", di(self.AdoptionCoordinatorID) ),

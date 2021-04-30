@@ -16,7 +16,6 @@ we did with a MySQL ASN database did not have data in any of those tables.
 db = web.database( dbn = "mysql", db = "sherwood", user = "root", pw = "root" )
 
 START_ID = 100
-HOLDS_AS_ADOPTIONS = False
 FIX_FIELD_LENGTHS = False
 REPAIR_TABLES = False
 
@@ -182,7 +181,10 @@ for row in db.query("select animals.*, intake.Comments as IntakeComments, intake
         a.DateBroughtIn = row.tsAdded
         a.NonShelterAnimal = 1
         a.Archived = 1
-        if str(row.CurrentOwner) in ppo: a.OriginalOwnerID = ppo[str(row.CurrentOwner)]
+        a.AnimalTypeID = 40
+        if str(row.CurrentOwner) in ppo: 
+            a.OriginalOwnerID = ppo[str(row.CurrentOwner)].ID
+            a.OwnerID = a.OriginalOwnerID
     if a.DateOfBirth is None:
         a.DateOfBirth = a.DateBroughtIn or row.tsAdded
     a.LastChangedDate = a.DateBroughtIn
@@ -250,35 +252,42 @@ for row in db.query("select * from disposit").list():
         a.NonShelterAnimal = 0
         movements.append(m)
 
-# At least one customer has used holds to store adoptions instead of dispositions
-# They also entered them multiple times.
-if HOLDS_AS_ADOPTIONS:
-    holdadopt = {}
-    for row in db.query("select * from hold").list():
-        a = None
-        if str(row.AnimalUid) in ppa:
-            a = ppa[str(row.AnimalUid)]
-        o = None
-        if str(row.CustUid) in ppo:
-            o = ppo[str(row.CustUid)]
-        if a is None or o is None:
-            asm.stderr("No animal/person combo: %s, %s" % (row.AnimalUid, row.CustUid))
-            continue
-        # Do we already have this animal/person combo?
-        k = "a=%so=%s" % (a.ID, o.ID)
-        if not k in holdadopt:
-            holdadopt[k] = "x"
-            m = asm.Movement()
-            m.AnimalID = a.ID
-            m.OwnerID = o.ID
-            m.MovementType = 1
-            m.MovementDate = row.Startts
-            a.Archived = 1
-            a.ActiveMovementID = m.ID
-            a.ActiveMovementDate = m.MovementDate
-            a.ActiveMovementType = 1
-            a.NonShelterAnimal = 0
-            movements.append(m)
+# This table records changes in status. In some cases, it's the only way to find
+# things like adoptions or historic licenses
+for row in db.query("select * from hold").list():
+    a = None
+    if str(row.AnimalUid) in ppa:
+        a = ppa[str(row.AnimalUid)]
+    o = None
+    if str(row.CustUid) in ppo:
+        o = ppo[str(row.CustUid)]
+    if a is None or o is None:
+        asm.stderr("No animal/person combo: %s, %s" % (row.AnimalUid, row.CustUid))
+        continue
+
+    if row.EndStatus == "35": # License purchase, 149 is license expiry
+        l = asm.OwnerLicence()
+        ownerlicences.append(l)
+        l.AnimalID = a.ID
+        l.OwnerID = o.ID
+        l.LicenceType = 1
+        l.LicenceNumber = "H%s" % row.HoldUid
+        l.IssueDate = row.Startts
+        l.ExpiryDate = row.Endts
+
+    elif row.EndStatus == "00" and True == False: # Routing status for adoption? Disabled for now
+        m = asm.Movement()
+        m.AnimalID = a.ID
+        m.OwnerID = o.ID
+        m.MovementType = 1
+        m.MovementDate = row.Startts
+        a.Archived = 1
+        a.ActiveMovementID = m.ID
+        a.ActiveMovementDate = m.MovementDate
+        a.ActiveMovementType = 1
+        a.NonShelterAnimal = 0
+        movements.append(m)
+
 
 """
 # Medical - this info MAY be supplied by the medetail table, but it was blank
