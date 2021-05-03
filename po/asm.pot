@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ASM3\n"
 "Report-Msgid-Bugs-To: robin@sheltermanager.com\n"
-"POT-Creation-Date: 2021-04-23 14:54+0000\n"
+"POT-Creation-Date: 2021-05-03 08:47+0000\n"
 "Last-Translator: Robin Rawson-Tetley <robin@sheltermanager.com>\n"
 "Language-Team: en <robin@sheltermanager.com>\n"
 "Language: en\n"
@@ -5260,6 +5260,10 @@ msgid "Flag"
 msgstr ""
 
 #: reports.js
+msgid "Flag missing {0}"
+msgstr ""
+
+#: reports.js
 msgid "Flag {0}"
 msgstr ""
 
@@ -10127,6 +10131,10 @@ msgstr ""
 
 #: media.js
 msgid "Retain until {0}"
+msgstr ""
+
+#: test.js
+msgid "Retest"
 msgstr ""
 
 #: dbupdate.py

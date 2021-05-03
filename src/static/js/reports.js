@@ -586,10 +586,14 @@ $(function() {
             $.each(controller.animalflags, function(i, v) {
                 reports.qb_animal_criteria.push(
                     [_("Flag {0}").replace("{0}", v.FLAG), "flag" + v.ID, "AdditionalFlags LIKE '%" + v.FLAG + "%'" ]);
+                reports.qb_animal_criteria.push(
+                    [_("Flag missing {0}").replace("{0}", v.FLAG), "flagnot" + v.ID, "AdditionalFlags NOT LIKE '%" + v.FLAG + "%'" ]);
             });
             $.each(controller.personflags, function(i, v) {
                 reports.qb_person_criteria.push(
                     [_("Flag {0}").replace("{0}", v.FLAG), "flag" + v.ID, "AdditionalFlags LIKE '%" + v.FLAG + "%'" ]);
+                reports.qb_person_criteria.push(
+                    [_("Flag missing {0}").replace("{0}", v.FLAG), "flagnot" + v.ID, "AdditionalFlags NOT LIKE '%" + v.FLAG + "%'" ]);
             });
             $.each(controller.jurisdictions, function(i, v) {
                 reports.qb_animal_criteria.push(
