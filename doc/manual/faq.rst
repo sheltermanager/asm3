@@ -159,6 +159,27 @@ apps exist for all mobile platforms that allow you to take a photo of a
 document, clean it up and output it as a PDF. Apps such as "CamScanner" for
 Android, or "Scanner App" for iPhone.
 
+Why can't I send certain fields to PetFinder?
+---------------------------------------------
+
+PetFinder's import spec only allows for the following items of information to be
+sent by ASM (or any third party system):
+
+Code, Name, Breed, Mix, Sex, Size, Color 1-3, Age, Bio/Description, Type, Shots, Altered,
+NoDogs, NoCats, NoKids, Housetrained, Declawed, SpecialNeeds, 6 x Photos, Arrival Date,
+Birth Date, Special Needs Notes, Adoption Fee, Display Adoption Fee Y/N
+
+Note that the spec only allows ASM to state whether an animal is bad with other
+animals, but not if it is good with them. It also will not accept video URLs or
+any other field that PetFinder have on their site that is not listed here.
+
+While color is accepted by PetFinder, we do not support sending it. The reason
+is that our color field is a single user customisable dropdown. PetFinder split
+the color into 3 dropdowns of separate colors and have very strict validation
+rules on which combinations are allowed for different species of animals. It is
+therefore impossible to map our color scheme to theirs in a way that
+won't cause many of your animal listings to be rejected.
+
 Why are ASM emails being sent from account@bounce.sheltermanager.com?
 ---------------------------------------------------------------------
 

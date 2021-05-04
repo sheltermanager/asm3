@@ -122,6 +122,7 @@
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#animal-view-adoptable-html">animal_view_adoptable_html</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#csv-mail-and-csv-report">csv_mail and csv_report</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#json-mail-and-json-report">json_mail and json_report</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#extra-image">extra_image</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#html-adoptable-animals">html_adoptable_animals</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#html-adopted-animals">html_adopted_animals</a></li>
@@ -836,6 +837,16 @@ not exist.</p>
 merge/report in the title attribute and if the merge requires any parameters,
 you can pass those too just like with html_report:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>http://localhost:5000/service?method=csv_report&amp;username=user&amp;password=letmein&amp;title=Detailed+Shelter+Inventory
+</pre></div>
+</div>
+</div>
+<div class="section" id="json-mail-and-json-report">
+<h2>json_mail and json_report<a class="headerlink" href="#json-mail-and-json-report" title="Permalink to this headline">¶</a></h2>
+<p class="rubric">Cache time: 10 minutes</p>
+<p>Returns a dataset containing a mail merge or report. Pass the name of the mail
+merge/report in the title attribute and if the merge requires any parameters,
+you can pass those too just like with html_report:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>http://localhost:5000/service?method=json_report&amp;username=user&amp;password=letmein&amp;title=Detailed+Shelter+Inventory
 </pre></div>
 </div>
 </div>

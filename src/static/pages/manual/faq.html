@@ -125,6 +125,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#i-uploaded-the-wrong-picture-for-an-animal-but-it-s-stuck">I uploaded the wrong picture for an animal, but it’s “stuck”?</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#why-do-i-get-page-1-of-1-in-the-header-when-i-print-documents">Why do I get “page 1 of 1” in the header when I print documents?</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#my-scanned-confidential-documents-are-being-published-on-my-website-petfinder">My scanned confidential documents are being published on my website / PetFinder!</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#why-can-t-i-send-certain-fields-to-petfinder">Why can’t I send certain fields to PetFinder?</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#why-are-asm-emails-being-sent-from-account-bounce-sheltermanager-com">Why are ASM emails being sent from account&#64;bounce.sheltermanager.com?</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#why-has-my-colour-scheme-reset">Why has my colour scheme reset?</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#if-i-delete-a-user-will-it-delete-everything-they-created">If I delete a user, will it delete everything they created?</a></li>
@@ -336,6 +337,23 @@ it will never publish a PDF to any website.</p>
 apps exist for all mobile platforms that allow you to take a photo of a
 document, clean it up and output it as a PDF. Apps such as “CamScanner” for
 Android, or “Scanner App” for iPhone.</p>
+</div>
+<div class="section" id="why-can-t-i-send-certain-fields-to-petfinder">
+<h2>Why can’t I send certain fields to PetFinder?<a class="headerlink" href="#why-can-t-i-send-certain-fields-to-petfinder" title="Permalink to this headline">¶</a></h2>
+<p>PetFinder’s import spec only allows for the following items of information to be
+sent by ASM (or any third party system):</p>
+<p>Code, Name, Breed, Mix, Sex, Size, Color 1-3, Age, Bio/Description, Type, Shots, Altered,
+NoDogs, NoCats, NoKids, Housetrained, Declawed, SpecialNeeds, 6 x Photos, Arrival Date,
+Birth Date, Special Needs Notes, Adoption Fee, Display Adoption Fee Y/N</p>
+<p>Note that the spec only allows ASM to state whether an animal is bad with other
+animals, but not if it is good with them. It also will not accept video URLs or
+any other field that PetFinder have on their site that is not listed here.</p>
+<p>While color is accepted by PetFinder, we do not support sending it. The reason
+is that our color field is a single user customisable dropdown. PetFinder split
+the color into 3 dropdowns of separate colors and have very strict validation
+rules on which combinations are allowed for different species of animals. It is
+therefore impossible to map our color scheme to theirs in a way that
+won’t cause many of your animal listings to be rejected.</p>
 </div>
 <div class="section" id="why-are-asm-emails-being-sent-from-account-bounce-sheltermanager-com">
 <h2>Why are ASM emails being sent from <a class="reference external" href="mailto:account&#37;&#52;&#48;bounce&#46;sheltermanager&#46;com">account<span>&#64;</span>bounce<span>&#46;</span>sheltermanager<span>&#46;</span>com</a>?<a class="headerlink" href="#why-are-asm-emails-being-sent-from-account-bounce-sheltermanager-com" title="Permalink to this headline">¶</a></h2>

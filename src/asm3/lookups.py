@@ -153,6 +153,7 @@ MICROCHIP_MANUFACTURERS = [
     { "length": 15, "regex": r"^9910010", "name": "HomeSafe", "locales": "en_AU" },
     { "length": 15, "regex": r"^991001911", "name": "911PetChip", "locales": "en" },
     { "length": 15, "regex": r"^9910010", "name": "AKC Reunite", "locales": "en" },
+    { "length": 15, "regex": r"^9910030", "name": "Global Micro Animal Registry", "locales": "en_AU" },
     { "length": 15, "regex": r"^9910039", "name": "911PetChip", "locales": "en" },
     { "length": 15, "regex": r"^992", "name": "International Pet Registry", "locales": "" },
     { "length": 15, "regex": r"^999", "name": "Transponder Test", "locales": ""}
