@@ -153,7 +153,7 @@ def insert_deletion(dbo, username, tablename, linkid, parentlinks, restoresql):
         "DeletedBy":    username,
         "Date":         dbo.now(),
         "IDList":       parentlinks,
-        "RestoreSQL":   restoresql
+        "*RestoreSQL":   restoresql
     }, generateID=False, writeAudit=False)
 
 def undelete(dbo, did, tablename):
