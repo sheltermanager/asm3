@@ -657,26 +657,37 @@ $(function() {
             // Litter autocomplete
             $("#litterid").autocomplete({source: html.decode(controller.autolitters)});
 
-            // Changing the neutered date sets a hidden version of the checkbox
+            // Setting the neutered date sets the checkbox
             $("#neutereddate").change(function() {
                 if ($("#neutereddate").val()) {
                     $("#neutered").prop("checked", true);
                 }
             });
 
-            // Changing the microchipped date sets a hidden version of the checkbox
+            // Setting the microchipped date or number sets the checkbox
             $("#microchipdate").change(function() {
                 if ($("#microchipdate").val()) {
                     $("#microchipped").prop("checked", true);
                 }
             });
+            $("#microchipnumber").change(function() {
+                if ($("#microchipnumber").val()) {
+                    $("#microchipped").prop("checked", true);
+                }
+            });
 
-            // Changing the tattoo date sets a hidden version of the checkbox
+            // Setting the tattoo number sets the checkbox
             $("#tattoodate").change(function() {
                 if ($("#tattoodate").val()) {
                     $("#tattoo").prop("checked", true);
                 }
             });
+            $("#tattoonumber").change(function() {
+                if ($("#tattoonumber").val()) {
+                    $("#tattoo").prop("checked", true);
+                }
+            });
+
 
             $("#internallocation").change(animal_new.update_units);
             $("#crossbreed").change(animal_new.enable_widgets);
