@@ -56,6 +56,12 @@ The All Publishers tab allows you to set options common to all internet publishe
   Animals who are marked as held awaiting reclaim will *not* be registered until
   after the hold is removed.
 
+* Register microchips from: When registering microchips, only consider animals
+  where the event triggering registration (intake, adoption, reclaim, etc)
+  occurred after this date. This is useful when enabling registration for the
+  first time on a database full of a historic data where you do not want to
+  re-register old chips to potentially out of date adopters.
+
 * Update adoption websites every: Some adoption websites will accept updates
   more frequently than the 24 hour default. Setting this option to a value
   smaller than 24 will update those services at the chosen interval. Services

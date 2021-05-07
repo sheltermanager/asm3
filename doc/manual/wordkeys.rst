@@ -265,6 +265,12 @@ OriginalOwner Additional Fields
     Additional fields on the original owner can be accessed via OriginalOwnerFIELDNAME
 CurrentOwnerName
     The name of the animal's current owner (fosterer or adopter)
+CurrentOwnerTitle
+    The title of the current owner
+CurrentOwnerFirstname / CurrentOwnerForenames 
+    The first name(s) of the current owner
+CurrentOwnerLastname / CurrentOwnerSurname
+    The last name of the current owner
 CurrentOwnerAddress 
     Current owner's address
 CurrentOwnerTown 
@@ -287,6 +293,12 @@ CurrentOwner Additional Fields
     Additional fields on the current owner can be accessed via CurrentOwnerFIELDNAME
 ReservedOwnerName
     The name of the person with an active reserve on the animal
+ReservedOwnerTitle
+    The title of the reserving person
+ReservedOwnerFirstname / ReservedOwnerForenames
+    The first name of the reserving person
+ReservedOwnerLastname / ReservedOwnerSurname
+    The last name of the reserving person
 ReservedOwnerAddress 
     Reserved owner's address
 ReservedOwnerTown 

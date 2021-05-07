@@ -254,6 +254,11 @@ contact info for animals currently in the care of the shelter. This includes
 animals brought to the shelter as well as those returned from a previous movement.
 Animals who are marked as held awaiting reclaim will <em>not</em> be registered until
 after the hold is removed.</li>
+<li>Register microchips from: When registering microchips, only consider animals
+where the event triggering registration (intake, adoption, reclaim, etc)
+occurred after this date. This is useful when enabling registration for the
+first time on a database full of a historic data where you do not want to
+re-register old chips to potentially out of date adopters.</li>
 <li>Update adoption websites every: Some adoption websites will accept updates
 more frequently than the 24 hour default. Setting this option to a value
 smaller than 24 will update those services at the chosen interval. Services

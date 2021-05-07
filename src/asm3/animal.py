@@ -120,6 +120,10 @@ def get_animal_query(dbo):
         "bj.JurisdictionName AS BroughtInByJurisdiction, " \
         "ro.ID AS ReservedOwnerID, " \
         "ro.OwnerName AS ReservedOwnerName, " \
+        "ro.OwnerTitle AS ReservedOwnerTitle, " \
+        "ro.OwnerInitials AS ReservedOwnerInitials, " \
+        "ro.OwnerForeNames AS ReservedOwnerForeNames, " \
+        "ro.OwnerSurname AS ReservedOwnerSurname, " \
         "ro.OwnerAddress AS ReservedOwnerAddress, " \
         "ro.OwnerTown AS ReservedOwnerTown, " \
         "ro.OwnerCounty AS ReservedOwnerCounty, " \
