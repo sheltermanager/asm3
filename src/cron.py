@@ -141,6 +141,7 @@ def publish_3pty(dbo):
         publishers = configuration.publishers_enabled(dbo)
         freq = configuration.publisher_sub24_frequency(dbo)
         for p in publishers.split(" "):
+            if p not in publish.PUBLISHER_LIST: continue
             # Services that we do more frequently than 24 hours are handled by 3pty_sub24
             if publish.PUBLISHER_LIST[p]["sub24hour"] and freq != 0: continue
             # We do html/ftp publishing separate from other publishers
