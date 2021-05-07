@@ -995,6 +995,9 @@ def medical_item_display_limit(dbo):
 def microchip_register_movements(dbo):
     return cstring(dbo, "MicrochipRegisterMovements", DEFAULTS["MicrochipRegisterMovements"])
 
+def microchip_register_from(dbo):
+    return cstring(dbo, "MicrochipRegisterFrom", "")
+
 def movement_donations_default_due(dbo):
     return cboolean(dbo, "MovementDonationsDefaultDue", DEFAULTS["MovementDonationsDefaultDue"] == "Yes")
 

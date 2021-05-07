@@ -194,9 +194,10 @@ def get_microchip_data(dbo, patterns, publishername, allowintake = True, organis
     organisation_email: The org email to set for intake animals (if blank, uses asm3.configuration.email())
     """
     movementtypes = asm3.configuration.microchip_register_movements(dbo)
+    registerfrom = asm3.i18n.display2python(dbo.locale, asm3.configuration.microchip_register_from(dbo))
 
     try:
-        rows = dbo.query(get_microchip_data_query(dbo, patterns, publishername, movementtypes, allowintake), distincton="ID")
+        rows = dbo.query(get_microchip_data_query(dbo, patterns, publishername, movementtypes, registerfrom, allowintake), distincton="ID")
     except Exception as err:
         asm3.al.error(str(err), "publisher.get_microchip_data", dbo, sys.exc_info())
 
@@ -280,7 +281,7 @@ def get_microchip_data(dbo, patterns, publishername, allowintake = True, organis
 
     return rows + extras
 
-def get_microchip_data_query(dbo, patterns, publishername, movementtypes = "1", allowintake = True):
+def get_microchip_data_query(dbo, patterns, publishername, movementtypes = "1", registerfrom = None, allowintake = True):
     """
     Generates a query for unpublished microchips.
     It does this by looking for animals who have microchips matching the pattern where
@@ -292,6 +293,7 @@ def get_microchip_data_query(dbo, patterns, publishername, movementtypes = "1", 
                    together in the preamble, eg: [ '977', "a.SmartTag = 1 AND a.SmartTagNumber <> ''" ]
     publishername: The name of the microchip registration publisher, eg: pettracuk
     movementtypes: An IN clause of movement types to include. 11 can be used for trial adoptions
+    registerfrom: None for all, or a cut off date to only register chips where the event triggering reg was after this date
     """
     pclauses = []
     for p in patterns:
@@ -300,18 +302,26 @@ def get_microchip_data_query(dbo, patterns, publishername, movementtypes = "1", 
             pclauses.append("(a.Identichip2Number IS NOT NULL AND a.Identichip2Number LIKE '%s%%')" % p)
         else:
             pclauses.append("(%s)" % p)
+    if registerfrom is None:
+        registerfrom = dbo.today(offset=-365*20) # No register from date set, go back 20 years
     trialclause = ""
     if movementtypes.find("11") == -1:
         trialclause = "AND a.HasTrialAdoption = 0"
     intakeclause = ""
     if movementtypes.find("0") != -1 and allowintake:
         # Note: Use of MostRecentEntryDate will pick up returns as well as intake
-        intakeclause = "OR (a.NonShelterAnimal = 0 AND a.IsHold = 0 AND a.Archived = 0 AND (a.ActiveMovementID = 0 OR a.ActiveMovementType = 2) " \
+        intakeclause = "OR (a.NonShelterAnimal = 0 AND a.IsHold = 0 AND a.Archived = 0 " \
+            "AND (a.ActiveMovementID = 0 OR a.ActiveMovementType = 2) " \
             "AND NOT EXISTS(SELECT SentDate FROM animalpublished WHERE PublishedTo = '%(publishername)s' " \
-            "AND AnimalID = a.ID AND SentDate >= a.MostRecentEntryDate))" % { "publishername": publishername }
-    nonshelterclause = "OR (a.NonShelterAnimal = 1 AND a.OriginalOwnerID Is Not Null AND a.OriginalOwnerID > 0 AND a.IdentichipDate Is Not Null " \
+            "AND AnimalID = a.ID AND SentDate >= a.MostRecentEntryDate) " \
+            "AND a.MostRecentEntryDate > %(regfrom)s " \
+            ")" % { "publishername": publishername, "regfrom": dbo.sql_value(registerfrom) }
+    nonshelterclause = "OR (a.NonShelterAnimal = 1 AND a.OriginalOwnerID Is Not Null " \
+        "AND a.OriginalOwnerID > 0 AND a.IdentichipDate Is Not Null " \
         "AND NOT EXISTS(SELECT SentDate FROM animalpublished WHERE PublishedTo = '%(publishername)s' " \
-        "AND AnimalID = a.ID AND SentDate >= a.IdentichipDate))" % { "publishername": publishername }
+        "AND AnimalID = a.ID AND SentDate >= a.IdentichipDate) " \
+        "AND a.IdentichipDate > %(regfrom)s " \
+        ")" % { "publishername": publishername, "regfrom": dbo.sql_value(registerfrom) }
     where = " WHERE (%(patterns)s) " \
         "AND a.DeceasedDate Is Null " \
         "AND a.Identichipped=1 " \
@@ -319,7 +329,7 @@ def get_microchip_data_query(dbo, patterns, publishername, movementtypes = "1", 
         "AND (" \
         "(a.ActiveMovementID > 0 AND a.ActiveMovementType > 0 AND a.ActiveMovementType IN (%(movementtypes)s) %(trialclause)s " \
         "AND NOT EXISTS(SELECT SentDate FROM animalpublished WHERE PublishedTo = '%(publishername)s' " \
-        "AND AnimalID = a.ID AND SentDate >= %(movementdate)s )) " \
+        "AND AnimalID = a.ID AND SentDate >= %(movementdate)s ) AND a.ActiveMovementDate > %(regfrom)s ) " \
         "%(nonshelterclause)s " \
         "%(intakeclause)s " \
         ")" % { 
@@ -330,6 +340,7 @@ def get_microchip_data_query(dbo, patterns, publishername, movementtypes = "1", 
             "movementtypes": movementtypes, 
             "intakeclause": intakeclause,
             "nonshelterclause": nonshelterclause,
+            "regfrom": dbo.sql_value(registerfrom), 
             "trialclause": trialclause,
             "publishername": publishername }
     sql = asm3.animal.get_animal_query(dbo) + where
