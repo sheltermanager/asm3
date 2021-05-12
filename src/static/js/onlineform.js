@@ -106,6 +106,15 @@ $(function() {
                         }
                     } 
                 },
+                { id: "reindex", text: _("Re-Index"), icon: "refresh", enabled: "always", perm: "eof",
+                    click: async function() {
+                        await tableform.reindex_dialog();
+                        tableform.buttons_default_state(buttons);
+                        let ids = tableform.table_ids(table);
+                        await common.ajax_post("onlineform", "mode=reindex&formid=" + controller.formid);
+                        location.reload();
+                    }
+                },
                 { id: "delete", text: _("Delete"), icon: "delete", enabled: "multi", perm: "eof", 
                     click: async function() { 
                         await tableform.delete_dialog();

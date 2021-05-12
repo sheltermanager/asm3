@@ -1596,6 +1596,47 @@ const tableform = {
     },
 
     /**
+     * Prompts the user to re-index form
+     * callback: Function to be run if the user clicks delete
+     * text: The delete dialog text (don't pass for the default)
+     * returns a promise.
+     */
+    reindex_dialog: function(callback, text) {
+        var b = {},
+            deferred = $.Deferred();
+        b[_("Re-Index")] = function() {
+            $("#dialog-reindex").dialog("close");
+            if (callback) { callback(); }
+            deferred.resolve();
+        };
+        b[_("Cancel")] = function() {
+            $(this).dialog("close");
+            deferred.reject("dialog cancelled");
+        };
+        var mess = _("This will reset the display indexes on the form to be offset by 10");
+        if (text && text != "") {
+            mess = text;
+        }
+        if ($("#dialog-reindex").length == 0) {
+            $("body").append('<div id="dialog-reindex" style="display: none" title="' +
+                _("Re-Index") + '"><p><span class="ui-icon ui-icon-alert"></span>' +
+                '<span id="dialog-reindex-text"></span></p></div>');
+        }
+        $("#dialog-reindex-text").html(mess);
+        $("#dialog-reindex").dialog({
+            resizable: false,
+            height: "auto",
+            width: 400,
+            modal: true,
+            dialogClass: "dialogshadow",
+            show: dlgfx.reindex_show,
+            hide: dlgfx.reindex_hide,
+            buttons: b
+        });
+        return deferred.promise();
+    },
+
+    /**
      * Shows an Ok/Cancel dialog.
      * selector: The dialog div
      * oktext: The text to show on the ok button
