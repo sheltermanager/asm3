@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ASM3\n"
 "Report-Msgid-Bugs-To: robin@sheltermanager.com\n"
-"POT-Creation-Date: 2021-05-03 08:47+0000\n"
+"POT-Creation-Date: 2021-05-12 09:28+0000\n"
 "Last-Translator: Robin Rawson-Tetley <robin@sheltermanager.com>\n"
 "Language-Team: en <robin@sheltermanager.com>\n"
 "Language: en\n"
@@ -8520,6 +8520,10 @@ msgstr ""
 msgid "Only allow users with one of these roles to view this incident"
 msgstr ""
 
+#: publish_options.js
+msgid "Only register microchips where the animal moved after this date"
+msgstr ""
+
 #: options.js
 msgid "Only show account totals for the current period, which starts on "
 msgstr ""
@@ -9486,6 +9490,10 @@ msgstr ""
 msgid "Raw Markup"
 msgstr ""
 
+#: onlineform.js
+msgid "Re-Index"
+msgstr ""
+
 #: main.js
 msgid "Read the manual for more information about Animal Shelter Manager."
 msgstr ""
@@ -9704,6 +9712,10 @@ msgstr ""
 
 #: publish_options.js
 msgid "Register microchips after"
+msgstr ""
+
+#: publish_options.js
+msgid "Register microchips from"
 msgstr ""
 
 #: animal.py dbupdate.py animal_find.js movements.js
@@ -12578,6 +12590,12 @@ msgstr ""
 
 #: waitinglist.js
 msgid "This will permanently remove this waiting list entry, are you sure?"
+msgstr ""
+
+#: onlineform.js
+msgid ""
+"This will recalculate display indexes in increments of 10 for every field in "
+"the form."
 msgstr ""
 
 #: staff_rota.js

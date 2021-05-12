@@ -108,11 +108,11 @@ $(function() {
                 },
                 { id: "reindex", text: _("Re-Index"), icon: "refresh", enabled: "always", perm: "eof",
                     click: async function() {
-                        await tableform.reindex_dialog();
+                        await tableform.show_okcancel_dialog("#dialog-reindex", _("Re-Index"), { width: 500 });
                         tableform.buttons_default_state(buttons);
                         let ids = tableform.table_ids(table);
                         await common.ajax_post("onlineform", "mode=reindex&formid=" + controller.formid);
-                        location.reload();
+                        common.route_reload();
                     }
                 },
                 { id: "delete", text: _("Delete"), icon: "delete", enabled: "multi", perm: "eof", 
@@ -163,6 +163,10 @@ $(function() {
             this.model();
             s += tableform.dialog_render(this.dialog);
             s += html.content_header(_("Online Form: {0}").replace("{0}", controller.formname));
+            s += '<div id="dialog-reindex" style="display: none" title="' + html.title(_("Re-Index")) + '">' +
+                '<p><span class="ui-icon ui-icon-alert"></span> ' + 
+                _("This will recalculate display indexes in increments of 10 for every field in the form.") +
+                '</p></div>';
             s += tableform.buttons_render(this.buttons);
             s += tableform.table_render(this.table);
             s += html.content_footer();
