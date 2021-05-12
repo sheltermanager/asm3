@@ -151,7 +151,7 @@ class Cardcom(PaymentProcessor):
                 }
             for p in self.getInvoiceItems(payments):
                 more_params.update(p)   
-        else: #if total_charge_sum == 0:
+        else: # if total_charge_sum == 0:
             more_params = {
                 "Operation": "3" # only create token
                 }
