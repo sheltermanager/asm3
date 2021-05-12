@@ -48,7 +48,7 @@ VALID_FIELDS = [
     "PERSONMATCHSEX", "PERSONMATCHSIZE", "PERSONMATCHCOLOR", "PERSONMATCHAGEFROM", "PERSONMATCHAGETO",
     "PERSONMATCHTYPE", "PERSONMATCHSPECIES", "PERSONMATCHBREED1", "PERSONMATCHBREED2",
     "PERSONMATCHGOODWITHCATS", "PERSONMATCHGOODWITHDOGS", "PERSONMATCHGOODWITHCHILDREN", "PERSONMATCHHOUSETRAINED",
-    "PERSONMATCHCOMMENTSCONTAIN"
+    "PERSONMATCHCOMMENTSCONTAIN", "FOSTERCAPACITY"
 ]
 
 def gkc(m, f):
@@ -619,6 +619,7 @@ def csvimport(dbo, csvdata, encoding = "utf-8-sig", user = "", createmissinglook
             p["membershipnumber"] = gks(row, "PERSONMEMBERSHIPNUMBER")
             p["membershipexpires"] = gkd(dbo, row, "PERSONMEMBERSHIPEXPIRY")
             p["matchactive"] = gkbi(row, "PERSONMATCHACTIVE")
+            p["fostercapacity"] = gks(row,"FOSTERCAPACITY")
             if p["matchactive"] == "1":
                 if "PERSONMATCHADDED" in cols: p["matchadded"] = gkd(dbo, row, "PERSONMATCHADDED")
                 if "PERSONMATCHEXPIRES" in cols: p["matchexpires"] = gkd(dbo, row, "PERSONMATCHEXPIRES")
