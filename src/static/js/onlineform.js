@@ -195,6 +195,7 @@ $(function() {
         },
 
         destroy: function() {
+            common.widget_destroy("#dialog-reindex");
             tableform.dialog_destroy();
         },
 
