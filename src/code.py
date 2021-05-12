@@ -4515,6 +4515,9 @@ class onlineform(JSONEndpoint):
         for did in o.post.integer_list("ids"):
             asm3.onlineform.delete_onlineformfield(o.dbo, o.user, did)
 
+    def post_reindex(self, o):
+        asm3.onlineform.reindex_onlineform(o.dbo, o.user, o.post.integer("formid"))
+        
 class onlineforms(JSONEndpoint):
     url = "onlineforms"
     get_permissions = asm3.users.VIEW_ONLINE_FORMS

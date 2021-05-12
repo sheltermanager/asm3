@@ -576,6 +576,16 @@ def delete_onlineform(dbo, username, formid):
     dbo.execute("DELETE FROM onlineformfield WHERE OnlineFormID = ?", [formid])
     dbo.delete("onlineform", formid, username)
 
+def reindex_onlineform(dbo, username, formid):
+    """
+    Resets display indexes to space out by 10 using current order
+    """
+    fields = get_onlineformfields(dbo, formid)
+    
+    for i in range(len(fields)):
+        newindex = (i + 1) * 10
+        dbo.execute("UPDATE onlineformfield SET DISPLAYINDEX = ? WHERE OnlineFormID = ? AND ID = ?", [newindex, formid, fields[i]["ID"]])
+
 def clone_onlineform(dbo, username, formid):
     """
     Clones formid
