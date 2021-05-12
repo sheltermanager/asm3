@@ -118,9 +118,8 @@ class Cardcom(PaymentProcessor):
 
 
         url = "https://secure.cardcom.solutions/Interface/LowProfile.aspx"
+
         params = {
-            "DocTypeToCreate": asm3.configuration.cardcom_documenttype(self.dbo), # 3 = nonprofit receipt
-            "Operation": "2", # charge + create token
             "TerminalNumber": asm3.configuration.cardcom_terminalnumber(self.dbo),
             "UserName": asm3.configuration.cardcom_username(self.dbo),
             "SumToBill": str(total_charge_sum / 100.0),
@@ -132,19 +131,34 @@ class Cardcom(PaymentProcessor):
             "IsVirtualTerminalMode": "true",
             "codepage": "65001", # unicode
             "ReturnValue": client_reference_id,
-            "InvoiceHead.CustName": asm3.utils.decode_html(p.OWNERNAME)[:50] , 
-            "InvoiceHead.CustAddresLine1": asm3.utils.decode_html(p.OWNERADDRESS)[:50], 
-            "InvoiceHead.CustCity": asm3.utils.decode_html(p.OWNERTOWN)[:50],            
-            "InvoiceHead.CustMobilePH": asm3.utils.decode_html(p.MOBILETELEPHONE)[:50],  
-            "InvoiceHead.ExtIsVatFree": "true",# no VAT for nonprofit receipts. TODO: config?
-            "InvoiceHead.SendByEmail": "true", # TODO: not critical - config?
-            "InvoiceHead.Language": "he", # TODO: not critical - config / use locale?
-            "InvoiceHead.Email": p.EMAILADDRESS,
             "IndicatorUrl": "%s/pp_cardcom" % BASE_URL, 
         }
 
-        for p in self.getInvoiceItems(payments):
-            params.update(p)        
+        # determine operation by total charge amount. If charge amount>0, charge and create token (this will also create a tax document). If charge amount==0, only create token
+        more_params = {}
+        if total_charge_sum > 0: 
+            more_params = {
+                "Operation": "2",  # charge + create token
+                "DocTypeToCreate": asm3.configuration.cardcom_documenttype(self.dbo), # 3 = nonprofit receipt
+                "InvoiceHead.CustName": asm3.utils.decode_html(p.OWNERNAME)[:50] , 
+                "InvoiceHead.CustAddresLine1": asm3.utils.decode_html(p.OWNERADDRESS)[:50], 
+                "InvoiceHead.CustCity": asm3.utils.decode_html(p.OWNERTOWN)[:50],            
+                "InvoiceHead.CustMobilePH": asm3.utils.decode_html(p.MOBILETELEPHONE)[:50],  
+                "InvoiceHead.ExtIsVatFree": "true",# no VAT for nonprofit receipts. TODO: config?
+                "InvoiceHead.SendByEmail": "true", # TODO: not critical - config?
+                "InvoiceHead.Language": "he", # TODO: not critical - config / use locale?
+                "InvoiceHead.Email": p.EMAILADDRESS,
+                }
+            for p in self.getInvoiceItems(payments):
+                more_params.update(p)   
+        else: #if total_charge_sum == 0:
+            more_params = {
+                "Operation": "3" # only create token
+                }
+
+        params.update(more_params)
+
+     
 
         asm_debug("params: %s" % params, "cardcom.checkoutUrl", self.dbo)
         r = asm3.utils.post_form(url, params)
