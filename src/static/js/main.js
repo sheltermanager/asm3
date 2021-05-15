@@ -61,302 +61,312 @@ $(function() {
             if (!config.bool("ShowAlertsHomePage")) { return; }
             if (!controller.alerts || controller.alerts.length == 0) { return; }
             alerts = controller.alerts[0];
-            let totalalerts = alerts.DUEVACC + alerts.EXPVACC + alerts.DUETEST + alerts.DUEMED + 
-                alerts.DUECLINIC + alerts.URGENTWL +  alerts.LONGRSV + alerts.DUEDON + alerts.ENDTRIAL + 
-                alerts.NOTNEU + alerts.NOTRAB + alerts.PUBLISH + alerts.LOOKFOR + alerts.LOSTFOUND + 
-                alerts.INFORM + alerts.ACUNFINE + alerts.ACUNDISP + alerts.ACUNCOMP + alerts.ACFOLL + 
-                alerts.TLOVER + alerts.STEXP + alerts.STEXPSOON + alerts.TRNODRV;
-            if (config.bool("EmblemNotForAdoption")) {
-                totalalerts += alerts.NOTADOPT;
+            let totalalerts = 0;
+            s += '<p class="asm-menu-category">' + _("Alerts") + ' (<span id="totalalerts"></span>)</p><p>';
+            if (alerts.DUEVACC > 0 && common.has_permission("vav")) {
+                totalalerts += alerts.DUEVACC;
+                s += '<a href="vaccination">' + html.icon("vaccination") + ' ' + 
+                    common.ntranslate(alerts.DUEVACC, [ 
+                        _("{plural0} vaccination needs to be administered today"), 
+                        _("{plural1} vaccinations need to be administered today"),
+                        _("{plural2} vaccinations need to be administered today"),
+                        _("{plural3} vaccinations need to be administered today")
+                    ]) + '</a><br />';
             }
-            if (config.bool("EmblemNotMicrochipped")) {
+            if (alerts.EXPVACC > 0 && common.has_permission("vav")) {
+                totalalerts += alerts.EXPVACC;
+                s += '<a href="vaccination?offset=xm365">' + html.icon("vaccination") + ' ' + 
+                    common.ntranslate(alerts.EXPVACC, [ 
+                        _("{plural0} vaccination has expired"), 
+                        _("{plural1} vaccinations have expired"),
+                        _("{plural2} vaccinations have expired"),
+                        _("{plural3} vaccinations have expired")
+                    ]) + '</a><br />';
+            }
+            if (alerts.DUETEST > 0 && common.has_permission("vat")) {
+                totalalerts += alerts.DUETEST;
+                s += '<a href="test">' + html.icon("test") + ' ' + 
+                    common.ntranslate(alerts.DUETEST, [ 
+                        _("{plural0} test needs to be performed today"), 
+                        _("{plural1} tests need to be performed today"),
+                        _("{plural2} tests need to be performed today"),
+                        _("{plural3} tests need to be performed today")
+                    ]) + '</a><br />';
+            }
+            if (alerts.DUEMED > 0 && common.has_permission("mvam")) {
+                totalalerts += alerts.DUEMED;
+                s += '<a href="medical">' + html.icon("medical") + ' ' + 
+                    common.ntranslate(alerts.DUEMED, [
+                        _("{plural0} medical treatment needs to be administered today"),
+                        _("{plural1} medical treatments need to be administered today"),
+                        _("{plural2} medical treatments need to be administered today"),
+                        _("{plural3} medical treatments need to be administered today")
+                    ]) + '</a><br />';
+            }
+            if (alerts.DUECLINIC > 0 && common.has_permission("vcl")) {
+                totalalerts += alerts.DUECLINIC;
+                s += '<a href="clinic_waitingroom">' + html.icon("health") + ' ' + 
+                    common.ntranslate(alerts.DUECLINIC, [
+                        _("{plural0} clinic appointment today"),
+                        _("{plural1} clinic appointments today"),
+                        _("{plural2} clinic appointments today"),
+                        _("{plural3} clinic appointments today")
+                    ]) + '</a><br />';
+            }
+
+            if (alerts.URGENTWL > 0 && common.has_permission("vwl")) {
+                totalalerts += alerts.URGENTWL;
+                s += '<a href="waitinglist_results?priorityfloor=1">' + html.icon("waitinglist") + ' ' + 
+                    common.ntranslate(alerts.URGENTWL, [
+                        _("{plural0} urgent entry on the waiting list"),
+                        _("{plural1} urgent entries on the waiting list"),
+                        _("{plural2} urgent entries on the waiting list"),
+                        _("{plural3} urgent entries on the waiting list")
+                    ]) + '</a><br />';
+            }
+            if (alerts.RSVHCK > 0 && config.bool("WarnNoHomeCheck") && common.has_permission("vo")) {
+                totalalerts += alerts.RSVHCK;
+                s += '<a href="search?q=reservenohomecheck">' + html.icon("person") + ' ' + 
+                    common.ntranslate(alerts.RSVHCK, [
+                        _("{plural0} person with an active reservation has not been homechecked"),
+                        _("{plural1} people with active reservations have not been homechecked"),
+                        _("{plural2} people with active reservations have not been homechecked"),
+                        _("{plural3} people with active reservations have not been homechecked")
+                    ]) + '</a><br />';
+            }
+            if (alerts.LONGRSV > 0 && common.has_permission("vamv")) {
+                totalalerts += alerts.LONGRSV;
+                s += '<a href="move_book_reservation">' + html.icon("reservation") + ' ' + 
+                    common.ntranslate(alerts.LONGRSV, [
+                        _("{plural0} reservation has been active over a week without adoption"),
+                        _("{plural1} reservations have been active over a week without adoption"),
+                        _("{plural2} reservations have been active over a week without adoption"),
+                        _("{plural3} reservations have been active over a week without adoption")
+                    ]) + '</a><br />';
+            }
+            if (alerts.NOTNEU > 0 && common.has_permission("va") && config.bool("EmblemUnneutered") ) {
+                totalalerts += alerts.NOTNEU;
+                s += '<a href="move_book_unneutered">' + html.icon("unneutered") + ' ' + 
+                    common.ntranslate(alerts.NOTNEU, [
+                        _("{plural0} unaltered animal has been adopted in the last month"),
+                        _("{plural1} unaltered animals have been adopted in the last month"),
+                        _("{plural2} unaltered animals have been adopted in the last month"),
+                        _("{plural3} unaltered animals have been adopted in the last month")
+                    ]) + '</a><br />';
+            }
+            if (alerts.NOTRAB > 0 && common.has_permission("va") && config.bool("EmblemRabies") ) {
+                totalalerts += alerts.NOTRAB;
+                s += '<a href="search?q=norabies">' + html.icon("rabies") + ' ' + 
+                    common.ntranslate(alerts.NOTRAB, [
+                        _("{plural0} animal has not had a rabies vaccination"),
+                        _("{plural1} animals have not had a rabies vaccination"),
+                        _("{plural2} animals have not had a rabies vaccination"),
+                        _("{plural3} animals have not had a rabies vaccination")
+                    ]) + '</a><br />';
+            }
+            if (alerts.NOTCHIP > 0 && common.has_permission("va") && config.bool("EmblemNotMicrochipped") ) {
                 totalalerts += alerts.NOTCHIP;
+                s += '<a href="search?q=notmicrochipped">' + html.icon("microchip") + ' ' + 
+                    common.ntranslate(alerts.NOTCHIP, [
+                        _("{plural0} shelter animal has not been microchipped"),
+                        _("{plural1} shelter animals have not been microchipped"),
+                        _("{plural2} shelter animals have not been microchipped"),
+                        _("{plural3} shelter animals have not been microchipped")
+                    ]) + '</a><br />';
             }
-            if (config.bool("EmblemHold")) {
+            if (alerts.DUEDON > 0 && common.has_permission("ovod")) {
+                totalalerts += alerts.DUEDON;
+                s += '<a href="donation?offset=d0">' + html.icon("donation") + ' ' + 
+                    common.ntranslate(alerts.DUEDON, [
+                        _("{plural0} person has an overdue payment"),
+                        _("{plural1} people have overdue payments"),
+                        _("{plural2} people have overdue payments"),
+                        _("{plural3} people have overdue payments")
+                    ]) + '</a><br />';
+            }
+            if (alerts.ENDTRIAL > 0 && common.has_permission("vamv")) {
+                totalalerts += alerts.ENDTRIAL;
+                s += '<a href="move_book_trial_adoption">' + html.icon("trial") + ' ' + 
+                    common.ntranslate(alerts.ENDTRIAL, [
+                        _("{plural0} trial adoption has ended"),
+                        _("{plural1} trial adoptions have ended"),
+                        _("{plural2} trial adoptions have ended"),
+                        _("{plural3} trial adoptions have ended")
+                    ]) + '</a><br />';
+            }
+            if (alerts.DOCUNSIGNED > 0 && common.has_permission("vo")) {
+                totalalerts += alerts.DOCUNSIGNED;
+                s += '<a href="search?q=unsigned">' + html.icon("signature") + ' ' + 
+                    common.ntranslate(alerts.DOCUNSIGNED, [
+                        _("{plural0} document signing request issued in the last month is unsigned"),
+                        _("{plural1} document signing requests issued in the last month are unsigned"),
+                        _("{plural2} document signing requests issued in the last month are unsigned"),
+                        _("{plural3} document signing requests issued in the last month are unsigned")
+                    ]) + '</a><br />';
+            }
+            if (alerts.DOCSIGNED > 0 && common.has_permission("vo")) {
+                totalalerts += alerts.DOCSIGNED;
+                s += '<a href="search?q=signed">' + html.icon("signature") + ' ' + 
+                    common.ntranslate(alerts.DOCSIGNED, [
+                        _("{plural0} document signing request has been received in the last week"),
+                        _("{plural1} document signing requests have been received in the last week"),
+                        _("{plural2} document signing requests have been received in the last week"),
+                        _("{plural3} document signing requests have been received in the last week")
+                    ]) + '</a><br />';
+            }
+            if (alerts.NOTADOPT > 0 && common.has_permission("va") && config.bool("EmblemNotForAdoption")) {
+                totalalerts += alerts.NOTADOPT;
+                s += '<a href="search?q=notforadoption">' + html.icon("notforadoption") + ' ' + 
+                    common.ntranslate(alerts.NOTADOPT, [
+                        _("{plural0} animal is not available for adoption"),
+                        _("{plural1} animals are not available for adoption"),
+                        _("{plural2} animals are not available for adoption"),
+                        _("{plural3} animals are not available for adoption")
+                    ]) + '</a><br />';
+            }
+            if (alerts.LNGTERM > 0 && common.has_permission("va") && config.bool("EmblemLongTerm")) {
+                totalalerts += alerts.LNGTERM;
+                s += '<a href="search?q=longterm">' + html.icon("calendar") + ' ' + 
+                    common.ntranslate(alerts.LNGTERM, [
+                        _("{plural0} animal has been on the shelter longer than {0} months").replace("{0}", config.integer("LongTermMonths")),
+                        _("{plural1} animals have been on the shelter longer than {0} months").replace("{0}", config.integer("LongTermMonths")),
+                        _("{plural2} animals have been on the shelter longer than {0} months").replace("{0}", config.integer("LongTermMonths")),
+                        _("{plural3} animals have been on the shelter longer than {0} months").replace("{0}", config.integer("LongTermMonths"))
+                    ]) + '</a><br />';
+            }
+
+            if (alerts.HOLDTODAY > 0 && common.has_permission("va") && config.bool("EmblemHold")) {
                 totalalerts += alerts.HOLDTODAY;
+                s += '<a href="search?q=holdtoday">' + html.icon("hold") + ' ' + 
+                    common.ntranslate(alerts.HOLDTODAY, [
+                        _("{plural0} animal has a hold ending today"),
+                        _("{plural1} animals have holds ending today"),
+                        _("{plural2} animals have holds ending today"),
+                        _("{plural3} animals have holds ending today")
+                    ]) + '</a><br />';
             }
-            if (config.bool("WarnNoHomeCheck")) { 
-                totalalerts += alerts.RSVHCK; 
+            if (alerts.INFORM > 0 && common.has_permission("vif")) {
+                totalalerts += alerts.INFORM;
+                s += '<a href="onlineform_incoming">' + html.icon("forms") + ' ' + 
+                    common.ntranslate(alerts.INFORM, [
+                        _("{plural0} new online form submission"),
+                        _("{plural1} new online form submissions"),
+                        _("{plural2} new online form submissions"),
+                        _("{plural3} new online form submissions")
+                    ]) + '</a><br />';
             }
-            if (config.bool("EmblemLongTerm")) { 
-                totalalerts += alerts.LNGTERM; 
+            if (alerts.LOOKFOR > 0 && common.has_permission("vcr")) {
+                totalalerts += alerts.LOOKFOR;
+                s += '<a href="person_lookingfor">' + html.icon("animal-find") + ' ' + 
+                    common.ntranslate(alerts.LOOKFOR, [
+                        _("{plural0} shelter animal has people looking for them"),
+                        _("{plural1} shelter animals have people looking for them"),
+                        _("{plural2} shelter animals have people looking for them"),
+                        _("{plural3} shelter animals have people looking for them")
+                    ]) + '</a><br />';
             }
-            if (totalalerts > 0) {
-                s += '<p class="asm-menu-category">' + _("Alerts") + ' (' + totalalerts + ')</p><p>';
-                if (alerts.DUEVACC > 0 && common.has_permission("vav")) {
-                    s += '<a href="vaccination">' + html.icon("vaccination") + ' ' + 
-                        common.ntranslate(alerts.DUEVACC, [ 
-                            _("{plural0} vaccination needs to be administered today"), 
-                            _("{plural1} vaccinations need to be administered today"),
-                            _("{plural2} vaccinations need to be administered today"),
-                            _("{plural3} vaccinations need to be administered today")
-                        ]) + '</a><br />';
-                }
-                if (alerts.EXPVACC > 0 && common.has_permission("vav")) {
-                    s += '<a href="vaccination?offset=xm365">' + html.icon("vaccination") + ' ' + 
-                        common.ntranslate(alerts.EXPVACC, [ 
-                            _("{plural0} vaccination has expired"), 
-                            _("{plural1} vaccinations have expired"),
-                            _("{plural2} vaccinations have expired"),
-                            _("{plural3} vaccinations have expired")
-                        ]) + '</a><br />';
-                }
-                if (alerts.DUETEST > 0 && common.has_permission("vat")) {
-                    s += '<a href="test">' + html.icon("test") + ' ' + 
-                        common.ntranslate(alerts.DUETEST, [ 
-                            _("{plural0} test needs to be performed today"), 
-                            _("{plural1} tests need to be performed today"),
-                            _("{plural2} tests need to be performed today"),
-                            _("{plural3} tests need to be performed today")
-                        ]) + '</a><br />';
-                }
-                if (alerts.DUEMED > 0 && common.has_permission("mvam")) {
-                    s += '<a href="medical">' + html.icon("medical") + ' ' + 
-                        common.ntranslate(alerts.DUEMED, [
-                            _("{plural0} medical treatment needs to be administered today"),
-                            _("{plural1} medical treatments need to be administered today"),
-                            _("{plural2} medical treatments need to be administered today"),
-                            _("{plural3} medical treatments need to be administered today")
-                        ]) + '</a><br />';
-                }
-                if (alerts.DUECLINIC > 0 && common.has_permission("vcl")) {
-                    s += '<a href="clinic_waitingroom">' + html.icon("health") + ' ' + 
-                        common.ntranslate(alerts.DUECLINIC, [
-                            _("{plural0} clinic appointment today"),
-                            _("{plural1} clinic appointments today"),
-                            _("{plural2} clinic appointments today"),
-                            _("{plural3} clinic appointments today")
-                        ]) + '</a><br />';
-                }
-
-                if (alerts.URGENTWL > 0 && common.has_permission("vwl")) {
-                    s += '<a href="waitinglist_results?priorityfloor=1">' + html.icon("waitinglist") + ' ' + 
-                        common.ntranslate(alerts.URGENTWL, [
-                            _("{plural0} urgent entry on the waiting list"),
-                            _("{plural1} urgent entries on the waiting list"),
-                            _("{plural2} urgent entries on the waiting list"),
-                            _("{plural3} urgent entries on the waiting list")
-                        ]) + '</a><br />';
-                }
-                if (alerts.RSVHCK > 0 && config.bool("WarnNoHomeCheck") && common.has_permission("vo")) {
-                    s += '<a href="search?q=reservenohomecheck">' + html.icon("person") + ' ' + 
-                        common.ntranslate(alerts.RSVHCK, [
-                            _("{plural0} person with an active reservation has not been homechecked"),
-                            _("{plural1} people with active reservations have not been homechecked"),
-                            _("{plural2} people with active reservations have not been homechecked"),
-                            _("{plural3} people with active reservations have not been homechecked")
-                        ]) + '</a><br />';
-                }
-                if (alerts.LONGRSV > 0 && common.has_permission("vamv")) {
-                    s += '<a href="move_book_reservation">' + html.icon("reservation") + ' ' + 
-                        common.ntranslate(alerts.LONGRSV, [
-                            _("{plural0} reservation has been active over a week without adoption"),
-                            _("{plural1} reservations have been active over a week without adoption"),
-                            _("{plural2} reservations have been active over a week without adoption"),
-                            _("{plural3} reservations have been active over a week without adoption")
-                        ]) + '</a><br />';
-                }
-                if (alerts.NOTNEU > 0 && common.has_permission("va") && config.bool("EmblemUnneutered") ) {
-                    s += '<a href="move_book_unneutered">' + html.icon("unneutered") + ' ' + 
-                        common.ntranslate(alerts.NOTNEU, [
-                            _("{plural0} unaltered animal has been adopted in the last month"),
-                            _("{plural1} unaltered animals have been adopted in the last month"),
-                            _("{plural2} unaltered animals have been adopted in the last month"),
-                            _("{plural3} unaltered animals have been adopted in the last month")
-                        ]) + '</a><br />';
-                }
-                if (alerts.NOTRAB > 0 && common.has_permission("va") && config.bool("EmblemRabies") ) {
-                    s += '<a href="search?q=norabies">' + html.icon("rabies") + ' ' + 
-                        common.ntranslate(alerts.NOTRAB, [
-                            _("{plural0} animal has not had a rabies vaccination"),
-                            _("{plural1} animals have not had a rabies vaccination"),
-                            _("{plural2} animals have not had a rabies vaccination"),
-                            _("{plural3} animals have not had a rabies vaccination")
-                        ]) + '</a><br />';
-                }
-                if (alerts.NOTCHIP > 0 && common.has_permission("va") && config.bool("EmblemNotMicrochipped") ) {
-                    s += '<a href="search?q=notmicrochipped">' + html.icon("microchip") + ' ' + 
-                        common.ntranslate(alerts.NOTCHIP, [
-                            _("{plural0} shelter animal has not been microchipped"),
-                            _("{plural1} shelter animals have not been microchipped"),
-                            _("{plural2} shelter animals have not been microchipped"),
-                            _("{plural3} shelter animals have not been microchipped")
-                        ]) + '</a><br />';
-                }
-                if (alerts.DUEDON > 0 && common.has_permission("ovod")) {
-                    s += '<a href="donation?offset=d0">' + html.icon("donation") + ' ' + 
-                        common.ntranslate(alerts.DUEDON, [
-                            _("{plural0} person has an overdue payment"),
-                            _("{plural1} people have overdue payments"),
-                            _("{plural2} people have overdue payments"),
-                            _("{plural3} people have overdue payments")
-                        ]) + '</a><br />';
-                }
-                if (alerts.ENDTRIAL > 0 && common.has_permission("vamv")) {
-                    s += '<a href="move_book_trial_adoption">' + html.icon("trial") + ' ' + 
-                        common.ntranslate(alerts.ENDTRIAL, [
-                            _("{plural0} trial adoption has ended"),
-                            _("{plural1} trial adoptions have ended"),
-                            _("{plural2} trial adoptions have ended"),
-                            _("{plural3} trial adoptions have ended")
-                        ]) + '</a><br />';
-                }
-                if (alerts.DOCUNSIGNED > 0 && common.has_permission("vo")) {
-                    s += '<a href="search?q=unsigned">' + html.icon("signature") + ' ' + 
-                        common.ntranslate(alerts.DOCUNSIGNED, [
-                            _("{plural0} document signing request issued in the last month is unsigned"),
-                            _("{plural1} document signing requests issued in the last month are unsigned"),
-                            _("{plural2} document signing requests issued in the last month are unsigned"),
-                            _("{plural3} document signing requests issued in the last month are unsigned")
-                        ]) + '</a><br />';
-                }
-                if (alerts.DOCSIGNED > 0 && common.has_permission("vo")) {
-                    s += '<a href="search?q=signed">' + html.icon("signature") + ' ' + 
-                        common.ntranslate(alerts.DOCSIGNED, [
-                            _("{plural0} document signing request has been received in the last week"),
-                            _("{plural1} document signing requests have been received in the last week"),
-                            _("{plural2} document signing requests have been received in the last week"),
-                            _("{plural3} document signing requests have been received in the last week")
-                        ]) + '</a><br />';
-                }
-                if (alerts.NOTADOPT > 0 && common.has_permission("va") && config.bool("EmblemNotForAdoption")) {
-                    s += '<a href="search?q=notforadoption">' + html.icon("notforadoption") + ' ' + 
-                        common.ntranslate(alerts.NOTADOPT, [
-                            _("{plural0} animal is not available for adoption"),
-                            _("{plural1} animals are not available for adoption"),
-                            _("{plural2} animals are not available for adoption"),
-                            _("{plural3} animals are not available for adoption")
-                        ]) + '</a><br />';
-                }
-                if (alerts.LNGTERM > 0 && common.has_permission("va") && config.bool("EmblemLongTerm")) {
-                    s += '<a href="search?q=longterm">' + html.icon("calendar") + ' ' + 
-                        common.ntranslate(alerts.LNGTERM, [
-                            _("{plural0} animal has been on the shelter longer than {0} months").replace("{0}", config.integer("LongTermMonths")),
-                            _("{plural1} animals have been on the shelter longer than {0} months").replace("{0}", config.integer("LongTermMonths")),
-                            _("{plural2} animals have been on the shelter longer than {0} months").replace("{0}", config.integer("LongTermMonths")),
-                            _("{plural3} animals have been on the shelter longer than {0} months").replace("{0}", config.integer("LongTermMonths"))
-                        ]) + '</a><br />';
-                }
-
-                if (alerts.HOLDTODAY > 0 && common.has_permission("va") && config.bool("EmblemHold")) {
-                    s += '<a href="search?q=holdtoday">' + html.icon("hold") + ' ' + 
-                        common.ntranslate(alerts.HOLDTODAY, [
-                            _("{plural0} animal has a hold ending today"),
-                            _("{plural1} animals have holds ending today"),
-                            _("{plural2} animals have holds ending today"),
-                            _("{plural3} animals have holds ending today")
-                        ]) + '</a><br />';
-                }
-                if (alerts.INFORM > 0 && common.has_permission("vif")) {
-                    s += '<a href="onlineform_incoming">' + html.icon("forms") + ' ' + 
-                        common.ntranslate(alerts.INFORM, [
-                            _("{plural0} new online form submission"),
-                            _("{plural1} new online form submissions"),
-                            _("{plural2} new online form submissions"),
-                            _("{plural3} new online form submissions")
-                        ]) + '</a><br />';
-                }
-                if (alerts.LOOKFOR > 0 && common.has_permission("vcr")) {
-                    s += '<a href="person_lookingfor">' + html.icon("animal-find") + ' ' + 
-                        common.ntranslate(alerts.LOOKFOR, [
-                            _("{plural0} shelter animal has people looking for them"),
-                            _("{plural1} shelter animals have people looking for them"),
-                            _("{plural2} shelter animals have people looking for them"),
-                            _("{plural3} shelter animals have people looking for them")
-                        ]) + '</a><br />';
-                }
-                if (alerts.LOSTFOUND > 0 && common.has_permission("mlaf")) {
-                    s += '<a href="lostfound_match">' + html.icon("match") + ' ' + 
-                        common.ntranslate(alerts.LOSTFOUND, [
-                            _("{plural0} potential match for a lost animal"),
-                            _("{plural1} potential matches for lost animals"),
-                            _("{plural2} potential matches for lost animals"),
-                            _("{plural3} potential matches for lost animals")
-                        ]) + '</a><br />';
-                }
-                if (alerts.PUBLISH > 0 && common.has_permission("uipb")) {
-                    s += '<a href="publish_logs">' + html.icon("web") + ' ' + 
-                        common.ntranslate(alerts.PUBLISH, [
-                            _("{plural0} recent publisher run had errors"),
-                            _("{plural1} recent publisher runs had errors"),
-                            _("{plural2} recent publisher runs had errors"),
-                            _("{plural3} recent publisher runs had errors")
-                        ]) + '</a><br />';
-                }
-                if (alerts.ACUNFINE > 0 && common.has_permission("vaci")) {
-                    s += '<a href="citations?filter=unpaid">' + html.icon("donation") + ' ' + 
-                        common.ntranslate(alerts.ACUNFINE, [
-                            _("{plural0} unpaid fine"),
-                            _("{plural1} unpaid fines"),
-                            _("{plural2} unpaid fines"),
-                            _("{plural3} unpaid fines")
-                        ]) + '</a><br />';
-                }
-                if (alerts.ACUNDISP > 0 && common.has_permission("vaci")) {
-                    s += '<a href="incident_find_results?filter=undispatched">' + html.icon("call") + ' ' + 
-                        common.ntranslate(alerts.ACUNDISP, [
-                            _("{plural0} undispatched animal control call"),
-                            _("{plural1} undispatched animal control calls"),
-                            _("{plural2} undispatched animal control calls"),
-                            _("{plural3} undispatched animal control calls")
-                        ]) + '</a><br />';
-                }
-                if (alerts.ACFOLL > 0 && common.has_permission("vaci")) {
-                    s += '<a href="incident_find_results?filter=requirefollowup">' + html.icon("call") + ' ' + 
-                        common.ntranslate(alerts.ACFOLL, [
-                            _("{plural0} animal control call due for followup today"),
-                            _("{plural1} animal control calls due for followup today"),
-                            _("{plural2} animal control calls due for followup today"),
-                            _("{plural3} animal control calls due for followup today")
-                        ]) + '</a><br />';
-                }
-                if (alerts.ACUNCOMP > 0 && common.has_permission("vaci")) {
-                    s += '<a href="incident_find_results?filter=incomplete">' + html.icon("call") + ' ' + 
-                        common.ntranslate(alerts.ACUNCOMP, [
-                            _("{plural0} incomplete animal control call"),
-                            _("{plural1} incomplete animal control calls"),
-                            _("{plural2} incomplete animal control calls"),
-                            _("{plural3} incomplete animal control calls")
-                        ]) + '</a><br />';
-                }
-                if (alerts.TLOVER > 0 && common.has_permission("vatl")) {
-                    s += '<a href="traploan?filter=active">' + html.icon("traploan") + ' ' + 
-                        common.ntranslate(alerts.TLOVER, [
-                            _("{plural0} trap is overdue for return"),
-                            _("{plural1} traps are overdue for return"),
-                            _("{plural2} traps are overdue for return"),
-                            _("{plural3} traps are overdue for return")
-                        ]) + '</a><br />';
-                }
-                if (alerts.STEXP > 0 && common.has_permission("vsl")) {
-                    s += '<a href="stocklevel?sortexp=1">' + html.icon("stock") + ' ' + 
-                        common.ntranslate(alerts.STEXP, [
-                            _("{plural0} item of stock has expired"),
-                            _("{plural1} items of stock have expired"),
-                            _("{plural2} items of stock have expired"),
-                            _("{plural3} items of stock have expired")
-                        ]) + '</a><br />';
-                }
-                if (alerts.STEXPSOON > 0 && common.has_permission("vsl")) {
-                    s += '<a href="stocklevel?sortexp=1">' + html.icon("stock") + ' ' + 
-                        common.ntranslate(alerts.STEXPSOON, [
-                            _("{plural0} item of stock expires in the next month"),
-                            _("{plural1} items of stock expire in the next month"),
-                            _("{plural2} items of stock expire in the next month"),
-                            _("{plural3} items of stock expire in the next month")
-                        ]) + '</a><br />';
-                }
-                if (alerts.TRNODRV > 0 && common.has_permission("vtr")) {
-                    s += '<a href="transport">' + html.icon("transport") + ' ' + 
-                        common.ntranslate(alerts.TRNODRV, [
-                            _("{plural0} transport does not have a driver assigned"),
-                            _("{plural1} transports do not have a driver assigned"),
-                            _("{plural2} transports do not have a driver assigned"),
-                            _("{plural3} transports do not have a driver assigned")
-                        ]) + '</a><br />';
-                }
-                s += '</p>';
+            if (alerts.LOSTFOUND > 0 && common.has_permission("mlaf")) {
+                totalalerts += alerts.LOSTFOUND;
+                s += '<a href="lostfound_match">' + html.icon("match") + ' ' + 
+                    common.ntranslate(alerts.LOSTFOUND, [
+                        _("{plural0} potential match for a lost animal"),
+                        _("{plural1} potential matches for lost animals"),
+                        _("{plural2} potential matches for lost animals"),
+                        _("{plural3} potential matches for lost animals")
+                    ]) + '</a><br />';
             }
+            if (alerts.PUBLISH > 0 && common.has_permission("uipb")) {
+                totalalerts += alerts.PUBLISH;
+                s += '<a href="publish_logs">' + html.icon("web") + ' ' + 
+                    common.ntranslate(alerts.PUBLISH, [
+                        _("{plural0} recent publisher run had errors"),
+                        _("{plural1} recent publisher runs had errors"),
+                        _("{plural2} recent publisher runs had errors"),
+                        _("{plural3} recent publisher runs had errors")
+                    ]) + '</a><br />';
+            }
+            if (alerts.ACUNFINE > 0 && common.has_permission("vaci")) {
+                totalalerts += alerts.ACUNFINE;
+                s += '<a href="citations?filter=unpaid">' + html.icon("donation") + ' ' + 
+                    common.ntranslate(alerts.ACUNFINE, [
+                        _("{plural0} unpaid fine"),
+                        _("{plural1} unpaid fines"),
+                        _("{plural2} unpaid fines"),
+                        _("{plural3} unpaid fines")
+                    ]) + '</a><br />';
+            }
+            if (alerts.ACUNDISP > 0 && common.has_permission("vaci")) {
+                totalalerts += alerts.ACUNDISP;
+                s += '<a href="incident_find_results?filter=undispatched">' + html.icon("call") + ' ' + 
+                    common.ntranslate(alerts.ACUNDISP, [
+                        _("{plural0} undispatched animal control call"),
+                        _("{plural1} undispatched animal control calls"),
+                        _("{plural2} undispatched animal control calls"),
+                        _("{plural3} undispatched animal control calls")
+                    ]) + '</a><br />';
+            }
+            if (alerts.ACFOLL > 0 && common.has_permission("vaci")) {
+                totalalerts += alerts.ACFOLL;
+                s += '<a href="incident_find_results?filter=requirefollowup">' + html.icon("call") + ' ' + 
+                    common.ntranslate(alerts.ACFOLL, [
+                        _("{plural0} animal control call due for followup today"),
+                        _("{plural1} animal control calls due for followup today"),
+                        _("{plural2} animal control calls due for followup today"),
+                        _("{plural3} animal control calls due for followup today")
+                    ]) + '</a><br />';
+            }
+            if (alerts.ACUNCOMP > 0 && common.has_permission("vaci")) {
+                totalalerts += alerts.ACUNCOMP;
+                s += '<a href="incident_find_results?filter=incomplete">' + html.icon("call") + ' ' + 
+                    common.ntranslate(alerts.ACUNCOMP, [
+                        _("{plural0} incomplete animal control call"),
+                        _("{plural1} incomplete animal control calls"),
+                        _("{plural2} incomplete animal control calls"),
+                        _("{plural3} incomplete animal control calls")
+                    ]) + '</a><br />';
+            }
+            if (alerts.TLOVER > 0 && common.has_permission("vatl")) {
+                totalalerts += alerts.TLOVER;
+                s += '<a href="traploan?filter=active">' + html.icon("traploan") + ' ' + 
+                    common.ntranslate(alerts.TLOVER, [
+                        _("{plural0} trap is overdue for return"),
+                        _("{plural1} traps are overdue for return"),
+                        _("{plural2} traps are overdue for return"),
+                        _("{plural3} traps are overdue for return")
+                    ]) + '</a><br />';
+            }
+            if (alerts.STEXP > 0 && common.has_permission("vsl")) {
+                totalalerts += alerts.STEXP;
+                s += '<a href="stocklevel?sortexp=1">' + html.icon("stock") + ' ' + 
+                    common.ntranslate(alerts.STEXP, [
+                        _("{plural0} item of stock has expired"),
+                        _("{plural1} items of stock have expired"),
+                        _("{plural2} items of stock have expired"),
+                        _("{plural3} items of stock have expired")
+                    ]) + '</a><br />';
+            }
+            if (alerts.STEXPSOON > 0 && common.has_permission("vsl")) {
+                totalalerts += alerts.STEXPSOON;
+                s += '<a href="stocklevel?sortexp=1">' + html.icon("stock") + ' ' + 
+                    common.ntranslate(alerts.STEXPSOON, [
+                        _("{plural0} item of stock expires in the next month"),
+                        _("{plural1} items of stock expire in the next month"),
+                        _("{plural2} items of stock expire in the next month"),
+                        _("{plural3} items of stock expire in the next month")
+                    ]) + '</a><br />';
+            }
+            if (alerts.TRNODRV > 0 && common.has_permission("vtr")) {
+                totalalerts += alerts.TRNODRV;
+                s += '<a href="transport">' + html.icon("transport") + ' ' + 
+                    common.ntranslate(alerts.TRNODRV, [
+                        _("{plural0} transport does not have a driver assigned"),
+                        _("{plural1} transports do not have a driver assigned"),
+                        _("{plural2} transports do not have a driver assigned"),
+                        _("{plural3} transports do not have a driver assigned")
+                    ]) + '</a><br />';
+            }
+            s += '</p>';
+            main.total_alerts = totalalerts;
             return s;
         },
 
@@ -917,6 +927,9 @@ $(function() {
         /** The highest story number the current user has seen */
         max_news_user: 0,
 
+        /** The calculated total number of visible alerts */
+        total_alerts: 0,
+
         sync: function() {
 
             // add a class to the html element for desktop or mobile
@@ -947,6 +960,9 @@ $(function() {
             // What's the highest news story this person has seen?
             main.max_news_user = format.to_int(common.local_get(asm.user + "_news"));
             $("#newsunread").html( "(" + (main.max_news_story - main.max_news_user) + ")" );
+
+            // Set the total alerts
+            $("#totalalerts").text( main.total_alerts );
 
         },
 
