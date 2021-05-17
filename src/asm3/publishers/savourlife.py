@@ -32,7 +32,7 @@ class SavourLifePublisher(AbstractPublisher):
         if an.CROSSBREED == 1:
             breed = "%s cross" % breed
         for k, v in DOG_BREEDS.items():
-            if v.lower().find(breed.lower()) != -1:
+            if v.lower() == breed.lower():
                 return int(k)
         self.log("'%s' is not a valid SavourLife breed, using default 'Cross Breed'" % an.BREEDNAME1)
         return 305
