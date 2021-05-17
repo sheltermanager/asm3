@@ -183,7 +183,8 @@ def get_onlineform_html(dbo, formid, completedocument = True):
                 '<option value=""></option><option>%s</option><option>%s</option></select>' % \
                 ( fid, cname, asm3.utils.nulltostr(f.TOOLTIP), asm3.i18n._("No", l), asm3.i18n._("Yes", l)))
         elif f.FIELDTYPE == FIELDTYPE_CHECKBOX:
-            h.append('<input class="asm-onlineform-check" type="checkbox" id="%s" name="%s" %s /> <label for="%s">%s</label>' % \
+            h.append('<input class="asm-onlineform-check" type="checkbox" id="%s" name="%s" %s /> ' \
+                '<label class="asm-onlineform-checkboxlabel" for="%s">%s</label>' % \
                 (fid, cname, required, fid, f.LABEL))
         elif f.FIELDTYPE == FIELDTYPE_TEXT:
             h.append('<input class="asm-onlineform-text" type="text" id="%s" name="%s" title="%s" %s %s />' % ( fid, cname, asm3.utils.nulltostr(f.TOOLTIP), autocomplete, requiredtext))
@@ -210,7 +211,8 @@ def get_onlineform_html(dbo, formid, completedocument = True):
             h.append('<div class="asm-onlineform-radiogroup" style="display: inline-block">')
             for i, lv in enumerate(asm3.utils.nulltostr(f.LOOKUPS).split("|")):
                 rid = "%s_%s" % (fid, i)
-                h.append('<input type="radio" class="asm-onlineform-radio" id="%s" name="%s" value="%s" %s /> <label for="%s">%s</label><br />' % (rid, cname, lv, required, rid, lv))
+                h.append('<input type="radio" class="asm-onlineform-radio" id="%s" name="%s" value="%s" %s /> ' \
+                    '<label class="asm-onlineform-checkboxlabel" for="%s">%s</label><br />' % (rid, cname, lv, required, rid, lv))
             h.append('</div>')
         elif f.FIELDTYPE == FIELDTYPE_CHECKBOXGROUP:
             h.append('<input type="hidden" name="%s" value="" />' % cname)
@@ -218,7 +220,8 @@ def get_onlineform_html(dbo, formid, completedocument = True):
             for i, lv in enumerate(asm3.utils.nulltostr(f.LOOKUPS).split("|")):
                 rid = "%s_%s" % (fid, i)
                 rname = "%s%s_" % (f.FIELDNAME, i)
-                h.append('<input type="checkbox" id="%s" data="%s" name="%s"/> <label for="%s">%s</label><br />' % (rid, lv, rname, rid, lv))
+                h.append('<input type="checkbox" id="%s" data="%s" name="%s"/> ' \
+                    '<label class="asm-onlineform-checkboxlabel" for="%s">%s</label><br />' % (rid, lv, rname, rid, lv))
             h.append('</div>')
         elif f.FIELDTYPE == FIELDTYPE_SHELTERANIMAL:
             h.append('<select class="asm-onlineform-shelteranimal" id="%s" name="%s" title="%s" %s>' % ( fid, cname, asm3.utils.nulltostr(f.TOOLTIP), required))
@@ -399,7 +402,7 @@ def get_onlineform_header(dbo):
         "}\n" \
         "/* full size computers and tablets */\n" \
         "@media screen and (min-device-width:481px) {\n" \
-        "    .asm-onlineform-td:first-child { max-width: 400px; }\n" \
+        "    .asm-onlineform-td:first-child, .asm-onlineform-checkboxlabel { max-width: 400px; }\n" \
         "    .asm-onlineform-table { margin-left: auto; margin-right: auto }\n" \
         "    textarea { width: 300px; height: 150px; }\n" \
         "    td, input, textarea, select, label { font-size: 110%; }\n" \
