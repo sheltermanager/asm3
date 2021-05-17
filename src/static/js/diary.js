@@ -22,7 +22,7 @@ $(function() {
                     { json_field: "DIARYDATETIME", post_field: "diarytime", label: _("Time"), type: "time" },
                     { json_field: "DATECOMPLETED", post_field: "completed", label: _("Completed"), type: "date" },
                     { json_field: "SUBJECT", label: _("Subject"), post_field: "subject", validation: "notblank", type: "text" },
-                    { json_field: "NOTE", label: _("Note"), post_field: "note", validation: "notblank", type: "textarea" },
+                    { json_field: "NOTE", label: _("Note"), post_field: "note", type: "textarea" },
                     { json_field: "COMMENTS", label: _("Comments"), post_field: "comments", type: "textarea" }
                 ]
             };
