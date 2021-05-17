@@ -402,7 +402,8 @@ def get_onlineform_header(dbo):
         "}\n" \
         "/* full size computers and tablets */\n" \
         "@media screen and (min-device-width:481px) {\n" \
-        "    .asm-onlineform-td:first-child, .asm-onlineform-checkboxlabel { max-width: 400px; }\n" \
+        "    .asm-onlineform-td:first-child { max-width: 400px; }\n" \
+        "    .asm-onlineform-checkboxlabel { max-width: 400px; display: inline-block; }\n" \
         "    .asm-onlineform-table { margin-left: auto; margin-right: auto }\n" \
         "    textarea { width: 300px; height: 150px; }\n" \
         "    td, input, textarea, select, label { font-size: 110%; }\n" \
