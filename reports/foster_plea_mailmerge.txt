@@ -1,0 +1,21 @@
+Foster Plea
+###
+Movements
+###
+Any
+###
+Contact info for all fosterers, including info for selected animal in need of fostering
+###
+en
+###
+SELECT ShelterCode, AnimalName, species.SpeciesName, animal.BreedName, animal.AnimalAge, 
+OwnerName, OwnerAddress, OwnerTown, OwnerCounty, OwnerPostcode, EmailAddress, 
+HomeTelephone, WorkTelephone, MobileTelephone
+FROM owner, animal
+INNER JOIN species ON species.ID = animal.SpeciesID
+INNER JOIN reservationstatus ON reservationstatus.ID = adoption.ReservationStatusID
+WHERE owner.IsFosterer = 0 AND owner.IsDeceased = 0 AND animal.ID = $ASK ANIMAL$
+ORDER BY OwnerName
+###
+MAIL
+
