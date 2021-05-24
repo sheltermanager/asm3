@@ -8,13 +8,27 @@ Contact info for all fosterers, including info for selected animal in need of fo
 ###
 en
 ###
-SELECT ShelterCode, AnimalName, species.SpeciesName, animal.BreedName, animal.AnimalAge, 
+SELECT
+a.ID AS AnimalID, a.ShelterCode, a.ShortCode,
+a.AnimalName, a.AnimalComments, a.HealthProblems, a,Markings, a.Fee, a.HoldUntilDate, 
+a.AnimalAge AS Age, a.MostRecentEntryDate as MostRecentEntry, a.Weight, a.DateOfBirth, a.DateBroughtIn, 
+a.BreedName, s.SpeciesName, c.BaseColour AS BaseColourName,
+a.IdentichipNumber, a.IdentichipNumber AS MicrochipNumber,
+(SELECT Name FROM lksyesno WHERE ID = a.Neutered) AS Neutered,
+(SELECT Sex FROM lksex WHERE ID = a.Sex) AS Sex,
+(SELECT Size FROM lksize WHERE ID = a.Size) AS Size,
+(SELECT Name FROM lksynunk WHERE ID = a.IsGoodWithChildren) AS GoodWithChildren,
+(SELECT Name FROM lksynun WHERE ID = a.IsGoodWithCats) AS GoodWithCats,
+(SELECT Name FROM lksynun WHERE ID = a.IsGoodWithDogs) AS GoodWithDogs,
+(SELECT Name FROM lksynun WHERE ID = a.IsHouseTrained) AS HouseTrained,
+il.LocationName AS InternalLocation, il.LocationName, a.ShelterLocationUnit AS LocationUnit, a.DisplayLocation,
+'<img height="200px" src="image?db=$DATABASENAME$&mode=animal&id=' || a.ID::text || '" />' AS DocumentImgLink,
 OwnerName, OwnerAddress, OwnerTown, OwnerCounty, OwnerPostcode, EmailAddress, 
 HomeTelephone, WorkTelephone, MobileTelephone
-FROM owner, animal
-INNER JOIN species ON species.ID = animal.SpeciesID
-INNER JOIN reservationstatus ON reservationstatus.ID = adoption.ReservationStatusID
-WHERE owner.IsFosterer = 0 AND owner.IsDeceased = 0 AND animal.ID = $ASK ANIMAL$
+FROM owner o, animal a
+INNER JOIN basecolour c ON c.ID = animal.BaseColourID
+INNER JOIN species s ON s.ID = animal.SpeciesID
+WHERE owner.IsFosterer = 1 AND owner.IsDeceased = 0 AND animal.ID = $ASK ANIMAL$
 ORDER BY OwnerName
 ###
 MAIL
