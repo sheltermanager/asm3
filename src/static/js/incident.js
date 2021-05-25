@@ -167,8 +167,7 @@ $(function() {
                 '<table width="100%" class="additionaltarget" data="to17">',
                 '<tr>',
                 '<td><label for="dispatchedaco">' + _("Dispatched ACO") + '</label></td>',
-                '<td><select id="dispatchedaco" data-json="DISPATCHEDACO" data-post="dispatchedaco" class="asm-selectbox">',
-                '<option> </option>',
+                '<td><select id="dispatchedaco" data-json="DISPATCHEDACO" data-post="dispatchedaco" class="asm-bsmselect" multiple="multiple">',
                 html.list_to_options(controller.users, "USERNAME", "USERNAME"),
                 '</td>',
                 '</tr>',
@@ -488,11 +487,12 @@ $(function() {
             });
 
             $("#button-email").button().click(function() {
-                let emailname = "", emailaddress = "";
+                let emailaddress = "", emailname = "";
                 $.each(controller.users, function(i, v) {
-                    if (v.USERNAME == $("#dispatchedaco").select("value")) {
+                    if (common.array_in(v.USERNAME, String($("#dispatchedaco").val()).split(","))) {
+                        if (emailaddress != "") { emailaddress += ", "; }
                         emailname = v.REALNAME;
-                        emailaddress = v.EMAILADDRESS;
+                        emailaddress += v.EMAILADDRESS;
                     }
                 });
                 let i = controller.incident;
@@ -512,7 +512,7 @@ $(function() {
                     title: _("Email incident notes to ACO"),
                     post: "incident",
                     formdata: "mode=email",
-                    name: emailname,
+                    name: common.iif(emailaddress.indexOf(",") == -1, emailname, ""),
                     email: emailaddress,
                     message: "<p>" + common.replace_all(html.decode(msg), "\n", "<br/>") + "</p>",
                     subject: subject
@@ -573,20 +573,21 @@ $(function() {
 
         sync: function() {
 
+            // If any of the dispatched ACOs are not in the list (can happen if a
+            // user account is later deleted), add it to the aco list so that it doesn't
+            // disappear.
+            $.each(controller.incident.DISPATCHEDACO.split(","), function(ia, aco) {
+                let acoinlist = false;
+                $.each(controller.users, function(i, v) {
+                    if (v.USERNAME == aco) { acoinlist = true; return false; }
+                });
+                if (!acoinlist) {
+                    $("#dispatchedaco").append("<option value=\"" + html.title(aco) + "\">" + aco + "</option>");
+                }
+            });
+
             // Load the data into the controls for the screen
             $("#asm-content input, #asm-content select, #asm-content textarea").fromJSON(controller.incident);
-
-            // If the dispatch ACO is not in the list (can happen if the
-            // user account is later deleted), add it back so that it doesn't
-            // disappear.
-            let acoinlist = false;
-            $.each(controller.users, function(i, v) {
-                if (v.USERNAME == controller.incident.DISPATCHEDACO) { acoinlist = true; return false; }
-            });
-            if (!acoinlist) {
-                $("#dispatchedaco").append("<option>" + controller.incident.DISPATCHEDACO + "</option>");
-                $("#dispatchedaco").select("value", controller.incident.DISPATCHEDACO);
-            }
 
             // Update the lat/long
             $(".asm-latlong").latlong("load");
