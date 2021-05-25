@@ -32,8 +32,8 @@ o.HomeTelephone, o.WorkTelephone, o.EmailAddress, o.OwnerTitle, o.OwnerForenames
 o.OwnerSurname, o.MembershipExpiryDate
 FROM owner o
 WHERE o.IsFosterer = 1 AND o.ExcludeFromBulkEmail = 0
-AND o.CreatedBy >= '$ASK DATE Entered between$'
-AND o.CreatedBy <= '$ASK DATE and$'
+AND o.CreatedDate >= '$ASK DATE Entered between$'
+AND o.CreatedDate <= '$ASK DATE and$'
 ORDER BY o.OwnerSurname
 ###
 MAIL
