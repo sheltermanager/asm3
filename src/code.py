@@ -485,13 +485,14 @@ class database(ASMEndpoint):
             </div>
             </form>
             <script type="text/javascript">
+            $("select").val("%s");
             $("#createdb").button().click(function() {
                 $("#createdb").button("disable");
                 $("#info").fadeIn();
                 $("#cdbf").submit();
             });
             </script>
-            """ % asm3.html.options_locales()
+            """ % (asm3.html.options_locales(), LOCALE)
         s += asm3.html.footer()
         self.content_type("text/html")
         return s
