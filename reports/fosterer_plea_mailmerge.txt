@@ -2,7 +2,7 @@ Fosterer Plea
 ###
 Movements
 ###
-Any
+34302/PostgreSQL
 ###
 Contact info for all fosterers, including info for selected animal in need of fostering
 ###
@@ -22,7 +22,7 @@ a.IdentichipNumber, a.IdentichipNumber AS MicrochipNumber,
 (SELECT Name FROM lksynun WHERE ID = a.IsGoodWithDogs) AS GoodWithDogs,
 (SELECT Name FROM lksynun WHERE ID = a.IsHouseTrained) AS HouseTrained,
 il.LocationName AS InternalLocation, il.LocationName, a.ShelterLocationUnit AS LocationUnit, a.DisplayLocation,
-'<img height="200px" src="image?db=$DATABASENAME$&mode=animal&id=' || a.ID::text || '" />' AS DocumentImgLink,
+'<img height="200px" src="https://service.sheltermanager.com/asmservice?account=$DATABASENAME$&method=animal_image&animalid=' || a.ID::text || '" />' AS DocumentImgLink,
 OwnerName, OwnerAddress, OwnerTown, OwnerCounty, OwnerPostcode, EmailAddress,
 HomeTelephone, WorkTelephone, MobileTelephone
 FROM owner o, animal a
