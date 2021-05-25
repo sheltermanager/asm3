@@ -391,6 +391,8 @@ def csvimport(dbo, csvdata, encoding = "utf-8-sig", user = "", createmissinglook
 
         # Do we have animal data to read?
         animalid = 0
+        nonshelter = False
+        originalownerid = 0
         if hasanimal and gks(row, "ANIMALNAME") != "":
             a = {}
             a["animalname"] = gks(row, "ANIMALNAME")
@@ -435,6 +437,7 @@ def csvimport(dbo, csvdata, encoding = "utf-8-sig", user = "", createmissinglook
             a["healthproblems"] = gks(row, "ANIMALHEALTHPROBLEMS")
             a["notforadoption"] = gkbi(row, "ANIMALNOTFORADOPTION")
             a["nonshelter"] = gkbc(row, "ANIMALNONSHELTER")
+            nonshelter = a["nonshelter"] == "on"
             a["transferin"] = gkbc(row, "ANIMALTRANSFER")
             a["housetrained"] = gkynu(row, "ANIMALHOUSETRAINED")
             a["goodwithcats"] = gkynu(row, "ANIMALGOODWITHCATS")
@@ -491,19 +494,20 @@ def csvimport(dbo, csvdata, encoding = "utf-8-sig", user = "", createmissinglook
                 p["mobiletelephone"] = gks(row, "ORIGINALOWNERCELLPHONE")
                 p["emailaddress"] = gks(row, "ORIGINALOWNEREMAIL")
                 try:
-                    ooid = 0
+                    originalownerid = 0
                     if checkduplicates:
                         dups = asm3.person.get_person_similar(dbo, p["emailaddress"], p["mobiletelephone"], p["surname"], p["forenames"], p["address"])
                         if len(dups) > 0:
-                            ooid = dups[0]["ID"]
-                    if ooid == 0:
-                        ooid = asm3.person.insert_person_from_form(dbo, asm3.utils.PostedData(p, dbo.locale), user, geocode=False)
+                            originalownerid = dups[0]["ID"]
+                    if originalownerid == 0:
+                        originalownerid = asm3.person.insert_person_from_form(dbo, asm3.utils.PostedData(p, dbo.locale), user, geocode=False)
                     # Identify any ORIGINALOWNERADDITIONAL additional fields and create/merge them
-                    if ooid > 0: create_additional_fields(dbo, row, errors, rowno, "ORIGINALOWNERADDITIONAL", "person", ooid)
+                    if originalownerid > 0: 
+                        create_additional_fields(dbo, row, errors, rowno, "ORIGINALOWNERADDITIONAL", "person", originalownerid)
                     if "transferin" in a and a["transferin"] == "on":
-                        a["broughtinby"] = str(ooid) # set original owner as transferor for transfers in
+                        a["broughtinby"] = str(originalownerid) # set original owner as transferor for transfers in
                     else:
-                        a["originalowner"] = str(ooid)
+                        a["originalowner"] = str(originalownerid)
                 except Exception as e:
                     row_error(errors, "originalowner", rowno, row, e, dbo, sys.exc_info())
             # If a current vet is specified, create a person record
@@ -703,7 +707,7 @@ def csvimport(dbo, csvdata, encoding = "utf-8-sig", user = "", createmissinglook
                 row_error(errors, "payment", rowno, row, e, dbo, sys.exc_info())
             if movementid != 0: asm3.movement.update_movement_donation(dbo, movementid)
 
-        # Vaccination?
+        # Vaccination
         if hasvacc and animalid != 0 and gks(row, "VACCINATIONDUEDATE") != "":
             v = {}
             v["animal"] = str(animalid)
@@ -722,7 +726,7 @@ def csvimport(dbo, csvdata, encoding = "utf-8-sig", user = "", createmissinglook
             except Exception as e:
                 row_error(errors, "vaccination", rowno, row, e, dbo, sys.exc_info())
 
-        # Test?
+        # Test
         if hastest and animalid != 0 and gks(row, "TESTDUEDATE") != "":
             v = {}
             v["animal"] = str(animalid)
@@ -736,7 +740,7 @@ def csvimport(dbo, csvdata, encoding = "utf-8-sig", user = "", createmissinglook
             except Exception as e:
                 row_error(errors, "test", rowno, row, e, dbo, sys.exc_info())
 
-        # Medical?
+        # Medical
         if hasmed and animalid != 0 and gks(row, "MEDICALGIVENDATE") != "" and gks(row, "MEDICALNAME") != "":
             m = {}
             m["animal"] = str(animalid)
@@ -762,10 +766,27 @@ def csvimport(dbo, csvdata, encoding = "utf-8-sig", user = "", createmissinglook
             except Exception as e:
                 row_error(errors, "log", rowno, row, e, dbo, sys.exc_info())
 
-        # License?
+        # License (PERSON columns)
         if haslicence and personid != 0 and gks(row, "LICENSENUMBER") != "":
             l = {}
             l["person"] = str(personid)
+            l["animal"] = str(animalid)
+            l["type"] = gkl(dbo, row, "LICENSETYPE", "licencetype", "LicenceTypeName", createmissinglookups)
+            if l["type"] == "0": l["type"] = 1
+            l["number"] = gks(row, "LICENSENUMBER")
+            l["fee"] = str(gkc(row, "LICENSEFEE"))
+            l["issuedate"] = gkd(dbo, row, "LICENSEISSUEDATE")
+            l["expirydate"] = gkd(dbo, row, "LICENSEEXPIRESDATE")
+            l["comments"] = gks(row, "LICENSECOMMENTS")
+            try:
+                asm3.financial.insert_licence_from_form(dbo, user, asm3.utils.PostedData(l, dbo.locale))
+            except Exception as e:
+                row_error(errors, "license", rowno, row, e, dbo, sys.exc_info())
+
+        # License (ORIGINALOWNER columns for non-shelter animals)
+        if haslicence and originalownerid != 0 and nonshelter and gks(row, "LICENSENUMBER") != "":
+            l = {}
+            l["person"] = str(originalownerid)
             l["animal"] = str(animalid)
             l["type"] = gkl(dbo, row, "LICENSETYPE", "licencetype", "LicenceTypeName", createmissinglookups)
             if l["type"] == "0": l["type"] = 1
