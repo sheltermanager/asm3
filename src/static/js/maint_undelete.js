@@ -9,13 +9,12 @@ $(function() {
         model: function() {
             const table = {
                 rows: controller.rows,
-                idcolumn: "ID",
+                idcolumn: "KEY",
                 edit: function(row) {
                     //common.route("document_repository_file?ajax=false&dbfsid=" + row.ID);
                 },
                 columns: [
-                    { field: "ID", display: _("ID") },
-                    { field: "TABLENAME", display: _("Table") },
+                    { field: "KEY", display: _("ID") },
                     { field: "DATE", display: _("Date"), initialsort: true, initialsortdirection: "desc", formatter: tableform.format_datetime },
                     { field: "DELETEDBY", display: _("By") }
                 ]
@@ -24,18 +23,20 @@ $(function() {
             const buttons = [
                 { id: "restore", text: _("Restore"), icon: "new", enabled: "multi", perm: "", 
                     click: async function() { 
-                        let rows = tableform.table_selected_rows(table), tablename = "", ids = [], multitable = false;
-                        $.each(rows, function(i, row) {
-                            ids.push(String(row.ID));
-                            if (tablename != "" && tablename != row.TABLENAME) { multitable = true; }
-                            tablename = row.TABLENAME;
-                        });
-                        if (multitable) { alert("Cannot restore from multiple tables at the same time."); return; }
-                        await common.ajax_post("maint_undelete", "mode=undelete&ids=" + ids.join(",") + "&table=" + tablename);
+                        await common.ajax_post("maint_undelete", "mode=undelete&ids=" + tableform.table_ids(table));
                         header.show_info("Restored.");
                      } 
+                },
+                { id: "selectall", type: "dropdownfilter", 
+                    options: [ "(select)", "animal", "customreport", "onlineformincoming" ],
+                    click: function(selval) {
+                        $("#tableform input[type='checkbox']").each(function() {
+                            if (String($(this).attr("data-id")).indexOf(selval) == 0) { $(this).prop("checked", true); }
+                        });
+                    }
                 }
             ];
+
             this.buttons = buttons;
             this.table = table;
         },

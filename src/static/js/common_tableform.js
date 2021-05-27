@@ -476,7 +476,7 @@ const tableform = {
      * Returns an empty list if nothing is selected.
      */
     table_selected_rows: function(table) {
-        var results = [], selid = $("#tableform input:checked").attr("data-id");
+        var results = [];
         $("#tableform input:checked").each(function() {
             var el = $(this);
             $.each(table.rows, function(i, v) {
