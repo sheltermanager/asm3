@@ -22,10 +22,16 @@ $(function() {
             };
 
             const buttons = [
-                { id: "restore", text: _("Restore"), icon: "new", enabled: "one", perm: "", 
+                { id: "restore", text: _("Restore"), icon: "new", enabled: "multi", perm: "", 
                     click: async function() { 
-                        let row = tableform.table_selected_row(table);
-                        await common.ajax_post("maint_undelete", "mode=undelete&id=" + row.ID + "&table=" + row.TABLENAME);
+                        let rows = tableform.table_selected_rows(table), tablename = "", ids = [], multitable = false;
+                        $.each(rows, function(i, row) {
+                            ids.push(String(row.ID));
+                            if (tablename != "" && tablename != row.TABLENAME) { multitable = true; }
+                            tablename = row.TABLENAME;
+                        });
+                        if (multitable) { alert("Cannot restore from multiple tables at the same time."); return; }
+                        await common.ajax_post("maint_undelete", "mode=undelete&ids=" + ids.join(",") + "&table=" + tablename);
                         header.show_info("Restored.");
                      } 
                 }

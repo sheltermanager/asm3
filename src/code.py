@@ -3948,7 +3948,8 @@ class maint_undelete(JSONEndpoint):
 
     def post_undelete(self, o):
         self.check(asm3.users.USE_SQL_INTERFACE)
-        asm3.audit.undelete(o.dbo, o.post.integer("id"), o.post["table"])
+        for i in o.post.integer_list("ids"):
+            asm3.audit.undelete(o.dbo, i, o.post["table"])
 
 class medical(JSONEndpoint):
     url = "medical"
