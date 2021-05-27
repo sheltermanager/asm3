@@ -284,7 +284,8 @@ def get_links(dbo, pid):
         "INNER JOIN species s ON s.ID = a.SpeciesID " \
         "LEFT OUTER JOIN internallocation il ON il.ID = a.ShelterLocation " \
         "LEFT OUTER JOIN deathreason dr ON dr.ID = a.PTSReasonID " \
-        "WHERE a.OwnerID = %d AND (a.NonShelterAnimal=1 OR a.OwnerID <> ad.OwnerID) " % (linkdisplay, animalextra, int(pid))
+        "WHERE (a.OwnerID = %d AND (a.NonShelterAnimal=1 OR a.OwnerID <> ad.OwnerID)) " \
+        "OR (a.OriginalOwnerID = %d AND a.NonShelterAnimal=1)" % (linkdisplay, animalextra, int(pid), int(pid))
     # Original Owner (shelter animals only)
     sql += "UNION SELECT 'OO' AS TYPE, " \
         "'' AS TYPEDISPLAY, a.DateBroughtIn AS DDATE, a.ID AS LINKID, " \
