@@ -1154,7 +1154,7 @@ $(function() {
                 '<td><input data="CardcomUserName" id="CardcomUserName" type="text" class="asm-textbox asm-doubletextbox asm-mask" /></td></tr>',
 
                 '<tr><td><label for="CardcomDocumentType">' + _("Cardcom Document Type") + '</label></td>',
-                '<td><input data="CardcomDocumentType" id="CardcomDocumentType" type="text" class="asm-textbox asm-doubletextbox asm-mask" /></td></tr>',
+                '<td><input data="CardcomDocumentType" id="CardcomDocumentType" type="text" class="asm-textbox asm-doubletextbox" /></td></tr>',
 
 
                 '<tr><td><label for="CardcomSuccessURL">' + _("Cardcom Success URL") + '</label></td>',

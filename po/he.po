@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: sheltermanager\n"
 "Report-Msgid-Bugs-To: robin@sheltermanager.com\n"
 "POT-Creation-Date: 2021-04-06 13:53+0000\n"
-"PO-Revision-Date: 2021-05-12 15:17+0300\n"
+"PO-Revision-Date: 2021-05-23 13:40+0300\n"
 "Last-Translator: Saggi <s@elephx.com>\n"
 "Language-Team: Hebrew <http://3.127.98.227/projects/asm/asm3/he/>\n"
 "Language: he\n"
@@ -4882,7 +4882,7 @@ msgstr "חיסונים שפג תוקפם בחודש הבא"
 
 #: vaccination.js
 msgid "Expired"
-msgstr "תפוגת חיסון"
+msgstr "פג תוקף"
 
 #: licence.js
 msgid "Expired in the last month"
@@ -4895,7 +4895,7 @@ msgstr "חיסונים שפג תוקפם בשבוע שעבר"
 #: mobile.py wordprocessor.py vouchers.js litters.js person.js vaccination.js
 #: main.js licence.js
 msgid "Expires"
-msgstr "מתי לחדש חיסון"
+msgstr "תפוגה"
 
 #: vouchers.js
 msgid "Expiring in next month"

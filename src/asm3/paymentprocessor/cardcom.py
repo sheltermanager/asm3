@@ -51,7 +51,7 @@ class Cardcom(PaymentProcessor):
             "InvoiceHead.CustCity": asm3.utils.decode_html(p.OWNERTOWN)[:50],            
             "InvoiceHead.CustMobilePH": asm3.utils.decode_html(p.MOBILETELEPHONE)[:50],  
             "InvoiceHead.ExtIsVatFree": "true",# no VAT for nonprofit receipts. TODO: config?
-            "InvoiceHead.SendByEmail": "true", # TODO: not critical - config?
+            "InvoiceHead.SendByEmail": "false", # TODO: not critical - config?
             "InvoiceHead.Language": "he", # TODO: not critical - config / use locale?
             "InvoiceHead.Email": p.EMAILADDRESS,
             "TokenToCharge.Token": asm3.person.get_extra_id(self.dbo, p, "Cardcom_Token"),
