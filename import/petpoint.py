@@ -41,7 +41,7 @@ header will also need to be removed or odd/even will be thrown out.
 # The shelter's petfinder ID for grabbing animal images for adoptable animals
 PETFINDER_ID = ""
 START_ID = 100
-ACCOUNT = "ss2519"
+ACCOUNT = "lm2547"
 
 INTAKE_FILENAME = "/home/robin/tmp/asm3_import_data/petpoint_%s/animals.csv" % ACCOUNT
 CASES_FILENAME = "/home/robin/tmp/asm3_import_data/petpoint_%s/cases.csv" % ACCOUNT
