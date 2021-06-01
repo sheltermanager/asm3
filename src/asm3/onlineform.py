@@ -396,7 +396,7 @@ def get_onlineform_header(dbo):
         "    * { font-size: 110%; }\n" \
         "    h2 { font-size: 200%; }\n" \
         "    .asm-onlineform-table td { display: block; width: 100%; margin-bottom: 20px; }\n" \
-        "    label, input, select, textarea { width: 97%; padding: 5px; }\n" \
+        "    label, input[type='text'], input[type='email'], select, textarea { width: 97%; padding: 5px; }" \
         "    label { word-wrap: anywhere; }\n" \
         "    input[type='submit'] { background-color: #2CBBBB; border: 1px solid #27A0A0; color: #fff; padding: 20px; }\n" \
         "}\n" \
