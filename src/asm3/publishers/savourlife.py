@@ -186,12 +186,14 @@ class SavourLifePublisher(AbstractPublisher):
                 # Append the additional fields so we can get the enquiry number
                 asm3.additional.append_to_results(self.dbo, animals, "animal")
 
-                # Cancel the inactive listings - we can either mark a dog as adopted, or we can delete the listing.
+                # Cancel the inactive listings - we can either mark a dog as adopted, held, or we can delete the listing.
                 for an in animals:
                     try:
                         status = "removed"
-                        if an.ACTIVEMOVEMENTDATE is not None and an.ACTIVEMOVEMENTTYPE == 1: 
+                        if an.ACTIVEMOVEMENTDATE is not None and an.ACTIVEMOVEMENTTYPE == 1:
                             status = "adopted"
+                        elif an.ARCHIVED == 0: # animal is still in care but not adoptable
+                            status = "held"
 
                         # We have the last status update in the LastStatus field 
                         # (which is animalpublished.Extra for this animal)
@@ -221,6 +223,10 @@ class SavourLifePublisher(AbstractPublisher):
                                 "EnquiryNumber": enquirynumber
                             }
                             url = SAVOURLIFE_URL + "setDogAdopted"
+                        elif status == "held":
+                            # We're marking the listing as held
+                            data = self.processAnimal(an, dogid, postcode, state, suburb, username, token, interstate, True)
+                            url = SAVOURLIFE_URL + "setDog"
                         else:
                             # We're deleting the listing
                             data = {
@@ -255,7 +261,7 @@ class SavourLifePublisher(AbstractPublisher):
 
         self.cleanup()
 
-    def processAnimal(self, an, dogid="", postcode="", state="", suburb="", username="", token="", interstate=False):
+    def processAnimal(self, an, dogid="", postcode="", state="", suburb="", username="", token="", interstate=False, hold=False):
         """ Processes an animal record and returns a data dictionary for upload as JSON """
         # Size is 10 = small, 20 = medium, 30 = large, 40 = x large
         size = ""
@@ -349,7 +355,7 @@ class SavourLifePublisher(AbstractPublisher):
             "SizeWhenAdult":            size,
             "IsSaved":                  an.ACTIVEMOVEMENTTYPE == 1,
             "MicrochipDetails":         microchipdetails,
-            "IsOnHold":                 an.HASACTIVERESERVE == 1
+            "IsOnHold":                 hold # Typically false, but the change status code will do this
         }
 
 
