@@ -373,10 +373,17 @@ const tableform = {
             });
         }
 
-        // Allow CTRL+A to select everything in the table
+        // Allow CTRL+A to select all visible rows in the table - 
+        // but only if the tableform dialog isn't open so CTRL+A still selects 
+        // content in dialog fields as expecetd.
         Mousetrap.bind("ctrl+a", function() {
-            $("#tableform input[type='checkbox']").prop("checked", true);
-            $("#tableform td").addClass("ui-state-highlight");
+            if ($("#dialog-tableform").hasClass("ui-dialog-content") && $("#dialog-tableform").dialog("isOpen")) { return false; }
+            $("#tableform input[type='checkbox']").each(function() {
+                if ($(this).is(":visible")) {
+                    $(this).prop("checked", true);
+                    $(this).closest("tr").find("td").addClass("ui-state-highlight");
+                }
+            });
             tableform.table_update_buttons(table, buttons);
             return false;
         });

@@ -31,8 +31,12 @@ $(function() {
                     options: [ "(select)", "animal", "customreport", "onlineformincoming" ],
                     click: function(selval) {
                         $("#tableform input[type='checkbox']").each(function() {
-                            if (String($(this).attr("data-id")).indexOf(selval) == 0) { $(this).prop("checked", true); }
+                            if (String($(this).attr("data-id")).indexOf(selval) == 0) { 
+                                $(this).prop("checked", true); 
+                                $(this).closest("tr").find("td").addClass("ui-state-highlight");
+                            }
                         });
+                        tableform.table_update_buttons(table, buttons);
                     }
                 }
             ];
