@@ -701,7 +701,8 @@ $.widget("asm.emailform", {
         $("#dialog-email").dialog("option", "title", o.title || _("Email person"));
         $("#dialog-email").dialog("open");
         if (o.logtypes) {
-            $("#em-logtype").append( html.list_to_options(o.logtypes, "ID", "LOGTYPENAME") );
+            $("#em-logtype").html( html.list_to_options(o.logtypes, "ID", "LOGTYPENAME") );
+            $("#em-logtype").select("removeRetiredOptions", "all");
             $("#em-logtype").select("value", config.integer("AFDefaultLogType"));
         }
         else {

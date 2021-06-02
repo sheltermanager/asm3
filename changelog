@@ -1,6 +1,7 @@
 45
 ================
 
+02/06/21 Remove inactive log types from email dialogs #1016
 02/06/21 HomeAgain: issue with blank forenames for orgs
 01/06/21 Fix for online form checkbox/radio on mobile layout
 01/06/21 SavourLife: support holding listings for animals in care
