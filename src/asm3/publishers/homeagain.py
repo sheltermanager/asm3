@@ -159,6 +159,8 @@ class HomeAgainPublisher(AbstractPublisher):
             return s.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
         reccountry = an.CURRENTOWNERCOUNTRY
         if reccountry is None or reccountry == "": reccountry = "USA"
+        forenames = an.CURRENTOWNERFORENAMES
+        if forenames is None or forenames == "": forenames = "org" # organisation
         return '<?xml version="1.0" encoding="UTF-8"?>\n' \
             '<MicrochipRegistration ' \
             'version="1.32" ' \
@@ -172,14 +174,14 @@ class HomeAgainPublisher(AbstractPublisher):
             '<OwnerDetails>' \
             ' <Salutation>' + xe(an["CURRENTOWNERTITLE"]) + '</Salutation>' \
             ' <Initials>' + xe(an["CURRENTOWNERINITIALS"]) + '</Initials>' \
-            ' <Forenames>' + xe(an["CURRENTOWNERFORENAMES"]) + '</Forenames>' \
+            ' <Forenames>' + xe(forenames) + '</Forenames>' \
             ' <Surname>' + xe(an["CURRENTOWNERSURNAME"]) + '</Surname>' \
             ' <Address>' \
             '  <Line1>'+ xe(an["CURRENTOWNERADDRESS"]) + '</Line1>' \
             '  <TownCity>'+ xe(an["CURRENTOWNERTOWN"]) + '</TownCity>' \
             '  <County_State>'+ xe(an["CURRENTOWNERCOUNTY"]) + '</County_State>' \
             '  <PostalCode>' + xe(an["CURRENTOWNERPOSTCODE"]) + '</PostalCode>' \
-            '  <Country>' + reccountry + '</Country>' \
+            '  <Country>' + xe(reccountry) + '</Country>' \
             ' </Address>' \
             ' <DaytimePhone><Number>' + xe(an["CURRENTOWNERWORKTELEPHONE"]) + '</Number><Note/></DaytimePhone>' \
             ' <EveningPhone><Number>' + xe(an["CURRENTOWNERHOMETELEPHONE"]) + '</Number><Note/></EveningPhone>' \
