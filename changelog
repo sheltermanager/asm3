@@ -1,6 +1,7 @@
 45
 ================
 
+04/06/21 Ability to title case headers for SAC CSV Export
 02/06/21 CTRL+A: only select visible rows and only when table is focused #1014
 02/06/21 Remove inactive log types from email dialogs #1016
 02/06/21 HomeAgain: issue with blank forenames for orgs

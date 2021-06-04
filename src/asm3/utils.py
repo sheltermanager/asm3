@@ -942,12 +942,17 @@ def csv_parse(s):
         if pos[2]: break # EOF
     return rows
 
-def csv(l, rows, cols = None, includeheader = True):
+def csv(l, rows, cols = None, includeheader = True, titlecaseheader = False):
     """
     Creates a CSV file from a set of resultset rows. If cols has been 
     supplied as a list of strings, fields will be output in that
     order.
     The file is constructed as a list of unicode strings and returned as a utf-8 encoded byte string.
+    l:  locale (used for formatting currencies and dates)
+    rows: list of dict result rows
+    cols: list of column headings, if None uses the result column names
+    includeheader: if True writes the header row
+    titlecaseheader: if True title cases the header row
     """
     if rows is None or len(rows) == 0: return ""
     lines = []
@@ -962,7 +967,10 @@ def csv(l, rows, cols = None, includeheader = True):
             cols.append(k)
         cols = sorted(cols)
     if includeheader: 
-        writerow(cols)
+        if titlecaseheader: 
+            writerow([ c.title() for c in cols ])
+        else:
+            writerow(cols)
     for r in rows:
         rd = []
         for c in cols:

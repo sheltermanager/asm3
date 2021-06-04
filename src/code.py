@@ -5404,7 +5404,7 @@ class report_export_csv(ASMEndpoint):
         rows, cols = asm3.reports.execute_query(dbo, crid, o.user, p)
         self.content_type("text/csv")
         self.header("Content-Disposition", u"attachment; filename=\"" + asm3.utils.decode_html(filename) + u".csv\"")
-        return asm3.utils.csv(o.locale, rows, cols, True)
+        return asm3.utils.csv(o.locale, rows, cols, includeheader=True, titlecaseheader="TITLECASEHEADER" in cols)
 
 class report_images(JSONEndpoint):
     url = "report_images"

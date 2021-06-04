@@ -393,7 +393,8 @@ AND DateOfBirth >= DeceasedDate - INTERVAL '5 months') AS "Outcome Owner-Intende
 
 0 AS "Outcome Owner-Intended Euthanasia Age Unknown",
 
-1 AS Ordering
+1 AS Ordering,
+1 AS TitleCaseHeader
 
 -- END OF SPECIES
 
@@ -765,7 +766,8 @@ AND DateOfBirth >= DeceasedDate - INTERVAL '5 months') AS "Outcome Owner-Intende
 
 0 AS "Outcome Owner-Intended Euthanasia Age Unknown",
 
-2 AS Ordering
+2 AS Ordering,
+1 AS TitleCaseHeader
 
 -- END OF SPECIES
 
@@ -1137,7 +1139,8 @@ AND DateOfBirth >= DeceasedDate - INTERVAL '5 months') AS "Outcome Owner-Intende
 
 0 AS "Outcome Owner-Intended Euthanasia Age Unknown",
 
-3 AS Ordering
+3 AS Ordering,
+1 AS TitleCaseHeader
 
 -- END OF SPECIES
 
@@ -1510,7 +1513,8 @@ AND DateOfBirth >= DeceasedDate - INTERVAL '5 months') AS "Outcome Owner-Intende
 
 0 AS "Outcome Owner-Intended Euthanasia Age Unknown",
 
-4 AS Ordering
+4 AS Ordering,
+1 AS TitleCaseHeader
 
 -- END OF SPECIES
 
@@ -1883,7 +1887,8 @@ AND DateOfBirth >= DeceasedDate - INTERVAL '5 months') AS "Outcome Owner-Intende
 
 0 AS "Outcome Owner-Intended Euthanasia Age Unknown", 
 
-5 AS Ordering
+5 AS Ordering,
+1 AS TitleCaseHeader
 
 -- END OF SPECIES
 
@@ -2255,7 +2260,8 @@ AND DateOfBirth >= DeceasedDate - INTERVAL '5 months') AS "Outcome Owner-Intende
 
 0 AS "Outcome Owner-Intended Euthanasia Age Unknown",
 
-6 AS Ordering
+6 AS Ordering,
+1 AS TitleCaseHeader
 
 -- END OF SPECIES
 
@@ -2627,7 +2633,8 @@ AND DateOfBirth >= DeceasedDate - INTERVAL '5 months') AS "Outcome Owner-Intende
 
 0 AS "Outcome Owner-Intended Euthanasia Age Unknown", 
 
-7 AS Ordering
+7 AS Ordering,
+1 AS TitleCaseHeader
 
 -- END OF SPECIES
 
@@ -3000,7 +3007,8 @@ AND DateOfBirth >= DeceasedDate - INTERVAL '5 months') AS "Outcome Owner-Intende
 
 0 AS "Outcome Owner-Intended Euthanasia Age Unknown", 
 
-8 AS Ordering
+8 AS Ordering,
+1 AS TitleCaseHeader
 
 -- END OF SPECIES
 
