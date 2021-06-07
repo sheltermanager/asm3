@@ -6,8 +6,8 @@ import time
 # flake8: noqa - we have a lot of locales and this is convenient
 from asm3.locales import *
 
-VERSION = "45u [Mon  7 Jun 11:22:56 BST 2021]"
-BUILD = "06071122"
+VERSION = "45u [Mon  7 Jun 11:42:08 BST 2021]"
+BUILD = "06071142"
 
 DMY = ( "%d/%m/%Y", "%d/%m/%y" )
 HDMY = ( "%d-%m-%Y", "%d-%m-%y" )
@@ -675,7 +675,7 @@ def format_diff(l, days):
     Returns a formatted diff from a number of days.
     Eg: 6 weeks, 5 months.
     """
-    if days < 0: days = 0
+    if days is None or days < 0: days = 0
     weeks = int(days / 7)
     months = int(days / 30.5)
     years = int(days / 365)

@@ -5402,9 +5402,10 @@ class report_export_csv(ASMEndpoint):
         filename = title.replace(" ", "_").replace("\"", "").replace("'", "").lower()
         p = asm3.reports.get_criteria_params(dbo, crid, post)
         rows, cols = asm3.reports.execute_query(dbo, crid, o.user, p)
+        titlecaseheader = cols is not None and "TITLECASEHEADER" in cols
         self.content_type("text/csv")
         self.header("Content-Disposition", u"attachment; filename=\"" + asm3.utils.decode_html(filename) + u".csv\"")
-        return asm3.utils.csv(o.locale, rows, cols, includeheader=True, titlecaseheader="TITLECASEHEADER" in cols)
+        return asm3.utils.csv(o.locale, rows, cols, includeheader=True, titlecaseheader=titlecaseheader)
 
 class report_images(JSONEndpoint):
     url = "report_images"

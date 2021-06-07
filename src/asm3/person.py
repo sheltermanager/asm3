@@ -1400,7 +1400,7 @@ def lookingfor_summary(dbo, personid, p = None):
         c.append(_("Good with dogs", l))
     if p.MATCHHOUSETRAINED == 0: 
         c.append(_("Housetrained", l))
-    if p.MATCHAGEFROM >= 0 and p.MATCHAGETO > 0: 
+    if p.MATCHAGEFROM and p.MATCHAGETO and p.MATCHAGEFROM >= 0 and p.MATCHAGETO > 0: 
         c.append(_("Age", l) + (" %0.2f - %0.2f" % (p.MATCHAGEFROM, p.MATCHAGETO)))
     if p.MATCHCOMMENTSCONTAIN is not None and p.MATCHCOMMENTSCONTAIN != "":
         c.append(_("Comments Contain", l) + ": " + p.MATCHCOMMENTSCONTAIN)
