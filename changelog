@@ -1,6 +1,7 @@
 45
 ================
 
+07/06/21 Use the database report header for maps and charts
 07/06/21 Remove .html and _ from subject when emailing from media
 04/06/21 Ability to title case headers for SAC CSV Export
 02/06/21 CTRL+A: only select visible rows and only when table is focused #1014

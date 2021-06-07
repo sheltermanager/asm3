@@ -15,12 +15,11 @@ HEADER = 0
 FOOTER = 1
 
 DEFAULT_REPORT_HEADER = """
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<!DOCTYPE html>
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <title>$$TITLE$$</title>
-
 <style>
 * {
 font-family: Verdana,Arial,Helvetica,Sans-Serif;
@@ -1384,14 +1383,23 @@ class Report:
         """
         
         l = self.dbo.locale
-        self._Append(asm3.html.graph_header(self.title))
+
+        htmlheader = self._ReadHeader()
+        htmlfooter = self._ReadFooter()
+
+        # Inject the script tags needed into the header
+        htmlheader = htmlheader.replace("</head>", asm3.html.graph_js() + "\n</head>")
+
+        # Start the graph off with the HTML header
+        self._Append(htmlheader)
+        self._Append('<div id="placeholder" style="display: none; width: 100%; height: 500px;"></div>')
 
         # Run the graph query, bail out if we have an error
         try:
             rs, cols = self.dbo.query_tuple_columns(self.sql)
         except Exception as e:
             self._p(e)
-            self._Append("</body></html>")
+            self._Append(htmlfooter)
             return self.output
 
         # Output any criteria given at the top of the chart
@@ -1401,7 +1409,7 @@ class Report:
         if len(rs) == 0:
             self._Append("<!-- NODATA -->")
             self._p(asm3.i18n._("No data.", l))
-            self._Append("</body></html>")
+            self._Append(htmlfooter)
             return self.output
 
         self._Append("""<script type="text/javascript">
@@ -1492,9 +1500,8 @@ class Report:
         """)
         self._Append("""
             });
-            </script>
-            </body>
-            </html>""")
+            </script>""")
+        self._Append(htmlfooter)
         return self.output
 
     def _GenerateMap(self):
@@ -1505,14 +1512,22 @@ class Report:
         The html should be just the word MAP
         """
         l = self.dbo.locale
-        self._Append(asm3.html.map_header(self.title))
+
+        htmlheader = self._ReadHeader()
+        htmlfooter = self._ReadFooter()
+
+        # Inject the script tags needed into the header and set the title
+        htmlheader = htmlheader.replace("</head>", asm3.html.map_js() + "\n</head>")
+
+        # Start the map off with the HTML header
+        self._Append(htmlheader)
 
         # Run the map query, bail out if we have an error
         try:
             rs, cols = self.dbo.query_tuple_columns(self.sql)
         except Exception as e:
             self._p(e)
-            self._Append("</body></html>")
+            self._Append(htmlfooter)
             return self.output
 
         # Output any criteria given at the top of the chart
@@ -1522,16 +1537,16 @@ class Report:
         if len(rs) == 0:
             self._Append("<!-- NODATA -->")
             self._p(asm3.i18n._("No data.", l))
-            self._Append("</body></html>")
+            self._Append(htmlfooter)
             return self.output
 
         # Check we have two columns
         if len(rs[0]) != 2:
             self._p("Map query should have two columns.")
-            self._Append("</body></html>")
+            self._Append(htmlfooter)
             return self.output
 
-        self._Append('<div id="embeddedmap" style="z-index: 1; width: 100%%; height: 600px; color: #000" />\n')
+        self._Append('<div id="embeddedmap" style="z-index: 1; width: 100%; height: 600px; color: #000"></div>\n')
         self._Append("<script type='text/javascript'>\n" \
             "setTimeout(function() {\n" \
             "var points = \n")
@@ -1543,10 +1558,8 @@ class Report:
         self._Append( asm3.utils.json(p) + ";\n" )
         self._Append( "mapping.draw_map(\"embeddedmap\", 10, \"\", points);\n" )
         self._Append( "}, 50);\n" )
-        self._Append("""
-            </script>
-            </body>
-            </html>""")
+        self._Append("</script>")
+        self._Append(htmlfooter)
         return self.output
 
     def _GenerateReport(self):

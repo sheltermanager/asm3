@@ -319,42 +319,23 @@ def tinymce_main(locale, action, recid="", mediaid = "", linktype = "", redirect
             "redirecturl": redirecturl, 
             "content": content }
 
-def graph_header(title):
-    return """<!DOCTYPE html>
-        <html>
-        <head>
-        <title>%(title)s</title>
-        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-        <link href="static/css/asm.css" rel="stylesheet" />
+def graph_js():
+    return """
         %(jquery)s
         %(flot)s
         %(flotpie)s
-        </head>
-        <body>
-        <h2 class="asm-header">%(title)s</h2>
-        <div id="placeholder" style="display: none; width: 100%%; height: 500px;"></div>
-    """ % { "title" : title, 
-            "jquery": script_tag(JQUERY_JS), 
+    """ % { "jquery": script_tag(JQUERY_JS), 
             "flot": script_tag(FLOT_JS), 
             "flotpie": script_tag(FLOT_PIE_JS) }
 
-def map_header(title):
-    return """<!DOCTYPE html>
-        <html>
-        <head>
-        <title>%(title)s</title>
-        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-        <link href="static/css/asm.css" rel="stylesheet" />
+def map_js():
+    return """
         %(jquery)s
         %(mousetrap)s
         <script type="text/javascript" src="config.js?ts=%(time)s"></script>
         %(common)s
         %(commonmap)s
-        </head>
-        <body>
-        <h2 class="asm-header">%(title)s</h2>
-    """ % { "title" : title, 
-            "mousetrap": script_tag(MOUSETRAP_JS),
+    """ % { "mousetrap": script_tag(MOUSETRAP_JS),
             "jquery": script_tag(JQUERY_JS), 
             "time": escape(now()),
             "common": asm_script_tag("common.js"),
