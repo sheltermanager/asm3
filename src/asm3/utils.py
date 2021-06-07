@@ -942,7 +942,7 @@ def csv_parse(s):
         if pos[2]: break # EOF
     return rows
 
-def csv(l, rows, cols = None, includeheader = True, titlecaseheader = False):
+def csv(l, rows, cols = None, includeheader = True, titlecaseheader = False, renameheader = ""):
     """
     Creates a CSV file from a set of resultset rows. If cols has been 
     supplied as a list of strings, fields will be output in that
@@ -953,6 +953,7 @@ def csv(l, rows, cols = None, includeheader = True, titlecaseheader = False):
     cols: list of column headings, if None uses the result column names
     includeheader: if True writes the header row
     titlecaseheader: if True title cases the header row
+    renameheader: A comma separated list of find=replace values to rewrite column headers
     """
     if rows is None or len(rows) == 0: return ""
     lines = []
@@ -966,11 +967,24 @@ def csv(l, rows, cols = None, includeheader = True, titlecaseheader = False):
         for k in rows[0].keys():
             cols.append(k)
         cols = sorted(cols)
-    if includeheader: 
+    if includeheader:
+        outputcols = cols
         if titlecaseheader: 
-            writerow([ c.title() for c in cols ])
-        else:
-            writerow(cols)
+            outputcols = [ c.title() for c in cols ]
+        if renameheaders != "":
+            rout = []
+            for c in outputcols: # can rewrite cols we just titlecased
+                match = False
+                for rh in renameheaders.split(","):
+                    find, replace = rh.split("=")
+                    if c == find:
+                        rout.append(replace)
+                        match = True
+                        break
+                if not match:
+                    rout.append(c)
+            outputcols = rout
+        writerow(outputcols)
     for r in rows:
         rd = []
         for c in cols:

@@ -5403,9 +5403,13 @@ class report_export_csv(ASMEndpoint):
         p = asm3.reports.get_criteria_params(dbo, crid, post)
         rows, cols = asm3.reports.execute_query(dbo, crid, o.user, p)
         titlecaseheader = cols is not None and "TITLECASEHEADER" in cols
+        renameheader = ""
+        if cols is not None and "RENAMEHEADER" in cols and len(rows) > 0:
+            renameheader = rows[0].RENAMEHEADER
+        renameheader = cols is not None and "RENAMEHEADER" in cols
         self.content_type("text/csv")
         self.header("Content-Disposition", u"attachment; filename=\"" + asm3.utils.decode_html(filename) + u".csv\"")
-        return asm3.utils.csv(o.locale, rows, cols, includeheader=True, titlecaseheader=titlecaseheader)
+        return asm3.utils.csv(o.locale, rows, cols, includeheader=True, titlecaseheader=titlecaseheader, renameheader=renameheader)
 
 class report_images(JSONEndpoint):
     url = "report_images"
