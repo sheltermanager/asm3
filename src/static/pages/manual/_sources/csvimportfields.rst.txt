@@ -236,6 +236,8 @@ PERSONMEMBERSHIPEXPIRY
     A date for when this person's membership expires
 PERSONFOSTERER
     Y or 1 in this column to indicate the person should have the fosterer flag set.
+PERSONFOSTERCAPACITY
+    The number of animals this person is willing to foster
 PERSONDONOR
     Y or 1 in this column to indicate the person is a regular donor.
 PERSONFLAGS

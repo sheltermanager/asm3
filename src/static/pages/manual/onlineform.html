@@ -226,6 +226,16 @@ for some of your form fields, by using the format fieldname=value.</p>
 <p class="first admonition-title">Warning</p>
 <p class="last">sheltermanager.com uses a short term 2 minute cache on forms, so if you make changes to a form you’ve recently viewed, you may have to wait 2 minutes for any changes you make to appear.</p>
 </div>
+<p>If you declare a javascript function in your form’s header or footer named
+asm3_onlineform_submit, it will be called when form validation is successful
+and just before the form is submitted. You can use this if you want to grab the
+form values and send them somewhere else or transform the values before it is
+submitted to ASM:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">function</span> <span class="n">asm3_onlineform_submit</span><span class="p">()</span> <span class="p">{</span>
+   <span class="n">alert</span><span class="p">(</span><span class="s2">&quot;form is about to be submitted&quot;</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
 <div class="section" id="editing-form-fields">
 <h2>Editing Form Fields<a class="headerlink" href="#editing-form-fields" title="Permalink to this headline">¶</a></h2>
 <p>Clicking on the form’s name will allow you to edit the individual fields of

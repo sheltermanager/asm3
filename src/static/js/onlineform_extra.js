@@ -400,6 +400,7 @@ $(document).ready(function() {
         else {
             e.preventDefault();
             remove_hidden(); // strip conditional fields that are not visible so they do not post
+            if (typeof asm3_onlineform_submit !== 'undefined') { asm3_onlineform_submit(); }
             $("form").submit();
         }
     });
