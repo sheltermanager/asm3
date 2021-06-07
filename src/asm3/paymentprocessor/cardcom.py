@@ -246,7 +246,6 @@ class Cardcom(PaymentProcessor):
                 asm3.person.set_extra_id(self.dbo, user, p, "Cardcom_Last4Digits", Last4Digits)
                 asm3.person.set_extra_id(self.dbo, user, p, "Cardcom_CCType", CCType)
                 asm3.person.set_extra_id(self.dbo, user, p, "Cardcom_CCOwner", CCOwner)
-            else
                 
             
             InvoiceResponseCode = results.get("InvoiceResponseCode")
