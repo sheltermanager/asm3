@@ -193,9 +193,9 @@ class Cardcom(PaymentProcessor):
                 asm3.al.error("Bad Cardcom operation response %s: %s" % (results['OperationResponse'], results['OperationResponseText']), "cardcom.receive", self.dbo)
                 raise ProcessorError("Bad Cardcom operation response %s: %s" % (results['OperationResponse'], results['OperationResponseText']))
 
-            if results.get("DealResponse") != "0":
-                asm3.al.error("Bad Cardcom operation response %s" % results['DealResponse'], "cardcom.receive", self.dbo)
-                raise ProcessorError("Bad Cardcom operation response %s" % results['DealResponse'])
+            #if results.get("DealResponse") != "0":
+            #    asm3.al.error("Bad Cardcom Deal response %s" % results['DealResponse'], "cardcom.receive", self.dbo)
+            #    raise ProcessorError("Bad Cardcom deal response %s" % results['DealResponse'])
 
             #ReturnValue contains db-payref. Extract payref
             client_reference_id = results.get("ReturnValue","")
@@ -246,6 +246,8 @@ class Cardcom(PaymentProcessor):
                 asm3.person.set_extra_id(self.dbo, user, p, "Cardcom_Last4Digits", Last4Digits)
                 asm3.person.set_extra_id(self.dbo, user, p, "Cardcom_CCType", CCType)
                 asm3.person.set_extra_id(self.dbo, user, p, "Cardcom_CCOwner", CCOwner)
+            else
+                
             
             InvoiceResponseCode = results.get("InvoiceResponseCode")
             if InvoiceResponseCode != "0":
