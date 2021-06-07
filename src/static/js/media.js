@@ -895,6 +895,13 @@ $(function() {
                 toaddresses.push(controller.animal.BROUGHTINBYEMAILADDRESS);
             }
 
+            sanitise_subject = function(s) {
+                // Sanitise the email subject field when it is a filename from medianotes
+                s = s.replace(".html", "");
+                s = common.replace_all(s, "_", " ");
+                return s;
+            };
+
             $("#button-email").button().click(function() {
                 $("#emailform").emailform("show", {
                     title: _("Email media"),
@@ -904,7 +911,7 @@ $(function() {
                     name: defaultname,
                     email: defaultemail,
                     toaddresses: toaddresses,
-                    subject: tableform.table_selected_row(media.table).MEDIANOTES,
+                    subject: sanitise_subject(tableform.table_selected_row(media.table).MEDIANOTES),
                     animalid: (controller.animal && controller.animal.ID),
                     personid: (controller.person && controller.person.ID),
                     templates: controller.templates,
@@ -920,7 +927,7 @@ $(function() {
                         "&ids=" + tableform.table_ids(media.table),
                     name: defaultname,
                     email: defaultemail,
-                    subject: tableform.table_selected_row(media.table).MEDIANOTES,
+                    subject: sanitise_subject(tableform.table_selected_row(media.table).MEDIANOTES),
                     animalid: (controller.animal && controller.animal.ID),
                     personid: (controller.person && controller.person.ID),
                     templates: controller.templates,
