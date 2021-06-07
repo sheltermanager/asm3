@@ -971,11 +971,11 @@ def csv(l, rows, cols = None, includeheader = True, titlecaseheader = False, ren
         outputcols = cols
         if titlecaseheader: 
             outputcols = [ c.title() for c in cols ]
-        if renameheaders != "":
+        if renameheader != "":
             rout = []
             for c in outputcols: # can rewrite cols we just titlecased
                 match = False
-                for rh in renameheaders.split(","):
+                for rh in renameheader.split(","):
                     find, replace = rh.split("=")
                     if c == find:
                         rout.append(replace)

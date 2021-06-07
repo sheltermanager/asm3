@@ -5406,7 +5406,6 @@ class report_export_csv(ASMEndpoint):
         renameheader = ""
         if cols is not None and "RENAMEHEADER" in cols and len(rows) > 0:
             renameheader = rows[0].RENAMEHEADER
-        renameheader = cols is not None and "RENAMEHEADER" in cols
         self.content_type("text/csv")
         self.header("Content-Disposition", u"attachment; filename=\"" + asm3.utils.decode_html(filename) + u".csv\"")
         return asm3.utils.csv(o.locale, rows, cols, includeheader=True, titlecaseheader=titlecaseheader, renameheader=renameheader)
