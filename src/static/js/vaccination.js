@@ -165,7 +165,7 @@ $(function() {
                         tableform.table_update(table);
                     } 
                 },
-                { id: "given", text: _("Give"), icon: "complete", enabled: "multi", perm: "cav",
+                { id: "given", text: _("Give"), icon: "complete", enabled: "multi", perm: "bcav",
                      click: function() {
                         let comments = "", vacctype = 0;
                         $.each(tableform.table_selected_rows(table), function(i, v) {
@@ -190,7 +190,7 @@ $(function() {
                         $("#dialog-given").dialog("open");
                      }
                  },
-                 { id: "required", text: _("Change Date Required"), icon: "calendar", enabled: "multi", perm: "cav", 
+                 { id: "required", text: _("Change Date Required"), icon: "calendar", enabled: "multi", perm: "bcav", 
                      click: function() {
                         $("#dialog-required").dialog("open");
                      }

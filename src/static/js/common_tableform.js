@@ -211,7 +211,7 @@ const tableform = {
         var t = [];
         if (!bodyonly) {
             t.push('<a id="tableform-select-all" href="#" ');
-            t.push('title="' + html.title(_("Select all")) + '">' + html.icon("selectall") + '</a>')
+            t.push('title="' + html.title(_("Select all")) + '">' + html.icon("selectall") + '</a>');
             t.push("<table id=\"tableform\" width=\"100%\"><thead><tr>");
             $.each(table.columns, function(i, v) {
                 if (v.hideif && v.hideif()) { return; }

@@ -208,7 +208,7 @@ $(function() {
                         tableform.table_update(table);
                     } 
                 },
-                { id: "given", text: _("Give"), icon: "complete", enabled: "multi", perm: "mcam", 
+                { id: "given", text: _("Give"), icon: "complete", enabled: "multi", perm: "bcam", 
                     tooltip: _("Mark treatments given"),
                     click: function() {
                         let comments = "";
@@ -231,7 +231,7 @@ $(function() {
                        $("#dialog-given").dialog("open");
                     }
                 },
-                { id: "undo", text: _("Undo"), icon: "cross", enabled: "multi", perm: "mcam",
+                { id: "undo", text: _("Undo"), icon: "cross", enabled: "multi", perm: "bcam",
                     tooltip: _("Undo given treatments"),
                     click: async function() {
                         await common.ajax_post("medical", "mode=undo&ids=" + medical.selected_treatment_ids());
@@ -248,7 +248,7 @@ $(function() {
                         }
                     }
                 },
-                { id: "required", text: _("Change Date Required"), icon: "calendar", enabled: "multi", perm: "mcam", 
+                { id: "required", text: _("Change Date Required"), icon: "calendar", enabled: "multi", perm: "bcam", 
                     tooltip: _("Change date required on selected treatments"),
                     click: function() {
                        $("#newdater").datepicker("setDate", new Date());
