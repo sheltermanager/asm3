@@ -719,10 +719,10 @@ def insert_onlineformincoming_from_form(dbo, post, remoteip):
                             submitteremail = v
                         if fieldname == "emailsubmissionto":
                             emailsubmissionto = v
-                        if fieldname == "firstname": 
+                        if fieldname == "firstname" or fieldname == "forenames": 
                             firstname = v
                             firstnamelabel = label
-                        if fieldname == "lastname": 
+                        if fieldname == "lastname" or fieldname == "surname":
                             lastname = v
                             lastnamelabel = label
                         if fieldname == "animalname" or fieldname == "reserveanimalname":
