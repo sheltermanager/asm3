@@ -476,6 +476,7 @@ select:disabled, input:disabled, textarea:disabled {
 .asm-warningrow { color: #ff0000; }
 #header-fixed { left: 16px; border-collapse: collapse; }
 #header-fixed th { padding: 8px; padding-right: 14px; }
+#tableform-select-all { position: absolute; margin-top: 8px; margin-left: 5px; }
 
 /** WAITING LIST ==================== */
 .asm-wl-highlight { color: #000; background-color: #fff284; }

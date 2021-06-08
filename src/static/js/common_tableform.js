@@ -210,6 +210,8 @@ const tableform = {
     table_render: function(table, bodyonly) {
         var t = [];
         if (!bodyonly) {
+            t.push('<a id="tableform-select-all" href="#" ');
+            t.push('title="' + html.title(_("Select all")) + '">' + html.icon("selectall") + '</a>')
             t.push("<table id=\"tableform\" width=\"100%\"><thead><tr>");
             $.each(table.columns, function(i, v) {
                 if (v.hideif && v.hideif()) { return; }
@@ -373,10 +375,9 @@ const tableform = {
             });
         }
 
-        // Allow CTRL+A to select all visible rows in the table - 
-        // but only if the tableform dialog isn't open so CTRL+A still selects 
-        // content in dialog fields as expecetd.
-        Mousetrap.bind("ctrl+a", function() {
+        // selects all the visible rows in the table.
+        // does nothing if the dialog is open.
+        const select_all = function() {
             if ($("#dialog-tableform").hasClass("ui-dialog-content") && $("#dialog-tableform").dialog("isOpen")) { return false; }
             $("#tableform input[type='checkbox']").each(function() {
                 if ($(this).is(":visible")) {
@@ -385,6 +386,19 @@ const tableform = {
                 }
             });
             tableform.table_update_buttons(table, buttons);
+        };
+
+        // Bind the CTRL+A key
+        Mousetrap.bind("ctrl+a", function() {
+            select_all();
+            return false;
+        });
+
+        // Bind the select all link in the table header
+        $("#tableform-select-all").click(function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            select_all();
             return false;
         });
 
