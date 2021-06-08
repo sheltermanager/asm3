@@ -781,6 +781,8 @@ def insert_onlineformincoming_from_form(dbo, post, remoteip):
         if fieldssofar < 3:
             # Don't include raw markup or signature/image fields in the preview
             if fld.VALUE.startswith("RAW::") or fld.VALUE.startswith("data:"): continue
+            # Or the system added timestamp field
+            if fld.FIELDNAME == "formreceived": continue
             fieldssofar += 1
             preview.append( "%s: %s" % (fld.LABEL, fld.VALUE ))
     
