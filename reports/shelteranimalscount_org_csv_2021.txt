@@ -432,8 +432,8 @@ extract(YEAR FROM DATE '$@from$')::integer AS "Record Year",
 extract(MONTH FROM DATE '$@from$')::integer AS "Record Month",
 'feline' AS Species, 
 
-TO_CHAR('$@from$'::timestamp, 'MM/DD/YYYY') AS "Beginning Count Date",
-TO_CHAR('$@to$'::timestamp, 'MM/DD/YYYY') AS "Ending Count Date",
+TO_CHAR('$@from$'::timestamp, 'YYYY-MM-DD') AS "Beginning Count Date",
+TO_CHAR('$@to$'::timestamp, 'YYYY-MM-DD') AS "Ending Count Date",
 
 (SELECT COUNT(*) FROM animal WHERE 
 NOT EXISTS (SELECT MovementDate FROM adoption WHERE MovementDate < '$@from$' AND (ReturnDate Is Null OR ReturnDate >= '$@from$') AND MovementType NOT IN (2,8) AND AnimalID = animal.ID)
@@ -730,7 +730,7 @@ INNER JOIN adoption ON animal.ID = adoption.AnimalID
 INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
 WHERE MovementType = 7 AND ReasonName LIKE '%TNR%'
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
-AND SpeciesID IN ($FELINE$)
+AND SpeciesID IN ($FELINES$)
 AND DateOfBirth < MovementDate - INTERVAL '5 months' 
 AND NonShelterAnimal = 0) AS "Other Live Outcome Adult",
 
@@ -739,7 +739,7 @@ INNER JOIN adoption ON animal.ID = adoption.AnimalID
 INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
 WHERE MovementType = 7 AND ReasonName LIKE '%TNR%'
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
-AND SpeciesID IN ($FELINE$)
+AND SpeciesID IN ($FELINES$)
 AND DateOfBirth >= MovementDate - INTERVAL '5 months' 
 AND NonShelterAnimal = 0) AS "Other Live Outcome Up To 5 Months",
 
@@ -750,7 +750,7 @@ INNER JOIN adoption ON animal.ID = adoption.AnimalID
 INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
 WHERE MovementType IN (4, 6)
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
-AND SpeciesID IN ($FELINE$)
+AND SpeciesID IN ($FELINES$)
 AND DateOfBirth < MovementDate - INTERVAL '5 months' 
 AND NonShelterAnimal = 0) AS "Lost In Care Adult",
 
@@ -759,7 +759,7 @@ INNER JOIN adoption ON animal.ID = adoption.AnimalID
 INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
 WHERE MovementType IN (4, 6)
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
-AND SpeciesID IN ($FELINE$)
+AND SpeciesID IN ($FELINES$)
 AND DateOfBirth >= MovementDate - INTERVAL '5 months' 
 AND NonShelterAnimal = 0) AS "Lost In Care Up To 5 Months",
 
@@ -830,8 +830,8 @@ extract(YEAR FROM DATE '$@from$')::integer AS "Record Year",
 extract(MONTH FROM DATE '$@from$')::integer AS "Record Month",
 'rabbit' AS Species, 
 
-TO_CHAR('$@from$'::timestamp, 'MM/DD/YYYY') AS "Beginning Count Date",
-TO_CHAR('$@to$'::timestamp, 'MM/DD/YYYY') AS "Ending Count Date",
+TO_CHAR('$@from$'::timestamp, 'YYYY-MM-DD') AS "Beginning Count Date",
+TO_CHAR('$@to$'::timestamp, 'YYYY-MM-DD') AS "Ending Count Date",
 
 (SELECT COUNT(*) FROM animal WHERE 
 NOT EXISTS (SELECT MovementDate FROM adoption WHERE MovementDate < '$@from$' AND (ReturnDate Is Null OR ReturnDate >= '$@from$') AND MovementType NOT IN (2,8) AND AnimalID = animal.ID)
@@ -1128,7 +1128,7 @@ INNER JOIN adoption ON animal.ID = adoption.AnimalID
 INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
 WHERE MovementType = 7 AND ReasonName LIKE '%TNR%'
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
-AND SpeciesID IN ($RABBIT$)
+AND SpeciesID IN ($RABBITS$)
 AND DateOfBirth < MovementDate - INTERVAL '5 months' 
 AND NonShelterAnimal = 0) AS "Other Live Outcome Adult",
 
@@ -1137,7 +1137,7 @@ INNER JOIN adoption ON animal.ID = adoption.AnimalID
 INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
 WHERE MovementType = 7 AND ReasonName LIKE '%TNR%'
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
-AND SpeciesID IN ($RABBIT$)
+AND SpeciesID IN ($RABBITS$)
 AND DateOfBirth >= MovementDate - INTERVAL '5 months' 
 AND NonShelterAnimal = 0) AS "Other Live Outcome Up To 5 Months",
 
@@ -1148,7 +1148,7 @@ INNER JOIN adoption ON animal.ID = adoption.AnimalID
 INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
 WHERE MovementType IN (4, 6)
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
-AND SpeciesID IN ($RABBIT$)
+AND SpeciesID IN ($RABBITS$)
 AND DateOfBirth < MovementDate - INTERVAL '5 months' 
 AND NonShelterAnimal = 0) AS "Lost In Care Adult",
 
@@ -1157,7 +1157,7 @@ INNER JOIN adoption ON animal.ID = adoption.AnimalID
 INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
 WHERE MovementType IN (4, 6)
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
-AND SpeciesID IN ($RABBIT$)
+AND SpeciesID IN ($RABBITS$)
 AND DateOfBirth >= MovementDate - INTERVAL '5 months' 
 AND NonShelterAnimal = 0) AS "Lost In Care Up To 5 Months",
 
@@ -1229,8 +1229,8 @@ extract(YEAR FROM DATE '$@from$')::integer AS "Record Year",
 extract(MONTH FROM DATE '$@from$')::integer AS "Record Month",
 'equine' AS Species, 
 
-TO_CHAR('$@from$'::timestamp, 'MM/DD/YYYY') AS "Beginning Count Date",
-TO_CHAR('$@to$'::timestamp, 'MM/DD/YYYY') AS "Ending Count Date",
+TO_CHAR('$@from$'::timestamp, 'YYYY-MM-DD') AS "Beginning Count Date",
+TO_CHAR('$@to$'::timestamp, 'YYYY-MM-DD') AS "Ending Count Date",
 
 (SELECT COUNT(*) FROM animal WHERE 
 NOT EXISTS (SELECT MovementDate FROM adoption WHERE MovementDate < '$@from$' AND (ReturnDate Is Null OR ReturnDate >= '$@from$') AND MovementType NOT IN (2,8) AND AnimalID = animal.ID)
@@ -1527,7 +1527,7 @@ INNER JOIN adoption ON animal.ID = adoption.AnimalID
 INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
 WHERE MovementType = 7 AND ReasonName LIKE '%TNR%'
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
-AND SpeciesID IN ($EQUINE$)
+AND SpeciesID IN ($EQUINES$)
 AND DateOfBirth < MovementDate - INTERVAL '5 months' 
 AND NonShelterAnimal = 0) AS "Other Live Outcome Adult",
 
@@ -1536,7 +1536,7 @@ INNER JOIN adoption ON animal.ID = adoption.AnimalID
 INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
 WHERE MovementType = 7 AND ReasonName LIKE '%TNR%'
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
-AND SpeciesID IN ($EQUINE$)
+AND SpeciesID IN ($EQUINES$)
 AND DateOfBirth >= MovementDate - INTERVAL '5 months' 
 AND NonShelterAnimal = 0) AS "Other Live Outcome Up To 5 Months",
 
@@ -1547,7 +1547,7 @@ INNER JOIN adoption ON animal.ID = adoption.AnimalID
 INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
 WHERE MovementType IN (4, 6)
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
-AND SpeciesID IN ($EQUINE$)
+AND SpeciesID IN ($EQUINES$)
 AND DateOfBirth < MovementDate - INTERVAL '5 months' 
 AND NonShelterAnimal = 0) AS "Lost In Care Adult",
 
@@ -1556,7 +1556,7 @@ INNER JOIN adoption ON animal.ID = adoption.AnimalID
 INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
 WHERE MovementType IN (4, 6)
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
-AND SpeciesID IN ($EQUINE$)
+AND SpeciesID IN ($EQUINES$)
 AND DateOfBirth >= MovementDate - INTERVAL '5 months' 
 AND NonShelterAnimal = 0) AS "Lost In Care Up To 5 Months",
 
@@ -1628,8 +1628,8 @@ extract(YEAR FROM DATE '$@from$')::integer AS "Record Year",
 extract(MONTH FROM DATE '$@from$')::integer AS "Record Month",
 'smallmammal' AS Species, 
 
-TO_CHAR('$@from$'::timestamp, 'MM/DD/YYYY') AS "Beginning Count Date",
-TO_CHAR('$@to$'::timestamp, 'MM/DD/YYYY') AS "Ending Count Date",
+TO_CHAR('$@from$'::timestamp, 'YYYY-MM-DD') AS "Beginning Count Date",
+TO_CHAR('$@to$'::timestamp, 'YYYY-MM-DD') AS "Ending Count Date",
 
 (SELECT COUNT(*) FROM animal WHERE 
 NOT EXISTS (SELECT MovementDate FROM adoption WHERE MovementDate < '$@from$' AND (ReturnDate Is Null OR ReturnDate >= '$@from$') AND MovementType NOT IN (2,8) AND AnimalID = animal.ID)
@@ -1926,7 +1926,7 @@ INNER JOIN adoption ON animal.ID = adoption.AnimalID
 INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
 WHERE MovementType = 7 AND ReasonName LIKE '%TNR%'
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
-AND SpeciesID IN ($SMALLMAMMAL$)
+AND SpeciesID IN ($SMALLMAMMALS$)
 AND DateOfBirth < MovementDate - INTERVAL '5 months' 
 AND NonShelterAnimal = 0) AS "Other Live Outcome Adult",
 
@@ -1935,7 +1935,7 @@ INNER JOIN adoption ON animal.ID = adoption.AnimalID
 INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
 WHERE MovementType = 7 AND ReasonName LIKE '%TNR%'
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
-AND SpeciesID IN ($SMALLMAMMAL$)
+AND SpeciesID IN ($SMALLMAMMALS$)
 AND DateOfBirth >= MovementDate - INTERVAL '5 months' 
 AND NonShelterAnimal = 0) AS "Other Live Outcome Up To 5 Months",
 
@@ -1946,7 +1946,7 @@ INNER JOIN adoption ON animal.ID = adoption.AnimalID
 INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
 WHERE MovementType IN (4, 6)
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
-AND SpeciesID IN ($SMALLMAMMAL$)
+AND SpeciesID IN ($SMALLMAMMALS$)
 AND DateOfBirth < MovementDate - INTERVAL '5 months' 
 AND NonShelterAnimal = 0) AS "Lost In Care Adult",
 
@@ -1955,7 +1955,7 @@ INNER JOIN adoption ON animal.ID = adoption.AnimalID
 INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
 WHERE MovementType IN (4, 6)
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
-AND SpeciesID IN ($SMALLMAMMAL$)
+AND SpeciesID IN ($SMALLMAMMALS$)
 AND DateOfBirth >= MovementDate - INTERVAL '5 months' 
 AND NonShelterAnimal = 0) AS "Lost In Care Up To 5 Months",
 
@@ -2026,8 +2026,8 @@ extract(YEAR FROM DATE '$@from$')::integer AS "Record Year",
 extract(MONTH FROM DATE '$@from$')::integer AS "Record Month",
 'farmanimal' AS Species, 
 
-TO_CHAR('$@from$'::timestamp, 'MM/DD/YYYY') AS "Beginning Count Date",
-TO_CHAR('$@to$'::timestamp, 'MM/DD/YYYY') AS "Ending Count Date",
+TO_CHAR('$@from$'::timestamp, 'YYYY-MM-DD') AS "Beginning Count Date",
+TO_CHAR('$@to$'::timestamp, 'YYYY-MM-DD') AS "Ending Count Date",
 
 (SELECT COUNT(*) FROM animal WHERE 
 NOT EXISTS (SELECT MovementDate FROM adoption WHERE MovementDate < '$@from$' AND (ReturnDate Is Null OR ReturnDate >= '$@from$') AND MovementType NOT IN (2,8) AND AnimalID = animal.ID)
@@ -2324,7 +2324,7 @@ INNER JOIN adoption ON animal.ID = adoption.AnimalID
 INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
 WHERE MovementType = 7 AND ReasonName LIKE '%TNR%'
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
-AND SpeciesID IN ($FARMANIMAL$)
+AND SpeciesID IN ($FARMANIMALS$)
 AND DateOfBirth < MovementDate - INTERVAL '5 months' 
 AND NonShelterAnimal = 0) AS "Other Live Outcome Adult",
 
@@ -2333,7 +2333,7 @@ INNER JOIN adoption ON animal.ID = adoption.AnimalID
 INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
 WHERE MovementType = 7 AND ReasonName LIKE '%TNR%'
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
-AND SpeciesID IN ($FARMANIMAL$)
+AND SpeciesID IN ($FARMANIMALS$)
 AND DateOfBirth >= MovementDate - INTERVAL '5 months' 
 AND NonShelterAnimal = 0) AS "Other Live Outcome Up To 5 Months",
 
@@ -2344,7 +2344,7 @@ INNER JOIN adoption ON animal.ID = adoption.AnimalID
 INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
 WHERE MovementType IN (4, 6)
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
-AND SpeciesID IN ($FARMANIMAL$)
+AND SpeciesID IN ($FARMANIMALS$)
 AND DateOfBirth < MovementDate - INTERVAL '5 months' 
 AND NonShelterAnimal = 0) AS "Lost In Care Adult",
 
@@ -2353,7 +2353,7 @@ INNER JOIN adoption ON animal.ID = adoption.AnimalID
 INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
 WHERE MovementType IN (4, 6)
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
-AND SpeciesID IN ($FARMANIMAL$)
+AND SpeciesID IN ($FARMANIMALS$)
 AND DateOfBirth >= MovementDate - INTERVAL '5 months' 
 AND NonShelterAnimal = 0) AS "Lost In Care Up To 5 Months",
 
@@ -2424,8 +2424,8 @@ extract(YEAR FROM DATE '$@from$')::integer AS "Record Year",
 extract(MONTH FROM DATE '$@from$')::integer AS "Record Month",
 'bird' AS Species, 
 
-TO_CHAR('$@from$'::timestamp, 'MM/DD/YYYY') AS "Beginning Count Date",
-TO_CHAR('$@to$'::timestamp, 'MM/DD/YYYY') AS "Ending Count Date",
+TO_CHAR('$@from$'::timestamp, 'YYYY-MM-DD') AS "Beginning Count Date",
+TO_CHAR('$@to$'::timestamp, 'YYYY-MM-DD') AS "Ending Count Date",
 
 (SELECT COUNT(*) FROM animal WHERE 
 NOT EXISTS (SELECT MovementDate FROM adoption WHERE MovementDate < '$@from$' AND (ReturnDate Is Null OR ReturnDate >= '$@from$') AND MovementType NOT IN (2,8) AND AnimalID = animal.ID)
@@ -2722,7 +2722,7 @@ INNER JOIN adoption ON animal.ID = adoption.AnimalID
 INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
 WHERE MovementType = 7 AND ReasonName LIKE '%TNR%'
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
-AND SpeciesID IN ($BIRD$)
+AND SpeciesID IN ($BIRDS$)
 AND DateOfBirth < MovementDate - INTERVAL '5 months' 
 AND NonShelterAnimal = 0) AS "Other Live Outcome Adult",
 
@@ -2731,7 +2731,7 @@ INNER JOIN adoption ON animal.ID = adoption.AnimalID
 INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
 WHERE MovementType = 7 AND ReasonName LIKE '%TNR%'
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
-AND SpeciesID IN ($BIRD$)
+AND SpeciesID IN ($BIRDS$)
 AND DateOfBirth >= MovementDate - INTERVAL '5 months' 
 AND NonShelterAnimal = 0) AS "Other Live Outcome Up To 5 Months",
 
@@ -2742,7 +2742,7 @@ INNER JOIN adoption ON animal.ID = adoption.AnimalID
 INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
 WHERE MovementType IN (4, 6)
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
-AND SpeciesID IN ($BIRD$)
+AND SpeciesID IN ($BIRDS$)
 AND DateOfBirth < MovementDate - INTERVAL '5 months' 
 AND NonShelterAnimal = 0) AS "Lost In Care Adult",
 
@@ -2751,7 +2751,7 @@ INNER JOIN adoption ON animal.ID = adoption.AnimalID
 INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
 WHERE MovementType IN (4, 6)
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
-AND SpeciesID IN ($BIRD$)
+AND SpeciesID IN ($BIRDS$)
 AND DateOfBirth >= MovementDate - INTERVAL '5 months' 
 AND NonShelterAnimal = 0) AS "Lost In Care Up To 5 Months",
 
@@ -2823,8 +2823,8 @@ extract(YEAR FROM DATE '$@from$')::integer AS "Record Year",
 extract(MONTH FROM DATE '$@from$')::integer AS "Record Month",
 'reptile' AS Species, 
 
-TO_CHAR('$@from$'::timestamp, 'MM/DD/YYYY') AS "Beginning Count Date",
-TO_CHAR('$@to$'::timestamp, 'MM/DD/YYYY') AS "Ending Count Date",
+TO_CHAR('$@from$'::timestamp, 'YYYY-MM-DD') AS "Beginning Count Date",
+TO_CHAR('$@to$'::timestamp, 'YYYY-MM-DD') AS "Ending Count Date",
 
 (SELECT COUNT(*) FROM animal WHERE 
 NOT EXISTS (SELECT MovementDate FROM adoption WHERE MovementDate < '$@from$' AND (ReturnDate Is Null OR ReturnDate >= '$@from$') AND MovementType NOT IN (2,8) AND AnimalID = animal.ID)
@@ -3121,7 +3121,7 @@ INNER JOIN adoption ON animal.ID = adoption.AnimalID
 INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
 WHERE MovementType = 7 AND ReasonName LIKE '%TNR%'
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
-AND SpeciesID IN ($REPTILE$)
+AND SpeciesID IN ($REPTILES$)
 AND DateOfBirth < MovementDate - INTERVAL '5 months' 
 AND NonShelterAnimal = 0) AS "Other Live Outcome Adult",
 
@@ -3130,7 +3130,7 @@ INNER JOIN adoption ON animal.ID = adoption.AnimalID
 INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
 WHERE MovementType = 7 AND ReasonName LIKE '%TNR%'
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
-AND SpeciesID IN ($REPTILE$)
+AND SpeciesID IN ($REPTILES$)
 AND DateOfBirth >= MovementDate - INTERVAL '5 months' 
 AND NonShelterAnimal = 0) AS "Other Live Outcome Up To 5 Months",
 
@@ -3141,7 +3141,7 @@ INNER JOIN adoption ON animal.ID = adoption.AnimalID
 INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
 WHERE MovementType IN (4, 6)
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
-AND SpeciesID IN ($REPTILE$)
+AND SpeciesID IN ($REPTILES$)
 AND DateOfBirth < MovementDate - INTERVAL '5 months' 
 AND NonShelterAnimal = 0) AS "Lost In Care Adult",
 
@@ -3150,7 +3150,7 @@ INNER JOIN adoption ON animal.ID = adoption.AnimalID
 INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
 WHERE MovementType IN (4, 6)
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
-AND SpeciesID IN ($REPTILE$)
+AND SpeciesID IN ($REPTILES$)
 AND DateOfBirth >= MovementDate - INTERVAL '5 months' 
 AND NonShelterAnimal = 0) AS "Lost In Care Up To 5 Months",
 
