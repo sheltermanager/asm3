@@ -388,6 +388,15 @@ const tableform = {
             tableform.table_update_buttons(table, buttons);
         };
 
+        // unselects all rows in the table
+        const unselect_all = function() {
+            $("#tableform input[type='checkbox']").each(function() {
+                $(this).prop("checked", false);
+                $(this).closest("tr").find("td").removeClass("ui-state-highlight");
+            });
+            tableform.table_update_buttons(table, buttons);
+        };
+
         // Bind the CTRL+A key
         Mousetrap.bind("ctrl+a", function() {
             select_all();
@@ -395,10 +404,18 @@ const tableform = {
         });
 
         // Bind the select all link in the table header
+        // Unlike the CTRL+A sequence, this one will toggle between select/unselect
         $("#tableform-select-all").click(function(e) {
             e.preventDefault();
             e.stopPropagation();
-            select_all();
+            if (!table.select_all_toggle) {
+                table.select_all_toggle = true;
+                select_all();
+            }
+            else {
+                table.select_all_toggle = false;
+                unselect_all();
+            }
             return false;
         });
 
