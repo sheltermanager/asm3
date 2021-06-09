@@ -599,7 +599,14 @@ const common = {
         }
         common.module_running = o;
         if (o.autofocus && !asm.mobileapp) {
-            $(o.autofocus).focus();
+            // Datepickers being the target of autofocus inside a containing widget that is
+            // not loaded yet (eg: accordion) can cause issues with them trying to render
+            // the calendar dropdown too early and in the wrong place. 
+            // We leave a 100ms delay before focusing the default widget to make sure
+            // other widgets have initialised first.
+            setTimeout(function() {
+                $(o.autofocus).focus();
+            }, 100); 
         }
     },
 
