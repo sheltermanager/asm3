@@ -84,7 +84,7 @@ SELECT
 '$PARENTARG4$' AS SpeciesName, 
 
 (SELECT COUNT(*) FROM animal WHERE 
-NOT EXISTS (SELECT MovementDate FROM adoption WHERE MovementDate < '$PARENTARG1$' AND (ReturnDate Is Null OR ReturnDate >= '$PARENTARG1$') AND MovementType NOT IN (8) AND AnimalID = animal.ID)
+NOT EXISTS (SELECT MovementDate FROM adoption WHERE MovementDate < '$PARENTARG1$' AND (ReturnDate Is Null OR ReturnDate >= '$PARENTARG1$') AND MovementType NOT IN (2,8) AND AnimalID = animal.ID)
 AND DateBroughtIn < '$PARENTARG1$'
 AND NonShelterAnimal = 0 AND IsDOA = 0
 AND SpeciesID IN ($PARENTARG3$)
@@ -98,7 +98,7 @@ AND SpeciesID IN ($PARENTARG3$)
 AND (DeceasedDate Is Null OR DeceasedDate >= '$PARENTARG1$')) AS BeginningOnFoster,
 
 (SELECT COUNT(*) FROM animal WHERE 
-NOT EXISTS (SELECT MovementDate FROM adoption WHERE MovementDate <= '$PARENTARG2$' AND (ReturnDate Is Null OR ReturnDate > '$PARENTARG2$') AND MovementType NOT IN (8) AND AnimalID = animal.ID)
+NOT EXISTS (SELECT MovementDate FROM adoption WHERE MovementDate <= '$PARENTARG2$' AND (ReturnDate Is Null OR ReturnDate > '$PARENTARG2$') AND MovementType NOT IN (2,8) AND AnimalID = animal.ID)
 AND DateBroughtIn <= '$PARENTARG2$ 23:59:59'
 AND NonShelterAnimal = 0 AND IsDOA = 0
 AND SpeciesID IN ($PARENTARG3$)
@@ -370,7 +370,25 @@ AND NonShelterAnimal = 0) AS JuniorReturnToField,
 (SELECT COUNT(*) FROM animal
 INNER JOIN adoption ON animal.ID = adoption.AnimalID 
 INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
-WHERE (MovementType IN (4, 6) OR (MovementType = 7 AND ReasonName LIKE '%TNR%'))
+WHERE MovementType IN (4, 6)
+AND MovementDate >= '$PARENTARG1$' AND MovementDate <= '$PARENTARG2$' 
+AND SpeciesID IN ($PARENTARG3$)
+AND DateOfBirth < MovementDate - INTERVAL '5 months' 
+AND NonShelterAnimal = 0) AS AdultLostInCare,
+
+(SELECT COUNT(*) FROM animal
+INNER JOIN adoption ON animal.ID = adoption.AnimalID 
+INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
+WHERE MovementType IN (4, 6)
+AND MovementDate >= '$PARENTARG1$' AND MovementDate <= '$PARENTARG2$' 
+AND SpeciesID IN ($PARENTARG3$)
+AND DateOfBirth >= MovementDate - INTERVAL '5 months' 
+AND NonShelterAnimal = 0) AS JuniorLostInCare,
+
+(SELECT COUNT(*) FROM animal
+INNER JOIN adoption ON animal.ID = adoption.AnimalID 
+INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
+WHERE MovementType = 7 AND ReasonName LIKE '%TNR%')
 AND MovementDate >= '$PARENTARG1$' AND MovementDate <= '$PARENTARG2$' 
 AND SpeciesID IN ($PARENTARG3$)
 AND DateOfBirth < MovementDate - INTERVAL '5 months' 
@@ -379,7 +397,7 @@ AND NonShelterAnimal = 0) AS AdultOtherLive,
 (SELECT COUNT(*) FROM animal
 INNER JOIN adoption ON animal.ID = adoption.AnimalID 
 INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
-WHERE (MovementType IN (4, 6) OR (MovementType = 7 AND ReasonName LIKE '%TNR%'))
+WHERE MovementType = 7 AND ReasonName LIKE '%TNR%')
 AND MovementDate >= '$PARENTARG1$' AND MovementDate <= '$PARENTARG2$' 
 AND SpeciesID IN ($PARENTARG3$)
 AND DateOfBirth >= MovementDate - INTERVAL '5 months' 
@@ -573,8 +591,8 @@ $$BODY
 
 <tr>
 <td>Other Outcomes: Lost in Care</td>
-<td>0</td>
-<td>0</td>
+<td>$AdultLostInCare</td>
+<td>$JuniorLostInCare</td>
 <td>0</td>
 </tr>
 
