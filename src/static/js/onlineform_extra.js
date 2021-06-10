@@ -231,14 +231,7 @@ $(document).ready(function() {
     // individually (they have a name attribute for showif functionality)
     const remove_hidden = function() {
         $("tr:hidden").remove();
-        /* # The method above is simpler and will also take out raw markup fields
-         * # so raw markup fields hidden by showif don't appear in the final form submission
-        $(".asm-onlineform-check:hidden").remove();
-        $(".asm-onlineform-text:hidden").remove();
-        $(".asm-onlineform-notes:hidden").remove();
-        $(".asm-onlineform-lookup:hidden").remove();
         $(".asm-onlineform-checkgroup input").remove();
-        */
     };
 
     // Find every visibleif rule and show/hide accordingly
