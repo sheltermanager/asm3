@@ -106,14 +106,14 @@ AND SpeciesID IN ($PARENTARG3$)
 AND (DeceasedDate Is Null OR DeceasedDate > '$PARENTARG2$')) AS EndingInShelter,
 
 (SELECT COUNT(*) FROM animal WHERE 
-EXISTS (SELECT MovementDate FROM adoption WHERE MovementDate <= '$PARENTARG1$' AND (ReturnDate Is Null OR ReturnDate > '$PARENTARG1$') AND MovementType = 2 AND AnimalID = animal.ID)
+EXISTS (SELECT MovementDate FROM adoption WHERE MovementDate <= '$PARENTARG2$' AND (ReturnDate Is Null OR ReturnDate > '$PARENTARG2$') AND MovementType = 2 AND AnimalID = animal.ID)
 AND DateBroughtIn <= '$PARENTARG2$ 23:59:59'
 AND NonShelterAnimal = 0
 AND SpeciesID IN ($PARENTARG3$)
 AND (DeceasedDate Is Null OR DeceasedDate > '$PARENTARG2$')) AS EndingOnFoster,
 
 (SELECT COUNT(*) FROM animal WHERE 
-EXISTS (SELECT MovementDate FROM adoption WHERE MovementDate <= '$PARENTARG1$' AND (ReturnDate Is Null OR ReturnDate > '$PARENTARG1$') AND MovementType = 2 AND AnimalID = animal.ID)
+EXISTS (SELECT MovementDate FROM adoption WHERE MovementDate <= '$PARENTARG2$' AND (ReturnDate Is Null OR ReturnDate > '$PARENTARG2$') AND MovementType = 2 AND AnimalID = animal.ID)
 AND DateBroughtIn <= '$PARENTARG2$ 23:59:59'
 AND NonShelterAnimal = 0
 AND SpeciesID IN ($PARENTARG3$)
