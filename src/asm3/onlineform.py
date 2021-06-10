@@ -169,7 +169,7 @@ def get_onlineform_html(dbo, formid, completedocument = True):
             requiredtext = "required=\"required\" pattern=\".*\\S+.*\""
             requiredspan = '<span class="asm-onlineform-required" style="color: #ff0000; float: right;">*</span>'
         if f.FIELDTYPE == FIELDTYPE_RAWMARKUP:
-            h.append('<td class="asm-onlineform-td" colspan="2">')
+            h.append('<td class="asm-onlineform-td asm-onlineform-raw" colspan="2">')
         elif f.FIELDTYPE == FIELDTYPE_CHECKBOX:
             h.append('<td class="asm-onlineform-td">%s</td><td class="asm-onlineform-td">' % requiredspan)
         else:
@@ -781,8 +781,9 @@ def insert_onlineformincoming_from_form(dbo, post, remoteip):
         if fieldssofar < 3:
             # Don't include raw markup or signature/image fields in the preview
             if fld.VALUE.startswith("RAW::") or fld.VALUE.startswith("data:"): continue
-            # Or the system added timestamp field
-            if fld.FIELDNAME == "formreceived": continue
+            # Or the system added timestamp field, or fields we would have already added above
+            if fld.FIELDNAME in ("formreceived", "firstname", "forenames", "lastname", "surname"): continue
+            if fld.FIELDNAME in ("animalname", "reserveanimalname"): continue
             fieldssofar += 1
             preview.append( "%s: %s" % (fld.LABEL, fld.VALUE ))
     

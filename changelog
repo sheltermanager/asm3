@@ -1,6 +1,8 @@
 45
 ================
 
+10/06/21 Do not include hidden raw markup fields in form submissions
+10/06/21 Prevent duplicate fields in online form preview
 09/06/21 Select all icon in tables now toggles #533
 09/06/21 Fix datepicker focus issue on lost/found screens
 08/06/21 Vacc/Medical give buttons linked to wrong permission
