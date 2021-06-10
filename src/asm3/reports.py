@@ -1747,6 +1747,7 @@ class Report:
                         self._OutputGroupBlock(gd, FOOTER, rs)
 
             # Do each header in ascending order
+            prevgroup = ""
             for gd in groups:
                 if gd.forceFinish or first_record:
                     # Mark the start position
@@ -1756,16 +1757,22 @@ class Report:
                     if gd.fieldName not in rs[row]:
                         self._p("Cannot construct group, field '%s' does not exist" % gd.fieldName)
                         return
-                    # Find the end position of the group so that
-                    # calculations work in headers
+                    # Find the end position of the group so that calculations work in headers. 
+                    # Also tracks the previous group changing to mark the end if this is a 2nd level group.
                     groupval = rs[row][gd.fieldName]
+                    prevgroupval = ""
+                    if prevgroup != "": prevgroupval = rs[row][prevgroup]
                     for trow in range(row, len(rs)):
+                        if prevgroupval != "" and prevgroupval != rs[trow][prevgroup]:
+                            gd.lastGroupEndPosition = trow-1
+                            break
                         if groupval != rs[trow][gd.fieldName]:
                             gd.lastGroupEndPosition = trow-1
                             break
                     # Output the header, switching field values
                     # and calculating any totals
                     self._OutputGroupBlock(gd, HEADER, rs)
+                prevgroup = gd.fieldName
 
             first_record = False
 

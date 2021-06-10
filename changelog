@@ -1,6 +1,7 @@
 45
 ================
 
+10/06/21 Bug calculating the end of a report group for header counts
 10/06/21 PetLink: support new submitDate column
 10/06/21 Hide inactive lookups in smartphone interface
 10/06/21 Do not include hidden raw markup fields in form submissions
