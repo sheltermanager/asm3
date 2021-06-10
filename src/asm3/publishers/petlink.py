@@ -76,7 +76,7 @@ class PetLinkPublisher(AbstractPublisher):
         failed_animals = []
 
         csv.append("Software,TransactionType,MicrochipID,FirstName,LastName,Address,City,State,ZipCode,Country," \
-            "Phone1,Phone2,Phone3,Email,Password,Date_of_Implant,PetName,Species,Breed,Gender," \
+            "Phone1,Phone2,Phone3,Email,Password,Date_of_Implant,submitDate,PetName,Species,Breed,Gender," \
             "Spayed_Neutered,ColorMarkings")
 
         for an in animals:
@@ -241,6 +241,10 @@ class PetLinkPublisher(AbstractPublisher):
         if email.find(",") != -1 and email.count("@") > 1:
             email = email[0:email.find(",")].strip()
 
+        # Date of the event that triggered registration
+        submitdate = an["ACTIVEMOVEMENTDATE"] or an["MOSTRECENTENTRYDATE"]
+        if an["NONSHELTERANIMAL"] == 1: submitdate = an["IDENTICHIPDATE"]
+
         line = []
         # Software
         line.append("\"ASM\"")
@@ -272,8 +276,10 @@ class PetLinkPublisher(AbstractPublisher):
         line.append("\"%s\"" % ( email ))
         # Chip Password (stripped phone number)
         line.append("\"%s\"" % phone)
-        # Date_of_Implant (yy-mm-dd)
-        line.append("\"%s\"" % asm3.i18n.format_date(an["IDENTICHIPDATE"], "%y-%m-%d"))
+        # Date_of_Implant (mm/dd/yyyy)
+        line.append("\"%s\"" % asm3.i18n.format_date(an["IDENTICHIPDATE"], "%m/%d/%Y"))
+        # submitDate (mm/dd/yyyy)
+        line.append("\"%s\"" % asm3.i18n.format_date(submitdate, "%m/%d/%Y"))
         # PetName
         line.append("\"%s\"" % an["ANIMALNAME"])
         # Species
