@@ -1,6 +1,7 @@
 45
 ================
 
+11/06/21 When movement animal changes, update for animal #1008
 11/06/21 Use native browser support for sticky table headers #908
 10/06/21 Bug calculating the end of a report group for header counts
 10/06/21 PetLink: support new submitDate column

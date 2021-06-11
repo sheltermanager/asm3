@@ -424,6 +424,7 @@ def update_movement_from_form(dbo, username, post):
     """
     validate_movement_form_data(dbo, post)
     movementid = post.integer("movementid")
+    oanimalid = dbo.query_int("SELECT AnimalID FROM adoption WHERE ID=?", [movementid])
 
     dbo.update("adoption", movementid, {
         "AdoptionNumber":               post["adoptionno"],
@@ -447,6 +448,11 @@ def update_movement_from_form(dbo, username, post):
         "TrialEndDate":                 post.date("trialenddate"),
         "Comments":                     post["comments"]
     }, username)
+
+    # If the animal ID has been changed, update the previous animal to prevent
+    # its active movement being left pointing at this movement
+    if post.integer("animal") > 0 and post.integer("animal") != oanimalid:
+        asm3.animal.update_animal_status(dbo, oanimalid)
 
     if post.integer("animal") > 0:
         asm3.animal.update_current_owner(dbo, username, post.integer("animal"))
