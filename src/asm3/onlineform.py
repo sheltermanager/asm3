@@ -497,13 +497,14 @@ def get_onlineformincoming_plain(dbo, collationid):
         h.append("%s: %s\n" % (label, f.VALUE))
     return "\n".join(h)
 
-def get_onlineformincoming_html_print(dbo, ids, include_raw=True, include_images=True):
+def get_onlineformincoming_html_print(dbo, ids, include_raw=True, include_images=True, strip_scripts=True):
     """
     Returns a complete printable version of the online form
     (header/footer wrapped around the html call above)
     ids: A list of integer ids
     include_raw: Include fields that are raw markup
     include_images: Include base64 encoded images
+    strip_script: Remove any script tags from the form
     """
     title = get_onlineformincoming_formname(dbo, ids[0])
     header = get_onlineform_header(dbo)
@@ -526,7 +527,9 @@ def get_onlineformincoming_html_print(dbo, ids, include_raw=True, include_images
         if i < len(ids)-1:
             h.append('<div style="page-break-before: always;"></div>')
     h.append("</body></html>")
-    return "\n".join(h)
+    s = "\n".join(h)
+    if strip_scripts: s = asm3.utils.strip_script_tags(s)
+    return s
 
 def get_onlineformincoming_name(dbo, collationid):
     """ Returns the form name for a collation id """
