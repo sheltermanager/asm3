@@ -754,7 +754,7 @@ UNION SELECT DISTINCT
   '<font color = "Red">Person Record added but NOT LINKED to any records and has no Flags.  Alerts Only Once.</font>' AS issue
 FROM owner o
 WHERE date_trunc('day', o.createddate) = current_date - 1
-AND o.additionalflags = '|'
+AND (o.additionalflags = '|' OR o.additionalflags = '')
 AND NOT EXISTS(SELECT ID FROM adoption WHERE OwnerID = o.ID OR ReturnedByOwnerID = o.ID)
 AND NOT EXISTS(SELECT ID FROM animal WHERE OriginalOwnerID = o.ID OR BroughtInByOwnerID = o.ID OR CurrentVetID = o.ID OR OwnersVetID = o.ID 
     OR AdoptionCoordinatorID = o.ID OR NeuteredByVetID = o.ID)
