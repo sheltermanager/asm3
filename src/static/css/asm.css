@@ -401,6 +401,7 @@ select:disabled, input:disabled, textarea:disabled {
 
 /** ROTA ======================== */
 .asm-staff-rota th { background-color: #fff; color: #666; padding: 8px; font-weight: normal; }
+.asm-staff-rota th { top: 0; position: sticky; } 
 .asm-staff-rota-today { background-color: #f5f5dc !important; color: #000 !important; }
 .asm-staff-rota { width: 100%; border-collapse: collapse; }
 .asm-staff-rota td { border: 1px solid #dbdbdb; text-align: center; padding: 5px; }
@@ -471,12 +472,11 @@ select:disabled, input:disabled, textarea:disabled {
 .asm-table td.first, .asm-table th.first { border-left-width: 0px !important; }
 .asm-table a { font-weight: bold; }
 .asm-table a:hover { text-decoration: underline !important; }
+.asm-table-sticky-header { top: 0; position: sticky; }
 .asm-completerow { opacity: 0.5; zoom: 1;}
 .asm-overduerow { font-style: italic !important; color: #ff0000 !important; }
 .asm-warningrow { color: #ff0000; }
-#header-fixed { left: 16px; border-collapse: collapse; }
-#header-fixed th { padding: 8px; padding-right: 14px; }
-#tableform-select-all { position: absolute; margin-top: 8px; margin-left: 5px; }
+#tableform-select-all { position: absolute; margin-top: 8px; margin-left: 5px; z-index: 1; }
 
 /** WAITING LIST ==================== */
 .asm-wl-highlight { color: #000; background-color: #fff284; }

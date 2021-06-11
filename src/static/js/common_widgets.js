@@ -168,7 +168,10 @@ $.fn.table = function(options) {
         input.addClass("tablesorter");
         let tablewidgets = [];
         if (options.filter) { tablewidgets.push("filter"); }
-        if (options.sticky_header && config.bool("StickyTableHeaders")) { tablewidgets.push("stickyHeaders"); }
+        if (options.sticky_header && config.bool("StickyTableHeaders")) { 
+            //tablewidgets.push("stickyHeaders"); Use native browser support via position: sticky instead
+            input.find("th").addClass("asm-table-sticky-header");
+        }
         input.tablesorter({
             sortColumn: options.sortColumn,
             sortList: options.sortList,
