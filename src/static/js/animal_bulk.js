@@ -280,6 +280,8 @@ $(function() {
             // Litter autocomplete
             $("#litterid").autocomplete({source: html.decode(controller.autolitters)});
 
+            validate.indicator([ "animals" ]);
+
             $("#button-update").button().click(async function() {
                 if (!validate.notblank([ "animals" ])) { return; }
                 $("#button-update").button("disable");

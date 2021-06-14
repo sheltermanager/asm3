@@ -552,6 +552,8 @@ $(function() {
 
         bind: function() {
 
+            validate.indicator(["animalname", "dateofbirth"]);
+
             let similarbuttons = {};
             similarbuttons[_("Close")] = function() { 
                 $(this).dialog("close");
@@ -723,6 +725,7 @@ $(function() {
                 const response = await common.ajax_post("animal", formdata);
                 $("#animalname").val(response); 
             });
+
         },
 
         sync: function() {

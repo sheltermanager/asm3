@@ -26,7 +26,7 @@ $(function() {
                 width: 550,
                 fields: [
                     { json_field: "USERNAME", post_field: "username", label: _("Username"), type: "text", validation: "notblank", readonly: true },
-                    { json_field: "PASSWORD", post_field: "password", label: _("Password"), type: "text", readonly: true },
+                    { json_field: "PASSWORD", post_field: "password", label: _("Password"), type: "text", validation: "notblank", readonly: true },
                     { json_field: "REALNAME", post_field: "realname", label: _("Real name"), type: "text" },
                     { json_field: "EMAILADDRESS", post_field: "email", label: _("Email"), type: "text" },
                     { json_field: "SUPERUSER", post_field: "superuser", label: _("Type"),  type: "select", defaultval: "0", options: 
@@ -256,6 +256,7 @@ $(function() {
             tableform.buttons_bind(this.buttons);
             tableform.table_bind(this.table, this.buttons);
             $("#site").closest("tr").toggle( config.bool("MultiSiteEnabled") );
+            validate.indicator([ "newpassword", "confirmpassword" ]);
         },
 
         set_extra_fields: function(row) {

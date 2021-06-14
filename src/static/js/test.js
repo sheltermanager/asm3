@@ -14,7 +14,6 @@ $(function() {
                 add_title: _("Add test"),
                 edit_title: _("Edit test"),
                 edit_perm: 'cat',
-                helper_text: _("Tests need an animal and at least a required date."),
                 close_on_ok: false,
                 use_default_values: false,
                 columns: 1,
@@ -397,6 +396,8 @@ $(function() {
             tableform.buttons_bind(this.buttons);
             tableform.table_bind(this.table, this.buttons);
             this.bind_givendialog();
+
+            validate.indicator([ "animal", "animals" ]);
 
             // When the test type is changed, use the default cost from the test type
             $("#type").change(test.set_default_cost);

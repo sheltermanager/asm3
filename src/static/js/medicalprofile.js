@@ -11,7 +11,6 @@ $(function() {
                 add_title: _("Add medical profile"),
                 edit_title: _("Edit medical profile"),
                 edit_perm: 'mcam',
-                helper_text: _("Medical profiles need a profile name, treatment, dosage and frequencies."),
                 close_on_ok: true,
                 columns: 1,
                 width: 800,

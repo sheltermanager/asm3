@@ -979,7 +979,7 @@ const tableform = {
      * dontrenderoutertable: don't render the outer table tag (undefined means render it)
      */
     fields_render: function(fields, columns, dontrenderoutertable) {
-        var d = "", callout = "";
+        let d = "";
         if (columns === undefined) { columns = 1; }
         if (!dontrenderoutertable) {
             d = "<table width=\"100%\">";
@@ -989,12 +989,15 @@ const tableform = {
             d += "<tr><td><table>";
         }
         $.each(fields, function(i, v) {
-            callout = "";
+            let labelx = "";
             if (v.hideif && v.hideif()) {
                 return;
             }
+            if (v.validation && v.validation.indexOf("not") == 0) {
+                labelx += ' <span class="asm-has-validation">*</span>';
+            }
             if (v.callout) {
-                callout = ' <span id="callout-' + v.post_field + '" class="asm-callout">' + v.callout + '</span>';
+                labelx += ' <span id="callout-' + v.post_field + '" class="asm-callout">' + v.callout + '</span>';
             }
             if (v.type == "check") {
                 if (!v.justwidget) { d += "<tr><td></td><td>"; }
@@ -1003,10 +1006,10 @@ const tableform = {
                 if (v.readonly) { d += " data-noedit=\"true\" "; }
                 if (v.tooltip) { d += "title=\"" + html.title(v.tooltip) + "\""; }
                 d += "/>";
-                if (!v.justwidget) { d += "<label for=\"" + v.post_field + "\">" + v.label + "</label>" + callout + "</td></tr>"; }
+                if (!v.justwidget) { d += "<label for=\"" + v.post_field + "\">" + v.label + "</label>" + labelx + "</td></tr>"; }
             }
             else if (v.type == "text") {
-                if (!v.justwidget) { d += "<tr><td><label for=\"" + v.post_field + "\">" + v.label + "</label>" + callout + "</td><td>"; }
+                if (!v.justwidget) { d += "<tr><td><label for=\"" + v.post_field + "\">" + v.label + "</label>" + labelx + "</td><td>"; }
                 d += "<input id=\"" + v.post_field + "\" type=\"text\" class=\"asm-textbox " + v.classes;
                 if (v.halfsize) { d += " asm-halftextbox"; }
                 d += "\" ";
@@ -1021,10 +1024,10 @@ const tableform = {
             else if (v.type == "textarea") {
                 if (!v.justwidget) {
                     if (v.labelpos && v.labelpos == "above") {
-                        d += "<tr><td><label for=\"" + v.post_field + "\">" + v.label + "</label>" + callout + "<br />";
+                        d += "<tr><td><label for=\"" + v.post_field + "\">" + v.label + "</label>" + labelx + "<br />";
                     }
                     else {
-                        d += "<tr><td><label for=\"" + v.post_field + "\">" + v.label + "</label>" + callout + "</td><td>";
+                        d += "<tr><td><label for=\"" + v.post_field + "\">" + v.label + "</label>" + labelx + "</td><td>";
                     }
                 }
                 if (!v.rows) { v.rows = 5; }
@@ -1040,10 +1043,10 @@ const tableform = {
             else if (v.type == "richtextarea") {
                 if (!v.justwidget) {
                     if (v.labelpos && v.labelpos == "above") {
-                        d += "<tr><td><label for=\"" + v.post_field + "\">" + v.label + "</label>" + callout + "<br />";
+                        d += "<tr><td><label for=\"" + v.post_field + "\">" + v.label + "</label>" + labelx + "<br />";
                     }
                     else {
-                        d += "<tr><td><label for=\"" + v.post_field + "\">" + v.label + "</label>" + callout + "</td><td>";
+                        d += "<tr><td><label for=\"" + v.post_field + "\">" + v.label + "</label>" + labelx + "</td><td>";
                     }
                 }
                 if (!v.width) { v.width = "100%"; }
@@ -1061,10 +1064,10 @@ const tableform = {
             else if (v.type == "htmleditor") {
                     if (!v.justwidget) {
                     if (v.labelpos && v.labelpos == "above") {
-                        d += "<tr><td><label for=\"" + v.post_field + "\">" + v.label + "</label>" + callout + "<br />";
+                        d += "<tr><td><label for=\"" + v.post_field + "\">" + v.label + "</label>" + labelx + "<br />";
                     }
                     else {
-                        d += "<tr><td><label for=\"" + v.post_field + "\">" + v.label + "</label>" + callout + "</td><td>";
+                        d += "<tr><td><label for=\"" + v.post_field + "\">" + v.label + "</label>" + labelx + "</td><td>";
                     }
                 }
                 if (!v.width) { v.width = "100%"; }
@@ -1081,10 +1084,10 @@ const tableform = {
             else if (v.type == "sqleditor") {
                     if (!v.justwidget) {
                     if (v.labelpos && v.labelpos == "above") {
-                        d += "<tr><td><label for=\"" + v.post_field + "\">" + v.label + "</label>" + callout + "<br />";
+                        d += "<tr><td><label for=\"" + v.post_field + "\">" + v.label + "</label>" + labelx + "<br />";
                     }
                     else {
-                        d += "<tr><td><label for=\"" + v.post_field + "\">" + v.label + "</label>" + callout + "</td><td>";
+                        d += "<tr><td><label for=\"" + v.post_field + "\">" + v.label + "</label>" + labelx + "</td><td>";
                     }
                 }
                 if (!v.width) { v.width = "100%"; }
@@ -1099,7 +1102,7 @@ const tableform = {
                 if (!v.justwidget) { d += "</td></tr>"; }
             }
             else if (v.type == "date") {
-                if (!v.justwidget) { d += "<tr><td><label for=\"" + v.post_field + "\">" + v.label + "</label>" + callout + "</td><td>"; }
+                if (!v.justwidget) { d += "<tr><td><label for=\"" + v.post_field + "\">" + v.label + "</label>" + labelx + "</td><td>"; }
                 d += "<input id=\"" + v.post_field + "\" type=\"text\" class=\"asm-textbox asm-datebox";
                 if (v.classes) { d += " " + v.classes; }
                 if (v.halfsize) { d += " asm-halftextbox"; }
@@ -1112,7 +1115,7 @@ const tableform = {
                 if (!v.justwidget) { d += "</td></tr>"; }
             }
             else if (v.type == "time") {
-                if (!v.justwidget) { d += "<tr><td><label for=\"" + v.post_field + "\">" + v.label + "</label>" + callout + "</td><td>"; }
+                if (!v.justwidget) { d += "<tr><td><label for=\"" + v.post_field + "\">" + v.label + "</label>" + labelx + "</td><td>"; }
                 d += "<input id=\"" + v.post_field + "\" type=\"text\" class=\"asm-textbox asm-timebox ";
                 if (v.classes) { d += " " + v.classes; }
                 if (v.halfsize) { d += " asm-halftextbox"; }
@@ -1125,7 +1128,7 @@ const tableform = {
                 if (!v.justwidget) { d += "</td></tr>"; }
             }
             else if (v.type == "datetime") {
-                if (!v.justwidget) { d += "<tr><td><label for=\"" + v.post_field + "\">" + v.label + "</label>" + callout + "</td><td>"; }
+                if (!v.justwidget) { d += "<tr><td><label for=\"" + v.post_field + "\">" + v.label + "</label>" + labelx + "</td><td>"; }
                 d += "<span style=\"white-space: nowrap\">";
                 d += "<input id=\"" + v.post_field + "date\" type=\"text\" class=\"asm-textbox asm-datebox asm-halftextbox\" ";
                 d += "data-json=\"" + v.json_field + "\" data-post=\"" + v.post_field + "date\" ";
@@ -1144,7 +1147,7 @@ const tableform = {
                 if (!v.justwidget) { d += "</td></tr>"; }
             }
             else if (v.type == "currency") {
-                if (!v.justwidget) { d += "<tr><td><label for=\"" + v.post_field + "\">" + v.label + "</label>" + callout + "</td><td>"; }
+                if (!v.justwidget) { d += "<tr><td><label for=\"" + v.post_field + "\">" + v.label + "</label>" + labelx + "</td><td>"; }
                 d += "<input id=\"" + v.post_field + "\" type=\"text\" class=\"asm-textbox asm-currencybox";
                 if (v.classes) { d += " " + v.classes; }
                 if (v.halfsize) { d += " asm-halftextbox"; }
@@ -1157,7 +1160,7 @@ const tableform = {
                 if (!v.justwidget) { d += "</td></tr>"; }
             }
             else if (v.type == "intnumber") {
-                if (!v.justwidget) { d += "<tr><td><label for=\"" + v.post_field + "\">" + v.label + "</label>" + callout + "</td><td>"; }
+                if (!v.justwidget) { d += "<tr><td><label for=\"" + v.post_field + "\">" + v.label + "</label>" + labelx + "</td><td>"; }
                 d += "<input id=\"" + v.post_field + "\" type=\"text\" class=\"asm-textbox asm-intbox ";
                 if (v.classes) { d += " " + v.classes; }
                 if (v.halfsize) { d += " asm-halftextbox"; }
@@ -1170,7 +1173,7 @@ const tableform = {
                 if (!v.justwidget) { d += "</td></tr>"; }
             }
             else if (v.type == "number") {
-                if (!v.justwidget) { d += "<tr><td><label for=\"" + v.post_field + "\">" + v.label + "</label>" + callout + "</td><td>"; }
+                if (!v.justwidget) { d += "<tr><td><label for=\"" + v.post_field + "\">" + v.label + "</label>" + labelx + "</td><td>"; }
                 d += "<input id=\"" + v.post_field + "\" type=\"text\" class=\"asm-textbox asm-numberbox ";
                 if (v.classes) { d += " " + v.classes; }
                 if (v.halfsize) { d += " asm-halftextbox"; }
@@ -1183,7 +1186,7 @@ const tableform = {
                 if (!v.justwidget) { d += "</td></tr>"; }
             }
             else if (v.type == "select") {
-                if (!v.justwidget) { d += "<tr><td><label for=\"" + v.post_field + "\">" + v.label + "</label>" + callout + "</td><td>"; }
+                if (!v.justwidget) { d += "<tr><td><label for=\"" + v.post_field + "\">" + v.label + "</label>" + labelx + "</td><td>"; }
                 d += "<select id=\"" + v.post_field + "\" class=\"asm-selectbox";
                 if (v.classes) { d += " " + v.classes; }
                 if (v.halfsize) { d += " asm-halftextbox"; }
@@ -1209,7 +1212,7 @@ const tableform = {
                 if (!v.justwidget) { d += "</td></tr>"; }
             }
             else if (v.type == "selectmulti") {
-                if (!v.justwidget) { d += "<tr><td><label for=\"" + v.post_field + "\">" + v.label + "</label>" + callout + "</td><td>"; }
+                if (!v.justwidget) { d += "<tr><td><label for=\"" + v.post_field + "\">" + v.label + "</label>" + labelx + "</td><td>"; }
                 d += "<select id=\"" + v.post_field + "\" multiple=\"multiple\" class=\"asm-bsmselect";
                 if (v.classes) { d += " " + v.classes; }
                 if (v.halfsize) { d += " asm-halftextbox"; }
@@ -1230,7 +1233,7 @@ const tableform = {
                 if (!v.justwidget) { d += "</td></tr>"; }
             }
             else if (v.type == "person") {
-                if (!v.justwidget) { d += "<tr><td><label for=\"" + v.post_field + "\">" + v.label + "</label>" + callout + "</td><td>"; }
+                if (!v.justwidget) { d += "<tr><td><label for=\"" + v.post_field + "\">" + v.label + "</label>" + labelx + "</td><td>"; }
                 d += "<input id=\"" + v.post_field + "\" type=\"hidden\" class=\"asm-personchooser\" ";
                 d += "data-json=\"" + v.json_field + "\" data-post=\"" + v.post_field + "\" ";
                 if (v.readonly) { d += " data-noedit=\"true\" "; }
@@ -1241,7 +1244,7 @@ const tableform = {
                 if (!v.justwidget) { d += "</td></tr>"; }
             }
             else if (v.type == "animal") {
-                if (!v.justwidget) { d += "<tr><td><label for=\"" + v.post_field + "\">" + v.label + "</label>" + callout + "</td><td>"; }
+                if (!v.justwidget) { d += "<tr><td><label for=\"" + v.post_field + "\">" + v.label + "</label>" + labelx + "</td><td>"; }
                 d += "<input id=\"" + v.post_field + "\" type=\"hidden\" class=\"asm-animalchooser\" ";
                 d += "data-json=\"" + v.json_field + "\" data-post=\"" + v.post_field + "\" ";
                 if (v.readonly) { d += " data-noedit=\"true\" "; }
@@ -1251,7 +1254,7 @@ const tableform = {
                 if (!v.justwidget) { d += "</td></tr>"; }
             }
             else if (v.type == "animalmulti") {
-                if (!v.justwidget) { d += "<tr><td><label for=\"" + v.post_field + "\">" + v.label + "</label>" + callout + "</td><td>"; }
+                if (!v.justwidget) { d += "<tr><td><label for=\"" + v.post_field + "\">" + v.label + "</label>" + labelx + "</td><td>"; }
                 d += "<input id=\"" + v.post_field + "\" type=\"hidden\" class=\"asm-animalchoosermulti\" ";
                 d += "data-json=\"" + v.json_field + "\" data-post=\"" + v.post_field + "\" ";
                 if (v.readonly) { d += " data-noedit=\"true\" "; }
@@ -1261,7 +1264,7 @@ const tableform = {
                 if (!v.justwidget) { d += "</td></tr>"; }
             }
             else if (v.type == "file") {
-                if (!v.justwidget) { d += "<tr><td><label for=\"" + v.post_field + "\">" + v.label + "</label>" + callout + "</td><td>"; }
+                if (!v.justwidget) { d += "<tr><td><label for=\"" + v.post_field + "\">" + v.label + "</label>" + labelx + "</td><td>"; }
                 d += "<input id=\"" + v.post_field + "\" name=\"" + v.post_field + "\" type=\"file\" ";
                 d += "data-json=\"" + v.json_field + "\" data-post=\"" + v.post_field + "\" ";
                 if (v.readonly) { d += " data-noedit=\"true\" "; }
@@ -1272,7 +1275,7 @@ const tableform = {
             }
             else if (v.type == "raw") {
                 // Special widget that allows custom markup instead
-                if (!v.justwidget) { d += "<tr id=\"" + v.post_field + "\"><td><label>" + v.label + "</label>" + callout + "</td><td>"; }
+                if (!v.justwidget) { d += "<tr id=\"" + v.post_field + "\"><td><label>" + v.label + "</label>" + labelx + "</td><td>"; }
                 d += v.markup;
                 if (!v.justwidget) { d += "</td></tr>"; } 
             }

@@ -16,8 +16,6 @@ $(function() {
                 add_title: _("Add account"),
                 edit_title: _("Edit account"),
                 edit_perm: 'cac',
-                helper_text: _("Accounts need a code.") + "<br /><br />" + 
-                    _("If you assign view or edit roles, only users within those roles will be able to view and edit this account."),
                 close_on_ok: false,
                 columns: 1,
                 width: 550,
@@ -34,6 +32,7 @@ $(function() {
                         tooltip: _("This expense account is the source for costs of this type"),
                         options: { displayfield: "COSTTYPENAME", valuefield: "ID", rows: controller.costtypes }},
                     { json_field: "VIEWROLEIDS", post_field: "viewroles", label: _("View Roles"), type: "selectmulti", 
+                        callout: _("If you assign view or edit roles, only users within those roles will be able to view and edit this account."),
                         options: { rows: controller.roles, valuefield: "ID", displayfield: "ROLENAME" }},
                     { json_field: "EDITROLEIDS", post_field: "editroles", label: _("Edit Roles"), type: "selectmulti", 
                         options: { rows: controller.roles, valuefield: "ID", displayfield: "ROLENAME" }},

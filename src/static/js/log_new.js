@@ -77,6 +77,8 @@ $(function() {
                 return true;
             };
 
+            validate.indicator([ "logdate" ]);
+
             // Set default values
             $("#logdate").datepicker("setDate", new Date());
             $("#type").select("value", config.integer("AFDefaultLogType"));    

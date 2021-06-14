@@ -359,6 +359,8 @@ $(function() {
             tableform.dialog_bind(this.dialog);
             tableform.buttons_bind(this.buttons);
             tableform.table_bind(this.table, this.buttons);
+
+            validate.indicator([ "animal", "animals" ]);
             
             // When we pickup and dropoff people, autofill the addresses
             $("#pickup").personchooser().bind("personchooserchange", function(event, rec) { 

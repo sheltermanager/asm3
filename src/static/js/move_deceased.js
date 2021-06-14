@@ -48,9 +48,6 @@ $(function() {
                 '</td></tr>',
                 '<tr>',
                 '<td><label for="ptsreason">' + _("Notes") + '</label>',
-                '<span id="callout-ptsreason" class="asm-callout">',
-                _("Notes about the death of the animal"),
-                '</span></td>',
                 '<td>',
                 '<textarea class="asm-textarea" id="ptsreason" data="ptsreason" rows="8"></textarea>',
                 '</td>',
@@ -69,6 +66,8 @@ $(function() {
                 validate.reset();
                 return validate.notblank([ "animal", "deceaseddate" ]);
             };
+
+            validate.indicator([ "animal", "deceaseddate" ]);
 
             // Callback when animal is changed
             $("#animal").animalchooser().bind("animalchooserchange", function(event, rec) {

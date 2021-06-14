@@ -159,6 +159,8 @@ $(function() {
                 }
             };
 
+            validate.indicator([ "incidentdate", "calldate" ]);
+
             $("#add").button().click(function() {
                 $("#asm-content button").button("disable");
                 add_incident("add");

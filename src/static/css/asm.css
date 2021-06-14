@@ -173,6 +173,10 @@ select:disabled, input:disabled, textarea:disabled {
     padding-left: 15px;
 }
 
+.asm-has-validation {
+    color: #f00;
+}
+
 .asm-hotkey {
     margin-right: 20px;
     float: right;

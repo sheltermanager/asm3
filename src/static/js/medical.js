@@ -13,7 +13,6 @@ $(function() {
                 add_title: _("Add medical regimen"),
                 edit_title: _("Edit medical regimen"),
                 edit_perm: 'mcam',
-                helper_text: _("Medical regimens need an animal, name, dosage, a start date and frequencies."),
                 close_on_ok: false,
                 hide_read_only: true,
                 columns: 1,
@@ -673,6 +672,8 @@ $(function() {
             tableform.table_bind(this.table, this.buttons);
             this.bind_givendialog();
             this.bind_requireddialog();
+
+            validate.indicator([ "animal", "animals" ]);
 
             // Remember the currently selected animal when it changes so we can add
             // its name and code to the local set

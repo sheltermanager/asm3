@@ -11,7 +11,6 @@ $(function() {
                 add_title: _("Add voucher"),
                 edit_title: _("Edit voucher"),
                 edit_perm: 'vcov',
-                helper_text: _("Vouchers need an issue and expiry date."),
                 close_on_ok: false,
                 columns: 1,
                 width: 550,

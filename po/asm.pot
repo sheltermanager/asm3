@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ASM3\n"
 "Report-Msgid-Bugs-To: robin@sheltermanager.com\n"
-"POT-Creation-Date: 2021-05-12 09:28+0000\n"
+"POT-Creation-Date: 2021-06-14 09:59+0000\n"
 "Last-Translator: Robin Rawson-Tetley <robin@sheltermanager.com>\n"
 "Language-Team: en <robin@sheltermanager.com>\n"
 "Language: en\n"
@@ -268,10 +268,6 @@ msgstr ""
 
 #: html.py configuration.py roles.js accounts.js options.js header.js
 msgid "Accounts"
-msgstr ""
-
-#: accounts.js
-msgid "Accounts need a code."
 msgstr ""
 
 #: common.js
@@ -680,10 +676,6 @@ msgstr ""
 
 #: html.py
 msgid "Additional fields"
-msgstr ""
-
-#: additional.js
-msgid "Additional fields need a name, label and type."
 msgstr ""
 
 #: html.py mobile.py dbupdate.py transport.js common_personchooser.js
@@ -1455,10 +1447,6 @@ msgstr ""
 
 #: clinic.py clinic_invoice.js
 msgid "Appointment {0}. {1} on {2} for {3}"
-msgstr ""
-
-#: clinic_appointment.js
-msgid "Appointments need a date and time."
 msgstr ""
 
 #: dbupdate.py
@@ -2939,10 +2927,6 @@ msgstr ""
 msgid "Costs"
 msgstr ""
 
-#: animal_costs.js
-msgid "Costs need a date and amount."
-msgstr ""
-
 #: dbupdate.py
 msgid "Coton de Tulear"
 msgstr ""
@@ -3251,10 +3235,6 @@ msgstr ""
 
 #: lostfound.js header_edit_header.js lostfound_new.js
 msgid "Date Reported"
-msgstr ""
-
-#: person_investigation.js
-msgid "Date and notes are mandatory."
 msgstr ""
 
 #: reports.js
@@ -3918,10 +3898,6 @@ msgstr ""
 
 #: lookups.py roles.js
 msgid "Diets"
-msgstr ""
-
-#: animal_diet.js
-msgid "Diets need a start date."
 msgstr ""
 
 #: mobile.py incident.js header_edit_header.js
@@ -5333,10 +5309,6 @@ msgstr ""
 msgid "Format telephone numbers according to my locale"
 msgstr ""
 
-#: onlineforms.js
-msgid "Forms need a name."
-msgstr ""
-
 #: dbupdate.py
 msgid "Fortnightly"
 msgstr ""
@@ -6628,10 +6600,6 @@ msgstr ""
 msgid "Invoice Only"
 msgstr ""
 
-#: clinic_invoice.js
-msgid "Invoice items need a description and amount."
-msgstr ""
-
 #: dbupdate.py
 msgid "Irish Setter"
 msgstr ""
@@ -7068,10 +7036,6 @@ msgstr ""
 msgid "Litters"
 msgstr ""
 
-#: litters.js
-msgid "Litters need at least a required date and number."
-msgstr ""
-
 #: animal.py
 msgid "Live Releases {0}"
 msgstr ""
@@ -7169,10 +7133,6 @@ msgstr ""
 
 #: log.py
 msgid "Log date must be a valid date"
-msgstr ""
-
-#: log.js
-msgid "Log entries need a date and text."
 msgstr ""
 
 #: log_new.js
@@ -7545,14 +7505,6 @@ msgstr ""
 
 #: html.py configuration.py header.js
 msgid "Medical profiles"
-msgstr ""
-
-#: medicalprofile.js
-msgid "Medical profiles need a profile name, treatment, dosage and frequencies."
-msgstr ""
-
-#: medical.js
-msgid "Medical regimens need an animal, name, dosage, a start date and frequencies."
 msgstr ""
 
 #: mobile.py
@@ -8352,7 +8304,7 @@ msgstr ""
 msgid "Notes"
 msgstr ""
 
-#: move_deceased.js animal.js
+#: animal.js
 msgid "Notes about the death of the animal"
 msgstr ""
 
@@ -8496,10 +8448,6 @@ msgstr ""
 
 #: html.py onlineforms.js roles.js options.js
 msgid "Online Forms"
-msgstr ""
-
-#: onlineform.js
-msgid "Online form fields need a name and label."
 msgstr ""
 
 #: onlineforms.js
@@ -8857,10 +8805,6 @@ msgstr ""
 
 #: roles.js header_edit_header.js
 msgid "Payments"
-msgstr ""
-
-#: donations.js
-msgid "Payments need at least one date, an amount and a person."
 msgstr ""
 
 #: options.js
@@ -10257,10 +10201,6 @@ msgstr ""
 msgid "Roles"
 msgstr ""
 
-#: roles.js
-msgid "Roles need a name."
-msgstr ""
-
 #: dbupdate.py
 msgid "Rosella"
 msgstr ""
@@ -10518,7 +10458,7 @@ msgid ""
 "reattached to this record."
 msgstr ""
 
-#: reports.js
+#: reports.js common_tableform.js
 msgid "Select all"
 msgstr ""
 
@@ -11450,10 +11390,6 @@ msgstr ""
 msgid "Stock level must have a unit"
 msgstr ""
 
-#: stocklevel.js
-msgid "Stock needs a name and unit."
-msgstr ""
-
 #: dbupdate.py
 msgid "Stocktake"
 msgstr ""
@@ -11630,7 +11566,7 @@ msgstr ""
 msgid "Tabby and White"
 msgstr ""
 
-#: common.js maint_undelete.js
+#: common.js
 msgid "Table"
 msgstr ""
 
@@ -11754,10 +11690,6 @@ msgstr ""
 
 #: html.py roles.js
 msgid "Tests"
-msgstr ""
-
-#: test.js
-msgid "Tests need an animal and at least a required date."
 msgstr ""
 
 #: dbupdate.py common_tableform.js onlineform.js
@@ -12803,10 +12735,6 @@ msgstr ""
 msgid "Transactions"
 msgstr ""
 
-#: accounts_trx.js
-msgid "Transactions need a date and description."
-msgstr ""
-
 #: dbupdate.py publish_options.js move_transfer.js
 msgid "Transfer"
 msgstr ""
@@ -13421,10 +13349,6 @@ msgstr ""
 msgid "Vaccinations"
 msgstr ""
 
-#: vaccination.js
-msgid "Vaccinations need an animal and at least a required date."
-msgstr ""
-
 #: medical.py
 msgid "Vaccinations require an animal"
 msgstr ""
@@ -13707,10 +13631,6 @@ msgstr ""
 
 #: roles.js header_edit_header.js
 msgid "Vouchers"
-msgstr ""
-
-#: vouchers.js
-msgid "Vouchers need an issue and expiry date."
 msgstr ""
 
 #: movement.py

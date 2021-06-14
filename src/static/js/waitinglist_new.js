@@ -122,6 +122,8 @@ $(function() {
 
             };
 
+            validate.indicator([ "owner", "dateputon", "description" ]);
+
             const add_waiting_list = async function(mode) {
                 if (!validation()) { return; }
 

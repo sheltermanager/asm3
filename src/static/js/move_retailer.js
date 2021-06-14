@@ -86,6 +86,8 @@ $(function() {
                 return true;
             };
 
+            validate.indicator([ "animal", "person", "retailerdate" ]);
+
             // Callback when animal is changed
             $("#animal").animalchooser().bind("animalchooserchange", function(event, rec) {
               

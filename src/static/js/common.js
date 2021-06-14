@@ -2696,6 +2696,14 @@ const validate = {
         $("#" + fid).focus();
     },
 
+    /* Accepts an array of IDs and adds a marker to the field label to show
+     * that there is validation on those fields */
+    indicator: function(fields) {
+        $.each(fields, function(i, f) {
+            $("label[for='" + f + "']").after(' <span class="asm-has-validation">*</span>');
+        });
+    },
+
     /* Given a container ID, removes highlighting from all the labels
         * if container is not supplied, #asm-content is assumed
         */

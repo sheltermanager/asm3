@@ -156,6 +156,8 @@ $(function() {
                 return true;
             };
 
+            validate.indicator([ "animal", "person", "movementdate" ]);
+
             // Callback when animal is changed
             $("#animal").animalchooser().bind("animalchooserchange", async function(event, a) {
                 // Hide things before we start

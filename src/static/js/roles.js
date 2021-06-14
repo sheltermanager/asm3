@@ -11,11 +11,6 @@ $(function() {
             const cr = function(token, s) { return "<input id='" + token + "' type='checkbox' class='token' /> <label for='" + token + "'>" + s + "</label><br />"; };
             let h = [
                 '<div id="dialog-add" style="display: none" title="' + html.title(_("Add role")) + '">',
-                '<div class="ui-state-highlight ui-corner-all" style="margin-top: 20px; padding: 0 .7em">',
-                '<p><span class="ui-icon ui-icon-info"></span>',
-                _("Roles need a name."),
-                '</p>',
-                '</div>',
                 '<input type="hidden" id="roleid" />',
                 '<input type="hidden" id="rolemap" />',
                 '<table width="100%">',
@@ -279,6 +274,8 @@ $(function() {
                     $("#button-clone").button("option", "disabled", true);
                 }
             });
+
+            validate.indicator([ "rolename" ]);
 
             let addbuttons = { };
             addbuttons[_("Create")] = async function() {

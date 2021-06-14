@@ -17,7 +17,6 @@ $(function() {
                 add_title: _("Add online form"),
                 edit_title: _("Edit online form"),
                 edit_perm: 'eof',
-                helper_text: _("Forms need a name."),
                 close_on_ok: false,
                 columns: 1,
                 width: 850,

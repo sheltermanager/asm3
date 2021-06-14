@@ -21,7 +21,6 @@ $(function() {
                 edit_perm: 'ocod',  
                 close_on_ok: false,
                 hide_read_only: true,
-                helper_text: _("Payments need at least one date, an amount and a person."),
                 columns: 2,
                 fields: [
                     { json_field: "DONATIONTYPEID", post_field: "type", label: _("Type"), type: "select", options: { displayfield: "DONATIONNAME", valuefield: "ID", rows: controller.donationtypes }},
@@ -33,7 +32,7 @@ $(function() {
                         hideif: function() { return !config.bool("DonationQuantities"); } },
                     { json_field: "UNITPRICE", post_field: "unitprice", label: _("Unit Price"), type: "currency", 
                         hideif: function() { return !config.bool("DonationQuantities"); } },
-                    { json_field: "DONATION", post_field: "amount", label: _("Amount"), type: "currency",
+                    { json_field: "DONATION", post_field: "amount", label: _("Amount"), type: "currency", validation: "notblank", 
                         callout: _("This is the gross payment amount, inclusive of any fees and taxes") },
                     { json_field: "FEE", post_field: "fee", label: _("Fee"), type: "currency", 
                         hideif: function() { return !config.bool("DonationFees"); }, 
@@ -53,7 +52,7 @@ $(function() {
                         hideif: function() { return !config.bool("VATEnabled"); } },
                     { type: "nextcol" },
                     { json_field: "ANIMALID", post_field: "animal", label: _("Animal"), type: "animal" },
-                    { json_field: "OWNERID", post_field: "person", label: _("Person"), type: "person" },
+                    { json_field: "OWNERID", post_field: "person", label: _("Person"), type: "person", validation: "notzero" },
                     { json_field: "MOVEMENTID", post_field: "movement", label: _("Movement"), type: "select", options: "" },
                     { json_field: "COMMENTS", post_field: "comments", label: _("Comments"), type: "textarea" }
                 ]
@@ -241,7 +240,6 @@ $(function() {
         },
 
         validation: function() {
-            if (!validate.notzero(["person"])) { return false; }
             if ($("#due").val() == "" && $("#received").val() == "") {
                 validate.notblank(["received", "due"]);
                 return false;

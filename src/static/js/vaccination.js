@@ -14,7 +14,6 @@ $(function() {
                 add_title: _("Add vaccination"),
                 edit_title: _("Edit vaccination"),
                 edit_perm: 'cav',
-                helper_text: _("Vaccinations need an animal and at least a required date."),
                 close_on_ok: false,
                 use_default_values: false,
                 columns: 1,
@@ -497,6 +496,8 @@ $(function() {
             tableform.table_bind(this.table, this.buttons);
             this.bind_givendialog();
             this.bind_requireddialog();
+
+            validate.indicator([ "animal", "animals" ]);
 
             // When the vacc type is changed, update the default cost and batch/manufacturer
             $("#type").change(function() {

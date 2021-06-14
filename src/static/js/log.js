@@ -11,7 +11,6 @@ $(function() {
                 add_title: _("Add log"),
                 edit_title: _("Edit log"),
                 edit_perm: 'cle',
-                helper_text: _("Log entries need a date and text."),
                 close_on_ok: false,
                 columns: 1,
                 width: 500,
