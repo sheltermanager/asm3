@@ -5407,6 +5407,7 @@ class report_export_csv(ASMEndpoint):
         if cols is not None and "RENAMEHEADER" in cols and len(rows) > 0:
             renameheader = rows[0].RENAMEHEADER
         self.content_type("text/csv")
+        if filename.find("&#") != -1: filename = str(crid) # non-latin1 chars in headers cause errors in web.py
         self.header("Content-Disposition", u"attachment; filename=\"" + asm3.utils.decode_html(filename) + u".csv\"")
         return asm3.utils.csv(o.locale, rows, cols, includeheader=True, titlecaseheader=titlecaseheader, renameheader=renameheader)
 

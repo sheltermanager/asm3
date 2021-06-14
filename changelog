@@ -1,6 +1,7 @@
 45
 ================
 
+14/06/21 Export report: non-latin1 characters in headers break web.py
 14/06/21 Use visual indicators for dialog required fields
 11/06/21 Strip script tags from onlineform submissions #1004
 11/06/21 When movement animal changes, update for animal #1008
