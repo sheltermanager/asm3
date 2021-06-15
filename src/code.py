@@ -1979,7 +1979,7 @@ class calendar_events(ASMEndpoint):
                     "title": d["SUBJECT"], 
                     "allDay": allday, 
                     "start": d["DIARYDATETIME"], 
-                    "tooltip": "%s %s" % (d["LINKINFO"], d["NOTE"]), 
+                    "tooltip": "%s %s %s" % (d["SUBJECT"], d["LINKINFO"], d["NOTE"]), 
                     "icon": "diary",
                     "link": "diary_edit_my" })
         if "v" in ev and self.checkb(asm3.users.VIEW_VACCINATION):
@@ -2068,7 +2068,7 @@ class calendar_events(ASMEndpoint):
         if "r" in ev and self.checkb(asm3.users.VIEW_TRANSPORT):
             for r in asm3.movement.get_transport_two_dates(dbo, start, end):
                 sub = "%s - %s" % (r["ANIMALNAME"], r["SHELTERCODE"])
-                tit = "%s - %s :: %s, %s" % (r["DRIVEROWNERNAME"], r["PICKUPOWNERADDRESS"], r["DROPOFFOWNERADDRESS"], r["COMMENTS"])
+                tit = "%s %s, %s - %s :: %s, %s" % (r["ANIMALNAME"], r["SHELTERCODE"], r["DRIVEROWNERNAME"], r["PICKUPOWNERADDRESS"], r["DROPOFFOWNERADDRESS"], r["COMMENTS"])
                 allday = False
                 if r["PICKUPDATETIME"].hour == 0 and r["PICKUPDATETIME"].minute == 0:
                     allday = True

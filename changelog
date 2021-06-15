@@ -1,6 +1,7 @@
 45
 ================
 
+15/06/21 Show longer descriptions in calendar listview for tablets #976
 15/06/21 ReturnedBy wordkeys #997
 14/06/21 Export report: non-latin1 characters in headers break web.py
 14/06/21 Use visual indicators for dialog required fields
