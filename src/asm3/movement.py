@@ -60,7 +60,14 @@ def get_movement_query(dbo):
         "(SELECT MovementType FROM lksmovementtype WHERE ID=10) " \
         "WHEN m.MovementDate Is Null AND m.ReservationDate Is Not Null THEN " \
         "(SELECT MovementType FROM lksmovementtype WHERE ID=9) " \
-        "ELSE l.MovementType END AS DisplayLocationName, co.OwnerName AS CurrentOwnerName, " \
+        "ELSE l.MovementType END AS DisplayLocationName, " \
+        "co.OwnerName AS CurrentOwnerName, " \
+        "rb.OwnerName AS ReturnedByOwnerName, rb.OwnerForeNames AS ReturnedByOwnerForenames, " \
+        "rb.OwnerSurname AS ReturnedByOwnerSurname, rb.OwnerAddress AS ReturnedByOwnerAddress, " \
+        "rb.OwnerTown AS ReturnedByOwnerTown, rb.OwnerCounty AS ReturnedByOwnerCounty, " \
+        "rb.OwnerPostcode AS ReturnedByOwnerPostcode, rb.HomeTelephone AS ReturnedByHomeTelephone, " \
+        "rb.WorkTelephone AS ReturnedByWorkTelephone, rb.MobileTelephone AS ReturnedByMobileTelephone, " \
+        "rb.EmailAddress AS ReturnedByEmailAddress, " \
         "a.AdoptionCoordinatorID, ac.OwnerName AS AdoptionCoordinatorName " \
         "FROM adoption m " \
         "LEFT OUTER JOIN reservationstatus rs ON rs.ID = m.ReservationStatusID " \
@@ -75,7 +82,8 @@ def get_movement_query(dbo):
         "LEFT OUTER JOIN species s ON a.SpeciesID = s.ID " \
         "LEFT OUTER JOIN lksex sx ON sx.ID = a.Sex " \
         "LEFT OUTER JOIN owner o ON m.OwnerID = o.ID " \
-        "LEFT OUTER JOIN owner r ON m.RetailerID = r.ID "
+        "LEFT OUTER JOIN owner r ON m.RetailerID = r.ID " \
+        "LEFT OUTER JOIN owner rb ON m.ReturnedByOwnerID = rb.ID "
 
 def get_transport_query(dbo):
     return "SELECT t.*, tt.TransportTypeName, " \

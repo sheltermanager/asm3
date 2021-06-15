@@ -857,6 +857,28 @@ ReturnNotes
     The reason for return notes
 ReturnReason
     The return category
+ReturnedByName
+    The name of the person who returned the animal
+ReturnedByFirstname / ReturnedByForenames 
+    The first name(s) of the person who returned the animal
+ReturnedByLastname / ReturnedBySurname
+    The last name of the person who returned the animal
+ReturnedByAddress 
+    The returner's address
+ReturnedByTown 
+    (ReturnedByCity for US users) 
+ReturnedByCounty 
+    (ReturnedByState for US users) 
+ReturnedByPostcode 
+    (ReturnedByZipcode for US users) 
+ReturnedByHomePhone 
+    Returner's home phone number
+ReturnedByWorkPhone 
+    Returner's work phone number
+ReturnedByMobilePhone 
+    Returner's cell/mobile phone number
+ReturnedByEmail 
+    Returner's email address
 AdoptionDate
     The date of the adoption (if this is an adoption, alias for MovementDate)
 FosteredDate
