@@ -1674,6 +1674,7 @@ $(function() {
 
             // Dirty handling
             validate.bind_dirty([ "animal_" ]);
+            validate.indicator(["animalname", "dateofbirth", "datebroughtin" ]);
 
             // If a popup warning has been set, display it
             animal.show_popup_warning();

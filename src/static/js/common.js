@@ -2700,7 +2700,7 @@ const validate = {
      * that there is validation on those fields */
     indicator: function(fields) {
         $.each(fields, function(i, f) {
-            $("label[for='" + f + "']").after(' <span class="asm-has-validation">*</span>');
+            $("label[for='" + f + "']").after('&nbsp;<span class="asm-has-validation">*</span>');
         });
     },
 

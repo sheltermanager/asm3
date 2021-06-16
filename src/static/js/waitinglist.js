@@ -285,6 +285,7 @@ $(function() {
 
             // Dirty handling
             validate.bind_dirty([ "waitinglist_" ]);
+            validate.indicator([ "owner", "dateputon", "description" ]);
 
         },
 

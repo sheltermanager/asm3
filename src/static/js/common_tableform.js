@@ -994,10 +994,10 @@ const tableform = {
                 return;
             }
             if (v.validation && v.validation.indexOf("not") == 0) {
-                labelx += ' <span class="asm-has-validation">*</span>';
+                labelx += '&nbsp;<span class="asm-has-validation">*</span>';
             }
             if (v.callout) {
-                labelx += ' <span id="callout-' + v.post_field + '" class="asm-callout">' + v.callout + '</span>';
+                labelx += '&nbsp;<span id="callout-' + v.post_field + '" class="asm-callout">' + v.callout + '</span>';
             }
             if (v.type == "check") {
                 if (!v.justwidget) { d += "<tr><td></td><td>"; }

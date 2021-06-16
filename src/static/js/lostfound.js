@@ -365,6 +365,8 @@ $(function() {
 
             // Dirty handling
             validate.bind_dirty([ "lostanimal_", "foundanimal_" ]);
+            if (this.mode == "lost") { validate.indicator([ "datelost", "datereported", "owner" ]); }
+            if (this.mode == "found") { validate.indicator([ "datefound", "datereported", "owner" ]); }
         },
 
         destroy: function() {

@@ -601,6 +601,7 @@ $(function() {
 
             // Dirty handling
             validate.bind_dirty([ "incident_" ]);
+            validate.indicator([ "incidentdate", "calldate" ]);
 
         },
 
