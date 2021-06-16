@@ -228,6 +228,9 @@ $(function() {
             $.each(config.str("WaitingListViewColumns").split(","), function(i, v) {
                 cols.push(common.trim(v));
             });
+            // If OwnerName is not present in the list, insert it as the first column to make
+            // sure there's still a link displayed to the target record
+            if (!common.array_in("OwnerName", cols)) { cols.unshift("OwnerName"); } 
             return cols;
         },
 
