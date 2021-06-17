@@ -1,6 +1,7 @@
 45
 ================
 
+17/06/21 Fix for scaling images with alpha channel to JPG
 16/06/21 Do not allow link fields to be removed from find screens #870
 15/06/21 Show longer descriptions in calendar listview for tablets #976
 15/06/21 ReturnedBy wordkeys #997

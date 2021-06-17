@@ -667,6 +667,7 @@ def scale_image(imagedata, resizespec):
         file_data = asm3.utils.bytesio(imagedata)
         im = Image.open(file_data)
         im.thumbnail(size, Image.ANTIALIAS)
+        if im.mode in ("RGBA", "P"): im = im.convert("RGB") # throw away alpha layer so we can output as JPEG
         # Save the scaled down image data 
         output = asm3.utils.bytesio()
         im.save(output, "JPEG")
