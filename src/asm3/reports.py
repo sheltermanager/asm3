@@ -1311,10 +1311,10 @@ class Report:
         Currently works for monthly and annual figures, but it does slow things down a bit.
         Decided not to do this for ownerlookingfor or lostfoundmatch as they would be even slower.
         """
-        if self.sql.find("animalfigures"):
-            seldate = asm3.i18n.parse_date('%Y-%m-%d', self.params[0][3])
+        if self.sql.find("animalfigures") != -1:
+            seldate = asm3.i18n.display2python(self.dbo.locale, self.params[0][3])
             if seldate: asm3.animal.update_animal_figures(self.dbo, seldate.month, seldate.year)
-        if self.sql.find("animalfiguresannual"):
+        if self.sql.find("animalfiguresannual") != -1:
             selyear = asm3.utils.cint(self.params[0][3])
             asm3.animal.update_animal_figures_annual(self.dbo, selyear)
 
