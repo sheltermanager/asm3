@@ -1359,7 +1359,7 @@ def html_to_pdf_cmd(dbo, htmldata):
     htmldata = re.sub(r'<img.*?signature\:.*?\/>', '', htmldata)
     # Remove anything that could be a security risk
     htmldata = re.sub(r'<iframe.*>', '', htmldata, flags=re.I)
-    htmldata = re.sub(r'<script.*>', '', htmldata, flags=re.I)
+    htmldata = strip_script_tags(htmldata)
     # Fix up any google QR codes where a protocol-less URI has been used
     htmldata = htmldata.replace("\"//chart.googleapis.com", "\"http://chart.googleapis.com")
     # Switch relative document uris to absolute service based calls
@@ -1423,7 +1423,7 @@ def html_to_pdf_pisa(dbo, htmldata):
     htmldata = re.sub(r'<img.*?signature\:.*?\/>', '', htmldata)
     # Remove anything that could be a security risk
     htmldata = re.sub(r'<iframe.*>', '', htmldata, flags=re.I)
-    htmldata = re.sub(r'<script.*>', '', htmldata, flags=re.I)
+    htmldata = strip_script_tags(htmldata)
     # Fix up any google QR codes where a protocol-less URI has been used
     htmldata = htmldata.replace("\"//chart.googleapis.com", "\"http://chart.googleapis.com")
     # Switch relative document uris to absolute service based calls

@@ -1,6 +1,7 @@
 45
 ================
 
+21/06/21 Strip script tags properly before feeding to PDF converter
 21/06/21 Generate monthly/annual figures when the report is requested #913
 21/06/21 Add report toolbar with email/export to CSV/PDF #313
 17/06/21 Fix for scaling images with alpha channel to JPG
