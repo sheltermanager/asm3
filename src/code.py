@@ -5411,6 +5411,45 @@ class report_export_csv(ASMEndpoint):
         self.header("Content-Disposition", u"attachment; filename=\"" + asm3.utils.decode_html(filename) + u".csv\"")
         return asm3.utils.csv(o.locale, rows, cols, includeheader=True, titlecaseheader=titlecaseheader, renameheader=renameheader)
 
+class report_export_email(ASMEndpoint):
+    url = "report_export_email"
+    get_permissions = asm3.users.EXPORT_REPORT
+
+    def content(self, o):
+        dbo = o.dbo
+        post = o.post
+        crid = post.integer("id")
+        email = post["email"]
+        crit = asm3.reports.get_criteria_controls(dbo, crid, locationfilter = o.locationfilter, siteid = o.siteid) 
+        # If this report takes criteria and none were supplied, go to the criteria screen instead to get them
+        if crit != "" and post["hascriteria"] == "": self.redirect("report_criteria?id=%d&target=report_export_email" % crid)
+        # Make sure this user has a role that can view the report
+        asm3.reports.check_view_permission(o.session, crid)
+        title = asm3.reports.get_title(dbo, crid)
+        p = asm3.reports.get_criteria_params(dbo, crid, post)
+        content = asm3.reports.execute(dbo, crid, o.user, p)
+        asm3.utils.send_email(dbo, asm3.configuration.email(dbo), email, "", "", title, content, "html")
+        self.redirect("report%s" % self.query() + "&sent=1")
+
+class report_export_pdf(ASMEndpoint):
+    url = "report_export_pdf"
+    get_permissions = asm3.users.EXPORT_REPORT
+
+    def content(self, o):
+        dbo = o.dbo
+        post = o.post
+        crid = post.integer("id")
+        crit = asm3.reports.get_criteria_controls(dbo, crid, locationfilter = o.locationfilter, siteid = o.siteid) 
+        # If this report takes criteria and none were supplied, go to the criteria screen instead to get them
+        if crit != "" and post["hascriteria"] == "": self.redirect("report_criteria?id=%d&target=report_export_pdf" % crid)
+        # Make sure this user has a role that can view the report
+        asm3.reports.check_view_permission(o.session, crid)
+        p = asm3.reports.get_criteria_params(dbo, crid, post)
+        disposition = asm3.configuration.pdf_inline(dbo) and "inline; filename=\"report.pdf\"" or "attachment; filename=\"report.pdf\""
+        self.content_type("application/pdf")
+        self.header("Content-Disposition", disposition)
+        return asm3.utils.html_to_pdf(dbo, asm3.reports.execute(dbo, crid, o.user, p))
+
 class report_images(JSONEndpoint):
     url = "report_images"
     

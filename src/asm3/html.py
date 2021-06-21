@@ -58,6 +58,9 @@ def asm_css_tag(filename):
     """
     return "<link rel=\"stylesheet\" type=\"text/css\" href=\"static/css/%s?b=%s\" />\n" % (filename, BUILD)
 
+def script_i18n(l):
+    return "<script type=\"text/javascript\" src=\"static/js/locales/locale_%s.js?b=%s\"></script>\n" % (real_locale(l), BUILD)
+
 def script_tag(uri, idattr=""):
     """
     Returns a script tag to a resource.
@@ -72,7 +75,7 @@ def asm_script_tag(filename):
     get it from the compat folder instead so it's still cross-browser compliant and minified.
     """
     standalone = [ "animal_view_adoptable.js", "document_edit.js", "mobile.js", "mobile_sign.js", 
-        "onlineform_extra.js" ]
+        "onlineform_extra.js", "report_toolbar.js" ]
     if ROLLUP_JS and filename in standalone and filename.find("/") == -1: filename = "compat/%s" % filename
     return "<script type=\"text/javascript\" src=\"static/js/%s?b=%s\"></script>\n" % (filename, BUILD)
 
@@ -84,7 +87,7 @@ def asm_script_tags(path):
         "common_animalchoosermulti.js", "common_personchooser.js", "common_tableform.js", "header.js",
         "header_additional.js", "header_edit_header.js" ]
     exclude = [ "animal_view_adoptable.js", "document_edit.js", "mobile.js", "mobile_sign.js", 
-        "onlineform_extra.js" ]
+        "onlineform_extra.js", "report_toolbar.js" ]
     # Read our available js files and append them to this list, not including ones
     # we've explicitly added above (since they are in correct load order)
     for i in os.listdir(path + "static/js"):
@@ -150,8 +153,6 @@ def bare_header(title, theme = "asm", locale = LOCALE, config_db = "asm", config
     """
     if config_db == "asm" and config_ts == "0":
         config_ts = python2unix(now())
-    def script_i18n(l):
-        return "<script type=\"text/javascript\" src=\"static/js/locales/locale_%s.js?b=%s\"></script>\n" % (real_locale(l), BUILD)
     def script_config():
         return "<script type=\"text/javascript\" src=\"config.js?db=%s&ts=%s\"></script>\n" % (config_db, config_ts)
     def script_schema():
@@ -340,6 +341,21 @@ def map_js():
             "time": escape(now()),
             "common": asm_script_tag("common.js"),
             "commonmap": asm_script_tag("common_map.js") }
+
+def report_js(l):
+    return """
+        %(jqueryuicss)s
+        %(jquery)s
+        %(jqueryui)s
+        %(i18n)s
+        %(asmcss)s
+        %(report_toolbar)s
+    """ % { "asmcss": asm_css_tag("asm.css"),
+            "jquery": script_tag(JQUERY_JS),
+            "jqueryui": script_tag(JQUERY_UI_JS),
+            "jqueryuicss": css_tag(JQUERY_UI_CSS % { "theme": "asm" }),
+            "i18n": script_i18n(l),
+            "report_toolbar": asm_script_tag("report_toolbar.js") }
 
 def escape(s):
     if s is None: return ""

@@ -125,7 +125,7 @@ def get_onlineform_html(dbo, formid, completedocument = True):
         df = asm3.i18n.get_display_date_format(l)
         df = df.replace("%Y", "yy").replace("%m", "mm").replace("%d", "dd")
         extra = "<script>\nDATE_FORMAT = '%s';\n</script>\n" % df
-        extra += asm3.html.css_tag(JQUERY_UI_CSS.replace("%(theme)s", "smoothness")) + \
+        extra += asm3.html.css_tag(JQUERY_UI_CSS.replace("%(theme)s", "asm")) + \
             asm3.html.css_tag(ASMSELECT_CSS) + \
             asm3.html.css_tag(TIMEPICKER_CSS) + \
             asm3.html.script_tag(JQUERY_JS) + \

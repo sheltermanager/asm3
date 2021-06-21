@@ -12,7 +12,7 @@ jsfiles = [ "common.js", "common_map.js", "common_widgets.js", "common_animalcho
     "header_additional.js", "header_edit_header.js" ]
 
 exclude = [ "animal_view_adoptable.js", "document_edit.js", "mobile.js", "mobile_sign.js", 
-    "onlineform_extra.js" ]
+    "onlineform_extra.js", "report_toolbar.js" ]
 
 for i in os.listdir("src/static/js"):
     if i not in jsfiles and i not in exclude and not i.startswith(".") and i.endswith(".js"):

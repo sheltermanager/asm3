@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ASM3\n"
 "Report-Msgid-Bugs-To: robin@sheltermanager.com\n"
-"POT-Creation-Date: 2021-06-14 09:59+0000\n"
+"POT-Creation-Date: 2021-06-21 16:40+0000\n"
 "Last-Translator: Robin Rawson-Tetley <robin@sheltermanager.com>\n"
 "Language-Team: en <robin@sheltermanager.com>\n"
 "Language: en\n"
@@ -1529,10 +1529,6 @@ msgstr ""
 msgid "Asset::Premises"
 msgstr ""
 
-#: common_personchooser.js
-msgid "At least the last name should be completed."
-msgstr ""
-
 #: onlineform_incoming.js media.js
 msgid "Attach"
 msgstr ""
@@ -2180,8 +2176,8 @@ msgstr ""
 #: document_templates.js publish_options.js report_images.js
 #: common_personchooser.js users.js person.js medical.js vaccination.js
 #: onlineforms.js reports.js sql.js onlineform_incoming.js common_widgets.js
-#: common_tableform.js common.js common_animalchoosermulti.js accounts_trx.js
-#: roles.js main.js test.js animal.js clinic_appointment.js
+#: common_tableform.js common.js common_animalchoosermulti.js report_toolbar.js
+#: accounts_trx.js roles.js main.js test.js animal.js clinic_appointment.js
 #: common_animalchooser.js media.js htmltemplates.js person_new.js
 msgid "Cancel"
 msgstr ""
@@ -4402,9 +4398,9 @@ msgid "Electricity Bills"
 msgstr ""
 
 #: html.py mobile.py onlineform.py users.js incident.js waitinglist_results.js
-#: person.js common.js onlineform.js waitinglist.js document_repository.js
-#: lostfound.js animal.js options.js person_find.js media.js
-#: header_edit_header.js person_find_results.js
+#: person.js common.js report_toolbar.js onlineform.js waitinglist.js
+#: document_repository.js lostfound.js animal.js options.js person_find.js
+#: media.js header_edit_header.js person_find_results.js
 msgid "Email"
 msgstr ""
 
@@ -6564,7 +6560,7 @@ msgstr ""
 msgid "Internal Locations"
 msgstr ""
 
-#: common.js
+#: common.js report_toolbar.js
 msgid "Invalid email address '{0}'"
 msgstr ""
 
@@ -7569,6 +7565,10 @@ msgstr ""
 
 #: lookups.py
 msgid "Message from {0}"
+msgstr ""
+
+#: report_toolbar.js
+msgid "Message sent."
 msgstr ""
 
 #: common_widgets.js
@@ -8663,6 +8663,10 @@ msgstr ""
 msgid "Owners Vet"
 msgstr ""
 
+#: report_toolbar.js
+msgid "PDF"
+msgstr ""
+
 #: common_widgets.js
 msgid "PM"
 msgstr ""
@@ -9202,7 +9206,7 @@ msgstr ""
 msgid "Previous Adopter"
 msgstr ""
 
-#: onlineform_incoming.js
+#: onlineform_incoming.js report_toolbar.js
 msgid "Print"
 msgstr ""
 
@@ -10505,7 +10509,7 @@ msgstr ""
 msgid "Selkirk Rex"
 msgstr ""
 
-#: mobile.py common_widgets.js
+#: mobile.py common_widgets.js report_toolbar.js
 msgid "Send"
 msgstr ""
 
@@ -10549,6 +10553,10 @@ msgstr ""
 
 #: roles.js
 msgid "Send mass emails and perform mail merges"
+msgstr ""
+
+#: report_toolbar.js
+msgid "Send to"
 msgstr ""
 
 #: mobile.py main.js

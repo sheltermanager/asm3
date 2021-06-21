@@ -403,6 +403,16 @@ select:disabled, input:disabled, textarea:disabled {
     font-weight: bold; 
 }
 
+/** REPORTS ===================== */
+.asm-report-toolbar {
+    top: 0;
+    position: sticky;
+    padding: 5px;
+    background-color: #fff;
+    border-bottom: 1px solid black;
+    margin-bottom: 5px;
+}
+
 /** ROTA ======================== */
 .asm-staff-rota th { background-color: #fff; color: #666; padding: 8px; font-weight: normal; }
 .asm-staff-rota th { top: 0; position: sticky; } 
