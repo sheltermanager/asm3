@@ -69,10 +69,14 @@ def get_animal_data(dbo, pc=None, animalid=0, include_additional_fields=False, r
 
     # Strip any personal data if requested
     if strip_personal_data:
+        personal = ["ADOPTIONCOORDINATOR", "ORIGINALOWNER", "BROUGHTINBY", 
+            "CURRENTOWNER", "OWNER", "RESERVEDOWNER", 
+            "CURRENTVET", "NEUTERINGVET", "OWNERSVET"]
         for r in rows:
             for k in r.keys():
-                if k.startswith("ORIGINALOWNER") or k.startswith("BROUGHTINBY") or k.startswith("CURRENTOWNER") or k.startswith("RESERVEDOWNER"):
-                    r[k] = ""
+                for p in personal:
+                    if k.startswith(p):
+                        r[k] = ""
 
     # Recalculate age groups
     if recalc_age_groups:
