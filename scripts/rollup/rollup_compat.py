@@ -16,7 +16,7 @@ jsfiles = [ "common.js", "common_map.js", "common_widgets.js", "common_animalcho
     "header_additional.js", "header_edit_header.js" ]
 
 exclude = [ "animal_view_adoptable.js", "document_edit.js", "mobile.js", "mobile_sign.js", 
-    "onlineform_extra.js", "rollup.js", "rollup_compat.js" ]
+    "onlineform_extra.js", "report_toolbar.js", "rollup.js", "rollup_compat.js" ]
 
 # Output extra polyfills first
 os.system("cat node_modules/regenerator-runtime/runtime.js | scripts/jsmin/jsmin > node_modules/regenerator-runtime/runtime.min.js")

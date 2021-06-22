@@ -288,6 +288,7 @@ DEFAULTS = {
     "ReceiptNumberNext": "0",
     "RecordSearchLimit": "1000",
     "ReloadMedical": "Yes",
+    "ReportToolbar": "Yes",
     "ReservesOverdueDays": "7",
     "RetailerOnShelter": "Yes",
     "ReturnFostersOnAdoption": "Yes",
@@ -651,6 +652,24 @@ def avid_reregistration(dbo):
 
 def cancel_reserves_on_adoption(dbo):
     return cboolean(dbo, "CancelReservesOnAdoption", DEFAULTS["CancelReservesOnAdoption"] == "Yes")
+
+def cardcom_terminalnumber(dbo):
+    return cstring(dbo, "CardcomTerminalNumber")
+
+def cardcom_username(dbo):
+    return cstring(dbo, "CardcomUserName")
+
+def cardcom_documenttype(dbo):
+    return cstring(dbo, "CardcomDocumentType")
+
+def cardcom_usetoken(dbo):
+    return cboolean(dbo,"CardcomUseToken", DEFAULTS["CardcomUseToken"] == "Yes")
+
+def cardcom_successurl(dbo):
+    return cstring(dbo, "CardcomSuccessURL")
+
+def cardcom_errorurl(dbo):
+    return cstring(dbo, "CardcomErrorURL")
 
 def clone_animal_include_logs(dbo):
     return cboolean(dbo, "CloneAnimalIncludeLogs", DEFAULTS["CloneAnimalIncludeLogs"] == "Yes")
@@ -1186,6 +1205,9 @@ def receipt_number_next(dbo):
     cset(dbo, "ReceiptNumberNext", str(nrn + 1))
     return nrn
 
+def report_toolbar(dbo):
+    return cboolean(dbo, "ReportToolbar", DEFAULTS["ReportToolbar"] == "Yes")
+
 def rescuegroups_user(dbo):
     return cstring(dbo, "RescueGroupsFTPUser")
 
@@ -1281,24 +1303,6 @@ def stripe_key(dbo):
 
 def stripe_secret_key(dbo):
     return cstring(dbo, "StripeSecretKey")
-
-def cardcom_terminalnumber(dbo):
-    return cstring(dbo, "CardcomTerminalNumber")
-
-def cardcom_username(dbo):
-    return cstring(dbo, "CardcomUserName")
-
-def cardcom_documenttype(dbo):
-    return cstring(dbo, "CardcomDocumentType")
-
-def cardcom_usetoken(dbo):
-    return cboolean(dbo,"CardcomUseToken", DEFAULTS["CardcomUseToken"] == "Yes")
-
-def cardcom_successurl(dbo):
-    return cstring(dbo, "CardcomSuccessURL")
-
-def cardcom_errorurl(dbo):
-    return cstring(dbo, "CardcomErrorURL")
 
 def use_short_shelter_codes(dbo):
     return cboolean(dbo, "UseShortShelterCodes")

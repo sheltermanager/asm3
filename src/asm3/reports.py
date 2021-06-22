@@ -1311,12 +1311,24 @@ class Report:
         Currently works for monthly and annual figures, but it does slow things down a bit.
         Decided not to do this for ownerlookingfor or lostfoundmatch as they would be even slower.
         """
-        if self.sql.find("animalfigures") != -1:
-            seldate = asm3.i18n.display2python(self.dbo.locale, self.params[0][3])
-            if seldate: asm3.animal.update_animal_figures(self.dbo, seldate.month, seldate.year)
-        if self.sql.find("animalfiguresannual") != -1:
-            selyear = asm3.utils.cint(self.params[0][3])
-            asm3.animal.update_animal_figures_annual(self.dbo, selyear)
+        # Find year, month or date parameters and extract the year and month for updating
+        year = 0
+        month = 0
+        for p in self.params:
+            iv = asm3.utils.cint(p[3])
+            if p[3].find("/") != -1:
+                seldate = asm3.i18n.display2python(self.dbo.locale, self.params[0][3])
+                if seldate is not None:
+                    year = seldate.year
+                    month = seldate.month
+            elif iv > 1990:
+                year = iv
+            elif iv <= 12:
+                month = iv
+        if self.sql.find("animalfigures") != -1 and year > 0 and month > 0:
+            asm3.animal.update_animal_figures(self.dbo, month, year)
+        if self.sql.find("animalfiguresannual") != -1 and year > 0:
+            asm3.animal.update_animal_figures_annual(self.dbo, year)
 
     def Execute(self, reportId = 0, username = "system", params = None):
         """
@@ -1611,8 +1623,9 @@ class Report:
         if htmlfooterstart != -1 and htmlfooterend != -1:
             htmlfooter = self.html[htmlfooterstart+12:htmlfooterend]
 
-        # Inject the script tags needed into the header
-        htmlheader = htmlheader.replace("</head>", asm3.html.report_js(l) + "\n</head>")
+        # Inject the script tags needed into the header for showing the print toolbar
+        if asm3.configuration.report_toolbar(self.dbo):
+            htmlheader = htmlheader.replace("</head>", asm3.html.report_js(l) + "\n</head>")
 
         # Start the report off with the HTML header
         self._Append(htmlheader)
