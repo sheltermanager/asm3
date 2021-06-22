@@ -1314,17 +1314,18 @@ class Report:
         # Find year, month or date parameters and extract the year and month for updating
         year = 0
         month = 0
-        for p in self.params:
-            iv = asm3.utils.cint(p[3])
-            if p[3].find("/") != -1:
-                seldate = asm3.i18n.display2python(self.dbo.locale, self.params[0][3])
-                if seldate is not None:
-                    year = seldate.year
-                    month = seldate.month
-            elif iv > 1990:
-                year = iv
-            elif iv <= 12:
-                month = iv
+        if self.params is not None:
+            for p in self.params:
+                iv = asm3.utils.cint(p[3])
+                if p[3].find("/") != -1:
+                    seldate = asm3.i18n.display2python(self.dbo.locale, self.params[0][3])
+                    if seldate is not None:
+                        year = seldate.year
+                        month = seldate.month
+                elif iv > 1990:
+                    year = iv
+                elif iv <= 12:
+                    month = iv
         if self.sql.find("animalfigures") != -1 and year > 0 and month > 0:
             asm3.animal.update_animal_figures(self.dbo, month, year)
         if self.sql.find("animalfiguresannual") != -1 and year > 0:
