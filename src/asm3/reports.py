@@ -1623,10 +1623,6 @@ class Report:
         if htmlfooterstart != -1 and htmlfooterend != -1:
             htmlfooter = self.html[htmlfooterstart+12:htmlfooterend]
 
-        # Inject the script tags needed into the header for showing the print toolbar
-        if asm3.configuration.report_toolbar(self.dbo):
-            htmlheader = htmlheader.replace("</head>", asm3.html.report_js(l) + "\n</head>")
-
         # Start the report off with the HTML header
         self._Append(htmlheader)
 

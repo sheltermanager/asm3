@@ -5355,7 +5355,11 @@ class report(ASMEndpoint):
         p = asm3.reports.get_criteria_params(dbo, crid, post)
         if asm3.configuration.audit_on_view_report(dbo):
             asm3.audit.view_report(dbo, o.user, title, str(post.data))
-        return asm3.reports.execute(dbo, crid, o.user, p)
+        s = asm3.reports.execute(dbo, crid, o.user, p)
+        # Inject the script tags needed into the header for showing the print toolbar
+        if asm3.configuration.report_toolbar(dbo):
+            s = s.replace("</head>", asm3.html.report_js(o.locale) + "\n</head>")
+        return s
 
 class report_criteria(JSONEndpoint):
     url = "report_criteria"
