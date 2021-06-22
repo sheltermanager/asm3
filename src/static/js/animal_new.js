@@ -233,8 +233,10 @@ $(function() {
                 '</td>',
                 '<td>',
                 '<input id="microchipped" data="microchipped" type="checkbox" class="asm-checkbox" />',
-                '<input id="microchipdate" data="microchipdate" class="asm-textbox asm-datebox" title="' + html.title(_("The date the animal was microchipped")) + '" />',
-                '<input type="text" id="microchipnumber" data="microchipnumber" class="asm-textbox" title="' + html.title(_("The microchip number")) + '" />',
+                '<input id="microchipdate" data="microchipdate" class="asm-textbox asm-datebox" placeholder="',
+                html.title(_("Date")) + '" />',
+                '<input type="text" id="microchipnumber" data="microchipnumber" class="asm-textbox" placeholder="', 
+                html.title(_("Number")) + '" />',
                 '</td>',
                 '</tr>',
                 '<tr id="tattoorow">',
@@ -243,11 +245,12 @@ $(function() {
                 '</td>',
                 '<td>',
                 '<input id="tattoo" data="tattoo" type="checkbox" class="asm-checkbox" />',
-                '<input id="tattoodate" data="tattoodate" class="asm-textbox asm-datebox" title="' + html.title(_("The date the animal was tattooed")) + '" />',
-                '<input type="text" id="tattoonumber" data="tattoonumber" class="asm-textbox" title="' + html.title(_("The tattoo number")) + '" />',
+                '<input id="tattoodate" data="tattoodate" class="asm-textbox asm-datebox" placeholder="',
+                html.title(_("Date")) + '" />',
+                '<input type="text" id="tattoonumber" data="tattoonumber" class="asm-textbox" placeholder="',
+                html.title(_("Number")) + '" />',
                 '</td>',
                 '</tr>',
-
                 '<tr id="litterrow">',
                 '<td>',
                 '<label for="litterid">' + _("Litter") + '</label>',
@@ -270,7 +273,7 @@ $(function() {
                 '</tr>',
                 '<tr id="feerow">',
                 '<td><label for="fee">' + _("Adoption Fee") + '</label></td>',
-                '<td><input id="fee" data-json="FEE" data-post="fee" class="asm-currencybox asm-textbox" value="0" /></td>',
+                '<td><input id="fee" data-post="fee" class="asm-currencybox asm-textbox" value="0" /></td>',
                 '</tr>',
                 '<tr id="originalownerrow">',
                 '<td><label for="originalowner">' + _("Original Owner") + '</label></td>',
@@ -278,6 +281,19 @@ $(function() {
                 '<div style="margin: 0; width: 315px;">',
                 '<input id="originalowner" data="originalowner" class="asm-personchooser" type="hidden" value="" />',
                 '</div>',
+                '</td>',
+                '<tr id="pickuprow">',
+                '<td>',
+                '<label for="pickedup">' + _("Picked Up") + '</label>',
+                '</td>',
+                '<td>',
+                '<input id="pickedup" data="pickedup" type="checkbox" class="asm-checkbox" />',
+                '<select class="asm-selectbox" id="pickuplocation" data-post="pickuplocation">',
+                '<option value="0"></option>',
+                html.list_to_options(controller.pickuplocations, "ID", "LOCATIONNAME"),
+                '</select>',
+                '<input class="asm-textbox" id="pickupaddress" data-post="pickupaddress" placeholder="',
+                html.title(_("Pickup Address")) + '" />',
                 '</td>',
                 '</tr>',
                 '<tr id="broughtinbyrow">',
@@ -493,6 +509,7 @@ $(function() {
             $("#entryreason").select("value", config.str("AFDefaultEntryReason"));
             $("#internallocation").select("value", config.str("AFDefaultLocation"));
             $("#jurisdiction").select("value", config.str("DefaultJurisdiction"));
+            $("#pickuplocation").select("firstvalue");
             $("#size").select("value", config.str("AFDefaultSize"));
             $("#sex").select("value", "2"); // Unknown
 
@@ -627,6 +644,7 @@ $(function() {
             if (!config.bool("AddAnimalsShowLocationUnit")) { $("#locationunitrow").hide(); }
             if (!config.bool("AddAnimalsShowMicrochip")) { $("#microchiprow").hide(); }
             if (!config.bool("AddAnimalsShowNeutered")) { $("#neuteredrow").hide(); }
+            if (!config.bool("AddAnimalsShowPickup")) { $("#pickuprow").hide(); }
             if (!config.bool("AddAnimalsShowSize")) { $("#sizerow").hide(); }
             if (!config.bool("AddAnimalsShowTattoo")) { $("#tattoorow").hide(); }
             if (!config.bool("AddAnimalsShowTimeBroughtIn")) { $("#timebroughtinrow").hide(); }
@@ -690,6 +708,15 @@ $(function() {
                 }
             });
 
+            // Setting the pickup address or location sets the checkbox
+            $("#pickuplocation").change(function() {
+                $("#pickedup").prop("checked", true);
+            });
+            $("#pickupaddress").change(function() {
+                if ($("#pickupaddress").val()) {
+                    $("#pickedup").prop("checked", true);
+                }
+            });
 
             $("#internallocation").change(animal_new.update_units);
             $("#crossbreed").change(animal_new.enable_widgets);

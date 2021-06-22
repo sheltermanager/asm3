@@ -149,6 +149,8 @@ choose some extra fields for the new animal screen.
 
 * Show the original owner field: Allow original owner to be set
 
+* Show the pickup fields: Allow pickup location/address to be set
+
 * Show the brought in by field: Allow brought in by to be set
 
 * Show the transfer in field: Allow incoming transfers to be set

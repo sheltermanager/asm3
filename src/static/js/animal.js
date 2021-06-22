@@ -327,7 +327,7 @@ $(function() {
                 '<label for="pickuplocation">' + _("Pickup Location") + '</label>',
                 '</td>',
                 '<td>',
-                '<select class="asm-selectbox" id="pickuplocation" data-json="PICKUPLOCATIONID" data-post="pickuplocation" title="' + html.title(_("The location where the animal was picked up")) + '">',
+                '<select class="asm-selectbox" id="pickuplocation" data-json="PICKUPLOCATIONID" data-post="pickuplocation">',
                 html.list_to_options(controller.pickuplocations, "ID", "LOCATIONNAME"),
                 '</select></td>',
                 '</tr>',

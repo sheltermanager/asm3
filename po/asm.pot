@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ASM3\n"
 "Report-Msgid-Bugs-To: robin@sheltermanager.com\n"
-"POT-Creation-Date: 2021-06-21 16:40+0000\n"
+"POT-Creation-Date: 2021-06-22 18:02+0000\n"
 "Last-Translator: Robin Rawson-Tetley <robin@sheltermanager.com>\n"
 "Language-Team: en <robin@sheltermanager.com>\n"
 "Language: en\n"
@@ -3192,7 +3192,7 @@ msgstr ""
 msgid "Database"
 msgstr ""
 
-#: mobile.py dbupdate.py wordprocessor.py move_reclaim.js
+#: mobile.py dbupdate.py wordprocessor.py animal_new.js move_reclaim.js
 #: animal_find_results.js person.js animal_costs.js move_retailer.js
 #: person_links.js diary.js citations.js traploan.js common.js
 #: person_investigation.js onlineform.js accounts_trx.js log_new.js animal.js
@@ -8324,9 +8324,10 @@ msgstr ""
 msgid "Now"
 msgstr ""
 
-#: lostfound.py mobile.py dbupdate.py incident.js incident_find_results.js
-#: licence_renewal.js incident_find.js waitinglist.js lostfound.js
-#: lostfound_find.js animal.js lostfound_find_results.js person_find_results.js
+#: lostfound.py mobile.py dbupdate.py animal_new.js incident.js
+#: incident_find_results.js licence_renewal.js incident_find.js waitinglist.js
+#: lostfound.js lostfound_find.js animal.js lostfound_find_results.js
+#: person_find_results.js
 msgid "Number"
 msgstr ""
 
@@ -8979,7 +8980,7 @@ msgstr ""
 msgid "Photo successfully uploaded."
 msgstr ""
 
-#: html.py animal_find_results.js animal.js
+#: html.py animal_new.js animal_find_results.js animal.js
 msgid "Picked Up"
 msgstr ""
 
@@ -8991,7 +8992,8 @@ msgstr ""
 msgid "Pickup"
 msgstr ""
 
-#: html.py animal_find_results.js person_links.js animal_find.js animal.js
+#: html.py animal_new.js animal_find_results.js person_links.js animal_find.js
+#: animal.js
 msgid "Pickup Address"
 msgstr ""
 
@@ -10920,6 +10922,10 @@ msgid "Show the original owner field"
 msgstr ""
 
 #: options.js
+msgid "Show the pickup fields"
+msgstr ""
+
+#: options.js
 msgid "Show the size field"
 msgstr ""
 
@@ -11810,7 +11816,7 @@ msgstr ""
 msgid "The date the animal was heartworm tested"
 msgstr ""
 
-#: animal_new.js animal.js
+#: animal.js
 msgid "The date the animal was microchipped"
 msgstr ""
 
@@ -11818,7 +11824,7 @@ msgstr ""
 msgid "The date the animal was reclaimed"
 msgstr ""
 
-#: animal_new.js animal.js
+#: animal.js
 msgid "The date the animal was tattooed"
 msgstr ""
 
@@ -11917,10 +11923,6 @@ msgid ""
 msgstr ""
 
 #: animal.js
-msgid "The location where the animal was picked up"
-msgstr ""
-
-#: animal_new.js animal.js
 msgid "The microchip number"
 msgstr ""
 
@@ -12008,7 +12010,7 @@ msgstr ""
 msgid "The species of this animal"
 msgstr ""
 
-#: animal_new.js animal.js
+#: animal.js
 msgid "The tattoo number"
 msgstr ""
 

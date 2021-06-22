@@ -95,6 +95,7 @@ DEFAULTS = {
     "AddAnimalsShowMicrochip": "No",
     "AddAnimalsShowNeutered": "No",
     "AddAnimalsShowOriginalOwner": "No",
+    "AddAnimalsShowPickup": "No",
     "AddAnimalsShowSize": "No",
     "AddAnimalsShowTattoo": "No",
     "AddAnimalsShowTimeBroughtIn": "No",

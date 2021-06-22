@@ -1,6 +1,7 @@
 45
 ================
 
+22/06/21 Option to add pickup location/address to new animals #442
 21/06/21 Strip vet info and owner name field from adoptable_js
 21/06/21 Strip script tags properly before feeding to PDF converter
 21/06/21 Generate monthly/annual figures when the report is requested #913

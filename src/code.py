@@ -1810,6 +1810,7 @@ class animal_new(JSONEndpoint):
             "entryreasons": asm3.lookups.get_entryreasons(dbo),
             "jurisdictions": asm3.lookups.get_jurisdictions(dbo),
             "internallocations": asm3.lookups.get_internal_locations(dbo, o.locationfilter, o.siteid),
+            "pickuplocations": asm3.lookups.get_pickup_locations(dbo),
             "sizes": asm3.lookups.get_sizes(dbo)
         }
         asm3.al.debug("loaded lookups for new animal", "code.animal_new", dbo)
