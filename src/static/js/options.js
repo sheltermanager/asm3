@@ -501,11 +501,13 @@ $(function() {
                     9888,  // Warning
                     9983,  // Striped flag
                     9986,  // Scissors
+                    9989,  // White heavy check mark (green)
                     9990,  // Telephone location
                     9999,  // Pencil
                     10003, // Tick
                     10004, // Cross
                     10052, // Snowflake
+                    10062, // White heavy cross
                     10084, // Heavy heart
                     127960, // House - buildings
                     127968, // House - building

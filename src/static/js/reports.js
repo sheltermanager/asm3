@@ -623,6 +623,28 @@ $(function() {
                 reports.qb_animal_criteria.push(
                     [_("Species is {0}").replace("{0}", v.SPECIESNAME), "species" + v.ID, "SpeciesID=" + v.ID]);
             });
+            $.each(controller.testtypes, function(i, v) {
+                reports.qb_animal_criteria.push(
+                    [_("Test performed {0}").replace("{0}", v.TESTNAME), "test" + v.ID, 
+                        "EXISTS(SELECT ID FROM animaltest WHERE DateOfTest Is Not Null AND " +
+                        "AnimalID=v_animal.ID AND TestTypeID=" + v.ID + ")"]);
+            });
+            $.each(controller.testtypes, function(i, v) {
+                reports.qb_animal_criteria.push(
+                    [_("Test not performed {0}").replace("{0}", v.TESTNAME), "nottest" + v.ID, 
+                        "NOT EXISTS(SELECT ID FROM animaltest WHERE DateOfTest Is Not Null AND " +
+                        "AnimalID=v_animal.ID AND TestTypeID=" + v.ID + ")"]);
+            });
+            $.each(controller.testtypes, function(i, v) {
+                reports.qb_animal_criteria.push(
+                    [_("Test due {0}").replace("{0}", v.TESTNAME), "testdue" + v.ID, 
+                        "EXISTS(SELECT ID FROM animaltest WHERE DateOfTest Is Null AND " +
+                        "DateRequired>='$ASK DATE {0}$' AND DateRequired<='$ASK DATE {1}$'" + 
+                        "AND AnimalID=v_animal.ID AND TestTypeID=" + v.ID + ")"
+                        .replace("{0}", _("Test due between"))
+                        .replace("{1}", _("and"))
+                    ]);
+            });
             $.each(controller.animaltypes, function(i, v) {
                 reports.qb_animal_criteria.push(
                     [_("Type is {0}").replace("{0}", v.ANIMALTYPE), "animaltype" + v.ID, "AnimalTypeID=" + v.ID]);
