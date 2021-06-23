@@ -499,13 +499,16 @@ $(function() {
                     9875,  // Anchor
                     9877,  // Medical
                     9888,  // Warning
+                    9951,  // Truck
                     9983,  // Striped flag
                     9986,  // Scissors
                     9989,  // White heavy check mark (green)
                     9990,  // Telephone location
+                    9992,  // Airplane
                     9999,  // Pencil
                     10003, // Tick
                     10004, // Cross
+                    10024, // Sparkles
                     10052, // Snowflake
                     10062, // White heavy cross
                     10084, // Heavy heart
