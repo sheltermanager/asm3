@@ -1415,7 +1415,7 @@ class Report:
         htmlfooter = self._ReadFooter()
 
         # Inject the script tags needed into the header
-        htmlheader = htmlheader.replace("</head>", asm3.html.graph_js() + "\n</head>")
+        htmlheader = htmlheader.replace("</head>", asm3.html.graph_js(l) + "\n</head>")
 
         # Start the graph off with the HTML header
         self._Append(htmlheader)
@@ -1617,6 +1617,10 @@ class Report:
         htmlheaderend = self.html.find("HTMLHEADER$$")
         if htmlheaderstart != -1 and htmlheaderend != -1:
             htmlheader = self.html[htmlheaderstart+12:htmlheaderend]
+
+        # Inject the script tags needed into the header for showing the print toolbar
+        if asm3.configuration.report_toolbar(self.dbo):
+            htmlheader = htmlheader.replace("</head>", asm3.html.report_js(l) + "\n</head>")
 
         htmlfooter = self._ReadFooter()
         htmlfooterstart = self.html.find("$$HTMLFOOTER")
