@@ -8,8 +8,8 @@ $(function() {
 
         model: function() {
             const dialog = {
-                add_title: _("Add trap loan"),
-                edit_title: _("Edit trap loan"),
+                add_title: _("Add equipment loan"),
+                edit_title: _("Edit equipment loan"),
                 edit_perm: 'catl',
                 close_on_ok: false,
                 columns: 1,
@@ -20,7 +20,8 @@ $(function() {
                     { json_field: "LOANDATE", post_field: "loandate", label: _("Date"), type: "date", validation: "notblank", defaultval: new Date() },
                     { json_field: "DEPOSITAMOUNT", post_field: "depositamount", label: _("Deposit"), type: "currency" },
                     { json_field: "DEPOSITRETURNDATE", post_field: "depositreturndate", label: _("Deposit Returned"), type: "date" },
-                    { json_field: "TRAPNUMBER", post_field: "trapnumber", label: _("Trap Number"), type: "text" },
+                    { json_field: "TRAPNUMBER", post_field: "trapnumber", label: _("Number"), type: "text", 
+                      callout: _("A unique number to identify this piece of equipment") },
                     { json_field: "RETURNDUEDATE", post_field: "returnduedate", label: _("Due"), type: "date" },
                     { json_field: "RETURNDATE", post_field: "returndate", label: _("Returned"), type: "date" },
                     { json_field: "COMMENTS", post_field: "comments", label: _("Comments"), type: "textarea" }
@@ -59,7 +60,7 @@ $(function() {
                         }
                     },
                     { field: "LOANDATE", display: _("Date"), initialsort: true, initialsortdirection: "desc", formatter: tableform.format_date },
-                    { field: "TRAPNUMBER", display: _("Trap Number") },
+                    { field: "TRAPNUMBER", display: _("Number") },
                     { field: "DEPOSITAMOUNT", display: _("Deposit"), formatter: tableform.format_currency },
                     { field: "RETURNDUEDATE", display: _("Due"), formatter: tableform.format_date },
                     { field: "RETURNDATE", display: _("Returned"), formatter: tableform.format_date },
@@ -68,7 +69,7 @@ $(function() {
             };
 
             const buttons = [
-                { id: "new", text: _("New Trap Loan"), icon: "new", enabled: "always", perm: "aatl",
+                { id: "new", text: _("New Loan"), icon: "new", enabled: "always", perm: "aatl",
                     click: async function() { 
                         $("#person").personchooser("clear");
                         if (controller.person) {
@@ -142,7 +143,7 @@ $(function() {
             if (controller.name == "person_traploan") {
                 return controller.person.OWNERNAME;
             }
-            return _("Active Trap Loans");
+            return _("Active Equipment Loans");
         },
         routes: {
             "person_traploan": function() { common.module_loadandstart("traploan", "person_traploan?id=" + this.qs.id); },

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ASM3\n"
 "Report-Msgid-Bugs-To: robin@sheltermanager.com\n"
-"POT-Creation-Date: 2021-06-22 18:02+0000\n"
+"POT-Creation-Date: 2021-06-24 15:23+0000\n"
 "Last-Translator: Robin Rawson-Tetley <robin@sheltermanager.com>\n"
 "Language-Team: en <robin@sheltermanager.com>\n"
 "Language: en\n"
@@ -164,6 +164,10 @@ msgstr ""
 msgid "A unique number to identify this movement"
 msgstr ""
 
+#: traploan.js
+msgid "A unique number to identify this piece of equipment"
+msgstr ""
+
 #: litters.js
 msgid "A unique reference for this litter"
 msgstr ""
@@ -278,12 +282,12 @@ msgstr ""
 msgid "Active"
 msgstr ""
 
-#: incident_map.js
-msgid "Active Incidents"
+#: traploan.js
+msgid "Active Equipment Loans"
 msgstr ""
 
-#: traploan.js
-msgid "Active Trap Loans"
+#: incident_map.js
+msgid "Active Incidents"
 msgstr ""
 
 #: reports.js
@@ -538,6 +542,10 @@ msgstr ""
 msgid "Add diet"
 msgstr ""
 
+#: traploan.js
+msgid "Add equipment loan"
+msgstr ""
+
 #: document_templates.js reports.js
 msgid "Add extra images for use in reports and documents"
 msgstr ""
@@ -632,10 +640,6 @@ msgstr ""
 
 #: transport.js
 msgid "Add transport"
-msgstr ""
-
-#: traploan.js
-msgid "Add trap loan"
 msgstr ""
 
 #: users.js
@@ -4257,6 +4261,10 @@ msgstr ""
 msgid "Edit diet"
 msgstr ""
 
+#: traploan.js
+msgid "Edit equipment loan"
+msgstr ""
+
 #: onlineform.js
 msgid "Edit form field"
 msgstr ""
@@ -4367,10 +4375,6 @@ msgstr ""
 
 #: transport.js
 msgid "Edit transport"
-msgstr ""
-
-#: traploan.js
-msgid "Edit trap loan"
 msgstr ""
 
 #: users.js
@@ -4695,6 +4699,18 @@ msgstr ""
 
 #: waitinglist_new.js waitinglist.js
 msgid "Entry reason"
+msgstr ""
+
+#: lookups.py
+msgid "Equipment Loan Types"
+msgstr ""
+
+#: header_edit_header.js
+msgid "Equipment Loans"
+msgstr ""
+
+#: html.py
+msgid "Equipment loans"
 msgstr ""
 
 #: login.js
@@ -7978,6 +7994,10 @@ msgstr ""
 msgid "New Litter"
 msgstr ""
 
+#: traploan.js
+msgid "New Loan"
+msgstr ""
+
 #: log.js
 msgid "New Log"
 msgstr ""
@@ -8036,10 +8056,6 @@ msgstr ""
 
 #: transport.js
 msgid "New Transport"
-msgstr ""
-
-#: traploan.js
-msgid "New Trap Loan"
 msgstr ""
 
 #: users.js
@@ -8325,9 +8341,9 @@ msgid "Now"
 msgstr ""
 
 #: lostfound.py mobile.py dbupdate.py animal_new.js incident.js
-#: incident_find_results.js licence_renewal.js incident_find.js waitinglist.js
-#: lostfound.js lostfound_find.js animal.js lostfound_find_results.js
-#: person_find_results.js
+#: incident_find_results.js licence_renewal.js traploan.js incident_find.js
+#: waitinglist.js lostfound.js lostfound_find.js animal.js
+#: lostfound_find_results.js person_find_results.js
 msgid "Number"
 msgstr ""
 
@@ -9809,6 +9825,10 @@ msgid "Remove the document repository functionality from menus"
 msgstr ""
 
 #: options.js
+msgid "Remove the equipment loan functionality from menus and screens"
+msgstr ""
+
+#: options.js
 msgid "Remove the good with fields from animal notes"
 msgstr ""
 
@@ -9868,10 +9888,6 @@ msgstr ""
 
 #: options.js
 msgid "Remove the transport functionality from menus and screens"
-msgstr ""
-
-#: options.js
-msgid "Remove the trap loan functionality from menus and screens"
 msgstr ""
 
 #: options.js
@@ -11698,8 +11714,24 @@ msgstr ""
 msgid "Test book"
 msgstr ""
 
+#: reports.js
+msgid "Test due between"
+msgstr ""
+
+#: reports.js
+msgid "Test due {0}"
+msgstr ""
+
 #: mobile.py
 msgid "Test marked as performed for {0} - {1}"
+msgstr ""
+
+#: reports.js
+msgid "Test not performed {0}"
+msgstr ""
+
+#: reports.js
+msgid "Test performed {0}"
 msgstr ""
 
 #: html.py roles.js
@@ -12834,23 +12866,15 @@ msgstr ""
 msgid "Transports must have valid pickup and dropoff dates and times."
 msgstr ""
 
-#: roles.js header_edit_header.js
+#: roles.js
 msgid "Trap Loans"
-msgstr ""
-
-#: traploan.js
-msgid "Trap Number"
-msgstr ""
-
-#: lookups.py
-msgid "Trap Types"
 msgstr ""
 
 #: calendarview.js
 msgid "Trap loan"
 msgstr ""
 
-#: html.py configuration.py header.js
+#: configuration.py header.js
 msgid "Trap loans"
 msgstr ""
 

@@ -487,7 +487,7 @@ edit_header = {
             [ "investigation", "person_investigation", _("Investigation"), "investigation", "voi" ],
             [ "citation", "person_citations", _("Citations"), "citation", "vacc" ],
             [ "rota", "person_rota", _("Rota"), "rota", "voro" ],
-            [ "traploan", "person_traploan", _("Trap Loans"), "traploan", "vatl" ],
+            [ "traploan", "person_traploan", _("Equipment Loans"), "traploan", "vatl" ],
             [ "clinic", "person_clinic", _("Clinic"), "health", "vcl" ],
             [ "donations", "person_donations", _("Payments"), "donation", "ovod" ],
             [ "vouchers", "person_vouchers", _("Vouchers"), "donation", "vvov" ],

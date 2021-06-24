@@ -63,7 +63,7 @@ LOOKUP_TABLES = {
     "testresult":       (_("Test Results"), "ResultName", _("Result"), "ResultDescription", "add del ret", ("animaltest.TestResultID",)),
     "lkstransportstatus": (_("Transport Statuses"), "Name", _("Status"), "", "", ("animaltransport.Status",)),
     "transporttype":    (_("Transport Types"), "TransportTypeName", _("Type"), "TransportTypeDescription", "add del ret", ("animaltransport.TransportTypeID",)),
-    "traptype":         (_("Trap Types"), "TrapTypeName", _("Type"), "TrapTypeDescription", "add del ret cost", ("ownertraploan.TrapTypeID",)),
+    "traptype":         (_("Equipment Loan Types"), "TrapTypeName", _("Type"), "TrapTypeDescription", "add del ret cost", ("ownertraploan.TrapTypeID",)),
     "vaccinationtype":  (_("Vaccination Types"), "VaccinationType", _("Type"), "VaccinationDescription", "add del ret cost sched", ("animalvaccination.VaccinationID",)),
     "voucher":          (_("Voucher Types"), "VoucherName", _("Type"), "VoucherDescription", "add del ret cost", ("ownervoucher.VoucherID",)),
     "lkworktype":       (_("Work Types"), "WorkType", _("Type"), "", "add del", ("ownerrota.WorkTypeID",))
