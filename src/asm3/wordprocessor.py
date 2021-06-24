@@ -447,6 +447,7 @@ def animal_tags(dbo, a, includeAdditional=True, includeCosts=True, includeDiet=T
         "DOCUMENTQRLINK50"      : "<img src=\"%s\" />" % asm3.html.qr_animal_img_src(a.ID, "50x50"),
         "ADOPTIONSTATUS"        : asm3.publishers.base.get_adoption_status(dbo, a),
         "ANIMALISADOPTABLE"     : asm3.utils.iif(asm3.publishers.base.is_animal_adoptable(dbo, a), _("Yes", l), _("No", l)),
+        "DATEAVAILABLEFORADOPTION": python2display(l, a["DATEAVAILABLEFORADOPTION"]),
         "ANIMALONSHELTER"       : yes_no(l, a["ARCHIVED"] == 0),
         "ANIMALONFOSTER"        : yes_no(l, a["ACTIVEMOVEMENTTYPE"] == asm3.movement.FOSTER),
         "ANIMALPERMANENTFOSTER" : yes_no(l, a["HASPERMANENTFOSTER"] == 1),

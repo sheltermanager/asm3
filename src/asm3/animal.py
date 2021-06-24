@@ -228,7 +228,8 @@ def get_animal_query(dbo):
         "(SELECT Name FROM lksyesno l WHERE l.ID = a.HasSpecialNeeds) AS HasSpecialNeedsName, " \
         "(SELECT Name FROM lksyesno l WHERE l.ID = a.DiedOffShelter) AS DiedOffShelterName, " \
         "(SELECT Name FROM lksyesno l WHERE l.ID = a.HasActiveReserve) AS HasActiveReserveName, " \
-        "(SELECT Name FROM lksyesno l WHERE l.ID = a.HasTrialAdoption) AS HasTrialAdoptionName " \
+        "(SELECT Name FROM lksyesno l WHERE l.ID = a.HasTrialAdoption) AS HasTrialAdoptionName, " \
+        "(SELECT SentDate FROM animalpublished WHERE PublishedTo='first' AND AnimalID=a.ID) AS DateAvailableForAdoption " \
         "FROM animal a " \
         "LEFT OUTER JOIN animal ba1 ON ba1.ID = a.BondedAnimalID " \
         "LEFT OUTER JOIN animal ba2 ON ba2.ID = a.BondedAnimal2ID " \

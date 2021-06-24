@@ -441,6 +441,8 @@ AnimalAtRetailer
     "Yes" if the animal is currently located at a retailer
 AnimalIsAdoptable
     "Yes" if the animal is available for adoption
+DateAvailableForAdoption
+    The date animal was first made available for adoption in its current stay in care.
 AnimalOnFoster
     "Yes" if the animal is in a foster home
 AnimalOnShelter

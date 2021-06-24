@@ -17,7 +17,7 @@ BreedName, SpeciesName, BaseColour AS BaseColourName, Markings,
 FROM animal a
 INNER JOIN species s ON s.ID = a.SpeciesID
 INNER JOIN basecolour c ON c.ID = a.BaseColourID
-WHERE a.IsNotAvailableForAdoption = 1
+WHERE Archived=0 AND IsNotAvailableForAdoption=0
 ORDER BY a.AnimalName
 ###
 MAIL
