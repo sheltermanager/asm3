@@ -1050,7 +1050,8 @@ def fix_relative_document_uris(dbo, s):
                 u = url("dbfs_image", "title=%s" % qsp(l, "id"))
             elif mode == "media":
                 u = url("media_image", "mediaid=%s" % qsp(l, "id"))
-            s = s.replace(l.replace("&", "&amp;"), u) # HTMLParser will fix &amp; back to &, breaking this replace
+            s = s.replace(l, u)
+            s = s.replace(l.replace("&", "&amp;"), u) # HTMLParser can fix &amp; back to &, breaking previous replace
             asm3.al.debug("translate '%s' to '%s'" % (l, u), "utils.fix_relative_document_uris", dbo)
         elif not l.startswith("http") and not l.startswith("data:") and not l.startswith("//"):
             s = s.replace(l, "") # cannot use this type of url
@@ -1359,6 +1360,7 @@ def html_to_pdf_cmd(dbo, htmldata):
     htmldata = re.sub(r'<img.*?signature\:.*?\/>', '', htmldata)
     # Remove anything that could be a security risk
     htmldata = re.sub(r'<iframe.*>', '', htmldata, flags=re.I)
+    htmldata = re.sub(r'<link.*>', '', htmldata, flags=re.I)
     htmldata = strip_script_tags(htmldata)
     # Fix up any google QR codes where a protocol-less URI has been used
     htmldata = htmldata.replace("\"//chart.googleapis.com", "\"http://chart.googleapis.com")
@@ -1423,6 +1425,7 @@ def html_to_pdf_pisa(dbo, htmldata):
     htmldata = re.sub(r'<img.*?signature\:.*?\/>', '', htmldata)
     # Remove anything that could be a security risk
     htmldata = re.sub(r'<iframe.*>', '', htmldata, flags=re.I)
+    htmldata = re.sub(r'<link.*>', '', htmldata, flags=re.I)
     htmldata = strip_script_tags(htmldata)
     # Fix up any google QR codes where a protocol-less URI has been used
     htmldata = htmldata.replace("\"//chart.googleapis.com", "\"http://chart.googleapis.com")
