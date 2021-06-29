@@ -49,6 +49,28 @@ $(function() {
                         tableform.table_update(table);
                     } 
                 },
+                { id: "deleteprocessed", text: _("Delete Processed"), icon: "delete", enabled: "always",
+                    mouseover: function() {
+                       onlineform_incoming.highlight_processed(true);
+                    },
+                    mouseleave: function() {
+                       onlineform_incoming.highlight_processed(false);
+                    },
+                    click: async function() {
+                        await tableform.delete_dialog();
+                        let ids=[]; // select the rows so we can use remove_selected to update the table
+                        $.each(controller.rows, function(i, v) {
+                            if (v.LINK) { 
+                                ids.push(v.COLLATIONID); 
+                                $("[data-id='" + v.COLLATIONID + "']").prop("checked", true);
+                            }
+                        });
+                        await common.ajax_post("onlineform_incoming", "mode=delete&ids=" + ids.join(","));
+                        tableform.buttons_default_state(buttons);
+                        tableform.table_remove_selected_from_json(table, controller.rows);
+                        tableform.table_update(table);
+                    }
+                },
                 { id: "print", text: _("Print"), icon: "print", enabled: "multi", tooltip: _("Print selected forms"), 
                     click: function() {
                         common.route("onlineform_incoming_print?ajax=false&mode=print&ids=" + encodeURIComponent(tableform.table_ids(table)));
@@ -290,6 +312,19 @@ $(function() {
             finally {
                 header.hide_loading();
             }
+        },
+
+        /**
+         * Puts a red border around all processed forms in the list
+         */
+        highlight_processed: function(enable) {
+            let bval = "1px solid red";
+            if (!enable) { bval = ""; }
+            $.each(controller.rows, function(i, v) {
+                if (v.LINK) {
+                    $("[data-id='" + v.COLLATIONID + "']").closest("tr").find("td").css({ border: bval });
+                }
+            });
         },
 
         /**
