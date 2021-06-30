@@ -1706,6 +1706,9 @@ const html = {
         if (config.bool("EmblemTrialAdoption") && a.HASTRIALADOPTION == 1) {
             s.push(html.icon("trial", _("Trial Adoption")));
         }
+        if (config.bool("EmblemFutureAdoption") && a.HASFUTUREADOPTION == 1) {
+            s.push(html.icon("movement", _("Future Adoption")));
+        }
         if (config.bool("EmblemCrueltyCase") && a.CRUELTYCASE == 1) {
             s.push(html.icon("case", _("Cruelty Case")));
         }

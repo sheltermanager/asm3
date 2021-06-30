@@ -198,6 +198,7 @@ DEFAULTS = {
     "EmblemBonded": "Yes",
     "EmblemCrueltyCase": "Yes",
     "EmblemDeceased": "Yes",
+    "EmblemFutureAdoption": "Yes",
     "EmblemHold": "Yes",
     "EmblemLongTerm": "Yes",
     "EmblemNonShelter": "Yes",
