@@ -17,6 +17,7 @@ $(function() {
             { "ID": 14, "NAME": _("{0} weeks").replace("{0}", "2") },
             { "ID": 21, "NAME": _("{0} weeks").replace("{0}", "3") },
             { "ID": 28, "NAME": _("{0} weeks").replace("{0}", "4") },
+            { "ID": 42, "NAME": _("{0} weeks").replace("{0}", "6") },
             { "ID": 56, "NAME": _("{0} weeks").replace("{0}", "8") },
             { "ID": 84, "NAME": _("{0} weeks").replace("{0}", "12") },
             { "ID": 182, "NAME": _("{0} weeks").replace("{0}", "26") },

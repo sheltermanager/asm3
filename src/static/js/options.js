@@ -545,6 +545,8 @@ $(function() {
                     html.icon("case") + ' <label for="showcrueltycase">' + _("Cruelty Case") + '</label><br />',
                 '<input data="EmblemDeceased" type="checkbox" id="showdeceased" class="asm-checkbox" type="checkbox" />',
                     html.icon("death") + ' <label for="showdeceased">' + _("Deceased") + '</label><br />',
+                '<input data="EmblemFutureAdoption" type="checkbox" id="showfutureadoption" class="asm-checkbox" type="checkbox" />',
+                    html.icon("movement") + ' <label for="showfutureadoption">' + _("Future Adoption") + '</label><br />',
                 '<input data="EmblemHold" type="checkbox" id="showhold" class="asm-checkbox" type="checkbox" />',
                     html.icon("hold") + ' <label for="showhold">' + _("Hold") + '</label><br />',
                 '<input data="EmblemLongTerm" type="checkbox" id="longterm" class="asm-checkbox" type="checkbox" />',
