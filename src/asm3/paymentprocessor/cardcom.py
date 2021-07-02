@@ -188,6 +188,7 @@ class Cardcom(PaymentProcessor):
             # parse results
             raw_results = r["response"]
             results = asm3.utils.parse_qs(raw_results)
+            asm_debug(results, "cardcom.receive", self.dbo)
             #check 
             if results.get("OperationResponse") != "0":
                 asm3.al.error("Bad Cardcom operation response %s: %s" % (results['OperationResponse'], results['OperationResponseText']), "cardcom.receive", self.dbo)
@@ -228,6 +229,9 @@ class Cardcom(PaymentProcessor):
             user = "cardcom"
 
             Token = results.get("Token")
+            if Token is None:
+                asm_debug("Token field not found in result. Trying ExtShvaParams.CardToken", "cardcom.receive", self.dbo)
+                Token = results.get("ExtShvaParams.CardToken")
             TokenExDate = results.get("TokenExDate")
             CardOwnerID = results.get("CardOwnerID")
             CardValidity = "%s/%s" % (results.get('CardValidityMonth'), results.get('CardValidityYear'))
@@ -246,6 +250,8 @@ class Cardcom(PaymentProcessor):
                 asm3.person.set_extra_id(self.dbo, user, p, "Cardcom_Last4Digits", Last4Digits)
                 asm3.person.set_extra_id(self.dbo, user, p, "Cardcom_CCType", CCType)
                 asm3.person.set_extra_id(self.dbo, user, p, "Cardcom_CCOwner", CCOwner)
+            else:
+                asm_debug("Token is empty. Not storing anything in EXTRAIDS", "cardcom.receive", self.dbo)
                 
             
             InvoiceResponseCode = results.get("InvoiceResponseCode")
