@@ -402,6 +402,8 @@ $.widget("asm.personchooser", {
                     listItemLabelClass: 'bsmListItemLabel-custom',
                     removeClass: 'bsmListItemRemove-custom'
                 });
+                // Setup phone number widgets
+                dialogadd.find(".asm-phone").phone();
                 // Add sites
                 dialogadd.find(".personchooser-site").html('<option value="0">' + _("(all)") + '</option>' + 
                     html.list_to_options(self.options.sites, "ID", "SITENAME"));
