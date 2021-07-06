@@ -651,7 +651,7 @@ def menu_structure(l, publisherlist, reports, mailmerges):
             (asm3.users.EXPORT_REPORT, "", "", "report_export", "asm-icon-report", _("Export Reports as CSV", l) ),
             (asm3.users.EXPORT_ANIMAL_CSV, "", "", "csvexport", "asm-icon-animal", _("Export Animals as CSV", l) ),
             (asm3.users.IMPORT_CSV_FILE, "", "", "csvimport", "asm-icon-database", _("Import a CSV file", l) ),
-            (asm3.users.USE_SQL_INTERFACE, "", "", "csvimport_paypal", "asm-icon-paypal", _("Import a PayPal CSV file", l) ),
+            (asm3.users.IMPORT_CSV_FILE, "", "", "csvimport_paypal", "asm-icon-paypal", _("Import a PayPal CSV file", l) ),
             (asm3.users.TRIGGER_BATCH, "", "", "batch", "asm-icon-batch", _("Trigger Batch Processes", l) )
         ))
     )
