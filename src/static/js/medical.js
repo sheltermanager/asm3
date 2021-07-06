@@ -175,7 +175,7 @@ $(function() {
                      click: function() { medical.new_medical(); }},
                 { id: "bulk", text: _("Bulk Regimen"), icon: "new", enabled: "always",
                     hideif: function() { return controller.animal; }, click: function() { medical.new_bulk_medical(); }},
-                { id: "delete-regimens", text: _("Delete Regimen"), icon: "delete", enabled: "multi", 
+                { id: "delete-regimens", text: _("Delete Regimen"), icon: "delete", enabled: "multi", perm: "mdam", 
                     mouseover: function() {
                        medical.highlight_selected_regimens(true);
                     },

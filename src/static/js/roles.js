@@ -198,6 +198,8 @@ $(function() {
                 cr("asm", _("Access Settings Menu")),
                 cr("cso", _("Change System Options")),
                 cr("cpo", _("Change Publishing Options")),
+                cr("eav", _("Export Animals as CSV")),
+                cr("icv", _("Import CSV File")),
                 cr("maf", _("Modify Additional Fields")),
                 cr("mdt", _("Modify Document Templates")),
                 cr("ml", _("Modify Lookups")),
