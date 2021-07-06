@@ -14,7 +14,7 @@ $(function() {
         '<label for="email">' + _("Send to") + '</label>',
         '<input id="email" type="text" placeholder="test@example.com" />',
         '</div>',
-        '<div class="asm-report-toolbar no-print dialogshadow">',
+        '<div class="asm-report-toolbar no-print">',
         '<button id="button-print">' + _("Print") + '</button>',
         '<button id="button-email">' + _("Email") + '</button>',
         '<button id="button-csv">' + _ ("CSV") + '</button>',
