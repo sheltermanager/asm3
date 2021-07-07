@@ -179,9 +179,9 @@ def get_onlineform_html(dbo, formid, completedocument = True):
             h.append('</td>')
             h.append('<td class="asm-onlineform-td">')
         if f.FIELDTYPE == FIELDTYPE_YESNO:
-            h.append('<select class="asm-onlineform-yesno" id="%s" name="%s" title="%s">' \
+            h.append('<select class="asm-onlineform-yesno" id="%s" name="%s" data-required="%s" title="%s">' \
                 '<option value=""></option><option>%s</option><option>%s</option></select>' % \
-                ( fid, cname, asm3.utils.nulltostr(f.TOOLTIP), asm3.i18n._("No", l), asm3.i18n._("Yes", l)))
+                ( fid, cname, asm3.utils.iif(required != "", "required", ""), asm3.utils.nulltostr(f.TOOLTIP), asm3.i18n._("No", l), asm3.i18n._("Yes", l)))
         elif f.FIELDTYPE == FIELDTYPE_CHECKBOX:
             h.append('<input class="asm-onlineform-check" type="checkbox" id="%s" name="%s" %s /> ' \
                 '<label class="asm-onlineform-checkboxlabel" for="%s">%s</label>' % \
