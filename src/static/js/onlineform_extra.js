@@ -193,28 +193,12 @@ $(document).ready(function() {
         return rv;
     };
 
-    const validate_yesno = function() {
-        let rv = true;
-        $(".asm-onlineform-yesno").each(function() {
-            if ($(this).attr("data-required")) {
-                let v = $(this).find(":selected").text();
-                if (!v) {
-                    alert("You must choose yes or no.");
-                    rv = false;
-                    $(this).focus();
-                    return false;
-                }
-            }
-        });
-        return rv;
-    };
-
     // Validate HTML5 required input fields 
     // (only does anything for browsers that don't support html5 required)
     const validate_required = function() {
         let rv = true;
         if (!html5_required) {
-            $(".asm-onlineform-adoptableanimal, .asm-onlineform-date, .asm-onlineform-text, .asm-onlineform-lookup, .asm-onlineform-notes").each(function() {
+            $(".asm-onlineform-adoptableanimal, .asm-onlineform-date, .asm-onlineform-text, .asm-onlineform-lookup, .asm-onlineform-yesno, .asm-onlineform-notes").each(function() {
                 if ($(this).attr("required")) {
                     let v = String($(this).val()).trim(); // Throw away whitespace before checking
                     if (!v) {
@@ -409,7 +393,6 @@ $(document).ready(function() {
         if (!validate_email()) { enable(); return false; }
         if (!validate_required()) { enable(); return false; }
         if (!validate_images()) { enable(); return false; }
-        if (!validate_yesno()) { enable(); return false; }
         if (html5_required && !$("form")[0].checkValidity()) { 
             enable(); // the default behaviour highlights the required fields so we need it to happen
         }
