@@ -1038,7 +1038,7 @@ def calc_time_on_shelter(dbo, animalid, a = None):
     (int) animalid: The animal to calculate time on shelter for
     """
     l = dbo.locale
-    return format_diff(l, calc_days_on_shelter(dbo, animalid, a))
+    return format_diff(l, calc_days_on_shelter(dbo, animalid, a), asm3.configuration.date_diff_cutoffs(dbo))
 
 def calc_total_time_on_shelter(dbo, animalid, a = None, movements = None):
     """
@@ -1047,7 +1047,7 @@ def calc_total_time_on_shelter(dbo, animalid, a = None, movements = None):
     (int) animalid: The animal to calculate time on shelter for
     """
     l = dbo.locale
-    return format_diff(l, calc_total_days_on_shelter(dbo, animalid, a, movements))
+    return format_diff(l, calc_total_days_on_shelter(dbo, animalid, a, movements), asm3.configuration.date_diff_cutoffs(dbo))
 
 def calc_days_on_shelter(dbo, animalid, a = None):
     """
@@ -1173,7 +1173,7 @@ def calc_age(dbo, animalid, a = None):
         stop = deceased
 
     # Format it as time period
-    return date_diff(l, dob, stop)
+    return date_diff(l, dob, stop, asm3.configuration.date_diff_cutoffs(dbo))
 
 def calc_shelter_code(dbo, animaltypeid, entryreasonid, speciesid, datebroughtin):
     """

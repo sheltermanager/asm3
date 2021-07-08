@@ -162,6 +162,7 @@ DEFAULTS = {
     "CodingFormat": "TYYYYNNN",
     "CurrencyCode": "USD",
     "ShortCodingFormat": "NNT",
+    "DateDiffCutoffs": "7|182|365",
     "DefaultAnimalAge": "1.0", 
     "DefaultDailyBoardingCost": "2000",
     "DefaultDateBroughtIn": "Yes",
@@ -701,6 +702,9 @@ def create_donation_trx(dbo):
 
 def currency_code(dbo):
     return cstring(dbo, "CurrencyCode", DEFAULTS["CurrencyCode"])
+
+def date_diff_cutoffs(dbo):
+    return cstring(dbo, "DateDiffCutoffs", DEFAULTS["DateDiffCutoffs"])
 
 def dbv(dbo, v = None):
     if v is None:

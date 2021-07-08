@@ -46,7 +46,7 @@ def get_waitinglist_by_id(dbo, wid):
         r.RANK = ranks[r.WLID]
     else:
         r.RANK = ""
-    r.TIMEONLIST = date_diff(l, r.DATEPUTONLIST, now(dbo.timezone))
+    r.TIMEONLIST = date_diff(l, r.DATEPUTONLIST, now(dbo.timezone), asm3.configuration.date_diff_cutoffs(dbo))
     return r
 
 def get_person_name(dbo, wid):
@@ -131,7 +131,7 @@ def get_waitinglist(dbo, priorityfloor = 5, species = -1, size = -1, addresscont
             r.RANK = ranks[r.WLID]
         else:
             r.RANK = ""
-        r.TIMEONLIST = date_diff(l, r.DATEPUTONLIST, now(dbo.timezone))
+        r.TIMEONLIST = date_diff(l, r.DATEPUTONLIST, now(dbo.timezone), asm3.configuration.date_diff_cutoffs(dbo) )
     return rows
 
 def get_waitinglist_find_simple(dbo, query = "", limit = 0, siteid = 0):

@@ -6,8 +6,8 @@ import time
 # flake8: noqa - we have a lot of locales and this is convenient
 from asm3.locales import *
 
-VERSION = "45u [Thu  8 Jul 09:29:02 BST 2021]"
-BUILD = "07080929"
+VERSION = "45u [Thu  8 Jul 17:11:00 BST 2021]"
+BUILD = "07081711"
 
 DMY = ( "%d/%m/%Y", "%d/%m/%y" )
 HDMY = ( "%d-%m-%Y", "%d-%m-%y" )
@@ -324,6 +324,12 @@ def get_plural_function(locale):
     """
     return get_locale_map(locale, LM_PLURAL_FUNCTION)
 
+def cint(s):
+    try:
+        return int(s)
+    except:
+        return 0
+
 def format_currency(locale, value, includeSymbol = True):
     """
     Formats a currency value to the correct number of 
@@ -445,11 +451,6 @@ def parse_time(d, t):
     """
     Parses the time t and combines it with python date d
     """
-    def cint(s):
-        try:
-            return int(s)
-        except:
-            return 0
     if d is None: return None
     tbits = t.split(":")
     hour = 0
@@ -659,7 +660,7 @@ def date_diff_days(date1, date2):
     except:
         return 0
 
-def date_diff(l, date1, date2):
+def date_diff(l, date1, date2, cutoffs = "7|182|365"):
     """
     Returns a string representing the difference between two
     dates. Eg: 6 weeks, 5 months.
@@ -668,9 +669,9 @@ def date_diff(l, date1, date2):
     (datetime) date2
     """
     days = int(date_diff_days(date1, date2))
-    return format_diff(l, days)
+    return format_diff(l, days, cutoffs)
 
-def format_diff(l, days):
+def format_diff(l, days, cutoffs = "7|182|365"):
     """
     Returns a formatted diff from a number of days.
     Eg: 6 weeks, 5 months.
@@ -681,13 +682,13 @@ def format_diff(l, days):
     years = int(days / 365)
    
     # If it's less than a week, show as days
-    if days < 7:
+    if days < cint(cutoffs.split("|")[0]):
         return ntranslate(days, [ _("{plural0} day.", l), _("{plural1} days.", l), _("{plural2} days.", l), _("{plural3} days.")], l)
-    # If it's 12 weeks or less, show as weeks
-    elif weeks <= 12:
+    # If it's 26 weeks or less, show as weeks
+    elif days < cint(cutoffs.split("|")[1]):
         return ntranslate(weeks, [ _("{plural0} week.", l), _("{plural1} weeks.", l), _("{plural2} weeks.", l), _("{plural3} weeks.")], l)
     # If it's less than a year, show as months
-    elif days < 365:
+    elif days < cint(cutoffs.split("|")[2]):
         return ntranslate(months, [ _("{plural0} month.", l), _("{plural1} months.", l), _("{plural2} months.", l), _("{plural3} months.")], l)
     else:
         # Show as years and months
