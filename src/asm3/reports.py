@@ -1619,7 +1619,7 @@ class Report:
             htmlheader = self.html[htmlheaderstart+12:htmlheaderend]
 
         # Inject the script tags needed into the header for showing the print toolbar
-        if asm3.configuration.report_toolbar(self.dbo):
+        if asm3.configuration.report_toolbar(self.dbo) and not self.isSubReport:
             htmlheader = htmlheader.replace("</head>", asm3.html.report_js(l) + "\n</head>")
 
         htmlfooter = self._ReadFooter()
