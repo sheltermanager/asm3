@@ -1,6 +1,7 @@
 45
 ================
 
+08/07/21 Remove inactive log types from log type filter
 07/07/21 Mandatory handling for Yes/No (Jacob Sabella) #1028
 06/07/21 Separate permissions for import/export CSV #1024
 06/07/21 Validate transport dates, pickup cannot be > dropoff #1025

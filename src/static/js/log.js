@@ -131,6 +131,7 @@ $(function() {
 
         bind: function() {
             $(".asm-tabbar").asmtabs();
+            $("#filter").select("removeRetiredOptions", "all");
             tableform.dialog_bind(this.dialog);
             tableform.buttons_bind(this.buttons);
             tableform.table_bind(this.table, this.buttons);
