@@ -4,6 +4,10 @@ $(function() {
 
     "use strict";
 
+    // Do nothing if the toolbar has already been loaded 
+    // or if an element with a no-toolbar class exists
+    if ($(".asm-report-toolbar").length > 0 || $(".no-toolbar").length > 0) { return; }
+
     const qs = function() {
         let s = String(window.location);
         return s.substring(s.indexOf("?")+1);
