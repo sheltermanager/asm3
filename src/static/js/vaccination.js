@@ -172,10 +172,10 @@ $(function() {
                             vacctype = v.VACCINATIONID;
                         });
                         $("#usagecomments").html(comments);
+                        $("#givenexpires, #givenbatch, #givenmanufacturer, #givenrabiestag").val("");
                         $("#givennewdate").datepicker("setDate", new Date());
                         let rd = vaccination.calc_reschedule_date(new Date(), vacctype);
-                        if (rd) { $("#rescheduledate").datepicker("setDate", rd); }
-                        $("#givenexpires, #givenbatch, #givenmanufacturer, #givenrabiestag").val("");
+                        if (rd) { $("#rescheduledate, #givenexpires").datepicker("setDate", rd); }
                         vaccination.set_given_batch(vacctype);
                         $("#usagetype").select("firstvalue");
                         $("#usagedate").datepicker("setDate", new Date());
