@@ -40,7 +40,7 @@ def get_person_query(dbo):
         "lfa.ID AS LatestFosterID, lfa.AnimalName AS LatestFosterName, lfa.ShelterCode AS LatestFosterShelterCode, " \
         "lma.ID AS LatestMoveAnimalID, lma.AnimalName AS LatestMoveAnimalName, lma.ShelterCode AS LatestMoveShelterCode, " \
         "lmat.MovementType AS LatestMoveTypeName, " \
-        "j.JurisdictionName, " \
+        "j.JurisdictionName, si.SiteName, " \
         "web.ID AS WebsiteMediaID, " \
         "web.MediaName AS WebsiteMediaName, " \
         "web.Date AS WebsiteMediaDate, " \
@@ -57,6 +57,7 @@ def get_person_query(dbo):
         "LEFT OUTER JOIN lksmovementtype lmat ON lmat.ID = lm.MovementType " \
         "LEFT OUTER JOIN media web ON web.LinkID = o.ID AND web.LinkTypeID = 3 AND web.WebsitePhoto = 1 " \
         "LEFT OUTER JOIN media doc ON doc.LinkID = o.ID AND doc.LinkTypeID = 3 AND doc.DocPhoto = 1 " \
+        "LEFT OUTER JOIN site si ON o.SiteID = si.ID " \
         "LEFT OUTER JOIN jurisdiction j ON j.ID = o.JurisdictionID " % ( dbo.sql_today(), dbo.sql_today() )
 
 def get_rota_query(dbo):

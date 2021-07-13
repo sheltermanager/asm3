@@ -910,8 +910,10 @@ Person Keys
 Person keys are available for documents generated from the person and movement
 screens, they are also available for documents generated from the payment 
 and licence tabs as well as lost animal, found animal and waiting list.
+For documents generated from the animal screen, the person will be chosen in
+the following order: Latest movement on file, latest reservation on file, 
+current owner (if the animal is non-shelter)
 Log keys are available for people, but prefixed with PersonLog instead of just Log.
-
 
 OwnerTitle 
     The person's title
@@ -963,6 +965,8 @@ OwnerLookingFor
     A summary of the "Looking for" slider on the person's record
 OwnerJurisdiction
     The person's jurisdiction
+OwnerSite
+    The site this person is linked to
 WorkTelephone 
     The person's work telephone number
 MobileTelephone 

@@ -1258,6 +1258,8 @@ def person_tags(dbo, p, includeImg=False, includeDonations=False, includeVoucher
         "EMAILADDRESS"          : p["EMAILADDRESS"],
         "JURISDICTION"          : p["JURISDICTIONNAME"],
         "OWNERJURISDICTION"     : p["JURISDICTIONNAME"],
+        "SITE"                  : p["SITENAME"],
+        "OWNERSITE"             : p["SITENAME"],
         "OWNERCOMMENTS"         : p["COMMENTS"],
         "OWNERFLAGS"            : asm3.utils.nulltostr(p["ADDITIONALFLAGS"]).replace("|", ", "),
         "OWNERCREATEDBY"        : p["CREATEDBY"],

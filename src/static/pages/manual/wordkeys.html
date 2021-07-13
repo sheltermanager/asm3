@@ -1104,6 +1104,9 @@ movements.</p>
 <p>Person keys are available for documents generated from the person and movement
 screens, they are also available for documents generated from the payment
 and licence tabs as well as lost animal, found animal and waiting list.
+For documents generated from the animal screen, the person will be chosen in
+the following order: Latest movement on file, latest reservation on file,
+current owner (if the animal is non-shelter)
 Log keys are available for people, but prefixed with PersonLog instead of just Log.</p>
 <dl class="docutils">
 <dt>OwnerTitle</dt>
@@ -1156,6 +1159,8 @@ Log keys are available for people, but prefixed with PersonLog instead of just L
 <dd>A summary of the “Looking for” slider on the person’s record</dd>
 <dt>OwnerJurisdiction</dt>
 <dd>The person’s jurisdiction</dd>
+<dt>OwnerSite</dt>
+<dd>The site this person is linked to</dd>
 <dt>WorkTelephone</dt>
 <dd>The person’s work telephone number</dd>
 <dt>MobileTelephone</dt>
