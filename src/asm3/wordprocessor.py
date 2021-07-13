@@ -1368,7 +1368,15 @@ def person_tags(dbo, p, includeImg=False, includeDonations=False, includeVoucher
         "TRAPNUMBER":               "TRAPNUMBER",
         "TRAPRETURNDUEDATE":        "d:RETURNDUEDATE",
         "TRAPRETURNDATE":           "d:RETURNDATE",
-        "TRAPCOMMENTS":             "COMMENTS"
+        "TRAPCOMMENTS":             "COMMENTS",
+        "EQUIPMENTTYPENAME":        "TRAPTYPENAME",
+        "EQUIPMENTLOANDATE":        "d:LOANDATE",
+        "EQUIPMENTDEPOSITAMOUNT":   "c:DEPOSITAMOUNT",
+        "EQUIPMENTDEPOSITRETURNDATE":"d:DEPOSITRETURNDATE",
+        "EQUIPMENTNUMBER":          "TRAPNUMBER",
+        "EQUIPMENTRETURNDUEDATE":   "d:RETURNDUEDATE",
+        "EQUIPMENTRETURNDATE":      "d:RETURNDATE",
+        "EQUIPMENTCOMMENTS":        "COMMENTS"
     }
     tags.update(table_tags(dbo, d, asm3.animalcontrol.get_person_traploans(dbo, p["ID"], asm3.animalcontrol.ASCENDING), "TRAPTYPENAME", "RETURNDUEDATE", "RETURNDATE"))
 

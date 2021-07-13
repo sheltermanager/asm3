@@ -1009,34 +1009,34 @@ FineDueDate
 FinePaidDate
     The date the fine was paid
 
-Traploan Keys
--------------
+Equipment Loan Keys
+-------------------
 
-The same rules apply as for vaccinations, but for accessing trap loans. Each
-loan is indexed with a number for ascending (eg: TrapTypeName1), LastX for
-descending (eg: TrapTypeNameLast1) and with the type name for the most recent
-loan of that type for the person (eg: TrapLoanDateCat). 
+The same rules apply as for vaccinations, but for accessing equipment loans. Each
+loan is indexed with a number for ascending (eg: EquipmentTypeName1), LastX for
+descending (eg: EquipmentTypeNameLast1) and with the type name for the most recent
+loan of that type for the person (eg: EquipmentLoanDateCat). 
 
 The Recent keyword returns returned trap loan records where Due is unreturned.
 
 The fields are:
 
-TrapTypeName
-    The type of trap being loaned
-TrapLoanDate
-    The date the trap was loaned
-TrapDepositAmount
+EquipmentTypeName
+    The type of equipment being loaned
+EquipmentLoanDate
+    The date the equipment was loaned
+EquipmentDepositAmount
     The amount of deposit on the loan
-TrapDepositReturnDate
+EquipmentDepositReturnDate
     The date the deposit was returned
-TrapNumber
-    The trap number of the trap being loaned
-TrapReturnDueDate
-    The date the trap is due for return
-TrapReturnDate
-    The date the trap was returned
-TrapComments
-    Any comments on the traploana
+EquipmentNumber
+    The equipment number of the trap being loaned
+EquipmentReturnDueDate
+    The date the equipment is due for return
+EquipmentReturnDate
+    The date the equipment was returned
+EquipmentComments
+    Any comments on the equipment loan
 
 Licence Keys
 ------------
