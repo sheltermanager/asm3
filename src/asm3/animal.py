@@ -3719,8 +3719,8 @@ def update_animal_status(dbo, animalid, a = None, movements = None, animalupdate
     if onshelter:
         ownerid = 0
 
-    # non-shelter owner should match original owner if not set
-    if a.nonshelteranimal == 1 and a.ownerid == 0:
+    # non-shelter owner should always match original owner since the user can only change original owner
+    if a.nonshelteranimal == 1:
         ownerid = a.originalownerid
 
     # Calculate location and qualified display location

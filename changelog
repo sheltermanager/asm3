@@ -1,6 +1,7 @@
 45
 ================
 
+14/07/21 OriginalOwner should always sync to Owner on non-shelter
 13/07/21 Rename trap loan wordkeys to equipment, update manual #775
 13/07/21 Add <<OwnerSite>> key for person documents
 08/07/21 Do not load report toolbar with subreports
