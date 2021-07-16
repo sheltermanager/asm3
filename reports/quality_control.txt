@@ -627,6 +627,19 @@ WHERE owner.OWNERCOUNTY = 'AR'
 --AND OWNER.LASTCHANGEDDATE > '2020-01-01'
 --AND NOT (ownerpostcode like '46%' or ownerpostcode like '47%')
 
+--Alerts when zipcode length doesn't match 5 or 10.  Added 7/16/2021
+UNION SELECT 
+  owner.ownername AS name,
+  owner.ownercode AS code,
+  date(owner.LastChangedDate) AS issuedate,
+  'Invalid Zipcode Length.' AS issue
+FROM owner
+WHERE ownerpostcode <>  '' 
+  AND LENGTH(ownerpostcode) not in (5,10)
+  AND ownerpostcode < 'a' -- Only look at numbers.
+--AND OWNER.LASTCHANGEDDATE > '2020-01-01'
+  AND NOT (owner.AdditionalFlags LIKE 'Ignore Issues|%' OR owner.AdditionalFlags  LIKE '%|Ignore Issues|%')
+
 --This strips out all characters and then alerts if phone number is not equal to 10
 --characters.  It will ignore this if two phone numbers are in same field but separated
 --by a slash (/)
@@ -697,6 +710,17 @@ WHERE date_trunc('day', o.LASTCHANGEDDATE) = current_date -1
 AND (o.hometelephone LIKE '%@%' 
 OR o.mobiletelephone LIKE '%@%' 
 OR o.mobiletelephone LIKE '%@%')
+
+--Looks for special characters that will affect searches.  Added 7/16/2021
+UNION SELECT
+  owner.ownername AS name,
+  owner.ownercode AS code,
+  date(owner.LastChangedDate) AS issuedate,
+ 'Invalid Character (such as ‘ or -).  Type over and re-Save.' AS issue  
+FROM owner
+WHERE ownerforenames like '%&#%' OR ownersurname like '%&#%'
+      OR owneraddress like '%&#%' OR ownertown like '%&#%'
+      OR ownercounty like '%&#%'
 
 --Alerts when the license expiration date compared to the issue date is less than 335 days
 --or expiration date is less than issue date.
