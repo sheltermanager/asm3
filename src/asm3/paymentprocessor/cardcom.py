@@ -24,7 +24,7 @@ class Cardcom(PaymentProcessor):
             yield {"InvoiceLines%d.Quantity" % index: 1}
             yield {"InvoiceLines%d.Price" % index: price} 
 
-    def tokenCharge(self, payref, item_description=""):
+    def tokenCharge(self, payref, item_description = "", installments = 1):
         payments = self.getPayments(payref)
         total_charge_sum = sum(
             round(r.DONATION, 2) + (r.VATAMOUNT if r.VATAMOUNT > 0 else 0) for r in payments # add VAT for consistency with other payment providers
@@ -46,6 +46,7 @@ class Cardcom(PaymentProcessor):
             "TokenToCharge.SumToBill": str(total_charge_sum),
             "TokenToCharge.CoinID": "1", # TODO: not critical - use ASM currency
             "TokenToCharge.UniqAsmachta": client_reference_id,
+            "TokenToCharge.NumOfPayments": installments,
             "InvoiceHead.CustName": asm3.utils.decode_html(p.OWNERNAME)[:50] , 
             "InvoiceHead.CustAddresLine1": asm3.utils.decode_html(p.OWNERADDRESS)[:50], 
             "InvoiceHead.CustCity": asm3.utils.decode_html(p.OWNERTOWN)[:50],            

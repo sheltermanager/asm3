@@ -2876,13 +2876,14 @@ class donation(JSONEndpoint):
         dbo = o.dbo
         post = o.post
         title = post["title"]
+        installments = post["installments"] # number of payments to pass to cardcom
         processor = asm3.financial.get_payment_processor(dbo, post["processor"])
         if not processor.validatePaymentReference(post["payref"]):
             return (asm3.utils.json({"error": "Invalid payref"}))
         if processor.isPaymentReceived(post["payref"]):
             return (asm3.utils.json({"error": "Expired payref"}))
         try:
-            processor.tokenCharge(post["payref"], title)
+            processor.tokenCharge(post["payref"], title, installments)
             return (asm3.utils.json({"message": _("Successful token charge.")}))
         except Exception as e:
             return (asm3.utils.json({"error": str(e)}))
