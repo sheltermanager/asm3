@@ -98,7 +98,7 @@ FLOOD_PROTECT_METHODS = {
     "json_mail": [ 5, 60, 60 ],
     "jsonp_mail": [ 5, 60, 60 ],
     "online_form_post": [ 1, 15, 15 ],
-    "upload_animal_image": [ 5, 30, 30 ]
+    "upload_animal_image": [ 10, 30, 30 ]
 }
 
 def flood_protect(method, remoteip):
