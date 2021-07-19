@@ -524,13 +524,24 @@ $(function() {
                 // Close menu
                 $("#button-processor").asmmenu("hide_all");
 
+                //TODO: generate cardcom payments dropdown
+                let cardcom_payments = ""
+                for(let i = 1; i <= config.integer("CardcomMaxInstallments"); i++) {
+                    cardcom_payments += '<option value="' + i.toString() + '">' + i.toString() + '</option>'
+                }
                 // show confirmation dialog
                 $("#paymentconfirmation").html("<br/>" + _("Credit card") + ": " + "****-****-****-" + card_last_4 
                     + "<br/>" + _("Expiration") +": " + card_validity 
-                    + "<br/>" + _("Total") + ": " + format.currency(total.toString()) );
+                    + "<br/>" + _("Total") + ": " + format.currency(total.toString()) 
+                    + '<br/><label for="cardcom-installments">' + _("Payments") + "</label>: " + '<select name="cardcom-installments" id="cardcom-installments">'
+                    + cardcom_payments
+                    + '</select>'
+                    );
+
                 await tableform.show_okcancel_dialog("#paymentconfirmation", _("Yes"));
                 let formdata = "mode=tokencharge&processor=" + processor_name + "&person=" +
-                        row.OWNERID + "&payref=" + row.OWNERCODE + "-" + row.RECEIPTNUMBER;
+                        row.OWNERID + "&payref=" + row.OWNERCODE + "-" + row.RECEIPTNUMBER +
+                        "&installments=" + $('#cardcom-installments option:selected').val();
                 const response = await common.ajax_post("donation", formdata);
                 // Attempt to save any changes before viewing the diary tab
                 let json = jQuery.parseJSON(response);

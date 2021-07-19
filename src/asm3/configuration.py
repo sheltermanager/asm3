@@ -153,6 +153,7 @@ DEFAULTS = {
     "CardcomSuccessURL": "https://secure.cardcom.solutions/DealWasSuccessful.aspx",
     "CardcomErrorURL": "https://secure.cardcom.solutions/DealWasUnSuccessful.aspx",
     "CardcomDocumentType": "3",
+    "CardcomMaxInstallments": "6",
     "CloneAnimalIncludeLogs": "Yes",
     "CollationIDNext": "0",
     "CostSourceAccount": "9",
@@ -667,6 +668,9 @@ def cardcom_documenttype(dbo):
 
 def cardcom_usetoken(dbo):
     return cboolean(dbo,"CardcomUseToken", DEFAULTS["CardcomUseToken"] == "Yes")
+
+def cardom_maxinstallments(dbo):
+    return cint(dbo,'CardcomMaxInstallments')
 
 def cardcom_successurl(dbo):
     return cstring(dbo, "CardcomSuccessURL")
