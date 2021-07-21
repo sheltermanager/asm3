@@ -5,6 +5,7 @@ build
 node_modules
 tags
 .vscode
+.idea
 doc/manual/_build
 install/deb/sheltermanager3
 src/static/js/bundle

@@ -71,6 +71,13 @@ In a development environment, you can start a test instance on port 5000 with:
 make test
 ```
 
+Docker Development Environment
+------------------------------
+
+You can run and test asm using a dockerized version.
+
+Find the resources at `asm3/scripts/docker/` and instructions at `asm3/scripts/docker/README.md`
+
 Logging
 -------
 
