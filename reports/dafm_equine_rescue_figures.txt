@@ -40,11 +40,11 @@ $$HEAD
 <h2>$SpeciesName</h2>
 <table border="1">
 <tr>
+<th>Microchip</th>
+<th>UELN</th>
 <th>Origin of Equine</th>
 <th>Date Equine Rescued</th>
 <th>Did you pay a fee?</th>
-<th>Microchip</th>
-<th>UELN</th>
 <th>EPN</th>
 <th>Rehoming Date</th>
 <th>Euthanasia Date</th>
@@ -58,11 +58,11 @@ GROUP$$
 
 $$BODY
 <tr>
+<td>$MICROCHIP</td>
+<td>$UELN</td>
 <td>$ORIGIN</td>
 <td>$DATEREQUINERESCUED</td>
 <td>No</td>
-<td>$MICROCHIP</td>
-<td>$UELN</td>
 <td>$EPN</td>
 <td>$REHOMINGDATE</td>
 <td>$DECEASEDDATE</td>
