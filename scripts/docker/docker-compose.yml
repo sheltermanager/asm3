@@ -4,17 +4,22 @@ services:
 
   postgres:
     environment:
-    - POSTGRES_PASSWORD=postgres
+      - POSTGRES_USER=asm3
+      - POSTGRES_PASSWORD=asm3
+      - POSTGRES_DB=asm
     image: postgres
     restart: always
     ports:
-    - 5432:5432
-    volumes:
-    - ./postgres/init.sh:/docker-entrypoint-initdb.d/init-user-db.sh
+      - 5432:5432
+    #volumes:
+    # - ./postgres/init.sh:/docker-entrypoint-initdb.d/init-user-db.sh
 
   asm:
     image: asm3
     ports:
-      - 5000:5000
+      - 8080:80
+    build:
+      context: ../../
+      dockerfile: scripts/docker/Dockerfile
     volumes:
       - ./asm3.conf.dev:/etc/asm3.conf

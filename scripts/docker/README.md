@@ -13,11 +13,11 @@ Development environment for ASM3 with Docker. This stack creates two containers:
 ### Containers Up
 
 ```bash
-docker build -t asm3 ../../.
+docker-compose build
 docker-compose up -d
 ```
 
-Open [http://localhost:5000](http://localhost:5000) to view the running application
+Open [http://localhost:5000](http://localhost:8080) to view the running application
 
 ### Containers Down
 
