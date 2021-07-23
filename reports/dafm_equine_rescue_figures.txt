@@ -16,7 +16,7 @@ CASE WHEN a.IsTransfer = 1 THEN 'Transfer from ' || bo.OwnerName ELSE er.ReasonN
 to_char(a.DateBroughtIn, 'DD/MM/YYYY') AS DateRequineRescued,
 a.IdentichipNumber AS Microchip,
 (SELECT LicenceNumber FROM ownerlicence WHERE AnimalID = a.ID ORDER BY IssueDate DESC LIMIT 1) AS UELN,
-CASE WHEN a.ActiveMovementType = IN (1,2) THEN (SELECT LicenceNumber FROM ownerlicence WHERE OwnerID = no.ID ORDER BY IssueDate DESC LIMIT 1) ELSE il.LocationName END AS EPN,
+CASE WHEN a.ActiveMovementType IN (1,2) THEN (SELECT LicenceNumber FROM ownerlicence WHERE OwnerID = no.ID ORDER BY IssueDate DESC LIMIT 1) ELSE il.LocationName END AS EPN,
 CASE WHEN a.ActiveMovementType IN (1,2) THEN a.ActiveMovementDate ELSE NULL END AS RehomingDate,
 a.DeceasedDate,
 (SELECT OwnerName FROM owner INNER JOIN additional af ON asm_to_integer(af.Value) = owner.ID INNER JOIN additionalfield aff ON aff.ID = af.AdditionalFieldID WHERE af.LinkID = a.ID AND aff.FieldName = 'Knackery') AS Knackery,
