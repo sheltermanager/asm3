@@ -470,6 +470,25 @@ animals with reservations, try this::
        transform: rotate(45deg);
    }
 
+Thumbnail Size
+^^^^^^^^^^^^^^
+
+By default, animal thumbnails will be displayed at the default system size (150px). 
+
+If you would like to use larger images in the thumbnail list, you can choose to
+inject full size images rather than thumbnails, then use CSS to constrain them
+to the size you prefer::
+
+    <script>
+    asm3_adoptable_fullsize_images = true;
+    </script>
+    <style>
+    .asm3-adoptable-thumbnail { max-width: 200px; } 
+    </style>
+    <div id="asm3-adoptables" />
+    <script src="http://localhost:5000/service?method=animal_view_adoptable_js"></script>
+
+
 Translations
 ^^^^^^^^^^^^
 
@@ -481,7 +500,7 @@ You can add on-the-fly translation by adding a script tag with a dictionary
 called asm3_adoptable_translations above the script that makes the service
 call. Eg to translate some English species to French and to change the default (any
 species) to all as well as the CLOSE link text::
-
+   
     <script>
     asm3_adoptable_translations = {
         "Dog": "Chien",

@@ -112,6 +112,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#animal-view">animal_view</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#animal-view-adoptable-js">animal_view_adoptable_js</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#css-and-styles">CSS and Styles</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#thumbnail-size">Thumbnail Size</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#translations">Translations</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#filters">Filters</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#sort">Sort</a></li>
@@ -663,6 +664,23 @@ animals with reservations, try this:</p>
     <span class="n">opacity</span><span class="p">:</span> <span class="mf">0.9</span><span class="p">;</span>
     <span class="n">transform</span><span class="p">:</span> <span class="n">rotate</span><span class="p">(</span><span class="mi">45</span><span class="n">deg</span><span class="p">);</span>
 <span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="thumbnail-size">
+<h3>Thumbnail Size<a class="headerlink" href="#thumbnail-size" title="Permalink to this headline">¶</a></h3>
+<p>By default, animal thumbnails will be displayed at the default system size (150px).</p>
+<p>If you would like to use larger images in the thumbnail list, you can choose to
+inject full size images rather than thumbnails, then use CSS to constrain them
+to the size you prefer:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">script</span><span class="o">&gt;</span>
+<span class="n">asm3_adoptable_fullsize_images</span> <span class="o">=</span> <span class="n">true</span><span class="p">;</span>
+<span class="o">&lt;/</span><span class="n">script</span><span class="o">&gt;</span>
+<span class="o">&lt;</span><span class="n">style</span><span class="o">&gt;</span>
+<span class="o">.</span><span class="n">asm3</span><span class="o">-</span><span class="n">adoptable</span><span class="o">-</span><span class="n">thumbnail</span> <span class="p">{</span> <span class="nb">max</span><span class="o">-</span><span class="n">width</span><span class="p">:</span> <span class="mi">200</span><span class="n">px</span><span class="p">;</span> <span class="p">}</span>
+<span class="o">&lt;/</span><span class="n">style</span><span class="o">&gt;</span>
+<span class="o">&lt;</span><span class="n">div</span> <span class="nb">id</span><span class="o">=</span><span class="s2">&quot;asm3-adoptables&quot;</span> <span class="o">/&gt;</span>
+<span class="o">&lt;</span><span class="n">script</span> <span class="n">src</span><span class="o">=</span><span class="s2">&quot;http://localhost:5000/service?method=animal_view_adoptable_js&quot;</span><span class="o">&gt;&lt;/</span><span class="n">script</span><span class="o">&gt;</span>
 </pre></div>
 </div>
 </div>

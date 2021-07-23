@@ -525,9 +525,9 @@ $(function() {
                 $("#button-processor").asmmenu("hide_all");
 
                 //TODO: generate cardcom payments dropdown
-                let cardcom_payments = ""
+                let cardcom_payments = "";
                 for(let i = 1; i <= config.integer("CardcomMaxInstallments"); i++) {
-                    cardcom_payments += '<option value="' + i.toString() + '">' + i.toString() + '</option>'
+                    cardcom_payments += '<option value="' + i.toString() + '">' + i.toString() + '</option>';
                 }
                 // show confirmation dialog
                 $("#paymentconfirmation").html("<br/>" + _("Credit card") + ": " + "****-****-****-" + card_last_4 

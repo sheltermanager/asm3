@@ -22,6 +22,11 @@
         filters_tokens.push("{" + item + "}");
     });
 
+    var fullsize_images = false;
+    if (typeof asm3_adoptable_fullsize_images !== 'undefined') {
+        fullsize_images = asm3_adoptable_fullsize_images;
+    }
+
     var use_iframe = false;
     if (typeof asm3_adoptable_iframe !== 'undefined') {
         use_iframe = asm3_adoptable_iframe;
@@ -145,7 +150,7 @@
             '<div class="{isreservedclass}">',
             '<img class="asm3-adoptable-thumbnail" ',
                 'alt="{animalname}" ',
-                'src="{baseurl}/service?account={account}&method=animal_thumbnail&animalid={animalid}&d={mediadate}" />',
+                'src="{baseurl}/service?account={account}&method={thumbnail_method}&animalid={animalid}&d={mediadate}" />',
             '<span></span>',
             '</div>',
             '<br />',
@@ -201,7 +206,8 @@
                 mediadate: item.WEBSITEMEDIADATE,
                 sex: spanwrap("sex", translate(item.SEXNAME)),
                 size: spanwrap("size", translate(item.SIZENAME)),
-                species: spanwrap("species", translate(item.SPECIESNAME))
+                species: spanwrap("species", translate(item.SPECIESNAME)),
+                thumbnail_method: (fullsize_images ? "animal_image" : "animal_thumbnail")
             }));
 
         });
