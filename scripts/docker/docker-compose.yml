@@ -11,11 +11,17 @@ services:
     restart: always
     ports:
       - 5432:5432
-    #volumes:
-    # - ./postgres/init.sh:/docker-entrypoint-initdb.d/init-user-db.sh
+
+  memcached:
+    image: memcached
+    ports:
+      - 11211:11211
 
   asm:
     image: asm3
+    links:
+      - "postgres"
+      - "memcached"
     ports:
       - 8080:80
     build:
