@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: sheltermanager\n"
 "Report-Msgid-Bugs-To: robin@sheltermanager.com\n"
-"POT-Creation-Date: 2021-06-24 15:23+0000\n"
-"PO-Revision-Date: 2021-07-17 10:33+0300\n"
+"POT-Creation-Date: 2021-07-30 09:32+0000\n"
+"PO-Revision-Date: 2021-07-30 15:02+0300\n"
 "Last-Translator: Saggi <s@elephx.com>\n"
 "Language-Team: Hebrew <http://3.127.98.227/projects/asm/asm3/he/>\n"
 "Language: he\n"
@@ -288,13 +288,9 @@ msgstr "חשבונות"
 msgid "Action"
 msgstr "פעולה"
 
-#: medical.py person.js medical.js reports.js accounts.js lookups.js
+#: medical.py person.js medical.js reports.js traploan.js accounts.js lookups.js
 msgid "Active"
 msgstr "פעיל"
-
-#: traploan.js
-msgid "Active Equipment Loans"
-msgstr "ציוד מושאל"
 
 #: incident_map.js
 msgid "Active Incidents"
@@ -710,7 +706,7 @@ msgstr "הכתובת מכילה"
 
 #: dbupdate.py
 msgid "Administered"
-msgstr "ניתן"
+msgstr "ניתן/נוצל"
 
 #: medical.js vaccination.js test.js
 msgid "Administering Vet"
@@ -1525,6 +1521,10 @@ msgstr "הגיע לתור"
 #: reports.js
 msgid "Ask the user for a city"
 msgstr "תן למשתמש לבחור עיר"
+
+#: reports.js
+msgid "Ask the user for a color"
+msgstr "תן למשתמש לבחור צבע"
 
 #: reports.js
 msgid "Ask the user for a flag"
@@ -3663,6 +3663,10 @@ msgstr "מחק תשלומים"
 msgid "Delete Person"
 msgstr "מחיקת אנשים"
 
+#: onlineform_incoming.js
+msgid "Delete Processed"
+msgstr "מחק טפסים שטופלו"
+
 #: medical.js
 msgid "Delete Regimen"
 msgstr "מחק טיפולים רפואיים"
@@ -4728,7 +4732,7 @@ msgstr "סיבת קליטה"
 msgid "Equipment Loan Types"
 msgstr "סוגי השאלת ציוד"
 
-#: header_edit_header.js
+#: traploan.js header_edit_header.js
 msgid "Equipment Loans"
 msgstr "השאלת ציוד"
 
@@ -4901,7 +4905,7 @@ msgstr "תאריך תפוגה"
 msgid "Export"
 msgstr "ייצוא"
 
-#: code.py html.py csvexport.js
+#: code.py html.py csvexport.js roles.js
 msgid "Export Animals as CSV"
 msgstr "יצא חיות כ-CSV"
 
@@ -5059,7 +5063,7 @@ msgstr "עמלה"
 
 #: donations.js
 msgid "Fees"
-msgstr "תשלומים"
+msgstr "עמלות"
 
 #: dbupdate.py
 msgid "Female"
@@ -5528,6 +5532,10 @@ msgstr "רשימת כתובות לשדה אל"
 #: movement.py
 msgid "From retailer is only valid on adoption movements."
 msgstr "שדה מחנות חוקי רק בתנועות אימוץ."
+
+#: common.js options.js
+msgid "Future Adoption"
+msgstr "אימוץ עתידי"
 
 #: diary.js
 msgid "Future notes"
@@ -6234,6 +6242,10 @@ msgstr "קובץ תמונה"
 #: onlineforms.js csvimport.js csvimport_paypal.js
 msgid "Import"
 msgstr "ייבוא"
+
+#: roles.js
+msgid "Import CSV File"
+msgstr "ייבא קובץ CSV"
 
 #: code.py html.py csvimport.js
 msgid "Import a CSV file"
@@ -8861,7 +8873,7 @@ msgstr "לוח תשלומים"
 msgid "Payment of {0} successfully received ({1})."
 msgstr "תשלום של {0} התקבל בהצלחה ({1})."
 
-#: roles.js header_edit_header.js
+#: donations.js roles.js header_edit_header.js
 msgid "Payments"
 msgstr "תשלומים"
 
@@ -9060,6 +9072,10 @@ msgstr "מיקום איסוף"
 #: lookups.py
 msgid "Pickup Locations"
 msgstr "מיקומים לאיסוף"
+
+#: movement.py
+msgid "Pickup date cannot be later than dropoff date."
+msgstr "תאריך איסוף אינו יכול להיות מאוחר מתאריך פיזור."
 
 #: dbupdate.py
 msgid "Pig"
@@ -10213,6 +10229,18 @@ msgstr "הוחזר לבעלים"
 #: lostfound_find.js
 msgid "Returned from"
 msgstr "הוחזר מ"
+
+#: traploan.js
+msgid "Returned in last month"
+msgstr "הוחזרו בחודש האחרון"
+
+#: traploan.js
+msgid "Returned in last week"
+msgstr "הוחזרו בשבוע האחרון"
+
+#: traploan.js
+msgid "Returned in last year"
+msgstr "הוחזרו בשנה האחרונה"
 
 #: lostfound_find.js
 msgid "Returned to"
@@ -11485,7 +11513,7 @@ msgstr "ספירת מלאי"
 
 #: animal.py dbupdate.py animal_find.js reports.js
 msgid "Stolen"
-msgstr "גנוב"
+msgstr "נגנב"
 
 #: animal.py
 msgid "Stolen {0}"
@@ -12838,7 +12866,7 @@ msgstr "סה״כ"
 
 #: stocklevel.js
 msgid "Total number of units in the container"
-msgstr "סה״כ יחידות במיכל"
+msgstr "סה״כ יחידות"
 
 #: dbupdate.py
 msgid "Toucan"
@@ -14979,7 +15007,7 @@ msgstr "{plural1} בקשות לחתימה על מסמכים מהחודש האח�
 
 #: main.js
 msgid "{plural1} incomplete animal control calls"
-msgstr "‫{plural1} } תקריות שלא טופלו"
+msgstr "‫{plural1} תקריות שלא טופלו"
 
 #: main.js
 msgid "{plural1} items of stock expire in the next month"
@@ -15434,6 +15462,9 @@ msgstr "{plural3} שבועות."
 #: i18n.py
 msgid "{plural3} years."
 msgstr "{plural3} שנים."
+
+#~ msgid "Active Equipment Loans"
+#~ msgstr "ציוד מושאל"
 
 #~ msgid "Accounts need a code."
 #~ msgstr "יש למלא קוד לחשבון."
