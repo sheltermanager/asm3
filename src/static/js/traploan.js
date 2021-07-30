@@ -96,6 +96,21 @@ $(function() {
                         tableform.table_remove_selected_from_json(table, controller.rows);
                         tableform.table_update(table);
                     } 
+                },
+                { id: "offset", type: "dropdownfilter", 
+                    options: [ "a|" + _("Active"), 
+                        "m7|" + _("Returned in last week"),
+                        "m31|" + _("Returned in last month"),
+                        "m365|" + _("Returned in last year") ], 
+                    click: function(selval) {
+                       common.route(controller.name + "?offset=" + selval);
+                    },
+                    hideif: function(row) {
+                        // Don't show for person records
+                        if (controller.person) {
+                            return true;
+                        }
+                    }
                 }
             ];
             this.dialog = dialog;
@@ -127,6 +142,13 @@ $(function() {
             tableform.table_bind(this.table, this.buttons);
         },
 
+        sync: function() {
+            // If an offset is given in the querystring, update the select
+            if (common.querystring_param("offset")) {
+                $("#offset").select("value", common.querystring_param("offset"));
+            }
+        },
+
         type_change: function() {
             let dc = common.get_field(controller.traptypes, $("#type").select("value"), "DEFAULTCOST");
             $("#depositamount").currency("value", dc);
@@ -143,7 +165,7 @@ $(function() {
             if (controller.name == "person_traploan") {
                 return controller.person.OWNERNAME;
             }
-            return _("Active Equipment Loans");
+            return _("Equipment Loans");
         },
         routes: {
             "person_traploan": function() { common.module_loadandstart("traploan", "person_traploan?id=" + this.qs.id); },

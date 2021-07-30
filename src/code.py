@@ -6054,8 +6054,11 @@ class traploan(JSONEndpoint):
     def controller(self, o):
         dbo = o.dbo
         traploans = []
-        if o.post["filter"] == "" or o.post["filter"] == "active":
+        offset = o.post["offset"]
+        if offset == "" or offset == "a":
             traploans = asm3.animalcontrol.get_active_traploans(dbo)
+        else:
+            traploans = asm3.animalcontrol.get_returned_traploans(dbo, offset)
         asm3.al.debug("got %d trap loans" % len(traploans), "code.traploan", dbo)
         return {
             "name": "traploan",

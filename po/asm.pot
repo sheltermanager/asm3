@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ASM3\n"
 "Report-Msgid-Bugs-To: robin@sheltermanager.com\n"
-"POT-Creation-Date: 2021-07-08 09:22+0000\n"
+"POT-Creation-Date: 2021-07-30 09:32+0000\n"
 "Last-Translator: Robin Rawson-Tetley <robin@sheltermanager.com>\n"
 "Language-Team: en <robin@sheltermanager.com>\n"
 "Language: en\n"
@@ -278,12 +278,9 @@ msgstr ""
 msgid "Action"
 msgstr ""
 
-#: medical.py person.js medical.js reports.js accounts.js lookups.js
+#: medical.py person.js medical.js reports.js traploan.js accounts.js
+#: lookups.js
 msgid "Active"
-msgstr ""
-
-#: traploan.js
-msgid "Active Equipment Loans"
 msgstr ""
 
 #: incident_map.js
@@ -1507,6 +1504,10 @@ msgstr ""
 
 #: reports.js
 msgid "Ask the user for a city"
+msgstr ""
+
+#: reports.js
+msgid "Ask the user for a color"
 msgstr ""
 
 #: reports.js
@@ -4709,7 +4710,7 @@ msgstr ""
 msgid "Equipment Loan Types"
 msgstr ""
 
-#: header_edit_header.js
+#: traploan.js header_edit_header.js
 msgid "Equipment Loans"
 msgstr ""
 
@@ -8836,7 +8837,7 @@ msgstr ""
 msgid "Payment of {0} successfully received ({1})."
 msgstr ""
 
-#: roles.js header_edit_header.js
+#: donations.js roles.js header_edit_header.js
 msgid "Payments"
 msgstr ""
 
@@ -10185,6 +10186,18 @@ msgstr ""
 
 #: lostfound_find.js
 msgid "Returned from"
+msgstr ""
+
+#: traploan.js
+msgid "Returned in last month"
+msgstr ""
+
+#: traploan.js
+msgid "Returned in last week"
+msgstr ""
+
+#: traploan.js
+msgid "Returned in last year"
 msgstr ""
 
 #: lostfound_find.js

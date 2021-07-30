@@ -306,6 +306,19 @@ def get_active_traploans(dbo):
         "WHERE ot.ReturnDate Is Null OR ot.ReturnDate > ? " \
         "ORDER BY ot.LoanDate DESC", [dbo.today()])
 
+def get_returned_traploans(dbo, offset = "m31"):
+    """
+    Returns returned traploan records
+    ID, TRAPTYPEID, TRAPTYPENAME, LOANDATE, DEPOSITRETURNDATE,
+    TRAPNUMBER, RETURNDUEDATE, RETURNDATE,
+    OWNERNAME
+    """
+    offsetdays = asm3.utils.atoi(offset)
+    return dbo.query(get_traploan_query(dbo) + \
+        "WHERE ot.ReturnDate >= ? " \
+        "AND ot.ReturnDate <= ? " \
+        "ORDER BY ot.LoanDate DESC", [ dbo.today(offset=offsetdays*-1), dbo.today() ])
+
 def get_person_traploans(dbo, oid, sort = ASCENDING):
     """
     Returns all of the traploan records for a person, along with
