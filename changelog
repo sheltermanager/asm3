@@ -1,6 +1,7 @@
 45
 ================
 
+06/08/21 Don't update lastchanged person on reparented/merged records
 30/07/21 Option to view returned equipment loans
 23/07/21 adoptable_js: Support full size images
 14/07/21 OriginalOwner should always sync to Owner on non-shelter

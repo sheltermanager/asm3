@@ -3071,17 +3071,17 @@ def merge_animal(dbo, username, animalid, mergeanimalid):
     if animalid == 0 or mergeanimalid == 0:
         raise asm3.utils.ASMValidationError("Internal error: Cannot merge ID 0")
 
-    def reparent(table, field, linktypefield = "", linktype = -1, lastchanged = True):
+    def reparent(table, field, linktypefield = "", linktype = -1, haslastchanged = True):
         try:
             if table == "media":
                 dbo.execute("UPDATE media SET LinkID=?, WebsitePhoto=0, WebsiteVideo=0, DocPhoto=0 WHERE LinkID=? AND LinkTypeID=?", (animalid, mergeanimalid, linktype))
             if linktype >= 0:
                 dbo.update(table, "%s=%s AND %s=%s" % (field, mergeanimalid, linktypefield, linktype), 
                     { field: animalid }, username, 
-                    setLastChanged=lastchanged, setRecordVersion=lastchanged)
+                    setLastChanged=False, setRecordVersion=haslastchanged)
             else:
                 dbo.update(table, "%s=%s" % (field, mergeanimalid), 
-                    { field: animalid }, username, setLastChanged=lastchanged, setRecordVersion=lastchanged)
+                    { field: animalid }, username, setLastChanged=False, setRecordVersion=haslastchanged)
         except Exception as err:
             asm3.al.error("error reparenting: %s -> %s, table=%s, field=%s, linktypefield=%s, linktype=%s, error=%s" % \
                 (mergeanimalid, animalid, table, field, linktypefield, linktype, err), "animal.merge_animal", dbo)
@@ -3090,24 +3090,24 @@ def merge_animal(dbo, username, animalid, mergeanimalid):
     reparent("adoption", "AnimalID")
     reparent("animal", "BondedAnimalID")
     reparent("animal", "BondedAnimal2ID")
-    reparent("animalcontrolanimal", "AnimalID", lastchanged=False)
+    reparent("animalcontrolanimal", "AnimalID", haslastchanged=False)
     reparent("animalcost", "AnimalID")
     reparent("animaldiet", "AnimalID")
-    reparent("animallitter", "ParentAnimalID", lastchanged=False)
-    reparent("animallostfoundmatch", "AnimalID", lastchanged=False)
+    reparent("animallitter", "ParentAnimalID", haslastchanged=False)
+    reparent("animallostfoundmatch", "AnimalID", haslastchanged=False)
     reparent("animalmedical", "AnimalID")
     reparent("animalmedicaltreatment", "AnimalID")
-    reparent("animalpublished", "AnimalID", lastchanged=False)
+    reparent("animalpublished", "AnimalID", haslastchanged=False)
     reparent("animaltest", "AnimalID")
     reparent("animaltransport", "AnimalID")
     reparent("animalvaccination", "AnimalID")
     reparent("clinicappointment", "AnimalID")
     reparent("ownerdonation", "AnimalID")
-    reparent("ownerlookingfor", "AnimalID", lastchanged=False)
+    reparent("ownerlookingfor", "AnimalID", haslastchanged=False)
     reparent("ownerlicence", "AnimalID")
-    reparent("media", "LinkID", "LinkTypeID", asm3.media.ANIMAL, lastchanged=False)
+    reparent("media", "LinkID", "LinkTypeID", asm3.media.ANIMAL, haslastchanged=False)
     reparent("diary", "LinkID", "LinkType", asm3.diary.ANIMAL)
-    reparent("log", "LinkID", "LinkType", asm3.log.ANIMAL, lastchanged=False)
+    reparent("log", "LinkID", "LinkType", asm3.log.ANIMAL, haslastchanged=False)
 
     # Reparent the audit records for the reparented records in the audit log
     # by switching ParentLinks to the new ID.

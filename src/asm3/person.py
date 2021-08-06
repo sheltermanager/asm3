@@ -1073,15 +1073,15 @@ def merge_person(dbo, username, personid, mergepersonid):
     if personid == 0 or mergepersonid == 0:
         raise asm3.utils.ASMValidationError("Internal error: Cannot merge ID 0")
 
-    def reparent(table, field, linktypefield = "", linktype = -1, lastchanged = True):
+    def reparent(table, field, linktypefield = "", linktype = -1, haslastchanged = True):
         try:
             if linktype >= 0:
                 dbo.update(table, "%s=%s AND %s=%s" % (field, mergepersonid, linktypefield, linktype), 
                     { field: personid }, username, 
-                    setLastChanged=lastchanged, setRecordVersion=lastchanged)
+                    setLastChanged=False, setRecordVersion=haslastchanged)
             else:
                 dbo.update(table, "%s=%s" % (field, mergepersonid), 
-                    { field: personid }, username, setLastChanged=lastchanged, setRecordVersion=lastchanged)
+                    { field: personid }, username, setLastChanged=False, setRecordVersion=haslastchanged)
         except Exception as err:
             asm3.al.error("error reparenting: %s -> %s, table=%s, field=%s, linktypefield=%s, linktype=%s, error=%s" % \
                 (mergepersonid, personid, table, field, linktypefield, linktype, err), "person.merge_person", dbo)
@@ -1136,13 +1136,13 @@ def merge_person(dbo, username, personid, mergepersonid):
     reparent("ownerdonation", "OwnerID")
     reparent("ownerinvestigation", "OwnerID")
     reparent("ownerlicence", "OwnerID")
-    reparent("ownerlookingfor", "OwnerID", lastchanged=False)
+    reparent("ownerlookingfor", "OwnerID", haslastchanged=False)
     reparent("ownertraploan", "OwnerID")
     reparent("ownervoucher", "OwnerID")
     reparent("users", "OwnerID")
-    reparent("media", "LinkID", "LinkTypeID", asm3.media.PERSON, lastchanged=False)
+    reparent("media", "LinkID", "LinkTypeID", asm3.media.PERSON, haslastchanged=False)
     reparent("diary", "LinkID", "LinkType", asm3.diary.PERSON)
-    reparent("log", "LinkID", "LinkType", asm3.log.PERSON, lastchanged=False)
+    reparent("log", "LinkID", "LinkType", asm3.log.PERSON, haslastchanged=False)
 
     # Assign the adopter flag if we brought in new open adoption movements
     update_adopter_flag(dbo, username, personid)
