@@ -1474,10 +1474,11 @@ $(function() {
                 validate.dirty(true);
             });
 
-            // If a value is set in the deceased date, set the default death reason
+            // If a value is set in the previously blank deceased date, 
+            // set the default death reason.
             // Another change event for this field handles visibility below
             $("#deceaseddate").change(function() {
-                if ($("#deceaseddate").val() != "") {
+                if ($("#deceaseddate").val() != "" && !a.DECEASEDDATE) {
                     $("#deathcategory").select("value", config.str("AFDefaultDeathReason"));
                 }
             });
