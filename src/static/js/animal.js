@@ -1478,7 +1478,7 @@ $(function() {
             // set the default death reason.
             // Another change event for this field handles visibility below
             $("#deceaseddate").change(function() {
-                if ($("#deceaseddate").val() != "" && !a.DECEASEDDATE) {
+                if ($("#deceaseddate").val() != "" && !controller.animal.DECEASEDDATE) {
                     $("#deathcategory").select("value", config.str("AFDefaultDeathReason"));
                 }
             });
