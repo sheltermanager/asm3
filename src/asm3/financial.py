@@ -311,6 +311,7 @@ def get_transactions(dbo, accountid, datefrom, dateto, reconciled=BOTH):
     rows = dbo.query("SELECT t.*, srcac.Code AS SrcCode, destac.Code AS DestCode, " \
         "o.OwnerName AS PersonName, o.ID AS PersonID, a.ID AS DonationAnimalID, " \
         "a.AnimalName AS DonationAnimalName, " \
+        "od.ReceiptNumber AS DonationReceiptNumber, " \
         "CASE " \
         "WHEN EXISTS(SELECT ItemValue FROM configuration WHERE ItemName Like 'UseShortShelterCodes' AND ItemValue = 'Yes') " \
         "THEN a.ShortCode ELSE a.ShelterCode END AS DonationAnimalCode, " \

@@ -41,6 +41,7 @@ $(function() {
                 '<td>',
                 '<a id="personlink" class="asm-embed-name" href="#"></a> ' + html.icon("right"),
                 '<a id="animallink" class="asm-embed-name" href="#"></a>',
+                '[<span id="receiptno"></span>]',
                 '</td>',
                 '</tr>',
                 '<tr id="costrow">',
@@ -138,7 +139,10 @@ $(function() {
                     desc += " " + html.icon("right") + " " + 
                         '<a href="animal?id=' + t.DONATIONANIMALID + '">' +
                         t.DONATIONANIMALCODE + " - " + 
-                        t.DONATIONANIMALNAME;
+                        t.DONATIONANIMALNAME + '</a>';
+                }
+                if (t.DONATIONRECEIPTNUMBER) {
+                    desc += " [" + t.DONATIONRECEIPTNUMBER + "]";
                 }
                 desc = html.truncate(t.DESCRIPTION) + " " + desc;
                 h.push("<tr>");
@@ -283,9 +287,10 @@ $(function() {
                 else {
                     $("#personlink").html(row.PERSONNAME);
                     $("#personlink").prop("href", "person_donations?id=" + row.PERSONID);
-                    $("#paymentrow").show();
                     $("#animallink").html(row.DONATIONANIMALCODE + " " + row.DONATIONANIMALNAME);
                     $("#animallink").prop("href", "animal_donations?id=" + row.DONATIONANIMALID);
+                    $("#receiptno").html(row.DONATIONRECEIPTNUMBER);
+                    $("#paymentrow").show();
                 }
                 if (!row.COSTANIMALNAME) {
                     $("#costrow").hide();
