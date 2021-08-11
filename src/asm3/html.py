@@ -804,6 +804,7 @@ def json_quicklinks(dbo):
 def json_waitinglistcolumns(dbo):
     l = dbo.locale
     cols = [ 
+        ( "Number", _("Number", l) ),
         ( "CreatedBy", _("Created By", l) ),
         ( "Rank", _("Rank", l) ),
         ( "SpeciesID", _("Species", l) ),

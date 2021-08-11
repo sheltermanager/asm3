@@ -1,6 +1,7 @@
 45
 ================
 
+11/08/21 Option to show waiting list number in columns
 06/08/21 Only set default death reason if deceased date was blank
 06/08/21 Don't update lastchanged person on reparented/merged records
 30/07/21 Option to view returned equipment loans

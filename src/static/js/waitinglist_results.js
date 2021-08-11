@@ -259,6 +259,7 @@ $(function() {
          */
         column_label: function(name, add) {
             let labels = {
+                "Number": _("Number"),
                 "CreatedBy": _("Created By"),
                 "Rank": _("Rank"),
                 "SpeciesID": _("Species"),
@@ -307,7 +308,10 @@ $(function() {
                     "ReasonForRemoval", "Comments", "Rank", "TimeOnList" ],
                 YES_NO_FIELDS = [ "CanAffordDonation" ];
             let rv = "";
-            if (name == "SpeciesID") {
+            if (name == "Number") {
+                rv = format.padleft(row.ID, 6);
+            }
+            else if (name == "SpeciesID") {
                 rv = row.SPECIESNAME;
             }
             else if (name == "Size") {
