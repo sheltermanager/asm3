@@ -126,6 +126,75 @@ INNER JOIN vaccinationtype v ON av.VaccinationID = v.ID
 WHERE (animal.SpeciesID=1 AND v.id IN (5,8)) OR (animal.SpeciesID=2 AND v.id = 9) -- have to look at vaccination ids
   AND NOT (animal.AdditionalFlags LIKE 'Ignore Issues|%' OR animal.AdditionalFlags  LIKE '%|Ignore Issues|%')
 
+--Days on Shelter should = 0 if DOA checkbox is checked.  Added 8/12/2021
+UNION SELECT
+  animal.animalname as name,
+  animal.sheltercode as code,
+  date(animal.LastChangedDate) as issuedate,
+    'Death Issue.  Days on Shelter should equal 0 if <i>Dead of arrival</i> Checkbox is selected.' AS issue
+FROM animal
+WHERE DeceasedDate is not null
+AND IsDOA = 1 and DaysOnShelter <> 0
+AND NonShelterAnimal = 0
+AND NOT (animal.AdditionalFlags LIKE 'Ignore Issues|%' OR animal.AdditionalFlags  LIKE '%|Ignore Issues|%')
+
+--Invalid death reason with DOA Issue.  Added 8/12/21
+UNION SELECT
+  animal.animalname as name,
+  animal.sheltercode as code,
+  date(animal.LastChangedDate) as issuedate,
+    'Death Issue.  DOA Category and DOA Checkbox Should Match' AS issue
+FROM animal
+WHERE DECEASEDDATE is not null
+AND (animal.IsDOA = 1 AND animal.PTSReasonID <> 1 -- REVIEW Death Reasons LOOKUP FIELDS
+  OR animal.IsDOA = 0 AND animal.PTSReasonID = 1)
+
+--Euthanized and DOA should not both be checked.  DOA means dead before
+--animal entered shelter.  Added 8/12/21
+UNION SELECT
+  animal.animalname as name,
+  animal.sheltercode as code,
+  date(animal.LastChangedDate) as issuedate,
+    'Death Issue.  DOA and Euthanized should not both be checked' AS issue
+FROM animal
+WHERE DECEASEDDATE is not null
+AND (animal.IsDOA = 1 AND animal.Puttosleep = 1
+  OR animal.IsDOA = 1 AND animal.AsilomarOwnerRequestedEuthanasia = 1)
+
+--Euthanasia check box not selected.  Added 8/12/21
+UNION SELECT
+  animal.animalname as name,
+  animal.sheltercode as code,
+  date(animal.LastChangedDate) as issuedate,
+    'Death Issue.  Euthanasia Checkbox Needs to be Checked' AS issue
+FROM animal
+WHERE PutToSleep = 0
+  AND PTSReasonID in (3,5,6,7,8)  -- REVIEW Death Reasons LOOKUP FIELDS
+  AND DECEASEDDATE is not null
+  AND NOT (animal.AdditionalFlags LIKE 'Ignore Issues|%' OR animal.AdditionalFlags  LIKE '%|Ignore Issues|%') 
+
+--Invalid death reason with euthanasia check box selected. Added 8/12/21
+UNION SELECT
+  animal.animalname as name,
+  animal.sheltercode as code,
+  date(animal.LastChangedDate) as issuedate,
+    'Death Issue.  Invalid Death Reason for Checked Euthanasia Box' AS issue
+FROM animal
+WHERE animal.PutToSleep = 1 AND animal.PTSReasonID IN (1,2) -- REVIEW Death Reasons LOOKUP FIELDS (**Remove Requested ID if using Asilomar).
+AND NOT (animal.AdditionalFlags LIKE 'Ignore Issues|%' OR animal.AdditionalFlags  LIKE '%|Ignore Issues|%') 
+
+--Alerts when an animal has been marked as either euthanized or DOA, but then the 
+--Death date later removed.  The euthanized or DOA fields need to be cleared out.
+UNION SELECT 
+  animal.animalname AS name,
+  animal.sheltercode AS code,
+  date(animal.LastChangedDate) AS issuedate,
+    'Death Issue. Marked deceased without Deceased Date.  Enter temp Deceased Date to clear deceased reason, then re-Save.' AS issue
+FROM animal
+WHERE (puttosleep = 1 OR diedoffshelter = 1 OR isdoa = 1)
+  AND deceaseddate IS NULL
+  AND NOT (animal.AdditionalFlags LIKE 'Ignore Issues|%' OR animal.AdditionalFlags  LIKE '%|Ignore Issues|%')
+
 --Alerts when an litter name was added to an animal, but a litter was not added in Edit Litters
 UNION SELECT 
   animal.animalname AS name,
@@ -135,47 +204,6 @@ UNION SELECT
 FROM animal
 WHERE acceptancenumber <> '' 
 AND NOT EXISTS(select ID FROM animallitter al WHERE al.acceptancenumber = animal.acceptancenumber)
-
---Alerts when an animal has been marked as either euthanized or DOA, but then the 
---Death date later removed.  The euthanized or DOA fields need to be cleared out.
-UNION SELECT 
-  animal.animalname AS name,
-  animal.sheltercode AS code,
-  date(animal.LastChangedDate) AS issuedate,
-    'Marked deceased without Deceased Date.  Enter temp Deceased Date to clear deceased reason, then re-Save.' AS issue
-FROM animal
-WHERE (puttosleep = 1 OR diedoffshelter = 1 OR isdoa = 1)
-  AND deceaseddate IS NULL
-  AND NOT (animal.AdditionalFlags LIKE 'Ignore Issues|%' OR animal.AdditionalFlags  LIKE '%|Ignore Issues|%')
-
---Alerts if marked 'Transfer In'  but the Entry Category not set to Transfer from …
-UNION SELECT 
-  animal.animalname AS name,
-  animal.sheltercode AS code,
-  date(animal.LastChangedDate) AS issuedate,
-  'Marked <i>Transfer In</i>, but <i>Entry Category</i> not set to Transfer from Shelter/Rescue in Entry section.' AS issue 
-FROM animal
-  INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
-WHERE animal.nonshelteranimal = 0
-  AND animal.istransfer = 1
---AND NOT animal.entryreasonid = 18  -- Check Entry Reason ID
-  AND entryreason.ReasonName NOT LIKE '%Transf%'
-  AND NOT (animal.AdditionalFlags LIKE 'Ignore Issues|%' OR animal.AdditionalFlags  LIKE '%|Ignore Issues|%')
-
---If marked 'Transfer In' , but check to see if there is a person in the 'Transferred From'
---field in the Entry Section.
-UNION SELECT 
-  animal.animalname AS name,
-  animal.sheltercode AS code,
-  date(animal.LastChangedDate) AS issuedate,
-  'Marked <i>Transfer In</i>, but no person in <i>Transferred From</i> field in Entry section.' AS issue 
-FROM animal
-INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
-WHERE animal.datebroughtin > '2000-01-01'
-  AND animal.nonshelteranimal = 0
-  AND animal.broughtinbyownerid = 0
-  AND (animal.istransfer = 1 OR entryreason.ReasonName LIKE '%Transf%')
-  AND NOT (animal.AdditionalFlags LIKE 'Ignore Issues|%' OR animal.AdditionalFlags  LIKE '%|Ignore Issues|%')
 
 --Alerts when adopted and marked microchip, but no microchip number entered.
 UNION SELECT 
@@ -254,7 +282,7 @@ WHERE  animal.deceaseddate IS NULL
   AND datebroughtin > '2010-01-01'
   AND NOT (animal.AdditionalFlags LIKE 'Ignore Issues|%' OR animal.AdditionalFlags  LIKE '%|Ignore Issues|%')
 
---Reports animals adopted but not altered.
+--Reports animals adopted but not altered. Can use this or next option if you set a spay/neuter due date in Medical. 
 UNION SELECT
   animal.animalname AS name,
   animal.sheltercode AS code,
@@ -272,6 +300,28 @@ WHERE  animal.deceaseddate IS NULL
   AND EXTRACT(days FROM current_date - animal.dateofbirth) >= 185
   AND animal.speciesid in (1,2)
   AND NOT (animal.AdditionalFlags LIKE 'Ignore Issues|%' OR animal.AdditionalFlags  LIKE '%|Ignore Issues|%')
+
+-- Either use code above or this code.  Use this code if you set a spay/neuter due date in Medical. Added 8/12/2021
+UNION SELECT
+  animal.animalname as name,
+  animal.sheltercode as code,
+  animal.activemovementdate AS issuedate,
+    'Not altered but adopted.  Spay/Neuter due date not entered in Medical or past due.' AS issue
+FROM animal
+  LEFT OUTER JOIN owner cw ON cw.ID = animal.adoptioncoordinatorID
+  INNER JOIN adoption ON adoption.ID = animal.activemovementID
+WHERE animal.deceaseddate is null
+  AND animal.activemovementtype = 1
+  AND animal.activemovementdate > '2010-01-01'
+  AND animal.Neutered = 0
+  AND adoption.ISTRIAL = 0
+  AND EXTRACT(days FROM current_date - animal.dateofbirth) >= 185
+  AND animal.speciesid in (1,2)
+  AND (NOT EXISTS(SELECT animalmedical.ID FROM animalmedical INNER JOIN animalmedicaltreatment amt ON amt.animalmedicalid = animalmedical.ID WHERE animalmedical.AnimalID = animal.ID AND animalmedical.TreatmentName like 'Spay%') -- REVIEW.  Update to match Medical Profile name
+       OR
+    EXISTS(SELECT animalmedical.ID FROM animalmedical INNER JOIN animalmedicaltreatment amt ON amt.animalmedicalid = animalmedical.ID WHERE animalmedical.AnimalID = animal.ID AND animalmedical.TreatmentName like 'Spay%' AND amt.DateRequired < current_date -1))  -- REVIEW.  Update to match Medical Profile name
+  AND NOT (animal.AdditionalFlags LIKE 'Ignore Issues|%' OR animal.AdditionalFlags  LIKE '%|Ignore Issues|%') 
+
 
 --Compares current owner (animal.ownerid with adoption.ownerid) to see if maybe
 --someone changed this field instead of creating a movement.
@@ -412,6 +462,25 @@ WHERE animal.deceaseddate IS NULL
   AND animal.speciesid = 1
   AND NOT (animal.AdditionalFlags LIKE 'Ignore Issues|%' OR animal.AdditionalFlags  LIKE '%|Ignore Issues|%')
 
+--This checks HW Positive Dogs for a retest date if shelter follows up on HW positive dogs.   Added 8/12/2021
+--Change from 6 month TO 1 year in INTERVAL statements if needed
+UNION SELECT
+animal.animalname as name,
+animal.sheltercode as code,
+date(animal.LastChangedDate) AS issuedate,
+   'Test Issue. Heartworm Positive Dog needs to be re-tested or Heartworm Test Due needs to be added to Test Tab.' AS ISSUE
+FROM animal
+  INNER JOIN species ON species.ID = animal.SpeciesID
+  LEFT OUTER JOIN owner cw ON cw.ID = animal.adoptioncoordinatorID
+--INNER JOIN animaltest ON animaltest.ANIMALID = animal.id
+WHERE (animal.archived=0 OR animal.activemovementtype IN (1,11))
+  AND animal.ActiveMovementDate > '2020-01-01'
+  AND animal.HeartwormTestResult = 2
+  AND animal.speciesid = 1
+  AND animal.HeartwormTestDate < CURRENT_DATE - INTERVAL '1 year'
+  AND NOT EXISTS(SELECT animaltest.testtypeid FROM animaltest INNER JOIN testtype ON testtype.ID = animaltest.TESTTYPEID WHERE animaltest.AnimalID = animal.ID AND testtype.TESTNAME like 'Heartworm%' and animaltest.DATEOFTEST is null)     
+  AND NOT (animal.AdditionalFlags LIKE 'Ignore Issues|%' OR animal.AdditionalFlags  LIKE '%|Ignore Issues|%') 
+
 --Two-part check for FIV/FLV Test
 UNION SELECT
   animal.animalname AS name,
@@ -455,6 +524,67 @@ WHERE animal.deceaseddate IS NULL
   AND animal.CombiTested = 0
   AND animal.speciesid = 2
  AND NOT (animal.AdditionalFlags LIKE 'Ignore Issues|%' OR animal.AdditionalFlags  LIKE '%|Ignore Issues|%')
+
+--Alerts if marked 'Transfer In'  but the Entry Category not set to Transfer from …
+UNION SELECT 
+  animal.animalname AS name,
+  animal.sheltercode AS code,
+  date(animal.LastChangedDate) AS issuedate,
+  'Transfer In Issue. Marked <i>Transfer In</i>, but <i>Entry Category</i> not set to Transfer from Shelter/Rescue in Entry section.' AS issue 
+FROM animal
+  INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
+WHERE animal.nonshelteranimal = 0
+  AND animal.istransfer = 1
+--AND NOT animal.entryreasonid = 18  -- Check Entry Reason ID
+  AND entryreason.ReasonName NOT LIKE '%Transf%'
+  AND NOT (animal.AdditionalFlags LIKE 'Ignore Issues|%' OR animal.AdditionalFlags  LIKE '%|Ignore Issues|%')
+
+--Alerts if Entry Category set to Transfer from but 'Transfer In' box not checked. Added 8/12/21
+UNION SELECT 
+animal.animalname as name,
+animal.sheltercode as code,
+date(animal.LastChangedDate) as issuedate,
+'Transfer In Issue. <i>Transfer</i> Entry Category Selected, but <i>Transfer In Checkbox</i> Not Selected in Entry Section.' AS issue 
+FROM animal
+   INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
+WHERE animal.nonshelteranimal = 0
+  AND animal.datebroughtin > '2020-01-01'
+  AND animal.istransfer = 0
+--AND NOT animal.entryreasonid = 18  -- USE THIS OR NEXT LINE.  Check Entry Reason ID
+  AND entryreason.ReasonName LIKE '%Transf%'
+AND NOT (animal.AdditionalFlags LIKE 'Ignore Issues|%' OR animal.AdditionalFlags  LIKE '%|Ignore Issues|%')
+
+--If marked 'Transfer In' , but check to see if there is a person in the 'Transferred From'
+--field in the Entry Section.
+UNION SELECT 
+  animal.animalname AS name,
+  animal.sheltercode AS code,
+  date(animal.LastChangedDate) AS issuedate,
+  'Transfer In Issue. Marked <i>Transfer In</i>, but no person in <i>Transferred From</i> field in Entry section.' AS issue 
+FROM animal
+INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
+WHERE animal.datebroughtin > '2000-01-01'
+  AND animal.nonshelteranimal = 0
+  AND animal.broughtinbyownerid = 0
+  AND (animal.istransfer = 1 OR entryreason.ReasonName LIKE '%Transf%')
+  AND NOT (animal.AdditionalFlags LIKE 'Ignore Issues|%' OR animal.AdditionalFlags  LIKE '%|Ignore Issues|%')
+
+--If marked 'Transfer In' ,  check to see if person in the 'Transferred From'
+--field is flagged as a Vet or Other Shelter.  Added 8/12/2021
+UNION SELECT 
+  animal.animalname AS name,
+  animal.sheltercode AS code,
+  date(animal.LastChangedDate) AS issuedate,
+  'Transfer In Issue. Marked <i>Transfer In</i>, but person in from not flagged as <i>Other Shelter or Vet</i>' AS issue 
+FROM animal
+INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
+INNER JOIN owner on owner.id = animal.broughtinbyownerid
+WHERE animal.datebroughtin > '2000-01-01'
+  AND animal.nonshelteranimal = 0
+  AND animal.broughtinbyownerid <> 0
+  AND NOT (owner.AdditionalFlags LIKE 'shelter|%' OR owner.AdditionalFlags  LIKE '%|shelter|%' OR owner.AdditionalFlags LIKE 'vet|%' OR owner.AdditionalFlags LIKE '%|vet|%')
+  AND (animal.istransfer = 1 OR entryreason.ReasonName LIKE '%Transf%')
+  AND NOT (animal.AdditionalFlags LIKE 'Ignore Issues|%' OR animal.AdditionalFlags  LIKE '%|Ignore Issues|%')
 
 --Reports an animal that was transferred to a organization/person that doesn't have
 --the Other Shelter flag.   This flag is needed for the 'Transfer an animal' functionality
@@ -506,10 +636,26 @@ UNION SELECT
 animal.animalname as name,
 animal.sheltercode as code,
   animalvaccination.DateOfVaccination AS issuedate,
-'Vaccination Manufacturer Starts With Numeric' AS ISSUE 
+'Vaccination Issue. Manufacturer Starts With Numeric' AS ISSUE 
 FROM animal
 INNER JOIN animalvaccination ON animalvaccination.animalid = animal.id
-where substring(animalvaccination.Manufacturer,1,1) in ('0','1','2','3','4','5','6','7','8','9')
+WHERE substring(animalvaccination.Manufacturer,1,1) in ('0','1','2','3','4','5','6','7','8','9')
+
+--Checks to see if Rabies Tag is missing.  Added 8/12/2021
+UNION SELECT
+  animal.animalname as name,
+  animal.sheltercode as code,
+  animalvaccination.DateOfVaccination AS issuedate,
+  'Vaccination Issue.  Missing Rabies Tag Number in Vaccination Record.'  AS ISSUE 
+FROM animal
+INNER JOIN animalvaccination ON animalvaccination.animalid = animal.id
+WHERE animalvaccination.vaccinationid IN (4) -- REVIEW Rabies ID needed
+  AND animalvaccination.DateofVaccination IS NOT NULL
+  AND animalvaccination.RabiesTag = ''
+  --AND date_trunc('day', animalvaccination.LastChangedDate) = current_date -1
+  AND date_trunc('day', animalvaccination.LastChangedDate) > '2021-01-01'
+  AND animal.nonshelteranimal = 0
+
 
 -----------------------------OWNER SECTION---------------------------------------------------------
 --This alerts when banned people also do not have the Exclude from bulk mailings flag.
