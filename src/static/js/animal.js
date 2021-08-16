@@ -1584,6 +1584,9 @@ $(function() {
                 if (controller.animal && controller.animal.CURRENTOWNEREMAILADDRESS) { 
                     toaddresses.push(controller.animal.CURRENTOWNEREMAILADDRESS);
                 }
+                if (controller.animal && controller.animal.CURRENTVETEMAILADDRESS) { 
+                    toaddresses.push(controller.animal.CURRENTVETEMAILADDRESS);
+                }
                 if (controller.animal && controller.animal.ADOPTIONCOORDINATOREMAILADDRESS) {
                     toaddresses.push(controller.animal.ADOPTIONCOORDINATOREMAILADDRESS);
                 }
