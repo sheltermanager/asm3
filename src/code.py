@@ -2310,8 +2310,8 @@ class csvexport_animals(ASMEndpoint):
 
 class csvimport(JSONEndpoint):
     url = "csvimport"
-    get_permissions = asm3.users.USE_SQL_INTERFACE
-    post_permissions = asm3.users.USE_SQL_INTERFACE
+    get_permissions = asm3.users.IMPORT_CSV_FILE
+    post_permissions = asm3.users.IMPORT_CSV_FILE
 
     def controller(self, o):
         return {}
@@ -2326,8 +2326,8 @@ class csvimport(JSONEndpoint):
 
 class csvimport_paypal(JSONEndpoint):
     url = "csvimport_paypal"
-    get_permissions = asm3.users.USE_SQL_INTERFACE
-    post_permissions = asm3.users.USE_SQL_INTERFACE
+    get_permissions = asm3.users.IMPORT_CSV_FILE
+    post_permissions = asm3.users.IMPORT_CSV_FILE
 
     def controller(self, o):
         return { 
