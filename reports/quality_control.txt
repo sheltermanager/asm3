@@ -740,7 +740,7 @@ UNION SELECT
   'Invalid State abbreviation.' AS issue
 FROM owner
 WHERE owner.OWNERTOWN <> ''
-  AND (owner.OWNERCOUNTRY LIKE 'US%'  OR owner.OWNERCOUNTRY = '')  -- skip check if foreign county
+  AND (owner.OWNERCOUNTRY LIKE 'US%' OR owner.OWNERCOUNTRY LIKE 'United States%' OR owner.OWNERCOUNTRY = '')  -- skip check if foreign county
   AND owner.OWNERCOUNTY NOT IN ('AK', 'AL', 'AR', 'AS', 'AZ', 'CA', 'CO', 'CT', 'DC', 'DE', 'FL', 'GA', 'GU', 'HI', 'IA', 'ID', 'IL', 'IN', 'KS', 'KY', 'LA', 'MA', 'MD', 'ME', 'MI', 'MN', 'MO', 'MP', 'MS', 'MT', 'NC', 'ND', 'NE', 'NH', 'NJ', 'NM', 'NV', 'NY', 'OH', 'OK', 'OR', 'PA', 'PR', 'RI', 'SC', 'SD', 'TN', 'TX', 'UM', 'UT', 'VA', 'VI', 'VT', 'WA', 'WI', 'WV', 'WY')
   AND NOT (owner.AdditionalFlags LIKE 'Ignore Issues|%' OR owner.AdditionalFlags  LIKE '%|Ignore Issues|%')
 
@@ -755,7 +755,7 @@ WHERE owner.LASTCHANGEDDATE > '2019-01-01'
   AND NOT owner.OWNERADDRESS = '' 
   AND NOT owner.OWNERTOWN = '' 
   AND NOT owner.OWNERCOUNTY = '' 
-  AND (owner.OWNERCOUNTRY LIKE 'US%'  OR owner.OWNERCOUNTRY = '')  -- skip check if foreign country
+  AND (owner.OWNERCOUNTRY LIKE 'US%' OR owner.OWNERCOUNTRY LIKE 'United States%' OR owner.OWNERCOUNTRY = '')  -- skip check if foreign country
   AND owner.ownerpostcode = ''
   AND NOT (owner.AdditionalFlags LIKE 'Ignore Issues|%' OR owner.AdditionalFlags  LIKE '%|Ignore Issues|%')
 
@@ -769,7 +769,7 @@ UNION SELECT
 FROM owner
 WHERE owner.OWNERCOUNTY = 'AR' 
   AND ownerpostcode <>  '' 
-  AND (ownerpostcode NOT LIKE '7%'  OR (ownerpostcode NOT LIKE '722%' AND ownertown = 'Little Rock'))
+  AND (ownerpostcode NOT LIKE '7%' OR (ownerpostcode NOT LIKE '722%' AND ownertown = 'Little Rock'))
 --AND OWNER.LASTCHANGEDDATE > '2020-01-01'
 --AND NOT (ownerpostcode like '46%' or ownerpostcode like '47%')
 
