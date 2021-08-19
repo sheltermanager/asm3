@@ -986,7 +986,7 @@ def send_fosterer_emails(dbo):
             "INNER JOIN animal a ON a.ID = m.AnimalID " \
             "LEFT OUTER JOIN species s ON s.ID = a.SpeciesID " \
             "LEFT OUTER JOIN lksex x ON x.ID = a.Sex " \
-            "WHERE m.OwnerID = ? AND MovementType = 2 AND IsPermanentFoster = 0 " \
+            "WHERE m.OwnerID = ? AND MovementType = 2 " \
             "AND MovementDate <= ? AND a.DeceasedDate Is Null " \
             "AND (ReturnDate Is Null OR ReturnDate > ?) ORDER BY MovementDate", ( f.ID, dbo.today(), dbo.today() ))
         asm3.al.debug("%d animals found for fosterer '%s'" % (len(animals), f.OWNERNAME), "movement.send_fosterer_emails", dbo)
