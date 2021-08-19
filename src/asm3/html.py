@@ -329,15 +329,14 @@ def graph_js(l):
         %(jqueryuicss)s
         %(i18n)s
         %(asmcss)s
-        %(report_toolbar)s
     """ % { "asmcss": asm_css_tag("asm.css"),
             "jquery": script_tag(JQUERY_JS), 
             "flot": script_tag(FLOT_JS), 
             "flotpie": script_tag(FLOT_PIE_JS),
             "i18n": script_i18n(l),
             "jqueryui": script_tag(JQUERY_UI_JS),
-            "jqueryuicss": css_tag(JQUERY_UI_CSS % { "theme": "asm" }),
-            "report_toolbar": asm_script_tag("report_toolbar.js") }
+            "jqueryuicss": css_tag(JQUERY_UI_CSS % { "theme": "asm" })
+          }
 
 def map_js():
     return """
