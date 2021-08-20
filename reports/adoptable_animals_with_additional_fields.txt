@@ -2,7 +2,7 @@ Adoptable Animals with Additional Fields
 ###
 Inventories
 ###
-34302/Any
+34501/Any
 ###
 List of adoptable animals with thumbnails.
 ###
@@ -15,7 +15,7 @@ INNER JOIN additional af ON af.LinkID = a.ID
 INNER JOIN additionalfield aff ON aff.ID = af.AdditionalFieldID AND af.LinkType IN (0,2,3,4,5,6)
 LEFT OUTER JOIN species s ON s.ID = a.SpeciesID
 LEFT OUTER JOIN animaltype t ON t.ID = a.AnimalTypeID
-WHERE a.Archived = 0 AND isNotAvailableForAdoption = 0 AND HasTrialAdoption = 0
+WHERE a.Archived = 0 AND a.Adoptable=1
 ORDER BY a.AnimalName, a.MostRecentEntryDate
 ###
 $$HEADER

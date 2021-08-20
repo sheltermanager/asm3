@@ -2,7 +2,7 @@ Adoptable Animals
 ###
 Animals
 ###
-34016/PostgreSQL
+34501/PostgreSQL
 ###
 Mail merge of all adoptable animals for generating multiple documents, etc.
 ###
@@ -17,7 +17,7 @@ BreedName, SpeciesName, BaseColour AS BaseColourName, Markings,
 FROM animal a
 INNER JOIN species s ON s.ID = a.SpeciesID
 INNER JOIN basecolour c ON c.ID = a.BaseColourID
-WHERE Archived=0 AND IsNotAvailableForAdoption=0
+WHERE Archived=0 AND Adoptable=1
 ORDER BY a.AnimalName
 ###
 MAIL
