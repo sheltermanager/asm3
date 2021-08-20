@@ -280,12 +280,12 @@ def get_animal_query(dbo):
         }
 
 def get_animal_status_query(dbo):
-    return "SELECT a.ID, a.ShelterCode, a.ShortCode, a.AnimalName, " \
+    return "SELECT a.ID, a.ShelterCode, a.ShortCode, a.AnimalName, a.AnimalComments, " \
         "a.DeceasedDate, a.DateOfBirth, a.DiedOffShelter, a.PutToSleep, a.Neutered, a.SpeciesID, " \
         "dr.ReasonName AS PTSReasonName, " \
         "il.LocationName AS ShelterLocationName, " \
         "a.ShelterLocation, a.ShelterLocationUnit, " \
-        "a.IsCourtesy, a.IsNotAvailableForAdoption, a.HasPermanentFoster, " \
+        "a.IsCourtesy, a.Adoptable, a.IsNotAvailableForAdoption, a.HasPermanentFoster, " \
         "a.CrueltyCase, a.NonShelterAnimal, a.IsHold, a.IsQuarantine, " \
         "a.DateBroughtIn, a.OriginalOwnerID, a.Archived, a.OwnerID, " \
         "a.ActiveMovementID, a.ActiveMovementDate, a.ActiveMovementType, a.ActiveMovementReturn, " \
@@ -3757,21 +3757,8 @@ def update_animal_status(dbo, animalid, a = None, movements = None, animalupdate
             loc = a.shelterlocationname
         qlocname = loc
 
-    # Has anything actually changed?
-    if a.archived == b2i(not onshelter) and \
-        a.ownerid == ownerid and \
-        a.activemovementid == activemovementid and \
-        a.activemovementdate == activemovementdate and \
-        a.activemovementtype == activemovementtype and \
-        a.activemovementreturn == activemovementreturn and \
-        a.diedoffshelter == b2i(diedoffshelter) and \
-        a.hasactivereserve == b2i(hasreserve) and \
-        a.hastrialadoption == b2i(hastrialadoption) and \
-        a.haspermanentfoster == b2i(haspermanentfoster) and \
-        a.mostrecententrydate == mostrecententrydate and \
-        a.displaylocation == qlocname:
-        # No - don't do anything
-        return
+    # Take a snapshot of our in memory animal
+    old = a.copy()
 
     # Update our in memory animal
     a.archived = b2i(not onshelter)
@@ -3787,9 +3774,26 @@ def update_animal_status(dbo, animalid, a = None, movements = None, animalupdate
     a.mostrecententrydate = mostrecententrydate
     a.displaylocation = qlocname
 
-    # Update the adoptable flag (requires result to be updated)
+    # Update the adoptable flag (requires a to be updated)
     adoptable = asm3.publishers.base.is_animal_adoptable(dbo, a)
-    a.adoptable = adoptable
+    a.adoptable = b2i(adoptable)
+
+    # Has anything actually changed?
+    if old.archived == a.archived and \
+        old.adoptable == a.adoptable and \
+        old.ownerid == a.ownerid and \
+        old.activemovementid == a.activemovementid and \
+        old.activemovementdate == a.activemovementdate and \
+        old.activemovementtype == a.activemovementtype and \
+        old.activemovementreturn == a.activemovementreturn and \
+        old.diedoffshelter == a.diedoffshelter and \
+        old.hasactivereserve == a.hasactivereserve and \
+        old.hastrialadoption == a.hastrialadoption and \
+        old.haspermanentfoster == a.haspermanentfoster and \
+        old.mostrecententrydate == a.mostrecententrydate and \
+        old.displaylocation == a.displaylocation:
+        # No - don't do anything
+        return
 
     # Update the location on any diary notes for this animal
     update_diary_linkinfo(dbo, animalid, a, diaryupdatebatch)
