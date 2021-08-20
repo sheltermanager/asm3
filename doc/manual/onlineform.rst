@@ -24,13 +24,6 @@ form data will automatically have those flags. In addition to that, the
 "checkbox" field type allows you to enter some additional person flags to set
 if that checkbox is checked during submission.
 
-If you set one of the "Send confirmation email to form submitter" options, 
-the system will look for a field called "emailaddress" during submission. 
-If that field exists and is populated with an email address, a
-confirmation email will be sent to that address. The confirmation message
-field will form the first part of the body of the email. HTML can be used, but
-it must be a complete HTML document that contains an <html> tag. 
-
 .. image:: images/onlineform_edit.png
 
 As you can see in the screenshot, each form has a “Form URL”. This is the web
@@ -39,6 +32,18 @@ it directly there in the UI to test your form.
 
 You may add extra parameters to the URL if you'd like to set default values
 for some of your form fields, by using the format fieldname=value.
+
+The form option "Email adoption coordinator" will send a copy of the submission
+to the person specified as the adoption coordinator for an animal the form 
+is about. The form must have an animalname or reserveanimalname field 
+for this to work.
+
+If you set one of the "Send confirmation email to form submitter" options, 
+the system will look for a field called "emailaddress" during submission. 
+If that field exists and is populated with an email address, a
+confirmation email will be sent to that address. The confirmation message
+field will form the first part of the body of the email. HTML can be used, but
+it must be a complete HTML document that contains an <html> tag. 
 
 .. warning:: sheltermanager.com uses a short term 2 minute cache on forms, so if you make changes to a form you've recently viewed, you may have to wait 2 minutes for any changes you make to appear.
 

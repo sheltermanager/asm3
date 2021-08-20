@@ -553,6 +553,7 @@ def insert_onlineform_from_form(dbo, username, post):
         "RedirectUrlAfterPOST": post["redirect"],
         "SetOwnerFlags":        post["flags"],
         "EmailAddress":         post["email"],
+        "EmailCoordinator":     post.boolean("emailcoordinator"),
         "EmailSubmitter":       post.integer("emailsubmitter"),
         "*EmailMessage":        post["emailmessage"],
         "*Header":              post["header"],
@@ -569,6 +570,7 @@ def update_onlineform_from_form(dbo, username, post):
         "RedirectUrlAfterPOST": post["redirect"],
         "SetOwnerFlags":        post["flags"],
         "EmailAddress":         post["email"],
+        "EmailCoordinator":     post.boolean("emailcoordinator"),
         "EmailSubmitter":       post.integer("emailsubmitter"),
         "*EmailMessage":        post["emailmessage"],
         "*Header":              post["header"],
@@ -813,7 +815,8 @@ def insert_onlineformincoming_from_form(dbo, post, remoteip):
         if emailsubmitter == 1: 
             body += "\n" + formdata
             attachments = images
-        asm3.utils.send_email(dbo, asm3.configuration.email(dbo), submitteremail, "", "", asm3.i18n._("Submission received: {0}", l).format(formname), 
+        asm3.utils.send_email(dbo, asm3.configuration.email(dbo), submitteremail, "", "", 
+            asm3.i18n._("Submission received: {0}", l).format(formname), 
             body, "html", attachments, exceptions=False)
 
     # Did the original form specify some email addresses to send 
@@ -832,8 +835,24 @@ def insert_onlineformincoming_from_form(dbo, post, remoteip):
         replyto = ""
         if emailsubmitter != 0: replyto = submitteremail 
         if replyto == "": replyto = asm3.configuration.email(dbo)
-        asm3.utils.send_email(dbo, replyto, email, "", "", "%s - %s" % (formname, ", ".join(preview)), 
+        asm3.utils.send_email(dbo, replyto, email, "", "", 
+            "%s - %s" % (formname, ", ".join(preview)), 
             formdata, "html", images, exceptions=False)
+
+    # Was the option set to email the adoption coordinator linked to animalname?
+    emailcoordinator = dbo.query_int("SELECT EmailCoordinator FROM onlineform o " \
+        "INNER JOIN onlineformincoming oi ON oi.FormName = o.Name " \
+        "WHERE oi.CollationID = ?", [collationid])
+    if emailcoordinator == 1 and animalname != "":
+        # If so, find the selected animal from the form
+        animalid = get_animal_id_from_field(dbo, animalname)
+        coordinatoremail = dbo.query_string("SELECT EmailAddress FROM animal " \
+            "INNER JOIN owner ON owner.ID = animal.AdoptionCoordinatorID " \
+            "WHERE animal.ID = ?", [animalid])
+        if coordinatoremail != "":
+            asm3.utils.send_email(dbo, asm3.configuration.email(dbo), coordinatoremail, "", "", 
+                "%s - %s" % (formname, ", ".join(preview)), 
+                formdata, "html", images, exceptions=False)
 
     # Did the form submission have a value in an "emailsubmissionto" field?
     if emailsubmissionto is not None and emailsubmissionto.strip() != "":
@@ -842,7 +861,8 @@ def insert_onlineformincoming_from_form(dbo, post, remoteip):
         if replyto == "": replyto = asm3.configuration.email(dbo)
         # Remove any line breaks from the list of addresses, this has caused malformed headers before
         emailsubmissionto = emailsubmissionto.replace("\n", "")
-        asm3.utils.send_email(dbo, replyto, emailsubmissionto, "", "", "%s - %s" % (formname, ", ".join(preview)), 
+        asm3.utils.send_email(dbo, replyto, emailsubmissionto, "", "", 
+            "%s - %s" % (formname, ", ".join(preview)), 
             formdata, "html", images, exceptions=False)
 
     return collationid
