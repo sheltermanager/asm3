@@ -12,8 +12,10 @@ import asm3.log
 import asm3.lookups
 import asm3.media
 import asm3.movement
+import asm3.publishers.base
 import asm3.users
 import asm3.utils
+
 from asm3.i18n import _, date_diff, date_diff_days, format_diff, python2display, subtract_years, subtract_months, add_days, subtract_days, monday_of_week, first_of_month, last_of_month, first_of_year
 
 import datetime
@@ -279,16 +281,24 @@ def get_animal_query(dbo):
 
 def get_animal_status_query(dbo):
     return "SELECT a.ID, a.ShelterCode, a.ShortCode, a.AnimalName, " \
-        "a.DeceasedDate, a.DiedOffShelter, a.PutToSleep, " \
+        "a.DeceasedDate, a.DateOfBirth, a.DiedOffShelter, a.PutToSleep, a.Neutered, a.SpeciesID, " \
         "dr.ReasonName AS PTSReasonName, " \
         "il.LocationName AS ShelterLocationName, " \
-        "a.ShelterLocationUnit, " \
-        "a.NonShelterAnimal, a.DateBroughtIn, a.OriginalOwnerID, a.Archived, a.OwnerID, " \
+        "a.ShelterLocation, a.ShelterLocationUnit, " \
+        "a.IsCourtesy, a.IsNotAvailableForAdoption, a.HasPermanentFoster, " \
+        "a.CrueltyCase, a.NonShelterAnimal, a.IsHold, a.IsQuarantine, " \
+        "a.DateBroughtIn, a.OriginalOwnerID, a.Archived, a.OwnerID, " \
         "a.ActiveMovementID, a.ActiveMovementDate, a.ActiveMovementType, a.ActiveMovementReturn, " \
-        "a.HasActiveReserve, a.HasTrialAdoption, a.HasPermanentFoster, a.MostRecentEntryDate, a.DisplayLocation " \
+        "a.HasActiveReserve, a.HasTrialAdoption, a.HasPermanentFoster, a.MostRecentEntryDate, a.DisplayLocation, " \
+        "CASE WHEN EXISTS(SELECT ID FROM adoption WHERE AnimalID = a.ID AND MovementType = 1 AND MovementDate > %(today)s) THEN 1 ELSE 0 END AS HasFutureAdoption, " \
+        "web.MediaName AS WebsiteMediaName, " \
+        "web.MediaNotes AS WebsiteMediaNotes " \
         "FROM animal a " \
+        "LEFT OUTER JOIN media web ON web.ID = (SELECT MAX(ID) FROM media sweb WHERE sweb.LinkID = a.ID AND sweb.LinkTypeID = 0 AND sweb.WebsitePhoto = 1) " \
         "LEFT OUTER JOIN deathreason dr ON dr.ID = a.PTSReasonID " \
-        "LEFT OUTER JOIN internallocation il ON il.ID = a.ShelterLocation "
+        "LEFT OUTER JOIN internallocation il ON il.ID = a.ShelterLocation " % {
+            "today": dbo.sql_today(),
+        }
 
 def get_animal_movement_status_query(dbo):
     return "SELECT m.ID, m.MovementType, m.MovementDate, m.ReturnDate, " \
@@ -3487,6 +3497,7 @@ def update_all_animal_statuses(dbo):
 
     aff = dbo.execute_many("UPDATE animal SET " \
         "Archived = ?, " \
+        "Adoptable = ?, " \
         "OwnerID = ?, " \
         "ActiveMovementID = ?, " \
         "ActiveMovementDate = ?, " \
@@ -3527,6 +3538,7 @@ def update_foster_animal_statuses(dbo):
 
     aff = dbo.execute_many("UPDATE animal SET " \
         "Archived = ?, " \
+        "Adoptable = ?, " \
         "OwnerID = ?, " \
         "ActiveMovementID = ?, " \
         "ActiveMovementDate = ?, " \
@@ -3568,6 +3580,7 @@ def update_on_shelter_animal_statuses(dbo):
 
     aff = dbo.execute_many("UPDATE animal SET " \
         "Archived = ?, " \
+        "Adoptable = ?, " \
         "OwnerID = ?, " \
         "ActiveMovementID = ?, " \
         "ActiveMovementDate = ?, " \
@@ -3588,9 +3601,9 @@ def update_animal_status(dbo, animalid, a = None, movements = None, animalupdate
     """
     Updates the movement status fields on an animal record: 
         ActiveMovement*, HasActiveReserve, HasTrialAdoption, MostRecentEntryDate, 
-        DiedOffShelter, Archived and DisplayLocation.
+        DiedOffShelter, Adoptable, Archived and DisplayLocation.
 
-    a can be an already loaded animal record
+    a can be an already loaded animal record with a result from get_animal_status_query
     movements is a list of movements for this animal (and can be for other animals too)
     animalupdatebatch and diaryupdatebatch are lists of parameters that can be passed to
     dbo.execute_many to do all updates in one hit where necessary. If they are passed, we'll
@@ -3599,6 +3612,7 @@ def update_animal_status(dbo, animalid, a = None, movements = None, animalupdate
 
     l = dbo.locale
     onshelter = True
+    adoptable = False
     diedoffshelter = False
     hasreserve = False
     hastrialadoption = False
@@ -3773,6 +3787,10 @@ def update_animal_status(dbo, animalid, a = None, movements = None, animalupdate
     a.mostrecententrydate = mostrecententrydate
     a.displaylocation = qlocname
 
+    # Update the adoptable flag (requires result to be updated)
+    adoptable = asm3.publishers.base.is_animal_adoptable(dbo, a)
+    a.adoptable = adoptable
+
     # Update the location on any diary notes for this animal
     update_diary_linkinfo(dbo, animalid, a, diaryupdatebatch)
   
@@ -3780,6 +3798,7 @@ def update_animal_status(dbo, animalid, a = None, movements = None, animalupdate
     if animalupdatebatch is not None:
         animalupdatebatch.append((
             b2i(not onshelter),
+            b2i(adoptable),
             ownerid,
             activemovementid,
             activemovementdate,
@@ -3797,6 +3816,7 @@ def update_animal_status(dbo, animalid, a = None, movements = None, animalupdate
         # Just do the DB update now
         dbo.update("animal", animalid, {
             "Archived":             b2i(not onshelter),
+            "Adoptable":            b2i(adoptable),
             "OwnerID":              ownerid,
             "ActiveMovementID":     activemovementid,
             "ActiveMovementDate":   activemovementdate,

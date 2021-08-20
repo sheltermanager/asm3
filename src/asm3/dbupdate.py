@@ -38,7 +38,7 @@ VERSIONS = (
     34101, 34102, 34103, 34104, 34105, 34106, 34107, 34108, 34109, 34110, 34111,
     34112, 34200, 34201, 34202, 34203, 34204, 34300, 34301, 34302, 34303, 34304,
     34305, 34306, 34400, 34401, 34402, 34403, 34404, 34405, 34406, 34407, 34408,
-    34409, 34410, 34411, 34500
+    34409, 34410, 34411, 34500, 34501
 )
 
 LATEST_VERSION = VERSIONS[-1]
@@ -343,6 +343,7 @@ def sql_structure(dbo):
         ffloat("Weight", True),
         fstr("RabiesTag", True),
         fint("Archived"),
+        fint("Adoptable", True),
         fint("ActiveMovementID"),
         fint("ActiveMovementType", True),
         fdate("ActiveMovementDate", True),
@@ -370,6 +371,7 @@ def sql_structure(dbo):
     sql += index("animal_ActiveMovementReturn", "animal", "ActiveMovementReturn")
     sql += index("animal_AcceptanceNumber", "animal", "AcceptanceNumber")
     sql += index("animal_ActiveMovementType", "animal", "ActiveMovementType")
+    sql += index("animal_Adoptable", "animal", "Adoptable")
     sql += index("animal_AdoptionCoordinatorID", "animal", "AdoptionCoordinatorID")
     sql += index("animal_AgeGroup", "animal", "AgeGroup")
     sql += index("animal_BaseColourID", "animal", "BaseColourID")
@@ -1159,6 +1161,7 @@ def sql_structure(dbo):
         fstr("RedirectUrlAfterPOST", True),
         fstr("SetOwnerFlags", True),
         fint("EmailSubmitter", True),
+        fint("EmailCoordinator", True),
         flongstr("EmailAddress", True),
         flongstr("EmailMessage", True),
         flongstr("Header", True),
@@ -5319,4 +5322,14 @@ def update_34500(dbo):
     # Add testtype.RescheduleDays
     add_column(dbo, "testtype", "RescheduleDays", dbo.type_integer)
     dbo.execute_dbupdate("UPDATE testtype SET RescheduleDays = 0 WHERE RescheduleDays Is Null")
+
+def update_34501(dbo):
+    # Add animal.Adoptable
+    add_column(dbo, "animal", "Adoptable", dbo.type_integer)
+    add_index(dbo, "animal_Adoptable", "animal", "Adoptable")
+    dbo.execute_dbupdate("UPDATE animal SET Adoptable = 0")
+    # Add onlineform.EmailCoordinator
+    add_column(dbo, "onlineform", "EmailCoordinator", dbo.type_integer)
+    dbo.execute_dbupdate("UPDATE onlineform SET EmailCoordinator = 0")
+
 
